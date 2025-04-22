@@ -16,14 +16,8 @@
 #visibility(change_to="abstract")
 pub(all) struct T {
   buffer : StringBuilder
-  summaries : Array[SummaryWithName]
+  summaries : Array[Summary]
 }
-
-///|
-pub struct SummaryWithName {
-  name : String?
-  summary : Summary
-} derive(ToJson)
 
 ///|
 pub fn new() -> T {

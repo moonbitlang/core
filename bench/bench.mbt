@@ -23,7 +23,7 @@ fn iter_n_microseconds(inner : () -> Unit, k : Int) -> Double {
 }
 
 ///|
-fn iter_count(inner : () -> Unit, count : UInt) -> Summary {
+fn iter_count(name? : String, inner : () -> Unit, count : UInt) -> Summary {
   let count = count.land(0x7FFFFFFF).reinterpret_as_int()
   let threshold = 100000.0 // 100 ms
   let target_batch_size = loop 1 {
@@ -48,72 +48,137 @@ fn iter_count(inner : () -> Unit, count : UInt) -> Summary {
     samples[i] = iter_n_microseconds(inner, batch_size) / batch_size.to_double()
   }
   winsorize(samples, 5.0)
-  Summary::new(samples, batch_size)
-}
-
-///|
-fn bench_internal(
-  self : T,
-  f : () -> Unit,
-  name : String?,
-  count : UInt
-) -> Unit {
-  let summary = iter_count(f, count)
-  if not(self.buffer.is_empty()) {
-    self.buffer.write_char(',')
-  }
-  let summary_with_name = { name, summary }
-  self.buffer.write_string(
-    summary_with_name.to_json().stringify(escape_slash=true),
-  )
-  self.summaries.push(summary_with_name)
+  Summary::new(name?, samples, batch_size)
 }
 
 ///|
 /// Run a benchmark in batch mode
-pub fn bench(self : T, f : () -> Unit, count~ : UInt = 10) -> Unit {
-  bench_internal(self, f, None, count)
-}
-
-///|
-/// Run a benchmark with its name in batch mode
-pub fn bench_with_name(
+pub fn bench(
   self : T,
-  name : String,
+  name? : String,
   f : () -> Unit,
   count~ : UInt = 10
 ) -> Unit {
-  bench_internal(self, f, Some(name), count)
-}
-
-///|
-fn single_bench_interal(
-  f : () -> Unit,
-  name : String?,
-  count : UInt
-) -> SummaryWithName {
-  let summary = iter_count(f, count)
-  { name, summary }
+  let summary = iter_count(name?, f, count)
+  if not(self.buffer.is_empty()) {
+    self.buffer.write_char(',')
+  }
+  self.buffer.write_string(summary.to_json().stringify(escape_slash=true))
+  self.summaries.push(summary)
 }
 
 ///|
 /// Run a benchmark and return its summary
-pub fn single_bench(f : () -> Unit, count~ : UInt = 10) -> SummaryWithName {
-  single_bench_interal(f, None, count)
-}
-
-///|
-/// Run a benchmark with its name and return its summary
-pub fn single_bench_with_name(
-  name : String,
+pub fn single_bench(
+  name? : String,
   f : () -> Unit,
   count~ : UInt = 10
-) -> SummaryWithName {
-  single_bench_interal(f, Some(name), count)
+) -> Summary {
+  iter_count(name?, f, count)
 }
 
-// For use in test drivers
 ///|
+/// Internal use only
 pub fn dump_summaries(self : T) -> String {
   "[\{self.buffer.to_string()}]"
+}
+
+///|
+test "bench - single_bench basic functionality" {
+  let bench_result = single_bench(
+    fn() {
+      // Simple operation
+      let x = 1 + 1
+      ignore(x)
+    },
+    count=2,
+  )
+
+  // Check that summary fields are properly populated
+  inspect!(bench_result.runs, content="2")
+  inspect!(bench_result.batch_size > 0, content="true")
+  inspect!(bench_result.sum > 0.0, content="true")
+  inspect!(bench_result.min <= bench_result.max, content="true")
+}
+
+///|
+test "bench - Summary struct properties" {
+  // Create a very simple bench and extract the summary
+  let bench_result = single_bench(
+    fn() {
+      // Simple operation
+      let x = 1
+      ignore(x)
+    },
+    count=5,
+  )
+
+  // Test that all the properties are accessible
+  inspect!(bench_result.mean >= 0, content="true")
+  inspect!(bench_result.median >= 0, content="true")
+  inspect!(bench_result.std_dev >= 0, content="true")
+  inspect!(bench_result.std_dev_pct >= 0, content="true")
+  inspect!(bench_result.median_abs_dev >= 0, content="true")
+  inspect!(bench_result.median_abs_dev_pct >= 0, content="true")
+
+  // The quartiles should be in ascending order
+  let (q1, q2, q3) = bench_result.quartiles
+  inspect!(q1 <= q2, content="true")
+  inspect!(q2 <= q3, content="true")
+
+  // IQR should be q3 - q1
+  inspect!((q3 - q1 - bench_result.iqr).abs() < 0.001, content="true")
+}
+
+///|
+test "bench - T struct and bench method" {
+  let bench_obj = new()
+
+  // Ensure the buffer is initially empty
+  inspect!(bench_obj.buffer.is_empty(), content="true")
+  inspect!(bench_obj.summaries.is_empty(), content="true")
+
+  // Run a benchmark
+  bench_obj.bench(
+    fn() {
+      // Simple operation
+      let x = 20 * 20
+      ignore(x)
+    },
+    count=2,
+  )
+
+  // After running, the buffer should not be empty and there should be one summary
+  inspect!(bench_obj.buffer.is_empty(), content="false")
+  inspect!(bench_obj.summaries.length(), content="1")
+
+  // Run another benchmark to ensure we can add multiple
+  bench_obj.bench(
+    fn() {
+      // Another operation
+      let y = 30 * 30
+      ignore(y)
+    },
+    count=2,
+  )
+
+  // Should now have two summaries
+  inspect!(bench_obj.summaries.length(), content="2")
+}
+
+///|
+test "bench - monotonic clock functionality" {
+  // Test that the clock functions work properly
+  let start = monotonic_clock_start()
+
+  // Do some simple work
+  let mut result = 0
+  for _ in 0..<1000 {
+    result += 1
+  }
+  ignore(result)
+  let elapsed = monotonic_clock_end(start)
+
+  // Elapsed time should be non-negative
+  inspect!(elapsed >= 0.0, content="true")
 }

@@ -1,9 +1,7 @@
 package "moonbitlang/core/bench"
 
 // Values
-fn bench(T, () -> Unit, count~ : UInt = ..) -> Unit
-
-fn bench_with_name(T, String, () -> Unit, count~ : UInt = ..) -> Unit
+fn bench(T, name? : String, () -> Unit, count~ : UInt = ..) -> Unit
 
 fn dump_summaries(T) -> String
 
@@ -13,42 +11,18 @@ fn monotonic_clock_start() -> Timestamp
 
 fn new() -> T
 
-fn single_bench(() -> Unit, count~ : UInt = ..) -> SummaryWithName
-
-fn single_bench_with_name(String, () -> Unit, count~ : UInt = ..) -> SummaryWithName
+fn single_bench(name? : String, () -> Unit, count~ : UInt = ..) -> Summary
 
 // Types and methods
-pub struct Summary {
-  sum : Double
-  min : Double
-  max : Double
-  mean : Double
-  median : Double
-  var : Double
-  std_dev : Double
-  std_dev_pct : Double
-  median_abs_dev : Double
-  median_abs_dev_pct : Double
-  quartiles : (Double, Double, Double)
-  iqr : Double
-  batch_size : Int
-  runs : Int
-}
+type Summary
 impl ToJson for Summary
-
-pub struct SummaryWithName {
-  name : String?
-  summary : Summary
-}
-impl ToJson for SummaryWithName
 
 pub(all) struct T {
   buffer : StringBuilder
-  summaries : Array[SummaryWithName]
+  summaries : Array[Summary]
 }
 impl T {
-  bench(Self, () -> Unit, count~ : UInt = ..) -> Unit
-  bench_with_name(Self, String, () -> Unit, count~ : UInt = ..) -> Unit
+  bench(Self, name? : String, () -> Unit, count~ : UInt = ..) -> Unit
   dump_summaries(Self) -> String
 }
 
