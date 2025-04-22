@@ -46,6 +46,7 @@ pub fn singleton[K, V](key : K, value : V) -> T[K, V] {
 }
 
 ///|
+/// Check if the map contains a key.
 pub fn contains[K : Eq + Hash, V](self : T[K, V], key : K) -> Bool {
   match self.find(key) {
     Some(_) => true
@@ -139,6 +140,7 @@ fn add_with_hash[K : Eq, V](
 }
 
 ///|
+/// Filter values that satisfy the predicate
 pub fn filter[K : Eq + Hash, V](self : T[K, V], pred : (V) -> Bool) -> T[K, V] {
   match self {
     Empty => Empty
@@ -160,11 +162,13 @@ pub fn filter[K : Eq + Hash, V](self : T[K, V], pred : (V) -> Bool) -> T[K, V] {
 }
 
 ///|
+/// Fold the values in the map
 pub fn fold[K, V, A](self : T[K, V], init~ : A, f : (A, V) -> A) -> A {
   fold_with_key(self, fn(acc, _k, v) { f(acc, v) }, init~)
 }
 
 ///|
+/// Fold the values in the map with key
 pub fn fold_with_key[K, V, A](
   self : T[K, V],
   f : (A, K, V) -> A,
@@ -189,11 +193,13 @@ pub fn fold_with_key[K, V, A](
 }
 
 ///|
+/// Maps over the values in the map
 pub fn map[K : Eq + Hash, V, A](self : T[K, V], f : (V) -> A) -> T[K, A] {
   map_with_key(self, fn(_k, v) { f(v) })
 }
 
 ///|
+/// Maps over the key-value pairs in the map
 pub fn map_with_key[K : Eq + Hash, V, A](
   self : T[K, V],
   f : (K, V) -> A
@@ -319,11 +325,13 @@ pub fn each[K, V](self : T[K, V], f : (K, V) -> Unit) -> Unit {
 }
 
 ///|
+/// Returns all keys of the map
 pub fn keys[K, V](self : T[K, V]) -> Array[K] {
   self.iter().map(fn { (k, _) => k }).collect()
 }
 
 ///|
+/// Returns all values of the map
 pub fn elems[K, V](self : T[K, V]) -> Array[V] {
   self.iter().map(fn { (_, v) => v }).collect()
 }
