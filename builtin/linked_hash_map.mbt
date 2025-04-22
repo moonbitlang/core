@@ -119,38 +119,34 @@ pub fn Map::set[K : Hash + Eq, V](self : Map[K, V], key : K, value : V) -> Unit 
   let hash = key.hash()
   let insert_entry = { idx: -1, psl: 0, hash, key, value }
   let list_node : ListNode[K, V] = { prev: None, next: None }
-  loop 0, hash & self.capacity_mask, insert_entry, list_node {
-    i, idx, entry, node =>
-      match self.entries[idx] {
-        None => {
+  for i = 0, idx = hash & self.capacity_mask, entry = insert_entry, node = list_node {
+    match self.entries[idx] {
+      None => {
+        self.entries[idx] = Some(entry)
+        self.list[idx] = node
+        entry.idx = idx
+        self.add_entry_to_tail(insert_entry)
+        self.size += 1
+        break
+      }
+      Some(curr_entry) => {
+        let curr_node = self.list[curr_entry.idx]
+        if curr_entry.hash == entry.hash && curr_entry.key == entry.key {
+          curr_entry.value = entry.value
+          break
+        }
+        if entry.psl > curr_entry.psl {
           self.entries[idx] = Some(entry)
           self.list[idx] = node
           entry.idx = idx
-          self.add_entry_to_tail(insert_entry)
-          self.size += 1
-          break
-        }
-        Some(curr_entry) => {
-          let curr_node = self.list[curr_entry.idx]
-          if curr_entry.hash == entry.hash && curr_entry.key == entry.key {
-            curr_entry.value = entry.value
-            break
-          }
-          if entry.psl > curr_entry.psl {
-            self.entries[idx] = Some(entry)
-            self.list[idx] = node
-            entry.idx = idx
-            curr_entry.psl += 1
-            continue i + 1,
-              (idx + 1) & self.capacity_mask,
-              curr_entry,
-              curr_node
-          } else {
-            entry.psl += 1
-            continue i + 1, (idx + 1) & self.capacity_mask, entry, node
-          }
+          curr_entry.psl += 1
+          continue i + 1, (idx + 1) & self.capacity_mask, curr_entry, curr_node
+        } else {
+          entry.psl += 1
+          continue i + 1, (idx + 1) & self.capacity_mask, entry, node
         }
       }
+    }
   }
 }
 
