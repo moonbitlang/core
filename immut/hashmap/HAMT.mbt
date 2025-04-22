@@ -152,11 +152,11 @@ pub fn filter[K : Eq + Hash, V](self : T[K, V], pred : (V) -> Bool) -> T[K, V] {
         Some(b) => Collision(b)
       }
     Branch(children) => {
-      let result = []
+      let mut result = Empty
       children.each(fn {
-        child => child.filter(pred).iter().each(fn { kv => result.push(kv) })
+        child => child.filter(pred).iter().each(fn { (k,v) => result = result.add(k,v) })
       })
-      from_array(result)
+      result
     }
   }
 }
