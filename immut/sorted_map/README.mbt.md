@@ -28,9 +28,9 @@ test {
 }
 ```
 
-## Insert & Find
+## Insert & Lookup
 
-You can use `add()` to add a key-value pair to the map and create a new map. Or use `find()` to get the value associated with a key.
+You can use `add()` to add a key-value pair to the map and create a new map. Or use `lookup()` to get the value associated with a key.
 
 ```moonbit
 test {

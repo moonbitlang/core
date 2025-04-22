@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-test "find" {
+test "lookup" {
   let m = @sorted_map.of([
     (3, "three"),
     (8, "eight"),
