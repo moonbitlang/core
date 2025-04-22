@@ -15,7 +15,8 @@
 ///|
 // Types
 priv struct Entry[K, V] {
-  mut idx : Int
+  mut prev : Int?
+  mut next : Entry[K, V]?
   mut psl : Int
   hash : Int
   key : K
@@ -25,12 +26,6 @@ priv struct Entry[K, V] {
 ///|
 impl[K : Eq, V] Eq for Entry[K, V] with op_equal(self, other) {
   self.hash == other.hash && self.key == other.key
-}
-
-///|
-priv struct ListNode[K, V] {
-  mut prev : Entry[K, V]?
-  mut next : Entry[K, V]?
 }
 
 ///|
@@ -47,13 +42,12 @@ priv struct ListNode[K, V] {
 /// ```
 struct Map[K, V] {
   mut entries : FixedArray[Entry[K, V]?]
-  mut list : FixedArray[ListNode[K, V]] // list of (prev, next)
   mut size : Int // active key-value pairs count
   mut capacity : Int // current capacity
   mut capacity_mask : Int // capacity_mask = capacity - 1, used to find idx
   mut growAt : Int // threshold that triggers grow
   mut head : Entry[K, V]? // head of linked list
-  mut tail : Entry[K, V]? // tail of linked list
+  mut tail : Int? // tail of linked list
 }
 
 // Implementations
@@ -95,7 +89,6 @@ pub fn Map::new[K, V](capacity~ : Int = 8) -> Map[K, V] {
     capacity_mask: capacity - 1,
     growAt: calc_grow_threshold(capacity),
     entries: FixedArray::make(capacity, None),
-    list: FixedArray::make(capacity, { prev: None, next: None }),
     head: None,
     tail: None,
   }
@@ -117,36 +110,70 @@ pub fn Map::set[K : Hash + Eq, V](self : Map[K, V], key : K, value : V) -> Unit 
     self.grow()
   }
   let hash = key.hash()
-  let insert_entry = { idx: -1, psl: 0, hash, key, value }
-  let list_node : ListNode[K, V] = { prev: None, next: None }
-  for i = 0, idx = hash & self.capacity_mask, entry = insert_entry, node = list_node {
+  let entry = { prev: self.tail, next: None, psl: 0, key, value, hash }
+  for i = 0, idx = hash & self.capacity_mask {
     match self.entries[idx] {
       None => {
+        self.add_entry_to_tail(idx, entry)
         self.entries[idx] = Some(entry)
-        self.list[idx] = node
-        entry.idx = idx
-        self.add_entry_to_tail(insert_entry)
         self.size += 1
         break
       }
       Some(curr_entry) => {
-        let curr_node = self.list[curr_entry.idx]
         if curr_entry.hash == entry.hash && curr_entry.key == entry.key {
           curr_entry.value = entry.value
           break
         }
         if entry.psl > curr_entry.psl {
+          self.push_away(idx, curr_entry)
+          self.add_entry_to_tail(idx, entry)
           self.entries[idx] = Some(entry)
-          self.list[idx] = node
-          entry.idx = idx
-          curr_entry.psl += 1
-          continue i + 1, (idx + 1) & self.capacity_mask, curr_entry, curr_node
-        } else {
-          entry.psl += 1
-          continue i + 1, (idx + 1) & self.capacity_mask, entry, node
+          self.size += 1
+          break
         }
+        entry.psl += 1
+        continue i + 1, (idx + 1) & self.capacity_mask
       }
     }
+  }
+}
+
+///|
+fn Map::push_away[K, V](
+  self : Map[K, V],
+  idx : Int,
+  entry : Entry[K, V]
+) -> Unit {
+  entry.psl += 1
+  for i = entry.psl, idx = (idx + 1) & self.capacity_mask, entry = entry {
+    match self.entries[idx] {
+      None => {
+        self.set_entry(entry, idx)
+        break
+      }
+      Some(curr_entry) =>
+        if i > curr_entry.psl {
+          self.set_entry(entry, idx)
+          curr_entry.psl += 1
+          continue i + 1, (idx + 1) & self.capacity_mask, curr_entry
+        } else {
+          entry.psl += 1
+          continue i + 1, (idx + 1) & self.capacity_mask, entry
+        }
+    }
+  }
+}
+
+///|
+fn Map::set_entry[K, V](
+  self : Map[K, V],
+  entry : Entry[K, V],
+  new_idx : Int
+) -> Unit {
+  self.entries[new_idx] = Some(entry)
+  match entry.next {
+    None => self.tail = Some(new_idx)
+    Some(next) => next.prev = Some(new_idx)
   }
 }
 
@@ -322,66 +349,49 @@ pub fn Map::remove[K : Hash + Eq, V](self : Map[K, V], key : K) -> Unit {
 }
 
 ///|
-fn Map::add_entry_to_tail[K : Eq, V](
+fn Map::add_entry_to_tail[K, V](
   self : Map[K, V],
+  idx : Int,
   entry : Entry[K, V]
 ) -> Unit {
   match self.tail {
     None => {
       self.head = Some(entry)
-      self.tail = Some(entry)
+      self.tail = Some(idx)
     }
     Some(tail) => {
-      self.list[tail.idx].next = Some(entry)
-      self.list[entry.idx].prev = Some(tail)
-      self.tail = Some(entry)
+      self.entries[tail].unwrap().next = Some(entry)
+      self.tail = Some(idx)
     }
   }
 }
 
 ///|
-fn Map::remove_entry[K : Eq, V](self : Map[K, V], entry : Entry[K, V]) -> Unit {
-  let node = self.list[entry.idx]
-  if self.is_empty() {
-    self.head = None
-    self.tail = None
-  } else {
-    if self.head.unwrap() == entry {
-      self.head = node.next
-    }
-    if self.tail.unwrap() == entry {
-      self.tail = node.prev
-    }
-    if node.prev is Some(prev) {
-      self.list[prev.idx].next = node.next
-    }
-    if node.next is Some(next) {
-      self.list[next.idx].prev = node.prev
-    }
+fn Map::remove_entry[K, V](self : Map[K, V], entry : Entry[K, V]) -> Unit {
+  match entry.prev {
+    None => self.head = entry.next
+    Some(idx) => self.entries[idx].unwrap().next = entry.next
   }
-  node.prev = None
-  node.next = None
+  match entry.next {
+    None => self.tail = entry.prev
+    Some(next) => next.prev = entry.prev
+  }
 }
 
 ///|
-fn Map::shift_back[K : Hash, V](self : Map[K, V], start_index : Int) -> Unit {
+fn Map::shift_back[K, V](self : Map[K, V], start_index : Int) -> Unit {
   for prev = start_index, curr = (start_index + 1) & self.capacity_mask {
-    match (self.entries[curr], self.list[curr]) {
-      (Some(entry), currNode) => {
+    match self.entries[curr] {
+      Some(entry) => {
         if entry.psl == 0 {
           break
         }
         entry.psl -= 1
-        entry.idx = prev
-        self.entries[prev] = Some(entry)
+        self.set_entry(entry, prev)
         self.entries[curr] = None
-        self.list[prev].prev = currNode.prev
-        self.list[prev].next = currNode.next
-        currNode.prev = None
-        currNode.next = None
         continue curr, (curr + 1) & self.capacity_mask
       }
-      (None, _) => break
+      None => break
     }
   }
 }
@@ -389,10 +399,8 @@ fn Map::shift_back[K : Hash, V](self : Map[K, V], start_index : Int) -> Unit {
 ///|
 fn Map::grow[K : Hash + Eq, V](self : Map[K, V]) -> Unit {
   let old_head = self.head
-  let old_list = self.list
   let new_capacity = self.capacity << 1
   self.entries = FixedArray::make(new_capacity, None)
-  self.list = FixedArray::make(new_capacity, { prev: None, next: None })
   self.capacity = new_capacity
   self.capacity_mask = new_capacity - 1
   self.growAt = calc_grow_threshold(self.capacity)
@@ -400,9 +408,9 @@ fn Map::grow[K : Hash + Eq, V](self : Map[K, V]) -> Unit {
   self.head = None
   self.tail = None
   loop old_head {
-    Some({ idx, key, value, .. }) => {
+    Some({ next, key, value, .. }) => {
       self.set(key, value)
-      continue old_list[idx].next
+      continue next
     }
     None => break
   }
@@ -436,12 +444,12 @@ pub impl[K : Show, V : Show] Show for Map[K, V] with output(self, logger) {
   logger.write_string("{")
   loop 0, self.head {
     _, None => logger.write_string("}")
-    i, Some({ key, value, idx, .. }) => {
+    i, Some({ key, value, next, .. }) => {
       if i > 0 {
         logger.write_string(", ")
       }
       logger..write_object(key)..write_string(": ").write_object(value)
-      continue i + 1, self.list[idx].next
+      continue i + 1, next
     }
   }
 }
@@ -468,9 +476,9 @@ pub fn Map::is_empty[K, V](self : Map[K, V]) -> Bool {
 /// Iterate over all key-value pairs of the map in the order of insertion.
 pub fn Map::each[K, V](self : Map[K, V], f : (K, V) -> Unit) -> Unit {
   loop self.head {
-    Some({ key, value, idx, .. }) => {
+    Some({ key, value, next, .. }) => {
       f(key, value)
-      continue self.list[idx].next
+      continue next
     }
     None => break
   }
@@ -480,9 +488,9 @@ pub fn Map::each[K, V](self : Map[K, V], f : (K, V) -> Unit) -> Unit {
 /// Iterate over all key-value pairs of the map in the order of insertion, with index.
 pub fn Map::eachi[K, V](self : Map[K, V], f : (Int, K, V) -> Unit) -> Unit {
   loop 0, self.head {
-    i, Some({ key, value, idx, .. }) => {
+    i, Some({ key, value, next, .. }) => {
       f(i, key, value)
-      continue i + 1, self.list[idx].next
+      continue i + 1, next
     }
     _, None => break
   }
@@ -502,9 +510,9 @@ pub fn Map::clear[K, V](self : Map[K, V]) -> Unit {
 pub fn Map::iter[K, V](self : Map[K, V]) -> Iter[(K, V)] {
   Iter::new(fn(yield_) {
     loop self.head {
-      Some({ key, value, idx, .. }) => {
+      Some({ key, value, next, .. }) => {
         guard yield_((key, value)) is IterContinue else { break IterEnd }
-        continue self.list[idx].next
+        continue next
       }
       None => break IterContinue
     }
@@ -515,9 +523,9 @@ pub fn Map::iter[K, V](self : Map[K, V]) -> Iter[(K, V)] {
 pub fn Map::iter2[K, V](self : Map[K, V]) -> Iter2[K, V] {
   Iter2::new(fn(yield_) {
     loop self.head {
-      Some({ key, value, idx, .. }) => {
+      Some({ key, value, next, .. }) => {
         guard yield_(key, value) is IterContinue else { break IterEnd }
-        continue self.list[idx].next
+        continue next
       }
       None => IterContinue
     }
@@ -528,9 +536,9 @@ pub fn Map::iter2[K, V](self : Map[K, V]) -> Iter2[K, V] {
 pub fn Map::keys[K, V](self : Map[K, V]) -> Iter[K] {
   Iter::new(fn(yield_) {
     loop self.head {
-      Some({ key, idx, .. }) => {
+      Some({ key, next, .. }) => {
         guard yield_(key) is IterContinue else { break IterEnd }
-        continue self.list[idx].next
+        continue next
       }
       None => IterContinue
     }
@@ -541,9 +549,9 @@ pub fn Map::keys[K, V](self : Map[K, V]) -> Iter[K] {
 pub fn Map::values[K, V](self : Map[K, V]) -> Iter[V] {
   Iter::new(fn(yield_) {
     loop self.head {
-      Some({ value, idx, .. }) => {
+      Some({ value, next, .. }) => {
         guard yield_(value) is IterContinue else { break IterEnd }
-        continue self.list[idx].next
+        continue next
       }
       None => IterContinue
     }
@@ -556,10 +564,10 @@ pub fn Map::to_array[K, V](self : Map[K, V]) -> Array[(K, V)] {
   let arr = Array::make_uninit(self.size)
   let mut i = 0
   loop self.head {
-    Some({ key, value, idx, .. }) => {
+    Some({ key, value, next, .. }) => {
       arr.unsafe_set(i, (key, value))
       i += 1
-      continue self.list[idx].next
+      continue next
     }
     None => break
   }
