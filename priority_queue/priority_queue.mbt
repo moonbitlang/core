@@ -73,18 +73,7 @@ pub fn copy[A](self : T[A]) -> T[A] {
 
 ///|
 pub fn to_array[A : Compare](self : T[A]) -> Array[A] {
-  // 1. count the number of nodes in the tree
-  fn count_nodes(x : Node[A]) -> Int {
-    match x {
-      Cons(_) as node => 1 + count_nodes(node.sibling) + count_nodes(node.child)
-      Nil => 0
-    }
-  }
-
-  let capacity = count_nodes(self.top)
-  // 2. create an array with the capacity
-  let arr = Array::new(capacity~)
-  // 3. fill the array with the nodes in the tree
+  let arr = Array::new(capacity=self.len)
   fn fill(arr : Array[A], node : Node[A]) {
     match node {
       Cons(_) as node => {
@@ -97,7 +86,6 @@ pub fn to_array[A : Compare](self : T[A]) -> Array[A] {
   }
 
   fill(arr, self.top)
-  // 4. sort the array in descending order
   arr.sort_by(fn(x, y) { y.compare(x) })
   arr
 }
