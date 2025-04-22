@@ -6,15 +6,13 @@ import(
 )
 
 // Values
-fn add[A](T[A], A) -> T[A]
-
 fn all[A](T[A], (A) -> Bool) -> Bool
 
 fn any[A](T[A], (A) -> Bool) -> Bool
 
 fn concat[A](T[A], T[A]) -> T[A]
 
-fn cons[A](A, T[A]) -> T[A]
+fn construct[A](A, T[A]) -> T[A]
 
 fn contains[A : Eq](T[A], A) -> Bool
 
@@ -27,6 +25,8 @@ fn drop_while[A](T[A], (A) -> Bool) -> T[A]
 fn each[A](T[A], (A) -> Unit) -> Unit
 
 fn eachi[A](T[A], (Int, A) -> Unit) -> Unit
+
+fn empty[A]() -> T[A]
 
 fn filter[A](T[A], (A) -> Bool) -> T[A]
 
@@ -82,11 +82,13 @@ fn maximum[A : Compare](T[A]) -> A?
 
 fn minimum[A : Compare](T[A]) -> A?
 
-fn nil[A]() -> T[A]
+fn new[A]() -> T[A]
 
 fn nth[A](T[A], Int) -> A?
 
 fn of[A](FixedArray[A]) -> T[A]
+
+fn prepend[A](T[A], A) -> T[A]
 
 fn remove[A : Eq](T[A], A) -> T[A]
 
@@ -136,15 +138,14 @@ fn unsafe_nth[A](T[A], Int) -> A
 
 fn unzip[A, B](T[(A, B)]) -> (T[A], T[B])
 
-fn zip[A, B](T[A], T[B]) -> T[(A, B)]?
+fn zip[A, B](T[A], T[B]) -> T[(A, B)]
 
 // Types and methods
 pub enum T[A] {
-  Nil
-  Cons(A, mut tail~ : T[A])
+  Empty
+  More(A, mut tail~ : T[A])
 }
 impl T {
-  add[A](Self[A], A) -> Self[A]
   all[A](Self[A], (A) -> Bool) -> Bool
   any[A](Self[A], (A) -> Bool) -> Bool
   concat[A](Self[A], Self[A]) -> Self[A]
@@ -177,6 +178,7 @@ impl T {
   maximum[A : Compare](Self[A]) -> A?
   minimum[A : Compare](Self[A]) -> A?
   nth[A](Self[A], Int) -> A?
+  prepend[A](Self[A], A) -> Self[A]
   remove[A : Eq](Self[A], A) -> Self[A]
   remove_at[A](Self[A], Int) -> Self[A]
   rev[A](Self[A]) -> Self[A]
@@ -198,7 +200,7 @@ impl T {
   unsafe_minimum[A : Compare](Self[A]) -> A
   unsafe_nth[A](Self[A], Int) -> A
   unzip[A, B](Self[(A, B)]) -> (Self[A], Self[B])
-  zip[A, B](Self[A], Self[B]) -> Self[(A, B)]?
+  zip[A, B](Self[A], Self[B]) -> Self[(A, B)]
 }
 impl[A] Add for T[A]
 impl[X] Default for T[X]

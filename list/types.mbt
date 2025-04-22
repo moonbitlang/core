@@ -14,6 +14,6 @@
 
 ///|
 pub enum T[A] {
-  Nil
-  Cons(A, mut tail~ : T[A])
+  Empty
+  More(A, mut tail~ : T[A])
 } derive(Eq)
