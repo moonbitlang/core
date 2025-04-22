@@ -15,13 +15,13 @@
 ///|
 test "bench - single_bench basic functionality" {
   let bench_result = single_bench(
-    fn() {
-      // Simple operation
-      let x = 1 + 1
-      ignore(x)
-    },
-    count=2,
-  )
+      fn() {
+        // Simple operation
+        let x = 1 + 1
+        ignore(x)
+      },
+      count=2,
+    ).summary
 
   // Check that summary fields are properly populated
   inspect!(bench_result.runs, content="2")
@@ -34,13 +34,13 @@ test "bench - single_bench basic functionality" {
 test "bench - Summary struct properties" {
   // Create a very simple bench and extract the summary
   let bench_result = single_bench(
-    fn() {
-      // Simple operation
-      let x = 1
-      ignore(x)
-    },
-    count=5,
-  )
+      fn() {
+        // Simple operation
+        let x = 1
+        ignore(x)
+      },
+      count=5,
+    ).summary
 
   // Test that all the properties are accessible
   inspect!(bench_result.mean >= 0, content="true")
