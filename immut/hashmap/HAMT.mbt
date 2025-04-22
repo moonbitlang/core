@@ -187,7 +187,10 @@ pub fn fold_with_key[K, V, A](
       Empty => go(stack, acc)
       Leaf(k, v) => go(stack, f(acc, k, v))
       Collision(bucket) => go(stack, bucket.foldl_with_key(init=acc, f))
-      Branch(children) =>
+      Branch(children) => {
+        if children.data.is_empty() {
+          return acc
+        }
         if index < children.data.length() {
           let child = children.data[index]
           stack.push((node, index + 1))
@@ -196,6 +199,7 @@ pub fn fold_with_key[K, V, A](
         } else {
           go(stack, acc)
         }
+      }
     }
   }
 
