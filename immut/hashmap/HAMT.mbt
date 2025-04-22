@@ -174,22 +174,29 @@ pub fn fold_with_key[K, V, A](
   f : (A, K, V) -> A,
   init~ : A
 ) -> A {
-  fn go(m : T[K, V], acc) {
-    match m {
-      Empty => acc
-      Leaf(k, v) => f(acc, k, v)
-      Collision(bucket) => bucket.foldl_with_key(init=acc, f)
-      Branch(children) => {
-        let mut result = acc
-        for i in 0..<children.data.length() {
-          result = go(children.data[i], result)
+  fn go(stack : Array[(T[K, V], Int)], acc : A) -> A {
+    if stack.is_empty() {
+      return acc
+    }
+    let (node, index) = stack.unsafe_pop()
+    match node {
+      Empty => go(stack, acc)
+      Leaf(k, v) => go(stack, f(acc, k, v))
+      Collision(bucket) => go(stack, bucket.foldl_with_key(init=acc, f))
+      Branch(children) =>
+        if index < children.data.length() {
+          let child = children.data[index]
+          stack.push((node, index + 1))
+          stack.push((child, 0))
+          go(stack, acc)
+        } else {
+          go(stack, acc)
         }
-        result
-      }
     }
   }
 
-  go(self, init)
+  let stack = Array::make(1, (self, 0))
+  go(stack, init)
 }
 
 ///|
