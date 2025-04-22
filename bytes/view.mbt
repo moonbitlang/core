@@ -121,8 +121,8 @@ pub fn View::op_get(self : View, index : Int) -> Byte {
 /// }
 /// ```
 pub fn View::get(self : View, index : Int) -> Byte? {
-  guard index >= 0 && index < self.len else { None }
-  Some(self.bytes[self.start + index])
+  guard index >= 0 && index < self.len() else { None }
+  Some(self.bytes().unsafe_get(self.start() + index))
 }
 
 ///|
