@@ -38,7 +38,10 @@ struct StringView {
 pub typealias View = StringView
 
 ///|
-fn len(self : View) -> Int {
+/// Returns the length of the view.
+/// 
+/// This method counts the charcodes(code unit) in the view and has O(1) complexity.
+pub fn length(self : View) -> Int {
   self.end - self.start
 }
 
@@ -78,11 +81,11 @@ pub fn String::view(
 pub fn View::view(
   self : View,
   start_offset~ : Int = 0,
-  end_offset~ : Int = self.len()
+  end_offset~ : Int = self.length()
 ) -> View {
   guard start_offset >= 0 &&
     start_offset <= end_offset &&
-    end_offset <= self.len() else {
+    end_offset <= self.length() else {
     abort("Invalid index for View")
   }
   {
@@ -114,7 +117,9 @@ pub fn View::offset_of_nth_char(self : View, i : Int) -> Int? {
 /// 
 /// This method has O(n) complexity.
 pub fn View::char_at(self : View, index : Int) -> Char {
-  guard index >= 0 && index < self.len() else { abort("Index out of bounds") }
+  guard index >= 0 && index < self.length() else {
+    abort("Index out of bounds")
+  }
   self.str.unsafe_char_at(self.start + index)
 }
 
@@ -123,7 +128,9 @@ pub fn View::char_at(self : View, index : Int) -> Char {
 /// 
 /// This method has O(1) complexity.
 pub fn View::charcode_at(self : View, index : Int) -> Int {
-  guard index >= 0 && index < self.len() else { abort("Index out of bounds") }
+  guard index >= 0 && index < self.length() else {
+    abort("Index out of bounds")
+  }
   self.str.unsafe_charcode_at(self.start + index)
 }
 
@@ -206,7 +213,7 @@ pub fn View::iter(self : View) -> Iter[Char] {
 ///|
 pub fn View::iter2(self : View) -> Iter2[Int, Char] {
   Iter2::new(fn(yield_) {
-    let len = self.len()
+    let len = self.length()
     for index = 0, n = 0; index < len; index = index + 1, n = n + 1 {
       let c1 = self.str.unsafe_charcode_at(self.start + index)
       if is_leading_surrogate(c1) && index + 1 < len {
@@ -251,8 +258,8 @@ pub fn View::rev_iter(self : View) -> Iter[Char] {
 /// Compares two views for equality. Returns true only if both views
 /// have the same length and contain identical characters in the same order.
 pub impl Eq for View with op_equal(self, other) {
-  let len = self.len()
-  guard len == other.len() else { return false }
+  let len = self.length()
+  guard len == other.length() else { return false }
   if physical_equal(self.str, other.str) && self.start == other.start {
     return true
   }
@@ -272,8 +279,8 @@ pub impl Eq for View with op_equal(self, other) {
 /// not necessarily the same as "alphabetical" order, which varies by language
 /// and locale.
 pub impl Compare for View with compare(self, other) {
-  let self_len = self.len()
-  let other_len = other.len()
+  let self_len = self.length()
+  let other_len = other.length()
   let cmp = self_len.compare(other_len)
   guard cmp == 0 else { return cmp }
   if physical_equal(self.str, other.str) && self.start == other.start {
