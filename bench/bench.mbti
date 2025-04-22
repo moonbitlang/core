@@ -3,13 +3,19 @@ package "moonbitlang/core/bench"
 // Values
 fn bench(T, () -> Unit, count~ : UInt = ..) -> Unit
 
+fn bench_with_name(T, String, () -> Unit, count~ : UInt = ..) -> Unit
+
+fn dump_summaries(T) -> String
+
 fn monotonic_clock_end(Timestamp) -> Double
 
 fn monotonic_clock_start() -> Timestamp
 
 fn new() -> T
 
-fn single_bench(() -> Unit, count~ : UInt = ..) -> Summary
+fn single_bench(() -> Unit, count~ : UInt = ..) -> SummaryWithName
+
+fn single_bench_with_name(String, () -> Unit, count~ : UInt = ..) -> SummaryWithName
 
 // Types and methods
 pub struct Summary {
@@ -30,12 +36,20 @@ pub struct Summary {
 }
 impl ToJson for Summary
 
+pub struct SummaryWithName {
+  name : String?
+  summary : Summary
+}
+impl ToJson for SummaryWithName
+
 pub(all) struct T {
   buffer : StringBuilder
-  summaries : Array[Summary]
+  summaries : Array[SummaryWithName]
 }
 impl T {
   bench(Self, () -> Unit, count~ : UInt = ..) -> Unit
+  bench_with_name(Self, String, () -> Unit, count~ : UInt = ..) -> Unit
+  dump_summaries(Self) -> String
 }
 
 type Timestamp

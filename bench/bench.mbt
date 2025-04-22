@@ -52,17 +52,68 @@ fn iter_count(inner : () -> Unit, count : UInt) -> Summary {
 }
 
 ///|
-pub fn bench(self : T, f : () -> Unit, count~ : UInt = 10) -> Unit {
+fn bench_internal(
+  self : T,
+  f : () -> Unit,
+  name : String?,
+  count : UInt
+) -> Unit {
   let summary = iter_count(f, count)
   if not(self.buffer.is_empty()) {
     self.buffer.write_char(',')
   }
-  self.buffer.write_string(summary.to_json().stringify())
-  self.summaries.push(summary)
+  let summary_with_name = { name, summary }
+  self.buffer.write_string(
+    summary_with_name.to_json().stringify(escape_slash=true),
+  )
+  self.summaries.push(summary_with_name)
 }
 
 ///|
-pub fn single_bench(f : () -> Unit, count~ : UInt = 10) -> Summary {
+/// Run a benchmark in batch mode
+pub fn bench(self : T, f : () -> Unit, count~ : UInt = 10) -> Unit {
+  bench_internal(self, f, None, count)
+}
+
+///|
+/// Run a benchmark with its name in batch mode
+pub fn bench_with_name(
+  self : T,
+  name : String,
+  f : () -> Unit,
+  count~ : UInt = 10
+) -> Unit {
+  bench_internal(self, f, Some(name), count)
+}
+
+///|
+fn single_bench_interal(
+  f : () -> Unit,
+  name : String?,
+  count : UInt
+) -> SummaryWithName {
   let summary = iter_count(f, count)
-  summary
+  { name, summary }
+}
+
+///|
+/// Run a benchmark and return its summary
+pub fn single_bench(f : () -> Unit, count~ : UInt = 10) -> SummaryWithName {
+  single_bench_interal(f, None, count)
+}
+
+///|
+/// Run a benchmark with its name and return its summary
+pub fn single_bench_with_name(
+  name : String,
+  f : () -> Unit,
+  count~ : UInt = 10
+) -> SummaryWithName {
+  single_bench_interal(f, Some(name), count)
+}
+
+// For use in test drivers
+///|
+pub fn dump_summaries(self : T) -> String {
+  "[\{self.buffer.to_string()}]"
 }
