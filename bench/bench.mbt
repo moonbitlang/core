@@ -78,6 +78,13 @@ pub fn single_bench(
 }
 
 ///|
+/// Keep a value to prevent the optimizer from removing 
+/// the calculation that produces it.
+pub fn keep(self : T, value : &OpaqueValue) -> Unit {
+  self.storage = value
+}
+
+///|
 /// Internal use only
 #coverage.skip
 pub fn dump_summaries(self : T) -> String {
