@@ -28,19 +28,19 @@ test "HAMT" {
     i, map => continue i + 1, map.add(i, i)
   }
   for i in 0..<100 {
-    assert_eq!((i, map.lookup(i)), (i, Some(i)))
+    assert_eq!((i, map.get(i)), (i, Some(i)))
   }
-  inspect!((100, map.lookup(100)), content="(100, None)")
+  inspect!((100, map.get(100)), content="(100, None)")
   let map = map.add(100, 100)
-  inspect!((100, map.lookup(100)), content="(100, Some(100))")
+  inspect!((100, map.get(100)), content="(100, Some(100))")
   // test for replacement
   let map = loop 0, map {
     100, map => map
     i, map => continue i + 2, map.add(i, i + 1)
   }
   for i = 0; i < 100; i = i + 2 {
-    assert_eq!((i, map.lookup(i)), (i, Some(i + 1)))
-    assert_eq!((i + 1, map.lookup(i + 1)), (i + 1, Some(i + 1)))
+    assert_eq!((i, map.get(i)), (i, Some(i + 1)))
+    assert_eq!((i + 1, map.get(i + 1)), (i + 1, Some(i + 1)))
   }
 }
 
@@ -51,15 +51,15 @@ test "HAMT::remove" {
     i, map => continue i + 1, map.add(i, i)
   }
   for i in 0..<100 {
-    assert_eq!((i, map.lookup(i)), (i, Some(i)))
+    assert_eq!((i, map.get(i)), (i, Some(i)))
   }
   let map = loop 0, map {
     100, map => map.remove(100) // test for removing non-existing element
     i, map => continue i + 2, map.remove(i)
   }
   for i = 0; i < 100; i = i + 2 {
-    assert_eq!(map.lookup(i), None)
-    assert_eq!(map.lookup(i + 1), Some(i + 1))
+    assert_eq!(map.get(i), None)
+    assert_eq!(map.get(i + 1), Some(i + 1))
   }
 }
 
@@ -114,24 +114,24 @@ test "HAMT::to_string" {
 test "HAMT::from_array" {
   let map = @hashmap.of([(1, "1"), (2, "2"), (42, "42")])
   inspect!(
-    (1, map.lookup(1)),
+    (1, map.get(1)),
     content=
       #|(1, Some("1"))
     ,
   )
   inspect!(
-    (2, map.lookup(2)),
+    (2, map.get(2)),
     content=
       #|(2, Some("2"))
     ,
   )
   inspect!(
-    (42, map.lookup(42)),
+    (42, map.get(42)),
     content=
       #|(42, Some("42"))
     ,
   )
-  inspect!((43, map.lookup(43)), content="(43, None)")
+  inspect!((43, map.get(43)), content="(43, None)")
 }
 
 ///|
@@ -309,9 +309,9 @@ test "filter with all elements matching" {
 test "filter with no elements matching" {
   let map = @hashmap.of([(1, 1), (2, 2), (3, 3)])
   let filtered = map.filter(fn(v) { v > 10 })
-  assert_eq!(filtered.lookup(1), None)
-  assert_eq!(filtered.lookup(2), None)
-  assert_eq!(filtered.lookup(3), None)
+  assert_eq!(filtered.get(1), None)
+  assert_eq!(filtered.get(2), None)
+  assert_eq!(filtered.get(3), None)
   assert_eq!(filtered.size(), 0)
 }
 
@@ -319,8 +319,8 @@ test "filter with no elements matching" {
 test "filter with collision" {
   let map = @hashmap.of([(1, 10), (2, 20)]).add(1, 30)
   let filtered = map.filter(fn(v) { v == 30 })
-  assert_eq!(filtered.lookup(1), Some(30))
-  assert_eq!(filtered.lookup(2), None)
+  assert_eq!(filtered.get(1), Some(30))
+  assert_eq!(filtered.get(2), None)
 }
 
 ///|
@@ -332,9 +332,9 @@ test "filter with branch nodes" {
   let filtered = map.filter(fn(v) { v % 20 == 0 })
   for i = 0; i < 10; i = i + 1 {
     if i * 10 % 20 == 0 {
-      assert_eq!(filtered.lookup(i), Some(i * 10))
+      assert_eq!(filtered.get(i), Some(i * 10))
     } else {
-      assert_eq!(filtered.lookup(i), None)
+      assert_eq!(filtered.get(i), None)
     }
   }
 }
@@ -359,9 +359,9 @@ test "HAMT::fold" {
 test "HAMT::map" {
   let map = @hashmap.of([(1, 10), (2, 20)])
   let mapped = map.map(fn(v) { v * 2 })
-  assert_eq!(mapped.lookup(1), Some(20))
-  assert_eq!(mapped.lookup(2), Some(40))
-  assert_eq!(mapped.lookup(3), None)
+  assert_eq!(mapped.get(1), Some(20))
+  assert_eq!(mapped.get(2), Some(40))
+  assert_eq!(mapped.get(3), None)
 }
 
 ///|
@@ -369,14 +369,14 @@ test "HAMT::map with overflow" {
   let max = 2147483647 // Int.max_value
   let map = @hashmap.of([(1, max)])
   let mapped = map.map(fn(v) { v + 1 })
-  assert_eq!(mapped.lookup(1), Some(-2147483648))
+  assert_eq!(mapped.get(1), Some(-2147483648))
 }
 
 ///|
 test "HAMT::map_with_key" {
   let map = @hashmap.of([(1, 10), (2, 20)])
   let mapped = map.map_with_key(fn(k, v) { "\{k}:\{v}" })
-  assert_eq!(mapped.lookup(1), Some("1:10"))
-  assert_eq!(mapped.lookup(2), Some("2:20"))
-  assert_eq!(mapped.lookup(3), None)
+  assert_eq!(mapped.get(1), Some("1:10"))
+  assert_eq!(mapped.get(2), Some("2:20"))
+  assert_eq!(mapped.get(3), None)
 }
