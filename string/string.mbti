@@ -100,6 +100,7 @@ impl StringView {
   charcode_at(Self, Int) -> Int
   contains_char(Self, Char) -> Bool
   find(Self, Self) -> Int?
+  find_by(Self, (Char) -> Bool) -> Int?
   fold[A](Self, init~ : A, (A, Char) -> A) -> A
   from_array(Array[Char]) -> Self
   from_iter(Iter[Char]) -> Self
@@ -122,9 +123,9 @@ impl StringView {
   op_get(Self, Int) -> Char
   pad_end(Self, Int, Char) -> String
   pad_start(Self, Int, Char) -> String
-  repeat(Self, Int) -> String
+  repeat(Self, Int) -> Self
   replace(Self, old~ : Self, new~ : Self) -> Self
-  replace_all(Self, old~ : Self, new~ : Self) -> String
+  replace_all(Self, old~ : Self, new~ : Self) -> Self
   rev(Self) -> String
   rev_find(Self, Self) -> Int?
   rev_fold[A](Self, init~ : A, (A, Char) -> A) -> A
@@ -132,8 +133,8 @@ impl StringView {
   rev_get(Self, Int) -> Char
   rev_iter(Self) -> Iter[Char]
   split(Self, Self) -> Iter[Self]
-  to_lower(Self) -> String
-  to_upper(Self) -> String
+  to_lower(Self) -> Self
+  to_upper(Self) -> Self
   trim(Self, Self) -> Self
   trim_end(Self, Self) -> Self
   trim_space(Self) -> Self
@@ -158,6 +159,7 @@ impl String {
   #deprecated
   ends_with(String, String) -> Bool
   find(String, StringView) -> Int?
+  find_by(String, (Char) -> Bool) -> Int?
   fold[A](String, init~ : A, (A, Char) -> A) -> A
   from_array(Array[Char]) -> String
   from_iter(Iter[Char]) -> String
