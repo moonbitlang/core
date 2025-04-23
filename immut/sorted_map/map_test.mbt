@@ -21,9 +21,9 @@ test "lookup" {
     (2, "two"),
     (0, "zero"),
   ])
-  assert_eq!(m.lookup(8), Some("eight"))
-  assert_eq!(m.lookup(2), Some("two"))
-  assert_eq!(m.lookup(4), None)
+  assert_eq!(m.get(8), Some("eight"))
+  assert_eq!(m.get(2), Some("two"))
+  assert_eq!(m.get(4), None)
 }
 
 ///|

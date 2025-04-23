@@ -48,7 +48,7 @@ pub fn singleton[K, V](key : K, value : V) -> T[K, V] {
 ///|
 /// Check if the map contains a key.
 pub fn contains[K : Eq + Hash, V](self : T[K, V], key : K) -> Bool {
-  match self.lookup(key) {
+  match self.get(key) {
     Some(_) => true
     None => false
   }
@@ -56,15 +56,15 @@ pub fn contains[K : Eq + Hash, V](self : T[K, V], key : K) -> Bool {
 
 ///|
 /// Lookup a key from a hash map
-#deprecated("Use `lookup()` instead")
+#deprecated("Use `get()` instead")
 #coverage.skip
 pub fn find[K : Eq + Hash, V](self : T[K, V], key : K) -> V? {
-  self.lookup(key)
+  self.get(key)
 }
 
 ///|
 /// Lookup a key from a hash map
-pub fn lookup[K : Eq + Hash, V](self : T[K, V], key : K) -> V? {
+pub fn get[K : Eq + Hash, V](self : T[K, V], key : K) -> V? {
   loop self, key.hash() {
     Empty, _ => None
     Leaf(key1, value), _ => if key == key1 { Some(value) } else { None }
@@ -85,7 +85,7 @@ pub fn lookup[K : Eq + Hash, V](self : T[K, V], key : K) -> V? {
 
 ///|
 pub fn op_get[K : Eq + Hash, V](self : T[K, V], key : K) -> V? {
-  self.lookup(key)
+  self.get(key)
 }
 
 ///|
@@ -326,7 +326,7 @@ pub fn union[K : Eq + Hash, V](self : T[K, V], other : T[K, V]) -> T[K, V] {
     (Leaf(k, v), _) =>
       // right-hand side element is prioritized
       // like Clojure's merge
-      match other.lookup(k) {
+      match other.get(k) {
         Some(_) => other
         None => other.add(k, v)
       }
@@ -434,7 +434,7 @@ pub fn of[K : Eq + Hash, V](arr : FixedArray[(K, V)]) -> T[K, V] {
 pub impl[K : Eq + Hash, V : Eq] Eq for T[K, V] with op_equal(self, other) {
   guard self.size() == other.size() else { return false }
   for kv in self {
-    guard other.lookup(kv.0) is Some(v) && v == kv.1 else { return false }
+    guard other.get(kv.0) is Some(v) && v == kv.1 else { return false }
 
   }
   true
