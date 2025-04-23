@@ -5,7 +5,7 @@ fn bench(T, name? : String, () -> Unit, count~ : UInt = ..) -> Unit
 
 fn dump_summaries(T) -> String
 
-fn keep(T, &OpaqueValue) -> Unit
+fn keep[Any](T, Any) -> Unit
 
 fn monotonic_clock_end(Timestamp) -> Double
 
@@ -27,7 +27,7 @@ pub(all) struct T {
 impl T {
   bench(Self, name? : String, () -> Unit, count~ : UInt = ..) -> Unit
   dump_summaries(Self) -> String
-  keep(Self, &OpaqueValue) -> Unit
+  keep[Any](Self, Any) -> Unit
 }
 
 type Timestamp
@@ -35,6 +35,4 @@ type Timestamp
 // Type aliases
 
 // Traits
-pub(open) trait OpaqueValue {
-}
 

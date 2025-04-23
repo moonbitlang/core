@@ -77,11 +77,13 @@ pub fn single_bench(
   iter_count(name?, f, count)
 }
 
+// NOTE: use a type parameter `Any` to avoid exposing `trait OpaqueValue` to users
 ///|
 /// Keep a value to prevent the optimizer from removing 
 /// the calculation that produces it.
-pub fn keep(self : T, value : &OpaqueValue) -> Unit {
-  self.storage = value
+pub fn keep[Any](self : T, value : Any) -> Unit {
+  let trait_object : &OpaqueValue = value
+  self.storage = trait_object
 }
 
 ///|
