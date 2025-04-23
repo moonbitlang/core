@@ -28,19 +28,19 @@ test "HAMT" {
     i, map => continue i + 1, map.add(i, i)
   }
   for i in 0..<100 {
-    assert_eq!((i, map.find(i)), (i, Some(i)))
+    assert_eq!((i, map.lookup(i)), (i, Some(i)))
   }
-  inspect!((100, map.find(100)), content="(100, None)")
+  inspect!((100, map.lookup(100)), content="(100, None)")
   let map = map.add(100, 100)
-  inspect!((100, map.find(100)), content="(100, Some(100))")
+  inspect!((100, map.lookup(100)), content="(100, Some(100))")
   // test for replacement
   let map = loop 0, map {
     100, map => map
     i, map => continue i + 2, map.add(i, i + 1)
   }
   for i = 0; i < 100; i = i + 2 {
-    assert_eq!((i, map.find(i)), (i, Some(i + 1)))
-    assert_eq!((i + 1, map.find(i + 1)), (i + 1, Some(i + 1)))
+    assert_eq!((i, map.lookup(i)), (i, Some(i + 1)))
+    assert_eq!((i + 1, map.lookup(i + 1)), (i + 1, Some(i + 1)))
   }
 }
 
@@ -51,16 +51,34 @@ test "HAMT::remove" {
     i, map => continue i + 1, map.add(i, i)
   }
   for i in 0..<100 {
-    assert_eq!((i, map.find(i)), (i, Some(i)))
+    assert_eq!((i, map.lookup(i)), (i, Some(i)))
   }
   let map = loop 0, map {
     100, map => map.remove(100) // test for removing non-existing element
     i, map => continue i + 2, map.remove(i)
   }
   for i = 0; i < 100; i = i + 2 {
-    assert_eq!(map.find(i), None)
-    assert_eq!(map.find(i + 1), Some(i + 1))
+    assert_eq!(map.lookup(i), None)
+    assert_eq!(map.lookup(i + 1), Some(i + 1))
   }
+}
+
+///|
+test "keys" {
+  let m = @hashmap.of([(1, "one"), (2, "two")])
+  let keys = m.keys()
+  assert_eq!(keys.contains(1), true)
+  assert_eq!(keys.contains(2), true)
+  assert_eq!(keys.contains(3), false)
+}
+
+///|
+test "HAMT::elems" {
+  let m = @hashmap.of([(1, "one"), (2, "two")])
+  let elems = m.elems()
+  assert_eq!(elems.contains("one"), true)
+  assert_eq!(elems.contains("two"), true)
+  assert_eq!(elems.contains("three"), false)
 }
 
 ///|
@@ -96,24 +114,34 @@ test "HAMT::to_string" {
 test "HAMT::from_array" {
   let map = @hashmap.of([(1, "1"), (2, "2"), (42, "42")])
   inspect!(
-    (1, map.find(1)),
+    (1, map.lookup(1)),
     content=
       #|(1, Some("1"))
     ,
   )
   inspect!(
-    (2, map.find(2)),
+    (2, map.lookup(2)),
     content=
       #|(2, Some("2"))
     ,
   )
   inspect!(
-    (42, map.find(42)),
+    (42, map.lookup(42)),
     content=
       #|(42, Some("42"))
     ,
   )
-  inspect!((43, map.find(43)), content="(43, None)")
+  inspect!((43, map.lookup(43)), content="(43, None)")
+}
+
+///|
+test "to_array" {
+  let m = @hashmap.of([(1, "one"), (2, "two")])
+  let arr = m.to_array()
+  assert_eq!(arr.length(), 2)
+  assert_eq!(arr.contains((1, "one")), true)
+  assert_eq!(arr.contains((2, "two")), true)
+  assert_eq!(arr.contains((3, "three")), false)
 }
 
 ///|
@@ -246,4 +274,109 @@ test "union 2 hashmaps, without conflict" {
   let map3 = map1.union(map2)
   let map4 = @hashmap.of([(1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6)])
   inspect!(map3 == map4, content="true")
+}
+
+///|
+test "HAMT::contains" {
+  let map = @hashmap.of([(1, "one")])
+  assert_eq!(map.contains(1), true)
+  assert_eq!(map.contains(2), false)
+  let map2 = map.add(2, "two")
+  assert_eq!(map2.contains(2), true)
+  let map3 = map.remove(2)
+  assert_eq!(map3.contains(2), false)
+}
+
+///|
+test "filter with simple predicate" {
+  let map = @hashmap.of([(1, 1), (2, 2), (3, 3), (4, 4)])
+  let only_even = map.filter(fn(v) { v % 2 == 0 })
+  assert_eq!(only_even.contains(1), false)
+  assert_eq!(only_even.contains(2), true)
+  assert_eq!(only_even.contains(3), false)
+  assert_eq!(only_even.contains(4), true)
+}
+
+///|
+test "filter with all elements matching" {
+  let map = @hashmap.of([(1, 1), (2, 2)])
+  let filtered = map.filter(fn(v) { v > 0 })
+  assert_eq!(filtered.contains(1), true)
+  assert_eq!(filtered.contains(2), true)
+}
+
+///|
+test "filter with no elements matching" {
+  let map = @hashmap.of([(1, 1), (2, 2), (3, 3)])
+  let filtered = map.filter(fn(v) { v > 10 })
+  assert_eq!(filtered.lookup(1), None)
+  assert_eq!(filtered.lookup(2), None)
+  assert_eq!(filtered.lookup(3), None)
+  assert_eq!(filtered.size(), 0)
+}
+
+///|
+test "filter with collision" {
+  let map = @hashmap.of([(1, 10), (2, 20)]).add(1, 30)
+  let filtered = map.filter(fn(v) { v == 30 })
+  assert_eq!(filtered.lookup(1), Some(30))
+  assert_eq!(filtered.lookup(2), None)
+}
+
+///|
+test "filter with branch nodes" {
+  let map = loop 0, @hashmap.new() {
+    10, map => map
+    i, map => continue i + 1, map.add(i, i * 10)
+  }
+  let filtered = map.filter(fn(v) { v % 20 == 0 })
+  for i = 0; i < 10; i = i + 1 {
+    if i * 10 % 20 == 0 {
+      assert_eq!(filtered.lookup(i), Some(i * 10))
+    } else {
+      assert_eq!(filtered.lookup(i), None)
+    }
+  }
+}
+
+///|
+test "HAMT::fold_with_key" {
+  let map = @hashmap.of([(1, "a"), (2, "b")])
+  let result = map.fold_with_key(init="", fn(acc, k, v) { acc + "\{k}:\{v}, " })
+  // order of elements is not guaranteed, so we check for substrings
+  assert_eq!(result.contains("1:a"), true)
+  assert_eq!(result.contains("2:b"), true)
+}
+
+///|
+test "HAMT::fold" {
+  let map = @hashmap.of([(1, 10), (2, 20), (3, 30)])
+  let result = map.fold(init=0, fn(acc, v) { acc + v })
+  assert_eq!(result, 60)
+}
+
+///|
+test "HAMT::map" {
+  let map = @hashmap.of([(1, 10), (2, 20)])
+  let mapped = map.map(fn(v) { v * 2 })
+  assert_eq!(mapped.lookup(1), Some(20))
+  assert_eq!(mapped.lookup(2), Some(40))
+  assert_eq!(mapped.lookup(3), None)
+}
+
+///|
+test "HAMT::map with overflow" {
+  let max = 2147483647 // Int.max_value
+  let map = @hashmap.of([(1, max)])
+  let mapped = map.map(fn(v) { v + 1 })
+  assert_eq!(mapped.lookup(1), Some(-2147483648))
+}
+
+///|
+test "HAMT::map_with_key" {
+  let map = @hashmap.of([(1, 10), (2, 20)])
+  let mapped = map.map_with_key(fn(k, v) { "\{k}:\{v}" })
+  assert_eq!(mapped.lookup(1), Some("1:10"))
+  assert_eq!(mapped.lookup(2), Some("2:20"))
+  assert_eq!(mapped.lookup(3), None)
 }

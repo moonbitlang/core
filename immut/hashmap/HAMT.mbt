@@ -40,8 +40,31 @@ pub fn new[K, V]() -> T[K, V] {
 }
 
 ///|
+/// Create a map with a single key-value pair.
+pub fn singleton[K, V](key : K, value : V) -> T[K, V] {
+  Leaf(key, value)
+}
+
+///|
+/// Check if the map contains a key.
+pub fn contains[K : Eq + Hash, V](self : T[K, V], key : K) -> Bool {
+  match self.lookup(key) {
+    Some(_) => true
+    None => false
+  }
+}
+
+///|
 /// Lookup a key from a hash map
+#deprecated("Use `lookup()` instead")
+#coverage.skip
 pub fn find[K : Eq + Hash, V](self : T[K, V], key : K) -> V? {
+  self.lookup(key)
+}
+
+///|
+/// Lookup a key from a hash map
+pub fn lookup[K : Eq + Hash, V](self : T[K, V], key : K) -> V? {
   loop self, key.hash() {
     Empty, _ => None
     Leaf(key1, value), _ => if key == key1 { Some(value) } else { None }
@@ -62,7 +85,7 @@ pub fn find[K : Eq + Hash, V](self : T[K, V], key : K) -> V? {
 
 ///|
 pub fn op_get[K : Eq + Hash, V](self : T[K, V], key : K) -> V? {
-  self.find(key)
+  self.lookup(key)
 }
 
 ///|
@@ -122,6 +145,105 @@ fn add_with_hash[K : Eq, V](
       }
     }
   }
+}
+
+///|
+/// Filter values that satisfy the predicate
+pub fn filter[K : Eq + Hash, V](self : T[K, V], pred : (V) -> Bool) -> T[K, V] {
+  match self {
+    Empty => Empty
+    Leaf(k, v) => if pred(v) { Leaf(k, v) } else { Empty }
+    Collision(bucket) =>
+      match bucket.filter(pred) {
+        None => Empty
+        Some(Just_One(k, v)) => Leaf(k, v)
+        Some(b) => Collision(b)
+      }
+    Branch(children) => {
+      let mut result = Empty
+      children.each(fn {
+        child =>
+          child
+          .filter(pred)
+          .iter()
+          .each(fn { (k, v) => result = result.add(k, v) })
+      })
+      result
+    }
+  }
+}
+
+///|
+/// Fold the values in the map
+pub fn fold[K, V, A](self : T[K, V], init~ : A, f : (A, V) -> A) -> A {
+  fold_with_key(self, fn(acc, _k, v) { f(acc, v) }, init~)
+}
+
+///|
+/// Fold the values in the map with key
+pub fn fold_with_key[K, V, A](
+  self : T[K, V],
+  f : (A, K, V) -> A,
+  init~ : A
+) -> A {
+  fn go(stack : Array[(T[K, V], Int)], acc : A) -> A {
+    if stack.is_empty() {
+      return acc
+    }
+    let (node, index) = stack.unsafe_pop()
+    match node {
+      Empty => go(stack, acc)
+      Leaf(k, v) => go(stack, f(acc, k, v))
+      Collision(bucket) => go(stack, bucket.foldl_with_key(init=acc, f))
+      Branch(children) => {
+        if children.data.is_empty() {
+          return acc
+        }
+        if index < children.data.length() {
+          let child = children.data[index]
+          stack.push((node, index + 1))
+          stack.push((child, 0))
+          go(stack, acc)
+        } else {
+          go(stack, acc)
+        }
+      }
+    }
+  }
+
+  let stack = Array::make(1, (self, 0))
+  go(stack, init)
+}
+
+///|
+/// Maps over the values in the map
+pub fn map[K : Eq + Hash, V, A](self : T[K, V], f : (V) -> A) -> T[K, A] {
+  map_with_key(self, fn(_k, v) { f(v) })
+}
+
+///|
+/// Maps over the key-value pairs in the map
+pub fn map_with_key[K : Eq + Hash, V, A](
+  self : T[K, V],
+  f : (K, V) -> A
+) -> T[K, A] {
+  fn go(m : T[K, V]) {
+    match m {
+      Empty => Empty
+      Leaf(k, v) => Leaf(k, f(k, v))
+      Collision(bucket) => Collision(bucket.map_with_key(f))
+      Branch(children) => {
+        let result = []
+        children.each(fn {
+          child =>
+            child.map_with_key(f).iter().each(fn { kv => result.push(kv) })
+        })
+        from_array(result)
+      }
+    }
+  }
+
+  go(self)
 }
 
 ///|
@@ -204,7 +326,7 @@ pub fn union[K : Eq + Hash, V](self : T[K, V], other : T[K, V]) -> T[K, V] {
     (Leaf(k, v), _) =>
       // right-hand side element is prioritized
       // like Clojure's merge
-      match other.find(k) {
+      match other.lookup(k) {
         Some(_) => other
         None => other.add(k, v)
       }
@@ -223,6 +345,18 @@ pub fn each[K, V](self : T[K, V], f : (K, V) -> Unit) -> Unit {
     Collision(bucket) => bucket.each(f)
     Branch(children) => children.each(fn { child => child.each(f) })
   }
+}
+
+///|
+/// Returns all keys of the map
+pub fn keys[K, V](self : T[K, V]) -> Iter[K] {
+  self.iter().map(fn { (k, _) => k })
+}
+
+///|
+/// Returns all values of the map
+pub fn elems[K, V](self : T[K, V]) -> Iter[V] {
+  self.iter().map(fn { (_, v) => v })
 }
 
 ///|
@@ -270,6 +404,14 @@ pub fn from_array[K : Eq + Hash, V](arr : Array[(K, V)]) -> T[K, V] {
 }
 
 ///|
+/// Convert to an array of key-value pairs.
+pub fn to_array[K, V](self : T[K, V]) -> Array[(K, V)] {
+  let arr = Array::new(capacity=self.size())
+  self.each(fn(k, v) { arr.push((k, v)) })
+  arr
+}
+
+///|
 pub impl[K : Eq + Hash + @quickcheck.Arbitrary, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[
   K,
   V,
@@ -292,7 +434,7 @@ pub fn of[K : Eq + Hash, V](arr : FixedArray[(K, V)]) -> T[K, V] {
 pub impl[K : Eq + Hash, V : Eq] Eq for T[K, V] with op_equal(self, other) {
   guard self.size() == other.size() else { return false }
   for kv in self {
-    guard other.find(kv.0) is Some(v) && v == kv.1 else { return false }
+    guard other.lookup(kv.0) is Some(v) && v == kv.1 else { return false }
 
   }
   true

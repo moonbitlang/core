@@ -89,6 +89,32 @@ fn Bucket::each[K, V](self : Bucket[K, V], f : (K, V) -> Unit) -> Unit {
 }
 
 ///|
+fn Bucket::filter[K, V](self : Bucket[K, V], f : (V) -> Bool) -> Bucket[K, V]? {
+  match self {
+    Just_One(k, v) => if f(v) { Some(Just_One(k, v)) } else { None }
+    More(k, v, rest) => {
+      let filtered = rest.filter(f)
+      if f(v) {
+        match filtered {
+          None => Some(Just_One(k, v))
+          Some(rest) => Some(More(k, v, rest))
+        }
+      } else {
+        filtered
+      }
+    }
+  }
+}
+
+///|
+test "Bucket::filter" {
+  let bucket = More(1, 1, More(2, 2, Just_One(3, 3)))
+  let filtered = bucket.filter(fn(v) { v == 2 })
+  assert_eq!(filtered.unwrap().find(1), None)
+  assert_eq!(filtered.unwrap().find(2), Some(2))
+}
+
+///|
 fn Bucket::iter[K, V](self : Bucket[K, V]) -> Iter[(K, V)] {
   Iter::new(fn {
     f =>
@@ -158,4 +184,59 @@ test "Bucket::iter" {
     }
   })
   inspect!(buf.to_string(), content="0 => 0, 1 => 1, 31 => 31")
+}
+
+///|
+/// Fold over the bucket from left to right, applying a function to each key-value pair.
+///
+fn Bucket::foldl_with_key[K, V, A](
+  self : Bucket[K, V],
+  f : (A, K, V) -> A,
+  init~ : A
+) -> A {
+  match self {
+    Just_One(k, v) => f(init, k, v)
+    More(k, v, rest) => rest.foldl_with_key(init=f(init, k, v), f)
+  }
+}
+
+///|
+test "foldl_with_key" {
+  let bucket = More("a", "a", More("b", "b", Just_One("c", "c")))
+  let result = bucket.foldl_with_key(init="", fn(init, _k, v) { init + v })
+  assert_eq!(result, "abc")
+}
+
+///|
+fn Bucket::map_with_key[K, V, A](
+  self : Bucket[K, V],
+  f : (K, V) -> A
+) -> Bucket[K, A] {
+  match self {
+    Just_One(k, v) => Just_One(k, f(k, v))
+    More(k, v, rest) => More(k, f(k, v), rest.map_with_key(f))
+  }
+}
+
+///|
+test "Bucket::map_with_key" {
+  let bucket = More(1, 10, More(2, 20, Just_One(3, 30)))
+  let mapped = bucket.map_with_key(fn(k, v) { "\{k}:\{v}" })
+  assert_eq!(mapped.find(1), Some("1:10"))
+  assert_eq!(mapped.find(2), Some("2:20"))
+  assert_eq!(mapped.find(3), Some("3:30"))
+}
+
+///|
+fn Bucket::map[K, V, A](self : Bucket[K, V], f : (V) -> A) -> Bucket[K, A] {
+  self.map_with_key(fn(_k, v) { f(v) })
+}
+
+///|
+test "Bucket::map" {
+  let bucket = More(1, 10, More(2, 20, Just_One(3, 30)))
+  let mapped = bucket.map(fn(v) { v * 2 })
+  assert_eq!(mapped.find(1), Some(20))
+  assert_eq!(mapped.find(2), Some(40))
+  assert_eq!(mapped.find(3), Some(60))
 }

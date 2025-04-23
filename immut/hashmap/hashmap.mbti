@@ -7,9 +7,20 @@ import(
 // Values
 fn add[K : Eq + Hash, V](T[K, V], K, V) -> T[K, V]
 
+fn contains[K : Eq + Hash, V](T[K, V], K) -> Bool
+
 fn each[K, V](T[K, V], (K, V) -> Unit) -> Unit
 
+fn elems[K, V](T[K, V]) -> Iter[V]
+
+fn filter[K : Eq + Hash, V](T[K, V], (V) -> Bool) -> T[K, V]
+
+#deprecated
 fn find[K : Eq + Hash, V](T[K, V], K) -> V?
+
+fn fold[K, V, A](T[K, V], init~ : A, (A, V) -> A) -> A
+
+fn fold_with_key[K, V, A](T[K, V], (A, K, V) -> A, init~ : A) -> A
 
 fn from_array[K : Eq + Hash, V](Array[(K, V)]) -> T[K, V]
 
@@ -19,6 +30,14 @@ fn iter[K, V](T[K, V]) -> Iter[(K, V)]
 
 fn iter2[K, V](T[K, V]) -> Iter2[K, V]
 
+fn keys[K, V](T[K, V]) -> Iter[K]
+
+fn lookup[K : Eq + Hash, V](T[K, V], K) -> V?
+
+fn map[K : Eq + Hash, V, A](T[K, V], (V) -> A) -> T[K, A]
+
+fn map_with_key[K : Eq + Hash, V, A](T[K, V], (K, V) -> A) -> T[K, A]
+
 fn new[K, V]() -> T[K, V]
 
 fn of[K : Eq + Hash, V](FixedArray[(K, V)]) -> T[K, V]
@@ -27,7 +46,11 @@ fn op_get[K : Eq + Hash, V](T[K, V], K) -> V?
 
 fn remove[K : Eq + Hash, V](T[K, V], K) -> T[K, V]
 
+fn singleton[K, V](K, V) -> T[K, V]
+
 fn size[K, V](T[K, V]) -> Int
+
+fn to_array[K, V](T[K, V]) -> Array[(K, V)]
 
 fn union[K : Eq + Hash, V](T[K, V], T[K, V]) -> T[K, V]
 
@@ -35,13 +58,24 @@ fn union[K : Eq + Hash, V](T[K, V], T[K, V]) -> T[K, V]
 type T[K, V]
 impl T {
   add[K : Eq + Hash, V](Self[K, V], K, V) -> Self[K, V]
+  contains[K : Eq + Hash, V](Self[K, V], K) -> Bool
   each[K, V](Self[K, V], (K, V) -> Unit) -> Unit
+  elems[K, V](Self[K, V]) -> Iter[V]
+  filter[K : Eq + Hash, V](Self[K, V], (V) -> Bool) -> Self[K, V]
+  #deprecated
   find[K : Eq + Hash, V](Self[K, V], K) -> V?
+  fold[K, V, A](Self[K, V], init~ : A, (A, V) -> A) -> A
+  fold_with_key[K, V, A](Self[K, V], (A, K, V) -> A, init~ : A) -> A
   iter[K, V](Self[K, V]) -> Iter[(K, V)]
   iter2[K, V](Self[K, V]) -> Iter2[K, V]
+  keys[K, V](Self[K, V]) -> Iter[K]
+  lookup[K : Eq + Hash, V](Self[K, V], K) -> V?
+  map[K : Eq + Hash, V, A](Self[K, V], (V) -> A) -> Self[K, A]
+  map_with_key[K : Eq + Hash, V, A](Self[K, V], (K, V) -> A) -> Self[K, A]
   op_get[K : Eq + Hash, V](Self[K, V], K) -> V?
   remove[K : Eq + Hash, V](Self[K, V], K) -> Self[K, V]
   size[K, V](Self[K, V]) -> Int
+  to_array[K, V](Self[K, V]) -> Array[(K, V)]
   union[K : Eq + Hash, V](Self[K, V], Self[K, V]) -> Self[K, V]
 }
 impl[K : Eq + Hash, V : Eq] Eq for T[K, V]
