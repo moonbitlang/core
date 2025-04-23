@@ -258,7 +258,7 @@ test "compare" {
   let arr1 = @array.of([1, 2, 3])
   let arr2 = @array.of([1, 2, 4])
   let arr3 = @array.of([1, 2])
-  let empty: @array.T[Int] = @array.new()
+  let empty : @array.T[Int] = @array.new()
   assert_eq!(arr1.compare(arr2), -1)
   assert_eq!(arr1.compare(arr3), 1)
   assert_eq!(arr3.compare(arr1), -1)

@@ -425,7 +425,7 @@ pub impl[A : Compare] Compare for T[A] with compare(self, other) {
     guard cmp is 0 else { break cmp }
 
   } else {
-    0
+    return 0
   }
 }
 
