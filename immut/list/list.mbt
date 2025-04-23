@@ -1118,3 +1118,50 @@ pub impl[A : Hash] Hash for T[A] with hash_combine(self, hasher) {
     hasher.combine(e)
   }
 }
+
+///|
+/// Compares two lists lexicographically.
+///
+/// First compares elements pairwise until a difference is found.
+/// If lists have different lengths and all shared elements are equal,
+/// the shorter list is considered less than the longer one.
+///
+/// Parameters:
+///
+/// * `self` : The first list to compare.
+/// * `other` : The second list to compare.
+///
+/// Returns an integer that indicates the relative order:
+///
+/// * A negative value if `self` is less than `other`
+/// * Zero if `self` equals `other`
+/// * A positive value if `self` is greater than `other`
+///
+/// Example:
+///
+/// ```moonbit
+/// test "List::compare" {
+///   let list1 = @list.of([1, 2, 3])
+///   let list2 = @list.of([1, 2, 4])
+///   let list3 = @list.of([1, 2])
+///   assert_eq!(list1.compare(list2), -1) // list1 < list2
+///   assert_eq!(list1.compare(list3), 1) // list2 > list1
+///   assert_eq!(list3.compare(list1), -1) // list1 > list3 (longer)
+///   assert_eq!(list1.compare(list1), 0) // list1 = list1
+/// }
+/// ```
+pub impl[A : Compare] Compare for T[A] with compare(self, other) {
+  loop self, other {
+    Nil, Nil => 0
+    Nil, Cons(_, _) => -1
+    Cons(_, _), Nil => 1
+    Cons(x, xs), Cons(y, ys) => {
+      let cmp = x.compare(y)
+      if cmp != 0 {
+        break cmp
+      } else {
+        continue xs, ys
+      }
+    }
+  }
+}
