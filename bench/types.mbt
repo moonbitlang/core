@@ -13,15 +13,19 @@
 // limitations under the License.
 
 ///|
+pub(open) trait OpaqueValue {}
+
+///|
 #visibility(change_to="abstract")
 pub(all) struct T {
   buffer : StringBuilder
   summaries : Array[Summary]
+  mut storage : &OpaqueValue
 }
 
 ///|
 pub fn new() -> T {
   let buffer = StringBuilder::new()
   let summaries = Array::new()
-  { buffer, summaries }
+  { buffer, summaries, storage: () }
 }

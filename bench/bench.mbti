@@ -5,6 +5,8 @@ fn bench(T, name? : String, () -> Unit, count~ : UInt = ..) -> Unit
 
 fn dump_summaries(T) -> String
 
+fn keep(T, &OpaqueValue) -> Unit
+
 fn monotonic_clock_end(Timestamp) -> Double
 
 fn monotonic_clock_start() -> Timestamp
@@ -20,10 +22,12 @@ impl ToJson for Summary
 pub(all) struct T {
   buffer : StringBuilder
   summaries : Array[Summary]
+  mut storage : &OpaqueValue
 }
 impl T {
   bench(Self, name? : String, () -> Unit, count~ : UInt = ..) -> Unit
   dump_summaries(Self) -> String
+  keep(Self, &OpaqueValue) -> Unit
 }
 
 type Timestamp
@@ -31,4 +35,6 @@ type Timestamp
 // Type aliases
 
 // Traits
+pub(open) trait OpaqueValue {
+}
 
