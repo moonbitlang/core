@@ -19,11 +19,7 @@ fn single_bench(name? : String, () -> Unit, count~ : UInt = ..) -> Summary
 type Summary
 impl ToJson for Summary
 
-pub(all) struct T {
-  buffer : StringBuilder
-  summaries : Array[Summary]
-  mut storage : &OpaqueValue
-}
+type T
 impl T {
   bench(Self, name? : String, () -> Unit, count~ : UInt = ..) -> Unit
   dump_summaries(Self) -> String

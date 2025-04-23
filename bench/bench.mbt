@@ -87,6 +87,12 @@ pub fn keep[Any](self : T, value : Any) -> Unit {
 }
 
 ///|
+/// Suppress field never-read warning
+fn touch_storage(self : T) -> Unit {
+  self.storage |> ignore
+}
+
+///|
 /// Internal use only
 #coverage.skip
 pub fn dump_summaries(self : T) -> String {
