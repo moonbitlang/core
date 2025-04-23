@@ -45,6 +45,7 @@ impl T {
   to_array[A : Compare](Self[A]) -> Array[A]
   unsafe_pop[A : Compare](Self[A]) -> Self[A]
 }
+impl[A : Compare] Compare for T[A]
 impl[A : Compare] Eq for T[A]
 impl[A : Hash + Compare] Hash for T[A]
 impl[A : Show + Compare] Show for T[A]

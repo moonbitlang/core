@@ -308,3 +308,47 @@ pub impl[A : Hash + Compare] Hash for T[A] with hash_combine(self, hasher) {
     hasher.combine(e)
   }
 }
+
+///|
+/// Compare two priority queues lexicographically by comparing their sorted contents.
+///
+/// Parameters:
+///
+/// * `self` : The first list to compare.
+/// * `other` : The second list to compare.
+///
+/// Returns an integer that indicates the relative order:
+///
+/// * A negative value if `self` is less than `other`
+/// * Zero if `self` equals `other`
+/// * A positive value if `self` is greater than `other`
+///
+/// Example:
+///
+/// ```moonbit
+/// test "priority_queue::compare" {
+///   let pq1 = @priority_queue.of([1, 2, 3])
+///   let pq2 = @priority_queue.of([1, 2, 4])
+///   let pq3 = @priority_queue.of([1, 2])
+///   assert_eq!(pq1.compare(pq2), -1) // pq1 < pq2
+///   assert_eq!(pq1.compare(pq3), 1)  // pq2 > pq1
+///   assert_eq!(pq3.compare(pq1), -1) // pq1 > pq3 (longer)
+///   assert_eq!(pq1.compare(pq1), 0)  // pq1 = pq1
+/// }
+/// ```
+pub impl[A : Compare] Compare for T[A] with compare(self, other) {
+  let len_cmp = self.length().compare(other.length())
+  if len_cmp != 0 {
+    return len_cmp
+  }
+  let self_arr = self.to_array()
+  let other_arr = other.to_array()
+  for i in 0..<self_arr.length() {
+    let cmp = self_arr[i].compare(other_arr[i])
+    if cmp != 0 {
+      return cmp
+    }
+  } else {
+    0
+  }
+}

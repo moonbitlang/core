@@ -185,3 +185,14 @@ test "complex" {
   inspect!(pq.iter(), content="[]")
   assert_eq!(pq.length(), 0)
 }
+
+///|
+test "compare" {
+  let pq1 = @priority_queue.of([1, 2, 3])
+  let pq2 = @priority_queue.of([1, 2, 4])
+  let pq3 = @priority_queue.of([1, 2])
+  assert_eq!(pq1.compare(pq2), -1)
+  assert_eq!(pq1.compare(pq3), 1)
+  assert_eq!(pq3.compare(pq1), -1)
+  assert_eq!(pq1.compare(pq1), 0)
+}
