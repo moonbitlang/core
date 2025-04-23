@@ -302,7 +302,7 @@ pub impl[T : Compare] Compare for Array[T] with compare(self, other) {
     guard cmp is 0 else { break cmp }
 
   } else {
-    return 0
+    0
   }
 }
 
