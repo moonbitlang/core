@@ -79,6 +79,7 @@ pub fn single_bench(
 
 ///|
 /// Internal use only
+#coverage.skip
 pub fn dump_summaries(self : T) -> String {
   "[\{self.buffer.to_string()}]"
 }
