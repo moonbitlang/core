@@ -349,6 +349,6 @@ pub impl[A : Compare] Compare for T[A] with compare(self, other) {
       return cmp
     }
   } else {
-    0
+    return 0
   }
 }
