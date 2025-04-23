@@ -383,6 +383,52 @@ pub impl[A : Show] Show for T[A] with output(self, logger) {
   logger.write_iter(self.iter(), prefix="@immut/array.of([", suffix="])")
 }
 
+///|
+/// Compares two arrays lexicographically.
+///
+/// First compares the lengths of the arrays. If they differ, returns -1 if the
+/// first array is shorter, 1 if it's longer. If the lengths are equal, compares
+/// elements pairwise until a difference is found or all elements have been
+/// compared.
+///
+/// Parameters:
+///
+/// * `self` : The first array to compare.
+/// * `other` : The second array to compare.
+///
+/// Returns an integer that indicates the relative order:
+///
+/// * A negative value if `self` is less than `other`
+/// * Zero if `self` equals `other`
+/// * A positive value if `self` is greater than `other`
+///
+/// Example:
+///
+/// ```moonbit
+/// test "Array::compare" {
+///   let arr1 = @array.of([1, 2, 3])
+///   let arr2 = @array.of([1, 2, 4])
+///   let arr3 = @array.of([1, 2])
+///   assert_eq!(arr1.compare(arr2), -1) // arr1 < arr2
+///   assert_eq!(arr1.compare(arr3), 1) // arr2 > arr1
+///   assert_eq!(arr3.compare(arr1), -1) // arr1 > arr3 (longer)
+///   assert_eq!(arr1.compare(arr1), 0) // arr1 = arr1
+/// }
+/// ```
+pub impl[A : Compare] Compare for T[A] with compare(self, other) {
+  let len_self = self.length()
+  let len_other = other.length()
+  let cmp = len_self.compare(len_other)
+  guard cmp is 0 else { return cmp }
+  for i in 0..<len_self {
+    let cmp = self[i].compare(other[i])
+    guard cmp is 0 else { break cmp }
+
+  } else {
+    0
+  }
+}
+
 //-----------------------------------------------------------------------------
 // For Internal Use
 //-----------------------------------------------------------------------------
