@@ -497,10 +497,10 @@ test "pad_end" {
 
 ///|
 /// Returns a new string with `self` repeated `n` times.
-pub fn View::repeat(self : View, n : Int) -> String {
+pub fn View::repeat(self : View, n : Int) -> View {
   match n {
     _..=0 => ""
-    1 => self.to_string()
+    1 => self
     _ => {
       let len = self.length()
       let buf = StringBuilder::new(size_hint=len * n)
@@ -516,7 +516,19 @@ pub fn View::repeat(self : View, n : Int) -> String {
 ///|
 /// Returns a new string with `self` repeated `n` times.
 pub fn repeat(self : String, n : Int) -> String {
-  self[:].repeat(n)
+  match n {
+    _..=0 => ""
+    1 => self
+    _ => {
+      let len = self.length()
+      let buf = StringBuilder::new(size_hint=len * n)
+      let str = self.to_string()
+      for _ in 0..<n {
+        buf.write_string(str)
+      }
+      buf.to_string()
+    }
+  }
 }
 
 ///|
@@ -694,33 +706,39 @@ test "replace" {
 /// If `old` is empty, it matches at the beginning of the string and after each
 /// character in the string, so `new` is inserted at the beginning of the string
 /// and after each character.
-pub fn View::replace_all(self : View, old~ : View, new~ : View) -> String {
+pub fn View::replace_all(self : View, old~ : View, new~ : View) -> View {
   let len = self.length()
   let buf = StringBuilder::new(size_hint=len)
   let old_len = old.length()
-  // todo: improve performance
+  let new = new.to_string()
+  // todo: improve performance by providing write_view method to StringBuilder
   if old_len == 0 {
-    buf.write_string(new.to_string())
-    self
-    .iter()
-    .each(fn(c) {
+    buf.write_string(new)
+    for c in self {
       buf.write_char(c)
-      buf.write_string(new.to_string())
-    })
-  } else {
-    let mut view = self
-    while view.find(old) is Some(end) {
-      buf.write_string(view.view(end_offset=end).to_string())
-      buf.write_string(new.to_string())
-      if end + old_len <= len {
-        view = view.view(start_offset=end + old_len)
-      } else {
-        break
-      }
+      buf.write_string(new)
     }
-    buf.write_string(view.to_string())
+    buf.to_string()
+  } else {
+    let first_end = self.find(old)
+    if first_end is Some(end) {
+      for view = self, end = end {
+        buf.write_string(view.view(end_offset=end).to_string())
+        buf.write_string(new)
+        // check if there is no more characters after the last occurrence of `old`
+        guard end + old_len <= len else { break }
+        let next_view = view.view(start_offset=end + old_len)
+        guard next_view.find(old) is Some(next_end) else {
+          buf.write_string(next_view.to_string())
+          break
+        }
+        continue next_view, next_end
+      }
+      buf.to_string()
+    } else {
+      self
+    }
   }
-  buf.to_string()
 }
 
 ///|
@@ -730,7 +748,38 @@ pub fn View::replace_all(self : View, old~ : View, new~ : View) -> String {
 /// character in the string, so `new` is inserted at the beginning of the string
 /// and after each character.
 pub fn replace_all(self : String, old~ : View, new~ : View) -> String {
-  self[:].replace_all(old~, new~)
+  let len = self.length()
+  let buf = StringBuilder::new(size_hint=len)
+  let old_len = old.length()
+  let new = new.to_string()
+  // todo: improve performance
+  if old_len == 0 {
+    buf.write_string(new)
+    for c in self {
+      buf.write_char(c)
+      buf.write_string(new)
+    }
+    buf.to_string()
+  } else {
+    let first_end = self.find(old)
+    if first_end is Some(end) {
+      for view = self[:], end = end {
+        buf.write_string(view.view(end_offset=end).to_string())
+        buf.write_string(new)
+        // check if there is no more characters after the last occurrence of `old`
+        guard end + old_len <= len else { break }
+        let next_view = view.view(start_offset=end + old_len)
+        guard next_view.find(old) is Some(next_end) else {
+          buf.write_string(next_view.to_string())
+          break
+        }
+        continue next_view, next_end
+      }
+      buf.to_string()
+    } else {
+      self
+    }
+  }
 }
 
 ///|
@@ -740,6 +789,14 @@ test "replace_all" {
   assert_eq!("hello".replace_all(old="ll", new="rr"), "herro")
   assert_eq!("hello".replace_all(old="hello", new="world"), "world")
   assert_eq!("hello hello hello".replace_all(old="hello", new="hi"), "hi hi hi")
+  assert_eq!(
+    "hello hello helloi".replace_all(old="hello", new="hi"),
+    "hi hi hii",
+  )
+  assert_eq!(
+    "hi hi hii".replace_all(old="hi", new="hello"),
+    "hello hello helloi",
+  )
   assert_eq!("hello".replace_all(old="", new="a"), "ahaealalaoa")
   assert_eq!("hello".replace_all(old="world", new="a"), "hello")
   assert_eq!("".replace_all(old="", new="a"), "a")
@@ -751,6 +808,40 @@ test "replace_all" {
   assert_eq!("abcabcabc".replace_all(old="abc", new=""), "")
   assert_eq!("abc".replace_all(old="abc", new=""), "")
   assert_eq!("abc".replace_all(old="", new="x"), "xaxbxcx")
+}
+
+///|
+test "View::replace_all" {
+  assert_eq!("hello"[:].replace_all(old="o", new="a"), "hella")
+  assert_eq!("hello"[:].replace_all(old="l", new="a"), "heaao")
+  assert_eq!("hello"[:].replace_all(old="ll", new="rr"), "herro")
+  assert_eq!("hello"[:].replace_all(old="hello", new="world"), "world")
+  assert_eq!(
+    "hello hello hello"[:].replace_all(old="hello", new="hi"),
+    "hi hi hi",
+  )
+  assert_eq!(
+    "hello hello helloi"[:].replace_all(old="hello", new="hi"),
+    "hi hi hii",
+  )
+  assert_eq!(
+    "hi hi hii"[:].replace_all(old="hi", new="hello"),
+    "hello hello helloi",
+  )
+  assert_eq!("hello"[:].replace_all(old="", new="a"), "ahaealalaoa")
+  assert_eq!("hello"[:].replace_all(old="world", new="a"), "hello")
+  assert_eq!(""[:].replace_all(old="", new="a"), "a")
+  assert_eq!("aaa"[:].replace_all(old="a", new="b"), "bbb")
+  assert_eq!("aaa"[:].replace_all(old="a", new="bb"), "bbbbbb")
+  assert_eq!("aaa"[:].replace_all(old="aa", new="b"), "ba")
+  assert_eq!(
+    "🤣🤣🤣"[:].replace_all(old="🤣", new="😊"),
+    "😊😊😊",
+  )
+  assert_eq!("abc123abc"[:].replace_all(old="abc", new="xyz"), "xyz123xyz")
+  assert_eq!("abcabcabc"[:].replace_all(old="abc", new=""), "")
+  assert_eq!("abc"[:].replace_all(old="abc", new=""), "")
+  assert_eq!("abc"[:].replace_all(old="", new="x"), "xaxbxcx")
 }
 
 ///|
@@ -784,7 +875,7 @@ test "to_lower" {
 
 ///|
 /// Converts this string to uppercase.
-pub fn View::to_upper(self : View) -> String {
+pub fn View::to_upper(self : View) -> View {
   // TODO: deal with non-ascii characters
   let buf = StringBuilder::new(size_hint=self.length())
   for c in self {
@@ -800,7 +891,16 @@ pub fn View::to_upper(self : View) -> String {
 ///|
 /// Converts this string to uppercase.
 pub fn to_upper(self : String) -> String {
-  self[:].to_upper()
+  // TODO: deal with non-ascii characters
+  let buf = StringBuilder::new(size_hint=self.length())
+  for c in self {
+    if c >= 'a' && c <= 'z' {
+      buf.write_char(Char::from_int(c.to_int() - 32))
+    } else {
+      buf.write_char(c)
+    }
+  }
+  buf.to_string()
 }
 
 ///|
