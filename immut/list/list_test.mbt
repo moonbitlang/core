@@ -708,3 +708,14 @@ test "stackover flow" {
     content="549755289600",
   )
 }
+
+///|
+test "compare" {
+  let list1 = @list.of([1, 2, 3])
+  let list2 = @list.of([1, 2, 4])
+  let list3 = @list.of([1, 2])
+  assert_eq!(list1.compare(list2), -1)
+  assert_eq!(list1.compare(list3), 1)
+  assert_eq!(list3.compare(list1), -1)
+  assert_eq!(list1.compare(list1), 0)
+}

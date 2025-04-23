@@ -252,6 +252,7 @@ impl T {
   zip[A, B](Self[A], Self[B]) -> Self[(A, B)]?
 }
 impl[A] Add for T[A]
+impl[A : Compare] Compare for T[A]
 impl[X] Default for T[X]
 impl[A : Eq] Eq for T[A]
 impl[A : Hash] Hash for T[A]
