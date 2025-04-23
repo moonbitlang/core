@@ -16,6 +16,16 @@
 type StringBuilder Ref[String]
 
 ///|
+/// Creates a new string builder with an optional initial capacity hint.
+///
+/// Parameters:
+///
+/// * `size_hint` : An optional initial capacity hint for the internal buffer. If
+/// less than 1, a minimum capacity of 1 is used. Defaults to 0. It is the size of bytes, 
+/// not the size of characters. `size_hint` may be ignored on some platforms, JS for example.
+///
+/// Returns a new `StringBuilder` instance with the specified initial capacity.
+///
 pub fn StringBuilder::new(size_hint~ : Int = 0) -> StringBuilder {
   ignore(size_hint)
   { val: "" }
