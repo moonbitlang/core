@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-pub(open) trait OpaqueValue {}
+priv trait OpaqueValue {}
 
 ///|
 #visibility(change_to="abstract")
