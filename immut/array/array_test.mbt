@@ -252,3 +252,14 @@ test "concat_empty" {
   let c = a.concat(b)
   inspect!(c, content="@immut/array.of([1, 2, 3])")
 }
+
+///|
+test "compare" {
+  let arr1 = @array.of([1, 2, 3])
+  let arr2 = @array.of([1, 2, 4])
+  let arr3 = @array.of([1, 2])
+  assert_eq!(arr1.compare(arr2), -1)
+  assert_eq!(arr1.compare(arr3), 1)
+  assert_eq!(arr3.compare(arr1), -1)
+  assert_eq!(arr1.compare(arr1), 0)
+}
