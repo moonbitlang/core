@@ -537,16 +537,19 @@ pub impl[K : @quickcheck.Arbitrary + Hash + Eq, V : @quickcheck.Arbitrary] @quic
 priv type MyString String derive(Eq)
 
 ///|
+#coverage.skip
 impl Hash for MyString with hash(self) {
   self._.length()
 }
 
 ///|
+#coverage.skip
 impl Hash for MyString with hash_combine(self, hasher) {
   hasher.combine_string(self._)
 }
 
 ///|
+#coverage.skip
 impl Show for MyString with output(self, logger) {
   logger.write_string(self._)
 }
@@ -647,4 +650,13 @@ test "grow" {
     m.debug_entries(),
     content="_,(0,C,1),(0,Go,2),(0,C++,3),(0,Java,4),(0,Scala,5),(1,Julia,5),(2,Cobol,5),(2,Python,6),(2,Haskell,7),(2,Rescript,8),_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_",
   )
+}
+
+///|
+test "get_or_init" {
+  let m : T[MyString, Int] = new()
+  inspect!(m.get_or_init("a", fn() { 1 }), content="1")
+  inspect!(m.get("a"), content="Some(1)")
+  inspect!(m.get_or_init("a", fn() { 2 }), content="1")
+  inspect!(m.get("a"), content="Some(1)")
 }

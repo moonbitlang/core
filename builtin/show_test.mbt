@@ -42,6 +42,7 @@ test "Show for Int16" {
   inspect!((0 : Int16).to_string(), content="0")
   inspect!((32767 : Int16).to_string(), content="32767")
   inspect!((-32768 : Int16).to_string(), content="-32768")
+  inspect!((-32766 : Int16), content="-32766")
 }
 
 ///|
@@ -62,6 +63,8 @@ test "Show for UInt64" {
 test "Show for UInt16" {
   inspect!((0 : UInt16).to_string(), content="0")
   inspect!((65535 : UInt16).to_string(), content="65535")
+  inspect!((65535 : UInt16).to_string(radix=8), content="177777")
+  inspect!((65536 : UInt16), content="65536")
 }
 
 ///|
