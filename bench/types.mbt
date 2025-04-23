@@ -16,8 +16,7 @@
 priv trait OpaqueValue {}
 
 ///|
-#visibility(change_to="abstract")
-pub(all) struct T {
+struct T {
   buffer : StringBuilder
   summaries : Array[Summary]
   mut storage : &OpaqueValue
