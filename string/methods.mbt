@@ -69,6 +69,39 @@ test "find" {
 }
 
 ///|
+/// Returns the offset of the first character that satisfies the given predicate.
+/// If no such character is found, it returns None.
+pub fn View::find_by(self : View, pred : (Char) -> Bool) -> Int? {
+  for i, c in self {
+    if pred(c) {
+      return Some(i)
+    }
+  }
+  None
+}
+
+///|
+/// Returns the offset of the first character that satisfies the given predicate.
+/// If no such character is found, it returns None.
+pub fn String::find_by(self : String, pred : (Char) -> Bool) -> Int? {
+  self[:].find_by(pred)
+}
+
+///|
+test "find_by" {
+  inspect!("hello".find_by(fn(c) { c == 'o' }), content="Some(4)")
+  inspect!("hello".find_by(fn(c) { c == 'l' }), content="Some(2)")
+  inspect!("hello".find_by(fn(c) { c == 'z' }), content="None")
+  inspect!("".find_by(fn(c) { c == 'a' }), content="None")
+  inspect!("hello".find_by(fn(c) { c is ('0'..='9') }), content="None")
+  inspect!("hello123".find_by(fn(c) { c is ('0'..='9') }), content="Some(5)")
+  inspect!("hello".find_by(fn(c) { c is ('A'..='Z') }), content="None")
+  inspect!("Hello".find_by(fn(c) { c is ('A'..='Z') }), content="Some(0)")
+  inspect!("αβγ".find_by(fn(c) { c == 'β' }), content="Some(1)")
+  inspect!("😀😁😂".find_by(fn(c) { c == '😂' }), content="Some(2)")
+}
+
+///|
 /// Returns the offset of the last occurrence of the given substring. If the
 /// substring is not found, it returns None.
 pub fn View::rev_find(self : View, str : View) -> Int? {
@@ -846,11 +879,13 @@ test "View::replace_all" {
 
 ///|
 /// Converts this string to lowercase.
-pub fn View::to_lower(self : View) -> String {
+pub fn View::to_lower(self : View) -> View {
   // TODO: deal with non-ascii characters
+  guard self.find_by(@char.is_ascii_uppercase) is Some(idx) else { return self }
   let buf = StringBuilder::new(size_hint=self.length())
-  for c in self {
-    if c is ('A'..='Z') {
+  buf.write_string(self.view(end_offset=idx).to_string())
+  for c in self.view(start_offset=idx) {
+    if c.is_ascii_uppercase() {
       // 'A' is 65 in ASCII, 'a' is 97, the difference is 32
       buf.write_char(Char::from_int(c.to_int() + 32))
     } else {
@@ -863,7 +898,19 @@ pub fn View::to_lower(self : View) -> String {
 ///|
 /// Converts this string to lowercase.
 pub fn to_lower(self : String) -> String {
-  self[:].to_lower()
+  // TODO: deal with non-ascii characters
+  guard self.find_by(@char.is_ascii_uppercase) is Some(idx) else { return self }
+  let buf = StringBuilder::new(size_hint=self.length())
+  buf.write_string(self.view(end_offset=idx).to_string())
+  for c in self.view(start_offset=idx) {
+    if c.is_ascii_uppercase() {
+      // 'A' is 65 in ASCII, 'a' is 97, the difference is 32
+      buf.write_char(Char::from_int(c.to_int() + 32))
+    } else {
+      buf.write_char(c)
+    }
+  }
+  buf.to_string()
 }
 
 ///|
@@ -874,12 +921,21 @@ test "to_lower" {
 }
 
 ///|
+test "View::to_lower" {
+  assert_eq!("Hello"[:].to_lower(), "hello")
+  assert_eq!("HELLO"[:].to_lower(), "hello")
+  assert_eq!("Hello, World!"[:].to_lower(), "hello, world!")
+}
+
+///|
 /// Converts this string to uppercase.
 pub fn View::to_upper(self : View) -> View {
   // TODO: deal with non-ascii characters
+  guard self.find_by(@char.is_ascii_lowercase) is Some(idx) else { return self }
   let buf = StringBuilder::new(size_hint=self.length())
-  for c in self {
-    if c >= 'a' && c <= 'z' {
+  buf.write_string(self.view(end_offset=idx).to_string())
+  for c in self.view(start_offset=idx) {
+    if c.is_ascii_lowercase() {
       buf.write_char(Char::from_int(c.to_int() - 32))
     } else {
       buf.write_char(c)
@@ -892,9 +948,11 @@ pub fn View::to_upper(self : View) -> View {
 /// Converts this string to uppercase.
 pub fn to_upper(self : String) -> String {
   // TODO: deal with non-ascii characters
+  guard self.find_by(@char.is_ascii_lowercase) is Some(idx) else { return self }
   let buf = StringBuilder::new(size_hint=self.length())
-  for c in self {
-    if c >= 'a' && c <= 'z' {
+  buf.write_string(self.view(end_offset=idx).to_string())
+  for c in self.view(start_offset=idx) {
+    if c.is_ascii_lowercase() {
       buf.write_char(Char::from_int(c.to_int() - 32))
     } else {
       buf.write_char(c)
@@ -908,6 +966,13 @@ test "to_upper" {
   assert_eq!("hello".to_upper(), "HELLO")
   assert_eq!("HELLO".to_upper(), "HELLO")
   assert_eq!("Hello, World!".to_upper(), "HELLO, WORLD!")
+}
+
+///|
+test "View::to_upper" {
+  assert_eq!("hello"[:].to_upper(), "HELLO")
+  assert_eq!("HELLO"[:].to_upper(), "HELLO")
+  assert_eq!("Hello, World!"[:].to_upper(), "HELLO, WORLD!")
 }
 
 ///|
