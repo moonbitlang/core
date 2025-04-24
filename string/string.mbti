@@ -146,6 +146,7 @@ impl StringView {
 impl Compare for StringView
 impl Default for StringView
 impl Eq for StringView
+impl Hash for StringView
 impl Show for StringView
 impl ToJson for StringView
 
