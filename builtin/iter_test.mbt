@@ -811,14 +811,12 @@ test "group_by with strings" {
   let iter = ["apple", "avocado", "banana", "cherry", "blueberry"].iter()
   let grouped = iter.group_by(fn(s) { s[0] })
   let result = grouped.map(fn(g) { (g.0, g.1.collect()) }).collect()
-  let a_group = result.filter(fn(item) { item.0 == 'a' }).unsafe_get(0)
-  let b1_group = result.filter(fn(item) { item.0 == 'b' }).unsafe_get(0)
-  let c_group = result.filter(fn(item) { item.0 == 'c' }).unsafe_get(0)
-  let b2_group = result.filter(fn(item) { item.0 == 'b' }).unsafe_get(1)
-  assert_eq!(a_group.1, ["apple", "avocado"])
-  assert_eq!(b1_group.1, ["banana"])
-  assert_eq!(c_group.1, ["cherry"])
-  assert_eq!(b2_group.1, ["blueberry"])
+  assert_eq!(result, [
+    ('a', ["apple", "avocado"]),
+    ('b', ["banana"]),
+    ('c', ["cherry"]),
+    ('b', ["blueberry"]),
+  ])
 }
 
 ///|
@@ -835,9 +833,13 @@ test "group_by with complex objects" {
     Person::{ name: "Eve", age: 30 },
   ].iter()
   let grouped = people.group_by(fn(p) { p.age })
-  let groups = grouped.map(fn(g) { g.0 }).collect()
-  assert_eq!(groups.length(), 4)
-  assert_true!(groups.contains(25))
-  assert_true!(groups.contains(30))
-  assert_true!(groups.contains(35))
+  let groups = grouped
+    .map(fn(g) { (g.0, g.1.map(fn(p) { p.name }).collect()) })
+    .collect()
+  assert_eq!(groups, [
+    (25, ["Alice", "Bob"]),
+    (30, ["Charlie"]),
+    (35, ["Dave"]),
+    (30, ["Eve"]),
+  ])
 }

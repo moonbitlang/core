@@ -1034,7 +1034,7 @@ pub fn Iter::group_by[T, K : Eq](
       }
       let key = current_key.unwrap()
       let elements = buffer
-      buffer = []
+      buffer = Array::new(capacity=16)
       yield_((key, elements.iter()))
     }
 
