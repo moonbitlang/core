@@ -292,12 +292,6 @@ pub fn last_index_of(
 }
 
 ///|
-/// Returns true if this string contains given sub string.
-pub fn contains(self : String, str : String) -> Bool {
-  self.find(str.view()) is Some(_)
-}
-
-///|
 /// Returns true if this string starts with a sub string.
 #deprecated("Use `s.has_prefix(str)` instead.")
 pub fn starts_with(self : String, str : String) -> Bool {

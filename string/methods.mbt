@@ -207,6 +207,33 @@ test "has_prefix" {
 }
 
 ///|
+/// Returns true if this string contains the given substring.
+pub fn View::contains(self : View, str : View) -> Bool {
+  self.find(str) is Some(_)
+}
+
+///|
+/// Returns true if this string contains the given substring.
+pub fn contains(self : String, str : View) -> Bool {
+  self[:].contains(str)
+}
+
+///|
+test "contains" {
+  inspect!("hello".contains("o"), content="true")
+  inspect!("hello".contains("l"), content="true")
+  inspect!("hello".contains("hello"), content="true")
+  inspect!("hello".contains("h"), content="true")
+  inspect!("hello".contains(""), content="true")
+  inspect!("hello".contains("world"), content="false")
+  inspect!("".contains(""), content="true")
+  inspect!("".contains("a"), content="false")
+  inspect!("hello hello".contains("hello"), content="true")
+  inspect!("aaa".contains("aa"), content="true")
+  inspect!("😀😀".contains("😀"), content="true")
+}
+
+///|
 /// Returns true if this string contains the given character.
 pub fn View::contains_char(self : View, c : Char) -> Bool {
   self.iter().any(fn(ch) { ch == c })
