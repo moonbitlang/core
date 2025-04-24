@@ -712,3 +712,12 @@ test "to_json" {
     ,
   )
 }
+
+///|
+test "hash" {
+  let a = "abc"
+  let b = "def"
+  let c = "abc"
+  assert_eq!(a.hash(), c.hash())
+  assert_not_eq!(a.hash(), b.hash())
+}
