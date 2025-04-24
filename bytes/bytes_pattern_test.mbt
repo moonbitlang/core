@@ -63,15 +63,7 @@ pub fn decode_utf8(bytes : Bytes) -> String {
         ((b2.to_int() & 0x3F) << 12) |
         ((b3.to_int() & 0x3F) << 6) |
         (b4.to_int() & 0x3F)
-
-      // Handle surrogate pairs for code points above 0xFFFF
-      if code_point > 0xFFFF {
-        let adjusted = code_point - 0x10000
-        buf.write_char(Char::from_int((adjusted >> 10) + 0xD800)) // High surrogate
-        buf.write_char(Char::from_int((adjusted & 0x3FF) + 0xDC00)) // Low surrogate
-      } else {
-        buf.write_char(Char::from_int(code_point))
-      }
+      buf.write_char(Char::from_int(code_point))
       continue next
     }
 
