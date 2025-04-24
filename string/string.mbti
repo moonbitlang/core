@@ -3,7 +3,7 @@ package "moonbitlang/core/string"
 // Values
 fn concat(Array[String], separator~ : String = ..) -> String
 
-fn contains(String, String) -> Bool
+fn contains(String, StringView) -> Bool
 
 fn contains_char(String, Char) -> Bool
 
@@ -98,6 +98,7 @@ impl StringView {
   char_length_eq(Self, Int) -> Bool
   char_length_ge(Self, Int) -> Bool
   charcode_at(Self, Int) -> Int
+  contains(Self, Self) -> Bool
   contains_char(Self, Char) -> Bool
   find(Self, Self) -> Int?
   find_by(Self, (Char) -> Bool) -> Int?
@@ -154,7 +155,7 @@ impl String {
   char_length_ge(String, Int, start_offset~ : Int = .., end_offset~ : Int = ..) -> Bool
   #deprecated
   concat(Array[String], separator~ : String = ..) -> String
-  contains(String, String) -> Bool
+  contains(String, StringView) -> Bool
   contains_char(String, Char) -> Bool
   #deprecated
   ends_with(String, String) -> Bool
