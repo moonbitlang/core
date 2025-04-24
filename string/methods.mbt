@@ -15,35 +15,87 @@
 ///|
 /// Returns the offset (charcode index) of the first occurrence of the given
 /// substring. If the substring is not found, it returns None.
+/// 
+/// Uses the KMP (Knuth-Morris-Pratt) algorithm for efficient substring search.
 pub fn View::find(self : View, str : View) -> Int? {
   let len = self.length()
   let sub_len = str.length()
+
   // Handle empty substring case
   guard sub_len > 0 else { return Some(0) }
+
   // If substring is longer than string, it can't be found
   guard sub_len <= len else { return None }
-  let max_idx = len - sub_len
-  let first = str.unsafe_charcode_at(0)
-  let mut i = 0
-  while i <= max_idx {
-    // find first character
-    while i < len && self.unsafe_charcode_at(i) != first {
-      i += 1
-    }
-    // check the rest
-    if i <= max_idx {
-      for j in 1..<sub_len {
-        if self.unsafe_charcode_at(i + j) != str.unsafe_charcode_at(j) {
-          break
-        }
-      } else {
-        // the substring is found
+
+  // Fast path for single-character pattern
+  if sub_len == 1 {
+    let pattern_char = str.unsafe_charcode_at(0)
+    for i in 0..<len {
+      if self.unsafe_charcode_at(i) == pattern_char {
         return Some(i)
       }
     }
-    i += 1
+    return None
   }
-  None
+
+  // Compute the KMP partial match table (also called "failure function" or "lps array")
+  let lps = {
+    // Pre-create the array with zeros
+    let result = Array::make(sub_len, 0)
+
+    // A function to update a specific index with a new value
+    fn update_lps(lps : Array[Int], idx : Int, val : Int) -> Array[Int] {
+      lps[idx] = val
+      lps
+    }
+
+    // Compute the LPS values
+    fn compute_lps(lps : Array[Int], prev : Int, i : Int) -> Array[Int] {
+      if i >= sub_len {
+        lps
+      } else if str.unsafe_charcode_at(i) == str.unsafe_charcode_at(prev) {
+        // Match found, extend the prefix
+        let new_prev = prev + 1
+        compute_lps(update_lps(lps, i, new_prev), new_prev, i + 1)
+      } else if prev != 0 {
+        // Mismatch after some match, backtrack
+        compute_lps(lps, lps[prev - 1], i)
+      } else {
+        // Mismatch at the beginning
+        compute_lps(update_lps(lps, i, 0), 0, i + 1)
+      }
+    }
+
+    // Start computation from index 1 (index 0 is always 0)
+    compute_lps(result, 0, 1)
+  }
+
+  // Use the KMP algorithm to search
+  fn kmp_search(i : Int, j : Int) -> Int? {
+    if i >= len {
+      // Reached the end without finding the pattern
+      None
+    } else if str.unsafe_charcode_at(j) == self.unsafe_charcode_at(i) {
+      // Characters match, advance both pointers
+      let new_i = i + 1
+      let new_j = j + 1
+      if new_j == sub_len {
+        // Found a complete match
+        Some(new_i - sub_len)
+      } else {
+        // Continue searching
+        kmp_search(new_i, new_j)
+      }
+    } else if j > 0 {
+      // Mismatch after some matches, use LPS to skip comparisons
+      kmp_search(i, lps[j - 1])
+    } else {
+      // Mismatch at beginning of pattern
+      kmp_search(i + 1, 0)
+    }
+  }
+
+  kmp_search(0, 0)
 }
 
 ///|
