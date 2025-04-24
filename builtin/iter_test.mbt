@@ -758,3 +758,86 @@ test "Float::until negative step" {
   let result = 10.0.until(0.0, step=-2.0).collect()
   inspect!(result, content="[10, 8, 6, 4, 2]")
 }
+
+///|
+test "group_by with consecutive identical elements" {
+  let iter = [1, 1, 2, 2, 3, 3].iter()
+  let grouped = iter.group_by(fn(x) { x })
+  let result = grouped.map(fn(g) { (g.0, g.1.collect()) }).collect()
+  assert_eq!(result, [(1, [1, 1]), (2, [2, 2]), (3, [3, 3])])
+}
+
+///|
+test "group_by with non-consecutive identical elements" {
+  let iter = [1, 2, 1, 3, 2, 1].iter()
+  let grouped = iter.group_by(fn(x) { x })
+  let result = grouped.map(fn(g) { (g.0, g.1.collect()) }).collect()
+  assert_eq!(result, [
+    (1, [1]),
+    (2, [2]),
+    (1, [1]),
+    (3, [3]),
+    (2, [2]),
+    (1, [1]),
+  ])
+}
+
+///|
+test "group_by with empty input" {
+  let iter = Iter::empty()
+  let grouped = iter.group_by(fn(x) { x })
+  let result = grouped.map(fn(g) { (g.0, g.1.collect()) }).collect()
+  assert_eq!(result, [])
+}
+
+///|
+test "group_by with single element input" {
+  let iter = [42].iter()
+  let grouped = iter.group_by(fn(x) { x })
+  let result = grouped.map(fn(g) { (g.0, g.1.collect()) }).collect()
+  assert_eq!(result, [(42, [42])])
+}
+
+///|
+test "group_by with custom key function" {
+  let iter = [1, 2, 3, 4].iter()
+  let grouped = iter.group_by(fn(x) { x % 2 })
+  let result = grouped.map(fn(g) { (g.0, g.1.collect()) }).collect()
+  assert_eq!(result, [(1, [1]), (0, [2]), (1, [3]), (0, [4])])
+}
+
+///|
+test "group_by with strings" {
+  let iter = ["apple", "avocado", "banana", "cherry", "blueberry"].iter()
+  let grouped = iter.group_by(fn(s) { s[0] })
+  let result = grouped.map(fn(g) { (g.0, g.1.collect()) }).collect()
+  let a_group = result.filter(fn(item) { item.0 == 'a' }).unsafe_get(0)
+  let b1_group = result.filter(fn(item) { item.0 == 'b' }).unsafe_get(0)
+  let c_group = result.filter(fn(item) { item.0 == 'c' }).unsafe_get(0)
+  let b2_group = result.filter(fn(item) { item.0 == 'b' }).unsafe_get(1)
+  assert_eq!(a_group.1, ["apple", "avocado"])
+  assert_eq!(b1_group.1, ["banana"])
+  assert_eq!(c_group.1, ["cherry"])
+  assert_eq!(b2_group.1, ["blueberry"])
+}
+
+///|
+test "group_by with complex objects" {
+  struct Person {
+    name : String
+    age : Int
+  } derive(Show)
+  let people = [
+    Person::{ name: "Alice", age: 25 },
+    Person::{ name: "Bob", age: 25 },
+    Person::{ name: "Charlie", age: 30 },
+    Person::{ name: "Dave", age: 35 },
+    Person::{ name: "Eve", age: 30 },
+  ].iter()
+  let grouped = people.group_by(fn(p) { p.age })
+  let groups = grouped.map(fn(g) { g.0 }).collect()
+  assert_eq!(groups.length(), 4)
+  assert_true!(groups.contains(25))
+  assert_true!(groups.contains(30))
+  assert_true!(groups.contains(35))
+}
