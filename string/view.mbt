@@ -328,3 +328,10 @@ pub fn View::make(length : Int, value : Char) -> View {
 pub impl ToJson for View with to_json(self) {
   String::to_json(self.to_string())
 }
+
+///|
+pub impl Hash for View with hash_combine(self : View, hasher : Hasher) -> Unit {
+  for i in 0..<self.length() {
+    hasher.combine_uint(self.unsafe_charcode_at(i).reinterpret_as_uint())
+  }
+}
