@@ -1009,57 +1009,30 @@ pub fn Iter::minimum[T : Compare](self : Iter[T]) -> T? {
 ///
 /// # Returns
 ///
-/// An iterator of tuples where each tuple contains a key and an iterator of elements that share that key.
+/// A Map where keys are the result of applying the discriminator function to elements,
+/// and values are arrays containing all elements that share the same key.
 ///
 /// # Example
 ///
 /// ```moonbit
 /// test "group_by" {
-///   let input = [1, 1, 2, 3, 2, 2, 1].iter()
-///   let grouped = input.group_by(fn(x) { x })
-///   let result = grouped.map(fn(g) { (g.0, g.1.collect()) }).collect()
-///   assert_eq!(result, [(1, [1, 1]), (2, [2]), (3, [3]), (2, [2, 2]), (1, [1])])
+///   let iter = [1, 1, 2, 3, 2, 2, 1].iter()
+///   let result = iter.group_by(fn(x) { x })
+///   assert_eq!(result.get(1), Some([1, 1, 1]))
+///   assert_eq!(result.get(2), Some([2, 2, 2]))
+///   assert_eq!(result.get(3), Some([3]))
 /// }
-pub fn Iter::group_by[T, K : Eq](
+pub fn Iter::group_by[T, K : Eq + Hash](
   self : Iter[T],
   f : (T) -> K
-) -> Iter[(K, Iter[T])] {
-  fn(yield_) {
-    let mut has_current = false
-    let mut current_key : K? = None
-    let mut buffer : Array[T] = []
-    fn emit_current_group() -> IterResult {
-      if buffer.is_empty() {
-        return IterContinue
-      }
-      let key = current_key.unwrap()
-      let elements = buffer
-      buffer = Array::new(capacity=16)
-      yield_((key, elements.iter()))
-    }
-
-    self.run(fn(x) {
-      let key = f(x)
-      if has_current && key == current_key.unwrap() {
-        buffer.push(x)
-        IterContinue
-      } else {
-        if has_current {
-          if emit_current_group() == IterEnd {
-            return IterEnd
-          }
-        }
-        has_current = true
-        current_key = Some(key)
-        buffer.push(x)
-        IterContinue
-      }
-    })
-    |> ignore
-    if has_current {
-      emit_current_group()
-    } else {
-      IterContinue
+) -> Map[K, Array[T]] {
+  let result = Map::new()
+  for element in self {
+    let key = f(element)
+    match result.get(key) {
+      Some(arr) => result.set(key, arr + [element])
+      None => result.set(key, [element])
     }
   }
+  result
 }
