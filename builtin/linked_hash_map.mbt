@@ -15,7 +15,7 @@
 ///|
 // Types
 priv struct Entry[K, V] {
-  mut prev : Int?
+  mut prev : Int
   mut next : Entry[K, V]?
   mut psl : Int
   hash : Int
@@ -47,7 +47,7 @@ struct Map[K, V] {
   mut capacity_mask : Int // capacity_mask = capacity - 1, used to find idx
   mut growAt : Int // threshold that triggers grow
   mut head : Entry[K, V]? // head of linked list
-  mut tail : Int? // tail of linked list
+  mut tail : Int // tail of linked list
 }
 
 // Implementations
@@ -90,7 +90,7 @@ pub fn Map::new[K, V](capacity~ : Int = 8) -> Map[K, V] {
     growAt: calc_grow_threshold(capacity),
     entries: FixedArray::make(capacity, None),
     head: None,
-    tail: None,
+    tail: -1,
   }
 }
 
@@ -165,8 +165,8 @@ fn Map::set_entry[K, V](
 ) -> Unit {
   self.entries[new_idx] = Some(entry)
   match entry.next {
-    None => self.tail = Some(new_idx)
-    Some(next) => next.prev = Some(new_idx)
+    None => self.tail = new_idx
+    Some(next) => next.prev = new_idx
   }
 }
 
@@ -347,15 +347,10 @@ fn Map::add_entry_to_tail[K, V](
   entry : Entry[K, V]
 ) -> Unit {
   match self.tail {
-    None => {
-      self.head = Some(entry)
-      self.tail = Some(idx)
-    }
-    Some(tail) => {
-      self.entries[tail].unwrap().next = Some(entry)
-      self.tail = Some(idx)
-    }
+    -1 => self.head = Some(entry)
+    tail => self.entries[tail].unwrap().next = Some(entry)
   }
+  self.tail = idx
   self.entries[idx] = Some(entry)
   self.size += 1
 }
@@ -363,8 +358,8 @@ fn Map::add_entry_to_tail[K, V](
 ///|
 fn Map::remove_entry[K, V](self : Map[K, V], entry : Entry[K, V]) -> Unit {
   match entry.prev {
-    None => self.head = entry.next
-    Some(idx) => self.entries[idx].unwrap().next = entry.next
+    -1 => self.head = entry.next
+    idx => self.entries[idx].unwrap().next = entry.next
   }
   match entry.next {
     None => self.tail = entry.prev
@@ -395,7 +390,7 @@ fn Map::grow[K : Hash + Eq, V](self : Map[K, V]) -> Unit {
   self.growAt = calc_grow_threshold(self.capacity)
   self.size = 0
   self.head = None
-  self.tail = None
+  self.tail = -1
   loop old_head {
     Some({ next, key, value, .. }) => {
       self.set(key, value)
@@ -491,7 +486,7 @@ pub fn Map::clear[K, V](self : Map[K, V]) -> Unit {
   self.entries.fill(None)
   self.size = 0
   self.head = None
-  self.tail = None
+  self.tail = -1
 }
 
 ///|
