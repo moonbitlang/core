@@ -23,7 +23,7 @@ fn shift(Decimal, Int) -> Unit
 fn to_double(Decimal) -> Double!StrConvError //deprecated
 
 // Types and methods
-type Decimal //deprecated
+type Decimal
 impl Decimal {
   #deprecated
   from_int64(Int64) -> Self

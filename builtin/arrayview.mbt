@@ -23,7 +23,7 @@
 /// assert_eq!(view[0], 2)
 /// assert_eq!(view.length(), 3)
 /// ```
-/// @alert deprecated "use @array.View instead"
+#deprecated("use @array.View instead")
 struct ArrayView[T] {
   buf : UninitializedArray[T]
   start : Int
