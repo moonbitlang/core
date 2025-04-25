@@ -191,7 +191,7 @@ test "clear" {
   assert_eq!(m.size, 0)
   assert_eq!(m.capacity, 8)
   assert_eq!(m.head, None)
-  assert_eq!(m.tail, None)
+  assert_eq!(m.tail, -1)
   for i in 0..<m.capacity {
     assert_eq!(m.entries[i], None)
   }
@@ -406,7 +406,7 @@ test "clear" {
   assert_eq!(m.size, 0)
   assert_eq!(m.capacity, 8)
   assert_eq!(m.head, None)
-  assert_eq!(m.tail, None)
+  assert_eq!(m.tail, -1)
   for i in 0..<m.capacity {
     assert_eq!(m.entries[i], None)
   }
@@ -454,7 +454,7 @@ test "new" {
   assert_eq!(m.size, 0)
   assert_eq!(m.capacity, 8)
   assert_eq!(m.head, None)
-  assert_eq!(m.tail, None)
+  assert_eq!(m.tail, -1)
   for i in 0..<m.capacity {
     assert_eq!(m.entries[i], None)
   }
@@ -547,7 +547,7 @@ test "clear" {
   assert_eq!(m.size, 0)
   assert_eq!(m.capacity, 8)
   assert_eq!(m.head, None)
-  assert_eq!(m.tail, None)
+  assert_eq!(m.tail, -1)
   for i in 0..<m.capacity {
     assert_eq!(m.entries[i], None)
   }
@@ -640,7 +640,7 @@ test "clear" {
   assert_eq!(m.size, 0)
   assert_eq!(m.capacity, 8)
   assert_eq!(m.head, None)
-  assert_eq!(m.tail, None)
+  assert_eq!(m.tail, -1)
   for i in 0..<m.capacity {
     assert_eq!(m.entries[i], None)
   }
@@ -793,7 +793,7 @@ test "remove_entry_head" {
   // This should ensure the head is updated correctly
   assert_false!(map.head is None)
   guard map.head is Some(head)
-  assert_eq!(head.prev, None)
+  assert_eq!(head.prev, -1)
   assert_true!(head.next is None)
   assert_eq!(head.psl, 0)
   assert_eq!(head.hash, (2).hash())
@@ -808,11 +808,10 @@ test "remove_entry_tail" {
   map.set(2, 2)
   map.remove(2)
   // This should ensure the tail is updated correctly
-  assert_false!(map.tail is None)
-  guard map.tail is Some(tail_idx)
-  assert_false!(map.entries[tail_idx] is None)
-  guard map.entries[tail_idx] is Some(tail)
-  assert_eq!(tail.prev, None)
+  assert_false!(map.tail is -1)
+  assert_false!(map.entries[map.tail] is None)
+  guard map.entries[map.tail] is Some(tail)
+  assert_eq!(tail.prev, -1)
   assert_true!(tail.next is None)
   assert_eq!(tail.psl, 0)
   assert_eq!(tail.hash, (1).hash())
