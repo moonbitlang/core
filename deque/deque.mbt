@@ -861,8 +861,8 @@ pub fn shrink_to_fit[A](self : T[A]) -> Unit {
 /// Shortens the deque in-place, keeping the first `len` elements and dropping
 /// the rest.
 ///
-/// If `len` is greater than or equal to the deque's current length, this has no
-/// effect; if `len` is negative, the function will panic.
+/// If `len` is greater than or equal to the deque's current length or negative, 
+/// this has no effect
 ///
 /// Parameters:
 ///
@@ -879,8 +879,7 @@ pub fn shrink_to_fit[A](self : T[A]) -> Unit {
 /// }
 /// ```
 pub fn truncate[A](self : T[A], len : Int) -> Unit {
-  guard len < self.len else { return }
-  guard len >= 0
+  guard len >= 0 && len < self.len else { return }
   if len == 0 {
     self.clear()
     return
