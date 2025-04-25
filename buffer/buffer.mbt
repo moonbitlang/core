@@ -674,6 +674,18 @@ pub impl Logger for T with write_substring(
 }
 
 ///|
+pub fn write_stringview(self : T, value : @string.View) -> Unit {
+  let len = value.length()
+  self.grow_if_necessary(self.len + len * 2)
+  for i = 0, j = self.len; i < len; i = i + 1, j = j + 2 {
+    let c = value.unsafe_charcode_at(i).reinterpret_as_uint()
+    self.data[j] = (c & 0xff).to_byte()
+    self.data[j + 1] = (c >> 8).to_byte()
+  }
+  self.len += len * 2
+}
+
+///|
 /// Writes a UTF-16LE encoded character into the buffer. Automatically grows the
 /// buffer if necessary.
 ///

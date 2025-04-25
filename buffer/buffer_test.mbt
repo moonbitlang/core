@@ -382,3 +382,15 @@ test "write_bytesview" {
     ,
   )
 }
+
+///|
+test "write_stringview" {
+  let buf = @buffer.new()
+  buf.write_stringview("hello".view(start_offset=1, end_offset=3))
+  inspect!(
+    buf.contents(),
+    content=
+      #|b"\x65\x00\x6c\x00"
+    ,
+  )
+}
