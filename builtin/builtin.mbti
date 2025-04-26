@@ -422,6 +422,7 @@ impl Int {
   to_uint(Int) -> UInt
   to_uint16(Int) -> UInt16
   to_uint64(Int) -> UInt64
+  unsafe_to_char(Int) -> Char
   until(Int, Int, step~ : Int = .., inclusive~ : Bool = ..) -> Iter[Int]
   #deprecated
   upto(Int, Int, inclusive~ : Bool = ..) -> Iter[Int]

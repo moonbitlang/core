@@ -1472,7 +1472,7 @@ pub fn Bytes::new(len : Int) -> Bytes {
 pub fn Int::to_byte(self : Int) -> Byte = "%i32_to_byte"
 
 ///|
-fn Int::unsafe_to_char(self : Int) -> Char = "%char_from_int"
+pub fn Int::unsafe_to_char(self : Int) -> Char = "%char_from_int"
 
 ///|
 pub fn Int::to_char(self : Int) -> Char? {
