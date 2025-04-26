@@ -412,6 +412,7 @@ impl Int {
   #deprecated
   shr(Int, Int) -> Int
   to_byte(Int) -> Byte
+  to_char(Int) -> Char?
   to_double(Int) -> Double
   to_float(Int) -> Float
   to_int16(Int) -> Int16

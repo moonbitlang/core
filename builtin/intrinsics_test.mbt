@@ -465,3 +465,50 @@ test "convert byte to int64" {
   let result = b.to_int64()
   inspect!(result, content="255")
 }
+
+///|
+test "Int::to_char" {
+  inspect!(Int::to_char(97), content="Some('a')")
+  inspect!(Int::to_char(65), content="Some('A')")
+  inspect!(Int::to_char(49), content="Some('1')")
+  inspect!(Int::to_char(33), content="Some('!')")
+}
+
+///|
+test "Int::to_char - Invalid values" {
+  inspect!(Int::to_char(-1), content="None")
+  inspect!(Int::to_char(1114112), content="None")
+  inspect!(Int::to_char(1114113), content="None")
+}
+
+///|
+test "Int::to_char - Valid values" {
+  inspect!(Int::to_char(0), content="Some('\\x00')")
+  inspect!(Int::to_char(127), content="Some('')")
+  inspect!(Int::to_char(128), content="Some('')")
+  inspect!(Int::to_char(0x7F), content="Some('')")
+  inspect!(Int::to_char(0x80), content="Some('')")
+  inspect!(Int::to_char(0xFF), content="Some('ÿ')")
+  inspect!(Int::to_char(0x100), content="Some('Ā')")
+  inspect!(Int::to_char(0xFFFF), content="Some('￿')")
+  inspect!(Int::to_char(0x10000), content="Some('𐀀')")
+  inspect!(Int::to_char(0x10FFFF), content="Some('􏿿')")
+}
+
+///|
+test "Int::to_char - Invalid values" {
+  inspect!(Int::to_char(-1), content="None")
+  inspect!(Int::to_char(0x10FFFF + 1), content="None")
+  inspect!(Int::to_char(0xD800), content="None")
+  inspect!(Int::to_char(0xDFFF), content="None")
+  inspect!(Int::to_char(0xD900), content="None")
+  inspect!(Int::to_char(0xDF00), content="None")
+}
+
+///|
+test "Int::to_char - Boundary cases" {
+  inspect!(Int::to_char(0xD7FF), content="Some('퟿')")
+  inspect!(Int::to_char(0xE000), content="Some('')")
+  inspect!(Int::to_char(0x10FFFF), content="Some('􏿿')")
+  inspect!(Int::to_char(0x10FFFF + 1), content="None")
+}
