@@ -231,7 +231,7 @@ test "map" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
   let exb = StringBuilder::new(size_hint=0)
   iter
-  .map(fn { x => Char::from_int(x.to_int() + 1) })
+  .map(fn { x => (x.to_int() + 1).to_char().unwrap() })
   .each(fn { x => exb.write_char(x) })
   inspect!(exb, content="23456")
 }
