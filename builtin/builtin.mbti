@@ -188,6 +188,7 @@ fn[T, K : Eq + Hash] Iter::group_by(Self[T], (T) -> K) -> Map[K, Array[T]]
 fn[A] Iter::head(Self[A]) -> A?
 fn[A] Iter::intersperse(Self[A], A) -> Self[A]
 fn[T] Iter::iter(Self[T]) -> Self[T]
+fn[T] Iter::iter2(Self[T]) -> Iter2[Int, T]
 fn Iter::join(Self[String], String) -> String
 fn[T] Iter::just_run(Self[T], (T) -> IterResult) -> Unit
 fn[A] Iter::last(Self[A]) -> A?

@@ -1039,3 +1039,17 @@ pub fn[T, K : Eq + Hash] Iter::group_by(
   }
   result
 }
+
+///|
+/// Returns an iterator that iterates over the index and the element of the iterator.
+pub fn[T] Iter::iter2(self : Iter[T]) -> Iter2[Int, T] {
+  fn {
+    yield_ => {
+      let mut index = -1
+      self.run(fn(i) {
+        index += 1
+        yield_(index, i)
+      })
+    }
+  }
+}
