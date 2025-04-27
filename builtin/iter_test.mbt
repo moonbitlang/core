@@ -748,3 +748,31 @@ test "Float::until negative step" {
   let result = 10.0.until(0.0, step=-2.0).collect()
   inspect!(result, content="[10, 8, 6, 4, 2]")
 }
+
+///|
+test "iteri" {
+  let iter = [].iter()
+  for _, _ in iter.iteri() {
+    assert_true!(false)
+  }
+  let iter = [0, 1, 2].iter()
+  for i, x in iter.iteri() {
+    assert_eq!(i, x)
+  }
+  let iter = [0, 1, 2].iter()
+  for i, x in iter.iteri(offset=10) {
+    assert_eq!(i, x + 10)
+  }
+}
+
+///|
+test "iter2" {
+  let iter = [].iter()
+  for _, _ in iter.iter2() {
+    assert_true!(false)
+  }
+  let iter = [(0, 1), (2, 3), (4, 5)].iter()
+  for k, v in iter.iter2() {
+    assert_eq!(k + 1, v)
+  }
+}
