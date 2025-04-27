@@ -256,6 +256,7 @@ fn get_with_hash[K : Hash + Eq, V](self : T[K, V], key : K, hash : Int) -> V? {
 ///   inspect!(map["nonexistent"], content="None")
 /// }
 /// ```
+#deprecated("Use `get` instead. `op_get` will return `V` instead of `Option[V]` in the future.")
 pub fn op_get[K : Hash + Eq, V](self : T[K, V], key : K) -> V? {
   self.get(key)
 }

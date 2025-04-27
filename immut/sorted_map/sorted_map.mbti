@@ -56,6 +56,7 @@ fn new[K, V]() -> T[K, V]
 
 fn of[K : Compare, V](FixedArray[(K, V)]) -> T[K, V]
 
+#deprecated
 fn op_get[K : Compare, V](T[K, V], K) -> V?
 
 fn remove[K : Compare, V](T[K, V], K) -> T[K, V]
@@ -104,6 +105,7 @@ impl T {
   new[K, V]() -> Self[K, V]
   #deprecated
   of[K : Compare, V](FixedArray[(K, V)]) -> Self[K, V]
+  #deprecated
   op_get[K : Compare, V](Self[K, V], K) -> V?
   remove[K : Compare, V](Self[K, V], K) -> Self[K, V]
   #deprecated

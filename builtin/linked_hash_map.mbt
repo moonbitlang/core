@@ -196,6 +196,7 @@ pub fn Map::get[K : Hash + Eq, V](self : Map[K, V], key : K) -> V? {
 }
 
 ///|
+#deprecated("Use `get` instead. `op_get` will return `V` instead of `Option[V]` in the future.")
 pub fn Map::op_get[K : Hash + Eq, V](self : Map[K, V], key : K) -> V? {
   self.get(key)
 }

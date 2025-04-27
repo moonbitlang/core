@@ -37,6 +37,7 @@ fn new[K, V](capacity~ : Int = ..) -> T[K, V]
 
 fn of[K : Eq + Hash, V](FixedArray[(K, V)]) -> T[K, V]
 
+#deprecated
 fn op_get[K : Hash + Eq, V](T[K, V], K) -> V?
 
 fn op_set[K : Hash + Eq, V](T[K, V], K, V) -> Unit
@@ -64,6 +65,7 @@ impl T {
   is_empty[K, V](Self[K, V]) -> Bool
   iter[K, V](Self[K, V]) -> Iter[(K, V)]
   iter2[K, V](Self[K, V]) -> Iter2[K, V]
+  #deprecated
   op_get[K : Hash + Eq, V](Self[K, V], K) -> V?
   op_set[K : Hash + Eq, V](Self[K, V], K, V) -> Unit
   remove[K : Hash + Eq, V](Self[K, V], K) -> Unit
