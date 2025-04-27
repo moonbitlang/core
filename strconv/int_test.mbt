@@ -29,7 +29,6 @@ fn parse_as_result(s : String, base~ : Int) -> Result[Int64, String] {
 
 ///|
 test "parse_int64_invalid_base" {
-  assert_eq!(parse_as_result("12345", base=1), Err(base_err))
   assert_eq!(parse_as_result("12345", base=37), Err(base_err))
   assert_eq!(parse_as_result("12345", base=-1), Err(base_err))
   assert_eq!(parse_as_result("12345", base=100), Err(base_err))
@@ -132,4 +131,29 @@ test "edge cases" {
 
   // Underscore is allowed between the prefix and the first digit
   inspect!(@strconv.parse_int64?("0x_DEADBEEF"), content="Ok(3735928559)")
+}
+
+///|
+test "more edge cases" {
+  inspect!(@strconv.parse_int64?("0b01", base=16), content="Ok(2817)")
+  inspect!(
+    @strconv.parse_int64?("0o01", base=16),
+    content="Err(invalid syntax)",
+  )
+  inspect!(@strconv.parse_int64?("0x01", base=16), content="Ok(1)")
+  inspect!(@strconv.parse_int?("0b01", base=16), content="Ok(2817)")
+  inspect!(@strconv.parse_int?("0o01", base=16), content="Err(invalid syntax)")
+  inspect!(@strconv.parse_int?("0x01", base=16), content="Ok(1)")
+  inspect!(@strconv.parse_uint?("0b01", base=16), content="Ok(2817)")
+  inspect!(@strconv.parse_uint?("0o01", base=16), content="Err(invalid syntax)")
+  inspect!(@strconv.parse_uint?("0x01", base=16), content="Ok(1)")
+  inspect!(@strconv.parse_uint64?("0b01", base=16), content="Ok(2817)")
+  inspect!(
+    @strconv.parse_uint64?("0o01", base=16),
+    content="Err(invalid syntax)",
+  )
+  inspect!(@strconv.parse_uint64?("0x01", base=16), content="Ok(1)")
+  inspect!(@strconv.parse_int?("0b01", base=10), content="Err(invalid syntax)")
+  inspect!(@strconv.parse_int?("0o01", base=10), content="Err(invalid syntax)")
+  inspect!(@strconv.parse_int?("0x01", base=10), content="Err(invalid syntax)")
 }

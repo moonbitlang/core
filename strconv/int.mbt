@@ -32,33 +32,30 @@ fn check_and_consume_base(
   view : @string.StringView,
   base : Int
 ) -> (Int, @string.StringView, Bool)!StrConvError {
-  match view {
-    ['0', 'x' | 'X', .. rest] => {
-      guard base is (0 | 16) else { base_err!() }
-      (16, rest, true)
+  // if the base is not given, we need to determine it from the prefix
+  if base == 0 {
+    match view {
+      ['0', 'x' | 'X', .. rest] => (16, rest, true)
+      ['0', 'o' | 'O', .. rest] => (8, rest, true)
+      ['0', 'b' | 'B', .. rest] => (2, rest, true)
+      _ => (10, view, false)
     }
-    ['0', 'o' | 'O', .. rest] => {
-      guard base is (0 | 8) else { base_err!() }
-      (8, rest, true)
+  } else {
+    // if the base is given, we need to check whether the prefix is consistent with it
+    match view {
+      ['0', 'x' | 'X', .. rest] if base == 16 => (16, rest, true)
+      ['0', 'o' | 'O', .. rest] if base == 8 => (8, rest, true)
+      ['0', 'b' | 'B', .. rest] if base == 2 => (2, rest, true)
+      _ => if base is (1..=36) { (base, view, false) } else { base_err!() }
     }
-    ['0', 'b' | 'B', .. rest] => {
-      guard base is (0 | 2) else { base_err!() }
-      (2, rest, true)
-    }
-    rest =>
-      match base {
-        0 => (10, rest, false)
-        2..=36 => (base, rest, false)
-        _ => base_err!()
-      }
   }
 }
 
 ///|
 test {
-  inspect!(parse_int64?("0b01", base=3), content="Err(invalid base)")
-  inspect!(parse_int64?("0x01", base=3), content="Err(invalid base)")
-  inspect!(parse_int64?("0o01", base=3), content="Err(invalid base)")
+  inspect!(parse_int64?("0b01", base=3), content="Err(invalid syntax)")
+  inspect!(parse_int64?("0x01", base=3), content="Err(invalid syntax)")
+  inspect!(parse_int64?("0o01", base=3), content="Err(invalid syntax)")
 }
 
 ///|
