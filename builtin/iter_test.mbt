@@ -793,3 +793,15 @@ test "group_by with complex objects" {
   let groups = grouped.values().map(fn(a) { a.map(fn(p) { p.name }) }).collect()
   assert_eq(groups, [["Alice", "Bob"], ["Charlie", "Eve"], ["Dave"]])
 }
+
+///|
+test "iter2" {
+  let iter : Iter[Int] = [].iter()
+  for _, _ in iter.iter2() {
+    assert_true(false)
+  }
+  let iter = [0, 1, 2].iter()
+  for i, x in iter.iter2() {
+    assert_eq(i, x)
+  }
+}
