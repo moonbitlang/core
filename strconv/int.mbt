@@ -41,10 +41,15 @@ fn check_and_consume_base(
       guard base is (0 | 8) else { base_err!() }
       (8, rest, true)
     }
-    ['0', 'b' | 'B', .. rest] => {
-      guard base is (0 | 2) else { base_err!() }
-      (2, rest, true)
-    }
+    ['0', 'b' | 'B', .. rest] =>
+      if base is (0 | 2) {
+        (2, rest, true)
+      } else if base is 16 {
+        // 'b' is a legitimate hex digit
+        (16, view, false)
+      } else {
+        base_err!()
+      }
     rest =>
       match base {
         0 => (10, rest, false)
