@@ -416,6 +416,36 @@ pub fn Iter::map[T, R](self : Iter[T], f : (T) -> R) -> Iter[R] {
 }
 
 ///|
+/// Transforms the elements of the iterator using a mapping function.
+///
+/// # Type Parameters
+///
+/// - `T`: The type of the elements in the iterator.
+/// - `R`: The type of the transformed elements.
+///
+/// # Arguments
+///
+/// * `self` - The input iterator.
+/// * `f` - The mapping function that transforms each element of the iterator with index.
+///
+/// # Returns
+///
+/// A new iterator that contains the transformed elements.
+pub fn Iter::mapi[T, R](self : Iter[T], f : (Int, T) -> R) -> Iter[R] {
+  fn {
+    yield_ => {
+      let mut i = -1
+      self.run(fn {
+        a => {
+          i = i + 1
+          yield_(f(i, a))
+        }
+      })
+    }
+  }
+}
+
+///|
 /// Transforms the elements of the iterator using a mapping function that returns an `Option`.
 /// The elements for which the function returns `None` are filtered out.
 pub fn Iter::filter_map[A, B](self : Iter[A], f : (A) -> B?) -> Iter[B] {
