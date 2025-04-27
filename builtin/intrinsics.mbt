@@ -1472,6 +1472,18 @@ pub fn Bytes::new(len : Int) -> Bytes {
 pub fn Int::to_byte(self : Int) -> Byte = "%i32_to_byte"
 
 ///|
+pub fn Int::unsafe_to_char(self : Int) -> Char = "%char_from_int"
+
+///|
+pub fn Int::to_char(self : Int) -> Char? {
+  if self is (0..=0xD7FF) || self is (0xE000..=0x10FFFF) {
+    Some(self.unsafe_to_char())
+  } else {
+    None
+  }
+}
+
+///|
 /// Converts an unsigned 64-bit integer to a byte by truncating it to fit within
 /// the byte range (0 to 255).
 ///

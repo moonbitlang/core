@@ -412,6 +412,7 @@ impl Int {
   #deprecated
   shr(Int, Int) -> Int
   to_byte(Int) -> Byte
+  to_char(Int) -> Char?
   to_double(Int) -> Double
   to_float(Int) -> Float
   to_int16(Int) -> Int16
@@ -421,6 +422,7 @@ impl Int {
   to_uint(Int) -> UInt
   to_uint16(Int) -> UInt16
   to_uint64(Int) -> UInt64
+  unsafe_to_char(Int) -> Char
   until(Int, Int, step~ : Int = .., inclusive~ : Bool = ..) -> Iter[Int]
   #deprecated
   upto(Int, Int, inclusive~ : Bool = ..) -> Iter[Int]

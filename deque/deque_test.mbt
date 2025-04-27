@@ -832,12 +832,8 @@ test "deque truncate" {
   // Current layout: [X, X, X, 4, 5, X]
   dq.truncate(2)
   @json.inspect!(dq.as_views(), content=[[4, 5], []])
-}
-
-///|
-test "panic deque truncate" {
-  let dq = @deque.of([1, 2, 3, 4, 5])
   dq.truncate(-1)
+  @json.inspect!(dq.as_views(), content=[[4, 5], []])
 }
 
 ///|

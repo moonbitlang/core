@@ -1,0 +1,217 @@
+package "moonbitlang/core/list"
+
+import(
+  "moonbitlang/core/json"
+  "moonbitlang/core/quickcheck"
+)
+
+// Values
+fn all[A](T[A], (A) -> Bool) -> Bool
+
+fn any[A](T[A], (A) -> Bool) -> Bool
+
+fn concat[A](T[A], T[A]) -> T[A]
+
+fn construct[A](A, T[A]) -> T[A]
+
+fn contains[A : Eq](T[A], A) -> Bool
+
+fn default[X]() -> T[X]
+
+fn drop[A](T[A], Int) -> T[A]
+
+fn drop_while[A](T[A], (A) -> Bool) -> T[A]
+
+fn each[A](T[A], (A) -> Unit) -> Unit
+
+fn eachi[A](T[A], (Int, A) -> Unit) -> Unit
+
+fn empty[A]() -> T[A]
+
+fn filter[A](T[A], (A) -> Bool) -> T[A]
+
+fn filter_map[A, B](T[A], (A) -> B?) -> T[B]
+
+fn find[A](T[A], (A) -> Bool) -> A?
+
+fn findi[A](T[A], (A, Int) -> Bool) -> A?
+
+fn flat_map[A, B](T[A], (A) -> T[B]) -> T[B]
+
+fn flatten[A](T[T[A]]) -> T[A]
+
+fn fold[A, B](T[A], init~ : B, (B, A) -> B) -> B
+
+fn foldi[A, B](T[A], init~ : B, (Int, B, A) -> B) -> B
+
+fn from_array[A](Array[A]) -> T[A]
+
+fn from_iter[A](Iter[A]) -> T[A]
+
+fn from_iter_rev[A](Iter[A]) -> T[A]
+
+fn from_json[A : @json.FromJson](Json) -> T[A]!@json.JsonDecodeError
+
+fn head[A](T[A]) -> A?
+
+fn intercalate[A](T[T[A]], T[A]) -> T[A]
+
+fn intersperse[A](T[A], A) -> T[A]
+
+fn is_empty[A](T[A]) -> Bool
+
+fn is_prefix[A : Eq](T[A], T[A]) -> Bool
+
+fn is_suffix[A : Eq](T[A], T[A]) -> Bool
+
+fn iter[A](T[A]) -> Iter[A]
+
+fn iter2[A](T[A]) -> Iter2[Int, A]
+
+fn last[A](T[A]) -> A?
+
+fn length[A](T[A]) -> Int
+
+fn lookup[A : Eq, B](T[(A, B)], A) -> B?
+
+fn map[A, B](T[A], (A) -> B) -> T[B]
+
+fn mapi[A, B](T[A], (Int, A) -> B) -> T[B]
+
+fn maximum[A : Compare](T[A]) -> A?
+
+fn minimum[A : Compare](T[A]) -> A?
+
+fn new[A]() -> T[A]
+
+fn nth[A](T[A], Int) -> A?
+
+fn of[A](FixedArray[A]) -> T[A]
+
+fn prepend[A](T[A], A) -> T[A]
+
+fn remove[A : Eq](T[A], A) -> T[A]
+
+fn remove_at[A](T[A], Int) -> T[A]
+
+fn repeat[A](Int, A) -> T[A]
+
+fn rev[A](T[A]) -> T[A]
+
+fn rev_concat[A](T[A], T[A]) -> T[A]
+
+fn rev_fold[A, B](T[A], init~ : B, (B, A) -> B) -> B
+
+fn rev_foldi[A, B](T[A], init~ : B, (Int, B, A) -> B) -> B
+
+fn rev_map[A, B](T[A], (A) -> B) -> T[B]
+
+fn scan_left[A, E](T[A], (E, A) -> E, init~ : E) -> T[E]
+
+fn scan_right[A, B](T[A], (B, A) -> B, init~ : B) -> T[B]
+
+fn singleton[A](A) -> T[A]
+
+fn sort[A : Compare](T[A]) -> T[A]
+
+fn tail[A](T[A]) -> T[A]
+
+fn take[A](T[A], Int) -> T[A]
+
+fn take_while[A](T[A], (A) -> Bool) -> T[A]
+
+fn to_array[A](T[A]) -> Array[A]
+
+fn to_json[A : ToJson](T[A]) -> Json
+
+fn unfold[A, S]((S) -> (A, S)?, init~ : S) -> T[A]
+
+fn unsafe_head[A](T[A]) -> A
+
+fn unsafe_last[A](T[A]) -> A
+
+fn unsafe_maximum[A : Compare](T[A]) -> A
+
+fn unsafe_minimum[A : Compare](T[A]) -> A
+
+fn unsafe_nth[A](T[A], Int) -> A
+
+fn unzip[A, B](T[(A, B)]) -> (T[A], T[B])
+
+fn zip[A, B](T[A], T[B]) -> T[(A, B)]
+
+// Types and methods
+pub enum T[A] {
+  Empty
+  More(A, mut tail~ : T[A])
+}
+impl T {
+  all[A](Self[A], (A) -> Bool) -> Bool
+  any[A](Self[A], (A) -> Bool) -> Bool
+  concat[A](Self[A], Self[A]) -> Self[A]
+  contains[A : Eq](Self[A], A) -> Bool
+  drop[A](Self[A], Int) -> Self[A]
+  drop_while[A](Self[A], (A) -> Bool) -> Self[A]
+  each[A](Self[A], (A) -> Unit) -> Unit
+  eachi[A](Self[A], (Int, A) -> Unit) -> Unit
+  filter[A](Self[A], (A) -> Bool) -> Self[A]
+  filter_map[A, B](Self[A], (A) -> B?) -> Self[B]
+  find[A](Self[A], (A) -> Bool) -> A?
+  findi[A](Self[A], (A, Int) -> Bool) -> A?
+  flat_map[A, B](Self[A], (A) -> Self[B]) -> Self[B]
+  flatten[A](Self[Self[A]]) -> Self[A]
+  fold[A, B](Self[A], init~ : B, (B, A) -> B) -> B
+  foldi[A, B](Self[A], init~ : B, (Int, B, A) -> B) -> B
+  head[A](Self[A]) -> A?
+  intercalate[A](Self[Self[A]], Self[A]) -> Self[A]
+  intersperse[A](Self[A], A) -> Self[A]
+  is_empty[A](Self[A]) -> Bool
+  is_prefix[A : Eq](Self[A], Self[A]) -> Bool
+  is_suffix[A : Eq](Self[A], Self[A]) -> Bool
+  iter[A](Self[A]) -> Iter[A]
+  iter2[A](Self[A]) -> Iter2[Int, A]
+  last[A](Self[A]) -> A?
+  length[A](Self[A]) -> Int
+  lookup[A : Eq, B](Self[(A, B)], A) -> B?
+  map[A, B](Self[A], (A) -> B) -> Self[B]
+  mapi[A, B](Self[A], (Int, A) -> B) -> Self[B]
+  maximum[A : Compare](Self[A]) -> A?
+  minimum[A : Compare](Self[A]) -> A?
+  nth[A](Self[A], Int) -> A?
+  prepend[A](Self[A], A) -> Self[A]
+  remove[A : Eq](Self[A], A) -> Self[A]
+  remove_at[A](Self[A], Int) -> Self[A]
+  rev[A](Self[A]) -> Self[A]
+  rev_concat[A](Self[A], Self[A]) -> Self[A]
+  rev_fold[A, B](Self[A], init~ : B, (B, A) -> B) -> B
+  rev_foldi[A, B](Self[A], init~ : B, (Int, B, A) -> B) -> B
+  rev_map[A, B](Self[A], (A) -> B) -> Self[B]
+  scan_left[A, E](Self[A], (E, A) -> E, init~ : E) -> Self[E]
+  scan_right[A, B](Self[A], (B, A) -> B, init~ : B) -> Self[B]
+  sort[A : Compare](Self[A]) -> Self[A]
+  tail[A](Self[A]) -> Self[A]
+  take[A](Self[A], Int) -> Self[A]
+  take_while[A](Self[A], (A) -> Bool) -> Self[A]
+  to_array[A](Self[A]) -> Array[A]
+  to_json[A : ToJson](Self[A]) -> Json
+  unsafe_head[A](Self[A]) -> A
+  unsafe_last[A](Self[A]) -> A
+  unsafe_maximum[A : Compare](Self[A]) -> A
+  unsafe_minimum[A : Compare](Self[A]) -> A
+  unsafe_nth[A](Self[A], Int) -> A
+  unzip[A, B](Self[(A, B)]) -> (Self[A], Self[B])
+  zip[A, B](Self[A], Self[B]) -> Self[(A, B)]
+}
+impl[A] Add for T[A]
+impl[X] Default for T[X]
+impl[A : Eq] Eq for T[A]
+impl[A : Hash] Hash for T[A]
+impl[A : Show] Show for T[A]
+impl[A : ToJson] ToJson for T[A]
+impl[A : @json.FromJson] @json.FromJson for T[A]
+impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[X]
+
+// Type aliases
+
+// Traits
+

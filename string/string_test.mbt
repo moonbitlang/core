@@ -563,11 +563,11 @@ test "String::fold" {
   let s = "this is a long string"
   inspect!(s.fold(init=0, fn(acc, c) { acc + c.to_int() }), content="1980")
   inspect!(
-    s.fold(init=@list.Nil, @list.add) |> @list.rev(),
+    s.fold(init=@list.empty(), @list.prepend) |> @list.rev(),
     content="@list.of(['t', 'h', 'i', 's', ' ', 'i', 's', ' ', 'a', ' ', 'l', 'o', 'n', 'g', ' ', 's', 't', 'r', 'i', 'n', 'g'])",
   )
   inspect!(
-    s.rev_fold(init=@list.Nil, @list.add),
+    s.rev_fold(init=@list.empty(), @list.prepend),
     content="@list.of(['t', 'h', 'i', 's', ' ', 'i', 's', ' ', 'a', ' ', 'l', 'o', 'n', 'g', ' ', 's', 't', 'r', 'i', 'n', 'g'])",
   )
 }
