@@ -98,6 +98,7 @@ pub fn get[K : Compare, V](self : T[K, V], key : K) -> V? {
 }
 
 ///|
+#deprecated("Use `get` instead. `op_get` will return `V` instead of `Option[V]` in the future.")
 pub fn op_get[K : Compare, V](self : T[K, V], key : K) -> V? {
   self.get(key)
 }

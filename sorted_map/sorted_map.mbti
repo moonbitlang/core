@@ -34,6 +34,7 @@ fn new[K, V]() -> T[K, V]
 #deprecated
 fn of[K : Compare, V](Array[(K, V)]) -> T[K, V]
 
+#deprecated
 fn op_get[K : Compare, V](T[K, V], K) -> V?
 
 fn op_set[K : Compare, V](T[K, V], K, V) -> Unit
@@ -61,6 +62,7 @@ impl T {
   iter[K, V](Self[K, V]) -> Iter[(K, V)]
   iter2[K, V](Self[K, V]) -> Iter2[K, V]
   keys[K, V](Self[K, V]) -> Array[K]
+  #deprecated
   op_get[K : Compare, V](Self[K, V], K) -> V?
   op_set[K : Compare, V](Self[K, V], K, V) -> Unit
   range[K : Compare, V](Self[K, V], K, K) -> Iter2[K, V]

@@ -42,6 +42,7 @@ fn new[K, V]() -> T[K, V]
 
 fn of[K : Eq + Hash, V](FixedArray[(K, V)]) -> T[K, V]
 
+#deprecated
 fn op_get[K : Eq + Hash, V](T[K, V], K) -> V?
 
 fn remove[K : Eq + Hash, V](T[K, V], K) -> T[K, V]
@@ -72,6 +73,7 @@ impl T {
   keys[K, V](Self[K, V]) -> Iter[K]
   map[K : Eq + Hash, V, A](Self[K, V], (V) -> A) -> Self[K, A]
   map_with_key[K : Eq + Hash, V, A](Self[K, V], (K, V) -> A) -> Self[K, A]
+  #deprecated
   op_get[K : Eq + Hash, V](Self[K, V], K) -> V?
   remove[K : Eq + Hash, V](Self[K, V], K) -> Self[K, V]
   size[K, V](Self[K, V]) -> Int

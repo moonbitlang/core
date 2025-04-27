@@ -70,7 +70,7 @@ pub fn as_object(self : JsonValue) -> Map[String, JsonValue]? {
 /// Try to get this element as a Json Object and get the element with the `key` as a Json Value
 pub fn value(self : JsonValue, key : String) -> JsonValue? {
   match self.as_object() {
-    Some(obj) => obj[key]
+    Some(obj) => obj.get(key)
     None => None
   }
 }
