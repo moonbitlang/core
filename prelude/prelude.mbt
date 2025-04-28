@@ -15,17 +15,17 @@
 ///|
 pub typealias @builtin.(
   ArgsLoc,
-  Array[X],
-  ArrayView[X],
-  UninitializedArray[X],
+  Array,
+  ArrayView,
+  UninitializedArray,
   BigInt,
   Failure,
   Hasher,
-  Iter[X],
-  Iter2[X, Y],
+  Iter,
+  Iter2,
   IterResult,
   Json,
-  Map[K, V],
+  Map,
   InspectError,
   SnapshotError,
   SourceLoc,
@@ -33,7 +33,7 @@ pub typealias @builtin.(
 )
 
 ///|
-pub typealias @set.Set[X]
+pub typealias @set.Set
 
 ///|
 pub traitalias @builtin.(

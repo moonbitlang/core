@@ -43,9 +43,9 @@ fn then[T, R](T, (T) -> R) -> R
 // Type aliases
 pub typealias ArgsLoc = @builtin.ArgsLoc
 
-pub typealias Array[X] = @builtin.Array[X]
+pub typealias Array[T] = @builtin.Array[T]
 
-pub typealias ArrayView[X] = @builtin.ArrayView[X]
+pub typealias ArrayView[T] = @builtin.ArrayView[T]
 
 pub typealias BigInt = @builtin.BigInt
 
@@ -55,9 +55,9 @@ pub typealias Hasher = @builtin.Hasher
 
 pub typealias InspectError = @builtin.InspectError
 
-pub typealias Iter[X] = @builtin.Iter[X]
+pub typealias Iter[T] = @builtin.Iter[T]
 
-pub typealias Iter2[X, Y] = @builtin.Iter2[X, Y]
+pub typealias Iter2[A, B] = @builtin.Iter2[A, B]
 
 pub typealias IterResult = @builtin.IterResult
 
@@ -65,7 +65,7 @@ pub typealias Json = @builtin.Json
 
 pub typealias Map[K, V] = @builtin.Map[K, V]
 
-pub typealias Set[X] = @moonbitlang/core/set.Set[X]
+pub typealias Set[K] = @moonbitlang/core/set.Set[K]
 
 pub typealias SnapshotError = @builtin.SnapshotError
 
@@ -73,7 +73,7 @@ pub typealias SourceLoc = @builtin.SourceLoc
 
 pub typealias StringBuilder = @builtin.StringBuilder
 
-pub typealias UninitializedArray[X] = @builtin.UninitializedArray[X]
+pub typealias UninitializedArray[T] = @builtin.UninitializedArray[T]
 
 pub traitalias Add = @builtin.Add
 
