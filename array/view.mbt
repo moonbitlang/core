@@ -344,6 +344,23 @@ pub fn View::filter[T](self : View[T], f : (T) -> Bool) -> Array[T] {
 }
 
 ///|
+/// Copy the view elements to a new array
+///
+/// # Example
+/// ```
+/// let view = [1, 2, 3, 4, 5, 6][2:4]
+/// let arr = view.to_array()
+/// assert_eq!(arr, [3, 4])
+/// ```
+pub fn View::to_array[T](self : View[T]) -> Array[T] {
+  let arr = []
+  for v in self {
+    arr.push(v)
+  }
+  arr
+}
+
+///|
 pub impl[X : Show] Show for View[X] with output(self, logger) {
   logger.write_iter(self.iter())
 }

@@ -174,3 +174,10 @@ test "arrayview_filter" {
   assert_eq!(filtered.length(), 1)
   assert_eq!(filtered[0], 4)
 }
+
+///|
+test "arrayview_to_array" {
+  let view = [1, 2, 3, 4, 5, 6][2:4]
+  let arr = view.to_array()
+  assert_eq!(arr, [3, 4])
+}
