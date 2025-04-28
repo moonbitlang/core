@@ -334,7 +334,7 @@ pub fn View::mapi_inplace[T](self : View[T], f : (Int, T) -> T) -> Unit {
 /// assert_eq!(v, [4, 6])
 /// ```
 pub fn View::filter[T](self : View[T], f : (T) -> Bool) -> Array[T] {
-  let arr = []
+  let arr = Array::new(capacity=self.length())
   for v in self {
     if f(v) {
       arr.push(v)
