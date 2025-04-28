@@ -466,18 +466,6 @@ impl[T : Show] Show for Node[T] with output(self, logger) {
 }
 
 ///|
-fn Node::to_array[T](self : Node[T]) -> Array[T] {
-  fn aux(n : Node[T]?) -> Array[_] {
-    match n {
-      None => []
-      Some({ value, left, right, .. }) => aux(left) + [value] + aux(right)
-    }
-  }
-
-  aux(Some(self))
-}
-
-///|
 pub fn range[V : Compare](self : T[V], low : V, high : V) -> Iter[V] {
   range_aux(self.root, low, high)
 }
