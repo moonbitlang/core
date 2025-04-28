@@ -1036,3 +1036,68 @@ pub fn Iter::group_by[T, K : Eq + Hash](
   }
   result
 }
+
+///|
+/// Groups elements of an iterator according to a discriminator function.
+///
+/// # Parameters
+///
+/// * `self` - The input iterator.
+/// * `f` - The discriminator function that maps elements to keys.
+///
+/// # Returns
+///
+/// An iterator of tuples where each tuple contains a key and an iterator of elements that share that key.
+///
+/// # Example
+///
+/// ```moonbit
+/// test "chunk_by" {
+///   let iter = [1, 1, 2, 3, 2, 2, 1].iter()
+///   let chunked = iter.chunk_by(fn(x) { x })
+///   let result = chunked.map(fn(g) { (g.0, g.1.collect()) }).collect()
+///   assert_eq!(result, [(1, [1, 1]), (2, [2]), (3, [3]), (2, [2, 2]), (1, [1])])
+/// }
+pub fn Iter::chunk_by[T, K : Eq](
+  self : Iter[T],
+  f : (T) -> K
+) -> Iter[(K, Iter[T])] {
+  fn(yield_) {
+    let mut has_current = false
+    let mut current_key : K? = None
+    let mut buffer : Array[T] = []
+    fn emit_current_chunk() -> IterResult {
+      if buffer.is_empty() {
+        return IterContinue
+      }
+      let key = current_key.unwrap()
+      let elements = buffer
+      buffer = Array::new(capacity=16)
+      yield_((key, elements.iter()))
+    }
+
+    self.run(fn(x) {
+      let key = f(x)
+      if has_current && key == current_key.unwrap() {
+        buffer.push(x)
+        IterContinue
+      } else {
+        if has_current {
+          if emit_current_chunk() == IterEnd {
+            return IterEnd
+          }
+        }
+        has_current = true
+        current_key = Some(key)
+        buffer.push(x)
+        IterContinue
+      }
+    })
+    |> ignore
+    if has_current {
+      emit_current_chunk()
+    } else {
+      IterContinue
+    }
+  }
+}

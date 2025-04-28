@@ -218,6 +218,7 @@ impl Iter {
   all[T](Self[T], (T) -> Bool) -> Bool
   any[T](Self[T], (T) -> Bool) -> Bool
   append[T](Self[T], T) -> Self[T]
+  chunk_by[T, K : Eq](Self[T], (T) -> K) -> Self[(K, Self[T])]
   collect[T](Self[T]) -> Array[T]
   concat[T](Self[T], Self[T]) -> Self[T]
   contains[A : Eq](Self[A], A) -> Bool
