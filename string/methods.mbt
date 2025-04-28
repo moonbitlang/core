@@ -664,11 +664,7 @@ pub fn View::split(self : View, sep : View) -> Iter[View] {
       }
       view = view.view(start_offset=end + sep_len)
     } else {
-      if view.is_empty() {
-        IterContinue
-      } else {
-        yield_(view)
-      }
+      yield_(view)
     }
   })
 }
@@ -701,12 +697,14 @@ test "split" {
   assert_eq!(",a,b,c".split(",").map(View::to_string).collect(), [
     "", "a", "b", "c",
   ])
-  assert_eq!("a,b,c,".split(",").map(View::to_string).collect(), ["a", "b", "c"])
+  assert_eq!("a,b,c,".split(",").map(View::to_string).collect(), [
+    "a", "b", "c", "",
+  ])
   assert_eq!("a,b,c".split("").map(View::to_string).collect(), [
     "a", ",", "b", ",", "c",
   ])
   assert_eq!("".split("").map(View::to_string).collect(), [])
-  assert_eq!("".split(",").map(View::to_string).collect(), [])
+  assert_eq!("".split(",").map(View::to_string).collect(), [""])
   assert_eq!("😀,😃,😄".split(",").map(View::to_string).collect(), [
     "😀", "😃", "😄",
   ])
