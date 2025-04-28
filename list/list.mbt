@@ -407,9 +407,9 @@ pub fn rev[A](self : T[A]) -> T[A] {
 /// assert_eq!(r, 15)
 /// ```
 pub fn fold[A, B](self : T[A], init~ : B, f : (B, A) -> B) -> B {
-  match self {
-    Empty => init
-    More(head, tail~) => tail.fold(f, init=f(init, head))
+  loop self, init {
+    Empty, acc => acc
+    More(head, tail~), acc => continue tail, f(acc, head)
   }
 }
 
