@@ -62,34 +62,10 @@ pub fn ignore[T](t : T) -> Unit = "%ignore"
 pub fn physical_equal[T](a : T, b : T) -> Bool = "%refeq"
 
 ///|
-/// Aborts the program with an error message. Always causes a panic, regardless
-/// of the message provided.
-///
-/// Parameters:
-///
-/// * `message` : A string containing the error message to be displayed when
-/// aborting.
-///
-/// Returns a value of type `T`. However, this function never actually returns a
-/// value as it always causes a panic.
-///
-/// Example:
-///
-/// ```moonbit
-/// test "panic abort/with_message" {
-///   let x : Int = abort("Something went wrong") // specify return type as Int
-///   ignore(x)
-/// }
-/// ```
-pub fn abort[T](msg : String) -> T {
-  ignore(msg)
-  panic()
-}
+pub fnalias @panic.panic
 
 ///|
-pub fn panic[T]() -> T = "%panic"
-
-// Bool primitive ops
+pub fnalias @panic.abort
 
 ///|
 /// Performs logical negation on a boolean value.

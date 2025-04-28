@@ -1,0 +1,13 @@
+package "moonbitlang/core/panic"
+
+// Values
+fn abort[T](String) -> T
+
+fn panic[T]() -> T
+
+// Types and methods
+
+// Type aliases
+
+// Traits
+

@@ -1,0 +1,8 @@
+{
+  "import": [
+    "moonbitlang/core/intrinsics"
+  ],
+  "virtual": {
+    "has-default": true
+  }
+}

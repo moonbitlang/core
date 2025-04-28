@@ -1,5 +1,7 @@
 {
-  "import": [],
+  "import": [
+    "moonbitlang/core/panic"
+  ],
   "test-import": [
     "moonbitlang/core/char",
     "moonbitlang/core/string",
