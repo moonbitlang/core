@@ -124,39 +124,25 @@ pub fn clear[K, V](self : T[K, V]) -> Unit {
 ///|
 /// Iterates the map.
 pub fn each[K, V](self : T[K, V], f : (K, V) -> Unit) -> Unit {
-  let s = []
-  let mut p = self.root
-  while not(p.is_empty()) || not(s.is_empty()) {
-    while not(p.is_empty()) {
-      s.push(p)
-      p = p.unwrap().left
-    }
-    if not(s.is_empty()) {
-      p = s.unsafe_pop()
-      f(p.unwrap().key, p.unwrap().value)
-      p = p.unwrap().right
+  fn dfs(root : Node[K, V]?) -> Unit {
+    if root is Some(root) {
+      dfs(root.left)
+      f(root.key, root.value)
+      dfs(root.right)
     }
   }
+
+  dfs(self.root)
 }
 
 ///|
 /// Iterates the map with index.
 pub fn eachi[K, V](self : T[K, V], f : (Int, K, V) -> Unit) -> Unit {
-  let s = []
-  let mut p = self.root
   let mut i = 0
-  while not(p.is_empty()) || not(s.is_empty()) {
-    while not(p.is_empty()) {
-      s.push(p)
-      p = p.unwrap().left
-    }
-    if not(s.is_empty()) {
-      p = s.unsafe_pop()
-      f(i, p.unwrap().key, p.unwrap().value)
-      p = p.unwrap().right
-      i += 1
-    }
-  }
+  self.each(fn(k, v) {
+    f(i, k, v)
+    i = i + 1
+  })
 }
 
 ///|
