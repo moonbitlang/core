@@ -423,7 +423,12 @@ pub fn fold[A, B](self : T[A], init~ : B, f : (B, A) -> B) -> B {
 /// assert_eq!(r, 15)
 /// ```
 pub fn rev_fold[A, B](self : T[A], init~ : B, f : (B, A) -> B) -> B {
-  self.rev().fold(init~, f)
+  let xs = self.to_array()
+  let mut acc = init
+  for x in xs.rev_iter() {
+    acc = f(acc, x)
+  }
+  acc
 }
 
 ///|
