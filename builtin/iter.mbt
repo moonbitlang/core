@@ -998,3 +998,23 @@ pub fn Iter::minimum[T : Compare](self : Iter[T]) -> T? {
   }
   res
 }
+
+///|
+/// Returns an iterator that iterates over the index and the element of the iterator.
+pub fn Iter::iteri[T](self : Iter[T], offset~ : Int = 0) -> Iter2[Int, T] {
+  fn {
+    yield_ => {
+      let mut value = offset - 1
+      self.run(fn(i) {
+        value += 1
+        yield_(value, i)
+      })
+    }
+  }
+}
+
+///|
+/// Returns an iterator that iterates over the key value pair.
+pub fn Iter::iter2[K, V](self : Iter[(K, V)]) -> Iter2[K, V] {
+  fn { yield_ => self.run(fn { (k, v) => yield_(k, v) }) }
+}
