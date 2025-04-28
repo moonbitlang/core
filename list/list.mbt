@@ -268,11 +268,9 @@ pub fn all[A](self : T[A], f : (A) -> Bool) -> Bool {
 ///|
 /// Test if any element of the list satisfies the predicate.
 pub fn any[A](self : T[A], f : (A) -> Bool) -> Bool {
-  match self {
+  loop self {
     Empty => false
-    More(head, tail~) =>
-      // this is tail recursive
-      f(head) || any(tail, f)
+    More(head, tail~) => if f(head) { true } else { continue tail }
   }
 }
 
