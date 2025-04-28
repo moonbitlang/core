@@ -31,26 +31,14 @@ test {
 
 ## Transformation
 
-You can transform the tuple using the `map_fst` and `map_snd` method, which will apply the function to the first and second element of the tuple respectively.
+You can transform the tuple using the matrix functions combined with `then`.
 
 ```moonbit  
 test {
     let tuple = (1, 2)
-    let _tuple2 = @tuple.map_fst(fn(x) { x + 1 }, tuple) // tuple2 = (2, 2)
-    let _tuple3 = @tuple.map_snd(fn(x) { x + 1 }, tuple) // tuple3 = (1, 3)
-}
-```
-
-Or you can use the `map_both` method to apply the function to both elements of the tuple.
-
-```moonbit
-test {
-    let tuple = (1, 2)
-    let _mapped = @tuple.map_both(
-        fn(x : Int) -> Int { x + 1 },
-        fn(x : Int) -> Int { x - 1 },
-        tuple
-    ) // mapped = (2, 1)
+    let _tuple2 = (fn { (x, y) => (x + 1, y) })(tuple) // tuple2 = (2, 2)
+    let _tuple3 = tuple |> then(fn { (x, y) => (x, y + 1) }) // tuple3 = (1, 3)
+    let _mapped = tuple |> then(fn(pair) { (pair.0 + 1, pair.1 - 1) }) // _mapped = 2, 1
 }
 ```
 

@@ -237,6 +237,16 @@ test "map" {
 }
 
 ///|
+test "mapi" {
+  let iter = test_from_array(['1', '2', '3', '4', '5'])
+  let exb = StringBuilder::new(size_hint=0)
+  iter
+  .mapi(fn { i, x => (i + x.to_int()).to_char().unwrap() })
+  .each(fn { x => exb.write_char(x) })
+  inspect!(exb, content="13579")
+}
+
+///|
 test "filter_map" {
   let arr = [1, 2, 3, 4, 5]
   let r1 = arr
