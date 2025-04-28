@@ -109,23 +109,43 @@ pub fn[T : Show] is_not(a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
   }
 }
 
-///|
+///| 
+/// Expected to be used in test blocks, don't catch this error.
+///  
+/// Produces an error message similar to @builtin.fail.
 pub fn[T] fail(msg : String, loc~ : SourceLoc = _) -> T! {
-  @builtin.fail(msg, loc~)
+  @builtin.fail!(msg, loc~)
 }
 
 ///|
+/// Write data to snapshot buffer, use `snapshot` to output.
+/// 
+/// See also `@test.T::writeln`
 pub fn write(self : T, obj : &Show) -> Unit {
   self.buffer.write_string(obj.to_string())
 }
 
-///|
+///| 
+/// Write data to snapshot buffer and newline, use `snapshot` to output.
+/// 
+/// See also `@test.T::write`
 pub fn writeln(self : T, obj : &Show) -> Unit {
   self.write(obj)
   self.buffer.write_char('\n')
 }
 
 ///|
+/// Take a snapshot of the current buffer and write to a file.
+/// 
+/// ```
+///  test {
+///   let t = new("test.txt")
+///   t.writeln("hello")
+///   t.snapshot!(filename="test.txt") // actual test block end
+/// }
+/// ```
+///
+/// Currently it can only be used once and should be used as the last step.
 pub fn snapshot(
   self : T,
   filename~ : String,
