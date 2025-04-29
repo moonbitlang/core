@@ -161,7 +161,7 @@ pub fn eachi[K, V](self : T[K, V], f : (Int, K, V) -> Unit) -> Unit {
 ///|
 /// Returns all keys in the map.
 pub fn keys[K, V](self : T[K, V]) -> Array[K] {
-  let keys = []
+  let keys = Array::new(capacity=self.size)
   self.each(fn(k, _v) { keys.push(k) })
   keys
 }
@@ -169,7 +169,7 @@ pub fn keys[K, V](self : T[K, V]) -> Array[K] {
 ///|
 /// Returns all values in the map.
 pub fn values[K, V](self : T[K, V]) -> Array[V] {
-  let values = []
+  let values = Array::new(capacity=self.size)
   self.each(fn(_k, v) { values.push(v) })
   values
 }
@@ -177,7 +177,7 @@ pub fn values[K, V](self : T[K, V]) -> Array[V] {
 ///|
 /// Converts the map to an array.
 pub fn to_array[K, V](self : T[K, V]) -> Array[(K, V)] {
-  let arr = []
+  let arr = Array::new(capacity=self.size)
   self.each(fn(k, v) { arr.push((k, v)) })
   arr
 }
