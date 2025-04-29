@@ -98,6 +98,7 @@ impl ArrayView {
   rev_fold[A, B](Self[A], init~ : B, (B, A) -> B) -> B
   rev_foldi[A, B](Self[A], init~ : B, (Int, B, A) -> B) -> B
   rev_inplace[T](Self[T]) -> Unit
+  to_array[T](Self[T]) -> Array[T]
 }
 impl[T : Compare] Compare for ArrayView[T]
 impl[T : Eq] Eq for ArrayView[T]
