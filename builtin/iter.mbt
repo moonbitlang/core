@@ -1029,10 +1029,13 @@ pub fn Iter::group_by[T, K : Eq + Hash](
   let result = Map::new()
   for element in self {
     let key = f(element)
-    match result.get(key) {
-      Some(arr) => result.set(key, arr + [element])
-      None => result.set(key, [element])
-    }
+    let _ = result.update(key, fn(arr) {
+      match arr {
+        Some(existing) => existing + [element]
+        None => [element]
+      }
+    })
+
   }
   result
 }

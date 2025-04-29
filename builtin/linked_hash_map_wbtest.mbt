@@ -891,7 +891,6 @@ test "op_equal_key_value_mismatch" {
 ///|
 test "Map::update basic functionality" {
   let map = { "a": 1, "b": 2 }
-
   let _ = map.update("a", fn(v) {
     match v {
       Some(val) => val * 2
@@ -899,7 +898,6 @@ test "Map::update basic functionality" {
     }
   })
   assert_eq!(map.get("a"), Some(2))
-
   let _ = map.update("c", fn(v) {
     match v {
       Some(val) => val
@@ -912,7 +910,6 @@ test "Map::update basic functionality" {
 ///|
 test "Map::update with complex operations" {
   let map = { "counter": 0 }
-
   let _ = map.update("counter", fn(v) {
     match v {
       Some(val) => val + 1
@@ -935,9 +932,9 @@ test "Map::update with complex operations" {
   assert_eq!(map.get("counter"), Some(0))
 }
 
+///|
 test "Map::update with different value types" {
   let map : Map[String, Array[Int]] = {}
-
   let res1 = map.update("numbers", fn(v) {
     match v {
       Some(arr) => {
@@ -981,7 +978,6 @@ test "Map::update with multiple operations" {
   let _ = map.update("a", fn(_) { 1 })
   let _ = map.update("b", fn(_) { 2 })
   let _ = map.update("c", fn(_) { 3 })
-
   assert_eq!(map.size(), 3)
   assert_eq!(map.get("a"), Some(1))
   assert_eq!(map.get("b"), Some(2))
@@ -995,8 +991,8 @@ test "Map::update with multiple operations" {
         None => 0
       }
     })
-  }
 
+  }
   assert_eq!(map.get("a"), Some(10))
   assert_eq!(map.get("b"), Some(20))
   assert_eq!(map.get("c"), Some(30))
