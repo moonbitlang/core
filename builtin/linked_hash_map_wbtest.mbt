@@ -887,3 +887,134 @@ test "op_equal_key_value_mismatch" {
   // This should return false as the values are different
   assert_eq!(map1 == map2, false)
 }
+
+///|
+test "Map::update basic functionality" {
+  let map = { "a": 1, "b": 2 }
+
+  let _ = map.update("a", fn(v) {
+    match v {
+      Some(val) => val * 2
+      None => 0
+    }
+  })
+  assert_eq!(map.get("a"), Some(2))
+
+  let _ = map.update("c", fn(v) {
+    match v {
+      Some(val) => val
+      None => 42
+    }
+  })
+  assert_eq!(map.get("c"), Some(42))
+}
+
+///|
+test "Map::update with complex operations" {
+  let map = { "counter": 0 }
+
+  let _ = map.update("counter", fn(v) {
+    match v {
+      Some(val) => val + 1
+      None => 1
+    }
+  })
+  assert_eq!(map.get("counter"), Some(1))
+
+  // Increment again
+  let _ = map.update("counter", fn(v) {
+    match v {
+      Some(val) => val + 1
+      None => 1
+    }
+  })
+  assert_eq!(map.get("counter"), Some(2))
+
+  // Reset counter
+  let _ = map.update("counter", fn(_) { 0 })
+  assert_eq!(map.get("counter"), Some(0))
+}
+
+test "Map::update with different value types" {
+  let map : Map[String, Array[Int]] = {}
+
+  let res1 = map.update("numbers", fn(v) {
+    match v {
+      Some(arr) => {
+        let new_arr = []
+        for i in arr {
+          new_arr.push(i)
+        }
+        new_arr.push(1)
+        new_arr
+      }
+      None => [1]
+    }
+  })
+  assert_eq!(res1[0], 1)
+  assert_eq!(map.get("numbers").unwrap().length(), 1)
+
+  // Add more elements
+  let res2 = map.update("numbers", fn(v) {
+    match v {
+      Some(arr) => {
+        let new_arr = []
+        for i in arr {
+          new_arr.push(i)
+        }
+        new_arr.push(2)
+        new_arr.push(3)
+        new_arr
+      }
+      None => [2, 3]
+    }
+  })
+  assert_eq!(res2, [1, 2, 3])
+  assert_eq!(map.get("numbers").unwrap().length(), 3)
+}
+
+///|
+test "Map::update with multiple operations" {
+  let map = {}
+
+  // Initialize multiple keys
+  let _ = map.update("a", fn(_) { 1 })
+  let _ = map.update("b", fn(_) { 2 })
+  let _ = map.update("c", fn(_) { 3 })
+
+  assert_eq!(map.size(), 3)
+  assert_eq!(map.get("a"), Some(1))
+  assert_eq!(map.get("b"), Some(2))
+  assert_eq!(map.get("c"), Some(3))
+
+  // Update all values at once
+  for k in ["a", "b", "c"] {
+    let _ = map.update(k, fn(v) {
+      match v {
+        Some(val) => val * 10
+        None => 0
+      }
+    })
+  }
+
+  assert_eq!(map.get("a"), Some(10))
+  assert_eq!(map.get("b"), Some(20))
+  assert_eq!(map.get("c"), Some(30))
+}
+
+///|
+test "update preserves order" {
+  let map = {}
+
+  // Add keys in specific order
+  let _ = map.update("first", fn(_) { 1 })
+  let _ = map.update("second", fn(_) { 2 })
+  let _ = map.update("third", fn(_) { 3 })
+
+  // Update middle key
+  let _ = map.update("second", fn(_) { 22 })
+
+  // Check that order is preserved
+  let keys = map.keys().collect()
+  assert_eq!(keys, ["first", "second", "third"])
+}

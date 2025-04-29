@@ -326,6 +326,7 @@ impl Map {
   set[K : Hash + Eq, V](Self[K, V], K, V) -> Unit
   size[K, V](Self[K, V]) -> Int
   to_array[K, V](Self[K, V]) -> Array[(K, V)]
+  update[K : Hash + Eq, V](Self[K, V], K, (V?) -> V) -> V
   values[K, V](Self[K, V]) -> Iter[V]
 }
 impl[K, V] Default for Map[K, V]

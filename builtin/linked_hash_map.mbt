@@ -263,6 +263,59 @@ pub fn Map::get_or_init[K : Hash + Eq, V](
 }
 
 ///|
+/// Updates the value associated with a key in the map using a function.
+///
+/// This method applies a function to the current value associated with the key
+/// (or `None` if the key does not exist) and sets the key to the result.
+///
+/// # Parameters
+///
+/// * `self` - The map to update.
+/// * `key` - The key whose value will be updated.
+/// * `f` - A function that takes the current value (or `None`) and returns the new value.
+///
+/// # Returns
+///
+/// The new value associated with the key after the update.
+///
+/// # Example
+///
+/// ```moonbit
+/// test "Map::update" {
+///   let map = { "a": 1, "b": 2 }
+///
+///   // Update an existing key
+///   let result1 = map.update("a", fn(v) {
+///     match v {
+///       Some(val) => val * 2
+///       None => 0
+///     }
+///   })
+///   assert_eq!(result1, 2)
+///   assert_eq!(map.get("a"), Some(2))
+///
+///   // Update a non-existing key
+///   let result2 = map.update("c", fn(v) {
+///     match v {
+///       Some(val) => val
+///       None => 42
+///     }
+///   })
+///   assert_eq!(result2, 42)
+///   assert_eq!(map.get("c"), Some(42))
+/// }
+/// ```
+pub fn Map::update[K : Hash + Eq, V](
+  self : Map[K, V],
+  key : K,
+  f : (V?) -> V
+) -> V {
+  let value = f(self.get(key))
+  self.set(key, value)
+  value
+}
+
+///|
 /// Check if the hash map contains a key.
 pub fn Map::contains[K : Hash + Eq, V](self : Map[K, V], key : K) -> Bool {
   // inline Map::get to avoid boxing
