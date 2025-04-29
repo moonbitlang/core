@@ -244,7 +244,7 @@ test "throws on invalid number" {
 test "throws on invalid chars" {
   inspect!(
     @json.parse?("[\u000c]"),
-    content="Err(Invalid character '\\x0c' at line 1, column 1)",
+    content="Err(Invalid character '\\u{0c}' at line 1, column 1)",
   )
   inspect!(
     @json.parse?("[\"\u0009\"]"),
@@ -252,7 +252,7 @@ test "throws on invalid chars" {
   )
   inspect!(
     @json.parse?("[\"a\u0000a\"]"),
-    content="Err(Invalid character '\\x00' at line 1, column 3)",
+    content="Err(Invalid character '\\u{00}' at line 1, column 3)",
   )
 }
 

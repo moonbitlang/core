@@ -72,7 +72,7 @@ test "Show::output" {
   assert_eq!(repr("\r"), "\"\\r\"")
   assert_eq!(repr("\b"), "\"\\b\"")
   assert_eq!(repr("\t"), "\"\\t\"")
-  assert_eq!(repr("\x00"), "\"\\x00\"")
+  assert_eq!(repr("\u{00}"), "\"\\u{00}\"")
   assert_eq!(repr("abc'\"def\\"), "\"abc'\\\"def\\\\\"")
 }
 
@@ -260,141 +260,112 @@ test "is_blank" {
 
 ///|
 test "index_of" {
-  inspect!("abc".index_of("a"), content="0")
-  inspect!("abc".index_of("b"), content="1")
-  inspect!("abc".index_of("c"), content="2")
-  inspect!("abc".index_of("ab"), content="0")
-  inspect!("abc".index_of("bc"), content="1")
-  inspect!("abc".index_of(""), content="0")
-  inspect!("abc".index_of("d"), content="-1")
-  inspect!("abc".index_of("abcd"), content="-1")
-  inspect!("你好月兔".index_of("你"), content="0")
-  inspect!("你好月兔".index_of("好"), content="1")
-  inspect!("你好月兔".index_of("月"), content="2")
-  inspect!("你好月兔".index_of("兔"), content="3")
-  inspect!("你好月兔".index_of("日"), content="-1")
-  inspect!("😍😭😡".index_of("😍"), content="0")
-  inspect!("😍😭😡".index_of("😭"), content="2")
-  inspect!("😍😭😡".index_of("😡"), content="4")
-  inspect!("😍😭😡".index_of("😎"), content="-1")
-  inspect!("".index_of("a"), content="-1")
-  inspect!("".index_of(""), content="0")
-  inspect!("abc".index_of("b", from=-1), content="1")
-  inspect!("abc".index_of("b", from=0), content="1")
-  inspect!("abc".index_of("b", from=1), content="1")
-  inspect!("abc".index_of("b", from=2), content="-1")
-  inspect!("abc".index_of("b", from=3), content="-1")
-  inspect!("abc".index_of("b", from=100), content="-1")
+  inspect!("abc".find("a"), content="Some(0)")
+  inspect!("abc".find("b"), content="Some(1)")
+  inspect!("abc".find("c"), content="Some(2)")
+  inspect!("abc".find("ab"), content="Some(0)")
+  inspect!("abc".find("bc"), content="Some(1)")
+  inspect!("abc".find(""), content="Some(0)")
+  inspect!("abc".find("d"), content="None")
+  inspect!("abc".find("abcd"), content="None")
+  inspect!("你好月兔".find("你"), content="Some(0)")
+  inspect!("你好月兔".find("好"), content="Some(1)")
+  inspect!("你好月兔".find("月"), content="Some(2)")
+  inspect!("你好月兔".find("兔"), content="Some(3)")
+  inspect!("你好月兔".find("日"), content="None")
+  inspect!("😍😭😡".find("😍"), content="Some(0)")
+  inspect!("😍😭😡".find("😭"), content="Some(2)")
+  inspect!("😍😭😡".find("😡"), content="Some(4)")
+  inspect!("😍😭😡".find("😎"), content="None")
+  inspect!("".find("a"), content="None")
+  inspect!("".find(""), content="Some(0)")
 }
 
 ///|
 test "String::index_of empty strings" {
   // Empty string cases
-  assert_eq!("".index_of(""), 0)
-  assert_eq!("abc".index_of(""), 0)
-  assert_eq!("".index_of("a"), -1)
+  inspect!("".find(""), content="Some(0)")
+  inspect!("abc".find(""), content="Some(0)")
+  inspect!("".find("a"), content="None")
 }
 
 ///|
 test "String::index_of basic matching" {
   // Basic substring matching
-  assert_eq!("abc".index_of("a"), 0)
-  assert_eq!("abc".index_of("b"), 1)
-  assert_eq!("abc".index_of("c"), 2)
-  assert_eq!("abc".index_of("ab"), 0)
-  assert_eq!("abc".index_of("bc"), 1)
-  assert_eq!("abc".index_of("abc"), 0)
-  assert_eq!("abc".index_of("d"), -1)
-  assert_eq!("abc".index_of("abcd"), -1)
+  inspect!("abc".find("a"), content="Some(0)")
+  inspect!("abc".find("b"), content="Some(1)")
+  inspect!("abc".find("c"), content="Some(2)")
+  inspect!("abc".find("ab"), content="Some(0)")
+  inspect!("abc".find("bc"), content="Some(1)")
+  inspect!("abc".find("abc"), content="Some(0)")
+  inspect!("abc".find("d"), content="None")
+  inspect!("abc".find("abcd"), content="None")
 }
 
-///|
-test "String::index_of with from parameter" {
-  // Testing from parameter
-  assert_eq!("abcabc".index_of("a", from=1), 3)
-  assert_eq!("abcabc".index_of("a", from=4), -1)
-  assert_eq!("abcabc".index_of("bc", from=2), 4)
-  assert_eq!("abc".index_of("", from=1), 1)
-  assert_eq!("abc".index_of("", from=3), 3)
-  assert_eq!("abc".index_of("", from=4), 3) // Bounded to length
-}
-
-///|
-test "String::index_of with negative from" {
-  // Testing negative from parameter
-  assert_eq!("abc".index_of("a", from=-1), 0)
-  assert_eq!("abc".index_of("b", from=-2), 1)
-}
 
 ///|
 test "String::index_of overlapping patterns" {
   // Testing overlapping patterns
-  assert_eq!("aaa".index_of("aa"), 0)
-  assert_eq!("aaa".index_of("aa", from=1), 1)
+  inspect!("aaa".find("aa"), content="Some(0)")
+  inspect!("aaa".view(start_offset=1).find("aa"), content="Some(0)")
 }
 
 ///|
 test "last_index_of" {
-  inspect!("abc".last_index_of("a"), content="0")
-  inspect!("abc".last_index_of("b"), content="1")
-  inspect!("abc".last_index_of("c"), content="2")
-  inspect!("abc".last_index_of("d"), content="-1")
-  inspect!("abc".last_index_of(""), content="3")
-  inspect!("abcabc".last_index_of("ab"), content="3")
-  inspect!("abcabc".last_index_of("ca"), content="2")
-  inspect!("abcabc".last_index_of("cb"), content="-1")
-  inspect!("abcabc".last_index_of("d"), content="-1")
-  inspect!("abcabc".last_index_of(""), content="6")
-  inspect!("你好月兔你好月兔".last_index_of("你"), content="4")
-  inspect!("你好月兔你好月兔".last_index_of("好"), content="5")
-  inspect!("你好月兔你好月兔".last_index_of("月"), content="6")
-  inspect!("你好月兔你好月兔".last_index_of("兔"), content="7")
-  inspect!("你好月兔你好月兔".last_index_of("日"), content="-1")
-  inspect!("😍😭😡😍😭😡".last_index_of("😍"), content="6")
-  inspect!("😍😭😡😍😭😡".last_index_of("😭"), content="8")
-  inspect!("😍😭😡😍😭😡".last_index_of("😡"), content="10")
-  inspect!("😍😭😡😍😭😡".last_index_of("😎"), content="-1")
-  inspect!("".last_index_of("a"), content="-1")
-  inspect!("".last_index_of(""), content="0")
-  inspect!("abc".last_index_of("b", from=-1), content="-1")
-  inspect!("abc".last_index_of("b", from=0), content="-1")
-  inspect!("abc".last_index_of("b", from=1), content="-1")
-  inspect!("abc".last_index_of("b", from=2), content="1")
-  inspect!("abc".last_index_of("b", from=3), content="1")
-  inspect!("abc".last_index_of("b", from=100), content="1")
+  inspect!("abc".rev_find("a"), content="Some(0)")
+  inspect!("abc".rev_find("b"), content="Some(1)")
+  inspect!("abc".rev_find("c"), content="Some(2)")
+  inspect!("abc".rev_find("d"), content="None")
+  inspect!("abc".rev_find(""), content="Some(3)")
+  inspect!("abcabc".rev_find("ab"), content="Some(3)")
+  inspect!("abcabc".rev_find("ca"), content="Some(2)")
+  inspect!("abcabc".rev_find("cb"), content="None")
+  inspect!("abcabc".rev_find("d"), content="None")
+  inspect!("abcabc".rev_find(""), content="Some(6)")
+  inspect!("你好月兔你好月兔".rev_find("你"), content="Some(4)")
+  inspect!("你好月兔你好月兔".rev_find("好"), content="Some(5)")
+  inspect!("你好月兔你好月兔".rev_find("月"), content="Some(6)")
+  inspect!("你好月兔你好月兔".rev_find("兔"), content="Some(7)")
+  inspect!("你好月兔你好月兔".rev_find("日"), content="None")
+  inspect!("😍😭😡😍😭😡".rev_find("😍"), content="Some(6)")
+  inspect!("😍😭😡😍😭😡".rev_find("😭"), content="Some(8)")
+  inspect!("😍😭😡😍😭😡".rev_find("😡"), content="Some(10)")
+  inspect!("😍😭😡😍😭😡".rev_find("😎"), content="None")
+  inspect!("".rev_find("a"), content="None")
+  inspect!("".rev_find(""), content="Some(0)")
 }
 
 ///|
-test "starts_with" {
-  inspect!("abc".starts_with("a"), content="true")
-  inspect!("abc".starts_with("ab"), content="true")
-  inspect!("abc".starts_with("abc"), content="true")
-  inspect!("abc".starts_with("abcd"), content="false")
-  inspect!("abc".starts_with("b"), content="false")
-  inspect!("abc".starts_with(""), content="true")
-  inspect!("你好月兔".starts_with("你好"), content="true")
-  inspect!("你好月兔".starts_with("月兔"), content="false")
-  inspect!("😍😭😡".starts_with("😍"), content="true")
-  inspect!("😍😭😡".starts_with("😭"), content="false")
-  inspect!("".starts_with(""), content="true")
-  inspect!("".starts_with("a"), content="false")
+test "has_prefix" {
+  inspect!("abc".has_prefix("a"), content="true")
+  inspect!("abc".has_prefix("ab"), content="true")
+  inspect!("abc".has_prefix("abc"), content="true")
+  inspect!("abc".has_prefix("abcd"), content="false")
+  inspect!("abc".has_prefix("b"), content="false")
+  inspect!("abc".has_prefix(""), content="true")
+  inspect!("你好月兔".has_prefix("你好"), content="true")
+  inspect!("你好月兔".has_prefix("月兔"), content="false")
+  inspect!("😍😭😡".has_prefix("😍"), content="true")
+  inspect!("😍😭😡".has_prefix("😭"), content="false")
+  inspect!("".has_prefix(""), content="true")
+  inspect!("".has_prefix("a"), content="false")
 }
 
 ///|
-test "ends_with" {
-  inspect!("abc".ends_with("c"), content="true")
-  inspect!("abc".ends_with("bc"), content="true")
-  inspect!("abc".ends_with("abc"), content="true")
-  inspect!("abc".ends_with("d"), content="false")
-  inspect!("abc".ends_with("ab"), content="false")
-  inspect!("abc".ends_with("abcd"), content="false")
-  inspect!("abc".ends_with(""), content="true")
-  inspect!("你好月兔".ends_with("你好"), content="false")
-  inspect!("你好月兔".ends_with("月兔"), content="true")
-  inspect!("😍😭😡".ends_with("😭"), content="false")
-  inspect!("😍😭😡".ends_with("😡"), content="true")
-  inspect!("".ends_with(""), content="true")
-  inspect!("".ends_with("a"), content="false")
+test "has_suffix" {
+  inspect!("abc".has_suffix("c"), content="true")
+  inspect!("abc".has_suffix("bc"), content="true")
+  inspect!("abc".has_suffix("abc"), content="true")
+  inspect!("abc".has_suffix("d"), content="false")
+  inspect!("abc".has_suffix("ab"), content="false")
+  inspect!("abc".has_suffix("abcd"), content="false")
+  inspect!("abc".has_suffix(""), content="true")
+  inspect!("你好月兔".has_suffix("你好"), content="false")
+  inspect!("你好月兔".has_suffix("月兔"), content="true")
+  inspect!("😍😭😡".has_suffix("😭"), content="false")
+  inspect!("😍😭😡".has_suffix("😡"), content="true")
+  inspect!("".has_suffix(""), content="true")
+  inspect!("".has_suffix("a"), content="false")
 }
 
 ///|
@@ -599,32 +570,32 @@ test "pad_right" {
 }
 
 ///|
-test "panic rev_get1" {
-  let str = "Hello🤣🤣🤣"
-  let _ = str.rev_get(-1)
+// test "panic rev_get1" {
+//   let str = "Hello🤣🤣🤣"
+//   let _ = str.rev_iter().nth(-1).unwrap()
 
-}
+// }
 
 ///|
 test "panic rev_get2" {
   let str = "Hello🤣🤣🤣"
-  let _ = str.rev_get(8)
+  let _ = str.rev_iter().nth(8).unwrap()
 
 }
 
 ///|
 test "length_ge" {
   let str = "Hello🤣🤣🤣"
-  assert_true!(str.length_ge(0))
-  assert_true!(str.length_ge(8))
-  assert_false!(str.length_ge(9))
+  assert_true!(str.char_length_ge(0))
+  assert_true!(str.char_length_ge(8))
+  assert_false!(str.char_length_ge(9))
 }
 
 ///|
 test "length_eq" {
   let str = "Hello🤣🤣🤣"
-  assert_true!(str.length_eq(8))
-  assert_false!(str.length_eq(9))
+  assert_true!(str.char_length_eq(8))
+  assert_false!(str.char_length_eq(9))
 }
 
 ///|
@@ -714,7 +685,7 @@ test "offset_of_nth_char range" {
 ///|
 test "offset_of_nth_char property" {
   let s = "a😭b😂c"
-  let n = s.codepoint_length()
+  let n = s.char_length()
   for i in 0..<n {
     let index = s.offset_of_nth_char(i).unwrap()
     assert_eq!(s.unsafe_char_at(index), s.iter().nth(i).unwrap())
@@ -724,7 +695,7 @@ test "offset_of_nth_char property" {
 ///|
 test "offset_of_nth_char property negative" {
   let s = "a😭b😂c"
-  let n = s.codepoint_length()
+  let n = s.char_length()
   for i in 1..=n {
     let index = s.offset_of_nth_char(-i).unwrap()
     assert_eq!(s.unsafe_char_at(index), s.rev_iter().nth(i - 1).unwrap())

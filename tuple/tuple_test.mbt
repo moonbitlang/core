@@ -30,30 +30,6 @@ test "snd" {
   assert_eq!(@tuple.snd(tuple), 2)
 }
 
-///|
-test "@tuple.map_fst" {
-  let tuple = (1, 2)
-  let mapped = @tuple.map_fst(fn(x : Int) -> Int { x + 1 }, tuple)
-  assert_eq!(mapped, (2, 2))
-}
-
-///|
-test "@tuple.map_snd" {
-  let tuple = (1, 2)
-  let mapped = @tuple.map_snd(fn(x : Int) -> Int { x + 1 }, tuple)
-  assert_eq!(mapped, (1, 3))
-}
-
-///|
-test "@tuple.map_both" {
-  let tuple = (1, 2)
-  let mapped = @tuple.map_both(
-    fn(x : Int) -> Int { x + 1 },
-    fn(x : Int) -> Int { x - 1 },
-    tuple,
-  )
-  assert_eq!(mapped, (2, 1))
-}
 
 ///|
 test "swap" {

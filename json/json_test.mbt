@@ -689,7 +689,7 @@ test "Result from_json error cases" {
 
   // Test with non-object
   inspect!(
-    @json.from_json?(json_num),
+    (@json.from_json?(json_num) : Result[Unit,_]),
     content=
       #|Err(JsonDecodeError(($, "Unit::from_json: expected null")))
     ,
@@ -701,7 +701,7 @@ test "Result from_json error cases" {
     "Extra": Json::Number(456),
   })
   inspect!(
-    @json.from_json?(json_obj),
+    (@json.from_json?(json_obj) : Result[Unit, _]),
     content=
       #|Err(JsonDecodeError(($, "Unit::from_json: expected null")))
     ,
@@ -710,7 +710,7 @@ test "Result from_json error cases" {
   // Test with object with invalid field name
   let json_obj2 = Json::Object({ "Invalid": Json::Number(123) })
   inspect!(
-    @json.from_json?(json_obj2),
+    (@json.from_json?(json_obj2) : Result[Unit,_]),
     content=
       #|Err(JsonDecodeError(($, "Unit::from_json: expected null")))
     ,
@@ -721,7 +721,7 @@ test "Result from_json error cases" {
 test "Unit from_json with invalid input" {
   let json_num = Json::Number(123)
   inspect!(
-    @json.from_json?(json_num),
+    (@json.from_json?(json_num) : Result[Unit, _]),
     content=
       #|Err(JsonDecodeError(($, "Unit::from_json: expected null")))
     ,

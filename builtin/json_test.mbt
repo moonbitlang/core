@@ -102,12 +102,15 @@ test "test UInt64::to_json" {
 
 ///|
 test "escape control characters" {
-  let str = "abc\x01def" // Control character with code 1
+  let str = "abc\u{01}def" // Control character with code 1
   let json = str.to_json()
   inspect!(
     json,
     content=
-      #|String("abc\x01def")
+      #|String("abc\u{01}def")
+
+
+
     ,
   )
 }
@@ -131,7 +134,10 @@ test "test form feed" {
   inspect!(
     json,
     content=
-      #|String("Form\x0cFeed")
+      #|String("Form\u{0c}Feed")
+
+
+
     ,
   )
 }
@@ -156,9 +162,9 @@ test "Bool::to_json true" {
 
 ///|
 test "to_hex_digit" {
-  let str = "\n\r\b\t\x0C\x00"
+  let str = "\n\r\b\t\u{0C}\u{00}"
   let escaped = str.to_json().as_string().unwrap()
-  inspect!(escaped, content="\n\r\b\t\x0c\x00")
+  assert_eq!(escaped, "\n\r\b\t\u{0c}\u{00}")
 }
 
 ///|

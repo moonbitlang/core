@@ -130,11 +130,10 @@ test {
 }
 ```
 
-To get a sub-list from the list, you can use the `init_()` method for getting all elements except the last one, and `tail()` for getting all elements except the first one.
+To get a sub-list from the list, you can use `tail()` for getting all elements except the first one.
 ```moonbit
 test {
     let list = @list.of([1, 2, 3, 4, 5])
-    assert_eq!(list.init_().to_array(), [1, 2, 3, 4])
     assert_eq!(list.tail().to_array(), [2, 3, 4, 5])
 }
 ```

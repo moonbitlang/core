@@ -32,7 +32,11 @@ test "multiple samples" {
     strings[5:10],
     content=
       
-  #|["E\b\x0f ", "", "K\x1f[", "!@", "xvLxb"]
+  #|["E\b\u{0f} ", "", "K\u{1f}[", "!@", "xvLxb"]
+
+
+
+
 
     ,
   )

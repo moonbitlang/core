@@ -483,7 +483,7 @@ test "Int::to_char - Invalid values" {
 
 ///|
 test "Int::to_char - Valid values" {
-  inspect!(Int::to_char(0), content="Some('\\x00')")
+  inspect!(Int::to_char(0), content="Some('\\u{00}')")
   inspect!(Int::to_char(127), content="Some('')")
   inspect!(Int::to_char(128), content="Some('')")
   inspect!(Int::to_char(0x7F), content="Some('')")
