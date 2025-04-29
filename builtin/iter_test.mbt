@@ -231,9 +231,19 @@ test "map" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
   let exb = StringBuilder::new(size_hint=0)
   iter
-  .map(fn { x => Char::from_int(x.to_int() + 1) })
+  .map(fn { x => (x.to_int() + 1).to_char().unwrap() })
   .each(fn { x => exb.write_char(x) })
   inspect!(exb, content="23456")
+}
+
+///|
+test "mapi" {
+  let iter = test_from_array(['1', '2', '3', '4', '5'])
+  let exb = StringBuilder::new(size_hint=0)
+  iter
+  .mapi(fn { i, x => (i + x.to_int()).to_char().unwrap() })
+  .each(fn { x => exb.write_char(x) })
+  inspect!(exb, content="13579")
 }
 
 ///|
@@ -657,4 +667,161 @@ test "@builtin.Iter::minimum" {
   // Test with empty sequence
   let empty : Iter[Int] = Iter::empty()
   inspect!(empty.minimum(), content="None")
+}
+
+///|
+test "Iter::prepend with early termination" {
+  let iter = [1, 2, 3].iter()
+  let result = iter.prepend(0).take(1).collect()
+  inspect!(result, content="[0]")
+}
+
+///|
+test "Iter::append with early termination" {
+  let iter = [1, 2, 3].iter()
+  let result = iter.take(2).append(4).take(2).collect()
+  inspect!(result, content="[1, 2]")
+}
+
+///|
+test "Iter::intersperse with early termination" {
+  let iter = [1, 2, 3].iter()
+  let result = iter.intersperse(0).take(3).collect()
+  inspect!(result, content="[1, 0, 2]")
+}
+
+///|
+test "Iter::iter method" {
+  let original = [1, 2, 3].iter()
+  let result = original.iter().collect()
+  inspect!(result, content="[1, 2, 3]")
+}
+
+///|
+test "Iter::contains method" {
+  let iter = [1, 2, 3, 4, 5].iter()
+  inspect!(iter.contains(3), content="true")
+  inspect!(iter.contains(6), content="false")
+}
+
+///|
+test "Iter::flatten method" {
+  let nested = [[1, 2], [3, 4], [5, 6]].iter().map(Array::iter)
+  let flattened = nested.flatten().collect()
+  inspect!(flattened, content="[1, 2, 3, 4, 5, 6]")
+}
+
+///|
+test "Iter::add operator" {
+  let iter1 = [1, 2, 3].iter()
+  let iter2 = [4, 5, 6].iter()
+  let result = (iter1 + iter2).collect()
+  inspect!(result, content="[1, 2, 3, 4, 5, 6]")
+}
+
+///|
+test "Float::until with step=0" {
+  let result = 1.0.until(2.0, step=0.0).collect()
+  inspect!(result, content="[]")
+}
+
+///|
+test "Float::until basic test" {
+  let result = 0.0.until(3.0, step=1.0).collect()
+  inspect!(result, content="[0, 1, 2]")
+}
+
+///|
+test "Float::until with early termination" {
+  let result = 0.0.until(10.0).take(3).collect()
+  inspect!(result, content="[0, 1, 2]")
+}
+
+///|
+test "Double::until with large numbers" {
+  let result = 1000000.0.until(2000000.0, step=500000.0).collect()
+  inspect!(result, content="[1000000, 1500000]")
+}
+
+///|
+test "Float::until with early break" {
+  for i in 0.0.until(10.0) {
+    if i > 2.0 {
+      break
+    }
+  }
+  // No assertion needed, just verifying that it doesn't crash
+}
+
+///|
+test "Float::until negative step" {
+  let result = 10.0.until(0.0, step=-2.0).collect()
+  inspect!(result, content="[10, 8, 6, 4, 2]")
+}
+
+///|
+test "group_by with consecutive identical elements" {
+  let iter = [1, 1, 2, 2, 3, 3].iter()
+  let grouped = iter.group_by(fn(x) { x })
+  assert_eq!(grouped.get(1), Some([1, 1]))
+  assert_eq!(grouped.get(2), Some([2, 2]))
+  assert_eq!(grouped.get(3), Some([3, 3]))
+}
+
+///|
+test "group_by with non-consecutive identical elements" {
+  let iter = [1, 2, 1, 3, 2, 1].iter()
+  let grouped = iter.group_by(fn(x) { x })
+  assert_eq!(grouped.get(1), Some([1, 1, 1]))
+  assert_eq!(grouped.get(2), Some([2, 2]))
+  assert_eq!(grouped.get(3), Some([3]))
+}
+
+///|
+test "group_by with empty input" {
+  let iter : Iter[Int] = Iter::empty()
+  let grouped = iter.group_by(fn(x) { x })
+  assert_eq!(grouped.size(), 0)
+}
+
+///|
+test "group_by with single element input" {
+  let iter = [42].iter()
+  let grouped = iter.group_by(fn(x) { x })
+  assert_eq!(grouped.get(42), Some([42]))
+}
+
+///|
+test "group_by with custom key function" {
+  let iter = [1, 2, 3, 4].iter()
+  let grouped = iter.group_by(fn(x) { x % 2 })
+  assert_eq!(grouped.get(0), Some([2, 4]))
+  assert_eq!(grouped.get(1), Some([1, 3]))
+}
+
+///|
+test "group_by with strings" {
+  let iter = ["apple", "avocado", "banana", "cherry", "blueberry"].iter()
+  let grouped = iter.group_by(fn(s) { s[0] })
+  assert_eq!(grouped.get('a'), Some(["apple", "avocado"]))
+  assert_eq!(grouped.get('b'), Some(["banana", "blueberry"]))
+  assert_eq!(grouped.get('c'), Some(["cherry"]))
+}
+
+///|
+test "group_by with complex objects" {
+  struct Person {
+    name : String
+    age : Int
+  }
+  let people = [
+    Person::{ name: "Alice", age: 25 },
+    Person::{ name: "Bob", age: 25 },
+    Person::{ name: "Charlie", age: 30 },
+    Person::{ name: "Dave", age: 35 },
+    Person::{ name: "Eve", age: 30 },
+  ].iter()
+  let grouped = people.group_by(fn(p) { p.age })
+  let groups = grouped.values().map(fn(a) { a.map(fn(p) { p.name }) }).collect()
+  assert_eq!(groups, [["Alice", "Bob"], ["Charlie", "Eve"], ["Dave"]])
 }

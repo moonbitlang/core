@@ -1,7 +1,3 @@
----
-moonbit: true
----
-
 # `buffer`
 
 The buffer package provides a flexible byte buffer implementation for efficient binary data handling and serialization.

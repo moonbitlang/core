@@ -33,16 +33,10 @@ fn unsafe_pop[A : Compare](T[A]) -> T[A]
 // Types and methods
 type T[A]
 impl T {
-  #deprecated
-  from_array[A : Compare](Array[A]) -> Self[A]
   from_iter[A : Compare](Iter[A]) -> Self[A]
   is_empty[A](Self[A]) -> Bool
   iter[A : Compare](Self[A]) -> Iter[A]
   length[A](Self[A]) -> Int
-  #deprecated
-  new[A : Compare]() -> Self[A]
-  #deprecated
-  of[A : Compare](FixedArray[A]) -> Self[A]
   peek[A](Self[A]) -> A?
   pop[A : Compare](Self[A]) -> Self[A]?
   #deprecated
@@ -51,9 +45,11 @@ impl T {
   to_array[A : Compare](Self[A]) -> Array[A]
   unsafe_pop[A : Compare](Self[A]) -> Self[A]
 }
+impl[A : Compare] Compare for T[A]
 impl[A : Compare] Eq for T[A]
 impl[A : Hash + Compare] Hash for T[A]
 impl[A : Show + Compare] Show for T[A]
+impl[A : ToJson + Compare] ToJson for T[A]
 impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for T[X]
 
 // Type aliases

@@ -46,10 +46,7 @@ pub fn parse_uint64(str : String, base~ : Int = 0) -> UInt64!StrConvError {
   }
 
   // `allow_underscore` is used to check validity of underscores
-  let (num_base, rest, allow_underscore) = check_and_consume_base!(
-    str.view(),
-    base,
-  )
+  let (num_base, rest, allow_underscore) = check_and_consume_base!(str, base)
 
   // calculate overflow threshold
   let overflow_threshold = match num_base {

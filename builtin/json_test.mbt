@@ -151,7 +151,7 @@ test "Result to_json with Err value" {
 ///|
 test "Bool::to_json true" {
   let result = true.to_json()
-  assert_eq!(result, Json::True)
+  assert_eq!(result, Json::boolean(true))
 }
 
 ///|

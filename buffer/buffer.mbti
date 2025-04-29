@@ -2,6 +2,7 @@ package "moonbitlang/core/buffer"
 
 import(
   "moonbitlang/core/bytes"
+  "moonbitlang/core/string"
 )
 
 // Values
@@ -49,6 +50,8 @@ fn write_iter(T, Iter[Byte]) -> Unit
 
 fn write_object(T, &Show) -> Unit
 
+fn write_stringview(T, @string.StringView) -> Unit
+
 fn write_uint64_be(T, UInt64) -> Unit
 
 fn write_uint64_le(T, UInt64) -> Unit
@@ -78,6 +81,7 @@ impl T {
   write_int_le(Self, Int) -> Unit
   write_iter(Self, Iter[Byte]) -> Unit
   write_object(Self, &Show) -> Unit
+  write_stringview(Self, @string.StringView) -> Unit
   write_uint64_be(Self, UInt64) -> Unit
   write_uint64_le(Self, UInt64) -> Unit
   write_uint_be(Self, UInt) -> Unit

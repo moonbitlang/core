@@ -1,7 +1,3 @@
----
-moonbit: true
----
-
 # `String`
 
 ## Overview
@@ -29,7 +25,7 @@ moonbit: true
     operates on code units, not Unicode characters, which may lead to unexpected
     results with multi-code-unit characters.
 
-* **Performance and Unicode Safety**: 
+* **Performance and Unicode Safety**:
   - Most APIs in this package operate on UTF-16 offsets rather than Unicode
     characters for efficiency. Offset-based operations have O(1) complexity
     while character-based operations typically require O(n) scanning. However,

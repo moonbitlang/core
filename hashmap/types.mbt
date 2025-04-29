@@ -41,8 +41,23 @@ priv struct Entry[K, V] {
 struct T[K, V] {
   mut entries : FixedArray[Entry[K, V]?]
   mut capacity : Int
+  mut capacity_mask : Int // capacity_mask = capacity - 1, used to find idx
   // size of field `entries`, it is redundant but useful for performance
   // so we don't need do `self.entries.length()` every time
   mut size : Int // active key-value pairs count
   // mut growAt : Int // threshold that triggers grow
+}
+
+///|
+pub impl[K : Hash + Eq, V : Eq] Eq for T[K, V] with op_equal(
+  self : T[K, V],
+  that : T[K, V]
+) -> Bool {
+  guard self.size == that.size else { return false }
+  for k, v in self {
+    guard that.contains_kv(k, v) else { return false }
+
+  } else {
+    true
+  }
 }

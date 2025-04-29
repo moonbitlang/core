@@ -34,12 +34,8 @@ impl T {
   ceil(Self) -> Int64
   floor(Self) -> Int64
   fract(Self) -> Self
-  #deprecated
-  from_double(Double) -> Self!RationalError
   is_integer(Self) -> Bool
   neg(Self) -> Self
-  #deprecated
-  new(Int64, Int64) -> Self?
   reciprocal(Self) -> Self
   to_double(Self) -> Double
   trunc(Self) -> Int64

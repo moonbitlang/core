@@ -9,6 +9,8 @@ fn from_fixedarray(FixedArray[Byte], len? : Int) -> Bytes
 
 fn from_iter(Iter[Byte]) -> Bytes
 
+fn get(Bytes, Int) -> Byte?
+
 fn iter(Bytes) -> Iter[Byte]
 
 fn of(FixedArray[Byte]) -> Bytes
@@ -21,6 +23,7 @@ fn to_fixedarray(Bytes, len? : Int) -> FixedArray[Byte]
 type View
 impl View {
   data(Self) -> Bytes
+  get(Self, Int) -> Byte?
   iter(Self) -> Iter[Byte]
   length(Self) -> Int
   op_as_view(Self, start~ : Int = .., end? : Int) -> Self
@@ -48,6 +51,7 @@ impl Bytes {
   from_array(Array[Byte]) -> Bytes
   from_fixedarray(FixedArray[Byte], len? : Int) -> Bytes
   from_iter(Iter[Byte]) -> Bytes
+  get(Bytes, Int) -> Byte?
   iter(Bytes) -> Iter[Byte]
   of(FixedArray[Byte]) -> Bytes
   op_as_view(Bytes, start~ : Int = .., end? : Int) -> View

@@ -32,6 +32,8 @@ fn from_iter[K : Compare, V](Iter[(K, V)]) -> T[K, V]
 
 fn from_json[V : @json.FromJson](Json) -> T[String, V]!@json.JsonDecodeError
 
+fn get[K : Compare, V](T[K, V], K) -> V?
+
 #deprecated
 fn insert[K : Compare, V](T[K, V], K, V) -> T[K, V]
 
@@ -43,6 +45,7 @@ fn iter2[K, V](T[K, V]) -> Iter2[K, V]
 
 fn keys[K, V](T[K, V]) -> Array[K]
 
+#deprecated
 fn lookup[K : Compare, V](T[K, V], K) -> V?
 
 fn map[K, X, Y](T[K, X], (X) -> Y) -> T[K, Y]
@@ -86,12 +89,14 @@ impl T {
   from_iter[K : Compare, V](Iter[(K, V)]) -> Self[K, V]
   #deprecated
   from_json[V : @json.FromJson](Json) -> Self[String, V]!@json.JsonDecodeError
+  get[K : Compare, V](Self[K, V], K) -> V?
   #deprecated
   insert[K : Compare, V](Self[K, V], K, V) -> Self[K, V]
   is_empty[K, V](Self[K, V]) -> Bool
   iter[K, V](Self[K, V]) -> Iter[(K, V)]
   iter2[K, V](Self[K, V]) -> Iter2[K, V]
   keys[K, V](Self[K, V]) -> Array[K]
+  #deprecated
   lookup[K : Compare, V](Self[K, V], K) -> V?
   map[K, X, Y](Self[K, X], (X) -> Y) -> Self[K, Y]
   map_with_key[K, X, Y](Self[K, X], (K, X) -> Y) -> Self[K, Y]

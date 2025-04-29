@@ -208,6 +208,14 @@ test "from_iter multiple elements iter" {
     @array.from_iter([1, 2, 3].iter()),
     content="@immut/array.of([1, 2, 3])",
   )
+  inspect!(
+    (0).until(32) |> @array.from_iter(),
+    content="@immut/array.of([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31])",
+  )
+  inspect!(
+    (0).until(33) |> @array.from_iter(),
+    content="@immut/array.of([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32])",
+  )
 }
 
 ///|
@@ -243,4 +251,17 @@ test "concat_empty" {
   let b = @array.of([1, 2, 3])
   let c = a.concat(b)
   inspect!(c, content="@immut/array.of([1, 2, 3])")
+}
+
+///|
+test "compare" {
+  let arr1 = @array.of([1, 2, 3])
+  let arr2 = @array.of([1, 2, 4])
+  let arr3 = @array.of([1, 2])
+  let empty : @array.T[Int] = @array.new()
+  assert_eq!(arr1.compare(arr2), -1)
+  assert_eq!(arr1.compare(arr3), 1)
+  assert_eq!(arr3.compare(arr1), -1)
+  assert_eq!(arr1.compare(arr1), 0)
+  assert_eq!(empty.compare(empty), 0)
 }

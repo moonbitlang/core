@@ -79,10 +79,7 @@ Safe access with error handling:
 test {
   let map = @sorted_map.from_array([(1, "one"), (2, "two")])
   let key = 3
-  match map.get(key) {
-    Some(value) => println("Found: \{value}")
-    None => println("Key {key} not found")
-  }
+  inspect!(map.get(key), content="None")
 }
 ```
 
@@ -264,14 +261,13 @@ When working with keys that might not exist, prefer using pattern matching for s
 fn get_score(scores : @sorted_map.T[Int, Int], student_id : Int) -> Int {
   match scores.get(student_id) {
     Some(score) => score
-    None => {
-      println(
-        "Student ID " +
-        student_id.to_string() +
-        " does not exist, returning default score",
-      )
+    None =>
+      // println(
+      //   "Student ID " +
+      //   student_id.to_string() +
+      //   " does not exist, returning default score",
+      // )
       0 // Default score
-    }
   }
 }
 

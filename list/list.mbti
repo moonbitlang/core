@@ -1,4 +1,4 @@
-package "moonbitlang/core/immut/list"
+package "moonbitlang/core/list"
 
 import(
   "moonbitlang/core/json"
@@ -6,16 +6,13 @@ import(
 )
 
 // Values
-fn add[A](T[A], A) -> T[A]
-
 fn all[A](T[A], (A) -> Bool) -> Bool
 
 fn any[A](T[A], (A) -> Bool) -> Bool
 
 fn concat[A](T[A], T[A]) -> T[A]
 
-#deprecated
-fn concat_map[A, B](T[A], (A) -> T[B]) -> T[B]
+fn construct[A](A, T[A]) -> T[A]
 
 fn contains[A : Eq](T[A], A) -> Bool
 
@@ -29,8 +26,7 @@ fn each[A](T[A], (A) -> Unit) -> Unit
 
 fn eachi[A](T[A], (Int, A) -> Unit) -> Unit
 
-#deprecated
-fn equal[A : Eq](T[A], T[A]) -> Bool
+fn empty[A]() -> T[A]
 
 fn filter[A](T[A], (A) -> Bool) -> T[A]
 
@@ -46,18 +42,6 @@ fn flatten[A](T[T[A]]) -> T[A]
 
 fn fold[A, B](T[A], init~ : B, (B, A) -> B) -> B
 
-#deprecated
-fn fold_left[A, B](T[A], (B, A) -> B, init~ : B) -> B
-
-#deprecated
-fn fold_lefti[A, B](T[A], (Int, B, A) -> B, init~ : B) -> B
-
-#deprecated
-fn fold_right[A, B](T[A], (A, B) -> B, init~ : B) -> B
-
-#deprecated
-fn fold_righti[A, B](T[A], (Int, A, B) -> B, init~ : B) -> B
-
 fn foldi[A, B](T[A], init~ : B, (Int, B, A) -> B) -> B
 
 fn from_array[A](Array[A]) -> T[A]
@@ -69,12 +53,6 @@ fn from_iter_rev[A](Iter[A]) -> T[A]
 fn from_json[A : @json.FromJson](Json) -> T[A]!@json.JsonDecodeError
 
 fn head[A](T[A]) -> A?
-
-#deprecated
-fn head_exn[A](T[A]) -> A
-
-#deprecated
-fn init_[A](T[A]) -> T[A]
 
 fn intercalate[A](T[T[A]], T[A]) -> T[A]
 
@@ -104,12 +82,13 @@ fn maximum[A : Compare](T[A]) -> A?
 
 fn minimum[A : Compare](T[A]) -> A?
 
+fn new[A]() -> T[A]
+
 fn nth[A](T[A], Int) -> A?
 
-#deprecated
-fn nth_exn[A](T[A], Int) -> A
-
 fn of[A](FixedArray[A]) -> T[A]
+
+fn prepend[A](T[A], A) -> T[A]
 
 fn remove[A : Eq](T[A], A) -> T[A]
 
@@ -121,15 +100,15 @@ fn rev[A](T[A]) -> T[A]
 
 fn rev_concat[A](T[A], T[A]) -> T[A]
 
-fn rev_fold[A, B](T[A], init~ : B, (A, B) -> B) -> B
+fn rev_fold[A, B](T[A], init~ : B, (B, A) -> B) -> B
 
-fn rev_foldi[A, B](T[A], init~ : B, (Int, A, B) -> B) -> B
+fn rev_foldi[A, B](T[A], init~ : B, (Int, B, A) -> B) -> B
 
 fn rev_map[A, B](T[A], (A) -> B) -> T[B]
 
 fn scan_left[A, E](T[A], (E, A) -> E, init~ : E) -> T[E]
 
-fn scan_right[A, B](T[A], (A, B) -> B, init~ : B) -> T[B]
+fn scan_right[A, B](T[A], (B, A) -> B, init~ : B) -> T[B]
 
 fn singleton[A](A) -> T[A]
 
@@ -159,29 +138,22 @@ fn unsafe_nth[A](T[A], Int) -> A
 
 fn unzip[A, B](T[(A, B)]) -> (T[A], T[B])
 
-fn zip[A, B](T[A], T[B]) -> T[(A, B)]?
+fn zip[A, B](T[A], T[B]) -> T[(A, B)]
 
 // Types and methods
-pub(all) enum T[A] {
-  Nil
-  Cons(A, T[A])
+pub enum T[A] {
+  Empty
+  More(A, mut tail~ : T[A])
 }
 impl T {
-  add[A](Self[A], A) -> Self[A]
   all[A](Self[A], (A) -> Bool) -> Bool
   any[A](Self[A], (A) -> Bool) -> Bool
   concat[A](Self[A], Self[A]) -> Self[A]
-  #deprecated
-  concat_map[A, B](Self[A], (A) -> Self[B]) -> Self[B]
   contains[A : Eq](Self[A], A) -> Bool
-  #deprecated
-  default[X]() -> Self[X]
   drop[A](Self[A], Int) -> Self[A]
   drop_while[A](Self[A], (A) -> Bool) -> Self[A]
   each[A](Self[A], (A) -> Unit) -> Unit
   eachi[A](Self[A], (Int, A) -> Unit) -> Unit
-  #deprecated
-  equal[A : Eq](Self[A], Self[A]) -> Bool
   filter[A](Self[A], (A) -> Bool) -> Self[A]
   filter_map[A, B](Self[A], (A) -> B?) -> Self[B]
   find[A](Self[A], (A) -> Bool) -> A?
@@ -189,26 +161,8 @@ impl T {
   flat_map[A, B](Self[A], (A) -> Self[B]) -> Self[B]
   flatten[A](Self[Self[A]]) -> Self[A]
   fold[A, B](Self[A], init~ : B, (B, A) -> B) -> B
-  #deprecated
-  fold_left[A, B](Self[A], (B, A) -> B, init~ : B) -> B
-  #deprecated
-  fold_lefti[A, B](Self[A], (Int, B, A) -> B, init~ : B) -> B
-  #deprecated
-  fold_right[A, B](Self[A], (A, B) -> B, init~ : B) -> B
-  #deprecated
-  fold_righti[A, B](Self[A], (Int, A, B) -> B, init~ : B) -> B
   foldi[A, B](Self[A], init~ : B, (Int, B, A) -> B) -> B
-  #deprecated
-  from_array[A](Array[A]) -> Self[A]
-  #deprecated
-  from_iter[A](Iter[A]) -> Self[A]
-  #deprecated
-  from_json[A : @json.FromJson](Json) -> Self[A]!@json.JsonDecodeError
   head[A](Self[A]) -> A?
-  #deprecated
-  head_exn[A](Self[A]) -> A
-  #deprecated
-  init_[A](Self[A]) -> Self[A]
   intercalate[A](Self[Self[A]], Self[A]) -> Self[A]
   intersperse[A](Self[A], A) -> Self[A]
   is_empty[A](Self[A]) -> Bool
@@ -224,19 +178,16 @@ impl T {
   maximum[A : Compare](Self[A]) -> A?
   minimum[A : Compare](Self[A]) -> A?
   nth[A](Self[A], Int) -> A?
-  #deprecated
-  nth_exn[A](Self[A], Int) -> A
-  #deprecated
-  of[A](FixedArray[A]) -> Self[A]
+  prepend[A](Self[A], A) -> Self[A]
   remove[A : Eq](Self[A], A) -> Self[A]
   remove_at[A](Self[A], Int) -> Self[A]
   rev[A](Self[A]) -> Self[A]
   rev_concat[A](Self[A], Self[A]) -> Self[A]
-  rev_fold[A, B](Self[A], init~ : B, (A, B) -> B) -> B
-  rev_foldi[A, B](Self[A], init~ : B, (Int, A, B) -> B) -> B
+  rev_fold[A, B](Self[A], init~ : B, (B, A) -> B) -> B
+  rev_foldi[A, B](Self[A], init~ : B, (Int, B, A) -> B) -> B
   rev_map[A, B](Self[A], (A) -> B) -> Self[B]
   scan_left[A, E](Self[A], (E, A) -> E, init~ : E) -> Self[E]
-  scan_right[A, B](Self[A], (A, B) -> B, init~ : B) -> Self[B]
+  scan_right[A, B](Self[A], (B, A) -> B, init~ : B) -> Self[B]
   sort[A : Compare](Self[A]) -> Self[A]
   tail[A](Self[A]) -> Self[A]
   take[A](Self[A], Int) -> Self[A]
@@ -249,10 +200,9 @@ impl T {
   unsafe_minimum[A : Compare](Self[A]) -> A
   unsafe_nth[A](Self[A], Int) -> A
   unzip[A, B](Self[(A, B)]) -> (Self[A], Self[B])
-  zip[A, B](Self[A], Self[B]) -> Self[(A, B)]?
+  zip[A, B](Self[A], Self[B]) -> Self[(A, B)]
 }
 impl[A] Add for T[A]
-impl[A : Compare] Compare for T[A]
 impl[X] Default for T[X]
 impl[A : Eq] Eq for T[A]
 impl[A : Hash] Hash for T[A]

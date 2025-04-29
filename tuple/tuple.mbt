@@ -59,6 +59,7 @@ pub fn snd[T, U](tuple : (T, U)) -> U {
 /// let mapped = @tuple.map_fst(fn(x : Int) -> Int { x + 1 }, tuple)
 /// assert_eq!(mapped, (2, 2))
 /// ```
+#deprecated("use `tuple |> then(fn { (a, b) => (f(a), b) })` instead")
 pub fn map_fst[T, U, V](f : (T) -> U, tuple : (T, V)) -> (U, V) {
   (f(tuple.0), tuple.1)
 }
@@ -72,6 +73,7 @@ pub fn map_fst[T, U, V](f : (T) -> U, tuple : (T, V)) -> (U, V) {
 /// let mapped = @tuple.map_snd(fn(x : Int) -> Int { x + 1 }, tuple)
 /// assert_eq!(mapped, (1, 3))
 /// ```
+#deprecated("use `tuple |> then(fn { (a, b) => (a, f(b)) })` instead")
 pub fn map_snd[T, U, V](f : (T) -> U, tuple : (V, T)) -> (V, U) {
   (tuple.0, f(tuple.1))
 }
@@ -85,6 +87,7 @@ pub fn map_snd[T, U, V](f : (T) -> U, tuple : (V, T)) -> (V, U) {
 /// let mapped = @tuple.map_both(fn(x : Int) -> Int { x + 1 }, fn(x : Int) -> Int { x - 1 }, tuple)
 /// assert_eq!(mapped, (2, 1))
 /// ```
+#deprecated("use `tuple |> then(fn { (a, b) => (f(a), g(b)) })` instead")
 pub fn map_both[T, U, V, W](
   f : (T) -> U,
   g : (V) -> W,

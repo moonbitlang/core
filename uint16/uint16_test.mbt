@@ -309,3 +309,25 @@ test "UInt16::lxor" {
   inspect!(lxor(50000, 40000), content="24336")
   inspect!(lxor(40000, 50000), content="24336")
 }
+
+///|
+test "UInt16::op_mod" {
+  fn mod(a : UInt16, b : UInt16) -> UInt16 {
+    a % b
+  }
+
+  inspect!(mod(10, 3), content="1")
+  inspect!(mod(10, 2), content="0")
+  inspect!(mod(10, 10), content="0")
+  inspect!(mod(10, 11), content="10")
+  inspect!(mod(0, 1), content="0")
+  inspect!(mod(1, 1), content="0")
+  inspect!(mod(65535, 10000), content="5535")
+  inspect!(mod(65535, 2), content="1")
+  inspect!(mod(65535, 65535), content="0")
+  inspect!(mod(32768, 10000), content="2768")
+  inspect!(mod(50000, 10000), content="0")
+  inspect!(mod(50000, 9999), content="5")
+  inspect!(mod(1234, 1000), content="234")
+  inspect!(mod(1234, 1235), content="1234")
+}

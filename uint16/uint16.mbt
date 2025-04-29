@@ -39,6 +39,11 @@ pub impl Div for UInt16 with op_div(self : UInt16, that : UInt16) -> UInt16 {
 }
 
 ///|
+pub impl Mod for UInt16 with op_mod(self : UInt16, that : UInt16) -> UInt16 {
+  (self.to_int() % that.to_int()).to_uint16()
+}
+
+///|
 pub impl Eq for UInt16 with op_equal(self, that) {
   self.to_int() == that.to_int()
 }

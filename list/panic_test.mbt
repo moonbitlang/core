@@ -13,15 +13,26 @@
 // limitations under the License.
 
 ///|
-#deprecated("use `@rational.new` instead")
-#coverage.skip
-pub fn T::new(numerator : Int64, denominator : Int64) -> T? {
-  new(numerator, denominator)
+test "last None" {
+  assert_eq!(@list.empty().last(), (None : Unit?))
 }
 
 ///|
-#deprecated("use `@rational.from_double` instead")
-#coverage.skip
-pub fn T::from_double(value : Double) -> T!RationalError {
-  from_double!(value)
+test "panic nth_exn" {
+  @list.empty().unsafe_nth(0)
+}
+
+///|
+test "panic @list.exn with empty list" {
+  @list.empty().unsafe_head()
+}
+
+///|
+test "panic @list.unsafe_maximum with empty list" {
+  inspect!((@list.empty() : @list.T[Int]).unsafe_maximum())
+}
+
+///|
+test "panic @list.unsafe_minimum with empty list" {
+  inspect!((@list.empty() : @list.T[Int]).unsafe_minimum())
 }

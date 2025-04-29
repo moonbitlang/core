@@ -13,29 +13,7 @@
 // limitations under the License.
 
 ///|
-#deprecated("use `@hashset.new` instead")
-#coverage.skip
-pub fn T::new[K](capacity~ : Int = default_init_capacity) -> T[K] {
-  new(capacity~)
-}
-
-///|
-#deprecated("use `@hashset.from_array` instead")
-#coverage.skip
-pub fn T::from_array[K : Hash + Eq](arr : Array[K]) -> T[K] {
-  from_array(arr)
-}
-
-///|
-#deprecated("use `@hashset.of` instead")
-#coverage.skip
-pub fn T::of[K : Hash + Eq](arr : FixedArray[K]) -> T[K] {
-  of(arr)
-}
-
-///|
-#deprecated("use `@hashset.from_iter` instead")
-#coverage.skip
-pub fn T::from_iter[K : Hash + Eq](iter : Iter[K]) -> T[K] {
-  from_iter(iter)
-}
+pub enum T[A] {
+  Empty
+  More(A, mut tail~ : T[A])
+} derive(Eq)

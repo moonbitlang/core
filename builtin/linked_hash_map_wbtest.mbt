@@ -191,7 +191,7 @@ test "clear" {
   assert_eq!(m.size, 0)
   assert_eq!(m.capacity, 8)
   assert_eq!(m.head, None)
-  assert_eq!(m.tail, None)
+  assert_eq!(m.tail, -1)
   for i in 0..<m.capacity {
     assert_eq!(m.entries[i], None)
   }
@@ -406,7 +406,7 @@ test "clear" {
   assert_eq!(m.size, 0)
   assert_eq!(m.capacity, 8)
   assert_eq!(m.head, None)
-  assert_eq!(m.tail, None)
+  assert_eq!(m.tail, -1)
   for i in 0..<m.capacity {
     assert_eq!(m.entries[i], None)
   }
@@ -454,7 +454,7 @@ test "new" {
   assert_eq!(m.size, 0)
   assert_eq!(m.capacity, 8)
   assert_eq!(m.head, None)
-  assert_eq!(m.tail, None)
+  assert_eq!(m.tail, -1)
   for i in 0..<m.capacity {
     assert_eq!(m.entries[i], None)
   }
@@ -547,7 +547,7 @@ test "clear" {
   assert_eq!(m.size, 0)
   assert_eq!(m.capacity, 8)
   assert_eq!(m.head, None)
-  assert_eq!(m.tail, None)
+  assert_eq!(m.tail, -1)
   for i in 0..<m.capacity {
     assert_eq!(m.entries[i], None)
   }
@@ -640,7 +640,7 @@ test "clear" {
   assert_eq!(m.size, 0)
   assert_eq!(m.capacity, 8)
   assert_eq!(m.head, None)
-  assert_eq!(m.tail, None)
+  assert_eq!(m.tail, -1)
   for i in 0..<m.capacity {
     assert_eq!(m.entries[i], None)
   }
@@ -749,6 +749,11 @@ test "remove" {
     m.debug_entries(),
     "_,(0,a,1),(0,bc,2),(1,cd,2),(1,abc,3),_,(0,abcdef,6),_",
   )
+  m.remove("abc")
+  assert_eq!(
+    m.debug_entries(),
+    "_,(0,a,1),(0,bc,2),(1,cd,2),_,_,(0,abcdef,6),_",
+  )
 }
 
 ///|
@@ -786,10 +791,14 @@ test "remove_entry_head" {
   map.set(2, 2)
   map.remove(1)
   // This should ensure the head is updated correctly
-  assert_eq!(
-    map.head,
-    Some({ idx: 1, psl: 0, hash: (2).hash(), key: 2, value: 2 }),
-  )
+  assert_false!(map.head is None)
+  guard map.head is Some(head)
+  assert_eq!(head.prev, -1)
+  assert_true!(head.next is None)
+  assert_eq!(head.psl, 0)
+  assert_eq!(head.hash, (2).hash())
+  assert_eq!(head.key, 2)
+  assert_eq!(head.value, 2)
 }
 
 ///|
@@ -799,10 +808,15 @@ test "remove_entry_tail" {
   map.set(2, 2)
   map.remove(2)
   // This should ensure the tail is updated correctly
-  assert_eq!(
-    map.tail,
-    Some(Entry::{ idx: 0, psl: 0, hash: (1).hash(), key: 1, value: 1 }),
-  )
+  assert_false!(map.tail is -1)
+  assert_false!(map.entries[map.tail] is None)
+  guard map.entries[map.tail] is Some(tail)
+  assert_eq!(tail.prev, -1)
+  assert_true!(tail.next is None)
+  assert_eq!(tail.psl, 0)
+  assert_eq!(tail.hash, (1).hash())
+  assert_eq!(tail.key, 1)
+  assert_eq!(tail.value, 1)
 }
 
 ///|

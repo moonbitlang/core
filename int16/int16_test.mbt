@@ -405,3 +405,24 @@ test "Int16::lxor" {
   inspect!(lxor(32767, 0), content="32767")
   inspect!(lxor(0, 32767), content="32767")
 }
+
+///|
+test "Int16::op_mod" {
+  fn mod(a : Int16, b : Int16) -> Int16 {
+    a % b
+  }
+
+  inspect!(mod(10, 3), content="1")
+  inspect!(mod(10, 2), content="0")
+  inspect!(mod(10, 10), content="0")
+  inspect!(mod(10, 11), content="10")
+  inspect!(mod(10, -3), content="1")
+  inspect!(mod(-10, 3), content="-1")
+  inspect!(mod(-10, -3), content="-1")
+  inspect!(mod(32767, 10000), content="2767")
+  inspect!(mod(32767, -10000), content="2767")
+  inspect!(mod(-32768, 10000), content="-2768")
+  inspect!(mod(-32768, -10000), content="-2768")
+  inspect!(mod(0, 1), content="0")
+  inspect!(mod(1, 1), content="0")
+}

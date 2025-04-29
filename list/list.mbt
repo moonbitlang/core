@@ -13,8 +13,26 @@
 // limitations under the License.
 
 ///|
-pub fn add[A](self : T[A], head : A) -> T[A] {
-  Cons(head, self)
+/// Creates an empty list
+pub fn new[A]() -> T[A] {
+  Empty
+}
+
+///|
+/// Creates an empty list
+pub fn empty[A]() -> T[A] {
+  Empty
+}
+
+///|
+/// Prepend an element to the list and create a new list.
+pub fn construct[A](head : A, tail : T[A]) -> T[A] {
+  More(head, tail~)
+}
+
+///|
+pub fn prepend[A](self : T[A], head : A) -> T[A] {
+  More(head, tail=self)
 }
 
 ///|
@@ -41,10 +59,10 @@ pub fn to_json[A : ToJson](self : T[A]) -> Json {
 ///|
 pub impl[A : @json.FromJson] @json.FromJson for T[A] with from_json(json, path) {
   guard json is Array(arr) else {
-    raise @json.JsonDecodeError((path, "@immut/list.from_json: expected array"))
+    raise @json.JsonDecodeError((path, "@list.from_json: expected array"))
   }
-  for i = arr.length() - 1, list = Nil; i >= 0; {
-    continue i - 1, list.add(A::from_json!(arr[i], path))
+  for i = arr.length() - 1, list = Empty; i >= 0; {
+    continue i - 1, list.prepend(A::from_json!(arr[i], path))
   } else {
     list
   }
@@ -65,8 +83,8 @@ pub fn from_json[A : @json.FromJson](json : Json) -> T[A]!@json.JsonDecodeError 
 /// assert_eq!(ls, @list.from_array([1, 2, 3, 4, 5]))
 /// ```
 pub fn from_array[A](arr : Array[A]) -> T[A] {
-  for i = arr.length() - 1, list = Nil; i >= 0; {
-    continue i - 1, Cons(arr[i], list)
+  for i = arr.length() - 1, list = Empty; i >= 0; {
+    continue i - 1, More(arr[i], tail=list)
   } else {
     list
   }
@@ -76,8 +94,8 @@ pub fn from_array[A](arr : Array[A]) -> T[A] {
 /// Get the length of the list.
 pub fn length[A](self : T[A]) -> Int {
   loop self, 0 {
-    Nil, len => len
-    Cons(_, rest), acc => continue rest, acc + 1
+    Empty, len => len
+    More(_, tail=rest), acc => continue rest, acc + 1
   }
 }
 
@@ -93,8 +111,8 @@ pub fn length[A](self : T[A]) -> Int {
 /// ```
 pub fn each[A](self : T[A], f : (A) -> Unit) -> Unit {
   loop self {
-    Nil => ()
-    Cons(head, tail) => {
+    Empty => ()
+    More(head, tail~) => {
       f(head)
       continue tail
     }
@@ -113,8 +131,8 @@ pub fn each[A](self : T[A], f : (A) -> Unit) -> Unit {
 /// ```
 pub fn eachi[A](self : T[A], f : (Int, A) -> Unit) -> Unit {
   loop self, 0 {
-    Nil, _ => ()
-    Cons(x, xs), i => {
+    Empty, _ => ()
+    More(x, tail=xs), i => {
       f(i, x)
       continue xs, i + 1
     }
@@ -131,22 +149,42 @@ pub fn eachi[A](self : T[A], f : (Int, A) -> Unit) -> Unit {
 /// ```
 pub fn map[A, B](self : T[A], f : (A) -> B) -> T[B] {
   match self {
-    Nil => Nil
-    Cons(head, tail) => Cons(f(head), map(tail, f))
+    Empty => Empty
+    More(hd, tail~) => {
+      let dest = More(f(hd), tail=Empty)
+      loop dest, tail {
+        _, Empty => ()
+        More(_) as dest, More(hd, tail~) => {
+          dest.tail = More(f(hd), tail=Empty)
+          continue dest.tail, tail
+        }
+        // unreachable
+        Empty, _ => panic()
+      }
+      dest
+    }
   }
 }
 
 ///|
 /// Maps the list with index.
 pub fn mapi[A, B](self : T[A], f : (Int, A) -> B) -> T[B] {
-  fn go(xs : T[A], i : Int, f : (Int, A) -> B) -> T[B] {
-    match xs {
-      Nil => Nil
-      Cons(x, xs) => Cons(f(i, x), go(xs, i + 1, f))
+  match self {
+    Empty => Empty
+    More(hd, tail~) => {
+      let dest = More(f(0, hd), tail=Empty)
+      loop 1, dest, tail {
+        _, _, Empty => ()
+        i, More(_) as dest, More(hd, tail~) => {
+          dest.tail = More(f(i, hd), tail=Empty)
+          continue i + 1, dest.tail, tail
+        }
+        // unreachable
+        _, Empty, _ => panic()
+      }
+      dest
     }
   }
-
-  go(self, 0, f)
 }
 
 ///|
@@ -159,9 +197,9 @@ pub fn mapi[A, B](self : T[A], f : (Int, A) -> B) -> T[B] {
 /// assert_eq!(@list.of([1, 2, 3, 4, 5]).rev_map(fn(x) { x * 2 }), @list.of([10, 8, 6, 4, 2]))
 /// ```
 pub fn rev_map[A, B](self : T[A], f : (A) -> B) -> T[B] {
-  loop Nil, self {
-    acc, Nil => acc
-    acc, Cons(x, xs) => continue Cons(f(x), acc), xs
+  loop Empty, self {
+    acc, Empty => acc
+    acc, More(x, tail=xs) => continue More(f(x), tail=acc), xs
   }
 }
 
@@ -169,12 +207,12 @@ pub fn rev_map[A, B](self : T[A], f : (A) -> B) -> T[B] {
 /// Convert list to array.
 pub fn to_array[A](self : T[A]) -> Array[A] {
   match self {
-    Nil => []
-    Cons(x, xs) => {
+    Empty => []
+    More(x, tail=xs) => {
       let arr = [x]
       loop xs {
-        Nil => ()
-        Cons(x, xs) => {
+        Empty => ()
+        More(x, tail=xs) => {
           arr.push(x)
           continue xs
         }
@@ -193,13 +231,27 @@ pub fn to_array[A](self : T[A]) -> Array[A] {
 /// assert_eq!(@list.of([1, 2, 3, 4, 5]).filter(fn(x){ x % 2 == 0}), @list.of([2, 4]))
 /// ```
 pub fn filter[A](self : T[A], f : (A) -> Bool) -> T[A] {
-  match self {
-    Nil => Nil
-    Cons(head, tail) =>
-      if f(head) {
-        Cons(head, filter(tail, f))
+  loop self {
+    Empty => Empty
+    More(head, tail~) =>
+      if not(f(head)) {
+        continue tail
       } else {
-        filter(tail, f)
+        let dest = More(head, tail=Empty)
+        loop dest, tail {
+          _, Empty => ()
+          More(_) as dest, More(hd, tail~) =>
+            if f(hd) {
+              dest.tail = More(hd, tail=Empty)
+              continue dest.tail, tail
+            } else {
+              continue dest, tail
+            }
+          Empty, _ =>
+            // unreachable
+            panic()
+        }
+        dest
       }
   }
 }
@@ -208,17 +260,17 @@ pub fn filter[A](self : T[A], f : (A) -> Bool) -> T[A] {
 /// Test if all elements of the list satisfy the predicate.
 pub fn all[A](self : T[A], f : (A) -> Bool) -> Bool {
   loop self {
-    Nil => true
-    Cons(head, tail) => if f(head) { continue tail } else { false }
+    Empty => true
+    More(head, tail~) => if f(head) { continue tail } else { false }
   }
 }
 
 ///|
 /// Test if any element of the list satisfies the predicate.
 pub fn any[A](self : T[A], f : (A) -> Bool) -> Bool {
-  match self {
-    Nil => false
-    Cons(head, tail) => f(head) || any(tail, f)
+  loop self {
+    Empty => false
+    More(head, tail~) => if f(head) { true } else { continue tail }
   }
 }
 
@@ -232,8 +284,8 @@ pub fn any[A](self : T[A], f : (A) -> Bool) -> Bool {
 /// ```
 pub fn tail[A](self : T[A]) -> T[A] {
   match self {
-    Nil => Nil
-    Cons(_, tail) => tail
+    Empty => Empty
+    More(_, tail~) => tail
   }
 }
 
@@ -242,16 +294,9 @@ pub fn tail[A](self : T[A]) -> T[A] {
 /// @alert unsafe "Panic if the list is empty"
 pub fn unsafe_head[A](self : T[A]) -> A {
   match self {
-    Nil => abort("head of empty list")
-    Cons(head, _) => head
+    Empty => abort("head of empty list")
+    More(head, tail=_) => head
   }
-}
-
-///|
-#deprecated("Use `unsafe_head` instead")
-#coverage.skip
-pub fn head_exn[A](self : T[A]) -> A {
-  unsafe_head(self)
 }
 
 ///|
@@ -264,8 +309,8 @@ pub fn head_exn[A](self : T[A]) -> A {
 /// ```
 pub fn head[A](self : T[A]) -> A? {
   match self {
-    Nil => None
-    Cons(head, _) => Some(head)
+    Empty => None
+    More(head, tail=_) => Some(head)
   }
 }
 
@@ -273,9 +318,9 @@ pub fn head[A](self : T[A]) -> A? {
 /// @alert unsafe "Panic if the list is empty"
 pub fn unsafe_last[A](self : T[A]) -> A {
   loop self {
-    Nil => abort("last of empty list")
-    Cons(head, Nil) => head
-    Cons(_, tail) => continue tail
+    Empty => abort("last of empty list")
+    More(head, tail=Empty) => head
+    More(_, tail~) => continue tail
   }
 }
 
@@ -289,9 +334,9 @@ pub fn unsafe_last[A](self : T[A]) -> A {
 /// ```
 pub fn last[A](self : T[A]) -> A? {
   loop self {
-    Nil => None
-    Cons(head, Nil) => Some(head)
-    Cons(_, tail) => continue tail
+    Empty => None
+    More(head, tail=Empty) => Some(head)
+    More(_, tail~) => continue tail
   }
 }
 
@@ -306,8 +351,21 @@ pub fn last[A](self : T[A]) -> A? {
 /// ```
 pub fn concat[A](self : T[A], other : T[A]) -> T[A] {
   match self {
-    Nil => other
-    Cons(head, tail) => Cons(head, concat(tail, other))
+    Empty => other
+    More(hd, tail=Empty) => More(hd, tail=other)
+    More(hd, tail~) => {
+      let dest = More(hd, tail=Empty)
+      loop dest, tail {
+        More(_) as dest, Empty => dest.tail = other
+        More(_) as dest, More(head, tail~) => {
+          dest.tail = More(head, tail=Empty)
+          continue dest.tail, tail
+        }
+        // unreachable
+        Empty, _ => panic()
+      }
+      dest
+    }
   }
 }
 
@@ -322,8 +380,8 @@ pub fn concat[A](self : T[A], other : T[A]) -> T[A] {
 /// ```
 pub fn rev_concat[A](self : T[A], other : T[A]) -> T[A] {
   loop self, other {
-    Nil, other => other
-    Cons(head, tail), other => continue tail, Cons(head, other)
+    Empty, other => other
+    More(head, tail~), other => continue tail, More(head, tail=other)
   }
 }
 
@@ -336,7 +394,7 @@ pub fn rev_concat[A](self : T[A], other : T[A]) -> T[A] {
 /// assert_eq!(@list.of([1, 2, 3, 4, 5]).rev(), @list.of([5, 4, 3, 2, 1]))
 /// ```
 pub fn rev[A](self : T[A]) -> T[A] {
-  self.rev_concat(Nil)
+  self.rev_concat(Empty)
 }
 
 ///|
@@ -349,9 +407,9 @@ pub fn rev[A](self : T[A]) -> T[A] {
 /// assert_eq!(r, 15)
 /// ```
 pub fn fold[A, B](self : T[A], init~ : B, f : (B, A) -> B) -> B {
-  match self {
-    Nil => init
-    Cons(head, tail) => tail.fold(f, init=f(init, head))
+  loop self, init {
+    Empty, acc => acc
+    More(head, tail~), acc => continue tail, f(acc, head)
   }
 }
 
@@ -360,52 +418,11 @@ pub fn fold[A, B](self : T[A], init~ : B, f : (B, A) -> B) -> B {
 ///
 /// # Example
 /// ```
-/// let r = @list.of([1, 2, 3, 4, 5]).rev_fold(fn(x, acc) { x + acc }, init=0)
+/// let r = @list.of([1, 2, 3, 4, 5]).rev_fold(fn(acc, x) { x + acc }, init=0)
 /// assert_eq!(r, 15)
 /// ```
-pub fn rev_fold[A, B](self : T[A], init~ : B, f : (A, B) -> B) -> B {
-  let tsil = self.rev() // avoid stack overflow, because we don't know `f` will use how much stack.
-  let mut acc = init
-  loop tsil {
-    Nil => ()
-    Cons(x, xs) => {
-      acc = f(x, acc)
-      continue xs
-    }
-  }
-  acc
-}
-
-///|
-/// Fold the list from left.
-///
-/// # Example
-///
-/// ```
-/// let r = @list.of([1, 2, 3, 4, 5]).fold(init=0, fn(acc, x) { acc + x })
-/// assert_eq!(r, 15)
-/// ```
-#deprecated("Use `fold` instead")
-#coverage.skip
-pub fn fold_left[A, B](self : T[A], f : (B, A) -> B, init~ : B) -> B {
-  self.fold(init~, f)
-}
-
-///|
-/// Fold the list from right.
-///
-/// # Example
-/// ```
-/// let r = @list.of([1, 2, 3, 4, 5]).rev_fold(fn(x, acc) { x + acc }, init=0)
-/// assert_eq!(r, 15)
-/// ```
-#deprecated("Use `rev_fold` instead")
-#coverage.skip
-pub fn fold_right[A, B](self : T[A], f : (A, B) -> B, init~ : B) -> B {
-  match self {
-    Nil => init
-    Cons(head, tail) => f(head, tail.rev_fold(f, init~))
-  }
+pub fn rev_fold[A, B](self : T[A], init~ : B, f : (B, A) -> B) -> B {
+  self.rev().fold(init~, f)
 }
 
 ///|
@@ -413,8 +430,8 @@ pub fn fold_right[A, B](self : T[A], f : (A, B) -> B, init~ : B) -> B {
 pub fn foldi[A, B](self : T[A], init~ : B, f : (Int, B, A) -> B) -> B {
   fn go(xs : T[A], i : Int, f : (Int, B, A) -> B, acc : B) -> B {
     match xs {
-      Nil => acc
-      Cons(x, xs) => go(xs, i + 1, f, f(i, acc, x))
+      Empty => acc
+      More(x, tail=xs) => go(xs, i + 1, f, f(i, acc, x))
     }
   }
 
@@ -423,86 +440,32 @@ pub fn foldi[A, B](self : T[A], init~ : B, f : (Int, B, A) -> B) -> B {
 
 ///|
 /// Fold the list from right with index.
-pub fn rev_foldi[A, B](self : T[A], init~ : B, f : (Int, A, B) -> B) -> B {
-  fn go(xs : T[A], i : Int, f : (Int, A, B) -> B, acc : B) -> B {
-    match xs {
-      Nil => acc
-      Cons(x, xs) => f(i, x, go(xs, i + 1, f, acc))
-    }
-  }
-
-  go(self, 0, f, init)
-}
-
-///|
-/// Fold the list from left with index.
-#deprecated("Use `foldi` instead")
-#coverage.skip
-pub fn fold_lefti[A, B](self : T[A], f : (Int, B, A) -> B, init~ : B) -> B {
-  fn go(xs : T[A], i : Int, f : (Int, B, A) -> B, acc : B) -> B {
-    match xs {
-      Nil => acc
-      Cons(x, xs) => go(xs, i + 1, f, f(i, acc, x))
-    }
-  }
-
-  go(self, 0, f, init)
-}
-
-///|
-/// Fold the list from right with index.
-#deprecated("Use `rev_foldi` instead")
-#coverage.skip
-pub fn fold_righti[A, B](self : T[A], f : (Int, A, B) -> B, init~ : B) -> B {
-  fn go(xs : T[A], i : Int, f : (Int, A, B) -> B, acc : B) -> B {
-    match xs {
-      Nil => acc
-      Cons(x, xs) => f(i, x, go(xs, i + 1, f, acc))
-    }
-  }
-
-  go(self, 0, f, init)
+/// 
+/// The index parameter corresponds to the order of traversal, 
+/// starting from 0 for the first element visited,
+/// i.e. the last element of the list would have index 0 as it's first visited.
+pub fn rev_foldi[A, B](self : T[A], init~ : B, f : (Int, B, A) -> B) -> B {
+  self.rev().foldi(init~, fn(i, b, a) { f(i, b, a) })
 }
 
 ///|
 /// Zip two lists.
-/// If the lists have different lengths, it will return None.
+/// If the lists have different lengths, it will return a list with shorter length.
 ///
 /// # Example
 ///
-/// ```
+/// ```moonbit
 /// let r = @list.zip(@list.of([1, 2, 3, 4, 5]), @list.of([6, 7, 8, 9, 10]))
-/// assert_eq!(r, Some(@list.from_array([(1, 6), (2, 7), (3, 8), (4, 9), (5, 10)])))
+/// assert_eq!(r, @list.from_array([(1, 6), (2, 7), (3, 8), (4, 9), (5, 10)]))
 /// ```
-pub fn zip[A, B](self : T[A], other : T[B]) -> T[(A, B)]? {
-  let mut acc = Nil
-  let res = loop self, other {
-    Nil, Nil => break Some(acc)
-    Cons(x, xs), Cons(y, ys) => {
-      acc = Cons((x, y), acc)
-      continue xs, ys
-    }
-    _, _ => break None
+pub fn zip[A, B](self : T[A], other : T[B]) -> T[(A, B)] {
+  let res = loop self, other, Empty {
+    Empty, _, acc => break acc
+    _, Empty, acc => break acc
+    More(x, tail=xs), More(y, tail=ys), acc =>
+      continue xs, ys, More((x, y), tail=acc)
   }
-  res.map(T::rev)
-}
-
-///|
-/// map over the list and concat all results.
-///
-/// `concat_map(f, ls)` equal to `ls.map(f).fold(Nil, fn(acc, x) { acc.concat(x) })))`
-///
-/// # Example
-///
-/// ```
-/// let ls = @list.from_array([1, 2, 3])
-/// let r = ls.flat_map(fn(x) { @list.from_array([x, x * 2]) })
-/// assert_eq!(r, @list.from_array([1, 2, 2, 4, 3, 6]))
-/// ```
-#deprecated("Use `flat_map` instead")
-#coverage.skip
-pub fn concat_map[A, B](self : T[A], f : (A) -> T[B]) -> T[B] {
-  flat_map(self, f)
+  res.reverse_inplace()
 }
 
 ///|
@@ -518,9 +481,40 @@ pub fn concat_map[A, B](self : T[A], f : (A) -> T[B]) -> T[B] {
 /// assert_eq!(r, @list.from_array([1, 2, 2, 4, 3, 6]))
 /// ```
 pub fn flat_map[A, B](self : T[A], f : (A) -> T[B]) -> T[B] {
-  match self {
-    Nil => Nil
-    Cons(head, tail) => concat(f(head), flat_map(tail, f))
+  loop self {
+    Empty => Empty
+    More(head, tail~) =>
+      match f(head) {
+        // continue until we have at least one element
+        Empty => continue tail
+        More(hd, tail=tl) => {
+          let dest = More(hd, tail=Empty)
+          // copy all the elements of `f(head)` first
+          let dest1 = loop dest, tl {
+            dest, Empty => dest
+            More(_) as dest, More(hd, tail~) => {
+              dest.tail = More(hd, tail=Empty)
+              continue dest.tail, tail
+            }
+            Empty, _ => panic()
+          }
+          // continue looping on the `tail` of `self`
+          loop_over_tail~: loop dest1, tail {
+            _, Empty => ()
+            More(_) as dest, More(t_hd, tail=Empty) => dest.tail = f(t_hd)
+            dest, More(t_hd, tail=t_tl) =>
+              loop dest, f(t_hd) {
+                dest, Empty => continue loop_over_tail~ dest, t_tl
+                More(_) as dest, More(hd, tail~) => {
+                  dest.tail = More(hd, tail=Empty)
+                  continue dest.tail, tail
+                }
+                Empty, _ => panic()
+              }
+          }
+          dest
+        }
+      }
   }
 }
 
@@ -535,12 +529,27 @@ pub fn flat_map[A, B](self : T[A], f : (A) -> T[B]) -> T[B] {
 /// assert_eq!(r, @list.of([4, 6, 3]))
 /// ```
 pub fn filter_map[A, B](self : T[A], f : (A) -> B?) -> T[B] {
-  loop Nil, self {
-    acc, Nil => acc.rev()
-    acc, Cons(x, xs) =>
-      match f(x) {
-        Some(v) => continue acc.add(v), xs
-        None => continue acc, xs
+  loop self {
+    Empty => Empty
+    More(hd, tail~) =>
+      match f(hd) {
+        None => continue tail
+        Some(head) => {
+          let dest = More(head, tail=Empty)
+          loop dest, tail {
+            _, Empty => ()
+            More(_) as dest, More(hd, tail~) =>
+              match f(hd) {
+                None => continue dest, tail
+                Some(head) => {
+                  dest.tail = More(head, tail=Empty)
+                  continue dest.tail, tail
+                }
+              }
+            Empty, _ => panic()
+          }
+          dest
+        }
       }
   }
 }
@@ -549,26 +558,19 @@ pub fn filter_map[A, B](self : T[A], f : (A) -> B?) -> T[B] {
 /// @alert unsafe "Panic if the index is out of bounds"
 pub fn unsafe_nth[A](self : T[A], n : Int) -> A {
   loop self, n {
-    Nil, _ => abort("nth: index out of bounds")
-    Cons(head, _), 0 => head
-    Cons(_, tail), n => continue tail, n - 1
+    Empty, _ => abort("nth: index out of bounds")
+    More(head, tail=_), 0 => head
+    More(_, tail~), n => continue tail, n - 1
   }
-}
-
-///|
-#deprecated("Use `unsafe_nth` instead")
-#coverage.skip
-pub fn nth_exn[A](self : T[A], n : Int) -> A {
-  unsafe_nth(self, n)
 }
 
 ///|
 /// Get nth element of the list or None if the index is out of bounds
 pub fn nth[A](self : T[A], n : Int) -> A? {
   loop self, n {
-    Nil, _ => None
-    Cons(head, _), 0 => Some(head)
-    Cons(_, tail), n => continue tail, n - 1
+    Empty, _ => None
+    More(head, tail=_), 0 => Some(head)
+    More(_, tail~), n => continue tail, n - 1
   }
 }
 
@@ -581,10 +583,8 @@ pub fn nth[A](self : T[A], n : Int) -> A? {
 /// assert_eq!(@list.repeat(5, 1), @list.from_array([1, 1, 1, 1, 1]))
 /// ```
 pub fn repeat[A](n : Int, x : A) -> T[A] {
-  if n == 0 {
-    Nil
-  } else {
-    Cons(x, repeat(n - 1, x))
+  loop Empty, n {
+    acc, n => if n <= 0 { acc } else { continue More(x, tail=acc), n - 1 }
   }
 }
 
@@ -599,17 +599,29 @@ pub fn repeat[A](n : Int, x : A) -> T[A] {
 /// ```
 pub fn intersperse[A](self : T[A], separator : A) -> T[A] {
   match self {
-    Nil => Nil
-    Cons(head, Nil) => Cons(head, Nil)
-    Cons(head, tail) =>
-      Cons(head, Cons(separator, intersperse(tail, separator)))
+    Empty => Empty
+    More(head, tail=Empty) => More(head, tail=Empty)
+    More(head, tail~) => {
+      let dest = More(head, tail=Empty)
+      loop dest, tail {
+        _, Empty => ()
+        More(_) as dest, More(hd, tail=tl) => {
+          let new_tail = More(hd, tail=Empty)
+          dest.tail = More(separator, tail=new_tail)
+          continue new_tail, tl
+        }
+        // unreachable
+        Empty, _ => panic()
+      }
+      dest
+    }
   }
 }
 
 ///|
 /// Check if the list is empty.
 pub fn is_empty[A](self : T[A]) -> Bool {
-  self is Nil
+  self is Empty
 }
 
 ///|
@@ -623,15 +635,21 @@ pub fn is_empty[A](self : T[A]) -> Bool {
 /// assert_eq!(b, @list.from_array([2, 4, 6]))
 /// ```
 pub fn unzip[A, B](self : T[(A, B)]) -> (T[A], T[B]) {
-  let mut xs = Nil
-  let mut ys = Nil
-  // implemented with loop to avoid stack overflow
-  loop self.rev() {
-    Nil => break (xs, ys)
-    Cons((x, y), tail) => {
-      xs = Cons(x, xs)
-      ys = Cons(y, ys)
-      continue tail
+  match self {
+    Empty => (Empty, Empty)
+    More((x, y), tail~) => {
+      let xs = More(x, tail=Empty)
+      let ys = More(y, tail=Empty)
+      loop tail, xs, ys {
+        Empty, _, _ => ()
+        More((x, y), tail~), More(_) as xptr, More(_) as yptr => {
+          xptr.tail = More(x, tail=Empty)
+          yptr.tail = More(y, tail=Empty)
+          continue tail, xptr.tail, yptr.tail
+        }
+        _, _, _ => abort("unreachable")
+      }
+      (xs, ys)
     }
   }
 }
@@ -646,9 +664,40 @@ pub fn unzip[A, B](self : T[(A, B)]) -> (T[A], T[B]) {
 /// assert_eq!(ls, @list.from_array([1, 2, 3, 4, 5, 6, 7, 8, 9]))
 /// ```
 pub fn flatten[A](self : T[T[A]]) -> T[A] {
-  match self {
-    Nil => Nil
-    Cons(head, tail) => concat(head, flatten(tail))
+  loop self {
+    Empty => Empty
+    More(head, tail~) =>
+      match head {
+        // continue until we have at least one element
+        Empty => continue tail
+        More(hd, tail=tl) => {
+          let dest = More(hd, tail=Empty)
+          // copy all the elements of `head` first
+          let dest1 = loop dest, tl {
+            dest, Empty => dest
+            More(_) as dest, More(hd, tail~) => {
+              dest.tail = More(hd, tail=Empty)
+              continue dest.tail, tail
+            }
+            Empty, _ => panic()
+          }
+          // continue looping on the `tail` of `self`
+          loop_over_tail~: loop dest1, tail {
+            _, Empty => ()
+            More(_) as dest, More(t_hd, tail=Empty) => dest.tail = t_hd
+            dest, More(t_hd, tail=t_tl) =>
+              loop dest, t_hd {
+                dest, Empty => continue loop_over_tail~ dest, t_tl
+                More(_) as dest, More(hd, tail~) => {
+                  dest.tail = More(hd, tail=Empty)
+                  continue dest.tail, tail
+                }
+                Empty, _ => panic()
+              }
+          }
+          dest
+        }
+      }
   }
 }
 
@@ -656,16 +705,13 @@ pub fn flatten[A](self : T[T[A]]) -> T[A] {
 /// @alert unsafe "Panic if the list is empty"
 pub fn unsafe_maximum[A : Compare](self : T[A]) -> A {
   match self {
-    Nil => abort("maximum: empty list")
-    Cons(x, Nil) => x
-    Cons(x, xs) => {
-      let y = unsafe_maximum(xs)
-      if x > y {
-        x
-      } else {
-        y
+    Empty => abort("maximum: empty list")
+    More(head, tail~) =>
+      loop tail, head {
+        Empty, curr_max => curr_max
+        More(item, tail~), curr_max =>
+          continue tail, if item > curr_max { item } else { curr_max }
       }
-    }
   }
 }
 
@@ -674,12 +720,12 @@ pub fn unsafe_maximum[A : Compare](self : T[A]) -> A {
 /// Returns None if the list is empty.
 pub fn maximum[A : Compare](self : T[A]) -> A? {
   match self {
-    Nil => None
-    Cons(x, Nil) => Some(x)
-    Cons(x, xs) =>
-      match maximum(xs) {
-        None => Some(x)
-        Some(y) => Some(if x > y { x } else { y })
+    Empty => None
+    More(head, tail~) =>
+      loop tail, head {
+        Empty, curr_max => Some(curr_max)
+        More(item, tail~), curr_max =>
+          continue tail, if item > curr_max { item } else { curr_max }
       }
   }
 }
@@ -688,16 +734,13 @@ pub fn maximum[A : Compare](self : T[A]) -> A? {
 /// @alert unsafe "Panic if the list is empty"
 pub fn unsafe_minimum[A : Compare](self : T[A]) -> A {
   match self {
-    Nil => abort("minimum: empty list")
-    Cons(x, Nil) => x
-    Cons(x, xs) => {
-      let y = unsafe_minimum(xs)
-      if x < y {
-        x
-      } else {
-        y
+    Empty => abort("maximum: empty list")
+    More(head, tail~) =>
+      loop tail, head {
+        Empty, curr_min => curr_min
+        More(item, tail~), curr_min =>
+          continue tail, if item < curr_min { item } else { curr_min }
       }
-    }
   }
 }
 
@@ -705,12 +748,12 @@ pub fn unsafe_minimum[A : Compare](self : T[A]) -> A {
 /// Get minimum element of the list.
 pub fn minimum[A : Compare](self : T[A]) -> A? {
   match self {
-    Nil => None
-    Cons(x, Nil) => Some(x)
-    Cons(x, xs) =>
-      match minimum(xs) {
-        None => Some(x)
-        Some(y) => Some(if x < y { x } else { y })
+    Empty => None
+    More(head, tail~) =>
+      loop tail, head {
+        Empty, curr_min => Some(curr_min)
+        More(item, tail~), curr_min =>
+          continue tail, if item < curr_min { item } else { curr_min }
       }
   }
 }
@@ -726,11 +769,11 @@ pub fn minimum[A : Compare](self : T[A]) -> A? {
 /// ```
 pub fn sort[A : Compare](self : T[A]) -> T[A] {
   match self {
-    Nil => Nil
-    Cons(x, xs) => {
+    Empty => Empty
+    More(x, tail=xs) => {
       let smaller = filter(xs, fn(y) { y < x })
       let greater = filter(xs, fn(y) { y >= x })
-      concat(sort(smaller), Cons(x, sort(greater)))
+      concat(sort(smaller), More(x, tail=sort(greater)))
     }
   }
 }
@@ -747,8 +790,8 @@ pub impl[A] Add for T[A] with op_add(self, other) {
 /// Check if the list contains the value.
 pub fn contains[A : Eq](self : T[A], value : A) -> Bool {
   loop self {
-    Nil => false
-    Cons(x, xs) => if x == value { true } else { continue xs }
+    Empty => false
+    More(x, tail=xs) => if x == value { true } else { continue xs }
   }
 }
 
@@ -763,8 +806,19 @@ pub fn contains[A : Eq](self : T[A], value : A) -> Bool {
 /// ```
 pub fn unfold[A, S](f : (S) -> (A, S)?, init~ : S) -> T[A] {
   match f(init) {
-    Some((element, new_state)) => Cons(element, unfold(init=new_state, f))
-    None => Nil
+    None => Empty
+    Some((element, new_state)) => {
+      let dest = More(element, tail=Empty)
+      loop dest, f(new_state) {
+        _, None => ()
+        More(_) as dest, Some((element, new_state)) => {
+          dest.tail = More(element, tail=Empty)
+          continue dest.tail, f(new_state)
+        }
+        Empty, _ => panic()
+      }
+      dest
+    }
   }
 }
 
@@ -780,16 +834,25 @@ pub fn unfold[A, S](f : (S) -> (A, S)?, init~ : S) -> T[A] {
 /// assert_eq!(r, @list.of([1, 2, 3]))
 /// ```
 pub fn take[A](self : T[A], n : Int) -> T[A] {
-  fn go {
-    _, Nil => Nil
-    1, Cons(x, _) => Cons(x, Nil)
-    n, Cons(x, xs) => Cons(x, go(n - 1, xs))
-  }
-
   if n <= 0 {
-    Nil
+    Empty
   } else {
-    go(n, self)
+    match self {
+      Empty => Empty
+      More(head, tail~) => {
+        let dest = More(head, tail=Empty)
+        loop dest, tail, n - 1 {
+          _, Empty, _ => ()
+          _, _, 0 => ()
+          More(_) as dest, More(x, tail=xs), n => {
+            dest.tail = More(x, tail=Empty)
+            continue dest.tail, xs, n - 1
+          }
+          Empty, _, _ => panic()
+        }
+        dest
+      }
+    }
   }
 }
 
@@ -806,9 +869,9 @@ pub fn take[A](self : T[A], n : Int) -> T[A] {
 /// ```
 pub fn drop[A](self : T[A], n : Int) -> T[A] {
   fn go {
-    _, Nil => Nil
-    1, Cons(_, xs) => xs
-    n, Cons(_, xs) => go(n - 1, xs)
+    _, Empty => Empty
+    1, More(_, tail=xs) => xs
+    n, More(_, tail=xs) => go(n - 1, xs)
   }
 
   if n <= 0 {
@@ -830,8 +893,23 @@ pub fn drop[A](self : T[A], n : Int) -> T[A] {
 /// ```
 pub fn take_while[A](self : T[A], p : (A) -> Bool) -> T[A] {
   match self {
-    Nil => Nil
-    Cons(x, xs) => if p(x) { Cons(x, xs.take_while(p)) } else { Nil }
+    Empty => Empty
+    More(head, tail~) =>
+      if p(head) {
+        let dest = More(head, tail=Empty)
+        loop dest, tail {
+          _, Empty => ()
+          More(_) as dest, More(x, tail=xs) if p(x) => {
+            dest.tail = More(x, tail=Empty)
+            continue dest.tail, xs
+          }
+          More(_), _ => ()
+          Empty, _ => panic()
+        }
+        dest
+      } else {
+        Empty
+      }
   }
 }
 
@@ -847,8 +925,8 @@ pub fn take_while[A](self : T[A], p : (A) -> Bool) -> T[A] {
 /// ```
 pub fn drop_while[A](self : T[A], p : (A) -> Bool) -> T[A] {
   loop self {
-    Nil => Nil
-    Cons(x, xs) => if p(x) { continue xs } else { Cons(x, xs) }
+    Empty => Empty
+    More(x, tail=xs) => if p(x) { continue xs } else { More(x, tail=xs) }
   }
 }
 
@@ -863,13 +941,16 @@ pub fn drop_while[A](self : T[A], p : (A) -> Bool) -> T[A] {
 /// assert_eq!(r, @list.of([0, 1, 3, 6, 10, 15]))
 /// ```
 pub fn scan_left[A, E](self : T[A], f : (E, A) -> E, init~ : E) -> T[E] {
-  Cons(
-    init,
-    match self {
-      Nil => Nil
-      Cons(x, xs) => xs.scan_left(f, init=f(init, x))
-    },
-  )
+  let dest = More(init, tail=Empty)
+  loop dest, self, init {
+    _, Empty, _ => ()
+    Empty, _, _ => panic()
+    More(_) as dest, More(x, tail=xs), acc => {
+      dest.tail = More(f(acc, x), tail=Empty)
+      continue dest.tail, xs, f(acc, x)
+    }
+  }
+  dest
 }
 
 ///|
@@ -880,17 +961,11 @@ pub fn scan_left[A, E](self : T[A], f : (E, A) -> E, init~ : E) -> T[E] {
 /// # Example
 /// ```
 /// let ls = @list.of([1, 2, 3, 4, 5])
-/// let r = ls.scan_right(fn(x, acc) { acc + x }, init=0)
+/// let r = ls.scan_right(fn(acc, x) { acc + x }, init=0)
 /// assert_eq!(r, @list.of([15, 14, 12, 9, 5, 0]))
 /// ```
-pub fn scan_right[A, B](self : T[A], f : (A, B) -> B, init~ : B) -> T[B] {
-  match self {
-    Nil => Cons(init, Nil)
-    Cons(x, xs) => {
-      let qs = xs.scan_right(f, init~)
-      Cons(f(x, qs.unsafe_head()), qs)
-    }
-  }
+pub fn scan_right[A, B](self : T[A], f : (B, A) -> B, init~ : B) -> T[B] {
+  self.rev().scan_left(f, init~).reverse_inplace()
 }
 
 ///|
@@ -904,8 +979,8 @@ pub fn scan_right[A, B](self : T[A], f : (A, B) -> B, init~ : B) -> T[B] {
 /// ```
 pub fn lookup[A : Eq, B](self : T[(A, B)], v : A) -> B? {
   loop self {
-    Nil => None
-    Cons((x, y), xs) => if x == v { Some(y) } else { continue xs }
+    Empty => None
+    More((x, y), tail=xs) => if x == v { Some(y) } else { continue xs }
   }
 }
 
@@ -920,8 +995,8 @@ pub fn lookup[A : Eq, B](self : T[(A, B)], v : A) -> B? {
 /// ```
 pub fn find[A](self : T[A], f : (A) -> Bool) -> A? {
   loop self {
-    Nil => None
-    Cons(element, list) =>
+    Empty => None
+    More(element, tail=list) =>
       if f(element) {
         Some(element)
       } else {
@@ -943,8 +1018,8 @@ pub fn findi[A](self : T[A], f : (A, Int) -> Bool) -> A? {
   loop self, 0 {
     list, index =>
       match list {
-        Nil => None
-        Cons(element, list) =>
+        Empty => None
+        More(element, tail=list) =>
           if f(element, index) {
             Some(element)
           } else {
@@ -964,10 +1039,22 @@ pub fn findi[A](self : T[A], f : (A, Int) -> Bool) -> A? {
 /// ```
 pub fn remove_at[A](self : T[A], index : Int) -> T[A] {
   match (index, self) {
-    (0, Cons(_, tail)) => tail
-    (_, Cons(head, tail)) => Cons(head, remove_at(tail, index - 1))
-    (_, Nil) => Nil
-    // abort("remove_at: index out of bounds")
+    (_, Empty) => Empty
+    (_..<0, _) => self
+    (0, More(_, tail~)) => tail
+    (n, More(head, tail~)) => {
+      let dest = More(head, tail=Empty)
+      loop dest, tail, n - 1 {
+        _, Empty, _ => ()
+        More(_) as dest, More(_, tail~), 0 => dest.tail = tail
+        More(_) as dest, More(x, tail=xs), n => {
+          dest.tail = More(x, tail=Empty)
+          continue dest.tail, xs, n - 1
+        }
+        Empty, _, _ => panic()
+      }
+      dest
+    }
   }
 }
 
@@ -981,13 +1068,23 @@ pub fn remove_at[A](self : T[A], index : Int) -> T[A] {
 /// ```
 pub fn remove[A : Eq](self : T[A], elem : A) -> T[A] {
   match self {
-    Nil => Nil
-    Cons(head, tail) =>
-      if head == elem {
-        tail
-      } else {
-        Cons(head, remove(tail, elem))
+    Empty => Empty
+    More(head, tail~) if head == elem => tail
+    More(head, tail~) => {
+      let dest = More(head, tail~)
+      loop dest, tail {
+        _, Empty => ()
+        More(_) as dest, More(x, tail=xs) =>
+          if x == elem {
+            dest.tail = xs
+          } else {
+            dest.tail = More(x, tail=Empty)
+            continue dest.tail, xs
+          }
+        Empty, _ => panic()
       }
+      dest
+    }
   }
 }
 
@@ -1001,9 +1098,14 @@ pub fn remove[A : Eq](self : T[A], elem : A) -> T[A] {
 /// ```
 pub fn is_prefix[A : Eq](self : T[A], prefix : T[A]) -> Bool {
   loop self, prefix {
-    _, Nil => true
-    Nil, Cons(_) => false
-    Cons(h1, t1), Cons(h2, t2) => if h1 == h2 { continue t1, t2 } else { false }
+    _, Empty => true
+    Empty, More(_) => false
+    More(h1, tail=t1), More(h2, tail=t2) =>
+      if h1 == h2 {
+        continue t1, t2
+      } else {
+        false
+      }
   }
 }
 
@@ -1038,21 +1140,21 @@ pub fn intercalate[A](self : T[T[A]], sep : T[A]) -> T[A] {
 
 ///|
 pub impl[X] Default for T[X] with default() {
-  Nil
+  Empty
 }
 
 ///|
 /// The empty list
 pub fn default[X]() -> T[X] {
-  Nil
+  Empty
 }
 
 ///|
 pub fn iter[A](self : T[A]) -> Iter[A] {
   Iter::new(fn(yield_) {
     loop self {
-      Nil => IterContinue
-      Cons(head, tail) => {
+      Empty => IterContinue
+      More(head, tail~) => {
         if yield_(head) == IterEnd {
           break IterEnd
         }
@@ -1066,8 +1168,8 @@ pub fn iter[A](self : T[A]) -> Iter[A] {
 pub fn iter2[A](self : T[A]) -> Iter2[Int, A] {
   Iter2::new(fn(yield_) {
     loop self, 0 {
-      Nil, _ => IterEnd
-      Cons(head, tail), i => {
+      Empty, _ => IterEnd
+      More(head, tail~), i => {
         if yield_(i, head) == IterEnd {
           break IterEnd
         }
@@ -1079,21 +1181,20 @@ pub fn iter2[A](self : T[A]) -> Iter2[Int, A] {
 
 ///|
 /// Convert the iterator into a list. Preserves order of elements.
-/// This function is tail-recursive, but consumes 2*n memory. 
 /// If the order of elements is not important, use `from_iter_rev` instead.
 pub fn from_iter[A](iter : Iter[A]) -> T[A] {
-  iter.fold(init=Nil, fn(acc, e) { Cons(e, acc) }).rev()
+  iter.fold(init=Empty, fn(acc, e) { More(e, tail=acc) }).reverse_inplace()
 }
 
 ///|
 pub fn from_iter_rev[A](iter : Iter[A]) -> T[A] {
-  iter.fold(init=Nil, fn(acc, e) { Cons(e, acc) })
+  iter.fold(init=Empty, fn(acc, e) { More(e, tail=acc) })
 }
 
 ///|
 pub fn of[A](arr : FixedArray[A]) -> T[A] {
-  for i = arr.length() - 1, list = Nil; i >= 0; {
-    continue i - 1, Cons(arr[i], list)
+  for i = arr.length() - 1, list = Empty; i >= 0; {
+    continue i - 1, More(arr[i], tail=list)
   } else {
     list
   }
@@ -1109,7 +1210,7 @@ pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[X] with arbitrar
 
 ///|
 pub fn singleton[A](x : A) -> T[A] {
-  Cons(x, Nil)
+  More(x, tail=Empty)
 }
 
 ///|
@@ -1120,48 +1221,16 @@ pub impl[A : Hash] Hash for T[A] with hash_combine(self, hasher) {
 }
 
 ///|
-/// Compares two lists lexicographically.
-///
-/// First compares elements pairwise until a difference is found.
-/// If lists have different lengths and all shared elements are equal,
-/// the shorter list is considered less than the longer one.
-///
-/// Parameters:
-///
-/// * `self` : The first list to compare.
-/// * `other` : The second list to compare.
-///
-/// Returns an integer that indicates the relative order:
-///
-/// * A negative value if `self` is less than `other`
-/// * Zero if `self` equals `other`
-/// * A positive value if `self` is greater than `other`
-///
-/// Example:
-///
-/// ```moonbit
-/// test "List::compare" {
-///   let list1 = @list.of([1, 2, 3])
-///   let list2 = @list.of([1, 2, 4])
-///   let list3 = @list.of([1, 2])
-///   assert_eq!(list1.compare(list2), -1) // list1 < list2
-///   assert_eq!(list1.compare(list3), 1) // list2 > list1
-///   assert_eq!(list3.compare(list1), -1) // list1 > list3 (longer)
-///   assert_eq!(list1.compare(list1), 0) // list1 = list1
-/// }
-/// ```
-pub impl[A : Compare] Compare for T[A] with compare(self, other) {
-  loop self, other {
-    Nil, Nil => 0
-    Nil, Cons(_, _) => -1
-    Cons(_, _), Nil => 1
-    Cons(x, xs), Cons(y, ys) => {
-      let cmp = x.compare(y)
-      if cmp != 0 {
-        break cmp
-      } else {
-        continue xs, ys
+fn reverse_inplace[A](self : T[A]) -> T[A] {
+  match self {
+    Empty | More(_, tail=Empty) => self
+    More(head, tail~) =>
+      loop More(head, tail=Empty), tail {
+        result, Empty => result
+        result, More(_, tail=xs) as new_result => {
+          new_result.tail = result
+          continue new_result, xs
+        }
       }
-    }
   }
 }

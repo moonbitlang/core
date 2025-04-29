@@ -233,6 +233,7 @@ impl Iter {
   flat_map[T, R](Self[T], (T) -> Self[R]) -> Self[R]
   flatten[T](Self[Self[T]]) -> Self[T]
   fold[T, B](Self[T], init~ : B, (B, T) -> B) -> B
+  group_by[T, K : Eq + Hash](Self[T], (T) -> K) -> Map[K, Array[T]]
   head[A](Self[A]) -> A?
   intersperse[A](Self[A], A) -> Self[A]
   iter[T](Self[T]) -> Self[T]
@@ -243,6 +244,7 @@ impl Iter {
   #deprecated
   map_option[A, B](Self[A], (A) -> B?) -> Self[B]
   map_while[A, B](Self[A], (A) -> B?) -> Self[B]
+  mapi[T, R](Self[T], (Int, T) -> R) -> Self[R]
   maximum[T : Compare](Self[T]) -> T?
   minimum[T : Compare](Self[T]) -> T?
   new[T](((T) -> IterResult) -> IterResult) -> Self[T]
@@ -304,6 +306,7 @@ impl Map {
   capacity[K, V](Self[K, V]) -> Int
   clear[K, V](Self[K, V]) -> Unit
   contains[K : Hash + Eq, V](Self[K, V], K) -> Bool
+  contains_kv[K : Hash + Eq, V : Eq](Self[K, V], K, V) -> Bool
   each[K, V](Self[K, V], (K, V) -> Unit) -> Unit
   eachi[K, V](Self[K, V], (Int, K, V) -> Unit) -> Unit
   from_array[K : Hash + Eq, V](Array[(K, V)]) -> Self[K, V]
@@ -411,6 +414,7 @@ impl Int {
   #deprecated
   shr(Int, Int) -> Int
   to_byte(Int) -> Byte
+  to_char(Int) -> Char?
   to_double(Int) -> Double
   to_float(Int) -> Float
   to_int16(Int) -> Int16
@@ -420,6 +424,7 @@ impl Int {
   to_uint(Int) -> UInt
   to_uint16(Int) -> UInt16
   to_uint64(Int) -> UInt64
+  unsafe_to_char(Int) -> Char
   until(Int, Int, step~ : Int = .., inclusive~ : Bool = ..) -> Iter[Int]
   #deprecated
   upto(Int, Int, inclusive~ : Bool = ..) -> Iter[Int]

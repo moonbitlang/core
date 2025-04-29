@@ -88,6 +88,7 @@ impl T {
   to_array[A](Self[A]) -> Array[A]
 }
 impl[A] Add for T[A]
+impl[A : Compare] Compare for T[A]
 impl[A : Eq] Eq for T[A]
 impl[A : Hash] Hash for T[A]
 impl[A : Show] Show for T[A]

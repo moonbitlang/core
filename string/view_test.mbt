@@ -95,7 +95,7 @@ test "stringview rev_get" {
 test "stringview length" {
   let str = "Hello🤣🤣🤣"
   let view = str[1:6]
-  inspect!(view.length(), content="5")
+  inspect!(view.length(), content="6")
 }
 
 ///|
@@ -711,4 +711,13 @@ test "to_json" {
       #|String("ell")
     ,
   )
+}
+
+///|
+test "hash" {
+  let a = "abc"
+  let b = "def"
+  let c = "abc"
+  assert_eq!(a.hash(), c.hash())
+  assert_not_eq!(a.hash(), b.hash())
 }

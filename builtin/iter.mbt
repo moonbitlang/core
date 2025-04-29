@@ -416,6 +416,36 @@ pub fn Iter::map[T, R](self : Iter[T], f : (T) -> R) -> Iter[R] {
 }
 
 ///|
+/// Transforms the elements of the iterator using a mapping function.
+///
+/// # Type Parameters
+///
+/// - `T`: The type of the elements in the iterator.
+/// - `R`: The type of the transformed elements.
+///
+/// # Arguments
+///
+/// * `self` - The input iterator.
+/// * `f` - The mapping function that transforms each element of the iterator with index.
+///
+/// # Returns
+///
+/// A new iterator that contains the transformed elements.
+pub fn Iter::mapi[T, R](self : Iter[T], f : (Int, T) -> R) -> Iter[R] {
+  fn {
+    yield_ => {
+      let mut i = -1
+      self.run(fn {
+        a => {
+          i = i + 1
+          yield_(f(i, a))
+        }
+      })
+    }
+  }
+}
+
+///|
 /// Transforms the elements of the iterator using a mapping function that returns an `Option`.
 /// The elements for which the function returns `None` are filtered out.
 pub fn Iter::filter_map[A, B](self : Iter[A], f : (A) -> B?) -> Iter[B] {
@@ -967,4 +997,42 @@ pub fn Iter::minimum[T : Compare](self : Iter[T]) -> T? {
     }
   }
   res
+}
+
+///|
+/// Groups elements of an iterator according to a discriminator function.
+///
+/// # Parameters
+///
+/// * `self` - The input iterator.
+/// * `f` - The discriminator function that maps elements to keys.
+///
+/// # Returns
+///
+/// A Map where keys are the result of applying the discriminator function to elements,
+/// and values are arrays containing all elements that share the same key.
+///
+/// # Example
+///
+/// ```moonbit
+/// test "group_by" {
+///   let iter = [1, 1, 2, 3, 2, 2, 1].iter()
+///   let result = iter.group_by(fn(x) { x })
+///   assert_eq!(result.get(1), Some([1, 1, 1]))
+///   assert_eq!(result.get(2), Some([2, 2, 2]))
+///   assert_eq!(result.get(3), Some([3]))
+/// }
+pub fn Iter::group_by[T, K : Eq + Hash](
+  self : Iter[T],
+  f : (T) -> K
+) -> Map[K, Array[T]] {
+  let result = Map::new()
+  for element in self {
+    let key = f(element)
+    match result.get(key) {
+      Some(arr) => result.set(key, arr + [element])
+      None => result.set(key, [element])
+    }
+  }
+  result
 }

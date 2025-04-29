@@ -42,6 +42,7 @@ test "Show for Int16" {
   inspect!((0 : Int16).to_string(), content="0")
   inspect!((32767 : Int16).to_string(), content="32767")
   inspect!((-32768 : Int16).to_string(), content="-32768")
+  inspect!((-32766 : Int16), content="-32766")
 }
 
 ///|
@@ -62,6 +63,11 @@ test "Show for UInt64" {
 test "Show for UInt16" {
   inspect!((0 : UInt16).to_string(), content="0")
   inspect!((65535 : UInt16).to_string(), content="65535")
+  inspect!((65535 : UInt16).to_string(radix=8), content="177777")
+  inspect!((65533 : UInt16), content="65533")
+  // TODO:
+  // inspect!((65536 : UInt16), content="65536")
+  // 65536 is overflow for uint16
 }
 
 ///|
@@ -248,4 +254,49 @@ test "char show hex digits" {
 test "char_special" {
   inspect!('\r', content="\r")
   inspect!('\b', content="\u{8}")
+}
+
+///|
+test "Show for Failure" {
+  let f = Failure("test error message")
+  inspect!(
+    f.to_string(),
+    content=
+      #|"Failure(test error message)"
+    ,
+  )
+}
+
+///|
+test "Show for Char special cases" {
+  // Test escape sequences
+  inspect!('\''.to_string(), content="'")
+
+  // Test various special character outputs
+  let quote_buf = StringBuilder::new()
+  '\''.output(quote_buf)
+  inspect!(quote_buf.to_string(), content="'\\''")
+  let backslash_buf = StringBuilder::new()
+  '\\'.output(backslash_buf)
+  inspect!(backslash_buf.to_string(), content="'\\\\'")
+  let cr_buf = StringBuilder::new()
+  '\r'.output(cr_buf)
+  inspect!(cr_buf.to_string(), content="'\\r'")
+  let backspace_buf = StringBuilder::new()
+  '\b'.output(backspace_buf)
+  inspect!(backspace_buf.to_string(), content="'\\b'")
+  let tab_buf = StringBuilder::new()
+  '\t'.output(tab_buf)
+  inspect!(tab_buf.to_string(), content="'\\t'")
+
+  // Test hex output for control characters
+  let ctrl1_buf = StringBuilder::new()
+  '\u{01}'.output(ctrl1_buf)
+  inspect!(ctrl1_buf.to_string(), content="'\\x01'")
+  let ctrl_f_buf = StringBuilder::new()
+  '\u{0F}'.output(ctrl_f_buf)
+  inspect!(ctrl_f_buf.to_string(), content="'\\x0f'")
+  let ctrl_1f_buf = StringBuilder::new()
+  '\u{1F}'.output(ctrl_1f_buf)
+  inspect!(ctrl_1f_buf.to_string(), content="'\\x1f'")
 }

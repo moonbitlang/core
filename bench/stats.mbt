@@ -16,7 +16,8 @@
 // Please refer to https://github.com/rust-lang/rust/blob/a19472a93e2eecce1477011fa9f7ec49b45ca164/library/test/src/stats.rs
 
 ///|
-pub struct Summary {
+struct Summary {
+  name : String?
   sum : Double
   min : Double
   max : Double
@@ -34,7 +35,11 @@ pub struct Summary {
 } derive(ToJson)
 
 ///|
-fn Summary::new(data : Array[Double], batch_size : Int) -> Summary {
+fn Summary::new(
+  name? : String,
+  data : Array[Double],
+  batch_size : Int
+) -> Summary {
   let sum = sum(data)
   let min = min(data)
   let max = max(data)
@@ -48,6 +53,7 @@ fn Summary::new(data : Array[Double], batch_size : Int) -> Summary {
   let quartiles = quartiles(data)
   let iqr = iqr(data)
   {
+    name,
     sum,
     min,
     max,

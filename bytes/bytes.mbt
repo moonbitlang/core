@@ -256,6 +256,35 @@ pub impl Default for Bytes with default() {
 }
 
 ///|
+/// Retrieves a byte from the view at the specified index.
+///
+/// Parameters:
+///
+/// * `self` : The bytes view to retrieve the byte from.
+/// * `index` : The position in the view from which to retrieve the byte.
+///
+/// Returns the byte at the specified index, or None if the index is out of bounds.
+///
+/// Example:
+/// 
+/// ```moonbit
+/// test "Bytes::get" {
+///   let bytes = b"\x01\x02\x03"
+///   let byte = bytes.get(1)
+///   inspect!(byte, content="Some(b'\\x02')")
+/// }
+/// test "Bytes::get/out_of_bounds" {
+///   let bytes = b"\x01\x02\x03"
+///   let byte = bytes.get(3)
+///   inspect!(byte, content="None")
+/// }
+/// ```
+pub fn get(self : Bytes, index : Int) -> Byte? {
+  guard index >= 0 && index < self.length() else { None }
+  Some(self[index])
+}
+
+///|
 /// same as `Bytes::default`
 pub fn default() -> Bytes {
   b""

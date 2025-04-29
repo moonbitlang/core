@@ -1,7 +1,3 @@
----
-moonbit: true
----
-
 # `byte`
 
 A package for working with bytes (8-bit unsigned integers) in MoonBit.

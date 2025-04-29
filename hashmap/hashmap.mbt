@@ -61,7 +61,12 @@ test "power_2_above" {
 /// ```
 pub fn new[K, V](capacity~ : Int = 8) -> T[K, V] {
   let capacity = power_2_above(8, capacity)
-  { size: 0, capacity, entries: FixedArray::make(capacity, None) }
+  {
+    size: 0,
+    capacity,
+    entries: FixedArray::make(capacity, None),
+    capacity_mask: capacity - 1,
+  }
 }
 
 ///|
@@ -130,7 +135,7 @@ fn set_with_hash[K : Eq, V](
   if self.size >= self.capacity / 2 {
     self.grow()
   }
-  for idx = hash & (self.capacity - 1), entry = { psl: 0, hash, key, value } {
+  for idx = hash & self.capacity_mask, entry = { psl: 0, hash, key, value } {
     match self.entries[idx] {
       None => {
         self.entries[idx] = Some(entry)
@@ -149,7 +154,7 @@ fn set_with_hash[K : Eq, V](
           entry
         }
         curr_entry.psl += 1
-        continue (idx + 1) & (self.capacity - 1), curr_entry
+        continue (idx + 1) & self.capacity_mask, curr_entry
       }
     }
   }
@@ -201,24 +206,31 @@ pub fn op_set[K : Hash + Eq, V](self : T[K, V], key : K, value : V) -> Unit {
 /// }
 /// ```
 pub fn get[K : Hash + Eq, V](self : T[K, V], key : K) -> V? {
-  self.get_with_hash(key, key.hash())
+  // self.get_with_hash(key, key.hash())
+  let hash = key.hash()
+  for i = 0, idx = hash & self.capacity_mask {
+    guard self.entries[idx] is Some(entry) else { break None }
+    if entry.hash == hash && entry.key == key {
+      break Some(entry.value)
+    }
+    if i > entry.psl {
+      break None
+    }
+    continue i + 1, (idx + 1) & self.capacity_mask
+  }
 }
 
 ///|
 fn get_with_hash[K : Hash + Eq, V](self : T[K, V], key : K, hash : Int) -> V? {
-  for i = 0, idx = hash & (self.capacity - 1) {
-    match self.entries[idx] {
-      Some(entry) => {
-        if entry.hash == hash && entry.key == key {
-          break Some(entry.value)
-        }
-        if i > entry.psl {
-          break None
-        }
-        continue i + 1, (idx + 1) & (self.capacity - 1)
-      }
-      None => break None
+  for i = 0, idx = hash & self.capacity_mask {
+    guard self.entries[idx] is Some(entry) else { break None }
+    if entry.hash == hash && entry.key == key {
+      break Some(entry.value)
     }
+    if i > entry.psl {
+      break None
+    }
+    continue i + 1, (idx + 1) & self.capacity_mask
   }
 }
 
@@ -273,6 +285,7 @@ pub fn op_get[K : Hash + Eq, V](self : T[K, V], key : K) -> V? {
 ///   inspect!(map.get("key"), content="Some(42)")
 /// }
 /// ```
+/// TODO: improve performance to avoid calling `get_with_hash` twice
 pub fn get_or_init[K : Hash + Eq, V](
   self : T[K, V],
   key : K,
@@ -316,9 +329,16 @@ pub fn get_or_default[K : Hash + Eq, V](
   key : K,
   default : V
 ) -> V {
-  match self.get(key) {
-    Some(v) => v
-    None => default
+  let hash = key.hash()
+  for i = 0, idx = hash & self.capacity_mask {
+    guard self.entries[idx] is Some(entry) else { break default }
+    if entry.hash == hash && entry.key == key {
+      break entry.value
+    }
+    if i > entry.psl {
+      break default
+    }
+    continue i + 1, (idx + 1) & self.capacity_mask
   }
 }
 
@@ -342,9 +362,35 @@ pub fn get_or_default[K : Hash + Eq, V](
 /// }
 /// ```
 pub fn contains[K : Hash + Eq, V](self : T[K, V], key : K) -> Bool {
-  match self.get(key) {
-    Some(_) => true
-    None => false
+  let hash = key.hash()
+  for i = 0, idx = hash & self.capacity_mask {
+    guard self.entries[idx] is Some(entry) else { return false }
+    if entry.hash == hash && entry.key == key {
+      return true
+    }
+    if i > entry.psl {
+      return false
+    }
+    continue i + 1, (idx + 1) & self.capacity_mask
+  }
+}
+
+///|
+pub fn contains_kv[K : Hash + Eq, V : Eq](
+  self : T[K, V],
+  key : K,
+  value : V
+) -> Bool {
+  let hash = key.hash()
+  for i = 0, idx = hash & self.capacity_mask {
+    guard self.entries[idx] is Some(entry) else { return false }
+    if entry.hash == hash && entry.key == key && entry.value == value {
+      return true
+    }
+    if i > entry.psl {
+      return false
+    }
+    continue i + 1, (idx + 1) & self.capacity_mask
   }
 }
 
@@ -371,7 +417,7 @@ pub fn contains[K : Hash + Eq, V](self : T[K, V], key : K) -> Bool {
 /// ```
 pub fn remove[K : Hash + Eq, V](self : T[K, V], key : K) -> Unit {
   let hash = key.hash()
-  for i = 0, idx = hash & (self.capacity - 1) {
+  for i = 0, idx = hash & self.capacity_mask {
     match self.entries[idx] {
       Some(entry) => {
         if entry.hash == hash && entry.key == key {
@@ -383,7 +429,7 @@ pub fn remove[K : Hash + Eq, V](self : T[K, V], key : K) -> Unit {
         if i > entry.psl {
           break
         }
-        continue i + 1, (idx + 1) & (self.capacity - 1)
+        continue i + 1, (idx + 1) & self.capacity_mask
       }
       None => break
     }
@@ -392,7 +438,7 @@ pub fn remove[K : Hash + Eq, V](self : T[K, V], key : K) -> Unit {
 
 ///|
 fn shift_back[K : Hash, V](self : T[K, V], start_index : Int) -> Unit {
-  for prev = start_index, curr = (start_index + 1) & (self.capacity - 1) {
+  for prev = start_index, curr = (start_index + 1) & self.capacity_mask {
     match self.entries[curr] {
       Some({ psl, hash, key, value }) => {
         if psl == 0 {
@@ -400,7 +446,7 @@ fn shift_back[K : Hash, V](self : T[K, V], start_index : Int) -> Unit {
         }
         self.entries[prev] = Some({ psl: psl - 1, hash, key, value })
         self.entries[curr] = None
-        continue curr, (curr + 1) & (self.capacity - 1)
+        continue curr, (curr + 1) & self.capacity_mask
       }
       None => break
     }
@@ -413,6 +459,7 @@ fn grow[K : Eq, V](self : T[K, V]) -> Unit {
   let new_capacity = self.capacity << 1
   self.entries = FixedArray::make(new_capacity, None)
   self.capacity = new_capacity
+  self.capacity_mask = new_capacity - 1
   self.size = 0
   for i in 0..<old_entries.length() {
     if old_entries[i] is Some({ key, value, hash, .. }) {
@@ -490,16 +537,19 @@ pub impl[K : @quickcheck.Arbitrary + Hash + Eq, V : @quickcheck.Arbitrary] @quic
 priv type MyString String derive(Eq)
 
 ///|
+#coverage.skip
 impl Hash for MyString with hash(self) {
   self._.length()
 }
 
 ///|
+#coverage.skip
 impl Hash for MyString with hash_combine(self, hasher) {
   hasher.combine_string(self._)
 }
 
 ///|
+#coverage.skip
 impl Show for MyString with output(self, logger) {
   logger.write_string(self._)
 }
@@ -600,4 +650,13 @@ test "grow" {
     m.debug_entries(),
     content="_,(0,C,1),(0,Go,2),(0,C++,3),(0,Java,4),(0,Scala,5),(1,Julia,5),(2,Cobol,5),(2,Python,6),(2,Haskell,7),(2,Rescript,8),_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_",
   )
+}
+
+///|
+test "get_or_init" {
+  let m : T[MyString, Int] = new()
+  inspect!(m.get_or_init("a", fn() { 1 }), content="1")
+  inspect!(m.get("a"), content="Some(1)")
+  inspect!(m.get_or_init("a", fn() { 2 }), content="1")
+  inspect!(m.get("a"), content="Some(1)")
 }

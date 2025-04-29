@@ -128,18 +128,6 @@ fn check_array_eq(a : Array[Int], t : T[Int]) -> Unit! {
   }
 }
 
-///|  
-/// Use this function to check if the FixedArray and the @immut/array are equal.
-/// If we `inspect` the array, it will raise an error if the arrays are too long.
-/// I guess that's because it exceeds the heap limit of the VM.
-fn check_fixedarray_eq(a : FixedArray[Int], t : T[Int]) -> Unit! {
-  assert_eq!(a.length(), t.size)
-  let len = t.size
-  for i in 0..<len {
-    assert_eq!(t[i], a[i])
-  }
-}
-
 ///|
 /// Generate a random array of length `n`.
 fn random_array(n : Int) -> Array[Int] {

@@ -292,12 +292,6 @@ pub fn last_index_of(
 }
 
 ///|
-/// Returns true if this string contains given sub string.
-pub fn contains(self : String, str : String) -> Bool {
-  self.find(str.view()) is Some(_)
-}
-
-///|
 /// Returns true if this string starts with a sub string.
 #deprecated("Use `s.has_prefix(str)` instead.")
 pub fn starts_with(self : String, str : String) -> Bool {
@@ -397,12 +391,14 @@ pub fn String::offset_of_nth_char(
 }
 
 ///|
-/// Returns the Unicode character at the given index.
-pub fn String::char_at(self : String, index : Int) -> Char {
-  guard index >= 0 && index < self.length() else {
-    abort("index out of bounds")
+/// Returns the Unicode character at the given offset.
+/// 
+/// This has O(1) complexity.
+pub fn String::char_at(self : String, offset : Int) -> Char {
+  guard offset >= 0 && offset < self.length() else {
+    abort("offset out of bounds")
   }
-  self.unsafe_char_at(index)
+  self.unsafe_char_at(offset)
 }
 
 ///|

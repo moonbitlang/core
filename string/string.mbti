@@ -3,7 +3,7 @@ package "moonbitlang/core/string"
 // Values
 fn concat(Array[String], separator~ : String = ..) -> String
 
-fn contains(String, String) -> Bool
+fn contains(String, StringView) -> Bool
 
 fn contains_char(String, Char) -> Bool
 
@@ -37,6 +37,8 @@ fn iter2(String) -> Iter2[Int, Char]
 
 #deprecated
 fn last_index_of(String, String, from~ : Int = ..) -> Int
+
+fn length(StringView) -> Int
 
 #deprecated
 fn length_eq(StringView, Int) -> Bool
@@ -96,8 +98,10 @@ impl StringView {
   char_length_eq(Self, Int) -> Bool
   char_length_ge(Self, Int) -> Bool
   charcode_at(Self, Int) -> Int
+  contains(Self, Self) -> Bool
   contains_char(Self, Char) -> Bool
   find(Self, Self) -> Int?
+  find_by(Self, (Char) -> Bool) -> Int?
   fold[A](Self, init~ : A, (A, Char) -> A) -> A
   from_array(Array[Char]) -> Self
   from_iter(Iter[Char]) -> Self
@@ -107,7 +111,6 @@ impl StringView {
   is_empty(Self) -> Bool
   iter(Self) -> Iter[Char]
   iter2(Self) -> Iter2[Int, Char]
-  #deprecated
   length(Self) -> Int
   #deprecated
   length_eq(Self, Int) -> Bool
@@ -121,9 +124,9 @@ impl StringView {
   op_get(Self, Int) -> Char
   pad_end(Self, Int, Char) -> String
   pad_start(Self, Int, Char) -> String
-  repeat(Self, Int) -> String
-  replace(Self, old~ : Self, new~ : Self) -> String
-  replace_all(Self, old~ : Self, new~ : Self) -> String
+  repeat(Self, Int) -> Self
+  replace(Self, old~ : Self, new~ : Self) -> Self
+  replace_all(Self, old~ : Self, new~ : Self) -> Self
   rev(Self) -> String
   rev_find(Self, Self) -> Int?
   rev_fold[A](Self, init~ : A, (A, Char) -> A) -> A
@@ -131,8 +134,8 @@ impl StringView {
   rev_get(Self, Int) -> Char
   rev_iter(Self) -> Iter[Char]
   split(Self, Self) -> Iter[Self]
-  to_lower(Self) -> String
-  to_upper(Self) -> String
+  to_lower(Self) -> Self
+  to_upper(Self) -> Self
   trim(Self, Self) -> Self
   trim_end(Self, Self) -> Self
   trim_space(Self) -> Self
@@ -143,6 +146,7 @@ impl StringView {
 impl Compare for StringView
 impl Default for StringView
 impl Eq for StringView
+impl Hash for StringView
 impl Show for StringView
 impl ToJson for StringView
 
@@ -152,11 +156,12 @@ impl String {
   char_length_ge(String, Int, start_offset~ : Int = .., end_offset~ : Int = ..) -> Bool
   #deprecated
   concat(Array[String], separator~ : String = ..) -> String
-  contains(String, String) -> Bool
+  contains(String, StringView) -> Bool
   contains_char(String, Char) -> Bool
   #deprecated
   ends_with(String, String) -> Bool
   find(String, StringView) -> Int?
+  find_by(String, (Char) -> Bool) -> Int?
   fold[A](String, init~ : A, (A, Char) -> A) -> A
   from_array(Array[Char]) -> String
   from_iter(Iter[Char]) -> String
