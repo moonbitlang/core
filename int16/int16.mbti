@@ -15,6 +15,7 @@ impl Default for Int16
 impl Div for Int16
 impl Eq for Int16
 impl Hash for Int16
+impl Mod for Int16
 impl Mul for Int16
 impl Shl for Int16
 impl Shr for Int16
