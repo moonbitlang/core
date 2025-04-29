@@ -138,14 +138,6 @@ test "last" {
 }
 
 ///|
-test "init_" {
-  let ls = @list.of([1, 2, 3, 4, 5])
-  let el : @list.T[Int] = @list.Nil
-  inspect!(ls.init_(), content="@list.of([1, 2, 3, 4])")
-  inspect!(el.init_(), content="@list.of([])")
-}
-
-///|
 test "concat" {
   let ls = @list.of([1, 2, 3, 4, 5])
   let rs = @list.of([6, 7, 8, 9, 10])

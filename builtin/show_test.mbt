@@ -121,14 +121,14 @@ test "Show for String" {
     content="abcdefg中文字符",
   )
   inspect!(
-    to_string_using_output("---\"---'---\\---\n---\t---\x67---"),
+    to_string_using_output("---\"---'---\\---\n---\t---\u{67}---"),
     content=
       #|"---\"---'---\\---\n---\t---g---"
     ,
   )
   // should be identity
   inspect!(
-    Show::to_string("---\"---'---\\---\n---\t---\x67---"),
+    Show::to_string("---\"---'---\\---\n---\t---\u{67}---"),
     content=
       #|---"---'---\---
       #|---	---g---
@@ -246,8 +246,8 @@ test "char show hex digits" {
   // inspect!('\x01', content="\x01")
   // FIXME: inspect!('\x0b') will not work with update test
   // inspect!('\x0b', content="\x0b")
-  assert_true!('\u{01}'.to_string() == "\x01")
-  assert_true!('\u{0b}'.to_string() == "\x0b")
+  inspect!('\u{01}' |> repr, content="'\\u{01}'")
+  inspect!('\u{0b}'|> repr , content="'\\u{0b}'")
 }
 
 ///|
@@ -292,11 +292,11 @@ test "Show for Char special cases" {
   // Test hex output for control characters
   let ctrl1_buf = StringBuilder::new()
   '\u{01}'.output(ctrl1_buf)
-  inspect!(ctrl1_buf.to_string(), content="'\\x01'")
+  inspect!(ctrl1_buf.to_string(), content="'\\u{01}'")
   let ctrl_f_buf = StringBuilder::new()
   '\u{0F}'.output(ctrl_f_buf)
-  inspect!(ctrl_f_buf.to_string(), content="'\\x0f'")
+  inspect!(ctrl_f_buf.to_string(), content="'\\u{0f}'")
   let ctrl_1f_buf = StringBuilder::new()
   '\u{1F}'.output(ctrl_1f_buf)
-  inspect!(ctrl_1f_buf.to_string(), content="'\\x1f'")
+  inspect!(ctrl_1f_buf.to_string(), content="'\\u{1f}'")
 }

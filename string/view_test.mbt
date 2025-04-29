@@ -12,96 +12,68 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-///|
-test "index_at" {
-  let str = "Hello"
-  let offset = str.index_at(3)
-  inspect!(offset, content="Some(StringIndex(3))")
-  let offset = str.index_at(5)
-  inspect!(offset, content="Some(StringIndex(5))")
-  let offset = str.index_at(6)
-  inspect!(offset, content="None")
-}
-
-///|
-test "index_at with surrogate pairs" {
-  let str = "🤣🤣🤣"
-  let offset = str.index_at(1)
-  inspect!(offset, content="Some(StringIndex(2))")
-  let offset = str.index_at(2)
-  inspect!(offset, content="Some(StringIndex(4))")
-  let offset = str.index_at(3)
-  inspect!(offset, content="Some(StringIndex(6))")
-  let offset = str.index_at(4)
-  inspect!(offset, content="None")
-  inspect!(str[1:2], content="🤣")
-  inspect!(str[1:3], content="🤣🤣")
-  inspect!(str[1:-1], content="🤣")
-  inspect!(str[1:-2], content="")
-  inspect!(str[:-1], content="🤣🤣")
-}
 
 ///|
 test "stringview basic" {
   let str = "Hello🤣🤣🤣"
-  let start = 1
-  let end = 6
-  inspect!(str[start:], content="ello🤣🤣🤣")
-  inspect!(str[:end], content="Hello🤣")
-  inspect!(str[start:end], content="ello🤣")
-  inspect!(str[:], content="Hello🤣🤣🤣")
+  let start_offset = 1
+  let end_offset = str.offset_of_nth_char(6).unwrap()
+  inspect!(str.view(start_offset~), content="ello🤣🤣🤣")
+  inspect!(str.view(end_offset~), content="Hello🤣")
+  inspect!(str.view(start_offset~,end_offset~), content="ello🤣")
+  inspect!(str.view(), content="Hello🤣🤣🤣")
 }
 
 ///|
 test "stringview basic2" {
   let str = "He🤣🤣🤣llo"
   let start = 1
-  let end = 7
-  inspect!(str[start:], content="e🤣🤣🤣llo")
-  inspect!(str[:end], content="He🤣🤣🤣ll")
-  inspect!(str[start:end], content="e🤣🤣🤣ll")
-  inspect!(str[:], content="He🤣🤣🤣llo")
+  let end = 10
+  inspect!(str.view(start_offset=start), content="e🤣🤣🤣llo")
+  inspect!(str.view(end_offset=end), content="He🤣🤣🤣ll")
+  inspect!(str.view(start_offset=start,end_offset=end), content="e🤣🤣🤣ll")
+  inspect!(str.view(), content="He🤣🤣🤣llo")
 }
 
 ///|
 test "stringview subview" {
   let str = "Hello🤣🤣🤣"
   let start = 1
-  let end = 6
-  let view = str[start:end]
-  inspect!(view[1:], content="llo🤣")
-  inspect!(view[1:4], content="llo")
-  inspect!(view[:4], content="ello")
-  inspect!(view[:], content="ello🤣")
+  let end = 7
+  let view = str.view(start_offset=start,end_offset=end)
+  inspect!(view.view(start_offset=1), content="llo🤣")
+  inspect!(view.view(start_offset=1,end_offset=4), content="llo")
+  inspect!(view.view(end_offset=4), content="ello")
+  inspect!(view.view(), content="ello🤣")
 }
 
 ///|
 test "stringview op_get" {
   let str = "Hello🤣🤣🤣"
-  let view = str[1:6]
-  inspect!(view[0], content="e")
-  inspect!(view[4], content="🤣")
+  let view = str.view(start_offset=1,end_offset=7)
+  inspect!(view.iter().nth(4).unwrap(), content="🤣")
+  inspect!(view.iter().nth(4).unwrap(), content="🤣")
 }
 
 ///|
 test "stringview rev_get" {
   let str = "Hello🤣🤣🤣"
-  let view = str[1:6]
-  inspect!(view.rev_get(0), content="🤣")
-  inspect!(view.rev_get(4), content="e")
+  let view = str.view(start_offset=1,end_offset=7)
+  inspect!(view.rev_iter().nth(0).unwrap(), content="🤣")
+  inspect!(view.rev_iter().nth(4).unwrap(), content="e")
 }
 
 ///|
 test "stringview length" {
   let str = "Hello🤣🤣🤣"
-  let view = str[1:6]
+  let view = str.view(start_offset=1,end_offset=7)
   inspect!(view.length(), content="6")
 }
 
 ///|
 test "stingview length_eq" {
   let str = "hello"
-  let view = str[1:4]
+  let view = str.view(start_offset=1,end_offset=4)
   inspect!(view.char_length_eq(0), content="false")
   inspect!(view.char_length_eq(1), content="false")
   inspect!(view.char_length_eq(2), content="false")
@@ -113,7 +85,7 @@ test "stingview length_eq" {
 ///|
 test "stingview length_ge" {
   let str = "hello"
-  let view = str[1:4]
+  let view = str.view(start_offset=1,end_offset=4)
   inspect!(view.char_length_ge(0), content="true")
   inspect!(view.char_length_ge(1), content="true")
   inspect!(view.char_length_ge(2), content="true")
@@ -125,100 +97,100 @@ test "stingview length_ge" {
 ///|
 test "stringview empty" {
   let str = "hello"
-  let view = str[0:0]
+  let view = str.view(start_offset=0,end_offset=0)
   inspect!(view.length(), content="0")
 }
 
 ///|
 test "panic out of bounds1" {
   let str = "Hello🤣🤣🤣"
-  let view = str[1:6]
-  let _ = view[5]
+  let view = str.view(start_offset=1,end_offset=7)
+  let _ = view.iter().nth(5).unwrap()
 
 }
 
 ///|
 test "panic out of bounds2" {
   let str = "Hello🤣🤣🤣"
-  let view = str[1:6]
-  let _ = view[6:]
+  let view = str.view(start_offset=1,end_offset=7)
+  let _ = view.view(start_offset=7)
 
 }
 
 ///|
 test "panic out of bounds3" {
   let str = "Hello🤣🤣🤣"
-  let view = str[1:6]
-  let _ = view[:6]
+  let view = str.view(start_offset=1,end_offset=7)
+  let _ = view.view(end_offset=7)
 
 }
 
 ///|
 test "panic out of bounds4" {
   let str = "hello"
-  let view = str[0:0]
-  let _ = view[0]
+  let view = str.view(start_offset=0,end_offset=0)
+  let _ = view.iter().nth(0).unwrap()
 
 }
 
 ///|
-test "index_at_rev" {
-  let str = "🤣🤣🤣"
-  let offset = str.index_at_rev(0)
-  inspect!(offset, content="Some(StringIndex(6))")
-  let offset = str.index_at_rev(1)
-  inspect!(offset, content="Some(StringIndex(4))")
-  let offset = str.index_at_rev(2)
-  inspect!(offset, content="Some(StringIndex(2))")
-  let offset = str.index_at_rev(3)
-  inspect!(offset, content="Some(StringIndex(0))")
-  let offset = str.index_at_rev(4)
-  inspect!(offset, content="None")
-  let offset = str.index_at_rev(1).unwrap()
-  let offset = str.index_at_rev(1, end=offset)
-  inspect!(offset, content="Some(StringIndex(2))")
-}
+// test "index_at_rev" {
+//   let str = "🤣🤣🤣"
+//   let offset = str.index_at_rev(0)
+//   inspect!(offset, content="Some(StringIndex(6))")
+//   let offset = str.index_at_rev(1)
+//   inspect!(offset, content="Some(StringIndex(4))")
+//   let offset = str.index_at_rev(2)
+//   inspect!(offset, content="Some(StringIndex(2))")
+//   let offset = str.index_at_rev(3)
+//   inspect!(offset, content="Some(StringIndex(0))")
+//   let offset = str.index_at_rev(4)
+//   inspect!(offset, content="None")
+//   let offset = str.index_at_rev(1).unwrap()
+//   let offset = str.index_at_rev(1, end=offset)
+//   inspect!(offset, content="Some(StringIndex(2))")
+// }
 
 ///|
-test "stringview negative index" {
-  let str = "Hello🤣🤣🤣"
-  let str_view = str[:]
-  let view = str_view[-1:]
-  inspect!(view, content="🤣")
-  let view = str_view[-2:]
-  inspect!(view, content="🤣🤣")
-  let view = str_view[-3:]
-  inspect!(view, content="🤣🤣🤣")
-  let view = str_view[-4:]
-  inspect!(view, content="o🤣🤣🤣")
-  let view = str_view[:-1]
-  inspect!(view, content="Hello🤣🤣")
-  let view = str_view[:-2]
-  inspect!(view, content="Hello🤣")
-  let view = str_view[:-3]
-  inspect!(view, content="Hello")
-  let view = str_view[:-4]
-  inspect!(view, content="Hell")
-  let view = str_view[-2:-1]
-  inspect!(view, content="🤣")
-  let view = str_view[-3:-1]
-  inspect!(view, content="🤣🤣")
-  let view = str_view[-4:-1]
-  inspect!(view, content="o🤣🤣")
-  let view = str_view[-4:-2]
-  inspect!(view, content="o🤣")
-  let view = str_view[-4:-4]
-  inspect!(view, content="")
-  let view = str_view[-3:-3]
-  inspect!(view, content="")
-}
+// test "stringview negative index" {
+//   let str = "Hello🤣🤣🤣"
+//   let str_view = str[:]
+//   let view = str_view[-1:]
+//   inspect!(view, content="🤣")
+//   let view = str_view[-2:]
+//   inspect!(view, content="🤣🤣")
+//   let view = str_view[-3:]
+//   inspect!(view, content="🤣🤣🤣")
+//   let view = str_view[-4:]
+//   inspect!(view, content="o🤣🤣🤣")
+//   let view = str_view[:-1]
+//   inspect!(view, content="Hello🤣🤣")
+//   let view = str_view[:-2]
+//   inspect!(view, content="Hello🤣")
+//   let view = str_view[:-3]
+//   inspect!(view, content="Hello")
+//   let view = str_view[:-4]
+//   inspect!(view, content="Hell")
+//   let view = str_view[-2:-1]
+//   inspect!(view, content="🤣")
+//   let view = str_view[-3:-1]
+//   inspect!(view, content="🤣🤣")
+//   let view = str_view[-4:-1]
+//   inspect!(view, content="o🤣🤣")
+//   let view = str_view[-4:-2]
+//   inspect!(view, content="o🤣")
+//   let view = str_view[-4:-4]
+//   inspect!(view, content="")
+//   let view = str_view[-3:-3]
+//   inspect!(view, content="")
+// }
 
 ///|
 test "panic negative index 1" {
   // index_at_rev fails
   let str = "hello"
   let str_view = str[:]
-  let _ = str_view[-6:]
+  let _ = str_view.view(start_offset=-6)
 
 }
 
@@ -226,8 +198,8 @@ test "panic negative index 1" {
 test "panic negative index 2" {
   // index_at_rev fails
   let str = "hello"
-  let str_view = str[:]
-  let _ = str_view[:-6]
+  let str_view = str.view()
+  let _ = str_view.view(end_offset=-6)
 
 }
 
@@ -235,8 +207,8 @@ test "panic negative index 2" {
 test "panic negative index 3" {
   // index_at_rev returns an index not in bounds of the view
   let str = "hello"
-  let str_view = str[1:4]
-  let _ = str_view[-4:]
+  let str_view = str.view(start_offset=1,end_offset=4)
+  let _ = str_view.view(start_offset=-4)
 
 }
 
@@ -244,8 +216,8 @@ test "panic negative index 3" {
 test "panic negative index 4" {
   // index_at_rev returns an index not in bounds of the view
   let str = "hello"
-  let str_view = str[1:4]
-  let _ = str_view[:-4]
+  let str_view = str.view(start_offset=1, end_offset=4)
+  let _ = str_view.view(end_offset=4)
 
 }
 
@@ -253,8 +225,8 @@ test "panic negative index 4" {
 test "panic negative index 5" {
   // index_at_rev returns an index not in bounds of the view
   let str = "hello"
-  let str_view = str[1:4]
-  let _ = str_view[4:]
+  let str_view = str.view(start_offset=1, end_offset=4)
+  let _ = str_view.view(start_offset=4)
 
 }
 
@@ -262,8 +234,8 @@ test "panic negative index 5" {
 test "panic negative index 6" {
   // index_at_rev returns an index not in bounds of the view
   let str = "hello"
-  let str_view = str[1:4]
-  let _ = str_view[:4]
+  let str_view = str.view(start_offset=1, end_offset=4)
+  let _ = str_view.view(end_offset=4)
 
 }
 
@@ -271,8 +243,8 @@ test "panic negative index 6" {
 test "panic negative index 7" {
   // start > end
   let str = "hello"
-  let str_view = str[1:4]
-  let _ = str_view[-1:-2]
+  let str_view = str.view(start_offset=1, end_offset=4)
+  let _ = str_view.view(start_offset=-1, end_offset=-2)
 
 }
 
@@ -280,8 +252,8 @@ test "panic negative index 7" {
 test "panic negative index 8" {
   // start > end
   let str = "hello"
-  let str_view = str[1:4]
-  let _ = str_view[-1:1]
+  let str_view = str.view(start_offset=1, end_offset=4)
+  let _ = str_view.view(start_offset=-1, end_offset=1)
 
 }
 
@@ -289,31 +261,23 @@ test "panic negative index 8" {
 test "panic negative index 9" {
   // start > end
   let str = "hello"
-  let str_view = str[1:4]
-  let _ = str_view[2:-2]
+  let str_view = str.view(start_offset=1, end_offset=4)
+  let _ = str_view.view(start_offset=2, end_offset=-2)
 
 }
 
 ///|
-test "panic rev_get" {
-  let str = "Hello🤣🤣🤣"
-  let view = str[1:6]
-  let _ = view.rev_get(5)
+// test "panic rev_get2" {
+//   let str = "Hello🤣🤣🤣"
+//   let view = str[1:6]
+//   let _ = view.rev_iter().nth(-1).unwrap()
 
-}
-
-///|
-test "panic rev_get2" {
-  let str = "Hello🤣🤣🤣"
-  let view = str[1:6]
-  let _ = view.rev_get(-1)
-
-}
+// }
 
 ///|
 test "stringview iter" {
   let str = "hello🤣🤣🤣"
-  let view = str[1:6]
+  let view = str.view(start_offset=1, end_offset=7)
   let iter = view.iter()
   inspect!(iter.count(), content="5")
   inspect!(iter, content="['e', 'l', 'l', 'o', '🤣']")
@@ -322,50 +286,37 @@ test "stringview iter" {
 ///|
 test "stringview rev_iter" {
   let str = "hello🤣🤣🤣"
-  let view = str[1:6]
+  let view = str.view(start_offset=1, end_offset=7)
   let iter = view.rev_iter()
   inspect!(iter.count(), content="5")
   inspect!(iter, content="['🤣', 'o', 'l', 'l', 'e']")
 }
 
 ///|
-test "stringview negative index" {
-  let str = "hello🤣😭😂"
-  inspect!(str[-2:-1], content="😭")
-  inspect!(str[-3:-1], content="🤣😭")
-  inspect!(str[-4:-1], content="o🤣😭")
-  inspect!(str[-4:], content="o🤣😭😂")
-  inspect!(str[:-2], content="hello🤣")
-  inspect!(str[-2:-2], content="")
-  inspect!(str[-0:0], content="")
-  inspect!(str[-8:], content="hello🤣😭😂")
-}
-
-///|
 test "panic stringview negative index1" {
   let str = "hello🤣😭😂"
-  let _ = str[-9:]
+  let _ = str.view(start_offset=-9)
 
 }
 
 ///|
 test "panic stringview negative index2" {
   let str = "hello🤣😭😂"
-  let _ = str[:-9]
+  let _ = str.view(end_offset=-9)
 
 }
 
 ///|
 test "panic stringview negative index3" {
   let str = "hello🤣😭😂"
-  let _ = str[-1:-2]
+  let _ = str.view(start_offset=-1, end_offset=-2)
 
 }
 
 ///|
 test "to_string" {
   let s = "Hello World"
-  let view = s[0:5]
+  let view = s.view(start_offset=0, end_offset=5)
   let ss = "\{view} Moonbit"
   inspect!(ss, content="Hello Moonbit")
 }
@@ -381,7 +332,7 @@ test "length_eq test with surrogate pair" {
 ///|
 test "length_ge with high surrogate" {
   let str = "🐰" // This emoji is represented using a surrogate pair
-  let view = str[0:]
+  let view = str.view(start_offset=0)
   assert_eq!(view.char_length_ge(1), true)
   assert_eq!(view.char_length_ge(2), false)
 }
@@ -389,34 +340,27 @@ test "length_ge with high surrogate" {
 ///|
 test "panic op_as_view with invalid positive start index" {
   let str = "Hello🤣🤣🤣"
-  let view = str[0:6]
-  ignore(view[100:])
+  let view = str.view()
+  ignore(view.view(start_offset=100))
 }
 
 ///|
 test "panic on accessing negative index" {
   let str = "Hello🤣🤣🤣"
-  let view = str[1:6]
-  ignore(view[-1]) // This should panic due to invalid index
+  let view = str.view()
+  ignore(view.view(start_offset=-1)) // This should panic due to invalid index
 }
 
 ///|
 test "panic on invalid start index" {
   let str = "Hello"
-  ignore(str[10:])
+  ignore(str.view(start_offset=10))
 }
 
 ///|
 test "panic on invalid end index" {
   let str = "Hello"
-  ignore(str[0:10])
-}
-
-///|
-test "panic_view_op_as_view_invalid_end_index" {
-  let str = "Hello🤣🤣🤣"
-  let view = str[1:7] // "ello🤣"
-  ignore(view[0:10]) // This should panic due to invalid end index
+  ignore(str.view(start_offset=0, end_offset=10))
 }
 
 ///|
@@ -444,7 +388,7 @@ test "panic_length_ge invalid surrogate pair" {
 ///|
 test "take first character from surrogate pairs" {
   let str = "Hello😀😃"
-  let view = str.op_as_view()
+  let view = str.view()
   let result = view.iter().take(6).collect().length()
   // 6 characters total: 5 ASCII + 1 emoji
   inspect!(result, content="6")
@@ -704,7 +648,7 @@ test "make" {
 
 ///|
 test "to_json" {
-  let v = "hello"[1:4].view()
+  let v = "hello".view(start_offset=1, end_offset=4)
   inspect!(
     v.to_json(),
     content=

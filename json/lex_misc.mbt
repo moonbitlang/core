@@ -101,7 +101,7 @@ test "expect_char" {
 ///|
 test "expect_char with surrogate pair" {
   // "\uD83D\uDE00" // todo: shall we allow this?
-  let ctx = ParseContext::make("a\uD83D\uDE00bc\uD83D\uDE00c")
+  let ctx = ParseContext::make("a\u{1F600}bc\u{1F600}c")
   ctx.expect_char!('a')
   ctx.expect_char!(Char::from_int(0x1F600))
   ctx.expect_char!('b')

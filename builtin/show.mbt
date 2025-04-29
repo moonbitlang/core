@@ -129,10 +129,10 @@ pub impl Show for String with output(self, logger) {
         if code < ' ' {
           flush_segment(i)
           logger
-          ..write_char('\\')
-          ..write_char('x')
+          ..write_string("\\u{")
           ..write_char(to_hex_digit(code / 16))
-          .write_char(to_hex_digit(code % 16))
+          ..write_char(to_hex_digit(code % 16))
+          .write_char('}')
         }
     }
   }
@@ -231,10 +231,10 @@ pub impl Show for Char with output(self, logger) {
       let code = self.to_int()
       if code < 0x20 {
         logger
-        ..write_char('\\')
-        ..write_char('x')
+        ..write_string("\\u{")
         ..write_char(to_hex_digit(code / 16))
-        .write_char(to_hex_digit(code % 16))
+        ..write_char(to_hex_digit(code % 16))
+        .write_char('}')
       } else {
         logger.write_char(self)
       }

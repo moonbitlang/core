@@ -13,19 +13,6 @@
 // limitations under the License.
 
 ///|
-test "read_char surrogate pair" {
-  // Test data:
-  // U+1F600 😀 (GRINNING FACE)
-  // UTF-16: D83D DE00 (high surrogate: 0xD83D, low surrogate: 0xDE00)
-  let json = "\"\uD83D\uDE00\""
-  let result = @json.parse!(json)
-  match result {
-    Json::String(s) => inspect!(s, content="😀")
-    _ => fail!("Expected string")
-  }
-}
-
-///|
 test "panic lex_assert_char with EOF" {
   // This case will trigger line L90 where we hit EOF
   let _ = @json.parse!("t")

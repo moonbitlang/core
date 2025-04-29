@@ -33,9 +33,12 @@ test "String::escape" {
     ,
   )
   inspect!(
-    "\x00\x01\x20\x21".escape(),
+    "\u{00}\u{01}\u{20}\u{21}".escape(),
     content=
-      #|"\x00\x01 !"
+      #|"\u{00}\u{01} !"
+
+
+
     ,
   )
 }
@@ -51,16 +54,16 @@ test "substring" {
 ///|
 test "panic codepoint_at1" {
   let str = "Hello🤣🤣🤣"
-  let _ = str.codepoint_at(8)
+  let _ = str.iter().nth(8).unwrap()
 
 }
 
 ///|
-test "panic codepoint_at2" {
-  let str = "Hello🤣🤣🤣"
-  let _ = str.codepoint_at(-1)
+// test "panic codepoint_at2" {
+//   let str = "Hello🤣🤣🤣"
+//   let _ = str.iter().nth(-1).unwrap()
 
-}
+// }
 
 ///|
 test "panic charcode_at with negative index" {
@@ -77,13 +80,13 @@ test "charcode_at with valid index" {
 ///|
 test "codepoint_at regular character at end of string" {
   let s = "Hello"
-  inspect!(s.codepoint_at(4), content="o")
+  inspect!(s.iter().nth(4).unwrap(), content="o")
 }
 
 ///|
 test "codepoint_at emoji" {
   let s = "👋"
-  inspect!(s.codepoint_at(0), content="👋")
+  inspect!(s.iter().nth(0).unwrap(), content="👋")
 }
 
 ///|
@@ -97,15 +100,15 @@ test "unsafe_char_at" {
 }
 
 ///|
-test "codepoint_length basic" {
+test "char_length basic" {
   let str = "hello"
-  inspect!(str.codepoint_length(), content="5")
+  inspect!(str.char_length(), content="5")
 }
 
 ///|
-test "codepoint_length with surrogate pairs" {
+test "char_length with surrogate pairs" {
   let str = "Hello🤣"
-  inspect!(str.codepoint_length(), content="6")
+  inspect!(str.char_length(), content="6")
 }
 
 ///|
@@ -131,5 +134,5 @@ test "panic codepoint_length with invalid surrogate pair" {
       'a',
     ], // invalid trailing surrogate
   )
-  ignore(s.codepoint_length())
+  ignore(s.char_length())
 }

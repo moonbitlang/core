@@ -11,7 +11,7 @@ test {
       .add("a", 1)
       .add("b", 2)
       .add("c", 3)
-  assert_eq!(map.find("a"), Some(1))
-  assert_eq!(map.find("d"), None)
+  assert_eq!(map.get("a"), Some(1))
+  assert_eq!(map.get("d"), None)
 }
 ```
