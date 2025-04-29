@@ -823,6 +823,14 @@ pub fn unfold[A, S](f : (S) -> (A, S)?, init~ : S) -> T[A] {
 }
 
 ///|
+pub fn rev_unfold[A, S](f : (S) -> (A, S)?, init~ : S) -> T[A] {
+  loop f(init), Empty {
+    None, acc => acc
+    Some((x, s)), acc => continue f(s), More(x, tail=acc)
+  }
+}
+
+///|
 /// Take first n elements of the list.
 /// If the list is shorter than n, return the whole list.
 ///

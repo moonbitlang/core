@@ -340,6 +340,14 @@ test "unfold" {
 }
 
 ///|
+test "rev_unfold" {
+  let ls = @list.rev_unfold(init=0, fn {
+    i => if i == 3 { None } else { Some((i, i + 1)) }
+  })
+  inspect!(ls, content="@list.of([2, 1, 0])")
+}
+
+///|
 test "take" {
   let ls = @list.of([1, 2, 3, 4, 5])
   inspect!(ls.take(3), content="@list.of([1, 2, 3])")
