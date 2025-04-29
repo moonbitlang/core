@@ -106,6 +106,8 @@ fn rev_foldi[A, B](T[A], init~ : B, (Int, B, A) -> B) -> B
 
 fn rev_map[A, B](T[A], (A) -> B) -> T[B]
 
+fn rev_unfold[A, S]((S) -> (A, S)?, init~ : S) -> T[A]
+
 fn scan_left[A, E](T[A], (E, A) -> E, init~ : E) -> T[E]
 
 fn scan_right[A, B](T[A], (B, A) -> B, init~ : B) -> T[B]
