@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 ///|
 test "stringview basic" {
   let str = "Hello🤣🤣🤣"
@@ -20,7 +19,7 @@ test "stringview basic" {
   let end_offset = str.offset_of_nth_char(6).unwrap()
   inspect!(str.view(start_offset~), content="ello🤣🤣🤣")
   inspect!(str.view(end_offset~), content="Hello🤣")
-  inspect!(str.view(start_offset~,end_offset~), content="ello🤣")
+  inspect!(str.view(start_offset~, end_offset~), content="ello🤣")
   inspect!(str.view(), content="Hello🤣🤣🤣")
 }
 
@@ -31,7 +30,10 @@ test "stringview basic2" {
   let end = 10
   inspect!(str.view(start_offset=start), content="e🤣🤣🤣llo")
   inspect!(str.view(end_offset=end), content="He🤣🤣🤣ll")
-  inspect!(str.view(start_offset=start,end_offset=end), content="e🤣🤣🤣ll")
+  inspect!(
+    str.view(start_offset=start, end_offset=end),
+    content="e🤣🤣🤣ll",
+  )
   inspect!(str.view(), content="He🤣🤣🤣llo")
 }
 
@@ -40,9 +42,9 @@ test "stringview subview" {
   let str = "Hello🤣🤣🤣"
   let start = 1
   let end = 7
-  let view = str.view(start_offset=start,end_offset=end)
+  let view = str.view(start_offset=start, end_offset=end)
   inspect!(view.view(start_offset=1), content="llo🤣")
-  inspect!(view.view(start_offset=1,end_offset=4), content="llo")
+  inspect!(view.view(start_offset=1, end_offset=4), content="llo")
   inspect!(view.view(end_offset=4), content="ello")
   inspect!(view.view(), content="ello🤣")
 }
@@ -50,7 +52,7 @@ test "stringview subview" {
 ///|
 test "stringview op_get" {
   let str = "Hello🤣🤣🤣"
-  let view = str.view(start_offset=1,end_offset=7)
+  let view = str.view(start_offset=1, end_offset=7)
   inspect!(view.iter().nth(4).unwrap(), content="🤣")
   inspect!(view.iter().nth(4).unwrap(), content="🤣")
 }
@@ -58,7 +60,7 @@ test "stringview op_get" {
 ///|
 test "stringview rev_get" {
   let str = "Hello🤣🤣🤣"
-  let view = str.view(start_offset=1,end_offset=7)
+  let view = str.view(start_offset=1, end_offset=7)
   inspect!(view.rev_iter().nth(0).unwrap(), content="🤣")
   inspect!(view.rev_iter().nth(4).unwrap(), content="e")
 }
@@ -66,14 +68,14 @@ test "stringview rev_get" {
 ///|
 test "stringview length" {
   let str = "Hello🤣🤣🤣"
-  let view = str.view(start_offset=1,end_offset=7)
+  let view = str.view(start_offset=1, end_offset=7)
   inspect!(view.length(), content="6")
 }
 
 ///|
 test "stingview length_eq" {
   let str = "hello"
-  let view = str.view(start_offset=1,end_offset=4)
+  let view = str.view(start_offset=1, end_offset=4)
   inspect!(view.char_length_eq(0), content="false")
   inspect!(view.char_length_eq(1), content="false")
   inspect!(view.char_length_eq(2), content="false")
@@ -85,7 +87,7 @@ test "stingview length_eq" {
 ///|
 test "stingview length_ge" {
   let str = "hello"
-  let view = str.view(start_offset=1,end_offset=4)
+  let view = str.view(start_offset=1, end_offset=4)
   inspect!(view.char_length_ge(0), content="true")
   inspect!(view.char_length_ge(1), content="true")
   inspect!(view.char_length_ge(2), content="true")
@@ -97,14 +99,14 @@ test "stingview length_ge" {
 ///|
 test "stringview empty" {
   let str = "hello"
-  let view = str.view(start_offset=0,end_offset=0)
+  let view = str.view(start_offset=0, end_offset=0)
   inspect!(view.length(), content="0")
 }
 
 ///|
 test "panic out of bounds1" {
   let str = "Hello🤣🤣🤣"
-  let view = str.view(start_offset=1,end_offset=7)
+  let view = str.view(start_offset=1, end_offset=7)
   let _ = view.iter().nth(5).unwrap()
 
 }
@@ -112,7 +114,7 @@ test "panic out of bounds1" {
 ///|
 test "panic out of bounds2" {
   let str = "Hello🤣🤣🤣"
-  let view = str.view(start_offset=1,end_offset=7)
+  let view = str.view(start_offset=1, end_offset=7)
   let _ = view.view(start_offset=7)
 
 }
@@ -120,7 +122,7 @@ test "panic out of bounds2" {
 ///|
 test "panic out of bounds3" {
   let str = "Hello🤣🤣🤣"
-  let view = str.view(start_offset=1,end_offset=7)
+  let view = str.view(start_offset=1, end_offset=7)
   let _ = view.view(end_offset=7)
 
 }
@@ -128,7 +130,7 @@ test "panic out of bounds3" {
 ///|
 test "panic out of bounds4" {
   let str = "hello"
-  let view = str.view(start_offset=0,end_offset=0)
+  let view = str.view(start_offset=0, end_offset=0)
   let _ = view.iter().nth(0).unwrap()
 
 }
@@ -207,7 +209,7 @@ test "panic negative index 2" {
 test "panic negative index 3" {
   // index_at_rev returns an index not in bounds of the view
   let str = "hello"
-  let str_view = str.view(start_offset=1,end_offset=4)
+  let str_view = str.view(start_offset=1, end_offset=4)
   let _ = str_view.view(start_offset=-4)
 
 }

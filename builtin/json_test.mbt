@@ -108,9 +108,6 @@ test "escape control characters" {
     json,
     content=
       #|String("abc\u{01}def")
-
-
-
     ,
   )
 }
@@ -135,9 +132,6 @@ test "test form feed" {
     json,
     content=
       #|String("Form\u{0c}Feed")
-
-
-
     ,
   )
 }

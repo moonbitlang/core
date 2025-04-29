@@ -302,7 +302,6 @@ test "String::index_of basic matching" {
   inspect!("abc".find("abcd"), content="None")
 }
 
-
 ///|
 test "String::index_of overlapping patterns" {
   // Testing overlapping patterns

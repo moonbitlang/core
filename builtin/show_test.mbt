@@ -247,7 +247,7 @@ test "char show hex digits" {
   // FIXME: inspect!('\x0b') will not work with update test
   // inspect!('\x0b', content="\x0b")
   inspect!('\u{01}' |> repr, content="'\\u{01}'")
-  inspect!('\u{0b}'|> repr , content="'\\u{0b}'")
+  inspect!('\u{0b}' |> repr, content="'\\u{0b}'")
 }
 
 ///|
