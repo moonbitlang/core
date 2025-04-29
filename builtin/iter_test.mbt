@@ -874,6 +874,18 @@ test "chunk_by with custom key function" {
 }
 
 ///|
+test "chunk_by with break" {
+  let iter = [1, 2].iter()
+  let chunked = iter.chunk_by(fn(x) { x }).append((3, [3].iter()))
+  let mut c = 0
+  for _ in chunked {
+    c += 1
+    break
+  }
+  assert_eq!(c, 1)
+}
+
+///|
 test "chunk_by with strings" {
   let iter = ["apple", "avocado", "banana", "cherry", "blueberry"].iter()
   let chunked = iter.chunk_by(fn(s) { s[0] })

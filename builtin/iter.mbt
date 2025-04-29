@@ -1063,39 +1063,25 @@ pub fn Iter::chunk_by[T, K : Eq](
   f : (T) -> K
 ) -> Iter[(K, Iter[T])] {
   fn(yield_) {
-    let mut has_current = false
     let mut current_key : K? = None
     let mut buffer : Array[T] = []
-    fn emit_current_chunk() -> IterResult {
-      if buffer.is_empty() {
-        return IterContinue
-      }
-      let key = current_key.unwrap()
-      let elements = buffer
-      buffer = Array::new(capacity=16)
-      yield_((key, elements.iter()))
-    }
-
-    self.run(fn(x) {
+    for x in self {
       let key = f(x)
-      if has_current && key == current_key.unwrap() {
-        buffer.push(x)
-        IterContinue
-      } else {
-        if has_current {
-          if emit_current_chunk() == IterEnd {
-            return IterEnd
+      match current_key {
+        None => current_key = Some(key)
+        Some(old_key) =>
+          if key != old_key {
+            guard yield_((old_key, buffer.iter())) is IterContinue else {
+              return IterEnd
+            }
+            buffer = Array::new(capacity=16)
+            current_key = Some(key)
           }
-        }
-        has_current = true
-        current_key = Some(key)
-        buffer.push(x)
-        IterContinue
       }
-    })
-    |> ignore
-    if has_current {
-      emit_current_chunk()
+      buffer.push(x)
+    }
+    if current_key is Some(old_key) {
+      yield_((old_key, buffer.iter()))
     } else {
       IterContinue
     }
