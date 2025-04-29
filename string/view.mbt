@@ -96,6 +96,60 @@ pub fn View::view(
 }
 
 ///|
+/// Creates a `View` into a `String`.
+/// 
+/// # Example
+/// 
+/// ```
+/// let str = "Hello🤣🤣🤣"
+/// let view1 = str.charcodes()
+/// inspect!(view1, content=
+///  "Hello🤣🤣🤣"
+///)
+/// let start = str.offset_of_nth_char(1).unwrap()
+/// let end = str.offset_of_nth_char(6).unwrap() // the second emoji
+/// let view2 = str.charcodes(start~, end~)
+/// inspect!(view2, content=
+///  "ello🤣"
+///)
+/// ```
+/// 
+/// This method has O(1) complexity.
+pub fn String::charcodes(
+  self : String,
+  start~ : Int = 0,
+  end~ : Int = self.length()
+) -> View {
+  self.view(start_offset=start, end_offset=end)
+}
+
+///|
+/// Creates a `View` into a `View`.
+/// 
+/// # Example
+/// 
+/// ```
+/// let str = "Hello🤣🤣🤣"
+/// let view1 = str.view()
+/// let view2 = view1.charcodes(start=1, end=7) // From 2nd to 6th character
+/// inspect!(view2, content=
+///  "ello🤣"
+///)
+/// ```
+/// 
+/// This method is similar to `String::charcodes` but operates on an existing view.
+/// It allows you to create a sub-view of an existing view with the specified character range.
+/// 
+/// This method has O(1) complexity.
+pub fn View::charcodes(
+  self : View,
+  start~ : Int = 0,
+  end~ : Int = self.length()
+) -> View {
+  self.view(start_offset=start, end_offset=end)
+}
+
+///|
 /// Returns the UTF-16 index of the i-th (zero-indexed) Unicode character of
 /// the view. If i is negative, it returns the index of the (n + i)-th character
 /// where n is the total number of Unicode characters in the view.
