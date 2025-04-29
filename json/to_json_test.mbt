@@ -103,10 +103,6 @@ test "String::to_json" {
     "\u{00}".to_json(),
     content=
       #|String("\u{00}")
-
-
-
-
     ,
   )
   inspect!(
@@ -119,10 +115,6 @@ test "String::to_json" {
     "\u{0c}\u{0d}\u{0f}".to_json(),
     content=
       #|String("\u{0c}\r\u{0f}")
-
-
-
-
     ,
   )
 }

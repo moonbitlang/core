@@ -30,7 +30,6 @@ test "snd" {
   assert_eq!(@tuple.snd(tuple), 2)
 }
 
-
 ///|
 test "swap" {
   let tuple = (1, 2)
