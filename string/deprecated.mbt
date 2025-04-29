@@ -84,7 +84,7 @@ fn index_at_rev_(
 }
 
 ///|
-#deprecated("use str.view(start = str.index_of_nth_char(i).unwrap(), end = str.index_of_nth_char(j).unwrap()) to replace str[i:j]")
+#deprecated("use str.charcodes(start = str.offset_of_nth_char(i).unwrap(), end = str.offset_of_nth_char(j).unwrap()) to replace str[i:j]")
 pub fn String::op_as_view(self : String, start~ : Int = 0, end? : Int) -> View {
   let str_len = self.length()
   let start = if start >= 0 {
@@ -108,7 +108,7 @@ pub fn String::op_as_view(self : String, start~ : Int = 0, end? : Int) -> View {
 }
 
 ///|
-#deprecated("use view.view(start = view.index_of_nth_char(i).unwrap(), end = view.index_of_nth_char(j).unwrap()) to replace view[i:j]")
+#deprecated("use view.charcodes(start = view.offset_of_nth_char(i).unwrap(), end = view.offset_of_nth_char(j).unwrap()) to replace view[i:j]")
 pub fn View::op_as_view(self : View, start~ : Int = 0, end? : Int) -> View {
   let start = if start >= 0 {
     index_at_(self.str, start, start=self.start).unwrap()._
