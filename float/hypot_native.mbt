@@ -38,17 +38,4 @@
 ///   inspect!((1.0 : Float).hypot(@float.neg_infinity), content="Infinity")
 /// }
 /// ```
-pub fn hypot(self : Float, y : Float) -> Float {
-  let epsilon : Float = 1.1920928955078125e-7
-  let x = self.abs()
-  let y = y.abs()
-  if x.is_inf() || y.is_inf() {
-    return infinity
-  }
-  let (x, y) = if y > x { (y, x) } else { (x, y) }
-  if x * epsilon >= y {
-    return x
-  }
-  let rat = y / x
-  x * (rat * rat + 1.0).sqrt()
-}
+pub extern "C" fn hypot(self : Float, y : Float) -> Float = "hypotf"

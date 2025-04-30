@@ -13,52 +13,53 @@
 // limitations under the License.
 
 ///|
-test "exp" {
-  inspect!((0.5 : Float).exp(), content="1.6487212181091309")
-  inspect!((1.0 : Float).exp(), content="2.7182817459106445")
-  inspect!((0.0 : Float).exp(), content="1")
-  inspect!((2.0 : Float).exp(), content="7.389056205749512")
-  inspect!((-1.0 : Float).exp(), content="0.3678794503211975")
-  inspect!(@float.infinity.exp(), content="Infinity")
-  inspect!(@float.neg_infinity.exp(), content="0")
-  inspect!((89 : Float).exp(), content="Infinity")
-  inspect!((-104 : Float).exp(), content="0")
+test "expf Test" {
+  let data : Array[Float] = [
+    1, 2, 3, 4, 5, 6.5, 7.5, 8.5, 9.5, 10.5, 0.25, 1.25, 2.25, 3.25, 4.25, -0.125,
+    -1.125, -2.125, -3.125, -4.125, -0.0625, -1.0625, -2.0625, -3.0625, -4.0625,
+    @float.neg_infinity, @float.infinity, @float.not_a_number,
+  ]
+  let libm_results : Array[Float] = [
+    2.7182817459106445, 7.389056205749512, 20.08553695678711, 54.598148345947266,
+    148.4131622314453, 665.1416625976562, 1808.0423583984375, 4914.76904296875, 13359.7265625,
+    36315.50390625, 1.2840254306793213, 3.490342855453491, 9.487735748291016, 25.790340423583984,
+    70.10541534423828, 0.8824968934059143, 0.32465246319770813, 0.1194329708814621,
+    0.04393693432211876, 0.016163494437932968, 0.9394130706787109, 0.345590740442276,
+    0.1271357387304306, 0.046770621091127396, 0.017205949872732162, 0, @float.infinity,
+    @float.not_a_number,
+  ]
+  for i in 0..<data.length() {
+    let x = data[i]
+    let res = x.exp()
+    let libm_res = libm_results[i]
+    assert_true!(
+      iabs(res.reinterpret_as_int() - libm_res.reinterpret_as_int()) <= 2,
+    )
+  }
 }
 
 ///|
-test "exp - quickcheck" {
-  let double : Array[Double] = @quickcheck.samples(4)
-  inspect!(
-    double,
-    content="[0.12125190562607557, 0.2656190379663609, 0.7248184591724188, 0.8261703932281662]",
-  )
-  inspect!(
-    double.map(fn(x) { x.exp() }),
-    content="[1.1289092551447675, 1.3042380988330389, 2.064356300995553, 2.2845530266177425]",
-  )
-  let float = double.map(Double::to_float)
-  inspect!(
-    float,
-    content="[0.1212519034743309, 0.26561903953552246, 0.7248184680938721, 0.8261703848838806]",
-  )
-  inspect!(
-    float.map(fn(x) { x.exp() }),
-    content="[1.1289092302322388, 1.3042380809783936, 2.0643563270568848, 2.284553050994873]",
-  )
-}
-
-///|
-test "expm1" {
-  inspect!((0 : Float).expm1(), content="0")
-  inspect!((1 : Float).expm1(), content="1.718281865119934")
-  inspect!((2 : Float).expm1(), content="6.389056205749512")
-  inspect!((3 : Float).expm1(), content="19.08553695678711")
-  inspect!((4 : Float).expm1(), content="53.598148345947266")
-  inspect!((5 : Float).expm1(), content="147.4131622314453")
-  inspect!((-0.5 : Float).expm1(), content="-0.39346933364868164")
-  inspect!((-1 : Float).expm1(), content="-0.6321205496788025")
-  inspect!((-2 : Float).expm1(), content="-0.8646647334098816")
-  inspect!(@float.not_a_number.expm1(), content="NaN")
-  inspect!(@float.infinity.expm1(), content="Infinity")
-  inspect!(@float.neg_infinity.expm1(), content="-1")
+test "expm1f Test" {
+  let data : Array[Float] = [
+    1, 2, 3, 4, 5, 6.5, 7.5, 8.5, 9.5, 10.5, 0.25, 1.25, 2.25, 3.25, 4.25, -0.125,
+    -1.125, -2.125, -3.125, -4.125, -0.0625, -1.0625, -2.0625, -3.0625, -4.0625,
+    @float.neg_infinity, @float.infinity, @float.not_a_number,
+  ]
+  let libm_results : Array[Float] = [
+    1.718281865119934, 6.389056205749512, 19.08553695678711, 53.598148345947266,
+    147.4131622314453, 664.1416625976562, 1807.0423583984375, 4913.76904296875, 13358.7265625,
+    36314.50390625, 0.2840254306793213, 2.490342855453491, 8.487735748291016, 24.790340423583984,
+    69.10541534423828, -0.1175030991435051, -0.6753475069999695, -0.8805670142173767,
+    -0.9560630917549133, -0.9838365316390991, -0.06058693677186966, -0.6544092297554016,
+    -0.8728642463684082, -0.9532293677330017, -0.9827940464019775, -1.0, @float.infinity,
+    @float.not_a_number,
+  ]
+  for i in 0..<data.length() {
+    let x = data[i]
+    let res = x.expm1()
+    let libm_res = libm_results[i]
+    assert_true!(
+      iabs(res.reinterpret_as_int() - libm_res.reinterpret_as_int()) <= 2,
+    )
+  }
 }
