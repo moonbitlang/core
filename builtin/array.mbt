@@ -66,6 +66,17 @@ pub fn Array::from_fixed_array[T](arr : FixedArray[T]) -> Array[T] {
 ///   ignore(Array::make(-1, 0))
 /// }
 /// ```
+/// 
+/// WARNING: A common pitfall is creating with the same initial value, for example:
+/// ```moonbit
+/// test {
+///   let two_dimension_array = Array::make(10, Array::make(10, 0))
+///   two_dimension_array[0][5] = 10
+///   assert_eq!(two_dimension_array[5][5], 10)
+/// }
+/// ```
+/// This is because all the cells reference to the same object (the Array[Int] in this case). 
+/// One should use makei() instead which creates an object for each index.
 pub fn Array::make[T](len : Int, elem : T) -> Array[T] {
   let arr = Array::make_uninit(len)
   for i in 0..<len {
