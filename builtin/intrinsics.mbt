@@ -1363,7 +1363,7 @@ pub fn Bytes::op_get(self : Bytes, idx : Int) -> Byte = "%bytes_get"
 /// }
 /// ```
 ///
-/// @alert unsafe "Panic if index is out of bounds"
+#internal(unsafe, "Panic if index is out of bounds")
 pub fn Bytes::unsafe_get(self : Bytes, idx : Int) -> Byte = "%bytes_get"
 
 ///|
@@ -1565,7 +1565,7 @@ pub fn FixedArray::op_get[T](self : FixedArray[T], idx : Int) -> T = "%fixedarra
 /// }
 /// ```
 ///
-/// @alert unsafe "Panic if index is out of bounds"
+#internal(unsafe, "Panic if index is out of bounds")
 pub fn FixedArray::unsafe_get[T](self : FixedArray[T], idx : Int) -> T = "%fixedarray.unsafe_get"
 
 ///|
@@ -1625,7 +1625,7 @@ pub fn FixedArray::get[T](self : FixedArray[T], idx : Int) -> T = "%fixedarray.g
 /// }
 /// ```
 ///
-/// @alert unsafe "Panic if index is out of bounds."
+#internal(unsafe, "Panic if index is out of bounds.")
 #intrinsic("%fixedarray.set")
 pub fn FixedArray::op_set[T](self : FixedArray[T], idx : Int, val : T) -> Unit = "%fixedarray.set"
 
@@ -1763,7 +1763,7 @@ pub fn String::charcode_length(self : String) -> Int = "%string_length"
 /// }
 /// ```
 ///
-/// @alert unsafe "Panic if index is out of bounds"
+#internal(unsafe, "Panic if index is out of bounds")
 pub fn String::op_get(self : String, idx : Int) -> Char = "%string_get"
 
 ///|
@@ -1820,7 +1820,7 @@ pub fn String::get(self : String, idx : Int) -> Char = "%string_get"
 /// }
 /// ```
 ///
-/// @alert unsafe "Panic if index is out of bounds."
+#internal(unsafe, "Panic if index is out of bounds.")
 pub fn String::unsafe_charcode_at(self : String, idx : Int) -> Int = "%string.unsafe_get"
 
 ///|

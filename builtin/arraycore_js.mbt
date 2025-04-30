@@ -213,7 +213,7 @@ pub fn Array::pop_exn[T](self : Array[T]) -> T {
 /// **NOTE** This method will not cause a panic, but it may result in undefined
 /// behavior on the JavaScript platform. Use with caution.
 ///
-/// @alert unsafe "Panic if the array is empty."
+#internal(unsafe, "Panic if the array is empty.")
 pub fn Array::unsafe_pop[T](self : Array[T]) -> T {
   JSArray::ofAnyArray(self).pop().toAny()
 }
@@ -230,7 +230,7 @@ pub fn Array::unsafe_pop[T](self : Array[T]) -> T {
 /// assert_eq!(vv, 4)
 /// assert_eq!(v, [3, 5])
 /// ```
-/// @alert unsafe "Panic if index is out of bounds."
+#internal(unsafe, "Panic if index is out of bounds.")
 pub fn Array::remove[T](self : Array[T], index : Int) -> T {
   guard index >= 0 && index < self.length() else {
     abort(
@@ -252,7 +252,7 @@ pub fn Array::remove[T](self : Array[T], index : Int) -> T {
 /// let v = [3, 4, 5]
 /// let vv = v.drain(1, 2) // vv = [4], v = [3, 5]
 /// ```
-/// @alert unsafe "Panic if index is out of bounds."
+#internal(unsafe, "Panic if index is out of bounds.")
 pub fn Array::drain[T](self : Array[T], begin : Int, end : Int) -> Array[T] {
   guard begin >= 0 && end <= self.length() && begin <= end else {
     abort(
@@ -269,7 +269,7 @@ pub fn Array::drain[T](self : Array[T], begin : Int, end : Int) -> Array[T] {
 /// ```
 /// [3, 4, 5].insert(1, 6)
 /// ```
-/// @alert unsafe "Panic if index is out of bounds."
+#internal(unsafe, "Panic if index is out of bounds.")
 pub fn Array::insert[T](self : Array[T], index : Int, value : T) -> Unit {
   guard index >= 0 && index <= self.length() else {
     abort(
@@ -287,7 +287,7 @@ pub fn Array::insert[T](self : Array[T], index : Int, value : T) -> Unit {
 /// difference, and the values in the new slots are left uninitilized.
 ///  If `new_len` is less than `len`, it will panic
 ///
-/// @alert unsafe "Panic if new length is negative."
+#internal(unsafe, "Panic if new length is negative.")
 fn Array::unsafe_grow_to_length[T](self : Array[T], new_len : Int) -> Unit {
   guard new_len >= self.length()
   JSArray::ofAnyArray(self).set_length(new_len)

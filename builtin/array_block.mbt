@@ -45,7 +45,7 @@
 /// }
 /// ```
 ///
-/// @alert unsafe "Panic if the indices or length are out of bounds"
+#internal(unsafe, "Panic if the indices or length are out of bounds")
 pub fn Array::unsafe_blit[A](
   dst : Array[A],
   dst_offset : Int,
