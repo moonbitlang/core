@@ -23,7 +23,7 @@
 /// assert_eq!(view[0], 2)
 /// assert_eq!(view.length(), 3)
 /// ```
-/// @alert deprecated "use @array.View instead"
+#internal(deprecated, "use @array.View instead")
 struct ArrayView[T] {
   buf : UninitializedArray[T]
   start : Int
@@ -120,7 +120,7 @@ pub fn ArrayView::op_get[T](self : ArrayView[T], index : Int) -> T {
 /// ```
 ///
 #intrinsic("%arrayview.unsafe_get")
-/// @alert unsafe "Panic if index is out of bounds"
+#internal(unsafe, "Panic if index is out of bounds")
 pub fn ArrayView::unsafe_get[T](self : ArrayView[T], index : Int) -> T {
   self.buf[self.start + index]
 }
@@ -154,7 +154,7 @@ pub fn ArrayView::unsafe_get[T](self : ArrayView[T], index : Int) -> T {
 /// }
 /// ```
 ///
-/// @alert unsafe "Panic if index is out of bounds."
+#internal(unsafe, "Panic if index is out of bounds.")
 pub fn ArrayView::op_set[T](
   self : ArrayView[T],
   index : Int,
@@ -196,7 +196,7 @@ pub fn ArrayView::op_set[T](
 /// }
 /// ```
 ///
-/// @alert unsafe "Panic if index is out of bounds"
+#internal(unsafe, "Panic if index is out of bounds")
 pub fn ArrayView::swap[T](self : ArrayView[T], i : Int, j : Int) -> Unit {
   guard i >= 0 && i < self.len && j >= 0 && j < self.len else {
     abort(

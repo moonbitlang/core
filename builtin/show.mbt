@@ -205,7 +205,8 @@ pub impl[X : Show] Show for Array[X] with output(self, logger) {
 
 ///|
 /// Convert Char to String
-/// @intrinsic %char.to_string
+// TODO: support attributes for impl
+// #intrinsic("%char.to_string")
 pub impl Show for Char with to_string(self : Char) -> String {
   [self]
 }

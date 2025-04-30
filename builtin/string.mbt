@@ -75,7 +75,7 @@ fn code_point_of_surrogate_pair(leading : Int, trailing : Int) -> Char {
 ///
 /// # Panics
 ///
-/// @alert unsafe "Panics if the index is out of bounds."
+#internal(unsafe, "Panics if the index is out of bounds.")
 pub fn String::charcode_at(self : String, index : Int) -> Int = "%string_get"
 
 ///|

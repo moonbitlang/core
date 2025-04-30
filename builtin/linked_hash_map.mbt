@@ -104,7 +104,7 @@ pub fn Map::from_array[K : Hash + Eq, V](arr : Array[(K, V)]) -> Map[K, V] {
 
 ///|
 /// Set a key-value pair into the hash map.
-/// @alert unsafe "Panic if the hash map is full."
+#internal(unsafe, "Panic if the hash map is full.")
 pub fn Map::set[K : Hash + Eq, V](self : Map[K, V], key : K, value : V) -> Unit {
   if self.size >= self.growAt {
     self.grow()
