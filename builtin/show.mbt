@@ -203,12 +203,15 @@ pub impl[X : Show] Show for Array[X] with output(self, logger) {
   logger.write_iter(self.iter())
 }
 
-///|
-/// Convert Char to String
-// TODO: support attributes for impl
-// #intrinsic("%char.to_string")
+///| Convert Char to String
 pub impl Show for Char with to_string(self : Char) -> String {
-  [self]
+  char_to_string(self)
+}
+
+///| TODO: support attributes for impl
+#intrinsic("%char.to_string")
+fn char_to_string(char : Char) -> String {
+  [char]
 }
 
 ///|
