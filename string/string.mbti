@@ -98,6 +98,7 @@ impl StringView {
   char_length_eq(Self, Int) -> Bool
   char_length_ge(Self, Int) -> Bool
   charcode_at(Self, Int) -> Int
+  charcodes(Self, start~ : Int = .., end~ : Int = ..) -> Self
   contains(Self, Self) -> Bool
   contains_char(Self, Char) -> Bool
   find(Self, Self) -> Int?
@@ -154,6 +155,7 @@ impl String {
   char_at(String, Int) -> Char
   char_length_eq(String, Int, start_offset~ : Int = .., end_offset~ : Int = ..) -> Bool
   char_length_ge(String, Int, start_offset~ : Int = .., end_offset~ : Int = ..) -> Bool
+  charcodes(String, start~ : Int = .., end~ : Int = ..) -> StringView
   #deprecated
   concat(Array[String], separator~ : String = ..) -> String
   contains(String, StringView) -> Bool

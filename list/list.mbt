@@ -268,11 +268,9 @@ pub fn all[A](self : T[A], f : (A) -> Bool) -> Bool {
 ///|
 /// Test if any element of the list satisfies the predicate.
 pub fn any[A](self : T[A], f : (A) -> Bool) -> Bool {
-  match self {
+  loop self {
     Empty => false
-    More(head, tail~) =>
-      // this is tail recursive
-      f(head) || any(tail, f)
+    More(head, tail~) => if f(head) { true } else { continue tail }
   }
 }
 
@@ -409,9 +407,9 @@ pub fn rev[A](self : T[A]) -> T[A] {
 /// assert_eq!(r, 15)
 /// ```
 pub fn fold[A, B](self : T[A], init~ : B, f : (B, A) -> B) -> B {
-  match self {
-    Empty => init
-    More(head, tail~) => tail.fold(f, init=f(init, head))
+  loop self, init {
+    Empty, acc => acc
+    More(head, tail~), acc => continue tail, f(acc, head)
   }
 }
 
@@ -637,15 +635,21 @@ pub fn is_empty[A](self : T[A]) -> Bool {
 /// assert_eq!(b, @list.from_array([2, 4, 6]))
 /// ```
 pub fn unzip[A, B](self : T[(A, B)]) -> (T[A], T[B]) {
-  let mut xs = Empty
-  let mut ys = Empty
-  // implemented with loop to avoid stack overflow
-  loop self.rev() {
-    Empty => break (xs, ys)
+  match self {
+    Empty => (Empty, Empty)
     More((x, y), tail~) => {
-      xs = More(x, tail=xs)
-      ys = More(y, tail=ys)
-      continue tail
+      let xs = More(x, tail=Empty)
+      let ys = More(y, tail=Empty)
+      loop tail, xs, ys {
+        Empty, _, _ => ()
+        More((x, y), tail~), More(_) as xptr, More(_) as yptr => {
+          xptr.tail = More(x, tail=Empty)
+          yptr.tail = More(y, tail=Empty)
+          continue tail, xptr.tail, yptr.tail
+        }
+        _, _, _ => abort("unreachable")
+      }
+      (xs, ys)
     }
   }
 }
