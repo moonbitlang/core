@@ -27,11 +27,6 @@ fn Tree::is_leaf[A](self : Tree[A]) -> Bool {
 }
 
 ///|
-fn Tree::is_empty[A](self : Tree[A]) -> Bool {
-  self is Empty
-}
-
-///|
 /// Get the rightmost child of a tree node. Abort if
 /// it is not a `Node`.
 fn Tree::right_child[A](self : Tree[A]) -> Tree[A] {
