@@ -14,9 +14,12 @@
 
 ///|
 test "maximum.value" {
-  assert_eq!(@math.maximum(1, 2), 2)
-  assert_eq!(@math.maximum(2, 1), 2)
-  assert_eq!(@math.maximum(2, 2), 2)
+  // assert_eq!(@math.maximum(1, 2), 2)
+  inspect!(1 |> maximum(2), content="2")
+  // assert_eq!(@math.maximum(2, 1), 2)
+  inspect!(2 |> maximum(1), content="2")
+  // assert_eq!(@math.maximum(2, 2), 2)
+  inspect!(2 |> maximum(2), content="2")
 }
 
 ///|

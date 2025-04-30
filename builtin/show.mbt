@@ -218,9 +218,9 @@ fn char_to_string(char : Char) -> String {
 pub impl Show for Char with output(self, logger) {
   fn to_hex_digit(i : Int) -> Char {
     if i < 10 {
-      Char::from_int('0'.to_int() + i)
+      (i + '0').unsafe_to_char()
     } else {
-      Char::from_int('a'.to_int() + (i - 10))
+      (i + 'a' - 10).unsafe_to_char()
     }
   }
 
