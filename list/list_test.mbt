@@ -21,6 +21,11 @@ test "from_array" {
 }
 
 ///|
+test "pipe" {
+  inspect!(1 |> @list.prepend(@list.empty(), _), content="@list.of([1])")
+}
+
+///|
 test "length" {
   let ls = @list.of([1, 2, 3, 4, 5])
   @json.inspect!(ls.length(), content=5)
