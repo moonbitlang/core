@@ -1704,6 +1704,17 @@ pub fn FixedArray::length[T](self : FixedArray[T]) -> Int = "%fixedarray.length"
 ///   ignore(FixedArray::make(-1, 0))
 /// }
 /// ```
+/// 
+/// WARNING: A common pitfall is creating with the same initial value, for example:
+/// ```moonbit
+/// test {
+///   let two_dimension_array = FixedArray::make(10, FixedArray::make(10, 0))
+///   two_dimension_array[0][5] = 10
+///   assert_eq!(two_dimension_array[5][5], 10)
+/// }
+/// ```
+/// This is because all the cells reference to the same object (the FixedArray[Int] in this case). 
+/// One should use makei() instead which creates an object for each index.
 pub fn FixedArray::make[T](len : Int, init : T) -> FixedArray[T] = "%fixedarray.make"
 
 // String primitive ops
