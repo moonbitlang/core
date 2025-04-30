@@ -18,7 +18,17 @@ pub fn sinh(x : Double) -> Double {
 }
 
 ///|
+pub fn sinhf(x : Float) -> Float {
+  x.sinh()
+}
+
+///|
 pub fn cosh(x : Double) -> Double {
+  x.cosh()
+}
+
+///|
+pub fn coshf(x : Float) -> Float {
   x.cosh()
 }
 
@@ -28,7 +38,17 @@ pub fn tanh(x : Double) -> Double {
 }
 
 ///|
+pub fn tanhf(x : Float) -> Float {
+  x.tanh()
+}
+
+///|
 pub fn asinh(x : Double) -> Double {
+  x.asinh()
+}
+
+///|
+pub fn asinhf(x : Float) -> Float {
   x.asinh()
 }
 
@@ -38,6 +58,16 @@ pub fn acosh(x : Double) -> Double {
 }
 
 ///|
+pub fn acoshf(x : Float) -> Float {
+  x.acosh()
+}
+
+///|
 pub fn atanh(x : Double) -> Double {
+  x.atanh()
+}
+
+///|
+pub fn atanhf(x : Float) -> Float {
   x.atanh()
 }
