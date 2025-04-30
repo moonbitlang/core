@@ -25,7 +25,17 @@ pub fn sin(x : Double) -> Double {
 }
 
 ///|
+pub fn sinf(x : Float) -> Float {
+  x.sin()
+}
+
+///|
 pub fn cos(x : Double) -> Double {
+  x.cos()
+}
+
+///|
+pub fn cosf(x : Float) -> Float {
   x.cos()
 }
 
@@ -35,7 +45,17 @@ pub fn tan(x : Double) -> Double {
 }
 
 ///|
+pub fn tanf(x : Float) -> Float {
+  x.tan()
+}
+
+///|
 pub fn atan(x : Double) -> Double {
+  x.atan()
+}
+
+///|
+pub fn atanf(x : Float) -> Float {
   x.atan()
 }
 
@@ -45,11 +65,26 @@ pub fn asin(x : Double) -> Double {
 }
 
 ///|
+pub fn asinf(x : Float) -> Float {
+  x.asin()
+}
+
+///|
 pub fn acos(x : Double) -> Double {
   x.acos()
 }
 
 ///|
+pub fn acosf(x : Float) -> Float {
+  x.acos()
+}
+
+///|
 pub fn atan2(y : Double, x : Double) -> Double {
+  y.atan2(x)
+}
+
+///|
+pub fn atan2f(y : Float, x : Float) -> Float {
   y.atan2(x)
 }

@@ -12,6 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// origin: FreeBSD /usr/src/lib/msun/src/e_expf.c
+// origin: FreeBSD /usr/src/lib/msun/src/s_expm1f.c
+//
+// Conversion to float by Ian Lance Taylor, Cygnus Support, ian@cygnus.com.
+//
+//
+// ====================================================
+// Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
+//
+// Developed at SunPro, a Sun Microsystems, Inc. business.
+// Permission to use, copy, modify, and distribute this
+// software is freely granted, provided that this notice
+// is preserved.
+// ====================================================
+//
+
 ///|
 fn top12(x : Float) -> UInt {
   x.reinterpret_as_int().reinterpret_as_uint() >> 20
@@ -142,7 +158,7 @@ pub fn exp(self : Float) -> Float {
 /// ```moonbit
 /// test "expm1" {
 ///  inspect!((0 : Float).expm1(), content="0")
-///  inspect!((1 : Float).expm1(), content="1.718281865119934")
+///  inspect!((1 : Float).expm1(), content="1.7182817459106445")
 ///  inspect!((-1 : Float).expm1(), content="-0.6321205496788025")
 ///  inspect!(@float.not_a_number.expm1(), content="NaN")
 ///  inspect!(@float.infinity.expm1(), content="Infinity")
@@ -150,5 +166,104 @@ pub fn exp(self : Float) -> Float {
 /// }
 /// ```
 pub fn expm1(self : Float) -> Float {
-  self.to_double().expm1().to_float()
+  let float_ln2_hi : Float = 6.9314575195e-01 // 0x3f317200
+  let float_ln2_lo : Float = 1.4286067653e-06 // 0x35bfbe8e
+  let inv_ln2 : Float = 1.4426950216e+00 // 0x3fb8aa3b
+  let mut x = self
+  let q1 : Float = -3.3333212137e-2 // -0x888868.0p-28
+  let q2 : Float = 1.5807170421e-3 //  0xcf3010.0p-33
+  let mut hx = x.reinterpret_as_uint()
+  let sign = (hx >> 31) != 0
+  hx = hx & 0x7fffffff
+
+  // filter out huge and non-finite argument
+  if hx >= 0x4195b844 {
+    // if |x|>=27*ln2
+    if hx > 0x7f800000 {
+      // NaN
+      return x
+    }
+    if sign {
+      return -1.0
+    }
+    if hx > 0x42b17217 {
+      x *= (0x1.0p127 : Float)
+      return x
+    }
+  }
+  let mut k : Int = 0
+  let mut hi : Float = 0
+  let mut lo : Float = 0
+  let mut c : Float = 0
+  // argument reduction
+  if hx > 0x3eb17218 {
+    // if  |x| > 0.5 ln2
+    if hx < 0x3F851592 {
+      // and |x| < 1.5 ln2
+      if not(sign) {
+        hi = x - float_ln2_hi
+        lo = float_ln2_lo
+        k = 1
+      } else {
+        hi = x + float_ln2_hi
+        lo = -float_ln2_lo
+        k = -1
+      }
+    } else {
+      k = (inv_ln2 * x + (if sign { -0.5 } else { 0.5 })).to_int()
+      let t = k.to_float()
+      hi = x - t * float_ln2_hi // t*ln2_hi is exact here
+      lo = t * float_ln2_lo
+    }
+    x = hi - lo
+    c = hi - x - lo
+  } else if hx < 0x33000000 {
+    // when |x|<2**-25, return x
+    //if hx < 0x00800000 {
+    //    force_eval!(x * x);
+    //}
+    return x
+  } else {
+    k = 0
+  }
+
+  // x is now in primary range
+  let hfx = (0.5 : Float) * x
+  let hxs = x * hfx
+  let r1 = (1.0 : Float) + hxs * (q1 + hxs * q2)
+  let t = (3.0 : Float) - r1 * hfx
+  let mut e = hxs * ((r1 - t) / ((6.0 : Float) - x * t))
+  if k == 0 {
+    // c is 0
+    return x - (x * e - hxs)
+  }
+  e = x * (e - c) - c
+  e -= hxs
+  // exp(x) ~ 2^k (x_reduced - e + 1)
+  if k == -1 {
+    return (0.5 : Float) * (x - e) - 0.5
+  }
+  if k == 1 {
+    if x < -0.25 {
+      return -(2.0 : Float) * (e - (x + 0.5))
+    }
+    return (1.0 : Float) + (2.0 : Float) * (x - e)
+  }
+  let twopk = ((0x7f + k) << 23).reinterpret_as_float() // 2^k
+  if not(k is (0..=56)) {
+    // suffice to return exp(x)-1
+    let mut y = x - e + 1.0
+    if k == 128 {
+      y = y * 2.0 * (0x1.0p127 : Float)
+    } else {
+      y = y * twopk
+    }
+    return y - 1.0
+  }
+  let uf = ((0x7f - k) << 23).reinterpret_as_float() // 2^-k
+  if k < 23 {
+    (x - e + ((1.0 : Float) - uf)) * twopk
+  } else {
+    (x - (e + uf) + 1.0) * twopk
+  }
 }

@@ -22,4 +22,11 @@ test "pow" {
   inspect!((-2.0 : Float).pow(-3.0), content="-0.125")
   inspect!((2.0 : Float).pow(-3.14), content="0.1134398877620697")
   inspect!((-2.0 : Float).pow(-3.14), content="NaN")
+  inspect!(@float.infinity.pow(3.0), content="Infinity")
+  inspect!(@float.infinity.pow(-3.0), content="0")
+  inspect!(@float.infinity.pow(0.0), content="1")
+  inspect!(@float.neg_infinity.pow(3.0), content="-Infinity")
+  inspect!(@float.neg_infinity.pow(-3.0), content="0")
+  inspect!(@float.neg_infinity.pow(0.0), content="1")
+  inspect!(@float.not_a_number.pow(3.0), content="NaN")
 }

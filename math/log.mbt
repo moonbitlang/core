@@ -33,6 +33,19 @@ pub fn ln(input : Double) -> Double {
 }
 
 ///|
+/// Calculates the natural logarithm (base e) of the input.
+///
+/// Parameters:
+///
+/// - `input` : The floating-point number for which to calculate the natural
+///   logarithm.
+///
+/// Returns the natural logarithm of the input.
+pub fn lnf(input : Float) -> Float {
+  input.ln()
+}
+
+///|
 /// Calculates the base-2 logarithm of the input number.
 ///
 /// Parameters:
@@ -84,5 +97,23 @@ pub fn log10(input : Double) -> Double {
 /// * Returns `-Infinity` if `x` is -1.
 /// * Returns `+Infinity` if `x` is `+Infinity`.
 pub fn ln_1p(input : Double) -> Double {
+  input.ln_1p()
+}
+
+///|
+/// Calculates ln(1 + x) accurately even when x is close to zero.
+///
+/// Parameters:
+///
+/// * `input` : The number to which 1 is added before calculating the logarithm.
+///
+/// Returns the natural logarithm of 1 + `input`.
+///
+/// Special Cases:
+///
+/// * Returns `NaN` if `x` is `NaN` or less than -1.
+/// * Returns `-Infinity` if `x` is -1.
+/// * Returns `+Infinity` if `x` is `+Infinity`.
+pub fn ln_1pf(input : Float) -> Float {
   input.ln_1p()
 }

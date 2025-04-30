@@ -12,6 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// origin: FreeBSD /usr/src/lib/msun/src/e_logf.c
+// origin: FreeBSD /usr/src/lib/msun/src/s_log1pf.c
+//
+// Conversion to float by Ian Lance Taylor, Cygnus Support, ian@cygnus.com.
+//
+//
+// ====================================================
+// Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
+//
+// Developed at SunPro, a Sun Microsystems, Inc. business.
+// Permission to use, copy, modify, and distribute this
+// software is freely granted, provided that this notice
+// is preserved.
+// ====================================================
+//
+
 ///|
 let logf_off = 0x3f330000U
 
@@ -135,5 +151,59 @@ pub fn ln(self : Float) -> Float {
 /// }
 /// ```
 pub fn ln_1p(self : Float) -> Float {
-  self.to_double().ln_1p().to_float()
+  let lg1_f : Float = 0.66666662693
+  let lg2_f : Float = 0.40000972152
+  let lg3_f : Float = 0.28498786688
+  let lg4_f : Float = 0.24279078841
+  let float_ln2_hi : Float = 6.9314575195e-01 // 0x3f317200
+  let float_ln2_lo : Float = 1.4286067653e-06 // 0x35bfbe8e
+  let mut ui : UInt = self.reinterpret_as_uint()
+  let mut f : Float = 0
+  let mut c : Float = 0
+  let mut iu : UInt = 0
+  let one : Float = 1.0
+  let mut k = 1
+  if ui < 0x3ed413d0 || (ui >> 31) > 0 {
+    if ui >= 0xbf800000 {
+      if self == -1.0 {
+        return self / 0.0
+      }
+      return (self - self) / 0.0
+    }
+    if (ui << 1) < (0x33800000U << 1) {
+      return self
+    }
+    if ui <= 0xbe95f619 {
+      k = 0
+      c = 0.0
+      f = self
+    }
+  } else if ui >= 0x7f800000 {
+    return self
+  }
+  if k > 0 {
+    ui = (one + self).reinterpret_as_uint()
+    iu = ui
+    iu += 0x3f800000U - 0x3f3504f3U
+    k = (iu >> 23).reinterpret_as_int() - 0x7f
+    if k < 25 {
+      let fui = ui.reinterpret_as_float()
+      c = if k >= 2 { one - (fui - self) } else { self - (fui - 1.0) }
+      c /= ui.reinterpret_as_float()
+    } else {
+      c = 0.0
+    }
+    iu = (iu & 0x007fffff) + 0x3f3504f3
+    ui = iu
+    f = ui.reinterpret_as_float() - 1.0
+  }
+  let s = f / (f + 2.0)
+  let z = s * s
+  let w = z * z
+  let t1 = w * (lg2_f + w * lg4_f)
+  let t2 = z * (lg1_f + w * lg3_f)
+  let r = t2 + t1
+  let hfsq = f * f * 0.5
+  let dk = k.to_float()
+  s * (hfsq + r) + (dk * float_ln2_lo + c) - hfsq + f + dk * float_ln2_hi
 }

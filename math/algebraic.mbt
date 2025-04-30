@@ -66,6 +66,21 @@ pub fn cbrt(x : Double) -> Double {
 }
 
 ///|
+/// Calculates the cube root of a number.
+///
+/// # Examples
+///
+/// ```
+/// assert_eq!(@math.cbrtf(1), 1)
+/// assert_eq!(@math.cbrtf(27), 3)
+/// assert_eq!(@math.cbrtf(125), 5)
+/// assert_eq!(@math.cbrtf(1000), 10)
+/// ```
+pub fn cbrtf(x : Float) -> Float {
+  x.cbrt()
+}
+
+///|
 /// Returns the hypotenuse of a right-angled triangle whose legs are `x` and `y`.
 ///
 /// # Examples
@@ -76,5 +91,19 @@ pub fn cbrt(x : Double) -> Double {
 /// assert_eq!(@math.hypot(8, 15), 17)
 /// ```
 pub fn hypot(x : Double, y : Double) -> Double {
+  x.hypot(y)
+}
+
+///|
+/// Returns the hypotenuse of a right-angled triangle whose legs are `x` and `y`.
+///
+/// # Examples
+///
+/// ```
+/// assert_eq!(@math.hypotf(3, 4), 5)
+/// assert_eq!(@math.hypotf(5, 12), 13)
+/// assert_eq!(@math.hypotf(8, 15), 17)
+/// ```
+pub fn hypotf(x : Float, y : Float) -> Float {
   x.hypot(y)
 }
