@@ -139,6 +139,84 @@ test "symmetric_difference" {
 }
 
 ///|
+test "is_disjoint" {
+  let m1 = @hashset.of(["a", "b", "c"])
+  let m2 = @hashset.of(["b", "c", "d"])
+  assert_eq!(m1.is_disjoint(m2), false)
+  let m1 = @hashset.of(["a", "b", "c"])
+  let m2 = @hashset.of(["e", "f", "g"])
+  assert_eq!(m1.is_disjoint(m2), true)
+}
+
+///|
+test "is_subset" {
+  let m1 = @hashset.of(["a", "b", "c"])
+  let m2 = @hashset.of(["b", "c", "d"])
+  assert_eq!(m1.is_subset(m2), false)
+  let m1 = @hashset.of(["a", "b", "c"])
+  let m2 = @hashset.of(["a", "b", "c", "d"])
+  assert_eq!(m1.is_subset(m2), true)
+}
+
+///|
+test "is_superset" {
+  let m1 = @hashset.of(["a", "b", "c"])
+  let m2 = @hashset.of(["b", "c", "d"])
+  assert_eq!(m1.is_superset(m2), false)
+  let m1 = @hashset.of(["a", "b", "c", "d"])
+  let m2 = @hashset.of(["a", "b", "c"])
+  assert_eq!(m1.is_superset(m2), true)
+}
+
+///|
+test "land" {
+  let m1 = @hashset.of(["a", "b", "c"])
+  let m2 = @hashset.of(["b", "c", "d"])
+  let m = m1 & m2
+  assert_eq!(m.size(), 2)
+  assert_false!(m.contains("a"))
+  assert_true!(m.contains("b"))
+  assert_true!(m.contains("c"))
+  assert_false!(m.contains("d"))
+}
+
+///|
+test "lor" {
+  let m1 = @hashset.of(["a", "b", "c"])
+  let m2 = @hashset.of(["b", "c", "d"])
+  let m = m1 | m2
+  assert_eq!(m.size(), 4)
+  assert_true!(m.contains("a"))
+  assert_true!(m.contains("b"))
+  assert_true!(m.contains("c"))
+  assert_true!(m.contains("d"))
+}
+
+///|
+test "lxor" {
+  let m1 = @hashset.of(["a", "b", "c"])
+  let m2 = @hashset.of(["b", "c", "d"])
+  let m = m1 ^ m2
+  assert_eq!(m.size(), 2)
+  assert_true!(m.contains("a"))
+  assert_false!(m.contains("b"))
+  assert_false!(m.contains("c"))
+  assert_true!(m.contains("d"))
+}
+
+///|
+test "op_sub" {
+  let m1 = @hashset.of(["a", "b", "c"])
+  let m2 = @hashset.of(["b", "c", "d"])
+  let m = m1 - m2
+  assert_eq!(m.size(), 1)
+  assert_true!(m.contains("a"))
+  assert_false!(m.contains("b"))
+  assert_false!(m.contains("c"))
+  assert_false!(m.contains("d"))
+}
+
+///|
 test "iter" {
   let buf = StringBuilder::new(size_hint=20)
   let map = @hashset.of(["a", "b", "c"])

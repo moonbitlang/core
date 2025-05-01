@@ -28,7 +28,13 @@ fn insert[K : Hash + Eq](T[K], K) -> Unit
 
 fn intersection[K : Hash + Eq](T[K], T[K]) -> T[K]
 
+fn is_disjoint[K : Hash + Eq](T[K], T[K]) -> Bool
+
 fn is_empty[K](T[K]) -> Bool
+
+fn is_subset[K : Hash + Eq](T[K], T[K]) -> Bool
+
+fn is_superset[K : Hash + Eq](T[K], T[K]) -> Bool
 
 fn iter[K](T[K]) -> Iter[K]
 
@@ -59,7 +65,10 @@ impl T {
   #deprecated
   insert[K : Hash + Eq](Self[K], K) -> Unit
   intersection[K : Hash + Eq](Self[K], Self[K]) -> Self[K]
+  is_disjoint[K : Hash + Eq](Self[K], Self[K]) -> Bool
   is_empty[K](Self[K]) -> Bool
+  is_subset[K : Hash + Eq](Self[K], Self[K]) -> Bool
+  is_superset[K : Hash + Eq](Self[K], Self[K]) -> Bool
   iter[K](Self[K]) -> Iter[K]
   remove[K : Hash + Eq](Self[K], K) -> Unit
   size[K](Self[K]) -> Int
@@ -67,7 +76,11 @@ impl T {
   to_array[K](Self[K]) -> Array[K]
   union[K : Hash + Eq](Self[K], Self[K]) -> Self[K]
 }
+impl[K : Hash + Eq] BitAnd for T[K]
+impl[K : Hash + Eq] BitOr for T[K]
+impl[K : Hash + Eq] BitXOr for T[K]
 impl[K : Show] Show for T[K]
+impl[K : Hash + Eq] Sub for T[K]
 impl[X : @quickcheck.Arbitrary + Eq + Hash] @quickcheck.Arbitrary for T[X]
 
 // Type aliases

@@ -209,6 +209,57 @@ pub fn symmetric_difference[K : Hash + Eq](self : T[K], other : T[K]) -> T[K] {
 }
 
 ///|
+/// Check if two sets have no common elements.
+pub fn is_disjoint[K : Hash + Eq](self : T[K], other : T[K]) -> Bool {
+  if self.size() <= other.size() {
+    self.iter().all(fn(k) { not(other.contains(k)) })
+  } else {
+    other.iter().all(fn(k) { not(self.contains(k)) })
+  }
+}
+
+///|
+/// Check if the current set is a subset of another set.
+pub fn is_subset[K : Hash + Eq](self : T[K], other : T[K]) -> Bool {
+  if self.size() <= other.size() {
+    self.iter().all(fn(k) { other.contains(k) })
+  } else {
+    false
+  }
+}
+
+///|
+/// Check if the current set is a superset of another set.
+pub fn is_superset[K : Hash + Eq](self : T[K], other : T[K]) -> Bool {
+  other.is_subset(self)
+}
+
+///|
+/// Intersection of two hash sets.
+pub impl[K : Hash + Eq] BitAnd for T[K] with land(self, other) {
+  self.intersection(other)
+}
+
+///|
+/// Union of two hash sets.
+/// @alert unsafe "Panic if the hash set is full."
+pub impl[K : Hash + Eq] BitOr for T[K] with lor(self, other) {
+  self.union(other)
+}
+
+///|
+/// Symmetric difference of two hash sets.
+pub impl[K : Hash + Eq] BitXOr for T[K] with lxor(self, other) {
+  self.symmetric_difference(other)
+}
+
+///|
+/// Difference of two hash sets.
+pub impl[K : Hash + Eq] Sub for T[K] with op_sub(self, other) {
+  self.difference(other)
+}
+
+///|
 pub fn iter[K](self : T[K]) -> Iter[K] {
   Iter::new(fn(yield_) {
     for entry in self.entries {
