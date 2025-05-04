@@ -29,13 +29,7 @@
 ///   inspect!(false.to_int(), content="0")
 /// }
 /// ```
-pub fn to_int(self : Bool) -> Int {
-  if self {
-    1
-  } else {
-    0
-  }
-}
+pub fn to_int(self : Bool) -> Int = "%identity"
 
 ///|
 /// Converts a boolean value to a 64-bit integer. Returns 1 for `true` and 0 for
