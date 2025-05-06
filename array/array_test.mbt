@@ -619,6 +619,74 @@ test "Array::last" {
 }
 
 ///|
+test "zip" {
+  // Test with two non-empty arrays
+  let arr1 = [1, 2, 3]
+  let arr2 = ['a', 'b', 'c']
+  inspect!(arr1.zip(arr2), content="[(1, 'a'), (2, 'b'), (3, 'c')]")
+
+  // Test with arrays of different lengths
+  let arr3 = [1, 2]
+  let arr4 = ["a", "b", "c"]
+  inspect!(
+    arr3.zip(arr4),
+    content=
+      #|[(1, "a"), (2, "b")]
+    ,
+  )
+
+  // Test with an empty array
+  let arr5 : Array[Int] = []
+  let arr6 = ["a", "b", "c"]
+  inspect!(arr5.zip(arr6), content="[]")
+}
+
+///|
+test "zip_with" {
+  // Test with two non-empty arrays and a function
+  let arr1 = [1, 2, 3]
+  let arr2 = [4, 5, 6]
+  let add = fn(a, b) { a + b }
+  inspect!(zip_with(arr1, arr2, add), content="[5, 7, 9]")
+
+  // Test with arrays of different lengths and a function
+  let arr3 = [1, 2]
+  let arr4 = [4, 5, 6]
+  inspect!(zip_with(arr3, arr4, add), content="[5, 7]")
+
+  // Test with an empty array and a function
+  let arr5 : Array[Int] = []
+  let arr6 = [4, 5, 6]
+  inspect!(zip_with(arr5, arr6, add), content="[]")
+}
+
+///|
+test "zip_to_iter2" {
+  // Test with two non-empty arrays
+  let arr1 = [1, 2, 3]
+  let arr2 = ['a', 'b', 'c']
+  inspect!(
+    arr1.zip_to_iter2(arr2).to_array(),
+    content="[(1, 'a'), (2, 'b'), (3, 'c')]",
+  )
+
+  // Test with arrays of different lengths
+  let arr3 = [1, 2]
+  let arr4 = ["a", "b", "c"]
+  inspect!(
+    arr3.zip_to_iter2(arr4).to_array(),
+    content=
+      #|[(1, "a"), (2, "b")]
+    ,
+  )
+
+  // Test with an empty array
+  let arr5 : Array[Int] = []
+  let arr6 = ["a", "b", "c"]
+  inspect!(arr5.zip_to_iter2(arr6), content="[]")
+}
+
+///|
 test "arbitrary" {
   let arr : Array[Array[Int]] = @quickcheck.samples(20)
   inspect!(arr[5:9], content="[[], [], [0], [0, 0]]")
