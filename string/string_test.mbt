@@ -394,7 +394,12 @@ test "split" {
     ,
   )
   inspect!("".split(""), content="[]")
-  inspect!("".split("x"), content="[]")
+  inspect!(
+    "".split("x"),
+    content=
+      #|[""]
+    ,
+  )
   inspect!(
     "你 wow 好 wow 月 wow 兔".split(" wow "),
     content=
@@ -482,7 +487,12 @@ test "split" {
     ,
   )
   inspect!("".split(""), content="[]")
-  inspect!("".split("x"), content="[]")
+  inspect!(
+    "".split("x"),
+    content=
+      #|[""]
+    ,
+  )
   inspect!(
     "你 wow 好 wow 月 wow 兔".split(" wow "),
     content=
@@ -699,4 +709,20 @@ test "offset_of_nth_char property negative" {
     let index = s.offset_of_nth_char(-i).unwrap()
     assert_eq!(s.unsafe_char_at(index), s.rev_iter().nth(i - 1).unwrap())
   }
+}
+
+///|
+test "split and then join should be identity" {
+  let string = ""
+  assert_eq!(string, string.split("").map(View::to_string).join(""))
+  assert_eq!(string, string.split("a").map(View::to_string).join("a"))
+  let string = "a,b,c,"
+  assert_eq!(string, string.split("").map(View::to_string).join(""))
+  assert_eq!(string, string.split(",").map(View::to_string).join(","))
+  let string = "a b c"
+  assert_eq!(string, string.split("").map(View::to_string).join(""))
+  assert_eq!(string, string.split(" ").map(View::to_string).join(" "))
+  let string = "aaaaa"
+  assert_eq!(string, string.split("").map(View::to_string).join(""))
+  assert_eq!(string, string.split("a").map(View::to_string).join("a"))
 }
