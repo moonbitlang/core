@@ -185,6 +185,112 @@ pub fn last[A](self : Array[A]) -> A? {
   }
 }
 
+///| 
+/// Zips two arrays into a single array of tuples.
+///
+/// Parameters:
+///
+/// * `self` : The first array.
+/// * `other` : The second array.
+///
+/// Returns an array of tuples, where each tuple contains corresponding elements
+/// from the two input arrays.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "zip" {
+///   let arr1 = [1, 2, 3]
+///   let arr2 = ['a', 'b', 'c']
+///   inspect!(arr1.zip(arr2), content="[(1, 'a'), (2, 'b'), (3, 'c')]")
+/// }
+/// ```
+pub fn zip[A, B](self : Array[A], other : Array[B]) -> Array[(A, B)] {
+  let length = if self.length() < other.length() {
+    self.length()
+  } else {
+    other.length()
+  }
+  let arr = Array::new(capacity=length)
+  for i = 0; i < length; i = i + 1 {
+    arr.push((self[i], other[i]))
+  } else {
+    return arr
+  }
+}
+
+///| 
+/// Zips two arrays into a single array by applying a function to each pair of elements.
+///
+/// Parameters:
+///
+/// * `l` : The first array.
+/// * `r` : The second array.
+/// * `merge` : A function that takes two arguments, one from each array, and returns a value.
+///
+/// Returns an array containing the results of applying the function to each pair of elements.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "zip_with" {
+///   let arr1 = [1, 2, 3]
+///   let arr2 = [4, 5, 6]
+///   let add = fn(a, b) { a + b }
+///   inspect!(zip_with(arr1, arr2, add), content="[5, 7, 9]")
+/// }
+/// ```
+pub fn zip_with[A, B, C](
+  l : Array[A],
+  r : Array[B],
+  merge : (A, B) -> C
+) -> Array[C] {
+  let length = if l.length() < r.length() { l.length() } else { r.length() }
+  let arr = Array::new(capacity=length)
+  for i = 0; i < length; i = i + 1 {
+    arr.push(merge(l[i], r[i]))
+  } else {
+    return arr
+  }
+}
+
+///| 
+/// Zips two arrays into an iterator that yields corresponding elements.
+///
+/// Parameters:
+///
+/// * `self` : The first array.
+/// * `other` : The second array.
+///
+/// Returns an `Iter2` iterator that produces corresponding elements
+/// from both arrays. The iteration continues until the shorter array is exhausted.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "zip_to_iter2" {
+///   let arr1 = [1, 2, 3]
+///   let arr2 = ['a', 'b', 'c']
+///   inspect!(arr1.zip_to_iter2(arr2).to_array(), content="[(1, 'a'), (2, 'b'), (3, 'c')]")
+/// }
+/// ```
+pub fn zip_to_iter2[A, B](self : Array[A], other : Array[B]) -> Iter2[A, B] {
+  let length = if self.length() < other.length() {
+    self.length()
+  } else {
+    other.length()
+  }
+  Iter2::new(fn(yield_) {
+    for i = 0; i < length; i = i + 1 {
+      if yield_(self[i], other[i]) == IterEnd {
+        break IterEnd
+      }
+    } else {
+      IterContinue
+    }
+  })
+}
+
 ///|
 pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Array[X] with arbitrary(
   size,
