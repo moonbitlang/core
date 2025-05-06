@@ -412,6 +412,7 @@ pub fn Array::append[T](self : Array[T], other : Array[T]) -> Unit {
 ///   inspect!(sum, content="6")
 /// }
 /// ```
+#local(f)
 pub fn Array::each[T](self : Array[T], f : (T) -> Unit) -> Unit {
   for v in self {
     f(v)
@@ -436,6 +437,7 @@ pub fn Array::each[T](self : Array[T], f : (T) -> Unit) -> Unit {
 /// v.rev_each(fn(x) { sum = sum - x })
 /// @json.inspect!(sum, content=-12)
 /// ```
+#local(f)
 pub fn Array::rev_each[T](self : Array[T], f : (T) -> Unit) -> Unit {
   let len = self.length()
   for i in 0..<len {
@@ -453,6 +455,7 @@ pub fn Array::rev_each[T](self : Array[T], f : (T) -> Unit) -> Unit {
 /// v.rev_eachi(fn(i, x) { sum = sum + x + i })
 /// assert_eq!(sum, 15)
 /// ```
+#local(f)
 pub fn Array::rev_eachi[T](self : Array[T], f : (Int, T) -> Unit) -> Unit {
   let len = self.length()
   for i in 0..<len {
@@ -469,6 +472,7 @@ pub fn Array::rev_eachi[T](self : Array[T], f : (Int, T) -> Unit) -> Unit {
 /// let mut sum = 0
 /// v.eachi(fn (i, x) {sum = sum + x + i})
 /// ```
+#local(f)
 pub fn Array::eachi[T](self : Array[T], f : (Int, T) -> Unit) -> Unit {
   for i, v in self {
     f(i, v)
@@ -499,6 +503,7 @@ pub fn Array::clear[T](self : Array[T]) -> Unit {
 /// let v2 = v.map(fn (x) {x + 1})
 /// assert_eq!(v2, [4, 5, 6])
 /// ```
+#local(f)
 pub fn Array::map[T, U](self : Array[T], f : (T) -> U) -> Array[U] {
   let arr = Array::make_uninit(self.length())
   for i, v in self {
@@ -516,6 +521,7 @@ pub fn Array::map[T, U](self : Array[T], f : (T) -> U) -> Array[U] {
 /// v.map_inplace(fn (x) {x + 1})
 /// assert_eq!(v, [4, 5, 6])
 /// ```
+#local(f)
 pub fn Array::map_inplace[T](self : Array[T], f : (T) -> T) -> Unit {
   for i, v in self {
     self[i] = f(v)
@@ -531,6 +537,7 @@ pub fn Array::map_inplace[T](self : Array[T], f : (T) -> T) -> Unit {
 /// let v2 = v.mapi(fn (i, x) {x + i})
 /// assert_eq!(v2, [3, 5, 7])
 /// ```
+#local(f)
 pub fn Array::mapi[T, U](self : Array[T], f : (Int, T) -> U) -> Array[U] {
   if self.length() == 0 {
     return []
@@ -551,6 +558,7 @@ pub fn Array::mapi[T, U](self : Array[T], f : (Int, T) -> U) -> Array[U] {
 /// v.mapi_inplace(fn (i, x) {x + i})
 /// assert_eq!(v, [3, 5, 7])
 /// ```
+#local(f)
 pub fn Array::mapi_inplace[T](self : Array[T], f : (Int, T) -> T) -> Unit {
   for i, v in self {
     self[i] = f(i, v)
@@ -579,6 +587,7 @@ pub fn Array::mapi_inplace[T](self : Array[T], f : (Int, T) -> T) -> Unit {
 ///   inspect!(evens, content="[2, 4]")
 /// }
 /// ```
+#local(f)
 pub fn Array::filter[T](self : Array[T], f : (T) -> Bool) -> Array[T] {
   let arr = []
   for v in self {
@@ -994,6 +1003,7 @@ pub fn Array::find_index[T](self : Array[T], f : (T) -> Bool) -> Int? {
 ///   None => println("Not found")
 /// }
 /// ```
+#local(f)
 pub fn Array::search_by[T](self : Array[T], f : (T) -> Bool) -> Int? {
   for i, v in self {
     if f(v) {
@@ -1106,6 +1116,7 @@ pub fn Array::binary_search[T : Compare](
 /// * For multiple matches, returns the leftmost matching position
 /// * Returns an insertion point that maintains the sort order when no match is
 /// found
+#local(cmp)
 pub fn Array::binary_search_by[T](
   self : Array[T],
   cmp : (T) -> Int
@@ -1201,6 +1212,7 @@ pub fn Array::swap[T](self : Array[T], i : Int, j : Int) -> Unit {
 /// }
 /// ```
 /// TODO: perf could be improved
+#local(f)
 pub fn Array::retain[T](self : Array[T], f : (T) -> Bool) -> Unit {
   for i = 0, j = 0; i < self.length(); {
     if f(self.unsafe_get(i)) {
@@ -1311,6 +1323,7 @@ pub fn Array::repeat[T](self : Array[T], times : Int) -> Array[T] {
 /// let sum = [1, 2, 3, 4, 5].fold(init=0, fn { sum, elem => sum + elem })
 /// assert_eq!(sum, 15)
 /// ```
+#local(f)
 pub fn Array::fold[A, B](self : Array[A], init~ : B, f : (B, A) -> B) -> B {
   for i = 0, acc = init; i < self.length(); {
     continue i + 1, f(acc, self[i])
@@ -1328,6 +1341,7 @@ pub fn Array::fold[A, B](self : Array[A], init~ : B, f : (B, A) -> B) -> B {
 /// let sum = [1, 2, 3, 4, 5].rev_fold(init=0, fn { sum, elem => sum + elem })
 /// assert_eq!(sum, 15)
 /// ```
+#local(f)
 pub fn Array::rev_fold[A, B](self : Array[A], init~ : B, f : (B, A) -> B) -> B {
   for i = self.length() - 1, acc = init; i >= 0; {
     continue i - 1, f(acc, self[i])
@@ -1345,6 +1359,7 @@ pub fn Array::rev_fold[A, B](self : Array[A], init~ : B, f : (B, A) -> B) -> B {
 /// let sum = [1, 2, 3, 4, 5].foldi(init=0, fn { index, sum, _elem => sum + index })
 /// assert_eq!(sum, 10)
 /// ```
+#local(f)
 pub fn Array::foldi[A, B](
   self : Array[A],
   init~ : B,
@@ -1366,6 +1381,7 @@ pub fn Array::foldi[A, B](
 /// let sum = [1, 2, 3, 4, 5].rev_foldi(init=0, fn { index, sum, _elem => sum + index })
 /// assert_eq!(sum, 10)
 /// ```
+#local(f)
 pub fn Array::rev_foldi[A, B](
   self : Array[A],
   init~ : B,
@@ -1524,6 +1540,7 @@ pub fn Array::dedup[T : Eq](self : Array[T]) -> Unit {
 ///   inspect!(arr, content="[1, 3, 5]")
 /// }
 /// ```
+#local(f)
 pub fn Array::extract_if[T](self : Array[T], f : (T) -> Bool) -> Array[T] {
   let v = []
   let indices = []
@@ -1606,6 +1623,7 @@ pub fn Array::chunks[T](self : Array[T], size : Int) -> Array[Array[T]] {
 ///   inspect!(v.chunk_by(fn(x, y) { x <= y }), content="[]")
 /// }
 /// ```
+#local(pred)
 pub fn Array::chunk_by[T](
   self : Array[T],
   pred : (T, T) -> Bool
@@ -1653,6 +1671,7 @@ pub fn Array::chunk_by[T](
 ///   inspect!(arr.split(fn(x) { x == 0 }), content="[[], [1], [], [2]]")
 /// }
 /// ```
+#local(pred)
 pub fn Array::split[T](self : Array[T], pred : (T) -> Bool) -> Array[Array[T]] {
   let chunks = []
   let mut i = 0
