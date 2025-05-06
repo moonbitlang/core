@@ -117,7 +117,8 @@ jobs:
 
       - name: install
         run: |
-          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
+          # use bleeding for passing ci temporarily
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash -s bleeding
           echo "$HOME/.moon/bin" >> $GITHUB_PATH
 
       - name: moon test
