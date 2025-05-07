@@ -1906,6 +1906,18 @@ priv extern type UnsafeMaybeUninit[_]
 pub fn Byte::to_int(self : Byte) -> Int = "%byte_to_int"
 
 ///|
+/// Converts a byte value to a character.
+///
+/// Parameters:
+///
+/// * `byte` : The byte value to be converted.
+///
+/// Returns the character corresponding to the byte value.
+pub fn Byte::to_char(self : Byte) -> Char {
+  self.to_int().unsafe_to_char()
+}
+
+///|
 /// Converts a byte value to a 64-bit signed integer by first converting it to a
 /// 32-bit integer and then extending it to a 64-bit integer.
 ///

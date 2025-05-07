@@ -31,7 +31,7 @@ pub fn decode_utf8(bytes : Bytes) -> String {
   loop bytes[:] {
     // 1-byte sequence (ASCII): 0xxxxxxx
     [0x00..=0x7F as b, .. next] => {
-      buf.write_char(b.to_int().unsafe_to_char())
+      buf.write_char(b.to_char())
       continue next
     }
 
