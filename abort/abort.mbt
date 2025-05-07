@@ -24,12 +24,9 @@
 /// Returns a value of type `T`. However, this function never actually returns a
 /// value as it always causes a panic.
 pub fn abort[T](msg : String) -> T {
-  println_mono(msg)
+  let _ = msg
   panic_impl()
 }
-
-///|
-fn println_mono(s : String) -> Unit = "%println"
 
 ///|
 fn panic_impl[T]() -> T = "%panic"
