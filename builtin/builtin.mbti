@@ -385,6 +385,7 @@ impl Byte {
 }
 
 impl Char {
+  #deprecated
   from_int(Int) -> Char
   to_int(Char) -> Int
   to_uint(Char) -> UInt
