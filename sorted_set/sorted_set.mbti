@@ -40,7 +40,8 @@ fn iter[V](T[V]) -> Iter[V]
 
 fn new[V]() -> T[V]
 
-fn of[V : Compare](Array[V]) -> T[V] //deprecated
+#deprecated
+fn of[V : Compare](Array[V]) -> T[V]
 
 fn range[V : Compare](T[V], V, V) -> Iter[V]
 

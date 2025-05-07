@@ -5,7 +5,8 @@ fn parse[A : FromStr](String) -> A!StrConvError
 
 fn parse_bool(String) -> Bool!StrConvError
 
-fn parse_decimal(String) -> Decimal!StrConvError //deprecated
+#deprecated
+fn parse_decimal(String) -> Decimal!StrConvError
 
 fn parse_double(String) -> Double!StrConvError
 
@@ -20,19 +21,22 @@ fn parse_uint64(String, base~ : Int = ..) -> UInt64!StrConvError
 #deprecated
 fn shift(Decimal, Int) -> Unit
 
-fn to_double(Decimal) -> Double!StrConvError //deprecated
+#deprecated
+fn to_double(Decimal) -> Double!StrConvError
 
 // Types and methods
-type Decimal //deprecated
+type Decimal
 impl Decimal {
   #deprecated
   from_int64(Int64) -> Self
   #deprecated
   new() -> Self
-  parse_decimal(String) -> Self!StrConvError //deprecated
+  #deprecated
+  parse_decimal(String) -> Self!StrConvError
   #deprecated
   shift(Self, Int) -> Unit
-  to_double(Self) -> Double!StrConvError //deprecated
+  #deprecated
+  to_double(Self) -> Double!StrConvError
 }
 impl Show for Decimal
 

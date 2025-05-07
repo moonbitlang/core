@@ -36,7 +36,8 @@ pub fn from_array[V : Compare](array : Array[V]) -> T[V] {
   set
 }
 
-///| @alert deprecated "Use @sorted_set.from_array instead"
+///|
+#deprecated("Use @sorted_set.from_array instead")
 pub fn of[V : Compare](array : Array[V]) -> T[V] {
   let set = new()
   for i in 0..<array.length() {

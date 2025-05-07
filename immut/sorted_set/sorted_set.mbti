@@ -92,7 +92,8 @@ impl T {
   fold[A : Compare, B](Self[A], init~ : B, (B, A) -> B) -> B
   #deprecated
   from_array[A : Compare](Array[A]) -> Self[A]
-  from_iter[A : Compare](Iter[A]) -> Self[A] //deprecated
+  #deprecated
+  from_iter[A : Compare](Iter[A]) -> Self[A]
   #deprecated
   from_json[A : @json.FromJson + Compare](Json) -> Self[A]!@json.JsonDecodeError
   #deprecated

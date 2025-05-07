@@ -29,7 +29,8 @@ fn split(RandomState) -> RandomState
 type RandomState
 impl RandomState {
   clone(Self) -> Self
-  new(seed~ : UInt64 = ..) -> Self //deprecated
+  #deprecated
+  new(seed~ : UInt64 = ..) -> Self
   next(Self) -> Unit
   next_double(Self) -> Double
   next_float(Self) -> Float
