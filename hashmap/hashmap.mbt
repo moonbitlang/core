@@ -119,8 +119,6 @@ pub fn from_array[K : Hash + Eq, V](arr : Array[(K, V)]) -> T[K, V] {
 ///   inspect!(map.get("key"), content="Some(24)")
 /// }
 /// ```
-///
-/// @alert unsafe "Panic if the hash map is full."
 pub fn set[K : Hash + Eq, V](self : T[K, V], key : K, value : V) -> Unit {
   self.set_with_hash(key, value, key.hash())
 }

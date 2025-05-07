@@ -155,7 +155,7 @@ pub fn View::get(self : View, index : Int) -> Byte? {
 /// }
 /// ```
 ///
-/// @alert unsafe "Panic if index is out of bounds"
+#internal(unsafe, "Panic if index is out of bounds")
 pub fn View::unsafe_get(self : View, index : Int) -> Byte {
   self.bytes()[self.start() + index]
 }

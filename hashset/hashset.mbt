@@ -44,7 +44,6 @@ pub fn of[K : Hash + Eq](arr : FixedArray[K]) -> T[K] {
 
 ///|
 /// Insert a key into hash set.
-/// @alert unsafe "Panic if the hash set is full."
 #deprecated("Use `add` instead.")
 #coverage.skip
 pub fn insert[K : Hash + Eq](self : T[K], key : K) -> Unit {
@@ -175,7 +174,6 @@ pub fn clear[K](self : T[K]) -> Unit {
 
 ///|
 /// Union of two hash sets.
-/// @alert unsafe "Panic if the hash set is full."
 pub fn union[K : Hash + Eq](self : T[K], other : T[K]) -> T[K] {
   let m = new()
   self.each(fn(k) { m.add(k) })
@@ -242,7 +240,6 @@ pub impl[K : Hash + Eq] BitAnd for T[K] with land(self, other) {
 
 ///|
 /// Union of two hash sets.
-/// @alert unsafe "Panic if the hash set is full."
 pub impl[K : Hash + Eq] BitOr for T[K] with lor(self, other) {
   self.union(other)
 }

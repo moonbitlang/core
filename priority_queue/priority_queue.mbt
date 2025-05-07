@@ -156,7 +156,7 @@ pub fn length[A](self : T[A]) -> Int {
 /// queue.unsafe_pop()
 /// assert_eq!(queue.length(), 3)
 /// ```
-/// @alert unsafe "Panic if the queue is empty."
+#internal(unsafe, "Panic if the queue is empty.")
 pub fn unsafe_pop[A : Compare](self : T[A]) -> Unit {
   self.top = match self.top {
     Nil => abort("The PriorityQueue is empty!")

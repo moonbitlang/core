@@ -63,6 +63,8 @@ fn code_point_of_surrogate_pair(leading : Int, trailing : Int) -> Char {
 
 ///|
 /// Returns the UTF-16 code unit at the given index.
+/// 
+/// This function will panic if the index is out of bounds.
 ///
 /// # Examples
 ///
@@ -73,9 +75,6 @@ fn code_point_of_surrogate_pair(leading : Int, trailing : Int) -> Char {
 /// inspect!(s.charcode_at(6), content="56611"); // Second surrogate of 🤣
 /// ```
 ///
-/// # Panics
-///
-#internal(unsafe, "Panics if the index is out of bounds.")
 pub fn String::charcode_at(self : String, index : Int) -> Int = "%string_get"
 
 ///|

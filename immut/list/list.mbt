@@ -239,7 +239,7 @@ pub fn tail[A](self : T[A]) -> T[A] {
 
 ///|
 /// Get first element of the list.
-/// @alert unsafe "Panic if the list is empty"
+#internal(unsafe, "Panic if the list is empty")
 pub fn unsafe_head[A](self : T[A]) -> A {
   match self {
     Nil => abort("head of empty list")
@@ -270,7 +270,7 @@ pub fn head[A](self : T[A]) -> A? {
 }
 
 ///|
-/// @alert unsafe "Panic if the list is empty"
+#internal(unsafe, "Panic if the list is empty")
 pub fn unsafe_last[A](self : T[A]) -> A {
   loop self {
     Nil => abort("last of empty list")
@@ -546,7 +546,7 @@ pub fn filter_map[A, B](self : T[A], f : (A) -> B?) -> T[B] {
 }
 
 ///|
-/// @alert unsafe "Panic if the index is out of bounds"
+#internal(unsafe, "Panic if the index is out of bounds")
 pub fn unsafe_nth[A](self : T[A], n : Int) -> A {
   loop self, n {
     Nil, _ => abort("nth: index out of bounds")
@@ -653,7 +653,7 @@ pub fn flatten[A](self : T[T[A]]) -> T[A] {
 }
 
 ///|
-/// @alert unsafe "Panic if the list is empty"
+#internal(unsafe, "Panic if the list is empty")
 pub fn unsafe_maximum[A : Compare](self : T[A]) -> A {
   match self {
     Nil => abort("maximum: empty list")
@@ -685,7 +685,7 @@ pub fn maximum[A : Compare](self : T[A]) -> A? {
 }
 
 ///|
-/// @alert unsafe "Panic if the list is empty"
+#internal(unsafe, "Panic if the list is empty")
 pub fn unsafe_minimum[A : Compare](self : T[A]) -> A {
   match self {
     Nil => abort("minimum: empty list")
