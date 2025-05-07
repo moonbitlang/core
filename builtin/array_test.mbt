@@ -641,3 +641,13 @@ struct MX {
 test {
   @json.inspect!(MX::default(), content={ "mm_num": [] })
 }
+
+///|
+test "array view implicit conversion" {
+  fn f(x : ArrayView[Int]) {
+    x.length()
+  }
+
+  let arr = [1, 2, 3]
+  inspect!(f(arr), content="3")
+}
