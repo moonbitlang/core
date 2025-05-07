@@ -185,3 +185,20 @@ test "arrayview_to_array" {
   let single_view = [1, 2, 3][1:2]
   assert_eq!(single_view.to_array(), [2])
 }
+
+///|
+test "arrayview_arbitrary" {
+  let arr : Array[ArrayView[Int]] = @quickcheck.samples(20)
+  inspect!(arr[5:9], content="[[], [], [0], [0, 0]]")
+  inspect!(
+    arr[10:15],
+    content="[[0, 0, 1, 0, -2], [0, 0, 0, -1, -2], [0, 0, 0, 0, 0, -2, -5, 4, 0, 8], [0, 0, -1, 2], [0, 0]]",
+  )
+}
+
+///|
+test "arrayview_hash" {
+  let arr : Array[ArrayView[Int]] = @quickcheck.samples(20)
+  inspect!(arr[5:9].hash(), content="-966877954")
+  inspect!(arr[10:15].hash(), content="-951019668")
+}

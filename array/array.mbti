@@ -110,7 +110,9 @@ impl ArrayView {
 }
 impl[T : Compare] Compare for ArrayView[T]
 impl[T : Eq] Eq for ArrayView[T]
+impl[A : Hash] Hash for ArrayView[A]
 impl[X : Show] Show for ArrayView[X]
+impl[A : @quickcheck.Arbitrary] @quickcheck.Arbitrary for ArrayView[A]
 
 // Type aliases
 pub typealias View[T] = ArrayView[T]

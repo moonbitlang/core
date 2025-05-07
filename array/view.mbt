@@ -396,3 +396,18 @@ pub impl[T : Compare] Compare for View[T] with compare(self, other) -> Int {
     0
   }
 }
+
+///|
+pub impl[A : Hash] Hash for View[A] with hash_combine(self, hasher) {
+  for e in self {
+    hasher.combine(e)
+  }
+}
+
+///|
+pub impl[A : @quickcheck.Arbitrary] @quickcheck.Arbitrary for View[A] with arbitrary(
+  size,
+  rs
+) {
+  Array::arbitrary(size, rs)[:]
+}
