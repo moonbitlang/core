@@ -1210,7 +1210,7 @@ pub fn Char::to_uint(self : Char) -> UInt {
 }
 
 ///|
-///
+#deprecated("Use `Int::unsafe_to_char` instead, and use `Int::to_char` for safe conversion")
 pub fn Char::from_int(val : Int) -> Char = "%char_from_int"
 
 ///|
