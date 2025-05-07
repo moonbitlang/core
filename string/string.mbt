@@ -163,7 +163,9 @@ pub fn iter(self : String) -> Iter[Char] {
         }
       }
       //TODO: handle garbage input
-      guard yield_(Char::from_int(c1)) is IterContinue else { break IterEnd }
+      guard yield_(Int::unsafe_to_char(c1)) is IterContinue else {
+        break IterEnd
+      }
 
     } else {
       IterContinue
@@ -186,7 +188,9 @@ pub fn iter2(self : String) -> Iter2[Int, Char] {
         }
       }
       //TODO: handle garbage input
-      guard yield_(n, Char::from_int(c1)) is IterContinue else { break IterEnd }
+      guard yield_(n, Int::unsafe_to_char(c1)) is IterContinue else {
+        break IterEnd
+      }
 
     } else {
       IterContinue
@@ -234,7 +238,9 @@ pub fn rev_iter(self : String) -> Iter[Char] {
         }
       }
       // TODO: handle garbage input
-      guard yield_(Char::from_int(c1)) is IterContinue else { break IterEnd }
+      guard yield_(Int::unsafe_to_char(c1)) is IterContinue else {
+        break IterEnd
+      }
 
     } else {
       IterContinue

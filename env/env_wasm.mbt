@@ -37,7 +37,7 @@ fn string_from_extern(e : XExternString) -> String {
     if ch == -1 {
       break
     } else {
-      buf.write_char(Char::from_int(ch))
+      buf.write_char(Int::unsafe_to_char(ch))
     }
   }
   finish_read_string(handle)
