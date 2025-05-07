@@ -2,18 +2,43 @@
 
 The `List` module provides an immutable linked list data structure with a variety of utility functions for functional programming.
 
+## Table of Contents
+
+1. Overview  
+2. Performance  
+3. Usage  
+   - Create  
+   - Basic Operations  
+   - Access Elements  
+   - Iteration  
+   - Advanced Operations  
+   - Conversion  
+   - Equality  
+4. Error Handling Best Practices  
+5. Implementation Notes  
+6. Comparison with Other Collections  
+
+---
+
 ## Overview
 
 `List` is a functional, immutable data structure that supports efficient traversal, transformation, and manipulation. It is particularly useful for recursive algorithms and scenarios where immutability is required.
 
+---
+
 ## Performance
 
-- **prepend**: O(1)
-- **length**: O(n)
-- **map/filter**: O(n)
-- **concatenate**: O(n)
-- **reverse**: O(n)
-- **space complexity**: O(n)
+- **prepend**: O(1)  
+- **length**: O(n)  
+- **map/filter**: O(n)  
+- **concatenate**: O(n)  
+- **reverse**: O(n)  
+- **nth**: O(n)  
+- **sort**: O(n log n)  
+- **flatten**: O(n * m), where `m` is the average inner list length  
+- **space complexity**: O(n)  
+
+---
 
 ## Usage
 
@@ -26,9 +51,11 @@ test {
   let empty_list : @list.T[Int] = @list.new()
   assert_true!(empty_list.is_empty())
   let list = @list.of([1, 2, 3, 4, 5])
-  assert_eq!(list,@list.of([1, 2, 3, 4, 5]))
+  assert_eq!(list, @list.of([1, 2, 3, 4, 5]))
 }
 ```
+
+---
 
 ### Basic Operations
 
@@ -65,6 +92,8 @@ test {
 }
 ```
 
+---
+
 ### Access Elements
 
 #### Head
@@ -99,6 +128,8 @@ test {
   assert_eq!(list.nth(2), Some(3))
 }
 ```
+
+---
 
 ### Iteration
 
@@ -135,6 +166,8 @@ test {
   assert_eq!(list, @list.of([2, 4]))
 }
 ```
+
+---
 
 ### Advanced Operations
 
@@ -182,6 +215,8 @@ test {
 }
 ```
 
+---
+
 ### Conversion
 
 #### To Array
@@ -206,6 +241,8 @@ test {
 }
 ```
 
+---
+
 ### Equality
 
 Lists with the same elements in the same order are considered equal.
@@ -218,7 +255,9 @@ test {
 }
 ```
 
-### Error Handling Best Practices
+---
+
+## Error Handling Best Practices
 
 When accessing elements that might not exist, use pattern matching for safety:
 
@@ -239,6 +278,14 @@ test {
 }
 ```
 
+### Additional Error Cases
+
+- **`nth()` on an empty list or out-of-bounds index**: Returns `None`.  
+- **`tail()` on an empty list**: Returns `Empty`.  
+- **`sort()` with non-comparable elements**: Throws a runtime error.  
+
+---
+
 ## Implementation Notes
 
 The `List` is implemented as a singly linked list. Operations like `prepend` and `head` are O(1), while operations like `length` and `map` are O(n).
@@ -248,13 +295,15 @@ Key properties of the implementation:
 - Recursive-friendly
 - Optimized for functional programming patterns
 
+---
+
 ## Comparison with Other Collections
 
-- **@array.T**: Provides O(1) random access but is mutable; use when random access is required
-- **@vector.T**: Optimized for dynamic resizing; use when frequent resizing is needed
-- **@list.T**: Immutable and optimized for recursive operations; use when immutability and functional patterns are required
+- **@array.T**: Provides O(1) random access but is mutable; use when random access is required.  
+- **@vector.T**: Optimized for dynamic resizing; use when frequent resizing is needed.  
+- **@list.T**: Immutable and optimized for recursive operations; use when immutability and functional patterns are required.  
 
 Choose `List` when you need:
-- Immutable data structures
-- Efficient prepend operations
-- Functional programming patterns
+- Immutable data structures  
+- Efficient prepend operations  
+- Functional programming patterns  
