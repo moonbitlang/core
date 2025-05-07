@@ -131,7 +131,7 @@ test "test form feed" {
 ///|
 test "to_json BigInt" {
   let n = BigInt::from_int(42)
-  inspect!(@builtin.BigInt::to_json(n), content="String(\"42\")")
+  inspect!(BigInt::to_json(n), content="String(\"42\")")
 }
 
 ///|

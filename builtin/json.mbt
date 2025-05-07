@@ -216,11 +216,6 @@ pub impl ToJson for Char with to_json(self : Char) -> Json {
 }
 
 ///|
-pub impl ToJson for BigInt with to_json(self : BigInt) -> Json {
-  String(self.to_string())
-}
-
-///|
 pub impl[X : ToJson] ToJson for Array[X] with to_json(self) {
   Array(self.map(ToJson::to_json))
 }

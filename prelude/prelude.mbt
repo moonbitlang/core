@@ -21,7 +21,6 @@ pub typealias @builtin.(
   ArgsLoc,
   Array,
   UninitializedArray,
-  BigInt,
   Failure,
   Hasher,
   Iter,
@@ -37,6 +36,9 @@ pub typealias @builtin.(
 
 ///|
 pub typealias @set.Set
+
+///|
+pub typealias @bigint.BigInt
 
 ///|
 pub traitalias @builtin.(

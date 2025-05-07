@@ -941,10 +941,12 @@ pub fn BigInt::to_string(self : BigInt) -> String {
   let decimal_mask = 10_000_000L // 10^(decimal_radix_bit_len). TODO: compute it when we have power function.
   // The following value should fit well into an Int without precision loss.
   // This is an approximation of the number of slots needed to represent the decimal value.
-  let decimal_len = ((self.len * radix_bit_len).to_double() *
+  let decimal_len = unchecked_double_to_int(
+    (self.len * radix_bit_len).to_double() *
     decimal_ratio /
-    decimal_radix_bit_len.to_double()).to_unchecked_int() +
-    1
+    decimal_radix_bit_len.to_double() +
+    1,
+  )
   let s = if self.sign == Negative { "-" } else { "" }
   let v = Array::make(decimal_len, 0L)
   let mut v_idx = 0
@@ -1048,7 +1050,9 @@ pub fn BigInt::from_string(input : String) -> BigInt {
     Positive
   }
   let mut b_len = (
-      (len.to_double() / decimal_ratio).to_unchecked_int() + 1 + radix_bit_len
+      unchecked_double_to_int(len.to_double() / decimal_ratio) +
+      1 +
+      radix_bit_len
     ) /
     radix_bit_len +
     1
@@ -1434,7 +1438,7 @@ pub fn BigInt::to_octets(self : BigInt, length? : Int) -> Bytes {
       .reinterpret_as_int()
       .to_byte()
   }
-  result.unsafe_to_bytes()
+  unsafe_fixedarray_to_bytes(result)
 }
 
 ///|
@@ -1875,3 +1879,9 @@ pub fn BigInt::to_uint64(self : BigInt) -> UInt64 {
   }
   result
 }
+
+///|
+fn unchecked_double_to_int(d : Double) -> Int = "%f64_to_i32"
+
+///|
+fn unsafe_fixedarray_to_bytes(arr : FixedArray[Byte]) -> Bytes = "%identity"

@@ -13,20 +13,23 @@
 // limitations under the License.
 
 ///|
-fn check_invariant(_a : BigInt) -> Unit! {
-  assert_true!(true)
+pub impl ToJson for BigInt with to_json(self : BigInt) -> Json {
+  Json::string(self.to_string())
 }
 
 ///|
-let zero = 0N
-
-///|
-test "BigInt::to_uint" {
-  assert_eq!(BigInt::from_int64(-1L).to_uint(), (-1).to_uint())
+pub impl @json.FromJson for BigInt with from_json(json, path) {
+  guard json is String(s) else {
+    raise @json.JsonDecodeError((path, "BigInt::from_json: expected number"))
+  }
+  BigInt::from_string(s)
 }
 
 ///|
-test "BigInt::to_int64" {
-  assert_eq!(BigInt::from_int64(-1).to_int64(), -1L)
-  assert_eq!(-1L, MyInt64::{ hi: -1, lo: -1 }.to_int64())
+pub impl @quickcheck.Arbitrary for BigInt with arbitrary(size, rs) {
+  if size == 0 {
+    0
+  } else {
+    rs.next_int64() |> BigInt::from_int64
+  }
 }

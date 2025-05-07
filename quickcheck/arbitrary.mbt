@@ -109,15 +109,6 @@ pub impl Arbitrary for String with arbitrary(size, rs) {
 }
 
 ///|
-pub impl Arbitrary for BigInt with arbitrary(size, rs) {
-  if size == 0 {
-    0
-  } else {
-    rs.next_int64() |> BigInt::from_int64
-  }
-}
-
-///|
 pub impl[X : Arbitrary] Arbitrary for Iter[X] with arbitrary(size, rs) {
   let len = if size == 0 { 0 } else { rs.next_positive_int() % size }
   Iter::new(fn(yield_) {

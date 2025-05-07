@@ -146,49 +146,6 @@ impl[X : ToJson] ToJson for ArrayView[X]
 
 pub(all) type! BenchError String
 
-type BigInt
-impl BigInt {
-  #deprecated
-  asr(Self, Int) -> Self
-  from_hex(String) -> Self
-  from_int(Int) -> Self
-  from_int64(Int64) -> Self
-  from_octets(Bytes, signum~ : Int = ..) -> Self
-  from_string(String) -> Self
-  from_uint(UInt) -> Self
-  from_uint64(UInt64) -> Self
-  is_zero(Self) -> Bool
-  #deprecated
-  lsl(Self, Int) -> Self
-  pow(Self, Self, modulus? : Self) -> Self
-  #deprecated
-  shl(Self, Int) -> Self
-  #deprecated
-  shr(Self, Int) -> Self
-  to_hex(Self, uppercase~ : Bool = ..) -> String
-  to_int(Self) -> Int
-  to_int64(Self) -> Int64
-  to_octets(Self, length? : Int) -> Bytes
-  to_string(Self) -> String
-  to_uint(Self) -> UInt
-  to_uint64(Self) -> UInt64
-}
-impl Add for BigInt
-impl BitAnd for BigInt
-impl BitOr for BigInt
-impl BitXOr for BigInt
-impl Compare for BigInt
-impl Div for BigInt
-impl Eq for BigInt
-impl Mod for BigInt
-impl Mul for BigInt
-impl Neg for BigInt
-impl Shl for BigInt
-impl Show for BigInt
-impl Shr for BigInt
-impl Sub for BigInt
-impl ToJson for BigInt
-
 pub(all) type! Failure String
 impl Show for Failure
 
