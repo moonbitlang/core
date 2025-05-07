@@ -687,6 +687,19 @@ test "zip_to_iter2" {
 }
 
 ///|
+test "zip_to_iter2 current behavior" {
+  // Only for recording what can be done, but not what should be done
+  let arr = [1, 2, 3]
+  let arr2 = ['a', 'b', 'c']
+  let iter = arr.zip_to_iter2(arr2)
+  arr.push(4)
+  arr2.push('d')
+  inspect!(iter.to_array(), content="[(1, 'a'), (2, 'b'), (3, 'c'), (4, 'd')]")
+  arr.clear()
+  inspect!(iter.to_array(), content="[]")
+}
+
+///|
 test "arbitrary" {
   let arr : Array[Array[Int]] = @quickcheck.samples(20)
   inspect!(arr[5:9], content="[[], [], [0], [0, 0]]")

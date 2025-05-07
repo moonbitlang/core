@@ -275,12 +275,12 @@ pub fn zip_with[A, B, C](
 /// }
 /// ```
 pub fn zip_to_iter2[A, B](self : Array[A], other : Array[B]) -> Iter2[A, B] {
-  let length = if self.length() < other.length() {
-    self.length()
-  } else {
-    other.length()
-  }
   Iter2::new(fn(yield_) {
+    let length = if self.length() < other.length() {
+      self.length()
+    } else {
+      other.length()
+    }
     for i = 0; i < length; i = i + 1 {
       if yield_(self[i], other[i]) == IterEnd {
         break IterEnd
