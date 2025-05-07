@@ -19,7 +19,7 @@
 /// reference:
 /// - <https://nigeltao.github.io/blog/2020/parse-number-f64-simple.html>
 /// - <https://nigeltao.github.io/blog/2020/eisel-lemire.html>
-/// @alert deprecated "Decimal will be changed to private. Use `@strconv.parse_double` instead"
+#deprecated("Decimal will be changed to private. Use `@strconv.parse_double` instead")
 struct Decimal {
   digits : FixedArray[Byte]
   mut digits_num : Int
@@ -70,7 +70,8 @@ fn Decimal::from_int64_priv(v : Int64) -> Decimal {
   Decimal::new_priv()..assign(v)
 }
 
-///| @alert deprecated "use `@strconv.parse_double` instead"
+///|
+#deprecated("use `@strconv.parse_double` instead")
 pub fn parse_decimal(str : String) -> Decimal!StrConvError {
   parse_decimal_from_view!(str.view())
 }
@@ -156,14 +157,15 @@ fn parse_decimal_from_view(str : @string.View) -> Decimal!StrConvError {
   d..trim()
 }
 
-///| @alert deprecated "use `@strconv.parse_double` instead"
+///|
+#deprecated("use `@strconv.parse_double` instead")
 pub fn Decimal::parse_decimal(str : String) -> Decimal!StrConvError {
   parse_decimal_from_view!(str.view())
 }
 
 ///|
 /// Convert the decimal to Double.
-///| @alert deprecated "use `@strconv.parse_double` instead to avoid using this method."
+#deprecated("use `@strconv.parse_double` instead to avoid using this method.")
 pub fn to_double(self : Decimal) -> Double!StrConvError {
   self.to_double_priv!()
 }

@@ -20,7 +20,7 @@ struct Rand {
 
 ///|
 /// Create a new random number generator with [seed].
-/// @alert unsafe "Panic if seed is not 32 bytes long"
+#internal(unsafe, "Panic if seed is not 32 bytes long")
 pub fn new(seed~ : Bytes = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456") -> Rand {
   if seed.length() != 32 {
     abort("seed must be 32 bytes long")
@@ -29,7 +29,8 @@ pub fn new(seed~ : Bytes = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456") -> Rand {
   { src, }
 }
 
-///| @alert deprecated "use `@random.new` instead"
+///|
+#deprecated("use `@random.new` instead")
 pub fn Rand::new(seed~ : Bytes = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456") -> Rand {
   new(seed~)
 }

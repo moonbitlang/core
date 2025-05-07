@@ -33,7 +33,8 @@ pub fn new(seed~ : UInt64 = 37) -> RandomState {
   { seed: mix64(seed), gamma: mix_gamma(seed + golden_gamma) }
 }
 
-///| @alert deprecated "use `@splitmix.new` instead"
+///|
+#deprecated("use `@splitmix.new` instead")
 pub fn RandomState::new(seed~ : UInt64 = 37) -> RandomState {
   new(seed~)
 }

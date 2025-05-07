@@ -16,7 +16,7 @@
 pub const PI = 0x3.243F6A8885A308CA8A54
 
 ///|
-///@alert deprecated "Use `PI` instead"
+#deprecated("Use `PI` instead")
 pub let pi = 0x3.243F6A8885A308CA8A54
 
 ///|

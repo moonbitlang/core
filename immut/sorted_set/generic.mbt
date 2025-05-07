@@ -40,7 +40,8 @@ pub fn from_iter[A : Compare](iter : Iter[A]) -> T[A] {
   iter.fold(init=new(), fn(s, e) { s.add(e) })
 }
 
-///| @alert deprecated "use `@immut/sorted_set.from_iter` instead"
+///|
+#deprecated("use `@immut/sorted_set.from_iter` instead")
 pub fn T::from_iter[A : Compare](iter : Iter[A]) -> T[A] {
   from_iter(iter)
 }

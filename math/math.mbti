@@ -45,7 +45,7 @@ fn maximum[T : Compare](T, T) -> T
 
 fn minimum[T : Compare](T, T) -> T
 
-let pi : Double //deprecated
+let pi : Double
 
 fn round(Double) -> Double
 
