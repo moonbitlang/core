@@ -64,14 +64,14 @@ pub fn to_array[A : Compare](self : T[A]) -> Array[A] {
 }
 
 ///|
-/// Remove the smallest value,
+/// Remove the smallest value.
+/// This function will panic if the set is empty.
 ///
 /// # Example
 ///
 /// ```
 /// assert_eq!(@sorted_set.of([3, 4, 5]).remove_min(), @sorted_set.of([4, 5]))
 /// ```
-/// @alert unsafe "Panic if the ImmutableSet is empty."
 pub fn remove_min[A : Compare](self : T[A]) -> T[A] {
   match self {
     Empty => abort("remove_min: empty ImmutableSet")
@@ -154,13 +154,13 @@ pub fn remove[A : Compare](self : T[A], value : A) -> T[A] {
 
 ///|
 /// Returns the smallest value in the sorted_set.
+/// This function will panic if the set is empty.
 ///
 /// # Example
 ///
 /// ```
 /// assert_eq!(@sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).min(), 1)
 /// ```
-/// @alert unsafe "Panic if the sorted_set is empty."
 pub fn min[A : Compare](self : T[A]) -> A {
   match self {
     Empty => abort("min: there are no values in sorted_set.")
@@ -185,13 +185,13 @@ pub fn min_option[A : Compare](self : T[A]) -> A? {
 
 ///|
 /// Returns the largest value in the sorted_set.
+/// This function will panic if the set is empty.
 ///
 /// # Example
 ///
 /// ```
 /// assert_eq!(@sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).max(), 9)
 /// ```
-/// @alert unsafe "Panic if the sorted_set is empty."
 pub fn max[A : Compare](self : T[A]) -> A {
   match self {
     Empty => abort("max: there are no values in ImmutableSet.")

@@ -13,10 +13,13 @@
 // limitations under the License.
 
 ///|
+#deprecated("Use `@array.View` instead")
+pub typealias ArrayView[A] = @array.View[A]
+
+///|
 pub typealias @builtin.(
   ArgsLoc,
   Array,
-  ArrayView,
   UninitializedArray,
   BigInt,
   Failure,

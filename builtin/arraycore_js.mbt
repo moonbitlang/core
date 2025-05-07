@@ -222,6 +222,8 @@ pub fn Array::unsafe_pop[T](self : Array[T]) -> T {
 /// Remove an element from the array at a given index.
 ///
 /// Removes and returns the element at position index within the array, shifting all elements after it to the left.
+/// 
+/// This function will panic if the index is out of bounds.
 ///
 /// # Example
 /// ```
@@ -230,7 +232,6 @@ pub fn Array::unsafe_pop[T](self : Array[T]) -> T {
 /// assert_eq!(vv, 4)
 /// assert_eq!(v, [3, 5])
 /// ```
-#internal(unsafe, "Panic if index is out of bounds.")
 pub fn Array::remove[T](self : Array[T], index : Int) -> T {
   guard index >= 0 && index < self.length() else {
     abort(
@@ -246,13 +247,14 @@ pub fn Array::remove[T](self : Array[T], index : Int) -> T {
 /// Removes the specified range from the array and returns it.
 ///
 /// This functions returns a array range from `begin` to `end` `[begin, end)`
+/// 
+/// This function will panic if the index is out of bounds.
 ///
 /// # Example
 /// ```
 /// let v = [3, 4, 5]
 /// let vv = v.drain(1, 2) // vv = [4], v = [3, 5]
 /// ```
-#internal(unsafe, "Panic if index is out of bounds.")
 pub fn Array::drain[T](self : Array[T], begin : Int, end : Int) -> Array[T] {
   guard begin >= 0 && end <= self.length() && begin <= end else {
     abort(
@@ -264,12 +266,13 @@ pub fn Array::drain[T](self : Array[T], begin : Int, end : Int) -> Array[T] {
 
 ///|
 /// Inserts an element at a given index within the array.
+/// 
+/// This function will panic if the index is out of bounds.
 ///
 /// # Example
 /// ```
 /// [3, 4, 5].insert(1, 6)
 /// ```
-#internal(unsafe, "Panic if index is out of bounds.")
 pub fn Array::insert[T](self : Array[T], index : Int, value : T) -> Unit {
   guard index >= 0 && index <= self.length() else {
     abort(
@@ -287,7 +290,6 @@ pub fn Array::insert[T](self : Array[T], index : Int, value : T) -> Unit {
 /// difference, and the values in the new slots are left uninitilized.
 ///  If `new_len` is less than `len`, it will panic
 ///
-#internal(unsafe, "Panic if new length is negative.")
 fn Array::unsafe_grow_to_length[T](self : Array[T], new_len : Int) -> Unit {
   guard new_len >= self.length()
   JSArray::ofAnyArray(self).set_length(new_len)

@@ -126,7 +126,7 @@ pub fn push[A](self : T[A], x : A) -> Unit {
 /// let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
 /// assert_eq!(queue.unsafe_peek(), 1)
 /// ```
-/// @alert unsafe "Panics if the queue is empty."
+#internal(unsafe, "Panics if the queue is empty.")
 pub fn unsafe_peek[A](self : T[A]) -> A {
   match self.first {
     None => abort("Queue is empty")
@@ -164,7 +164,7 @@ pub fn peek[A](self : T[A]) -> A? {
 /// let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
 /// assert_eq!(queue.unsafe_pop(), 1)
 /// ```
-/// @alert unsafe "Panics if the queue is empty."
+#internal(unsafe, "Panics if the queue is empty.")
 pub fn unsafe_pop[A](self : T[A]) -> A {
   match self.first {
     None => abort("Queue is empty")

@@ -274,7 +274,8 @@ pub fn FixedArray::set_utf8_char(
 ///|
 /// Fill UTF16LE encoded char `value` into byte sequence `self`, starting at `offset`.
 /// It return the length of bytes has been written.
-#internal(unsafe, "Panic if the [value] is out of range")
+/// 
+/// This function will panic if the `value` is out of range.
 pub fn FixedArray::set_utf16le_char(
   self : FixedArray[Byte],
   offset : Int,
@@ -302,7 +303,8 @@ pub fn FixedArray::set_utf16le_char(
 ///|
 /// Fill UTF16BE encoded char `value` into byte sequence `self`, starting at `offset`.
 /// It return the length of bytes has been written.
-#internal(unsafe, "Panic if the [value] is out of range")
+/// 
+/// This function will panic if the `value` is out of range.
 pub fn FixedArray::set_utf16be_char(
   self : FixedArray[Byte],
   offset : Int,

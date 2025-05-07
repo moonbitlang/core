@@ -167,13 +167,13 @@ fn change_and_down[A : Compare](self : Node[A], value : A) -> Node[A] {
 ///|
 /// Pops the first value from the immutable priority queue.
 ///
-/// @alert unsafe "Panics if the queue is empty."
 /// # Example
 /// ```
 /// let queue = @priority_queue.of([1, 2, 3, 4])
 /// let first = queue.unsafe_pop()
 /// assert_eq!(first, @priority_queue.of([1, 2, 3]))
 /// ```
+#internal(unsafe, "Panics if the queue is empty.")
 pub fn unsafe_pop[A : Compare](self : T[A]) -> T[A] {
   match self.node {
     Empty => abort("Priority queue is empty!")

@@ -1603,7 +1603,6 @@ pub fn FixedArray::get[T](self : FixedArray[T], idx : Int) -> T = "%fixedarray.g
 /// }
 /// ```
 ///
-#internal(unsafe, "Panic if index is out of bounds.")
 #intrinsic("%fixedarray.set")
 pub fn FixedArray::op_set[T](self : FixedArray[T], idx : Int, val : T) -> Unit = "%fixedarray.set"
 
@@ -1752,7 +1751,6 @@ pub fn String::charcode_length(self : String) -> Int = "%string_length"
 /// }
 /// ```
 ///
-#internal(unsafe, "Panic if index is out of bounds")
 pub fn String::op_get(self : String, idx : Int) -> Char = "%string_get"
 
 ///|

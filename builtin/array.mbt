@@ -153,7 +153,6 @@ pub fn Array::unsafe_get[T](self : Array[T], idx : Int) -> T {
 /// }
 /// ```
 ///
-#internal(unsafe, "Panic if index is out of bounds")
 #intrinsic("%array.get")
 pub fn Array::op_get[T](self : Array[T], index : Int) -> T {
   let len = self.length()
@@ -222,7 +221,6 @@ fn Array::unsafe_set[T](self : Array[T], idx : Int, val : T) -> Unit {
 /// }
 /// ```
 ///
-#internal(unsafe, "Panic if index is out of bounds.")
 #intrinsic("%array.set")
 pub fn Array::op_set[T](self : Array[T], index : Int, value : T) -> Unit {
   let len = self.length()
@@ -721,6 +719,7 @@ pub fn Array::rev[T](self : Array[T]) -> Array[T] {
 
 ///|
 /// Split the array into two at the given index.
+/// This function will panic if the index is out of bounds.
 ///
 /// # Example
 /// ```
@@ -730,7 +729,6 @@ pub fn Array::rev[T](self : Array[T]) -> Array[T] {
 /// assert_eq!(v2, [4, 5])
 /// ```
 /// TODO: perf could be optimized
-#internal(unsafe, "Panic if index is out of bounds.")
 pub fn Array::split_at[T](self : Array[T], index : Int) -> (Array[T], Array[T]) {
   if index < 0 || index > self.length() {
     let len = self.length()
@@ -1149,8 +1147,8 @@ pub fn Array::binary_search_by[T](
 /// * `index1` : The index of the first element to be swapped.
 /// * `index2` : The index of the second element to be swapped.
 ///
-/// Throws an error if either index is negative or greater than or equal to the
-/// length of the array.
+/// This function will panic if either index is negative or greater than or equal to
+/// the length of the array.
 ///
 /// Example:
 ///
@@ -1166,7 +1164,6 @@ pub fn Array::binary_search_by[T](
 ///   ignore(arr.swap(0, 3)) // Index out of bounds
 /// }
 /// ```
-#internal(unsafe, "Panic if index is out of bounds.")
 pub fn Array::swap[T](self : Array[T], i : Int, j : Int) -> Unit {
   if i >= self.length() || j >= self.length() || i < 0 || j < 0 {
     let len = self.length()
@@ -1260,7 +1257,6 @@ pub fn Array::retain[T](self : Array[T], f : (T) -> Bool) -> Unit {
 /// }
 /// ```
 ///
-#internal(unsafe, "Panic if new length is negative.")
 pub fn Array::resize[T](self : Array[T], new_len : Int, f : T) -> Unit {
   if new_len < 0 {
     abort("negative new length")

@@ -51,14 +51,6 @@ test "to_json on empty fixed array" {
 }
 
 ///|
-test "test empty array view to json" {
-  let arr : Array[Int] = []
-  let view : ArrayView[Int] = arr[:]
-  let json = @builtin.ArrayView::to_json(view)
-  inspect!(json, content="Array([])")
-}
-
-///|
 test "test map with string values" {
   let m : Map[String, Int] = {}
   inspect!(m.to_json(), content="Object({})")

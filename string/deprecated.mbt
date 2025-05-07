@@ -148,6 +148,7 @@ pub fn length_ge(self : View, len : Int) -> Bool {
 
 ///|
 /// Returns the character at the given index from the end of the string.
+/// This function will panic if the index is out of bounds.
 ///
 /// # Examples
 ///
@@ -156,10 +157,6 @@ pub fn length_ge(self : View, len : Int) -> Bool {
 /// inspect!(s.rev_get(0), content="🤣")
 /// inspect!(s.rev_get(4), content="l")
 /// ```
-///
-/// # Panics
-///
-/// @alert unsafe "Panics if the index is out of bounds."
 #deprecated("use String::rev_iter().nth(index).unwrap() instead")
 pub fn String::rev_get(self : String, index : Int) -> Char {
   guard index >= 0
