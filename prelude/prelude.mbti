@@ -47,7 +47,7 @@ pub typealias Array[T] = @builtin.Array[T]
 
 pub typealias ArrayView[A] = @builtin.ArrayView[A]
 
-pub typealias BigInt = @builtin.BigInt
+pub typealias BigInt = @moonbitlang/core/bigint.BigInt
 
 pub typealias Failure = @builtin.Failure
 

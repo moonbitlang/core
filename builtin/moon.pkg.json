@@ -12,15 +12,12 @@
     "moonbitlang/core/array",
     "moonbitlang/core/int64",
     "moonbitlang/core/uint",
-    "moonbitlang/core/json"
+    "moonbitlang/core/json",
+    "moonbitlang/core/bigint"
   ],
   "targets": {
     "int64_js.mbt": ["js"],
     "int64_nonjs.mbt": ["not", "js"],
-    "bigint_js.mbt": ["js"],
-    "bigint_nonjs.mbt": ["not", "js"],
-    "bigint_js_wbtest.mbt": ["js"],
-    "bigint_nonjs_wbtest.mbt": ["not", "js"],
     "arraycore_js.mbt": ["js"],
     "arraycore_nonjs.mbt": ["not", "js"],
     "panic_test.mbt": ["not", "native", "llvm"],

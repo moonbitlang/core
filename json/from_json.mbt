@@ -134,14 +134,6 @@ pub impl FromJson for Char with from_json(json, path) {
 }
 
 ///|
-pub impl FromJson for BigInt with from_json(json, path) {
-  guard json is String(s) else {
-    decode_error!(path, "BigInt::from_json: expected number")
-  }
-  BigInt::from_string(s)
-}
-
-///|
 pub impl[X : FromJson] FromJson for Array[X] with from_json(json, path) {
   guard json is Array(a) else {
     decode_error!(path, "Array::from_json: expected array")
