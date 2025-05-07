@@ -95,7 +95,7 @@ pub impl Arbitrary for Double with arbitrary(_, rs) {
 ///|
 pub impl Arbitrary for Char with arbitrary(_, rs) {
   // Choose only ASCII characters
-  rs.next_uint() % 128 |> UInt::reinterpret_as_int |> Int::unsafe_to_char
+  (rs.next_uint() % 128 |> UInt::reinterpret_as_int).unsafe_to_char()
 }
 
 ///|
