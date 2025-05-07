@@ -122,6 +122,7 @@ fn[A] Array::unsafe_blit_fixed(Self[A], Int, FixedArray[A], Int, Int) -> Unit
 fn[T] Array::unsafe_get(Self[T], Int) -> T
 fn[T] Array::unsafe_pop(Self[T]) -> T
 fn[A] Array::unsafe_pop_back(Self[A]) -> Unit
+fn[T] Array::windows(Self[T], Int) -> Self[ArrayView[T]]
 impl[T] Add for Array[T]
 impl[T : Compare] Compare for Array[T]
 impl[T] Default for Array[T]
