@@ -257,7 +257,7 @@ test "contains_char" {
   inspect!("hello world".contains_char('w'), content="true")
   inspect!("😀😀".contains_char('😀'), content="true")
   inspect!("😀😀".contains_char('😃'), content="false")
-  inspect!("hello".contains_char(Int::unsafe_to_char(104)), content="true") // 'h' is 104 in ASCII
+  inspect!("hello".contains_char((104).unsafe_to_char()), content="true") // 'h' is 104 in ASCII
 }
 
 ///|
@@ -912,7 +912,7 @@ pub fn View::to_lower(self : View) -> View {
   for c in self.view(start_offset=idx) {
     if c.is_ascii_uppercase() {
       // 'A' is 65 in ASCII, 'a' is 97, the difference is 32
-      buf.write_char(Int::unsafe_to_char(c.to_int() + 32))
+      buf.write_char((c.to_int() + 32).unsafe_to_char())
     } else {
       buf.write_char(c)
     }
@@ -930,7 +930,7 @@ pub fn to_lower(self : String) -> String {
   for c in self.view(start_offset=idx) {
     if c.is_ascii_uppercase() {
       // 'A' is 65 in ASCII, 'a' is 97, the difference is 32
-      buf.write_char(Int::unsafe_to_char(c.to_int() + 32))
+      buf.write_char((c.to_int() + 32).unsafe_to_char())
     } else {
       buf.write_char(c)
     }
@@ -961,7 +961,7 @@ pub fn View::to_upper(self : View) -> View {
   buf.write_string(self.view(end_offset=idx).to_string())
   for c in self.view(start_offset=idx) {
     if c.is_ascii_lowercase() {
-      buf.write_char(Int::unsafe_to_char(c.to_int() - 32))
+      buf.write_char((c.to_int() - 32).unsafe_to_char())
     } else {
       buf.write_char(c)
     }
@@ -978,7 +978,7 @@ pub fn to_upper(self : String) -> String {
   buf.write_string(self.view(end_offset=idx).to_string())
   for c in self.view(start_offset=idx) {
     if c.is_ascii_lowercase() {
-      buf.write_char(Int::unsafe_to_char(c.to_int() - 32))
+      buf.write_char((c.to_int() - 32).unsafe_to_char())
     } else {
       buf.write_char(c)
     }

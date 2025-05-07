@@ -1190,11 +1190,11 @@ pub fn BigInt::to_hex(self : BigInt, uppercase~ : Bool = true) -> String {
       let y = x % 16
       x /= 16
       tmp = (if y < 10 {
-          Int::unsafe_to_char(y.reinterpret_as_int() + 48).to_string()
+          (y.reinterpret_as_int() + 48).unsafe_to_char().to_string()
         } else if uppercase {
-          Int::unsafe_to_char(y.reinterpret_as_int() + 55).to_string()
+          (y.reinterpret_as_int() + 55).unsafe_to_char().to_string()
         } else {
-          Int::unsafe_to_char(y.reinterpret_as_int() + 87).to_string()
+          (y.reinterpret_as_int() + 87).unsafe_to_char().to_string()
         }) +
         tmp
     }

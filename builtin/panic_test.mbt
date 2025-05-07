@@ -295,14 +295,14 @@ test "panic blit_from_string with invalid str_offset + length" {
 ///|
 test "panic set_utf16le_char with invalid code point" {
   let arr = FixedArray::makei(10, fn { _ => b'\x00' })
-  let char = Int::unsafe_to_char(0x110000)
+  let char = (0x110000).unsafe_to_char()
   arr.set_utf16le_char(0, char) |> ignore
 }
 
 ///|
 test "panic set_utf16be_char with invalid code point" {
   let arr = FixedArray::makei(10, fn { _ => b'\x00' })
-  let char = Int::unsafe_to_char(0x110000)
+  let char = (0x110000).unsafe_to_char()
   arr.set_utf16le_char(0, char) |> ignore
 }
 

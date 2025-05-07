@@ -160,9 +160,9 @@ pub fn stringify(
 fn escape(str : String, escape_slash~ : Bool) -> String {
   fn to_hex_digit(i : Int) -> Char {
     if i < 10 {
-      Int::unsafe_to_char('0'.to_int() + i)
+      ('0'.to_int() + i).unsafe_to_char()
     } else {
-      Int::unsafe_to_char('a'.to_int() + (i - 10))
+      ('a'.to_int() + (i - 10)).unsafe_to_char()
     }
   }
 
