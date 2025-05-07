@@ -590,9 +590,9 @@ pub fn View::to_double_le(self : View) -> Double {
 pub impl Show for View with output(self, logger) {
   fn to_hex_digit(i : Int) -> Char {
     if i < 10 {
-      Char::from_int('0'.to_int() + i)
+      Int::unsafe_to_char('0'.to_int() + i)
     } else {
-      Char::from_int('a'.to_int() + (i - 10))
+      Int::unsafe_to_char('a'.to_int() + (i - 10))
     }
   }
 

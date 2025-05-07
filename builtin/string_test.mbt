@@ -127,7 +127,7 @@ test "String::make with zero length" {
 test "panic codepoint_length with invalid surrogate pair" {
   // Create a string with a leading surrogate (0xD800) followed by an invalid trailing surrogate
   let s = String::from_array([
-      Char::from_int(0xD800), // leading surrogate
+      Int::unsafe_to_char(0xD800), // leading surrogate
       'a',
     ], // invalid trailing surrogate
   )

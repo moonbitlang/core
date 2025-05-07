@@ -64,9 +64,9 @@ pub impl Show for UInt16 with output(self, logger) {
 ///|
 fn to_hex_digit(i : Int) -> Char {
   if i < 10 {
-    Char::from_int(i + '0')
+    Int::unsafe_to_char(i + '0')
   } else {
-    Char::from_int(i + 'a' - 10)
+    Int::unsafe_to_char(i + 'a' - 10)
   }
 }
 
@@ -107,7 +107,7 @@ pub impl Show for String with output(self, logger) {
     match self.unsafe_charcode_at(i) {
       '"' | '\\' as c => {
         flush_segment(i)
-        logger..write_char('\\').write_char(Char::from_int(c))
+        logger..write_char('\\').write_char(Int::unsafe_to_char(c))
       }
       '\n' => {
         flush_segment(i)
