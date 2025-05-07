@@ -21,7 +21,7 @@ test "op_get with existing key" {
     (2, "two"),
     (0, "zero"),
   ])
-  assert_eq!(map[3], Some("three"))
+  assert_eq!(map.get(3), Some("three"))
 }
 
 ///|
@@ -33,7 +33,7 @@ test "op_get with non-existing key" {
     (2, "two"),
     (0, "zero"),
   ])
-  assert_eq!(map[4], None)
+  assert_eq!(map.get(4), None)
 }
 
 ///|
@@ -46,7 +46,7 @@ test "op_get after insertion" {
     (0, "zero"),
   ])
   let map = map.add(4, "four")
-  assert_eq!(map[4], Some("four"))
+  assert_eq!(map.get(4), Some("four"))
 }
 
 ///|
@@ -59,7 +59,7 @@ test "op_get after removal" {
     (0, "zero"),
   ])
   let map = map.remove(3)
-  assert_eq!(map[3], None)
+  assert_eq!(map.get(3), None)
 }
 
 ///|
@@ -98,7 +98,7 @@ test "iter" {
 ///|
 test "op_get with empty map" {
   let map : @sorted_map.T[Int, String] = @sorted_map.new()
-  assert_eq!(map[3], None)
+  assert_eq!(map.get(3), None)
 }
 
 ///|
