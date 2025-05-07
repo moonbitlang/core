@@ -57,9 +57,9 @@ test "op_get" {
   let m = @hashmap.new()
   m.set("a", 1)
   m.set("b", 2)
-  assert_eq!(m["a"], Some(1))
-  assert_eq!(m["b"], Some(2))
-  assert_eq!(m["c"], None)
+  assert_eq!(m.get("a"), Some(1))
+  assert_eq!(m.get("b"), Some(2))
+  assert_eq!(m.get("c"), None)
 }
 
 ///|

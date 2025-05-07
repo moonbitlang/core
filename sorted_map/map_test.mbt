@@ -73,24 +73,24 @@ test "contains" {
 test "op_get" {
   let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
   inspect!(
-    map[1],
+    map.get(1),
     content=
       #|Some("a")
     ,
   )
   inspect!(
-    map[2],
+    map.get(2),
     content=
       #|Some("b")
     ,
   )
   inspect!(
-    map[3],
+    map.get(3),
     content=
       #|Some("c")
     ,
   )
-  inspect!(map[4], content="None")
+  inspect!(map.get(4), content="None")
 }
 
 ///|
