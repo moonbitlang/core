@@ -499,6 +499,17 @@ test "chunks_by" {
 }
 
 ///|
+test "array_windows" {
+  let arr = [1, 2, 3, 4, 5, 6]
+  let windows = arr.windows(11)
+  inspect!(windows, content="[]")
+  let windows = arr.windows(5)
+  inspect!(windows, content="[[1, 2, 3, 4, 5], [2, 3, 4, 5, 6]]")
+  let windows = arr.windows(1)
+  inspect!(windows, content="[[1], [2], [3], [4], [5], [6]]")
+}
+
+///|
 test "array_get_out_of_bounds" {
   let arr = [1, 2, 3]
   assert_eq(arr.get(3), None)
