@@ -18,6 +18,11 @@ pub fn round(input : Double) -> Double {
 }
 
 ///|
+pub fn roundf(input : Float) -> Float {
+  input.round()
+}
+
+///|
 test "round" {
   assert_eq!(round(4503599627370497.5), 4503599627370498.0)
   assert_eq!(round(2251799813685248.5), 2251799813685249.0)
@@ -25,6 +30,11 @@ test "round" {
 
 ///|
 pub fn ceil(input : Double) -> Double {
+  input.ceil()
+}
+
+///|
+pub fn ceilf(input : Float) -> Float {
   input.ceil()
 }
 
@@ -43,6 +53,11 @@ pub fn floor(input : Double) -> Double {
 }
 
 ///|
+pub fn floorf(input : Float) -> Float {
+  input.floor()
+}
+
+///|
 test "floor" {
   assert_eq!(floor(2251799813685248.5), 2251799813685248.0)
   assert_eq!(floor(1.1), 1.0)
@@ -53,6 +68,11 @@ test "floor" {
 
 ///|
 pub fn trunc(input : Double) -> Double {
+  input.trunc()
+}
+
+///|
+pub fn truncf(input : Float) -> Float {
   input.trunc()
 }
 
