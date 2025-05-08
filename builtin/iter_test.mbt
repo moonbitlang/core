@@ -256,7 +256,7 @@ test "filter_map" {
   inspect!(r1, content="[3, 4, 5]")
   let r2 : Array[Unit] = arr.iter().filter_map(fn(_x) { None }).collect()
   inspect!(r2, content="[]")
-  let r3 : Array[Unit] = [].iter().filter_map(Option::Some).collect()
+  let r3 : Array[Unit] = [].iter().filter_map(Option::Some(_)).collect()
   inspect!(r3, content="[]")
 }
 
