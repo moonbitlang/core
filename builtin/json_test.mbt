@@ -159,3 +159,10 @@ test "Char::to_json converts char to JSON string" {
   let json = c.to_json()
   inspect!(json, content="String(\"A\")")
 }
+
+///|
+test "Byte::to_json" {
+  inspect!(b'\x00'.to_json(), content="Number(0)")
+  inspect!(b'\xff'.to_json(), content="Number(255)")
+  inspect!(b'\x42'.to_json(), content="Number(66)")
+}

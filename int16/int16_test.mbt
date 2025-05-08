@@ -426,3 +426,11 @@ test "Int16::op_mod" {
   inspect!(mod(0, 1), content="0")
   inspect!(mod(1, 1), content="0")
 }
+
+///|
+test "Int16::to_json" {
+  inspect!(Int16::to_json(0), content="Number(0)")
+  inspect!(Int16::to_json(1), content="Number(1)")
+  inspect!(Int16::to_json(32767), content="Number(32767)")
+  inspect!(Int16::to_json(-32768), content="Number(-32768)")
+}

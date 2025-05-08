@@ -92,3 +92,8 @@ pub impl BitXOr for UInt16 with lxor(self : UInt16, that : UInt16) -> UInt16 {
 pub impl Default for UInt16 with default() {
   0
 }
+
+///|
+pub impl ToJson for UInt16 with to_json(self : UInt16) -> Json {
+  Json::number(self.to_int().to_double())
+}

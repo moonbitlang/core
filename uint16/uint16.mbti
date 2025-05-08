@@ -20,6 +20,7 @@ impl Mul for UInt16
 impl Shl for UInt16
 impl Shr for UInt16
 impl Sub for UInt16
+impl ToJson for UInt16
 
 // Type aliases
 
