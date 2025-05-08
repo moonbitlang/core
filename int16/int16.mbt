@@ -92,3 +92,8 @@ pub impl BitXOr for Int16 with lxor(self : Int16, that : Int16) -> Int16 {
 pub impl Default for Int16 with default() {
   0
 }
+
+///|
+pub impl ToJson for Int16 with to_json(self : Int16) -> Json {
+  Json::number(self.to_int().to_double())
+}

@@ -832,6 +832,7 @@ pub(open) trait ToJson {
 }
 impl ToJson for Unit
 impl ToJson for Bool
+impl ToJson for Byte
 impl ToJson for Char
 impl ToJson for Int
 impl ToJson for Int64
