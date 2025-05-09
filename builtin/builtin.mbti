@@ -124,6 +124,7 @@ impl Array {
   unsafe_blit_fixed[A](Self[A], Int, FixedArray[A], Int, Int) -> Unit
   unsafe_get[T](Self[T], Int) -> T
   unsafe_pop[T](Self[T]) -> T
+  windows[T](Self[T], Int) -> Self[ArrayView[T]]
 }
 impl[T] Add for Array[T]
 impl[T : Compare] Compare for Array[T]
