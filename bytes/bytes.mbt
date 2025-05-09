@@ -43,6 +43,57 @@ pub fn from_array(arr : Array[Byte]) -> Bytes {
 }
 
 ///|
+/// Creates a new bytes sequence from a byte array.
+///
+/// Parameters:
+///
+/// * `array` : An array of bytes to be converted.
+///
+/// Returns a new bytes sequence containing the same bytes as the input array.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "Bytes::from_arrayview" {
+///   let arr = [b'h', b'i']
+///   let bytes = @bytes.from_array(arr)
+///   inspect!(bytes, content=
+///     #|b"\x68\x69"
+///   )
+/// }
+/// ```
+pub fn Bytes::from_arrayview(view  :ArrayView[Byte]) -> Bytes {
+  Bytes::makei(view.length(), fn(i) { view [i] })
+}
+
+///|
+/// same as `Bytes::from_array`
+pub fn from_arrayview(view : ArrayView[Byte]) -> Bytes {
+  Bytes::makei(view.length(), fn(i) { view [i] })
+}
+
+/// Converts a bytes sequence into an immutable view of bytes (ArrayView).
+///
+/// Parameters:
+///
+/// * `bytes` : A sequence of bytes to be converted into a view.
+///
+/// Returns an immutable view of the input bytes sequence.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "Bytes::to_array_view" {
+///   let bytes = b"hello"
+///   let view = bytes.to_array_view()
+///   inspect!(view, content="b\"hello\"")
+/// }
+/// ```
+pub fn Bytes::to_arrayview(self : Bytes) -> ArrayView[Byte] {
+  self.to_array().op_as_view()
+}
+
+///|
 /// Creates a new bytes sequence from a fixed-size array of bytes with an
 /// optional length parameter.
 ///
