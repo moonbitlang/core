@@ -109,7 +109,7 @@ pub fn length[A](self : T[A]) -> Int {
 /// @list.of([1, 2, 3, 4, 5]).each(fn(x) { arr.push(x) })
 /// assert_eq!(arr, [1, 2, 3, 4, 5])
 /// ```
-#local(f)
+#locals(f)
 pub fn each[A](self : T[A], f : (A) -> Unit) -> Unit {
   loop self {
     Empty => ()
