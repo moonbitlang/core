@@ -5,6 +5,8 @@ fn default() -> Bytes
 
 fn from_array(Array[Byte]) -> Bytes
 
+fn from_arrayview(ArrayView[Byte]) -> Bytes
+
 fn from_fixedarray(FixedArray[Byte], len? : Int) -> Bytes
 
 fn from_iter(Iter[Byte]) -> Bytes
@@ -16,6 +18,8 @@ fn iter(Bytes) -> Iter[Byte]
 fn of(FixedArray[Byte]) -> Bytes
 
 fn to_array(Bytes) -> Array[Byte]
+
+fn to_arrayview(Bytes) -> ArrayView[Byte]
 
 fn to_fixedarray(Bytes, len? : Int) -> FixedArray[Byte]
 
@@ -49,6 +53,7 @@ impl Show for View
 
 impl Bytes {
   from_array(Array[Byte]) -> Bytes
+  from_arrayview(ArrayView[Byte]) -> Bytes
   from_fixedarray(FixedArray[Byte], len? : Int) -> Bytes
   from_iter(Iter[Byte]) -> Bytes
   get(Bytes, Int) -> Byte?
@@ -56,6 +61,7 @@ impl Bytes {
   of(FixedArray[Byte]) -> Bytes
   op_as_view(Bytes, start~ : Int = .., end? : Int) -> View
   to_array(Bytes) -> Array[Byte]
+  to_arrayview(Bytes) -> ArrayView[Byte]
   to_fixedarray(Bytes, len? : Int) -> FixedArray[Byte]
 }
 impl Add for Bytes
