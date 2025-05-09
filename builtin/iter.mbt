@@ -1036,3 +1036,54 @@ pub fn Iter::group_by[T, K : Eq + Hash](
   }
   result
 }
+
+///|
+/// Groups elements of an iterator according to a discriminator function.
+///
+/// # Parameters
+///
+/// * `self` - The input iterator.
+/// * `f` - The discriminator function that maps elements to keys.
+///
+/// # Returns
+///
+/// An iterator of tuples where each tuple contains a key and an iterator of elements that share that key.
+///
+/// # Example
+///
+/// ```moonbit
+/// test "chunk_by" {
+///   let iter = [1, 1, 2, 3, 2, 2, 1].iter()
+///   let chunked = iter.chunk_by(fn(x) { x })
+///   let result = chunked.map(fn(g) { (g.0, g.1.collect()) }).collect()
+///   assert_eq!(result, [(1, [1, 1]), (2, [2]), (3, [3]), (2, [2, 2]), (1, [1])])
+/// }
+pub fn Iter::chunk_by[T, K : Eq](
+  self : Iter[T],
+  f : (T) -> K
+) -> Iter[(K, Iter[T])] {
+  fn(yield_) {
+    let mut current_key : K? = None
+    let mut buffer : Array[T] = []
+    for x in self {
+      let key = f(x)
+      match current_key {
+        None => current_key = Some(key)
+        Some(old_key) =>
+          if key != old_key {
+            guard yield_((old_key, buffer.iter())) is IterContinue else {
+              return IterEnd
+            }
+            buffer = Array::new(capacity=16)
+            current_key = Some(key)
+          }
+      }
+      buffer.push(x)
+    }
+    if current_key is Some(old_key) {
+      yield_((old_key, buffer.iter()))
+    } else {
+      IterContinue
+    }
+  }
+}
