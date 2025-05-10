@@ -17,8 +17,6 @@ fn of(FixedArray[Byte]) -> Bytes
 
 fn to_array(Bytes) -> Array[Byte]
 
-fn to_arrayview(Bytes) -> ArrayView[Byte]
-
 fn to_fixedarray(Bytes, len? : Int) -> FixedArray[Byte]
 
 // Types and methods
@@ -58,7 +56,6 @@ impl Bytes {
   of(FixedArray[Byte]) -> Bytes
   op_as_view(Bytes, start~ : Int = .., end? : Int) -> View
   to_array(Bytes) -> Array[Byte]
-  to_arrayview(Bytes) -> ArrayView[Byte]
   to_fixedarray(Bytes, len? : Int) -> FixedArray[Byte]
 }
 impl Add for Bytes
