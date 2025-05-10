@@ -5,8 +5,6 @@ fn default() -> Bytes
 
 fn from_array(Array[Byte]) -> Bytes
 
-fn from_arrayview(ArrayView[Byte]) -> Bytes
-
 fn from_fixedarray(FixedArray[Byte], len? : Int) -> Bytes
 
 fn from_iter(Iter[Byte]) -> Bytes
@@ -53,7 +51,6 @@ impl Show for View
 
 impl Bytes {
   from_array(Array[Byte]) -> Bytes
-  from_arrayview(ArrayView[Byte]) -> Bytes
   from_fixedarray(FixedArray[Byte], len? : Int) -> Bytes
   from_iter(Iter[Byte]) -> Bytes
   get(Bytes, Int) -> Byte?
