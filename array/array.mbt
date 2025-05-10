@@ -304,3 +304,40 @@ pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Array[X] with arbi
 pub fn join(self : Array[String], separator : String) -> String {
   @string.concat(self, separator~)
 }
+
+///|
+/// Converts a bytes sequence into an immutable view of bytes (ArrayView).
+///
+/// Returns an immutable view of the input bytes sequence.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "ArrayView::from_bytes" {
+///   let bytes:Bytes = [b'h', b'i']
+///   let array_view = ArrayView::from_bytes(bytes)
+///   inspect!(array_view, content="[b'\x68', b'\x69']")
+/// }
+/// ```
+pub fn ArrayView::from_bytes(self: Bytes) -> ArrayView[Byte] {
+  self.to_array().op_as_view()
+}
+
+///|
+/// Converts a immutable view of bytes into an bytes sequence.
+///
+/// Returns an bytes sequence of the input immutable view.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "ArrayView::to_bytes" {
+///   let array_view:ArrayView[Byte] = [b'h', b'i']
+///   let bytes:Bytes = ArrayView::to_bytes(array_view)
+///   inspect!(bytes, content="b"\x68\x69"")
+/// }
+/// ```
+pub fn ArrayView::to_bytes(self: ArrayView[Byte]) -> Bytes {
+  let arr:Array[Byte]=self.to_array()
+  Bytes::from_array(arr)
+}
