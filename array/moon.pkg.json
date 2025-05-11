@@ -14,6 +14,8 @@
   "targets": {
     "array_js.mbt": ["js"],
     "array_nonjs.mbt": ["not", "js"],
+    "blit_js.mbt": ["js"],
+    "blit_nonjs.mbt": ["not", "js"],
     "panic_test.mbt": ["not", "native", "llvm"]
   }
 }

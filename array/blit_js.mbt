@@ -13,33 +13,15 @@
 // limitations under the License.
 
 ///|
-priv extern type JSArray
-
-///|
-fn JSArray::ofAnyArray[T](array : Array[T]) -> JSArray = "%identity"
-
-///|
-fn JSArray::toAnyArray[T](self : JSArray) -> Array[T] = "%identity"
-
-///|
-fn JSArray::ofAnyFixedArray[T](array : FixedArray[T]) -> JSArray = "%identity"
-
-///|
-fn JSArray::toAnyFixedArray[T](self : JSArray) -> FixedArray[T] = "%identity"
-
-///|
-extern "js" fn JSArray::copy(self : JSArray) -> JSArray =
-  #|(arr) => arr.slice(0)
-
-///|
-/// Creates and returns a new array with a copy of all elements from the input
-/// array.
+/// Creates a new array that is a copy of the original array.
 ///
 /// Parameters:
 ///
-/// * `array` : The array to be copied.
+/// * `self` : The array to be copied. The type of elements in the array must be
+/// `T`.
 ///
-/// Returns a new array containing all elements from the original array.
+/// Returns a new array containing all elements from the original array in the
+/// same order.
 ///
 /// Example:
 ///
@@ -51,6 +33,6 @@ extern "js" fn JSArray::copy(self : JSArray) -> JSArray =
 ///   inspect!(physical_equal(original, copied), content="false")
 /// }
 /// ```
-pub fn copy[T](self : Array[T]) -> Array[T] {
-  JSArray::ofAnyArray(self).copy().toAnyArray()
+pub fn FixedArray::copy[T](self : FixedArray[T]) -> FixedArray[T] {
+  JSArray::ofAnyFixedArray(self).copy().toAnyFixedArray()
 }
