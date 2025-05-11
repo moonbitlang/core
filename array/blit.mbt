@@ -13,38 +13,6 @@
 // limitations under the License.
 
 ///|
-/// Creates a new array that is a copy of the original array.
-///
-/// Parameters:
-///
-/// * `self` : The array to be copied. The type of elements in the array must be
-/// `T`.
-///
-/// Returns a new array containing all elements from the original array in the
-/// same order.
-///
-/// Example:
-///
-/// ```moonbit
-/// test "copy" {
-///   let original = [1, 2, 3]
-///   let copied = original.copy()
-///   inspect!(copied, content="[1, 2, 3]")
-///   inspect!(physical_equal(original, copied), content="false")
-/// }
-/// ```
-pub fn FixedArray::copy[T](self : FixedArray[T]) -> FixedArray[T] {
-  let len = self.length()
-  if len == 0 {
-    []
-  } else {
-    let arr = FixedArray::make(len, self[0])
-    FixedArray::unsafe_blit(arr, 0, self, 0, len)
-    arr
-  }
-}
-
-///|
 test "copy" {
   let a : FixedArray[_] = [1, 2, 3, 4]
   let b = a.copy()
