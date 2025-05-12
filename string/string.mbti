@@ -40,12 +40,6 @@ fn last_index_of(String, String, from~ : Int = ..) -> Int
 
 fn length(StringView) -> Int
 
-#deprecated
-fn length_eq(StringView, Int) -> Bool
-
-#deprecated
-fn length_ge(StringView, Int) -> Bool
-
 fn pad_end(String, Int, Char) -> String
 
 fn pad_start(String, Int, Char) -> String
@@ -59,9 +53,6 @@ fn replace_all(String, old~ : StringView, new~ : StringView) -> String
 fn rev(String) -> String
 
 fn rev_fold[A](String, init~ : A, (A, Char) -> A) -> A
-
-#deprecated
-fn rev_get(StringView, Int) -> Char
 
 fn rev_iter(String) -> Iter[Char]
 
@@ -113,16 +104,11 @@ impl StringView {
   iter(Self) -> Iter[Char]
   iter2(Self) -> Iter2[Int, Char]
   length(Self) -> Int
-  #deprecated
-  length_eq(Self, Int) -> Bool
-  #deprecated
-  length_ge(Self, Int) -> Bool
   make(Int, Char) -> Self
   offset_of_nth_char(Self, Int) -> Int?
   #deprecated
   op_as_view(Self, start~ : Int = .., end? : Int) -> Self
-  #deprecated
-  op_get(Self, Int) -> Char
+  op_get(Self, Int) -> Int
   pad_end(Self, Int, Char) -> String
   pad_start(Self, Int, Char) -> String
   repeat(Self, Int) -> Self
@@ -131,8 +117,6 @@ impl StringView {
   rev(Self) -> String
   rev_find(Self, Self) -> Int?
   rev_fold[A](Self, init~ : A, (A, Char) -> A) -> A
-  #deprecated
-  rev_get(Self, Int) -> Char
   rev_iter(Self) -> Iter[Char]
   split(Self, Self) -> Iter[Self]
   to_lower(Self) -> Self
@@ -181,10 +165,6 @@ impl String {
   iter2(String) -> Iter2[Int, Char]
   #deprecated
   last_index_of(String, String, from~ : Int = ..) -> Int
-  #deprecated
-  length_eq(String, Int) -> Bool
-  #deprecated
-  length_ge(String, Int) -> Bool
   offset_of_nth_char(String, Int, start_offset~ : Int = .., end_offset~ : Int = ..) -> Int?
   #deprecated
   op_as_view(String, start~ : Int = .., end? : Int) -> StringView
@@ -196,8 +176,6 @@ impl String {
   rev(String) -> String
   rev_find(String, StringView) -> Int?
   rev_fold[A](String, init~ : A, (A, Char) -> A) -> A
-  #deprecated
-  rev_get(String, Int) -> Char
   rev_iter(String) -> Iter[Char]
   split(String, StringView) -> Iter[StringView]
   #deprecated
