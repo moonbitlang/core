@@ -71,6 +71,7 @@ test "find" {
 ///|
 /// Returns the offset of the first character that satisfies the given predicate.
 /// If no such character is found, it returns None.
+#locals(pred)
 pub fn View::find_by(self : View, pred : (Char) -> Bool) -> Int? {
   for i, c in self {
     if pred(c) {
@@ -83,8 +84,14 @@ pub fn View::find_by(self : View, pred : (Char) -> Bool) -> Int? {
 ///|
 /// Returns the offset of the first character that satisfies the given predicate.
 /// If no such character is found, it returns None.
+#locals(pred)
 pub fn String::find_by(self : String, pred : (Char) -> Bool) -> Int? {
-  self[:].find_by(pred)
+  for i, c in self {
+    if pred(c) {
+      return Some(i)
+    }
+  }
+  None
 }
 
 ///|
@@ -99,6 +106,90 @@ test "find_by" {
   inspect!("Hello".find_by(fn(c) { c is ('A'..='Z') }), content="Some(0)")
   inspect!("αβγ".find_by(fn(c) { c == 'β' }), content="Some(1)")
   inspect!("😀😁😂".find_by(fn(c) { c == '😂' }), content="Some(2)")
+}
+
+///|
+/// Find the index of the first charcode that satisfies the given predicate.
+/// If no such charcode is found, it returns None.
+#locals(pred)
+pub fn View::find_by_charcode(self : View, pred : (Int) -> Bool) -> Int? {
+  for i in 0..<self.length() {
+    if pred(self.unsafe_charcode_at(i)) {
+      return Some(i)
+    }
+  }
+  None
+}
+
+///|
+/// Find the index of the first charcode that satisfies the given predicate.
+/// If no such charcode is found, it returns None.
+#locals(pred)
+pub fn String::find_by_charcode(self : String, pred : (Int) -> Bool) -> Int? {
+  for i in 0..<self.length() {
+    if pred(self.unsafe_charcode_at(i)) {
+      return Some(i)
+    }
+  }
+  None
+}
+
+///|  
+test "find_by_charcode" {
+  // Test basic character finding
+  inspect!("hello".find_by_charcode(Int::op_equal(_, 'o')), content="Some(4)")
+  inspect!("hello".find_by_charcode(Int::op_equal(_, 'l')), content="Some(2)")
+  inspect!("hello".find_by_charcode(Int::op_equal(_, 'z')), content="None")
+  inspect!(
+    "hello"[1:].find_by_charcode(Int::op_equal(_, 'o')),
+    content="Some(3)",
+  )
+  inspect!(
+    "hello"[:4].find_by_charcode(Int::op_equal(_, 'o')),
+    content="None",
+  )
+  inspect!("hello".find_by_charcode(Int::op_equal(_, 'z')), content="None")
+
+  // Test empty string
+  inspect!("".find_by_charcode(Int::op_equal(_, 'a')), content="None")
+
+  // Test numeric characters
+  inspect!(
+    "hello".find_by_charcode(fn(c) { c >= '0' && c <= '9' }),
+    content="None",
+  )
+  inspect!(
+    "hello123".find_by_charcode(fn(c) { c >= '0' && c <= '9' }),
+    content="Some(5)",
+  )
+
+  // Test case sensitivity
+  inspect!(
+    "hello".find_by_charcode(fn(c) { c >= 'A' && c <= 'Z' }),
+    content="None",
+  )
+  inspect!(
+    "Hello".find_by_charcode(fn(c) { c >= 'A' && c <= 'Z' }),
+    content="Some(0)",
+  )
+
+  // Test non-ASCII characters
+  inspect!("αβγ".find_by_charcode(fn(c) { c == 'β' }), content="Some(1)")
+
+  // Test emoji and multi-byte characters
+  inspect!(
+    "😀😁😂".find_by_charcode(fn(c) { c == 0xD83D }),
+    content="Some(0)",
+  ) // First code unit of 😀
+
+  // Test specific code point ranges
+  inspect!(
+    "Hello, 世界!".find_by_charcode(fn(c) { c > 127 }),
+    content="Some(7)",
+  ) // First non-ASCII character
+
+  // Test with complex predicate
+  inspect!("a1b2c3".find_by_charcode(fn(c) { c % 2 == 0 }), content="Some(2)") // '1' has code 49 which is odd
 }
 
 ///|
