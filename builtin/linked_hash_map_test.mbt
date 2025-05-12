@@ -60,3 +60,21 @@ test "map::contains_kv" {
   }
 
 }
+
+///|
+test "map::get_by_view::string_view" {
+  let map = { "a": 1, "b": 2, "c": 3 }
+  let str = "abcd"
+  fn slice(s : String, i, j) {
+    s.charcodes(start=i, end=j)
+  }
+
+  fn view(s : String) {
+    s[:]
+  }
+
+  inspect!(map.get_by_view(slice(str, 0, 1), view~), content="Some(1)")
+  inspect!(map.get_by_view(slice(str, 1, 2), view~), content="Some(2)")
+  inspect!(map.get_by_view(slice(str, 2, 3), view~), content="Some(3)")
+  inspect!(map.get_by_view(slice(str, 3, 4), view~), content="None")
+}
