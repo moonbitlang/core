@@ -1723,15 +1723,12 @@ pub fn String::length(self : String) -> Int = "%string_length"
 pub fn String::charcode_length(self : String) -> Int = "%string_length"
 
 ///|
-/// Retrieves the character at the specified index in a string. Each character in
-/// the string is represented as a UTF-16 code unit.
+/// Retrieves the charcode (UTF-16 code unit) at the specified index in a string.
 ///
 /// Parameters:
 ///
-/// * `string` : The string from which to retrieve the character.
-/// * `index` : The position in the string from which to retrieve the character.
-///
-/// Returns the character at the specified index.
+/// * `string` : The string from which to retrieve the charcode.
+/// * `index` : The position in the string from which to retrieve the charcode.
 ///
 /// Throws a runtime error if `index` is negative or greater than or equal to the
 /// length of the string.
@@ -1741,8 +1738,8 @@ pub fn String::charcode_length(self : String) -> Int = "%string_length"
 /// ```moonbit
 /// test "String::op_get" {
 ///   let s = "Hello, 世界!"
-///   inspect!(s[0], content="H")
-///   inspect!(s[7], content="世")
+///   inspect!(s[0].to_char(), content="Some('H')")
+///   inspect!(s[7], content="19990")
 /// }
 ///
 /// test "panic String::op_get/out_of_bounds" {
@@ -1751,7 +1748,7 @@ pub fn String::charcode_length(self : String) -> Int = "%string_length"
 /// }
 /// ```
 ///
-pub fn String::op_get(self : String, idx : Int) -> Char = "%string_get"
+pub fn String::op_get(self : String, idx : Int) -> Int = "%string_get"
 
 ///|
 /// Retrieves the character at the specified index in a string.
