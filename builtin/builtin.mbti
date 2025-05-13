@@ -738,6 +738,7 @@ pub(open) trait Logger {
 pub(open) trait Mod {
   op_mod(Self, Self) -> Self
 }
+impl Mod for Byte
 impl Mod for Int
 impl Mod for Int64
 impl Mod for UInt
