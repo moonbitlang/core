@@ -59,6 +59,19 @@ pub fn View::op_get(self : View, index : Int) -> Int {
 }
 
 ///|
+/// Returns the original string that is being viewed.
+pub fn data(self : View) -> String {
+  self.str
+}
+
+///|
+/// Returns the starting offset (in UTF-16 code units) of this view into its
+/// underlying string.
+pub fn start_offset(self : View) -> Int {
+  self.start
+}
+
+///|
 /// Returns the length of the view.
 /// 
 /// This method counts the charcodes(code unit) in the view and has O(1) complexity.
