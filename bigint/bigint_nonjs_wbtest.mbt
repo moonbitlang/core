@@ -116,3 +116,49 @@ test "op_sub coverage for max(self_len, other_len)" {
   inspect!(b.len, content="1")
   inspect!(result.len, content="1")
 }
+
+///|
+test "BigInt::bit_length" {
+  inspect!(0N.bit_length(), content="0")
+  inspect!(1N.bit_length(), content="1")
+  inspect!((-1N).bit_length(), content="0")
+  inspect!(16N.bit_length(), content="5")
+  inspect!((-16N).bit_length(), content="4")
+  inspect!(42N.bit_length(), content="6")
+  inspect!((-42N).bit_length(), content="6")
+  inspect!(1024N.bit_length(), content="11")
+  inspect!(10000000N.bit_length(), content="24")
+  inspect!((1N << 31).bit_length(), content="32")
+  inspect!((1N << 63).bit_length(), content="64")
+}
+
+///|
+test "BigInt::ctz" {
+  inspect!(0N.ctz(), content="0")
+  inspect!(1N.ctz(), content="0")
+  inspect!(8N.ctz(), content="3") // 1000
+  inspect!(12N.ctz(), content="2") // 1100
+  inspect!(174056N.ctz(), content="3") // 101010011111101000
+  inspect!((1N << 31).ctz(), content="31")
+  inspect!((1N << 63).ctz(), content="63")
+}
+
+///|
+test "BigInt::random" {
+  let r = @random.new()
+  inspect!(BigInt::random(r, 1), content="1")
+  inspect!(BigInt::random(r, 3), content="4")
+  inspect!(BigInt::random(r, 7), content="124")
+  inspect!(BigInt::random(r, 8), content="214")
+  inspect!(BigInt::random(r, 32), content="2414602873")
+  inspect!(BigInt::random(r, 40), content="802289275496")
+  inspect!(BigInt::random(r, 64), content="11595814417413844606")
+  inspect!(
+    BigInt::random(r, 128),
+    content="199636798653786520281179348962356227657",
+  )
+
+  // with limit
+  inspect!(BigInt::random(r, 8, limit=32), content="23")
+  inspect!(BigInt::random(r, 32, limit=10000000), content="7766603")
+}
