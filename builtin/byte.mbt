@@ -70,6 +70,11 @@ pub impl Div for Byte with op_div(self : Byte, that : Byte) -> Byte {
 }
 
 ///|
+pub impl Mod for Byte with op_mod(self : Byte, that : Byte) -> Byte {
+  (self.to_int() % that.to_int()).to_byte()
+}
+
+///|
 /// Compares two `Byte` values for equality.
 ///
 /// Parameters:

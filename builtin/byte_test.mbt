@@ -195,3 +195,9 @@ test "byte_op_div" {
   inspect!((80 : Byte) / 8, content="b'\\x0A'")
   inspect!((10 : Byte) / 3, content="b'\\x03'")
 }
+
+///|
+test "byte_op_mod" {
+  inspect!((80 : Byte) % 8, content="b'\\x00'")
+  inspect!((42 : Byte) % 17, content="b'\\x08'")
+}
