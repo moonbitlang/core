@@ -15,7 +15,9 @@
 ///|
 test "combine int" {
   fn hash(v) {
-    Hasher::new()..combine_int(v).finalize()
+    let hasher = Hasher::new()
+    hasher.combine_int(v)
+    hasher.finalize()
   }
 
   inspect!(hash(0), content="148298089")
@@ -31,7 +33,9 @@ test "combine int" {
 ///|
 test "combine char" {
   fn hash(v) {
-    Hasher::new()..combine_char(v).finalize()
+    let hasher = Hasher::new()
+    hasher.combine_char(v)
+    hasher.finalize()
   }
 
   inspect!(hash('c'), content="-1500876651")
@@ -40,7 +44,9 @@ test "combine char" {
 ///|
 test "combine int64" {
   fn hash(v) {
-    Hasher::new()..combine_int64(v).finalize()
+    let hasher = Hasher::new()
+    hasher.combine_int64(v)
+    hasher.finalize()
   }
 
   inspect!(hash(0), content="-558656237")
@@ -56,7 +62,9 @@ test "combine int64" {
 ///|
 test "combine uint" {
   fn hash(v) {
-    Hasher::new()..combine_uint(v).finalize()
+    let hasher = Hasher::new()
+    hasher.combine_uint(v)
+    hasher.finalize()
   }
 
   inspect!(hash(0), content="148298089")
@@ -71,7 +79,9 @@ test "combine uint" {
 ///|
 test "combine uint64" {
   fn hash(v) {
-    Hasher::new()..combine_uint64(v).finalize()
+    let hasher = Hasher::new()
+    hasher.combine_uint64(v)
+    hasher.finalize()
   }
 
   inspect!(hash(0), content="-558656237")
@@ -86,7 +96,9 @@ test "combine uint64" {
 ///|
 test "combine double" {
   fn hash(v) {
-    Hasher::new()..combine_double(v).finalize()
+    let hasher = Hasher::new()
+    hasher.combine_double(v)
+    hasher.finalize()
   }
 
   inspect!(hash(0.0), content="-558656237")
@@ -100,7 +112,9 @@ test "combine double" {
 ///|
 test "combine float" {
   fn hash(v : Float) {
-    Hasher::new()..combine_float(v).finalize()
+    let hasher = Hasher::new()
+    hasher.combine_float(v)
+    hasher.finalize()
   }
 
   inspect!(hash(0.0), content="148298089")
@@ -114,7 +128,9 @@ test "combine float" {
 ///|
 test "combine string" {
   fn hash(v) {
-    Hasher::new()..combine_string(v).finalize()
+    let hasher = Hasher::new()
+    hasher.combine_string(v)
+    hasher.finalize()
   }
 
   inspect!(hash(""), content="46947589")
@@ -133,7 +149,9 @@ test "combine string" {
 ///|
 test "combine bytes" {
   fn hash(v) {
-    Hasher::new()..combine_bytes(v).finalize()
+    let hasher = Hasher::new()
+    hasher.combine_bytes(v)
+    hasher.finalize()
   }
 
   let b1 : Bytes = [
@@ -156,7 +174,9 @@ test "combine bytes" {
 ///|
 test "combine byte" {
   fn hash(v) {
-    Hasher::new()..combine_byte(v).finalize()
+    let hasher = Hasher::new()
+    hasher.combine_byte(v)
+    hasher.finalize()
   }
 
   inspect!(hash(b'0'), content="-1971641254")
@@ -177,7 +197,7 @@ test "combine all" {
   ..combine_uint64(4294967296)
   ..combine_double(1.234)
   ..combine_string("Moonbit")
-  .combine_bytes(Bytes::make(10, b'1'))
+  ..combine_bytes(Bytes::make(10, b'1'))
   inspect!(hasher.finalize(), content="1982681228")
   inspect!(hasher.finalize() == hasher.finalize(), content="true")
 }
