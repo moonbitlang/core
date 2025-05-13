@@ -40,7 +40,7 @@ pub impl Show for ParseError with output(self, logger) {
       ..write_string(" at line ")
       ..write_object(line)
       ..write_string(", column ")
-      .write_object(column)
+      ..write_object(column)
     InvalidEof => logger.write_string("Unexpected end of file")
     InvalidNumber({ line, column }, s) =>
       logger
@@ -49,13 +49,13 @@ pub impl Show for ParseError with output(self, logger) {
       ..write_string(" at line ")
       ..write_object(line)
       ..write_string(", column ")
-      .write_object(column)
+      ..write_object(column)
     InvalidIdentEscape({ line, column }) =>
       logger
       ..write_string("Invalid escape sequence in identifier at line ")
       ..write_object(line)
       ..write_string(", column ")
-      .write_object(column)
+      ..write_object(column)
   }
 }
 

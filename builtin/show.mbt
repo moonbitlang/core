@@ -107,7 +107,7 @@ pub impl Show for String with output(self, logger) {
     match self.unsafe_charcode_at(i) {
       '"' | '\\' as c => {
         flush_segment(i)
-        logger..write_char('\\').write_char(c.unsafe_to_char())
+        logger..write_char('\\')..write_char(c.unsafe_to_char())
       }
       '\n' => {
         flush_segment(i)
@@ -132,7 +132,7 @@ pub impl Show for String with output(self, logger) {
           ..write_string("\\u{")
           ..write_char(to_hex_digit(code / 16))
           ..write_char(to_hex_digit(code % 16))
-          .write_char('}')
+          ..write_char('}')
         }
     }
   }
@@ -176,21 +176,21 @@ pub impl[X : Show] Show for X? with output(self, logger) {
   match self {
     None => logger.write_string("None")
     Some(arg) =>
-      logger..write_string("Some(")..write_object(arg).write_string(")")
+      logger..write_string("Some(")..write_object(arg)..write_string(")")
   }
 }
 
 ///|
 pub impl[T : Show, E : Show] Show for Result[T, E] with output(self, logger) {
   match self {
-    Ok(x) => logger..write_string("Ok(")..write_object(x).write_string(")")
-    Err(e) => logger..write_string("Err(")..write_object(e).write_string(")")
+    Ok(x) => logger..write_string("Ok(")..write_object(x)..write_string(")")
+    Err(e) => logger..write_string("Err(")..write_object(e)..write_string(")")
   }
 }
 
 ///|
 pub impl[X : Show] Show for Ref[X] with output(self, logger) {
-  logger..write_string("{val: ")..write_object(self.val).write_string("}")
+  logger..write_string("{val: ")..write_object(self.val)..write_string("}")
 }
 
 ///|
@@ -226,7 +226,7 @@ pub impl Show for Char with output(self, logger) {
 
   logger.write_char('\'')
   match self {
-    '\'' | '\\' => logger..write_char('\\').write_char(self)
+    '\'' | '\\' => logger..write_char('\\')..write_char(self)
     '\n' => logger.write_string("\\n")
     '\r' => logger.write_string("\\r")
     '\b' => logger.write_string("\\b")
@@ -238,7 +238,7 @@ pub impl Show for Char with output(self, logger) {
         ..write_string("\\u{")
         ..write_char(to_hex_digit(code / 16))
         ..write_char(to_hex_digit(code % 16))
-        .write_char('}')
+        ..write_char('}')
       } else {
         logger.write_char(self)
       }
