@@ -282,19 +282,25 @@ test "tuple roundtrip" {
 ///|
 test "tuple failure" {
   let u = [1, 2]
-  let v : Result[(Int, Int, Int), _] = @json.from_json?(u.to_json())
+  let v : Result[(Int, Int, Int), _] = try {
+    @json.from_json!(u.to_json()) |> Ok
+  } catch {
+    err => Err(err)
+  }
   inspect!(
-    v,
+    v.unwrap_err(),
     content=
-      #|Err(JsonDecodeError(($, "expected tuple of size 3")))
+      #|JsonDecodeError(($, "expected tuple of size 3"))
+
     ,
   )
   let u = ((1, 2), (3, 4))
   let v : Result[((Int, Int), Int), _] = @json.from_json?(ToJson::to_json(u))
   inspect!(
-    v,
+    v.unwrap_err(),
     content=
-      #|Err(JsonDecodeError(($[1], "Int::from_json: expected number")))
+      #|JsonDecodeError(($[1], "Int::from_json: expected number"))
+
     ,
   )
 }
@@ -343,7 +349,7 @@ test "Result" {
   inspect!(v, content="Ok(1)")
   let u = (Err("error") : Result[Int, String]).to_json()
   let v : Result[Int, String] = @json.from_json!(u)
-  inspect!(v, content="Err(\"error\")")
+  inspect!(v.unwrap_err(), content="error")
 }
 
 ///|
