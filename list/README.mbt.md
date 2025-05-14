@@ -1,6 +1,6 @@
 # List
 
-The `List` module provides an immutable linked list data structure with a variety of utility functions for functional programming.
+The `List` package provides an immutable linked list data structure with a variety of utility functions for functional programming.
 
 ## Table of Contents
 
