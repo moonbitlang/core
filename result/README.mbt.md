@@ -3,12 +3,7 @@
 ## Overview
 `Result[T,E]` is a type used for handling computation results and errors in an explicit and declarative manner, similar to Rust (`Result<T,E>`) and OCaml (`('a, 'e) result`). 
 It is an enum with two variants: `Ok(T)`, which represents success and contains a value of type `T`, and `Err(E)`, representing error and containing an error value of type `E`. 
-```moonbit skip
-enum Result[T, E] {
-    Ok(T)
-    Err(E)
-}
-```
+
 
 ## Usage
 ### Constructing Result
@@ -23,8 +18,8 @@ test {
 Or use the `ok` and `err` functions to create a `Result` value.
 ```moonbit
 test {
-    let _result : Result[String, Unit] = ok("yes")
-    let _error : Result[Int, String] = err("error")
+    let _result : Result[String, Unit] = Ok("yes")
+    let _error : Result[Int, String] = Err("error")
 }
 ```
 
