@@ -338,6 +338,37 @@ pub fn unwrap[T, E](self : Result[T, E]) -> T {
 }
 
 ///|
+/// Extracts the error value from a `Result[T, E]`. If the `Result` is `Ok`,
+/// aborts with a runtime error message.
+///
+/// Parameters:
+///
+/// * `self` : The `Result` value to extract the error from.
+///
+/// Returns the error value of type `E` if `self` is `Err(e)`.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "unwrap_err" {
+///   let err : Result[Int, String] = Err("error message")
+///   inspect!(err.unwrap_err(), content="\"error message\"")
+/// }
+///
+/// test "panic unwrap_err/ok" {
+///   let ok : Result[Int, String] = Ok(42)
+///   let _ = ok.unwrap_err()
+///
+/// }
+/// ```
+pub fn unwrap_err[T, E](self : Result[T, E]) -> E {
+  match self {
+    Ok(_) => abort("called `Result::unwrap_err()` on an `Ok` value")
+    Err(e) => e
+  }
+}
+
+///|
 test "show" {
   let ok : Result[_, String] = Ok("hello")
   inspect!(
