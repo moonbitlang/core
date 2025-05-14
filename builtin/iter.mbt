@@ -805,8 +805,8 @@ pub impl[T] Add for Iter[T] with op_add(self, other) {
 
 ///|
 /// Collects the elements of the iterator into an array.
-pub fn Iter::to_array[T](self : Iter[T]) -> Array[T] {
-  let result = []
+pub fn Iter::to_array[T](self : Iter[T], size_hint~ : Int = 0) -> Array[T] {
+  let result = Array::new(capacity=size_hint)
   for e in self {
     result.push(e)
   }
@@ -815,10 +815,8 @@ pub fn Iter::to_array[T](self : Iter[T]) -> Array[T] {
 
 ///|
 /// Collects the elements of the iterator into an array.
-pub fn Iter::collect[T](self : Iter[T]) -> Array[T] {
-  let result = []
-  self.each(fn(e) { result.push(e) })
-  result
+pub fn Iter::collect[T](self : Iter[T], size_hint~ : Int = 0) -> Array[T] {
+  self.to_array(size_hint~)
 }
 
 ///|
