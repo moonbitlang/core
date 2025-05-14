@@ -393,7 +393,7 @@ pub fn String::offset_of_nth_char(
 }
 
 ///|
-/// Returns the Unicode character at the given offset.
+/// Returns the Unicode character at the given offset. Note this is not the n-th character.
 /// 
 /// This has O(1) complexity.
 pub fn String::char_at(self : String, offset : Int) -> Char {
