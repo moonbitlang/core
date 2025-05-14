@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-#visibility(change_to="readonly", "Use smart constructor to make json")
+#visibility(change_to="readonly", "Use helper functions like `Json::object(...)` instead")
 pub(all) enum Json {
   Null
   True
