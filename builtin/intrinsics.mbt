@@ -1738,8 +1738,8 @@ pub fn String::charcode_length(self : String) -> Int = "%string_length"
 /// ```moonbit
 /// test "String::op_get" {
 ///   let s = "Hello, 世界!"
-///   inspect!(s[0].to_char(), content="Some('H')")
-///   inspect!(s[7], content="19990")
+///   inspect!(s[0], content="H")
+///   inspect!(s[7], content="世")
 /// }
 ///
 /// test "panic String::op_get/out_of_bounds" {
@@ -1748,7 +1748,7 @@ pub fn String::charcode_length(self : String) -> Int = "%string_length"
 /// }
 /// ```
 ///
-pub fn String::op_get(self : String, idx : Int) -> Int = "%string_get"
+pub fn String::op_get(self : String, idx : Int) -> Char = "%string_get"
 
 ///|
 /// Retrieves the character at the specified index in a string.
