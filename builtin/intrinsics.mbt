@@ -1732,22 +1732,7 @@ pub fn String::charcode_length(self : String) -> Int = "%string_length"
 ///
 /// Throws a runtime error if `index` is negative or greater than or equal to the
 /// length of the string.
-///
-/// Example:
-///
-/// ```moonbit
-/// test "String::op_get" {
-///   let s = "Hello, 世界!"
-///   inspect!(s[0], content="H")
-///   inspect!(s[7], content="世")
-/// }
-///
-/// test "panic String::op_get/out_of_bounds" {
-///   let s = "Hello"
-///   ignore(s[5]) // Index out of bounds
-/// }
-/// ```
-///
+#deprecated("use `String::charcode_at` and `Int::to_char` instead")
 pub fn String::op_get(self : String, idx : Int) -> Char = "%string_get"
 
 ///|
