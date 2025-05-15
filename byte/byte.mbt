@@ -51,12 +51,12 @@ pub fn to_uint64(self : Byte) -> UInt64 {
 /// Example:
 ///
 /// ```moonbit
-/// test "count_ones" {
+/// test "popcnt" {
 ///   let b = b'\x0F'
-///   inspect!(b.count_ones(), content="4")
+///   inspect!(b.popcnt(), content="4")
 /// }
 /// ```
-pub fn count_ones(self : Byte) -> Int {
+pub fn popcnt(self : Byte) -> Int {
   let mut n = self
   n = (n & 0x55) + ((n >> 1) & 0x55)
   n = (n & 0x33) + ((n >> 2) & 0x33)

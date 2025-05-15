@@ -52,27 +52,27 @@ test "additional random cases" {
 }
 
 ///|
-test "count_ones max_value" {
+test "popcnt max_value" {
   let b = b'\xFF'
-  inspect!(b.count_ones(), content="8")
+  inspect!(b.popcnt(), content="8")
 }
 
 ///|
-test "count_ones min_value" {
+test "popcnt min_value" {
   let b = b'\x00'
-  inspect!(b.count_ones(), content="0")
+  inspect!(b.popcnt(), content="0")
 }
 
 ///|
-test "count_ones random cases" {
-  inspect!(b'\x00'.count_ones(), content="0")
-  inspect!(b'\x01'.count_ones(), content="1")
-  inspect!(b'\x03'.count_ones(), content="2")
-  inspect!(b'\x05'.count_ones(), content="2")
-  inspect!(b'\x0F'.count_ones(), content="4")
-  inspect!(b'\x4F'.count_ones(), content="5")
-  inspect!(b'\x3F'.count_ones(), content="6")
-  inspect!(b'\x7F'.count_ones(), content="7")
-  inspect!(b'\x5F'.count_ones(), content="6")
-  inspect!(b'\xFF'.count_ones(), content="8")
+test "popcnt random cases" {
+  inspect!(b'\x00'.popcnt(), content="0")
+  inspect!(b'\x01'.popcnt(), content="1")
+  inspect!(b'\x03'.popcnt(), content="2")
+  inspect!(b'\x05'.popcnt(), content="2")
+  inspect!(b'\x0F'.popcnt(), content="4")
+  inspect!(b'\x4F'.popcnt(), content="5")
+  inspect!(b'\x3F'.popcnt(), content="6")
+  inspect!(b'\x7F'.popcnt(), content="7")
+  inspect!(b'\x5F'.popcnt(), content="6")
+  inspect!(b'\xFF'.popcnt(), content="8")
 }
