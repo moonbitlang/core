@@ -540,6 +540,7 @@ impl String {
   get(String, Int) -> Char
   length(String) -> Int
   make(Int, Char) -> String
+  #deprecated
   op_get(String, Int) -> Char
   substring(String, start~ : Int = .., end? : Int) -> String
   to_string(String) -> String
