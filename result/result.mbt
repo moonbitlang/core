@@ -352,7 +352,7 @@ pub fn unwrap[T, E](self : Result[T, E]) -> T {
 /// ```moonbit
 /// test "unwrap_err" {
 ///   let err : Result[Int, String] = Err("error message")
-///   inspect!(err.unwrap_err(), content="\"error message\"")
+///   inspect!(err.unwrap_err(), content="error message")
 /// }
 ///
 /// test "panic unwrap_err/ok" {
