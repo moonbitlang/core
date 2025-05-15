@@ -1017,9 +1017,13 @@ pub fn fold[A](self : String, init~ : A, f : (A, Char) -> A) -> A {
 
 ///|
 test "fold" {
-  assert_eq!("hello".fold(init=[], fn(acc, c) { acc..push(c) }), [
-    'h', 'e', 'l', 'l', 'o',
-  ])
+  assert_eq!(
+    "hello".fold(init=[], fn(acc, c) {
+      acc.push(c)
+      acc
+    }),
+    ['h', 'e', 'l', 'l', 'o'],
+  )
   assert_eq!(
     "hello".fold(init=0, fn(acc, c) { acc + c.to_int() }),
     104 + 101 + 108 + 108 + 111,
@@ -1042,9 +1046,13 @@ pub fn rev_fold[A](self : String, init~ : A, f : (A, Char) -> A) -> A {
 
 ///|
 test "rev_fold" {
-  assert_eq!("hello".rev_fold(init=[], fn(acc, c) { acc..push(c) }), [
-    'o', 'l', 'l', 'e', 'h',
-  ])
+  assert_eq!(
+    "hello".rev_fold(init=[], fn(acc, c) {
+      acc.push(c)
+      acc
+    }),
+    ['o', 'l', 'l', 'e', 'h'],
+  )
   assert_eq!(
     "hello".rev_fold(init=0, fn(acc, c) { acc + c.to_int() }),
     111 + 108 + 108 + 101 + 104,
