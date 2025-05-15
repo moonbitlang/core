@@ -87,7 +87,6 @@ pub impl Show for Bytes with output(self, logger) {
     ..write_string("\\x")
     ..write_char(to_hex_digit(byte / 16))
     ..write_char(to_hex_digit(byte % 16))
-    |> ignore
   }
   logger.write_string("\"")
 }

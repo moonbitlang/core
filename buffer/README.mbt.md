@@ -11,7 +11,7 @@ test "basic buffer operations" {
   let buf = @buffer.new()
 
   // Write some bytes
-  buf..write_byte(b'H').write_byte(b'i')
+  buf..write_byte(b'H')..write_byte(b'i')
 
   // Check contents
   inspect!(buf.is_empty(), content="false")

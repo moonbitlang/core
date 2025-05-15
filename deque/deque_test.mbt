@@ -816,11 +816,12 @@ test "deque truncate" {
   // Test split case (head_len < len)
   // Push and pop to create a wrap-around situation
   let dq = @deque.of([1, 2, 3, 4, 5, 6])
-    ..unsafe_pop_front()
-    ..unsafe_pop_front()
-    ..unsafe_pop_front()
-    ..push_back(7)
-    ..push_back(8)
+  dq
+  ..unsafe_pop_front()
+  ..unsafe_pop_front()
+  ..unsafe_pop_front()
+  ..push_back(7)
+  ..push_back(8)
   // Current layout: [7, 8, X, 4, 5, 6]
   @json.inspect!(dq.as_views(), content=[[4, 5, 6], [7, 8]])
   dq.truncate(42)
@@ -854,11 +855,12 @@ test "deque retain" {
   fn dq!() {
     // Push and pop to create a wrap-around situation
     let dq = @deque.of([1, 2, 3, 4, 5, 6])
-      ..unsafe_pop_front()
-      ..unsafe_pop_front()
-      ..unsafe_pop_front()
-      ..push_back(7)
-      ..push_back(8)
+    dq
+    ..unsafe_pop_front()
+    ..unsafe_pop_front()
+    ..unsafe_pop_front()
+    ..push_back(7)
+    ..push_back(8)
     // Current layout: [7, 8, X, 4, 5, 6]
     @json.inspect!(dq.as_views(), content=[[4, 5, 6], [7, 8]])
     dq
@@ -900,11 +902,12 @@ test "deque retain_map" {
   fn dq!() {
     // Push and pop to create a wrap-around situation
     let dq = @deque.of([1, 2, 3, 4, 5, 6])
-      ..unsafe_pop_front()
-      ..unsafe_pop_front()
-      ..unsafe_pop_front()
-      ..push_back(7)
-      ..push_back(8)
+    dq
+    ..unsafe_pop_front()
+    ..unsafe_pop_front()
+    ..unsafe_pop_front()
+    ..push_back(7)
+    ..push_back(8)
     // Current layout: [7, 8, X, 4, 5, 6]
     @json.inspect!(dq.as_views(), content=[[4, 5, 6], [7, 8]])
     dq
@@ -957,7 +960,8 @@ test "@deque.to_array/wrapped_around" {
 
 ///|
 test "pop_front when wrapped around" {
-  let dq = of([1, 2, 3, 4, 5])..push_front(6)
+  let dq = of([1, 2, 3, 4, 5])
+  dq.push_front(6)
   inspect!(dq.as_views(), content="([6], [1, 2, 3, 4, 5])")
   for _ in 0..<dq.length() {
     ignore(dq.pop_front())
@@ -967,7 +971,8 @@ test "pop_front when wrapped around" {
 
 ///|
 test "unsafe_pop_back when wrapped around" {
-  let dq = of([1, 2, 3, 4, 5])..push_front(6)
+  let dq = of([1, 2, 3, 4, 5])
+  dq.push_front(6)
   inspect!(dq.as_views(), content="([6], [1, 2, 3, 4, 5])")
   for _ in 0..<dq.length() {
     dq.unsafe_pop_back()
@@ -977,7 +982,8 @@ test "unsafe_pop_back when wrapped around" {
 
 ///|
 test "pop_back when wrapped around" {
-  let dq = of([1, 2, 3, 4, 5])..push_front(6)
+  let dq = of([1, 2, 3, 4, 5])
+  dq.push_front(6)
   inspect!(dq.as_views(), content="([6], [1, 2, 3, 4, 5])")
   for _ in 0..<dq.length() {
     ignore(dq.pop_back())
@@ -987,13 +993,15 @@ test "pop_back when wrapped around" {
 
 ///|
 test "rev_iter when wrapped around" {
-  let dq = of([1, 2, 3, 4, 5])..push_front(6)
+  let dq = of([1, 2, 3, 4, 5])
+  dq.push_front(6)
   inspect!(dq.rev_iter(), content="[5, 4, 3, 2, 1, 6]")
 }
 
 ///|
 test "rev_iter2 when wrapped around" {
-  let dq = of([1, 2, 3, 4, 5])..push_front(6)
+  let dq = of([1, 2, 3, 4, 5])
+  dq.push_front(6)
   inspect!(
     dq.rev_iter2(),
     content="[(0, 5), (1, 4), (2, 3), (3, 2), (4, 1), (5, 6)]",

@@ -53,12 +53,9 @@ fn grow_if_necessary(self : T, required : Int) -> Unit {
     enough_space = enough_space * 2
   }
   if enough_space != self.data.length() {
-    self.data = FixedArray::make(enough_space, Byte::default())..unsafe_blit(
-      0,
-      self.data,
-      0,
-      self.len,
-    )
+    let new_data = FixedArray::make(enough_space, Byte::default())
+    new_data.unsafe_blit(0, self.data, 0, self.len)
+    self.data = new_data
   }
 }
 
