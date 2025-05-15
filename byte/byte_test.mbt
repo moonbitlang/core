@@ -50,3 +50,29 @@ test "additional random cases" {
   inspect!(@moonbitlang/core/byte.to_uint64(b'\x64'), content="100")
   inspect!(@moonbitlang/core/byte.to_uint64(b'\x99'), content="153")
 }
+
+///|
+test "count_ones max_value" {
+  let b = b'\xFF'
+  inspect!(b.count_ones(), content="8")
+}
+
+///|
+test "count_ones min_value" {
+  let b = b'\x00'
+  inspect!(b.count_ones(), content="0")
+}
+
+///|
+test "count_ones random cases" {
+  inspect!(b'\x00'.count_ones(), content="0")
+  inspect!(b'\x01'.count_ones(), content="1")
+  inspect!(b'\x03'.count_ones(), content="2")
+  inspect!(b'\x05'.count_ones(), content="2")
+  inspect!(b'\x0F'.count_ones(), content="4")
+  inspect!(b'\x4F'.count_ones(), content="5")
+  inspect!(b'\x3F'.count_ones(), content="6")
+  inspect!(b'\x7F'.count_ones(), content="7")
+  inspect!(b'\x5F'.count_ones(), content="6")
+  inspect!(b'\xFF'.count_ones(), content="8")
+}

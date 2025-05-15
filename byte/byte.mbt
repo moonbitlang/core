@@ -39,7 +39,6 @@ pub fn to_uint64(self : Byte) -> UInt64 {
   self.to_uint().to_uint64()
 }
 
-
 ///|
 /// Counts the number of 1-bits (population count) in the byte using bitwise operations.
 ///
@@ -57,10 +56,10 @@ pub fn to_uint64(self : Byte) -> UInt64 {
 ///   inspect!(b.count_ones(), content="4")
 /// }
 /// ```
-pub fn count_ones(self: Byte) -> Int {
-  let mut n = self;
-  n = (n & 0x55) + ((n >> 1) & 0x55);
-  n = (n & 0x33) + ((n >> 2) & 0x33);
-  n = (n & 0x0F) + ((n >> 4) & 0x0F);
+pub fn count_ones(self : Byte) -> Int {
+  let mut n = self
+  n = (n & 0x55) + ((n >> 1) & 0x55)
+  n = (n & 0x33) + ((n >> 2) & 0x33)
+  n = (n & 0x0F) + ((n >> 4) & 0x0F)
   n.to_int()
 }
