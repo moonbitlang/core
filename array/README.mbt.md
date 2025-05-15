@@ -65,9 +65,8 @@ test "sorting" {
 
   // Custom comparison
   let strs = ["aa", "b", "ccc"]
-  let sorted2 = strs
-    .copy()
-    ..sort_by(fn(a, b) { a.length().compare(b.length()) })
+  let sorted2 = strs.copy()
+  sorted2.sort_by(fn(a, b) { a.length().compare(b.length()) })
   inspect!(
     sorted2,
     content=
@@ -77,7 +76,8 @@ test "sorting" {
 
   // Sort by key
   let pairs = [(2, "b"), (1, "a"), (3, "c")]
-  let sorted3 = pairs.copy()..sort_by_key(fn(p) { p.0 })
+  let sorted3 = pairs.copy()
+  sorted3.sort_by_key(fn(p) { p.0 })
   inspect!(
     sorted3,
     content=

@@ -287,9 +287,10 @@ test "from_iter empty iter" {
 ///|
 test "remove item causes break when psl < i" {
   let set = Set::new()
-    ..add(1)
-    ..add(11) // This goes to a different bucket due to hash collision
-    ..remove(21) // Key doesn't exist, will cause psl < i and break
+  set
+  ..add(1)
+  ..add(11) // This goes to a different bucket due to hash collision
+  ..remove(21) // Key doesn't exist, will cause psl < i and break
   assert_eq!(set.size(), 2)
 }
 
@@ -300,28 +301,34 @@ test "to_array_empty" {
 
 ///|
 test "to_array_non_empty" {
-  let set = Set::new()..add(1)..add(2)..add(3)
+  let set = Set::new()
+  set..add(1)..add(2)..add(3)
   inspect!(set.to_array(), content="[1, 2, 3]")
 }
 
 ///|
 test "op_equal: different size" {
-  let set1 = Set::new()..add(1)
+  let set1 = Set::new()
+  set1.add(1)
   let set2 = Set::new()
   inspect!(set1 == set2, content="false")
 }
 
 ///|
 test "op_equal: different keys" {
-  let set1 = Set::new()..add(1)
-  let set2 = Set::new()..add(2)
+  let set1 = Set::new()
+  set1.add(1)
+  let set2 = Set::new()
+  set2.add(2)
   inspect!(set1 == set2, content="false")
 }
 
 ///|
 test "op_equal: same sets" {
-  let set1 = Set::new()..add(1)
-  let set2 = Set::new()..add(1)
+  let set1 = Set::new()
+  set1.add(1)
+  let set2 = Set::new()
+  set2.add(1)
   inspect!(set1 == set2, content="true")
 }
 
@@ -334,15 +341,19 @@ test "op_equal: empty sets" {
 
 ///|
 test "op_equal: same elements different order" {
-  let set1 = Set::new()..add(1)..add(2)..add(3)
-  let set2 = Set::new()..add(3)..add(2)..add(1)
+  let set1 = Set::new()
+  set1..add(1)..add(2)..add(3)
+  let set2 = Set::new()
+  set2..add(3)..add(2)..add(1)
   inspect!(set1 == set2, content="true")
 }
 
 ///|
 test "op_equal: subset" {
-  let set1 = Set::new()..add(1)..add(2)..add(3)
-  let set2 = Set::new()..add(1)..add(2)
+  let set1 = Set::new()
+  set1..add(1)..add(2)..add(3)
+  let set2 = Set::new()
+  set2..add(1)..add(2)
   inspect!(set1 == set2, content="false")
   inspect!(set2 == set1, content="false")
 }
@@ -375,8 +386,10 @@ test "op_equal: large sets with one difference" {
 
 ///|
 test "op_equal: after removal" {
-  let set1 = Set::new()..add(1)..add(2)..add(3)
-  let set2 = Set::new()..add(1)..add(2)..add(3)
+  let set1 = Set::new()
+  set1..add(1)..add(2)..add(3)
+  let set2 = Set::new()
+  set2..add(1)..add(2)..add(3)
   set1.remove(2)
   inspect!(set1 == set2, content="false")
   set2.remove(2)
@@ -385,7 +398,8 @@ test "op_equal: after removal" {
 
 ///|
 test "op_equal: after clear" {
-  let set1 = Set::new()..add(1)..add(2)..add(3)
+  let set1 = Set::new()
+  set1..add(1)..add(2)..add(3)
   let set2 = Set::new()
   inspect!(set1 == set2, content="false")
   set1.clear()
@@ -394,8 +408,10 @@ test "op_equal: after clear" {
 
 ///|
 test "op_equal: with string elements" {
-  let set1 = Set::new()..add("apple")..add("banana")..add("cherry")
-  let set2 = Set::new()..add("apple")..add("banana")..add("cherry")
+  let set1 = Set::new()
+  set1..add("apple")..add("banana")..add("cherry")
+  let set2 = Set::new()
+  set2..add("apple")..add("banana")..add("cherry")
   inspect!(set1 == set2, content="true")
   set1.remove("banana")
   inspect!(set1 == set2, content="false")
@@ -403,7 +419,8 @@ test "op_equal: with string elements" {
 
 ///|
 test "op_equal: reflexivity" {
-  let set = Set::new()..add(1)..add(2)..add(3)
+  let set = Set::new()
+  set..add(1)..add(2)..add(3)
   inspect!(set == set, content="true")
 }
 
