@@ -26,9 +26,9 @@ You can use `set()` to add a key-value pair to the map, and use `get()` to get a
 test {
   let map : Map[String, Int] = {}
   map.set("a", 1)
-  assert_eq!(map.get("a"), Some(1))
-  assert_eq!(map.get_or_default("a", 0), 1)
-  assert_eq!(map.get_or_default("b", 0), 0)
+  inspect!(map.get("a"), content="Some(1)")
+  inspect!(map.get_or_default("a", 0), content="1")
+  inspect!(map.get_or_default("b", 0), content="0")
   @json.inspect!(map, content={ "a": 1 })
   map.set("a", 2) // duplicate key
   @json.inspect!(map, content={ "a": 2 })
@@ -59,8 +59,8 @@ You can use `contains()` to check whether a key exists.
 ```moonbit
 test {
   let map = { "a": 1, "b": 2, "c": 3 }
-  assert_eq!(map.contains("a"), true)
-  assert_eq!(map.contains("d"), false)
+  inspect!(map.contains("a"), content="true")
+  inspect!(map.contains("d"), content="false")
 }
 ```
 
@@ -71,8 +71,8 @@ You can use `size()` to get the number of key-value pairs in the map, or `capaci
 ```moonbit
 test {
   let map = { "a": 1, "b": 2, "c": 3 }
-  assert_eq!(map.size(), 3)
-  assert_eq!(map.capacity(), 8)
+  inspect!(map.size(), content="3")
+  inspect!(map.capacity(), content="8")
 }
 ```
 
@@ -81,7 +81,7 @@ Similarly, you can use `is_empty()` to check whether the map is empty.
 ```moonbit
 test {
   let map : Map[String, Int] = {}
-  assert_eq!(map.is_empty(), true)
+  inspect!(map.is_empty(), content="true")
 }
 ```
 
@@ -93,7 +93,7 @@ You can use `clear` to remove all key-value pairs from the map, but the allocate
 test {
   let map = { "a": 1, "b": 2, "c": 3 }
   map.clear()
-  assert_eq!(map.is_empty(), true)
+  inspect!(map.is_empty(), content="true")
 }
 ```
 
@@ -104,11 +104,11 @@ You can use `each()` or `eachi()` to iterate through all key-value pairs in the 
 ```moonbit
 test {
   let map = { "a": 1, "b": 2, "c": 3 }
-    let arr = []
-    map.each(fn(k, v) { arr.push((k, v)) })
-    assert_eq!(arr, [("a", 1), ("b", 2), ("c", 3)])
-    let arr2 = []
-    map.eachi(fn(i, k, v) { arr2.push((i, k, v)) })
-    assert_eq!(arr2, [(0, "a", 1), (1, "b", 2), (2, "c", 3)])
+  let arr = []
+  map.each(fn(k, v) { arr.push((k, v)) })
+  @json.inspect!(arr, content=[["a", 1], ["b", 2], ["c", 3]])
+  let arr2 = []
+  map.eachi(fn(i, k, v) { arr2.push((i, k, v)) })
+  @json.inspect!(arr2, content=[[0, "a", 1], [1, "b", 2], [2, "c", 3]])
 }
 ```

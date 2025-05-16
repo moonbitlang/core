@@ -67,7 +67,9 @@ pub fn Decimal::from_int64(v : Int64) -> Decimal {
 
 ///|
 fn Decimal::from_int64_priv(v : Int64) -> Decimal {
-  Decimal::new_priv()..assign(v)
+  let d = Decimal::new_priv()
+  d.assign(v)
+  d
 }
 
 ///|
@@ -154,7 +156,8 @@ fn parse_decimal_from_view(str : @string.View) -> Decimal!StrConvError {
   }
   // finish
   guard rest is [] else { syntax_err!() }
-  d..trim()
+  d.trim()
+  d
 }
 
 ///|

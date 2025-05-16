@@ -5,10 +5,13 @@ let max_value : Byte
 
 let min_value : Byte
 
+fn popcnt(Byte) -> Int
+
 fn to_uint64(Byte) -> UInt64
 
 // Types and methods
 impl Byte {
+  popcnt(Byte) -> Int
   to_uint64(Byte) -> UInt64
 }
 

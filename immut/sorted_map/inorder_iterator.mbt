@@ -17,7 +17,9 @@ priv type InorderIterator[K, V] Array[T[K, V]]
 
 ///|
 fn InorderIterator::new[K, V](root : T[K, V]) -> InorderIterator[K, V] {
-  InorderIterator([])..move_left(root)
+  let it = InorderIterator([])
+  it.move_left(root)
+  it
 }
 
 ///|

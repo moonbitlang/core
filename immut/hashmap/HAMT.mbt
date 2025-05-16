@@ -443,5 +443,5 @@ pub impl[K : Eq + Hash, V : Eq] Eq for T[K, V] with op_equal(self, other) {
 
 ///|
 pub impl[K : Hash, V : Hash] Hash for T[K, V] with hash_combine(self, hasher) {
-  self.each(fn(k, v) { hasher..combine(k).combine(v) })
+  self.each(fn(k, v) { hasher..combine(k)..combine(v) })
 }

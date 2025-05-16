@@ -20,7 +20,7 @@ pub impl[A : Show, B : Show] Show for (A, B) with output(self, logger) {
   ..write_object(a)
   ..write_string(", ")
   ..write_object(b)
-  .write_string(")")
+  ..write_string(")")
 }
 
 ///|
@@ -36,7 +36,7 @@ pub impl[A : Show, B : Show, C : Show] Show for (A, B, C) with output(
   ..write_object(b)
   ..write_string(", ")
   ..write_object(c)
-  .write_string(")")
+  ..write_string(")")
 }
 
 ///|
@@ -54,7 +54,7 @@ pub impl[A : Show, B : Show, C : Show, D : Show] Show for (A, B, C, D) with outp
   ..write_object(c)
   ..write_string(", ")
   ..write_object(d)
-  .write_string(")")
+  ..write_string(")")
 }
 
 ///|
@@ -77,7 +77,7 @@ pub impl[A : Show, B : Show, C : Show, D : Show, E : Show] Show for (
   ..write_object(d)
   ..write_string(", ")
   ..write_object(e)
-  .write_string(")")
+  ..write_string(")")
 }
 
 ///|
@@ -103,7 +103,7 @@ pub impl[A : Show, B : Show, C : Show, D : Show, E : Show, F : Show] Show for (
   ..write_object(e)
   ..write_string(", ")
   ..write_object(f)
-  .write_string(")")
+  ..write_string(")")
 }
 
 ///|
@@ -132,7 +132,7 @@ pub impl[A : Show, B : Show, C : Show, D : Show, E : Show, F : Show, G : Show] S
   ..write_object(f)
   ..write_string(", ")
   ..write_object(g)
-  .write_string(")")
+  ..write_string(")")
 }
 
 ///|
@@ -164,7 +164,7 @@ pub impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : 
   ..write_object(x6)
   ..write_string(", ")
   ..write_object(x7)
-  .write_string(")")
+  ..write_string(")")
 }
 
 ///|
@@ -199,7 +199,7 @@ pub impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : 
   ..write_object(x7)
   ..write_string(", ")
   ..write_object(x8)
-  .write_string(")")
+  ..write_string(")")
 }
 
 ///|
@@ -237,7 +237,7 @@ pub impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : 
   ..write_object(x8)
   ..write_string(", ")
   ..write_object(x9)
-  .write_string(")")
+  ..write_string(")")
 }
 
 ///|
@@ -278,7 +278,7 @@ pub impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : 
   ..write_object(x9)
   ..write_string(", ")
   ..write_object(x10)
-  .write_string(")")
+  ..write_string(")")
 }
 
 ///|
@@ -322,7 +322,7 @@ pub impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : 
   ..write_object(x10)
   ..write_string(", ")
   ..write_object(x11)
-  .write_string(")")
+  ..write_string(")")
 }
 
 ///|
@@ -369,7 +369,7 @@ pub impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : 
   ..write_object(x11)
   ..write_string(", ")
   ..write_object(x12)
-  .write_string(")")
+  ..write_string(")")
 }
 
 ///|
@@ -419,7 +419,7 @@ pub impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : 
   ..write_object(x12)
   ..write_string(", ")
   ..write_object(x13)
-  .write_string(")")
+  ..write_string(")")
 }
 
 ///|
@@ -472,7 +472,7 @@ pub impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : 
   ..write_object(x13)
   ..write_string(", ")
   ..write_object(x14)
-  .write_string(")")
+  ..write_string(")")
 }
 
 ///|
@@ -528,5 +528,5 @@ pub impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : 
   ..write_object(x14)
   ..write_string(", ")
   ..write_object(x15)
-  .write_string(")")
+  ..write_string(")")
 }

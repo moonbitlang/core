@@ -88,7 +88,9 @@ priv type InorderIterator[A] Array[T[A]]
 
 ///|
 fn InorderIterator::new[A](root : T[A]) -> InorderIterator[A] {
-  InorderIterator([])..move_left(root)
+  let it = InorderIterator([])
+  it.move_left(root)
+  it
 }
 
 ///|

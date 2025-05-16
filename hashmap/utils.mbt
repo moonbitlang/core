@@ -363,7 +363,7 @@ pub impl[K : Show, V : Show] Show for T[K, V] with output(self, logger) {
     ..write_object(k)
     ..write_string(", ")
     ..write_object(v)
-    .write_string(")")
+    ..write_string(")")
   })
   logger.write_string("])")
 }

@@ -110,7 +110,7 @@ pub fn stringify(
           buf
           ..write_char('\"')
           ..write_string(escape(k, escape_slash~))
-          .write_char('\"')
+          ..write_char('\"')
           if indent == 0 {
             buf.write_char(':')
           } else {

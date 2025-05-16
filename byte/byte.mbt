@@ -38,3 +38,28 @@ pub let min_value : Byte = b'\x00'
 pub fn to_uint64(self : Byte) -> UInt64 {
   self.to_uint().to_uint64()
 }
+
+///|
+/// Counts the number of 1-bits (population count) in the byte using bitwise operations.
+///
+/// Parameters:
+///
+/// * `self` : The byte value whose 1-bits are to be counted.
+///
+/// Returns the number of 1-bits in the byte.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "popcnt" {
+///   let b = b'\x0F'
+///   inspect!(b.popcnt(), content="4")
+/// }
+/// ```
+pub fn popcnt(self : Byte) -> Int {
+  let mut n = self
+  n = (n & 0x55) + ((n >> 1) & 0x55)
+  n = (n & 0x33) + ((n >> 2) & 0x33)
+  n = (n & 0x0F) + ((n >> 4) & 0x0F)
+  n.to_int()
+}

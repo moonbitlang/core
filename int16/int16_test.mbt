@@ -151,7 +151,7 @@ test "Int16::op_div" {
   inspect!(div(-1, 1), content="-1")
   inspect!(div(32767, 1), content="32767") // Max value / 1
   inspect!(div(-32768, 1), content="-32768") // Min value / 1
-  inspect!(div(-32768, -1), content="-32768") // Min value / -1 (overflow)
+  // inspect!(div(-32768, -1), content="-32768") // Min value / -1 (this is a UB, overflow)
   inspect!(div(32767, -1), content="-32767") // Max value / -1
   inspect!(div(12345, 123), content="100") // Larger numbers
   inspect!(div(-12345, 123), content="-100") // Negative dividend
