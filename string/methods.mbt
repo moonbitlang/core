@@ -144,10 +144,7 @@ test "find_by_charcode" {
     "hello"[1:].find_by_charcode(Int::op_equal(_, 'o')),
     content="Some(3)",
   )
-  inspect!(
-    "hello"[:4].find_by_charcode(Int::op_equal(_, 'o')),
-    content="None",
-  )
+  inspect!("hello"[:4].find_by_charcode(Int::op_equal(_, 'o')), content="None")
   inspect!("hello".find_by_charcode(Int::op_equal(_, 'z')), content="None")
 
   // Test empty string
