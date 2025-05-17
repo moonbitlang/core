@@ -156,9 +156,9 @@ pub fn filter[K : Eq + Hash, V](self : T[K, V], pred : (V) -> Bool) -> T[K, V] {
     Leaf(k, v) => if pred(v) { Leaf(k, v) } else { Empty }
     Collision(bucket) =>
       match bucket.filter(pred) {
-        None => Empty
         Some(Just_One(k, v)) => Leaf(k, v)
         Some(b) => Collision(b)
+        None => Empty 
       }
     Branch(children) => {
       let mut result = Empty
@@ -197,9 +197,6 @@ pub fn fold_with_key[K, V, A](
       Leaf(k, v) => go(stack, f(acc, k, v))
       Collision(bucket) => go(stack, bucket.foldl_with_key(init=acc, f))
       Branch(children) => {
-        if children.data.is_empty() {
-          return acc
-        }
         if index < children.data.length() {
           let child = children.data[index]
           stack.push((node, index + 1))
