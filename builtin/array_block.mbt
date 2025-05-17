@@ -137,7 +137,6 @@ pub fn Array::unsafe_blit_fixed[A](
 /// * `len` is negative
 /// * `src_offset` is negative
 /// * `dst_offset` is negative
-/// * `dst_offset + len` exceeds the length of destination array
 /// * `src_offset + len` exceeds the length of source array
 pub fn Array::blit_to[A](
   self : Array[A],
@@ -146,11 +145,12 @@ pub fn Array::blit_to[A](
   src_offset~ : Int = 0,
   dst_offset~ : Int = 0
 ) -> Unit {
-  guard len >= 0 &&
-    dst_offset >= 0 &&
-    src_offset >= 0 &&
-    dst_offset <= dst.length() &&
-    src_offset + len <= self.length()
+  guard len >= 0 else { abort("`len` is negative") }
+  guard dst_offset >= 0 else { abort("`dst_offset` is negative") }
+  guard src_offset >= 0 else { abort("`src_offset` is negative") }
+  guard src_offset + len <= self.length() else {
+    abort("`src_offset + len` exceeds the length of source array")
+  }
   if dst_offset + len > dst.length() {
     dst.unsafe_grow_to_length(dst_offset + len)
   }
