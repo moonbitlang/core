@@ -175,7 +175,7 @@ impl Iter {
   all[T](Self[T], (T) -> Bool) -> Bool
   any[T](Self[T], (T) -> Bool) -> Bool
   append[T](Self[T], T) -> Self[T]
-  collect[T](Self[T]) -> Array[T]
+  collect[T](Self[T], size_hint~ : Int = ..) -> Array[T]
   concat[T](Self[T], Self[T]) -> Self[T]
   contains[A : Eq](Self[A], A) -> Bool
   count[T](Self[T]) -> Int
@@ -215,7 +215,7 @@ impl Iter {
   take[T](Self[T], Int) -> Self[T]
   take_while[T](Self[T], (T) -> Bool) -> Self[T]
   tap[T](Self[T], (T) -> Unit) -> Self[T]
-  to_array[T](Self[T]) -> Array[T]
+  to_array[T](Self[T], size_hint~ : Int = ..) -> Array[T]
 }
 impl[T] Add for Iter[T]
 impl[T : Show] Show for Iter[T]
