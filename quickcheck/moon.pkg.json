@@ -5,6 +5,9 @@
   ],
   "test-import": [
     "moonbitlang/core/array",
-    "moonbitlang/core/bigint"
+    "moonbitlang/core/bigint",
+    "moonbitlang/core/float",
+    "moonbitlang/core/double",
+    "moonbitlang/core/tuple"
   ]
 }
