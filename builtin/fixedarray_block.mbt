@@ -112,8 +112,11 @@ pub fn FixedArray::blit_to[A](
   src_offset~ : Int = 0,
   dst_offset~ : Int = 0
 ) -> Unit {
-  if dst_offset + len > dst.length() || src_offset + len > self.length() {
-    panic()
+  guard len >= 0 else { abort("`len` is negative") }
+  guard dst_offset >= 0 else { abort("`dst_offset` is negative") }
+  guard src_offset >= 0 else { abort("`src_offset` is negative") }
+  guard dst_offset + len <= dst.length() && src_offset + len <= self.length() else {
+    abort("source or destination range exceeds array length")
   }
   FixedArray::unsafe_blit(dst, dst_offset, self, src_offset, len)
 }
