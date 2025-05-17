@@ -159,8 +159,7 @@ pub fn map[A, B](self : T[A], f : (A) -> B) -> T[B] {
           dest.tail = More(f(hd), tail=Empty)
           continue dest.tail, tail
         }
-        // unreachable
-        Empty, _ => panic()
+        Empty, _ => abort("unreachable")
       }
       dest
     }
@@ -180,8 +179,7 @@ pub fn mapi[A, B](self : T[A], f : (Int, A) -> B) -> T[B] {
           dest.tail = More(f(i, hd), tail=Empty)
           continue i + 1, dest.tail, tail
         }
-        // unreachable
-        _, Empty, _ => panic()
+        _, Empty, _ => abort("unreachable")
       }
       dest
     }
@@ -248,9 +246,7 @@ pub fn filter[A](self : T[A], f : (A) -> Bool) -> T[A] {
             } else {
               continue dest, tail
             }
-          Empty, _ =>
-            // unreachable
-            panic()
+          Empty, _ => abort("unreachable")
         }
         dest
       }
@@ -362,8 +358,7 @@ pub fn concat[A](self : T[A], other : T[A]) -> T[A] {
           dest.tail = More(head, tail=Empty)
           continue dest.tail, tail
         }
-        // unreachable
-        Empty, _ => panic()
+        Empty, _ => abort("unreachable")
       }
       dest
     }
@@ -502,7 +497,7 @@ pub fn flat_map[A, B](self : T[A], f : (A) -> T[B]) -> T[B] {
               dest.tail = More(hd, tail=Empty)
               continue dest.tail, tail
             }
-            Empty, _ => panic()
+            Empty, _ => abort("unreachable")
           }
           // continue looping on the `tail` of `self`
           loop_over_tail~: loop dest1, tail {
@@ -515,7 +510,7 @@ pub fn flat_map[A, B](self : T[A], f : (A) -> T[B]) -> T[B] {
                   dest.tail = More(hd, tail=Empty)
                   continue dest.tail, tail
                 }
-                Empty, _ => panic()
+                Empty, _ => abort("unreachable")
               }
           }
           dest
@@ -552,7 +547,7 @@ pub fn filter_map[A, B](self : T[A], f : (A) -> B?) -> T[B] {
                   continue dest.tail, tail
                 }
               }
-            Empty, _ => panic()
+            Empty, _ => abort("unreachable")
           }
           dest
         }
@@ -616,8 +611,7 @@ pub fn intersperse[A](self : T[A], separator : A) -> T[A] {
           dest.tail = More(separator, tail=new_tail)
           continue new_tail, tl
         }
-        // unreachable
-        Empty, _ => panic()
+        Empty, _ => abort("unreachable")
       }
       dest
     }
@@ -685,7 +679,7 @@ pub fn flatten[A](self : T[T[A]]) -> T[A] {
               dest.tail = More(hd, tail=Empty)
               continue dest.tail, tail
             }
-            Empty, _ => panic()
+            Empty, _ => abort("unreachable")
           }
           // continue looping on the `tail` of `self`
           loop_over_tail~: loop dest1, tail {
@@ -698,7 +692,7 @@ pub fn flatten[A](self : T[T[A]]) -> T[A] {
                   dest.tail = More(hd, tail=Empty)
                   continue dest.tail, tail
                 }
-                Empty, _ => panic()
+                Empty, _ => abort("unreachable")
               }
           }
           dest
@@ -821,7 +815,7 @@ pub fn unfold[A, S](f : (S) -> (A, S)?, init~ : S) -> T[A] {
           dest.tail = More(element, tail=Empty)
           continue dest.tail, f(new_state)
         }
-        Empty, _ => panic()
+        Empty, _ => abort("unreachable")
       }
       dest
     }
@@ -862,7 +856,7 @@ pub fn take[A](self : T[A], n : Int) -> T[A] {
             dest.tail = More(x, tail=Empty)
             continue dest.tail, xs, n - 1
           }
-          Empty, _, _ => panic()
+          Empty, _, _ => abort("unreachable")
         }
         dest
       }
@@ -918,7 +912,7 @@ pub fn take_while[A](self : T[A], p : (A) -> Bool) -> T[A] {
             continue dest.tail, xs
           }
           More(_), _ => ()
-          Empty, _ => panic()
+          Empty, _ => abort("unreachable")
         }
         dest
       } else {
@@ -958,7 +952,7 @@ pub fn scan_left[A, E](self : T[A], f : (E, A) -> E, init~ : E) -> T[E] {
   let dest = More(init, tail=Empty)
   loop dest, self, init {
     _, Empty, _ => ()
-    Empty, _, _ => panic()
+    Empty, _, _ => abort("unreachable")
     More(_) as dest, More(x, tail=xs), acc => {
       dest.tail = More(f(acc, x), tail=Empty)
       continue dest.tail, xs, f(acc, x)
@@ -1065,7 +1059,7 @@ pub fn remove_at[A](self : T[A], index : Int) -> T[A] {
           dest.tail = More(x, tail=Empty)
           continue dest.tail, xs, n - 1
         }
-        Empty, _, _ => panic()
+        Empty, _, _ => abort("unreachable")
       }
       dest
     }
@@ -1095,7 +1089,7 @@ pub fn remove[A : Eq](self : T[A], elem : A) -> T[A] {
             dest.tail = More(x, tail=Empty)
             continue dest.tail, xs
           }
-        Empty, _ => panic()
+        Empty, _ => abort("unreachable")
       }
       dest
     }
