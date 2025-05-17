@@ -278,3 +278,10 @@ jobs:
             fi
           done
           (exit $_passed)
+
+      - name: prettier
+        run: |
+          npm install --global prettier;
+          find . -name *.mod.json -exec npx prettier --write {} \;
+          find . -name *.pkg.json -exec npx prettier --write {} \;
+          git diff --exit-code;
