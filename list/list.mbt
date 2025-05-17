@@ -1197,7 +1197,22 @@ pub fn iter2[A](self : T[A]) -> Iter2[Int, A] {
 /// Convert the iterator into a list. Preserves order of elements.
 /// If the order of elements is not important, use `from_iter_rev` instead.
 pub fn from_iter[A](iter : Iter[A]) -> T[A] {
-  iter.fold(init=Empty, fn(acc, e) { More(e, tail=acc) }).reverse_inplace()
+  let mut res = Empty
+  let mut ptr = Empty
+  for x in iter {
+    match (res, ptr) {
+      (Empty, _) => {
+        res = More(x, tail=Empty)
+        ptr = res
+      }
+      (More(_), More(_) as ptr_) => {
+        ptr_.tail = More(x, tail=Empty)
+        ptr = ptr_.tail
+      }
+      (_, _) => abort("unreachable")
+    }
+  }
+  res
 }
 
 ///|
