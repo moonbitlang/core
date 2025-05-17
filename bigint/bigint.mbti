@@ -2,6 +2,7 @@ package "moonbitlang/core/bigint"
 
 import(
   "moonbitlang/core/json"
+  "moonbitlang/core/random"
 )
 
 // Values
@@ -11,6 +12,8 @@ type BigInt
 impl BigInt {
   #deprecated
   asr(Self, Int) -> Self
+  bit_length(Self) -> Int
+  ctz(Self) -> Int
   from_hex(String) -> Self
   from_int(Int) -> Self
   from_int64(Int64) -> Self
@@ -22,6 +25,8 @@ impl BigInt {
   #deprecated
   lsl(Self, Int) -> Self
   pow(Self, Self, modulus? : Self) -> Self
+  probably_prime(Self, @random.Rand, iters~ : Int = ..) -> Bool
+  random(@random.Rand, Int, limit~ : Self = ..) -> Self
   #deprecated
   shl(Self, Int) -> Self
   #deprecated
