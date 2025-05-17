@@ -7,6 +7,8 @@ fn contains(String, StringView) -> Bool
 
 fn contains_char(String, Char) -> Bool
 
+fn data(StringView) -> String
+
 fn default() -> String
 
 #deprecated
@@ -58,6 +60,8 @@ fn rev_iter(String) -> Iter[Char]
 
 fn split(String, StringView) -> Iter[StringView]
 
+fn start_offset(StringView) -> Int
+
 #deprecated
 fn starts_with(String, String) -> Bool
 
@@ -92,6 +96,7 @@ impl StringView {
   charcodes(Self, start~ : Int = .., end~ : Int = ..) -> Self
   contains(Self, Self) -> Bool
   contains_char(Self, Char) -> Bool
+  data(Self) -> String
   find(Self, Self) -> Int?
   find_by(Self, (Char) -> Bool) -> Int?
   fold[A](Self, init~ : A, (A, Char) -> A) -> A
@@ -119,6 +124,7 @@ impl StringView {
   rev_fold[A](Self, init~ : A, (A, Char) -> A) -> A
   rev_iter(Self) -> Iter[Char]
   split(Self, Self) -> Iter[Self]
+  start_offset(Self) -> Int
   to_lower(Self) -> Self
   to_upper(Self) -> Self
   trim(Self, Self) -> Self
