@@ -113,12 +113,12 @@ pub fn Array::unsafe_blit_fixed[A](
 ///
 /// Parameters:
 ///
-/// * `source` : The array to copy elements from.
-/// * `destination` : The array to copy elements to. Will be automatically grown
+/// * `self` : The array to copy elements from.
+/// * `dst` : The array to copy elements to. Will be automatically grown
 /// if needed to accommodate the copied elements.
-/// * `length` : The number of elements to copy.
-/// * `source_start` : Starting index in the source array. Defaults to 0.
-/// * `destination_start` : Starting index in the destination array. Defaults to
+/// * `len` : The number of elements to copy.
+/// * `src_offset` : Starting index in the source array. Defaults to 0.
+/// * `dst_offset` : Starting index in the destination array. Defaults to
 /// 0.
 ///
 /// Example:
@@ -137,7 +137,6 @@ pub fn Array::unsafe_blit_fixed[A](
 /// * `len` is negative
 /// * `src_offset` is negative
 /// * `dst_offset` is negative
-/// * `dst_offset + len` exceeds the length of destination array
 /// * `src_offset + len` exceeds the length of source array
 pub fn Array::blit_to[A](
   self : Array[A],
@@ -146,11 +145,12 @@ pub fn Array::blit_to[A](
   src_offset~ : Int = 0,
   dst_offset~ : Int = 0
 ) -> Unit {
-  guard len >= 0 &&
-    dst_offset >= 0 &&
-    src_offset >= 0 &&
-    dst_offset <= dst.length() &&
-    src_offset + len <= self.length()
+  guard len >= 0 else { abort("`len` is negative") }
+  guard dst_offset >= 0 else { abort("`dst_offset` is negative") }
+  guard src_offset >= 0 else { abort("`src_offset` is negative") }
+  guard src_offset + len <= self.length() else {
+    abort("`src_offset + len` exceeds the length of source array")
+  }
   if dst_offset + len > dst.length() {
     dst.unsafe_grow_to_length(dst_offset + len)
   }
@@ -249,7 +249,7 @@ test "panic Array::blit_to/boundary_cases" {
 }
 
 ///|
-test "panic Array::blit_to/boundary_cases" {
+test "Array::blit_to/grow" {
   let src = [1, 2, 3, 4, 5]
   let dst = [0, 0, 0, 0, 0]
   // dst offset exceeding dst length
