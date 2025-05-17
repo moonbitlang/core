@@ -249,7 +249,7 @@ test "panic Array::blit_to/boundary_cases" {
 }
 
 ///|
-test "panic Array::blit_to/boundary_cases" {
+test "Array::blit_to/grow" {
   let src = [1, 2, 3, 4, 5]
   let dst = [0, 0, 0, 0, 0]
   // dst offset exceeding dst length
