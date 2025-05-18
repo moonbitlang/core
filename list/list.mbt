@@ -36,6 +36,11 @@ pub fn prepend[A](self : T[A], head : A) -> T[A] {
 }
 
 ///|
+pub fn add[A](self : T[A], head : A) -> T[A] {
+  More(head, tail=self)
+}
+
+///|
 pub impl[A : Show] Show for T[A] with output(xs, logger) {
   logger.write_iter(xs.iter(), prefix="@list.of([", suffix="])")
 }
@@ -126,9 +131,11 @@ pub fn each[A](self : T[A], f : (A) -> Unit) -> Unit {
 /// # Example
 ///
 /// ```
-/// let arr = []
-/// @list.of([1, 2, 3, 4, 5]).eachi(fn(i, x) { arr.push("(\{i},\{x})") })
-/// assert_eq!(arr, ["(0,1)", "(1,2)", "(2,3)", "(3,4)", "(4,5)"])
+/// test {
+///   let arr = []
+///   @list.of([1, 2, 3, 4, 5]).eachi(fn(i, x) { arr.push("(\{i},\{x})") })
+///   assert_eq!(arr, ["(0,1)", "(1,2)", "(2,3)", "(3,4)", "(4,5)"])
+/// }
 /// ```
 pub fn eachi[A](self : T[A], f : (Int, A) -> Unit) -> Unit {
   loop self, 0 {
