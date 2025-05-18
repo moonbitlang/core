@@ -188,8 +188,8 @@ pub fn fold_with_key[K, V, A](
   f : (A, K, V) -> A
 ) -> A {
   loop @list.singleton((self, 0)), init {
-    Nil, acc => acc
-    Cons((node, index), tail), acc =>
+    Empty, acc => acc
+    More((node, index), tail~), acc =>
       match node {
         Empty => continue tail, acc
         Leaf(k, v) => continue tail, f(acc, k, v)
