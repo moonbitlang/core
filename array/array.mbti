@@ -64,6 +64,7 @@ impl FixedArray {
   stable_sort[T : Compare](Self[T]) -> Unit
   starts_with[T : Eq](Self[T], Self[T]) -> Bool
   swap[T](Self[T], Int, Int) -> Unit
+  join(self : FixedArray[String], separator : String) -> String
 }
 impl[T] Add for FixedArray[T]
 impl[T : Compare] Compare for FixedArray[T]
@@ -108,6 +109,7 @@ impl ArrayView {
   rev_foldi[A, B](Self[A], init~ : B, (Int, B, A) -> B) -> B
   rev_inplace[T](Self[T]) -> Unit
   to_array[T](Self[T]) -> Array[T]
+  join(self : ArrayView[String], separator : String) -> String
 }
 impl[T : Compare] Compare for ArrayView[T]
 impl[T : Eq] Eq for ArrayView[T]

@@ -1166,6 +1166,42 @@ pub fn[A] FixedArray::last(self : FixedArray[A]) -> A? {
 }
 
 ///|
+/// Concatenate strings within an array into a single complete string.
+///
+/// Example:
+/// 
+/// ```moonbit
+/// test "FixedArray::join" {
+///   let fixed_array:FixedArray[String]=["1","2","3"]
+///   inspect!(fixed_array.join(","), content="1,2,3")
+/// }
+/// ```
+pub fn FixedArray::join(self : FixedArray[String], separator : String) -> String {
+  let len = self.length()
+  if len == 0 {
+    return ""
+  }
+  let first = self[0]
+  let mut size_hint = first.length()
+  for i = 1; i < len; i = i + 1 {
+    size_hint += separator.length() + self[i].length()
+  }
+  let string = StringBuilder::new(size_hint~)
+  if separator == "" {
+    for i = 0; i < len; i = i + 1 {
+      string.write_string(self[i])
+    }
+  } else {
+    string.write_string(self[0])
+    for i = 1; i < len; i = i + 1 {
+      string.write_string(separator)
+      string.write_string(self[i])
+    }
+  }
+  string.to_string()
+}
+
+///|
 test "FixedArray::last/empty" {
   let empty : FixedArray[Int] = []
   inspect(empty.last(), content="None")
