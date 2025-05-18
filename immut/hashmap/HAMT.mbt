@@ -182,6 +182,9 @@ pub fn fold[K, V, A](self : T[K, V], init~ : A, f : (A, V) -> A) -> A {
 
 ///|
 /// Fold the values in the map with key
+/// TODO: can not mark `f` as `#locals(f)` because 
+/// it will be shadowed by the `f` in the `fold_with_key` function
+/// TO make it more useful in the future, we may need propogate
 pub fn fold_with_key[K, V, A](
   self : T[K, V],
   init~ : A,
@@ -196,7 +199,7 @@ pub fn fold_with_key[K, V, A](
         Collision(bucket) => continue tail, bucket.foldl_with_key(init=acc, f)
         Branch(children) =>
           if index < children.data.length() {
-            let child = children.data[index]
+            let child = children.data.unsafe_get(index)
             continue tail.add((node, index + 1)).add((child, 0)), acc
           } else {
             continue tail, acc
