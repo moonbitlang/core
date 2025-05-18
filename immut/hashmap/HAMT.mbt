@@ -184,32 +184,25 @@ pub fn fold[K, V, A](self : T[K, V], init~ : A, f : (A, V) -> A) -> A {
 /// Fold the values in the map with key
 pub fn fold_with_key[K, V, A](
   self : T[K, V],
-  f : (A, K, V) -> A,
-  init~ : A
+  init~ : A,
+  f : (A, K, V) -> A
 ) -> A {
-  fn go(stack : Array[(T[K, V], Int)], acc : A) -> A {
-    if stack.is_empty() {
-      return acc
-    }
-    let (node, index) = stack.unsafe_pop()
-    match node {
-      Empty => go(stack, acc)
-      Leaf(k, v) => go(stack, f(acc, k, v))
-      Collision(bucket) => go(stack, bucket.foldl_with_key(init=acc, f))
-      Branch(children) =>
-        if index < children.data.length() {
-          let child = children.data[index]
-          stack.push((node, index + 1))
-          stack.push((child, 0))
-          go(stack, acc)
-        } else {
-          go(stack, acc)
-        }
-    }
+  loop @list.singleton((self, 0)), init {
+    Nil, acc => acc
+    Cons((node, index), tail), acc =>
+      match node {
+        Empty => continue tail, acc
+        Leaf(k, v) => continue tail, f(acc, k, v)
+        Collision(bucket) => continue tail, bucket.foldl_with_key(init=acc, f)
+        Branch(children) =>
+          if index < children.data.length() {
+            let child = children.data[index]
+            continue tail.add((node, index + 1)).add((child, 0)), acc
+          } else {
+            continue tail, acc
+          }
+      }
   }
-
-  let stack = Array::make(1, (self, 0))
-  go(stack, init)
 }
 
 ///|
