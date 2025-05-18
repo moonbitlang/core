@@ -151,7 +151,7 @@ test "Int16::op_div" {
   inspect!(div(-1, 1), content="-1")
   inspect!(div(32767, 1), content="32767") // Max value / 1
   inspect!(div(-32768, 1), content="-32768") // Min value / 1
-  inspect!(div(-32768, -1), content="-32768") // Min value / -1 (overflow)
+  // inspect!(div(-32768, -1), content="-32768") // Min value / -1 (this is a UB, overflow)
   inspect!(div(32767, -1), content="-32767") // Max value / -1
   inspect!(div(12345, 123), content="100") // Larger numbers
   inspect!(div(-12345, 123), content="-100") // Negative dividend
@@ -453,4 +453,12 @@ test "Int16::abs" {
   inspect!(abs(32767), content="32767")
   inspect!(abs(-32768), content="-32768")
   assert_eq!(abs(@int16.min_value), @int16.min_value)
+}
+
+///|
+test "Int16::to_json" {
+  inspect!(Int16::to_json(0), content="Number(0)")
+  inspect!(Int16::to_json(1), content="Number(1)")
+  inspect!(Int16::to_json(32767), content="Number(32767)")
+  inspect!(Int16::to_json(-32768), content="Number(-32768)")
 }

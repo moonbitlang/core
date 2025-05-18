@@ -50,3 +50,29 @@ test "additional random cases" {
   inspect!(@moonbitlang/core/byte.to_uint64(b'\x64'), content="100")
   inspect!(@moonbitlang/core/byte.to_uint64(b'\x99'), content="153")
 }
+
+///|
+test "popcnt max_value" {
+  let b = b'\xFF'
+  inspect!(b.popcnt(), content="8")
+}
+
+///|
+test "popcnt min_value" {
+  let b = b'\x00'
+  inspect!(b.popcnt(), content="0")
+}
+
+///|
+test "popcnt random cases" {
+  inspect!(b'\x00'.popcnt(), content="0")
+  inspect!(b'\x01'.popcnt(), content="1")
+  inspect!(b'\x03'.popcnt(), content="2")
+  inspect!(b'\x05'.popcnt(), content="2")
+  inspect!(b'\x0F'.popcnt(), content="4")
+  inspect!(b'\x4F'.popcnt(), content="5")
+  inspect!(b'\x3F'.popcnt(), content="6")
+  inspect!(b'\x7F'.popcnt(), content="7")
+  inspect!(b'\x5F'.popcnt(), content="6")
+  inspect!(b'\xFF'.popcnt(), content="8")
+}

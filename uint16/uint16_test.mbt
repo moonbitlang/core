@@ -331,3 +331,11 @@ test "UInt16::op_mod" {
   inspect!(mod(1234, 1000), content="234")
   inspect!(mod(1234, 1235), content="1234")
 }
+
+///|
+test "UInt16::to_json" {
+  inspect!(UInt16::to_json(0), content="Number(0)")
+  inspect!(UInt16::to_json(1), content="Number(1)")
+  inspect!(UInt16::to_json(66), content="Number(66)")
+  inspect!(UInt16::to_json(65535), content="Number(65535)")
+}

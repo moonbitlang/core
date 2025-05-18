@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-#visibility(change_to="readonly", "Use smart constructor to make json")
+#visibility(change_to="readonly", "Use helper functions like `Json::object(...)` instead")
 pub(all) enum Json {
   Null
   True
@@ -168,6 +168,11 @@ pub impl ToJson for Bool with to_json(self : Bool) -> Json {
   } else {
     false
   }
+}
+
+///|
+pub impl ToJson for Byte with to_json(self : Byte) -> Json {
+  Number(self.to_double())
 }
 
 ///|

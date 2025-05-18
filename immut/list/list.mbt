@@ -364,14 +364,10 @@ pub fn fold[A, B](self : T[A], init~ : B, f : (B, A) -> B) -> B {
 /// assert_eq!(r, 15)
 /// ```
 pub fn rev_fold[A, B](self : T[A], init~ : B, f : (A, B) -> B) -> B {
-  let tsil = self.rev() // avoid stack overflow, because we don't know `f` will use how much stack.
+  let xs = self.to_array()
   let mut acc = init
-  loop tsil {
-    Nil => ()
-    Cons(x, xs) => {
-      acc = f(x, acc)
-      continue xs
-    }
+  for x in xs.rev_iter() {
+    acc = f(x, acc)
   }
   acc
 }

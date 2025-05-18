@@ -31,6 +31,8 @@ fn to_option[T, E](Result[T, E]) -> T?
 
 fn unwrap[T, E](Result[T, E]) -> T
 
+fn unwrap_err[T, E](Result[T, E]) -> E
+
 fn unwrap_or_error[T, E : Error](Result[T, E]) -> T!E
 
 fn wrap0[T, E : Error](f~ : () -> T!E) -> Result[T, E]
@@ -52,6 +54,7 @@ impl Result {
   or_else[T, E](Self[T, E], () -> T) -> T
   to_option[T, E](Self[T, E]) -> T?
   unwrap[T, E](Self[T, E]) -> T
+  unwrap_err[T, E](Self[T, E]) -> E
   unwrap_or_error[T, E : Error](Self[T, E]) -> T!E
 }
 impl[T : Compare, E : Compare] Compare for Result[T, E]

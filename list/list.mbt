@@ -109,7 +109,7 @@ pub fn length[A](self : T[A]) -> Int {
 /// @list.of([1, 2, 3, 4, 5]).each(fn(x) { arr.push(x) })
 /// assert_eq!(arr, [1, 2, 3, 4, 5])
 /// ```
-#local(f)
+#locals(f)
 pub fn each[A](self : T[A], f : (A) -> Unit) -> Unit {
   loop self {
     Empty => ()
@@ -423,7 +423,12 @@ pub fn fold[A, B](self : T[A], init~ : B, f : (B, A) -> B) -> B {
 /// assert_eq!(r, 15)
 /// ```
 pub fn rev_fold[A, B](self : T[A], init~ : B, f : (B, A) -> B) -> B {
-  self.rev().fold(init~, f)
+  let xs = self.to_array()
+  let mut acc = init
+  for x in xs.rev_iter() {
+    acc = f(acc, x)
+  }
+  acc
 }
 
 ///|

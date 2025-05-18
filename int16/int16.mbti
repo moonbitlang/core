@@ -24,6 +24,7 @@ impl Neg for Int16
 impl Shl for Int16
 impl Shr for Int16
 impl Sub for Int16
+impl ToJson for Int16
 
 // Type aliases
 

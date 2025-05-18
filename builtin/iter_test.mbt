@@ -800,7 +800,7 @@ test "group_by with custom key function" {
 ///|
 test "group_by with strings" {
   let iter = ["apple", "avocado", "banana", "cherry", "blueberry"].iter()
-  let grouped = iter.group_by(fn(s) { s[0] })
+  let grouped = iter.group_by(fn(s) { s.charcode_at(0) })
   assert_eq!(grouped.get('a'), Some(["apple", "avocado"]))
   assert_eq!(grouped.get('b'), Some(["banana", "blueberry"]))
   assert_eq!(grouped.get('c'), Some(["cherry"]))

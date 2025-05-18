@@ -738,6 +738,7 @@ pub(open) trait Logger {
 pub(open) trait Mod {
   op_mod(Self, Self) -> Self
 }
+impl Mod for Byte
 impl Mod for Int
 impl Mod for Int64
 impl Mod for UInt
@@ -832,6 +833,7 @@ pub(open) trait ToJson {
 }
 impl ToJson for Unit
 impl ToJson for Bool
+impl ToJson for Byte
 impl ToJson for Char
 impl ToJson for Int
 impl ToJson for Int64

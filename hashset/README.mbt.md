@@ -94,10 +94,15 @@ You can use `union()`, `intersection()`, `difference()` and `symmetric_differenc
 test {
   let m1 = @hashset.of(["a", "b", "c"])
   let m2 = @hashset.of(["b", "c", "d"])
-  assert_eq!(m1.union(m2).to_array()..sort(), ["a", "b", "c", "d"])
-  assert_eq!(m1.intersection(m2).to_array()..sort(), ["b", "c"])
-  assert_eq!(m1.difference(m2).to_array()..sort(), ["a"])
-  assert_eq!(m1.symmetric_difference(m2).to_array()..sort(), ["a", "d"])
+  fn to_sorted_array(set : @hashset.T[String]) {
+    let arr = set.to_array()
+    arr.sort()
+    arr
+  }
+  assert_eq!(m1.union(m2) |> to_sorted_array, ["a", "b", "c", "d"])
+  assert_eq!(m1.intersection(m2) |> to_sorted_array, ["b", "c"])
+  assert_eq!(m1.difference(m2) |> to_sorted_array, ["a"])
+  assert_eq!(m1.symmetric_difference(m2) |> to_sorted_array, ["a", "d"])
 }
 ```
 

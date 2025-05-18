@@ -16,6 +16,18 @@
 let default_init_capacity = 8
 
 ///|
+test "new_with_capacity_then_add " {
+  let set : @hashset.T[(String, String)] = @hashset.new(capacity=20)
+  set.add(("None", "Hash"))
+  inspect!(
+    set,
+    content=
+      #|@hashset.of([("None", "Hash")])
+    ,
+  )
+}
+
+///|
 test "doc" {
   let set = @hashset.of([3, 8, 1])
   set.add(3)

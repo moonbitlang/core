@@ -37,6 +37,26 @@ struct StringView {
 /// multi-byte characters correctly.
 pub typealias View = StringView
 
+///| 
+/// Returns the charcode(UTF-16 code unit) at the given index.
+/// 
+/// This method has O(1) complexity.
+/// 
+/// # Example
+/// 
+/// ```
+/// let str = "Hello🤣🤣🤣"
+/// let view = str[1:6]
+/// inspect!(view[0].to_char(), content="Some('e')")
+/// inspect!(view[4], content="55358")
+/// ```
+pub fn View::op_get(self : View, index : Int) -> Int {
+  guard index >= 0 && index < self.length() else {
+    abort("Index out of bounds")
+  }
+  self.str.unsafe_charcode_at(self.start + index)
+}
+
 ///|
 /// Returns the length of the view.
 /// 

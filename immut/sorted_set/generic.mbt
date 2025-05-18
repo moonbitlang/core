@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// This module implements the set data structure.
+// This package implements the set data structure.
 // The types stored in set need to implement the Compare trait.
 // All operations over sets are purely applicative (no side-effects).
 
@@ -88,7 +88,9 @@ priv type InorderIterator[A] Array[T[A]]
 
 ///|
 fn InorderIterator::new[A](root : T[A]) -> InorderIterator[A] {
-  InorderIterator([])..move_left(root)
+  let it = InorderIterator([])
+  it.move_left(root)
+  it
 }
 
 ///|
