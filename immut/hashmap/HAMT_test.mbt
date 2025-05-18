@@ -73,12 +73,12 @@ test "keys" {
 }
 
 ///|
-test "HAMT::elems" {
+test "HAMT::values" {
   let m = @hashmap.of([(1, "one"), (2, "two")])
-  let elems = m.elems()
-  assert_eq(elems.contains("one"), true)
-  assert_eq(elems.contains("two"), true)
-  assert_eq(elems.contains("three"), false)
+  let values = m.values()
+  assert_eq(values.contains("one"), true)
+  assert_eq(values.contains("two"), true)
+  assert_eq(values.contains("three"), false)
 }
 
 ///|
