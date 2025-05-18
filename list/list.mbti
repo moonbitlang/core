@@ -6,6 +6,8 @@ import(
 )
 
 // Values
+fn add[A](T[A], A) -> T[A]
+
 fn all[A](T[A], (A) -> Bool) -> Bool
 
 fn any[A](T[A], (A) -> Bool) -> Bool
@@ -148,6 +150,7 @@ pub enum T[A] {
   More(A, mut tail~ : T[A])
 }
 impl T {
+  add[A](Self[A], A) -> Self[A]
   all[A](Self[A], (A) -> Bool) -> Bool
   any[A](Self[A], (A) -> Bool) -> Bool
   concat[A](Self[A], Self[A]) -> Self[A]
