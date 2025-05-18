@@ -39,6 +39,7 @@ fn value(Json, String) -> Json?
 pub(all) type! JsonDecodeError (JsonPath, String)
 impl Eq for JsonDecodeError
 impl Show for JsonDecodeError
+impl ToJson for JsonDecodeError
 
 type JsonPath
 impl JsonPath {
@@ -47,6 +48,7 @@ impl JsonPath {
 }
 impl Eq for JsonPath
 impl Show for JsonPath
+impl ToJson for JsonPath
 
 pub(all) type! ParseError {
   InvalidChar(Position, Char)

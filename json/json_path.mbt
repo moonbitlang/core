@@ -45,6 +45,11 @@ pub impl Show for JsonPath with output(self, logger) {
 }
 
 ///|
+pub impl ToJson for JsonPath with to_json(self) {
+  String(self.to_string())
+}
+
+///|
 test "show JsonPath" {
   let path = Key(Index(Root, index=0), key="foo")
   @builtin.inspect!(path, content="$[0].foo")
