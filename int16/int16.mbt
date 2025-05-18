@@ -89,6 +89,20 @@ pub impl BitXOr for Int16 with lxor(self : Int16, that : Int16) -> Int16 {
 }
 
 ///|
+pub impl Neg for Int16 with op_neg(self : Int16) -> Int16 {
+  (-self.to_int()).to_int16()
+}
+
+///|
+pub fn Int16::abs(self : Int16) -> Int16 {
+  if self < 0 {
+    -self
+  } else {
+    self
+  }
+}
+
+///|
 pub impl Default for Int16 with default() {
   0
 }

@@ -428,6 +428,34 @@ test "Int16::op_mod" {
 }
 
 ///|
+test "Int16::op_neg" {
+  fn neg(a : Int16) -> Int16 {
+    -a
+  }
+
+  inspect!(neg(10), content="-10")
+  inspect!(neg(-10), content="10")
+  inspect!(neg(0), content="0")
+  inspect!(neg(32767), content="-32767")
+  inspect!(neg(-32768), content="-32768")
+  assert_eq!(neg(@int16.min_value), @int16.min_value)
+}
+
+///|
+test "Int16::abs" {
+  fn abs(a : Int16) -> Int16 {
+    a.abs()
+  }
+
+  inspect!(abs(10), content="10")
+  inspect!(abs(-10), content="10")
+  inspect!(abs(0), content="0")
+  inspect!(abs(32767), content="32767")
+  inspect!(abs(-32768), content="-32768")
+  assert_eq!(abs(@int16.min_value), @int16.min_value)
+}
+
+///|
 test "Int16::to_json" {
   inspect!(Int16::to_json(0), content="Number(0)")
   inspect!(Int16::to_json(1), content="Number(1)")
