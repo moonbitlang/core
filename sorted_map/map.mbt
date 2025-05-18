@@ -147,18 +147,46 @@ pub fn eachi[K, V](self : T[K, V], f : (Int, K, V) -> Unit) -> Unit {
 
 ///|
 /// Returns all keys in the map.
-pub fn keys[K, V](self : T[K, V]) -> Array[K] {
-  let keys = Array::new(capacity=self.size)
-  self.each(fn(k, _v) { keys.push(k) })
-  keys
+pub fn keys[K, V](self : T[K, V]) -> Iter[K] {
+  Iter::new(fn(yield_) {
+    fn go(x : Node[K, V]?) {
+      match x {
+        None => IterContinue
+        Some({ left, right, key, .. }) =>
+          if go(left) is IterEnd {
+            IterEnd
+          } else if yield_(key) is IterEnd {
+            IterEnd
+          } else {
+            go(right)
+          }
+      }
+    }
+
+    go(self.root)
+  })
 }
 
 ///|
 /// Returns all values in the map.
-pub fn values[K, V](self : T[K, V]) -> Array[V] {
-  let values = Array::new(capacity=self.size)
-  self.each(fn(_k, v) { values.push(v) })
-  values
+pub fn values[K, V](self : T[K, V]) -> Iter[V] {
+  Iter::new(fn(yield_) {
+    fn go(x : Node[K, V]?) {
+      match x {
+        None => IterContinue
+        Some({ left, right, value, .. }) =>
+          if go(left) is IterEnd {
+            IterEnd
+          } else if yield_(value) is IterEnd {
+            IterEnd
+          } else {
+            go(right)
+          }
+      }
+    }
+
+    go(self.root)
+  })
 }
 
 ///|
