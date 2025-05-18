@@ -184,7 +184,7 @@ pub fn fold[K, V, A](self : T[K, V], init~ : A, f : (A, V) -> A) -> A {
 /// Fold the values in the map with key
 /// TODO: can not mark `f` as `#locals(f)` because 
 /// it will be shadowed by the `f` in the `fold_with_key` function
-/// TO make it more useful in the future, we may need propogate
+/// TO make it more useful in the future, we may need propagate
 pub fn fold_with_key[K, V, A](
   self : T[K, V],
   init~ : A,
