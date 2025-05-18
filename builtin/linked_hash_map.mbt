@@ -45,7 +45,7 @@ struct Map[K, V] {
   mut size : Int // active key-value pairs count
   mut capacity : Int // current capacity
   mut capacity_mask : Int // capacity_mask = capacity - 1, used to find idx
-  mut growAt : Int // threshold that triggers grow
+  mut grow_at : Int // threshold that triggers grow
   mut head : Entry[K, V]? // head of linked list
   mut tail : Int // tail of linked list
 }
@@ -87,7 +87,7 @@ pub fn Map::new[K, V](capacity~ : Int = 8) -> Map[K, V] {
     size: 0,
     capacity,
     capacity_mask: capacity - 1,
-    growAt: calc_grow_threshold(capacity),
+    grow_at: calc_grow_threshold(capacity),
     entries: FixedArray::make(capacity, None),
     head: None,
     tail: -1,
@@ -105,7 +105,7 @@ pub fn Map::from_array[K : Hash + Eq, V](arr : Array[(K, V)]) -> Map[K, V] {
 ///|
 /// Set a key-value pair into the hash map.
 pub fn Map::set[K : Hash + Eq, V](self : Map[K, V], key : K, value : V) -> Unit {
-  if self.size >= self.growAt {
+  if self.size >= self.grow_at {
     self.grow()
   }
   let hash = key.hash()
@@ -387,7 +387,7 @@ fn Map::grow[K : Hash + Eq, V](self : Map[K, V]) -> Unit {
   self.entries = FixedArray::make(new_capacity, None)
   self.capacity = new_capacity
   self.capacity_mask = new_capacity - 1
-  self.growAt = calc_grow_threshold(self.capacity)
+  self.grow_at = calc_grow_threshold(self.capacity)
   self.size = 0
   self.head = None
   self.tail = -1

@@ -22,7 +22,7 @@ pub fn new[K](capacity~ : Int = default_init_capacity) -> T[K] {
   {
     size: 0,
     capacity,
-    growAt: calc_grow_threshold(capacity),
+    grow_at: calc_grow_threshold(capacity),
     entries: FixedArray::make(capacity, None),
   }
 }
@@ -53,7 +53,7 @@ pub fn insert[K : Hash + Eq](self : T[K], key : K) -> Unit {
 ///|
 /// Insert a key into hash set.
 pub fn add[K : Hash + Eq](self : T[K], key : K) -> Unit {
-  if self.capacity == 0 || self.size >= self.growAt {
+  if self.capacity == 0 || self.size >= self.grow_at {
     self.grow()
   }
   let hash = key.hash()
@@ -309,7 +309,7 @@ fn grow[K : Hash + Eq](self : T[K]) -> Unit {
   // handle zero capacity
   if self.capacity == 0 {
     self.capacity = default_init_capacity
-    self.growAt = calc_grow_threshold(self.capacity)
+    self.grow_at = calc_grow_threshold(self.capacity)
     self.size = 0
     self.entries = FixedArray::make(self.capacity, None)
     return
@@ -317,7 +317,7 @@ fn grow[K : Hash + Eq](self : T[K]) -> Unit {
   let old_entries = self.entries
   self.entries = FixedArray::make(self.capacity * 2, None)
   self.capacity = self.capacity * 2
-  self.growAt = calc_grow_threshold(self.capacity)
+  self.grow_at = calc_grow_threshold(self.capacity)
   self.size = 0
   for i in 0..<old_entries.length() {
     if old_entries[i] is Some({ key, .. }) {

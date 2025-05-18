@@ -41,7 +41,7 @@ struct Set[K] {
   mut size : Int
   mut capacity : Int
   mut capacity_mask : Int
-  mut growAt : Int
+  mut grow_at : Int
   mut head : SEntry[K]?
   mut tail : SEntry[K]?
 }
@@ -58,7 +58,7 @@ pub fn Set::new[K](capacity~ : Int = 8) -> Set[K] {
     size: 0,
     capacity,
     capacity_mask: capacity - 1,
-    growAt: calc_grow_threshold(capacity),
+    grow_at: calc_grow_threshold(capacity),
     entries: FixedArray::make(capacity, None),
     list: FixedArray::make(capacity, { prev: None, next: None }),
     head: None,
@@ -86,7 +86,7 @@ pub fn insert[K : Hash + Eq](self : Set[K], key : K) -> Unit {
 ///|
 /// Insert a key into the hash set.if the key exists return false
 pub fn add_and_check[K : Hash + Eq](self : Set[K], key : K) -> Bool {
-  if self.size >= self.growAt {
+  if self.size >= self.grow_at {
     self.grow()
   }
   let hash = key.hash()
@@ -125,7 +125,7 @@ pub fn add_and_check[K : Hash + Eq](self : Set[K], key : K) -> Bool {
 ///|
 /// Insert a key into the hash set.
 pub fn add[K : Hash + Eq](self : Set[K], key : K) -> Unit {
-  if self.size >= self.growAt {
+  if self.size >= self.grow_at {
     self.grow()
   }
   let hash = key.hash()
@@ -300,7 +300,7 @@ fn grow[K : Hash + Eq](self : Set[K]) -> Unit {
   self.list = FixedArray::make(new_capacity, { prev: None, next: None })
   self.capacity = new_capacity
   self.capacity_mask = new_capacity - 1
-  self.growAt = calc_grow_threshold(self.capacity)
+  self.grow_at = calc_grow_threshold(self.capacity)
   self.size = 0
   self.head = None
   self.tail = None
