@@ -16,7 +16,7 @@
 /// Lookup a key from the bucket
 fn Bucket::find[T : Eq](self : Bucket[T], key : T) -> Bool {
   match self {
-    Just_One(key1) => key == key1
+    JustOne(key1) => key == key1
     More(key1, rest) => if key == key1 { true } else { rest.find(key) }
   }
 }
@@ -26,7 +26,7 @@ fn Bucket::find[T : Eq](self : Bucket[T], key : T) -> Bool {
 /// Replace the old entry if one with the same key already exists.
 fn Bucket::add[T : Eq](self : Bucket[T], key : T) -> Bucket[T] {
   match self {
-    Just_One(key1) => if key == key1 { self } else { More(key, self) }
+    JustOne(key1) => if key == key1 { self } else { More(key, self) }
     More(key1, rest) =>
       if key == key1 {
         self
@@ -40,13 +40,13 @@ fn Bucket::add[T : Eq](self : Bucket[T], key : T) -> Bucket[T] {
 /// Remove a key from a bucket
 fn Bucket::remove[T : Eq](self : Bucket[T], key : T) -> Bucket[T]? {
   match self {
-    Just_One(old_key) => if key == old_key { None } else { Some(self) }
+    JustOne(old_key) => if key == old_key { None } else { Some(self) }
     More(old_key, rest) =>
       if key == old_key {
         Some(rest)
       } else {
         match rest.remove(key) {
-          None => Some(Just_One(old_key))
+          None => Some(JustOne(old_key))
           Some(rest) => Some(More(old_key, rest))
         }
       }
@@ -57,7 +57,7 @@ fn Bucket::remove[T : Eq](self : Bucket[T], key : T) -> Bucket[T]? {
 /// Get the size of a bucket
 fn Bucket::size[T](self : Bucket[T]) -> Int {
   loop self, 1 {
-    Just_One(_), acc => acc
+    JustOne(_), acc => acc
     More(_, rest), acc => continue rest, acc + 1
   }
 }
@@ -66,7 +66,7 @@ fn Bucket::size[T](self : Bucket[T]) -> Int {
 /// Iterate through elements of a bucket
 fn Bucket::each[T](self : Bucket[T], f : (T) -> Unit) -> Unit {
   loop self {
-    Just_One(k) => f(k)
+    JustOne(k) => f(k)
     More(k, rest) => {
       f(k)
       continue rest
@@ -79,7 +79,7 @@ fn Bucket::iter[T](self : Bucket[T]) -> Iter[T] {
   Iter::new(fn {
     f =>
       loop self {
-        Just_One(k) => f(k)
+        JustOne(k) => f(k)
         More(k, rest) =>
           if f(k) == IterContinue {
             continue rest
@@ -92,7 +92,7 @@ fn Bucket::iter[T](self : Bucket[T]) -> Iter[T] {
 
 ///|
 test "Bucket" {
-  let b0 : Bucket[_] = Just_One(0)
+  let b0 : Bucket[_] = JustOne(0)
   inspect!((b0.find(0), b0.find(1), b0.size()), content="(true, false, 1)")
   let b1 = b0.add(1)
   inspect!((b1.find(0), b1.find(1), b1.size()), content="(true, true, 2)")
@@ -110,7 +110,7 @@ test "Bucket" {
 
 ///|
 test "Bucket::iter" {
-  let b : Bucket[_] = More(0, More(1, Just_One(31)))
+  let b : Bucket[_] = More(0, More(1, JustOne(31)))
   let buf = StringBuilder::new(size_hint=0)
   let mut is_first = true
   b.each(fn(k) {
@@ -126,7 +126,7 @@ test "Bucket::iter" {
 
 ///|
 test "Bucket::iter" {
-  let b : Bucket[_] = More(0, More(1, Just_One(31)))
+  let b : Bucket[_] = More(0, More(1, JustOne(31)))
   let buf = StringBuilder::new(size_hint=0)
   let mut is_first = true
   b
@@ -148,7 +148,7 @@ test "Bucket::iter" {
 
 ///|
 test "Bucket add and remove" {
-  let b0 : Bucket[_] = Just_One(0)
+  let b0 : Bucket[_] = JustOne(0)
   let b1 = b0.add(1)
   let b2 = b1.add(2)
   let b3 = b2.remove(0).unwrap()
@@ -174,7 +174,7 @@ test "Bucket add and remove" {
 
 ///|
 test "Bucket size" {
-  let b0 : Bucket[_] = Just_One(0)
+  let b0 : Bucket[_] = JustOne(0)
   let b1 = b0.add(1)
   let b2 = b1.add(2)
   let b3 = b2.remove(0).unwrap()
@@ -190,7 +190,7 @@ test "Bucket size" {
 
 ///|
 test "Bucket iter" {
-  let b0 : Bucket[_] = Just_One(0)
+  let b0 : Bucket[_] = JustOne(0)
   let b1 = b0.add(1)
   let b2 = b1.add(2)
   let buf = StringBuilder::new(size_hint=0)
@@ -208,7 +208,7 @@ test "Bucket iter" {
 
 ///|
 test "Bucket iter" {
-  let b0 : Bucket[_] = Just_One(0)
+  let b0 : Bucket[_] = JustOne(0)
   let b1 = b0.add(1)
   let b2 = b1.add(2)
   let buf = StringBuilder::new(size_hint=0)

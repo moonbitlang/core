@@ -16,7 +16,7 @@
 /// A bucket is a non-empty linked list of key-value pair,
 /// used to resolve hash collision in HAMT
 priv enum Bucket[T] {
-  Just_One(T) // must be non-empty
+  JustOne(T) // must be non-empty
   More(T, Bucket[T])
 }
 
