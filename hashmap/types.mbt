@@ -45,7 +45,7 @@ struct T[K, V] {
   // size of field `entries`, it is redundant but useful for performance
   // so we don't need do `self.entries.length()` every time
   mut size : Int // active key-value pairs count
-  // mut growAt : Int // threshold that triggers grow
+  // mut grow_at : Int // threshold that triggers grow
 }
 
 ///|

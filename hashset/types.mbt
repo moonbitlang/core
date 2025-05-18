@@ -39,5 +39,5 @@ struct T[K] {
   mut entries : FixedArray[Entry[K]?]
   mut size : Int // active key count
   mut capacity : Int // current capacity
-  mut growAt : Int // threshold that triggers grow
+  mut grow_at : Int // threshold that triggers grow
 }
