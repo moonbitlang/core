@@ -83,7 +83,7 @@ fn add_with_hash[A : Eq](self : T[A], key : A, depth : Int, hash : Int) -> T[A] 
       if key == key1 {
         Leaf(key)
       } else {
-        Collision(More(key, Just_One(key1)))
+        Collision(More(key, JustOne(key1)))
       }
     Collision(bucket) => Collision(bucket.add(key))
     Branch(children) => {
@@ -135,7 +135,7 @@ fn remove_with_hash[A : Eq](
     Collision(bucket) =>
       match bucket.remove(key) {
         None => Empty
-        Some(Just_One(k)) => Leaf(k)
+        Some(JustOne(k)) => Leaf(k)
         Some(new_bucket) => Collision(new_bucket)
       }
     Branch(children) => {

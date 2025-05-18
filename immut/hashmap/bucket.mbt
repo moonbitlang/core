@@ -16,7 +16,7 @@
 /// Lookup a key from the bucket
 fn Bucket::find[K : Eq, V](self : Bucket[K, V], key : K) -> V? {
   match self {
-    Just_One(key1, value) => if key == key1 { Some(value) } else { None }
+    JustOne(key1, value) => if key == key1 { Some(value) } else { None }
     More(key1, value, rest) =>
       if key == key1 {
         Some(value)
@@ -35,9 +35,9 @@ fn Bucket::add[K : Eq, V](
   value : V
 ) -> Bucket[K, V] {
   match self {
-    Just_One(key1, _) =>
+    JustOne(key1, _) =>
       if key == key1 {
-        Just_One(key, value)
+        JustOne(key, value)
       } else {
         More(key, value, self)
       }
@@ -54,13 +54,13 @@ fn Bucket::add[K : Eq, V](
 /// Remove a key from a bucket
 fn Bucket::remove[K : Eq, V](self : Bucket[K, V], key : K) -> Bucket[K, V]? {
   match self {
-    Just_One(old_key, _) => if key == old_key { None } else { Some(self) }
+    JustOne(old_key, _) => if key == old_key { None } else { Some(self) }
     More(old_key, old_value, rest) =>
       if key == old_key {
         Some(rest)
       } else {
         match rest.remove(key) {
-          None => Some(Just_One(old_key, old_value))
+          None => Some(JustOne(old_key, old_value))
           Some(rest) => Some(More(old_key, old_value, rest))
         }
       }
@@ -71,7 +71,7 @@ fn Bucket::remove[K : Eq, V](self : Bucket[K, V], key : K) -> Bucket[K, V]? {
 /// Get the size of a bucket
 fn Bucket::size[K, V](self : Bucket[K, V]) -> Int {
   loop self, 1 {
-    Just_One(_), acc => acc
+    JustOne(_), acc => acc
     More(_, _, rest), acc => continue rest, acc + 1
   }
 }
@@ -80,7 +80,7 @@ fn Bucket::size[K, V](self : Bucket[K, V]) -> Int {
 /// Iterate through elements of a bucket
 fn Bucket::each[K, V](self : Bucket[K, V], f : (K, V) -> Unit) -> Unit {
   loop self {
-    Just_One(k, v) => f(k, v)
+    JustOne(k, v) => f(k, v)
     More(k, v, rest) => {
       f(k, v)
       continue rest
@@ -91,12 +91,12 @@ fn Bucket::each[K, V](self : Bucket[K, V], f : (K, V) -> Unit) -> Unit {
 ///|
 fn Bucket::filter[K, V](self : Bucket[K, V], f : (V) -> Bool) -> Bucket[K, V]? {
   match self {
-    Just_One(k, v) => if f(v) { Some(Just_One(k, v)) } else { None }
+    JustOne(k, v) => if f(v) { Some(JustOne(k, v)) } else { None }
     More(k, v, rest) => {
       let filtered = rest.filter(f)
       if f(v) {
         match filtered {
-          None => Some(Just_One(k, v))
+          None => Some(JustOne(k, v))
           Some(rest) => Some(More(k, v, rest))
         }
       } else {
@@ -108,7 +108,7 @@ fn Bucket::filter[K, V](self : Bucket[K, V], f : (V) -> Bool) -> Bucket[K, V]? {
 
 ///|
 test "Bucket::filter" {
-  let bucket = More(1, 1, More(2, 2, Just_One(3, 3)))
+  let bucket = More(1, 1, More(2, 2, JustOne(3, 3)))
   let filtered = bucket.filter(fn(v) { v == 2 })
   assert_eq!(filtered.unwrap().find(1), None)
   assert_eq!(filtered.unwrap().find(2), Some(2))
@@ -119,7 +119,7 @@ fn Bucket::iter[K, V](self : Bucket[K, V]) -> Iter[(K, V)] {
   Iter::new(fn {
     f =>
       loop self {
-        Just_One(k, v) => f((k, v))
+        JustOne(k, v) => f((k, v))
         More(k, v, rest) =>
           if f((k, v)) == IterContinue {
             continue rest
@@ -132,7 +132,7 @@ fn Bucket::iter[K, V](self : Bucket[K, V]) -> Iter[(K, V)] {
 
 ///|
 test "Bucket" {
-  let b0 : Bucket[_] = Just_One(0, 0)
+  let b0 : Bucket[_] = JustOne(0, 0)
   inspect!((b0.find(0), b0.find(1), b0.size()), content="(Some(0), None, 1)")
   let b1 = b0.add(1, 1)
   inspect!((b1.find(0), b1.find(1), b1.size()), content="(Some(0), Some(1), 2)")
@@ -150,7 +150,7 @@ test "Bucket" {
 
 ///|
 test "Bucket::iter" {
-  let b : Bucket[_] = More(0, 0, More(1, 1, Just_One(31, 31)))
+  let b : Bucket[_] = More(0, 0, More(1, 1, JustOne(31, 31)))
   let buf = StringBuilder::new(size_hint=0)
   let mut is_first = true
   b.each(fn(k, v) {
@@ -166,7 +166,7 @@ test "Bucket::iter" {
 
 ///|
 test "Bucket::iter" {
-  let b : Bucket[_] = More(0, 0, More(1, 1, Just_One(31, 31)))
+  let b : Bucket[_] = More(0, 0, More(1, 1, JustOne(31, 31)))
   let buf = StringBuilder::new(size_hint=0)
   let mut is_first = true
   b
@@ -195,14 +195,14 @@ fn Bucket::foldl_with_key[K, V, A](
   init~ : A
 ) -> A {
   match self {
-    Just_One(k, v) => f(init, k, v)
+    JustOne(k, v) => f(init, k, v)
     More(k, v, rest) => rest.foldl_with_key(init=f(init, k, v), f)
   }
 }
 
 ///|
 test "foldl_with_key" {
-  let bucket = More("a", "a", More("b", "b", Just_One("c", "c")))
+  let bucket = More("a", "a", More("b", "b", JustOne("c", "c")))
   let result = bucket.foldl_with_key(init="", fn(init, _k, v) { init + v })
   assert_eq!(result, "abc")
 }
@@ -213,14 +213,14 @@ fn Bucket::map_with_key[K, V, A](
   f : (K, V) -> A
 ) -> Bucket[K, A] {
   match self {
-    Just_One(k, v) => Just_One(k, f(k, v))
+    JustOne(k, v) => JustOne(k, f(k, v))
     More(k, v, rest) => More(k, f(k, v), rest.map_with_key(f))
   }
 }
 
 ///|
 test "Bucket::map_with_key" {
-  let bucket = More(1, 10, More(2, 20, Just_One(3, 30)))
+  let bucket = More(1, 10, More(2, 20, JustOne(3, 30)))
   let mapped = bucket.map_with_key(fn(k, v) { "\{k}:\{v}" })
   assert_eq!(mapped.find(1), Some("1:10"))
   assert_eq!(mapped.find(2), Some("2:20"))
@@ -234,7 +234,7 @@ fn Bucket::map[K, V, A](self : Bucket[K, V], f : (V) -> A) -> Bucket[K, A] {
 
 ///|
 test "Bucket::map" {
-  let bucket = More(1, 10, More(2, 20, Just_One(3, 30)))
+  let bucket = More(1, 10, More(2, 20, JustOne(3, 30)))
   let mapped = bucket.map(fn(v) { v * 2 })
   assert_eq!(mapped.find(1), Some(20))
   assert_eq!(mapped.find(2), Some(40))

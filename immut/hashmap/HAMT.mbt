@@ -119,7 +119,7 @@ fn add_with_hash[K : Eq, V](
       if key == key1 {
         Leaf(key, value)
       } else {
-        Collision(More(key, value, Just_One(key1, value1)))
+        Collision(More(key, value, JustOne(key1, value1)))
       }
     Collision(bucket) => Collision(bucket.add(key, value))
     Branch(children) => {
@@ -156,7 +156,7 @@ pub fn filter[K : Eq + Hash, V](self : T[K, V], pred : (V) -> Bool) -> T[K, V] {
     Leaf(k, v) => if pred(v) { Leaf(k, v) } else { Empty }
     Collision(bucket) =>
       match bucket.filter(pred) {
-        Some(Just_One(k, v)) => Leaf(k, v)
+        Some(JustOne(k, v)) => Leaf(k, v)
         Some(b) => Collision(b)
         None => Empty
       }
@@ -270,7 +270,7 @@ fn remove_with_hash[K : Eq, V](
     Collision(bucket) =>
       match bucket.remove(key) {
         None => Empty
-        Some(Just_One(k, v)) => Leaf(k, v)
+        Some(JustOne(k, v)) => Leaf(k, v)
         Some(new_bucket) => Collision(new_bucket)
       }
     Branch(children) => {
