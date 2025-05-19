@@ -414,10 +414,21 @@ pub fn to_array[V](self : T[V]) -> Array[V] {
 /// Returns a iterator.
 pub fn iter[V](self : T[V]) -> Iter[V] {
   Iter::new(fn(yield_) {
-    match self.root {
-      None => IterContinue
-      Some(root) => root.iter().run(yield_)
+    fn go(x : Node[V]?) {
+      match x {
+        None => IterContinue
+        Some({ left, right, value, .. }) =>
+          if go(left) is IterEnd {
+            IterEnd
+          } else if yield_(value) is IterEnd {
+            IterEnd
+          } else {
+            go(right)
+          }
+      }
     }
+
+    go(self.root)
   })
 }
 

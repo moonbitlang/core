@@ -171,49 +171,43 @@ pub fn to_array[K, V](self : T[K, V]) -> Array[(K, V)] {
 
 ///|
 pub fn iter[K, V](self : T[K, V]) -> Iter[(K, V)] {
-  iter_aux(self.root)
-}
-
-///|
-fn iter_aux[K, V](node : Node[K, V]?) -> Iter[(K, V)] {
   Iter::new(fn(yield_) {
-    match node {
-      None => IterContinue
-      Some(node) =>
-        if iter_aux(node.left).run(yield_) == IterEnd {
-          return IterEnd
-        } else if yield_((node.key, node.value)) == IterEnd {
-          return IterEnd
-        } else if iter_aux(node.right).run(yield_) == IterEnd {
-          return IterEnd
-        } else {
-          IterContinue
-        }
+    fn go(x : Node[K, V]?) {
+      match x {
+        None => IterContinue
+        Some({ left, right, key, value, .. }) =>
+          if go(left) is IterEnd {
+            IterEnd
+          } else if yield_((key, value)) is IterEnd {
+            IterEnd
+          } else {
+            go(right)
+          }
+      }
     }
+
+    go(self.root)
   })
 }
 
 ///|
 pub fn iter2[K, V](self : T[K, V]) -> Iter2[K, V] {
-  iter_aux2(self.root)
-}
-
-///|
-fn iter_aux2[K, V](node : Node[K, V]?) -> Iter2[K, V] {
   Iter2::new(fn(yield_) {
-    match node {
-      None => IterContinue
-      Some(node) =>
-        if iter_aux2(node.left).run(yield_) == IterEnd {
-          return IterEnd
-        } else if yield_(node.key, node.value) == IterEnd {
-          return IterEnd
-        } else if iter_aux2(node.right).run(yield_) == IterEnd {
-          return IterEnd
-        } else {
-          IterContinue
-        }
+    fn go(x : Node[K, V]?) {
+      match x {
+        None => IterContinue
+        Some({ left, right, key, value, .. }) =>
+          if go(left) is IterEnd {
+            IterEnd
+          } else if yield_(key, value) is IterEnd {
+            IterEnd
+          } else {
+            go(right)
+          }
+      }
     }
+
+    go(self.root)
   })
 }
 
