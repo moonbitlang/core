@@ -18,7 +18,7 @@ const DEFAULT_PRIME_TEST_ITERS = 64
 
 ///|
 /// First 2048 prime numbers.
-let small_primes : Array[BigInt] = [
+let small_primes : Array[@bigint.BigInt] = [
   2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73,
   79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163,
   167, 173, 179, 181, 191, 193, 197, 199, 211, 223, 227, 229, 233, 239, 241, 251,
@@ -198,22 +198,22 @@ let small_primes : Array[BigInt] = [
 ///
 /// ```moonbit
 /// ///|
-/// test "probably_prime" {
+/// test "is_probable_prime" {
 ///   let rand = @random.new()
 ///   let prime = BigInt::from_string("17")
 ///   let composite = BigInt::from_string("15")
-///   inspect!(prime.probably_prime(rand), content="true")
-///   inspect!(composite.probably_prime(rand), content="false")
+///   inspect!(is_probable_prime(prime, rand), content="true")
+///   inspect!(is_probable_prime(composite, rand), content="false")
 /// }
 ///
 /// ///|
-/// test "panic probably_prime/invalid_iterations" {
+/// test "panic is_probable_prime/invalid_iterations" {
 ///   let rand = @random.new()
-///   ignore(42N.probably_prime(rand, iters=0)) // Panics with "non-positive iters for probably prime"
+///   ignore(is_probable_prime(42N, rand, iters=0)) // Panics with "non-positive iters for probably prime"
 /// }
 /// ```
-pub fn BigInt::probably_prime(
-  self : BigInt,
+pub fn is_probable_prime(
+  number : @bigint.BigInt,
   rand : @random.Rand,
   iters~ : Int = DEFAULT_PRIME_TEST_ITERS
 ) -> Bool {
@@ -221,23 +221,54 @@ pub fn BigInt::probably_prime(
     abort("non-positive iters for probably prime")
   }
   // simple tests
-  if self <= 1N {
+  if number <= 1N {
     return false
   }
-  if self <= 3N {
+  if number <= 3N {
     return true
   }
-  if self % 2N == 0 {
+  if number % 2N == 0 {
     // odd number
     return false
   }
-  self.trial_divisions() && self.miller_rabin_test(iters, rand)
+  trial_divisions(number) && miller_rabin_test(number, iters, rand)
 }
 
 ///|
-fn trial_divisions(self : BigInt) -> Bool {
+/// Generates a probable prime number with a specified bit length using a random
+/// number generator.
+///
+/// Parameters:
+///
+/// * `rand` : A random number generator implementing the `Rand` trait, used for
+/// generating random values.
+/// * `bits` : The desired bit length of the prime number to be generated.
+///
+/// Returns a `BigInt` that is probably prime (with probability at least 1 -
+/// 2^(-128)).
+///
+/// Example:
+///
+/// ```moonbit
+/// test "probable_prime" {
+///   let rand = @random.new()
+///   let prime = probable_prime(64, rand)
+///   inspect!(is_probable_prime(prime, rand), content="true")
+/// }
+/// ```
+pub fn probable_prime(bits : Int, rand : @random.Rand) -> @bigint.BigInt {
+  for {
+    let b = rand.bigint(bits)
+    if is_probable_prime(b, rand) {
+      break b
+    }
+  }
+}
+
+///|
+fn trial_divisions(n : @bigint.BigInt) -> Bool {
   // calculate the number of trial divisions based on the bit length of the candidate
-  let td = match self.bit_length() {
+  let td = match n.bit_length() {
     _..=512 => 64
     512..=1024 => 128
     1024..=2048 => 384
@@ -245,8 +276,8 @@ fn trial_divisions(self : BigInt) -> Bool {
     _ => 2048
   }
   for i = 1; i < td; i = i + 1 {
-    if self % small_primes[i] == 0 {
-      return self == small_primes[i]
+    if n % small_primes[i] == 0 {
+      return n == small_primes[i]
     }
   }
   true
@@ -254,11 +285,14 @@ fn trial_divisions(self : BigInt) -> Bool {
 
 ///|
 /// Refer to FIPS 186-4 C.3.1 Miller-Rabin Probabilistic Primality Test
-fn miller_rabin_test(self : BigInt, iters : Int, rand : @random.Rand) -> Bool {
-  if self <= 3N {
+fn miller_rabin_test(
+  w : @bigint.BigInt,
+  iters : Int,
+  rand : @random.Rand
+) -> Bool {
+  if w <= 3N {
     abort("candidate of miller rabin test must larger than 3")
   }
-  let w = self
   let w1 = w - 1N
   let w3 = w - 3N
   // (step 1) calculate largest int 'a' such that 2^a divides w - 1
@@ -270,7 +304,13 @@ fn miller_rabin_test(self : BigInt, iters : Int, rand : @random.Rand) -> Bool {
   // (step 4)
   next~: for i = 0; i < iters; i = i + 1 {
     // (step 4.1) obtain a random BigInt b where 1 < b < w-1
-    let b = BigInt::random(rand, w3_len, limit=w3) + 2N
+    let rand_b = for {
+      let x = rand.bigint(w3_len)
+      if x < w3 {
+        break x
+      }
+    }
+    let b = rand_b + 2N
     // (step 4.3) z = b^m mod w
     let mut z = b.pow(m, modulus=w)
     // (step 4.4) if z = 1 || z = w - 1, goto next

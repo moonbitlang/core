@@ -1,6 +1,12 @@
 package "moonbitlang/core/random"
 
+import(
+  "moonbitlang/core/bigint"
+)
+
 // Values
+fn bigint(Rand, Int) -> @bigint.BigInt
+
 fn double(Rand) -> Double
 
 fn float(Rand) -> Float
@@ -20,6 +26,7 @@ fn uint64(Rand, limit~ : UInt64 = ..) -> UInt64
 // Types and methods
 type Rand
 impl Rand {
+  bigint(Self, Int) -> @bigint.BigInt
   double(Self) -> Double
   float(Self) -> Float
   int(Self, limit~ : Int = ..) -> Int

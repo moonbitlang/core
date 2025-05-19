@@ -1909,64 +1909,6 @@ pub fn BigInt::ctz(self : BigInt) -> Int {
 }
 
 ///|
-/// Generates a random positive `BigInt` with a specified number of bits,
-/// optionally bounded by a limit.
-///
-/// Parameters:
-///
-/// * `rand` : A random number generator that implements the `Rand` trait.
-/// * `bits` : The desired number of bits in the generated number.
-/// * `limit` : Optional upper bound (exclusive) for the generated number. If set
-/// to `0`, no upper bound is applied.
-///
-/// Returns a random `BigInt` value that:
-///
-/// * Has exactly `bits` number of bits when no limit is specified
-/// * Is less than the specified limit when a limit is provided
-/// * Is always positive
-///
-/// Example:
-///
-/// ```moonbit
-/// ///|
-/// test "BigInt::random" {
-///   let rand = @random.new()
-///   let n = BigInt::random(rand, 8) // Generate random 8-bit number
-///   inspect!(n.bit_length() <= 8, content="true")
-///   let m = BigInt::random(rand, 64, limit=100N) // Generate random number less than 100
-///   inspect!(m < 100N, content="true")
-/// }
-/// ```
-pub fn BigInt::random(
-  rand : @random.Rand,
-  bits : Int,
-  limit~ : BigInt = 0N
-) -> BigInt {
-  let div = bits / radix_bit_len
-  let mod = bits % radix_bit_len
-  let len = if limit > 0N {
-    limit.len
-  } else if mod == 0 {
-    div
-  } else {
-    div + 1
-  }
-  let limbs = FixedArray::make(len, 0U)
-  let b : BigInt = { limbs, sign: Positive, len }
-  let mask = if mod == 0 { 0xFFFFFFFFU } else { (1U << mod) - 1U }
-  for {
-    for i = 0; i < len; i = i + 1 {
-      b.limbs[i] = rand.uint()
-    }
-    limbs[len - 1] = limbs[len - 1] & mask
-    if (limit == 0N && b.bit_length() == bits) || b < limit {
-      break
-    }
-  }
-  b
-}
-
-///|
 fn unchecked_double_to_int(d : Double) -> Int = "%f64_to_i32"
 
 ///|

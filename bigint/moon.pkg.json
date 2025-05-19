@@ -4,8 +4,7 @@
     "moonbitlang/core/uint",
     "moonbitlang/core/json",
     "moonbitlang/core/quickcheck",
-    "moonbitlang/core/quickcheck/splitmix",
-    "moonbitlang/core/random"
+    "moonbitlang/core/quickcheck/splitmix"
   ],
   "targets": {
     "bigint_js.mbt": ["js"],
