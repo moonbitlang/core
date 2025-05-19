@@ -33,8 +33,7 @@ pub fn CoverageCounter::new(size : Int) -> CoverageCounter {
 ///
 #coverage.skip
 pub fn CoverageCounter::incr(self : CoverageCounter, idx : Int) -> Unit {
-  let counter = self.counter[idx]
-  self.counter[idx] = counter + 1
+  self.counter.unsafe_set(idx, self.counter.unsafe_get(idx) + 1)
 }
 
 ///|
