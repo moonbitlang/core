@@ -142,23 +142,3 @@ test "BigInt::ctz" {
   inspect!((1N << 31).ctz(), content="31")
   inspect!((1N << 63).ctz(), content="63")
 }
-
-///|
-test "BigInt::random" {
-  let r = @random.new()
-  inspect!(BigInt::random(r, 1), content="1")
-  inspect!(BigInt::random(r, 3), content="4")
-  inspect!(BigInt::random(r, 7), content="124")
-  inspect!(BigInt::random(r, 8), content="214")
-  inspect!(BigInt::random(r, 32), content="2414602873")
-  inspect!(BigInt::random(r, 40), content="802289275496")
-  inspect!(BigInt::random(r, 64), content="11595814417413844606")
-  inspect!(
-    BigInt::random(r, 128),
-    content="199636798653786520281179348962356227657",
-  )
-
-  // with limit
-  inspect!(BigInt::random(r, 8, limit=32), content="23")
-  inspect!(BigInt::random(r, 32, limit=10000000), content="7766603")
-}
