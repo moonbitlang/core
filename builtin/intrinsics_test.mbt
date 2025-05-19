@@ -520,5 +520,5 @@ test "FixedArray::unsafe_set" {
   arr.unsafe_set(1, 2)
   arr.unsafe_set(2, 3)
   arr.unsafe_set(3, 4)
-  inspect!(arr, content="1")
+  inspect!(arr, content="[1, 2, 3, 4]")
 }
