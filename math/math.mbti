@@ -1,5 +1,10 @@
 package "moonbitlang/core/math"
 
+import(
+  "moonbitlang/core/bigint"
+  "moonbitlang/core/random"
+)
+
 // Values
 const PI : Double = 0x3.243F6A8885A308CA8A54
 
@@ -33,6 +38,8 @@ fn floor(Double) -> Double
 
 fn hypot(Double, Double) -> Double
 
+fn is_probable_prime(@bigint.BigInt, @random.Rand, iters~ : Int = ..) -> Bool
+
 fn ln(Double) -> Double
 
 fn ln_1p(Double) -> Double
@@ -46,6 +53,8 @@ fn maximum[T : Compare](T, T) -> T
 fn minimum[T : Compare](T, T) -> T
 
 let pi : Double
+
+fn probable_prime(Int, @random.Rand) -> @bigint.BigInt
 
 fn round(Double) -> Double
 

@@ -210,7 +210,19 @@ extern "js" fn BigInt::modpow_ffi(
   exponent : BigInt,
   modulus : BigInt
 ) -> BigInt =
-  #|(x, y, z) => x ** y % z
+  #|(x, y, z) => {
+  #|  if (z === 1n) return 0n;
+  #|  let result = 1n;
+  #|  x = x % z;
+  #|  while (y > 0n) {
+  #|    if (y & 1n) {
+  #|       result = (result * x) % z;
+  #|    }
+  #|    y >>= 1n;
+  #|    x = (x * x) % z;
+  #|  }
+  #|  return result;
+  #|}
 
 ///|
 extern "js" fn BigInt::pow_ffi(self : BigInt, exponent : BigInt) -> BigInt =
@@ -385,3 +397,60 @@ pub fn BigInt::to_int64(self : BigInt) -> Int64 {
   let lo = self.to_uint()
   (hi.to_int64() << 32) | lo.to_int64()
 }
+
+///|
+/// Returns the number of bits required to represent a `BigInt` value in two's
+/// complement format, excluding the sign bit.
+///
+/// Parameters:
+///
+/// * `self` : The `BigInt` value whose bit length is to be calculated.
+///
+/// Example:
+///
+/// ```moonbit
+/// ///|
+/// test "BigInt::bit_length" {
+///   let pos = 16N // 10000
+///   inspect!(pos.bit_length(), content="5")
+///   let neg = -16N // 
+///   inspect!(neg.bit_length(), content="4")
+///   let zero = 0N
+///   inspect!(zero.bit_length(), content="0")
+/// }
+/// ```
+pub extern "js" fn BigInt::bit_length(self : BigInt) -> Int =
+  #|(n) => {
+  #|  if (n >= 0) {
+  #|    return n === 0n ? 0 : n.toString(2).length;
+  #|  } else {
+  #|    const absN = -n;
+  #|    const absMinus1 = absN - 1n;
+  #|    return absMinus1 === 0n ? 0 : absMinus1.toString(2).length;
+  #|  }
+  #|}
+
+///| Returns the number of trailing zero bits in the binary representation of 
+/// the absolute value of this BigInt.
+///
+/// For zero, it returns -1.
+///
+/// Example:
+/// ```moonbit
+/// test "BigInt::ctz" {
+///   inspect!(8N.ctz(), content="3") // 0b1000
+///   inspect!(12N.ctz(), content="2") // 0b1100
+///   inspect!(0N.ctz(), content="0")
+/// }
+/// ```
+pub extern "js" fn BigInt::ctz(self : BigInt) -> Int =
+  #|(n) => {
+  #|  if (n === 0n) return 0;
+  #|  let absN = n < 0n ? -n : n;
+  #|  let count = 0;
+  #|  while ((absN & 1n) === 0n) {
+  #|    absN >>= 1n;
+  #|    count++;
+  #|  }
+  #|  return count;
+  #|}

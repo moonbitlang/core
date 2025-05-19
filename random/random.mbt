@@ -176,6 +176,50 @@ pub fn float(self : Rand) -> Float {
 }
 
 ///|
+/// Generates a random positive `BigInt` with a specified number of bits.
+///
+/// Parameters:
+///
+/// * `rand` : A random number generator that implements the `Rand` trait.
+/// * `bits` : The desired number of bits in the generated number.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "Rand::bigint" {
+///   let rand = @random.new()
+///   let n = rand.bigint(8) // Generate random 8-bit number
+///   inspect!(n.bit_length() <= 8, content="true")
+/// }
+/// ```
+pub fn bigint(self : Rand, bits : Int) -> @bigint.BigInt {
+  let mod = bits % 8
+  let len = if mod == 0 { bits / 8 } else { bits / 8 + 1 }
+  let bytes = Bytes::makei(len, fn(i) {
+    if i == 0 && mod != 0 {
+      let mask = (1U << mod) - 1U
+      (self.uint(limit=256) & mask).to_byte()
+    } else {
+      self.uint(limit=256).to_byte()
+    }
+  })
+  @bigint.BigInt::from_octets(bytes)
+}
+
+///|
+test "bigint" {
+  let r = new()
+  inspect!(r.bigint(1), content="1")
+  inspect!(r.bigint(3), content="4")
+  inspect!(r.bigint(7), content="124")
+  inspect!(r.bigint(8), content="214")
+  inspect!(r.bigint(32), content="2910404175")
+  inspect!(r.bigint(40), content="714745001576")
+  inspect!(r.bigint(64), content="13430064486797060338")
+  inspect!(r.bigint(128), content="251068071753473224445949321151725639522")
+}
+
+///|
 priv struct UInt128 {
   mut hi : UInt64
   mut lo : UInt64
