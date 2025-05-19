@@ -47,6 +47,7 @@ impl FixedArray {
   from_array[T](Array[T]) -> Self[T]
   from_iter[T](Iter[T]) -> Self[T]
   is_sorted[T : Compare](Self[T]) -> Bool
+  join(Self[String], String) -> String
   last[A](Self[A]) -> A?
   makei[T](Int, (Int) -> T) -> Self[T]
   map[T, U](Self[T], (T) -> U) -> Self[U]
@@ -64,7 +65,6 @@ impl FixedArray {
   stable_sort[T : Compare](Self[T]) -> Unit
   starts_with[T : Eq](Self[T], Self[T]) -> Bool
   swap[T](Self[T], Int, Int) -> Unit
-  join(self : FixedArray[String], separator : String) -> String
 }
 impl[T] Add for FixedArray[T]
 impl[T : Compare] Compare for FixedArray[T]
@@ -101,6 +101,7 @@ impl ArrayView {
   foldi[A, B](Self[A], init~ : B, (Int, B, A) -> B) -> B
   iter[A](Self[A]) -> Iter[A]
   iter2[A](Self[A]) -> Iter2[Int, A]
+  join(Self[String], String) -> String
   map[T, U](Self[T], (T) -> U) -> Array[U]
   map_inplace[T](Self[T], (T) -> T) -> Unit
   mapi[T, U](Self[T], (Int, T) -> U) -> Array[U]
@@ -109,7 +110,6 @@ impl ArrayView {
   rev_foldi[A, B](Self[A], init~ : B, (Int, B, A) -> B) -> B
   rev_inplace[T](Self[T]) -> Unit
   to_array[T](Self[T]) -> Array[T]
-  join(self : ArrayView[String], separator : String) -> String
 }
 impl[T : Compare] Compare for ArrayView[T]
 impl[T : Eq] Eq for ArrayView[T]
