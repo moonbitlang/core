@@ -512,3 +512,13 @@ test "Int::to_char - Boundary cases" {
   inspect!(Int::to_char(0x10FFFF), content="Some('􏿿')")
   inspect!(Int::to_char(0x10FFFF + 1), content="None")
 }
+
+///|
+test "FixedArray::unsafe_set" {
+  let arr = FixedArray::make(4, 0)
+  arr.unsafe_set(0, 1)
+  arr.unsafe_set(1, 2)
+  arr.unsafe_set(2, 3)
+  arr.unsafe_set(3, 4)
+  inspect!(arr, content="1")
+}

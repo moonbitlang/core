@@ -1547,6 +1547,14 @@ pub fn FixedArray::op_get[T](self : FixedArray[T], idx : Int) -> T = "%fixedarra
 pub fn FixedArray::unsafe_get[T](self : FixedArray[T], idx : Int) -> T = "%fixedarray.unsafe_get"
 
 ///|
+#internal(unsafe, "Panic if index is out of bounds")
+pub fn FixedArray::unsafe_set[T](
+  self : FixedArray[T],
+  idx : Int,
+  val : T
+) -> Unit = "%fixedarray.unsafe_set"
+
+///|
 /// Retrieves an element at the specified index from a fixed-size array. This
 /// function is similar to `op_get` but provides explicit bounds checking.
 ///
