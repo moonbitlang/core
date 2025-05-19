@@ -226,46 +226,31 @@ pub impl[K : @quickcheck.Arbitrary + Compare, V : @quickcheck.Arbitrary] @quickc
   @quickcheck.Arbitrary::arbitrary(size, rs) |> from_iter
 }
 
-///|Returns a new array of key-value pairs that are within the specified range [low, high).
-pub fn range[K : Compare, V](self : T[K, V], low : K, high : K) -> Iter2[K, V] {
-  range_aux(self.root, low, high)
-}
-
 ///|Returns a new array of key-value pairs that are within the specified range [low, high].
-fn range_aux[K : Compare, V](
-  node : Node[K, V]?,
-  low : K,
-  high : K
-) -> Iter2[K, V] {
+pub fn range[K : Compare, V](self : T[K, V], low : K, high : K) -> Iter2[K, V] {
   Iter2::new(fn(yield_) {
-    match node {
-      None => IterContinue
-      Some(node) => {
-        let cmp_key_low = node.key.compare(low)
-        let cmp_key_high = node.key.compare(high)
-        if cmp_key_low > 0 {
-          // we should go left
-          guard range_aux(node.left, low, high).run(yield_) is IterContinue else {
-            return IterEnd
+    fn go(x : Node[K, V]?) {
+      match x {
+        None => IterContinue
+        Some({ left, right, key, value, .. }) => {
+          let cmp_key_low = key.compare(low)
+          let cmp_key_high = key.compare(high)
+          if cmp_key_low > 0 && go(left) is IterEnd {
+            IterEnd
+          } else if cmp_key_low >= 0 &&
+            cmp_key_high <= 0 &&
+            yield_(key, value) is IterEnd {
+            IterEnd
+          } else if cmp_key_high < 0 {
+            go(right)
+          } else {
+            IterContinue
           }
-
         }
-        if cmp_key_low >= 0 && cmp_key_high <= 0 {
-          // we should yield this node
-          guard yield_(node.key, node.value) is IterContinue else {
-            return IterEnd
-          }
-
-        }
-        if cmp_key_high < 0 {
-          guard range_aux(node.right, low, high).run(yield_) is IterContinue else {
-            return IterEnd
-          }
-
-        }
-        IterContinue
       }
     }
+
+    go(self.root)
   })
 }
 
