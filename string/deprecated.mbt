@@ -23,6 +23,7 @@ type StringIndex Int derive(Show, Eq)
 
 ///|
 #deprecated("StringIndex is deprecated, use String::index_of_nth_char instead")
+#coverage.skip
 pub fn index_at(
   self : String,
   offset_by : Int,
@@ -33,6 +34,7 @@ pub fn index_at(
 
 ///|
 #deprecated("StringIndex is deprecated, use String::index_of_nth_char instead")
+#coverage.skip
 pub fn index_at_rev(
   self : String,
   offset_by : Int,
@@ -85,6 +87,7 @@ fn index_at_rev_(
 
 ///|
 #deprecated("use str.charcodes(start = str.offset_of_nth_char(i).unwrap(), end = str.offset_of_nth_char(j).unwrap()) to replace str[i:j]")
+#coverage.skip
 pub fn String::op_as_view(self : String, start~ : Int = 0, end? : Int) -> View {
   let str_len = self.length()
   let start = if start >= 0 {
@@ -109,6 +112,7 @@ pub fn String::op_as_view(self : String, start~ : Int = 0, end? : Int) -> View {
 
 ///|
 #deprecated("use view.charcodes(start = view.offset_of_nth_char(i).unwrap(), end = view.offset_of_nth_char(j).unwrap()) to replace view[i:j]")
+#coverage.skip
 pub fn View::op_as_view(self : View, start~ : Int = 0, end? : Int) -> View {
   let start = if start >= 0 {
     index_at_(self.str, start, start=self.start).unwrap()._
