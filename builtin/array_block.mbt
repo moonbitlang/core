@@ -149,7 +149,6 @@ pub fn Array::blit_to[A](
   guard len >= 0 &&
     dst_offset >= 0 &&
     src_offset >= 0 &&
-    dst_offset <= dst.length() &&
     src_offset + len <= self.length()
   if dst_offset + len > dst.length() {
     dst.unsafe_grow_to_length(dst_offset + len)
