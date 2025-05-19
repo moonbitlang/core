@@ -461,36 +461,29 @@ impl[T : Show] Show for Node[T] with output(self, logger) {
 
 ///|
 pub fn range[V : Compare](self : T[V], low : V, high : V) -> Iter[V] {
-  range_aux(self.root, low, high)
-}
-
-///|
-fn range_aux[V : Compare](root : Node[V]?, low : V, high : V) -> Iter[V] {
   Iter::new(fn(yield_) {
-    match root {
-      None => IterContinue
-      Some(node) => {
-        let cmp_key_low = node.value.compare(low)
-        let cmp_key_high = node.value.compare(high)
-        if cmp_key_low > 0 {
-          guard range_aux(node.left, low, high).run(yield_) is IterContinue else {
-            return IterEnd
+    fn go(x : Node[V]?) {
+      match x {
+        None => IterContinue
+        Some({ left, right, value, .. }) => {
+          let cmp_key_low = value.compare(low)
+          let cmp_key_high = value.compare(high)
+          if cmp_key_low > 0 && go(left) is IterEnd {
+            IterEnd
+          } else if cmp_key_low >= 0 &&
+            cmp_key_high <= 0 &&
+            yield_(value) is IterEnd {
+            IterEnd
+          } else if cmp_key_high < 0 {
+            go(right)
+          } else {
+            IterContinue
           }
-
         }
-        if cmp_key_low >= 0 && cmp_key_high <= 0 {
-          guard yield_(node.value) is IterContinue else { return IterEnd }
-
-        }
-        if cmp_key_high < 0 {
-          guard range_aux(node.right, low, high).run(yield_) is IterContinue else {
-            return IterEnd
-          }
-
-        }
-        IterContinue
       }
     }
+
+    go(self.root)
   })
 }
 
