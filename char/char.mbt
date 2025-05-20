@@ -348,3 +348,23 @@ pub fn is_printable(self : Char) -> Bool {
   }
   true
 }
+
+///| Makes a copy of the value in its ASCII lower case equivalent.
+/// ASCII letters 'A' to 'Z' are mapped to 'a' to 'z',
+/// but non-ASCII letters are unchanged.
+pub fn to_ascii_lowercase(self : Char) -> Char {
+  if self.is_ascii_uppercase() {
+    return (self.to_int() + 32).unsafe_to_char()
+  }
+  self
+}
+
+///| Makes a copy of the value in its ASCII upper case equivalent.
+/// ASCII letters 'a' to 'z' are mapped to 'A' to 'Z',
+/// but non-ASCII letters are unchanged.
+pub fn to_ascii_uppercase(self : Char) -> Char {
+  if self.is_ascii_lowercase() {
+    return (self.to_int() - 32).unsafe_to_char()
+  }
+  self
+}
