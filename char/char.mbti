@@ -53,6 +53,8 @@ impl Char {
   is_whitespace(Char) -> Bool
 }
 impl Hash for Char
+impl Show for Char
+impl ToJson for Char
 
 // Type aliases
 
