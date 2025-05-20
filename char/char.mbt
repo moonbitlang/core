@@ -378,46 +378,40 @@ pub impl Show for Char with output(self, logger) {
     '\b' => logger.write_string("\\b")
     '\t' => logger.write_string("\\t")
     ' '..='~' => logger.write_char(self)
-    _ => {
+    _ =>
+      if not(self.is_printable()) {
       let code = self.to_int()
-      if code < 256 ||
-        code
-        is (0x200B..=0x200D
-        | 0x202A..=0x202E
-        | 0x2060
-        | 0x2066..=0x2069
-        | 0xD800..=0xDFFF
-        | 0xFDD0..=0xFDEF
-        | 0xFFFE
-        | 0xFFFF
-        | 0x1FFFE
-        | 0x1FFFF
-        | 0x2FFFE
-        | 0x2FFFF
-        | 0x10FFFE..=0x10FFFF) {
-        // U+0000..=U+001F |
-        // U+0000..=U+001F |
-        // U+007F |
-        // U+0080..=U+009F |
-        // U+200B..=U+200D |
-        // U+202A..=U+202E |
-        // U+2060 |
-        // U+2066..=U+2069 |
-        // U+D800..=U+DFFF |
-        // U+FDD0..=U+FDEF |
-        // U+FFFE | U+FFFF |
-        // U+1FFFE | U+1FFFF |
-        // U+2FFFE | U+2FFFF |
-        // ...
-        // U+10FFFE | U+10FFFF  
-        logger
-        ..write_string("\\u{")
-        ..write_char(to_hex_digit(code / 16))
-        ..write_char(to_hex_digit(code % 16))
-        ..write_char('}')
+        let hex_len = if code <= 0xFF {
+          2
+        } else if code <= 0xFFF {
+          3
+        } else if code <= 0xFFFF {
+          4
+        } else if code <= 0xFFFFF {
+          5
+        } else {
+          6
+        }
+        logger.write_string("\\u{")
+        if hex_len >= 6 {
+          logger.write_char(to_hex_digit((code >> 20) & 0xF))
+        }
+        if hex_len >= 5 {
+          logger.write_char(to_hex_digit((code >> 16) & 0xF))
+        }
+        if hex_len >= 4 {
+          logger.write_char(to_hex_digit((code >> 12) & 0xF))
+        }
+        if hex_len >= 3 {
+          logger.write_char(to_hex_digit((code >> 8) & 0xF))
+        }
+        if hex_len >= 2 {
+          logger.write_char(to_hex_digit((code >> 4) & 0xF))
+        }
+        logger.write_char(to_hex_digit(code & 0xF))
+        logger.write_char('}')
       } else {
         logger.write_char(self)
-      }
     }
   }
   logger.write_char('\'')
