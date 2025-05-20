@@ -368,3 +368,82 @@ pub fn to_ascii_uppercase(self : Char) -> Char {
   }
   self
 }
+
+///| Convert Char to String
+pub impl Show for Char with to_string(self : Char) -> String {
+  char_to_string(self)
+}
+
+///| TODO: support attributes for impl
+#intrinsic("%char.to_string")
+fn char_to_string(char : Char) -> String {
+  [char]
+}
+
+///|
+pub impl Show for Char with output(self, logger) {
+  fn to_hex_digit(i : Int) -> Char {
+    if i < 10 {
+      (i + '0').unsafe_to_char()
+    } else {
+      (i + 'a' - 10).unsafe_to_char()
+    }
+  }
+
+  logger.write_char('\'')
+  match self {
+    '\'' | '\\' => logger..write_char('\\')..write_char(self)
+    '\n' => logger.write_string("\\n")
+    '\r' => logger.write_string("\\r")
+    '\b' => logger.write_string("\\b")
+    '\t' => logger.write_string("\\t")
+    ' '..='~' => logger.write_char(self)
+    _ => {
+      let code = self.to_int()
+      if code < 256 ||
+        code
+        is (0x200B..=0x200D
+        | 0x202A..=0x202E
+        | 0x2060
+        | 0x2066..=0x2069
+        | 0xD800..=0xDFFF
+        | 0xFDD0..=0xFDEF
+        | 0xFFFE
+        | 0xFFFF
+        | 0x1FFFE
+        | 0x1FFFF
+        | 0x2FFFE
+        | 0x2FFFF
+        | 0x10FFFE..=0x10FFFF) {
+        // U+0000..=U+001F |
+        // U+0000..=U+001F |
+        // U+007F |
+        // U+0080..=U+009F |
+        // U+200B..=U+200D |
+        // U+202A..=U+202E |
+        // U+2060 |
+        // U+2066..=U+2069 |
+        // U+D800..=U+DFFF |
+        // U+FDD0..=U+FDEF |
+        // U+FFFE | U+FFFF |
+        // U+1FFFE | U+1FFFF |
+        // U+2FFFE | U+2FFFF |
+        // ...
+        // U+10FFFE | U+10FFFF  
+        logger
+        ..write_string("\\u{")
+        ..write_char(to_hex_digit(code / 16))
+        ..write_char(to_hex_digit(code % 16))
+        ..write_char('}')
+      } else {
+        logger.write_char(self)
+      }
+    }
+  }
+  logger.write_char('\'')
+}
+
+///|
+pub impl ToJson for Char with to_json(self : Char) -> Json {
+  Json::string(self.to_string())
+}

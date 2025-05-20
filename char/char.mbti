@@ -59,6 +59,8 @@ impl Char {
   to_ascii_uppercase(Char) -> Char
 }
 impl Hash for Char
+impl Show for Char
+impl ToJson for Char
 
 // Type aliases
 
