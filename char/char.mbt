@@ -304,46 +304,68 @@ pub fn is_printable(self : Char) -> Bool {
   if self.is_control() {
     return false
   }
+  let self = self.to_int()
 
   // Private use areas (Co)
-  if self >= '\u{E000}' && self <= '\u{F8FF}' {
+  if self is (0xE000..=0xF8FF | 0xF0000..=0xFFFFD | 0x100000..=0x10FFFD) {
     return false
   }
 
-  // Format characters (Cf) - main ranges
-  if (self >= '\u{200B}' && self <= '\u{200F}') || // Zero-width, directional marks
-    (self >= '\u{202A}' && self <= '\u{202E}') || // Directional formatting
-    (self >= '\u{2060}' && self <= '\u{2064}') || // Word joiners, invisible operators
-    (self >= '\u{FFF9}' && self <= '\u{FFFB}') || // Interlinear annotations
-    // Additional format characters
-    (self >= '\u{FE00}' && self <= '\u{FE0F}') || // Variation selectors
-    (self >= '\u{E0100}' && self <= '\u{E01EF}') || // Variation selectors supplement
-    (self >= '\u{180B}' && self <= '\u{180E}') || // Mongolian format controls
-    self == '\u{061C}' || // Arabic letter mark
-    self == '\u{FEFF}' || // Byte order mark
-    self == '\u{110BD}' || // Kaithi number sign
-    self == '\u{1BCA0}' ||
-    self == '\u{1BCA1}' ||
-    self == '\u{1BCA2}' ||
-    self == '\u{1BCA3}' || // Shorthand format controls
-    self == '\u{1D173}' ||
-    self == '\u{1D174}' ||
-    self == '\u{1D175}' ||
-    self == '\u{1D176}' ||
-    self == '\u{1D177}' ||
-    self == '\u{1D178}' ||
-    self == '\u{1D179}' ||
-    self == '\u{1D17A}' {
+  // Format characters (Cf)
+  if self
+    is ('\u{00AD}'
+    | '\u{0600}'..='\u{0605}'
+    | '\u{061C}'
+    | '\u{06DD}'
+    | '\u{070F}'
+    | '\u{0890}'..='\u{0891}'
+    | '\u{08E2}'
+    | '\u{180E}'
+    | '\u{200B}'..='\u{200F}'
+    | '\u{202A}'..='\u{202E}'
+    | '\u{2060}'..='\u{2064}'
+    | '\u{2066}'..='\u{206F}'
+    | '\u{feff}'
+    | '\u{FFF9}'..='\u{FFFB}'
+    | '\u{110BD}'
+    | '\u{110CD}'
+    | '\u{13430}'..='\u{1343F}'
+    | '\u{1BCA0}'..='\u{1BCA3}'
+    | '\u{1D173}'..='\u{1D17A}'
+    | '\u{E0001}'
+    | '\u{E0020}'..='\u{E007F}') {
     return false
-  } // Musical format controls
+  }
+  // Surrogate (Cs)
+  if self >= 0xD800 && self <= 0xDFFF {
+    return false
+  }
 
   // Line and paragraph separators (Zl, Zp)
   if self == '\u{2028}' || self == '\u{2029}' {
     return false
   }
 
-  // Specific other non-printable characters
-  if self == '\u{00AD}' { // Soft hyphen
+  // Noncharacter
+  if self
+    is (0xFDD0..=0xFDEF
+    | 0xFFFE..=0xFFFF
+    | 0x1FFFE..=0x1FFFF
+    | 0x2FFFE..=0x2FFFF
+    | 0x3FFFE..=0x3FFFF
+    | 0x4FFFE..=0x4FFFF
+    | 0x5FFFE..=0x5FFFF
+    | 0x6FFFE..=0x6FFFF
+    | 0x7FFFE..=0x7FFFF
+    | 0x8FFFE..=0x8FFFF
+    | 0x9FFFE..=0x9FFFF
+    | 0xAFFFE..=0xAFFFF
+    | 0xBFFFE..=0xBFFFF
+    | 0xCFFFE..=0xCFFFF
+    | 0xDFFFE..=0xDFFFF
+    | 0xEFFFE..=0xEFFFF
+    | 0xFFFFE..=0xFFFFF
+    | 0x10FFFE..=0x10FFFF) {
     return false
   }
   true
@@ -400,7 +422,7 @@ pub impl Show for Char with output(self, logger) {
     ' '..='~' => logger.write_char(self)
     _ =>
       if not(self.is_printable()) {
-      let code = self.to_int()
+        let code = self.to_int()
         let hex_len = if code <= 0xFF {
           2
         } else if code <= 0xFFF {
@@ -432,7 +454,7 @@ pub impl Show for Char with output(self, logger) {
         logger.write_char('}')
       } else {
         logger.write_char(self)
-    }
+      }
   }
   logger.write_char('\'')
 }
