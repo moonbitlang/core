@@ -19,6 +19,10 @@ fn size[X](SparseArray[X]) -> Int
 
 fn union[X](SparseArray[X], SparseArray[X], (X, X) -> X) -> SparseArray[X]
 
+fn intersection[X](SparseArray[X], SparseArray[X], (X, X) -> X) -> SparseArray[X]
+
+fn difference[X](SparseArray[X], SparseArray[X]) -> SparseArray[X]
+
 // Types and methods
 pub(all) type Bitset UInt
 impl Bitset {
@@ -31,6 +35,8 @@ impl Bitset {
   remove(Self, Int) -> Self
   size(Self) -> Int
   union(Self, Self) -> Self
+  intersection(Self, Self) -> Self
+  difference(Self, Self) -> Self
 }
 impl Eq for Bitset
 
