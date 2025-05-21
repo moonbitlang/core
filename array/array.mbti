@@ -47,6 +47,7 @@ impl FixedArray {
   from_array[T](Array[T]) -> Self[T]
   from_iter[T](Iter[T]) -> Self[T]
   is_sorted[T : Compare](Self[T]) -> Bool
+  join(Self[String], String) -> String
   last[A](Self[A]) -> A?
   makei[T](Int, (Int) -> T) -> Self[T]
   map[T, U](Self[T], (T) -> U) -> Self[U]
@@ -99,6 +100,7 @@ impl ArrayView {
   fold[A, B](Self[A], init~ : B, (B, A) -> B) -> B
   foldi[A, B](Self[A], init~ : B, (Int, B, A) -> B) -> B
   iter[A](Self[A]) -> Iter[A]
+  join(Self[String], String) -> String
   map[T, U](Self[T], (T) -> U) -> Array[U]
   map_inplace[T](Self[T], (T) -> T) -> Unit
   mapi[T, U](Self[T], (Int, T) -> U) -> Array[U]
