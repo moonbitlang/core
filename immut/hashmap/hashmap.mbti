@@ -63,6 +63,12 @@ fn union[K : Eq + Hash, V](T[K, V], T[K, V]) -> T[K, V]
 
 fn union_with[K : Eq + Hash, V](T[K, V], T[K, V], (K, V, V) -> V) -> T[K, V]
 
+fn intersection[K : Eq + Hash, V](Self[K, V], Self[K, V]) -> Self[K, V]
+
+fn intersection_with[K : Eq + Hash, V](Self[K, V], Self[K, V], (K, V, V) -> V) -> Self[K, V]
+
+fn difference[K : Eq + Hash, V](Self[K, V], Self[K, V]) -> Self[K, V]
+
 // Types and methods
 type T[K, V]
 impl T {
@@ -91,6 +97,9 @@ impl T {
   to_array[K, V](Self[K, V]) -> Array[(K, V)]
   union[K : Eq + Hash, V](Self[K, V], Self[K, V]) -> Self[K, V]
   union_with[K : Eq + Hash, V](Self[K, V], Self[K, V], (K, V, V) -> V) -> Self[K, V]
+  intersection[K : Eq + Hash, V](Self[K, V], Self[K, V]) -> Self[K, V]
+  intersection_with[K : Eq + Hash, V](Self[K, V], Self[K, V], (K, V, V) -> V) -> Self[K, V]
+  difference[K : Eq + Hash, V](Self[K, V], Self[K, V]) -> Self[K, V]
 }
 impl[K : Eq + Hash, V : Eq] Eq for T[K, V]
 impl[K : Hash, V : Hash] Hash for T[K, V]
