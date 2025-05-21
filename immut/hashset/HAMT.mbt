@@ -193,6 +193,56 @@ pub fn union[K : Eq + Hash](self : T[K], other : T[K]) -> T[K] {
 }
 
 ///|
+/// Intersect two hashsets
+pub fn intersection[K : Eq + Hash](self : T[K], other : T[K]) -> T[K] {
+  match (self, other) {
+    (_, Empty) => Empty
+    (Empty, _) => Empty
+    (Leaf(k), _) => if other.contains(k) { Leaf(k) } else { Empty }
+    (_, Leaf(k)) => if self.contains(k) { Leaf(k) } else { Empty }
+    (Branch(sa1), Branch(sa2)) => {
+      let res = sa1.intersection(sa2, fn(m1, m2) { m1.intersection(m2) })
+      if res.size() == 0 {
+        Empty
+      } else {
+        Branch(res)
+      }
+    }
+    (_, _) =>
+      self
+      .iter()
+      .fold(init=Empty, fn(m, k) {
+        if other.contains(k) {
+          m.add(k)
+        } else {
+          m
+        }
+      })
+  }
+}
+
+///|
+/// Difference of two hashsets: elements in `self` but not in `other`
+pub fn difference[K : Eq + Hash](self : T[K], other : T[K]) -> T[K] {
+  match (self, other) {
+    (Empty, _) => Empty
+    (_, Empty) => self
+    (Leaf(k), _) => if other.contains(k) { Empty } else { Leaf(k) }
+    (Branch(sa1), Branch(sa2)) => Branch(sa1.difference(sa2))
+    (_, _) =>
+      self
+      .iter()
+      .fold(init=Empty, fn(m, k) {
+        if other.contains(k) {
+          m
+        } else {
+          m.add(k)
+        }
+      })
+  }
+}
+
+///|
 /// Returns true if the hash set is empty.
 pub fn is_empty[A](self : T[A]) -> Bool {
   self is Empty
