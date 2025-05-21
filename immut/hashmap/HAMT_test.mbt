@@ -581,6 +581,131 @@ test "HAMT::union leaf to non-overlapping map" {
 }
 
 ///|
+test "HAMT::union_with no overlap" {
+  let m1 = @hashmap.of([(1, 10), (2, 20)])
+  let m2 = @hashmap.of([(3, 30), (4, 40)])
+  let u = m1.union_with(m2, fn(_k, v1, v2) { v1 + v2 })
+  assert_eq!(u.get(1), Some(10))
+  assert_eq!(u.get(2), Some(20))
+  assert_eq!(u.get(3), Some(30))
+  assert_eq!(u.get(4), Some(40))
+  assert_eq!(u.size(), 4)
+}
+
+///|
+test "HAMT::union_with overlap" {
+  let m1 = @hashmap.of([(1, 10), (2, 20)])
+  let m2 = @hashmap.of([(2, 200), (3, 300)])
+  let u = m1.union_with(m2, fn(_k, v1, v2) { v1 * v2 })
+  assert_eq!(u.get(1), Some(10))
+  assert_eq!(u.get(2), Some(4000))
+  assert_eq!(u.get(3), Some(300))
+  assert_eq!(u.size(), 3)
+}
+
+///|
+test "HAMT::union_with self" {
+  let m = @hashmap.of([(1, 1), (2, 2), (3, 3)])
+  let u = m.union_with(m, fn(_k, v1, v2) { v1 + v2 })
+  assert_eq!(u.get(1), Some(2))
+  assert_eq!(u.get(2), Some(4))
+  assert_eq!(u.get(3), Some(6))
+  assert_eq!(u.size(), 3)
+}
+
+///|
+test "HAMT::intersection both empty" {
+  let m1 = @hashmap.of([(1, 10), (2, 20), (3, 30)])
+  let m2 = @hashmap.new()
+  let inter = m1.intersection(m2)
+  assert_eq!(inter.size(), 0)
+}
+
+///|
+test "HAMT::intersection partial overlap" {
+  let m1 = @hashmap.of([(1, 10), (2, 20), (3, 30)])
+  let m2 = @hashmap.of([(2, 200), (3, 300), (4, 400)])
+  let inter = m1.intersection(m2)
+  assert_eq!(inter.get(1), None)
+  assert_eq!(inter.get(2), Some(20))
+  assert_eq!(inter.get(3), Some(30))
+  assert_eq!(inter.get(4), None)
+  assert_eq!(inter.size(), 2)
+}
+
+///|
+test "HAMT::intersection full overlap" {
+  let m1 = @hashmap.of([(1, 10), (2, 20)])
+  let m2 = @hashmap.of([(1, 100), (2, 200)])
+  let inter = m1.intersection(m2)
+  assert_eq!(inter.get(1), Some(10))
+  assert_eq!(inter.get(2), Some(20))
+  assert_eq!(inter.size(), 2)
+}
+
+///|
+test "HAMT::intersection_with no overlap" {
+  let m1 = @hashmap.of([(1, 10)])
+  let m2 = @hashmap.of([(2, 20)])
+  let inter = m1.intersection_with(m2, fn(_k, v1, v2) { v1 + v2 })
+  assert_eq!(inter.size(), 0)
+}
+
+///|
+test "HAMT::intersection_with has overlap" {
+  let m1 = @hashmap.of([(1, 10), (2, 20)])
+  let m2 = @hashmap.of([(2, 200), (3, 300)])
+  let inter = m1.intersection_with(m2, fn(_k, v1, v2) { v1 + v2 })
+  assert_eq!(inter.get(1), None)
+  assert_eq!(inter.get(2), Some(220))
+  assert_eq!(inter.get(3), None)
+  assert_eq!(inter.size(), 1)
+}
+
+///|
+test "HAMT::intersection_with string values" {
+  let m1 = @hashmap.of([(1, "foo"), (2, "bar")])
+  let m2 = @hashmap.of([(2, "baz"), (3, "qux")])
+  let inter = m1.intersection_with(m2, fn(_k, v1, v2) { v1 + v2 })
+  assert_eq!(inter.get(1), None)
+  assert_eq!(inter.get(2), Some("barbaz"))
+  assert_eq!(inter.get(3), None)
+  assert_eq!(inter.size(), 1)
+}
+
+///|
+test "HAMT::difference no overlap" {
+  let m1 = @hashmap.of([(1, 10), (2, 20)])
+  let m2 = @hashmap.of([(3, 30), (4, 40)])
+  let diff = m1.difference(m2)
+  assert_eq!(diff.get(1), Some(10))
+  assert_eq!(diff.get(2), Some(20))
+  assert_eq!(diff.get(3), None)
+  assert_eq!(diff.get(4), None)
+  assert_eq!(diff.size(), 2)
+}
+
+///|
+test "HAMT::difference partial overlap" {
+  let m1 = @hashmap.of([(1, 10), (2, 20), (3, 30)])
+  let m2 = @hashmap.of([(2, 200), (4, 400)])
+  let diff = m1.difference(m2)
+  assert_eq!(diff.get(1), Some(10))
+  assert_eq!(diff.get(2), None)
+  assert_eq!(diff.get(3), Some(30))
+  assert_eq!(diff.get(4), None)
+  assert_eq!(diff.size(), 2)
+}
+
+///|
+test "HAMT::difference full overlap" {
+  let m1 = @hashmap.of([(1, 10), (2, 20)])
+  let m2 = @hashmap.of([(1, 100), (2, 200)])
+  let diff = m1.difference(m2)
+  assert_eq!(diff.size(), 0)
+}
+
+///|
 test "HAMT::each" {
   let empty = @hashmap.new()
   let mut sum = 0
