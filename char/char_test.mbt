@@ -363,6 +363,7 @@ test "is_printable" {
   assert_true!(symbol.is_printable())
   assert_true!(math.is_printable())
   assert_true!(currency.is_printable())
+  assert_true!(variation_selector.is_printable())
 
   // Test non-printable characters
   assert_false!(null.is_printable())
@@ -372,7 +373,6 @@ test "is_printable" {
   assert_false!(left_to_right_mark.is_printable())
   assert_false!(private_use.is_printable())
   assert_false!(word_joiner.is_printable())
-  assert_false!(variation_selector.is_printable())
   assert_false!(soft_hyphen.is_printable())
   assert_false!(musical_format.is_printable())
   assert_false!(paragraph_separator.is_printable())
