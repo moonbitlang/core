@@ -13,9 +13,9 @@
 // limitations under the License.
 
 ///|
-fn scalbn(self : Double, exp : Int) -> Double {
+fn scalbn(x : Double, exp : Int) -> Double {
   let mut n = exp
-  let mut y : Double = self
+  let mut y : Double = x
   if n > 1023 {
     y *= 0x1.0p1023
     n -= 1023

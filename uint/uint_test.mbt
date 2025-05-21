@@ -64,7 +64,7 @@ test "default" {
 ///|
 test "to_le_bytes" {
   let x : UInt = 0x12345678U
-  let bytes = @uint.to_le_bytes(x)
+  let bytes = x.to_le_bytes()
   inspect(bytes[0].to_int(), content="120") // 0x78
   inspect(bytes[1].to_int(), content="86") // 0x56
   inspect(bytes[2].to_int(), content="52") // 0x34
@@ -79,5 +79,5 @@ test "test UInt::default" {
 ///|
 test "to_be_bytes" {
   let n = 4294967295U // maximum UInt value
-  inspect(@uint.to_be_bytes(n), content="b\"\\xff\\xff\\xff\\xff\"")
+  inspect(n.to_be_bytes(), content="b\"\\xff\\xff\\xff\\xff\"")
 }

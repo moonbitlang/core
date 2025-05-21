@@ -26,7 +26,7 @@ test "uint byte conversion" {
   let num = 258U // 0x00000102 in hex
 
   // Big-endian bytes (most significant byte first)
-  let be_bytes = @uint.to_be_bytes(num)
+  let be_bytes = num.to_be_bytes()
   inspect(
     be_bytes,
     content=
@@ -35,7 +35,7 @@ test "uint byte conversion" {
   )
 
   // Little-endian bytes (least significant byte first)
-  let le_bytes = @uint.to_le_bytes(num)
+  let le_bytes = num.to_le_bytes()
   inspect(
     le_bytes,
     content=
@@ -52,9 +52,9 @@ test "uint byte conversion" {
 ```moonbit
 test "uint type conversion" {
   let num = 42U
-  inspect(@uint.to_int64(num), content="42")
+  inspect(num.to_int64(), content="42")
   let large_num = 4294967295U // max value
-  inspect(@uint.to_int64(large_num), content="4294967295")
+  inspect(large_num.to_int64(), content="4294967295")
 }
 ```
 

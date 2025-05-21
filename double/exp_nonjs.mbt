@@ -51,7 +51,7 @@
 ///   inspect(not_a_number.exp().is_nan(), content="true")
 /// }
 /// ```
-pub fn exp(self : Double) -> Double {
+pub fn Double::exp(self : Double) -> Double {
   fn get_high_word(x : Double) -> UInt {
     (x.reinterpret_as_uint64() >> 32).to_uint()
   }
@@ -189,7 +189,7 @@ pub fn exp(self : Double) -> Double {
 ///   inspect(@double.neg_infinity.expm1(), content="-1")
 /// }
 /// ```
-pub fn expm1(self : Double) -> Double {
+pub fn Double::expm1(self : Double) -> Double {
   if self.is_nan() {
     return not_a_number
   }

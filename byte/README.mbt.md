@@ -22,7 +22,7 @@ test "byte conversion" {
   let byte = b'A'
   inspect(byte.to_uint64(), content="65")
   let byte = b' '
-  inspect(@byte.to_uint64(byte), content="32")
+  inspect(byte.to_uint64(), content="32")
 }
 ```
 

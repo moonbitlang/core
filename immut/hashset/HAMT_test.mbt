@@ -156,17 +156,17 @@ test "each on empty set" {
 test "from_array with empty array" {
   let empty_array : Array[Int] = []
   let set = @hashset.from_array(empty_array)
-  inspect(@hashset.is_empty(set), content="true")
+  inspect(set.is_empty(), content="true")
 }
 
 ///|
 test "from_array with non-empty array" {
   let array = [1, 2, 3]
   let set = @hashset.from_array(array)
-  inspect(@hashset.contains(set, 1), content="true")
-  inspect(@hashset.contains(set, 2), content="true")
-  inspect(@hashset.contains(set, 3), content="true")
-  inspect(@hashset.size(set), content="3")
+  inspect(set.contains(1), content="true")
+  inspect(set.contains(2), content="true")
+  inspect(set.contains(3), content="true")
+  inspect(set.size(), content="3")
 }
 
 ///|

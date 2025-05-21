@@ -58,7 +58,7 @@
 ///   inspect(@double.neg_infinity.sinh(), content="-Infinity")
 /// }
 /// ```
-pub fn sinh(self : Double) -> Double {
+pub fn Double::sinh(self : Double) -> Double {
   if self.is_nan() || self.is_inf() {
     return self
   }
@@ -118,7 +118,7 @@ pub fn sinh(self : Double) -> Double {
 ///   inspect(@double.neg_infinity.cosh(), content="Infinity")
 /// }
 /// ```
-pub fn cosh(self : Double) -> Double {
+pub fn Double::cosh(self : Double) -> Double {
   if self.is_nan() {
     return self
   }
@@ -180,7 +180,7 @@ pub fn cosh(self : Double) -> Double {
 ///   inspect(@double.neg_infinity.tanh(), content="-1")
 /// }
 /// ```
-pub fn tanh(self : Double) -> Double {
+pub fn Double::tanh(self : Double) -> Double {
   if self.is_nan() {
     return self
   }
@@ -241,7 +241,7 @@ pub fn tanh(self : Double) -> Double {
 ///   inspect(@double.neg_infinity.asinh(), content="-Infinity")
 /// }
 /// ```
-pub fn asinh(self : Double) -> Double {
+pub fn Double::asinh(self : Double) -> Double {
   if self.is_nan() || self.is_inf() {
     return self
   }
@@ -301,7 +301,7 @@ pub fn asinh(self : Double) -> Double {
 ///   inspect(@double.neg_infinity.acosh(), content="NaN")
 /// }
 /// ```
-pub fn acosh(self : Double) -> Double {
+pub fn Double::acosh(self : Double) -> Double {
   let one = 1.0
   let hx = get_high_word(self).reinterpret_as_int()
   if self < 1.0 || self.is_nan() {
@@ -352,7 +352,7 @@ pub fn acosh(self : Double) -> Double {
 ///   inspect(@double.neg_infinity.atanh(), content="NaN")
 /// }
 /// ```
-pub fn atanh(self : Double) -> Double {
+pub fn Double::atanh(self : Double) -> Double {
   let hx : Int = get_high_word(self).reinterpret_as_int()
   let ix = hx & 0x7fffffff
   if self.abs() > 1.0 {

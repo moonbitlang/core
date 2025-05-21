@@ -125,7 +125,7 @@ pub let min_positive : Float = (0x00800000).reinterpret_as_float()
 ///   inspect(@float.not_a_number.abs().is_nan(), content="true")
 /// }
 /// ```
-pub fn abs(self : Float) -> Float = "%f32.abs"
+pub fn Float::abs(self : Float) -> Float = "%f32.abs"
 
 ///|
 /// Converts a floating-point number to its string representation.

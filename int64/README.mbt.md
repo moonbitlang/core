@@ -28,8 +28,8 @@ The package provides functions to convert `Int64` values to their binary represe
 ```moonbit
 test "binary conversion" {
   let x = 258L // Int64 value of 258
-  let be_bytes = @int64.to_be_bytes(x)
-  let le_bytes = @int64.to_le_bytes(x)
+  let be_bytes = x.to_be_bytes()
+  let le_bytes = x.to_le_bytes()
 
   // Convert to String for inspection
   inspect(

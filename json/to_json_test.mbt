@@ -206,7 +206,7 @@ test "optional field" {
     { x: None, t: Some(None) },
   ]
   inspect(
-    opt.to_json() |> @json.stringify,
+    opt.to_json().stringify(),
     content=
       #|[{"x":42,"t":[42]},{},{"t":null}]
     ,

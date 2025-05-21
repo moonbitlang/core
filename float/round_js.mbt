@@ -31,7 +31,7 @@
 ///   inspect((-3.7 : Float).trunc(), content="-3.0")
 /// }
 /// ```
-pub fn trunc(self : Float) -> Float = "Math" "trunc"
+pub fn Float::trunc(self : Float) -> Float = "Math" "trunc"
 
 ///|
 /// Returns the smallest integer greater than or equal to the given
@@ -51,7 +51,7 @@ pub fn trunc(self : Float) -> Float = "Math" "trunc"
 ///   inspect((-1.5 : Float).ceil(), content="-1.0")
 /// }
 /// ```
-pub fn ceil(self : Float) -> Float = "Math" "ceil"
+pub fn Float::ceil(self : Float) -> Float = "Math" "ceil"
 
 ///|
 /// Returns the largest integer value less than or equal to the given
@@ -72,7 +72,7 @@ pub fn ceil(self : Float) -> Float = "Math" "ceil"
 ///   inspect((-3.7 : Float).floor(), content="-4.0")
 /// }
 /// ```
-pub fn floor(self : Float) -> Float = "Math" "floor"
+pub fn Float::floor(self : Float) -> Float = "Math" "floor"
 
 ///|
 /// Rounds a floating-point number to the nearest integer, with ties rounding up
@@ -94,4 +94,4 @@ pub fn floor(self : Float) -> Float = "Math" "floor"
 ///   inspect((-1.5 : Float).round(), content="-1.0")
 /// }
 /// ```
-pub fn round(self : Float) -> Float = "Math" "round"
+pub fn Float::round(self : Float) -> Float = "Math" "round"

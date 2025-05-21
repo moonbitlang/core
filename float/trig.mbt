@@ -33,7 +33,7 @@
 ///   inspect(@float.neg_infinity.sin(), content="NaN")
 /// }
 /// ```
-pub fn sin(self : Float) -> Float {
+pub fn Float::sin(self : Float) -> Float {
   self.to_double().sin().to_float()
 }
 
@@ -58,7 +58,7 @@ pub fn sin(self : Float) -> Float {
 ///   inspect(@float.neg_infinity.cos(), content="NaN")
 /// }
 /// ```
-pub fn cos(self : Float) -> Float {
+pub fn Float::cos(self : Float) -> Float {
   self.to_double().cos().to_float()
 }
 
@@ -83,7 +83,7 @@ pub fn cos(self : Float) -> Float {
 ///   inspect(@float.neg_infinity.tan(), content="NaN")
 /// }
 /// ```
-pub fn tan(self : Float) -> Float {
+pub fn Float::tan(self : Float) -> Float {
   self.to_double().tan().to_float()
 }
 
@@ -111,7 +111,7 @@ pub fn tan(self : Float) -> Float {
 ///   inspect(@float.neg_infinity.asin(), content="NaN")
 /// }
 /// ```
-pub fn asin(self : Float) -> Float {
+pub fn Float::asin(self : Float) -> Float {
   self.to_double().asin().to_float()
 }
 
@@ -139,7 +139,7 @@ pub fn asin(self : Float) -> Float {
 ///   inspect(@float.neg_infinity.acos(), content="NaN")
 /// }
 /// ```
-pub fn acos(self : Float) -> Float {
+pub fn Float::acos(self : Float) -> Float {
   self.to_double().acos().to_float()
 }
 
@@ -166,7 +166,7 @@ pub fn acos(self : Float) -> Float {
 ///   inspect(@float.neg_infinity.atan(), content="-1.5707963705062866")
 /// }
 /// ```
-pub fn atan(self : Float) -> Float {
+pub fn Float::atan(self : Float) -> Float {
   self.to_double().atan().to_float()
 }
 
@@ -201,6 +201,6 @@ pub fn atan(self : Float) -> Float {
 ///   inspect(@float.neg_infinity.atan2(@float.infinity), content="-0.7853981852531433")
 /// }
 /// ```
-pub fn atan2(self : Float, other : Float) -> Float {
+pub fn Float::atan2(self : Float, other : Float) -> Float {
   self.to_double().atan2(other.to_double()).to_float()
 }

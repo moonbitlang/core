@@ -36,8 +36,8 @@ test "basic operations" {
   inspect(@double.trunc(3.7), content="3")
 
   // Sign
-  inspect(@double.signum(-3.14), content="-1")
-  inspect(@double.signum(2.0), content="1")
+  inspect((-3.14).signum(), content="-1")
+  inspect((2.0).signum(), content="1")
 
   // Type conversion
   inspect(@double.from_int(42), content="42")
@@ -113,10 +113,10 @@ Functions for testing special floating-point values and comparing numbers:
 ```moonbit
 test "special value testing" {
   // Testing for special values
-  inspect(@double.is_nan(@double.not_a_number), content="true")
-  inspect(@double.is_inf(@double.infinity), content="true")
-  inspect(@double.is_pos_inf(@double.infinity), content="true")
-  inspect(@double.is_neg_inf(@double.neg_infinity), content="true")
+  inspect(@double.not_a_number.is_nan(), content="true")
+  inspect(@double.infinity.is_inf(), content="true")
+  inspect(@double.infinity.is_pos_inf(), content="true")
+  inspect(@double.neg_infinity.is_neg_inf(), content="true")
 
   // Approximate equality
   let relative_tolerance = 1.e-9

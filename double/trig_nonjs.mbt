@@ -688,7 +688,7 @@ fn __kernal_tan(x : Double, y : Double, iy : Int) -> Double {
 ///   inspect(@double.neg_infinity.sin(), content="NaN")
 /// }
 /// ```
-pub fn sin(self : Double) -> Double {
+pub fn Double::sin(self : Double) -> Double {
   if self.is_inf() || self.is_nan() {
     return not_a_number
   }
@@ -731,7 +731,7 @@ pub fn sin(self : Double) -> Double {
 ///   inspect(@double.neg_infinity.cos(), content="NaN")
 /// }
 /// ```
-pub fn cos(self : Double) -> Double {
+pub fn Double::cos(self : Double) -> Double {
   if self.is_inf() || self.is_nan() {
     return not_a_number
   }
@@ -774,7 +774,7 @@ pub fn cos(self : Double) -> Double {
 ///   inspect(@double.neg_infinity.tan(), content="NaN")
 /// }
 /// ```
-pub fn tan(self : Double) -> Double {
+pub fn Double::tan(self : Double) -> Double {
   if self.is_inf() || self.is_nan() {
     return not_a_number
   }
@@ -813,7 +813,7 @@ pub fn tan(self : Double) -> Double {
 ///   inspect(@double.neg_infinity.asin(), content="NaN")
 /// }
 /// ```
-pub fn asin(self : Double) -> Double {
+pub fn Double::asin(self : Double) -> Double {
   let huge = 1.0e+300
   let pio4_hi = 7.85398163397448278999e-01
   let pio2_hi = 1.57079632679489655800
@@ -895,7 +895,7 @@ pub fn asin(self : Double) -> Double {
 ///   inspect(@double.neg_infinity.acos(), content="NaN")
 /// }
 /// ```
-pub fn acos(self : Double) -> Double {
+pub fn Double::acos(self : Double) -> Double {
   let one : Double = 1.0
   let pi : Double = 3.14159265358979311600
   let pio2_hi : Double = 1.57079632679489655800
@@ -975,7 +975,7 @@ pub fn acos(self : Double) -> Double {
 ///   inspect(@double.neg_infinity.atan(), content="-1.5707963267948966")
 /// }
 /// ```
-pub fn atan(self : Double) -> Double {
+pub fn Double::atan(self : Double) -> Double {
   if self.is_nan() || self == 0.0 {
     return self
   }
@@ -1085,7 +1085,7 @@ pub fn atan(self : Double) -> Double {
 ///   inspect(@double.neg_infinity.atan2(@double.infinity), content="-0.7853981633974483")
 /// }
 /// ```
-pub fn atan2(self : Double, x : Double) -> Double {
+pub fn Double::atan2(self : Double, x : Double) -> Double {
   if x.is_nan() || self.is_nan() {
     return not_a_number
   }

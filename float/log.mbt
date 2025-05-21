@@ -72,7 +72,7 @@ let logf_data : LogfData = {
 ///   inspect((0.0 : Float).ln(), content="-Infinity")
 /// }
 /// ```
-pub fn ln(self : Float) -> Float {
+pub fn Float::ln(self : Float) -> Float {
   let mut ix : UInt = self.reinterpret_as_int().reinterpret_as_uint()
   if ix == 0x3f800000U {
     return 0.0
@@ -134,6 +134,6 @@ pub fn ln(self : Float) -> Float {
 ///   inspect(@float.neg_infinity.ln_1p(), content="NaN")
 /// }
 /// ```
-pub fn ln_1p(self : Float) -> Float {
+pub fn Float::ln_1p(self : Float) -> Float {
   self.to_double().ln_1p().to_float()
 }

@@ -116,13 +116,13 @@ pub fn reciprocal(self : T) -> T {
 
 ///|
 /// Returns the negation of a rational number.
-pub fn neg(self : T) -> T {
+pub fn T::neg(self : T) -> T {
   new_unchecked(-self.numerator, self.denominator)
 }
 
 ///|
 /// Returns the absolute value of a rational number.
-pub fn abs(self : T) -> T {
+pub fn T::abs(self : T) -> T {
   new_unchecked(self.numerator.abs(), self.denominator.abs())
 }
 
@@ -256,7 +256,7 @@ pub fn from_double(value : Double) -> T!RationalError {
 
 ///|
 /// Ceils a rational number towards positive infinity.
-pub fn ceil(self : T) -> Int64 {
+pub fn T::ceil(self : T) -> Int64 {
   let sign = if self.numerator < 0L { -1L } else { 1L }
   let quotient = self.numerator / self.denominator
   if self.numerator % self.denominator == 0L {
@@ -268,7 +268,7 @@ pub fn ceil(self : T) -> Int64 {
 
 ///|
 /// Floors a rational number towards negative infinity.
-pub fn floor(self : T) -> Int64 {
+pub fn T::floor(self : T) -> Int64 {
   let sign = if self.numerator < 0L { -1L } else { 1L }
   let quotient = self.numerator / self.denominator
   if self.numerator % self.denominator == 0L {
@@ -280,7 +280,7 @@ pub fn floor(self : T) -> Int64 {
 
 ///|
 /// Rounds a rational number towards zero.
-pub fn trunc(self : T) -> Int64 {
+pub fn T::trunc(self : T) -> Int64 {
   if self.numerator < 0L {
     -(-self.numerator / self.denominator)
   } else {
@@ -326,6 +326,9 @@ pub impl @quickcheck.Arbitrary for T with arbitrary(size, rs) {
 pub fn is_integer(self : T) -> Bool {
   self.denominator == 1L
 }
+
+///|
+pub fnalias T::(neg, abs, ceil, floor, trunc)
 
 ///|
 test "op_add" {
@@ -451,13 +454,13 @@ test "op_div" {
 test "reciprocal" {
   // 1/2 -> 2/1
   let a = new_unchecked(1L, 2L)
-  let b = reciprocal(a)
+  let b = a.reciprocal()
   assert_eq!(b.numerator, 2L)
   assert_eq!(b.denominator, 1L)
 
   // -1/2 -> -2/1
   let a = new_unchecked(-1L, 2L)
-  let b = reciprocal(a)
+  let b = a.reciprocal()
   assert_eq!(b.numerator, -2L)
   assert_eq!(b.denominator, 1L)
 }
@@ -568,25 +571,25 @@ test "trunc" {
 test "fract" {
   // 1/2 -> 1/2
   let a = new_unchecked(1L, 2L)
-  let b = fract(a)
+  let b = a.fract()
   assert_eq!(b.numerator, 1L)
   assert_eq!(b.denominator, 2L)
 
   // -1/2 -> -1/2
   let a = new_unchecked(-1L, 2L)
-  let b = fract(a)
+  let b = a.fract()
   assert_eq!(b.numerator, -1L)
   assert_eq!(b.denominator, 2L)
 
   // 3/2 -> 1/2
   let a = new_unchecked(3L, 2L)
-  let b = fract(a)
+  let b = a.fract()
   assert_eq!(b.numerator, 1L)
   assert_eq!(b.denominator, 2L)
 
   // -3/2 -> -1/2
   let a = new_unchecked(-3L, 2L)
-  let b = fract(a)
+  let b = a.fract()
   assert_eq!(b.numerator, -1L)
   assert_eq!(b.denominator, 2L)
 }
