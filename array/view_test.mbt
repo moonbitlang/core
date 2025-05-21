@@ -92,6 +92,19 @@ test "iter" {
   @json.inspect!(array[5:9].iter().to_array(), content=[5, 6, 7, 8])
 }
 
+test "iter2" {
+  let arr = [1, 2, 3]
+  let view = arr[1:]
+  let mut sum = 0
+  let mut sum_keys = 0
+  view.iter2().each(fn(i, x) {
+    sum = sum + x 
+    sum_keys = sum_keys + i
+  })
+  inspect!(sum, content="5")
+  inspect!(sum_keys, content="1")
+}
+
 ///|
 test "to_string" {
   let arr = [0, 1, 2, 3, 4]
