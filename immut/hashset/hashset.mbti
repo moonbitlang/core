@@ -29,6 +29,10 @@ fn size[A](T[A]) -> Int
 
 fn union[K : Eq + Hash](T[K], T[K]) -> T[K]
 
+fn intersection[K : Eq + Hash](T[K], T[K]) -> T[K]
+
+fn difference[K : Eq + Hash](T[K], T[K]) -> T[K]
+
 // Types and methods
 type T[A]
 impl T {
@@ -40,6 +44,8 @@ impl T {
   remove[A : Eq + Hash](Self[A], A) -> Self[A]
   size[A](Self[A]) -> Int
   union[K : Eq + Hash](Self[K], Self[K]) -> Self[K]
+  intersection[K : Eq + Hash](Self[K], Self[K]) -> Self[K]
+  difference[K : Eq + Hash](Self[K], Self[K]) -> Self[K]
 }
 impl[A : Eq] Eq for T[A]
 impl[A : Hash] Hash for T[A]
