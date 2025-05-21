@@ -10,39 +10,69 @@ const PI : Double = 0x3.243F6A8885A308CA8A54
 
 fn acos(Double) -> Double
 
+fn acosf(Float) -> Float
+
 fn acosh(Double) -> Double
+
+fn acoshf(Float) -> Float
 
 fn asin(Double) -> Double
 
+fn asinf(Float) -> Float
+
 fn asinh(Double) -> Double
+
+fn asinhf(Float) -> Float
 
 fn atan(Double) -> Double
 
 fn atan2(Double, Double) -> Double
 
+fn atan2f(Float, Float) -> Float
+
+fn atanf(Float) -> Float
+
 fn atanh(Double) -> Double
 
+fn atanhf(Float) -> Float
+
 fn cbrt(Double) -> Double
+
+fn cbrtf(Float) -> Float
 
 fn ceil(Double) -> Double
 
 fn cos(Double) -> Double
 
+fn cosf(Float) -> Float
+
 fn cosh(Double) -> Double
+
+fn coshf(Float) -> Float
 
 fn exp(Double) -> Double
 
+fn expf(Float) -> Float
+
 fn expm1(Double) -> Double
+
+fn expm1f(Float) -> Float
 
 fn floor(Double) -> Double
 
 fn hypot(Double, Double) -> Double
+
+fn hypotf(Float, Float) -> Float
 
 fn is_probable_prime(@bigint.BigInt, @random.Rand, iters~ : Int = ..) -> Bool
 
 fn ln(Double) -> Double
 
 fn ln_1p(Double) -> Double
+
+fn ln_1pf(Float) -> Float
+
+fn lnf(Float) -> Float
 
 fn log10(Double) -> Double
 
@@ -54,17 +84,29 @@ fn minimum[T : Compare](T, T) -> T
 
 let pi : Double
 
+fn powf(Float, Float) -> Float
+
 fn probable_prime(Int, @random.Rand) -> @bigint.BigInt
 
 fn round(Double) -> Double
 
+fn scalbnf(Float, Int) -> Float
+
 fn sin(Double) -> Double
+
+fn sinf(Float) -> Float
 
 fn sinh(Double) -> Double
 
+fn sinhf(Float) -> Float
+
 fn tan(Double) -> Double
 
+fn tanf(Float) -> Float
+
 fn tanh(Double) -> Double
+
+fn tanhf(Float) -> Float
 
 fn trunc(Double) -> Double
 

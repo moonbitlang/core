@@ -2,6 +2,8 @@
   "import": [
     "moonbitlang/core/builtin",
     "moonbitlang/core/double",
+    "moonbitlang/core/float",
+    "moonbitlang/core/int",
     "moonbitlang/core/bigint",
     "moonbitlang/core/random"
   ],
