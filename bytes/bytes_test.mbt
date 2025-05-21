@@ -135,9 +135,11 @@ test "iter" {
 test "iter2" {
   let buf = StringBuilder::new(size_hint=5)
   let keys = []
-  b"abcde".iter2().each(fn(i, x) {
+  b"abcde"
+  .iter2()
+  .each(fn(i, x) {
     buf.write_string(x.to_string())
-    keys.push( i )
+    keys.push(i)
   })
   inspect!(buf, content="b'\\x61'b'\\x62'b'\\x63'b'\\x64'b'\\x65'")
   inspect!(keys, content="[0, 1, 2, 3, 4]")

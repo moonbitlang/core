@@ -216,6 +216,7 @@ pub fn View::iter2[A](self : View[A]) -> Iter2[Int, A] {
   Iter2::new(fn(yield_) {
     for i, v in self {
       guard yield_(i, v) is IterContinue else { break IterEnd }
+
     } else {
       IterContinue
     }
