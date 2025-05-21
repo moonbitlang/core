@@ -46,7 +46,7 @@
 ///   inspect(1.0.hypot(@double.neg_infinity), content="Infinity")
 /// }
 /// ```
-pub fn hypot(self : Double, y : Double) -> Double {
+pub fn Double::hypot(self : Double, y : Double) -> Double {
   if self.is_nan() || y.is_nan() {
     return not_a_number
   }

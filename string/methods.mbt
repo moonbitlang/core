@@ -906,7 +906,7 @@ test "View::replace_all" {
 /// Converts this string to lowercase.
 pub fn View::to_lower(self : View) -> View {
   // TODO: deal with non-ascii characters
-  guard self.find_by(@char.is_ascii_uppercase) is Some(idx) else { return self }
+  guard self.find_by(_.is_ascii_uppercase()) is Some(idx) else { return self }
   let buf = StringBuilder::new(size_hint=self.length())
   buf.write_string(self.view(end_offset=idx).to_string())
   for c in self.view(start_offset=idx) {
@@ -924,7 +924,7 @@ pub fn View::to_lower(self : View) -> View {
 /// Converts this string to lowercase.
 pub fn to_lower(self : String) -> String {
   // TODO: deal with non-ascii characters
-  guard self.find_by(@char.is_ascii_uppercase) is Some(idx) else { return self }
+  guard self.find_by(_.is_ascii_uppercase()) is Some(idx) else { return self }
   let buf = StringBuilder::new(size_hint=self.length())
   buf.write_string(self.view(end_offset=idx).to_string())
   for c in self.view(start_offset=idx) {
@@ -956,7 +956,7 @@ test "View::to_lower" {
 /// Converts this string to uppercase.
 pub fn View::to_upper(self : View) -> View {
   // TODO: deal with non-ascii characters
-  guard self.find_by(@char.is_ascii_lowercase) is Some(idx) else { return self }
+  guard self.find_by(_.is_ascii_lowercase()) is Some(idx) else { return self }
   let buf = StringBuilder::new(size_hint=self.length())
   buf.write_string(self.view(end_offset=idx).to_string())
   for c in self.view(start_offset=idx) {
@@ -973,7 +973,7 @@ pub fn View::to_upper(self : View) -> View {
 /// Converts this string to uppercase.
 pub fn to_upper(self : String) -> String {
   // TODO: deal with non-ascii characters
-  guard self.find_by(@char.is_ascii_lowercase) is Some(idx) else { return self }
+  guard self.find_by(_.is_ascii_lowercase()) is Some(idx) else { return self }
   let buf = StringBuilder::new(size_hint=self.length())
   buf.write_string(self.view(end_offset=idx).to_string())
   for c in self.view(start_offset=idx) {

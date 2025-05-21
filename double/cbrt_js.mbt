@@ -42,4 +42,4 @@
 ///   inspect(@double.neg_infinity, content="-Infinity")
 /// }
 /// ```
-pub fn cbrt(self : Double) -> Double = "Math" "cbrt"
+pub fn Double::cbrt(self : Double) -> Double = "Math" "cbrt"

@@ -226,9 +226,9 @@ pub fn[T] flatten(self : T??) -> T? {
 ///|
 test "flatten" {
   let a : Int?? = Some(Some(42))
-  assert_eq!(flatten(a), Some(42))
+  assert_eq!(a.flatten(), Some(42))
   let b : Int?? = Some(None)
-  assert_eq!(flatten(b), None)
+  assert_eq!(b.flatten(), None)
 }
 
 ///|

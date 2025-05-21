@@ -37,7 +37,7 @@ fn[K : Compare, V] split_max(self : T[K, V]) -> (K, V, T[K, V]) {
   match self {
     Tree(k, value=v, l, Empty, ..) => (k, v, l)
     Tree(k, value=v, l, r, ..) => {
-      let (k1, v1, r) = split_max(r)
+      let (k1, v1, r) = r.split_max()
       (k1, v1, balance(k, v, l, r))
     }
     Empty => abort("Map::split_max error")
@@ -49,7 +49,7 @@ fn[K : Compare, V] split_min(self : T[K, V]) -> (K, V, T[K, V]) {
   match self {
     Tree(k, value=v, Empty, r, ..) => (k, v, r)
     Tree(k, value=v, l, r, ..) => {
-      let (k1, v1, l) = split_min(l)
+      let (k1, v1, l) = l.split_min()
       (k1, v1, balance(k, v, l, r))
     }
     Empty => abort("Map::split_min error")
@@ -57,16 +57,16 @@ fn[K : Compare, V] split_min(self : T[K, V]) -> (K, V, T[K, V]) {
 }
 
 ///|
-fn[K : Compare, V] glue(self : T[K, V], other : T[K, V]) -> T[K, V] {
-  match (self, other) {
+fn[K : Compare, V] glue(l : T[K, V], r : T[K, V]) -> T[K, V] {
+  match (l, r) {
     (Empty, r) => r
     (l, Empty) => l
     (l, r) =>
       if l.size() > r.size() {
-        let (k, v, l) = split_max(l)
+        let (k, v, l) = l.split_max()
         balance(k, v, l, r)
       } else {
-        let (k, v, r) = split_min(r)
+        let (k, v, r) = r.split_min()
         balance(k, v, l, r)
       }
   }
@@ -83,9 +83,9 @@ pub fn[K : Compare, V] remove(self : T[K, V], key : K) -> T[K, V] {
       if c == 0 {
         glue(l, r)
       } else if c < 0 {
-        balance(k, v, remove(l, key), r)
+        balance(k, v, l.remove(key), r)
       } else {
-        balance(k, v, l, remove(r, key))
+        balance(k, v, l, r.remove(key))
       }
     }
   }
@@ -94,7 +94,7 @@ pub fn[K : Compare, V] remove(self : T[K, V], key : K) -> T[K, V] {
 ///|
 /// Filter values that satisfy the predicate
 pub fn[K : Compare, V] filter(self : T[K, V], pred : (V) -> Bool) -> T[K, V] {
-  filter_with_key(self, fn(_k, v) { pred(v) })
+  self.filter_with_key(fn(_k, v) { pred(v) })
 }
 
 ///|
@@ -107,9 +107,9 @@ pub fn[K : Compare, V] filter_with_key(
     Empty => Empty
     Tree(k, value=v, l, r, ..) =>
       if pred(k, v) {
-        balance(k, v, filter_with_key(l, pred), filter_with_key(r, pred))
+        balance(k, v, l.filter_with_key(pred), r.filter_with_key(pred))
       } else {
-        glue(filter_with_key(l, pred), filter_with_key(r, pred))
+        glue(l.filter_with_key(pred), r.filter_with_key(pred))
       }
   }
 }
@@ -172,15 +172,15 @@ fn[K : Compare, V] balance(
     make_tree(k2, v2, make_tree(k1, v1, x, y1), make_tree(k3, v3, y2, z))
   }
 
-  let ln = size(l)
-  let rn = size(r)
+  let ln = l.size()
+  let rn = r.size()
   if ln + rn < 2 {
     make_tree(key, value, l, r)
   } else if rn > ratio * ln {
     // right is too big
     guard r is Tree(_, rl, rr, ..)
-    let rln = size(rl)
-    let rrn = size(rr)
+    let rln = rl.size()
+    let rrn = rr.size()
     if rln < rrn {
       single_l(key, value, l, r)
     } else {
@@ -189,8 +189,8 @@ fn[K : Compare, V] balance(
   } else if ln > ratio * rn {
     // left is too big
     guard l is Tree(_, ll, lr, ..)
-    let lln = size(ll)
-    let lrn = size(lr)
+    let lln = ll.size()
+    let lrn = lr.size()
     if lrn < lln {
       single_r(key, value, l, r)
     } else {
@@ -370,7 +370,7 @@ test "glue" {
     Tree(_, l, r, ..) => (l, r)
     _ => abort("unreachable")
   }
-  let m = l.glue(r)
+  let m = glue(l, r)
   assert_eq!(m.debug_tree(), "(2,two,(1,one,(0,zero,_,_),_),(8,eight,_,_))")
 }
 

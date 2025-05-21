@@ -177,7 +177,7 @@ pub fn[K : Eq + Hash, V] filter(self : T[K, V], pred : (V) -> Bool) -> T[K, V] {
 ///|
 /// Fold the values in the map
 pub fn[K, V, A] fold(self : T[K, V], init~ : A, f : (A, V) -> A) -> A {
-  fold_with_key(self, fn(acc, _k, v) { f(acc, v) }, init~)
+  self.fold_with_key(fn(acc, _k, v) { f(acc, v) }, init~)
 }
 
 ///|
@@ -211,7 +211,7 @@ pub fn[K, V, A] fold_with_key(
 ///|
 /// Maps over the values in the map
 pub fn[K : Eq + Hash, V, A] map(self : T[K, V], f : (V) -> A) -> T[K, A] {
-  map_with_key(self, fn(_k, v) { f(v) })
+  self.map_with_key(fn(_k, v) { f(v) })
 }
 
 ///|

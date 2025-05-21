@@ -38,6 +38,6 @@
 ///   inspect((1.0 : Float).hypot(@float.neg_infinity), content="Infinity")
 /// }
 /// ```
-pub fn hypot(self : Float, y : Float) -> Float {
+pub fn Float::hypot(self : Float, y : Float) -> Float {
   self.to_double().hypot(y.to_double()).to_float()
 }

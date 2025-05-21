@@ -138,7 +138,7 @@ pub fn[A] unsafe_peek(self : T[A]) -> A {
 #deprecated("Use `unsafe_peek` instead")
 #coverage.skip
 pub fn[A] peek_exn(self : T[A]) -> A {
-  unsafe_peek(self)
+  self.unsafe_peek()
 }
 
 ///|
@@ -184,7 +184,7 @@ pub fn[A] unsafe_pop(self : T[A]) -> A {
 #deprecated("Use `unsafe_pop` instead")
 #coverage.skip
 pub fn[A] pop_exn(self : T[A]) -> A {
-  unsafe_pop(self)
+  self.unsafe_pop()
 }
 
 ///|

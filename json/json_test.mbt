@@ -14,34 +14,27 @@
 
 ///|
 test "get as null" {
-  inspect(Json::null() |> @json.as_null, content="Some(())")
-  inspect(Json::boolean(true) |> @json.as_null, content="None")
-  inspect(Json::boolean(false) |> @json.as_null, content="None")
-  inspect(Json::number(1.0) |> @json.as_null, content="None")
-  inspect(Json::string("Hello World") |> @json.as_null, content="None")
+  inspect(Json::null().as_null(), content="Some(())")
+  inspect(Json::boolean(true).as_null(), content="None")
+  inspect(Json::boolean(false).as_null(), content="None")
+  inspect(Json::number(1.0).as_null(), content="None")
+  inspect(Json::string("Hello World").as_null(), content="None")
+  inspect(Json::array([Json::string("Hello World")]).as_null(), content="None")
   inspect(
-    Json::array([Json::string("Hello World")]) |> @json.as_null,
-    content="None",
-  )
-  inspect(
-    Json::object({ "key": Json::string("key"), "value": Json::number(100.0) })
-    |> @json.as_null,
+    Json::object({ "key": Json::string("key"), "value": Json::number(100.0) }).as_null(),
     content="None",
   )
 }
 
 ///|
 test "get as bool" {
-  inspect(Json::null() |> @json.as_bool, content="None")
-  inspect(Json::boolean(true) |> @json.as_bool, content="Some(true)")
-  inspect(Json::boolean(false) |> @json.as_bool, content="Some(false)")
-  inspect(Json::number(1.0) |> @json.as_bool, content="None")
-  inspect(Json::string("Hello World") |> @json.as_bool, content="None")
-  inspect(
-    Json::array([Json::string("Hello World")]) |> @json.as_bool,
-    content="None",
-  )
-  inspect({ "key": "key", "value": 100.0 } |> @json.as_bool, content="None")
+  inspect(Json::null().as_bool(), content="None")
+  inspect(Json::boolean(true).as_bool(), content="Some(true)")
+  inspect(Json::boolean(false).as_bool(), content="Some(false)")
+  inspect(Json::number(1.0).as_bool(), content="None")
+  inspect(Json::string("Hello World").as_bool(), content="None")
+  inspect(Json::array([Json::string("Hello World")]).as_bool(), content="None")
+  inspect(Json::as_bool({ "key": "key", "value": 100.0 }), content="None")
 }
 
 ///|
@@ -58,119 +51,102 @@ fn check2!(x : String) -> Json!@json.ParseError {
 test "get as number" {
   let _ = check
   let _ = check2
-  inspect(Json::null() |> @json.as_number, content="None")
-  inspect(Json::boolean(false) |> @json.as_number, content="None")
-  inspect(Json::boolean(true) |> @json.as_number, content="None")
-  inspect(Json::number(1.0) |> @json.as_number, content="Some(1)")
-  inspect(Json::string("Hello World") |> @json.as_number, content="None")
+  inspect(Json::null().as_number(), content="None")
+  inspect(Json::boolean(false).as_number(), content="None")
+  inspect(Json::boolean(true).as_number(), content="None")
+  inspect(Json::number(1.0).as_number(), content="Some(1)")
+  inspect(Json::string("Hello World").as_number(), content="None")
   inspect(
-    Json::array([Json::string("Hello World")]) |> @json.as_number,
+    Json::array([Json::string("Hello World")]).as_number(),
     content="None",
   )
   inspect(
     Json::object(
       Map::of([("key", Json::string("key")), ("value", Json::number(100.0))]),
-    )
-    |> @json.as_number,
+    ).as_number(),
     content="None",
   )
 }
 
 ///|
 test "get as string" {
-  inspect(Json::null() |> @json.as_string, content="None")
-  inspect(Json::boolean(true) |> @json.as_string, content="None")
-  inspect(Json::boolean(false) |> @json.as_string, content="None")
-  inspect(Json::number(1.0) |> @json.as_string, content="None")
+  inspect(Json::null().as_string(), content="None")
+  inspect(Json::boolean(true).as_string(), content="None")
+  inspect(Json::boolean(false).as_string(), content="None")
+  inspect(Json::number(1.0).as_string(), content="None")
   inspect(
-    Json::string("Hello World") |> @json.as_string,
+    Json::string("Hello World").as_string(),
     content=
       #|Some("Hello World")
     ,
   )
   inspect(
-    Json::array([Json::string("Hello World")]) |> @json.as_string,
+    Json::array([Json::string("Hello World")]).as_string(),
     content="None",
   )
   inspect(
     Json::object(
       Map::of([("key", Json::string("key")), ("value", Json::number(100.0))]),
-    )
-    |> @json.as_string,
+    ).as_string(),
     content="None",
   )
 }
 
 ///|
 test "get as array" {
-  inspect(Json::null() |> @json.as_array, content="None")
-  inspect(Json::boolean(true) |> @json.as_array, content="None")
-  inspect(Json::boolean(false) |> @json.as_array, content="None")
-  inspect(Json::number(1.0) |> @json.as_array, content="None")
-  inspect(Json::string("Hello World") |> @json.as_array, content="None")
+  inspect(Json::null().as_array(), content="None")
+  inspect(Json::boolean(true).as_array(), content="None")
+  inspect(Json::boolean(false).as_array(), content="None")
+  inspect(Json::number(1.0).as_array(), content="None")
+  inspect(Json::string("Hello World").as_array(), content="None")
   inspect(
-    Json::array([Json::string("Hello World")]) |> @json.as_array,
+    Json::array([Json::string("Hello World")]).as_array(),
     content=
       #|Some([String("Hello World")])
     ,
   )
   inspect(
-    Json::array([Json::string("Hello World")]).item(0).bind(@json.as_string),
+    Json::array([Json::string("Hello World")]).item(0).bind(Json::as_string),
     content=
       #|Some("Hello World")
     ,
   )
   inspect(
-    Json::array([Json::string("Hello World")]).item(1).bind(@json.as_string),
+    Json::array([Json::string("Hello World")]).item(1).bind(Json::as_string),
     content="None",
   )
   inspect(
-    Json::array([Json::string("Hello World")]).item(0).bind(@json.as_number),
+    Json::array([Json::string("Hello World")]).item(0).bind(Json::as_number),
     content="None",
   )
   inspect(
     Json::object(
       Map::of([("key", Json::string("key")), ("value", Json::number(100.0))]),
-    )
-    |> @json.as_array,
+    ).as_array(),
     content="None",
   )
 }
 
 ///|
 test "get as object" {
+  inspect(Json::null().as_object().map(_.to_array()), content="None")
+  inspect(Json::boolean(true).as_object().map(_.to_array()), content="None")
+  inspect(Json::boolean(false).as_object().map(_.to_array()), content="None")
+  inspect(Json::number(1.0).as_object().map(_.to_array()), content="None")
   inspect(
-    Json::null() |> @json.as_object |> @option.map(Map::to_array),
+    Json::string("Hello World").as_object().map(_.to_array()),
     content="None",
   )
   inspect(
-    Json::boolean(true) |> @json.as_object |> @option.map(Map::to_array),
-    content="None",
-  )
-  inspect(
-    Json::boolean(false) |> @json.as_object |> @option.map(Map::to_array),
-    content="None",
-  )
-  inspect(
-    Json::number(1.0) |> @json.as_object |> @option.map(Map::to_array),
-    content="None",
-  )
-  inspect(
-    Json::string("Hello World") |> @json.as_object |> @option.map(Map::to_array),
-    content="None",
-  )
-  inspect(
-    Json::array([Json::string("Hello World")])
-    |> @json.as_object
-    |> @option.map(Map::to_array),
+    Json::array([Json::string("Hello World")]).as_object().map(_.to_array()),
     content="None",
   )
   inspect(
     Json::object(
       Map::of([("key", Json::string("key")), ("value", Json::number(100.0))]),
     )
-    |> @json.as_object
-    |> @option.map(Map::to_array),
+    .as_object()
+    .map(_.to_array()),
     content=
       #|Some([("key", String("key")), ("value", Number(100))])
     ,
@@ -180,7 +156,7 @@ test "get as object" {
       Map::of([("key", Json::string("key")), ("value", Json::number(100.0))]),
     )
     .value("key")
-    .bind(@json.as_string),
+    .bind(_.as_string()),
     content=
       #|Some("key")
     ,
@@ -190,7 +166,7 @@ test "get as object" {
       Map::of([("key", Json::string("key")), ("value", Json::number(100.0))]),
     )
     .value("value")
-    .bind(@json.as_number),
+    .bind(_.as_number()),
     content="Some(100)",
   )
   inspect(
@@ -198,7 +174,7 @@ test "get as object" {
       Map::of([("key", Json::string("key")), ("value", Json::number(100.0))]),
     )
     .value("key")
-    .bind(@json.as_number),
+    .bind(_.as_number()),
     content="None",
   )
   inspect(
@@ -206,7 +182,7 @@ test "get as object" {
       Map::of([("key", Json::string("key")), ("value", Json::number(100.0))]),
     )
     .value("asdf")
-    .bind(@json.as_number),
+    .bind(_.as_number()),
     content="None",
   )
 }
@@ -221,38 +197,38 @@ test "deep access" {
     "bool": false,
     "obj": {},
   }
-  inspect(json.value("null").bind(@json.as_null), content="Some(())")
+  inspect(json.value("null").bind(Json::as_null), content="Some(())")
   inspect(
-    json.value("key").bind(fn { array => array.item(2) }).bind(@json.as_null),
+    json.value("key").bind(fn { array => array.item(2) }).bind(Json::as_null),
     content="Some(())",
   )
-  inspect(json.value("bool").bind(@json.as_bool), content="Some(false)")
+  inspect(json.value("bool").bind(Json::as_bool), content="Some(false)")
   inspect(
-    json.value("key").bind(fn { array => array.item(1) }).bind(@json.as_bool),
+    json.value("key").bind(fn { array => array.item(1) }).bind(Json::as_bool),
     content="Some(true)",
   )
   inspect(
-    json.value("key").bind(@json.as_array),
+    json.value("key").bind(Json::as_array),
     content=
       #|Some([Number(1), True, Null, Array([]), Object({"key": String("value"), "value": Number(100)})])
     ,
   )
   inspect(
-    json.value("key").bind(fn { array => array.item(3) }).bind(@json.as_array),
+    json.value("key").bind(fn { array => array.item(3) }).bind(Json::as_array),
     content="Some([])",
   )
   inspect(
     json
     .value("key")
     .bind(fn { array => array.item(4) })
-    .bind(@json.as_object)
-    .map(Map::to_array),
+    .bind(_.as_object())
+    .map(_.to_array()),
     content=
       #|Some([("key", String("value")), ("value", Number(100))])
     ,
   )
   inspect(
-    json.value("obj").bind(@json.as_object).map(Map::to_array),
+    json.value("obj").bind(_.as_object()).map(_.to_array()),
     content="Some([])",
   )
 }
@@ -371,13 +347,13 @@ test "string from and to json round trip" {
 test "escape" {
   let s = "http://example.com/"
   inspect(
-    @json.stringify(Json::string(s), escape_slash=true),
+    Json::string(s).stringify(escape_slash=true),
     content=
       #|"http:\/\/example.com\/"
     ,
   )
   inspect(
-    @json.stringify(Json::string(s)),
+    Json::string(s).stringify(),
     content=
       #|"http://example.com/"
     ,

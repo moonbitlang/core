@@ -48,7 +48,7 @@ let frac_bits = 23
 ///   inspect((0.2 : Float).trunc(), content="0.0")
 /// }
 /// ```
-pub fn trunc(self : Float) -> Float {
+pub fn Float::trunc(self : Float) -> Float {
   let u32 = self.reinterpret_as_uint()
   let biased_exp = ((u32 >> frac_bits) & ((0x1U << exp_bits) - 1)).reinterpret_as_int()
   if biased_exp < exp_bias {
@@ -80,7 +80,7 @@ pub fn trunc(self : Float) -> Float {
 ///   inspect((-1.5 : Float).ceil(), content="-1.0")
 /// }
 /// ```
-pub fn ceil(self : Float) -> Float {
+pub fn Float::ceil(self : Float) -> Float {
   let trunced = self.trunc()
   if self > trunced {
     return trunced + 1.0
@@ -109,7 +109,7 @@ pub fn ceil(self : Float) -> Float {
 ///   inspect((2.0 : Float).floor(), content="2.0")
 /// }
 /// ```
-pub fn floor(self : Float) -> Float {
+pub fn Float::floor(self : Float) -> Float {
   let trunced = self.trunc()
   if self < trunced {
     return trunced - 1.0
@@ -137,6 +137,6 @@ pub fn floor(self : Float) -> Float {
 ///   inspect((-2.5 : Float).round(), content="-2.0")
 /// }
 /// ```
-pub fn round(self : Float) -> Float {
+pub fn Float::round(self : Float) -> Float {
   floor(self + 0.5)
 }

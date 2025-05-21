@@ -36,7 +36,7 @@
 ///   inspect(@double.neg_infinity.sin(), content="NaN")
 /// }
 /// ```
-pub fn sin(self : Double) -> Double = "Math" "sin"
+pub fn Double::sin(self : Double) -> Double = "Math" "sin"
 
 ///|
 /// Calculates the cosine of a number in radians. Handles special cases and edge
@@ -62,7 +62,7 @@ pub fn sin(self : Double) -> Double = "Math" "sin"
 ///   inspect(@double.neg_infinity.cos(), content="NaN")
 /// }
 /// ```
-pub fn cos(self : Double) -> Double = "Math" "cos"
+pub fn Double::cos(self : Double) -> Double = "Math" "cos"
 
 ///|
 /// Calculates the tangent of a number in radians. Handles special cases and edge
@@ -88,7 +88,7 @@ pub fn cos(self : Double) -> Double = "Math" "cos"
 ///   inspect(@double.neg_infinity.tan(), content="NaN")
 /// }
 /// ```
-pub fn tan(self : Double) -> Double = "Math" "tan"
+pub fn Double::tan(self : Double) -> Double = "Math" "tan"
 
 ///|
 /// Calculates the arcsine of a number. Handles special cases and edge conditions
@@ -115,7 +115,7 @@ pub fn tan(self : Double) -> Double = "Math" "tan"
 ///   inspect(@double.neg_infinity.asin(), content="NaN")
 /// }
 /// ```
-pub fn asin(self : Double) -> Double = "Math" "asin"
+pub fn Double::asin(self : Double) -> Double = "Math" "asin"
 
 ///|
 /// Calculates the arccosine of a number.
@@ -142,7 +142,7 @@ pub fn asin(self : Double) -> Double = "Math" "asin"
 ///   inspect(0.0.acos(), content="1.5707963267948966")
 /// }
 /// ```
-pub fn acos(self : Double) -> Double = "Math" "acos"
+pub fn Double::acos(self : Double) -> Double = "Math" "acos"
 
 ///|
 /// Calculates the arctangent of a number.
@@ -167,7 +167,7 @@ pub fn acos(self : Double) -> Double = "Math" "acos"
 ///   inspect(@double.neg_infinity.atan(), content="-1.5707963267948966")
 /// }
 /// ```
-pub fn atan(self : Double) -> Double = "Math" "atan"
+pub fn Double::atan(self : Double) -> Double = "Math" "atan"
 
 ///|
 /// Calculates the arctangent of the quotient of two numbers.
@@ -200,4 +200,4 @@ pub fn atan(self : Double) -> Double = "Math" "atan"
 ///   inspect(neg_infinity.atan2(infinity), content="-0.7853981633974483")
 /// }
 /// ```
-pub fn atan2(self : Double, x : Double) -> Double = "Math" "atan2"
+pub fn Double::atan2(self : Double, x : Double) -> Double = "Math" "atan2"
