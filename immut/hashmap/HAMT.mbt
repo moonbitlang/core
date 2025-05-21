@@ -330,6 +330,71 @@ pub fn union[K : Eq + Hash, V](self : T[K, V], other : T[K, V]) -> T[K, V] {
 }
 
 ///|
+/// Union two hashmaps with a function
+pub fn union_with[K : Eq + Hash, V](
+  self : T[K, V],
+  other : T[K, V],
+  f : (K, V, V) -> V
+) -> T[K, V] {
+  self
+  .iter()
+  .fold(init=other, fn(m, kv) {
+    match m.get(kv.0) {
+      Some(v2) => m.add(kv.0, f(kv.0, kv.1, v2))
+      None => m.add(kv.0, kv.1)
+    }
+  })
+}
+
+///|
+/// Intersect two hashmaps
+pub fn intersection[K : Eq + Hash, V](
+  self : T[K, V],
+  other : T[K, V]
+) -> T[K, V] {
+  self
+  .iter()
+  .fold(init=Empty, fn(m, kv) {
+    if other.get(kv.0) is Some(_) {
+      m.add(kv.0, kv.1)
+    } else {
+      m
+    }
+  })
+}
+
+///|
+/// Intersection two hashmaps with a function
+pub fn intersection_with[K : Eq + Hash, V](
+  self : T[K, V],
+  other : T[K, V],
+  f : (K, V, V) -> V
+) -> T[K, V] {
+  self
+  .iter()
+  .fold(init=Empty, fn(m, kv) {
+    match other.get(kv.0) {
+      Some(v2) => m.add(kv.0, f(kv.0, kv.1, v2))
+      None => m
+    }
+  })
+}
+
+///|
+/// Difference two hashmaps
+pub fn difference[K : Eq + Hash, V](self : T[K, V], other : T[K, V]) -> T[K, V] {
+  self
+  .iter()
+  .fold(init=Empty, fn(m, kv) {
+    if other.get(kv.0) is None {
+      m.add(kv.0, kv.1)
+    } else {
+      m
+    }
+  })
+}
+
+///|
 /// Iterate through the elements in a hash map
 pub fn each[K, V](self : T[K, V], f : (K, V) -> Unit) -> Unit {
   match self {
