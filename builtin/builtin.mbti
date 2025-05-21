@@ -780,7 +780,6 @@ pub(open) trait Show {
 impl Show for Unit
 impl Show for Bool
 impl Show for Byte
-impl Show for Char
 impl Show for Int
 impl Show for Int16
 impl Show for Int64
@@ -835,7 +834,6 @@ pub(open) trait ToJson {
 impl ToJson for Unit
 impl ToJson for Bool
 impl ToJson for Byte
-impl ToJson for Char
 impl ToJson for Int
 impl ToJson for Int64
 impl ToJson for UInt
