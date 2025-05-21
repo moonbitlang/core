@@ -336,14 +336,26 @@ pub fn union_with[K : Eq + Hash, V](
   other : T[K, V],
   f : (K, V, V) -> V
 ) -> T[K, V] {
-  self
-  .iter()
-  .fold(init=other, fn(m, kv) {
-    match m.get(kv.0) {
-      Some(v2) => m.add(kv.0, f(kv.0, kv.1, v2))
-      None => m.add(kv.0, kv.1)
+  match (self, other) {
+    (_, Empty) => self
+    (Empty, _) => other
+    (_, Leaf(k, v)) => match self.get(k) {
+      Some(v1) => self.add(k, f(k, v1, v))
+      None => self.add(k, v)
     }
-  })
+    (Leaf(k, v), _) => match other.get(k) {
+      Some(v2) => other.add(k, f(k, v, v2))
+      None => other.add(k, v)
+    }
+    (Branch(sa1), Branch(sa2)) =>
+      Branch(sa1.union(sa2, fn(m1, m2) { m1.union_with(m2, f) }))
+    (_, _) => self.iter().fold(init=other, fn(m, kv) {
+      match m.get(kv.0) {
+        Some(v2) => m.add(kv.0, f(kv.0, kv.1, v2))
+        None => m.add(kv.0, kv.1)
+      }
+    })
+  }
 }
 
 ///|
