@@ -339,27 +339,22 @@ pub fn union_with[K : Eq + Hash, V](
   match (self, other) {
     (_, Empty) => self
     (Empty, _) => other
-    (_, Leaf(k, v)) =>
-      match self.get(k) {
-        Some(v1) => self.add(k, f(k, v1, v))
-        None => self.add(k, v)
-      }
-    (Leaf(k, v), _) =>
-      match other.get(k) {
-        Some(v2) => other.add(k, f(k, v, v2))
-        None => other.add(k, v)
-      }
+    (_, Leaf(k, v)) => match self.get(k) {
+      Some(v1) => self.add(k, f(k, v1, v))
+      None => self.add(k, v)
+    }
+    (Leaf(k, v), _) => match other.get(k) {
+      Some(v2) => other.add(k, f(k, v, v2))
+      None => other.add(k, v)
+    }
     (Branch(sa1), Branch(sa2)) =>
       Branch(sa1.union(sa2, fn(m1, m2) { m1.union_with(m2, f) }))
-    (_, _) =>
-      self
-      .iter()
-      .fold(init=other, fn(m, kv) {
-        match m.get(kv.0) {
-          Some(v2) => m.add(kv.0, f(kv.0, kv.1, v2))
-          None => m.add(kv.0, kv.1)
-        }
-      })
+    (_, _) => self.iter().fold(init=other, fn(m, kv) {
+      match m.get(kv.0) {
+        Some(v2) => m.add(kv.0, f(kv.0, kv.1, v2))
+        None => m.add(kv.0, kv.1)
+      }
+    })
   }
 }
 
@@ -385,14 +380,8 @@ pub fn intersection[K : Eq + Hash, V](
     (Branch(sa1), Branch(sa2)) =>
       Branch(sa1.intersection(sa2, fn(m1, m2) { m1.intersection(m2) }))
     (_, _) =>
-      self
-      .iter()
-      .fold(init=Empty, fn(m, kv) {
-        if other.get(kv.0) is Some(_) {
-          m.add(kv.0, kv.1)
-        } else {
-          m
-        }
+      self.iter().fold(init=Empty, fn(m, kv) {
+        if other.get(kv.0) is Some(_) { m.add(kv.0, kv.1) } else { m }
       })
   }
 }
@@ -420,9 +409,7 @@ pub fn intersection_with[K : Eq + Hash, V](
     (Branch(sa1), Branch(sa2)) =>
       Branch(sa1.intersection(sa2, fn(m1, m2) { m1.intersection_with(m2, f) }))
     (_, _) =>
-      self
-      .iter()
-      .fold(init=Empty, fn(m, kv) {
+      self.iter().fold(init=Empty, fn(m, kv) {
         match other.get(kv.0) {
           Some(v2) => m.add(kv.0, f(kv.0, kv.1, v2))
           None => m
@@ -442,16 +429,11 @@ pub fn difference[K : Eq + Hash, V](self : T[K, V], other : T[K, V]) -> T[K, V] 
         Some(_) => Empty
         None => Leaf(k, v)
       }
-    (Branch(sa1), Branch(sa2)) => Branch(sa1.difference(sa2))
+    (Branch(sa1), Branch(sa2)) =>
+      Branch(sa1.difference(sa2))
     (_, _) =>
-      self
-      .iter()
-      .fold(init=Empty, fn(m, kv) {
-        if other.get(kv.0) is None {
-          m.add(kv.0, kv.1)
-        } else {
-          m
-        }
+      self.iter().fold(init=Empty, fn(m, kv) {
+        if other.get(kv.0) is None { m.add(kv.0, kv.1) } else { m }
       })
   }
 }
