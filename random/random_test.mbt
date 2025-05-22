@@ -37,11 +37,11 @@ test "prng" {
 ///|
 test {
   let random = @random.new()
-  inspect!(random.float(), content="0.27378302812576294")
-  inspect!(random.float(), content="0.4169347286224365")
-  inspect!(random.float(), content="0.5513989925384521")
-  inspect!(random.float(), content="0.8607915639877319")
-  inspect!(random.float(), content="0.10972100496292114")
+  inspect(random.float(), content="0.27378302812576294")
+  inspect(random.float(), content="0.4169347286224365")
+  inspect(random.float(), content="0.5513989925384521")
+  inspect(random.float(), content="0.8607915639877319")
+  inspect(random.float(), content="0.10972100496292114")
 }
 
 ///|
@@ -67,5 +67,5 @@ test "uint64 modulo bias handling with large limit" {
   let r = @random.new()
   let limit = 12345678901234567890UL // Large non-power-of-2 number
   let result = r.uint64(limit~)
-  inspect!(result < limit, content="true")
+  inspect(result < limit, content="true")
 }

@@ -48,7 +48,7 @@ pub fn[A : Compare] T::from_iter(iter : Iter[A]) -> T[A] {
 
 ///|
 test {
-  @json.inspect!(of([2, 7, 1, 2, 3, 4, 5]), content=[1, 2, 3, 4, 5, 7])
+  @json.inspect(of([2, 7, 1, 2, 3, 4, 5]), content=[1, 2, 3, 4, 5, 7])
 }
 
 ///|

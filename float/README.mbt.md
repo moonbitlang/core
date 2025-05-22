@@ -9,24 +9,24 @@ The package defines several special floating-point values:
 ```moonbit
 test "special float values" {
   // Infinity values
-  inspect!(@float.infinity, content="Infinity")
-  inspect!(@float.neg_infinity, content="-Infinity")
+  inspect(@float.infinity, content="Infinity")
+  inspect(@float.neg_infinity, content="-Infinity")
 
   // Not a Number
-  inspect!(@float.not_a_number, content="NaN")
+  inspect(@float.not_a_number, content="NaN")
 
   // Bounds
-  inspect!(@float.max_value, content="3.4028234663852886e+38")
-  inspect!(@float.min_value, content="-3.4028234663852886e+38")
-  inspect!(@float.min_positive, content="1.1754943508222875e-38")
+  inspect(@float.max_value, content="3.4028234663852886e+38")
+  inspect(@float.min_value, content="-3.4028234663852886e+38")
+  inspect(@float.min_positive, content="1.1754943508222875e-38")
 }
 
 test "checking special values" {
   // Testing for special values
-  inspect!(@float.is_inf(@float.infinity), content="true")
-  inspect!(@float.is_neg_inf(@float.neg_infinity), content="true")
-  inspect!(@float.is_pos_inf(@float.infinity), content="true")
-  inspect!(@float.is_nan(@float.not_a_number), content="true")
+  inspect(@float.is_inf(@float.infinity), content="true")
+  inspect(@float.is_neg_inf(@float.neg_infinity), content="true")
+  inspect(@float.is_pos_inf(@float.infinity), content="true")
+  inspect(@float.is_nan(@float.not_a_number), content="true")
 }
 ```
 
@@ -37,20 +37,20 @@ The package provides various ways to round floating-point numbers:
 ```moonbit
 test "rounding functions" {
   // Ceiling - rounds up
-  inspect!(@float.ceil(3.2), content="4")
-  inspect!(@float.ceil(-3.2), content="-3")
+  inspect(@float.ceil(3.2), content="4")
+  inspect(@float.ceil(-3.2), content="-3")
 
   // Floor - rounds down
-  inspect!(@float.floor(3.2), content="3")
-  inspect!(@float.floor(-3.2), content="-4")
+  inspect(@float.floor(3.2), content="3")
+  inspect(@float.floor(-3.2), content="-4")
 
   // Round - rounds to nearest integer
-  inspect!(@float.round(3.7), content="4")
-  inspect!(@float.round(3.2), content="3")
+  inspect(@float.round(3.7), content="4")
+  inspect(@float.round(3.2), content="3")
 
   // Truncate - removes decimal part
-  inspect!(@float.trunc(3.7), content="3")
-  inspect!(@float.trunc(-3.7), content="-3")
+  inspect(@float.trunc(3.7), content="3")
+  inspect(@float.trunc(-3.7), content="-3")
 }
 ```
 
@@ -61,23 +61,23 @@ The package includes a complete set of trigonometric functions:
 ```moonbit
 test "trigonometric functions" {
   // Basic trigonometric functions
-  inspect!(@float.sin(0.0), content="0")
-  inspect!(@float.cos(0.0), content="1")
-  inspect!(@float.tan(0.0), content="0")
+  inspect(@float.sin(0.0), content="0")
+  inspect(@float.cos(0.0), content="1")
+  inspect(@float.tan(0.0), content="0")
 
   // Inverse trigonometric functions
   let y = @float.sin(0.5)
-  inspect!(@float.asin(y), content="0.5")
+  inspect(@float.asin(y), content="0.5")
 
   // Hyperbolic functions
-  inspect!(@float.sinh(0.0), content="0")
-  inspect!(@float.cosh(0.0), content="1")
-  inspect!(@float.tanh(0.0), content="0")
+  inspect(@float.sinh(0.0), content="0")
+  inspect(@float.cosh(0.0), content="1")
+  inspect(@float.tanh(0.0), content="0")
 
   // Inverse hyperbolic functions
-  inspect!(@float.asinh(0.0), content="0")
-  inspect!(@float.acosh(1.0), content="0")
-  inspect!(@float.atanh(0.0), content="0")
+  inspect(@float.asinh(0.0), content="0")
+  inspect(@float.acosh(1.0), content="0")
+  inspect(@float.atanh(0.0), content="0")
 }
 ```
 
@@ -88,16 +88,16 @@ Functions for exponential and logarithmic calculations:
 ```moonbit
 test "exp and log functions" {
   // Exponential
-  inspect!(@float.exp(0.0), content="1")
-  inspect!(@float.expm1(0.0), content="0") // exp(x) - 1
+  inspect(@float.exp(0.0), content="1")
+  inspect(@float.expm1(0.0), content="0") // exp(x) - 1
 
   // Natural logarithm
-  inspect!(@float.ln(1.0), content="0")
-  inspect!(@float.ln_1p(0.0), content="0") // ln(1 + x)
+  inspect(@float.ln(1.0), content="0")
+  inspect(@float.ln_1p(0.0), content="0") // ln(1 + x)
 
   // Power functions
-  inspect!(@float.pow(2.0, 3.0), content="8")
-  inspect!(@float.cbrt(8.0), content="2") // cube root
+  inspect(@float.pow(2.0, 3.0), content="8")
+  inspect(@float.cbrt(8.0), content="2") // cube root
 }
 ```
 
@@ -108,16 +108,16 @@ Other useful operations on floats:
 ```moonbit
 test "utility functions" {
   // Absolute value
-  inspect!(@float.abs(-3.14), content="3.140000104904175")
+  inspect(@float.abs(-3.14), content="3.140000104904175")
 
   // Hypotenuse calculation
-  inspect!(@float.hypot(3.0, 4.0), content="5")
+  inspect(@float.hypot(3.0, 4.0), content="5")
 
   // Conversion to integer
-  inspect!(@float.to_int(3.14), content="3")
+  inspect(@float.to_int(3.14), content="3")
 
   // Default value
-  inspect!(@float.default(), content="0")
+  inspect(@float.default(), content="0")
 }
 ```
 
@@ -132,8 +132,8 @@ test "byte representation" {
   let be_bytes = x.to_be_bytes()
   // Little-endian bytes
   let le_bytes = x.to_le_bytes()
-  inspect!(be_bytes.length(), content="4")
-  inspect!(le_bytes.length(), content="4")
+  inspect(be_bytes.length(), content="4")
+  inspect(le_bytes.length(), content="4")
 }
 ```
 
@@ -144,10 +144,10 @@ All functions can also be called in method style:
 ```moonbit
 test "method style calls" {
   let x : Float = 3.14
-  inspect!(x.floor(), content="3")
-  inspect!(x.ceil(), content="4")
-  inspect!(x.round(), content="3")
+  inspect(x.floor(), content="3")
+  inspect(x.ceil(), content="4")
+  inspect(x.round(), content="3")
   let y : Float = 2.0
-  inspect!(y.pow(3.0), content="8")
+  inspect(y.pow(3.0), content="8")
 }
 ```

@@ -19,12 +19,12 @@ fnalias @builtin.inspect
 ///| shadow
 ///|
 test "parse invalid decimal exponent sign" {
-  inspect!(@json.parse?("1e"), content="Err(Unexpected end of file)")
+  inspect(@json.parse?("1e"), content="Err(Unexpected end of file)")
 }
 
 ///|
 test "lex_zero invalid case" {
-  inspect!(
+  inspect(
     @json.parse?("01"),
     content="Err(Invalid character '1' at line 1, column 1)",
   )
@@ -32,7 +32,7 @@ test "lex_zero invalid case" {
 
 ///|
 test "invalid number" {
-  inspect!(
+  inspect(
     @json.parse?("1e999999999"),
     content="Err(Invalid number 1e999999999 at line 1, column 0)",
   )
@@ -40,5 +40,5 @@ test "invalid number" {
 
 ///|
 test "parse incomplete exponent sign" {
-  inspect!(@json.parse?("1e+"), content="Err(Unexpected end of file)")
+  inspect(@json.parse?("1e+"), content="Err(Unexpected end of file)")
 }

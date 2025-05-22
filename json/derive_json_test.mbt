@@ -24,7 +24,7 @@ test {
   let v = Hello::{ fieldA: 3, fieldB: 2, data: { "a": 3 } }
   let vj = v.to_json()
   let v0 : Hello[Int, Int] = @json.from_json!(vj)
-  inspect!(
+  inspect(
     v0,
     content=
       #|{fieldA: 3, fieldB: 2, data: {"a": 3}}
@@ -50,7 +50,7 @@ struct Hello3[A, B] {
 test {
   let h = Hello::{ fieldA: 1, fieldB: "hello", data: { "a": 1, "b": 2 } }
   let j = h.to_json()
-  inspect!(
+  inspect(
     j,
     content=
       #|Object({"fieldA": Number(1), "fieldB": String("hello"), "data": Object({"a": Number(1), "b": Number(2)})})
@@ -58,7 +58,7 @@ test {
   )
   let h3 = Hello3::{ fieldAX: 1, fieldB: "hello", data: { 1: 1, 2: 2 } }
   let j3 = h3.to_json()
-  inspect!(
+  inspect(
     j3,
     content=
       #|Object({"fieldAX": Number(1), "fieldB": String("hello"), "data": Object({"1": Number(1), "2": Number(2)})})

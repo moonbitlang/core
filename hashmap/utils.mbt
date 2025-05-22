@@ -41,8 +41,8 @@ fn[K : Show, V : Show] debug_entries(self : T[K, V]) -> String {
 /// test "clear" {
 ///   let map = @hashmap.of([("a", 1), ("b", 2)])
 ///   map.clear()
-///   inspect!(map.size(), content="0")
-///   inspect!(map.get("a"), content="None")
+///   inspect(map.size(), content="0")
+///   inspect(map.get("a"), content="None")
 /// }
 /// ```
 pub fn[K, V] clear(self : T[K, V]) -> Unit {
@@ -66,9 +66,9 @@ pub fn[K, V] clear(self : T[K, V]) -> Unit {
 /// test "iter" {
 ///   let map = @hashmap.of([(1, "one"), (2, "two")])
 ///   let pairs = map.iter().to_array()
-///   inspect!(pairs.length(), content="2")
-///   inspect!(pairs.contains((1, "one")), content="true")
-///   inspect!(pairs.contains((2, "two")), content="true")
+///   inspect(pairs.length(), content="2")
+///   inspect(pairs.contains((1, "one")), content="true")
+///   inspect(pairs.contains((2, "two")), content="true")
 /// }
 /// ```
 pub fn[K, V] iter(self : T[K, V]) -> Iter[(K, V)] {
@@ -103,7 +103,7 @@ pub fn[K, V] iter(self : T[K, V]) -> Iter[(K, V)] {
 ///   let map = @hashmap.of([(1, "one"), (2, "two")])
 ///   let mut sum = 0
 ///   map.iter2().each(fn(k, _) { sum = sum + k })
-///   inspect!(sum, content="3")
+///   inspect(sum, content="3")
 /// }
 /// ```
 pub fn[K, V] iter2(self : T[K, V]) -> Iter2[K, V] {
@@ -146,8 +146,8 @@ pub fn[K, V] iter2(self : T[K, V]) -> Iter2[K, V] {
 ///     }
 ///   })
 ///   let map = @hashmap.from_iter(iter)
-///   inspect!(map.get(1), content="Some(\"one\")")
-///   inspect!(map.get(2), content="Some(\"two\")")
+///   inspect(map.get(1), content="Some(\"one\")")
+///   inspect(map.get(2), content="Some(\"two\")")
 /// }
 /// ```
 pub fn[K : Hash + Eq, V] from_iter(iter : Iter[(K, V)]) -> T[K, V] {
@@ -172,7 +172,7 @@ pub fn[K : Hash + Eq, V] from_iter(iter : Iter[(K, V)]) -> T[K, V] {
 /// test "to_array" {
 ///   let map = @hashmap.of([(1, "one"), (2, "two")])
 ///   let arr = map.to_array()
-///   inspect!(arr, content=
+///   inspect(arr, content=
 ///   #|[(2, "two"), (1, "one")]
 /// )
 /// }
@@ -215,7 +215,7 @@ pub fn[K, V] to_array(self : T[K, V]) -> Array[(K, V)] {
 /// ```moonbit
 /// test "size" {
 ///   let map = @hashmap.of([("a", 1), ("b", 2), ("c", 3)])
-///   inspect!(map.size(), content="3")
+///   inspect(map.size(), content="3")
 /// }
 /// ```
 pub fn[K, V] size(self : T[K, V]) -> Int {
@@ -239,7 +239,7 @@ pub fn[K, V] size(self : T[K, V]) -> Int {
 /// ```moonbit
 /// test "capacity" {
 ///   let map : @hashmap.T[Int, String] = @hashmap.new(capacity=16)
-///   inspect!(map.capacity(), content="16")
+///   inspect(map.capacity(), content="16")
 /// }
 /// ```
 pub fn[K, V] capacity(self : T[K, V]) -> Int {
@@ -261,9 +261,9 @@ pub fn[K, V] capacity(self : T[K, V]) -> Int {
 /// ```moonbit
 /// test "is_empty" {
 ///   let map : @hashmap.T[String, Int] = @hashmap.new()
-///   inspect!(map.is_empty(), content="true")
+///   inspect(map.is_empty(), content="true")
 ///   map.set("key", 42)
-///   inspect!(map.is_empty(), content="false")
+///   inspect(map.is_empty(), content="false")
 /// }
 /// ```
 pub fn[K, V] is_empty(self : T[K, V]) -> Bool {
@@ -287,7 +287,7 @@ pub fn[K, V] is_empty(self : T[K, V]) -> Bool {
 ///   let map = @hashmap.of([(1, "one"), (2, "two")])
 ///   let mut result = ""
 ///   map.each(fn(k, v) { result = result + "\{k}:\{v}," })
-///   inspect!(result, content="2:two,1:one,")
+///   inspect(result, content="2:two,1:one,")
 /// }
 /// ```
 pub fn[K, V] each(self : T[K, V], f : (K, V) -> Unit) -> Unit {
@@ -319,7 +319,7 @@ pub fn[K, V] each(self : T[K, V], f : (K, V) -> Unit) -> Unit {
 ///   let mut result = 0
 ///   map.eachi(fn(i, k, _) { if k == "b" { result = i } })
 ///   // "b" is at index 1
-///   inspect!(result, content="2")
+///   inspect(result, content="2")
 /// }
 /// ```
 pub fn[K, V] eachi(self : T[K, V], f : (Int, K, V) -> Unit) -> Unit {
@@ -347,7 +347,7 @@ pub fn[K, V] eachi(self : T[K, V], f : (Int, K, V) -> Unit) -> Unit {
 /// ```moonbit
 /// test "show" {
 ///   let map = @hashmap.of([(1, "one"), (2, "two")])
-///   inspect!(map, content=
+///   inspect(map, content=
 ///   #|HashMap::of([(2, "two"), (1, "one")])
 /// )
 /// }

@@ -69,12 +69,12 @@ fn power_2_above(x : Int, n : Int) -> Int {
 
 ///|
 test "power_2_above" {
-  inspect!(power_2_above(1, 15), content="16")
-  inspect!(power_2_above(1, 16), content="16")
-  inspect!(power_2_above(1, 17), content="32")
-  inspect!(power_2_above(1, 32), content="32")
-  inspect!(power_2_above(128, 33), content="128")
-  inspect!(power_2_above(1, 2147483647), content="1073741824")
+  inspect(power_2_above(1, 15), content="16")
+  inspect(power_2_above(1, 16), content="16")
+  inspect(power_2_above(1, 17), content="32")
+  inspect(power_2_above(1, 32), content="32")
+  inspect(power_2_above(128, 33), content="128")
+  inspect(power_2_above(1, 2147483647), content="1073741824")
 }
 
 ///|
@@ -219,8 +219,8 @@ pub fn[K : Hash + Eq, V] Map::op_get(self : Map[K, V], key : K) -> V? {
 /// ```moonbit
 /// test "get_or_default" {
 ///   let map = { "a": 1, "b": 2 }
-///   inspect!(map.get_or_default("a", 0), content="1")
-///   inspect!(map.get_or_default("c", 42), content="42")
+///   inspect(map.get_or_default("a", 0), content="1")
+///   inspect(map.get_or_default("c", 42), content="42")
 /// }
 /// ```
 pub fn[K : Hash + Eq, V] Map::get_or_default(
@@ -297,9 +297,9 @@ pub fn[K : Hash + Eq, V] Map::contains(self : Map[K, V], key : K) -> Bool {
 /// 
 /// test "Map::contains_kv" {
 ///   let map = { "a": 1, "b": 2 }
-///   inspect!(map.contains_kv("a", 1), content="true")
-///   inspect!(map.contains_kv("a", 2), content="false")
-///   inspect!(map.contains_kv("c", 3), content="false")
+///   inspect(map.contains_kv("a", 1), content="true")
+///   inspect(map.contains_kv("a", 2), content="false")
+///   inspect(map.contains_kv("c", 3), content="false")
 /// }
 /// ```
 pub fn[K : Hash + Eq, V : Eq] Map::contains_kv(

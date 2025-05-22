@@ -25,8 +25,8 @@
 ///
 /// ```moonbit
 /// test "to_int" {
-///   inspect!(true.to_int(), content="1")
-///   inspect!(false.to_int(), content="0")
+///   inspect(true.to_int(), content="1")
+///   inspect(false.to_int(), content="0")
 /// }
 /// ```
 pub fn to_int(self : Bool) -> Int {
@@ -51,8 +51,8 @@ pub fn to_int(self : Bool) -> Int {
 ///
 /// ```moonbit
 /// test "to_int64" {
-///   inspect!(true.to_int64(), content="1")
-///   inspect!(false.to_int64(), content="0")
+///   inspect(true.to_int64(), content="1")
+///   inspect(false.to_int64(), content="0")
 /// }
 /// ```
 pub fn to_int64(self : Bool) -> Int64 {
@@ -77,8 +77,8 @@ pub fn to_int64(self : Bool) -> Int64 {
 ///
 /// ```moonbit
 /// test "to_uint" {
-///   inspect!(true.to_uint(), content="1")
-///   inspect!(false.to_uint(), content="0")
+///   inspect(true.to_uint(), content="1")
+///   inspect(false.to_uint(), content="0")
 /// }
 /// ```
 pub fn to_uint(self : Bool) -> UInt {
@@ -103,8 +103,8 @@ pub fn to_uint(self : Bool) -> UInt {
 ///
 /// ```moonbit
 /// test "to_uint64" {
-///   inspect!(true.to_uint64(), content="1")
-///   inspect!(false.to_uint64(), content="0")
+///   inspect(true.to_uint64(), content="1")
+///   inspect(false.to_uint64(), content="0")
 /// }
 /// ```
 pub fn to_uint64(self : Bool) -> UInt64 {

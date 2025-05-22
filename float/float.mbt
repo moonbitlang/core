@@ -23,8 +23,8 @@
 ///
 /// ```moonbit
 /// test "not_a_number" {
-///   inspect!(@float.not_a_number.is_nan(), content="true")
-///   inspect!(@float.not_a_number + 1.0, content="NaN")
+///   inspect(@float.not_a_number.is_nan(), content="true")
+///   inspect(@float.not_a_number + 1.0, content="NaN")
 /// }
 /// ```
 pub let not_a_number : Float = (0x7FC00000).reinterpret_as_float()
@@ -39,8 +39,8 @@ pub let not_a_number : Float = (0x7FC00000).reinterpret_as_float()
 ///
 /// ```moonbit
 /// test "infinity" {
-///   inspect!(@float.infinity.is_pos_inf(), content="true")
-///   inspect!(@float.infinity > 1.0, content="true")
+///   inspect(@float.infinity.is_pos_inf(), content="true")
+///   inspect(@float.infinity > 1.0, content="true")
 /// }
 /// ```
 pub let infinity : Float = (0x7F800000).reinterpret_as_float()
@@ -56,8 +56,8 @@ pub let infinity : Float = (0x7F800000).reinterpret_as_float()
 ///
 /// ```moonbit
 /// test "neg_infinity" {
-///   inspect!(@float.neg_infinity.is_neg_inf(), content="true")
-///   inspect!(@float.neg_infinity < (-1.0 : Float), content="true")
+///   inspect(@float.neg_infinity.is_neg_inf(), content="true")
+///   inspect(@float.neg_infinity < (-1.0 : Float), content="true")
 /// }
 /// ```
 pub let neg_infinity : Float = (0xFF800000).reinterpret_as_float()
@@ -70,8 +70,8 @@ pub let neg_infinity : Float = (0xFF800000).reinterpret_as_float()
 ///
 /// ```moonbit
 /// test "max_value" {
-///   inspect!(@float.max_value < @float.infinity, content="true")
-///   inspect!(@float.max_value > 0.0, content="true")
+///   inspect(@float.max_value < @float.infinity, content="true")
+///   inspect(@float.max_value > 0.0, content="true")
 /// }
 /// ```
 pub let max_value : Float = (0x7F7FFFFF).reinterpret_as_float()
@@ -83,8 +83,8 @@ pub let max_value : Float = (0x7F7FFFFF).reinterpret_as_float()
 ///
 /// ```moonbit
 /// test "min_value" {
-///   inspect!(@float.min_value < -1.0, content="true")
-///   inspect!(@float.min_value > @float.neg_infinity, content="true")
+///   inspect(@float.min_value < -1.0, content="true")
+///   inspect(@float.min_value > @float.neg_infinity, content="true")
 /// }
 /// ```
 pub let min_value : Float = (0xFF7FFFFF).reinterpret_as_float()
@@ -97,8 +97,8 @@ pub let min_value : Float = (0xFF7FFFFF).reinterpret_as_float()
 ///
 /// ```moonbit
 /// test "min_positive" {
-///   inspect!(@float.min_positive > 0.0, content="true")
-///   inspect!(@float.min_positive < 1.2e-38, content="true")
+///   inspect(@float.min_positive > 0.0, content="true")
+///   inspect(@float.min_positive < 1.2e-38, content="true")
 /// }
 /// ```
 pub let min_positive : Float = (0x00800000).reinterpret_as_float()
@@ -118,11 +118,11 @@ pub let min_positive : Float = (0x00800000).reinterpret_as_float()
 ///
 /// ```moonbit
 /// test "Float::abs" {
-///   inspect!((1.5 : Float).abs(), content="1.5")
-///   inspect!((-1.5 : Float).abs(), content="1.5")
-///   inspect!((0.0 : Float).abs(), content="0")
-///   inspect!((-0.0 : Float).abs(), content="0")
-///   inspect!(@float.not_a_number.abs().is_nan(), content="true")
+///   inspect((1.5 : Float).abs(), content="1.5")
+///   inspect((-1.5 : Float).abs(), content="1.5")
+///   inspect((0.0 : Float).abs(), content="0")
+///   inspect((-0.0 : Float).abs(), content="0")
+///   inspect(@float.not_a_number.abs().is_nan(), content="true")
 /// }
 /// ```
 pub fn abs(self : Float) -> Float = "%f32.abs"
@@ -141,7 +141,7 @@ pub fn abs(self : Float) -> Float = "%f32.abs"
 /// test "Float::output" {
 ///   let f : Float = 3.14
 ///   let s = f.to_double().to_string()
-///   inspect!(s, content="3.140000104904175")
+///   inspect(s, content="3.140000104904175")
 /// }
 /// ```
 pub impl Show for Float with output(self, logger) {
@@ -157,7 +157,7 @@ pub impl Show for Float with output(self, logger) {
 ///
 /// ```moonbit
 /// test "Float::default" {
-///   inspect!(Float::default(), content="0")
+///   inspect(Float::default(), content="0")
 /// }
 /// ```
 pub impl Default for Float with default() {
@@ -173,7 +173,7 @@ pub impl Default for Float with default() {
 ///
 /// ```moonbit
 /// test "default" {
-///   inspect!(@float.default(), content="0")
+///   inspect(@float.default(), content="0")
 /// }
 /// ```
 pub fn default() -> Float {
@@ -197,7 +197,7 @@ pub fn default() -> Float {
 /// test "Float::hash" {
 ///   let f : Float = 3.14
 ///   let h = Hash::hash(f)
-///   inspect!(h != 0, content="true")
+///   inspect(h != 0, content="true")
 /// }
 /// ```
 pub impl Hash for Float with hash(self) {
@@ -219,7 +219,7 @@ pub impl Hash for Float with hash(self) {
 ///   let x : Float = 3.14
 ///   let y : Float = 3.14
 ///   // Same values should produce same hash combinations
-///   inspect!(Hash::hash(x) == Hash::hash(y), content="true")
+///   inspect(Hash::hash(x) == Hash::hash(y), content="true")
 /// }
 /// ```
 pub impl Hash for Float with hash_combine(self, hasher) {
@@ -243,7 +243,7 @@ pub impl Hash for Float with hash_combine(self, hasher) {
 /// ```moonbit
 /// test "Float::to_be_bytes" {
 ///   let x : Float = 1.0
-///   inspect!(x.to_be_bytes(), content=
+///   inspect(x.to_be_bytes(), content=
 ///   #|b"\x3f\x80\x00\x00"
 /// )
 /// }
@@ -269,7 +269,7 @@ pub fn to_be_bytes(self : Float) -> Bytes {
 /// test "to_le_bytes" {
 ///   let f : Float = 1.0
 ///   let bytes = f.to_le_bytes()
-///   inspect!(bytes.length(), content="4")
+///   inspect(bytes.length(), content="4")
 /// }
 /// ```
 pub fn to_le_bytes(self : Float) -> Bytes {
@@ -290,9 +290,9 @@ pub fn to_le_bytes(self : Float) -> Bytes {
 ///
 /// ```moonbit
 /// test "Float::is_inf" {
-///   inspect!(@float.infinity.is_inf(), content="true")
-///   inspect!(@float.neg_infinity.is_inf(), content="true")
-///   inspect!((1.0 : Float).is_inf(), content="false")
+///   inspect(@float.infinity.is_inf(), content="true")
+///   inspect(@float.neg_infinity.is_inf(), content="true")
+///   inspect((1.0 : Float).is_inf(), content="false")
 /// }
 /// ```
 pub fn is_inf(self : Float) -> Bool {
@@ -312,9 +312,9 @@ pub fn is_inf(self : Float) -> Bool {
 ///
 /// ```moonbit
 /// test "Float::is_pos_inf" {
-///   inspect!(@float.infinity.is_pos_inf(), content="true")
-///   inspect!((1.0 : Float).is_pos_inf(), content="false")
-///   inspect!(@float.neg_infinity.is_pos_inf(), content="false")
+///   inspect(@float.infinity.is_pos_inf(), content="true")
+///   inspect((1.0 : Float).is_pos_inf(), content="false")
+///   inspect(@float.neg_infinity.is_pos_inf(), content="false")
 /// }
 /// ```
 pub fn is_pos_inf(self : Float) -> Bool {
@@ -334,9 +334,9 @@ pub fn is_pos_inf(self : Float) -> Bool {
 ///
 /// ```moonbit
 /// test "Float::is_neg_inf" {
-///   inspect!(@float.neg_infinity.is_neg_inf(), content="true")
-///   inspect!((1.0 : Float).is_neg_inf(), content="false")
-///   inspect!(@float.infinity.is_neg_inf(), content="false")
+///   inspect(@float.neg_infinity.is_neg_inf(), content="true")
+///   inspect((1.0 : Float).is_neg_inf(), content="false")
+///   inspect(@float.infinity.is_neg_inf(), content="false")
 /// }
 /// ```
 pub fn is_neg_inf(self : Float) -> Bool {
@@ -356,9 +356,9 @@ pub fn is_neg_inf(self : Float) -> Bool {
 ///
 /// ```moonbit
 /// test "Float::is_nan" {
-///   inspect!(@float.not_a_number.is_nan(), content="true")
-///   inspect!((1.0 : Float).is_nan(), content="false")
-///   inspect!(@float.infinity.is_nan(), content="false")
+///   inspect(@float.not_a_number.is_nan(), content="true")
+///   inspect((1.0 : Float).is_nan(), content="false")
+///   inspect(@float.infinity.is_nan(), content="false")
 /// }
 /// ```
 pub fn is_nan(self : Float) -> Bool {

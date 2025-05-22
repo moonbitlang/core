@@ -30,9 +30,9 @@ test "HAMT" {
   for i in 0..<100 {
     assert_eq!((i, map.get(i)), (i, Some(i)))
   }
-  inspect!((100, map.get(100)), content="(100, None)")
+  inspect((100, map.get(100)), content="(100, None)")
   let map = map.add(100, 100)
-  inspect!((100, map.get(100)), content="(100, Some(100))")
+  inspect((100, map.get(100)), content="(100, Some(100))")
   // test for replacement
   let map = loop 0, map {
     100, map => map
@@ -86,7 +86,7 @@ test "HAMT::iter" {
   let data = @hashmap.of([(0, "a"), (2, "b"), (3, "d"), (5, "e"), (11111, "f")])
   let mut s = ""
   data.iter().each(fn { (k, v) => s += " \{k},\{v}" })
-  inspect!(s, content=" 0,a 5,e 3,d 11111,f 2,b")
+  inspect(s, content=" 0,a 5,e 3,d 11111,f 2,b")
 }
 
 ///|
@@ -94,7 +94,7 @@ test "HAMT::iter2" {
   let data = @hashmap.of([(0, "a"), (2, "b"), (3, "d"), (5, "e"), (11111, "f")])
   let mut s = ""
   data.iter2().each(fn { k, v => s += " \{k},\{v}" })
-  inspect!(s, content=" 0,a 5,e 3,d 11111,f 2,b")
+  inspect(s, content=" 0,a 5,e 3,d 11111,f 2,b")
 }
 
 ///|
@@ -104,7 +104,7 @@ test "HAMT::to_string" {
     .add(3, 3)
     .add(0x0f_ff_ff_ff, 0x0f_ff_ff_ff)
     .add(42, 42)
-  inspect!(
+  inspect(
     map,
     content="@immut/hashmap.of([(3, 3), (42, 42), (1, 1), (268435455, 268435455)])",
   )
@@ -113,25 +113,25 @@ test "HAMT::to_string" {
 ///|
 test "HAMT::from_array" {
   let map = @hashmap.of([(1, "1"), (2, "2"), (42, "42")])
-  inspect!(
+  inspect(
     (1, map.get(1)),
     content=
       #|(1, Some("1"))
     ,
   )
-  inspect!(
+  inspect(
     (2, map.get(2)),
     content=
       #|(2, Some("2"))
     ,
   )
-  inspect!(
+  inspect(
     (42, map.get(42)),
     content=
       #|(42, Some("42"))
     ,
   )
-  inspect!((43, map.get(43)), content="(43, None)")
+  inspect((43, map.get(43)), content="(43, None)")
 }
 
 ///|
@@ -146,7 +146,7 @@ test "to_array" {
 
 ///|
 test "from_iter multiple elements iter" {
-  inspect!(
+  inspect(
     @hashmap.from_iter([(1, 1), (2, 2), (3, 3)].iter()),
     content="@immut/hashmap.of([(3, 3), (2, 2), (1, 1)])",
   )
@@ -154,7 +154,7 @@ test "from_iter multiple elements iter" {
 
 ///|
 test "from_iter single element iter" {
-  inspect!(
+  inspect(
     @hashmap.from_iter([(1, 1)].iter()),
     content="@immut/hashmap.of([(1, 1)])",
   )
@@ -163,7 +163,7 @@ test "from_iter single element iter" {
 ///|
 test "from_iter empty iter" {
   let pq : @hashmap.T[Int, Int] = @hashmap.from_iter(Iter::empty())
-  inspect!(pq, content="@immut/hashmap.of([])")
+  inspect(pq, content="@immut/hashmap.of([])")
 }
 
 ///|
@@ -171,16 +171,16 @@ test "eq for boundary cases" {
   // Test with empty maps
   let empty_map1 : @hashmap.T[Int, Int] = @hashmap.new()
   let empty_map2 : @hashmap.T[Int, Int] = @hashmap.new()
-  inspect!(empty_map1 == empty_map2, content="true")
+  inspect(empty_map1 == empty_map2, content="true")
 
   // Test with one empty map and one non-empty map
   let non_empty_map : @hashmap.T[Int, Int] = @hashmap.of([(1, 1)])
-  inspect!(empty_map1 == non_empty_map, content="false")
-  inspect!(non_empty_map == empty_map1, content="false")
+  inspect(empty_map1 == non_empty_map, content="false")
+  inspect(non_empty_map == empty_map1, content="false")
 
   // Test with maps of different sizes
   let larger_map : @hashmap.T[Int, Int] = @hashmap.of([(1, 1), (2, 2)])
-  inspect!(non_empty_map == larger_map, content="false")
+  inspect(non_empty_map == larger_map, content="false")
 }
 
 ///|
@@ -188,24 +188,24 @@ test "eq for random cases" {
   // Test with maps containing different keys
   let map1 : @hashmap.T[Int, Int] = @hashmap.of([(1, 1), (2, 2)])
   let map2 : @hashmap.T[Int, Int] = @hashmap.of([(1, 1), (3, 3)])
-  inspect!(map1 == map2, content="false")
+  inspect(map1 == map2, content="false")
 
   // Test with maps containing same keys but different values
   let map3 : @hashmap.T[Int, Int] = @hashmap.of([(1, 1), (2, 3)])
-  inspect!(map1 == map3, content="false")
+  inspect(map1 == map3, content="false")
 
   // Test with maps containing same keys and values but in different order
   let map4 : @hashmap.T[Int, Int] = @hashmap.of([(2, 2), (1, 1)])
-  inspect!(map1 == map4, content="true")
+  inspect(map1 == map4, content="true")
 
   // Test with maps containing same keys and values but with different hash collisions
   let map5 : @hashmap.T[Int, Int] = @hashmap.of([(1, 1), (11, 11)])
   let map6 : @hashmap.T[Int, Int] = @hashmap.of([(1, 1), (11, 11)])
-  inspect!(map5 == map6, content="true")
+  inspect(map5 == map6, content="true")
 
   // Test with maps containing same keys and values but with different hash collisions and different order
   let map7 : @hashmap.T[Int, Int] = @hashmap.of([(11, 11), (1, 1)])
-  inspect!(map5 == map7, content="true")
+  inspect(map5 == map7, content="true")
 }
 
 ///|
@@ -213,26 +213,26 @@ test "eq for random cases with different types" {
   // Test with maps containing different types
   let map8 : @hashmap.T[String, Int] = @hashmap.of([("one", 1), ("two", 2)])
   let map9 : @hashmap.T[String, Int] = @hashmap.of([("one", 1), ("two", 2)])
-  inspect!(map8 == map9, content="true")
+  inspect(map8 == map9, content="true")
 
   // Test with maps containing same keys but different values of different types
   let map10 : @hashmap.T[String, Int] = @hashmap.of([("one", 1), ("two", 3)])
-  inspect!(map8 == map10, content="false")
+  inspect(map8 == map10, content="false")
 
   // Test with maps containing different keys of different types
   let map11 : @hashmap.T[String, Int] = @hashmap.of([("one", 1), ("three", 3)])
-  inspect!(map8 == map11, content="false")
+  inspect(map8 == map11, content="false")
 }
 
 ///|
 test "hash" {
   let map1 = @hashmap.of([("one", 1), ("two", 2)])
   let map2 = @hashmap.of([("one", 1), ("two", 2)])
-  inspect!(map1.hash() == map2.hash(), content="true")
+  inspect(map1.hash() == map2.hash(), content="true")
   let map3 = @hashmap.of([("two", 2), ("one", 1)])
-  inspect!(map1.hash() == map3.hash(), content="true")
+  inspect(map1.hash() == map3.hash(), content="true")
   let map4 = @hashmap.of([("one", 1), ("two", 2), ("three", 3)])
-  inspect!(map1.hash() == map4.hash(), content="false")
+  inspect(map1.hash() == map4.hash(), content="false")
 }
 
 ///|
@@ -240,14 +240,14 @@ test "each on empty map" {
   let empty = @hashmap.new()
   let mut sum = 0
   empty.each(fn(k : Int, v : Int) { sum = sum + k + v })
-  inspect!(sum, content="0")
+  inspect(sum, content="0")
 }
 
 ///|
 test "remove non-existent key with hash collision" {
   let map = @hashmap.of([("a", 1)])
   let new_map = map.remove("b")
-  inspect!(new_map.size(), content="1")
+  inspect(new_map.size(), content="1")
 }
 
 ///|
@@ -255,7 +255,7 @@ test "remove all keys from collision bucket" {
   let map = @hashmap.from_array([("a", 1), ("b", 2)])
   let map1 = map.remove("a")
   let map2 = map1.remove("b")
-  inspect!(map2.size(), content="0")
+  inspect(map2.size(), content="0")
 }
 
 ///|
@@ -264,7 +264,7 @@ test "union 2 hashmaps, choose the right hand side" {
   let map2 = @hashmap.of([(1, 10), (2, 20), (4, 40)])
   let map3 = map1.union(map2)
   let map4 = @hashmap.of([(1, 10), (2, 20), (3, 3), (4, 40)])
-  inspect!(map3 == map4, content="true")
+  inspect(map3 == map4, content="true")
 }
 
 ///|
@@ -273,7 +273,7 @@ test "union 2 hashmaps, without conflict" {
   let map2 = @hashmap.of([(4, 4), (5, 5), (6, 6)])
   let map3 = map1.union(map2)
   let map4 = @hashmap.of([(1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6)])
-  inspect!(map3 == map4, content="true")
+  inspect(map3 == map4, content="true")
 }
 
 ///|

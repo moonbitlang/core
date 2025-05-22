@@ -25,13 +25,13 @@ test "show error" {
     }
   }
 
-  inspect!(
+  inspect(
     f?(true),
     content=
       #|Ok("ok")
     ,
   )
-  inspect!(
+  inspect(
     f?(false),
     content="Err(moonbitlang/core/error_blackbox_test.IntError.IntError)",
   )

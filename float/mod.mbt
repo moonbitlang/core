@@ -26,8 +26,8 @@
 ///
 /// ```moonbit
 /// test "op_mod" {
-///   inspect!((5.7 : Float).op_mod(2.0), content="1.6999998092651367")
-///   inspect!((-5.7 : Float).op_mod(2.0), content="-1.6999998092651367")
+///   inspect((5.7 : Float).op_mod(2.0), content="1.6999998092651367")
+///   inspect((-5.7 : Float).op_mod(2.0), content="-1.6999998092651367")
 /// }
 /// ```
 pub impl Mod for Float with op_mod(self : Float, other : Float) -> Float {

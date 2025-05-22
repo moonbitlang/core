@@ -44,13 +44,13 @@ fn[T] Array::make_uninit(len : Int) -> Array[T] {
 /// ```moonbit
 /// test "Array::new" {
 ///   let arr : Array[Int] = Array::new(capacity=10)
-///   inspect!(arr.length(), content="0")
-///   inspect!(arr.capacity(), content="10")
+///   inspect(arr.length(), content="0")
+///   inspect(arr.capacity(), content="10")
 /// }
 ///
 /// test "Array::new/default" {
 ///   let arr : Array[Int] = Array::new()
-///   inspect!(arr.length(), content="0")
+///   inspect(arr.length(), content="0")
 /// }
 /// ```
 pub fn[T] Array::new(capacity~ : Int = 0) -> Array[T] {
@@ -75,9 +75,9 @@ pub fn[T] Array::new(capacity~ : Int = 0) -> Array[T] {
 /// ```moonbit
 /// test "Array::length" {
 ///   let arr = [1, 2, 3]
-///   inspect!(arr.length(), content="3")
+///   inspect(arr.length(), content="3")
 ///   let empty : Array[Int] = []
-///   inspect!(empty.length(), content="0")
+///   inspect(empty.length(), content="0")
 /// }
 /// ```
 #intrinsic("%array.length")
@@ -120,7 +120,7 @@ fn[T] Array::unsafe_truncate_to_length(self : Array[T], new_len : Int) -> Unit {
 test "unsafe_truncate_to_length" {
   let arr = [1, 2, 3, 4, 5]
   arr.unsafe_truncate_to_length(3)
-  inspect!(arr, content="[1, 2, 3]")
+  inspect(arr, content="[1, 2, 3]")
 }
 
 ///|
@@ -301,8 +301,8 @@ pub fn[T] Array::pop_exn(self : Array[T]) -> T {
 /// ```moonbit
 /// test "unsafe_pop" {
 ///   let arr = [1, 2, 3]
-///   inspect!(arr.unsafe_pop(), content="3")
-///   inspect!(arr, content="[1, 2]")
+///   inspect(arr.unsafe_pop(), content="3")
+///   inspect(arr, content="[1, 2]")
 /// }
 ///
 /// test "panic unsafe_pop/empty" {

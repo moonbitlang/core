@@ -43,5 +43,5 @@ test "simplify" {
   let _ignored = Add(Div(Lit(1), Lit(2)), Div(Lit(1), Lit(2)))
   let e = Sub(Mul(Lit(1), Var("x")), Mul(Lit(1), Var("x")))
   let simplified = simplify(e)
-  inspect!(simplified, content="Lit(0)")
+  inspect(simplified, content="Lit(0)")
 }

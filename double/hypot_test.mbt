@@ -14,14 +14,14 @@
 
 ///|
 test "hypot" {
-  inspect!(3.0.hypot(4), content="5")
-  inspect!(6.0.hypot(8), content="10")
-  inspect!(5.0.hypot(12), content="13")
-  inspect!(7.0.hypot(24), content="25")
-  inspect!(@double.not_a_number.hypot(2), content="NaN")
-  inspect!(2.0.hypot(@double.not_a_number), content="NaN")
-  inspect!(3.0.hypot(@double.infinity), content="Infinity")
-  inspect!(@double.infinity.hypot(2), content="Infinity")
+  inspect(3.0.hypot(4), content="5")
+  inspect(6.0.hypot(8), content="10")
+  inspect(5.0.hypot(12), content="13")
+  inspect(7.0.hypot(24), content="25")
+  inspect(@double.not_a_number.hypot(2), content="NaN")
+  inspect(2.0.hypot(@double.not_a_number), content="NaN")
+  inspect(3.0.hypot(@double.infinity), content="Infinity")
+  inspect(@double.infinity.hypot(2), content="Infinity")
 
   // Precision Test
   let xs = [1.2, 2.3, 3.4, 4.5, 5.6]

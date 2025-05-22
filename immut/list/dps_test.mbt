@@ -53,7 +53,7 @@ test "map" {
     tail=Cons(2, tail=Cons(3, tail=Cons(4, tail=Cons(5, tail=Nil)))),
   )
   let lst : L = map(lstL, fn { x => x * 2 })
-  inspect!(
+  inspect(
     lst,
     content="Cons(2, tail=Cons(4, tail=Cons(6, tail=Cons(8, tail=Cons(10, tail=Nil)))))",
   )

@@ -16,13 +16,13 @@
 test "RandomState::next" {
   let state = @splitmix.new()
   let _ = state.next()
-  inspect!(state.next_uint(), content="1118850684")
+  inspect(state.next_uint(), content="1118850684")
 }
 
 ///|
 test "next_two_uint should return two 32-bit unsigned integers" {
   let state = @splitmix.new()
-  inspect!(state.next_two_uint(), content="(520772969, 1037978766)")
+  inspect(state.next_two_uint(), content="(520772969, 1037978766)")
 }
 
 ///|
@@ -35,7 +35,7 @@ test "clone_random_state" {
   let clone_int = cloned.next_int()
 
   // The cloned state should produce the same value as the original
-  inspect!(orig_int == clone_int, content="true")
+  inspect(orig_int == clone_int, content="true")
 }
 
 ///|
@@ -43,6 +43,6 @@ test "next_float" {
   let state = @splitmix.new(seed=42UL)
   let result = state.next_float()
   // Since the result is random, we only check if it falls within the expected range [0, 1]
-  inspect!(result >= 0.0, content="true")
-  inspect!(result <= 1.0, content="false")
+  inspect(result >= 0.0, content="true")
+  inspect(result <= 1.0, content="false")
 }

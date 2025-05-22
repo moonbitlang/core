@@ -28,7 +28,7 @@
 /// test "Array::from_iter" {
 ///   let iter = Iter::singleton(42)
 ///   let arr = Array::from_iter(iter)
-///   inspect!(arr, content="[42]")
+///   inspect(arr, content="[42]")
 /// }
 /// ```
 pub fn[T] Array::from_iter(iter : Iter[T]) -> Array[T] {
@@ -74,7 +74,7 @@ pub fn[T] push_iter(self : Array[T], iter : Iter[T]) -> Unit {
 /// ```moonbit
 /// test "Array::makei" {
 ///   let arr = Array::makei(3, fn(i) { i * 2 })
-///   inspect!(arr, content="[0, 2, 4]")
+///   inspect(arr, content="[0, 2, 4]")
 /// }
 /// ```
 pub fn[T] Array::makei(length : Int, value : (Int) -> T) -> Array[T] {
@@ -173,9 +173,9 @@ pub fn[A, B] filter_map(self : Array[A], f : (A) -> B?) -> Array[B] {
 /// ```moonbit
 /// test "last" {
 ///   let arr = [1, 2, 3]
-///   inspect!(arr.last(), content="Some(3)")
+///   inspect(arr.last(), content="Some(3)")
 ///   let empty : Array[Int] = []
-///   inspect!(empty.last(), content="None")
+///   inspect(empty.last(), content="None")
 /// }
 /// ```
 pub fn[A] last(self : Array[A]) -> A? {
@@ -202,7 +202,7 @@ pub fn[A] last(self : Array[A]) -> A? {
 /// test "zip" {
 ///   let arr1 = [1, 2, 3]
 ///   let arr2 = ['a', 'b', 'c']
-///   inspect!(arr1.zip(arr2), content="[(1, 'a'), (2, 'b'), (3, 'c')]")
+///   inspect(arr1.zip(arr2), content="[(1, 'a'), (2, 'b'), (3, 'c')]")
 /// }
 /// ```
 pub fn[A, B] zip(self : Array[A], other : Array[B]) -> Array[(A, B)] {
@@ -237,7 +237,7 @@ pub fn[A, B] zip(self : Array[A], other : Array[B]) -> Array[(A, B)] {
 ///   let arr1 = [1, 2, 3]
 ///   let arr2 = [4, 5, 6]
 ///   let add = fn(a, b) { a + b }
-///   inspect!(zip_with(arr1, arr2, add), content="[5, 7, 9]")
+///   inspect(zip_with(arr1, arr2, add), content="[5, 7, 9]")
 /// }
 /// ```
 pub fn[A, B, C] zip_with(
@@ -271,7 +271,7 @@ pub fn[A, B, C] zip_with(
 /// test "zip_to_iter2" {
 ///   let arr1 = [1, 2, 3]
 ///   let arr2 = ['a', 'b', 'c']
-///   inspect!(arr1.zip_to_iter2(arr2).to_array(), content="[(1, 'a'), (2, 'b'), (3, 'c')]")
+///   inspect(arr1.zip_to_iter2(arr2).to_array(), content="[(1, 'a'), (2, 'b'), (3, 'c')]")
 /// }
 /// ```
 pub fn[A, B] zip_to_iter2(self : Array[A], other : Array[B]) -> Iter2[A, B] {

@@ -29,12 +29,12 @@ fn power_2_above(x : Int, n : Int) -> Int {
 
 ///|
 test "power_2_above" {
-  inspect!(power_2_above(1, 15), content="16")
-  inspect!(power_2_above(1, 16), content="16")
-  inspect!(power_2_above(1, 17), content="32")
-  inspect!(power_2_above(1, 32), content="32")
-  inspect!(power_2_above(128, 33), content="128")
-  inspect!(power_2_above(1, 2147483647), content="1073741824")
+  inspect(power_2_above(1, 15), content="16")
+  inspect(power_2_above(1, 16), content="16")
+  inspect(power_2_above(1, 17), content="32")
+  inspect(power_2_above(1, 32), content="32")
+  inspect(power_2_above(128, 33), content="128")
+  inspect(power_2_above(1, 2147483647), content="1073741824")
 }
 
 ///|
@@ -55,8 +55,8 @@ test "power_2_above" {
 /// ```moonbit
 /// test "new" {
 ///   let map : @hashmap.T[String, Int] = @hashmap.new(capacity=16)
-///   inspect!(map.capacity(), content="16")
-///   inspect!(map.is_empty(), content="true")
+///   inspect(map.capacity(), content="16")
+///   inspect(map.is_empty(), content="true")
 /// }
 /// ```
 pub fn[K, V] new(capacity~ : Int = 8) -> T[K, V] {
@@ -87,8 +87,8 @@ pub fn[K, V] new(capacity~ : Int = 8) -> T[K, V] {
 /// test "from_array" {
 ///   let arr = [(1, "one"), (2, "two"), (1, "ONE")]
 ///   let map = @hashmap.from_array(arr)
-///   inspect!(map.get(1), content="Some(\"ONE\")")
-///   inspect!(map.get(2), content="Some(\"two\")")
+///   inspect(map.get(1), content="Some(\"ONE\")")
+///   inspect(map.get(2), content="Some(\"two\")")
 /// }
 /// ```
 pub fn[K : Hash + Eq, V] from_array(arr : Array[(K, V)]) -> T[K, V] {
@@ -114,9 +114,9 @@ pub fn[K : Hash + Eq, V] from_array(arr : Array[(K, V)]) -> T[K, V] {
 /// test "set" {
 ///   let map : @hashmap.T[String, Int] = @hashmap.new()
 ///   map.set("key", 42)
-///   inspect!(map.get("key"), content="Some(42)")
+///   inspect(map.get("key"), content="Some(42)")
 ///   map.set("key", 24) // update existing key
-///   inspect!(map.get("key"), content="Some(24)")
+///   inspect(map.get("key"), content="Some(24)")
 /// }
 /// ```
 pub fn[K : Hash + Eq, V] set(self : T[K, V], key : K, value : V) -> Unit {
@@ -177,7 +177,7 @@ fn[K : Eq, V] set_with_hash(
 /// test "op_set" {
 ///   let map : @hashmap.T[String, Int] = @hashmap.new()
 ///   map["key"] = 42
-///   inspect!(map.get("key"), content="Some(42)")
+///   inspect(map.get("key"), content="Some(42)")
 /// }
 /// ```
 pub fn[K : Hash + Eq, V] op_set(self : T[K, V], key : K, value : V) -> Unit {
@@ -199,8 +199,8 @@ pub fn[K : Hash + Eq, V] op_set(self : T[K, V], key : K, value : V) -> Unit {
 /// ```moonbit
 /// test "get" {
 ///   let map = @hashmap.of([("key", 42)])
-///   inspect!(map.get("key"), content="Some(42)")
-///   inspect!(map.get("nonexistent"), content="None")
+///   inspect(map.get("key"), content="Some(42)")
+///   inspect(map.get("nonexistent"), content="None")
 /// }
 /// ```
 pub fn[K : Hash + Eq, V] get(self : T[K, V], key : K) -> V? {
@@ -250,8 +250,8 @@ fn[K : Hash + Eq, V] get_with_hash(self : T[K, V], key : K, hash : Int) -> V? {
 /// ```moonbit
 /// test "op_get" {
 ///   let map = @hashmap.of([("key", 42)])
-///   inspect!(map["key"], content="Some(42)")
-///   inspect!(map["nonexistent"], content="None")
+///   inspect(map["key"], content="Some(42)")
+///   inspect(map["nonexistent"], content="None")
 /// }
 /// ```
 #deprecated("Use `get` instead. `op_get` will return `V` instead of `Option[V]` in the future.")
@@ -280,8 +280,8 @@ pub fn[K : Hash + Eq, V] op_get(self : T[K, V], key : K) -> V? {
 /// test "get_or_init" {
 ///   let map : @hashmap.T[String, Int] = @hashmap.new()
 ///   let value = map.get_or_init("key", fn() { 42 })
-///   inspect!(value, content="42")
-///   inspect!(map.get("key"), content="Some(42)")
+///   inspect(value, content="42")
+///   inspect(map.get("key"), content="Some(42)")
 /// }
 /// ```
 /// TODO: improve performance to avoid calling `get_with_hash` twice
@@ -319,8 +319,8 @@ pub fn[K : Hash + Eq, V] get_or_init(
 /// ```moonbit
 /// test "get_or_default" {
 ///   let map = @hashmap.of([("a", 1), ("b", 2)])
-///   inspect!(map.get_or_default("a", 0), content="1")
-///   inspect!(map.get_or_default("c", 0), content="0")
+///   inspect(map.get_or_default("a", 0), content="1")
+///   inspect(map.get_or_default("c", 0), content="0")
 /// }
 /// ```
 pub fn[K : Hash + Eq, V] get_or_default(
@@ -356,8 +356,8 @@ pub fn[K : Hash + Eq, V] get_or_default(
 /// ```moonbit
 /// test "contains" {
 ///   let map = @hashmap.of([("a", 1), ("b", 2)])
-///   inspect!(map.contains("a"), content="true")
-///   inspect!(map.contains("c"), content="false")
+///   inspect(map.contains("a"), content="true")
+///   inspect(map.contains("c"), content="false")
 /// }
 /// ```
 pub fn[K : Hash + Eq, V] contains(self : T[K, V], key : K) -> Bool {
@@ -410,8 +410,8 @@ pub fn[K : Hash + Eq, V : Eq] contains_kv(
 /// test "remove" {
 ///   let map = @hashmap.of([("a", 1), ("b", 2)])
 ///   map.remove("a")
-///   inspect!(map.get("a"), content="None")
-///   inspect!(map.size(), content="1")
+///   inspect(map.get("a"), content="None")
+///   inspect(map.size(), content="1")
 /// }
 /// ```
 pub fn[K : Hash + Eq, V] remove(self : T[K, V], key : K) -> Unit {
@@ -484,8 +484,8 @@ fn[K : Eq, V] grow(self : T[K, V]) -> Unit {
 /// ```moonbit
 /// test "of" {
 ///   let map = @hashmap.of([(1, "one"), (2, "two")])
-///   inspect!(map.get(1), content="Some(\"one\")")
-///   inspect!(map.get(2), content="Some(\"two\")")
+///   inspect(map.get(1), content="Some(\"one\")")
+///   inspect(map.get(2), content="Some(\"two\")")
 /// }
 /// ```
 pub fn[K : Eq + Hash, V] of(arr : FixedArray[(K, V)]) -> T[K, V] {
@@ -497,8 +497,8 @@ pub fn[K : Eq + Hash, V] of(arr : FixedArray[(K, V)]) -> T[K, V] {
 ///|
 test "of" {
   let m = of([(1, 2), (3, 4)])
-  inspect!(m.get(1), content="Some(2)")
-  inspect!(m.get(3), content="Some(4)")
+  inspect(m.get(1), content="Some(2)")
+  inspect(m.get(3), content="Some(4)")
 }
 
 ///|
@@ -518,7 +518,7 @@ test "of" {
 /// ```moonbit
 /// test "arbitrary" {
 ///   let samples : Array[@hashmap.T[Int, String]] = @quickcheck.samples(5)
-///   inspect!(samples.length(), content="5")
+///   inspect(samples.length(), content="5")
 /// }
 /// ```
 pub impl[K : @quickcheck.Arbitrary + Hash + Eq, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[
@@ -556,13 +556,13 @@ impl Show for MyString with output(self, logger) {
 ///|
 test "arbitrary" {
   let samples : Array[T[String, Int]] = @quickcheck.samples(20)
-  inspect!(
+  inspect(
     samples[5:10],
     content=
       #|[HashMap::of([]), HashMap::of([]), HashMap::of([("", 0)]), HashMap::of([("", 0)]), HashMap::of([("", 0)])]
     ,
   )
-  inspect!(
+  inspect(
     samples[11:15],
     content=
       #|[HashMap::of([("Q", 1), ("", 0), ("\u{1e}", 0)]), HashMap::of([("", 0)]), HashMap::of([("F:", 0), ("A&", 2), ("v\b", 0), ("", 0), ("#", 0)]), HashMap::of([("p(", -2), ("^\u{1e}", 3), ("2x", 1), ("", 3)])]
@@ -581,7 +581,7 @@ test "set" {
   m.set("c", 1)
   m.set("d", 1)
   assert_eq!(m.size(), 7)
-  inspect!(
+  inspect(
     m.debug_entries(),
     content="_,(0,a,1),(1,b,1),(2,c,1),(3,d,1),(3,bc,2),(4,cd,2),(4,abc,3),_,_,_,_,_,_,_,_",
   )
@@ -598,7 +598,7 @@ test "remove" {
   m.set("abcdef", 6)
   m.remove("ab")
   assert_eq!(m.size(), 5)
-  inspect!(
+  inspect(
     m.debug_entries(),
     content="_,(0,a,1),(0,bc,2),(1,cd,2),(1,abc,3),_,(0,abcdef,6),_,_,_,_,_,_,_,_,_",
   )
@@ -612,7 +612,7 @@ test "remove_unexist_key" {
   m.set("abc", 3)
   m.remove("d")
   assert_eq!(m.size(), 3)
-  inspect!(m.debug_entries(), content="_,(0,a,1),(0,ab,2),(0,abc,3),_,_,_,_")
+  inspect(m.debug_entries(), content="_,(0,a,1),(0,ab,2),(0,abc,3),_,_,_,_")
 }
 
 ///|
@@ -636,16 +636,16 @@ test "grow" {
   m.set("Scala", 5)
   m.set("Julia", 5)
   assert_eq!(m.size(), 6)
-  inspect!(m.capacity(), content="16")
+  inspect(m.capacity(), content="16")
   m.set("Cobol", 5)
   assert_eq!(m.size(), 7)
-  inspect!(m.capacity(), content="16")
+  inspect(m.capacity(), content="16")
   m.set("Python", 6)
   m.set("Haskell", 7)
   m.set("Rescript", 8)
   assert_eq!(m.size(), 10)
-  inspect!(m.capacity(), content="32")
-  inspect!(
+  inspect(m.capacity(), content="32")
+  inspect(
     m.debug_entries(),
     content="_,(0,C,1),(0,Go,2),(0,C++,3),(0,Java,4),(0,Scala,5),(1,Julia,5),(2,Cobol,5),(2,Python,6),(2,Haskell,7),(2,Rescript,8),_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_",
   )
@@ -654,8 +654,8 @@ test "grow" {
 ///|
 test "get_or_init" {
   let m : T[MyString, Int] = new()
-  inspect!(m.get_or_init("a", fn() { 1 }), content="1")
-  inspect!(m.get("a"), content="Some(1)")
-  inspect!(m.get_or_init("a", fn() { 2 }), content="1")
-  inspect!(m.get("a"), content="Some(1)")
+  inspect(m.get_or_init("a", fn() { 1 }), content="1")
+  inspect(m.get("a"), content="Some(1)")
+  inspect(m.get_or_init("a", fn() { 2 }), content="1")
+  inspect(m.get("a"), content="Some(1)")
 }

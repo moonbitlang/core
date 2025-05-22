@@ -32,26 +32,26 @@ test "BigInt::to_int64" {
 
 ///|
 test "BigInt::bit_length" {
-  inspect!(0N.bit_length(), content="0")
-  inspect!(1N.bit_length(), content="1")
-  inspect!((-1N).bit_length(), content="0")
-  inspect!(16N.bit_length(), content="5")
-  inspect!((-16N).bit_length(), content="4")
-  inspect!(42N.bit_length(), content="6")
-  inspect!((-42N).bit_length(), content="6")
-  inspect!(1024N.bit_length(), content="11")
-  inspect!(10000000N.bit_length(), content="24")
-  inspect!((1N << 31).bit_length(), content="32")
-  inspect!((1N << 63).bit_length(), content="64")
+  inspect(0N.bit_length(), content="0")
+  inspect(1N.bit_length(), content="1")
+  inspect((-1N).bit_length(), content="0")
+  inspect(16N.bit_length(), content="5")
+  inspect((-16N).bit_length(), content="4")
+  inspect(42N.bit_length(), content="6")
+  inspect((-42N).bit_length(), content="6")
+  inspect(1024N.bit_length(), content="11")
+  inspect(10000000N.bit_length(), content="24")
+  inspect((1N << 31).bit_length(), content="32")
+  inspect((1N << 63).bit_length(), content="64")
 }
 
 ///|
 test "BigInt::ctz" {
-  inspect!(0N.ctz(), content="0")
-  inspect!(1N.ctz(), content="0")
-  inspect!(8N.ctz(), content="3") // 1000
-  inspect!(12N.ctz(), content="2") // 1100
-  inspect!(174056N.ctz(), content="3") // 101010011111101000
-  inspect!((1N << 31).ctz(), content="31")
-  inspect!((1N << 63).ctz(), content="63")
+  inspect(0N.ctz(), content="0")
+  inspect(1N.ctz(), content="0")
+  inspect(8N.ctz(), content="3") // 1000
+  inspect(12N.ctz(), content="2") // 1100
+  inspect(174056N.ctz(), content="3") // 101010011111101000
+  inspect((1N << 31).ctz(), content="31")
+  inspect((1N << 63).ctz(), content="63")
 }

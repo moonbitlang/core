@@ -8,8 +8,8 @@ The package provides constants for the minimum and maximum values of a byte:
 
 ```moonbit
 test "byte constants" {
-  inspect!(@byte.min_value, content="b'\\x00'")
-  inspect!(@byte.max_value, content="b'\\xFF'")
+  inspect(@byte.min_value, content="b'\\x00'")
+  inspect(@byte.max_value, content="b'\\xFF'")
 }
 ```
 
@@ -20,9 +20,9 @@ Bytes can be converted to other numeric types. The package provides conversion t
 ```moonbit
 test "byte conversion" {
   let byte = b'A'
-  inspect!(byte.to_uint64(), content="65")
+  inspect(byte.to_uint64(), content="65")
   let byte = b' '
-  inspect!(@byte.to_uint64(byte), content="32")
+  inspect(@byte.to_uint64(byte), content="32")
 }
 ```
 
@@ -34,19 +34,19 @@ Although not directly part of this package, MoonBit provides byte literals with 
 test "byte literals" {
   // ASCII character
   let a = b'a'
-  inspect!(a.to_uint64(), content="97")
+  inspect(a.to_uint64(), content="97")
 
   // Hexadecimal escape sequence
   let hex = b'\x41'
-  inspect!(hex.to_uint64(), content="65")
+  inspect(hex.to_uint64(), content="65")
 
   // Null byte
   let null = b'\x00'
-  inspect!(null.to_uint64(), content="0")
+  inspect(null.to_uint64(), content="0")
 
   // Maximum value
   let max = b'\xff'
-  inspect!(max.to_uint64(), content="255")
+  inspect(max.to_uint64(), content="255")
 }
 ```
 

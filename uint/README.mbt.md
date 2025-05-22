@@ -9,11 +9,11 @@ This package provides functionalities for handling 32-bit unsigned integers in M
 ```moonbit
 test "uint basics" {
   // Default value is 0
-  inspect!(@uint.default(), content="0")
+  inspect(@uint.default(), content="0")
 
   // Maximum and minimum values
-  inspect!(@uint.max_value, content="4294967295")
-  inspect!(@uint.min_value, content="0")
+  inspect(@uint.max_value, content="4294967295")
+  inspect(@uint.min_value, content="0")
 }
 ```
 
@@ -27,7 +27,7 @@ test "uint byte conversion" {
 
   // Big-endian bytes (most significant byte first)
   let be_bytes = @uint.to_be_bytes(num)
-  inspect!(
+  inspect(
     be_bytes,
     content=
       #|b"\x00\x00\x01\x02"
@@ -36,7 +36,7 @@ test "uint byte conversion" {
 
   // Little-endian bytes (least significant byte first)
   let le_bytes = @uint.to_le_bytes(num)
-  inspect!(
+  inspect(
     le_bytes,
     content=
       #|b"\x02\x01\x00\x00"
@@ -52,9 +52,9 @@ test "uint byte conversion" {
 ```moonbit
 test "uint type conversion" {
   let num = 42U
-  inspect!(@uint.to_int64(num), content="42")
+  inspect(@uint.to_int64(num), content="42")
   let large_num = 4294967295U // max value
-  inspect!(@uint.to_int64(large_num), content="4294967295")
+  inspect(@uint.to_int64(large_num), content="4294967295")
 }
 ```
 
@@ -65,14 +65,14 @@ test "uint methods" {
   let num = 1000U
 
   // Using method syntax
-  inspect!(num.to_int64(), content="1000")
-  inspect!(
+  inspect(num.to_int64(), content="1000")
+  inspect(
     num.to_be_bytes(),
     content=
       #|b"\x00\x00\x03\xe8"
     ,
   )
-  inspect!(
+  inspect(
     num.to_le_bytes(),
     content=
       #|b"\xe8\x03\x00\x00"

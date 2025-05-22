@@ -29,7 +29,7 @@ fn Error::to_string(self : Error) -> String = "%error.to_string"
 /// ```moonbit
 /// test "Error::Show/output" {
 ///   let error : Error = Failure("test error")
-///   inspect!(error, content="\"Failure(test error)\"")
+///   inspect(error, content="\"Failure(test error)\"")
 /// }
 /// ```
 pub impl Show for Error with output(self, logger) {

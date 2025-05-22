@@ -28,8 +28,8 @@
 /// test "copy" {
 ///   let original = [1, 2, 3]
 ///   let copied = original.copy()
-///   inspect!(copied, content="[1, 2, 3]")
-///   inspect!(physical_equal(original, copied), content="false")
+///   inspect(copied, content="[1, 2, 3]")
+///   inspect(physical_equal(original, copied), content="false")
 /// }
 /// ```
 pub fn[T] copy(self : Array[T]) -> Array[T] {

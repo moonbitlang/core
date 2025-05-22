@@ -17,8 +17,8 @@ test "test_tuple3_eq" {
   let t1 : (Int, String, Bool) = (1, "a", true)
   let t2 : (Int, String, Bool) = (1, "a", true)
   let t3 : (Int, String, Bool) = (2, "a", true)
-  inspect!(t1 == t2, content="true")
-  inspect!(t1 == t3, content="false")
+  inspect(t1 == t2, content="true")
+  inspect(t1 == t3, content="false")
 }
 
 ///|
@@ -42,15 +42,15 @@ test "test tuple8 equality" {
   let t1 = (1, "hello", true, 42L, 3.14, 'a', [1, 2], "world")
   let t2 = (1, "hello", true, 42L, 3.14, 'a', [1, 2], "world")
   let t3 = (2, "hello", true, 42L, 3.14, 'a', [1, 2], "world")
-  inspect!(t1 == t2, content="true")
-  inspect!(t1 == t3, content="false")
+  inspect(t1 == t2, content="true")
+  inspect(t1 == t3, content="false")
 }
 
 ///|
 test "tuple9 equal" {
   let t1 = (1, 2, 3, 4, 5, 6, 7, 8, 9)
   let t2 = (1, 2, 3, 4, 5, 6, 7, 8, 9)
-  inspect!(t1 == t2, content="true")
+  inspect(t1 == t2, content="true")
 }
 
 ///|
@@ -58,18 +58,18 @@ test "tuple10_equality" {
   // Test case 1: identical tuples
   let t1 = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
   let t2 = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
-  inspect!(t1 == t2, content="true")
+  inspect(t1 == t2, content="true")
 
   // Test case 2: tuples differ at first element
   let t3 = (0, 2, 3, 4, 5, 6, 7, 8, 9, 10)
-  inspect!(t1 == t3, content="false")
+  inspect(t1 == t3, content="false")
 }
 
 ///|
 test "Tuple11::op_equal with equal tuples" {
   let t1 = (1, "a", true, 1.0, b'x', false, 42, 'c', -1, "hello", 100)
   let t2 = (1, "a", true, 1.0, b'x', false, 42, 'c', -1, "hello", 100)
-  inspect!(t1 == t2, content="true")
+  inspect(t1 == t2, content="true")
 }
 
 ///|
@@ -98,14 +98,14 @@ test "tuple14_equal_true" {
     Int,
   ) = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14)
   let t2 = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14)
-  inspect!(t1 == t2, content="true")
+  inspect(t1 == t2, content="true")
 }
 
 ///|
 test "tuple15_eq_same_values" {
   let t1 = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15)
   let t2 = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15)
-  inspect!(t1 == t2, content="true")
+  inspect(t1 == t2, content="true")
 }
 
 ///|
@@ -123,7 +123,7 @@ test "tuple16_equal" {
 test "test tuple5 equality with equal values" {
   let t1 = (1, "a", true, 3.14, 42)
   let t2 = (1, "a", true, 3.14, 42)
-  inspect!(t1 == t2, content="true")
+  inspect(t1 == t2, content="true")
 }
 
 ///|
@@ -137,5 +137,5 @@ test "tuple6 equal" {
 test "tuple13_equal_test_same_values" {
   let t1 = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13)
   let t2 = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13)
-  inspect!(t1 == t2, content="true")
+  inspect(t1 == t2, content="true")
 }

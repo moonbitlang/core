@@ -949,13 +949,13 @@ pub fn[A] Iter::op_as_view(
 /// ```moonbit
 /// test "Iter::contains" {
 ///   let iter = [1, 2, 3, 4, 5].iter()
-///   inspect!(iter.contains(3), content="true")
-///   inspect!(iter.contains(6), content="false")
+///   inspect(iter.contains(3), content="true")
+///   inspect(iter.contains(6), content="false")
 /// }
 ///
 /// test "Iter::contains/empty" {
 ///   let iter = Iter::empty()
-///   inspect!(iter.contains(1), content="false")
+///   inspect(iter.contains(1), content="false")
 /// }
 /// ```
 pub fn[A : Eq] Iter::contains(self : Iter[A], value : A) -> Bool {

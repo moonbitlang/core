@@ -34,16 +34,16 @@
 ///
 /// ```moonbit
 /// test "hypot" {
-///   inspect!(3.0.hypot(4.0), content="5")
-///   inspect!(5.0.hypot(12.0), content="13")
-///   inspect!(8.0.hypot(15.0), content="17")
-///   inspect!(7.0.hypot(24.0), content="25")
-///   inspect!(@double.not_a_number.hypot(1.0), content="NaN")
-///   inspect!(1.0.hypot(@double.not_a_number), content="NaN")
-///   inspect!(@double.infinity.hypot(1.0), content="Infinity")
-///   inspect!(1.0.hypot(@double.infinity), content="Infinity")
-///   inspect!(@double.neg_infinity.hypot(1.0), content="Infinity")
-///   inspect!(1.0.hypot(@double.neg_infinity), content="Infinity")
+///   inspect(3.0.hypot(4.0), content="5")
+///   inspect(5.0.hypot(12.0), content="13")
+///   inspect(8.0.hypot(15.0), content="17")
+///   inspect(7.0.hypot(24.0), content="25")
+///   inspect(@double.not_a_number.hypot(1.0), content="NaN")
+///   inspect(1.0.hypot(@double.not_a_number), content="NaN")
+///   inspect(@double.infinity.hypot(1.0), content="Infinity")
+///   inspect(1.0.hypot(@double.infinity), content="Infinity")
+///   inspect(@double.neg_infinity.hypot(1.0), content="Infinity")
+///   inspect(1.0.hypot(@double.neg_infinity), content="Infinity")
 /// }
 /// ```
 pub fn hypot(self : Double, y : Double) -> Double {

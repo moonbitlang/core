@@ -30,15 +30,15 @@
 ///
 /// ```moonbit
 /// test "sinh" {
-///   inspect!(0.0.sinh(), content="0")
-///   inspect!((-0.0).sinh(), content="0")
-///   inspect!(1.0.sinh(), content="1.1752011936438014")
-///   inspect!(2.0.sinh(), content="3.626860407847019")
-///   inspect!(1000.0.sinh(), content="Infinity")
-///   inspect!((-1000.0).sinh(), content="-Infinity")
-///   inspect!(@double.not_a_number.sinh(), content="NaN")
-///   inspect!(@double.infinity.sinh(), content="Infinity")
-///   inspect!(@double.neg_infinity.sinh(), content="-Infinity")
+///   inspect(0.0.sinh(), content="0")
+///   inspect((-0.0).sinh(), content="0")
+///   inspect(1.0.sinh(), content="1.1752011936438014")
+///   inspect(2.0.sinh(), content="3.626860407847019")
+///   inspect(1000.0.sinh(), content="Infinity")
+///   inspect((-1000.0).sinh(), content="-Infinity")
+///   inspect(@double.not_a_number.sinh(), content="NaN")
+///   inspect(@double.infinity.sinh(), content="Infinity")
+///   inspect(@double.neg_infinity.sinh(), content="-Infinity")
 /// }
 /// ```
 pub fn sinh(self : Double) -> Double = "Math" "sinh"
@@ -61,15 +61,15 @@ pub fn sinh(self : Double) -> Double = "Math" "sinh"
 ///
 /// ```moonbit
 /// test "cosh" {
-///   inspect!(0.0.cosh(), content="1")
-///   inspect!((-0.0).cosh(), content="1")
-///   inspect!(1.0.cosh(), content="1.5430806348152437")
-///   inspect!(2.0.cosh(), content="3.7621956910836314")
-///   inspect!(1000.0.cosh(), content="Infinity")
-///   inspect!((-1000.0).cosh(), content="Infinity")
-///   inspect!(@double.not_a_number.cosh(), content="NaN")
-///   inspect!(@double.infinity.cosh(), content="Infinity")
-///   inspect!(@double.neg_infinity.cosh(), content="Infinity")
+///   inspect(0.0.cosh(), content="1")
+///   inspect((-0.0).cosh(), content="1")
+///   inspect(1.0.cosh(), content="1.5430806348152437")
+///   inspect(2.0.cosh(), content="3.7621956910836314")
+///   inspect(1000.0.cosh(), content="Infinity")
+///   inspect((-1000.0).cosh(), content="Infinity")
+///   inspect(@double.not_a_number.cosh(), content="NaN")
+///   inspect(@double.infinity.cosh(), content="Infinity")
+///   inspect(@double.neg_infinity.cosh(), content="Infinity")
 /// }
 /// ```
 pub fn cosh(self : Double) -> Double = "Math" "cosh"
@@ -93,15 +93,15 @@ pub fn cosh(self : Double) -> Double = "Math" "cosh"
 ///
 /// ```moobit
 /// test "tanh" {
-///   inspect!(0.0.tanh(), content="0")
-///   inspect!((-0.0).tanh(), content="0")
-///   inspect!(1.0.tanh(), content="0.7615941559557649")
-///   inspect!(2.0.tanh(), content="0.9640275800758169")
-///   inspect!(1000.0.tanh(), content="1")
-///   inspect!((-1000.0).tanh(), content="-1")
-///   inspect!(@double.not_a_number.tanh(), content="NaN")
-///   inspect!(@double.infinity.tanh(), content="1")
-///   inspect!(@double.neg_infinity.tanh(), content="-1")
+///   inspect(0.0.tanh(), content="0")
+///   inspect((-0.0).tanh(), content="0")
+///   inspect(1.0.tanh(), content="0.7615941559557649")
+///   inspect(2.0.tanh(), content="0.9640275800758169")
+///   inspect(1000.0.tanh(), content="1")
+///   inspect((-1000.0).tanh(), content="-1")
+///   inspect(@double.not_a_number.tanh(), content="NaN")
+///   inspect(@double.infinity.tanh(), content="1")
+///   inspect(@double.neg_infinity.tanh(), content="-1")
 /// }
 /// ```
 pub fn tanh(self : Double) -> Double = "Math" "tanh"
@@ -124,15 +124,15 @@ pub fn tanh(self : Double) -> Double = "Math" "tanh"
 ///
 /// ```moonbit
 /// test "asinh" {
-///   inspect!(0.0.asinh(), content="0")
-///   inspect!((-0.0).asinh(), content="0")
-///   inspect!(1.0.asinh(), content="0.881373587019543")
-///   inspect!(2.0.asinh(), content="1.4436354751788103")
-///   inspect!(1000.0.asinh(), content="7.600902709541988")
-///   inspect!((-1000.0).asinh(), content="-7.600902709541988")
-///   inspect!(@double.not_a_number.asinh(), content="NaN")
-///   inspect!(@double.infinity.asinh(), content="Infinity")
-///   inspect!(@double.neg_infinity.asinh(), content="-Infinity")
+///   inspect(0.0.asinh(), content="0")
+///   inspect((-0.0).asinh(), content="0")
+///   inspect(1.0.asinh(), content="0.881373587019543")
+///   inspect(2.0.asinh(), content="1.4436354751788103")
+///   inspect(1000.0.asinh(), content="7.600902709541988")
+///   inspect((-1000.0).asinh(), content="-7.600902709541988")
+///   inspect(@double.not_a_number.asinh(), content="NaN")
+///   inspect(@double.infinity.asinh(), content="Infinity")
+///   inspect(@double.neg_infinity.asinh(), content="-Infinity")
 /// }
 /// ```
 pub fn asinh(self : Double) -> Double = "Math" "asinh"
@@ -157,14 +157,14 @@ pub fn asinh(self : Double) -> Double = "Math" "asinh"
 ///
 /// ```moonbit
 /// test "acosh" {
-///   inspect!(1.0.acosh(), content="0")
-///   inspect!(2.0.acosh(), content="1.3169578969248166")
-///   inspect!(1000.0.acosh(), content="7.600902209541989")
-///   inspect!((-1.0).acosh(), content="NaN")
-///   inspect!((-2.0).acosh(), content="NaN")
-///   inspect!(@double.not_a_number.acosh(), content="NaN")
-///   inspect!(@double.infinity.acosh(), content="Infinity")
-///   inspect!(@double.neg_infinity.acosh(), content="NaN")
+///   inspect(1.0.acosh(), content="0")
+///   inspect(2.0.acosh(), content="1.3169578969248166")
+///   inspect(1000.0.acosh(), content="7.600902209541989")
+///   inspect((-1.0).acosh(), content="NaN")
+///   inspect((-2.0).acosh(), content="NaN")
+///   inspect(@double.not_a_number.acosh(), content="NaN")
+///   inspect(@double.infinity.acosh(), content="Infinity")
+///   inspect(@double.neg_infinity.acosh(), content="NaN")
 /// }
 /// ```
 pub fn acosh(self : Double) -> Double = "Math" "acosh"
@@ -188,16 +188,16 @@ pub fn acosh(self : Double) -> Double = "Math" "acosh"
 ///
 /// ```moonbit
 /// test "atanh" {
-///   inspect!(0.0.atanh(), content="0")
-///   inspect!((-0.0).atanh(), content="0")
-///   inspect!(0.5.atanh(), content="0.5493061443340548")
-///   inspect!((-0.5).atanh(), content="-0.5493061443340548")
-///   inspect!(1.0.atanh(), content="Infinity")
-///   inspect!((-1.0).atanh(), content="-Infinity")
-///   inspect!(1.5.atanh(), content="NaN")
-///   inspect!(@double.not_a_number.atanh(), content="NaN")
-///   inspect!(@double.infinity.atanh(), content="NaN")
-///   inspect!(@double.neg_infinity.atanh(), content="NaN")
+///   inspect(0.0.atanh(), content="0")
+///   inspect((-0.0).atanh(), content="0")
+///   inspect(0.5.atanh(), content="0.5493061443340548")
+///   inspect((-0.5).atanh(), content="-0.5493061443340548")
+///   inspect(1.0.atanh(), content="Infinity")
+///   inspect((-1.0).atanh(), content="-Infinity")
+///   inspect(1.5.atanh(), content="NaN")
+///   inspect(@double.not_a_number.atanh(), content="NaN")
+///   inspect(@double.infinity.atanh(), content="NaN")
+///   inspect(@double.neg_infinity.atanh(), content="NaN")
 /// }
 /// ```
 pub fn atanh(self : Double) -> Double = "Math" "atanh"

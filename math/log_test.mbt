@@ -37,16 +37,16 @@ test "lnf Test" {
 
 ///|
 test "ln_1p" {
-  inspect!(ln_1pf(0), content="0")
-  inspect!(ln_1pf(1), content="0.6931471824645996")
-  inspect!(ln_1pf(2), content="1.0986123085021973")
-  inspect!(ln_1pf(3), content="1.3862943649291992")
-  inspect!(ln_1pf(4), content="1.6094379425048828")
-  inspect!(ln_1pf(5), content="1.7917594909667969")
-  inspect!(ln_1pf(-0.5), content="-0.6931471824645996")
-  inspect!(ln_1pf(-1), content="-Infinity")
-  inspect!(ln_1pf(-2), content="NaN")
-  inspect!(ln_1pf(@float.not_a_number), content="NaN")
-  inspect!(ln_1pf(@float.infinity), content="Infinity")
-  inspect!(ln_1pf(@float.neg_infinity), content="NaN")
+  inspect(ln_1pf(0), content="0")
+  inspect(ln_1pf(1), content="0.6931471824645996")
+  inspect(ln_1pf(2), content="1.0986123085021973")
+  inspect(ln_1pf(3), content="1.3862943649291992")
+  inspect(ln_1pf(4), content="1.6094379425048828")
+  inspect(ln_1pf(5), content="1.7917594909667969")
+  inspect(ln_1pf(-0.5), content="-0.6931471824645996")
+  inspect(ln_1pf(-1), content="-Infinity")
+  inspect(ln_1pf(-2), content="NaN")
+  inspect(ln_1pf(@float.not_a_number), content="NaN")
+  inspect(ln_1pf(@float.infinity), content="Infinity")
+  inspect(ln_1pf(@float.neg_infinity), content="NaN")
 }

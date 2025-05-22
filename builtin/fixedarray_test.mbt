@@ -29,10 +29,10 @@ test "compare" {
   let arr1 : FixedArray[Int] = [1, 2, 3]
   let arr2 : FixedArray[Int] = [1, 2, 4]
   let arr3 : FixedArray[Int] = [1, 2]
-  inspect!(arr1.compare(arr2), content="-1")
-  inspect!(arr1.compare(arr3), content="1")
-  inspect!(arr3.compare(arr1), content="-1")
-  inspect!(arr1.compare(arr1), content="0")
+  inspect(arr1.compare(arr2), content="-1")
+  inspect(arr1.compare(arr3), content="1")
+  inspect(arr3.compare(arr1), content="-1")
+  inspect(arr1.compare(arr1), content="0")
 }
 
 ///|
@@ -54,7 +54,7 @@ test "fixed array iter with early termination" {
       IterContinue
     }
   })
-  inspect!(count, content="2")
+  inspect(count, content="2")
 }
 
 ///|
@@ -62,7 +62,7 @@ test "FixedArray::iter2 with empty array" {
   let arr : FixedArray[Int] = []
   let mut count = 0
   arr.iter2().each(fn(_, _) { count = count + 1 })
-  inspect!(count, content="0")
+  inspect(count, content="0")
 }
 
 ///|
@@ -70,5 +70,5 @@ test "FixedArray::iter2 with single element" {
   let arr = FixedArray::make(1, 42)
   let pairs : Array[(Int, Int)] = []
   arr.iter2().each(fn(i, x) { pairs.push((i, x)) })
-  inspect!(pairs, content="[(0, 42)]")
+  inspect(pairs, content="[(0, 42)]")
 }

@@ -368,7 +368,7 @@ test "iter" {
     exb.write_string(x.to_string())
     exb.write_char('\n')
   })
-  inspect!(
+  inspect(
     exb,
     content=
       #|42
@@ -383,7 +383,7 @@ test "iter" {
     exb.write_string(x.to_string())
     exb.write_char('\n')
   })
-  inspect!(exb, content="")
+  inspect(exb, content="")
 }
 
 ///|
@@ -425,7 +425,7 @@ pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for X? with arbitrary(
 ///|
 test "arbitrary" {
   let samples : Array[Int?] = @quickcheck.samples(10)
-  inspect!(
+  inspect(
     samples,
     content="[None, None, Some(-1), Some(0), None, Some(0), Some(-5), Some(2), None, Some(4)]",
   )

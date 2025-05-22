@@ -14,12 +14,12 @@ test "basic buffer operations" {
   buf..write_byte(b'H')..write_byte(b'i')
 
   // Check contents
-  inspect!(buf.is_empty(), content="false")
-  inspect!(buf.length(), content="2")
+  inspect(buf.is_empty(), content="false")
+  inspect(buf.length(), content="2")
 
   // Get contents as bytes
   let bytes = buf.contents()
-  inspect!(
+  inspect(
     bytes,
     content=
       #|b"\x48\x69"
@@ -28,7 +28,7 @@ test "basic buffer operations" {
 
   // Reset buffer
   buf.reset()
-  inspect!(buf.is_empty(), content="true")
+  inspect(buf.is_empty(), content="true")
 }
 ```
 
@@ -38,7 +38,7 @@ Write numbers in different encodings:
 
 ```moonbit
 test "number serialization" {
-  inspect!(
+  inspect(
     @buffer.new()
     // Write integers in different byte orders
     ..write_int_be(42)
@@ -48,7 +48,7 @@ test "number serialization" {
       #|b"\x00\x00\x00\x2a\x2a\x00\x00\x00"
     ,
   )
-  inspect!(
+  inspect(
     @buffer.new()
     // Write floating point numbers
     ..write_float_be(3.14)
@@ -58,7 +58,7 @@ test "number serialization" {
       #|b"\x40\x48\xf5\xc3\xc3\xf5\x48\x40"
     ,
   )
-  inspect!(
+  inspect(
     @buffer.new()
     // Write 64-bit integers
     ..write_int64_be(0xAABBCCDDEEL)
@@ -68,7 +68,7 @@ test "number serialization" {
       #|b"\x00\x00\x00\xaa\xbb\xcc\xdd\xee\xee\xdd\xcc\xbb\xaa\x00\x00\x00"
     ,
   )
-  inspect!(
+  inspect(
     @buffer.new()
     // Write unsigned integers
     ..write_uint_be(0x2077U)
@@ -96,7 +96,7 @@ test "byte sequence writing" {
   // Write byte iterator
   buf.write_iter(bytes.iter())
   let contents = buf.to_bytes()
-  inspect!(
+  inspect(
     contents,
     content=
       #|b"\x48\x65\x6c\x6c\x6f\x48\x65\x6c\x6c\x6f"
@@ -118,7 +118,7 @@ test "object writing" {
 
   // Contents will be "42" as bytes
   let contents = buf.contents()
-  inspect!(
+  inspect(
     contents,
     content=
       #|b"\x34\x00\x32\x00"
@@ -142,7 +142,7 @@ test "buffer with size hint" {
   }
 
   // Each integer takes 4 bytes
-  inspect!(buf.length(), content="400")
+  inspect(buf.length(), content="400")
 }
 ```
 
@@ -158,7 +158,7 @@ test "buffer as logger" {
   // Use buffer to log array
   array.output(buf)
   let contents = buf.contents()
-  inspect!(
+  inspect(
     contents,
     content=
       #|b"\x5b\x00\x31\x00\x2c\x00\x20\x00\x32\x00\x2c\x00\x20\x00\x33\x00\x5d\x00"
@@ -178,7 +178,7 @@ test "buffer conversion" {
   buf.write_byte(b'b')
   buf.write_byte(b'c')
   let bytes = buf.to_bytes()
-  inspect!(
+  inspect(
     bytes,
     content=
       #|b"\x61\x62\x63"
@@ -199,7 +199,7 @@ test "byte view writing" {
   // Write a view of the bytes
   buf.write_bytesview(bytes[0:5]) // Write "Hello"
   let contents = buf.to_bytes()
-  inspect!(
+  inspect(
     contents,
     content=
       #|b"\x48\x65\x6c\x6c\x6f"

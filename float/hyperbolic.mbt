@@ -30,15 +30,15 @@
 ///
 /// ```moonbit
 /// test "sinh" {
-///   inspect!((0.0 : Float).sinh(), content="0")
-///   inspect!((-0.0 : Float).sinh(), content="0")
-///   inspect!((1.0 : Float).sinh(), content="1.175201177597046")
-///   inspect!((2.0 : Float).sinh(), content="3.6268603801727295")
-///   inspect!((1000.0 : Float).sinh(), content="Infinity")
-///   inspect!((-1000.0 : Float).sinh(), content="-Infinity")
-///   inspect!(@float.not_a_number.sinh(), content="NaN")
-///   inspect!(@float.infinity.sinh(), content="Infinity")
-///   inspect!(@float.neg_infinity.sinh(), content="-Infinity")
+///   inspect((0.0 : Float).sinh(), content="0")
+///   inspect((-0.0 : Float).sinh(), content="0")
+///   inspect((1.0 : Float).sinh(), content="1.175201177597046")
+///   inspect((2.0 : Float).sinh(), content="3.6268603801727295")
+///   inspect((1000.0 : Float).sinh(), content="Infinity")
+///   inspect((-1000.0 : Float).sinh(), content="-Infinity")
+///   inspect(@float.not_a_number.sinh(), content="NaN")
+///   inspect(@float.infinity.sinh(), content="Infinity")
+///   inspect(@float.neg_infinity.sinh(), content="-Infinity")
 /// }
 /// ```
 pub fn sinh(self : Float) -> Float {
@@ -63,15 +63,15 @@ pub fn sinh(self : Float) -> Float {
 ///
 /// ```moonbit
 /// test "cosh" {
-///   inspect!((0.0 : Float).cosh(), content="1")
-///   inspect!((-0.0).cosh(), content="1")
-///   inspect!((1.0 : Float).cosh(), content="1.5430806875228882")
-///   inspect!((2.0: Float).cosh(), content="3.762195587158203")
-///   inspect!((1000.0: Float).cosh(), content="Infinity")
-///   inspect!((-1000.0 : Float).cosh(), content="Infinity")
-///   inspect!(@float.not_a_number.cosh(), content="NaN")
-///   inspect!(@float.infinity.cosh(), content="Infinity")
-///   inspect!(@float.neg_infinity.cosh(), content="Infinity")
+///   inspect((0.0 : Float).cosh(), content="1")
+///   inspect((-0.0).cosh(), content="1")
+///   inspect((1.0 : Float).cosh(), content="1.5430806875228882")
+///   inspect((2.0: Float).cosh(), content="3.762195587158203")
+///   inspect((1000.0: Float).cosh(), content="Infinity")
+///   inspect((-1000.0 : Float).cosh(), content="Infinity")
+///   inspect(@float.not_a_number.cosh(), content="NaN")
+///   inspect(@float.infinity.cosh(), content="Infinity")
+///   inspect(@float.neg_infinity.cosh(), content="Infinity")
 /// }
 /// ```
 pub fn cosh(self : Float) -> Float {
@@ -97,15 +97,15 @@ pub fn cosh(self : Float) -> Float {
 ///
 /// ```moobit
 /// test "tanh" {
-///   inspect!((0.0 : Float).tanh(), content="0")
-///   inspect!((-0.0 : Float).tanh(), content="0")
-///   inspect!((1.0 : Float).tanh(), content="0.7615941559557649")
-///   inspect!((2.0 : Float).tanh(), content="0.9640275800758169")
-///   inspect!((1000.0 : Float).tanh(), content="1")
-///   inspect!((-1000.0 : Float).tanh(), content="-1")
-///   inspect!(@float.not_a_number.tanh(), content="NaN")
-///   inspect!(@float.infinity.tanh(), content="1")
-///   inspect!(@float.neg_infinity.tanh(), content="-1")
+///   inspect((0.0 : Float).tanh(), content="0")
+///   inspect((-0.0 : Float).tanh(), content="0")
+///   inspect((1.0 : Float).tanh(), content="0.7615941559557649")
+///   inspect((2.0 : Float).tanh(), content="0.9640275800758169")
+///   inspect((1000.0 : Float).tanh(), content="1")
+///   inspect((-1000.0 : Float).tanh(), content="-1")
+///   inspect(@float.not_a_number.tanh(), content="NaN")
+///   inspect(@float.infinity.tanh(), content="1")
+///   inspect(@float.neg_infinity.tanh(), content="-1")
 /// }
 /// ```
 pub fn tanh(self : Float) -> Float {
@@ -130,14 +130,14 @@ pub fn tanh(self : Float) -> Float {
 ///
 /// ```moonbit
 /// test "asinh" {
-///   inspect!((0.0 : Float).asinh(), content="0")
-///   inspect!((-0.0 : Float).asinh(), content="0")
-///   inspect!((1.0 : Float).asinh(), content="0.8813735842704773")
-///   inspect!((2.0 : Float).asinh(), content="1.4436354637145996")
-///   inspect!((1000.0 : Float).asinh(), content="7.600902557373047")
-///   inspect!(@float.not_a_number.asinh(), content="NaN")
-///   inspect!(@float.infinity.asinh(), content="Infinity")
-///   inspect!(@float.neg_infinity.asinh(), content="-Infinity")
+///   inspect((0.0 : Float).asinh(), content="0")
+///   inspect((-0.0 : Float).asinh(), content="0")
+///   inspect((1.0 : Float).asinh(), content="0.8813735842704773")
+///   inspect((2.0 : Float).asinh(), content="1.4436354637145996")
+///   inspect((1000.0 : Float).asinh(), content="7.600902557373047")
+///   inspect(@float.not_a_number.asinh(), content="NaN")
+///   inspect(@float.infinity.asinh(), content="Infinity")
+///   inspect(@float.neg_infinity.asinh(), content="-Infinity")
 /// }
 /// ```
 pub fn asinh(self : Float) -> Float {
@@ -164,14 +164,14 @@ pub fn asinh(self : Float) -> Float {
 ///
 /// ```moonbit
 /// test "acosh" {
-///   inspect!((1.0 : Float).acosh(), content="0")
-///   inspect!((2.0 : Float).acosh(), content="1.316957950592041")
-///   inspect!((1000.0 : Float).acosh(), content="7.600902080535889")
-///   inspect!((-1.0 : Float).acosh(), content="NaN")
-///   inspect!((-2.0 : Float).acosh(), content="NaN")
-///   inspect!(@float.not_a_number.acosh(), content="NaN")
-///   inspect!(@float.infinity.acosh(), content="Infinity")
-///   inspect!(@float.neg_infinity.acosh(), content="NaN")
+///   inspect((1.0 : Float).acosh(), content="0")
+///   inspect((2.0 : Float).acosh(), content="1.316957950592041")
+///   inspect((1000.0 : Float).acosh(), content="7.600902080535889")
+///   inspect((-1.0 : Float).acosh(), content="NaN")
+///   inspect((-2.0 : Float).acosh(), content="NaN")
+///   inspect(@float.not_a_number.acosh(), content="NaN")
+///   inspect(@float.infinity.acosh(), content="Infinity")
+///   inspect(@float.neg_infinity.acosh(), content="NaN")
 /// }
 /// ```
 pub fn acosh(self : Float) -> Float {
@@ -197,16 +197,16 @@ pub fn acosh(self : Float) -> Float {
 ///
 /// ```moonbit
 /// test "atanh" {
-///   inspect!((0.0 : Float).atanh(), content="0")
-///   inspect!((-0.0 : Float).atanh(), content="0")
-///   inspect!((0.5 : Float).atanh(), content="0.5493061542510986")
-///   inspect!((-0.5 : Float).atanh(), content="-0.5493061542510986")
-///   inspect!((1.0 : Float).atanh(), content="Infinity")
-///   inspect!((-1.0 : Float).atanh(), content="-Infinity")
-///   inspect!((1.5 : Float).atanh(), content="NaN")
-///   inspect!(@float.not_a_number.atanh(), content="NaN")
-///   inspect!(@float.infinity.atanh(), content="NaN")
-///   inspect!(@float.neg_infinity.atanh(), content="NaN")
+///   inspect((0.0 : Float).atanh(), content="0")
+///   inspect((-0.0 : Float).atanh(), content="0")
+///   inspect((0.5 : Float).atanh(), content="0.5493061542510986")
+///   inspect((-0.5 : Float).atanh(), content="-0.5493061542510986")
+///   inspect((1.0 : Float).atanh(), content="Infinity")
+///   inspect((-1.0 : Float).atanh(), content="-Infinity")
+///   inspect((1.5 : Float).atanh(), content="NaN")
+///   inspect(@float.not_a_number.atanh(), content="NaN")
+///   inspect(@float.infinity.atanh(), content="NaN")
+///   inspect(@float.neg_infinity.atanh(), content="NaN")
 /// }
 /// ```
 pub fn atanh(self : Float) -> Float {

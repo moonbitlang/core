@@ -93,19 +93,19 @@ fn[T] Bucket::iter(self : Bucket[T]) -> Iter[T] {
 ///|
 test "Bucket" {
   let b0 : Bucket[_] = JustOne(0)
-  inspect!((b0.find(0), b0.find(1), b0.size()), content="(true, false, 1)")
+  inspect((b0.find(0), b0.find(1), b0.size()), content="(true, false, 1)")
   let b1 = b0.add(1)
-  inspect!((b1.find(0), b1.find(1), b1.size()), content="(true, true, 2)")
+  inspect((b1.find(0), b1.find(1), b1.size()), content="(true, true, 2)")
   let b2 = b1.add(2)
-  inspect!((b2.find(0), b2.find(1), b2.size()), content="(true, true, 3)")
+  inspect((b2.find(0), b2.find(1), b2.size()), content="(true, true, 3)")
   let b3 = b2.remove(0)
   {
     let b1 = b3.unwrap()
-    inspect!((b1.find(0), b1.find(1)), content="(false, true)")
+    inspect((b1.find(0), b1.find(1)), content="(false, true)")
   }
   let b4 = b2.remove(1)
   let b1 = b4.unwrap() // b4 ? --> return Option instead of Result
-  inspect!((b1.find(0), b1.find(1)), content="(true, false)")
+  inspect((b1.find(0), b1.find(1)), content="(true, false)")
 }
 
 ///|
@@ -121,7 +121,7 @@ test "Bucket::iter" {
     }
     buf.write_string("\{k}")
   })
-  inspect!(buf.to_string(), content="0, 1, 31")
+  inspect(buf.to_string(), content="0, 1, 31")
 }
 
 ///|
@@ -143,7 +143,7 @@ test "Bucket::iter" {
       buf.write_string("\{k}")
     }
   })
-  inspect!(buf.to_string(), content="0, 1, 31")
+  inspect(buf.to_string(), content="0, 1, 31")
 }
 
 ///|
@@ -203,7 +203,7 @@ test "Bucket iter" {
     }
     buf.write_string("\{k}")
   })
-  inspect!(buf, content="1, 2, 0")
+  inspect(buf, content="1, 2, 0")
 }
 
 ///|
@@ -225,5 +225,5 @@ test "Bucket iter" {
       buf.write_string("\{k}")
     }
   })
-  inspect!(buf, content="1, 2, 0")
+  inspect(buf, content="1, 2, 0")
 }
