@@ -3,11 +3,15 @@ package "moonbitlang/core/immut/internal/sparse_array"
 // Values
 fn add[X](SparseArray[X], Int, X) -> SparseArray[X]
 
+fn difference[X](SparseArray[X], SparseArray[X]) -> SparseArray[X]
+
 fn each[X](SparseArray[X], (X) -> Unit) -> Unit
 
 fn empty[X]() -> SparseArray[X]
 
 fn has[X](SparseArray[X], Int) -> Bool
+
+fn intersection[X](SparseArray[X], SparseArray[X], (X, X) -> X) -> SparseArray[X]
 
 fn op_get[X](SparseArray[X], Int) -> X?
 
@@ -18,10 +22,6 @@ fn singleton[X](Int, X) -> SparseArray[X]
 fn size[X](SparseArray[X]) -> Int
 
 fn union[X](SparseArray[X], SparseArray[X], (X, X) -> X) -> SparseArray[X]
-
-fn intersection[X](SparseArray[X], SparseArray[X], (X, X) -> X) -> SparseArray[X]
-
-fn difference[X](SparseArray[X], SparseArray[X]) -> SparseArray[X]
 
 // Types and methods
 pub(all) type Bitset UInt
@@ -35,8 +35,6 @@ impl Bitset {
   remove(Self, Int) -> Self
   size(Self) -> Int
   union(Self, Self) -> Self
-  intersection(Self, Self) -> Self
-  difference(Self, Self) -> Self
 }
 impl Eq for Bitset
 
@@ -46,8 +44,10 @@ pub(all) struct SparseArray[X] {
 }
 impl SparseArray {
   add[X](Self[X], Int, X) -> Self[X]
+  difference[X](Self[X], Self[X]) -> Self[X]
   each[X](Self[X], (X) -> Unit) -> Unit
   has[X](Self[X], Int) -> Bool
+  intersection[X](Self[X], Self[X], (X, X) -> X) -> Self[X]
   op_get[X](Self[X], Int) -> X?
   replace[X](Self[X], Int, X) -> Self[X]
   size[X](Self[X]) -> Int
