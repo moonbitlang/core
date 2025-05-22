@@ -48,12 +48,14 @@ pub fn Array::from_iter[T](iter : Iter[T]) -> Array[T] {
 /// u.push_iter(v.iter())
 /// assert_eq!(u, [1, 2, 3, 4, 5, 6])
 /// ```
-pub fn push_iter[T](self : Array[T], iter : Iter[T]) -> Unit {
+pub fn Array::push_iter[T](self : Array[T], iter : Iter[T]) -> Unit {
   for x in iter {
     self.push(x)
   }
 }
 
+#deprecated("use method call")
+pub fnalias Array::push_iter
 ///|
 /// Creates a new array of the specified length, where each element is
 /// initialized using an index-based initialization function.
