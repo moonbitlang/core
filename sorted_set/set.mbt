@@ -414,26 +414,21 @@ pub fn to_array[V](self : T[V]) -> Array[V] {
 /// Returns a iterator.
 pub fn iter[V](self : T[V]) -> Iter[V] {
   Iter::new(fn(yield_) {
-    match self.root {
-      None => IterContinue
-      Some(root) => root.iter().run(yield_)
+    fn go(x : Node[V]?) {
+      match x {
+        None => IterContinue
+        Some({ left, right, value, .. }) =>
+          if go(left) is IterEnd {
+            IterEnd
+          } else if yield_(value) is IterEnd {
+            IterEnd
+          } else {
+            go(right)
+          }
+      }
     }
-  })
-}
 
-///|
-fn Node::iter[A](self : Node[A]) -> Iter[A] {
-  Iter::new(fn(yield_) {
-    if self.left is Some(l) {
-      guard l.iter().run(yield_) is IterContinue else { return IterEnd }
-
-    }
-    guard yield_(self.value) is IterContinue else { return IterEnd }
-    if self.right is Some(r) {
-      guard r.iter().run(yield_) is IterContinue else { return IterEnd }
-
-    }
-    IterContinue
+    go(self.root)
   })
 }
 
@@ -447,10 +442,7 @@ pub fn from_iter[V : Compare](iter : Iter[V]) -> T[V] {
 ///|
 /// Converts the set to string.
 pub impl[V : Show] Show for T[V] with output(self, logger) {
-  match self.root {
-    None => logger.write_string("@sorted_set.of([])")
-    Some(node) => Show::output(node, logger)
-  }
+  logger.write_iter(self.iter(), prefix="@sorted_set.of([", suffix="])")
 }
 
 ///|
@@ -463,41 +455,35 @@ pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for T[X] wit
 
 ///|
 impl[T : Show] Show for Node[T] with output(self, logger) {
-  logger.write_iter(self.iter(), prefix="@sorted_set.of([", suffix="])")
+  let x = { root: Some(self), size: 0 } // Hack for test
+  logger.write_iter(x.iter())
 }
 
 ///|
 pub fn range[V : Compare](self : T[V], low : V, high : V) -> Iter[V] {
-  range_aux(self.root, low, high)
-}
-
-///|
-fn range_aux[V : Compare](root : Node[V]?, low : V, high : V) -> Iter[V] {
   Iter::new(fn(yield_) {
-    match root {
-      None => IterContinue
-      Some(node) => {
-        let cmp_key_low = node.value.compare(low)
-        let cmp_key_high = node.value.compare(high)
-        if cmp_key_low > 0 {
-          guard range_aux(node.left, low, high).run(yield_) is IterContinue else {
-            return IterEnd
+    fn go(x : Node[V]?) {
+      match x {
+        None => IterContinue
+        Some({ left, right, value, .. }) => {
+          let cmp_key_low = value.compare(low)
+          let cmp_key_high = value.compare(high)
+          if cmp_key_low > 0 && go(left) is IterEnd {
+            IterEnd
+          } else if cmp_key_low >= 0 &&
+            cmp_key_high <= 0 &&
+            yield_(value) is IterEnd {
+            IterEnd
+          } else if cmp_key_high < 0 {
+            go(right)
+          } else {
+            IterContinue
           }
-
         }
-        if cmp_key_low >= 0 && cmp_key_high <= 0 {
-          guard yield_(node.value) is IterContinue else { return IterEnd }
-
-        }
-        if cmp_key_high < 0 {
-          guard range_aux(node.right, low, high).run(yield_) is IterContinue else {
-            return IterEnd
-          }
-
-        }
-        IterContinue
       }
     }
+
+    go(self.root)
   })
 }
 
@@ -756,17 +742,17 @@ test "union" {
 ///|
 test "split" {
   let (l, r) = split(from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).root, 5)
-  inspect!(l, content="Some(@sorted_set.of([1, 2, 3, 4]))")
-  inspect!(r, content="Some(@sorted_set.of([6, 7, 8, 9]))")
+  inspect!(l, content="Some([1, 2, 3, 4])")
+  inspect!(r, content="Some([6, 7, 8, 9])")
   let (l, r) = split(from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).root, 0)
   inspect!(l, content="None")
-  inspect!(r, content="Some(@sorted_set.of([1, 2, 3, 4, 5, 6, 7, 8, 9]))")
+  inspect!(r, content="Some([1, 2, 3, 4, 5, 6, 7, 8, 9])")
   let (l, r) = split(from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).root, 10)
-  inspect!(l, content="Some(@sorted_set.of([1, 2, 3, 4, 5, 6, 7, 8, 9]))")
+  inspect!(l, content="Some([1, 2, 3, 4, 5, 6, 7, 8, 9])")
   inspect!(r, content="None")
   let (l, r) = split(from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).root, 4)
-  inspect!(l, content="Some(@sorted_set.of([1, 2, 3]))")
-  inspect!(r, content="Some(@sorted_set.of([5, 6, 7, 8, 9]))")
+  inspect!(l, content="Some([1, 2, 3])")
+  inspect!(r, content="Some([5, 6, 7, 8, 9])")
   let (l, r) = split(from_array([]).root, 7)
   inspect!(l, content="None")
   inspect!(r, content="None")
@@ -783,11 +769,11 @@ test "split" {
   )
   inspect!(
     l,
-    content="Some(@sorted_set.of([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49]))",
+    content="Some([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49])",
   )
   inspect!(
     r,
-    content="Some(@sorted_set.of([51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100]))",
+    content="Some([51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100])",
   )
 }
 
@@ -797,29 +783,20 @@ test "join" {
   let r = from_array([27, 28, 40, 35, 33])
   inspect!(
     join(l.root, 26, r.root),
-    content="@sorted_set.of([1, 6, 8, 11, 13, 15, 17, 25, 26, 27, 28, 33, 35, 40])",
+    content="[1, 6, 8, 11, 13, 15, 17, 25, 26, 27, 28, 33, 35, 40]",
   )
   let l = from_array([3, 2, 5, 1, 4])
   let r = from_array([7])
-  inspect!(
-    join(l.root, 6, r.root),
-    content="@sorted_set.of([1, 2, 3, 4, 5, 6, 7])",
-  )
+  inspect!(join(l.root, 6, r.root), content="[1, 2, 3, 4, 5, 6, 7]")
   let l = from_array([3, 2, 5, 1, 4])
   let r = from_array([])
-  inspect!(
-    join(l.root, 6, r.root),
-    content="@sorted_set.of([1, 2, 3, 4, 5, 6])",
-  )
+  inspect!(join(l.root, 6, r.root), content="[1, 2, 3, 4, 5, 6]")
   let l = from_array([])
   let r = from_array([])
-  inspect!(join(l.root, 6, r.root), content="@sorted_set.of([6])")
+  inspect!(join(l.root, 6, r.root), content="[6]")
   let l = from_array([])
   let r = from_array([7, 8, 9, 10, 11, 12])
-  inspect!(
-    join(l.root, 6, r.root),
-    content="@sorted_set.of([6, 7, 8, 9, 10, 11, 12])",
-  )
+  inspect!(join(l.root, 6, r.root), content="[6, 7, 8, 9, 10, 11, 12]")
 }
 
 ///|

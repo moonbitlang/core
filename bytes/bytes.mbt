@@ -238,6 +238,33 @@ pub fn iter(self : Bytes) -> Iter[Byte] {
 }
 
 ///|
+/// Creates an iterator that yields tuples of index and byte,
+/// indices start from 0.
+/// 
+/// Example:
+/// test "iter2" {
+///   let buf = StringBuilder::new(size_hint=5)
+///   let keys = []
+///   b"abcde".iter2().each(fn(i, x) {
+///     buf.write_string(x.to_string())
+///     keys.push( i )
+///   })
+///   inspect!(buf, content="b'\\x61'b'\\x62'b'\\x63'b'\\x64'b'\\x65'")
+///   inspect!(keys, content="[0, 1, 2, 3, 4]")
+/// }
+pub fn iter2(self : Bytes) -> Iter2[Int, Byte] {
+  Iter2::new(fn(yield_) {
+    for i = 0, len = self.length(); i < len; i = i + 1 {
+      if yield_(i, self[i]) == IterEnd {
+        break IterEnd
+      }
+    } else {
+      IterContinue
+    }
+  })
+}
+
+///|
 /// Creates a new empty bytes sequence.
 ///
 /// Returns an empty bytes sequence.

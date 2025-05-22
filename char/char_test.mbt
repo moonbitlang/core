@@ -363,6 +363,7 @@ test "is_printable" {
   assert_true!(symbol.is_printable())
   assert_true!(math.is_printable())
   assert_true!(currency.is_printable())
+  assert_true!(variation_selector.is_printable())
 
   // Test non-printable characters
   assert_false!(null.is_printable())
@@ -372,7 +373,6 @@ test "is_printable" {
   assert_false!(left_to_right_mark.is_printable())
   assert_false!(private_use.is_printable())
   assert_false!(word_joiner.is_printable())
-  assert_false!(variation_selector.is_printable())
   assert_false!(soft_hyphen.is_printable())
   assert_false!(musical_format.is_printable())
   assert_false!(paragraph_separator.is_printable())
@@ -381,4 +381,24 @@ test "is_printable" {
     ['\t', '\n', '\r', '\b', '\\'].map(is_printable),
     content="[false, false, false, false, true]",
   )
+}
+
+///|
+test "to ascii uppercase" {
+  assert_eq!('A', 'a'.to_ascii_uppercase())
+  assert_eq!('Z', 'z'.to_ascii_uppercase())
+  assert_eq!('A', 'A'.to_ascii_uppercase())
+  assert_eq!('Z', 'Z'.to_ascii_uppercase())
+  assert_eq!('_', '_'.to_ascii_uppercase())
+  assert_eq!('❤', '❤'.to_ascii_uppercase())
+}
+
+///|
+test "to ascii lowercase" {
+  assert_eq!('a', 'A'.to_ascii_lowercase())
+  assert_eq!('z', 'Z'.to_ascii_lowercase())
+  assert_eq!('a', 'a'.to_ascii_lowercase())
+  assert_eq!('z', 'z'.to_ascii_lowercase())
+  assert_eq!('_', '_'.to_ascii_lowercase())
+  assert_eq!('❤', '❤'.to_ascii_lowercase())
 }

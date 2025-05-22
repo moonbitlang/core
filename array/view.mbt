@@ -194,6 +194,36 @@ pub fn View::iter[A](self : View[A]) -> Iter[A] {
 }
 
 ///|
+/// Returns an iterator that yields tuples of index and value
+/// indices start from 0.
+/// 
+/// Example:
+/// ```moonbit
+/// test "View::iter" {
+///   let arr = [1, 2, 3]
+///   let view = arr[1:]
+///   let mut sum = 0
+///   let mut sum_keys = 0
+///   view.iter2().each(fn(i, x) {
+///     sum = sum + x 
+///     sum_keys = sum_keys + i
+///   })
+///   inspect!(sum, content="5")
+///   inspect!(sum_keys, content="1")
+/// }
+/// ```
+pub fn View::iter2[A](self : View[A]) -> Iter2[Int, A] {
+  Iter2::new(fn(yield_) {
+    for i, v in self {
+      guard yield_(i, v) is IterContinue else { break IterEnd }
+
+    } else {
+      IterContinue
+    }
+  })
+}
+
+///|
 /// Fold out values from an View according to certain rules.
 ///
 /// # Example

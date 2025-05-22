@@ -484,15 +484,15 @@ test "Int::to_char - Invalid values" {
 ///|
 test "Int::to_char - Valid values" {
   inspect!(Int::to_char(0), content="Some('\\u{00}')")
-  inspect!(Int::to_char(127), content="Some('')")
-  inspect!(Int::to_char(128), content="Some('')")
-  inspect!(Int::to_char(0x7F), content="Some('')")
-  inspect!(Int::to_char(0x80), content="Some('')")
+  inspect!(Int::to_char(127), content="Some('\\u{7f}')")
+  inspect!(Int::to_char(128), content="Some('\\u{80}')")
+  inspect!(Int::to_char(0x7F), content="Some('\\u{7f}')")
+  inspect!(Int::to_char(0x80), content="Some('\\u{80}')")
   inspect!(Int::to_char(0xFF), content="Some('ÿ')")
   inspect!(Int::to_char(0x100), content="Some('Ā')")
-  inspect!(Int::to_char(0xFFFF), content="Some('￿')")
+  inspect!(Int::to_char(0xFFFF), content="Some('\\u{ffff}')")
   inspect!(Int::to_char(0x10000), content="Some('𐀀')")
-  inspect!(Int::to_char(0x10FFFF), content="Some('􏿿')")
+  inspect!(Int::to_char(0x10FFFF), content="Some('\\u{10ffff}')")
 }
 
 ///|
@@ -508,8 +508,8 @@ test "Int::to_char - Invalid values" {
 ///|
 test "Int::to_char - Boundary cases" {
   inspect!(Int::to_char(0xD7FF), content="Some('퟿')")
-  inspect!(Int::to_char(0xE000), content="Some('')")
-  inspect!(Int::to_char(0x10FFFF), content="Some('􏿿')")
+  inspect!(Int::to_char(0xE000), content="Some('\\u{e000}')")
+  inspect!(Int::to_char(0x10FFFF), content="Some('\\u{10ffff}')")
   inspect!(Int::to_char(0x10FFFF + 1), content="None")
 }
 

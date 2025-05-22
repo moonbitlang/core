@@ -13,6 +13,8 @@ fn get(Bytes, Int) -> Byte?
 
 fn iter(Bytes) -> Iter[Byte]
 
+fn iter2(Bytes) -> Iter2[Int, Byte]
+
 fn of(FixedArray[Byte]) -> Bytes
 
 fn to_array(Bytes) -> Array[Byte]
@@ -53,6 +55,7 @@ impl Bytes {
   from_iter(Iter[Byte]) -> Bytes
   get(Bytes, Int) -> Byte?
   iter(Bytes) -> Iter[Byte]
+  iter2(Bytes) -> Iter2[Int, Byte]
   of(FixedArray[Byte]) -> Bytes
   op_as_view(Bytes, start~ : Int = .., end? : Int) -> View
   to_array(Bytes) -> Array[Byte]
