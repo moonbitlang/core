@@ -3,11 +3,15 @@ package "moonbitlang/core/immut/internal/sparse_array"
 // Values
 fn[X] add(SparseArray[X], Int, X) -> SparseArray[X]
 
+fn[X] difference(SparseArray[X], SparseArray[X]) -> SparseArray[X]
+
 fn[X] each(SparseArray[X], (X) -> Unit) -> Unit
 
 fn[X] empty() -> SparseArray[X]
 
 fn[X] has(SparseArray[X], Int) -> Bool
+
+fn[X] intersection(SparseArray[X], SparseArray[X], (X, X) -> X) -> SparseArray[X]
 
 fn[X] op_get(SparseArray[X], Int) -> X?
 

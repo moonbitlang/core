@@ -331,7 +331,7 @@ pub fn[K : Eq + Hash, V] union(self : T[K, V], other : T[K, V]) -> T[K, V] {
 
 ///|
 /// Union two hashmaps with a function
-pub fn union_with[K : Eq + Hash, V](
+pub fn[K : Eq + Hash, V] union_with(
   self : T[K, V],
   other : T[K, V],
   f : (K, V, V) -> V
@@ -365,7 +365,7 @@ pub fn union_with[K : Eq + Hash, V](
 
 ///|
 /// Intersect two hashmaps
-pub fn intersection[K : Eq + Hash, V](
+pub fn[K : Eq + Hash, V] intersection(
   self : T[K, V],
   other : T[K, V]
 ) -> T[K, V] {
@@ -399,7 +399,7 @@ pub fn intersection[K : Eq + Hash, V](
 
 ///|
 /// Intersection two hashmaps with a function
-pub fn intersection_with[K : Eq + Hash, V](
+pub fn[K : Eq + Hash, V] intersection_with(
   self : T[K, V],
   other : T[K, V],
   f : (K, V, V) -> V
@@ -433,7 +433,7 @@ pub fn intersection_with[K : Eq + Hash, V](
 
 ///|
 /// Difference of two hashmaps: elements in `self` but not in `other`
-pub fn difference[K : Eq + Hash, V](self : T[K, V], other : T[K, V]) -> T[K, V] {
+pub fn[K : Eq + Hash, V] difference(self : T[K, V], other : T[K, V]) -> T[K, V] {
   match (self, other) {
     (Empty, _) => Empty
     (_, Empty) => self

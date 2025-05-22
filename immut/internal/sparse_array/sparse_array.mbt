@@ -106,7 +106,7 @@ pub fn[X] union(
 /// `intersection(self: SparseArray[X], other: SparseArray[X], f: (X, X) -> X) -> SparseArray[X]`
 ///
 /// Only keep indices present in both sparse arrays, and merge values with f.
-pub fn intersection[X](
+pub fn[X] intersection(
   self : SparseArray[X],
   other : SparseArray[X],
   f : (X, X) -> X
@@ -132,7 +132,7 @@ pub fn intersection[X](
 /// `difference(self: SparseArray[X], other: SparseArray[X]) -> SparseArray[X]`
 ///
 /// Keep indices and values only present in self but not in other.
-pub fn difference[X](
+pub fn[X] difference(
   self : SparseArray[X],
   other : SparseArray[X]
 ) -> SparseArray[X] {
