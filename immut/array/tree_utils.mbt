@@ -17,19 +17,19 @@
 
 ///|
 /// If the tree is a `Node`.
-fn Tree::is_node[A](self : Tree[A]) -> Bool {
+fn[A] Tree::is_node(self : Tree[A]) -> Bool {
   self is Node(_, _)
 }
 
 ///|
-fn Tree::is_leaf[A](self : Tree[A]) -> Bool {
+fn[A] Tree::is_leaf(self : Tree[A]) -> Bool {
   self is Leaf(_)
 }
 
 ///|
 /// Get the rightmost child of a tree node. Abort if
 /// it is not a `Node`.
-fn Tree::right_child[A](self : Tree[A]) -> Tree[A] {
+fn[A] Tree::right_child(self : Tree[A]) -> Tree[A] {
   match self {
     Node(children, _) => children[children.length() - 1]
     Leaf(_) | Empty => abort("Should not get children on non-`Node`s")
@@ -39,7 +39,7 @@ fn Tree::right_child[A](self : Tree[A]) -> Tree[A] {
 ///|
 /// Get the leftmost child of a tree node. Abort if
 /// it is not a `Node`.
-fn Tree::left_child[A](self : Tree[A]) -> Tree[A] {
+fn[A] Tree::left_child(self : Tree[A]) -> Tree[A] {
   match self {
     Node(children, _) => children[0]
     Leaf(_) | Empty => abort("Should not get children on non-`Node`s")
@@ -48,7 +48,7 @@ fn Tree::left_child[A](self : Tree[A]) -> Tree[A] {
 
 ///|
 /// Get the leaf contents. Abort if it is not a `Leaf`.
-fn Tree::leaf_elements[A](self : Tree[A]) -> FixedArray[A] {
+fn[A] Tree::leaf_elements(self : Tree[A]) -> FixedArray[A] {
   guard self is Leaf(children) else {
     abort("Should not call `get_leaf_elements` on non-leaf nodes")
   }
@@ -57,7 +57,7 @@ fn Tree::leaf_elements[A](self : Tree[A]) -> FixedArray[A] {
 
 ///|
 /// Get the children of a `Node`. Abort if it is not a `Node`.
-fn Tree::node_children[A](self : Tree[A]) -> FixedArray[Tree[A]] {
+fn[A] Tree::node_children(self : Tree[A]) -> FixedArray[Tree[A]] {
   guard self is Node(children, _) else {
     abort("Should not call `node_children` on non-`Node`s")
   }
@@ -66,7 +66,7 @@ fn Tree::node_children[A](self : Tree[A]) -> FixedArray[Tree[A]] {
 
 ///|
 /// Get the physical size of the current node, not the total number of elements in the tree.
-fn Tree::local_size[A](self : Tree[A]) -> Int {
+fn[A] Tree::local_size(self : Tree[A]) -> Int {
   match self {
     Empty => 0
     Leaf(l) => l.length()
@@ -76,7 +76,7 @@ fn Tree::local_size[A](self : Tree[A]) -> Int {
 
 ///|
 /// Get the total number of elements in the tree.
-fn Tree::size[A](self : Tree[A], shift : Int) -> Int {
+fn[A] Tree::size(self : Tree[A], shift : Int) -> Int {
   match self {
     Empty => 0
     Leaf(l) => l.length()

@@ -17,7 +17,7 @@
 // All operations over sets are purely applicative (no side-effects).
 
 ///|
-pub fn iter[A](self : T[A]) -> Iter[A] {
+pub fn[A] iter(self : T[A]) -> Iter[A] {
   Iter::new(fn(yield_) {
     fn go {
       Empty => IterContinue
@@ -36,13 +36,13 @@ pub fn iter[A](self : T[A]) -> Iter[A] {
 }
 
 ///|
-pub fn from_iter[A : Compare](iter : Iter[A]) -> T[A] {
+pub fn[A : Compare] from_iter(iter : Iter[A]) -> T[A] {
   iter.fold(init=new(), fn(s, e) { s.add(e) })
 }
 
 ///|
 #deprecated("use `@immut/sorted_set.from_iter` instead")
-pub fn T::from_iter[A : Compare](iter : Iter[A]) -> T[A] {
+pub fn[A : Compare] T::from_iter(iter : Iter[A]) -> T[A] {
   from_iter(iter)
 }
 
@@ -87,14 +87,14 @@ pub impl[A : Compare] Compare for T[A] with compare(self, other) -> Int {
 priv type InorderIterator[A] Array[T[A]]
 
 ///|
-fn InorderIterator::new[A](root : T[A]) -> InorderIterator[A] {
+fn[A] InorderIterator::new(root : T[A]) -> InorderIterator[A] {
   let it = InorderIterator([])
   it.move_left(root)
   it
 }
 
 ///|
-fn InorderIterator::move_left[A](
+fn[A] InorderIterator::move_left(
   self : InorderIterator[A],
   node : T[A]
 ) -> Unit {
@@ -108,7 +108,7 @@ fn InorderIterator::move_left[A](
 }
 
 ///|
-fn InorderIterator::next[A](self : InorderIterator[A]) -> A? {
+fn[A] InorderIterator::next(self : InorderIterator[A]) -> A? {
   guard self._.pop() is Some(curr) else { return None }
   guard curr is Node(right~, value~, ..)
   self.move_left(right)

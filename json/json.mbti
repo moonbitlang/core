@@ -21,7 +21,7 @@ fn as_object(Json) -> Map[String, Json]?
 
 fn as_string(Json) -> String?
 
-fn from_json[T : FromJson](Json, path~ : JsonPath = ..) -> T!JsonDecodeError
+fn[T : FromJson] from_json(Json, path~ : JsonPath = ..) -> T!JsonDecodeError
 
 fn inspect(&ToJson, content? : Json, loc~ : SourceLoc = _, args_loc~ : ArgsLoc = _) -> Unit!InspectError
 

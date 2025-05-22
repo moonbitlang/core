@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-fn debug_string[T : Show](t : T) -> String {
+fn[T : Show] debug_string(t : T) -> String {
   let buf = StringBuilder::new(size_hint=50)
   t.output(buf)
   buf.to_string()
@@ -47,7 +47,7 @@ fn debug_string[T : Show](t : T) -> String {
 /// }
 /// ```
 #coverage.skip
-pub fn assert_eq[T : Eq + Show](a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
+pub fn[T : Eq + Show] assert_eq(a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
   if a != b {
     fail!("`\{a} != \{b}`", loc~)
   }
@@ -80,7 +80,7 @@ pub fn assert_eq[T : Eq + Show](a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
 /// }
 /// ```
 #coverage.skip
-pub fn assert_not_eq[T : Eq + Show](
+pub fn[T : Eq + Show] assert_not_eq(
   a : T,
   b : T,
   loc~ : SourceLoc = _

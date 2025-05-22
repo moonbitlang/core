@@ -27,7 +27,7 @@ fn max(x : Int, y : Int) -> Int {
 }
 
 ///|
-fn height[V](node : Node[V]?) -> Int {
+fn[V] height(node : Node[V]?) -> Int {
   match node {
     None => 0
     Some(n) => n.height
@@ -35,7 +35,7 @@ fn height[V](node : Node[V]?) -> Int {
 }
 
 ///|
-fn debug_node[V : Show](self : Node[V]) -> String {
+fn[V : Show] debug_node(self : Node[V]) -> String {
   let l = match self.left {
     Some(left) => left.debug_node()
     None => "_"
@@ -50,7 +50,7 @@ fn debug_node[V : Show](self : Node[V]) -> String {
 }
 
 ///|
-fn debug_tree[V : Show](self : T[V]) -> String {
+fn[V : Show] debug_tree(self : T[V]) -> String {
   match self.root {
     Some(root) => root.debug_node()
     None => "_"

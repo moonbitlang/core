@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-fn debug_entries[K : Show, V : Show](self : T[K, V]) -> String {
+fn[K : Show, V : Show] debug_entries(self : T[K, V]) -> String {
   for s = "", i = 0; i < self.entries.length(); {
     let s = if i > 0 { s + "," } else { s }
     match self.entries[i] {
@@ -45,7 +45,7 @@ fn debug_entries[K : Show, V : Show](self : T[K, V]) -> String {
 ///   inspect!(map.get("a"), content="None")
 /// }
 /// ```
-pub fn clear[K, V](self : T[K, V]) -> Unit {
+pub fn[K, V] clear(self : T[K, V]) -> Unit {
   self.entries.fill(None)
   self.size = 0
 }
@@ -71,7 +71,7 @@ pub fn clear[K, V](self : T[K, V]) -> Unit {
 ///   inspect!(pairs.contains((2, "two")), content="true")
 /// }
 /// ```
-pub fn iter[K, V](self : T[K, V]) -> Iter[(K, V)] {
+pub fn[K, V] iter(self : T[K, V]) -> Iter[(K, V)] {
   Iter::new(fn(yield_) {
     for entry in self.entries {
       if entry is Some({ key, value, .. }) {
@@ -106,7 +106,7 @@ pub fn iter[K, V](self : T[K, V]) -> Iter[(K, V)] {
 ///   inspect!(sum, content="3")
 /// }
 /// ```
-pub fn iter2[K, V](self : T[K, V]) -> Iter2[K, V] {
+pub fn[K, V] iter2(self : T[K, V]) -> Iter2[K, V] {
   Iter2::new(fn(yield_) {
     for entry in self.entries {
       if entry is Some({ key, value, .. }) {
@@ -150,7 +150,7 @@ pub fn iter2[K, V](self : T[K, V]) -> Iter2[K, V] {
 ///   inspect!(map.get(2), content="Some(\"two\")")
 /// }
 /// ```
-pub fn from_iter[K : Hash + Eq, V](iter : Iter[(K, V)]) -> T[K, V] {
+pub fn[K : Hash + Eq, V] from_iter(iter : Iter[(K, V)]) -> T[K, V] {
   let m = new()
   iter.each(fn(e) { m[e.0] = e.1 })
   m
@@ -177,7 +177,7 @@ pub fn from_iter[K : Hash + Eq, V](iter : Iter[(K, V)]) -> T[K, V] {
 /// )
 /// }
 /// ```
-pub fn to_array[K, V](self : T[K, V]) -> Array[(K, V)] {
+pub fn[K, V] to_array(self : T[K, V]) -> Array[(K, V)] {
   let mut i = 0
   let res = while i < self.capacity {
     if self.entries[i] is Some({ key, value, .. }) {
@@ -218,7 +218,7 @@ pub fn to_array[K, V](self : T[K, V]) -> Array[(K, V)] {
 ///   inspect!(map.size(), content="3")
 /// }
 /// ```
-pub fn size[K, V](self : T[K, V]) -> Int {
+pub fn[K, V] size(self : T[K, V]) -> Int {
   self.size
 }
 
@@ -242,7 +242,7 @@ pub fn size[K, V](self : T[K, V]) -> Int {
 ///   inspect!(map.capacity(), content="16")
 /// }
 /// ```
-pub fn capacity[K, V](self : T[K, V]) -> Int {
+pub fn[K, V] capacity(self : T[K, V]) -> Int {
   self.capacity
 }
 
@@ -266,7 +266,7 @@ pub fn capacity[K, V](self : T[K, V]) -> Int {
 ///   inspect!(map.is_empty(), content="false")
 /// }
 /// ```
-pub fn is_empty[K, V](self : T[K, V]) -> Bool {
+pub fn[K, V] is_empty(self : T[K, V]) -> Bool {
   self.size == 0
 }
 
@@ -290,7 +290,7 @@ pub fn is_empty[K, V](self : T[K, V]) -> Bool {
 ///   inspect!(result, content="2:two,1:one,")
 /// }
 /// ```
-pub fn each[K, V](self : T[K, V], f : (K, V) -> Unit) -> Unit {
+pub fn[K, V] each(self : T[K, V], f : (K, V) -> Unit) -> Unit {
   for i in 0..<self.capacity {
     if self.entries[i] is Some({ key, value, .. }) {
       f(key, value)
@@ -322,7 +322,7 @@ pub fn each[K, V](self : T[K, V], f : (K, V) -> Unit) -> Unit {
 ///   inspect!(result, content="2")
 /// }
 /// ```
-pub fn eachi[K, V](self : T[K, V], f : (Int, K, V) -> Unit) -> Unit {
+pub fn[K, V] eachi(self : T[K, V], f : (Int, K, V) -> Unit) -> Unit {
   for i = 0, idx = 0; i < self.capacity; {
     match self.entries[i] {
       Some({ key, value, .. }) => {

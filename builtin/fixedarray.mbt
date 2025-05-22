@@ -35,7 +35,7 @@
 /// }
 /// ```
 #intrinsic("%iter.from_array")
-pub fn FixedArray::iter[T](self : FixedArray[T]) -> Iter[T] {
+pub fn[T] FixedArray::iter(self : FixedArray[T]) -> Iter[T] {
   Iter::new(fn(yield_) {
     for v in self {
       guard yield_(v) is IterContinue else { break IterEnd }
@@ -68,7 +68,7 @@ pub fn FixedArray::iter[T](self : FixedArray[T]) -> Iter[T] {
 ///   inspect!(sum, content="33") // (0 + 10) + (1 + 10) + (2 + 10) = 33
 /// }
 /// ```
-pub fn FixedArray::iter2[T](self : FixedArray[T]) -> Iter2[Int, T] {
+pub fn[T] FixedArray::iter2(self : FixedArray[T]) -> Iter2[Int, T] {
   Iter2::new(fn(yield_) {
     for i, v in self {
       guard yield_(i, v) is IterContinue else { break IterEnd }
@@ -110,7 +110,7 @@ pub impl[X] Default for FixedArray[X] with default() {
 /// fa.fill(3)
 /// assert_eq!(fa[0], 3)
 /// ```
-pub fn FixedArray::fill[T](self : FixedArray[T], value : T) -> Unit {
+pub fn[T] FixedArray::fill(self : FixedArray[T], value : T) -> Unit {
   for i in 0..<self.length() {
     self[i] = value
   }
@@ -135,6 +135,6 @@ pub fn FixedArray::fill[T](self : FixedArray[T], value : T) -> Unit {
 ///   inspect!(non_empty.is_empty(), content="false")
 /// }
 /// ```
-pub fn FixedArray::is_empty[T](self : FixedArray[T]) -> Bool {
+pub fn[T] FixedArray::is_empty(self : FixedArray[T]) -> Bool {
   self.length() == 0
 }

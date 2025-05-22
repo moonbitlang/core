@@ -5,59 +5,59 @@ import(
 )
 
 // Values
-fn add[V : Compare](T[V], V) -> Unit
+fn[V : Compare] add(T[V], V) -> Unit
 
-fn contains[V : Compare](T[V], V) -> Bool
+fn[V : Compare] contains(T[V], V) -> Bool
 
-fn copy[V](T[V]) -> T[V]
-
-#deprecated
-fn deep_clone[V](T[V]) -> T[V]
+fn[V] copy(T[V]) -> T[V]
 
 #deprecated
-fn diff[V : Compare](T[V], T[V]) -> T[V]
-
-fn difference[V : Compare](T[V], T[V]) -> T[V]
-
-fn disjoint[V : Compare](T[V], T[V]) -> Bool
-
-fn each[V](T[V], (V) -> Unit) -> Unit
-
-fn eachi[V](T[V], (Int, V) -> Unit) -> Unit
-
-fn from_array[V : Compare](Array[V]) -> T[V]
-
-fn from_iter[V : Compare](Iter[V]) -> T[V]
+fn[V] deep_clone(T[V]) -> T[V]
 
 #deprecated
-fn intersect[V : Compare](T[V], T[V]) -> T[V]
+fn[V : Compare] diff(T[V], T[V]) -> T[V]
 
-fn intersection[V : Compare](T[V], T[V]) -> T[V]
+fn[V : Compare] difference(T[V], T[V]) -> T[V]
 
-fn is_empty[V : Compare](T[V]) -> Bool
+fn[V : Compare] disjoint(T[V], T[V]) -> Bool
 
-fn iter[V](T[V]) -> Iter[V]
+fn[V] each(T[V], (V) -> Unit) -> Unit
 
-fn new[V]() -> T[V]
+fn[V] eachi(T[V], (Int, V) -> Unit) -> Unit
+
+fn[V : Compare] from_array(Array[V]) -> T[V]
+
+fn[V : Compare] from_iter(Iter[V]) -> T[V]
 
 #deprecated
-fn of[V : Compare](Array[V]) -> T[V]
+fn[V : Compare] intersect(T[V], T[V]) -> T[V]
 
-fn range[V : Compare](T[V], V, V) -> Iter[V]
+fn[V : Compare] intersection(T[V], T[V]) -> T[V]
 
-fn remove[V : Compare](T[V], V) -> Unit
+fn[V : Compare] is_empty(T[V]) -> Bool
 
-fn singleton[V : Compare](V) -> T[V]
+fn[V] iter(T[V]) -> Iter[V]
 
-fn size[V : Compare](T[V]) -> Int
+fn[V] new() -> T[V]
 
-fn subset[V : Compare](T[V], T[V]) -> Bool
+#deprecated
+fn[V : Compare] of(Array[V]) -> T[V]
 
-fn symmetric_difference[V : Compare](T[V], T[V]) -> T[V]
+fn[V : Compare] range(T[V], V, V) -> Iter[V]
 
-fn to_array[V](T[V]) -> Array[V]
+fn[V : Compare] remove(T[V], V) -> Unit
 
-fn union[V : Compare](T[V], T[V]) -> T[V]
+fn[V : Compare] singleton(V) -> T[V]
+
+fn[V : Compare] size(T[V]) -> Int
+
+fn[V : Compare] subset(T[V], T[V]) -> Bool
+
+fn[V : Compare] symmetric_difference(T[V], T[V]) -> T[V]
+
+fn[V] to_array(T[V]) -> Array[V]
+
+fn[V : Compare] union(T[V], T[V]) -> T[V]
 
 // Types and methods
 type T[V]

@@ -30,7 +30,7 @@
 /// let result = @option.when(true, fn(){ "Hello, World!" })
 /// assert_eq!(result, Some("Hello, World!"))
 /// ```
-pub fn when[T](condition : Bool, value : () -> T) -> T? {
+pub fn[T] when(condition : Bool, value : () -> T) -> T? {
   if condition {
     Some(value())
   } else {
@@ -60,7 +60,7 @@ test "when" {
 ///
 /// An `Option` value that is `Some(value())` if the condition is false, otherwise `None`.
 ///
-pub fn unless[T](condition : Bool, value : () -> T) -> T? {
+pub fn[T] unless(condition : Bool, value : () -> T) -> T? {
   when(not(condition), value)
 }
 
@@ -74,7 +74,7 @@ test "unless" {
 
 ///|
 /// Creates an empty `Option` of type `T`.
-pub fn empty[T]() -> T? {
+pub fn[T] empty() -> T? {
   None
 }
 
@@ -87,7 +87,7 @@ test "empty" {
 
 ///|
 /// Creates an `Option` that contains a value.
-pub fn some[T](value : T) -> T? {
+pub fn[T] some(value : T) -> T? {
   Some(value)
 }
 
@@ -110,7 +110,7 @@ test "some" {
 /// let b = None
 /// assert_eq!(b.map(fn(x){ x * 2 }), None)
 /// ```
-pub fn map[T, U](self : T?, f : (T) -> U) -> U? {
+pub fn[T, U] map(self : T?, f : (T) -> U) -> U? {
   match self {
     Some(t) => Some(f(t))
     None => None
@@ -135,7 +135,7 @@ test "map" {
 /// let a = Some(5)
 /// assert_eq!(a.map_or(3, fn(x){ x * 2 }), 10)
 /// ```
-pub fn map_or[T, U](self : T?, default : U, f : (T) -> U) -> U {
+pub fn[T, U] map_or(self : T?, default : U, f : (T) -> U) -> U {
   match self {
     None => default
     Some(x) => f(x)
@@ -159,7 +159,7 @@ test "map_or" {
 /// let a = Some(5)
 /// assert_eq!(a.map_or_else(fn(){ 3 }, fn(x){ x * 2 }), 10)
 /// ```
-pub fn map_or_else[T, U](self : T?, default : () -> U, f : (T) -> U) -> U {
+pub fn[T, U] map_or_else(self : T?, default : () -> U, f : (T) -> U) -> U {
   match self {
     None => default()
     Some(x) => f(x)
@@ -188,7 +188,7 @@ test "map_or_else" {
 /// let r2 = b.bind(fn(x){ Some(x * 2) })
 /// assert_eq!(r2, None)
 /// ```
-pub fn bind[T, U](self : T?, f : (T) -> U?) -> U? {
+pub fn[T, U] bind(self : T?, f : (T) -> U?) -> U? {
   match self {
     Some(t) => f(t)
     None => None
@@ -216,7 +216,7 @@ test "bind" {
 /// let b : Int?? = Some(None)
 /// assert_eq!(@option.flatten(b), None)
 /// ```
-pub fn flatten[T](self : T??) -> T? {
+pub fn[T] flatten(self : T??) -> T? {
   match self {
     Some(inner) => inner
     None => None
@@ -233,7 +233,7 @@ test "flatten" {
 
 ///|
 /// Checks if the option is empty.
-pub fn is_empty[T](self : T?) -> Bool {
+pub fn[T] is_empty(self : T?) -> Bool {
   self is None
 }
 
@@ -257,7 +257,7 @@ test "is_empty" {
 /// assert_eq!(x.filter(fn(x){ x > 5 }), None)
 /// assert_eq!(x.filter(fn(x){ x < 5 }), Some(3))
 /// ```
-pub fn filter[T](self : T?, f : (T) -> Bool) -> T? {
+pub fn[T] filter(self : T?, f : (T) -> Bool) -> T? {
   match self {
     Some(t) => if f(t) { self } else { None }
     None => None
@@ -273,7 +273,7 @@ test "filter" {
 
 ///|
 /// Return the contained `Some` value or the provided default.
-pub fn or[T](self : T?, default : T) -> T {
+pub fn[T] or(self : T?, default : T) -> T {
   match self {
     None => default
     Some(t) => t
@@ -291,7 +291,7 @@ test "or" {
 /// Return the contained `Some` value or the provided default.
 ///
 /// Default is lazily evaluated
-pub fn or_else[T](self : T?, default : () -> T) -> T {
+pub fn[T] or_else(self : T?, default : () -> T) -> T {
   match self {
     None => default()
     Some(t) => t
@@ -307,7 +307,7 @@ test "or else" {
 
 ///|
 /// Return the contained `Some` value or the result of the `T::default()`.
-pub fn or_default[T : Default](self : T?) -> T {
+pub fn[T : Default] or_default(self : T?) -> T {
   match self {
     None => T::default()
     Some(t) => t
@@ -351,7 +351,7 @@ pub impl[X] Default for X? with default() {
 }
 
 ///|
-pub fn iter[T](self : T?) -> Iter[T] {
+pub fn[T] iter(self : T?) -> Iter[T] {
   match self {
     Some(v) => Iter::singleton(v)
     None => Iter::empty()
@@ -387,7 +387,7 @@ test "iter" {
 }
 
 ///|
-pub fn or_error[T, Err : Error](self : T?, err : Err) -> T!Err {
+pub fn[T, Err : Error] or_error(self : T?, err : Err) -> T!Err {
   match self {
     Some(v) => v
     None => raise err
@@ -397,17 +397,13 @@ pub fn or_error[T, Err : Error](self : T?, err : Err) -> T!Err {
 ///|
 test "or error" {
   assert_eq!(
-    try {
-      (None : String?).or_error!(Failure("This is serious"))
-    } catch {
+    try (None : String?).or_error!(Failure("This is serious")) catch {
       Failure(err) => err
     },
     "This is serious",
   )
   assert_eq!(
-    try {
-      Some("This is ok").or_error!(Failure("This is serious"))
-    } catch {
+    try Some("This is ok").or_error!(Failure("This is serious")) catch {
       Failure(err) => err
     },
     "This is ok",

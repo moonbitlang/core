@@ -6,31 +6,31 @@ import(
 )
 
 // Values
-fn copy[T](Array[T]) -> Array[T]
+fn[T] copy(Array[T]) -> Array[T]
 
-fn filter_map[A, B](Array[A], (A) -> B?) -> Array[B]
+fn[A, B] filter_map(Array[A], (A) -> B?) -> Array[B]
 
 fn join(Array[String], String) -> String
 
-fn last[A](Array[A]) -> A?
+fn[A] last(Array[A]) -> A?
 
-fn push_iter[T](Array[T], Iter[T]) -> Unit
+fn[T] push_iter(Array[T], Iter[T]) -> Unit
 
-fn shuffle[T](Array[T], rand~ : (Int) -> Int) -> Array[T]
+fn[T] shuffle(Array[T], rand~ : (Int) -> Int) -> Array[T]
 
-fn shuffle_in_place[T](Array[T], rand~ : (Int) -> Int) -> Unit
+fn[T] shuffle_in_place(Array[T], rand~ : (Int) -> Int) -> Unit
 
-fn sort[T : Compare](Array[T]) -> Unit
+fn[T : Compare] sort(Array[T]) -> Unit
 
-fn sort_by[T](Array[T], (T, T) -> Int) -> Unit
+fn[T] sort_by(Array[T], (T, T) -> Int) -> Unit
 
-fn sort_by_key[T, K : Compare](Array[T], (T) -> K) -> Unit
+fn[T, K : Compare] sort_by_key(Array[T], (T) -> K) -> Unit
 
-fn zip[A, B](Array[A], Array[B]) -> Array[(A, B)]
+fn[A, B] zip(Array[A], Array[B]) -> Array[(A, B)]
 
-fn zip_to_iter2[A, B](Array[A], Array[B]) -> Iter2[A, B]
+fn[A, B] zip_to_iter2(Array[A], Array[B]) -> Iter2[A, B]
 
-fn zip_with[A, B, C](Array[A], Array[B], (A, B) -> C) -> Array[C]
+fn[A, B, C] zip_with(Array[A], Array[B], (A, B) -> C) -> Array[C]
 
 // Types and methods
 impl FixedArray {

@@ -32,7 +32,7 @@
 ///   ignore([1, 2, 3].iter().each(fn(x) { sum = sum + x })) // Ignore the Unit return value of each()
 /// }
 /// ```
-pub fn ignore[T](t : T) -> Unit = "%ignore"
+pub fn[T] ignore(t : T) -> Unit = "%ignore"
 
 ///|
 /// Tests if two values are physically equal (i.e., point to the same memory
@@ -59,13 +59,13 @@ pub fn ignore[T](t : T) -> Unit = "%ignore"
 ///   inspect!(physical_equal(arr1, arr3), content="false") // Different objects with same content
 /// }
 /// ```
-pub fn physical_equal[T](a : T, b : T) -> Bool = "%refeq"
+pub fn[T] physical_equal(a : T, b : T) -> Bool = "%refeq"
 
 ///|
 pub fnalias @abort.abort
 
 ///|
-pub fn panic[T]() -> T = "%panic"
+pub fn[T] panic() -> T = "%panic"
 
 // Bool primitive ops
 
@@ -1512,7 +1512,7 @@ pub fn UInt64::to_byte(self : UInt64) -> Byte {
 ///   ignore(arr[3]) // Index out of bounds
 /// }
 /// ```
-pub fn FixedArray::op_get[T](self : FixedArray[T], idx : Int) -> T = "%fixedarray.get"
+pub fn[T] FixedArray::op_get(self : FixedArray[T], idx : Int) -> T = "%fixedarray.get"
 
 ///|
 /// Retrieves an element from a fixed-size array at the specified index without
@@ -1544,11 +1544,11 @@ pub fn FixedArray::op_get[T](self : FixedArray[T], idx : Int) -> T = "%fixedarra
 /// ```
 ///
 #internal(unsafe, "Panic if index is out of bounds")
-pub fn FixedArray::unsafe_get[T](self : FixedArray[T], idx : Int) -> T = "%fixedarray.unsafe_get"
+pub fn[T] FixedArray::unsafe_get(self : FixedArray[T], idx : Int) -> T = "%fixedarray.unsafe_get"
 
 ///|
 #internal(unsafe, "Panic if index is out of bounds")
-pub fn FixedArray::unsafe_set[T](
+pub fn[T] FixedArray::unsafe_set(
   self : FixedArray[T],
   idx : Int,
   val : T
@@ -1581,7 +1581,7 @@ pub fn FixedArray::unsafe_set[T](
 ///   inspect!(arr.get(3), content="None")
 /// }
 /// ```
-pub fn FixedArray::get[T](self : FixedArray[T], idx : Int) -> T = "%fixedarray.get"
+pub fn[T] FixedArray::get(self : FixedArray[T], idx : Int) -> T = "%fixedarray.get"
 
 ///|
 /// Sets a value at the specified index in a fixed-size array. The original value
@@ -1612,7 +1612,7 @@ pub fn FixedArray::get[T](self : FixedArray[T], idx : Int) -> T = "%fixedarray.g
 /// ```
 ///
 #intrinsic("%fixedarray.set")
-pub fn FixedArray::op_set[T](self : FixedArray[T], idx : Int, val : T) -> Unit = "%fixedarray.set"
+pub fn[T] FixedArray::op_set(self : FixedArray[T], idx : Int, val : T) -> Unit = "%fixedarray.set"
 
 ///|
 /// Sets the value at the specified index in a fixed-size array.
@@ -1641,7 +1641,7 @@ pub fn FixedArray::op_set[T](self : FixedArray[T], idx : Int, val : T) -> Unit =
 ///   ignore(arr.set(3, 42)) // Panic: index out of bounds
 /// }
 /// ```
-pub fn FixedArray::set[T](self : FixedArray[T], idx : Int, val : T) -> Unit = "%fixedarray.set"
+pub fn[T] FixedArray::set(self : FixedArray[T], idx : Int, val : T) -> Unit = "%fixedarray.set"
 
 ///|
 /// Returns the number of elements in a fixed-size array.
@@ -1660,7 +1660,7 @@ pub fn FixedArray::set[T](self : FixedArray[T], idx : Int, val : T) -> Unit = "%
 ///   inspect!(arr.length(), content="3")
 /// }
 /// ```
-pub fn FixedArray::length[T](self : FixedArray[T]) -> Int = "%fixedarray.length"
+pub fn[T] FixedArray::length(self : FixedArray[T]) -> Int = "%fixedarray.length"
 
 ///|
 /// Creates a new fixed-size array with the specified length, initializing all
@@ -1700,7 +1700,7 @@ pub fn FixedArray::length[T](self : FixedArray[T]) -> Int = "%fixedarray.length"
 /// ```
 /// This is because all the cells reference to the same object (the FixedArray[Int] in this case). 
 /// One should use makei() instead which creates an object for each index.
-pub fn FixedArray::make[T](len : Int, init : T) -> FixedArray[T] = "%fixedarray.make"
+pub fn[T] FixedArray::make(len : Int, init : T) -> FixedArray[T] = "%fixedarray.make"
 
 // String primitive ops
 

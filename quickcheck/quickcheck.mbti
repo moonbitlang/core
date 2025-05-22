@@ -5,9 +5,9 @@ import(
 )
 
 // Values
-fn gen[T : Arbitrary](size? : Int, state? : @splitmix.RandomState) -> T
+fn[T : Arbitrary] gen(size? : Int, state? : @splitmix.RandomState) -> T
 
-fn samples[X : Arbitrary](Int) -> Array[X]
+fn[X : Arbitrary] samples(Int) -> Array[X]
 
 // Types and methods
 

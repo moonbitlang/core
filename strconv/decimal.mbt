@@ -635,15 +635,11 @@ test "from_int64" {
 ///|
 test "parse_decimal" {
   let s = "0.0000000000000000000000000000007888609052210118054117285652827862296732064351090230047702789306640625"
-  let hpd = try {
-    parse_decimal_priv!(s)
-  } catch {
+  let hpd = try parse_decimal_priv!(s) catch {
     _ => panic()
   }
   assert_eq!(hpd.to_string(), s)
-  let hpd = try {
-    parse_decimal_priv!("1.0e-10")
-  } catch {
+  let hpd = try parse_decimal_priv!("1.0e-10") catch {
     _ => panic()
   }
   assert_eq!(hpd.to_string(), "0.0000000001")

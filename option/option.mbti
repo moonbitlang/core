@@ -5,37 +5,37 @@ import(
 )
 
 // Values
-fn bind[T, U](T?, (T) -> U?) -> U?
+fn[T, U] bind(T?, (T) -> U?) -> U?
 
-fn empty[T]() -> T?
+fn[T] empty() -> T?
 
-fn filter[T](T?, (T) -> Bool) -> T?
+fn[T] filter(T?, (T) -> Bool) -> T?
 
-fn flatten[T](T??) -> T?
+fn[T] flatten(T??) -> T?
 
-fn is_empty[T](T?) -> Bool
+fn[T] is_empty(T?) -> Bool
 
-fn iter[T](T?) -> Iter[T]
+fn[T] iter(T?) -> Iter[T]
 
-fn map[T, U](T?, (T) -> U) -> U?
+fn[T, U] map(T?, (T) -> U) -> U?
 
-fn map_or[T, U](T?, U, (T) -> U) -> U
+fn[T, U] map_or(T?, U, (T) -> U) -> U
 
-fn map_or_else[T, U](T?, () -> U, (T) -> U) -> U
+fn[T, U] map_or_else(T?, () -> U, (T) -> U) -> U
 
-fn or[T](T?, T) -> T
+fn[T] or(T?, T) -> T
 
-fn or_default[T : Default](T?) -> T
+fn[T : Default] or_default(T?) -> T
 
-fn or_else[T](T?, () -> T) -> T
+fn[T] or_else(T?, () -> T) -> T
 
-fn or_error[T, Err : Error](T?, Err) -> T!Err
+fn[T, Err : Error] or_error(T?, Err) -> T!Err
 
-fn some[T](T) -> T?
+fn[T] some(T) -> T?
 
-fn unless[T](Bool, () -> T) -> T?
+fn[T] unless(Bool, () -> T) -> T?
 
-fn when[T](Bool, () -> T) -> T?
+fn[T] when(Bool, () -> T) -> T?
 
 // Types and methods
 impl Option {

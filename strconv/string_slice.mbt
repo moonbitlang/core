@@ -126,7 +126,7 @@ fn lower(c : Char) -> Char {
 ///|
 /// Returns the accumulated value, the slice left, and the number of digits consumed.
 /// It ignores underscore and stops when a non-digit character is found.
-fn fold_digits[T](
+fn[T] fold_digits(
   self : StringSlice,
   init : T,
   f : (Int, T) -> T

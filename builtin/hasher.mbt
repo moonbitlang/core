@@ -96,7 +96,7 @@ pub fn Hasher::new(seed~ : Int = 0) -> Hasher {
 ///   inspect!(hasher.finalize(), content="860601284")
 /// }
 /// ```
-pub fn Hasher::combine[T : Hash](self : Hasher, value : T) -> Unit {
+pub fn[T : Hash] Hasher::combine(self : Hasher, value : T) -> Unit {
   value.hash_combine(self)
 }
 

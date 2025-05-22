@@ -81,7 +81,7 @@ pub fn single_bench(
 ///|
 /// Keep a value to prevent the optimizer from removing 
 /// the calculation that produces it.
-pub fn keep[Any](self : T, value : Any) -> Unit {
+pub fn[Any] keep(self : T, value : Any) -> Unit {
   let trait_object : &OpaqueValue = value
   self.storage = trait_object
 }

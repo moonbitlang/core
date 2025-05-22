@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-fn set_null[T](buffer : UninitializedArray[T], index : Int) = "%fixedarray.set_null"
+fn[T] set_null(buffer : UninitializedArray[T], index : Int) = "%fixedarray.set_null"
 
 ///|
 /// Creates a new empty deque with an optional initial capacity.
@@ -41,7 +41,7 @@ fn set_null[T](buffer : UninitializedArray[T], index : Int) = "%fixedarray.set_n
 ///   inspect!(dq.capacity(), content="10")
 /// }
 /// ```
-pub fn new[A](capacity~ : Int = 0) -> T[A] {
+pub fn[A] new(capacity~ : Int = 0) -> T[A] {
   T::{ buf: UninitializedArray::make(capacity), len: 0, head: 0, tail: 0 }
 }
 
@@ -69,7 +69,7 @@ pub impl[A : Show] Show for T[A] with output(self, logger) {
 ///   inspect!(dq, content="@deque.of([1, 2, 3, 4, 5])")
 /// }
 /// ```
-pub fn from_array[A](arr : Array[A]) -> T[A] {
+pub fn[A] from_array(arr : Array[A]) -> T[A] {
   let deq = T::{
     buf: UninitializedArray::make(arr.length()),
     len: arr.length(),
@@ -103,7 +103,7 @@ pub fn from_array[A](arr : Array[A]) -> T[A] {
 ///   inspect!(copied, content="@deque.of([1, 2, 3, 4, 5])")
 /// }
 /// ```
-pub fn copy[A](self : T[A]) -> T[A] {
+pub fn[A] copy(self : T[A]) -> T[A] {
   let len = self.len
   let deq = T::{
     buf: UninitializedArray::make(len),
@@ -134,7 +134,7 @@ pub fn copy[A](self : T[A]) -> T[A] {
 ///   inspect!(dq, content="@deque.of([1, 2, 3])")
 /// }
 /// ```
-pub fn of[A](arr : FixedArray[A]) -> T[A] {
+pub fn[A] of(arr : FixedArray[A]) -> T[A] {
   let deq = T::{
     buf: UninitializedArray::make(arr.length()),
     len: arr.length(),
@@ -166,7 +166,7 @@ pub fn of[A](arr : FixedArray[A]) -> T[A] {
 ///   inspect!(dq.length(), content="4")
 /// }
 /// ```
-pub fn length[A](self : T[A]) -> Int {
+pub fn[A] length(self : T[A]) -> Int {
   self.len
 }
 
@@ -190,13 +190,13 @@ pub fn length[A](self : T[A]) -> Int {
 ///   inspect!(dq.capacity(), content="10")
 /// }
 /// ```
-pub fn capacity[A](self : T[A]) -> Int {
+pub fn[A] capacity(self : T[A]) -> Int {
   self.buf.length()
 }
 
 ///|
 /// Reallocate the deque with a new capacity.
-fn realloc[A](self : T[A]) -> Unit {
+fn[A] realloc(self : T[A]) -> Unit {
   let old_cap = self.len
   let new_cap = if old_cap == 0 { 8 } else { old_cap * 2 }
   let new_buf = UninitializedArray::make(new_cap)
@@ -232,7 +232,7 @@ fn realloc[A](self : T[A]) -> Unit {
 /// let dv = @deque.of([1, 2, 3, 4, 5])
 /// assert_eq!(dv.front(), Some(1))
 /// ```
-pub fn front[A](self : T[A]) -> A? {
+pub fn[A] front(self : T[A]) -> A? {
   if self.len == 0 {
     None
   } else {
@@ -248,7 +248,7 @@ pub fn front[A](self : T[A]) -> A? {
 /// let dv = @deque.of([1, 2, 3, 4, 5])
 /// assert_eq!(dv.back(), Some(5))
 /// ```
-pub fn back[A](self : T[A]) -> A? {
+pub fn[A] back(self : T[A]) -> A? {
   if self.len == 0 {
     None
   } else {
@@ -267,7 +267,7 @@ pub fn back[A](self : T[A]) -> A? {
 /// dv.push_front(0)
 /// assert_eq!(dv.front(), Some(0))
 /// ```
-pub fn push_front[A](self : T[A], value : A) -> Unit {
+pub fn[A] push_front(self : T[A], value : A) -> Unit {
   if self.len == self.buf.length() {
     self.realloc()
   }
@@ -289,7 +289,7 @@ pub fn push_front[A](self : T[A], value : A) -> Unit {
 /// dv.push_back(6)
 /// assert_eq!(dv.back(), Some(6))
 /// ```
-pub fn push_back[A](self : T[A], value : A) -> Unit {
+pub fn[A] push_back(self : T[A], value : A) -> Unit {
   if self.len == self.buf.length() {
     self.realloc()
   }
@@ -310,7 +310,7 @@ pub fn push_back[A](self : T[A], value : A) -> Unit {
 /// assert_eq!(dv.front(), Some(2))
 /// ```
 #internal(unsafe, "Panic if the deque is empty.")
-pub fn unsafe_pop_front[A](self : T[A]) -> Unit {
+pub fn[A] unsafe_pop_front(self : T[A]) -> Unit {
   match self.len {
     0 => abort("The deque is empty!")
     1 => {
@@ -351,7 +351,7 @@ pub fn unsafe_pop_front[A](self : T[A]) -> Unit {
 ///
 #deprecated("Use `unsafe_pop_front` instead")
 #coverage.skip
-pub fn pop_front_exn[A](self : T[A]) -> Unit {
+pub fn[A] pop_front_exn(self : T[A]) -> Unit {
   unsafe_pop_front(self)
 }
 
@@ -365,7 +365,7 @@ pub fn pop_front_exn[A](self : T[A]) -> Unit {
 /// assert_eq!(dv.back(), Some(4))
 /// ```
 #internal(unsafe, "Panic if the deque is empty.")
-pub fn unsafe_pop_back[A](self : T[A]) -> Unit {
+pub fn[A] unsafe_pop_back(self : T[A]) -> Unit {
   match self.len {
     0 => abort("The deque is empty!")
     1 => {
@@ -408,7 +408,7 @@ pub fn unsafe_pop_back[A](self : T[A]) -> Unit {
 ///
 #deprecated("Use `unsafe_pop_back` instead")
 #coverage.skip
-pub fn pop_back_exn[A](self : T[A]) -> Unit {
+pub fn[A] pop_back_exn(self : T[A]) -> Unit {
   unsafe_pop_back(self)
 }
 
@@ -420,7 +420,7 @@ pub fn pop_back_exn[A](self : T[A]) -> Unit {
 /// let dv = @deque.of([1, 2, 3, 4, 5])
 /// assert_eq!(dv.pop_front(), Some(1))
 /// ```
-pub fn pop_front[A](self : T[A]) -> A? {
+pub fn[A] pop_front(self : T[A]) -> A? {
   match self.len {
     0 => None
     1 => {
@@ -451,7 +451,7 @@ pub fn pop_front[A](self : T[A]) -> A? {
 /// let dv = @deque.of([1, 2, 3, 4, 5])
 /// assert_eq!(dv.pop_back(), Some(5))
 /// ```
-pub fn pop_back[A](self : T[A]) -> A? {
+pub fn[A] pop_back(self : T[A]) -> A? {
   match self.len {
     0 => None
     1 => {
@@ -484,7 +484,7 @@ pub fn pop_back[A](self : T[A]) -> A? {
 /// let dv = @deque.of([1, 2, 3, 4, 5])
 /// assert_eq!(dv[2], 3)
 /// ```
-pub fn op_get[A](self : T[A], index : Int) -> A {
+pub fn[A] op_get(self : T[A], index : Int) -> A {
   if index < 0 || index >= self.len {
     let len = self.len
     abort(
@@ -509,7 +509,7 @@ pub fn op_get[A](self : T[A], index : Int) -> A {
 /// dv[2] = 1
 /// assert_eq!(dv[2], 1)
 /// ```
-pub fn op_set[A](self : T[A], index : Int, value : A) -> Unit {
+pub fn[A] op_set(self : T[A], index : Int, value : A) -> Unit {
   if index < 0 || index >= self.len {
     let len = self.len
     abort(
@@ -549,7 +549,7 @@ pub fn op_set[A](self : T[A], index : Int, value : A) -> Unit {
 ///   inspect!(v2.length(), content="0")
 /// }
 /// ```
-pub fn T::as_views[A](self : T[A]) -> (@array.View[A], @array.View[A]) {
+pub fn[A] T::as_views(self : T[A]) -> (@array.View[A], @array.View[A]) {
   guard self.len != 0 else { ([][:], [][:]) }
   let { buf, head, len, .. } = self
   let cap = buf.length()
@@ -605,7 +605,7 @@ pub impl[A : Eq] Eq for T[A] with op_equal(self, other) {
 /// dv.each(fn (x) {sum = sum + x})
 /// assert_eq!(sum, 15)
 /// ```
-pub fn each[A](self : T[A], f : (A) -> Unit) -> Unit {
+pub fn[A] each(self : T[A], f : (A) -> Unit) -> Unit {
   for v in self {
     f(v)
   }
@@ -621,7 +621,7 @@ pub fn each[A](self : T[A], f : (A) -> Unit) -> Unit {
 /// dv.eachi(fn (i, _x) {idx_sum = idx_sum + i})
 /// assert_eq!(idx_sum, 10)
 /// ```
-pub fn eachi[A](self : T[A], f : (Int, A) -> Unit) -> Unit {
+pub fn[A] eachi(self : T[A], f : (Int, A) -> Unit) -> Unit {
   for i, v in self {
     f(i, v)
   }
@@ -637,7 +637,7 @@ pub fn eachi[A](self : T[A], f : (Int, A) -> Unit) -> Unit {
 /// dv.rev_each(fn (x) {sum = sum + x})
 /// assert_eq!(sum, 15)
 /// ```
-pub fn rev_each[A](self : T[A], f : (A) -> Unit) -> Unit {
+pub fn[A] rev_each(self : T[A], f : (A) -> Unit) -> Unit {
   for v in self.rev_iter() {
     f(v)
   }
@@ -653,7 +653,7 @@ pub fn rev_each[A](self : T[A], f : (A) -> Unit) -> Unit {
 /// dv.rev_eachi(fn (i, _x) {idx_sum = idx_sum + i})
 /// assert_eq!(idx_sum, 10)
 /// ```
-pub fn rev_eachi[A](self : T[A], f : (Int, A) -> Unit) -> Unit {
+pub fn[A] rev_eachi(self : T[A], f : (Int, A) -> Unit) -> Unit {
   for i, v in self.rev_iter2() {
     f(i, v)
   }
@@ -670,7 +670,7 @@ pub fn rev_eachi[A](self : T[A], f : (Int, A) -> Unit) -> Unit {
 /// dv.clear()
 /// assert_eq!(dv.length(), 0)
 /// ```
-pub fn clear[A](self : T[A]) -> Unit {
+pub fn[A] clear(self : T[A]) -> Unit {
   let { head, buf, len, .. } = self
   let cap = buf.length()
   let head_len = cap - head
@@ -700,7 +700,7 @@ pub fn clear[A](self : T[A]) -> Unit {
 /// let dv2 = dv.map(fn (x) {x + 1})
 /// assert_eq!(dv2, @deque.of([4, 5, 6]))
 /// ```
-pub fn map[A, U](self : T[A], f : (A) -> U) -> T[U] {
+pub fn[A, U] map(self : T[A], f : (A) -> U) -> T[U] {
   if self.len == 0 {
     new()
   } else {
@@ -721,7 +721,7 @@ pub fn map[A, U](self : T[A], f : (A) -> U) -> T[U] {
 /// let dv2 = dv.mapi(fn (i, x) {x + i}) // @deque.of([3, 5, 7])
 /// assert_eq!(dv2, @deque.of([3, 5, 7]))
 /// ```
-pub fn mapi[A, U](self : T[A], f : (Int, A) -> U) -> T[U] {
+pub fn[A, U] mapi(self : T[A], f : (Int, A) -> U) -> T[U] {
   if self.len == 0 {
     new()
   } else {
@@ -743,7 +743,7 @@ pub fn mapi[A, U](self : T[A], f : (Int, A) -> U) -> T[U] {
 /// dv.push_back(1)
 /// assert_eq!(dv.is_empty(), false)
 /// ```
-pub fn is_empty[A](self : T[A]) -> Bool {
+pub fn[A] is_empty(self : T[A]) -> Bool {
   self.len == 0
 }
 
@@ -767,7 +767,7 @@ pub fn is_empty[A](self : T[A]) -> Bool {
 ///   inspect!(dq.search(4), content="None")
 /// }
 /// ```
-pub fn search[A : Eq](self : T[A], value : A) -> Int? {
+pub fn[A : Eq] search(self : T[A], value : A) -> Int? {
   for i in 0..<self.len {
     if self.buf[i] == value {
       return Some(i)
@@ -796,7 +796,7 @@ pub fn search[A : Eq](self : T[A], value : A) -> Int? {
 ///   inspect!(dq.contains(6), content="false")
 /// }
 /// ```
-pub fn contains[A : Eq](self : T[A], value : A) -> Bool {
+pub fn[A : Eq] contains(self : T[A], value : A) -> Bool {
   self.iter().contains(value)
 }
 
@@ -811,7 +811,7 @@ pub fn contains[A : Eq](self : T[A], value : A) -> Bool {
 /// dv.reserve_capacity(10)
 /// assert_eq!(dv.capacity(), 10)
 /// ```
-pub fn reserve_capacity[A](self : T[A], capacity : Int) -> Unit {
+pub fn[A] reserve_capacity(self : T[A], capacity : Int) -> Unit {
   if self.capacity() >= capacity {
     return
   }
@@ -841,7 +841,7 @@ pub fn reserve_capacity[A](self : T[A], capacity : Int) -> Unit {
 /// dv.shrink_to_fit()
 /// assert_eq!(dv.capacity(), 3)
 /// ```
-pub fn shrink_to_fit[A](self : T[A]) -> Unit {
+pub fn[A] shrink_to_fit(self : T[A]) -> Unit {
   if self.capacity() <= self.length() {
     return
   }
@@ -876,7 +876,7 @@ pub fn shrink_to_fit[A](self : T[A]) -> Unit {
 ///   inspect!(dq, content="@deque.of([1, 2, 3])")
 /// }
 /// ```
-pub fn truncate[A](self : T[A], len : Int) -> Unit {
+pub fn[A] truncate(self : T[A], len : Int) -> Unit {
   guard len >= 0 && len < self.len else { return }
   if len == 0 {
     self.clear()
@@ -929,7 +929,7 @@ pub fn truncate[A](self : T[A], len : Int) -> Unit {
 ///   inspect!(dq, content="@deque.of([4, 8])")
 /// }
 /// ```
-pub fn retain_map[A](self : T[A], f : (A) -> A?) -> Unit {
+pub fn[A] retain_map(self : T[A], f : (A) -> A?) -> Unit {
   guard not(self.is_empty()) else { return }
   let { head, buf, .. } = self
   let cap = buf.length()
@@ -968,7 +968,7 @@ pub fn retain_map[A](self : T[A], f : (A) -> A?) -> Unit {
 /// and updates those elements with the values inside the `Some` variant.
 ///
 #deprecated("Use `@deque.retain_map` instead")
-pub fn filter_map_inplace[A](self : T[A], f : (A) -> A?) -> Unit {
+pub fn[A] filter_map_inplace(self : T[A], f : (A) -> A?) -> Unit {
   self.retain_map(f)
 }
 
@@ -992,7 +992,7 @@ pub fn filter_map_inplace[A](self : T[A], f : (A) -> A?) -> Unit {
 ///   inspect!(dq, content="@deque.of([2, 4])")
 /// }
 /// ```
-pub fn retain[A](self : T[A], f : (A) -> Bool) -> Unit {
+pub fn[A] retain(self : T[A], f : (A) -> Bool) -> Unit {
   guard not(self.is_empty()) else { return }
   let { head, buf, .. } = self
   let cap = buf.length()
@@ -1045,7 +1045,7 @@ pub fn retain[A](self : T[A], f : (A) -> Bool) -> Unit {
 ///   inspect!(sum, content="15")
 /// }
 /// ```
-pub fn iter[A](self : T[A]) -> Iter[A] {
+pub fn[A] iter(self : T[A]) -> Iter[A] {
   Iter::new(fn(yield_) {
     guard not(self.is_empty()) else { IterContinue }
     let { head, buf, len, .. } = self
@@ -1092,7 +1092,7 @@ pub fn iter[A](self : T[A]) -> Iter[A] {
 ///   inspect!(sum, content="80") // 0*10 + 1*20 + 2*30 = 80
 /// }
 /// ```
-pub fn iter2[A](self : T[A]) -> Iter2[Int, A] {
+pub fn[A] iter2(self : T[A]) -> Iter2[Int, A] {
   Iter2::new(fn(yield_) {
     guard not(self.is_empty()) else { IterContinue }
     let { head, buf, len, .. } = self
@@ -1138,7 +1138,7 @@ pub fn iter2[A](self : T[A]) -> Iter2[Int, A] {
 ///   inspect!(sum, content="321")
 /// }
 /// ```
-pub fn rev_iter[A](self : T[A]) -> Iter[A] {
+pub fn[A] rev_iter(self : T[A]) -> Iter[A] {
   Iter::new(fn(yield_) {
     guard not(self.is_empty()) else { IterContinue }
     let { head, buf, len, .. } = self
@@ -1185,7 +1185,7 @@ pub fn rev_iter[A](self : T[A]) -> Iter[A] {
 ///   inspect!(s, content="0:3 1:2 2:1 ")
 /// }
 /// ```
-pub fn rev_iter2[A](self : T[A]) -> Iter2[Int, A] {
+pub fn[A] rev_iter2(self : T[A]) -> Iter2[Int, A] {
   Iter2::new(fn(yield_) {
     guard not(self.is_empty()) else { IterContinue }
     let { head, buf, len, .. } = self
@@ -1230,14 +1230,14 @@ pub fn rev_iter2[A](self : T[A]) -> Iter2[Int, A] {
 ///   inspect!(dq, content="@deque.of([1, 2, 3, 4, 5])")
 /// }
 /// ```
-pub fn from_iter[A](iter : Iter[A]) -> T[A] {
+pub fn[A] from_iter(iter : Iter[A]) -> T[A] {
   let dq = new()
   iter.each(fn(e) { dq.push_back(e) })
   dq
 }
 
 ///|
-pub fn to_array[A](self : T[A]) -> Array[A] {
+pub fn[A] to_array(self : T[A]) -> Array[A] {
   if self.length() == 0 {
     []
   } else {

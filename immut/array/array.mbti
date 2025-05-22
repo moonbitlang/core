@@ -5,52 +5,52 @@ import(
 )
 
 // Values
-fn concat[A](T[A], T[A]) -> T[A]
+fn[A] concat(T[A], T[A]) -> T[A]
 
 #deprecated
-fn copy[A](T[A]) -> T[A]
+fn[A] copy(T[A]) -> T[A]
 
-fn each[A](T[A], (A) -> Unit) -> Unit
+fn[A] each(T[A], (A) -> Unit) -> Unit
 
-fn eachi[A](T[A], (Int, A) -> Unit) -> Unit
+fn[A] eachi(T[A], (Int, A) -> Unit) -> Unit
 
-fn fold[A, B](T[A], init~ : B, (B, A) -> B) -> B
-
-#deprecated
-fn fold_left[A](T[A], (A, A) -> A, init~ : A) -> A
+fn[A, B] fold(T[A], init~ : B, (B, A) -> B) -> B
 
 #deprecated
-fn fold_right[A](T[A], (A, A) -> A, init~ : A) -> A
+fn[A] fold_left(T[A], (A, A) -> A, init~ : A) -> A
 
-fn from_array[A](Array[A]) -> T[A]
+#deprecated
+fn[A] fold_right(T[A], (A, A) -> A, init~ : A) -> A
 
-fn from_iter[A](Iter[A]) -> T[A]
+fn[A] from_array(Array[A]) -> T[A]
 
-fn is_empty[A](T[A]) -> Bool
+fn[A] from_iter(Iter[A]) -> T[A]
 
-fn iter[A](T[A]) -> Iter[A]
+fn[A] is_empty(T[A]) -> Bool
 
-fn length[A](T[A]) -> Int
+fn[A] iter(T[A]) -> Iter[A]
 
-fn make[A](Int, A) -> T[A]
+fn[A] length(T[A]) -> Int
 
-fn makei[A](Int, (Int) -> A) -> T[A]
+fn[A] make(Int, A) -> T[A]
 
-fn map[A, B](T[A], (A) -> B) -> T[B]
+fn[A] makei(Int, (Int) -> A) -> T[A]
 
-fn new[A]() -> T[A]
+fn[A, B] map(T[A], (A) -> B) -> T[B]
 
-fn of[A](FixedArray[A]) -> T[A]
+fn[A] new() -> T[A]
 
-fn op_get[A](T[A], Int) -> A
+fn[A] of(FixedArray[A]) -> T[A]
 
-fn push[A](T[A], A) -> T[A]
+fn[A] op_get(T[A], Int) -> A
 
-fn rev_fold[A, B](T[A], init~ : B, (B, A) -> B) -> B
+fn[A] push(T[A], A) -> T[A]
 
-fn set[A](T[A], Int, A) -> T[A]
+fn[A, B] rev_fold(T[A], init~ : B, (B, A) -> B) -> B
 
-fn to_array[A](T[A]) -> Array[A]
+fn[A] set(T[A], Int, A) -> T[A]
+
+fn[A] to_array(T[A]) -> Array[A]
 
 // Types and methods
 type T[A]

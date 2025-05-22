@@ -28,7 +28,7 @@ fn offset_to_position(input : String, offset : Int) -> Position {
 }
 
 ///|
-fn ParseContext::invalid_char[T](
+fn[T] ParseContext::invalid_char(
   ctx : ParseContext,
   shift~ : Int = 0
 ) -> T!ParseError {

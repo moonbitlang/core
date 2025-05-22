@@ -464,7 +464,7 @@ test "eachi" {
 
 ///|
 // For testing purposes
-fn test_from_array[T](arr : Array[T]) -> Iter[T] {
+fn[T] test_from_array(arr : Array[T]) -> Iter[T] {
   Iter::new(fn {
     yield_ =>
       for i in 0..<arr.length() {

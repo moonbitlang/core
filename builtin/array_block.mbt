@@ -46,7 +46,7 @@
 /// ```
 ///
 #internal(unsafe, "Panic if the indices or length are out of bounds")
-pub fn Array::unsafe_blit[A](
+pub fn[A] Array::unsafe_blit(
   dst : Array[A],
   dst_offset : Int,
   src : Array[A],
@@ -90,7 +90,7 @@ pub fn Array::unsafe_blit[A](
 ///   inspect!(dst, content="[0, 1, 2, 0, 0]")
 /// }
 /// ```
-pub fn Array::unsafe_blit_fixed[A](
+pub fn[A] Array::unsafe_blit_fixed(
   dst : Array[A],
   dst_offset : Int,
   src : FixedArray[A],
@@ -139,7 +139,7 @@ pub fn Array::unsafe_blit_fixed[A](
 /// * `dst_offset` is negative
 /// * `dst_offset` exceeds the length of destination array
 /// * `src_offset + len` exceeds the length of source array
-pub fn Array::blit_to[A](
+pub fn[A] Array::blit_to(
   self : Array[A],
   dst : Array[A],
   len~ : Int,

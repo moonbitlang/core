@@ -31,7 +31,7 @@
 ///   inspect!(arr, content="[42]")
 /// }
 /// ```
-pub fn Array::from_iter[T](iter : Iter[T]) -> Array[T] {
+pub fn[T] Array::from_iter(iter : Iter[T]) -> Array[T] {
   iter.collect()
 }
 
@@ -48,7 +48,7 @@ pub fn Array::from_iter[T](iter : Iter[T]) -> Array[T] {
 /// u.push_iter(v.iter())
 /// assert_eq!(u, [1, 2, 3, 4, 5, 6])
 /// ```
-pub fn push_iter[T](self : Array[T], iter : Iter[T]) -> Unit {
+pub fn[T] push_iter(self : Array[T], iter : Iter[T]) -> Unit {
   for x in iter {
     self.push(x)
   }
@@ -77,7 +77,7 @@ pub fn push_iter[T](self : Array[T], iter : Iter[T]) -> Unit {
 ///   inspect!(arr, content="[0, 2, 4]")
 /// }
 /// ```
-pub fn Array::makei[T](length : Int, value : (Int) -> T) -> Array[T] {
+pub fn[T] Array::makei(length : Int, value : (Int) -> T) -> Array[T] {
   if length <= 0 {
     []
   } else {
@@ -105,7 +105,7 @@ pub fn Array::makei[T](length : Int, value : (Int) -> T) -> Array[T] {
 /// }
 /// Array::shuffle_in_place(arr, rand=rand)
 /// ```
-pub fn shuffle_in_place[T](self : Array[T], rand~ : (Int) -> Int) -> Unit {
+pub fn[T] shuffle_in_place(self : Array[T], rand~ : (Int) -> Int) -> Unit {
   let n = self.length()
   for i = n - 1; i > 0; i = i - 1 {
     let j = rand(i + 1) % (i + 1)
@@ -131,7 +131,7 @@ pub fn shuffle_in_place[T](self : Array[T], rand~ : (Int) -> Int) -> Unit {
 /// }
 /// let _shuffled = Array::shuffle(arr, rand=rand)
 /// ```
-pub fn shuffle[T](self : Array[T], rand~ : (Int) -> Int) -> Array[T] {
+pub fn[T] shuffle(self : Array[T], rand~ : (Int) -> Int) -> Array[T] {
   let new_arr = self.copy()
   Array::shuffle_in_place(new_arr, rand~)
   new_arr
@@ -147,7 +147,7 @@ pub fn shuffle[T](self : Array[T], rand~ : (Int) -> Int) -> Array[T] {
 /// 
 /// # Returns
 /// 
-pub fn filter_map[A, B](self : Array[A], f : (A) -> B?) -> Array[B] {
+pub fn[A, B] filter_map(self : Array[A], f : (A) -> B?) -> Array[B] {
   let result = []
   for x in self {
     if f(x) is Some(x) {
@@ -178,7 +178,7 @@ pub fn filter_map[A, B](self : Array[A], f : (A) -> B?) -> Array[B] {
 ///   inspect!(empty.last(), content="None")
 /// }
 /// ```
-pub fn last[A](self : Array[A]) -> A? {
+pub fn[A] last(self : Array[A]) -> A? {
   match self {
     [] => None
     [.., last] => Some(last)
@@ -205,7 +205,7 @@ pub fn last[A](self : Array[A]) -> A? {
 ///   inspect!(arr1.zip(arr2), content="[(1, 'a'), (2, 'b'), (3, 'c')]")
 /// }
 /// ```
-pub fn zip[A, B](self : Array[A], other : Array[B]) -> Array[(A, B)] {
+pub fn[A, B] zip(self : Array[A], other : Array[B]) -> Array[(A, B)] {
   let length = if self.length() < other.length() {
     self.length()
   } else {
@@ -240,7 +240,7 @@ pub fn zip[A, B](self : Array[A], other : Array[B]) -> Array[(A, B)] {
 ///   inspect!(zip_with(arr1, arr2, add), content="[5, 7, 9]")
 /// }
 /// ```
-pub fn zip_with[A, B, C](
+pub fn[A, B, C] zip_with(
   l : Array[A],
   r : Array[B],
   merge : (A, B) -> C
@@ -274,7 +274,7 @@ pub fn zip_with[A, B, C](
 ///   inspect!(arr1.zip_to_iter2(arr2).to_array(), content="[(1, 'a'), (2, 'b'), (3, 'c')]")
 /// }
 /// ```
-pub fn zip_to_iter2[A, B](self : Array[A], other : Array[B]) -> Iter2[A, B] {
+pub fn[A, B] zip_to_iter2(self : Array[A], other : Array[B]) -> Iter2[A, B] {
   Iter2::new(fn(yield_) {
     let length = if self.length() < other.length() {
       self.length()

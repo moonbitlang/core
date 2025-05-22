@@ -1002,7 +1002,7 @@ test "View::to_upper" {
 
 ///|
 /// Folds the characters of the string into a single value.
-pub fn View::fold[A](self : View, init~ : A, f : (A, Char) -> A) -> A {
+pub fn[A] View::fold(self : View, init~ : A, f : (A, Char) -> A) -> A {
   let mut rv = init
   for c in self {
     rv = f(rv, c)
@@ -1011,7 +1011,7 @@ pub fn View::fold[A](self : View, init~ : A, f : (A, Char) -> A) -> A {
 }
 
 ///| Folds the characters of the string into a single value.
-pub fn fold[A](self : String, init~ : A, f : (A, Char) -> A) -> A {
+pub fn[A] fold(self : String, init~ : A, f : (A, Char) -> A) -> A {
   self[:].fold(init~, f)
 }
 
@@ -1031,7 +1031,7 @@ test "fold" {
 }
 
 ///|
-pub fn View::rev_fold[A](self : View, init~ : A, f : (A, Char) -> A) -> A {
+pub fn[A] View::rev_fold(self : View, init~ : A, f : (A, Char) -> A) -> A {
   let mut rv = init
   for c in self.rev_iter() {
     rv = f(rv, c)
@@ -1040,7 +1040,7 @@ pub fn View::rev_fold[A](self : View, init~ : A, f : (A, Char) -> A) -> A {
 }
 
 ///|
-pub fn rev_fold[A](self : String, init~ : A, f : (A, Char) -> A) -> A {
+pub fn[A] rev_fold(self : String, init~ : A, f : (A, Char) -> A) -> A {
   self[:].rev_fold(init~, f)
 }
 

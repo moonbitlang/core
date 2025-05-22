@@ -24,13 +24,13 @@
 /// arr.sort()
 /// assert_eq!(arr, [1, 2, 3, 4, 5])
 /// ```
-pub fn sort[T : Compare](self : Array[T]) -> Unit {
+pub fn[T : Compare] sort(self : Array[T]) -> Unit {
   let len = self.length()
   quick_sort(self[:len], None, get_limit(len))
 }
 
 ///|
-fn quick_sort[T : Compare](arr : ArrayView[T], pred : T?, limit : Int) -> Unit {
+fn[T : Compare] quick_sort(arr : ArrayView[T], pred : T?, limit : Int) -> Unit {
   let mut limit = limit
   let mut arr = arr
   let mut pred = pred
@@ -107,7 +107,7 @@ fn get_limit(len : Int) -> Int {
 /// It will only tolerate at most 8 unsorted elements. The time complexity is O(n).
 ///
 /// Returns whether the array is sorted.
-fn try_bubble_sort[T : Compare](arr : ArrayView[T]) -> Bool {
+fn[T : Compare] try_bubble_sort(arr : ArrayView[T]) -> Bool {
   let max_tries = 8
   let mut tries = 0
   for i in 1..<arr.length() {
@@ -128,7 +128,7 @@ fn try_bubble_sort[T : Compare](arr : ArrayView[T]) -> Bool {
 
 ///|
 /// Used when the array is small enough (<=16) to avoid recursion overhead.
-fn ArrayView::insertion_sort[T : Compare](arr : ArrayView[T]) -> Unit {
+fn[T : Compare] ArrayView::insertion_sort(arr : ArrayView[T]) -> Unit {
   for i in 1..<arr.length() {
     for j = i; j > 0 && arr[j - 1] > arr[j]; j = j - 1 {
       arr.swap(j, j - 1)
@@ -137,7 +137,7 @@ fn ArrayView::insertion_sort[T : Compare](arr : ArrayView[T]) -> Unit {
 }
 
 ///|
-fn partition[T : Compare](arr : ArrayView[T], pivot_index : Int) -> (Int, Bool) {
+fn[T : Compare] partition(arr : ArrayView[T], pivot_index : Int) -> (Int, Bool) {
   arr.swap(pivot_index, arr.length() - 1)
   let pivot = arr[arr.length() - 1]
   let mut i = 0
@@ -161,7 +161,7 @@ fn partition[T : Compare](arr : ArrayView[T], pivot_index : Int) -> (Int, Bool) 
 /// It avoids worst case performance by choosing a pivot that is likely to be close to the median.
 ///
 /// Returns the pivot index and whether the array is likely sorted.
-fn choose_pivot[T : Compare](arr : ArrayView[T]) -> (Int, Bool) {
+fn[T : Compare] choose_pivot(arr : ArrayView[T]) -> (Int, Bool) {
   let len = arr.length()
   let use_median_of_medians = 50
   let max_swaps = 4 * 3
@@ -199,7 +199,7 @@ fn choose_pivot[T : Compare](arr : ArrayView[T]) -> (Int, Bool) {
 }
 
 ///|
-fn heap_sort[T : Compare](arr : ArrayView[T]) -> Unit {
+fn[T : Compare] heap_sort(arr : ArrayView[T]) -> Unit {
   let len = arr.length()
   for i = len / 2 - 1; i >= 0; i = i - 1 {
     sift_down(arr, i)
@@ -211,7 +211,7 @@ fn heap_sort[T : Compare](arr : ArrayView[T]) -> Unit {
 }
 
 ///|
-fn sift_down[T : Compare](arr : ArrayView[T], index : Int) -> Unit {
+fn[T : Compare] sift_down(arr : ArrayView[T], index : Int) -> Unit {
   let mut index = index
   let len = arr.length()
   let mut child = index * 2 + 1

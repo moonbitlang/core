@@ -12,7 +12,7 @@ fn default() -> String
 #deprecated
 fn ends_with(String, String) -> Bool
 
-fn fold[A](String, init~ : A, (A, Char) -> A) -> A
+fn[A] fold(String, init~ : A, (A, Char) -> A) -> A
 
 fn from_array(Array[Char]) -> String
 
@@ -52,7 +52,7 @@ fn replace_all(String, old~ : StringView, new~ : StringView) -> String
 
 fn rev(String) -> String
 
-fn rev_fold[A](String, init~ : A, (A, Char) -> A) -> A
+fn[A] rev_fold(String, init~ : A, (A, Char) -> A) -> A
 
 fn rev_iter(String) -> Iter[Char]
 

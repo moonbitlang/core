@@ -78,9 +78,9 @@ fn log10(Double) -> Double
 
 fn log2(Double) -> Double
 
-fn maximum[T : Compare](T, T) -> T
+fn[T : Compare] maximum(T, T) -> T
 
-fn minimum[T : Compare](T, T) -> T
+fn[T : Compare] minimum(T, T) -> T
 
 let pi : Double
 

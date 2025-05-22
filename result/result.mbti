@@ -5,41 +5,41 @@ import(
 )
 
 // Values
-fn bind[T, E, U](Result[T, E], (T) -> Result[U, E]) -> Result[U, E]
+fn[T, E, U] bind(Result[T, E], (T) -> Result[U, E]) -> Result[U, E]
 
-fn err[T, E](E) -> Result[T, E]
+fn[T, E] err(E) -> Result[T, E]
 
-fn flatten[T, E](Result[Result[T, E], E]) -> Result[T, E]
+fn[T, E] flatten(Result[Result[T, E], E]) -> Result[T, E]
 
-fn fold[T, E, V](Result[T, E], (T) -> V, (E) -> V) -> V
+fn[T, E, V] fold(Result[T, E], (T) -> V, (E) -> V) -> V
 
-fn is_err[T, E](Result[T, E]) -> Bool
+fn[T, E] is_err(Result[T, E]) -> Bool
 
-fn is_ok[T, E](Result[T, E]) -> Bool
+fn[T, E] is_ok(Result[T, E]) -> Bool
 
-fn map[T, E, U](Result[T, E], (T) -> U) -> Result[U, E]
+fn[T, E, U] map(Result[T, E], (T) -> U) -> Result[U, E]
 
-fn map_err[T, E, F](Result[T, E], (E) -> F) -> Result[T, F]
+fn[T, E, F] map_err(Result[T, E], (E) -> F) -> Result[T, F]
 
-fn ok[T, E](T) -> Result[T, E]
+fn[T, E] ok(T) -> Result[T, E]
 
-fn or[T, E](Result[T, E], T) -> T
+fn[T, E] or(Result[T, E], T) -> T
 
-fn or_else[T, E](Result[T, E], () -> T) -> T
+fn[T, E] or_else(Result[T, E], () -> T) -> T
 
-fn to_option[T, E](Result[T, E]) -> T?
+fn[T, E] to_option(Result[T, E]) -> T?
 
-fn unwrap[T, E](Result[T, E]) -> T
+fn[T, E] unwrap(Result[T, E]) -> T
 
-fn unwrap_err[T, E](Result[T, E]) -> E
+fn[T, E] unwrap_err(Result[T, E]) -> E
 
-fn unwrap_or_error[T, E : Error](Result[T, E]) -> T!E
+fn[T, E : Error] unwrap_or_error(Result[T, E]) -> T!E
 
-fn wrap0[T, E : Error](f~ : () -> T!E) -> Result[T, E]
+fn[T, E : Error] wrap0(f~ : () -> T!E) -> Result[T, E]
 
-fn wrap1[T, A, E : Error](f~ : (A) -> T!E, A) -> Result[T, E]
+fn[T, A, E : Error] wrap1(f~ : (A) -> T!E, A) -> Result[T, E]
 
-fn wrap2[T, A, B, E : Error](f~ : (A, B) -> T!E, A, B) -> Result[T, E]
+fn[T, A, B, E : Error] wrap2(f~ : (A, B) -> T!E, A, B) -> Result[T, E]
 
 // Types and methods
 impl Result {

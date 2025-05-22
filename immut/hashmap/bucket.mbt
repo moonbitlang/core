@@ -14,7 +14,7 @@
 
 ///|
 /// Lookup a key from the bucket
-fn Bucket::find[K : Eq, V](self : Bucket[K, V], key : K) -> V? {
+fn[K : Eq, V] Bucket::find(self : Bucket[K, V], key : K) -> V? {
   match self {
     JustOne(key1, value) => if key == key1 { Some(value) } else { None }
     More(key1, value, rest) =>
@@ -29,7 +29,7 @@ fn Bucket::find[K : Eq, V](self : Bucket[K, V], key : K) -> V? {
 ///|
 /// Add a new key-value pair to a bucket.
 /// Replace the old entry if one with the same key already exists.
-fn Bucket::add[K : Eq, V](
+fn[K : Eq, V] Bucket::add(
   self : Bucket[K, V],
   key : K,
   value : V
@@ -52,7 +52,7 @@ fn Bucket::add[K : Eq, V](
 
 ///|
 /// Remove a key from a bucket
-fn Bucket::remove[K : Eq, V](self : Bucket[K, V], key : K) -> Bucket[K, V]? {
+fn[K : Eq, V] Bucket::remove(self : Bucket[K, V], key : K) -> Bucket[K, V]? {
   match self {
     JustOne(old_key, _) => if key == old_key { None } else { Some(self) }
     More(old_key, old_value, rest) =>
@@ -69,7 +69,7 @@ fn Bucket::remove[K : Eq, V](self : Bucket[K, V], key : K) -> Bucket[K, V]? {
 
 ///|
 /// Get the size of a bucket
-fn Bucket::size[K, V](self : Bucket[K, V]) -> Int {
+fn[K, V] Bucket::size(self : Bucket[K, V]) -> Int {
   loop self, 1 {
     JustOne(_), acc => acc
     More(_, _, rest), acc => continue rest, acc + 1
@@ -78,7 +78,7 @@ fn Bucket::size[K, V](self : Bucket[K, V]) -> Int {
 
 ///|
 /// Iterate through elements of a bucket
-fn Bucket::each[K, V](self : Bucket[K, V], f : (K, V) -> Unit) -> Unit {
+fn[K, V] Bucket::each(self : Bucket[K, V], f : (K, V) -> Unit) -> Unit {
   loop self {
     JustOne(k, v) => f(k, v)
     More(k, v, rest) => {
@@ -89,7 +89,7 @@ fn Bucket::each[K, V](self : Bucket[K, V], f : (K, V) -> Unit) -> Unit {
 }
 
 ///|
-fn Bucket::filter[K, V](self : Bucket[K, V], f : (V) -> Bool) -> Bucket[K, V]? {
+fn[K, V] Bucket::filter(self : Bucket[K, V], f : (V) -> Bool) -> Bucket[K, V]? {
   match self {
     JustOne(k, v) => if f(v) { Some(JustOne(k, v)) } else { None }
     More(k, v, rest) => {
@@ -115,7 +115,7 @@ test "Bucket::filter" {
 }
 
 ///|
-fn Bucket::iter[K, V](self : Bucket[K, V]) -> Iter[(K, V)] {
+fn[K, V] Bucket::iter(self : Bucket[K, V]) -> Iter[(K, V)] {
   Iter::new(fn {
     f =>
       loop self {
@@ -189,7 +189,7 @@ test "Bucket::iter" {
 ///|
 /// Fold over the bucket from left to right, applying a function to each key-value pair.
 ///
-fn Bucket::foldl_with_key[K, V, A](
+fn[K, V, A] Bucket::foldl_with_key(
   self : Bucket[K, V],
   f : (A, K, V) -> A,
   init~ : A
@@ -208,7 +208,7 @@ test "foldl_with_key" {
 }
 
 ///|
-fn Bucket::map_with_key[K, V, A](
+fn[K, V, A] Bucket::map_with_key(
   self : Bucket[K, V],
   f : (K, V) -> A
 ) -> Bucket[K, A] {
@@ -228,7 +228,7 @@ test "Bucket::map_with_key" {
 }
 
 ///|
-fn Bucket::map[K, V, A](self : Bucket[K, V], f : (V) -> A) -> Bucket[K, A] {
+fn[K, V, A] Bucket::map(self : Bucket[K, V], f : (V) -> A) -> Bucket[K, A] {
   self.map_with_key(fn(_k, v) { f(v) })
 }
 
