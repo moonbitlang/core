@@ -4,24 +4,24 @@ package "moonbitlang/core/test"
 fn bench(T, () -> Unit, count~ : UInt = ..) -> Unit!BenchError
 
 #deprecated
-fn eq[T : Show + Eq](T, T, loc~ : SourceLoc = _) -> Unit!
+fn[T : Show + Eq] eq(T, T, loc~ : SourceLoc = _) -> Unit!
 
-fn fail[T](String, loc~ : SourceLoc = _) -> T!
+fn[T] fail(String, loc~ : SourceLoc = _) -> T!
 
 #deprecated
 fn is_false(Bool, loc~ : SourceLoc = _) -> Unit!
 
-fn is_not[T : Show](T, T, loc~ : SourceLoc = _) -> Unit!
+fn[T : Show] is_not(T, T, loc~ : SourceLoc = _) -> Unit!
 
 #deprecated
 fn is_true(Bool, loc~ : SourceLoc = _) -> Unit!
 
 #deprecated
-fn ne[T : Show + Eq](T, T, loc~ : SourceLoc = _) -> Unit!
+fn[T : Show + Eq] ne(T, T, loc~ : SourceLoc = _) -> Unit!
 
 fn new(String) -> T
 
-fn same_object[T : Show](T, T, loc~ : SourceLoc = _) -> Unit!
+fn[T : Show] same_object(T, T, loc~ : SourceLoc = _) -> Unit!
 
 fn snapshot(T, filename~ : String, loc~ : SourceLoc = _, args_loc~ : ArgsLoc = _) -> Unit!SnapshotError
 

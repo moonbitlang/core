@@ -5,30 +5,30 @@ import(
 )
 
 // Values
-fn from_array[A : Compare](Array[A]) -> T[A]
+fn[A : Compare] from_array(Array[A]) -> T[A]
 
-fn is_empty[A](T[A]) -> Bool
+fn[A] is_empty(T[A]) -> Bool
 
-fn iter[A : Compare](T[A]) -> Iter[A]
+fn[A : Compare] iter(T[A]) -> Iter[A]
 
-fn length[A](T[A]) -> Int
+fn[A] length(T[A]) -> Int
 
-fn new[A : Compare]() -> T[A]
+fn[A : Compare] new() -> T[A]
 
-fn of[A : Compare](FixedArray[A]) -> T[A]
+fn[A : Compare] of(FixedArray[A]) -> T[A]
 
-fn peek[A](T[A]) -> A?
+fn[A] peek(T[A]) -> A?
 
-fn pop[A : Compare](T[A]) -> T[A]?
+fn[A : Compare] pop(T[A]) -> T[A]?
 
 #deprecated
-fn pop_exn[A : Compare](T[A]) -> T[A]
+fn[A : Compare] pop_exn(T[A]) -> T[A]
 
-fn push[A : Compare](T[A], A) -> T[A]
+fn[A : Compare] push(T[A], A) -> T[A]
 
-fn to_array[A : Compare](T[A]) -> Array[A]
+fn[A : Compare] to_array(T[A]) -> Array[A]
 
-fn unsafe_pop[A : Compare](T[A]) -> T[A]
+fn[A : Compare] unsafe_pop(T[A]) -> T[A]
 
 // Types and methods
 type T[A]

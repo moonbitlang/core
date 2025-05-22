@@ -5,55 +5,55 @@ import(
 )
 
 // Values
-fn add[K : Eq + Hash, V](T[K, V], K, V) -> T[K, V]
+fn[K : Eq + Hash, V] add(T[K, V], K, V) -> T[K, V]
 
-fn contains[K : Eq + Hash, V](T[K, V], K) -> Bool
+fn[K : Eq + Hash, V] contains(T[K, V], K) -> Bool
 
-fn each[K, V](T[K, V], (K, V) -> Unit) -> Unit
+fn[K, V] each(T[K, V], (K, V) -> Unit) -> Unit
 
-fn elems[K, V](T[K, V]) -> Iter[V]
+fn[K, V] elems(T[K, V]) -> Iter[V]
 
-fn filter[K : Eq + Hash, V](T[K, V], (V) -> Bool) -> T[K, V]
-
-#deprecated
-fn find[K : Eq + Hash, V](T[K, V], K) -> V?
-
-fn fold[K, V, A](T[K, V], init~ : A, (A, V) -> A) -> A
-
-fn fold_with_key[K, V, A](T[K, V], init~ : A, (A, K, V) -> A) -> A
-
-fn from_array[K : Eq + Hash, V](Array[(K, V)]) -> T[K, V]
-
-fn from_iter[K : Eq + Hash, V](Iter[(K, V)]) -> T[K, V]
-
-fn get[K : Eq + Hash, V](T[K, V], K) -> V?
-
-fn iter[K, V](T[K, V]) -> Iter[(K, V)]
-
-fn iter2[K, V](T[K, V]) -> Iter2[K, V]
-
-fn keys[K, V](T[K, V]) -> Iter[K]
-
-fn map[K : Eq + Hash, V, A](T[K, V], (V) -> A) -> T[K, A]
-
-fn map_with_key[K : Eq + Hash, V, A](T[K, V], (K, V) -> A) -> T[K, A]
-
-fn new[K, V]() -> T[K, V]
-
-fn of[K : Eq + Hash, V](FixedArray[(K, V)]) -> T[K, V]
+fn[K : Eq + Hash, V] filter(T[K, V], (V) -> Bool) -> T[K, V]
 
 #deprecated
-fn op_get[K : Eq + Hash, V](T[K, V], K) -> V?
+fn[K : Eq + Hash, V] find(T[K, V], K) -> V?
 
-fn remove[K : Eq + Hash, V](T[K, V], K) -> T[K, V]
+fn[K, V, A] fold(T[K, V], init~ : A, (A, V) -> A) -> A
 
-fn singleton[K, V](K, V) -> T[K, V]
+fn[K, V, A] fold_with_key(T[K, V], init~ : A, (A, K, V) -> A) -> A
 
-fn size[K, V](T[K, V]) -> Int
+fn[K : Eq + Hash, V] from_array(Array[(K, V)]) -> T[K, V]
 
-fn to_array[K, V](T[K, V]) -> Array[(K, V)]
+fn[K : Eq + Hash, V] from_iter(Iter[(K, V)]) -> T[K, V]
 
-fn union[K : Eq + Hash, V](T[K, V], T[K, V]) -> T[K, V]
+fn[K : Eq + Hash, V] get(T[K, V], K) -> V?
+
+fn[K, V] iter(T[K, V]) -> Iter[(K, V)]
+
+fn[K, V] iter2(T[K, V]) -> Iter2[K, V]
+
+fn[K, V] keys(T[K, V]) -> Iter[K]
+
+fn[K : Eq + Hash, V, A] map(T[K, V], (V) -> A) -> T[K, A]
+
+fn[K : Eq + Hash, V, A] map_with_key(T[K, V], (K, V) -> A) -> T[K, A]
+
+fn[K, V] new() -> T[K, V]
+
+fn[K : Eq + Hash, V] of(FixedArray[(K, V)]) -> T[K, V]
+
+#deprecated
+fn[K : Eq + Hash, V] op_get(T[K, V], K) -> V?
+
+fn[K : Eq + Hash, V] remove(T[K, V], K) -> T[K, V]
+
+fn[K, V] singleton(K, V) -> T[K, V]
+
+fn[K, V] size(T[K, V]) -> Int
+
+fn[K, V] to_array(T[K, V]) -> Array[(K, V)]
+
+fn[K : Eq + Hash, V] union(T[K, V], T[K, V]) -> T[K, V]
 
 // Types and methods
 type T[K, V]

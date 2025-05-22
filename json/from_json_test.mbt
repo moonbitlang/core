@@ -282,9 +282,7 @@ test "tuple roundtrip" {
 ///|
 test "tuple failure" {
   let u = [1, 2]
-  let v : Result[(Int, Int, Int), _] = try {
-    @json.from_json!(u.to_json()) |> Ok
-  } catch {
+  let v : Result[(Int, Int, Int), _] = try @json.from_json!(u.to_json()) |> Ok catch {
     err => Err(err)
   }
   inspect!(

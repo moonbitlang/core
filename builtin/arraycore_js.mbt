@@ -20,19 +20,19 @@
 priv extern type JSValue
 
 ///|
-fn JSValue::ofAny[T](array : T) -> JSValue = "%identity"
+fn[T] JSValue::ofAny(array : T) -> JSValue = "%identity"
 
 ///|
-fn JSValue::toAny[T](self : JSValue) -> T = "%identity"
+fn[T] JSValue::toAny(self : JSValue) -> T = "%identity"
 
 ///|
 priv extern type JSArray
 
 ///|
-fn JSArray::ofAnyArray[T](array : Array[T]) -> JSArray = "%identity"
+fn[T] JSArray::ofAnyArray(array : Array[T]) -> JSArray = "%identity"
 
 ///|
-fn JSArray::toAnyArray[T](self : JSArray) -> Array[T] = "%identity"
+fn[T] JSArray::toAnyArray(self : JSArray) -> Array[T] = "%identity"
 
 ///|
 extern "js" fn JSArray::set_length(self : JSArray, new_len : Int) -> Unit =
@@ -71,26 +71,26 @@ extern "js" fn JSArray::splice1(
 extern type Array[T]
 
 ///|
-fn Array::make_uninit[T](len : Int) -> Array[T] = "%fixedarray.make_uninit"
+fn[T] Array::make_uninit(len : Int) -> Array[T] = "%fixedarray.make_uninit"
 
 ///|
 /// Creates a new array.
-pub fn Array::new[T](capacity~ : Int = 0) -> Array[T] {
+pub fn[T] Array::new(capacity~ : Int = 0) -> Array[T] {
   ignore(capacity)
   []
 }
 
 ///|
 /// Returns the number of elements in the array.
-pub fn Array::length[T](self : Array[T]) -> Int = "%fixedarray.length"
+pub fn[T] Array::length(self : Array[T]) -> Int = "%fixedarray.length"
 
 ///|
-fn Array::unsafe_truncate_to_length[T](self : Array[T], new_len : Int) -> Unit {
+fn[T] Array::unsafe_truncate_to_length(self : Array[T], new_len : Int) -> Unit {
   JSArray::ofAnyArray(self).set_length(new_len)
 }
 
 ///|
-fn Array::buffer[T](self : Array[T]) -> UninitializedArray[T] = "%identity"
+fn[T] Array::buffer(self : Array[T]) -> UninitializedArray[T] = "%identity"
 
 ///|
 test "array_unsafe_blit_fixed" {
@@ -143,7 +143,7 @@ test "UninitializedArray::unsafe_blit_fixed" {
 /// v.reserve_capacity(10)
 /// assert_eq!(v.capacity(), 1)
 /// ```
-pub fn Array::reserve_capacity[T](self : Array[T], capacity : Int) -> Unit {
+pub fn[T] Array::reserve_capacity(self : Array[T], capacity : Int) -> Unit {
   ignore(self)
   ignore(capacity)
 }
@@ -163,7 +163,7 @@ pub fn Array::reserve_capacity[T](self : Array[T], capacity : Int) -> Unit {
 /// v.shrink_to_fit()
 /// assert_eq!(v.capacity(), 3)
 /// ```
-pub fn Array::shrink_to_fit[T](self : Array[T]) -> Unit {
+pub fn[T] Array::shrink_to_fit(self : Array[T]) -> Unit {
   ignore(self)
 }
 
@@ -177,7 +177,7 @@ pub fn Array::shrink_to_fit[T](self : Array[T]) -> Unit {
 /// let v = []
 /// v.push(3)
 /// ```
-pub fn Array::push[T](self : Array[T], value : T) -> Unit {
+pub fn[T] Array::push(self : Array[T], value : T) -> Unit {
   JSArray::ofAnyArray(self).push(JSValue::ofAny(value))
 }
 
@@ -191,7 +191,7 @@ pub fn Array::push[T](self : Array[T], value : T) -> Unit {
 /// assert_eq!(vv, Some(3))
 /// assert_eq!(v, [1, 2])
 /// ```
-pub fn Array::pop[T](self : Array[T]) -> T? {
+pub fn[T] Array::pop(self : Array[T]) -> T? {
   if self.length() == 0 {
     None
   } else {
@@ -203,7 +203,7 @@ pub fn Array::pop[T](self : Array[T]) -> T? {
 ///|
 #deprecated("Use `unsafe_pop` instead")
 #coverage.skip
-pub fn Array::pop_exn[T](self : Array[T]) -> T {
+pub fn[T] Array::pop_exn(self : Array[T]) -> T {
   self.unsafe_pop()
 }
 
@@ -214,7 +214,7 @@ pub fn Array::pop_exn[T](self : Array[T]) -> T {
 /// behavior on the JavaScript platform. Use with caution.
 ///
 #internal(unsafe, "Panic if the array is empty.")
-pub fn Array::unsafe_pop[T](self : Array[T]) -> T {
+pub fn[T] Array::unsafe_pop(self : Array[T]) -> T {
   JSArray::ofAnyArray(self).pop().toAny()
 }
 
@@ -232,7 +232,7 @@ pub fn Array::unsafe_pop[T](self : Array[T]) -> T {
 /// assert_eq!(vv, 4)
 /// assert_eq!(v, [3, 5])
 /// ```
-pub fn Array::remove[T](self : Array[T], index : Int) -> T {
+pub fn[T] Array::remove(self : Array[T], index : Int) -> T {
   guard index >= 0 && index < self.length() else {
     abort(
       "index out of bounds: the len is from 0 to \{self.length()} but the index is \{index}",
@@ -255,7 +255,7 @@ pub fn Array::remove[T](self : Array[T], index : Int) -> T {
 /// let v = [3, 4, 5]
 /// let vv = v.drain(1, 2) // vv = [4], v = [3, 5]
 /// ```
-pub fn Array::drain[T](self : Array[T], begin : Int, end : Int) -> Array[T] {
+pub fn[T] Array::drain(self : Array[T], begin : Int, end : Int) -> Array[T] {
   guard begin >= 0 && end <= self.length() && begin <= end else {
     abort(
       "index out of bounds: the len is \{self.length()} but the index is (\{begin}, \{end})",
@@ -273,7 +273,7 @@ pub fn Array::drain[T](self : Array[T], begin : Int, end : Int) -> Array[T] {
 /// ```
 /// [3, 4, 5].insert(1, 6)
 /// ```
-pub fn Array::insert[T](self : Array[T], index : Int, value : T) -> Unit {
+pub fn[T] Array::insert(self : Array[T], index : Int, value : T) -> Unit {
   guard index >= 0 && index <= self.length() else {
     abort(
       "index out of bounds: the len is from 0 to \{self.length()} but the index is \{index}",
@@ -290,7 +290,7 @@ pub fn Array::insert[T](self : Array[T], index : Int, value : T) -> Unit {
 /// difference, and the values in the new slots are left uninitilized.
 ///  If `new_len` is less than `len`, it will panic
 ///
-fn Array::unsafe_grow_to_length[T](self : Array[T], new_len : Int) -> Unit {
+fn[T] Array::unsafe_grow_to_length(self : Array[T], new_len : Int) -> Unit {
   guard new_len >= self.length()
   JSArray::ofAnyArray(self).set_length(new_len)
 }

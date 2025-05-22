@@ -52,7 +52,7 @@ struct Set[K] {
 /// Create a hash set.
 /// The capacity of the set will be the smallest power of 2 that is
 /// greater than or equal to the provided [capacity].
-pub fn Set::new[K](capacity~ : Int = 8) -> Set[K] {
+pub fn[K] Set::new(capacity~ : Int = 8) -> Set[K] {
   let capacity = power_2_above(8, capacity)
   {
     size: 0,
@@ -68,7 +68,7 @@ pub fn Set::new[K](capacity~ : Int = 8) -> Set[K] {
 
 ///|
 /// Create a hash set from array.
-pub fn Set::from_array[K : Hash + Eq](arr : Array[K]) -> Set[K] {
+pub fn[K : Hash + Eq] Set::from_array(arr : Array[K]) -> Set[K] {
   let m = Set::new(capacity=arr.length())
   arr.each(fn(e) { m.add(e) })
   m
@@ -79,13 +79,13 @@ pub fn Set::from_array[K : Hash + Eq](arr : Array[K]) -> Set[K] {
 ///
 #deprecated("Use `add` instead.")
 #coverage.skip
-pub fn insert[K : Hash + Eq](self : Set[K], key : K) -> Unit {
+pub fn[K : Hash + Eq] insert(self : Set[K], key : K) -> Unit {
   self.add(key)
 }
 
 ///|
 /// Insert a key into the hash set.if the key exists return false
-pub fn add_and_check[K : Hash + Eq](self : Set[K], key : K) -> Bool {
+pub fn[K : Hash + Eq] add_and_check(self : Set[K], key : K) -> Bool {
   if self.size >= self.grow_at {
     self.grow()
   }
@@ -124,7 +124,7 @@ pub fn add_and_check[K : Hash + Eq](self : Set[K], key : K) -> Bool {
 
 ///|
 /// Insert a key into the hash set.
-pub fn add[K : Hash + Eq](self : Set[K], key : K) -> Unit {
+pub fn[K : Hash + Eq] add(self : Set[K], key : K) -> Unit {
   if self.size >= self.grow_at {
     self.grow()
   }
@@ -163,7 +163,7 @@ pub fn add[K : Hash + Eq](self : Set[K], key : K) -> Unit {
 
 ///|
 /// Check if the hash set contains a key.
-pub fn contains[K : Hash + Eq](self : Set[K], key : K) -> Bool {
+pub fn[K : Hash + Eq] contains(self : Set[K], key : K) -> Bool {
   let hash = key.hash()
   for i = 0, idx = hash & self.capacity_mask {
     match self.entries[idx] {
@@ -183,7 +183,7 @@ pub fn contains[K : Hash + Eq](self : Set[K], key : K) -> Bool {
 
 ///|
 /// Remove a key from hash set.
-pub fn remove[K : Hash + Eq](self : Set[K], key : K) -> Unit {
+pub fn[K : Hash + Eq] remove(self : Set[K], key : K) -> Unit {
   let hash = key.hash()
   for i = 0, idx = hash & self.capacity_mask {
     match self.entries[idx] {
@@ -207,7 +207,7 @@ pub fn remove[K : Hash + Eq](self : Set[K], key : K) -> Unit {
 
 ///|
 /// Remove a key from hash set.if the key exists, delete it and return true
-pub fn remove_and_check[K : Hash + Eq](self : Set[K], key : K) -> Bool {
+pub fn[K : Hash + Eq] remove_and_check(self : Set[K], key : K) -> Bool {
   let hash = key.hash()
   for i = 0, idx = hash & self.capacity_mask {
     match self.entries[idx] {
@@ -230,7 +230,7 @@ pub fn remove_and_check[K : Hash + Eq](self : Set[K], key : K) -> Bool {
 }
 
 ///|
-fn add_entry_to_tail[K : Eq](self : Set[K], entry : SEntry[K]) -> Unit {
+fn[K : Eq] add_entry_to_tail(self : Set[K], entry : SEntry[K]) -> Unit {
   match self.tail {
     None => {
       self.head = Some(entry)
@@ -245,7 +245,7 @@ fn add_entry_to_tail[K : Eq](self : Set[K], entry : SEntry[K]) -> Unit {
 }
 
 ///|
-fn remove_entry[K : Eq](self : Set[K], entry : SEntry[K]) -> Unit {
+fn[K : Eq] remove_entry(self : Set[K], entry : SEntry[K]) -> Unit {
   let node = self.list[entry.idx]
   if self.is_empty() {
     self.head = None
@@ -269,7 +269,7 @@ fn remove_entry[K : Eq](self : Set[K], entry : SEntry[K]) -> Unit {
 }
 
 ///|
-fn shift_back[K : Hash](self : Set[K], start_index : Int) -> Unit {
+fn[K : Hash] shift_back(self : Set[K], start_index : Int) -> Unit {
   for prev = start_index, curr = (start_index + 1) & self.capacity_mask {
     match (self.entries[curr], self.list[curr]) {
       (Some(entry), currNode) => {
@@ -292,7 +292,7 @@ fn shift_back[K : Hash](self : Set[K], start_index : Int) -> Unit {
 }
 
 ///|
-fn grow[K : Hash + Eq](self : Set[K]) -> Unit {
+fn[K : Hash + Eq] grow(self : Set[K]) -> Unit {
   let old_head = self.head
   let old_list = self.list
   let new_capacity = self.capacity << 1
@@ -316,7 +316,7 @@ fn grow[K : Hash + Eq](self : Set[K]) -> Unit {
 // Utils
 
 ///|
-fn debug_entries[K : Show](self : Set[K]) -> String {
+fn[K : Show] debug_entries(self : Set[K]) -> String {
   let buf = StringBuilder::new()
   for i in 0..<self.entries.length() {
     if i > 0 {
@@ -352,25 +352,25 @@ pub impl[K] Default for Set[K] with default() {
 
 ///|
 /// Get the number of keys in the set.
-pub fn size[K](self : Set[K]) -> Int {
+pub fn[K] size(self : Set[K]) -> Int {
   self.size
 }
 
 ///|
 /// Get the capacity of the set.
-pub fn capacity[K](self : Set[K]) -> Int {
+pub fn[K] capacity(self : Set[K]) -> Int {
   self.capacity
 }
 
 ///|
 /// Check if the hash set is empty.
-pub fn is_empty[K](self : Set[K]) -> Bool {
+pub fn[K] is_empty(self : Set[K]) -> Bool {
   self.size == 0
 }
 
 ///|
 /// Iterate over all keys of the set in the order of insertion.
-pub fn each[K](self : Set[K], f : (K) -> Unit) -> Unit {
+pub fn[K] each(self : Set[K], f : (K) -> Unit) -> Unit {
   loop self.head {
     Some({ key, idx, .. }) => {
       f(key)
@@ -382,7 +382,7 @@ pub fn each[K](self : Set[K], f : (K) -> Unit) -> Unit {
 
 ///|
 /// Iterate over all keys of the set in the order of insertion, with index.
-pub fn eachi[K](self : Set[K], f : (Int, K) -> Unit) -> Unit {
+pub fn[K] eachi(self : Set[K], f : (Int, K) -> Unit) -> Unit {
   loop 0, self.head {
     i, Some({ key, idx, .. }) => {
       f(i, key)
@@ -394,7 +394,7 @@ pub fn eachi[K](self : Set[K], f : (Int, K) -> Unit) -> Unit {
 
 ///|
 /// Clears the set, removing all keys. Keeps the allocated space.
-pub fn clear[K](self : Set[K]) -> Unit {
+pub fn[K] clear(self : Set[K]) -> Unit {
   self.entries.fill(None)
   self.size = 0
   self.head = None
@@ -403,7 +403,7 @@ pub fn clear[K](self : Set[K]) -> Unit {
 
 ///|
 /// Returns the iterator of the hash set, provide elements in the order of insertion.
-pub fn iter[K](self : Set[K]) -> Iter[K] {
+pub fn[K] iter(self : Set[K]) -> Iter[K] {
   Iter::new(fn(yield_) {
     loop self.head {
       Some({ key, idx, .. }) => {
@@ -419,7 +419,7 @@ pub fn iter[K](self : Set[K]) -> Iter[K] {
 
 ///|
 /// Converts the hash set to an array.
-pub fn to_array[K](self : Set[K]) -> Array[K] {
+pub fn[K] to_array(self : Set[K]) -> Array[K] {
   let res = Array::new(capacity=self.size)
   loop self.head {
     Some({ key, idx, .. }) => {
@@ -448,7 +448,7 @@ pub impl[K : Hash + Eq] Eq for Set[K] with op_equal(self, other) {
 }
 
 ///|
-pub fn Set::of[K : Hash + Eq](arr : FixedArray[K]) -> Set[K] {
+pub fn[K : Hash + Eq] Set::of(arr : FixedArray[K]) -> Set[K] {
   let length = arr.length()
   let m = Set::new(capacity=length)
   // arr.iter(fn(e) { m.set(e.0, e.1) })
@@ -460,21 +460,21 @@ pub fn Set::of[K : Hash + Eq](arr : FixedArray[K]) -> Set[K] {
 }
 
 ///|
-pub fn Set::from_iter[K : Hash + Eq](iter : Iter[K]) -> Set[K] {
+pub fn[K : Hash + Eq] Set::from_iter(iter : Iter[K]) -> Set[K] {
   let m = Set::new()
   iter.each(fn(e) { m.add(e) })
   m
 }
 
 ///|
-pub fn difference[K : Hash + Eq](self : Set[K], other : Set[K]) -> Set[K] {
+pub fn[K : Hash + Eq] difference(self : Set[K], other : Set[K]) -> Set[K] {
   let m = Set::new()
   self.each(fn(k) { if not(other.contains(k)) { m.add(k) } })
   m
 }
 
 ///|
-pub fn symmetric_difference[K : Hash + Eq](
+pub fn[K : Hash + Eq] symmetric_difference(
   self : Set[K],
   other : Set[K]
 ) -> Set[K] {
@@ -485,7 +485,7 @@ pub fn symmetric_difference[K : Hash + Eq](
 }
 
 ///|
-pub fn union[K : Hash + Eq](self : Set[K], other : Set[K]) -> Set[K] {
+pub fn[K : Hash + Eq] union(self : Set[K], other : Set[K]) -> Set[K] {
   let m = Set::new()
   self.each(fn(k) { m.add(k) })
   other.each(fn(k) { m.add(k) })
@@ -493,7 +493,7 @@ pub fn union[K : Hash + Eq](self : Set[K], other : Set[K]) -> Set[K] {
 }
 
 ///|
-pub fn intersection[K : Hash + Eq](self : Set[K], other : Set[K]) -> Set[K] {
+pub fn[K : Hash + Eq] intersection(self : Set[K], other : Set[K]) -> Set[K] {
   let m = Set::new()
   self.each(fn(k) { if other.contains(k) { m.add(k) } })
   m

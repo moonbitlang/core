@@ -14,7 +14,7 @@
 
 ///|
 /// Lookup a key from the bucket
-fn Bucket::find[T : Eq](self : Bucket[T], key : T) -> Bool {
+fn[T : Eq] Bucket::find(self : Bucket[T], key : T) -> Bool {
   match self {
     JustOne(key1) => key == key1
     More(key1, rest) => if key == key1 { true } else { rest.find(key) }
@@ -24,7 +24,7 @@ fn Bucket::find[T : Eq](self : Bucket[T], key : T) -> Bool {
 ///|
 /// Add a new key-value pair to a bucket.
 /// Replace the old entry if one with the same key already exists.
-fn Bucket::add[T : Eq](self : Bucket[T], key : T) -> Bucket[T] {
+fn[T : Eq] Bucket::add(self : Bucket[T], key : T) -> Bucket[T] {
   match self {
     JustOne(key1) => if key == key1 { self } else { More(key, self) }
     More(key1, rest) =>
@@ -38,7 +38,7 @@ fn Bucket::add[T : Eq](self : Bucket[T], key : T) -> Bucket[T] {
 
 ///|
 /// Remove a key from a bucket
-fn Bucket::remove[T : Eq](self : Bucket[T], key : T) -> Bucket[T]? {
+fn[T : Eq] Bucket::remove(self : Bucket[T], key : T) -> Bucket[T]? {
   match self {
     JustOne(old_key) => if key == old_key { None } else { Some(self) }
     More(old_key, rest) =>
@@ -55,7 +55,7 @@ fn Bucket::remove[T : Eq](self : Bucket[T], key : T) -> Bucket[T]? {
 
 ///|
 /// Get the size of a bucket
-fn Bucket::size[T](self : Bucket[T]) -> Int {
+fn[T] Bucket::size(self : Bucket[T]) -> Int {
   loop self, 1 {
     JustOne(_), acc => acc
     More(_, rest), acc => continue rest, acc + 1
@@ -64,7 +64,7 @@ fn Bucket::size[T](self : Bucket[T]) -> Int {
 
 ///|
 /// Iterate through elements of a bucket
-fn Bucket::each[T](self : Bucket[T], f : (T) -> Unit) -> Unit {
+fn[T] Bucket::each(self : Bucket[T], f : (T) -> Unit) -> Unit {
   loop self {
     JustOne(k) => f(k)
     More(k, rest) => {
@@ -75,7 +75,7 @@ fn Bucket::each[T](self : Bucket[T], f : (T) -> Unit) -> Unit {
 }
 
 ///|
-fn Bucket::iter[T](self : Bucket[T]) -> Iter[T] {
+fn[T] Bucket::iter(self : Bucket[T]) -> Iter[T] {
   Iter::new(fn {
     f =>
       loop self {

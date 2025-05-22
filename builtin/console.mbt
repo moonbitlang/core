@@ -16,7 +16,7 @@
 fn println_mono(s : String) -> Unit = "%println"
 
 ///|
-fn any_to_string[T](any : T) -> String = "%any.to_string"
+fn[T] any_to_string(any : T) -> String = "%any.to_string"
 
 ///|
 /// Prints any value that implements the `Show` trait to the standard output,
@@ -35,14 +35,14 @@ fn any_to_string[T](any : T) -> String = "%any.to_string"
 ///   println([1, 2, 3])
 /// }
 /// ```
-pub fn println[T : Show](input : T) -> Unit {
+pub fn[T : Show] println(input : T) -> Unit {
   println_mono(input.to_string())
 }
 
 ///|
 /// Prints and returns the value of a given expression for quick and dirty debugging.
 #deprecated("This function is for debugging only and should not be used in production")
-pub fn dump[T](t : T, name? : String, loc~ : SourceLoc = _) -> T {
+pub fn[T] dump(t : T, name? : String, loc~ : SourceLoc = _) -> T {
   let name = match name {
     Some(name) => name
     None => ""

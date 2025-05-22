@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-fn debug_string[T : Show](t : T) -> String {
+fn[T : Show] debug_string(t : T) -> String {
   let buf = StringBuilder::new(size_hint=50)
   t.output(buf)
   buf.to_string()
@@ -22,7 +22,7 @@ fn debug_string[T : Show](t : T) -> String {
 ///|
 #deprecated("Use built-in `assert_eq` instead")
 #coverage.skip
-pub fn eq[T : Show + Eq](a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
+pub fn[T : Show + Eq] eq(a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
   if a != b {
     let a = debug_string(a)
     let b = debug_string(b)
@@ -33,7 +33,7 @@ pub fn eq[T : Show + Eq](a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
 ///|
 #deprecated("Use built-in `assert_not_eq` instead")
 #coverage.skip
-pub fn ne[T : Show + Eq](a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
+pub fn[T : Show + Eq] ne(a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
   if not(a != b) {
     let a = debug_string(a)
     let b = debug_string(b)
@@ -77,7 +77,7 @@ pub fn is_false(x : Bool, loc~ : SourceLoc = _) -> Unit! {
 /// @test.same_object!(a, a)
 /// @test.is_not!(a, b)
 /// ```
-pub fn same_object[T : Show](a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
+pub fn[T : Show] same_object(a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
   if not(physical_equal(a, b)) {
     let a = debug_string(a)
     let b = debug_string(b)
@@ -101,7 +101,7 @@ pub fn same_object[T : Show](a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
 /// @test.is_not!(a, b)
 /// @test.same_object!(a, a)
 /// ```
-pub fn is_not[T : Show](a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
+pub fn[T : Show] is_not(a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
   if physical_equal(a, b) {
     let a = debug_string(a)
     let b = debug_string(b)
@@ -110,7 +110,7 @@ pub fn is_not[T : Show](a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
 }
 
 ///|
-pub fn fail[T](msg : String, loc~ : SourceLoc = _) -> T! {
+pub fn[T] fail(msg : String, loc~ : SourceLoc = _) -> T! {
   @builtin.fail!(msg, loc~)
 }
 

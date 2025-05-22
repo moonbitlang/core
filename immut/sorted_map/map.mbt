@@ -16,7 +16,7 @@
 /// Create a new map with a key-value pair inserted.
 /// O(log n).
 ///
-pub fn add[K : Compare, V](self : T[K, V], key : K, value : V) -> T[K, V] {
+pub fn[K : Compare, V] add(self : T[K, V], key : K, value : V) -> T[K, V] {
   match self {
     Empty => singleton(key, value)
     Tree(k, value=v, l, r, ..) => {
@@ -33,7 +33,7 @@ pub fn add[K : Compare, V](self : T[K, V], key : K, value : V) -> T[K, V] {
 }
 
 ///|
-fn split_max[K : Compare, V](self : T[K, V]) -> (K, V, T[K, V]) {
+fn[K : Compare, V] split_max(self : T[K, V]) -> (K, V, T[K, V]) {
   match self {
     Tree(k, value=v, l, Empty, ..) => (k, v, l)
     Tree(k, value=v, l, r, ..) => {
@@ -45,7 +45,7 @@ fn split_max[K : Compare, V](self : T[K, V]) -> (K, V, T[K, V]) {
 }
 
 ///|
-fn split_min[K : Compare, V](self : T[K, V]) -> (K, V, T[K, V]) {
+fn[K : Compare, V] split_min(self : T[K, V]) -> (K, V, T[K, V]) {
   match self {
     Tree(k, value=v, Empty, r, ..) => (k, v, r)
     Tree(k, value=v, l, r, ..) => {
@@ -57,7 +57,7 @@ fn split_min[K : Compare, V](self : T[K, V]) -> (K, V, T[K, V]) {
 }
 
 ///|
-fn glue[K : Compare, V](self : T[K, V], other : T[K, V]) -> T[K, V] {
+fn[K : Compare, V] glue(self : T[K, V], other : T[K, V]) -> T[K, V] {
   match (self, other) {
     (Empty, r) => r
     (l, Empty) => l
@@ -75,7 +75,7 @@ fn glue[K : Compare, V](self : T[K, V], other : T[K, V]) -> T[K, V] {
 ///|
 /// Create a new map with a key-value pair removed. O(log n).
 /// If the key is not a member or map, the original map is returned.
-pub fn remove[K : Compare, V](self : T[K, V], key : K) -> T[K, V] {
+pub fn[K : Compare, V] remove(self : T[K, V], key : K) -> T[K, V] {
   match self {
     Empty => Empty
     Tree(k, value=v, l, r, ..) => {
@@ -93,13 +93,13 @@ pub fn remove[K : Compare, V](self : T[K, V], key : K) -> T[K, V] {
 
 ///|
 /// Filter values that satisfy the predicate
-pub fn filter[K : Compare, V](self : T[K, V], pred : (V) -> Bool) -> T[K, V] {
+pub fn[K : Compare, V] filter(self : T[K, V], pred : (V) -> Bool) -> T[K, V] {
   filter_with_key(self, fn(_k, v) { pred(v) })
 }
 
 ///|
 /// Filter key-value pairs that satisfy the predicate
-pub fn filter_with_key[K : Compare, V](
+pub fn[K : Compare, V] filter_with_key(
   self : T[K, V],
   pred : (K, V) -> Bool
 ) -> T[K, V] {
@@ -116,7 +116,7 @@ pub fn filter_with_key[K : Compare, V](
 
 ///|
 /// Convert to an array of key-value pairs.
-pub fn to_array[K, V](self : T[K, V]) -> Array[(K, V)] {
+pub fn[K, V] to_array(self : T[K, V]) -> Array[(K, V)] {
   let arr = []
   self.each(fn(k, v) { arr.push((k, v)) })
   arr
@@ -127,7 +127,7 @@ pub fn to_array[K, V](self : T[K, V]) -> Array[(K, V)] {
 let ratio = 5
 
 ///|
-fn balance[K : Compare, V](
+fn[K : Compare, V] balance(
   key : K,
   value : V,
   l : T[K, V],

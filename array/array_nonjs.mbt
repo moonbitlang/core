@@ -32,7 +32,7 @@
 ///   inspect!(physical_equal(original, copied), content="false")
 /// }
 /// ```
-pub fn copy[T](self : Array[T]) -> Array[T] {
+pub fn[T] copy(self : Array[T]) -> Array[T] {
   let len = self.length()
   if len == 0 {
     []

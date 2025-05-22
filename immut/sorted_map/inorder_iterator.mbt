@@ -16,14 +16,14 @@
 priv type InorderIterator[K, V] Array[T[K, V]]
 
 ///|
-fn InorderIterator::new[K, V](root : T[K, V]) -> InorderIterator[K, V] {
+fn[K, V] InorderIterator::new(root : T[K, V]) -> InorderIterator[K, V] {
   let it = InorderIterator([])
   it.move_left(root)
   it
 }
 
 ///|
-fn InorderIterator::move_left[K, V](
+fn[K, V] InorderIterator::move_left(
   self : InorderIterator[K, V],
   node : T[K, V]
 ) -> Unit {
@@ -37,7 +37,7 @@ fn InorderIterator::move_left[K, V](
 }
 
 ///|
-fn InorderIterator::next[K, V](self : InorderIterator[K, V]) -> (K, V)? {
+fn[K, V] InorderIterator::next(self : InorderIterator[K, V]) -> (K, V)? {
   guard self._.pop() is Some(curr) else { return None }
   guard curr is Tree(key, _, right, value~, ..)
   self.move_left(right)

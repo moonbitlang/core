@@ -59,7 +59,7 @@ test "power_2_above" {
 ///   inspect!(map.is_empty(), content="true")
 /// }
 /// ```
-pub fn new[K, V](capacity~ : Int = 8) -> T[K, V] {
+pub fn[K, V] new(capacity~ : Int = 8) -> T[K, V] {
   let capacity = power_2_above(8, capacity)
   {
     size: 0,
@@ -91,7 +91,7 @@ pub fn new[K, V](capacity~ : Int = 8) -> T[K, V] {
 ///   inspect!(map.get(2), content="Some(\"two\")")
 /// }
 /// ```
-pub fn from_array[K : Hash + Eq, V](arr : Array[(K, V)]) -> T[K, V] {
+pub fn[K : Hash + Eq, V] from_array(arr : Array[(K, V)]) -> T[K, V] {
   let m = new(capacity=arr.length())
   arr.each(fn(e) { m.set(e.0, e.1) })
   m
@@ -119,12 +119,12 @@ pub fn from_array[K : Hash + Eq, V](arr : Array[(K, V)]) -> T[K, V] {
 ///   inspect!(map.get("key"), content="Some(24)")
 /// }
 /// ```
-pub fn set[K : Hash + Eq, V](self : T[K, V], key : K, value : V) -> Unit {
+pub fn[K : Hash + Eq, V] set(self : T[K, V], key : K, value : V) -> Unit {
   self.set_with_hash(key, value, key.hash())
 }
 
 ///|
-fn set_with_hash[K : Eq, V](
+fn[K : Eq, V] set_with_hash(
   self : T[K, V],
   key : K,
   value : V,
@@ -180,7 +180,7 @@ fn set_with_hash[K : Eq, V](
 ///   inspect!(map.get("key"), content="Some(42)")
 /// }
 /// ```
-pub fn op_set[K : Hash + Eq, V](self : T[K, V], key : K, value : V) -> Unit {
+pub fn[K : Hash + Eq, V] op_set(self : T[K, V], key : K, value : V) -> Unit {
   self.set(key, value)
 }
 
@@ -203,7 +203,7 @@ pub fn op_set[K : Hash + Eq, V](self : T[K, V], key : K, value : V) -> Unit {
 ///   inspect!(map.get("nonexistent"), content="None")
 /// }
 /// ```
-pub fn get[K : Hash + Eq, V](self : T[K, V], key : K) -> V? {
+pub fn[K : Hash + Eq, V] get(self : T[K, V], key : K) -> V? {
   // self.get_with_hash(key, key.hash())
   let hash = key.hash()
   for i = 0, idx = hash & self.capacity_mask {
@@ -219,7 +219,7 @@ pub fn get[K : Hash + Eq, V](self : T[K, V], key : K) -> V? {
 }
 
 ///|
-fn get_with_hash[K : Hash + Eq, V](self : T[K, V], key : K, hash : Int) -> V? {
+fn[K : Hash + Eq, V] get_with_hash(self : T[K, V], key : K, hash : Int) -> V? {
   for i = 0, idx = hash & self.capacity_mask {
     guard self.entries[idx] is Some(entry) else { break None }
     if entry.hash == hash && entry.key == key {
@@ -255,7 +255,7 @@ fn get_with_hash[K : Hash + Eq, V](self : T[K, V], key : K, hash : Int) -> V? {
 /// }
 /// ```
 #deprecated("Use `get` instead. `op_get` will return `V` instead of `Option[V]` in the future.")
-pub fn op_get[K : Hash + Eq, V](self : T[K, V], key : K) -> V? {
+pub fn[K : Hash + Eq, V] op_get(self : T[K, V], key : K) -> V? {
   self.get(key)
 }
 
@@ -285,7 +285,7 @@ pub fn op_get[K : Hash + Eq, V](self : T[K, V], key : K) -> V? {
 /// }
 /// ```
 /// TODO: improve performance to avoid calling `get_with_hash` twice
-pub fn get_or_init[K : Hash + Eq, V](
+pub fn[K : Hash + Eq, V] get_or_init(
   self : T[K, V],
   key : K,
   init : () -> V
@@ -323,7 +323,7 @@ pub fn get_or_init[K : Hash + Eq, V](
 ///   inspect!(map.get_or_default("c", 0), content="0")
 /// }
 /// ```
-pub fn get_or_default[K : Hash + Eq, V](
+pub fn[K : Hash + Eq, V] get_or_default(
   self : T[K, V],
   key : K,
   default : V
@@ -360,7 +360,7 @@ pub fn get_or_default[K : Hash + Eq, V](
 ///   inspect!(map.contains("c"), content="false")
 /// }
 /// ```
-pub fn contains[K : Hash + Eq, V](self : T[K, V], key : K) -> Bool {
+pub fn[K : Hash + Eq, V] contains(self : T[K, V], key : K) -> Bool {
   let hash = key.hash()
   for i = 0, idx = hash & self.capacity_mask {
     guard self.entries[idx] is Some(entry) else { return false }
@@ -375,7 +375,7 @@ pub fn contains[K : Hash + Eq, V](self : T[K, V], key : K) -> Bool {
 }
 
 ///|
-pub fn contains_kv[K : Hash + Eq, V : Eq](
+pub fn[K : Hash + Eq, V : Eq] contains_kv(
   self : T[K, V],
   key : K,
   value : V
@@ -414,7 +414,7 @@ pub fn contains_kv[K : Hash + Eq, V : Eq](
 ///   inspect!(map.size(), content="1")
 /// }
 /// ```
-pub fn remove[K : Hash + Eq, V](self : T[K, V], key : K) -> Unit {
+pub fn[K : Hash + Eq, V] remove(self : T[K, V], key : K) -> Unit {
   let hash = key.hash()
   for i = 0, idx = hash & self.capacity_mask {
     match self.entries[idx] {
@@ -436,7 +436,7 @@ pub fn remove[K : Hash + Eq, V](self : T[K, V], key : K) -> Unit {
 }
 
 ///|
-fn shift_back[K : Hash, V](self : T[K, V], start_index : Int) -> Unit {
+fn[K : Hash, V] shift_back(self : T[K, V], start_index : Int) -> Unit {
   for prev = start_index, curr = (start_index + 1) & self.capacity_mask {
     match self.entries[curr] {
       Some({ psl, hash, key, value }) => {
@@ -453,7 +453,7 @@ fn shift_back[K : Hash, V](self : T[K, V], start_index : Int) -> Unit {
 }
 
 ///|
-fn grow[K : Eq, V](self : T[K, V]) -> Unit {
+fn[K : Eq, V] grow(self : T[K, V]) -> Unit {
   let old_entries = self.entries
   let new_capacity = self.capacity << 1
   self.entries = FixedArray::make(new_capacity, None)
@@ -488,7 +488,7 @@ fn grow[K : Eq, V](self : T[K, V]) -> Unit {
 ///   inspect!(map.get(2), content="Some(\"two\")")
 /// }
 /// ```
-pub fn of[K : Eq + Hash, V](arr : FixedArray[(K, V)]) -> T[K, V] {
+pub fn[K : Eq + Hash, V] of(arr : FixedArray[(K, V)]) -> T[K, V] {
   let m = new(capacity=arr.length())
   arr.each(fn(e) { m.set(e.0, e.1) })
   m

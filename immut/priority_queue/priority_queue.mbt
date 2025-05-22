@@ -20,7 +20,7 @@
 /// let queue = @priority_queue.new()
 /// assert_eq!(queue.push(1).length(), 1)
 /// ```
-pub fn new[A : Compare]() -> T[A] {
+pub fn[A : Compare] new() -> T[A] {
   { node: Empty, size: 0 }
 }
 
@@ -32,7 +32,7 @@ pub fn new[A : Compare]() -> T[A] {
 /// let queue = @priority_queue.of([1, 2, 3, 4, 5])
 /// assert_eq!(queue.length(), 5)
 /// ```
-pub fn from_array[A : Compare](array : Array[A]) -> T[A] {
+pub fn[A : Compare] from_array(array : Array[A]) -> T[A] {
   let mut pq = new()
   for i in 0..<array.length() {
     pq = pq.push(array[i])
@@ -41,7 +41,7 @@ pub fn from_array[A : Compare](array : Array[A]) -> T[A] {
 }
 
 ///|
-pub fn to_array[A : Compare](self : T[A]) -> Array[A] {
+pub fn[A : Compare] to_array(self : T[A]) -> Array[A] {
   let arr : Array[A] = []
   fn go(x : Node[A]) {
     match x {
@@ -61,7 +61,7 @@ pub fn to_array[A : Compare](self : T[A]) -> Array[A] {
 }
 
 ///|
-pub fn iter[A : Compare](self : T[A]) -> Iter[A] {
+pub fn[A : Compare] iter(self : T[A]) -> Iter[A] {
   Iter::new(fn(yield_) {
     let arr = self.to_array()
     for i in 0..<arr.length() {
@@ -74,7 +74,7 @@ pub fn iter[A : Compare](self : T[A]) -> Iter[A] {
 }
 
 ///|
-pub fn T::from_iter[A : Compare](iter : Iter[A]) -> T[A] {
+pub fn[A : Compare] T::from_iter(iter : Iter[A]) -> T[A] {
   iter.fold(init=new(), fn(s, e) { s.push(e) })
 }
 
@@ -109,7 +109,7 @@ fn next(self : Path) -> Path {
 /// let first = queue.pop()
 /// assert_eq!(first, Some(@priority_queue.of([1, 2, 3])))
 /// ```
-pub fn pop[A : Compare](self : T[A]) -> T[A]? {
+pub fn[A : Compare] pop(self : T[A]) -> T[A]? {
   match self.node {
     Empty => None
     Leaf(_) => Some({ node: Empty, size: 0 })
@@ -121,7 +121,7 @@ pub fn pop[A : Compare](self : T[A]) -> T[A]? {
 }
 
 ///|
-fn remove_last_leaf[A : Compare](self : Node[A], path : Path) -> (A, Node[A]) {
+fn[A : Compare] remove_last_leaf(self : Node[A], path : Path) -> (A, Node[A]) {
   match self {
     Empty => abort("Priority queue is empty!")
     Leaf(a) => (a, Empty)
@@ -139,7 +139,7 @@ fn remove_last_leaf[A : Compare](self : Node[A], path : Path) -> (A, Node[A]) {
 
 ///|
 /// require: self is not empty
-fn change_and_down[A : Compare](self : Node[A], value : A) -> Node[A] {
+fn[A : Compare] change_and_down(self : Node[A], value : A) -> Node[A] {
   match self {
     Empty => abort("unreachable")
     Leaf(_) => Leaf(value)
@@ -174,7 +174,7 @@ fn change_and_down[A : Compare](self : Node[A], value : A) -> Node[A] {
 /// assert_eq!(first, @priority_queue.of([1, 2, 3]))
 /// ```
 #internal(unsafe, "Panics if the queue is empty.")
-pub fn unsafe_pop[A : Compare](self : T[A]) -> T[A] {
+pub fn[A : Compare] unsafe_pop(self : T[A]) -> T[A] {
   match self.node {
     Empty => abort("Priority queue is empty!")
     Leaf(_) => { node: Empty, size: 0 }
@@ -188,7 +188,7 @@ pub fn unsafe_pop[A : Compare](self : T[A]) -> T[A] {
 ///|
 #deprecated("Use `unsafe_pop` instead")
 #coverage.skip
-pub fn pop_exn[A : Compare](self : T[A]) -> T[A] {
+pub fn[A : Compare] pop_exn(self : T[A]) -> T[A] {
   unsafe_pop(self)
 }
 
@@ -200,7 +200,7 @@ pub fn pop_exn[A : Compare](self : T[A]) -> T[A] {
 /// let queue = @priority_queue.new()
 /// assert_eq!(queue.push(1).length(), 1)
 /// ```
-pub fn push[A : Compare](self : T[A], value : A) -> T[A] {
+pub fn[A : Compare] push(self : T[A], value : A) -> T[A] {
   match self.node {
     Empty => { node: Leaf(value), size: 1 }
     Leaf(_) | Branch(_) => {
@@ -211,7 +211,7 @@ pub fn push[A : Compare](self : T[A], value : A) -> T[A] {
 }
 
 ///|
-fn Node::push[A : Compare](self : Node[A], value : A, path : Path) -> Node[A] {
+fn[A : Compare] Node::push(self : Node[A], value : A, path : Path) -> Node[A] {
   match self {
     Empty => Leaf(value)
     Leaf(a) => {
@@ -237,7 +237,7 @@ fn Node::push[A : Compare](self : Node[A], value : A, path : Path) -> Node[A] {
 /// let queue = @priority_queue.of([1, 2, 3, 4])
 /// assert_eq!(queue.peek(), Some(4))
 /// ```
-pub fn peek[A](self : T[A]) -> A? {
+pub fn[A] peek(self : T[A]) -> A? {
   match self.node {
     Empty => None
     Leaf(a) => Some(a)
@@ -254,7 +254,7 @@ pub fn peek[A](self : T[A]) -> A? {
 /// assert_eq!(queue.is_empty(), true)
 /// assert_eq!(queue.push(1).is_empty(), false)
 /// ```
-pub fn is_empty[A](self : T[A]) -> Bool {
+pub fn[A] is_empty(self : T[A]) -> Bool {
   self.node is Empty
 }
 
@@ -267,12 +267,12 @@ pub fn is_empty[A](self : T[A]) -> Bool {
 /// assert_eq!(queue.length(), 0)
 /// assert_eq!(queue.push(1).length(), 1)
 /// ```
-pub fn length[A](self : T[A]) -> Int {
+pub fn[A] length(self : T[A]) -> Int {
   self.size
 }
 
 ///|
-pub fn of[A : Compare](arr : FixedArray[A]) -> T[A] {
+pub fn[A : Compare] of(arr : FixedArray[A]) -> T[A] {
   let mut pq = new()
   for i in 0..<arr.length() {
     pq = pq.push(arr[i])

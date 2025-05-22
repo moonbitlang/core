@@ -5,50 +5,50 @@ import(
 )
 
 // Values
-fn capacity[K, V](T[K, V]) -> Int
+fn[K, V] capacity(T[K, V]) -> Int
 
-fn clear[K, V](T[K, V]) -> Unit
+fn[K, V] clear(T[K, V]) -> Unit
 
-fn contains[K : Hash + Eq, V](T[K, V], K) -> Bool
+fn[K : Hash + Eq, V] contains(T[K, V], K) -> Bool
 
-fn contains_kv[K : Hash + Eq, V : Eq](T[K, V], K, V) -> Bool
+fn[K : Hash + Eq, V : Eq] contains_kv(T[K, V], K, V) -> Bool
 
-fn each[K, V](T[K, V], (K, V) -> Unit) -> Unit
+fn[K, V] each(T[K, V], (K, V) -> Unit) -> Unit
 
-fn eachi[K, V](T[K, V], (Int, K, V) -> Unit) -> Unit
+fn[K, V] eachi(T[K, V], (Int, K, V) -> Unit) -> Unit
 
-fn from_array[K : Hash + Eq, V](Array[(K, V)]) -> T[K, V]
+fn[K : Hash + Eq, V] from_array(Array[(K, V)]) -> T[K, V]
 
-fn from_iter[K : Hash + Eq, V](Iter[(K, V)]) -> T[K, V]
+fn[K : Hash + Eq, V] from_iter(Iter[(K, V)]) -> T[K, V]
 
-fn get[K : Hash + Eq, V](T[K, V], K) -> V?
+fn[K : Hash + Eq, V] get(T[K, V], K) -> V?
 
-fn get_or_default[K : Hash + Eq, V](T[K, V], K, V) -> V
+fn[K : Hash + Eq, V] get_or_default(T[K, V], K, V) -> V
 
-fn get_or_init[K : Hash + Eq, V](T[K, V], K, () -> V) -> V
+fn[K : Hash + Eq, V] get_or_init(T[K, V], K, () -> V) -> V
 
-fn is_empty[K, V](T[K, V]) -> Bool
+fn[K, V] is_empty(T[K, V]) -> Bool
 
-fn iter[K, V](T[K, V]) -> Iter[(K, V)]
+fn[K, V] iter(T[K, V]) -> Iter[(K, V)]
 
-fn iter2[K, V](T[K, V]) -> Iter2[K, V]
+fn[K, V] iter2(T[K, V]) -> Iter2[K, V]
 
-fn new[K, V](capacity~ : Int = ..) -> T[K, V]
+fn[K, V] new(capacity~ : Int = ..) -> T[K, V]
 
-fn of[K : Eq + Hash, V](FixedArray[(K, V)]) -> T[K, V]
+fn[K : Eq + Hash, V] of(FixedArray[(K, V)]) -> T[K, V]
 
 #deprecated
-fn op_get[K : Hash + Eq, V](T[K, V], K) -> V?
+fn[K : Hash + Eq, V] op_get(T[K, V], K) -> V?
 
-fn op_set[K : Hash + Eq, V](T[K, V], K, V) -> Unit
+fn[K : Hash + Eq, V] op_set(T[K, V], K, V) -> Unit
 
-fn remove[K : Hash + Eq, V](T[K, V], K) -> Unit
+fn[K : Hash + Eq, V] remove(T[K, V], K) -> Unit
 
-fn set[K : Hash + Eq, V](T[K, V], K, V) -> Unit
+fn[K : Hash + Eq, V] set(T[K, V], K, V) -> Unit
 
-fn size[K, V](T[K, V]) -> Int
+fn[K, V] size(T[K, V]) -> Int
 
-fn to_array[K, V](T[K, V]) -> Array[(K, V)]
+fn[K, V] to_array(T[K, V]) -> Array[(K, V)]
 
 // Types and methods
 type T[K, V]

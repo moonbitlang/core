@@ -24,7 +24,7 @@
 /// arr.sort_by_key(fn (x) {-x})
 /// assert_eq!(arr, [5, 4, 3, 2, 1])
 /// ```
-pub fn FixedArray::sort_by_key[T, K : Compare](
+pub fn[T, K : Compare] FixedArray::sort_by_key(
   self : FixedArray[T],
   map : (T) -> K
 ) -> Unit {
@@ -58,7 +58,7 @@ test "@array.sort_by_key/basic" {
 /// arr.sort_by(fn (a, b) { a - b })
 /// assert_eq!(arr, [1, 2, 3, 4, 5])
 /// ```
-pub fn FixedArray::sort_by[T](
+pub fn[T] FixedArray::sort_by(
   self : FixedArray[T],
   cmp : (T, T) -> Int
 ) -> Unit {
@@ -123,7 +123,7 @@ test "sort_by: mixed positive and negative numbers" {
 }
 
 ///|
-fn fixed_quick_sort_by[T](
+fn[T] fixed_quick_sort_by(
   arr : FixedArraySlice[T],
   cmp : (T, T) -> Int,
   pred : T?,
@@ -194,7 +194,7 @@ fn fixed_quick_sort_by[T](
 /// It will only tolerate at most 8 unsorted elements. The time complexity is O(n).
 ///
 /// Returns whether the array is sorted.
-fn fixed_try_bubble_sort_by[T](
+fn[T] fixed_try_bubble_sort_by(
   arr : FixedArraySlice[T],
   cmp : (T, T) -> Int
 ) -> Bool {
@@ -222,7 +222,7 @@ fn fixed_try_bubble_sort_by[T](
 /// It will only tolerate at most 8 unsorted elements. The time complexity is O(n).
 ///
 /// Returns whether the array is sorted.
-fn fixed_bubble_sort_by[T](
+fn[T] fixed_bubble_sort_by(
   arr : FixedArraySlice[T],
   cmp : (T, T) -> Int
 ) -> Unit {
@@ -247,7 +247,7 @@ test "try_bubble_sort" {
 }
 
 ///|
-fn fixed_partition_by[T](
+fn[T] fixed_partition_by(
   arr : FixedArraySlice[T],
   cmp : (T, T) -> Int,
   pivot_index : Int
@@ -275,7 +275,7 @@ fn fixed_partition_by[T](
 /// It avoids worst case performance by choosing a pivot that is likely to be close to the median.
 ///
 /// Returns the pivot index and whether the array is likely sorted.
-fn fixed_choose_pivot_by[T](
+fn[T] fixed_choose_pivot_by(
   arr : FixedArraySlice[T],
   cmp : (T, T) -> Int
 ) -> (Int, Bool) {
@@ -316,7 +316,7 @@ fn fixed_choose_pivot_by[T](
 }
 
 ///|
-fn fixed_heap_sort_by[T](arr : FixedArraySlice[T], cmp : (T, T) -> Int) -> Unit {
+fn[T] fixed_heap_sort_by(arr : FixedArraySlice[T], cmp : (T, T) -> Int) -> Unit {
   let len = arr.length()
   for i = len / 2 - 1; i >= 0; i = i - 1 {
     fixed_sift_down_by(arr, i, cmp)
@@ -328,7 +328,7 @@ fn fixed_heap_sort_by[T](arr : FixedArraySlice[T], cmp : (T, T) -> Int) -> Unit 
 }
 
 ///|
-fn fixed_sift_down_by[T](
+fn[T] fixed_sift_down_by(
   arr : FixedArraySlice[T],
   index : Int,
   cmp : (T, T) -> Int

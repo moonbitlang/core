@@ -14,7 +14,7 @@
 
 ///|
 /// create a reference from value
-pub fn Ref::new[T](x : T) -> Ref[T] {
+pub fn[T] Ref::new(x : T) -> Ref[T] {
   { val: x }
 }
 
@@ -24,7 +24,7 @@ test "to_string" {
 }
 
 ///| same as `Ref::new`
-pub fn new[T](x : T) -> Ref[T] {
+pub fn[T] new(x : T) -> Ref[T] {
   { val: x }
 }
 
@@ -36,7 +36,7 @@ pub fn new[T](x : T) -> Ref[T] {
 /// ```
 /// assert_eq!(@ref.new(1).map(fn(a){ a + 1 }).val, 2)
 /// ```
-pub fn map[T, R](self : Ref[T], f : (T) -> R) -> Ref[R] {
+pub fn[T, R] map(self : Ref[T], f : (T) -> R) -> Ref[R] {
   { val: f(self.val) }
 }
 
@@ -61,7 +61,7 @@ pub fn map[T, R](self : Ref[T], f : (T) -> R) -> Ref[R] {
 /// x.protect(2, fn () { x.val = 3 })
 /// assert_eq!(x.val, 1)
 /// ```
-pub fn protect[T, R](self : Ref[T], a : T, f : () -> R) -> R {
+pub fn[T, R] protect(self : Ref[T], a : T, f : () -> R) -> R {
   let old = self.val
   self.val = a
   let r = f()
@@ -81,7 +81,7 @@ pub fn protect[T, R](self : Ref[T], a : T, f : () -> R) -> R {
 /// assert_eq!(x.val, 2)
 /// assert_eq!(y.val, 1)
 /// ```
-pub fn swap[T](self : Ref[T], that : Ref[T]) -> Unit {
+pub fn[T] swap(self : Ref[T], that : Ref[T]) -> Unit {
   let tmp = self.val
   self.val = that.val
   that.val = tmp
@@ -97,7 +97,7 @@ test "swap" {
 }
 
 ///|
-pub fn update[T](self : Ref[T], f : (T) -> T) -> Unit {
+pub fn[T] update(self : Ref[T], f : (T) -> T) -> Unit {
   self.val = f(self.val)
 }
 

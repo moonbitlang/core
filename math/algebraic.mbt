@@ -38,7 +38,7 @@
 /// assert_eq!(@math.maximum(1, 2), 2)
 /// assert_eq!(@math.maximum(2, 2), 2)
 /// ```
-pub fn maximum[T : Compare](x : T, y : T) -> T {
+pub fn[T : Compare] maximum(x : T, y : T) -> T {
   if x > y {
     x
   } else {
@@ -57,7 +57,7 @@ pub fn maximum[T : Compare](x : T, y : T) -> T {
 /// assert_eq!(@math.minimum(1, 2), 1)
 /// assert_eq!(@math.minimum(2, 2), 2)
 /// ```
-pub fn minimum[T : Compare](x : T, y : T) -> T {
+pub fn[T : Compare] minimum(x : T, y : T) -> T {
   if x > y {
     y
   } else {

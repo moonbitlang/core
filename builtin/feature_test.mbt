@@ -37,7 +37,7 @@ impl Range for String with range(lo, hi) {
 }
 
 ///|
-fn my_range[T : Range](lo : T, hi : T) -> RangeImpl[T] {
+fn[T : Range] my_range(lo : T, hi : T) -> RangeImpl[T] {
   T::range(lo, hi)
 }
 // Note when use trait to encode overloading:

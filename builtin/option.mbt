@@ -22,7 +22,7 @@ pub impl[X : Eq] Eq for X? with op_equal(self, other) {
 }
 
 ///|
-pub fn Option::to_string[X : Show](self : X?) -> String {
+pub fn[X : Show] Option::to_string(self : X?) -> String {
   match self {
     None => "None"
     Some(x) => "Some(" + x.to_string() + ")"
@@ -33,7 +33,7 @@ pub fn Option::to_string[X : Show](self : X?) -> String {
 /// Extract the value in `Some`.
 /// 
 /// If the value is `None`, it throws a panic.
-pub fn Option::unwrap[X](self : X?) -> X {
+pub fn[X] Option::unwrap(self : X?) -> X {
   match self {
     None => panic()
     Some(x) => x

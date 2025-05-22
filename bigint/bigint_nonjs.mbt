@@ -1225,7 +1225,7 @@ fn BigInt::copy(self : BigInt) -> BigInt {
 }
 
 ///|
-fn max[T : Compare](a : T, b : T) -> T {
+fn[T : Compare] max(a : T, b : T) -> T {
   if a > b {
     a
   } else {

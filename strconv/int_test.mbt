@@ -20,9 +20,7 @@ let base_err = "invalid base"
 
 ///|
 fn parse_as_result(s : String, base~ : Int) -> Result[Int64, String] {
-  try {
-    @strconv.parse_int64!(s, base~) |> Ok
-  } catch {
+  try @strconv.parse_int64!(s, base~) |> Ok catch {
     StrConvError(err) => Err(err)
   }
 }

@@ -148,12 +148,12 @@ pub fn to_double(self : T) -> Double {
 }
 
 ///|
-fn nan_error[T]() -> T!RationalError {
+fn[T] nan_error() -> T!RationalError {
   raise RationalError("Rational::from_double: cannot convert NaN")
 }
 
 ///|
-fn overflow_error[T]() -> T!RationalError {
+fn[T] overflow_error() -> T!RationalError {
   raise RationalError("Rational::from_double: overflow")
 }
 

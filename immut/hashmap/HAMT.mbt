@@ -35,19 +35,19 @@ let segment_length : Int = 5
 let segment_mask : Int = 0b11111
 
 ///|
-pub fn new[K, V]() -> T[K, V] {
+pub fn[K, V] new() -> T[K, V] {
   Empty
 }
 
 ///|
 /// Create a map with a single key-value pair.
-pub fn singleton[K, V](key : K, value : V) -> T[K, V] {
+pub fn[K, V] singleton(key : K, value : V) -> T[K, V] {
   Leaf(key, value)
 }
 
 ///|
 /// Check if the map contains a key.
-pub fn contains[K : Eq + Hash, V](self : T[K, V], key : K) -> Bool {
+pub fn[K : Eq + Hash, V] contains(self : T[K, V], key : K) -> Bool {
   match self.get(key) {
     Some(_) => true
     None => false
@@ -58,13 +58,13 @@ pub fn contains[K : Eq + Hash, V](self : T[K, V], key : K) -> Bool {
 /// Lookup a key from a hash map
 #deprecated("Use `get()` instead")
 #coverage.skip
-pub fn find[K : Eq + Hash, V](self : T[K, V], key : K) -> V? {
+pub fn[K : Eq + Hash, V] find(self : T[K, V], key : K) -> V? {
   self.get(key)
 }
 
 ///|
 /// Lookup a key from a hash map
-pub fn get[K : Eq + Hash, V](self : T[K, V], key : K) -> V? {
+pub fn[K : Eq + Hash, V] get(self : T[K, V], key : K) -> V? {
   loop self, key.hash() {
     Empty, _ => None
     Leaf(key1, value), _ => if key == key1 { Some(value) } else { None }
@@ -85,12 +85,12 @@ pub fn get[K : Eq + Hash, V](self : T[K, V], key : K) -> V? {
 
 ///|
 #deprecated("Use `get` instead. `op_get` will return `V` instead of `Option[V]` in the future.")
-pub fn op_get[K : Eq + Hash, V](self : T[K, V], key : K) -> V? {
+pub fn[K : Eq + Hash, V] op_get(self : T[K, V], key : K) -> V? {
   self.get(key)
 }
 
 ///|
-fn add_with_hash[K : Eq, V](
+fn[K : Eq, V] add_with_hash(
   self : T[K, V],
   key : K,
   depth : Int,
@@ -150,7 +150,7 @@ fn add_with_hash[K : Eq, V](
 
 ///|
 /// Filter values that satisfy the predicate
-pub fn filter[K : Eq + Hash, V](self : T[K, V], pred : (V) -> Bool) -> T[K, V] {
+pub fn[K : Eq + Hash, V] filter(self : T[K, V], pred : (V) -> Bool) -> T[K, V] {
   match self {
     Empty => Empty
     Leaf(k, v) => if pred(v) { Leaf(k, v) } else { Empty }
@@ -176,7 +176,7 @@ pub fn filter[K : Eq + Hash, V](self : T[K, V], pred : (V) -> Bool) -> T[K, V] {
 
 ///|
 /// Fold the values in the map
-pub fn fold[K, V, A](self : T[K, V], init~ : A, f : (A, V) -> A) -> A {
+pub fn[K, V, A] fold(self : T[K, V], init~ : A, f : (A, V) -> A) -> A {
   fold_with_key(self, fn(acc, _k, v) { f(acc, v) }, init~)
 }
 
@@ -185,7 +185,7 @@ pub fn fold[K, V, A](self : T[K, V], init~ : A, f : (A, V) -> A) -> A {
 /// TODO: can not mark `f` as `#locals(f)` because 
 /// it will be shadowed by the `f` in the `fold_with_key` function
 /// TO make it more useful in the future, we may need propagate
-pub fn fold_with_key[K, V, A](
+pub fn[K, V, A] fold_with_key(
   self : T[K, V],
   init~ : A,
   f : (A, K, V) -> A
@@ -210,13 +210,13 @@ pub fn fold_with_key[K, V, A](
 
 ///|
 /// Maps over the values in the map
-pub fn map[K : Eq + Hash, V, A](self : T[K, V], f : (V) -> A) -> T[K, A] {
+pub fn[K : Eq + Hash, V, A] map(self : T[K, V], f : (V) -> A) -> T[K, A] {
   map_with_key(self, fn(_k, v) { f(v) })
 }
 
 ///|
 /// Maps over the key-value pairs in the map
-pub fn map_with_key[K : Eq + Hash, V, A](
+pub fn[K : Eq + Hash, V, A] map_with_key(
   self : T[K, V],
   f : (K, V) -> A
 ) -> T[K, A] {
@@ -243,18 +243,18 @@ pub fn map_with_key[K : Eq + Hash, V, A](
 /// Add a key-value pair to the hashmap.
 ///
 /// If a pair with the same key already exists, the old one is replaced
-pub fn add[K : Eq + Hash, V](self : T[K, V], key : K, value : V) -> T[K, V] {
+pub fn[K : Eq + Hash, V] add(self : T[K, V], key : K, value : V) -> T[K, V] {
   self.add_with_hash(key, 0, key.hash(), value)
 }
 
 ///|
 /// Remove an element from a map
-pub fn remove[K : Eq + Hash, V](self : T[K, V], key : K) -> T[K, V] {
+pub fn[K : Eq + Hash, V] remove(self : T[K, V], key : K) -> T[K, V] {
   self.remove_with_hash(key, 0, key.hash())
 }
 
 ///|
-fn remove_with_hash[K : Eq, V](
+fn[K : Eq, V] remove_with_hash(
   self : T[K, V],
   key : K,
   depth : Int,
@@ -293,7 +293,7 @@ fn remove_with_hash[K : Eq, V](
 /// Calculate the size of a map.
 ///
 /// WARNING: this operation is `O(N)` in map size
-pub fn size[K, V](self : T[K, V]) -> Int {
+pub fn[K, V] size(self : T[K, V]) -> Int {
   match self {
     Empty => 0
     Leaf(_) => 1
@@ -311,7 +311,7 @@ pub fn size[K, V](self : T[K, V]) -> Int {
 
 ///|
 /// Union two hashmaps
-pub fn union[K : Eq + Hash, V](self : T[K, V], other : T[K, V]) -> T[K, V] {
+pub fn[K : Eq + Hash, V] union(self : T[K, V], other : T[K, V]) -> T[K, V] {
   match (self, other) {
     (_, Empty) => self
     (Empty, _) => other
@@ -331,7 +331,7 @@ pub fn union[K : Eq + Hash, V](self : T[K, V], other : T[K, V]) -> T[K, V] {
 
 ///|
 /// Iterate through the elements in a hash map
-pub fn each[K, V](self : T[K, V], f : (K, V) -> Unit) -> Unit {
+pub fn[K, V] each(self : T[K, V], f : (K, V) -> Unit) -> Unit {
   match self {
     Empty => ()
     Leaf(k, v) => f(k, v)
@@ -342,19 +342,19 @@ pub fn each[K, V](self : T[K, V], f : (K, V) -> Unit) -> Unit {
 
 ///|
 /// Returns all keys of the map
-pub fn keys[K, V](self : T[K, V]) -> Iter[K] {
+pub fn[K, V] keys(self : T[K, V]) -> Iter[K] {
   self.iter().map(fn { (k, _) => k })
 }
 
 ///|
 /// Returns all values of the map
-pub fn elems[K, V](self : T[K, V]) -> Iter[V] {
+pub fn[K, V] elems(self : T[K, V]) -> Iter[V] {
   self.iter().map(fn { (_, v) => v })
 }
 
 ///|
 /// Converted to Iter
-pub fn iter[K, V](self : T[K, V]) -> Iter[(K, V)] {
+pub fn[K, V] iter(self : T[K, V]) -> Iter[(K, V)] {
   match self {
     Empty => Iter::empty()
     Leaf(k, v) => Iter::singleton((k, v))
@@ -364,7 +364,7 @@ pub fn iter[K, V](self : T[K, V]) -> Iter[(K, V)] {
 }
 
 ///|
-pub fn iter2[K, V](self : T[K, V]) -> Iter2[K, V] {
+pub fn[K, V] iter2(self : T[K, V]) -> Iter2[K, V] {
   Iter2::new(fn(yield_) {
     for kv in self {
       guard yield_(kv.0, kv.1) is IterContinue else { break IterEnd }
@@ -376,7 +376,7 @@ pub fn iter2[K, V](self : T[K, V]) -> Iter2[K, V] {
 }
 
 ///|
-pub fn from_iter[K : Eq + Hash, V](iter : Iter[(K, V)]) -> T[K, V] {
+pub fn[K : Eq + Hash, V] from_iter(iter : Iter[(K, V)]) -> T[K, V] {
   iter.fold(init=new(), fn(m, e) { m.add(e.0, e.1) })
 }
 
@@ -386,7 +386,7 @@ pub impl[K : Show, V : Show] Show for T[K, V] with output(self, logger) {
 }
 
 ///|
-pub fn from_array[K : Eq + Hash, V](arr : Array[(K, V)]) -> T[K, V] {
+pub fn[K : Eq + Hash, V] from_array(arr : Array[(K, V)]) -> T[K, V] {
   loop arr.length(), new() {
     0, map => map
     n, map => {
@@ -398,7 +398,7 @@ pub fn from_array[K : Eq + Hash, V](arr : Array[(K, V)]) -> T[K, V] {
 
 ///|
 /// Convert to an array of key-value pairs.
-pub fn to_array[K, V](self : T[K, V]) -> Array[(K, V)] {
+pub fn[K, V] to_array(self : T[K, V]) -> Array[(K, V)] {
   let arr = Array::new(capacity=self.size())
   self.each(fn(k, v) { arr.push((k, v)) })
   arr
@@ -413,7 +413,7 @@ pub impl[K : Eq + Hash + @quickcheck.Arbitrary, V : @quickcheck.Arbitrary] @quic
 }
 
 ///|
-pub fn of[K : Eq + Hash, V](arr : FixedArray[(K, V)]) -> T[K, V] {
+pub fn[K : Eq + Hash, V] of(arr : FixedArray[(K, V)]) -> T[K, V] {
   loop arr.length(), new() {
     0, map => map
     n, map => {

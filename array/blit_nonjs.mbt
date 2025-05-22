@@ -33,7 +33,7 @@
 ///   inspect!(physical_equal(original, copied), content="false")
 /// }
 /// ```
-pub fn FixedArray::copy[T](self : FixedArray[T]) -> FixedArray[T] {
+pub fn[T] FixedArray::copy(self : FixedArray[T]) -> FixedArray[T] {
   let len = self.length()
   if len == 0 {
     []

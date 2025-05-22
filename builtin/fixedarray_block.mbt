@@ -35,7 +35,7 @@
 ///
 #intrinsic("%fixedarray.copy")
 #coverage.skip
-pub fn FixedArray::unsafe_blit[A](
+pub fn[A] FixedArray::unsafe_blit(
   dst : FixedArray[A],
   dst_offset : Int,
   src : FixedArray[A],
@@ -58,7 +58,7 @@ pub fn FixedArray::unsafe_blit[A](
 /// FixedArray[T] instead of UninitializedArray[T].
 #intrinsic("%fixedarray.copy")
 #coverage.skip
-fn UninitializedArray::unsafe_blit_fixed[T](
+fn[T] UninitializedArray::unsafe_blit_fixed(
   dst : UninitializedArray[T],
   dst_offset : Int,
   src : FixedArray[T],
@@ -105,7 +105,7 @@ fn UninitializedArray::unsafe_blit_fixed[T](
 ///   ignore(src.blit_to(dst, len=4)) // Panics: length out of bounds
 /// }
 /// ```
-pub fn FixedArray::blit_to[A](
+pub fn[A] FixedArray::blit_to(
   self : FixedArray[A],
   dst : FixedArray[A],
   len~ : Int,

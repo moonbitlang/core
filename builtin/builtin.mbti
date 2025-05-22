@@ -1,44 +1,44 @@
 package "moonbitlang/core/builtin"
 
 // Values
-fn abort[T](String) -> T
+fn[T] abort(String) -> T
 
-fn assert_eq[T : Eq + Show](T, T, loc~ : SourceLoc = _) -> Unit!
+fn[T : Eq + Show] assert_eq(T, T, loc~ : SourceLoc = _) -> Unit!
 
 fn assert_false(Bool, loc~ : SourceLoc = _) -> Unit!
 
-fn assert_not_eq[T : Eq + Show](T, T, loc~ : SourceLoc = _) -> Unit!
+fn[T : Eq + Show] assert_not_eq(T, T, loc~ : SourceLoc = _) -> Unit!
 
 fn assert_true(Bool, loc~ : SourceLoc = _) -> Unit!
 
 #deprecated
-fn dump[T](T, name? : String, loc~ : SourceLoc = _) -> T
+fn[T] dump(T, name? : String, loc~ : SourceLoc = _) -> T
 
-fn fail[T](String, loc~ : SourceLoc = _) -> T!Failure
+fn[T] fail(String, loc~ : SourceLoc = _) -> T!Failure
 
-fn ignore[T](T) -> Unit
+fn[T] ignore(T) -> Unit
 
 fn inspect(&Show, content~ : String = .., loc~ : SourceLoc = _, args_loc~ : ArgsLoc = _) -> Unit!InspectError
 
 fn not(Bool) -> Bool
 
-fn op_ge[T : Compare](T, T) -> Bool
+fn[T : Compare] op_ge(T, T) -> Bool
 
-fn op_gt[T : Compare](T, T) -> Bool
+fn[T : Compare] op_gt(T, T) -> Bool
 
-fn op_le[T : Compare](T, T) -> Bool
+fn[T : Compare] op_le(T, T) -> Bool
 
-fn op_lt[T : Compare](T, T) -> Bool
+fn[T : Compare] op_lt(T, T) -> Bool
 
-fn op_notequal[T : Eq](T, T) -> Bool
+fn[T : Eq] op_notequal(T, T) -> Bool
 
-fn panic[T]() -> T
+fn[T] panic() -> T
 
-fn physical_equal[T](T, T) -> Bool
+fn[T] physical_equal(T, T) -> Bool
 
-fn println[T : Show](T) -> Unit
+fn[T : Show] println(T) -> Unit
 
-fn repr[T : Show](T) -> String
+fn[T : Show] repr(T) -> String
 
 // Types and methods
 pub(all) type ArgsLoc Array[SourceLoc?]
