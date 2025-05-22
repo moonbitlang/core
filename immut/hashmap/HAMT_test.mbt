@@ -581,6 +581,99 @@ test "HAMT::union leaf to non-overlapping map" {
 }
 
 ///|
+test "HAMT::intersection with empty" {
+  let m1 = @hashmap.of([(1, 1)])
+  let m2 = @hashmap.new()
+  assert_eq!(m1.intersection(m2).size(), 0)
+  assert_eq!(m2.intersection(m1).size(), 0)
+}
+
+///|
+test "HAMT::intersection with leaf" {
+  let m1 = @hashmap.of([(1, 1), (2, 2)])
+  let m2 = @hashmap.singleton(2, 2)
+  let m3 = @hashmap.singleton(3, 3)
+  assert_eq!(m1.intersection(m2).get(2), Some(2))
+  assert_eq!(m1.intersection(m3).get(3), None)
+  assert_eq!(m2.intersection(m1).get(2), Some(2))
+}
+
+///|
+test "HAMT::intersection with branch" {
+  let m1 = @hashmap.of([(1, 1), (2, 2), (3, 3)])
+  let m2 = @hashmap.of([(2, 2), (3, 30), (4, 4)])
+  let inter = m1.intersection(m2)
+  assert_eq!(inter.get(1), None)
+  assert_eq!(inter.get(2), Some(2))
+  assert_eq!(inter.get(3), Some(3))
+  assert_eq!(inter.get(4), None)
+}
+
+///|
+test "HAMT::intersection_with with empty" {
+  let m1 = @hashmap.of([(1, 1)])
+  let m2 = @hashmap.new()
+  assert_eq!(m1.intersection_with(m2, fn(_k, v1, v2) { v1 + v2 }).size(), 0)
+  assert_eq!(m2.intersection_with(m1, fn(_k, v1, v2) { v1 + v2 }).size(), 0)
+}
+
+///|
+test "HAMT::intersection_with with leaf" {
+  let m1 = @hashmap.of([(1, 1), (2, 2)])
+  let m2 = @hashmap.singleton(2, 20)
+  let m3 = @hashmap.singleton(3, 30)
+  assert_eq!(
+    m1.intersection_with(m2, fn(_k, v1, v2) { v1 + v2 }).get(2),
+    Some(22),
+  )
+  assert_eq!(m1.intersection_with(m3, fn(_k, v1, v2) { v1 + v2 }).get(3), None)
+  assert_eq!(
+    m2.intersection_with(m1, fn(_k, v1, v2) { v1 + v2 }).get(2),
+    Some(22),
+  )
+}
+
+///|
+test "HAMT::intersection_with with branch" {
+  let m1 = @hashmap.of([(1, 1), (2, 2), (3, 3)])
+  let m2 = @hashmap.of([(2, 20), (3, 30), (4, 4)])
+  let inter = m1.intersection_with(m2, fn(_k, v1, v2) { v1 * v2 })
+  assert_eq!(inter.get(1), None)
+  assert_eq!(inter.get(2), Some(40))
+  assert_eq!(inter.get(3), Some(90))
+  assert_eq!(inter.get(4), None)
+}
+
+///|
+test "HAMT::difference with empty" {
+  let m1 = @hashmap.of([(1, 1)])
+  let m2 = @hashmap.new()
+  assert_eq!(m1.difference(m2), m1)
+  assert_eq!(m2.difference(m1).size(), 0)
+}
+
+///|
+test "HAMT::difference with leaf" {
+  let m1 = @hashmap.of([(1, 1), (2, 2)])
+  let m2 = @hashmap.singleton(2, 2)
+  let m3 = @hashmap.singleton(3, 3)
+  assert_eq!(m1.difference(m2).get(2), None)
+  assert_eq!(m1.difference(m3).get(1), Some(1))
+  assert_eq!(m2.difference(m1).size(), 0)
+}
+
+///|
+test "HAMT::difference with branch" {
+  let m1 = @hashmap.of([(1, 1), (2, 2), (3, 3)])
+  let m2 = @hashmap.of([(2, 2), (3, 30), (4, 4)])
+  let diff = m1.difference(m2)
+  assert_eq!(diff.get(1), Some(1))
+  assert_eq!(diff.get(2), None)
+  assert_eq!(diff.get(3), None)
+  assert_eq!(diff.get(4), None)
+}
+
+///|
 test "HAMT::each" {
   let empty = @hashmap.new()
   let mut sum = 0

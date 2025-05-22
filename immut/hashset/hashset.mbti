@@ -9,11 +9,15 @@ fn add[A : Eq + Hash](T[A], A) -> T[A]
 
 fn contains[A : Eq + Hash](T[A], A) -> Bool
 
+fn difference[K : Eq + Hash](T[K], T[K]) -> T[K]
+
 fn each[A](T[A], (A) -> Unit) -> Unit
 
 fn from_array[A : Eq + Hash](Array[A]) -> T[A]
 
 fn from_iter[A : Eq + Hash](Iter[A]) -> T[A]
+
+fn intersection[K : Eq + Hash](T[K], T[K]) -> T[K]
 
 fn is_empty[A](T[A]) -> Bool
 
@@ -34,7 +38,9 @@ type T[A]
 impl T {
   add[A : Eq + Hash](Self[A], A) -> Self[A]
   contains[A : Eq + Hash](Self[A], A) -> Bool
+  difference[K : Eq + Hash](Self[K], Self[K]) -> Self[K]
   each[A](Self[A], (A) -> Unit) -> Unit
+  intersection[K : Eq + Hash](Self[K], Self[K]) -> Self[K]
   is_empty[A](Self[A]) -> Bool
   iter[A](Self[A]) -> Iter[A]
   remove[A : Eq + Hash](Self[A], A) -> Self[A]

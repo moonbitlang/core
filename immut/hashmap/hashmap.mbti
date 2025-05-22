@@ -9,6 +9,8 @@ fn add[K : Eq + Hash, V](T[K, V], K, V) -> T[K, V]
 
 fn contains[K : Eq + Hash, V](T[K, V], K) -> Bool
 
+fn difference[K : Eq + Hash, V](T[K, V], T[K, V]) -> T[K, V]
+
 fn each[K, V](T[K, V], (K, V) -> Unit) -> Unit
 
 fn elems[K, V](T[K, V]) -> Iter[V]
@@ -27,6 +29,10 @@ fn from_array[K : Eq + Hash, V](Array[(K, V)]) -> T[K, V]
 fn from_iter[K : Eq + Hash, V](Iter[(K, V)]) -> T[K, V]
 
 fn get[K : Eq + Hash, V](T[K, V], K) -> V?
+
+fn intersection[K : Eq + Hash, V](T[K, V], T[K, V]) -> T[K, V]
+
+fn intersection_with[K : Eq + Hash, V](T[K, V], T[K, V], (K, V, V) -> V) -> T[K, V]
 
 fn iter[K, V](T[K, V]) -> Iter[(K, V)]
 
@@ -55,11 +61,14 @@ fn to_array[K, V](T[K, V]) -> Array[(K, V)]
 
 fn union[K : Eq + Hash, V](T[K, V], T[K, V]) -> T[K, V]
 
+fn union_with[K : Eq + Hash, V](T[K, V], T[K, V], (K, V, V) -> V) -> T[K, V]
+
 // Types and methods
 type T[K, V]
 impl T {
   add[K : Eq + Hash, V](Self[K, V], K, V) -> Self[K, V]
   contains[K : Eq + Hash, V](Self[K, V], K) -> Bool
+  difference[K : Eq + Hash, V](Self[K, V], Self[K, V]) -> Self[K, V]
   each[K, V](Self[K, V], (K, V) -> Unit) -> Unit
   elems[K, V](Self[K, V]) -> Iter[V]
   filter[K : Eq + Hash, V](Self[K, V], (V) -> Bool) -> Self[K, V]
@@ -68,6 +77,8 @@ impl T {
   fold[K, V, A](Self[K, V], init~ : A, (A, V) -> A) -> A
   fold_with_key[K, V, A](Self[K, V], init~ : A, (A, K, V) -> A) -> A
   get[K : Eq + Hash, V](Self[K, V], K) -> V?
+  intersection[K : Eq + Hash, V](Self[K, V], Self[K, V]) -> Self[K, V]
+  intersection_with[K : Eq + Hash, V](Self[K, V], Self[K, V], (K, V, V) -> V) -> Self[K, V]
   iter[K, V](Self[K, V]) -> Iter[(K, V)]
   iter2[K, V](Self[K, V]) -> Iter2[K, V]
   keys[K, V](Self[K, V]) -> Iter[K]
@@ -79,6 +90,7 @@ impl T {
   size[K, V](Self[K, V]) -> Int
   to_array[K, V](Self[K, V]) -> Array[(K, V)]
   union[K : Eq + Hash, V](Self[K, V], Self[K, V]) -> Self[K, V]
+  union_with[K : Eq + Hash, V](Self[K, V], Self[K, V], (K, V, V) -> V) -> Self[K, V]
 }
 impl[K : Eq + Hash, V : Eq] Eq for T[K, V]
 impl[K : Hash, V : Hash] Hash for T[K, V]
