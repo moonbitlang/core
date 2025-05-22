@@ -16,14 +16,14 @@
 test "copy" {
   let a : FixedArray[_] = [1, 2, 3, 4]
   let b = a.copy()
-  inspect!(b, content="[1, 2, 3, 4]")
-  inspect!(physical_equal(b, a), content="false")
+  inspect(b, content="[1, 2, 3, 4]")
+  inspect(physical_equal(b, a), content="false")
   let c = FixedArray::make(8, 0)
   a.blit_to(c, len=4, dst_offset=3)
-  inspect!(c, content="[0, 0, 0, 1, 2, 3, 4, 0]")
-  inspect!(([] : FixedArray[Int]).copy(), content="[]")
+  inspect(c, content="[0, 0, 0, 1, 2, 3, 4, 0]")
+  inspect(([] : FixedArray[Int]).copy(), content="[]")
   a.blit_to(a, len=2, src_offset=1)
-  inspect!(a, content="[2, 3, 3, 4]")
+  inspect(a, content="[2, 3, 3, 4]")
 }
 
 ///|
@@ -45,7 +45,7 @@ test "copy" {
 ///  let arr = FixedArray::make(4, b'\x00')
 ///  let view = b"\x01\x02\x03"[1:]
 ///  arr.blit_from_bytesview(1, view)
-///  inspect!(arr, content="[b'\\x00', b'\\x02', b'\\x03', b'\\x00']")
+///  inspect(arr, content="[b'\\x00', b'\\x02', b'\\x03', b'\\x00']")
 /// ```
 pub fn FixedArray::blit_from_bytesview(
   self : FixedArray[Byte],

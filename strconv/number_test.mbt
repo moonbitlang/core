@@ -15,11 +15,11 @@
 ///|
 test "parse_inf_nan positive NaN" {
   let result = @strconv.parse_double!("+nan")
-  inspect!(@double.is_nan(result), content="true")
+  inspect(@double.is_nan(result), content="true")
 }
 
 ///|
 test "parse_inf_nan negative NaN" {
   let result = @strconv.parse_double!("-nan")
-  inspect!(@double.is_nan(result), content="true")
+  inspect(@double.is_nan(result), content="true")
 }

@@ -23,18 +23,18 @@ fn test_parse(input : String, loc~ : SourceLoc = _) -> Json!Error {
 //region objects
 ///|
 test "parses empty object" {
-  inspect!(@json.parse?("{}"), content="Ok(Object({}))")
+  inspect(@json.parse?("{}"), content="Ok(Object({}))")
 }
 
 ///|
 test "parses object" {
-  inspect!(
+  inspect(
     @json.parse?("{\"a\":1}"),
     content=
       #|Ok(Object({"a": Number(1)}))
     ,
   )
-  inspect!(
+  inspect(
     @json.parse?("{\"a\":1,\"b\":2}"),
     content=
       #|Ok(Object({"a": Number(1), "b": Number(2)}))
@@ -44,7 +44,7 @@ test "parses object" {
 
 ///|
 test "parses multiple properties" {
-  inspect!(
+  inspect(
     @json.parse?("{\"abc\":1,\"def\":2}"),
     content=
       #|Ok(Object({"abc": Number(1), "def": Number(2)}))
@@ -54,7 +54,7 @@ test "parses multiple properties" {
 
 ///|
 test "parses nested objects" {
-  inspect!(
+  inspect(
     @json.parse?("{\"a\":{\"b\":2}}"),
     content=
       #|Ok(Object({"a": Object({"b": Number(2)})}))
@@ -107,13 +107,13 @@ test "parses nulls" {
 ///|
 test "parses true" {
   let json = test_parse!("true")
-  inspect!(json, content="True")
+  inspect(json, content="True")
 }
 
 ///|
 test "parses false" {
   let json = test_parse!("false")
-  inspect!(json, content="False")
+  inspect(json, content="False")
 }
 //endregion
 
@@ -222,100 +222,100 @@ test "parses whitespace" {
 
 ///|
 test "valid" {
-  inspect!(@json.valid("{\"a\": 1, \"b\":2}"), content="true")
-  inspect!(@json.valid("{}"), content="true")
-  inspect!(@json.valid("{a:1, b:2}"), content="false")
-  inspect!(@json.valid("{"), content="false")
+  inspect(@json.valid("{\"a\": 1, \"b\":2}"), content="true")
+  inspect(@json.valid("{}"), content="true")
+  inspect(@json.valid("{a:1, b:2}"), content="false")
+  inspect(@json.valid("{"), content="false")
 }
 
 ///|
 test "parse unexpected token in value" {
   let result = @json.parse?("{a:1}")
-  inspect!(result, content="Err(Invalid character 'a' at line 1, column 1)")
+  inspect(result, content="Err(Invalid character 'a' at line 1, column 1)")
 }
 
 ///|
 test "parse unexpected token in object property name" {
   let result = @json.parse?("{\"a\":1, b:2}")
-  inspect!(result, content="Err(Invalid character 'b' at line 1, column 8)")
+  inspect(result, content="Err(Invalid character 'b' at line 1, column 8)")
 }
 
 ///|
 test "parse unexpected token after object property name" {
   let result = @json.parse?("{\"a\" b:2}")
-  inspect!(result, content="Err(Invalid character 'b' at line 1, column 5)")
+  inspect(result, content="Err(Invalid character 'b' at line 1, column 5)")
 }
 
 ///|
 test "parse unexpected token after object value" {
   let result = @json.parse?("{\"a\":1 b:2}")
-  inspect!(result, content="Err(Invalid character 'b' at line 1, column 7)")
+  inspect(result, content="Err(Invalid character 'b' at line 1, column 7)")
 }
 
 ///|
 test "parse unexpected token in array" {
   let result = @json.parse?("[1, 2 a]")
-  inspect!(result, content="Err(Invalid character 'a' at line 1, column 6)")
+  inspect(result, content="Err(Invalid character 'a' at line 1, column 6)")
 }
 
 ///|
 test "parse unexpected token in value" {
   let result = @json.parse?("{a:1}")
-  inspect!(result, content="Err(Invalid character 'a' at line 1, column 1)")
+  inspect(result, content="Err(Invalid character 'a' at line 1, column 1)")
 }
 
 ///|
 test "parse unexpected token in object property name" {
   let result = @json.parse?("{\"a\":1, b:2}")
-  inspect!(result, content="Err(Invalid character 'b' at line 1, column 8)")
+  inspect(result, content="Err(Invalid character 'b' at line 1, column 8)")
 }
 
 ///|
 test "parse unexpected token after object property name" {
   let result = @json.parse?("{\"a\" b:2}")
-  inspect!(result, content="Err(Invalid character 'b' at line 1, column 5)")
+  inspect(result, content="Err(Invalid character 'b' at line 1, column 5)")
 }
 
 ///|
 test "parse unexpected token after object value" {
   let result = @json.parse?("{\"a\":1 b:2}")
-  inspect!(result, content="Err(Invalid character 'b' at line 1, column 7)")
+  inspect(result, content="Err(Invalid character 'b' at line 1, column 7)")
 }
 
 ///|
 test "parse unexpected token in array" {
   let result = @json.parse?("[1, 2 a]")
-  inspect!(result, content="Err(Invalid character 'a' at line 1, column 6)")
+  inspect(result, content="Err(Invalid character 'a' at line 1, column 6)")
 }
 
 ///|
 test "parse unexpected token in value" {
   let result = @json.parse?("{a:1}")
-  inspect!(result, content="Err(Invalid character 'a' at line 1, column 1)")
+  inspect(result, content="Err(Invalid character 'a' at line 1, column 1)")
 }
 
 ///|
 test "parse unexpected token in object property name" {
   let result = @json.parse?("{\"a\":1, b:2}")
-  inspect!(result, content="Err(Invalid character 'b' at line 1, column 8)")
+  inspect(result, content="Err(Invalid character 'b' at line 1, column 8)")
 }
 
 ///|
 test "parse unexpected token after object property name" {
   let result = @json.parse?("{\"a\" b:2}")
-  inspect!(result, content="Err(Invalid character 'b' at line 1, column 5)")
+  inspect(result, content="Err(Invalid character 'b' at line 1, column 5)")
 }
 
 ///|
 test "parse unexpected token after object value" {
   let result = @json.parse?("{\"a\":1 b:2}")
-  inspect!(result, content="Err(Invalid character 'b' at line 1, column 7)")
+  inspect(result, content="Err(Invalid character 'b' at line 1, column 7)")
 }
 
 ///|
 test "parse unexpected token in array" {
   let result = @json.parse?("[1, 2 a]")
-  inspect!(result, content="Err(Invalid character 'a' at line 1, column 6)")
+  inspect(result, content="Err(Invalid character 'a' at line 1, column 6)")
 }
 
 ///|
@@ -327,7 +327,7 @@ test "parse multi-lines json" {
     #|}
     ,
   )
-  inspect!(
+  inspect(
     result,
     content=
       #|Ok(Object({"a": Number(2), "b": Number(3)}))
@@ -344,24 +344,24 @@ test "parse multi-lines json error" {
     #|}
     ,
   )
-  inspect!(result, content="Err(Invalid character 'a' at line 3, column 6)")
+  inspect(result, content="Err(Invalid character 'a' at line 3, column 6)")
 }
 
 ///|
 test "parser error" {
-  inspect!(
+  inspect(
     @json.parse?("]"),
     content="Err(Invalid character ']' at line 1, column 0)",
   )
-  inspect!(
+  inspect(
     @json.parse?("}"),
     content="Err(Invalid character '}' at line 1, column 0)",
   )
-  inspect!(
+  inspect(
     @json.parse?(","),
     content="Err(Invalid character ',' at line 1, column 0)",
   )
-  // inspect!(
+  // inspect(
   //   // test first char is emoji
   //   @json.parse?("\u{1F600}"),
 

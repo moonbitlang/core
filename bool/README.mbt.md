@@ -9,12 +9,12 @@ The package allows converting boolean values to various integer types. `true` is
 ```moonbit
 test "bool to integer conversions" {
   // Direct function calls
-  inspect!(@bool.to_int(true), content="1")
-  inspect!(@bool.to_int(false), content="0")
+  inspect(@bool.to_int(true), content="1")
+  inspect(@bool.to_int(false), content="0")
 
   // Method syntax
-  inspect!(true.to_int(), content="1")
-  inspect!(false.to_int(), content="0")
+  inspect(true.to_int(), content="1")
+  inspect(false.to_int(), content="0")
 }
 ```
 
@@ -29,15 +29,15 @@ Besides regular `Int`, the package supports conversion to other integer types:
 ```moonbit
 test "bool to other integer types" {
   // UInt
-  inspect!(true.to_uint(), content="1")
-  inspect!(false.to_uint(), content="0")
+  inspect(true.to_uint(), content="1")
+  inspect(false.to_uint(), content="0")
 
   // Int64
-  inspect!(true.to_int64(), content="1")
-  inspect!(false.to_int64(), content="0")
+  inspect(true.to_int64(), content="1")
+  inspect(false.to_int64(), content="0")
 
   // UInt64
-  inspect!(true.to_uint64(), content="1")
-  inspect!(false.to_uint64(), content="0")
+  inspect(true.to_uint64(), content="1")
+  inspect(false.to_uint64(), content="0")
 }
 ```

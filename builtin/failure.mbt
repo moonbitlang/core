@@ -29,7 +29,7 @@
 /// test "Failure" {
 ///   let err : Failure = Failure("Test assertion failed")
 ///   match err {
-///     Failure(msg) => inspect!(msg, content="Test assertion failed")
+///     Failure(msg) => inspect(msg, content="Test assertion failed")
 ///   }
 /// }
 /// ```

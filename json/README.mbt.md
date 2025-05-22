@@ -25,7 +25,7 @@ test "parse and validate jsons" {
   }
 
   // Pretty print with indentation
-  inspect!(
+  inspect(
     @json.stringify(json, indent=2),
     content=
       #|{
@@ -46,7 +46,7 @@ test "json object navigation" {
 
   // Access string
   let string_opt = json.value("string").unwrap().as_string()
-  inspect!(
+  inspect(
     string_opt,
     content=
       #|Some("hello")
@@ -55,14 +55,14 @@ test "json object navigation" {
 
   // Access number
   let number_opt = json.value("number").unwrap().as_number()
-  inspect!(number_opt, content="Some(42)")
+  inspect(number_opt, content="Some(42)")
 
   // Access array
   let array_opt = json.value("array").unwrap().as_array()
-  inspect!(array_opt, content="Some([Number(1), Number(2), Number(3)])")
+  inspect(array_opt, content="Some([Number(1), Number(2), Number(3)])")
 
   // Handle missing keys gracefully
-  inspect!(json.value("missing"), content="None")
+  inspect(json.value("missing"), content="None")
 }
 ```
 
@@ -74,15 +74,15 @@ test "json array navigation" {
 
   // Access by index
   let first = array.item(0)
-  inspect!(first, content="Some(Number(1))")
+  inspect(first, content="Some(Number(1))")
 
   // Access out of bounds
   let missing = array.item(10)
-  inspect!(missing, content="None")
+  inspect(missing, content="None")
 
   // Iterate through array
   let values = array.as_array().unwrap()
-  inspect!(
+  inspect(
     values.iter(),
     content="[Number(1), Number(2), Number(3), Number(4), Number(5)]",
   )
@@ -98,17 +98,17 @@ test "json decode" {
   // Decode basic types
   let json_number = (42 : Json)
   let number : Int = @json.from_json!(json_number)
-  inspect!(number, content="42")
+  inspect(number, content="42")
 
   // Decode arrays
   let json_array = ([1, 2, 3] : Json)
   let array : Array[Int] = @json.from_json!(json_array)
-  inspect!(array, content="[1, 2, 3]")
+  inspect(array, content="[1, 2, 3]")
 
   // Decode maps
   let json_map = ({ "a": 1, "b": 2 } : Json)
   let map : Map[String, Int] = @json.from_json!(json_map)
-  inspect!(
+  inspect(
     map,
     content=
       #|{"a": 1, "b": 2}
@@ -127,8 +127,8 @@ test "json path" {
     panic()
   } catch {
     @json.JsonDecodeError((path, msg)) => {
-      inspect!(path, content="$[1]")
-      inspect!(msg, content="Int::from_json: expected number")
+      inspect(path, content="$[1]")
+      inspect(msg, content="Int::from_json: expected number")
     }
   }
 }
@@ -136,7 +136,7 @@ test "json path" {
 
 ## JSON-based Snapshot Testing
 
-`@json.inspect!()` can be used as an alternative to `inspect!()` when a value's `ToJson` implementation is considered a better debugging representation than its `Show` implementation.
+`@json.inspect()` can be used as an alternative to `inspect()` when a value's `ToJson` implementation is considered a better debugging representation than its `Show` implementation.
 This is particularly true for deeply-nested data structures.
 
 ```moonbit
@@ -145,10 +145,10 @@ test "json inspection" {
 
   // Simple json values
   let json_value : Json = { "key": "value", "numbers": [1, 2, 3] }
-  @json.inspect!(json_value, content={ "key": "value", "numbers": [1, 2, 3] })
+  @json.inspect(json_value, content={ "key": "value", "numbers": [1, 2, 3] })
 
   // Null and boolean values
   let json_special = { "null": null, "bool": true }
-  @json.inspect!(json_special, content={ "null": null, "bool": true })
+  @json.inspect(json_special, content={ "null": null, "bool": true })
 }
 ```

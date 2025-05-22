@@ -70,7 +70,7 @@ test "array_equal" {
   let arr3 = [1, 2, 4]
   assert_eq!(arr1, arr2)
   assert_not_eq!(arr1, arr3)
-  inspect!([1, 2] == [1, 2, 3], content="false")
+  inspect([1, 2] == [1, 2, 3], content="false")
 }
 
 ///|
@@ -78,10 +78,10 @@ test "array_compare" {
   let arr1 = [1, 2, 3]
   let arr2 = [1, 2, 4]
   let arr3 = [1, 2]
-  inspect!(arr1.compare(arr2), content="-1")
-  inspect!(arr1.compare(arr3), content="1")
-  inspect!(arr3.compare(arr1), content="-1")
-  inspect!(arr1.compare(arr1), content="0")
+  inspect(arr1.compare(arr2), content="-1")
+  inspect(arr1.compare(arr3), content="1")
+  inspect(arr3.compare(arr1), content="-1")
+  inspect(arr1.compare(arr1), content="0")
 }
 
 ///|
@@ -160,7 +160,7 @@ test "array_each_rev" {
   let arr = [1, 2, 3]
   let mut sum = 0
   arr.rev_each(fn(x) { sum = sum + x })
-  inspect!(sum, content="6")
+  inspect(sum, content="6")
 }
 
 ///|
@@ -179,7 +179,7 @@ test "array_eachi_rev" {
   let arr = [1, 2, 3]
   let mut sum = 0
   arr.rev_eachi(fn(i, x) { sum = sum + i + x })
-  inspect!(sum, content="9")
+  inspect(sum, content="9")
 }
 
 ///|
@@ -193,7 +193,7 @@ test "array_eachi_rev_2" {
     ..write_object(x)
     ..write_string("\n")
   })
-  inspect!(
+  inspect(
     buf,
     content=
       #|0: 'c'
@@ -219,7 +219,7 @@ test "array_map" {
   assert_eq!(mapped[0], 2)
   assert_eq!(mapped[1], 4)
   assert_eq!(mapped[2], 6)
-  @json.inspect!(([] : Array[Int]).map(fn(x) { x }), content=[])
+  @json.inspect(([] : Array[Int]).map(fn(x) { x }), content=[])
 }
 
 ///|
@@ -240,7 +240,7 @@ test "array_mapi" {
   assert_eq!(mapped[0], 1)
   assert_eq!(mapped[1], 3)
   assert_eq!(mapped[2], 5)
-  inspect!(([] : Array[Int]).mapi(fn(_idx, x) { x }), content="[]")
+  inspect(([] : Array[Int]).mapi(fn(_idx, x) { x }), content="[]")
 }
 
 ///|
@@ -270,8 +270,8 @@ test "array_is_empty" {
 
 ///|
 test "array_is_sorted" {
-  inspect!([1, 2, 3].is_sorted(), content="true")
-  inspect!([1, 3, 2].is_sorted(), content="false")
+  inspect([1, 2, 3].is_sorted(), content="true")
+  inspect([1, 3, 2].is_sorted(), content="false")
 }
 
 ///|
@@ -309,7 +309,7 @@ test "array_starts_with" {
   let arr = [1, 2, 3]
   assert_true!(arr.starts_with([1, 2]))
   assert_false!(arr.starts_with([2, 3]))
-  inspect!(arr.starts_with([1, 2, 3, 4]), content="false")
+  inspect(arr.starts_with([1, 2, 3, 4]), content="false")
 }
 
 ///|
@@ -317,7 +317,7 @@ test "array_ends_with" {
   let arr = [1, 2, 3]
   assert_true!(arr.ends_with([2, 3]))
   assert_false!(arr.ends_with([1, 2]))
-  inspect!(arr.ends_with([1, 2, 3, 4]), content="false")
+  inspect(arr.ends_with([1, 2, 3, 4]), content="false")
 }
 
 ///|
@@ -371,9 +371,9 @@ test "array_resize" {
   assert_eq!(arr[3], 42)
   assert_eq!(arr[4], 42)
   arr.resize(3, 0)
-  inspect!(arr.length(), content="3")
-  inspect!(arr[0], content="1")
-  inspect!(arr[1], content="2")
+  inspect(arr.length(), content="3")
+  inspect(arr[0], content="1")
+  inspect(arr[1], content="2")
 }
 
 ///|
@@ -483,7 +483,7 @@ test "array_chunks" {
 ///|
 test "chunks_by" {
   let v = [1, 1, 2, 3, 2, 3, 2, 3, 4]
-  inspect!(
+  inspect(
     v.chunk_by(fn(x, y) { x <= y }),
     content="[[1, 1, 2, 3], [2, 3], [2, 3, 4]]",
   )
@@ -492,7 +492,7 @@ test "chunks_by" {
 ///|
 test "chunks_by" {
   let v = [1, 1, 2, 3, 2, 3, 2, 3, 4]
-  inspect!(
+  inspect(
     v.chunk_by(fn(x, y) { x <= y }),
     content="[[1, 1, 2, 3], [2, 3], [2, 3, 4]]",
   )
@@ -514,14 +514,14 @@ test "array_pop_empty" {
 test "array_reserve" {
   let a = [1, 2, 3]
   a.reserve_capacity(2)
-  inspect!(a, content="[1, 2, 3]")
+  inspect(a, content="[1, 2, 3]")
   a.reserve_capacity(4)
-  inspect!(a, content="[1, 2, 3]")
+  inspect(a, content="[1, 2, 3]")
 }
 
 ///|
 test "array_split" {
-  inspect!(
+  inspect(
     [1, 2, 3, 4, 5, 6, 7].split(fn(x) { x % 2 == 1 }),
     content="[[], [2], [4], [6]]",
   )
@@ -529,8 +529,8 @@ test "array_split" {
 
 ///|
 test "array_search_by" {
-  inspect!([1, 2, 3, 4, 5].search_by(fn(x) { x % 2 == 0 }), content="Some(1)")
-  inspect!([1, 2, 3, 4, 5].search_by(fn(x) { x > 5 }), content="None")
+  inspect([1, 2, 3, 4, 5].search_by(fn(x) { x % 2 == 0 }), content="Some(1)")
+  inspect([1, 2, 3, 4, 5].search_by(fn(x) { x > 5 }), content="None")
 }
 
 ///|
@@ -606,34 +606,34 @@ test "array_binary_search_by_test" {
 test "array_dedup" {
   let array = [3, 4, 5, 6, 6, 4]
   array.dedup()
-  inspect!(array, content="[3, 4, 5, 6, 4]")
+  inspect(array, content="[3, 4, 5, 6, 4]")
 }
 
 ///|
 test "array_dedup - long" {
   let array = [1, 2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 4, 3, 2, 1, 1, 1]
   array.dedup()
-  inspect!(array, content="[1, 2, 3, 4, 5, 6, 4, 3, 2, 1]")
+  inspect(array, content="[1, 2, 3, 4, 5, 6, 4, 3, 2, 1]")
 }
 
 ///|
 test "array_dedup - edge cases" {
   let array = [1, 1, 1, 1, 1]
   array.dedup()
-  inspect!(array, content="[1]")
+  inspect(array, content="[1]")
   let array : Array[Int] = []
   array.dedup()
-  inspect!(array, content="[]")
+  inspect(array, content="[]")
   let array = [1, 2, 3, 4, 5]
   array.dedup()
-  inspect!(array, content="[1, 2, 3, 4, 5]")
+  inspect(array, content="[1, 2, 3, 4, 5]")
 }
 
 ///|
 test "array of bytes, new & push" {
   let bytes : Array[Byte] = Array::new(capacity=10)
   bytes.push(b'a')
-  inspect!(bytes, content="[b'\\x61']")
+  inspect(bytes, content="[b'\\x61']")
 }
 
 ///|
@@ -643,7 +643,7 @@ struct MX {
 
 ///|
 test {
-  @json.inspect!(MX::default(), content={ "mm_num": [] })
+  @json.inspect(MX::default(), content={ "mm_num": [] })
 }
 
 ///|
@@ -653,5 +653,5 @@ test "array view implicit conversion" {
   }
 
   let arr = [1, 2, 3]
-  inspect!(f(arr), content="3")
+  inspect(f(arr), content="3")
 }

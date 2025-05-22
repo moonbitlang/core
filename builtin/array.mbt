@@ -29,7 +29,7 @@
 /// test "Array::from_fixed_array" {
 ///   let fixed = FixedArray::make(3, 42)
 ///   let dynamic = Array::from_fixed_array(fixed)
-///   inspect!(dynamic, content="[42, 42, 42]")
+///   inspect(dynamic, content="[42, 42, 42]")
 /// }
 /// ```
 pub fn[T] Array::from_fixed_array(arr : FixedArray[T]) -> Array[T] {
@@ -59,7 +59,7 @@ pub fn[T] Array::from_fixed_array(arr : FixedArray[T]) -> Array[T] {
 /// ```moonbit
 /// test "Array::make" {
 ///   let arr = Array::make(3, 42)
-///   inspect!(arr, content="[42, 42, 42]")
+///   inspect(arr, content="[42, 42, 42]")
 /// }
 ///
 /// test "panic Array::make/negative_length" {
@@ -117,7 +117,7 @@ pub fn[T] Array::capacity(self : Array[T]) -> Int {
 /// ```moonbit
 /// test "Array::unsafe_get/basic" {
 ///   let arr = [1, 2, 3]
-///   inspect!(arr.unsafe_get(1), content="2")
+///   inspect(arr.unsafe_get(1), content="2")
 /// }
 /// ```
 ///
@@ -144,7 +144,7 @@ pub fn[T] Array::unsafe_get(self : Array[T], idx : Int) -> T {
 /// ```moonbit
 /// test "Array::op_get" {
 ///   let arr = [1, 2, 3]
-///   inspect!(arr[1], content="2")
+///   inspect(arr[1], content="2")
 /// }
 ///
 /// test "panic Array::op_get/out_of_bounds" {
@@ -176,9 +176,9 @@ pub fn[T] Array::op_get(self : Array[T], index : Int) -> T {
 /// ```moonbit
 /// test "Array::get" {
 ///   let arr = [1, 2, 3]
-///   inspect!(arr.get(-1), content="None")
-///   inspect!(arr.get(0), content="Some(1)")
-///   inspect!(arr.get(3), content="None")
+///   inspect(arr.get(-1), content="None")
+///   inspect(arr.get(0), content="Some(1)")
+///   inspect(arr.get(3), content="None")
 /// }
 /// ```
 pub fn[T] Array::get(self : Array[T], index : Int) -> T? {
@@ -212,7 +212,7 @@ fn[T] Array::unsafe_set(self : Array[T], idx : Int, val : T) -> Unit {
 /// test "Array::op_set" {
 ///   let arr = [1, 2, 3]
 ///   arr[1] = 42
-///   inspect!(arr, content="[1, 42, 3]")
+///   inspect(arr, content="[1, 42, 3]")
 /// }
 ///
 /// test "panic Array::op_set/out_of_bounds" {
@@ -246,8 +246,8 @@ pub fn[T] Array::op_set(self : Array[T], index : Int, value : T) -> Unit {
 ///   let arr1 = [1, 2, 3]
 ///   let arr2 = [1, 2, 3]
 ///   let arr3 = [1, 2, 4]
-///   inspect!(arr1 == arr2, content="true")
-///   inspect!(arr1 == arr3, content="false")
+///   inspect(arr1 == arr2, content="true")
+///   inspect(arr1 == arr3, content="false")
 /// }
 /// ```
 pub impl[T : Eq] Eq for Array[T] with op_equal(self, other) {
@@ -295,10 +295,10 @@ pub impl[T : Hash] Hash for Array[T] with hash_combine(self, hasher) {
 ///   let arr1 = [1, 2, 3]
 ///   let arr2 = [1, 2, 4]
 ///   let arr3 = [1, 2]
-///   inspect!(arr1.compare(arr2), content="-1") // arr1 < arr2
-///   inspect!(arr2.compare(arr1), content="1") // arr2 > arr1
-///   inspect!(arr1.compare(arr3), content="1") // arr1 > arr3 (longer)
-///   inspect!(arr1.compare(arr1), content="0") // arr1 = arr1
+///   inspect(arr1.compare(arr2), content="-1") // arr1 < arr2
+///   inspect(arr2.compare(arr1), content="1") // arr2 > arr1
+///   inspect(arr1.compare(arr3), content="1") // arr1 > arr3 (longer)
+///   inspect(arr1.compare(arr1), content="0") // arr1 = arr1
 /// }
 /// ```
 pub impl[T : Compare] Compare for Array[T] with compare(self, other) {
@@ -332,7 +332,7 @@ pub impl[T : Compare] Compare for Array[T] with compare(self, other) {
 /// test "Array::op_add" {
 ///   let a = [1, 2, 3]
 ///   let b = [4, 5]
-///   inspect!(a + b, content="[1, 2, 3, 4, 5]")
+///   inspect(a + b, content="[1, 2, 3, 4, 5]")
 /// }
 /// ```
 pub impl[T] Add for Array[T] with op_add(self, other) {
@@ -370,14 +370,14 @@ pub impl[T] Add for Array[T] with op_add(self, other) {
 ///   let v1 = [1, 2, 3]
 ///   let v2 = [4, 5, 6]
 ///   v1.append(v2)
-///   inspect!(v1, content="[1, 2, 3, 4, 5, 6]")
+///   inspect(v1, content="[1, 2, 3, 4, 5, 6]")
 /// }
 ///
 /// test "Array::append/empty" {
 ///   let v1 = [1, 2, 3]
 ///   let v2 : Array[Int] = []
 ///   v1.append(v2)
-///   inspect!(v1, content="[1, 2, 3]")
+///   inspect(v1, content="[1, 2, 3]")
 /// }
 /// ```
 pub fn[T] Array::append(self : Array[T], other : Array[T]) -> Unit {
@@ -407,7 +407,7 @@ pub fn[T] Array::append(self : Array[T], other : Array[T]) -> Unit {
 ///   let arr = [1, 2, 3]
 ///   let mut sum = 0
 ///   arr.each(fn(x) { sum = sum + x })
-///   inspect!(sum, content="6")
+///   inspect(sum, content="6")
 /// }
 /// ```
 #locals(f)
@@ -433,7 +433,7 @@ pub fn[T] Array::each(self : Array[T], f : (T) -> Unit) -> Unit {
 /// let v = [3, 4, 5]
 /// let mut sum = 0
 /// v.rev_each(fn(x) { sum = sum - x })
-/// @json.inspect!(sum, content=-12)
+/// @json.inspect(sum, content=-12)
 /// ```
 #locals(f)
 pub fn[T] Array::rev_each(self : Array[T], f : (T) -> Unit) -> Unit {
@@ -582,7 +582,7 @@ pub fn[T] Array::mapi_inplace(self : Array[T], f : (Int, T) -> T) -> Unit {
 /// test "Array::filter" {
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let evens = arr.filter(fn(x) { x % 2 == 0 })
-///   inspect!(evens, content="[2, 4]")
+///   inspect(evens, content="[2, 4]")
 /// }
 /// ```
 #locals(f)
@@ -610,9 +610,9 @@ pub fn[T] Array::filter(self : Array[T], f : (T) -> Bool) -> Array[T] {
 /// ```moonbit
 /// test "Array::is_empty" {
 ///   let empty : Array[Int] = []
-///   inspect!(empty.is_empty(), content="true")
+///   inspect(empty.is_empty(), content="true")
 ///   let non_empty = [1, 2, 3]
-///   inspect!(non_empty.is_empty(), content="false")
+///   inspect(non_empty.is_empty(), content="false")
 /// }
 /// ```
 pub fn[T] Array::is_empty(self : Array[T]) -> Bool {
@@ -642,9 +642,9 @@ pub fn[T] Array::is_empty(self : Array[T]) -> Bool {
 ///   let ascending = [1, 2, 3, 4, 5]
 ///   let descending = [5, 4, 3, 2, 1]
 ///   let unsorted = [1, 3, 2, 4, 5]
-///   inspect!(ascending.is_sorted(), content="true")
-///   inspect!(descending.is_sorted(), content="false")
-///   inspect!(unsorted.is_sorted(), content="false")
+///   inspect(ascending.is_sorted(), content="true")
+///   inspect(descending.is_sorted(), content="false")
+///   inspect(unsorted.is_sorted(), content="false")
 /// }
 /// ```
 pub fn[T : Compare] Array::is_sorted(self : Array[T]) -> Bool {
@@ -673,13 +673,13 @@ pub fn[T : Compare] Array::is_sorted(self : Array[T]) -> Bool {
 /// test "Array::rev_inplace" {
 ///   let arr = [1, 2, 3, 4, 5]
 ///   arr.rev_inplace()
-///   inspect!(arr, content="[5, 4, 3, 2, 1]")
+///   inspect(arr, content="[5, 4, 3, 2, 1]")
 /// }
 ///
 /// test "Array::rev_inplace/empty" {
 ///   let arr : Array[Int] = []
 ///   arr.rev_inplace()
-///   inspect!(arr, content="[]")
+///   inspect(arr, content="[]")
 /// }
 /// ```
 pub fn[T] Array::rev_inplace(self : Array[T]) -> Unit {
@@ -705,8 +705,8 @@ pub fn[T] Array::rev_inplace(self : Array[T]) -> Unit {
 /// ```moonbit
 /// test "Array::rev" {
 ///   let arr = [1, 2, 3, 4, 5]
-///   inspect!(arr.rev(), content="[5, 4, 3, 2, 1]")
-///   inspect!(arr, content="[1, 2, 3, 4, 5]") // original array unchanged
+///   inspect(arr.rev(), content="[5, 4, 3, 2, 1]")
+///   inspect(arr, content="[1, 2, 3, 4, 5]") // original array unchanged
 /// }
 /// ```
 pub fn[T] Array::rev(self : Array[T]) -> Array[T] {
@@ -767,13 +767,13 @@ pub fn[T] Array::split_at(self : Array[T], index : Int) -> (Array[T], Array[T]) 
 /// ```moonbit
 /// test "Array::contains" {
 ///   let arr = [1, 2, 3, 4, 5]
-///   inspect!(arr.contains(3), content="true")
-///   inspect!(arr.contains(6), content="false")
+///   inspect(arr.contains(3), content="true")
+///   inspect(arr.contains(6), content="false")
 /// }
 ///
 /// test "Array::contains/empty" {
 ///   let arr : Array[Int] = []
-///   inspect!(arr.contains(1), content="false")
+///   inspect(arr.contains(1), content="false")
 /// }
 /// ```
 pub fn[T : Eq] Array::contains(self : Array[T], value : T) -> Bool {
@@ -805,10 +805,10 @@ pub fn[T : Eq] Array::contains(self : Array[T], value : T) -> Bool {
 /// ```moonbit
 /// test "Array::starts_with" {
 ///   let arr = [1, 2, 3, 4, 5]
-///   inspect!(arr.starts_with([1, 2]), content="true")
-///   inspect!(arr.starts_with([2, 3]), content="false")
-///   inspect!(arr.starts_with([]), content="true")
-///   inspect!(arr.starts_with([1, 2, 3, 4, 5, 6]), content="false")
+///   inspect(arr.starts_with([1, 2]), content="true")
+///   inspect(arr.starts_with([2, 3]), content="false")
+///   inspect(arr.starts_with([]), content="true")
+///   inspect(arr.starts_with([1, 2, 3, 4, 5, 6]), content="false")
 /// }
 /// ```
 pub fn[T : Eq] Array::starts_with(self : Array[T], prefix : Array[T]) -> Bool {
@@ -839,15 +839,15 @@ pub fn[T : Eq] Array::starts_with(self : Array[T], prefix : Array[T]) -> Bool {
 /// ```moonbit
 /// test "Array::ends_with/basic" {
 ///   let arr = [1, 2, 3, 4, 5]
-///   inspect!(arr.ends_with([4, 5]), content="true")
-///   inspect!(arr.ends_with([3, 4]), content="false")
-///   inspect!(arr.ends_with([]), content="true")
+///   inspect(arr.ends_with([4, 5]), content="true")
+///   inspect(arr.ends_with([3, 4]), content="false")
+///   inspect(arr.ends_with([]), content="true")
 /// }
 ///
 /// test "Array::ends_with/empty" {
 ///   let arr : Array[Int] = []
-///   inspect!(arr.ends_with([]), content="true")
-///   inspect!(arr.ends_with([1]), content="false")
+///   inspect(arr.ends_with([]), content="true")
+///   inspect(arr.ends_with([1]), content="false")
 /// }
 /// ```
 pub fn[T : Eq] Array::ends_with(self : Array[T], suffix : Array[T]) -> Bool {
@@ -881,8 +881,8 @@ pub fn[T : Eq] Array::ends_with(self : Array[T], suffix : Array[T]) -> Bool {
 /// ```moonbit
 /// test "strip_prefix" {
 ///   let arr = [1, 2, 3, 4, 5]
-///   inspect!(arr.strip_prefix([1, 2]), content="Some([3, 4, 5])")
-///   inspect!(arr.strip_prefix([2, 3]), content="None")
+///   inspect(arr.strip_prefix([1, 2]), content="Some([3, 4, 5])")
+///   inspect(arr.strip_prefix([2, 3]), content="None")
 /// }
 /// ```
 pub fn[T : Eq] Array::strip_prefix(
@@ -946,8 +946,8 @@ pub fn[T : Eq] Array::strip_suffix(
 /// ```moonbit
 /// test "Array::search" {
 ///   let arr = [1, 2, 3, 2, 4]
-///   inspect!(arr.search(2), content="Some(1)") // first occurrence
-///   inspect!(arr.search(5), content="None") // not found
+///   inspect(arr.search(2), content="Some(1)") // first occurrence
+///   inspect(arr.search(5), content="None") // not found
 /// }
 /// ```
 pub fn[T : Eq] Array::search(self : Array[T], value : T) -> Int? {
@@ -978,8 +978,8 @@ pub fn[T : Eq] Array::search(self : Array[T], value : T) -> Int? {
 /// ```moonbit
 /// test "find_index" {
 ///   let arr = [1, 2, 3, 4, 5]
-///   inspect!(arr.search_by(fn(x) { x > 3 }), content="Some(3)")
-///   inspect!(arr.search_by(fn(x) { x > 10 }), content="None")
+///   inspect(arr.search_by(fn(x) { x > 3 }), content="Some(3)")
+///   inspect(arr.search_by(fn(x) { x > 10 }), content="None")
 /// }
 /// ```
 ///
@@ -1093,7 +1093,7 @@ pub fn[T : Compare] Array::binary_search(
 ///       0
 ///     }
 ///   })
-///   inspect!(find_3, content="Ok(1)")
+///   inspect(find_3, content="Ok(1)")
 ///   let find_4 = arr.binary_search_by(fn(x) {
 ///     if x < 4 {
 ///       -1
@@ -1103,7 +1103,7 @@ pub fn[T : Compare] Array::binary_search(
 ///       0
 ///     }
 ///   })
-///   inspect!(find_4, content="Err(2)")
+///   inspect(find_4, content="Err(2)")
 /// }
 /// ```
 ///
@@ -1156,7 +1156,7 @@ pub fn[T] Array::binary_search_by(
 /// test "Array::swap" {
 ///   let arr = [1, 2, 3]
 ///   arr.swap(0, 2)
-///   inspect!(arr, content="[3, 2, 1]")
+///   inspect(arr, content="[3, 2, 1]")
 /// }
 ///
 /// test "panic Array::swap/out_of_bounds" {
@@ -1193,19 +1193,19 @@ pub fn[T] Array::swap(self : Array[T], i : Int, j : Int) -> Unit {
 /// test "retain" {
 ///   let arr = [1, 2, 3, 4, 5]
 ///   arr.retain(fn(x) { x % 2 == 0 })
-///   inspect!(arr, content="[2, 4]")
+///   inspect(arr, content="[2, 4]")
 /// }
 ///
 /// test "retain/empty_result" {
 ///   let arr = [1, 2, 3]
 ///   arr.retain(fn(x) { x > 10 })
-///   inspect!(arr, content="[]")
+///   inspect(arr, content="[]")
 /// }
 ///
 /// test "retain/keep_all" {
 ///   let arr = [1, 2, 3]
 ///   arr.retain(fn { _ => true })
-///   inspect!(arr, content="[1, 2, 3]")
+///   inspect(arr, content="[1, 2, 3]")
 /// }
 /// ```
 /// TODO: perf could be improved
@@ -1242,13 +1242,13 @@ pub fn[T] Array::retain(self : Array[T], f : (T) -> Bool) -> Unit {
 /// test "Array::resize/shrink" {
 ///   let arr = [1, 2, 3, 4, 5]
 ///   arr.resize(3, 0)
-///   inspect!(arr, content="[1, 2, 3]")
+///   inspect(arr, content="[1, 2, 3]")
 /// }
 ///
 /// test "Array::resize/extend" {
 ///   let arr = [1, 2, 3]
 ///   arr.resize(5, 0)
-///   inspect!(arr, content="[1, 2, 3, 0, 0]")
+///   inspect(arr, content="[1, 2, 3, 0, 0]")
 /// }
 ///
 /// test "panic Array::resize/negative_length" {
@@ -1479,19 +1479,19 @@ pub fn[T, U] Array::fold_righti(
 /// test "dedup" {
 ///   let arr = [1, 2, 2, 3, 3, 3, 2]
 ///   arr.dedup()
-///   inspect!(arr, content="[1, 2, 3, 2]")
+///   inspect(arr, content="[1, 2, 3, 2]")
 /// }
 ///
 /// test "dedup/sorted" {
 ///   let arr = [1, 2, 2, 2, 3, 3]
 ///   arr.dedup()
-///   inspect!(arr, content="[1, 2, 3]")
+///   inspect(arr, content="[1, 2, 3]")
 /// }
 ///
 /// test "dedup/empty" {
 ///   let arr : Array[Int] = []
 ///   arr.dedup()
-///   inspect!(arr, content="[]")
+///   inspect(arr, content="[]")
 /// }
 /// ```
 ///
@@ -1532,8 +1532,8 @@ pub fn[T : Eq] Array::dedup(self : Array[T]) -> Unit {
 /// test "extract_if" {
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let extracted = arr.extract_if(fn(x) { x % 2 == 0 })
-///   inspect!(extracted, content="[2, 4]")
-///   inspect!(arr, content="[1, 3, 5]")
+///   inspect(extracted, content="[2, 4]")
+///   inspect(arr, content="[1, 3, 5]")
 /// }
 /// ```
 #locals(f)
@@ -1570,12 +1570,12 @@ pub fn[T] Array::extract_if(self : Array[T], f : (T) -> Bool) -> Array[T] {
 /// test "chunks" {
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let chunks = arr.chunks(2)
-///   inspect!(chunks, content="[[1, 2], [3, 4], [5]]")
+///   inspect(chunks, content="[[1, 2], [3, 4], [5]]")
 /// }
 ///
 /// test "chunks/empty" {
 ///   let arr : Array[Int] = []
-///   inspect!(arr.chunks(3), content="[]")
+///   inspect(arr.chunks(3), content="[]")
 /// }
 /// ```
 pub fn[T] Array::chunks(self : Array[T], size : Int) -> Array[Array[T]] {
@@ -1611,12 +1611,12 @@ pub fn[T] Array::chunks(self : Array[T], size : Int) -> Array[Array[T]] {
 /// test "chunk_by" {
 ///   let v = [1, 1, 2, 3, 2, 3, 2, 3, 4]
 ///   let chunks = v.chunk_by(fn(x, y) { x <= y })
-///   inspect!(chunks, content="[[1, 1, 2, 3], [2, 3], [2, 3, 4]]")
+///   inspect(chunks, content="[[1, 1, 2, 3], [2, 3], [2, 3, 4]]")
 /// }
 ///
 /// test "chunk_by/empty" {
 ///   let v : Array[Int] = []
-///   inspect!(v.chunk_by(fn(x, y) { x <= y }), content="[]")
+///   inspect(v.chunk_by(fn(x, y) { x <= y }), content="[]")
 /// }
 /// ```
 #locals(pred)
@@ -1659,12 +1659,12 @@ pub fn[T] Array::chunk_by(
 /// ```moonbit
 /// test "split/basic" {
 ///   let arr = [1, 0, 2, 0, 3, 0, 4]
-///   inspect!(arr.split(fn(x) { x == 0 }), content="[[1], [2], [3], [4]]")
+///   inspect(arr.split(fn(x) { x == 0 }), content="[[1], [2], [3], [4]]")
 /// }
 ///
 /// test "split/empty_chunks" {
 ///   let arr = [0, 1, 0, 0, 2, 0]
-///   inspect!(arr.split(fn(x) { x == 0 }), content="[[], [1], [], [2]]")
+///   inspect(arr.split(fn(x) { x == 0 }), content="[[], [1], [], [2]]")
 /// }
 /// ```
 #locals(pred)
@@ -1699,7 +1699,7 @@ pub fn[T] Array::split(self : Array[T], pred : (T) -> Bool) -> Array[Array[T]] {
 ///   let arr = [1, 2, 3]
 ///   let mut sum = 0
 ///   arr.iter().each(fn(x) { sum = sum + x })
-///   inspect!(sum, content="6")
+///   inspect(sum, content="6")
 /// }
 /// ```
 pub fn[T] Array::iter(self : Array[T]) -> Iter[T] {
@@ -1731,7 +1731,7 @@ pub fn[T] Array::iter(self : Array[T]) -> Iter[T] {
 ///   let arr = [1, 2, 3]
 ///   let result = []
 ///   arr.rev_iter().each(fn(x) { result.push(x) })
-///   inspect!(result, content="[3, 2, 1]")
+///   inspect(result, content="[3, 2, 1]")
 /// }
 /// ```
 pub fn[T] Array::rev_iter(self : Array[T]) -> Iter[T] {
@@ -1763,7 +1763,7 @@ pub fn[T] Array::rev_iter(self : Array[T]) -> Iter[T] {
 ///   let arr = [10, 20, 30]
 ///   let mut sum = 0
 ///   arr.iter2().each(fn(i, x) { sum = sum + i + x })
-///   inspect!(sum, content="63") // (0 + 10) + (1 + 20) + (2 + 30) = 63
+///   inspect(sum, content="63") // (0 + 10) + (1 + 20) + (2 + 30) = 63
 /// }
 /// ```
 pub fn[A] Array::iter2(self : Array[A]) -> Iter2[Int, A] {
@@ -1787,8 +1787,8 @@ pub fn[A] Array::iter2(self : Array[A]) -> Iter2[Int, A] {
 /// ```moonbit
 /// test "Array::default" {
 ///   let arr : Array[Int] = Array::default()
-///   inspect!(arr.length(), content="0")
-///   inspect!(arr.is_empty(), content="true")
+///   inspect(arr.length(), content="0")
+///   inspect(arr.is_empty(), content="true")
 /// }
 /// ```
 pub impl[T] Default for Array[T] with default() {

@@ -108,11 +108,11 @@ pub fn uint(self : Rand, limit~ : UInt = 0) -> UInt {
 test "uint" {
   let r = new()
   let n = r.uint(limit=10U)
-  inspect!(n, content="7")
+  inspect(n, content="7")
   let n = r.uint(limit=10U)
-  inspect!(n, content="0")
+  inspect(n, content="0")
   let n = r.uint(limit=10U)
-  inspect!(n, content="5")
+  inspect(n, content="5")
 }
 
 ///|
@@ -148,11 +148,11 @@ test "UInt64" {
   assert_eq!(n, exp)
   let r = new()
   let n = r.uint64(limit=10UL)
-  inspect!(n, content="7")
+  inspect(n, content="7")
   let n = r.uint64(limit=10UL)
-  inspect!(n, content="0")
+  inspect(n, content="0")
   let n = r.uint64(limit=10UL)
-  inspect!(n, content="5")
+  inspect(n, content="5")
 }
 
 ///|
@@ -166,7 +166,7 @@ pub fn double(self : Rand) -> Double {
 test "double" {
   let r = new()
   let n = r.double()
-  inspect!(n, content="0.615969772029264")
+  inspect(n, content="0.615969772029264")
 }
 
 ///|
@@ -189,7 +189,7 @@ pub fn float(self : Rand) -> Float {
 /// test "Rand::bigint" {
 ///   let rand = @random.new()
 ///   let n = rand.bigint(8) // Generate random 8-bit number
-///   inspect!(n.bit_length() <= 8, content="true")
+///   inspect(n.bit_length() <= 8, content="true")
 /// }
 /// ```
 pub fn bigint(self : Rand, bits : Int) -> @bigint.BigInt {
@@ -209,14 +209,14 @@ pub fn bigint(self : Rand, bits : Int) -> @bigint.BigInt {
 ///|
 test "bigint" {
   let r = new()
-  inspect!(r.bigint(1), content="1")
-  inspect!(r.bigint(3), content="4")
-  inspect!(r.bigint(7), content="124")
-  inspect!(r.bigint(8), content="214")
-  inspect!(r.bigint(32), content="2910404175")
-  inspect!(r.bigint(40), content="714745001576")
-  inspect!(r.bigint(64), content="13430064486797060338")
-  inspect!(r.bigint(128), content="251068071753473224445949321151725639522")
+  inspect(r.bigint(1), content="1")
+  inspect(r.bigint(3), content="4")
+  inspect(r.bigint(7), content="124")
+  inspect(r.bigint(8), content="214")
+  inspect(r.bigint(32), content="2910404175")
+  inspect(r.bigint(40), content="714745001576")
+  inspect(r.bigint(64), content="13430064486797060338")
+  inspect(r.bigint(128), content="251068071753473224445949321151725639522")
 }
 
 ///|
@@ -311,5 +311,5 @@ test "shuffle" {
     a[i] = a[j]
     a[j] = t
   })
-  inspect!(a, content="[3, 5, 2, 1, 4]")
+  inspect(a, content="[3, 5, 2, 1, 4]")
 }

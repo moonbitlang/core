@@ -79,7 +79,7 @@ Safe access with error handling:
 test {
   let map = @sorted_map.from_array([(1, "one"), (2, "two")])
   let key = 3
-  inspect!(map.get(key), content="None")
+  inspect(map.get(key), content="None")
 }
 ```
 

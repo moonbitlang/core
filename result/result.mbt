@@ -352,7 +352,7 @@ pub fn[T, E] unwrap(self : Result[T, E]) -> T {
 /// ```moonbit
 /// test "unwrap_err" {
 ///   let err : Result[Int, String] = Err("error message")
-///   inspect!(err.unwrap_err(), content="error message")
+///   inspect(err.unwrap_err(), content="error message")
 /// }
 ///
 /// test "panic unwrap_err/ok" {
@@ -371,14 +371,14 @@ pub fn[T, E] unwrap_err(self : Result[T, E]) -> E {
 ///|
 test "show" {
   let ok : Result[_, String] = Ok("hello")
-  inspect!(
+  inspect(
     ok,
     content=
       #|Ok("hello")
     ,
   )
   let err : Result[String, _] = Err("world")
-  inspect!(
+  inspect(
     err,
     content=
       #|Err("world")
@@ -401,7 +401,7 @@ test "unwrap exn" {
     |> Ok catch {
     Failure(msg) => Err(msg)
   })
-  |> inspect!(
+  |> inspect(
     content=
       #|Err("This is serious")
     ,

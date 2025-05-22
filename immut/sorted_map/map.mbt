@@ -204,7 +204,7 @@ fn[K : Compare, V] balance(
 ///|
 test "from_array" {
   let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
-  inspect!(
+  inspect(
     m.debug_tree(),
     content="(3,three,(1,one,(0,zero,_,_),(2,two,_,_)),(8,eight,_,_))",
   )
@@ -213,9 +213,9 @@ test "from_array" {
 ///|
 test "insert" {
   let m = of([(3, "three"), (8, "eight"), (1, "one")])
-  inspect!(m.debug_tree(), content="(3,three,(1,one,_,_),(8,eight,_,_))")
+  inspect(m.debug_tree(), content="(3,three,(1,one,_,_),(8,eight,_,_))")
   let m = m.add(5, "five").add(2, "two").add(0, "zero").add(1, "one_updated")
-  inspect!(
+  inspect(
     m.debug_tree(),
     content="(3,three,(1,one_updated,(0,zero,_,_),(2,two,_,_)),(8,eight,(5,five,_,_),_))",
   )
@@ -224,25 +224,25 @@ test "insert" {
 ///|
 test "remove" {
   let m1 = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
-  inspect!(
+  inspect(
     m1.debug_tree(),
     content="(3,three,(1,one,(0,zero,_,_),(2,two,_,_)),(8,eight,_,_))",
   )
   let m2 = m1.remove(1).remove(3)
-  inspect!(m2.debug_tree(), content="(2,two,(0,zero,_,_),(8,eight,_,_))")
+  inspect(m2.debug_tree(), content="(2,two,(0,zero,_,_),(8,eight,_,_))")
   let m3 = m1.remove(8)
-  inspect!(
+  inspect(
     m3.debug_tree(),
     content="(2,two,(1,one,(0,zero,_,_),_),(3,three,_,_))",
   )
   let e : T[Int, Int] = Empty
-  inspect!(e.remove(1).debug_tree(), content="_")
+  inspect(e.remove(1).debug_tree(), content="_")
 }
 
 ///|
 test "contains" {
   let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
-  inspect!(
+  inspect(
     m.debug_tree(),
     content="(3,three,(1,one,(0,zero,_,_),(2,two,_,_)),(8,eight,_,_))",
   )
@@ -294,9 +294,9 @@ test "singleton" {
 ///|
 test "insert" {
   let m = of([(3, "three"), (8, "eight"), (1, "one")])
-  inspect!(m.debug_tree(), content="(3,three,(1,one,_,_),(8,eight,_,_))")
+  inspect(m.debug_tree(), content="(3,three,(1,one,_,_),(8,eight,_,_))")
   let m = m.add(5, "five").add(2, "two").add(0, "zero").add(1, "one_updated")
-  inspect!(
+  inspect(
     m.debug_tree(),
     content="(3,three,(1,one_updated,(0,zero,_,_),(2,two,_,_)),(8,eight,(5,five,_,_),_))",
   )
@@ -305,7 +305,7 @@ test "insert" {
 ///|
 test "remove" {
   let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
-  inspect!(
+  inspect(
     m.debug_tree(),
     content="(3,three,(1,one,(0,zero,_,_),(2,two,_,_)),(8,eight,_,_))",
   )
@@ -378,9 +378,9 @@ test "glue" {
 test "split_max with non-empty tree" {
   let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
   let (k, v, r) = m.split_max()
-  inspect!(k, content="8")
-  inspect!(v, content="eight")
-  inspect!(
+  inspect(k, content="8")
+  inspect(v, content="eight")
+  inspect(
     r.debug_tree(),
     content="(2,two,(1,one,(0,zero,_,_),_),(3,three,_,_))",
   )

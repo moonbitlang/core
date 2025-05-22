@@ -14,14 +14,14 @@
 
 ///|
 test "cbrt" {
-  inspect!(1.0.cbrt(), content="1")
-  inspect!(3.0.cbrt(), content="1.4422495703074083")
-  inspect!((-3.0).cbrt(), content="-1.4422495703074083")
-  inspect!(10.0.cbrt(), content="2.154434690031884")
-  inspect!(1000.0.cbrt(), content="10")
-  inspect!(not_a_number.cbrt(), content="NaN")
-  inspect!(infinity, content="Infinity")
-  inspect!(neg_infinity, content="-Infinity")
+  inspect(1.0.cbrt(), content="1")
+  inspect(3.0.cbrt(), content="1.4422495703074083")
+  inspect((-3.0).cbrt(), content="-1.4422495703074083")
+  inspect(10.0.cbrt(), content="2.154434690031884")
+  inspect(1000.0.cbrt(), content="10")
+  inspect(not_a_number.cbrt(), content="NaN")
+  inspect(infinity, content="Infinity")
+  inspect(neg_infinity, content="-Infinity")
   let vals = [
     -2.1, -3.2, -4.3, -5.4, -6.5, -7.6, -8.7, -9.8, -10.9, -11.1, 1.2, 2.3, 3.4,
     4.5, 5.6, 6.7, 7.8, 8.9, 9.1, 10.2, 1357.9, 2468.0, 3579.1, 4680.2, 5791.3, 6802.4,

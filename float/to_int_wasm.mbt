@@ -30,11 +30,11 @@
 ///
 /// ```moonbit
 /// test "Float::to_int/normal" {
-///   inspect!((1.5 : Float).to_int(), content="1")
-///   inspect!((-1.5 : Float).to_int(), content="-1")
-///   inspect!(@float.not_a_number.to_int(), content="0")
-///   inspect!(@float.infinity.to_int(), content="2147483647")
-///   inspect!(@float.neg_infinity.to_int(), content="-2147483648")
+///   inspect((1.5 : Float).to_int(), content="1")
+///   inspect((-1.5 : Float).to_int(), content="-1")
+///   inspect(@float.not_a_number.to_int(), content="0")
+///   inspect(@float.infinity.to_int(), content="2147483647")
+///   inspect(@float.neg_infinity.to_int(), content="-2147483648")
 /// }
 /// ```
 pub fn to_int(self : Float) -> Int = "%f32.to_i32_saturate"

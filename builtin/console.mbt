@@ -52,7 +52,7 @@ pub fn[T] dump(t : T, name? : String, loc~ : SourceLoc = _) -> T {
 }
 
 ///|
-/// Represents an error type used by the `inspect!` function to indicate failures
+/// Represents an error type used by the `inspect` function to indicate failures
 /// in value inspection. Contains a string message describing the nature of the
 /// inspection failure.
 ///
@@ -63,7 +63,7 @@ pub fn[T] dump(t : T, name? : String, loc~ : SourceLoc = _) -> T {
 /// ```moonbit
 /// test "inspect/failure" {
 ///   let x : Int = 42
-///   inspect!(x, content="42") // Raises InspectError with detailed failure message
+///   inspect(x, content="42") // Raises InspectError with detailed failure message
 /// }
 /// ```
 pub(all) type! InspectError String
@@ -136,28 +136,28 @@ fn base64_encode_string_codepoint(s : String) -> String {
 
 ///|
 test {
-  inspect!(base64_encode_string_codepoint(""))
-  inspect!(base64_encode_string_codepoint("a"), content="YQAAAA==")
-  inspect!(base64_encode_string_codepoint("ab"), content="YQAAAGIAAAA=")
-  inspect!(base64_encode_string_codepoint("abc"), content="YQAAAGIAAABjAAAA")
-  inspect!(
+  inspect(base64_encode_string_codepoint(""))
+  inspect(base64_encode_string_codepoint("a"), content="YQAAAA==")
+  inspect(base64_encode_string_codepoint("ab"), content="YQAAAGIAAAA=")
+  inspect(base64_encode_string_codepoint("abc"), content="YQAAAGIAAABjAAAA")
+  inspect(
     base64_encode_string_codepoint("abcd"),
     content="YQAAAGIAAABjAAAAZAAAAA==",
   )
-  inspect!(
+  inspect(
     base64_encode_string_codepoint("abcde"),
     content="YQAAAGIAAABjAAAAZAAAAGUAAAA=",
   )
-  inspect!(base64_encode_string_codepoint("a中"), content="YQAAAC1OAAA=")
-  inspect!(
+  inspect(base64_encode_string_codepoint("a中"), content="YQAAAC1OAAA=")
+  inspect(
     base64_encode_string_codepoint("a中🤣"),
     content="YQAAAC1OAAAj+QEA",
   )
-  inspect!(
+  inspect(
     base64_encode_string_codepoint("a中🤣a"),
     content="YQAAAC1OAAAj+QEAYQAAAA==",
   )
-  inspect!(
+  inspect(
     base64_encode_string_codepoint("a中🤣中"),
     content="YQAAAC1OAAAj+QEALU4AAA==",
   )
@@ -187,9 +187,9 @@ test {
 ///
 /// ```moonbit skip
 /// test "inspect/basic" {
-///   inspect!(42, content="42")
-///   inspect!("hello", content="hello")
-///   inspect!([1, 2, 3], content="[1, 2, 3]")
+///   inspect(42, content="42")
+///   inspect("hello", content="hello")
+///   inspect([1, 2, 3], content="[1, 2, 3]")
 /// }
 /// ```
 pub fn inspect(
@@ -237,5 +237,5 @@ pub(all) type! BenchError String
 ///|
 test "panic error case of inspect" {
   let x : Int = 42
-  inspect!(x, content="100")
+  inspect(x, content="100")
 }

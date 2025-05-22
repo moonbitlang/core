@@ -67,5 +67,5 @@ test "update with identity function" {
 ///|
 test "Ref::new with string" {
   let r = Ref::new("hello")
-  inspect!(r, content="{val: \"hello\"}")
+  inspect(r, content="{val: \"hello\"}")
 }

@@ -31,7 +31,7 @@
 ///   let arr = FixedArray::make(3, 42)
 ///   let mut sum = 0
 ///   arr.iter().each(fn(x) { sum = sum + x })
-///   inspect!(sum, content="126")
+///   inspect(sum, content="126")
 /// }
 /// ```
 #intrinsic("%iter.from_array")
@@ -65,7 +65,7 @@ pub fn[T] FixedArray::iter(self : FixedArray[T]) -> Iter[T] {
 ///   let arr = FixedArray::make(3, 10)
 ///   let mut sum = 0
 ///   arr.iter2().each(fn(i, x) { sum = sum + i + x })
-///   inspect!(sum, content="33") // (0 + 10) + (1 + 10) + (2 + 10) = 33
+///   inspect(sum, content="33") // (0 + 10) + (1 + 10) + (2 + 10) = 33
 /// }
 /// ```
 pub fn[T] FixedArray::iter2(self : FixedArray[T]) -> Iter2[Int, T] {
@@ -93,8 +93,8 @@ pub fn[T] FixedArray::iter2(self : FixedArray[T]) -> Iter2[Int, T] {
 /// ```moonbit
 /// test "FixedArray::default" {
 ///   let arr : FixedArray[Int] = FixedArray::default()
-///   inspect!(arr.length(), content="0")
-///   inspect!(arr.is_empty(), content="true")
+///   inspect(arr.length(), content="0")
+///   inspect(arr.is_empty(), content="true")
 /// }
 /// ```
 pub impl[X] Default for FixedArray[X] with default() {
@@ -130,9 +130,9 @@ pub fn[T] FixedArray::fill(self : FixedArray[T], value : T) -> Unit {
 /// ```moonbit
 /// test "FixedArray::is_empty" {
 ///   let empty : FixedArray[Int] = []
-///   inspect!(empty.is_empty(), content="true")
+///   inspect(empty.is_empty(), content="true")
 ///   let non_empty = [1, 2, 3]
-///   inspect!(non_empty.is_empty(), content="false")
+///   inspect(non_empty.is_empty(), content="false")
 /// }
 /// ```
 pub fn[T] FixedArray::is_empty(self : FixedArray[T]) -> Bool {

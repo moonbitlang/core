@@ -45,7 +45,7 @@ struct ArrayView[T] {
 /// test "ArrayView::length" {
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let view = arr[2:4]
-///   inspect!(view.length(), content="2")
+///   inspect(view.length(), content="2")
 /// }
 /// ```
 pub fn[T] ArrayView::length(self : ArrayView[T]) -> Int {
@@ -72,8 +72,8 @@ pub fn[T] ArrayView::length(self : ArrayView[T]) -> Int {
 /// test "ArrayView::op_get" {
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let view = arr[2:4]
-///   inspect!(view[0], content="3")
-///   inspect!(view[1], content="4")
+///   inspect(view[0], content="3")
+///   inspect(view[1], content="4")
 /// }
 ///
 /// test "panic ArrayView::op_get/out_of_bounds" {
@@ -109,7 +109,7 @@ pub fn[T] ArrayView::op_get(self : ArrayView[T], index : Int) -> T {
 /// test "ArrayView::unsafe_get" {
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let view = arr[1:4]
-///   inspect!(view.unsafe_get(1), content="3")
+///   inspect(view.unsafe_get(1), content="3")
 /// }
 ///
 /// test "panic ArrayView::unsafe_get/out_of_bounds" {
@@ -144,7 +144,7 @@ pub fn[T] ArrayView::unsafe_get(self : ArrayView[T], index : Int) -> T {
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let view = arr[1:4] // view contains [2, 3, 4]
 ///   view.op_set(1, 42)
-///   inspect!(arr, content="[1, 2, 42, 4, 5]")
+///   inspect(arr, content="[1, 2, 42, 4, 5]")
 /// }
 ///
 /// test "panic ArrayView::op_set/out_of_bounds" {
@@ -186,7 +186,7 @@ pub fn[T] ArrayView::op_set(
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let view = arr[1:4] // view = [2, 3, 4]
 ///   view.swap(0, 2) // view = [4, 3, 2]
-///   inspect!(view, content="[4, 3, 2]")
+///   inspect(view, content="[4, 3, 2]")
 /// }
 ///
 /// test "panic ArrayView::swap/out_of_bounds" {
@@ -229,8 +229,8 @@ pub fn[T] ArrayView::swap(self : ArrayView[T], i : Int, j : Int) -> Unit {
 /// test "op_as_view" {
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let view = arr[1:4] // Create a view of elements at indices 1, 2, and 3
-///   inspect!(view[0], content="2") // First element of view is arr[1]
-///   inspect!(view.length(), content="3") // View contains 3 elements
+///   inspect(view[0], content="2") // First element of view is arr[1]
+///   inspect(view.length(), content="3") // View contains 3 elements
 /// }
 ///
 /// test "panic op_as_view/invalid_range" {
@@ -283,7 +283,7 @@ pub fn[T] Array::op_as_view(
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let view = arr[1:4] // view = [2, 3, 4]
 ///   let subview = view[1:2] // subview = [3]
-///   inspect!(subview[0], content="3")
+///   inspect(subview[0], content="3")
 /// }
 /// ```
 ///

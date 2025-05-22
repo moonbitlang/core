@@ -316,7 +316,7 @@ test "mapi" {
 /// ```moonbit
 /// test "FixedArray::makei" {
 ///   let arr = FixedArray::makei(3, fn(i) { i * 2 })
-///   inspect!(arr, content="[0, 2, 4]")
+///   inspect(arr, content="[0, 2, 4]")
 /// }
 /// ```
 pub fn[T] FixedArray::makei(length : Int, value : (Int) -> T) -> FixedArray[T] {
@@ -361,7 +361,7 @@ test "fixedarray_new_with_index" {
 /// test "FixedArray::from_array" {
 ///   let dynamic_array = [1, 2, 3, 4, 5]
 ///   let fixed_array = FixedArray::from_array(dynamic_array)
-///   inspect!(fixed_array, content="[1, 2, 3, 4, 5]")
+///   inspect(fixed_array, content="[1, 2, 3, 4, 5]")
 /// }
 /// ```
 pub fn[T] FixedArray::from_array(array : Array[T]) -> FixedArray[T] {
@@ -525,7 +525,7 @@ test "rev_foldi" {
 /// test "rev_inplace" {
 ///   let arr : FixedArray[_] = [1, 2, 3, 4, 5]
 ///   arr.rev_inplace()
-///   inspect!(arr, content="[5, 4, 3, 2, 1]")
+///   inspect(arr, content="[5, 4, 3, 2, 1]")
 /// }
 /// ```
 pub fn[T] FixedArray::rev_inplace(self : FixedArray[T]) -> Unit {
@@ -553,9 +553,9 @@ pub fn[T] FixedArray::rev_inplace(self : FixedArray[T]) -> Unit {
 /// ```moonbit
 /// test "FixedArray::rev" {
 ///   let arr : FixedArray[Int] = [1, 2, 3, 4, 5]
-///   inspect!(arr.rev(), content="[5, 4, 3, 2, 1]")
+///   inspect(arr.rev(), content="[5, 4, 3, 2, 1]")
 ///   // Original array remains unchanged
-///   inspect!(arr, content="[1, 2, 3, 4, 5]")
+///   inspect(arr, content="[1, 2, 3, 4, 5]")
 /// }
 /// ```
 pub fn[T] FixedArray::rev(self : FixedArray[T]) -> FixedArray[T] {
@@ -942,8 +942,8 @@ test "ends_with" {
 ///   let arr1 : FixedArray[Int] = [1, 2, 3]
 ///   let arr2 : FixedArray[Int] = [1, 2, 3]
 ///   let arr3 : FixedArray[Int] = [1, 2, 4]
-///   inspect!(arr1 == arr2, content="true")
-///   inspect!(arr1 == arr3, content="false")
+///   inspect(arr1 == arr2, content="true")
+///   inspect(arr1 == arr3, content="false")
 /// }
 /// ```
 pub impl[T : Eq] Eq for FixedArray[T] with op_equal(
@@ -971,31 +971,22 @@ pub impl[T : Hash] Hash for FixedArray[T] with hash_combine(self, hasher) {
 ///|
 test "op_equal" {
   {
-    inspect!(([] : FixedArray[Int]) == [], content="true")
-    inspect!(([] : FixedArray[_]) == [1], content="false")
-    inspect!(([1, 2] : FixedArray[_]) == [], content="false")
+    inspect(([] : FixedArray[Int]) == [], content="true")
+    inspect(([] : FixedArray[_]) == [1], content="false")
+    inspect(([1, 2] : FixedArray[_]) == [], content="false")
   }
   {
-    inspect!(([1] : FixedArray[_]) == [1], content="true")
-    inspect!(([1] : FixedArray[_]) == [2], content="false")
-    inspect!(([1, 2] : FixedArray[_]) == [1], content="false")
-    inspect!(([1] : FixedArray[_]) == [1, 2], content="false")
+    inspect(([1] : FixedArray[_]) == [1], content="true")
+    inspect(([1] : FixedArray[_]) == [2], content="false")
+    inspect(([1, 2] : FixedArray[_]) == [1], content="false")
+    inspect(([1] : FixedArray[_]) == [1, 2], content="false")
   }
-  inspect!(([1, 2, 3, 4, 5] : FixedArray[_]) == [1, 2, 3, 4, 5], content="true")
-  inspect!(([1, 2, 3, 4, 5] : FixedArray[_]) == [1, 2, 3, 4], content="false")
-  inspect!(([1, 2, 3, 4] : FixedArray[_]) == [1, 2, 3, 4, 5], content="false")
-  inspect!(
-    ([1, 2, 3, 4, 5] : FixedArray[_]) == [6, 2, 3, 4, 5],
-    content="false",
-  )
-  inspect!(
-    ([1, 2, 3, 4, 5] : FixedArray[_]) == [1, 2, 6, 4, 5],
-    content="false",
-  )
-  inspect!(
-    ([1, 2, 3, 4, 5] : FixedArray[_]) == [1, 2, 3, 4, 6],
-    content="false",
-  )
+  inspect(([1, 2, 3, 4, 5] : FixedArray[_]) == [1, 2, 3, 4, 5], content="true")
+  inspect(([1, 2, 3, 4, 5] : FixedArray[_]) == [1, 2, 3, 4], content="false")
+  inspect(([1, 2, 3, 4] : FixedArray[_]) == [1, 2, 3, 4, 5], content="false")
+  inspect(([1, 2, 3, 4, 5] : FixedArray[_]) == [6, 2, 3, 4, 5], content="false")
+  inspect(([1, 2, 3, 4, 5] : FixedArray[_]) == [1, 2, 6, 4, 5], content="false")
+  inspect(([1, 2, 3, 4, 5] : FixedArray[_]) == [1, 2, 3, 4, 6], content="false")
 }
 
 ///|
@@ -1021,10 +1012,10 @@ test "op_equal" {
 ///   let arr1 = [1, 2, 3]
 ///   let arr2 = [1, 2, 4]
 ///   let arr3 = [1, 2]
-///   inspect!(arr1.compare(arr2), content="-1") // arr1 < arr2
-///   inspect!(arr2.compare(arr1), content="1") // arr2 > arr1
-///   inspect!(arr1.compare(arr3), content="1") // arr1 > arr3 (longer)
-///   inspect!(arr1.compare(arr1), content="0") // arr1 = arr1
+///   inspect(arr1.compare(arr2), content="-1") // arr1 < arr2
+///   inspect(arr2.compare(arr1), content="1") // arr2 > arr1
+///   inspect(arr1.compare(arr3), content="1") // arr1 > arr3 (longer)
+///   inspect(arr1.compare(arr1), content="0") // arr1 = arr1
 /// }
 /// ```
 pub impl[T : Compare] Compare for FixedArray[T] with compare(self, other) {
@@ -1060,7 +1051,7 @@ pub impl[T : Compare] Compare for FixedArray[T] with compare(self, other) {
 /// test "op_add" {
 ///   let arr1 : FixedArray[Int] = [1, 2, 3]
 ///   let arr2 : FixedArray[Int] = [4, 5, 6]
-///   inspect!(arr1 + arr2, content="[1, 2, 3, 4, 5, 6]")
+///   inspect(arr1 + arr2, content="[1, 2, 3, 4, 5, 6]")
 /// }
 /// ```
 pub impl[T] Add for FixedArray[T] with op_add(self, other) {
@@ -1078,22 +1069,22 @@ pub impl[T] Add for FixedArray[T] with op_add(self, other) {
 ///|
 test "op_add" {
   {
-    inspect!(([] : FixedArray[Int]) + [], content="[]")
-    inspect!(([] : FixedArray[_]) + [1, 2, 3, 4, 5], content="[1, 2, 3, 4, 5]")
-    inspect!(([1, 2, 3, 4, 5] : FixedArray[_]) + [], content="[1, 2, 3, 4, 5]")
+    inspect(([] : FixedArray[Int]) + [], content="[]")
+    inspect(([] : FixedArray[_]) + [1, 2, 3, 4, 5], content="[1, 2, 3, 4, 5]")
+    inspect(([1, 2, 3, 4, 5] : FixedArray[_]) + [], content="[1, 2, 3, 4, 5]")
   }
   {
-    inspect!(([1] : FixedArray[_]) + [2], content="[1, 2]")
-    inspect!(
+    inspect(([1] : FixedArray[_]) + [2], content="[1, 2]")
+    inspect(
       ([1] : FixedArray[_]) + [1, 2, 3, 4, 5],
       content="[1, 1, 2, 3, 4, 5]",
     )
-    inspect!(
+    inspect(
       ([1, 2, 3, 4, 5] : FixedArray[_]) + [1],
       content="[1, 2, 3, 4, 5, 1]",
     )
   }
-  inspect!(
+  inspect(
     ([1, 2, 3, 4, 5] : FixedArray[_]) + [6, 7, 8, 9, 10],
     content="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]",
   )
@@ -1111,7 +1102,7 @@ test "iter" {
     i = i + 1
   })
   assert_eq!(i, arr.length())
-  inspect!(
+  inspect(
     exb,
     content=
       #|1
@@ -1140,7 +1131,7 @@ test "iter" {
 /// test "FixedArray::from_iter" {
 ///   let arr = [1, 2, 3]
 ///   let fixed_arr = FixedArray::from_iter(arr.iter())
-///   inspect!(fixed_arr, content="[1, 2, 3]")
+///   inspect(fixed_arr, content="[1, 2, 3]")
 /// }
 /// ```
 pub fn[T] FixedArray::from_iter(iter : Iter[T]) -> FixedArray[T] {
@@ -1162,9 +1153,9 @@ pub fn[T] FixedArray::from_iter(iter : Iter[T]) -> FixedArray[T] {
 /// ```moonbit
 /// test "FixedArray::last" {
 ///   let array : FixedArray[Int] = [1, 2, 3]
-///   inspect!(array.last(), content="Some(3)")
+///   inspect(array.last(), content="Some(3)")
 ///   let empty : FixedArray[Int] = []
-///   inspect!(empty.last(), content="None")
+///   inspect(empty.last(), content="None")
 /// }
 /// ```
 pub fn[A] FixedArray::last(self : FixedArray[A]) -> A? {
@@ -1177,33 +1168,33 @@ pub fn[A] FixedArray::last(self : FixedArray[A]) -> A? {
 ///|
 test "FixedArray::last/empty" {
   let empty : FixedArray[Int] = []
-  inspect!(empty.last(), content="None")
+  inspect(empty.last(), content="None")
 }
 
 ///|
 test "FixedArray::last/non_empty" {
   let array : FixedArray[_] = [1, 2, 3]
-  inspect!(array.last(), content="Some(3)")
+  inspect(array.last(), content="Some(3)")
   let single : FixedArray[_] = [42]
-  inspect!(single.last(), content="Some(42)")
+  inspect(single.last(), content="Some(42)")
 }
 
 ///|
 test "FixedArray::last/empty_array" {
   let empty_array : FixedArray[Int] = []
-  inspect!(FixedArray::last(empty_array), content="None")
+  inspect(FixedArray::last(empty_array), content="None")
 }
 
 ///|
 test "FixedArray::last/single_element" {
   let single_element_array : FixedArray[Int] = [42]
-  inspect!(FixedArray::last(single_element_array), content="Some(42)")
+  inspect(FixedArray::last(single_element_array), content="Some(42)")
 }
 
 ///|
 test "FixedArray::last/multiple_elements" {
   let multiple_elements_array : FixedArray[Int] = [1, 2, 3, 4, 5]
-  inspect!(FixedArray::last(multiple_elements_array), content="Some(5)")
+  inspect(FixedArray::last(multiple_elements_array), content="Some(5)")
 }
 
 ///|

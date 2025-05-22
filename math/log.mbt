@@ -158,9 +158,9 @@ let logf_data : LogfData = {
 ///
 /// ```moonbit
 /// test "ln" {
-///   inspect!(lnf(1), content="0")
-///   inspect!(lnf(2.718281828459045), content="0.9999999403953552")
-///   inspect!(lnf(0), content="-Infinity")
+///   inspect(lnf(1), content="0")
+///   inspect(lnf(2.718281828459045), content="0.9999999403953552")
+///   inspect(lnf(0), content="-Infinity")
 /// }
 /// ```
 pub fn lnf(x : Float) -> Float {
@@ -216,13 +216,13 @@ pub fn lnf(x : Float) -> Float {
 ///
 /// ```moonbit
 /// test "ln_1p" {
-///   inspect!(ln_1pf(0), content="0")
-///   inspect!(ln_1pf(1), content="0.6931471824645996")
-///   inspect!(ln_1pf(-1), content="-Infinity")
-///   inspect!(ln_1pf(-2), content="NaN")
-///   inspect!(ln_1pf(@float.not_a_number), content="NaN")
-///   inspect!(ln_1pf(@float.infinity), content="Infinity")
-///   inspect!(ln_1pf(@float.neg_infinity), content="NaN")
+///   inspect(ln_1pf(0), content="0")
+///   inspect(ln_1pf(1), content="0.6931471824645996")
+///   inspect(ln_1pf(-1), content="-Infinity")
+///   inspect(ln_1pf(-2), content="NaN")
+///   inspect(ln_1pf(@float.not_a_number), content="NaN")
+///   inspect(ln_1pf(@float.infinity), content="Infinity")
+///   inspect(ln_1pf(@float.neg_infinity), content="NaN")
 /// }
 /// ```
 pub fn ln_1pf(x : Float) -> Float {

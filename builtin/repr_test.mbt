@@ -14,13 +14,13 @@
 
 ///|
 test "repr" {
-  inspect!(repr(1), content="1")
-  inspect!(repr("x"), content="\"x\"")
-  inspect!(repr(true), content="true")
-  inspect!(repr(false), content="false")
-  inspect!(repr(1.0), content="1")
-  inspect!(repr('a'), content="'a'")
-  inspect!(
+  inspect(repr(1), content="1")
+  inspect(repr("x"), content="\"x\"")
+  inspect(repr(true), content="true")
+  inspect(repr(false), content="false")
+  inspect(repr(1.0), content="1")
+  inspect(repr('a'), content="'a'")
+  inspect(
     repr((1, "x", '\n', ['a'])),
     content=
       #|(1, "x", '\n', ['a'])

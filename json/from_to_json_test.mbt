@@ -25,14 +25,14 @@ enum Expr {
 test {
   let e = Expr::Add(Val("x"), Val("y"))
   let ej = e.to_json()
-  inspect!(
+  inspect(
     ej |> @json.stringify,
     content=
       #|{"$tag":"Add","0":{"$tag":"Val","0":"x"},"1":{"$tag":"Val","0":"y"}}
     ,
   )
   let e0 : Expr = @json.from_json!(ej)
-  inspect!(
+  inspect(
     e0,
     content=
       #|Add(Val("x"), Val("y"))

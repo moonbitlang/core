@@ -258,7 +258,7 @@ pub fn[A : Compare] of(arr : FixedArray[A]) -> T[A] {
 
 ///|
 test "meld_and_merges" {
-  inspect!(
+  inspect(
     match meld(Cons(content=1, sibling=Nil, child=Nil), Nil) {
       Nil => false
       Cons(..) => true
@@ -291,11 +291,11 @@ pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for T[X] wit
 ///|
 test "priority queue arbitrary" {
   let samples : Array[T[Int]] = @quickcheck.samples(20)
-  inspect!(
+  inspect(
     samples[5:10],
     content="[@priority_queue.of([]), @priority_queue.of([]), @priority_queue.of([0]), @priority_queue.of([0, 0]), @priority_queue.of([3, 2, 1, 0, 0, 0, 0])]",
   )
-  inspect!(
+  inspect(
     samples[11:15],
     content="[@priority_queue.of([0, 0, 0, -1, -2]), @priority_queue.of([8, 4, 0, 0, 0, 0, 0, 0, -2, -5]), @priority_queue.of([2, 0, 0, -1]), @priority_queue.of([0, 0])]",
   )

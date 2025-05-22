@@ -518,8 +518,8 @@ test "stable_sort" {
 /// test "FixedArray::is_sorted" {
 ///   let sorted : FixedArray[Int] = [1, 2, 3, 4, 5]
 ///   let unsorted : FixedArray[Int] = [5, 4, 3, 2, 1]
-///   inspect!(FixedArray::is_sorted(sorted), content="true")
-///   inspect!(FixedArray::is_sorted(unsorted), content="false")
+///   inspect(FixedArray::is_sorted(sorted), content="true")
+///   inspect(FixedArray::is_sorted(unsorted), content="false")
 /// }
 /// ```
 pub fn[T : Compare] FixedArray::is_sorted(arr : FixedArray[T]) -> Bool {

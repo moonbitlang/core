@@ -43,9 +43,9 @@ let frac_bits = 23
 ///
 /// ```moonbit
 /// test "trunc" {
-///   inspect!((3.7 : Float).trunc(), content="3.0")
-///   inspect!((-3.7 : Float).trunc(), content="-3.0")
-///   inspect!((0.2 : Float).trunc(), content="0.0")
+///   inspect((3.7 : Float).trunc(), content="3.0")
+///   inspect((-3.7 : Float).trunc(), content="-3.0")
+///   inspect((0.2 : Float).trunc(), content="0.0")
 /// }
 /// ```
 pub fn trunc(self : Float) -> Float {
@@ -75,9 +75,9 @@ pub fn trunc(self : Float) -> Float {
 ///
 /// ```moonbit
 /// test "ceil" {
-///   inspect!((1.5 : Float).ceil(), content="2.0")
-///   inspect!((1.0 : Float).ceil(), content="1.0")
-///   inspect!((-1.5 : Float).ceil(), content="-1.0")
+///   inspect((1.5 : Float).ceil(), content="2.0")
+///   inspect((1.0 : Float).ceil(), content="1.0")
+///   inspect((-1.5 : Float).ceil(), content="-1.0")
 /// }
 /// ```
 pub fn ceil(self : Float) -> Float {
@@ -104,9 +104,9 @@ pub fn ceil(self : Float) -> Float {
 ///
 /// ```moonbit
 /// test "floor" {
-///   inspect!((1.7 : Float).floor(), content="1.0")
-///   inspect!((-1.7 : Float).floor(), content="-2.0")
-///   inspect!((2.0 : Float).floor(), content="2.0")
+///   inspect((1.7 : Float).floor(), content="1.0")
+///   inspect((-1.7 : Float).floor(), content="-2.0")
+///   inspect((2.0 : Float).floor(), content="2.0")
 /// }
 /// ```
 pub fn floor(self : Float) -> Float {
@@ -132,9 +132,9 @@ pub fn floor(self : Float) -> Float {
 ///
 /// ```moonbit
 /// test "round" {
-///   inspect!((2.3 : Float).round(), content="2.0")
-///   inspect!((2.5 : Float).round(), content="3.0")
-///   inspect!((-2.5 : Float).round(), content="-2.0")
+///   inspect((2.3 : Float).round(), content="2.0")
+///   inspect((2.5 : Float).round(), content="3.0")
+///   inspect((-2.5 : Float).round(), content="-2.0")
 /// }
 /// ```
 pub fn round(self : Float) -> Float {

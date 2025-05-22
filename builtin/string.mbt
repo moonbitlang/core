@@ -70,9 +70,9 @@ fn code_point_of_surrogate_pair(leading : Int, trailing : Int) -> Char {
 ///
 /// ```
 /// let s = "Hello🤣";
-/// inspect!(s.charcode_at(0), content="72");
-/// inspect!(s.charcode_at(5), content="55358"); // First surrogate of 🤣
-/// inspect!(s.charcode_at(6), content="56611"); // Second surrogate of 🤣
+/// inspect(s.charcode_at(0), content="72");
+/// inspect(s.charcode_at(5), content="55358"); // First surrogate of 🤣
+/// inspect(s.charcode_at(6), content="56611"); // Second surrogate of 🤣
 /// ```
 ///
 pub fn String::charcode_at(self : String, index : Int) -> Int = "%string_get"
@@ -87,8 +87,8 @@ pub fn String::charcode_at(self : String, index : Int) -> Int = "%string_get"
 ///
 /// ```
 /// let s = "Hello🤣";
-/// inspect!(s.codepoint_at(0), content="H");
-/// inspect!(s.codepoint_at(5), content="🤣"); // Returns full emoji character
+/// inspect(s.codepoint_at(0), content="H");
+/// inspect(s.codepoint_at(5), content="🤣"); // Returns full emoji character
 /// ```
 ///
 /// # Panics
@@ -153,8 +153,8 @@ pub fn String::unsafe_char_at(self : String, index : Int) -> Char {
 ///
 /// ```
 /// let s = "Hello🤣";
-/// inspect!(s.char_length(), content = "6"); // 6 actual characters
-/// inspect!(s.length(), content = "7");  // 5 ASCII chars + 2 surrogate pairs
+/// inspect(s.char_length(), content = "6"); // 6 actual characters
+/// inspect(s.length(), content = "7");  // 5 ASCII chars + 2 surrogate pairs
 /// ```
 pub fn String::char_length(
   self : String,
@@ -220,15 +220,15 @@ fn unsafe_substring(str : String, start : Int, end : Int) -> String {
 /// ```moonbit
 /// test "substring/basic" {
 ///   let s = "Hello world"
-///   inspect!(s.substring(start=0, end=5), content="Hello")
-///   inspect!(s.substring(start=6, end=11), content="world")
-///   inspect!(s.substring(), content="Hello world")
+///   inspect(s.substring(start=0, end=5), content="Hello")
+///   inspect(s.substring(start=6, end=11), content="world")
+///   inspect(s.substring(), content="Hello world")
 /// }
 ///
 /// test "substring/empty" {
 ///   let s = "test"
-///   inspect!(s.substring(start=2, end=2), content="")
-///   inspect!("".substring(), content="")
+///   inspect(s.substring(start=2, end=2), content="")
+///   inspect("".substring(), content="")
 /// }
 ///
 /// test "panic substring/invalid_range" {
@@ -251,17 +251,17 @@ pub fn String::substring(self : String, start~ : Int = 0, end? : Int) -> String 
 ///|
 test "substring/basic" {
   let s = "hello, world"
-  inspect!(s.substring(start=0, end=5), content="hello")
-  inspect!(s.substring(start=7, end=12), content="world")
-  inspect!(s.substring(), content="hello, world")
+  inspect(s.substring(start=0, end=5), content="hello")
+  inspect(s.substring(start=7, end=12), content="world")
+  inspect(s.substring(), content="hello, world")
 }
 
 ///|
 test "substring/empty" {
   let s = "test"
-  inspect!(s.substring(start=2, end=2), content="")
-  inspect!(s.substring(start=4, end=4), content="")
-  inspect!("".substring(), content="")
+  inspect(s.substring(start=2, end=2), content="")
+  inspect(s.substring(start=4, end=4), content="")
+  inspect("".substring(), content="")
 }
 
 ///|
@@ -274,19 +274,19 @@ test "panic substring/invalid_range" {
 
 ///|
 test "substring/basic" {
-  inspect!("Hello world".substring(start=0, end=5), content="Hello")
-  inspect!("Hello world".substring(start=6, end=11), content="world")
-  inspect!("Hello world".substring(start=0), content="Hello world")
-  inspect!("Hello world".substring(start=6), content="world")
+  inspect("Hello world".substring(start=0, end=5), content="Hello")
+  inspect("Hello world".substring(start=6, end=11), content="world")
+  inspect("Hello world".substring(start=0), content="Hello world")
+  inspect("Hello world".substring(start=6), content="world")
 }
 
 ///|
 test "substring/boundary" {
-  inspect!("".substring(start=0, end=0), content="")
-  inspect!("a".substring(start=0, end=1), content="a")
-  inspect!("abc".substring(start=0), content="abc")
-  inspect!("abc".substring(start=1), content="bc")
-  inspect!("abc".substring(start=0, end=3), content="abc")
+  inspect("".substring(start=0, end=0), content="")
+  inspect("a".substring(start=0, end=1), content="a")
+  inspect("abc".substring(start=0), content="abc")
+  inspect("abc".substring(start=1), content="bc")
+  inspect("abc".substring(start=0, end=3), content="abc")
 }
 
 ///|

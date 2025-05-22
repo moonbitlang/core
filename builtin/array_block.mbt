@@ -41,7 +41,7 @@
 ///   let src = [1, 2, 3, 4, 5]
 ///   let dst = [0, 0, 0, 0, 0]
 ///   Array::unsafe_blit(dst, 1, src, 2, 2)
-///   inspect!(dst, content="[0, 3, 4, 0, 0]")
+///   inspect(dst, content="[0, 3, 4, 0, 0]")
 /// }
 /// ```
 ///
@@ -87,7 +87,7 @@ pub fn[A] Array::unsafe_blit(
 ///     src[i] = i + 1
 ///   }
 ///   Array::unsafe_blit_fixed(dst, 1, src, 0, 2)
-///   inspect!(dst, content="[0, 1, 2, 0, 0]")
+///   inspect(dst, content="[0, 1, 2, 0, 0]")
 /// }
 /// ```
 pub fn[A] Array::unsafe_blit_fixed(
@@ -128,7 +128,7 @@ pub fn[A] Array::unsafe_blit_fixed(
 ///   let src = [1, 2, 3, 4, 5]
 ///   let dst = [0, 0]
 ///   src.blit_to(dst, len=3, dst_offset=1)
-///   inspect!(dst, content="[0, 1, 2, 3]")
+///   inspect(dst, content="[0, 1, 2, 3]")
 /// }
 /// ```
 ///
@@ -162,7 +162,7 @@ test "Array::blit_to/basic" {
   let src = [1, 2, 3, 4, 5]
   let dst = [0, 0, 0, 0, 0]
   Array::blit_to(src, dst, len=3, src_offset=1, dst_offset=2)
-  inspect!(dst, content="[0, 0, 2, 3, 4]")
+  inspect(dst, content="[0, 0, 2, 3, 4]")
 }
 
 ///|
@@ -170,7 +170,7 @@ test "Array::blit_to/basic" {
   let src = [1, 2, 3, 4, 5]
   let dst = [0, 0, 0, 0, 0]
   Array::blit_to(src, dst, len=3)
-  inspect!(dst, content="[1, 2, 3, 0, 0]")
+  inspect(dst, content="[1, 2, 3, 0, 0]")
 }
 
 ///|
@@ -178,7 +178,7 @@ test "Array::blit_to/zero_length" {
   let src = [1, 2, 3]
   let dst = [4, 5, 6]
   Array::blit_to(src, dst, len=0)
-  inspect!(dst, content="[4, 5, 6]")
+  inspect(dst, content="[4, 5, 6]")
 }
 
 ///|
@@ -186,7 +186,7 @@ test "Array::blit_to/grow_destination" {
   let src = [1, 2, 3, 4, 5]
   let dst = [0, 0]
   Array::blit_to(src, dst, len=3, dst_offset=1)
-  inspect!(dst, content="[0, 1, 2, 3]")
+  inspect(dst, content="[0, 1, 2, 3]")
 }
 
 ///|
@@ -195,19 +195,19 @@ test "Array::blit_to/edge_cases" {
   let src = [1, 2, 3, 4, 5]
   let dst = [0, 0, 0, 0, 0]
   Array::blit_to(src, dst, len=2, src_offset=1, dst_offset=2)
-  inspect!(dst, content="[0, 0, 2, 3, 0]")
+  inspect(dst, content="[0, 0, 2, 3, 0]")
 
   // Test when src and dst are the same array
   Array::blit_to(src, src, len=2, src_offset=0, dst_offset=3)
-  inspect!(src, content="[1, 2, 3, 1, 2]")
+  inspect(src, content="[1, 2, 3, 1, 2]")
 
   // Test with len equal to 0
   Array::blit_to(src, dst, len=0, src_offset=0, dst_offset=0)
-  inspect!(dst, content="[0, 0, 2, 3, 0]")
+  inspect(dst, content="[0, 0, 2, 3, 0]")
 
   // Test with len equal to the length of src
   Array::blit_to(src, dst, len=5)
-  inspect!(dst, content="[1, 2, 3, 1, 2]")
+  inspect(dst, content="[1, 2, 3, 1, 2]")
 }
 
 ///|
@@ -216,11 +216,11 @@ test "Array::blit_to/edge_cases" {
   let dst = [0, 0, 0, 0, 0]
   // Test with len equal to 0
   Array::blit_to(src, dst, len=0, src_offset=0, dst_offset=0)
-  inspect!(dst, content="[0, 0, 0, 0, 0]")
+  inspect(dst, content="[0, 0, 0, 0, 0]")
 
   // Test with len equal to the length of src
   Array::blit_to(src, dst, len=5, src_offset=0, dst_offset=0)
-  inspect!(dst, content="[1, 2, 3, 4, 5]")
+  inspect(dst, content="[1, 2, 3, 4, 5]")
 }
 
 ///|
@@ -266,15 +266,15 @@ test "Array::blit_to - random cases" {
 
   // Random len, src_offset, and dst_offset
   Array::blit_to(src, dst, len=2, src_offset=2, dst_offset=1)
-  inspect!(dst, content="[0, 30, 40, 0, 0]")
+  inspect(dst, content="[0, 30, 40, 0, 0]")
 
   // Another random case
   Array::blit_to(src, dst, len=3, src_offset=1, dst_offset=2)
-  inspect!(dst, content="[0, 30, 20, 30, 40]")
+  inspect(dst, content="[0, 30, 20, 30, 40]")
 
   // Yet another random case
   Array::blit_to(src, dst, len=1, src_offset=4, dst_offset=4)
-  inspect!(dst, content="[0, 30, 20, 30, 50]")
+  inspect(dst, content="[0, 30, 20, 30, 50]")
 }
 
 ///|
@@ -284,15 +284,15 @@ test "Array::blit_to - boundary cases" {
 
   // Test with src_offset at the end of src
   Array::blit_to(src, dst, len=1, src_offset=4, dst_offset=0)
-  inspect!(dst, content="[5, 0, 0, 0, 0]")
+  inspect(dst, content="[5, 0, 0, 0, 0]")
 
   // Test with dst_offset at the end of dst
   Array::blit_to(src, dst, len=1, src_offset=0, dst_offset=4)
-  inspect!(dst, content="[5, 0, 0, 0, 1]")
+  inspect(dst, content="[5, 0, 0, 0, 1]")
 
   // Test with len equal to the remaining length of src
   Array::blit_to(src, dst, len=2, src_offset=3, dst_offset=3)
-  inspect!(dst, content="[5, 0, 0, 4, 5]")
+  inspect(dst, content="[5, 0, 0, 4, 5]")
 }
 
 ///|
@@ -300,7 +300,7 @@ test "Array::unsafe_blit_fixed" {
   let src = FixedArray::make(3, 1) // Create a FixedArray with 3 elements of value 1
   let dst = Array::make(5, 0) // Create an Array with 5 elements of value 0
   Array::unsafe_blit_fixed(dst, 1, src, 0, 2) // Copy 2 elements from src[0] to dst[1]
-  inspect!(dst, content="[0, 1, 1, 0, 0]")
+  inspect(dst, content="[0, 1, 1, 0, 0]")
 }
 
 // test "Array::blit_to - invalid cases" {
@@ -309,21 +309,21 @@ test "Array::unsafe_blit_fixed" {
 
 //   // Invalid len
 //   Array::blit_to(src, dst, len=-1)
-//   inspect!(dst, content="[0, 0, 0, 0, 0]")
+//   inspect(dst, content="[0, 0, 0, 0, 0]")
 
 //   // Invalid src_offset
 //   Array::blit_to(src, dst, len=2, src_offset=-1)
-//   inspect!(dst, content="[0, 0, 0, 0, 0]")
+//   inspect(dst, content="[0, 0, 0, 0, 0]")
 
 //   // Invalid dst_offset
 //   Array::blit_to(src, dst, len=2, dst_offset=-1)
-//   inspect!(dst, content="[0, 0, 0, 0, 0]")
+//   inspect(dst, content="[0, 0, 0, 0, 0]")
 
 //   // len exceeding src length
 //   Array::blit_to(src, dst, len=6)
-//   inspect!(dst, content="[0, 0, 0, 0, 0]")
+//   inspect(dst, content="[0, 0, 0, 0, 0]")
 
 //   // len exceeding dst length
 //   Array::blit_to(src, dst, len=5, dst_offset=1)
-//   inspect!(dst, content="[0, 0, 0, 0, 0]")
+//   inspect(dst, content="[0, 0, 0, 0, 0]")
 // }

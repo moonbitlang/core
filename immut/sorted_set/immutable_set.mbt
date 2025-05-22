@@ -386,7 +386,7 @@ pub fn[A : Compare] difference(self : T[A], other : T[A]) -> T[A] {
 /// test "symmetric_difference" {
 ///   let set1 = @sorted_set.of([1, 2, 3, 4])
 ///   let set2 = @sorted_set.of([3, 4, 5, 6])
-///   inspect!(
+///   inspect(
 ///     set1.symmetric_difference(set2),
 ///     content="@immut/sorted_set.of([1, 2, 5, 6])",
 ///   )
@@ -809,10 +809,10 @@ pub impl[A : Hash] Hash for T[A] with hash_combine(self, hasher) {
 
 ///|
 test "split_bis" {
-  inspect!(of([1, 2, 3]).split_bis(1), content="Found")
-  inspect!(of([1, 2, 3]).split_bis(3), content="Found")
-  inspect!(of([1, 2, 3]).split_bis(0), content="NotFound")
-  inspect!(of([1, 2, 3]).split_bis(4), content="NotFound")
+  inspect(of([1, 2, 3]).split_bis(1), content="Found")
+  inspect(of([1, 2, 3]).split_bis(3), content="Found")
+  inspect(of([1, 2, 3]).split_bis(0), content="NotFound")
+  inspect(of([1, 2, 3]).split_bis(4), content="NotFound")
 }
 
 ///|
@@ -821,7 +821,7 @@ test "balance with left height greater" {
   let value = 4
   let right = of([5])
   let balanced_set = balance(left, value, right)
-  inspect!(balanced_set, content="@immut/sorted_set.of([1, 2, 3, 4, 5])")
+  inspect(balanced_set, content="@immut/sorted_set.of([1, 2, 3, 4, 5])")
 }
 
 ///|
@@ -830,7 +830,7 @@ test "balance with right height greater" {
   let value = 2
   let right = of([3, 4, 5])
   let balanced_set = balance(left, value, right)
-  inspect!(balanced_set, content="@immut/sorted_set.of([1, 2, 3, 4, 5])")
+  inspect(balanced_set, content="@immut/sorted_set.of([1, 2, 3, 4, 5])")
 }
 
 ///|
@@ -839,7 +839,7 @@ test "join with different heights" {
   let value = 4
   let right = of([5, 6, 7])
   let joined_set = join(left, value, right)
-  inspect!(joined_set, content="@immut/sorted_set.of([1, 2, 3, 4, 5, 6, 7])")
+  inspect(joined_set, content="@immut/sorted_set.of([1, 2, 3, 4, 5, 6, 7])")
 }
 
 ///|

@@ -39,7 +39,7 @@ pub typealias View[T] = ArrayView[T]
 /// test "rev_inplace" {
 ///   let arr = [1, 2, 3, 4, 5]
 ///   arr[:].rev_inplace()
-///   inspect!(arr, content="[5, 4, 3, 2, 1]")
+///   inspect(arr, content="[5, 4, 3, 2, 1]")
 /// }
 /// ```
 pub fn[T] View::rev_inplace(self : View[T]) -> Unit {
@@ -66,7 +66,7 @@ pub fn[T] View::rev_inplace(self : View[T]) -> Unit {
 ///   let arr = [1, 2, 3][:]
 ///   let mut sum = 0
 ///   arr.each(fn(x) { sum = sum + x })
-///   inspect!(sum, content="6")
+///   inspect(sum, content="6")
 /// }
 /// ```
 pub fn[T] View::each(self : View[T], f : (T) -> Unit) -> Unit {
@@ -147,8 +147,8 @@ pub fn[T] View::any(self : View[T], f : (T) -> Bool) -> Bool {
 /// ```moonbit
 /// test "array_view/contains" {
 ///   let arr = [1, 2, 3, 4, 5][:]
-///   inspect!(arr.contains(3), content="true")
-///   inspect!(arr.contains(6), content="false")
+///   inspect(arr.contains(3), content="true")
+///   inspect(arr.contains(6), content="false")
 /// }
 /// ```
 pub fn[T : Eq] View::contains(self : View[T], value : T) -> Bool {
@@ -179,7 +179,7 @@ pub fn[T : Eq] View::contains(self : View[T], value : T) -> Bool {
 ///   let view = arr[1:]
 ///   let mut sum = 0
 ///   view.iter().each(fn(x) { sum = sum + x })
-///   inspect!(sum, content="5")
+///   inspect(sum, content="5")
 /// }
 /// ```
 pub fn[A] View::iter(self : View[A]) -> Iter[A] {
@@ -208,8 +208,8 @@ pub fn[A] View::iter(self : View[A]) -> Iter[A] {
 ///     sum = sum + x 
 ///     sum_keys = sum_keys + i
 ///   })
-///   inspect!(sum, content="5")
-///   inspect!(sum_keys, content="1")
+///   inspect(sum, content="5")
+///   inspect(sum_keys, content="1")
 /// }
 /// ```
 pub fn[A] View::iter2(self : View[A]) -> Iter2[Int, A] {

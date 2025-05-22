@@ -27,23 +27,23 @@ test "stringbuilder" {
   buf.write_string("hello")
   buf.write_char(' ')
   buf.write_substring("world", 0, 3)
-  inspect!(buf.to_string(), content="hello wor")
+  inspect(buf.to_string(), content="hello wor")
 }
 
 ///|
 test "is_empty method" {
   let buf = StringBuilder::new()
-  inspect!(buf.is_empty(), content="true")
+  inspect(buf.is_empty(), content="true")
   buf.write_string("Test")
-  inspect!(buf.is_empty(), content="false")
+  inspect(buf.is_empty(), content="false")
   buf.reset()
-  inspect!(buf.is_empty(), content="true")
+  inspect(buf.is_empty(), content="true")
 }
 
 ///|
 test {
   let data = ["a", "b", "c", "hello world"]
-  @json.inspect!(data.map(id), content=["a", "b", "c", "hello world"])
+  @json.inspect(data.map(id), content=["a", "b", "c", "hello world"])
   // assert_eq!(StringBuilder::new()..write_string("hello").to_string(), "hello")
 }
 
@@ -52,8 +52,8 @@ test "write_iter" {
   let str = "Hello🤣🤣🤣"
   let sb = StringBuilder::new()
   sb.write_iter(str.iter())
-  inspect!(sb.to_string(), content="Hello🤣🤣🤣")
+  inspect(sb.to_string(), content="Hello🤣🤣🤣")
   let str_view = str.view(start_offset=1, end_offset=7)
   sb.write_iter(str_view.iter())
-  inspect!(sb.to_string(), content="Hello🤣🤣🤣ello🤣")
+  inspect(sb.to_string(), content="Hello🤣🤣🤣ello🤣")
 }

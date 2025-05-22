@@ -202,8 +202,8 @@ let small_primes : Array[@bigint.BigInt] = [
 ///   let rand = @random.new()
 ///   let prime = BigInt::from_string("17")
 ///   let composite = BigInt::from_string("15")
-///   inspect!(is_probable_prime(prime, rand), content="true")
-///   inspect!(is_probable_prime(composite, rand), content="false")
+///   inspect(is_probable_prime(prime, rand), content="true")
+///   inspect(is_probable_prime(composite, rand), content="false")
 /// }
 ///
 /// ///|
@@ -253,7 +253,7 @@ pub fn is_probable_prime(
 /// test "probable_prime" {
 ///   let rand = @random.new()
 ///   let prime = probable_prime(64, rand)
-///   inspect!(is_probable_prime(prime, rand), content="true")
+///   inspect(is_probable_prime(prime, rand), content="true")
 /// }
 /// ```
 pub fn probable_prime(bits : Int, rand : @random.Rand) -> @bigint.BigInt {

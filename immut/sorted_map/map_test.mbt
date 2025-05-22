@@ -159,7 +159,7 @@ test "iter" {
     let (k, v) = e
     buf.write_string("[\{k}-\{v}]")
   })
-  inspect!(buf, content="[1-one][2-two][3-three]")
+  inspect(buf, content="[1-one][2-two][3-three]")
   buf.reset()
   map
   .iter()
@@ -168,7 +168,7 @@ test "iter" {
     let (k, v) = e
     buf.write_string("[\{k}-\{v}]")
   })
-  inspect!(buf, content="[1-one][2-two]")
+  inspect(buf, content="[1-one][2-two]")
 }
 
 ///|
@@ -201,7 +201,7 @@ test "op_equal" {
 ///|
 test "show" {
   let m = @sorted_map.of([(1, "one"), (2, "two"), (3, "three")])
-  inspect!(
+  inspect(
     m,
     content="@immut/sorted_map.of([(1, \"one\"), (2, \"two\"), (3, \"three\")])",
   )
@@ -209,7 +209,7 @@ test "show" {
 
 ///|
 test "from_iter multiple elements iter" {
-  inspect!(
+  inspect(
     @sorted_map.from_iter([(1, 1), (2, 2), (3, 3)].iter()),
     content="@immut/sorted_map.of([(1, 1), (2, 2), (3, 3)])",
   )
@@ -217,7 +217,7 @@ test "from_iter multiple elements iter" {
 
 ///|
 test "from_iter single element iter" {
-  inspect!(
+  inspect(
     @sorted_map.from_iter([(1, 1)].iter()),
     content="@immut/sorted_map.of([(1, 1)])",
   )
@@ -226,16 +226,16 @@ test "from_iter single element iter" {
 ///|
 test "from_iter empty iter" {
   let pq : @sorted_map.T[Int, Int] = @sorted_map.from_iter(Iter::empty())
-  inspect!(pq, content="@immut/sorted_map.of([])")
+  inspect(pq, content="@immut/sorted_map.of([])")
 }
 
 ///|
 test "hash" {
   let map1 = @sorted_map.of([("one", 1), ("two", 2)])
   let map2 = @sorted_map.of([("one", 1), ("two", 2)])
-  inspect!(map1.hash() == map2.hash(), content="true")
+  inspect(map1.hash() == map2.hash(), content="true")
   let map3 = @sorted_map.of([("two", 2), ("one", 1)])
-  inspect!(map1.hash() == map3.hash(), content="true")
+  inspect(map1.hash() == map3.hash(), content="true")
   let map4 = @sorted_map.of([("one", 1), ("two", 2), ("three", 3)])
-  inspect!(map1.hash() == map4.hash(), content="false")
+  inspect(map1.hash() == map4.hash(), content="false")
 }

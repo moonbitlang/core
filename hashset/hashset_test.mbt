@@ -19,7 +19,7 @@ let default_init_capacity = 8
 test "new_with_capacity_then_add " {
   let set : @hashset.T[(String, String)] = @hashset.new(capacity=20)
   set.add(("None", "Hash"))
-  inspect!(
+  inspect(
     set,
     content=
       #|@hashset.of([("None", "Hash")])
@@ -32,7 +32,7 @@ test "doc" {
   let set = @hashset.of([3, 8, 1])
   set.add(3)
   set.add(4)
-  inspect!(set, content="@hashset.of([3, 4, 1, 8])")
+  inspect(set, content="@hashset.of([3, 4, 1, 8])")
 }
 
 ///|
@@ -86,7 +86,7 @@ test "iter" {
   let m = @hashset.of(["a", "b", "c"])
   let mut sum = ""
   m.each(fn(k) { sum += k })
-  inspect!(sum, content="cab")
+  inspect(sum, content="cab")
 }
 
 ///|
@@ -98,8 +98,8 @@ test "iteri" {
     s += k
     sum += i
   })
-  inspect!(s, content="231")
-  inspect!(sum, content="3")
+  inspect(s, content="231")
+  inspect(sum, content="3")
 }
 
 ///|
@@ -233,10 +233,10 @@ test "iter" {
   let buf = StringBuilder::new(size_hint=20)
   let map = @hashset.of(["a", "b", "c"])
   map.iter().each(fn(e) { buf.write_string("[\{e}]") })
-  inspect!(buf, content="[c][a][b]")
+  inspect(buf, content="[c][a][b]")
   buf.reset()
   map.iter().take(2).each(fn(e) { buf.write_string("[\{e}]") })
-  inspect!(buf, content="[c][a]")
+  inspect(buf, content="[c][a]")
 }
 
 ///|
@@ -341,7 +341,7 @@ test "clear_and_reinsert" {
 
 ///|
 test "from_iter multiple elements iter" {
-  inspect!(
+  inspect(
     @hashset.from_iter([1, 2, 3].iter()),
     content="@hashset.of([3, 1, 2])",
   )
@@ -349,23 +349,23 @@ test "from_iter multiple elements iter" {
 
 ///|
 test "from_iter single element iter" {
-  inspect!(@hashset.from_iter([1].iter()), content="@hashset.of([1])")
+  inspect(@hashset.from_iter([1].iter()), content="@hashset.of([1])")
 }
 
 ///|
 test "from_iter empty iter" {
   let map : @hashset.T[Int] = @hashset.from_iter(Iter::empty())
-  inspect!(map, content="@hashset.of([])")
+  inspect(map, content="@hashset.of([])")
 }
 
 ///|
 test "hashset arbitrary" {
   let samples : Array[@hashset.T[Int]] = @quickcheck.samples(20)
-  inspect!(
+  inspect(
     samples[5:10],
     content="[@hashset.of([]), @hashset.of([]), @hashset.of([0]), @hashset.of([0]), @hashset.of([0, 3, 1, 2])]",
   )
-  inspect!(
+  inspect(
     samples[11:15],
     content="[@hashset.of([0, -2, -1]), @hashset.of([0, 4, -5, -2, 8]), @hashset.of([2, 0, -1]), @hashset.of([0])]",
   )
@@ -374,14 +374,14 @@ test "hashset arbitrary" {
 ///|
 test "@hashset.to_array/empty" {
   let set : @hashset.T[Int] = @hashset.new()
-  inspect!(@hashset.to_array(set), content="[]")
+  inspect(@hashset.to_array(set), content="[]")
 }
 
 ///|
 test "@hashset.to_array/single" {
   let set = @hashset.new()
   set.add(42)
-  inspect!(@hashset.to_array(set), content="[42]")
+  inspect(@hashset.to_array(set), content="[42]")
 }
 
 ///|
@@ -391,5 +391,5 @@ test "@hashset.to_array/multiple" {
   set.add(2)
   set.add(3)
   set.add(4)
-  inspect!(@hashset.to_array(set), content="[3, 4, 1, 2]")
+  inspect(@hashset.to_array(set), content="[3, 4, 1, 2]")
 }

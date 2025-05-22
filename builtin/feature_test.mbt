@@ -46,8 +46,8 @@ fn[T : Range] my_range(lo : T, hi : T) -> RangeImpl[T] {
 
 ///|
 test {
-  @json.inspect!(my_range(1, 10), content={ "lo": 1, "hi": 10 })
-  @json.inspect!(my_range("a", "z"), content={ "lo": "a", "hi": "z" })
+  @json.inspect(my_range(1, 10), content={ "lo": 1, "hi": 10 })
+  @json.inspect(my_range("a", "z"), content={ "lo": "a", "hi": "z" })
 }
 
 ///|
@@ -68,17 +68,17 @@ fn labeld_break(xss : Array[Array[Double]]) -> Double? {
 ///|
 test "labeld_break/empty" {
   let xss : Array[Array[Double]] = []
-  inspect!(labeld_break(xss), content="None")
+  inspect(labeld_break(xss), content="None")
 }
 
 ///|
 test "labeld_break/sum_under_threshold" {
   let xss = [[1.0, 2.0], [3.0, 4.0]]
-  inspect!(labeld_break(xss), content="None")
+  inspect(labeld_break(xss), content="None")
 }
 
 ///|
 test "labeld_break/cross_threshold" {
   let xss = [[3.0, 4.0], [5.0, 6.0]]
-  inspect!(labeld_break(xss), content="Some(12)")
+  inspect(labeld_break(xss), content="Some(12)")
 }

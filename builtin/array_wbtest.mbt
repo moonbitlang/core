@@ -15,5 +15,5 @@
 ///|
 test {
   let empty : Array[Unit] = Array::make_uninit(0)
-  inspect!(empty, content="[]")
+  inspect(empty, content="[]")
 }

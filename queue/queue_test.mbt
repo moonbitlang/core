@@ -34,7 +34,7 @@ test "from_fixed_array_1" {
 ///|
 test "from_fixed_array_2" {
   let q : @queue.T[Int] = @queue.of([])
-  inspect!(q, content="@queue.of([])")
+  inspect(q, content="@queue.of([])")
 }
 
 ///|
@@ -53,22 +53,22 @@ test "from_array_1" {
 ///|
 test "from_array_2" {
   let q : @queue.T[Int] = @queue.from_array([])
-  inspect!(q, content="@queue.of([])")
+  inspect(q, content="@queue.of([])")
   let array = Array::makei(3, fn(idx) { idx + 1 })
   let q : @queue.T[Int] = @queue.from_array(array)
-  inspect!(q, content="@queue.of([1, 2, 3])")
+  inspect(q, content="@queue.of([1, 2, 3])")
   let q : @queue.T[Int] = @queue.from_array(Array::new(capacity=10))
-  inspect!(q, content="@queue.of([])")
+  inspect(q, content="@queue.of([])")
 }
 
 ///|
 test "to_string" {
   let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
-  inspect!(queue, content="@queue.of([1, 2, 3, 4])")
+  inspect(queue, content="@queue.of([1, 2, 3, 4])")
   queue.push(11)
-  inspect!(queue, content="@queue.of([1, 2, 3, 4, 11])")
+  inspect(queue, content="@queue.of([1, 2, 3, 4, 11])")
   queue.unsafe_pop() |> ignore
-  inspect!(queue, content="@queue.of([2, 3, 4, 11])")
+  inspect(queue, content="@queue.of([2, 3, 4, 11])")
 }
 
 ///|
@@ -162,7 +162,7 @@ test "fold" {
   assert_eq!(sum, 10)
   let sum2 = @queue.of([1, 2, 3, 4]).fold(init=0, fn(acc, x) { acc + x })
   assert_eq!(sum2, 10)
-  inspect!(
+  inspect(
     @queue.of([1, 2, 3, 4]).fold(init=0L, fn(acc, x) { acc + x.to_int64() }),
     content="10",
   )
@@ -171,30 +171,30 @@ test "fold" {
 ///|
 test "length" {
   let empty : @queue.T[Unit] = @queue.of([])
-  inspect!(empty.length(), content="0")
-  inspect!(@queue.of([1, 2, 3]).length(), content="3")
+  inspect(empty.length(), content="0")
+  inspect(@queue.of([1, 2, 3]).length(), content="3")
 }
 
 ///|
 test "iter" {
   let q = @queue.of([1, 2, 3, 4, 5])
-  inspect!(q.iter().fold(fn(x, y) { x + y }, init=0), content="15")
+  inspect(q.iter().fold(fn(x, y) { x + y }, init=0), content="15")
 }
 
 ///|
 test "from_iter multiple elements iter" {
-  inspect!(@queue.from_iter([1, 2, 3].iter()), content="@queue.of([1, 2, 3])")
+  inspect(@queue.from_iter([1, 2, 3].iter()), content="@queue.of([1, 2, 3])")
 }
 
 ///|
 test "from_iter single element iter" {
-  inspect!(@queue.from_iter([1].iter()), content="@queue.of([1])")
+  inspect(@queue.from_iter([1].iter()), content="@queue.of([1])")
 }
 
 ///|
 test "from_iter empty iter" {
   let pq : @queue.T[Int] = @queue.from_iter(Iter::empty())
-  inspect!(pq, content="@queue.of([])")
+  inspect(pq, content="@queue.of([])")
 }
 
 ///|
@@ -208,9 +208,9 @@ test "to_string" {
 ///|
 test "queue arbitrary" {
   let samples : Array[T[Int]] = @quickcheck.samples(20)
-  inspect!(
+  inspect(
     samples[1:5],
     content="[@queue.of([]), @queue.of([]), @queue.of([0]), @queue.of([0])]",
   )
-  inspect!(samples[15], content="@queue.of([])")
+  inspect(samples[15], content="@queue.of([])")
 }

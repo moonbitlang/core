@@ -27,7 +27,7 @@
 /// test "Bytes::from_array" {
 ///   let arr = [b'h', b'i']
 ///   let bytes = @bytes.from_array(arr)
-///   inspect!(bytes, content=
+///   inspect(bytes, content=
 ///     #|b"\x68\x69"
 ///   )
 /// }
@@ -62,7 +62,7 @@ pub fn from_array(arr : Array[Byte]) -> Bytes {
 /// test "Bytes::from_fixedarray" {
 ///   let arr : FixedArray[Byte] = [b'h', b'e', b'l', b'l', b'o']
 ///   let bytes = @bytes.from_fixedarray(arr, len=3)
-///   inspect!(bytes, content=
+///   inspect(bytes, content=
 ///     #|b"\x68\x65\x6c"
 ///   )
 /// }
@@ -101,9 +101,9 @@ pub fn from_fixedarray(arr : FixedArray[Byte], len? : Int) -> Bytes {
 /// test "Bytes::to_fixedarray" {
 ///   let bytes = b"hello"
 ///   let arr = bytes.to_fixedarray()
-///   inspect!(arr, content="[b'\\x68', b'\\x65', b'\\x6C', b'\\x6C', b'\\x6F']")
+///   inspect(arr, content="[b'\\x68', b'\\x65', b'\\x6C', b'\\x6C', b'\\x6F']")
 ///   let arr2 = bytes.to_fixedarray(len=3)
-///   inspect!(arr2, content="[b'\\x68', b'\\x65', b'\\x6C']")
+///   inspect(arr2, content="[b'\\x68', b'\\x65', b'\\x6C']")
 /// }
 /// ```
 pub fn to_fixedarray(self : Bytes, len? : Int) -> FixedArray[Byte] {
@@ -133,7 +133,7 @@ pub fn to_fixedarray(self : Bytes, len? : Int) -> FixedArray[Byte] {
 /// test "from_iter" {
 ///   let iter = Iter::singleton(b'h')
 ///   let bytes = @bytes.from_iter(iter)
-///   inspect!(bytes, content=
+///   inspect(bytes, content=
 ///     #|b"\x68"
 ///   )
 /// }
@@ -164,7 +164,7 @@ pub fn from_iter(iter : Iter[Byte]) -> Bytes {
 /// test "of" {
 ///   let arr : FixedArray[Byte] = [b'h', b'e', b'l', b'l', b'o']
 ///   let bytes = @bytes.of(arr)
-///   inspect!(bytes, content=
+///   inspect(bytes, content=
 ///     #|b"\x68\x65\x6c\x6c\x6f"
 ///   )
 /// }
@@ -195,7 +195,7 @@ pub fn of(arr : FixedArray[Byte]) -> Bytes {
 /// test "Bytes::to_array" {
 ///   let bytes = b"hello"
 ///   let arr = bytes.to_array()
-///   inspect!(arr, content="[b'\\x68', b'\\x65', b'\\x6C', b'\\x6C', b'\\x6F']")
+///   inspect(arr, content="[b'\\x68', b'\\x65', b'\\x6C', b'\\x6C', b'\\x6F']")
 /// }
 /// ```
 pub fn to_array(self : Bytes) -> Array[Byte] {
@@ -222,7 +222,7 @@ pub fn to_array(self : Bytes) -> Array[Byte] {
 ///   let bytes = Bytes::from_array([b'h', b'i'])
 ///   let mut sum = 0
 ///   bytes.iter().each(fn(b) { sum = sum + b.to_int() })
-///   inspect!(sum, content="209") // ASCII values: 'h'(104) + 'i'(105) = 209
+///   inspect(sum, content="209") // ASCII values: 'h'(104) + 'i'(105) = 209
 /// }
 /// ```
 pub fn iter(self : Bytes) -> Iter[Byte] {
@@ -249,8 +249,8 @@ pub fn iter(self : Bytes) -> Iter[Byte] {
 ///     buf.write_string(x.to_string())
 ///     keys.push( i )
 ///   })
-///   inspect!(buf, content="b'\\x61'b'\\x62'b'\\x63'b'\\x64'b'\\x65'")
-///   inspect!(keys, content="[0, 1, 2, 3, 4]")
+///   inspect(buf, content="b'\\x61'b'\\x62'b'\\x63'b'\\x64'b'\\x65'")
+///   inspect(keys, content="[0, 1, 2, 3, 4]")
 /// }
 pub fn iter2(self : Bytes) -> Iter2[Int, Byte] {
   Iter2::new(fn(yield_) {
@@ -274,8 +274,8 @@ pub fn iter2(self : Bytes) -> Iter2[Int, Byte] {
 /// ```moonbit
 /// test "default" {
 ///   let bytes = @bytes.default()
-///   inspect!(bytes, content="b\"\"")
-///   inspect!(bytes.length(), content="0")
+///   inspect(bytes, content="b\"\"")
+///   inspect(bytes.length(), content="0")
 /// }
 /// ```
 pub impl Default for Bytes with default() {
@@ -298,12 +298,12 @@ pub impl Default for Bytes with default() {
 /// test "Bytes::get" {
 ///   let bytes = b"\x01\x02\x03"
 ///   let byte = bytes.get(1)
-///   inspect!(byte, content="Some(b'\\x02')")
+///   inspect(byte, content="Some(b'\\x02')")
 /// }
 /// test "Bytes::get/out_of_bounds" {
 ///   let bytes = b"\x01\x02\x03"
 ///   let byte = bytes.get(3)
-///   inspect!(byte, content="None")
+///   inspect(byte, content="None")
 /// }
 /// ```
 pub fn get(self : Bytes, index : Int) -> Byte? {

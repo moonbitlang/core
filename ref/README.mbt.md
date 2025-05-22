@@ -9,7 +9,7 @@ References can be created using `@ref.new()`. The reference value can be accesse
 ```moonbit
 test "creating and accessing refs" {
   let r1 = @ref.new(42)
-  inspect!(r1.val, content="42")
+  inspect(r1.val, content="42")
 }
 ```
 
@@ -21,9 +21,9 @@ The `update` function allows modifying the contained value using a transformatio
 test "updating refs" {
   let counter = @ref.new(0)
   @ref.update(counter, fn(x) { x + 1 })
-  inspect!(counter.val, content="1")
+  inspect(counter.val, content="1")
   counter.update(fn(x) { x * 2 })
-  inspect!(counter.val, content="2")
+  inspect(counter.val, content="2")
 }
 ```
 
@@ -35,9 +35,9 @@ The `map` function transforms a reference while preserving the reference wrapper
 test "mapping refs" {
   let num = @ref.new(10)
   let doubled = @ref.map(num, fn(x) { x * 2 })
-  inspect!(doubled.val, content="20")
+  inspect(doubled.val, content="20")
   let squared = num.map(fn(x) { x * x })
-  inspect!(squared.val, content="100")
+  inspect(squared.val, content="100")
 }
 ```
 
@@ -50,8 +50,8 @@ test "swapping refs" {
   let r1 = @ref.new("first")
   let r2 = @ref.new("second")
   @ref.swap(r1, r2)
-  inspect!(r1.val, content="second")
-  inspect!(r2.val, content="first")
+  inspect(r1.val, content="second")
+  inspect(r2.val, content="first")
 }
 ```
 
@@ -67,9 +67,9 @@ test "protected updates" {
     middle = state.val
     42
   })
-  inspect!(middle, content="50")
-  inspect!(result, content="42")
-  inspect!(state.val, content="100")
+  inspect(middle, content="50")
+  inspect(result, content="42")
+  inspect(state.val, content="100")
 }
 ```
 

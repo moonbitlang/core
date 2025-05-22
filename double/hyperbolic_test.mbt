@@ -15,37 +15,37 @@
 ///|
 test "hyperbolic" {
   // sinh
-  inspect!(0.0.sinh(), content="0")
-  inspect!((-0.0).sinh(), content="0")
-  inspect!(1.0.sinh(), content="1.1752011936438014")
-  inspect!(2.0.sinh(), content="3.626860407847019")
-  inspect!(1000.0.sinh(), content="Infinity")
-  inspect!((-1000.0).sinh(), content="-Infinity")
-  inspect!(not_a_number.sinh(), content="NaN")
-  inspect!(infinity.sinh(), content="Infinity")
-  inspect!(neg_infinity.sinh(), content="-Infinity")
+  inspect(0.0.sinh(), content="0")
+  inspect((-0.0).sinh(), content="0")
+  inspect(1.0.sinh(), content="1.1752011936438014")
+  inspect(2.0.sinh(), content="3.626860407847019")
+  inspect(1000.0.sinh(), content="Infinity")
+  inspect((-1000.0).sinh(), content="-Infinity")
+  inspect(not_a_number.sinh(), content="NaN")
+  inspect(infinity.sinh(), content="Infinity")
+  inspect(neg_infinity.sinh(), content="-Infinity")
 
   // cosh
-  inspect!(0.0.cosh(), content="1")
-  inspect!((-0.0).cosh(), content="1")
-  inspect!(1.0.cosh(), content="1.5430806348152437")
-  inspect!(2.0.cosh(), content="3.7621956910836314")
-  inspect!(1000.0.cosh(), content="Infinity")
-  inspect!((-1000.0).cosh(), content="Infinity")
-  inspect!(not_a_number.cosh(), content="NaN")
-  inspect!(infinity.cosh(), content="Infinity")
-  inspect!(neg_infinity.cosh(), content="Infinity")
+  inspect(0.0.cosh(), content="1")
+  inspect((-0.0).cosh(), content="1")
+  inspect(1.0.cosh(), content="1.5430806348152437")
+  inspect(2.0.cosh(), content="3.7621956910836314")
+  inspect(1000.0.cosh(), content="Infinity")
+  inspect((-1000.0).cosh(), content="Infinity")
+  inspect(not_a_number.cosh(), content="NaN")
+  inspect(infinity.cosh(), content="Infinity")
+  inspect(neg_infinity.cosh(), content="Infinity")
 
   // tanh
-  inspect!(0.0.tanh(), content="0")
-  inspect!((-0.0).tanh(), content="0")
-  inspect!(1.0.tanh(), content="0.7615941559557649")
-  inspect!(2.0.tanh(), content="0.9640275800758169")
-  inspect!(1000.0.tanh(), content="1")
-  inspect!((-1000.0).tanh(), content="-1")
-  inspect!(not_a_number.tanh(), content="NaN")
-  inspect!(infinity.tanh(), content="1")
-  inspect!(neg_infinity.tanh(), content="-1")
+  inspect(0.0.tanh(), content="0")
+  inspect((-0.0).tanh(), content="0")
+  inspect(1.0.tanh(), content="0.7615941559557649")
+  inspect(2.0.tanh(), content="0.9640275800758169")
+  inspect(1000.0.tanh(), content="1")
+  inspect((-1000.0).tanh(), content="-1")
+  inspect(not_a_number.tanh(), content="NaN")
+  inspect(infinity.tanh(), content="1")
+  inspect(neg_infinity.tanh(), content="-1")
   let vals = [
     1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9, 10.0, -1.234, -2.345, -3.456, -4.567,
     -5.678, -6.789, -7.890, -8.901, -9.012, -10.123, 0.0123, 0.0234, 0.0345, 0.0456,
@@ -103,15 +103,15 @@ test "hyperbolic" {
 ///|
 test "asinh" {
   // asinh
-  inspect!(0.0.asinh(), content="0")
-  inspect!((-0.0).asinh(), content="0")
-  inspect!(1.0.asinh(), content="0.881373587019543")
-  inspect!(2.0.asinh(), content="1.4436354751788103")
-  inspect!(1000.0.asinh(), content="7.600902709541988")
-  inspect!((-1000.0).asinh(), content="-7.600902709541988")
-  inspect!(not_a_number.asinh(), content="NaN")
-  inspect!(infinity.asinh(), content="Infinity")
-  inspect!(neg_infinity.asinh(), content="-Infinity")
+  inspect(0.0.asinh(), content="0")
+  inspect((-0.0).asinh(), content="0")
+  inspect(1.0.asinh(), content="0.881373587019543")
+  inspect(2.0.asinh(), content="1.4436354751788103")
+  inspect(1000.0.asinh(), content="7.600902709541988")
+  inspect((-1000.0).asinh(), content="-7.600902709541988")
+  inspect(not_a_number.asinh(), content="NaN")
+  inspect(infinity.asinh(), content="Infinity")
+  inspect(neg_infinity.asinh(), content="-Infinity")
   let vals = [
     0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.98, -0.123, -0.234, -0.345, -0.456,
     -0.567, -0.678, -0.789, -0.890, -0.901, -0.987, 0.0123, 0.0234, 0.0345, 0.0456,
@@ -143,14 +143,14 @@ test "asinh" {
 ///|
 test "acosh" {
   // acosh
-  inspect!(1.0.acosh(), content="0")
-  inspect!(2.0.acosh(), content="1.3169578969248166")
-  inspect!(1000.0.acosh(), content="7.600902209541989")
-  inspect!(not_a_number.acosh(), content="NaN")
-  inspect!(infinity.acosh(), content="Infinity")
-  inspect!((-1.0).acosh(), content="NaN")
-  inspect!((-2.0).acosh(), content="NaN")
-  inspect!(neg_infinity.acosh(), content="NaN")
+  inspect(1.0.acosh(), content="0")
+  inspect(2.0.acosh(), content="1.3169578969248166")
+  inspect(1000.0.acosh(), content="7.600902209541989")
+  inspect(not_a_number.acosh(), content="NaN")
+  inspect(infinity.acosh(), content="Infinity")
+  inspect((-1.0).acosh(), content="NaN")
+  inspect((-2.0).acosh(), content="NaN")
+  inspect(neg_infinity.acosh(), content="NaN")
   let vals = [
     1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9, 10.0, 123.45, 234.56, 345.67, 456.78,
     567.89, 678.90, 789.01, 890.12, 901.23, 987.65,
@@ -175,16 +175,16 @@ test "acosh" {
 ///|
 test "atanh" {
   // atanh
-  inspect!(0.0.atanh(), content="0")
-  inspect!((-0.0).atanh(), content="0")
-  inspect!(0.5.atanh(), content="0.5493061443340548")
-  inspect!((-0.5).atanh(), content="-0.5493061443340548")
-  inspect!(1.0.atanh(), content="Infinity")
-  inspect!((-1.0).atanh(), content="-Infinity")
-  inspect!(1.5.atanh(), content="NaN")
-  inspect!(not_a_number.atanh(), content="NaN")
-  inspect!(infinity.atanh(), content="NaN")
-  inspect!(neg_infinity.atanh(), content="NaN")
+  inspect(0.0.atanh(), content="0")
+  inspect((-0.0).atanh(), content="0")
+  inspect(0.5.atanh(), content="0.5493061443340548")
+  inspect((-0.5).atanh(), content="-0.5493061443340548")
+  inspect(1.0.atanh(), content="Infinity")
+  inspect((-1.0).atanh(), content="-Infinity")
+  inspect(1.5.atanh(), content="NaN")
+  inspect(not_a_number.atanh(), content="NaN")
+  inspect(infinity.atanh(), content="NaN")
+  inspect(neg_infinity.atanh(), content="NaN")
   let vals = [
     0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.98, -0.123, -0.234, -0.345, -0.456,
     -0.567, -0.678, -0.789, -0.890, -0.901, -0.987, 0.0123, 0.0234, 0.0345, 0.0456,

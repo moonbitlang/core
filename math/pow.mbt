@@ -41,15 +41,15 @@
 ///
 /// ```moonbit
 /// test "scalbnf" {
-///   inspect!(scalbnf(1.5, 2), content="6")
-///   inspect!(scalbnf(2, -1), content="1")
-///   inspect!(scalbnf(3, 0), content="3")
-///   inspect!(scalbnf(1, 128), content="Infinity")
-///   inspect!(scalbnf(1, -150), content="0")
-///   inspect!(scalbnf(1, 254), content="Infinity")
-///   inspect!(scalbnf(@float.not_a_number, 1), content="NaN")
-///   inspect!(scalbnf(-2, 1), content="-4")
-///   inspect!(scalbnf(-2, 128), content="-Infinity")
+///   inspect(scalbnf(1.5, 2), content="6")
+///   inspect(scalbnf(2, -1), content="1")
+///   inspect(scalbnf(3, 0), content="3")
+///   inspect(scalbnf(1, 128), content="Infinity")
+///   inspect(scalbnf(1, -150), content="0")
+///   inspect(scalbnf(1, 254), content="Infinity")
+///   inspect(scalbnf(@float.not_a_number, 1), content="NaN")
+///   inspect(scalbnf(-2, 1), content="-4")
+///   inspect(scalbnf(-2, 128), content="-Infinity")
 /// }
 /// ```
 pub fn scalbnf(y : Float, exp : Int) -> Float {
@@ -95,9 +95,9 @@ pub fn scalbnf(y : Float, exp : Int) -> Float {
 ///
 /// ```moonbit
 /// test "pow" {
-///   inspect!((2.0 : Float).pow(3.0), content="8")
-///   inspect!((4.0 : Float).pow(0.5), content="2")
-///   inspect!((1.0 : Float).pow(-1.0), content="1")
+///   inspect((2.0 : Float).pow(3.0), content="8")
+///   inspect((4.0 : Float).pow(0.5), content="2")
+///   inspect((1.0 : Float).pow(-1.0), content="1")
 /// }
 /// ```
 pub fn powf(base : Float, exponent : Float) -> Float {

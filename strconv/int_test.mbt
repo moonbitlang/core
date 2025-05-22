@@ -57,13 +57,13 @@ test "parse_int64_uncovered_lines" {
 ///|
 test "@strconv.parse_int64/base_parsing" {
   // Test different bases
-  inspect!(@strconv.parse_int64!("1010", base=2), content="10")
-  inspect!(@strconv.parse_int64!("777", base=8), content="511")
-  inspect!(@strconv.parse_int64!("ff", base=16), content="255")
+  inspect(@strconv.parse_int64!("1010", base=2), content="10")
+  inspect(@strconv.parse_int64!("777", base=8), content="511")
+  inspect(@strconv.parse_int64!("ff", base=16), content="255")
   // Test auto-detection of base
-  inspect!(@strconv.parse_int64!("0xFF"), content="255")
-  inspect!(@strconv.parse_int64!("0b1010"), content="10")
-  inspect!(@strconv.parse_int64!("0o777"), content="511")
+  inspect(@strconv.parse_int64!("0xFF"), content="255")
+  inspect(@strconv.parse_int64!("0b1010"), content="10")
+  inspect(@strconv.parse_int64!("0o777"), content="511")
 }
 
 ///|
@@ -79,39 +79,39 @@ test "panic @strconv.parse_int64/invalid_input" {
 ///|
 test "@strconv.parse_int64/boundary_values" {
   // Test minimum and maximum values
-  inspect!(
+  inspect(
     @strconv.parse_int64!("-9223372036854775808"),
     content="-9223372036854775808",
   )
-  inspect!(
+  inspect(
     @strconv.parse_int64!("9223372036854775807"),
     content="9223372036854775807",
   )
   // Test with underscores
-  inspect!(
+  inspect(
     @strconv.parse_int64!("922_3372_0368_5477_5807"),
     content="9223372036854775807",
   )
   // Test with different sign prefixes
-  inspect!(@strconv.parse_int64!("+42"), content="42")
-  inspect!(@strconv.parse_int64!("-42"), content="-42")
+  inspect(@strconv.parse_int64!("+42"), content="42")
+  inspect(@strconv.parse_int64!("-42"), content="-42")
 }
 
 ///|
 test "@moonbitlang/core/strconv.parse_int64/base10" {
-  inspect!(@moonbitlang/core/strconv.parse_int64!("12345"), content="12345")
-  inspect!(@moonbitlang/core/strconv.parse_int64!("-12345"), content="-12345")
-  inspect!(@moonbitlang/core/strconv.parse_int64!("0"), content="0")
-  inspect!(@moonbitlang/core/strconv.parse_int64!("-0"), content="0")
+  inspect(@moonbitlang/core/strconv.parse_int64!("12345"), content="12345")
+  inspect(@moonbitlang/core/strconv.parse_int64!("-12345"), content="-12345")
+  inspect(@moonbitlang/core/strconv.parse_int64!("0"), content="0")
+  inspect(@moonbitlang/core/strconv.parse_int64!("-0"), content="0")
 }
 
 ///|
 test "@moonbitlang/core/strconv.parse_int64/boundary_cases" {
-  inspect!(
+  inspect(
     @moonbitlang/core/strconv.parse_int64!("9223372036854775807"),
     content="9223372036854775807",
   )
-  inspect!(
+  inspect(
     @moonbitlang/core/strconv.parse_int64!("-9223372036854775808"),
     content="-9223372036854775808",
   )
@@ -125,34 +125,31 @@ test "panic @moonbitlang/core/strconv.parse_int64/invalid_base" {
 ///|
 test "edge cases" {
   // Invalid: Missing digits after hex prefix
-  inspect!(@strconv.parse_int64?("0x"), content="Err(invalid syntax)")
-  inspect!(@strconv.parse_int64?("0x_"), content="Err(invalid syntax)")
+  inspect(@strconv.parse_int64?("0x"), content="Err(invalid syntax)")
+  inspect(@strconv.parse_int64?("0x_"), content="Err(invalid syntax)")
 
   // Underscore is allowed between the prefix and the first digit
-  inspect!(@strconv.parse_int64?("0x_DEADBEEF"), content="Ok(3735928559)")
+  inspect(@strconv.parse_int64?("0x_DEADBEEF"), content="Ok(3735928559)")
 }
 
 ///|
 test "more edge cases" {
-  inspect!(@strconv.parse_int64?("0b01", base=16), content="Ok(2817)")
-  inspect!(
-    @strconv.parse_int64?("0o01", base=16),
-    content="Err(invalid syntax)",
-  )
-  inspect!(@strconv.parse_int64?("0x01", base=16), content="Ok(1)")
-  inspect!(@strconv.parse_int?("0b01", base=16), content="Ok(2817)")
-  inspect!(@strconv.parse_int?("0o01", base=16), content="Err(invalid syntax)")
-  inspect!(@strconv.parse_int?("0x01", base=16), content="Ok(1)")
-  inspect!(@strconv.parse_uint?("0b01", base=16), content="Ok(2817)")
-  inspect!(@strconv.parse_uint?("0o01", base=16), content="Err(invalid syntax)")
-  inspect!(@strconv.parse_uint?("0x01", base=16), content="Ok(1)")
-  inspect!(@strconv.parse_uint64?("0b01", base=16), content="Ok(2817)")
-  inspect!(
+  inspect(@strconv.parse_int64?("0b01", base=16), content="Ok(2817)")
+  inspect(@strconv.parse_int64?("0o01", base=16), content="Err(invalid syntax)")
+  inspect(@strconv.parse_int64?("0x01", base=16), content="Ok(1)")
+  inspect(@strconv.parse_int?("0b01", base=16), content="Ok(2817)")
+  inspect(@strconv.parse_int?("0o01", base=16), content="Err(invalid syntax)")
+  inspect(@strconv.parse_int?("0x01", base=16), content="Ok(1)")
+  inspect(@strconv.parse_uint?("0b01", base=16), content="Ok(2817)")
+  inspect(@strconv.parse_uint?("0o01", base=16), content="Err(invalid syntax)")
+  inspect(@strconv.parse_uint?("0x01", base=16), content="Ok(1)")
+  inspect(@strconv.parse_uint64?("0b01", base=16), content="Ok(2817)")
+  inspect(
     @strconv.parse_uint64?("0o01", base=16),
     content="Err(invalid syntax)",
   )
-  inspect!(@strconv.parse_uint64?("0x01", base=16), content="Ok(1)")
-  inspect!(@strconv.parse_int?("0b01", base=10), content="Err(invalid syntax)")
-  inspect!(@strconv.parse_int?("0o01", base=10), content="Err(invalid syntax)")
-  inspect!(@strconv.parse_int?("0x01", base=10), content="Err(invalid syntax)")
+  inspect(@strconv.parse_uint64?("0x01", base=16), content="Ok(1)")
+  inspect(@strconv.parse_int?("0b01", base=10), content="Err(invalid syntax)")
+  inspect(@strconv.parse_int?("0o01", base=10), content="Err(invalid syntax)")
+  inspect(@strconv.parse_int?("0x01", base=10), content="Err(invalid syntax)")
 }

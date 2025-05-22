@@ -11,7 +11,7 @@ test "bytes creation" {
   // Create from array of bytes
   let arr = [b'h', b'e', b'l', b'l', b'o']
   let bytes1 = @bytes.from_array(arr)
-  inspect!(
+  inspect(
     bytes1,
     content=
       #|b"\x68\x65\x6c\x6c\x6f"
@@ -21,7 +21,7 @@ test "bytes creation" {
   // Create from fixed array
   let fixed = FixedArray::make(3, b'a')
   let bytes2 = @bytes.of(fixed)
-  inspect!(
+  inspect(
     bytes2,
     content=
       #|b"\x61\x61\x61"
@@ -30,7 +30,7 @@ test "bytes creation" {
 
   // Create empty bytes
   let empty = @bytes.default()
-  inspect!(
+  inspect(
     empty,
     content=
       #|b""
@@ -39,7 +39,7 @@ test "bytes creation" {
 
   // Create from iterator
   let iter_bytes = @bytes.from_iter(arr.iter())
-  inspect!(
+  inspect(
     iter_bytes,
     content=
       #|b"\x68\x65\x6c\x6c\x6f"
@@ -59,15 +59,15 @@ test "bytes conversion" {
 
   // Convert to array
   let array = bytes.to_array()
-  inspect!(array, content="[b'\\x78', b'\\x79', b'\\x7A']")
+  inspect(array, content="[b'\\x78', b'\\x79', b'\\x7A']")
 
   // Convert to fixed array
   let fixed = bytes.to_fixedarray()
-  inspect!(fixed, content="[b'\\x78', b'\\x79', b'\\x7A']")
+  inspect(fixed, content="[b'\\x78', b'\\x79', b'\\x7A']")
 
   // Convert to iterator and collect back
   let collected = bytes.iter().to_array()
-  inspect!(collected, content="[b'\\x78', b'\\x79', b'\\x7A']")
+  inspect(collected, content="[b'\\x78', b'\\x79', b'\\x7A']")
 }
 ```
 
@@ -84,17 +84,17 @@ test "bytes view operations" {
   let view = num_bytes[:]
 
   // Get individual bytes
-  inspect!(view[0], content="b'\\x12'")
+  inspect(view[0], content="b'\\x12'")
 
   // Interpret as integers (big-endian)
-  inspect!(view.to_int_be(), content="305419896")
+  inspect(view.to_int_be(), content="305419896")
 
   // Interpret as integers (little-endian)
-  inspect!(view.to_int_le(), content="2018915346")
+  inspect(view.to_int_le(), content="2018915346")
 
   // Create a sub-view
   let sub_view = view[1:3]
-  inspect!(sub_view.length(), content="2")
+  inspect(sub_view.length(), content="2")
 }
 ```
 
@@ -109,8 +109,8 @@ test "numeric interpretation" {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x42,
   ])
   let int64_view = int64_bytes[:]
-  inspect!(int64_view.to_int64_be(), content="66")
-  inspect!(int64_view.to_uint64_le(), content="4755801206503243776")
+  inspect(int64_view.to_int64_be(), content="66")
+  inspect(int64_view.to_uint64_le(), content="4755801206503243776")
 }
 ```
 
@@ -125,7 +125,7 @@ test "bytes operations" {
 
   // Concatenation
   let combined = b1 + b2
-  inspect!(
+  inspect(
     combined,
     content=
       #|b"\x61\x62\x63\x64"
@@ -135,8 +135,8 @@ test "bytes operations" {
   // Comparison
   let same = @bytes.from_array([b'a', b'b'])
   let different = @bytes.from_array([b'x', b'y'])
-  inspect!(b1 == same, content="true")
-  inspect!(b1 == different, content="false")
-  inspect!(b1 < b2, content="true")
+  inspect(b1 == same, content="true")
+  inspect(b1 == different, content="false")
+  inspect(b1 < b2, content="true")
 }
 ```

@@ -30,13 +30,13 @@ const UINT64_MAX : UInt64 = 0xffffffffffffffffUL
 /// These underscores do not affect the value.
 /// Examples:
 /// ```
-/// inspect!(parse_uint64!("123"), content="123")
-/// inspect!(parse_uint64!("0xff", base=0), content="255")
-/// inspect!(parse_uint64!("0o10"), content="8")
-/// inspect!(parse_uint64!("0b1010"), content="10")
-/// inspect!(parse_uint64!("1_234"), content="1234")
-/// inspect!(parse_uint64!("ff", base=16), content="255")
-/// inspect!(parse_uint64!("zz", base=36), content="1295")
+/// inspect(parse_uint64!("123"), content="123")
+/// inspect(parse_uint64!("0xff", base=0), content="255")
+/// inspect(parse_uint64!("0o10"), content="8")
+/// inspect(parse_uint64!("0b1010"), content="10")
+/// inspect(parse_uint64!("1_234"), content="1234")
+/// inspect(parse_uint64!("ff", base=16), content="255")
+/// inspect(parse_uint64!("zz", base=36), content="1295")
 /// ```
 /// 
 pub fn parse_uint64(str : String, base~ : Int = 0) -> UInt64!StrConvError {
@@ -260,6 +260,6 @@ test "parse_uint" {
 
 ///|
 test "parse_uint64 uppercase hex and invalid base" {
-  inspect!(parse_uint64?("ABCD", base=16), content="Ok(43981)")
-  inspect!(parse_uint64?("1234", base=37), content="Err(invalid base)")
+  inspect(parse_uint64?("ABCD", base=16), content="Ok(43981)")
+  inspect(parse_uint64?("1234", base=37), content="Err(invalid base)")
 }
