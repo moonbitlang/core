@@ -40,8 +40,10 @@ pub(all) struct SparseArray[X] {
 }
 impl SparseArray {
   add[X](Self[X], Int, X) -> Self[X]
+  difference[X](Self[X], Self[X]) -> Self[X]
   each[X](Self[X], (X) -> Unit) -> Unit
   has[X](Self[X], Int) -> Bool
+  intersection[X](Self[X], Self[X], (X, X) -> X) -> Self[X]
   op_get[X](Self[X], Int) -> X?
   replace[X](Self[X], Int, X) -> Self[X]
   size[X](Self[X]) -> Int

@@ -34,7 +34,9 @@ type T[A]
 impl T {
   add[A : Eq + Hash](Self[A], A) -> Self[A]
   contains[A : Eq + Hash](Self[A], A) -> Bool
+  difference[K : Eq + Hash](Self[K], Self[K]) -> Self[K]
   each[A](Self[A], (A) -> Unit) -> Unit
+  intersection[K : Eq + Hash](Self[K], Self[K]) -> Self[K]
   is_empty[A](Self[A]) -> Bool
   iter[A](Self[A]) -> Iter[A]
   remove[A : Eq + Hash](Self[A], A) -> Self[A]
