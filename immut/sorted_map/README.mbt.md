@@ -23,8 +23,8 @@ Also, you can construct it from an array using `of()` or `from_array()`.
 ```moonbit
 test {
   let map = @sorted_map.of([("a", 1), ("b", 2), ("c", 3)])
-  assert_eq!(map.elems(), [1, 2, 3])
-  assert_eq!(map.keys(), ["a", "b", "c"])
+  assert_eq!(map.elems().collect(), [1, 2, 3])
+  assert_eq!(map.keys().collect(), ["a", "b", "c"])
 }
 ```
 
@@ -106,9 +106,9 @@ Use `map()` or `map_with_key()` to map a function over all values.
 test {
   let map = @sorted_map.of([("a", 1), ("b", 2), ("c", 3)])
   let map = map.map(fn(v) { v + 1 })
-  assert_eq!(map.elems(), [2, 3, 4])
+  assert_eq!(map.elems().collect(), [2, 3, 4])
   let map = map.map_with_key(fn(_k, v) { v + 1 })
-  assert_eq!(map.elems(), [3, 4, 5])
+  assert_eq!(map.elems().collect(), [3, 4, 5])
 }
 ```
 
@@ -130,11 +130,11 @@ Use `filter()` or `filter_with_key()` to filter all keys/values that satisfy the
 test {
   let map = @sorted_map.of([("a", 1), ("b", 2), ("c", 3)])
   let map = map.filter(fn (v) { v > 1 })
-  assert_eq!(map.elems(), [2, 3])
-  assert_eq!(map.keys(), ["b", "c"])
+  assert_eq!(map.elems().collect(), [2, 3])
+  assert_eq!(map.keys().collect(), ["b", "c"])
   let map = map.filter_with_key(fn (k, v) { k > "a" && v > 1 })
-  assert_eq!(map.elems(), [2, 3])
-  assert_eq!(map.keys(), ["b", "c"])
+  assert_eq!(map.elems().collect(), [2, 3])
+  assert_eq!(map.keys().collect(), ["b", "c"])
 }
 ```
 
@@ -145,8 +145,8 @@ Use `elems()` to get all values in ascending order of their keys.
 ```moonbit
 test {
   let map = @sorted_map.of([("a", 1), ("b", 2), ("c", 3)])
-  let elems = map.elems() // [1, 2, 3]
-  assert_eq!(elems, [1, 2, 3])
+  let elems = map.elems()
+  assert_eq!(elems.collect(), [1, 2, 3])
 }
 ```
 
@@ -155,8 +155,8 @@ Use `keys()` to get all keys of the map in ascending order.
 ```moonbit
 test {
   let map = @sorted_map.of([("a", 1), ("b", 2), ("c", 3)])
-  let keys = map.keys() // ["a", "b", "c"]
-  assert_eq!(keys, ["a", "b", "c"])
+  let keys = map.keys()
+  assert_eq!(keys.collect(), ["a", "b", "c"])
 }
 ```
 

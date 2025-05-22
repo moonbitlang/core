@@ -27,7 +27,7 @@ fn iter[K, V](T[K, V]) -> Iter[(K, V)]
 
 fn iter2[K, V](T[K, V]) -> Iter2[K, V]
 
-fn keys[K, V](T[K, V]) -> Array[K]
+fn keys[K, V](T[K, V]) -> Iter[K]
 
 fn new[K, V]() -> T[K, V]
 
@@ -47,7 +47,7 @@ fn size[K, V](T[K, V]) -> Int
 
 fn to_array[K, V](T[K, V]) -> Array[(K, V)]
 
-fn values[K, V](T[K, V]) -> Array[V]
+fn values[K, V](T[K, V]) -> Iter[V]
 
 // Types and methods
 type T[K, V]
@@ -61,7 +61,7 @@ impl T {
   is_empty[K, V](Self[K, V]) -> Bool
   iter[K, V](Self[K, V]) -> Iter[(K, V)]
   iter2[K, V](Self[K, V]) -> Iter2[K, V]
-  keys[K, V](Self[K, V]) -> Array[K]
+  keys[K, V](Self[K, V]) -> Iter[K]
   #deprecated
   op_get[K : Compare, V](Self[K, V], K) -> V?
   op_set[K : Compare, V](Self[K, V], K, V) -> Unit
@@ -69,7 +69,7 @@ impl T {
   remove[K : Compare, V](Self[K, V], K) -> Unit
   size[K, V](Self[K, V]) -> Int
   to_array[K, V](Self[K, V]) -> Array[(K, V)]
-  values[K, V](Self[K, V]) -> Array[V]
+  values[K, V](Self[K, V]) -> Iter[V]
 }
 impl[K, V] Default for T[K, V]
 impl[K : Eq, V : Eq] Eq for T[K, V]

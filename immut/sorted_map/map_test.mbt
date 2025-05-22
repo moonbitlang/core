@@ -101,7 +101,7 @@ test "foldr_with_key" {
 }
 
 ///|
-test "to_array" {
+test "iter" {
   let m = @sorted_map.of([(1, "one"), (2, "two"), (3, "three")])
   assert_eq!(m.iter().collect(), [(1, "one"), (2, "two"), (3, "three")])
 }
@@ -109,13 +109,13 @@ test "to_array" {
 ///|
 test "keys" {
   let m = @sorted_map.of([(1, "one"), (2, "two"), (3, "three")])
-  assert_eq!(m.keys(), [1, 2, 3])
+  assert_eq!(m.keys().collect(), [1, 2, 3])
 }
 
 ///|
 test "elems" {
   let m = @sorted_map.of([(1, "one"), (2, "two"), (3, "three")])
-  assert_eq!(m.elems(), ["one", "two", "three"])
+  assert_eq!(m.elems().collect(), ["one", "two", "three"])
 }
 
 ///|
