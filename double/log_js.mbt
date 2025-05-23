@@ -36,7 +36,7 @@
 ///   inspect(0.0.ln(), content="-Infinity")
 /// }
 /// ```
-pub fn ln(self : Double) -> Double = "Math" "log"
+pub fn Double::ln(self : Double) -> Double = "Math" "log"
 
 ///|
 /// Calculates the base-2 logarithm of a double-precision floating-point number.
@@ -56,7 +56,7 @@ pub fn ln(self : Double) -> Double = "Math" "log"
 ///   inspect(3.0.log2(), content="1.584962500721156")
 /// }
 /// ```
-pub fn log2(self : Double) -> Double = "Math" "log2"
+pub fn Double::log2(self : Double) -> Double = "Math" "log2"
 
 ///|
 /// Calculates the base-10 logarithm of a double-precision floating-point number.
@@ -78,7 +78,7 @@ pub fn log2(self : Double) -> Double = "Math" "log2"
 ///   inspect(100.0.log10(), content="2")
 /// }
 /// ```
-pub fn log10(self : Double) -> Double = "Math" "log10"
+pub fn Double::log10(self : Double) -> Double = "Math" "log10"
 
 ///|
 /// Calculates ln(1 + x) accurately even when x is close to zero.
@@ -109,4 +109,4 @@ pub fn log10(self : Double) -> Double = "Math" "log10"
 ///   inspect(@double.neg_infinity.ln_1p(), content="NaN")
 /// }
 /// ```
-pub fn ln_1p(self : Double) -> Double = "Math" "log1p"
+pub fn Double::ln_1p(self : Double) -> Double = "Math" "log1p"

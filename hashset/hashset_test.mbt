@@ -374,14 +374,14 @@ test "hashset arbitrary" {
 ///|
 test "@hashset.to_array/empty" {
   let set : @hashset.T[Int] = @hashset.new()
-  inspect(@hashset.to_array(set), content="[]")
+  inspect(set.to_array(), content="[]")
 }
 
 ///|
 test "@hashset.to_array/single" {
   let set = @hashset.new()
   set.add(42)
-  inspect(@hashset.to_array(set), content="[42]")
+  inspect(set.to_array(), content="[42]")
 }
 
 ///|
@@ -391,5 +391,5 @@ test "@hashset.to_array/multiple" {
   set.add(2)
   set.add(3)
   set.add(4)
-  inspect(@hashset.to_array(set), content="[3, 4, 1, 2]")
+  inspect(set.to_array(), content="[3, 4, 1, 2]")
 }

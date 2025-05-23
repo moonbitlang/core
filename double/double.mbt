@@ -78,7 +78,7 @@ pub fn from_int(i : Int) -> Double {
 ///   inspect(0.0.abs(), content="0")
 /// }
 /// ```
-pub fn abs(self : Double) -> Double = "%f64.abs"
+pub fn Double::abs(self : Double) -> Double = "%f64.abs"
 
 ///|
 /// Returns the sign of the double.
@@ -268,35 +268,35 @@ test "signum" {
 
 ///|
 test "is_nan" {
-  assert_true!(is_nan(not_a_number))
-  assert_false!(is_nan(0.0))
-  assert_false!(is_nan(12345.678))
-  assert_false!(is_nan(infinity))
-  assert_false!(is_nan(neg_infinity))
+  assert_true!(not_a_number.is_nan())
+  assert_false!(0.0.is_nan())
+  assert_false!(12345.678.is_nan())
+  assert_false!(infinity.is_nan())
+  assert_false!(neg_infinity.is_nan())
 }
 
 ///|
 test "is_inf" {
-  assert_true!(is_inf(infinity))
-  assert_true!(is_inf(neg_infinity))
-  assert_false!(is_inf(0.0))
-  assert_false!(is_inf(12345.678))
+  assert_true!(infinity.is_inf())
+  assert_true!(neg_infinity.is_inf())
+  assert_false!(0.0.is_inf())
+  assert_false!(12345.678.is_inf())
 }
 
 ///|
 test "is_pos_inf" {
-  assert_true!(is_pos_inf(infinity))
-  assert_false!(is_pos_inf(neg_infinity))
-  assert_false!(is_pos_inf(0.0))
-  assert_false!(is_pos_inf(12345.678))
+  assert_true!(infinity.is_pos_inf())
+  assert_false!(neg_infinity.is_pos_inf())
+  assert_false!(0.0.is_pos_inf())
+  assert_false!(12345.678.is_pos_inf())
 }
 
 ///|
 test "is_neg_inf" {
-  assert_false!(is_neg_inf(infinity))
-  assert_true!(is_neg_inf(neg_infinity))
-  assert_false!(is_neg_inf(0.0))
-  assert_false!(is_neg_inf(12345.678))
+  assert_false!(infinity.is_neg_inf())
+  assert_true!(neg_infinity.is_neg_inf())
+  assert_false!(0.0.is_neg_inf())
+  assert_false!(12345.678.is_neg_inf())
 }
 
 ///|
@@ -376,7 +376,7 @@ pub impl Show for Double with output(self, logger) {
 ///   inspect(infinity.is_close(infinity), content="true")
 /// }
 /// ```
-pub fn is_close(
+pub fn Double::is_close(
   self : Double,
   other : Double,
   relative_tolerance~ : Double = 1.0e-09,

@@ -23,10 +23,10 @@ test "special float values" {
 
 test "checking special values" {
   // Testing for special values
-  inspect(@float.is_inf(@float.infinity), content="true")
-  inspect(@float.is_neg_inf(@float.neg_infinity), content="true")
-  inspect(@float.is_pos_inf(@float.infinity), content="true")
-  inspect(@float.is_nan(@float.not_a_number), content="true")
+  inspect(@float.infinity.is_inf(), content="true")
+  inspect(@float.neg_infinity.is_neg_inf(), content="true")
+  inspect(@float.infinity.is_pos_inf(), content="true")
+  inspect(@float.not_a_number.is_nan(), content="true")
 }
 ```
 
@@ -114,7 +114,7 @@ test "utility functions" {
   inspect(@float.hypot(3.0, 4.0), content="5")
 
   // Conversion to integer
-  inspect(@float.to_int(3.14), content="3")
+  inspect((3.14).to_int(), content="3")
 
   // Default value
   inspect(@float.default(), content="0")

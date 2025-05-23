@@ -132,8 +132,8 @@ pub impl Compare for Byte with compare(self : Byte, that : Byte) -> Int {
 }
 
 ///|
-fn alphabet(self : Int) -> String {
-  match self {
+fn alphabet(x : Int) -> String {
+  match x {
     0 => "0"
     1 => "1"
     2 => "2"

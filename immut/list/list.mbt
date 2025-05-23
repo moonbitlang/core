@@ -132,7 +132,7 @@ pub fn[A] eachi(self : T[A], f : (Int, A) -> Unit) -> Unit {
 pub fn[A, B] map(self : T[A], f : (A) -> B) -> T[B] {
   match self {
     Nil => Nil
-    Cons(head, tail) => Cons(f(head), map(tail, f))
+    Cons(head, tail) => Cons(f(head), tail.map(f))
   }
 }
 
@@ -197,9 +197,9 @@ pub fn[A] filter(self : T[A], f : (A) -> Bool) -> T[A] {
     Nil => Nil
     Cons(head, tail) =>
       if f(head) {
-        Cons(head, filter(tail, f))
+        Cons(head, tail.filter(f))
       } else {
-        filter(tail, f)
+        tail.filter(f)
       }
   }
 }
@@ -218,7 +218,7 @@ pub fn[A] all(self : T[A], f : (A) -> Bool) -> Bool {
 pub fn[A] any(self : T[A], f : (A) -> Bool) -> Bool {
   match self {
     Nil => false
-    Cons(head, tail) => f(head) || any(tail, f)
+    Cons(head, tail) => f(head) || tail.any(f)
   }
 }
 
@@ -251,7 +251,7 @@ pub fn[A] unsafe_head(self : T[A]) -> A {
 #deprecated("Use `unsafe_head` instead")
 #coverage.skip
 pub fn[A] head_exn(self : T[A]) -> A {
-  unsafe_head(self)
+  self.unsafe_head()
 }
 
 ///|
@@ -307,7 +307,7 @@ pub fn[A] last(self : T[A]) -> A? {
 pub fn[A] concat(self : T[A], other : T[A]) -> T[A] {
   match self {
     Nil => other
-    Cons(head, tail) => Cons(head, concat(tail, other))
+    Cons(head, tail) => Cons(head, tail.concat(other))
   }
 }
 
@@ -498,7 +498,7 @@ pub fn[A, B] zip(self : T[A], other : T[B]) -> T[(A, B)]? {
 #deprecated("Use `flat_map` instead")
 #coverage.skip
 pub fn[A, B] concat_map(self : T[A], f : (A) -> T[B]) -> T[B] {
-  flat_map(self, f)
+  self.flat_map(f)
 }
 
 ///|
@@ -516,7 +516,7 @@ pub fn[A, B] concat_map(self : T[A], f : (A) -> T[B]) -> T[B] {
 pub fn[A, B] flat_map(self : T[A], f : (A) -> T[B]) -> T[B] {
   match self {
     Nil => Nil
-    Cons(head, tail) => concat(f(head), flat_map(tail, f))
+    Cons(head, tail) => f(head).concat(tail.flat_map(f))
   }
 }
 
@@ -555,7 +555,7 @@ pub fn[A] unsafe_nth(self : T[A], n : Int) -> A {
 #deprecated("Use `unsafe_nth` instead")
 #coverage.skip
 pub fn[A] nth_exn(self : T[A], n : Int) -> A {
-  unsafe_nth(self, n)
+  self.unsafe_nth(n)
 }
 
 ///|
@@ -597,8 +597,7 @@ pub fn[A] intersperse(self : T[A], separator : A) -> T[A] {
   match self {
     Nil => Nil
     Cons(head, Nil) => Cons(head, Nil)
-    Cons(head, tail) =>
-      Cons(head, Cons(separator, intersperse(tail, separator)))
+    Cons(head, tail) => Cons(head, Cons(separator, tail.intersperse(separator)))
   }
 }
 
@@ -644,7 +643,7 @@ pub fn[A, B] unzip(self : T[(A, B)]) -> (T[A], T[B]) {
 pub fn[A] flatten(self : T[T[A]]) -> T[A] {
   match self {
     Nil => Nil
-    Cons(head, tail) => concat(head, flatten(tail))
+    Cons(head, tail) => head.concat(tail.flatten())
   }
 }
 
@@ -655,7 +654,7 @@ pub fn[A : Compare] unsafe_maximum(self : T[A]) -> A {
     Nil => abort("maximum: empty list")
     Cons(x, Nil) => x
     Cons(x, xs) => {
-      let y = unsafe_maximum(xs)
+      let y = xs.unsafe_maximum()
       if x > y {
         x
       } else {
@@ -673,7 +672,7 @@ pub fn[A : Compare] maximum(self : T[A]) -> A? {
     Nil => None
     Cons(x, Nil) => Some(x)
     Cons(x, xs) =>
-      match maximum(xs) {
+      match xs.maximum() {
         None => Some(x)
         Some(y) => Some(if x > y { x } else { y })
       }
@@ -687,7 +686,7 @@ pub fn[A : Compare] unsafe_minimum(self : T[A]) -> A {
     Nil => abort("minimum: empty list")
     Cons(x, Nil) => x
     Cons(x, xs) => {
-      let y = unsafe_minimum(xs)
+      let y = xs.unsafe_minimum()
       if x < y {
         x
       } else {
@@ -704,7 +703,7 @@ pub fn[A : Compare] minimum(self : T[A]) -> A? {
     Nil => None
     Cons(x, Nil) => Some(x)
     Cons(x, xs) =>
-      match minimum(xs) {
+      match xs.minimum() {
         None => Some(x)
         Some(y) => Some(if x < y { x } else { y })
       }
@@ -724,9 +723,9 @@ pub fn[A : Compare] sort(self : T[A]) -> T[A] {
   match self {
     Nil => Nil
     Cons(x, xs) => {
-      let smaller = filter(xs, fn(y) { y < x })
-      let greater = filter(xs, fn(y) { y >= x })
-      concat(sort(smaller), Cons(x, sort(greater)))
+      let smaller = xs.filter(fn(y) { y < x })
+      let greater = xs.filter(fn(y) { y >= x })
+      smaller.sort().concat(Cons(x, greater.sort()))
     }
   }
 }
@@ -961,7 +960,7 @@ pub fn[A] findi(self : T[A], f : (A, Int) -> Bool) -> A? {
 pub fn[A] remove_at(self : T[A], index : Int) -> T[A] {
   match (index, self) {
     (0, Cons(_, tail)) => tail
-    (_, Cons(head, tail)) => Cons(head, remove_at(tail, index - 1))
+    (_, Cons(head, tail)) => Cons(head, tail.remove_at(index - 1))
     (_, Nil) => Nil
     // abort("remove_at: index out of bounds")
   }
@@ -982,7 +981,7 @@ pub fn[A : Eq] remove(self : T[A], elem : A) -> T[A] {
       if head == elem {
         tail
       } else {
-        Cons(head, remove(tail, elem))
+        Cons(head, tail.remove(elem))
       }
   }
 }

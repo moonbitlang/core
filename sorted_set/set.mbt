@@ -53,7 +53,7 @@ pub fn[V : Compare] of(array : Array[V]) -> T[V] {
 #deprecated("Use `copy` instead")
 #coverage.skip
 pub fn[V] deep_clone(self : T[V]) -> T[V] {
-  copy(self)
+  self.copy()
 }
 
 ///|

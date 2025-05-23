@@ -28,7 +28,7 @@ test "next_two_uint should return two 32-bit unsigned integers" {
 ///|
 test "clone_random_state" {
   let state = @splitmix.new(seed=42UL)
-  let cloned = @splitmix.clone(state)
+  let cloned = state.clone()
 
   // Generate some values from both states to ensure they behave the same
   let orig_int = state.next_int()

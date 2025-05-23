@@ -31,7 +31,7 @@
 ///   inspect(0.0.trunc(), content="0")
 /// }
 /// ```
-pub fn trunc(self : Double) -> Double = "(func (param $d f64) (result f64) (f64.trunc (local.get $d)))"
+pub fn Double::trunc(self : Double) -> Double = "(func (param $d f64) (result f64) (f64.trunc (local.get $d)))"
 
 ///|
 /// Returns the smallest integer greater than or equal to the given number.
@@ -51,7 +51,7 @@ pub fn trunc(self : Double) -> Double = "(func (param $d f64) (result f64) (f64.
 ///   inspect(42.0.ceil(), content="42")
 /// }
 /// ```
-pub fn ceil(self : Double) -> Double = "(func (param $d f64) (result f64) (f64.ceil (local.get $d)))"
+pub fn Double::ceil(self : Double) -> Double = "(func (param $d f64) (result f64) (f64.ceil (local.get $d)))"
 
 ///|
 /// Returns the largest integer less than or equal to the given number.
@@ -72,7 +72,7 @@ pub fn ceil(self : Double) -> Double = "(func (param $d f64) (result f64) (f64.c
 ///   inspect(0.0.floor(), content="0")
 /// }
 /// ```
-pub fn floor(self : Double) -> Double = "(func (param $d f64) (result f64) (f64.floor (local.get $d)))"
+pub fn Double::floor(self : Double) -> Double = "(func (param $d f64) (result f64) (f64.floor (local.get $d)))"
 
 ///|
 /// Rounds a floating-point number to the nearest integer using "round half up"
@@ -95,6 +95,6 @@ pub fn floor(self : Double) -> Double = "(func (param $d f64) (result f64) (f64.
 ///   inspect((-3.5).round(), content="-3")
 /// }
 /// ```
-pub fn round(self : Double) -> Double {
+pub fn Double::round(self : Double) -> Double {
   floor(self + 0.5)
 }

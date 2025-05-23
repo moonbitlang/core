@@ -8,10 +8,6 @@ The package allows converting boolean values to various integer types. `true` is
 
 ```moonbit
 test "bool to integer conversions" {
-  // Direct function calls
-  inspect(@bool.to_int(true), content="1")
-  inspect(@bool.to_int(false), content="0")
-
   // Method syntax
   inspect(true.to_int(), content="1")
   inspect(false.to_int(), content="0")

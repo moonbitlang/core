@@ -49,19 +49,19 @@ pub fn to_le_bytes(self : UInt64) -> Bytes {
 ///|
 test "to_be_bytes" {
   inspect(
-    to_be_bytes(max_value),
+    max_value.to_be_bytes(),
     content=
       #|b"\xff\xff\xff\xff\xff\xff\xff\xff"
     ,
   )
   inspect(
-    to_be_bytes(min_value),
+    min_value.to_be_bytes(),
     content=
       #|b"\x00\x00\x00\x00\x00\x00\x00\x00"
     ,
   )
   inspect(
-    to_be_bytes(0x123456789ABCDEF0UL),
+    0x123456789ABCDEF0UL.to_be_bytes(),
     content=
       #|b"\x12\x34\x56\x78\x9a\xbc\xde\xf0"
     ,
@@ -71,19 +71,19 @@ test "to_be_bytes" {
 ///|
 test "to_le_bytes" {
   inspect(
-    to_le_bytes(max_value),
+    max_value.to_le_bytes(),
     content=
       #|b"\xff\xff\xff\xff\xff\xff\xff\xff"
     ,
   )
   inspect(
-    to_le_bytes(min_value),
+    min_value.to_le_bytes(),
     content=
       #|b"\x00\x00\x00\x00\x00\x00\x00\x00"
     ,
   )
   inspect(
-    to_le_bytes(0x123456789ABCDEF0UL),
+    0x123456789ABCDEF0UL.to_le_bytes(),
     content=
       #|b"\xf0\xde\xbc\x9a\x78\x56\x34\x12"
     ,

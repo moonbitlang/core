@@ -41,6 +41,6 @@
 ///  inspect(@float.neg_infinity.cbrt(), content="-Infinity")
 /// }
 /// ```
-pub fn cbrt(self : Float) -> Float {
+pub fn Float::cbrt(self : Float) -> Float {
   self.to_double().cbrt().to_float()
 }

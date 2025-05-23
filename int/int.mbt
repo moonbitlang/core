@@ -38,13 +38,16 @@ pub let min_value = -2147483648
 ///   inspect(@int.abs(0), content="0")
 /// }
 /// ```
-pub fn abs(self : Int) -> Int {
+pub fn Int::abs(self : Int) -> Int {
   if self < 0 {
     -self
   } else {
     self
   }
 }
+
+///|
+pub fnalias Int::abs
 
 ///| Converts the Int to a Bytes in big-endian byte order.
 pub fn to_be_bytes(self : Int) -> Bytes {

@@ -52,7 +52,7 @@ test "abs function coverage" {
 
 ///|
 test "to_le_bytes" {
-  let bytes = @int.to_le_bytes(0x12345678)
+  let bytes = (0x12345678).to_le_bytes()
   inspect(
     bytes,
     content=
@@ -63,7 +63,7 @@ test "to_le_bytes" {
 
 ///|
 test "to_be_bytes" {
-  let bytes = @int.to_be_bytes(0x12345678)
+  let bytes = (0x12345678).to_be_bytes()
   inspect(
     bytes,
     content=

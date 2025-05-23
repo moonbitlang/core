@@ -132,7 +132,7 @@ const POW_ivln2_l = 1.92596299112661746887e-08
 ///   inspect(infinity.pow(-1.0), content="0")
 /// }
 /// ```
-pub fn pow(self : Double, other : Double) -> Double {
+pub fn Double::pow(self : Double, other : Double) -> Double {
   fn set_low_word(d : Double, v : UInt) -> Double {
     let bits : UInt64 = d.reinterpret_as_uint64()
     let bits = bits & 0xFFFF_FFFF_0000_0000

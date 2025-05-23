@@ -41,7 +41,7 @@
 ///   inspect(@double.neg_infinity.sinh(), content="-Infinity")
 /// }
 /// ```
-pub fn sinh(self : Double) -> Double = "Math" "sinh"
+pub fn Double::sinh(self : Double) -> Double = "Math" "sinh"
 
 ///|
 /// Calculates the hyperbolic cosine of a number.
@@ -72,7 +72,7 @@ pub fn sinh(self : Double) -> Double = "Math" "sinh"
 ///   inspect(@double.neg_infinity.cosh(), content="Infinity")
 /// }
 /// ```
-pub fn cosh(self : Double) -> Double = "Math" "cosh"
+pub fn Double::cosh(self : Double) -> Double = "Math" "cosh"
 
 ///|
 /// Calculates the hyperbolic tangent of a number.
@@ -104,7 +104,7 @@ pub fn cosh(self : Double) -> Double = "Math" "cosh"
 ///   inspect(@double.neg_infinity.tanh(), content="-1")
 /// }
 /// ```
-pub fn tanh(self : Double) -> Double = "Math" "tanh"
+pub fn Double::tanh(self : Double) -> Double = "Math" "tanh"
 
 ///|
 /// Calculates the inverse hyperbolic sine of a number.
@@ -135,7 +135,7 @@ pub fn tanh(self : Double) -> Double = "Math" "tanh"
 ///   inspect(@double.neg_infinity.asinh(), content="-Infinity")
 /// }
 /// ```
-pub fn asinh(self : Double) -> Double = "Math" "asinh"
+pub fn Double::asinh(self : Double) -> Double = "Math" "asinh"
 
 ///|
 /// Calculates the inverse hyperbolic cosine of a number.
@@ -167,7 +167,7 @@ pub fn asinh(self : Double) -> Double = "Math" "asinh"
 ///   inspect(@double.neg_infinity.acosh(), content="NaN")
 /// }
 /// ```
-pub fn acosh(self : Double) -> Double = "Math" "acosh"
+pub fn Double::acosh(self : Double) -> Double = "Math" "acosh"
 
 ///|
 /// Calculates the inverse hyperbolic tangent of a number.
@@ -200,4 +200,4 @@ pub fn acosh(self : Double) -> Double = "Math" "acosh"
 ///   inspect(@double.neg_infinity.atanh(), content="NaN")
 /// }
 /// ```
-pub fn atanh(self : Double) -> Double = "Math" "atanh"
+pub fn Double::atanh(self : Double) -> Double = "Math" "atanh"

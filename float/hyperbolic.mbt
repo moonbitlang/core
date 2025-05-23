@@ -41,7 +41,7 @@
 ///   inspect(@float.neg_infinity.sinh(), content="-Infinity")
 /// }
 /// ```
-pub fn sinh(self : Float) -> Float {
+pub fn Float::sinh(self : Float) -> Float {
   self.to_double().sinh().to_float()
 }
 
@@ -74,7 +74,7 @@ pub fn sinh(self : Float) -> Float {
 ///   inspect(@float.neg_infinity.cosh(), content="Infinity")
 /// }
 /// ```
-pub fn cosh(self : Float) -> Float {
+pub fn Float::cosh(self : Float) -> Float {
   self.to_double().cosh().to_float()
 }
 
@@ -108,7 +108,7 @@ pub fn cosh(self : Float) -> Float {
 ///   inspect(@float.neg_infinity.tanh(), content="-1")
 /// }
 /// ```
-pub fn tanh(self : Float) -> Float {
+pub fn Float::tanh(self : Float) -> Float {
   self.to_double().tanh().to_float()
 }
 
@@ -140,7 +140,7 @@ pub fn tanh(self : Float) -> Float {
 ///   inspect(@float.neg_infinity.asinh(), content="-Infinity")
 /// }
 /// ```
-pub fn asinh(self : Float) -> Float {
+pub fn Float::asinh(self : Float) -> Float {
   self.to_double().asinh().to_float()
 }
 
@@ -174,7 +174,7 @@ pub fn asinh(self : Float) -> Float {
 ///   inspect(@float.neg_infinity.acosh(), content="NaN")
 /// }
 /// ```
-pub fn acosh(self : Float) -> Float {
+pub fn Float::acosh(self : Float) -> Float {
   self.to_double().acosh().to_float()
 }
 
@@ -209,6 +209,6 @@ pub fn acosh(self : Float) -> Float {
 ///   inspect(@float.neg_infinity.atanh(), content="NaN")
 /// }
 /// ```
-pub fn atanh(self : Float) -> Float {
+pub fn Float::atanh(self : Float) -> Float {
   self.to_double().atanh().to_float()
 }

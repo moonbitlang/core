@@ -32,6 +32,6 @@
 ///   inspect((1.0 : Float).pow(-1.0), content="1")
 /// }
 /// ```
-pub fn pow(self : Float, other : Float) -> Float {
+pub fn Float::pow(self : Float, other : Float) -> Float {
   self.to_double().pow(other.to_double()).to_float()
 }
