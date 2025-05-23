@@ -302,5 +302,27 @@ pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Array[X] with arbi
 
 ///|
 pub fn join(self : Array[String], separator : String) -> String {
-  @string.concat(self, separator~)
+  match self {
+    [] => ""
+    [hd, .. tl] => {
+      let mut size_hint = hd.length()
+      for s in tl {
+        size_hint += s.length() + separator.length()
+      }
+      size_hint = size_hint << 1
+      let buf = StringBuilder::new(size_hint~)
+      buf.write_string(hd)
+      if separator == "" {
+        for s in tl {
+          buf.write_string(s)
+        }
+      } else {
+        for s in tl {
+          buf.write_string(separator)
+          buf.write_string(s)
+        }
+      }
+      buf.to_string()
+    }
+  }
 }

@@ -124,6 +124,7 @@ impl Array {
   unsafe_blit_fixed[A](Self[A], Int, FixedArray[A], Int, Int) -> Unit
   unsafe_get[T](Self[T], Int) -> T
   unsafe_pop[T](Self[T]) -> T
+  unsafe_pop_back[A](Self[A]) -> Unit
 }
 impl[T] Add for Array[T]
 impl[T : Compare] Compare for Array[T]
@@ -174,6 +175,7 @@ type Iter[T]
 impl Iter {
   all[T](Self[T], (T) -> Bool) -> Bool
   any[T](Self[T], (T) -> Bool) -> Bool
+  #deprecated
   append[T](Self[T], T) -> Self[T]
   collect[T](Self[T]) -> Array[T]
   concat[T](Self[T], Self[T]) -> Self[T]
@@ -208,6 +210,7 @@ impl Iter {
   nth[T](Self[T], Int) -> T?
   op_as_view[A](Self[A], start~ : Int = .., end? : Int) -> Self[A]
   peek[T](Self[T]) -> T?
+  #deprecated
   prepend[T](Self[T], T) -> Self[T]
   repeat[T](T) -> Self[T]
   run[T](Self[T], (T) -> IterResult) -> IterResult
@@ -540,6 +543,7 @@ impl String {
   get(String, Int) -> Char
   length(String) -> Int
   make(Int, Char) -> String
+  #deprecated
   op_get(String, Int) -> Char
   substring(String, start~ : Int = .., end? : Int) -> String
   to_string(String) -> String
@@ -557,6 +561,7 @@ impl FixedArray {
   blit_from_string(Self[Byte], Int, String, Int, Int) -> Unit
   blit_to[A](Self[A], Self[A], len~ : Int, src_offset~ : Int = .., dst_offset~ : Int = ..) -> Unit
   fill[T](Self[T], T) -> Unit
+  #deprecated
   get[T](Self[T], Int) -> T
   is_empty[T](Self[T]) -> Bool
   iter[T](Self[T]) -> Iter[T]
@@ -580,6 +585,7 @@ impl Bytes {
   make(Int, Byte) -> Bytes
   makei(Int, (Int) -> Byte) -> Bytes
   new(Int) -> Bytes
+  #deprecated
   of_string(String) -> Bytes
   op_get(Bytes, Int) -> Byte
   to_unchecked_string(Bytes, offset~ : Int = .., length~ : Int = ..) -> String
