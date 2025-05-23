@@ -68,6 +68,7 @@ pub fn Bytes::makei(length : Int, value : (Int) -> Byte) -> Bytes {
 ///   inspect(bytes, content="b\"\\x41\\x00\\x42\\x00\\x43\\x00\"")
 /// }
 /// ```
+#deprecated("Use `str.to_bytes()` instead")
 pub fn Bytes::of_string(str : String) -> Bytes {
   FixedArray::make(str.length() * 2, Byte::default())
   ..blit_from_string(0, str, 0, str.length())
