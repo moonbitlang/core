@@ -71,6 +71,7 @@ test "UInt16::from_int64" {
   inspect(Int::to_uint16(32768), content="32768") // Half of max value
   inspect(Int::to_uint16(49152), content="49152") // 3/4 of max value
   inspect(Int::to_uint16(16384), content="16384") // 1/4 of max value
+  inspect((65535 : UInt16) + 1, content="0") // Max value + 1 wraps to 0
 }
 
 ///|

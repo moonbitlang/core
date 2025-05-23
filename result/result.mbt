@@ -114,8 +114,8 @@ pub fn[T, E] is_ok(self : Result[T, E]) -> Bool {
 test "is_ok" {
   let x : Result[Int, String] = Ok(6)
   let y : Result[Int, String] = Err("error")
-  assert_eq!(is_ok(x), true)
-  assert_eq!(is_ok(y), false)
+  assert_eq!(x.is_ok(), true)
+  assert_eq!(y.is_ok(), false)
 }
 
 ///|
@@ -128,8 +128,8 @@ pub fn[T, E] is_err(self : Result[T, E]) -> Bool {
 test "is_err" {
   let x : Result[Int, String] = Ok(6)
   let y : Result[Int, String] = Err("error")
-  assert_eq!(is_err(x), false)
-  assert_eq!(is_err(y), true)
+  assert_eq!(x.is_err(), false)
+  assert_eq!(y.is_err(), true)
 }
 
 ///|
@@ -181,8 +181,8 @@ pub fn[T, E] or_else(self : Result[T, E], default : () -> T) -> T {
 test "or_else" {
   let x : Result[Int, String] = Ok(6)
   let y : Result[Int, String] = Err("error")
-  let z = or_else(x, fn() { 0 })
-  let w = or_else(y, fn() { 0 })
+  let z = x.or_else(fn() { 0 })
+  let w = y.or_else(fn() { 0 })
   assert_eq!(z, 6)
   assert_eq!(w, 0)
 }
@@ -239,7 +239,7 @@ pub fn[T, E, U] bind(
 ///|
 test "bind" {
   let x : Result[Int, String] = Ok(6)
-  let y = bind(x, fn(v : Int) { Ok(v * 7) })
+  let y = x.bind(fn(v : Int) { Ok(v * 7) })
   assert_eq!(y, Ok(42))
 }
 
@@ -264,9 +264,9 @@ pub fn[T, E, V] fold(self : Result[T, E], ok : (T) -> V, err : (E) -> V) -> V {
 ///|
 test "fold" {
   let x : Result[Int, String] = Ok(6)
-  let y = fold(x, fn(v : Int) -> Int { v * 7 }, fn(_e : String) -> Int { 0 })
+  let y = x.fold(fn(v : Int) -> Int { v * 7 }, fn(_e : String) -> Int { 0 })
   let z : Result[Int, String] = Err("error")
-  let w = fold(z, fn(v : Int) -> Int { v * 7 }, fn(_e : String) -> Int { 0 })
+  let w = z.fold(fn(v : Int) -> Int { v * 7 }, fn(_e : String) -> Int { 0 })
   assert_eq!(y, 42)
   assert_eq!(w, 0)
 }
@@ -294,8 +294,8 @@ pub fn[T, E] to_option(self : Result[T, E]) -> T? {
 test "to_option" {
   let x : Result[Int, String] = Ok(6)
   let y : Result[Int, String] = Err("error")
-  let z = to_option(x)
-  let w = to_option(y)
+  let z = x.to_option()
+  let w = y.to_option()
   assert_eq!(z, Some(6))
   assert_eq!(w, None)
 }

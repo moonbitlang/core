@@ -103,7 +103,7 @@ fn frexp(f : Double) -> (Double, Int) {
 ///   inspect(0.0.ln(), content="-Infinity")
 /// }
 /// ```
-pub fn ln(self : Double) -> Double {
+pub fn Double::ln(self : Double) -> Double {
   if self < 0.0 {
     return not_a_number
   } else if self.is_nan() || self.is_inf() {
@@ -145,7 +145,7 @@ pub fn ln(self : Double) -> Double {
 ///   inspect(3.0.log2(), content="1.584962500721156")
 /// }
 /// ```
-pub fn log2(self : Double) -> Double {
+pub fn Double::log2(self : Double) -> Double {
   let (f, e) = frexp(self)
   if f == 0.5 {
     return e.to_double() - 1.0
@@ -175,7 +175,7 @@ pub fn log2(self : Double) -> Double {
 ///   inspect(15.0.log10(), content="1.1760912590556813")
 /// }
 /// ```
-pub fn log10(self : Double) -> Double {
+pub fn Double::log10(self : Double) -> Double {
   if self < 0.0 {
     return not_a_number
   } else if self.is_nan() || self.is_inf() {
@@ -225,7 +225,7 @@ pub fn log10(self : Double) -> Double {
 ///   inspect(@double.neg_infinity.ln_1p(), content="NaN")
 /// }
 /// ```
-pub fn ln_1p(self : Double) -> Double {
+pub fn Double::ln_1p(self : Double) -> Double {
   if self < -1.0 || self.is_nan() {
     return not_a_number
   }

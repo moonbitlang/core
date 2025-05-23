@@ -100,7 +100,7 @@ UInt64 provides methods for converting to bytes in both big-endian and little-en
 ```moonbit
 test "UInt64 byte conversion" {
   // Convert to bytes in big-endian order (most significant byte first)
-  let be_bytes = @uint64.to_be_bytes(0x123456789ABCDEF0UL)
+  let be_bytes = (0x123456789ABCDEF0UL).to_be_bytes()
   inspect(
     be_bytes,
     content=
@@ -109,7 +109,7 @@ test "UInt64 byte conversion" {
   )
 
   // Convert to bytes in little-endian order (least significant byte first)
-  let le_bytes = @uint64.to_le_bytes(0x123456789ABCDEF0UL)
+  let le_bytes = (0x123456789ABCDEF0UL).to_le_bytes()
   inspect(
     le_bytes,
     content=
@@ -191,7 +191,7 @@ test "UInt64 hexadecimal literals" {
   inspect(ad.to_byte(), content="b'\\xAD'")
 
   // Convert to byte representation
-  let bytes = @uint64.to_be_bytes(value)
+  let bytes = value.to_be_bytes()
   inspect(
     bytes,
     content=

@@ -693,7 +693,7 @@ test "test_clone_from" {
         for _idx in 0..<pfu {
           u.push_front(2)
         }
-        let v = @deque.copy(u)
+        let v = u.copy()
         assert_eq!(v, u)
       }
     }

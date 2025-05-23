@@ -199,7 +199,7 @@ Flatten a list of lists.
 
 ```moonbit
 test {
-  let list = @list.flatten(@list.of([@list.of([1, 2]), @list.of([3, 4])]))
+  let list = @list.of([@list.of([1, 2]), @list.of([3, 4])]).flatten()
   assert_eq!(list, @list.of([1, 2, 3, 4]))
 }
 ```

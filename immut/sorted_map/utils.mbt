@@ -65,7 +65,7 @@ pub fn[K, V] is_empty(self : T[K, V]) -> Bool {
 
 ///|
 fn[K, V] make_tree(key : K, value : V, l : T[K, V], r : T[K, V]) -> T[K, V] {
-  let size = size(l) + size(r) + 1
+  let size = l.size() + r.size() + 1
   Tree(key, value~, size~, l, r)
 }
 
@@ -109,9 +109,9 @@ pub fn[K, V] each(self : T[K, V], f : (K, V) -> Unit) -> Unit {
   match self {
     Empty => ()
     Tree(k, value~, l, r, ..) => {
-      each(l, f)
+      l.each(f)
       f(k, value)
-      each(r, f)
+      r.each(f)
     }
   }
 }
@@ -124,8 +124,8 @@ pub fn[K, V] eachi(self : T[K, V], f : (Int, K, V) -> Unit) -> Unit {
       Empty => ()
       Tree(k, value~, l, r, ..) => {
         do_eachi(l, f, i)
-        f(size(l) + i, k, value)
-        do_eachi(r, f, size(l) + i + 1)
+        f(l.size() + i, k, value)
+        do_eachi(r, f, l.size() + i + 1)
       }
     }
   }
@@ -139,7 +139,7 @@ pub fn[K, X, Y] map(self : T[K, X], f : (X) -> Y) -> T[K, Y] {
   match self {
     Empty => Empty
     Tree(k, value~, size~, l, r) =>
-      Tree(k, value=f(value), size~, map(l, f), map(r, f))
+      Tree(k, value=f(value), size~, l.map(f), r.map(f))
   }
 }
 
@@ -149,7 +149,7 @@ pub fn[K, X, Y] map_with_key(self : T[K, X], f : (K, X) -> Y) -> T[K, Y] {
   match self {
     Empty => Empty
     Tree(k, value~, l, r, size~) =>
-      Tree(k, value=f(k, value), size~, map_with_key(l, f), map_with_key(r, f))
+      Tree(k, value=f(k, value), size~, l.map_with_key(f), r.map_with_key(f))
   }
 }
 
@@ -157,7 +157,7 @@ pub fn[K, X, Y] map_with_key(self : T[K, X], f : (K, X) -> Y) -> T[K, Y] {
 /// Fold the values in the map.
 /// O(n).
 pub fn[K, V, A] fold(self : T[K, V], init~ : A, f : (A, V) -> A) -> A {
-  foldl_with_key(self, fn(acc, _k, v) { f(acc, v) }, init~)
+  self.foldl_with_key(fn(acc, _k, v) { f(acc, v) }, init~)
 }
 
 ///|
@@ -201,8 +201,8 @@ fn[K : Show, V : Show] debug_tree(self : T[K, V]) -> String {
   match self {
     Empty => "_"
     Tree(k, value~, l, r, ..) => {
-      let l = debug_tree(l)
-      let r = debug_tree(r)
+      let l = l.debug_tree()
+      let r = r.debug_tree()
       "(\{k},\{value},\{l},\{r})"
     }
   }

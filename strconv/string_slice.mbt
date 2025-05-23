@@ -148,9 +148,9 @@ fn[T] fold_digits(
 
 ///|
 test "eq_ignore_case" {
-  assert_true!(prefix_eq_ignore_case(full_slice("nan"), "NaN"))
-  assert_true!(prefix_eq_ignore_case(full_slice("inf"), "inf"))
-  assert_true!(prefix_eq_ignore_case(full_slice("inf"), "Inf"))
+  assert_true!(full_slice("nan").prefix_eq_ignore_case("NaN"))
+  assert_true!(full_slice("inf").prefix_eq_ignore_case("inf"))
+  assert_true!(full_slice("inf").prefix_eq_ignore_case("Inf"))
 }
 
 ///|

@@ -54,7 +54,7 @@
 ///   inspect(@double.neg_infinity, content="-Infinity")
 /// }
 /// ```
-pub fn cbrt(self : Double) -> Double {
+pub fn Double::cbrt(self : Double) -> Double {
   if self.is_inf() || self.is_nan() || self == 0.0 {
     return self
   }

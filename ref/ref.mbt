@@ -81,11 +81,14 @@ pub fn[T, R] protect(self : Ref[T], a : T, f : () -> R) -> R {
 /// assert_eq!(x.val, 2)
 /// assert_eq!(y.val, 1)
 /// ```
-pub fn[T] swap(self : Ref[T], that : Ref[T]) -> Unit {
+pub fn[T] Ref::swap(self : Ref[T], that : Ref[T]) -> Unit {
   let tmp = self.val
   self.val = that.val
   that.val = tmp
 }
+
+///|
+pub fnalias Ref::swap
 
 ///|
 test "swap" {

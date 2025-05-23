@@ -38,12 +38,12 @@ test "mod" {
   inspect(4.0e-310 % 3.0e-310, content="1e-310")
   // inf
   inspect(1.0 % @double.infinity, content="1")
-  assert_true!(@double.is_nan(@double.infinity % @double.infinity))
-  assert_true!(@double.is_nan(@double.infinity % 1))
+  assert_true((@double.infinity % @double.infinity).is_nan())
+  assert_true((@double.infinity % 1).is_nan())
   // division by zero
-  assert_true!(@double.is_nan(1.0 % 0))
-  assert_true!(@double.is_nan(1.0 % -0))
+  assert_true!((1.0 % 0).is_nan())
+  assert_true!((1.0 % -0).is_nan())
   // nan
-  assert_true!(@double.is_nan(@double.not_a_number % 1.0))
-  assert_true!(@double.is_nan(1.0 % @double.not_a_number))
+  assert_true!((@double.not_a_number % 1.0).is_nan())
+  assert_true!((1.0 % @double.not_a_number).is_nan())
 }

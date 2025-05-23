@@ -26,7 +26,7 @@ test {
   let e = Expr::Add(Val("x"), Val("y"))
   let ej = e.to_json()
   inspect(
-    ej |> @json.stringify,
+    ej.stringify(),
     content=
       #|{"$tag":"Add","0":{"$tag":"Val","0":"x"},"1":{"$tag":"Val","0":"y"}}
     ,
