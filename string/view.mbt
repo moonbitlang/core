@@ -47,8 +47,8 @@ pub typealias View = StringView
 /// ```
 /// let str = "Hello🤣🤣🤣"
 /// let view = str[1:6]
-/// inspect!(view[0].to_char(), content="Some('e')")
-/// inspect!(view[4], content="55358")
+/// inspect(view[0].to_char(), content="Some('e')")
+/// inspect(view[4], content="55358")
 /// ```
 pub fn View::op_get(self : View, index : Int) -> Int {
   guard index >= 0 && index < self.length() else {
@@ -73,13 +73,13 @@ pub fn length(self : View) -> Int {
 /// ```
 /// let str = "Hello🤣🤣🤣"
 /// let view1 = str.view()
-/// inspect!(view1, content=
+/// inspect(view1, content=
 ///  "Hello🤣🤣🤣"
 ///)
 /// let start_offset = str.offset_of_nth_char(1).unwrap()
 /// let end_offset = str.offset_of_nth_char(6).unwrap() // the second emoji
 /// let view2 = str.view(start_offset~, end_offset~)
-/// inspect!(view2, content=
+/// inspect(view2, content=
 ///  "ello🤣"
 ///)
 /// ```
@@ -123,13 +123,13 @@ pub fn View::view(
 /// ```
 /// let str = "Hello🤣🤣🤣"
 /// let view1 = str.charcodes()
-/// inspect!(view1, content=
+/// inspect(view1, content=
 ///  "Hello🤣🤣🤣"
 ///)
 /// let start = str.offset_of_nth_char(1).unwrap()
 /// let end = str.offset_of_nth_char(6).unwrap() // the second emoji
 /// let view2 = str.charcodes(start~, end~)
-/// inspect!(view2, content=
+/// inspect(view2, content=
 ///  "ello🤣"
 ///)
 /// ```
@@ -152,7 +152,7 @@ pub fn String::charcodes(
 /// let str = "Hello🤣🤣🤣"
 /// let view1 = str.view()
 /// let view2 = view1.charcodes(start=1, end=7) // From 2nd to 6th character
-/// inspect!(view2, content=
+/// inspect(view2, content=
 ///  "ello🤣"
 ///)
 /// ```
@@ -256,7 +256,7 @@ pub impl Show for View with output(self, logger) {
 /// ```
 /// let str = "Hello World"
 /// let view = str[0:5]  // "Hello"
-/// inspect!(view.to_string(), content="Hello")
+/// inspect(view.to_string(), content="Hello")
 /// ```
 pub impl Show for StringView with to_string(self) {
   self.str.substring(start=self.start, end=self.end)

@@ -123,7 +123,7 @@ pub impl[X : Arbitrary] Arbitrary for Iter[X] with arbitrary(size, rs) {
 }
 
 ///|
-pub fn gen[T : Arbitrary](size? : Int, state? : @splitmix.RandomState) -> T {
+pub fn[T : Arbitrary] gen(size? : Int, state? : @splitmix.RandomState) -> T {
   let size = match size {
     None => 0
     Some(x) => x

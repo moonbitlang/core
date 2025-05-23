@@ -25,15 +25,15 @@
 ///
 /// ```moonbit
 /// test "sin" {
-///   inspect!((0.0 : Float).sin(), content="0")
-///   inspect!((2.0 : Float).sin(), content="0.9092974066734314")
-///   inspect!((-5.0 : Float).sin(), content="0.9589242935180664")
-///   inspect!(@float.not_a_number.sin(), content="NaN")
-///   inspect!(@float.infinity.sin(), content="NaN")
-///   inspect!(@float.neg_infinity.sin(), content="NaN")
+///   inspect((0.0 : Float).sin(), content="0")
+///   inspect((2.0 : Float).sin(), content="0.9092974066734314")
+///   inspect((-5.0 : Float).sin(), content="0.9589242935180664")
+///   inspect(@float.not_a_number.sin(), content="NaN")
+///   inspect(@float.infinity.sin(), content="NaN")
+///   inspect(@float.neg_infinity.sin(), content="NaN")
 /// }
 /// ```
-pub fn sin(self : Float) -> Float {
+pub fn Float::sin(self : Float) -> Float {
   self.to_double().sin().to_float()
 }
 
@@ -50,15 +50,15 @@ pub fn sin(self : Float) -> Float {
 ///
 /// ```moonbit
 /// test "cos" {
-///   inspect!((0.0 : Float).cos(), content="1")
-///   inspect!((2.0 : Float).cos(), content="-0.416146844625473")
-///   inspect!((-5.0 : Float).cos(), content="0.28366219997406006")
-///   inspect!(@float.not_a_number.cos(), content="NaN")
-///   inspect!(@float.infinity.cos(), content="NaN")
-///   inspect!(@float.neg_infinity.cos(), content="NaN")
+///   inspect((0.0 : Float).cos(), content="1")
+///   inspect((2.0 : Float).cos(), content="-0.416146844625473")
+///   inspect((-5.0 : Float).cos(), content="0.28366219997406006")
+///   inspect(@float.not_a_number.cos(), content="NaN")
+///   inspect(@float.infinity.cos(), content="NaN")
+///   inspect(@float.neg_infinity.cos(), content="NaN")
 /// }
 /// ```
-pub fn cos(self : Float) -> Float {
+pub fn Float::cos(self : Float) -> Float {
   self.to_double().cos().to_float()
 }
 
@@ -75,15 +75,15 @@ pub fn cos(self : Float) -> Float {
 ///
 /// ```moonbit
 /// test "tan" {
-///   inspect!((0.0 : Float).tan(), content="0")
-///   inspect!((2.0 : Float).tan(), content="-2.185039758682251")
-///   inspect!((-5.0 : Float).tan(), content="3.3805150985717773")
-///   inspect!(@float.not_a_number.tan(), content="NaN")
-///   inspect!(@float.infinity.tan(), content="NaN")
-///   inspect!(@float.neg_infinity.tan(), content="NaN")
+///   inspect((0.0 : Float).tan(), content="0")
+///   inspect((2.0 : Float).tan(), content="-2.185039758682251")
+///   inspect((-5.0 : Float).tan(), content="3.3805150985717773")
+///   inspect(@float.not_a_number.tan(), content="NaN")
+///   inspect(@float.infinity.tan(), content="NaN")
+///   inspect(@float.neg_infinity.tan(), content="NaN")
 /// }
 /// ```
-pub fn tan(self : Float) -> Float {
+pub fn Float::tan(self : Float) -> Float {
   self.to_double().tan().to_float()
 }
 
@@ -103,15 +103,15 @@ pub fn tan(self : Float) -> Float {
 ///
 /// ```moonbit
 /// test "asin" {
-///   inspect!((0.0 : Float).asin(), content="0")
-///   inspect!((1.0 : Float).asin(), content="1.5707963705062866")
-///   inspect!((-1.0 : Float).asin(), content="-1.5707963705062866")
-///   inspect!(@float.not_a_number.asin(), content="NaN")
-///   inspect!(@float.infinity.asin(), content="NaN")
-///   inspect!(@float.neg_infinity.asin(), content="NaN")
+///   inspect((0.0 : Float).asin(), content="0")
+///   inspect((1.0 : Float).asin(), content="1.5707963705062866")
+///   inspect((-1.0 : Float).asin(), content="-1.5707963705062866")
+///   inspect(@float.not_a_number.asin(), content="NaN")
+///   inspect(@float.infinity.asin(), content="NaN")
+///   inspect(@float.neg_infinity.asin(), content="NaN")
 /// }
 /// ```
-pub fn asin(self : Float) -> Float {
+pub fn Float::asin(self : Float) -> Float {
   self.to_double().asin().to_float()
 }
 
@@ -131,15 +131,15 @@ pub fn asin(self : Float) -> Float {
 ///
 /// ```moonbit
 /// test "acos" {
-///   inspect!((0.0 : Float).acos(), content="1.5707963705062866")
-///   inspect!((1.0 : Float).acos(), content="0")
-///   inspect!((-1.0 : Float).acos(), content="3.1415927410125732")
-///   inspect!(@float.not_a_number.acos(), content="NaN")
-///   inspect!(@float.infinity.acos(), content="NaN")
-///   inspect!(@float.neg_infinity.acos(), content="NaN")
+///   inspect((0.0 : Float).acos(), content="1.5707963705062866")
+///   inspect((1.0 : Float).acos(), content="0")
+///   inspect((-1.0 : Float).acos(), content="3.1415927410125732")
+///   inspect(@float.not_a_number.acos(), content="NaN")
+///   inspect(@float.infinity.acos(), content="NaN")
+///   inspect(@float.neg_infinity.acos(), content="NaN")
 /// }
 /// ```
-pub fn acos(self : Float) -> Float {
+pub fn Float::acos(self : Float) -> Float {
   self.to_double().acos().to_float()
 }
 
@@ -158,15 +158,15 @@ pub fn acos(self : Float) -> Float {
 ///
 /// ```moonbit
 /// test "atan" {
-///   inspect!((0.0 : Float).atan(), content="0")
-///   inspect!((1.0 : Float).atan(), content="0.7853981852531433")
-///   inspect!((-1.0 : Float).atan(), content="-0.7853981852531433")
-///   inspect!(@float.not_a_number.atan(), content="NaN")
-///   inspect!(@float.infinity.atan(), content="1.5707963705062866")
-///   inspect!(@float.neg_infinity.atan(), content="-1.5707963705062866")
+///   inspect((0.0 : Float).atan(), content="0")
+///   inspect((1.0 : Float).atan(), content="0.7853981852531433")
+///   inspect((-1.0 : Float).atan(), content="-0.7853981852531433")
+///   inspect(@float.not_a_number.atan(), content="NaN")
+///   inspect(@float.infinity.atan(), content="1.5707963705062866")
+///   inspect(@float.neg_infinity.atan(), content="-1.5707963705062866")
 /// }
 /// ```
-pub fn atan(self : Float) -> Float {
+pub fn Float::atan(self : Float) -> Float {
   self.to_double().atan().to_float()
 }
 
@@ -186,21 +186,21 @@ pub fn atan(self : Float) -> Float {
 ///
 /// ```moonbit
 /// test "atan2" {
-///   inspect!((0.0 : Float).atan2(-1.0), content="3.1415927410125732")
-///   inspect!((1.0 : Float).atan2(0.0), content="1.5707963705062866")
-///   inspect!((1.0 : Float).atan2(1.0), content="0.7853981852531433")
-///   inspect!(@float.not_a_number.atan2(1.0), content="NaN")
-///   inspect!((1.0 : Float).atan2(not_a_number), content="NaN")
-///   inspect!(@float.infinity.atan2(1.0), content="1.5707963705062866")
-///   inspect!((1.0 : Float).atan2(infinity), content="0")
-///   inspect!(@float.neg_infinity.atan2(1.0), content="-1.5707963705062866")
-///   inspect!((1.0 : Float).atan2(@float.neg_infinity), content="3.1415927410125732")
-///   inspect!(@float.infinity.atan2(@float.infinity), content="0.7853981852531433")
-///   inspect!(@float.neg_infinity.atan2(@float.neg_infinity), content="-2.356194496154785")
-///   inspect!(@float.infinity.atan2(@float.neg_infinity), content="2.356194496154785")
-///   inspect!(@float.neg_infinity.atan2(@float.infinity), content="-0.7853981852531433")
+///   inspect((0.0 : Float).atan2(-1.0), content="3.1415927410125732")
+///   inspect((1.0 : Float).atan2(0.0), content="1.5707963705062866")
+///   inspect((1.0 : Float).atan2(1.0), content="0.7853981852531433")
+///   inspect(@float.not_a_number.atan2(1.0), content="NaN")
+///   inspect((1.0 : Float).atan2(not_a_number), content="NaN")
+///   inspect(@float.infinity.atan2(1.0), content="1.5707963705062866")
+///   inspect((1.0 : Float).atan2(infinity), content="0")
+///   inspect(@float.neg_infinity.atan2(1.0), content="-1.5707963705062866")
+///   inspect((1.0 : Float).atan2(@float.neg_infinity), content="3.1415927410125732")
+///   inspect(@float.infinity.atan2(@float.infinity), content="0.7853981852531433")
+///   inspect(@float.neg_infinity.atan2(@float.neg_infinity), content="-2.356194496154785")
+///   inspect(@float.infinity.atan2(@float.neg_infinity), content="2.356194496154785")
+///   inspect(@float.neg_infinity.atan2(@float.infinity), content="-0.7853981852531433")
 /// }
 /// ```
-pub fn atan2(self : Float, other : Float) -> Float {
+pub fn Float::atan2(self : Float, other : Float) -> Float {
   self.to_double().atan2(other.to_double()).to_float()
 }

@@ -54,7 +54,7 @@ fn View::make(b : Bytes, start : Int, len : Int) -> View = "%bytesview.make"
 /// test "View::length" {
 ///   let bytes = b"\x00\x01\x02\x03\x04"
 ///   let view = bytes[2:4]
-///   inspect!(view.length(), content="2")
+///   inspect(view.length(), content="2")
 /// }
 /// ```
 pub fn View::length(self : View) -> Int {
@@ -77,7 +77,7 @@ pub fn View::length(self : View) -> Int {
 /// test "View::op_get" {
 ///   let bytes = b"\x01\x02\x03\x04\x05"
 ///   let view = bytes[1:4] // view contains [0x02, 0x03, 0x04]
-///   inspect!(view[1], content="b'\\x03'")
+///   inspect(view[1], content="b'\\x03'")
 /// }
 /// 
 /// test "panic View::op_get/out_of_bounds" {
@@ -111,13 +111,13 @@ pub fn View::op_get(self : View, index : Int) -> Byte {
 ///   let bytes = b"\x01\x02\x03\x04\x05"
 ///   let view = bytes[1:4] 
 ///   let result = view.get(1)
-///   inspect!(result, content="Some(b'\\x03')")
+///   inspect(result, content="Some(b'\\x03')")
 /// }
 /// test "View::get/out_of_bounds" {
 ///   let bytes = b"\x01\x02\x03\x04\x05"
 ///   let view = bytes[1:4] 
 ///   let result = view.get(5)
-///   inspect!(result, content="None")
+///   inspect(result, content="None")
 /// }
 /// ```
 pub fn View::get(self : View, index : Int) -> Byte? {
@@ -146,7 +146,7 @@ pub fn View::get(self : View, index : Int) -> Byte? {
 /// test "View::unsafe_get" {
 ///   let bytes = b"\x01\x02\x03\x04\x05"
 ///   let view = bytes[2:4] // view contains [0x03, 0x04]
-///   inspect!(view.unsafe_get(0), content="b'\\x03'")
+///   inspect(view.unsafe_get(0), content="b'\\x03'")
 /// }
 /// 
 /// test "panic View::unsafe_get/out_of_bounds" {
@@ -248,7 +248,7 @@ pub fn View::iter(self : View) -> Iter[Byte] {
 /// ```moonbit
 /// test "View::to_uint_be" {
 ///   let bytes = b"\x12\x34\x56\x78"[:]
-///   inspect!(bytes.to_uint_be(), content="305419896") // 0x12345678
+///   inspect(bytes.to_uint_be(), content="305419896") // 0x12345678
 /// }
 /// 
 /// test "panic View::to_uint_be/out_of_bounds" {
@@ -284,7 +284,7 @@ pub fn View::to_uint_be(self : View) -> UInt {
 /// test "View::to_uint_le" {
 ///   let bytes = b"\x01\x02\x03\x04"
 ///   let view = bytes[:]
-///   inspect!(view.to_uint_le(), content="67305985") // 0x04030201
+///   inspect(view.to_uint_le(), content="67305985") // 0x04030201
 /// }
 /// ```
 pub fn View::to_uint_le(self : View) -> UInt {
@@ -316,7 +316,7 @@ pub fn View::to_uint_le(self : View) -> UInt {
 /// ```moonbit
 /// test "View::to_uint64_be" {
 ///   let bytes = b"\x01\x23\x45\x67\x89\xAB\xCD\xEF"[:]
-///   inspect!(bytes.to_uint64_be(), content="81985529216486895")
+///   inspect(bytes.to_uint64_be(), content="81985529216486895")
 /// }
 /// 
 /// test "panic View::to_uint64_be/short_input" {
@@ -358,7 +358,7 @@ pub fn View::to_uint64_be(self : View) -> UInt64 {
 /// ```moonbit
 /// test "View::to_uint64_le" {
 ///   let bytes = b"\x01\x02\x03\x04\x05\x06\x07\x08"[:]
-///   inspect!(bytes.to_uint64_le(), content="578437695752307201")
+///   inspect(bytes.to_uint64_le(), content="578437695752307201")
 /// }
 /// 
 /// test "panic View::to_uint64_le/short_view" {
@@ -397,7 +397,7 @@ pub fn View::to_uint64_le(self : View) -> UInt64 {
 /// ```moonbit
 /// test "View::to_int_be" {
 ///   let bytes = b"\x80\x00\x00\x00"[:] // Represents -2147483648 in two's complement
-///   inspect!(bytes.to_int_be(), content="-2147483648")
+///   inspect(bytes.to_int_be(), content="-2147483648")
 /// }
 /// ```
 pub fn View::to_int_be(self : View) -> Int {
@@ -425,7 +425,7 @@ pub fn View::to_int_be(self : View) -> Int {
 /// test "View::to_int_le" {
 ///   let bytes = b"\x78\x56\x34\x12"
 ///   let view = bytes[:]
-///   inspect!(view.to_int_le(), content="305419896") // 0x12345678 in decimal
+///   inspect(view.to_int_le(), content="305419896") // 0x12345678 in decimal
 /// }
 /// ```
 pub fn View::to_int_le(self : View) -> Int {
@@ -449,7 +449,7 @@ pub fn View::to_int_le(self : View) -> Int {
 /// ```moonbit
 /// test "View::to_int64_be" {
 ///   let bytes = b"\x80\x00\x00\x00\x00\x00\x00\x00"[:] // Most negative 64-bit integer
-///   inspect!(bytes.to_int64_be(), content="-9223372036854775808")
+///   inspect(bytes.to_int64_be(), content="-9223372036854775808")
 /// }
 /// ```
 pub fn View::to_int64_be(self : View) -> Int64 {
@@ -475,7 +475,7 @@ pub fn View::to_int64_be(self : View) -> Int64 {
 /// test "View::to_int64_le" {
 ///   let bytes = b"\x01\x02\x03\x04\x05\x06\x07\x08"
 ///   let view = bytes[:]
-///   inspect!(view.to_int64_le(), content="578437695752307201")
+///   inspect(view.to_int64_le(), content="578437695752307201")
 /// }
 /// ```
 pub fn View::to_int64_le(self : View) -> Int64 {
@@ -503,7 +503,7 @@ pub fn View::to_int64_le(self : View) -> Int64 {
 ///   let view = bytes[:]
 ///   let float = view.to_float_be()
 ///   // Convert to double for comparison since Float doesn't implement Show
-///   inspect!(float.to_double(), content="3.140000104904175")
+///   inspect(float.to_double(), content="3.140000104904175")
 /// }
 /// ```
 pub fn View::to_float_be(self : View) -> Float {
@@ -527,7 +527,7 @@ pub fn View::to_float_be(self : View) -> Float {
 /// test "View::to_float_le" {
 ///   let bytes = b"\x00\x00\x80\x3F" // Represents 1.0 in little-endian IEEE-754
 ///   let f = bytes[:].to_float_le()
-///   inspect!(f.to_double(), content="1")
+///   inspect(f.to_double(), content="1")
 /// }
 /// ```
 pub fn View::to_float_le(self : View) -> Float {
@@ -554,7 +554,7 @@ pub fn View::to_float_le(self : View) -> Float {
 ///   // Bytes representing 1.0 in IEEE 754 double-precision format (big-endian)
 ///   let bytes = b"\x3F\xF0\x00\x00\x00\x00\x00\x00"
 ///   let view = bytes[:]
-///   inspect!(view.to_double_be(), content="1")
+///   inspect(view.to_double_be(), content="1")
 /// }
 /// ```
 pub fn View::to_double_be(self : View) -> Double {
@@ -579,7 +579,7 @@ pub fn View::to_double_be(self : View) -> Double {
 /// test "View::to_double_le" {
 ///   let bytes = b"\x00\x00\x00\x00\x00\x00\xF0\x3F" // represents 1.0 in little-endian
 ///   let view = bytes[:]
-///   inspect!(view.to_double_le(), content="1")
+///   inspect(view.to_double_le(), content="1")
 /// }
 /// ```
 pub fn View::to_double_le(self : View) -> Double {
@@ -621,9 +621,9 @@ pub impl Show for View with output(self, logger) {
 /// Example:
 /// ```moonbit
 /// let bytes = b"abcabc"
-/// inspect!(bytes[0:3] == bytes[3:6], content="true")
-/// inspect!(bytes[0:3] == bytes[2:5], content="false")
-/// inspect!(bytes[0:4] == bytes[3:6], content="false")
+/// inspect(bytes[0:3] == bytes[3:6], content="true")
+/// inspect(bytes[0:3] == bytes[2:5], content="false")
+/// inspect(bytes[0:4] == bytes[3:6], content="false")
 /// ```
 pub impl Eq for View with op_equal(self, other) -> Bool {
   guard self.len() == other.len() else { return false }
@@ -654,11 +654,11 @@ pub impl Eq for View with op_equal(self, other) -> Bool {
 ///
 /// ```moonbit
 /// let bytes = b"abcabc"
-/// inspect!(bytes[0:3].compare(bytes[3:6]), content="0")  // abc = abc
-/// inspect!(bytes[0:3].compare(bytes[2:5]), content="-1") // abc < cab
-/// inspect!(bytes[1:4].compare(bytes[3:6]), content="1")  // bca > abc
-/// inspect!(bytes[0:3].compare(bytes[0:4]), content="-1") // abc < abca
-/// inspect!(bytes[1:5].compare(bytes[2:5]), content="1")  // bcab > cab
+/// inspect(bytes[0:3].compare(bytes[3:6]), content="0")  // abc = abc
+/// inspect(bytes[0:3].compare(bytes[2:5]), content="-1") // abc < cab
+/// inspect(bytes[1:4].compare(bytes[3:6]), content="1")  // bca > abc
+/// inspect(bytes[0:3].compare(bytes[0:4]), content="-1") // abc < abca
+/// inspect(bytes[1:5].compare(bytes[2:5]), content="1")  // bcab > cab
 /// ```
 pub impl Compare for View with compare(self, other) -> Int {
   let self_len = self.len()

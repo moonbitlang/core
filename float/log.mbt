@@ -67,12 +67,12 @@ let logf_data : LogfData = {
 ///
 /// ```moonbit
 /// test "ln" {
-///   inspect!((1.0 : Float).ln(), content="0")
-///   inspect!((2.718281828459045 : Float).ln(), content="0.9999999403953552")
-///   inspect!((0.0 : Float).ln(), content="-Infinity")
+///   inspect((1.0 : Float).ln(), content="0")
+///   inspect((2.718281828459045 : Float).ln(), content="0.9999999403953552")
+///   inspect((0.0 : Float).ln(), content="-Infinity")
 /// }
 /// ```
-pub fn ln(self : Float) -> Float {
+pub fn Float::ln(self : Float) -> Float {
   let mut ix : UInt = self.reinterpret_as_int().reinterpret_as_uint()
   if ix == 0x3f800000U {
     return 0.0
@@ -125,15 +125,15 @@ pub fn ln(self : Float) -> Float {
 ///
 /// ```moonbit
 /// test "ln_1p" {
-///   inspect!((0 : Float).ln_1p(), content="0")
-///   inspect!((1 : Float).ln_1p(), content="0.6931471824645996")
-///   inspect!((-1 : Float).ln_1p(), content="-Infinity")
-///   inspect!((-2 : Float).ln_1p(), content="NaN")
-///   inspect!(@float.not_a_number.ln_1p(), content="NaN")
-///   inspect!(@float.infinity.ln_1p(), content="Infinity")
-///   inspect!(@float.neg_infinity.ln_1p(), content="NaN")
+///   inspect((0 : Float).ln_1p(), content="0")
+///   inspect((1 : Float).ln_1p(), content="0.6931471824645996")
+///   inspect((-1 : Float).ln_1p(), content="-Infinity")
+///   inspect((-2 : Float).ln_1p(), content="NaN")
+///   inspect(@float.not_a_number.ln_1p(), content="NaN")
+///   inspect(@float.infinity.ln_1p(), content="Infinity")
+///   inspect(@float.neg_infinity.ln_1p(), content="NaN")
 /// }
 /// ```
-pub fn ln_1p(self : Float) -> Float {
+pub fn Float::ln_1p(self : Float) -> Float {
   self.to_double().ln_1p().to_float()
 }

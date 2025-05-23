@@ -20,7 +20,7 @@ pub(all) struct AllThree {
 } derive(Eq, Show)
 
 ///|
-fn array_to_json[T](arr : Array[T], f~ : (T) -> Json) -> Json {
+fn[T] array_to_json(arr : Array[T], f~ : (T) -> Json) -> Json {
   Json::array(arr.map(f))
 }
 
@@ -96,7 +96,7 @@ test {
     strings: ["a", "b", "c"],
   }
   let json = all_three.to_json()
-  inspect!(
+  inspect(
     of_json?(json),
     content=
       #|Ok({ints: [1, 2, 3], floats: [1, 2, 3], strings: ["a", "b", "c"]})

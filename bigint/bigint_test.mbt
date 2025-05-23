@@ -15,18 +15,18 @@
 ///|
 test "neg" {
   let a = BigInt::from_int64(123456789012345678)
-  inspect!(-a, content="-123456789012345678")
+  inspect(-a, content="-123456789012345678")
   let a = BigInt::from_string(
     "123456789012345678123456789012345678123456789012345678123456789012345678",
   )
-  inspect!(
+  inspect(
     -a,
     content="-123456789012345678123456789012345678123456789012345678123456789012345678",
   )
   let a = BigInt::from_string(
     "-123456789012345678123456789012345678123456789012345678123456789012345678",
   )
-  inspect!(
+  inspect(
     -a,
     content="123456789012345678123456789012345678123456789012345678123456789012345678",
   )
@@ -36,35 +36,35 @@ test "neg" {
 test "add" {
   let a = BigInt::from_int64(123456789012345678)
   let b = BigInt::from_int64(876543210987654321)
-  inspect!(a + b, content="999999999999999999")
+  inspect(a + b, content="999999999999999999")
   let a = BigInt::from_string(
     "123456789012345678123456789012345678123456789012345678123456789012345678",
   )
   let b = BigInt::from_string(
     "876543210987654321876543210987654321876543210987654321876543210987654321",
   )
-  inspect!(
+  inspect(
     a + b,
     content="999999999999999999999999999999999999999999999999999999999999999999999999",
   )
-  inspect!(-1N + 1N, content="0")
-  inspect!(1N + -1N, content="0")
-  inspect!(-11N + 11N, content="0")
-  inspect!(11N + -11N, content="0")
+  inspect(-1N + 1N, content="0")
+  inspect(1N + -1N, content="0")
+  inspect(-11N + 11N, content="0")
+  inspect(11N + -11N, content="0")
 }
 
 ///|
 test "sub" {
   let a = BigInt::from_int64(123456789012345678)
   let b = BigInt::from_int64(876543210987654321)
-  inspect!(a - b, content="-753086421975308643")
+  inspect(a - b, content="-753086421975308643")
   let a = BigInt::from_string(
     "123456789012345678123456789012345678123456789012345678123456789012345678",
   )
   let b = BigInt::from_string(
     "876543210987654321876543210987654321876543210987654321876543210987654321",
   )
-  inspect!(
+  inspect(
     a - b,
     content="-753086421975308643753086421975308643753086421975308643753086421975308643",
   )
@@ -74,14 +74,14 @@ test "sub" {
 test "mul" {
   let a = BigInt::from_int64(123456789012345678)
   let b = BigInt::from_int64(876543210987654321)
-  inspect!(a * b, content="108215210259106841348574911222374638")
+  inspect(a * b, content="108215210259106841348574911222374638")
   let a = BigInt::from_string(
     "123456789012345678123456789012345678123456789012345678123456789012345678",
   )
   let b = BigInt::from_string(
     "876543210987654321876543210987654321876543210987654321876543210987654321",
   )
-  inspect!(
+  inspect(
     a * b,
     content="108215210259106841565005331740588321021795453222069800478585574703551279718945275666819076262155154185337596805365032703856117348574911222374638",
   )
@@ -91,16 +91,16 @@ test "mul" {
 test "div" {
   let a = BigInt::from_int64(123456789012345678)
   let b = BigInt::from_int64(876543210987654321)
-  inspect!(a / b, content="0")
-  inspect!(a % b, content="123456789012345678")
+  inspect(a / b, content="0")
+  inspect(a % b, content="123456789012345678")
   let a = BigInt::from_string(
     "123456789012345678123456789012345678123456789012345678123456789012345678",
   )
   let b = BigInt::from_string(
     "876543210987654321876543210987654321876543210987654321876543210987654321",
   )
-  inspect!(a / b, content="0")
-  inspect!(
+  inspect(a / b, content="0")
+  inspect(
     a % b,
     content="123456789012345678123456789012345678123456789012345678123456789012345678",
   )
@@ -110,12 +110,12 @@ test "div" {
 test "neg" {
   let a = BigInt::from_int64(123456789012345678L)
   let b = -a
-  inspect!(b.to_string(), content="-123456789012345678")
+  inspect(b.to_string(), content="-123456789012345678")
   let a = BigInt::from_string(
     "123456789012345678123456789012345678123456789012345678123456789012345678",
   )
   let b = -a
-  inspect!(
+  inspect(
     b.to_string(),
     content="-123456789012345678123456789012345678123456789012345678123456789012345678",
   )
@@ -123,7 +123,7 @@ test "neg" {
     "-123456789012345678123456789012345678123456789012345678123456789012345678",
   )
   let b = -a
-  inspect!(
+  inspect(
     b.to_string(),
     content="123456789012345678123456789012345678123456789012345678123456789012345678",
   )
@@ -134,17 +134,17 @@ test "add" {
   let a = BigInt::from_int64(123456789012345678L)
   let b = BigInt::from_int64(987654321098765432L)
   let c = a + b
-  inspect!(c.to_string(), content="1111111110111111110")
+  inspect(c.to_string(), content="1111111110111111110")
   let a = BigInt::from_string("123456789012345678123456789012345678")
   let b = BigInt::from_string("9876543210987654329876543210987654321241243")
   let c = a + b
-  inspect!(c.to_string(), content="9876543334444443342222221334444443333586921")
+  inspect(c.to_string(), content="9876543334444443342222221334444443333586921")
   let a = BigInt::from_string(
     "-345678987654356798765467898765456789098764567890987655678",
   )
   let b = BigInt::from_string("76678908909876567890987656789098789")
   let c = a + b
-  inspect!(
+  inspect(
     c.to_string(),
     content="-345678987654356798765391219856546912530873580234198556889",
   )
@@ -155,7 +155,7 @@ test "add" {
     "-5467890987656789098765678909876789098767098767890987657890987689",
   )
   let c = a + b
-  inspect!(
+  inspect(
     c.to_string(),
     content="-123456794480236665780245887778024588000245887779444446014444446903333367",
   )
@@ -166,7 +166,7 @@ test "add" {
     "-5467890987656789098765678909876789098767098767890987657890987689",
   )
   let c = a + b
-  inspect!(
+  inspect(
     c.to_string(),
     content="123456783544454690466667690246666768246667690245246910232469131121357989",
   )
@@ -176,18 +176,18 @@ test "add" {
   )
   let c = a + b
   let d = b + a
-  inspect!(
+  inspect(
     c.to_string(),
     content="98765432109876543422222221122222221422222221124686919336581914",
   )
-  inspect!(
+  inspect(
     d.to_string(),
     content="98765432109876543422222221122222221422222221124686919336581914",
   )
   let a = BigInt::from_string("1")
   let b = BigInt::from_string("1")
   let c = a + b
-  inspect!(c.to_string(), content="2")
+  inspect(c.to_string(), content="2")
 }
 
 ///|
@@ -195,33 +195,33 @@ test "sub" {
   let a = BigInt::from_int64(987654321098765432L)
   let b = BigInt::from_int64(123456789012345678L)
   let c = a - b
-  inspect!(c.to_string(), content="864197532086419754")
+  inspect(c.to_string(), content="864197532086419754")
   let c = b - a
-  inspect!(c.to_string(), content="-864197532086419754")
+  inspect(c.to_string(), content="-864197532086419754")
   let a = BigInt::from_string("987654321098765432987654321098765432")
   let b = BigInt::from_string("123456789012345678123456789012345678")
   let c = a - b
-  inspect!(c.to_string(), content="864197532086419754864197532086419754")
+  inspect(c.to_string(), content="864197532086419754864197532086419754")
   let c = b - a
-  inspect!(c.to_string(), content="-864197532086419754864197532086419754")
+  inspect(c.to_string(), content="-864197532086419754864197532086419754")
   let a = BigInt::from_string("-123456789012345678123456789012345678")
   let b = BigInt::from_string("-987654321098765432987654321098765432")
   let c = a - b
-  inspect!(c.to_string(), content="864197532086419754864197532086419754")
+  inspect(c.to_string(), content="864197532086419754864197532086419754")
   let c = b - a
-  inspect!(c.to_string(), content="-864197532086419754864197532086419754")
+  inspect(c.to_string(), content="-864197532086419754864197532086419754")
   let a = BigInt::from_string("123456789012345678123456789012345678233")
   let b = BigInt::from_string("-987654321098765432987654321098765432")
   let c = a - b
-  inspect!(c.to_string(), content="124444443333444443556444443333444443665")
+  inspect(c.to_string(), content="124444443333444443556444443333444443665")
   let a = BigInt::from_string("-123456789012345678123456789012345678233")
   let b = BigInt::from_string("987654321098765432987654321098765432")
   let c = a - b
-  inspect!(c.to_string(), content="-124444443333444443556444443333444443665")
+  inspect(c.to_string(), content="-124444443333444443556444443333444443665")
   let a = BigInt::from_string("123456789012345678123456789012345678233")
   let b = BigInt::from_string("987")
   let c = a - b
-  inspect!(c.to_string(), content="123456789012345678123456789012345677246")
+  inspect(c.to_string(), content="123456789012345678123456789012345677246")
 }
 
 ///|
@@ -229,14 +229,14 @@ test "mul" {
   let a = BigInt::from_int64(987654321098765432L)
   let b = BigInt::from_int64(123456789012345678L)
   let c = a * b
-  inspect!(c.to_string(), content="121932631137021794322511812221002896")
+  inspect(c.to_string(), content="121932631137021794322511812221002896")
   let b = BigInt::from_int(0)
   let c = a * b
-  inspect!(c.to_string(), content="0")
+  inspect(c.to_string(), content="0")
   let a = BigInt::from_string("987654321098765432987654321098765432")
   let b = BigInt::from_string("123456789012345678123456789012345678")
   let c = a * b
-  inspect!(
+  inspect(
     c.to_string(),
     content="121932631137021794566377074495046484766956255579027586322511812221002896",
   )
@@ -247,7 +247,7 @@ test "mul" {
     "5467890987656789098765678909876789098767098767890987657890987689",
   )
   let c = a * b
-  inspect!(
+  inspect(
     c.to_string(),
     content="-675048264005650638331575538351330675368295268968297112032725993817064025468035871811413387811508597465733350774788866848766914110358142",
   )
@@ -258,7 +258,7 @@ test "mul" {
     "123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678123456789012345678",
   )
   let c = a * b
-  inspect!(
+  inspect(
     c.to_string(),
     content="15241578753238836558451457271757357101661335790275877644871214308794398188081092827312918731290971345831439274500849864349959817710728382868480360920606901387000904130485419905521447340363938424041990550242456942562533760120975461083076969999493979603620179878012498124163389756531016644691358056296296328691358056296296328691358056296296328691358056296296328691358056296296328691358056296296328691358056296296328691358056296296328676116477543057492132906599024538971589696720506020451046486841987501930503276963468983409960067084950464889416857206431946368873647327913427848330437449394909327787227570876390807244017692357872286700807813839353766157597935320835245614388056802316725071178178283798204527968299765279684",
   )
@@ -269,7 +269,7 @@ test "mul" {
     "1234567890123456781234567890123456781234567890123456712345678901234567812345678901234567812345678901234567123456789012345678123456789012345678123456789012345671234567890123456781234567890123456781234567890123456778123456789012345678123456789012345677812345678901234567812345678901234567",
   )
   let c = a * b
-  inspect!(
+  inspect(
     c.to_string(),
     content="152415787532388365584514572717573571016613357902758767943911109891785022264898961743637076585886813595489045858864333485751589068742852004272132278621370522791825008396569425417257107181754610622689205966939795827737216965321140148280426843839658668785227943677793100839548931529644952793580330296296378793580330296296378793580330296296378793580330296296378793580330296296378793580330296296378793580330296296378793580330296296378793580330296296378793580330296296378793580330296296378793580330296296378793580330296296378793580330296296378793580330296296378793580330296296378793580330296296378793580330296296378793580330296296378793580330296296378793580330296296378793580330296296378793580330296296378793580330296296378793580330296296378793580330296296378793580330296296378793580330296296378793580330296296378793580330296296378793580330296296378793580330296296378793427914508763990427995815723578805222563716938393620025636419186404593771315431334552741716994443482700889747721465962810627204511587444292106661301708925773586968571933726870961536473148541685756104374363356500551056363364975156230513153486456637710008352386618503277954031398766651426",
   )
@@ -280,15 +280,15 @@ test "div" {
   let a = BigInt::from_int64(987654321098765432L)
   let b = BigInt::from_int64(123456789012345678L)
   let c = a / b
-  inspect!(c.to_string(), content="8")
+  inspect(c.to_string(), content="8")
   let c = a % b
-  inspect!(c.to_string(), content="9000000008")
+  inspect(c.to_string(), content="9000000008")
   let a = BigInt::from_string("987654321098765432987654321098765432")
   let b = BigInt::from_string("123456789012345678123456789012345678")
   let c = a / b
-  inspect!(c.to_string(), content="8")
+  inspect(c.to_string(), content="8")
   let c = a % b
-  inspect!(c.to_string(), content="9000000008000000009000000008")
+  inspect(c.to_string(), content="9000000008000000009000000008")
   let a = BigInt::from_string(
     "-123456789012345678123456789012345678123456789012345678123456789012345678",
   )
@@ -296,9 +296,9 @@ test "div" {
     "-5467890987656789098765678909876789098767098767890987657890987689",
   )
   let c = a / b
-  inspect!(c.to_string(), content="22578502")
+  inspect(c.to_string(), content="22578502")
   let c = a % b
-  inspect!(
+  inspect(
     c.to_string(),
     content="-1411754890143397710214334775703365651947321477507789807694283800",
   )
@@ -309,9 +309,9 @@ test "div" {
     "-5467890987656789098765678909876789098767098767890987657890987689",
   )
   let c = a / b
-  inspect!(c.to_string(), content="-2271")
+  inspect(c.to_string(), content="-2271")
   let c = a % b
-  inspect!(
+  inspect(
     c.to_string(),
     content="4064942729645489156617763015435495456653277079443154228330540643",
   )
@@ -322,11 +322,11 @@ test "div" {
     "5467890987656789098765678909876789098767098767890987657890987689",
   )
   let c = a / b
-  inspect!(c.to_string(), content="102321")
+  inspect(c.to_string(), content="102321")
   let c = a % b
-  inspect!(c.to_string(), content="0")
+  inspect(c.to_string(), content="0")
   let c = b / a
-  inspect!(c.to_string(), content="0")
+  inspect(c.to_string(), content="0")
   let a = BigInt::from_string(
     "-123456789012345678123456789012345678123456789012345678123456789012345678",
   )
@@ -334,9 +334,9 @@ test "div" {
     "98765432109876543298765432109876543298765432112341241213125125",
   )
   let c = a / b
-  inspect!(c.to_string(), content="-1249999988")
+  inspect(c.to_string(), content="-1249999988")
   let c = a % b
-  inspect!(
+  inspect(
     c.to_string(),
     content="-60185184318518518460185184318518518457104311955145277319847178",
   )
@@ -344,17 +344,17 @@ test "div" {
     "123456789012345678123456789012345678123456789012345678123456789012345678",
   )
   let c = a / b
-  inspect!(c.to_string(), content="-1")
+  inspect(c.to_string(), content="-1")
   let c = a % b
-  inspect!(c.to_string(), content="0")
+  inspect(c.to_string(), content="0")
   let b = BigInt::from_int(42)
   let c = a / b
-  inspect!(
+  inspect(
     c.to_string(),
     content="-2939447357436801860082304500293944717225161643151087574368018786008230",
   )
   let c = a % b
-  inspect!(c.to_string(), content="-18")
+  inspect(c.to_string(), content="-18")
   let a = BigInt::from_string(
     "192840512535448761530339373212972361809285001825938158026158292411480026580386667968523131569543343891463401449181505398836",
   )
@@ -362,42 +362,42 @@ test "div" {
     "53114991887765067119604462397623222751521283658033792",
   )
   let c = a / b
-  inspect!(
+  inspect(
     c.to_string(),
     content="3630623025283172274355511610456320508397929760764978568884844414130904",
   )
   let a = BigInt::from_string("65535232222222222222222222222")
   let b = BigInt::from_string("1")
   let c = a / b
-  inspect!(c.to_string(), content="65535232222222222222222222222")
+  inspect(c.to_string(), content="65535232222222222222222222222")
   let c = a % b
-  inspect!(c.to_string(), content="0")
+  inspect(c.to_string(), content="0")
 }
 
 ///|
 test "op_shl" {
   let a = BigInt::from_int64(1234567890123456789)
   let b = a << 1
-  inspect!(b.to_string(), content="2469135780246913578")
+  inspect(b.to_string(), content="2469135780246913578")
   let c = a << 64
-  inspect!(c.to_string(), content="22773757910726981402256170801141121024")
+  inspect(c.to_string(), content="22773757910726981402256170801141121024")
   let a = 0N
   let b = a << 1
-  inspect!(b.to_string(), content="0")
+  inspect(b.to_string(), content="0")
 }
 
 ///|
 test "op_shr" {
   let a = BigInt::from_int64(1234567890123456789L)
   let b = a >> 1
-  inspect!(b.to_string(), content="617283945061728394")
+  inspect(b.to_string(), content="617283945061728394")
   let c = a >> 64
-  inspect!(c.to_string(), content="0")
+  inspect(c.to_string(), content="0")
   let a = BigInt::from_int64(-1234567890123456789L)
   let b = a >> 1
-  inspect!(b.to_string(), content="-617283945061728395")
+  inspect(b.to_string(), content="-617283945061728395")
   let c = a >> 64
-  inspect!(c.to_string(), content="-1")
+  inspect(c.to_string(), content="-1")
   assert_eq!(BigInt::from_int64(0b1111_1111L) >> 4, BigInt::from_int64(0b1111L))
   assert_eq!(BigInt::from_int64(0b1111_1111L) >> 24, BigInt::from_int64(0))
   assert_eq!(BigInt::from_int64(0b1111_1111L) >> 44, BigInt::from_int64(0))
@@ -406,46 +406,46 @@ test "op_shr" {
 ///|
 test "decimal_string" {
   let a = BigInt::from_string("0")
-  inspect!(a.to_string(), content="0")
+  inspect(a.to_string(), content="0")
   let a = BigInt::from_string("123")
-  inspect!(a.to_string(), content="123")
+  inspect(a.to_string(), content="123")
   assert_eq!(a, BigInt::from_int64(123L))
   let a = BigInt::from_string("1234567890123456789")
-  inspect!(a.to_string(), content="1234567890123456789")
+  inspect(a.to_string(), content="1234567890123456789")
   let b = BigInt::from_string("-1234567890")
-  inspect!(b.to_string(), content="-1234567890")
+  inspect(b.to_string(), content="-1234567890")
   assert_eq!(a, BigInt::from_int64(1234567890123456789L))
   let str = "12345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812"
   let a = BigInt::from_string(str)
-  inspect!(a.to_string(), content=str)
+  inspect(a.to_string(), content=str)
   let a = BigInt::from_int64(1234567890123456789L)
-  inspect!(a.to_string(), content="1234567890123456789")
+  inspect(a.to_string(), content="1234567890123456789")
   let b = BigInt::from_int64(-1234567890L)
-  inspect!(b.to_string(), content="-1234567890")
+  inspect(b.to_string(), content="-1234567890")
 }
 
 ///|
 test "from_int" {
   let a = BigInt::from_int(1234567899)
-  inspect!(a.to_string(), content="1234567899")
+  inspect(a.to_string(), content="1234567899")
   let b = BigInt::from_int(-1234567890)
-  inspect!(b.to_string(), content="-1234567890")
+  inspect(b.to_string(), content="-1234567890")
 }
 
 ///|
 test "from_int" {
   let a = BigInt::from_int(1234567899)
-  inspect!(a.to_string(), content="1234567899")
+  inspect(a.to_string(), content="1234567899")
   let b = BigInt::from_int(-1234567890)
-  inspect!(b.to_string(), content="-1234567890")
+  inspect(b.to_string(), content="-1234567890")
 }
 
 ///|
 test "compare" {
   let a = BigInt::from_int64(1234567890123456789L)
   let b = BigInt::from_int64(-1234567890123456789L)
-  inspect!(a.compare(b), content="1")
-  inspect!(b.compare(a), content="-1")
+  inspect(a.compare(b), content="1")
+  inspect(b.compare(a), content="-1")
   let a = -a
   let b = BigInt::from_int64(-1234567890123456788L)
   assert_true!(a.compare(b) < 0)
@@ -460,41 +460,41 @@ test "compare" {
 test "from_hex" {
   // Check zero
   let a = BigInt::from_hex("0")
-  inspect!(a.to_string(), content="0")
+  inspect(a.to_string(), content="0")
 
   // Test positive number
   let a = BigInt::from_hex("1")
-  inspect!(a.to_string(), content="1")
+  inspect(a.to_string(), content="1")
 
   // Test negative number
   let a = BigInt::from_hex("-F")
-  inspect!(a.to_string(), content="-15")
+  inspect(a.to_string(), content="-15")
   let a = BigInt::from_hex("-a")
-  inspect!(a.to_string(), content="-10")
+  inspect(a.to_string(), content="-10")
 
   // Test large positive number
   let a = BigInt::from_hex("112210F47DE98115")
-  inspect!(a.to_string(), content="1234567890123456789")
+  inspect(a.to_string(), content="1234567890123456789")
 
   // Test very large positive number
   let a = BigInt::from_hex(
     "123456789012345678123456789012345678123456789012345678123456789012345678",
   )
-  inspect!(
+  inspect(
     a.to_string(),
     content="35365207917649046390549507392234216535182073572857507984542859337680634154115797374584",
   )
   let a = BigInt::from_hex(
     "11E3444DC1F35F057AD2CBC2791737468140A426FAC3CBA7AF8C92A8F34E",
   )
-  inspect!(
+  inspect(
     a.to_string(),
     content="123456789012345678123456789012345678123456789012345678123456789012345678",
   )
   let a = BigInt::from_hex(
     "805146F2F58580962A0A2E6134BC75E25AD97AE3D09CD34BA4F629AB8911F3F5CB8573A62EDD16B0D46775A415F545A75518DA3439914D9CAA26449067D85E704E8FCF9B29182485B41F952616BACDFDDF52B413B524D0EB743E8264A9C6AE32D12C3D20C5B81189060F4AC5D216713D503A69644EA8E4EA220A720C41F6B3D18BED65B4238318E6B0A41D8540D756865EC92DF40E8D365A230F17DF1D0A440BC6A557CD46D00B10D74C0E75500B2ADB3A0336223F9285B78CD04F485E417E1DB562B9EFCF79433209E6D6E2F43A484E471DE4F1F5AE38E08E7DAEB644C2C0A22697DD6D29BE0B40FF50DB575FEF02FA5525953C7C198B4A3600BA8CE1F917852A4B957151189F09DCDFCB79963E7D850127858A97855B94870ACCBE8203E73FE79791EE6EA1B1282A0CEAC54D6F6B7CD6C7B8D8092E949FF0A84",
   )
-  inspect!(
+  inspect(
     a.to_string(),
     content="12345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812",
   )
@@ -503,7 +503,7 @@ test "from_hex" {
   let a = BigInt::from_hex(
     "-123456789012345678123456789012345678123456789012345678123456789012345678",
   )
-  inspect!(
+  inspect(
     a.to_string(),
     content="-35365207917649046390549507392234216535182073572857507984542859337680634154115797374584",
   )
@@ -513,51 +513,51 @@ test "from_hex" {
 test "to_hex" {
   // Check zero
   let a = BigInt::from_hex("00")
-  inspect!(a.to_hex(), content="0")
+  inspect(a.to_hex(), content="0")
 
   // Test negative number
   let a = BigInt::from_hex("-F")
-  inspect!(a.to_hex(), content="-F")
+  inspect(a.to_hex(), content="-F")
 
   // Test positive number
   let a = BigInt::from_hex("F")
-  inspect!(a.to_hex(), content="F")
+  inspect(a.to_hex(), content="F")
 
   // Test positive number with leading zero
   let a = BigInt::from_hex("10")
-  inspect!(a.to_hex(), content="10")
+  inspect(a.to_hex(), content="10")
 
   // Test large positive number
   let a = BigInt::from_hex("01234567890123456789")
-  inspect!(a.to_hex(), content="1234567890123456789")
+  inspect(a.to_hex(), content="1234567890123456789")
 
   // Check padding
   let a = BigInt::from_hex("100000")
-  inspect!(a.to_string(), content="1048576")
-  inspect!(a.to_hex(), content="100000")
+  inspect(a.to_string(), content="1048576")
+  inspect(a.to_hex(), content="100000")
 
   // Test very large positive number
   let a = BigInt::from_string(
     "123456789012345678123456789012345678123456789012345678123456789012345678",
   )
-  inspect!(
+  inspect(
     a.to_hex(),
     content="11E3444DC1F35F057AD2CBC2791737468140A426FAC3CBA7AF8C92A8F34E",
   )
   let a = BigInt::from_string(
     "35365207917649046390549507392234216535182073572857507984542859337680634154115797374584",
   )
-  inspect!(
+  inspect(
     a.to_hex(),
     content="123456789012345678123456789012345678123456789012345678123456789012345678",
   )
   let str = "12345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812"
   let a = BigInt::from_string(str)
-  inspect!(
+  inspect(
     a.to_hex(),
     content="805146F2F58580962A0A2E6134BC75E25AD97AE3D09CD34BA4F629AB8911F3F5CB8573A62EDD16B0D46775A415F545A75518DA3439914D9CAA26449067D85E704E8FCF9B29182485B41F952616BACDFDDF52B413B524D0EB743E8264A9C6AE32D12C3D20C5B81189060F4AC5D216713D503A69644EA8E4EA220A720C41F6B3D18BED65B4238318E6B0A41D8540D756865EC92DF40E8D365A230F17DF1D0A440BC6A557CD46D00B10D74C0E75500B2ADB3A0336223F9285B78CD04F485E417E1DB562B9EFCF79433209E6D6E2F43A484E471DE4F1F5AE38E08E7DAEB644C2C0A22697DD6D29BE0B40FF50DB575FEF02FA5525953C7C198B4A3600BA8CE1F917852A4B957151189F09DCDFCB79963E7D850127858A97855B94870ACCBE8203E73FE79791EE6EA1B1282A0CEAC54D6F6B7CD6C7B8D8092E949FF0A84",
   )
-  inspect!(
+  inspect(
     a.to_hex(uppercase=false),
     content="805146f2f58580962a0a2e6134bc75e25ad97ae3d09cd34ba4f629ab8911f3f5cb8573a62edd16b0d46775a415f545a75518da3439914d9caa26449067d85e704e8fcf9b29182485b41f952616bacdfddf52b413b524d0eb743e8264a9c6ae32d12c3d20c5b81189060f4ac5d216713d503a69644ea8e4ea220a720c41f6b3d18bed65b4238318e6b0a41d8540d756865ec92df40e8d365a230f17df1d0a440bc6a557cd46d00b10d74c0e75500b2adb3a0336223f9285b78cd04f485e417e1db562b9efcf79433209e6d6e2f43a484e471de4f1f5ae38e08e7daeb644c2c0a22697dd6d29be0b40ff50db575fef02fa5525953c7c198b4a3600ba8ce1f917852a4b957151189f09dcdfcb79963e7d850127858a97855b94870accbe8203e73fe79791ee6ea1b1282a0ceac54d6f6b7cd6c7b8d8092e949ff0a84",
   )
@@ -566,11 +566,11 @@ test "to_hex" {
   let a = BigInt::from_string(
     "-123456789012345678123456789012345678123456789012345678123456789012345678",
   )
-  inspect!(
+  inspect(
     a.to_hex(),
     content="-11E3444DC1F35F057AD2CBC2791737468140A426FAC3CBA7AF8C92A8F34E",
   )
-  inspect!(
+  inspect(
     a.to_hex(uppercase=false),
     content="-11e3444dc1f35f057ad2cbc2791737468140a426fac3cba7af8c92a8f34e",
   )
@@ -580,147 +580,147 @@ test "to_hex" {
 test "land_1" {
   let a = BigInt::from_string("-10")
   let b = BigInt::from_string("11")
-  inspect!(a & b, content="2")
+  inspect(a & b, content="2")
 }
 
 ///|
 test "land_2" {
   let a = BigInt::from_string("-10")
   let b = BigInt::from_hex("fffffffffffffff") // 15 'f' chars
-  inspect!(a & b, content="1152921504606846966")
+  inspect(a & b, content="1152921504606846966")
 }
 
 ///|
 test "land_3" {
   let a = BigInt::from_hex("ffffffffffffffff") // 16 'f' chars
   let b = BigInt::from_string("-10")
-  inspect!(a & b, content="18446744073709551606")
+  inspect(a & b, content="18446744073709551606")
 }
 
 ///|
 test "land_4" {
   let a = BigInt::from_string("0")
   let b = BigInt::from_string("-10")
-  inspect!(a & b, content="0")
+  inspect(a & b, content="0")
 }
 
 ///|
 test "land_5" {
   let a = BigInt::from_hex("ffffffffffffffff")
   let b = BigInt::from_hex("ffffffffffffffff")
-  inspect!(a & b, content="18446744073709551615")
+  inspect(a & b, content="18446744073709551615")
 }
 
 ///|
 test "lor_1" {
   let a = BigInt::from_string("-10")
   let b = BigInt::from_string("11")
-  inspect!(a | b, content="-1")
+  inspect(a | b, content="-1")
 }
 
 ///|
 test "lor_2" {
   let a = BigInt::from_string("-10")
   let b = BigInt::from_hex("fffffffffffffff") // 15 'f' chars
-  inspect!(a | b, content="-1")
+  inspect(a | b, content="-1")
 }
 
 ///|
 test "lor_3" {
   let a = BigInt::from_hex("ffffffffffffffff") // 16 'f' chars
   let b = BigInt::from_string("-10")
-  inspect!(a | b, content="-1")
+  inspect(a | b, content="-1")
 }
 
 ///|
 test "lor_4" {
   let a = BigInt::from_string("0")
   let b = BigInt::from_string("-10")
-  inspect!(a | b, content="-10")
+  inspect(a | b, content="-10")
 }
 
 ///|
 test "lor_5" {
   let a = BigInt::from_hex("ffffffffffffffff")
   let b = BigInt::from_string("0")
-  inspect!(a | b, content="18446744073709551615")
+  inspect(a | b, content="18446744073709551615")
 }
 
 ///|
 test "lxor_1" {
   let a = BigInt::from_string("-10")
   let b = BigInt::from_string("11")
-  inspect!(a ^ b, content="-3")
+  inspect(a ^ b, content="-3")
 }
 
 ///|
 test "lxor_2" {
   let a = BigInt::from_string("-10")
   let b = BigInt::from_hex("fffffffffffffff") // 15 'f' chars
-  inspect!(a ^ b, content="-1152921504606846967")
+  inspect(a ^ b, content="-1152921504606846967")
 }
 
 ///|
 test "lxor_3" {
   let a = BigInt::from_hex("ffffffffffffffff") // 16 'f' chars
   let b = BigInt::from_string("-10")
-  inspect!(a ^ b, content="-18446744073709551607")
+  inspect(a ^ b, content="-18446744073709551607")
 }
 
 ///|
 test "lxor_4" {
   let a = BigInt::from_string("0")
   let b = BigInt::from_string("-10")
-  inspect!(a ^ b, content="-10")
+  inspect(a ^ b, content="-10")
 }
 
 ///|
 test "lxor_5" {
   let a = BigInt::from_string("0")
   let b = BigInt::from_hex("ffffffffffffffff")
-  inspect!(a ^ b, content="18446744073709551615")
+  inspect(a ^ b, content="18446744073709551615")
 }
 
 ///|
 test "to_int" {
   let a = BigInt::from_int(1234567899)
-  inspect!(a.to_int(), content="1234567899")
+  inspect(a.to_int(), content="1234567899")
   let b = BigInt::from_int(-1234567890)
-  inspect!(b.to_int(), content="-1234567890")
+  inspect(b.to_int(), content="-1234567890")
   let max = 2N.pow(32) - 1
-  inspect!(max.to_int(), content="-1")
-  inspect!((max + 1).to_int(), content="0")
+  inspect(max.to_int(), content="-1")
+  inspect((max + 1).to_int(), content="0")
 }
 
 ///|
 test "to_uint" {
   let a = BigInt::from_uint(1234567899)
-  inspect!(a.to_uint(), content="1234567899")
+  inspect(a.to_uint(), content="1234567899")
   let b = BigInt::from_int(-1234567890)
-  inspect!(b.to_uint(), content="3060399406")
+  inspect(b.to_uint(), content="3060399406")
   let max = 2N.pow(32) - 1
-  inspect!(max.to_uint(), content="4294967295")
-  inspect!((max + 1).to_uint(), content="0")
+  inspect(max.to_uint(), content="4294967295")
+  inspect((max + 1).to_uint(), content="0")
 }
 
 ///|
 test "to_int64" {
   let a = BigInt::from_int64(1234567890123456789L)
-  inspect!(a.to_int64(), content="1234567890123456789")
+  inspect(a.to_int64(), content="1234567890123456789")
   let b = BigInt::from_int64(-1234567890123456789L)
-  inspect!(b.to_int64(), content="-1234567890123456789")
+  inspect(b.to_int64(), content="-1234567890123456789")
   let max = 2N.pow(63) - 1
-  inspect!(max.to_int64(), content="9223372036854775807")
-  inspect!((max + 1).to_int64(), content="-9223372036854775808")
+  inspect(max.to_int64(), content="9223372036854775807")
+  inspect((max + 1).to_int64(), content="-9223372036854775808")
 }
 
 ///|
 test "to_uint64" {
   let a = BigInt::from_uint64(1234567890123456789UL)
-  inspect!(a.to_uint64(), content="1234567890123456789")
+  inspect(a.to_uint64(), content="1234567890123456789")
   let b = BigInt::from_int64(-1234567890123456789L)
-  inspect!(b.to_uint64(), content="17212176183586094827")
+  inspect(b.to_uint64(), content="17212176183586094827")
   let max = 2N.pow(64) - 1
-  inspect!(max.to_uint64(), content="18446744073709551615")
-  inspect!((max + 1).to_uint64(), content="0")
+  inspect(max.to_uint64(), content="18446744073709551615")
+  inspect((max + 1).to_uint64(), content="0")
 }

@@ -22,7 +22,7 @@ pub(open) trait FromJson {
 }
 
 ///|
-pub fn from_json[T : FromJson](
+pub fn[T : FromJson] from_json(
   json : Json,
   path~ : JsonPath = Root
 ) -> T!JsonDecodeError {
@@ -30,7 +30,7 @@ pub fn from_json[T : FromJson](
 }
 
 ///|
-fn decode_error[T](path : JsonPath, msg : String) -> T!JsonDecodeError {
+fn[T] decode_error(path : JsonPath, msg : String) -> T!JsonDecodeError {
   raise JsonDecodeError((path, msg))
 }
 
@@ -58,9 +58,7 @@ pub impl FromJson for Int64 with from_json(json, path) {
       path, "Int64::from_json: expected number in string representation",
     )
   }
-  try {
-    @strconv.parse_int64!(str)
-  } catch {
+  try @strconv.parse_int64!(str) catch {
     error => decode_error!(path, "Int64::from_json: parsing failure \{error}")
   }
 }
@@ -80,9 +78,7 @@ pub impl FromJson for UInt64 with from_json(json, path) {
       path, "UInt64::from_json: expected number in string representation",
     )
   }
-  try {
-    @strconv.parse_uint64!(str)
-  } catch {
+  try @strconv.parse_uint64!(str) catch {
     error => decode_error!(path, "UInt64::from_json: parsing failure \{error}")
   }
 }

@@ -6,68 +6,68 @@ import(
 )
 
 // Values
-fn add[K : Compare, V](T[K, V], K, V) -> T[K, V]
+fn[K : Compare, V] add(T[K, V], K, V) -> T[K, V]
 
-fn contains[K : Compare, V](T[K, V], K) -> Bool
+fn[K : Compare, V] contains(T[K, V], K) -> Bool
 
-fn each[K, V](T[K, V], (K, V) -> Unit) -> Unit
+fn[K, V] each(T[K, V], (K, V) -> Unit) -> Unit
 
-fn eachi[K, V](T[K, V], (Int, K, V) -> Unit) -> Unit
+fn[K, V] eachi(T[K, V], (Int, K, V) -> Unit) -> Unit
 
-fn elems[K, V](T[K, V]) -> Array[V]
+fn[K, V] elems(T[K, V]) -> Array[V]
 
-fn filter[K : Compare, V](T[K, V], (V) -> Bool) -> T[K, V]
+fn[K : Compare, V] filter(T[K, V], (V) -> Bool) -> T[K, V]
 
-fn filter_with_key[K : Compare, V](T[K, V], (K, V) -> Bool) -> T[K, V]
+fn[K : Compare, V] filter_with_key(T[K, V], (K, V) -> Bool) -> T[K, V]
 
-fn fold[K, V, A](T[K, V], init~ : A, (A, V) -> A) -> A
+fn[K, V, A] fold(T[K, V], init~ : A, (A, V) -> A) -> A
 
-fn foldl_with_key[K, V, A](T[K, V], (A, K, V) -> A, init~ : A) -> A
+fn[K, V, A] foldl_with_key(T[K, V], (A, K, V) -> A, init~ : A) -> A
 
-fn foldr_with_key[K, V, A](T[K, V], (A, K, V) -> A, init~ : A) -> A
+fn[K, V, A] foldr_with_key(T[K, V], (A, K, V) -> A, init~ : A) -> A
 
-fn from_array[K : Compare, V](Array[(K, V)]) -> T[K, V]
+fn[K : Compare, V] from_array(Array[(K, V)]) -> T[K, V]
 
-fn from_iter[K : Compare, V](Iter[(K, V)]) -> T[K, V]
+fn[K : Compare, V] from_iter(Iter[(K, V)]) -> T[K, V]
 
-fn from_json[V : @json.FromJson](Json) -> T[String, V]!@json.JsonDecodeError
+fn[V : @json.FromJson] from_json(Json) -> T[String, V]!@json.JsonDecodeError
 
-fn get[K : Compare, V](T[K, V], K) -> V?
-
-#deprecated
-fn insert[K : Compare, V](T[K, V], K, V) -> T[K, V]
-
-fn is_empty[K, V](T[K, V]) -> Bool
-
-fn iter[K, V](T[K, V]) -> Iter[(K, V)]
-
-fn iter2[K, V](T[K, V]) -> Iter2[K, V]
-
-fn keys[K, V](T[K, V]) -> Array[K]
+fn[K : Compare, V] get(T[K, V], K) -> V?
 
 #deprecated
-fn lookup[K : Compare, V](T[K, V], K) -> V?
+fn[K : Compare, V] insert(T[K, V], K, V) -> T[K, V]
 
-fn map[K, X, Y](T[K, X], (X) -> Y) -> T[K, Y]
+fn[K, V] is_empty(T[K, V]) -> Bool
 
-fn map_with_key[K, X, Y](T[K, X], (K, X) -> Y) -> T[K, Y]
+fn[K, V] iter(T[K, V]) -> Iter[(K, V)]
 
-fn new[K, V]() -> T[K, V]
+fn[K, V] iter2(T[K, V]) -> Iter2[K, V]
 
-fn of[K : Compare, V](FixedArray[(K, V)]) -> T[K, V]
+fn[K, V] keys(T[K, V]) -> Array[K]
 
 #deprecated
-fn op_get[K : Compare, V](T[K, V], K) -> V?
+fn[K : Compare, V] lookup(T[K, V], K) -> V?
 
-fn remove[K : Compare, V](T[K, V], K) -> T[K, V]
+fn[K, X, Y] map(T[K, X], (X) -> Y) -> T[K, Y]
 
-fn singleton[K, V](K, V) -> T[K, V]
+fn[K, X, Y] map_with_key(T[K, X], (K, X) -> Y) -> T[K, Y]
 
-fn size[K, V](T[K, V]) -> Int
+fn[K, V] new() -> T[K, V]
 
-fn to_array[K, V](T[K, V]) -> Array[(K, V)]
+fn[K : Compare, V] of(FixedArray[(K, V)]) -> T[K, V]
 
-fn to_json[K : Show, V : ToJson](T[K, V]) -> Json
+#deprecated
+fn[K : Compare, V] op_get(T[K, V], K) -> V?
+
+fn[K : Compare, V] remove(T[K, V], K) -> T[K, V]
+
+fn[K, V] singleton(K, V) -> T[K, V]
+
+fn[K, V] size(T[K, V]) -> Int
+
+fn[K, V] to_array(T[K, V]) -> Array[(K, V)]
+
+fn[K : Show, V : ToJson] to_json(T[K, V]) -> Json
 
 // Types and methods
 type T[K, V]

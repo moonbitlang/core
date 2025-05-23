@@ -24,7 +24,7 @@
 /// arr.sort_by_key(fn (x) {-x})
 /// assert_eq!(arr, [5, 4, 3, 2, 1])
 /// ```
-pub fn sort_by_key[T, K : Compare](self : Array[T], map : (T) -> K) -> Unit {
+pub fn[T, K : Compare] sort_by_key(self : Array[T], map : (T) -> K) -> Unit {
   quick_sort_by(
     self[:],
     fn(a, b) { map(a).compare(map(b)) },
@@ -45,12 +45,12 @@ pub fn sort_by_key[T, K : Compare](self : Array[T], map : (T) -> K) -> Unit {
 /// arr.sort_by(fn (a, b) { a - b })
 /// assert_eq!(arr, [1, 2, 3, 4, 5])
 /// ```
-pub fn sort_by[T](self : Array[T], cmp : (T, T) -> Int) -> Unit {
+pub fn[T] sort_by(self : Array[T], cmp : (T, T) -> Int) -> Unit {
   quick_sort_by(self[:], cmp, None, get_limit(self.length()))
 }
 
 ///|
-fn quick_sort_by[T](
+fn[T] quick_sort_by(
   arr : ArrayView[T],
   cmp : (T, T) -> Int,
   pred : T?,
@@ -121,7 +121,7 @@ fn quick_sort_by[T](
 /// It will only tolerate at most 8 unsorted elements. The time complexity is O(n).
 ///
 /// Returns whether the array is sorted.
-fn try_bubble_sort_by[T](arr : ArrayView[T], cmp : (T, T) -> Int) -> Bool {
+fn[T] try_bubble_sort_by(arr : ArrayView[T], cmp : (T, T) -> Int) -> Bool {
   let max_tries = 8
   let mut tries = 0
   for i in 1..<arr.length() {
@@ -146,7 +146,7 @@ fn try_bubble_sort_by[T](arr : ArrayView[T], cmp : (T, T) -> Int) -> Bool {
 /// It will only tolerate at most 8 unsorted elements. The time complexity is O(n).
 ///
 /// Returns whether the array is sorted.
-fn bubble_sort_by[T](arr : ArrayView[T], cmp : (T, T) -> Int) -> Unit {
+fn[T] bubble_sort_by(arr : ArrayView[T], cmp : (T, T) -> Int) -> Unit {
   for i in 1..<arr.length() {
     for j = i; j > 0 && cmp(arr[j - 1], arr[j]) > 0; j = j - 1 {
       arr.swap(j, j - 1)
@@ -155,7 +155,7 @@ fn bubble_sort_by[T](arr : ArrayView[T], cmp : (T, T) -> Int) -> Unit {
 }
 
 ///|
-fn partition_by[T](
+fn[T] partition_by(
   arr : ArrayView[T],
   cmp : (T, T) -> Int,
   pivot_index : Int
@@ -183,7 +183,7 @@ fn partition_by[T](
 /// It avoids worst case performance by choosing a pivot that is likely to be close to the median.
 ///
 /// Returns the pivot index and whether the array is likely sorted.
-fn choose_pivot_by[T](arr : ArrayView[T], cmp : (T, T) -> Int) -> (Int, Bool) {
+fn[T] choose_pivot_by(arr : ArrayView[T], cmp : (T, T) -> Int) -> (Int, Bool) {
   let len = arr.length()
   let use_median_of_medians = 50
   let max_swaps = 4 * 3
@@ -221,7 +221,7 @@ fn choose_pivot_by[T](arr : ArrayView[T], cmp : (T, T) -> Int) -> (Int, Bool) {
 }
 
 ///|
-fn heap_sort_by[T](arr : ArrayView[T], cmp : (T, T) -> Int) -> Unit {
+fn[T] heap_sort_by(arr : ArrayView[T], cmp : (T, T) -> Int) -> Unit {
   let len = arr.length()
   for i = len / 2 - 1; i >= 0; i = i - 1 {
     sift_down_by(arr, i, cmp)
@@ -233,7 +233,7 @@ fn heap_sort_by[T](arr : ArrayView[T], cmp : (T, T) -> Int) -> Unit {
 }
 
 ///|
-fn sift_down_by[T](
+fn[T] sift_down_by(
   arr : ArrayView[T],
   index : Int,
   cmp : (T, T) -> Int

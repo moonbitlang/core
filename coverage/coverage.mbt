@@ -173,7 +173,7 @@ fn coverage_log(
 ///|
 test "new_counter" {
   let counter = CoverageCounter::new(2)
-  inspect!(counter.to_string(), content="[0, 0]")
+  inspect(counter.to_string(), content="[0, 0]")
 }
 
 ///|
@@ -181,7 +181,7 @@ test "incr_counter" {
   let counter = CoverageCounter::new(10)
   counter.incr(0)
   counter.incr(9)
-  inspect!(counter.to_string(), content="[1, 0, 0, 0, 0, 0, 0, 0, 0, 1]")
+  inspect(counter.to_string(), content="[1, 0, 0, 0, 0, 0, 0, 0, 0, 1]")
 }
 
 ///|
@@ -196,7 +196,7 @@ test "log" {
   )
   let buf = StringBuilder::new(size_hint=1024)
   coverage_log(counters, buf)
-  inspect!(
+  inspect(
     buf,
     content=
       #|{ "foo/foo": [1, 0]
@@ -209,7 +209,7 @@ test "log" {
 ///|
 test "backslash escape" {
   let s = "\n\r\t\b\"'\\"
-  inspect!(s.escape(), content="\"\\n\\r\\t\\b\\\"'\\\\\"")
+  inspect(s.escape(), content="\"\\n\\r\\t\\b\\\"'\\\\\"")
 }
 
 ///|
@@ -224,7 +224,7 @@ test "reset" {
   )
   let buf = StringBuilder::new(size_hint=1024)
   coverage_log(counters, buf)
-  inspect!(
+  inspect(
     buf,
     content=
       #|{ "foo/foo": [1, 0]
@@ -235,7 +235,7 @@ test "reset" {
   coverage_reset(counters)
   let buf = StringBuilder::new(size_hint=1024)
   coverage_log(counters, buf)
-  inspect!(
+  inspect(
     buf,
     content=
       #|{ "foo/foo": [0, 0]

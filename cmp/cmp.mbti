@@ -1,9 +1,9 @@
 package "moonbitlang/core/cmp"
 
 // Values
-fn maximum_by_key[T, K : Compare](T, T, (T) -> K) -> T
+fn[T, K : Compare] maximum_by_key(T, T, (T) -> K) -> T
 
-fn minimum_by_key[T, K : Compare](T, T, (T) -> K) -> T
+fn[T, K : Compare] minimum_by_key(T, T, (T) -> K) -> T
 
 // Types and methods
 

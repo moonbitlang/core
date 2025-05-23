@@ -14,96 +14,96 @@
 
 ///|
 test "Tuple2::compare" {
-  inspect!((0, 1).compare((0, 1)), content="0")
-  inspect!((0, 1).compare((1, 1)), content="-1")
-  inspect!((0, 1).compare((0, 2)), content="-1")
+  inspect((0, 1).compare((0, 1)), content="0")
+  inspect((0, 1).compare((1, 1)), content="-1")
+  inspect((0, 1).compare((0, 2)), content="-1")
 }
 
 ///|
 test "Tuple3::compare" {
-  inspect!((0, 1, 2).compare((0, 1, 2)), content="0")
-  inspect!((0, 1, 2).compare((1, 1, 2)), content="-1")
-  inspect!((0, 1, 2).compare((0, 2, 2)), content="-1")
-  inspect!((0, 1, 2).compare((0, 1, 3)), content="-1")
+  inspect((0, 1, 2).compare((0, 1, 2)), content="0")
+  inspect((0, 1, 2).compare((1, 1, 2)), content="-1")
+  inspect((0, 1, 2).compare((0, 2, 2)), content="-1")
+  inspect((0, 1, 2).compare((0, 1, 3)), content="-1")
 }
 
 ///|
 test "Tuple4::compare" {
-  inspect!((0, 1, 2, 3).compare((0, 1, 2, 3)), content="0")
-  inspect!((0, 1, 2, 3).compare((1, 1, 2, 3)), content="-1")
-  inspect!((0, 1, 2, 3).compare((0, 2, 2, 3)), content="-1")
-  inspect!((0, 1, 2, 3).compare((0, 1, 3, 3)), content="-1")
-  inspect!((0, 1, 2, 3).compare((0, 1, 2, 4)), content="-1")
+  inspect((0, 1, 2, 3).compare((0, 1, 2, 3)), content="0")
+  inspect((0, 1, 2, 3).compare((1, 1, 2, 3)), content="-1")
+  inspect((0, 1, 2, 3).compare((0, 2, 2, 3)), content="-1")
+  inspect((0, 1, 2, 3).compare((0, 1, 3, 3)), content="-1")
+  inspect((0, 1, 2, 3).compare((0, 1, 2, 4)), content="-1")
 }
 
 ///|
 test "Tuple5::compare" {
-  inspect!((0, 1, 2, 3, 4).compare((0, 1, 2, 3, 4)), content="0")
-  inspect!((0, 1, 2, 3, 4).compare((1, 1, 2, 3, 4)), content="-1")
-  inspect!((0, 1, 2, 3, 4).compare((0, 2, 2, 3, 4)), content="-1")
-  inspect!((0, 1, 2, 3, 4).compare((0, 1, 3, 3, 4)), content="-1")
-  inspect!((0, 1, 2, 3, 4).compare((0, 1, 2, 4, 4)), content="-1")
-  inspect!((0, 1, 2, 3, 4).compare((0, 1, 2, 3, 5)), content="-1")
+  inspect((0, 1, 2, 3, 4).compare((0, 1, 2, 3, 4)), content="0")
+  inspect((0, 1, 2, 3, 4).compare((1, 1, 2, 3, 4)), content="-1")
+  inspect((0, 1, 2, 3, 4).compare((0, 2, 2, 3, 4)), content="-1")
+  inspect((0, 1, 2, 3, 4).compare((0, 1, 3, 3, 4)), content="-1")
+  inspect((0, 1, 2, 3, 4).compare((0, 1, 2, 4, 4)), content="-1")
+  inspect((0, 1, 2, 3, 4).compare((0, 1, 2, 3, 5)), content="-1")
 }
 
 ///|
 test "Tuple6::compare" {
-  inspect!((0, 1, 2, 3, 4, 5).compare((0, 1, 2, 3, 4, 5)), content="0")
-  inspect!((0, 1, 2, 3, 4, 5).compare((1, 1, 2, 3, 4, 5)), content="-1")
-  inspect!((0, 1, 2, 3, 4, 5).compare((0, 2, 2, 3, 4, 5)), content="-1")
-  inspect!((0, 1, 2, 3, 4, 5).compare((0, 1, 3, 3, 4, 5)), content="-1")
-  inspect!((0, 1, 2, 3, 4, 5).compare((0, 1, 2, 4, 4, 5)), content="-1")
-  inspect!((0, 1, 2, 3, 4, 5).compare((0, 1, 2, 3, 5, 5)), content="-1")
-  inspect!((0, 1, 2, 3, 4, 5).compare((0, 1, 2, 3, 4, 6)), content="-1")
+  inspect((0, 1, 2, 3, 4, 5).compare((0, 1, 2, 3, 4, 5)), content="0")
+  inspect((0, 1, 2, 3, 4, 5).compare((1, 1, 2, 3, 4, 5)), content="-1")
+  inspect((0, 1, 2, 3, 4, 5).compare((0, 2, 2, 3, 4, 5)), content="-1")
+  inspect((0, 1, 2, 3, 4, 5).compare((0, 1, 3, 3, 4, 5)), content="-1")
+  inspect((0, 1, 2, 3, 4, 5).compare((0, 1, 2, 4, 4, 5)), content="-1")
+  inspect((0, 1, 2, 3, 4, 5).compare((0, 1, 2, 3, 5, 5)), content="-1")
+  inspect((0, 1, 2, 3, 4, 5).compare((0, 1, 2, 3, 4, 6)), content="-1")
 }
 
 ///|
 test "Tuple7::compare" {
-  inspect!((0, 1, 2, 3, 4, 5, 6).compare((0, 1, 2, 3, 4, 5, 6)), content="0")
-  inspect!((0, 1, 2, 3, 4, 5, 6).compare((1, 1, 2, 3, 4, 5, 6)), content="-1")
-  inspect!((0, 1, 2, 3, 4, 5, 6).compare((0, 2, 2, 3, 4, 5, 6)), content="-1")
-  inspect!((0, 1, 2, 3, 4, 5, 6).compare((0, 1, 3, 3, 4, 5, 6)), content="-1")
-  inspect!((0, 1, 2, 3, 4, 5, 6).compare((0, 1, 2, 4, 4, 5, 6)), content="-1")
-  inspect!((0, 1, 2, 3, 4, 5, 6).compare((0, 1, 2, 3, 5, 5, 6)), content="-1")
-  inspect!((0, 1, 2, 3, 4, 5, 6).compare((0, 1, 2, 3, 4, 6, 6)), content="-1")
-  inspect!((0, 1, 2, 3, 4, 5, 6).compare((0, 1, 2, 3, 4, 5, 7)), content="-1")
+  inspect((0, 1, 2, 3, 4, 5, 6).compare((0, 1, 2, 3, 4, 5, 6)), content="0")
+  inspect((0, 1, 2, 3, 4, 5, 6).compare((1, 1, 2, 3, 4, 5, 6)), content="-1")
+  inspect((0, 1, 2, 3, 4, 5, 6).compare((0, 2, 2, 3, 4, 5, 6)), content="-1")
+  inspect((0, 1, 2, 3, 4, 5, 6).compare((0, 1, 3, 3, 4, 5, 6)), content="-1")
+  inspect((0, 1, 2, 3, 4, 5, 6).compare((0, 1, 2, 4, 4, 5, 6)), content="-1")
+  inspect((0, 1, 2, 3, 4, 5, 6).compare((0, 1, 2, 3, 5, 5, 6)), content="-1")
+  inspect((0, 1, 2, 3, 4, 5, 6).compare((0, 1, 2, 3, 4, 6, 6)), content="-1")
+  inspect((0, 1, 2, 3, 4, 5, 6).compare((0, 1, 2, 3, 4, 5, 7)), content="-1")
 }
 
 ///|
 test "Tuple8::compare" {
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7).compare((0, 1, 2, 3, 4, 5, 6, 7)),
     content="0",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7).compare((1, 1, 2, 3, 4, 5, 6, 7)),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7).compare((0, 2, 2, 3, 4, 5, 6, 7)),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7).compare((0, 1, 3, 3, 4, 5, 6, 7)),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7).compare((0, 1, 2, 4, 4, 5, 6, 7)),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7).compare((0, 1, 2, 3, 5, 5, 6, 7)),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7).compare((0, 1, 2, 3, 4, 6, 6, 7)),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7).compare((0, 1, 2, 3, 4, 5, 7, 7)),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7).compare((0, 1, 2, 3, 4, 5, 6, 8)),
     content="-1",
   )
@@ -111,43 +111,43 @@ test "Tuple8::compare" {
 
 ///|
 test "Tuple9::compare" {
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8).compare((0, 1, 2, 3, 4, 5, 6, 7, 8)),
     content="0",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8).compare((1, 1, 2, 3, 4, 5, 6, 7, 8)),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8).compare((0, 2, 2, 3, 4, 5, 6, 7, 8)),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8).compare((0, 1, 3, 3, 4, 5, 6, 7, 8)),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8).compare((0, 1, 2, 4, 4, 5, 6, 7, 8)),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8).compare((0, 1, 2, 3, 5, 5, 6, 7, 8)),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8).compare((0, 1, 2, 3, 4, 6, 6, 7, 8)),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8).compare((0, 1, 2, 3, 4, 5, 7, 7, 8)),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8).compare((0, 1, 2, 3, 4, 5, 6, 8, 8)),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8).compare((0, 1, 2, 3, 4, 5, 6, 7, 9)),
     content="-1",
   )
@@ -155,47 +155,47 @@ test "Tuple9::compare" {
 
 ///|
 test "Tuple10::compare" {
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9).compare((0, 1, 2, 3, 4, 5, 6, 7, 8, 9)),
     content="0",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9).compare((1, 1, 2, 3, 4, 5, 6, 7, 8, 9)),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9).compare((0, 2, 2, 3, 4, 5, 6, 7, 8, 9)),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9).compare((0, 1, 3, 3, 4, 5, 6, 7, 8, 9)),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9).compare((0, 1, 2, 4, 4, 5, 6, 7, 8, 9)),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9).compare((0, 1, 2, 3, 5, 5, 6, 7, 8, 9)),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9).compare((0, 1, 2, 3, 4, 6, 6, 7, 8, 9)),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9).compare((0, 1, 2, 3, 4, 5, 7, 7, 8, 9)),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9).compare((0, 1, 2, 3, 4, 5, 6, 8, 8, 9)),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9).compare((0, 1, 2, 3, 4, 5, 6, 7, 9, 9)),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9).compare((0, 1, 2, 3, 4, 5, 6, 7, 8, 10)),
     content="-1",
   )
@@ -203,73 +203,73 @@ test "Tuple10::compare" {
 
 ///|
 test "Tuple11::compare" {
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10).compare(
       (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10),
     ),
     content="0",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10).compare(
       (1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10).compare(
       (0, 2, 2, 3, 4, 5, 6, 7, 8, 9, 10),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10).compare(
       (0, 1, 3, 3, 4, 5, 6, 7, 8, 9, 10),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10).compare(
       (0, 1, 2, 4, 4, 5, 6, 7, 8, 9, 10),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10).compare(
       (0, 1, 2, 3, 5, 5, 6, 7, 8, 9, 10),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10).compare(
       (0, 1, 2, 3, 4, 6, 6, 7, 8, 9, 10),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10).compare(
       (0, 1, 2, 3, 4, 5, 7, 7, 8, 9, 10),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10).compare(
       (0, 1, 2, 3, 4, 5, 6, 8, 8, 9, 10),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10).compare(
       (0, 1, 2, 3, 4, 5, 6, 7, 9, 9, 10),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10).compare(
       (0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 10),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10).compare(
       (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11),
     ),
@@ -279,79 +279,79 @@ test "Tuple11::compare" {
 
 ///|
 test "Tuple12::compare" {
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11).compare(
       (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11),
     ),
     content="0",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11).compare(
       (1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11).compare(
       (0, 2, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11).compare(
       (0, 1, 3, 3, 4, 5, 6, 7, 8, 9, 10, 11),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11).compare(
       (0, 1, 2, 4, 4, 5, 6, 7, 8, 9, 10, 11),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11).compare(
       (0, 1, 2, 3, 5, 5, 6, 7, 8, 9, 10, 11),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11).compare(
       (0, 1, 2, 3, 4, 6, 6, 7, 8, 9, 10, 11),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11).compare(
       (0, 1, 2, 3, 4, 5, 7, 7, 8, 9, 10, 11),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11).compare(
       (0, 1, 2, 3, 4, 5, 6, 8, 8, 9, 10, 11),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11).compare(
       (0, 1, 2, 3, 4, 5, 6, 7, 9, 9, 10, 11),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11).compare(
       (0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 10, 11),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11).compare(
       (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 11),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11).compare(
       (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12),
     ),
@@ -361,85 +361,85 @@ test "Tuple12::compare" {
 
 ///|
 test "Tuple13::compare" {
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12).compare(
       (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12),
     ),
     content="0",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12).compare(
       (1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12).compare(
       (0, 2, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12).compare(
       (0, 1, 3, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12).compare(
       (0, 1, 2, 4, 4, 5, 6, 7, 8, 9, 10, 11, 12),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12).compare(
       (0, 1, 2, 3, 5, 5, 6, 7, 8, 9, 10, 11, 12),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12).compare(
       (0, 1, 2, 3, 4, 6, 6, 7, 8, 9, 10, 11, 12),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12).compare(
       (0, 1, 2, 3, 4, 5, 7, 7, 8, 9, 10, 11, 12),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12).compare(
       (0, 1, 2, 3, 4, 5, 6, 8, 8, 9, 10, 11, 12),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12).compare(
       (0, 1, 2, 3, 4, 5, 6, 7, 9, 9, 10, 11, 12),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12).compare(
       (0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 10, 11, 12),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12).compare(
       (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 11, 12),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12).compare(
       (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 12),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12).compare(
       (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13),
     ),
@@ -449,91 +449,91 @@ test "Tuple13::compare" {
 
 ///|
 test "Tuple14::compare" {
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13).compare(
       (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13),
     ),
     content="0",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13).compare(
       (1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13).compare(
       (0, 2, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13).compare(
       (0, 1, 3, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13).compare(
       (0, 1, 2, 4, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13).compare(
       (0, 1, 2, 3, 5, 5, 6, 7, 8, 9, 10, 11, 12, 13),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13).compare(
       (0, 1, 2, 3, 4, 6, 6, 7, 8, 9, 10, 11, 12, 13),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13).compare(
       (0, 1, 2, 3, 4, 5, 7, 7, 8, 9, 10, 11, 12, 13),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13).compare(
       (0, 1, 2, 3, 4, 5, 6, 8, 8, 9, 10, 11, 12, 13),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13).compare(
       (0, 1, 2, 3, 4, 5, 6, 7, 9, 9, 10, 11, 12, 13),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13).compare(
       (0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 10, 11, 12, 13),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13).compare(
       (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 11, 12, 13),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13).compare(
       (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 12, 13),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13).compare(
       (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 13),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13).compare(
       (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14),
     ),
@@ -543,97 +543,97 @@ test "Tuple14::compare" {
 
 ///|
 test "Tuple15::compare" {
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14).compare(
       (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14),
     ),
     content="0",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14).compare(
       (1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14).compare(
       (0, 2, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14).compare(
       (0, 1, 3, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14).compare(
       (0, 1, 2, 4, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14).compare(
       (0, 1, 2, 3, 5, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14).compare(
       (0, 1, 2, 3, 4, 6, 6, 7, 8, 9, 10, 11, 12, 13, 14),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14).compare(
       (0, 1, 2, 3, 4, 5, 7, 7, 8, 9, 10, 11, 12, 13, 14),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14).compare(
       (0, 1, 2, 3, 4, 5, 6, 8, 8, 9, 10, 11, 12, 13, 14),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14).compare(
       (0, 1, 2, 3, 4, 5, 6, 7, 9, 9, 10, 11, 12, 13, 14),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14).compare(
       (0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 10, 11, 12, 13, 14),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14).compare(
       (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 11, 12, 13, 14),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14).compare(
       (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 12, 13, 14),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14).compare(
       (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 13, 14),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14).compare(
       (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 14),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14).compare(
       (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15),
     ),
@@ -643,103 +643,103 @@ test "Tuple15::compare" {
 
 ///|
 test "Tuple16::compare" {
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15).compare(
       (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15),
     ),
     content="0",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15).compare(
       (1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15).compare(
       (0, 2, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15).compare(
       (0, 1, 3, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15).compare(
       (0, 1, 2, 4, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15).compare(
       (0, 1, 2, 3, 5, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15).compare(
       (0, 1, 2, 3, 4, 6, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15).compare(
       (0, 1, 2, 3, 4, 5, 7, 7, 8, 9, 10, 11, 12, 13, 14, 15),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15).compare(
       (0, 1, 2, 3, 4, 5, 6, 8, 8, 9, 10, 11, 12, 13, 14, 15),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15).compare(
       (0, 1, 2, 3, 4, 5, 6, 7, 9, 9, 10, 11, 12, 13, 14, 15),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15).compare(
       (0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 10, 11, 12, 13, 14, 15),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15).compare(
       (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 11, 12, 13, 14, 15),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15).compare(
       (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 12, 13, 14, 15),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15).compare(
       (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 13, 14, 15),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15).compare(
       (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 14, 15),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15).compare(
       (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15, 15),
     ),
     content="-1",
   )
-  inspect!(
+  inspect(
     (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15).compare(
       (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16),
     ),

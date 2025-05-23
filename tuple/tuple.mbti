@@ -5,26 +5,26 @@ import(
 )
 
 // Values
-fn curry[T, U, V]((T, U) -> V) -> (T) -> (U) -> V
+fn[T, U, V] curry((T, U) -> V) -> (T) -> (U) -> V
 
-fn fst[T, U]((T, U)) -> T
-
-#deprecated
-fn map_both[T, U, V, W]((T) -> U, (V) -> W, (T, V)) -> (U, W)
+fn[T, U] fst((T, U)) -> T
 
 #deprecated
-fn map_fst[T, U, V]((T) -> U, (T, V)) -> (U, V)
+fn[T, U, V, W] map_both((T) -> U, (V) -> W, (T, V)) -> (U, W)
 
 #deprecated
-fn map_snd[T, U, V]((T) -> U, (V, T)) -> (V, U)
+fn[T, U, V] map_fst((T) -> U, (T, V)) -> (U, V)
 
-fn pair[T, U](T, U) -> (T, U)
+#deprecated
+fn[T, U, V] map_snd((T) -> U, (V, T)) -> (V, U)
 
-fn snd[T, U]((T, U)) -> U
+fn[T, U] pair(T, U) -> (T, U)
 
-fn swap[T, U]((T, U)) -> (U, T)
+fn[T, U] snd((T, U)) -> U
 
-fn uncurry[T, U, V]((T) -> (U) -> V) -> (T, U) -> V
+fn[T, U] swap((T, U)) -> (U, T)
+
+fn[T, U, V] uncurry((T) -> (U) -> V) -> (T, U) -> V
 
 // Types and methods
 impl[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary] @quickcheck.Arbitrary for (A, B)

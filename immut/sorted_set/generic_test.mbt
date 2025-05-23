@@ -47,7 +47,7 @@ test "iter early termination - value" {
 test "iter terminates on right" {
   let set = of([1, 2, 3])
   let result = set.iter().take(2).to_array()
-  inspect!(result, content="[1, 2]")
+  inspect(result, content="[1, 2]")
 }
 
 ///|
@@ -71,5 +71,5 @@ test "iter with early termination on left subtree" {
   })
 
   // Verify that we stopped after processing the first element
-  inspect!(count, content="1")
+  inspect(count, content="1")
 }

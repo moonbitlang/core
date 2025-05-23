@@ -30,9 +30,9 @@
 /// test "Byte::op_mul" {
 ///   let a = b'\x02'
 ///   let b = b'\x03'
-///   inspect!(a * b, content="b'\\x06'") // 2 * 3 = 6
+///   inspect(a * b, content="b'\\x06'") // 2 * 3 = 6
 ///   let c = b'\xFF'
-///   inspect!(c * c, content="b'\\x01'") // 255 * 255 = 65025, truncated to 1
+///   inspect(c * c, content="b'\\x01'") // 255 * 255 = 65025, truncated to 1
 /// }
 /// ```
 pub impl Mul for Byte with op_mul(self : Byte, that : Byte) -> Byte {
@@ -56,7 +56,7 @@ pub impl Mul for Byte with op_mul(self : Byte, that : Byte) -> Byte {
 /// test "Byte::op_div" {
 ///   let a = b'\xFF' // 255
 ///   let b = b'\x03' // 3
-///   inspect!(a / b, content="b'\\x55'") // 255 / 3 = 85 (0x55)
+///   inspect(a / b, content="b'\\x55'") // 255 / 3 = 85 (0x55)
 /// }
 ///
 /// test "panic Byte::op_div/division_by_zero" {
@@ -132,8 +132,8 @@ pub impl Compare for Byte with compare(self : Byte, that : Byte) -> Int {
 }
 
 ///|
-fn alphabet(self : Int) -> String {
-  match self {
+fn alphabet(x : Int) -> String {
+  match x {
     0 => "0"
     1 => "1"
     2 => "2"
@@ -185,7 +185,7 @@ pub fn Byte::to_string(self : Byte) -> String {
 /// ```moonbit
 /// test "Byte::hash" {
 ///   let b = b'\x42'
-///   inspect!(Hash::hash(b), content="66") // ASCII value of 'B'
+///   inspect(Hash::hash(b), content="66") // ASCII value of 'B'
 /// }
 /// ```
 pub impl Hash for Byte with hash(self) {
@@ -208,7 +208,7 @@ pub impl Hash for Byte with hash(self) {
 /// test "Byte::hash_combine" {
 ///   let hasher = Hasher::new()
 ///   hasher.combine_byte(b'\xFF')
-///   inspect!(hasher.finalize(), content="1955036104")
+///   inspect(hasher.finalize(), content="1955036104")
 /// }
 /// ```
 pub impl Hash for Byte with hash_combine(self, hasher) {

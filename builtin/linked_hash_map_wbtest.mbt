@@ -232,7 +232,7 @@ test "iter" {
     let (k, v) = e
     buf.write_string("[\{k}-\{v}]")
   })
-  inspect!(buf, content="[1-one][2-two][3-three]")
+  inspect(buf, content="[1-one][2-two][3-three]")
   buf.reset()
   map
   .iter()
@@ -241,7 +241,7 @@ test "iter" {
     let (k, v) = e
     buf.write_string("[\{k}-\{v}]")
   })
-  inspect!(buf, content="[1-one][2-two]")
+  inspect(buf, content="[1-one][2-two]")
 }
 
 ///|
@@ -251,67 +251,67 @@ test "iter order" {
   m["two"] = 2
   let buf = StringBuilder::new(size_hint=0)
   m.each(fn(k, v) { buf.write_string("[\{k}-\{v}]") })
-  inspect!(buf.to_string(), content="[one-1][three-3][two-2]")
+  inspect(buf.to_string(), content="[one-1][three-3][two-2]")
 }
 
 ///|
 test "linked list" {
   let m = {}
-  inspect!(m, content="{}")
+  inspect(m, content="{}")
   m["one"] = 1
   m["two"] = 2
   m["three"] = 3
   m["four"] = 4
   m["five"] = 5
-  inspect!(
+  inspect(
     m,
     content=
       #|{"one": 1, "two": 2, "three": 3, "four": 4, "five": 5}
     ,
   )
   m.remove("three")
-  inspect!(
+  inspect(
     m,
     content=
       #|{"one": 1, "two": 2, "four": 4, "five": 5}
     ,
   )
   m.set("two", 20)
-  inspect!(
+  inspect(
     m,
     content=
       #|{"one": 1, "two": 20, "four": 4, "five": 5}
     ,
   )
   m.remove("one")
-  inspect!(
+  inspect(
     m,
     content=
       #|{"two": 20, "four": 4, "five": 5}
     ,
   )
   m.remove("five")
-  inspect!(
+  inspect(
     m,
     content=
       #|{"two": 20, "four": 4}
     ,
   )
   m.remove("two")
-  inspect!(
+  inspect(
     m,
     content=
       #|{"four": 4}
     ,
   )
   m.remove("four")
-  inspect!(m, content="{}")
+  inspect(m, content="{}")
 }
 
 ///|
 test "to_array" {
   let map = { 1: "one", 2: "two", 3: "three" }
-  inspect!(
+  inspect(
     map.to_array(),
     content=
       #|[(1, "one"), (2, "two"), (3, "three")]
@@ -689,9 +689,9 @@ test "op_equal_1" {
   m1.set("b", 2)
   m1.set("c", 3)
   let m2 = { "a": 1, "b": 2, "c": 3 }
-  inspect!(m1 == m2, content="true")
-  inspect!({ "a": 1 } == {}, content="false")
-  inspect!({ 1: 2, 2: 3 } == { 1: 3, 2: 4 }, content="false")
+  inspect(m1 == m2, content="true")
+  inspect({ "a": 1 } == {}, content="false")
+  inspect({ 1: 2, 2: 3 } == { 1: 3, 2: 4 }, content="false")
 }
 
 ///|
@@ -699,25 +699,25 @@ test "op_equal_2" {
   let map1 = { "a": 1, "b": 2 }
   let map2 = { "b": 2, "a": 1 }
   let map3 = { "a": 1, "b": 2 }
-  inspect!(map1 == map2, content="true")
-  inspect!(map1 == map3, content="true")
+  inspect(map1 == map2, content="true")
+  inspect(map1 == map3, content="true")
 }
 
 ///|
 test "to_string" {
   let m = {}
-  inspect!(m.to_string(), content="{}")
+  inspect(m.to_string(), content="{}")
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
-  inspect!(
+  inspect(
     m.to_string(),
     content=
       #|{"a": 1, "b": 2, "c": 3}
     ,
   )
   let nested_m = { "a": { "b": 2 }, "B": { "C": 3 } }
-  inspect!(
+  inspect(
     nested_m.to_string(),
     content=
       #|{"a": {"b": 2}, "B": {"C": 3}}
@@ -731,7 +731,7 @@ test "hash collision" {
   m.set("a", 1)
   m.set("ab", 2)
   m.set("abc", 3)
-  inspect!(m["d"], content="None")
+  inspect(m["d"], content="None")
 }
 
 ///|

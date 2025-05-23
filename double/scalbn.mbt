@@ -13,9 +13,9 @@
 // limitations under the License.
 
 ///|
-fn scalbn(self : Double, exp : Int) -> Double {
+fn scalbn(x : Double, exp : Int) -> Double {
   let mut n = exp
-  let mut y : Double = self
+  let mut y : Double = x
   if n > 1023 {
     y *= 0x1.0p1023
     n -= 1023
@@ -45,16 +45,16 @@ fn scalbn(self : Double, exp : Int) -> Double {
 
 ///|
 test "scalbn" {
-  inspect!(scalbn(1.5, 2), content="6")
-  inspect!(scalbn(2.0, -1), content="1")
-  inspect!(scalbn(3.0, 0), content="3")
-  inspect!(scalbn(1.0, 1024), content="Infinity")
-  inspect!(scalbn(1.0, -1023), content="1.1125369292536007e-308")
-  inspect!(scalbn(1.0, 2047), content="Infinity")
-  inspect!(scalbn(1.0, -1992), content="0")
-  inspect!(scalbn(1.0, 3070), content="Infinity")
-  inspect!(scalbn(1.0, -2961), content="0")
-  inspect!(scalbn(infinity, 10), content="Infinity")
-  inspect!(scalbn(not_a_number, 10), content="NaN")
-  inspect!(scalbn(0.0, 10), content="0")
+  inspect(scalbn(1.5, 2), content="6")
+  inspect(scalbn(2.0, -1), content="1")
+  inspect(scalbn(3.0, 0), content="3")
+  inspect(scalbn(1.0, 1024), content="Infinity")
+  inspect(scalbn(1.0, -1023), content="1.1125369292536007e-308")
+  inspect(scalbn(1.0, 2047), content="Infinity")
+  inspect(scalbn(1.0, -1992), content="0")
+  inspect(scalbn(1.0, 3070), content="Infinity")
+  inspect(scalbn(1.0, -2961), content="0")
+  inspect(scalbn(infinity, 10), content="Infinity")
+  inspect(scalbn(not_a_number, 10), content="NaN")
+  inspect(scalbn(0.0, 10), content="0")
 }

@@ -35,9 +35,9 @@ test "shrink_to_fit" {
   v.push(1)
   v.push(2)
   v.push(3)
-  inspect!(v.capacity(), content="10")
+  inspect(v.capacity(), content="10")
   v.shrink_to_fit()
-  inspect!(v.capacity(), content="3")
+  inspect(v.capacity(), content="3")
   v.shrink_to_fit()
-  inspect!(v.capacity(), content="3")
+  inspect(v.capacity(), content="3")
 }

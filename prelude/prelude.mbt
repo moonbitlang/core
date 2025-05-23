@@ -97,7 +97,7 @@ pub fnalias @builtin.(
 /// assert_eq!(x |> tap(fn(n) { val.val += n }), 5)
 /// assert_eq!(val.val, 6)
 /// ```
-pub fn tap[T](value : T, f : (T) -> Unit) -> T {
+pub fn[T] tap(value : T, f : (T) -> Unit) -> T {
   f(value)
   value
 }
@@ -118,6 +118,6 @@ pub fn tap[T](value : T, f : (T) -> Unit) -> T {
 /// let result = x |> then(fn(n) { n * 2 })
 /// assert_eq!(result, 10)
 /// ```
-pub fn then[T, R](value : T, f : (T) -> R) -> R {
+pub fn[T, R] then(value : T, f : (T) -> R) -> R {
   f(value)
 }

@@ -1,7 +1,7 @@
 package "moonbitlang/core/strconv"
 
 // Values
-fn parse[A : FromStr](String) -> A!StrConvError
+fn[A : FromStr] parse(String) -> A!StrConvError
 
 fn parse_bool(String) -> Bool!StrConvError
 

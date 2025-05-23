@@ -9,13 +9,13 @@ Generate random values of any type that implements the `Arbitrary` trait:
 ```moonbit
 test "basic generation" {
   let b : Bool = @quickcheck.gen()
-  inspect!(b, content="true")
+  inspect(b, content="true")
   let x : Int = @quickcheck.gen()
-  inspect!(x, content="0")
+  inspect(x, content="0")
 
   // Generate with size parameter
   let sized : Array[Int] = @quickcheck.gen(size=5)
-  inspect!(sized.length() <= 5, content="true")
+  inspect(sized.length() <= 5, content="true")
 }
 ```
 
@@ -26,9 +26,9 @@ Generate multiple test cases using the `samples` function:
 ```moonbit
 test "multiple samples" {
   let ints : Array[Int] = @quickcheck.samples(5)
-  inspect!(ints, content="[0, 0, 0, -1, -1]")
+  inspect(ints, content="[0, 0, 0, -1, -1]")
   let strings : Array[String] = @quickcheck.samples(12)
-  inspect!(
+  inspect(
     strings[5:10],
     content=
       
@@ -51,14 +51,14 @@ QuickCheck provides `Arbitrary` implementations for all basic MoonBit types:
 test "builtin types" {
   // Basic types
   let v : (Bool, Char, Byte) = @quickcheck.gen()
-  inspect!(v, content="(true, '#', b'\\x12')")
+  inspect(v, content="(true, '#', b'\\x12')")
   // Numeric types
   let v : (Int, Int64, UInt, UInt64, Float, Double, BigInt) = @quickcheck.gen()
-  inspect!(v, content="(0, 0, 0, 0, 76806128, 0.33098446695254635, 0)")
+  inspect(v, content="(0, 0, 0, 0, 76806128, 0.33098446695254635, 0)")
   // Collections
 
   let v : (String, Bytes, Iter[Int]) = @quickcheck.gen()
-  inspect!(
+  inspect(
     v,
     content=
       #|("", b"", [])
@@ -85,9 +85,9 @@ impl Arbitrary for Point with arbitrary(size, r0) {
 
 test "custom type generation" {
   let point : Point = @quickcheck.gen()
-  inspect!(point, content="{x: 0, y: 0}")
+  inspect(point, content="{x: 0, y: 0}")
   let points : Array[Point] = @quickcheck.samples(10)
-  inspect!(
+  inspect(
     points[6:],
     content="[{x: 0, y: 1}, {x: -1, y: -5}, {x: -6, y: -6}, {x: -1, y: 7}]",
   )

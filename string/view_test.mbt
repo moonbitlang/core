@@ -17,10 +17,10 @@ test "stringview basic" {
   let str = "Hello🤣🤣🤣"
   let start_offset = 1
   let end_offset = str.offset_of_nth_char(6).unwrap()
-  inspect!(str.view(start_offset~), content="ello🤣🤣🤣")
-  inspect!(str.view(end_offset~), content="Hello🤣")
-  inspect!(str.view(start_offset~, end_offset~), content="ello🤣")
-  inspect!(str.view(), content="Hello🤣🤣🤣")
+  inspect(str.view(start_offset~), content="ello🤣🤣🤣")
+  inspect(str.view(end_offset~), content="Hello🤣")
+  inspect(str.view(start_offset~, end_offset~), content="ello🤣")
+  inspect(str.view(), content="Hello🤣🤣🤣")
 }
 
 ///|
@@ -28,13 +28,13 @@ test "stringview basic2" {
   let str = "He🤣🤣🤣llo"
   let start = 1
   let end = 10
-  inspect!(str.view(start_offset=start), content="e🤣🤣🤣llo")
-  inspect!(str.view(end_offset=end), content="He🤣🤣🤣ll")
-  inspect!(
+  inspect(str.view(start_offset=start), content="e🤣🤣🤣llo")
+  inspect(str.view(end_offset=end), content="He🤣🤣🤣ll")
+  inspect(
     str.view(start_offset=start, end_offset=end),
     content="e🤣🤣🤣ll",
   )
-  inspect!(str.view(), content="He🤣🤣🤣llo")
+  inspect(str.view(), content="He🤣🤣🤣llo")
 }
 
 ///|
@@ -43,64 +43,64 @@ test "stringview subview" {
   let start = 1
   let end = 7
   let view = str.view(start_offset=start, end_offset=end)
-  inspect!(view.view(start_offset=1), content="llo🤣")
-  inspect!(view.view(start_offset=1, end_offset=4), content="llo")
-  inspect!(view.view(end_offset=4), content="ello")
-  inspect!(view.view(), content="ello🤣")
+  inspect(view.view(start_offset=1), content="llo🤣")
+  inspect(view.view(start_offset=1, end_offset=4), content="llo")
+  inspect(view.view(end_offset=4), content="ello")
+  inspect(view.view(), content="ello🤣")
 }
 
 ///|
 test "stringview op_get" {
   let str = "Hello🤣🤣🤣"
   let view = str.view(start_offset=1, end_offset=7)
-  inspect!(view.iter().nth(4).unwrap(), content="🤣")
-  inspect!(view.iter().nth(4).unwrap(), content="🤣")
+  inspect(view.iter().nth(4).unwrap(), content="🤣")
+  inspect(view.iter().nth(4).unwrap(), content="🤣")
 }
 
 ///|
 test "stringview rev_get" {
   let str = "Hello🤣🤣🤣"
   let view = str.view(start_offset=1, end_offset=7)
-  inspect!(view.rev_iter().nth(0).unwrap(), content="🤣")
-  inspect!(view.rev_iter().nth(4).unwrap(), content="e")
+  inspect(view.rev_iter().nth(0).unwrap(), content="🤣")
+  inspect(view.rev_iter().nth(4).unwrap(), content="e")
 }
 
 ///|
 test "stringview length" {
   let str = "Hello🤣🤣🤣"
   let view = str.view(start_offset=1, end_offset=7)
-  inspect!(view.length(), content="6")
+  inspect(view.length(), content="6")
 }
 
 ///|
 test "stingview length_eq" {
   let str = "hello"
   let view = str.view(start_offset=1, end_offset=4)
-  inspect!(view.char_length_eq(0), content="false")
-  inspect!(view.char_length_eq(1), content="false")
-  inspect!(view.char_length_eq(2), content="false")
-  inspect!(view.char_length_eq(3), content="true")
-  inspect!(view.char_length_eq(4), content="false")
-  inspect!(view.char_length_eq(5), content="false")
+  inspect(view.char_length_eq(0), content="false")
+  inspect(view.char_length_eq(1), content="false")
+  inspect(view.char_length_eq(2), content="false")
+  inspect(view.char_length_eq(3), content="true")
+  inspect(view.char_length_eq(4), content="false")
+  inspect(view.char_length_eq(5), content="false")
 }
 
 ///|
 test "stingview length_ge" {
   let str = "hello"
   let view = str.view(start_offset=1, end_offset=4)
-  inspect!(view.char_length_ge(0), content="true")
-  inspect!(view.char_length_ge(1), content="true")
-  inspect!(view.char_length_ge(2), content="true")
-  inspect!(view.char_length_ge(3), content="true")
-  inspect!(view.char_length_ge(4), content="false")
-  inspect!(view.char_length_ge(5), content="false")
+  inspect(view.char_length_ge(0), content="true")
+  inspect(view.char_length_ge(1), content="true")
+  inspect(view.char_length_ge(2), content="true")
+  inspect(view.char_length_ge(3), content="true")
+  inspect(view.char_length_ge(4), content="false")
+  inspect(view.char_length_ge(5), content="false")
 }
 
 ///|
 test "stringview empty" {
   let str = "hello"
   let view = str.view(start_offset=0, end_offset=0)
-  inspect!(view.length(), content="0")
+  inspect(view.length(), content="0")
 }
 
 ///|
@@ -139,18 +139,18 @@ test "panic out of bounds4" {
 // test "index_at_rev" {
 //   let str = "🤣🤣🤣"
 //   let offset = str.index_at_rev(0)
-//   inspect!(offset, content="Some(StringIndex(6))")
+//   inspect(offset, content="Some(StringIndex(6))")
 //   let offset = str.index_at_rev(1)
-//   inspect!(offset, content="Some(StringIndex(4))")
+//   inspect(offset, content="Some(StringIndex(4))")
 //   let offset = str.index_at_rev(2)
-//   inspect!(offset, content="Some(StringIndex(2))")
+//   inspect(offset, content="Some(StringIndex(2))")
 //   let offset = str.index_at_rev(3)
-//   inspect!(offset, content="Some(StringIndex(0))")
+//   inspect(offset, content="Some(StringIndex(0))")
 //   let offset = str.index_at_rev(4)
-//   inspect!(offset, content="None")
+//   inspect(offset, content="None")
 //   let offset = str.index_at_rev(1).unwrap()
 //   let offset = str.index_at_rev(1, end=offset)
-//   inspect!(offset, content="Some(StringIndex(2))")
+//   inspect(offset, content="Some(StringIndex(2))")
 // }
 
 ///|
@@ -158,33 +158,33 @@ test "panic out of bounds4" {
 //   let str = "Hello🤣🤣🤣"
 //   let str_view = str[:]
 //   let view = str_view[-1:]
-//   inspect!(view, content="🤣")
+//   inspect(view, content="🤣")
 //   let view = str_view[-2:]
-//   inspect!(view, content="🤣🤣")
+//   inspect(view, content="🤣🤣")
 //   let view = str_view[-3:]
-//   inspect!(view, content="🤣🤣🤣")
+//   inspect(view, content="🤣🤣🤣")
 //   let view = str_view[-4:]
-//   inspect!(view, content="o🤣🤣🤣")
+//   inspect(view, content="o🤣🤣🤣")
 //   let view = str_view[:-1]
-//   inspect!(view, content="Hello🤣🤣")
+//   inspect(view, content="Hello🤣🤣")
 //   let view = str_view[:-2]
-//   inspect!(view, content="Hello🤣")
+//   inspect(view, content="Hello🤣")
 //   let view = str_view[:-3]
-//   inspect!(view, content="Hello")
+//   inspect(view, content="Hello")
 //   let view = str_view[:-4]
-//   inspect!(view, content="Hell")
+//   inspect(view, content="Hell")
 //   let view = str_view[-2:-1]
-//   inspect!(view, content="🤣")
+//   inspect(view, content="🤣")
 //   let view = str_view[-3:-1]
-//   inspect!(view, content="🤣🤣")
+//   inspect(view, content="🤣🤣")
 //   let view = str_view[-4:-1]
-//   inspect!(view, content="o🤣🤣")
+//   inspect(view, content="o🤣🤣")
 //   let view = str_view[-4:-2]
-//   inspect!(view, content="o🤣")
+//   inspect(view, content="o🤣")
 //   let view = str_view[-4:-4]
-//   inspect!(view, content="")
+//   inspect(view, content="")
 //   let view = str_view[-3:-3]
-//   inspect!(view, content="")
+//   inspect(view, content="")
 // }
 
 ///|
@@ -281,8 +281,8 @@ test "stringview iter" {
   let str = "hello🤣🤣🤣"
   let view = str.view(start_offset=1, end_offset=7)
   let iter = view.iter()
-  inspect!(iter.count(), content="5")
-  inspect!(iter, content="['e', 'l', 'l', 'o', '🤣']")
+  inspect(iter.count(), content="5")
+  inspect(iter, content="['e', 'l', 'l', 'o', '🤣']")
 }
 
 ///|
@@ -290,8 +290,8 @@ test "stringview rev_iter" {
   let str = "hello🤣🤣🤣"
   let view = str.view(start_offset=1, end_offset=7)
   let iter = view.rev_iter()
-  inspect!(iter.count(), content="5")
-  inspect!(iter, content="['🤣', 'o', 'l', 'l', 'e']")
+  inspect(iter.count(), content="5")
+  inspect(iter, content="['🤣', 'o', 'l', 'l', 'e']")
 }
 
 ///|
@@ -320,7 +320,7 @@ test "to_string" {
   let s = "Hello World"
   let view = s.view(start_offset=0, end_offset=5)
   let ss = "\{view} Moonbit"
-  inspect!(ss, content="Hello Moonbit")
+  inspect(ss, content="Hello Moonbit")
 }
 
 ///|
@@ -393,109 +393,109 @@ test "take first character from surrogate pairs" {
   let view = str.view()
   let result = view.iter().take(6).collect().length()
   // 6 characters total: 5 ASCII + 1 emoji
-  inspect!(result, content="6")
+  inspect(result, content="6")
 }
 
 ///|
 test "index_of_nth_char" {
   let str = "aa😭b😂cc"
   let view = str.view(start_offset=1, end_offset=8)
-  inspect!(view, content="a😭b😂c")
-  inspect!(view.offset_of_nth_char(0), content="Some(0)")
-  inspect!(view.offset_of_nth_char(1), content="Some(1)")
-  inspect!(view.offset_of_nth_char(2), content="Some(3)")
-  inspect!(view.offset_of_nth_char(3), content="Some(4)")
-  inspect!(view.offset_of_nth_char(4), content="Some(6)")
-  inspect!(view.offset_of_nth_char(5), content="None")
-  inspect!(view.offset_of_nth_char(-1), content="Some(6)")
-  inspect!(view.offset_of_nth_char(-2), content="Some(4)")
-  inspect!(view.offset_of_nth_char(-3), content="Some(3)")
-  inspect!(view.offset_of_nth_char(-4), content="Some(1)")
-  inspect!(view.offset_of_nth_char(-5), content="Some(0)")
-  inspect!(view.offset_of_nth_char(-6), content="None")
+  inspect(view, content="a😭b😂c")
+  inspect(view.offset_of_nth_char(0), content="Some(0)")
+  inspect(view.offset_of_nth_char(1), content="Some(1)")
+  inspect(view.offset_of_nth_char(2), content="Some(3)")
+  inspect(view.offset_of_nth_char(3), content="Some(4)")
+  inspect(view.offset_of_nth_char(4), content="Some(6)")
+  inspect(view.offset_of_nth_char(5), content="None")
+  inspect(view.offset_of_nth_char(-1), content="Some(6)")
+  inspect(view.offset_of_nth_char(-2), content="Some(4)")
+  inspect(view.offset_of_nth_char(-3), content="Some(3)")
+  inspect(view.offset_of_nth_char(-4), content="Some(1)")
+  inspect(view.offset_of_nth_char(-5), content="Some(0)")
+  inspect(view.offset_of_nth_char(-6), content="None")
 }
 
 ///|
 test "char_at" {
   let str = "aa😭b😂cc"
   let view = str.view(start_offset=1, end_offset=8)
-  inspect!(view.char_at(0), content="a")
-  inspect!(view.char_at(1), content="😭")
-  inspect!(view.char_at(3), content="b")
-  inspect!(view.char_at(4), content="😂")
-  inspect!(view.char_at(6), content="c")
+  inspect(view.char_at(0), content="a")
+  inspect(view.char_at(1), content="😭")
+  inspect(view.char_at(3), content="b")
+  inspect(view.char_at(4), content="😂")
+  inspect(view.char_at(6), content="c")
 }
 
 ///|
 test "charcode_at" {
   let str = "aa😭b😂cc"
   let view = str.view(start_offset=1, end_offset=8)
-  inspect!(view.charcode_at(0), content="97")
-  inspect!(view.charcode_at(1), content="55357")
-  inspect!(view.charcode_at(2), content="56877")
-  inspect!(view.charcode_at(3), content="98")
-  inspect!(view.charcode_at(4), content="55357")
-  inspect!(view.charcode_at(5), content="56834")
-  inspect!(view.charcode_at(6), content="99")
+  inspect(view.charcode_at(0), content="97")
+  inspect(view.charcode_at(1), content="55357")
+  inspect(view.charcode_at(2), content="56877")
+  inspect(view.charcode_at(3), content="98")
+  inspect(view.charcode_at(4), content="55357")
+  inspect(view.charcode_at(5), content="56834")
+  inspect(view.charcode_at(6), content="99")
 }
 
 ///|
 test "char_length" {
   let str = "aa😭b😂cc"
   let view = str.view(start_offset=1, end_offset=8)
-  inspect!(view.char_length(), content="5")
+  inspect(view.char_length(), content="5")
 }
 
 ///|
 test "utf16 indexed view" {
   let str = "aa😭b😂cc"
   let v0 = str.view()
-  inspect!(v0, content="aa😭b😂cc")
-  inspect!(v0.char_length(), content="7")
+  inspect(v0, content="aa😭b😂cc")
+  inspect(v0.char_length(), content="7")
   let v1 = str.view(start_offset=1, end_offset=8)
-  inspect!(v1, content="a😭b😂c")
-  inspect!(v1.char_length(), content="5")
+  inspect(v1, content="a😭b😂c")
+  inspect(v1.char_length(), content="5")
   let v2 = str.view(start_offset=1)
-  inspect!(v2, content="a😭b😂cc")
-  inspect!(v2.char_length(), content="6")
+  inspect(v2, content="a😭b😂cc")
+  inspect(v2.char_length(), content="6")
   let v3 = str.view(end_offset=4)
-  inspect!(v3, content="aa😭")
-  inspect!(v3.char_length(), content="3")
+  inspect(v3, content="aa😭")
+  inspect(v3.char_length(), content="3")
   let v4 = str.view(start_offset=1, end_offset=1)
-  inspect!(v4, content="")
-  inspect!(v4.char_length(), content="0")
+  inspect(v4, content="")
+  inspect(v4.char_length(), content="0")
   let v5 = str.view(end_offset=0)
-  inspect!(v5, content="")
-  inspect!(v5.char_length(), content="0")
+  inspect(v5, content="")
+  inspect(v5.char_length(), content="0")
   let v6 = str.view(start_offset=str.length())
-  inspect!(v6, content="")
-  inspect!(v6.char_length(), content="0")
+  inspect(v6, content="")
+  inspect(v6.char_length(), content="0")
   let v7 = str.view(start_offset=str.length(), end_offset=str.length())
-  inspect!(v7, content="")
-  inspect!(v7.char_length(), content="0")
+  inspect(v7, content="")
+  inspect(v7.char_length(), content="0")
 }
 
 ///|
 test "op_equal" {
   let str = "012301230123"
-  inspect!(str.view() == str.view(), content="true")
-  inspect!(str.view() == str.view(start_offset=1), content="false")
-  inspect!(
+  inspect(str.view() == str.view(), content="true")
+  inspect(str.view() == str.view(start_offset=1), content="false")
+  inspect(
     str.view(start_offset=0, end_offset=4) ==
     str.view(start_offset=4, end_offset=8),
     content="true",
   )
-  inspect!(
+  inspect(
     str.view(start_offset=0, end_offset=4) ==
     str.view(start_offset=8, end_offset=12),
     content="true",
   )
-  inspect!(
+  inspect(
     str.view(start_offset=0, end_offset=3) ==
     str.view(start_offset=4, end_offset=7),
     content="true",
   )
-  inspect!(
+  inspect(
     str.view(start_offset=0, end_offset=3) ==
     str.view(start_offset=0, end_offset=4),
     content="false",
@@ -503,29 +503,29 @@ test "op_equal" {
 
   // Test with surrogate pairs
   let emoji_str = "🤣abc🤣def"
-  inspect!(
+  inspect(
     emoji_str.view(start_offset=0, end_offset=2) ==
     emoji_str.view(start_offset=5, end_offset=7),
     content="true",
   )
-  inspect!(
+  inspect(
     emoji_str.view(start_offset=2, end_offset=5) ==
     emoji_str.view(start_offset=7, end_offset=10),
     content="false",
   )
-  inspect!(
+  inspect(
     emoji_str.view(start_offset=0, end_offset=5) ==
     emoji_str.view(start_offset=5, end_offset=10),
     content="false",
   )
 
   // Test empty views
-  inspect!(
+  inspect(
     str.view(start_offset=0, end_offset=0) ==
     str.view(start_offset=4, end_offset=4),
     content="true",
   )
-  inspect!(
+  inspect(
     str.view(start_offset=0, end_offset=0) ==
     str.view(start_offset=0, end_offset=1),
     content="false",
@@ -534,8 +534,8 @@ test "op_equal" {
   // Test views from different strings
   let str1 = "bcabc"
   let str2 = "abcabc"
-  inspect!(str1.view() == str2.view(), content="false")
-  inspect!(str1.view() == str2.view(start_offset=1), content="true")
+  inspect(str1.view() == str2.view(), content="false")
+  inspect(str1.view() == str2.view(start_offset=1), content="true")
 }
 
 ///|
@@ -543,7 +543,7 @@ test "stringview compare" {
   let str = "abcabc"
 
   // Test equal views
-  inspect!(
+  inspect(
     str
     .view(start_offset=0, end_offset=3)
     .compare(str.view(start_offset=3, end_offset=6)),
@@ -551,7 +551,7 @@ test "stringview compare" {
   )
 
   // Test lexicographically smaller view
-  inspect!(
+  inspect(
     str
     .view(start_offset=0, end_offset=3)
     .compare(str.view(start_offset=2, end_offset=5)),
@@ -559,7 +559,7 @@ test "stringview compare" {
   )
 
   // Test lexicographically larger view
-  inspect!(
+  inspect(
     str
     .view(start_offset=1, end_offset=4)
     .compare(str.view(start_offset=3, end_offset=6)),
@@ -567,13 +567,13 @@ test "stringview compare" {
   )
 
   // Test different length views
-  inspect!(
+  inspect(
     str
     .view(start_offset=0, end_offset=3)
     .compare(str.view(start_offset=0, end_offset=4)),
     content="-1",
   )
-  inspect!(
+  inspect(
     str
     .view(start_offset=1, end_offset=5)
     .compare(str.view(start_offset=2, end_offset=5)),
@@ -582,7 +582,7 @@ test "stringview compare" {
 
   // Test with surrogate pairs
   let emoji_str = "🤣abc🤣def"
-  inspect!(
+  inspect(
     emoji_str
     .view(start_offset=0, end_offset=5)
     .compare(emoji_str.view(start_offset=5, end_offset=10)),
@@ -590,7 +590,7 @@ test "stringview compare" {
   )
 
   // Test empty views
-  inspect!(
+  inspect(
     str
     .view(start_offset=0, end_offset=0)
     .compare(str.view(start_offset=4, end_offset=4)),
@@ -600,31 +600,31 @@ test "stringview compare" {
   // Test views from different strings with same content
   let str1 = "bcabc"
   let str2 = "abcabc"
-  inspect!(str1.view().compare(str2.view(start_offset=1)), content="0")
+  inspect(str1.view().compare(str2.view(start_offset=1)), content="0")
 }
 
 ///|
 test "view of view" {
   let v1 = "00abc😭def😂ghi11".view(start_offset=2, end_offset=15)
   let v2 = v1.view(start_offset=3, end_offset=6)
-  inspect!(v2, content="😭d")
+  inspect(v2, content="😭d")
   let v3 = v2.view(start_offset=2, end_offset=3)
-  inspect!(v3, content="d")
+  inspect(v3, content="d")
   let v4 = v1.view(start_offset=2, end_offset=6)
-  inspect!(v4, content="c😭d")
+  inspect(v4, content="c😭d")
   let v6 = v1.view(start_offset=5, end_offset=5)
-  inspect!(v6, content="")
+  inspect(v6, content="")
   let v7 = v1.view()
-  inspect!(v7, content="abc😭def😂ghi")
+  inspect(v7, content="abc😭def😂ghi")
   let v8 = v1.view(start_offset=3, end_offset=10)
-  inspect!(v8, content="😭def😂")
+  inspect(v8, content="😭def😂")
 }
 
 ///|
 test "iter2" {
   let str = "aa😭b😂cc"
   let view = str.view(start_offset=1, end_offset=8)
-  inspect!(
+  inspect(
     view.iter2().iter().collect(),
     content="[(0, 'a'), (1, '😭'), (2, 'b'), (3, '😂'), (4, 'c')]",
   )
@@ -633,25 +633,25 @@ test "iter2" {
 ///|
 test "from_array" {
   let v = View::from_array(['a', '😭', 'b', '😂', 'c'])
-  inspect!(v, content="a😭b😂c")
+  inspect(v, content="a😭b😂c")
 }
 
 ///|
 test "from_iter" {
   let v = View::from_iter(['a', '😭', 'b', '😂', 'c'].iter())
-  inspect!(v, content="a😭b😂c")
+  inspect(v, content="a😭b😂c")
 }
 
 ///|
 test "make" {
   let v = View::make(5, 'a')
-  inspect!(v, content="aaaaa")
+  inspect(v, content="aaaaa")
 }
 
 ///|
 test "to_json" {
   let v = "hello".view(start_offset=1, end_offset=4)
-  inspect!(
+  inspect(
     v.to_json(),
     content=
       #|String("ell")

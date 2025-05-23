@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-fn new_node[K, V](key : K, value : V) -> Node[K, V] {
+fn[K, V] new_node(key : K, value : V) -> Node[K, V] {
   { key, value, left: None, right: None, height: 1 }
 }
 
@@ -32,7 +32,7 @@ fn max(x : Int, y : Int) -> Int {
 }
 
 ///|
-fn height[K, V](node : Node[K, V]?) -> Int {
+fn[K, V] height(node : Node[K, V]?) -> Int {
   match node {
     None => 0
     Some(n) => n.height
@@ -40,7 +40,7 @@ fn height[K, V](node : Node[K, V]?) -> Int {
 }
 
 ///|
-fn debug_node[K : Show, V : Show](self : Node[K, V]) -> String {
+fn[K : Show, V : Show] debug_node(self : Node[K, V]) -> String {
   let l = match self.left {
     Some(left) => left.debug_node()
     None => "_"
@@ -53,7 +53,7 @@ fn debug_node[K : Show, V : Show](self : Node[K, V]) -> String {
 }
 
 ///|
-fn debug_tree[K : Show, V : Show](self : T[K, V]) -> String {
+fn[K : Show, V : Show] debug_tree(self : T[K, V]) -> String {
   match self.root {
     Some(root) => root.debug_node()
     None => "_"

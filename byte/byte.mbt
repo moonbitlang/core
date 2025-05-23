@@ -32,7 +32,7 @@ pub let min_value : Byte = b'\x00'
 /// ```moonbit
 /// test "to_uint64" {
 ///   let b = b'\xFF'
-///   inspect!(b.to_uint64(), content="255")
+///   inspect(b.to_uint64(), content="255")
 /// }
 /// ```
 pub fn to_uint64(self : Byte) -> UInt64 {
@@ -53,7 +53,7 @@ pub fn to_uint64(self : Byte) -> UInt64 {
 /// ```moonbit
 /// test "popcnt" {
 ///   let b = b'\x0F'
-///   inspect!(b.popcnt(), content="4")
+///   inspect(b.popcnt(), content="4")
 /// }
 /// ```
 pub fn popcnt(self : Byte) -> Int {

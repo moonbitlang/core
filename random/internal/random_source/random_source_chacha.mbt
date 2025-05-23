@@ -81,7 +81,7 @@ test "bytesToUInt64" {
   for i in 0..<2 {
     bytes[i] = i.to_byte()
   }
-  inspect!(bytesToUInt64(bytes), content="256")
+  inspect(bytesToUInt64(bytes), content="256")
 }
 
 ///|

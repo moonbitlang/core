@@ -17,9 +17,9 @@ test "byte.to_string" {
   let b1 = b'\x00'
   let b2 = b'\x0F'
   let b3 = b'\xFF'
-  inspect!(b1, content="b'\\x00'")
-  inspect!(b2, content="b'\\x0F'")
-  inspect!(b3, content="b'\\xFF'")
+  inspect(b1, content="b'\\x00'")
+  inspect(b2, content="b'\\x0F'")
+  inspect(b3, content="b'\\xFF'")
 }
 
 ///|
@@ -84,120 +84,120 @@ test "byte_land" {
 
 ///|
 test "byte_shr" {
-  inspect!(b'\x01' >> 1, content="b'\\x00'")
-  inspect!(b'\x02' >> 1, content="b'\\x01'")
-  inspect!(b'\x04' >> 2, content="b'\\x01'")
-  inspect!(b'\x00' >> 1, content="b'\\x00'")
-  inspect!(b'\xFF' >> 0, content="b'\\xFF'")
-  inspect!(b'\xFF' >> 8, content="b'\\x00'")
-  inspect!(b'\x10' >> 3, content="b'\\x02'")
-  inspect!(b'\x20' >> 4, content="b'\\x02'")
-  inspect!(b'\x40' >> 5, content="b'\\x02'")
-  inspect!(b'\x80' >> 6, content="b'\\x02'")
-  inspect!(b'\x08' >> 2, content="b'\\x02'")
-  inspect!(b'\x02' >> 1, content="b'\\x01'")
+  inspect(b'\x01' >> 1, content="b'\\x00'")
+  inspect(b'\x02' >> 1, content="b'\\x01'")
+  inspect(b'\x04' >> 2, content="b'\\x01'")
+  inspect(b'\x00' >> 1, content="b'\\x00'")
+  inspect(b'\xFF' >> 0, content="b'\\xFF'")
+  inspect(b'\xFF' >> 8, content="b'\\x00'")
+  inspect(b'\x10' >> 3, content="b'\\x02'")
+  inspect(b'\x20' >> 4, content="b'\\x02'")
+  inspect(b'\x40' >> 5, content="b'\\x02'")
+  inspect(b'\x80' >> 6, content="b'\\x02'")
+  inspect(b'\x08' >> 2, content="b'\\x02'")
+  inspect(b'\x02' >> 1, content="b'\\x01'")
 }
 
 ///|
 test "byte_shl" {
   // Test for the smallest possible shift count
-  inspect!(b'\x01' << 0, content="b'\\x01'")
+  inspect(b'\x01' << 0, content="b'\\x01'")
 
   // Test for the largest possible shift count within the range of Int
-  inspect!(b'\x01' << 7, content="b'\\x80'")
+  inspect(b'\x01' << 7, content="b'\\x80'")
 
   // Test for the largest possible shift count that causes overflow
-  inspect!(b'\x01' << 8, content="b'\\x00'")
+  inspect(b'\x01' << 8, content="b'\\x00'")
 
   // Test for a negative shift count
-  inspect!(b'\x01' << -1, content="b'\\x00'")
+  inspect(b'\x01' << -1, content="b'\\x00'")
   // Random byte value and shift count
-  inspect!(b'\x05' << 2, content="b'\\x14'")
+  inspect(b'\x05' << 2, content="b'\\x14'")
 
   // Another random byte value and shift count
-  inspect!(b'\x0A' << 3, content="b'\\x50'")
+  inspect(b'\x0A' << 3, content="b'\\x50'")
 
   // Random byte value and shift count
-  inspect!(b'\x10' << 4, content="b'\\x00'")
+  inspect(b'\x10' << 4, content="b'\\x00'")
 
   // Random byte value and shift count
-  inspect!(b'\x20' << 5, content="b'\\x00'")
+  inspect(b'\x20' << 5, content="b'\\x00'")
 
   // Random byte value and shift count
-  inspect!(b'\x40' << 6, content="b'\\x00'")
+  inspect(b'\x40' << 6, content="b'\\x00'")
 
   // Random byte value and shift count
-  inspect!(b'\x80' << 7, content="b'\\x00'")
+  inspect(b'\x80' << 7, content="b'\\x00'")
   // Test for zero byte with various shift counts
-  inspect!(b'\x00' << 0, content="b'\\x00'")
-  inspect!(b'\x00' << 1, content="b'\\x00'")
-  inspect!(b'\x00' << 7, content="b'\\x00'")
-  inspect!(b'\x00' << 8, content="b'\\x00'")
-  inspect!(b'\x00' << -1, content="b'\\x00'")
+  inspect(b'\x00' << 0, content="b'\\x00'")
+  inspect(b'\x00' << 1, content="b'\\x00'")
+  inspect(b'\x00' << 7, content="b'\\x00'")
+  inspect(b'\x00' << 8, content="b'\\x00'")
+  inspect(b'\x00' << -1, content="b'\\x00'")
   // Test for maximum byte value with various shift counts
-  inspect!(b'\xFF' << 0, content="b'\\xFF'")
-  inspect!(b'\xFF' << 1, content="b'\\xFE'")
-  inspect!(b'\xFF' << 7, content="b'\\x80'")
-  inspect!(b'\xFF' << 8, content="b'\\x00'")
-  inspect!(b'\xFF' << -1, content="b'\\x00'")
+  inspect(b'\xFF' << 0, content="b'\\xFF'")
+  inspect(b'\xFF' << 1, content="b'\\xFE'")
+  inspect(b'\xFF' << 7, content="b'\\x80'")
+  inspect(b'\xFF' << 8, content="b'\\x00'")
+  inspect(b'\xFF' << -1, content="b'\\x00'")
 }
 
 ///|
 test "byte_op_add" {
-  inspect!(b'\x01' + b'\x02', content="b'\\x03'")
-  inspect!(b'\x05' + b'\x05', content="b'\\x0A'")
-  inspect!(b'\x0A' + b'\x0A', content="b'\\x14'")
-  inspect!(b'\x00' + b'\x00', content="b'\\x00'")
-  inspect!(b'\xFF' + b'\x01', content="b'\\x00'")
-  inspect!(b'\x7F' + b'\x01', content="b'\\x80'")
-  inspect!(b'\x10' + b'\x20', content="b'\\x30'")
-  inspect!(b'\x3A' + b'\x4B', content="b'\\x85'")
-  inspect!(b'\x5C' + b'\x6D', content="b'\\xC9'")
-  inspect!(b'\x7E' + b'\x7F', content="b'\\xFD'")
-  inspect!(b'\x8A' + b'\x9B', content="b'\\x25'")
-  inspect!(b'\xB0' + b'\xC1', content="b'\\x71'")
+  inspect(b'\x01' + b'\x02', content="b'\\x03'")
+  inspect(b'\x05' + b'\x05', content="b'\\x0A'")
+  inspect(b'\x0A' + b'\x0A', content="b'\\x14'")
+  inspect(b'\x00' + b'\x00', content="b'\\x00'")
+  inspect(b'\xFF' + b'\x01', content="b'\\x00'")
+  inspect(b'\x7F' + b'\x01', content="b'\\x80'")
+  inspect(b'\x10' + b'\x20', content="b'\\x30'")
+  inspect(b'\x3A' + b'\x4B', content="b'\\x85'")
+  inspect(b'\x5C' + b'\x6D', content="b'\\xC9'")
+  inspect(b'\x7E' + b'\x7F', content="b'\\xFD'")
+  inspect(b'\x8A' + b'\x9B', content="b'\\x25'")
+  inspect(b'\xB0' + b'\xC1', content="b'\\x71'")
 }
 
 ///|
 test "byte_op_sub" {
   // Test for the smallest possible byte values
-  inspect!(b'\x00' - b'\x00', content="b'\\x00'")
-  inspect!(b'\x00' - b'\x01', content="b'\\xFF'") // Underflow case
-  inspect!(b'\x01' - b'\x00', content="b'\\x01'")
+  inspect(b'\x00' - b'\x00', content="b'\\x00'")
+  inspect(b'\x00' - b'\x01', content="b'\\xFF'") // Underflow case
+  inspect(b'\x01' - b'\x00', content="b'\\x01'")
 
   // Test for the largest possible byte values
-  inspect!(b'\xFF' - b'\x00', content="b'\\xFF'")
-  inspect!(b'\xFF' - b'\xFF', content="b'\\x00'")
-  inspect!(b'\xFF' - b'\x01', content="b'\\xFE'")
+  inspect(b'\xFF' - b'\x00', content="b'\\xFF'")
+  inspect(b'\xFF' - b'\xFF', content="b'\\x00'")
+  inspect(b'\xFF' - b'\x01', content="b'\\xFE'")
   // Random byte values
-  inspect!(b'\x3F' - b'\x2A', content="b'\\x15'")
-  inspect!(b'\x7A' - b'\x4B', content="b'\\x2F'")
-  inspect!(b'\xB5' - b'\x8C', content="b'\\x29'")
-  inspect!(b'\x12' - b'\x34', content="b'\\xDE'") // Underflow case
-  inspect!(b'\x9A' - b'\x78', content="b'\\x22'")
-  inspect!(b'\x4D' - b'\x6E', content="b'\\xDF'") // Underflow case
+  inspect(b'\x3F' - b'\x2A', content="b'\\x15'")
+  inspect(b'\x7A' - b'\x4B', content="b'\\x2F'")
+  inspect(b'\xB5' - b'\x8C', content="b'\\x29'")
+  inspect(b'\x12' - b'\x34', content="b'\\xDE'") // Underflow case
+  inspect(b'\x9A' - b'\x78', content="b'\\x22'")
+  inspect(b'\x4D' - b'\x6E', content="b'\\xDF'") // Underflow case
   // Test cases where the result should underflow
-  inspect!(b'\x00' - b'\x01', content="b'\\xFF'")
-  inspect!(b'\x05' - b'\x0A', content="b'\\xFB'")
-  inspect!(b'\x10' - b'\x20', content="b'\\xF0'")
-  inspect!(b'\x80' - b'\xFF', content="b'\\x81'")
-  inspect!(b'\x0F' - b'\x10', content="b'\\xFF'")
+  inspect(b'\x00' - b'\x01', content="b'\\xFF'")
+  inspect(b'\x05' - b'\x0A', content="b'\\xFB'")
+  inspect(b'\x10' - b'\x20', content="b'\\xF0'")
+  inspect(b'\x80' - b'\xFF', content="b'\\x81'")
+  inspect(b'\x0F' - b'\x10', content="b'\\xFF'")
 }
 
 ///|
 test "byte_op_mul" {
-  inspect!((8 : Byte) * 16, content="b'\\x80'")
-  inspect!((3 : Byte) * 200, content="b'\\x58'")
+  inspect((8 : Byte) * 16, content="b'\\x80'")
+  inspect((3 : Byte) * 200, content="b'\\x58'")
 }
 
 ///|
 test "byte_op_div" {
-  inspect!((80 : Byte) / 8, content="b'\\x0A'")
-  inspect!((10 : Byte) / 3, content="b'\\x03'")
+  inspect((80 : Byte) / 8, content="b'\\x0A'")
+  inspect((10 : Byte) / 3, content="b'\\x03'")
 }
 
 ///|
 test "byte_op_mod" {
-  inspect!((80 : Byte) % 8, content="b'\\x00'")
-  inspect!((42 : Byte) % 17, content="b'\\x08'")
+  inspect((80 : Byte) % 8, content="b'\\x00'")
+  inspect((42 : Byte) % 17, content="b'\\x08'")
 }

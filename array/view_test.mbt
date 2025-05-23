@@ -35,7 +35,7 @@ test "eachi" {
   let v = [3, 4, 5][:]
   let mut sum = 0
   v.eachi(fn(i, x) { sum = sum + x + i })
-  inspect!(sum, content="15")
+  inspect(sum, content="15")
 }
 
 ///|
@@ -85,46 +85,62 @@ test "compare" {
 ///|
 test "iter" {
   let array = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-  @json.inspect!(array[:].iter().to_array(), content=[
+  @json.inspect(array[:].iter().to_array(), content=[
     0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
   ])
-  @json.inspect!(array[5:].iter().to_array(), content=[5, 6, 7, 8, 9, 10])
-  @json.inspect!(array[5:9].iter().to_array(), content=[5, 6, 7, 8])
+  @json.inspect(array[5:].iter().to_array(), content=[5, 6, 7, 8, 9, 10])
+  @json.inspect(array[5:9].iter().to_array(), content=[5, 6, 7, 8])
+}
+
+///|
+test "iter2" {
+  let arr = [1, 2, 3]
+  let view = arr[1:]
+  let mut sum = 0
+  let mut sum_keys = 0
+  view
+  .iter2()
+  .each(fn(i, x) {
+    sum = sum + x
+    sum_keys = sum_keys + i
+  })
+  inspect(sum, content="5")
+  inspect(sum_keys, content="1")
 }
 
 ///|
 test "to_string" {
   let arr = [0, 1, 2, 3, 4]
-  @json.inspect!(arr[1:3], content=[1, 2])
-  @json.inspect!("\{arr[1:3]}!", content="[1, 2]!")
+  @json.inspect(arr[1:3], content=[1, 2])
+  @json.inspect("\{arr[1:3]}!", content="[1, 2]!")
 }
 
 ///|
 test "arrayview_fold" {
   let arr = [1, 2, 3][:]
   let sum = arr.fold(fn(acc, x) { acc + x }, init=0)
-  inspect!(sum, content="6")
+  inspect(sum, content="6")
 }
 
 ///|
 test "arrayview_rev_fold" {
   let arr = [1, 2, 3][:]
   let sum = arr.rev_fold(fn(acc, x) { acc + x }, init=0)
-  inspect!(sum, content="6")
+  inspect(sum, content="6")
 }
 
 ///|
 test "arrayview_foldi" {
   let arr = [1, 2, 3][:]
   let sum = arr.foldi(fn(i, acc, x) { acc + i + x }, init=0)
-  inspect!(sum, content="9")
+  inspect(sum, content="9")
 }
 
 ///|
 test "arrayview_rev_foldi" {
   let arr = [1, 2, 3][:]
   let sum = arr.rev_foldi(fn(i, acc, x) { acc + i + x }, init=0)
-  inspect!(sum, content="9")
+  inspect(sum, content="9")
 }
 
 ///|
@@ -134,7 +150,7 @@ test "arrayview_map" {
   assert_eq!(mapped.length(), 2)
   assert_eq!(mapped[0], 4)
   assert_eq!(mapped[1], 6)
-  @json.inspect!(([1] : Array[Int])[1:].map(fn(x) { x }), content=[])
+  @json.inspect(([1] : Array[Int])[1:].map(fn(x) { x }), content=[])
 }
 
 ///|
@@ -154,7 +170,7 @@ test "arrayview_mapi" {
   assert_eq!(mapped.length(), 2)
   assert_eq!(mapped[0], 2)
   assert_eq!(mapped[1], 4)
-  inspect!(([1] : Array[Int])[1:].mapi(fn(_idx, x) { x }), content="[]")
+  inspect(([1] : Array[Int])[1:].mapi(fn(_idx, x) { x }), content="[]")
 }
 
 ///|
@@ -189,8 +205,8 @@ test "arrayview_to_array" {
 ///|
 test "arrayview_arbitrary" {
   let arr : Array[ArrayView[Int]] = @quickcheck.samples(20)
-  inspect!(arr[5:9], content="[[], [], [0], [0, 0]]")
-  inspect!(
+  inspect(arr[5:9], content="[[], [], [0], [0, 0]]")
+  inspect(
     arr[10:15],
     content="[[0, 0, 1, 0, -2], [0, 0, 0, -1, -2], [0, 0, 0, 0, 0, -2, -5, 4, 0, 8], [0, 0, -1, 2], [0, 0]]",
   )
@@ -199,6 +215,6 @@ test "arrayview_arbitrary" {
 ///|
 test "arrayview_hash" {
   let arr : Array[ArrayView[Int]] = @quickcheck.samples(20)
-  inspect!(arr[5:9].hash(), content="-966877954")
-  inspect!(arr[10:15].hash(), content="-951019668")
+  inspect(arr[5:9].hash(), content="-966877954")
+  inspect(arr[10:15].hash(), content="-951019668")
 }

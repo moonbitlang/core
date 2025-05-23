@@ -32,16 +32,16 @@ let syntax_err_str = "invalid syntax"
 let base_err_str = "invalid base"
 
 ///|
-fn range_err[T]() -> T!StrConvError {
+fn[T] range_err() -> T!StrConvError {
   raise StrConvError(range_err_str)
 }
 
 ///|
-fn syntax_err[T]() -> T!StrConvError {
+fn[T] syntax_err() -> T!StrConvError {
   raise StrConvError(syntax_err_str)
 }
 
 ///|
-fn base_err[T]() -> T!StrConvError {
+fn[T] base_err() -> T!StrConvError {
   raise StrConvError(base_err_str)
 }

@@ -91,16 +91,16 @@ fn index_at_rev_(
 pub fn String::op_as_view(self : String, start~ : Int = 0, end? : Int) -> View {
   let str_len = self.length()
   let start = if start >= 0 {
-    index_at_(self, start, start=0).unwrap()._
+    self.index_at_(start, start=0).unwrap()._
   } else {
-    index_at_rev_(self, -start, end=str_len).unwrap()._
+    self.index_at_rev_(-start, end=str_len).unwrap()._
   }
   let end = match end {
     Some(end) =>
       if end >= 0 {
-        index_at_(self, end, start=0).unwrap()._
+        self.index_at_(end, start=0).unwrap()._
       } else {
-        index_at_rev_(self, -end, end=str_len).unwrap()._
+        self.index_at_rev_(-end, end=str_len).unwrap()._
       }
     None => str_len
   }
@@ -115,16 +115,16 @@ pub fn String::op_as_view(self : String, start~ : Int = 0, end? : Int) -> View {
 #coverage.skip
 pub fn View::op_as_view(self : View, start~ : Int = 0, end? : Int) -> View {
   let start = if start >= 0 {
-    index_at_(self.str, start, start=self.start).unwrap()._
+    self.str.index_at_(start, start=self.start).unwrap()._
   } else {
-    index_at_rev_(self.str, -start, end=self.end).unwrap()._
+    self.str.index_at_rev_(-start, end=self.end).unwrap()._
   }
   let end = match end {
     Some(end) =>
       if end >= 0 {
-        index_at_(self.str, end, start=self.start).unwrap()._
+        self.str.index_at_(end, start=self.start).unwrap()._
       } else {
-        index_at_rev_(self.str, -end, end=self.end).unwrap()._
+        self.str.index_at_rev_(-end, end=self.end).unwrap()._
       }
     None => self.end
   }

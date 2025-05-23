@@ -9,18 +9,18 @@ Functions for determining if a character belongs to various ASCII categories.
 ```moonbit
 test "ascii classification" {
   // Basic ASCII checks
-  inspect!(@char.is_ascii('A'), content="true")
-  inspect!(@char.is_ascii('λ'), content="false")
+  inspect('A'.is_ascii(), content="true")
+  inspect('λ'.is_ascii(), content="false")
 
   // Letter classification
-  inspect!(@char.is_ascii_alphabetic('Z'), content="true")
-  inspect!(@char.is_ascii_alphabetic('1'), content="false")
+  inspect('Z'.is_ascii_alphabetic(), content="true")
+  inspect('1'.is_ascii_alphabetic(), content="false")
 
   // Case classification
-  inspect!(@char.is_ascii_uppercase('A'), content="true")
-  inspect!(@char.is_ascii_uppercase('a'), content="false")
-  inspect!(@char.is_ascii_lowercase('a'), content="true")
-  inspect!(@char.is_ascii_lowercase('A'), content="false")
+  inspect('A'.is_ascii_uppercase(), content="true")
+  inspect('a'.is_ascii_uppercase(), content="false")
+  inspect('a'.is_ascii_lowercase(), content="true")
+  inspect('A'.is_ascii_lowercase(), content="false")
 }
 ```
 
@@ -31,24 +31,24 @@ Functions for identifying digits in different number bases.
 ```moonbit
 test "number classification" {
   // Decimal digits
-  inspect!(@char.is_ascii_digit('5'), content="true")
-  inspect!(@char.is_ascii_digit('x'), content="false")
+  inspect('5'.is_ascii_digit(), content="true")
+  inspect('x'.is_ascii_digit(), content="false")
 
   // Hexadecimal digits
-  inspect!(@char.is_ascii_hexdigit('F'), content="true")
-  inspect!(@char.is_ascii_hexdigit('G'), content="false")
+  inspect('F'.is_ascii_hexdigit(), content="true")
+  inspect('G'.is_ascii_hexdigit(), content="false")
 
   // Octal digits
-  inspect!(@char.is_ascii_octdigit('7'), content="true")
-  inspect!(@char.is_ascii_octdigit('8'), content="false")
+  inspect('7'.is_ascii_octdigit(), content="true")
+  inspect('8'.is_ascii_octdigit(), content="false")
 
   // Custom base digits
-  inspect!(@char.is_digit('5', 6U), content="true")
-  inspect!(@char.is_digit('6', 6U), content="false")
+  inspect('5'.is_digit(6U), content="true")
+  inspect('6'.is_digit(6U), content="false")
 
   // General numeric characters
-  inspect!(@char.is_numeric('1'), content="true")
-  inspect!(@char.is_numeric('A'), content="false")
+  inspect('1'.is_numeric(), content="true")
+  inspect('A'.is_numeric(), content="false")
 }
 ```
 
@@ -59,17 +59,17 @@ Functions for identifying whitespace, control characters and other special chara
 ```moonbit
 test "special characters" {
   // Whitespace characters
-  inspect!(@char.is_ascii_whitespace(' '), content="true")
-  inspect!(@char.is_whitespace('\n'), content="true")
+  inspect(' '.is_ascii_whitespace(), content="true")
+  inspect('\n'.is_whitespace(), content="true")
 
   // Control characters
-  inspect!(@char.is_ascii_control('\u0000'), content="true")
-  inspect!(@char.is_control('\u007F'), content="true")
+  inspect('\u0000'.is_ascii_control(), content="true")
+  inspect('\u007F'.is_control(), content="true")
 
   // Graphic and punctuation characters
-  inspect!(@char.is_ascii_graphic('!'), content="true")
-  inspect!(@char.is_ascii_graphic(' '), content="false")
-  inspect!(@char.is_ascii_punctuation(','), content="true")
+  inspect('!'.is_ascii_graphic(), content="true")
+  inspect(' '.is_ascii_graphic(), content="false")
+  inspect(','.is_ascii_punctuation(), content="true")
 }
 ```
 
@@ -81,19 +81,19 @@ All character classification functions can also be called as methods directly on
 test "method style" {
   // Letter methods
   let c = 'A'
-  inspect!(c.is_ascii(), content="true")
-  inspect!(c.is_ascii_alphabetic(), content="true")
-  inspect!(c.is_ascii_uppercase(), content="true")
+  inspect(c.is_ascii(), content="true")
+  inspect(c.is_ascii_alphabetic(), content="true")
+  inspect(c.is_ascii_uppercase(), content="true")
 
   // Digit methods
   let d = '7'
-  inspect!(d.is_ascii_digit(), content="true")
-  inspect!(d.is_digit(8U), content="true")
-  inspect!(d.is_ascii_hexdigit(), content="true")
+  inspect(d.is_ascii_digit(), content="true")
+  inspect(d.is_digit(8U), content="true")
+  inspect(d.is_ascii_hexdigit(), content="true")
 
   // Special character methods
   let s = ' '
-  inspect!(s.is_ascii_whitespace(), content="true")
-  inspect!(s.is_whitespace(), content="true")
+  inspect(s.is_ascii_whitespace(), content="true")
+  inspect(s.is_whitespace(), content="true")
 }
 ```

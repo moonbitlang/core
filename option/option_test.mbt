@@ -45,8 +45,8 @@ fn test_option_arg(x? : Int, y? : Int) -> Int {
 
 ///|
 test {
-  inspect!(test_option_arg(), content="7")
-  inspect!(test_option_arg(x=1), content="5")
-  inspect!(test_option_arg(y=2), content="5")
-  inspect!(test_option_arg(x=1, y=2), content="3")
+  inspect(test_option_arg(), content="7")
+  inspect(test_option_arg(x=1), content="5")
+  inspect(test_option_arg(y=2), content="5")
+  inspect(test_option_arg(x=1, y=2), content="3")
 }

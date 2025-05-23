@@ -74,7 +74,7 @@ You can use `iter()` to get an iterator of the array, or use `each()` to iterate
 ```moonbit
 test {
   let arr = @array.of([1, 2, 3, 4, 5])
-  inspect!(arr.iter(), content="[1, 2, 3, 4, 5]")
+  inspect(arr.iter(), content="[1, 2, 3, 4, 5]")
   let val = []
   arr.each(fn(v) { val.push(v) })
   assert_eq!(val, [1, 2, 3, 4, 5])

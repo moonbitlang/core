@@ -5,15 +5,15 @@ import(
 )
 
 // Values
-fn map[T, R](Ref[T], (T) -> R) -> Ref[R]
+fn[T, R] map(Ref[T], (T) -> R) -> Ref[R]
 
-fn new[T](T) -> Ref[T]
+fn[T] new(T) -> Ref[T]
 
-fn protect[T, R](Ref[T], T, () -> R) -> R
+fn[T, R] protect(Ref[T], T, () -> R) -> R
 
-fn swap[T](Ref[T], Ref[T]) -> Unit
+fn[T] swap(Ref[T], Ref[T]) -> Unit
 
-fn update[T](Ref[T], (T) -> T) -> Unit
+fn[T] update(Ref[T], (T) -> T) -> Unit
 
 // Types and methods
 impl Ref {

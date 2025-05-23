@@ -5,47 +5,47 @@ import(
 )
 
 // Values
-fn clear[A](T[A]) -> Unit
+fn[A] clear(T[A]) -> Unit
 
-fn copy[A](T[A]) -> T[A]
+fn[A] copy(T[A]) -> T[A]
 
-fn each[A](T[A], (A) -> Unit) -> Unit
+fn[A] each(T[A], (A) -> Unit) -> Unit
 
-fn eachi[A](T[A], (Int, A) -> Unit) -> Unit
+fn[A] eachi(T[A], (Int, A) -> Unit) -> Unit
 
-fn fold[A, B](T[A], init~ : B, (B, A) -> B) -> B
+fn[A, B] fold(T[A], init~ : B, (B, A) -> B) -> B
 
-fn from_array[A](Array[A]) -> T[A]
+fn[A] from_array(Array[A]) -> T[A]
 
-fn from_iter[A](Iter[A]) -> T[A]
+fn[A] from_iter(Iter[A]) -> T[A]
 
-fn is_empty[A](T[A]) -> Bool
+fn[A] is_empty(T[A]) -> Bool
 
-fn iter[A](T[A]) -> Iter[A]
+fn[A] iter(T[A]) -> Iter[A]
 
-fn length[A](T[A]) -> Int
+fn[A] length(T[A]) -> Int
 
-fn new[A]() -> T[A]
+fn[A] new() -> T[A]
 
-fn of[A](FixedArray[A]) -> T[A]
+fn[A] of(FixedArray[A]) -> T[A]
 
-fn peek[A](T[A]) -> A?
-
-#deprecated
-fn peek_exn[A](T[A]) -> A
-
-fn pop[A](T[A]) -> A?
+fn[A] peek(T[A]) -> A?
 
 #deprecated
-fn pop_exn[A](T[A]) -> A
+fn[A] peek_exn(T[A]) -> A
 
-fn push[A](T[A], A) -> Unit
+fn[A] pop(T[A]) -> A?
 
-fn transfer[A](T[A], T[A]) -> Unit
+#deprecated
+fn[A] pop_exn(T[A]) -> A
 
-fn unsafe_peek[A](T[A]) -> A
+fn[A] push(T[A], A) -> Unit
 
-fn unsafe_pop[A](T[A]) -> A
+fn[A] transfer(T[A], T[A]) -> Unit
+
+fn[A] unsafe_peek(T[A]) -> A
+
+fn[A] unsafe_pop(T[A]) -> A
 
 // Types and methods
 type T[A]

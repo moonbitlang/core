@@ -92,7 +92,7 @@ test "expect_char" {
   ctx.expect_char!('a')
   ctx.expect_char!('b')
   ctx.expect_char!('c')
-  inspect!(
+  inspect(
     ctx.expect_char?('d').to_string(),
     content="Err(Unexpected end of file)",
   )
@@ -108,7 +108,7 @@ test "expect_char with surrogate pair" {
   ctx.expect_char!('c')
   ctx.expect_char!((0x1F600).unsafe_to_char())
   ctx.expect_char!('c')
-  inspect!(
+  inspect(
     ctx.expect_char?('d').to_string(),
     content="Err(Unexpected end of file)",
   )

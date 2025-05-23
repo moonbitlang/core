@@ -16,7 +16,7 @@
 test "parse_uint64 overflow check" {
   let largest_uint64 = "18446744073709551615" // Maximum UInt64 value
   let result = @strconv.parse_uint64!(largest_uint64)
-  inspect!(result, content="18446744073709551615")
+  inspect(result, content="18446744073709551615")
 
   // Test overflow with very large value
   try {

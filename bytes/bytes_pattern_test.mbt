@@ -103,15 +103,15 @@ test "decode_utf8_basic" {
 test "decode_utf8_invalid" {
   // Incomplete 2-byte sequence
   let incomplete_2byte = b"\xC3"
-  inspect!(decode_utf8(incomplete_2byte), content="")
+  inspect(decode_utf8(incomplete_2byte), content="")
 
   // Incomplete 3-byte sequence
   let incomplete_3byte = b"\xE4\xBD"
-  inspect!(decode_utf8(incomplete_3byte), content="")
+  inspect(decode_utf8(incomplete_3byte), content="")
 
   // Invalid continuation byte
   // let invalid_continuation = b"\xE4\x00\xA0"
-  // inspect!(decode_utf8(invalid_continuation), content="\x00")
+  // inspect(decode_utf8(invalid_continuation), content="\x00")
 
   // Mixed valid and invalid
   let mixed_valid_invalid = b"A\xC3B\xE4\xBD\xA0"

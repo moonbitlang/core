@@ -14,30 +14,30 @@
 
 ///|
 #coverage.skip
-pub fn op_lt[T : Compare](self_ : T, other : T) -> Bool {
+pub fn[T : Compare] op_lt(self_ : T, other : T) -> Bool {
   self_.compare(other).is_neg()
 }
 
 ///|
 #coverage.skip
-pub fn op_gt[T : Compare](self_ : T, other : T) -> Bool {
+pub fn[T : Compare] op_gt(self_ : T, other : T) -> Bool {
   self_.compare(other).is_pos()
 }
 
 ///|
 #coverage.skip
-pub fn op_le[T : Compare](self_ : T, other : T) -> Bool {
+pub fn[T : Compare] op_le(self_ : T, other : T) -> Bool {
   self_.compare(other).is_non_pos()
 }
 
 ///|
 #coverage.skip
-pub fn op_ge[T : Compare](self_ : T, other : T) -> Bool {
+pub fn[T : Compare] op_ge(self_ : T, other : T) -> Bool {
   self_.compare(other).is_non_neg()
 }
 
 ///|
 #coverage.skip
-pub fn op_notequal[T : Eq](x : T, y : T) -> Bool {
+pub fn[T : Eq] op_notequal(x : T, y : T) -> Bool {
   not(x == y)
 }

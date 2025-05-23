@@ -5,29 +5,29 @@ import(
 )
 
 // Values
-fn add[A : Eq + Hash](T[A], A) -> T[A]
+fn[A : Eq + Hash] add(T[A], A) -> T[A]
 
-fn contains[A : Eq + Hash](T[A], A) -> Bool
+fn[A : Eq + Hash] contains(T[A], A) -> Bool
 
-fn each[A](T[A], (A) -> Unit) -> Unit
+fn[A] each(T[A], (A) -> Unit) -> Unit
 
-fn from_array[A : Eq + Hash](Array[A]) -> T[A]
+fn[A : Eq + Hash] from_array(Array[A]) -> T[A]
 
-fn from_iter[A : Eq + Hash](Iter[A]) -> T[A]
+fn[A : Eq + Hash] from_iter(Iter[A]) -> T[A]
 
-fn is_empty[A](T[A]) -> Bool
+fn[A] is_empty(T[A]) -> Bool
 
-fn iter[A](T[A]) -> Iter[A]
+fn[A] iter(T[A]) -> Iter[A]
 
-fn new[A]() -> T[A]
+fn[A] new() -> T[A]
 
-fn of[A : Eq + Hash](FixedArray[A]) -> T[A]
+fn[A : Eq + Hash] of(FixedArray[A]) -> T[A]
 
-fn remove[A : Eq + Hash](T[A], A) -> T[A]
+fn[A : Eq + Hash] remove(T[A], A) -> T[A]
 
-fn size[A](T[A]) -> Int
+fn[A] size(T[A]) -> Int
 
-fn union[K : Eq + Hash](T[K], T[K]) -> T[K]
+fn[K : Eq + Hash] union(T[K], T[K]) -> T[K]
 
 // Types and methods
 type T[A]

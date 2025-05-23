@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-pub fn samples[X : Arbitrary](x : Int) -> Array[X] {
+pub fn[X : Arbitrary] samples(x : Int) -> Array[X] {
   let rs = @splitmix.new()
   let array = Array::make(x, X::arbitrary(0, rs))
   for i in 1..<x {

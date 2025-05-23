@@ -15,7 +15,7 @@
 ///|
 test "new" {
   let m : @hashmap.T[Int, Int] = @hashmap.new()
-  inspect!(m.capacity(), content="8")
+  inspect(m.capacity(), content="8")
   assert_eq!(m.size(), 0)
 }
 
@@ -25,10 +25,10 @@ test "get" {
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
-  inspect!(m.get("a"), content="Some(1)")
-  inspect!(m.get("b"), content="Some(2)")
-  inspect!(m.get("c"), content="Some(3)")
-  inspect!(m.get("d"), content="None")
+  inspect(m.get("a"), content="Some(1)")
+  inspect(m.get("b"), content="Some(2)")
+  inspect(m.get("c"), content="Some(3)")
+  inspect(m.get("d"), content="None")
 }
 
 ///|
@@ -137,7 +137,7 @@ test "iter" {
     let (k, v) = e
     buf.write_string("[\{k}-\{v}]")
   })
-  inspect!(buf, content="[2-two][1-one][3-three]")
+  inspect(buf, content="[2-two][1-one][3-three]")
   buf.reset()
   map
   .iter()
@@ -146,7 +146,7 @@ test "iter" {
     let (k, v) = e
     buf.write_string("[\{k}-\{v}]")
   })
-  inspect!(buf, content="[2-two][1-one]")
+  inspect(buf, content="[2-two][1-one]")
 }
 
 ///|
@@ -156,13 +156,13 @@ test "iter2" {
   for k, v in map {
     buf.write_string("[\{k}-\{v}]")
   }
-  inspect!(buf, content="[2-two][1-one][3-three]")
+  inspect(buf, content="[2-two][1-one][3-three]")
 }
 
 ///|
 test "to_array" {
   let map = @hashmap.of([(1, "one"), (2, "two"), (3, "three")])
-  inspect!(
+  inspect(
     map.to_array(),
     content=
       #|[(2, "two"), (1, "one"), (3, "three")]
@@ -175,7 +175,7 @@ test "get_nonexistent_key" {
   let m = @hashmap.new()
   m.set("a", 1)
   m.set("b", 2)
-  inspect!(m.get("c"), content="None")
+  inspect(m.get("c"), content="None")
 }
 
 ///|
@@ -192,7 +192,7 @@ test "get_nonexistent_key" {
   let m = @hashmap.new()
   m.set("a", 1)
   m.set("b", 2)
-  inspect!(m.get("c"), content="None")
+  inspect(m.get("c"), content="None")
 }
 
 ///|
@@ -209,7 +209,7 @@ test "get_nonexistent_key" {
   let m = @hashmap.new()
   m.set("a", 1)
   m.set("b", 2)
-  inspect!(m.get("c"), content="None")
+  inspect(m.get("c"), content="None")
 }
 
 ///|
@@ -226,7 +226,7 @@ test "get_nonexistent_key" {
   let m = @hashmap.new()
   m.set("a", 1)
   m.set("b", 2)
-  inspect!(m.get("c"), content="None")
+  inspect(m.get("c"), content="None")
 }
 
 ///|
@@ -267,37 +267,37 @@ test "get_nonexistent_key_with_psl" {
   m.set("x", 24)
   m.set("y", 25)
   m.set("z", 26)
-  inspect!(m.get("A"), content="None")
-  inspect!(m.get("B"), content="None")
-  inspect!(m.get("C"), content="None")
-  inspect!(m.get("D"), content="None")
-  inspect!(m.get("E"), content="None")
-  inspect!(m.get("F"), content="None")
-  inspect!(m.get("G"), content="None")
-  inspect!(m.get("H"), content="None")
-  inspect!(m.get("I"), content="None")
-  inspect!(m.get("J"), content="None")
-  inspect!(m.get("K"), content="None")
-  inspect!(m.get("L"), content="None")
-  inspect!(m.get("M"), content="None")
-  inspect!(m.get("N"), content="None")
-  inspect!(m.get("O"), content="None")
-  inspect!(m.get("P"), content="None")
-  inspect!(m.get("Q"), content="None")
-  inspect!(m.get("R"), content="None")
-  inspect!(m.get("S"), content="None")
-  inspect!(m.get("T"), content="None")
-  inspect!(m.get("U"), content="None")
-  inspect!(m.get("V"), content="None")
-  inspect!(m.get("W"), content="None")
-  inspect!(m.get("X"), content="None")
-  inspect!(m.get("Y"), content="None")
-  inspect!(m.get("Z"), content="None")
+  inspect(m.get("A"), content="None")
+  inspect(m.get("B"), content="None")
+  inspect(m.get("C"), content="None")
+  inspect(m.get("D"), content="None")
+  inspect(m.get("E"), content="None")
+  inspect(m.get("F"), content="None")
+  inspect(m.get("G"), content="None")
+  inspect(m.get("H"), content="None")
+  inspect(m.get("I"), content="None")
+  inspect(m.get("J"), content="None")
+  inspect(m.get("K"), content="None")
+  inspect(m.get("L"), content="None")
+  inspect(m.get("M"), content="None")
+  inspect(m.get("N"), content="None")
+  inspect(m.get("O"), content="None")
+  inspect(m.get("P"), content="None")
+  inspect(m.get("Q"), content="None")
+  inspect(m.get("R"), content="None")
+  inspect(m.get("S"), content="None")
+  inspect(m.get("T"), content="None")
+  inspect(m.get("U"), content="None")
+  inspect(m.get("V"), content="None")
+  inspect(m.get("W"), content="None")
+  inspect(m.get("X"), content="None")
+  inspect(m.get("Y"), content="None")
+  inspect(m.get("Z"), content="None")
 }
 
 ///|
 test "from_iter multiple elements iter" {
-  inspect!(
+  inspect(
     @hashmap.from_iter([(1, 1), (2, 2), (3, 3)].iter()),
     content="HashMap::of([(2, 2), (1, 1), (3, 3)])",
   )
@@ -305,62 +305,62 @@ test "from_iter multiple elements iter" {
 
 ///|
 test "from_iter single element iter" {
-  inspect!(@hashmap.from_iter([(1, 1)].iter()), content="HashMap::of([(1, 1)])")
+  inspect(@hashmap.from_iter([(1, 1)].iter()), content="HashMap::of([(1, 1)])")
 }
 
 ///|
 test "from_iter empty iter" {
   let map : @hashmap.T[Int, Int] = @hashmap.from_iter(Iter::empty())
-  inspect!(map, content="HashMap::of([])")
+  inspect(map, content="HashMap::of([])")
 }
 
 ///|
 test "@hashmap.contains/empty" {
   let map : @hashmap.T[Int, String] = @hashmap.new()
-  inspect!(map.contains(42), content="false")
+  inspect(map.contains(42), content="false")
 }
 
 ///|
 test "@hashmap.contains/basic" {
   let map = @hashmap.of([(1, "one"), (2, "two"), (3, "three")])
-  inspect!(map.contains(2), content="true")
-  inspect!(map.contains(4), content="false")
+  inspect(map.contains(2), content="true")
+  inspect(map.contains(4), content="false")
 }
 
 ///|
 test "@hashmap.contains/after_operations" {
   let map = @hashmap.of([(1, "one"), (2, "two")])
   map.remove(1)
-  inspect!(map.contains(1), content="false")
+  inspect(map.contains(1), content="false")
   map.set(1, "ONE")
-  inspect!(map.contains(1), content="true")
+  inspect(map.contains(1), content="true")
   map.clear()
-  inspect!(map.contains(2), content="false")
+  inspect(map.contains(2), content="false")
 }
 
 ///|
 test "@hashmap.from_array" {
   let map = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
-  @json.inspect!(map, content={ "a": 1, "c": 3, "b": 2 })
+  @json.inspect(map, content={ "a": 1, "c": 3, "b": 2 })
 }
 
 ///|
 test "@hashmap.from_array with int key" {
   let map = @hashmap.from_array([(1, "one"), (2, "two"), (3, "three")])
-  @json.inspect!(map, content={ "2": "two", "1": "one", "3": "three" })
+  @json.inspect(map, content={ "2": "two", "1": "one", "3": "three" })
 }
 
 ///|
 test "@hashmap.contains_kv" {
   let map = @hashmap.of([(1, "one"), (2, "two"), (3, "three")])
-  inspect!(map.contains_kv(1, "one"), content="true")
-  inspect!(map.contains_kv(1, "two"), content="false")
-  inspect!(map.contains_kv(4, "four"), content="false")
+  inspect(map.contains_kv(1, "one"), content="true")
+  inspect(map.contains_kv(1, "two"), content="false")
+  inspect(map.contains_kv(4, "four"), content="false")
 }
 
 ///|
 test "@hashmap.eq" {
   let map1 = @hashmap.of([(1, "one"), (2, "two"), (3, "three")])
   let map2 = @hashmap.of([(1, "one"), (2, "two"), (3, "three")])
-  inspect!(map1 == map2, content="true")
+  inspect(map1 == map2, content="true")
 }

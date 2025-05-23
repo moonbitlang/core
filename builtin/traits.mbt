@@ -85,12 +85,12 @@ impl Show with to_string(self) {
 }
 
 ///|
-pub fn &Logger::write_object[Obj : Show](self : &Logger, obj : Obj) -> Unit {
+pub fn[Obj : Show] &Logger::write_object(self : &Logger, obj : Obj) -> Unit {
   obj.output(self)
 }
 
 ///|
-pub fn &Logger::write_iter[T : Show](
+pub fn[T : Show] &Logger::write_iter(
   self : &Logger,
   iter : Iter[T],
   prefix~ : String = "[",
@@ -121,7 +121,7 @@ pub fn &Logger::write_iter[T : Show](
 // TODO: Logger::write_double(self:Logger, val:Double) -> Unit
 
 ///|
-pub fn repr[T : Show](t : T) -> String {
+pub fn[T : Show] repr(t : T) -> String {
   let logger = StringBuilder::new()
   t.output(logger)
   logger.to_string()

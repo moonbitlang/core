@@ -19,5 +19,5 @@ pub impl Default for UInt64 with default() {
 
 ///|
 test {
-  inspect!(0x7000_0001_1F00_100FUL.popcnt(), content="14")
+  inspect(0x7000_0001_1F00_100FUL.popcnt(), content="14")
 }

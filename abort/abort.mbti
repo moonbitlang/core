@@ -1,7 +1,7 @@
 package "moonbitlang/core/abort"
 
 // Values
-fn abort[T](String) -> T
+fn[T] abort(String) -> T
 
 // Types and methods
 

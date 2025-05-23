@@ -29,10 +29,10 @@ test "panic @list.exn with empty list" {
 
 ///|
 test "panic @list.unsafe_maximum with empty list" {
-  inspect!((@list.empty() : @list.T[Int]).unsafe_maximum())
+  inspect((@list.empty() : @list.T[Int]).unsafe_maximum())
 }
 
 ///|
 test "panic @list.unsafe_minimum with empty list" {
-  inspect!((@list.empty() : @list.T[Int]).unsafe_minimum())
+  inspect((@list.empty() : @list.T[Int]).unsafe_minimum())
 }

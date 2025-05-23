@@ -14,96 +14,96 @@
 
 ///|
 test "array_as_view" {
-  inspect!([1, 2, 3][:].length(), content="3")
+  inspect([1, 2, 3][:].length(), content="3")
 }
 
 ///|
 test "view_as_view" {
-  inspect!([1, 2, 3][:][:].length(), content="3")
+  inspect([1, 2, 3][:][:].length(), content="3")
 }
 
 ///|
 test "op_get" {
-  inspect!([1, 2, 3][:][1], content="2")
-  inspect!([1, 2, 3][:][2], content="3")
+  inspect([1, 2, 3][:][1], content="2")
+  inspect([1, 2, 3][:][2], content="3")
 }
 
 ///|
 test "op_set" {
   let v = [1, 2, 3][:]
-  inspect!(v[1], content="2")
+  inspect(v[1], content="2")
   v[1] = 4
-  inspect!(v[1], content="4")
+  inspect(v[1], content="4")
 }
 
 ///|
 test "swap" {
   let v = [1, 2, 3][:]
-  inspect!(v[1], content="2")
+  inspect(v[1], content="2")
   v.swap(1, 2)
-  inspect!(v[1], content="3")
+  inspect(v[1], content="3")
 }
 
 ///|
 test "negative index1" {
   let arr = [1, 2, 3]
   let view = arr[-1:]
-  inspect!(view, content="[3]")
+  inspect(view, content="[3]")
   let view = arr[-2:]
-  inspect!(view, content="[2, 3]")
+  inspect(view, content="[2, 3]")
   let view = arr[-3:]
-  inspect!(view, content="[1, 2, 3]")
+  inspect(view, content="[1, 2, 3]")
   let view = arr[:-1]
-  inspect!(view, content="[1, 2]")
+  inspect(view, content="[1, 2]")
   let view = arr[:-2]
-  inspect!(view, content="[1]")
+  inspect(view, content="[1]")
   let view = arr[:-3]
-  inspect!(view, content="[]")
+  inspect(view, content="[]")
   let view = arr[-3:-3]
-  inspect!(view, content="[]")
+  inspect(view, content="[]")
   let view = arr[-3:-2]
-  inspect!(view, content="[1]")
+  inspect(view, content="[1]")
   let view = arr[-3:-1]
-  inspect!(view, content="[1, 2]")
+  inspect(view, content="[1, 2]")
   let view = arr[-3:0]
-  inspect!(view, content="[]")
+  inspect(view, content="[]")
   let view = arr[-3:1]
-  inspect!(view, content="[1]")
+  inspect(view, content="[1]")
   let view = arr[-3:2]
-  inspect!(view, content="[1, 2]")
+  inspect(view, content="[1, 2]")
   let view = arr[-3:3]
-  inspect!(view, content="[1, 2, 3]")
+  inspect(view, content="[1, 2, 3]")
 }
 
 ///|
 test "negative index2" {
   let arr = [0, 1, 2, 3, 4][1:4]
   let view = arr[-1:]
-  inspect!(view, content="[3]")
+  inspect(view, content="[3]")
   let view = arr[-2:]
-  inspect!(view, content="[2, 3]")
+  inspect(view, content="[2, 3]")
   let view = arr[-3:]
-  inspect!(view, content="[1, 2, 3]")
+  inspect(view, content="[1, 2, 3]")
   let view = arr[:-1]
-  inspect!(view, content="[1, 2]")
+  inspect(view, content="[1, 2]")
   let view = arr[:-2]
-  inspect!(view, content="[1]")
+  inspect(view, content="[1]")
   let view = arr[:-3]
-  inspect!(view, content="[]")
+  inspect(view, content="[]")
   let view = arr[-3:-3]
-  inspect!(view, content="[]")
+  inspect(view, content="[]")
   let view = arr[-3:-2]
-  inspect!(view, content="[1]")
+  inspect(view, content="[1]")
   let view = arr[-3:-1]
-  inspect!(view, content="[1, 2]")
+  inspect(view, content="[1, 2]")
   let view = arr[-3:0]
-  inspect!(view, content="[]")
+  inspect(view, content="[]")
   let view = arr[-3:1]
-  inspect!(view, content="[1]")
+  inspect(view, content="[1]")
   let view = arr[-3:2]
-  inspect!(view, content="[1, 2]")
+  inspect(view, content="[1, 2]")
   let view = arr[-3:3]
-  inspect!(view, content="[1, 2, 3]")
+  inspect(view, content="[1, 2, 3]")
 }
 
 ///|

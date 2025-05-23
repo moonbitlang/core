@@ -15,6 +15,6 @@
 ///|
 #deprecated("use `@sorted_set.from_iter` instead")
 #coverage.skip
-pub fn T::from_iter[V : Compare](iter : Iter[V]) -> T[V] {
+pub fn[V : Compare] T::from_iter(iter : Iter[V]) -> T[V] {
   from_iter(iter)
 }

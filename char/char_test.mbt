@@ -46,7 +46,7 @@ test "Char hash function with struct" {
   let m = {}
   m[{ x: 'a' }] = '3'
   m[{ x: 'b' }] = '3'
-  inspect!(m, content="{{x: 'a'}: '3', {x: 'b'}: '3'}")
+  inspect(m, content="{{x: 'a'}: '3', {x: 'b'}: '3'}")
 }
 
 ///|
@@ -54,7 +54,7 @@ test "Char hash" {
   let m = {}
   m['a'] = '3'
   m['b'] = '3'
-  inspect!(m, content="{'a': '3', 'b': '3'}")
+  inspect(m, content="{'a': '3', 'b': '3'}")
 }
 
 ///|
@@ -363,6 +363,7 @@ test "is_printable" {
   assert_true!(symbol.is_printable())
   assert_true!(math.is_printable())
   assert_true!(currency.is_printable())
+  assert_true!(variation_selector.is_printable())
 
   // Test non-printable characters
   assert_false!(null.is_printable())
@@ -372,12 +373,11 @@ test "is_printable" {
   assert_false!(left_to_right_mark.is_printable())
   assert_false!(private_use.is_printable())
   assert_false!(word_joiner.is_printable())
-  assert_false!(variation_selector.is_printable())
   assert_false!(soft_hyphen.is_printable())
   assert_false!(musical_format.is_printable())
   assert_false!(paragraph_separator.is_printable())
   assert_false!(byte_order_mark.is_printable())
-  inspect!(
+  inspect(
     ['\t', '\n', '\r', '\b', '\\'].map(is_printable),
     content="[false, false, false, false, true]",
   )

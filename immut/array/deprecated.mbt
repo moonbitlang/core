@@ -15,41 +15,41 @@
 ///|
 #deprecated("use `@immut/array.new` instead")
 #coverage.skip
-pub fn T::new[A]() -> T[A] {
+pub fn[A] T::new() -> T[A] {
   new()
 }
 
 ///|
 #deprecated("use `@immut/array.from_iter` instead")
 #coverage.skip
-pub fn T::from_iter[A](iter : Iter[A]) -> T[A] {
+pub fn[A] T::from_iter(iter : Iter[A]) -> T[A] {
   from_iter(iter)
 }
 
 ///|
 #deprecated("use `@immut/array.from_array` instead")
 #coverage.skip
-pub fn T::from_array[A](arr : Array[A]) -> T[A] {
+pub fn[A] T::from_array(arr : Array[A]) -> T[A] {
   from_array(arr)
 }
 
 ///|
 #deprecated("use `@immut/array.make` instead")
 #coverage.skip
-pub fn T::make[A](len : Int, value : A) -> T[A] {
+pub fn[A] T::make(len : Int, value : A) -> T[A] {
   make(len, value)
 }
 
 ///|
 #deprecated("use `@immut/array.makei` instead")
 #coverage.skip
-pub fn T::makei[A](len : Int, f : (Int) -> A) -> T[A] {
+pub fn[A] T::makei(len : Int, f : (Int) -> A) -> T[A] {
   makei(len, f)
 }
 
 ///|
 #deprecated("use `@immut/array.of` instead")
 #coverage.skip
-pub fn T::of[A](arr : FixedArray[A]) -> T[A] {
+pub fn[A] T::of(arr : FixedArray[A]) -> T[A] {
   of(arr)
 }

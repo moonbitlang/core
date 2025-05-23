@@ -22,22 +22,22 @@ pub(all) struct SparseArray[X] {
 } derive(Eq)
 
 ///|
-pub fn empty[X]() -> SparseArray[X] {
+pub fn[X] empty() -> SparseArray[X] {
   { elem_info: empty_bitset, data: [] }
 }
 
 ///|
-pub fn singleton[X](idx : Int, value : X) -> SparseArray[X] {
+pub fn[X] singleton(idx : Int, value : X) -> SparseArray[X] {
   { elem_info: empty_bitset.add(idx), data: [value] }
 }
 
 ///|
-pub fn has[X](self : SparseArray[X], idx : Int) -> Bool {
+pub fn[X] has(self : SparseArray[X], idx : Int) -> Bool {
   self.elem_info.has(idx)
 }
 
 ///|
-pub fn op_get[X](self : SparseArray[X], idx : Int) -> X? {
+pub fn[X] op_get(self : SparseArray[X], idx : Int) -> X? {
   if self.elem_info.has(idx) {
     Some(self.data[self.elem_info.index_of(idx)])
   } else {
@@ -50,7 +50,7 @@ pub fn op_get[X](self : SparseArray[X], idx : Int) -> X? {
 ///
 /// Add a new element into the sparse array.
 /// [idx] must be absent from [self]
-pub fn add[X](self : SparseArray[X], idx : Int, value : X) -> SparseArray[X] {
+pub fn[X] add(self : SparseArray[X], idx : Int, value : X) -> SparseArray[X] {
   let old_data = self.data
   let old_len = old_data.length()
   let new_len = old_len + 1
@@ -70,7 +70,7 @@ pub fn add[X](self : SparseArray[X], idx : Int, value : X) -> SparseArray[X] {
 /// `union(self: SparseArray[X], other: SparseArray[X]) -> SparseArray[X]`
 /// 
 /// Combine two sparse arrays into one.
-pub fn union[X](
+pub fn[X] union(
   self : SparseArray[X],
   other : SparseArray[X],
   union : (X, X) -> X
@@ -106,7 +106,7 @@ pub fn union[X](
 /// `replace(self: SparseArray[X], idx: Int, value: X)`
 ///
 // replace an existing element in the sparse array.
-pub fn replace[X](
+pub fn[X] replace(
   self : SparseArray[X],
   idx : Int,
   value : X
@@ -120,7 +120,7 @@ pub fn replace[X](
 /// `size(self: SparseArray[X]) -> Int`
 ///
 /// Return the size of a sparse array
-pub fn size[X](self : SparseArray[X]) -> Int {
+pub fn[X] size(self : SparseArray[X]) -> Int {
   self.data.length()
 }
 
@@ -128,7 +128,7 @@ pub fn size[X](self : SparseArray[X]) -> Int {
 /// `each(self: SparseArray[X], f: (X) -> Unit) -> Unit`
 ///
 /// Iterate through elements in a sparse array
-pub fn each[X](self : SparseArray[X], f : (X) -> Unit) -> Unit {
+pub fn[X] each(self : SparseArray[X], f : (X) -> Unit) -> Unit {
   for i in 0..<self.elem_info.size() {
     f(self.data[i])
   }

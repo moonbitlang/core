@@ -205,9 +205,7 @@ fn percentile_of_sorted(data : Array[Double], pct : Double) -> Double! {
 fn percentile(data : Array[Double], pct : Double) -> Double {
   let sorted = data.copy()
   sorted.sort()
-  try {
-    percentile_of_sorted!(sorted, pct)
-  } catch {
+  try percentile_of_sorted!(sorted, pct) catch {
     _ => panic()
   }
 }

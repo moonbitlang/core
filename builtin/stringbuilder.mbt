@@ -14,7 +14,7 @@
 
 ///|
 /// Writes the string representation of a object to the StringBuilder.
-pub fn StringBuilder::write_object[T : Show](
+pub fn[T : Show] StringBuilder::write_object(
   self : StringBuilder,
   obj : T
 ) -> Unit {

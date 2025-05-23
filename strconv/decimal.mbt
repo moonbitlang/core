@@ -635,15 +635,11 @@ test "from_int64" {
 ///|
 test "parse_decimal" {
   let s = "0.0000000000000000000000000000007888609052210118054117285652827862296732064351090230047702789306640625"
-  let hpd = try {
-    parse_decimal_priv!(s)
-  } catch {
+  let hpd = try parse_decimal_priv!(s) catch {
     _ => panic()
   }
   assert_eq!(hpd.to_string(), s)
-  let hpd = try {
-    parse_decimal_priv!("1.0e-10")
-  } catch {
+  let hpd = try parse_decimal_priv!("1.0e-10") catch {
     _ => panic()
   }
   assert_eq!(hpd.to_string(), "0.0000000001")
@@ -686,18 +682,18 @@ test "shift" {
 
 ///|
 test "parse decimal with underscore" {
-  inspect!(parse_decimal_priv!("1e1_2"), content="1000000000000")
-  inspect!(parse_decimal_priv!("1e12"), content="1000000000000")
-  inspect!(parse_decimal_priv!("1_2_3"), content="123")
+  inspect(parse_decimal_priv!("1e1_2"), content="1000000000000")
+  inspect(parse_decimal_priv!("1e12"), content="1000000000000")
+  inspect(parse_decimal_priv!("1_2_3"), content="123")
 }
 
 ///|
 test "parse decimal error" {
-  inspect!(parse_decimal_priv?("1e"), content="Err(invalid syntax)")
-  inspect!(parse_decimal_priv?("1e+"), content="Err(invalid syntax)")
-  inspect!(parse_decimal_priv?("1e_"), content="Err(invalid syntax)")
-  inspect!(parse_decimal_priv?("1-23"), content="Err(invalid syntax)")
-  inspect!(parse_decimal_priv?("1.2.3"), content="Err(invalid syntax)")
+  inspect(parse_decimal_priv?("1e"), content="Err(invalid syntax)")
+  inspect(parse_decimal_priv?("1e+"), content="Err(invalid syntax)")
+  inspect(parse_decimal_priv?("1e_"), content="Err(invalid syntax)")
+  inspect(parse_decimal_priv?("1-23"), content="Err(invalid syntax)")
+  inspect(parse_decimal_priv?("1.2.3"), content="Err(invalid syntax)")
 }
 
 ///|
@@ -706,7 +702,7 @@ test "parse decimal with large numbers" {
   for i in 0..<100 {
     s += "9"
   }
-  inspect!(
+  inspect(
     parse_decimal_priv!(s),
     content="9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
   )
@@ -717,7 +713,7 @@ test "should_round_up when truncated and half-way" {
   // Create a decimal from "12.50"
   let decimal = parse_decimal_priv!("12.50")
   // Convert to double
-  inspect!(decimal.to_double_priv!(), content="12.5")
+  inspect(decimal.to_double_priv!(), content="12.5")
 }
 
 ///|
@@ -727,7 +723,7 @@ test "parse_decimal with large numbers and truncation" {
   for i in 0..<1000 {
     s += "0"
   }
-  inspect!(
+  inspect(
     parse_decimal_priv!(s),
     content="10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
   )
@@ -735,7 +731,7 @@ test "parse_decimal with large numbers and truncation" {
 
 ///|
 test "corner cases" {
-  inspect!(parse_decimal_priv?(".123"), content="Ok(0.123)")
-  inspect!(parse_decimal_priv?("."), content="Err(invalid syntax)")
-  inspect!(parse_decimal_priv?("-"), content="Err(invalid syntax)")
+  inspect(parse_decimal_priv?(".123"), content="Ok(0.123)")
+  inspect(parse_decimal_priv?("."), content="Err(invalid syntax)")
+  inspect(parse_decimal_priv?("-"), content="Err(invalid syntax)")
 }

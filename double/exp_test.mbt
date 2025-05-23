@@ -14,46 +14,46 @@
 
 ///|
 test "exp" {
-  inspect!(@double.exp(1.0), content="2.718281828459045")
-  inspect!(@double.exp(-1.0), content="0.36787944117144233")
-  inspect!(@double.exp(1.0e-10), content="1.0000000001")
-  inspect!(@double.exp(-1.0e-10), content="0.9999999999")
-  inspect!(@double.exp(2.0), content="7.38905609893065")
-  inspect!(@double.exp(-2.0), content="0.1353352832366127")
-  inspect!(@double.exp(0.5), content="1.6487212707001282")
-  inspect!(@double.exp(-0.5), content="0.6065306597126334")
-  inspect!(@double.exp(5.0), content="148.4131591025766")
-  inspect!(@double.exp(-5.0), content="0.006737946999085467")
-  inspect!(@double.exp(10.0), content="22026.465794806718")
-  inspect!(@double.exp(-10.0), content="0.00004539992976248485")
-  inspect!(@double.exp(100.0), content="2.6881171418161356e+43")
-  inspect!(@double.exp(-100.0), content="3.720075976020836e-44")
+  inspect(@double.exp(1.0), content="2.718281828459045")
+  inspect(@double.exp(-1.0), content="0.36787944117144233")
+  inspect(@double.exp(1.0e-10), content="1.0000000001")
+  inspect(@double.exp(-1.0e-10), content="0.9999999999")
+  inspect(@double.exp(2.0), content="7.38905609893065")
+  inspect(@double.exp(-2.0), content="0.1353352832366127")
+  inspect(@double.exp(0.5), content="1.6487212707001282")
+  inspect(@double.exp(-0.5), content="0.6065306597126334")
+  inspect(@double.exp(5.0), content="148.4131591025766")
+  inspect(@double.exp(-5.0), content="0.006737946999085467")
+  inspect(@double.exp(10.0), content="22026.465794806718")
+  inspect(@double.exp(-10.0), content="0.00004539992976248485")
+  inspect(@double.exp(100.0), content="2.6881171418161356e+43")
+  inspect(@double.exp(-100.0), content="3.720075976020836e-44")
 }
 
 ///|
 test "exp - special values" {
-  inspect!(@double.exp(@double.neg_infinity), content="0")
-  inspect!(@double.exp(@double.infinity), content="Infinity")
-  inspect!(@double.exp(@double.not_a_number), content="NaN")
-  inspect!(@double.exp(0.0), content="1")
+  inspect(@double.exp(@double.neg_infinity), content="0")
+  inspect(@double.exp(@double.infinity), content="Infinity")
+  inspect(@double.exp(@double.not_a_number), content="NaN")
+  inspect(@double.exp(0.0), content="1")
 }
 
 ///|
 test "exp - overflow & underflow" {
-  inspect!(@double.exp(710.0), content="Infinity")
-  inspect!(@double.exp(-745.14), content="0")
+  inspect(@double.exp(710.0), content="Infinity")
+  inspect(@double.exp(-745.14), content="0")
 }
 
 ///|
 test "expm1" {
-  inspect!(0.0.expm1(), content="0")
-  inspect!(1.0.expm1(), content="1.718281828459045")
-  inspect!(2.0.expm1(), content="6.38905609893065")
-  inspect!((-1.0).expm1(), content="-0.6321205588285577")
-  inspect!((-2.0).expm1(), content="-0.8646647167633873")
-  inspect!(@double.not_a_number.expm1(), content="NaN")
-  inspect!(@double.infinity.expm1(), content="Infinity")
-  inspect!(@double.neg_infinity.expm1(), content="-1")
+  inspect(0.0.expm1(), content="0")
+  inspect(1.0.expm1(), content="1.718281828459045")
+  inspect(2.0.expm1(), content="6.38905609893065")
+  inspect((-1.0).expm1(), content="-0.6321205588285577")
+  inspect((-2.0).expm1(), content="-0.8646647167633873")
+  inspect(@double.not_a_number.expm1(), content="NaN")
+  inspect(@double.infinity.expm1(), content="Infinity")
+  inspect(@double.neg_infinity.expm1(), content="-1")
   let vals = [
     -10.0, -9.0, -8.0, -7.0, -6.0, -5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0,
     4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 1.23, 2.45, 3.67, 4.89, 5.67, 6.78, 7.89,

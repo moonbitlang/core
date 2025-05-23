@@ -62,15 +62,15 @@ test "FixedArray::from_iter with empty iterator" {
 
 ///|
 test "FixedArray::last" {
-  inspect!(FixedArray::last([1, 2, 3]), content="Some(3)")
-  inspect!(
+  inspect(FixedArray::last([1, 2, 3]), content="Some(3)")
+  inspect(
     FixedArray::last(["a", "b", "c"]),
     content=
       #|Some("c")
     ,
   )
-  inspect!(FixedArray::last([1]), content="Some(1)")
-  inspect!(
+  inspect(FixedArray::last([1]), content="Some(1)")
+  inspect(
     FixedArray::last(["single"]),
     content=
       #|Some("single")
@@ -81,11 +81,11 @@ test "FixedArray::last" {
 ///|
 test "FixedArray::arbitrary" {
   let samples : Array[FixedArray[Int]] = @quickcheck.samples(15)
-  inspect!(
+  inspect(
     samples[0:10],
     content="[[], [], [], [0], [0], [], [], [0], [0, 0], [0, 0, 0, 0, 2, 3, 1]]",
   )
-  inspect!(
+  inspect(
     samples[10:15],
     content="[[0, 0, 1, 0, -2], [0, 0, 0, -1, -2], [0, 0, 0, 0, 0, -2, -5, 4, 0, 8], [0, 0, -1, 2], [0, 0]]",
   )

@@ -60,6 +60,7 @@ pub fn from_iter(iter : Iter[Char]) -> String {
 /// let s = @string.concat(["a", "b", "c"], separator=",")
 /// assert_eq!(s, "a,b,c")
 /// ```
+#deprecated("Use `Array::join` instead.")
 pub fn concat(strings : Array[String], separator~ : String = "") -> String {
   match strings {
     [] => ""
@@ -124,8 +125,13 @@ pub fn default() -> String {
 ///|
 /// `String` holds a sequence of UTF-16 code units encoded in little endian format
 pub fn to_bytes(self : String) -> Bytes {
-  Bytes::of_string(self)
+  let array = FixedArray::make(self.length() * 2, Byte::default())
+  array.blit_from_string(0, self, 0, self.length())
+  array |> unsafe_to_bytes
 }
+
+///|
+fn unsafe_to_bytes(array : FixedArray[Byte]) -> Bytes = "%identity"
 
 ///|
 /// Converts the String into an array of Chars.

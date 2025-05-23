@@ -7446,53 +7446,53 @@ test "test_compare_u(9223372036854775807, 9223372036854775807) = 0" {
 ///|
 test "grouped test for boundary cases" {
   // Test for the smallest UInt64 value
-  inspect!(UInt64::reinterpret_as_double(0UL), content="0")
+  inspect(UInt64::reinterpret_as_double(0UL), content="0")
 
   // Test for the largest UInt64 value
-  inspect!(UInt64::reinterpret_as_double(0xFFFFFFFFFFFFFFFFUL), content="NaN")
+  inspect(UInt64::reinterpret_as_double(0xFFFFFFFFFFFFFFFFUL), content="NaN")
 
   // Test for a value near the boundary
-  inspect!(UInt64::reinterpret_as_double(0x7FFFFFFFFFFFFFFFUL), content="NaN")
+  inspect(UInt64::reinterpret_as_double(0x7FFFFFFFFFFFFFFFUL), content="NaN")
 }
 
 ///|
 test "grouped test for random cases" {
   // Random values
-  inspect!(
+  inspect(
     UInt64::reinterpret_as_double(0x123456789ABCDEF0UL),
     content="5.626349274901198e-221",
   )
-  inspect!(
+  inspect(
     UInt64::reinterpret_as_double(0xABCDEF0123456789UL),
     content="-1.0948396824175042e-97",
   )
-  inspect!(
+  inspect(
     UInt64::reinterpret_as_double(0x5555555555555555UL),
     content="1.1945305291614955e+103",
   )
-  inspect!(
+  inspect(
     UInt64::reinterpret_as_double(0xAAAAAAAAAAAAAAAAUL),
     content="-3.7206620809969885e-103",
   )
-  inspect!(
+  inspect(
     UInt64::reinterpret_as_double(0x1111111111111111UL),
     content="1.8010757365944223e-226",
   )
-  inspect!(UInt64::reinterpret_as_double(0xFFFFFFFF00000000UL), content="NaN")
+  inspect(UInt64::reinterpret_as_double(0xFFFFFFFF00000000UL), content="NaN")
 }
 
 ///|
 test "grouped test for specific patterns" {
   // Test for alternating bits
-  inspect!(
+  inspect(
     UInt64::reinterpret_as_double(0xAAAAAAAAAAAAAAAAUL),
     content="-3.7206620809969885e-103",
   )
-  inspect!(
+  inspect(
     UInt64::reinterpret_as_double(0x5555555555555555UL),
     content="1.1945305291614955e+103",
   )
 
   // Test for all bits set except the most significant bit
-  inspect!(UInt64::reinterpret_as_double(0x7FFFFFFFFFFFFFFFUL), content="NaN")
+  inspect(UInt64::reinterpret_as_double(0x7FFFFFFFFFFFFFFFUL), content="NaN")
 }

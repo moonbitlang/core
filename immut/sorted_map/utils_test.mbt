@@ -77,7 +77,7 @@ test "iter" {
     buf.write_object(kv)
     buf.write_string("\n")
   }
-  inspect!(
+  inspect(
     buf,
     content=
       #|0: "zero"
@@ -105,7 +105,7 @@ test "op_get with empty map" {
 test "to_json with non-empty map" {
   let map = [(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")]
     |> @sorted_map.of
-  @json.inspect!(map.to_json(), content={
+  @json.inspect(map.to_json(), content={
     "0": "zero",
     "1": "one",
     "2": "two",
@@ -117,7 +117,7 @@ test "to_json with non-empty map" {
 ///|
 test "to_json with empty map" {
   let map : @sorted_map.T[Int, String] = @sorted_map.new()
-  @json.inspect!(map.to_json(), content={})
+  @json.inspect(map.to_json(), content={})
 }
 
 ///|

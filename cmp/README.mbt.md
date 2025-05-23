@@ -17,13 +17,13 @@ test "cmp_by_key" {
   let s1 = "hello"
   let s2 = "hi"
   let longer = @cmp.maximum_by_key(s1, s2, String::length)
-  inspect!(longer, content="hello")
+  inspect(longer, content="hello")
 
   // Compare structs by a specific field
   let alice = { name: "Alice", age: 25 }
   let bob = { name: "Bob", age: 30 }
   let younger = @cmp.minimum_by_key(alice, bob, fn(p) { p.age })
-  inspect!(younger, content="{name: \"Alice\", age: 25}")
+  inspect(younger, content="{name: \"Alice\", age: 25}")
 
   // When keys are equal, the first argument is considered the minimum
   let p1 = ("first", 1)
