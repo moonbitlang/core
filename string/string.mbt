@@ -60,6 +60,7 @@ pub fn from_iter(iter : Iter[Char]) -> String {
 /// let s = @string.concat(["a", "b", "c"], separator=",")
 /// assert_eq!(s, "a,b,c")
 /// ```
+#deprecated("Use `Array::join` instead.")
 pub fn concat(strings : Array[String], separator~ : String = "") -> String {
   match strings {
     [] => ""
