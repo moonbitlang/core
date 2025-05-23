@@ -23,16 +23,6 @@ test "String::from_iter" {
 }
 
 ///|
-test "String::concat" {
-  inspect(@string.concat(["123", "456"]), content="123456")
-  inspect(
-    @string.concat(["aaa", "bbb", "ccc"], separator=" "),
-    content="aaa bbb ccc",
-  )
-  inspect(@string.concat([], separator=" "), content="")
-}
-
-///|
 test "default" {
   inspect(@string.default())
 }

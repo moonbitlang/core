@@ -1,6 +1,7 @@
 package "moonbitlang/core/string"
 
 // Values
+#deprecated
 fn concat(Array[String], separator~ : String = ..) -> String
 
 fn contains(String, StringView) -> Bool
