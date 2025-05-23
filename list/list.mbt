@@ -792,6 +792,20 @@ pub fn[A : Compare] sort(self : T[A]) -> T[A] {
 }
 
 ///|
+/// Use array to help sort
+/// # Example
+///
+/// ```
+/// let ls = @list.sort(@list.from_array([1,123,52,3,6,0,-6,-76]))
+/// assert_eq!(ls, @list.from_array([-76, -6, 0, 1, 3, 6, 52, 123]))
+/// ```
+pub fn[A : Compare] sort_v2(self : T[A]) -> T[A] {
+  let arr = self.to_array()
+  arr.sort()
+  from_array(arr)
+}
+
+///|
 /// Concatenate two lists.
 ///
 /// `a + b` equal to `a.concat(b)`

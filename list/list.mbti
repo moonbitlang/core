@@ -118,6 +118,8 @@ fn[A] singleton(A) -> T[A]
 
 fn[A : Compare] sort(T[A]) -> T[A]
 
+fn[A : Compare] sort_v2(T[A]) -> T[A]
+
 fn[A] tail(T[A]) -> T[A]
 
 fn[A] take(T[A], Int) -> T[A]
@@ -194,6 +196,7 @@ impl T {
   scan_left[A, E](Self[A], (E, A) -> E, init~ : E) -> Self[E]
   scan_right[A, B](Self[A], (B, A) -> B, init~ : B) -> Self[B]
   sort[A : Compare](Self[A]) -> Self[A]
+  sort_v2[A : Compare](Self[A]) -> Self[A]
   tail[A](Self[A]) -> Self[A]
   take[A](Self[A], Int) -> Self[A]
   take_while[A](Self[A], (A) -> Bool) -> Self[A]
