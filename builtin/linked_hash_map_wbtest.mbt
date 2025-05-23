@@ -891,25 +891,22 @@ test "op_equal_key_value_mismatch" {
 ///|
 test "Map::map applies function to values and returns new map" {
   let map = { "a": 1, "b": 2, "c": 3 }
-  let new_map = map.map(fn(v) { ("key" + v.to_string(), v * 10) })
-  inspect(new_map.get("key1") == Some(10))
-  inspect(new_map.get("key2") == Some(20))
-  inspect(new_map.get("key3") == Some(30))
+  let new_map = map.map(fn(v) { v * 10 })
+  let values = new_map.values().to_array()
+  inspect(values, content="[10, 20, 30]")
 }
 
 ///|
 test "Map::map on empty map returns empty map" {
   let map : Map[String, Int] = Map::new()
-  let new_map = map.map(fn(v) { ("x", v * 2) })
+  let new_map = map.map(fn(v) { v * 2 })
   inspect(new_map, content="{}")
 }
 
 ///|
 test "Map::map preserves insertion order of results" {
   let map = { "a": 5, "b": 6 }
-  let new_map = map.map(fn(v) { ("k" + v.to_string(), v + 1) })
-  let keys = new_map.keys().to_array()
-  inspect(keys == ["k5", "k6"])
+  let new_map = map.map(fn(v) { v + 1 })
   let values = new_map.values().to_array()
   inspect(values, content="[6, 7]")
 }
@@ -917,37 +914,40 @@ test "Map::map preserves insertion order of results" {
 ///|
 test "Map::map_with_key basic usage" {
   let map = { "a": 1, "b": 2, "c": 3 }
-  let mapped = map.map_with_key(fn(k, v) { (k + "_x", v * 10) })
-  inspect(mapped, content="{\"a_x\": 10, \"b_x\": 20, \"c_x\": 30}")
+  let mapped = map.map_with_key(fn(k, v) { k.length() + v })
+  let mapped_values = mapped.values().to_array()
+  inspect(mapped_values, content="[2, 3, 4]")
 }
 
 ///|
-test "Map::map_with_key with key transformation only" {
-  let map = { 1: "one", 2: "two" }
-  let mapped = map.map_with_key(fn(k, v) { (k + 10, v) })
-  inspect(mapped, content="{11: \"one\", 12: \"two\"}")
-}
-
-///|
-test "Map::map_with_key with value transformation only" {
-  let map = { "x": 5, "y": 6 }
-  let mapped = map.map_with_key(fn(k, v) { (k, v + 1) })
-  inspect(mapped, content="{\"x\": 6, \"y\": 7}")
-}
-
-///|
-test "Map::map_with_key on empty map" {
-  let map = ({} : Map[String, Int])
-  let mapped = map.map_with_key(fn(k, v) { (k + "!", v * 2) })
+test "Map::map_with_key with empty map" {
+  let map : Map[String, Int] = Map::new()
+  let mapped = map.map_with_key(fn(_, v) { v * 2 })
   inspect(mapped, content="{}")
 }
 
 ///|
-test "Map::map_with_key with complex keys and values" {
-  let map = { "one": 1, "two": 2, "three": 3 }
-  let mapped = map.map_with_key(fn(k, v) { (k + "=" + v.to_string(), v) })
-  let keys = mapped.keys().to_array()
-  inspect(keys == ["one=1", "two=2", "three=3"])
+test "Map::map_with_key preserves insertion order" {
+  let map = { "x": 10, "y": 20, "z": 30 }
+  let mapped = map.map_with_key(fn(_, v) { v + 1 })
+  inspect(
+    mapped,
+    content=
+      #|{"x": 11, "y": 21, "z": 31}
+    ,
+  )
+}
+
+///|
+test "Map::map_with_key with key and value concatenation" {
+  let map = { 1: "a", 2: "b" }
+  let mapped = map.map_with_key(fn(k, v) { v + k.to_string() })
+  inspect(
+    mapped,
+    content=
+      #|{1: "a1", 2: "b2"}
+    ,
+  )
 }
 
 ///|
@@ -992,7 +992,7 @@ test "Map::filter with always true predicate returns identical map" {
 test "Map::filter on empty map returns empty map" {
   let map : Map[String, Int] = Map::new()
   let filtered = map.filter(fn(_k, _v) { true })
-  inspect(filtered.is_empty())
+  inspect(filtered, content="{}")
 }
 
 ///|
@@ -1020,7 +1020,12 @@ test "Map::fold on empty map returns initial value" {
 test "Map::fold builds list of key-value tuples" {
   let map = { "a": 10, "b": 20 }
   let arr = map.fold([], fn(acc, k, v) { acc + [(k, v)] })
-  inspect(arr == [("a", 10), ("b", 20)])
+  inspect(
+    arr,
+    content=
+      #|[("a", 10), ("b", 20)]
+    ,
+  )
 }
 
 ///|

@@ -269,8 +269,8 @@ impl Map {
   contains_kv[K : Hash + Eq, V : Eq](Self[K, V], K, V) -> Bool
   each[K, V](Self[K, V], (K, V) -> Unit) -> Unit
   eachi[K, V](Self[K, V], (Int, K, V) -> Unit) -> Unit
-  filter[K, V](Self[K, V], (K, V) -> Bool) -> Self[K, V]
-  fold[K : Hash + Eq, V, A](Self[K, V], init : A, (A, K, V) -> A) -> A
+  filter[K : Hash + Eq, V](Self[K, V], (K, V) -> Bool) -> Self[K, V]
+  fold[K : Hash + Eq, V, A](Self[K, V], A, (A, K, V) -> A) -> A
   from_array[K : Hash + Eq, V](Array[(K, V)]) -> Self[K, V]
   from_iter[K : Hash + Eq, V](Iter[(K, V)]) -> Self[K, V]
   get[K : Hash + Eq, V](Self[K, V], K) -> V?
@@ -280,14 +280,14 @@ impl Map {
   iter[K, V](Self[K, V]) -> Iter[(K, V)]
   iter2[K, V](Self[K, V]) -> Iter2[K, V]
   keys[K, V](Self[K, V]) -> Iter[K]
-  map[K : Hash + Eq, V, K2 : Hash + Eq, V2](Self[K, V], (V) -> (K2, V2)) -> Self[K2, V2]
-  map_with_key[K : Hash + Eq, V, K2 : Hash + Eq, V2](Self[K, V], (K, V) -> (K2, V2)) -> Self[K2, V2]
+  map[K : Hash + Eq, V, V2](Self[K, V], (V) -> V2) -> Self[K, V2]
+  map_with_key[K : Hash + Eq, V, V2](Self[K, V], (K, V) -> V2) -> Self[K, V2]
   new[K, V](capacity~ : Int = ..) -> Self[K, V]
   of[K : Hash + Eq, V](FixedArray[(K, V)]) -> Self[K, V]
   #deprecated
   op_get[K : Hash + Eq, V](Self[K, V], K) -> V?
   op_set[K : Hash + Eq, V](Self[K, V], K, V) -> Unit
-  partition[K : Hash + Eq, V](Self[K, V], (K, V) -> Bool) -> (Map[K, V], Map[K, V])
+  partition[K : Hash + Eq, V](Self[K, V], (K, V) -> Bool) -> (Self[K, V], Self[K, V])
   remove[K : Hash + Eq, V](Self[K, V], K) -> Unit
   set[K : Hash + Eq, V](Self[K, V], K, V) -> Unit
   size[K, V](Self[K, V]) -> Int

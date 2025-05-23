@@ -602,23 +602,25 @@ pub impl[K, V] Default for Map[K, V] with default() {
 
 ///|
 /// Applies a function to each key-value pair in the map and returns a new map with the results.
-pub fn[K : Hash + Eq, V, K2 : Hash + Eq, V2] Map::map(
+pub fn[K : Hash + Eq, V, V2] Map::map(
   self : Map[K, V],
-  f : (V) -> (K2, V2)
-) -> Map[K2, V2] {
-  self.map_with_key(fn(_k, v) { f(v) })
+  f : (V) -> V2
+) -> Map[K, V2] {
+  self.map_with_key(fn(_, v) { f(v) })
 }
 
 ///|
 /// Applies a function to each key-value pair in the map and returns a new map with the results, using the original keys.
-pub fn[K : Hash + Eq, V, K2 : Hash + Eq, V2] Map::map_with_key(
+pub fn[K : Hash + Eq, V, V2] Map::map_with_key(
   self : Map[K, V],
-  f : (K, V) -> (K2, V2)
-) -> Map[K2, V2] {
+  f : (K, V) -> V2
+) -> Map[K, V2] {
+  if self.is_empty() {
+    return Map::new()
+  }
   let m = Map::new(capacity=self.size)
   for e in self.iter() {
-    let (k2, v2) = f(e.0, e.1)
-    m.set(k2, v2)
+    m.set(e.0, f(e.0, e.1))
   }
   m
 }
@@ -629,6 +631,9 @@ pub fn[K : Hash + Eq, V] Map::filter(
   self : Map[K, V],
   pred : (K, V) -> Bool
 ) -> Map[K, V] {
+  if self.is_empty() {
+    return Map::new()
+  }
   let m = Map::new(capacity=self.size)
   for e in self.iter() {
     if pred(e.0, e.1) {
@@ -646,8 +651,11 @@ pub fn[K : Hash + Eq, V, A] Map::fold(
   init : A,
   f : (A, K, V) -> A
 ) -> A {
+  if self.is_empty() {
+    return init
+  }
   let mut acc = init
-  for e in self.iter() {
+  for e in self {
     acc = f(acc, e.0, e.1)
   }
   acc
@@ -659,9 +667,12 @@ pub fn[K : Hash + Eq, V] Map::partition(
   self : Map[K, V],
   pred : (K, V) -> Bool
 ) -> (Map[K, V], Map[K, V]) {
+  if self.is_empty() {
+    return (Map::new(), Map::new())
+  }
   let m1 = Map::new(capacity=self.size)
   let m2 = Map::new(capacity=self.size)
-  for e in self.iter() {
+  for e in self {
     if pred(e.0, e.1) {
       m1.set(e.0, e.1)
     } else {
