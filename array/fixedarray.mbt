@@ -1190,12 +1190,6 @@ pub fn FixedArray::join(
     size_hint += separator.length() + self[i].length()
   }
   let string = StringBuilder::new(size_hint~)
-  size_hint = separator.length()
-  let a = StringBuilder::new(size_hint~)
-  for i = 0; i < separator.length(); i = i + 1 {
-    a.write_char(separator[i].unsafe_to_char())
-  }
-  let separator_string = a.to_string()
   if separator.is_empty() {
     for i = 0; i < len; i = i + 1 {
       string.write_string(self[i])
@@ -1203,7 +1197,7 @@ pub fn FixedArray::join(
   } else {
     string.write_string(self[0])
     for i = 1; i < len; i = i + 1 {
-      string.write_string(separator_string)
+      string.write_string(separator.to_string())
       string.write_string(self[i])
     }
   }
