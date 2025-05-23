@@ -720,3 +720,10 @@ test "Array[String]::join" {
   inspect!(["aaa", "bbb", "ccc"].join(" "), content="aaa bbb ccc")
   inspect!([].join(" "))
 }
+
+///|
+test "Array::pop_back" {
+  let arr = [1]
+  arr.unsafe_pop_back()
+  assert_eq!(arr, [])
+}

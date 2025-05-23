@@ -124,6 +124,7 @@ impl Array {
   unsafe_blit_fixed[A](Self[A], Int, FixedArray[A], Int, Int) -> Unit
   unsafe_get[T](Self[T], Int) -> T
   unsafe_pop[T](Self[T]) -> T
+  unsafe_pop_back[A](Self[A]) -> Unit
 }
 impl[T] Add for Array[T]
 impl[T : Compare] Compare for Array[T]
