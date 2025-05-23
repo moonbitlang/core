@@ -781,25 +781,6 @@ pub fn[A : Compare] minimum(self : T[A]) -> A? {
 /// assert_eq(ls, @list.from_array([-76, -6, 0, 1, 3, 6, 52, 123]))
 /// ```
 pub fn[A : Compare] sort(self : T[A]) -> T[A] {
-  match self {
-    Empty => Empty
-    More(x, tail=xs) => {
-      let smaller = xs.filter(fn(y) { y < x })
-      let greater = xs.filter(fn(y) { y >= x })
-      smaller.sort().concat(More(x, tail=greater.sort()))
-    }
-  }
-}
-
-///|
-/// Use array to help sort
-/// # Example
-///
-/// ```
-/// let ls = @list.sort(@list.from_array([1,123,52,3,6,0,-6,-76]))
-/// assert_eq!(ls, @list.from_array([-76, -6, 0, 1, 3, 6, 52, 123]))
-/// ```
-pub fn[A : Compare] sort_v2(self : T[A]) -> T[A] {
   let arr = self.to_array()
   arr.sort()
   from_array(arr)
