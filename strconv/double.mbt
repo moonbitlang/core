@@ -92,7 +92,7 @@ pub fn parse_double(str : String) -> Double!StrConvError {
     syntax_err!()
   }
   // Clinger's fast path (How to read floating point numbers accurately)[https://doi.org/10.1145/989393.989430]
-  match try_fast_path(num) {
+  match num.try_fast_path() {
     Some(value) => value
     None => {
       // fallback to slow path

@@ -88,7 +88,7 @@ let exp2f_data : Exp2fData = {
 ///   inspect(@float.neg_infinity.exp(), content="0")
 /// }
 /// ```
-pub fn exp(self : Float) -> Float {
+pub fn Float::exp(self : Float) -> Float {
   let xd = self.to_double()
   let abstop = top12(self) & 0x7ff
   if abstop >= top12(88.0) {
@@ -149,6 +149,6 @@ pub fn exp(self : Float) -> Float {
 ///  inspect(@float.neg_infinity.expm1(), content="-1")
 /// }
 /// ```
-pub fn expm1(self : Float) -> Float {
+pub fn Float::expm1(self : Float) -> Float {
   self.to_double().expm1().to_float()
 }

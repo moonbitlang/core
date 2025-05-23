@@ -26,7 +26,7 @@ test "parse and validate jsons" {
 
   // Pretty print with indentation
   inspect(
-    @json.stringify(json, indent=2),
+    json.stringify(indent=2),
     content=
       #|{
       #|  "key": 42

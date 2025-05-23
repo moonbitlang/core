@@ -784,9 +784,9 @@ pub fn[A : Compare] sort(self : T[A]) -> T[A] {
   match self {
     Empty => Empty
     More(x, tail=xs) => {
-      let smaller = filter(xs, fn(y) { y < x })
-      let greater = filter(xs, fn(y) { y >= x })
-      concat(sort(smaller), More(x, tail=sort(greater)))
+      let smaller = xs.filter(fn(y) { y < x })
+      let greater = xs.filter(fn(y) { y >= x })
+      smaller.sort().concat(More(x, tail=greater.sort()))
     }
   }
 }

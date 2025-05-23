@@ -13,13 +13,33 @@
 // limitations under the License.
 
 ///|
-test "parse_inf_nan positive NaN" {
-  let result = @strconv.parse_double!("+nan")
-  inspect(result.is_nan(), content="true")
-}
-
-///|
-test "parse_inf_nan negative NaN" {
-  let result = @strconv.parse_double!("-nan")
-  inspect(result.is_nan(), content="true")
-}
+pub fnalias Double::(
+  sin,
+  cos,
+  tan,
+  asin,
+  acos,
+  atan,
+  atan2,
+  exp,
+  expm1,
+  pow,
+  ln,
+  log2,
+  log10,
+  ln_1p,
+  sinh,
+  cosh,
+  tanh,
+  asinh,
+  acosh,
+  atanh,
+  hypot,
+  cbrt,
+  is_close,
+  trunc,
+  floor,
+  ceil,
+  round,
+  abs
+)

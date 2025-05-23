@@ -30,25 +30,25 @@ test "int to byte" {
 
 ///|
 test "grouped test for boundary cases" {
-  inspect(@moonbitlang/core/byte.to_uint64(b'\x00'), content="0")
-  inspect(@moonbitlang/core/byte.to_uint64(b'\xFF'), content="255")
+  inspect(b'\x00'.to_uint64(), content="0")
+  inspect(b'\xFF'.to_uint64(), content="255")
 }
 
 ///|
 test "grouped test for random cases" {
-  inspect(@moonbitlang/core/byte.to_uint64(b'\x10'), content="16")
-  inspect(@moonbitlang/core/byte.to_uint64(b'\x2A'), content="42")
-  inspect(@moonbitlang/core/byte.to_uint64(b'\x7F'), content="127")
-  inspect(@moonbitlang/core/byte.to_uint64(b'\x80'), content="128")
-  inspect(@moonbitlang/core/byte.to_uint64(b'\xAA'), content="170")
-  inspect(@moonbitlang/core/byte.to_uint64(b'\x55'), content="85")
+  inspect(b'\x10'.to_uint64(), content="16")
+  inspect(b'\x2A'.to_uint64(), content="42")
+  inspect(b'\x7F'.to_uint64(), content="127")
+  inspect(b'\x80'.to_uint64(), content="128")
+  inspect(b'\xAA'.to_uint64(), content="170")
+  inspect(b'\x55'.to_uint64(), content="85")
 }
 
 ///|
 test "additional random cases" {
-  inspect(@moonbitlang/core/byte.to_uint64(b'\x3C'), content="60")
-  inspect(@moonbitlang/core/byte.to_uint64(b'\x64'), content="100")
-  inspect(@moonbitlang/core/byte.to_uint64(b'\x99'), content="153")
+  inspect(b'\x3C'.to_uint64(), content="60")
+  inspect(b'\x64'.to_uint64(), content="100")
+  inspect(b'\x99'.to_uint64(), content="153")
 }
 
 ///|

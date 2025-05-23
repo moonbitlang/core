@@ -62,13 +62,16 @@ pub fn from_int(i : Int) -> Int64 {
 ///   inspect(0L.abs(), content="0")
 /// }
 /// ```
-pub fn abs(self : Int64) -> Int64 {
+pub fn Int64::abs(self : Int64) -> Int64 {
   if self < 0L {
     -self
   } else {
     self
   }
 }
+
+///|
+pub fnalias Int64::abs
 
 ///| Converts the Int64 to a Bytes in big-endian byte order.
 pub fn to_be_bytes(self : Int64) -> Bytes {

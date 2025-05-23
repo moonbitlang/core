@@ -81,8 +81,8 @@ test "rev_map" {
 test "to_array" {
   let list = @list.of([1, 2, 3, 4, 5])
   let empty : @list.T[Int] = @list.Nil
-  let array = @list.to_array(list)
-  let earray = @list.to_array(empty)
+  let array = list.to_array()
+  let earray = empty.to_array()
   inspect(array, content="[1, 2, 3, 4, 5]")
   inspect(earray, content="[]")
 }
@@ -279,7 +279,7 @@ test "is_empty" {
 ///|
 test "unzip" {
   let ls = @list.of([(1, 2), (3, 4), (5, 6)])
-  let (a, b) = @list.unzip(ls)
+  let (a, b) = ls.unzip()
   inspect(a, content="@list.of([1, 3, 5])")
   inspect(b, content="@list.of([2, 4, 6])")
 }
@@ -358,16 +358,16 @@ test "drop" {
 
 ///|
 test "take_while" {
-  let ls = @list.take_while(@list.of([0, 1, 2, 3, 4]), fn(x) { x < 3 })
-  let el : @list.T[Int] = @list.take_while(@list.Nil, fn(_e) { true })
+  let ls = @list.of([0, 1, 2, 3, 4]).take_while(fn(x) { x < 3 })
+  let el : @list.T[Int] = @list.Nil.take_while(fn(_e) { true })
   inspect(ls, content="@list.of([0, 1, 2])")
   inspect(el, content="@list.of([])")
 }
 
 ///|
 test "drop_while" {
-  let ls = @list.drop_while(@list.of([0, 1, 2, 3, 4]), fn(x) { x < 3 })
-  let el : @list.T[Int] = @list.drop_while(@list.Nil, fn(_e) { true })
+  let ls = @list.of([0, 1, 2, 3, 4]).drop_while(fn(x) { x < 3 })
+  let el : @list.T[Int] = @list.Nil.drop_while(fn(_e) { true })
   inspect(ls, content="@list.of([3, 4])")
   inspect(el, content="@list.of([])")
 }
@@ -580,14 +580,14 @@ test "List::from_json" {
 ///|
 test "List::head_exn with non-empty list" {
   let list = @list.of([1, 2, 3, 4, 5])
-  let head = @list.head(list)
+  let head = list.head()
   assert_eq!(head, Some(1))
 }
 
 ///|
 test "List::last with non-empty list" {
   let list = @list.of([1, 2, 3, 4, 5])
-  let last = @list.last(list)
+  let last = list.last()
   assert_eq!(last, Some(5))
 }
 
@@ -608,14 +608,14 @@ test "@list.zip with empty list" {
 ///|
 test "List::nth_exn with valid index" {
   let list = @list.of([1, 2, 3, 4, 5])
-  let nth = @list.nth(list, 2)
+  let nth = list.nth(2)
   assert_eq!(nth, Some(3))
 }
 
 ///|
 test "List::maximum with non-empty list" {
   let list = @list.of([1, 3, 5, 2, 4])
-  let max = @list.maximum(list)
+  let max = list.maximum()
   assert_eq!(max, Some(5))
 }
 
@@ -627,7 +627,7 @@ test "@list.maximum with empty list" {
 ///|
 test "List::minimum with non-empty list" {
   let list = @list.of([1, 3, 5, 2, 4])
-  let min = @list.minimum(list)
+  let min = list.minimum()
   assert_eq!(min, Some(1))
 }
 

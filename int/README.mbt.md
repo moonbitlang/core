@@ -27,7 +27,7 @@ test "byte conversions" {
   let num = 258 // 0x0102 in hex
 
   // Big-endian conversion (most significant byte first)
-  let be_bytes = @int.to_be_bytes(num)
+  let be_bytes = num.to_be_bytes()
   inspect(
     be_bytes.to_string(),
     content=
@@ -36,7 +36,7 @@ test "byte conversions" {
   )
 
   // Little-endian conversion (least significant byte first)
-  let le_bytes = @int.to_le_bytes(num)
+  let le_bytes = num.to_le_bytes()
   inspect(
     le_bytes.to_string(),
     content=

@@ -39,7 +39,7 @@
 ///   inspect(not_a_number.exp().is_nan(), content="true")
 /// }
 /// ```
-pub fn exp(self : Double) -> Double = "Math" "exp"
+pub fn Double::exp(self : Double) -> Double = "Math" "exp"
 
 ///|
 /// Calculates exp(x) - 1 accurately even when x is close to zero.
@@ -70,4 +70,4 @@ pub fn exp(self : Double) -> Double = "Math" "exp"
 ///   inspect(@double.neg_infinity.expm1(), content="-1")
 /// }
 /// ```
-pub fn expm1(self : Double) -> Double = "Math" "expm1"
+pub fn Double::expm1(self : Double) -> Double = "Math" "expm1"

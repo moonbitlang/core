@@ -37,4 +37,4 @@
 ///   inspect(infinity.pow(-1.0), content="0")
 /// }
 /// ```
-pub fn pow(self : Double, other : Double) -> Double = "Math" "pow"
+pub fn Double::pow(self : Double, other : Double) -> Double = "Math" "pow"

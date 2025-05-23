@@ -23,7 +23,6 @@ Unit values can be converted to strings using either the standalone function or 
 test "unit string conversion" {
   let u = ()
   // Both ways produce the same result
-  inspect(@unit.to_string(u), content="()")
   inspect(u.to_string(), content="()")
 }
 ```

@@ -38,4 +38,4 @@
 ///   inspect(1.0.hypot(@double.neg_infinity), content="Infinity")
 /// }
 /// ```
-pub fn hypot(self : Double, y : Double) -> Double = "Math" "hypot"
+pub fn Double::hypot(self : Double, y : Double) -> Double = "Math" "hypot"
