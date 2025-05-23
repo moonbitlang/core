@@ -23,10 +23,10 @@
 ///
 /// Returns a value of type `T`. However, this function never actually returns a
 /// value as it always causes a panic.
-pub fn abort[T](msg : String) -> T {
+pub fn[T] abort(msg : String) -> T {
   let _ = msg
   panic_impl()
 }
 
 ///|
-fn panic_impl[T]() -> T = "%panic"
+fn[T] panic_impl() -> T = "%panic"
