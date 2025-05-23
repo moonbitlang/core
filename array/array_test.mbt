@@ -716,8 +716,7 @@ test "Array[String]::join" {
   inspect(["a", "b", "c"].join(","), content="a,b,c")
   inspect(["a", "b", "c"].join(""), content="abc")
   inspect(["a", "b", "c"].join(" "), content="a b c")
-  inspect(["a", "b", "c"].join(" "), content="a b c")
-  inspect(["a", "b", "c"].join(" "), content="a b c")
-  inspect(["a", "b", "c"].join(" "), content="a b c")
-  inspect(["a", "b", "c"].join(" "), content="a b c")
+  inspect!(["123", "456"].join(""), content="123456")
+  inspect!(["aaa", "bbb", "ccc"].join(" "), content="aaa bbb ccc")
+  inspect!([].join(" "))
 }
