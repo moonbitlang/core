@@ -557,7 +557,7 @@ impl FixedArray {
   blit_from_string(Self[Byte], Int, String, Int, Int) -> Unit
   blit_to[A](Self[A], Self[A], len~ : Int, src_offset~ : Int = .., dst_offset~ : Int = ..) -> Unit
   fill[T](Self[T], T) -> Unit
-  get[T](Self[T], Int) -> T
+  get[T](Self[T], Int) -> T?
   is_empty[T](Self[T]) -> Bool
   iter[T](Self[T]) -> Iter[T]
   iter2[T](Self[T]) -> Iter2[Int, T]
