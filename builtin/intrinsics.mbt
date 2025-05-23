@@ -1581,6 +1581,7 @@ pub fn[T] FixedArray::unsafe_set(
 ///   inspect(arr.get(3), content="None")
 /// }
 /// ```
+#deprecated("use `arr.op_get(i)`(arr[i]) instead")
 pub fn[T] FixedArray::get(self : FixedArray[T], idx : Int) -> T = "%fixedarray.get"
 
 ///|
