@@ -716,8 +716,14 @@ test "Array[String]::join" {
   inspect(["a", "b", "c"].join(","), content="a,b,c")
   inspect(["a", "b", "c"].join(""), content="abc")
   inspect(["a", "b", "c"].join(" "), content="a b c")
-  inspect(["a", "b", "c"].join(" "), content="a b c")
-  inspect(["a", "b", "c"].join(" "), content="a b c")
-  inspect(["a", "b", "c"].join(" "), content="a b c")
-  inspect(["a", "b", "c"].join(" "), content="a b c")
+  inspect!(["123", "456"].join(""), content="123456")
+  inspect!(["aaa", "bbb", "ccc"].join(" "), content="aaa bbb ccc")
+  inspect!([].join(" "))
+}
+
+///|
+test "Array::pop_back" {
+  let arr = [1]
+  arr.unsafe_pop_back()
+  assert_eq!(arr, [])
 }

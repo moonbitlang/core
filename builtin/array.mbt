@@ -1794,3 +1794,17 @@ pub fn[A] Array::iter2(self : Array[A]) -> Iter2[Int, A] {
 pub impl[T] Default for Array[T] with default() {
   []
 }
+
+///|
+/// Removes a back element from an array.
+///
+/// # Example
+/// ```mbt
+/// let array = [1, 2, 3, 4, 5]
+/// array.unsafe_pop_back()
+/// assert_eq!(array.last(), Some(4))
+/// ```
+#internal(unsafe, "Panic if the array is empty on non-JS backend.")
+pub fn[A] Array::unsafe_pop_back(self : Array[A]) -> Unit {
+  self.unsafe_pop() |> ignore
+}

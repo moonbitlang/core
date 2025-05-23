@@ -241,19 +241,19 @@ test "panic from_octets coverage for empty octets" {
 
 ///|
 test "panic sub_string with invalid byte_length" {
-  let bytes = Bytes::of_string("Hello, World!")
+  let bytes = b"Hello, World!"
   bytes.to_unchecked_string(offset=0, length=-1) |> ignore
 }
 
 ///|
 test "panic sub_string with invalid byte_offset" {
-  let bytes = Bytes::of_string("Hello, World!")
+  let bytes = b"Hello, World!"
   bytes.to_unchecked_string(offset=-1, length=5) |> ignore
 }
 
 ///|
 test "panic sub_string with invalid byte_offset + byte_length" {
-  let bytes = Bytes::of_string("Hello, World!")
+  let bytes = b"Hello, World!"
   bytes.to_unchecked_string(offset=0, length=bytes.length() + 1) |> ignore
 }
 

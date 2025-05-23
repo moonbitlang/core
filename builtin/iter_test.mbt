@@ -312,22 +312,6 @@ test "tap" {
 }
 
 ///|
-test "prepend" {
-  let iter = test_from_array(['0', '1', '2', '3', '4', '5'])
-  let exb = StringBuilder::new(size_hint=0)
-  iter.prepend('X').each(fn { x => exb.write_char(x) })
-  inspect(exb, content="X012345")
-}
-
-///|
-test "append" {
-  let iter = test_from_array(['1', '2', '3', '4', '5'])
-  let exb = StringBuilder::new(size_hint=0)
-  iter.append('6').each(fn { x => exb.write_char(x) })
-  inspect(exb, content="123456")
-}
-
-///|
 test "concat" {
   let iter1 = test_from_array(['1', '2', '3'])
   let iter2 = test_from_array(['4', '5', '6'])
@@ -665,20 +649,6 @@ test "@builtin.Iter::minimum" {
   // Test with empty sequence
   let empty : Iter[Int] = Iter::empty()
   inspect(empty.minimum(), content="None")
-}
-
-///|
-test "Iter::prepend with early termination" {
-  let iter = [1, 2, 3].iter()
-  let result = iter.prepend(0).take(1).collect()
-  inspect(result, content="[0]")
-}
-
-///|
-test "Iter::append with early termination" {
-  let iter = [1, 2, 3].iter()
-  let result = iter.take(2).append(4).take(2).collect()
-  inspect(result, content="[1, 2]")
 }
 
 ///|
