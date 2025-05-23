@@ -358,7 +358,9 @@ pub fn View::to_array[T](self : View[T]) -> Array[T] {
     []
   } else {
     let arr = Array::make(len, self[0])
-    self.iter().eachi(fn(i, v) { arr[i] = v })
+    for i, v in self {
+      arr[i] = v
+    }
     arr
   }
 }

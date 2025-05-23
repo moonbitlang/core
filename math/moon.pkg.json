@@ -1,5 +1,11 @@
 {
-  "import": ["moonbitlang/core/builtin", "moonbitlang/core/double"],
-  "test-import": ["moonbitlang/core/test"]
-
+  "import": [
+    "moonbitlang/core/builtin",
+    "moonbitlang/core/double",
+    "moonbitlang/core/bigint",
+    "moonbitlang/core/random"
+  ],
+  "test-import": [
+    "moonbitlang/core/test"
+  ]
 }

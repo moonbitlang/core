@@ -32,7 +32,7 @@
 // - forall len <= i < limbs.length(). limbs[i] == 0
 struct BigInt {
   limbs : FixedArray[UInt] // Note: do not use limbs.length(), use len instead because of leading zeros
-  sign : Sign // true for positive, false for negative
+  sign : Sign
   len : Int
 }
 
@@ -1842,6 +1842,70 @@ pub fn BigInt::to_uint64(self : BigInt) -> UInt64 {
     result = result | (value.limbs[i].to_uint64() & radix_mask)
   }
   result
+}
+
+///|
+/// Returns the number of bits required to represent a `BigInt` value in two's
+/// complement format, excluding the sign bit.
+///
+/// Parameters:
+///
+/// * `self` : The `BigInt` value whose bit length is to be calculated.
+///
+/// Example:
+///
+/// ```moonbit
+/// ///|
+/// test "BigInt::bit_length" {
+///   let pos = 16N // 10000
+///   inspect!(pos.bit_length(), content="5")
+///   let neg = -16N // 
+///   inspect!(neg.bit_length(), content="4")
+///   let zero = 0N
+///   inspect!(zero.bit_length(), content="0")
+/// }
+/// ```
+pub fn BigInt::bit_length(self : BigInt) -> Int {
+  if self.len == 0 {
+    return 0
+  }
+  let mut bit_length = (self.len - 1) * radix_bit_len +
+    (radix_bit_len - self.limbs[self.len - 1].clz())
+  if self.sign == Negative {
+    // check if this number is a power of two
+    let mut pow2 = self.limbs[0].popcnt() == 1
+    for i = 1; i < self.len && pow2; i = i + 1 {
+      pow2 = self.limbs[i] == 0
+    }
+    if pow2 {
+      bit_length -= 1
+    }
+  }
+  bit_length
+}
+
+///| Returns the number of trailing zero bits in the binary representation of 
+/// the absolute value of this BigInt.
+///
+/// Example:
+/// ```moonbit
+/// test "BigInt::ctz" {
+///   inspect!(8N.ctz(), content="3") // 0b1000
+///   inspect!(12N.ctz(), content="2") // 0b1100
+///   inspect!(0N.ctz(), content="0")
+/// }
+/// ```
+pub fn BigInt::ctz(self : BigInt) -> Int {
+  if self.is_zero() {
+    return 0
+  }
+
+  // Find first non-zero limb
+  let mut i = 0
+  while i < self.len && self.limbs[i] == 0 {
+    i = i + 1
+  }
+  radix_bit_len * i + self.limbs[i].ctz()
 }
 
 ///|

@@ -113,12 +113,12 @@ pub fn Array::unsafe_blit_fixed[A](
 ///
 /// Parameters:
 ///
-/// * `source` : The array to copy elements from.
-/// * `destination` : The array to copy elements to. Will be automatically grown
+/// * `self` : The array to copy elements from.
+/// * `dst` : The array to copy elements to. Will be automatically grown
 /// if needed to accommodate the copied elements.
-/// * `length` : The number of elements to copy.
-/// * `source_start` : Starting index in the source array. Defaults to 0.
-/// * `destination_start` : Starting index in the destination array. Defaults to
+/// * `len` : The number of elements to copy.
+/// * `src_offset` : Starting index in the source array. Defaults to 0.
+/// * `dst_offset` : Starting index in the destination array. Defaults to
 /// 0.
 ///
 /// Example:
