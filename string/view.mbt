@@ -16,7 +16,8 @@
 /// A `StringView` represents a view of a String that maintains proper Unicode
 /// character boundaries. It allows safe access to a substring while handling 
 /// multi-byte characters correctly.
-/// alert deprecated "use @string.View instead"
+#deprecated("use @string.View instead")
+#builtin.valtype
 struct StringView {
   // # Fields
   //
