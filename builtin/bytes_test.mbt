@@ -13,23 +13,16 @@
 // limitations under the License.
 
 ///|
-test "to_string" {
-  let bytes = Bytes::of_string("Hello, World!")
-  assert_eq!(bytes.to_unchecked_string(), "Hello, World!")
-}
+const HELLO_WORLD = b"H\x00e\x00l\x00l\x00o\x00,\x00 \x00W\x00o\x00r\x00l\x00d\x00!\x00"
 
 ///|
-test "of_string" {
-  let str = "Hello, World!"
-  let bytes = Bytes::of_string(str)
-  assert_eq!(bytes.length(), str.length() * 2)
+test "to_string" {
+  assert_eq!(HELLO_WORLD.to_unchecked_string(), "Hello, World!")
 }
 
 ///|
 test "sub_string" {
-  let bytes = Bytes::of_string("Hello, World!")
-  assert_eq!(bytes.to_unchecked_string(offset=0, length=5 * 2), "Hello")
-  // assert_eq(bytes.sub_string(10, 5 * 2), "World")?
+  assert_eq!(HELLO_WORLD.to_unchecked_string(offset=0, length=5 * 2), "Hello")
 }
 
 ///|
@@ -42,9 +35,11 @@ test "blit_from_string" {
 
 ///|
 test "copy" {
-  let bytes = Bytes::of_string("Hello, World!")
-  let copy_bytes = bytes.copy()
-  assert_eq!(copy_bytes.to_unchecked_string(), bytes.to_unchecked_string())
+  let copy_bytes = HELLO_WORLD.copy()
+  assert_eq!(
+    copy_bytes.to_unchecked_string(),
+    HELLO_WORLD.to_unchecked_string(),
+  )
 }
 
 ///|
@@ -157,10 +152,9 @@ test "set_utf16be_char" {
 
 ///|
 test "op_equal" {
-  let bytes = Bytes::of_string("Hello, World!")
-  let copy_bytes = bytes.copy()
-  assert_eq!(bytes, copy_bytes)
-  assert_not_eq!(bytes, Bytes::new(10))
+  let copy_bytes = HELLO_WORLD.copy()
+  assert_eq!(HELLO_WORLD, copy_bytes)
+  assert_not_eq!(HELLO_WORLD, Bytes::new(10))
 }
 
 ///|

@@ -581,6 +581,7 @@ impl Bytes {
   make(Int, Byte) -> Bytes
   makei(Int, (Int) -> Byte) -> Bytes
   new(Int) -> Bytes
+  #deprecated
   of_string(String) -> Bytes
   op_get(Bytes, Int) -> Byte
   to_unchecked_string(Bytes, offset~ : Int = .., length~ : Int = ..) -> String
