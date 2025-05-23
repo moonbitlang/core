@@ -322,19 +322,11 @@ test "sort" {
 }
 
 ///|
-test "v2-sort" {
-  let ls = @list.of([1, 123, 52, 3, 6, 0, -6, -76])
-  let el : @list.T[Int] = @list.empty()
-  inspect(el.sort_v2(), content="@list.of([])")
-  inspect(ls.sort_v2(), content="@list.of([-76, -6, 0, 1, 3, 6, 52, 123])")
-}
-
-///|
-test "v2-sort-stack-safety" {
+test "sort-stack-safety" {
   let arr = FixedArray::makei(100_000, fn { x => x })
   arr.rev_inplace()
   let ls = @list.of(arr)
-  ls.sort_v2() |> ignore
+  ls.sort() |> ignore
 }
 
 ///|
