@@ -321,7 +321,7 @@ test "op_equal" {
       if xs.to_array() == ys.to_array() {
         assert_eq(xs, ys)
       } else {
-        assert_not_eq!(xs, ys)
+        assert_not_eq(xs, ys)
       }
     }
   }
