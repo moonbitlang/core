@@ -37,7 +37,7 @@ test "try_fast_path overflow when mantissa is too large" {
 
 ///|
 test "corner cases" {
-  inspect(@strconv.parse_double?(".123"), content="Ok(0.123)")
-  inspect(@strconv.parse_double?("."), content="Err(invalid syntax)")
-  inspect(@strconv.parse_double?("-"), content="Err(invalid syntax)")
+  inspect(try? @strconv.parse_double(".123"), content="Ok(0.123)")
+  inspect(try? @strconv.parse_double("."), content="Err(invalid syntax)")
+  inspect(try? @strconv.parse_double("-"), content="Err(invalid syntax)")
 }
