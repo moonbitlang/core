@@ -15,7 +15,7 @@
 ///|
 test "panic assert_not_eq with equal values" {
   let str = "test"
-  ignore(assert_not_eq!(str, str))
+  ignore(assert_not_eq(str, str))
 }
 
 ///|

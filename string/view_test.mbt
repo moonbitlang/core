@@ -665,5 +665,5 @@ test "hash" {
   let b = "def"
   let c = "abc"
   assert_eq(a.hash(), c.hash())
-  assert_not_eq!(a.hash(), b.hash())
+  assert_not_eq(a.hash(), b.hash())
 }

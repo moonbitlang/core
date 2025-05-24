@@ -206,7 +206,7 @@ test "arbitrary implementation for hashset" {
 test "equal between different constructors" {
   let set1 = @hashset.of([])
   let set2 = @hashset.of(["a"])
-  assert_not_eq!(set1, set2)
+  assert_not_eq(set1, set2)
 }
 
 ///|

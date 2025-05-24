@@ -151,7 +151,7 @@ test "set_utf16be_char" {
 test "op_equal" {
   let copy_bytes = HELLO_WORLD.copy()
   assert_eq(HELLO_WORLD, copy_bytes)
-  assert_not_eq!(HELLO_WORLD, Bytes::new(10))
+  assert_not_eq(HELLO_WORLD, Bytes::new(10))
 }
 
 ///|

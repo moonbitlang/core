@@ -504,7 +504,7 @@ pub impl Hash for String with hash_combine(self, hasher) {
 /// ```moonbit 
 /// test {
 ///   let x = 42
-///   assert_not_eq!(Hash::hash(x),Hasher::new()..combine(x).finalize())
+///   assert_not_eq(Hash::hash(x),Hasher::new()..combine(x).finalize())
 /// }
 /// ```
 pub impl Hash for Int with hash(self) {

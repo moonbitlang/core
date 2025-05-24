@@ -52,7 +52,7 @@ test "Unit hash_combine test" {
   let _ = Hash::hash_combine((), hasher)
   let hash1 = hasher.finalize()
   let hasher2 = Hasher::new()
-  assert_not_eq!(hash1, hasher2.finalize())
+  assert_not_eq(hash1, hasher2.finalize())
 }
 
 ///|
