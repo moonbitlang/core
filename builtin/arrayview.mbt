@@ -24,6 +24,7 @@
 /// assert_eq!(view.length(), 3)
 /// ```
 #deprecated("use @array.View instead")
+#builtin.valtype
 struct ArrayView[T] {
   buf : UninitializedArray[T]
   start : Int

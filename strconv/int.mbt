@@ -29,9 +29,9 @@ const INT64_MAX = 0x7fffffffffffffffL
 /// and consume the prefix.
 /// The boolean flag `allow_underscore` is used to check validity of underscores.
 fn check_and_consume_base(
-  view : @string.StringView,
+  view : @string.View,
   base : Int
-) -> (Int, @string.StringView, Bool)!StrConvError {
+) -> (Int, @string.View, Bool)!StrConvError {
   // if the base is not given, we need to determine it from the prefix
   if base == 0 {
     match view {
