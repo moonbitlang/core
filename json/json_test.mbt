@@ -321,10 +321,8 @@ test "stringify escape 4" {
 
 ///|
 test "stringify escape round trip" {
-  match (try? @json.parse(json.stringify())) {
-    Err(e) => raise e
-    Ok(newjson) => assert_eq(newjson, json)
-  }
+  let newjson = @json.parse(json.stringify())
+  assert_eq(newjson, json)
 }
 
 ///|
