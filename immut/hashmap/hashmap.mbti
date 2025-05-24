@@ -11,6 +11,7 @@ fn[K : Eq + Hash, V] contains(T[K, V], K) -> Bool
 
 fn[K, V] each(T[K, V], (K, V) -> Unit) -> Unit
 
+#deprecated
 fn[K, V] elems(T[K, V]) -> Iter[V]
 
 fn[K : Eq + Hash, V] filter(T[K, V], (V) -> Bool) -> T[K, V]
@@ -55,12 +56,15 @@ fn[K, V] to_array(T[K, V]) -> Array[(K, V)]
 
 fn[K : Eq + Hash, V] union(T[K, V], T[K, V]) -> T[K, V]
 
+fn[K, V] values(T[K, V]) -> Iter[V]
+
 // Types and methods
 type T[K, V]
 impl T {
   add[K : Eq + Hash, V](Self[K, V], K, V) -> Self[K, V]
   contains[K : Eq + Hash, V](Self[K, V], K) -> Bool
   each[K, V](Self[K, V], (K, V) -> Unit) -> Unit
+  #deprecated
   elems[K, V](Self[K, V]) -> Iter[V]
   filter[K : Eq + Hash, V](Self[K, V], (V) -> Bool) -> Self[K, V]
   #deprecated
@@ -79,6 +83,7 @@ impl T {
   size[K, V](Self[K, V]) -> Int
   to_array[K, V](Self[K, V]) -> Array[(K, V)]
   union[K : Eq + Hash, V](Self[K, V], Self[K, V]) -> Self[K, V]
+  values[K, V](Self[K, V]) -> Iter[V]
 }
 impl[K : Eq + Hash, V : Eq] Eq for T[K, V]
 impl[K : Hash, V : Hash] Hash for T[K, V]
