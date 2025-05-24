@@ -60,7 +60,7 @@ test "sinhf Test" {
     let x = data[i]
     let res = @math.sinhf(x)
     let libm_res = libm_results[i]
-    assert_true!(
+    assert_true(
       (res.reinterpret_as_int() - libm_res.reinterpret_as_int()).abs() <= 2,
     )
   }
@@ -84,7 +84,7 @@ test "coshf Test" {
     let x = data[i]
     let res = @math.coshf(x)
     let libm_res = libm_results[i]
-    assert_true!(
+    assert_true(
       (res.reinterpret_as_int() - libm_res.reinterpret_as_int()).abs() <= 2,
     )
   }
@@ -108,7 +108,7 @@ test "tanhf Test" {
     let x = data[i]
     let res = @math.tanhf(x)
     let libm_res = libm_results[i]
-    assert_true!(
+    assert_true(
       (res.reinterpret_as_int() - libm_res.reinterpret_as_int()).abs() <= 2,
     )
   }
@@ -133,7 +133,7 @@ test "asinhf Test" {
     let x = data[i]
     let res = @math.asinhf(x)
     let libm_res = libm_results[i]
-    assert_true!(
+    assert_true(
       (res.reinterpret_as_int() - libm_res.reinterpret_as_int()).abs() <= 2,
     )
   }
@@ -153,7 +153,7 @@ test "acoshf Test" {
     let x = data[i]
     let res = @math.acoshf(x)
     let libm_res = libm_results[i]
-    assert_true!(
+    assert_true(
       (res.reinterpret_as_int() - libm_res.reinterpret_as_int()).abs() <= 2,
     )
   }
@@ -177,7 +177,7 @@ test "atanhf Test" {
     let x = data[i]
     let res = @math.atanhf(x)
     let libm_res = libm_results[i]
-    assert_true!(
+    assert_true(
       (res.reinterpret_as_int() - libm_res.reinterpret_as_int()).abs() <= 2,
     )
   }

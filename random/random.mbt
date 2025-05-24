@@ -52,7 +52,7 @@ test "next" {
   let r = new()
   let n = r.next()
   let exp = 13219109469176600229UL
-  assert_eq!(n, exp)
+  assert_eq(n, exp)
 }
 
 ///|
@@ -145,7 +145,7 @@ test "UInt64" {
   let r = new()
   let n = r.uint64()
   let exp = 13219109469176600229UL
-  assert_eq!(n, exp)
+  assert_eq(n, exp)
   let r = new()
   let n = r.uint64(limit=10UL)
   inspect(n, content="7")
@@ -250,29 +250,29 @@ fn umul128(a : UInt64, b : UInt64) -> Unit {
 ///|
 test "umul128" {
   umul128(0x123456789ABCDEF0, 0xFEDCBA9876543210)
-  assert_eq!(gUInt128.hi, 1305938385386173474UL)
-  assert_eq!(gUInt128.lo, 2552847189736476416UL)
+  assert_eq(gUInt128.hi, 1305938385386173474UL)
+  assert_eq(gUInt128.lo, 2552847189736476416UL)
 }
 
 ///|
 test "umul128: handles small numbers correctly" {
   umul128(1UL, 1UL)
-  assert_eq!(gUInt128.hi, 0UL)
-  assert_eq!(gUInt128.lo, 1UL)
+  assert_eq(gUInt128.hi, 0UL)
+  assert_eq(gUInt128.lo, 1UL)
 }
 
 ///|
 test "umul128: handles large numbers correctly" {
   umul128(1UL, 0xFFFFFFFFFFFFFFFFUL)
-  assert_eq!(gUInt128.hi, 0UL)
-  assert_eq!(gUInt128.lo, 0xFFFFFFFFFFFFFFFFUL)
+  assert_eq(gUInt128.hi, 0UL)
+  assert_eq(gUInt128.lo, 0xFFFFFFFFFFFFFFFFUL)
 }
 
 ///|
 test "umul128: handles zero correctly" {
   umul128(0UL, 0UL)
-  assert_eq!(gUInt128.hi, 0UL)
-  assert_eq!(gUInt128.lo, 0UL)
+  assert_eq(gUInt128.hi, 0UL)
+  assert_eq(gUInt128.lo, 0UL)
 }
 
 ///|

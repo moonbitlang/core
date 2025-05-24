@@ -18,7 +18,7 @@
 /// # Example
 /// ```
 /// let queue : @queue.T[Int] = @queue.new()
-/// assert_eq!(queue.length(), 0)
+/// assert_eq(queue.length(), 0)
 /// ```
 pub fn[A] new() -> T[A] {
   { length: 0, first: None, last: None }
@@ -31,7 +31,7 @@ pub fn[A] new() -> T[A] {
 /// ```
 /// let array = Array::makei(3, fn(idx) { idx + 1 })
 /// let queue : @queue.T[Int] = @queue.from_array(array)
-/// assert_eq!(queue.length(), 3)
+/// assert_eq(queue.length(), 3)
 /// ```
 pub fn[A] from_array(arr : Array[A]) -> T[A] {
   guard arr.length() > 0 else { return new() }
@@ -76,7 +76,7 @@ pub fn[A] clear(self : T[A]) -> Unit {
 /// # Example
 /// ```
 /// let queue : @queue.T[Int] = @queue.new()
-/// assert_eq!(queue.length(), 0)
+/// assert_eq(queue.length(), 0)
 /// ```
 pub fn[A] length(self : T[A]) -> Int {
   self.length
@@ -88,7 +88,7 @@ pub fn[A] length(self : T[A]) -> Int {
 /// # Example
 /// ```
 /// let queue : @queue.T[Int] = @queue.new()
-/// assert_true!(queue.is_empty())
+/// assert_true(queue.is_empty())
 /// ```
 pub fn[A] is_empty(self : T[A]) -> Bool {
   self.length == 0
@@ -124,7 +124,7 @@ pub fn[A] push(self : T[A], x : A) -> Unit {
 /// # Example
 /// ```
 /// let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
-/// assert_eq!(queue.unsafe_peek(), 1)
+/// assert_eq(queue.unsafe_peek(), 1)
 /// ```
 #internal(unsafe, "Panics if the queue is empty.")
 pub fn[A] unsafe_peek(self : T[A]) -> A {
@@ -147,7 +147,7 @@ pub fn[A] peek_exn(self : T[A]) -> A {
 /// # Example
 /// ```
 /// let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
-/// assert_eq!(queue.peek(), Some(1))
+/// assert_eq(queue.peek(), Some(1))
 /// ```
 pub fn[A] peek(self : T[A]) -> A? {
   match self.first {
@@ -162,7 +162,7 @@ pub fn[A] peek(self : T[A]) -> A? {
 /// # Example
 /// ```
 /// let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
-/// assert_eq!(queue.unsafe_pop(), 1)
+/// assert_eq(queue.unsafe_pop(), 1)
 /// ```
 #internal(unsafe, "Panics if the queue is empty.")
 pub fn[A] unsafe_pop(self : T[A]) -> A {
@@ -193,7 +193,7 @@ pub fn[A] pop_exn(self : T[A]) -> A {
 /// # Example
 /// ```
 /// let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
-/// assert_eq!(queue.pop(), Some(1))
+/// assert_eq(queue.pop(), Some(1))
 /// ```
 pub fn[A] pop(self : T[A]) -> A? {
   match self.first {
@@ -255,7 +255,7 @@ pub fn[A] eachi(self : T[A], f : (Int, A) -> Unit) -> Unit {
 /// ```
 /// let queue : @queue.T[Int] = @queue.new()
 /// let sum = queue.fold(init=0, fn(acc, x) { acc + x })
-/// assert_eq!(sum, 0)
+/// assert_eq(sum, 0)
 /// ```
 pub fn[A, B] fold(self : T[A], init~ : B, f : (B, A) -> B) -> B {
   loop self.first, init {
@@ -271,7 +271,7 @@ pub fn[A, B] fold(self : T[A], init~ : B, f : (B, A) -> B) -> B {
 /// ```
 /// let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
 /// let queue2 : @queue.T[Int] = queue.copy()
-/// assert_eq!(queue2.length(), 4)
+/// assert_eq(queue2.length(), 4)
 /// ```
 pub fn[A] copy(self : T[A]) -> T[A] {
   guard self.first is Some({ content, next }) else { return new() }
@@ -324,7 +324,7 @@ pub fn[A] transfer(self : T[A], dst : T[A]) -> Unit {
 /// ```
 /// let queue : @queue.T[Int] = @queue.of([5, 6, 7, 8])
 /// let sum = queue.iter().fold(fn(x, y) { x + y }, init=0)
-/// assert_eq!(sum, 26)
+/// assert_eq(sum, 26)
 /// ```
 pub fn[A] iter(self : T[A]) -> Iter[A] {
   Iter::new(fn(yield_) {
@@ -346,7 +346,7 @@ pub fn[A] iter(self : T[A]) -> Iter[A] {
 /// # Example
 /// ```
 /// let queue : @queue.T[Int] = @queue.from_iter(Iter::empty())
-/// assert_eq!(queue.length(), 0)
+/// assert_eq(queue.length(), 0)
 /// ```
 pub fn[A] from_iter(iter : Iter[A]) -> T[A] {
   let q = new()
@@ -360,7 +360,7 @@ pub fn[A] from_iter(iter : Iter[A]) -> T[A] {
 /// # Example
 /// ```
 /// let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
-/// assert_eq!(queue.length(), 4)
+/// assert_eq(queue.length(), 4)
 /// ```
 pub fn[A] of(arr : FixedArray[A]) -> T[A] {
   guard arr.length() > 0 else { return new() }
@@ -378,18 +378,18 @@ pub fn[A] of(arr : FixedArray[A]) -> T[A] {
 test "from_fixed_array_2" {
   let q = of([1, 2, 3, 4])
   q.push(11)
-  assert_eq!(q, of([1, 2, 3, 4, 11]))
+  assert_eq(q, of([1, 2, 3, 4, 11]))
   q.unsafe_pop() |> ignore
-  assert_eq!(q, of([2, 3, 4, 11]))
+  assert_eq(q, of([2, 3, 4, 11]))
 }
 
 ///|
 test "from_array_2" {
   let q = of([1, 2, 3, 4])
   q.push(11)
-  assert_eq!(q, of([1, 2, 3, 4, 11]))
+  assert_eq(q, of([1, 2, 3, 4, 11]))
   q.unsafe_pop() |> ignore
-  assert_eq!(q, of([2, 3, 4, 11]))
+  assert_eq(q, of([2, 3, 4, 11]))
 }
 
 ///|
@@ -397,11 +397,11 @@ test "op_equal" {
   let queue = of([1, 2, 3, 4])
   let queue2 = of([1, 2, 3, 4])
   let queue3 = of([1, 2, 3, 5])
-  assert_true!(queue == queue2)
-  assert_false!(queue == queue3)
+  assert_true(queue == queue2)
+  assert_false(queue == queue3)
   queue.unsafe_pop() |> ignore
-  assert_false!(queue == queue2)
-  assert_eq!(queue, of([2, 3, 4]))
+  assert_false(queue == queue2)
+  assert_eq(queue, of([2, 3, 4]))
 }
 
 ///|
@@ -411,18 +411,18 @@ test "push" {
   queue.push(2)
   queue.push(3)
   queue.push(1)
-  assert_eq!(queue.length(), 4)
-  assert_eq!(queue, of([1, 2, 3, 1]))
+  assert_eq(queue.length(), 4)
+  assert_eq(queue, of([1, 2, 3, 1]))
 }
 
 ///|
 test "copy" {
   let queue : T[Int] = of([1, 2, 3, 4])
   let queue2 : T[Int] = queue.copy()
-  assert_eq!(queue2.length(), 4)
-  assert_eq!(queue2, of([1, 2, 3, 4]))
-  assert_eq!(queue.length(), 4)
-  assert_eq!(queue, of([1, 2, 3, 4]))
+  assert_eq(queue2.length(), 4)
+  assert_eq(queue2, of([1, 2, 3, 4]))
+  assert_eq(queue.length(), 4)
+  assert_eq(queue, of([1, 2, 3, 4]))
 }
 
 ///|
@@ -430,14 +430,14 @@ test "transfer" {
   let queue : T[Int] = of([1, 2, 3, 4])
   let queue2 : T[Int] = of([5, 6, 7, 8])
   queue.transfer(queue2)
-  assert_eq!(queue.length(), 0)
-  assert_eq!(queue2.length(), 8)
-  assert_eq!(queue2, of([5, 6, 7, 8, 1, 2, 3, 4]))
+  assert_eq(queue.length(), 0)
+  assert_eq(queue2.length(), 8)
+  assert_eq(queue2, of([5, 6, 7, 8, 1, 2, 3, 4]))
 }
 
 ///|
 test "cell_equal" {
-  assert_false!(of([]).first == of([1]).first)
+  assert_false(of([]).first == of([1]).first)
 }
 
 ///|

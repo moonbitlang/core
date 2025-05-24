@@ -116,7 +116,7 @@ test "parse_uint64" {
   ]
   for i in 0..<tests.length() {
     let t = tests[i]
-    assert_eq!(
+    assert_eq(
       try Result::Ok(parse_uint64!(t.0)) catch {
         StrConvError(err) => Err(err)
       },
@@ -214,7 +214,7 @@ test "parse_uint64_base" {
   ]
   for i in 0..<tests.length() {
     let t = tests[i]
-    assert_eq!(
+    assert_eq(
       try Result::Ok(parse_uint64!(t.0, base=t.1)) catch {
         StrConvError(err) => Err(err)
       },
@@ -249,7 +249,7 @@ test "parse_uint" {
   ]
   for i in 0..<tests.length() {
     let t = tests[i]
-    assert_eq!(
+    assert_eq(
       try Result::Ok(parse_uint!(t.0)) catch {
         StrConvError(err) => Err(err)
       },

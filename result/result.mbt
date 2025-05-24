@@ -20,7 +20,7 @@
 /// ```
 /// let x: Result[Int, Unit] = Ok(6)
 /// let y = x.map(fn (v : Int) { v * 7 })
-/// assert_eq!(y, Ok(42))
+/// assert_eq(y, Ok(42))
 /// ```
 pub fn[T, E, U] map(self : Result[T, E], f : (T) -> U) -> Result[U, E] {
   match self {
@@ -35,8 +35,8 @@ test "map" {
   let y = x.map(fn(v : Int) { v * 7 })
   let z : Result[Int, Int] = Err(3)
   let w = z.map(fn(v : Int) { v * 7 })
-  assert_eq!(y, Ok(42))
-  assert_eq!(w, Err(3))
+  assert_eq(y, Ok(42))
+  assert_eq(w, Err(3))
 }
 
 ///|
@@ -47,7 +47,7 @@ test "map" {
 /// ```
 /// let x: Result[Int, String] = Err("error")
 /// let y = x.map_err(fn (v : String) { v + "!" })
-/// assert_eq!(y, Err("error!"))
+/// assert_eq(y, Err("error!"))
 /// ```
 pub fn[T, E, F] map_err(self : Result[T, E], f : (E) -> F) -> Result[T, F] {
   match self {
@@ -62,8 +62,8 @@ test "map_err" {
   let y = x.map_err(fn(v : String) { v + "!" })
   let z : Result[Int, Int] = Ok(6)
   let w = z.map_err(fn(v : Int) { v + 6 })
-  assert_eq!(y, Err("error!"))
-  assert_eq!(w, Ok(6))
+  assert_eq(y, Err("error!"))
+  assert_eq(w, Ok(6))
 }
 
 ///|
@@ -73,7 +73,7 @@ test "map_err" {
 ///
 /// ```
 /// let x: Result[Int, String] = Err("error")
-/// assert_eq!(x, Err("error"))
+/// assert_eq(x, Err("error"))
 /// ```
 pub fn[T, E] err(value : E) -> Result[T, E] {
   Err(value)
@@ -82,7 +82,7 @@ pub fn[T, E] err(value : E) -> Result[T, E] {
 ///|
 test "err" {
   let x : Result[Int, String] = err("error")
-  assert_eq!(x, Err("error"))
+  assert_eq(x, Err("error"))
 }
 
 ///|
@@ -92,7 +92,7 @@ test "err" {
 ///
 /// ```
 /// let x: Result[String, Unit] = Ok("yes")
-/// assert_true!(x.is_ok())
+/// assert_true(x.is_ok())
 /// ```
 pub fn[T, E] ok(value : T) -> Result[T, E] {
   Ok(value)
@@ -101,7 +101,7 @@ pub fn[T, E] ok(value : T) -> Result[T, E] {
 ///|
 test "ok" {
   let x : Result[String, Unit] = ok("yes")
-  assert_eq!(x, Ok("yes"))
+  assert_eq(x, Ok("yes"))
 }
 
 ///|
@@ -114,8 +114,8 @@ pub fn[T, E] is_ok(self : Result[T, E]) -> Bool {
 test "is_ok" {
   let x : Result[Int, String] = Ok(6)
   let y : Result[Int, String] = Err("error")
-  assert_eq!(x.is_ok(), true)
-  assert_eq!(y.is_ok(), false)
+  assert_eq(x.is_ok(), true)
+  assert_eq(y.is_ok(), false)
 }
 
 ///|
@@ -128,8 +128,8 @@ pub fn[T, E] is_err(self : Result[T, E]) -> Bool {
 test "is_err" {
   let x : Result[Int, String] = Ok(6)
   let y : Result[Int, String] = Err("error")
-  assert_eq!(x.is_err(), false)
-  assert_eq!(y.is_err(), true)
+  assert_eq(x.is_err(), false)
+  assert_eq(y.is_err(), true)
 }
 
 ///|
@@ -140,7 +140,7 @@ test "is_err" {
 /// ```
 /// let x: Result[Int, String] = Ok(6)
 /// let y = x.or(0)
-/// assert_eq!(y, 6)
+/// assert_eq(y, 6)
 /// ```
 pub fn[T, E] or(self : Result[T, E], default : T) -> T {
   match self {
@@ -155,8 +155,8 @@ test "or" {
   let y : Result[Int, String] = Err("error")
   let z = x.or(0)
   let w = y.or(0)
-  assert_eq!(z, 6)
-  assert_eq!(w, 0)
+  assert_eq(z, 6)
+  assert_eq(w, 0)
 }
 
 ///|
@@ -168,7 +168,7 @@ test "or" {
 /// ```
 /// let x: Result[Int, String] = Ok(6)
 /// let y = x.or_else(fn() { 0 })
-/// assert_eq!(y, 6)
+/// assert_eq(y, 6)
 /// ```
 pub fn[T, E] or_else(self : Result[T, E], default : () -> T) -> T {
   match self {
@@ -183,8 +183,8 @@ test "or_else" {
   let y : Result[Int, String] = Err("error")
   let z = x.or_else(fn() { 0 })
   let w = y.or_else(fn() { 0 })
-  assert_eq!(z, 6)
-  assert_eq!(w, 0)
+  assert_eq(z, 6)
+  assert_eq(w, 0)
 }
 
 ///|
@@ -197,7 +197,7 @@ test "or_else" {
 /// ```
 /// let x: Result[Result[Int, String], String] = Ok(Ok(6))
 /// let y = x.flatten()
-/// assert_eq!(y, Ok(6))
+/// assert_eq(y, Ok(6))
 /// ```
 pub fn[T, E] flatten(self : Result[Result[T, E], E]) -> Result[T, E] {
   match self {
@@ -212,8 +212,8 @@ test "flatten" {
   let y = x.flatten()
   let z : Result[Result[Int, String], String] = Err("error")
   let w = z.flatten()
-  assert_eq!(y, Ok(6))
-  assert_eq!(w, Err("error"))
+  assert_eq(y, Ok(6))
+  assert_eq(w, Err("error"))
 }
 
 ///|
@@ -224,7 +224,7 @@ test "flatten" {
 /// ```
 /// let x: Result[Int, String] = Ok(6)
 /// let y = x.bind(fn(v : Int) { Ok(v * 7) })
-/// assert_eq!(y, Ok(42))
+/// assert_eq(y, Ok(42))
 /// ```
 pub fn[T, E, U] bind(
   self : Result[T, E],
@@ -240,7 +240,7 @@ pub fn[T, E, U] bind(
 test "bind" {
   let x : Result[Int, String] = Ok(6)
   let y = x.bind(fn(v : Int) { Ok(v * 7) })
-  assert_eq!(y, Ok(42))
+  assert_eq(y, Ok(42))
 }
 
 ///|
@@ -252,7 +252,7 @@ test "bind" {
 /// ```
 /// let x = Ok(6)
 /// let y = x.fold(fn(v : Int) -> Int { v * 7 }, fn(_e : String) -> Int { 0 })
-/// assert_eq!(y, 42)
+/// assert_eq(y, 42)
 /// ```
 pub fn[T, E, V] fold(self : Result[T, E], ok : (T) -> V, err : (E) -> V) -> V {
   match self {
@@ -267,8 +267,8 @@ test "fold" {
   let y = x.fold(fn(v : Int) -> Int { v * 7 }, fn(_e : String) -> Int { 0 })
   let z : Result[Int, String] = Err("error")
   let w = z.fold(fn(v : Int) -> Int { v * 7 }, fn(_e : String) -> Int { 0 })
-  assert_eq!(y, 42)
-  assert_eq!(w, 0)
+  assert_eq(y, 42)
+  assert_eq(w, 0)
 }
 
 ///|
@@ -281,7 +281,7 @@ test "fold" {
 /// ```
 /// let x: Result[Int, String] = Ok(6)
 /// let y = x.to_option()
-/// assert_eq!(y, Some(6))
+/// assert_eq(y, Some(6))
 /// ```
 pub fn[T, E] to_option(self : Result[T, E]) -> T? {
   match self {
@@ -296,8 +296,8 @@ test "to_option" {
   let y : Result[Int, String] = Err("error")
   let z = x.to_option()
   let w = y.to_option()
-  assert_eq!(z, Some(6))
-  assert_eq!(w, None)
+  assert_eq(z, Some(6))
+  assert_eq(w, None)
 }
 
 ///|
@@ -319,14 +319,14 @@ test "compare" {
   let ok2 = Result::Ok(2)
   let err1 = Result::Err(1)
   let err2 = Result::Err(2)
-  assert_eq!(0, ok1.compare(ok1))
-  assert_eq!(0, err2.compare(Result::Err(2)))
-  assert_eq!(-1, ok1.compare(ok2))
-  assert_eq!(1, ok2.compare(ok1))
-  assert_eq!(-1, err1.compare(err2))
-  assert_eq!(1, err2.compare(err1))
-  assert_eq!(-1, ok2.compare(err1))
-  assert_eq!(1, err1.compare(ok2))
+  assert_eq(0, ok1.compare(ok1))
+  assert_eq(0, err2.compare(Result::Err(2)))
+  assert_eq(-1, ok1.compare(ok2))
+  assert_eq(1, ok2.compare(ok1))
+  assert_eq(-1, err1.compare(err2))
+  assert_eq(1, err2.compare(err1))
+  assert_eq(-1, ok2.compare(err1))
+  assert_eq(1, err1.compare(ok2))
 }
 
 ///|

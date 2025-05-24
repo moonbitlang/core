@@ -15,25 +15,25 @@
 ///|
 test "unwrap should return value on Some" {
   let some : Int? = Some(42)
-  assert_eq!(some.unwrap(), 42)
+  assert_eq(some.unwrap(), 42)
 }
 
 ///|
 test "Option::default should return None" {
   let x : Int? = Option::default()
-  assert_eq!(x, None)
+  assert_eq(x, None)
 }
 
 ///|
 test "Option::default should return None for String" {
   let x : String? = Option::default()
-  assert_eq!(x, None)
+  assert_eq(x, None)
 }
 
 ///|
 test "Option::default should return None for Bool" {
   let x : Bool? = Option::default()
-  assert_eq!(x, None)
+  assert_eq(x, None)
 }
 
 ///|

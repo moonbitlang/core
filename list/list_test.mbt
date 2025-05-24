@@ -586,7 +586,7 @@ test "List::to_json with empty list" {
 ///|
 test "List::from_json" {
   for xs in (@quickcheck.samples(20) : Array[@list.T[Int]]) {
-    assert_eq!(xs, @json.from_json!(xs.to_json()))
+    assert_eq(xs, @json.from_json!(xs.to_json()))
   }
 }
 
@@ -615,21 +615,21 @@ test "eachi" {
   let list = @list.of([1, 2, 3, 4, 5])
   let mut acc = 0
   list.eachi(fn(i, x) { acc += x * i })
-  assert_eq!(acc, 40)
+  assert_eq(acc, 40)
 }
 
 ///|
 test "List::head_exn with non-empty list" {
   let list = @list.of([1, 2, 3, 4, 5])
   let head = list.head()
-  assert_eq!(head, Some(1))
+  assert_eq(head, Some(1))
 }
 
 ///|
 test "List::last with non-empty list" {
   let list = @list.of([1, 2, 3, 4, 5])
   let last = list.last()
-  assert_eq!(last, Some(5))
+  assert_eq(last, Some(5))
 }
 
 ///|
@@ -638,7 +638,7 @@ test "List::zip with lists of equal length" {
   let list2 = @list.of(["a", "b", "c"])
   let zipped = list1.zip(list2)
   let expected = @list.of([(1, "a"), (2, "b"), (3, "c")])
-  assert_eq!(zipped, expected)
+  assert_eq(zipped, expected)
 }
 
 ///|
@@ -653,14 +653,14 @@ test "@list.zip with empty list" {
 test "List::nth_exn with valid index" {
   let list = @list.of([1, 2, 3, 4, 5])
   let nth = list.nth(2)
-  assert_eq!(nth, Some(3))
+  assert_eq(nth, Some(3))
 }
 
 ///|
 test "List::maximum with non-empty list" {
   let list = @list.of([1, 3, 5, 2, 4])
   let max = list.maximum()
-  assert_eq!(max, Some(5))
+  assert_eq(max, Some(5))
 }
 
 ///|
@@ -672,7 +672,7 @@ test "@list.maximum with empty list" {
 test "List::minimum with non-empty list" {
   let list = @list.of([1, 3, 5, 2, 4])
   let min = list.minimum()
-  assert_eq!(min, Some(1))
+  assert_eq(min, Some(1))
 }
 
 ///|

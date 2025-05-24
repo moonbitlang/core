@@ -29,9 +29,9 @@ You can check the variant of a `Result` using the `is_ok` and `is_err` methods.
 test {
     let result: Result[Int, String] = Ok(42)
     let is_ok = result.is_ok()
-    assert_eq!(is_ok, true)
+    assert_eq(is_ok, true)
     let is_err = result.is_err()
-    assert_eq!(is_err, false)
+    assert_eq(is_err, false)
 }
 ```
 
@@ -44,7 +44,7 @@ test {
         Ok(value) => value
         Err(_) => -1
     }
-    assert_eq!(val, 33)
+    assert_eq(val, 33)
 }
 ```
 
@@ -53,7 +53,7 @@ Or using the `unwrap` method, which will panic if the result is `Err` and return
 test {
     let result: Result[Int, String] = Ok(42)
     let value = result.unwrap()
-    assert_eq!(value, 42)
+    assert_eq(value, 42)
 }
 ```
 
@@ -62,7 +62,7 @@ A safe alternative is the `or` method, which returns the value if the result is 
 test {
     let result: Result[Int, String] = Err("error")
     let value = result.or(0)
-    assert_eq!(value, 0)
+    assert_eq(value, 0)
 }
 ```
 
@@ -71,7 +71,7 @@ There is a lazy version of `or` called `or_else`, which takes a function that re
 test {
     let result: Result[Int, String] = Err("error")
     let value = result.or_else(fn() { 0 })
-    assert_eq!(value, 0)
+    assert_eq(value, 0)
 }
 ```
 
@@ -82,7 +82,7 @@ and remains unchanged if it is `Err`.
 test {
     let result: Result[Int, String] = Ok(42)
     let new_result = result.map(fn(x) { x + 1 })
-    assert_eq!(new_result, Ok(43))
+    assert_eq(new_result, Ok(43))
 }
 ```
 
@@ -91,7 +91,7 @@ A dual method to `map` is `map_err`, which applies a function to the error value
 test {
     let result: Result[Int, String] = Err("error")
     let new_result = result.map_err(fn(x) { x + "!" })
-    assert_eq!(new_result, Err("error!"))
+    assert_eq(new_result, Err("error!"))
 }
 ```
 
@@ -100,10 +100,10 @@ You can turn a `Result[T, E]` into a `Option[T]` by using the method `to_option`
 test {
     let result: Result[Int, String] = Ok(42)
     let option = result.to_option()
-    assert_eq!(option, Some(42))
+    assert_eq(option, Some(42))
     let result1: Result[Int, String] = Err("error")
     let option1 = result1.to_option()
-    assert_eq!(option1, None)
+    assert_eq(option1, None)
 }
 ```
 
@@ -113,7 +113,7 @@ Moonbit provides monadic operations for `Result`, such as `flatten` and `bind`, 
 test {
     let result: Result[Result[Int, String], String] = Ok(Ok(42))
     let flattened = result.flatten()
-    assert_eq!(flattened, Ok(42))
+    assert_eq(flattened, Ok(42))
 }
 ```
 
@@ -122,6 +122,6 @@ The `bind` method is similar to `map`, but the function passed to it should retu
 test {
     let result: Result[Int, String] = Ok(42)
     let new_result = result.bind(fn(x) { Ok(x + 1) })
-    assert_eq!(new_result, Ok(43))
+    assert_eq(new_result, Ok(43))
 }
 ```

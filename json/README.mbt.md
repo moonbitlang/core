@@ -9,10 +9,10 @@ The `json` package provides comprehensive JSON handling capabilities, including 
 ```moonbit
 test "parse and validate jsons" {
   // Check if a string is valid JSON
-  assert_true!(@json.valid("{\"key\": 42}"))
-  assert_true!(@json.valid("[1, 2, 3]"))
-  assert_true!(@json.valid("null"))
-  assert_true!(@json.valid("false"))
+  assert_true(@json.valid("{\"key\": 42}"))
+  assert_true(@json.valid("[1, 2, 3]"))
+  assert_true(@json.valid("null"))
+  assert_true(@json.valid("false"))
 
   // Parse JSON string into Json value
   let json = try {

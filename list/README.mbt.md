@@ -49,9 +49,9 @@ You can create an empty list or a list from an array.
 ```moonbit
 test {
   let empty_list : @list.T[Int] = @list.new()
-  assert_true!(empty_list.is_empty())
+  assert_true(empty_list.is_empty())
   let list = @list.of([1, 2, 3, 4, 5])
-  assert_eq!(list, @list.of([1, 2, 3, 4, 5]))
+  assert_eq(list, @list.of([1, 2, 3, 4, 5]))
 }
 ```
 
@@ -66,7 +66,7 @@ Add an element to the beginning of the list.
 ```moonbit
 test {
   let list = @list.of([2, 3, 4, 5]).prepend(1)
-  assert_eq!(list, @list.of([1, 2, 3, 4, 5]))
+  assert_eq(list, @list.of([1, 2, 3, 4, 5]))
 }
 ```
 
@@ -77,7 +77,7 @@ Get the number of elements in the list.
 ```moonbit
 test {
   let list = @list.of([1, 2, 3, 4, 5])
-  assert_eq!(list.length(), 5)
+  assert_eq(list.length(), 5)
 }
 ```
 
@@ -88,7 +88,7 @@ Determine if the list is empty.
 ```moonbit
 test {
   let empty_list : @list.T[Int] = @list.new()
-  assert_eq!(empty_list.is_empty(), true)
+  assert_eq(empty_list.is_empty(), true)
 }
 ```
 
@@ -103,7 +103,7 @@ Get the first element of the list as an `Option`.
 ```moonbit
 test {
   let list = @list.of([1, 2, 3, 4, 5])
-  assert_eq!(list.head(), Some(1))
+  assert_eq(list.head(), Some(1))
 }
 ```
 
@@ -114,7 +114,7 @@ Get the list without its first element.
 ```moonbit
 test {
   let list = @list.of([1, 2, 3, 4, 5])
-  assert_eq!(list.tail(), @list.of([2, 3, 4, 5]))
+  assert_eq(list.tail(), @list.of([2, 3, 4, 5]))
 }
 ```
 
@@ -125,7 +125,7 @@ Get the nth element of the list as an `Option`.
 ```moonbit
 test {
   let list = @list.of([1, 2, 3, 4, 5])
-  assert_eq!(list.nth(2), Some(3))
+  assert_eq(list.nth(2), Some(3))
 }
 ```
 
@@ -141,7 +141,7 @@ Iterate over the elements of the list.
 test {
   let arr = []
   @list.of([1, 2, 3, 4, 5]).each(fn(x) { arr.push(x) })
-  assert_eq!(arr, [1, 2, 3, 4, 5])
+  assert_eq(arr, [1, 2, 3, 4, 5])
 }
 ```
 
@@ -152,7 +152,7 @@ Transform each element of the list.
 ```moonbit
 test {
   let list = @list.of([1, 2, 3, 4, 5]).map(fn(x) { x * 2 })
-  assert_eq!(list, @list.of([2, 4, 6, 8, 10]))
+  assert_eq(list, @list.of([2, 4, 6, 8, 10]))
 }
 ```
 
@@ -163,7 +163,7 @@ Keep elements that satisfy a predicate.
 ```moonbit
 test {
   let list = @list.of([1, 2, 3, 4, 5]).filter(fn(x) { x % 2 == 0 })
-  assert_eq!(list, @list.of([2, 4]))
+  assert_eq(list, @list.of([2, 4]))
 }
 ```
 
@@ -178,7 +178,7 @@ Reverse the list.
 ```moonbit
 test {
   let list = @list.of([1, 2, 3, 4, 5]).rev()
-  assert_eq!(list, @list.of([5, 4, 3, 2, 1]))
+  assert_eq(list, @list.of([5, 4, 3, 2, 1]))
 }
 ```
 
@@ -189,7 +189,7 @@ Concatenate two lists.
 ```moonbit
 test {
   let list = @list.of([1, 2, 3]).concat(@list.of([4, 5]))
-  assert_eq!(list, @list.of([1, 2, 3, 4, 5]))
+  assert_eq(list, @list.of([1, 2, 3, 4, 5]))
 }
 ```
 
@@ -200,7 +200,7 @@ Flatten a list of lists.
 ```moonbit
 test {
   let list = @list.of([@list.of([1, 2]), @list.of([3, 4])]).flatten()
-  assert_eq!(list, @list.of([1, 2, 3, 4]))
+  assert_eq(list, @list.of([1, 2, 3, 4]))
 }
 ```
 
@@ -211,7 +211,7 @@ Sort the list in ascending order.
 ```moonbit
 test {
   let list = @list.of([3, 1, 4, 1, 5, 9]).sort()
-  assert_eq!(list, @list.of([1, 1, 3, 4, 5, 9]))
+  assert_eq(list, @list.of([1, 1, 3, 4, 5, 9]))
 }
 ```
 
@@ -226,7 +226,7 @@ Convert a list to an array.
 ```moonbit
 test {
   let list = @list.of([1, 2, 3, 4, 5])
-  assert_eq!(list.to_array(), [1, 2, 3, 4, 5])
+  assert_eq(list.to_array(), [1, 2, 3, 4, 5])
 }
 ```
 
@@ -237,7 +237,7 @@ Create a list from an array.
 ```moonbit
 test {
   let list = @list.from_array([1, 2, 3, 4, 5])
-  assert_eq!(list, @list.of([1, 2, 3, 4, 5]))
+  assert_eq(list, @list.of([1, 2, 3, 4, 5]))
 }
 ```
 
@@ -251,7 +251,7 @@ Lists with the same elements in the same order are considered equal.
 test {
   let list1 = @list.of([1, 2, 3])
   let list2 = @list.of([1, 2, 3])
-  assert_eq!(list1 == list2, true)
+  assert_eq(list1 == list2, true)
 }
 ```
 
@@ -271,10 +271,10 @@ fn safe_head(list : @list.T[Int]) -> Int {
 
 test {
   let list = @list.of([1, 2, 3])
-  assert_eq!(safe_head(list), 1)
+  assert_eq(safe_head(list), 1)
 
   let empty_list : @list.T[Int] = @list.new()
-  assert_eq!(safe_head(empty_list), 0)
+  assert_eq(safe_head(empty_list), 0)
 }
 ```
 

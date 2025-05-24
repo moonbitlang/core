@@ -15,13 +15,13 @@
 ///|
 test "to_string with empty FixedArray" {
   let emptyArray : FixedArray[Int] = FixedArray::default()
-  assert_eq!(emptyArray.to_string(), "[]")
+  assert_eq(emptyArray.to_string(), "[]")
 }
 
 ///|
 test "to_string with non-empty FixedArray" {
   let array : FixedArray[Int] = [1, 2, 3]
-  assert_eq!(array.to_string(), "[1, 2, 3]")
+  assert_eq(array.to_string(), "[1, 2, 3]")
 }
 
 ///|
@@ -38,7 +38,7 @@ test "compare" {
 ///|
 test "is_empty" {
   let arr : FixedArray[Int] = []
-  assert_true!(arr.is_empty())
+  assert_true(arr.is_empty())
 }
 
 ///|
