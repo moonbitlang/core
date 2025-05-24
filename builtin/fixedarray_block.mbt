@@ -23,7 +23,7 @@
 /// let src = FixedArray::from_array([1, 2, 3, 4, 5])
 /// let dst = FixedArray::from_array([0, 0, 0, 0, 0])
 /// FixedArray::unsafe_blit(dst, 0, src, 0, 3)
-/// assert_eq!(dst, FixedArray::from_array([1, 2, 3, 0, 0]))
+/// assert_eq(dst, FixedArray::from_array([1, 2, 3, 0, 0]))
 /// ```
 ///
 /// The behavior is undefined and platform-specific if:

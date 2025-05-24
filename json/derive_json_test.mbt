@@ -30,7 +30,7 @@ test {
       #|{fieldA: 3, fieldB: 2, data: {"a": 3}}
     ,
   )
-  assert_eq!(v0, v)
+  assert_eq(v0, v)
 }
 
 ///|

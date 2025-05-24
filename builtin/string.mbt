@@ -19,7 +19,7 @@ fn unsafe_make_string(length : Int, value : Char) -> String = "$moonbit.unsafe_m
 /// Create new string of `length`, where each character is `value`
 ///
 /// ```
-/// assert_eq!(String::make(5,'S'), "SSSSS")
+/// assert_eq(String::make(5,'S'), "SSSSS")
 /// ```
 pub fn String::make(length : Int, value : Char) -> String {
   guard length >= 0 else { abort("invalid length") }

@@ -41,9 +41,9 @@ test "mod" {
   assert_true((@double.infinity % @double.infinity).is_nan())
   assert_true((@double.infinity % 1).is_nan())
   // division by zero
-  assert_true!((1.0 % 0).is_nan())
-  assert_true!((1.0 % -0).is_nan())
+  assert_true((1.0 % 0).is_nan())
+  assert_true((1.0 % -0).is_nan())
   // nan
-  assert_true!((@double.not_a_number % 1.0).is_nan())
-  assert_true!((1.0 % @double.not_a_number).is_nan())
+  assert_true((@double.not_a_number % 1.0).is_nan())
+  assert_true((1.0 % @double.not_a_number).is_nan())
 }

@@ -221,14 +221,14 @@ test "combine_bool" {
   let hasher2 = @builtin.Hasher::new()
   hasher2.combine_int(1)
   let hash2 = hasher2.finalize()
-  assert_eq!(hash1, hash2)
+  assert_eq(hash1, hash2)
   let hasher3 = @builtin.Hasher::new()
   hasher3.combine_bool(false)
   let hash3 = hasher3.finalize()
   let hasher4 = @builtin.Hasher::new()
   hasher4.combine_int(0)
   let hash4 = hasher4.finalize()
-  assert_eq!(hash3, hash4)
+  assert_eq(hash3, hash4)
 }
 
 ///|

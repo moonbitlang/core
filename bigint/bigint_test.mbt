@@ -398,9 +398,9 @@ test "op_shr" {
   inspect(b.to_string(), content="-617283945061728395")
   let c = a >> 64
   inspect(c.to_string(), content="-1")
-  assert_eq!(BigInt::from_int64(0b1111_1111L) >> 4, BigInt::from_int64(0b1111L))
-  assert_eq!(BigInt::from_int64(0b1111_1111L) >> 24, BigInt::from_int64(0))
-  assert_eq!(BigInt::from_int64(0b1111_1111L) >> 44, BigInt::from_int64(0))
+  assert_eq(BigInt::from_int64(0b1111_1111L) >> 4, BigInt::from_int64(0b1111L))
+  assert_eq(BigInt::from_int64(0b1111_1111L) >> 24, BigInt::from_int64(0))
+  assert_eq(BigInt::from_int64(0b1111_1111L) >> 44, BigInt::from_int64(0))
 }
 
 ///|
@@ -409,12 +409,12 @@ test "decimal_string" {
   inspect(a.to_string(), content="0")
   let a = BigInt::from_string("123")
   inspect(a.to_string(), content="123")
-  assert_eq!(a, BigInt::from_int64(123L))
+  assert_eq(a, BigInt::from_int64(123L))
   let a = BigInt::from_string("1234567890123456789")
   inspect(a.to_string(), content="1234567890123456789")
   let b = BigInt::from_string("-1234567890")
   inspect(b.to_string(), content="-1234567890")
-  assert_eq!(a, BigInt::from_int64(1234567890123456789L))
+  assert_eq(a, BigInt::from_int64(1234567890123456789L))
   let str = "12345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812345678901234567812"
   let a = BigInt::from_string(str)
   inspect(a.to_string(), content=str)
@@ -448,12 +448,12 @@ test "compare" {
   inspect(b.compare(a), content="-1")
   let a = -a
   let b = BigInt::from_int64(-1234567890123456788L)
-  assert_true!(a.compare(b) < 0)
-  assert_true!(b.compare(a) > 0)
+  assert_true(a.compare(b) < 0)
+  assert_true(b.compare(a) > 0)
   let a = BigInt::from_int64(-1234567890123456789L)
   let b = BigInt::from_int64(-1234569L)
-  assert_true!(a.compare(b) < 0)
-  assert_true!(b.compare(a) > 0)
+  assert_true(a.compare(b) < 0)
+  assert_true(b.compare(a) > 0)
 }
 
 ///|

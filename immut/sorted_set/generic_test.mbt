@@ -16,14 +16,14 @@
 test "sorted set equality comparison with unequal elements" {
   let set1 = @sorted_set.of([1, 2, 3])
   let set2 = @sorted_set.of([1, 2, 4])
-  assert_false!(set1 == set2)
+  assert_false(set1 == set2)
 }
 
 ///|
 test "compare with shared prefix" {
   let set1 = @sorted_set.of([1, 2, 3])
   let set2 = @sorted_set.of([1, 2, 4])
-  assert_true!(set1 < set2)
+  assert_true(set1 < set2)
 }
 
 ///|
@@ -40,7 +40,7 @@ test "iter early termination - value" {
         IterContinue
       }
     })
-  assert_eq!(count, 1)
+  assert_eq(count, 1)
 }
 
 ///|

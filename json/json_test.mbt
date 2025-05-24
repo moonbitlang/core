@@ -258,7 +258,7 @@ test "stringify" {
       inspect(i, content="100")
     _ => fail!("Failed to match the JSON")
   }
-  assert_eq!(newjson, json)
+  assert_eq(newjson, json)
 }
 
 ///|
@@ -323,7 +323,7 @@ test "stringify escape 4" {
 test "stringify escape round trip" {
   match @json.parse?(json.stringify()) {
     Err(e) => raise e
-    Ok(newjson) => assert_eq!(newjson, json)
+    Ok(newjson) => assert_eq(newjson, json)
   }
 }
 
@@ -340,7 +340,7 @@ test "string from and to json round trip" {
     #|  / __  /  __/ / / /_/ /  / /  / / /_/ / /_/ / / / / /_/ / / /_
     #| /_/ /_/\___/_/_/\____/  /_/  /_/\____/\____/_/ /_/_____/_/\__/
     #|
-  assert_eq!(@json.from_json!(greeting.to_json()), greeting)
+  assert_eq(@json.from_json!(greeting.to_json()), greeting)
 }
 
 ///|
@@ -394,7 +394,7 @@ test "stringify number" {
   for json in nums {
     match @json.parse?(json.stringify()) {
       Err(e) => err.push(e.to_string())
-      Ok(newjson) => assert_eq!(newjson, json)
+      Ok(newjson) => assert_eq(newjson, json)
     }
   }
   inspect(err, content="[]")

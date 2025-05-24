@@ -177,13 +177,13 @@ test "complex" {
   for i in 0..=1000 {
     pq = pq.push(arr[i])
   }
-  assert_eq!(pq.length(), 1001)
+  assert_eq(pq.length(), 1001)
   for i in 0..=1000 {
-    assert_eq!(pq.peek(), Some(1000 - i))
+    assert_eq(pq.peek(), Some(1000 - i))
     pq = pq.pop().unwrap()
   }
   inspect(pq.iter(), content="[]")
-  assert_eq!(pq.length(), 0)
+  assert_eq(pq.length(), 0)
 }
 
 ///|
@@ -192,11 +192,11 @@ test "compare" {
   let pq2 = @priority_queue.of([1, 2, 4])
   let pq3 = @priority_queue.of([1, 2])
   let empty : @priority_queue.T[Int] = @priority_queue.new()
-  assert_eq!(pq1.compare(pq2), -1)
-  assert_eq!(pq1.compare(pq3), 1)
-  assert_eq!(pq3.compare(pq1), -1)
-  assert_eq!(pq1.compare(pq1), 0)
-  assert_eq!(empty.compare(empty), 0)
+  assert_eq(pq1.compare(pq2), -1)
+  assert_eq(pq1.compare(pq3), 1)
+  assert_eq(pq3.compare(pq1), -1)
+  assert_eq(pq1.compare(pq1), 0)
+  assert_eq(empty.compare(empty), 0)
 }
 
 ///|

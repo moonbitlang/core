@@ -275,7 +275,7 @@ test "parse_double" {
   ]
   for i in 0..<tests.length() {
     let t = tests[i]
-    assert_eq!(
+    assert_eq(
       try Result::Ok(parse_double!(t.0)) catch {
         StrConvError(err) => Err(err)
       },
@@ -286,43 +286,43 @@ test "parse_double" {
 
 ///|
 test "parse_double_inf" {
-  assert_eq!(
+  assert_eq(
     try parse_double!("inf") catch {
       _ => panic()
     },
     @double.infinity,
   )
-  assert_eq!(
+  assert_eq(
     try parse_double!("+Inf") catch {
       _ => panic()
     },
     @double.infinity,
   )
-  assert_eq!(
+  assert_eq(
     try parse_double!("-Inf") catch {
       _ => panic()
     },
     @double.neg_infinity,
   )
-  assert_eq!(
+  assert_eq(
     try parse_double!("+Infinity") catch {
       _ => panic()
     },
     @double.infinity,
   )
-  assert_eq!(
+  assert_eq(
     try parse_double!("-Infinity") catch {
       _ => panic()
     },
     @double.neg_infinity,
   )
-  assert_eq!(
+  assert_eq(
     try parse_double!("+INFINITY") catch {
       _ => panic()
     },
     @double.infinity,
   )
-  assert_eq!(
+  assert_eq(
     try parse_double!("-INFINITY") catch {
       _ => panic()
     },
@@ -335,13 +335,13 @@ test "parse_double_nan" {
   let nan = try parse_double!("nan") catch {
     _ => panic()
   }
-  assert_true!(nan.is_nan())
+  assert_true(nan.is_nan())
   let nan = try parse_double!("NaN") catch {
     _ => panic()
   }
-  assert_true!(nan.is_nan())
+  assert_true(nan.is_nan())
   let nan = try parse_double!("NAN") catch {
     _ => panic()
   }
-  assert_true!(nan.is_nan())
+  assert_true(nan.is_nan())
 }

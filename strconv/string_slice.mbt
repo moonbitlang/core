@@ -148,15 +148,15 @@ fn[T] fold_digits(
 
 ///|
 test "eq_ignore_case" {
-  assert_true!(full_slice("nan").prefix_eq_ignore_case("NaN"))
-  assert_true!(full_slice("inf").prefix_eq_ignore_case("inf"))
-  assert_true!(full_slice("inf").prefix_eq_ignore_case("Inf"))
+  assert_true(full_slice("nan").prefix_eq_ignore_case("NaN"))
+  assert_true(full_slice("inf").prefix_eq_ignore_case("inf"))
+  assert_true(full_slice("inf").prefix_eq_ignore_case("Inf"))
 }
 
 ///|
 test "lower" {
-  assert_eq!(lower('Z'), 'z')
-  assert_eq!(lower('A'), 'a')
-  assert_eq!(lower('a'), 'a')
-  assert_eq!(lower('z'), 'z')
+  assert_eq(lower('Z'), 'z')
+  assert_eq(lower('A'), 'a')
+  assert_eq(lower('a'), 'a')
+  assert_eq(lower('z'), 'z')
 }

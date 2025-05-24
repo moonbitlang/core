@@ -319,7 +319,7 @@ test "op_equal" {
   for xs in xss {
     for ys in xss {
       if xs.to_array() == ys.to_array() {
-        assert_eq!(xs, ys)
+        assert_eq(xs, ys)
       } else {
         assert_not_eq!(xs, ys)
       }
@@ -332,7 +332,7 @@ test "compare" {
   let xss : Array[@sorted_set.T[Int]] = @quickcheck.samples(5)
   for xs in xss {
     for ys in xss {
-      assert_eq!(xs.compare(ys), xs.to_array().compare(ys.to_array()))
+      assert_eq(xs.compare(ys), xs.to_array().compare(ys.to_array()))
     }
   }
 }
@@ -346,7 +346,7 @@ test "to_json" {
 ///|
 test "from_json" {
   for xs in (@quickcheck.samples(20) : Array[@sorted_set.T[Int]]) {
-    assert_eq!(xs, @json.from_json!(xs.to_json()))
+    assert_eq(xs, @json.from_json!(xs.to_json()))
   }
 }
 

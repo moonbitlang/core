@@ -22,7 +22,7 @@
 /// ```
 /// let arr: FixedArray[Int] = [5, 4, 3, 2, 1]
 /// arr.stable_sort()
-/// assert_eq!(arr, [1, 2, 3, 4, 5])
+/// assert_eq(arr, [1, 2, 3, 4, 5])
 /// ```
 pub fn[T : Compare] FixedArray::stable_sort(self : FixedArray[T]) -> Unit {
   timsort({ array: self, start: 0, end: self.length() })
@@ -207,7 +207,7 @@ fn collapse(runs : Array[TimSortRun], stop : Int) -> Int? {
 /// ```
 /// let arr = [5, 4, 3, 2, 1]
 /// arr.sort()
-/// assert_eq!(arr, [1, 2, 3, 4, 5])
+/// assert_eq(arr, [1, 2, 3, 4, 5])
 /// ```
 pub fn[T : Compare] FixedArray::sort(self : FixedArray[T]) -> Unit {
   fixed_quick_sort(
@@ -336,8 +336,8 @@ fn[T : Compare] fixed_bubble_sort(arr : FixedArraySlice[T]) -> Unit {
 test "fixed_try_bubble_sort" {
   let arr : FixedArray[_] = [8, 7, 6, 5, 4, 3, 2, 1]
   let sorted = fixed_try_bubble_sort({ array: arr, start: 0, end: 8 })
-  assert_eq!(sorted, true)
-  assert_eq!(arr, [1, 2, 3, 4, 5, 6, 7, 8])
+  assert_eq(sorted, true)
+  assert_eq(arr, [1, 2, 3, 4, 5, 6, 7, 8])
 }
 
 ///|
@@ -439,13 +439,13 @@ fn[T : Compare] fixed_sift_down(arr : FixedArraySlice[T], index : Int) -> Unit {
 fn fixed_test_sort(f : (FixedArray[Int]) -> Unit) -> Unit! {
   let arr : FixedArray[_] = [5, 4, 3, 2, 1]
   f(arr)
-  assert_eq!(arr, [1, 2, 3, 4, 5])
+  assert_eq(arr, [1, 2, 3, 4, 5])
   let arr : FixedArray[_] = [5, 5, 5, 5, 1]
   f(arr)
-  assert_eq!(arr, [1, 5, 5, 5, 5])
+  assert_eq(arr, [1, 5, 5, 5, 5])
   let arr : FixedArray[_] = [1, 2, 3, 4, 5]
   f(arr)
-  assert_eq!(arr, [1, 2, 3, 4, 5])
+  assert_eq(arr, [1, 2, 3, 4, 5])
   let arr = FixedArray::make(1000, 0)
   for i in 0..<1000 {
     arr[i] = 1000 - i - 1
@@ -458,7 +458,7 @@ fn fixed_test_sort(f : (FixedArray[Int]) -> Unit) -> Unit! {
   for i in 0..<1000 {
     expected[i] = i
   }
-  assert_eq!(arr, expected)
+  assert_eq(arr, expected)
 }
 
 ///|
@@ -484,7 +484,7 @@ test "sort" {
 test "stable_sort" {
   let arr : FixedArray[_] = [5, 1, 3, 4, 2]
   arr.stable_sort()
-  assert_eq!(arr, [1, 2, 3, 4, 5])
+  assert_eq(arr, [1, 2, 3, 4, 5])
   let arr = FixedArray::make(1000, 0)
   for i in 0..<1000 {
     arr[i] = 1000 - i - 1
@@ -497,7 +497,7 @@ test "stable_sort" {
   for i in 0..<1000 {
     expected[i] = i
   }
-  assert_eq!(arr, expected)
+  assert_eq(arr, expected)
 }
 
 ///|
@@ -544,60 +544,60 @@ test "stable_sort_complex" {
       index += 1
     }
   }
-  assert_false!(arr.is_sorted())
+  assert_false(arr.is_sorted())
   arr.stable_sort()
-  assert_true!(arr.is_sorted())
+  assert_true(arr.is_sorted())
 }
 
 ///|
 test "find_streak with empty array" {
   let arr : FixedArray[Int] = []
   let (streak_end, was_reversed) = find_streak({ array: arr, start: 0, end: 0 })
-  assert_eq!(streak_end, 0)
-  assert_eq!(was_reversed, false)
+  assert_eq(streak_end, 0)
+  assert_eq(was_reversed, false)
 }
 
 ///|
 test "find_streak with single element array" {
   let arr : FixedArray[_] = [1]
   let (streak_end, was_reversed) = find_streak({ array: arr, start: 0, end: 1 })
-  assert_eq!(streak_end, 1)
-  assert_eq!(was_reversed, false)
+  assert_eq(streak_end, 1)
+  assert_eq(was_reversed, false)
 }
 
 ///|
 test "find_streak with increasing elements" {
   let arr : FixedArray[_] = [1, 2, 3, 4, 5]
   let (streak_end, was_reversed) = find_streak({ array: arr, start: 0, end: 5 })
-  assert_eq!(streak_end, 5)
-  assert_eq!(was_reversed, false)
+  assert_eq(streak_end, 5)
+  assert_eq(was_reversed, false)
 }
 
 ///|
 test "find_streak with decreasing elements" {
   let arr : FixedArray[_] = [5, 4, 3, 2, 1]
   let (streak_end, was_reversed) = find_streak({ array: arr, start: 0, end: 5 })
-  assert_eq!(streak_end, 5)
-  assert_eq!(was_reversed, true)
+  assert_eq(streak_end, 5)
+  assert_eq(was_reversed, true)
 }
 
 ///|
 test "provide_sorted_batch with long run" {
   let arr : FixedArray[_] = [1, 2, 3, 4, 5]
   let end = provide_sorted_batch({ array: arr, start: 0, end: 5 }, 0, 5)
-  assert_eq!(end, 5)
+  assert_eq(end, 5)
 }
 
 ///|
 test "fixed_quick_sort with limit reached" {
   let arr : FixedArray[_] = [5, 4, 3, 2, 1]
   fixed_quick_sort({ array: arr, start: 0, end: 5 }, None, 0)
-  assert_true!(FixedArray::is_sorted(arr))
+  assert_true(FixedArray::is_sorted(arr))
 }
 
 ///|
 test "fixed_quick_sort with balanced partitions" {
   let arr : FixedArray[_] = [5, 4, 3, 2, 1]
   fixed_quick_sort({ array: arr, start: 0, end: 5 }, None, 10)
-  assert_true!(FixedArray::is_sorted(arr))
+  assert_true(FixedArray::is_sorted(arr))
 }

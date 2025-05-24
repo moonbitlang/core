@@ -38,5 +38,5 @@ test {
       #|Add(Val("x"), Val("y"))
     ,
   )
-  assert_eq!(e0, e)
+  assert_eq(e0, e)
 }

@@ -29,7 +29,7 @@ test "cmp_by_key" {
   let p1 = ("first", 1)
   let p2 = ("second", 1)
   let snd = fn(p : (_, _)) { p.1 }
-  assert_eq!(@cmp.minimum_by_key(p1, p2, snd), p1)
-  assert_eq!(@cmp.maximum_by_key(p1, p2, snd), p2)
+  assert_eq(@cmp.minimum_by_key(p1, p2, snd), p1)
+  assert_eq(@cmp.maximum_by_key(p1, p2, snd), p2)
 }
 ```

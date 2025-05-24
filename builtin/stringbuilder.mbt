@@ -36,7 +36,7 @@ pub fn[T : Show] StringBuilder::write_object(
 ///   let sb = StringBuilder::new()
 ///   let chars = "Hello🤣".iter()
 ///   sb.write_iter(chars)
-///   assert_eq!(sb.to_string(), "Hello🤣")
+///   assert_eq(sb.to_string(), "Hello🤣")
 /// }
 /// ```
 pub fn StringBuilder::write_iter(

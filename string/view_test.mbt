@@ -328,15 +328,15 @@ test "length_eq test with surrogate pair" {
   // "🤣" is encoded as a surrogate pair
   let str = "🤣"
   let view = str[:]
-  assert_true!(view.char_length_eq(1))
+  assert_true(view.char_length_eq(1))
 }
 
 ///|
 test "length_ge with high surrogate" {
   let str = "🐰" // This emoji is represented using a surrogate pair
   let view = str.view(start_offset=0)
-  assert_eq!(view.char_length_ge(1), true)
-  assert_eq!(view.char_length_ge(2), false)
+  assert_eq(view.char_length_ge(1), true)
+  assert_eq(view.char_length_ge(2), false)
 }
 
 ///|
@@ -664,6 +664,6 @@ test "hash" {
   let a = "abc"
   let b = "def"
   let c = "abc"
-  assert_eq!(a.hash(), c.hash())
+  assert_eq(a.hash(), c.hash())
   assert_not_eq!(a.hash(), b.hash())
 }

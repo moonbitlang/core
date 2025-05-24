@@ -22,10 +22,10 @@ You can access the elements of the tuple using the `fst` and `snd` methods (Shor
 ```moonbit
 test {
     let tuple = (1, 2)
-    assert_eq!(tuple.0, 1)
-    assert_eq!(tuple.1, 2)
-    assert_eq!(@tuple.fst(tuple), 1)
-    assert_eq!(@tuple.snd(tuple), 2)
+    assert_eq(tuple.0, 1)
+    assert_eq(tuple.1, 2)
+    assert_eq(@tuple.fst(tuple), 1)
+    assert_eq(@tuple.snd(tuple), 2)
 }
 ```
 

@@ -17,7 +17,7 @@
 ///
 /// ```
 /// let s = @string.from_array(['H', 'e', 'l', 'l', 'o'])
-/// assert_eq!(s, "Hello")
+/// assert_eq(s, "Hello")
 /// ```
 ///
 /// Do not convert large datas to `Array[Char]` and build a string with `String::from_array`.
@@ -56,9 +56,9 @@ pub fn from_iter(iter : Iter[Char]) -> String {
 ///
 /// ```
 /// let s = @string.concat(["Hello", ", ", "world!"])
-/// assert_eq!(s, "Hello, world!")
+/// assert_eq(s, "Hello, world!")
 /// let s = @string.concat(["a", "b", "c"], separator=",")
-/// assert_eq!(s, "a,b,c")
+/// assert_eq(s, "a,b,c")
 /// ```
 #deprecated("Use `Array::join` instead.")
 pub fn concat(strings : Array[String], separator~ : String = "") -> String {
@@ -152,8 +152,8 @@ pub fn to_array(self : String) -> Array[Char] {
 ///
 /// ```
 /// let s = "Hello, World!🤣";
-/// assert_eq!(s.iter().count(), 14); // Unicode characters
-/// assert_eq!(s.length(), 15); // Utf16 code units
+/// assert_eq(s.iter().count(), 14); // Unicode characters
+/// assert_eq(s.length(), 15); // Utf16 code units
 /// ```
 pub fn iter(self : String) -> Iter[Char] {
   Iter::new(fn(yield_) {
@@ -226,7 +226,7 @@ pub fn iter2(self : String) -> Iter2[Int, Char] {
 /// ```
 /// let input = "Hello, World!"
 /// let reversed = input.rev_iter().collect()
-/// assert_eq!(reversed, ['!', 'd', 'l', 'r', 'o', 'W', ' ', ',', 'o', 'l', 'l', 'e', 'H'])
+/// assert_eq(reversed, ['!', 'd', 'l', 'r', 'o', 'W', ' ', ',', 'o', 'l', 'l', 'e', 'H'])
 /// ```
 pub fn rev_iter(self : String) -> Iter[Char] {
   Iter::new(fn(yield_) {

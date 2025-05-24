@@ -183,8 +183,8 @@ fn iqr(data : Array[Double]) -> Double {
 
 ///|
 fn percentile_of_sorted(data : Array[Double], pct : Double) -> Double! {
-  assert_false!(data.is_empty())
-  assert_true!(pct >= 0.0 && pct <= 100.0)
+  assert_false(data.is_empty())
+  assert_true(pct >= 0.0 && pct <= 100.0)
   if data.length() == 1 {
     return data[0]
   }

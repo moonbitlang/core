@@ -16,12 +16,12 @@
 test {
   let unit1 = ()
   let unit2 = ()
-  assert_eq!(unit1, unit2)
+  assert_eq(unit1, unit2)
 }
 
 ///|
 test {
   let unit1 = ()
   let unit2 = ()
-  assert_true!(physical_equal(unit1, unit2))
+  assert_true(physical_equal(unit1, unit2))
 }

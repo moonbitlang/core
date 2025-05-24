@@ -44,7 +44,7 @@ test "is_empty method" {
 test {
   let data = ["a", "b", "c", "hello world"]
   @json.inspect(data.map(id), content=["a", "b", "c", "hello world"])
-  // assert_eq!(StringBuilder::new()..write_string("hello").to_string(), "hello")
+  // assert_eq(StringBuilder::new()..write_string("hello").to_string(), "hello")
 }
 
 ///|

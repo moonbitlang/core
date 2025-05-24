@@ -12,9 +12,9 @@ You can create a list manually via the `default()` or construct it using the `of
 ```moonbit
 test {
     let list0 : @list.T[Int] = @list.default()
-    assert_eq!(list0.length(), 0)
+    assert_eq(list0.length(), 0)
     let list1 = @list.of([1, 2, 3, 4, 5])
-    assert_eq!(list1.length(), 5)
+    assert_eq(list1.length(), 5)
 }
 ```
 
@@ -22,14 +22,14 @@ Or use `Cons` constructor directly (Adds a single element to the beginning of a 
 ```moonbit
 test {
     let list = @list.Cons(1, Cons(2, Cons(3, Nil)))
-    assert_eq!(list.to_array(), [1, 2, 3])
+    assert_eq(list.to_array(), [1, 2, 3])
 }
 ```
 
 Build a repeated list by using the `repeat()` method:
 ```moonbit
 test {
-    assert_eq!(@list.repeat(3, 1).to_array(), [1, 1, 1])
+    assert_eq(@list.repeat(3, 1).to_array(), [1, 1, 1])
 }
 ```
 
@@ -43,7 +43,7 @@ test {
         Cons(head, _tail) => arr.push(head)
         Nil => println("Empty list")
     }
-    assert_eq!(arr, [1])
+    assert_eq(arr, [1])
 }
 ```
 
@@ -54,7 +54,7 @@ test {
     let list = @list.of([1, 2, 3, 4, 5])
     let arr = []
     list.each(fn (ele) { arr.push(ele) }) 
-    assert_eq!(arr, [1, 2, 3, 4, 5])
+    assert_eq(arr, [1, 2, 3, 4, 5])
 }
 ```
 
@@ -66,8 +66,8 @@ test {
     let list2 = @list.of([4, 5, 6])
     let list3 = list1.concat(list2)
     let list4 = list1 + list2
-    assert_eq!(list3.to_array(), [1, 2, 3, 4, 5, 6])
-    assert_eq!(list4.to_array(), [1, 2, 3, 4, 5, 6])
+    assert_eq(list3.to_array(), [1, 2, 3, 4, 5, 6])
+    assert_eq(list4.to_array(), [1, 2, 3, 4, 5, 6])
 }
 ```
 
@@ -78,7 +78,7 @@ test {
     let ls2 = @list.of([4, 5, 6])
     let ls3 = @list.of([7, 8, 9])
     let ls4 = @list.of([ls1, ls2, ls3])
-    assert_eq!(ls4.flatten().to_array(), [1, 2, 3, 4, 5, 6, 7, 8, 9])
+    assert_eq(ls4.flatten().to_array(), [1, 2, 3, 4, 5, 6, 7, 8, 9])
 }
 ```
 
@@ -87,7 +87,7 @@ To insert separate elements into a list, you can use the `intersperse()` method:
 ```moonbit
 test {
     let list = @list.of([1, 2, 3])
-    assert_eq!(list.intersperse(0).to_array(), [1, 0, 2, 0, 3])
+    assert_eq(list.intersperse(0).to_array(), [1, 0, 2, 0, 3])
 }
 ```
 
@@ -100,11 +100,11 @@ There are three ways to filter / reject / select multiple elements from a list:
 ```moonbit
 test {
     let ls = @list.of([1, 2, 3, 4, 5])
-    assert_eq!(ls.filter(fn (ele) { ele % 2 == 0 }).to_array(), [2, 4])
-    assert_eq!(ls.take(2).to_array(), [1, 2])
-    assert_eq!(ls.drop(2).to_array(), [3, 4, 5])
-    assert_eq!(ls.take_while(fn (ele) { ele < 3 }).to_array(), [1, 2])
-    assert_eq!(ls.drop_while(fn (ele) { ele < 3 }).to_array(), [3, 4, 5])
+    assert_eq(ls.filter(fn (ele) { ele % 2 == 0 }).to_array(), [2, 4])
+    assert_eq(ls.take(2).to_array(), [1, 2])
+    assert_eq(ls.drop(2).to_array(), [3, 4, 5])
+    assert_eq(ls.take_while(fn (ele) { ele < 3 }).to_array(), [1, 2])
+    assert_eq(ls.drop_while(fn (ele) { ele < 3 }).to_array(), [3, 4, 5])
 }
 ```
 
@@ -115,8 +115,8 @@ And access the last element using the `last()` method (O(n)).
 ```moonbit
 test {
     let list = @list.of([1, 2, 3, 4, 5])
-    assert_eq!(list.head(), Some(1))
-    assert_eq!(list.last(), Some(5))
+    assert_eq(list.head(), Some(1))
+    assert_eq(list.last(), Some(5))
 }
 ```
 
@@ -125,8 +125,8 @@ If the index is out of bounds, it returns `None`.
 ```moonbit
 test {
     let list = @list.of([1, 2, 3, 4, 5])
-    assert_eq!(list.nth(2), Some(3))
-    assert_eq!(list.nth(8), None)
+    assert_eq(list.nth(2), Some(3))
+    assert_eq(list.nth(8), None)
 }
 ```
 
@@ -134,7 +134,7 @@ To get a sub-list from the list, you can use `tail()` for getting all elements e
 ```moonbit
 test {
     let list = @list.of([1, 2, 3, 4, 5])
-    assert_eq!(list.tail().to_array(), [2, 3, 4, 5])
+    assert_eq(list.tail().to_array(), [2, 3, 4, 5])
 }
 ```
 
@@ -143,7 +143,7 @@ You can reduce (fold) a list to a single value using the `fold()` method.
 ```moonbit
 test {
   let list = @list.of([1, 2, 3, 4, 5])
-  assert_eq!(list.fold(init=0, fn(acc, x) { acc + x }), 15)
+  assert_eq(list.fold(init=0, fn(acc, x) { acc + x }), 15)
 }
 ```
 
@@ -154,7 +154,7 @@ To transform list elements, you can use the `map()` method.
 ```moonbit
 test {
   let list = @list.of([1, 2, 3, 4, 5])
-  assert_eq!(list.map(fn (ele) { ele * 2 }).to_array(), [2, 4, 6, 8, 10])
+  assert_eq(list.map(fn (ele) { ele * 2 }).to_array(), [2, 4, 6, 8, 10])
 }
 ```
 
@@ -162,6 +162,6 @@ The `rev` method reverses the list.
 ```moonbit
 test {
   let list = @list.of([1, 2, 3, 4, 5])
-  assert_eq!(list.rev().to_array(), [5, 4, 3, 2, 1])
+  assert_eq(list.rev().to_array(), [5, 4, 3, 2, 1])
 }
 ```

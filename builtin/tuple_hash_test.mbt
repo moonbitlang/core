@@ -22,7 +22,7 @@ fn h() -> Hasher {
 
 ///|
 test "hash_combine for 2-tuple" {
-  assert_eq!(
+  assert_eq(
     h()..combine(1)..combine("hello").finalize(),
     h()..combine((1, "hello")).finalize(),
   )
@@ -30,7 +30,7 @@ test "hash_combine for 2-tuple" {
 
 ///|
 test "hash_combine for 3-tuple" {
-  assert_eq!(
+  assert_eq(
     h()..combine(1)..combine("hello")..combine(3.14).finalize(),
     h()..combine((1, "hello", 3.14)).finalize(),
   )
@@ -38,7 +38,7 @@ test "hash_combine for 3-tuple" {
 
 ///|
 test "hash_combine for 4-tuple" {
-  assert_eq!(
+  assert_eq(
     h()..combine(1)..combine("hello")..combine(3.14)..combine(15).finalize(),
     h()..combine((1, "hello", 3.14, 15)).finalize(),
   )
@@ -46,7 +46,7 @@ test "hash_combine for 4-tuple" {
 
 ///|
 test "hash_combine for 5-tuple" {
-  assert_eq!(
+  assert_eq(
     h()
     ..combine(1)
     ..combine("hello")
@@ -60,7 +60,7 @@ test "hash_combine for 5-tuple" {
 
 ///|
 test "hash_combine for 6-tuple" {
-  assert_eq!(
+  assert_eq(
     h()
     ..combine(1)
     ..combine("hello")
@@ -75,7 +75,7 @@ test "hash_combine for 6-tuple" {
 
 ///|
 test "hash_combine for 7-tuple" {
-  assert_eq!(
+  assert_eq(
     h()
     ..combine(1)
     ..combine("hello")

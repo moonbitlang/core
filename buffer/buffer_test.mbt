@@ -75,7 +75,7 @@ test "grow_if_necessary method" {
   buf.write_string(
     "This is a test string that is longer than the initial capacity",
   )
-  assert_true!(buf.to_bytes().length() >= 60)
+  assert_true(buf.to_bytes().length() >= 60)
 }
 
 ///|
@@ -98,7 +98,7 @@ test "to_bytes method" {
   let buf = @buffer.new(size_hint=10)
   buf.write_string("Test")
   let bytes = buf.to_bytes()
-  assert_eq!(bytes.length(), 8) // Each character in "Test" is 2 bytes
+  assert_eq(bytes.length(), 8) // Each character in "Test" is 2 bytes
 }
 
 ///|
@@ -114,7 +114,7 @@ test "grow_if_necessary method" {
   buf.write_string(
     "This is a test string that is longer than the initial capacity",
   )
-  assert_true!(buf.to_bytes().length() >= 60)
+  assert_true(buf.to_bytes().length() >= 60)
 }
 
 ///|
@@ -137,7 +137,7 @@ test "to_bytes method" {
   let buf = @buffer.new(size_hint=10)
   buf.write_string("Test")
   let bytes = buf.to_bytes()
-  assert_eq!(bytes.length(), 8) // Each character in "Test" is 2 bytes
+  assert_eq(bytes.length(), 8) // Each character in "Test" is 2 bytes
 }
 
 ///|
@@ -160,7 +160,7 @@ test "grow_if_necessary method" {
   buf.write_string(
     "This is a test string that is longer than the initial capacity",
   )
-  assert_true!(buf.to_bytes().length() >= 60)
+  assert_true(buf.to_bytes().length() >= 60)
 }
 
 ///|
@@ -183,7 +183,7 @@ test "to_bytes method" {
   let buf = @buffer.new(size_hint=10)
   buf.write_string("Test")
   let bytes = buf.to_bytes()
-  assert_eq!(bytes.length(), 8) // Each character in "Test" is 2 bytes
+  assert_eq(bytes.length(), 8) // Each character in "Test" is 2 bytes
 }
 
 ///|

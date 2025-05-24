@@ -46,7 +46,7 @@ test "mix" {
   let vec = []
   v.eachi(fn(i, _e) { vec.push(i) })
   for i in 0..<large_const {
-    assert_eq!(vec[i], i)
+    assert_eq(vec[i], i)
   }
 }
 

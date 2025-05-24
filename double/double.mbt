@@ -245,63 +245,63 @@ pub fn is_neg_inf(self : Double) -> Bool {
 
 ///|
 test "from_int" {
-  assert_eq!(from_int(1), 1.0)
-  assert_eq!(from_int(0), 0.0)
-  assert_eq!(from_int(100000), 1.0e5)
+  assert_eq(from_int(1), 1.0)
+  assert_eq(from_int(0), 0.0)
+  assert_eq(from_int(100000), 1.0e5)
 }
 
 ///|
 test "abs" {
   let d = -1.0
-  assert_eq!(d.abs(), 1.0)
-  assert_eq!(1.0.abs(), 1.0)
+  assert_eq(d.abs(), 1.0)
+  assert_eq(1.0.abs(), 1.0)
 }
 
 ///|
 test "signum" {
   let d = -2.0
-  assert_eq!(d.signum(), -1.0)
-  assert_eq!(1.0.signum(), 1.0)
-  assert_eq!(0.0.signum(), 0.0)
-  assert_true!(not_a_number.signum().is_nan())
+  assert_eq(d.signum(), -1.0)
+  assert_eq(1.0.signum(), 1.0)
+  assert_eq(0.0.signum(), 0.0)
+  assert_true(not_a_number.signum().is_nan())
 }
 
 ///|
 test "is_nan" {
-  assert_true!(not_a_number.is_nan())
-  assert_false!(0.0.is_nan())
-  assert_false!(12345.678.is_nan())
-  assert_false!(infinity.is_nan())
-  assert_false!(neg_infinity.is_nan())
+  assert_true(not_a_number.is_nan())
+  assert_false(0.0.is_nan())
+  assert_false(12345.678.is_nan())
+  assert_false(infinity.is_nan())
+  assert_false(neg_infinity.is_nan())
 }
 
 ///|
 test "is_inf" {
-  assert_true!(infinity.is_inf())
-  assert_true!(neg_infinity.is_inf())
-  assert_false!(0.0.is_inf())
-  assert_false!(12345.678.is_inf())
+  assert_true(infinity.is_inf())
+  assert_true(neg_infinity.is_inf())
+  assert_false(0.0.is_inf())
+  assert_false(12345.678.is_inf())
 }
 
 ///|
 test "is_pos_inf" {
-  assert_true!(infinity.is_pos_inf())
-  assert_false!(neg_infinity.is_pos_inf())
-  assert_false!(0.0.is_pos_inf())
-  assert_false!(12345.678.is_pos_inf())
+  assert_true(infinity.is_pos_inf())
+  assert_false(neg_infinity.is_pos_inf())
+  assert_false(0.0.is_pos_inf())
+  assert_false(12345.678.is_pos_inf())
 }
 
 ///|
 test "is_neg_inf" {
-  assert_false!(infinity.is_neg_inf())
-  assert_true!(neg_infinity.is_neg_inf())
-  assert_false!(0.0.is_neg_inf())
-  assert_false!(12345.678.is_neg_inf())
+  assert_false(infinity.is_neg_inf())
+  assert_true(neg_infinity.is_neg_inf())
+  assert_false(0.0.is_neg_inf())
+  assert_false(12345.678.is_neg_inf())
 }
 
 ///|
 test "min equal to neg max" {
-  assert_true!(min_value == -max_value)
+  assert_true(min_value == -max_value)
 }
 
 ///|

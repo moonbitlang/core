@@ -52,7 +52,7 @@ test "InorderIterator" {
   for i = 0; ; i = i + 1 {
     match iter.next() {
       None => break
-      Some(value) => assert_eq!(value, arr[i])
+      Some(value) => assert_eq(value, arr[i])
     }
   }
 }

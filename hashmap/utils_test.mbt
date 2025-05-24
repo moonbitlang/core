@@ -15,7 +15,7 @@
 ///|
 test "capacity" {
   let m = @hashmap.new()
-  assert_eq!(m.capacity(), 8)
+  assert_eq(m.capacity(), 8)
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
@@ -24,5 +24,5 @@ test "capacity" {
   m.set("f", 6)
   m.set("g", 7)
   m.set("h", 8)
-  assert_eq!(m.capacity(), 16)
+  assert_eq(m.capacity(), 16)
 }

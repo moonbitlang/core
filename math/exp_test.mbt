@@ -32,7 +32,7 @@ test "expf Test" {
     let x = data[i]
     let res = @math.expf(x)
     let libm_res = libm_results[i]
-    assert_true!(
+    assert_true(
       (res.reinterpret_as_int() - libm_res.reinterpret_as_int()).abs() <= 2,
     )
   }
@@ -58,7 +58,7 @@ test "expm1f Test" {
     let x = data[i]
     let res = @math.expm1f(x)
     let libm_res = libm_results[i]
-    assert_true!(
+    assert_true(
       (res.reinterpret_as_int() - libm_res.reinterpret_as_int()).abs() <= 2,
     )
   }

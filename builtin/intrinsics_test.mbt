@@ -455,7 +455,7 @@ test "UInt::reinterpret_as_float roundtrip" {
   for value in values {
     let float_value = value.reinterpret_as_float()
     let roundtrip_value = Float::reinterpret_as_uint(float_value)
-    assert_eq!(roundtrip_value, value)
+    assert_eq(roundtrip_value, value)
   }
 }
 
