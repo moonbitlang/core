@@ -63,7 +63,7 @@ The `Rational` type supports the following double operations:
 test {
     let a = @rational.new(1L, 2L).unwrap()
     assert_eq(a.to_double(), 0.5)
-    assert_eq(@rational.from_double!(0.5).to_string(), "1/2")
+    assert_eq(@rational.from_double(0.5).to_string(), "1/2")
 }
 ```
 

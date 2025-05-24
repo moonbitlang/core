@@ -550,7 +550,7 @@ test "copy" {
   let arr = [1, 2, 3, 4, 5]
   let copied = arr.copy()
   assert_eq(copied, [1, 2, 3, 4, 5])
-  @test.is_not!(arr, copied)
+  @test.is_not(arr, copied)
   inspect(([] : Array[Int]).copy(), content="[]")
 }
 
@@ -716,9 +716,9 @@ test "Array[String]::join" {
   inspect(["a", "b", "c"].join(","), content="a,b,c")
   inspect(["a", "b", "c"].join(""), content="abc")
   inspect(["a", "b", "c"].join(" "), content="a b c")
-  inspect!(["123", "456"].join(""), content="123456")
-  inspect!(["aaa", "bbb", "ccc"].join(" "), content="aaa bbb ccc")
-  inspect!([].join(" "))
+  inspect(["123", "456"].join(""), content="123456")
+  inspect(["aaa", "bbb", "ccc"].join(" "), content="aaa bbb ccc")
+  inspect([].join(" "))
 }
 
 ///|

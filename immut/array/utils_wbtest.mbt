@@ -85,7 +85,7 @@ fn execute_array_test(rs : Array[Op]) -> Unit! {
         // push_end
         a.push(v)
         t = t.push(v)
-        check_array_eq!(a, t)
+        check_array_eq(a, t)
       }
       Concat(v) => {
         // concat
@@ -94,13 +94,13 @@ fn execute_array_test(rs : Array[Op]) -> Unit! {
           a.push(v[i])
         }
         t = t.concat(from_array(v))
-        check_array_eq!(a, t)
+        check_array_eq(a, t)
       }
       Set(idx, v) => {
         // set
         a[idx] = v
         t = t.set(idx, v)
-        check_array_eq!(a, t)
+        check_array_eq(a, t)
       }
     }
   }

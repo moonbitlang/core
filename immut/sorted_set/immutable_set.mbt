@@ -601,7 +601,7 @@ pub impl[A : @json.FromJson + Compare] @json.FromJson for T[A] with from_json(
   }
   let mut set = new()
   for i in arr {
-    set = set.add(A::from_json!(i, path))
+    set = set.add(A::from_json(i, path))
   }
   set
 }
@@ -610,7 +610,7 @@ pub impl[A : @json.FromJson + Compare] @json.FromJson for T[A] with from_json(
 pub fn[A : @json.FromJson + Compare] from_json(
   json : Json
 ) -> T[A]!@json.JsonDecodeError {
-  @json.from_json!(json)
+  @json.from_json(json)
 }
 
 ///|

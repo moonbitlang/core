@@ -94,9 +94,9 @@ test "hyperbolic" {
   }
 
   for i in 0..<vals.length() {
-    high_accuracy_test!(vals[i].sinh(), sinh_res[i])
-    high_accuracy_test!(vals[i].cosh(), cosh_res[i])
-    high_accuracy_test!(vals[i].tanh(), tanh_res[i])
+    high_accuracy_test(vals[i].sinh(), sinh_res[i])
+    high_accuracy_test(vals[i].cosh(), cosh_res[i])
+    high_accuracy_test(vals[i].tanh(), tanh_res[i])
   }
 }
 
@@ -136,7 +136,7 @@ test "asinh" {
   }
 
   for i in 0..<vals.length() {
-    high_accuracy_test!(vals[i].asinh(), asinh_res[i])
+    high_accuracy_test(vals[i].asinh(), asinh_res[i])
   }
 }
 
@@ -168,7 +168,7 @@ test "acosh" {
   }
 
   for i in 0..<vals.length() {
-    high_accuracy_test!(vals[i].acosh(), acosh_res[i])
+    high_accuracy_test(vals[i].acosh(), acosh_res[i])
   }
 }
 
@@ -206,6 +206,6 @@ test "atanh" {
   }
 
   for i in 0..<vals.length() {
-    high_accuracy_test!(vals[i].atanh(), atanh_res[i])
+    high_accuracy_test(vals[i].atanh(), atanh_res[i])
   }
 }

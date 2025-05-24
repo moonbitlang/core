@@ -26,7 +26,7 @@ pub fn[T : Show + Eq] eq(a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
   if a != b {
     let a = debug_string(a)
     let b = debug_string(b)
-    fail!("`\{a} == \{b}`", loc~)
+    fail("`\{a} == \{b}`", loc~)
   }
 }
 
@@ -37,7 +37,7 @@ pub fn[T : Show + Eq] ne(a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
   if not(a != b) {
     let a = debug_string(a)
     let b = debug_string(b)
-    fail!("`\{a} != \{b}`", loc~)
+    fail("`\{a} != \{b}`", loc~)
   }
 }
 
@@ -47,7 +47,7 @@ pub fn[T : Show + Eq] ne(a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
 pub fn is_true(x : Bool, loc~ : SourceLoc = _) -> Unit! {
   if not(x) {
     let x = debug_string(x)
-    fail!("`\{x}` is not true", loc~)
+    fail("`\{x}` is not true", loc~)
   }
 }
 
@@ -57,7 +57,7 @@ pub fn is_true(x : Bool, loc~ : SourceLoc = _) -> Unit! {
 pub fn is_false(x : Bool, loc~ : SourceLoc = _) -> Unit! {
   if x {
     let x = debug_string(x)
-    fail!("`\{x}` is not false", loc~)
+    fail("`\{x}` is not false", loc~)
   }
 }
 
@@ -74,14 +74,14 @@ pub fn is_false(x : Bool, loc~ : SourceLoc = _) -> Unit! {
 /// ```
 /// let a = "4" + "2"
 /// let b = "4" + "2"
-/// @test.same_object!(a, a)
-/// @test.is_not!(a, b)
+/// @test.same_object(a, a)
+/// @test.is_not(a, b)
 /// ```
 pub fn[T : Show] same_object(a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
   if not(physical_equal(a, b)) {
     let a = debug_string(a)
     let b = debug_string(b)
-    fail!("`\{a} is \{b}`", loc~)
+    fail("`\{a} is \{b}`", loc~)
   }
 }
 
@@ -98,20 +98,20 @@ pub fn[T : Show] same_object(a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
 /// ```
 /// let a = "4" + "2"
 /// let b = "4" + "2"
-/// @test.is_not!(a, b)
-/// @test.same_object!(a, a)
+/// @test.is_not(a, b)
+/// @test.same_object(a, a)
 /// ```
 pub fn[T : Show] is_not(a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
   if physical_equal(a, b) {
     let a = debug_string(a)
     let b = debug_string(b)
-    fail!("`not(\{a} is \{b})`", loc~)
+    fail("`not(\{a} is \{b})`", loc~)
   }
 }
 
 ///|
 pub fn[T] fail(msg : String, loc~ : SourceLoc = _) -> T! {
-  @builtin.fail!(msg, loc~)
+  @builtin.fail(msg, loc~)
 }
 
 ///|

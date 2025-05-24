@@ -183,7 +183,7 @@ pub fn from_double(value : Double) -> T!RationalError {
   // continued fraction algorithm
   // Ported from https://github.com/rust-num/num
   if value.is_nan() {
-    nan_error!()
+    nan_error()
   }
   let sign = if value < 0.0 { -1L } else { 1L }
   let value = value.abs()
@@ -200,7 +200,7 @@ pub fn from_double(value : Double) -> T!RationalError {
 
   // Overflow
   if q > t_max_f {
-    overflow_error!()
+    overflow_error()
   }
   for i in 0..<max_iteration {
     if not(q >= -9223372036854775808.0 && q < 9223372036854775808.0) {
@@ -246,7 +246,7 @@ pub fn from_double(value : Double) -> T!RationalError {
   }
   // Overflow
   if d1 == 0L {
-    overflow_error!()
+    overflow_error()
   }
   match new(sign * n1, d1) {
     Some(r) => r
