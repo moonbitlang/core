@@ -605,9 +605,9 @@ test "to_json/from_json" {
   @json.inspect(list, content=json_expected)
   let list2 : @list.T[Int] = @json.from_json(json_expected)
   @json.inspect(list2, content=json_expected)
-  let v : Result[@list.T[Int], @json.JsonDecodeError] = @json.from_json?({
-    "a": 1,
-  })
+  let v : Result[@list.T[Int], @json.JsonDecodeError] = try? @json.from_json({
+      "a": 1,
+    })
   @json.inspect(v, content={
     "Err": {
       "$tag": "JsonDecodeError",

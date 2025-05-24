@@ -689,11 +689,11 @@ test "parse decimal with underscore" {
 
 ///|
 test "parse decimal error" {
-  inspect(parse_decimal_priv?("1e"), content="Err(invalid syntax)")
-  inspect(parse_decimal_priv?("1e+"), content="Err(invalid syntax)")
-  inspect(parse_decimal_priv?("1e_"), content="Err(invalid syntax)")
-  inspect(parse_decimal_priv?("1-23"), content="Err(invalid syntax)")
-  inspect(parse_decimal_priv?("1.2.3"), content="Err(invalid syntax)")
+  inspect(try? parse_decimal_priv("1e"), content="Err(invalid syntax)")
+  inspect(try? parse_decimal_priv("1e+"), content="Err(invalid syntax)")
+  inspect(try? parse_decimal_priv("1e_"), content="Err(invalid syntax)")
+  inspect(try? parse_decimal_priv("1-23"), content="Err(invalid syntax)")
+  inspect(try? parse_decimal_priv("1.2.3"), content="Err(invalid syntax)")
 }
 
 ///|
@@ -731,7 +731,7 @@ test "parse_decimal with large numbers and truncation" {
 
 ///|
 test "corner cases" {
-  inspect(parse_decimal_priv?(".123"), content="Ok(0.123)")
-  inspect(parse_decimal_priv?("."), content="Err(invalid syntax)")
-  inspect(parse_decimal_priv?("-"), content="Err(invalid syntax)")
+  inspect(try? parse_decimal_priv(".123"), content="Ok(0.123)")
+  inspect(try? parse_decimal_priv("."), content="Err(invalid syntax)")
+  inspect(try? parse_decimal_priv("-"), content="Err(invalid syntax)")
 }

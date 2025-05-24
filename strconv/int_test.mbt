@@ -125,31 +125,49 @@ test "panic @moonbitlang/core/strconv.parse_int64/invalid_base" {
 ///|
 test "edge cases" {
   // Invalid: Missing digits after hex prefix
-  inspect(@strconv.parse_int64?("0x"), content="Err(invalid syntax)")
-  inspect(@strconv.parse_int64?("0x_"), content="Err(invalid syntax)")
+  inspect(try? @strconv.parse_int64("0x"), content="Err(invalid syntax)")
+  inspect(try? @strconv.parse_int64("0x_"), content="Err(invalid syntax)")
 
   // Underscore is allowed between the prefix and the first digit
-  inspect(@strconv.parse_int64?("0x_DEADBEEF"), content="Ok(3735928559)")
+  inspect(try? @strconv.parse_int64("0x_DEADBEEF"), content="Ok(3735928559)")
 }
 
 ///|
 test "more edge cases" {
-  inspect(@strconv.parse_int64?("0b01", base=16), content="Ok(2817)")
-  inspect(@strconv.parse_int64?("0o01", base=16), content="Err(invalid syntax)")
-  inspect(@strconv.parse_int64?("0x01", base=16), content="Ok(1)")
-  inspect(@strconv.parse_int?("0b01", base=16), content="Ok(2817)")
-  inspect(@strconv.parse_int?("0o01", base=16), content="Err(invalid syntax)")
-  inspect(@strconv.parse_int?("0x01", base=16), content="Ok(1)")
-  inspect(@strconv.parse_uint?("0b01", base=16), content="Ok(2817)")
-  inspect(@strconv.parse_uint?("0o01", base=16), content="Err(invalid syntax)")
-  inspect(@strconv.parse_uint?("0x01", base=16), content="Ok(1)")
-  inspect(@strconv.parse_uint64?("0b01", base=16), content="Ok(2817)")
+  inspect(try? @strconv.parse_int64("0b01", base=16), content="Ok(2817)")
   inspect(
-    @strconv.parse_uint64?("0o01", base=16),
+    try? @strconv.parse_int64("0o01", base=16),
     content="Err(invalid syntax)",
   )
-  inspect(@strconv.parse_uint64?("0x01", base=16), content="Ok(1)")
-  inspect(@strconv.parse_int?("0b01", base=10), content="Err(invalid syntax)")
-  inspect(@strconv.parse_int?("0o01", base=10), content="Err(invalid syntax)")
-  inspect(@strconv.parse_int?("0x01", base=10), content="Err(invalid syntax)")
+  inspect(try? @strconv.parse_int64("0x01", base=16), content="Ok(1)")
+  inspect(try? @strconv.parse_int64("0b01", base=16), content="Ok(2817)")
+  inspect(
+    try? @strconv.parse_int64("0o01", base=16),
+    content="Err(invalid syntax)",
+  )
+  inspect(try? @strconv.parse_int64("0x01", base=16), content="Ok(1)")
+  inspect(try? @strconv.parse_int64("0b01", base=16), content="Ok(2817)")
+  inspect(
+    try? @strconv.parse_int64("0o01", base=16),
+    content="Err(invalid syntax)",
+  )
+  inspect(try? @strconv.parse_int64("0x01", base=16), content="Ok(1)")
+  inspect(try? @strconv.parse_int64("0b01", base=16), content="Ok(2817)")
+  inspect(
+    try? @strconv.parse_int64("0o01", base=16),
+    content="Err(invalid syntax)",
+  )
+  inspect(try? @strconv.parse_int64("0x01", base=16), content="Ok(1)")
+  inspect(
+    try? @strconv.parse_int64("0b01", base=10),
+    content="Err(invalid syntax)",
+  )
+  inspect(
+    try? @strconv.parse_int64("0o01", base=10),
+    content="Err(invalid syntax)",
+  )
+  inspect(
+    try? @strconv.parse_int64("0x01", base=10),
+    content="Err(invalid syntax)",
+  )
 }
