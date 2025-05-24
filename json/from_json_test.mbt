@@ -159,10 +159,7 @@ test "tuple roundtrip" {
   let u = [1, 2]
   inspect((@json.from_json(u.to_json()) : (Int, Int)), content="(1, 2)")
   let u = [1, 2, 3]
-  inspect(
-    (@json.from_json(u.to_json()) : (Int, Int, Int)),
-    content="(1, 2, 3)",
-  )
+  inspect((@json.from_json(u.to_json()) : (Int, Int, Int)), content="(1, 2, 3)")
   let u = [1, 2, 3, 4]
   inspect(
     (@json.from_json(u.to_json()) : (Int, Int, Int, Int)),
