@@ -57,22 +57,22 @@ let max_mantissa_fast_path : UInt64 = 2UL << mantissa_explicit_bits
 ///
 /// Examples:
 /// ```
-/// inspect(parse_double!("123"), content="123")
-/// inspect(parse_double!("12.34"), content="12.34")
-/// inspect(parse_double!(".123"), content="0.123")
-/// inspect(parse_double!("1e5"), content="100000")
-/// inspect(parse_double!("1.2e-3"), content="0.0012")
-/// inspect(parse_double!("1_234.5"), content="1234.5")
+/// inspect(parse_double("123"), content="123")
+/// inspect(parse_double("12.34"), content="12.34")
+/// inspect(parse_double(".123"), content="0.123")
+/// inspect(parse_double("1e5"), content="100000")
+/// inspect(parse_double("1.2e-3"), content="0.0012")
+/// inspect(parse_double("1_234.5"), content="1234.5")
 /// ```
 ///
 /// An exponent value exp scales the mantissa (significand) by 10^exp.
 /// For example, "1.23e2" represents 1.23 × 10² = 123.
 pub fn parse_double(str : String) -> Double!StrConvError {
   if str.length() == 0 {
-    syntax_err!()
+    syntax_err()
   }
   if not(check_underscore(str)) {
-    syntax_err!()
+    syntax_err()
   }
   // validate its a number
   let (num, consumed) = match parse_number(str) {
@@ -81,23 +81,23 @@ pub fn parse_double(str : String) -> Double!StrConvError {
       match parse_inf_nan(str) {
         Some((num, consumed)) =>
           if str.length() != consumed {
-            syntax_err!()
+            syntax_err()
           } else {
             return num
           }
-        None => syntax_err!()
+        None => syntax_err()
       }
   }
   if str.length() != consumed {
-    syntax_err!()
+    syntax_err()
   }
   // Clinger's fast path (How to read floating point numbers accurately)[https://doi.org/10.1145/989393.989430]
   match num.try_fast_path() {
     Some(value) => value
     None => {
       // fallback to slow path
-      let ret = parse_decimal_priv!(str)
-      ret.to_double_priv!()
+      let ret = parse_decimal_priv(str)
+      ret.to_double_priv()
     }
   }
 }
@@ -276,7 +276,7 @@ test "parse_double" {
   for i in 0..<tests.length() {
     let t = tests[i]
     assert_eq(
-      try Result::Ok(parse_double!(t.0)) catch {
+      try Result::Ok(parse_double(t.0)) catch {
         StrConvError(err) => Err(err)
       },
       t.1,
@@ -287,43 +287,43 @@ test "parse_double" {
 ///|
 test "parse_double_inf" {
   assert_eq(
-    try parse_double!("inf") catch {
+    try parse_double("inf") catch {
       _ => panic()
     },
     @double.infinity,
   )
   assert_eq(
-    try parse_double!("+Inf") catch {
+    try parse_double("+Inf") catch {
       _ => panic()
     },
     @double.infinity,
   )
   assert_eq(
-    try parse_double!("-Inf") catch {
+    try parse_double("-Inf") catch {
       _ => panic()
     },
     @double.neg_infinity,
   )
   assert_eq(
-    try parse_double!("+Infinity") catch {
+    try parse_double("+Infinity") catch {
       _ => panic()
     },
     @double.infinity,
   )
   assert_eq(
-    try parse_double!("-Infinity") catch {
+    try parse_double("-Infinity") catch {
       _ => panic()
     },
     @double.neg_infinity,
   )
   assert_eq(
-    try parse_double!("+INFINITY") catch {
+    try parse_double("+INFINITY") catch {
       _ => panic()
     },
     @double.infinity,
   )
   assert_eq(
-    try parse_double!("-INFINITY") catch {
+    try parse_double("-INFINITY") catch {
       _ => panic()
     },
     @double.neg_infinity,
@@ -332,15 +332,15 @@ test "parse_double_inf" {
 
 ///|
 test "parse_double_nan" {
-  let nan = try parse_double!("nan") catch {
+  let nan = try parse_double("nan") catch {
     _ => panic()
   }
   assert_true(nan.is_nan())
-  let nan = try parse_double!("NaN") catch {
+  let nan = try parse_double("NaN") catch {
     _ => panic()
   }
   assert_true(nan.is_nan())
-  let nan = try parse_double!("NAN") catch {
+  let nan = try parse_double("NAN") catch {
     _ => panic()
   }
   assert_true(nan.is_nan())

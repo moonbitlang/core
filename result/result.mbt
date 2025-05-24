@@ -397,7 +397,7 @@ pub fn[T, E : Error] unwrap_or_error(self : Result[T, E]) -> T!E {
 ///|
 test "unwrap exn" {
   (try
-    (Err(Failure("This is serious")) : Result[Unit, Failure]).unwrap_or_error!()
+    (Err(Failure("This is serious")) : Result[Unit, Failure]).unwrap_or_error()
     |> Ok catch {
     Failure(msg) => Err(msg)
   })
@@ -410,14 +410,14 @@ test "unwrap exn" {
 
 ///|
 pub fn[T, E : Error] wrap0(f~ : () -> T!E) -> Result[T, E] {
-  try f!() |> Ok catch {
+  try f() |> Ok catch {
     e => Err(e)
   }
 }
 
 ///|
 pub fn[T, A, E : Error] wrap1(f~ : (A) -> T!E, a : A) -> Result[T, E] {
-  try f!(a) |> Ok catch {
+  try f(a) |> Ok catch {
     e => Err(e)
   }
 }
@@ -428,7 +428,7 @@ pub fn[T, A, B, E : Error] wrap2(
   a : A,
   b : B
 ) -> Result[T, E] {
-  try f!(a, b) |> Ok catch {
+  try f(a, b) |> Ok catch {
     e => Err(e)
   }
 }

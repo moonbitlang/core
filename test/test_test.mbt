@@ -15,25 +15,25 @@
 ///|
 test " same_object call with the same object" {
   let s = "Hello"
-  @test.same_object!(s, s)
+  @test.same_object(s, s)
 }
 
 ///|
 test "panic same_object call with different objects" {
   let a = "1"
   let b = "2"
-  @test.same_object!(a, b)
+  @test.same_object(a, b)
 }
 
 ///|
 test "is_not called with the different objects" {
   let a = "1"
   let b = "2"
-  @test.is_not!(a, b)
+  @test.is_not(a, b)
 }
 
 ///|
 test "panic is_not called with the same object" {
   let s = "Hello"
-  @test.is_not!(s, s)
+  @test.is_not(s, s)
 }

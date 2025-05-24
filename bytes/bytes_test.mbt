@@ -223,13 +223,13 @@ test "panic Fixed::blit_from_bytesview 2" {
 ///|
 test "bytes pattern match" {
   let bytes : Bytes = "Hello, world!你好"
-  guard bytes is [.. b"Hello", ..] else { fail!("") }
+  guard bytes is [.. b"Hello", ..] else { fail("") }
   guard bytes is [.. _x, .. "你好"] && _x is [.. "Hello, world!", ..] else {
-    fail!("")
+    fail("")
   }
-  guard bytes is [.., .. "你好"] else { fail!("") }
+  guard bytes is [.., .. "你好"] else { fail("") }
   // CR: ZYU: it's weird this works but below does not work
-  // guard bytes is [.. _ , .. "你好"] else { fail!("") }
+  // guard bytes is [.. _ , .. "你好"] else { fail("") }
 }
 
 ///|

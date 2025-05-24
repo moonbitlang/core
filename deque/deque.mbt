@@ -1259,7 +1259,7 @@ pub impl[A : ToJson] ToJson for T[A] with to_json(self : T[A]) -> Json {
 }
 
 ///|
-pub impl[A : @json.FromJson] @json.FromJson for T[A] with from_json!(json, path) {
+pub impl[A : @json.FromJson] @json.FromJson for T[A] with from_json(json, path) {
   guard json is Array(arr) else {
     raise @json.JsonDecodeError((path, "Deque::from_json: expected array"))
   }
@@ -1268,7 +1268,7 @@ pub impl[A : @json.FromJson] @json.FromJson for T[A] with from_json!(json, path)
   let head = 0
   let tail = len
   for i, x in arr {
-    buf[i] = @json.FromJson::from_json!(x, path.add_index(i))
+    buf[i] = @json.FromJson::from_json(x, path.add_index(i))
   }
   { len, buf, head, tail }
 }

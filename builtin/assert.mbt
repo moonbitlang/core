@@ -49,7 +49,7 @@ fn[T : Show] debug_string(t : T) -> String {
 #coverage.skip
 pub fn[T : Eq + Show] assert_eq(a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
   if a != b {
-    fail!("`\{a} != \{b}`", loc~)
+    fail("`\{a} != \{b}`", loc~)
   }
 }
 
@@ -88,7 +88,7 @@ pub fn[T : Eq + Show] assert_not_eq(
   if not(a != b) {
     let a = debug_string(a)
     let b = debug_string(b)
-    fail!("`\{a} == \{b}`", loc~)
+    fail("`\{a} == \{b}`", loc~)
   }
 }
 
@@ -119,7 +119,7 @@ pub fn[T : Eq + Show] assert_not_eq(
 #coverage.skip
 pub fn assert_true(x : Bool, loc~ : SourceLoc = _) -> Unit! {
   if not(x) {
-    fail!("`\{x}` is not true", loc~)
+    fail("`\{x}` is not true", loc~)
   }
 }
 
@@ -152,6 +152,6 @@ pub fn assert_true(x : Bool, loc~ : SourceLoc = _) -> Unit! {
 pub fn assert_false(x : Bool, loc~ : SourceLoc = _) -> Unit! {
   if x {
     let x = debug_string(x)
-    fail!("`\{x}` is not false", loc~)
+    fail("`\{x}` is not false", loc~)
   }
 }

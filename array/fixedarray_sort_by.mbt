@@ -351,7 +351,7 @@ fn[T] fixed_sift_down_by(
 
 ///|
 test "heap_sort" {
-  fixed_test_sort!(fn(arr) {
+  fixed_test_sort(fn(arr) {
     fixed_heap_sort_by({ array: arr, start: 0, end: arr.length() }, fn(a, b) {
       a - b
     })
@@ -360,7 +360,7 @@ test "heap_sort" {
 
 ///|
 test "bubble_sort" {
-  fixed_test_sort!(fn(arr) {
+  fixed_test_sort(fn(arr) {
     fixed_bubble_sort_by({ array: arr, start: 0, end: arr.length() }, fn(a, b) {
       a - b
     })
@@ -369,7 +369,7 @@ test "bubble_sort" {
 
 ///|
 test "sort" {
-  fixed_test_sort!(fn(arr) { arr.sort() })
+  fixed_test_sort(fn(arr) { arr.sort() })
 }
 
 ///|

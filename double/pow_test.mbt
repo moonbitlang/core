@@ -60,5 +60,5 @@ test "pow" (it : @test.T) {
       it.writeln("\{x} ** \{y} == \{@double.pow(x, y)}")
     }
   }
-  it.snapshot!(filename="pow")
+  it.snapshot(filename="pow")
 }

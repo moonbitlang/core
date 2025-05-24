@@ -16,7 +16,7 @@
 fn test_parse(input : String, loc~ : SourceLoc = _) -> Json!Error {
   match @json.parse?(input) {
     Ok(json) => json
-    Err(err) => fail!("Parse failed, \{loc}, \{err}")
+    Err(err) => fail("Parse failed, \{loc}, \{err}")
   }
 }
 
@@ -66,25 +66,25 @@ test "parses nested objects" {
 //region arrays
 ///|
 test "parses empty arrays" {
-  let json = test_parse!("[]")
+  let json = test_parse("[]")
   assert_eq(json, Json::array([]))
 }
 
 ///|
 test "parses array values" {
-  let json = test_parse!("[1]")
+  let json = test_parse("[1]")
   assert_eq(json, Json::array([Json::number(1.0)]))
 }
 
 ///|
 test "parses multiple array values" {
-  let json = test_parse!("[1,2]")
+  let json = test_parse("[1,2]")
   assert_eq(json, Json::array([Json::number(1.0), Json::number(2.0)]))
 }
 
 ///|
 test "parses nested arrays" {
-  let json = test_parse!("[1,[2,3]]")
+  let json = test_parse("[1,[2,3]]")
   assert_eq(
     json,
     Json::array([
@@ -98,7 +98,7 @@ test "parses nested arrays" {
 //region nulls
 ///|
 test "parses nulls" {
-  let json = test_parse!("null")
+  let json = test_parse("null")
   assert_eq(json, Json::null())
 }
 //endregion
@@ -106,13 +106,13 @@ test "parses nulls" {
 //region booleans
 ///|
 test "parses true" {
-  let json = test_parse!("true")
+  let json = test_parse("true")
   inspect(json, content="True")
 }
 
 ///|
 test "parses false" {
-  let json = test_parse!("false")
+  let json = test_parse("false")
   inspect(json, content="False")
 }
 //endregion
@@ -120,7 +120,7 @@ test "parses false" {
 //region numbers
 ///|
 test "parses leading zeroes" {
-  let json = test_parse!("[0,0.0,0e0]")
+  let json = test_parse("[0,0.0,0e0]")
   assert_eq(
     json,
     Json::array([Json::number(0.0), Json::number(0.0), Json::number(0.0)]),
@@ -129,7 +129,7 @@ test "parses leading zeroes" {
 
 ///|
 test "parses integers" {
-  let json = test_parse!("[1,23,456,7890]")
+  let json = test_parse("[1,23,456,7890]")
   assert_eq(
     json,
     Json::array([
@@ -143,7 +143,7 @@ test "parses integers" {
 
 ///|
 test "parses signed numbers" {
-  let json = test_parse!("[-1,2,-0.1,-0]")
+  let json = test_parse("[-1,2,-0.1,-0]")
   assert_eq(
     json,
     Json::array([
@@ -157,13 +157,13 @@ test "parses signed numbers" {
 
 ///|
 test "parses fractional numbers" {
-  let json = test_parse!("[1.0,1.23]")
+  let json = test_parse("[1.0,1.23]")
   assert_eq(json, Json::array([Json::number(1.0), Json::number(1.23)]))
 }
 
 ///|
 test "parses exponents" {
-  let json = test_parse!("[1e0,1e1,1e01,1.0e0,1.1e0,1e-1,1e+1]")
+  let json = test_parse("[1e0,1e1,1e01,1.0e0,1.1e0,1e-1,1e+1]")
   assert_eq(
     json,
     Json::array([
@@ -180,13 +180,13 @@ test "parses exponents" {
 
 ///|
 test "parses 1" {
-  let json = test_parse!("1")
+  let json = test_parse("1")
   assert_eq(json, Json::number(1.0))
 }
 
 ///|
 test "parses +1.23e100" {
-  let json = test_parse!("1.23e100")
+  let json = test_parse("1.23e100")
   assert_eq(json, Json::number(1.23e100))
 }
 
@@ -195,19 +195,19 @@ test "parses +1.23e100" {
 //region strings
 ///|
 test "parses string" {
-  let json = test_parse!("\"abc\"")
+  let json = test_parse("\"abc\"")
   assert_eq(json, Json::string("abc"))
 }
 
 ///|
 test "parses quotes in string" {
-  let json = test_parse!("[\"\\\"\",\"'\"]")
+  let json = test_parse("[\"\\\"\",\"'\"]")
   assert_eq(json, Json::array([Json::string("\""), Json::string("'")]))
 }
 
 ///|
 test "parses escaped characters" {
-  let json = test_parse!("\"\\b\\f\\n\\r\\t\\u01fF\\\"\"")
+  let json = test_parse("\"\\b\\f\\n\\r\\t\\u01fF\\\"\"")
   assert_eq(json, Json::string("\u0008\u000C\n\r\t\u01FF\""))
 }
 //endregion
@@ -215,7 +215,7 @@ test "parses escaped characters" {
 //region whitespace
 ///|
 test "parses whitespace" {
-  let json = test_parse!("{\t \u00A0\uFEFF\n\r\u2028\u2029\u2003}")
+  let json = test_parse("{\t \u00A0\uFEFF\n\r\u2028\u2029\u2003}")
   assert_eq(json, Json::object({}))
 }
 //endregion

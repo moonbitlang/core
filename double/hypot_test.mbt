@@ -42,7 +42,7 @@ test "hypot" {
   let mut i : Int = 0
   for x in xs {
     for y in ys {
-      high_accuracy_test!(x.hypot(y), hypot_res[i])
+      high_accuracy_test(x.hypot(y), hypot_res[i])
       i = i + 1
     }
   }

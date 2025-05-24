@@ -44,7 +44,7 @@ pub impl[A : @json.FromJson] @json.FromJson for T[A] with from_json(json, path) 
     raise @json.JsonDecodeError((path, "@immut/list.from_json: expected array"))
   }
   for i = arr.length() - 1, list = Nil; i >= 0; {
-    continue i - 1, list.add(A::from_json!(arr[i], path))
+    continue i - 1, list.add(A::from_json(arr[i], path))
   } else {
     list
   }
@@ -52,7 +52,7 @@ pub impl[A : @json.FromJson] @json.FromJson for T[A] with from_json(json, path) 
 
 ///|
 pub fn[A : @json.FromJson] from_json(json : Json) -> T[A]!@json.JsonDecodeError {
-  @json.from_json!(json)
+  @json.from_json(json)
 }
 
 ///|

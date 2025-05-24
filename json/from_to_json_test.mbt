@@ -31,7 +31,7 @@ test {
       #|{"$tag":"Add","0":{"$tag":"Val","0":"x"},"1":{"$tag":"Val","0":"y"}}
     ,
   )
-  let e0 : Expr = @json.from_json!(ej)
+  let e0 : Expr = @json.from_json(ej)
   inspect(
     e0,
     content=

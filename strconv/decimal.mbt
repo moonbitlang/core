@@ -75,12 +75,12 @@ fn Decimal::from_int64_priv(v : Int64) -> Decimal {
 ///|
 #deprecated("use `@strconv.parse_double` instead")
 pub fn parse_decimal(str : String) -> Decimal!StrConvError {
-  parse_decimal_from_view!(str.view())
+  parse_decimal_from_view(str.view())
 }
 
 ///|
 fn parse_decimal_priv(str : String) -> Decimal!StrConvError {
-  parse_decimal_from_view!(str.view())
+  parse_decimal_from_view(str.view())
 }
 
 ///|
@@ -101,7 +101,7 @@ fn parse_decimal_from_view(str : @string.View) -> Decimal!StrConvError {
   let rest = loop rest {
     ['_', .. rest] => continue rest
     ['.', .. rest] => {
-      guard not(has_dp) else { syntax_err!() }
+      guard not(has_dp) else { syntax_err() }
       has_dp = true
       d.decimal_point = d.digits_num
       continue rest
@@ -123,7 +123,7 @@ fn parse_decimal_from_view(str : @string.View) -> Decimal!StrConvError {
     }
     rest => rest
   }
-  guard has_digits else { syntax_err!() }
+  guard has_digits else { syntax_err() }
   if not(has_dp) {
     d.decimal_point = d.digits_num
   }
@@ -139,7 +139,7 @@ fn parse_decimal_from_view(str : @string.View) -> Decimal!StrConvError {
         }
         rest => rest
       }
-      guard rest is ['0'..='9', ..] else { syntax_err!() }
+      guard rest is ['0'..='9', ..] else { syntax_err() }
       let mut exp = 0
       let rest = loop rest {
         ['_', .. rest] => continue rest
@@ -155,7 +155,7 @@ fn parse_decimal_from_view(str : @string.View) -> Decimal!StrConvError {
     rest => rest
   }
   // finish
-  guard rest is [] else { syntax_err!() }
+  guard rest is [] else { syntax_err() }
   d.trim()
   d
 }
@@ -163,14 +163,14 @@ fn parse_decimal_from_view(str : @string.View) -> Decimal!StrConvError {
 ///|
 #deprecated("use `@strconv.parse_double` instead")
 pub fn Decimal::parse_decimal(str : String) -> Decimal!StrConvError {
-  parse_decimal_from_view!(str.view())
+  parse_decimal_from_view(str.view())
 }
 
 ///|
 /// Convert the decimal to Double.
 #deprecated("use `@strconv.parse_double` instead to avoid using this method.")
 pub fn to_double(self : Decimal) -> Double!StrConvError {
-  self.to_double_priv!()
+  self.to_double_priv()
 }
 
 ///|
@@ -188,7 +188,7 @@ fn to_double_priv(self : Decimal) -> Double!StrConvError {
   }
   if self.decimal_point > 310 {
     // overflow
-    range_err!()
+    range_err()
   }
 
   // scale by powers of 2 until in range [0.5 .. 1]
@@ -229,7 +229,7 @@ fn to_double_priv(self : Decimal) -> Double!StrConvError {
   }
   if exponent - double_info.bias >= (1 << double_info.exponent_bits) - 1 {
     // overflow
-    range_err!()
+    range_err()
   }
 
   // multiply by (2 ** precision) and round to get mantissa
@@ -243,7 +243,7 @@ fn to_double_priv(self : Decimal) -> Double!StrConvError {
     exponent += 1
     if exponent - double_info.bias >= (1 << double_info.exponent_bits) - 1 {
       // overflow
-      range_err!()
+      range_err()
     }
   }
 
@@ -635,11 +635,11 @@ test "from_int64" {
 ///|
 test "parse_decimal" {
   let s = "0.0000000000000000000000000000007888609052210118054117285652827862296732064351090230047702789306640625"
-  let hpd = try parse_decimal_priv!(s) catch {
+  let hpd = try parse_decimal_priv(s) catch {
     _ => panic()
   }
   assert_eq(hpd.to_string(), s)
-  let hpd = try parse_decimal_priv!("1.0e-10") catch {
+  let hpd = try parse_decimal_priv("1.0e-10") catch {
     _ => panic()
   }
   assert_eq(hpd.to_string(), "0.0000000001")
@@ -682,9 +682,9 @@ test "shift" {
 
 ///|
 test "parse decimal with underscore" {
-  inspect(parse_decimal_priv!("1e1_2"), content="1000000000000")
-  inspect(parse_decimal_priv!("1e12"), content="1000000000000")
-  inspect(parse_decimal_priv!("1_2_3"), content="123")
+  inspect(parse_decimal_priv("1e1_2"), content="1000000000000")
+  inspect(parse_decimal_priv("1e12"), content="1000000000000")
+  inspect(parse_decimal_priv("1_2_3"), content="123")
 }
 
 ///|
@@ -703,7 +703,7 @@ test "parse decimal with large numbers" {
     s += "9"
   }
   inspect(
-    parse_decimal_priv!(s),
+    parse_decimal_priv(s),
     content="9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
   )
 }
@@ -711,9 +711,9 @@ test "parse decimal with large numbers" {
 ///|
 test "should_round_up when truncated and half-way" {
   // Create a decimal from "12.50"
-  let decimal = parse_decimal_priv!("12.50")
+  let decimal = parse_decimal_priv("12.50")
   // Convert to double
-  inspect(decimal.to_double_priv!(), content="12.5")
+  inspect(decimal.to_double_priv(), content="12.5")
 }
 
 ///|
@@ -724,7 +724,7 @@ test "parse_decimal with large numbers and truncation" {
     s += "0"
   }
   inspect(
-    parse_decimal_priv!(s),
+    parse_decimal_priv(s),
     content="10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
   )
 }

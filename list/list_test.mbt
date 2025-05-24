@@ -586,7 +586,7 @@ test "List::to_json with empty list" {
 ///|
 test "List::from_json" {
   for xs in (@quickcheck.samples(20) : Array[@list.T[Int]]) {
-    assert_eq(xs, @json.from_json!(xs.to_json()))
+    assert_eq(xs, @json.from_json(xs.to_json()))
   }
 }
 
@@ -595,7 +595,7 @@ test "to_json/from_json" {
   let list = @list.of([1, 2, 3, 4, 5])
   let json_expected : Json = [1, 2, 3, 4, 5]
   @json.inspect(list, content=json_expected)
-  let list2 : @list.T[Int] = @json.from_json!(json_expected)
+  let list2 : @list.T[Int] = @json.from_json(json_expected)
   @json.inspect(list2, content=json_expected)
   let v : Result[@list.T[Int], @json.JsonDecodeError] = @json.from_json?({
     "a": 1,
@@ -606,7 +606,7 @@ test "to_json/from_json" {
       "0": ["$", "@list.from_json: expected array"],
     },
   })
-  let v2 : @list.T[Int] = @list.from_json!([1, 2, 3, 4])
+  let v2 : @list.T[Int] = @list.from_json([1, 2, 3, 4])
   @json.inspect(v2, content=[1, 2, 3, 4])
 }
 

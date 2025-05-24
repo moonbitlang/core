@@ -214,7 +214,7 @@ pub fn expm1f(x : Float) -> Float {
   } else if hx < 0x33000000 {
     // when |x|<2**-25, return x
     //if hx < 0x00800000 {
-    //    force_eval!(x * x);
+    //    force_eval(x * x);
     //}
     return x
   } else {

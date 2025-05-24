@@ -294,5 +294,5 @@ pub fn[K : Show, V : ToJson] to_json(self : T[K, V]) -> Json {
 pub fn[V : @json.FromJson] from_json(
   json : Json
 ) -> T[String, V]!@json.JsonDecodeError {
-  @json.from_json!(json)
+  @json.from_json(json)
 }

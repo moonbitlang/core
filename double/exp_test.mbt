@@ -75,6 +75,6 @@ test "expm1" {
   }
 
   for i in 0..<vals.length() {
-    high_accuracy_test!(expm1_res[i], vals[i].expm1())
+    high_accuracy_test(expm1_res[i], vals[i].expm1())
   }
 }

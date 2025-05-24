@@ -54,7 +54,7 @@ pub(all) type! Failure String
 ///
 /// ```moonbit
 /// test "panic fail" {
-///   fail!("Something went wrong")
+///   fail("Something went wrong")
 /// }
 /// ```
 pub fn[T] fail(msg : String, loc~ : SourceLoc = _) -> T!Failure {

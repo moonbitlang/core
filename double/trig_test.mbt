@@ -89,9 +89,9 @@ test "trigonometric functions" {
   }
 
   for i in 0..<vals.length() {
-    high_accuracy_test!(vals[i].sin(), sin_res[i])
-    high_accuracy_test!(vals[i].cos(), cos_res[i])
-    high_accuracy_test!(vals[i].tan(), tan_res[i])
+    high_accuracy_test(vals[i].sin(), sin_res[i])
+    high_accuracy_test(vals[i].cos(), cos_res[i])
+    high_accuracy_test(vals[i].tan(), tan_res[i])
   }
 }
 
@@ -149,8 +149,8 @@ test "Inverse trigonometric functions" {
   }
 
   for i in 0..<vals.length() {
-    high_accuracy_test!(vals[i].asin(), asin_res[i])
-    high_accuracy_test!(vals[i].acos(), acos_res[i])
+    high_accuracy_test(vals[i].asin(), asin_res[i])
+    high_accuracy_test(vals[i].acos(), acos_res[i])
   }
 }
 
@@ -191,7 +191,7 @@ test "atan" {
   }
 
   for i in 0..<vals.length() {
-    high_accuracy_test!(vals[i].atan(), atan_res[i])
+    high_accuracy_test(vals[i].atan(), atan_res[i])
   }
 }
 
@@ -231,7 +231,7 @@ test "atan2" {
   let mut idx = 0
   for y in vals {
     for x in vals {
-      high_accuracy_test!(y.atan2(x), atan2_res[idx])
+      high_accuracy_test(y.atan2(x), atan2_res[idx])
       idx = idx + 1
     }
   }

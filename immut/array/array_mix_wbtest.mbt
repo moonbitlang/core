@@ -14,15 +14,15 @@
 
 ///|
 test "random property tests" {
-  run_test!(104UL, 10, 4)
-  run_test!(503UL, 50, 3)
-  run_test!(10002UL, 200, 2)
-  run_test!(53UL, 4, 1)
+  run_test(104UL, 10, 4)
+  run_test(503UL, 50, 3)
+  run_test(10002UL, 200, 2)
+  run_test(53UL, 4, 1)
 }
 
 ///|
 fn run_test(seed : UInt64, rep : Int, max_lvl : Int) -> Unit! {
   let rng = Random({ val: seed })
   let rs = random_test_gen(rng, rep, max_lvl)
-  execute_array_test!(rs)
+  execute_array_test(rs)
 }

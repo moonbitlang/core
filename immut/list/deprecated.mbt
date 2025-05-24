@@ -18,7 +18,7 @@
 pub fn[A : @json.FromJson] T::from_json(
   json : Json
 ) -> T[A]!@json.JsonDecodeError {
-  @json.from_json!(json)
+  @json.from_json(json)
 }
 
 ///|

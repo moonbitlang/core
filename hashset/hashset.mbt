@@ -474,7 +474,7 @@ test "clear" {
   assert_eq(m.size(), 0)
   assert_eq(m.capacity(), 8)
   for i in 0..<m.capacity() {
-    @test.same_object!(m.entries[i], None)
+    @test.same_object(m.entries[i], None)
   }
 }
 

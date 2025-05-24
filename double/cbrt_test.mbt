@@ -43,6 +43,6 @@ test "cbrt" {
   }
 
   for i in 0..<vals.length() {
-    high_accuracy_test!(vals[i].cbrt(), cbrt_res[i])
+    high_accuracy_test(vals[i].cbrt(), cbrt_res[i])
   }
 }

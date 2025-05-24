@@ -63,5 +63,5 @@ pub fn[K : Compare, V] T::of(array : FixedArray[(K, V)]) -> T[K, V] {
 pub fn[V : @json.FromJson] T::from_json(
   json : Json
 ) -> T[String, V]!@json.JsonDecodeError {
-  @json.from_json!(json)
+  @json.from_json(json)
 }
