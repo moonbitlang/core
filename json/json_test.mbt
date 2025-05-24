@@ -321,7 +321,7 @@ test "stringify escape 4" {
 
 ///|
 test "stringify escape round trip" {
-  match @json.parse?(json.stringify()) {
+  match (try? @json.parse(json.stringify())) {
     Err(e) => raise e
     Ok(newjson) => assert_eq(newjson, json)
   }
@@ -392,7 +392,7 @@ test "stringify number" {
   inspect(nums[12].stringify(), content="null")
   let err : Array[String] = []
   for json in nums {
-    match @json.parse?(json.stringify()) {
+    match (try? @json.parse(json.stringify())) {
       Err(e) => err.push(e.to_string())
       Ok(newjson) => assert_eq(newjson, json)
     }
@@ -487,7 +487,7 @@ test "stringify with indent" {
 ///|
 test "Bool from_json with invalid input" {
   let json_null = Json::null()
-  let result : Result[Bool, _] = @json.from_json?(json_null)
+  let result : Result[Bool, _] = try? @json.from_json(json_null)
   inspect(
     result,
     content=
@@ -495,7 +495,7 @@ test "Bool from_json with invalid input" {
     ,
   )
   let json_num = Json::number(123)
-  let result2 : Result[Bool, _] = @json.from_json?(json_num)
+  let result2 : Result[Bool, _] = try? @json.from_json(json_num)
   inspect(
     result2,
     content=
@@ -508,7 +508,7 @@ test "Bool from_json with invalid input" {
 test "Int64 from_json error cases" {
   // Test with non-string input
   let json_num = Json::number(123)
-  let result : Result[Int64, _] = @json.from_json?(json_num)
+  let result : Result[Int64, _] = try? @json.from_json(json_num)
   inspect(
     result,
     content=
@@ -518,7 +518,7 @@ test "Int64 from_json error cases" {
 
   // Test with invalid string input
   let json_str = Json::string("not_a_number")
-  let result2 : Result[Int64, _] = @json.from_json?(json_str)
+  let result2 : Result[Int64, _] = try? @json.from_json(json_str)
   inspect(
     result2,
     content=
@@ -530,7 +530,7 @@ test "Int64 from_json error cases" {
 ///|
 test "UInt from_json with invalid input" {
   let json_str = Json::string("123")
-  let result : Result[UInt, _] = @json.from_json?(json_str)
+  let result : Result[UInt, _] = try? @json.from_json(json_str)
   inspect(
     result,
     content=
@@ -543,7 +543,7 @@ test "UInt from_json with invalid input" {
 test "UInt64 from_json error cases" {
   // Test with non-string input
   let json_num = Json::number(123)
-  let result : Result[UInt64, _] = @json.from_json?(json_num)
+  let result : Result[UInt64, _] = try? @json.from_json(json_num)
   inspect(
     result,
     content=
@@ -553,7 +553,7 @@ test "UInt64 from_json error cases" {
 
   // Test with invalid string input
   let json_str = Json::string("not_a_number")
-  let result2 : Result[UInt64, _] = @json.from_json?(json_str)
+  let result2 : Result[UInt64, _] = try? @json.from_json(json_str)
   inspect(
     result2,
     content=
@@ -567,7 +567,7 @@ test "String and View from_json with invalid input" {
   let json_num = Json::number(123)
 
   // Test String
-  let result1 : Result[String, _] = @json.from_json?(json_num)
+  let result1 : Result[String, _] = try? @json.from_json(json_num)
   inspect(
     result1,
     content=
@@ -576,7 +576,7 @@ test "String and View from_json with invalid input" {
   )
 
   // Test View
-  let result2 : Result[@string.View, _] = @json.from_json?(json_num)
+  let result2 : Result[@string.View, _] = try? @json.from_json(json_num)
   inspect(
     result2,
     content=
@@ -589,7 +589,7 @@ test "String and View from_json with invalid input" {
 test "Char from_json error cases" {
   // Test with non-string input
   let json_num = Json::number(123)
-  let result : Result[Char, _] = @json.from_json?(json_num)
+  let result : Result[Char, _] = try? @json.from_json(json_num)
   inspect(
     result,
     content=
@@ -599,7 +599,7 @@ test "Char from_json error cases" {
 
   // Test with multi-character string
   let json_str = Json::string("abc")
-  let result2 : Result[Char, _] = @json.from_json?(json_str)
+  let result2 : Result[Char, _] = try? @json.from_json(json_str)
   inspect(
     result2,
     content=
@@ -611,7 +611,7 @@ test "Char from_json error cases" {
 ///|
 test "BigInt from_json with invalid input" {
   let json_num = Json::number(123)
-  let result : Result[BigInt, _] = @json.from_json?(json_num)
+  let result : Result[BigInt, _] = try? @json.from_json(json_num)
   inspect(
     result,
     content=
@@ -623,14 +623,14 @@ test "BigInt from_json with invalid input" {
 ///|
 test "Array and FixedArray from_json with invalid input" {
   let json_num = Json::number(123)
-  let result1 : Result[Array[Int], _] = @json.from_json?(json_num)
+  let result1 : Result[Array[Int], _] = try? @json.from_json(json_num)
   inspect(
     result1,
     content=
       #|Err(JsonDecodeError(($, "Array::from_json: expected array")))
     ,
   )
-  let result2 : Result[FixedArray[Int], _] = @json.from_json?(json_num)
+  let result2 : Result[FixedArray[Int], _] = try? @json.from_json(json_num)
   inspect(
     result2,
     content=
@@ -642,7 +642,7 @@ test "Array and FixedArray from_json with invalid input" {
 ///|
 test "Map from_json with invalid input" {
   let json_num = Json::number(123)
-  let result : Result[Map[String, Int], _] = @json.from_json?(json_num)
+  let result : Result[Map[String, Int], _] = try? @json.from_json(json_num)
   inspect(
     result,
     content=
@@ -654,7 +654,7 @@ test "Map from_json with invalid input" {
 ///|
 test "Option from_json with invalid input" {
   let json_obj = Json::object({ "key": Json::number(123) })
-  let result : Result[Int?, _] = @json.from_json?(json_obj)
+  let result : Result[Int?, _] = try? @json.from_json(json_obj)
   inspect(
     result,
     content=
@@ -669,7 +669,7 @@ test "Result from_json error cases" {
 
   // Test with non-object
   inspect(
-    (@json.from_json?(json_num) : Result[Unit, _]),
+    (try? @json.from_json(json_num) : Result[Unit, _]),
     content=
       #|Err(JsonDecodeError(($, "Unit::from_json: expected null")))
     ,
@@ -681,7 +681,7 @@ test "Result from_json error cases" {
     "Extra": Json::number(456),
   })
   inspect(
-    (@json.from_json?(json_obj) : Result[Unit, _]),
+    (try? @json.from_json(json_obj) : Result[Unit, _]),
     content=
       #|Err(JsonDecodeError(($, "Unit::from_json: expected null")))
     ,
@@ -690,7 +690,7 @@ test "Result from_json error cases" {
   // Test with object with invalid field name
   let json_obj2 = Json::object({ "Invalid": Json::number(123) })
   inspect(
-    (@json.from_json?(json_obj2) : Result[Unit, _]),
+    (try? @json.from_json(json_obj2) : Result[Unit, _]),
     content=
       #|Err(JsonDecodeError(($, "Unit::from_json: expected null")))
     ,
@@ -701,7 +701,7 @@ test "Result from_json error cases" {
 test "Unit from_json with invalid input" {
   let json_num = Json::number(123)
   inspect(
-    (@json.from_json?(json_num) : Result[Unit, _]),
+    (try? @json.from_json(json_num) : Result[Unit, _]),
     content=
       #|Err(JsonDecodeError(($, "Unit::from_json: expected null")))
     ,
