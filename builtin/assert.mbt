@@ -72,11 +72,11 @@ pub fn[T : Eq + Show] assert_eq(a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
 ///
 /// ```moonbit
 /// test "assert_not_eq" {
-///   assert_not_eq!(1, 2) // Passes
+///   assert_not_eq(1, 2) // Passes
 /// }
 ///
 /// test "panic assert_not_eq/equal_values" {
-///   ignore(assert_not_eq!(42, 42)) // Fails with detailed error message
+///   ignore(assert_not_eq(42, 42)) // Fails with detailed error message
 /// }
 /// ```
 #coverage.skip

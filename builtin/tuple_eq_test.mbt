@@ -116,7 +116,7 @@ test "tuple16_equal" {
   assert_true(t1 == t2)
   assert_false(t1 == t3)
   assert_eq(t1, t2)
-  assert_not_eq!(t1, t3)
+  assert_not_eq(t1, t3)
 }
 
 ///|
