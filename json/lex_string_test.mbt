@@ -15,7 +15,7 @@
 ///|
 test "lex_string with forward slash escape" {
   inspect(
-    @json.parse!("\"\\/\""),
+    @json.parse("\"\\/\""),
     content=
       #|String("/")
     ,

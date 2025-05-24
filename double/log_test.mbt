@@ -75,6 +75,6 @@ test "ln_1p" {
   }
 
   for i in 0..<vals.length() {
-    high_accuracy_test!(ln_1p_res[i], vals[i].ln_1p())
+    high_accuracy_test(ln_1p_res[i], vals[i].ln_1p())
   }
 }

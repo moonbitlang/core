@@ -264,12 +264,12 @@ test "try_bubble_sort" {
 
 ///|
 test "heap_sort" {
-  test_sort!(fn(arr) { heap_sort_by(arr[:], fn(a, b) { a - b }) })
+  test_sort(fn(arr) { heap_sort_by(arr[:], fn(a, b) { a - b }) })
 }
 
 ///|
 test "bubble_sort" {
-  test_sort!(fn(arr) { bubble_sort_by(arr[:], fn(a, b) { a - b }) })
+  test_sort(fn(arr) { bubble_sort_by(arr[:], fn(a, b) { a - b }) })
 }
 
 ///|
@@ -281,5 +281,5 @@ test "sort_by_key" {
 
 ///|
 test "sort_by" {
-  test_sort!(fn(arr) { arr.sort_by(fn(a, b) { a - b }) })
+  test_sort(fn(arr) { arr.sort_by(fn(a, b) { a - b }) })
 }

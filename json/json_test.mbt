@@ -39,12 +39,12 @@ test "get as bool" {
 
 ///|
 fn check!(x : String) -> Json {
-  @json.parse!(x)
+  @json.parse(x)
 }
 
 ///|
 fn check2!(x : String) -> Json!@json.ParseError {
-  @json.parse!(x)
+  @json.parse(x)
 }
 
 ///|
@@ -252,11 +252,11 @@ test "stringify" {
 
   // not mut once we have `try except else` syntax
   // we do come across issues like ParseError not unified with String
-  let newjson = @json.parse!(json.stringify())
+  let newjson = @json.parse(json.stringify())
   match json {
     { "key": [_, _, _, _, { "value": Number(i), .. }, ..], .. } =>
       inspect(i, content="100")
-    _ => fail!("Failed to match the JSON")
+    _ => fail("Failed to match the JSON")
   }
   assert_eq(newjson, json)
 }
@@ -340,7 +340,7 @@ test "string from and to json round trip" {
     #|  / __  /  __/ / / /_/ /  / /  / / /_/ / /_/ / / / / /_/ / / /_
     #| /_/ /_/\___/_/_/\____/  /_/  /_/\____/\____/_/ /_/_____/_/\__/
     #|
-  assert_eq(@json.from_json!(greeting.to_json()), greeting)
+  assert_eq(@json.from_json(greeting.to_json()), greeting)
 }
 
 ///|

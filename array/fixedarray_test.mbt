@@ -100,7 +100,7 @@ test "FixedArray::makei" {
   assert_eq(simple_arr[0].val, 2)
   let arr = FixedArray::makei(2, fn(_i) { { val: 1 } })
   assert_eq(arr.length(), 2)
-  @test.is_not!(arr[0], arr[1])
+  @test.is_not(arr[0], arr[1])
   assert_eq(arr[0].val, 1)
   assert_eq(arr[1].val, 1)
 }

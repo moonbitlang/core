@@ -669,11 +669,11 @@ test "test_from_array" {
     assert_eq(deq.length(), array.length())
   }
 
-  test_fn!(0)
-  test_fn!(1)
-  test_fn!(2)
-  test_fn!(32)
-  test_fn!(35)
+  test_fn(0)
+  test_fn(1)
+  test_fn(2)
+  test_fn(32)
+  test_fn(35)
 }
 
 ///|
@@ -722,15 +722,15 @@ test "deque guard iter coverage improvement" {
   }
 
   // This should trigger condition: cap - len >= len
-  test_n_via_push_front!(0)
+  test_n_via_push_front(0)
   // These should trigger condition: cap - len < len which has no coverage
-  test_n_via_push_front!(2)
-  test_n_via_push_front!(4)
-  test_n_via_push_front!(6)
+  test_n_via_push_front(2)
+  test_n_via_push_front(4)
+  test_n_via_push_front(6)
   // This should trigger condition: cap - len >= len again
-  test_n_via_push_front!(10)
-  test_n_via_push_front!(12)
-  test_n_via_push_front!(15)
+  test_n_via_push_front(10)
+  test_n_via_push_front(12)
+  test_n_via_push_front(15)
 }
 
 ///|
@@ -779,15 +779,15 @@ test "deque guard iter2 coverage improvement" {
   }
 
   // This should trigger condition: cap - len >= len
-  test_n_via_push_front!(0)
+  test_n_via_push_front(0)
   // These should trigger condition: cap - len < len which has no coverage
-  test_n_via_push_front!(2)
-  test_n_via_push_front!(4)
-  test_n_via_push_front!(6)
+  test_n_via_push_front(2)
+  test_n_via_push_front(4)
+  test_n_via_push_front(6)
   // This should trigger condition: cap - len >= len again
-  test_n_via_push_front!(10)
-  test_n_via_push_front!(12)
-  test_n_via_push_front!(15)
+  test_n_via_push_front(10)
+  test_n_via_push_front(12)
+  test_n_via_push_front(15)
 }
 
 ///|
@@ -863,14 +863,14 @@ test "deque retain" {
     dq
   }
 
-  @json.inspect(dq!()..retain(is_even).as_views(), content=[[4, 6, 8], []])
-  @json.inspect(dq!()..retain(fn(x) { x >= 5 }).as_views(), content=[
+  @json.inspect(dq()..retain(is_even).as_views(), content=[[4, 6, 8], []])
+  @json.inspect(dq()..retain(fn(x) { x >= 5 }).as_views(), content=[
     [5, 6, 7],
     [8],
   ])
-  @json.inspect(dq!()..retain(fn(x) { x >= 7 }).as_views(), content=[[7, 8], []])
-  @json.inspect(dq!()..retain(fn(_) { false }).as_views(), content=[[], []])
-  @json.inspect(dq!()..retain(fn(_) { true }).as_views(), content=[
+  @json.inspect(dq()..retain(fn(x) { x >= 7 }).as_views(), content=[[7, 8], []])
+  @json.inspect(dq()..retain(fn(_) { false }).as_views(), content=[[], []])
+  @json.inspect(dq()..retain(fn(_) { true }).as_views(), content=[
     [4, 5, 6],
     [7, 8],
   ])
@@ -907,19 +907,19 @@ test "deque retain_map" {
     dq
   }
 
-  @json.inspect(dq!()..retain_map(inc_if_even).as_views(), content=[
+  @json.inspect(dq()..retain_map(inc_if_even).as_views(), content=[
     [5, 7, 9],
     [],
   ])
-  @json.inspect(dq!()..retain_map(inc_if(fn(x) { x >= 5 })).as_views(), content=[
+  @json.inspect(dq()..retain_map(inc_if(fn(x) { x >= 5 })).as_views(), content=[
     [6, 7, 8],
     [9],
   ])
-  @json.inspect(dq!()..retain_map(inc_if(fn(x) { x >= 7 })).as_views(), content=[
+  @json.inspect(dq()..retain_map(inc_if(fn(x) { x >= 7 })).as_views(), content=[
     [8, 9],
     [],
   ])
-  @json.inspect(dq!()..retain_map(Option::Some(_)).as_views(), content=[
+  @json.inspect(dq()..retain_map(Option::Some(_)).as_views(), content=[
     [4, 5, 6],
     [7, 8],
   ])

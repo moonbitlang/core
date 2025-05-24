@@ -573,7 +573,7 @@ test "List::to_json with empty list" {
 ///|
 test "List::from_json" {
   for xs in (@quickcheck.samples(20) : Array[@list.T[Int]]) {
-    assert_eq(xs, @json.from_json!(xs.to_json()))
+    assert_eq(xs, @json.from_json(xs.to_json()))
   }
 }
 

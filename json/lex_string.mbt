@@ -28,7 +28,7 @@ fn ParseContext::lex_string(ctx : ParseContext) -> String!ParseError {
         flush(ctx.offset - 1)
         break
       }
-      Some('\n' | '\r') => ctx.invalid_char!(shift=-1)
+      Some('\n' | '\r') => ctx.invalid_char(shift=-1)
       Some('\\') => {
         flush(ctx.offset - 1)
         match ctx.read_char() {
@@ -41,17 +41,17 @@ fn ParseContext::lex_string(ctx : ParseContext) -> String!ParseError {
           Some('\\') => buf.write_char('\\')
           Some('/') => buf.write_char('/')
           Some('u') => {
-            let c = ctx.lex_hex_digits!(4)
+            let c = ctx.lex_hex_digits(4)
             buf.write_char(c.unsafe_to_char())
           }
-          Some(_) => ctx.invalid_char!(shift=-1)
+          Some(_) => ctx.invalid_char(shift=-1)
           None => raise InvalidEof
         }
         start = ctx.offset
       }
       Some(ch) =>
         if ch.to_int() < 32 {
-          ctx.invalid_char!(shift=-1)
+          ctx.invalid_char(shift=-1)
         } else {
           continue
         }
@@ -70,17 +70,17 @@ fn ParseContext::lex_hex_digits(ctx : ParseContext, n : Int) -> Int!ParseError {
         if c >= 'A' {
           let d = (c.to_int() & (32).lnot()) - 'A'.to_int() + 10
           if d > 15 {
-            ctx.invalid_char!(shift=-1)
+            ctx.invalid_char(shift=-1)
           }
           r = (r << 4) | d
         } else if c >= '0' {
           let d = c.to_int() - '0'.to_int()
           if d > 9 {
-            ctx.invalid_char!(shift=-1)
+            ctx.invalid_char(shift=-1)
           }
           r = (r << 4) | d
         } else {
-          ctx.invalid_char!(shift=-1)
+          ctx.invalid_char(shift=-1)
         }
       None => raise InvalidEof
     }

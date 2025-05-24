@@ -39,7 +39,7 @@ pub fn[A : Compare] T::from_array(array : Array[A]) -> T[A] {
 pub fn[A : @json.FromJson + Compare] T::from_json(
   json : Json
 ) -> T[A]!@json.JsonDecodeError {
-  @json.from_json!(json)
+  @json.from_json(json)
 }
 
 ///|

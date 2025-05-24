@@ -123,6 +123,6 @@ test "to_json with empty map" {
 ///|
 test "from_json" {
   for xs in (@quickcheck.samples(20) : Array[@sorted_map.T[String, Int]]) {
-    assert_eq(xs, @json.from_json!(xs.to_json()))
+    assert_eq(xs, @json.from_json(xs.to_json()))
   }
 }

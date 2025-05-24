@@ -18,7 +18,7 @@ pub fn parse_bool(str : String) -> Bool!StrConvError {
   match str {
     "1" | "t" | "T" | "true" | "TRUE" | "True" => true
     "0" | "f" | "F" | "false" | "FALSE" | "False" => false
-    _ => syntax_err!()
+    _ => syntax_err()
   }
 }
 
@@ -43,7 +43,7 @@ test "parse_bool" {
   for i in 0..<tests.length() {
     let t = tests[i]
     assert_eq(
-      try Result::Ok(parse_bool!(t.0)) catch {
+      try Result::Ok(parse_bool(t.0)) catch {
         StrConvError(err) => Err(err)
       },
       t.1,
