@@ -104,7 +104,7 @@ test "from_double NaN check" {
 fn from_double_array(
   a : Array[Double]
 ) -> Array[Result[@rational.T, @rational.RationalError]] {
-  a.map(fn { x => @rational.from_double?(x) })
+  a.map(fn { x => try? @rational.from_double(x) })
 }
 
 ///|
@@ -113,7 +113,12 @@ test "from_double array" {
     0.5, 5, 29.97, -29.97, 63.5, 126.5, 127.0, 127.5, -63.5, -126.5, -127.0, -127.5,
   ]
   inspect(
-    a.map(fn { x => @rational.from_double?(x).unwrap() }),
+    a.map(fn {
+      x =>
+        try @rational.from_double(x) catch {
+          _ => abort("")
+        }
+    }),
     content="[1/2, 5, 2997/100, -2997/100, 127/2, 253/2, 127, 255/2, -127/2, -253/2, -127, -255/2]",
   )
   let a = [
