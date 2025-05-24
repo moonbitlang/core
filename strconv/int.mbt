@@ -223,28 +223,28 @@ fn overflow_threshold(base : Int, neg : Bool) -> Int64 {
 
 ///|
 test "check_underscore" {
-  assert_true!(check_underscore("123"))
-  assert_true!(check_underscore("0x123"))
-  assert_true!(check_underscore("0o123"))
-  assert_true!(check_underscore("0b101"))
-  assert_true!(check_underscore("1_2_3"))
-  assert_true!(check_underscore("0x_1_2_3_A_F"))
-  assert_true!(check_underscore("0o_1_2_3"))
-  assert_true!(check_underscore("0b_1_0_1"))
-  assert_false!(check_underscore("1__2_3"))
-  assert_false!(check_underscore("_123"))
-  assert_false!(check_underscore("123_"))
+  assert_true(check_underscore("123"))
+  assert_true(check_underscore("0x123"))
+  assert_true(check_underscore("0o123"))
+  assert_true(check_underscore("0b101"))
+  assert_true(check_underscore("1_2_3"))
+  assert_true(check_underscore("0x_1_2_3_A_F"))
+  assert_true(check_underscore("0o_1_2_3"))
+  assert_true(check_underscore("0b_1_0_1"))
+  assert_false(check_underscore("1__2_3"))
+  assert_false(check_underscore("_123"))
+  assert_false(check_underscore("123_"))
 }
 
 ///|
 test "determine_base" {
-  assert_eq!(determine_base("1234"), 10)
-  assert_eq!(determine_base("0x1234"), 16)
-  assert_eq!(determine_base("0X1234"), 16)
-  assert_eq!(determine_base("0o1234"), 8)
-  assert_eq!(determine_base("0O1234"), 8)
-  assert_eq!(determine_base("0b1010"), 2)
-  assert_eq!(determine_base("0B1010"), 2)
+  assert_eq(determine_base("1234"), 10)
+  assert_eq(determine_base("0x1234"), 16)
+  assert_eq(determine_base("0X1234"), 16)
+  assert_eq(determine_base("0o1234"), 8)
+  assert_eq(determine_base("0O1234"), 8)
+  assert_eq(determine_base("0b1010"), 2)
+  assert_eq(determine_base("0B1010"), 2)
 }
 
 ///|
@@ -278,7 +278,7 @@ test "parse_int64" {
   ]
   for i in 0..<tests.length() {
     let t = tests[i]
-    assert_eq!(
+    assert_eq(
       try Result::Ok(parse_int64!(t.0)) catch {
         StrConvError(err) => Err(err)
       },
@@ -396,7 +396,7 @@ test "parse_int64_base" {
   ]
   for i in 0..<tests.length() {
     let t = tests[i]
-    assert_eq!(
+    assert_eq(
       try Result::Ok(parse_int64!(t.0, base=t.1)) catch {
         StrConvError(err) => Err(err)
       },
@@ -436,7 +436,7 @@ test "parse_int" {
   ]
   for i in 0..<tests.length() {
     let t = tests[i]
-    assert_eq!(
+    assert_eq(
       try Result::Ok(parse_int!(t.0)) catch {
         StrConvError(err) => Err(err)
       },

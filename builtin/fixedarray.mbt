@@ -108,7 +108,7 @@ pub impl[X] Default for FixedArray[X] with default() {
 /// ```
 /// let fa : FixedArray[Int] = [0, 0, 0, 0, 0]
 /// fa.fill(3)
-/// assert_eq!(fa[0], 3)
+/// assert_eq(fa[0], 3)
 /// ```
 pub fn[T] FixedArray::fill(self : FixedArray[T], value : T) -> Unit {
   for i in 0..<self.length() {

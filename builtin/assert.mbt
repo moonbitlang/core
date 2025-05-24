@@ -38,12 +38,12 @@ fn[T : Show] debug_string(t : T) -> String {
 ///
 /// ```moonbit
 /// test "assert_eq" {
-///   assert_eq!(1, 1)
-///   assert_eq!("hello", "hello")
+///   assert_eq(1, 1)
+///   assert_eq("hello", "hello")
 /// }
 ///
 /// test "panic assert_eq/not_equal" {
-///   ignore(assert_eq!(1, 2)) // Will fail with message showing values and location
+///   ignore(assert_eq(1, 2)) // Will fail with message showing values and location
 /// }
 /// ```
 #coverage.skip
@@ -109,11 +109,11 @@ pub fn[T : Eq + Show] assert_not_eq(
 ///
 /// ```moonbit
 /// test "assert_true" {
-///   assert_true!(true)
+///   assert_true(true)
 /// }
 ///
 /// test "panic assert_true/false_condition" {
-///   ignore(assert_true!(false)) // Throws Failure
+///   ignore(assert_true(false)) // Throws Failure
 /// }
 /// ```
 #coverage.skip
@@ -140,12 +140,12 @@ pub fn assert_true(x : Bool, loc~ : SourceLoc = _) -> Unit! {
 ///
 /// ```moonbit
 /// test "assert_false" {
-///   assert_false!(false)
-///   assert_false!(1 > 2)
+///   assert_false(false)
+///   assert_false(1 > 2)
 /// }
 ///
 /// test "panic assert_false/with_true" {
-///   assert_false!(true) // This will fail with an error message
+///   assert_false(true) // This will fail with an error message
 /// }
 /// ```
 #coverage.skip

@@ -17,7 +17,7 @@ test "Result equality with Ok" {
   let result1 : Result[Int, String] = Result::Ok(1)
   let result2 = Result::Ok(1)
   let result3 = Result::Ok(2)
-  assert_eq!(result1, result2)
+  assert_eq(result1, result2)
   assert_not_eq!(result1, result3)
 }
 
@@ -26,7 +26,7 @@ test "Result equality with Err" {
   let result1 : Result[Int, String] = Result::Err("error")
   let result2 = Result::Err("error")
   let result3 = Result::Err("different error")
-  assert_eq!(result1, result2)
+  assert_eq(result1, result2)
   assert_not_eq!(result1, result3)
 }
 

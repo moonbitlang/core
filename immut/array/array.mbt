@@ -106,7 +106,7 @@ pub fn[A] copy(self : T[A]) -> T[A] {
 /// # Example
 /// ```
 /// let v = @array.of([1, 2, 3])
-/// assert_eq!(v, @array.from_array([1, 2, 3]))
+/// assert_eq(v, @array.from_array([1, 2, 3]))
 /// ```
 pub fn[A] from_array(arr : Array[A]) -> T[A] {
   makei(arr.length(), fn(i) { arr[i] })
@@ -182,7 +182,7 @@ pub fn[A] length(self : T[A]) -> Int {
 /// # Examples
 /// ```
 /// let v = @array.of([1, 2, 3, 4, 5])
-/// assert_eq!(v[0], 1)
+/// assert_eq(v[0], 1)
 /// ```
 pub fn[A] op_get(self : T[A], index : Int) -> A {
   if index == 0 {
@@ -204,7 +204,7 @@ pub fn[A] op_get(self : T[A], index : Int) -> A {
 /// # Example
 /// ```
 /// let v = @array.of([1, 2, 3, 4, 5])
-/// assert_eq!(v.set(1, 10), @array.of([1, 10, 3, 4, 5]))
+/// assert_eq(v.set(1, 10), @array.of([1, 10, 3, 4, 5]))
 /// ```
 pub fn[A] set(self : T[A], index : Int, value : A) -> T[A] {
   {
@@ -220,7 +220,7 @@ pub fn[A] set(self : T[A], index : Int, value : A) -> T[A] {
 /// # Example
 /// ```
 /// let v = @array.of([1, 2, 3])
-/// assert_eq!(v.push(4), @array.of([1, 2, 3, 4]))
+/// assert_eq(v.push(4), @array.of([1, 2, 3, 4]))
 /// ```
 pub fn[A] push(self : T[A], value : A) -> T[A] {
   let (tree, shift) = self.tree.push_end(self.shift, value)
@@ -270,7 +270,7 @@ pub fn[A] iter(self : T[A]) -> Iter[A] {
 /// let arr = []
 /// let v = @array.of([1, 2, 3, 4, 5])
 /// v.each(fn(e) { arr.push(e) })
-/// assert_eq!(arr, [1, 2, 3, 4, 5])
+/// assert_eq(arr, [1, 2, 3, 4, 5])
 /// ```
 pub fn[A] each(self : T[A], f : (A) -> Unit) -> Unit {
   self.tree.each(f)
@@ -284,7 +284,7 @@ pub fn[A] each(self : T[A], f : (A) -> Unit) -> Unit {
 /// let arr = []
 /// let v = @array.of([1, 2, 3, 4, 5])
 /// v.eachi(fn(i, e) { arr.push(i * e) })
-/// assert_eq!(arr, [0, 2, 6, 12, 20])
+/// assert_eq(arr, [0, 2, 6, 12, 20])
 /// ```
 pub fn[A] eachi(self : T[A], f : (Int, A) -> Unit) -> Unit {
   self.tree.eachi(f, self.shift, 0)
@@ -296,7 +296,7 @@ pub fn[A] eachi(self : T[A], f : (Int, A) -> Unit) -> Unit {
 /// # Example
 /// ```
 /// let v = @array.of([1, 2, 3, 4, 5])
-/// assert_eq!(v.fold(fn(a, b) { a + b }, init=0), 15)
+/// assert_eq(v.fold(fn(a, b) { a + b }, init=0), 15)
 /// ```
 pub fn[A, B] fold(self : T[A], init~ : B, f : (B, A) -> B) -> B {
   self.tree.fold(init, f)
@@ -308,7 +308,7 @@ pub fn[A, B] fold(self : T[A], init~ : B, f : (B, A) -> B) -> B {
 /// # Example
 /// ```
 /// let v = @array.of([1, 2, 3, 4, 5])
-/// assert_eq!(v.rev_fold(fn(a, b) { a + b }, init=0), 15)
+/// assert_eq(v.rev_fold(fn(a, b) { a + b }, init=0), 15)
 /// ```
 pub fn[A, B] rev_fold(self : T[A], init~ : B, f : (B, A) -> B) -> B {
   self.tree.rev_fold(init, f)
@@ -320,7 +320,7 @@ pub fn[A, B] rev_fold(self : T[A], init~ : B, f : (B, A) -> B) -> B {
 /// # Example
 /// ```
 /// let v = @array.of([1, 2, 3, 4, 5])
-/// assert_eq!(v.fold(fn(a, b) { a + b }, init=0), 15)
+/// assert_eq(v.fold(fn(a, b) { a + b }, init=0), 15)
 /// ```
 #deprecated("Use `fold` instead")
 #coverage.skip
@@ -334,7 +334,7 @@ pub fn[A] fold_left(self : T[A], f : (A, A) -> A, init~ : A) -> A {
 /// # Example
 /// ```
 /// let v = @array.of([1, 2, 3, 4, 5])
-/// assert_eq!(v.rev_fold(fn(a, b) { a + b }, init=0), 15)
+/// assert_eq(v.rev_fold(fn(a, b) { a + b }, init=0), 15)
 /// ```
 #deprecated("Use `rev_fold` instead")
 #coverage.skip
@@ -348,7 +348,7 @@ pub fn[A] fold_right(self : T[A], f : (A, A) -> A, init~ : A) -> A {
 /// # Example
 /// ```
 /// let v = @array.of([1, 2, 3, 4, 5])
-/// assert_eq!(v.map(fn(e) { e * 2 }), @array.of([2, 4, 6, 8, 10]))
+/// assert_eq(v.map(fn(e) { e * 2 }), @array.of([2, 4, 6, 8, 10]))
 /// ```
 pub fn[A, B] map(self : T[A], f : (A) -> B) -> T[B] {
   { tree: self.tree.map(f), size: self.size, shift: self.shift }
@@ -409,10 +409,10 @@ pub impl[A : Show] Show for T[A] with output(self, logger) {
 ///   let arr1 = @array.of([1, 2, 3])
 ///   let arr2 = @array.of([1, 2, 4])
 ///   let arr3 = @array.of([1, 2])
-///   assert_eq!(arr1.compare(arr2), -1) // arr1 < arr2
-///   assert_eq!(arr1.compare(arr3), 1) // arr2 > arr1
-///   assert_eq!(arr3.compare(arr1), -1) // arr1 > arr3 (longer)
-///   assert_eq!(arr1.compare(arr1), 0) // arr1 = arr1
+///   assert_eq(arr1.compare(arr2), -1) // arr1 < arr2
+///   assert_eq(arr1.compare(arr3), 1) // arr2 > arr1
+///   assert_eq(arr3.compare(arr1), -1) // arr1 > arr3 (longer)
+///   assert_eq(arr1.compare(arr1), 0) // arr1 = arr1
 /// }
 /// ```
 pub impl[A : Compare] Compare for T[A] with compare(self, other) {

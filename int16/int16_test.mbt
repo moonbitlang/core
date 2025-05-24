@@ -438,7 +438,7 @@ test "Int16::op_neg" {
   inspect(neg(0), content="0")
   inspect(neg(32767), content="-32767")
   inspect(neg(-32768), content="-32768")
-  assert_eq!(neg(@int16.min_value), @int16.min_value)
+  assert_eq(neg(@int16.min_value), @int16.min_value)
 }
 
 ///|
@@ -452,7 +452,7 @@ test "Int16::abs" {
   inspect(abs(0), content="0")
   inspect(abs(32767), content="32767")
   inspect(abs(-32768), content="-32768")
-  assert_eq!(abs(@int16.min_value), @int16.min_value)
+  assert_eq(abs(@int16.min_value), @int16.min_value)
 }
 
 ///|

@@ -19,8 +19,8 @@ pub fn round(input : Double) -> Double {
 
 ///|
 test "round" {
-  assert_eq!(round(4503599627370497.5), 4503599627370498.0)
-  assert_eq!(round(2251799813685248.5), 2251799813685249.0)
+  assert_eq(round(4503599627370497.5), 4503599627370498.0)
+  assert_eq(round(2251799813685248.5), 2251799813685249.0)
 }
 
 ///|
@@ -30,11 +30,11 @@ pub fn ceil(input : Double) -> Double {
 
 ///|
 test "ceil" {
-  assert_eq!(ceil(2251799813685248.5), 2251799813685249.0)
-  assert_eq!(ceil(1.1), 2.0)
-  assert_eq!(ceil(1.0), 1.0)
-  assert_eq!(ceil(0.9), 1.0)
-  assert_eq!(ceil(0.0), 0.0)
+  assert_eq(ceil(2251799813685248.5), 2251799813685249.0)
+  assert_eq(ceil(1.1), 2.0)
+  assert_eq(ceil(1.0), 1.0)
+  assert_eq(ceil(0.9), 1.0)
+  assert_eq(ceil(0.0), 0.0)
 }
 
 ///|
@@ -44,11 +44,11 @@ pub fn floor(input : Double) -> Double {
 
 ///|
 test "floor" {
-  assert_eq!(floor(2251799813685248.5), 2251799813685248.0)
-  assert_eq!(floor(1.1), 1.0)
-  assert_eq!(floor(1.0), 1.0)
-  assert_eq!(floor(0.9), 0.0)
-  assert_eq!(floor(0.0), 0.0)
+  assert_eq(floor(2251799813685248.5), 2251799813685248.0)
+  assert_eq(floor(1.1), 1.0)
+  assert_eq(floor(1.0), 1.0)
+  assert_eq(floor(0.9), 0.0)
+  assert_eq(floor(0.0), 0.0)
 }
 
 ///|
@@ -58,11 +58,11 @@ pub fn trunc(input : Double) -> Double {
 
 ///|
 test "trunc" {
-  assert_eq!(trunc(4503599627370497.0), 4503599627370497.0)
-  assert_eq!(trunc(2251799813685248.5), 2251799813685248.0)
-  assert_eq!(trunc(4.5), 4.0)
-  assert_eq!(trunc(1.5), 1.0)
-  assert_eq!(trunc(1.0), 1.0)
-  assert_eq!(trunc(0.2), 0.0)
-  assert_eq!(trunc(0.0), 0.0)
+  assert_eq(trunc(4503599627370497.0), 4503599627370497.0)
+  assert_eq(trunc(2251799813685248.5), 2251799813685248.0)
+  assert_eq(trunc(4.5), 4.0)
+  assert_eq(trunc(1.5), 1.0)
+  assert_eq(trunc(1.0), 1.0)
+  assert_eq(trunc(0.2), 0.0)
+  assert_eq(trunc(0.0), 0.0)
 }
