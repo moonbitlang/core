@@ -322,6 +322,14 @@ test "sort" {
 }
 
 ///|
+test "sort-stack-safety" {
+  let arr = FixedArray::makei(100_000, fn { x => x })
+  arr.rev_inplace()
+  let ls = @list.of(arr)
+  ls.sort() |> ignore
+}
+
+///|
 test "contain" {
   let ls = @list.of([1, 2, 3])
   inspect(ls.contains(1), content="true")
