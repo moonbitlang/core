@@ -58,12 +58,14 @@ pub(all) type! ParseError {
 }
 impl Eq for ParseError
 impl Show for ParseError
+impl ToJson for ParseError
 
 pub(all) struct Position {
   line : Int
   column : Int
 }
 impl Eq for Position
+impl ToJson for Position
 
 impl Json {
   as_array(Self) -> Array[Self]?
