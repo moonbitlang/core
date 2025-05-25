@@ -69,7 +69,7 @@ test "from array literal" {
   let b2 = @bytes.of([
     65, 0, 66, 0, 67, 0, 68, 0, 69, 0, 70, 0, 71, 0, 72, 0, 73, 0,
   ])
-  assert_eq!(b1, b2)
+  assert_eq(b1, b2)
 }
 
 ///|
@@ -223,13 +223,13 @@ test "panic Fixed::blit_from_bytesview 2" {
 ///|
 test "bytes pattern match" {
   let bytes : Bytes = "Hello, world!你好"
-  guard bytes is [.. b"Hello", ..] else { fail!("") }
+  guard bytes is [.. b"Hello", ..] else { fail("") }
   guard bytes is [.. _x, .. "你好"] && _x is [.. "Hello, world!", ..] else {
-    fail!("")
+    fail("")
   }
-  guard bytes is [.., .. "你好"] else { fail!("") }
+  guard bytes is [.., .. "你好"] else { fail("") }
   // CR: ZYU: it's weird this works but below does not work
-  // guard bytes is [.. _ , .. "你好"] else { fail!("") }
+  // guard bytes is [.. _ , .. "你好"] else { fail("") }
 }
 
 ///|

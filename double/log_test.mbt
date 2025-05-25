@@ -71,10 +71,10 @@ test "ln_1p" {
   ]
   fn high_accuracy_test(expect : Double, actual : Double) -> Unit!Error {
     let ulp = (expect.reinterpret_as_int64() - actual.reinterpret_as_int64()).abs()
-    assert_true!(ulp <= 1)
+    assert_true(ulp <= 1)
   }
 
   for i in 0..<vals.length() {
-    high_accuracy_test!(ln_1p_res[i], vals[i].ln_1p())
+    high_accuracy_test(ln_1p_res[i], vals[i].ln_1p())
   }
 }

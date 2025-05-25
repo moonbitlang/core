@@ -9,14 +9,14 @@ The `json` package provides comprehensive JSON handling capabilities, including 
 ```moonbit
 test "parse and validate jsons" {
   // Check if a string is valid JSON
-  assert_true!(@json.valid("{\"key\": 42}"))
-  assert_true!(@json.valid("[1, 2, 3]"))
-  assert_true!(@json.valid("null"))
-  assert_true!(@json.valid("false"))
+  assert_true(@json.valid("{\"key\": 42}"))
+  assert_true(@json.valid("[1, 2, 3]"))
+  assert_true(@json.valid("null"))
+  assert_true(@json.valid("false"))
 
   // Parse JSON string into Json value
   let json = try {
-    @json.parse!("{\"key\": 42}")
+    @json.parse("{\"key\": 42}")
   } catch {
     ParseError::InvalidChar(_, _) => panic()
     ParseError::InvalidEof => panic()
@@ -40,7 +40,7 @@ test "parse and validate jsons" {
 
 ```moonbit
 test "json object navigation" {
-  let json = @json.parse!(
+  let json = @json.parse(
     "{\"string\":\"hello\",\"number\":42,\"array\":[1,2,3]}",
   )
 
@@ -70,7 +70,7 @@ test "json object navigation" {
 
 ```moonbit
 test "json array navigation" {
-  let array = @json.parse!("[1,2,3,4,5]")
+  let array = @json.parse("[1,2,3,4,5]")
 
   // Access by index
   let first = array.item(0)
@@ -97,17 +97,17 @@ test "json array navigation" {
 test "json decode" {
   // Decode basic types
   let json_number = (42 : Json)
-  let number : Int = @json.from_json!(json_number)
+  let number : Int = @json.from_json(json_number)
   inspect(number, content="42")
 
   // Decode arrays
   let json_array = ([1, 2, 3] : Json)
-  let array : Array[Int] = @json.from_json!(json_array)
+  let array : Array[Int] = @json.from_json(json_array)
   inspect(array, content="[1, 2, 3]")
 
   // Decode maps
   let json_map = ({ "a": 1, "b": 2 } : Json)
-  let map : Map[String, Int] = @json.from_json!(json_map)
+  let map : Map[String, Int] = @json.from_json(json_map)
   inspect(
     map,
     content=
@@ -123,7 +123,7 @@ test "json decode" {
 test "json path" {
   // Handle decode errors
   try {
-    let _arr : Array[Int] = @json.from_json!(([42, "not a number", 49] : Json))
+    let _arr : Array[Int] = @json.from_json(([42, "not a number", 49] : Json))
     panic()
   } catch {
     @json.JsonDecodeError((path, msg)) => {

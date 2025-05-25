@@ -35,7 +35,7 @@ fn FixedArray::unsafe_to_bytes(self : FixedArray[Byte]) -> Bytes = "%identity"
 /// ```moonbit
 /// test "Bytes::makei" {
 ///   let bytes = Bytes::makei(3, fn(i) { (i + 65).to_byte() })
-///   assert_eq!(bytes, b"ABC")
+///   assert_eq(bytes, b"ABC")
 /// }
 /// ```
 pub fn Bytes::makei(length : Int, value : (Int) -> Byte) -> Bytes {

@@ -21,13 +21,13 @@ test "unsafe_pop_front after many push_front" {
   for i in 0..<10 {
     dq.unsafe_pop_front()
   }
-  assert_eq!(dq.head, dq.tail)
+  assert_eq(dq.head, dq.tail)
 }
 
 ///|
 test "truncate zero" {
   let dq = of([1, 2, 3])
   dq.truncate(0)
-  assert_eq!(dq.len, 0)
-  assert_eq!(dq.head, dq.tail)
+  assert_eq(dq.len, 0)
+  assert_eq(dq.head, dq.tail)
 }

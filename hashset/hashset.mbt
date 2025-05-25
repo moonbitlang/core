@@ -398,8 +398,8 @@ test "set" {
   m.add("cd")
   m.add("c")
   m.add("d")
-  assert_eq!(m.size, 7)
-  assert_eq!(
+  assert_eq(m.size, 7)
+  assert_eq(
     m.debug_entries(),
     "_,(0,a),(1,b),(2,c),(3,d),(3,bc),(4,cd),(4,abc),_,_,_,_,_,_,_,_",
   )
@@ -419,8 +419,8 @@ test "remove" {
   m.add("abc" |> i)
   m.add("abcdef" |> i)
   m.remove("ab" |> i)
-  assert_eq!(m.size(), 5)
-  assert_eq!(m.debug_entries(), "_,(0,a),(0,bc),(1,cd),(1,abc),_,(0,abcdef),_")
+  assert_eq(m.size(), 5)
+  assert_eq(m.debug_entries(), "_,(0,a),(0,bc),(1,cd),(1,abc),_,(0,abcdef),_")
 }
 
 ///|
@@ -434,8 +434,8 @@ test "remove_unexist_key" {
   m.add("ab" |> i)
   m.add("abc" |> i)
   m.remove("d" |> i)
-  assert_eq!(m.size(), 3)
-  assert_eq!(m.debug_entries(), "_,(0,a),(0,ab),(0,abc),_,_,_,_")
+  assert_eq(m.size(), 3)
+  assert_eq(m.debug_entries(), "_,(0,a),(0,ab),(0,abc),_,_,_,_")
 }
 
 ///|
@@ -451,17 +451,17 @@ test "grow" {
   m.add("Java" |> i)
   m.add("Scala" |> i)
   m.add("Julia" |> i)
-  assert_eq!(m.size, 6)
-  assert_eq!(m.capacity, 8)
+  assert_eq(m.size, 6)
+  assert_eq(m.capacity, 8)
   m.add("Cobol" |> i)
-  assert_eq!(m.size, 7)
-  assert_eq!(m.capacity, 16)
+  assert_eq(m.size, 7)
+  assert_eq(m.capacity, 16)
   m.add("Python" |> i)
   m.add("Haskell" |> i)
   m.add("Rescript" |> i)
-  assert_eq!(m.size, 10)
-  assert_eq!(m.capacity, 16)
-  assert_eq!(
+  assert_eq(m.size, 10)
+  assert_eq(m.capacity, 16)
+  assert_eq(
     m.debug_entries(),
     "_,(0,C),(0,Go),(0,C++),(0,Java),(0,Scala),(1,Julia),(2,Cobol),(2,Python),(2,Haskell),(2,Rescript),_,_,_,_,_",
   )
@@ -471,10 +471,10 @@ test "grow" {
 test "clear" {
   let m : T[MyString] = new()
   m.clear()
-  assert_eq!(m.size(), 0)
-  assert_eq!(m.capacity(), 8)
+  assert_eq(m.size(), 0)
+  assert_eq(m.capacity(), 8)
   for i in 0..<m.capacity() {
-    @test.same_object!(m.entries[i], None)
+    @test.same_object(m.entries[i], None)
   }
 }
 

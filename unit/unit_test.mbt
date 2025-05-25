@@ -16,34 +16,34 @@
 test {
   let unit1 = ()
   let unit2 = ()
-  assert_eq!(unit1, unit2)
+  assert_eq(unit1, unit2)
 }
 
 ///|
 test {
   let unit1 = ()
   let unit2 = ()
-  assert_true!(physical_equal(unit1, unit2))
+  assert_true(physical_equal(unit1, unit2))
 }
 
 ///|
 test {
   let unit = ()
-  assert_eq!(@unit.default(), unit)
-  assert_eq!(unit.to_string(), "()")
+  assert_eq(@unit.default(), unit)
+  assert_eq(unit.to_string(), "()")
 }
 
 ///|
 test {
   let unit1 = ()
   let unit2 = ()
-  assert_eq!(unit1.compare(unit2), 0)
+  assert_eq(unit1.compare(unit2), 0)
 }
 
 ///|
 test {
   let unit = ()
-  assert_eq!(unit.hash(), 0)
+  assert_eq(unit.hash(), 0)
 }
 
 ///|
@@ -52,7 +52,7 @@ test "Unit hash_combine test" {
   let _ = Hash::hash_combine((), hasher)
   let hash1 = hasher.finalize()
   let hasher2 = Hasher::new()
-  assert_not_eq!(hash1, hasher2.finalize())
+  assert_not_eq(hash1, hasher2.finalize())
 }
 
 ///|

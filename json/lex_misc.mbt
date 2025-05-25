@@ -52,19 +52,19 @@ fn ParseContext::expect_char(ctx : ParseContext, c : Char) -> Unit!ParseError {
     // c0 < SURROGATE_LOW_CHAR || c0 is (0xE000..=0XFFFF)  
     // c0 is a valid char so only need check if c0<0xFFFF is BMP code point
     if c0 != c1 {
-      ctx.invalid_char!(shift=-1)
+      ctx.invalid_char(shift=-1)
     }
   } else {
     // c0 is not bmp code point
     // c1 has to be surrogate pair otherwise it is invalid
     guard c1 is (SURROGATE_LOW_CHAR..=SURROGATE_HIGH_CHAR) &&
       ctx.offset < ctx.end_offset else {
-      ctx.invalid_char!(shift=-1)
+      ctx.invalid_char(shift=-1)
     }
     let c2 = ctx.input.unsafe_charcode_at(ctx.offset)
     let c3 = (c1 << 10) + c2 - 0x35fdc00
     if c3 != c0 {
-      ctx.invalid_char!(shift=-1)
+      ctx.invalid_char(shift=-1)
     } else {
       ctx.offset += 1 // consume and move forward
     }
@@ -82,36 +82,30 @@ fn ParseContext::expect_ascii_char(
   let c1 = ctx.input.unsafe_charcode_at(ctx.offset)
   ctx.offset += 1
   if c.to_int() != c1 {
-    ctx.invalid_char!(shift=-1)
+    ctx.invalid_char(shift=-1)
   }
 }
 
 ///|
 test "expect_char" {
   let ctx = ParseContext::make("abc")
-  ctx.expect_char!('a')
-  ctx.expect_char!('b')
-  ctx.expect_char!('c')
-  inspect(
-    ctx.expect_char?('d').to_string(),
-    content="Err(Unexpected end of file)",
-  )
+  ctx.expect_char('a')
+  ctx.expect_char('b')
+  ctx.expect_char('c')
+  inspect(try? ctx.expect_char('d'), content={ "Err": { "$tag": "InvalidEof" } })
 }
 
 ///|
 test "expect_char with surrogate pair" {
   // "\uD83D\uDE00" // todo: shall we allow this?
   let ctx = ParseContext::make("a\u{1F600}bc\u{1F600}c")
-  ctx.expect_char!('a')
-  ctx.expect_char!((0x1F600).unsafe_to_char())
-  ctx.expect_char!('b')
-  ctx.expect_char!('c')
-  ctx.expect_char!((0x1F600).unsafe_to_char())
-  ctx.expect_char!('c')
-  inspect(
-    ctx.expect_char?('d').to_string(),
-    content="Err(Unexpected end of file)",
-  )
+  ctx.expect_char('a')
+  ctx.expect_char((0x1F600).unsafe_to_char())
+  ctx.expect_char('b')
+  ctx.expect_char('c')
+  ctx.expect_char((0x1F600).unsafe_to_char())
+  ctx.expect_char('c')
+  inspect(try? ctx.expect_char('d'), content={ "Err": { "$tag": "InvalidEof" } })
 }
 
 ///|
@@ -137,7 +131,7 @@ fn ParseContext::lex_after_array_value(ctx : ParseContext) -> Token!ParseError {
   match ctx.read_char() {
     Some(']') => RBracket
     Some(',') => Comma
-    Some(_) => ctx.invalid_char!(shift=-1)
+    Some(_) => ctx.invalid_char(shift=-1)
     None => raise InvalidEof
   }
 }
@@ -147,7 +141,7 @@ fn ParseContext::lex_after_property_name(ctx : ParseContext) -> Unit!ParseError 
   ctx.lex_skip_whitespace()
   match ctx.read_char() {
     Some(':') => ()
-    Some(_) => ctx.invalid_char!(shift=-1)
+    Some(_) => ctx.invalid_char(shift=-1)
     None => raise InvalidEof
   }
 }
@@ -158,7 +152,7 @@ fn ParseContext::lex_after_object_value(ctx : ParseContext) -> Token!ParseError 
   match ctx.read_char() {
     Some('}') => RBrace
     Some(',') => Comma
-    Some(_) => ctx.invalid_char!(shift=-1)
+    Some(_) => ctx.invalid_char(shift=-1)
     None => raise InvalidEof
   }
 }
@@ -171,10 +165,10 @@ fn ParseContext::lex_property_name(ctx : ParseContext) -> Token!ParseError {
   match ctx.read_char() {
     Some('}') => RBrace
     Some('"') => {
-      let s = ctx.lex_string!()
+      let s = ctx.lex_string()
       String(s)
     }
-    Some(_) => ctx.invalid_char!(shift=-1)
+    Some(_) => ctx.invalid_char(shift=-1)
     None => raise InvalidEof
   }
 }
@@ -187,10 +181,10 @@ fn ParseContext::lex_property_name2(ctx : ParseContext) -> Token!ParseError {
   ctx.lex_skip_whitespace()
   match ctx.read_char() {
     Some('"') => {
-      let s = ctx.lex_string!()
+      let s = ctx.lex_string()
       String(s)
     }
-    Some(_) => ctx.invalid_char!(shift=-1)
+    Some(_) => ctx.invalid_char(shift=-1)
     None => raise InvalidEof
   }
 }

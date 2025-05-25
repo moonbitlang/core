@@ -658,7 +658,7 @@ test "double/ryu.mbt:205" {
   if sum < high0 {
     high1 = high1 + 1
   }
-  assert_eq!(high1, 222222222)
+  assert_eq(high1, 222222222)
 }
 
 ///|
@@ -673,12 +673,12 @@ test "double/ryu.mbt:230" {
   if sum < high0 {
     high1 = high1 + 1UL
   }
-  assert_eq!(high1, 222222222UL)
+  assert_eq(high1, 222222222UL)
 }
 
 ///|
 test "double/ryu.mbt:252" {
-  assert_eq!(gDOUBLE_POW5_BITCOUNT, 125)
+  assert_eq(gDOUBLE_POW5_BITCOUNT, 125)
 }
 
 ///|
@@ -693,7 +693,7 @@ test "double/ryu.mbt:205" {
   if sum < high0 {
     high1 = high1 + 1UL
   }
-  assert_eq!(high1, 222222222UL)
+  assert_eq(high1, 222222222UL)
 }
 
 ///|
@@ -708,10 +708,10 @@ test "double/ryu.mbt:230" {
   if sum < high0 {
     high1 = high1 + 1UL
   }
-  assert_eq!(high1, 222222222UL)
+  assert_eq(high1, 222222222UL)
 }
 
 ///|
 test "double/ryu.mbt:252" {
-  assert_eq!(gDOUBLE_POW5_BITCOUNT, 125)
+  assert_eq(gDOUBLE_POW5_BITCOUNT, 125)
 }

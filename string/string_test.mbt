@@ -29,21 +29,21 @@ test "default" {
 
 ///|
 test "compare" {
-  assert_eq!(0, "".compare(""))
-  assert_eq!(-1, "".compare("abc"))
-  assert_eq!(1, "abc".compare(""))
-  assert_eq!(-1, "abcd".compare("abce"))
-  assert_eq!(1, "abce".compare("abcd"))
-  assert_eq!(-1, "c".compare("ab"))
-  assert_eq!(1, "ab".compare("c"))
+  assert_eq(0, "".compare(""))
+  assert_eq(-1, "".compare("abc"))
+  assert_eq(1, "abc".compare(""))
+  assert_eq(-1, "abcd".compare("abce"))
+  assert_eq(1, "abce".compare("abcd"))
+  assert_eq(-1, "c".compare("ab"))
+  assert_eq(1, "ab".compare("c"))
 }
 
 ///|
 test "to_bytes" {
-  assert_eq!("中文".to_bytes().to_unchecked_string(), "中文")
-  assert_eq!("asdf".to_bytes().to_unchecked_string(), "asdf")
-  assert_eq!("🤣🤣".to_bytes().to_unchecked_string(), "🤣🤣")
-  assert_eq!("🤔".to_bytes().to_unchecked_string(), "🤔")
+  assert_eq("中文".to_bytes().to_unchecked_string(), "中文")
+  assert_eq("asdf".to_bytes().to_unchecked_string(), "asdf")
+  assert_eq("🤣🤣".to_bytes().to_unchecked_string(), "🤣🤣")
+  assert_eq("🤔".to_bytes().to_unchecked_string(), "🤔")
 }
 
 ///|
@@ -54,16 +54,16 @@ test "Show::output" {
     buf.to_string()
   }
 
-  assert_eq!(repr("a"), "\"a\"")
-  assert_eq!(repr("'"), "\"'\"")
-  assert_eq!(repr("\""), "\"\\\"\"")
-  assert_eq!(repr("\\"), "\"\\\\\"")
-  assert_eq!(repr("\n"), "\"\\n\"")
-  assert_eq!(repr("\r"), "\"\\r\"")
-  assert_eq!(repr("\b"), "\"\\b\"")
-  assert_eq!(repr("\t"), "\"\\t\"")
-  assert_eq!(repr("\u{00}"), "\"\\u{00}\"")
-  assert_eq!(repr("abc'\"def\\"), "\"abc'\\\"def\\\\\"")
+  assert_eq(repr("a"), "\"a\"")
+  assert_eq(repr("'"), "\"'\"")
+  assert_eq(repr("\""), "\"\\\"\"")
+  assert_eq(repr("\\"), "\"\\\\\"")
+  assert_eq(repr("\n"), "\"\\n\"")
+  assert_eq(repr("\r"), "\"\\r\"")
+  assert_eq(repr("\b"), "\"\\b\"")
+  assert_eq(repr("\t"), "\"\\t\"")
+  assert_eq(repr("\u{00}"), "\"\\u{00}\"")
+  assert_eq(repr("abc'\"def\\"), "\"abc'\\\"def\\\\\"")
 }
 
 ///|
@@ -165,7 +165,7 @@ test "iter2" {
 test "Buffer::to_bytes" {
   let buffer = StringBuilder::new(size_hint=16)
   buffer.write_string("中文")
-  assert_eq!(buffer.to_string(), "中文")
+  assert_eq(buffer.to_string(), "中文")
 }
 
 ///|
@@ -585,16 +585,16 @@ test "panic rev_get2" {
 ///|
 test "length_ge" {
   let str = "Hello🤣🤣🤣"
-  assert_true!(str.char_length_ge(0))
-  assert_true!(str.char_length_ge(8))
-  assert_false!(str.char_length_ge(9))
+  assert_true(str.char_length_ge(0))
+  assert_true(str.char_length_ge(8))
+  assert_false(str.char_length_ge(9))
 }
 
 ///|
 test "length_eq" {
   let str = "Hello🤣🤣🤣"
-  assert_true!(str.char_length_eq(8))
-  assert_false!(str.char_length_eq(9))
+  assert_true(str.char_length_eq(8))
+  assert_false(str.char_length_eq(9))
 }
 
 ///|
@@ -681,7 +681,7 @@ test "offset_of_nth_char property" {
   let n = s.char_length()
   for i in 0..<n {
     let index = s.offset_of_nth_char(i).unwrap()
-    assert_eq!(s.unsafe_char_at(index), s.iter().nth(i).unwrap())
+    assert_eq(s.unsafe_char_at(index), s.iter().nth(i).unwrap())
   }
 }
 
@@ -691,22 +691,30 @@ test "offset_of_nth_char property negative" {
   let n = s.char_length()
   for i in 1..=n {
     let index = s.offset_of_nth_char(-i).unwrap()
-    assert_eq!(s.unsafe_char_at(index), s.rev_iter().nth(i - 1).unwrap())
+    assert_eq(s.unsafe_char_at(index), s.rev_iter().nth(i - 1).unwrap())
   }
 }
 
 ///|
 test "split and then join should be identity" {
   let string = ""
-  assert_eq!(string, string.split("").map(View::to_string).join(""))
-  assert_eq!(string, string.split("a").map(View::to_string).join("a"))
+  assert_eq(string, string.split("").map(View::to_string).join(""))
+  assert_eq(string, string.split("a").map(View::to_string).join("a"))
   let string = "a,b,c,"
-  assert_eq!(string, string.split("").map(View::to_string).join(""))
-  assert_eq!(string, string.split(",").map(View::to_string).join(","))
+  assert_eq(string, string.split("").map(View::to_string).join(""))
+  assert_eq(string, string.split(",").map(View::to_string).join(","))
   let string = "a b c"
-  assert_eq!(string, string.split("").map(View::to_string).join(""))
-  assert_eq!(string, string.split(" ").map(View::to_string).join(" "))
+  assert_eq(string, string.split("").map(View::to_string).join(""))
+  assert_eq(string, string.split(" ").map(View::to_string).join(" "))
   let string = "aaaaa"
-  assert_eq!(string, string.split("").map(View::to_string).join(""))
-  assert_eq!(string, string.split("a").map(View::to_string).join("a"))
+  assert_eq(string, string.split("").map(View::to_string).join(""))
+  assert_eq(string, string.split("a").map(View::to_string).join("a"))
+}
+
+///|
+test "string chars array" {
+  let v0 : String = ['a', .."x"]
+  assert_true(v0 is "ax")
+  let v : String = ['a', 'b']
+  assert_true(v is "ab")
 }

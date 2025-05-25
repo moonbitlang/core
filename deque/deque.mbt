@@ -230,7 +230,7 @@ fn[A] realloc(self : T[A]) -> Unit {
 /// # Example
 /// ```
 /// let dv = @deque.of([1, 2, 3, 4, 5])
-/// assert_eq!(dv.front(), Some(1))
+/// assert_eq(dv.front(), Some(1))
 /// ```
 pub fn[A] front(self : T[A]) -> A? {
   if self.len == 0 {
@@ -246,7 +246,7 @@ pub fn[A] front(self : T[A]) -> A? {
 /// # Example
 /// ```
 /// let dv = @deque.of([1, 2, 3, 4, 5])
-/// assert_eq!(dv.back(), Some(5))
+/// assert_eq(dv.back(), Some(5))
 /// ```
 pub fn[A] back(self : T[A]) -> A? {
   if self.len == 0 {
@@ -265,7 +265,7 @@ pub fn[A] back(self : T[A]) -> A? {
 /// ```
 /// let dv = @deque.of([1, 2, 3, 4, 5])
 /// dv.push_front(0)
-/// assert_eq!(dv.front(), Some(0))
+/// assert_eq(dv.front(), Some(0))
 /// ```
 pub fn[A] push_front(self : T[A], value : A) -> Unit {
   if self.len == self.buf.length() {
@@ -287,7 +287,7 @@ pub fn[A] push_front(self : T[A], value : A) -> Unit {
 /// ```
 /// let dv = @deque.of([1, 2, 3, 4, 5])
 /// dv.push_back(6)
-/// assert_eq!(dv.back(), Some(6))
+/// assert_eq(dv.back(), Some(6))
 /// ```
 pub fn[A] push_back(self : T[A], value : A) -> Unit {
   if self.len == self.buf.length() {
@@ -307,7 +307,7 @@ pub fn[A] push_back(self : T[A], value : A) -> Unit {
 /// ```
 /// let dv = @deque.of([1, 2, 3, 4, 5])
 /// dv.unsafe_pop_front()
-/// assert_eq!(dv.front(), Some(2))
+/// assert_eq(dv.front(), Some(2))
 /// ```
 #internal(unsafe, "Panic if the deque is empty.")
 pub fn[A] unsafe_pop_front(self : T[A]) -> Unit {
@@ -362,7 +362,7 @@ pub fn[A] pop_front_exn(self : T[A]) -> Unit {
 /// ```
 /// let dv = @deque.of([1, 2, 3, 4, 5])
 /// dv.unsafe_pop_back()
-/// assert_eq!(dv.back(), Some(4))
+/// assert_eq(dv.back(), Some(4))
 /// ```
 #internal(unsafe, "Panic if the deque is empty.")
 pub fn[A] unsafe_pop_back(self : T[A]) -> Unit {
@@ -418,7 +418,7 @@ pub fn[A] pop_back_exn(self : T[A]) -> Unit {
 /// # Example
 /// ```
 /// let dv = @deque.of([1, 2, 3, 4, 5])
-/// assert_eq!(dv.pop_front(), Some(1))
+/// assert_eq(dv.pop_front(), Some(1))
 /// ```
 pub fn[A] pop_front(self : T[A]) -> A? {
   match self.len {
@@ -449,7 +449,7 @@ pub fn[A] pop_front(self : T[A]) -> A? {
 /// # Example
 /// ```
 /// let dv = @deque.of([1, 2, 3, 4, 5])
-/// assert_eq!(dv.pop_back(), Some(5))
+/// assert_eq(dv.pop_back(), Some(5))
 /// ```
 pub fn[A] pop_back(self : T[A]) -> A? {
   match self.len {
@@ -482,7 +482,7 @@ pub fn[A] pop_back(self : T[A]) -> A? {
 /// # Example
 /// ```
 /// let dv = @deque.of([1, 2, 3, 4, 5])
-/// assert_eq!(dv[2], 3)
+/// assert_eq(dv[2], 3)
 /// ```
 pub fn[A] op_get(self : T[A], index : Int) -> A {
   if index < 0 || index >= self.len {
@@ -507,7 +507,7 @@ pub fn[A] op_get(self : T[A], index : Int) -> A {
 /// ```
 /// let dv = @deque.of([1, 2, 3, 4, 5])
 /// dv[2] = 1
-/// assert_eq!(dv[2], 1)
+/// assert_eq(dv[2], 1)
 /// ```
 pub fn[A] op_set(self : T[A], index : Int, value : A) -> Unit {
   if index < 0 || index >= self.len {
@@ -603,7 +603,7 @@ pub impl[A : Eq] Eq for T[A] with op_equal(self, other) {
 /// let dv = @deque.of([1, 2, 3, 4, 5])
 /// let mut sum = 0
 /// dv.each(fn (x) {sum = sum + x})
-/// assert_eq!(sum, 15)
+/// assert_eq(sum, 15)
 /// ```
 pub fn[A] each(self : T[A], f : (A) -> Unit) -> Unit {
   for v in self {
@@ -619,7 +619,7 @@ pub fn[A] each(self : T[A], f : (A) -> Unit) -> Unit {
 /// let dv = @deque.of([1, 2, 3, 4, 5])
 /// let mut idx_sum = 0
 /// dv.eachi(fn (i, _x) {idx_sum = idx_sum + i})
-/// assert_eq!(idx_sum, 10)
+/// assert_eq(idx_sum, 10)
 /// ```
 pub fn[A] eachi(self : T[A], f : (Int, A) -> Unit) -> Unit {
   for i, v in self {
@@ -635,7 +635,7 @@ pub fn[A] eachi(self : T[A], f : (Int, A) -> Unit) -> Unit {
 /// let dv = @deque.of([1, 2, 3, 4, 5])
 /// let mut sum = 0
 /// dv.rev_each(fn (x) {sum = sum + x})
-/// assert_eq!(sum, 15)
+/// assert_eq(sum, 15)
 /// ```
 pub fn[A] rev_each(self : T[A], f : (A) -> Unit) -> Unit {
   for v in self.rev_iter() {
@@ -651,7 +651,7 @@ pub fn[A] rev_each(self : T[A], f : (A) -> Unit) -> Unit {
 /// let dv = @deque.of([1, 2, 3, 4, 5])
 /// let mut idx_sum = 0
 /// dv.rev_eachi(fn (i, _x) {idx_sum = idx_sum + i})
-/// assert_eq!(idx_sum, 10)
+/// assert_eq(idx_sum, 10)
 /// ```
 pub fn[A] rev_eachi(self : T[A], f : (Int, A) -> Unit) -> Unit {
   for i, v in self.rev_iter2() {
@@ -668,7 +668,7 @@ pub fn[A] rev_eachi(self : T[A], f : (Int, A) -> Unit) -> Unit {
 /// ```
 /// let dv = @deque.of([1, 2, 3, 4, 5])
 /// dv.clear()
-/// assert_eq!(dv.length(), 0)
+/// assert_eq(dv.length(), 0)
 /// ```
 pub fn[A] clear(self : T[A]) -> Unit {
   let { head, buf, len, .. } = self
@@ -698,7 +698,7 @@ pub fn[A] clear(self : T[A]) -> Unit {
 /// ```
 /// let dv = @deque.of([3, 4, 5])
 /// let dv2 = dv.map(fn (x) {x + 1})
-/// assert_eq!(dv2, @deque.of([4, 5, 6]))
+/// assert_eq(dv2, @deque.of([4, 5, 6]))
 /// ```
 pub fn[A, U] map(self : T[A], f : (A) -> U) -> T[U] {
   if self.len == 0 {
@@ -719,7 +719,7 @@ pub fn[A, U] map(self : T[A], f : (A) -> U) -> T[U] {
 /// ```
 /// let dv = @deque.of([3, 4, 5])
 /// let dv2 = dv.mapi(fn (i, x) {x + i}) // @deque.of([3, 5, 7])
-/// assert_eq!(dv2, @deque.of([3, 5, 7]))
+/// assert_eq(dv2, @deque.of([3, 5, 7]))
 /// ```
 pub fn[A, U] mapi(self : T[A], f : (Int, A) -> U) -> T[U] {
   if self.len == 0 {
@@ -739,9 +739,9 @@ pub fn[A, U] mapi(self : T[A], f : (Int, A) -> U) -> T[U] {
 /// # Example
 /// ```
 /// let dv = @deque.new()
-/// assert_eq!(dv.is_empty(), true)
+/// assert_eq(dv.is_empty(), true)
 /// dv.push_back(1)
-/// assert_eq!(dv.is_empty(), false)
+/// assert_eq(dv.is_empty(), false)
 /// ```
 pub fn[A] is_empty(self : T[A]) -> Bool {
   self.len == 0
@@ -809,7 +809,7 @@ pub fn[A : Eq] contains(self : T[A], value : A) -> Bool {
 /// ```
 /// let dv = @deque.of([1])
 /// dv.reserve_capacity(10)
-/// assert_eq!(dv.capacity(), 10)
+/// assert_eq(dv.capacity(), 10)
 /// ```
 pub fn[A] reserve_capacity(self : T[A], capacity : Int) -> Unit {
   if self.capacity() >= capacity {
@@ -837,9 +837,9 @@ pub fn[A] reserve_capacity(self : T[A], capacity : Int) -> Unit {
 /// dv.push_back(1)
 /// dv.push_back(2)
 /// dv.push_back(3)
-/// assert_eq!(dv.capacity(), 10)
+/// assert_eq(dv.capacity(), 10)
 /// dv.shrink_to_fit()
-/// assert_eq!(dv.capacity(), 3)
+/// assert_eq(dv.capacity(), 3)
 /// ```
 pub fn[A] shrink_to_fit(self : T[A]) -> Unit {
   if self.capacity() <= self.length() {
@@ -1259,7 +1259,7 @@ pub impl[A : ToJson] ToJson for T[A] with to_json(self : T[A]) -> Json {
 }
 
 ///|
-pub impl[A : @json.FromJson] @json.FromJson for T[A] with from_json!(json, path) {
+pub impl[A : @json.FromJson] @json.FromJson for T[A] with from_json(json, path) {
   guard json is Array(arr) else {
     raise @json.JsonDecodeError((path, "Deque::from_json: expected array"))
   }
@@ -1268,7 +1268,7 @@ pub impl[A : @json.FromJson] @json.FromJson for T[A] with from_json!(json, path)
   let head = 0
   let tail = len
   for i, x in arr {
-    buf[i] = @json.FromJson::from_json!(x, path.add_index(i))
+    buf[i] = @json.FromJson::from_json(x, path.add_index(i))
   }
   { len, buf, head, tail }
 }

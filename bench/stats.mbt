@@ -166,9 +166,9 @@ fn quartiles(data : Array[Double]) -> (Double, Double, Double) {
   let sorted = data.copy()
   sorted.sort()
   try {
-    let q1 = percentile_of_sorted!(sorted, 25.0)
-    let q2 = percentile_of_sorted!(sorted, 50.0)
-    let q3 = percentile_of_sorted!(sorted, 75.0)
+    let q1 = percentile_of_sorted(sorted, 25.0)
+    let q2 = percentile_of_sorted(sorted, 50.0)
+    let q3 = percentile_of_sorted(sorted, 75.0)
     (q1, q2, q3)
   } catch {
     _ => panic()
@@ -183,8 +183,8 @@ fn iqr(data : Array[Double]) -> Double {
 
 ///|
 fn percentile_of_sorted(data : Array[Double], pct : Double) -> Double! {
-  assert_false!(data.is_empty())
-  assert_true!(pct >= 0.0 && pct <= 100.0)
+  assert_false(data.is_empty())
+  assert_true(pct >= 0.0 && pct <= 100.0)
   if data.length() == 1 {
     return data[0]
   }
@@ -205,7 +205,7 @@ fn percentile_of_sorted(data : Array[Double], pct : Double) -> Double! {
 fn percentile(data : Array[Double], pct : Double) -> Double {
   let sorted = data.copy()
   sorted.sort()
-  try percentile_of_sorted!(sorted, pct) catch {
+  try percentile_of_sorted(sorted, pct) catch {
     _ => panic()
   }
 }
@@ -215,8 +215,8 @@ fn winsorize(data : Array[Double], pct : Double) -> Unit {
   let sorted = data.copy()
   sorted.sort()
   try {
-    let lo = percentile_of_sorted!(sorted, pct)
-    let hi = percentile_of_sorted!(sorted, 100.0 - pct)
+    let lo = percentile_of_sorted(sorted, pct)
+    let hi = percentile_of_sorted(sorted, 100.0 - pct)
     for i, samp in data {
       if samp > hi {
         data[i] = hi

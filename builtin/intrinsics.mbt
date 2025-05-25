@@ -1275,7 +1275,7 @@ pub impl Compare for Char with compare(self, other) = "%char_compare"
 ///
 /// ```moonbit
 /// test "Char::default" {
-///   assert_true!(Char::default().to_string() == "\x00")
+///   assert_true(Char::default().to_string() == "\x00")
 /// }
 /// ```
 pub impl Default for Char with default() = "%char_default"
@@ -1696,7 +1696,7 @@ pub fn[T] FixedArray::length(self : FixedArray[T]) -> Int = "%fixedarray.length"
 /// test {
 ///   let two_dimension_array = FixedArray::make(10, FixedArray::make(10, 0))
 ///   two_dimension_array[0][5] = 10
-///   assert_eq!(two_dimension_array[5][5], 10)
+///   assert_eq(two_dimension_array[5][5], 10)
 /// }
 /// ```
 /// This is because all the cells reference to the same object (the FixedArray[Int] in this case). 

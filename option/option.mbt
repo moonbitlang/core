@@ -28,7 +28,7 @@
 ///
 /// ```
 /// let result = @option.when(true, fn(){ "Hello, World!" })
-/// assert_eq!(result, Some("Hello, World!"))
+/// assert_eq(result, Some("Hello, World!"))
 /// ```
 pub fn[T] when(condition : Bool, value : () -> T) -> T? {
   if condition {
@@ -42,8 +42,8 @@ pub fn[T] when(condition : Bool, value : () -> T) -> T? {
 test "when" {
   let result = when(true, fn() { "Hello, World!" })
   let result2 = when(false, fn() { "Hello, World!" })
-  assert_eq!(result, Some("Hello, World!"))
-  assert_eq!(result2, None)
+  assert_eq(result, Some("Hello, World!"))
+  assert_eq(result2, None)
 }
 
 ///|
@@ -68,8 +68,8 @@ pub fn[T] unless(condition : Bool, value : () -> T) -> T? {
 test "unless" {
   let result = unless(true, fn() { "Hello, World!" })
   let result2 = unless(false, fn() { "Hello, World!" })
-  assert_eq!(result, None)
-  assert_eq!(result2, Some("Hello, World!"))
+  assert_eq(result, None)
+  assert_eq(result2, Some("Hello, World!"))
 }
 
 ///|
@@ -82,7 +82,7 @@ pub fn[T] empty() -> T? {
 test "empty" {
   let x : Int? = None
   let y : Int? = empty()
-  assert_eq!(x, y)
+  assert_eq(x, y)
 }
 
 ///|
@@ -95,7 +95,7 @@ pub fn[T] some(value : T) -> T? {
 test "some" {
   let x : Int? = Some(5)
   let y : Int? = some(5)
-  assert_eq!(x, y)
+  assert_eq(x, y)
 }
 
 ///|
@@ -105,10 +105,10 @@ test "some" {
 ///
 /// ```
 /// let a = Some(5)
-/// assert_eq!(a.map(fn(x){ x * 2 }), Some(10))
+/// assert_eq(a.map(fn(x){ x * 2 }), Some(10))
 ///
 /// let b = None
-/// assert_eq!(b.map(fn(x){ x * 2 }), None)
+/// assert_eq(b.map(fn(x){ x * 2 }), None)
 /// ```
 pub fn[T, U] map(self : T?, f : (T) -> U) -> U? {
   match self {
@@ -121,8 +121,8 @@ pub fn[T, U] map(self : T?, f : (T) -> U) -> U? {
 test "map" {
   let a = Option::Some(5)
   let b : Int? = None
-  assert_eq!(a.map(fn(x) { x * 2 }), Some(10))
-  assert_eq!(b.map(fn(x) { x * 2 }), None)
+  assert_eq(a.map(fn(x) { x * 2 }), Some(10))
+  assert_eq(b.map(fn(x) { x * 2 }), None)
 }
 
 ///|
@@ -133,7 +133,7 @@ test "map" {
 ///
 /// ```
 /// let a = Some(5)
-/// assert_eq!(a.map_or(3, fn(x){ x * 2 }), 10)
+/// assert_eq(a.map_or(3, fn(x){ x * 2 }), 10)
 /// ```
 pub fn[T, U] map_or(self : T?, default : U, f : (T) -> U) -> U {
   match self {
@@ -146,8 +146,8 @@ pub fn[T, U] map_or(self : T?, default : U, f : (T) -> U) -> U {
 test "map_or" {
   let a = Option::Some("foo")
   let b : String? = Option::None
-  assert_eq!(a.map_or(42, fn(x) { x.length() }), 3)
-  assert_eq!(b.map_or(42, fn(x) { x.length() }), 42)
+  assert_eq(a.map_or(42, fn(x) { x.length() }), 3)
+  assert_eq(b.map_or(42, fn(x) { x.length() }), 42)
 }
 
 ///|
@@ -157,7 +157,7 @@ test "map_or" {
 ///
 /// ```
 /// let a = Some(5)
-/// assert_eq!(a.map_or_else(fn(){ 3 }, fn(x){ x * 2 }), 10)
+/// assert_eq(a.map_or_else(fn(){ 3 }, fn(x){ x * 2 }), 10)
 /// ```
 pub fn[T, U] map_or_else(self : T?, default : () -> U, f : (T) -> U) -> U {
   match self {
@@ -171,8 +171,8 @@ test "map_or_else" {
   let k = 21
   let a = Option::Some("foo")
   let b : String? = Option::None
-  assert_eq!(a.map_or_else(fn() { 2 * k }, fn(x) { x.length() }), 3)
-  assert_eq!(b.map_or_else(fn() { 2 * k }, fn(x) { x.length() }), 42)
+  assert_eq(a.map_or_else(fn() { 2 * k }, fn(x) { x.length() }), 3)
+  assert_eq(b.map_or_else(fn() { 2 * k }, fn(x) { x.length() }), 42)
 }
 
 ///|
@@ -183,10 +183,10 @@ test "map_or_else" {
 /// ```
 /// let a = Option::Some(5)
 /// let r1 = a.bind(fn(x){ Some(x * 2) })
-/// assert_eq!(r1, Some(10))
+/// assert_eq(r1, Some(10))
 /// let b : Option[Int] = None
 /// let r2 = b.bind(fn(x){ Some(x * 2) })
-/// assert_eq!(r2, None)
+/// assert_eq(r2, None)
 /// ```
 pub fn[T, U] bind(self : T?, f : (T) -> U?) -> U? {
   match self {
@@ -199,8 +199,8 @@ pub fn[T, U] bind(self : T?, f : (T) -> U?) -> U? {
 test "bind" {
   let a = Option::Some(5)
   let b : Int? = None
-  assert_eq!(a.bind(fn(x) { Some(x * 2) }), Some(10))
-  assert_eq!(b.bind(fn(x) { Some(x * 2) }), None)
+  assert_eq(a.bind(fn(x) { Some(x * 2) }), Some(10))
+  assert_eq(b.bind(fn(x) { Some(x * 2) }), None)
 }
 
 ///|
@@ -212,9 +212,9 @@ test "bind" {
 ///
 /// ```
 /// let a = Some(Some(42));
-/// assert_eq!(@option.flatten(a), Some(42))
+/// assert_eq(@option.flatten(a), Some(42))
 /// let b : Int?? = Some(None)
-/// assert_eq!(@option.flatten(b), None)
+/// assert_eq(@option.flatten(b), None)
 /// ```
 pub fn[T] flatten(self : T??) -> T? {
   match self {
@@ -226,9 +226,9 @@ pub fn[T] flatten(self : T??) -> T? {
 ///|
 test "flatten" {
   let a : Int?? = Some(Some(42))
-  assert_eq!(a.flatten(), Some(42))
+  assert_eq(a.flatten(), Some(42))
   let b : Int?? = Some(None)
-  assert_eq!(b.flatten(), None)
+  assert_eq(b.flatten(), None)
 }
 
 ///|
@@ -241,8 +241,8 @@ pub fn[T] is_empty(self : T?) -> Bool {
 test "is_empty" {
   let x = Option::Some(3)
   let y : Int? = None
-  assert_false!(x.is_empty())
-  assert_true!(y.is_empty())
+  assert_false(x.is_empty())
+  assert_true(y.is_empty())
 }
 
 ///|
@@ -254,8 +254,8 @@ test "is_empty" {
 /// # Example
 /// ```
 /// let x = Some(3)
-/// assert_eq!(x.filter(fn(x){ x > 5 }), None)
-/// assert_eq!(x.filter(fn(x){ x < 5 }), Some(3))
+/// assert_eq(x.filter(fn(x){ x > 5 }), None)
+/// assert_eq(x.filter(fn(x){ x < 5 }), Some(3))
 /// ```
 pub fn[T] filter(self : T?, f : (T) -> Bool) -> T? {
   match self {
@@ -267,8 +267,8 @@ pub fn[T] filter(self : T?, f : (T) -> Bool) -> T? {
 ///|
 test "filter" {
   let x = Option::Some(3)
-  assert_eq!(x.filter(fn(x) { x > 5 }), None)
-  assert_eq!(x.filter(fn(x) { x < 5 }), Some(3))
+  assert_eq(x.filter(fn(x) { x > 5 }), None)
+  assert_eq(x.filter(fn(x) { x < 5 }), Some(3))
 }
 
 ///|
@@ -283,8 +283,8 @@ pub fn[T] or(self : T?, default : T) -> T {
 ///|
 test "or" {
   let x = Option::Some(3)
-  assert_eq!(x.or(5), 3)
-  assert_eq!((None : Int?).or(5), 5)
+  assert_eq(x.or(5), 3)
+  assert_eq((None : Int?).or(5), 5)
 }
 
 ///|
@@ -301,8 +301,8 @@ pub fn[T] or_else(self : T?, default : () -> T) -> T {
 ///|
 test "or else" {
   let x = Option::Some(3)
-  assert_eq!(x.or_else(fn() { 5 }), 3)
-  assert_eq!((None : Int?).or_else(fn() { 5 }), 5)
+  assert_eq(x.or_else(fn() { 5 }), 3)
+  assert_eq((None : Int?).or_else(fn() { 5 }), 5)
 }
 
 ///|
@@ -317,8 +317,8 @@ pub fn[T : Default] or_default(self : T?) -> T {
 ///|
 test "or default" {
   let x = Option::Some(3)
-  assert_eq!(x.or_default(), 3)
-  assert_eq!((None : Int?).or_default(), 0)
+  assert_eq(x.or_default(), 3)
+  assert_eq((None : Int?).or_default(), 0)
 }
 
 ///|
@@ -336,12 +336,12 @@ test "compare" {
   let some1 = Option::Some(1)
   let some2 = Option::Some(2)
   let none = Option::None
-  assert_eq!(0, some1.compare(Option::Some(1)))
-  assert_eq!(-1, some1.compare(some2))
-  assert_eq!(1, some2.compare(some1))
-  assert_eq!(0, none.compare(none))
-  assert_eq!(-1, none.compare(some1))
-  assert_eq!(1, some2.compare(none))
+  assert_eq(0, some1.compare(Option::Some(1)))
+  assert_eq(-1, some1.compare(some2))
+  assert_eq(1, some2.compare(some1))
+  assert_eq(0, none.compare(none))
+  assert_eq(-1, none.compare(some1))
+  assert_eq(1, some2.compare(none))
 }
 
 ///|
@@ -396,14 +396,14 @@ pub fn[T, Err : Error] or_error(self : T?, err : Err) -> T!Err {
 
 ///|
 test "or error" {
-  assert_eq!(
-    try (None : String?).or_error!(Failure("This is serious")) catch {
+  assert_eq(
+    try (None : String?).or_error(Failure("This is serious")) catch {
       Failure(err) => err
     },
     "This is serious",
   )
-  assert_eq!(
-    try Some("This is ok").or_error!(Failure("This is serious")) catch {
+  assert_eq(
+    try Some("This is ok").or_error(Failure("This is serious")) catch {
       Failure(err) => err
     },
     "This is ok",

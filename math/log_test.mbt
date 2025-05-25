@@ -29,7 +29,7 @@ test "lnf Test" {
     let x = data[i]
     let res = lnf(x)
     let libm_res = libm_results[i]
-    assert_true!(
+    assert_true(
       (res.reinterpret_as_int() - libm_res.reinterpret_as_int()).abs() <= 2,
     )
   }

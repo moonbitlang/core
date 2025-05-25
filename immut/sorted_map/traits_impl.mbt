@@ -88,7 +88,7 @@ pub impl[V : @json.FromJson] @json.FromJson for T[String, V] with from_json(
   }
   let mut map = new()
   for k, v in obj {
-    map = map.add(k, V::from_json!(v, path))
+    map = map.add(k, V::from_json(v, path))
   }
   map
 }

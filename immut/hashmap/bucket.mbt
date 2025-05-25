@@ -110,8 +110,8 @@ fn[K, V] Bucket::filter(self : Bucket[K, V], f : (V) -> Bool) -> Bucket[K, V]? {
 test "Bucket::filter" {
   let bucket = More(1, 1, More(2, 2, JustOne(3, 3)))
   let filtered = bucket.filter(fn(v) { v == 2 })
-  assert_eq!(filtered.unwrap().find(1), None)
-  assert_eq!(filtered.unwrap().find(2), Some(2))
+  assert_eq(filtered.unwrap().find(1), None)
+  assert_eq(filtered.unwrap().find(2), Some(2))
 }
 
 ///|
@@ -204,7 +204,7 @@ fn[K, V, A] Bucket::foldl_with_key(
 test "foldl_with_key" {
   let bucket = More("a", "a", More("b", "b", JustOne("c", "c")))
   let result = bucket.foldl_with_key(init="", fn(init, _k, v) { init + v })
-  assert_eq!(result, "abc")
+  assert_eq(result, "abc")
 }
 
 ///|
@@ -222,9 +222,9 @@ fn[K, V, A] Bucket::map_with_key(
 test "Bucket::map_with_key" {
   let bucket = More(1, 10, More(2, 20, JustOne(3, 30)))
   let mapped = bucket.map_with_key(fn(k, v) { "\{k}:\{v}" })
-  assert_eq!(mapped.find(1), Some("1:10"))
-  assert_eq!(mapped.find(2), Some("2:20"))
-  assert_eq!(mapped.find(3), Some("3:30"))
+  assert_eq(mapped.find(1), Some("1:10"))
+  assert_eq(mapped.find(2), Some("2:20"))
+  assert_eq(mapped.find(3), Some("3:30"))
 }
 
 ///|
@@ -236,7 +236,7 @@ fn[K, V, A] Bucket::map(self : Bucket[K, V], f : (V) -> A) -> Bucket[K, A] {
 test "Bucket::map" {
   let bucket = More(1, 10, More(2, 20, JustOne(3, 30)))
   let mapped = bucket.map(fn(v) { v * 2 })
-  assert_eq!(mapped.find(1), Some(20))
-  assert_eq!(mapped.find(2), Some(40))
-  assert_eq!(mapped.find(3), Some(60))
+  assert_eq(mapped.find(1), Some(20))
+  assert_eq(mapped.find(2), Some(40))
+  assert_eq(mapped.find(3), Some(60))
 }
