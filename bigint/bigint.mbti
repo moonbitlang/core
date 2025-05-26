@@ -12,7 +12,11 @@ impl BigInt {
   #deprecated
   asr(Self, Int) -> Self
   bit_length(Self) -> Int
+  compare_int(Self, Int) -> Int
+  compare_int64(Self, Int64) -> Int
   ctz(Self) -> Int
+  equal_int(Self, Int) -> Bool
+  equal_int64(Self, Int64) -> Bool
   from_hex(String) -> Self
   from_int(Int) -> Self
   from_int64(Int64) -> Self
