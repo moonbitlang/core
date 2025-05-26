@@ -557,6 +557,8 @@ impl Option {
 }
 
 impl FixedArray {
+  binary_search[T : Compare](Self[T], T) -> Result[Int, Int]
+  binary_search_by[T](Self[T], (T) -> Int) -> Result[Int, Int]
   blit_from_bytes(Self[Byte], Int, Bytes, Int, Int) -> Unit
   blit_from_string(Self[Byte], Int, String, Int, Int) -> Unit
   blit_to[A](Self[A], Self[A], len~ : Int, src_offset~ : Int = .., dst_offset~ : Int = ..) -> Unit
