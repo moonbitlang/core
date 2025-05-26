@@ -142,3 +142,15 @@ test "BigInt::ctz" {
   inspect((1N << 31).ctz(), content="31")
   inspect((1N << 63).ctz(), content="63")
 }
+
+///|
+test {
+  inspect(
+    MyBigInt(-9223372036854775809N),
+    content="{limbs : [1, 2147483648, 0], sign : Negative, len : 2 }",
+  ) // Int64.min_value - 1
+  inspect(
+    MyBigInt(-9223372036854775810N),
+    content="{limbs : [2, 2147483648, 0], sign : Negative, len : 2 }",
+  ) // Int64.min_value - 2
+}
