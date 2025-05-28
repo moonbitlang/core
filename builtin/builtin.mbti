@@ -192,6 +192,7 @@ impl Iter {
   flat_map[T, R](Self[T], (T) -> Self[R]) -> Self[R]
   flatten[T](Self[Self[T]]) -> Self[T]
   fold[T, B](Self[T], init~ : B, (B, T) -> B) -> B
+  #deprecated
   group_by[T, K : Eq + Hash](Self[T], (T) -> K) -> Map[K, Array[T]]
   head[A](Self[A]) -> A?
   intersperse[A](Self[A], A) -> Self[A]
