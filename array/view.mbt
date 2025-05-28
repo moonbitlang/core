@@ -396,6 +396,46 @@ pub fn[T] View::to_array(self : View[T]) -> Array[T] {
 }
 
 ///|
+/// Concatenate strings within an array into a single complete string.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "View::join" {
+///   let a:Array[String]=["1","2","3"]
+///   let array_view = a[:]
+///   inspect!(array_view.join(","), content="1,2,3")
+/// }
+/// ```
+pub fn View::join(self : ArrayView[String], separator : @string.View) -> String {
+  match self {
+    [] => ""
+    [hd, .. tl] => {
+      let mut size_hint = hd.length()
+      for s in tl {
+        size_hint += s.length() + separator.length()
+      }
+      size_hint = size_hint << 1
+      let buf = StringBuilder::new(size_hint~)
+      buf.write_string(hd)
+      if separator is "" {
+        for s in tl {
+          buf.write_string(s)
+        }
+      } else {
+        let separator = separator.to_string()
+        for s in tl {
+          // TODO : use `write_view` when available
+          buf.write_string(separator)
+          buf.write_string(s)
+        }
+      }
+      buf.to_string()
+    }
+  }
+}
+
+///|
 pub impl[X : Show] Show for View[X] with output(self, logger) {
   logger.write_iter(self.iter())
 }
