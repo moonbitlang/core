@@ -24,7 +24,7 @@ You can use `length()` to get the number of elements in the current priority que
 ```moonbit
 test {
   let pq = @priority_queue.of([1, 2, 3, 4, 5])
-  assert_eq!(pq.length(), 5)
+  assert_eq(pq.length(), 5)
 }
 ```
 
@@ -33,7 +33,7 @@ Similarly, you can use the `is_empty` to determine whether the priority queue is
 ```moonbit
 test {
   let pq : @priority_queue.T[Int] = @priority_queue.new()
-  assert_eq!(pq.is_empty(), true)
+  assert_eq(pq.is_empty(), true)
  }
 ```
 
@@ -44,7 +44,7 @@ You can use `peek()` to look at the head element of a queue, which must be eithe
 ```moonbit
 test {
   let pq = @priority_queue.of([1, 2, 3, 4, 5])
-  assert_eq!(pq.peek(), Some(5))
+  assert_eq(pq.peek(), Some(5))
 }
 ```
 
@@ -57,7 +57,7 @@ test {
   let pq : @priority_queue.T[Int] = @priority_queue.new()
   pq.push(1)
   pq.push(2)
-  assert_eq!(pq.peek(), Some(2))
+  assert_eq(pq.peek(), Some(2))
 }
 ```
 
@@ -68,14 +68,14 @@ You can use `pop()` to pop the element at the front of the priority queue, respe
 ```moonbit
 test {
   let pq = @priority_queue.of([5, 4, 3, 2, 1])
-  assert_eq!(pq.pop(), Some(5))
+  assert_eq(pq.pop(), Some(5))
 }
 ```
 
 ```moonbit
 test {
   let pq = @priority_queue.of([5, 4, 3, 2, 1])
-  assert_eq!(pq.length(), 5)
+  assert_eq(pq.length(), 5)
 }
 ```
 
@@ -87,7 +87,7 @@ You can use `clear` to clear a priority queue.
 test {
   let pq = @priority_queue.of([1, 2, 3, 4, 5])
   pq.clear()
-  assert_eq!(pq.is_empty(), true)
+  assert_eq(pq.is_empty(), true)
 }
 ```
 

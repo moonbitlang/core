@@ -20,10 +20,10 @@
 /// ```
 /// let bs = b"\x00\x01\x02\x03\x04\x05"
 /// let bv = bs[1:4]
-/// assert_eq!(bv.length(), 3)
-/// assert_eq!(bv[0], b'\x01')
-/// assert_eq!(bv[1], b'\x02')
-/// assert_eq!(bv[2], b'\x03')
+/// assert_eq(bv.length(), 3)
+/// assert_eq(bv[0], b'\x01')
+/// assert_eq(bv[1], b'\x02')
+/// assert_eq(bv[2], b'\x03')
 /// ```
 #builtin.valtype
 struct View {
@@ -161,10 +161,10 @@ pub fn View::unsafe_get(self : View, index : Int) -> Byte {
 /// ```
 /// let bs = b"\x00\x01\x02\x03\x04\x05"
 /// let bv = bs[1:4]
-/// assert_eq!(bv.length(), 3)
-/// assert_eq!(bv[0], b'\x01')
-/// assert_eq!(bv[1], b'\x02')
-/// assert_eq!(bv[2], b'\x03')
+/// assert_eq(bv.length(), 3)
+/// assert_eq(bv[0], b'\x01')
+/// assert_eq(bv[1], b'\x02')
+/// assert_eq(bv[2], b'\x03')
 /// ```
 pub fn Bytes::op_as_view(self : Bytes, start~ : Int = 0, end? : Int) -> View {
   let len = self.length()
@@ -187,8 +187,8 @@ pub fn Bytes::op_as_view(self : Bytes, start~ : Int = 0, end? : Int) -> View {
 /// ```
 /// let bv = b"\x00\x01\x02\x03\x04\x05"[:]
 /// let bv2 = bv[1:4]
-/// assert_eq!(bv2.length(), 3)
-/// assert_eq!(bv2[1], b'\x02')
+/// assert_eq(bv2.length(), 3)
+/// assert_eq(bv2[1], b'\x02')
 /// ```
 pub fn View::op_as_view(self : View, start~ : Int = 0, end? : Int) -> View {
   let len = self.length()
@@ -212,7 +212,7 @@ pub fn View::op_as_view(self : View, start~ : Int = 0, end? : Int) -> View {
 /// let bv = b"\x00\x01\x02\x03\x04\x05"[:]
 /// let mut sum = 0
 /// bv.iter().each(fn(x) { sum = sum + x.to_int() })
-/// assert_eq!(sum, 15)
+/// assert_eq(sum, 15)
 /// ```
 pub fn View::iter(self : View) -> Iter[Byte] {
   Iter::new(fn(yield_) {

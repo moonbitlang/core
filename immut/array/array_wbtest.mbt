@@ -46,7 +46,7 @@ test "mix" {
   let vec = []
   v.eachi(fn(i, _e) { vec.push(i) })
   for i in 0..<large_const {
-    assert_eq!(vec[i], i)
+    assert_eq(vec[i], i)
   }
 }
 
@@ -71,37 +71,37 @@ test "op_get" {
 ///|
 test "concat-two-full-tree" {
   let bf = branching_factor_power(4)
-  execute_array_test!(gen_concat_seq_from_len_array([bf, bf]))
+  execute_array_test(gen_concat_seq_from_len_array([bf, bf]))
 }
 
 ///|
 test "concat-full-tree-and-a-leaf" {
   let bf = branching_factor_power(4)
-  execute_array_test!(gen_concat_seq_from_len_array([bf, 1]))
+  execute_array_test(gen_concat_seq_from_len_array([bf, 1]))
 }
 
 ///|
 test "concat-a-leaf-and-full-tree" {
   let bf = branching_factor_power(4)
-  execute_array_test!(gen_concat_seq_from_len_array([1, bf]))
+  execute_array_test(gen_concat_seq_from_len_array([1, bf]))
 }
 
 ///|
 test "concat-two-leaf" {
-  execute_array_test!(gen_concat_seq_from_len_array([1, 1]))
+  execute_array_test(gen_concat_seq_from_len_array([1, 1]))
 }
 
 ///|
 test "concat-multiple-full-tree" {
   let bf = branching_factor_power(4)
-  execute_array_test!(gen_concat_seq(3, fn(_i) { bf }))
+  execute_array_test(gen_concat_seq(3, fn(_i) { bf }))
 }
 
 ///|
 test "concat-multiple-random-tree" {
   let bf = branching_factor_power(2)
   let rng = Random({ val: 0UL })
-  execute_array_test!(gen_concat_seq(2, fn(_i) { rng.int(limit=bf) }))
+  execute_array_test(gen_concat_seq(2, fn(_i) { rng.int(limit=bf) }))
 }
 
 ///|

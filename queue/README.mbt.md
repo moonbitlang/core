@@ -26,8 +26,8 @@ You can get the length of the queue by using the `length` method. The `is_empty`
 ```moonbit
 test {
     let queue = @queue.of([1,2,3])
-    assert_eq!(queue.length(), 3)
-    assert_eq!(queue.is_empty(), false)
+    assert_eq(queue.length(), 3)
+    assert_eq(queue.is_empty(), false)
 }
 ```
 
@@ -38,8 +38,8 @@ test {
     let queue = @queue.new()
     queue.push(1)
     queue.push(2)
-    assert_eq!(queue.pop(), Some(1))
-    assert_eq!(queue.pop(), Some(2))
+    assert_eq(queue.pop(), Some(1))
+    assert_eq(queue.pop(), Some(2))
 }
 ```
 
@@ -48,7 +48,7 @@ You can get the first element of the queue without removing it using the `peek` 
 ```moonbit
 test {
     let queue = @queue.of([1,2,3])
-    assert_eq!(queue.peek(), Some(1))
+    assert_eq(queue.peek(), Some(1))
 }
 ```
 
@@ -61,7 +61,7 @@ test {
     let queue = @queue.of([1,2,3])
     let mut sum = 0
     queue.each(fn(x) { sum += x })
-    assert_eq!(sum, 6)
+    assert_eq(sum, 6)
 }
 ```
 
@@ -70,7 +70,7 @@ You can fold the queue using the `fold` method.
 test {
     let queue = @queue.of([1,2,3])
     let sum = queue.fold(init = 0, fn(acc, x) { acc + x })
-    assert_eq!(sum, 6)
+    assert_eq(sum, 6)
 }
 ```
 

@@ -108,7 +108,7 @@ pub impl[X] Default for FixedArray[X] with default() {
 /// ```
 /// let fa : FixedArray[Int] = [0, 0, 0, 0, 0]
 /// fa.fill(3)
-/// assert_eq!(fa[0], 3)
+/// assert_eq(fa[0], 3)
 /// ```
 pub fn[T] FixedArray::fill(self : FixedArray[T], value : T) -> Unit {
   for i in 0..<self.length() {
@@ -137,4 +137,131 @@ pub fn[T] FixedArray::fill(self : FixedArray[T], value : T) -> Unit {
 /// ```
 pub fn[T] FixedArray::is_empty(self : FixedArray[T]) -> Bool {
   self.length() == 0
+}
+
+///|
+/// 
+/// Performs a binary search on a sorted array to find the index of a given element.
+///
+/// # Example
+/// ```
+/// let v : FixedArray[Int] = [3, 4, 5]
+/// let result = v.binary_search(3)
+/// assert_eq(result, Ok(0)) // The element 3 is found at index 0
+/// ```
+///
+/// # Arguments
+/// - `self`: The array in which to perform the search.
+/// - `value`: The element to search for in the array.
+///
+/// # Returns
+/// - `Result[Int, Int]`:
+/// If the element is found, an `Ok` variant is returned, containing the index of the matching element in the array.
+/// If there are multiple matches, the leftmost match will be returned.
+/// If the element is not found, an `Err` variant is returned, containing the index where the element could be inserted to maintain the sorted order.
+///
+/// # Notes
+/// - Ensure that the array is sorted in increasing order before calling this function.
+/// - If the array is not sorted, the returned result is undefined and should not be relied on.
+pub fn[T : Compare] FixedArray::binary_search(
+  self : FixedArray[T],
+  value : T
+) -> Result[Int, Int] {
+  let len = self.length()
+  for i = 0, j = len; i < j; {
+    let h = i + (j - i) / 2
+    // Note even if self[h] == value, we still continue the search
+    // because we want to find the leftmost match
+    if self.unsafe_get(h) < value {
+      continue h + 1, j
+    } else {
+      continue i, h
+    }
+  } else {
+    if i < len && self.unsafe_get(i) == value {
+      Ok(i)
+    } else {
+      Err(i)
+    }
+  }
+}
+
+///|
+/// Performs a binary search on a sorted array using a custom comparison
+/// function. Returns the position of the matching element if found, or the
+/// position where the element could be inserted while maintaining the sorted
+/// order.
+///
+/// Parameters:
+///
+/// * `array` : The sorted array to search in.
+/// * `comparator` : A function that compares each element with the target value,
+/// returning:
+///  * A negative integer if the element is less than the target
+///  * Zero if the element equals the target
+///  * A positive integer if the element is greater than the target
+///
+/// Returns a `Result` containing either:
+///
+/// * `Ok(index)` if a matching element is found at position `index`
+/// * `Err(index)` if no match is found, where `index` is the position where the
+/// element could be inserted
+///
+/// Example:
+///
+/// ```moonbit
+/// test "binary_search_by" {
+///   let arr : FixedArray[Int] = [1, 3, 5, 7, 9]
+///   let find_3 = arr.binary_search_by(fn(x) {
+///     if x < 3 {
+///       -1
+///     } else if x > 3 {
+///       1
+///     } else {
+///       0
+///     }
+///   })
+///   inspect(find_3, content="Ok(1)")
+///   let find_4 = arr.binary_search_by(fn(x) {
+///     if x < 4 {
+///       -1
+///     } else if x > 4 {
+///       1
+///     } else {
+///       0
+///     }
+///   })
+///   inspect(find_4, content="Err(2)")
+/// }
+/// ```
+///
+/// Notes:
+///
+/// * Assumes the array is sorted according to the ordering implied by the
+/// comparison function
+/// * For multiple matches, returns the leftmost matching position
+/// * Returns an insertion point that maintains the sort order when no match is
+/// found
+#locals(cmp)
+pub fn[T] FixedArray::binary_search_by(
+  self : FixedArray[T],
+  cmp : (T) -> Int
+) -> Result[Int, Int] {
+  let len = self.length()
+  for i = 0, j = len; i < j; {
+    let h = i + (j - i) / 2
+    // Note even if self[h] == value, we still continue the search
+    // because we want to find the leftmost match
+    if cmp(self.unsafe_get(h)) < 0 {
+      continue h + 1, j
+    } else {
+      continue i, h
+    }
+  } else {
+    if i < len && cmp(self.unsafe_get(i)) == 0 {
+      Ok(i)
+    } else {
+      Err(i)
+    }
+  }
 }

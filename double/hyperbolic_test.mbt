@@ -90,13 +90,13 @@ test "hyperbolic" {
   ]
   fn high_accuracy_test(expect : Double, actual : Double) -> Unit!Error {
     let ulp = (expect.reinterpret_as_int64() - actual.reinterpret_as_int64()).abs()
-    assert_true!(ulp <= 1)
+    assert_true(ulp <= 1)
   }
 
   for i in 0..<vals.length() {
-    high_accuracy_test!(vals[i].sinh(), sinh_res[i])
-    high_accuracy_test!(vals[i].cosh(), cosh_res[i])
-    high_accuracy_test!(vals[i].tanh(), tanh_res[i])
+    high_accuracy_test(vals[i].sinh(), sinh_res[i])
+    high_accuracy_test(vals[i].cosh(), cosh_res[i])
+    high_accuracy_test(vals[i].tanh(), tanh_res[i])
   }
 }
 
@@ -132,11 +132,11 @@ test "asinh" {
   ]
   fn high_accuracy_test(expect : Double, actual : Double) -> Unit!Error {
     let ulp = (expect.reinterpret_as_int64() - actual.reinterpret_as_int64()).abs()
-    assert_true!(ulp <= 1)
+    assert_true(ulp <= 1)
   }
 
   for i in 0..<vals.length() {
-    high_accuracy_test!(vals[i].asinh(), asinh_res[i])
+    high_accuracy_test(vals[i].asinh(), asinh_res[i])
   }
 }
 
@@ -164,11 +164,11 @@ test "acosh" {
   ]
   fn high_accuracy_test(expect : Double, actual : Double) -> Unit!Error {
     let ulp = (expect.reinterpret_as_int64() - actual.reinterpret_as_int64()).abs()
-    assert_true!(ulp <= 1)
+    assert_true(ulp <= 1)
   }
 
   for i in 0..<vals.length() {
-    high_accuracy_test!(vals[i].acosh(), acosh_res[i])
+    high_accuracy_test(vals[i].acosh(), acosh_res[i])
   }
 }
 
@@ -202,10 +202,10 @@ test "atanh" {
   ]
   fn high_accuracy_test(expect : Double, actual : Double) -> Unit!Error {
     let ulp = (expect.reinterpret_as_int64() - actual.reinterpret_as_int64()).abs()
-    assert_true!(ulp <= 1)
+    assert_true(ulp <= 1)
   }
 
   for i in 0..<vals.length() {
-    high_accuracy_test!(vals[i].atanh(), atanh_res[i])
+    high_accuracy_test(vals[i].atanh(), atanh_res[i])
   }
 }

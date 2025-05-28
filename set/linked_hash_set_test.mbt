@@ -18,8 +18,8 @@ let default_init_capacity = 8
 ///|
 test "new" {
   let m : Set[Int] = Set::new()
-  assert_eq!(m.capacity(), default_init_capacity)
-  assert_eq!(m.size(), 0)
+  assert_eq(m.capacity(), default_init_capacity)
+  assert_eq(m.size(), 0)
 }
 
 ///|
@@ -28,10 +28,10 @@ test "insert" {
   m.add("a")
   m.add("b")
   m.add("c")
-  assert_true!(m.contains("a"))
-  assert_true!(m.contains("b"))
-  assert_true!(m.contains("c"))
-  assert_false!(m.contains("d"))
+  assert_true(m.contains("a"))
+  assert_true(m.contains("b"))
+  assert_true(m.contains("c"))
+  assert_false(m.contains("d"))
 }
 
 ///|
@@ -43,39 +43,39 @@ test "add remove" {
   if m.remove_and_check("a") {
     m.add("d")
   }
-  assert_true!(m.add_and_check("test"))
-  assert_false!(m.add_and_check("test"))
-  assert_true!(not(m.contains("a")) && m.contains("d"))
-  assert_true!(m.contains("b"))
-  assert_true!(m.contains("c"))
-  assert_true!(m.contains("d"))
+  assert_true(m.add_and_check("test"))
+  assert_false(m.add_and_check("test"))
+  assert_true(not(m.contains("a")) && m.contains("d"))
+  assert_true(m.contains("b"))
+  assert_true(m.contains("c"))
+  assert_true(m.contains("d"))
 }
 
 ///|
 test "from_array" {
   let m = Set::of(["a", "b", "c"])
-  assert_true!(m.contains("a"))
-  assert_true!(m.contains("b"))
-  assert_true!(m.contains("c"))
-  assert_false!(m.contains("d"))
+  assert_true(m.contains("a"))
+  assert_true(m.contains("b"))
+  assert_true(m.contains("c"))
+  assert_false(m.contains("d"))
 }
 
 ///|
 test "size" {
   let m = Set::new()
-  assert_eq!(m.size(), 0)
+  assert_eq(m.size(), 0)
   m.add("a")
-  assert_eq!(m.size(), 1)
+  assert_eq(m.size(), 1)
 }
 
 ///|
 test "is_empty" {
   let m = Set::new()
-  assert_eq!(m.is_empty(), true)
+  assert_eq(m.is_empty(), true)
   m.add("a")
-  assert_eq!(m.is_empty(), false)
+  assert_eq(m.is_empty(), false)
   m.remove("a")
-  assert_eq!(m.is_empty(), true)
+  assert_eq(m.is_empty(), true)
 }
 
 ///|
@@ -104,11 +104,11 @@ test "union" {
   let m1 = Set::of(["a", "b", "c"])
   let m2 = Set::of(["b", "c", "d"])
   let m = m1.union(m2)
-  assert_eq!(m.size(), 4)
-  assert_true!(m.contains("a"))
-  assert_true!(m.contains("b"))
-  assert_true!(m.contains("c"))
-  assert_true!(m.contains("d"))
+  assert_eq(m.size(), 4)
+  assert_true(m.contains("a"))
+  assert_true(m.contains("b"))
+  assert_true(m.contains("c"))
+  assert_true(m.contains("d"))
 }
 
 ///|
@@ -116,11 +116,11 @@ test "intersection" {
   let m1 = Set::of(["a", "b", "c"])
   let m2 = Set::of(["b", "c", "d"])
   let m = m1.intersection(m2)
-  assert_eq!(m.size(), 2)
-  assert_false!(m.contains("a"))
-  assert_true!(m.contains("b"))
-  assert_true!(m.contains("c"))
-  assert_false!(m.contains("d"))
+  assert_eq(m.size(), 2)
+  assert_false(m.contains("a"))
+  assert_true(m.contains("b"))
+  assert_true(m.contains("c"))
+  assert_false(m.contains("d"))
 }
 
 ///|
@@ -128,11 +128,11 @@ test "difference" {
   let m1 = Set::of(["a", "b", "c"])
   let m2 = Set::of(["b", "c", "d"])
   let m = m1.difference(m2)
-  assert_eq!(m.size(), 1)
-  assert_true!(m.contains("a"))
-  assert_false!(m.contains("b"))
-  assert_false!(m.contains("c"))
-  assert_false!(m.contains("d"))
+  assert_eq(m.size(), 1)
+  assert_true(m.contains("a"))
+  assert_false(m.contains("b"))
+  assert_false(m.contains("c"))
+  assert_false(m.contains("d"))
 }
 
 ///|
@@ -140,11 +140,11 @@ test "symmetric_difference" {
   let m1 = Set::of(["a", "b", "c"])
   let m2 = Set::of(["b", "c", "d"])
   let m = m1.symmetric_difference(m2)
-  assert_eq!(m.size(), 2)
-  assert_true!(m.contains("a"))
-  assert_false!(m.contains("b"))
-  assert_false!(m.contains("c"))
-  assert_true!(m.contains("d"))
+  assert_eq(m.size(), 2)
+  assert_true(m.contains("a"))
+  assert_false(m.contains("b"))
+  assert_false(m.contains("c"))
+  assert_true(m.contains("d"))
 }
 
 ///|
@@ -162,10 +162,10 @@ test "iter" {
 test "from_array" {
   let arr = ["a", "b", "c"]
   let m = Set::from_array(arr)
-  assert_true!(m.contains("a"))
-  assert_true!(m.contains("b"))
-  assert_true!(m.contains("c"))
-  assert_false!(m.contains("d"))
+  assert_true(m.contains("a"))
+  assert_true(m.contains("b"))
+  assert_true(m.contains("c"))
+  assert_false(m.contains("d"))
 }
 
 ///|
@@ -174,8 +174,8 @@ test "insert_and_grow" {
   for i in 0..<10 {
     m.add(i.to_string())
   }
-  assert_eq!(m.size(), 10)
-  assert_eq!(m.capacity(), 16)
+  assert_eq(m.size(), 10)
+  assert_eq(m.capacity(), 16)
   @json.inspect(m, content=["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"])
 }
 
@@ -196,19 +196,19 @@ test "remove_and_shift_back" {
   m.add("c")
   m.add("d")
   m.remove("b")
-  assert_false!(m.contains("b"))
-  assert_true!(m.contains("a"))
-  assert_true!(m.contains("c"))
-  assert_true!(m.contains("d"))
+  assert_false(m.contains("b"))
+  assert_true(m.contains("a"))
+  assert_true(m.contains("c"))
+  assert_true(m.contains("d"))
 }
 
 ///|
 test "capacity_and_size" {
   let m = Set::new()
-  assert_eq!(m.capacity(), default_init_capacity)
-  assert_eq!(m.size(), 0)
+  assert_eq(m.capacity(), default_init_capacity)
+  assert_eq(m.size(), 0)
   m.add("a")
-  assert_eq!(m.size(), 1)
+  assert_eq(m.size(), 1)
 }
 
 ///|
@@ -217,10 +217,10 @@ test "clear_and_reinsert" {
   m.add("a")
   m.add("b")
   m.clear()
-  assert_eq!(m.size(), 0)
+  assert_eq(m.size(), 0)
   m.add("c")
-  assert_eq!(m.size(), 1)
-  assert_true!(m.contains("c"))
+  assert_eq(m.size(), 1)
+  assert_true(m.contains("c"))
 }
 
 ///|
@@ -229,8 +229,8 @@ test "insert_and_grow" {
   for i in 0..<10 {
     m.add(i.to_string())
   }
-  assert_eq!(m.size(), 10)
-  assert_eq!(m.capacity(), 16)
+  assert_eq(m.size(), 10)
+  assert_eq(m.capacity(), 16)
 }
 
 ///|
@@ -241,19 +241,19 @@ test "remove_and_shift_back" {
   m.add("c")
   m.add("d")
   m.remove("b")
-  assert_false!(m.contains("b"))
-  assert_true!(m.contains("a"))
-  assert_true!(m.contains("c"))
-  assert_true!(m.contains("d"))
+  assert_false(m.contains("b"))
+  assert_true(m.contains("a"))
+  assert_true(m.contains("c"))
+  assert_true(m.contains("d"))
 }
 
 ///|
 test "capacity_and_size" {
   let m = Set::new()
-  assert_eq!(m.capacity(), default_init_capacity)
-  assert_eq!(m.size(), 0)
+  assert_eq(m.capacity(), default_init_capacity)
+  assert_eq(m.size(), 0)
   m.add("a")
-  assert_eq!(m.size(), 1)
+  assert_eq(m.size(), 1)
 }
 
 ///|
@@ -262,10 +262,10 @@ test "clear_and_reinsert" {
   m.add("a")
   m.add("b")
   m.clear()
-  assert_eq!(m.size(), 0)
+  assert_eq(m.size(), 0)
   m.add("c")
-  assert_eq!(m.size(), 1)
-  assert_true!(m.contains("c"))
+  assert_eq(m.size(), 1)
+  assert_true(m.contains("c"))
 }
 
 ///|
@@ -291,7 +291,7 @@ test "remove item causes break when psl < i" {
   ..add(1)
   ..add(11) // This goes to a different bucket due to hash collision
   ..remove(21) // Key doesn't exist, will cause psl < i and break
-  assert_eq!(set.size(), 2)
+  assert_eq(set.size(), 2)
 }
 
 ///|
@@ -434,7 +434,7 @@ test "remove_and_check when key not found in empty slot" {
 test "trigger grow" {
   let set = Set::new(capacity=2)
   for i in 0..<10 {
-    assert_true!(set.add_and_check(i))
+    assert_true(set.add_and_check(i))
   }
   inspect(set, content="{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}")
 }

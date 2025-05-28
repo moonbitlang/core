@@ -13,16 +13,24 @@
 // limitations under the License.
 
 ///|
-test "random property tests" {
-  run_test(104UL, 10, 4)
-  run_test(503UL, 50, 3)
-  run_test(10002UL, 200, 2)
-  run_test(53UL, 4, 1)
-}
-
-///|
-fn run_test(seed : UInt64, rep : Int, max_lvl : Int) -> Unit! {
-  let rng = Random({ val: seed })
-  let rs = random_test_gen(rng, rep, max_lvl)
-  execute_array_test(rs)
+test "feature pipe" {
+  let b : Bytes = "hello"
+  let mut u = Bytes::new(b.length())
+  let v = b
+    |> tap(fn(x) { u = x })
+    |> _.length() // test _.length()
+    |> _.to_int64() // test _.to_int()
+  inspect(v, content="5")
+  inspect(
+    b,
+    content=
+      #|b"\x68\x65\x6c\x6c\x6f"
+    ,
+  )
+  inspect(
+    u,
+    content=
+      #|b"\x68\x65\x6c\x6c\x6f"
+    ,
+  )
 }

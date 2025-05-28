@@ -147,7 +147,7 @@ test "array_unsafe_blit_fixed" {
   }
   UninitializedArray::unsafe_blit_fixed(dst, 0, src, 0, 5)
   for i in 0..<5 {
-    assert_eq!(dst[i], src[i])
+    assert_eq(dst[i], src[i])
   }
 }
 
@@ -160,7 +160,7 @@ test "UninitializedArray::unsafe_blit_fixed" {
   }
   UninitializedArray::unsafe_blit_fixed(dst, 0, src, 0, 5)
   for i in 0..<5 {
-    assert_eq!(dst[i], src[i])
+    assert_eq(dst[i], src[i])
   }
 }
 
@@ -173,7 +173,7 @@ test "UninitializedArray::unsafe_blit_fixed" {
   }
   UninitializedArray::unsafe_blit_fixed(dst, 0, src, 0, 5)
   for i in 0..<5 {
-    assert_eq!(dst[i], src[i])
+    assert_eq(dst[i], src[i])
   }
 }
 
@@ -183,14 +183,14 @@ test "Array::resize_buffer" {
   arr.push(1)
   arr.push(2)
   arr.resize_buffer(4)
-  assert_eq!(arr.buffer()._.length() >= 4, true)
+  assert_eq(arr.buffer()._.length() >= 4, true)
   arr.push(3)
   arr.push(4)
-  assert_eq!(arr.length(), 4)
-  assert_eq!(arr[0], 1)
-  assert_eq!(arr[1], 2)
-  assert_eq!(arr[2], 3)
-  assert_eq!(arr[3], 4)
+  assert_eq(arr.length(), 4)
+  assert_eq(arr[0], 1)
+  assert_eq(arr[1], 2)
+  assert_eq(arr[2], 3)
+  assert_eq(arr[3], 4)
 }
 
 ///|
@@ -210,7 +210,7 @@ fn[T] Array::realloc(self : Array[T]) -> Unit {
 /// ```
 /// let v = [1]
 /// v.reserve_capacity(10)
-/// assert_eq!(v.capacity(), 10)
+/// assert_eq(v.capacity(), 10)
 /// ```
 pub fn[T] Array::reserve_capacity(self : Array[T], capacity : Int) -> Unit {
   if self.capacity() >= capacity {
@@ -230,7 +230,7 @@ pub fn[T] Array::reserve_capacity(self : Array[T], capacity : Int) -> Unit {
 /// v.push(2)
 /// v.push(3)
 /// v.shrink_to_fit()
-/// assert_eq!(v.capacity(), 3)
+/// assert_eq(v.capacity(), 3)
 /// ```
 pub fn[T] Array::shrink_to_fit(self : Array[T]) -> Unit {
   if self.capacity() <= self.length() {
@@ -264,8 +264,8 @@ pub fn[T] Array::push(self : Array[T], value : T) -> Unit {
 /// # Example
 /// ```
 /// let v = [1, 2, 3]
-/// assert_eq!(v.pop(), Some(3))
-/// assert_eq!(v, [1, 2])
+/// assert_eq(v.pop(), Some(3))
+/// assert_eq(v, [1, 2])
 /// ```
 pub fn[T] Array::pop(self : Array[T]) -> T? {
   let len = self.length()
@@ -331,8 +331,8 @@ pub fn[T] Array::unsafe_pop(self : Array[T]) -> T {
 /// # Example
 /// ```
 /// let v = [3, 4, 5]
-/// assert_eq!(v.remove(1), 4)
-/// assert_eq!(v, [3, 5])
+/// assert_eq(v.remove(1), 4)
+/// assert_eq(v, [3, 5])
 /// ```
 pub fn[T] Array::remove(self : Array[T], index : Int) -> T {
   guard index >= 0 && index < self.length() else {
@@ -363,8 +363,8 @@ pub fn[T] Array::remove(self : Array[T], index : Int) -> T {
 /// ```
 /// let v = [3, 4, 5]
 /// let vv = v.drain(1, 2) // vv = [4], v = [3, 5]
-/// assert_eq!(vv, [4])
-/// assert_eq!(v, [3, 5])
+/// assert_eq(vv, [4])
+/// assert_eq(v, [3, 5])
 /// ```
 pub fn[T] Array::drain(self : Array[T], begin : Int, end : Int) -> Array[T] {
   guard begin >= 0 && end <= self.length() && begin <= end

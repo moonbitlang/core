@@ -25,8 +25,8 @@ You can use the `length` to get the length of the immutable priority queue.
 ```moonbit
 test {
   let pq = @priority_queue.new()
-  assert_eq!(pq.length(), 0)
-  assert_eq!(pq.push(1).length(), 1)
+  assert_eq(pq.length(), 0)
+  assert_eq(pq.push(1).length(), 1)
 }
 ```
 
@@ -35,7 +35,7 @@ You can use the `is_empty` to determine whether the immutable priority queue is 
 ```moonbit
 test {
   let pq : @priority_queue.T[Int] = @priority_queue.new()
-  assert_eq!(pq.is_empty(), true)
+  assert_eq(pq.is_empty(), true)
 }
 ```
 
@@ -46,7 +46,7 @@ You can use `peek()` to look at the head element of a queue, which must be eithe
 ```moonbit
 test {
   let pq = @priority_queue.of([1, 2, 3, 4, 5])
-  assert_eq!(pq.peek(), Some(5))
+  assert_eq(pq.peek(), Some(5))
   // @json.inspect(pq)
   // we have to add `@json` package in test-import
   // it's reported unused package currently
@@ -58,7 +58,7 @@ You can use `push()` to add elements to the immutable priority queue and get a n
 ```moonbit
 test {
   let pq : @priority_queue.T[Int] = @priority_queue.new()
-  assert_eq!(pq.push(1).peek(), Some(1))
+  assert_eq(pq.push(1).peek(), Some(1))
 }
 ```
 
@@ -71,6 +71,6 @@ test {
     Some(q) => q.peek()
     None => None
   }
-  assert_eq!(val, Some(4))
+  assert_eq(val, Some(4))
 }
 ```

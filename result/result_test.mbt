@@ -15,15 +15,15 @@
 ///|
 test "Result unwrap should return Ok value" {
   let ok_result : Result[Int, Error] = Ok(42)
-  assert_eq!(ok_result.unwrap(), 42)
-  assert_eq!(ok_result.unwrap_or_error!(), 42)
+  assert_eq(ok_result.unwrap(), 42)
+  assert_eq(ok_result.unwrap_or_error(), 42)
 }
 
 ///|
 test "bind with Err" {
   let x : Result[Int, String] = Err("error")
   let y = x.bind(fn(v : Int) { Ok(v * 7) })
-  assert_eq!(y, Err("error"))
+  assert_eq(y, Err("error"))
 }
 
 ///|

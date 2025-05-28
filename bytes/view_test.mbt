@@ -477,7 +477,7 @@ test "BytesView::eq" {
 test "View::bytes" {
   let bytes = b"abcabc"
   let view = bytes[1:4]
-  @test.same_object!(view.data(), bytes)
+  @test.same_object(view.data(), bytes)
 }
 
 ///|

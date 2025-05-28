@@ -36,13 +36,13 @@ test "hypot" {
   ]
   fn high_accuracy_test(expect : Double, actual : Double) -> Unit!Error {
     let ulp = (expect.reinterpret_as_int64() - actual.reinterpret_as_int64()).abs()
-    assert_true!(ulp <= 1)
+    assert_true(ulp <= 1)
   }
 
   let mut i : Int = 0
   for x in xs {
     for y in ys {
-      high_accuracy_test!(x.hypot(y), hypot_res[i])
+      high_accuracy_test(x.hypot(y), hypot_res[i])
       i = i + 1
     }
   }

@@ -26,7 +26,7 @@ test {
     match i {
       StringError(s) => buf.write_string(s)
       IntError(i) =>
-        // assert_eq!(i, 1)
+        // assert_eq(i, 1)
         buf.write_object(i)
       _ => abort("impossible")
     }

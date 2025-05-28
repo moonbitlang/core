@@ -58,13 +58,13 @@ test "division" {
 ///|
 test "from_double overflow" {
   let result = 10.0e200 |> @result.wrap1(f=@rational.from_double)
-  assert_eq!(result, Err(RationalError("Rational::from_double: overflow")))
+  assert_eq(result, Err(RationalError("Rational::from_double: overflow")))
 }
 
 ///|
 test "from_double NaN" {
   let result = @double.not_a_number |> @result.wrap1(f=@rational.from_double)
-  assert_eq!(
+  assert_eq(
     result,
     Err(RationalError("Rational::from_double: cannot convert NaN")),
   )
@@ -74,26 +74,26 @@ test "from_double NaN" {
 test "from_double overflow edge case" {
   let result = 9_223_372_036_854_775_807.1
     |> @result.wrap1(f=@rational.from_double)
-  assert_eq!(result, Err(RationalError("Rational::from_double: overflow")))
+  assert_eq(result, Err(RationalError("Rational::from_double: overflow")))
 }
 
 ///|
 test "from_double overflow edge case" {
   let result = 9_223_372_036_854_775_807.1
     |> @result.wrap1(f=@rational.from_double)
-  assert_eq!(result, Err(RationalError("Rational::from_double: overflow")))
+  assert_eq(result, Err(RationalError("Rational::from_double: overflow")))
 }
 
 ///|
 test "from_double overflow check in continued fraction algorithm" {
   let result = 10.0e200 |> @result.wrap1(f=@rational.from_double)
-  assert_eq!(result, Err(RationalError("Rational::from_double: overflow")))
+  assert_eq(result, Err(RationalError("Rational::from_double: overflow")))
 }
 
 ///|
 test "from_double NaN check" {
   let result = @double.not_a_number |> @result.wrap1(f=@rational.from_double)
-  assert_eq!(
+  assert_eq(
     result,
     Err(RationalError("Rational::from_double: cannot convert NaN")),
   )
@@ -104,7 +104,7 @@ test "from_double NaN check" {
 fn from_double_array(
   a : Array[Double]
 ) -> Array[Result[@rational.T, @rational.RationalError]] {
-  a.map(fn { x => @rational.from_double?(x) })
+  a.map(fn { x => try? @rational.from_double(x) })
 }
 
 ///|
@@ -113,7 +113,12 @@ test "from_double array" {
     0.5, 5, 29.97, -29.97, 63.5, 126.5, 127.0, 127.5, -63.5, -126.5, -127.0, -127.5,
   ]
   inspect(
-    a.map(fn { x => @rational.from_double?(x).unwrap() }),
+    a.map(fn {
+      x =>
+        try @rational.from_double(x) catch {
+          _ => abort("")
+        }
+    }),
     content="[1/2, 5, 2997/100, -2997/100, 127/2, 253/2, 127, 255/2, -127/2, -253/2, -127, -255/2]",
   )
   let a = [
