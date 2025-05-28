@@ -3,6 +3,7 @@ package "moonbitlang/core/array"
 import(
   "moonbitlang/core/bytes"
   "moonbitlang/core/quickcheck"
+  "moonbitlang/core/string"
 )
 
 // Values
@@ -10,7 +11,7 @@ fn[T] copy(Array[T]) -> Array[T]
 
 fn[A, B] filter_map(Array[A], (A) -> B?) -> Array[B]
 
-fn join(Array[String], String) -> String
+fn join(Array[String], @string.StringView) -> String
 
 fn[A] last(Array[A]) -> A?
 
@@ -47,7 +48,7 @@ impl FixedArray {
   from_array[T](Array[T]) -> Self[T]
   from_iter[T](Iter[T]) -> Self[T]
   is_sorted[T : Compare](Self[T]) -> Bool
-  join(Self[String], String) -> String
+  join(Self[String], @string.StringView) -> String
   last[A](Self[A]) -> A?
   makei[T](Int, (Int) -> T) -> Self[T]
   map[T, U](Self[T], (T) -> U) -> Self[U]
@@ -76,7 +77,7 @@ impl Array {
   copy[T](Self[T]) -> Self[T]
   filter_map[A, B](Self[A], (A) -> B?) -> Self[B]
   from_iter[T](Iter[T]) -> Self[T]
-  join(Self[String], String) -> String
+  join(Self[String], @string.StringView) -> String
   last[A](Self[A]) -> A?
   makei[T](Int, (Int) -> T) -> Self[T]
   push_iter[T](Self[T], Iter[T]) -> Unit
@@ -101,7 +102,7 @@ impl ArrayView {
   foldi[A, B](Self[A], init~ : B, (Int, B, A) -> B) -> B
   iter[A](Self[A]) -> Iter[A]
   iter2[A](Self[A]) -> Iter2[Int, A]
-  join(Self[String], String) -> String
+  join(Self[String], @string.StringView) -> String
   map[T, U](Self[T], (T) -> U) -> Array[U]
   map_inplace[T](Self[T], (T) -> T) -> Unit
   mapi[T, U](Self[T], (Int, T) -> U) -> Array[U]
