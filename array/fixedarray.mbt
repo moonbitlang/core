@@ -1239,6 +1239,16 @@ test "FixedArray::last/multiple_elements" {
 }
 
 ///|
+test "FixedArray::join" {
+  let fixed_array : FixedArray[String] = ["1", "2", "3"]
+  inspect(fixed_array.join(","), content="1,2,3")
+  inspect(fixed_array.join(""), content="123")
+  inspect(fixed_array.join(" "), content="1 2 3")
+  let fixed_array_empty : FixedArray[String] = []
+  inspect(fixed_array_empty.join(","), content="")
+}
+
+///|
 pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for FixedArray[X] with arbitrary(
   size,
   rs
