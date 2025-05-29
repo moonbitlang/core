@@ -10,10 +10,8 @@ fn to_be_bytes(UInt64) -> Bytes
 fn to_le_bytes(UInt64) -> Bytes
 
 // Types and methods
-impl UInt64 {
-  to_be_bytes(UInt64) -> Bytes
-  to_le_bytes(UInt64) -> Bytes
-}
+fn UInt64::to_be_bytes(UInt64) -> Bytes
+fn UInt64::to_le_bytes(UInt64) -> Bytes
 
 // Type aliases
 

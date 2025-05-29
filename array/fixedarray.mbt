@@ -1026,7 +1026,6 @@ pub impl[T : Compare] Compare for FixedArray[T] with compare(self, other) {
   for i in 0..<len_self {
     let cmp = self.unsafe_get(i).compare(other.unsafe_get(i))
     guard cmp == 0 else { break cmp }
-
   } else {
     0
   }

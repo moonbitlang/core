@@ -20,11 +20,9 @@ type Summary
 impl ToJson for Summary
 
 type T
-impl T {
-  bench(Self, name? : String, () -> Unit, count~ : UInt = ..) -> Unit
-  dump_summaries(Self) -> String
-  keep[Any](Self, Any) -> Unit
-}
+fn T::bench(Self, name? : String, () -> Unit, count~ : UInt = ..) -> Unit
+fn T::dump_summaries(Self) -> String
+fn[Any] T::keep(Self, Any) -> Unit
 
 type Timestamp
 

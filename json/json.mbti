@@ -42,10 +42,8 @@ impl Show for JsonDecodeError
 impl ToJson for JsonDecodeError
 
 type JsonPath
-impl JsonPath {
-  add_index(Self, Int) -> Self
-  add_key(Self, String) -> Self
-}
+fn JsonPath::add_index(Self, Int) -> Self
+fn JsonPath::add_key(Self, String) -> Self
 impl Eq for JsonPath
 impl Show for JsonPath
 impl ToJson for JsonPath
@@ -67,17 +65,15 @@ pub(all) struct Position {
 impl Eq for Position
 impl ToJson for Position
 
-impl Json {
-  as_array(Self) -> Array[Self]?
-  as_bool(Self) -> Bool?
-  as_null(Self) -> Unit?
-  as_number(Self) -> Double?
-  as_object(Self) -> Map[String, Self]?
-  as_string(Self) -> String?
-  item(Self, Int) -> Self?
-  stringify(Self, escape_slash~ : Bool = .., indent~ : Int = ..) -> String
-  value(Self, String) -> Self?
-}
+fn Json::as_array(Self) -> Array[Self]?
+fn Json::as_bool(Self) -> Bool?
+fn Json::as_null(Self) -> Unit?
+fn Json::as_number(Self) -> Double?
+fn Json::as_object(Self) -> Map[String, Self]?
+fn Json::as_string(Self) -> String?
+fn Json::item(Self, Int) -> Self?
+fn Json::stringify(Self, escape_slash~ : Bool = .., indent~ : Int = ..) -> String
+fn Json::value(Self, String) -> Self?
 impl Show for Json
 impl ToJson for Json
 

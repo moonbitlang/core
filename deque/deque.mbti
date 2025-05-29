@@ -90,48 +90,46 @@ fn[A] unsafe_pop_front(T[A]) -> Unit
 
 // Types and methods
 type T[A]
-impl T {
-  as_views[A](Self[A]) -> (ArrayView[A], ArrayView[A])
-  back[A](Self[A]) -> A?
-  capacity[A](Self[A]) -> Int
-  clear[A](Self[A]) -> Unit
-  contains[A : Eq](Self[A], A) -> Bool
-  copy[A](Self[A]) -> Self[A]
-  each[A](Self[A], (A) -> Unit) -> Unit
-  eachi[A](Self[A], (Int, A) -> Unit) -> Unit
-  #deprecated
-  filter_map_inplace[A](Self[A], (A) -> A?) -> Unit
-  front[A](Self[A]) -> A?
-  is_empty[A](Self[A]) -> Bool
-  iter[A](Self[A]) -> Iter[A]
-  iter2[A](Self[A]) -> Iter2[Int, A]
-  length[A](Self[A]) -> Int
-  map[A, U](Self[A], (A) -> U) -> Self[U]
-  mapi[A, U](Self[A], (Int, A) -> U) -> Self[U]
-  op_get[A](Self[A], Int) -> A
-  op_set[A](Self[A], Int, A) -> Unit
-  pop_back[A](Self[A]) -> A?
-  #deprecated
-  pop_back_exn[A](Self[A]) -> Unit
-  pop_front[A](Self[A]) -> A?
-  #deprecated
-  pop_front_exn[A](Self[A]) -> Unit
-  push_back[A](Self[A], A) -> Unit
-  push_front[A](Self[A], A) -> Unit
-  reserve_capacity[A](Self[A], Int) -> Unit
-  retain[A](Self[A], (A) -> Bool) -> Unit
-  retain_map[A](Self[A], (A) -> A?) -> Unit
-  rev_each[A](Self[A], (A) -> Unit) -> Unit
-  rev_eachi[A](Self[A], (Int, A) -> Unit) -> Unit
-  rev_iter[A](Self[A]) -> Iter[A]
-  rev_iter2[A](Self[A]) -> Iter2[Int, A]
-  search[A : Eq](Self[A], A) -> Int?
-  shrink_to_fit[A](Self[A]) -> Unit
-  to_array[A](Self[A]) -> Array[A]
-  truncate[A](Self[A], Int) -> Unit
-  unsafe_pop_back[A](Self[A]) -> Unit
-  unsafe_pop_front[A](Self[A]) -> Unit
-}
+fn[A] T::as_views(Self[A]) -> (ArrayView[A], ArrayView[A])
+fn[A] T::back(Self[A]) -> A?
+fn[A] T::capacity(Self[A]) -> Int
+fn[A] T::clear(Self[A]) -> Unit
+fn[A : Eq] T::contains(Self[A], A) -> Bool
+fn[A] T::copy(Self[A]) -> Self[A]
+fn[A] T::each(Self[A], (A) -> Unit) -> Unit
+fn[A] T::eachi(Self[A], (Int, A) -> Unit) -> Unit
+#deprecated
+fn[A] T::filter_map_inplace(Self[A], (A) -> A?) -> Unit
+fn[A] T::front(Self[A]) -> A?
+fn[A] T::is_empty(Self[A]) -> Bool
+fn[A] T::iter(Self[A]) -> Iter[A]
+fn[A] T::iter2(Self[A]) -> Iter2[Int, A]
+fn[A] T::length(Self[A]) -> Int
+fn[A, U] T::map(Self[A], (A) -> U) -> Self[U]
+fn[A, U] T::mapi(Self[A], (Int, A) -> U) -> Self[U]
+fn[A] T::op_get(Self[A], Int) -> A
+fn[A] T::op_set(Self[A], Int, A) -> Unit
+fn[A] T::pop_back(Self[A]) -> A?
+#deprecated
+fn[A] T::pop_back_exn(Self[A]) -> Unit
+fn[A] T::pop_front(Self[A]) -> A?
+#deprecated
+fn[A] T::pop_front_exn(Self[A]) -> Unit
+fn[A] T::push_back(Self[A], A) -> Unit
+fn[A] T::push_front(Self[A], A) -> Unit
+fn[A] T::reserve_capacity(Self[A], Int) -> Unit
+fn[A] T::retain(Self[A], (A) -> Bool) -> Unit
+fn[A] T::retain_map(Self[A], (A) -> A?) -> Unit
+fn[A] T::rev_each(Self[A], (A) -> Unit) -> Unit
+fn[A] T::rev_eachi(Self[A], (Int, A) -> Unit) -> Unit
+fn[A] T::rev_iter(Self[A]) -> Iter[A]
+fn[A] T::rev_iter2(Self[A]) -> Iter2[Int, A]
+fn[A : Eq] T::search(Self[A], A) -> Int?
+fn[A] T::shrink_to_fit(Self[A]) -> Unit
+fn[A] T::to_array(Self[A]) -> Array[A]
+fn[A] T::truncate(Self[A], Int) -> Unit
+fn[A] T::unsafe_pop_back(Self[A]) -> Unit
+fn[A] T::unsafe_pop_front(Self[A]) -> Unit
 impl[A : Eq] Eq for T[A]
 impl[A : Show] Show for T[A]
 impl[A : ToJson] ToJson for T[A]

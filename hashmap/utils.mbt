@@ -76,7 +76,6 @@ pub fn[K, V] iter(self : T[K, V]) -> Iter[(K, V)] {
     for entry in self.entries {
       if entry is Some({ key, value, .. }) {
         guard yield_((key, value)) is IterContinue else { break IterEnd }
-
       }
     } else {
       IterContinue
@@ -111,7 +110,6 @@ pub fn[K, V] iter2(self : T[K, V]) -> Iter2[K, V] {
     for entry in self.entries {
       if entry is Some({ key, value, .. }) {
         guard yield_(key, value) is IterContinue else { break IterEnd }
-
       }
     } else {
       IterContinue

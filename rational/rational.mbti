@@ -29,17 +29,15 @@ impl Eq for RationalError
 impl Show for RationalError
 
 type T
-impl T {
-  abs(Self) -> Self
-  ceil(Self) -> Int64
-  floor(Self) -> Int64
-  fract(Self) -> Self
-  is_integer(Self) -> Bool
-  neg(Self) -> Self
-  reciprocal(Self) -> Self
-  to_double(Self) -> Double
-  trunc(Self) -> Int64
-}
+fn T::abs(Self) -> Self
+fn T::ceil(Self) -> Int64
+fn T::floor(Self) -> Int64
+fn T::fract(Self) -> Self
+fn T::is_integer(Self) -> Bool
+fn T::neg(Self) -> Self
+fn T::reciprocal(Self) -> Self
+fn T::to_double(Self) -> Double
+fn T::trunc(Self) -> Int64
 impl Add for T
 impl Compare for T
 impl Div for T

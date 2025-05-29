@@ -40,31 +40,29 @@ fn[K : Hash + Eq] union(Set[K], Set[K]) -> Set[K]
 
 // Types and methods
 type Set[K]
-impl Set {
-  add[K : Hash + Eq](Self[K], K) -> Unit
-  add_and_check[K : Hash + Eq](Self[K], K) -> Bool
-  capacity[K](Self[K]) -> Int
-  clear[K](Self[K]) -> Unit
-  contains[K : Hash + Eq](Self[K], K) -> Bool
-  difference[K : Hash + Eq](Self[K], Self[K]) -> Self[K]
-  each[K](Self[K], (K) -> Unit) -> Unit
-  eachi[K](Self[K], (Int, K) -> Unit) -> Unit
-  from_array[K : Hash + Eq](Array[K]) -> Self[K]
-  from_iter[K : Hash + Eq](Iter[K]) -> Self[K]
-  #deprecated
-  insert[K : Hash + Eq](Self[K], K) -> Unit
-  intersection[K : Hash + Eq](Self[K], Self[K]) -> Self[K]
-  is_empty[K](Self[K]) -> Bool
-  iter[K](Self[K]) -> Iter[K]
-  new[K](capacity~ : Int = ..) -> Self[K]
-  of[K : Hash + Eq](FixedArray[K]) -> Self[K]
-  remove[K : Hash + Eq](Self[K], K) -> Unit
-  remove_and_check[K : Hash + Eq](Self[K], K) -> Bool
-  size[K](Self[K]) -> Int
-  symmetric_difference[K : Hash + Eq](Self[K], Self[K]) -> Self[K]
-  to_array[K](Self[K]) -> Array[K]
-  union[K : Hash + Eq](Self[K], Self[K]) -> Self[K]
-}
+fn[K : Hash + Eq] Set::add(Self[K], K) -> Unit
+fn[K : Hash + Eq] Set::add_and_check(Self[K], K) -> Bool
+fn[K] Set::capacity(Self[K]) -> Int
+fn[K] Set::clear(Self[K]) -> Unit
+fn[K : Hash + Eq] Set::contains(Self[K], K) -> Bool
+fn[K : Hash + Eq] Set::difference(Self[K], Self[K]) -> Self[K]
+fn[K] Set::each(Self[K], (K) -> Unit) -> Unit
+fn[K] Set::eachi(Self[K], (Int, K) -> Unit) -> Unit
+fn[K : Hash + Eq] Set::from_array(Array[K]) -> Self[K]
+fn[K : Hash + Eq] Set::from_iter(Iter[K]) -> Self[K]
+#deprecated
+fn[K : Hash + Eq] Set::insert(Self[K], K) -> Unit
+fn[K : Hash + Eq] Set::intersection(Self[K], Self[K]) -> Self[K]
+fn[K] Set::is_empty(Self[K]) -> Bool
+fn[K] Set::iter(Self[K]) -> Iter[K]
+fn[K] Set::new(capacity~ : Int = ..) -> Self[K]
+fn[K : Hash + Eq] Set::of(FixedArray[K]) -> Self[K]
+fn[K : Hash + Eq] Set::remove(Self[K], K) -> Unit
+fn[K : Hash + Eq] Set::remove_and_check(Self[K], K) -> Bool
+fn[K] Set::size(Self[K]) -> Int
+fn[K : Hash + Eq] Set::symmetric_difference(Self[K], Self[K]) -> Self[K]
+fn[K] Set::to_array(Self[K]) -> Array[K]
+fn[K : Hash + Eq] Set::union(Self[K], Self[K]) -> Self[K]
 impl[K] Default for Set[K]
 impl[K : Hash + Eq] Eq for Set[K]
 impl[K : Show] Show for Set[K]

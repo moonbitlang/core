@@ -1054,16 +1054,13 @@ pub fn[A] iter(self : T[A]) -> Iter[A] {
     if head_len >= len {
       for i in head..<(head + len) {
         guard yield_(buf[i]) is IterContinue else { return IterEnd }
-
       }
     } else {
       for i in head..<cap {
         guard yield_(buf[i]) is IterContinue else { return IterEnd }
-
       }
       for i in 0..<(len - head_len) {
         guard yield_(buf[i]) is IterContinue else { return IterEnd }
-
       }
     }
     IterContinue
@@ -1147,16 +1144,13 @@ pub fn[A] rev_iter(self : T[A]) -> Iter[A] {
     if head_len >= len {
       for i = head + len - 1; i >= head; i = i - 1 {
         guard yield_(buf[i]) is IterContinue else { return IterEnd }
-
       }
     } else {
       for i = len - head_len - 1; i >= 0; i = i - 1 {
         guard yield_(buf[i]) is IterContinue else { return IterEnd }
-
       }
       for i = cap - 1; i >= head; i = i - 1 {
         guard yield_(buf[i]) is IterContinue else { return IterEnd }
-
       }
     }
     IterContinue

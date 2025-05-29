@@ -6,9 +6,7 @@ let max_value : Int16
 let min_value : Int16
 
 // Types and methods
-impl Int16 {
-  abs(Int16) -> Int16
-}
+fn Int16::abs(Int16) -> Int16
 impl Add for Int16
 impl BitAnd for Int16
 impl BitOr for Int16

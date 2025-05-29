@@ -23,44 +23,40 @@ fn to_fixedarray(Bytes, len? : Int) -> FixedArray[Byte]
 
 // Types and methods
 type View
-impl View {
-  data(Self) -> Bytes
-  get(Self, Int) -> Byte?
-  iter(Self) -> Iter[Byte]
-  length(Self) -> Int
-  op_as_view(Self, start~ : Int = .., end? : Int) -> Self
-  op_get(Self, Int) -> Byte
-  start_offset(Self) -> Int
-  to_double_be(Self) -> Double
-  to_double_le(Self) -> Double
-  to_float_be(Self) -> Float
-  to_float_le(Self) -> Float
-  to_int64_be(Self) -> Int64
-  to_int64_le(Self) -> Int64
-  to_int_be(Self) -> Int
-  to_int_le(Self) -> Int
-  to_uint64_be(Self) -> UInt64
-  to_uint64_le(Self) -> UInt64
-  to_uint_be(Self) -> UInt
-  to_uint_le(Self) -> UInt
-  unsafe_get(Self, Int) -> Byte
-}
+fn View::data(Self) -> Bytes
+fn View::get(Self, Int) -> Byte?
+fn View::iter(Self) -> Iter[Byte]
+fn View::length(Self) -> Int
+fn View::op_as_view(Self, start~ : Int = .., end? : Int) -> Self
+fn View::op_get(Self, Int) -> Byte
+fn View::start_offset(Self) -> Int
+fn View::to_double_be(Self) -> Double
+fn View::to_double_le(Self) -> Double
+fn View::to_float_be(Self) -> Float
+fn View::to_float_le(Self) -> Float
+fn View::to_int64_be(Self) -> Int64
+fn View::to_int64_le(Self) -> Int64
+fn View::to_int_be(Self) -> Int
+fn View::to_int_le(Self) -> Int
+fn View::to_uint64_be(Self) -> UInt64
+fn View::to_uint64_le(Self) -> UInt64
+fn View::to_uint_be(Self) -> UInt
+fn View::to_uint_le(Self) -> UInt
+fn View::unsafe_get(Self, Int) -> Byte
 impl Compare for View
 impl Eq for View
 impl Show for View
 
-impl Bytes {
-  from_array(Array[Byte]) -> Bytes
-  from_fixedarray(FixedArray[Byte], len? : Int) -> Bytes
-  from_iter(Iter[Byte]) -> Bytes
-  get(Bytes, Int) -> Byte?
-  iter(Bytes) -> Iter[Byte]
-  iter2(Bytes) -> Iter2[Int, Byte]
-  of(FixedArray[Byte]) -> Bytes
-  op_as_view(Bytes, start~ : Int = .., end? : Int) -> View
-  to_array(Bytes) -> Array[Byte]
-  to_fixedarray(Bytes, len? : Int) -> FixedArray[Byte]
-}
+fn Bytes::from_array(Array[Byte]) -> Bytes
+fn Bytes::from_fixedarray(FixedArray[Byte], len? : Int) -> Bytes
+fn Bytes::from_iter(Iter[Byte]) -> Bytes
+fn Bytes::get(Bytes, Int) -> Byte?
+fn Bytes::iter(Bytes) -> Iter[Byte]
+fn Bytes::iter2(Bytes) -> Iter2[Int, Byte]
+fn Bytes::of(FixedArray[Byte]) -> Bytes
+fn Bytes::op_as_view(Bytes, start~ : Int = .., end? : Int) -> View
+fn Bytes::to_array(Bytes) -> Array[Byte]
+fn Bytes::to_fixedarray(Bytes, len? : Int) -> FixedArray[Byte]
 impl Add for Bytes
 impl Default for Bytes
 impl Hash for Bytes

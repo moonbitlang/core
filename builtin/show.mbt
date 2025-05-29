@@ -76,13 +76,11 @@ test "to_hex_digit" {
     guard to_hex_digit(i) == ('0'.to_int() + i).unsafe_to_char() else {
       fail("to_hex_digit(\{i}) does not match")
     }
-
   }
   for i in 10..<16 {
     guard to_hex_digit(i) == ('a'.to_int() + (i - 10)).unsafe_to_char() else {
       fail("to_hex_digit(\{i}) does not match")
     }
-
   }
 }
 

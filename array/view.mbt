@@ -186,7 +186,6 @@ pub fn[A] View::iter(self : View[A]) -> Iter[A] {
   Iter::new(fn(yield_) {
     for v in self {
       guard yield_(v) is IterContinue else { break IterEnd }
-
     } else {
       IterContinue
     }
@@ -216,7 +215,6 @@ pub fn[A] View::iter2(self : View[A]) -> Iter2[Int, A] {
   Iter2::new(fn(yield_) {
     for i, v in self {
       guard yield_(i, v) is IterContinue else { break IterEnd }
-
     } else {
       IterContinue
     }
@@ -463,7 +461,6 @@ pub impl[T : Compare] Compare for View[T] with compare(self, other) -> Int {
   for i in 0..<len_self {
     let cmp = self[i].compare(other[i])
     guard cmp == 0 else { break cmp }
-
   } else {
     0
   }

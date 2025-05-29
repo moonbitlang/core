@@ -78,50 +78,48 @@ fn[A : Compare] union(T[A], T[A]) -> T[A]
 
 // Types and methods
 type T[A]
-impl T {
-  add[A : Compare](Self[A], A) -> Self[A]
-  all[A : Compare](Self[A], (A) -> Bool) -> Bool
-  any[A : Compare](Self[A], (A) -> Bool) -> Bool
-  contains[A : Compare](Self[A], A) -> Bool
-  #deprecated
-  diff[A : Compare](Self[A], Self[A]) -> Self[A]
-  difference[A : Compare](Self[A], Self[A]) -> Self[A]
-  disjoint[A : Compare](Self[A], Self[A]) -> Bool
-  each[A](Self[A], (A) -> Unit) -> Unit
-  filter[A : Compare](Self[A], (A) -> Bool) -> Self[A]
-  fold[A : Compare, B](Self[A], init~ : B, (B, A) -> B) -> B
-  #deprecated
-  from_array[A : Compare](Array[A]) -> Self[A]
-  #deprecated
-  from_iter[A : Compare](Iter[A]) -> Self[A]
-  #deprecated
-  from_json[A : @json.FromJson + Compare](Json) -> Self[A]!@json.JsonDecodeError
-  #deprecated
-  inter[A : Compare](Self[A], Self[A]) -> Self[A]
-  intersection[A : Compare](Self[A], Self[A]) -> Self[A]
-  is_empty[A : Compare](Self[A]) -> Bool
-  iter[A](Self[A]) -> Iter[A]
-  map[A : Compare, B : Compare](Self[A], (A) -> B) -> Self[B]
-  max[A : Compare](Self[A]) -> A
-  max_option[A : Compare](Self[A]) -> A?
-  min[A : Compare](Self[A]) -> A
-  min_option[A : Compare](Self[A]) -> A?
-  #deprecated
-  new[A]() -> Self[A]
-  #deprecated
-  of[A : Compare](FixedArray[A]) -> Self[A]
-  remove[A : Compare](Self[A], A) -> Self[A]
-  remove_min[A : Compare](Self[A]) -> Self[A]
-  #deprecated
-  singleton[A : Compare](A) -> Self[A]
-  size[A : Compare](Self[A]) -> Int
-  split[A : Compare](Self[A], A) -> (Self[A], Bool, Self[A])
-  subset[A : Compare](Self[A], Self[A]) -> Bool
-  symmetric_difference[A : Compare](Self[A], Self[A]) -> Self[A]
-  to_array[A : Compare](Self[A]) -> Array[A]
-  to_json[A : ToJson](Self[A]) -> Json
-  union[A : Compare](Self[A], Self[A]) -> Self[A]
-}
+fn[A : Compare] T::add(Self[A], A) -> Self[A]
+fn[A : Compare] T::all(Self[A], (A) -> Bool) -> Bool
+fn[A : Compare] T::any(Self[A], (A) -> Bool) -> Bool
+fn[A : Compare] T::contains(Self[A], A) -> Bool
+#deprecated
+fn[A : Compare] T::diff(Self[A], Self[A]) -> Self[A]
+fn[A : Compare] T::difference(Self[A], Self[A]) -> Self[A]
+fn[A : Compare] T::disjoint(Self[A], Self[A]) -> Bool
+fn[A] T::each(Self[A], (A) -> Unit) -> Unit
+fn[A : Compare] T::filter(Self[A], (A) -> Bool) -> Self[A]
+fn[A : Compare, B] T::fold(Self[A], init~ : B, (B, A) -> B) -> B
+#deprecated
+fn[A : Compare] T::from_array(Array[A]) -> Self[A]
+#deprecated
+fn[A : Compare] T::from_iter(Iter[A]) -> Self[A]
+#deprecated
+fn[A : @json.FromJson + Compare] T::from_json(Json) -> Self[A]!@json.JsonDecodeError
+#deprecated
+fn[A : Compare] T::inter(Self[A], Self[A]) -> Self[A]
+fn[A : Compare] T::intersection(Self[A], Self[A]) -> Self[A]
+fn[A : Compare] T::is_empty(Self[A]) -> Bool
+fn[A] T::iter(Self[A]) -> Iter[A]
+fn[A : Compare, B : Compare] T::map(Self[A], (A) -> B) -> Self[B]
+fn[A : Compare] T::max(Self[A]) -> A
+fn[A : Compare] T::max_option(Self[A]) -> A?
+fn[A : Compare] T::min(Self[A]) -> A
+fn[A : Compare] T::min_option(Self[A]) -> A?
+#deprecated
+fn[A] T::new() -> Self[A]
+#deprecated
+fn[A : Compare] T::of(FixedArray[A]) -> Self[A]
+fn[A : Compare] T::remove(Self[A], A) -> Self[A]
+fn[A : Compare] T::remove_min(Self[A]) -> Self[A]
+#deprecated
+fn[A : Compare] T::singleton(A) -> Self[A]
+fn[A : Compare] T::size(Self[A]) -> Int
+fn[A : Compare] T::split(Self[A], A) -> (Self[A], Bool, Self[A])
+fn[A : Compare] T::subset(Self[A], Self[A]) -> Bool
+fn[A : Compare] T::symmetric_difference(Self[A], Self[A]) -> Self[A]
+fn[A : Compare] T::to_array(Self[A]) -> Array[A]
+fn[A : ToJson] T::to_json(Self[A]) -> Json
+fn[A : Compare] T::union(Self[A], Self[A]) -> Self[A]
 impl[A : Compare] Add for T[A]
 impl[A : Compare] Compare for T[A]
 impl[A] Default for T[A]

@@ -62,31 +62,29 @@ fn write_uint_le(T, UInt) -> Unit
 
 // Types and methods
 type T
-impl T {
-  contents(Self) -> Bytes
-  is_empty(Self) -> Bool
-  length(Self) -> Int
-  reset(Self) -> Unit
-  to_bytes(Self) -> Bytes
-  write_byte(Self, Byte) -> Unit
-  write_bytes(Self, Bytes) -> Unit
-  write_bytesview(Self, @bytes.View) -> Unit
-  write_double_be(Self, Double) -> Unit
-  write_double_le(Self, Double) -> Unit
-  write_float_be(Self, Float) -> Unit
-  write_float_le(Self, Float) -> Unit
-  write_int64_be(Self, Int64) -> Unit
-  write_int64_le(Self, Int64) -> Unit
-  write_int_be(Self, Int) -> Unit
-  write_int_le(Self, Int) -> Unit
-  write_iter(Self, Iter[Byte]) -> Unit
-  write_object(Self, &Show) -> Unit
-  write_stringview(Self, @string.StringView) -> Unit
-  write_uint64_be(Self, UInt64) -> Unit
-  write_uint64_le(Self, UInt64) -> Unit
-  write_uint_be(Self, UInt) -> Unit
-  write_uint_le(Self, UInt) -> Unit
-}
+fn T::contents(Self) -> Bytes
+fn T::is_empty(Self) -> Bool
+fn T::length(Self) -> Int
+fn T::reset(Self) -> Unit
+fn T::to_bytes(Self) -> Bytes
+fn T::write_byte(Self, Byte) -> Unit
+fn T::write_bytes(Self, Bytes) -> Unit
+fn T::write_bytesview(Self, @bytes.View) -> Unit
+fn T::write_double_be(Self, Double) -> Unit
+fn T::write_double_le(Self, Double) -> Unit
+fn T::write_float_be(Self, Float) -> Unit
+fn T::write_float_le(Self, Float) -> Unit
+fn T::write_int64_be(Self, Int64) -> Unit
+fn T::write_int64_le(Self, Int64) -> Unit
+fn T::write_int_be(Self, Int) -> Unit
+fn T::write_int_le(Self, Int) -> Unit
+fn T::write_iter(Self, Iter[Byte]) -> Unit
+fn T::write_object(Self, &Show) -> Unit
+fn T::write_stringview(Self, @string.StringView) -> Unit
+fn T::write_uint64_be(Self, UInt64) -> Unit
+fn T::write_uint64_le(Self, UInt64) -> Unit
+fn T::write_uint_be(Self, UInt) -> Unit
+fn T::write_uint_le(Self, UInt) -> Unit
 impl Logger for T
 impl Show for T
 

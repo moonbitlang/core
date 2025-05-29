@@ -38,20 +38,18 @@ fn[T] unless(Bool, () -> T) -> T?
 fn[T] when(Bool, () -> T) -> T?
 
 // Types and methods
-impl Option {
-  bind[T, U](T?, (T) -> U?) -> U?
-  filter[T](T?, (T) -> Bool) -> T?
-  flatten[T](T??) -> T?
-  is_empty[T](T?) -> Bool
-  iter[T](T?) -> Iter[T]
-  map[T, U](T?, (T) -> U) -> U?
-  map_or[T, U](T?, U, (T) -> U) -> U
-  map_or_else[T, U](T?, () -> U, (T) -> U) -> U
-  or[T](T?, T) -> T
-  or_default[T : Default](T?) -> T
-  or_else[T](T?, () -> T) -> T
-  or_error[T, Err : Error](T?, Err) -> T!Err
-}
+fn[T, U] Option::bind(T?, (T) -> U?) -> U?
+fn[T] Option::filter(T?, (T) -> Bool) -> T?
+fn[T] Option::flatten(T??) -> T?
+fn[T] Option::is_empty(T?) -> Bool
+fn[T] Option::iter(T?) -> Iter[T]
+fn[T, U] Option::map(T?, (T) -> U) -> U?
+fn[T, U] Option::map_or(T?, U, (T) -> U) -> U
+fn[T, U] Option::map_or_else(T?, () -> U, (T) -> U) -> U
+fn[T] Option::or(T?, T) -> T
+fn[T : Default] Option::or_default(T?) -> T
+fn[T] Option::or_else(T?, () -> T) -> T
+fn[T, Err : Error] Option::or_error(T?, Err) -> T!Err
 impl[X : Compare] Compare for X?
 impl[X] Default for X?
 impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for X?
