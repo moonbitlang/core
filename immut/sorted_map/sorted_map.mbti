@@ -14,6 +14,7 @@ fn[K, V] each(T[K, V], (K, V) -> Unit) -> Unit
 
 fn[K, V] eachi(T[K, V], (Int, K, V) -> Unit) -> Unit
 
+#deprecated
 fn[K, V] elems(T[K, V]) -> Array[V]
 
 fn[K : Compare, V] filter(T[K, V], (V) -> Bool) -> T[K, V]
@@ -69,6 +70,8 @@ fn[K, V] to_array(T[K, V]) -> Array[(K, V)]
 
 fn[K : Show, V : ToJson] to_json(T[K, V]) -> Json
 
+fn[K, V] values(T[K, V]) -> Iter[V]
+
 // Types and methods
 type T[K, V]
 impl T {
@@ -76,6 +79,7 @@ impl T {
   contains[K : Compare, V](Self[K, V], K) -> Bool
   each[K, V](Self[K, V], (K, V) -> Unit) -> Unit
   eachi[K, V](Self[K, V], (Int, K, V) -> Unit) -> Unit
+  #deprecated
   elems[K, V](Self[K, V]) -> Array[V]
   #deprecated
   empty[K, V]() -> Self[K, V]
@@ -113,6 +117,7 @@ impl T {
   size[K, V](Self[K, V]) -> Int
   to_array[K, V](Self[K, V]) -> Array[(K, V)]
   to_json[K : Show, V : ToJson](Self[K, V]) -> Json
+  values[K, V](Self[K, V]) -> Iter[V]
 }
 impl[K : Compare, V : Compare] Compare for T[K, V]
 impl[K, V] Default for T[K, V]
