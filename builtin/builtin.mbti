@@ -57,7 +57,7 @@ fn[T] Array::clear(Self[T]) -> Unit
 fn[T : Eq] Array::contains(Self[T], T) -> Bool
 fn[T : Eq] Array::dedup(Self[T]) -> Unit
 fn[T] Array::drain(Self[T], Int, Int) -> Self[T]
-fn[T] Array::each(Self[T], (T) -> Unit) -> Unit
+fn[T] Array::each(Self[T], (T) -> Unit?Error) -> Unit?Error
 fn[T] Array::eachi(Self[T], (Int, T) -> Unit) -> Unit
 fn[T : Eq] Array::ends_with(Self[T], Self[T]) -> Bool
 fn[T] Array::extract_if(Self[T], (T) -> Bool) -> Self[T]

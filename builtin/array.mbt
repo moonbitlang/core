@@ -409,7 +409,7 @@ pub fn[T] Array::append(self : Array[T], other : Array[T]) -> Unit {
 /// }
 /// ```
 #locals(f)
-pub fn[T] Array::each(self : Array[T], f : (T) -> Unit) -> Unit {
+pub fn[T] Array::each(self : Array[T], f : (T) -> Unit?Error) -> Unit?Error {
   for v in self {
     f(v)
   }
