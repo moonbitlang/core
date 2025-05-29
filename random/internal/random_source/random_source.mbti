@@ -6,9 +6,7 @@ package "moonbitlang/core/random/internal/random_source"
 pub(all) struct ChaCha8 {
   state : State
 }
-impl ChaCha8 {
-  new(Bytes) -> Self
-}
+fn ChaCha8::new(Bytes) -> Self
 
 pub(all) struct State {
   mut buffer : FixedArray[UInt64]
@@ -17,10 +15,8 @@ pub(all) struct State {
   mut n : UInt
   mut c : UInt
 }
-impl State {
-  next(Self) -> (UInt64, Bool)
-  refill(Self) -> Unit
-}
+fn State::next(Self) -> (UInt64, Bool)
+fn State::refill(Self) -> Unit
 
 // Type aliases
 

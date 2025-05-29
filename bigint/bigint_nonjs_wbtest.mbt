@@ -57,7 +57,6 @@ fn check_invariant(a : BigInt) -> Unit! {
         "invariant forall 0 <= i < len. 0 <= limbs[i] < radix is broken: a.limbs[\{i}] = \{a.limbs[i]}",
       )
     }
-
   }
   if a.limbs.iter().take(a.len).any(fn(x) { x > 0 }) {
     guard a.limbs[a.len - 1] > 0 else {
@@ -65,21 +64,18 @@ fn check_invariant(a : BigInt) -> Unit! {
         "invariant (exists 0 <= i < len. limbs[i] > 0) => limbs[len-1] > 0 is broken",
       )
     }
-
   } else {
     guard a.len == 1 && a.limbs[0] == 0 else {
       fail(
         "invariant (forall 0 <= i < len. limbs[i] == 0) => limbs[0] == 0 and len == 1 is broken: len = \{a.len}, limbs = \{a.limbs}",
       )
     }
-
   }
   guard a.limbs.iter().drop(a.len).all(fn(x) { x == 0 }) else {
     fail(
       "invariant forall len <= i < limbs.length(). limbs[i] == 0 is broken: len = \{a.len}, limbs = \{a.limbs}",
     )
   }
-
 }
 
 ///|
@@ -141,4 +137,16 @@ test "BigInt::ctz" {
   inspect(174056N.ctz(), content="3") // 101010011111101000
   inspect((1N << 31).ctz(), content="31")
   inspect((1N << 63).ctz(), content="63")
+}
+
+///|
+test {
+  inspect(
+    MyBigInt(-9223372036854775809N),
+    content="{limbs : [1, 2147483648, 0], sign : Negative, len : 2 }",
+  ) // Int64.min_value - 1
+  inspect(
+    MyBigInt(-9223372036854775810N),
+    content="{limbs : [2, 2147483648, 0], sign : Negative, len : 2 }",
+  ) // Int64.min_value - 2
 }

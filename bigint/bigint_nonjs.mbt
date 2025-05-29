@@ -1913,3 +1913,45 @@ fn unchecked_double_to_int(d : Double) -> Int = "%f64_to_i32"
 
 ///|
 fn unsafe_fixedarray_to_bytes(arr : FixedArray[Byte]) -> Bytes = "%identity"
+
+///|
+fn can_convert_to_int(x : BigInt) -> Bool {
+  // bigint range from [-(2^32 - 1), 2^32 - 1] has len == 1. But here we only
+  // want bigint from [-2^31, 2^31 - 1]
+  x.len == 1 &&
+  (if x.sign == Negative {
+    x.limbs[0] <= 0x80000000
+  } else {
+    x.limbs[0] < 0x80000000
+  })
+}
+
+///|
+fn can_convert_to_int64(x : BigInt) -> Bool {
+  x.len <= 2 &&
+  (if x.sign == Negative {
+    x.limbs[1] < 0x80000000 || (x.limbs[1] == 0x80000000 && x.limbs[0] == 0)
+  } else {
+    x.limbs[1] < 0x80000000
+  })
+}
+
+///|
+fn is_neg(x : BigInt) -> Bool {
+  x.sign == Negative
+}
+
+///|
+test "limb length" {
+  inspect(0N.len, content="1")
+  inspect(1N.len, content="1")
+  inspect((-1N).len, content="1")
+  inspect(2147483647N.len, content="1") // Int.max_value
+  inspect((-2147483648N).len, content="1") // Int.min_value
+  inspect(2147483648N.len, content="1") // Int.max_value + 1
+  inspect((-2147483649N).len, content="1") // Int.min_value - 1
+  inspect(4294967295N.len, content="1") // 2^32 - 1
+  inspect((-4294967295N).len, content="1") // -(2^32 - 1)
+  inspect(4294967296N.len, content="2") // 2^32
+  inspect((-4294967296N).len, content="2") // -2^32
+}

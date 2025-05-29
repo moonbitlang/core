@@ -475,8 +475,15 @@ pub fn[K, V] keys(self : T[K, V]) -> Iter[K] {
 
 ///|
 /// Returns all values of the map
-pub fn[K, V] elems(self : T[K, V]) -> Iter[V] {
+pub fn[K, V] values(self : T[K, V]) -> Iter[V] {
   self.iter().map(fn { (_, v) => v })
+}
+
+///|
+#deprecated("Use `values` instead")
+#coverage.skip
+pub fn[K, V] elems(self : T[K, V]) -> Iter[V] {
+  self.values()
 }
 
 ///|
@@ -495,7 +502,6 @@ pub fn[K, V] iter2(self : T[K, V]) -> Iter2[K, V] {
   Iter2::new(fn(yield_) {
     for kv in self {
       guard yield_(kv.0, kv.1) is IterContinue else { break IterEnd }
-
     } else {
       IterContinue
     }
@@ -555,7 +561,6 @@ pub impl[K : Eq + Hash, V : Eq] Eq for T[K, V] with op_equal(self, other) {
   guard self.size() == other.size() else { return false }
   for kv in self {
     guard other.get(kv.0) is Some(v) && v == kv.1 else { return false }
-
   }
   true
 }

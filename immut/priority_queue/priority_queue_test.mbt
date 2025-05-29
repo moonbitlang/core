@@ -167,7 +167,7 @@ test "equal" {
 ///|
 test "complex" {
   fn rand(upper : Int) -> Int {
-    let rng = @random.new()
+    let rng = @random.Rand::new()
     rng.int(limit=upper)
   }
 

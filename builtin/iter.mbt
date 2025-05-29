@@ -1024,6 +1024,7 @@ pub fn[T : Compare] Iter::minimum(self : Iter[T]) -> T? {
 ///   assert_eq(result.get(2), Some([2, 2, 2]))
 ///   assert_eq(result.get(3), Some([3]))
 /// }
+#deprecated
 pub fn[T, K : Eq + Hash] Iter::group_by(
   self : Iter[T],
   f : (T) -> K
