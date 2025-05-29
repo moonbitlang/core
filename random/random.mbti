@@ -28,17 +28,15 @@ fn uint64(Rand, limit~ : UInt64 = ..) -> UInt64
 
 // Types and methods
 type Rand
-impl Rand {
-  bigint(Self, Int) -> @bigint.BigInt
-  double(Self) -> Double
-  float(Self) -> Float
-  int(Self, limit~ : Int = ..) -> Int
-  int64(Self, limit~ : Int64 = ..) -> Int64
-  new(generator~ : &Source = ..) -> Self
-  shuffle(Self, Int, (Int, Int) -> Unit) -> Unit
-  uint(Self, limit~ : UInt = ..) -> UInt
-  uint64(Self, limit~ : UInt64 = ..) -> UInt64
-}
+fn Rand::bigint(Self, Int) -> @bigint.BigInt
+fn Rand::double(Self) -> Double
+fn Rand::float(Self) -> Float
+fn Rand::int(Self, limit~ : Int = ..) -> Int
+fn Rand::int64(Self, limit~ : Int64 = ..) -> Int64
+fn Rand::new(generator~ : &Source = ..) -> Self
+fn Rand::shuffle(Self, Int, (Int, Int) -> Unit) -> Unit
+fn Rand::uint(Self, limit~ : UInt = ..) -> UInt
+fn Rand::uint64(Self, limit~ : UInt64 = ..) -> UInt64
 
 // Type aliases
 
