@@ -195,6 +195,35 @@ pub fn[K : Hash + Eq, V] Map::get(self : Map[K, V], key : K) -> V? {
 }
 
 ///|
+/// Get the value associated with the view of a key.
+/// When searching the map, instead of comparing keys directly,
+/// a view of keys, obtained by the parameter `view`, is used.
+/// This is useful for e.g. querying a `Map` of `String` with `@string.View`.
+///
+/// The `view` function and the `Hash` implementation of `View` should satisfy:
+/// ```skip
+/// view(key).hash() == key.hash() 
+/// ```
+#locals(view)
+pub fn Map::get_by_view[K, View : Hash + Eq, Value](
+  self : Map[K, Value],
+  key : View,
+  view~ : (K) -> View
+) -> Value? {
+  let hash = key.hash()
+  for i = 0, idx = hash & self.capacity_mask {
+    guard self.entries[idx] is Some(entry) else { break None }
+    if entry.hash == hash && view(entry.key) == key {
+      break Some(entry.value)
+    }
+    if i > entry.psl {
+      break None
+    }
+    continue i + 1, (idx + 1) & self.capacity_mask
+  }
+}
+
+///|
 #deprecated("Use `get` instead. `op_get` will return `V` instead of `Option[V]` in the future.")
 pub fn[K : Hash + Eq, V] Map::op_get(self : Map[K, V], key : K) -> V? {
   self.get(key)
