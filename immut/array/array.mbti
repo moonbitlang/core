@@ -26,6 +26,8 @@ fn[A] from_array(Array[A]) -> T[A]
 
 fn[A] from_iter(Iter[A]) -> T[A]
 
+fn[A] get(T[A], Int) -> A?
+
 fn[A] is_empty(T[A]) -> Bool
 
 fn[A] iter(T[A]) -> Iter[A]
@@ -69,6 +71,7 @@ impl T {
   from_array[A](Array[A]) -> Self[A]
   #deprecated
   from_iter[A](Iter[A]) -> Self[A]
+  get[A](Self[A], Int) -> A?
   is_empty[A](Self[A]) -> Bool
   iter[A](Self[A]) -> Iter[A]
   length[A](Self[A]) -> Int
