@@ -342,3 +342,8 @@ pub impl Add for Bytes with op_add(self : Bytes, other : Bytes) -> Bytes {
   }
   unsafe_to_bytes(rv)
 }
+
+///|
+pub impl ToJson for Bytes with to_json(self : Bytes) -> Json {
+  self.to_array().to_json()
+}

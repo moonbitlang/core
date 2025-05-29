@@ -108,6 +108,28 @@ pub impl FromJson for @string.View with from_json(json, path) {
 }
 
 ///|
+pub impl FromJson for Bytes with from_json(json, path) {
+  guard json is Array(a) else {
+    decode_error(path, "Bytes::from_json: expected array of bytes")
+  }
+  let len = a.length()
+  if len == 0 {
+    return b""
+  }
+  let res = @buffer.new(size_hint=len)
+  for i in 0..<len {
+    guard a[i] is Number(n) else {
+      decode_error(path.add_index(i), "Bytes::from_json: expected byte")
+    }
+    if n < 0 || n > 255 {
+      decode_error(path.add_index(i), "Bytes::from_json: byte out of range")
+    }
+    res.write_byte(n.to_int().to_byte())
+  }
+  res.to_bytes()
+}
+
+///|
 pub impl FromJson for Char with from_json(json, path) {
   guard json is String(a) else {
     decode_error(path, "Char::from_json: expected string")
@@ -227,7 +249,6 @@ pub impl FromJson for Unit with from_json(json, path) {
   guard json is Null else {
     decode_error(path, "Unit::from_json: expected null")
   }
-
 }
 
 ///|
