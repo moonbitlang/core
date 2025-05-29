@@ -39,7 +39,6 @@ pub fn[T] FixedArray::iter(self : FixedArray[T]) -> Iter[T] {
   Iter::new(fn(yield_) {
     for v in self {
       guard yield_(v) is IterContinue else { break IterEnd }
-
     } else {
       IterContinue
     }
@@ -72,7 +71,6 @@ pub fn[T] FixedArray::iter2(self : FixedArray[T]) -> Iter2[Int, T] {
   Iter2::new(fn(yield_) {
     for i, v in self {
       guard yield_(i, v) is IterContinue else { break IterEnd }
-
     } else {
       IterContinue
     }

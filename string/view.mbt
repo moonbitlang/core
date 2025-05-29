@@ -278,7 +278,6 @@ pub fn View::iter(self : View) -> Iter[Char] {
         }
       }
       guard yield_(c1.unsafe_to_char()) is IterContinue else { break IterEnd }
-
     } else {
       IterContinue
     }
@@ -302,7 +301,6 @@ pub fn View::iter2(self : View) -> Iter2[Int, Char] {
       guard yield_(n, c1.unsafe_to_char()) is IterContinue else {
         break IterEnd
       }
-
     } else {
       IterContinue
     }
@@ -324,7 +322,6 @@ pub fn View::rev_iter(self : View) -> Iter[Char] {
         }
       }
       guard yield_(c1.unsafe_to_char()) is IterContinue else { break IterEnd }
-
     } else {
       IterContinue
     }
@@ -345,7 +342,6 @@ pub impl Eq for View with op_equal(self, other) {
       other.str.unsafe_charcode_at(other.start + i) else {
       return false
     }
-
   }
   true
 }
@@ -368,7 +364,6 @@ pub impl Compare for View with compare(self, other) {
       .unsafe_charcode_at(self.start + i)
       .compare(other.str.unsafe_charcode_at(other.start + i))
     guard cmp == 0 else { return cmp }
-
   }
   0
 }

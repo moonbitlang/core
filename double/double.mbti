@@ -90,52 +90,50 @@ fn to_uint(Double) -> UInt
 fn trunc(Double) -> Double
 
 // Types and methods
-impl Double {
-  abs(Double) -> Double
-  acos(Double) -> Double
-  acosh(Double) -> Double
-  asin(Double) -> Double
-  asinh(Double) -> Double
-  atan(Double) -> Double
-  atan2(Double, Double) -> Double
-  atanh(Double) -> Double
-  cbrt(Double) -> Double
-  ceil(Double) -> Double
-  cos(Double) -> Double
-  cosh(Double) -> Double
-  exp(Double) -> Double
-  expm1(Double) -> Double
-  floor(Double) -> Double
-  from_int(Int) -> Double
-  hypot(Double, Double) -> Double
-  #deprecated
-  inf(Int) -> Double
-  is_close(Double, Double, relative_tolerance~ : Double = .., absolute_tolerance~ : Double = ..) -> Bool
-  is_inf(Double) -> Bool
-  is_nan(Double) -> Bool
-  is_neg_inf(Double) -> Bool
-  is_pos_inf(Double) -> Bool
-  ln(Double) -> Double
-  ln_1p(Double) -> Double
-  log10(Double) -> Double
-  log2(Double) -> Double
-  #deprecated
-  min_normal() -> Double
-  #deprecated
-  nan() -> Double
-  pow(Double, Double) -> Double
-  round(Double) -> Double
-  signum(Double) -> Double
-  sin(Double) -> Double
-  sinh(Double) -> Double
-  tan(Double) -> Double
-  tanh(Double) -> Double
-  to_be_bytes(Double) -> Bytes
-  to_le_bytes(Double) -> Bytes
-  to_string(Double) -> String
-  to_uint(Double) -> UInt
-  trunc(Double) -> Double
-}
+fn Double::abs(Double) -> Double
+fn Double::acos(Double) -> Double
+fn Double::acosh(Double) -> Double
+fn Double::asin(Double) -> Double
+fn Double::asinh(Double) -> Double
+fn Double::atan(Double) -> Double
+fn Double::atan2(Double, Double) -> Double
+fn Double::atanh(Double) -> Double
+fn Double::cbrt(Double) -> Double
+fn Double::ceil(Double) -> Double
+fn Double::cos(Double) -> Double
+fn Double::cosh(Double) -> Double
+fn Double::exp(Double) -> Double
+fn Double::expm1(Double) -> Double
+fn Double::floor(Double) -> Double
+fn Double::from_int(Int) -> Double
+fn Double::hypot(Double, Double) -> Double
+#deprecated
+fn Double::inf(Int) -> Double
+fn Double::is_close(Double, Double, relative_tolerance~ : Double = .., absolute_tolerance~ : Double = ..) -> Bool
+fn Double::is_inf(Double) -> Bool
+fn Double::is_nan(Double) -> Bool
+fn Double::is_neg_inf(Double) -> Bool
+fn Double::is_pos_inf(Double) -> Bool
+fn Double::ln(Double) -> Double
+fn Double::ln_1p(Double) -> Double
+fn Double::log10(Double) -> Double
+fn Double::log2(Double) -> Double
+#deprecated
+fn Double::min_normal() -> Double
+#deprecated
+fn Double::nan() -> Double
+fn Double::pow(Double, Double) -> Double
+fn Double::round(Double) -> Double
+fn Double::signum(Double) -> Double
+fn Double::sin(Double) -> Double
+fn Double::sinh(Double) -> Double
+fn Double::tan(Double) -> Double
+fn Double::tanh(Double) -> Double
+fn Double::to_be_bytes(Double) -> Bytes
+fn Double::to_le_bytes(Double) -> Bytes
+fn Double::to_string(Double) -> String
+fn Double::to_uint(Double) -> UInt
+fn Double::trunc(Double) -> Double
 impl Hash for Double
 impl Mod for Double
 impl Show for Double

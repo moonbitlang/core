@@ -26,18 +26,16 @@ fn to_double(Decimal) -> Double!StrConvError
 
 // Types and methods
 type Decimal
-impl Decimal {
-  #deprecated
-  from_int64(Int64) -> Self
-  #deprecated
-  new() -> Self
-  #deprecated
-  parse_decimal(String) -> Self!StrConvError
-  #deprecated
-  shift(Self, Int) -> Unit
-  #deprecated
-  to_double(Self) -> Double!StrConvError
-}
+#deprecated
+fn Decimal::from_int64(Int64) -> Self
+#deprecated
+fn Decimal::new() -> Self
+#deprecated
+fn Decimal::parse_decimal(String) -> Self!StrConvError
+#deprecated
+fn Decimal::shift(Self, Int) -> Unit
+#deprecated
+fn Decimal::to_double(Self) -> Double!StrConvError
 impl Show for Decimal
 
 pub(all) type! StrConvError String

@@ -225,7 +225,6 @@ pub fn View::iter(self : View) -> Iter[Byte] {
   Iter::new(fn(yield_) {
     for i in 0..<self.len() {
       guard yield_(self[i]) is IterContinue else { break IterEnd }
-
     } else {
       IterContinue
     }
@@ -629,7 +628,6 @@ pub impl Eq for View with op_equal(self, other) -> Bool {
   guard self.len() == other.len() else { return false }
   for i in 0..<self.len() {
     guard self.unsafe_get(i) == other.unsafe_get(i) else { return false }
-
   }
   true
 }
@@ -670,7 +668,6 @@ pub impl Compare for View with compare(self, other) -> Int {
     let b2 = other.unsafe_get(i)
     let cmp = b1.compare(b2)
     guard cmp == 0 else { return cmp }
-
   }
   0
 }
