@@ -683,3 +683,13 @@ pub fn View::data(self : View) -> Bytes {
 pub fn View::start_offset(self : View) -> Int {
   self.start()
 }
+
+///|
+pub fn View::to_bytes(self : View) -> Bytes {
+  if self.len() == 0 && self.len() == self.bytes().length() {
+    return self.bytes()
+  }
+  let bytes = FixedArray::make(self.len(), (0 : Byte))
+  bytes.blit_from_bytes(0, self.bytes(), self.start_offset(), self.len())
+  unsafe_to_bytes(bytes)
+}
