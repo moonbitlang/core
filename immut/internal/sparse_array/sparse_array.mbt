@@ -70,7 +70,7 @@ pub fn[X] add(self : SparseArray[X], idx : Int, value : X) -> SparseArray[X] {
 /// `union(self: SparseArray[X], other: SparseArray[X]) -> SparseArray[X]`
 /// 
 /// Combine two sparse arrays into one.
-pub fn[X] union(
+pub fn[X] SparseArray::union(
   self : SparseArray[X],
   other : SparseArray[X],
   union : (X, X) -> X
@@ -106,7 +106,7 @@ pub fn[X] union(
 /// `intersection(self: SparseArray[X], other: SparseArray[X], f: (X, X) -> X) -> SparseArray[X]`
 ///
 /// Only keep indices present in both sparse arrays, and merge values with f.
-pub fn[X] intersection(
+pub fn[X] SparseArray::intersection(
   self : SparseArray[X],
   other : SparseArray[X],
   f : (X, X) -> X
@@ -132,7 +132,7 @@ pub fn[X] intersection(
 /// `difference(self: SparseArray[X], other: SparseArray[X]) -> SparseArray[X]`
 ///
 /// Keep indices and values only present in self but not in other.
-pub fn[X] difference(
+pub fn[X] SparseArray::difference(
   self : SparseArray[X],
   other : SparseArray[X]
 ) -> SparseArray[X] {
