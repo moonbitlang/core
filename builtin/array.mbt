@@ -409,7 +409,7 @@ pub fn[T] Array::append(self : Array[T], other : Array[T]) -> Unit {
 /// }
 /// ```
 #locals(f)
-pub fn[T] Array::each(self : Array[T], f : (T) -> Unit) -> Unit {
+pub fn[T] Array::each(self : Array[T], f : (T) -> Unit?Error) -> Unit?Error {
   for v in self {
     f(v)
   }
@@ -1635,6 +1635,45 @@ pub fn[T] Array::chunk_by(
     chunks.push(chunk)
   }
   chunks
+}
+
+///|
+/// Generates overlapping subslices (sliding windows) of the specified size.
+///
+/// Parameters:
+///
+/// * `array` : The array to be processed with sliding windows.
+/// * `size` : The window length. Must be a positive integer.
+///
+/// Returns an array of slices, where each inner slice is a contiguous subslice
+/// of the original array. Windows are produced with a step size of 1. If the
+/// original array's length is less than the specified window size, the result
+/// will be an empty array.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "windows" {
+///   let arr = [1, 2, 3, 4, 5]
+///   let windows = arr.windows(2)
+///   inspect!(windows, content="[[1, 2], [2, 3], [3, 4], [4, 5]]")
+/// }
+///
+/// test "empty_windows" {
+///   let arr : Array[Int] = [1, 2]
+///   inspect!(arr.windows(3), content="[]")
+/// }
+/// ```
+pub fn[T] Array::windows(self : Array[T], size : Int) -> Array[ArrayView[T]] {
+  let len = self.length() - size + 1
+  if len < 1 {
+    return []
+  }
+  let windows = Array::new(capacity=len)
+  for i in 0..<len {
+    windows.push(self[i:i + size])
+  }
+  windows
 }
 
 ///|

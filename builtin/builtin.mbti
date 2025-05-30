@@ -57,7 +57,7 @@ fn[T] Array::clear(Self[T]) -> Unit
 fn[T : Eq] Array::contains(Self[T], T) -> Bool
 fn[T : Eq] Array::dedup(Self[T]) -> Unit
 fn[T] Array::drain(Self[T], Int, Int) -> Self[T]
-fn[T] Array::each(Self[T], (T) -> Unit) -> Unit
+fn[T] Array::each(Self[T], (T) -> Unit?Error) -> Unit?Error
 fn[T] Array::eachi(Self[T], (Int, T) -> Unit) -> Unit
 fn[T : Eq] Array::ends_with(Self[T], Self[T]) -> Bool
 fn[T] Array::extract_if(Self[T], (T) -> Bool) -> Self[T]
@@ -122,6 +122,7 @@ fn[A] Array::unsafe_blit_fixed(Self[A], Int, FixedArray[A], Int, Int) -> Unit
 fn[T] Array::unsafe_get(Self[T], Int) -> T
 fn[T] Array::unsafe_pop(Self[T]) -> T
 fn[A] Array::unsafe_pop_back(Self[A]) -> Unit
+fn[T] Array::windows(Self[T], Int) -> Self[ArrayView[T]]
 impl[T] Add for Array[T]
 impl[T : Compare] Compare for Array[T]
 impl[T] Default for Array[T]
@@ -188,6 +189,7 @@ fn[T, K : Eq + Hash] Iter::group_by(Self[T], (T) -> K) -> Map[K, Array[T]]
 fn[A] Iter::head(Self[A]) -> A?
 fn[A] Iter::intersperse(Self[A], A) -> Self[A]
 fn[T] Iter::iter(Self[T]) -> Self[T]
+fn[T] Iter::iter2(Self[T]) -> Iter2[Int, T]
 fn Iter::join(Self[String], String) -> String
 fn[T] Iter::just_run(Self[T], (T) -> IterResult) -> Unit
 fn[A] Iter::last(Self[A]) -> A?
