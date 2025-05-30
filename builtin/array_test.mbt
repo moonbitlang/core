@@ -669,3 +669,23 @@ test "each with error callback" {
   assert_true(v is Err(_))
   inspect(sum, content="1")
 }
+
+///|
+test "each with error callback 2" {
+  let arr = [1, 2, 3]
+  let mut sum = 0
+  try
+    arr.each(fn(x) {
+      if x == 2 {
+        fail("Error at 2")
+      }
+      sum += x
+    }) catch {
+    Failure(_) => {
+      inspect(sum, content="1")
+      assert_true(true)
+    }
+  } else {
+    _ => assert_true(false)
+  }
+}
