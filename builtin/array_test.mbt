@@ -655,3 +655,17 @@ test "array view implicit conversion" {
   let arr = [1, 2, 3]
   inspect(f(arr), content="3")
 }
+
+///|
+test "each with error callback" {
+  let arr = [1, 2, 3]
+  let mut sum = 0
+  let v = try? arr.each(fn(x) {
+      if x == 2 {
+        fail("Error at 2")
+      }
+      sum += x
+    })
+  assert_true(v is Err(_))
+  inspect(sum, content="1")
+}
