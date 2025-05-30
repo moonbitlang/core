@@ -218,3 +218,26 @@ fn winsorize(data : Array[Double], pct : Double) -> Unit {
     }
   }
 }
+
+///|
+test {
+  let data = [1.1, 21.4, 2.2, 3.3, 4.5, 12.5, 33.3, 14.4]
+  let summary = Summary::new(data, 3)
+  assert_true(summary.sum.is_close(92.7))
+  assert_true(summary.min.is_close(1.1))
+  assert_true(summary.max.is_close(33.3))
+  assert_true(summary.mean.is_close(11.5875))
+  assert_true(summary.median.is_close(8.5))
+  assert_true(summary.var.is_close(127.64125))
+  assert_true(summary.std_dev.is_close(11.297842714430043))
+  assert_true(summary.std_dev_pct.is_close(97.50026075020534))
+  assert_true(summary.median_abs_dev.is_close(9.04386))
+  assert_true(summary.median_abs_dev_pct.is_close(106.39835294117646))
+  let (q1, q2, q3) = summary.quartiles
+  assert_true(q1.is_close(3.025))
+  assert_true(q2.is_close(8.5))
+  assert_true(q3.is_close(16.15))
+  assert_true(summary.iqr.is_close(13.125))
+  assert_true(summary.batch_size == 3)
+  assert_true(summary.runs == 8)
+}
