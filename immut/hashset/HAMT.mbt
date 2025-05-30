@@ -180,7 +180,7 @@ pub fn[A] size(self : T[A]) -> Int {
 
 ///|
 /// Union two hashsets
-pub fn[K : Eq + Hash] union(self : T[K], other : T[K]) -> T[K] {
+pub fn[K : Eq + Hash] T::union(self : T[K], other : T[K]) -> T[K] {
   match (self, other) {
     (_, Empty) => self
     (Empty, _) => other
@@ -194,7 +194,7 @@ pub fn[K : Eq + Hash] union(self : T[K], other : T[K]) -> T[K] {
 
 ///|
 /// Intersect two hashsets
-pub fn[K : Eq + Hash] intersection(self : T[K], other : T[K]) -> T[K] {
+pub fn[K : Eq + Hash] T::intersection(self : T[K], other : T[K]) -> T[K] {
   match (self, other) {
     (_, Empty) => Empty
     (Empty, _) => Empty
@@ -223,7 +223,7 @@ pub fn[K : Eq + Hash] intersection(self : T[K], other : T[K]) -> T[K] {
 
 ///|
 /// Difference of two hashsets: elements in `self` but not in `other`
-pub fn[K : Eq + Hash] difference(self : T[K], other : T[K]) -> T[K] {
+pub fn[K : Eq + Hash] T::difference(self : T[K], other : T[K]) -> T[K] {
   match (self, other) {
     (Empty, _) => Empty
     (_, Empty) => self

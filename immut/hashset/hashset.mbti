@@ -9,15 +9,11 @@ fn[A : Eq + Hash] add(T[A], A) -> T[A]
 
 fn[A : Eq + Hash] contains(T[A], A) -> Bool
 
-fn[K : Eq + Hash] difference(T[K], T[K]) -> T[K]
-
 fn[A] each(T[A], (A) -> Unit) -> Unit
 
 fn[A : Eq + Hash] from_array(Array[A]) -> T[A]
 
 fn[A : Eq + Hash] from_iter(Iter[A]) -> T[A]
-
-fn[K : Eq + Hash] intersection(T[K], T[K]) -> T[K]
 
 fn[A] is_empty(T[A]) -> Bool
 
@@ -30,8 +26,6 @@ fn[A : Eq + Hash] of(FixedArray[A]) -> T[A]
 fn[A : Eq + Hash] remove(T[A], A) -> T[A]
 
 fn[A] size(T[A]) -> Int
-
-fn[K : Eq + Hash] union(T[K], T[K]) -> T[K]
 
 // Types and methods
 type T[A]
