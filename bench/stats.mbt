@@ -218,3 +218,24 @@ fn winsorize(data : Array[Double], pct : Double) -> Unit {
     }
   }
 }
+
+///|
+test {
+  let data = [1.1, 21.4, 2.2, 3.3, 4.5, 12.5, 33.3, 14.4]
+  @json.inspect(Summary::new(data, 0), content={
+    "sum": 92.7,
+    "min": 1.1,
+    "max": 33.3,
+    "mean": 11.5875,
+    "median": 8.5,
+    "var": 127.64125,
+    "std_dev": 11.297842714430043,
+    "std_dev_pct": 97.50026075020534,
+    "median_abs_dev": 9.043859999999999,
+    "median_abs_dev_pct": 106.39835294117646,
+    "quartiles": [3.025, 8.5, 16.15],
+    "iqr": 13.124999999999998,
+    "batch_size": 0,
+    "runs": 8,
+  })
+}
