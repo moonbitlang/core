@@ -17,8 +17,6 @@ fn[X] singleton(Int, X) -> SparseArray[X]
 
 fn[X] size(SparseArray[X]) -> Int
 
-fn[X] union(SparseArray[X], SparseArray[X], (X, X) -> X) -> SparseArray[X]
-
 // Types and methods
 pub(all) type Bitset UInt
 fn Bitset::add(Self, Int) -> Self
@@ -37,8 +35,10 @@ pub(all) struct SparseArray[X] {
   data : FixedArray[X]
 }
 fn[X] SparseArray::add(Self[X], Int, X) -> Self[X]
+fn[X] SparseArray::difference(Self[X], Self[X]) -> Self[X]
 fn[X] SparseArray::each(Self[X], (X) -> Unit) -> Unit
 fn[X] SparseArray::has(Self[X], Int) -> Bool
+fn[X] SparseArray::intersection(Self[X], Self[X], (X, X) -> X) -> Self[X]
 fn[X] SparseArray::op_get(Self[X], Int) -> X?
 fn[X] SparseArray::replace(Self[X], Int, X) -> Self[X]
 fn[X] SparseArray::size(Self[X]) -> Int

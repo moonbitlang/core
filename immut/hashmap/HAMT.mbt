@@ -311,7 +311,7 @@ pub fn[K, V] size(self : T[K, V]) -> Int {
 
 ///|
 /// Union two hashmaps
-pub fn[K : Eq + Hash, V] union(self : T[K, V], other : T[K, V]) -> T[K, V] {
+pub fn[K : Eq + Hash, V] T::union(self : T[K, V], other : T[K, V]) -> T[K, V] {
   match (self, other) {
     (_, Empty) => self
     (Empty, _) => other
@@ -326,6 +326,136 @@ pub fn[K : Eq + Hash, V] union(self : T[K, V], other : T[K, V]) -> T[K, V] {
     (Branch(sa1), Branch(sa2)) =>
       Branch(sa1.union(sa2, fn(m1, m2) { m1.union(m2) }))
     (_, _) => self.iter().fold(init=other, fn(m, kv) { m.add(kv.0, kv.1) })
+  }
+}
+
+///|
+/// Union two hashmaps with a function
+pub fn[K : Eq + Hash, V] T::union_with(
+  self : T[K, V],
+  other : T[K, V],
+  f : (K, V, V) -> V
+) -> T[K, V] {
+  match (self, other) {
+    (_, Empty) => self
+    (Empty, _) => other
+    (_, Leaf(k, v)) =>
+      match self.get(k) {
+        Some(v1) => self.add(k, f(k, v1, v))
+        None => self.add(k, v)
+      }
+    (Leaf(k, v), _) =>
+      match other.get(k) {
+        Some(v2) => other.add(k, f(k, v, v2))
+        None => other.add(k, v)
+      }
+    (Branch(sa1), Branch(sa2)) =>
+      Branch(sa1.union(sa2, fn(m1, m2) { m1.union_with(m2, f) }))
+    (_, _) =>
+      self
+      .iter()
+      .fold(init=other, fn(m, kv) {
+        match m.get(kv.0) {
+          Some(v2) => m.add(kv.0, f(kv.0, kv.1, v2))
+          None => m.add(kv.0, kv.1)
+        }
+      })
+  }
+}
+
+///|
+/// Intersect two hashmaps
+pub fn[K : Eq + Hash, V] T::intersection(
+  self : T[K, V],
+  other : T[K, V]
+) -> T[K, V] {
+  match (self, other) {
+    (_, Empty) => Empty
+    (Empty, _) => Empty
+    (Leaf(k, v), _) =>
+      match other.get(k) {
+        Some(_) => Leaf(k, v)
+        None => Empty
+      }
+    (_, Leaf(k, _)) =>
+      match self.get(k) {
+        Some(v) => Leaf(k, v)
+        None => Empty
+      }
+    (Branch(sa1), Branch(sa2)) =>
+      Branch(sa1.intersection(sa2, fn(m1, m2) { m1.intersection(m2) }))
+    (_, _) =>
+      self
+      .iter()
+      .fold(init=Empty, fn(m, kv) {
+        if other.get(kv.0) is Some(_) {
+          m.add(kv.0, kv.1)
+        } else {
+          m
+        }
+      })
+  }
+}
+
+///|
+/// Intersection two hashmaps with a function
+pub fn[K : Eq + Hash, V] T::intersection_with(
+  self : T[K, V],
+  other : T[K, V],
+  f : (K, V, V) -> V
+) -> T[K, V] {
+  match (self, other) {
+    (_, Empty) => Empty
+    (Empty, _) => Empty
+    (Leaf(k, v), _) =>
+      match other.get(k) {
+        Some(v2) => Leaf(k, f(k, v, v2))
+        None => Empty
+      }
+    (_, Leaf(k, v2)) =>
+      match self.get(k) {
+        Some(v1) => Leaf(k, f(k, v1, v2))
+        None => Empty
+      }
+    (Branch(sa1), Branch(sa2)) =>
+      Branch(sa1.intersection(sa2, fn(m1, m2) { m1.intersection_with(m2, f) }))
+    (_, _) =>
+      self
+      .iter()
+      .fold(init=Empty, fn(m, kv) {
+        match other.get(kv.0) {
+          Some(v2) => m.add(kv.0, f(kv.0, kv.1, v2))
+          None => m
+        }
+      })
+  }
+}
+
+///|
+/// Difference of two hashmaps: elements in `self` but not in `other`
+pub fn[K : Eq + Hash, V] T::difference(
+  self : T[K, V],
+  other : T[K, V]
+) -> T[K, V] {
+  match (self, other) {
+    (Empty, _) => Empty
+    (_, Empty) => self
+    (Leaf(k, v), _) =>
+      match other.get(k) {
+        Some(_) => Empty
+        None => Leaf(k, v)
+      }
+    (Branch(sa1), Branch(sa2)) => Branch(sa1.difference(sa2))
+    (_, _) =>
+      self
+      .iter()
+      .fold(init=Empty, fn(m, kv) {
+        if other.get(kv.0) is None {
+          m.add(kv.0, kv.1)
+        } else {
+          m
+        }
+      })
   }
 }
 
