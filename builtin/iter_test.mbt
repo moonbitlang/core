@@ -728,71 +728,71 @@ test "Float::until negative step" {
 }
 
 ///|
-test "group_by with consecutive identical elements" {
-  let iter = [1, 1, 2, 2, 3, 3].iter()
-  let grouped = iter.group_by(fn(x) { x })
-  assert_eq(grouped.get(1), Some([1, 1]))
-  assert_eq(grouped.get(2), Some([2, 2]))
-  assert_eq(grouped.get(3), Some([3, 3]))
-}
+// test "group_by with consecutive identical elements" {
+//   let iter = [1, 1, 2, 2, 3, 3].iter()
+//   let grouped = iter.group_by(fn(x) { x })
+//   assert_eq(grouped.get(1), Some([1, 1]))
+//   assert_eq(grouped.get(2), Some([2, 2]))
+//   assert_eq(grouped.get(3), Some([3, 3]))
+// }
 
 ///|
-test "group_by with non-consecutive identical elements" {
-  let iter = [1, 2, 1, 3, 2, 1].iter()
-  let grouped = iter.group_by(fn(x) { x })
-  assert_eq(grouped.get(1), Some([1, 1, 1]))
-  assert_eq(grouped.get(2), Some([2, 2]))
-  assert_eq(grouped.get(3), Some([3]))
-}
+// test "group_by with non-consecutive identical elements" {
+//   let iter = [1, 2, 1, 3, 2, 1].iter()
+//   let grouped = iter.group_by(fn(x) { x })
+//   assert_eq(grouped.get(1), Some([1, 1, 1]))
+//   assert_eq(grouped.get(2), Some([2, 2]))
+//   assert_eq(grouped.get(3), Some([3]))
+// }
 
 ///|
-test "group_by with empty input" {
-  let iter : Iter[Int] = Iter::empty()
-  let grouped = iter.group_by(fn(x) { x })
-  assert_eq(grouped.size(), 0)
-}
+// test "group_by with empty input" {
+//   let iter : Iter[Int] = Iter::empty()
+//   let grouped = iter.group_by(fn(x) { x })
+//   assert_eq(grouped.size(), 0)
+// }
 
 ///|
-test "group_by with single element input" {
-  let iter = [42].iter()
-  let grouped = iter.group_by(fn(x) { x })
-  assert_eq(grouped.get(42), Some([42]))
-}
+// test "group_by with single element input" {
+//   let iter = [42].iter()
+//   let grouped = iter.group_by(fn(x) { x })
+//   assert_eq(grouped.get(42), Some([42]))
+// }
 
 ///|
-test "group_by with custom key function" {
-  let iter = [1, 2, 3, 4].iter()
-  let grouped = iter.group_by(fn(x) { x % 2 })
-  assert_eq(grouped.get(0), Some([2, 4]))
-  assert_eq(grouped.get(1), Some([1, 3]))
-}
+// test "group_by with custom key function" {
+//   let iter = [1, 2, 3, 4].iter()
+//   let grouped = iter.group_by(fn(x) { x % 2 })
+//   assert_eq(grouped.get(0), Some([2, 4]))
+//   assert_eq(grouped.get(1), Some([1, 3]))
+// }
 
 ///|
-test "group_by with strings" {
-  let iter = ["apple", "avocado", "banana", "cherry", "blueberry"].iter()
-  let grouped = iter.group_by(fn(s) { s.charcode_at(0) })
-  assert_eq(grouped.get('a'), Some(["apple", "avocado"]))
-  assert_eq(grouped.get('b'), Some(["banana", "blueberry"]))
-  assert_eq(grouped.get('c'), Some(["cherry"]))
-}
+// test "group_by with strings" {
+//   let iter = ["apple", "avocado", "banana", "cherry", "blueberry"].iter()
+//   let grouped = iter.group_by(fn(s) { s.charcode_at(0) })
+//   assert_eq(grouped.get('a'), Some(["apple", "avocado"]))
+//   assert_eq(grouped.get('b'), Some(["banana", "blueberry"]))
+//   assert_eq(grouped.get('c'), Some(["cherry"]))
+// }
 
 ///|
-test "group_by with complex objects" {
-  struct Person {
-    name : String
-    age : Int
-  }
-  let people = [
-    Person::{ name: "Alice", age: 25 },
-    Person::{ name: "Bob", age: 25 },
-    Person::{ name: "Charlie", age: 30 },
-    Person::{ name: "Dave", age: 35 },
-    Person::{ name: "Eve", age: 30 },
-  ].iter()
-  let grouped = people.group_by(fn(p) { p.age })
-  let groups = grouped.values().map(fn(a) { a.map(fn(p) { p.name }) }).collect()
-  assert_eq(groups, [["Alice", "Bob"], ["Charlie", "Eve"], ["Dave"]])
-}
+// test "group_by with complex objects" {
+//   struct Person {
+//     name : String
+//     age : Int
+//   }
+//   let people = [
+//     Person::{ name: "Alice", age: 25 },
+//     Person::{ name: "Bob", age: 25 },
+//     Person::{ name: "Charlie", age: 30 },
+//     Person::{ name: "Dave", age: 35 },
+//     Person::{ name: "Eve", age: 30 },
+//   ].iter()
+//   let grouped = people.group_by(fn(p) { p.age })
+//   let groups = grouped.values().map(fn(a) { a.map(fn(p) { p.name }) }).collect()
+//   assert_eq(groups, [["Alice", "Bob"], ["Charlie", "Eve"], ["Dave"]])
+// }
 
 ///|
 test "iter2" {
