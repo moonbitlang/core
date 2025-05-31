@@ -40,18 +40,20 @@ fn Summary::new(
   data : Array[Double],
   batch_size : Int
 ) -> Summary {
+  let sorted_data = data.copy()
+  sorted_data.sort()
   let sum = sum(data)
   let min = min(data)
   let max = max(data)
-  let mean = mean(data)
-  let median = median(data)
-  let var = var(data)
-  let std_dev = std_dev(data)
-  let std_dev_pct = std_dev_pct(data)
-  let median_abs_dev = median_abs_dev(data)
-  let median_abs_dev_pct = median_abs_dev_pct(data)
-  let quartiles = quartiles(data)
-  let iqr = iqr(data)
+  let mean = mean(data, sum~)
+  let median = median(sorted_data~)
+  let var = var(data, mean~)
+  let std_dev = std_dev(var~)
+  let std_dev_pct = std_dev_pct(mean~, std_dev~)
+  let median_abs_dev = median_abs_dev(data, med=median)
+  let median_abs_dev_pct = median_abs_dev_pct(med=median, mad=median_abs_dev)
+  let quartiles = quartiles(sorted_data~)
+  let iqr = iqr(quartiles~)
   {
     name,
     sum,
@@ -103,23 +105,21 @@ fn max(data : Array[Double]) -> Double {
 }
 
 ///|
-fn mean(data : Array[Double]) -> Double {
-  let sum = sum(data)
+fn mean(data : Array[Double], sum~ : Double) -> Double {
   let count = data.length()
   sum / count.to_double()
 }
 
 ///|
-fn median(data : Array[Double]) -> Double {
-  percentile(data, 50.0)
+fn median(sorted_data~ : Array[Double]) -> Double {
+  percentile(sorted_data~, pct=50.0)
 }
 
 ///|
-fn var(data : Array[Double]) -> Double {
+fn var(data : Array[Double], mean~ : Double) -> Double {
   if data.length() < 2 {
     return 0.0
   }
-  let mean = mean(data)
   let mut v = 0.0
   for i in data {
     let d = i - mean
@@ -129,14 +129,12 @@ fn var(data : Array[Double]) -> Double {
 }
 
 ///|
-fn std_dev(data : Array[Double]) -> Double {
-  var(data).sqrt()
+fn std_dev(var~ : Double) -> Double {
+  var.sqrt()
 }
 
 ///|
-fn std_dev_pct(data : Array[Double]) -> Double {
-  let mean = mean(data)
-  let std_dev = std_dev(data)
+fn std_dev_pct(mean~ : Double, std_dev~ : Double) -> Double {
   if mean == 0.0 {
     return 0.0
   }
@@ -144,17 +142,15 @@ fn std_dev_pct(data : Array[Double]) -> Double {
 }
 
 ///|
-fn median_abs_dev(data : Array[Double]) -> Double {
-  let med = median(data)
+fn median_abs_dev(data : Array[Double], med~ : Double) -> Double {
   let abs_devs = data.map(fn(x) { (med - x).abs() })
+  abs_devs.sort()
   // https://en.wikipedia.org/wiki/Median_absolute_deviation
-  median(abs_devs) * 1.4826
+  median(sorted_data=abs_devs) * 1.4826
 }
 
 ///|
-fn median_abs_dev_pct(data : Array[Double]) -> Double {
-  let med = median(data)
-  let mad = median_abs_dev(data)
+fn median_abs_dev_pct(med~ : Double, mad~ : Double) -> Double {
   if med == 0.0 {
     return 0.0
   }
@@ -162,69 +158,71 @@ fn median_abs_dev_pct(data : Array[Double]) -> Double {
 }
 
 ///|
-fn quartiles(data : Array[Double]) -> (Double, Double, Double) {
-  let sorted = data.copy()
-  sorted.sort()
-  try {
-    let q1 = percentile_of_sorted(sorted, 25.0)
-    let q2 = percentile_of_sorted(sorted, 50.0)
-    let q3 = percentile_of_sorted(sorted, 75.0)
-    (q1, q2, q3)
-  } catch {
-    _ => panic()
-  }
+fn quartiles(sorted_data~ : Array[Double]) -> (Double, Double, Double) {
+  let q1 = percentile(sorted_data~, pct=25.0)
+  let q2 = percentile(sorted_data~, pct=50.0)
+  let q3 = percentile(sorted_data~, pct=75.0)
+  (q1, q2, q3)
 }
 
 ///|
-fn iqr(data : Array[Double]) -> Double {
-  let (q1, _, q3) = quartiles(data)
+fn iqr(quartiles~ : (Double, Double, Double)) -> Double {
+  let (q1, _, q3) = quartiles
   q3 - q1
 }
 
 ///|
-fn percentile_of_sorted(data : Array[Double], pct : Double) -> Double! {
-  assert_false(data.is_empty())
-  assert_true(pct >= 0.0 && pct <= 100.0)
-  if data.length() == 1 {
-    return data[0]
+fn percentile(sorted_data~ : Array[Double], pct~ : Double) -> Double {
+  guard sorted_data.length() > 0
+  guard pct >= 0.0 && pct <= 100.0
+  if sorted_data.length() == 1 {
+    return sorted_data[0]
   }
   if pct == 100.0 {
-    return data[data.length() - 1]
+    return sorted_data[sorted_data.length() - 1]
   }
-  let length = (data.length() - 1).to_double()
+  let length = (sorted_data.length() - 1).to_double()
   let rank = pct / 100 * length
   let lrank = rank.floor()
   let d = rank - lrank
   let n = lrank.to_int()
-  let lo = data[n]
-  let hi = data[n + 1]
+  let lo = sorted_data[n]
+  let hi = sorted_data[n + 1]
   lo + (hi - lo) * d
 }
 
 ///|
-fn percentile(data : Array[Double], pct : Double) -> Double {
-  let sorted = data.copy()
-  sorted.sort()
-  try percentile_of_sorted(sorted, pct) catch {
-    _ => panic()
+fn winsorize(data : Array[Double], pct : Double) -> Unit {
+  let sorted_data = data.copy()
+  sorted_data.sort()
+  let lo = percentile(sorted_data~, pct~)
+  let hi = percentile(sorted_data~, pct=100.0 - pct)
+  for i, samp in data {
+    if samp > hi {
+      data[i] = hi
+    } else if samp < lo {
+      data[i] = lo
+    }
   }
 }
 
 ///|
-fn winsorize(data : Array[Double], pct : Double) -> Unit {
-  let sorted = data.copy()
-  sorted.sort()
-  try {
-    let lo = percentile_of_sorted(sorted, pct)
-    let hi = percentile_of_sorted(sorted, 100.0 - pct)
-    for i, samp in data {
-      if samp > hi {
-        data[i] = hi
-      } else if samp < lo {
-        data[i] = lo
-      }
-    }
-  } catch {
-    _ => panic()
-  }
+test {
+  let data = [1.1, 21.4, 2.2, 3.3, 4.5, 12.5, 33.3, 14.4]
+  @json.inspect(Summary::new(data, 0), content={
+    "sum": 92.7,
+    "min": 1.1,
+    "max": 33.3,
+    "mean": 11.5875,
+    "median": 8.5,
+    "var": 127.64125,
+    "std_dev": 11.297842714430043,
+    "std_dev_pct": 97.50026075020534,
+    "median_abs_dev": 9.043859999999999,
+    "median_abs_dev_pct": 106.39835294117646,
+    "quartiles": [3.025, 8.5, 16.15],
+    "iqr": 13.124999999999998,
+    "batch_size": 0,
+    "runs": 8,
+  })
 }
