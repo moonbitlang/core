@@ -139,9 +139,11 @@ test "UninitializedArray::unsafe_blit_fixed" {
 /// # Example
 ///
 /// ```
-/// let v = [1]
-/// v.reserve_capacity(10)
-/// assert_eq(v.capacity(), 1)
+/// test "reserve_capacity_example" {
+///   let v = [1]
+///   v.reserve_capacity(10)
+///   assert_eq(v.capacity(), 1)
+/// }
 /// ```
 pub fn[T] Array::reserve_capacity(self : Array[T], capacity : Int) -> Unit {
   ignore(self)
@@ -155,13 +157,15 @@ pub fn[T] Array::reserve_capacity(self : Array[T], capacity : Int) -> Unit {
 /// # Example
 ///
 /// ```
-/// let v = Array::new(capacity=10)
-/// v.push(1)
-/// v.push(2)
-/// v.push(3)
-/// assert_eq(v.capacity(), 3)
-/// v.shrink_to_fit()
-/// assert_eq(v.capacity(), 3)
+/// test "shrink_to_fit_example" {
+///   let v = Array::new(capacity=10)
+///   v.push(1)
+///   v.push(2)
+///   v.push(3)
+///   assert_eq(v.capacity(), 3)
+///   v.shrink_to_fit()
+///   assert_eq(v.capacity(), 3)
+/// }
 /// ```
 pub fn[T] Array::shrink_to_fit(self : Array[T]) -> Unit {
   ignore(self)
@@ -174,8 +178,10 @@ pub fn[T] Array::shrink_to_fit(self : Array[T]) -> Unit {
 ///
 /// # Example
 /// ```
-/// let v = []
-/// v.push(3)
+/// test "push_example" {
+///   let v = []
+///   v.push(3)
+/// }
 /// ```
 pub fn[T] Array::push(self : Array[T], value : T) -> Unit {
   JSArray::ofAnyArray(self).push(JSValue::ofAny(value))
@@ -186,10 +192,12 @@ pub fn[T] Array::push(self : Array[T], value : T) -> Unit {
 ///
 /// # Example
 /// ```
-/// let v = [1, 2, 3]
-/// let vv = v.pop()
-/// assert_eq(vv, Some(3))
-/// assert_eq(v, [1, 2])
+/// test "pop_example" {
+///   let v = [1, 2, 3]
+///   let vv = v.pop()
+///   assert_eq(vv, Some(3))
+///   assert_eq(v, [1, 2])
+/// }
 /// ```
 pub fn[T] Array::pop(self : Array[T]) -> T? {
   if self.length() == 0 {
@@ -227,10 +235,12 @@ pub fn[T] Array::unsafe_pop(self : Array[T]) -> T {
 ///
 /// # Example
 /// ```
-/// let v = [3, 4, 5]
-/// let vv = v.remove(1)
-/// assert_eq(vv, 4)
-/// assert_eq(v, [3, 5])
+/// test "remove_example" {
+///   let v = [3, 4, 5]
+///   let vv = v.remove(1)
+///   assert_eq(vv, 4)
+///   assert_eq(v, [3, 5])
+/// }
 /// ```
 pub fn[T] Array::remove(self : Array[T], index : Int) -> T {
   guard index >= 0 && index < self.length() else {
@@ -252,8 +262,10 @@ pub fn[T] Array::remove(self : Array[T], index : Int) -> T {
 ///
 /// # Example
 /// ```
-/// let v = [3, 4, 5]
-/// let vv = v.drain(1, 2) // vv = [4], v = [3, 5]
+/// test "drain_example" {
+///   let v = [3, 4, 5]
+///   let vv = v.drain(1, 2) // vv = [4], v = [3, 5]
+/// }
 /// ```
 pub fn[T] Array::drain(self : Array[T], begin : Int, end : Int) -> Array[T] {
   guard begin >= 0 && end <= self.length() && begin <= end else {
@@ -271,7 +283,9 @@ pub fn[T] Array::drain(self : Array[T], begin : Int, end : Int) -> Array[T] {
 ///
 /// # Example
 /// ```
-/// [3, 4, 5].insert(1, 6)
+/// test "insert_example" {
+///   [3, 4, 5].insert(1, 6)
+/// }
 /// ```
 pub fn[T] Array::insert(self : Array[T], index : Int, value : T) -> Unit {
   guard index >= 0 && index <= self.length() else {

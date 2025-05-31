@@ -97,13 +97,15 @@ pub fn[T] Array::makei(length : Int, value : (Int) -> T) -> Array[T] {
 /// *rand n* is expected to returns a uniformly distribution integer between 0 and n - 1
 /// # Example
 /// 
-/// ```
-/// let arr = [1, 2, 3, 4, 5]
-/// fn rand(upper : Int) -> Int {
-///   let rng = @random.new()
-///   rng.int(limit=upper)
+/// ```moonbit
+/// test "Array::shuffle_in_place" {
+///   let arr = [1, 2, 3, 4, 5]
+///   fn rand(upper : Int) -> Int {
+///     let rng = @random.new()
+///     rng.int(limit=upper)
+///   }
+///   Array::shuffle_in_place(arr, rand=rand)
 /// }
-/// Array::shuffle_in_place(arr, rand=rand)
 /// ```
 pub fn[T] shuffle_in_place(self : Array[T], rand~ : (Int) -> Int) -> Unit {
   let n = self.length()

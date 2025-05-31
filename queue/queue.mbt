@@ -17,8 +17,10 @@
 ///
 /// # Example
 /// ```
-/// let queue : @queue.T[Int] = @queue.new()
-/// assert_eq(queue.length(), 0)
+/// test "new_queue_example" {
+///   let queue : @queue.T[Int] = @queue.new()
+///   assert_eq(queue.length(), 0)
+/// }
 /// ```
 pub fn[A] new() -> T[A] {
   { length: 0, first: None, last: None }
@@ -29,9 +31,11 @@ pub fn[A] new() -> T[A] {
 ///
 /// # Example
 /// ```
-/// let array = Array::makei(3, fn(idx) { idx + 1 })
-/// let queue : @queue.T[Int] = @queue.from_array(array)
-/// assert_eq(queue.length(), 3)
+/// test "from_array_example" {
+///   let array = Array::makei(3, fn(idx) { idx + 1 })
+///   let queue : @queue.T[Int] = @queue.from_array(array)
+///   assert_eq(queue.length(), 3)
+/// }
 /// ```
 pub fn[A] from_array(arr : Array[A]) -> T[A] {
   guard arr.length() > 0 else { return new() }
@@ -61,8 +65,10 @@ impl[A : Eq] Eq for T[A] with op_equal(self, other) {
 ///
 /// # Example
 /// ```
-/// let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
-/// queue.clear()
+/// test "clear_example" {
+///   let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
+///   queue.clear()
+/// }
 /// ```
 pub fn[A] clear(self : T[A]) -> Unit {
   self.length = 0
@@ -75,8 +81,10 @@ pub fn[A] clear(self : T[A]) -> Unit {
 ///
 /// # Example
 /// ```
-/// let queue : @queue.T[Int] = @queue.new()
-/// assert_eq(queue.length(), 0)
+/// test "length_example" {
+///   let queue : @queue.T[Int] = @queue.new()
+///   assert_eq(queue.length(), 0)
+/// }
 /// ```
 pub fn[A] length(self : T[A]) -> Int {
   self.length
@@ -87,8 +95,10 @@ pub fn[A] length(self : T[A]) -> Int {
 ///
 /// # Example
 /// ```
-/// let queue : @queue.T[Int] = @queue.new()
-/// assert_true(queue.is_empty())
+/// test "is_empty_example" {
+///   let queue : @queue.T[Int] = @queue.new()
+///   assert_true(queue.is_empty())
+/// }
 /// ```
 pub fn[A] is_empty(self : T[A]) -> Bool {
   self.length == 0
@@ -99,8 +109,10 @@ pub fn[A] is_empty(self : T[A]) -> Bool {
 ///
 /// # Example
 /// ```
-/// let queue : @queue.T[Int] = @queue.new()
-/// queue.push(1)
+/// test "push_example" {
+///   let queue : @queue.T[Int] = @queue.new()
+///   queue.push(1)
+/// }
 /// ```
 pub fn[A] push(self : T[A], x : A) -> Unit {
   let cell = Some({ content: x, next: None })
@@ -123,8 +135,10 @@ pub fn[A] push(self : T[A], x : A) -> Unit {
 ///
 /// # Example
 /// ```
-/// let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
-/// assert_eq(queue.unsafe_peek(), 1)
+/// test "unsafe_peek_example" {
+///   let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
+///   assert_eq(queue.unsafe_peek(), 1)
+/// }
 /// ```
 #internal(unsafe, "Panics if the queue is empty.")
 pub fn[A] unsafe_peek(self : T[A]) -> A {
@@ -146,8 +160,10 @@ pub fn[A] peek_exn(self : T[A]) -> A {
 ///
 /// # Example
 /// ```
-/// let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
-/// assert_eq(queue.peek(), Some(1))
+/// test "peek_example" {
+///   let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
+///   assert_eq(queue.peek(), Some(1))
+/// }
 /// ```
 pub fn[A] peek(self : T[A]) -> A? {
   match self.first {
@@ -161,8 +177,10 @@ pub fn[A] peek(self : T[A]) -> A? {
 ///
 /// # Example
 /// ```
-/// let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
-/// assert_eq(queue.unsafe_pop(), 1)
+/// test "unsafe_pop_example" {
+///   let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
+///   assert_eq(queue.unsafe_pop(), 1)
+/// }
 /// ```
 #internal(unsafe, "Panics if the queue is empty.")
 pub fn[A] unsafe_pop(self : T[A]) -> A {
@@ -192,8 +210,10 @@ pub fn[A] pop_exn(self : T[A]) -> A {
 ///
 /// # Example
 /// ```
-/// let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
-/// assert_eq(queue.pop(), Some(1))
+/// test "pop_example" {
+///   let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
+///   assert_eq(queue.pop(), Some(1))
+/// }
 /// ```
 pub fn[A] pop(self : T[A]) -> A? {
   match self.first {

@@ -26,7 +26,7 @@ fn[T] set_null(buffer : UninitializedArray[T], index : Int) = "%fixedarray.set_n
 /// Returns a new empty deque of type `T[A]` where `A` is the type of elements
 /// the deque will hold.
 ///
-/// Example:
+///# Example
 ///
 /// ```moonbit
 /// test "T::new" {
