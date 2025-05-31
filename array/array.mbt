@@ -292,6 +292,43 @@ pub fn[A, B] zip_to_iter2(self : Array[A], other : Array[B]) -> Iter2[A, B] {
 }
 
 ///|
+/// Truncates the array in-place to the specified length.
+///
+/// If `len` is greater than or equal to the current array length, 
+/// the function does nothing. If `len` is 0, the array is cleared.
+/// Otherwise, removes elements from the end until the array reaches the given length.
+///
+/// Parameters:
+///
+/// * `self` : The target array (modified in-place).
+/// * `len` : The new desired length (must be non-negative).
+///
+/// Important: 
+///   - If `len` is negative, the function does nothing.
+///   - If `len` exceeds current length, the array remains unchanged.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "truncate" {
+///   let arr = [1, 2, 3, 4, 5]
+///   arr.truncate(3)
+///   inspect(arr, content="[1, 2, 3]")
+/// }
+/// ```
+pub fn truncate[A](self : Array[A], len : Int) -> Unit {
+  guard len >= 0 && len < self.length() else { return }
+  if len == 0 {
+    self.clear()
+    return
+  }
+  let length = self.length() - len
+  for i = 0; i < length; i = i + 1 {
+    ignore(self.pop_exn())
+  }
+}
+
+///|
 pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Array[X] with arbitrary(
   size,
   rs

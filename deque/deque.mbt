@@ -1244,6 +1244,141 @@ pub fn[A] to_array(self : T[A]) -> Array[A] {
 }
 
 ///|
+/// Joins the elements of a string deque into a single string, 
+/// separated by the specified separator.
+///
+/// Parameters:
+///
+/// * `self` : The deque of strings to join.
+/// * `separator` : The separator to insert between elements (as a string view).
+///
+/// Returns the concatenated string. 
+///   - If the deque is empty, returns an empty string.
+///   - Efficiently pre-allocates memory based on calculated size hint.
+///   - Handles empty separators efficiently by direct concatenation.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "join" {
+///   let deque = @deque.of(["a","b","c"])
+///   let s1 = deque.join("")
+///   inspect(s1, content="abc")
+/// 
+///   let s2 = deque.join(",")
+///   inspect(s2, content="a,b,c")
+/// }
+/// ```
+pub fn join(self : T[String], separator : @string.View) -> String {
+  let len = self.length()
+  if len == 0 {
+    ""
+  } else {
+    let first = self[0]
+    let mut size_hint = first.length()
+    for i = 1; i < len; i = i + 1 {
+      size_hint += separator.length() + self[i].length()
+    }
+    let string = StringBuilder::new(size_hint~)
+    string.write_string(self[0])
+    if separator.is_empty() {
+      for i = 1; i < len; i = i + 1 {
+        string.write_string(self[i])
+      }
+    } else {
+      for i = 1; i < len; i = i + 1 {
+        string.write_string(separator.to_string())
+        string.write_string(self[i])
+      }
+    }
+    string.to_string()
+  }
+}
+
+///|
+/// Removes and returns elements in the specified range [begin, end) from the deque.
+///
+/// Parameters:
+///
+/// * `self` : The target deque (modified in-place).
+/// * `begin` : Start index of the range (inclusive).
+/// * `end` : End index of the range (exclusive).
+///
+/// Important:
+///   - Requires `0 <= begin <= end <= self.length()`
+///   - Returns a new deque containing the drained elements.
+///   - Original deque retains elements outside [begin, end) in original order.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "drain" {
+///   let deque = @deque.of([1,2,3,4,5,6,7,8,9])
+///   let deque_test = deque.drain(2, 6)
+///   inspect(deque_test, content="@deque.of([3, 4, 5, 6])")
+///   inspect(deque, content="@deque.of([1, 2, 7, 8, 9])")
+/// }
+/// ```
+pub fn drain[A](self : T[A], begin : Int, end : Int) -> T[A] {
+  guard begin >= 0 && end <= self.length() && begin <= end
+  let deque = self.copy()
+  deque.clear()
+  let length = self.length()
+  for i = 0; i < length; i = i + 1 {
+    match self.pop_front() {
+      Some(pop) =>
+        if i > begin - 1 && i < end {
+          deque.push_back(pop)
+        } else {
+          self.push_back(pop)
+        }
+      None => ()
+    }
+  }
+  deque
+}
+
+///|
+/// Flattens a high-dimensional deque into a lower-dimensional deque
+/// by concatenating all inner deques in order.
+///
+/// Parameters:
+///
+/// * `self` : The high-dimensional deque to flatten.
+///
+/// Returns a new lower-dimensional deque containing all elements 
+/// from inner deques in sequence.
+///
+/// Note:
+///   - Uses the first inner deque as base and appends subsequent deques.
+///   - Efficiently preserves element order across all inner deques.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "flatten" {
+///   let deque = @deque.of([@deque.of([1,2,3]),@deque.of([4,5,6]),@deque.of([7,8])])
+///   let deque_test = deque.flatten()
+///   inspect(deque_test, content="@deque.of([1, 2, 3, 4, 5, 6, 7, 8])")
+/// }
+/// ```
+pub fn flatten[A](self : T[T[A]]) -> T[A] {
+  let deque = self[0].copy()
+  let len = self.length()
+  let mut selflen = 0
+  for i = 1; i < len; i = i + 1 {
+    selflen = self[i].length()
+    for j = 0; j < selflen; j = j + 1 {
+      match self[i].pop_front() {
+        Some(pop) => deque.push_back(pop)
+        None => ()
+      }
+    }
+  }
+  deque
+}
+
+///|
 pub impl[A : ToJson] ToJson for T[A] with to_json(self : T[A]) -> Json {
   let res = Array::make(self.length(), Json::null())
   for i, x in self {
