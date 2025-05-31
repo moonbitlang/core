@@ -1319,7 +1319,7 @@ pub fn join(self : T[String], separator : @string.View) -> String {
 ///   inspect(deque, content="@deque.of([1, 2, 7, 8, 9])")
 /// }
 /// ```
-pub fn drain[A](self : T[A], begin : Int, end : Int) -> T[A] {
+pub fn[A] drain(self : T[A], begin : Int, end : Int) -> T[A] {
   guard begin >= 0 && end <= self.length() && begin <= end
   let deque = self.copy()
   deque.clear()
@@ -1362,7 +1362,7 @@ pub fn drain[A](self : T[A], begin : Int, end : Int) -> T[A] {
 ///   inspect(deque_test, content="@deque.of([1, 2, 3, 4, 5, 6, 7, 8])")
 /// }
 /// ```
-pub fn flatten[A](self : T[T[A]]) -> T[A] {
+pub fn[A] flatten(self : T[T[A]]) -> T[A] {
   let deque = self[0].copy()
   let len = self.length()
   let mut selflen = 0
