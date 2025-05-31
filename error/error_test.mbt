@@ -157,3 +157,36 @@ test "protect2 & finally raise error" {
     ,
   )
 }
+
+///|
+type! ErrWithToJson Int derive(ToJson)
+
+///|
+type! ErrWithoutToJson Int
+
+///|
+test "error to json" {
+  //TODO: note despite `impl ToJson for Error`, for suberror
+  // we can not use `@json.inspect` to inspect the error
+  // @json.inspect(ErrWithoutToJson(42))
+  // This also applies to `impl Show for Error`, for suberror
+  // we can not use `inspect` to inspect the error
+  // we may auto-derive `ToJson` and `Show` for suberror automatically
+  // to enhance the user experience
+  fn j(err : Error) {
+    err.to_json()
+  }
+
+  inspect(
+    j(ErrWithToJson(42)),
+    content=
+      #|Object({"$tag": String("ErrWithToJson"), "0": Number(42)})
+    ,
+  )
+  inspect(
+    j(ErrWithoutToJson(42)),
+    content=
+      #|String("moonbitlang/core/error_blackbox_test.ErrWithoutToJson.ErrWithoutToJson")
+    ,
+  )
+}
