@@ -472,7 +472,10 @@ pub fn[T] Array::rev_eachi(self : Array[T], f : (Int, T) -> Unit) -> Unit {
 /// }
 /// ```
 #locals(f)
-pub fn[T] Array::eachi(self : Array[T], f : (Int, T) -> Unit?Error) -> Unit?Error {
+pub fn[T] Array::eachi(
+  self : Array[T],
+  f : (Int, T) -> Unit?Error
+) -> Unit?Error {
   for i, v in self {
     f(i, v)
   }
@@ -537,7 +540,10 @@ pub fn[T] Array::map_inplace(self : Array[T], f : (T) -> T?Error) -> Unit?Error 
 /// assert_eq(v2, [3, 5, 7])
 /// ```
 #locals(f)
-pub fn[T, U] Array::mapi(self : Array[T], f : (Int, T) -> U?Error) -> Array[U]?Error {
+pub fn[T, U] Array::mapi(
+  self : Array[T],
+  f : (Int, T) -> U?Error
+) -> Array[U]?Error {
   if self.length() == 0 {
     return []
   }
@@ -558,7 +564,10 @@ pub fn[T, U] Array::mapi(self : Array[T], f : (Int, T) -> U?Error) -> Array[U]?E
 /// assert_eq(v, [3, 5, 7])
 /// ```
 #locals(f)
-pub fn[T] Array::mapi_inplace(self : Array[T], f : (Int, T) -> T?Error) -> Unit?Error {
+pub fn[T] Array::mapi_inplace(
+  self : Array[T],
+  f : (Int, T) -> T?Error
+) -> Unit?Error {
   for i, v in self {
     self[i] = f(i, v)
   }
@@ -587,7 +596,10 @@ pub fn[T] Array::mapi_inplace(self : Array[T], f : (Int, T) -> T?Error) -> Unit?
 /// }
 /// ```
 #locals(f)
-pub fn[T] Array::filter(self : Array[T], f : (T) -> Bool?Error) -> Array[T]?Error {
+pub fn[T] Array::filter(
+  self : Array[T],
+  f : (T) -> Bool?Error
+) -> Array[T]?Error {
   let arr = []
   for v in self {
     if f(v) {
