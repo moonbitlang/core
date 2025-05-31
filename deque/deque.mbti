@@ -2,6 +2,7 @@ package "moonbitlang/core/deque"
 
 import(
   "moonbitlang/core/json"
+  "moonbitlang/core/string"
 )
 
 // Values
@@ -15,12 +16,16 @@ fn[A : Eq] contains(T[A], A) -> Bool
 
 fn[A] copy(T[A]) -> T[A]
 
+fn[A] drain(T[A], Int, Int) -> T[A]
+
 fn[A] each(T[A], (A) -> Unit) -> Unit
 
 fn[A] eachi(T[A], (Int, A) -> Unit) -> Unit
 
 #deprecated
 fn[A] filter_map_inplace(T[A], (A) -> A?) -> Unit
+
+fn[A] flatten(T[T[A]]) -> T[A]
 
 fn[A] from_array(Array[A]) -> T[A]
 
@@ -33,6 +38,8 @@ fn[A] is_empty(T[A]) -> Bool
 fn[A] iter(T[A]) -> Iter[A]
 
 fn[A] iter2(T[A]) -> Iter2[Int, A]
+
+fn join(T[String], @string.StringView) -> String
 
 fn[A] length(T[A]) -> Int
 
@@ -96,17 +103,17 @@ fn[A] T::capacity(Self[A]) -> Int
 fn[A] T::clear(Self[A]) -> Unit
 fn[A : Eq] T::contains(Self[A], A) -> Bool
 fn[A] T::copy(Self[A]) -> Self[A]
-fn[A] T::drain[A] (Self[A], Int, Int) -> Self[A]
+fn[A] T::drain(Self[A], Int, Int) -> Self[A]
 fn[A] T::each(Self[A], (A) -> Unit) -> Unit
 fn[A] T::eachi(Self[A], (Int, A) -> Unit) -> Unit
 #deprecated
 fn[A] T::filter_map_inplace(Self[A], (A) -> A?) -> Unit
-fn[A] T::flatten[A](Self[Self[A]]) -> Self[A]
+fn[A] T::flatten(Self[Self[A]]) -> Self[A]
 fn[A] T::front(Self[A]) -> A?
 fn[A] T::is_empty(Self[A]) -> Bool
 fn[A] T::iter(Self[A]) -> Iter[A]
 fn[A] T::iter2(Self[A]) -> Iter2[Int, A]
-fn T::join(Self[String], String) -> String
+fn T::join(Self[String], @string.StringView) -> String
 fn[A] T::length(Self[A]) -> Int
 fn[A, U] T::map(Self[A], (A) -> U) -> Self[U]
 fn[A, U] T::mapi(Self[A], (Int, A) -> U) -> Self[U]
