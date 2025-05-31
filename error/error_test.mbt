@@ -92,7 +92,7 @@ fn[A] protect2(finally~ : () -> Unit?Error, work : () -> A!) -> A! {
 
 ///|
 test "protect" {
-  let x = try? protect(finally=fn() { println("finally") }, fn() {
+  let x = try? protect(finally=fn() {  }, fn() {
       if true {
         raise Failure("error")
       } else {
@@ -126,7 +126,7 @@ test "protect & finally raise error" {
 
 ///|
 test "protect2" {
-  let x = try? protect2(finally=fn() { println("finally") }, fn() {
+  let x = try? protect2(finally=fn() {  }, fn() {
       if true {
         raise Failure("error")
       } else {
