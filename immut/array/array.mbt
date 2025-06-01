@@ -105,8 +105,10 @@ pub fn[A] copy(self : T[A]) -> T[A] {
 /// 
 /// # Example
 /// ```
-/// let v = @array.of([1, 2, 3])
-/// assert_eq(v, @array.from_array([1, 2, 3]))
+/// test "from_array example" {
+///   let v = @array.of([1, 2, 3])
+///   assert_eq(v, @array.from_array([1, 2, 3]))
+/// }
 /// ```
 pub fn[A] from_array(arr : Array[A]) -> T[A] {
   makei(arr.length(), fn(i) { arr[i] })
@@ -181,8 +183,10 @@ pub fn[A] length(self : T[A]) -> Int {
 ///
 /// # Examples
 /// ```
-/// let v = @array.of([1, 2, 3, 4, 5])
-/// assert_eq(v[0], 1)
+/// test "op_get example" {
+///   let v = @array.of([1, 2, 3, 4, 5])
+///   assert_eq(v[0], 1)
+/// }
 /// ```
 pub fn[A] op_get(self : T[A], index : Int) -> A {
   if index == 0 {
@@ -231,8 +235,10 @@ pub fn[A] get(self : T[A], index : Int) -> A? {
 ///
 /// # Example
 /// ```
-/// let v = @array.of([1, 2, 3, 4, 5])
-/// assert_eq(v.set(1, 10), @array.of([1, 10, 3, 4, 5]))
+/// test "set example" {
+///   let v = @array.of([1, 2, 3, 4, 5])
+///   assert_eq(v.set(1, 10), @array.of([1, 10, 3, 4, 5]))
+/// }
 /// ```
 pub fn[A] set(self : T[A], index : Int, value : A) -> T[A] {
   {
@@ -295,10 +301,12 @@ pub fn[A] iter(self : T[A]) -> Iter[A] {
 ///
 /// # Example
 /// ```
-/// let arr = []
-/// let v = @array.of([1, 2, 3, 4, 5])
-/// v.each(fn(e) { arr.push(e) })
-/// assert_eq(arr, [1, 2, 3, 4, 5])
+/// test "each example" {
+///   let arr = []
+///   let v = @array.of([1, 2, 3, 4, 5])
+///   v.each(fn(e) { arr.push(e) })
+///   assert_eq(arr, [1, 2, 3, 4, 5])
+/// }
 /// ```
 pub fn[A] each(self : T[A], f : (A) -> Unit) -> Unit {
   self.tree.each(f)
