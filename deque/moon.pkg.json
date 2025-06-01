@@ -2,7 +2,6 @@
   "import": [
     "moonbitlang/core/builtin",
     "moonbitlang/core/json",
-    "moonbitlang/core/string",
     "moonbitlang/core/array"
   ],
   "targets": {
