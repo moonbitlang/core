@@ -16,8 +16,10 @@
 /// Convert char array to string.
 ///
 /// ```
-/// let s = @string.from_array(['H', 'e', 'l', 'l', 'o'])
-/// assert_eq(s, "Hello")
+/// test "from_array_example" {
+///   let s = @string.from_array(['H', 'e', 'l', 'l', 'o'])
+///   assert_eq(s, "Hello")
+/// }
 /// ```
 ///
 /// Do not convert large datas to `Array[Char]` and build a string with `String::from_array`.
@@ -151,9 +153,11 @@ pub fn to_array(self : String) -> Array[Char] {
 /// As a result, the count of characters returned by `iter().count()` may not be equal to the length of the string returned by `length()`.
 ///
 /// ```
-/// let s = "Hello, World!🤣";
-/// assert_eq(s.iter().count(), 14); // Unicode characters
-/// assert_eq(s.length(), 15); // Utf16 code units
+/// test "iter_example" {
+///   let s = "Hello, World!🤣";
+///   assert_eq(s.iter().count(), 14); // Unicode characters
+///   assert_eq(s.length(), 15); // Utf16 code units
+/// }
 /// ```
 pub fn iter(self : String) -> Iter[Char] {
   Iter::new(fn(yield_) {
@@ -222,9 +226,11 @@ pub fn iter2(self : String) -> Iter2[Int, Char] {
 /// # Examples
 ///
 /// ```
-/// let input = "Hello, World!"
-/// let reversed = input.rev_iter().collect()
-/// assert_eq(reversed, ['!', 'd', 'l', 'r', 'o', 'W', ' ', ',', 'o', 'l', 'l', 'e', 'H'])
+/// test "rev_iter_example" {
+///   let input = "Hello, World!"
+///   let reversed = input.rev_iter().collect()
+///   assert_eq(reversed, ['!', 'd', 'l', 'r', 'o', 'W', ' ', ',', 'o', 'l', 'l', 'e', 'H'])
+/// }
 /// ```
 pub fn rev_iter(self : String) -> Iter[Char] {
   Iter::new(fn(yield_) {
