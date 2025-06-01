@@ -302,16 +302,18 @@ test "umul128: handles zero correctly" {
 ///
 /// # Example
 /// ```
-/// let r = @random.new()
-/// let a = [1, 2, 3, 4, 5]
-/// r.shuffle(
-///   a.length(),
-///   fn(i : Int, j : Int) {
-///     let t = a[i]
-///     a[i] = a[j]
-///     a[j] = t
-///   },
-/// )
+/// test "shuffle example" {
+///   let r = @random.new()
+///   let a = [1, 2, 3, 4, 5]
+///   r.shuffle(
+///     a.length(),
+///     fn(i : Int, j : Int) {
+///       let t = a[i]
+///       a[i] = a[j]
+///       a[j] = t
+///     },
+///   )
+/// }
 /// ```
 pub fn shuffle(self : Rand, limit : Int, swap : (Int, Int) -> Unit) -> Unit {
   if limit < 0 {

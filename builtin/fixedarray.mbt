@@ -104,9 +104,11 @@ pub impl[X] Default for FixedArray[X] with default() {
 ///
 /// # Example
 /// ```
-/// let fa : FixedArray[Int] = [0, 0, 0, 0, 0]
-/// fa.fill(3)
-/// assert_eq(fa[0], 3)
+/// test "FixedArray::fill" {
+///   let fa : FixedArray[Int] = [0, 0, 0, 0, 0]
+///   fa.fill(3)
+///   assert_eq(fa[0], 3)
+/// }
 /// ```
 pub fn[T] FixedArray::fill(self : FixedArray[T], value : T) -> Unit {
   for i in 0..<self.length() {
@@ -143,9 +145,11 @@ pub fn[T] FixedArray::is_empty(self : FixedArray[T]) -> Bool {
 ///
 /// # Example
 /// ```
-/// let v : FixedArray[Int] = [3, 4, 5]
-/// let result = v.binary_search(3)
-/// assert_eq(result, Ok(0)) // The element 3 is found at index 0
+/// test "FixedArray::binary_search" {
+///   let v : FixedArray[Int] = [3, 4, 5]
+///   let result = v.binary_search(3)
+///   assert_eq(result, Ok(0)) // The element 3 is found at index 0
+/// }
 /// ```
 ///
 /// # Arguments
