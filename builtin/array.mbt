@@ -463,13 +463,19 @@ pub fn[T] Array::rev_eachi(self : Array[T], f : (Int, T) -> Unit) -> Unit {
 /// Iterates over the elements of the array with index.
 ///
 /// # Example
-/// ```
-/// let v = [3, 4, 5]
-/// let mut sum = 0
-/// v.eachi(fn (i, x) {sum = sum + x + i})
+/// ```moonbit
+/// test "Array::eachi" {
+///   let v = [3, 4, 5]
+///   let mut sum = 0
+///   v.eachi(fn (i, x) {sum = sum + x + i})
+///   inspect(sum, content="15")
+/// }
 /// ```
 #locals(f)
-pub fn[T] Array::eachi(self : Array[T], f : (Int, T) -> Unit) -> Unit {
+pub fn[T] Array::eachi(
+  self : Array[T],
+  f : (Int, T) -> Unit?Error
+) -> Unit?Error {
   for i, v in self {
     f(i, v)
   }
@@ -500,7 +506,7 @@ pub fn[T] Array::clear(self : Array[T]) -> Unit {
 /// assert_eq(v2, [4, 5, 6])
 /// ```
 #locals(f)
-pub fn[T, U] Array::map(self : Array[T], f : (T) -> U) -> Array[U] {
+pub fn[T, U] Array::map(self : Array[T], f : (T) -> U?Error) -> Array[U]?Error {
   let arr = Array::make_uninit(self.length())
   for i, v in self {
     arr.unsafe_set(i, f(v))
@@ -518,7 +524,7 @@ pub fn[T, U] Array::map(self : Array[T], f : (T) -> U) -> Array[U] {
 /// assert_eq(v, [4, 5, 6])
 /// ```
 #locals(f)
-pub fn[T] Array::map_inplace(self : Array[T], f : (T) -> T) -> Unit {
+pub fn[T] Array::map_inplace(self : Array[T], f : (T) -> T?Error) -> Unit?Error {
   for i, v in self {
     self[i] = f(v)
   }
@@ -534,7 +540,10 @@ pub fn[T] Array::map_inplace(self : Array[T], f : (T) -> T) -> Unit {
 /// assert_eq(v2, [3, 5, 7])
 /// ```
 #locals(f)
-pub fn[T, U] Array::mapi(self : Array[T], f : (Int, T) -> U) -> Array[U] {
+pub fn[T, U] Array::mapi(
+  self : Array[T],
+  f : (Int, T) -> U?Error
+) -> Array[U]?Error {
   if self.length() == 0 {
     return []
   }
@@ -555,7 +564,10 @@ pub fn[T, U] Array::mapi(self : Array[T], f : (Int, T) -> U) -> Array[U] {
 /// assert_eq(v, [3, 5, 7])
 /// ```
 #locals(f)
-pub fn[T] Array::mapi_inplace(self : Array[T], f : (Int, T) -> T) -> Unit {
+pub fn[T] Array::mapi_inplace(
+  self : Array[T],
+  f : (Int, T) -> T?Error
+) -> Unit?Error {
   for i, v in self {
     self[i] = f(i, v)
   }
@@ -584,7 +596,10 @@ pub fn[T] Array::mapi_inplace(self : Array[T], f : (Int, T) -> T) -> Unit {
 /// }
 /// ```
 #locals(f)
-pub fn[T] Array::filter(self : Array[T], f : (T) -> Bool) -> Array[T] {
+pub fn[T] Array::filter(
+  self : Array[T],
+  f : (T) -> Bool?Error
+) -> Array[T]?Error {
   let arr = []
   for v in self {
     if f(v) {

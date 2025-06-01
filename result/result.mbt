@@ -409,6 +409,8 @@ test "unwrap exn" {
 }
 
 ///|
+#deprecated("use try? instead")
+#coverage.skip
 pub fn[T, E : Error] wrap0(f~ : () -> T!E) -> Result[T, E] {
   try f() |> Ok catch {
     e => Err(e)
@@ -416,6 +418,8 @@ pub fn[T, E : Error] wrap0(f~ : () -> T!E) -> Result[T, E] {
 }
 
 ///|
+#deprecated("use try? instead")
+#coverage.skip
 pub fn[T, A, E : Error] wrap1(f~ : (A) -> T!E, a : A) -> Result[T, E] {
   try f(a) |> Ok catch {
     e => Err(e)
@@ -423,6 +427,8 @@ pub fn[T, A, E : Error] wrap1(f~ : (A) -> T!E, a : A) -> Result[T, E] {
 }
 
 ///|
+#deprecated("use try? instead")
+#coverage.skip
 pub fn[T, A, B, E : Error] wrap2(
   f~ : (A, B) -> T!E,
   a : A,

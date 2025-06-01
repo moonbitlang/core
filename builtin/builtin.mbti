@@ -58,10 +58,10 @@ fn[T : Eq] Array::contains(Self[T], T) -> Bool
 fn[T : Eq] Array::dedup(Self[T]) -> Unit
 fn[T] Array::drain(Self[T], Int, Int) -> Self[T]
 fn[T] Array::each(Self[T], (T) -> Unit?Error) -> Unit?Error
-fn[T] Array::eachi(Self[T], (Int, T) -> Unit) -> Unit
+fn[T] Array::eachi(Self[T], (Int, T) -> Unit?Error) -> Unit?Error
 fn[T : Eq] Array::ends_with(Self[T], Self[T]) -> Bool
 fn[T] Array::extract_if(Self[T], (T) -> Bool) -> Self[T]
-fn[T] Array::filter(Self[T], (T) -> Bool) -> Self[T]
+fn[T] Array::filter(Self[T], (T) -> Bool?Error) -> Self[T]?Error
 #deprecated
 fn[T] Array::find_index(Self[T], (T) -> Bool) -> Int?
 fn[T] Array::flatten(Self[Self[T]]) -> Self[T]
@@ -84,10 +84,10 @@ fn[T] Array::iter(Self[T]) -> Iter[T]
 fn[A] Array::iter2(Self[A]) -> Iter2[Int, A]
 fn[T] Array::length(Self[T]) -> Int
 fn[T] Array::make(Int, T) -> Self[T]
-fn[T, U] Array::map(Self[T], (T) -> U) -> Self[U]
-fn[T] Array::map_inplace(Self[T], (T) -> T) -> Unit
-fn[T, U] Array::mapi(Self[T], (Int, T) -> U) -> Self[U]
-fn[T] Array::mapi_inplace(Self[T], (Int, T) -> T) -> Unit
+fn[T, U] Array::map(Self[T], (T) -> U?Error) -> Self[U]?Error
+fn[T] Array::map_inplace(Self[T], (T) -> T?Error) -> Unit?Error
+fn[T, U] Array::mapi(Self[T], (Int, T) -> U?Error) -> Self[U]?Error
+fn[T] Array::mapi_inplace(Self[T], (Int, T) -> T?Error) -> Unit?Error
 fn[T] Array::new(capacity~ : Int = ..) -> Self[T]
 fn[T] Array::op_as_view(Self[T], start~ : Int = .., end? : Int) -> ArrayView[T]
 fn[T] Array::op_get(Self[T], Int) -> T

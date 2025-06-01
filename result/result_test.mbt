@@ -29,7 +29,7 @@ test "bind with Err" {
 ///|
 test "wrap0 with error" {
   let f = fn() -> Int!Failure { raise Failure("error") }
-  let result = wrap0(f~)
+  let result = try? f()
   inspect(
     result,
     content=
@@ -41,7 +41,7 @@ test "wrap0 with error" {
 ///|
 test "wrap2 with error result" {
   let f = fn(_, _) -> Unit!Failure { raise Failure("error") }
-  let r = wrap2(f~, 1, 2)
+  let r = try? f(1, 2)
   inspect(
     r,
     content=
