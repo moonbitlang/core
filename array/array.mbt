@@ -316,16 +316,16 @@ pub fn[A, B] zip_to_iter2(self : Array[A], other : Array[B]) -> Iter2[A, B] {
 ///   inspect(arr, content="[1, 2, 3]")
 /// }
 /// ```
-pub fn[A] truncate(self : Array[A], len : Int) -> Unit {
+pub fn[A] Array::truncate(self : Array[A], len : Int) -> Unit {
   guard len >= 0 && len < self.length() else { return }
   if len == 0 {
     self.clear()
     return
   }
-  let length = self.length() - len
-  for i = 0; i < length; i = i + 1 {
-    ignore(self.pop_exn())
-  }
+  let a = self[0:length]
+  let array = a.to_array()
+  self.clear()
+  self.append(array)
 }
 
 ///|

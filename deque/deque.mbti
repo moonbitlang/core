@@ -2,7 +2,6 @@ package "moonbitlang/core/deque"
 
 import(
   "moonbitlang/core/json"
-  "moonbitlang/core/string"
 )
 
 // Values

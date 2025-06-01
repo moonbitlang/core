@@ -1269,30 +1269,8 @@ pub fn[A] to_array(self : T[A]) -> Array[A] {
 ///   inspect(s2, content="a,b,c")
 /// }
 /// ```
-pub fn join(self : T[String], separator : @string.View) -> String {
-  let len = self.length()
-  if len == 0 {
-    ""
-  } else {
-    let first = self[0]
-    let mut size_hint = first.length()
-    for i = 1; i < len; i = i + 1 {
-      size_hint += separator.length() + self[i].length()
-    }
-    let string = StringBuilder::new(size_hint~)
-    string.write_string(self[0])
-    if separator.is_empty() {
-      for i = 1; i < len; i = i + 1 {
-        string.write_string(self[i])
-      }
-    } else {
-      for i = 1; i < len; i = i + 1 {
-        string.write_string(separator.to_string())
-        string.write_string(self[i])
-      }
-    }
-    string.to_string()
-  }
+pub fn T::join(self : T[String], separator : String) -> String {
+  self.iter().join(separator)
 }
 
 ///|
@@ -1319,7 +1297,7 @@ pub fn join(self : T[String], separator : @string.View) -> String {
 ///   inspect(deque, content="@deque.of([1, 2, 7, 8, 9])")
 /// }
 /// ```
-pub fn[A] drain(self : T[A], begin : Int, end : Int) -> T[A] {
+pub fn[A] T::drain(self : T[A], begin : Int, end : Int) -> T[A] {
   guard begin >= 0 && end <= self.length() && begin <= end
   let deque = self.copy()
   deque.clear()
@@ -1362,7 +1340,7 @@ pub fn[A] drain(self : T[A], begin : Int, end : Int) -> T[A] {
 ///   inspect(deque_test, content="@deque.of([1, 2, 3, 4, 5, 6, 7, 8])")
 /// }
 /// ```
-pub fn[A] flatten(self : T[T[A]]) -> T[A] {
+pub fn[A] T::flatten(self : T[T[A]]) -> T[A] {
   let deque = self[0].copy()
   let len = self.length()
   let mut selflen = 0
