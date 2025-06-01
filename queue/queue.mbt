@@ -235,9 +235,11 @@ pub fn[A] pop(self : T[A]) -> A? {
 ///
 /// # Example
 /// ```
-/// let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
-/// let mut sum = 0
-/// queue.each(fn(x) { sum = sum + x })
+/// test "each" {
+///   let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
+///   let mut sum = 0
+///   queue.each(fn(x) { sum = sum + x })
+/// }
 /// ```
 pub fn[A] each(self : T[A], f : (A) -> Unit) -> Unit {
   loop self.first {
@@ -254,9 +256,11 @@ pub fn[A] each(self : T[A], f : (A) -> Unit) -> Unit {
 ///
 /// # Example
 /// ```
-/// let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
-/// let mut sum = 0
-/// queue.eachi(fn(x, i) { sum = sum + x * i })
+/// test "eachi" {
+///   let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
+///   let mut sum = 0
+///   queue.eachi(fn(x, i) { sum = sum + x * i })
+/// }
 /// ```
 pub fn[A] eachi(self : T[A], f : (Int, A) -> Unit) -> Unit {
   loop self.first, 0 {
@@ -273,9 +277,11 @@ pub fn[A] eachi(self : T[A], f : (Int, A) -> Unit) -> Unit {
 ///
 /// # Example
 /// ```
-/// let queue : @queue.T[Int] = @queue.new()
-/// let sum = queue.fold(init=0, fn(acc, x) { acc + x })
-/// assert_eq(sum, 0)
+/// test "fold" {
+///   let queue : @queue.T[Int] = @queue.new()
+///   let sum = queue.fold(init=0, fn(acc, x) { acc + x })
+///   assert_eq(sum, 0)
+/// }
 /// ```
 pub fn[A, B] fold(self : T[A], init~ : B, f : (B, A) -> B) -> B {
   loop self.first, init {
@@ -289,9 +295,11 @@ pub fn[A, B] fold(self : T[A], init~ : B, f : (B, A) -> B) -> B {
 ///
 /// # Example
 /// ```
-/// let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
-/// let queue2 : @queue.T[Int] = queue.copy()
-/// assert_eq(queue2.length(), 4)
+/// test "copy" {
+///   let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
+///   let queue2 : @queue.T[Int] = queue.copy()
+///   assert_eq(queue2.length(), 4)
+/// }
 /// ```
 pub fn[A] copy(self : T[A]) -> T[A] {
   guard self.first is Some({ content, next }) else { return new() }
@@ -314,9 +322,11 @@ pub fn[A] copy(self : T[A]) -> T[A] {
 ///
 /// # Example
 /// ```
-/// let dst : @queue.T[Int] = @queue.new()
-/// let src : @queue.T[Int] = @queue.of([5, 6, 7, 8])
-/// src.transfer(dst)
+/// test "transfer" {
+///   let dst : @queue.T[Int] = @queue.new()
+///   let src : @queue.T[Int] = @queue.of([5, 6, 7, 8])
+///   src.transfer(dst)
+/// }
 /// ```
 pub fn[A] transfer(self : T[A], dst : T[A]) -> Unit {
   if self.length > 0 {
@@ -342,9 +352,11 @@ pub fn[A] transfer(self : T[A], dst : T[A]) -> Unit {
 ///
 /// # Example
 /// ```
-/// let queue : @queue.T[Int] = @queue.of([5, 6, 7, 8])
-/// let sum = queue.iter().fold(fn(x, y) { x + y }, init=0)
-/// assert_eq(sum, 26)
+/// test "iter" {
+///   let queue : @queue.T[Int] = @queue.of([5, 6, 7, 8])
+///   let sum = queue.iter().fold(fn(x, y) { x + y }, init=0)
+///   assert_eq(sum, 26)
+/// }
 /// ```
 pub fn[A] iter(self : T[A]) -> Iter[A] {
   Iter::new(fn(yield_) {
@@ -365,8 +377,10 @@ pub fn[A] iter(self : T[A]) -> Iter[A] {
 ///
 /// # Example
 /// ```
-/// let queue : @queue.T[Int] = @queue.from_iter(Iter::empty())
-/// assert_eq(queue.length(), 0)
+/// test "from_iter" {
+///   let queue : @queue.T[Int] = @queue.from_iter(Iter::empty())
+///   assert_eq(queue.length(), 0)
+/// }
 /// ```
 pub fn[A] from_iter(iter : Iter[A]) -> T[A] {
   let q = new()
@@ -379,8 +393,10 @@ pub fn[A] from_iter(iter : Iter[A]) -> T[A] {
 ///
 /// # Example
 /// ```
-/// let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
-/// assert_eq(queue.length(), 4)
+/// test "of" {
+///   let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
+///   assert_eq(queue.length(), 4)
+/// }
 /// ```
 pub fn[A] of(arr : FixedArray[A]) -> T[A] {
   guard arr.length() > 0 else { return new() }
