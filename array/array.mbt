@@ -322,7 +322,7 @@ pub fn[A] Array::truncate(self : Array[A], len : Int) -> Unit {
     self.clear()
     return
   }
-  let a = self[0:length]
+  let a = self[0:len]
   let array = a.to_array()
   self.clear()
   self.append(array)
