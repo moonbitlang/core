@@ -18,10 +18,12 @@
 /// # Example
 ///
 /// ```moonbit
-/// let arr = [1, 2, 3, 4, 5]
-/// let view = arr[1:4]  // Creates a view of elements at indices 1,2,3
-/// assert_eq(view[0], 2)
-/// assert_eq(view.length(), 3)
+/// test "arrayview_example" {
+///   let arr = [1, 2, 3, 4, 5]
+///   let view = arr[1:4]  // Creates a view of elements at indices 1,2,3
+///   assert_eq(view[0], 2)
+///   assert_eq(view.length(), 3)
+/// }
 /// ```
 #deprecated("use @array.View instead")
 #builtin.valtype
