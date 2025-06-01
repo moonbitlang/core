@@ -236,7 +236,37 @@ test "contains" {
 ///|
 /// Returns true if this string contains the given character.
 pub fn View::contains_char(self : View, c : Char) -> Bool {
-  self.iter().any(fn(ch) { ch == c })
+  let len = self.length()
+  // Check empty
+  guard len > 0 else { return false }
+  let c = c.to_int()
+  if c <= 0xFFFF {
+    // Search BMP
+    for i in 0..<len {
+      if self.unsafe_charcode_at(i) == c {
+        return true
+      }
+    }
+  } else {
+    // Check insufficient
+    guard len >= 2 else { return false }
+    // Calc surrogate pair
+    let adj = c - 0x10000
+    let high = 0xD800 + (adj >> 10)
+    let low = 0xDC00 + (adj & 0x3FF)
+    // Search surrogate pair
+    let mut i = 0
+    while i < len - 1 {
+      if self.unsafe_charcode_at(i) == high {
+        i += 1
+        if self.unsafe_charcode_at(i) == low {
+          return true
+        }
+      }
+      i += 1
+    }
+  }
+  false
 }
 
 ///|
