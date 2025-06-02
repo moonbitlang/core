@@ -13,23 +13,45 @@
 // limitations under the License.
 
 ///|
-test "scalbn" {
+test "scalbn comprehensive" {
+  // Basic tests for scalbnf
   inspect(scalbnf(1.5, 2), content="6")
   inspect(scalbnf(2.0, -1), content="1")
   inspect(scalbnf(3.0, 0), content="3")
+
+  // Test extreme exponent values
   inspect(scalbnf(1.0, 128), content="Infinity")
   inspect(scalbnf(1.0, -150), content="0")
   inspect(scalbnf(1.0, 254), content="Infinity")
   inspect(scalbnf(1.0, -199), content="0")
   inspect(scalbnf(1.0, 307), content="Infinity")
   inspect(scalbnf(1.0, -296), content="0")
+
+  // Test with special values
   inspect(scalbnf(@float.infinity, 10), content="Infinity")
+  inspect(scalbnf(@float.neg_infinity, 10), content="-Infinity")
   inspect(scalbnf(@float.not_a_number, 10), content="NaN")
   inspect(scalbnf(0.0, 10), content="0")
+  inspect(scalbnf(-0.0, 10), content="0")
+
+  // Test with different float values
+  inspect(scalbnf(0.5, 1), content="1")
+  inspect(scalbnf(0.25, 2), content="1")
+  inspect(scalbnf(0.1, 4), content="1.600000023841858")
+
+  // Test with negative numbers
+  inspect(scalbnf(-2.0, 3), content="-16")
+  inspect(scalbnf(-3.0, -1), content="-1.5")
+
+  // Test with small numbers
+  let small_number = 1.0e-20
+  let small_float = small_number.to_float()
+  inspect(scalbnf(small_float, 1), content="1.999999936531045e-20")
 }
 
 ///|
-test "pow" {
+test "pow basic" {
+  // Basic tests for powf
   inspect(powf(1.0, 3.0), content="1")
   inspect(powf(-1.0, 3.0), content="-1")
   inspect(powf(2.0, 3.0), content="8")
@@ -38,6 +60,8 @@ test "pow" {
   inspect(powf(-2.0, -3.0), content="-0.125")
   inspect(powf(2.0, -3.14), content="0.1134398877620697")
   inspect(powf(-2.0, -3.14), content="NaN")
+
+  // Test with special values
   inspect(powf(@float.infinity, 3.0), content="Infinity")
   inspect(powf(@float.infinity, -3.0), content="0")
   inspect(powf(@float.infinity, 0.0), content="1")
@@ -45,4 +69,128 @@ test "pow" {
   inspect(powf(@float.neg_infinity, -3.0), content="0")
   inspect(powf(@float.neg_infinity, 0.0), content="1")
   inspect(powf(@float.not_a_number, 3.0), content="NaN")
+}
+
+///|
+test "pow special cases" {
+  // Test x^0 for various x values
+  inspect(powf(0.0, 0.0), content="1")
+  inspect(powf(1.0, 0.0), content="1")
+  inspect(powf(-1.0, 0.0), content="1")
+  inspect(powf(@float.infinity, 0.0), content="1")
+  inspect(powf(@float.neg_infinity, 0.0), content="1")
+  inspect(powf(@float.not_a_number, 0.0), content="1")
+
+  // Test 0^y for various y values
+  inspect(powf(0.0, 1.0), content="0")
+  inspect(powf(0.0, 2.0), content="0")
+  inspect(powf(0.0, -1.0), content="Infinity")
+  inspect(powf(0.0, -2.0), content="Infinity")
+  inspect(powf(0.0, 0.5), content="0")
+  inspect(powf(0.0, -0.5), content="Infinity")
+
+  // Test negative base with non-integer exponent
+  inspect(powf(-1.0, 0.5), content="NaN")
+  inspect(powf(-2.0, 0.5), content="NaN")
+
+  // Test 1^y for various y values
+  inspect(powf(1.0, 10.0), content="1")
+  inspect(powf(1.0, -10.0), content="1")
+  inspect(powf(1.0, @float.infinity), content="1")
+  inspect(powf(1.0, @float.neg_infinity), content="1")
+  inspect(powf(1.0, @float.not_a_number), content="1")
+
+  // Test x^NaN
+  inspect(powf(2.0, @float.not_a_number), content="NaN")
+  inspect(powf(-2.0, @float.not_a_number), content="NaN")
+
+  // Test NaN^y (except for y=0, tested above)
+  inspect(powf(@float.not_a_number, 1.0), content="NaN")
+  inspect(powf(@float.not_a_number, -1.0), content="NaN")
+}
+
+///|
+test "pow edge cases" {
+  // Test cases with very large exponents
+  inspect(powf(1.2, 100.0), content="Infinity")
+  inspect(powf(0.8, 100.0), content="7.254320991757178E-10")
+
+  // Test cases with very small exponents
+  inspect(powf(1.2, -100.0), content="7.254320991757178E-10")
+  inspect(powf(0.8, -100.0), content="Infinity")
+
+  // Test cases with small base
+  let small_flt : Float = 1.0e-5
+  inspect(powf(small_flt, 2.0), content="1.0E-10")
+  inspect(powf(small_flt, 0.5), content="0.0031622776")
+
+  // Test cases with large base
+  let large_flt : Float = 1.0e5
+  inspect(powf(large_flt, 2.0), content="1.0E+10")
+  inspect(powf(large_flt, 0.5), content="316.22775")
+
+  // Test negative exponent with negative base (where exponent is integer)
+  inspect(powf(-2.0, -4.0), content="0.0625")
+  inspect(powf(-2.0, -5.0), content="-0.03125")
+
+  // Test fractional exponents with positive base
+  inspect(powf(4.0, 0.5), content="2")
+  inspect(powf(9.0, 0.5), content="3")
+  inspect(powf(16.0, 0.25), content="2")
+
+  // Test powers that should closely approximate known values
+  inspect(powf(10.0, 2.0), content="100")
+  inspect(powf(10.0, -2.0), content="0.01")
+}
+
+///|
+test "pow with standard functions" {
+  // Compare with standard mathematical identities
+
+  // Test simple cases of e^x
+  let e_flt : Float = 2.7182817459106445
+  let x_flt : Float = 2.0
+  let expected_exp_flt : Float = 7.3890562
+  let actual_pow_flt = powf(e_flt, x_flt)
+  assert_true!((actual_pow_flt - expected_exp_flt).abs() < 0.01)
+
+  // Test sqrt(x) vs. pow(x, 0.5)
+  let values_flt : Array[Float] = [4.0, 9.0, 16.0, 25.0]
+  for value in values_flt {
+    let expected_sqrt_flt = value.sqrt()
+    let actual_pow_flt = powf(value, 0.5)
+    assert_true!((actual_pow_flt - expected_sqrt_flt).abs() < 0.01)
+  }
+
+  // Test pow(x, y) * pow(x, z) = pow(x, y + z)
+  let x_test_flt : Float = 3.0
+  let y_test_flt : Float = 2.0
+  let z_test_flt : Float = 4.0
+  let left_val_flt = powf(x_test_flt, y_test_flt) * powf(x_test_flt, z_test_flt)
+  let right_val_flt = powf(x_test_flt, y_test_flt + z_test_flt)
+  assert_true!((left_val_flt - right_val_flt).abs() < 0.01)
+
+  // Test pow(x, y)^z = pow(x, y*z)
+  let left_test_flt = powf(powf(x_test_flt, y_test_flt), z_test_flt)
+  let right_test_flt = powf(x_test_flt, y_test_flt * z_test_flt)
+  assert_true!((left_test_flt - right_test_flt).abs() < 0.01)
+}
+
+///|
+test "pow double direct method" {
+  // Test Double.pow which is provided by Double directly
+  let a_dbl : Double = 2.0
+  let b_dbl : Double = 10.0
+  inspect(a_dbl.pow(b_dbl), content="1024.0")
+
+  // Test a few more Double.pow cases
+  inspect(10.0.pow(-3.0), content="0.001")
+  inspect(5.0.pow(0.0), content="1.0")
+  inspect((-3.0).pow(3.0), content="-27.0")
+
+  // Test with infinity
+  inspect(@double.infinity.pow(2.0), content="Infinity")
+
+  // Test with negative base and fractional exponent (should be NaN)
+  inspect((-2.0).pow(2.5), content="NaN")
 }
