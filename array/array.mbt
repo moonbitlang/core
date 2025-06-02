@@ -43,10 +43,12 @@ pub fn[T] Array::from_iter(iter : Iter[T]) -> Array[T] {
 ///
 /// # Example
 /// ```
-/// let u = [1, 2, 3]
-/// let v = [4, 5, 6]
-/// u.push_iter(v.iter())
-/// assert_eq(u, [1, 2, 3, 4, 5, 6])
+/// test "push_iter_example" {
+///   let u = [1, 2, 3]
+///   let v = [4, 5, 6]
+///   u.push_iter(v.iter())
+///   assert_eq(u, [1, 2, 3, 4, 5, 6])
+/// }
 /// ```
 pub fn[T] push_iter(self : Array[T], iter : Iter[T]) -> Unit {
   for x in iter {
