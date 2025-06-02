@@ -112,35 +112,35 @@ test "pow special cases" {
 ///|
 test "pow edge cases" {
   // Test cases with very large exponents
-  inspect(powf(1.2, 100.0), content="Infinity")
-  inspect(powf(0.8, 100.0), content="7.254320991757178E-10")
+  assert_true(powf(1.2, 100.0).close_to(82818304.0))
+  assert_true(powf(0.8, 100.0).close_to(2.0370390096946522e-10))
 
   // Test cases with very small exponents
-  inspect(powf(1.2, -100.0), content="7.254320991757178E-10")
-  inspect(powf(0.8, -100.0), content="Infinity")
+  assert_true(powf(1.2, -100.0).close_to(1.2074625743707657e-8))
+  assert_true(powf(0.8, -100.0).close_to(4909086208.0))
 
   // Test cases with small base
   let small_flt : Float = 1.0e-5
-  inspect(powf(small_flt, 2.0), content="1.0E-10")
-  inspect(powf(small_flt, 0.5), content="0.0031622776")
+  assert_true(powf(small_flt, 2.0).close_to(9.999999439624929e-11))
+  assert_true(powf(small_flt, 0.5).close_to(0.003162277629598975))
 
   // Test cases with large base
   let large_flt : Float = 1.0e5
-  inspect(powf(large_flt, 2.0), content="1.0E+10")
-  inspect(powf(large_flt, 0.5), content="316.22775")
+  assert_true(powf(large_flt, 2.0).close_to(10000000000.0))
+  assert_true(powf(large_flt, 0.5).close_to(316.2277526855469))
 
   // Test negative exponent with negative base (where exponent is integer)
-  inspect(powf(-2.0, -4.0), content="0.0625")
-  inspect(powf(-2.0, -5.0), content="-0.03125")
+  assert_true(powf(-2.0, -4.0).close_to(0.0625))
+  assert_true(powf(-2.0, -5.0).close_to(-0.03125))
 
   // Test fractional exponents with positive base
-  inspect(powf(4.0, 0.5), content="2")
-  inspect(powf(9.0, 0.5), content="3")
-  inspect(powf(16.0, 0.25), content="2")
+  assert_true(powf(4.0, 0.5).close_to(2.0))
+  assert_true(powf(9.0, 0.5).close_to(3.0))
+  assert_true(powf(16.0, 0.25).close_to(2.0))
 
   // Test powers that should closely approximate known values
-  inspect(powf(10.0, 2.0), content="100")
-  inspect(powf(10.0, -2.0), content="0.01")
+  assert_true(powf(10.0, 2.0).close_to(100.0))
+  assert_true(powf(10.0, -2.0).close_to(0.009999999776482582))
 }
 
 ///|
@@ -181,16 +181,16 @@ test "pow double direct method" {
   // Test Double.pow which is provided by Double directly
   let a_dbl : Double = 2.0
   let b_dbl : Double = 10.0
-  inspect(a_dbl.pow(b_dbl), content="1024.0")
+  assert_true(a_dbl.pow(b_dbl).close_to(1024.0))
 
   // Test a few more Double.pow cases
-  inspect(10.0.pow(-3.0), content="0.001")
-  inspect(5.0.pow(0.0), content="1.0")
-  inspect((-3.0).pow(3.0), content="-27.0")
+  assert_true(10.0.pow(-3.0).close_to(0.001))
+  assert_true(5.0.pow(0.0).close_to(1.0))
+  assert_true((-3.0).pow(3.0).close_to(-27.0))
 
   // Test with infinity
-  inspect(@double.infinity.pow(2.0), content="Infinity")
+  assert_true(@double.infinity.pow(2.0).is_inf())
 
   // Test with negative base and fractional exponent (should be NaN)
-  inspect((-2.0).pow(2.5), content="NaN")
+  assert_true((-2.0).pow(2.5).is_nan())
 }
