@@ -120,7 +120,7 @@ test "pow edge cases" {
   assert_true(powf(0.8, -100.0).close_to(4909086208.0))
 
   // Test cases with small base
-  let small_flt : Float = 1.0e-5
+  let small_flt = 1.0e-5F
   assert_true(powf(small_flt, 2.0).close_to(9.999999439624929e-11))
   assert_true(powf(small_flt, 0.5).close_to(0.003162277629598975))
 
