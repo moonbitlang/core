@@ -7,3 +7,4 @@ _coverage
 bisect.coverage
 
 .DS_Store
+.ai/
