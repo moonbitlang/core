@@ -37,20 +37,18 @@ struct Summary {
 ///|
 fn Summary::new(
   name? : String,
-  data : Array[Double],
+  sorted_data~ : Array[Double],
   batch_size : Int
 ) -> Summary {
-  let sorted_data = data.copy()
-  sorted_data.sort()
-  let sum = sum(data)
-  let min = min(data)
-  let max = max(data)
-  let mean = mean(data, sum~)
+  let sum = sum(sorted_data)
+  let min = min(sorted_data~)
+  let max = max(sorted_data~)
+  let mean = mean(sorted_data, sum~)
   let median = median(sorted_data~)
-  let var = var(data, mean~)
+  let var = var(sorted_data, mean~)
   let std_dev = std_dev(var~)
   let std_dev_pct = std_dev_pct(mean~, std_dev~)
-  let median_abs_dev = median_abs_dev(data, med=median)
+  let median_abs_dev = median_abs_dev(sorted_data, med=median)
   let median_abs_dev_pct = median_abs_dev_pct(med=median, mad=median_abs_dev)
   let quartiles = quartiles(sorted_data~)
   let iqr = iqr(quartiles~)
@@ -69,7 +67,7 @@ fn Summary::new(
     quartiles,
     iqr,
     batch_size,
-    runs: data.length(),
+    runs: sorted_data.length(),
   }
 }
 
@@ -83,25 +81,13 @@ fn sum(data : Array[Double]) -> Double {
 }
 
 ///|
-fn min(data : Array[Double]) -> Double {
-  let mut min = data[0]
-  for i in data {
-    if i < min {
-      min = i
-    }
-  }
-  min
+fn min(sorted_data~ : Array[Double]) -> Double {
+  sorted_data[0]
 }
 
 ///|
-fn max(data : Array[Double]) -> Double {
-  let mut max = data[0]
-  for i in data {
-    if i > max {
-      max = i
-    }
-  }
-  max
+fn max(sorted_data~ : Array[Double]) -> Double {
+  sorted_data[sorted_data.length() - 1]
 }
 
 ///|
@@ -192,16 +178,14 @@ fn percentile(sorted_data~ : Array[Double], pct~ : Double) -> Double {
 }
 
 ///|
-fn winsorize(data : Array[Double], pct : Double) -> Unit {
-  let sorted_data = data.copy()
-  sorted_data.sort()
+fn winsorize(sorted_data~ : Array[Double], pct : Double) -> Unit {
   let lo = percentile(sorted_data~, pct~)
   let hi = percentile(sorted_data~, pct=100.0 - pct)
-  for i, samp in data {
+  for i, samp in sorted_data {
     if samp > hi {
-      data[i] = hi
+      sorted_data[i] = hi
     } else if samp < lo {
-      data[i] = lo
+      sorted_data[i] = lo
     }
   }
 }
@@ -209,7 +193,8 @@ fn winsorize(data : Array[Double], pct : Double) -> Unit {
 ///|
 test {
   let data = [1.1, 21.4, 2.2, 3.3, 4.5, 12.5, 33.3, 14.4]
-  let summary = Summary::new(data, 3)
+  data.sort()
+  let summary = Summary::new(sorted_data=data, 3)
   assert_true(summary.sum.is_close(92.7))
   assert_true(summary.min.is_close(1.1))
   assert_true(summary.max.is_close(33.3))
