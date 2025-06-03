@@ -48,8 +48,8 @@ fn Summary::new(
   let var = var(sorted_data, mean~)
   let std_dev = std_dev(var~)
   let std_dev_pct = std_dev_pct(mean~, std_dev~)
-  let median_abs_dev = median_abs_dev(sorted_data, med=median)
-  let median_abs_dev_pct = median_abs_dev_pct(med=median, mad=median_abs_dev)
+  let median_abs_dev = median_abs_dev(sorted_data, median_=median)
+  let median_abs_dev_pct = median_abs_dev_pct(median~, median_abs_dev~)
   let quartiles = quartiles(sorted_data~)
   let iqr = iqr(quartiles~)
   {
@@ -128,19 +128,19 @@ fn std_dev_pct(mean~ : Double, std_dev~ : Double) -> Double {
 }
 
 ///|
-fn median_abs_dev(data : Array[Double], med~ : Double) -> Double {
-  let abs_devs = data.map(fn(x) { (med - x).abs() })
+fn median_abs_dev(data : Array[Double], median_~ : Double) -> Double {
+  let abs_devs = data.map(fn(x) { (median_ - x).abs() })
   abs_devs.sort()
   // https://en.wikipedia.org/wiki/Median_absolute_deviation
   median(sorted_data=abs_devs) * 1.4826
 }
 
 ///|
-fn median_abs_dev_pct(med~ : Double, mad~ : Double) -> Double {
-  if med == 0.0 {
+fn median_abs_dev_pct(median~ : Double, median_abs_dev~ : Double) -> Double {
+  if median == 0.0 {
     return 0.0
   }
-  mad / med * 100.0
+  median_abs_dev / median * 100.0
 }
 
 ///|
