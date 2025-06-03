@@ -679,10 +679,10 @@ pub fn View::start_offset(self : View) -> Int {
 
 ///|
 pub fn View::to_bytes(self : View) -> Bytes {
-  if self.len() == 0 && self.len() == self.bytes().length() {
-    return self.bytes()
+  if self.len == 0 && self.len == self.bytes.length() {
+    return self.bytes
   }
-  let bytes = FixedArray::make(self.len(), (0 : Byte))
-  bytes.blit_from_bytes(0, self.bytes(), self.start_offset(), self.len())
+  let bytes = FixedArray::make(self.len, (0 : Byte))
+  bytes.blit_from_bytes(0, self.bytes, self.start, self.len)
   unsafe_to_bytes(bytes)
 }
