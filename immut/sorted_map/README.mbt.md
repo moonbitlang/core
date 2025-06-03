@@ -23,7 +23,7 @@ Also, you can construct it from an array using `of()` or `from_array()`.
 ```moonbit
 test {
   let map = @sorted_map.of([("a", 1), ("b", 2), ("c", 3)])
-  assert_eq(map.elems(), [1, 2, 3])
+  assert_eq(map.values().collect(), [1, 2, 3])
   assert_eq(map.keys(), ["a", "b", "c"])
 }
 ```
@@ -106,9 +106,9 @@ Use `map()` or `map_with_key()` to map a function over all values.
 test {
   let map = @sorted_map.of([("a", 1), ("b", 2), ("c", 3)])
   let map = map.map(fn(v) { v + 1 })
-  assert_eq(map.elems(), [2, 3, 4])
+  assert_eq(map.values().collect(), [2, 3, 4])
   let map = map.map_with_key(fn(_k, v) { v + 1 })
-  assert_eq(map.elems(), [3, 4, 5])
+  assert_eq(map.values().collect(), [3, 4, 5])
 }
 ```
 
@@ -130,23 +130,23 @@ Use `filter()` or `filter_with_key()` to filter all keys/values that satisfy the
 test {
   let map = @sorted_map.of([("a", 1), ("b", 2), ("c", 3)])
   let map = map.filter(fn (v) { v > 1 })
-  assert_eq(map.elems(), [2, 3])
+  assert_eq(map.values().collect(), [2, 3])
   assert_eq(map.keys(), ["b", "c"])
   let map = map.filter_with_key(fn (k, v) { k > "a" && v > 1 })
-  assert_eq(map.elems(), [2, 3])
+  assert_eq(map.values().collect(), [2, 3])
   assert_eq(map.keys(), ["b", "c"])
 }
 ```
 
 ## Conversion
 
-Use `elems()` to get all values in ascending order of their keys.
+Use `values()` to get all values in ascending order of their keys.
 
 ```moonbit
 test {
   let map = @sorted_map.of([("a", 1), ("b", 2), ("c", 3)])
-  let elems = map.elems() // [1, 2, 3]
-  assert_eq(elems, [1, 2, 3])
+  let values = map.values()
+  assert_eq(values.collect(), [1, 2, 3])
 }
 ```
 

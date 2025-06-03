@@ -156,7 +156,9 @@ pub fn[A, B] mapi(self : T[A], f : (Int, A) -> B) -> T[B] {
 ///
 /// # Example
 /// ```
-/// assert_eq(@list.of([1, 2, 3, 4, 5]).rev_map(fn(x) { x * 2 }), @list.of([10, 8, 6, 4, 2]))
+/// test "rev_map example" {
+///   assert_eq(@list.of([1, 2, 3, 4, 5]).rev_map(fn(x) { x * 2 }), @list.of([10, 8, 6, 4, 2]))
+/// }
 /// ```
 pub fn[A, B] rev_map(self : T[A], f : (A) -> B) -> T[B] {
   loop Nil, self {
@@ -360,8 +362,10 @@ pub fn[A, B] fold(self : T[A], init~ : B, f : (B, A) -> B) -> B {
 ///
 /// # Example
 /// ```
-/// let r = @list.of([1, 2, 3, 4, 5]).rev_fold(fn(x, acc) { x + acc }, init=0)
-/// assert_eq(r, 15)
+/// test "fold_right example" {
+///   let r = @list.of([1, 2, 3, 4, 5]).rev_fold(fn(x, acc) { x + acc }, init=0)
+///   assert_eq(r, 15)
+/// }
 /// ```
 pub fn[A, B] rev_fold(self : T[A], init~ : B, f : (A, B) -> B) -> B {
   let xs = self.to_array()
@@ -388,13 +392,6 @@ pub fn[A, B] fold_left(self : T[A], f : (B, A) -> B, init~ : B) -> B {
 }
 
 ///|
-/// Fold the list from right.
-///
-/// # Example
-/// ```
-/// let r = @list.of([1, 2, 3, 4, 5]).rev_fold(fn(x, acc) { x + acc }, init=0)
-/// assert_eq(r, 15)
-/// ```
 #deprecated("Use `rev_fold` instead")
 #coverage.skip
 pub fn[A, B] fold_right(self : T[A], f : (A, B) -> B, init~ : B) -> B {
@@ -853,9 +850,11 @@ pub fn[A] drop_while(self : T[A], p : (A) -> Bool) -> T[A] {
 /// # Example
 ///
 /// ```
-/// let ls = @list.of([1, 2, 3, 4, 5])
-/// let r = ls.scan_left(fn(acc, x) { acc + x }, init=0)
-/// assert_eq(r, @list.of([0, 1, 3, 6, 10, 15]))
+/// test "scan_left example" {
+///   let ls = @list.of([1, 2, 3, 4, 5])
+///   let r = ls.scan_left(fn(acc, x) { acc + x }, init=0)
+///   assert_eq(r, @list.of([0, 1, 3, 6, 10, 15]))
+/// }
 /// ```
 pub fn[A, E] scan_left(self : T[A], f : (E, A) -> E, init~ : E) -> T[E] {
   Cons(
@@ -1019,13 +1018,15 @@ pub fn[A : Eq] is_suffix(self : T[A], suffix : T[A]) -> Bool {
 ///
 /// # Example
 /// ```
-/// let ls = @list.of([
-///    @list.of([1, 2, 3]),
-///    @list.of([4, 5, 6]),
-///    @list.of([7, 8, 9]),
-/// ])
-/// let r = ls.intercalate(@list.of([0]))
-/// assert_eq(r, @list.of([1, 2, 3, 0, 4, 5, 6, 0, 7, 8, 9]))
+/// test "intercalate example" {
+///   let ls = @list.of([
+///      @list.of([1, 2, 3]),
+///      @list.of([4, 5, 6]),
+///      @list.of([7, 8, 9]),
+///   ])
+///   let r = ls.intercalate(@list.of([0]))
+///   assert_eq(r, @list.of([1, 2, 3, 0, 4, 5, 6, 0, 7, 8, 9]))
+/// }
 /// ```
 pub fn[A] intercalate(self : T[T[A]], sep : T[A]) -> T[A] {
   self.intersperse(sep).flatten()

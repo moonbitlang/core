@@ -10,10 +10,8 @@ fn popcnt(Byte) -> Int
 fn to_uint64(Byte) -> UInt64
 
 // Types and methods
-impl Byte {
-  popcnt(Byte) -> Int
-  to_uint64(Byte) -> UInt64
-}
+fn Byte::popcnt(Byte) -> Int
+fn Byte::to_uint64(Byte) -> UInt64
 
 // Type aliases
 

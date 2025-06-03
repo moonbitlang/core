@@ -113,9 +113,9 @@ test "keys" {
 }
 
 ///|
-test "elems" {
+test "values" {
   let m = @sorted_map.of([(1, "one"), (2, "two"), (3, "three")])
-  assert_eq(m.elems(), ["one", "two", "three"])
+  assert_eq(m.values().collect(), ["one", "two", "three"])
 }
 
 ///|

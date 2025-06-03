@@ -6,9 +6,7 @@ fn default() -> Unit
 fn to_string(Unit) -> String
 
 // Types and methods
-impl Unit {
-  to_string(Unit) -> String
-}
+fn Unit::to_string(Unit) -> String
 impl Compare for Unit
 impl Default for Unit
 impl Hash for Unit
