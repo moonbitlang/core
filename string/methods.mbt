@@ -16,32 +16,70 @@
 /// Returns the offset (charcode index) of the first occurrence of the given
 /// substring. If the substring is not found, it returns None.
 pub fn View::find(self : View, str : View) -> Int? {
-  let len = self.length()
-  let sub_len = str.length()
-  // Handle empty substring case
-  guard sub_len > 0 else { return Some(0) }
-  // If substring is longer than string, it can't be found
-  guard sub_len <= len else { return None }
-  let max_idx = len - sub_len
-  let first = str.unsafe_charcode_at(0)
+  if str.length() <= 4 {
+    brute_force_find(self, str)
+  } else {
+    boyer_moore_horspool_find(self, str)
+  }
+  // TODO: When the pattern string is long (>= 256),
+  // consider using Two-Way algorithm to ensure linear time complexity.
+}
+
+///|
+/// Simple brute force string search algorithm
+/// Scans the haystack left to right, matching the needle at each position
+fn brute_force_find(haystack : View, needle : View) -> Int? {
+  let haystack_len = haystack.length()
+  let needle_len = needle.length()
+  guard needle_len > 0 else { return Some(0) }
+  guard haystack_len >= needle_len else { return None }
+  let needle_first = needle.unsafe_charcode_at(0)
+  let forward_len = haystack_len - needle_len
   let mut i = 0
-  while i <= max_idx {
-    // find first character
-    while i < len && self.unsafe_charcode_at(i) != first {
+  while i <= forward_len {
+    // Skip positions where first charcode doesn't match
+    while i <= forward_len && haystack.unsafe_charcode_at(i) != needle_first {
       i += 1
     }
-    // check the rest
-    if i <= max_idx {
-      for j in 1..<sub_len {
-        if self.unsafe_charcode_at(i + j) != str.unsafe_charcode_at(j) {
+    if i <= forward_len {
+      // Check remaining charcodes for full match
+      for j in 1..<needle_len {
+        if haystack.unsafe_charcode_at(i + j) != needle.unsafe_charcode_at(j) {
           break
         }
       } else {
-        // the substring is found
         return Some(i)
       }
+      i += 1
     }
-    i += 1
+  }
+  None
+}
+
+///|
+/// Boyer-Moore-Horspool algorithm for string search (left to right)
+/// More efficient than brute force for longer patterns by using bad char heuristic
+fn boyer_moore_horspool_find(haystack : View, needle : View) -> Int? {
+  let haystack_len = haystack.length()
+  let needle_len = needle.length()
+  guard needle_len > 0 else { return Some(0) }
+  guard haystack_len >= needle_len else { return None }
+  // Build skip table
+  let skip_table = FixedArray::make(1 << 8, needle_len)
+  for i in 0..<(needle_len - 1) {
+    skip_table[needle.unsafe_charcode_at(i) & 0xFF] = needle_len - 1 - i
+  }
+  for i = 0
+      i <= haystack_len - needle_len
+      i = i + skip_table[haystack.unsafe_charcode_at(i + needle_len - 1) & 0xFF] {
+    // Check all charcodes for match at current position
+    for j in 0..=(needle_len - 1) {
+      if haystack.unsafe_charcode_at(i + j) != needle.unsafe_charcode_at(j) {
+        break
+      }
+    } else {
+      return Some(i)
+    }
   }
   None
 }
@@ -66,6 +104,14 @@ test "find" {
   inspect("hello hello".find("hello"), content="Some(0)")
   inspect("aaa".find("aa"), content="Some(0)")
   inspect("😀😀".find("😀"), content="Some(0)")
+  inspect(
+    ("😀😀aa".repeat(20) + "😀😀😀😀").find("😀😀😀😀"),
+    content="Some(120)",
+  )
+  inspect(
+    ("😀😀😀😀" + "😀😀aa".repeat(20)).find("😀😀😀😀"),
+    content="Some(0)",
+  )
 }
 
 ///|
@@ -105,28 +151,68 @@ test "find_by" {
 /// Returns the offset of the last occurrence of the given substring. If the
 /// substring is not found, it returns None.
 pub fn View::rev_find(self : View, str : View) -> Int? {
-  let len = self.length()
-  let sub_len = str.length()
-  guard sub_len > 0 else { return Some(len) }
-  guard sub_len <= len else { return None }
-  let min_idx = sub_len - 1
-  let last = str.unsafe_charcode_at(sub_len - 1)
-  let mut i = len - 1
-  while i >= min_idx {
-    while i >= 0 && self.unsafe_charcode_at(i) != last {
+  if str.length() <= 4 {
+    brute_force_rev_find(self, str)
+  } else {
+    boyer_moore_horspool_rev_find(self, str)
+  }
+  // TODO: When the pattern string is long (>= 256),
+  // consider using Two-Way algorithm to ensure linear time complexity.
+}
+
+///|
+/// Simple brute force string search algorithm
+/// Scans the haystack right to left, matching the needle at each position
+fn brute_force_rev_find(haystack : View, needle : View) -> Int? {
+  let haystack_len = haystack.length()
+  let needle_len = needle.length()
+  guard needle_len > 0 else { return Some(haystack_len) }
+  guard haystack_len >= needle_len else { return None }
+  let needle_first = needle.unsafe_charcode_at(0)
+  let mut i = haystack_len - needle_len
+  while i >= 0 {
+    // Skip positions where first charcode doesn't match
+    while i >= 0 && haystack.unsafe_charcode_at(i) != needle_first {
       i -= 1
     }
-    if i >= min_idx {
-      for j in 1..<sub_len {
-        if self.unsafe_charcode_at(i - j) !=
-          str.unsafe_charcode_at(sub_len - 1 - j) {
+    if i >= 0 {
+      // Check remaining charcodes for full match
+      for j in 1..<needle_len {
+        if haystack.unsafe_charcode_at(i + j) != needle.unsafe_charcode_at(j) {
           break
         }
       } else {
-        return Some(i - sub_len + 1)
+        return Some(i)
       }
+      i -= 1
     }
-    i -= 1
+  }
+  None
+}
+
+///|
+/// Boyer-Moore-Horspool algorithm for reverse string search (right to left)
+/// More efficient than brute force for longer patterns by using bad char heuristic
+fn boyer_moore_horspool_rev_find(haystack : View, needle : View) -> Int? {
+  let haystack_len = haystack.length()
+  let needle_len = needle.length()
+  guard needle_len > 0 else { return Some(haystack_len) }
+  guard haystack_len >= needle_len else { return None }
+  let skip_table = FixedArray::make(1 << 8, needle_len)
+  for i = needle_len - 1; i > 0; i = i - 1 {
+    skip_table[needle.unsafe_charcode_at(i) & 0xFF] = i
+  }
+  for i = haystack_len - needle_len
+      i >= 0
+      i = i - skip_table[haystack.unsafe_charcode_at(i) & 0xFF] {
+    // Check all charcodes for match at current position
+    for j in 0..<needle_len {
+      if haystack.unsafe_charcode_at(i + j) != needle.unsafe_charcode_at(j) {
+        break
+      }
+    } else {
+      return Some(i)
+    }
   }
   None
 }
@@ -151,6 +237,14 @@ test "rev_find" {
   inspect("hello hello".rev_find("hello"), content="Some(6)")
   inspect("aaa".rev_find("aa"), content="Some(1)")
   inspect("😀😀".rev_find("😀"), content="Some(2)")
+  inspect(
+    ("😀😀aa".repeat(20) + "😀😀😀😀").rev_find("😀😀😀😀"),
+    content="Some(120)",
+  )
+  inspect(
+    ("😀😀😀😀" + "😀😀aa".repeat(20)).rev_find("😀😀😀😀"),
+    content="Some(4)",
+  )
 }
 
 ///| 
