@@ -812,8 +812,7 @@ test "Iter::iter2" {
   for i, x in iter.iter2() {
     assert_eq(i, x)
   }
-  // TODO: fix this in the next release
-  // for i, x in iter {
-  //   assert_eq(i, x)
-  // }
+  for i, x in iter {
+    assert_eq(i, x)
+  }
 }
