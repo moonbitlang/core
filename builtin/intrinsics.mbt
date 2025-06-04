@@ -67,28 +67,6 @@ pub fnalias @abort.abort
 ///|
 pub fn[T] panic() -> T = "%panic"
 
-// Bool primitive ops
-
-///|
-/// Performs logical negation on a boolean value.
-///
-/// Parameters:
-///
-/// * `value` : The boolean value to negate.
-///
-/// Returns the logical NOT of the input value: `true` if the input is `false`,
-/// and `false` if the input is `true`.
-///
-/// Example:
-///
-/// ```moonbit
-/// test "not" {
-///   inspect(not(true), content="false")
-///   inspect(not(false), content="true")
-/// }
-/// ```
-pub fn not(x : Bool) -> Bool = "%bool_not"
-
 ///|
 /// Compares two boolean values for equality.
 ///

@@ -75,7 +75,6 @@ pub fnalias @builtin.(
   panic,
   physical_equal,
   println,
-  not,
   repr,
   dump
 )
