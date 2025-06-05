@@ -517,8 +517,7 @@ fn FixedArray::blit_from_bytes(Self[Byte], Int, Bytes, Int, Int) -> Unit
 fn FixedArray::blit_from_string(Self[Byte], Int, String, Int, Int) -> Unit
 fn[A] FixedArray::blit_to(Self[A], Self[A], len~ : Int, src_offset~ : Int = .., dst_offset~ : Int = ..) -> Unit
 fn[T] FixedArray::fill(Self[T], T) -> Unit
-#deprecated
-fn[T] FixedArray::get(Self[T], Int) -> T
+fn[T] FixedArray::get(Self[T], Int) -> T?
 fn[T] FixedArray::is_empty(Self[T]) -> Bool
 fn[T] FixedArray::iter(Self[T]) -> Iter[T]
 fn[T] FixedArray::iter2(Self[T]) -> Iter2[Int, T]
