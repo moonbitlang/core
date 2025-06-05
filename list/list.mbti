@@ -149,64 +149,62 @@ pub enum T[A] {
   Empty
   More(A, mut tail~ : T[A])
 }
-impl T {
-  add[A](Self[A], A) -> Self[A]
-  all[A](Self[A], (A) -> Bool) -> Bool
-  any[A](Self[A], (A) -> Bool) -> Bool
-  concat[A](Self[A], Self[A]) -> Self[A]
-  contains[A : Eq](Self[A], A) -> Bool
-  drop[A](Self[A], Int) -> Self[A]
-  drop_while[A](Self[A], (A) -> Bool) -> Self[A]
-  each[A](Self[A], (A) -> Unit) -> Unit
-  eachi[A](Self[A], (Int, A) -> Unit) -> Unit
-  filter[A](Self[A], (A) -> Bool) -> Self[A]
-  filter_map[A, B](Self[A], (A) -> B?) -> Self[B]
-  find[A](Self[A], (A) -> Bool) -> A?
-  findi[A](Self[A], (A, Int) -> Bool) -> A?
-  flat_map[A, B](Self[A], (A) -> Self[B]) -> Self[B]
-  flatten[A](Self[Self[A]]) -> Self[A]
-  fold[A, B](Self[A], init~ : B, (B, A) -> B) -> B
-  foldi[A, B](Self[A], init~ : B, (Int, B, A) -> B) -> B
-  head[A](Self[A]) -> A?
-  intercalate[A](Self[Self[A]], Self[A]) -> Self[A]
-  intersperse[A](Self[A], A) -> Self[A]
-  is_empty[A](Self[A]) -> Bool
-  is_prefix[A : Eq](Self[A], Self[A]) -> Bool
-  is_suffix[A : Eq](Self[A], Self[A]) -> Bool
-  iter[A](Self[A]) -> Iter[A]
-  iter2[A](Self[A]) -> Iter2[Int, A]
-  last[A](Self[A]) -> A?
-  length[A](Self[A]) -> Int
-  lookup[A : Eq, B](Self[(A, B)], A) -> B?
-  map[A, B](Self[A], (A) -> B) -> Self[B]
-  mapi[A, B](Self[A], (Int, A) -> B) -> Self[B]
-  maximum[A : Compare](Self[A]) -> A?
-  minimum[A : Compare](Self[A]) -> A?
-  nth[A](Self[A], Int) -> A?
-  prepend[A](Self[A], A) -> Self[A]
-  remove[A : Eq](Self[A], A) -> Self[A]
-  remove_at[A](Self[A], Int) -> Self[A]
-  rev[A](Self[A]) -> Self[A]
-  rev_concat[A](Self[A], Self[A]) -> Self[A]
-  rev_fold[A, B](Self[A], init~ : B, (B, A) -> B) -> B
-  rev_foldi[A, B](Self[A], init~ : B, (Int, B, A) -> B) -> B
-  rev_map[A, B](Self[A], (A) -> B) -> Self[B]
-  scan_left[A, E](Self[A], (E, A) -> E, init~ : E) -> Self[E]
-  scan_right[A, B](Self[A], (B, A) -> B, init~ : B) -> Self[B]
-  sort[A : Compare](Self[A]) -> Self[A]
-  tail[A](Self[A]) -> Self[A]
-  take[A](Self[A], Int) -> Self[A]
-  take_while[A](Self[A], (A) -> Bool) -> Self[A]
-  to_array[A](Self[A]) -> Array[A]
-  to_json[A : ToJson](Self[A]) -> Json
-  unsafe_head[A](Self[A]) -> A
-  unsafe_last[A](Self[A]) -> A
-  unsafe_maximum[A : Compare](Self[A]) -> A
-  unsafe_minimum[A : Compare](Self[A]) -> A
-  unsafe_nth[A](Self[A], Int) -> A
-  unzip[A, B](Self[(A, B)]) -> (Self[A], Self[B])
-  zip[A, B](Self[A], Self[B]) -> Self[(A, B)]
-}
+fn[A] T::add(Self[A], A) -> Self[A]
+fn[A] T::all(Self[A], (A) -> Bool) -> Bool
+fn[A] T::any(Self[A], (A) -> Bool) -> Bool
+fn[A] T::concat(Self[A], Self[A]) -> Self[A]
+fn[A : Eq] T::contains(Self[A], A) -> Bool
+fn[A] T::drop(Self[A], Int) -> Self[A]
+fn[A] T::drop_while(Self[A], (A) -> Bool) -> Self[A]
+fn[A] T::each(Self[A], (A) -> Unit) -> Unit
+fn[A] T::eachi(Self[A], (Int, A) -> Unit) -> Unit
+fn[A] T::filter(Self[A], (A) -> Bool) -> Self[A]
+fn[A, B] T::filter_map(Self[A], (A) -> B?) -> Self[B]
+fn[A] T::find(Self[A], (A) -> Bool) -> A?
+fn[A] T::findi(Self[A], (A, Int) -> Bool) -> A?
+fn[A, B] T::flat_map(Self[A], (A) -> Self[B]) -> Self[B]
+fn[A] T::flatten(Self[Self[A]]) -> Self[A]
+fn[A, B] T::fold(Self[A], init~ : B, (B, A) -> B) -> B
+fn[A, B] T::foldi(Self[A], init~ : B, (Int, B, A) -> B) -> B
+fn[A] T::head(Self[A]) -> A?
+fn[A] T::intercalate(Self[Self[A]], Self[A]) -> Self[A]
+fn[A] T::intersperse(Self[A], A) -> Self[A]
+fn[A] T::is_empty(Self[A]) -> Bool
+fn[A : Eq] T::is_prefix(Self[A], Self[A]) -> Bool
+fn[A : Eq] T::is_suffix(Self[A], Self[A]) -> Bool
+fn[A] T::iter(Self[A]) -> Iter[A]
+fn[A] T::iter2(Self[A]) -> Iter2[Int, A]
+fn[A] T::last(Self[A]) -> A?
+fn[A] T::length(Self[A]) -> Int
+fn[A : Eq, B] T::lookup(Self[(A, B)], A) -> B?
+fn[A, B] T::map(Self[A], (A) -> B) -> Self[B]
+fn[A, B] T::mapi(Self[A], (Int, A) -> B) -> Self[B]
+fn[A : Compare] T::maximum(Self[A]) -> A?
+fn[A : Compare] T::minimum(Self[A]) -> A?
+fn[A] T::nth(Self[A], Int) -> A?
+fn[A] T::prepend(Self[A], A) -> Self[A]
+fn[A : Eq] T::remove(Self[A], A) -> Self[A]
+fn[A] T::remove_at(Self[A], Int) -> Self[A]
+fn[A] T::rev(Self[A]) -> Self[A]
+fn[A] T::rev_concat(Self[A], Self[A]) -> Self[A]
+fn[A, B] T::rev_fold(Self[A], init~ : B, (B, A) -> B) -> B
+fn[A, B] T::rev_foldi(Self[A], init~ : B, (Int, B, A) -> B) -> B
+fn[A, B] T::rev_map(Self[A], (A) -> B) -> Self[B]
+fn[A, E] T::scan_left(Self[A], (E, A) -> E, init~ : E) -> Self[E]
+fn[A, B] T::scan_right(Self[A], (B, A) -> B, init~ : B) -> Self[B]
+fn[A : Compare] T::sort(Self[A]) -> Self[A]
+fn[A] T::tail(Self[A]) -> Self[A]
+fn[A] T::take(Self[A], Int) -> Self[A]
+fn[A] T::take_while(Self[A], (A) -> Bool) -> Self[A]
+fn[A] T::to_array(Self[A]) -> Array[A]
+fn[A : ToJson] T::to_json(Self[A]) -> Json
+fn[A] T::unsafe_head(Self[A]) -> A
+fn[A] T::unsafe_last(Self[A]) -> A
+fn[A : Compare] T::unsafe_maximum(Self[A]) -> A
+fn[A : Compare] T::unsafe_minimum(Self[A]) -> A
+fn[A] T::unsafe_nth(Self[A], Int) -> A
+fn[A, B] T::unzip(Self[(A, B)]) -> (Self[A], Self[B])
+fn[A, B] T::zip(Self[A], Self[B]) -> Self[(A, B)]
 impl[A] Add for T[A]
 impl[X] Default for T[X]
 impl[A : Eq] Eq for T[A]

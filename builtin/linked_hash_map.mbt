@@ -34,11 +34,13 @@ impl[K : Eq, V] Eq for Entry[K, V] with op_equal(self, other) {
 /// # Example
 ///
 /// ```
-/// let map = { 3: "three", 8 :  "eight", 1 :  "one"}
-/// assert_eq!(map.get(2), None)
-/// assert_eq!(map.get(3), Some("three"))
-/// map.set(3, "updated")
-/// assert_eq!(map.get(3), Some("updated"))
+/// test "linked_hash_map_example" {
+///   let map = { 3: "three", 8 :  "eight", 1 :  "one"}
+///   assert_eq(map.get(2), None)
+///   assert_eq(map.get(3), Some("three"))
+///   map.set(3, "updated")
+///   assert_eq(map.get(3), Some("updated"))
+/// }
 /// ```
 struct Map[K, V] {
   mut entries : FixedArray[Entry[K, V]?]
@@ -568,7 +570,6 @@ pub impl[K : Hash + Eq, V : Eq] Eq for Map[K, V] with op_equal(
   guard self.size == that.size else { return false }
   for k, v in self {
     guard that.contains_kv(k, v) else { return false }
-
   } else {
     true
   }

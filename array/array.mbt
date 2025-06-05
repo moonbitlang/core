@@ -43,10 +43,12 @@ pub fn[T] Array::from_iter(iter : Iter[T]) -> Array[T] {
 ///
 /// # Example
 /// ```
-/// let u = [1, 2, 3]
-/// let v = [4, 5, 6]
-/// u.push_iter(v.iter())
-/// assert_eq!(u, [1, 2, 3, 4, 5, 6])
+/// test "push_iter_example" {
+///   let u = [1, 2, 3]
+///   let v = [4, 5, 6]
+///   u.push_iter(v.iter())
+///   assert_eq(u, [1, 2, 3, 4, 5, 6])
+/// }
 /// ```
 pub fn[T] push_iter(self : Array[T], iter : Iter[T]) -> Unit {
   for x in iter {
@@ -97,13 +99,15 @@ pub fn[T] Array::makei(length : Int, value : (Int) -> T) -> Array[T] {
 /// *rand n* is expected to returns a uniformly distribution integer between 0 and n - 1
 /// # Example
 /// 
-/// ```
-/// let arr = [1, 2, 3, 4, 5]
-/// fn rand(upper : Int) -> Int {
-///   let rng = @random.new()
-///   rng.int(limit=upper)
+/// ```moonbit
+/// test "Array::shuffle_in_place" {
+///   let arr = [1, 2, 3, 4, 5]
+///   fn rand(upper : Int) -> Int {
+///     let rng = @random.new()
+///     rng.int(limit=upper)
+///   }
+///   Array::shuffle_in_place(arr, rand=rand)
 /// }
-/// Array::shuffle_in_place(arr, rand=rand)
 /// ```
 pub fn[T] shuffle_in_place(self : Array[T], rand~ : (Int) -> Int) -> Unit {
   let n = self.length()
@@ -301,28 +305,6 @@ pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Array[X] with arbi
 }
 
 ///|
-pub fn join(self : Array[String], separator : String) -> String {
-  match self {
-    [] => ""
-    [hd, .. tl] => {
-      let mut size_hint = hd.length()
-      for s in tl {
-        size_hint += s.length() + separator.length()
-      }
-      size_hint = size_hint << 1
-      let buf = StringBuilder::new(size_hint~)
-      buf.write_string(hd)
-      if separator == "" {
-        for s in tl {
-          buf.write_string(s)
-        }
-      } else {
-        for s in tl {
-          buf.write_string(separator)
-          buf.write_string(s)
-        }
-      }
-      buf.to_string()
-    }
-  }
+pub fn join(self : Array[String], separator : @string.View) -> String {
+  self[:].join(separator)
 }

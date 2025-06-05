@@ -477,7 +477,7 @@ test "BytesView::eq" {
 test "View::bytes" {
   let bytes = b"abcabc"
   let view = bytes[1:4]
-  @test.same_object!(view.data(), bytes)
+  @test.same_object(view.data(), bytes)
 }
 
 ///|
@@ -485,4 +485,32 @@ test "View::start" {
   let bytes = b"abcabc"
   let view = bytes[1:4]
   inspect(view.start_offset(), content="1")
+}
+
+///|
+test "View::to_bytes" {
+  let bytes = b"abcabc"
+  let view = bytes[1:4]
+  inspect(
+    view.to_bytes(),
+    content=
+      #|b"\x62\x63\x61"
+    ,
+  )
+  let bytes = b"abcabc"
+  let view = bytes[:]
+  inspect(
+    view.to_bytes(),
+    content=
+      #|b"\x61\x62\x63\x61\x62\x63"
+    ,
+  )
+  let bytes = b"abcabc"
+  let view = bytes[0:0]
+  inspect(
+    view.to_bytes(),
+    content=
+      #|b""
+    ,
+  )
 }

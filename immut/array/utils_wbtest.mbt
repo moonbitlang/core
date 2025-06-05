@@ -85,7 +85,7 @@ fn execute_array_test(rs : Array[Op]) -> Unit! {
         // push_end
         a.push(v)
         t = t.push(v)
-        check_array_eq!(a, t)
+        check_array_eq(a, t)
       }
       Concat(v) => {
         // concat
@@ -94,13 +94,13 @@ fn execute_array_test(rs : Array[Op]) -> Unit! {
           a.push(v[i])
         }
         t = t.concat(from_array(v))
-        check_array_eq!(a, t)
+        check_array_eq(a, t)
       }
       Set(idx, v) => {
         // set
         a[idx] = v
         t = t.set(idx, v)
-        check_array_eq!(a, t)
+        check_array_eq(a, t)
       }
     }
   }
@@ -121,10 +121,10 @@ fn branching_factor_power(a : Int) -> Int {
 /// If we `inspect` the array, it will raise an error if the arrays are too long.
 /// I guess that's because it exceeds the heap limit of the VM.
 fn check_array_eq(a : Array[Int], t : T[Int]) -> Unit! {
-  assert_eq!(a.length(), t.size)
+  assert_eq(a.length(), t.size)
   let len = t.size
   for i in 0..<len {
-    assert_eq!(t[i], a[i])
+    assert_eq(t[i], a[i])
   }
 }
 

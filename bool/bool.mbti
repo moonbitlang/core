@@ -10,12 +10,10 @@ fn to_uint(Bool) -> UInt
 fn to_uint64(Bool) -> UInt64
 
 // Types and methods
-impl Bool {
-  to_int(Bool) -> Int
-  to_int64(Bool) -> Int64
-  to_uint(Bool) -> UInt
-  to_uint64(Bool) -> UInt64
-}
+fn Bool::to_int(Bool) -> Int
+fn Bool::to_int64(Bool) -> Int64
+fn Bool::to_uint(Bool) -> UInt
+fn Bool::to_uint64(Bool) -> UInt64
 impl Hash for Bool
 
 // Type aliases

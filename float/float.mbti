@@ -80,40 +80,38 @@ fn to_le_bytes(Float) -> Bytes
 fn trunc(Float) -> Float
 
 // Types and methods
-impl Float {
-  abs(Float) -> Float
-  acos(Float) -> Float
-  acosh(Float) -> Float
-  asin(Float) -> Float
-  asinh(Float) -> Float
-  atan(Float) -> Float
-  atan2(Float, Float) -> Float
-  atanh(Float) -> Float
-  cbrt(Float) -> Float
-  ceil(Float) -> Float
-  cos(Float) -> Float
-  cosh(Float) -> Float
-  exp(Float) -> Float
-  expm1(Float) -> Float
-  floor(Float) -> Float
-  hypot(Float, Float) -> Float
-  is_inf(Float) -> Bool
-  is_nan(Float) -> Bool
-  is_neg_inf(Float) -> Bool
-  is_pos_inf(Float) -> Bool
-  ln(Float) -> Float
-  ln_1p(Float) -> Float
-  pow(Float, Float) -> Float
-  round(Float) -> Float
-  sin(Float) -> Float
-  sinh(Float) -> Float
-  tan(Float) -> Float
-  tanh(Float) -> Float
-  to_be_bytes(Float) -> Bytes
-  to_int(Float) -> Int
-  to_le_bytes(Float) -> Bytes
-  trunc(Float) -> Float
-}
+fn Float::abs(Float) -> Float
+fn Float::acos(Float) -> Float
+fn Float::acosh(Float) -> Float
+fn Float::asin(Float) -> Float
+fn Float::asinh(Float) -> Float
+fn Float::atan(Float) -> Float
+fn Float::atan2(Float, Float) -> Float
+fn Float::atanh(Float) -> Float
+fn Float::cbrt(Float) -> Float
+fn Float::ceil(Float) -> Float
+fn Float::cos(Float) -> Float
+fn Float::cosh(Float) -> Float
+fn Float::exp(Float) -> Float
+fn Float::expm1(Float) -> Float
+fn Float::floor(Float) -> Float
+fn Float::hypot(Float, Float) -> Float
+fn Float::is_inf(Float) -> Bool
+fn Float::is_nan(Float) -> Bool
+fn Float::is_neg_inf(Float) -> Bool
+fn Float::is_pos_inf(Float) -> Bool
+fn Float::ln(Float) -> Float
+fn Float::ln_1p(Float) -> Float
+fn Float::pow(Float, Float) -> Float
+fn Float::round(Float) -> Float
+fn Float::sin(Float) -> Float
+fn Float::sinh(Float) -> Float
+fn Float::tan(Float) -> Float
+fn Float::tanh(Float) -> Float
+fn Float::to_be_bytes(Float) -> Bytes
+fn Float::to_int(Float) -> Int
+fn Float::to_le_bytes(Float) -> Bytes
+fn Float::trunc(Float) -> Float
 impl Default for Float
 impl Hash for Float
 impl Mod for Float

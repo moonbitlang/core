@@ -40,13 +40,13 @@ const UINT64_MAX : UInt64 = 0xffffffffffffffffUL
 /// ```
 /// 
 pub fn parse_uint64(str : String, base~ : Int = 0) -> UInt64!StrConvError {
-  guard str != "" else { syntax_err!() }
+  guard str != "" else { syntax_err() }
   if str is ['+' | '-', ..] {
-    syntax_err!()
+    syntax_err()
   }
 
   // `allow_underscore` is used to check validity of underscores
-  let (num_base, rest, allow_underscore) = check_and_consume_base!(str, base)
+  let (num_base, rest, allow_underscore) = check_and_consume_base(str, base)
 
   // calculate overflow threshold
   let overflow_threshold = match num_base {
@@ -57,12 +57,12 @@ pub fn parse_uint64(str : String, base~ : Int = 0) -> UInt64!StrConvError {
   let has_digit = rest
     is (['0'..='9' | 'a'..='z' | 'A'..='Z', ..]
     | ['_', '0'..='9' | 'a'..='z' | 'A'..='Z', ..])
-  guard has_digit else { syntax_err!() }
+  guard has_digit else { syntax_err() }
   loop rest, 0UL, allow_underscore {
     ['_'], _, _ =>
       // the last character cannot be underscore
-      syntax_err!()
-    ['_', ..], _, false => syntax_err!()
+      syntax_err()
+    ['_', ..], _, false => syntax_err()
     ['_', .. rest], acc, true => continue rest, acc, false
     [c, .. rest], acc, _ => {
       let c = c.to_int()
@@ -70,12 +70,12 @@ pub fn parse_uint64(str : String, base~ : Int = 0) -> UInt64!StrConvError {
         '0'..='9' => c - '0'
         'a'..='z' => c + (10 - 'a')
         'A'..='Z' => c + (10 - 'A')
-        _ => syntax_err!()
+        _ => syntax_err()
       }
-      guard d < num_base else { syntax_err!() }
-      guard acc < overflow_threshold else { range_err!() }
+      guard d < num_base else { syntax_err() }
+      guard acc < overflow_threshold else { range_err() }
       let next_acc = acc * num_base.to_uint64() + d.to_uint64()
-      guard next_acc >= acc && next_acc <= UINT64_MAX else { range_err!() }
+      guard next_acc >= acc && next_acc <= UINT64_MAX else { range_err() }
       continue rest, next_acc, true
     }
     [], acc, _ => acc
@@ -88,7 +88,7 @@ pub fn parse_uint64(str : String, base~ : Int = 0) -> UInt64!StrConvError {
 pub fn parse_uint(str : String, base~ : Int = 0) -> UInt!StrConvError {
   let n = parse_uint64!(str, base~)
   if n > UINT_MAX.to_uint64() {
-    range_err!()
+    range_err()
   }
   n.to_uint()
 }
@@ -116,7 +116,7 @@ test "parse_uint64" {
   ]
   for i in 0..<tests.length() {
     let t = tests[i]
-    assert_eq!(
+    assert_eq(
       try Result::Ok(parse_uint64!(t.0)) catch {
         StrConvError(err) => Err(err)
       },
@@ -214,7 +214,7 @@ test "parse_uint64_base" {
   ]
   for i in 0..<tests.length() {
     let t = tests[i]
-    assert_eq!(
+    assert_eq(
       try Result::Ok(parse_uint64!(t.0, base=t.1)) catch {
         StrConvError(err) => Err(err)
       },
@@ -249,8 +249,8 @@ test "parse_uint" {
   ]
   for i in 0..<tests.length() {
     let t = tests[i]
-    assert_eq!(
-      try Result::Ok(parse_uint!(t.0)) catch {
+    assert_eq(
+      try Result::Ok(parse_uint(t.0)) catch {
         StrConvError(err) => Err(err)
       },
       t.1,

@@ -143,14 +143,14 @@ test "Result to_json with Err value" {
 ///|
 test "Bool::to_json true" {
   let result = true.to_json()
-  assert_eq!(result, Json::boolean(true))
+  assert_eq(result, Json::boolean(true))
 }
 
 ///|
 test "to_hex_digit" {
   let str = "\n\r\b\t\u{0C}\u{00}"
   let escaped = str.to_json().as_string().unwrap()
-  assert_eq!(escaped, "\n\r\b\t\u{0c}\u{00}")
+  assert_eq(escaped, "\n\r\b\t\u{0c}\u{00}")
 }
 
 ///|

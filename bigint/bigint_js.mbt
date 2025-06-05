@@ -454,3 +454,15 @@ pub extern "js" fn BigInt::ctz(self : BigInt) -> Int =
   #|  }
   #|  return count;
   #|}
+
+///|
+extern "js" fn can_convert_to_int(x : BigInt) -> Bool =
+  #|(x) => x >= -(2n ** 31n) && x < 2n ** 31n
+
+///|
+extern "js" fn can_convert_to_int64(x : BigInt) -> Bool =
+  #|(x) => x >= -(2n ** 63n) && x < 2n ** 63n
+
+///|
+extern "js" fn is_neg(x : BigInt) -> Bool =
+  #|(x) => x < 0n

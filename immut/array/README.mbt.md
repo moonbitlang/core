@@ -22,9 +22,9 @@ Or use `make()`, `makei()` to create an array with some elements.
 ```moonbit
 test {
   let arr1 = @array.make(5, 1)
-  assert_eq!(arr1.to_array(), [1, 1, 1, 1, 1])
+  assert_eq(arr1.to_array(), [1, 1, 1, 1, 1])
   let arr2 = @array.makei(5, fn(i){i + 1})
-  assert_eq!(arr2.to_array(), [1, 2, 3, 4, 5])
+  assert_eq(arr2.to_array(), [1, 2, 3, 4, 5])
 }
 ```
 
@@ -36,8 +36,8 @@ Since the array is immutable, the `set()`, `push()` operation is not in-place. I
 test {
   let arr1 = @array.of([1, 2, 3, 4, 5])
   let arr2 = arr1.set(2, 10).push(6)
-  assert_eq!(arr1.to_array(), [1, 2, 3, 4, 5])
-  assert_eq!(arr2.to_array(), [1, 2, 10, 4, 5, 6])
+  assert_eq(arr1.to_array(), [1, 2, 3, 4, 5])
+  assert_eq(arr2.to_array(), [1, 2, 10, 4, 5, 6])
 }
 ```
 
@@ -50,7 +50,7 @@ test {
   let arr1 = @array.of([1, 2, 3])
   let arr2 = @array.of([4, 5, 6])
   let arr3 = arr1.concat(arr2)
-  assert_eq!(arr3.to_array(), [1, 2, 3, 4, 5, 6])
+  assert_eq(arr3.to_array(), [1, 2, 3, 4, 5, 6])
 }
 ```
 
@@ -61,9 +61,9 @@ You can use `op_get()` to get the value at the index, or `length()` to get the l
 ```moonbit
 test {
   let arr = @array.of([1, 2, 3, 4, 5])
-  assert_eq!(arr[2], 3)
-  assert_eq!(arr.length(), 5)
-  assert_eq!(arr.is_empty(), false)
+  assert_eq(arr[2], 3)
+  assert_eq(arr.length(), 5)
+  assert_eq(arr.is_empty(), false)
 }
 ```
 
@@ -77,10 +77,10 @@ test {
   inspect(arr.iter(), content="[1, 2, 3, 4, 5]")
   let val = []
   arr.each(fn(v) { val.push(v) })
-  assert_eq!(val, [1, 2, 3, 4, 5])
+  assert_eq(val, [1, 2, 3, 4, 5])
   let vali = []
   arr.eachi(fn(i, v) { vali.push((i, v)) })
-  assert_eq!(vali, [(0, 1), (1, 2), (2, 3), (3, 4), (4, 5)])
+  assert_eq(vali, [(0, 1), (1, 2), (2, 3), (3, 4), (4, 5)])
 }
 ```
 

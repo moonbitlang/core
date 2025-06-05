@@ -271,8 +271,15 @@ pub fn[K, V] keys(self : T[K, V]) -> Array[K] {
 
 ///|
 /// Return all elements of the map in the ascending order of their keys.
+pub fn[K, V] values(self : T[K, V]) -> Iter[V] {
+  self.iter().map(fn { (_, v) => v })
+}
+
+///|
+#deprecated("Use `values` instead")
+#coverage.skip
 pub fn[K, V] elems(self : T[K, V]) -> Array[V] {
-  self.iter().map(fn { (_, v) => v }).collect()
+  self.values().collect()
 }
 
 ///|
@@ -294,5 +301,5 @@ pub fn[K : Show, V : ToJson] to_json(self : T[K, V]) -> Json {
 pub fn[V : @json.FromJson] from_json(
   json : Json
 ) -> T[String, V]!@json.JsonDecodeError {
-  @json.from_json!(json)
+  @json.from_json(json)
 }

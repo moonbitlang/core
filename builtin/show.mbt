@@ -74,15 +74,13 @@ fn to_hex_digit(i : Int) -> Char {
 test "to_hex_digit" {
   for i in 0..<10 {
     guard to_hex_digit(i) == ('0'.to_int() + i).unsafe_to_char() else {
-      fail!("to_hex_digit(\{i}) does not match")
+      fail("to_hex_digit(\{i}) does not match")
     }
-
   }
   for i in 10..<16 {
     guard to_hex_digit(i) == ('a'.to_int() + (i - 10)).unsafe_to_char() else {
-      fail!("to_hex_digit(\{i}) does not match")
+      fail("to_hex_digit(\{i}) does not match")
     }
-
   }
 }
 

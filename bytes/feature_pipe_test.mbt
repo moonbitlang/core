@@ -13,39 +13,24 @@
 // limitations under the License.
 
 ///|
-test "Result unwrap should return Ok value" {
-  let ok_result : Result[Int, Error] = Ok(42)
-  assert_eq(ok_result.unwrap(), 42)
-  assert_eq(ok_result.unwrap_or_error(), 42)
-}
-
-///|
-test "bind with Err" {
-  let x : Result[Int, String] = Err("error")
-  let y = x.bind(fn(v : Int) { Ok(v * 7) })
-  assert_eq(y, Err("error"))
-}
-
-///|
-test "wrap0 with error" {
-  let f = fn() -> Int!Failure { raise Failure("error") }
-  let result = try? f()
+test "feature pipe" {
+  let b : Bytes = "hello"
+  let mut u = Bytes::new(b.length())
+  let v = b
+    |> tap(fn(x) { u = x })
+    |> _.length() // test _.length()
+    |> _.to_int64() // test _.to_int()
+  inspect(v, content="5")
   inspect(
-    result,
+    b,
     content=
-      #|Err("Failure(error)")
+      #|b"\x68\x65\x6c\x6c\x6f"
     ,
   )
-}
-
-///|
-test "wrap2 with error result" {
-  let f = fn(_, _) -> Unit!Failure { raise Failure("error") }
-  let r = try? f(1, 2)
   inspect(
-    r,
+    u,
     content=
-      #|Err("Failure(error)")
+      #|b"\x68\x65\x6c\x6c\x6f"
     ,
   )
 }

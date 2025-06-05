@@ -19,7 +19,7 @@ fn unsafe_make_string(length : Int, value : Char) -> String = "$moonbit.unsafe_m
 /// Create new string of `length`, where each character is `value`
 ///
 /// ```
-/// assert_eq!(String::make(5,'S'), "SSSSS")
+/// assert_eq(String::make(5,'S'), "SSSSS")
 /// ```
 pub fn String::make(length : Int, value : Char) -> String {
   guard length >= 0 else { abort("invalid length") }
@@ -69,10 +69,12 @@ fn code_point_of_surrogate_pair(leading : Int, trailing : Int) -> Char {
 /// # Examples
 ///
 /// ```
-/// let s = "Hello🤣";
-/// inspect(s.charcode_at(0), content="72");
-/// inspect(s.charcode_at(5), content="55358"); // First surrogate of 🤣
-/// inspect(s.charcode_at(6), content="56611"); // Second surrogate of 🤣
+/// test "String::charcode_at" {
+///   let s = "Hello🤣";
+///   inspect(s.charcode_at(0), content="72");
+///   inspect(s.charcode_at(5), content="55358"); // First surrogate of 🤣
+///   inspect(s.charcode_at(6), content="56611"); // Second surrogate of 🤣
+/// }
 /// ```
 ///
 pub fn String::charcode_at(self : String, index : Int) -> Int = "%string_get"
@@ -86,9 +88,11 @@ pub fn String::charcode_at(self : String, index : Int) -> Int = "%string_get"
 /// # Examples
 ///
 /// ```
-/// let s = "Hello🤣";
-/// inspect(s.codepoint_at(0), content="H");
-/// inspect(s.codepoint_at(5), content="🤣"); // Returns full emoji character
+/// test "String::codepoint_at" {
+///   let s = "Hello🤣";
+///   inspect(s.codepoint_at(0), content="H");
+///   inspect(s.codepoint_at(5), content="🤣"); // Returns full emoji character
+/// }
 /// ```
 ///
 /// # Panics
@@ -152,9 +156,11 @@ pub fn String::unsafe_char_at(self : String, index : Int) -> Char {
 /// # Examples
 ///
 /// ```
-/// let s = "Hello🤣";
-/// inspect(s.char_length(), content = "6"); // 6 actual characters
-/// inspect(s.length(), content = "7");  // 5 ASCII chars + 2 surrogate pairs
+/// test "String::char_length" {
+///   let s = "Hello🤣";
+///   inspect(s.char_length(), content = "6"); // 6 actual characters
+///   inspect(s.length(), content = "7");  // 5 ASCII chars + 2 surrogate pairs
+/// }
 /// ```
 pub fn String::char_length(
   self : String,

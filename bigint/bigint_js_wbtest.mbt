@@ -14,7 +14,7 @@
 
 ///|
 fn check_invariant(_a : BigInt) -> Unit! {
-  assert_true!(true)
+  assert_true(true)
 }
 
 ///|
@@ -22,12 +22,12 @@ let zero = 0N
 
 ///|
 test "BigInt::to_uint" {
-  assert_eq!(BigInt::from_int64(-1L).to_uint(), (-1).reinterpret_as_uint())
+  assert_eq(BigInt::from_int64(-1L).to_uint(), (-1).reinterpret_as_uint())
 }
 
 ///|
 test "BigInt::to_int64" {
-  assert_eq!(BigInt::from_int64(-1).to_int64(), -1L)
+  assert_eq(BigInt::from_int64(-1).to_int64(), -1L)
 }
 
 ///|

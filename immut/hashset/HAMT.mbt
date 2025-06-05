@@ -180,7 +180,7 @@ pub fn[A] size(self : T[A]) -> Int {
 
 ///|
 /// Union two hashsets
-pub fn[K : Eq + Hash] union(self : T[K], other : T[K]) -> T[K] {
+pub fn[K : Eq + Hash] T::union(self : T[K], other : T[K]) -> T[K] {
   match (self, other) {
     (_, Empty) => self
     (Empty, _) => other
@@ -194,7 +194,7 @@ pub fn[K : Eq + Hash] union(self : T[K], other : T[K]) -> T[K] {
 
 ///|
 /// Intersect two hashsets
-pub fn[K : Eq + Hash] intersection(self : T[K], other : T[K]) -> T[K] {
+pub fn[K : Eq + Hash] T::intersection(self : T[K], other : T[K]) -> T[K] {
   match (self, other) {
     (_, Empty) => Empty
     (Empty, _) => Empty
@@ -223,7 +223,7 @@ pub fn[K : Eq + Hash] intersection(self : T[K], other : T[K]) -> T[K] {
 
 ///|
 /// Difference of two hashsets: elements in `self` but not in `other`
-pub fn[K : Eq + Hash] difference(self : T[K], other : T[K]) -> T[K] {
+pub fn[K : Eq + Hash] T::difference(self : T[K], other : T[K]) -> T[K] {
   match (self, other) {
     (Empty, _) => Empty
     (_, Empty) => self
@@ -329,12 +329,12 @@ pub impl[K : Eq + Hash + @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[K] w
 
 ///|
 test "hash" {
-  assert_eq!(Hash::hash(of([1, 2, 3, 4])), Hash::hash(of([3, 2]).add(1).add(4)))
-  assert_not_eq!(Hash::hash(of([1, 2, 3])), Hash::hash(of([1, 2, 4])))
+  assert_eq(Hash::hash(of([1, 2, 3, 4])), Hash::hash(of([3, 2]).add(1).add(4)))
+  assert_not_eq(Hash::hash(of([1, 2, 3])), Hash::hash(of([1, 2, 4])))
 }
 
 ///|
 test "eq" {
-  assert_eq!(of([1, 2, 3, 4]), of([3, 2]).add(1).add(4))
-  assert_not_eq!(of([1, 2, 3]), of([1, 2, 4]))
+  assert_eq(of([1, 2, 3, 4]), of([3, 2]).add(1).add(4))
+  assert_not_eq(of([1, 2, 3]), of([1, 2, 4]))
 }

@@ -259,9 +259,28 @@ test "compare" {
   let arr2 = @array.of([1, 2, 4])
   let arr3 = @array.of([1, 2])
   let empty : @array.T[Int] = @array.new()
-  assert_eq!(arr1.compare(arr2), -1)
-  assert_eq!(arr1.compare(arr3), 1)
-  assert_eq!(arr3.compare(arr1), -1)
-  assert_eq!(arr1.compare(arr1), 0)
-  assert_eq!(empty.compare(empty), 0)
+  assert_eq(arr1.compare(arr2), -1)
+  assert_eq(arr1.compare(arr3), 1)
+  assert_eq(arr3.compare(arr1), -1)
+  assert_eq(arr1.compare(arr1), 0)
+  assert_eq(empty.compare(empty), 0)
+}
+
+///|
+test "@array.get/normal" {
+  let arr = @array.of([1, 2, 3, 4, 5])
+  inspect!(arr.get(2), content="Some(3)")
+}
+
+///|
+test "@array.get/first" {
+  let arr = @array.of([42])
+  inspect!(arr.get(0), content="Some(42)")
+}
+
+///|
+test "@array.get/out_of_bounds" {
+  let arr = @array.of([1, 2, 3])
+  inspect!(arr.get(-1), content="None")
+  inspect!(arr.get(3), content="None")
 }

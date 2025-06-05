@@ -21,8 +21,8 @@
 /// ```moonbit
 /// let arr = [1, 2, 3, 4, 5]
 /// let view = arr[1:4]  // Creates a view of elements at indices 1,2,3
-/// assert_eq!(view[0], 2)
-/// assert_eq!(view.length(), 3)
+/// assert_eq(view[0], 2)
+/// assert_eq(view.length(), 3)
 /// ```
 pub typealias View[T] = ArrayView[T]
 
@@ -84,7 +84,7 @@ pub fn[T] View::each(self : View[T], f : (T) -> Unit) -> Unit {
 /// let v = [3, 4, 5][:]
 /// let mut sum = 0
 /// v.eachi(fn (i, x) { sum = sum + x + i })
-/// assert_eq!(sum, 15)
+/// assert_eq(sum, 15)
 /// ```
 pub fn[T] View::eachi(self : View[T], f : (Int, T) -> Unit) -> Unit {
   for i, v in self {
@@ -99,8 +99,8 @@ pub fn[T] View::eachi(self : View[T], f : (Int, T) -> Unit) -> Unit {
 /// 
 /// ```
 /// let v = [1, 4, 6, 8, 9]
-/// assert_false!(v[:].all(fn(elem) { elem % 2 == 0 }))
-/// assert_true!(v[1:4].all(fn(elem) { elem % 2 == 0 }))
+/// assert_false(v[:].all(fn(elem) { elem % 2 == 0 }))
+/// assert_true(v[1:4].all(fn(elem) { elem % 2 == 0 }))
 /// ```
 pub fn[T] View::all(self : View[T], f : (T) -> Bool) -> Bool {
   for v in self {
@@ -118,8 +118,8 @@ pub fn[T] View::all(self : View[T], f : (T) -> Bool) -> Bool {
 ///
 /// ```
 /// let v = [1, 2, 3, 4, 5][:]
-/// assert_true!(v.any(fn(ele) { ele < 6 }))
-/// assert_false!(v.any(fn(ele) { ele < 1 }))
+/// assert_true(v.any(fn(ele) { ele < 6 }))
+/// assert_false(v.any(fn(ele) { ele < 1 }))
 /// ```
 pub fn[T] View::any(self : View[T], f : (T) -> Bool) -> Bool {
   for v in self {
@@ -186,7 +186,6 @@ pub fn[A] View::iter(self : View[A]) -> Iter[A] {
   Iter::new(fn(yield_) {
     for v in self {
       guard yield_(v) is IterContinue else { break IterEnd }
-
     } else {
       IterContinue
     }
@@ -216,7 +215,6 @@ pub fn[A] View::iter2(self : View[A]) -> Iter2[Int, A] {
   Iter2::new(fn(yield_) {
     for i, v in self {
       guard yield_(i, v) is IterContinue else { break IterEnd }
-
     } else {
       IterContinue
     }
@@ -229,7 +227,7 @@ pub fn[A] View::iter2(self : View[A]) -> Iter2[Int, A] {
 /// # Example
 /// ```
 /// let sum = [1, 2, 3, 4, 5][:].fold(init=0, fn { sum, elem => sum + elem })
-/// assert_eq!(sum, 15)
+/// assert_eq(sum, 15)
 /// ```
 pub fn[A, B] View::fold(self : View[A], init~ : B, f : (B, A) -> B) -> B {
   for i = 0, acc = init; i < self.length(); {
@@ -245,7 +243,7 @@ pub fn[A, B] View::fold(self : View[A], init~ : B, f : (B, A) -> B) -> B {
 /// # Example
 /// ```
 /// let sum = [1, 2, 3, 4, 5][:].rev_fold(init=0, fn { sum, elem => sum + elem })
-/// assert_eq!(sum, 15)
+/// assert_eq(sum, 15)
 /// ```
 pub fn[A, B] View::rev_fold(self : View[A], init~ : B, f : (B, A) -> B) -> B {
   for i = self.length() - 1, acc = init; i >= 0; {
@@ -261,7 +259,7 @@ pub fn[A, B] View::rev_fold(self : View[A], init~ : B, f : (B, A) -> B) -> B {
 /// # Example
 /// ```
 /// let sum = [1, 2, 3, 4, 5][:].foldi(init=0, fn { index, sum, _elem => sum + index })
-/// assert_eq!(sum, 10)
+/// assert_eq(sum, 10)
 /// ```
 pub fn[A, B] View::foldi(self : View[A], init~ : B, f : (Int, B, A) -> B) -> B {
   for i = 0, acc = init; i < self.length(); {
@@ -277,7 +275,7 @@ pub fn[A, B] View::foldi(self : View[A], init~ : B, f : (Int, B, A) -> B) -> B {
 /// # Example
 /// ```
 /// let sum = [1, 2, 3, 4, 5][:].rev_foldi(init=0, fn { index, sum, _elem => sum + index })
-/// assert_eq!(sum, 10)
+/// assert_eq(sum, 10)
 /// ```
 pub fn[A, B] View::rev_foldi(
   self : View[A],
@@ -299,7 +297,7 @@ pub fn[A, B] View::rev_foldi(
 /// ```
 /// let v = [3, 4, 5]
 /// let v2 = v[1:].map(fn (x) {x + 1})
-/// assert_eq!(v2, [5, 6])
+/// assert_eq(v2, [5, 6])
 /// ```
 pub fn[T, U] View::map(self : View[T], f : (T) -> U) -> Array[U] {
   if self.length() == 0 {
@@ -315,7 +313,7 @@ pub fn[T, U] View::map(self : View[T], f : (T) -> U) -> Array[U] {
 /// ```
 /// let v = [3, 4, 5]
 /// v[1:].map_inplace(fn (x) {x + 1})
-/// assert_eq!(v, [3, 5, 6])
+/// assert_eq(v, [3, 5, 6])
 /// ```
 pub fn[T] View::map_inplace(self : View[T], f : (T) -> T) -> Unit {
   for i, v in self {
@@ -330,7 +328,7 @@ pub fn[T] View::map_inplace(self : View[T], f : (T) -> T) -> Unit {
 /// ```
 /// let v = [3, 4, 5]
 /// let v2 = v[1:].mapi(fn (i, x) {x + i})
-/// assert_eq!(v2, [4, 6])
+/// assert_eq(v2, [4, 6])
 /// ```
 pub fn[T, U] View::mapi(self : View[T], f : (Int, T) -> U) -> Array[U] {
   if self.length() == 0 {
@@ -346,7 +344,7 @@ pub fn[T, U] View::mapi(self : View[T], f : (Int, T) -> U) -> Array[U] {
 /// ```
 /// let v = [3, 4, 5]
 /// v[1:].mapi_inplace(fn (i, x) {x + i})
-/// assert_eq!(v, [3, 4, 6])
+/// assert_eq(v, [3, 4, 6])
 /// ```
 pub fn[T] View::mapi_inplace(self : View[T], f : (Int, T) -> T) -> Unit {
   for i, v in self {
@@ -361,7 +359,7 @@ pub fn[T] View::mapi_inplace(self : View[T], f : (Int, T) -> T) -> Unit {
 /// ```
 /// let arr = [1, 2, 3, 4, 5, 6]
 /// let v = arr[2:].filter(fn (x) { x % 2 == 0 })
-/// assert_eq!(v, [4, 6])
+/// assert_eq(v, [4, 6])
 /// ```
 pub fn[T] View::filter(self : View[T], f : (T) -> Bool) -> Array[T] {
   let arr = []
@@ -380,7 +378,7 @@ pub fn[T] View::filter(self : View[T], f : (T) -> Bool) -> Array[T] {
 /// ```
 /// let view = [1, 2, 3, 4, 5, 6][2:4]
 /// let arr = view.to_array()
-/// assert_eq!(arr, [3, 4])
+/// assert_eq(arr, [3, 4])
 /// ```
 pub fn[T] View::to_array(self : View[T]) -> Array[T] {
   let len = self.length()
@@ -392,6 +390,46 @@ pub fn[T] View::to_array(self : View[T]) -> Array[T] {
       arr[i] = v
     }
     arr
+  }
+}
+
+///|
+/// Concatenate strings within an array into a single complete string.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "View::join" {
+///   let a:Array[String]=["1","2","3"]
+///   let array_view = a[:]
+///   inspect!(array_view.join(","), content="1,2,3")
+/// }
+/// ```
+pub fn View::join(self : ArrayView[String], separator : @string.View) -> String {
+  match self {
+    [] => ""
+    [hd, .. tl] => {
+      let mut size_hint = hd.length()
+      for s in tl {
+        size_hint += s.length() + separator.length()
+      }
+      size_hint = size_hint << 1
+      let buf = StringBuilder::new(size_hint~)
+      buf.write_string(hd)
+      if separator is "" {
+        for s in tl {
+          buf.write_string(s)
+        }
+      } else {
+        let separator = separator.to_string()
+        for s in tl {
+          // TODO : use `write_view` when available
+          buf.write_string(separator)
+          buf.write_string(s)
+        }
+      }
+      buf.to_string()
+    }
   }
 }
 
@@ -423,7 +461,6 @@ pub impl[T : Compare] Compare for View[T] with compare(self, other) -> Int {
   for i in 0..<len_self {
     let cmp = self[i].compare(other[i])
     guard cmp == 0 else { break cmp }
-
   } else {
     0
   }

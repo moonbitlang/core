@@ -236,7 +236,37 @@ test "contains" {
 ///|
 /// Returns true if this string contains the given character.
 pub fn View::contains_char(self : View, c : Char) -> Bool {
-  self.iter().any(fn(ch) { ch == c })
+  let len = self.length()
+  // Check empty
+  guard len > 0 else { return false }
+  let c = c.to_int()
+  if c <= 0xFFFF {
+    // Search BMP
+    for i in 0..<len {
+      if self.unsafe_charcode_at(i) == c {
+        return true
+      }
+    }
+  } else {
+    // Check insufficient
+    guard len >= 2 else { return false }
+    // Calc surrogate pair
+    let adj = c - 0x10000
+    let high = 0xD800 + (adj >> 10)
+    let low = 0xDC00 + (adj & 0x3FF)
+    // Search surrogate pair
+    let mut i = 0
+    while i < len - 1 {
+      if self.unsafe_charcode_at(i) == high {
+        i += 1
+        if self.unsafe_charcode_at(i) == low {
+          return true
+        }
+      }
+      i += 1
+    }
+  }
+  false
 }
 
 ///|
@@ -684,31 +714,31 @@ pub fn split(self : String, sep : View) -> Iter[View] {
 
 ///|
 test "split" {
-  assert_eq!("a,b,c".split(",").map(View::to_string).collect(), ["a", "b", "c"])
-  assert_eq!("a,b,c".split("").map(View::to_string).collect(), [
+  assert_eq("a,b,c".split(",").map(View::to_string).collect(), ["a", "b", "c"])
+  assert_eq("a,b,c".split("").map(View::to_string).collect(), [
     "a", ",", "b", ",", "c",
   ])
-  assert_eq!(
+  assert_eq(
     "apple::orange::banana".split("::").map(View::to_string).collect(),
     ["apple", "orange", "banana"],
   )
-  assert_eq!("abc".split("").map(View::to_string).collect(), ["a", "b", "c"])
-  assert_eq!("hello".split(",").map(View::to_string).collect(), ["hello"])
-  assert_eq!(",a,b,c".split(",").map(View::to_string).collect(), [
+  assert_eq("abc".split("").map(View::to_string).collect(), ["a", "b", "c"])
+  assert_eq("hello".split(",").map(View::to_string).collect(), ["hello"])
+  assert_eq(",a,b,c".split(",").map(View::to_string).collect(), [
     "", "a", "b", "c",
   ])
-  assert_eq!("a,b,c,".split(",").map(View::to_string).collect(), [
+  assert_eq("a,b,c,".split(",").map(View::to_string).collect(), [
     "a", "b", "c", "",
   ])
-  assert_eq!("a,b,c".split("").map(View::to_string).collect(), [
+  assert_eq("a,b,c".split("").map(View::to_string).collect(), [
     "a", ",", "b", ",", "c",
   ])
-  assert_eq!("".split("").map(View::to_string).collect(), [])
-  assert_eq!("".split(",").map(View::to_string).collect(), [""])
-  assert_eq!("😀,😃,😄".split(",").map(View::to_string).collect(), [
+  assert_eq("".split("").map(View::to_string).collect(), [])
+  assert_eq("".split(",").map(View::to_string).collect(), [""])
+  assert_eq("😀,😃,😄".split(",").map(View::to_string).collect(), [
     "😀", "😃", "😄",
   ])
-  assert_eq!("a😀b😀c".split("😀").map(View::to_string).collect(), [
+  assert_eq("a😀b😀c".split("😀").map(View::to_string).collect(), [
     "a", "b", "c",
   ])
 }
@@ -842,64 +872,64 @@ pub fn replace_all(self : String, old~ : View, new~ : View) -> String {
 
 ///|
 test "replace_all" {
-  assert_eq!("hello".replace_all(old="o", new="a"), "hella")
-  assert_eq!("hello".replace_all(old="l", new="a"), "heaao")
-  assert_eq!("hello".replace_all(old="ll", new="rr"), "herro")
-  assert_eq!("hello".replace_all(old="hello", new="world"), "world")
-  assert_eq!("hello hello hello".replace_all(old="hello", new="hi"), "hi hi hi")
-  assert_eq!(
+  assert_eq("hello".replace_all(old="o", new="a"), "hella")
+  assert_eq("hello".replace_all(old="l", new="a"), "heaao")
+  assert_eq("hello".replace_all(old="ll", new="rr"), "herro")
+  assert_eq("hello".replace_all(old="hello", new="world"), "world")
+  assert_eq("hello hello hello".replace_all(old="hello", new="hi"), "hi hi hi")
+  assert_eq(
     "hello hello helloi".replace_all(old="hello", new="hi"),
     "hi hi hii",
   )
-  assert_eq!(
+  assert_eq(
     "hi hi hii".replace_all(old="hi", new="hello"),
     "hello hello helloi",
   )
-  assert_eq!("hello".replace_all(old="", new="a"), "ahaealalaoa")
-  assert_eq!("hello".replace_all(old="world", new="a"), "hello")
-  assert_eq!("".replace_all(old="", new="a"), "a")
-  assert_eq!("aaa".replace_all(old="a", new="b"), "bbb")
-  assert_eq!("aaa".replace_all(old="a", new="bb"), "bbbbbb")
-  assert_eq!("aaa".replace_all(old="aa", new="b"), "ba")
-  assert_eq!("🤣🤣🤣".replace_all(old="🤣", new="😊"), "😊😊😊")
-  assert_eq!("abc123abc".replace_all(old="abc", new="xyz"), "xyz123xyz")
-  assert_eq!("abcabcabc".replace_all(old="abc", new=""), "")
-  assert_eq!("abc".replace_all(old="abc", new=""), "")
-  assert_eq!("abc".replace_all(old="", new="x"), "xaxbxcx")
+  assert_eq("hello".replace_all(old="", new="a"), "ahaealalaoa")
+  assert_eq("hello".replace_all(old="world", new="a"), "hello")
+  assert_eq("".replace_all(old="", new="a"), "a")
+  assert_eq("aaa".replace_all(old="a", new="b"), "bbb")
+  assert_eq("aaa".replace_all(old="a", new="bb"), "bbbbbb")
+  assert_eq("aaa".replace_all(old="aa", new="b"), "ba")
+  assert_eq("🤣🤣🤣".replace_all(old="🤣", new="😊"), "😊😊😊")
+  assert_eq("abc123abc".replace_all(old="abc", new="xyz"), "xyz123xyz")
+  assert_eq("abcabcabc".replace_all(old="abc", new=""), "")
+  assert_eq("abc".replace_all(old="abc", new=""), "")
+  assert_eq("abc".replace_all(old="", new="x"), "xaxbxcx")
 }
 
 ///|
 test "View::replace_all" {
-  assert_eq!("hello"[:].replace_all(old="o", new="a"), "hella")
-  assert_eq!("hello"[:].replace_all(old="l", new="a"), "heaao")
-  assert_eq!("hello"[:].replace_all(old="ll", new="rr"), "herro")
-  assert_eq!("hello"[:].replace_all(old="hello", new="world"), "world")
-  assert_eq!(
+  assert_eq("hello"[:].replace_all(old="o", new="a"), "hella")
+  assert_eq("hello"[:].replace_all(old="l", new="a"), "heaao")
+  assert_eq("hello"[:].replace_all(old="ll", new="rr"), "herro")
+  assert_eq("hello"[:].replace_all(old="hello", new="world"), "world")
+  assert_eq(
     "hello hello hello"[:].replace_all(old="hello", new="hi"),
     "hi hi hi",
   )
-  assert_eq!(
+  assert_eq(
     "hello hello helloi"[:].replace_all(old="hello", new="hi"),
     "hi hi hii",
   )
-  assert_eq!(
+  assert_eq(
     "hi hi hii"[:].replace_all(old="hi", new="hello"),
     "hello hello helloi",
   )
-  assert_eq!("hello"[:].replace_all(old="", new="a"), "ahaealalaoa")
-  assert_eq!("hello"[:].replace_all(old="world", new="a"), "hello")
-  assert_eq!(""[:].replace_all(old="", new="a"), "a")
-  assert_eq!("aaa"[:].replace_all(old="a", new="b"), "bbb")
-  assert_eq!("aaa"[:].replace_all(old="a", new="bb"), "bbbbbb")
-  assert_eq!("aaa"[:].replace_all(old="aa", new="b"), "ba")
-  assert_eq!(
+  assert_eq("hello"[:].replace_all(old="", new="a"), "ahaealalaoa")
+  assert_eq("hello"[:].replace_all(old="world", new="a"), "hello")
+  assert_eq(""[:].replace_all(old="", new="a"), "a")
+  assert_eq("aaa"[:].replace_all(old="a", new="b"), "bbb")
+  assert_eq("aaa"[:].replace_all(old="a", new="bb"), "bbbbbb")
+  assert_eq("aaa"[:].replace_all(old="aa", new="b"), "ba")
+  assert_eq(
     "🤣🤣🤣"[:].replace_all(old="🤣", new="😊"),
     "😊😊😊",
   )
-  assert_eq!("abc123abc"[:].replace_all(old="abc", new="xyz"), "xyz123xyz")
-  assert_eq!("abcabcabc"[:].replace_all(old="abc", new=""), "")
-  assert_eq!("abc"[:].replace_all(old="abc", new=""), "")
-  assert_eq!("abc"[:].replace_all(old="", new="x"), "xaxbxcx")
+  assert_eq("abc123abc"[:].replace_all(old="abc", new="xyz"), "xyz123xyz")
+  assert_eq("abcabcabc"[:].replace_all(old="abc", new=""), "")
+  assert_eq("abc"[:].replace_all(old="abc", new=""), "")
+  assert_eq("abc"[:].replace_all(old="", new="x"), "xaxbxcx")
 }
 
 ///|
@@ -940,16 +970,16 @@ pub fn to_lower(self : String) -> String {
 
 ///|
 test "to_lower" {
-  assert_eq!("Hello".to_lower(), "hello")
-  assert_eq!("HELLO".to_lower(), "hello")
-  assert_eq!("Hello, World!".to_lower(), "hello, world!")
+  assert_eq("Hello".to_lower(), "hello")
+  assert_eq("HELLO".to_lower(), "hello")
+  assert_eq("Hello, World!".to_lower(), "hello, world!")
 }
 
 ///|
 test "View::to_lower" {
-  assert_eq!("Hello"[:].to_lower(), "hello")
-  assert_eq!("HELLO"[:].to_lower(), "hello")
-  assert_eq!("Hello, World!"[:].to_lower(), "hello, world!")
+  assert_eq("Hello"[:].to_lower(), "hello")
+  assert_eq("HELLO"[:].to_lower(), "hello")
+  assert_eq("Hello, World!"[:].to_lower(), "hello, world!")
 }
 
 ///|
@@ -988,16 +1018,16 @@ pub fn to_upper(self : String) -> String {
 
 ///|
 test "to_upper" {
-  assert_eq!("hello".to_upper(), "HELLO")
-  assert_eq!("HELLO".to_upper(), "HELLO")
-  assert_eq!("Hello, World!".to_upper(), "HELLO, WORLD!")
+  assert_eq("hello".to_upper(), "HELLO")
+  assert_eq("HELLO".to_upper(), "HELLO")
+  assert_eq("Hello, World!".to_upper(), "HELLO, WORLD!")
 }
 
 ///|
 test "View::to_upper" {
-  assert_eq!("hello"[:].to_upper(), "HELLO")
-  assert_eq!("HELLO"[:].to_upper(), "HELLO")
-  assert_eq!("Hello, World!"[:].to_upper(), "HELLO, WORLD!")
+  assert_eq("hello"[:].to_upper(), "HELLO")
+  assert_eq("HELLO"[:].to_upper(), "HELLO")
+  assert_eq("Hello, World!"[:].to_upper(), "HELLO, WORLD!")
 }
 
 ///|
@@ -1017,14 +1047,14 @@ pub fn[A] fold(self : String, init~ : A, f : (A, Char) -> A) -> A {
 
 ///|
 test "fold" {
-  assert_eq!(
+  assert_eq(
     "hello".fold(init=[], fn(acc, c) {
       acc.push(c)
       acc
     }),
     ['h', 'e', 'l', 'l', 'o'],
   )
-  assert_eq!(
+  assert_eq(
     "hello".fold(init=0, fn(acc, c) { acc + c.to_int() }),
     104 + 101 + 108 + 108 + 111,
   )
@@ -1046,14 +1076,14 @@ pub fn[A] rev_fold(self : String, init~ : A, f : (A, Char) -> A) -> A {
 
 ///|
 test "rev_fold" {
-  assert_eq!(
+  assert_eq(
     "hello".rev_fold(init=[], fn(acc, c) {
       acc.push(c)
       acc
     }),
     ['o', 'l', 'l', 'e', 'h'],
   )
-  assert_eq!(
+  assert_eq(
     "hello".rev_fold(init=0, fn(acc, c) { acc + c.to_int() }),
     111 + 108 + 108 + 101 + 104,
   )

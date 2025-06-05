@@ -15,18 +15,18 @@
 ///|
 test {
   let args = @env.args()
-  assert_true!(args.length() != 0)
+  assert_true(args.length() != 0)
 }
 
 ///|
 test "now returns reasonable timestamp" {
   let timestamp = @env.now()
-  assert_true!(timestamp > 0) // 1970-01-01 00:00:00 UTC
-  assert_true!(timestamp < 96406502400000UL) // 5025-01-01 00:00:00 UTC
+  assert_true(timestamp > 0) // 1970-01-01 00:00:00 UTC
+  assert_true(timestamp < 96406502400000UL) // 5025-01-01 00:00:00 UTC
 }
 
 ///|
 test "current_dir returns reasonable directory" {
   let dir = @env.current_dir()
-  assert_true!(dir.is_empty() == false)
+  assert_true(dir.is_empty() == false)
 }

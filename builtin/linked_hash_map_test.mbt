@@ -56,7 +56,6 @@ test "map::contains_kv" {
   inspect(map.contains_kv("a", 1), content="true")
   inspect(map.contains_kv("a", 2), content="false")
   guard map is { "a": 1, "b": 2, "c": 3, .. } else {
-    fail!("map is not { \"a\": 1, \"b\": 2, \"c\": 3 }")
+    fail("map is not { \"a\": 1, \"b\": 2, \"c\": 3 }")
   }
-
 }

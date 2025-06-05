@@ -35,19 +35,9 @@ fn to_json(self : AllThree) -> Json {
 }
 
 ///|
-struct DecodeErrorData {
-  message : String
+type! DecodeError {
+  DecodeError(String)
 } derive(Eq, Show)
-
-///|
-type! DecodeError DecodeErrorData
-
-///|
-pub impl Show for DecodeError with output(self, logger) {
-  match self {
-    DecodeError(e) => Show::output(e, logger)
-  }
-}
 
 ///|
 fn of_json(jv : Json) -> AllThree!DecodeError {
@@ -81,10 +71,7 @@ fn of_json(jv : Json) -> AllThree!DecodeError {
       }
       { ints: ints_result, floats: floats_result, strings: strings_result }
     }
-    _ =>
-      raise DecodeError(DecodeErrorData::{
-        message: "Expected an object of ints, floats, and strings",
-      })
+    _ => raise DecodeError("Expected an object of ints, floats, and strings")
   }
 }
 
@@ -97,9 +84,24 @@ test {
   }
   let json = all_three.to_json()
   inspect(
-    of_json?(json),
+    try? of_json(json),
     content=
       #|Ok({ints: [1, 2, 3], floats: [1, 2, 3], strings: ["a", "b", "c"]})
     ,
   )
+  // FIXME:
+  // note try? `body_no_error` is confusing
+  //   Warning: [0023]
+  //      │
+  //  100 │     try? of_json?(json),
+  //      │     ─┬─  
+  //      │      ╰─── Warning: The body of this try expression never raises any error.
+  // ─────╯
+  // Error: [4018]
+  //      │
+  //  100 │     try? of_json?(json),
+  //      │     ─────────┬─────────  
+  //      │              ╰─────────── Type Error does not implement trait Show: package @moonbitlang/core/error is not imported, so its methods cannot be used.
+  //   note: this constraint is required by `impl` of Show for type Result at moonbitlang/core/builtin/show.mbt:191:1
+  // ─────╯
 }

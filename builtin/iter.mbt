@@ -495,7 +495,7 @@ pub fn[T, R] Iter::flat_map(self : Iter[T], f : (T) -> Iter[R]) -> Iter[R] {
 /// test {
 ///   fn f(n : Int) { Int::until(0,n) }
 ///   let xs = f(10)
-///   assert_eq!(xs.map(f).flatten().to_array(),xs.flat_map(f).to_array())
+///   assert_eq(xs.map(f).flatten().to_array(),xs.flat_map(f).to_array())
 /// }
 /// ```
 pub fn[T] Iter::flatten(self : Iter[Iter[T]]) -> Iter[T] {
@@ -875,7 +875,7 @@ pub fn[A] Iter::last(self : Iter[A]) -> A? {
 ///
 /// ```
 /// let iter = Iter::singleton(42)
-/// assert_eq!(iter.head(), Some(42))
+/// assert_eq(iter.head(), Some(42))
 /// ```
 pub fn[A] Iter::head(self : Iter[A]) -> A? {
   for i in self {
@@ -898,7 +898,7 @@ pub fn[A] Iter::head(self : Iter[A]) -> A? {
 /// ```
 /// let arr = []
 /// [1, 2, 3].iter().intersperse(0).each(fn(i) {arr.push(i)})
-/// assert_eq!(arr, [1, 0, 2, 0, 3])
+/// assert_eq(arr, [1, 0, 2, 0, 3])
 /// ```
 pub fn[A] Iter::intersperse(self : Iter[A], sep : A) -> Iter[A] {
   fn(yield_) {
@@ -1020,10 +1020,11 @@ pub fn[T : Compare] Iter::minimum(self : Iter[T]) -> T? {
 /// test "group_by" {
 ///   let iter = [1, 1, 2, 3, 2, 2, 1].iter()
 ///   let result = iter.group_by(fn(x) { x })
-///   assert_eq!(result.get(1), Some([1, 1, 1]))
-///   assert_eq!(result.get(2), Some([2, 2, 2]))
-///   assert_eq!(result.get(3), Some([3]))
+///   assert_eq(result.get(1), Some([1, 1, 1]))
+///   assert_eq(result.get(2), Some([2, 2, 2]))
+///   assert_eq(result.get(3), Some([3]))
 /// }
+#deprecated
 pub fn[T, K : Eq + Hash] Iter::group_by(
   self : Iter[T],
   f : (T) -> K
@@ -1037,4 +1038,18 @@ pub fn[T, K : Eq + Hash] Iter::group_by(
     }
   }
   result
+}
+
+///|
+/// Returns an iterator that iterates over the index and the element of the iterator.
+pub fn[T] Iter::iter2(self : Iter[T]) -> Iter2[Int, T] {
+  fn {
+    yield_ => {
+      let mut index = -1
+      self.run(fn(i) {
+        index += 1
+        yield_(index, i)
+      })
+    }
+  }
 }

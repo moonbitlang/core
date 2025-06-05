@@ -25,7 +25,7 @@ test "test_tuple3_eq" {
 test "test tuple4 equality - same values" {
   let t1 : (Int, Int, Int, Int) = (1, 2, 3, 4)
   let t2 : (Int, Int, Int, Int) = (1, 2, 3, 4)
-  assert_true!(t1 == t2)
+  assert_true(t1 == t2)
 }
 
 ///|
@@ -33,8 +33,8 @@ test "test_tuple7_equality" {
   let t1 = (1, "a", true, 42.0, 'x', [1, 2], "hello")
   let t2 = (1, "a", true, 42.0, 'x', [1, 2], "hello")
   let t3 = (2, "a", true, 42.0, 'x', [1, 2], "hello")
-  assert_true!(t1 == t2)
-  assert_false!(t1 == t3)
+  assert_true(t1 == t2)
+  assert_false(t1 == t3)
 }
 
 ///|
@@ -76,7 +76,7 @@ test "Tuple11::op_equal with equal tuples" {
 test "tuple12_equal_same_values" {
   let t1 = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)
   let t2 = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)
-  assert_true!(t1 == t2)
+  assert_true(t1 == t2)
 }
 
 ///|
@@ -113,10 +113,10 @@ test "tuple16_equal" {
   let t1 = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15)
   let t2 = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15)
   let t3 = (1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15)
-  assert_true!(t1 == t2)
-  assert_false!(t1 == t3)
-  assert_eq!(t1, t2)
-  assert_not_eq!(t1, t3)
+  assert_true(t1 == t2)
+  assert_false(t1 == t3)
+  assert_eq(t1, t2)
+  assert_not_eq(t1, t3)
 }
 
 ///|
@@ -130,7 +130,7 @@ test "test tuple5 equality with equal values" {
 test "tuple6 equal" {
   let t1 = (1, "a", true, 2.0, 'b', 3U)
   let t2 = (1, "a", true, 2.0, 'b', 3U)
-  assert_true!(t1 == t2)
+  assert_true(t1 == t2)
 }
 
 ///|
