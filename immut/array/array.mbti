@@ -70,7 +70,6 @@ fn[A] T::fold_right(Self[A], (A, A) -> A, init~ : A) -> A
 fn[A] T::from_array(Array[A]) -> Self[A]
 #deprecated
 fn[A] T::from_iter(Iter[A]) -> Self[A]
-fn[A] T::get(Self[A], Int) -> A?
 fn[A] T::is_empty(Self[A]) -> Bool
 fn[A] T::iter(Self[A]) -> Iter[A]
 fn[A] T::length(Self[A]) -> Int
