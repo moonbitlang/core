@@ -80,7 +80,10 @@ test "each" {
 /// })
 /// assert_eq(arr, [(0, 1), (1, 2), (2, 3), (3, 4), (4, 5)])
 /// ```
-pub fn[T] FixedArray::eachi(self : FixedArray[T], f : (Int, T) -> Unit) -> Unit {
+pub fn[T] FixedArray::eachi(
+  self : FixedArray[T],
+  f : (Int, T) -> Unit?Error
+) -> Unit?Error {
   for i, v in self {
     f(i, v)
   }
@@ -182,8 +185,8 @@ test "rev_each" {
 /// ```
 pub fn[T] FixedArray::rev_eachi(
   self : FixedArray[T],
-  f : (Int, T) -> Unit
-) -> Unit {
+  f : (Int, T) -> Unit?Error
+) -> Unit?Error {
   let len = self.length()
   for i in 0..<len {
     f(i, self[len - i - 1])
@@ -238,8 +241,8 @@ test "rev_eachi" {
 /// ```
 pub fn[T, U] FixedArray::map(
   self : FixedArray[T],
-  f : (T) -> U
-) -> FixedArray[U] {
+  f : (T) -> U?Error
+) -> FixedArray[U]?Error {
   if self.length() == 0 {
     return []
   }
@@ -273,8 +276,8 @@ test "map" {
 /// ```
 pub fn[T, U] FixedArray::mapi(
   self : FixedArray[T],
-  f : (Int, T) -> U
-) -> FixedArray[U] {
+  f : (Int, T) -> U?Error
+) -> FixedArray[U]?Error {
   if self.length() == 0 {
     return []
   }
@@ -385,8 +388,8 @@ test "from_array" {
 pub fn[A, B] FixedArray::fold(
   self : FixedArray[A],
   init~ : B,
-  f : (B, A) -> B
-) -> B {
+  f : (B, A) -> B?Error
+) -> B?Error {
   for i = 0, acc = init; i < self.length(); {
     continue i + 1, f(acc, self[i])
   } else {
@@ -417,8 +420,8 @@ test "fold" {
 pub fn[A, B] FixedArray::rev_fold(
   self : FixedArray[A],
   init~ : B,
-  f : (B, A) -> B
-) -> B {
+  f : (B, A) -> B?Error
+) -> B?Error {
   for i = self.length() - 1, acc = init; i >= 0; {
     continue i - 1, f(acc, self[i])
   } else {
@@ -451,8 +454,8 @@ test "rev_fold" {
 pub fn[A, B] FixedArray::foldi(
   self : FixedArray[A],
   init~ : B,
-  f : (Int, B, A) -> B
-) -> B {
+  f : (Int, B, A) -> B?Error
+) -> B?Error {
   for i = 0, acc = init; i < self.length(); {
     continue i + 1, f(i, acc, self[i])
   } else {
@@ -486,8 +489,8 @@ test "fold_lefti" {
 pub fn[A, B] FixedArray::rev_foldi(
   self : FixedArray[A],
   init~ : B,
-  f : (Int, B, A) -> B
-) -> B {
+  f : (Int, B, A) -> B?Error
+) -> B?Error {
   let len = self.length()
   for i = len - 1, acc = init; i >= 0; {
     continue i - 1, f(len - i - 1, acc, self[i])
@@ -668,7 +671,10 @@ test "swap" {
 /// assert_true(arr.all(fn(ele) { ele < 6 }))
 /// assert_false(arr.all(fn(ele) { ele < 5 }))
 /// ```
-pub fn[T] FixedArray::all(self : FixedArray[T], f : (T) -> Bool) -> Bool {
+pub fn[T] FixedArray::all(
+  self : FixedArray[T],
+  f : (T) -> Bool?Error
+) -> Bool?Error {
   for i in 0..<self.length() {
     if not(f(self[i])) {
       return false
@@ -704,7 +710,10 @@ test "all" {
 /// assert_true(arr.any(fn(ele) { ele < 6 }))
 /// assert_true(arr.any(fn(ele) { ele < 5 }))
 /// ```
-pub fn[T] FixedArray::any(self : FixedArray[T], f : (T) -> Bool) -> Bool {
+pub fn[T] FixedArray::any(
+  self : FixedArray[T],
+  f : (T) -> Bool?Error
+) -> Bool?Error {
   for i in 0..<self.length() {
     if f(self[i]) {
       return true

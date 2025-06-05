@@ -151,7 +151,7 @@ pub fn[T] shuffle(self : Array[T], rand~ : (Int) -> Int) -> Array[T] {
 /// 
 /// # Returns
 /// 
-pub fn[A, B] filter_map(self : Array[A], f : (A) -> B?) -> Array[B] {
+pub fn[A, B] filter_map(self : Array[A], f : (A) -> B??Error) -> Array[B]?Error {
   let result = []
   for x in self {
     if f(x) is Some(x) {
@@ -247,8 +247,8 @@ pub fn[A, B] zip(self : Array[A], other : Array[B]) -> Array[(A, B)] {
 pub fn[A, B, C] zip_with(
   l : Array[A],
   r : Array[B],
-  merge : (A, B) -> C
-) -> Array[C] {
+  merge : (A, B) -> C?Error
+) -> Array[C]?Error {
   let length = if l.length() < r.length() { l.length() } else { r.length() }
   let arr = Array::new(capacity=length)
   for i = 0; i < length; i = i + 1 {
