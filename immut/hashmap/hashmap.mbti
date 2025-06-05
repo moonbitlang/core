@@ -9,8 +9,6 @@ fn[K : Eq + Hash, V] add(T[K, V], K, V) -> T[K, V]
 
 fn[K : Eq + Hash, V] contains(T[K, V], K) -> Bool
 
-fn[K : Eq + Hash, V] difference(T[K, V], T[K, V]) -> T[K, V]
-
 fn[K, V] each(T[K, V], (K, V) -> Unit) -> Unit
 
 #deprecated
@@ -30,10 +28,6 @@ fn[K : Eq + Hash, V] from_array(Array[(K, V)]) -> T[K, V]
 fn[K : Eq + Hash, V] from_iter(Iter[(K, V)]) -> T[K, V]
 
 fn[K : Eq + Hash, V] get(T[K, V], K) -> V?
-
-fn[K : Eq + Hash, V] intersection(T[K, V], T[K, V]) -> T[K, V]
-
-fn[K : Eq + Hash, V] intersection_with(T[K, V], T[K, V], (K, V, V) -> V) -> T[K, V]
 
 fn[K, V] iter(T[K, V]) -> Iter[(K, V)]
 
@@ -68,6 +62,7 @@ fn[K : Eq + Hash, V] T::add(Self[K, V], K, V) -> Self[K, V]
 fn[K : Eq + Hash, V] T::contains(Self[K, V], K) -> Bool
 fn[K : Eq + Hash, V] T::difference(Self[K, V], Self[K, V]) -> Self[K, V]
 fn[K, V] T::each(Self[K, V], (K, V) -> Unit) -> Unit
+#deprecated
 fn[K, V] T::elems(Self[K, V]) -> Iter[V]
 fn[K : Eq + Hash, V] T::filter(Self[K, V], (V) -> Bool) -> Self[K, V]
 #deprecated
@@ -89,6 +84,7 @@ fn[K, V] T::size(Self[K, V]) -> Int
 fn[K, V] T::to_array(Self[K, V]) -> Array[(K, V)]
 fn[K : Eq + Hash, V] T::union(Self[K, V], Self[K, V]) -> Self[K, V]
 fn[K : Eq + Hash, V] T::union_with(Self[K, V], Self[K, V], (K, V, V) -> V) -> Self[K, V]
+fn[K, V] T::values(Self[K, V]) -> Iter[V]
 impl[K : Eq + Hash, V : Eq] Eq for T[K, V]
 impl[K : Hash, V : Hash] Hash for T[K, V]
 impl[K : Show, V : Show] Show for T[K, V]

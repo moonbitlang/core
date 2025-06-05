@@ -30,6 +30,7 @@ fn View::length(Self) -> Int
 fn View::op_as_view(Self, start~ : Int = .., end? : Int) -> Self
 fn View::op_get(Self, Int) -> Byte
 fn View::start_offset(Self) -> Int
+fn View::to_bytes(Self) -> Bytes
 fn View::to_double_be(Self) -> Double
 fn View::to_double_le(Self) -> Double
 fn View::to_float_be(Self) -> Float

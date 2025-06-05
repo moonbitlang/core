@@ -47,6 +47,7 @@ fn[A, B] FixedArray::foldi(Self[A], init~ : B, (Int, B, A) -> B) -> B
 fn[T] FixedArray::from_array(Array[T]) -> Self[T]
 fn[T] FixedArray::from_iter(Iter[T]) -> Self[T]
 fn[T : Compare] FixedArray::is_sorted(Self[T]) -> Bool
+fn FixedArray::join(Self[String], @string.StringView) -> String
 fn[A] FixedArray::last(Self[A]) -> A?
 fn[T] FixedArray::makei(Int, (Int) -> T) -> Self[T]
 fn[T, U] FixedArray::map(Self[T], (T) -> U) -> Self[U]
@@ -73,7 +74,7 @@ impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for FixedArray[X]
 fn[T] Array::copy(Self[T]) -> Self[T]
 fn[A, B] Array::filter_map(Self[A], (A) -> B?) -> Self[B]
 fn[T] Array::from_iter(Iter[T]) -> Self[T]
-fn Array::join(Self[String], String) -> String
+fn Array::join(Self[String], @string.StringView) -> String
 fn[A] Array::last(Self[A]) -> A?
 fn[T] Array::makei(Int, (Int) -> T) -> Self[T]
 fn[T] Array::push_iter(Self[T], Iter[T]) -> Unit
@@ -96,6 +97,7 @@ fn[A, B] ArrayView::fold(Self[A], init~ : B, (B, A) -> B) -> B
 fn[A, B] ArrayView::foldi(Self[A], init~ : B, (Int, B, A) -> B) -> B
 fn[A] ArrayView::iter(Self[A]) -> Iter[A]
 fn[A] ArrayView::iter2(Self[A]) -> Iter2[Int, A]
+fn ArrayView::join(Self[String], @string.StringView) -> String
 fn[T, U] ArrayView::map(Self[T], (T) -> U) -> Array[U]
 fn[T] ArrayView::map_inplace(Self[T], (T) -> T) -> Unit
 fn[T, U] ArrayView::mapi(Self[T], (Int, T) -> U) -> Array[U]
