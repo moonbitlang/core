@@ -256,7 +256,6 @@ pub impl[T : Eq] Eq for Array[T] with op_equal(self, other) {
   guard self_len == other_len else { return false }
   for i in 0..<self_len {
     guard self.unsafe_get(i) == other.unsafe_get(i) else { break false }
-
   } else {
     true
   }
@@ -309,7 +308,6 @@ pub impl[T : Compare] Compare for Array[T] with compare(self, other) {
   for i in 0..<len_self {
     let cmp = self.unsafe_get(i).compare(other.unsafe_get(i))
     guard cmp is 0 else { break cmp }
-
   } else {
     0
   }
@@ -1706,7 +1704,6 @@ pub fn[T] Array::iter(self : Array[T]) -> Iter[T] {
   Iter::new(fn(yield_) {
     for v in self {
       guard yield_(v) is IterContinue else { break IterEnd }
-
     } else {
       IterContinue
     }
@@ -1738,7 +1735,6 @@ pub fn[T] Array::rev_iter(self : Array[T]) -> Iter[T] {
   Iter::new(fn(yield_) {
     for i = self.length() - 1; i >= 0; i = i - 1 {
       guard yield_(self.unsafe_get(i)) is IterContinue else { break IterEnd }
-
     } else {
       IterContinue
     }
@@ -1770,7 +1766,6 @@ pub fn[A] Array::iter2(self : Array[A]) -> Iter2[Int, A] {
   Iter2::new(fn(yield_) {
     for i, v in self {
       guard yield_(i, v) is IterContinue else { break IterEnd }
-
     } else {
       IterContinue
     }

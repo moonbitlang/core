@@ -298,7 +298,6 @@ fn[A] Tree::iter(self : Tree[A]) -> Iter[A] {
       Node(ns, _) =>
         for n in ns {
           guard n.iter().run(yield_) is IterContinue else { break IterEnd }
-
         } else {
           IterContinue
         }

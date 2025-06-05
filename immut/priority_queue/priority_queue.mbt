@@ -66,7 +66,6 @@ pub fn[A : Compare] iter(self : T[A]) -> Iter[A] {
     let arr = self.to_array()
     for i in 0..<arr.length() {
       guard yield_(arr[i]) is IterContinue else { break IterEnd }
-
     } else {
       IterContinue
     }

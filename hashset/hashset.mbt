@@ -262,7 +262,6 @@ pub fn[K] iter(self : T[K]) -> Iter[K] {
     for entry in self.entries {
       if entry is Some({ key, .. }) {
         guard yield_(key) is IterContinue else { break IterEnd }
-
       }
     } else {
       IterContinue

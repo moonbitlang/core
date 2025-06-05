@@ -423,7 +423,6 @@ pub impl[A : Compare] Compare for T[A] with compare(self, other) {
   for i in 0..<len_self {
     let cmp = self[i].compare(other[i])
     guard cmp is 0 else { break cmp }
-
   } else {
     return 0
   }
