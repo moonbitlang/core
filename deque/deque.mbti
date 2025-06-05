@@ -15,16 +15,12 @@ fn[A : Eq] contains(T[A], A) -> Bool
 
 fn[A] copy(T[A]) -> T[A]
 
-fn[A] drain(T[A], Int, Int) -> T[A]
-
 fn[A] each(T[A], (A) -> Unit) -> Unit
 
 fn[A] eachi(T[A], (Int, A) -> Unit) -> Unit
 
 #deprecated
 fn[A] filter_map_inplace(T[A], (A) -> A?) -> Unit
-
-fn[A] flatten(T[T[A]]) -> T[A]
 
 fn[A] from_array(Array[A]) -> T[A]
 
@@ -37,8 +33,6 @@ fn[A] is_empty(T[A]) -> Bool
 fn[A] iter(T[A]) -> Iter[A]
 
 fn[A] iter2(T[A]) -> Iter2[Int, A]
-
-fn join(T[String], String) -> String
 
 fn[A] length(T[A]) -> Int
 

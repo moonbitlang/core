@@ -27,8 +27,6 @@ fn[T] sort_by(Array[T], (T, T) -> Int) -> Unit
 
 fn[T, K : Compare] sort_by_key(Array[T], (T) -> K) -> Unit
 
-fn[A] truncate(Array[A], Int) -> Unit
-
 fn[A, B] zip(Array[A], Array[B]) -> Array[(A, B)]
 
 fn[A, B] zip_to_iter2(Array[A], Array[B]) -> Iter2[A, B]
