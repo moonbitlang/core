@@ -14,7 +14,7 @@
 
 ///|
 #deprecated("Use `@array.View` instead")
-pub typealias ArrayView[A] = @array.View[A]
+pub typealias @array.View as ArrayView
 
 ///|
 pub typealias @builtin.(

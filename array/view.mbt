@@ -24,7 +24,7 @@
 /// assert_eq(view[0], 2)
 /// assert_eq(view.length(), 3)
 /// ```
-pub typealias View[T] = ArrayView[T]
+pub typealias ArrayView as View
 
 ///|
 /// Reverses the elements in the array view in place.

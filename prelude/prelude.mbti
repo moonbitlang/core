@@ -45,7 +45,7 @@ pub typealias ArgsLoc = @builtin.ArgsLoc
 
 pub typealias Array[T] = @builtin.Array[T]
 
-pub typealias ArrayView[A] = @builtin.ArrayView[A]
+pub typealias ArrayView[T] = @builtin.ArrayView[T]
 
 pub typealias BigInt = @moonbitlang/core/bigint.BigInt
 
