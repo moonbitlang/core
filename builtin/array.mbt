@@ -446,10 +446,12 @@ pub fn[T] Array::rev_each(self : Array[T], f : (T) -> Unit) -> Unit {
 ///
 /// # Example
 /// ```
-/// let v = [3, 4, 5]
-/// let mut sum = 0
-/// v.rev_eachi(fn(i, x) { sum = sum + x + i })
-/// assert_eq(sum, 15)
+/// test "Array::rev_eachi" {
+///   let v = [3, 4, 5]
+///   let mut sum = 0
+///   v.rev_eachi(fn(i, x) { sum = sum + x + i })
+///   assert_eq(sum, 15)
+/// }
 /// ```
 #locals(f)
 pub fn[T] Array::rev_eachi(self : Array[T], f : (Int, T) -> Unit) -> Unit {
@@ -488,9 +490,11 @@ pub fn[T] Array::eachi(
 ///
 /// # Example
 /// ```
-/// let v = [3, 4, 5]
-/// v.clear()
-/// assert_eq(v.length(), 0)
+/// test "Array::clear" {
+///   let v = [3, 4, 5]
+///   v.clear()
+///   assert_eq(v.length(), 0)
+/// }
 /// ```
 pub fn[T] Array::clear(self : Array[T]) -> Unit {
   self.unsafe_truncate_to_length(0)
@@ -501,9 +505,11 @@ pub fn[T] Array::clear(self : Array[T]) -> Unit {
 ///
 /// # Example
 /// ```
-/// let v = [3, 4, 5]
-/// let v2 = v.map(fn (x) {x + 1})
-/// assert_eq(v2, [4, 5, 6])
+/// test "Array::map" {
+///   let v = [3, 4, 5]
+///   let v2 = v.map(fn (x) {x + 1})
+///   assert_eq(v2, [4, 5, 6])
+/// }
 /// ```
 #locals(f)
 pub fn[T, U] Array::map(self : Array[T], f : (T) -> U?Error) -> Array[U]?Error {
@@ -519,9 +525,11 @@ pub fn[T, U] Array::map(self : Array[T], f : (T) -> U?Error) -> Array[U]?Error {
 ///
 /// # Example
 /// ```
-/// let v = [3, 4, 5]
-/// v.map_inplace(fn (x) {x + 1})
-/// assert_eq(v, [4, 5, 6])
+/// test "Array::map_inplace" {
+///   let v = [3, 4, 5]
+///   v.map_inplace(fn (x) {x + 1})
+///   assert_eq(v, [4, 5, 6])
+/// }
 /// ```
 #locals(f)
 pub fn[T] Array::map_inplace(self : Array[T], f : (T) -> T?Error) -> Unit?Error {
@@ -535,9 +543,11 @@ pub fn[T] Array::map_inplace(self : Array[T], f : (T) -> T?Error) -> Unit?Error 
 ///
 /// # Example
 /// ```
-/// let v = [3, 4, 5]
-/// let v2 = v.mapi(fn (i, x) {x + i})
-/// assert_eq(v2, [3, 5, 7])
+/// test "Array::mapi" {
+///   let v = [3, 4, 5]
+///   let v2 = v.mapi(fn (i, x) {x + i})
+///   assert_eq(v2, [3, 5, 7])
+/// }
 /// ```
 #locals(f)
 pub fn[T, U] Array::mapi(
@@ -559,9 +569,11 @@ pub fn[T, U] Array::mapi(
 ///
 /// # Example
 /// ```
-/// let v = [3, 4, 5]
-/// v.mapi_inplace(fn (i, x) {x + i})
-/// assert_eq(v, [3, 5, 7])
+/// test "Array::mapi_inplace" {
+///   let v = [3, 4, 5]
+///   v.mapi_inplace(fn (i, x) {x + i})
+///   assert_eq(v, [3, 5, 7])
+/// }
 /// ```
 #locals(f)
 pub fn[T] Array::mapi_inplace(
@@ -736,10 +748,12 @@ pub fn[T] Array::rev(self : Array[T]) -> Array[T] {
 ///
 /// # Example
 /// ```
-/// let v = [3, 4, 5]
-/// let (v1, v2) = v.split_at(1)
-/// assert_eq(v1, [3])
-/// assert_eq(v2, [4, 5])
+/// test "Array::split_at" {
+///   let v = [3, 4, 5]
+///   let (v1, v2) = v.split_at(1)
+///   assert_eq(v1, [3])
+///   assert_eq(v2, [4, 5])
+/// }
 /// ```
 /// TODO: perf could be optimized
 pub fn[T] Array::split_at(self : Array[T], index : Int) -> (Array[T], Array[T]) {
@@ -924,9 +938,11 @@ pub fn[T : Eq] Array::strip_prefix(
 ///
 /// # Example
 /// ```
-/// let v = [3, 4, 5]
-/// let v2 = v.strip_suffix([5])
-/// assert_eq(v2, Some([3, 4]))
+/// test "Array::strip_suffix" {
+///   let v = [3, 4, 5]
+///   let v2 = v.strip_suffix([5])
+///   assert_eq(v2, Some([3, 4]))
+/// }
 /// ```
 pub fn[T : Eq] Array::strip_suffix(
   self : Array[T],
@@ -1008,10 +1024,12 @@ pub fn[T] Array::find_index(self : Array[T], f : (T) -> Bool) -> Int? {
 /// # Example
 ///
 /// ```
-/// let v = [1, 2, 3, 4, 5]
-/// match v.search_by(fn(x) { x == 3 }) {
-///   Some(index) => assert_eq(index, 2) // 2
-///   None => println("Not found")
+/// test "Array::search_by" {
+///   let v = [1, 2, 3, 4, 5]
+///   match v.search_by(fn(x) { x == 3 }) {
+///     Some(index) => assert_eq(index, 2) // 2
+///     None => println("Not found")
+///   }
 /// }
 /// ```
 #locals(f)
@@ -1030,9 +1048,11 @@ pub fn[T] Array::search_by(self : Array[T], f : (T) -> Bool) -> Int? {
 ///
 /// # Example
 /// ```
-/// let v = [3, 4, 5]
-/// let result = v.binary_search(3)
-/// assert_eq(result, Ok(0)) // The element 3 is found at index 0
+/// test "Array::binary_search" {
+///   let v = [3, 4, 5]
+///   let result = v.binary_search(3)
+///   assert_eq(result, Ok(0)) // The element 3 is found at index 0
+/// }
 /// ```
 ///
 /// # Arguments
