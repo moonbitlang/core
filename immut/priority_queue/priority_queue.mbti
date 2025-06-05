@@ -32,19 +32,17 @@ fn[A : Compare] unsafe_pop(T[A]) -> T[A]
 
 // Types and methods
 type T[A]
-impl T {
-  from_iter[A : Compare](Iter[A]) -> Self[A]
-  is_empty[A](Self[A]) -> Bool
-  iter[A : Compare](Self[A]) -> Iter[A]
-  length[A](Self[A]) -> Int
-  peek[A](Self[A]) -> A?
-  pop[A : Compare](Self[A]) -> Self[A]?
-  #deprecated
-  pop_exn[A : Compare](Self[A]) -> Self[A]
-  push[A : Compare](Self[A], A) -> Self[A]
-  to_array[A : Compare](Self[A]) -> Array[A]
-  unsafe_pop[A : Compare](Self[A]) -> Self[A]
-}
+fn[A : Compare] T::from_iter(Iter[A]) -> Self[A]
+fn[A] T::is_empty(Self[A]) -> Bool
+fn[A : Compare] T::iter(Self[A]) -> Iter[A]
+fn[A] T::length(Self[A]) -> Int
+fn[A] T::peek(Self[A]) -> A?
+fn[A : Compare] T::pop(Self[A]) -> Self[A]?
+#deprecated
+fn[A : Compare] T::pop_exn(Self[A]) -> Self[A]
+fn[A : Compare] T::push(Self[A], A) -> Self[A]
+fn[A : Compare] T::to_array(Self[A]) -> Array[A]
+fn[A : Compare] T::unsafe_pop(Self[A]) -> Self[A]
 impl[A : Compare] Compare for T[A]
 impl[A : Compare] Eq for T[A]
 impl[A : Hash + Compare] Hash for T[A]
