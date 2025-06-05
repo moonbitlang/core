@@ -9,7 +9,7 @@ import(
 // Values
 fn[T] copy(Array[T]) -> Array[T]
 
-fn[A, B] filter_map(Array[A], (A) -> B?) -> Array[B]
+fn[A, B] filter_map(Array[A], (A) -> B??Error) -> Array[B]?Error
 
 fn join(Array[String], @string.StringView) -> String
 
@@ -31,32 +31,32 @@ fn[A, B] zip(Array[A], Array[B]) -> Array[(A, B)]
 
 fn[A, B] zip_to_iter2(Array[A], Array[B]) -> Iter2[A, B]
 
-fn[A, B, C] zip_with(Array[A], Array[B], (A, B) -> C) -> Array[C]
+fn[A, B, C] zip_with(Array[A], Array[B], (A, B) -> C?Error) -> Array[C]?Error
 
 // Types and methods
-fn[T] FixedArray::all(Self[T], (T) -> Bool) -> Bool
-fn[T] FixedArray::any(Self[T], (T) -> Bool) -> Bool
+fn[T] FixedArray::all(Self[T], (T) -> Bool?Error) -> Bool?Error
+fn[T] FixedArray::any(Self[T], (T) -> Bool?Error) -> Bool?Error
 fn FixedArray::blit_from_bytesview(Self[Byte], Int, @bytes.View) -> Unit
 fn[T : Eq] FixedArray::contains(Self[T], T) -> Bool
 fn[T] FixedArray::copy(Self[T]) -> Self[T]
 fn[T] FixedArray::each(Self[T], (T) -> Unit) -> Unit
-fn[T] FixedArray::eachi(Self[T], (Int, T) -> Unit) -> Unit
+fn[T] FixedArray::eachi(Self[T], (Int, T) -> Unit?Error) -> Unit?Error
 fn[T : Eq] FixedArray::ends_with(Self[T], Self[T]) -> Bool
-fn[A, B] FixedArray::fold(Self[A], init~ : B, (B, A) -> B) -> B
-fn[A, B] FixedArray::foldi(Self[A], init~ : B, (Int, B, A) -> B) -> B
+fn[A, B] FixedArray::fold(Self[A], init~ : B, (B, A) -> B?Error) -> B?Error
+fn[A, B] FixedArray::foldi(Self[A], init~ : B, (Int, B, A) -> B?Error) -> B?Error
 fn[T] FixedArray::from_array(Array[T]) -> Self[T]
 fn[T] FixedArray::from_iter(Iter[T]) -> Self[T]
 fn[T : Compare] FixedArray::is_sorted(Self[T]) -> Bool
 fn FixedArray::join(Self[String], @string.StringView) -> String
 fn[A] FixedArray::last(Self[A]) -> A?
 fn[T] FixedArray::makei(Int, (Int) -> T) -> Self[T]
-fn[T, U] FixedArray::map(Self[T], (T) -> U) -> Self[U]
-fn[T, U] FixedArray::mapi(Self[T], (Int, T) -> U) -> Self[U]
+fn[T, U] FixedArray::map(Self[T], (T) -> U?Error) -> Self[U]?Error
+fn[T, U] FixedArray::mapi(Self[T], (Int, T) -> U?Error) -> Self[U]?Error
 fn[T] FixedArray::rev(Self[T]) -> Self[T]
 fn[T] FixedArray::rev_each(Self[T], (T) -> Unit) -> Unit
-fn[T] FixedArray::rev_eachi(Self[T], (Int, T) -> Unit) -> Unit
-fn[A, B] FixedArray::rev_fold(Self[A], init~ : B, (B, A) -> B) -> B
-fn[A, B] FixedArray::rev_foldi(Self[A], init~ : B, (Int, B, A) -> B) -> B
+fn[T] FixedArray::rev_eachi(Self[T], (Int, T) -> Unit?Error) -> Unit?Error
+fn[A, B] FixedArray::rev_fold(Self[A], init~ : B, (B, A) -> B?Error) -> B?Error
+fn[A, B] FixedArray::rev_foldi(Self[A], init~ : B, (Int, B, A) -> B?Error) -> B?Error
 fn[T] FixedArray::rev_inplace(Self[T]) -> Unit
 fn[T : Eq] FixedArray::search(Self[T], T) -> Int?
 fn[T : Compare] FixedArray::sort(Self[T]) -> Unit
@@ -72,7 +72,7 @@ impl[T : Hash] Hash for FixedArray[T]
 impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for FixedArray[X]
 
 fn[T] Array::copy(Self[T]) -> Self[T]
-fn[A, B] Array::filter_map(Self[A], (A) -> B?) -> Self[B]
+fn[A, B] Array::filter_map(Self[A], (A) -> B??Error) -> Self[B]?Error
 fn[T] Array::from_iter(Iter[T]) -> Self[T]
 fn Array::join(Self[String], @string.StringView) -> String
 fn[A] Array::last(Self[A]) -> A?
@@ -87,23 +87,23 @@ fn[A, B] Array::zip(Self[A], Self[B]) -> Self[(A, B)]
 fn[A, B] Array::zip_to_iter2(Self[A], Self[B]) -> Iter2[A, B]
 impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Array[X]
 
-fn[T] ArrayView::all(Self[T], (T) -> Bool) -> Bool
-fn[T] ArrayView::any(Self[T], (T) -> Bool) -> Bool
+fn[T] ArrayView::all(Self[T], (T) -> Bool?Error) -> Bool?Error
+fn[T] ArrayView::any(Self[T], (T) -> Bool?Error) -> Bool?Error
 fn[T : Eq] ArrayView::contains(Self[T], T) -> Bool
 fn[T] ArrayView::each(Self[T], (T) -> Unit) -> Unit
-fn[T] ArrayView::eachi(Self[T], (Int, T) -> Unit) -> Unit
-fn[T] ArrayView::filter(Self[T], (T) -> Bool) -> Array[T]
-fn[A, B] ArrayView::fold(Self[A], init~ : B, (B, A) -> B) -> B
-fn[A, B] ArrayView::foldi(Self[A], init~ : B, (Int, B, A) -> B) -> B
+fn[T] ArrayView::eachi(Self[T], (Int, T) -> Unit?Error) -> Unit?Error
+fn[T] ArrayView::filter(Self[T], (T) -> Bool?Error) -> Array[T]?Error
+fn[A, B] ArrayView::fold(Self[A], init~ : B, (B, A) -> B?Error) -> B?Error
+fn[A, B] ArrayView::foldi(Self[A], init~ : B, (Int, B, A) -> B?Error) -> B?Error
 fn[A] ArrayView::iter(Self[A]) -> Iter[A]
 fn[A] ArrayView::iter2(Self[A]) -> Iter2[Int, A]
 fn ArrayView::join(Self[String], @string.StringView) -> String
 fn[T, U] ArrayView::map(Self[T], (T) -> U) -> Array[U]
-fn[T] ArrayView::map_inplace(Self[T], (T) -> T) -> Unit
+fn[T] ArrayView::map_inplace(Self[T], (T) -> T?Error) -> Unit?Error
 fn[T, U] ArrayView::mapi(Self[T], (Int, T) -> U) -> Array[U]
-fn[T] ArrayView::mapi_inplace(Self[T], (Int, T) -> T) -> Unit
-fn[A, B] ArrayView::rev_fold(Self[A], init~ : B, (B, A) -> B) -> B
-fn[A, B] ArrayView::rev_foldi(Self[A], init~ : B, (Int, B, A) -> B) -> B
+fn[T] ArrayView::mapi_inplace(Self[T], (Int, T) -> T?Error) -> Unit?Error
+fn[A, B] ArrayView::rev_fold(Self[A], init~ : B, (B, A) -> B?Error) -> B?Error
+fn[A, B] ArrayView::rev_foldi(Self[A], init~ : B, (Int, B, A) -> B?Error) -> B?Error
 fn[T] ArrayView::rev_inplace(Self[T]) -> Unit
 fn[T] ArrayView::to_array(Self[T]) -> Array[T]
 impl[T : Compare] Compare for ArrayView[T]
