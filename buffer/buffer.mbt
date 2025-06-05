@@ -14,7 +14,7 @@
 
 ///| Extensible buffer.
 #deprecated("Use type `T` instead")
-pub(all) typealias Buffer = T
+pub(all) typealias T as Buffer
 
 ///|
 /// Extensible buffer.

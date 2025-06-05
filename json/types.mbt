@@ -14,7 +14,7 @@
 
 ///|
 #deprecated("Definition of json is moved to builtin package, use `Json` instead")
-pub(all) typealias JsonValue = Json
+pub(all) typealias Json as JsonValue
 
 ///|
 pub(all) struct Position {
