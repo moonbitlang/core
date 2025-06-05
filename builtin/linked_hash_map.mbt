@@ -461,7 +461,10 @@ pub fn[K, V] Map::is_empty(self : Map[K, V]) -> Bool {
 ///|
 /// Iterate over all key-value pairs of the map in the order of insertion.
 #locals(f)
-pub fn[K, V] Map::each(self : Map[K, V], f : (K, V) -> Unit) -> Unit {
+pub fn[K, V] Map::each(
+  self : Map[K, V],
+  f : (K, V) -> Unit?Error
+) -> Unit?Error {
   loop self.head {
     Some({ key, value, next, .. }) => {
       f(key, value)
@@ -474,7 +477,10 @@ pub fn[K, V] Map::each(self : Map[K, V], f : (K, V) -> Unit) -> Unit {
 ///|
 /// Iterate over all key-value pairs of the map in the order of insertion, with index.
 #locals(f)
-pub fn[K, V] Map::eachi(self : Map[K, V], f : (Int, K, V) -> Unit) -> Unit {
+pub fn[K, V] Map::eachi(
+  self : Map[K, V],
+  f : (Int, K, V) -> Unit?Error
+) -> Unit?Error {
   loop 0, self.head {
     i, Some({ key, value, next, .. }) => {
       f(i, key, value)
