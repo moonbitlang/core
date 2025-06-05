@@ -69,7 +69,7 @@ pub fn[T] View::rev_inplace(self : View[T]) -> Unit {
 ///   inspect(sum, content="6")
 /// }
 /// ```
-pub fn[T] View::each(self : View[T], f : (T) -> Unit) -> Unit {
+pub fn[T] View::each(self : View[T], f : (T) -> Unit?Error) -> Unit?Error {
   for v in self {
     f(v)
   }

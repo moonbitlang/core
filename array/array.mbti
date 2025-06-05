@@ -90,7 +90,7 @@ impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Array[X]
 fn[T] ArrayView::all(Self[T], (T) -> Bool?Error) -> Bool?Error
 fn[T] ArrayView::any(Self[T], (T) -> Bool?Error) -> Bool?Error
 fn[T : Eq] ArrayView::contains(Self[T], T) -> Bool
-fn[T] ArrayView::each(Self[T], (T) -> Unit) -> Unit
+fn[T] ArrayView::each(Self[T], (T) -> Unit?Error) -> Unit?Error
 fn[T] ArrayView::eachi(Self[T], (Int, T) -> Unit?Error) -> Unit?Error
 fn[T] ArrayView::filter(Self[T], (T) -> Bool?Error) -> Array[T]?Error
 fn[A, B] ArrayView::fold(Self[A], init~ : B, (B, A) -> B?Error) -> B?Error
