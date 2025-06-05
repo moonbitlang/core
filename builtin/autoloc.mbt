@@ -20,6 +20,7 @@
 /// This type is public to all packages but its internal representation is
 /// opaque. Users cannot construct values of this type directly; they are
 /// automatically created by the compiler when needed.
+/// TODO: can not make a dummy loc
 pub(all) extern type SourceLoc
 
 ///|
@@ -36,7 +37,7 @@ pub(all) extern type SourceLoc
 /// Note: This function is primarily used internally by the compiler for error
 /// reporting and debugging purposes. Source locations are automatically created
 /// by the compiler when needed.
-pub fn SourceLoc::to_string(self : SourceLoc) -> String = "%loc_to_string"
+pub fn SourceLoc::to_string(self : Self) -> String = "%loc_to_string"
 
 ///|
 pub impl Show for SourceLoc with output(self, logger) {
