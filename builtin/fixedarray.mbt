@@ -247,8 +247,8 @@ pub fn[T : Compare] FixedArray::binary_search(
 #locals(cmp)
 pub fn[T] FixedArray::binary_search_by(
   self : FixedArray[T],
-  cmp : (T) -> Int
-) -> Result[Int, Int] {
+  cmp : (T) -> Int?Error
+) -> Result[Int, Int]?Error {
   let len = self.length()
   for i = 0, j = len; i < j; {
     let h = i + (j - i) / 2
