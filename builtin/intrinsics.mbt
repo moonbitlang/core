@@ -1552,36 +1552,6 @@ pub fn[T] FixedArray::unsafe_set(
 ) -> Unit = "%fixedarray.unsafe_set"
 
 ///|
-/// Retrieves an element at the specified index from a fixed-size array. This
-/// function is similar to `op_get` but provides explicit bounds checking.
-///
-/// Parameters:
-///
-/// * `array` : The fixed-size array to access.
-/// * `index` : The position in the array from which to retrieve the element.
-///
-/// Returns the element at the specified index.
-///
-/// Throws a runtime error if the index is out of bounds (less than 0 or greater
-/// than or equal to the length of the array).
-///
-/// Example:
-///
-/// ```moonbit
-/// test "FixedArray::get" {
-///   let arr = [1, 2, 3]
-///   inspect(arr.get(1), content="Some(2)")
-/// }
-///
-/// test "FixedArray::get/out_of_bounds" {
-///   let arr = [1, 2, 3]
-///   inspect(arr.get(3), content="None")
-/// }
-/// ```
-#deprecated("use `arr.op_get(i)`(arr[i]) instead")
-pub fn[T] FixedArray::get(self : FixedArray[T], idx : Int) -> T = "%fixedarray.get"
-
-///|
 /// Sets a value at the specified index in a fixed-size array. The original value
 /// at that index is overwritten.
 ///
