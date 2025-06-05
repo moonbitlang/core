@@ -20,8 +20,6 @@ fn[T] ignore(T) -> Unit
 
 fn inspect(&Show, content~ : String = .., loc~ : SourceLoc = _, args_loc~ : ArgsLoc = _) -> Unit!InspectError
 
-fn not(Bool) -> Bool
-
 fn[T : Compare] op_ge(T, T) -> Bool
 
 fn[T : Compare] op_gt(T, T) -> Bool

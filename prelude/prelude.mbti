@@ -24,8 +24,6 @@ fn[T] ignore(T) -> Unit
 
 fn inspect(&@builtin.Show, content~ : String = .., loc~ : @builtin.SourceLoc = _, args_loc~ : @builtin.ArgsLoc = _) -> Unit!@builtin.InspectError
 
-fn not(Bool) -> Bool
-
 fn[T] panic() -> T
 
 fn[T] physical_equal(T, T) -> Bool
