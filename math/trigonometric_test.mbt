@@ -13,17 +13,12 @@
 // limitations under the License.
 
 ///|
-trait Floating {
-  close_to(a : Self, b : Self) -> Bool
-}
-
-///|
-impl Floating for Float with close_to(a : Float, b : Float) -> Bool {
+fn Float::close_to(a : Self, b : Self) -> Bool {
   (a - b).abs() < 1.0e-6 // low precision for float
 }
 
 ///|
-impl Floating for Double with close_to(a : Double, b : Double) -> Bool {
+fn Double::close_to(a : Self, b : Self) -> Bool {
   (a - b).abs() < 1.0e-10
 }
 
