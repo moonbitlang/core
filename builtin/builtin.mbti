@@ -512,7 +512,7 @@ fn[X : Show] Option::to_string(X?) -> String
 fn[X] Option::unwrap(X?) -> X
 
 fn[T : Compare] FixedArray::binary_search(Self[T], T) -> Result[Int, Int]
-fn[T] FixedArray::binary_search_by(Self[T], (T) -> Int) -> Result[Int, Int]
+fn[T] FixedArray::binary_search_by(Self[T], (T) -> Int?Error) -> Result[Int, Int]?Error
 fn FixedArray::blit_from_bytes(Self[Byte], Int, Bytes, Int, Int) -> Unit
 fn FixedArray::blit_from_string(Self[Byte], Int, String, Int, Int) -> Unit
 fn[A] FixedArray::blit_to(Self[A], Self[A], len~ : Int, src_offset~ : Int = .., dst_offset~ : Int = ..) -> Unit
