@@ -705,3 +705,28 @@ test "Unit from_json with invalid input" {
     ,
   )
 }
+
+///|
+test "nested json" {
+  struct X {
+    w : Int
+  } derive(ToJson)
+  let u : Int = 3
+  let h = X::{ w: 3 }
+  let v : Json = {
+    "nestedmap": {
+      "key1": u, // auto to json
+      "a": h,
+      "key2": "value2",
+      "key3": { "subkey1": u, "subkey2": h, "subkey3": [1, 2, 3] },
+    },
+  }
+  @json.inspect(v, content={
+    "nestedmap": {
+      "key1": 3,
+      "a": { "w": 3 },
+      "key2": "value2",
+      "key3": { "subkey1": 3, "subkey2": { "w": 3 }, "subkey3": [1, 2, 3] },
+    },
+  })
+}
