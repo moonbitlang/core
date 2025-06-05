@@ -180,7 +180,7 @@ pub fn[A] size(self : T[A]) -> Int {
 
 ///|
 /// Union two hashsets
-pub fn[K : Eq + Hash] union(self : T[K], other : T[K]) -> T[K] {
+pub fn[K : Eq + Hash] T::union(self : T[K], other : T[K]) -> T[K] {
   match (self, other) {
     (_, Empty) => self
     (Empty, _) => other
@@ -189,6 +189,56 @@ pub fn[K : Eq + Hash] union(self : T[K], other : T[K]) -> T[K] {
     (Branch(sa1), Branch(sa2)) =>
       Branch(sa1.union(sa2, fn(m1, m2) { m1.union(m2) }))
     (_, _) => self.iter().fold(init=other, fn(m, k) { m.add(k) })
+  }
+}
+
+///|
+/// Intersect two hashsets
+pub fn[K : Eq + Hash] T::intersection(self : T[K], other : T[K]) -> T[K] {
+  match (self, other) {
+    (_, Empty) => Empty
+    (Empty, _) => Empty
+    (Leaf(k), _) => if other.contains(k) { Leaf(k) } else { Empty }
+    (_, Leaf(k)) => if self.contains(k) { Leaf(k) } else { Empty }
+    (Branch(sa1), Branch(sa2)) => {
+      let res = sa1.intersection(sa2, fn(m1, m2) { m1.intersection(m2) })
+      if res.size() == 0 {
+        Empty
+      } else {
+        Branch(res)
+      }
+    }
+    (_, _) =>
+      self
+      .iter()
+      .fold(init=Empty, fn(m, k) {
+        if other.contains(k) {
+          m.add(k)
+        } else {
+          m
+        }
+      })
+  }
+}
+
+///|
+/// Difference of two hashsets: elements in `self` but not in `other`
+pub fn[K : Eq + Hash] T::difference(self : T[K], other : T[K]) -> T[K] {
+  match (self, other) {
+    (Empty, _) => Empty
+    (_, Empty) => self
+    (Leaf(k), _) => if other.contains(k) { Empty } else { Leaf(k) }
+    (Branch(sa1), Branch(sa2)) => Branch(sa1.difference(sa2))
+    (_, _) =>
+      self
+      .iter()
+      .fold(init=Empty, fn(m, k) {
+        if other.contains(k) {
+          m
+        } else {
+          m.add(k)
+        }
+      })
   }
 }
 

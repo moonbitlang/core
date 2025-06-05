@@ -70,7 +70,7 @@ pub fn[X] add(self : SparseArray[X], idx : Int, value : X) -> SparseArray[X] {
 /// `union(self: SparseArray[X], other: SparseArray[X]) -> SparseArray[X]`
 /// 
 /// Combine two sparse arrays into one.
-pub fn[X] union(
+pub fn[X] SparseArray::union(
   self : SparseArray[X],
   other : SparseArray[X],
   union : (X, X) -> X
@@ -99,6 +99,54 @@ pub fn[X] union(
       }
     }
     { elem_info: un, data: new_data }
+  }
+}
+
+///|
+/// `intersection(self: SparseArray[X], other: SparseArray[X], f: (X, X) -> X) -> SparseArray[X]`
+///
+/// Only keep indices present in both sparse arrays, and merge values with f.
+pub fn[X] SparseArray::intersection(
+  self : SparseArray[X],
+  other : SparseArray[X],
+  f : (X, X) -> X
+) -> SparseArray[X] {
+  let inter = self.elem_info.intersection(other.elem_info)
+  let new_len = inter.size()
+  if new_len == 0 {
+    empty()
+  } else {
+    let init = self.data[0] // Both sides have elements, pick either for init
+    let new_data = FixedArray::make(new_len, init)
+    for i in inter.iter() {
+      new_data[inter.index_of(i)] = f(
+        self.data[self.elem_info.index_of(i)],
+        other.data[other.elem_info.index_of(i)],
+      )
+    }
+    { elem_info: inter, data: new_data }
+  }
+}
+
+///|
+/// `difference(self: SparseArray[X], other: SparseArray[X]) -> SparseArray[X]`
+///
+/// Keep indices and values only present in self but not in other.
+pub fn[X] SparseArray::difference(
+  self : SparseArray[X],
+  other : SparseArray[X]
+) -> SparseArray[X] {
+  let diff = self.elem_info.difference(other.elem_info)
+  let new_len = diff.size()
+  if new_len == 0 {
+    empty()
+  } else {
+    let init = self.data[0]
+    let new_data = FixedArray::make(new_len, init)
+    for i in diff.iter() {
+      new_data[diff.index_of(i)] = self.data[self.elem_info.index_of(i)]
+    }
+    { elem_info: diff, data: new_data }
   }
 }
 

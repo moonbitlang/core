@@ -27,13 +27,13 @@ fn[A : Eq + Hash] remove(T[A], A) -> T[A]
 
 fn[A] size(T[A]) -> Int
 
-fn[K : Eq + Hash] union(T[K], T[K]) -> T[K]
-
 // Types and methods
 type T[A]
 fn[A : Eq + Hash] T::add(Self[A], A) -> Self[A]
 fn[A : Eq + Hash] T::contains(Self[A], A) -> Bool
+fn[K : Eq + Hash] T::difference(Self[K], Self[K]) -> Self[K]
 fn[A] T::each(Self[A], (A) -> Unit) -> Unit
+fn[K : Eq + Hash] T::intersection(Self[K], Self[K]) -> Self[K]
 fn[A] T::is_empty(Self[A]) -> Bool
 fn[A] T::iter(Self[A]) -> Iter[A]
 fn[A : Eq + Hash] T::remove(Self[A], A) -> Self[A]

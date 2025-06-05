@@ -36,3 +36,157 @@ test "show error" {
     content="Err(moonbitlang/core/error_blackbox_test.IntError.IntError)",
   )
 }
+
+///|
+/// This could be mimiced using defer in swift
+/// ```swift
+/// func protect<A, E: Error>(finally: () -> Void, work: () throws -> A) rethrows -> A {
+///   do {
+///     return try work()
+///   } catch {
+///     finally()
+///     throw error 
+///   }
+/// }
+/// ```
+/// The design choice is that `finally` should be allowed to throw or not
+/// If it does throw, which error should be raised?
+/// here `protect` raise the `work` error
+fn[A, E : Error] protect(finally~ : () -> Unit?Error, work : () -> A!E) -> A!E {
+  try work() catch {
+    e => {
+      try finally() catch {
+        _ => ()
+      }
+      raise e
+    }
+  } else {
+    x => {
+      try finally() catch {
+        _ => ()
+      }
+      x
+    }
+  }
+}
+
+///|
+/// here `protect2` raise the `finally` error
+/// this is more intuitive
+/// However, due to the error comes from multiple sources,
+/// it is hard to track which error is the original one
+/// in the type system
+fn[A] protect2(finally~ : () -> Unit?Error, work : () -> A!) -> A! {
+  try work() catch {
+    e => {
+      finally()
+      raise e
+    }
+  } else {
+    x => {
+      finally()
+      x
+    }
+  }
+}
+
+///|
+test "protect" {
+  let x = try? protect(finally=fn() {  }, fn() {
+      if true {
+        raise Failure("error")
+      } else {
+        1
+      }
+    })
+  inspect(
+    x,
+    content=
+      #|Err("Failure(error)")
+    ,
+  )
+}
+
+///|
+test "protect & finally raise error" {
+  let x = try? protect(finally=fn() { raise Failure("finally error") }, fn() {
+      if true {
+        raise Failure("error")
+      } else {
+        1
+      }
+    })
+  inspect(
+    x,
+    content=
+      #|Err("Failure(error)")
+    ,
+  )
+}
+
+///|
+test "protect2" {
+  let x = try? protect2(finally=fn() {  }, fn() {
+      if true {
+        raise Failure("error")
+      } else {
+        1
+      }
+    })
+  inspect(
+    x,
+    content=
+      #|Err("Failure(error)")
+    ,
+  )
+}
+
+///|
+test "protect2 & finally raise error" {
+  let x = try? protect2(finally=fn() { raise Failure("finally error") }, fn() {
+      if true {
+        raise Failure("error")
+      } else {
+        1
+      }
+    })
+  inspect(
+    x,
+    content=
+      #|Err("Failure(finally error)")
+    ,
+  )
+}
+
+///|
+type! ErrWithToJson Int derive(ToJson)
+
+///|
+type! ErrWithoutToJson Int
+
+///|
+test "error to json" {
+  //TODO: note despite `impl ToJson for Error`, for suberror
+  // we can not use `@json.inspect` to inspect the error
+  // @json.inspect(ErrWithoutToJson(42))
+  // This also applies to `impl Show for Error`, for suberror
+  // we can not use `inspect` to inspect the error
+  // we may auto-derive `ToJson` and `Show` for suberror automatically
+  // to enhance the user experience
+  fn j(err : Error) {
+    err.to_json()
+  }
+
+  inspect(
+    j(ErrWithToJson(42)),
+    content=
+      #|Object({"$tag": String("ErrWithToJson"), "0": Number(42)})
+    ,
+  )
+  inspect(
+    j(ErrWithoutToJson(42)),
+    content=
+      #|String("moonbitlang/core/error_blackbox_test.ErrWithoutToJson.ErrWithoutToJson")
+    ,
+  )
+}

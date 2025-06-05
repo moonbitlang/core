@@ -34,11 +34,13 @@ impl[K : Eq, V] Eq for Entry[K, V] with op_equal(self, other) {
 /// # Example
 ///
 /// ```
-/// let map = { 3: "three", 8 :  "eight", 1 :  "one"}
-/// assert_eq(map.get(2), None)
-/// assert_eq(map.get(3), Some("three"))
-/// map.set(3, "updated")
-/// assert_eq(map.get(3), Some("updated"))
+/// test "linked_hash_map_example" {
+///   let map = { 3: "three", 8 :  "eight", 1 :  "one"}
+///   assert_eq(map.get(2), None)
+///   assert_eq(map.get(3), Some("three"))
+///   map.set(3, "updated")
+///   assert_eq(map.get(3), Some("updated"))
+/// }
 /// ```
 struct Map[K, V] {
   mut entries : FixedArray[Entry[K, V]?]

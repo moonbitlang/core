@@ -35,10 +35,13 @@ fn[T, E] unwrap_err(Result[T, E]) -> E
 
 fn[T, E : Error] unwrap_or_error(Result[T, E]) -> T!E
 
+#deprecated
 fn[T, E : Error] wrap0(f~ : () -> T!E) -> Result[T, E]
 
+#deprecated
 fn[T, A, E : Error] wrap1(f~ : (A) -> T!E, A) -> Result[T, E]
 
+#deprecated
 fn[T, A, B, E : Error] wrap2(f~ : (A, B) -> T!E, A, B) -> Result[T, E]
 
 // Types and methods

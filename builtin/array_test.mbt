@@ -700,3 +700,191 @@ test "each with error callback 2" {
     _ => assert_true(false)
   }
 }
+
+///|
+test "eachi with error callback" {
+  let arr = [1, 2, 3]
+  let mut sum = 0
+  let v = try? arr.eachi(fn(i, x) {
+      if x == 2 {
+        fail("Error at 2")
+      }
+      sum += x + i
+    })
+  assert_true(v is Err(_))
+  inspect(sum, content="1")
+}
+
+///|
+test "eachi with error callback 2" {
+  let arr = [1, 2, 3]
+  let mut sum = 0
+  try
+    arr.eachi(fn(i, x) {
+      if x == 2 {
+        fail("Error at 2")
+      }
+      sum += x + i
+    }) catch {
+    Failure(_) => {
+      inspect(sum, content="1")
+      assert_true(true)
+    }
+  } else {
+    _ => assert_true(false)
+  }
+}
+
+///|
+test "map with error callback" {
+  let arr = [1, 2, 3]
+  let v = try? arr.map(fn(x) {
+      if x == 2 {
+        raise Failure("Error at 2")
+      }
+      x + 1
+    })
+  assert_true(v is Err(_))
+  inspect(
+    v,
+    content=
+      #|Err("Failure(Error at 2)")
+    ,
+  )
+}
+
+///|
+test "map with error callback 2" {
+  let arr = [1, 2, 3]
+  try
+    arr.map(fn(x) {
+      if x == 2 {
+        fail("Error at 2")
+      }
+      x + 1
+    }) catch {
+    Failure(_) => assert_true(true)
+  } else {
+    _ => assert_true(false)
+  }
+}
+
+///|
+test "mapi with error callback" {
+  let arr = [1, 2, 3]
+  let v = try? arr.mapi(fn(i, x) {
+      if x == 2 {
+        raise Failure("Error at 2")
+      }
+      x + i
+    })
+  assert_true(v is Err(_))
+  inspect(
+    v,
+    content=
+      #|Err("Failure(Error at 2)")
+    ,
+  )
+}
+
+///|
+test "mapi with error callback 2" {
+  let arr = [1, 2, 3]
+  try
+    arr.mapi(fn(i, x) {
+      if x == 2 {
+        raise Failure("Error at 2")
+      }
+      x + i
+    }) catch {
+    Failure(_) => assert_true(true)
+  } else {
+    _ => assert_true(false)
+  }
+}
+
+///|
+test "filter with error callback" {
+  let arr = [1, 2, 3]
+  let v = try? arr.filter(fn(x) {
+      if x == 2 {
+        raise Failure("Error at 2")
+      }
+      x % 2 == 0
+    })
+  assert_true(v is Err(_))
+  inspect(
+    v,
+    content=
+      #|Err("Failure(Error at 2)")
+    ,
+  )
+}
+
+///|
+test "filter with error callback 2" {
+  let arr = [1, 2, 3]
+  try
+    arr.filter(fn(x) {
+      if x == 2 {
+        raise Failure("Error at 2")
+      }
+      x % 2 == 0
+    }) catch {
+    Failure(_) => assert_true(true)
+  } else {
+    _ => assert_true(false)
+  }
+}
+
+///|
+test "map_inplace with error callback" {
+  let arr = [1, 2, 3]
+  let v = try? arr.map_inplace(fn(x) {
+      if x == 2 {
+        raise Failure("Error at 2")
+      }
+      x + 1
+    })
+  assert_true(v is Err(_))
+  inspect(
+    v,
+    content=
+      #|Err("Failure(Error at 2)")
+    ,
+  )
+}
+
+///|
+test "map_inplace with error callback 2" {
+  let arr = [1, 2, 3]
+  try
+    arr.map_inplace(fn(x) {
+      if x == 2 {
+        raise Failure("Error at 2")
+      }
+      x + 1
+    }) catch {
+    Failure(_) => assert_true(true)
+  } else {
+    _ => assert_true(false)
+  }
+}
+
+///|
+test "mapi_inplace with error callback" {
+  let arr = [1, 2, 3]
+  let v = try? arr.mapi_inplace(fn(i, x) {
+      if x == 2 {
+        raise Failure("Error at 2")
+      }
+      x + i
+    })
+  assert_true(v is Err(_))
+  inspect(
+    v,
+    content=
+      #|Err("Failure(Error at 2)")
+    ,
+  )
+}
