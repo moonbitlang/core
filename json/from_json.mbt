@@ -227,7 +227,6 @@ pub impl FromJson for Unit with from_json(json, path) {
   guard json is Null else {
     decode_error(path, "Unit::from_json: expected null")
   }
-
 }
 
 ///|

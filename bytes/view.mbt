@@ -225,7 +225,6 @@ pub fn View::iter(self : View) -> Iter[Byte] {
   Iter::new(fn(yield_) {
     for i in 0..<self.len() {
       guard yield_(self[i]) is IterContinue else { break IterEnd }
-
     } else {
       IterContinue
     }
@@ -629,7 +628,6 @@ pub impl Eq for View with op_equal(self, other) -> Bool {
   guard self.len() == other.len() else { return false }
   for i in 0..<self.len() {
     guard self.unsafe_get(i) == other.unsafe_get(i) else { return false }
-
   }
   true
 }
@@ -670,7 +668,6 @@ pub impl Compare for View with compare(self, other) -> Int {
     let b2 = other.unsafe_get(i)
     let cmp = b1.compare(b2)
     guard cmp == 0 else { return cmp }
-
   }
   0
 }
@@ -685,4 +682,14 @@ pub fn View::data(self : View) -> Bytes {
 /// Retrieves the start index of the view.
 pub fn View::start_offset(self : View) -> Int {
   self.start()
+}
+
+///|
+pub fn View::to_bytes(self : View) -> Bytes {
+  if self.len() == 0 && self.len() == self.bytes().length() {
+    return self.bytes()
+  }
+  let bytes = FixedArray::make(self.len(), (0 : Byte))
+  bytes.blit_from_bytes(0, self.bytes(), self.start_offset(), self.len())
+  unsafe_to_bytes(bytes)
 }

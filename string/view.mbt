@@ -59,6 +59,19 @@ pub fn View::op_get(self : View, index : Int) -> Int {
 }
 
 ///|
+/// Returns the original string that is being viewed.
+pub fn data(self : View) -> String {
+  self.str
+}
+
+///|
+/// Returns the starting offset (in UTF-16 code units) of this view into its
+/// underlying string.
+pub fn start_offset(self : View) -> Int {
+  self.start
+}
+
+///|
 /// Returns the length of the view.
 /// 
 /// This method counts the charcodes(code unit) in the view and has O(1) complexity.
@@ -278,7 +291,6 @@ pub fn View::iter(self : View) -> Iter[Char] {
         }
       }
       guard yield_(c1.unsafe_to_char()) is IterContinue else { break IterEnd }
-
     } else {
       IterContinue
     }
@@ -302,7 +314,6 @@ pub fn View::iter2(self : View) -> Iter2[Int, Char] {
       guard yield_(n, c1.unsafe_to_char()) is IterContinue else {
         break IterEnd
       }
-
     } else {
       IterContinue
     }
@@ -324,7 +335,6 @@ pub fn View::rev_iter(self : View) -> Iter[Char] {
         }
       }
       guard yield_(c1.unsafe_to_char()) is IterContinue else { break IterEnd }
-
     } else {
       IterContinue
     }
@@ -345,7 +355,6 @@ pub impl Eq for View with op_equal(self, other) {
       other.str.unsafe_charcode_at(other.start + i) else {
       return false
     }
-
   }
   true
 }
@@ -368,7 +377,6 @@ pub impl Compare for View with compare(self, other) {
       .unsafe_charcode_at(self.start + i)
       .compare(other.str.unsafe_charcode_at(other.start + i))
     guard cmp == 0 else { return cmp }
-
   }
   0
 }

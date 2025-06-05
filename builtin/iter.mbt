@@ -1024,6 +1024,7 @@ pub fn[T : Compare] Iter::minimum(self : Iter[T]) -> T? {
 ///   assert_eq(result.get(2), Some([2, 2, 2]))
 ///   assert_eq(result.get(3), Some([3]))
 /// }
+#deprecated
 pub fn[T, K : Eq + Hash] Iter::group_by(
   self : Iter[T],
   f : (T) -> K
@@ -1037,4 +1038,18 @@ pub fn[T, K : Eq + Hash] Iter::group_by(
     }
   }
   result
+}
+
+///|
+/// Returns an iterator that iterates over the index and the element of the iterator.
+pub fn[T] Iter::iter2(self : Iter[T]) -> Iter2[Int, T] {
+  fn {
+    yield_ => {
+      let mut index = -1
+      self.run(fn(i) {
+        index += 1
+        yield_(index, i)
+      })
+    }
+  }
 }

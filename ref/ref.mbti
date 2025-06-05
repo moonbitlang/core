@@ -16,13 +16,11 @@ fn[T] swap(Ref[T], Ref[T]) -> Unit
 fn[T] update(Ref[T], (T) -> T) -> Unit
 
 // Types and methods
-impl Ref {
-  map[T, R](Self[T], (T) -> R) -> Self[R]
-  new[T](T) -> Self[T]
-  protect[T, R](Self[T], T, () -> R) -> R
-  swap[T](Self[T], Self[T]) -> Unit
-  update[T](Self[T], (T) -> T) -> Unit
-}
+fn[T, R] Ref::map(Self[T], (T) -> R) -> Self[R]
+fn[T] Ref::new(T) -> Self[T]
+fn[T, R] Ref::protect(Self[T], T, () -> R) -> R
+fn[T] Ref::swap(Self[T], Self[T]) -> Unit
+fn[T] Ref::update(Self[T], (T) -> T) -> Unit
 impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Ref[X]
 
 // Type aliases

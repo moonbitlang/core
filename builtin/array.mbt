@@ -256,7 +256,6 @@ pub impl[T : Eq] Eq for Array[T] with op_equal(self, other) {
   guard self_len == other_len else { return false }
   for i in 0..<self_len {
     guard self.unsafe_get(i) == other.unsafe_get(i) else { break false }
-
   } else {
     true
   }
@@ -309,7 +308,6 @@ pub impl[T : Compare] Compare for Array[T] with compare(self, other) {
   for i in 0..<len_self {
     let cmp = self.unsafe_get(i).compare(other.unsafe_get(i))
     guard cmp is 0 else { break cmp }
-
   } else {
     0
   }
@@ -411,7 +409,7 @@ pub fn[T] Array::append(self : Array[T], other : Array[T]) -> Unit {
 /// }
 /// ```
 #locals(f)
-pub fn[T] Array::each(self : Array[T], f : (T) -> Unit) -> Unit {
+pub fn[T] Array::each(self : Array[T], f : (T) -> Unit?Error) -> Unit?Error {
   for v in self {
     f(v)
   }
@@ -448,10 +446,12 @@ pub fn[T] Array::rev_each(self : Array[T], f : (T) -> Unit) -> Unit {
 ///
 /// # Example
 /// ```
-/// let v = [3, 4, 5]
-/// let mut sum = 0
-/// v.rev_eachi(fn(i, x) { sum = sum + x + i })
-/// assert_eq(sum, 15)
+/// test "Array::rev_eachi" {
+///   let v = [3, 4, 5]
+///   let mut sum = 0
+///   v.rev_eachi(fn(i, x) { sum = sum + x + i })
+///   assert_eq(sum, 15)
+/// }
 /// ```
 #locals(f)
 pub fn[T] Array::rev_eachi(self : Array[T], f : (Int, T) -> Unit) -> Unit {
@@ -465,13 +465,19 @@ pub fn[T] Array::rev_eachi(self : Array[T], f : (Int, T) -> Unit) -> Unit {
 /// Iterates over the elements of the array with index.
 ///
 /// # Example
-/// ```
-/// let v = [3, 4, 5]
-/// let mut sum = 0
-/// v.eachi(fn (i, x) {sum = sum + x + i})
+/// ```moonbit
+/// test "Array::eachi" {
+///   let v = [3, 4, 5]
+///   let mut sum = 0
+///   v.eachi(fn (i, x) {sum = sum + x + i})
+///   inspect(sum, content="15")
+/// }
 /// ```
 #locals(f)
-pub fn[T] Array::eachi(self : Array[T], f : (Int, T) -> Unit) -> Unit {
+pub fn[T] Array::eachi(
+  self : Array[T],
+  f : (Int, T) -> Unit?Error
+) -> Unit?Error {
   for i, v in self {
     f(i, v)
   }
@@ -484,9 +490,11 @@ pub fn[T] Array::eachi(self : Array[T], f : (Int, T) -> Unit) -> Unit {
 ///
 /// # Example
 /// ```
-/// let v = [3, 4, 5]
-/// v.clear()
-/// assert_eq(v.length(), 0)
+/// test "Array::clear" {
+///   let v = [3, 4, 5]
+///   v.clear()
+///   assert_eq(v.length(), 0)
+/// }
 /// ```
 pub fn[T] Array::clear(self : Array[T]) -> Unit {
   self.unsafe_truncate_to_length(0)
@@ -497,12 +505,14 @@ pub fn[T] Array::clear(self : Array[T]) -> Unit {
 ///
 /// # Example
 /// ```
-/// let v = [3, 4, 5]
-/// let v2 = v.map(fn (x) {x + 1})
-/// assert_eq(v2, [4, 5, 6])
+/// test "Array::map" {
+///   let v = [3, 4, 5]
+///   let v2 = v.map(fn (x) {x + 1})
+///   assert_eq(v2, [4, 5, 6])
+/// }
 /// ```
 #locals(f)
-pub fn[T, U] Array::map(self : Array[T], f : (T) -> U) -> Array[U] {
+pub fn[T, U] Array::map(self : Array[T], f : (T) -> U?Error) -> Array[U]?Error {
   let arr = Array::make_uninit(self.length())
   for i, v in self {
     arr.unsafe_set(i, f(v))
@@ -515,12 +525,14 @@ pub fn[T, U] Array::map(self : Array[T], f : (T) -> U) -> Array[U] {
 ///
 /// # Example
 /// ```
-/// let v = [3, 4, 5]
-/// v.map_inplace(fn (x) {x + 1})
-/// assert_eq(v, [4, 5, 6])
+/// test "Array::map_inplace" {
+///   let v = [3, 4, 5]
+///   v.map_inplace(fn (x) {x + 1})
+///   assert_eq(v, [4, 5, 6])
+/// }
 /// ```
 #locals(f)
-pub fn[T] Array::map_inplace(self : Array[T], f : (T) -> T) -> Unit {
+pub fn[T] Array::map_inplace(self : Array[T], f : (T) -> T?Error) -> Unit?Error {
   for i, v in self {
     self[i] = f(v)
   }
@@ -531,12 +543,17 @@ pub fn[T] Array::map_inplace(self : Array[T], f : (T) -> T) -> Unit {
 ///
 /// # Example
 /// ```
-/// let v = [3, 4, 5]
-/// let v2 = v.mapi(fn (i, x) {x + i})
-/// assert_eq(v2, [3, 5, 7])
+/// test "Array::mapi" {
+///   let v = [3, 4, 5]
+///   let v2 = v.mapi(fn (i, x) {x + i})
+///   assert_eq(v2, [3, 5, 7])
+/// }
 /// ```
 #locals(f)
-pub fn[T, U] Array::mapi(self : Array[T], f : (Int, T) -> U) -> Array[U] {
+pub fn[T, U] Array::mapi(
+  self : Array[T],
+  f : (Int, T) -> U?Error
+) -> Array[U]?Error {
   if self.length() == 0 {
     return []
   }
@@ -552,12 +569,17 @@ pub fn[T, U] Array::mapi(self : Array[T], f : (Int, T) -> U) -> Array[U] {
 ///
 /// # Example
 /// ```
-/// let v = [3, 4, 5]
-/// v.mapi_inplace(fn (i, x) {x + i})
-/// assert_eq(v, [3, 5, 7])
+/// test "Array::mapi_inplace" {
+///   let v = [3, 4, 5]
+///   v.mapi_inplace(fn (i, x) {x + i})
+///   assert_eq(v, [3, 5, 7])
+/// }
 /// ```
 #locals(f)
-pub fn[T] Array::mapi_inplace(self : Array[T], f : (Int, T) -> T) -> Unit {
+pub fn[T] Array::mapi_inplace(
+  self : Array[T],
+  f : (Int, T) -> T?Error
+) -> Unit?Error {
   for i, v in self {
     self[i] = f(i, v)
   }
@@ -586,7 +608,10 @@ pub fn[T] Array::mapi_inplace(self : Array[T], f : (Int, T) -> T) -> Unit {
 /// }
 /// ```
 #locals(f)
-pub fn[T] Array::filter(self : Array[T], f : (T) -> Bool) -> Array[T] {
+pub fn[T] Array::filter(
+  self : Array[T],
+  f : (T) -> Bool?Error
+) -> Array[T]?Error {
   let arr = []
   for v in self {
     if f(v) {
@@ -723,10 +748,12 @@ pub fn[T] Array::rev(self : Array[T]) -> Array[T] {
 ///
 /// # Example
 /// ```
-/// let v = [3, 4, 5]
-/// let (v1, v2) = v.split_at(1)
-/// assert_eq(v1, [3])
-/// assert_eq(v2, [4, 5])
+/// test "Array::split_at" {
+///   let v = [3, 4, 5]
+///   let (v1, v2) = v.split_at(1)
+///   assert_eq(v1, [3])
+///   assert_eq(v2, [4, 5])
+/// }
 /// ```
 /// TODO: perf could be optimized
 pub fn[T] Array::split_at(self : Array[T], index : Int) -> (Array[T], Array[T]) {
@@ -911,9 +938,11 @@ pub fn[T : Eq] Array::strip_prefix(
 ///
 /// # Example
 /// ```
-/// let v = [3, 4, 5]
-/// let v2 = v.strip_suffix([5])
-/// assert_eq(v2, Some([3, 4]))
+/// test "Array::strip_suffix" {
+///   let v = [3, 4, 5]
+///   let v2 = v.strip_suffix([5])
+///   assert_eq(v2, Some([3, 4]))
+/// }
 /// ```
 pub fn[T : Eq] Array::strip_suffix(
   self : Array[T],
@@ -995,10 +1024,12 @@ pub fn[T] Array::find_index(self : Array[T], f : (T) -> Bool) -> Int? {
 /// # Example
 ///
 /// ```
-/// let v = [1, 2, 3, 4, 5]
-/// match v.search_by(fn(x) { x == 3 }) {
-///   Some(index) => assert_eq(index, 2) // 2
-///   None => println("Not found")
+/// test "Array::search_by" {
+///   let v = [1, 2, 3, 4, 5]
+///   match v.search_by(fn(x) { x == 3 }) {
+///     Some(index) => assert_eq(index, 2) // 2
+///     None => println("Not found")
+///   }
 /// }
 /// ```
 #locals(f)
@@ -1017,9 +1048,11 @@ pub fn[T] Array::search_by(self : Array[T], f : (T) -> Bool) -> Int? {
 ///
 /// # Example
 /// ```
-/// let v = [3, 4, 5]
-/// let result = v.binary_search(3)
-/// assert_eq(result, Ok(0)) // The element 3 is found at index 0
+/// test "Array::binary_search" {
+///   let v = [3, 4, 5]
+///   let result = v.binary_search(3)
+///   assert_eq(result, Ok(0)) // The element 3 is found at index 0
+/// }
 /// ```
 ///
 /// # Arguments
@@ -1640,6 +1673,45 @@ pub fn[T] Array::chunk_by(
 }
 
 ///|
+/// Generates overlapping subslices (sliding windows) of the specified size.
+///
+/// Parameters:
+///
+/// * `array` : The array to be processed with sliding windows.
+/// * `size` : The window length. Must be a positive integer.
+///
+/// Returns an array of slices, where each inner slice is a contiguous subslice
+/// of the original array. Windows are produced with a step size of 1. If the
+/// original array's length is less than the specified window size, the result
+/// will be an empty array.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "windows" {
+///   let arr = [1, 2, 3, 4, 5]
+///   let windows = arr.windows(2)
+///   inspect!(windows, content="[[1, 2], [2, 3], [3, 4], [4, 5]]")
+/// }
+///
+/// test "empty_windows" {
+///   let arr : Array[Int] = [1, 2]
+///   inspect!(arr.windows(3), content="[]")
+/// }
+/// ```
+pub fn[T] Array::windows(self : Array[T], size : Int) -> Array[ArrayView[T]] {
+  let len = self.length() - size + 1
+  if len < 1 {
+    return []
+  }
+  let windows = Array::new(capacity=len)
+  for i in 0..<len {
+    windows.push(self[i:i + size])
+  }
+  windows
+}
+
+///|
 /// Splits an array into chunks using a predicate function. Creates chunks by
 /// grouping consecutive elements that do not satisfy the predicate function.
 /// Elements that satisfy the predicate function are excluded from the resulting
@@ -1706,7 +1778,6 @@ pub fn[T] Array::iter(self : Array[T]) -> Iter[T] {
   Iter::new(fn(yield_) {
     for v in self {
       guard yield_(v) is IterContinue else { break IterEnd }
-
     } else {
       IterContinue
     }
@@ -1738,7 +1809,6 @@ pub fn[T] Array::rev_iter(self : Array[T]) -> Iter[T] {
   Iter::new(fn(yield_) {
     for i = self.length() - 1; i >= 0; i = i - 1 {
       guard yield_(self.unsafe_get(i)) is IterContinue else { break IterEnd }
-
     } else {
       IterContinue
     }
@@ -1770,7 +1840,6 @@ pub fn[A] Array::iter2(self : Array[A]) -> Iter2[Int, A] {
   Iter2::new(fn(yield_) {
     for i, v in self {
       guard yield_(i, v) is IterContinue else { break IterEnd }
-
     } else {
       IterContinue
     }

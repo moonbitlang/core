@@ -4,6 +4,7 @@ package "moonbitlang/core/error"
 
 // Types and methods
 impl Show for Error
+impl ToJson for Error
 
 // Type aliases
 

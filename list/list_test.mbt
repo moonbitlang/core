@@ -322,6 +322,14 @@ test "sort" {
 }
 
 ///|
+test "sort-stack-safety" {
+  let arr = FixedArray::makei(100_000, fn { x => x })
+  arr.rev_inplace()
+  let ls = @list.of(arr)
+  ls.sort() |> ignore
+}
+
+///|
 test "contain" {
   let ls = @list.of([1, 2, 3])
   inspect(ls.contains(1), content="true")
@@ -597,9 +605,9 @@ test "to_json/from_json" {
   @json.inspect(list, content=json_expected)
   let list2 : @list.T[Int] = @json.from_json(json_expected)
   @json.inspect(list2, content=json_expected)
-  let v : Result[@list.T[Int], @json.JsonDecodeError] = @json.from_json?({
-    "a": 1,
-  })
+  let v : Result[@list.T[Int], @json.JsonDecodeError] = try? @json.from_json({
+      "a": 1,
+    })
   @json.inspect(v, content={
     "Err": {
       "$tag": "JsonDecodeError",
@@ -733,4 +741,276 @@ test "immutability" {
   let l3 = l1.flat_map(fn(_) { l1 })
   inspect(l3, content="@list.of([1, 2, 1, 2])")
   inspect(l1, content="@list.of([1, 2])")
+}
+
+///|
+test "advanced list manipulations" {
+  // Test multiple operations chained together
+  let l = @list.of([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+
+  // Filter even numbers, double them, and take first 3
+  let result = l.filter(fn(x) { x % 2 == 0 }).map(fn(x) { x * 2 }).take(3)
+  inspect(result, content="@list.of([4, 8, 12])")
+
+  // Perform multiple transformations and ensure original list stays unchanged
+  let orig = @list.of([3, 1, 4, 1, 5, 9, 2, 6])
+  let sorted = orig.sort()
+  let filtered = orig.filter(fn(x) { x > 3 })
+  let mapped = orig.map(fn(x) { x * x })
+  inspect(orig, content="@list.of([3, 1, 4, 1, 5, 9, 2, 6])")
+  inspect(sorted, content="@list.of([1, 1, 2, 3, 4, 5, 6, 9])")
+  inspect(filtered, content="@list.of([4, 5, 9, 6])")
+  inspect(mapped, content="@list.of([9, 1, 16, 1, 25, 81, 4, 36])")
+}
+
+///|
+test "scan_right complex operations" {
+  // Test scan_right with more complex operations
+  let l1 = @list.of([1, 2, 3, 4])
+
+  // Calculate running product from right to left
+  let products = l1.scan_right(fn(acc, x) { x * acc }, init=1)
+  inspect(products, content="@list.of([24, 24, 12, 4, 1])")
+
+  // Test with string concatenation
+  let l2 = @list.of(["a", "b", "c"])
+  let concat = l2.scan_right(fn(acc, x) { x + acc }, init="")
+  inspect(concat, content="@list.of([\"abc\", \"bc\", \"c\", \"\"])")
+
+  // Test with more complex function
+  let l3 = @list.of([10, 5, 8, 2])
+  let result = l3.scan_right(
+    fn(acc, x) { if x > acc { x } else { acc } },
+    init=0,
+  )
+  inspect(result, content="@list.of([10, 8, 8, 2, 0])")
+}
+
+///|
+test "drop advanced cases" {
+  // Test drop with various edge cases
+  let l = @list.of([1, 2, 3, 4, 5])
+
+  // Drop negative number (should be treated as 0)
+  inspect(l.drop(-3), content="@list.of([1, 2, 3, 4, 5])")
+
+  // Drop exact length
+  inspect(l.drop(5), content="@list.of([])")
+
+  // Drop more than length
+  inspect(l.drop(10), content="@list.of([])")
+
+  // Drop from empty list
+  let empty : @list.T[Int] = @list.empty()
+  inspect(empty.drop(3), content="@list.of([])")
+
+  // Drop 0
+  inspect(l.drop(0), content="@list.of([1, 2, 3, 4, 5])")
+}
+
+///|
+test "list manual grouping implementation" {
+  // Test manual grouping implementation
+  let mixed = @list.of([1, 2, 3, 4, 5, 6, 7, 8, 9])
+
+  // Manually implement partition for even/odd
+  let evens = mixed.filter(fn(x) { x % 2 == 0 })
+  let odds = mixed.filter(fn(x) { x % 2 != 0 })
+
+  // Check our manual implementation
+  inspect(evens, content="@list.of([2, 4, 6, 8])")
+  inspect(odds, content="@list.of([1, 3, 5, 7, 9])")
+  assert_eq!(evens.length(), 4)
+  assert_eq!(odds.length(), 5)
+}
+
+///|
+test "equality" {
+  // Test equality operators
+  let l1 = @list.of([1, 2, 3])
+  let l2 = @list.of([1, 2, 3])
+  let l3 = @list.of([1, 2, 4])
+  let l4 = @list.of([1, 2])
+  let l5 = @list.of([1, 2, 3, 4])
+
+  // Test equality
+  assert_eq!(l1, l2)
+  assert_not_eq!(l1, l3)
+  assert_not_eq!(l1, l4)
+  assert_not_eq!(l1, l5)
+}
+
+///|
+test "advanced folding operations" {
+  let l = @list.of([1, 2, 3, 4, 5])
+
+  // Test fold for sum of squares
+  let result = l.fold(fn(acc, x) { acc + x * x }, init=0)
+  inspect(result, content="55")
+
+  // Test fold with more complex operations
+  let texts = @list.of(["hello", "world", "moonbit"])
+  let counts = texts.fold(fn(acc, s) { acc + s.length() }, init=0)
+  inspect(counts, content="17")
+
+  // Test with multiple fold operations
+  let list = @list.of([10, 20, 30, 40, 50])
+  let sum = list.fold(fn(acc, x) { acc + x }, init=0)
+  let max = list.fold(
+    fn(acc, x) { if x > acc { x } else { acc } },
+    init=list.head().unwrap(),
+  )
+  let product = list.fold(fn(acc, x) { acc * x }, init=1)
+  assert_eq!(sum, 150)
+  assert_eq!(max, 50)
+  assert_eq!(product, 12000000)
+}
+
+///|
+test "remove_at edge cases" {
+  let l = @list.of([1, 2, 3, 4, 5])
+
+  // Remove at negative index (should not change list)
+  inspect(l.remove_at(-1), content="@list.of([1, 2, 3, 4, 5])")
+
+  // Remove at exact last position
+  inspect(l.remove_at(4), content="@list.of([1, 2, 3, 4])")
+
+  // Remove at middle
+  inspect(l.remove_at(2), content="@list.of([1, 2, 4, 5])")
+
+  // Remove from empty list
+  let empty : @list.T[Int] = @list.empty()
+  inspect(empty.remove_at(0), content="@list.of([])")
+
+  // Remove multiple elements
+  let result = l.remove_at(0).remove_at(0).remove_at(0)
+  inspect(result, content="@list.of([4, 5])")
+}
+
+///|
+test "nested lists operations" {
+  // Test operations on nested lists
+  let nested = @list.of([@list.of([1, 2]), @list.of([3, 4]), @list.of([5, 6])])
+
+  // Map each inner list
+  let mapped = nested.map(fn(inner) { inner.map(fn(x) { x * 2 }) })
+  inspect(
+    mapped,
+    content="@list.of([@list.of([2, 4]), @list.of([6, 8]), @list.of([10, 12])])",
+  )
+
+  // Flatten and then map
+  let flat_mapped = nested.flatten().map(fn(x) { x * 2 })
+  inspect(flat_mapped, content="@list.of([2, 4, 6, 8, 10, 12])")
+
+  // Map and then flatten (should be equivalent to flat_map)
+  let map_flatten = nested
+    .map(fn(inner) { inner.map(fn(x) { x * 2 }) })
+    .flatten()
+  inspect(map_flatten, content="@list.of([2, 4, 6, 8, 10, 12])")
+
+  // Use flat_map directly
+  let direct_flat_map = nested.flat_map(fn(inner) { inner.map(fn(x) { x * 2 }) })
+  inspect(direct_flat_map, content="@list.of([2, 4, 6, 8, 10, 12])")
+}
+
+///|
+test "find and filter combination" {
+  let l = @list.of([1, 2, 3, 4, 5])
+
+  // Find first even number
+  let first_even = l.find(fn(x) { x % 2 == 0 })
+  inspect(first_even, content="Some(2)")
+
+  // Find when nothing matches
+  let find_none = l.find(fn(x) { x > 10 })
+  inspect(find_none, content="None")
+
+  // Manual implementation to find and transform
+  let first_even_val = first_even.unwrap()
+  let first_even_times_10 = first_even_val * 10
+
+  // Check our manual transformation
+  inspect(Some(first_even_times_10), content="Some(20)")
+
+  // Filter and map combination to get squares of even numbers
+  let filtered = l.filter(fn(x) { x % 2 == 0 })
+  let mapped = filtered.map(fn(x) { x * x })
+  inspect(mapped, content="@list.of([4, 16])")
+}
+
+///|
+test "intersperse with complex values" {
+  // Test intersperse with different types of elements
+
+  // String elements
+  let words = @list.of(["hello", "moonbit", "world"])
+  inspect(
+    words.intersperse(", "),
+    content="@list.of([\"hello\", \", \", \"moonbit\", \", \", \"world\"])",
+  )
+
+  // List elements
+  let lists = @list.of([@list.of([1, 2]), @list.of([3, 4]), @list.of([5, 6])])
+  let separator = @list.of([0, 0])
+  let result = lists.intersperse(separator)
+  inspect(result.length(), content="5")
+
+  // Empty list with intersperse
+  let empty : @list.T[Int] = @list.empty()
+  inspect(empty.intersperse(0), content="@list.of([])")
+
+  // Single element list with intersperse
+  let single = @list.of(["a"])
+  inspect(single.intersperse(","), content="@list.of([\"a\"])")
+}
+
+///|
+test "complex list recursion safety" {
+  // Create very large lists and ensure operations are stack safe
+
+  // Create a large list using unfold
+  let large = @list.unfold(init=0, fn {
+    i => if i < 10000 { Some((i, i + 1)) } else { None }
+  })
+
+  // Verify operations on large list work correctly without stack overflow
+  assert_eq!(large.length(), 10000)
+  assert_eq!(large.nth(9999), Some(9999))
+  assert_eq!(large.last(), Some(9999))
+
+  // Test operations that traverse the entire list
+  let sum = large.fold(fn(acc, x) { acc + x }, init=0)
+  assert_eq!(sum, 49995000) // Sum of numbers 0 to 9999
+
+  // Test filter on large list
+  let filtered = large.filter(fn(x) { x % 1000 == 0 })
+  assert_eq!(filtered.length(), 10)
+}
+
+///|
+test "is_prefix and is_suffix complex cases" {
+  let l = @list.of([1, 2, 3, 4, 5])
+
+  // Test is_prefix with various scenarios
+  assert_true!(l.is_prefix(@list.of([1])))
+  assert_true!(l.is_prefix(@list.of([1, 2])))
+  assert_true!(l.is_prefix(@list.of([1, 2, 3])))
+  assert_false!(l.is_prefix(@list.of([2, 3])))
+  assert_false!(l.is_prefix(@list.of([0, 1, 2])))
+
+  // Test is_suffix with various scenarios
+  assert_true!(l.is_suffix(@list.of([5])))
+  assert_true!(l.is_suffix(@list.of([4, 5])))
+  assert_true!(l.is_suffix(@list.of([3, 4, 5])))
+  assert_false!(l.is_suffix(@list.of([2, 5])))
+  assert_false!(l.is_suffix(@list.of([3, 4, 6])))
+
+  // Test with empty list
+  let empty : @list.T[Int] = @list.empty()
+  assert_true!(empty.is_prefix(@list.of([])))
+  assert_true!(empty.is_suffix(@list.of([])))
+  assert_true!(l.is_prefix(@list.of([])))
+  assert_true!(l.is_suffix(@list.of([])))
 }

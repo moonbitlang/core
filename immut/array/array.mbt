@@ -105,8 +105,10 @@ pub fn[A] copy(self : T[A]) -> T[A] {
 /// 
 /// # Example
 /// ```
-/// let v = @array.of([1, 2, 3])
-/// assert_eq(v, @array.from_array([1, 2, 3]))
+/// test "from_array example" {
+///   let v = @array.of([1, 2, 3])
+///   assert_eq(v, @array.from_array([1, 2, 3]))
+/// }
 /// ```
 pub fn[A] from_array(arr : Array[A]) -> T[A] {
   makei(arr.length(), fn(i) { arr[i] })
@@ -181,8 +183,10 @@ pub fn[A] length(self : T[A]) -> Int {
 ///
 /// # Examples
 /// ```
-/// let v = @array.of([1, 2, 3, 4, 5])
-/// assert_eq(v[0], 1)
+/// test "op_get example" {
+///   let v = @array.of([1, 2, 3, 4, 5])
+///   assert_eq(v[0], 1)
+/// }
 /// ```
 pub fn[A] op_get(self : T[A], index : Int) -> A {
   if index == 0 {
@@ -194,6 +198,34 @@ pub fn[A] op_get(self : T[A], index : Int) -> A {
   }
 }
 
+///|
+/// Returns the element at the specified index in the array, wrapped in an
+/// `Option` type.
+///
+/// Parameters:
+///
+/// * `array` : The immutable array.
+/// * `index` : The index of the element to retrieve.
+///
+/// Returns `Some(value)` if the index is valid, `None` if the index is out of
+/// bounds.
+///
+/// Example:
+///
+/// ```moonbit
+/// ///|
+/// test "get" {
+///   let v = @array.of([1, 2, 3])
+///   inspect!(v.get(1), content="Some(2)")
+///   inspect!(v.get(-1), content="None")
+///   inspect!(v.get(3), content="None")
+/// }
+/// ```
+pub fn[A] get(self : T[A], index : Int) -> A? {
+  guard 0 <= index && index < self.size else { None }
+  Some(self[index])
+}
+
 //-----------------------------------------------------------------------------
 // Modifier
 //-----------------------------------------------------------------------------
@@ -203,8 +235,10 @@ pub fn[A] op_get(self : T[A], index : Int) -> A {
 ///
 /// # Example
 /// ```
-/// let v = @array.of([1, 2, 3, 4, 5])
-/// assert_eq(v.set(1, 10), @array.of([1, 10, 3, 4, 5]))
+/// test "set example" {
+///   let v = @array.of([1, 2, 3, 4, 5])
+///   assert_eq(v.set(1, 10), @array.of([1, 10, 3, 4, 5]))
+/// }
 /// ```
 pub fn[A] set(self : T[A], index : Int, value : A) -> T[A] {
   {
@@ -267,10 +301,12 @@ pub fn[A] iter(self : T[A]) -> Iter[A] {
 ///
 /// # Example
 /// ```
-/// let arr = []
-/// let v = @array.of([1, 2, 3, 4, 5])
-/// v.each(fn(e) { arr.push(e) })
-/// assert_eq(arr, [1, 2, 3, 4, 5])
+/// test "each example" {
+///   let arr = []
+///   let v = @array.of([1, 2, 3, 4, 5])
+///   v.each(fn(e) { arr.push(e) })
+///   assert_eq(arr, [1, 2, 3, 4, 5])
+/// }
 /// ```
 pub fn[A] each(self : T[A], f : (A) -> Unit) -> Unit {
   self.tree.each(f)
@@ -423,7 +459,6 @@ pub impl[A : Compare] Compare for T[A] with compare(self, other) {
   for i in 0..<len_self {
     let cmp = self[i].compare(other[i])
     guard cmp is 0 else { break cmp }
-
   } else {
     return 0
   }

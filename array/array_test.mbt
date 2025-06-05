@@ -528,7 +528,7 @@ test "iter" {
 test "shuffle_in_place" {
   let arr : Array[Int] = [1, 2, 3, 4, 5, 6, 7]
   fn rand(upper : Int) -> Int {
-    let rng = @random.new()
+    let rng = @random.Rand::new()
     rng.int() % upper
   }
 
@@ -719,6 +719,18 @@ test "Array[String]::join" {
   inspect(["123", "456"].join(""), content="123456")
   inspect(["aaa", "bbb", "ccc"].join(" "), content="aaa bbb ccc")
   inspect([].join(" "))
+}
+
+///|
+test "Array[View]::join" {
+  let arr = ["a", "b", "c"][:]
+  inspect(arr.join(","), content="a,b,c")
+  inspect(["a", "b", "c"][:].join(","), content="a,b,c")
+  inspect(["a", "b", "c"][:].join(""), content="abc")
+  inspect(["a", "b", "c"][:].join(" "), content="a b c")
+  inspect(["123", "456"][:].join(""), content="123456")
+  inspect(["aaa", "bbb", "ccc"][:].join(" "), content="aaa bbb ccc")
+  inspect([][:].join(" "))
 }
 
 ///|

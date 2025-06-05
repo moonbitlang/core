@@ -15,13 +15,9 @@ test "parse and validate jsons" {
   assert_true(@json.valid("false"))
 
   // Parse JSON string into Json value
-  let json = try {
-    @json.parse("{\"key\": 42}")
-  } catch {
-    ParseError::InvalidChar(_, _) => panic()
-    ParseError::InvalidEof => panic()
-    ParseError::InvalidNumber(_, _) => panic()
-    ParseError::InvalidIdentEscape(_) => panic()
+  let json = try @json.parse("{\"key\": 42}") catch {
+    (_ : ParseError) => panic()
+    // _ => panic() // redundant, the type checker won't refine further
   }
 
   // Pretty print with indentation

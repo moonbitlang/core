@@ -26,6 +26,8 @@ fn[A] from_array(Array[A]) -> T[A]
 
 fn[A] from_iter(Iter[A]) -> T[A]
 
+fn[A] get(T[A], Int) -> A?
+
 fn[A] is_empty(T[A]) -> Bool
 
 fn[A] iter(T[A]) -> Iter[A]
@@ -54,39 +56,38 @@ fn[A] to_array(T[A]) -> Array[A]
 
 // Types and methods
 type T[A]
-impl T {
-  concat[A](Self[A], Self[A]) -> Self[A]
-  #deprecated
-  copy[A](Self[A]) -> Self[A]
-  each[A](Self[A], (A) -> Unit) -> Unit
-  eachi[A](Self[A], (Int, A) -> Unit) -> Unit
-  fold[A, B](Self[A], init~ : B, (B, A) -> B) -> B
-  #deprecated
-  fold_left[A](Self[A], (A, A) -> A, init~ : A) -> A
-  #deprecated
-  fold_right[A](Self[A], (A, A) -> A, init~ : A) -> A
-  #deprecated
-  from_array[A](Array[A]) -> Self[A]
-  #deprecated
-  from_iter[A](Iter[A]) -> Self[A]
-  is_empty[A](Self[A]) -> Bool
-  iter[A](Self[A]) -> Iter[A]
-  length[A](Self[A]) -> Int
-  #deprecated
-  make[A](Int, A) -> Self[A]
-  #deprecated
-  makei[A](Int, (Int) -> A) -> Self[A]
-  map[A, B](Self[A], (A) -> B) -> Self[B]
-  #deprecated
-  new[A]() -> Self[A]
-  #deprecated
-  of[A](FixedArray[A]) -> Self[A]
-  op_get[A](Self[A], Int) -> A
-  push[A](Self[A], A) -> Self[A]
-  rev_fold[A, B](Self[A], init~ : B, (B, A) -> B) -> B
-  set[A](Self[A], Int, A) -> Self[A]
-  to_array[A](Self[A]) -> Array[A]
-}
+fn[A] T::concat(Self[A], Self[A]) -> Self[A]
+#deprecated
+fn[A] T::copy(Self[A]) -> Self[A]
+fn[A] T::each(Self[A], (A) -> Unit) -> Unit
+fn[A] T::eachi(Self[A], (Int, A) -> Unit) -> Unit
+fn[A, B] T::fold(Self[A], init~ : B, (B, A) -> B) -> B
+#deprecated
+fn[A] T::fold_left(Self[A], (A, A) -> A, init~ : A) -> A
+#deprecated
+fn[A] T::fold_right(Self[A], (A, A) -> A, init~ : A) -> A
+#deprecated
+fn[A] T::from_array(Array[A]) -> Self[A]
+#deprecated
+fn[A] T::from_iter(Iter[A]) -> Self[A]
+fn[A] T::get(Self[A], Int) -> A?
+fn[A] T::is_empty(Self[A]) -> Bool
+fn[A] T::iter(Self[A]) -> Iter[A]
+fn[A] T::length(Self[A]) -> Int
+#deprecated
+fn[A] T::make(Int, A) -> Self[A]
+#deprecated
+fn[A] T::makei(Int, (Int) -> A) -> Self[A]
+fn[A, B] T::map(Self[A], (A) -> B) -> Self[B]
+#deprecated
+fn[A] T::new() -> Self[A]
+#deprecated
+fn[A] T::of(FixedArray[A]) -> Self[A]
+fn[A] T::op_get(Self[A], Int) -> A
+fn[A] T::push(Self[A], A) -> Self[A]
+fn[A, B] T::rev_fold(Self[A], init~ : B, (B, A) -> B) -> B
+fn[A] T::set(Self[A], Int, A) -> Self[A]
+fn[A] T::to_array(Self[A]) -> Array[A]
 impl[A] Add for T[A]
 impl[A : Compare] Compare for T[A]
 impl[A : Eq] Eq for T[A]
