@@ -73,8 +73,8 @@ pub fn[X] add(self : SparseArray[X], idx : Int, value : X) -> SparseArray[X] {
 pub fn[X] SparseArray::union(
   self : SparseArray[X],
   other : SparseArray[X],
-  union : (X, X) -> X
-) -> SparseArray[X] {
+  union : (X, X) -> X?Error
+) -> SparseArray[X]?Error {
   let un = self.elem_info.union(other.elem_info)
   let diff = self.elem_info.difference(other.elem_info)
   let new_len = un.size()
@@ -109,8 +109,8 @@ pub fn[X] SparseArray::union(
 pub fn[X] SparseArray::intersection(
   self : SparseArray[X],
   other : SparseArray[X],
-  f : (X, X) -> X
-) -> SparseArray[X] {
+  f : (X, X) -> X?Error
+) -> SparseArray[X]?Error {
   let inter = self.elem_info.intersection(other.elem_info)
   let new_len = inter.size()
   if new_len == 0 {
@@ -176,7 +176,7 @@ pub fn[X] size(self : SparseArray[X]) -> Int {
 /// `each(self: SparseArray[X], f: (X) -> Unit) -> Unit`
 ///
 /// Iterate through elements in a sparse array
-pub fn[X] each(self : SparseArray[X], f : (X) -> Unit) -> Unit {
+pub fn[X] each(self : SparseArray[X], f : (X) -> Unit?Error) -> Unit?Error {
   for i in 0..<self.elem_info.size() {
     f(self.data[i])
   }
