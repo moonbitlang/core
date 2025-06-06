@@ -93,7 +93,10 @@ pub fn[K : Compare, V] remove(self : T[K, V], key : K) -> T[K, V] {
 
 ///|
 /// Filter values that satisfy the predicate
-pub fn[K : Compare, V] filter(self : T[K, V], pred : (V) -> Bool) -> T[K, V] {
+pub fn[K : Compare, V] filter(
+  self : T[K, V],
+  pred : (V) -> Bool?Error
+) -> T[K, V]?Error {
   self.filter_with_key(fn(_k, v) { pred(v) })
 }
 
@@ -101,8 +104,8 @@ pub fn[K : Compare, V] filter(self : T[K, V], pred : (V) -> Bool) -> T[K, V] {
 /// Filter key-value pairs that satisfy the predicate
 pub fn[K : Compare, V] filter_with_key(
   self : T[K, V],
-  pred : (K, V) -> Bool
-) -> T[K, V] {
+  pred : (K, V) -> Bool?Error
+) -> T[K, V]?Error {
   match self {
     Empty => Empty
     Tree(k, value=v, l, r, ..) =>

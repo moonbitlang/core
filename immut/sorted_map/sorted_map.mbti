@@ -17,9 +17,9 @@ fn[K, V] eachi(T[K, V], (Int, K, V) -> Unit) -> Unit
 #deprecated
 fn[K, V] elems(T[K, V]) -> Array[V]
 
-fn[K : Compare, V] filter(T[K, V], (V) -> Bool) -> T[K, V]
+fn[K : Compare, V] filter(T[K, V], (V) -> Bool?Error) -> T[K, V]?Error
 
-fn[K : Compare, V] filter_with_key(T[K, V], (K, V) -> Bool) -> T[K, V]
+fn[K : Compare, V] filter_with_key(T[K, V], (K, V) -> Bool?Error) -> T[K, V]?Error
 
 fn[K, V, A] fold(T[K, V], init~ : A, (A, V) -> A) -> A
 
@@ -82,8 +82,8 @@ fn[K, V] T::eachi(Self[K, V], (Int, K, V) -> Unit) -> Unit
 fn[K, V] T::elems(Self[K, V]) -> Array[V]
 #deprecated
 fn[K, V] T::empty() -> Self[K, V]
-fn[K : Compare, V] T::filter(Self[K, V], (V) -> Bool) -> Self[K, V]
-fn[K : Compare, V] T::filter_with_key(Self[K, V], (K, V) -> Bool) -> Self[K, V]
+fn[K : Compare, V] T::filter(Self[K, V], (V) -> Bool?Error) -> Self[K, V]?Error
+fn[K : Compare, V] T::filter_with_key(Self[K, V], (K, V) -> Bool?Error) -> Self[K, V]?Error
 fn[K, V, A] T::fold(Self[K, V], init~ : A, (A, V) -> A) -> A
 fn[K, V, A] T::foldl_with_key(Self[K, V], (A, K, V) -> A, init~ : A) -> A
 fn[K, V, A] T::foldr_with_key(Self[K, V], (A, K, V) -> A, init~ : A) -> A
