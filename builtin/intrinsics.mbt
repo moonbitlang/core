@@ -1134,9 +1134,6 @@ pub impl Compare for Double with compare(self, other) = "%f64_compare"
 pub impl Default for Double with default() = "%f64_default"
 
 ///|
-fn Double::to_unchecked_int(self : Double) -> Int = "%f64_to_i32"
-
-///|
 /// Converts an unsigned 32-bit integer to a double-precision floating-point
 /// number. Since the range of unsigned 32-bit integers is smaller than what can
 /// be precisely represented by a double-precision floating-point number, this
