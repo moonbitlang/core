@@ -1046,6 +1046,39 @@ pub fn[A] find(self : T[A], f : (A) -> Bool) -> A? {
 }
 
 ///|
+/// Returns the index of the first element in the list that satisfies the
+/// predicate function, or `None` if no element satisfies the predicate.
+///
+/// Parameters:
+///
+/// * `self` : The input list to search through.
+/// * `f` : A function that takes an element of the list and returns a
+/// boolean indicating whether the element satisfies the search criteria.
+///
+/// Returns an `Option` containing the index of the first matching element, or
+/// `None` if no element matches.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "find_index" {
+///   let ls = of([1, 2, 3, 4, 5])
+///   inspect!(ls.find_index(fn(x) { x % 2 == 0 }), content="Some(1)")
+///   inspect!(ls.find_index(fn(x) { x > 10 }), content="None")
+/// }
+/// ```
+///
+pub fn[A] find_index(self : T[A], f : (A) -> Bool) -> Int? {
+  let mut idx = 0
+  for x in self {
+    guard not(f(x)) else { break Some(idx) }
+    idx += 1
+  } else {
+    None
+  }
+}
+
+///|
 /// Find the first element in the list that satisfies f and passes the index as an argument.
 ///
 /// # Example
