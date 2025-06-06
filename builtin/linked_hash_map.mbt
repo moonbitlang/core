@@ -410,22 +410,6 @@ fn calc_grow_threshold(capacity : Int) -> Int {
 // Utils
 
 ///|
-fn[K : Show, V : Show] Map::debug_entries(self : Map[K, V]) -> String {
-  let buf = StringBuilder::new()
-  for i in 0..<self.entries.length() {
-    if i > 0 {
-      buf.write_char(',')
-    }
-    match self.entries[i] {
-      None => buf.write_char('_')
-      Some({ psl, key, value, .. }) =>
-        buf.write_string("(\{psl},\{key},\{value})")
-    }
-  }
-  buf.to_string()
-}
-
-///|
 pub impl[K : Show, V : Show] Show for Map[K, V] with output(self, logger) {
   logger.write_string("{")
   loop 0, self.head {

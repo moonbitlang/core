@@ -82,13 +82,7 @@ pub fn single_bench(
 /// the calculation that produces it.
 pub fn[Any] keep(self : T, value : Any) -> Unit {
   let trait_object : &OpaqueValue = value
-  self.storage = trait_object
-}
-
-///|
-/// Suppress field never-read warning
-fn touch_storage(self : T) -> Unit {
-  self.storage |> ignore
+  self._storage = trait_object
 }
 
 ///|
