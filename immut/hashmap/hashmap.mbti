@@ -9,19 +9,19 @@ fn[K : Eq + Hash, V] add(T[K, V], K, V) -> T[K, V]
 
 fn[K : Eq + Hash, V] contains(T[K, V], K) -> Bool
 
-fn[K, V] each(T[K, V], (K, V) -> Unit) -> Unit
+fn[K, V] each(T[K, V], (K, V) -> Unit?Error) -> Unit?Error
 
 #deprecated
 fn[K, V] elems(T[K, V]) -> Iter[V]
 
-fn[K : Eq + Hash, V] filter(T[K, V], (V) -> Bool) -> T[K, V]
+fn[K : Eq + Hash, V] filter(T[K, V], (V) -> Bool?Error) -> T[K, V]?Error
 
 #deprecated
 fn[K : Eq + Hash, V] find(T[K, V], K) -> V?
 
-fn[K, V, A] fold(T[K, V], init~ : A, (A, V) -> A) -> A
+fn[K, V, A] fold(T[K, V], init~ : A, (A, V) -> A?Error) -> A?Error
 
-fn[K, V, A] fold_with_key(T[K, V], init~ : A, (A, K, V) -> A) -> A
+fn[K, V, A] fold_with_key(T[K, V], init~ : A, (A, K, V) -> A?Error) -> A?Error
 
 fn[K : Eq + Hash, V] from_array(Array[(K, V)]) -> T[K, V]
 
@@ -35,9 +35,9 @@ fn[K, V] iter2(T[K, V]) -> Iter2[K, V]
 
 fn[K, V] keys(T[K, V]) -> Iter[K]
 
-fn[K : Eq + Hash, V, A] map(T[K, V], (V) -> A) -> T[K, A]
+fn[K : Eq + Hash, V, A] map(T[K, V], (V) -> A?Error) -> T[K, A]?Error
 
-fn[K : Eq + Hash, V, A] map_with_key(T[K, V], (K, V) -> A) -> T[K, A]
+fn[K : Eq + Hash, V, A] map_with_key(T[K, V], (K, V) -> A?Error) -> T[K, A]?Error
 
 fn[K, V] new() -> T[K, V]
 
@@ -61,29 +61,29 @@ type T[K, V]
 fn[K : Eq + Hash, V] T::add(Self[K, V], K, V) -> Self[K, V]
 fn[K : Eq + Hash, V] T::contains(Self[K, V], K) -> Bool
 fn[K : Eq + Hash, V] T::difference(Self[K, V], Self[K, V]) -> Self[K, V]
-fn[K, V] T::each(Self[K, V], (K, V) -> Unit) -> Unit
+fn[K, V] T::each(Self[K, V], (K, V) -> Unit?Error) -> Unit?Error
 #deprecated
 fn[K, V] T::elems(Self[K, V]) -> Iter[V]
-fn[K : Eq + Hash, V] T::filter(Self[K, V], (V) -> Bool) -> Self[K, V]
+fn[K : Eq + Hash, V] T::filter(Self[K, V], (V) -> Bool?Error) -> Self[K, V]?Error
 #deprecated
 fn[K : Eq + Hash, V] T::find(Self[K, V], K) -> V?
-fn[K, V, A] T::fold(Self[K, V], init~ : A, (A, V) -> A) -> A
-fn[K, V, A] T::fold_with_key(Self[K, V], init~ : A, (A, K, V) -> A) -> A
+fn[K, V, A] T::fold(Self[K, V], init~ : A, (A, V) -> A?Error) -> A?Error
+fn[K, V, A] T::fold_with_key(Self[K, V], init~ : A, (A, K, V) -> A?Error) -> A?Error
 fn[K : Eq + Hash, V] T::get(Self[K, V], K) -> V?
 fn[K : Eq + Hash, V] T::intersection(Self[K, V], Self[K, V]) -> Self[K, V]
-fn[K : Eq + Hash, V] T::intersection_with(Self[K, V], Self[K, V], (K, V, V) -> V) -> Self[K, V]
+fn[K : Eq + Hash, V] T::intersection_with(Self[K, V], Self[K, V], (K, V, V) -> V?Error) -> Self[K, V]?Error
 fn[K, V] T::iter(Self[K, V]) -> Iter[(K, V)]
 fn[K, V] T::iter2(Self[K, V]) -> Iter2[K, V]
 fn[K, V] T::keys(Self[K, V]) -> Iter[K]
-fn[K : Eq + Hash, V, A] T::map(Self[K, V], (V) -> A) -> Self[K, A]
-fn[K : Eq + Hash, V, A] T::map_with_key(Self[K, V], (K, V) -> A) -> Self[K, A]
+fn[K : Eq + Hash, V, A] T::map(Self[K, V], (V) -> A?Error) -> Self[K, A]?Error
+fn[K : Eq + Hash, V, A] T::map_with_key(Self[K, V], (K, V) -> A?Error) -> Self[K, A]?Error
 #deprecated
 fn[K : Eq + Hash, V] T::op_get(Self[K, V], K) -> V?
 fn[K : Eq + Hash, V] T::remove(Self[K, V], K) -> Self[K, V]
 fn[K, V] T::size(Self[K, V]) -> Int
 fn[K, V] T::to_array(Self[K, V]) -> Array[(K, V)]
 fn[K : Eq + Hash, V] T::union(Self[K, V], Self[K, V]) -> Self[K, V]
-fn[K : Eq + Hash, V] T::union_with(Self[K, V], Self[K, V], (K, V, V) -> V) -> Self[K, V]
+fn[K : Eq + Hash, V] T::union_with(Self[K, V], Self[K, V], (K, V, V) -> V?Error) -> Self[K, V]?Error
 fn[K, V] T::values(Self[K, V]) -> Iter[V]
 impl[K : Eq + Hash, V : Eq] Eq for T[K, V]
 impl[K : Hash, V : Hash] Hash for T[K, V]
