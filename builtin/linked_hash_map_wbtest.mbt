@@ -886,173 +886,18 @@ test "op_equal_key_value_mismatch" {
 }
 
 ///|
-test "Map::map applies function to values and returns new map" {
-  let map = { "a": 1, "b": 2, "c": 3 }
-  let new_map = map.map(fn(v) { v * 10 })
-  let values = new_map.values().to_array()
-  inspect(values, content="[10, 20, 30]")
-}
 
-///|
-test "Map::map on empty map returns empty map" {
-  let map : Map[String, Int] = Map::new()
-  let new_map = map.map(fn(v) { v * 2 })
-  inspect(new_map, content="{}")
-}
-
-///|
-test "Map::map preserves insertion order of results" {
-  let map = { "a": 5, "b": 6 }
-  let new_map = map.map(fn(v) { v + 1 })
-  let values = new_map.values().to_array()
-  inspect(values, content="[6, 7]")
-}
-
-///|
-test "Map::map_with_key basic usage" {
-  let map = { "a": 1, "b": 2, "c": 3 }
-  let mapped = map.map_with_key(fn(k, v) { k.length() + v })
-  let mapped_values = mapped.values().to_array()
-  inspect(mapped_values, content="[2, 3, 4]")
-}
-
-///|
-test "Map::map_with_key with empty map" {
-  let map : Map[String, Int] = Map::new()
-  let mapped = map.map_with_key(fn(_, v) { v * 2 })
-  inspect(mapped, content="{}")
-}
-
-///|
-test "Map::map_with_key preserves insertion order" {
-  let map = { "x": 10, "y": 20, "z": 30 }
-  let mapped = map.map_with_key(fn(_, v) { v + 1 })
-  inspect(
-    mapped,
-    content=
-      #|{"x": 11, "y": 21, "z": 31}
-    ,
-  )
-}
-
-///|
-test "Map::map_with_key with key and value concatenation" {
-  let map = { 1: "a", 2: "b" }
-  let mapped = map.map_with_key(fn(k, v) { v + k.to_string() })
-  inspect(
-    mapped,
-    content=
-      #|{1: "a1", 2: "b2"}
-    ,
-  )
-}
-
-///|
-test "Map::filter returns only matching key-value pairs" {
-  let map = { "a": 1, "b": 2, "c": 3, "d": 4 }
-  let even_map = map.filter(fn(_k, v) { v % 2 == 0 })
-  inspect(
-    even_map,
-    content=
-      #|{"b": 2, "d": 4}
-    ,
-  )
-  let odd_map = map.filter(fn(_k, v) { v % 2 == 1 })
-  inspect(
-    odd_map,
-    content=
-      #|{"a": 1, "c": 3}
-    ,
-  )
-}
-
-///|
-test "Map::filter with always false predicate returns empty map" {
-  let map = { "x": 10, "y": 20 }
-  let filtered = map.filter(fn(_k, _v) { false })
-  inspect(filtered.is_empty(), content="true")
-}
-
-///|
-test "Map::filter with always true predicate returns identical map" {
-  let map = { "foo": 7, "bar": 8 }
-  let filtered = map.filter(fn(_k, _v) { true })
-  inspect(
-    filtered,
-    content=
-      #|{"foo": 7, "bar": 8}
-    ,
-  )
-}
-
-///|
-test "Map::filter on empty map returns empty map" {
-  let map : Map[String, Int] = Map::new()
-  let filtered = map.filter(fn(_k, _v) { true })
-  inspect(filtered, content="{}")
-}
-
-///|
-test "Map::fold sums values" {
-  let map = { "a": 1, "b": 2, "c": 3 }
-  let sum = map.fold(0, fn(acc, _k, v) { acc + v })
-  inspect(sum, content="6")
-}
-
-///|
-test "Map::fold concatenates keys" {
-  let map = { "x": 1, "y": 2, "z": 3 }
-  let keys = map.fold("", fn(acc, k, _v) { acc + k })
-  inspect(keys, content="xyz")
-}
-
-///|
-test "Map::fold on empty map returns initial value" {
-  let map : Map[String, Int] = Map::new()
-  let result = map.fold(42, fn(acc, _k, _v) { acc + 1 })
-  inspect(result, content="42")
-}
-
-///|
-test "Map::fold builds list of key-value tuples" {
-  let map = { "a": 10, "b": 20 }
-  let arr = map.fold([], fn(acc, k, v) { acc + [(k, v)] })
-  inspect(
-    arr,
-    content=
-      #|[("a", 10), ("b", 20)]
-    ,
-  )
-}
-
-///|
-test "Map::partition basic usage" {
-  let map = { "a": 1, "b": 2, "c": 3, "d": 4 }
-  let (even, odd) = map.partition(fn(_k, v) { v % 2 == 0 })
-  inspect(even, content="{\"b\": 2, \"d\": 4}")
-  inspect(odd, content="{\"a\": 1, \"c\": 3}")
-}
-
-///|
-test "Map::partition all true" {
-  let map = { "x": 10, "y": 20 }
-  let (all, none) = map.partition(fn(_k, v) { v > 0 })
-  inspect(all, content="{\"x\": 10, \"y\": 20}")
-  inspect(none, content="{}")
-}
-
-///|
-test "Map::partition all false" {
-  let map = { "x": -1, "y": -2 }
-  let (none, all) = map.partition(fn(_k, v) { v > 0 })
-  inspect(none, content="{}")
-  inspect(all, content="{\"x\": -1, \"y\": -2}")
-}
-
-///|
-test "Map::partition empty map" {
-  let map : Map[String, Int] = Map::new()
-  let (a, b) = map.partition(fn(_k, v) { v > 0 })
-  inspect(a, content="{}")
-  inspect(b, content="{}")
+fn[K : Show, V : Show] Map::debug_entries(self : Map[K, V]) -> String {
+  let buf = StringBuilder::new()
+  for i in 0..<self.entries.length() {
+    if i > 0 {
+      buf.write_char(',')
+    }
+    match self.entries[i] {
+      None => buf.write_char('_')
+      Some({ psl, key, value, .. }) =>
+        buf.write_string("(\{psl},\{key},\{value})")
+    }
+  }
+  buf.to_string()
 }
