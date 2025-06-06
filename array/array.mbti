@@ -99,11 +99,11 @@ fn[A] ArrayView::iter(Self[A]) -> Iter[A]
 fn[A] ArrayView::iter2(Self[A]) -> Iter2[Int, A]
 fn ArrayView::join(Self[String], @string.StringView) -> String
 fn[T, U] ArrayView::map(Self[T], (T) -> U?Error) -> Array[U]?Error
-fn[T] ArrayView::map_inplace(Self[T], (T) -> T) -> Unit
+fn[T] ArrayView::map_inplace(Self[T], (T) -> T?Error) -> Unit?Error
 fn[T, U] ArrayView::mapi(Self[T], (Int, T) -> U?Error) -> Array[U]?Error
 fn[T] ArrayView::mapi_inplace(Self[T], (Int, T) -> T?Error) -> Unit?Error
 fn[A, B] ArrayView::rev_fold(Self[A], init~ : B, (B, A) -> B?Error) -> B?Error
-fn[A, B] ArrayView::rev_foldi(Self[A], init~ : B, (Int, B, A) -> B) -> B
+fn[A, B] ArrayView::rev_foldi(Self[A], init~ : B, (Int, B, A) -> B?Error) -> B?Error
 fn[T] ArrayView::rev_inplace(Self[T]) -> Unit
 fn[T] ArrayView::to_array(Self[T]) -> Array[T]
 impl[T : Compare] Compare for ArrayView[T]
