@@ -66,12 +66,8 @@ jobs:
           moon test --target wasm-gc
           moon test --release --target wasm
           moon test --release --target wasm-gc
-        env: 
+        env:
           MOONC_INTERNAL_PARAMS: dedup_wasm = 1 |
-
-      - name: Setup tmate session
-        if: ${{ failure() }}
-        uses: mxschmitt/action-tmate@v3
 
       - name: Setup MSVC
         if: ${{ matrix.os == 'windows-latest' }}
@@ -86,12 +82,12 @@ jobs:
         if: ${{ matrix.os == 'windows-latest' }}
         run: |
           moon test --release --target all
-      
+
       - name: Run moon test on Windows (--target native)
         if: ${{ matrix.os == 'windows-latest' }}
         run: |
           moon test --target native
-      
+
       - name: Run moon test on Windows (--release + --target native)
         if: ${{ matrix.os == 'windows-latest' }}
         run: |
@@ -224,12 +220,12 @@ jobs:
         if: ${{ matrix.os == 'windows-latest' }}
         run: |
           moon test --release --target all
-      
+
       - name: Run moon test on Windows (--target native)
         if: ${{ matrix.os == 'windows-latest' }}
         run: |
           moon test --target native
-      
+
       - name: Run moon test on Windows (--release + --target native)
         if: ${{ matrix.os == 'windows-latest' }}
         run: |
@@ -239,7 +235,7 @@ jobs:
         run: |
           moon clean
           moon test --target wasm
-        env: 
+        env:
           MOONC_INTERNAL_PARAMS: allocator = tlsf-mbt |
 
       - name: moon test --doc
@@ -256,6 +252,10 @@ jobs:
         run: |
           moon info --target wasm,wasm-gc,js,native
           git diff
+
+      - name: Setup tmate session
+        if: ${{ failure() }}
+        uses: mxschmitt/action-tmate@v3
 
       - name: check core size
         run: find ./target -name '*.core' | xargs ls -lh
