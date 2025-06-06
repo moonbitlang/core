@@ -79,7 +79,10 @@ pub fn[T] push_iter(self : Array[T], iter : Iter[T]) -> Unit {
 ///   inspect(arr, content="[0, 2, 4]")
 /// }
 /// ```
-pub fn[T] Array::makei(length : Int, value : (Int) -> T) -> Array[T] {
+pub fn[T] Array::makei(
+  length : Int,
+  value : (Int) -> T?Error
+) -> Array[T]?Error {
   if length <= 0 {
     []
   } else {
@@ -151,7 +154,7 @@ pub fn[T] shuffle(self : Array[T], rand~ : (Int) -> Int) -> Array[T] {
 /// 
 /// # Returns
 /// 
-pub fn[A, B] filter_map(self : Array[A], f : (A) -> B?) -> Array[B] {
+pub fn[A, B] filter_map(self : Array[A], f : (A) -> B??Error) -> Array[B]?Error {
   let result = []
   for x in self {
     if f(x) is Some(x) {
