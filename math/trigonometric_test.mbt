@@ -13,39 +13,41 @@
 // limitations under the License.
 
 ///|
-trait Floating {
-  close_to(a : Self, b : Self) -> Bool
-}
+// trait Floating {
+//   is_close(a : Self, b : Self) -> Bool
+// }
 
-///|
-impl Floating for Float with close_to(a : Float, b : Float) -> Bool {
-  (a - b).abs() < 1.0e-6 // low precision for float
-}
+// ///|
+// impl Floating for Float with is_close(a : Float, b : Float) -> Bool {
+//   (a - b).abs() < 1.0e-6 // low precision for float
+// }
 
-///|
-impl Floating for Double with close_to(a : Double, b : Double) -> Bool {
-  (a - b).abs() < 1.0e-10
-}
+// ///|
+// impl Floating for Double with is_close(a : Double, b : Double) -> Bool {
+//   (a - b).abs() < 1.0e-10
+// }
 
 ///|
 test "sin function comprehensive" {
   // Basic tests for sin
-  assert_true(@math.sin(0.0).close_to(0))
-  assert_true(@math.sin(@math.PI / 2.0).close_to(1))
-  assert_true(@math.sin(@math.PI).close_to(0))
-  assert_true(@math.sin(3.0 * @math.PI / 2.0).close_to(-1))
-  assert_true(@math.sin(2.0 * @math.PI).close_to(0))
+  assert_true(@math.sin(0.0).is_close(0))
+  assert_true(@math.sin(@math.PI / 2.0).is_close(1))
+  assert_true(@math.sin(@math.PI).is_close(0, absolute_tolerance=1.0e-6))
+  assert_true(@math.sin(3.0 * @math.PI / 2.0).is_close(-1))
+  assert_true(@math.sin(2.0 * @math.PI).is_close(0, absolute_tolerance=1.0e-6))
 
   // Test various angles between 0 and 2π
-  assert_true(@math.sin(@math.PI / 6.0).close_to(0.5))
-  assert_true(@math.sin(@math.PI / 4.0).close_to(0.7071067811865475))
-  assert_true(@math.sin(@math.PI / 3.0).close_to(0.8660254037844386))
-  assert_true(@math.sin(2.0 * @math.PI / 3.0).close_to(0.8660254037844387))
-  assert_true(@math.sin(3.0 * @math.PI / 4.0).close_to(0.7071067811865476))
-  assert_true(@math.sin(5.0 * @math.PI / 6.0).close_to(0.5))
+  assert_true(@math.sin(@math.PI / 6.0).is_close(0.5))
+  assert_true(@math.sin(@math.PI / 4.0).is_close(0.7071067811865475))
+  assert_true(@math.sin(@math.PI / 3.0).is_close(0.8660254037844386))
+  assert_true(@math.sin(2.0 * @math.PI / 3.0).is_close(0.8660254037844387))
+  assert_true(@math.sin(3.0 * @math.PI / 4.0).is_close(0.7071067811865476))
+  assert_true(@math.sin(5.0 * @math.PI / 6.0).is_close(0.5))
 
   // Test negative values
-  assert_true(@math.sin(-@math.PI / 2.0).close_to(-1))
+  assert_true(
+    @math.sin(-@math.PI / 2.0).is_close(-1, absolute_tolerance=1.0e-6),
+  )
 
   // Test special values
   assert_true(@math.sin(@double.not_a_number).is_nan())
@@ -56,22 +58,24 @@ test "sin function comprehensive" {
 ///|
 test "cos function comprehensive" {
   // Basic tests for cos
-  assert_true(@math.cos(0.0).close_to(1))
-  assert_true(@math.cos(@math.PI / 2.0).close_to(0))
-  assert_true(@math.cos(@math.PI).close_to(-1))
-  assert_true(@math.cos(3.0 * @math.PI / 2.0).close_to(0))
-  assert_true(@math.cos(2.0 * @math.PI).close_to(1))
+  assert_true(@math.cos(0.0).is_close(1))
+  assert_true(@math.cos(@math.PI / 2.0).is_close(0, absolute_tolerance=1.0e-6))
+  assert_true(@math.cos(@math.PI).is_close(-1))
+  assert_true(
+    @math.cos(3.0 * @math.PI / 2.0).is_close(0, absolute_tolerance=1.0e-6),
+  )
+  assert_true(@math.cos(2.0 * @math.PI).is_close(1))
 
   // Test various angles between 0 and 2π
-  assert_true(@math.cos(@math.PI / 6.0).close_to(0.8660254037844387))
-  assert_true(@math.cos(@math.PI / 4.0).close_to(0.7071067811865476))
-  assert_true(@math.cos(@math.PI / 3.0).close_to(0.5000000000000001))
-  assert_true(@math.cos(2.0 * @math.PI / 3.0).close_to(-0.4999999999999998))
-  assert_true(@math.cos(3.0 * @math.PI / 4.0).close_to(-0.7071067811865475))
-  assert_true(@math.cos(5.0 * @math.PI / 6.0).close_to(-0.8660254037844387))
+  assert_true(@math.cos(@math.PI / 6.0).is_close(0.8660254037844387))
+  assert_true(@math.cos(@math.PI / 4.0).is_close(0.7071067811865476))
+  assert_true(@math.cos(@math.PI / 3.0).is_close(0.5000000000000001))
+  assert_true(@math.cos(2.0 * @math.PI / 3.0).is_close(-0.4999999999999998))
+  assert_true(@math.cos(3.0 * @math.PI / 4.0).is_close(-0.7071067811865475))
+  assert_true(@math.cos(5.0 * @math.PI / 6.0).is_close(-0.8660254037844387))
 
   // Test negative values
-  assert_true(@math.cos(-@math.PI).close_to(-1))
+  assert_true(@math.cos(-@math.PI).is_close(-1))
 
   // Test special values
   assert_true(@math.cos(@double.not_a_number).is_nan())
@@ -82,17 +86,17 @@ test "cos function comprehensive" {
 ///|
 test "tan function comprehensive" {
   // Basic tests for tan
-  assert_true(@math.tan(0.0).close_to(0))
-  assert_true(@math.tan(@math.PI).close_to(0))
-  assert_true(@math.tan(2.0 * @math.PI).close_to(0))
+  assert_true(@math.tan(0.0).is_close(0))
+  assert_true(@math.tan(@math.PI).is_close(0, absolute_tolerance=1.0e-6))
+  assert_true(@math.tan(2.0 * @math.PI).is_close(0, absolute_tolerance=1.0e-6))
 
   // Test various angles
-  assert_true(@math.tan(@math.PI / 4.0).close_to(1))
-  assert_true(@math.tan(@math.PI / 3.0).close_to(1.7320508075688767))
-  assert_true(@math.tan(2.0 * @math.PI / 3.0).close_to(-1.7320508075688783))
+  assert_true(@math.tan(@math.PI / 4.0).is_close(1))
+  assert_true(@math.tan(@math.PI / 3.0).is_close(1.7320508075688767))
+  assert_true(@math.tan(2.0 * @math.PI / 3.0).is_close(-1.7320508075688783))
 
   // Test negative values
-  assert_true(@math.tan(-@math.PI / 4.0).close_to(-1))
+  assert_true(@math.tan(-@math.PI / 4.0).is_close(-1))
 
   // Test special values
   assert_true(@math.tan(@double.not_a_number).is_nan())
@@ -103,35 +107,35 @@ test "tan function comprehensive" {
 ///|
 test "atan function comprehensive" {
   // Basic tests for atan
-  assert_true(@math.atan(0.0).close_to(0))
-  assert_true(@math.atan(1.0).close_to(0.7853981633974483))
-  assert_true(@math.atan(-1.0).close_to(-0.7853981633974483))
+  assert_true(@math.atan(0.0).is_close(0))
+  assert_true(@math.atan(1.0).is_close(0.7853981633974483))
+  assert_true(@math.atan(-1.0).is_close(-0.7853981633974483))
 
   // Test various values
-  assert_true(@math.atan(0.5).close_to(0.4636476090008061))
-  assert_true(@math.atan(2.0).close_to(1.1071487177940904))
-  assert_true(@math.atan(10.0).close_to(1.4711276743037347))
+  assert_true(@math.atan(0.5).is_close(0.4636476090008061))
+  assert_true(@math.atan(2.0).is_close(1.1071487177940904))
+  assert_true(@math.atan(10.0).is_close(1.4711276743037347))
 
   // Test extreme values
-  assert_true(@math.atan(1000.0).close_to(1.5697963271282298))
+  assert_true(@math.atan(1000.0).is_close(1.5697963271282298))
 
   // Test special values
   assert_true(@math.atan(@double.not_a_number).is_nan())
-  assert_true(@math.atan(@double.infinity).close_to(1.5707963267948966))
-  assert_true(@math.atan(@double.neg_infinity).close_to(-1.5707963267948966))
+  assert_true(@math.atan(@double.infinity).is_close(1.5707963267948966))
+  assert_true(@math.atan(@double.neg_infinity).is_close(-1.5707963267948966))
 }
 
 ///|
 test "asin function comprehensive" {
   // Basic tests for asin
-  assert_true(@math.asin(0.0).close_to(0))
-  assert_true(@math.asin(1.0).close_to(1.5707963267948966))
-  assert_true(@math.asin(-1.0).close_to(-1.5707963267948966))
+  assert_true(@math.asin(0.0).is_close(0))
+  assert_true(@math.asin(1.0).is_close(1.5707963267948966))
+  assert_true(@math.asin(-1.0).is_close(-1.5707963267948966))
 
   // Test values within range [-1, 1]
-  assert_true(@math.asin(0.5).close_to(0.5235987755982989))
-  assert_true(@math.asin(-0.5).close_to(-0.5235987755982989))
-  assert_true(@math.asin(0.8660254037844386).close_to(1.0471975511965976)) // sin(π/3)
+  assert_true(@math.asin(0.5).is_close(0.5235987755982989))
+  assert_true(@math.asin(-0.5).is_close(-0.5235987755982989))
+  assert_true(@math.asin(0.8660254037844386).is_close(1.0471975511965976)) // sin(π/3)
 
   // Test values outside valid range
   assert_true(@math.asin(1.2).is_nan())
@@ -146,14 +150,14 @@ test "asin function comprehensive" {
 ///|
 test "acos function comprehensive" {
   // Basic tests for acos
-  assert_true(@math.acos(1.0).close_to(0))
-  assert_true(@math.acos(0.0).close_to(1.5707963267948966))
-  assert_true(@math.acos(-1.0).close_to(3.141592653589793))
+  assert_true(@math.acos(1.0).is_close(0))
+  assert_true(@math.acos(0.0).is_close(1.5707963267948966))
+  assert_true(@math.acos(-1.0).is_close(3.141592653589793))
 
   // Test values within range [-1, 1]
-  assert_true(@math.acos(0.5).close_to(1.0471975511965979))
-  assert_true(@math.acos(-0.5).close_to(2.0943951023931957))
-  assert_true(@math.acos(0.866025403784439).close_to(0.523598775598298))
+  assert_true(@math.acos(0.5).is_close(1.0471975511965979))
+  assert_true(@math.acos(-0.5).is_close(2.0943951023931957))
+  assert_true(@math.acos(0.866025403784439).is_close(0.523598775598298))
 
   // Test values outside valid range
   assert_true(@math.acos(1.2).is_nan())
@@ -168,53 +172,53 @@ test "acos function comprehensive" {
 ///|
 test "atan2 function comprehensive" {
   // Test quadrant I (positive x, positive y)
-  assert_true(@math.atan2(1.0, 1.0).close_to(0.7853981633974483)) // 45 degrees
-  assert_true(@math.atan2(1.0, 3.0).close_to(0.3217505543966422)) // ~18.4 degrees
+  assert_true(@math.atan2(1.0, 1.0).is_close(0.7853981633974483)) // 45 degrees
+  assert_true(@math.atan2(1.0, 3.0).is_close(0.3217505543966422)) // ~18.4 degrees
 
   // Test quadrant II (negative x, positive y)
-  assert_true(@math.atan2(1.0, -1.0).close_to(2.356194490192345)) // 135 degrees
-  assert_true(@math.atan2(3.0, -1.0).close_to(1.892546881191539)) // ~108.4 degrees
+  assert_true(@math.atan2(1.0, -1.0).is_close(2.356194490192345)) // 135 degrees
+  assert_true(@math.atan2(3.0, -1.0).is_close(1.892546881191539)) // ~108.4 degrees
 
   // Test quadrant III (negative x, negative y)
-  assert_true(@math.atan2(-1.0, -1.0).close_to(-2.356194490192345)) // -135 degrees
-  assert_true(@math.atan2(-1.0, -3.0).close_to(-2.819842099193151)) // ~-161.6 degrees
+  assert_true(@math.atan2(-1.0, -1.0).is_close(-2.356194490192345)) // -135 degrees
+  assert_true(@math.atan2(-1.0, -3.0).is_close(-2.819842099193151)) // ~-161.6 degrees
 
   // Test quadrant IV (positive x, negative y)
-  assert_true(@math.atan2(-1.0, 1.0).close_to(-0.7853981633974483)) // -45 degrees
-  assert_true(@math.atan2(-3.0, 1.0).close_to(-1.2490457723982544)) // ~-71.6 degrees
+  assert_true(@math.atan2(-1.0, 1.0).is_close(-0.7853981633974483)) // -45 degrees
+  assert_true(@math.atan2(-3.0, 1.0).is_close(-1.2490457723982544)) // ~-71.6 degrees
 
   // Test special cases
-  assert_true(@math.atan2(0.0, 1.0).close_to(0)) // 0 degrees
-  assert_true(@math.atan2(1.0, 0.0).close_to(1.5707963267948966)) // 90 degrees
-  assert_true(@math.atan2(0.0, -1.0).close_to(3.141592653589793)) // 180 degrees
-  assert_true(@math.atan2(-1.0, 0.0).close_to(-1.5707963267948966)) // -90 degrees
+  assert_true(@math.atan2(0.0, 1.0).is_close(0)) // 0 degrees
+  assert_true(@math.atan2(1.0, 0.0).is_close(1.5707963267948966)) // 90 degrees
+  assert_true(@math.atan2(0.0, -1.0).is_close(3.141592653589793)) // 180 degrees
+  assert_true(@math.atan2(-1.0, 0.0).is_close(-1.5707963267948966)) // -90 degrees
 
   // Test with infinity
-  assert_true(@math.atan2(1.0, @double.infinity).close_to(0))
+  assert_true(@math.atan2(1.0, @double.infinity).is_close(0))
   assert_true(
-    @math.atan2(1.0, @double.neg_infinity).close_to(3.141592653589793),
+    @math.atan2(1.0, @double.neg_infinity).is_close(3.141592653589793),
   )
-  assert_true(@math.atan2(@double.infinity, 1.0).close_to(1.5707963267948966))
+  assert_true(@math.atan2(@double.infinity, 1.0).is_close(1.5707963267948966))
   assert_true(
-    @math.atan2(@double.neg_infinity, 1.0).close_to(-1.5707963267948966),
+    @math.atan2(@double.neg_infinity, 1.0).is_close(-1.5707963267948966),
   )
 
   // Test special cases with infinity
   assert_true(
-    @math.atan2(@double.infinity, @double.infinity).close_to(0.7853981633974483),
+    @math.atan2(@double.infinity, @double.infinity).is_close(0.7853981633974483),
   )
   assert_true(
-    @math.atan2(@double.infinity, @double.neg_infinity).close_to(
+    @math.atan2(@double.infinity, @double.neg_infinity).is_close(
       2.356194490192345,
     ),
   )
   assert_true(
-    @math.atan2(@double.neg_infinity, @double.infinity).close_to(
+    @math.atan2(@double.neg_infinity, @double.infinity).is_close(
       -0.7853981633974483,
     ),
   )
   assert_true(
-    @math.atan2(@double.neg_infinity, @double.neg_infinity).close_to(
+    @math.atan2(@double.neg_infinity, @double.neg_infinity).is_close(
       -2.356194490192345,
     ),
   )
@@ -227,19 +231,19 @@ test "atan2 function comprehensive" {
 ///|
 test "sinf function comprehensive" {
   // Basic test cases
-  assert_true(@math.sinf(0.0).close_to(0))
-  assert_true(@math.sinf(1.0).close_to(0.8414709568023682))
-  assert_true(@math.sinf(-1.0).close_to(-0.8414709568023682))
+  assert_true(@math.sinf(0.0).is_close(0))
+  assert_true(@math.sinf(1.0).is_close(0.8414709568023682))
+  assert_true(@math.sinf(-1.0).is_close(-0.8414709568023682))
 
   // Testing at multiples of π/2
   let pi_2 = (@math.PI / 2.0).to_float()
-  assert_true(@math.sinf(pi_2).close_to(1))
-  assert_true(@math.sinf(pi_2 * 2.0).close_to(0))
-  assert_true(@math.sinf(pi_2 * 3.0).close_to(-1))
-  assert_true(@math.sinf(pi_2 * 4.0).close_to(0))
+  assert_true(@math.sinf(pi_2).is_close(1))
+  assert_true(@math.sinf(pi_2 * 2.0).is_close(0, absolute_tolerance=1.0e-6))
+  assert_true(@math.sinf(pi_2 * 3.0).is_close(-1))
+  assert_true(@math.sinf(pi_2 * 4.0).is_close(0, absolute_tolerance=1.0e-6))
 
   // Testing extreme values
-  assert_true(@math.sinf(100.0).close_to(-0.5063656568527222))
+  assert_true(@math.sinf(100.0).is_close(-0.5063656568527222))
 
   // Testing special values
   assert_true(@math.sinf(@float.not_a_number).is_nan())
@@ -250,18 +254,18 @@ test "sinf function comprehensive" {
 ///|
 test "cosf function comprehensive" {
   // Basic test cases
-  assert_true(@math.cosf(0.0).close_to(1))
-  assert_true(@math.cosf(1.0).close_to(0.5403022766113281))
-  assert_true(@math.cosf(-1.0).close_to(0.5403022766113281))
+  assert_true(@math.cosf(0.0).is_close(1))
+  assert_true(@math.cosf(1.0).is_close(0.5403022766113281))
+  assert_true(@math.cosf(-1.0).is_close(0.5403022766113281))
 
   // Testing at multiples of π/2
   let pi_2 = (@math.PI / 2.0).to_float()
-  assert_true(@math.cosf(pi_2).close_to(0))
+  assert_true(@math.cosf(pi_2).is_close(0, absolute_tolerance=1.0e-6))
   // this precision is pretty low
   // inspect(@math.cosf(pi_2 ), content="-4.371138828673793e-8")
-  assert_true(@math.cosf(pi_2 * 2.0).close_to(-1))
-  assert_true(@math.cosf(pi_2 * 3.0).close_to(0))
-  assert_true(@math.cosf(pi_2 * 4.0).close_to(1))
+  assert_true(@math.cosf(pi_2 * 2.0).is_close(-1))
+  assert_true(@math.cosf(pi_2 * 3.0).is_close(0, absolute_tolerance=1.0e-6))
+  assert_true(@math.cosf(pi_2 * 4.0).is_close(1))
 
   // Testing extreme values
   inspect(@math.cosf(100.0), content="0.8623188734054565")
@@ -275,16 +279,16 @@ test "cosf function comprehensive" {
 ///|
 test "tanf function comprehensive" {
   // Basic test cases
-  assert_true(@math.tanf(0.0).close_to(0))
-  assert_true(@math.tanf(1.0).close_to(1.5574077367782593))
-  assert_true(@math.tanf(-1.0).close_to(-1.5574077367782593))
+  assert_true(@math.tanf(0.0).is_close(0))
+  assert_true(@math.tanf(1.0).is_close(1.5574077367782593))
+  assert_true(@math.tanf(-1.0).is_close(-1.5574077367782593))
 
   // Testing at multiples of π
   let pi = @math.PI.to_float()
   // inspect(@math.tanf(pi), content="8.742277657347586e-8")
-  assert_true(@math.tanf(pi).close_to(0))
+  assert_true(@math.tanf(pi).is_close(0, absolute_tolerance=1.0e-6))
   // inspect(@math.tanf(2.0 * pi), content="1.7484555314695172e-7")
-  assert_true(@math.tanf(2.0 * pi).close_to(0))
+  assert_true(@math.tanf(2.0 * pi).is_close(0, absolute_tolerance=1.0e-6))
 
   // Testing values close to singularities
   let pi_2 = pi / 2.0
@@ -293,7 +297,7 @@ test "tanf function comprehensive" {
   assert_true!(result > 0.0)
 
   // Testing extreme values
-  assert_true(@math.tanf(10.0).close_to(0.6483607888221741))
+  assert_true(@math.tanf(10.0).is_close(0.6483607888221741))
 
   // Testing special values
   assert_true(@math.tanf(@float.not_a_number).is_nan())
@@ -309,9 +313,9 @@ test "asinf function comprehensive" {
   inspect(@math.asinf(-1.0), content="-1.5707963705062866")
 
   // Testing various values in range [-1,1]
-  assert_true(@math.asinf(0.5).close_to(0.5235987901687622))
-  assert_true(@math.asinf(-0.5).close_to(-0.5235987901687622))
-  assert_true(@math.asinf(0.8660254).close_to(1.0471974611282349)) // ≈ sin(π/3)
+  assert_true(@math.asinf(0.5).is_close(0.5235987901687622))
+  assert_true(@math.asinf(-0.5).is_close(-0.5235987901687622))
+  assert_true(@math.asinf(0.8660254).is_close(1.0471974611282349)) // ≈ sin(π/3)
 
   // Testing out of range
   assert_true(@math.asinf(1.5).is_nan())
@@ -331,9 +335,9 @@ test "acosf function comprehensive" {
   inspect(@math.acosf(-1.0), content="3.141592502593994")
 
   // Testing various values in range [-1,1]
-  assert_true(@math.acosf(0.5).close_to(1.0471975803375244))
-  assert_true(@math.acosf(-0.5).close_to(2.094395160675049))
-  assert_true(@math.acosf(0.8660254).close_to(0.5235987901687622)) // ≈ cos(π/3)
+  assert_true(@math.acosf(0.5).is_close(1.0471975803375244))
+  assert_true(@math.acosf(-0.5).is_close(2.094395160675049))
+  assert_true(@math.acosf(0.8660254).is_close(0.5235987901687622)) // ≈ cos(π/3)
 
   // Testing out of range
   assert_true(@math.acosf(1.5).is_nan())
@@ -348,64 +352,64 @@ test "acosf function comprehensive" {
 ///|
 test "atanf function comprehensive" {
   // Basic test cases
-  assert_true(@math.atanf(0.0).close_to(0))
-  assert_true(@math.atanf(1.0).close_to(0.7853981852531433))
-  assert_true(@math.atanf(-1.0).close_to(-0.7853981852531433))
+  assert_true(@math.atanf(0.0).is_close(0))
+  assert_true(@math.atanf(1.0).is_close(0.7853981852531433))
+  assert_true(@math.atanf(-1.0).is_close(-0.7853981852531433))
 
   // Testing various values
-  assert_true(@math.atanf(0.5).close_to(0.46364760398864746))
-  assert_true(@math.atanf(-0.5).close_to(-0.46364760398864746))
-  assert_true(@math.atanf(100.0).close_to(1.5607966184616089))
+  assert_true(@math.atanf(0.5).is_close(0.46364760398864746))
+  assert_true(@math.atanf(-0.5).is_close(-0.46364760398864746))
+  assert_true(@math.atanf(100.0).is_close(1.5607966184616089))
 
   // Testing special values
   assert_true(@math.atanf(@float.not_a_number).is_nan())
-  assert_true(@math.atanf(@float.infinity).close_to(1.570796251296997))
-  assert_true(@math.atanf(@float.neg_infinity).close_to(-1.570796251296997))
+  assert_true(@math.atanf(@float.infinity).is_close(1.570796251296997))
+  assert_true(@math.atanf(@float.neg_infinity).is_close(-1.570796251296997))
 }
 
 ///|
 test "atan2f function comprehensive" {
   // Testing quadrant I (x > 0, y > 0)
-  assert_true(@math.atan2f(1.0, 1.0).close_to(0.7853981852531433))
-  assert_true(@math.atan2f(2.0, 1.0).close_to(1.1071487665176392))
+  assert_true(@math.atan2f(1.0, 1.0).is_close(0.7853981852531433))
+  assert_true(@math.atan2f(2.0, 1.0).is_close(1.1071487665176392))
 
   // Testing quadrant II (x < 0, y > 0)
-  assert_true(@math.atan2f(1.0, -1.0).close_to(3.9269909858703613))
-  assert_true(@math.atan2f(2.0, -1.0).close_to(4.248741149902344))
+  assert_true(@math.atan2f(1.0, -1.0).is_close(3.9269909858703613))
+  assert_true(@math.atan2f(2.0, -1.0).is_close(4.248741149902344))
 
   // Testing quadrant III (x < 0, y < 0)
-  assert_true(@math.atan2f(-1.0, -1.0).close_to(-2.356194496154785))
-  assert_true(@math.atan2f(-2.0, -1.0).close_to(-2.0344438552856445))
+  assert_true(@math.atan2f(-1.0, -1.0).is_close(-2.356194496154785))
+  assert_true(@math.atan2f(-2.0, -1.0).is_close(-2.0344438552856445))
 
   // Testing quadrant IV (x > 0, y < 0)
-  assert_true(@math.atan2f(-1.0, 1.0).close_to(-0.7853981852531433))
-  assert_true(@math.atan2f(-2.0, 1.0).close_to(-1.1071487665176392))
+  assert_true(@math.atan2f(-1.0, 1.0).is_close(-0.7853981852531433))
+  assert_true(@math.atan2f(-2.0, 1.0).is_close(-1.1071487665176392))
 
   // Testing along axes
-  assert_true(@math.atan2f(0.0, 1.0).close_to(0))
-  assert_true(@math.atan2f(0.0, -1.0).close_to(3.1415927410125732))
-  assert_true(@math.atan2f(1.0, 0.0).close_to(1.5707963705062866))
-  assert_true(@math.atan2f(-1.0, 0.0).close_to(-1.5707963705062866))
+  assert_true(@math.atan2f(0.0, 1.0).is_close(0))
+  assert_true(@math.atan2f(0.0, -1.0).is_close(3.1415927410125732))
+  assert_true(@math.atan2f(1.0, 0.0).is_close(1.5707963705062866))
+  assert_true(@math.atan2f(-1.0, 0.0).is_close(-1.5707963705062866))
 
   // Testing special cases with zeros
-  assert_true(@math.atan2f(0.0, 0.0).close_to(0))
+  assert_true(@math.atan2f(0.0, 0.0).is_close(0))
 
   // Testing with infinity
   assert_true(
-    @math.atan2f(@float.infinity, @float.infinity).close_to(0.7853981852531433),
+    @math.atan2f(@float.infinity, @float.infinity).is_close(0.7853981852531433),
   )
   assert_true(
-    @math.atan2f(@float.infinity, @float.neg_infinity).close_to(
+    @math.atan2f(@float.infinity, @float.neg_infinity).is_close(
       2.356194496154785,
     ),
   )
   assert_true(
-    @math.atan2f(@float.neg_infinity, @float.infinity).close_to(
+    @math.atan2f(@float.neg_infinity, @float.infinity).is_close(
       -0.7853981852531433,
     ),
   )
   assert_true(
-    @math.atan2f(@float.neg_infinity, @float.neg_infinity).close_to(
+    @math.atan2f(@float.neg_infinity, @float.neg_infinity).is_close(
       -2.356194496154785,
     ),
   )
