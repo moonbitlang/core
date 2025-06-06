@@ -10,7 +10,6 @@ import(
 fn[T] copy(Array[T]) -> Array[T]
 
 fn[A, B] filter_map(Array[A], (A) -> B??Error) -> Array[B]?Error
-fn[A, B] filter_map(Array[A], (A) -> B??Error) -> Array[B]?Error
 
 fn join(Array[String], @string.StringView) -> String
 
@@ -45,8 +44,6 @@ fn[T] FixedArray::eachi(Self[T], (Int, T) -> Unit?Error) -> Unit?Error
 fn[T : Eq] FixedArray::ends_with(Self[T], Self[T]) -> Bool
 fn[A, B] FixedArray::fold(Self[A], init~ : B, (B, A) -> B?Error) -> B?Error
 fn[A, B] FixedArray::foldi(Self[A], init~ : B, (Int, B, A) -> B?Error) -> B?Error
-fn[A, B] FixedArray::fold(Self[A], init~ : B, (B, A) -> B?Error) -> B?Error
-fn[A, B] FixedArray::foldi(Self[A], init~ : B, (Int, B, A) -> B?Error) -> B?Error
 fn[T] FixedArray::from_array(Array[T]) -> Self[T]
 fn[T] FixedArray::from_iter(Iter[T]) -> Self[T]
 fn[T : Compare] FixedArray::is_sorted(Self[T]) -> Bool
@@ -76,7 +73,6 @@ impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for FixedArray[X]
 
 fn[T] Array::copy(Self[T]) -> Self[T]
 fn[A, B] Array::filter_map(Self[A], (A) -> B??Error) -> Self[B]?Error
-fn[A, B] Array::filter_map(Self[A], (A) -> B??Error) -> Self[B]?Error
 fn[T] Array::from_iter(Iter[T]) -> Self[T]
 fn Array::join(Self[String], @string.StringView) -> String
 fn[A] Array::last(Self[A]) -> A?
@@ -93,14 +89,7 @@ impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Array[X]
 
 fn[T] ArrayView::all(Self[T], (T) -> Bool?Error) -> Bool?Error
 fn[T] ArrayView::any(Self[T], (T) -> Bool?Error) -> Bool?Error
-fn[T] ArrayView::all(Self[T], (T) -> Bool?Error) -> Bool?Error
-fn[T] ArrayView::any(Self[T], (T) -> Bool?Error) -> Bool?Error
 fn[T : Eq] ArrayView::contains(Self[T], T) -> Bool
-fn[T] ArrayView::each(Self[T], (T) -> Unit?Error) -> Unit?Error
-fn[T] ArrayView::eachi(Self[T], (Int, T) -> Unit?Error) -> Unit?Error
-fn[T] ArrayView::filter(Self[T], (T) -> Bool?Error) -> Array[T]?Error
-fn[A, B] ArrayView::fold(Self[A], init~ : B, (B, A) -> B?Error) -> B?Error
-fn[A, B] ArrayView::foldi(Self[A], init~ : B, (Int, B, A) -> B?Error) -> B?Error
 fn[T] ArrayView::each(Self[T], (T) -> Unit?Error) -> Unit?Error
 fn[T] ArrayView::eachi(Self[T], (Int, T) -> Unit?Error) -> Unit?Error
 fn[T] ArrayView::filter(Self[T], (T) -> Bool?Error) -> Array[T]?Error
