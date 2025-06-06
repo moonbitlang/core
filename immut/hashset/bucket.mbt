@@ -64,7 +64,7 @@ fn[T] Bucket::size(self : Bucket[T]) -> Int {
 
 ///|
 /// Iterate through elements of a bucket
-fn[T] Bucket::each(self : Bucket[T], f : (T) -> Unit) -> Unit {
+fn[T] Bucket::each(self : Bucket[T], f : (T) -> Unit?Error) -> Unit?Error {
   loop self {
     JustOne(k) => f(k)
     More(k, rest) => {
