@@ -150,7 +150,10 @@ fn[K : Eq, V] add_with_hash(
 
 ///|
 /// Filter values that satisfy the predicate
-pub fn[K : Eq + Hash, V] filter(self : T[K, V], pred : (V) -> Bool) -> T[K, V] {
+pub fn[K : Eq + Hash, V] filter(
+  self : T[K, V],
+  pred : (V) -> Bool?Error
+) -> T[K, V]?Error {
   match self {
     Empty => Empty
     Leaf(k, v) => if pred(v) { Leaf(k, v) } else { Empty }
@@ -176,7 +179,11 @@ pub fn[K : Eq + Hash, V] filter(self : T[K, V], pred : (V) -> Bool) -> T[K, V] {
 
 ///|
 /// Fold the values in the map
-pub fn[K, V, A] fold(self : T[K, V], init~ : A, f : (A, V) -> A) -> A {
+pub fn[K, V, A] fold(
+  self : T[K, V],
+  init~ : A,
+  f : (A, V) -> A?Error
+) -> A?Error {
   self.fold_with_key(fn(acc, _k, v) { f(acc, v) }, init~)
 }
 
@@ -188,8 +195,8 @@ pub fn[K, V, A] fold(self : T[K, V], init~ : A, f : (A, V) -> A) -> A {
 pub fn[K, V, A] fold_with_key(
   self : T[K, V],
   init~ : A,
-  f : (A, K, V) -> A
-) -> A {
+  f : (A, K, V) -> A?Error
+) -> A?Error {
   loop @list.singleton((self, 0)), init {
     Empty, acc => acc
     More((node, index), tail~), acc =>
@@ -210,7 +217,10 @@ pub fn[K, V, A] fold_with_key(
 
 ///|
 /// Maps over the values in the map
-pub fn[K : Eq + Hash, V, A] map(self : T[K, V], f : (V) -> A) -> T[K, A] {
+pub fn[K : Eq + Hash, V, A] map(
+  self : T[K, V],
+  f : (V) -> A?Error
+) -> T[K, A]?Error {
   self.map_with_key(fn(_k, v) { f(v) })
 }
 
@@ -218,9 +228,9 @@ pub fn[K : Eq + Hash, V, A] map(self : T[K, V], f : (V) -> A) -> T[K, A] {
 /// Maps over the key-value pairs in the map
 pub fn[K : Eq + Hash, V, A] map_with_key(
   self : T[K, V],
-  f : (K, V) -> A
-) -> T[K, A] {
-  fn go(m : T[K, V]) {
+  f : (K, V) -> A?Error
+) -> T[K, A]?Error {
+  fn go(m : T[K, V]) -> T[K, A]?Error {
     match m {
       Empty => Empty
       Leaf(k, v) => Leaf(k, f(k, v))
@@ -334,8 +344,8 @@ pub fn[K : Eq + Hash, V] T::union(self : T[K, V], other : T[K, V]) -> T[K, V] {
 pub fn[K : Eq + Hash, V] T::union_with(
   self : T[K, V],
   other : T[K, V],
-  f : (K, V, V) -> V
-) -> T[K, V] {
+  f : (K, V, V) -> V?Error
+) -> T[K, V]?Error {
   match (self, other) {
     (_, Empty) => self
     (Empty, _) => other
@@ -402,8 +412,8 @@ pub fn[K : Eq + Hash, V] T::intersection(
 pub fn[K : Eq + Hash, V] T::intersection_with(
   self : T[K, V],
   other : T[K, V],
-  f : (K, V, V) -> V
-) -> T[K, V] {
+  f : (K, V, V) -> V?Error
+) -> T[K, V]?Error {
   match (self, other) {
     (_, Empty) => Empty
     (Empty, _) => Empty
@@ -461,7 +471,7 @@ pub fn[K : Eq + Hash, V] T::difference(
 
 ///|
 /// Iterate through the elements in a hash map
-pub fn[K, V] each(self : T[K, V], f : (K, V) -> Unit) -> Unit {
+pub fn[K, V] each(self : T[K, V], f : (K, V) -> Unit?Error) -> Unit?Error {
   match self {
     Empty => ()
     Leaf(k, v) => f(k, v)
