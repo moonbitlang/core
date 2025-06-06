@@ -311,7 +311,7 @@ pub fn[A, B] View::rev_foldi(
 /// let v2 = v[1:].map(fn (x) {x + 1})
 /// assert_eq(v2, [5, 6])
 /// ```
-pub fn[T, U] View::map(self : View[T], f : (T) -> U) -> Array[U] {
+pub fn[T, U] View::map(self : View[T], f : (T) -> U?Error) -> Array[U]?Error {
   if self.length() == 0 {
     return []
   }
@@ -342,7 +342,10 @@ pub fn[T] View::map_inplace(self : View[T], f : (T) -> T?Error) -> Unit?Error {
 /// let v2 = v[1:].mapi(fn (i, x) {x + i})
 /// assert_eq(v2, [4, 6])
 /// ```
-pub fn[T, U] View::mapi(self : View[T], f : (Int, T) -> U) -> Array[U] {
+pub fn[T, U] View::mapi(
+  self : View[T],
+  f : (Int, T) -> U?Error
+) -> Array[U]?Error {
   if self.length() == 0 {
     return []
   }
