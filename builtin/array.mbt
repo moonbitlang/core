@@ -454,7 +454,10 @@ pub fn[T] Array::rev_each(self : Array[T], f : (T) -> Unit) -> Unit {
 /// }
 /// ```
 #locals(f)
-pub fn[T] Array::rev_eachi(self : Array[T], f : (Int, T) -> Unit) -> Unit {
+pub fn[T] Array::rev_eachi(
+  self : Array[T],
+  f : (Int, T) -> Unit?Error
+) -> Unit?Error {
   let len = self.length()
   for i in 0..<len {
     f(i, self[len - i - 1])
@@ -1243,7 +1246,7 @@ pub fn[T] Array::swap(self : Array[T], i : Int, j : Int) -> Unit {
 /// ```
 /// TODO: perf could be improved
 #locals(f)
-pub fn[T] Array::retain(self : Array[T], f : (T) -> Bool) -> Unit {
+pub fn[T] Array::retain(self : Array[T], f : (T) -> Bool?Error) -> Unit?Error {
   for i = 0, j = 0; i < self.length(); {
     if f(self.unsafe_get(i)) {
       self.unsafe_set(j, self.unsafe_get(i))
@@ -1353,7 +1356,11 @@ pub fn[T] Array::repeat(self : Array[T], times : Int) -> Array[T] {
 /// assert_eq(sum, 15)
 /// ```
 #locals(f)
-pub fn[A, B] Array::fold(self : Array[A], init~ : B, f : (B, A) -> B) -> B {
+pub fn[A, B] Array::fold(
+  self : Array[A],
+  init~ : B,
+  f : (B, A) -> B?Error
+) -> B?Error {
   for i = 0, acc = init; i < self.length(); {
     continue i + 1, f(acc, self[i])
   } else {
@@ -1371,7 +1378,11 @@ pub fn[A, B] Array::fold(self : Array[A], init~ : B, f : (B, A) -> B) -> B {
 /// assert_eq(sum, 15)
 /// ```
 #locals(f)
-pub fn[A, B] Array::rev_fold(self : Array[A], init~ : B, f : (B, A) -> B) -> B {
+pub fn[A, B] Array::rev_fold(
+  self : Array[A],
+  init~ : B,
+  f : (B, A) -> B?Error
+) -> B?Error {
   for i = self.length() - 1, acc = init; i >= 0; {
     continue i - 1, f(acc, self[i])
   } else {
@@ -1392,8 +1403,8 @@ pub fn[A, B] Array::rev_fold(self : Array[A], init~ : B, f : (B, A) -> B) -> B {
 pub fn[A, B] Array::foldi(
   self : Array[A],
   init~ : B,
-  f : (Int, B, A) -> B
-) -> B {
+  f : (Int, B, A) -> B?Error
+) -> B?Error {
   for i = 0, acc = init; i < self.length(); {
     continue i + 1, f(i, acc, self[i])
   } else {
@@ -1414,8 +1425,8 @@ pub fn[A, B] Array::foldi(
 pub fn[A, B] Array::rev_foldi(
   self : Array[A],
   init~ : B,
-  f : (Int, B, A) -> B
-) -> B {
+  f : (Int, B, A) -> B?Error
+) -> B?Error {
   let len = self.length()
   for i = len - 1, acc = init; i >= 0; {
     continue i - 1, f(len - i - 1, acc, self[i])
@@ -1435,7 +1446,11 @@ pub fn[A, B] Array::rev_foldi(
 /// ```
 #deprecated("Use `fold` instead.")
 #coverage.skip
-pub fn[T, U] Array::fold_left(self : Array[T], f : (U, T) -> U, init~ : U) -> U {
+pub fn[T, U] Array::fold_left(
+  self : Array[T],
+  f : (U, T) -> U?Error,
+  init~ : U
+) -> U?Error {
   self.fold(init~, f)
 }
 
@@ -1452,9 +1467,9 @@ pub fn[T, U] Array::fold_left(self : Array[T], f : (U, T) -> U, init~ : U) -> U 
 #coverage.skip
 pub fn[T, U] Array::fold_right(
   self : Array[T],
-  f : (U, T) -> U,
+  f : (U, T) -> U?Error,
   init~ : U
-) -> U {
+) -> U?Error {
   self.rev_fold(init~, f)
 }
 
@@ -1471,9 +1486,9 @@ pub fn[T, U] Array::fold_right(
 #coverage.skip
 pub fn[T, U] Array::fold_lefti(
   self : Array[T],
-  f : (Int, U, T) -> U,
+  f : (Int, U, T) -> U?Error,
   init~ : U
-) -> U {
+) -> U?Error {
   self.foldi(init~, f)
 }
 
@@ -1490,9 +1505,9 @@ pub fn[T, U] Array::fold_lefti(
 #coverage.skip
 pub fn[T, U] Array::fold_righti(
   self : Array[T],
-  f : (Int, U, T) -> U,
+  f : (Int, U, T) -> U?Error,
   init~ : U
-) -> U {
+) -> U?Error {
   self.rev_foldi(init~, f)
 }
 
@@ -1655,8 +1670,8 @@ pub fn[T] Array::chunks(self : Array[T], size : Int) -> Array[Array[T]] {
 #locals(pred)
 pub fn[T] Array::chunk_by(
   self : Array[T],
-  pred : (T, T) -> Bool
-) -> Array[Array[T]] {
+  pred : (T, T) -> Bool?Error
+) -> Array[Array[T]]?Error {
   let chunks = []
   let mut i = 0
   while i < self.length() {
@@ -1740,7 +1755,10 @@ pub fn[T] Array::windows(self : Array[T], size : Int) -> Array[ArrayView[T]] {
 /// }
 /// ```
 #locals(pred)
-pub fn[T] Array::split(self : Array[T], pred : (T) -> Bool) -> Array[Array[T]] {
+pub fn[T] Array::split(
+  self : Array[T],
+  pred : (T) -> Bool?Error
+) -> Array[Array[T]]?Error {
   let chunks = []
   let mut i = 0
   while i < self.length() {

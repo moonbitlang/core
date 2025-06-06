@@ -13,6 +13,11 @@
 // limitations under the License.
 
 ///|
+fn[T] Tree::is_empty_tree(self : Tree[T]) -> Bool {
+  self is Empty
+}
+
+///|
 test "mix" {
   let mut v = new()
   inspect(v.tree.is_empty_tree(), content="true")

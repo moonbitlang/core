@@ -377,10 +377,10 @@ pub impl Show for Double with output(self, logger) {
 /// }
 /// ```
 pub fn Double::is_close(
-  self : Double,
-  other : Double,
-  relative_tolerance~ : Double = 1.0e-09,
-  absolute_tolerance~ : Double = 0.0
+  self : Self,
+  other : Self,
+  relative_tolerance~ : Self = 1.0e-09,
+  absolute_tolerance~ : Self = 0.0
 ) -> Bool {
   if relative_tolerance < 0.0 || absolute_tolerance < 0.0 {
     abort("Tolerances must be non-negative")

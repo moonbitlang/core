@@ -176,22 +176,6 @@ pub fn State::refill(self : State) -> Unit {
 }
 
 ///|
-fn State::reseed(self : State) -> Unit {
-  let seed = FixedArray::make(4, 0UL)
-  for i in 0..<4 {
-    for {
-      let x = self.next()
-      if x.1 {
-        seed[i] = x.0
-        break
-      }
-      self.refill()
-    }
-  }
-  self.init64(seed)
-}
-
-///|
 fn chacha_block(
   seed : FixedArray[UInt64],
   buf : FixedArray[FixedArray[UInt]],
