@@ -514,9 +514,3 @@ fn shift_cap_of_size(size : Int) -> (Int, Int) {
   let shift = num_bits * depth
   (shift, cap)
 }
-
-///|
-/// Print the tree structure of the internal tree. For debug use.
-fn[A : Show] to_debug_string(self : T[A]) -> String {
-  self.tree.to_string()
-}
