@@ -79,7 +79,10 @@ pub fn[T] push_iter(self : Array[T], iter : Iter[T]) -> Unit {
 ///   inspect(arr, content="[0, 2, 4]")
 /// }
 /// ```
-pub fn[T] Array::makei(length : Int, value : (Int) -> T) -> Array[T] {
+pub fn[T] Array::makei(
+  length : Int,
+  value : (Int) -> T?Error
+) -> Array[T]?Error {
   if length <= 0 {
     []
   } else {
