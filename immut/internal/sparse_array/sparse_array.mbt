@@ -14,170 +14,194 @@
 
 ///|
 /// A sparse array with at most 32 elements, where elements are not required to have contiguous index.
-/// Empty elements don't waste any space, without losing constant-time access
-pub(all) struct SparseArray[X] {
+/// Empty elements don't waste any space, without losing constant-time access.
+/// It will have at least one element.
+pub(all) struct T[A] {
   // record which elements are present
-  elem_info : Bitset
-  data : FixedArray[X]
+  priv bitset : Bitset
+  data : FixedArray[A]
 } derive(Eq)
 
 ///|
-pub fn[X] empty() -> SparseArray[X] {
-  { elem_info: empty_bitset, data: [] }
+pub fn[A] T::singleton(idx : Int, value : A) -> T[A] {
+  { bitset: empty_bitset.add(idx), data: [value] }
 }
 
 ///|
-pub fn[X] singleton(idx : Int, value : X) -> SparseArray[X] {
-  { elem_info: empty_bitset.add(idx), data: [value] }
-}
-
-///|
-pub fn[X] has(self : SparseArray[X], idx : Int) -> Bool {
-  self.elem_info.has(idx)
-}
-
-///|
-pub fn[X] op_get(self : SparseArray[X], idx : Int) -> X? {
-  if self.elem_info.has(idx) {
-    Some(self.data[self.elem_info.index_of(idx)])
-  } else {
-    None
+pub fn[A] T::doubleton(idx1 : Int, value1 : A, idx2 : Int, value2 : A) -> T[A] {
+  {
+    bitset: empty_bitset.add(idx1).add(idx2),
+    data: if idx1 < idx2 {
+      [value1, value2]
+    } else {
+      [value2, value1]
+    },
   }
 }
 
 ///|
-/// `add(self: SparseArray[X], idx: Int, value: X)`
-///
+pub fn[A] T::has(self : T[A], idx : Int) -> Bool {
+  self.bitset.has(idx)
+}
+
+///|
+pub fn[A] T::op_get(self : T[A], idx : Int) -> A {
+  self.data[self.bitset.index_of(idx)]
+}
+
+///|
 /// Add a new element into the sparse array.
-/// [idx] must be absent from [self]
-pub fn[X] add(self : SparseArray[X], idx : Int, value : X) -> SparseArray[X] {
-  let old_data = self.data
+/// `idx` must be absent from `self`
+pub fn[A] T::add(self : T[A], idx : Int, value : A) -> T[A] {
+  let { data: old_data, bitset: old_bitset } = self
   let old_len = old_data.length()
-  let new_len = old_len + 1
-  let pos_of_new_item = self.elem_info.index_of(idx)
-  let new_data = FixedArray::make(new_len, value)
-  old_data.blit_to(new_data, len=pos_of_new_item)
-  old_data.blit_to(
+  let added_index = old_bitset.index_of(idx)
+  let new_data = FixedArray::make(old_len + 1, value)
+  FixedArray::unsafe_blit(new_data, 0, old_data, 0, added_index)
+  FixedArray::unsafe_blit(
     new_data,
-    len=old_len - pos_of_new_item,
-    src_offset=pos_of_new_item,
-    dst_offset=pos_of_new_item + 1,
+    added_index + 1,
+    old_data,
+    added_index,
+    old_len - added_index,
   )
-  { elem_info: self.elem_info.add(idx), data: new_data }
+  { bitset: old_bitset.add(idx), data: new_data }
 }
 
 ///|
-/// `union(self: SparseArray[X], other: SparseArray[X]) -> SparseArray[X]`
-/// 
-/// Combine two sparse arrays into one.
-pub fn[X] SparseArray::union(
-  self : SparseArray[X],
-  other : SparseArray[X],
-  union : (X, X) -> X
-) -> SparseArray[X] {
-  let un = self.elem_info.union(other.elem_info)
-  let diff = self.elem_info.difference(other.elem_info)
-  let new_len = un.size()
-  if new_len == 0 {
-    empty()
-  } else {
-    // the total length of 2 sparse arrays is not 0
-    // so it's safe to use the first element of either array
-    let init = if self.data.is_empty() { other.data[0] } else { self.data[0] }
-    let new_data = FixedArray::make(new_len, init)
-    for i in diff.iter() {
-      new_data[un.index_of(i)] = self.data[self.elem_info.index_of(i)]
-    }
-    for i in other.elem_info.iter() {
-      new_data[un.index_of(i)] = if self.elem_info.has(i) {
-        union(
-          self.data[self.elem_info.index_of(i)],
-          other.data[other.elem_info.index_of(i)],
-        )
-      } else {
-        other.data[other.elem_info.index_of(i)]
-      }
-    }
-    { elem_info: un, data: new_data }
-  }
+/// Removes an element at the specified index from the sparse array.
+/// `idx` must be in `self`
+pub fn[A] T::remove(self : T[A], idx : Int) -> T[A] {
+  let { data: old_data, bitset: old_bitset } = self
+  let old_len = old_data.length()
+  let removed_index = old_bitset.index_of(idx)
+  let new_data = FixedArray::make(old_len - 1, old_data.unsafe_get(0))
+  FixedArray::unsafe_blit(new_data, 0, old_data, 0, removed_index)
+  FixedArray::unsafe_blit(
+    new_data,
+    removed_index,
+    old_data,
+    removed_index + 1,
+    old_len - removed_index - 1,
+  )
+  { bitset: old_bitset.remove(idx), data: new_data }
 }
 
 ///|
-/// `intersection(self: SparseArray[X], other: SparseArray[X], f: (X, X) -> X) -> SparseArray[X]`
-///
-/// Only keep indices present in both sparse arrays, and merge values with f.
-pub fn[X] SparseArray::intersection(
-  self : SparseArray[X],
-  other : SparseArray[X],
-  f : (X, X) -> X
-) -> SparseArray[X] {
-  let inter = self.elem_info.intersection(other.elem_info)
-  let new_len = inter.size()
-  if new_len == 0 {
-    empty()
-  } else {
-    let init = self.data[0] // Both sides have elements, pick either for init
-    let new_data = FixedArray::make(new_len, init)
-    for i in inter.iter() {
-      new_data[inter.index_of(i)] = f(
-        self.data[self.elem_info.index_of(i)],
-        other.data[other.elem_info.index_of(i)],
-      )
-    }
-    { elem_info: inter, data: new_data }
-  }
-}
-
-///|
-/// `difference(self: SparseArray[X], other: SparseArray[X]) -> SparseArray[X]`
-///
-/// Keep indices and values only present in self but not in other.
-pub fn[X] SparseArray::difference(
-  self : SparseArray[X],
-  other : SparseArray[X]
-) -> SparseArray[X] {
-  let diff = self.elem_info.difference(other.elem_info)
-  let new_len = diff.size()
-  if new_len == 0 {
-    empty()
-  } else {
-    let init = self.data[0]
-    let new_data = FixedArray::make(new_len, init)
-    for i in diff.iter() {
-      new_data[diff.index_of(i)] = self.data[self.elem_info.index_of(i)]
-    }
-    { elem_info: diff, data: new_data }
-  }
-}
-
-///|
-/// `replace(self: SparseArray[X], idx: Int, value: X)`
-///
 // replace an existing element in the sparse array.
-pub fn[X] replace(
-  self : SparseArray[X],
-  idx : Int,
-  value : X
-) -> SparseArray[X] {
-  let new_data = self.data.copy()
-  new_data[self.elem_info.index_of(idx)] = value
-  { elem_info: self.elem_info, data: new_data }
+pub fn[A] T::replace(self : T[A], idx : Int, value : A) -> T[A] {
+  let { data: old_data, bitset: old_bitset } = self
+  let len = old_data.length()
+  let new_data = FixedArray::make(len, value)
+  FixedArray::unsafe_blit(new_data, 0, old_data, 0, len)
+  new_data.unsafe_set(old_bitset.index_of(idx), value)
+  { bitset: old_bitset, data: new_data }
 }
 
 ///|
-/// `size(self: SparseArray[X]) -> Int`
-///
-/// Return the size of a sparse array
-pub fn[X] size(self : SparseArray[X]) -> Int {
-  self.data.length()
+pub fn[A] T::replace_inplace(self : T[A], idx : Int, value : A) -> Unit {
+  self.data.unsafe_set(self.bitset.index_of(idx), value)
 }
 
 ///|
-/// `each(self: SparseArray[X], f: (X) -> Unit) -> Unit`
-///
+pub fn[A] T::first_index(self : T[A]) -> Int {
+  self.bitset.fitst_idx()
+}
+
+///|
+pub fn[A] T::first_value(self : T[A]) -> A {
+  self.data[0]
+}
+
+///|
 /// Iterate through elements in a sparse array
-pub fn[X] each(self : SparseArray[X], f : (X) -> Unit) -> Unit {
-  for i in 0..<self.elem_info.size() {
+pub fn[A] T::each(self : T[A], f : (A) -> Unit) -> Unit {
+  for i in 0..<self.bitset.size() {
     f(self.data[i])
+  }
+}
+
+///|
+/// Combine two sparse arrays into one.
+pub fn[A] T::union(self : T[A], other : T[A], f : (A, A) -> A) -> T[A] {
+  let union_bitset : Bitset = self.bitset._ | other.bitset._
+  let data = FixedArray::make(union_bitset.size(), self.data[0])
+  for rest = union_bitset, index = 0; rest != 0; {
+    let idx = rest.fitst_idx()
+    data[index] = if self.has(idx) {
+      if other.has(idx) {
+        f(self[idx], other[idx])
+      } else {
+        self[idx]
+      }
+    } else {
+      other[idx]
+    }
+    continue rest.remove(idx), index + 1
+  }
+  { bitset: union_bitset, data }
+}
+
+///|
+fn[A] copy_prefix(arr : FixedArray[A], len~ : Int) -> FixedArray[A] {
+  let res = FixedArray::make(len, arr[0])
+  FixedArray::unsafe_blit(res, 0, arr, 0, len)
+  res
+}
+
+///|
+/// Only keep indices present in both sparse arrays, and merge values with f.
+pub fn[A] T::intersection(self : T[A], other : T[A], f : (A, A) -> A?) -> T[A]? {
+  let inter_bitset : Bitset = self.bitset._ & other.bitset._
+  guard inter_bitset != 0 else { return None }
+  let data = FixedArray::make(inter_bitset.size(), self.data[0])
+  for rest = inter_bitset, index = 0, bitset = inter_bitset; rest != 0; {
+    let idx = rest.fitst_idx()
+    match f(self[idx], other[idx]) {
+      Some(value) => {
+        data[index] = value
+        continue rest.remove(idx), index + 1, bitset
+      }
+      None => continue rest.remove(idx), index, bitset.remove(idx)
+    }
+  } else {
+    if bitset == 0 {
+      None
+    } else if bitset == inter_bitset {
+      Some({ bitset, data })
+    } else {
+      Some({ bitset, data: copy_prefix(data, len=index) })
+    }
+  }
+}
+
+///|
+/// Keep indices and values only present in self but not in other.
+pub fn[A] T::difference(self : T[A], other : T[A], f : (A, A) -> A?) -> T[A]? {
+  let self_bitset = self.bitset
+  guard self_bitset != 0 else { return None }
+  let data = FixedArray::make(self_bitset.size(), self.data[0])
+  for rest = self_bitset, index = 0, bitset = self_bitset; rest != 0; {
+    let idx = rest.fitst_idx()
+    if other.bitset.has(idx) {
+      match f(self[idx], other[idx]) {
+        None => continue rest.remove(idx), index, bitset.remove(idx)
+        Some(value) => {
+          data[index] = value
+          continue rest.remove(idx), index + 1, bitset
+        }
+      }
+    } else {
+      data[index] = self[idx]
+      continue rest.remove(idx), index + 1, bitset
+    }
+  } else {
+    if bitset == 0 {
+      None
+    } else if bitset == self_bitset {
+      Some({ bitset, data })
+    } else {
+      Some({ bitset, data: copy_prefix(data, len=index) })
+    }
   }
 }
