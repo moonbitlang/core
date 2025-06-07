@@ -7,13 +7,13 @@ import(
 // Values
 fn[T] abort(String) -> T
 
-fn[T : @builtin.Eq + @builtin.Show] assert_eq(T, T, loc~ : @builtin.SourceLoc = _) -> Unit!
+fn[T : @builtin.Eq + @builtin.Show] assert_eq(T, T, fail_msg~ : String = .., loc~ : @builtin.SourceLoc = _) -> Unit!
 
-fn assert_false(Bool, loc~ : @builtin.SourceLoc = _) -> Unit!
+fn assert_false(Bool, fail_msg~ : String = .., loc~ : @builtin.SourceLoc = _) -> Unit!
 
-fn[T : @builtin.Eq + @builtin.Show] assert_not_eq(T, T, loc~ : @builtin.SourceLoc = _) -> Unit!
+fn[T : @builtin.Eq + @builtin.Show] assert_not_eq(T, T, fail_msg~ : String = .., loc~ : @builtin.SourceLoc = _) -> Unit!
 
-fn assert_true(Bool, loc~ : @builtin.SourceLoc = _) -> Unit!
+fn assert_true(Bool, fail_msg~ : String = .., loc~ : @builtin.SourceLoc = _) -> Unit!
 
 #deprecated
 fn[T] dump(T, name? : String, loc~ : @builtin.SourceLoc = _) -> T
