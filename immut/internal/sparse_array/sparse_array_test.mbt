@@ -13,55 +13,60 @@
 // limitations under the License.
 
 ///|
+fn[A] T::get(self : T[A], idx : Int) -> A? {
+  if self.has(idx) {
+    Some(self[idx])
+  } else {
+    None
+  }
+}
+
+///|
 test "SparseArray" {
-  let arr0 = @sparse_array.singleton(1, 1)
+  let arr0 = T::singleton(1, 1)
   inspect(
-    (arr0.has(0), arr0[0], arr0.has(1), arr0[1], arr0.has(2), arr0[2]),
-    content="(false, None, true, Some(1), false, None)",
+    (arr0.get(0), arr0.get(1), arr0.get(2)),
+    content="(None, Some(1), None)",
   )
   let arr1 = arr0.add(2, 2)
   inspect(
-    (arr1.has(0), arr1[0], arr1.has(1), arr1[1], arr1.has(2), arr1[2]),
-    content="(false, None, true, Some(1), true, Some(2))",
+    (arr1.get(0), arr1.get(1), arr1.get(2)),
+    content="(None, Some(1), Some(2))",
   )
   let arr2 = arr1.add(0, 0)
   inspect(
-    (arr2.has(0), arr2[0], arr2.has(1), arr2[1], arr2.has(2), arr2[2]),
-    content="(true, Some(0), true, Some(1), true, Some(2))",
+    (arr2.get(0), arr2.get(1), arr2.get(2)),
+    content="(Some(0), Some(1), Some(2))",
   )
   let arr3 = arr2.replace(1, 42)
   inspect(
-    (arr3.has(0), arr3[0], arr3.has(1), arr3[1], arr3.has(2), arr3[2]),
-    content="(true, Some(0), true, Some(42), true, Some(2))",
+    (arr3.get(0), arr3.get(1), arr3.get(2)),
+    content="(Some(0), Some(42), Some(2))",
   )
 }
 
 ///|
 test "SparseArray::union" {
-  let arr1 = @sparse_array.singleton(0, 0)
-    .add(1, 1)
-    .add(3, 3)
-    .add(4, 4)
-    .add(5, 5)
-  let arr2 = @sparse_array.singleton(1, 10).add(2, 2).add(4, 40).add(31, 31)
+  let arr1 = T::singleton(0, 0).add(1, 1).add(3, 3).add(4, 4).add(5, 5)
+  let arr2 = T::singleton(1, 10).add(2, 2).add(4, 40).add(31, 31)
   let arr3 = arr1.union(arr2, fn(_x, y) { y })
   inspect(
     [
-      (arr3.has(0), arr3[0]),
-      (arr3.has(1), arr3[1]),
-      (arr3.has(2), arr3[2]),
-      (arr3.has(3), arr3[3]),
-      (arr3.has(4), arr3[4]),
-      (arr3.has(5), arr3[5]),
-      (arr3.has(31), arr3[31]),
+      arr3.get(0),
+      arr3.get(1),
+      arr3.get(2),
+      arr3.get(3),
+      arr3.get(4),
+      arr3.get(5),
+      arr3.get(31),
     ],
-    content="[(true, Some(0)), (true, Some(10)), (true, Some(2)), (true, Some(3)), (true, Some(40)), (true, Some(5)), (true, Some(31))]",
+    content="[Some(0), Some(10), Some(2), Some(3), Some(40), Some(5), Some(31)]",
   )
 }
 
 ///|
-test "SparseArray::iter" {
-  let arr = @sparse_array.singleton(0, 0).add(1, 1).add(3, 3).add(31, 31)
+test "SparseArray::each" {
+  let arr = T::singleton(0, 0).add(1, 1).add(3, 3).add(31, 31)
   let buf = StringBuilder::new(size_hint=0)
   let mut is_first = true
   arr.each(fn(x) {
