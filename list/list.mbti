@@ -36,6 +36,8 @@ fn[A, B] filter_map(T[A], (A) -> B?) -> T[B]
 
 fn[A] find(T[A], (A) -> Bool) -> A?
 
+fn[A] find_index(T[A], (A) -> Bool) -> Int?
+
 fn[A] findi(T[A], (A, Int) -> Bool) -> A?
 
 fn[A, B] flat_map(T[A], (A) -> T[B]) -> T[B]
@@ -153,11 +155,14 @@ fn[A] T::add(Self[A], A) -> Self[A]
 fn[A] T::all(Self[A], (A) -> Bool) -> Bool
 fn[A] T::any(Self[A], (A) -> Bool) -> Bool
 fn[A] T::concat(Self[A], Self[A]) -> Self[A]
+fn[A] T::construct(A, Self[A]) -> Self[A]
 fn[A : Eq] T::contains(Self[A], A) -> Bool
+fn[X] T::default() -> Self[X]
 fn[A] T::drop(Self[A], Int) -> Self[A]
 fn[A] T::drop_while(Self[A], (A) -> Bool) -> Self[A]
 fn[A] T::each(Self[A], (A) -> Unit) -> Unit
 fn[A] T::eachi(Self[A], (Int, A) -> Unit) -> Unit
+fn[A] T::empty() -> Self[A]
 fn[A] T::filter(Self[A], (A) -> Bool) -> Self[A]
 fn[A, B] T::filter_map(Self[A], (A) -> B?) -> Self[B]
 fn[A] T::find(Self[A], (A) -> Bool) -> A?
@@ -167,6 +172,10 @@ fn[A, B] T::flat_map(Self[A], (A) -> Self[B]) -> Self[B]
 fn[A] T::flatten(Self[Self[A]]) -> Self[A]
 fn[A, B] T::fold(Self[A], init~ : B, (B, A) -> B) -> B
 fn[A, B] T::foldi(Self[A], init~ : B, (Int, B, A) -> B) -> B
+fn[A] T::from_array(Array[A]) -> Self[A]
+fn[A] T::from_iter(Iter[A]) -> Self[A]
+fn[A] T::from_iter_rev(Iter[A]) -> Self[A]
+fn[A : @json.FromJson] T::from_json(Json) -> Self[A]!@json.JsonDecodeError
 fn[A] T::head(Self[A]) -> A?
 fn[A] T::intercalate(Self[Self[A]], Self[A]) -> Self[A]
 fn[A] T::intersperse(Self[A], A) -> Self[A]
@@ -182,23 +191,29 @@ fn[A, B] T::map(Self[A], (A) -> B) -> Self[B]
 fn[A, B] T::mapi(Self[A], (Int, A) -> B) -> Self[B]
 fn[A : Compare] T::maximum(Self[A]) -> A?
 fn[A : Compare] T::minimum(Self[A]) -> A?
+fn[A] T::new() -> Self[A]
 fn[A] T::nth(Self[A], Int) -> A?
+fn[A] T::of(FixedArray[A]) -> Self[A]
 fn[A] T::prepend(Self[A], A) -> Self[A]
 fn[A : Eq] T::remove(Self[A], A) -> Self[A]
 fn[A] T::remove_at(Self[A], Int) -> Self[A]
+fn[A] T::repeat(Int, A) -> Self[A]
 fn[A] T::rev(Self[A]) -> Self[A]
 fn[A] T::rev_concat(Self[A], Self[A]) -> Self[A]
 fn[A, B] T::rev_fold(Self[A], init~ : B, (B, A) -> B) -> B
 fn[A, B] T::rev_foldi(Self[A], init~ : B, (Int, B, A) -> B) -> B
 fn[A, B] T::rev_map(Self[A], (A) -> B) -> Self[B]
+fn[A, S] T::rev_unfold((S) -> (A, S)?, init~ : S) -> Self[A]
 fn[A, E] T::scan_left(Self[A], (E, A) -> E, init~ : E) -> Self[E]
 fn[A, B] T::scan_right(Self[A], (B, A) -> B, init~ : B) -> Self[B]
+fn[A] T::singleton(A) -> Self[A]
 fn[A : Compare] T::sort(Self[A]) -> Self[A]
 fn[A] T::tail(Self[A]) -> Self[A]
 fn[A] T::take(Self[A], Int) -> Self[A]
 fn[A] T::take_while(Self[A], (A) -> Bool) -> Self[A]
 fn[A] T::to_array(Self[A]) -> Array[A]
 fn[A : ToJson] T::to_json(Self[A]) -> Json
+fn[A, S] T::unfold((S) -> (A, S)?, init~ : S) -> Self[A]
 fn[A] T::unsafe_head(Self[A]) -> A
 fn[A] T::unsafe_last(Self[A]) -> A
 fn[A : Compare] T::unsafe_maximum(Self[A]) -> A
