@@ -1,49 +1,27 @@
 package "moonbitlang/core/immut/internal/sparse_array"
 
 // Values
-fn[X] add(SparseArray[X], Int, X) -> SparseArray[X]
+fn[A] doubleton(Int, A, Int, A) -> T[A]
 
-fn[X] each(SparseArray[X], (X) -> Unit) -> Unit
-
-fn[X] empty() -> SparseArray[X]
-
-fn[X] has(SparseArray[X], Int) -> Bool
-
-fn[X] op_get(SparseArray[X], Int) -> X?
-
-fn[X] replace(SparseArray[X], Int, X) -> SparseArray[X]
-
-fn[X] singleton(Int, X) -> SparseArray[X]
-
-fn[X] size(SparseArray[X]) -> Int
+fn[A] singleton(Int, A) -> T[A]
 
 // Types and methods
-pub(all) type Bitset UInt
-fn Bitset::add(Self, Int) -> Self
-fn Bitset::difference(Self, Self) -> Self
-fn Bitset::has(Self, Int) -> Bool
-fn Bitset::index_of(Self, Int) -> Int
-fn Bitset::intersection(Self, Self) -> Self
-fn Bitset::iter(Self) -> Iter[Int]
-fn Bitset::remove(Self, Int) -> Self
-fn Bitset::size(Self) -> Int
-fn Bitset::union(Self, Self) -> Self
-impl Eq for Bitset
-
-pub(all) struct SparseArray[X] {
-  elem_info : Bitset
-  data : FixedArray[X]
+pub(all) struct T[A] {
+  data : FixedArray[A]
+  // private fields
 }
-fn[X] SparseArray::add(Self[X], Int, X) -> Self[X]
-fn[X] SparseArray::difference(Self[X], Self[X]) -> Self[X]
-fn[X] SparseArray::each(Self[X], (X) -> Unit) -> Unit
-fn[X] SparseArray::has(Self[X], Int) -> Bool
-fn[X] SparseArray::intersection(Self[X], Self[X], (X, X) -> X) -> Self[X]
-fn[X] SparseArray::op_get(Self[X], Int) -> X?
-fn[X] SparseArray::replace(Self[X], Int, X) -> Self[X]
-fn[X] SparseArray::size(Self[X]) -> Int
-fn[X] SparseArray::union(Self[X], Self[X], (X, X) -> X) -> Self[X]
-impl[X : Eq] Eq for SparseArray[X]
+fn[A] T::add(Self[A], Int, A) -> Self[A]
+fn[A] T::difference(Self[A], Self[A], (A, A) -> A?) -> Self[A]?
+fn[A] T::each(Self[A], (A) -> Unit) -> Unit
+fn[A] T::first_index(Self[A]) -> Int
+fn[A] T::has(Self[A], Int) -> Bool
+fn[A] T::intersection(Self[A], Self[A], (A, A) -> A?) -> Self[A]?
+fn[A] T::op_get(Self[A], Int) -> A
+fn[A] T::remove(Self[A], Int) -> Self[A]
+fn[A] T::replace(Self[A], Int, A) -> Self[A]
+fn[A] T::replace_inplace(Self[A], Int, A) -> Unit
+fn[A] T::union(Self[A], Self[A], (A, A) -> A) -> Self[A]
+impl[A : Eq] Eq for T[A]
 
 // Type aliases
 
