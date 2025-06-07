@@ -26,5 +26,5 @@ enum T[K, V] {
   Empty
   Leaf(K, V) // optimize for the case of no collision
   Collision(Bucket[K, V]) // use a list of buckets to resolve collision
-  Branch(@sparse_array.SparseArray[T[K, V]])
+  Branch(@sparse_array.T[T[K, V]])
 }
