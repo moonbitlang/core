@@ -38,7 +38,7 @@ pub fn[A : Hash] T::singleton(key : A) -> T[A] {
 }
 
 ///|
-pub fn[A : Hash + Eq] T::of(arr : FixedArray[A]) -> T[A] {
+pub fn[A : Eq + Hash] T::of(arr : FixedArray[A]) -> T[A] {
   match arr {
     [] => None
     [x, ..] => {
@@ -53,7 +53,7 @@ pub fn[A : Hash + Eq] T::of(arr : FixedArray[A]) -> T[A] {
 }
 
 ///|
-pub fn[A : Hash + Eq] T::from_array(arr : Array[A]) -> T[A] {
+pub fn[A : Eq + Hash] T::from_array(arr : Array[A]) -> T[A] {
   match arr {
     [] => None
     [x, .. xs] =>
@@ -65,7 +65,7 @@ pub fn[A : Hash + Eq] T::from_array(arr : Array[A]) -> T[A] {
 }
 
 ///|
-pub fn[A : Hash + Eq] T::from_iter(iter : Iter[A]) -> T[A] {
+pub fn[A : Eq + Hash] T::from_iter(iter : Iter[A]) -> T[A] {
   iter.fold(init=T::new()._, fn {
     None, key => T::singleton(key)._
     Some(node), key => node.add_inplace(key, Path::of(key)) |> Some
