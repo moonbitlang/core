@@ -36,8 +36,6 @@ fn[A, B] filter_map(T[A], (A) -> B?) -> T[B]
 
 fn[A] find(T[A], (A) -> Bool) -> A?
 
-fn[A] find_index(T[A], (A) -> Bool) -> Int?
-
 fn[A] findi(T[A], (A, Int) -> Bool) -> A?
 
 fn[A, B] flat_map(T[A], (A) -> T[B]) -> T[B]

@@ -1063,18 +1063,20 @@ pub fn[A] find(self : T[A], f : (A) -> Bool) -> A? {
 /// ```moonbit
 /// test "find_index" {
 ///   let ls = of([1, 2, 3, 4, 5])
-///   inspect!(ls.find_index(fn(x) { x % 2 == 0 }), content="Some(1)")
-///   inspect!(ls.find_index(fn(x) { x > 10 }), content="None")
+///   inspect(ls.find_index(fn(x) { x % 2 == 0 }), content="Some(1)")
+///   inspect(ls.find_index(fn(x) { x > 10 }), content="None")
 /// }
 /// ```
 ///
-pub fn[A] find_index(self : T[A], f : (A) -> Bool) -> Int? {
-  let mut idx = 0
-  for x in self {
-    guard not(f(x)) else { break Some(idx) }
-    idx += 1
-  } else {
-    None
+pub fn[A] T::find_index(self : Self[A], f : (A) -> Bool) -> Int? {
+  loop self, 0 {
+    Empty, _ => None
+    More(element, tail=list), idx =>
+      if f(element) {
+        Some(idx)
+      } else {
+        continue list, idx + 1
+      }
   }
 }
 
