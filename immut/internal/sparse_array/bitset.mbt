@@ -14,77 +14,53 @@
 
 ///|
 /// a simple bit set to store a set of integers less than 32
-pub(all) type Bitset UInt derive(Eq)
+priv type Bitset UInt derive(Eq)
 
 ///|
 let empty_bitset : Bitset = Bitset(0)
 
 ///|
-/// `has(self: Bitset, idx: Int)`
-///
 /// Check if the given index is present in the bitset.
-pub fn Bitset::has(self : Bitset, idx : Int) -> Bool {
+fn Bitset::has(self : Bitset, idx : Int) -> Bool {
   (self._ & (1U << idx)) != 0
 }
 
 ///|
-/// `index_of(self: Bitset, idx: Int)`
-///
 /// Get the index of the bit in the bitset.
-pub fn Bitset::index_of(self : Bitset, idx : Int) -> Int {
+fn Bitset::index_of(self : Bitset, idx : Int) -> Int {
   (self._ & ((1U << idx) - 1)).popcnt()
 }
 
 ///|
-pub fn Bitset::union(self : Bitset, other : Bitset) -> Bitset {
+fn Bitset::fitst_idx(self : Bitset) -> Int {
+  self._.ctz()
+}
+
+///|
+fn Bitset::union(self : Bitset, other : Bitset) -> Bitset {
   Bitset(self._ | other._)
 }
 
 ///|
-pub fn Bitset::intersection(self : Bitset, other : Bitset) -> Bitset {
+fn Bitset::intersection(self : Bitset, other : Bitset) -> Bitset {
   Bitset(self._ & other._)
 }
 
 ///|
-pub fn Bitset::difference(self : Bitset, other : Bitset) -> Bitset {
-  Bitset(self._ & other._.lnot())
-}
-
-///|
-pub fn Bitset::iter(self : Bitset) -> Iter[Int] {
-  Iter::new(fn(yield_) {
-    let mut bs = self._
-    while bs != 0 {
-      let next = bs & (-bs.reinterpret_as_int()).reinterpret_as_uint()
-      guard yield_(bs.ctz()) is IterContinue else { break IterEnd }
-      bs = bs ^ next
-    } else {
-      IterContinue
-    }
-  })
-}
-
-///|
-/// `add(self: Bitset, idx: Int)`
-///
 /// Add a new index to the bitset.
-pub fn Bitset::add(self : Bitset, idx : Int) -> Bitset {
+fn Bitset::add(self : Bitset, idx : Int) -> Bitset {
   Bitset(self._ | (1U << idx))
 }
 
 ///|
-/// `remove(self: Bitset, idx: Int)`
-///
 /// Remove an index from the bitset.
-pub fn Bitset::remove(self : Bitset, idx : Int) -> Bitset {
+fn Bitset::remove(self : Bitset, idx : Int) -> Bitset {
   Bitset(self._ ^ (1U << idx))
 }
 
 ///|
-/// `size(self: Bitset) -> Int`
-///
 /// Calculate the size of a bitset
-pub fn Bitset::size(self : Bitset) -> Int {
+fn Bitset::size(self : Bitset) -> Int {
   self._.popcnt()
 }
 
@@ -135,24 +111,6 @@ test "Bitset::intersection" {
   inspect(b3.has(1), content="false")
   inspect(b3.has(2), content="true")
   inspect(b3.has(3), content="false")
-}
-
-///|
-test "Bitset::difference" {
-  let b1 = empty_bitset.add(2).add(3)
-  let b2 = empty_bitset.add(0).add(1).add(2)
-  let b3 = b1.difference(b2)
-  inspect(b3.has(0), content="false")
-  inspect(b3.has(1), content="false")
-  inspect(b3.has(2), content="false")
-  inspect(b3.has(3), content="true")
-}
-
-///|
-test "Bitset::iter" {
-  let b = empty_bitset.add(0).add(1).add(31)
-  let arr = b.iter().collect()
-  inspect(arr, content="[0, 1, 31]")
 }
 
 ///|
