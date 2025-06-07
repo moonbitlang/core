@@ -109,11 +109,6 @@ pub fn[A] T::first_index(self : T[A]) -> Int {
 }
 
 ///|
-pub fn[A] T::first_value(self : T[A]) -> A {
-  self.data[0]
-}
-
-///|
 /// Iterate through elements in a sparse array
 pub fn[A] T::each(self : T[A], f : (A) -> Unit) -> Unit {
   for i in 0..<self.bitset.size() {
