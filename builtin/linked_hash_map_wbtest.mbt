@@ -886,7 +886,6 @@ test "op_equal_key_value_mismatch" {
 }
 
 ///|
-
 fn[K : Show, V : Show] Map::debug_entries(self : Map[K, V]) -> String {
   let buf = StringBuilder::new()
   for i in 0..<self.entries.length() {
