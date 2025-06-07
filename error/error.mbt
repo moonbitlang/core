@@ -37,4 +37,9 @@ pub impl Show for Error with output(self, logger) {
 }
 
 ///|
-pub impl ToJson for Error with to_json(self) = "%error.to_json"
+fn Error::to_json(self : Error) -> Json = "%error.to_json"
+
+///|
+pub impl ToJson for Error with to_json(self) {
+  self.to_json()
+}

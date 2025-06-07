@@ -161,6 +161,7 @@ fn[A] T::eachi(Self[A], (Int, A) -> Unit) -> Unit
 fn[A] T::filter(Self[A], (A) -> Bool) -> Self[A]
 fn[A, B] T::filter_map(Self[A], (A) -> B?) -> Self[B]
 fn[A] T::find(Self[A], (A) -> Bool) -> A?
+fn[A] T::find_index(Self[A], (A) -> Bool) -> Int?
 fn[A] T::findi(Self[A], (A, Int) -> Bool) -> A?
 fn[A, B] T::flat_map(Self[A], (A) -> Self[B]) -> Self[B]
 fn[A] T::flatten(Self[Self[A]]) -> Self[A]

@@ -1014,3 +1014,18 @@ test "is_prefix and is_suffix complex cases" {
   assert_true!(l.is_prefix(@list.of([])))
   assert_true!(l.is_suffix(@list.of([])))
 }
+
+///|
+test "find_index" {
+  // empty
+  let empty = @list.empty()
+  inspect(empty.find_index(fn(x) { x > 0 }), content="None")
+  // basic
+  let ls = @list.of([1, 2, 3, 4, 5])
+  inspect(ls.find_index(fn(x) { x > 3 }), content="Some(3)")
+  inspect(ls.find_index(fn(x) { x < 0 }), content="None")
+  inspect(ls.find_index(fn(x) { x == 1 }), content="Some(0)")
+  // all-match
+  let ls = @list.of([2, 4, 6, 8, 10])
+  inspect(ls.find_index(fn(x) { x % 2 == 0 }), content="Some(0)")
+}
