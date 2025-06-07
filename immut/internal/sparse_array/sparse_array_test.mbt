@@ -23,7 +23,7 @@ fn[A] T::get(self : T[A], idx : Int) -> A? {
 
 ///|
 test "SparseArray" {
-  let arr0 = T::singleton(1, 1)
+  let arr0 = singleton(1, 1)
   inspect(
     (arr0.get(0), arr0.get(1), arr0.get(2)),
     content="(None, Some(1), None)",
@@ -47,8 +47,8 @@ test "SparseArray" {
 
 ///|
 test "SparseArray::union" {
-  let arr1 = T::singleton(0, 0).add(1, 1).add(3, 3).add(4, 4).add(5, 5)
-  let arr2 = T::singleton(1, 10).add(2, 2).add(4, 40).add(31, 31)
+  let arr1 = singleton(0, 0).add(1, 1).add(3, 3).add(4, 4).add(5, 5)
+  let arr2 = singleton(1, 10).add(2, 2).add(4, 40).add(31, 31)
   let arr3 = arr1.union(arr2, fn(_x, y) { y })
   inspect(
     [
@@ -66,7 +66,7 @@ test "SparseArray::union" {
 
 ///|
 test "SparseArray::each" {
-  let arr = T::singleton(0, 0).add(1, 1).add(3, 3).add(31, 31)
+  let arr = singleton(0, 0).add(1, 1).add(3, 3).add(31, 31)
   let buf = StringBuilder::new(size_hint=0)
   let mut is_first = true
   arr.each(fn(x) {
