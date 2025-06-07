@@ -29,7 +29,10 @@
 /// ```
 /// TODO: change the intrinsic to match the function name
 #intrinsic("%fixedarray.iter")
-pub fn[T] FixedArray::each(self : FixedArray[T], f : (T) -> Unit) -> Unit {
+pub fn[T] FixedArray::each(
+  self : FixedArray[T],
+  f : (T) -> Unit?Error
+) -> Unit?Error {
   for v in self {
     f(v)
   }
@@ -132,7 +135,10 @@ test "eachi" {
 /// [1, 2, 3, 4, 5].rev_each(fn(x){ arr.push(x) })
 /// assert_eq(arr, [5, 4, 3, 2, 1])
 /// ```
-pub fn[T] FixedArray::rev_each(self : FixedArray[T], f : (T) -> Unit) -> Unit {
+pub fn[T] FixedArray::rev_each(
+  self : FixedArray[T],
+  f : (T) -> Unit?Error
+) -> Unit?Error {
   for i = self.length() - 1; i >= 0; i = i - 1 {
     f(self[i])
   }
@@ -322,7 +328,10 @@ test "mapi" {
 ///   inspect(arr, content="[0, 2, 4]")
 /// }
 /// ```
-pub fn[T] FixedArray::makei(length : Int, value : (Int) -> T) -> FixedArray[T] {
+pub fn[T] FixedArray::makei(
+  length : Int,
+  value : (Int) -> T?Error
+) -> FixedArray[T]?Error {
   if length <= 0 {
     []
   } else {
