@@ -23,12 +23,12 @@ pub(all) struct T[A] {
 } derive(Eq)
 
 ///|
-pub fn[A] T::singleton(idx : Int, value : A) -> T[A] {
+pub fn[A] singleton(idx : Int, value : A) -> T[A] {
   { bitset: empty_bitset.add(idx), data: [value] }
 }
 
 ///|
-pub fn[A] T::doubleton(idx1 : Int, value1 : A, idx2 : Int, value2 : A) -> T[A] {
+pub fn[A] doubleton(idx1 : Int, value1 : A, idx2 : Int, value2 : A) -> T[A] {
   {
     bitset: empty_bitset.add(idx1).add(idx2),
     data: if idx1 < idx2 {

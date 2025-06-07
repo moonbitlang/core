@@ -35,14 +35,14 @@ fn[A] join_2(k1 : A, p1 : Path, k2 : A, p2 : Path) -> SpArr[Node[A]] {
     } else {
       Branch(join_2(k1, p1.next(), k2, p2.next()))
     }
-    SpArr::singleton(idx1, n)
+    @sparse_array.singleton(idx1, n)
   } else {
     let (n1, n2) = if p1.is_last() {
       (Leaf(k1, @list.empty()), Leaf(k2, @list.empty()))
     } else {
       (Flat(k1, p1.next()), Flat(k2, p2.next()))
     }
-    SpArr::doubleton(idx1, n1, idx2, n2)
+    @sparse_array.doubleton(idx1, n1, idx2, n2)
   }
 }
 

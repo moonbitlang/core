@@ -28,17 +28,17 @@
 // - <https://lampwww.epfl.ch/papers/idealhashtrees.pdf>
 
 ///|
-pub fn[A] T::new() -> T[A] {
+pub fn[A] new() -> T[A] {
   None
 }
 
 ///|
-pub fn[A : Hash] T::singleton(key : A) -> T[A] {
+pub fn[A : Hash] singleton(key : A) -> T[A] {
   Some(Flat(key, Path::of(key)))
 }
 
 ///|
-pub fn[A : Eq + Hash] T::of(arr : FixedArray[A]) -> T[A] {
+pub fn[A : Eq + Hash] of(arr : FixedArray[A]) -> T[A] {
   match arr {
     [] => None
     [x, ..] => {
@@ -53,7 +53,7 @@ pub fn[A : Eq + Hash] T::of(arr : FixedArray[A]) -> T[A] {
 }
 
 ///|
-pub fn[A : Eq + Hash] T::from_array(arr : Array[A]) -> T[A] {
+pub fn[A : Eq + Hash] from_array(arr : Array[A]) -> T[A] {
   match arr {
     [] => None
     [x, .. xs] =>
@@ -65,9 +65,9 @@ pub fn[A : Eq + Hash] T::from_array(arr : Array[A]) -> T[A] {
 }
 
 ///|
-pub fn[A : Eq + Hash] T::from_iter(iter : Iter[A]) -> T[A] {
-  iter.fold(init=T::new()._, fn {
-    None, key => T::singleton(key)._
+pub fn[A : Eq + Hash] from_iter(iter : Iter[A]) -> T[A] {
+  iter.fold(init=new()._, fn {
+    None, key => singleton(key)._
     Some(node), key => node.add_inplace(key, Path::of(key)) |> Some
   })
 }
@@ -93,7 +93,7 @@ pub fn[A : Eq + Hash] T::contains(self : T[A], key : A) -> Bool {
 ///|
 pub fn[A : Eq + Hash] T::add(self : T[A], key : A) -> T[A] {
   match self._ {
-    None => T::singleton(key)
+    None => singleton(key)
     Some(node) => node.add(key, Path::of(key)) |> Some
   }
 }
@@ -228,16 +228,11 @@ pub impl[A : Eq + Hash + @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[A] w
   size,
   rs
 ) {
-  @quickcheck.Arbitrary::arbitrary(size, rs) |> T::from_iter
+  @quickcheck.Arbitrary::arbitrary(size, rs) |> from_iter
 }
 
 ///|
 pub fnalias T::(
-  new,
-  singleton,
-  of,
-  from_array,
-  from_iter,
   is_empty,
   size,
   contains,
