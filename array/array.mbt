@@ -223,6 +223,83 @@ pub fn[A, B] zip(self : Array[A], other : Array[B]) -> Array[(A, B)] {
   }
 }
 
+///|
+/// Splits an array of pairs into two arrays, separating the first and second elements.
+///
+/// # Example
+/// ```moonbit
+/// test "Array::unzip" {
+///   let arr = [(1, "a"), (2, "b"), (3, "c")]
+///   let (nums, strs) = arr.unzip()
+///   inspect(nums, content="[1, 2, 3]")
+///   inspect(strs, content="[\"a\", \"b\", \"c\"]")
+/// }
+/// ```
+pub fn[T1, T2] unzip(self : Array[(T1, T2)]) -> (Array[T1], Array[T2]) {
+  let arr1 : Array[T1] = Array::new(capacity=self.length())
+  let arr2 : Array[T2] = Array::new(capacity=self.length())
+  for pair in self {
+    let (x, y) = pair
+    arr1.push(x)
+    arr2.push(y)
+  }
+  (arr1, arr2)
+}
+
+///| Maps each element of the array through a function and then unzips the results.
+///
+/// # Example
+/// ```moonbit
+/// test "Array::map_unzip" {
+///   let arr = [1, 2, 3]
+///   let (evens, odds) = arr.map_unzip(fn(x) { (x * 2, x * 2 + 1) })
+///   inspect(evens, content="[2, 4, 6]")
+///   inspect(odds, content="[3, 5, 7]")
+/// }
+/// ```
+pub fn[T, T1, T2] map_unzip(
+  self : Array[T],
+  f : (T) -> (T1, T2)
+) -> (Array[T1], Array[T2]) {
+  let arr1 : Array[T1] = Array::new(capacity=self.length())
+  let arr2 : Array[T2] = Array::new(capacity=self.length())
+  for x in self {
+    let (y1, y2) = f(x)
+    arr1.push(y1)
+    arr2.push(y2)
+  }
+  (arr1, arr2)
+}
+
+///|
+/// Maps each element of the array through a function and then unzips the results into three arrays.
+///
+/// # Example
+/// ```moonbit
+/// test "Array::map_unzip3" {
+///   let arr = [1, 2, 3]
+///   let (a, b, c) = arr.map_unzip3(fn(x) { (x, x * 2, x * 3) })
+///   inspect(a, content="[1, 2, 3]")
+///   inspect(b, content="[2, 4, 6]")
+///   inspect(c, content="[3, 6, 9]")
+/// }
+/// ```
+pub fn[T, T1, T2, T3] map_unzip3(
+  self : Array[T],
+  f : (T) -> (T1, T2, T3)
+) -> (Array[T1], Array[T2], Array[T3]) {
+  let arr1 : Array[T1] = Array::new(capacity=self.length())
+  let arr2 : Array[T2] = Array::new(capacity=self.length())
+  let arr3 : Array[T3] = Array::new(capacity=self.length())
+  for x in self {
+    let (y1, y2, y3) = f(x)
+    arr1.push(y1)
+    arr2.push(y2)
+    arr3.push(y3)
+  }
+  (arr1, arr2, arr3)
+}
+
 ///| 
 /// Zips two arrays into a single array by applying a function to each pair of elements.
 ///
