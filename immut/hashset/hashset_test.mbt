@@ -13,6 +13,15 @@
 // limitations under the License.
 
 ///|
+priv type MyInt Int derive(Eq)
+
+///|
+impl Hash for MyInt with hash_combine(self, hasher) {
+  // To create hash collisions, only use the lowest 8 bits
+  (self._ & 0xff).hash_combine(hasher)
+}
+
+///|
 test "Set" {
   let map = loop (0, @hashset.new()) {
     (100, map) => map
@@ -21,9 +30,9 @@ test "Set" {
   for i in 0..<100 {
     assert_eq((i, map.contains(i)), (i, true))
   }
-  inspect((100, map.contains(100)), content="(100, false)")
+  assert_false(map.contains(100))
   let map = map.add(100)
-  inspect((100, map.contains(100)), content="(100, true)")
+  assert_true(map.contains(100))
 }
 
 ///|
@@ -52,6 +61,22 @@ test "@hashset.remove" {
     assert_eq(map.contains(i), false)
     assert_eq(map.contains(i + 1), true)
   }
+  let empty = @hashset.new()
+  assert_eq(empty.remove(1), empty)
+}
+
+///|
+test "@hashset.remove when collision" {
+  let set : T[MyInt] = of([0x000, 0x100, 0x200, 0x300])
+  assert_eq(set.size(), 4)
+  let set = set.remove(0x000)
+  assert_eq(set.size(), 3)
+  let set = set.remove(0x100)
+  assert_eq(set.size(), 2)
+  let set = set.remove(0x300)
+  assert_eq(set.size(), 1)
+  let set = set.remove(0x200)
+  assert_eq(set.size(), 0)
 }
 
 ///|
@@ -71,18 +96,18 @@ test "@hashset.to_string" {
 ///|
 test "@hashset.from_array" {
   let set = @hashset.of(["1", "2", "42"])
-  inspect(set.contains("1"), content="true")
-  inspect(set.contains("2"), content="true")
-  inspect(set.contains("42"), content="true")
-  inspect(set.contains("43"), content="false")
+  assert_true(set.contains("1"))
+  assert_true(set.contains("2"))
+  assert_true(set.contains("42"))
+  assert_false(set.contains("43"))
 }
 
 ///|
 test "@hashset.is_empty" {
   let set = @hashset.new()
-  inspect(set.is_empty(), content="true")
+  assert_true(set.is_empty())
   let set = set.add(1)
-  inspect(set.is_empty(), content="false")
+  assert_false(set.is_empty())
 }
 
 ///|
@@ -100,15 +125,15 @@ test "@hashset.size" {
 ///|
 test "@hashset.is_empty" {
   let set = @hashset.new()
-  assert_eq(set.is_empty(), true)
+  assert_true(set.is_empty())
   let set = set.add(1)
-  assert_eq(set.is_empty(), false)
+  assert_false(set.is_empty())
   let set = set.remove(1)
-  assert_eq(set.is_empty(), true)
+  assert_true(set.is_empty())
 }
 
 ///|
-test "@hashset.iter" {
+test "@hashset.each" {
   let set = @hashset.new().add(1).add(2).add(3)
   let result = []
   set.each(fn { x => result.push(x) })
@@ -149,23 +174,23 @@ test "each on empty set" {
   let s = @hashset.new()
   let mut count = 0
   s.each(fn(_x : Int) -> Unit { count = count + 1 })
-  inspect(count, content="0")
+  assert_eq(count, 0)
 }
 
 ///|
 test "from_array with empty array" {
   let empty_array : Array[Int] = []
   let set = @hashset.from_array(empty_array)
-  inspect(set.is_empty(), content="true")
+  assert_true(set.is_empty())
 }
 
 ///|
 test "from_array with non-empty array" {
   let array = [1, 2, 3]
   let set = @hashset.from_array(array)
-  inspect(set.contains(1), content="true")
-  inspect(set.contains(2), content="true")
-  inspect(set.contains(3), content="true")
+  assert_true(set.contains(1))
+  assert_true(set.contains(2))
+  assert_true(set.contains(3))
   inspect(set.size(), content="3")
 }
 
@@ -186,10 +211,21 @@ test "from_array - non-empty array" {
 test "hashset equality" {
   let set1 = @hashset.of([1, 2])
   let set2 = @hashset.of([2, 1])
-  inspect(set1 == set2, content="true")
+  let set3 = @hashset.of([2, 1, 3])
+  assert_eq(set1, set2)
+  assert_not_eq(set1, set3)
   let empty1 : @hashset.T[Unit] = @hashset.new()
   let empty2 : @hashset.T[Unit] = @hashset.new()
-  inspect(empty1 == empty2, content="true")
+  assert_eq(empty1, empty2)
+}
+
+///|
+test "hashset hash" {
+  let set1 = @hashset.of([1, 2])
+  let set2 = @hashset.of([2, 1])
+  let set3 = @hashset.of([2, 1, 3])
+  assert_eq(set1.hash(), set2.hash())
+  assert_not_eq(set1.hash(), set3.hash())
 }
 
 ///|
@@ -210,44 +246,11 @@ test "equal between different constructors" {
 }
 
 ///|
-test "union 2 hashsets" {
-  let set1 = @hashset.of([1, 2, 3])
-  let set2 = @hashset.of([3, 4, 5])
-  let set3 = set1.union(set2)
-  let set4 = @hashset.of([1, 2, 3, 4, 5])
-  inspect(set3 == set4, content="true")
-}
-
-///|
-test "@hashset.intersection with overlapping sets" {
-  let set1 = @hashset.of([1, 2, 3, 4])
-  let set2 = @hashset.of([3, 4, 5, 6])
-  let result = set1.intersection(set2)
-  inspect(result, content="@immut/hashset.of([3, 4])")
-}
-
-///|
 test "@hashset.intersection with disjoint sets" {
   let set1 = @hashset.of([1, 2])
   let set2 = @hashset.of([3, 4])
   let result = set1.intersection(set2)
-  inspect(result.is_empty(), content="true")
-}
-
-///|
-test "@hashset.intersection with one empty set" {
-  let set1 = @hashset.of([1, 2, 3])
-  let set2 = @hashset.new()
-  let result = set1.intersection(set2)
-  inspect(result.is_empty(), content="true")
-}
-
-///|
-test "@hashset.intersection with identical sets" {
-  let set1 = @hashset.of([1, 2, 3])
-  let set2 = @hashset.of([1, 2, 3])
-  let result = set1.intersection(set2)
-  inspect(result == set1, content="true")
+  assert_true(result.is_empty())
 }
 
 ///|
@@ -255,5 +258,60 @@ test "@hashset.intersection with subset" {
   let set1 = @hashset.of([1, 2, 3, 4])
   let set2 = @hashset.of([2, 3])
   let result = set1.intersection(set2)
-  inspect(result == @hashset.of([2, 3]), content="true")
+  assert_eq(result, @hashset.of([2, 3]))
+}
+
+///|
+fn make_test_data() -> (T[MyInt], T[MyInt]) {
+  let collisions_0 = (1).until(3000, step=0x100)
+  let collisions_11 = (2).until(3000, step=0x100)
+  let collisions_12 = (2).until(1000, step=0x100)
+  let i1 = (0).until(200) + collisions_0 + collisions_11
+  let i2 = (-200).until(100) + collisions_0 + collisions_12
+  let t1 = from_iter(i1.map(MyInt(_)))
+  let t2 = from_iter(i2.map(MyInt(_)))
+  (t1, t2)
+}
+
+///|
+test "union" {
+  let (a, b) = make_test_data()
+  let empty = new()
+  assert_true(a.union(a) == a)
+  assert_true(a.union(empty) == a)
+  assert_true(empty.union(a) == a)
+  let c = a.union(b)
+  assert_true(a.iter().all(c.contains(_)))
+  assert_true(b.iter().all(c.contains(_)))
+  assert_true(c.iter().all(fn(k) { a.contains(k) || b.contains(k) }))
+}
+
+///|
+test "intersection" {
+  let (a, b) = make_test_data()
+  let empty = new()
+  assert_true(a.intersection(a) == a)
+  assert_true(a.intersection(empty).is_empty())
+  assert_true(empty.intersection(a).is_empty())
+  let c = a.intersection(b)
+  assert_true(a.iter().all(fn(k) { b.contains(k) == c.contains(k) }))
+  assert_true(b.iter().all(fn(k) { a.contains(k) == c.contains(k) }))
+  assert_true(c.iter().all(fn(k) { a.contains(k) && b.contains(k) }))
+}
+
+///|
+test "difference" {
+  let (a, b) = make_test_data()
+  let empty = new()
+  assert_true(a.difference(a).is_empty())
+  assert_true(a.difference(empty) == a)
+  assert_true(empty.difference(a).is_empty())
+  let adb = a.difference(b)
+  assert_true(a.iter().all(fn(k) { b.contains(k) != adb.contains(k) }))
+  assert_true(b.iter().all(fn(k) { not(adb.contains(k)) }))
+  assert_true(adb.iter().all(fn(k) { a.contains(k) && not(b.contains(k)) }))
+  let bda = b.difference(a)
+  assert_true(b.iter().all(fn(k) { a.contains(k) != bda.contains(k) }))
+  assert_true(a.iter().all(fn(k) { not(bda.contains(k)) }))
+  assert_true(bda.iter().all(fn(k) { b.contains(k) && not(a.contains(k)) }))
 }
