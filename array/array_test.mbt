@@ -642,6 +642,55 @@ test "zip" {
 }
 
 ///|
+test "unzip" {
+  // Test with a non-empty array of tuples
+  let arr = [(1, "a"), (2, "b"), (3, "c")]
+  let (nums, strs) = arr.unzip()
+  assert_eq(nums, [1, 2, 3])
+  assert_eq(strs, ["a", "b", "c"])
+
+  // Test with an empty array
+  let empty : Array[(Int, String)] = []
+  let (e1, e2) = empty.unzip()
+  assert_eq(e1, [])
+  assert_eq(e2, [])
+}
+
+///|
+test "map_unzip" {
+  // Test with a non-empty array of Ints
+  let arr = [1, 2, 3]
+  let (original, doubled) = arr.map_unzip(fn(x) { (x, x * 2) })
+  assert_eq(original, [1, 2, 3])
+  assert_eq(doubled, [2, 4, 6])
+
+  // Test with a empty array
+  let empty : Array[Int] = []
+  let (e1, e2) = empty.map_unzip(fn(x) { (x, x * 2) })
+  assert_eq(e1, [])
+  assert_eq(e2, [])
+}
+
+///|
+test "map_unzip3" {
+  // Test with a non-empty array of Ints
+  let arr2 = [0, 1]
+  let (bools, strs, ints) = arr2.map_unzip3(fn(x) {
+    (x % 2 == 0, x.to_string(), x * 2)
+  })
+  assert_eq(bools, [true, false])
+  assert_eq(strs, ["0", "1"])
+  assert_eq(ints, [0, 2])
+
+  // Test with an empty array
+  let empty : Array[Int] = []
+  let (e1, e2, e3) = empty.map_unzip3(fn(x) { (x, x * 2, x + 100) })
+  assert_eq(e1, [])
+  assert_eq(e2, [])
+  assert_eq(e3, [])
+}
+
+///|
 test "zip_with" {
   // Test with two non-empty arrays and a function
   let arr1 = [1, 2, 3]
