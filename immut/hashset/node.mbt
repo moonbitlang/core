@@ -174,15 +174,12 @@ fn[A] Node::iter(self : Node[A]) -> Iter[A] {
             continue k2, tail
           }
         }
-      Branch(sa) => {
-        let data = sa.data
-        let len_1 = sa.data.length() - 1
-        for i in 0..<len_1 {
-          guard go(sa.data[i]) is IterContinue else { return IterEnd }
+      Branch({ data: children }) =>
+        for c in children {
+          guard go(c) is IterContinue else { return IterEnd }
         } else {
-          go(data[len_1])
+          IterContinue
         }
-      }
     }
 
     go(self)
@@ -215,7 +212,7 @@ impl[A : Hash] Hash for Node[A] with hash_combine(self, hasher) {
       // However, all elements in the same `Leaf` have almost identical hashes
       // which requires further discussion.
       hasher.combine_int(r.fold(init=k.hash(), fn(acc, x) { acc ^ x.hash() }))
-    Branch(sa) => sa.data.each(go)
+    Branch({ data: children }) => children.each(go)
   }
 
   go(self)

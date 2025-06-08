@@ -119,7 +119,7 @@ pub fn[A] T::each(self : T[A], f : (A) -> Unit) -> Unit {
 ///|
 /// Combine two sparse arrays into one.
 pub fn[A] T::union(self : T[A], other : T[A], f : (A, A) -> A) -> T[A] {
-  let union_bitset : Bitset = self.bitset._ | other.bitset._
+  let union_bitset = self.bitset.union(other.bitset)
   let data = FixedArray::make(union_bitset.size(), self.data[0])
   for rest = union_bitset, index = 0; rest != 0; {
     let idx = rest.fitst_idx()
@@ -147,7 +147,7 @@ fn[A] copy_prefix(arr : FixedArray[A], len~ : Int) -> FixedArray[A] {
 ///|
 /// Only keep indices present in both sparse arrays, and merge values with f.
 pub fn[A] T::intersection(self : T[A], other : T[A], f : (A, A) -> A?) -> T[A]? {
-  let inter_bitset : Bitset = self.bitset._ & other.bitset._
+  let inter_bitset = self.bitset.intersection(other.bitset)
   guard inter_bitset != 0 else { return None }
   let data = FixedArray::make(inter_bitset.size(), self.data[0])
   for rest = inter_bitset, index = 0, bitset = inter_bitset; rest != 0; {

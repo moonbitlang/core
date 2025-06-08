@@ -159,7 +159,7 @@ pub fn[A : Eq] T::intersection(self : T[A], other : T[A]) -> T[A] {
       (Branch(asa), Branch(bsa)) =>
         match asa.intersection(bsa, go) {
           None => None
-          Some(sa) if sa.data is [Flat(k, next)] =>
+          Some({ data: [Flat(k, next)] } as sa) =>
             Some(Flat(k, next.push(sa.first_index())))
           Some(sa) => Some(Branch(sa))
         }
@@ -194,7 +194,7 @@ pub fn[A : Eq] T::difference(self : T[A], other : T[A]) -> T[A] {
       (Branch(asa), Branch(bsa)) =>
         match asa.difference(bsa, go) {
           None => None
-          Some(sa) if sa.data is [Flat(k, next)] =>
+          Some({ data: [Flat(k, next)] } as sa) =>
             Some(Flat(k, next.push(sa.first_index())))
           Some(sa) => Some(Branch(sa))
         }
