@@ -13,6 +13,36 @@
 // limitations under the License.
 
 ///|
+/// Retrieves an element at the specified index from a fixed-size array. 
+///
+/// Parameters:
+///
+/// * `array` : The fixed-size array to access.
+/// * `index` : The position in the array from which to retrieve the element.
+///
+/// Returns `Some(element)` if the index is within bounds, or `None` if the index
+/// is out of bounds.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "FixedArray::get" {
+///   let arr : FixedArray[Int] = [1, 2, 3]
+///   inspect!(arr.get(1), content="Some(2)")
+/// }
+///
+/// test "FixedArray::get/out_of_bounds" {
+///   let arr : FixedArray[Int] = [1, 2, 3]
+///   inspect!(arr.get(3), content="None")
+/// }
+/// ```
+pub fn[T] FixedArray::get(self : FixedArray[T], idx : Int) -> T? {
+  let len = self.length()
+  guard idx >= 0 && idx < len else { None }
+  Some(self.unsafe_get(idx))
+}
+
+///|
 ///
 /// Creates an iterator over the elements of a fixed-size array, providing
 /// sequential access to each element.
@@ -247,8 +277,8 @@ pub fn[T : Compare] FixedArray::binary_search(
 #locals(cmp)
 pub fn[T] FixedArray::binary_search_by(
   self : FixedArray[T],
-  cmp : (T) -> Int
-) -> Result[Int, Int] {
+  cmp : (T) -> Int?Error
+) -> Result[Int, Int]?Error {
   let len = self.length()
   for i = 0, j = len; i < j; {
     let h = i + (j - i) / 2

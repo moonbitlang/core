@@ -884,3 +884,19 @@ test "op_equal_key_value_mismatch" {
   // This should return false as the values are different
   assert_eq(map1 == map2, false)
 }
+
+///|
+fn[K : Show, V : Show] Map::debug_entries(self : Map[K, V]) -> String {
+  let buf = StringBuilder::new()
+  for i in 0..<self.entries.length() {
+    if i > 0 {
+      buf.write_char(',')
+    }
+    match self.entries[i] {
+      None => buf.write_char('_')
+      Some({ psl, key, value, .. }) =>
+        buf.write_string("(\{psl},\{key},\{value})")
+    }
+  }
+  buf.to_string()
+}

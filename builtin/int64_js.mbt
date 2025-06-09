@@ -321,10 +321,6 @@ fn MyInt64::to_uint(self : MyInt64) -> UInt {
 }
 
 ///|
-extern "js" fn MyInt64::to_double(self : MyInt64) -> Double =
-  #|(a) => a.hi * 4294967296.0 + (a.lo >>> 0)
-
-///|
 fn MyInt64::extend_i32_u(value : Int) -> MyInt64 {
   { hi: 0, lo: value }
 }
@@ -499,11 +495,6 @@ pub impl Default for Int64 with default() {
 ///|
 pub fn Int64::to_int(self : Int64) -> Int {
   MyInt64::from_int64(self).to_int()
-}
-
-///|
-fn Int64::to_uint(self : Int64) -> UInt {
-  MyInt64::from_int64(self).to_uint()
 }
 
 ///|

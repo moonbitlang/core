@@ -316,21 +316,6 @@ fn[K : Hash + Eq] grow(self : Set[K]) -> Unit {
 // Utils
 
 ///|
-fn[K : Show] debug_entries(self : Set[K]) -> String {
-  let buf = StringBuilder::new()
-  for i in 0..<self.entries.length() {
-    if i > 0 {
-      buf.write_char(',')
-    }
-    match self.entries[i] {
-      None => buf.write_char('_')
-      Some({ psl, key, .. }) => buf.write_string("(\{psl},\{key})")
-    }
-  }
-  buf.to_string()
-}
-
-///|
 pub impl[K : Show] Show for Set[K] with output(self, logger) {
   logger.write_string("{")
   loop 0, self.head {

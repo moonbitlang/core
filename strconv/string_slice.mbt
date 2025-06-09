@@ -94,15 +94,6 @@ fn is_empty(self : StringSlice) -> Bool {
 }
 
 ///|
-fn StringSlice::to_string(self : StringSlice) -> String {
-  let buf = StringBuilder::new(size_hint=self.length())
-  for i in 0..<self.length() {
-    buf.write_char(self[i])
-  }
-  buf.to_string()
-}
-
-///|
 fn prefix_eq_ignore_case(self : StringSlice, s2 : String) -> Bool {
   for i = 0; i < s2.length() && i < self.length(); i = i + 1 {
     let c1 = self[i]

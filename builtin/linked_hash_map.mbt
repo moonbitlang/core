@@ -410,22 +410,6 @@ fn calc_grow_threshold(capacity : Int) -> Int {
 // Utils
 
 ///|
-fn[K : Show, V : Show] Map::debug_entries(self : Map[K, V]) -> String {
-  let buf = StringBuilder::new()
-  for i in 0..<self.entries.length() {
-    if i > 0 {
-      buf.write_char(',')
-    }
-    match self.entries[i] {
-      None => buf.write_char('_')
-      Some({ psl, key, value, .. }) =>
-        buf.write_string("(\{psl},\{key},\{value})")
-    }
-  }
-  buf.to_string()
-}
-
-///|
 pub impl[K : Show, V : Show] Show for Map[K, V] with output(self, logger) {
   logger.write_string("{")
   loop 0, self.head {
@@ -461,7 +445,10 @@ pub fn[K, V] Map::is_empty(self : Map[K, V]) -> Bool {
 ///|
 /// Iterate over all key-value pairs of the map in the order of insertion.
 #locals(f)
-pub fn[K, V] Map::each(self : Map[K, V], f : (K, V) -> Unit) -> Unit {
+pub fn[K, V] Map::each(
+  self : Map[K, V],
+  f : (K, V) -> Unit?Error
+) -> Unit?Error {
   loop self.head {
     Some({ key, value, next, .. }) => {
       f(key, value)
@@ -474,7 +461,10 @@ pub fn[K, V] Map::each(self : Map[K, V], f : (K, V) -> Unit) -> Unit {
 ///|
 /// Iterate over all key-value pairs of the map in the order of insertion, with index.
 #locals(f)
-pub fn[K, V] Map::eachi(self : Map[K, V], f : (Int, K, V) -> Unit) -> Unit {
+pub fn[K, V] Map::eachi(
+  self : Map[K, V],
+  f : (Int, K, V) -> Unit?Error
+) -> Unit?Error {
   loop 0, self.head {
     i, Some({ key, value, next, .. }) => {
       f(i, key, value)
