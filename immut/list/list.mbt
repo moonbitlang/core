@@ -772,10 +772,12 @@ pub fn[A, S] unfold(f : (S) -> (A, S)?, init~ : S) -> T[A] {
 /// assert_eq(r, @list.of([1, 2, 3]))
 /// ```
 pub fn[A] take(self : T[A], n : Int) -> T[A] {
-  fn go {
-    _, Nil => Nil
-    1, Cons(x, _) => Cons(x, Nil)
-    n, Cons(x, xs) => Cons(x, go(n - 1, xs))
+  fn go(n, t) {
+    match (n, t) {
+      (_, Nil) => Nil
+      (1, Cons(x, _)) => Cons(x, Nil)
+      (n, Cons(x, xs)) => Cons(x, go(n - 1, xs))
+    }
   }
 
   if n <= 0 {
@@ -797,16 +799,14 @@ pub fn[A] take(self : T[A], n : Int) -> T[A] {
 /// assert_eq(r, @list.of([4, 5]))
 /// ```
 pub fn[A] drop(self : T[A], n : Int) -> T[A] {
-  fn go {
-    _, Nil => Nil
-    1, Cons(_, xs) => xs
-    n, Cons(_, xs) => go(n - 1, xs)
-  }
-
   if n <= 0 {
     self
   } else {
-    go(n, self)
+    loop n, self {
+      _, Nil => Nil
+      1, Cons(_, xs) => xs
+      n, Cons(_, xs) => continue n - 1, xs
+    }
   }
 }
 

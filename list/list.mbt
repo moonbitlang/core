@@ -902,16 +902,14 @@ pub fn[A] take(self : T[A], n : Int) -> T[A] {
 /// assert_eq(r, @list.of([4, 5]))
 /// ```
 pub fn[A] drop(self : T[A], n : Int) -> T[A] {
-  fn go {
-    _, Empty => Empty
-    1, More(_, tail=xs) => xs
-    n, More(_, tail=xs) => go(n - 1, xs)
-  }
-
   if n <= 0 {
     self
   } else {
-    go(n, self)
+    loop n, self {
+      _, Empty => Empty
+      1, More(_, tail=xs) => xs
+      n, More(_, tail=xs) => continue n - 1, xs
+    }
   }
 }
 
