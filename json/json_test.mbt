@@ -613,7 +613,7 @@ test "BigInt from_json with invalid input" {
   inspect(
     result,
     content=
-      #|Err(JsonDecodeError(($, "BigInt::from_json: expected number")))
+      #|Err(JsonDecodeError(($, "BigInt::from_json: expected number in string representation")))
     ,
   )
 }
