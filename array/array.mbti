@@ -84,6 +84,9 @@ fn[T : Compare] Array::sort(Self[T]) -> Unit
 fn[T] Array::sort_by(Self[T], (T, T) -> Int) -> Unit
 fn[T, K : Compare] Array::sort_by_key(Self[T], (T) -> K) -> Unit
 fn[A, B] Array::zip(Self[A], Self[B]) -> Self[(A, B)]
+fn[T1, T2] Array::unzip(self: Array[(T1, T2)]) -> (Array[T1], Array[T2])
+pub fn[T, T1, T2] Array::map_unzip(self: Array[T], f: (T) -> (T1, T2)) -> (Array[T1], Array[T2])
+pub fn[T, T1, T2, T3] Array::map_unzip3(self: Array[T], f: (T) -> (T1, T2, T3)) -> (Array[T1], Array[T2], Array[T3])
 fn[A, B] Array::zip_to_iter2(Self[A], Self[B]) -> Iter2[A, B]
 impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Array[X]
 
