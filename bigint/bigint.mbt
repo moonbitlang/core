@@ -45,8 +45,11 @@ pub impl ToJson for BigInt with to_json(self : BigInt) -> Json {
 ///|
 pub impl @json.FromJson for BigInt with from_json(json, path) {
   guard json is String(s) else {
-    raise @json.JsonDecodeError((path, "BigInt::from_json: expected number"))
+    raise @json.JsonDecodeError(
+      (path, "BigInt::from_json: expected number in string representation"),
+    )
   }
+  // TODO: Capture parse failure
   BigInt::from_string(s)
 }
 

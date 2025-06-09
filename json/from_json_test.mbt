@@ -637,7 +637,9 @@ test "BigInt from_json error handling" {
   let result : Result[BigInt, _] = try? @json.from_json(json_number)
   inspect(
     result,
-    content="Err(JsonDecodeError(($, \"BigInt::from_json: expected number\")))",
+    content=
+      #|Err(JsonDecodeError(($, "BigInt::from_json: expected number in string representation")))
+    ,
   )
 }
 
