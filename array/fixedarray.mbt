@@ -1180,8 +1180,8 @@ pub fn[A] FixedArray::last(self : FixedArray[A]) -> A? {
 /// 
 /// ```moonbit
 /// test "FixedArray::join" {
-///   let fixed_array:FixedArray[String]=["1","2","3"]
-///   inspect!(fixed_array.join(","), content="1,2,3")
+///   let fixed_array : FixedArray[String] = ["1", "2", "3"]
+///   inspect(fixed_array.join(","), content="1,2,3")
 /// }
 /// ```
 pub fn FixedArray::join(
