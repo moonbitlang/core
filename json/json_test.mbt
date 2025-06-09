@@ -38,19 +38,17 @@ test "get as bool" {
 }
 
 ///|
-fn check!(x : String) -> Json {
+fn _check!(x : String) -> Json {
   @json.parse(x)
 }
 
 ///|
-fn check2!(x : String) -> Json!@json.ParseError {
+fn _check2!(x : String) -> Json!@json.ParseError {
   @json.parse(x)
 }
 
 ///|
 test "get as number" {
-  let _ = check
-  let _ = check2
   inspect(Json::null().as_number(), content="None")
   inspect(Json::boolean(false).as_number(), content="None")
   inspect(Json::boolean(true).as_number(), content="None")
@@ -197,32 +195,28 @@ test "deep access" {
     "bool": false,
     "obj": {},
   }
-  inspect(json.value("null").bind(Json::as_null), content="Some(())")
+  inspect(json.value("null").bind(_.as_null()), content="Some(())")
   inspect(
-    json.value("key").bind(fn { array => array.item(2) }).bind(Json::as_null),
+    json.value("key").bind(_.item(2)).bind(_.as_null()),
     content="Some(())",
   )
-  inspect(json.value("bool").bind(Json::as_bool), content="Some(false)")
+  inspect(json.value("bool").bind(_.as_bool()), content="Some(false)")
   inspect(
-    json.value("key").bind(fn { array => array.item(1) }).bind(Json::as_bool),
+    json.value("key").bind(_.item(1)).bind(_.as_bool()),
     content="Some(true)",
   )
   inspect(
-    json.value("key").bind(Json::as_array),
+    json.value("key").bind(_.as_array()),
     content=
       #|Some([Number(1), True, Null, Array([]), Object({"key": String("value"), "value": Number(100)})])
     ,
   )
   inspect(
-    json.value("key").bind(fn { array => array.item(3) }).bind(Json::as_array),
+    json.value("key").bind(_.item(3)).bind(_.as_array()),
     content="Some([])",
   )
   inspect(
-    json
-    .value("key")
-    .bind(fn { array => array.item(4) })
-    .bind(_.as_object())
-    .map(_.to_array()),
+    json.value("key").bind(_.item(4)).bind(_.as_object()).map(_.to_array()),
     content=
       #|Some([("key", String("value")), ("value", Number(100))])
     ,
