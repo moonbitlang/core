@@ -590,3 +590,60 @@ pub fn[K : Hash + Eq, V] Map::from_iter(iter : Iter[(K, V)]) -> Map[K, V] {
 pub impl[K, V] Default for Map[K, V] with default() {
   Map::new()
 }
+
+///|
+/// Filters the map by applying a predicate function to each key-value pair.
+pub fn[K : Hash + Eq, V] Map::filter(
+  self : Map[K, V],
+  pred : (K, V) -> Bool
+) -> Map[K, V] {
+  if self.is_empty() {
+    return Map::new()
+  }
+  let m = Map::new(capacity=self.size)
+  for e in self.iter() {
+    if pred(e.0, e.1) {
+      m.set(e.0, e.1)
+    }
+  }
+  m
+}
+
+///|
+/// Folds the map from an initial value by applying a function to each key-value pair and the accumulator.
+/// The order of folding is not guaranteed.
+pub fn[K : Hash + Eq, V, A] Map::fold(
+  self : Map[K, V],
+  init : A,
+  f : (A, K, V) -> A
+) -> A {
+  if self.is_empty() {
+    return init
+  }
+  let mut acc = init
+  for e in self {
+    acc = f(acc, e.0, e.1)
+  }
+  acc
+}
+
+///|
+/// Partitions the map into two maps based on a predicate function.
+pub fn[K : Hash + Eq, V] Map::partition(
+  self : Map[K, V],
+  pred : (K, V) -> Bool
+) -> (Map[K, V], Map[K, V]) {
+  if self.is_empty() {
+    return (Map::new(), Map::new())
+  }
+  let m1 = Map::new(capacity=self.size)
+  let m2 = Map::new(capacity=self.size)
+  for e in self {
+    if pred(e.0, e.1) {
+      m1.set(e.0, e.1)
+    } else {
+      m2.set(e.0, e.1)
+    }
+  }
+  (m1, m2)
+}
