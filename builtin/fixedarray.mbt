@@ -28,12 +28,12 @@
 /// ```moonbit
 /// test "FixedArray::get" {
 ///   let arr : FixedArray[Int] = [1, 2, 3]
-///   inspect!(arr.get(1), content="Some(2)")
+///   inspect(arr.get(1), content="Some(2)")
 /// }
 ///
 /// test "FixedArray::get/out_of_bounds" {
 ///   let arr : FixedArray[Int] = [1, 2, 3]
-///   inspect!(arr.get(3), content="None")
+///   inspect(arr.get(3), content="None")
 /// }
 /// ```
 pub fn[T] FixedArray::get(self : FixedArray[T], idx : Int) -> T? {

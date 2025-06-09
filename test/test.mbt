@@ -141,7 +141,7 @@ pub fn writeln(self : T, obj : &Show) -> Unit {
 ///  test {
 ///   let t = new("test.txt")
 ///   t.writeln("hello")
-///   t.snapshot!(filename="test.txt") // actual test block end
+///   t.snapshot(filename="test.txt") // actual test block end
 /// }
 /// ```
 ///

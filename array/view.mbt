@@ -415,9 +415,9 @@ pub fn[T] View::to_array(self : View[T]) -> Array[T] {
 ///
 /// ```moonbit
 /// test "View::join" {
-///   let a:Array[String]=["1","2","3"]
+///   let a : Array[String] = ["1", "2", "3"]
 ///   let array_view = a[:]
-///   inspect!(array_view.join(","), content="1,2,3")
+///   inspect(array_view.join(","), content="1,2,3")
 /// }
 /// ```
 pub fn View::join(self : ArrayView[String], separator : @string.View) -> String {

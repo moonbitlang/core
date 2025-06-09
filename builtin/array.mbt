@@ -1706,12 +1706,12 @@ pub fn[T] Array::chunk_by(
 /// test "windows" {
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let windows = arr.windows(2)
-///   inspect!(windows, content="[[1, 2], [2, 3], [3, 4], [4, 5]]")
+///   inspect(windows, content="[[1, 2], [2, 3], [3, 4], [4, 5]]")
 /// }
 ///
 /// test "empty_windows" {
-///   let arr : Array[Int] = [1, 2]
-///   inspect!(arr.windows(3), content="[]")
+///   let arr = [1, 2]
+///   inspect(arr.windows(3), content="[]")
 /// }
 /// ```
 pub fn[T] Array::windows(self : Array[T], size : Int) -> Array[ArrayView[T]] {
