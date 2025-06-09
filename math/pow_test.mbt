@@ -152,14 +152,14 @@ test "pow with standard functions" {
   let x_flt : Float = 2.0
   let expected_exp_flt : Float = 7.3890562
   let actual_pow_flt = powf(e_flt, x_flt)
-  assert_true!((actual_pow_flt - expected_exp_flt).abs() < 0.01)
+  assert_true((actual_pow_flt - expected_exp_flt).abs() < 0.01)
 
   // Test sqrt(x) vs. pow(x, 0.5)
   let values_flt : Array[Float] = [4.0, 9.0, 16.0, 25.0]
   for value in values_flt {
     let expected_sqrt_flt = value.sqrt()
     let actual_pow_flt = powf(value, 0.5)
-    assert_true!((actual_pow_flt - expected_sqrt_flt).abs() < 0.01)
+    assert_true((actual_pow_flt - expected_sqrt_flt).abs() < 0.01)
   }
 
   // Test pow(x, y) * pow(x, z) = pow(x, y + z)
@@ -168,12 +168,12 @@ test "pow with standard functions" {
   let z_test_flt : Float = 4.0
   let left_val_flt = powf(x_test_flt, y_test_flt) * powf(x_test_flt, z_test_flt)
   let right_val_flt = powf(x_test_flt, y_test_flt + z_test_flt)
-  assert_true!((left_val_flt - right_val_flt).abs() < 0.01)
+  assert_true((left_val_flt - right_val_flt).abs() < 0.01)
 
   // Test pow(x, y)^z = pow(x, y*z)
   let left_test_flt = powf(powf(x_test_flt, y_test_flt), z_test_flt)
   let right_test_flt = powf(x_test_flt, y_test_flt * z_test_flt)
-  assert_true!((left_test_flt - right_test_flt).abs() < 0.01)
+  assert_true((left_test_flt - right_test_flt).abs() < 0.01)
 }
 
 ///|

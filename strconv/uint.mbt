@@ -86,7 +86,7 @@ pub fn parse_uint64(str : String, base~ : Int = 0) -> UInt64!StrConvError {
 /// Parse a string in the given base (0, 2 to 36), return an UInt number or an error.
 /// If the `~base` argument is 0, the base will be inferred by the prefix.
 pub fn parse_uint(str : String, base~ : Int = 0) -> UInt!StrConvError {
-  let n = parse_uint64!(str, base~)
+  let n = parse_uint64(str, base~)
   if n > UINT_MAX.to_uint64() {
     range_err()
   }
@@ -117,7 +117,7 @@ test "parse_uint64" {
   for i in 0..<tests.length() {
     let t = tests[i]
     assert_eq(
-      try Result::Ok(parse_uint64!(t.0)) catch {
+      try Result::Ok(parse_uint64(t.0)) catch {
         StrConvError(err) => Err(err)
       },
       t.1,
@@ -215,7 +215,7 @@ test "parse_uint64_base" {
   for i in 0..<tests.length() {
     let t = tests[i]
     assert_eq(
-      try Result::Ok(parse_uint64!(t.0, base=t.1)) catch {
+      try Result::Ok(parse_uint64(t.0, base=t.1)) catch {
         StrConvError(err) => Err(err)
       },
       t.2,
@@ -260,6 +260,6 @@ test "parse_uint" {
 
 ///|
 test "parse_uint64 uppercase hex and invalid base" {
-  inspect(parse_uint64?("ABCD", base=16), content="Ok(43981)")
-  inspect(parse_uint64?("1234", base=37), content="Err(invalid base)")
+  inspect(try? parse_uint64("ABCD", base=16), content="Ok(43981)")
+  inspect(try? parse_uint64("1234", base=37), content="Err(invalid base)")
 }

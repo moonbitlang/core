@@ -294,7 +294,7 @@ test "tanf function comprehensive" {
   let pi_2 = pi / 2.0
   let close_to_singularity = pi_2 - 0.01
   let result = @math.tanf(close_to_singularity)
-  assert_true!(result > 0.0)
+  assert_true(result > 0.0)
 
   // Testing extreme values
   assert_true(@math.tanf(10.0).is_close(0.6483607888221741))
