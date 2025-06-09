@@ -114,7 +114,7 @@ pub fn[T : Show] is_not(a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
 ///  
 /// Produces an error message similar to @builtin.fail.
 pub fn[T] fail(msg : String, loc~ : SourceLoc = _) -> T! {
-  @builtin.fail!(msg, loc~)
+  @builtin.fail(msg, loc~)
 }
 
 ///|

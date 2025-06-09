@@ -53,9 +53,9 @@ fn check_and_consume_base(
 
 ///|
 test {
-  inspect(parse_int64?("0b01", base=3), content="Err(invalid syntax)")
-  inspect(parse_int64?("0x01", base=3), content="Err(invalid syntax)")
-  inspect(parse_int64?("0o01", base=3), content="Err(invalid syntax)")
+  inspect(try? parse_int64("0b01", base=3), content="Err(invalid syntax)")
+  inspect(try? parse_int64("0x01", base=3), content="Err(invalid syntax)")
+  inspect(try? parse_int64("0o01", base=3), content="Err(invalid syntax)")
 }
 
 ///|
@@ -133,7 +133,7 @@ pub fn parse_int64(str : String, base~ : Int = 0) -> Int64!StrConvError {
 /// Parse a string in the given base (0, 2 to 36), return a Int number or an error.
 /// If the `~base` argument is 0, the base will be inferred by the prefix.
 pub fn parse_int(str : String, base~ : Int = 0) -> Int!StrConvError {
-  let n = parse_int64!(str, base~)
+  let n = parse_int64(str, base~)
   if n < INT_MIN.to_int64() || n > INT_MAX.to_int64() {
     range_err()
   }
@@ -279,7 +279,7 @@ test "parse_int64" {
   for i in 0..<tests.length() {
     let t = tests[i]
     assert_eq(
-      try Result::Ok(parse_int64!(t.0)) catch {
+      try Result::Ok(parse_int64(t.0)) catch {
         StrConvError(err) => Err(err)
       },
       t.1,
@@ -397,7 +397,7 @@ test "parse_int64_base" {
   for i in 0..<tests.length() {
     let t = tests[i]
     assert_eq(
-      try Result::Ok(parse_int64!(t.0, base=t.1)) catch {
+      try Result::Ok(parse_int64(t.0, base=t.1)) catch {
         StrConvError(err) => Err(err)
       },
       t.2,

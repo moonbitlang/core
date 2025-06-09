@@ -35,7 +35,7 @@ pub impl FromStr for Int with from_string(str) {
 
 ///|
 pub impl FromStr for Int64 with from_string(str) {
-  parse_int64!(str)
+  parse_int64(str)
 }
 
 ///|
@@ -45,7 +45,7 @@ pub impl FromStr for UInt with from_string(str) {
 
 ///|
 pub impl FromStr for UInt64 with from_string(str) {
-  parse_uint64!(str)
+  parse_uint64(str)
 }
 
 ///|

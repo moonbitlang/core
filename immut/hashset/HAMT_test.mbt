@@ -223,7 +223,7 @@ test "@hashset.intersection with overlapping sets" {
   let set1 = @hashset.of([1, 2, 3, 4])
   let set2 = @hashset.of([3, 4, 5, 6])
   let result = set1.intersection(set2)
-  inspect!(result, content="@immut/hashset.of([3, 4])")
+  inspect(result, content="@immut/hashset.of([3, 4])")
 }
 
 ///|
@@ -231,7 +231,7 @@ test "@hashset.intersection with disjoint sets" {
   let set1 = @hashset.of([1, 2])
   let set2 = @hashset.of([3, 4])
   let result = set1.intersection(set2)
-  inspect!(result.is_empty(), content="true")
+  inspect(result.is_empty(), content="true")
 }
 
 ///|
@@ -239,7 +239,7 @@ test "@hashset.intersection with one empty set" {
   let set1 = @hashset.of([1, 2, 3])
   let set2 = @hashset.new()
   let result = set1.intersection(set2)
-  inspect!(result.is_empty(), content="true")
+  inspect(result.is_empty(), content="true")
 }
 
 ///|
@@ -247,7 +247,7 @@ test "@hashset.intersection with identical sets" {
   let set1 = @hashset.of([1, 2, 3])
   let set2 = @hashset.of([1, 2, 3])
   let result = set1.intersection(set2)
-  inspect!(result == set1, content="true")
+  inspect(result == set1, content="true")
 }
 
 ///|
@@ -255,5 +255,5 @@ test "@hashset.intersection with subset" {
   let set1 = @hashset.of([1, 2, 3, 4])
   let set2 = @hashset.of([2, 3])
   let result = set1.intersection(set2)
-  inspect!(result == @hashset.of([2, 3]), content="true")
+  inspect(result == @hashset.of([2, 3]), content="true")
 }
