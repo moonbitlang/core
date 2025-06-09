@@ -584,3 +584,28 @@ pub fn[K : Hash + Eq, V] Map::from_iter(iter : Iter[(K, V)]) -> Map[K, V] {
 pub impl[K, V] Default for Map[K, V] with default() {
   Map::new()
 }
+
+///|
+/// Applies a function to each key-value pair in the map and returns a new map with the results.
+pub fn[K : Hash + Eq, V, V2] Map::map(
+  self : Map[K, V],
+  f : (V) -> V2
+) -> Map[K, V2] {
+  self.map_with_key(fn(_, v) { f(v) })
+}
+
+///|
+/// Applies a function to each key-value pair in the map and returns a new map with the results, using the original keys.
+pub fn[K : Hash + Eq, V, V2] Map::map_with_key(
+  self : Map[K, V],
+  f : (K, V) -> V2
+) -> Map[K, V2] {
+  if self.is_empty() {
+    return Map::new()
+  }
+  let m = Map::new(capacity=self.size)
+  for e in self.iter() {
+    m.set(e.0, f(e.0, e.1))
+  }
+  m
+}
