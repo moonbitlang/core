@@ -19,16 +19,18 @@
 ///|
 pub fn[A] iter(self : T[A]) -> Iter[A] {
   Iter::new(fn(yield_) {
-    fn go {
-      Empty => IterContinue
-      Node(left~, right~, value~, ..) =>
-        if go(left) is IterEnd {
-          IterEnd
-        } else if yield_(value) is IterEnd {
-          IterEnd
-        } else {
-          go(right)
-        }
+    fn go(t) {
+      match t {
+        Empty => IterContinue
+        Node(left~, right~, value~, ..) =>
+          if go(left) is IterEnd {
+            IterEnd
+          } else if yield_(value) is IterEnd {
+            IterEnd
+          } else {
+            go(right)
+          }
+      }
     }
 
     go(self)
