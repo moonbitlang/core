@@ -268,6 +268,8 @@ fn[K, V] Map::is_empty(Self[K, V]) -> Bool
 fn[K, V] Map::iter(Self[K, V]) -> Iter[(K, V)]
 fn[K, V] Map::iter2(Self[K, V]) -> Iter2[K, V]
 fn[K, V] Map::keys(Self[K, V]) -> Iter[K]
+fn[K : Hash + Eq, V, V2] Map::map(Self[K, V], (V) -> V2) -> Self[K, V2]
+fn[K : Hash + Eq, V, V2] Map::map_with_key(Self[K, V], (K, V) -> V2) -> Self[K, V2]
 fn[K, V] Map::new(capacity~ : Int = ..) -> Self[K, V]
 fn[K : Hash + Eq, V] Map::of(FixedArray[(K, V)]) -> Self[K, V]
 #deprecated
