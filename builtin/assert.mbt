@@ -47,9 +47,14 @@ fn[T : Show] debug_string(t : T) -> String {
 /// }
 /// ```
 #coverage.skip
-pub fn[T : Eq + Show] assert_eq(a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
+pub fn[T : Eq + Show] assert_eq(
+  a : T,
+  b : T,
+  fail_msg~ : String = "`\{debug_string(a)} != \{debug_string(b)}`",
+  loc~ : SourceLoc = _
+) -> Unit! {
   if a != b {
-    fail("`\{a} != \{b}`", loc~)
+    fail(fail_msg, loc~)
   }
 }
 
@@ -83,12 +88,11 @@ pub fn[T : Eq + Show] assert_eq(a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
 pub fn[T : Eq + Show] assert_not_eq(
   a : T,
   b : T,
+  fail_msg~ : String = "`\{debug_string(a)} == \{debug_string(b)}`",
   loc~ : SourceLoc = _
 ) -> Unit! {
   if not(a != b) {
-    let a = debug_string(a)
-    let b = debug_string(b)
-    fail("`\{a} == \{b}`", loc~)
+    fail(fail_msg, loc~)
   }
 }
 
@@ -117,9 +121,13 @@ pub fn[T : Eq + Show] assert_not_eq(
 /// }
 /// ```
 #coverage.skip
-pub fn assert_true(x : Bool, loc~ : SourceLoc = _) -> Unit! {
+pub fn assert_true(
+  x : Bool,
+  fail_msg~ : String = "`\{x}` is not true",
+  loc~ : SourceLoc = _
+) -> Unit! {
   if not(x) {
-    fail("`\{x}` is not true", loc~)
+    fail(fail_msg, loc~)
   }
 }
 
@@ -149,9 +157,12 @@ pub fn assert_true(x : Bool, loc~ : SourceLoc = _) -> Unit! {
 /// }
 /// ```
 #coverage.skip
-pub fn assert_false(x : Bool, loc~ : SourceLoc = _) -> Unit! {
+pub fn assert_false(
+  x : Bool,
+  fail_msg~ : String = "`\{x}` is not false",
+  loc~ : SourceLoc = _
+) -> Unit! {
   if x {
-    let x = debug_string(x)
-    fail("`\{x}` is not false", loc~)
+    fail(fail_msg, loc~)
   }
 }
