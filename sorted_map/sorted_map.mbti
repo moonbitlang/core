@@ -11,9 +11,9 @@ fn[K, V] clear(T[K, V]) -> Unit
 
 fn[K : Compare, V] contains(T[K, V], K) -> Bool
 
-fn[K, V] each(T[K, V], (K, V) -> Unit) -> Unit
+fn[K, V] each(T[K, V], (K, V) -> Unit?Error) -> Unit?Error
 
-fn[K, V] eachi(T[K, V], (Int, K, V) -> Unit) -> Unit
+fn[K, V] eachi(T[K, V], (Int, K, V) -> Unit?Error) -> Unit?Error
 
 fn[K : Compare, V] from_array(Array[(K, V)]) -> T[K, V]
 
@@ -54,8 +54,8 @@ type T[K, V]
 fn[K : Compare, V] T::add(Self[K, V], K, V) -> Unit
 fn[K, V] T::clear(Self[K, V]) -> Unit
 fn[K : Compare, V] T::contains(Self[K, V], K) -> Bool
-fn[K, V] T::each(Self[K, V], (K, V) -> Unit) -> Unit
-fn[K, V] T::eachi(Self[K, V], (Int, K, V) -> Unit) -> Unit
+fn[K, V] T::each(Self[K, V], (K, V) -> Unit?Error) -> Unit?Error
+fn[K, V] T::eachi(Self[K, V], (Int, K, V) -> Unit?Error) -> Unit?Error
 fn[K : Compare, V] T::get(Self[K, V], K) -> V?
 fn[K, V] T::is_empty(Self[K, V]) -> Bool
 fn[K, V] T::iter(Self[K, V]) -> Iter[(K, V)]
