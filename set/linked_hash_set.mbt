@@ -355,7 +355,7 @@ pub fn[K] is_empty(self : Set[K]) -> Bool {
 
 ///|
 /// Iterate over all keys of the set in the order of insertion.
-pub fn[K] each(self : Set[K], f : (K) -> Unit) -> Unit {
+pub fn[K] each(self : Set[K], f : (K) -> Unit?Error) -> Unit?Error {
   loop self.head {
     Some({ key, idx, .. }) => {
       f(key)
@@ -367,7 +367,7 @@ pub fn[K] each(self : Set[K], f : (K) -> Unit) -> Unit {
 
 ///|
 /// Iterate over all keys of the set in the order of insertion, with index.
-pub fn[K] eachi(self : Set[K], f : (Int, K) -> Unit) -> Unit {
+pub fn[K] eachi(self : Set[K], f : (Int, K) -> Unit?Error) -> Unit?Error {
   loop 0, self.head {
     i, Some({ key, idx, .. }) => {
       f(i, key)
