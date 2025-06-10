@@ -642,6 +642,21 @@ test "zip" {
 }
 
 ///|
+test "unzip" {
+  // Test with a non-empty array of tuples
+  let arr = [(1, "a"), (2, "b"), (3, "c")]
+  let (nums, strs) = arr.unzip()
+  assert_eq(nums, [1, 2, 3])
+  assert_eq(strs, ["a", "b", "c"])
+
+  // Test with an empty array
+  let empty : Array[(Int, String)] = []
+  let (e1, e2) = empty.unzip()
+  assert_eq(e1, [])
+  assert_eq(e2, [])
+}
+
+///|
 test "zip_with" {
   // Test with two non-empty arrays and a function
   let arr1 = [1, 2, 3]

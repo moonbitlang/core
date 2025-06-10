@@ -223,6 +223,29 @@ pub fn[A, B] zip(self : Array[A], other : Array[B]) -> Array[(A, B)] {
   }
 }
 
+///|
+/// Splits an array of pairs into two arrays, separating the first and second elements.
+///
+/// # Example
+/// ```moonbit
+/// test "Array::unzip" {
+///   let arr = [(1, "a"), (2, "b"), (3, "c")]
+///   let (nums, strs) = arr.unzip()
+///   inspect(nums, content="[1, 2, 3]")
+///   inspect(strs, content="[\"a\", \"b\", \"c\"]")
+/// }
+/// ```
+pub fn[T1, T2] unzip(self : Array[(T1, T2)]) -> (Array[T1], Array[T2]) {
+  let arr1 : Array[T1] = Array::new(capacity=self.length())
+  let arr2 : Array[T2] = Array::new(capacity=self.length())
+  for pair in self {
+    let (x, y) = pair
+    arr1.push(x)
+    arr2.push(y)
+  }
+  (arr1, arr2)
+}
+
 ///| 
 /// Zips two arrays into a single array by applying a function to each pair of elements.
 ///
