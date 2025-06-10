@@ -108,6 +108,7 @@ pub fn[T] Iter::eachi(self : Iter[T], f : (Int, T) -> Unit) -> Unit {
 ///
 /// Returns the final accumulator value after folding all elements of the iterator.
 #intrinsic("%iter.reduce")
+#locals(f)
 pub fn[T, B] Iter::fold(self : Iter[T], init~ : B, f : (B, T) -> B) -> B {
   let mut acc = init
   for a in self {
@@ -849,11 +850,11 @@ pub fn[T] Iter::iter(self : Iter[T]) -> Iter[T] {
 ///|
 /// Returns the last element of the iterator, or `None` if the iterator is empty.
 pub fn[A] Iter::last(self : Iter[A]) -> A? {
-  fn f(_a : A?, b : A) {
-    Some(b)
+  let mut last = None
+  for a in self {
+    last = Some(a)
   }
-
-  self.fold(init=None, f)
+  last
 }
 
 ///|
