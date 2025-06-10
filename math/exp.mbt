@@ -13,14 +13,7 @@
 // limitations under the License.
 
 ///|
-pub fn exp(input : Double) -> Double {
-  input.exp()
-}
-
-///|
-pub fn expm1(input : Double) -> Double {
-  input.expm1()
-}
+pub fnalias Double::(exp, expm1)
 
 ///|
 fn top12(x : Float) -> UInt {
