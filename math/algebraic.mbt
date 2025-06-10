@@ -66,19 +66,7 @@ pub fn[T : Compare] minimum(x : T, y : T) -> T {
 }
 
 ///|
-/// Calculates the cube root of a number.
-///
-/// # Examples
-///
-/// ```
-/// assert_eq(@math.cbrt(1), 1)
-/// assert_eq(@math.cbrt(27), 3)
-/// assert_eq(@math.cbrt(125), 5)
-/// assert_eq(@math.cbrt(1000), 10)
-/// ```
-pub fn cbrt(x : Double) -> Double {
-  x.cbrt()
-}
+pub fnalias Double::(cbrt, hypot)
 
 ///|
 /// Calculates the cube root of a number.
@@ -135,20 +123,6 @@ pub fn cbrtf(x : Float) -> Float {
 
   // rounding to 24 bits is perfect in round-to-nearest mode
   t.to_float()
-}
-
-///|
-/// Returns the hypotenuse of a right-angled triangle whose legs are `x` and `y`.
-///
-/// # Examples
-///
-/// ```
-/// assert_eq(@math.hypot(3, 4), 5)
-/// assert_eq(@math.hypot(5, 12), 13)
-/// assert_eq(@math.hypot(8, 15), 17)
-/// ```
-pub fn hypot(x : Double, y : Double) -> Double {
-  x.hypot(y)
 }
 
 ///|
