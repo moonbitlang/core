@@ -21,9 +21,9 @@ fn[V : Compare] difference(T[V], T[V]) -> T[V]
 
 fn[V : Compare] disjoint(T[V], T[V]) -> Bool
 
-fn[V] each(T[V], (V) -> Unit) -> Unit
+fn[V] each(T[V], (V) -> Unit?Error) -> Unit?Error
 
-fn[V] eachi(T[V], (Int, V) -> Unit) -> Unit
+fn[V] eachi(T[V], (Int, V) -> Unit?Error) -> Unit?Error
 
 fn[V : Compare] from_array(Array[V]) -> T[V]
 
@@ -70,8 +70,8 @@ fn[V] T::deep_clone(Self[V]) -> Self[V]
 fn[V : Compare] T::diff(Self[V], Self[V]) -> Self[V]
 fn[V : Compare] T::difference(Self[V], Self[V]) -> Self[V]
 fn[V : Compare] T::disjoint(Self[V], Self[V]) -> Bool
-fn[V] T::each(Self[V], (V) -> Unit) -> Unit
-fn[V] T::eachi(Self[V], (Int, V) -> Unit) -> Unit
+fn[V] T::each(Self[V], (V) -> Unit?Error) -> Unit?Error
+fn[V] T::eachi(Self[V], (Int, V) -> Unit?Error) -> Unit?Error
 #deprecated
 fn[V : Compare] T::from_iter(Iter[V]) -> Self[V]
 #deprecated
