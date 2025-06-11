@@ -278,11 +278,8 @@ pub fn index_of(self : String, str : String, from~ : Int = 0) -> Int {
 ///|
 /// Returns the last index of the sub string.
 #deprecated("Use `s.rev_find(substr)` instead. If the optional argument `from` is not 0, take view from the string first. Please do not use an invalid `from` argument.")
-pub fn last_index_of(
-  self : String,
-  str : String,
-  from~ : Int = self.length()
-) -> Int {
+pub fn last_index_of(self : String, str : String, from? : Int) -> Int {
+  let from = if from is Some(f) { f } else { self.length() }
   if from >= self.length() {
     if self.rev_find(str.view()) is Some(idx) {
       idx
@@ -390,8 +387,9 @@ pub fn String::offset_of_nth_char(
   self : String,
   i : Int,
   start_offset~ : Int = 0,
-  end_offset~ : Int = self.length()
+  end_offset? : Int
 ) -> Int? {
+  let end_offset = if end_offset is Some(o) { o } else { self.length() }
   if i >= 0 {
     // forward case
     self.offset_of_nth_char_forward(i, start_offset~, end_offset~)
@@ -420,8 +418,9 @@ pub fn String::char_length_eq(
   self : String,
   len : Int,
   start_offset~ : Int = 0,
-  end_offset~ : Int = self.length()
+  end_offset? : Int
 ) -> Bool {
+  let end_offset = if end_offset is Some(o) { o } else { self.length() }
   for index = start_offset, count = 0
       index < end_offset && count < len
       index = index + 1, count = count + 1 {
@@ -447,8 +446,9 @@ pub fn String::char_length_ge(
   self : String,
   len : Int,
   start_offset~ : Int = 0,
-  end_offset~ : Int = self.length()
+  end_offset? : Int
 ) -> Bool {
+  let end_offset = if end_offset is Some(o) { o } else { self.length() }
   for index = start_offset, count = 0
       index < end_offset && count < len
       index = index + 1, count = count + 1 {
