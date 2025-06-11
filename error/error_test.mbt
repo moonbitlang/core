@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-type! IntError Int
+suberror IntError Int
 
 ///|
 test "show error" {
@@ -159,10 +159,10 @@ test "protect2 & finally raise error" {
 }
 
 ///|
-type! ErrWithToJson Int derive(ToJson)
+suberror ErrWithToJson Int derive(ToJson)
 
 ///|
-type! ErrWithoutToJson Int
+suberror ErrWithoutToJson Int
 
 ///|
 test "error to json" {

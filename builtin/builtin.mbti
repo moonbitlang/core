@@ -140,9 +140,9 @@ fn[T] ArrayView::swap(Self[T], Int, Int) -> Unit
 fn[T] ArrayView::unsafe_get(Self[T], Int) -> T
 impl[X : ToJson] ToJson for ArrayView[X]
 
-pub(all) type! BenchError String
+pub(all) suberror BenchError String
 
-pub(all) type! Failure String
+pub(all) suberror Failure String
 impl Show for Failure
 
 type Hasher
@@ -162,7 +162,7 @@ fn Hasher::combine_unit(Self) -> Unit
 fn Hasher::finalize(Self) -> Int
 fn Hasher::new(seed~ : Int = ..) -> Self
 
-pub(all) type! InspectError String
+pub(all) suberror InspectError String
 
 type Iter[T]
 fn[T] Iter::all(Self[T], (T) -> Bool) -> Bool
@@ -281,7 +281,7 @@ impl[K : Hash + Eq, V : Eq] Eq for Map[K, V]
 impl[K : Show, V : Show] Show for Map[K, V]
 impl[K : Show, V : ToJson] ToJson for Map[K, V]
 
-pub(all) type! SnapshotError String
+pub(all) suberror SnapshotError String
 
 pub(all) extern type SourceLoc
 fn SourceLoc::to_string(Self) -> String

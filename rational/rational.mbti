@@ -24,7 +24,7 @@ fn to_double(T) -> Double
 fn trunc(T) -> Int64
 
 // Types and methods
-pub(all) type! RationalError String
+pub(all) suberror RationalError String
 impl Eq for RationalError
 impl Show for RationalError
 

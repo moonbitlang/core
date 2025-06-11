@@ -35,7 +35,7 @@ fn to_json(self : AllThree) -> Json {
 }
 
 ///|
-type! DecodeError {
+suberror DecodeError {
   DecodeError(String)
 } derive(Eq, Show)
 
