@@ -58,13 +58,13 @@ pub fn parse_uint64(str : String, base~ : Int = 0) -> UInt64!StrConvError {
     is (['0'..='9' | 'a'..='z' | 'A'..='Z', ..]
     | ['_', '0'..='9' | 'a'..='z' | 'A'..='Z', ..])
   guard has_digit else { syntax_err() }
-  loop rest, 0UL, allow_underscore {
-    ['_'], _, _ =>
+  loop (rest, 0UL, allow_underscore) {
+    (['_'], _, _) =>
       // the last character cannot be underscore
       syntax_err()
-    ['_', ..], _, false => syntax_err()
-    ['_', .. rest], acc, true => continue rest, acc, false
-    [c, .. rest], acc, _ => {
+    (['_', ..], _, false) => syntax_err()
+    (['_', .. rest], acc, true) => continue (rest, acc, false)
+    ([c, .. rest], acc, _) => {
       let c = c.to_int()
       let d = match c {
         '0'..='9' => c - '0'
@@ -76,9 +76,9 @@ pub fn parse_uint64(str : String, base~ : Int = 0) -> UInt64!StrConvError {
       guard acc < overflow_threshold else { range_err() }
       let next_acc = acc * num_base.to_uint64() + d.to_uint64()
       guard next_acc >= acc && next_acc <= UINT64_MAX else { range_err() }
-      continue rest, next_acc, true
+      continue (rest, next_acc, true)
     }
-    [], acc, _ => acc
+    ([], acc, _) => acc
   }
 }
 

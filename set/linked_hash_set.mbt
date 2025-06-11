@@ -318,14 +318,14 @@ fn[K : Hash + Eq] grow(self : Set[K]) -> Unit {
 ///|
 pub impl[K : Show] Show for Set[K] with output(self, logger) {
   logger.write_string("{")
-  loop 0, self.head {
-    _, None => logger.write_string("}")
-    i, Some({ key, idx, .. }) => {
+  loop (0, self.head) {
+    (_, None) => logger.write_string("}")
+    (i, Some({ key, idx, .. })) => {
       if i > 0 {
         logger.write_string(", ")
       }
       logger.write_object(key)
-      continue i + 1, self.list[idx].next
+      continue (i + 1, self.list[idx].next)
     }
   }
 }
@@ -368,12 +368,12 @@ pub fn[K] each(self : Set[K], f : (K) -> Unit?Error) -> Unit?Error {
 ///|
 /// Iterate over all keys of the set in the order of insertion, with index.
 pub fn[K] eachi(self : Set[K], f : (Int, K) -> Unit?Error) -> Unit?Error {
-  loop 0, self.head {
-    i, Some({ key, idx, .. }) => {
+  loop (0, self.head) {
+    (i, Some({ key, idx, .. })) => {
       f(i, key)
-      continue i + 1, self.list[idx].next
+      continue (i + 1, self.list[idx].next)
     }
-    _, None => break
+    (_, None) => break
   }
 }
 

@@ -42,18 +42,20 @@ pub fn[A] new() -> T[A] {
 ///|
 /// Lookup a value from the hash set
 pub fn[A : Eq + Hash] contains(self : T[A], key : A) -> Bool {
-  loop self, key.hash() {
-    Empty, _ => false
-    Leaf(key1), _ => key == key1
-    Collision(bucket), _ => bucket.find(key)
+  loop (self, key.hash()) {
+    (Empty, _) => false
+    (Leaf(key1), _) => key == key1
+    (Collision(bucket), _) => bucket.find(key)
     // get the first segment (lower 5 bits) of the hash value
     // inline the hot path of Sparse_array::op_get
-    Branch(children), hash => {
+    (Branch(children), hash) => {
       let idx = hash & segment_mask
       if children.elem_info.has(idx) {
         let child = children.data[children.elem_info.index_of(idx)]
-        continue child,
-          (hash.reinterpret_as_uint() >> segment_length).reinterpret_as_int()
+        continue (
+            child,
+            (hash.reinterpret_as_uint() >> segment_length).reinterpret_as_int(),
+          )
       }
       false
     }
@@ -282,22 +284,22 @@ pub impl[A : Show] Show for T[A] with output(self, logger) {
 
 ///|
 pub fn[A : Eq + Hash] from_array(arr : Array[A]) -> T[A] {
-  loop arr.length(), new() {
-    0, set => set
-    n, set => {
+  loop (arr.length(), new()) {
+    (0, set) => set
+    (n, set) => {
       let k = arr[n - 1]
-      continue n - 1, set.add(k)
+      continue (n - 1, set.add(k))
     }
   }
 }
 
 ///|
 pub fn[A : Eq + Hash] of(arr : FixedArray[A]) -> T[A] {
-  loop arr.length(), new() {
-    0, set => set
-    n, set => {
+  loop (arr.length(), new()) {
+    (0, set) => set
+    (n, set) => {
       let k = arr[n - 1]
-      continue n - 1, set.add(k)
+      continue (n - 1, set.add(k))
     }
   }
 }

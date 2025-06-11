@@ -412,14 +412,14 @@ fn calc_grow_threshold(capacity : Int) -> Int {
 ///|
 pub impl[K : Show, V : Show] Show for Map[K, V] with output(self, logger) {
   logger.write_string("{")
-  loop 0, self.head {
-    _, None => logger.write_string("}")
-    i, Some({ key, value, next, .. }) => {
+  loop (0, self.head) {
+    (_, None) => logger.write_string("}")
+    (i, Some({ key, value, next, .. })) => {
       if i > 0 {
         logger.write_string(", ")
       }
       logger..write_object(key)..write_string(": ")..write_object(value)
-      continue i + 1, next
+      continue (i + 1, next)
     }
   }
 }
@@ -465,12 +465,12 @@ pub fn[K, V] Map::eachi(
   self : Map[K, V],
   f : (Int, K, V) -> Unit?Error
 ) -> Unit?Error {
-  loop 0, self.head {
-    i, Some({ key, value, next, .. }) => {
+  loop (0, self.head) {
+    (i, Some({ key, value, next, .. })) => {
       f(i, key, value)
-      continue i + 1, next
+      continue (i + 1, next)
     }
-    _, None => break
+    (_, None) => break
   }
 }
 
