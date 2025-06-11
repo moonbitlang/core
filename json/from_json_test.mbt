@@ -19,7 +19,7 @@ fn temp() -> Unit {
 }
 
 ///|
-typealias TestX = Map[String, Int]
+typealias Map[String, Int] as TestX
 
 ///|
 test {
