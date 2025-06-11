@@ -165,8 +165,9 @@ pub fn String::unsafe_char_at(self : String, index : Int) -> Char {
 pub fn String::char_length(
   self : String,
   start_offset~ : Int = 0,
-  end_offset~ : Int = self.length()
+  end_offset? : Int
 ) -> Int {
+  let end_offset = if end_offset is Some(o) { o } else { self.length() }
   guard start_offset >= 0 &&
     start_offset <= end_offset &&
     end_offset <= self.length() else {
@@ -194,9 +195,9 @@ pub fn String::char_length(
 pub fn String::codepoint_length(
   self : String,
   start_offset~ : Int = 0,
-  end_offset~ : Int = self.length()
+  end_offset? : Int
 ) -> Int {
-  self.char_length(start_offset~, end_offset~)
+  self.char_length(start_offset~, end_offset?)
 }
 
 ///|
