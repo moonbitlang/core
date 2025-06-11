@@ -272,7 +272,7 @@ fn[T] Tree::push_end(self : Tree[T], shift : Int, value : T) -> (Tree[T], Int) {
 
 ///|
 /// For each element in the tree, apply the function `f`.
-fn[A] Tree::each(self : Tree[A], f : (A) -> Unit) -> Unit {
+fn[A] Tree::each(self : Tree[A], f : (A) -> Unit?Error) -> Unit?Error {
   match self {
     Empty => ()
     Leaf(l) => l.each(f)
@@ -300,10 +300,10 @@ fn[A] Tree::iter(self : Tree[A]) -> Iter[A] {
 /// For each element in the tree, apply the function `f` with the index of the element.
 fn[A] Tree::eachi(
   self : Tree[A],
-  f : (Int, A) -> Unit,
+  f : (Int, A) -> Unit?Error,
   shift : Int,
   start : Int
-) -> Unit {
+) -> Unit?Error {
   match self {
     Empty => ()
     Leaf(l) =>
@@ -331,7 +331,7 @@ fn[A] Tree::eachi(
 
 ///|
 /// Fold the tree.
-fn[A, B] Tree::fold(self : Tree[A], acc : B, f : (B, A) -> B) -> B {
+fn[A, B] Tree::fold(self : Tree[A], acc : B, f : (B, A) -> B?Error) -> B?Error {
   match self {
     Empty => acc
     Leaf(l) => l.fold(f, init=acc)
@@ -341,7 +341,11 @@ fn[A, B] Tree::fold(self : Tree[A], acc : B, f : (B, A) -> B) -> B {
 
 ///|
 /// Fold the tree in reverse order.
-fn[A, B] Tree::rev_fold(self : Tree[A], acc : B, f : (B, A) -> B) -> B {
+fn[A, B] Tree::rev_fold(
+  self : Tree[A],
+  acc : B,
+  f : (B, A) -> B?Error
+) -> B?Error {
   match self {
     Empty => acc
     Leaf(l) => l.rev_fold(f, init=acc)
@@ -351,7 +355,7 @@ fn[A, B] Tree::rev_fold(self : Tree[A], acc : B, f : (B, A) -> B) -> B {
 
 ///|
 /// Map the tree.
-fn[A, B] Tree::map(self : Tree[A], f : (A) -> B) -> Tree[B] {
+fn[A, B] Tree::map(self : Tree[A], f : (A) -> B?Error) -> Tree[B]?Error {
   match self {
     Empty => Empty
     Leaf(l) => Leaf(l.map(f))

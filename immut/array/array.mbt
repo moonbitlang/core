@@ -45,7 +45,7 @@ pub fn[A] make(len : Int, value : A) -> T[A] {
 
 ///|
 /// Create a persistent array with a given length and a function to generate values.
-pub fn[A] makei(len : Int, f : (Int) -> A) -> T[A] {
+pub fn[A] makei(len : Int, f : (Int) -> A?Error) -> T[A]?Error {
   let quot = len / branching_factor
   let rem = len % branching_factor
   let leaves = if rem == 0 {
@@ -308,7 +308,7 @@ pub fn[A] iter(self : T[A]) -> Iter[A] {
 ///   assert_eq(arr, [1, 2, 3, 4, 5])
 /// }
 /// ```
-pub fn[A] each(self : T[A], f : (A) -> Unit) -> Unit {
+pub fn[A] each(self : T[A], f : (A) -> Unit?Error) -> Unit?Error {
   self.tree.each(f)
 }
 
@@ -322,7 +322,7 @@ pub fn[A] each(self : T[A], f : (A) -> Unit) -> Unit {
 /// v.eachi(fn(i, e) { arr.push(i * e) })
 /// assert_eq(arr, [0, 2, 6, 12, 20])
 /// ```
-pub fn[A] eachi(self : T[A], f : (Int, A) -> Unit) -> Unit {
+pub fn[A] eachi(self : T[A], f : (Int, A) -> Unit?Error) -> Unit?Error {
   self.tree.eachi(f, self.shift, 0)
 }
 
@@ -334,7 +334,7 @@ pub fn[A] eachi(self : T[A], f : (Int, A) -> Unit) -> Unit {
 /// let v = @array.of([1, 2, 3, 4, 5])
 /// assert_eq(v.fold(fn(a, b) { a + b }, init=0), 15)
 /// ```
-pub fn[A, B] fold(self : T[A], init~ : B, f : (B, A) -> B) -> B {
+pub fn[A, B] fold(self : T[A], init~ : B, f : (B, A) -> B?Error) -> B?Error {
   self.tree.fold(init, f)
 }
 
@@ -346,7 +346,7 @@ pub fn[A, B] fold(self : T[A], init~ : B, f : (B, A) -> B) -> B {
 /// let v = @array.of([1, 2, 3, 4, 5])
 /// assert_eq(v.rev_fold(fn(a, b) { a + b }, init=0), 15)
 /// ```
-pub fn[A, B] rev_fold(self : T[A], init~ : B, f : (B, A) -> B) -> B {
+pub fn[A, B] rev_fold(self : T[A], init~ : B, f : (B, A) -> B?Error) -> B?Error {
   self.tree.rev_fold(init, f)
 }
 
@@ -360,7 +360,7 @@ pub fn[A, B] rev_fold(self : T[A], init~ : B, f : (B, A) -> B) -> B {
 /// ```
 #deprecated("Use `fold` instead")
 #coverage.skip
-pub fn[A] fold_left(self : T[A], f : (A, A) -> A, init~ : A) -> A {
+pub fn[A] fold_left(self : T[A], f : (A, A) -> A?Error, init~ : A) -> A?Error {
   self.fold(init~, f)
 }
 
@@ -374,7 +374,7 @@ pub fn[A] fold_left(self : T[A], f : (A, A) -> A, init~ : A) -> A {
 /// ```
 #deprecated("Use `rev_fold` instead")
 #coverage.skip
-pub fn[A] fold_right(self : T[A], f : (A, A) -> A, init~ : A) -> A {
+pub fn[A] fold_right(self : T[A], f : (A, A) -> A?Error, init~ : A) -> A?Error {
   self.rev_fold(init~, f)
 }
 
@@ -386,7 +386,7 @@ pub fn[A] fold_right(self : T[A], f : (A, A) -> A, init~ : A) -> A {
 /// let v = @array.of([1, 2, 3, 4, 5])
 /// assert_eq(v.map(fn(e) { e * 2 }), @array.of([2, 4, 6, 8, 10]))
 /// ```
-pub fn[A, B] map(self : T[A], f : (A) -> B) -> T[B] {
+pub fn[A, B] map(self : T[A], f : (A) -> B?Error) -> T[B]?Error {
   { tree: self.tree.map(f), size: self.size, shift: self.shift }
 }
 
