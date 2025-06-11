@@ -49,24 +49,26 @@ fn[A] join_2(k1 : A, p1 : Path, k2 : A, p2 : Path) -> SpArr[Node[A]] {
 ///|
 fn[A : Eq] Node::add(self : Node[A], key : A, path : Path) -> Node[A] {
   let node = self
-  loop node, path, fn { x => x } {
-    Flat(k, path_k), path, on_replaced =>
+  loop (node, path, fn { x => x }) {
+    (Flat(k, path_k), path, on_replaced) =>
       if path == path_k && key == k {
         self
       } else {
         on_replaced(Branch(join_2(k, path_k, key, path)))
       }
-    Branch(sa), path, on_replaced => {
+    (Branch(sa), path, on_replaced) => {
       let idx = path.idx()
       if sa.has(idx) {
-        continue sa[idx],
-          path.next(),
-          fn(r) { on_replaced(Branch(sa.replace(idx, r))) }
+        continue (
+            sa[idx],
+            path.next(),
+            fn(r) { on_replaced(Branch(sa.replace(idx, r))) },
+          )
       } else {
         on_replaced(Branch(sa.add(idx, Flat(key, path.next()))))
       }
     }
-    Leaf(k, r), _, on_replaced =>
+    (Leaf(k, r), _, on_replaced) =>
       if key == k || r.any(key.op_equal(_)) {
         self
       } else {
@@ -78,27 +80,29 @@ fn[A : Eq] Node::add(self : Node[A], key : A, path : Path) -> Node[A] {
 ///|
 fn[A : Eq] Node::add_inplace(self : Node[A], key : A, path : Path) -> Node[A] {
   let node = self
-  loop node, path, fn { x => x } {
-    Flat(k, path_k), path, on_replaced =>
+  loop (node, path, fn { x => x }) {
+    (Flat(k, path_k), path, on_replaced) =>
       if path == path_k && key == k {
         self
       } else {
         on_replaced(Branch(join_2(k, path_k, key, path)))
       }
-    Branch(sa), path, on_replaced => {
+    (Branch(sa), path, on_replaced) => {
       let idx = path.idx()
       if sa.has(idx) {
-        continue sa[idx],
-          path.next(),
-          fn(r) {
-            sa.replace_inplace(idx, r)
-            self
-          }
+        continue (
+            sa[idx],
+            path.next(),
+            fn(r) {
+              sa.replace_inplace(idx, r)
+              self
+            },
+          )
       } else {
         on_replaced(Branch(sa.add(idx, Flat(key, path.next()))))
       }
     }
-    Leaf(k, r), _, on_replaced =>
+    (Leaf(k, r), _, on_replaced) =>
       if key == k || r.any(key.op_equal(_)) {
         self
       } else {
@@ -110,32 +114,32 @@ fn[A : Eq] Node::add_inplace(self : Node[A], key : A, path : Path) -> Node[A] {
 ///|
 fn[A : Eq] Node::remove(self : Node[A], key : A, path : Path) -> Node[A]? {
   let node = self
-  loop node, path, fn { x => x } {
-    Flat(k, path_k), path, on_remove =>
+  loop (node, path, fn { x => x }) {
+    (Flat(k, path_k), path, on_remove) =>
       if path == path_k && key == k {
         on_remove(None)
       } else {
         Some(self)
       }
-    Branch(sa), path, on_remove => {
+    (Branch(sa), path, on_remove) => {
       let idx = path.idx()
       guard sa.has(idx) else { return Some(self) }
-      continue sa[idx],
-        path.next(),
-        fn(result) {
-          let new_sa = match (result, sa.data) {
-            (None, [_]) => return on_remove(None)
-            (None, _) => sa.remove(idx)
-            (Some(child), _) => sa.replace(idx, child)
-          }
-          match new_sa.data {
-            [Flat(k, next)] =>
-              on_remove(Some(Flat(k, next.push(new_sa.first_index()))))
-            _ => on_remove(Some(Branch(new_sa)))
-          }
+      fn on_remove_next(result) {
+        let new_sa = match (result, sa.data) {
+          (None, [_]) => return on_remove(None)
+          (None, _) => sa.remove(idx)
+          (Some(child), _) => sa.replace(idx, child)
         }
+        match new_sa.data {
+          [Flat(k, next)] =>
+            on_remove(Some(Flat(k, next.push(new_sa.first_index()))))
+          _ => on_remove(Some(Branch(new_sa)))
+        }
+      }
+
+      continue (sa[idx], path.next(), on_remove_next)
     }
-    Leaf(k, r), _, on_remove =>
+    (Leaf(k, r), _, on_remove) =>
       if k == key {
         match r {
           Empty => on_remove(None)
@@ -167,11 +171,11 @@ fn[A] Node::iter(self : Node[A]) -> Iter[A] {
     fn go {
       Flat(k, _) => yield_(k)
       Leaf(k, r) =>
-        loop k, r {
-          k, Empty => yield_(k)
-          k, More(k2, tail~) => {
+        loop (k, r) {
+          (k, Empty) => yield_(k)
+          (k, More(k2, tail~)) => {
             guard yield_(k) is IterContinue else { return IterEnd }
-            continue k2, tail
+            continue (k2, tail)
           }
         }
       Branch({ data: children }) =>
