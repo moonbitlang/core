@@ -43,14 +43,12 @@ struct T {
 ///|
 /// Expand the buffer size if capacity smaller than required space.
 fn grow_if_necessary(self : T, required : Int) -> Unit {
-  // TODO: get rid of mut
-  let mut enough_space = self.data.length()
-  if enough_space <= 0 {
-    enough_space = 1
-  }
-  // double the enough_space until it larger than required
-  while enough_space < required {
-    enough_space = enough_space * 2
+  let start = if self.data.length() <= 0 { 1 } else { self.data.length() }
+  let enough_space = for space = start {
+    if space >= required {
+      break space
+    }
+    continue space * 2
   }
   if enough_space != self.data.length() {
     let new_data = FixedArray::make(enough_space, Byte::default())
