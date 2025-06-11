@@ -488,14 +488,14 @@ fn Double::until(Double, Double, step~ : Double = .., inclusive~ : Bool = ..) ->
 #deprecated
 fn Double::upto(Double, Double, inclusive~ : Bool = ..) -> Iter[Double]
 
-fn String::char_length(String, start_offset~ : Int = .., end_offset~ : Int = ..) -> Int
+fn String::char_length(String, start_offset~ : Int = .., end_offset? : Int) -> Int
 fn String::charcode_at(String, Int) -> Int
 #deprecated
 fn String::charcode_length(String) -> Int
 #deprecated
 fn String::codepoint_at(String, Int) -> Char
 #deprecated
-fn String::codepoint_length(String, start_offset~ : Int = .., end_offset~ : Int = ..) -> Int
+fn String::codepoint_length(String, start_offset~ : Int = .., end_offset? : Int) -> Int
 fn String::escape(String) -> String
 #deprecated
 fn String::get(String, Int) -> Char
@@ -541,7 +541,7 @@ fn Bytes::new(Int) -> Bytes
 #deprecated
 fn Bytes::of_string(String) -> Bytes
 fn Bytes::op_get(Bytes, Int) -> Byte
-fn Bytes::to_unchecked_string(Bytes, offset~ : Int = .., length~ : Int = ..) -> String
+fn Bytes::to_unchecked_string(Bytes, offset~ : Int = .., length? : Int) -> String
 fn Bytes::unsafe_get(Bytes, Int) -> Byte
 
 fn[T : Show] Logger::write_iter(&Self, Iter[T], prefix~ : String = .., suffix~ : String = .., sep~ : String = .., trailing~ : Bool = ..) -> Unit

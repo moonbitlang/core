@@ -100,8 +100,9 @@ pub fn length(self : View) -> Int {
 pub fn String::view(
   self : String,
   start_offset~ : Int = 0,
-  end_offset~ : Int = self.length()
+  end_offset? : Int
 ) -> View {
+  let end_offset = if end_offset is Some(o) { o } else { self.length() }
   guard start_offset >= 0 &&
     start_offset <= end_offset &&
     end_offset <= self.length() else {
@@ -115,8 +116,9 @@ pub fn String::view(
 pub fn View::view(
   self : View,
   start_offset~ : Int = 0,
-  end_offset~ : Int = self.length()
+  end_offset? : Int
 ) -> View {
+  let end_offset = if end_offset is Some(o) { o } else { self.length() }
   guard start_offset >= 0 &&
     start_offset <= end_offset &&
     end_offset <= self.length() else {
@@ -149,12 +151,8 @@ pub fn View::view(
 /// ```
 /// 
 /// This method has O(1) complexity.
-pub fn String::charcodes(
-  self : String,
-  start~ : Int = 0,
-  end~ : Int = self.length()
-) -> View {
-  self.view(start_offset=start, end_offset=end)
+pub fn String::charcodes(self : String, start~ : Int = 0, end? : Int) -> View {
+  self.view(start_offset=start, end_offset?=end)
 }
 
 ///|
@@ -175,12 +173,8 @@ pub fn String::charcodes(
 /// It allows you to create a sub-view of an existing view with the specified character range.
 /// 
 /// This method has O(1) complexity.
-pub fn View::charcodes(
-  self : View,
-  start~ : Int = 0,
-  end~ : Int = self.length()
-) -> View {
-  self.view(start_offset=start, end_offset=end)
+pub fn View::charcodes(self : View, start~ : Int = 0, end? : Int) -> View {
+  self.view(start_offset=start, end_offset?=end)
 }
 
 ///|
