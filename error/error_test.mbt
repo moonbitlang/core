@@ -58,14 +58,14 @@ fn[A, E : Error] protect(
 ) -> A raise E {
   try work() catch {
     e => {
-      try finally() catch {
+      finally() catch {
         _ => ()
       }
       raise e
     }
   } else {
     x => {
-      try finally() catch {
+      finally() catch {
         _ => ()
       }
       x

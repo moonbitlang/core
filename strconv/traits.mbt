@@ -60,28 +60,16 @@ pub fn[A : FromStr] parse(str : String) -> A raise StrConvError {
 
 ///|
 test "parse" {
-  let b : Bool = try parse("true") catch {
-    _ => panic()
-  }
+  let b : Bool = parse("true") catch { _ => panic() }
   assert_eq(b, true)
-  let i : Int = try parse("12345") catch {
-    _ => panic()
-  }
+  let i : Int = parse("12345") catch { _ => panic() }
   assert_eq(i, 12345)
-  let i64 : Int64 = try parse("9223372036854775807") catch {
-    _ => panic()
-  }
+  let i64 : Int64 = parse("9223372036854775807") catch { _ => panic() }
   assert_eq(i64, 9223372036854775807L)
-  let ui : UInt = try parse("4294967295") catch {
-    _ => panic()
-  }
+  let ui : UInt = parse("4294967295") catch { _ => panic() }
   assert_eq(ui, 4294967295)
-  let ui64 : UInt64 = try parse("18446744073709551615") catch {
-    _ => panic()
-  }
+  let ui64 : UInt64 = parse("18446744073709551615") catch { _ => panic() }
   assert_eq(ui64, 18446744073709551615UL)
-  let d : Double = try parse("1234.56789") catch {
-    _ => panic()
-  }
+  let d : Double = parse("1234.56789") catch { _ => panic() }
   assert_eq(d, 1234.56789)
 }

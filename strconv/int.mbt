@@ -279,7 +279,7 @@ test "parse_int64" {
   for i in 0..<tests.length() {
     let t = tests[i]
     assert_eq(
-      try Result::Ok(parse_int64(t.0)) catch {
+      Result::Ok(parse_int64(t.0)) catch {
         StrConvError(err) => Err(err)
       },
       t.1,
@@ -397,7 +397,7 @@ test "parse_int64_base" {
   for i in 0..<tests.length() {
     let t = tests[i]
     assert_eq(
-      try Result::Ok(parse_int64(t.0, base=t.1)) catch {
+      Result::Ok(parse_int64(t.0, base=t.1)) catch {
         StrConvError(err) => Err(err)
       },
       t.2,
@@ -437,7 +437,7 @@ test "parse_int" {
   for i in 0..<tests.length() {
     let t = tests[i]
     assert_eq(
-      try Result::Ok(parse_int(t.0)) catch {
+      Result::Ok(parse_int(t.0)) catch {
         StrConvError(err) => Err(err)
       },
       t.1,

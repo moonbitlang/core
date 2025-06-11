@@ -58,7 +58,7 @@ pub impl FromJson for Int64 with from_json(json, path) {
       path, "Int64::from_json: expected number in string representation",
     )
   }
-  try @strconv.parse_int64(str) catch {
+  @strconv.parse_int64(str) catch {
     error => decode_error(path, "Int64::from_json: parsing failure \{error}")
   }
 }
@@ -78,7 +78,7 @@ pub impl FromJson for UInt64 with from_json(json, path) {
       path, "UInt64::from_json: expected number in string representation",
     )
   }
-  try @strconv.parse_uint64(str) catch {
+  @strconv.parse_uint64(str) catch {
     error => decode_error(path, "UInt64::from_json: parsing failure \{error}")
   }
 }

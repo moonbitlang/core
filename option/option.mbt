@@ -411,13 +411,13 @@ pub fn[T, Err : Error] or_error(self : T?, err : Err) -> T raise Err {
 ///|
 test "or error" {
   assert_eq(
-    try (None : String?).or_error(Failure("This is serious")) catch {
+    (None : String?).or_error(Failure("This is serious")) catch {
       Failure(err) => err
     },
     "This is serious",
   )
   assert_eq(
-    try Some("This is ok").or_error(Failure("This is serious")) catch {
+    Some("This is ok").or_error(Failure("This is serious")) catch {
       Failure(err) => err
     },
     "This is ok",
