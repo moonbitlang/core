@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-fn ParseContext::lex_string(ctx : ParseContext) -> String!ParseError {
+fn ParseContext::lex_string(ctx : ParseContext) -> String raise ParseError {
   let buf = StringBuilder::new()
   let mut start = ctx.offset
   fn flush(end : Int) {
@@ -62,7 +62,10 @@ fn ParseContext::lex_string(ctx : ParseContext) -> String!ParseError {
 }
 
 ///|
-fn ParseContext::lex_hex_digits(ctx : ParseContext, n : Int) -> Int!ParseError {
+fn ParseContext::lex_hex_digits(
+  ctx : ParseContext,
+  n : Int
+) -> Int raise ParseError {
   let mut r = 0
   for i in 0..<n {
     match ctx.read_char() {

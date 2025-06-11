@@ -54,7 +54,7 @@ fn[A] from_iter(Iter[A]) -> T[A]
 
 fn[A] from_iter_rev(Iter[A]) -> T[A]
 
-fn[A : @json.FromJson] from_json(Json) -> T[A]!@json.JsonDecodeError
+fn[A : @json.FromJson] from_json(Json) -> T[A] raise @json.JsonDecodeError
 
 fn[A] head(T[A]) -> A?
 

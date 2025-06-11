@@ -88,7 +88,7 @@ test "hyperbolic" {
     -0.0007649998507676599, -0.0006539999067579279, -0.0005429999466323373, -0.000431999973126146,
     -0.00032099998897461345, -0.00020999999691300006, -0.00010899999956832366, -0.00009869999967949839,
   ]
-  fn high_accuracy_test(expect : Double, actual : Double) -> Unit!Error {
+  fn high_accuracy_test(expect : Double, actual : Double) -> Unit raise Error {
     let ulp = (expect.reinterpret_as_int64() - actual.reinterpret_as_int64()).abs()
     assert_true(ulp <= 1)
   }
@@ -130,7 +130,7 @@ test "asinh" {
     6.538633835534552, 6.817350253294403, 7.0350756937495404, 7.213621564277984,
     7.363926577179187, 7.484503781189334, 7.496907985311977, 7.5884758208251615,
   ]
-  fn high_accuracy_test(expect : Double, actual : Double) -> Unit!Error {
+  fn high_accuracy_test(expect : Double, actual : Double) -> Unit raise Error {
     let ulp = (expect.reinterpret_as_int64() - actual.reinterpret_as_int64()).abs()
     assert_true(ulp <= 1)
   }
@@ -162,7 +162,7 @@ test "acosh" {
     6.538629651005136, 6.817347856913533, 7.035074143357386, 7.213620479456226, 7.363925774013791,
     7.4845031501260895, 7.496907369711817, 7.588475308242551,
   ]
-  fn high_accuracy_test(expect : Double, actual : Double) -> Unit!Error {
+  fn high_accuracy_test(expect : Double, actual : Double) -> Unit raise Error {
     let ulp = (expect.reinterpret_as_int64() - actual.reinterpret_as_int64()).abs()
     assert_true(ulp <= 1)
   }
@@ -200,7 +200,7 @@ test "atanh" {
     0.05676087889558879, 0.06790417606372265, 0.07906433728155227, 0.09034500538583387,
     0.10154761647863907, 0.11277568726185497,
   ]
-  fn high_accuracy_test(expect : Double, actual : Double) -> Unit!Error {
+  fn high_accuracy_test(expect : Double, actual : Double) -> Unit raise Error {
     let ulp = (expect.reinterpret_as_int64() - actual.reinterpret_as_int64()).abs()
     assert_true(ulp <= 1)
   }

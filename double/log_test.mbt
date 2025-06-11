@@ -73,7 +73,7 @@ test "ln_1p" {
     -0.41551544396166584, -0.5978370007556204, -0.8209805520698303, -1.1086626245216111,
     -1.5141277326297757, -2.207274913189721, -2.302585092994046, -3.912023005428145,
   ]
-  fn high_accuracy_test(expect : Double, actual : Double) -> Unit!Error {
+  fn high_accuracy_test(expect : Double, actual : Double) -> Unit raise Error {
     let ulp = (expect.reinterpret_as_int64() - actual.reinterpret_as_int64()).abs()
     assert_true(ulp <= 1)
   }

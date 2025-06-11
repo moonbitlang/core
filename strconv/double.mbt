@@ -67,7 +67,7 @@ let max_mantissa_fast_path : UInt64 = 2UL << mantissa_explicit_bits
 ///
 /// An exponent value exp scales the mantissa (significand) by 10^exp.
 /// For example, "1.23e2" represents 1.23 × 10² = 123.
-pub fn parse_double(str : String) -> Double!StrConvError {
+pub fn parse_double(str : String) -> Double raise StrConvError {
   if str.length() == 0 {
     syntax_err()
   }

@@ -3,22 +3,22 @@ package "moonbitlang/core/builtin"
 // Values
 fn[T] abort(String) -> T
 
-fn[T : Eq + Show] assert_eq(T, T, loc~ : SourceLoc = _) -> Unit!
+fn[T : Eq + Show] assert_eq(T, T, loc~ : SourceLoc = _) -> Unit raise
 
-fn assert_false(Bool, loc~ : SourceLoc = _) -> Unit!
+fn assert_false(Bool, loc~ : SourceLoc = _) -> Unit raise
 
-fn[T : Eq + Show] assert_not_eq(T, T, loc~ : SourceLoc = _) -> Unit!
+fn[T : Eq + Show] assert_not_eq(T, T, loc~ : SourceLoc = _) -> Unit raise
 
-fn assert_true(Bool, loc~ : SourceLoc = _) -> Unit!
+fn assert_true(Bool, loc~ : SourceLoc = _) -> Unit raise
 
 #deprecated
 fn[T] dump(T, name? : String, loc~ : SourceLoc = _) -> T
 
-fn[T] fail(String, loc~ : SourceLoc = _) -> T!Failure
+fn[T] fail(String, loc~ : SourceLoc = _) -> T raise Failure
 
 fn[T] ignore(T) -> Unit
 
-fn inspect(&Show, content~ : String = .., loc~ : SourceLoc = _, args_loc~ : ArgsLoc = _) -> Unit!InspectError
+fn inspect(&Show, content~ : String = .., loc~ : SourceLoc = _, args_loc~ : ArgsLoc = _) -> Unit raise InspectError
 
 fn not(Bool) -> Bool
 
@@ -51,30 +51,30 @@ fn[T : Compare] Array::binary_search(Self[T], T) -> Result[Int, Int]
 fn[T] Array::binary_search_by(Self[T], (T) -> Int) -> Result[Int, Int]
 fn[A] Array::blit_to(Self[A], Self[A], len~ : Int, src_offset~ : Int = .., dst_offset~ : Int = ..) -> Unit
 fn[T] Array::capacity(Self[T]) -> Int
-fn[T] Array::chunk_by(Self[T], (T, T) -> Bool?Error) -> Self[Self[T]]?Error
+fn[T] Array::chunk_by(Self[T], (T, T) -> Bool raise?) -> Self[Self[T]] raise?
 fn[T] Array::chunks(Self[T], Int) -> Self[Self[T]]
 fn[T] Array::clear(Self[T]) -> Unit
 fn[T : Eq] Array::contains(Self[T], T) -> Bool
 fn[T : Eq] Array::dedup(Self[T]) -> Unit
 fn[T] Array::drain(Self[T], Int, Int) -> Self[T]
-fn[T] Array::each(Self[T], (T) -> Unit?Error) -> Unit?Error
-fn[T] Array::eachi(Self[T], (Int, T) -> Unit?Error) -> Unit?Error
+fn[T] Array::each(Self[T], (T) -> Unit raise?) -> Unit raise?
+fn[T] Array::eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?
 fn[T : Eq] Array::ends_with(Self[T], Self[T]) -> Bool
 fn[T] Array::extract_if(Self[T], (T) -> Bool) -> Self[T]
-fn[T] Array::filter(Self[T], (T) -> Bool?Error) -> Self[T]?Error
+fn[T] Array::filter(Self[T], (T) -> Bool raise?) -> Self[T] raise?
 #deprecated
 fn[T] Array::find_index(Self[T], (T) -> Bool) -> Int?
 fn[T] Array::flatten(Self[Self[T]]) -> Self[T]
-fn[A, B] Array::fold(Self[A], init~ : B, (B, A) -> B?Error) -> B?Error
+fn[A, B] Array::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 #deprecated
-fn[T, U] Array::fold_left(Self[T], (U, T) -> U?Error, init~ : U) -> U?Error
+fn[T, U] Array::fold_left(Self[T], (U, T) -> U raise?, init~ : U) -> U raise?
 #deprecated
-fn[T, U] Array::fold_lefti(Self[T], (Int, U, T) -> U?Error, init~ : U) -> U?Error
+fn[T, U] Array::fold_lefti(Self[T], (Int, U, T) -> U raise?, init~ : U) -> U raise?
 #deprecated
-fn[T, U] Array::fold_right(Self[T], (U, T) -> U?Error, init~ : U) -> U?Error
+fn[T, U] Array::fold_right(Self[T], (U, T) -> U raise?, init~ : U) -> U raise?
 #deprecated
-fn[T, U] Array::fold_righti(Self[T], (Int, U, T) -> U?Error, init~ : U) -> U?Error
-fn[A, B] Array::foldi(Self[A], init~ : B, (Int, B, A) -> B?Error) -> B?Error
+fn[T, U] Array::fold_righti(Self[T], (Int, U, T) -> U raise?, init~ : U) -> U raise?
+fn[A, B] Array::foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
 fn[T] Array::from_fixed_array(FixedArray[T]) -> Self[T]
 fn[T] Array::get(Self[T], Int) -> T?
 fn[T] Array::insert(Self[T], Int, T) -> Unit
@@ -84,10 +84,10 @@ fn[T] Array::iter(Self[T]) -> Iter[T]
 fn[A] Array::iter2(Self[A]) -> Iter2[Int, A]
 fn[T] Array::length(Self[T]) -> Int
 fn[T] Array::make(Int, T) -> Self[T]
-fn[T, U] Array::map(Self[T], (T) -> U?Error) -> Self[U]?Error
-fn[T] Array::map_inplace(Self[T], (T) -> T?Error) -> Unit?Error
-fn[T, U] Array::mapi(Self[T], (Int, T) -> U?Error) -> Self[U]?Error
-fn[T] Array::mapi_inplace(Self[T], (Int, T) -> T?Error) -> Unit?Error
+fn[T, U] Array::map(Self[T], (T) -> U raise?) -> Self[U] raise?
+fn[T] Array::map_inplace(Self[T], (T) -> T raise?) -> Unit raise?
+fn[T, U] Array::mapi(Self[T], (Int, T) -> U raise?) -> Self[U] raise?
+fn[T] Array::mapi_inplace(Self[T], (Int, T) -> T raise?) -> Unit raise?
 fn[T] Array::new(capacity~ : Int = ..) -> Self[T]
 fn[T] Array::op_as_view(Self[T], start~ : Int = .., end? : Int) -> ArrayView[T]
 fn[T] Array::op_get(Self[T], Int) -> T
@@ -100,18 +100,18 @@ fn[T] Array::remove(Self[T], Int) -> T
 fn[T] Array::repeat(Self[T], Int) -> Self[T]
 fn[T] Array::reserve_capacity(Self[T], Int) -> Unit
 fn[T] Array::resize(Self[T], Int, T) -> Unit
-fn[T] Array::retain(Self[T], (T) -> Bool?Error) -> Unit?Error
+fn[T] Array::retain(Self[T], (T) -> Bool raise?) -> Unit raise?
 fn[T] Array::rev(Self[T]) -> Self[T]
 fn[T] Array::rev_each(Self[T], (T) -> Unit) -> Unit
-fn[T] Array::rev_eachi(Self[T], (Int, T) -> Unit?Error) -> Unit?Error
-fn[A, B] Array::rev_fold(Self[A], init~ : B, (B, A) -> B?Error) -> B?Error
-fn[A, B] Array::rev_foldi(Self[A], init~ : B, (Int, B, A) -> B?Error) -> B?Error
+fn[T] Array::rev_eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?
+fn[A, B] Array::rev_fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
+fn[A, B] Array::rev_foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
 fn[T] Array::rev_inplace(Self[T]) -> Unit
 fn[T] Array::rev_iter(Self[T]) -> Iter[T]
 fn[T : Eq] Array::search(Self[T], T) -> Int?
 fn[T] Array::search_by(Self[T], (T) -> Bool) -> Int?
 fn[T] Array::shrink_to_fit(Self[T]) -> Unit
-fn[T] Array::split(Self[T], (T) -> Bool?Error) -> Self[Self[T]]?Error
+fn[T] Array::split(Self[T], (T) -> Bool raise?) -> Self[Self[T]] raise?
 fn[T] Array::split_at(Self[T], Int) -> (Self[T], Self[T])
 fn[T : Eq] Array::starts_with(Self[T], Self[T]) -> Bool
 fn[T : Eq] Array::strip_prefix(Self[T], Self[T]) -> Self[T]?
@@ -255,8 +255,8 @@ fn[K, V] Map::capacity(Self[K, V]) -> Int
 fn[K, V] Map::clear(Self[K, V]) -> Unit
 fn[K : Hash + Eq, V] Map::contains(Self[K, V], K) -> Bool
 fn[K : Hash + Eq, V : Eq] Map::contains_kv(Self[K, V], K, V) -> Bool
-fn[K, V] Map::each(Self[K, V], (K, V) -> Unit?Error) -> Unit?Error
-fn[K, V] Map::eachi(Self[K, V], (Int, K, V) -> Unit?Error) -> Unit?Error
+fn[K, V] Map::each(Self[K, V], (K, V) -> Unit raise?) -> Unit raise?
+fn[K, V] Map::eachi(Self[K, V], (Int, K, V) -> Unit raise?) -> Unit raise?
 fn[K : Hash + Eq, V] Map::from_array(Array[(K, V)]) -> Self[K, V]
 fn[K : Hash + Eq, V] Map::from_iter(Iter[(K, V)]) -> Self[K, V]
 fn[K : Hash + Eq, V] Map::get(Self[K, V], K) -> V?
@@ -512,7 +512,7 @@ fn[X : Show] Option::to_string(X?) -> String
 fn[X] Option::unwrap(X?) -> X
 
 fn[T : Compare] FixedArray::binary_search(Self[T], T) -> Result[Int, Int]
-fn[T] FixedArray::binary_search_by(Self[T], (T) -> Int?Error) -> Result[Int, Int]?Error
+fn[T] FixedArray::binary_search_by(Self[T], (T) -> Int raise?) -> Result[Int, Int] raise?
 fn FixedArray::blit_from_bytes(Self[Byte], Int, Bytes, Int, Int) -> Unit
 fn FixedArray::blit_from_string(Self[Byte], Int, String, Int, Int) -> Unit
 fn[A] FixedArray::blit_to(Self[A], Self[A], len~ : Int, src_offset~ : Int = .., dst_offset~ : Int = ..) -> Unit

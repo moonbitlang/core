@@ -20,7 +20,7 @@
 
 ///|
 pub(open) trait FromStr {
-  from_string(String) -> Self!StrConvError
+  from_string(String) -> Self raise StrConvError
 }
 
 ///|
@@ -54,7 +54,7 @@ pub impl FromStr for Double with from_string(str) {
 }
 
 ///|
-pub fn[A : FromStr] parse(str : String) -> A!StrConvError {
+pub fn[A : FromStr] parse(str : String) -> A raise StrConvError {
   A::from_string(str)
 }
 

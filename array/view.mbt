@@ -69,7 +69,7 @@ pub fn[T] View::rev_inplace(self : View[T]) -> Unit {
 ///   inspect(sum, content="6")
 /// }
 /// ```
-pub fn[T] View::each(self : View[T], f : (T) -> Unit?Error) -> Unit?Error {
+pub fn[T] View::each(self : View[T], f : (T) -> Unit raise?) -> Unit raise? {
   for v in self {
     f(v)
   }
@@ -86,7 +86,10 @@ pub fn[T] View::each(self : View[T], f : (T) -> Unit?Error) -> Unit?Error {
 /// v.eachi(fn (i, x) { sum = sum + x + i })
 /// assert_eq(sum, 15)
 /// ```
-pub fn[T] View::eachi(self : View[T], f : (Int, T) -> Unit?Error) -> Unit?Error {
+pub fn[T] View::eachi(
+  self : View[T],
+  f : (Int, T) -> Unit raise?
+) -> Unit raise? {
   for i, v in self {
     f(i, v)
   }
@@ -102,7 +105,7 @@ pub fn[T] View::eachi(self : View[T], f : (Int, T) -> Unit?Error) -> Unit?Error 
 /// assert_false(v[:].all(fn(elem) { elem % 2 == 0 }))
 /// assert_true(v[1:4].all(fn(elem) { elem % 2 == 0 }))
 /// ```
-pub fn[T] View::all(self : View[T], f : (T) -> Bool?Error) -> Bool?Error {
+pub fn[T] View::all(self : View[T], f : (T) -> Bool raise?) -> Bool raise? {
   for v in self {
     if not(f(v)) {
       return false
@@ -121,7 +124,7 @@ pub fn[T] View::all(self : View[T], f : (T) -> Bool?Error) -> Bool?Error {
 /// assert_true(v.any(fn(ele) { ele < 6 }))
 /// assert_false(v.any(fn(ele) { ele < 1 }))
 /// ```
-pub fn[T] View::any(self : View[T], f : (T) -> Bool?Error) -> Bool?Error {
+pub fn[T] View::any(self : View[T], f : (T) -> Bool raise?) -> Bool raise? {
   for v in self {
     if f(v) {
       return true
@@ -232,8 +235,8 @@ pub fn[A] View::iter2(self : View[A]) -> Iter2[Int, A] {
 pub fn[A, B] View::fold(
   self : View[A],
   init~ : B,
-  f : (B, A) -> B?Error
-) -> B?Error {
+  f : (B, A) -> B raise?
+) -> B raise? {
   for i = 0, acc = init; i < self.length(); {
     continue i + 1, f(acc, self[i])
   } else {
@@ -252,8 +255,8 @@ pub fn[A, B] View::fold(
 pub fn[A, B] View::rev_fold(
   self : View[A],
   init~ : B,
-  f : (B, A) -> B?Error
-) -> B?Error {
+  f : (B, A) -> B raise?
+) -> B raise? {
   for i = self.length() - 1, acc = init; i >= 0; {
     continue i - 1, f(acc, self[i])
   } else {
@@ -272,8 +275,8 @@ pub fn[A, B] View::rev_fold(
 pub fn[A, B] View::foldi(
   self : View[A],
   init~ : B,
-  f : (Int, B, A) -> B?Error
-) -> B?Error {
+  f : (Int, B, A) -> B raise?
+) -> B raise? {
   for i = 0, acc = init; i < self.length(); {
     continue i + 1, f(i, acc, self[i])
   } else {
@@ -292,8 +295,8 @@ pub fn[A, B] View::foldi(
 pub fn[A, B] View::rev_foldi(
   self : View[A],
   init~ : B,
-  f : (Int, B, A) -> B?Error
-) -> B?Error {
+  f : (Int, B, A) -> B raise?
+) -> B raise? {
   let len = self.length()
   for i = len - 1, acc = init; i >= 0; {
     continue i - 1, f(len - i - 1, acc, self[i])
@@ -311,7 +314,7 @@ pub fn[A, B] View::rev_foldi(
 /// let v2 = v[1:].map(fn (x) {x + 1})
 /// assert_eq(v2, [5, 6])
 /// ```
-pub fn[T, U] View::map(self : View[T], f : (T) -> U?Error) -> Array[U]?Error {
+pub fn[T, U] View::map(self : View[T], f : (T) -> U raise?) -> Array[U] raise? {
   if self.length() == 0 {
     return []
   }
@@ -327,7 +330,7 @@ pub fn[T, U] View::map(self : View[T], f : (T) -> U?Error) -> Array[U]?Error {
 /// v[1:].map_inplace(fn (x) {x + 1})
 /// assert_eq(v, [3, 5, 6])
 /// ```
-pub fn[T] View::map_inplace(self : View[T], f : (T) -> T?Error) -> Unit?Error {
+pub fn[T] View::map_inplace(self : View[T], f : (T) -> T raise?) -> Unit raise? {
   for i, v in self {
     self[i] = f(v)
   }
@@ -344,8 +347,8 @@ pub fn[T] View::map_inplace(self : View[T], f : (T) -> T?Error) -> Unit?Error {
 /// ```
 pub fn[T, U] View::mapi(
   self : View[T],
-  f : (Int, T) -> U?Error
-) -> Array[U]?Error {
+  f : (Int, T) -> U raise?
+) -> Array[U] raise? {
   if self.length() == 0 {
     return []
   }
@@ -363,8 +366,8 @@ pub fn[T, U] View::mapi(
 /// ```
 pub fn[T] View::mapi_inplace(
   self : View[T],
-  f : (Int, T) -> T?Error
-) -> Unit?Error {
+  f : (Int, T) -> T raise?
+) -> Unit raise? {
   for i, v in self {
     self[i] = f(i, v)
   }
@@ -379,7 +382,10 @@ pub fn[T] View::mapi_inplace(
 /// let v = arr[2:].filter(fn (x) { x % 2 == 0 })
 /// assert_eq(v, [4, 6])
 /// ```
-pub fn[T] View::filter(self : View[T], f : (T) -> Bool?Error) -> Array[T]?Error {
+pub fn[T] View::filter(
+  self : View[T],
+  f : (T) -> Bool raise?
+) -> Array[T] raise? {
   let arr = []
   for v in self {
     if f(v) {

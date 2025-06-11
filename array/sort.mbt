@@ -229,7 +229,7 @@ fn[T : Compare] sift_down(arr : ArrayView[T], index : Int) -> Unit {
 }
 
 ///|
-fn test_sort(f : (Array[Int]) -> Unit) -> Unit! {
+fn test_sort(f : (Array[Int]) -> Unit) -> Unit raise {
   let arr = [5, 4, 3, 2, 1]
   f(arr)
   assert_eq(arr, [1, 2, 3, 4, 5])

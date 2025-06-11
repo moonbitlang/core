@@ -17,7 +17,7 @@ suberror IntError Int
 
 ///|
 test "show error" {
-  fn f(b : Bool) -> String! {
+  fn f(b : Bool) -> String raise {
     if b {
       "ok"
     } else {
@@ -52,7 +52,10 @@ test "show error" {
 /// The design choice is that `finally` should be allowed to throw or not
 /// If it does throw, which error should be raised?
 /// here `protect` raise the `work` error
-fn[A, E : Error] protect(finally~ : () -> Unit?Error, work : () -> A!E) -> A!E {
+fn[A, E : Error] protect(
+  finally~ : () -> Unit raise?,
+  work : () -> A raise E
+) -> A raise E {
   try work() catch {
     e => {
       try finally() catch {
@@ -76,7 +79,7 @@ fn[A, E : Error] protect(finally~ : () -> Unit?Error, work : () -> A!E) -> A!E {
 /// However, due to the error comes from multiple sources,
 /// it is hard to track which error is the original one
 /// in the type system
-fn[A] protect2(finally~ : () -> Unit?Error, work : () -> A!) -> A! {
+fn[A] protect2(finally~ : () -> Unit raise?, work : () -> A raise) -> A raise {
   try work() catch {
     e => {
       finally()

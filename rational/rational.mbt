@@ -148,12 +148,12 @@ pub fn to_double(self : T) -> Double {
 }
 
 ///|
-fn[T] nan_error() -> T!RationalError {
+fn[T] nan_error() -> T raise RationalError {
   raise RationalError("Rational::from_double: cannot convert NaN")
 }
 
 ///|
-fn[T] overflow_error() -> T!RationalError {
+fn[T] overflow_error() -> T raise RationalError {
   raise RationalError("Rational::from_double: overflow")
 }
 
@@ -179,7 +179,7 @@ pub impl Eq for RationalError with op_equal(
 
 ///|
 /// Returns the approximate rational value of a double.
-pub fn from_double(value : Double) -> T!RationalError {
+pub fn from_double(value : Double) -> T raise RationalError {
   // continued fraction algorithm
   // Ported from https://github.com/rust-num/num
   if value.is_nan() {

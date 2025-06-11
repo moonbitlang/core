@@ -57,6 +57,6 @@ pub(all) suberror Failure String
 ///   fail("Something went wrong")
 /// }
 /// ```
-pub fn[T] fail(msg : String, loc~ : SourceLoc = _) -> T!Failure {
+pub fn[T] fail(msg : String, loc~ : SourceLoc = _) -> T raise Failure {
   raise Failure("FAILED: \{loc} \{msg}")
 }

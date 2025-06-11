@@ -447,8 +447,8 @@ pub fn[K, V] Map::is_empty(self : Map[K, V]) -> Bool {
 #locals(f)
 pub fn[K, V] Map::each(
   self : Map[K, V],
-  f : (K, V) -> Unit?Error
-) -> Unit?Error {
+  f : (K, V) -> Unit raise?
+) -> Unit raise? {
   loop self.head {
     Some({ key, value, next, .. }) => {
       f(key, value)
@@ -463,8 +463,8 @@ pub fn[K, V] Map::each(
 #locals(f)
 pub fn[K, V] Map::eachi(
   self : Map[K, V],
-  f : (Int, K, V) -> Unit?Error
-) -> Unit?Error {
+  f : (Int, K, V) -> Unit raise?
+) -> Unit raise? {
   loop (0, self.head) {
     (i, Some({ key, value, next, .. })) => {
       f(i, key, value)

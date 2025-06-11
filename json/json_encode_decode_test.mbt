@@ -40,7 +40,7 @@ suberror DecodeError {
 } derive(Eq, Show)
 
 ///|
-fn of_json(jv : Json) -> AllThree!DecodeError {
+fn of_json(jv : Json) -> AllThree raise DecodeError {
   match jv {
     {
       "ints": Array(ints),

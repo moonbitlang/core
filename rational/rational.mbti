@@ -9,7 +9,7 @@ fn floor(T) -> Int64
 
 fn fract(T) -> T
 
-fn from_double(Double) -> T!RationalError
+fn from_double(Double) -> T raise RationalError
 
 fn is_integer(T) -> Bool
 
