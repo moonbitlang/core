@@ -55,17 +55,17 @@ pub fn String::find(self : String, str : View) -> Int? {
 
 ///|
 test "find" {
-  inspect!("hello".find("o"), content="Some(4)")
-  inspect!("hello".find("l"), content="Some(2)")
-  inspect!("hello".find("hello"), content="Some(0)")
-  inspect!("hello".find("h"), content="Some(0)")
-  inspect!("hello".find(""), content="Some(0)")
-  inspect!("hello".find("world"), content="None")
-  inspect!("".find(""), content="Some(0)")
-  inspect!("".find("a"), content="None")
-  inspect!("hello hello".find("hello"), content="Some(0)")
-  inspect!("aaa".find("aa"), content="Some(0)")
-  inspect!("😀😀".find("😀"), content="Some(0)")
+  inspect("hello".find("o"), content="Some(4)")
+  inspect("hello".find("l"), content="Some(2)")
+  inspect("hello".find("hello"), content="Some(0)")
+  inspect("hello".find("h"), content="Some(0)")
+  inspect("hello".find(""), content="Some(0)")
+  inspect("hello".find("world"), content="None")
+  inspect("".find(""), content="Some(0)")
+  inspect("".find("a"), content="None")
+  inspect("hello hello".find("hello"), content="Some(0)")
+  inspect("aaa".find("aa"), content="Some(0)")
+  inspect("😀😀".find("😀"), content="Some(0)")
 }
 
 ///|
@@ -89,16 +89,16 @@ pub fn String::find_by(self : String, pred : (Char) -> Bool) -> Int? {
 
 ///|
 test "find_by" {
-  inspect!("hello".find_by(fn(c) { c == 'o' }), content="Some(4)")
-  inspect!("hello".find_by(fn(c) { c == 'l' }), content="Some(2)")
-  inspect!("hello".find_by(fn(c) { c == 'z' }), content="None")
-  inspect!("".find_by(fn(c) { c == 'a' }), content="None")
-  inspect!("hello".find_by(fn(c) { c is ('0'..='9') }), content="None")
-  inspect!("hello123".find_by(fn(c) { c is ('0'..='9') }), content="Some(5)")
-  inspect!("hello".find_by(fn(c) { c is ('A'..='Z') }), content="None")
-  inspect!("Hello".find_by(fn(c) { c is ('A'..='Z') }), content="Some(0)")
-  inspect!("αβγ".find_by(fn(c) { c == 'β' }), content="Some(1)")
-  inspect!("😀😁😂".find_by(fn(c) { c == '😂' }), content="Some(2)")
+  inspect("hello".find_by(fn(c) { c == 'o' }), content="Some(4)")
+  inspect("hello".find_by(fn(c) { c == 'l' }), content="Some(2)")
+  inspect("hello".find_by(fn(c) { c == 'z' }), content="None")
+  inspect("".find_by(fn(c) { c == 'a' }), content="None")
+  inspect("hello".find_by(fn(c) { c is ('0'..='9') }), content="None")
+  inspect("hello123".find_by(fn(c) { c is ('0'..='9') }), content="Some(5)")
+  inspect("hello".find_by(fn(c) { c is ('A'..='Z') }), content="None")
+  inspect("Hello".find_by(fn(c) { c is ('A'..='Z') }), content="Some(0)")
+  inspect("αβγ".find_by(fn(c) { c == 'β' }), content="Some(1)")
+  inspect("😀😁😂".find_by(fn(c) { c == '😂' }), content="Some(2)")
 }
 
 ///|
@@ -140,17 +140,17 @@ pub fn String::rev_find(self : String, str : View) -> Int? {
 
 ///|
 test "rev_find" {
-  inspect!("hello".rev_find("o"), content="Some(4)")
-  inspect!("hello".rev_find("l"), content="Some(3)")
-  inspect!("hello".rev_find("hello"), content="Some(0)")
-  inspect!("hello".rev_find("h"), content="Some(0)")
-  inspect!("hello".rev_find(""), content="Some(5)")
-  inspect!("hello".rev_find("world"), content="None")
-  inspect!("".rev_find(""), content="Some(0)")
-  inspect!("".rev_find("a"), content="None")
-  inspect!("hello hello".rev_find("hello"), content="Some(6)")
-  inspect!("aaa".rev_find("aa"), content="Some(1)")
-  inspect!("😀😀".rev_find("😀"), content="Some(2)")
+  inspect("hello".rev_find("o"), content="Some(4)")
+  inspect("hello".rev_find("l"), content="Some(3)")
+  inspect("hello".rev_find("hello"), content="Some(0)")
+  inspect("hello".rev_find("h"), content="Some(0)")
+  inspect("hello".rev_find(""), content="Some(5)")
+  inspect("hello".rev_find("world"), content="None")
+  inspect("".rev_find(""), content="Some(0)")
+  inspect("".rev_find("a"), content="None")
+  inspect("hello hello".rev_find("hello"), content="Some(6)")
+  inspect("aaa".rev_find("aa"), content="Some(1)")
+  inspect("😀😀".rev_find("😀"), content="Some(2)")
 }
 
 ///| 
@@ -167,16 +167,16 @@ pub fn String::has_suffix(self : String, str : View) -> Bool {
 
 ///|
 test "has_suffix" {
-  inspect!("hello".has_suffix("lo"), content="true")
-  inspect!("hello".has_suffix("hello"), content="true")
-  inspect!("hello".has_suffix(""), content="true")
-  inspect!("hello".has_suffix("world"), content="false")
-  inspect!("hello".has_suffix("hel"), content="false")
-  inspect!("".has_suffix(""), content="true")
-  inspect!("".has_suffix("a"), content="false")
-  inspect!("hello world".has_suffix("world"), content="true")
-  inspect!("😀😀".has_suffix("😀"), content="true")
-  inspect!("😀😀".has_suffix("😀😀"), content="true")
+  inspect("hello".has_suffix("lo"), content="true")
+  inspect("hello".has_suffix("hello"), content="true")
+  inspect("hello".has_suffix(""), content="true")
+  inspect("hello".has_suffix("world"), content="false")
+  inspect("hello".has_suffix("hel"), content="false")
+  inspect("".has_suffix(""), content="true")
+  inspect("".has_suffix("a"), content="false")
+  inspect("hello world".has_suffix("world"), content="true")
+  inspect("😀😀".has_suffix("😀"), content="true")
+  inspect("😀😀".has_suffix("😀😀"), content="true")
 }
 
 ///|
@@ -193,17 +193,17 @@ pub fn String::has_prefix(self : String, str : View) -> Bool {
 
 ///|
 test "has_prefix" {
-  inspect!("hello".has_prefix("h"), content="true")
-  inspect!("hello".has_prefix("he"), content="true")
-  inspect!("hello".has_prefix(""), content="true")
-  inspect!("hello".has_prefix("world"), content="false")
-  inspect!("hello".has_prefix("lo"), content="false")
-  inspect!("".has_prefix(""), content="true")
-  inspect!("".has_prefix("a"), content="false")
-  inspect!("😀hello".has_prefix("😀"), content="true")
-  inspect!("😀😃hello".has_prefix("😀😃"), content="true")
-  inspect!("😀hello".has_prefix("😃"), content="false")
-  inspect!("hello😀".has_prefix("😀"), content="false")
+  inspect("hello".has_prefix("h"), content="true")
+  inspect("hello".has_prefix("he"), content="true")
+  inspect("hello".has_prefix(""), content="true")
+  inspect("hello".has_prefix("world"), content="false")
+  inspect("hello".has_prefix("lo"), content="false")
+  inspect("".has_prefix(""), content="true")
+  inspect("".has_prefix("a"), content="false")
+  inspect("😀hello".has_prefix("😀"), content="true")
+  inspect("😀😃hello".has_prefix("😀😃"), content="true")
+  inspect("😀hello".has_prefix("😃"), content="false")
+  inspect("hello😀".has_prefix("😀"), content="false")
 }
 
 ///|
@@ -220,23 +220,53 @@ pub fn contains(self : String, str : View) -> Bool {
 
 ///|
 test "contains" {
-  inspect!("hello".contains("o"), content="true")
-  inspect!("hello".contains("l"), content="true")
-  inspect!("hello".contains("hello"), content="true")
-  inspect!("hello".contains("h"), content="true")
-  inspect!("hello".contains(""), content="true")
-  inspect!("hello".contains("world"), content="false")
-  inspect!("".contains(""), content="true")
-  inspect!("".contains("a"), content="false")
-  inspect!("hello hello".contains("hello"), content="true")
-  inspect!("aaa".contains("aa"), content="true")
-  inspect!("😀😀".contains("😀"), content="true")
+  inspect("hello".contains("o"), content="true")
+  inspect("hello".contains("l"), content="true")
+  inspect("hello".contains("hello"), content="true")
+  inspect("hello".contains("h"), content="true")
+  inspect("hello".contains(""), content="true")
+  inspect("hello".contains("world"), content="false")
+  inspect("".contains(""), content="true")
+  inspect("".contains("a"), content="false")
+  inspect("hello hello".contains("hello"), content="true")
+  inspect("aaa".contains("aa"), content="true")
+  inspect("😀😀".contains("😀"), content="true")
 }
 
 ///|
 /// Returns true if this string contains the given character.
 pub fn View::contains_char(self : View, c : Char) -> Bool {
-  self.iter().any(fn(ch) { ch == c })
+  let len = self.length()
+  // Check empty
+  guard len > 0 else { return false }
+  let c = c.to_int()
+  if c <= 0xFFFF {
+    // Search BMP
+    for i in 0..<len {
+      if self.unsafe_charcode_at(i) == c {
+        return true
+      }
+    }
+  } else {
+    // Check insufficient
+    guard len >= 2 else { return false }
+    // Calc surrogate pair
+    let adj = c - 0x10000
+    let high = 0xD800 + (adj >> 10)
+    let low = 0xDC00 + (adj & 0x3FF)
+    // Search surrogate pair
+    let mut i = 0
+    while i < len - 1 {
+      if self.unsafe_charcode_at(i) == high {
+        i += 1
+        if self.unsafe_charcode_at(i) == low {
+          return true
+        }
+      }
+      i += 1
+    }
+  }
+  false
 }
 
 ///|
@@ -247,17 +277,17 @@ pub fn contains_char(self : String, c : Char) -> Bool {
 
 ///|
 test "contains_char" {
-  inspect!("hello".contains_char('h'), content="true")
-  inspect!("hello".contains_char('e'), content="true")
-  inspect!("hello".contains_char('l'), content="true")
-  inspect!("hello".contains_char('o'), content="true")
-  inspect!("hello".contains_char('x'), content="false")
-  inspect!("".contains_char('a'), content="false")
-  inspect!("hello world".contains_char(' '), content="true")
-  inspect!("hello world".contains_char('w'), content="true")
-  inspect!("😀😀".contains_char('😀'), content="true")
-  inspect!("😀😀".contains_char('😃'), content="false")
-  inspect!("hello".contains_char((104).unsafe_to_char()), content="true") // 'h' is 104 in ASCII
+  inspect("hello".contains_char('h'), content="true")
+  inspect("hello".contains_char('e'), content="true")
+  inspect("hello".contains_char('l'), content="true")
+  inspect("hello".contains_char('o'), content="true")
+  inspect("hello".contains_char('x'), content="false")
+  inspect("".contains_char('a'), content="false")
+  inspect("hello world".contains_char(' '), content="true")
+  inspect("hello world".contains_char('w'), content="true")
+  inspect("😀😀".contains_char('😀'), content="true")
+  inspect("😀😀".contains_char('😃'), content="false")
+  inspect("hello".contains_char((104).unsafe_to_char()), content="true") // 'h' is 104 in ASCII
 }
 
 ///|
@@ -284,18 +314,18 @@ pub fn trim_start(self : String, char_set : View) -> View {
 
 ///|
 test "trim_start" {
-  inspect!("hello".trim_start("h"), content="ello")
-  inspect!("hello".trim_start("he"), content="llo")
-  inspect!("hello".trim_start("eh"), content="llo")
-  inspect!("hello".trim_start("x"), content="hello")
-  inspect!("hello".trim_start(""), content="hello")
-  inspect!("".trim_start("a"), content="")
-  inspect!("   hello".trim_start(" "), content="hello")
-  inspect!("hello world".trim_start("helo"), content=" world")
-  inspect!("😀😀hello".trim_start("😀"), content="hello")
-  inspect!("😀😃hello".trim_start("😀😃"), content="hello")
-  inspect!("aaaabc".trim_start("a"), content="bc")
-  inspect!("aaaa".trim_start("a"), content="")
+  inspect("hello".trim_start("h"), content="ello")
+  inspect("hello".trim_start("he"), content="llo")
+  inspect("hello".trim_start("eh"), content="llo")
+  inspect("hello".trim_start("x"), content="hello")
+  inspect("hello".trim_start(""), content="hello")
+  inspect("".trim_start("a"), content="")
+  inspect("   hello".trim_start(" "), content="hello")
+  inspect("hello world".trim_start("helo"), content=" world")
+  inspect("😀😀hello".trim_start("😀"), content="hello")
+  inspect("😀😃hello".trim_start("😀😃"), content="hello")
+  inspect("aaaabc".trim_start("a"), content="bc")
+  inspect("aaaa".trim_start("a"), content="")
 }
 
 ///|
@@ -322,17 +352,17 @@ pub fn trim_end(self : String, char_set : View) -> View {
 
 ///|
 test "trim_end" {
-  inspect!("hello".trim_end("o"), content="hell")
-  inspect!("hello".trim_end("lo"), content="he")
-  inspect!("hello".trim_end("x"), content="hello")
-  inspect!("hello".trim_end(""), content="hello")
-  inspect!("".trim_end("a"), content="")
-  inspect!("hello   ".trim_end(" "), content="hello")
-  inspect!("hello world".trim_end("dlrow "), content="he")
-  inspect!("hello😀😀".trim_end("😀"), content="hello")
-  inspect!("hello😀😃".trim_end("😀😃"), content="hello")
-  inspect!("abcccc".trim_end("c"), content="ab")
-  inspect!("cccc".trim_end("c"), content="")
+  inspect("hello".trim_end("o"), content="hell")
+  inspect("hello".trim_end("lo"), content="he")
+  inspect("hello".trim_end("x"), content="hello")
+  inspect("hello".trim_end(""), content="hello")
+  inspect("".trim_end("a"), content="")
+  inspect("hello   ".trim_end(" "), content="hello")
+  inspect("hello world".trim_end("dlrow "), content="he")
+  inspect("hello😀😀".trim_end("😀"), content="hello")
+  inspect("hello😀😃".trim_end("😀😃"), content="hello")
+  inspect("abcccc".trim_end("c"), content="ab")
+  inspect("cccc".trim_end("c"), content="")
 }
 
 ///|
@@ -351,21 +381,21 @@ pub fn trim(self : String, char_set : View) -> View {
 
 ///|
 test "trim" {
-  inspect!("hello".trim("h"), content="ello")
-  inspect!("hello".trim("o"), content="hell")
-  inspect!("hello".trim("ho"), content="ell")
-  inspect!("hello".trim("oh"), content="ell")
-  inspect!("hello".trim("x"), content="hello")
-  inspect!("hello".trim(""), content="hello")
-  inspect!("".trim("a"), content="")
-  inspect!("   hello   ".trim(" "), content="hello")
-  inspect!("hello world".trim("hd"), content="ello worl")
-  inspect!("😀hello😀".trim("😀"), content="hello")
-  inspect!("😀😃hello😀😃".trim("😀😃"), content="hello")
-  inspect!("aaaabcaaa".trim("a"), content="bc")
-  inspect!("aaaa".trim("a"), content="")
-  inspect!("  hello world  ".trim(" "), content="hello world")
-  inspect!("abcabc".trim("abc"), content="")
+  inspect("hello".trim("h"), content="ello")
+  inspect("hello".trim("o"), content="hell")
+  inspect("hello".trim("ho"), content="ell")
+  inspect("hello".trim("oh"), content="ell")
+  inspect("hello".trim("x"), content="hello")
+  inspect("hello".trim(""), content="hello")
+  inspect("".trim("a"), content="")
+  inspect("   hello   ".trim(" "), content="hello")
+  inspect("hello world".trim("hd"), content="ello worl")
+  inspect("😀hello😀".trim("😀"), content="hello")
+  inspect("😀😃hello😀😃".trim("😀😃"), content="hello")
+  inspect("aaaabcaaa".trim("a"), content="bc")
+  inspect("aaaa".trim("a"), content="")
+  inspect("  hello world  ".trim(" "), content="hello world")
+  inspect("abcabc".trim("abc"), content="")
 }
 
 ///| 
@@ -382,16 +412,16 @@ pub fn trim_space(self : String) -> View {
 
 ///|
 test "trim_space" {
-  inspect!("hello".trim_space(), content="hello")
-  inspect!("  hello  ".trim_space(), content="hello")
-  inspect!("hello  ".trim_space(), content="hello")
-  inspect!("  hello".trim_space(), content="hello")
-  inspect!("\t\nhello\r\n".trim_space(), content="hello")
-  inspect!("  hello world  ".trim_space(), content="hello world")
-  inspect!("  ".trim_space(), content="")
-  inspect!("\n\r\t".trim_space(), content="")
-  inspect!("".trim_space(), content="")
-  inspect!("  hello\nworld\t".trim_space(), content="hello\nworld")
+  inspect("hello".trim_space(), content="hello")
+  inspect("  hello  ".trim_space(), content="hello")
+  inspect("hello  ".trim_space(), content="hello")
+  inspect("  hello".trim_space(), content="hello")
+  inspect("\t\nhello\r\n".trim_space(), content="hello")
+  inspect("  hello world  ".trim_space(), content="hello world")
+  inspect("  ".trim_space(), content="")
+  inspect("\n\r\t".trim_space(), content="")
+  inspect("".trim_space(), content="")
+  inspect("  hello\nworld\t".trim_space(), content="hello\nworld")
 }
 
 ///|
@@ -408,19 +438,19 @@ pub fn is_empty(self : String) -> Bool {
 
 ///|
 test "is_empty" {
-  inspect!("".is_empty(), content="true")
-  inspect!("hello".is_empty(), content="false")
-  inspect!(" ".is_empty(), content="false")
-  inspect!("\n".is_empty(), content="false")
-  inspect!("\t".is_empty(), content="false")
-  inspect!("   ".is_empty(), content="false")
+  inspect("".is_empty(), content="true")
+  inspect("hello".is_empty(), content="false")
+  inspect(" ".is_empty(), content="false")
+  inspect("\n".is_empty(), content="false")
+  inspect("\t".is_empty(), content="false")
+  inspect("   ".is_empty(), content="false")
 
   // Test with string views
   let s = "hello"
   let empty_view = s[0:0]
   let non_empty_view = s[0:3]
-  inspect!(empty_view.is_empty(), content="true")
-  inspect!(non_empty_view.is_empty(), content="false")
+  inspect(empty_view.is_empty(), content="true")
+  inspect(non_empty_view.is_empty(), content="false")
 }
 
 ///|
@@ -437,22 +467,22 @@ pub fn is_blank(self : String) -> Bool {
 
 ///|
 test "is_blank" {
-  inspect!("".is_blank(), content="true")
-  inspect!("hello".is_blank(), content="false")
-  inspect!(" ".is_blank(), content="true")
-  inspect!("\n".is_blank(), content="true")
-  inspect!("\t".is_blank(), content="true")
-  inspect!("   ".is_blank(), content="true")
-  inspect!(" \n\t\r ".is_blank(), content="true")
-  inspect!("hello world".is_blank(), content="false")
-  inspect!("  hello  ".is_blank(), content="false")
+  inspect("".is_blank(), content="true")
+  inspect("hello".is_blank(), content="false")
+  inspect(" ".is_blank(), content="true")
+  inspect("\n".is_blank(), content="true")
+  inspect("\t".is_blank(), content="true")
+  inspect("   ".is_blank(), content="true")
+  inspect(" \n\t\r ".is_blank(), content="true")
+  inspect("hello world".is_blank(), content="false")
+  inspect("  hello  ".is_blank(), content="false")
 
   // Test with string views
   let s = "   hello  "
   let blank_view = s[0:3] // "   "
   let non_blank_view = s[3:8] // "hello"
-  inspect!(blank_view.is_blank(), content="true")
-  inspect!(non_blank_view.is_blank(), content="false")
+  inspect(blank_view.is_blank(), content="true")
+  inspect(non_blank_view.is_blank(), content="false")
 }
 
 ///|
@@ -485,26 +515,26 @@ pub fn pad_start(
 ///|
 test "pad_start" {
   // Test with regular strings
-  inspect!("2".pad_start(3, '0'), content="002")
-  inspect!("abc".pad_start(5, 'x'), content="xxabc")
-  inspect!("hello".pad_start(4, ' '), content="hello") // No padding needed
-  inspect!("".pad_start(3, '-'), content="---")
+  inspect("2".pad_start(3, '0'), content="002")
+  inspect("abc".pad_start(5, 'x'), content="xxabc")
+  inspect("hello".pad_start(4, ' '), content="hello") // No padding needed
+  inspect("".pad_start(3, '-'), content="---")
 
   // Test with different padding characters
-  inspect!("test".pad_start(8, '*'), content="****test")
-  inspect!("123".pad_start(6, '0'), content="000123")
+  inspect("test".pad_start(8, '*'), content="****test")
+  inspect("123".pad_start(6, '0'), content="000123")
 
   // Test with string views
   let s = "hello"
   let view = s[2:5] // "llo"
-  inspect!(view.pad_start(5, 'x'), content="xxllo")
+  inspect(view.pad_start(5, 'x'), content="xxllo")
 
   // Test with Unicode characters
-  inspect!("🌟".pad_start(3, '✨'), content="✨✨🌟")
+  inspect("🌟".pad_start(3, '✨'), content="✨✨🌟")
 
   // Edge cases
-  inspect!("abc".pad_start(0, 'x'), content="abc") // width less than string length
-  inspect!("abc".pad_start(3, 'x'), content="abc") // width equal to string length
+  inspect("abc".pad_start(0, 'x'), content="abc") // width less than string length
+  inspect("abc".pad_start(3, 'x'), content="abc") // width equal to string length
 }
 
 ///|
@@ -533,26 +563,26 @@ pub fn pad_end(self : String, total_width : Int, padding_char : Char) -> String 
 ///|
 test "pad_end" {
   // Test with regular strings
-  inspect!("2".pad_end(3, '0'), content="200")
-  inspect!("abc".pad_end(5, 'x'), content="abcxx")
-  inspect!("hello".pad_end(4, ' '), content="hello") // No padding needed
-  inspect!("".pad_end(3, '-'), content="---")
+  inspect("2".pad_end(3, '0'), content="200")
+  inspect("abc".pad_end(5, 'x'), content="abcxx")
+  inspect("hello".pad_end(4, ' '), content="hello") // No padding needed
+  inspect("".pad_end(3, '-'), content="---")
 
   // Test with different padding characters
-  inspect!("test".pad_end(8, '*'), content="test****")
-  inspect!("123".pad_end(6, '0'), content="123000")
+  inspect("test".pad_end(8, '*'), content="test****")
+  inspect("123".pad_end(6, '0'), content="123000")
 
   // Test with string views
   let s = "hello"
   let view = s[2:5] // "llo"
-  inspect!(view.pad_end(5, 'x'), content="lloxx")
+  inspect(view.pad_end(5, 'x'), content="lloxx")
 
   // Test with Unicode characters
-  inspect!("🌟".pad_end(3, '✨'), content="🌟✨✨")
+  inspect("🌟".pad_end(3, '✨'), content="🌟✨✨")
 
   // Edge cases
-  inspect!("abc".pad_end(0, 'x'), content="abc") // width less than string length
-  inspect!("abc".pad_end(3, 'x'), content="abc") // width equal to string length
+  inspect("abc".pad_end(0, 'x'), content="abc") // width less than string length
+  inspect("abc".pad_end(3, 'x'), content="abc") // width equal to string length
 }
 
 ///|
@@ -594,26 +624,26 @@ pub fn repeat(self : String, n : Int) -> String {
 ///|
 test "repeat" {
   // Test with regular strings
-  inspect!("abc".repeat(3), content="abcabcabc")
-  inspect!("x".repeat(5), content="xxxxx")
-  inspect!("hello ".repeat(2), content="hello hello ")
+  inspect("abc".repeat(3), content="abcabcabc")
+  inspect("x".repeat(5), content="xxxxx")
+  inspect("hello ".repeat(2), content="hello hello ")
 
   // Test with empty string
-  inspect!("".repeat(10), content="")
+  inspect("".repeat(10), content="")
 
   // Test with string views
   let s = "hello world"
   let view = s[6:11] // "world"
-  inspect!(view.repeat(2), content="worldworld")
+  inspect(view.repeat(2), content="worldworld")
 
   // Test with Unicode characters
-  inspect!("🌟".repeat(3), content="🌟🌟🌟")
-  inspect!("✨🌟".repeat(2), content="✨🌟✨🌟")
+  inspect("🌟".repeat(3), content="🌟🌟🌟")
+  inspect("✨🌟".repeat(2), content="✨🌟✨🌟")
 
   // Edge cases
-  inspect!("abc".repeat(0), content="")
-  inspect!("abc".repeat(-5), content="")
-  inspect!("abc".repeat(1), content="abc")
+  inspect("abc".repeat(0), content="")
+  inspect("abc".repeat(-5), content="")
+  inspect("abc".repeat(1), content="abc")
 }
 
 ///|
@@ -636,10 +666,10 @@ pub fn rev(self : String) -> String {
 
 ///|
 test "rev" {
-  inspect!("hello".rev(), content="olleh")
-  inspect!("".rev(), content="")
-  inspect!("abc".rev(), content="cba")
-  inspect!("😀😃".rev(), content="😃😀")
+  inspect("hello".rev(), content="olleh")
+  inspect("".rev(), content="")
+  inspect("abc".rev(), content="cba")
+  inspect("😀😃".rev(), content="😃😀")
 }
 
 ///|
@@ -684,31 +714,31 @@ pub fn split(self : String, sep : View) -> Iter[View] {
 
 ///|
 test "split" {
-  assert_eq!("a,b,c".split(",").map(View::to_string).collect(), ["a", "b", "c"])
-  assert_eq!("a,b,c".split("").map(View::to_string).collect(), [
+  assert_eq("a,b,c".split(",").map(View::to_string).collect(), ["a", "b", "c"])
+  assert_eq("a,b,c".split("").map(View::to_string).collect(), [
     "a", ",", "b", ",", "c",
   ])
-  assert_eq!(
+  assert_eq(
     "apple::orange::banana".split("::").map(View::to_string).collect(),
     ["apple", "orange", "banana"],
   )
-  assert_eq!("abc".split("").map(View::to_string).collect(), ["a", "b", "c"])
-  assert_eq!("hello".split(",").map(View::to_string).collect(), ["hello"])
-  assert_eq!(",a,b,c".split(",").map(View::to_string).collect(), [
+  assert_eq("abc".split("").map(View::to_string).collect(), ["a", "b", "c"])
+  assert_eq("hello".split(",").map(View::to_string).collect(), ["hello"])
+  assert_eq(",a,b,c".split(",").map(View::to_string).collect(), [
     "", "a", "b", "c",
   ])
-  assert_eq!("a,b,c,".split(",").map(View::to_string).collect(), [
+  assert_eq("a,b,c,".split(",").map(View::to_string).collect(), [
     "a", "b", "c", "",
   ])
-  assert_eq!("a,b,c".split("").map(View::to_string).collect(), [
+  assert_eq("a,b,c".split("").map(View::to_string).collect(), [
     "a", ",", "b", ",", "c",
   ])
-  assert_eq!("".split("").map(View::to_string).collect(), [])
-  assert_eq!("".split(",").map(View::to_string).collect(), [""])
-  assert_eq!("😀,😃,😄".split(",").map(View::to_string).collect(), [
+  assert_eq("".split("").map(View::to_string).collect(), [])
+  assert_eq("".split(",").map(View::to_string).collect(), [""])
+  assert_eq("😀,😃,😄".split(",").map(View::to_string).collect(), [
     "😀", "😃", "😄",
   ])
-  assert_eq!("a😀b😀c".split("😀").map(View::to_string).collect(), [
+  assert_eq("a😀b😀c".split("😀").map(View::to_string).collect(), [
     "a", "b", "c",
   ])
 }
@@ -749,13 +779,13 @@ pub fn replace(self : String, old~ : View, new~ : View) -> String {
 
 ///|
 test "replace" {
-  inspect!("hello".replace(old="o", new="a"), content="hella")
-  inspect!("hello".replace(old="l", new="a"), content="healo")
-  inspect!("hello".replace(old="hello", new="a"), content="a")
-  inspect!("hello".replace(old="h", new="a"), content="aello")
-  inspect!("hello".replace(old="", new="a"), content="ahello")
-  inspect!("hello".replace(old="world", new="a"), content="hello")
-  inspect!("".replace(old="", new="a"), content="a")
+  inspect("hello".replace(old="o", new="a"), content="hella")
+  inspect("hello".replace(old="l", new="a"), content="healo")
+  inspect("hello".replace(old="hello", new="a"), content="a")
+  inspect("hello".replace(old="h", new="a"), content="aello")
+  inspect("hello".replace(old="", new="a"), content="ahello")
+  inspect("hello".replace(old="world", new="a"), content="hello")
+  inspect("".replace(old="", new="a"), content="a")
 }
 
 ///|
@@ -842,71 +872,71 @@ pub fn replace_all(self : String, old~ : View, new~ : View) -> String {
 
 ///|
 test "replace_all" {
-  assert_eq!("hello".replace_all(old="o", new="a"), "hella")
-  assert_eq!("hello".replace_all(old="l", new="a"), "heaao")
-  assert_eq!("hello".replace_all(old="ll", new="rr"), "herro")
-  assert_eq!("hello".replace_all(old="hello", new="world"), "world")
-  assert_eq!("hello hello hello".replace_all(old="hello", new="hi"), "hi hi hi")
-  assert_eq!(
+  assert_eq("hello".replace_all(old="o", new="a"), "hella")
+  assert_eq("hello".replace_all(old="l", new="a"), "heaao")
+  assert_eq("hello".replace_all(old="ll", new="rr"), "herro")
+  assert_eq("hello".replace_all(old="hello", new="world"), "world")
+  assert_eq("hello hello hello".replace_all(old="hello", new="hi"), "hi hi hi")
+  assert_eq(
     "hello hello helloi".replace_all(old="hello", new="hi"),
     "hi hi hii",
   )
-  assert_eq!(
+  assert_eq(
     "hi hi hii".replace_all(old="hi", new="hello"),
     "hello hello helloi",
   )
-  assert_eq!("hello".replace_all(old="", new="a"), "ahaealalaoa")
-  assert_eq!("hello".replace_all(old="world", new="a"), "hello")
-  assert_eq!("".replace_all(old="", new="a"), "a")
-  assert_eq!("aaa".replace_all(old="a", new="b"), "bbb")
-  assert_eq!("aaa".replace_all(old="a", new="bb"), "bbbbbb")
-  assert_eq!("aaa".replace_all(old="aa", new="b"), "ba")
-  assert_eq!("🤣🤣🤣".replace_all(old="🤣", new="😊"), "😊😊😊")
-  assert_eq!("abc123abc".replace_all(old="abc", new="xyz"), "xyz123xyz")
-  assert_eq!("abcabcabc".replace_all(old="abc", new=""), "")
-  assert_eq!("abc".replace_all(old="abc", new=""), "")
-  assert_eq!("abc".replace_all(old="", new="x"), "xaxbxcx")
+  assert_eq("hello".replace_all(old="", new="a"), "ahaealalaoa")
+  assert_eq("hello".replace_all(old="world", new="a"), "hello")
+  assert_eq("".replace_all(old="", new="a"), "a")
+  assert_eq("aaa".replace_all(old="a", new="b"), "bbb")
+  assert_eq("aaa".replace_all(old="a", new="bb"), "bbbbbb")
+  assert_eq("aaa".replace_all(old="aa", new="b"), "ba")
+  assert_eq("🤣🤣🤣".replace_all(old="🤣", new="😊"), "😊😊😊")
+  assert_eq("abc123abc".replace_all(old="abc", new="xyz"), "xyz123xyz")
+  assert_eq("abcabcabc".replace_all(old="abc", new=""), "")
+  assert_eq("abc".replace_all(old="abc", new=""), "")
+  assert_eq("abc".replace_all(old="", new="x"), "xaxbxcx")
 }
 
 ///|
 test "View::replace_all" {
-  assert_eq!("hello"[:].replace_all(old="o", new="a"), "hella")
-  assert_eq!("hello"[:].replace_all(old="l", new="a"), "heaao")
-  assert_eq!("hello"[:].replace_all(old="ll", new="rr"), "herro")
-  assert_eq!("hello"[:].replace_all(old="hello", new="world"), "world")
-  assert_eq!(
+  assert_eq("hello"[:].replace_all(old="o", new="a"), "hella")
+  assert_eq("hello"[:].replace_all(old="l", new="a"), "heaao")
+  assert_eq("hello"[:].replace_all(old="ll", new="rr"), "herro")
+  assert_eq("hello"[:].replace_all(old="hello", new="world"), "world")
+  assert_eq(
     "hello hello hello"[:].replace_all(old="hello", new="hi"),
     "hi hi hi",
   )
-  assert_eq!(
+  assert_eq(
     "hello hello helloi"[:].replace_all(old="hello", new="hi"),
     "hi hi hii",
   )
-  assert_eq!(
+  assert_eq(
     "hi hi hii"[:].replace_all(old="hi", new="hello"),
     "hello hello helloi",
   )
-  assert_eq!("hello"[:].replace_all(old="", new="a"), "ahaealalaoa")
-  assert_eq!("hello"[:].replace_all(old="world", new="a"), "hello")
-  assert_eq!(""[:].replace_all(old="", new="a"), "a")
-  assert_eq!("aaa"[:].replace_all(old="a", new="b"), "bbb")
-  assert_eq!("aaa"[:].replace_all(old="a", new="bb"), "bbbbbb")
-  assert_eq!("aaa"[:].replace_all(old="aa", new="b"), "ba")
-  assert_eq!(
+  assert_eq("hello"[:].replace_all(old="", new="a"), "ahaealalaoa")
+  assert_eq("hello"[:].replace_all(old="world", new="a"), "hello")
+  assert_eq(""[:].replace_all(old="", new="a"), "a")
+  assert_eq("aaa"[:].replace_all(old="a", new="b"), "bbb")
+  assert_eq("aaa"[:].replace_all(old="a", new="bb"), "bbbbbb")
+  assert_eq("aaa"[:].replace_all(old="aa", new="b"), "ba")
+  assert_eq(
     "🤣🤣🤣"[:].replace_all(old="🤣", new="😊"),
     "😊😊😊",
   )
-  assert_eq!("abc123abc"[:].replace_all(old="abc", new="xyz"), "xyz123xyz")
-  assert_eq!("abcabcabc"[:].replace_all(old="abc", new=""), "")
-  assert_eq!("abc"[:].replace_all(old="abc", new=""), "")
-  assert_eq!("abc"[:].replace_all(old="", new="x"), "xaxbxcx")
+  assert_eq("abc123abc"[:].replace_all(old="abc", new="xyz"), "xyz123xyz")
+  assert_eq("abcabcabc"[:].replace_all(old="abc", new=""), "")
+  assert_eq("abc"[:].replace_all(old="abc", new=""), "")
+  assert_eq("abc"[:].replace_all(old="", new="x"), "xaxbxcx")
 }
 
 ///|
 /// Converts this string to lowercase.
 pub fn View::to_lower(self : View) -> View {
   // TODO: deal with non-ascii characters
-  guard self.find_by(@char.is_ascii_uppercase) is Some(idx) else { return self }
+  guard self.find_by(_.is_ascii_uppercase()) is Some(idx) else { return self }
   let buf = StringBuilder::new(size_hint=self.length())
   buf.write_string(self.view(end_offset=idx).to_string())
   for c in self.view(start_offset=idx) {
@@ -924,7 +954,7 @@ pub fn View::to_lower(self : View) -> View {
 /// Converts this string to lowercase.
 pub fn to_lower(self : String) -> String {
   // TODO: deal with non-ascii characters
-  guard self.find_by(@char.is_ascii_uppercase) is Some(idx) else { return self }
+  guard self.find_by(_.is_ascii_uppercase()) is Some(idx) else { return self }
   let buf = StringBuilder::new(size_hint=self.length())
   buf.write_string(self.view(end_offset=idx).to_string())
   for c in self.view(start_offset=idx) {
@@ -940,23 +970,23 @@ pub fn to_lower(self : String) -> String {
 
 ///|
 test "to_lower" {
-  assert_eq!("Hello".to_lower(), "hello")
-  assert_eq!("HELLO".to_lower(), "hello")
-  assert_eq!("Hello, World!".to_lower(), "hello, world!")
+  assert_eq("Hello".to_lower(), "hello")
+  assert_eq("HELLO".to_lower(), "hello")
+  assert_eq("Hello, World!".to_lower(), "hello, world!")
 }
 
 ///|
 test "View::to_lower" {
-  assert_eq!("Hello"[:].to_lower(), "hello")
-  assert_eq!("HELLO"[:].to_lower(), "hello")
-  assert_eq!("Hello, World!"[:].to_lower(), "hello, world!")
+  assert_eq("Hello"[:].to_lower(), "hello")
+  assert_eq("HELLO"[:].to_lower(), "hello")
+  assert_eq("Hello, World!"[:].to_lower(), "hello, world!")
 }
 
 ///|
 /// Converts this string to uppercase.
 pub fn View::to_upper(self : View) -> View {
   // TODO: deal with non-ascii characters
-  guard self.find_by(@char.is_ascii_lowercase) is Some(idx) else { return self }
+  guard self.find_by(_.is_ascii_lowercase()) is Some(idx) else { return self }
   let buf = StringBuilder::new(size_hint=self.length())
   buf.write_string(self.view(end_offset=idx).to_string())
   for c in self.view(start_offset=idx) {
@@ -973,7 +1003,7 @@ pub fn View::to_upper(self : View) -> View {
 /// Converts this string to uppercase.
 pub fn to_upper(self : String) -> String {
   // TODO: deal with non-ascii characters
-  guard self.find_by(@char.is_ascii_lowercase) is Some(idx) else { return self }
+  guard self.find_by(_.is_ascii_lowercase()) is Some(idx) else { return self }
   let buf = StringBuilder::new(size_hint=self.length())
   buf.write_string(self.view(end_offset=idx).to_string())
   for c in self.view(start_offset=idx) {
@@ -988,21 +1018,21 @@ pub fn to_upper(self : String) -> String {
 
 ///|
 test "to_upper" {
-  assert_eq!("hello".to_upper(), "HELLO")
-  assert_eq!("HELLO".to_upper(), "HELLO")
-  assert_eq!("Hello, World!".to_upper(), "HELLO, WORLD!")
+  assert_eq("hello".to_upper(), "HELLO")
+  assert_eq("HELLO".to_upper(), "HELLO")
+  assert_eq("Hello, World!".to_upper(), "HELLO, WORLD!")
 }
 
 ///|
 test "View::to_upper" {
-  assert_eq!("hello"[:].to_upper(), "HELLO")
-  assert_eq!("HELLO"[:].to_upper(), "HELLO")
-  assert_eq!("Hello, World!"[:].to_upper(), "HELLO, WORLD!")
+  assert_eq("hello"[:].to_upper(), "HELLO")
+  assert_eq("HELLO"[:].to_upper(), "HELLO")
+  assert_eq("Hello, World!"[:].to_upper(), "HELLO, WORLD!")
 }
 
 ///|
 /// Folds the characters of the string into a single value.
-pub fn View::fold[A](self : View, init~ : A, f : (A, Char) -> A) -> A {
+pub fn[A] View::fold(self : View, init~ : A, f : (A, Char) -> A) -> A {
   let mut rv = init
   for c in self {
     rv = f(rv, c)
@@ -1011,27 +1041,27 @@ pub fn View::fold[A](self : View, init~ : A, f : (A, Char) -> A) -> A {
 }
 
 ///| Folds the characters of the string into a single value.
-pub fn fold[A](self : String, init~ : A, f : (A, Char) -> A) -> A {
+pub fn[A] fold(self : String, init~ : A, f : (A, Char) -> A) -> A {
   self[:].fold(init~, f)
 }
 
 ///|
 test "fold" {
-  assert_eq!(
+  assert_eq(
     "hello".fold(init=[], fn(acc, c) {
       acc.push(c)
       acc
     }),
     ['h', 'e', 'l', 'l', 'o'],
   )
-  assert_eq!(
+  assert_eq(
     "hello".fold(init=0, fn(acc, c) { acc + c.to_int() }),
     104 + 101 + 108 + 108 + 111,
   )
 }
 
 ///|
-pub fn View::rev_fold[A](self : View, init~ : A, f : (A, Char) -> A) -> A {
+pub fn[A] View::rev_fold(self : View, init~ : A, f : (A, Char) -> A) -> A {
   let mut rv = init
   for c in self.rev_iter() {
     rv = f(rv, c)
@@ -1040,20 +1070,20 @@ pub fn View::rev_fold[A](self : View, init~ : A, f : (A, Char) -> A) -> A {
 }
 
 ///|
-pub fn rev_fold[A](self : String, init~ : A, f : (A, Char) -> A) -> A {
+pub fn[A] rev_fold(self : String, init~ : A, f : (A, Char) -> A) -> A {
   self[:].rev_fold(init~, f)
 }
 
 ///|
 test "rev_fold" {
-  assert_eq!(
+  assert_eq(
     "hello".rev_fold(init=[], fn(acc, c) {
       acc.push(c)
       acc
     }),
     ['o', 'l', 'l', 'e', 'h'],
   )
-  assert_eq!(
+  assert_eq(
     "hello".rev_fold(init=0, fn(acc, c) { acc + c.to_int() }),
     111 + 108 + 108 + 101 + 104,
   )

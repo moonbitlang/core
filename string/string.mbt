@@ -16,8 +16,10 @@
 /// Convert char array to string.
 ///
 /// ```
-/// let s = @string.from_array(['H', 'e', 'l', 'l', 'o'])
-/// assert_eq!(s, "Hello")
+/// test "from_array_example" {
+///   let s = @string.from_array(['H', 'e', 'l', 'l', 'o'])
+///   assert_eq(s, "Hello")
+/// }
 /// ```
 ///
 /// Do not convert large datas to `Array[Char]` and build a string with `String::from_array`.
@@ -56,10 +58,11 @@ pub fn from_iter(iter : Iter[Char]) -> String {
 ///
 /// ```
 /// let s = @string.concat(["Hello", ", ", "world!"])
-/// assert_eq!(s, "Hello, world!")
+/// assert_eq(s, "Hello, world!")
 /// let s = @string.concat(["a", "b", "c"], separator=",")
-/// assert_eq!(s, "a,b,c")
+/// assert_eq(s, "a,b,c")
 /// ```
+#deprecated("Use `Array::join` instead.")
 pub fn concat(strings : Array[String], separator~ : String = "") -> String {
   match strings {
     [] => ""
@@ -124,8 +127,13 @@ pub fn default() -> String {
 ///|
 /// `String` holds a sequence of UTF-16 code units encoded in little endian format
 pub fn to_bytes(self : String) -> Bytes {
-  Bytes::of_string(self)
+  let array = FixedArray::make(self.length() * 2, Byte::default())
+  array.blit_from_string(0, self, 0, self.length())
+  array |> unsafe_to_bytes
 }
+
+///|
+fn unsafe_to_bytes(array : FixedArray[Byte]) -> Bytes = "%identity"
 
 ///|
 /// Converts the String into an array of Chars.
@@ -145,9 +153,11 @@ pub fn to_array(self : String) -> Array[Char] {
 /// As a result, the count of characters returned by `iter().count()` may not be equal to the length of the string returned by `length()`.
 ///
 /// ```
-/// let s = "Hello, World!🤣";
-/// assert_eq!(s.iter().count(), 14); // Unicode characters
-/// assert_eq!(s.length(), 15); // Utf16 code units
+/// test "iter_example" {
+///   let s = "Hello, World!🤣";
+///   assert_eq(s.iter().count(), 14); // Unicode characters
+///   assert_eq(s.length(), 15); // Utf16 code units
+/// }
 /// ```
 pub fn iter(self : String) -> Iter[Char] {
   Iter::new(fn(yield_) {
@@ -164,7 +174,6 @@ pub fn iter(self : String) -> Iter[Char] {
       }
       //TODO: handle garbage input
       guard yield_(c1.unsafe_to_char()) is IterContinue else { break IterEnd }
-
     } else {
       IterContinue
     }
@@ -189,7 +198,6 @@ pub fn iter2(self : String) -> Iter2[Int, Char] {
       guard yield_(n, c1.unsafe_to_char()) is IterContinue else {
         break IterEnd
       }
-
     } else {
       IterContinue
     }
@@ -218,9 +226,11 @@ pub fn iter2(self : String) -> Iter2[Int, Char] {
 /// # Examples
 ///
 /// ```
-/// let input = "Hello, World!"
-/// let reversed = input.rev_iter().collect()
-/// assert_eq!(reversed, ['!', 'd', 'l', 'r', 'o', 'W', ' ', ',', 'o', 'l', 'l', 'e', 'H'])
+/// test "rev_iter_example" {
+///   let input = "Hello, World!"
+///   let reversed = input.rev_iter().collect()
+///   assert_eq(reversed, ['!', 'd', 'l', 'r', 'o', 'W', ' ', ',', 'o', 'l', 'l', 'e', 'H'])
+/// }
 /// ```
 pub fn rev_iter(self : String) -> Iter[Char] {
   Iter::new(fn(yield_) {
@@ -237,7 +247,6 @@ pub fn rev_iter(self : String) -> Iter[Char] {
       }
       // TODO: handle garbage input
       guard yield_(c1.unsafe_to_char()) is IterContinue else { break IterEnd }
-
     } else {
       IterContinue
     }

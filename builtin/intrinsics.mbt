@@ -32,7 +32,7 @@
 ///   ignore([1, 2, 3].iter().each(fn(x) { sum = sum + x })) // Ignore the Unit return value of each()
 /// }
 /// ```
-pub fn ignore[T](t : T) -> Unit = "%ignore"
+pub fn[T] ignore(t : T) -> Unit = "%ignore"
 
 ///|
 /// Tests if two values are physically equal (i.e., point to the same memory
@@ -55,17 +55,17 @@ pub fn ignore[T](t : T) -> Unit = "%ignore"
 ///   let arr1 = [1, 2, 3]
 ///   let arr2 = arr1
 ///   let arr3 = [1, 2, 3]
-///   inspect!(physical_equal(arr1, arr2), content="true") // Same object
-///   inspect!(physical_equal(arr1, arr3), content="false") // Different objects with same content
+///   inspect(physical_equal(arr1, arr2), content="true") // Same object
+///   inspect(physical_equal(arr1, arr3), content="false") // Different objects with same content
 /// }
 /// ```
-pub fn physical_equal[T](a : T, b : T) -> Bool = "%refeq"
+pub fn[T] physical_equal(a : T, b : T) -> Bool = "%refeq"
 
 ///|
 pub fnalias @abort.abort
 
 ///|
-pub fn panic[T]() -> T = "%panic"
+pub fn[T] panic() -> T = "%panic"
 
 // Bool primitive ops
 
@@ -83,8 +83,8 @@ pub fn panic[T]() -> T = "%panic"
 ///
 /// ```moonbit
 /// test "not" {
-///   inspect!(not(true), content="false")
-///   inspect!(not(false), content="true")
+///   inspect(not(true), content="false")
+///   inspect(not(false), content="true")
 /// }
 /// ```
 pub fn not(x : Bool) -> Bool = "%bool_not"
@@ -104,10 +104,10 @@ pub fn not(x : Bool) -> Bool = "%bool_not"
 ///
 /// ```moonbit
 /// test "Bool::op_equal" {
-///   inspect!(true == true, content="true")
-///   inspect!(false == true, content="false")
-///   inspect!(true == false, content="false")
-///   inspect!(false == false, content="true")
+///   inspect(true == true, content="true")
+///   inspect(false == true, content="false")
+///   inspect(true == false, content="false")
+///   inspect(false == false, content="true")
 /// }
 /// ```
 pub impl Eq for Bool with op_equal(self : Bool, other : Bool) -> Bool = "%bool_eq"
@@ -136,9 +136,9 @@ pub impl Eq for Bool with op_equal(self : Bool, other : Bool) -> Bool = "%bool_e
 ///   let t = true
 ///   let f = false
 ///   // This usage is deprecated, use compare() instead
-///   inspect!(t.compare(f), content="1")
-///   inspect!(f.compare(t), content="-1")
-///   inspect!(t.compare(t), content="0")
+///   inspect(t.compare(f), content="1")
+///   inspect(f.compare(t), content="-1")
+///   inspect(t.compare(t), content="0")
 /// }
 /// ```
 ///
@@ -165,9 +165,9 @@ pub fn Bool::op_compare(self : Bool, other : Bool) -> Int = "%bool_compare"
 ///
 /// ```moonbit
 /// test "Bool::compare" {
-///   inspect!(true.compare(false), content="1") // true > false
-///   inspect!(false.compare(true), content="-1") // false < true
-///   inspect!(true.compare(true), content="0") // true = true
+///   inspect(true.compare(false), content="1") // true > false
+///   inspect(false.compare(true), content="-1") // false < true
+///   inspect(true.compare(true), content="0") // true = true
 /// }
 /// ```
 pub impl Compare for Bool with compare(self, other) = "%bool_compare"
@@ -182,7 +182,7 @@ pub impl Compare for Bool with compare(self, other) = "%bool_compare"
 /// ```moonbit
 /// test "Bool::default" {
 ///   let b : Bool = Bool::default()
-///   inspect!(b, content="false")
+///   inspect(b, content="false")
 /// }
 /// ```
 pub impl Default for Bool with default() = "%bool_default"
@@ -206,9 +206,9 @@ pub impl Default for Bool with default() = "%bool_default"
 ///
 /// ```moonbit
 /// test "Int::op_neg" {
-///   inspect!(-42, content="-42")
-///   inspect!(42, content="42")
-///   inspect!(--2147483647, content="2147483647") // negating near min value
+///   inspect(-42, content="-42")
+///   inspect(42, content="42")
+///   inspect(--2147483647, content="2147483647") // negating near min value
 /// }
 /// ```
 pub impl Neg for Int with op_neg(self) = "%i32_neg"
@@ -231,8 +231,8 @@ pub impl Neg for Int with op_neg(self) = "%i32_neg"
 ///
 /// ```moonbit
 /// test "Int::op_add" {
-///   inspect!(42 + 1, content="43")
-///   inspect!(2147483647 + 1, content="-2147483648") // Overflow wraps around to minimum value
+///   inspect(42 + 1, content="43")
+///   inspect(2147483647 + 1, content="-2147483648") // Overflow wraps around to minimum value
 /// }
 /// ```
 pub impl Add for Int with op_add(self, other) = "%i32_add"
@@ -255,9 +255,9 @@ pub impl Add for Int with op_add(self, other) = "%i32_add"
 /// test "Int::op_sub" {
 ///   let a = 42
 ///   let b = 10
-///   inspect!(a - b, content="32")
+///   inspect(a - b, content="32")
 ///   let max = 2147483647 // Int maximum value
-///   inspect!(max - -1, content="-2147483648") // Overflow case
+///   inspect(max - -1, content="-2147483648") // Overflow case
 /// }
 /// ```
 pub impl Sub for Int with op_sub(self, other) = "%i32_sub"
@@ -278,10 +278,10 @@ pub impl Sub for Int with op_sub(self, other) = "%i32_sub"
 ///
 /// ```moonbit
 /// test "Int::op_mul" {
-///   inspect!(42 * 2, content="84")
-///   inspect!(-10 * 3, content="-30")
+///   inspect(42 * 2, content="84")
+///   inspect(-10 * 3, content="-30")
 ///   let max = 2147483647 // Int.max_value
-///   inspect!(max * 2, content="-2") // Overflow wraps around
+///   inspect(max * 2, content="-2") // Overflow wraps around
 /// }
 /// ```
 pub impl Mul for Int with op_mul(self, other) = "%i32_mul"
@@ -304,9 +304,9 @@ pub impl Mul for Int with op_mul(self, other) = "%i32_mul"
 ///
 /// ```moonbit
 /// test "Int::op_div" {
-///   inspect!(10 / 3, content="3") // truncates towards zero
-///   inspect!(-10 / 3, content="-3")
-///   inspect!(10 / -3, content="-3")
+///   inspect(10 / 3, content="3") // truncates towards zero
+///   inspect(-10 / 3, content="-3")
+///   inspect(10 / -3, content="-3")
 /// }
 ///
 /// test "panic Int::op_div/division_by_zero" {
@@ -332,9 +332,9 @@ pub impl Div for Int with op_div(self, other) = "%i32_div"
 ///
 /// ```moonbit
 /// test "Int::op_mod" {
-///   inspect!(7 % 3, content="1")
-///   inspect!(-7 % 3, content="-1")
-///   inspect!(7 % -3, content="1")
+///   inspect(7 % 3, content="1")
+///   inspect(-7 % 3, content="-1")
+///   inspect(7 % -3, content="1")
 /// }
 ///
 /// test "panic Int::op_mod/division_by_zero" {
@@ -359,8 +359,8 @@ pub impl Mod for Int with op_mod(self, other) = "%i32_mod"
 /// test "Int::lnot" {
 ///   let a = -1 // All bits are 1
 ///   let b = 0 // All bits are 0
-///   inspect!(a.lnot(), content="0")
-///   inspect!(b.lnot(), content="-1")
+///   inspect(a.lnot(), content="0")
+///   inspect(b.lnot(), content="-1")
 /// }
 /// ```
 pub fn Int::lnot(self : Int) -> Int = "%i32_lnot"
@@ -383,7 +383,7 @@ pub fn Int::lnot(self : Int) -> Int = "%i32_lnot"
 /// test "Int::land" {
 ///   let x = 0xF0 // 11110000
 ///   let y = 0xAA // 10101010
-///   inspect!(x & y, content="160") // 10100000 = 160
+///   inspect(x & y, content="160") // 10100000 = 160
 /// }
 /// ```
 pub fn Int::land(self : Int, other : Int) -> Int = "%i32_land"
@@ -407,7 +407,7 @@ pub fn Int::land(self : Int, other : Int) -> Int = "%i32_land"
 /// test "Int::lor" {
 ///   let x = 0xF0F0 // 1111_0000_1111_0000
 ///   let y = 0x0F0F // 0000_1111_0000_1111
-///   inspect!(x | y, content="65535") // 1111_1111_1111_1111 = 65535
+///   inspect(x | y, content="65535") // 1111_1111_1111_1111 = 65535
 /// }
 /// ```
 pub fn Int::lor(self : Int, other : Int) -> Int = "%i32_lor"
@@ -429,8 +429,8 @@ pub fn Int::lor(self : Int, other : Int) -> Int = "%i32_lor"
 /// test "Int::lxor" {
 ///   let x = 0xF0F0 // 1111_0000_1111_0000
 ///   let y = 0x0F0F // 0000_1111_0000_1111
-///   inspect!(x ^ y, content="65535") // 1111_1111_1111_1111
-///   inspect!(x ^ x, content="0") // XOR with self gives 0
+///   inspect(x ^ y, content="65535") // 1111_1111_1111_1111
+///   inspect(x ^ x, content="0") // XOR with self gives 0
 /// }
 /// ```
 pub fn Int::lxor(self : Int, other : Int) -> Int = "%i32_lxor"
@@ -455,9 +455,9 @@ pub fn Int::lxor(self : Int, other : Int) -> Int = "%i32_lxor"
 /// ```moonbit
 /// test "Int::op_shl" {
 ///   let x = 1
-///   inspect!(x << 3, content="8") // Binary: 1 -> 1000
+///   inspect(x << 3, content="8") // Binary: 1 -> 1000
 ///   let y = -4
-///   inspect!(y << 2, content="-16") // Binary: 100 -> 10000
+///   inspect(y << 2, content="-16") // Binary: 100 -> 10000
 /// }
 /// ```
 pub impl Shl for Int with op_shl(self, other) = "%i32_shl"
@@ -482,9 +482,9 @@ pub impl Shl for Int with op_shl(self, other) = "%i32_shl"
 /// ```moonbit
 /// test "Int::op_shr" {
 ///   let n = -16
-///   inspect!(n >> 2, content="-4") // Sign bit is preserved during shift
+///   inspect(n >> 2, content="-4") // Sign bit is preserved during shift
 ///   let p = 16
-///   inspect!(p >> 2, content="4") // Regular right shift for positive numbers
+///   inspect(p >> 2, content="4") // Regular right shift for positive numbers
 /// }
 /// ```
 pub impl Shr for Int with op_shr(self, other) = "%i32_shr"
@@ -507,9 +507,9 @@ pub impl Shr for Int with op_shr(self, other) = "%i32_shr"
 /// ```moonbit
 /// test "Int::lsl" {
 ///   let x = 1
-///   inspect!(x << 3, content="8") // Binary: 1 -> 1000
+///   inspect(x << 3, content="8") // Binary: 1 -> 1000
 ///   let y = 42
-///   inspect!(y << 2, content="168") // Binary: 101010 -> 10101000
+///   inspect(y << 2, content="168") // Binary: 101010 -> 10101000
 /// }
 /// ```
 ///
@@ -537,7 +537,7 @@ pub fn Int::lsl(self : Int, other : Int) -> Int = "%i32_shl"
 /// ```moonbit
 /// test "Int::shl" {
 ///   let x = 1
-///   inspect!(x << 3, content="8") // Equivalent to x << 3
+///   inspect(x << 3, content="8") // Equivalent to x << 3
 /// }
 /// ```
 ///
@@ -565,7 +565,7 @@ pub fn Int::shl(self : Int, other : Int) -> Int = "%i32_shl"
 /// test "Int::lsr" {
 ///   let x = -4 // Binary: 11111...11100
 ///   let unsigned = x.reinterpret_as_uint() // Convert to UInt first
-///   inspect!(unsigned >> 1, content="2147483646") // Using the recommended operator
+///   inspect(unsigned >> 1, content="2147483646") // Using the recommended operator
 /// }
 /// ```
 ///
@@ -593,7 +593,7 @@ pub fn Int::lsr(self : Int, other : Int) -> Int {
 /// ```moonbit
 /// test "Int::asr" {
 ///   let x = -16
-///   inspect!(x >> 2, content="-4") // Right shift preserves sign bit
+///   inspect(x >> 2, content="-4") // Right shift preserves sign bit
 /// }
 /// ```
 ///
@@ -619,7 +619,7 @@ pub fn Int::asr(self : Int, other : Int) -> Int = "%i32_shr"
 /// ```moonbit
 /// test "Int::shr" {
 ///   let n = -1024
-///   inspect!(n >> 3, content="-128") // Preserves sign bit during right shift
+///   inspect(n >> 3, content="-128") // Preserves sign bit during right shift
 /// }
 /// ```
 ///
@@ -644,11 +644,11 @@ pub fn Int::shr(self : Int, other : Int) -> Int = "%i32_shr"
 /// ```moonbit
 /// test "Int::ctz" {
 ///   let x = 0
-///   inspect!(x.ctz(), content="32") // All bits are zero
+///   inspect(x.ctz(), content="32") // All bits are zero
 ///   let y = 1
-///   inspect!(y.ctz(), content="0") // No trailing zeros
+///   inspect(y.ctz(), content="0") // No trailing zeros
 ///   let z = 16
-///   inspect!(z.ctz(), content="4") // Binary: ...10000
+///   inspect(z.ctz(), content="4") // Binary: ...10000
 /// }
 /// ```
 pub fn Int::ctz(self : Int) -> Int = "%i32_ctz"
@@ -672,9 +672,9 @@ pub fn Int::clz(self : Int) -> Int = "%i32_clz"
 /// ```moonbit
 /// test "Int::popcnt" {
 ///   let x = 0b1011 // Binary: 1011 (3 bits set)
-///   inspect!(x.popcnt(), content="3")
+///   inspect(x.popcnt(), content="3")
 ///   let y = -1 // All bits set in two's complement
-///   inspect!(y.popcnt(), content="32")
+///   inspect(y.popcnt(), content="32")
 /// }
 /// ```
 pub fn Int::popcnt(self : Int) -> Int = "%i32_popcnt"
@@ -693,8 +693,8 @@ pub fn Int::popcnt(self : Int) -> Int = "%i32_popcnt"
 ///
 /// ```moonbit
 /// test "Int::op_equal" {
-///   inspect!(42 == 42, content="true")
-///   inspect!(42 == -42, content="false")
+///   inspect(42 == 42, content="true")
+///   inspect(42 == -42, content="false")
 /// }
 /// ```
 pub impl Eq for Int with op_equal(self : Int, other : Int) -> Bool = "%i32_eq"
@@ -719,9 +719,9 @@ pub impl Eq for Int with op_equal(self : Int, other : Int) -> Bool = "%i32_eq"
 /// test "Int::compare" {
 ///   let a = 42
 ///   let b = 24
-///   inspect!(a.compare(b), content="1") // 42 > 24
-///   inspect!(b.compare(a), content="-1") // 24 < 42
-///   inspect!(a.compare(a), content="0") // 42 = 42
+///   inspect(a.compare(b), content="1") // 42 > 24
+///   inspect(b.compare(a), content="-1") // 24 < 42
+///   inspect(a.compare(a), content="0") // 42 = 42
 /// }
 /// ```
 pub impl Compare for Int with compare(self, other) = "%i32_compare"
@@ -745,9 +745,9 @@ pub fn Int::is_pos(self : Int) -> Bool = "%i32_is_pos"
 ///   let neg = -42
 ///   let zero = 0
 ///   let pos = 42
-///   inspect!(neg.is_neg(), content="true")
-///   inspect!(zero.is_neg(), content="false")
-///   inspect!(pos.is_neg(), content="false")
+///   inspect(neg.is_neg(), content="true")
+///   inspect(zero.is_neg(), content="false")
+///   inspect(pos.is_neg(), content="false")
 /// }
 /// ```
 pub fn Int::is_neg(self : Int) -> Bool = "%i32_is_neg"
@@ -768,7 +768,7 @@ pub fn Int::is_non_neg(self : Int) -> Bool = "%i32_is_non_neg"
 /// ```moonbit
 /// test "Int::default" {
 ///   let x : Int = Int::default()
-///   inspect!(x, content="0")
+///   inspect(x, content="0")
 /// }
 /// ```
 pub impl Default for Int with default() = "%i32_default"
@@ -790,9 +790,9 @@ pub impl Default for Int with default() = "%i32_default"
 /// ```moonbit
 /// test "Int::to_double" {
 ///   let n = 42
-///   inspect!(n.to_double(), content="42")
+///   inspect(n.to_double(), content="42")
 ///   let neg = -42
-///   inspect!(neg.to_double(), content="-42")
+///   inspect(neg.to_double(), content="-42")
 /// }
 /// ```
 pub fn Int::to_double(self : Int) -> Double = "%i32_to_f64"
@@ -813,7 +813,7 @@ pub fn Int::to_double(self : Int) -> Double = "%i32_to_f64"
 ///
 /// ```moonbit
 /// test "UInt::trunc_double" {
-///   inspect!(UInt::trunc_double(42.75), content="42")
+///   inspect(UInt::trunc_double(42.75), content="42")
 /// }
 /// ```
 pub fn UInt::trunc_double(val : Double) -> UInt = "%f64.to_u32"
@@ -844,8 +844,8 @@ pub fn Int::reinterpret_as_uint(self : Int) -> UInt = "%i32.to_u32_reinterpret"
 /// test "Int::to_uint" {
 ///   let pos = 42
 ///   let neg = -1
-///   inspect!(pos.reinterpret_as_uint(), content="42")
-///   inspect!(neg.reinterpret_as_uint(), content="4294967295") // 2^32 - 1
+///   inspect(pos.reinterpret_as_uint(), content="42")
+///   inspect(neg.reinterpret_as_uint(), content="4294967295") // 2^32 - 1
 /// }
 /// ```
 ///
@@ -871,9 +871,9 @@ pub fn Int::to_uint(self : Int) -> UInt = "%i32.to_u32_reinterpret"
 /// ```moonbit
 /// test "Int::to_uint64" {
 ///   let pos = 42
-///   inspect!(pos.to_uint64(), content="42")
+///   inspect(pos.to_uint64(), content="42")
 ///   let neg = -1
-///   inspect!(neg.to_uint64(), content="18446744073709551615") // 2^64 - 1
+///   inspect(neg.to_uint64(), content="18446744073709551615") // 2^64 - 1
 /// }
 /// ```
 pub fn Int::to_uint64(self : Int) -> UInt64 {
@@ -895,9 +895,9 @@ pub fn Int::to_uint64(self : Int) -> UInt64 {
 ///
 /// ```moonbit
 /// test "Double::op_neg" {
-///   inspect!(-42.0, content="-42")
-///   inspect!(--42.0, content="42")
-///   inspect!(-(0.0 / 0.0), content="NaN") // Negating NaN returns NaN
+///   inspect(-42.0, content="-42")
+///   inspect(--42.0, content="42")
+///   inspect(-(0.0 / 0.0), content="NaN") // Negating NaN returns NaN
 /// }
 /// ```
 pub impl Neg for Double with op_neg(self) = "%f64_neg"
@@ -922,8 +922,8 @@ pub impl Neg for Double with op_neg(self) = "%f64_neg"
 ///
 /// ```moonbit
 /// test "Double::op_add" {
-///   inspect!(2.5 + 3.7, content="6.2")
-///   inspect!(1.0 / 0.0 + -1.0 / 0.0, content="NaN") // Infinity + -Infinity = NaN
+///   inspect(2.5 + 3.7, content="6.2")
+///   inspect(1.0 / 0.0 + -1.0 / 0.0, content="NaN") // Infinity + -Infinity = NaN
 /// }
 /// ```
 pub impl Add for Double with op_add(self, other) = "%f64_add"
@@ -945,8 +945,8 @@ pub impl Add for Double with op_add(self, other) = "%f64_add"
 /// test "Double::op_sub" {
 ///   let a = 5.0
 ///   let b = 3.0
-///   inspect!(a - b, content="2")
-///   inspect!(0.0 / 0.0 - 1.0, content="NaN") // NaN - anything = NaN
+///   inspect(a - b, content="2")
+///   inspect(0.0 / 0.0 - 1.0, content="NaN") // NaN - anything = NaN
 /// }
 /// ```
 pub impl Sub for Double with op_sub(self, other) = "%f64_sub"
@@ -973,10 +973,10 @@ pub impl Sub for Double with op_sub(self, other) = "%f64_sub"
 ///
 /// ```moonbit
 /// test "Double::op_mul" {
-///   inspect!(2.5 * 2.0, content="5")
-///   inspect!(-2.0 * 3.0, content="-6")
+///   inspect(2.5 * 2.0, content="5")
+///   inspect(-2.0 * 3.0, content="-6")
 ///   let nan = 0.0 / 0.0 // NaN
-///   inspect!(nan * 1.0, content="NaN")
+///   inspect(nan * 1.0, content="NaN")
 /// }
 /// ```
 pub impl Mul for Double with op_mul(self, other) = "%f64_mul"
@@ -1004,9 +1004,9 @@ pub impl Mul for Double with op_mul(self, other) = "%f64_mul"
 ///
 /// ```moonbit
 /// test "Double::op_div" {
-///   inspect!(6.0 / 2.0, content="3")
-///   inspect!(-6.0 / 2.0, content="-3")
-///   inspect!(1.0 / 0.0, content="Infinity")
+///   inspect(6.0 / 2.0, content="3")
+///   inspect(-6.0 / 2.0, content="-3")
+///   inspect(1.0 / 0.0, content="Infinity")
 /// }
 /// ```
 pub impl Div for Double with op_div(self, other) = "%f64_div"
@@ -1028,9 +1028,9 @@ pub impl Div for Double with op_div(self, other) = "%f64_div"
 ///
 /// ```moonbit
 /// test "Double::sqrt" {
-///   inspect!(4.0.sqrt(), content="2")
-///   inspect!(0.0.sqrt(), content="0")
-///   inspect!((-1.0).sqrt(), content="NaN")
+///   inspect(4.0.sqrt(), content="2")
+///   inspect(0.0.sqrt(), content="0")
+///   inspect((-1.0).sqrt(), content="NaN")
 /// }
 /// ```
 pub fn Double::sqrt(self : Double) -> Double = "%f64_sqrt"
@@ -1055,10 +1055,10 @@ pub fn Double::sqrt(self : Double) -> Double = "%f64_sqrt"
 ///   let a = 3.14
 ///   let b = 3.14
 ///   let c = 2.718
-///   inspect!(a == b, content="true")
-///   inspect!(a == c, content="false")
+///   inspect(a == b, content="true")
+///   inspect(a == c, content="false")
 ///   let nan = 0.0 / 0.0 // NaN
-///   inspect!(nan == nan, content="false") // Note: NaN equals itself in MoonBit
+///   inspect(nan == nan, content="false") // Note: NaN equals itself in MoonBit
 /// }
 /// ```
 pub impl Eq for Double with op_equal(self : Double, other : Double) -> Bool = "%f64_eq"
@@ -1080,9 +1080,9 @@ pub impl Eq for Double with op_equal(self : Double, other : Double) -> Bool = "%
 ///
 /// ```moonbit
 /// test "Double::op_neq" {
-///   inspect!(1.0 != 2.0, content="true")
-///   inspect!(1.0 != 1.0, content="false")
-///   inspect!(0.0 / 0.0 != 0.0 / 0.0, content="true") // NaN != NaN
+///   inspect(1.0 != 2.0, content="true")
+///   inspect(1.0 != 1.0, content="false")
+///   inspect(0.0 / 0.0 != 0.0 / 0.0, content="true") // NaN != NaN
 /// }
 /// ```
 pub fn Double::op_neq(self : Double, other : Double) -> Bool = "%f64_ne"
@@ -1112,9 +1112,9 @@ pub fn Double::op_neq(self : Double, other : Double) -> Bool = "%f64_ne"
 /// test "Double::compare" {
 ///   let a = 3.14
 ///   let b = 2.718
-///   inspect!(a.compare(b), content="1") // 3.14 > 2.718
-///   inspect!(b.compare(a), content="-1") // 2.718 < 3.14
-///   inspect!(a.compare(a), content="0") // 3.14 = 3.14
+///   inspect(a.compare(b), content="1") // 3.14 > 2.718
+///   inspect(b.compare(a), content="-1") // 2.718 < 3.14
+///   inspect(a.compare(a), content="0") // 3.14 = 3.14
 /// }
 /// ```
 pub impl Compare for Double with compare(self, other) = "%f64_compare"
@@ -1128,13 +1128,10 @@ pub impl Compare for Double with compare(self, other) = "%f64_compare"
 ///
 /// ```moonbit
 /// test "Double::default" {
-///   inspect!(Double::default(), content="0")
+///   inspect(Double::default(), content="0")
 /// }
 /// ```
 pub impl Default for Double with default() = "%f64_default"
-
-///|
-fn Double::to_unchecked_int(self : Double) -> Int = "%f64_to_i32"
 
 ///|
 /// Converts an unsigned 32-bit integer to a double-precision floating-point
@@ -1154,9 +1151,9 @@ fn Double::to_unchecked_int(self : Double) -> Int = "%f64_to_i32"
 /// ```moonbit
 /// test "Double::convert_uint" {
 ///   let n = 42U
-///   inspect!(Double::convert_uint(n), content="42")
+///   inspect(Double::convert_uint(n), content="42")
 ///   let max = 4294967295U // maximum value of UInt
-///   inspect!(Double::convert_uint(max), content="4294967295")
+///   inspect(Double::convert_uint(max), content="4294967295")
 /// }
 /// ```
 pub fn Double::convert_uint(val : UInt) -> Double = "%u32.to_f64"
@@ -1177,8 +1174,8 @@ pub fn Double::convert_uint(val : UInt) -> Double = "%u32.to_f64"
 ///
 /// ```moonbit
 /// test "Char::to_int" {
-///   inspect!('A'.to_int(), content="65") // ASCII value of 'A'
-///   inspect!('あ'.to_int(), content="12354") // Unicode code point of 'あ'
+///   inspect('A'.to_int(), content="65") // ASCII value of 'A'
+///   inspect('あ'.to_int(), content="12354") // Unicode code point of 'あ'
 /// }
 /// ```
 pub fn Char::to_int(self : Char) -> Int = "%char_to_int"
@@ -1200,9 +1197,9 @@ pub fn Char::to_int(self : Char) -> Int = "%char_to_int"
 /// ```moonbit
 /// test "Char::to_uint" {
 ///   let c = 'A'
-///   inspect!(c.to_uint(), content="65") // ASCII value of 'A'
+///   inspect(c.to_uint(), content="65") // ASCII value of 'A'
 ///   let emoji = '🤣'
-///   inspect!(emoji.to_uint(), content="129315") // Unicode code point U+1F923
+///   inspect(emoji.to_uint(), content="129315") // Unicode code point U+1F923
 /// }
 /// ```
 pub fn Char::to_uint(self : Char) -> UInt {
@@ -1231,8 +1228,8 @@ pub fn Char::from_int(val : Int) -> Char = "%char_from_int"
 ///   let a = 'A'
 ///   let b = 'A'
 ///   let c = 'B'
-///   inspect!(a == b, content="true")
-///   inspect!(a == c, content="false")
+///   inspect(a == b, content="true")
+///   inspect(a == c, content="false")
 /// }
 /// ```
 pub impl Eq for Char with op_equal(self : Char, other : Char) -> Bool = "%char_eq"
@@ -1258,9 +1255,9 @@ pub impl Eq for Char with op_equal(self : Char, other : Char) -> Bool = "%char_e
 ///
 /// ```moonbit
 /// test "Char::compare" {
-///   inspect!('a'.compare('b'), content="-1")
-///   inspect!('b'.compare('a'), content="1")
-///   inspect!('a'.compare('a'), content="0")
+///   inspect('a'.compare('b'), content="-1")
+///   inspect('b'.compare('a'), content="1")
+///   inspect('a'.compare('a'), content="0")
 /// }
 /// ```
 pub impl Compare for Char with compare(self, other) = "%char_compare"
@@ -1275,7 +1272,7 @@ pub impl Compare for Char with compare(self, other) = "%char_compare"
 ///
 /// ```moonbit
 /// test "Char::default" {
-///   assert_true!(Char::default().to_string() == "\x00")
+///   assert_true(Char::default().to_string() == "\x00")
 /// }
 /// ```
 pub impl Default for Char with default() = "%char_default"
@@ -1301,7 +1298,7 @@ pub impl Default for Char with default() = "%char_default"
 /// ```moonbit
 /// test "Bytes::op_get" {
 ///   let bytes = b"\x01\x02\x03"
-///   inspect!(bytes[1], content="b'\\x02'")
+///   inspect(bytes[1], content="b'\\x02'")
 /// }
 ///
 /// test "panic Bytes::op_get/out_of_bounds" {
@@ -1332,7 +1329,7 @@ pub fn Bytes::op_get(self : Bytes, idx : Int) -> Byte = "%bytes_get"
 /// ```moonbit
 /// test "Bytes::unsafe_get" {
 ///   let bytes = b"\x01\x02\x03"
-///   inspect!(bytes.unsafe_get(1), content="b'\\x02'")
+///   inspect(bytes.unsafe_get(1), content="b'\\x02'")
 /// }
 ///
 /// test "panic Bytes::unsafe_get/out_of_bounds" {
@@ -1358,9 +1355,9 @@ pub fn Bytes::unsafe_get(self : Bytes, idx : Int) -> Byte = "%bytes_get"
 /// ```moonbit
 /// test "Bytes::length" {
 ///   let bytes = b"\x01\x02\x03"
-///   inspect!(bytes.length(), content="3")
+///   inspect(bytes.length(), content="3")
 ///   let empty = b""
-///   inspect!(empty.length(), content="0")
+///   inspect(empty.length(), content="0")
 /// }
 /// ```
 pub fn Bytes::length(self : Bytes) -> Int = "%bytes_length"
@@ -1381,11 +1378,11 @@ pub fn Bytes::length(self : Bytes) -> Int = "%bytes_length"
 /// ```moonbit
 /// test "Bytes::make" {
 ///   let bytes = Bytes::make(3, b'\xFF')
-///   inspect!(bytes, content=
+///   inspect(bytes, content=
 ///   #|b"\xff\xff\xff"
 /// )
 ///   let empty = Bytes::make(0, b'\x00')
-///   inspect!(empty, content="b\"\"")
+///   inspect(empty, content="b\"\"")
 /// }
 /// ```
 pub fn Bytes::make(len : Int, init : Byte) -> Bytes {
@@ -1414,12 +1411,12 @@ fn Bytes::unsafe_make(len : Int, init : Byte) -> Bytes = "%bytes_make"
 /// ```moonbit
 /// test "Bytes::new" {
 ///   let bytes = Bytes::new(3)
-///   inspect!(bytes, content="b\"\\x00\\x00\\x00\"")
+///   inspect(bytes, content="b\"\\x00\\x00\\x00\"")
 /// }
 ///
 /// test "Bytes::new/empty" {
 ///   let bytes = Bytes::new(0)
-///   inspect!(bytes, content="b\"\"")
+///   inspect(bytes, content="b\"\"")
 /// }
 /// ```
 pub fn Bytes::new(len : Int) -> Bytes {
@@ -1442,9 +1439,9 @@ pub fn Bytes::new(len : Int) -> Bytes {
 /// ```moonbit
 /// test "Int::to_byte" {
 ///   let n = 258 // In binary: 100000010
-///   inspect!(n.to_byte(), content="b'\\x02'") // Only keeps 00000010
+///   inspect(n.to_byte(), content="b'\\x02'") // Only keeps 00000010
 ///   let neg = -1 // In binary: all 1's
-///   inspect!(neg.to_byte(), content="b'\\xFF'") // Only keeps 11111111
+///   inspect(neg.to_byte(), content="b'\\xFF'") // Only keeps 11111111
 /// }
 /// ```
 pub fn Int::to_byte(self : Int) -> Byte = "%i32_to_byte"
@@ -1476,7 +1473,7 @@ pub fn Int::to_char(self : Int) -> Char? {
 /// ```moonbit
 /// test "UInt64::to_byte" {
 ///   let n = 258UL // In binary: 100000010
-///   inspect!(n.to_byte(), content="b'\\x02'") // Only keeps 00000010
+///   inspect(n.to_byte(), content="b'\\x02'") // Only keeps 00000010
 /// }
 /// ```
 pub fn UInt64::to_byte(self : UInt64) -> Byte {
@@ -1504,7 +1501,7 @@ pub fn UInt64::to_byte(self : UInt64) -> Byte {
 /// ```moonbit
 /// test "FixedArray::op_get" {
 ///   let arr = FixedArray::make(3, 42)
-///   inspect!(arr[1], content="42")
+///   inspect(arr[1], content="42")
 /// }
 ///
 /// test "panic FixedArray::op_get/out_of_bounds" {
@@ -1512,7 +1509,7 @@ pub fn UInt64::to_byte(self : UInt64) -> Byte {
 ///   ignore(arr[3]) // Index out of bounds
 /// }
 /// ```
-pub fn FixedArray::op_get[T](self : FixedArray[T], idx : Int) -> T = "%fixedarray.get"
+pub fn[T] FixedArray::op_get(self : FixedArray[T], idx : Int) -> T = "%fixedarray.get"
 
 ///|
 /// Retrieves an element from a fixed-size array at the specified index without
@@ -1534,7 +1531,7 @@ pub fn FixedArray::op_get[T](self : FixedArray[T], idx : Int) -> T = "%fixedarra
 /// ```moonbit
 /// test "FixedArray::unsafe_get" {
 ///   let arr = FixedArray::make(3, 42)
-///   inspect!(arr.unsafe_get(1), content="42")
+///   inspect(arr.unsafe_get(1), content="42")
 /// }
 ///
 /// test "panic FixedArray::unsafe_get/out_of_bounds" {
@@ -1544,44 +1541,15 @@ pub fn FixedArray::op_get[T](self : FixedArray[T], idx : Int) -> T = "%fixedarra
 /// ```
 ///
 #internal(unsafe, "Panic if index is out of bounds")
-pub fn FixedArray::unsafe_get[T](self : FixedArray[T], idx : Int) -> T = "%fixedarray.unsafe_get"
+pub fn[T] FixedArray::unsafe_get(self : FixedArray[T], idx : Int) -> T = "%fixedarray.unsafe_get"
 
 ///|
 #internal(unsafe, "Panic if index is out of bounds")
-pub fn FixedArray::unsafe_set[T](
+pub fn[T] FixedArray::unsafe_set(
   self : FixedArray[T],
   idx : Int,
   val : T
 ) -> Unit = "%fixedarray.unsafe_set"
-
-///|
-/// Retrieves an element at the specified index from a fixed-size array. This
-/// function is similar to `op_get` but provides explicit bounds checking.
-///
-/// Parameters:
-///
-/// * `array` : The fixed-size array to access.
-/// * `index` : The position in the array from which to retrieve the element.
-///
-/// Returns the element at the specified index.
-///
-/// Throws a runtime error if the index is out of bounds (less than 0 or greater
-/// than or equal to the length of the array).
-///
-/// Example:
-///
-/// ```moonbit
-/// test "FixedArray::get" {
-///   let arr = [1, 2, 3]
-///   inspect!(arr.get(1), content="Some(2)")
-/// }
-///
-/// test "FixedArray::get/out_of_bounds" {
-///   let arr = [1, 2, 3]
-///   inspect!(arr.get(3), content="None")
-/// }
-/// ```
-pub fn FixedArray::get[T](self : FixedArray[T], idx : Int) -> T = "%fixedarray.get"
 
 ///|
 /// Sets a value at the specified index in a fixed-size array. The original value
@@ -1602,7 +1570,7 @@ pub fn FixedArray::get[T](self : FixedArray[T], idx : Int) -> T = "%fixedarray.g
 /// test "FixedArray::op_set" {
 ///   let arr = [1, 2, 3]
 ///   arr[1] = 42
-///   inspect!(arr, content="[1, 42, 3]")
+///   inspect(arr, content="[1, 42, 3]")
 /// }
 ///
 /// test "panic FixedArray::op_set/out_of_bounds" {
@@ -1612,7 +1580,7 @@ pub fn FixedArray::get[T](self : FixedArray[T], idx : Int) -> T = "%fixedarray.g
 /// ```
 ///
 #intrinsic("%fixedarray.set")
-pub fn FixedArray::op_set[T](self : FixedArray[T], idx : Int, val : T) -> Unit = "%fixedarray.set"
+pub fn[T] FixedArray::op_set(self : FixedArray[T], idx : Int, val : T) -> Unit = "%fixedarray.set"
 
 ///|
 /// Sets the value at the specified index in a fixed-size array.
@@ -1633,7 +1601,7 @@ pub fn FixedArray::op_set[T](self : FixedArray[T], idx : Int, val : T) -> Unit =
 /// test "FixedArray::set" {
 ///   let arr = FixedArray::make(3, 0)
 ///   arr.set(1, 42)
-///   inspect!(arr[1], content="42")
+///   inspect(arr[1], content="42")
 /// }
 ///
 /// test "panic FixedArray::set/out_of_bounds" {
@@ -1641,7 +1609,7 @@ pub fn FixedArray::op_set[T](self : FixedArray[T], idx : Int, val : T) -> Unit =
 ///   ignore(arr.set(3, 42)) // Panic: index out of bounds
 /// }
 /// ```
-pub fn FixedArray::set[T](self : FixedArray[T], idx : Int, val : T) -> Unit = "%fixedarray.set"
+pub fn[T] FixedArray::set(self : FixedArray[T], idx : Int, val : T) -> Unit = "%fixedarray.set"
 
 ///|
 /// Returns the number of elements in a fixed-size array.
@@ -1657,10 +1625,10 @@ pub fn FixedArray::set[T](self : FixedArray[T], idx : Int, val : T) -> Unit = "%
 /// ```moonbit
 /// test "FixedArray::length" {
 ///   let arr = FixedArray::make(3, 42)
-///   inspect!(arr.length(), content="3")
+///   inspect(arr.length(), content="3")
 /// }
 /// ```
-pub fn FixedArray::length[T](self : FixedArray[T]) -> Int = "%fixedarray.length"
+pub fn[T] FixedArray::length(self : FixedArray[T]) -> Int = "%fixedarray.length"
 
 ///|
 /// Creates a new fixed-size array with the specified length, initializing all
@@ -1681,8 +1649,8 @@ pub fn FixedArray::length[T](self : FixedArray[T]) -> Int = "%fixedarray.length"
 /// ```moonbit
 /// test "FixedArray::make" {
 ///   let arr = FixedArray::make(3, 42)
-///   inspect!(arr[0], content="42")
-///   inspect!(arr.length(), content="3")
+///   inspect(arr[0], content="42")
+///   inspect(arr.length(), content="3")
 /// }
 ///
 /// test "panic FixedArray::make/negative_length" {
@@ -1695,12 +1663,12 @@ pub fn FixedArray::length[T](self : FixedArray[T]) -> Int = "%fixedarray.length"
 /// test {
 ///   let two_dimension_array = FixedArray::make(10, FixedArray::make(10, 0))
 ///   two_dimension_array[0][5] = 10
-///   assert_eq!(two_dimension_array[5][5], 10)
+///   assert_eq(two_dimension_array[5][5], 10)
 /// }
 /// ```
 /// This is because all the cells reference to the same object (the FixedArray[Int] in this case). 
 /// One should use makei() instead which creates an object for each index.
-pub fn FixedArray::make[T](len : Int, init : T) -> FixedArray[T] = "%fixedarray.make"
+pub fn[T] FixedArray::make(len : Int, init : T) -> FixedArray[T] = "%fixedarray.make"
 
 // String primitive ops
 
@@ -1719,9 +1687,9 @@ pub fn FixedArray::make[T](len : Int, init : T) -> FixedArray[T] = "%fixedarray.
 ///
 /// ```moonbit
 /// test "String::length" {
-///   inspect!("hello".length(), content="5")
-///   inspect!("🤣".length(), content="2") // Emoji uses two UTF-16 code units
-///   inspect!("".length(), content="0") // Empty string
+///   inspect("hello".length(), content="5")
+///   inspect("🤣".length(), content="2") // Emoji uses two UTF-16 code units
+///   inspect("".length(), content="0") // Empty string
 /// }
 /// ```
 pub fn String::length(self : String) -> Int = "%string_length"
@@ -1731,31 +1699,7 @@ pub fn String::length(self : String) -> Int = "%string_length"
 pub fn String::charcode_length(self : String) -> Int = "%string_length"
 
 ///|
-/// Retrieves the charcode (UTF-16 code unit) at the specified index in a string.
-///
-/// Parameters:
-///
-/// * `string` : The string from which to retrieve the charcode.
-/// * `index` : The position in the string from which to retrieve the charcode.
-///
-/// Throws a runtime error if `index` is negative or greater than or equal to the
-/// length of the string.
-///
-/// Example:
-///
-/// ```moonbit
-/// test "String::op_get" {
-///   let s = "Hello, 世界!"
-///   inspect!(s[0], content="H")
-///   inspect!(s[7], content="世")
-/// }
-///
-/// test "panic String::op_get/out_of_bounds" {
-///   let s = "Hello"
-///   ignore(s[5]) // Index out of bounds
-/// }
-/// ```
-///
+#deprecated("use `String::charcode_at` and `Int::to_char` instead")
 pub fn String::op_get(self : String, idx : Int) -> Char = "%string_get"
 
 ///|
@@ -1776,8 +1720,8 @@ pub fn String::op_get(self : String, idx : Int) -> Char = "%string_get"
 /// ```moonbit
 /// test "String::get" {
 ///   let s = "Hello, 世界"
-///   inspect!(s.get(0), content="H")
-///   inspect!(s.get(7), content="世")
+///   inspect(s.get(0), content="H")
+///   inspect(s.get(7), content="世")
 /// }
 ///
 /// test "panic String::get/out_of_bounds" {
@@ -1806,9 +1750,9 @@ pub fn String::get(self : String, idx : Int) -> Char = "%string_get"
 /// ```moonbit
 /// test "String::unsafe_charcode_at" {
 ///   let s = "Hello🤣"
-///   inspect!(s.unsafe_charcode_at(0), content="72") // 'H'
-///   inspect!(s.unsafe_charcode_at(5), content="55358") // First surrogate of 🤣
-///   inspect!(s.unsafe_charcode_at(6), content="56611") // Second surrogate of 🤣
+///   inspect(s.unsafe_charcode_at(0), content="72") // 'H'
+///   inspect(s.unsafe_charcode_at(5), content="55358") // First surrogate of 🤣
+///   inspect(s.unsafe_charcode_at(6), content="56611") // Second surrogate of 🤣
 /// }
 /// ```
 ///
@@ -1832,8 +1776,8 @@ pub fn String::unsafe_charcode_at(self : String, idx : Int) -> Int = "%string.un
 /// test "String::op_add" {
 ///   let hello = "Hello"
 ///   let world = " World!"
-///   inspect!(hello + world, content="Hello World!")
-///   inspect!("" + "abc", content="abc") // concatenating with empty string
+///   inspect(hello + world, content="Hello World!")
+///   inspect("" + "abc", content="abc") // concatenating with empty string
 /// }
 /// ```
 pub impl Add for String with op_add(self, other) = "%string_add"
@@ -1856,8 +1800,8 @@ pub impl Add for String with op_add(self, other) = "%string_add"
 ///   let str1 = "hello"
 ///   let str2 = "hello"
 ///   let str3 = "world"
-///   inspect!(str1 == str2, content="true")
-///   inspect!(str1 == str3, content="false")
+///   inspect(str1 == str2, content="true")
+///   inspect(str1 == str3, content="false")
 /// }
 /// ```
 pub impl Eq for String with op_equal(self : String, other : String) -> Bool = "%string_eq"
@@ -1877,7 +1821,7 @@ pub impl Eq for String with op_equal(self : String, other : String) -> Bool = "%
 /// ```moonbit
 /// test "String::to_string" {
 ///   let s = "hello"
-///   inspect!(s.to_string(), content="hello")
+///   inspect(s.to_string(), content="hello")
 /// }
 /// ```
 pub fn String::to_string(self : String) -> String = "%string_to_string"
@@ -1903,9 +1847,9 @@ priv extern type UnsafeMaybeUninit[_]
 /// ```moonbit
 /// test "Byte::to_int" {
 ///   let b = b'\xFF' // byte with value 255
-///   inspect!(b.to_int(), content="255")
+///   inspect(b.to_int(), content="255")
 ///   let zero = b'\x00'
-///   inspect!(zero.to_int(), content="0")
+///   inspect(zero.to_int(), content="0")
 /// }
 /// ```
 pub fn Byte::to_int(self : Byte) -> Int = "%byte_to_int"
@@ -1938,7 +1882,7 @@ pub fn Byte::to_char(self : Byte) -> Char {
 /// ```moonbit
 /// test "Byte::to_int64" {
 ///   let b = b'\xFF'
-///   inspect!(b.to_int64(), content="255")
+///   inspect(b.to_int64(), content="255")
 /// }
 /// ```
 pub fn Byte::to_int64(self : Byte) -> Int64 {
@@ -1970,9 +1914,9 @@ pub fn UInt::reinterpret_as_int(self : UInt) -> Int = "%u32.to_i32_reinterpret"
 /// ```moonbit
 /// test "UInt::to_int" {
 ///   let a = 42U
-///   inspect!(a.reinterpret_as_int(), content="42")
+///   inspect(a.reinterpret_as_int(), content="42")
 ///   let b = 4294967295U // maximum value of UInt (2^32 - 1)
-///   inspect!(b.reinterpret_as_int(), content="-1") // becomes -1 when reinterpreted as Int
+///   inspect(b.reinterpret_as_int(), content="-1") // becomes -1 when reinterpreted as Int
 /// }
 /// ```
 ///
@@ -1998,11 +1942,11 @@ pub fn UInt::to_int(self : UInt) -> Int = "%u32.to_i32_reinterpret"
 /// test "UInt::op_add" {
 ///   let a = 42U
 ///   let b = 100U
-///   inspect!(a + b, content="142")
+///   inspect(a + b, content="142")
 ///
 ///   // Demonstrate overflow behavior
 ///   let max = 4294967295U // UInt::max_value
-///   inspect!(max + 1U, content="0")
+///   inspect(max + 1U, content="0")
 /// }
 /// ```
 pub impl Add for UInt with op_add(self, other) = "%u32.add"
@@ -2027,10 +1971,10 @@ pub impl Add for UInt with op_add(self, other) = "%u32.add"
 /// test "UInt::op_sub" {
 ///   let a = 5U
 ///   let b = 3U
-///   inspect!(a - b, content="2")
+///   inspect(a - b, content="2")
 ///   let c = 3U
 ///   let d = 5U
-///   inspect!(c - d, content="4294967294") // wraps around to 2^32 - 2
+///   inspect(c - d, content="4294967294") // wraps around to 2^32 - 2
 /// }
 /// ```
 pub impl Sub for UInt with op_sub(self, other) = "%u32.sub"
@@ -2054,9 +1998,9 @@ pub impl Sub for UInt with op_sub(self, other) = "%u32.sub"
 /// test "UInt::op_mul" {
 ///   let a = 3U
 ///   let b = 4U
-///   inspect!(a * b, content="12")
+///   inspect(a * b, content="12")
 ///   let max = 4294967295U
-///   inspect!(max * 2U, content="4294967294") // Wraps around to max * 2 % 2^32
+///   inspect(max * 2U, content="4294967294") // Wraps around to max * 2 % 2^32
 /// }
 /// ```
 pub impl Mul for UInt with op_mul(self, other) = "%u32.mul"
@@ -2079,7 +2023,7 @@ pub impl Mul for UInt with op_mul(self, other) = "%u32.mul"
 /// test "UInt::op_div" {
 ///   let a = 42U
 ///   let b = 5U
-///   inspect!(a / b, content="8") // Using infix operator
+///   inspect(a / b, content="8") // Using infix operator
 /// }
 ///
 /// test "panic UInt::op_div/division_by_zero" {
@@ -2107,8 +2051,8 @@ pub impl Div for UInt with op_div(self, other) = "%u32.div"
 /// test "UInt::op_mod" {
 ///   let a = 17U
 ///   let b = 5U
-///   inspect!(a % b, content="2") // 17 divided by 5 gives quotient 3 and remainder 2
-///   inspect!(7U % 4U, content="3")
+///   inspect(a % b, content="2") // 17 divided by 5 gives quotient 3 and remainder 2
+///   inspect(7U % 4U, content="3")
 /// }
 ///
 /// test "panic UInt::op_mod/division_by_zero" {
@@ -2135,8 +2079,8 @@ pub impl Mod for UInt with op_mod(self, other) = "%u32.mod"
 ///   let a = 42U
 ///   let b = 42U
 ///   let c = 24U
-///   inspect!(a == b, content="true")
-///   inspect!(a == c, content="false")
+///   inspect(a == b, content="true")
+///   inspect(a == c, content="false")
 /// }
 /// ```
 pub impl Eq for UInt with op_equal(self : UInt, other : UInt) -> Bool = "%u32.eq"
@@ -2157,8 +2101,8 @@ pub impl Eq for UInt with op_equal(self : UInt, other : UInt) -> Bool = "%u32.eq
 /// test "UInt::op_neq" {
 ///   let a = 42U
 ///   let b = 24U
-///   inspect!(a != b, content="true")
-///   inspect!(a != a, content="false")
+///   inspect(a != b, content="true")
+///   inspect(a != a, content="false")
 /// }
 /// ```
 pub fn UInt::op_neq(self : UInt, other : UInt) -> Bool = "%u32.ne"
@@ -2183,9 +2127,9 @@ pub fn UInt::op_neq(self : UInt, other : UInt) -> Bool = "%u32.ne"
 /// test "UInt::compare" {
 ///   let a = 42U
 ///   let b = 24U
-///   inspect!(a.compare(b), content="1") // 42 > 24
-///   inspect!(b.compare(a), content="-1") // 24 < 42
-///   inspect!(a.compare(a), content="0") // 42 = 42
+///   inspect(a.compare(b), content="1") // 42 > 24
+///   inspect(b.compare(a), content="-1") // 24 < 42
+///   inspect(a.compare(a), content="0") // 42 = 42
 /// }
 /// ```
 pub impl Compare for UInt with compare(self, other) = "%u32.compare"
@@ -2209,7 +2153,7 @@ pub impl Compare for UInt with compare(self, other) = "%u32.compare"
 /// test "UInt::land" {
 ///   let a = 0xF0F0U // 1111_0000_1111_0000
 ///   let b = 0xFF00U // 1111_1111_0000_0000
-///   inspect!(a & b, content="61440") // 1111_0000_0000_0000 = 61440
+///   inspect(a & b, content="61440") // 1111_0000_0000_0000 = 61440
 /// }
 /// ```
 pub fn UInt::land(self : UInt, other : UInt) -> UInt = "%u32.bitand"
@@ -2232,7 +2176,7 @@ pub fn UInt::land(self : UInt, other : UInt) -> UInt = "%u32.bitand"
 /// test "UInt::lor" {
 ///   let a = 0xF0F0U // Binary: 1111_0000_1111_0000
 ///   let b = 0x0F0FU // Binary: 0000_1111_0000_1111
-///   inspect!(a | b, content="65535") // Binary: 1111_1111_1111_1111
+///   inspect(a | b, content="65535") // Binary: 1111_1111_1111_1111
 /// }
 /// ```
 pub fn UInt::lor(self : UInt, other : UInt) -> UInt = "%u32.bitor"
@@ -2255,7 +2199,7 @@ pub fn UInt::lor(self : UInt, other : UInt) -> UInt = "%u32.bitor"
 /// test "UInt::lxor" {
 ///   let a = 0xFF00U // Binary: 1111_1111_0000_0000
 ///   let b = 0x0F0FU // Binary: 0000_1111_0000_1111
-///   inspect!(a ^ b, content="61455") // Binary: 1111_0000_0000_1111
+///   inspect(a ^ b, content="61455") // Binary: 1111_0000_0000_1111
 /// }
 /// ```
 pub fn UInt::lxor(self : UInt, other : UInt) -> UInt = "%u32.bitxor"
@@ -2277,7 +2221,7 @@ pub fn UInt::lxor(self : UInt, other : UInt) -> UInt = "%u32.bitxor"
 /// ```moonbit
 /// test "UInt::lnot" {
 ///   let x = 0xFF00U // Binary: 1111_1111_0000_0000
-///   inspect!(x.lnot(), content="4294902015") // Binary: ...0000_0000_1111_1111
+///   inspect(x.lnot(), content="4294902015") // Binary: ...0000_0000_1111_1111
 /// }
 /// ```
 pub fn UInt::lnot(self : UInt) -> UInt = "%u32.bitnot"
@@ -2303,9 +2247,9 @@ pub fn UInt::lnot(self : UInt) -> UInt = "%u32.bitnot"
 /// ```moonbit
 /// test "UInt::lsl" {
 ///   let x = 1U
-///   inspect!(x << 3, content="8") // Using the recommended operator
+///   inspect(x << 3, content="8") // Using the recommended operator
 ///   let y = 8U
-///   inspect!(y << 1, content="16") // Using the recommended operator
+///   inspect(y << 1, content="16") // Using the recommended operator
 /// }
 /// ```
 ///
@@ -2331,7 +2275,7 @@ pub fn UInt::lsl(self : UInt, shift : Int) -> UInt = "%u32.shl"
 /// ```moonbit
 /// test "UInt::shl" {
 ///   let x = 1U
-///   inspect!(x << 3, content="8") // Binary: 1 -> 1000
+///   inspect(x << 3, content="8") // Binary: 1 -> 1000
 /// }
 /// ```
 ///
@@ -2357,7 +2301,7 @@ pub fn UInt::shl(self : UInt, shift : Int) -> UInt = "%u32.shl"
 /// ```moonbit
 /// test "UInt::lsr" {
 ///   let x = 0xF0000000U
-///   inspect!(x >> 4, content="251658240") // Using the recommended operator
+///   inspect(x >> 4, content="251658240") // Using the recommended operator
 /// }
 /// ```
 ///
@@ -2382,7 +2326,7 @@ pub fn UInt::lsr(self : UInt, shift : Int) -> UInt = "%u32.shr"
 /// ```moonbit
 /// test "UInt::shr" {
 ///   let x = 0xFF000000U
-///   inspect!(x >> 8, content="16711680") // 0x00FF0000
+///   inspect(x >> 8, content="16711680") // 0x00FF0000
 /// }
 /// ```
 ///
@@ -2409,9 +2353,9 @@ pub fn UInt::shr(self : UInt, shift : Int) -> UInt = "%u32.shr"
 /// ```moonbit
 /// test "UInt::op_shl" {
 ///   let x = 1U
-///   inspect!(x << 3, content="8") // Binary: 1 -> 1000
+///   inspect(x << 3, content="8") // Binary: 1 -> 1000
 ///   let y = 0xFFFFFFFFU
-///   inspect!(y << 16, content="4294901760") // All bits after position 16 are discarded
+///   inspect(y << 16, content="4294901760") // All bits after position 16 are discarded
 /// }
 /// ```
 pub impl Shl for UInt with op_shl(self, shift) = "%u32.shl"
@@ -2436,13 +2380,13 @@ pub impl Shl for UInt with op_shl(self, shift) = "%u32.shl"
 /// ```moonbit
 /// test "UInt::op_shr" {
 ///   let x = 0xFF000000U
-///   inspect!(x >> 8, content="16711680") // 0x00FF0000
-///   inspect!(x >> 24, content="255") // 0x000000FF
+///   inspect(x >> 8, content="16711680") // 0x00FF0000
+///   inspect(x >> 24, content="255") // 0x000000FF
 /// }
 ///
 /// test "UInt::op_shr/large_shift" {
 ///   let x = 0xFF000000U
-///   inspect!(x >> 32, content="4278190080") // Same as x >> 0 due to masking
+///   inspect(x >> 32, content="4278190080") // Same as x >> 0 due to masking
 /// }
 /// ```
 pub impl Shr for UInt with op_shr(self, shift) = "%u32.shr"
@@ -2463,9 +2407,9 @@ pub impl Shr for UInt with op_shr(self, shift) = "%u32.shr"
 ///
 /// ```moonbit
 /// test "UInt::clz" {
-///   inspect!(0U.clz(), content="32")
-///   inspect!(1U.clz(), content="31")
-///   inspect!(0x80000000U.clz(), content="0")
+///   inspect(0U.clz(), content="32")
+///   inspect(1U.clz(), content="31")
+///   inspect(0x80000000U.clz(), content="0")
 /// }
 /// ```
 pub fn UInt::clz(self : UInt) -> Int = "%u32.clz"
@@ -2487,9 +2431,9 @@ pub fn UInt::clz(self : UInt) -> Int = "%u32.clz"
 /// ```moonbit
 /// test "UInt::ctz" {
 ///   let x = 24U // Binary: ...011000
-///   inspect!(x.ctz(), content="3") // 3 trailing zeros
+///   inspect(x.ctz(), content="3") // 3 trailing zeros
 ///   let y = 0U
-///   inspect!(y.ctz(), content="32") // All bits are zero
+///   inspect(y.ctz(), content="32") // All bits are zero
 /// }
 /// ```
 pub fn UInt::ctz(self : UInt) -> Int = "%u32.ctz"
@@ -2510,7 +2454,7 @@ pub fn UInt::ctz(self : UInt) -> Int = "%u32.ctz"
 /// ```moonbit
 /// test "UInt::popcnt" {
 ///   let x = 0xF0F0U // Binary: 1111 0000 1111 0000
-///   inspect!(x.popcnt(), content="8") // Has 8 bits set to 1
+///   inspect(x.popcnt(), content="8") // Has 8 bits set to 1
 /// }
 /// ```
 pub fn UInt::popcnt(self : UInt) -> Int = "%u32.popcnt"
@@ -2532,9 +2476,9 @@ pub fn UInt::popcnt(self : UInt) -> Int = "%u32.popcnt"
 /// ```moonbit
 /// test "UInt::to_uint64" {
 ///   let n = 42U
-///   inspect!(n.to_uint64(), content="42")
+///   inspect(n.to_uint64(), content="42")
 ///   let max = 4294967295U // Maximum value of UInt
-///   inspect!(max.to_uint64(), content="4294967295")
+///   inspect(max.to_uint64(), content="4294967295")
 /// }
 /// ```
 pub fn UInt::to_uint64(self : UInt) -> UInt64 {
@@ -2557,9 +2501,9 @@ pub fn UInt::to_uint64(self : UInt) -> UInt64 {
 /// ```moonbit
 /// test "UInt::to_byte" {
 ///   let n = 258U // In binary: 100000010
-///   inspect!(n.to_byte(), content="b'\\x02'") // Only keeps 00000010
+///   inspect(n.to_byte(), content="b'\\x02'") // Only keeps 00000010
 ///   let big = 4294967295U // Maximum value of UInt
-///   inspect!(big.to_byte(), content="b'\\xFF'") // Only keeps 11111111
+///   inspect(big.to_byte(), content="b'\\xFF'") // Only keeps 11111111
 /// }
 /// ```
 pub fn UInt::to_byte(self : UInt) -> Byte {
@@ -2584,9 +2528,9 @@ pub fn UInt::to_byte(self : UInt) -> Byte {
 /// ```moonbit
 /// test "Double::convert_uint" {
 ///   let n = 42U
-///   inspect!(n.to_double(), content="42")
+///   inspect(n.to_double(), content="42")
 ///   let max = 4294967295U // maximum value of UInt
-///   inspect!(max.to_double(), content="4294967295")
+///   inspect(max.to_double(), content="4294967295")
 /// }
 /// ```
 pub fn UInt::to_double(self : UInt) -> Double = "%u32.to_f64"
@@ -2613,9 +2557,9 @@ pub fn UInt::to_double(self : UInt) -> Double = "%u32.to_f64"
 /// ```moonbit
 /// test "Float::op_neg" {
 ///   let f = 3.14.to_float()
-///   inspect!((-f).to_double(), content="-3.140000104904175")
+///   inspect((-f).to_double(), content="-3.140000104904175")
 ///   let zero = 0.0.to_float()
-///   inspect!((-zero).to_double(), content="0")
+///   inspect((-zero).to_double(), content="0")
 /// }
 /// ```
 pub impl Neg for Float with op_neg(self) = "%f32.neg"
@@ -2639,7 +2583,7 @@ pub impl Neg for Float with op_neg(self) = "%f32.neg"
 ///   let a = 3.14.to_float()
 ///   let b = 2.86.to_float()
 ///   let sum = a + b
-///   inspect!(sum.to_double(), content="6")
+///   inspect(sum.to_double(), content="6")
 /// }
 /// ```
 pub impl Add for Float with op_add(self, other) = "%f32.add"
@@ -2662,7 +2606,7 @@ pub impl Add for Float with op_add(self, other) = "%f32.add"
 ///   let x = 3.14.to_float()
 ///   let y = 1.0.to_float()
 ///   let result = x - y
-///   inspect!(result.to_double(), content="2.140000104904175")
+///   inspect(result.to_double(), content="2.140000104904175")
 /// }
 /// ```
 pub impl Sub for Float with op_sub(self, other) = "%f32.sub"
@@ -2687,7 +2631,7 @@ pub impl Sub for Float with op_sub(self, other) = "%f32.sub"
 ///   let x = Int::to_float(2)
 ///   let y = Int::to_float(3)
 ///   let z = x * y
-///   inspect!(z.to_double(), content="6")
+///   inspect(z.to_double(), content="6")
 /// }
 /// ```
 pub impl Mul for Float with op_mul(self, other) = "%f32.mul"
@@ -2715,8 +2659,8 @@ pub impl Mul for Float with op_mul(self, other) = "%f32.mul"
 ///   let a = 6.0.to_float()
 ///   let b = 2.0.to_float()
 ///   let result = (a / b).to_double()
-///   inspect!(result, content="3")
-///   inspect!((0.0.to_float() / 0.0.to_float()).to_double(), content="NaN")
+///   inspect(result, content="3")
+///   inspect((0.0.to_float() / 0.0.to_float()).to_double(), content="NaN")
 /// }
 /// ```
 pub impl Div for Float with op_div(self, other) = "%f32.div"
@@ -2743,10 +2687,10 @@ pub impl Div for Float with op_div(self, other) = "%f32.div"
 /// test "Float::sqrt" {
 ///   let x = 16.0.to_float()
 ///   let root = x.sqrt()
-///   inspect!(root.to_double(), content="4")
+///   inspect(root.to_double(), content="4")
 ///   let neg = (-4.0).to_float()
 ///   let neg_root = neg.sqrt()
-///   inspect!(neg_root.to_double(), content="NaN")
+///   inspect(neg_root.to_double(), content="NaN")
 /// }
 /// ```
 pub fn Float::sqrt(self : Float) -> Float = "%f32.sqrt"
@@ -2771,8 +2715,8 @@ pub fn Float::sqrt(self : Float) -> Float = "%f32.sqrt"
 ///   let x = 3.14
 ///   let y = 3.14
 ///   let z = 0.0 / 0.0 // NaN
-///   inspect!(x == y, content="true")
-///   inspect!(z == z, content="false") // NaN is not equal to itself
+///   inspect(x == y, content="true")
+///   inspect(z == z, content="false") // NaN is not equal to itself
 /// }
 /// ```
 pub impl Eq for Float with op_equal(self : Float, other : Float) -> Bool = "%f32.eq"
@@ -2797,9 +2741,9 @@ pub impl Eq for Float with op_equal(self : Float, other : Float) -> Bool = "%f32
 ///   let x = 1.0.to_float()
 ///   let y = 2.0.to_float()
 ///   let nan = (0.0 / 0.0).to_float()
-///   inspect!(x != y, content="true")
-///   inspect!(x != x, content="false")
-///   inspect!(nan != nan, content="true") // NaN is not equal to itself
+///   inspect(x != y, content="true")
+///   inspect(x != x, content="false")
+///   inspect(nan != nan, content="true") // NaN is not equal to itself
 /// }
 /// ```
 pub fn Float::op_neq(self : Float, other : Float) -> Bool = "%f32.ne"
@@ -2824,9 +2768,9 @@ pub fn Float::op_neq(self : Float, other : Float) -> Bool = "%f32.ne"
 /// test "Float::compare" {
 ///   let a = 3.14
 ///   let b = 2.718
-///   inspect!(a.compare(b), content="1") // 3.14 > 2.718
-///   inspect!(b.compare(a), content="-1") // 2.718 < 3.14
-///   inspect!(a.compare(a), content="0") // 3.14 = 3.14
+///   inspect(a.compare(b), content="1") // 3.14 > 2.718
+///   inspect(b.compare(a), content="-1") // 2.718 < 3.14
+///   inspect(a.compare(a), content="0") // 3.14 = 3.14
 /// }
 /// ```
 pub impl Compare for Float with compare(self, other) = "%f32.compare"
@@ -2848,7 +2792,7 @@ pub impl Compare for Float with compare(self, other) = "%f32.compare"
 /// ```moonbit
 /// test "Float::to_double" {
 ///   let f = 3.14.to_float()
-///   inspect!(f.to_double(), content="3.140000104904175")
+///   inspect(f.to_double(), content="3.140000104904175")
 /// }
 /// ```
 pub fn Float::to_double(self : Float) -> Double = "%f32.to_f64"
@@ -2872,7 +2816,7 @@ pub fn Float::to_double(self : Float) -> Double = "%f32.to_f64"
 /// test "Float::reinterpret_as_int" {
 ///   let f = 1.0.to_float()
 ///   // IEEE 754 representation of 1.0 is 0x3F800000
-///   inspect!(f.reinterpret_as_int(), content="1065353216")
+///   inspect(f.reinterpret_as_int(), content="1065353216")
 /// }
 /// ```
 pub fn Float::reinterpret_as_int(self : Float) -> Int = "%f32.to_i32_reinterpret"
@@ -2895,7 +2839,7 @@ pub fn Float::reinterpret_as_int(self : Float) -> Int = "%f32.to_i32_reinterpret
 /// ```moonbit
 /// test "Float::reinterpret_as_uint" {
 ///   let x : Float = 1.0
-///   inspect!(x.reinterpret_as_uint(), content="1065353216") // Decimal representation of 0x3F800000
+///   inspect(x.reinterpret_as_uint(), content="1065353216") // Decimal representation of 0x3F800000
 /// }
 /// ```
 pub fn Float::reinterpret_as_uint(self : Float) -> UInt = "%f32.to_i32_reinterpret"
@@ -2919,7 +2863,7 @@ pub fn Float::reinterpret_as_uint(self : Float) -> UInt = "%f32.to_i32_reinterpr
 ///   let n = 42
 ///   let f = n.to_float()
 ///   // Convert back to double for comparison since Float doesn't implement Show
-///   inspect!(f.to_double(), content="42")
+///   inspect(f.to_double(), content="42")
 /// }
 /// ```
 pub fn Int::to_float(self : Int) -> Float = "%i32.to_f32"
@@ -2943,7 +2887,7 @@ pub fn Int::to_float(self : Int) -> Float = "%i32.to_f32"
 /// test "Int::reinterpret_as_float" {
 ///   // 0x3F800000 represents 1.0 in IEEE 754 single-precision format
 ///   let n = 1065353216 // 0x3F800000
-///   inspect!(n.reinterpret_as_float().to_double(), content="1")
+///   inspect(n.reinterpret_as_float().to_double(), content="1")
 /// }
 /// ```
 pub fn Int::reinterpret_as_float(self : Int) -> Float = "%i32.to_f32_reinterpret"
@@ -2966,7 +2910,7 @@ pub fn Int::reinterpret_as_float(self : Int) -> Float = "%i32.to_f32_reinterpret
 /// ```moonbit
 /// test "UInt::reinterpret_as_float" {
 ///   let n = 0x3F800000U // Bit pattern for 1.0f
-///   inspect!(n.reinterpret_as_float().to_double(), content="1")
+///   inspect(n.reinterpret_as_float().to_double(), content="1")
 /// }
 /// ```
 pub fn UInt::reinterpret_as_float(self : UInt) -> Float = "%i32.to_f32_reinterpret"
@@ -2989,7 +2933,7 @@ pub fn UInt::reinterpret_as_float(self : UInt) -> Float = "%i32.to_f32_reinterpr
 ///   let b = b'\xFF' // 255 in decimal
 ///   let f = b.to_float()
 ///   // Convert to double for comparison since Float doesn't implement Show
-///   inspect!(f.to_double(), content="255")
+///   inspect(f.to_double(), content="255")
 /// }
 /// ```
 pub fn Byte::to_float(self : Byte) -> Float = "%byte.to_f32"
@@ -3016,7 +2960,7 @@ pub fn Byte::to_double(self : Byte) -> Double {
 /// ```moonbit
 /// test "Double::to_float" {
 ///   let d = 3.14159265359
-///   inspect!(d.to_float().to_double(), content="3.1415927410125732") // Note the loss of precision
+///   inspect(d.to_float().to_double(), content="3.1415927410125732") // Note the loss of precision
 /// }
 /// ```
 pub fn Double::to_float(self : Double) -> Float = "%f64.to_f32"
@@ -3038,9 +2982,9 @@ pub fn Double::to_float(self : Double) -> Float = "%f64.to_f32"
 /// ```moonbit
 /// test "UInt::to_float" {
 ///   let n = 42U
-///   inspect!(n.to_float().to_double(), content="42")
+///   inspect(n.to_float().to_double(), content="42")
 ///   let big = 16777216U // 2^24
-///   inspect!(big.to_float().to_double(), content="16777216") // Last precisely representable integer
+///   inspect(big.to_float().to_double(), content="16777216") // Last precisely representable integer
 /// }
 /// ```
 pub fn UInt::to_float(self : UInt) -> Float = "%u32.to_f32"
@@ -3060,9 +3004,9 @@ pub fn UInt::to_float(self : UInt) -> Float = "%u32.to_f32"
 /// ```moonbit
 /// test "Int16::to_int" {
 ///   let n = Int::to_int16(42)
-///   inspect!(n.to_int(), content="42")
+///   inspect(n.to_int(), content="42")
 ///   let neg = Int::to_int16(-42)
-///   inspect!(neg.to_int(), content="-42")
+///   inspect(neg.to_int(), content="-42")
 /// }
 /// ```
 pub fn Int16::to_int(self : Int16) -> Int = "%i16_to_i32"
@@ -3083,7 +3027,7 @@ pub fn Int16::to_int(self : Int16) -> Int = "%i16_to_i32"
 /// ```moonbit
 /// test "Int16::to_byte" {
 ///   let x = Int::to_int16(258) // In binary: 0000_0001_0000_0010
-///   inspect!(x.to_byte(), content="b'\\x02'") // Only keeps 0000_0010
+///   inspect(x.to_byte(), content="b'\\x02'") // Only keeps 0000_0010
 /// }
 /// ```
 pub fn Int16::to_byte(self : Int16) -> Byte = "%i16_to_byte"
@@ -3107,9 +3051,9 @@ pub fn Int::to_int16(self : Int) -> Int16 = "%i32_to_i16"
 /// ```moonbit
 /// test "Byte::to_int16" {
 ///   let b = b'\xFF' // -1 as a signed byte
-///   inspect!(b.to_int16(), content="255") // Sign is preserved
+///   inspect(b.to_int16(), content="255") // Sign is preserved
 ///   let p = b'\x7F' // 127 as a signed byte
-///   inspect!(p.to_int16(), content="127")
+///   inspect(p.to_int16(), content="127")
 /// }
 /// ```
 pub fn Byte::to_int16(self : Byte) -> Int16 = "%byte_to_i16"
@@ -3130,9 +3074,9 @@ pub fn Byte::to_int16(self : Byte) -> Int16 = "%byte_to_i16"
 /// ```moonbit
 /// test "UInt16::to_int" {
 ///   let x = Int::to_uint16(42)
-///   inspect!(x.to_int(), content="42")
+///   inspect(x.to_int(), content="42")
 ///   let max = Int::to_uint16(65535) // maximum value of UInt16
-///   inspect!(max.to_int(), content="65535")
+///   inspect(max.to_int(), content="65535")
 /// }
 /// ```
 pub fn UInt16::to_int(self : UInt16) -> Int = "%u16_to_i32"
@@ -3152,7 +3096,7 @@ pub fn UInt16::to_int(self : UInt16) -> Int = "%u16_to_i32"
 /// ```moonbit
 /// test "UInt16::to_byte" {
 ///   let x = Int::to_uint16(258) // Binary: 0000_0001_0000_0010
-///   inspect!(x.to_byte(), content="b'\\x02'") // Only keeps 0000_0010
+///   inspect(x.to_byte(), content="b'\\x02'") // Only keeps 0000_0010
 /// }
 /// ```
 pub fn UInt16::to_byte(self : UInt16) -> Byte = "%u16_to_byte"
@@ -3174,11 +3118,11 @@ pub fn UInt16::to_byte(self : UInt16) -> Byte = "%u16_to_byte"
 /// ```moonbit
 /// test "Int::to_uint16" {
 ///   let n = 42
-///   inspect!(n.to_uint16(), content="42")
+///   inspect(n.to_uint16(), content="42")
 ///   let neg = -1
-///   inspect!(neg.to_uint16(), content="65535") // -1 becomes max value of UInt16
+///   inspect(neg.to_uint16(), content="65535") // -1 becomes max value of UInt16
 ///   let large = 65536
-///   inspect!(large.to_uint16(), content="0") // Values wrap around
+///   inspect(large.to_uint16(), content="0") // Values wrap around
 /// }
 /// ```
 pub fn Int::to_uint16(self : Int) -> UInt16 = "%i32_to_u16"
@@ -3198,9 +3142,9 @@ pub fn Int::to_uint16(self : Int) -> UInt16 = "%i32_to_u16"
 /// ```moonbit
 /// test "Byte::to_uint16" {
 ///   let b = b'\xFF' // byte with value 255
-///   inspect!(b.to_uint16(), content="255")
+///   inspect(b.to_uint16(), content="255")
 ///   let zero = b'\x00'
-///   inspect!(zero.to_uint16(), content="0")
+///   inspect(zero.to_uint16(), content="0")
 /// }
 /// ```
 pub fn Byte::to_uint16(self : Byte) -> UInt16 = "%byte_to_u16"

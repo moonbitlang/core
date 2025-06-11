@@ -13,13 +13,18 @@
 // limitations under the License.
 
 ///|
+fn[T] Tree::is_empty_tree(self : Tree[T]) -> Bool {
+  self is Empty
+}
+
+///|
 test "mix" {
   let mut v = new()
-  inspect!(v.tree.is_empty_tree(), content="true")
+  inspect(v.tree.is_empty_tree(), content="true")
   for i in 0..<100 {
     v = v.push(i)
   }
-  inspect!(
+  inspect(
     v,
     content="@immut/array.of([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99])",
   )
@@ -29,15 +34,15 @@ test "mix" {
   }
   let mut ct = 0
   v.each(fn(e) { ct = ct + e })
-  inspect!(ct, content="4950")
+  inspect(ct, content="4950")
   v2.each(fn(e) { ct = ct + e })
-  inspect!(ct, content="14850")
+  inspect(ct, content="14850")
   v2 = v2.map(fn(e) { e * 2 })
   let ct1 = v2.fold(fn(a, b) { a + b }, init=0)
   let ct2 = v2.rev_fold(fn(a, b) { a + b }, init=0)
-  inspect!(ct1, content="19800")
-  inspect!(ct2, content="19800")
-  inspect!(v.tree.is_empty_tree(), content="false")
+  inspect(ct1, content="19800")
+  inspect(ct2, content="19800")
+  inspect(v.tree.is_empty_tree(), content="false")
   let large_const = branching_factor * branching_factor + 1
   let mut v = new()
   for i in 0..<large_const {
@@ -46,7 +51,7 @@ test "mix" {
   let vec = []
   v.eachi(fn(i, _e) { vec.push(i) })
   for i in 0..<large_const {
-    assert_eq!(vec[i], i)
+    assert_eq(vec[i], i)
   }
 }
 
@@ -55,53 +60,53 @@ test "op_get" {
   let bf = branching_factor_power(4)
   let v_content = random_array(bf)
   let v = from_iter(v_content.iter())
-  inspect!(v.length(), content=bf.to_string())
-  inspect!(v[0], content=v_content[0].to_string())
-  inspect!(v[bf - 1], content=v_content[bf - 1].to_string())
-  inspect!(v[bf / 2], content=v_content[bf / 2].to_string())
+  inspect(v.length(), content=bf.to_string())
+  inspect(v[0], content=v_content[0].to_string())
+  inspect(v[bf - 1], content=v_content[bf - 1].to_string())
+  inspect(v[bf / 2], content=v_content[bf / 2].to_string())
   let bf = branching_factor
   let v_content = random_array(bf)
   let v = from_iter(v_content.iter())
-  inspect!(v.length(), content=bf.to_string())
-  inspect!(v[0], content=v_content[0].to_string())
-  inspect!(v[bf - 1], content=v_content[bf - 1].to_string())
-  inspect!(v[bf / 2], content=v_content[bf / 2].to_string())
+  inspect(v.length(), content=bf.to_string())
+  inspect(v[0], content=v_content[0].to_string())
+  inspect(v[bf - 1], content=v_content[bf - 1].to_string())
+  inspect(v[bf / 2], content=v_content[bf / 2].to_string())
 }
 
 ///|
 test "concat-two-full-tree" {
   let bf = branching_factor_power(4)
-  execute_array_test!(gen_concat_seq_from_len_array([bf, bf]))
+  execute_array_test(gen_concat_seq_from_len_array([bf, bf]))
 }
 
 ///|
 test "concat-full-tree-and-a-leaf" {
   let bf = branching_factor_power(4)
-  execute_array_test!(gen_concat_seq_from_len_array([bf, 1]))
+  execute_array_test(gen_concat_seq_from_len_array([bf, 1]))
 }
 
 ///|
 test "concat-a-leaf-and-full-tree" {
   let bf = branching_factor_power(4)
-  execute_array_test!(gen_concat_seq_from_len_array([1, bf]))
+  execute_array_test(gen_concat_seq_from_len_array([1, bf]))
 }
 
 ///|
 test "concat-two-leaf" {
-  execute_array_test!(gen_concat_seq_from_len_array([1, 1]))
+  execute_array_test(gen_concat_seq_from_len_array([1, 1]))
 }
 
 ///|
 test "concat-multiple-full-tree" {
   let bf = branching_factor_power(4)
-  execute_array_test!(gen_concat_seq(3, fn(_i) { bf }))
+  execute_array_test(gen_concat_seq(3, fn(_i) { bf }))
 }
 
 ///|
 test "concat-multiple-random-tree" {
   let bf = branching_factor_power(2)
   let rng = Random({ val: 0UL })
-  execute_array_test!(gen_concat_seq(2, fn(_i) { rng.int(limit=bf) }))
+  execute_array_test(gen_concat_seq(2, fn(_i) { rng.int(limit=bf) }))
 }
 
 ///|

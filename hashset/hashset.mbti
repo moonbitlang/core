@@ -5,77 +5,75 @@ import(
 )
 
 // Values
-fn add[K : Hash + Eq](T[K], K) -> Unit
+fn[K : Hash + Eq] add(T[K], K) -> Unit
 
-fn capacity[K](T[K]) -> Int
+fn[K] capacity(T[K]) -> Int
 
-fn clear[K](T[K]) -> Unit
+fn[K] clear(T[K]) -> Unit
 
-fn contains[K : Hash + Eq](T[K], K) -> Bool
+fn[K : Hash + Eq] contains(T[K], K) -> Bool
 
-fn difference[K : Hash + Eq](T[K], T[K]) -> T[K]
+fn[K : Hash + Eq] difference(T[K], T[K]) -> T[K]
 
-fn each[K](T[K], (K) -> Unit) -> Unit
+fn[K] each(T[K], (K) -> Unit) -> Unit
 
-fn eachi[K](T[K], (Int, K) -> Unit) -> Unit
+fn[K] eachi(T[K], (Int, K) -> Unit) -> Unit
 
-fn from_array[K : Hash + Eq](Array[K]) -> T[K]
+fn[K : Hash + Eq] from_array(Array[K]) -> T[K]
 
-fn from_iter[K : Hash + Eq](Iter[K]) -> T[K]
+fn[K : Hash + Eq] from_iter(Iter[K]) -> T[K]
 
 #deprecated
-fn insert[K : Hash + Eq](T[K], K) -> Unit
+fn[K : Hash + Eq] insert(T[K], K) -> Unit
 
-fn intersection[K : Hash + Eq](T[K], T[K]) -> T[K]
+fn[K : Hash + Eq] intersection(T[K], T[K]) -> T[K]
 
-fn is_disjoint[K : Hash + Eq](T[K], T[K]) -> Bool
+fn[K : Hash + Eq] is_disjoint(T[K], T[K]) -> Bool
 
-fn is_empty[K](T[K]) -> Bool
+fn[K] is_empty(T[K]) -> Bool
 
-fn is_subset[K : Hash + Eq](T[K], T[K]) -> Bool
+fn[K : Hash + Eq] is_subset(T[K], T[K]) -> Bool
 
-fn is_superset[K : Hash + Eq](T[K], T[K]) -> Bool
+fn[K : Hash + Eq] is_superset(T[K], T[K]) -> Bool
 
-fn iter[K](T[K]) -> Iter[K]
+fn[K] iter(T[K]) -> Iter[K]
 
-fn new[K](capacity~ : Int = ..) -> T[K]
+fn[K] new(capacity~ : Int = ..) -> T[K]
 
-fn of[K : Hash + Eq](FixedArray[K]) -> T[K]
+fn[K : Hash + Eq] of(FixedArray[K]) -> T[K]
 
-fn remove[K : Hash + Eq](T[K], K) -> Unit
+fn[K : Hash + Eq] remove(T[K], K) -> Unit
 
-fn size[K](T[K]) -> Int
+fn[K] size(T[K]) -> Int
 
-fn symmetric_difference[K : Hash + Eq](T[K], T[K]) -> T[K]
+fn[K : Hash + Eq] symmetric_difference(T[K], T[K]) -> T[K]
 
-fn to_array[K](T[K]) -> Array[K]
+fn[K] to_array(T[K]) -> Array[K]
 
-fn union[K : Hash + Eq](T[K], T[K]) -> T[K]
+fn[K : Hash + Eq] union(T[K], T[K]) -> T[K]
 
 // Types and methods
 type T[K]
-impl T {
-  add[K : Hash + Eq](Self[K], K) -> Unit
-  capacity[K](Self[K]) -> Int
-  clear[K](Self[K]) -> Unit
-  contains[K : Hash + Eq](Self[K], K) -> Bool
-  difference[K : Hash + Eq](Self[K], Self[K]) -> Self[K]
-  each[K](Self[K], (K) -> Unit) -> Unit
-  eachi[K](Self[K], (Int, K) -> Unit) -> Unit
-  #deprecated
-  insert[K : Hash + Eq](Self[K], K) -> Unit
-  intersection[K : Hash + Eq](Self[K], Self[K]) -> Self[K]
-  is_disjoint[K : Hash + Eq](Self[K], Self[K]) -> Bool
-  is_empty[K](Self[K]) -> Bool
-  is_subset[K : Hash + Eq](Self[K], Self[K]) -> Bool
-  is_superset[K : Hash + Eq](Self[K], Self[K]) -> Bool
-  iter[K](Self[K]) -> Iter[K]
-  remove[K : Hash + Eq](Self[K], K) -> Unit
-  size[K](Self[K]) -> Int
-  symmetric_difference[K : Hash + Eq](Self[K], Self[K]) -> Self[K]
-  to_array[K](Self[K]) -> Array[K]
-  union[K : Hash + Eq](Self[K], Self[K]) -> Self[K]
-}
+fn[K : Hash + Eq] T::add(Self[K], K) -> Unit
+fn[K] T::capacity(Self[K]) -> Int
+fn[K] T::clear(Self[K]) -> Unit
+fn[K : Hash + Eq] T::contains(Self[K], K) -> Bool
+fn[K : Hash + Eq] T::difference(Self[K], Self[K]) -> Self[K]
+fn[K] T::each(Self[K], (K) -> Unit) -> Unit
+fn[K] T::eachi(Self[K], (Int, K) -> Unit) -> Unit
+#deprecated
+fn[K : Hash + Eq] T::insert(Self[K], K) -> Unit
+fn[K : Hash + Eq] T::intersection(Self[K], Self[K]) -> Self[K]
+fn[K : Hash + Eq] T::is_disjoint(Self[K], Self[K]) -> Bool
+fn[K] T::is_empty(Self[K]) -> Bool
+fn[K : Hash + Eq] T::is_subset(Self[K], Self[K]) -> Bool
+fn[K : Hash + Eq] T::is_superset(Self[K], Self[K]) -> Bool
+fn[K] T::iter(Self[K]) -> Iter[K]
+fn[K : Hash + Eq] T::remove(Self[K], K) -> Unit
+fn[K] T::size(Self[K]) -> Int
+fn[K : Hash + Eq] T::symmetric_difference(Self[K], Self[K]) -> Self[K]
+fn[K] T::to_array(Self[K]) -> Array[K]
+fn[K : Hash + Eq] T::union(Self[K], Self[K]) -> Self[K]
 impl[K : Hash + Eq] BitAnd for T[K]
 impl[K : Hash + Eq] BitOr for T[K]
 impl[K : Hash + Eq] BitXOr for T[K]

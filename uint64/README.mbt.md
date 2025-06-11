@@ -9,10 +9,10 @@ The package defines the minimum and maximum values for UInt64:
 ```moonbit
 test "UInt64 constants" {
   // Minimum value of UInt64
-  inspect!(@uint64.min_value, content="0")
+  inspect(@uint64.min_value, content="0")
 
   // Maximum value of UInt64
-  inspect!(@uint64.max_value, content="18446744073709551615")
+  inspect(@uint64.max_value, content="18446744073709551615")
 }
 ```
 
@@ -26,20 +26,20 @@ test "UInt64 arithmetic" {
   let b : UInt64 = 50UL
 
   // Addition
-  inspect!(a + b, content="150")
+  inspect(a + b, content="150")
 
   // Subtraction
-  inspect!(a - b, content="50")
+  inspect(a - b, content="50")
 
   // Multiplication
-  inspect!(a * b, content="5000")
+  inspect(a * b, content="5000")
 
   // Division
-  inspect!(a / b, content="2")
+  inspect(a / b, content="2")
 
   // Overflow behavior
-  inspect!(@uint64.max_value + 1UL, content="0") // Wraps around to 0
-  inspect!(@uint64.min_value - 1UL, content="18446744073709551615") // Underflow wraps to maximum value
+  inspect(@uint64.max_value + 1UL, content="0") // Wraps around to 0
+  inspect(@uint64.min_value - 1UL, content="18446744073709551615") // Underflow wraps to maximum value
 }
 ```
 
@@ -53,21 +53,21 @@ test "UInt64 bitwise operations" {
   let b : UInt64 = 0b1100UL
 
   // Bitwise AND
-  inspect!(a & b, content="8")
+  inspect(a & b, content="8")
 
   // Bitwise OR
-  inspect!(a | b, content="14")
+  inspect(a | b, content="14")
 
   // Bitwise XOR
-  inspect!(a ^ b, content="6")
+  inspect(a ^ b, content="6")
 
   // Left shift
-  inspect!(a << 1, content="20")
-  inspect!(a << 2, content="40")
+  inspect(a << 1, content="20")
+  inspect(a << 2, content="40")
 
   // Right shift
-  inspect!(a >> 1, content="5")
-  inspect!(b >> 2, content="3")
+  inspect(a >> 1, content="5")
+  inspect(b >> 2, content="3")
 }
 ```
 
@@ -82,14 +82,14 @@ test "UInt64 comparison and equality" {
   let c : UInt64 = 100UL
 
   // Equality
-  inspect!(a == c, content="true")
-  inspect!(a != b, content="true")
+  inspect(a == c, content="true")
+  inspect(a != b, content="true")
 
   // Comparison
-  inspect!(a > b, content="true")
-  inspect!(b < a, content="true")
-  inspect!(a >= c, content="true")
-  inspect!(c <= a, content="true")
+  inspect(a > b, content="true")
+  inspect(b < a, content="true")
+  inspect(a >= c, content="true")
+  inspect(c <= a, content="true")
 }
 ```
 
@@ -100,8 +100,8 @@ UInt64 provides methods for converting to bytes in both big-endian and little-en
 ```moonbit
 test "UInt64 byte conversion" {
   // Convert to bytes in big-endian order (most significant byte first)
-  let be_bytes = @uint64.to_be_bytes(0x123456789ABCDEF0UL)
-  inspect!(
+  let be_bytes = (0x123456789ABCDEF0UL).to_be_bytes()
+  inspect(
     be_bytes,
     content=
       #|b"\x12\x34\x56\x78\x9a\xbc\xde\xf0"
@@ -109,8 +109,8 @@ test "UInt64 byte conversion" {
   )
 
   // Convert to bytes in little-endian order (least significant byte first)
-  let le_bytes = @uint64.to_le_bytes(0x123456789ABCDEF0UL)
-  inspect!(
+  let le_bytes = (0x123456789ABCDEF0UL).to_le_bytes()
+  inspect(
     le_bytes,
     content=
       #|b"\xf0\xde\xbc\x9a\x78\x56\x34\x12"
@@ -127,11 +127,11 @@ UInt64 implements the Default trait:
 test "UInt64 default value" {
   // Default value is 0
   let a : UInt64 = 0UL
-  inspect!(a, content="0")
+  inspect(a, content="0")
 
   // Hash support is available via .hash()
   let value : UInt64 = 42UL
-  inspect!(value.hash(), content="-1962516083")
+  inspect(value.hash(), content="-1962516083")
 }
 ```
 
@@ -142,20 +142,20 @@ UInt64 works with various conversions to and from other types:
 ```moonbit
 test "UInt64 conversions" {
   // From Int to UInt64
-  inspect!((42).to_uint64(), content="42")
+  inspect((42).to_uint64(), content="42")
 
   // From UInt64 to Int or Double
   let value : UInt64 = 100UL
-  inspect!(value.to_int(), content="100")
+  inspect(value.to_int(), content="100")
   let as_double = value.to_double()
-  inspect!(as_double, content="100")
+  inspect(as_double, content="100")
 
   // Overflow handling in conversions
-  inspect!((-1).to_uint64(), content="18446744073709551615") // Negative numbers wrap around
+  inspect((-1).to_uint64(), content="18446744073709551615") // Negative numbers wrap around
 
   // Converting back from floating point
   let from_double = 42.0.to_uint64()
-  inspect!(from_double, content="42")
+  inspect(from_double, content="42")
 }
 ```
 
@@ -169,11 +169,11 @@ test "UInt64 for large numbers" {
   let large_number : UInt64 = (1UL << 63) - 1UL
 
   // This exceeds a 32-bit integer's maximum value
-  inspect!(large_number > (1UL << 32) - 1UL, content="true")
+  inspect(large_number > (1UL << 32) - 1UL, content="true")
 
   // Arithmetic still works with large values
   let result = large_number * 2UL
-  inspect!(result, content="18446744073709551614") // This effectively calculates 2^64 - 2
+  inspect(result, content="18446744073709551614") // This effectively calculates 2^64 - 2
 }
 ```
 
@@ -188,11 +188,11 @@ test "UInt64 hexadecimal literals" {
 
   // Extract specific byte using shifts and masks
   let ad = (value >> 16) & 0xFFUL
-  inspect!(ad.to_byte(), content="b'\\xAD'")
+  inspect(ad.to_byte(), content="b'\\xAD'")
 
   // Convert to byte representation
-  let bytes = @uint64.to_be_bytes(value)
-  inspect!(
+  let bytes = value.to_be_bytes()
+  inspect(
     bytes,
     content=
       #|b"\x00\x00\x00\x00\xde\xad\xbe\xef"

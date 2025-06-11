@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-fn set_null[T](self : UninitializedArray[T], index : Int) = "%fixedarray.set_null"
+fn[T] set_null(self : UninitializedArray[T], index : Int) = "%fixedarray.set_null"
 
 ///|
 /// An `Array` is a collection of values that supports random access and can
@@ -24,7 +24,7 @@ struct Array[T] {
 }
 
 ///|
-fn Array::make_uninit[T](len : Int) -> Array[T] {
+fn[T] Array::make_uninit(len : Int) -> Array[T] {
   { buf: UninitializedArray::make(len), len }
 }
 
@@ -44,16 +44,16 @@ fn Array::make_uninit[T](len : Int) -> Array[T] {
 /// ```moonbit
 /// test "Array::new" {
 ///   let arr : Array[Int] = Array::new(capacity=10)
-///   inspect!(arr.length(), content="0")
-///   inspect!(arr.capacity(), content="10")
+///   inspect(arr.length(), content="0")
+///   inspect(arr.capacity(), content="10")
 /// }
 ///
 /// test "Array::new/default" {
 ///   let arr : Array[Int] = Array::new()
-///   inspect!(arr.length(), content="0")
+///   inspect(arr.length(), content="0")
 /// }
 /// ```
-pub fn Array::new[T](capacity~ : Int = 0) -> Array[T] {
+pub fn[T] Array::new(capacity~ : Int = 0) -> Array[T] {
   if capacity == 0 {
     []
   } else {
@@ -75,13 +75,13 @@ pub fn Array::new[T](capacity~ : Int = 0) -> Array[T] {
 /// ```moonbit
 /// test "Array::length" {
 ///   let arr = [1, 2, 3]
-///   inspect!(arr.length(), content="3")
+///   inspect(arr.length(), content="3")
 ///   let empty : Array[Int] = []
-///   inspect!(empty.length(), content="0")
+///   inspect(empty.length(), content="0")
 /// }
 /// ```
 #intrinsic("%array.length")
-pub fn Array::length[T](self : Array[T]) -> Int {
+pub fn[T] Array::length(self : Array[T]) -> Int {
   self.len
 }
 
@@ -107,7 +107,7 @@ pub fn Array::length[T](self : Array[T]) -> Int {
 /// behavior.
 ///
 /// TODO: this can be optimized by using the intrinsic to null out the range
-fn Array::unsafe_truncate_to_length[T](self : Array[T], new_len : Int) -> Unit {
+fn[T] Array::unsafe_truncate_to_length(self : Array[T], new_len : Int) -> Unit {
   let len = self.length()
   guard new_len <= len
   for i in new_len..<len {
@@ -120,16 +120,16 @@ fn Array::unsafe_truncate_to_length[T](self : Array[T], new_len : Int) -> Unit {
 test "unsafe_truncate_to_length" {
   let arr = [1, 2, 3, 4, 5]
   arr.unsafe_truncate_to_length(3)
-  inspect!(arr, content="[1, 2, 3]")
+  inspect(arr, content="[1, 2, 3]")
 }
 
 ///|
-fn Array::buffer[T](self : Array[T]) -> UninitializedArray[T] {
+fn[T] Array::buffer(self : Array[T]) -> UninitializedArray[T] {
   self.buf
 }
 
 ///|
-fn Array::resize_buffer[T](self : Array[T], new_capacity : Int) -> Unit {
+fn[T] Array::resize_buffer(self : Array[T], new_capacity : Int) -> Unit {
   let new_buf = UninitializedArray::make(new_capacity)
   let old_buf = self.buf
   let old_cap = old_buf._.length()
@@ -147,7 +147,7 @@ test "array_unsafe_blit_fixed" {
   }
   UninitializedArray::unsafe_blit_fixed(dst, 0, src, 0, 5)
   for i in 0..<5 {
-    assert_eq!(dst[i], src[i])
+    assert_eq(dst[i], src[i])
   }
 }
 
@@ -160,7 +160,7 @@ test "UninitializedArray::unsafe_blit_fixed" {
   }
   UninitializedArray::unsafe_blit_fixed(dst, 0, src, 0, 5)
   for i in 0..<5 {
-    assert_eq!(dst[i], src[i])
+    assert_eq(dst[i], src[i])
   }
 }
 
@@ -173,7 +173,7 @@ test "UninitializedArray::unsafe_blit_fixed" {
   }
   UninitializedArray::unsafe_blit_fixed(dst, 0, src, 0, 5)
   for i in 0..<5 {
-    assert_eq!(dst[i], src[i])
+    assert_eq(dst[i], src[i])
   }
 }
 
@@ -183,19 +183,19 @@ test "Array::resize_buffer" {
   arr.push(1)
   arr.push(2)
   arr.resize_buffer(4)
-  assert_eq!(arr.buffer()._.length() >= 4, true)
+  assert_eq(arr.buffer()._.length() >= 4, true)
   arr.push(3)
   arr.push(4)
-  assert_eq!(arr.length(), 4)
-  assert_eq!(arr[0], 1)
-  assert_eq!(arr[1], 2)
-  assert_eq!(arr[2], 3)
-  assert_eq!(arr[3], 4)
+  assert_eq(arr.length(), 4)
+  assert_eq(arr[0], 1)
+  assert_eq(arr[1], 2)
+  assert_eq(arr[2], 3)
+  assert_eq(arr[3], 4)
 }
 
 ///|
 /// Reallocate the array with a new capacity.
-fn Array::realloc[T](self : Array[T]) -> Unit {
+fn[T] Array::realloc(self : Array[T]) -> Unit {
   let old_cap = self.length()
   let new_cap = if old_cap == 0 { 8 } else { old_cap * 2 }
   self.resize_buffer(new_cap)
@@ -208,11 +208,13 @@ fn Array::realloc[T](self : Array[T]) -> Unit {
 /// # Example
 ///
 /// ```
-/// let v = [1]
-/// v.reserve_capacity(10)
-/// assert_eq!(v.capacity(), 10)
+/// test "reserve_capacity_example" {
+///   let v = [1]
+///   v.reserve_capacity(10)
+///   assert_eq(v.capacity(), 10)
+/// }
 /// ```
-pub fn Array::reserve_capacity[T](self : Array[T], capacity : Int) -> Unit {
+pub fn[T] Array::reserve_capacity(self : Array[T], capacity : Int) -> Unit {
   if self.capacity() >= capacity {
     return
   }
@@ -225,14 +227,16 @@ pub fn Array::reserve_capacity[T](self : Array[T], capacity : Int) -> Unit {
 /// # Example
 ///
 /// ```
-/// let v = Array::new(capacity=10)
-/// v.push(1)
-/// v.push(2)
-/// v.push(3)
-/// v.shrink_to_fit()
-/// assert_eq!(v.capacity(), 3)
+/// test "shrink_to_fit_example" {
+///   let v = Array::new(capacity=10)
+///   v.push(1)
+///   v.push(2)
+///   v.push(3)
+///   v.shrink_to_fit()
+///   assert_eq(v.capacity(), 3)
+/// }
 /// ```
-pub fn Array::shrink_to_fit[T](self : Array[T]) -> Unit {
+pub fn[T] Array::shrink_to_fit(self : Array[T]) -> Unit {
   if self.capacity() <= self.length() {
     return
   }
@@ -246,10 +250,12 @@ pub fn Array::shrink_to_fit[T](self : Array[T]) -> Unit {
 ///
 /// # Example
 /// ```
-/// let v = []
-/// v.push(3)
+/// test "push_example" {
+///   let v = []
+///   v.push(3)
+/// }
 /// ```
-pub fn Array::push[T](self : Array[T], value : T) -> Unit {
+pub fn[T] Array::push(self : Array[T], value : T) -> Unit {
   if self.length() == self.buffer()._.length() {
     self.realloc()
   }
@@ -263,11 +269,13 @@ pub fn Array::push[T](self : Array[T], value : T) -> Unit {
 ///
 /// # Example
 /// ```
-/// let v = [1, 2, 3]
-/// assert_eq!(v.pop(), Some(3))
-/// assert_eq!(v, [1, 2])
+/// test "pop_example" {
+///   let v = [1, 2, 3]
+///   assert_eq(v.pop(), Some(3))
+///   assert_eq(v, [1, 2])
+/// }
 /// ```
-pub fn Array::pop[T](self : Array[T]) -> T? {
+pub fn[T] Array::pop(self : Array[T]) -> T? {
   let len = self.length()
   if len == 0 {
     None
@@ -283,7 +291,7 @@ pub fn Array::pop[T](self : Array[T]) -> T? {
 ///|
 #deprecated("Use `unsafe_pop` instead")
 #coverage.skip
-pub fn Array::pop_exn[T](self : Array[T]) -> T {
+pub fn[T] Array::pop_exn(self : Array[T]) -> T {
   self.unsafe_pop()
 }
 
@@ -301,8 +309,8 @@ pub fn Array::pop_exn[T](self : Array[T]) -> T {
 /// ```moonbit
 /// test "unsafe_pop" {
 ///   let arr = [1, 2, 3]
-///   inspect!(arr.unsafe_pop(), content="3")
-///   inspect!(arr, content="[1, 2]")
+///   inspect(arr.unsafe_pop(), content="3")
+///   inspect(arr, content="[1, 2]")
 /// }
 ///
 /// test "panic unsafe_pop/empty" {
@@ -312,7 +320,7 @@ pub fn Array::pop_exn[T](self : Array[T]) -> T {
 /// ```
 ///
 #internal(unsafe, "Panic if the array is empty.")
-pub fn Array::unsafe_pop[T](self : Array[T]) -> T {
+pub fn[T] Array::unsafe_pop(self : Array[T]) -> T {
   let len = self.length()
   guard len != 0
   let index = len - 1
@@ -330,11 +338,13 @@ pub fn Array::unsafe_pop[T](self : Array[T]) -> T {
 ///
 /// # Example
 /// ```
-/// let v = [3, 4, 5]
-/// assert_eq!(v.remove(1), 4)
-/// assert_eq!(v, [3, 5])
+/// test "remove_example" {
+///   let v = [3, 4, 5]
+///   assert_eq(v.remove(1), 4)
+///   assert_eq(v, [3, 5])
+/// }
 /// ```
-pub fn Array::remove[T](self : Array[T], index : Int) -> T {
+pub fn[T] Array::remove(self : Array[T], index : Int) -> T {
   guard index >= 0 && index < self.length() else {
     abort(
       "index out of bounds: the len is from 0 to \{self.length()} but the index is \{index}",
@@ -361,12 +371,14 @@ pub fn Array::remove[T](self : Array[T], index : Int) -> T {
 ///
 /// # Example
 /// ```
-/// let v = [3, 4, 5]
-/// let vv = v.drain(1, 2) // vv = [4], v = [3, 5]
-/// assert_eq!(vv, [4])
-/// assert_eq!(v, [3, 5])
+/// test "drain_example" {
+///   let v = [3, 4, 5]
+///   let vv = v.drain(1, 2) // vv = [4], v = [3, 5]
+///   assert_eq(vv, [4])
+///   assert_eq(v, [3, 5])
+/// }
 /// ```
-pub fn Array::drain[T](self : Array[T], begin : Int, end : Int) -> Array[T] {
+pub fn[T] Array::drain(self : Array[T], begin : Int, end : Int) -> Array[T] {
   guard begin >= 0 && end <= self.length() && begin <= end
   let num = end - begin
   let v = Array::make_uninit(num)
@@ -388,9 +400,11 @@ pub fn Array::drain[T](self : Array[T], begin : Int, end : Int) -> Array[T] {
 ///
 /// # Example
 /// ```
-/// [3, 4, 5].insert(1, 6)
+/// test "insert_example" {
+///   [3, 4, 5].insert(1, 6)
+/// }
 /// ```
-pub fn Array::insert[T](self : Array[T], index : Int, value : T) -> Unit {
+pub fn[T] Array::insert(self : Array[T], index : Int, value : T) -> Unit {
   guard index >= 0 && index <= self.length() else {
     abort(
       "index out of bounds: the len is from 0 to \{self.length()} but the index is \{index}",
@@ -418,7 +432,7 @@ pub fn Array::insert[T](self : Array[T], index : Int, value : T) -> Unit {
 /// difference, and the values in the new slots are left uninitialized.
 ///  If `new_len` is less than `len`, it will panic
 ///
-fn Array::unsafe_grow_to_length[T](self : Array[T], new_len : Int) -> Unit {
+fn[T] Array::unsafe_grow_to_length(self : Array[T], new_len : Int) -> Unit {
   guard new_len >= self.length()
   let new_buf = UninitializedArray::make(new_len)
   UninitializedArray::unsafe_blit(new_buf, 0, self.buf, 0, self.len)

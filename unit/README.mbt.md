@@ -11,7 +11,7 @@ test "unit construction" {
   let u1 = ()
   let u2 = @unit.default()
   // Any two unit values are equal
-  inspect!(u1 == u2, content="true")
+  inspect(u1 == u2, content="true")
 }
 ```
 
@@ -23,8 +23,7 @@ Unit values can be converted to strings using either the standalone function or 
 test "unit string conversion" {
   let u = ()
   // Both ways produce the same result
-  inspect!(@unit.to_string(u), content="()")
-  inspect!(u.to_string(), content="()")
+  inspect(u.to_string(), content="()")
 }
 ```
 
@@ -37,16 +36,16 @@ test "unit trait implementations" {
   // Compare - all unit values compare equal
   let u1 = ()
   let u2 = ()
-  inspect!(u1.compare(u2), content="0")
+  inspect(u1.compare(u2), content="0")
 
   // Hash - all unit values hash to the same value
   let h1 = u1.hash()
   let h2 = u2.hash()
-  inspect!(h1 == h2, content="true")
+  inspect(h1 == h2, content="true")
 
   // Default - provides the unit value
   let u3 = Unit::default()
-  inspect!(u3 == u1, content="true")
+  inspect(u3 == u1, content="true")
 }
 ```
 

@@ -43,7 +43,7 @@ const GPRIME5 : UInt = 0x165667B1
 ///   let hasher = Hasher::new()
 ///   hasher.combine_int(42)
 ///   hasher.combine_string("hello")
-///   inspect!(hasher.finalize(), content="860601284")
+///   inspect(hasher.finalize(), content="860601284")
 /// }
 /// ```
 struct Hasher {
@@ -69,7 +69,7 @@ struct Hasher {
 ///   let x = 123
 ///   h1.combine(x)
 ///   h2.combine(x)
-///   inspect!(h1.finalize() != h2.finalize(), content="true") // Different seeds produce different hashes
+///   inspect(h1.finalize() != h2.finalize(), content="true") // Different seeds produce different hashes
 /// }
 /// ```
 pub fn Hasher::new(seed~ : Int = 0) -> Hasher {
@@ -93,10 +93,10 @@ pub fn Hasher::new(seed~ : Int = 0) -> Hasher {
 ///   let hasher = Hasher::new()
 ///   hasher.combine(42)
 ///   hasher.combine("hello")
-///   inspect!(hasher.finalize(), content="860601284")
+///   inspect(hasher.finalize(), content="860601284")
 /// }
 /// ```
-pub fn Hasher::combine[T : Hash](self : Hasher, value : T) -> Unit {
+pub fn[T : Hash] Hasher::combine(self : Hasher, value : T) -> Unit {
   value.hash_combine(self)
 }
 
@@ -114,7 +114,7 @@ pub fn Hasher::combine[T : Hash](self : Hasher, value : T) -> Unit {
 /// test "Hasher::combine_unit" {
 ///   let hasher = Hasher::new()
 ///   hasher.combine_unit()
-///   inspect!(hasher.finalize(), content="148298089")
+///   inspect(hasher.finalize(), content="148298089")
 /// }
 /// ```
 pub fn Hasher::combine_unit(self : Hasher) -> Unit {
@@ -137,7 +137,7 @@ pub fn Hasher::combine_unit(self : Hasher) -> Unit {
 /// test "Hasher::combine_bool" {
 ///   let hasher = Hasher::new()
 ///   hasher.combine_bool(true)
-///   inspect!(hasher.finalize(), content="-205818221")
+///   inspect(hasher.finalize(), content="-205818221")
 /// }
 /// ```
 pub fn Hasher::combine_bool(self : Hasher, value : Bool) -> Unit {
@@ -160,7 +160,7 @@ pub fn Hasher::combine_bool(self : Hasher, value : Bool) -> Unit {
 /// test "Hasher::combine_int" {
 ///   let hasher = Hasher::new()
 ///   hasher.combine_int(42)
-///   inspect!(hasher.finalize(), content="1161967057")
+///   inspect(hasher.finalize(), content="1161967057")
 /// }
 /// ```
 pub fn Hasher::combine_int(self : Hasher, value : Int) -> Unit {
@@ -184,7 +184,7 @@ pub fn Hasher::combine_int(self : Hasher, value : Int) -> Unit {
 /// test "Hasher::combine_int64" {
 ///   let hasher = Hasher::new()
 ///   hasher.combine_int64(42L)
-///   inspect!(hasher.finalize(), content="-1962516083")
+///   inspect(hasher.finalize(), content="-1962516083")
 /// }
 /// ```
 pub fn Hasher::combine_int64(self : Hasher, value : Int64) -> Unit {
@@ -209,7 +209,7 @@ pub fn Hasher::combine_int64(self : Hasher, value : Int64) -> Unit {
 /// test "Hasher::combine_uint" {
 ///   let hasher = Hasher::new()
 ///   hasher.combine_uint(42U)
-///   inspect!(hasher.finalize(), content="1161967057")
+///   inspect(hasher.finalize(), content="1161967057")
 /// }
 /// ```
 pub fn Hasher::combine_uint(self : Hasher, value : UInt) -> Unit {
@@ -233,7 +233,7 @@ pub fn Hasher::combine_uint(self : Hasher, value : UInt) -> Unit {
 /// test "Hasher::combine_uint64" {
 ///   let hasher = Hasher::new()
 ///   hasher.combine_uint64(42UL)
-///   inspect!(hasher.finalize(), content="-1962516083")
+///   inspect(hasher.finalize(), content="-1962516083")
 /// }
 /// ```
 pub fn Hasher::combine_uint64(self : Hasher, value : UInt64) -> Unit {
@@ -257,7 +257,7 @@ pub fn Hasher::combine_uint64(self : Hasher, value : UInt64) -> Unit {
 /// test "Hasher::combine_double" {
 ///   let hasher = Hasher::new()
 ///   hasher.combine_double(3.14)
-///   inspect!(hasher.finalize(), content="-428265677")
+///   inspect(hasher.finalize(), content="-428265677")
 /// }
 /// ```
 pub fn Hasher::combine_double(self : Hasher, value : Double) -> Unit {
@@ -281,7 +281,7 @@ pub fn Hasher::combine_double(self : Hasher, value : Double) -> Unit {
 /// test "Hasher::combine_float" {
 ///   let hasher = Hasher::new()
 ///   hasher.combine_float(3.14)
-///   inspect!(hasher.finalize(), content="635116317") // Hash of the bits of 3.14
+///   inspect(hasher.finalize(), content="635116317") // Hash of the bits of 3.14
 /// }
 /// ```
 pub fn Hasher::combine_float(self : Hasher, value : Float) -> Unit {
@@ -302,7 +302,7 @@ pub fn Hasher::combine_float(self : Hasher, value : Float) -> Unit {
 /// test "Hasher::combine_byte" {
 ///   let hasher = Hasher::new()
 ///   hasher.combine_byte(b'\xFF')
-///   inspect!(hasher.finalize(), content="1955036104")
+///   inspect(hasher.finalize(), content="1955036104")
 /// }
 /// ```
 pub fn Hasher::combine_byte(self : Hasher, value : Byte) -> Unit {
@@ -325,7 +325,7 @@ pub fn Hasher::combine_byte(self : Hasher, value : Byte) -> Unit {
 /// test "Hasher::combine_bytes" {
 ///   let hasher = Hasher::new()
 ///   hasher.combine_bytes(b"\xFF\x00\xFF\x00")
-///   inspect!(hasher.finalize(), content="-686861102")
+///   inspect(hasher.finalize(), content="-686861102")
 /// }
 /// ```
 pub fn Hasher::combine_bytes(self : Hasher, value : Bytes) -> Unit {
@@ -358,7 +358,7 @@ pub fn Hasher::combine_bytes(self : Hasher, value : Bytes) -> Unit {
 /// test "Hasher::combine_string" {
 ///   let hasher = Hasher::new()
 ///   hasher.combine_string("hello")
-///   inspect!(hasher.finalize(), content="-655549713")
+///   inspect(hasher.finalize(), content="-655549713")
 /// }
 /// ```
 pub fn Hasher::combine_string(self : Hasher, value : String) -> Unit {
@@ -383,7 +383,7 @@ pub fn Hasher::combine_string(self : Hasher, value : String) -> Unit {
 /// test "Hasher::combine_char" {
 ///   let hasher = Hasher::new()
 ///   hasher.combine_char('A')
-///   inspect!(hasher.finalize(), content="-1625495534")
+///   inspect(hasher.finalize(), content="-1625495534")
 /// }
 /// ```
 pub fn Hasher::combine_char(self : Hasher, value : Char) -> Unit {
@@ -406,7 +406,7 @@ pub fn Hasher::combine_char(self : Hasher, value : Char) -> Unit {
 /// test "Hasher::finalize" {
 ///   let hasher = Hasher::new()
 ///   hasher.combine_byte(b'\xFF')
-///   inspect!(hasher.finalize(), content="1955036104")
+///   inspect(hasher.finalize(), content="1955036104")
 /// }
 /// ```
 pub fn Hasher::finalize(self : Hasher) -> Int {
@@ -466,8 +466,8 @@ fn endian32(input : Bytes, cur : Int) -> UInt {
 ///   let s1 = "hello"
 ///   let s2 = "hello"
 ///   let s3 = "world"
-///   inspect!(Hash::hash(s1) == Hash::hash(s2), content="true")
-///   inspect!(Hash::hash(s1) == Hash::hash(s3), content="false")
+///   inspect(Hash::hash(s1) == Hash::hash(s2), content="true")
+///   inspect(Hash::hash(s1) == Hash::hash(s3), content="false")
 /// }
 /// ```
 pub impl Hash for String with hash_combine(self, hasher) {
@@ -493,9 +493,9 @@ pub impl Hash for String with hash_combine(self, hasher) {
 /// ```moonbit
 /// test "Int::hash" {
 ///   let x = 42
-///   inspect!(Hash::hash(x), content="-1704501356")
+///   inspect(Hash::hash(x), content="-1704501356")
 ///   let y = -42
-///   inspect!(Hash::hash(y), content="1617647962")
+///   inspect(Hash::hash(y), content="1617647962")
 /// }
 /// ```
 /// TODO: This implementation is **different** from the default implementation of the hash trait. 
@@ -504,7 +504,7 @@ pub impl Hash for String with hash_combine(self, hasher) {
 /// ```moonbit 
 /// test {
 ///   let x = 42
-///   assert_not_eq!(Hash::hash(x),Hasher::new()..combine(x).finalize())
+///   assert_not_eq(Hash::hash(x),Hasher::new()..combine(x).finalize())
 /// }
 /// ```
 pub impl Hash for Int with hash(self) {
@@ -535,7 +535,7 @@ pub impl Hash for Int with hash(self) {
 /// test "Int::hash_combine" {
 ///   let hasher = Hasher::new()
 ///   hasher.combine_int(42)
-///   inspect!(hasher.finalize(), content="1161967057")
+///   inspect(hasher.finalize(), content="1161967057")
 /// }
 /// ```
 pub impl Hash for Int with hash_combine(self, hasher) {
@@ -559,7 +559,7 @@ pub impl Hash for Int with hash_combine(self, hasher) {
 /// test "UInt::hash_combine" {
 ///   let hasher = Hasher::new()
 ///   hasher.combine_uint(42U)
-///   inspect!(hasher.finalize(), content="1161967057")
+///   inspect(hasher.finalize(), content="1161967057")
 /// }
 /// ```
 pub impl Hash for UInt with hash_combine(self, hasher) {
@@ -581,7 +581,7 @@ pub impl Hash for UInt with hash_combine(self, hasher) {
 /// test "UInt64::hash_combine" {
 ///   let hasher = Hasher::new()
 ///   hasher.combine_uint64(42UL)
-///   inspect!(hasher.finalize(), content="-1962516083")
+///   inspect(hasher.finalize(), content="-1962516083")
 /// }
 /// ```
 pub impl Hash for UInt64 with hash_combine(self, hasher) {
@@ -605,10 +605,10 @@ pub impl Hash for UInt64 with hash_combine(self, hasher) {
 ///   let some_value : Int? = Some(42)
 ///   let none_value : Int? = None
 ///   hasher.combine(some_value)
-///   inspect!(hasher.finalize(), content="2103260413")
+///   inspect(hasher.finalize(), content="2103260413")
 ///   let hasher2 = Hasher::new()
 ///   hasher2.combine(none_value)
-///   inspect!(hasher2.finalize(), content="148298089")
+///   inspect(hasher2.finalize(), content="148298089")
 /// }
 /// ```
 pub impl[X : Hash] Hash for X? with hash_combine(self, hasher) {
@@ -635,10 +635,10 @@ pub impl[X : Hash] Hash for X? with hash_combine(self, hasher) {
 ///   let ok_result : Result[Int, String] = Ok(42)
 ///   let err_result : Result[Int, String] = Err("error")
 ///   hasher.combine(ok_result)
-///   inspect!(hasher.finalize(), content="-1948635851")
+///   inspect(hasher.finalize(), content="-1948635851")
 ///   let hasher = Hasher::new()
 ///   hasher.combine(err_result)
-///   inspect!(hasher.finalize(), content="1953766574")
+///   inspect(hasher.finalize(), content="1953766574")
 /// }
 /// ```
 pub impl[T : Hash, E : Hash] Hash for Result[T, E] with hash_combine(

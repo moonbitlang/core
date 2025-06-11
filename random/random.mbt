@@ -13,38 +13,59 @@
 // limitations under the License.
 
 ///|
-/// Currently we only support [chacha8] as the source of randomness.
-struct Rand {
-  src : @random_source.ChaCha8
+/// `Rand` is a pseudo-random number generator (PRNG) that provides various
+/// methods to generate random numbers of different types.
+type Rand &Source
+
+///|
+/// The [Source] trait defines a method to generate random numbers.
+pub(open) trait Source {
+  next(Self) -> UInt64
+}
+
+///|
+impl Source for @random_source.ChaCha8 with next(self : @random_source.ChaCha8) -> UInt64 {
+  for {
+    let x = self.state.next()
+    if x.1 {
+      return x.0
+    }
+    self.state.refill()
+  }
 }
 
 ///|
 /// Create a new random number generator with [seed].
-/// 
-/// The seed must be 32 bytes long.
+/// @alert unsafe "Panic if seed is not 32 bytes long"
+#deprecated("Use `Rand::new()` instead")
 pub fn new(seed~ : Bytes = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456") -> Rand {
   if seed.length() != 32 {
     abort("seed must be 32 bytes long")
   }
-  let src = @random_source.ChaCha8::new(seed)
-  { src, }
+  @random_source.ChaCha8::new(seed) as &Source
 }
 
 ///|
-#deprecated("use `@random.new` instead")
-pub fn Rand::new(seed~ : Bytes = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456") -> Rand {
-  new(seed~)
+/// Create a new random number generator with [seed].
+/// @alert unsafe "Panic if seed is not 32 bytes long"
+pub fn chacha8(seed~ : Bytes = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456") -> &Source {
+  if seed.length() != 32 {
+    abort("seed must be 32 bytes long")
+  }
+  @random_source.ChaCha8::new(seed) as &Source
+}
+
+///|
+/// Create a new random number generator with a given [Gen] source.
+pub fn Rand::new(
+  generator~ : &Source = chacha8(seed=b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456")
+) -> Rand {
+  generator
 }
 
 ///|
 fn next(self : Rand) -> UInt64 {
-  for {
-    let x = self.src.state.next()
-    if x.1 {
-      return x.0
-    }
-    self.src.state.refill()
-  }
+  self._.next()
 }
 
 ///|
@@ -52,7 +73,7 @@ test "next" {
   let r = new()
   let n = r.next()
   let exp = 13219109469176600229UL
-  assert_eq!(n, exp)
+  assert_eq(n, exp)
 }
 
 ///|
@@ -108,11 +129,11 @@ pub fn uint(self : Rand, limit~ : UInt = 0) -> UInt {
 test "uint" {
   let r = new()
   let n = r.uint(limit=10U)
-  inspect!(n, content="7")
+  inspect(n, content="7")
   let n = r.uint(limit=10U)
-  inspect!(n, content="0")
+  inspect(n, content="0")
   let n = r.uint(limit=10U)
-  inspect!(n, content="5")
+  inspect(n, content="5")
 }
 
 ///|
@@ -145,14 +166,14 @@ test "UInt64" {
   let r = new()
   let n = r.uint64()
   let exp = 13219109469176600229UL
-  assert_eq!(n, exp)
+  assert_eq(n, exp)
   let r = new()
   let n = r.uint64(limit=10UL)
-  inspect!(n, content="7")
+  inspect(n, content="7")
   let n = r.uint64(limit=10UL)
-  inspect!(n, content="0")
+  inspect(n, content="0")
   let n = r.uint64(limit=10UL)
-  inspect!(n, content="5")
+  inspect(n, content="5")
 }
 
 ///|
@@ -166,7 +187,7 @@ pub fn double(self : Rand) -> Double {
 test "double" {
   let r = new()
   let n = r.double()
-  inspect!(n, content="0.615969772029264")
+  inspect(n, content="0.615969772029264")
 }
 
 ///|
@@ -189,7 +210,7 @@ pub fn float(self : Rand) -> Float {
 /// test "Rand::bigint" {
 ///   let rand = @random.new()
 ///   let n = rand.bigint(8) // Generate random 8-bit number
-///   inspect!(n.bit_length() <= 8, content="true")
+///   inspect(n.bit_length() <= 8, content="true")
 /// }
 /// ```
 pub fn bigint(self : Rand, bits : Int) -> @bigint.BigInt {
@@ -209,14 +230,14 @@ pub fn bigint(self : Rand, bits : Int) -> @bigint.BigInt {
 ///|
 test "bigint" {
   let r = new()
-  inspect!(r.bigint(1), content="1")
-  inspect!(r.bigint(3), content="4")
-  inspect!(r.bigint(7), content="124")
-  inspect!(r.bigint(8), content="214")
-  inspect!(r.bigint(32), content="2910404175")
-  inspect!(r.bigint(40), content="714745001576")
-  inspect!(r.bigint(64), content="13430064486797060338")
-  inspect!(r.bigint(128), content="251068071753473224445949321151725639522")
+  inspect(r.bigint(1), content="1")
+  inspect(r.bigint(3), content="4")
+  inspect(r.bigint(7), content="124")
+  inspect(r.bigint(8), content="214")
+  inspect(r.bigint(32), content="2910404175")
+  inspect(r.bigint(40), content="714745001576")
+  inspect(r.bigint(64), content="13430064486797060338")
+  inspect(r.bigint(128), content="251068071753473224445949321151725639522")
 }
 
 ///|
@@ -250,29 +271,29 @@ fn umul128(a : UInt64, b : UInt64) -> Unit {
 ///|
 test "umul128" {
   umul128(0x123456789ABCDEF0, 0xFEDCBA9876543210)
-  assert_eq!(gUInt128.hi, 1305938385386173474UL)
-  assert_eq!(gUInt128.lo, 2552847189736476416UL)
+  assert_eq(gUInt128.hi, 1305938385386173474UL)
+  assert_eq(gUInt128.lo, 2552847189736476416UL)
 }
 
 ///|
 test "umul128: handles small numbers correctly" {
   umul128(1UL, 1UL)
-  assert_eq!(gUInt128.hi, 0UL)
-  assert_eq!(gUInt128.lo, 1UL)
+  assert_eq(gUInt128.hi, 0UL)
+  assert_eq(gUInt128.lo, 1UL)
 }
 
 ///|
 test "umul128: handles large numbers correctly" {
   umul128(1UL, 0xFFFFFFFFFFFFFFFFUL)
-  assert_eq!(gUInt128.hi, 0UL)
-  assert_eq!(gUInt128.lo, 0xFFFFFFFFFFFFFFFFUL)
+  assert_eq(gUInt128.hi, 0UL)
+  assert_eq(gUInt128.lo, 0xFFFFFFFFFFFFFFFFUL)
 }
 
 ///|
 test "umul128: handles zero correctly" {
   umul128(0UL, 0UL)
-  assert_eq!(gUInt128.hi, 0UL)
-  assert_eq!(gUInt128.lo, 0UL)
+  assert_eq(gUInt128.hi, 0UL)
+  assert_eq(gUInt128.lo, 0UL)
 }
 
 ///|
@@ -281,16 +302,18 @@ test "umul128: handles zero correctly" {
 ///
 /// # Example
 /// ```
-/// let r = @random.new()
-/// let a = [1, 2, 3, 4, 5]
-/// r.shuffle(
-///   a.length(),
-///   fn(i : Int, j : Int) {
-///     let t = a[i]
-///     a[i] = a[j]
-///     a[j] = t
-///   },
-/// )
+/// test "shuffle example" {
+///   let r = @random.new()
+///   let a = [1, 2, 3, 4, 5]
+///   r.shuffle(
+///     a.length(),
+///     fn(i : Int, j : Int) {
+///       let t = a[i]
+///       a[i] = a[j]
+///       a[j] = t
+///     },
+///   )
+/// }
 /// ```
 pub fn shuffle(self : Rand, limit : Int, swap : (Int, Int) -> Unit) -> Unit {
   if limit < 0 {
@@ -311,5 +334,5 @@ test "shuffle" {
     a[i] = a[j]
     a[j] = t
   })
-  inspect!(a, content="[3, 5, 2, 1, 4]")
+  inspect(a, content="[3, 5, 2, 1, 4]")
 }

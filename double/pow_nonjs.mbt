@@ -124,15 +124,15 @@ const POW_ivln2_l = 1.92596299112661746887e-08
 /// ```moonbit
 /// test "pow" {
 ///   let x = 2.0
-///   inspect!(x.pow(3.0), content="8")
-///   inspect!(x.pow(0.5), content="1.4142135623730951")
-///   inspect!(x.pow(0.0), content="1")
-///   inspect!((-1.0).pow(2.0), content="1")
-///   inspect!(0.0.pow(0.0), content="1")
-///   inspect!(infinity.pow(-1.0), content="0")
+///   inspect(x.pow(3.0), content="8")
+///   inspect(x.pow(0.5), content="1.4142135623730951")
+///   inspect(x.pow(0.0), content="1")
+///   inspect((-1.0).pow(2.0), content="1")
+///   inspect(0.0.pow(0.0), content="1")
+///   inspect(infinity.pow(-1.0), content="0")
 /// }
 /// ```
-pub fn pow(self : Double, other : Double) -> Double {
+pub fn Double::pow(self : Double, other : Double) -> Double {
   fn set_low_word(d : Double, v : UInt) -> Double {
     let bits : UInt64 = d.reinterpret_as_uint64()
     let bits = bits & 0xFFFF_FFFF_0000_0000

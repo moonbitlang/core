@@ -6,114 +6,117 @@ import(
 )
 
 // Values
-fn add[K : Compare, V](T[K, V], K, V) -> T[K, V]
+fn[K : Compare, V] add(T[K, V], K, V) -> T[K, V]
 
-fn contains[K : Compare, V](T[K, V], K) -> Bool
+fn[K : Compare, V] contains(T[K, V], K) -> Bool
 
-fn each[K, V](T[K, V], (K, V) -> Unit) -> Unit
+fn[K, V] each(T[K, V], (K, V) -> Unit) -> Unit
 
-fn eachi[K, V](T[K, V], (Int, K, V) -> Unit) -> Unit
-
-fn elems[K, V](T[K, V]) -> Array[V]
-
-fn filter[K : Compare, V](T[K, V], (V) -> Bool) -> T[K, V]
-
-fn filter_with_key[K : Compare, V](T[K, V], (K, V) -> Bool) -> T[K, V]
-
-fn fold[K, V, A](T[K, V], init~ : A, (A, V) -> A) -> A
-
-fn foldl_with_key[K, V, A](T[K, V], (A, K, V) -> A, init~ : A) -> A
-
-fn foldr_with_key[K, V, A](T[K, V], (A, K, V) -> A, init~ : A) -> A
-
-fn from_array[K : Compare, V](Array[(K, V)]) -> T[K, V]
-
-fn from_iter[K : Compare, V](Iter[(K, V)]) -> T[K, V]
-
-fn from_json[V : @json.FromJson](Json) -> T[String, V]!@json.JsonDecodeError
-
-fn get[K : Compare, V](T[K, V], K) -> V?
+fn[K, V] eachi(T[K, V], (Int, K, V) -> Unit) -> Unit
 
 #deprecated
-fn insert[K : Compare, V](T[K, V], K, V) -> T[K, V]
+fn[K, V] elems(T[K, V]) -> Array[V]
 
-fn is_empty[K, V](T[K, V]) -> Bool
+fn[K : Compare, V] filter(T[K, V], (V) -> Bool) -> T[K, V]
 
-fn iter[K, V](T[K, V]) -> Iter[(K, V)]
+fn[K : Compare, V] filter_with_key(T[K, V], (K, V) -> Bool) -> T[K, V]
 
-fn iter2[K, V](T[K, V]) -> Iter2[K, V]
+fn[K, V, A] fold(T[K, V], init~ : A, (A, V) -> A) -> A
 
-fn keys[K, V](T[K, V]) -> Array[K]
+fn[K, V, A] foldl_with_key(T[K, V], (A, K, V) -> A, init~ : A) -> A
+
+fn[K, V, A] foldr_with_key(T[K, V], (A, K, V) -> A, init~ : A) -> A
+
+fn[K : Compare, V] from_array(Array[(K, V)]) -> T[K, V]
+
+fn[K : Compare, V] from_iter(Iter[(K, V)]) -> T[K, V]
+
+fn[V : @json.FromJson] from_json(Json) -> T[String, V]!@json.JsonDecodeError
+
+fn[K : Compare, V] get(T[K, V], K) -> V?
 
 #deprecated
-fn lookup[K : Compare, V](T[K, V], K) -> V?
+fn[K : Compare, V] insert(T[K, V], K, V) -> T[K, V]
 
-fn map[K, X, Y](T[K, X], (X) -> Y) -> T[K, Y]
+fn[K, V] is_empty(T[K, V]) -> Bool
 
-fn map_with_key[K, X, Y](T[K, X], (K, X) -> Y) -> T[K, Y]
+fn[K, V] iter(T[K, V]) -> Iter[(K, V)]
 
-fn new[K, V]() -> T[K, V]
+fn[K, V] iter2(T[K, V]) -> Iter2[K, V]
 
-fn of[K : Compare, V](FixedArray[(K, V)]) -> T[K, V]
+fn[K, V] keys(T[K, V]) -> Array[K]
 
 #deprecated
-fn op_get[K : Compare, V](T[K, V], K) -> V?
+fn[K : Compare, V] lookup(T[K, V], K) -> V?
 
-fn remove[K : Compare, V](T[K, V], K) -> T[K, V]
+fn[K, X, Y] map(T[K, X], (X) -> Y) -> T[K, Y]
 
-fn singleton[K, V](K, V) -> T[K, V]
+fn[K, X, Y] map_with_key(T[K, X], (K, X) -> Y) -> T[K, Y]
 
-fn size[K, V](T[K, V]) -> Int
+fn[K, V] new() -> T[K, V]
 
-fn to_array[K, V](T[K, V]) -> Array[(K, V)]
+fn[K : Compare, V] of(FixedArray[(K, V)]) -> T[K, V]
 
-fn to_json[K : Show, V : ToJson](T[K, V]) -> Json
+#deprecated
+fn[K : Compare, V] op_get(T[K, V], K) -> V?
+
+fn[K : Compare, V] remove(T[K, V], K) -> T[K, V]
+
+fn[K, V] singleton(K, V) -> T[K, V]
+
+fn[K, V] size(T[K, V]) -> Int
+
+fn[K, V] to_array(T[K, V]) -> Array[(K, V)]
+
+fn[K : Show, V : ToJson] to_json(T[K, V]) -> Json
+
+fn[K, V] values(T[K, V]) -> Iter[V]
 
 // Types and methods
 type T[K, V]
-impl T {
-  add[K : Compare, V](Self[K, V], K, V) -> Self[K, V]
-  contains[K : Compare, V](Self[K, V], K) -> Bool
-  each[K, V](Self[K, V], (K, V) -> Unit) -> Unit
-  eachi[K, V](Self[K, V], (Int, K, V) -> Unit) -> Unit
-  elems[K, V](Self[K, V]) -> Array[V]
-  #deprecated
-  empty[K, V]() -> Self[K, V]
-  filter[K : Compare, V](Self[K, V], (V) -> Bool) -> Self[K, V]
-  filter_with_key[K : Compare, V](Self[K, V], (K, V) -> Bool) -> Self[K, V]
-  fold[K, V, A](Self[K, V], init~ : A, (A, V) -> A) -> A
-  foldl_with_key[K, V, A](Self[K, V], (A, K, V) -> A, init~ : A) -> A
-  foldr_with_key[K, V, A](Self[K, V], (A, K, V) -> A, init~ : A) -> A
-  #deprecated
-  from_array[K : Compare, V](Array[(K, V)]) -> Self[K, V]
-  #deprecated
-  from_iter[K : Compare, V](Iter[(K, V)]) -> Self[K, V]
-  #deprecated
-  from_json[V : @json.FromJson](Json) -> Self[String, V]!@json.JsonDecodeError
-  get[K : Compare, V](Self[K, V], K) -> V?
-  #deprecated
-  insert[K : Compare, V](Self[K, V], K, V) -> Self[K, V]
-  is_empty[K, V](Self[K, V]) -> Bool
-  iter[K, V](Self[K, V]) -> Iter[(K, V)]
-  iter2[K, V](Self[K, V]) -> Iter2[K, V]
-  keys[K, V](Self[K, V]) -> Array[K]
-  #deprecated
-  lookup[K : Compare, V](Self[K, V], K) -> V?
-  map[K, X, Y](Self[K, X], (X) -> Y) -> Self[K, Y]
-  map_with_key[K, X, Y](Self[K, X], (K, X) -> Y) -> Self[K, Y]
-  #deprecated
-  new[K, V]() -> Self[K, V]
-  #deprecated
-  of[K : Compare, V](FixedArray[(K, V)]) -> Self[K, V]
-  #deprecated
-  op_get[K : Compare, V](Self[K, V], K) -> V?
-  remove[K : Compare, V](Self[K, V], K) -> Self[K, V]
-  #deprecated
-  singleton[K, V](K, V) -> Self[K, V]
-  size[K, V](Self[K, V]) -> Int
-  to_array[K, V](Self[K, V]) -> Array[(K, V)]
-  to_json[K : Show, V : ToJson](Self[K, V]) -> Json
-}
+fn[K : Compare, V] T::add(Self[K, V], K, V) -> Self[K, V]
+fn[K : Compare, V] T::contains(Self[K, V], K) -> Bool
+fn[K, V] T::each(Self[K, V], (K, V) -> Unit) -> Unit
+fn[K, V] T::eachi(Self[K, V], (Int, K, V) -> Unit) -> Unit
+#deprecated
+fn[K, V] T::elems(Self[K, V]) -> Array[V]
+#deprecated
+fn[K, V] T::empty() -> Self[K, V]
+fn[K : Compare, V] T::filter(Self[K, V], (V) -> Bool) -> Self[K, V]
+fn[K : Compare, V] T::filter_with_key(Self[K, V], (K, V) -> Bool) -> Self[K, V]
+fn[K, V, A] T::fold(Self[K, V], init~ : A, (A, V) -> A) -> A
+fn[K, V, A] T::foldl_with_key(Self[K, V], (A, K, V) -> A, init~ : A) -> A
+fn[K, V, A] T::foldr_with_key(Self[K, V], (A, K, V) -> A, init~ : A) -> A
+#deprecated
+fn[K : Compare, V] T::from_array(Array[(K, V)]) -> Self[K, V]
+#deprecated
+fn[K : Compare, V] T::from_iter(Iter[(K, V)]) -> Self[K, V]
+#deprecated
+fn[V : @json.FromJson] T::from_json(Json) -> Self[String, V]!@json.JsonDecodeError
+fn[K : Compare, V] T::get(Self[K, V], K) -> V?
+#deprecated
+fn[K : Compare, V] T::insert(Self[K, V], K, V) -> Self[K, V]
+fn[K, V] T::is_empty(Self[K, V]) -> Bool
+fn[K, V] T::iter(Self[K, V]) -> Iter[(K, V)]
+fn[K, V] T::iter2(Self[K, V]) -> Iter2[K, V]
+fn[K, V] T::keys(Self[K, V]) -> Array[K]
+#deprecated
+fn[K : Compare, V] T::lookup(Self[K, V], K) -> V?
+fn[K, X, Y] T::map(Self[K, X], (X) -> Y) -> Self[K, Y]
+fn[K, X, Y] T::map_with_key(Self[K, X], (K, X) -> Y) -> Self[K, Y]
+#deprecated
+fn[K, V] T::new() -> Self[K, V]
+#deprecated
+fn[K : Compare, V] T::of(FixedArray[(K, V)]) -> Self[K, V]
+#deprecated
+fn[K : Compare, V] T::op_get(Self[K, V], K) -> V?
+fn[K : Compare, V] T::remove(Self[K, V], K) -> Self[K, V]
+#deprecated
+fn[K, V] T::singleton(K, V) -> Self[K, V]
+fn[K, V] T::size(Self[K, V]) -> Int
+fn[K, V] T::to_array(Self[K, V]) -> Array[(K, V)]
+fn[K : Show, V : ToJson] T::to_json(Self[K, V]) -> Json
+fn[K, V] T::values(Self[K, V]) -> Iter[V]
 impl[K : Compare, V : Compare] Compare for T[K, V]
 impl[K, V] Default for T[K, V]
 impl[K : Eq, V : Eq] Eq for T[K, V]

@@ -15,25 +15,25 @@
 ///| Create an empty map.
 #deprecated("Use `new()` instead")
 #coverage.skip
-pub fn T::empty[K, V]() -> T[K, V] {
+pub fn[K, V] T::empty() -> T[K, V] {
   Empty
 }
 
 ///| Create an empty map.
-pub fn new[K, V]() -> T[K, V] {
+pub fn[K, V] new() -> T[K, V] {
   Empty
 }
 
 ///|
 /// Create a map with a single key-value pair.
-pub fn singleton[K, V](key : K, value : V) -> T[K, V] {
+pub fn[K, V] singleton(key : K, value : V) -> T[K, V] {
   Tree(key, value~, size=1, Empty, Empty)
 }
 
 ///|
 /// Check if the map contains a key.
 /// O(log n).
-pub fn contains[K : Compare, V](self : T[K, V], key : K) -> Bool {
+pub fn[K : Compare, V] contains(self : T[K, V], key : K) -> Bool {
   loop self {
     Empty => false
     Tree(k, l, r, ..) => {
@@ -51,7 +51,7 @@ pub fn contains[K : Compare, V](self : T[K, V], key : K) -> Bool {
 
 ///|
 /// Get the number of key-value pairs in the map.
-pub fn size[K, V](self : T[K, V]) -> Int {
+pub fn[K, V] size(self : T[K, V]) -> Int {
   match self {
     Empty => 0
     Tree(_) as t => t.size
@@ -59,13 +59,13 @@ pub fn size[K, V](self : T[K, V]) -> Int {
 }
 
 ///|
-pub fn is_empty[K, V](self : T[K, V]) -> Bool {
+pub fn[K, V] is_empty(self : T[K, V]) -> Bool {
   self.size() == 0
 }
 
 ///|
-fn make_tree[K, V](key : K, value : V, l : T[K, V], r : T[K, V]) -> T[K, V] {
-  let size = size(l) + size(r) + 1
+fn[K, V] make_tree(key : K, value : V, l : T[K, V], r : T[K, V]) -> T[K, V] {
+  let size = l.size() + r.size() + 1
   Tree(key, value~, size~, l, r)
 }
 
@@ -74,14 +74,14 @@ fn make_tree[K, V](key : K, value : V, l : T[K, V], r : T[K, V]) -> T[K, V] {
 /// O(log n).
 #deprecated("Use `get` instead")
 #coverage.skip
-pub fn lookup[K : Compare, V](self : T[K, V], key : K) -> V? {
+pub fn[K : Compare, V] lookup(self : T[K, V], key : K) -> V? {
   self.get(key)
 }
 
 ///|
 /// Get the value associated with a key.
 /// O(log n).
-pub fn get[K : Compare, V](self : T[K, V], key : K) -> V? {
+pub fn[K : Compare, V] get(self : T[K, V], key : K) -> V? {
   loop self {
     Empty => None
     Tree(k, value~, l, r, ..) => {
@@ -99,33 +99,33 @@ pub fn get[K : Compare, V](self : T[K, V], key : K) -> V? {
 
 ///|
 #deprecated("Use `get` instead. `op_get` will return `V` instead of `Option[V]` in the future.")
-pub fn op_get[K : Compare, V](self : T[K, V], key : K) -> V? {
+pub fn[K : Compare, V] op_get(self : T[K, V], key : K) -> V? {
   self.get(key)
 }
 
 ///|
 /// Iterate over the key-value pairs in the map.
-pub fn each[K, V](self : T[K, V], f : (K, V) -> Unit) -> Unit {
+pub fn[K, V] each(self : T[K, V], f : (K, V) -> Unit) -> Unit {
   match self {
     Empty => ()
     Tree(k, value~, l, r, ..) => {
-      each(l, f)
+      l.each(f)
       f(k, value)
-      each(r, f)
+      r.each(f)
     }
   }
 }
 
 ///|
 /// Iterate over the key-value pairs with index.
-pub fn eachi[K, V](self : T[K, V], f : (Int, K, V) -> Unit) -> Unit {
+pub fn[K, V] eachi(self : T[K, V], f : (Int, K, V) -> Unit) -> Unit {
   fn do_eachi(m : T[K, V], f, i) {
     match m {
       Empty => ()
       Tree(k, value~, l, r, ..) => {
         do_eachi(l, f, i)
-        f(size(l) + i, k, value)
-        do_eachi(r, f, size(l) + i + 1)
+        f(l.size() + i, k, value)
+        do_eachi(r, f, l.size() + i + 1)
       }
     }
   }
@@ -135,35 +135,35 @@ pub fn eachi[K, V](self : T[K, V], f : (Int, K, V) -> Unit) -> Unit {
 
 ///|
 /// Ts over the values in the map.
-pub fn map[K, X, Y](self : T[K, X], f : (X) -> Y) -> T[K, Y] {
+pub fn[K, X, Y] map(self : T[K, X], f : (X) -> Y) -> T[K, Y] {
   match self {
     Empty => Empty
     Tree(k, value~, size~, l, r) =>
-      Tree(k, value=f(value), size~, map(l, f), map(r, f))
+      Tree(k, value=f(value), size~, l.map(f), r.map(f))
   }
 }
 
 ///|
 /// Maps over the key-value pairs in the map.
-pub fn map_with_key[K, X, Y](self : T[K, X], f : (K, X) -> Y) -> T[K, Y] {
+pub fn[K, X, Y] map_with_key(self : T[K, X], f : (K, X) -> Y) -> T[K, Y] {
   match self {
     Empty => Empty
     Tree(k, value~, l, r, size~) =>
-      Tree(k, value=f(k, value), size~, map_with_key(l, f), map_with_key(r, f))
+      Tree(k, value=f(k, value), size~, l.map_with_key(f), r.map_with_key(f))
   }
 }
 
 ///|
 /// Fold the values in the map.
 /// O(n).
-pub fn fold[K, V, A](self : T[K, V], init~ : A, f : (A, V) -> A) -> A {
-  foldl_with_key(self, fn(acc, _k, v) { f(acc, v) }, init~)
+pub fn[K, V, A] fold(self : T[K, V], init~ : A, f : (A, V) -> A) -> A {
+  self.foldl_with_key(fn(acc, _k, v) { f(acc, v) }, init~)
 }
 
 ///|
 /// Post-order fold.
 /// O(n).
-pub fn foldr_with_key[K, V, A](
+pub fn[K, V, A] foldr_with_key(
   self : T[K, V],
   f : (A, K, V) -> A,
   init~ : A
@@ -181,7 +181,7 @@ pub fn foldr_with_key[K, V, A](
 ///|
 /// Pre-order fold.
 /// O(n).
-pub fn foldl_with_key[K, V, A](
+pub fn[K, V, A] foldl_with_key(
   self : T[K, V],
   f : (A, K, V) -> A,
   init~ : A
@@ -197,12 +197,12 @@ pub fn foldl_with_key[K, V, A](
 }
 
 ///|
-fn debug_tree[K : Show, V : Show](self : T[K, V]) -> String {
+fn[K : Show, V : Show] debug_tree(self : T[K, V]) -> String {
   match self {
     Empty => "_"
     Tree(k, value~, l, r, ..) => {
-      let l = debug_tree(l)
-      let r = debug_tree(r)
+      let l = l.debug_tree()
+      let r = r.debug_tree()
       "(\{k},\{value},\{l},\{r})"
     }
   }
@@ -211,7 +211,7 @@ fn debug_tree[K : Show, V : Show](self : T[K, V]) -> String {
 ///|
 /// Build a map from an array of key-value pairs.
 /// O(n*log n).
-pub fn from_array[K : Compare, V](array : Array[(K, V)]) -> T[K, V] {
+pub fn[K : Compare, V] from_array(array : Array[(K, V)]) -> T[K, V] {
   for i = 0, mp = Empty; i < array.length(); {
     let (k, v) = array[i]
     continue i + 1, mp.add(k, v)
@@ -221,18 +221,20 @@ pub fn from_array[K : Compare, V](array : Array[(K, V)]) -> T[K, V] {
 }
 
 ///|
-pub fn iter[K, V](self : T[K, V]) -> Iter[(K, V)] {
+pub fn[K, V] iter(self : T[K, V]) -> Iter[(K, V)] {
   Iter::new(fn(yield_) {
-    fn go {
-      Empty => IterContinue
-      Tree(k, value~, l, r, ..) =>
-        if go(l) is IterEnd {
-          IterEnd
-        } else if yield_((k, value)) is IterEnd {
-          IterEnd
-        } else {
-          go(r)
-        }
+    fn go(t) {
+      match t {
+        Empty => IterContinue
+        Tree(k, value~, l, r, ..) =>
+          if go(l) is IterEnd {
+            IterEnd
+          } else if yield_((k, value)) is IterEnd {
+            IterEnd
+          } else {
+            go(r)
+          }
+      }
     }
 
     go(self)
@@ -240,18 +242,20 @@ pub fn iter[K, V](self : T[K, V]) -> Iter[(K, V)] {
 }
 
 ///|
-pub fn iter2[K, V](self : T[K, V]) -> Iter2[K, V] {
+pub fn[K, V] iter2(self : T[K, V]) -> Iter2[K, V] {
   Iter2::new(fn(yield_) {
-    fn go {
-      Empty => IterContinue
-      Tree(k, value~, l, r, ..) =>
-        if go(l) is IterEnd {
-          IterEnd
-        } else if yield_(k, value) is IterEnd {
-          IterEnd
-        } else {
-          go(r)
-        }
+    fn go(t) {
+      match t {
+        Empty => IterContinue
+        Tree(k, value~, l, r, ..) =>
+          if go(l) is IterEnd {
+            IterEnd
+          } else if yield_(k, value) is IterEnd {
+            IterEnd
+          } else {
+            go(r)
+          }
+      }
     }
 
     go(self)
@@ -259,24 +263,31 @@ pub fn iter2[K, V](self : T[K, V]) -> Iter2[K, V] {
 }
 
 ///|
-pub fn from_iter[K : Compare, V](iter : Iter[(K, V)]) -> T[K, V] {
+pub fn[K : Compare, V] from_iter(iter : Iter[(K, V)]) -> T[K, V] {
   iter.fold(init=new(), fn(m, e) { m.add(e.0, e.1) })
 }
 
 ///|
 /// Return all keys of the map in ascending order.
-pub fn keys[K, V](self : T[K, V]) -> Array[K] {
+pub fn[K, V] keys(self : T[K, V]) -> Array[K] {
   self.iter().map(fn { (k, _) => k }).collect()
 }
 
 ///|
 /// Return all elements of the map in the ascending order of their keys.
-pub fn elems[K, V](self : T[K, V]) -> Array[V] {
-  self.iter().map(fn { (_, v) => v }).collect()
+pub fn[K, V] values(self : T[K, V]) -> Iter[V] {
+  self.iter().map(fn { (_, v) => v })
 }
 
 ///|
-pub fn of[K : Compare, V](array : FixedArray[(K, V)]) -> T[K, V] {
+#deprecated("Use `values` instead")
+#coverage.skip
+pub fn[K, V] elems(self : T[K, V]) -> Array[V] {
+  self.values().collect()
+}
+
+///|
+pub fn[K : Compare, V] of(array : FixedArray[(K, V)]) -> T[K, V] {
   for i = 0, mp = Empty; i < array.length(); {
     let (k, v) = array[i]
     continue i + 1, mp.add(k, v)
@@ -286,13 +297,13 @@ pub fn of[K : Compare, V](array : FixedArray[(K, V)]) -> T[K, V] {
 }
 
 ///|
-pub fn to_json[K : Show, V : ToJson](self : T[K, V]) -> Json {
+pub fn[K : Show, V : ToJson] to_json(self : T[K, V]) -> Json {
   ToJson::to_json(self)
 }
 
 ///|
-pub fn from_json[V : @json.FromJson](
+pub fn[V : @json.FromJson] from_json(
   json : Json
 ) -> T[String, V]!@json.JsonDecodeError {
-  @json.from_json!(json)
+  @json.from_json(json)
 }

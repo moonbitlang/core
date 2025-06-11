@@ -16,16 +16,16 @@
 priv extern type JSArray
 
 ///|
-fn JSArray::ofAnyArray[T](array : Array[T]) -> JSArray = "%identity"
+fn[T] JSArray::ofAnyArray(array : Array[T]) -> JSArray = "%identity"
 
 ///|
-fn JSArray::toAnyArray[T](self : JSArray) -> Array[T] = "%identity"
+fn[T] JSArray::toAnyArray(self : JSArray) -> Array[T] = "%identity"
 
 ///|
-fn JSArray::ofAnyFixedArray[T](array : FixedArray[T]) -> JSArray = "%identity"
+fn[T] JSArray::ofAnyFixedArray(array : FixedArray[T]) -> JSArray = "%identity"
 
 ///|
-fn JSArray::toAnyFixedArray[T](self : JSArray) -> FixedArray[T] = "%identity"
+fn[T] JSArray::toAnyFixedArray(self : JSArray) -> FixedArray[T] = "%identity"
 
 ///|
 extern "js" fn JSArray::copy(self : JSArray) -> JSArray =
@@ -47,10 +47,10 @@ extern "js" fn JSArray::copy(self : JSArray) -> JSArray =
 /// test "copy" {
 ///   let original = [1, 2, 3]
 ///   let copied = original.copy()
-///   inspect!(copied, content="[1, 2, 3]")
-///   inspect!(physical_equal(original, copied), content="false")
+///   inspect(copied, content="[1, 2, 3]")
+///   inspect(physical_equal(original, copied), content="false")
 /// }
 /// ```
-pub fn copy[T](self : Array[T]) -> Array[T] {
+pub fn[T] copy(self : Array[T]) -> Array[T] {
   JSArray::ofAnyArray(self).copy().toAnyArray()
 }

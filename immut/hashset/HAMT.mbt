@@ -35,13 +35,13 @@ let segment_length : Int = 5
 let segment_mask : Int = 0b11111
 
 ///|
-pub fn new[A]() -> T[A] {
+pub fn[A] new() -> T[A] {
   Empty
 }
 
 ///|
 /// Lookup a value from the hash set
-pub fn contains[A : Eq + Hash](self : T[A], key : A) -> Bool {
+pub fn[A : Eq + Hash] contains(self : T[A], key : A) -> Bool {
   loop self, key.hash() {
     Empty, _ => false
     Leaf(key1), _ => key == key1
@@ -61,7 +61,7 @@ pub fn contains[A : Eq + Hash](self : T[A], key : A) -> Bool {
 }
 
 ///|
-fn add_with_hash[A : Eq](self : T[A], key : A, depth : Int, hash : Int) -> T[A] {
+fn[A : Eq] add_with_hash(self : T[A], key : A, depth : Int, hash : Int) -> T[A] {
   fn make_leaf(depth : Int, key : A, hash : Int) {
     // make sure leaf nodes always appear at the bottom of the tree
     if depth >= 32 {
@@ -112,18 +112,18 @@ fn add_with_hash[A : Eq](self : T[A], key : A, depth : Int, hash : Int) -> T[A] 
 
 ///|
 /// Add a key to the hashset.
-pub fn add[A : Eq + Hash](self : T[A], key : A) -> T[A] {
+pub fn[A : Eq + Hash] add(self : T[A], key : A) -> T[A] {
   self.add_with_hash(key, 0, key.hash())
 }
 
 ///|
 /// Remove an element from a set
-pub fn remove[A : Eq + Hash](self : T[A], key : A) -> T[A] {
+pub fn[A : Eq + Hash] remove(self : T[A], key : A) -> T[A] {
   self.remove_with_hash(key, 0, key.hash())
 }
 
 ///|
-fn remove_with_hash[A : Eq](
+fn[A : Eq] remove_with_hash(
   self : T[A],
   key : A,
   depth : Int,
@@ -162,7 +162,7 @@ fn remove_with_hash[A : Eq](
 /// Calculate the size of a set.
 ///
 /// WARNING: this operation is `O(N)` in set size
-pub fn size[A](self : T[A]) -> Int {
+pub fn[A] size(self : T[A]) -> Int {
   match self {
     Empty => 0
     Leaf(_) => 1
@@ -180,7 +180,7 @@ pub fn size[A](self : T[A]) -> Int {
 
 ///|
 /// Union two hashsets
-pub fn union[K : Eq + Hash](self : T[K], other : T[K]) -> T[K] {
+pub fn[K : Eq + Hash] T::union(self : T[K], other : T[K]) -> T[K] {
   match (self, other) {
     (_, Empty) => self
     (Empty, _) => other
@@ -193,14 +193,64 @@ pub fn union[K : Eq + Hash](self : T[K], other : T[K]) -> T[K] {
 }
 
 ///|
+/// Intersect two hashsets
+pub fn[K : Eq + Hash] T::intersection(self : T[K], other : T[K]) -> T[K] {
+  match (self, other) {
+    (_, Empty) => Empty
+    (Empty, _) => Empty
+    (Leaf(k), _) => if other.contains(k) { Leaf(k) } else { Empty }
+    (_, Leaf(k)) => if self.contains(k) { Leaf(k) } else { Empty }
+    (Branch(sa1), Branch(sa2)) => {
+      let res = sa1.intersection(sa2, fn(m1, m2) { m1.intersection(m2) })
+      if res.size() == 0 {
+        Empty
+      } else {
+        Branch(res)
+      }
+    }
+    (_, _) =>
+      self
+      .iter()
+      .fold(init=Empty, fn(m, k) {
+        if other.contains(k) {
+          m.add(k)
+        } else {
+          m
+        }
+      })
+  }
+}
+
+///|
+/// Difference of two hashsets: elements in `self` but not in `other`
+pub fn[K : Eq + Hash] T::difference(self : T[K], other : T[K]) -> T[K] {
+  match (self, other) {
+    (Empty, _) => Empty
+    (_, Empty) => self
+    (Leaf(k), _) => if other.contains(k) { Empty } else { Leaf(k) }
+    (Branch(sa1), Branch(sa2)) => Branch(sa1.difference(sa2))
+    (_, _) =>
+      self
+      .iter()
+      .fold(init=Empty, fn(m, k) {
+        if other.contains(k) {
+          m
+        } else {
+          m.add(k)
+        }
+      })
+  }
+}
+
+///|
 /// Returns true if the hash set is empty.
-pub fn is_empty[A](self : T[A]) -> Bool {
+pub fn[A] is_empty(self : T[A]) -> Bool {
   self is Empty
 }
 
 ///|
 /// Iterate through the elements in a hash set
-pub fn each[A](self : T[A], f : (A) -> Unit) -> Unit {
+pub fn[A] each(self : T[A], f : (A) -> Unit) -> Unit {
   match self {
     Empty => ()
     Leaf(k) => f(k)
@@ -211,7 +261,7 @@ pub fn each[A](self : T[A], f : (A) -> Unit) -> Unit {
 
 ///|
 /// Converted to Iter
-pub fn iter[A](self : T[A]) -> Iter[A] {
+pub fn[A] iter(self : T[A]) -> Iter[A] {
   match self {
     Empty => Iter::empty()
     Leaf(k) => Iter::singleton(k)
@@ -221,7 +271,7 @@ pub fn iter[A](self : T[A]) -> Iter[A] {
 }
 
 ///|
-pub fn from_iter[A : Eq + Hash](iter : Iter[A]) -> T[A] {
+pub fn[A : Eq + Hash] from_iter(iter : Iter[A]) -> T[A] {
   iter.fold(init=new(), fn(s, e) { s.add(e) })
 }
 
@@ -231,7 +281,7 @@ pub impl[A : Show] Show for T[A] with output(self, logger) {
 }
 
 ///|
-pub fn from_array[A : Eq + Hash](arr : Array[A]) -> T[A] {
+pub fn[A : Eq + Hash] from_array(arr : Array[A]) -> T[A] {
   loop arr.length(), new() {
     0, set => set
     n, set => {
@@ -242,7 +292,7 @@ pub fn from_array[A : Eq + Hash](arr : Array[A]) -> T[A] {
 }
 
 ///|
-pub fn of[A : Eq + Hash](arr : FixedArray[A]) -> T[A] {
+pub fn[A : Eq + Hash] of(arr : FixedArray[A]) -> T[A] {
   loop arr.length(), new() {
     0, set => set
     n, set => {
@@ -279,12 +329,12 @@ pub impl[K : Eq + Hash + @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[K] w
 
 ///|
 test "hash" {
-  assert_eq!(Hash::hash(of([1, 2, 3, 4])), Hash::hash(of([3, 2]).add(1).add(4)))
-  assert_not_eq!(Hash::hash(of([1, 2, 3])), Hash::hash(of([1, 2, 4])))
+  assert_eq(Hash::hash(of([1, 2, 3, 4])), Hash::hash(of([3, 2]).add(1).add(4)))
+  assert_not_eq(Hash::hash(of([1, 2, 3])), Hash::hash(of([1, 2, 4])))
 }
 
 ///|
 test "eq" {
-  assert_eq!(of([1, 2, 3, 4]), of([3, 2]).add(1).add(4))
-  assert_not_eq!(of([1, 2, 3]), of([1, 2, 4]))
+  assert_eq(of([1, 2, 3, 4]), of([3, 2]).add(1).add(4))
+  assert_not_eq(of([1, 2, 3]), of([1, 2, 4]))
 }

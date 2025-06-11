@@ -28,10 +28,10 @@
 /// test "Array::from_iter" {
 ///   let iter = Iter::singleton(42)
 ///   let arr = Array::from_iter(iter)
-///   inspect!(arr, content="[42]")
+///   inspect(arr, content="[42]")
 /// }
 /// ```
-pub fn Array::from_iter[T](iter : Iter[T]) -> Array[T] {
+pub fn[T] Array::from_iter(iter : Iter[T]) -> Array[T] {
   iter.collect()
 }
 
@@ -43,12 +43,14 @@ pub fn Array::from_iter[T](iter : Iter[T]) -> Array[T] {
 ///
 /// # Example
 /// ```
-/// let u = [1, 2, 3]
-/// let v = [4, 5, 6]
-/// u.push_iter(v.iter())
-/// assert_eq!(u, [1, 2, 3, 4, 5, 6])
+/// test "push_iter_example" {
+///   let u = [1, 2, 3]
+///   let v = [4, 5, 6]
+///   u.push_iter(v.iter())
+///   assert_eq(u, [1, 2, 3, 4, 5, 6])
+/// }
 /// ```
-pub fn Array::push_iter[T](self : Array[T], iter : Iter[T]) -> Unit {
+pub fn[T] Array::push_iter(self : Self[T], iter : Iter[T]) -> Unit {
   for x in iter {
     self.push(x)
   }
@@ -76,10 +78,13 @@ pub fnalias Array::push_iter
 /// ```moonbit
 /// test "Array::makei" {
 ///   let arr = Array::makei(3, fn(i) { i * 2 })
-///   inspect!(arr, content="[0, 2, 4]")
+///   inspect(arr, content="[0, 2, 4]")
 /// }
 /// ```
-pub fn Array::makei[T](length : Int, value : (Int) -> T) -> Array[T] {
+pub fn[T] Array::makei(
+  length : Int,
+  value : (Int) -> T?Error
+) -> Array[T]?Error {
   if length <= 0 {
     []
   } else {
@@ -99,15 +104,17 @@ pub fn Array::makei[T](length : Int, value : (Int) -> T) -> Array[T] {
 /// *rand n* is expected to returns a uniformly distribution integer between 0 and n - 1
 /// # Example
 /// 
-/// ```
-/// let arr = [1, 2, 3, 4, 5]
-/// fn rand(upper : Int) -> Int {
-///   let rng = @random.new()
-///   rng.int(limit=upper)
+/// ```moonbit
+/// test "Array::shuffle_in_place" {
+///   let arr = [1, 2, 3, 4, 5]
+///   fn rand(upper : Int) -> Int {
+///     let rng = @random.new()
+///     rng.int(limit=upper)
+///   }
+///   Array::shuffle_in_place(arr, rand=rand)
 /// }
-/// Array::shuffle_in_place(arr, rand=rand)
 /// ```
-pub fn shuffle_in_place[T](self : Array[T], rand~ : (Int) -> Int) -> Unit {
+pub fn[T] shuffle_in_place(self : Array[T], rand~ : (Int) -> Int) -> Unit {
   let n = self.length()
   for i = n - 1; i > 0; i = i - 1 {
     let j = rand(i + 1) % (i + 1)
@@ -133,7 +140,7 @@ pub fn shuffle_in_place[T](self : Array[T], rand~ : (Int) -> Int) -> Unit {
 /// }
 /// let _shuffled = Array::shuffle(arr, rand=rand)
 /// ```
-pub fn shuffle[T](self : Array[T], rand~ : (Int) -> Int) -> Array[T] {
+pub fn[T] shuffle(self : Array[T], rand~ : (Int) -> Int) -> Array[T] {
   let new_arr = self.copy()
   Array::shuffle_in_place(new_arr, rand~)
   new_arr
@@ -149,7 +156,7 @@ pub fn shuffle[T](self : Array[T], rand~ : (Int) -> Int) -> Array[T] {
 /// 
 /// # Returns
 /// 
-pub fn filter_map[A, B](self : Array[A], f : (A) -> B?) -> Array[B] {
+pub fn[A, B] filter_map(self : Array[A], f : (A) -> B??Error) -> Array[B]?Error {
   let result = []
   for x in self {
     if f(x) is Some(x) {
@@ -175,12 +182,12 @@ pub fn filter_map[A, B](self : Array[A], f : (A) -> B?) -> Array[B] {
 /// ```moonbit
 /// test "last" {
 ///   let arr = [1, 2, 3]
-///   inspect!(arr.last(), content="Some(3)")
+///   inspect(arr.last(), content="Some(3)")
 ///   let empty : Array[Int] = []
-///   inspect!(empty.last(), content="None")
+///   inspect(empty.last(), content="None")
 /// }
 /// ```
-pub fn last[A](self : Array[A]) -> A? {
+pub fn[A] last(self : Array[A]) -> A? {
   match self {
     [] => None
     [.., last] => Some(last)
@@ -204,10 +211,10 @@ pub fn last[A](self : Array[A]) -> A? {
 /// test "zip" {
 ///   let arr1 = [1, 2, 3]
 ///   let arr2 = ['a', 'b', 'c']
-///   inspect!(arr1.zip(arr2), content="[(1, 'a'), (2, 'b'), (3, 'c')]")
+///   inspect(arr1.zip(arr2), content="[(1, 'a'), (2, 'b'), (3, 'c')]")
 /// }
 /// ```
-pub fn zip[A, B](self : Array[A], other : Array[B]) -> Array[(A, B)] {
+pub fn[A, B] zip(self : Array[A], other : Array[B]) -> Array[(A, B)] {
   let length = if self.length() < other.length() {
     self.length()
   } else {
@@ -219,6 +226,29 @@ pub fn zip[A, B](self : Array[A], other : Array[B]) -> Array[(A, B)] {
   } else {
     return arr
   }
+}
+
+///|
+/// Splits an array of pairs into two arrays, separating the first and second elements.
+///
+/// # Example
+/// ```moonbit
+/// test "Array::unzip" {
+///   let arr = [(1, "a"), (2, "b"), (3, "c")]
+///   let (nums, strs) = arr.unzip()
+///   inspect(nums, content="[1, 2, 3]")
+///   inspect(strs, content="[\"a\", \"b\", \"c\"]")
+/// }
+/// ```
+pub fn[T1, T2] unzip(self : Array[(T1, T2)]) -> (Array[T1], Array[T2]) {
+  let arr1 : Array[T1] = Array::new(capacity=self.length())
+  let arr2 : Array[T2] = Array::new(capacity=self.length())
+  for pair in self {
+    let (x, y) = pair
+    arr1.push(x)
+    arr2.push(y)
+  }
+  (arr1, arr2)
 }
 
 ///| 
@@ -239,14 +269,14 @@ pub fn zip[A, B](self : Array[A], other : Array[B]) -> Array[(A, B)] {
 ///   let arr1 = [1, 2, 3]
 ///   let arr2 = [4, 5, 6]
 ///   let add = fn(a, b) { a + b }
-///   inspect!(zip_with(arr1, arr2, add), content="[5, 7, 9]")
+///   inspect(zip_with(arr1, arr2, add), content="[5, 7, 9]")
 /// }
 /// ```
-pub fn zip_with[A, B, C](
+pub fn[A, B, C] zip_with(
   l : Array[A],
   r : Array[B],
-  merge : (A, B) -> C
-) -> Array[C] {
+  merge : (A, B) -> C?Error
+) -> Array[C]?Error {
   let length = if l.length() < r.length() { l.length() } else { r.length() }
   let arr = Array::new(capacity=length)
   for i = 0; i < length; i = i + 1 {
@@ -273,10 +303,10 @@ pub fn zip_with[A, B, C](
 /// test "zip_to_iter2" {
 ///   let arr1 = [1, 2, 3]
 ///   let arr2 = ['a', 'b', 'c']
-///   inspect!(arr1.zip_to_iter2(arr2).to_array(), content="[(1, 'a'), (2, 'b'), (3, 'c')]")
+///   inspect(arr1.zip_to_iter2(arr2).to_array(), content="[(1, 'a'), (2, 'b'), (3, 'c')]")
 /// }
 /// ```
-pub fn zip_to_iter2[A, B](self : Array[A], other : Array[B]) -> Iter2[A, B] {
+pub fn[A, B] zip_to_iter2(self : Array[A], other : Array[B]) -> Iter2[A, B] {
   Iter2::new(fn(yield_) {
     let length = if self.length() < other.length() {
       self.length()
@@ -303,6 +333,6 @@ pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Array[X] with arbi
 }
 
 ///|
-pub fn join(self : Array[String], separator : String) -> String {
-  @string.concat(self, separator~)
+pub fn join(self : Array[String], separator : @string.View) -> String {
+  self[:].join(separator)
 }

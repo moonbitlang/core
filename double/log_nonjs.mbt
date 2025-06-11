@@ -97,13 +97,13 @@ fn frexp(f : Double) -> (Double, Int) {
 ///
 /// ```moonbit
 /// test "ln" {
-///   inspect!(2.0.ln(), content="0.6931471805599453")
-///   inspect!(1.0.ln(), content="0")
-///   inspect!((-1.0).ln(), content="NaN")
-///   inspect!(0.0.ln(), content="-Infinity")
+///   inspect(2.0.ln(), content="0.6931471805599453")
+///   inspect(1.0.ln(), content="0")
+///   inspect((-1.0).ln(), content="NaN")
+///   inspect(0.0.ln(), content="-Infinity")
 /// }
 /// ```
-pub fn ln(self : Double) -> Double {
+pub fn Double::ln(self : Double) -> Double {
   if self < 0.0 {
     return not_a_number
   } else if self.is_nan() || self.is_inf() {
@@ -140,12 +140,12 @@ pub fn ln(self : Double) -> Double {
 ///
 /// ```moonbit
 /// test "log2" {
-///   inspect!(2.0.log2(), content="1")
-///   inspect!(0.5.log2(), content="-1")
-///   inspect!(3.0.log2(), content="1.584962500721156")
+///   inspect(2.0.log2(), content="1")
+///   inspect(0.5.log2(), content="-1")
+///   inspect(3.0.log2(), content="1.584962500721156")
 /// }
 /// ```
-pub fn log2(self : Double) -> Double {
+pub fn Double::log2(self : Double) -> Double {
   let (f, e) = frexp(self)
   if f == 0.5 {
     return e.to_double() - 1.0
@@ -168,14 +168,14 @@ pub fn log2(self : Double) -> Double {
 ///
 /// ```moonbit
 /// test "log10" {
-///   inspect!(0.1.log10(), content="-1")
-///   inspect!(1.0.log10(), content="0")
-///   inspect!(10.0.log10(), content="1")
-///   inspect!(100.0.log10(), content="2")
-///   inspect!(15.0.log10(), content="1.1760912590556813")
+///   inspect(0.1.log10(), content="-1")
+///   inspect(1.0.log10(), content="0")
+///   inspect(10.0.log10(), content="1")
+///   inspect(100.0.log10(), content="2")
+///   inspect(15.0.log10(), content="1.1760912590556813")
 /// }
 /// ```
-pub fn log10(self : Double) -> Double {
+pub fn Double::log10(self : Double) -> Double {
   if self < 0.0 {
     return not_a_number
   } else if self.is_nan() || self.is_inf() {
@@ -215,17 +215,17 @@ pub fn log10(self : Double) -> Double {
 ///
 /// ```moonbit
 /// test "ln_1p" {
-///   inspect!(0.0.ln_1p(), content="0")
-///   inspect!(1.0.ln_1p(), content="0.6931471805599453")
-///   inspect!(2.0.ln_1p(), content="1.0986122886681096")
-///   inspect!(@double.not_a_number.ln_1p(), content="NaN")
-///   inspect!((-1.0).ln_1p(), content="-Infinity")
-///   inspect!((-2.0).ln_1p(), content="NaN")
-///   inspect!(@double.infinity.ln_1p(), content="Infinity")
-///   inspect!(@double.neg_infinity.ln_1p(), content="NaN")
+///   inspect(0.0.ln_1p(), content="0")
+///   inspect(1.0.ln_1p(), content="0.6931471805599453")
+///   inspect(2.0.ln_1p(), content="1.0986122886681096")
+///   inspect(@double.not_a_number.ln_1p(), content="NaN")
+///   inspect((-1.0).ln_1p(), content="-Infinity")
+///   inspect((-2.0).ln_1p(), content="NaN")
+///   inspect(@double.infinity.ln_1p(), content="Infinity")
+///   inspect(@double.neg_infinity.ln_1p(), content="NaN")
 /// }
 /// ```
-pub fn ln_1p(self : Double) -> Double {
+pub fn Double::ln_1p(self : Double) -> Double {
   if self < -1.0 || self.is_nan() {
     return not_a_number
   }
@@ -325,50 +325,50 @@ pub fn ln_1p(self : Double) -> Double {
 ///|
 test "log2 log10" {
   // log2
-  assert_eq!(3.0.log2(), 1.584962500721156)
-  assert_eq!(2.0.log2(), 1.0)
-  assert_eq!(1.0.log2(), 0.0)
-  assert_eq!(0.5.log2(), -1.0)
-  assert_eq!(0.25.log2(), -2.0)
-  assert_eq!(0.1.log2(), -3.321928094887362)
+  assert_eq(3.0.log2(), 1.584962500721156)
+  assert_eq(2.0.log2(), 1.0)
+  assert_eq(1.0.log2(), 0.0)
+  assert_eq(0.5.log2(), -1.0)
+  assert_eq(0.25.log2(), -2.0)
+  assert_eq(0.1.log2(), -3.321928094887362)
 
   // log10
-  assert_eq!(0.2.log10(), -0.6989700043360187)
-  assert_eq!(0.1.log10(), -1)
-  assert_eq!(1.0.log10(), 0.0)
-  assert_eq!(10.0.log10(), 1.0)
-  assert_eq!(100.0.log10(), 2.0)
-  assert_eq!(1000.0.log10(), 3.0)
-  assert_eq!(3.0.log10(), 0.47712125471966244)
-  assert_eq!(11.0.log10(), 1.041392685158225)
-  assert_eq!(15.0.log10(), 1.1760912590556813)
+  assert_eq(0.2.log10(), -0.6989700043360187)
+  assert_eq(0.1.log10(), -1)
+  assert_eq(1.0.log10(), 0.0)
+  assert_eq(10.0.log10(), 1.0)
+  assert_eq(100.0.log10(), 2.0)
+  assert_eq(1000.0.log10(), 3.0)
+  assert_eq(3.0.log10(), 0.47712125471966244)
+  assert_eq(11.0.log10(), 1.041392685158225)
+  assert_eq(15.0.log10(), 1.1760912590556813)
 }
 
 ///|
 test "ln" {
-  assert_true!(not_a_number.ln().is_nan())
-  assert_true!(infinity.ln().is_pos_inf())
-  assert_true!(neg_infinity.ln().is_nan())
-  assert_true!((-1.0).ln().is_nan())
-  assert_true!(0.0.ln().is_neg_inf())
-  assert_true!((-0.0).ln().is_neg_inf())
-  assert_eq!(50.0.ln(), 3.912023005428146)
-  assert_eq!(2.0.ln(), 0.6931471805599453)
-  assert_eq!(1.1125369292536007e-308.ln(), -709.0895657128241)
-  assert_eq!(5.562684646268003e-309.ln(), -709.782712893384)
-  assert_true!(
+  assert_true(not_a_number.ln().is_nan())
+  assert_true(infinity.ln().is_pos_inf())
+  assert_true(neg_infinity.ln().is_nan())
+  assert_true((-1.0).ln().is_nan())
+  assert_true(0.0.ln().is_neg_inf())
+  assert_true((-0.0).ln().is_neg_inf())
+  assert_eq(50.0.ln(), 3.912023005428146)
+  assert_eq(2.0.ln(), 0.6931471805599453)
+  assert_eq(1.1125369292536007e-308.ln(), -709.0895657128241)
+  assert_eq(5.562684646268003e-309.ln(), -709.782712893384)
+  assert_true(
     match frexp(0.0) {
       (0.0, 0) => true
       _ => false
     },
   )
-  assert_true!(
+  assert_true(
     match frexp(infinity) {
       (f, 0) => if f.is_pos_inf() { true } else { false }
       _ => false
     },
   )
-  assert_true!(
+  assert_true(
     match frexp(not_a_number) {
       (f, 0) => if f.is_nan() { true } else { false }
       _ => false
@@ -378,9 +378,9 @@ test "ln" {
 
 ///|
 test "ln_1p" {
-  assert_true!(not_a_number.ln_1p().is_nan())
-  assert_true!(infinity.ln_1p().is_pos_inf())
-  assert_true!(neg_infinity.ln_1p().is_nan())
-  assert_true!((-1.0).ln_1p().is_neg_inf())
-  assert_eq!(0.0.ln_1p(), 0.0)
+  assert_true(not_a_number.ln_1p().is_nan())
+  assert_true(infinity.ln_1p().is_pos_inf())
+  assert_true(neg_infinity.ln_1p().is_nan())
+  assert_true((-1.0).ln_1p().is_neg_inf())
+  assert_eq(0.0.ln_1p(), 0.0)
 }

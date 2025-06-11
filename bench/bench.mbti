@@ -5,7 +5,7 @@ fn bench(T, name? : String, () -> Unit, count~ : UInt = ..) -> Unit
 
 fn dump_summaries(T) -> String
 
-fn keep[Any](T, Any) -> Unit
+fn[Any] keep(T, Any) -> Unit
 
 fn monotonic_clock_end(Timestamp) -> Double
 
@@ -20,11 +20,9 @@ type Summary
 impl ToJson for Summary
 
 type T
-impl T {
-  bench(Self, name? : String, () -> Unit, count~ : UInt = ..) -> Unit
-  dump_summaries(Self) -> String
-  keep[Any](Self, Any) -> Unit
-}
+fn T::bench(Self, name? : String, () -> Unit, count~ : UInt = ..) -> Unit
+fn T::dump_summaries(Self) -> String
+fn[Any] T::keep(Self, Any) -> Unit
 
 type Timestamp
 

@@ -23,7 +23,7 @@ You can use `insert()` to add a key to the set, and `contains()` to check whethe
 test {
   let set : @hashset.T[String] = @hashset.new()
   set.add("a")
-  assert_eq!(set.contains("a"), true)
+  assert_eq(set.contains("a"), true)
 }
 ```
 
@@ -35,7 +35,7 @@ You can use `remove()` to remove a key.
 test {
   let set = @hashset.of(["a", "b", "c"])
   set.remove("a")
-  assert_eq!(set.contains("a"), false)
+  assert_eq(set.contains("a"), false)
 }
 ```
 
@@ -46,8 +46,8 @@ You can use `size()` to get the number of keys in the set, or `capacity()` to ge
 ```moonbit
 test {
   let set = @hashset.of(["a", "b", "c"])
-  assert_eq!(set.size(), 3)
-  assert_eq!(set.capacity(), 8)
+  assert_eq(set.size(), 3)
+  assert_eq(set.capacity(), 8)
 }
 ```
 
@@ -56,7 +56,7 @@ Similarly, you can use `is_empty()` to check whether the set is empty.
 ```moonbit
 test {
   let set : @hashset.T[Int] = @hashset.new()
-  assert_eq!(set.is_empty(), true)
+  assert_eq(set.is_empty(), true)
 }
 ```
 
@@ -68,7 +68,7 @@ You can use `clear` to remove all keys from the set, but the allocated memory wi
 test {
   let set = @hashset.of(["a", "b", "c"])
   set.clear()
-  assert_eq!(set.is_empty(), true)
+  assert_eq(set.is_empty(), true)
 }
 ```
 
@@ -99,10 +99,10 @@ test {
     arr.sort()
     arr
   }
-  assert_eq!(m1.union(m2) |> to_sorted_array, ["a", "b", "c", "d"])
-  assert_eq!(m1.intersection(m2) |> to_sorted_array, ["b", "c"])
-  assert_eq!(m1.difference(m2) |> to_sorted_array, ["a"])
-  assert_eq!(m1.symmetric_difference(m2) |> to_sorted_array, ["a", "d"])
+  assert_eq(m1.union(m2) |> to_sorted_array, ["a", "b", "c", "d"])
+  assert_eq(m1.intersection(m2) |> to_sorted_array, ["b", "c"])
+  assert_eq(m1.difference(m2) |> to_sorted_array, ["a"])
+  assert_eq(m1.symmetric_difference(m2) |> to_sorted_array, ["a", "d"])
 }
 ```
 

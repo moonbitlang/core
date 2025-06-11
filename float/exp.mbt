@@ -83,12 +83,12 @@ let exp2f_data : Exp2fData = {
 ///
 /// ```moonbit
 /// test "exp" {
-///   inspect!((0.0 : Float).exp(), content="1")
-///   inspect!((1.0 : Float).exp(), content="2.7182817459106445")
-///   inspect!(@float.neg_infinity.exp(), content="0")
+///   inspect((0.0 : Float).exp(), content="1")
+///   inspect((1.0 : Float).exp(), content="2.7182817459106445")
+///   inspect(@float.neg_infinity.exp(), content="0")
 /// }
 /// ```
-pub fn exp(self : Float) -> Float {
+pub fn Float::exp(self : Float) -> Float {
   let xd = self.to_double()
   let abstop = top12(self) & 0x7ff
   if abstop >= top12(88.0) {
@@ -141,14 +141,14 @@ pub fn exp(self : Float) -> Float {
 ///
 /// ```moonbit
 /// test "expm1" {
-///  inspect!((0 : Float).expm1(), content="0")
-///  inspect!((1 : Float).expm1(), content="1.718281865119934")
-///  inspect!((-1 : Float).expm1(), content="-0.6321205496788025")
-///  inspect!(@float.not_a_number.expm1(), content="NaN")
-///  inspect!(@float.infinity.expm1(), content="Infinity")
-///  inspect!(@float.neg_infinity.expm1(), content="-1")
+///  inspect((0 : Float).expm1(), content="0")
+///  inspect((1 : Float).expm1(), content="1.718281865119934")
+///  inspect((-1 : Float).expm1(), content="-0.6321205496788025")
+///  inspect(@float.not_a_number.expm1(), content="NaN")
+///  inspect(@float.infinity.expm1(), content="Infinity")
+///  inspect(@float.neg_infinity.expm1(), content="-1")
 /// }
 /// ```
-pub fn expm1(self : Float) -> Float {
+pub fn Float::expm1(self : Float) -> Float {
   self.to_double().expm1().to_float()
 }

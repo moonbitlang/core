@@ -19,14 +19,14 @@ test {
   } derive(Show)
   let data = Data::{ val: "Hello, 世界\t\n!" }
   // TODO: the data type annotation is not needed
-  inspect!(
+  inspect(
     data,
     content=
       #|{val: "Hello, 世界\t\n!"}
     ,
   )
   let v = "\u{00AD}Hello, \u{2060}世界\t\n!\u{1D173}"
-  inspect!(
+  inspect(
     repr(v),
     content=
       #|"­Hello, ⁠世界\t\n!𝅳"

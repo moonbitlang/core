@@ -290,6 +290,29 @@ extern "js" fn BigInt::js_lor(self : BigInt, other : BigInt) -> BigInt =
   #|(x, y) => x | y
 
 ///|
+/// Performs a bitwise OR operation between two arbitrary-precision integers,
+/// following two's complement representation for negative numbers.
+///
+/// Parameters:
+///
+/// * `self` : The first arbitrary-precision integer operand.
+/// * `other` : The second arbitrary-precision integer operand.
+///
+/// Returns a new `BigInt` representing the result of the bitwise OR operation.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "BigInt::lor" {
+///   let a = BigInt::from_string("42")
+///   let b = BigInt::from_string("-12")
+///   inspect(a | b, content="-2")
+///   let c = BigInt::from_string("-8")
+///   let d = BigInt::from_string("-4")
+///   inspect(c | d, content="-4")
+/// }
+/// ```
+///
 pub impl BitOr for BigInt with lor(self, other) {
   self.js_lor(other)
 }
@@ -299,6 +322,43 @@ extern "js" fn BigInt::js_lxor(self : BigInt, other : BigInt) -> BigInt =
   #|(x, y) => x ^ y
 
 ///|
+/// Performs a bitwise XOR (exclusive OR) operation between two
+/// arbitrary-precision integers, treating them as two's complement binary
+/// numbers.
+///
+/// The XOR operation compares each bit position of both operands and returns 1
+/// if the bits are different, 0 if they are the same. For negative numbers, the
+/// operation is performed using two's complement representation.
+///
+/// Parameters:
+///
+/// * `self` : The first `BigInt` operand for the XOR operation.
+/// * `other` : The second `BigInt` operand for the XOR operation.
+///
+/// Returns a new `BigInt` value representing the bitwise XOR of the two
+/// operands.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "BigInt::lxor" {
+///   let a = BigInt::from_string("42")  // 0b101010
+///   let b = BigInt::from_string("25")  // 0b011001
+///   inspect(a.lxor(b), content="51")   // 0b110011
+/// }
+///
+/// test "BigInt::lxor/negative" {
+///   let a = BigInt::from_string("42")
+///   let b = BigInt::from_string("-7")
+///   inspect(a.lxor(b), content="-45")
+/// }
+///
+/// test "BigInt::lxor/self_cancellation" {
+///   let a = BigInt::from_string("42")
+///   inspect(a.lxor(a), content="0")    // XOR with self gives 0
+/// }
+/// ```
+///
 pub impl BitXOr for BigInt with lxor(self, other) {
   self.js_lxor(other)
 }
@@ -317,9 +377,9 @@ pub impl BitXOr for BigInt with lxor(self, other) {
 /// ```moonbit
 /// test "BigInt::to_uint" {
 ///   let n = 42N
-///   inspect!(n.to_uint(), content="42")
+///   inspect(n.to_uint(), content="42")
 ///   let neg = -1N
-///   inspect!(neg.to_uint(), content="4294967295") // 2^32 - 1
+///   inspect(neg.to_uint(), content="4294967295") // 2^32 - 1
 /// }
 /// ```
 pub extern "js" fn BigInt::to_uint(self : BigInt) -> UInt =
@@ -340,7 +400,7 @@ pub extern "js" fn BigInt::to_uint(self : BigInt) -> UInt =
 /// ```moonbit
 /// test "BigInt::to_int" {
 ///   let big = 2147483648N // 2^31
-///   inspect!(big.to_int(), content="-2147483648") // Overflow to Int.min_value
+///   inspect(big.to_int(), content="-2147483648") // Overflow to Int.min_value
 /// }
 /// ```
 pub extern "js" fn BigInt::to_int(self : BigInt) -> Int =
@@ -361,9 +421,9 @@ pub extern "js" fn BigInt::to_int(self : BigInt) -> Int =
 /// ```moonbit
 /// test "BigInt::to_uint64" {
 ///   let n = 12345678901234567890N
-///   inspect!(n.to_uint64(), content="12345678901234567890")
+///   inspect(n.to_uint64(), content="12345678901234567890")
 ///   let neg = -1N
-///   inspect!(neg.to_uint64(), content="18446744073709551615") // 2^64 - 1
+///   inspect(neg.to_uint64(), content="18446744073709551615") // 2^64 - 1
 /// }
 /// ```
 pub fn BigInt::to_uint64(self : BigInt) -> UInt64 {
@@ -387,9 +447,9 @@ pub fn BigInt::to_uint64(self : BigInt) -> UInt64 {
 /// ```moonbit
 /// test "BigInt::to_int64" {
 ///   let big = 9223372036854775807N // max value of Int64
-///   inspect!(big.to_int64(), content="9223372036854775807")
+///   inspect(big.to_int64(), content="9223372036854775807")
 ///   let bigger = big + 1
-///   inspect!(bigger.to_int64(), content="-9223372036854775808") // Overflow to Int64.min_value
+///   inspect(bigger.to_int64(), content="-9223372036854775808") // Overflow to Int64.min_value
 /// }
 /// ```
 pub fn BigInt::to_int64(self : BigInt) -> Int64 {
@@ -412,11 +472,11 @@ pub fn BigInt::to_int64(self : BigInt) -> Int64 {
 /// ///|
 /// test "BigInt::bit_length" {
 ///   let pos = 16N // 10000
-///   inspect!(pos.bit_length(), content="5")
+///   inspect(pos.bit_length(), content="5")
 ///   let neg = -16N // 
-///   inspect!(neg.bit_length(), content="4")
+///   inspect(neg.bit_length(), content="4")
 ///   let zero = 0N
-///   inspect!(zero.bit_length(), content="0")
+///   inspect(zero.bit_length(), content="0")
 /// }
 /// ```
 pub extern "js" fn BigInt::bit_length(self : BigInt) -> Int =
@@ -438,9 +498,9 @@ pub extern "js" fn BigInt::bit_length(self : BigInt) -> Int =
 /// Example:
 /// ```moonbit
 /// test "BigInt::ctz" {
-///   inspect!(8N.ctz(), content="3") // 0b1000
-///   inspect!(12N.ctz(), content="2") // 0b1100
-///   inspect!(0N.ctz(), content="0")
+///   inspect(8N.ctz(), content="3") // 0b1000
+///   inspect(12N.ctz(), content="2") // 0b1100
+///   inspect(0N.ctz(), content="0")
 /// }
 /// ```
 pub extern "js" fn BigInt::ctz(self : BigInt) -> Int =
@@ -454,3 +514,15 @@ pub extern "js" fn BigInt::ctz(self : BigInt) -> Int =
   #|  }
   #|  return count;
   #|}
+
+///|
+extern "js" fn can_convert_to_int(x : BigInt) -> Bool =
+  #|(x) => x >= -(2n ** 31n) && x < 2n ** 31n
+
+///|
+extern "js" fn can_convert_to_int64(x : BigInt) -> Bool =
+  #|(x) => x >= -(2n ** 63n) && x < 2n ** 63n
+
+///|
+extern "js" fn is_neg(x : BigInt) -> Bool =
+  #|(x) => x < 0n

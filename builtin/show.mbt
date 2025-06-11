@@ -72,10 +72,16 @@ fn to_hex_digit(i : Int) -> Char {
 
 ///|
 test "to_hex_digit" {
-  inspect!(
-    Array::make(16, 0).mapi(fn { i, _ => to_hex_digit(i) }),
-    content="['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f']",
-  )
+  for i in 0..<10 {
+    guard to_hex_digit(i) == ('0'.to_int() + i).unsafe_to_char() else {
+      fail("to_hex_digit(\{i}) does not match")
+    }
+  }
+  for i in 10..<16 {
+    guard to_hex_digit(i) == ('a'.to_int() + (i - 10)).unsafe_to_char() else {
+      fail("to_hex_digit(\{i}) does not match")
+    }
+  }
 }
 
 ///|
@@ -148,8 +154,8 @@ pub impl Show for String with output(self, logger) {
 /// 
 /// ```
 /// let str = "Hello \n"
-/// inspect!(str.to_string(), content="Hello \n")
-/// inspect!(str.escape(), content="\"Hello \\n\"")
+/// inspect(str.to_string(), content="Hello \n")
+/// inspect(str.escape(), content="\"Hello \\n\"")
 /// ```
 pub impl Show for String with to_string(self) {
   self
@@ -200,48 +206,4 @@ pub impl[X : Show] Show for FixedArray[X] with output(self, logger) {
 ///|
 pub impl[X : Show] Show for Array[X] with output(self, logger) {
   logger.write_iter(self.iter())
-}
-
-///| Convert Char to String
-pub impl Show for Char with to_string(self : Char) -> String {
-  char_to_string(self)
-}
-
-///| TODO: support attributes for impl
-#intrinsic("%char.to_string")
-fn char_to_string(char : Char) -> String {
-  [char]
-}
-
-///|
-pub impl Show for Char with output(self, logger) {
-  fn to_hex_digit(i : Int) -> Char {
-    if i < 10 {
-      (i + '0').unsafe_to_char()
-    } else {
-      (i + 'a' - 10).unsafe_to_char()
-    }
-  }
-
-  logger.write_char('\'')
-  match self {
-    '\'' | '\\' => logger..write_char('\\')..write_char(self)
-    '\n' => logger.write_string("\\n")
-    '\r' => logger.write_string("\\r")
-    '\b' => logger.write_string("\\b")
-    '\t' => logger.write_string("\\t")
-    _ => {
-      let code = self.to_int()
-      if code < 0x20 {
-        logger
-        ..write_string("\\u{")
-        ..write_char(to_hex_digit(code / 16))
-        ..write_char(to_hex_digit(code % 16))
-        ..write_char('}')
-      } else {
-        logger.write_char(self)
-      }
-    }
-  }
-  logger.write_char('\'')
 }

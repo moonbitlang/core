@@ -15,20 +15,20 @@
 ///|
 test "panic assert_not_eq with equal values" {
   let str = "test"
-  ignore(assert_not_eq!(str, str))
+  ignore(assert_not_eq(str, str))
 }
 
 ///|
 test "panic assert_false with true" {
-  ignore(assert_false!(true))
+  ignore(assert_false(true))
 }
 
 ///|
 test "panic assert_eq with unequal values" {
-  ignore(assert_eq!(1, 2))
+  ignore(assert_eq(1, 2))
 }
 
 ///|
 test "panic assert_true with false" {
-  ignore(assert_true!(false))
+  ignore(assert_true(false))
 }

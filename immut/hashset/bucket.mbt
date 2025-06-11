@@ -14,7 +14,7 @@
 
 ///|
 /// Lookup a key from the bucket
-fn Bucket::find[T : Eq](self : Bucket[T], key : T) -> Bool {
+fn[T : Eq] Bucket::find(self : Bucket[T], key : T) -> Bool {
   match self {
     JustOne(key1) => key == key1
     More(key1, rest) => if key == key1 { true } else { rest.find(key) }
@@ -24,7 +24,7 @@ fn Bucket::find[T : Eq](self : Bucket[T], key : T) -> Bool {
 ///|
 /// Add a new key-value pair to a bucket.
 /// Replace the old entry if one with the same key already exists.
-fn Bucket::add[T : Eq](self : Bucket[T], key : T) -> Bucket[T] {
+fn[T : Eq] Bucket::add(self : Bucket[T], key : T) -> Bucket[T] {
   match self {
     JustOne(key1) => if key == key1 { self } else { More(key, self) }
     More(key1, rest) =>
@@ -38,7 +38,7 @@ fn Bucket::add[T : Eq](self : Bucket[T], key : T) -> Bucket[T] {
 
 ///|
 /// Remove a key from a bucket
-fn Bucket::remove[T : Eq](self : Bucket[T], key : T) -> Bucket[T]? {
+fn[T : Eq] Bucket::remove(self : Bucket[T], key : T) -> Bucket[T]? {
   match self {
     JustOne(old_key) => if key == old_key { None } else { Some(self) }
     More(old_key, rest) =>
@@ -55,7 +55,7 @@ fn Bucket::remove[T : Eq](self : Bucket[T], key : T) -> Bucket[T]? {
 
 ///|
 /// Get the size of a bucket
-fn Bucket::size[T](self : Bucket[T]) -> Int {
+fn[T] Bucket::size(self : Bucket[T]) -> Int {
   loop self, 1 {
     JustOne(_), acc => acc
     More(_, rest), acc => continue rest, acc + 1
@@ -64,7 +64,7 @@ fn Bucket::size[T](self : Bucket[T]) -> Int {
 
 ///|
 /// Iterate through elements of a bucket
-fn Bucket::each[T](self : Bucket[T], f : (T) -> Unit) -> Unit {
+fn[T] Bucket::each(self : Bucket[T], f : (T) -> Unit) -> Unit {
   loop self {
     JustOne(k) => f(k)
     More(k, rest) => {
@@ -75,7 +75,7 @@ fn Bucket::each[T](self : Bucket[T], f : (T) -> Unit) -> Unit {
 }
 
 ///|
-fn Bucket::iter[T](self : Bucket[T]) -> Iter[T] {
+fn[T] Bucket::iter(self : Bucket[T]) -> Iter[T] {
   Iter::new(fn {
     f =>
       loop self {
@@ -93,19 +93,19 @@ fn Bucket::iter[T](self : Bucket[T]) -> Iter[T] {
 ///|
 test "Bucket" {
   let b0 : Bucket[_] = JustOne(0)
-  inspect!((b0.find(0), b0.find(1), b0.size()), content="(true, false, 1)")
+  inspect((b0.find(0), b0.find(1), b0.size()), content="(true, false, 1)")
   let b1 = b0.add(1)
-  inspect!((b1.find(0), b1.find(1), b1.size()), content="(true, true, 2)")
+  inspect((b1.find(0), b1.find(1), b1.size()), content="(true, true, 2)")
   let b2 = b1.add(2)
-  inspect!((b2.find(0), b2.find(1), b2.size()), content="(true, true, 3)")
+  inspect((b2.find(0), b2.find(1), b2.size()), content="(true, true, 3)")
   let b3 = b2.remove(0)
   {
     let b1 = b3.unwrap()
-    inspect!((b1.find(0), b1.find(1)), content="(false, true)")
+    inspect((b1.find(0), b1.find(1)), content="(false, true)")
   }
   let b4 = b2.remove(1)
   let b1 = b4.unwrap() // b4 ? --> return Option instead of Result
-  inspect!((b1.find(0), b1.find(1)), content="(true, false)")
+  inspect((b1.find(0), b1.find(1)), content="(true, false)")
 }
 
 ///|
@@ -121,7 +121,7 @@ test "Bucket::iter" {
     }
     buf.write_string("\{k}")
   })
-  inspect!(buf.to_string(), content="0, 1, 31")
+  inspect(buf.to_string(), content="0, 1, 31")
 }
 
 ///|
@@ -143,7 +143,7 @@ test "Bucket::iter" {
       buf.write_string("\{k}")
     }
   })
-  inspect!(buf.to_string(), content="0, 1, 31")
+  inspect(buf.to_string(), content="0, 1, 31")
 }
 
 ///|
@@ -154,22 +154,22 @@ test "Bucket add and remove" {
   let b3 = b2.remove(0).unwrap()
   let b4 = b2.remove(1).unwrap()
   let b5 = b2.remove(2).unwrap()
-  assert_eq!(b0.find(0), true)
-  assert_eq!(b0.find(1), false)
-  assert_eq!(b1.find(0), true)
-  assert_eq!(b1.find(1), true)
-  assert_eq!(b2.find(0), true)
-  assert_eq!(b2.find(1), true)
-  assert_eq!(b2.find(2), true)
-  assert_eq!(b3.find(0), false)
-  assert_eq!(b3.find(1), true)
-  assert_eq!(b3.find(2), true)
-  assert_eq!(b4.find(0), true)
-  assert_eq!(b4.find(1), false)
-  assert_eq!(b4.find(2), true)
-  assert_eq!(b5.find(0), true)
-  assert_eq!(b5.find(1), true)
-  assert_eq!(b5.find(2), false)
+  assert_eq(b0.find(0), true)
+  assert_eq(b0.find(1), false)
+  assert_eq(b1.find(0), true)
+  assert_eq(b1.find(1), true)
+  assert_eq(b2.find(0), true)
+  assert_eq(b2.find(1), true)
+  assert_eq(b2.find(2), true)
+  assert_eq(b3.find(0), false)
+  assert_eq(b3.find(1), true)
+  assert_eq(b3.find(2), true)
+  assert_eq(b4.find(0), true)
+  assert_eq(b4.find(1), false)
+  assert_eq(b4.find(2), true)
+  assert_eq(b5.find(0), true)
+  assert_eq(b5.find(1), true)
+  assert_eq(b5.find(2), false)
 }
 
 ///|
@@ -180,12 +180,12 @@ test "Bucket size" {
   let b3 = b2.remove(0).unwrap()
   let b4 = b2.remove(1).unwrap()
   let b5 = b2.remove(2).unwrap()
-  assert_eq!(b0.size(), 1)
-  assert_eq!(b1.size(), 2)
-  assert_eq!(b2.size(), 3)
-  assert_eq!(b3.size(), 2)
-  assert_eq!(b4.size(), 2)
-  assert_eq!(b5.size(), 2)
+  assert_eq(b0.size(), 1)
+  assert_eq(b1.size(), 2)
+  assert_eq(b2.size(), 3)
+  assert_eq(b3.size(), 2)
+  assert_eq(b4.size(), 2)
+  assert_eq(b5.size(), 2)
 }
 
 ///|
@@ -203,7 +203,7 @@ test "Bucket iter" {
     }
     buf.write_string("\{k}")
   })
-  inspect!(buf, content="1, 2, 0")
+  inspect(buf, content="1, 2, 0")
 }
 
 ///|
@@ -225,5 +225,5 @@ test "Bucket iter" {
       buf.write_string("\{k}")
     }
   })
-  inspect!(buf, content="1, 2, 0")
+  inspect(buf, content="1, 2, 0")
 }

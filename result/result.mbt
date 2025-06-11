@@ -20,9 +20,9 @@
 /// ```
 /// let x: Result[Int, Unit] = Ok(6)
 /// let y = x.map(fn (v : Int) { v * 7 })
-/// assert_eq!(y, Ok(42))
+/// assert_eq(y, Ok(42))
 /// ```
-pub fn map[T, E, U](self : Result[T, E], f : (T) -> U) -> Result[U, E] {
+pub fn[T, E, U] map(self : Result[T, E], f : (T) -> U) -> Result[U, E] {
   match self {
     Ok(value) => Ok(f(value))
     Err(err) => Err(err)
@@ -35,8 +35,8 @@ test "map" {
   let y = x.map(fn(v : Int) { v * 7 })
   let z : Result[Int, Int] = Err(3)
   let w = z.map(fn(v : Int) { v * 7 })
-  assert_eq!(y, Ok(42))
-  assert_eq!(w, Err(3))
+  assert_eq(y, Ok(42))
+  assert_eq(w, Err(3))
 }
 
 ///|
@@ -47,9 +47,9 @@ test "map" {
 /// ```
 /// let x: Result[Int, String] = Err("error")
 /// let y = x.map_err(fn (v : String) { v + "!" })
-/// assert_eq!(y, Err("error!"))
+/// assert_eq(y, Err("error!"))
 /// ```
-pub fn map_err[T, E, F](self : Result[T, E], f : (E) -> F) -> Result[T, F] {
+pub fn[T, E, F] map_err(self : Result[T, E], f : (E) -> F) -> Result[T, F] {
   match self {
     Ok(value) => Ok(value)
     Err(err) => Err(f(err))
@@ -62,8 +62,8 @@ test "map_err" {
   let y = x.map_err(fn(v : String) { v + "!" })
   let z : Result[Int, Int] = Ok(6)
   let w = z.map_err(fn(v : Int) { v + 6 })
-  assert_eq!(y, Err("error!"))
-  assert_eq!(w, Ok(6))
+  assert_eq(y, Err("error!"))
+  assert_eq(w, Ok(6))
 }
 
 ///|
@@ -73,16 +73,16 @@ test "map_err" {
 ///
 /// ```
 /// let x: Result[Int, String] = Err("error")
-/// assert_eq!(x, Err("error"))
+/// assert_eq(x, Err("error"))
 /// ```
-pub fn err[T, E](value : E) -> Result[T, E] {
+pub fn[T, E] err(value : E) -> Result[T, E] {
   Err(value)
 }
 
 ///|
 test "err" {
   let x : Result[Int, String] = err("error")
-  assert_eq!(x, Err("error"))
+  assert_eq(x, Err("error"))
 }
 
 ///|
@@ -92,21 +92,21 @@ test "err" {
 ///
 /// ```
 /// let x: Result[String, Unit] = Ok("yes")
-/// assert_true!(x.is_ok())
+/// assert_true(x.is_ok())
 /// ```
-pub fn ok[T, E](value : T) -> Result[T, E] {
+pub fn[T, E] ok(value : T) -> Result[T, E] {
   Ok(value)
 }
 
 ///|
 test "ok" {
   let x : Result[String, Unit] = ok("yes")
-  assert_eq!(x, Ok("yes"))
+  assert_eq(x, Ok("yes"))
 }
 
 ///|
 /// Check if a `Result` is an `Ok`.
-pub fn is_ok[T, E](self : Result[T, E]) -> Bool {
+pub fn[T, E] is_ok(self : Result[T, E]) -> Bool {
   self is Ok(_)
 }
 
@@ -114,13 +114,13 @@ pub fn is_ok[T, E](self : Result[T, E]) -> Bool {
 test "is_ok" {
   let x : Result[Int, String] = Ok(6)
   let y : Result[Int, String] = Err("error")
-  assert_eq!(is_ok(x), true)
-  assert_eq!(is_ok(y), false)
+  assert_eq(x.is_ok(), true)
+  assert_eq(y.is_ok(), false)
 }
 
 ///|
 /// Check if a `Result` is an `Err`.
-pub fn is_err[T, E](self : Result[T, E]) -> Bool {
+pub fn[T, E] is_err(self : Result[T, E]) -> Bool {
   self is Err(_)
 }
 
@@ -128,8 +128,8 @@ pub fn is_err[T, E](self : Result[T, E]) -> Bool {
 test "is_err" {
   let x : Result[Int, String] = Ok(6)
   let y : Result[Int, String] = Err("error")
-  assert_eq!(is_err(x), false)
-  assert_eq!(is_err(y), true)
+  assert_eq(x.is_err(), false)
+  assert_eq(y.is_err(), true)
 }
 
 ///|
@@ -140,9 +140,9 @@ test "is_err" {
 /// ```
 /// let x: Result[Int, String] = Ok(6)
 /// let y = x.or(0)
-/// assert_eq!(y, 6)
+/// assert_eq(y, 6)
 /// ```
-pub fn or[T, E](self : Result[T, E], default : T) -> T {
+pub fn[T, E] or(self : Result[T, E], default : T) -> T {
   match self {
     Ok(value) => value
     Err(_) => default
@@ -155,8 +155,8 @@ test "or" {
   let y : Result[Int, String] = Err("error")
   let z = x.or(0)
   let w = y.or(0)
-  assert_eq!(z, 6)
-  assert_eq!(w, 0)
+  assert_eq(z, 6)
+  assert_eq(w, 0)
 }
 
 ///|
@@ -168,9 +168,9 @@ test "or" {
 /// ```
 /// let x: Result[Int, String] = Ok(6)
 /// let y = x.or_else(fn() { 0 })
-/// assert_eq!(y, 6)
+/// assert_eq(y, 6)
 /// ```
-pub fn or_else[T, E](self : Result[T, E], default : () -> T) -> T {
+pub fn[T, E] or_else(self : Result[T, E], default : () -> T) -> T {
   match self {
     Ok(value) => value
     Err(_) => default()
@@ -181,10 +181,10 @@ pub fn or_else[T, E](self : Result[T, E], default : () -> T) -> T {
 test "or_else" {
   let x : Result[Int, String] = Ok(6)
   let y : Result[Int, String] = Err("error")
-  let z = or_else(x, fn() { 0 })
-  let w = or_else(y, fn() { 0 })
-  assert_eq!(z, 6)
-  assert_eq!(w, 0)
+  let z = x.or_else(fn() { 0 })
+  let w = y.or_else(fn() { 0 })
+  assert_eq(z, 6)
+  assert_eq(w, 0)
 }
 
 ///|
@@ -197,9 +197,9 @@ test "or_else" {
 /// ```
 /// let x: Result[Result[Int, String], String] = Ok(Ok(6))
 /// let y = x.flatten()
-/// assert_eq!(y, Ok(6))
+/// assert_eq(y, Ok(6))
 /// ```
-pub fn flatten[T, E](self : Result[Result[T, E], E]) -> Result[T, E] {
+pub fn[T, E] flatten(self : Result[Result[T, E], E]) -> Result[T, E] {
   match self {
     Ok(value) => value
     Err(err) => Err(err)
@@ -212,8 +212,8 @@ test "flatten" {
   let y = x.flatten()
   let z : Result[Result[Int, String], String] = Err("error")
   let w = z.flatten()
-  assert_eq!(y, Ok(6))
-  assert_eq!(w, Err("error"))
+  assert_eq(y, Ok(6))
+  assert_eq(w, Err("error"))
 }
 
 ///|
@@ -224,9 +224,9 @@ test "flatten" {
 /// ```
 /// let x: Result[Int, String] = Ok(6)
 /// let y = x.bind(fn(v : Int) { Ok(v * 7) })
-/// assert_eq!(y, Ok(42))
+/// assert_eq(y, Ok(42))
 /// ```
-pub fn bind[T, E, U](
+pub fn[T, E, U] bind(
   self : Result[T, E],
   g : (T) -> Result[U, E]
 ) -> Result[U, E] {
@@ -239,8 +239,8 @@ pub fn bind[T, E, U](
 ///|
 test "bind" {
   let x : Result[Int, String] = Ok(6)
-  let y = bind(x, fn(v : Int) { Ok(v * 7) })
-  assert_eq!(y, Ok(42))
+  let y = x.bind(fn(v : Int) { Ok(v * 7) })
+  assert_eq(y, Ok(42))
 }
 
 ///|
@@ -252,9 +252,9 @@ test "bind" {
 /// ```
 /// let x = Ok(6)
 /// let y = x.fold(fn(v : Int) -> Int { v * 7 }, fn(_e : String) -> Int { 0 })
-/// assert_eq!(y, 42)
+/// assert_eq(y, 42)
 /// ```
-pub fn fold[T, E, V](self : Result[T, E], ok : (T) -> V, err : (E) -> V) -> V {
+pub fn[T, E, V] fold(self : Result[T, E], ok : (T) -> V, err : (E) -> V) -> V {
   match self {
     Ok(value) => ok(value)
     Err(error) => err(error)
@@ -264,11 +264,11 @@ pub fn fold[T, E, V](self : Result[T, E], ok : (T) -> V, err : (E) -> V) -> V {
 ///|
 test "fold" {
   let x : Result[Int, String] = Ok(6)
-  let y = fold(x, fn(v : Int) -> Int { v * 7 }, fn(_e : String) -> Int { 0 })
+  let y = x.fold(fn(v : Int) -> Int { v * 7 }, fn(_e : String) -> Int { 0 })
   let z : Result[Int, String] = Err("error")
-  let w = fold(z, fn(v : Int) -> Int { v * 7 }, fn(_e : String) -> Int { 0 })
-  assert_eq!(y, 42)
-  assert_eq!(w, 0)
+  let w = z.fold(fn(v : Int) -> Int { v * 7 }, fn(_e : String) -> Int { 0 })
+  assert_eq(y, 42)
+  assert_eq(w, 0)
 }
 
 ///|
@@ -281,9 +281,9 @@ test "fold" {
 /// ```
 /// let x: Result[Int, String] = Ok(6)
 /// let y = x.to_option()
-/// assert_eq!(y, Some(6))
+/// assert_eq(y, Some(6))
 /// ```
-pub fn to_option[T, E](self : Result[T, E]) -> T? {
+pub fn[T, E] to_option(self : Result[T, E]) -> T? {
   match self {
     Ok(value) => Some(value)
     Err(_) => None
@@ -294,10 +294,10 @@ pub fn to_option[T, E](self : Result[T, E]) -> T? {
 test "to_option" {
   let x : Result[Int, String] = Ok(6)
   let y : Result[Int, String] = Err("error")
-  let z = to_option(x)
-  let w = to_option(y)
-  assert_eq!(z, Some(6))
-  assert_eq!(w, None)
+  let z = x.to_option()
+  let w = y.to_option()
+  assert_eq(z, Some(6))
+  assert_eq(w, None)
 }
 
 ///|
@@ -319,18 +319,18 @@ test "compare" {
   let ok2 = Result::Ok(2)
   let err1 = Result::Err(1)
   let err2 = Result::Err(2)
-  assert_eq!(0, ok1.compare(ok1))
-  assert_eq!(0, err2.compare(Result::Err(2)))
-  assert_eq!(-1, ok1.compare(ok2))
-  assert_eq!(1, ok2.compare(ok1))
-  assert_eq!(-1, err1.compare(err2))
-  assert_eq!(1, err2.compare(err1))
-  assert_eq!(-1, ok2.compare(err1))
-  assert_eq!(1, err1.compare(ok2))
+  assert_eq(0, ok1.compare(ok1))
+  assert_eq(0, err2.compare(Result::Err(2)))
+  assert_eq(-1, ok1.compare(ok2))
+  assert_eq(1, ok2.compare(ok1))
+  assert_eq(-1, err1.compare(err2))
+  assert_eq(1, err2.compare(err1))
+  assert_eq(-1, ok2.compare(err1))
+  assert_eq(1, err1.compare(ok2))
 }
 
 ///|
-pub fn unwrap[T, E](self : Result[T, E]) -> T {
+pub fn[T, E] unwrap(self : Result[T, E]) -> T {
   match self {
     Ok(x) => x
     Err(_) => abort("called `Result::unwrap()` on an `Err` value")
@@ -352,7 +352,7 @@ pub fn unwrap[T, E](self : Result[T, E]) -> T {
 /// ```moonbit
 /// test "unwrap_err" {
 ///   let err : Result[Int, String] = Err("error message")
-///   inspect!(err.unwrap_err(), content="error message")
+///   inspect(err.unwrap_err(), content="error message")
 /// }
 ///
 /// test "panic unwrap_err/ok" {
@@ -361,7 +361,7 @@ pub fn unwrap[T, E](self : Result[T, E]) -> T {
 ///
 /// }
 /// ```
-pub fn unwrap_err[T, E](self : Result[T, E]) -> E {
+pub fn[T, E] unwrap_err(self : Result[T, E]) -> E {
   match self {
     Ok(_) => abort("called `Result::unwrap_err()` on an `Ok` value")
     Err(e) => e
@@ -371,14 +371,14 @@ pub fn unwrap_err[T, E](self : Result[T, E]) -> E {
 ///|
 test "show" {
   let ok : Result[_, String] = Ok("hello")
-  inspect!(
+  inspect(
     ok,
     content=
       #|Ok("hello")
     ,
   )
   let err : Result[String, _] = Err("world")
-  inspect!(
+  inspect(
     err,
     content=
       #|Err("world")
@@ -387,7 +387,7 @@ test "show" {
 }
 
 ///|
-pub fn unwrap_or_error[T, E : Error](self : Result[T, E]) -> T!E {
+pub fn[T, E : Error] unwrap_or_error(self : Result[T, E]) -> T!E {
   match self {
     Ok(x) => x
     Err(e) => raise e
@@ -396,13 +396,12 @@ pub fn unwrap_or_error[T, E : Error](self : Result[T, E]) -> T!E {
 
 ///|
 test "unwrap exn" {
-  (try {
-    (Err(Failure("This is serious")) : Result[Unit, Failure]).unwrap_or_error!()
-    |> Ok
-  } catch {
+  (try
+    (Err(Failure("This is serious")) : Result[Unit, Failure]).unwrap_or_error()
+    |> Ok catch {
     Failure(msg) => Err(msg)
   })
-  |> inspect!(
+  |> inspect(
     content=
       #|Err("This is serious")
     ,
@@ -410,32 +409,32 @@ test "unwrap exn" {
 }
 
 ///|
-pub fn wrap0[T, E : Error](f~ : () -> T!E) -> Result[T, E] {
-  try {
-    f!() |> Ok
-  } catch {
+#deprecated("use try? instead")
+#coverage.skip
+pub fn[T, E : Error] wrap0(f~ : () -> T!E) -> Result[T, E] {
+  try f() |> Ok catch {
     e => Err(e)
   }
 }
 
 ///|
-pub fn wrap1[T, A, E : Error](f~ : (A) -> T!E, a : A) -> Result[T, E] {
-  try {
-    f!(a) |> Ok
-  } catch {
+#deprecated("use try? instead")
+#coverage.skip
+pub fn[T, A, E : Error] wrap1(f~ : (A) -> T!E, a : A) -> Result[T, E] {
+  try f(a) |> Ok catch {
     e => Err(e)
   }
 }
 
 ///|
-pub fn wrap2[T, A, B, E : Error](
+#deprecated("use try? instead")
+#coverage.skip
+pub fn[T, A, B, E : Error] wrap2(
   f~ : (A, B) -> T!E,
   a : A,
   b : B
 ) -> Result[T, E] {
-  try {
-    f!(a, b) |> Ok
-  } catch {
+  try f(a, b) |> Ok catch {
     e => Err(e)
   }
 }

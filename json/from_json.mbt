@@ -22,15 +22,15 @@ pub(open) trait FromJson {
 }
 
 ///|
-pub fn from_json[T : FromJson](
+pub fn[T : FromJson] from_json(
   json : Json,
   path~ : JsonPath = Root
 ) -> T!JsonDecodeError {
-  FromJson::from_json!(json, path)
+  FromJson::from_json(json, path)
 }
 
 ///|
-fn decode_error[T](path : JsonPath, msg : String) -> T!JsonDecodeError {
+fn[T] decode_error(path : JsonPath, msg : String) -> T!JsonDecodeError {
   raise JsonDecodeError((path, msg))
 }
 
@@ -39,14 +39,14 @@ pub impl FromJson for Bool with from_json(json, path) {
   match json {
     true => true
     false => false
-    _ => decode_error!(path, "Bool::from_json: expected boolean")
+    _ => decode_error(path, "Bool::from_json: expected boolean")
   }
 }
 
 ///|
 pub impl FromJson for Int with from_json(json, path) {
   guard json is Number(n) else {
-    decode_error!(path, "Int::from_json: expected number")
+    decode_error(path, "Int::from_json: expected number")
   }
   n.to_int()
 }
@@ -54,21 +54,19 @@ pub impl FromJson for Int with from_json(json, path) {
 ///|
 pub impl FromJson for Int64 with from_json(json, path) {
   guard json is String(str) else {
-    decode_error!(
+    decode_error(
       path, "Int64::from_json: expected number in string representation",
     )
   }
-  try {
-    @strconv.parse_int64!(str)
-  } catch {
-    error => decode_error!(path, "Int64::from_json: parsing failure \{error}")
+  try @strconv.parse_int64(str) catch {
+    error => decode_error(path, "Int64::from_json: parsing failure \{error}")
   }
 }
 
 ///|
 pub impl FromJson for UInt with from_json(json, path) {
   guard json is Number(n) else {
-    decode_error!(path, "UInt::from_json: expected number")
+    decode_error(path, "UInt::from_json: expected number")
   }
   n.to_uint()
 }
@@ -76,21 +74,19 @@ pub impl FromJson for UInt with from_json(json, path) {
 ///|
 pub impl FromJson for UInt64 with from_json(json, path) {
   guard json is String(str) else {
-    decode_error!(
+    decode_error(
       path, "UInt64::from_json: expected number in string representation",
     )
   }
-  try {
-    @strconv.parse_uint64!(str)
-  } catch {
-    error => decode_error!(path, "UInt64::from_json: parsing failure \{error}")
+  try @strconv.parse_uint64(str) catch {
+    error => decode_error(path, "UInt64::from_json: parsing failure \{error}")
   }
 }
 
 ///|
 pub impl FromJson for Double with from_json(json, path) {
   guard json is Number(n) else {
-    decode_error!(path, "Double::from_json: expected number")
+    decode_error(path, "Double::from_json: expected number")
   }
   n
 }
@@ -98,7 +94,7 @@ pub impl FromJson for Double with from_json(json, path) {
 ///|
 pub impl FromJson for String with from_json(json, path) {
   guard json is String(a) else {
-    decode_error!(path, "String::from_json: expected string")
+    decode_error(path, "String::from_json: expected string")
   }
   a
 }
@@ -106,7 +102,7 @@ pub impl FromJson for String with from_json(json, path) {
 ///|
 pub impl FromJson for @string.View with from_json(json, path) {
   guard json is String(a) else {
-    decode_error!(path, "View::from_json: expected string")
+    decode_error(path, "View::from_json: expected string")
   }
   a[:]
 }
@@ -114,7 +110,7 @@ pub impl FromJson for @string.View with from_json(json, path) {
 ///|
 pub impl FromJson for Char with from_json(json, path) {
   guard json is String(a) else {
-    decode_error!(path, "Char::from_json: expected string")
+    decode_error(path, "Char::from_json: expected string")
   }
   let len = a.length()
   if len == 1 {
@@ -122,54 +118,46 @@ pub impl FromJson for Char with from_json(json, path) {
   } else if len == 2 {
     let c1 = a.unsafe_charcode_at(0)
     let c2 = a.unsafe_charcode_at(1)
-    if c1 >= 0xD800 && c1 <= 0xDBFF && c2 >= 0xDC00 && c2 <= 0xDFFF {
+    if c1 is (0xD800..=0xDBFF) && c2 is (0xDC00..=0xDFFF) {
       let c3 = (c1 << 10) + c2 - 0x35fdc00
       c3.unsafe_to_char()
     } else {
-      decode_error!(path, "Char::from_json: invalid surrogate pair")
+      decode_error(path, "Char::from_json: invalid surrogate pair")
     }
   } else {
-    decode_error!(path, "Char::from_json: expected single character")
+    decode_error(path, "Char::from_json: expected single character")
   }
 }
 
 ///|
 pub impl[X : FromJson] FromJson for Array[X] with from_json(json, path) {
   guard json is Array(a) else {
-    decode_error!(path, "Array::from_json: expected array")
+    decode_error(path, "Array::from_json: expected array")
   }
-  let res : Array[X] = Array::new(capacity=a.length())
-  let idx = Index(path, index=0)
-  for i in 0..<a.length() {
-    // TODO: it should be assert here
-    if idx is (Index(_) as idx) {
-      idx.index = i
-    }
-    res.push(FromJson::from_json!(a[i], idx))
-  }
-  res
+  guard Index(path, index=0) is (Index(_) as new_path)
+  a.mapi(fn(i, x) {
+    new_path.index = i
+    FromJson::from_json(x, new_path)
+  })
 }
 
 ///|
 pub impl[X : FromJson] FromJson for FixedArray[X] with from_json(json, path) {
   guard json is Array(a) else {
-    decode_error!(path, "FixedArray::from_json: expected array")
+    decode_error(path, "FixedArray::from_json: expected array")
   }
   let len = a.length()
   if len == 0 {
     return []
   }
-  let idx = Index(path, index=0)
-  let res : FixedArray[X] = FixedArray::make(
+  guard Index(path, index=0) is (Index(_) as new_path)
+  let res = FixedArray::make(
     len,
-    FromJson::from_json!(a[0], idx),
+    FromJson::from_json(a.unsafe_get(0), new_path),
   )
   for i in 1..<len {
-    // TODO: it should be assert here
-    if idx is (Index(_) as idx) {
-      idx.index = i
-    }
-    res[i] = FromJson::from_json!(a[i], idx)
+    new_path.index = i
+    res[i] = FromJson::from_json(a.unsafe_get(i), new_path)
   }
   res
 }
@@ -179,19 +167,17 @@ pub impl[V : FromJson] FromJson for Map[String, V] with from_json(json, path) {
   // Note in theory, we can make it more general like
   // Map[K : FromString, V : FromJson]
   // but currently we don't have FromString 
-  // Here ToJSON we have 
+  // Here ToJson we have 
   // Map[K : Show, V : ToJson]
   guard json is Object(obj) else {
-    decode_error!(path, "Map::from_json: expected object")
+    decode_error(path, "Map::from_json: expected object")
   }
   let res = {}
-  let key = Key(path, key="")
+  guard Key(path, key="") is (Key(_) as new_path)
+  // Map::map_with_key
   for k, v in obj {
-    // TODO: it should be assert here
-    if key is (Key(_) as k0) {
-      k0.key = k
-    }
-    res[k] = FromJson::from_json!(v, key)
+    new_path.key = k
+    res[k] = FromJson::from_json(v, new_path)
   }
   res
 }
@@ -200,8 +186,8 @@ pub impl[V : FromJson] FromJson for Map[String, V] with from_json(json, path) {
 pub impl[T : FromJson] FromJson for T? with from_json(json, path) {
   match json {
     Null => None
-    Array([value]) => Some(FromJson::from_json!(value, path.add_index(0)))
-    _ => decode_error!(path, "Option::from_json: expected array or null")
+    Array([value]) => Some(FromJson::from_json(value, path.add_index(0)))
+    _ => decode_error(path, "Option::from_json: expected array or null")
   }
 }
 
@@ -211,16 +197,16 @@ pub impl[Ok : FromJson, Err : FromJson] FromJson for Result[Ok, Err] with from_j
   path
 ) {
   guard json is Object(obj) else {
-    decode_error!(path, "Result::from_json: expected object")
+    decode_error(path, "Result::from_json: expected object")
   }
   if obj.size() != 1 {
-    decode_error!(path, "Result::from_json: expected object with one field")
+    decode_error(path, "Result::from_json: expected object with one field")
   }
   match obj {
-    { "Ok": ok, .. } => Ok(FromJson::from_json!(ok, path.add_key("Ok")))
-    { "Err": err, .. } => Err(FromJson::from_json!(err, path.add_key("Err")))
+    { "Ok": ok, .. } => Ok(FromJson::from_json(ok, path.add_key("Ok")))
+    { "Err": err, .. } => Err(FromJson::from_json(err, path.add_key("Err")))
     _ =>
-      decode_error!(
+      decode_error(
         path, "Result::from_json: expected object with Ok or Err field",
       )
   }
@@ -229,9 +215,8 @@ pub impl[Ok : FromJson, Err : FromJson] FromJson for Result[Ok, Err] with from_j
 ///|
 pub impl FromJson for Unit with from_json(json, path) {
   guard json is Null else {
-    decode_error!(path, "Unit::from_json: expected null")
+    decode_error(path, "Unit::from_json: expected null")
   }
-
 }
 
 ///|

@@ -94,15 +94,6 @@ fn is_empty(self : StringSlice) -> Bool {
 }
 
 ///|
-fn StringSlice::to_string(self : StringSlice) -> String {
-  let buf = StringBuilder::new(size_hint=self.length())
-  for i in 0..<self.length() {
-    buf.write_char(self[i])
-  }
-  buf.to_string()
-}
-
-///|
 fn prefix_eq_ignore_case(self : StringSlice, s2 : String) -> Bool {
   for i = 0; i < s2.length() && i < self.length(); i = i + 1 {
     let c1 = self[i]
@@ -126,7 +117,7 @@ fn lower(c : Char) -> Char {
 ///|
 /// Returns the accumulated value, the slice left, and the number of digits consumed.
 /// It ignores underscore and stops when a non-digit character is found.
-fn fold_digits[T](
+fn[T] fold_digits(
   self : StringSlice,
   init : T,
   f : (Int, T) -> T
@@ -148,15 +139,15 @@ fn fold_digits[T](
 
 ///|
 test "eq_ignore_case" {
-  assert_true!(prefix_eq_ignore_case(full_slice("nan"), "NaN"))
-  assert_true!(prefix_eq_ignore_case(full_slice("inf"), "inf"))
-  assert_true!(prefix_eq_ignore_case(full_slice("inf"), "Inf"))
+  assert_true(full_slice("nan").prefix_eq_ignore_case("NaN"))
+  assert_true(full_slice("inf").prefix_eq_ignore_case("inf"))
+  assert_true(full_slice("inf").prefix_eq_ignore_case("Inf"))
 }
 
 ///|
 test "lower" {
-  assert_eq!(lower('Z'), 'z')
-  assert_eq!(lower('A'), 'a')
-  assert_eq!(lower('a'), 'a')
-  assert_eq!(lower('z'), 'z')
+  assert_eq(lower('Z'), 'z')
+  assert_eq(lower('A'), 'a')
+  assert_eq(lower('a'), 'a')
+  assert_eq(lower('z'), 'z')
 }

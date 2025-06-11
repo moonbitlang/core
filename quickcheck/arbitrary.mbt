@@ -60,7 +60,7 @@ pub impl Arbitrary for Bytes with arbitrary(size, rs) {
     Bytes::new(0)
   } else {
     let sz = rs.next_positive_int() % size
-    Bytes::makei(sz, fn(_) { Byte::arbitrary(size, rs) })
+    Bytes::makei(sz, fn(_) { Arbitrary::arbitrary(size, rs) })
   }
 }
 
@@ -103,7 +103,8 @@ pub impl Arbitrary for String with arbitrary(size, rs) {
   let len = if size == 0 { 0 } else { rs.next_positive_int() % size }
   let mut s = ""
   for i in 0..<len {
-    s = s + Char::arbitrary(i, rs).to_string()
+    let c : Char = Arbitrary::arbitrary(i, rs)
+    s = s + c.to_string()
   }
   s
 }
@@ -123,7 +124,7 @@ pub impl[X : Arbitrary] Arbitrary for Iter[X] with arbitrary(size, rs) {
 }
 
 ///|
-pub fn gen[T : Arbitrary](size? : Int, state? : @splitmix.RandomState) -> T {
+pub fn[T : Arbitrary] gen(size? : Int, state? : @splitmix.RandomState) -> T {
   let size = match size {
     None => 0
     Some(x) => x

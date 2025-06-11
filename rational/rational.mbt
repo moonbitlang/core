@@ -116,13 +116,13 @@ pub fn reciprocal(self : T) -> T {
 
 ///|
 /// Returns the negation of a rational number.
-pub fn neg(self : T) -> T {
+pub fn T::neg(self : T) -> T {
   new_unchecked(-self.numerator, self.denominator)
 }
 
 ///|
 /// Returns the absolute value of a rational number.
-pub fn abs(self : T) -> T {
+pub fn T::abs(self : T) -> T {
   new_unchecked(self.numerator.abs(), self.denominator.abs())
 }
 
@@ -148,12 +148,12 @@ pub fn to_double(self : T) -> Double {
 }
 
 ///|
-fn nan_error[T]() -> T!RationalError {
+fn[T] nan_error() -> T!RationalError {
   raise RationalError("Rational::from_double: cannot convert NaN")
 }
 
 ///|
-fn overflow_error[T]() -> T!RationalError {
+fn[T] overflow_error() -> T!RationalError {
   raise RationalError("Rational::from_double: overflow")
 }
 
@@ -183,7 +183,7 @@ pub fn from_double(value : Double) -> T!RationalError {
   // continued fraction algorithm
   // Ported from https://github.com/rust-num/num
   if value.is_nan() {
-    nan_error!()
+    nan_error()
   }
   let sign = if value < 0.0 { -1L } else { 1L }
   let value = value.abs()
@@ -200,7 +200,7 @@ pub fn from_double(value : Double) -> T!RationalError {
 
   // Overflow
   if q > t_max_f {
-    overflow_error!()
+    overflow_error()
   }
   for i in 0..<max_iteration {
     if not(q >= -9223372036854775808.0 && q < 9223372036854775808.0) {
@@ -246,7 +246,7 @@ pub fn from_double(value : Double) -> T!RationalError {
   }
   // Overflow
   if d1 == 0L {
-    overflow_error!()
+    overflow_error()
   }
   match new(sign * n1, d1) {
     Some(r) => r
@@ -256,7 +256,7 @@ pub fn from_double(value : Double) -> T!RationalError {
 
 ///|
 /// Ceils a rational number towards positive infinity.
-pub fn ceil(self : T) -> Int64 {
+pub fn T::ceil(self : T) -> Int64 {
   let sign = if self.numerator < 0L { -1L } else { 1L }
   let quotient = self.numerator / self.denominator
   if self.numerator % self.denominator == 0L {
@@ -268,7 +268,7 @@ pub fn ceil(self : T) -> Int64 {
 
 ///|
 /// Floors a rational number towards negative infinity.
-pub fn floor(self : T) -> Int64 {
+pub fn T::floor(self : T) -> Int64 {
   let sign = if self.numerator < 0L { -1L } else { 1L }
   let quotient = self.numerator / self.denominator
   if self.numerator % self.denominator == 0L {
@@ -280,7 +280,7 @@ pub fn floor(self : T) -> Int64 {
 
 ///|
 /// Rounds a rational number towards zero.
-pub fn trunc(self : T) -> Int64 {
+pub fn T::trunc(self : T) -> Int64 {
   if self.numerator < 0L {
     -(-self.numerator / self.denominator)
   } else {
@@ -328,39 +328,42 @@ pub fn is_integer(self : T) -> Bool {
 }
 
 ///|
+pub fnalias T::(neg, abs, ceil, floor, trunc)
+
+///|
 test "op_add" {
   // 1/2 + 1/3 = 5/6
   let a = new_unchecked(1L, 2L)
   let b = new_unchecked(1L, 3L)
   let c = a + b
-  assert_eq!(c.numerator, 5L)
-  assert_eq!(c.denominator, 6L)
+  assert_eq(c.numerator, 5L)
+  assert_eq(c.denominator, 6L)
 
   // 1/2 + 1/2 = 1
   let a = new_unchecked(1L, 2L)
   let b = new_unchecked(1L, 2L)
   let c = a + b
-  assert_eq!(c.numerator, 1L)
-  assert_eq!(c.denominator, 1L)
+  assert_eq(c.numerator, 1L)
+  assert_eq(c.denominator, 1L)
 
   // 1/2 + 1/6 = 2/3
   let a = new_unchecked(1L, 2L)
   let b = new_unchecked(1L, 6L)
   let c = a + b
-  assert_eq!(c.numerator, 2L)
+  assert_eq(c.numerator, 2L)
 
   // -1/2 + 1/2 = 0
   let a = new_unchecked(-1L, 2L)
   let b = new_unchecked(1L, 2L)
   let c = a + b
-  assert_eq!(c.numerator, 0L)
+  assert_eq(c.numerator, 0L)
 
   // -1/2 + -1/2 = -1
   let a = new_unchecked(-1L, 2L)
   let b = new_unchecked(-1L, 2L)
   let c = a + b
-  assert_eq!(c.numerator, -1L)
-  assert_eq!(c.denominator, 1L)
+  assert_eq(c.numerator, -1L)
+  assert_eq(c.denominator, 1L)
 }
 
 ///|
@@ -369,34 +372,34 @@ test "op_sub" {
   let a = new_unchecked(1L, 2L)
   let b = new_unchecked(1L, 3L)
   let c = a - b
-  assert_eq!(c.numerator, 1L)
-  assert_eq!(c.denominator, 6L)
+  assert_eq(c.numerator, 1L)
+  assert_eq(c.denominator, 6L)
 
   // 1/2 - 1/2 = 0
   let a = new_unchecked(1L, 2L)
   let b = new_unchecked(1L, 2L)
   let c = a - b
-  assert_eq!(c.numerator, 0L)
+  assert_eq(c.numerator, 0L)
 
   // 1/2 - 1/6 = 1/3
   let a = new_unchecked(1L, 2L)
   let b = new_unchecked(1L, 6L)
   let c = a - b
-  assert_eq!(c.numerator, 1L)
-  assert_eq!(c.denominator, 3L)
+  assert_eq(c.numerator, 1L)
+  assert_eq(c.denominator, 3L)
 
   // -1/2 - 1/2 = -1
   let a = new_unchecked(-1L, 2L)
   let b = new_unchecked(1L, 2L)
   let c = a - b
-  assert_eq!(c.numerator, -1L)
-  assert_eq!(c.denominator, 1L)
+  assert_eq(c.numerator, -1L)
+  assert_eq(c.denominator, 1L)
 
   // -1/2 - -1/2 = 0
   let a = new_unchecked(-1L, 2L)
   let b = new_unchecked(-1L, 2L)
   let c = a - b
-  assert_eq!(c.numerator, 0L)
+  assert_eq(c.numerator, 0L)
 }
 
 ///|
@@ -405,22 +408,22 @@ test "op_mul" {
   let a = new_unchecked(1L, 2L)
   let b = new_unchecked(2L, 3L)
   let c = a * b
-  assert_eq!(c.numerator, 1L)
-  assert_eq!(c.denominator, 3L)
+  assert_eq(c.numerator, 1L)
+  assert_eq(c.denominator, 3L)
 
   // -4/3 * 3/4 = -1
   let a = new_unchecked(-4L, 3L)
   let b = new_unchecked(3L, 4L)
   let c = a * b
-  assert_eq!(c.numerator, -1L)
-  assert_eq!(c.denominator, 1L)
+  assert_eq(c.numerator, -1L)
+  assert_eq(c.denominator, 1L)
 
   // 1024/42 * 0 = 0
   let a = new_unchecked(1024L, 42L)
   let b = new_unchecked(0L, 1L)
   let c = a * b
-  assert_eq!(c.numerator, 0L)
-  assert_eq!(c.denominator, 1L)
+  assert_eq(c.numerator, 0L)
+  assert_eq(c.denominator, 1L)
 }
 
 ///|
@@ -429,37 +432,37 @@ test "op_div" {
   let a = new_unchecked(1L, 2L)
   let b = new_unchecked(2L, 3L)
   let c = a / b
-  assert_eq!(c.numerator, 3L)
-  assert_eq!(c.denominator, 4L)
+  assert_eq(c.numerator, 3L)
+  assert_eq(c.denominator, 4L)
 
   // 1/2 / -2/3 = -3/4
   let a = new_unchecked(1L, 2L)
   let b = new_unchecked(-2L, 3L)
   let c = a / b
-  assert_eq!(c.numerator, -3L)
-  assert_eq!(c.denominator, 4L)
+  assert_eq(c.numerator, -3L)
+  assert_eq(c.denominator, 4L)
 
   // 0 / 1 = 0
   let a = new_unchecked(0L, 1L)
   let b = new_unchecked(1L, 1L)
   let c = a / b
-  assert_eq!(c.numerator, 0L)
-  assert_eq!(c.denominator, 1L)
+  assert_eq(c.numerator, 0L)
+  assert_eq(c.denominator, 1L)
 }
 
 ///|
 test "reciprocal" {
   // 1/2 -> 2/1
   let a = new_unchecked(1L, 2L)
-  let b = reciprocal(a)
-  assert_eq!(b.numerator, 2L)
-  assert_eq!(b.denominator, 1L)
+  let b = a.reciprocal()
+  assert_eq(b.numerator, 2L)
+  assert_eq(b.denominator, 1L)
 
   // -1/2 -> -2/1
   let a = new_unchecked(-1L, 2L)
-  let b = reciprocal(a)
-  assert_eq!(b.numerator, -2L)
-  assert_eq!(b.denominator, 1L)
+  let b = a.reciprocal()
+  assert_eq(b.numerator, -2L)
+  assert_eq(b.denominator, 1L)
 }
 
 ///|
@@ -467,14 +470,14 @@ test "neg" {
   // 1/2 -> -1/2
   let a = new_unchecked(1L, 2L)
   let b = neg(a)
-  assert_eq!(b.numerator, -1L)
-  assert_eq!(b.denominator, 2L)
+  assert_eq(b.numerator, -1L)
+  assert_eq(b.denominator, 2L)
 
   // -1/2 -> 1/2
   let a = new_unchecked(-1L, 2L)
   let b = neg(a)
-  assert_eq!(b.numerator, 1L)
-  assert_eq!(b.denominator, 2L)
+  assert_eq(b.numerator, 1L)
+  assert_eq(b.denominator, 2L)
 }
 
 ///|
@@ -482,14 +485,14 @@ test "abs" {
   // 1/2 -> 1/2
   let a = new_unchecked(1L, 2L)
   let b = abs(a)
-  assert_eq!(b.numerator, 1L)
-  assert_eq!(b.denominator, 2L)
+  assert_eq(b.numerator, 1L)
+  assert_eq(b.denominator, 2L)
 
   // -1/2 -> 1/2
   let a = new_unchecked(-1L, 2L)
   let b = abs(a)
-  assert_eq!(b.numerator, 1L)
-  assert_eq!(b.denominator, 2L)
+  assert_eq(b.numerator, 1L)
+  assert_eq(b.denominator, 2L)
 }
 
 ///|
@@ -497,12 +500,12 @@ test "to_double" {
   // 1/2 -> 0.5
   let a = new_unchecked(1L, 2L)
   let b = a.to_double()
-  assert_eq!(b, 0.5)
+  assert_eq(b, 0.5)
 
   // -1/2 -> -0.5
   let a = new_unchecked(-1L, 2L)
   let b = a.to_double()
-  assert_eq!(b, -0.5)
+  assert_eq(b, -0.5)
 }
 
 ///|
@@ -510,22 +513,22 @@ test "ceil" {
   // 1/2 -> 1
   let a = new_unchecked(1L, 2L)
   let b = ceil(a)
-  assert_eq!(b, 1L)
+  assert_eq(b, 1L)
 
   // -1/2 -> 0
   let a = new_unchecked(-1L, 2L)
   let b = ceil(a)
-  assert_eq!(b, 0L)
+  assert_eq(b, 0L)
 
   // -2/2 -> -1
   let a = new_unchecked(-2L, 2L)
   let b = ceil(a)
-  assert_eq!(b, -1L)
+  assert_eq(b, -1L)
 
   // 2/2 -> 1
   let a = new_unchecked(2L, 2L)
   let b = ceil(a)
-  assert_eq!(b, 1L)
+  assert_eq(b, 1L)
 }
 
 ///|
@@ -533,22 +536,22 @@ test "floor" {
   // 1/2 -> 0
   let a = new_unchecked(1L, 2L)
   let b = floor(a)
-  assert_eq!(b, 0L)
+  assert_eq(b, 0L)
 
   // -1/2 -> -1
   let a = new_unchecked(-1L, 2L)
   let b = floor(a)
-  assert_eq!(b, -1L)
+  assert_eq(b, -1L)
 
   // -2/2 -> -1
   let a = new_unchecked(-2L, 2L)
   let b = floor(a)
-  assert_eq!(b, -1L)
+  assert_eq(b, -1L)
 
   // 2/2 -> 1
   let a = new_unchecked(2L, 2L)
   let b = floor(a)
-  assert_eq!(b, 1L)
+  assert_eq(b, 1L)
 }
 
 ///|
@@ -556,39 +559,39 @@ test "trunc" {
   // 1/2 -> 0
   let a = new_unchecked(1L, 2L)
   let b = trunc(a)
-  assert_eq!(b, 0L)
+  assert_eq(b, 0L)
 
   // -1/2 -> 0
   let a = new_unchecked(-1L, 2L)
   let b = trunc(a)
-  assert_eq!(b, 0L)
+  assert_eq(b, 0L)
 }
 
 ///|
 test "fract" {
   // 1/2 -> 1/2
   let a = new_unchecked(1L, 2L)
-  let b = fract(a)
-  assert_eq!(b.numerator, 1L)
-  assert_eq!(b.denominator, 2L)
+  let b = a.fract()
+  assert_eq(b.numerator, 1L)
+  assert_eq(b.denominator, 2L)
 
   // -1/2 -> -1/2
   let a = new_unchecked(-1L, 2L)
-  let b = fract(a)
-  assert_eq!(b.numerator, -1L)
-  assert_eq!(b.denominator, 2L)
+  let b = a.fract()
+  assert_eq(b.numerator, -1L)
+  assert_eq(b.denominator, 2L)
 
   // 3/2 -> 1/2
   let a = new_unchecked(3L, 2L)
-  let b = fract(a)
-  assert_eq!(b.numerator, 1L)
-  assert_eq!(b.denominator, 2L)
+  let b = a.fract()
+  assert_eq(b.numerator, 1L)
+  assert_eq(b.denominator, 2L)
 
   // -3/2 -> -1/2
   let a = new_unchecked(-3L, 2L)
-  let b = fract(a)
-  assert_eq!(b.numerator, -1L)
-  assert_eq!(b.denominator, 2L)
+  let b = a.fract()
+  assert_eq(b.numerator, -1L)
+  assert_eq(b.denominator, 2L)
 }
 
 ///|
@@ -596,36 +599,36 @@ test "to_string" {
   // 1/2 -> "1/2"
   let a = new_unchecked(1L, 2L)
   let b = a.to_string()
-  assert_eq!(b, "1/2")
+  assert_eq(b, "1/2")
 
   // 4/4 -> "1"
   let a = new_unchecked(4L, 4L)
   let b = a.to_string()
-  assert_eq!(b, "1")
+  assert_eq(b, "1")
 
   // 0/1 -> "0"
   let a = new_unchecked(0L, 1L)
   let b = a.to_string()
-  assert_eq!(b, "0")
+  assert_eq(b, "0")
 }
 
 ///|
 test "is_integer" {
   // 1/2 is not an integer
   let a = new_unchecked(1L, 2L)
-  assert_false!(a.is_integer())
+  assert_false(a.is_integer())
 
   // 1 is an integer
   let a = new_unchecked(1L, 1L)
-  assert_true!(a.is_integer())
+  assert_true(a.is_integer())
 
   // 0 is an integer
   let a = new_unchecked(0L, 1L)
-  assert_true!(a.is_integer())
+  assert_true(a.is_integer())
 
   // -1 is an integer
   let a = new_unchecked(-1L, 1L)
-  assert_true!(a.is_integer())
+  assert_true(a.is_integer())
 }
 
 ///|
@@ -633,46 +636,46 @@ test "compare" {
   // 1/2 < 2/3
   let a = new_unchecked(1L, 2L)
   let b = new_unchecked(2L, 3L)
-  assert_eq!(a.compare(b), -1)
-  assert_true!(a < b)
-  assert_true!(a <= b)
-  assert_true!(a != b)
+  assert_eq(a.compare(b), -1)
+  assert_true(a < b)
+  assert_true(a <= b)
+  assert_true(a != b)
 
   // -1/2 > -2/3
   let a = new_unchecked(-1L, 2L)
   let b = new_unchecked(-2L, 3L)
-  assert_eq!(a.compare(b), 1)
-  assert_true!(a > b)
-  assert_true!(a >= b)
-  assert_true!(a != b)
+  assert_eq(a.compare(b), 1)
+  assert_true(a > b)
+  assert_true(a >= b)
+  assert_true(a != b)
 
   // 1/2 == 1/2
   let a = new_unchecked(1L, 2L)
   let b = new_unchecked(1L, 2L)
-  assert_eq!(a.compare(b), 0)
-  assert_true!(a == b)
+  assert_eq(a.compare(b), 0)
+  assert_true(a == b)
 }
 
 ///|
 test "from_double normal case" {
-  let result = 0.5 |> @result.wrap1(f=from_double)
-  assert_eq!(result, Ok(new_unchecked(1L, 2L)))
+  let result = try? from_double(0.5)
+  assert_eq(result, Ok(new_unchecked(1L, 2L)))
 }
 
 ///|
 test "from_double edge case" {
-  let result = 9_223_372_036_800_000_000.0 |> @result.wrap1(f=from_double)
-  assert_eq!(result, Ok(new_unchecked(9_223_372_036_800_000_000L, 1L)))
+  let result = try? from_double(9_223_372_036_800_000_000.0)
+  assert_eq(result, Ok(new_unchecked(9_223_372_036_800_000_000L, 1L)))
 }
 
 ///|
 test "from_double normal case" {
-  let result = 0.5 |> @result.wrap1(f=from_double)
-  assert_eq!(result, Ok(new_unchecked(1L, 2L)))
+  let result = try? from_double(0.5)
+  assert_eq(result, Ok(new_unchecked(1L, 2L)))
 }
 
 ///|
 test "from_double edge case" {
-  let result = 9_223_372_036_800_000_000.0 |> @result.wrap1(f=from_double)
-  assert_eq!(result, Ok(new_unchecked(9_223_372_036_800_000_000L, 1L)))
+  let result = try? from_double(9_223_372_036_800_000_000.0)
+  assert_eq(result, Ok(new_unchecked(9_223_372_036_800_000_000L, 1L)))
 }

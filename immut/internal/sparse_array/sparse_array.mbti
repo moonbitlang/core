@@ -1,52 +1,48 @@
 package "moonbitlang/core/immut/internal/sparse_array"
 
 // Values
-fn add[X](SparseArray[X], Int, X) -> SparseArray[X]
+fn[X] add(SparseArray[X], Int, X) -> SparseArray[X]
 
-fn each[X](SparseArray[X], (X) -> Unit) -> Unit
+fn[X] each(SparseArray[X], (X) -> Unit) -> Unit
 
-fn empty[X]() -> SparseArray[X]
+fn[X] empty() -> SparseArray[X]
 
-fn has[X](SparseArray[X], Int) -> Bool
+fn[X] has(SparseArray[X], Int) -> Bool
 
-fn op_get[X](SparseArray[X], Int) -> X?
+fn[X] op_get(SparseArray[X], Int) -> X?
 
-fn replace[X](SparseArray[X], Int, X) -> SparseArray[X]
+fn[X] replace(SparseArray[X], Int, X) -> SparseArray[X]
 
-fn singleton[X](Int, X) -> SparseArray[X]
+fn[X] singleton(Int, X) -> SparseArray[X]
 
-fn size[X](SparseArray[X]) -> Int
-
-fn union[X](SparseArray[X], SparseArray[X], (X, X) -> X) -> SparseArray[X]
+fn[X] size(SparseArray[X]) -> Int
 
 // Types and methods
 pub(all) type Bitset UInt
-impl Bitset {
-  add(Self, Int) -> Self
-  difference(Self, Self) -> Self
-  has(Self, Int) -> Bool
-  index_of(Self, Int) -> Int
-  intersection(Self, Self) -> Self
-  iter(Self) -> Iter[Int]
-  remove(Self, Int) -> Self
-  size(Self) -> Int
-  union(Self, Self) -> Self
-}
+fn Bitset::add(Self, Int) -> Self
+fn Bitset::difference(Self, Self) -> Self
+fn Bitset::has(Self, Int) -> Bool
+fn Bitset::index_of(Self, Int) -> Int
+fn Bitset::intersection(Self, Self) -> Self
+fn Bitset::iter(Self) -> Iter[Int]
+fn Bitset::remove(Self, Int) -> Self
+fn Bitset::size(Self) -> Int
+fn Bitset::union(Self, Self) -> Self
 impl Eq for Bitset
 
 pub(all) struct SparseArray[X] {
   elem_info : Bitset
   data : FixedArray[X]
 }
-impl SparseArray {
-  add[X](Self[X], Int, X) -> Self[X]
-  each[X](Self[X], (X) -> Unit) -> Unit
-  has[X](Self[X], Int) -> Bool
-  op_get[X](Self[X], Int) -> X?
-  replace[X](Self[X], Int, X) -> Self[X]
-  size[X](Self[X]) -> Int
-  union[X](Self[X], Self[X], (X, X) -> X) -> Self[X]
-}
+fn[X] SparseArray::add(Self[X], Int, X) -> Self[X]
+fn[X] SparseArray::difference(Self[X], Self[X]) -> Self[X]
+fn[X] SparseArray::each(Self[X], (X) -> Unit) -> Unit
+fn[X] SparseArray::has(Self[X], Int) -> Bool
+fn[X] SparseArray::intersection(Self[X], Self[X], (X, X) -> X) -> Self[X]
+fn[X] SparseArray::op_get(Self[X], Int) -> X?
+fn[X] SparseArray::replace(Self[X], Int, X) -> Self[X]
+fn[X] SparseArray::size(Self[X]) -> Int
+fn[X] SparseArray::union(Self[X], Self[X], (X, X) -> X) -> Self[X]
 impl[X : Eq] Eq for SparseArray[X]
 
 // Type aliases

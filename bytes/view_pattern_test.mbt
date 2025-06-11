@@ -16,7 +16,7 @@
 test "View::pattern" {
   let view = b"\x01\x02\x03"[:]
   match view {
-    [0x01, 0x02, .. rest] => inspect!(rest, content="b\"\\x03\"")
+    [0x01, 0x02, .. rest] => inspect(rest, content="b\"\\x03\"")
     _ => abort("should not happen")
   }
 }

@@ -33,7 +33,7 @@ pub(all) enum Json {
 ///
 /// ```moonbit
 /// test "null" {
-///   inspect!(Json::null(), content="Null")
+///   inspect(Json::null(), content="Null")
 /// }
 /// ```
 pub fn Json::null() -> Json {
@@ -54,7 +54,7 @@ pub fn Json::null() -> Json {
 ///
 /// ```moonbit
 /// test "number" {
-///   inspect!(Json::number(3.14), content="Number(3.14)")
+///   inspect(Json::number(3.14), content="Number(3.14)")
 /// }
 /// ```
 pub fn Json::number(number : Double) -> Json {
@@ -74,7 +74,7 @@ pub fn Json::number(number : Double) -> Json {
 ///
 /// ```moonbit
 /// test "string" {
-///   inspect!(Json::string("hello"), content="String(\"hello\")")
+///   inspect(Json::string("hello"), content="String(\"hello\")")
 /// }
 /// ```
 pub fn Json::string(string : String) -> Json {
@@ -94,8 +94,8 @@ pub fn Json::string(string : String) -> Json {
 ///
 /// ```moonbit
 /// test "boolean" {
-///   inspect!(Json::boolean(true), content="True")
-///   inspect!(Json::boolean(false), content="False")
+///   inspect(Json::boolean(true), content="True")
+///   inspect(Json::boolean(false), content="False")
 /// }
 /// ```
 pub fn Json::boolean(boolean : Bool) -> Json {
@@ -120,7 +120,7 @@ pub fn Json::boolean(boolean : Bool) -> Json {
 /// ```moonbit
 /// test "array" {
 ///   let values : Array[Json] = [1.0, "hello"]
-///   inspect!(
+///   inspect(
 ///     Json::array(values),
 ///     content="Array([Number(1), String(\"hello\")])",
 ///   )
@@ -145,7 +145,7 @@ pub fn Json::array(array : Array[Json]) -> Json {
 /// ```moonbit
 /// test "object" {
 ///   let map : Map[String, Json] = { "name": "John", "age": 42.0 }
-///   inspect!(
+///   inspect(
 ///     Json::object(map),
 ///     content="Object({\"name\": String(\"John\"), \"age\": Number(42)})",
 ///   )
@@ -213,11 +213,6 @@ pub impl ToJson for Float with to_json(self : Float) -> Json {
 ///|
 pub impl ToJson for String with to_json(self : String) -> Json {
   String(self)
-}
-
-///|
-pub impl ToJson for Char with to_json(self : Char) -> Json {
-  String(self.to_string())
 }
 
 ///|

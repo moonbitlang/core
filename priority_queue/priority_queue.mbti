@@ -5,48 +5,46 @@ import(
 )
 
 // Values
-fn clear[A](T[A]) -> Unit
+fn[A] clear(T[A]) -> Unit
 
-fn copy[A](T[A]) -> T[A]
+fn[A] copy(T[A]) -> T[A]
 
-fn from_array[A : Compare](Array[A]) -> T[A]
+fn[A : Compare] from_array(Array[A]) -> T[A]
 
-fn from_iter[K : Compare](Iter[K]) -> T[K]
+fn[K : Compare] from_iter(Iter[K]) -> T[K]
 
-fn is_empty[A](T[A]) -> Bool
+fn[A] is_empty(T[A]) -> Bool
 
-fn iter[A : Compare](T[A]) -> Iter[A]
+fn[A : Compare] iter(T[A]) -> Iter[A]
 
-fn length[A](T[A]) -> Int
+fn[A] length(T[A]) -> Int
 
-fn new[A]() -> T[A]
+fn[A] new() -> T[A]
 
-fn of[A : Compare](FixedArray[A]) -> T[A]
+fn[A : Compare] of(FixedArray[A]) -> T[A]
 
-fn peek[A](T[A]) -> A?
+fn[A] peek(T[A]) -> A?
 
-fn pop[A : Compare](T[A]) -> A?
+fn[A : Compare] pop(T[A]) -> A?
 
-fn push[A : Compare](T[A], A) -> Unit
+fn[A : Compare] push(T[A], A) -> Unit
 
-fn to_array[A : Compare](T[A]) -> Array[A]
+fn[A : Compare] to_array(T[A]) -> Array[A]
 
-fn unsafe_pop[A : Compare](T[A]) -> Unit
+fn[A : Compare] unsafe_pop(T[A]) -> Unit
 
 // Types and methods
 type T[A]
-impl T {
-  clear[A](Self[A]) -> Unit
-  copy[A](Self[A]) -> Self[A]
-  is_empty[A](Self[A]) -> Bool
-  iter[A : Compare](Self[A]) -> Iter[A]
-  length[A](Self[A]) -> Int
-  peek[A](Self[A]) -> A?
-  pop[A : Compare](Self[A]) -> A?
-  push[A : Compare](Self[A], A) -> Unit
-  to_array[A : Compare](Self[A]) -> Array[A]
-  unsafe_pop[A : Compare](Self[A]) -> Unit
-}
+fn[A] T::clear(Self[A]) -> Unit
+fn[A] T::copy(Self[A]) -> Self[A]
+fn[A] T::is_empty(Self[A]) -> Bool
+fn[A : Compare] T::iter(Self[A]) -> Iter[A]
+fn[A] T::length(Self[A]) -> Int
+fn[A] T::peek(Self[A]) -> A?
+fn[A : Compare] T::pop(Self[A]) -> A?
+fn[A : Compare] T::push(Self[A], A) -> Unit
+fn[A : Compare] T::to_array(Self[A]) -> Array[A]
+fn[A : Compare] T::unsafe_pop(Self[A]) -> Unit
 impl[K] Default for T[K]
 impl[A : Show + Compare] Show for T[A]
 impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for T[X]

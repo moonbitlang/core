@@ -25,18 +25,18 @@ enum Expr {
 test {
   let e = Expr::Add(Val("x"), Val("y"))
   let ej = e.to_json()
-  inspect!(
-    ej |> @json.stringify,
+  inspect(
+    ej.stringify(),
     content=
       #|{"$tag":"Add","0":{"$tag":"Val","0":"x"},"1":{"$tag":"Val","0":"y"}}
     ,
   )
-  let e0 : Expr = @json.from_json!(ej)
-  inspect!(
+  let e0 : Expr = @json.from_json(ej)
+  inspect(
     e0,
     content=
       #|Add(Val("x"), Val("y"))
     ,
   )
-  assert_eq!(e0, e)
+  assert_eq(e0, e)
 }

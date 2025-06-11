@@ -22,9 +22,9 @@
 /// ```
 /// let arr = [5, 3, 2, 4, 1]
 /// arr.sort_by_key(fn (x) {-x})
-/// assert_eq!(arr, [5, 4, 3, 2, 1])
+/// assert_eq(arr, [5, 4, 3, 2, 1])
 /// ```
-pub fn FixedArray::sort_by_key[T, K : Compare](
+pub fn[T, K : Compare] FixedArray::sort_by_key(
   self : FixedArray[T],
   map : (T) -> K
 ) -> Unit {
@@ -40,10 +40,10 @@ pub fn FixedArray::sort_by_key[T, K : Compare](
 test "@array.sort_by_key/basic" {
   let arr : FixedArray[_] = [3, 1, 4, 1, 5]
   arr.sort_by_key(fn(x) { x })
-  inspect!(arr, content="[1, 1, 3, 4, 5]")
+  inspect(arr, content="[1, 1, 3, 4, 5]")
   let arr2 : FixedArray[_] = [3, 1, 4, 1, 5]
   arr2.sort_by_key(fn(x) { -x })
-  inspect!(arr2, content="[5, 4, 3, 1, 1]")
+  inspect(arr2, content="[5, 4, 3, 1, 1]")
 }
 
 ///|
@@ -56,9 +56,9 @@ test "@array.sort_by_key/basic" {
 /// ```
 /// let arr = [5, 3, 2, 4, 1]
 /// arr.sort_by(fn (a, b) { a - b })
-/// assert_eq!(arr, [1, 2, 3, 4, 5])
+/// assert_eq(arr, [1, 2, 3, 4, 5])
 /// ```
-pub fn FixedArray::sort_by[T](
+pub fn[T] FixedArray::sort_by(
   self : FixedArray[T],
   cmp : (T, T) -> Int
 ) -> Unit {
@@ -74,30 +74,30 @@ pub fn FixedArray::sort_by[T](
 test "sort_by: basic functionality" {
   let arr : FixedArray[_] = [5, 3, 2, 4, 1]
   arr.sort_by(fn(a, b) { a - b })
-  inspect!(arr, content="[1, 2, 3, 4, 5]")
+  inspect(arr, content="[1, 2, 3, 4, 5]")
 }
 
 ///|
 test "sort_by: edge cases" {
   let empty_arr : FixedArray[Int] = []
   empty_arr.sort_by(fn(a, b) { a - b })
-  inspect!(empty_arr, content="[]")
+  inspect(empty_arr, content="[]")
   let single_element_arr : FixedArray[_] = [1]
   single_element_arr.sort_by(fn(a, b) { a - b })
-  inspect!(single_element_arr, content="[1]")
+  inspect(single_element_arr, content="[1]")
 }
 
 ///|
 test "sort_by: random cases" {
   let random_arr1 : FixedArray[_] = [3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5]
   random_arr1.sort_by(fn(a, b) { a - b })
-  inspect!(random_arr1, content="[1, 1, 2, 3, 3, 4, 5, 5, 5, 6, 9]")
+  inspect(random_arr1, content="[1, 1, 2, 3, 3, 4, 5, 5, 5, 6, 9]")
   let random_arr2 : FixedArray[_] = [7, 1, 8, 2, 8, 1, 8, 2, 8, 4, 5, 9]
   random_arr2.sort_by(fn(a, b) { a - b })
-  inspect!(random_arr2, content="[1, 1, 2, 2, 4, 5, 7, 8, 8, 8, 8, 9]")
+  inspect(random_arr2, content="[1, 1, 2, 2, 4, 5, 7, 8, 8, 8, 8, 9]")
   let random_arr3 : FixedArray[_] = [10, -1, 0, 10, -1, 0, 10, -1, 0]
   random_arr3.sort_by(fn(a, b) { a - b })
-  inspect!(random_arr3, content="[-1, -1, -1, 0, 0, 0, 10, 10, 10]")
+  inspect(random_arr3, content="[-1, -1, -1, 0, 0, 0, 10, 10, 10]")
 }
 
 ///|
@@ -105,25 +105,25 @@ test "sort_by: large array" {
   let large_arr = FixedArray::makei(1000, fn(i) { 1000 - i })
   large_arr.sort_by(fn(a, b) { a - b })
   let expected = FixedArray::makei(1000, fn(i) { i + 1 })
-  inspect!(large_arr, content=expected.to_string())
+  inspect(large_arr, content=expected.to_string())
 }
 
 ///|
 test "sort_by: negative numbers" {
   let negative_arr : FixedArray[_] = [-5, -3, -2, -4, -1]
   negative_arr.sort_by(fn(a, b) { a - b })
-  inspect!(negative_arr, content="[-5, -4, -3, -2, -1]")
+  inspect(negative_arr, content="[-5, -4, -3, -2, -1]")
 }
 
 ///|
 test "sort_by: mixed positive and negative numbers" {
   let mixed_arr : FixedArray[_] = [-5, 3, -2, 4, -1]
   mixed_arr.sort_by(fn(a, b) { a - b })
-  inspect!(mixed_arr, content="[-5, -2, -1, 3, 4]")
+  inspect(mixed_arr, content="[-5, -2, -1, 3, 4]")
 }
 
 ///|
-fn fixed_quick_sort_by[T](
+fn[T] fixed_quick_sort_by(
   arr : FixedArraySlice[T],
   cmp : (T, T) -> Int,
   pred : T?,
@@ -194,7 +194,7 @@ fn fixed_quick_sort_by[T](
 /// It will only tolerate at most 8 unsorted elements. The time complexity is O(n).
 ///
 /// Returns whether the array is sorted.
-fn fixed_try_bubble_sort_by[T](
+fn[T] fixed_try_bubble_sort_by(
   arr : FixedArraySlice[T],
   cmp : (T, T) -> Int
 ) -> Bool {
@@ -222,7 +222,7 @@ fn fixed_try_bubble_sort_by[T](
 /// It will only tolerate at most 8 unsorted elements. The time complexity is O(n).
 ///
 /// Returns whether the array is sorted.
-fn fixed_bubble_sort_by[T](
+fn[T] fixed_bubble_sort_by(
   arr : FixedArraySlice[T],
   cmp : (T, T) -> Int
 ) -> Unit {
@@ -242,12 +242,12 @@ test "try_bubble_sort" {
   ) {
     a - b
   })
-  assert_eq!(sorted, true)
-  assert_eq!(arr, [1, 2, 3, 4, 5, 6, 7, 8])
+  assert_eq(sorted, true)
+  assert_eq(arr, [1, 2, 3, 4, 5, 6, 7, 8])
 }
 
 ///|
-fn fixed_partition_by[T](
+fn[T] fixed_partition_by(
   arr : FixedArraySlice[T],
   cmp : (T, T) -> Int,
   pivot_index : Int
@@ -275,7 +275,7 @@ fn fixed_partition_by[T](
 /// It avoids worst case performance by choosing a pivot that is likely to be close to the median.
 ///
 /// Returns the pivot index and whether the array is likely sorted.
-fn fixed_choose_pivot_by[T](
+fn[T] fixed_choose_pivot_by(
   arr : FixedArraySlice[T],
   cmp : (T, T) -> Int
 ) -> (Int, Bool) {
@@ -316,7 +316,7 @@ fn fixed_choose_pivot_by[T](
 }
 
 ///|
-fn fixed_heap_sort_by[T](arr : FixedArraySlice[T], cmp : (T, T) -> Int) -> Unit {
+fn[T] fixed_heap_sort_by(arr : FixedArraySlice[T], cmp : (T, T) -> Int) -> Unit {
   let len = arr.length()
   for i = len / 2 - 1; i >= 0; i = i - 1 {
     fixed_sift_down_by(arr, i, cmp)
@@ -328,7 +328,7 @@ fn fixed_heap_sort_by[T](arr : FixedArraySlice[T], cmp : (T, T) -> Int) -> Unit 
 }
 
 ///|
-fn fixed_sift_down_by[T](
+fn[T] fixed_sift_down_by(
   arr : FixedArraySlice[T],
   index : Int,
   cmp : (T, T) -> Int
@@ -351,7 +351,7 @@ fn fixed_sift_down_by[T](
 
 ///|
 test "heap_sort" {
-  fixed_test_sort!(fn(arr) {
+  fixed_test_sort(fn(arr) {
     fixed_heap_sort_by({ array: arr, start: 0, end: arr.length() }, fn(a, b) {
       a - b
     })
@@ -360,7 +360,7 @@ test "heap_sort" {
 
 ///|
 test "bubble_sort" {
-  fixed_test_sort!(fn(arr) {
+  fixed_test_sort(fn(arr) {
     fixed_bubble_sort_by({ array: arr, start: 0, end: arr.length() }, fn(a, b) {
       a - b
     })
@@ -369,14 +369,14 @@ test "bubble_sort" {
 
 ///|
 test "sort" {
-  fixed_test_sort!(fn(arr) { arr.sort() })
+  fixed_test_sort(fn(arr) { arr.sort() })
 }
 
 ///|
 test "sort_by" {
   let arr = [5, 1, 3, 4, 2]
   arr.sort_by_key(fn(x) { -x })
-  assert_eq!(arr, [5, 4, 3, 2, 1])
+  assert_eq(arr, [5, 4, 3, 2, 1])
 }
 
 ///|
@@ -393,5 +393,5 @@ test "sort_by_fallback" {
       1
     }
   })
-  assert_true!(arr.is_sorted())
+  assert_true(arr.is_sorted())
 }

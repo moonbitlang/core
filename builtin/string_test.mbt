@@ -14,25 +14,25 @@
 
 ///|
 test "String::escape" {
-  inspect!(
+  inspect(
     "abc,def".escape(),
     content=
       #|"abc,def"
     ,
   )
-  inspect!(
+  inspect(
     "\n\t\\".escape(),
     content=
       #|"\n\t\\"
     ,
   )
-  inspect!(
+  inspect(
     "\"'".escape(),
     content=
       #|"\"'"
     ,
   )
-  inspect!(
+  inspect(
     "\u{00}\u{01}\u{20}\u{21}".escape(),
     content=
       #|"\u{00}\u{01} !"
@@ -42,10 +42,10 @@ test "String::escape" {
 
 ///|
 test "substring" {
-  assert_eq!("abc".substring(), "abc")
-  assert_eq!("abc".substring(start=1), "bc")
-  assert_eq!("abc".substring(end=2), "ab")
-  assert_eq!("abc".substring(start=1, end=2), "b")
+  assert_eq("abc".substring(), "abc")
+  assert_eq("abc".substring(start=1), "bc")
+  assert_eq("abc".substring(end=2), "ab")
+  assert_eq("abc".substring(start=1, end=2), "b")
 }
 
 ///|
@@ -71,41 +71,41 @@ test "panic charcode_at with negative index" {
 ///|
 test "charcode_at with valid index" {
   let s = "Hello"
-  inspect!(s.charcode_at(0), content="72")
+  inspect(s.charcode_at(0), content="72")
 }
 
 ///|
 test "codepoint_at regular character at end of string" {
   let s = "Hello"
-  inspect!(s.iter().nth(4).unwrap(), content="o")
+  inspect(s.iter().nth(4).unwrap(), content="o")
 }
 
 ///|
 test "codepoint_at emoji" {
   let s = "👋"
-  inspect!(s.iter().nth(0).unwrap(), content="👋")
+  inspect(s.iter().nth(0).unwrap(), content="👋")
 }
 
 ///|
 test "unsafe_char_at" {
   let s = "a👋b"
-  inspect!(s.unsafe_char_at(0), content="a")
-  inspect!(s.unsafe_char_at(1), content="👋")
+  inspect(s.unsafe_char_at(0), content="a")
+  inspect(s.unsafe_char_at(1), content="👋")
   // invalid char cannot be inspected
-  inspect!(s.unsafe_char_at(2).to_int(), content="56395")
-  inspect!(s.unsafe_char_at(3), content="b")
+  inspect(s.unsafe_char_at(2).to_int(), content="56395")
+  inspect(s.unsafe_char_at(3), content="b")
 }
 
 ///|
 test "char_length basic" {
   let str = "hello"
-  inspect!(str.char_length(), content="5")
+  inspect(str.char_length(), content="5")
 }
 
 ///|
 test "char_length with surrogate pairs" {
   let str = "Hello🤣"
-  inspect!(str.char_length(), content="6")
+  inspect(str.char_length(), content="6")
 }
 
 ///|
@@ -115,12 +115,12 @@ test "panic String::make with negative length" {
 
 ///|
 test "String::make with non-bmp" {
-  inspect!(String::make(2, '🤣'), content="🤣🤣")
+  inspect(String::make(2, '🤣'), content="🤣🤣")
 }
 
 ///|
 test "String::make with zero length" {
-  inspect!(String::make(0, 'A'), content="")
+  inspect(String::make(0, 'A'), content="")
 }
 
 ///|

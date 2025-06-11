@@ -14,13 +14,13 @@
 
 ///|
 #deprecated("Definition of json is moved to builtin package, use `Json` instead")
-pub(all) typealias JsonValue = Json
+pub typealias Json as JsonValue
 
 ///|
 pub(all) struct Position {
   line : Int // 1-based
   column : Int // 0-based
-} derive(Eq)
+} derive(Eq, ToJson)
 
 ///|
 pub(all) type! ParseError {
@@ -28,7 +28,7 @@ pub(all) type! ParseError {
   InvalidEof
   InvalidNumber(Position, String)
   InvalidIdentEscape(Position)
-} derive(Eq)
+} derive(Eq, ToJson)
 
 ///|
 pub impl Show for ParseError with output(self, logger) {

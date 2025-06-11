@@ -18,13 +18,13 @@
 
 ///|
 /// Return a new empty array
-pub fn new[A]() -> T[A] {
+pub fn[A] new() -> T[A] {
   { tree: Tree::empty(), size: 0, shift: 0 }
 }
 
 ///|
 /// Create a persistent array with a given length and value.
-pub fn make[A](len : Int, value : A) -> T[A] {
+pub fn[A] make(len : Int, value : A) -> T[A] {
   let quot = len / branching_factor
   let rem = len % branching_factor
   let leaves = if rem == 0 {
@@ -45,7 +45,7 @@ pub fn make[A](len : Int, value : A) -> T[A] {
 
 ///|
 /// Create a persistent array with a given length and a function to generate values.
-pub fn makei[A](len : Int, f : (Int) -> A) -> T[A] {
+pub fn[A] makei(len : Int, f : (Int) -> A) -> T[A] {
   let quot = len / branching_factor
   let rem = len % branching_factor
   let leaves = if rem == 0 {
@@ -70,7 +70,7 @@ pub fn makei[A](len : Int, f : (Int) -> A) -> T[A] {
 
 ///|
 /// Convert a FixedArray to an @immut/array.
-pub fn of[A](arr : FixedArray[A]) -> T[A] {
+pub fn[A] of(arr : FixedArray[A]) -> T[A] {
   makei(arr.length(), fn(i) { arr[i] })
 }
 
@@ -81,7 +81,7 @@ pub fn of[A](arr : FixedArray[A]) -> T[A] {
 /// 
 #deprecated("We don't copy immutable array")
 #coverage.skip
-pub fn copy[A](self : T[A]) -> T[A] {
+pub fn[A] copy(self : T[A]) -> T[A] {
   fn copy(t : Tree[A]) -> Tree[A] {
     match t {
       Leaf(l) => Leaf(l.copy())
@@ -105,15 +105,17 @@ pub fn copy[A](self : T[A]) -> T[A] {
 /// 
 /// # Example
 /// ```
-/// let v = @array.of([1, 2, 3])
-/// assert_eq!(v, @array.from_array([1, 2, 3]))
+/// test "from_array example" {
+///   let v = @array.of([1, 2, 3])
+///   assert_eq(v, @array.from_array([1, 2, 3]))
+/// }
 /// ```
-pub fn from_array[A](arr : Array[A]) -> T[A] {
+pub fn[A] from_array(arr : Array[A]) -> T[A] {
   makei(arr.length(), fn(i) { arr[i] })
 }
 
 ///|
-pub fn from_iter[A](iter : Iter[A]) -> T[A] {
+pub fn[A] from_iter(iter : Iter[A]) -> T[A] {
   let mut buf : FixedArray[A] = []
   let mut index = 0
   let leaves = []
@@ -148,7 +150,7 @@ pub fn from_iter[A](iter : Iter[A]) -> T[A] {
 //-----------------------------------------------------------------------------
 
 ///|
-pub fn to_array[A](self : T[A]) -> Array[A] {
+pub fn[A] to_array(self : T[A]) -> Array[A] {
   if self.is_empty() {
     []
   } else {
@@ -163,12 +165,12 @@ pub fn to_array[A](self : T[A]) -> Array[A] {
 //-----------------------------------------------------------------------------
 
 ///|
-pub fn is_empty[A](self : T[A]) -> Bool {
+pub fn[A] is_empty(self : T[A]) -> Bool {
   self.size == 0
 }
 
 ///|
-pub fn length[A](self : T[A]) -> Int {
+pub fn[A] length(self : T[A]) -> Int {
   self.size
 }
 
@@ -181,10 +183,12 @@ pub fn length[A](self : T[A]) -> Int {
 ///
 /// # Examples
 /// ```
-/// let v = @array.of([1, 2, 3, 4, 5])
-/// assert_eq!(v[0], 1)
+/// test "op_get example" {
+///   let v = @array.of([1, 2, 3, 4, 5])
+///   assert_eq(v[0], 1)
+/// }
 /// ```
-pub fn op_get[A](self : T[A], index : Int) -> A {
+pub fn[A] op_get(self : T[A], index : Int) -> A {
   if index == 0 {
     self.tree.get_first()
   } else if index == self.size - 1 {
@@ -192,6 +196,34 @@ pub fn op_get[A](self : T[A], index : Int) -> A {
   } else {
     self.tree.get(index, self.shift)
   }
+}
+
+///|
+/// Returns the element at the specified index in the array, wrapped in an
+/// `Option` type.
+///
+/// Parameters:
+///
+/// * `array` : The immutable array.
+/// * `index` : The index of the element to retrieve.
+///
+/// Returns `Some(value)` if the index is valid, `None` if the index is out of
+/// bounds.
+///
+/// Example:
+///
+/// ```moonbit
+/// ///|
+/// test "get" {
+///   let v = @array.of([1, 2, 3])
+///   inspect(v.get(1), content="Some(2)")
+///   inspect(v.get(-1), content="None")
+///   inspect(v.get(3), content="None")
+/// }
+/// ```
+pub fn[A] get(self : T[A], index : Int) -> A? {
+  guard 0 <= index && index < self.size else { None }
+  Some(self[index])
 }
 
 //-----------------------------------------------------------------------------
@@ -203,10 +235,12 @@ pub fn op_get[A](self : T[A], index : Int) -> A {
 ///
 /// # Example
 /// ```
-/// let v = @array.of([1, 2, 3, 4, 5])
-/// assert_eq!(v.set(1, 10), @array.of([1, 10, 3, 4, 5]))
+/// test "set example" {
+///   let v = @array.of([1, 2, 3, 4, 5])
+///   assert_eq(v.set(1, 10), @array.of([1, 10, 3, 4, 5]))
+/// }
 /// ```
-pub fn set[A](self : T[A], index : Int, value : A) -> T[A] {
+pub fn[A] set(self : T[A], index : Int, value : A) -> T[A] {
   {
     tree: self.tree.set(index, self.shift, value),
     size: self.size,
@@ -220,16 +254,16 @@ pub fn set[A](self : T[A], index : Int, value : A) -> T[A] {
 /// # Example
 /// ```
 /// let v = @array.of([1, 2, 3])
-/// assert_eq!(v.push(4), @array.of([1, 2, 3, 4]))
+/// assert_eq(v.push(4), @array.of([1, 2, 3, 4]))
 /// ```
-pub fn push[A](self : T[A], value : A) -> T[A] {
+pub fn[A] push(self : T[A], value : A) -> T[A] {
   let (tree, shift) = self.tree.push_end(self.shift, value)
   { tree, size: self.size + 1, shift }
 }
 
 ///|
 /// Given two trees, concatenate them into a new tree.
-pub fn concat[A](self : T[A], other : T[A]) -> T[A] {
+pub fn[A] concat(self : T[A], other : T[A]) -> T[A] {
   if self.is_empty() {
     return other
   }
@@ -258,7 +292,7 @@ pub impl[A] Add for T[A] with op_add(self, other) {
 
 ///|
 /// Return an iterator over the array.
-pub fn iter[A](self : T[A]) -> Iter[A] {
+pub fn[A] iter(self : T[A]) -> Iter[A] {
   self.tree.iter()
 }
 
@@ -267,12 +301,14 @@ pub fn iter[A](self : T[A]) -> Iter[A] {
 ///
 /// # Example
 /// ```
-/// let arr = []
-/// let v = @array.of([1, 2, 3, 4, 5])
-/// v.each(fn(e) { arr.push(e) })
-/// assert_eq!(arr, [1, 2, 3, 4, 5])
+/// test "each example" {
+///   let arr = []
+///   let v = @array.of([1, 2, 3, 4, 5])
+///   v.each(fn(e) { arr.push(e) })
+///   assert_eq(arr, [1, 2, 3, 4, 5])
+/// }
 /// ```
-pub fn each[A](self : T[A], f : (A) -> Unit) -> Unit {
+pub fn[A] each(self : T[A], f : (A) -> Unit) -> Unit {
   self.tree.each(f)
 }
 
@@ -284,9 +320,9 @@ pub fn each[A](self : T[A], f : (A) -> Unit) -> Unit {
 /// let arr = []
 /// let v = @array.of([1, 2, 3, 4, 5])
 /// v.eachi(fn(i, e) { arr.push(i * e) })
-/// assert_eq!(arr, [0, 2, 6, 12, 20])
+/// assert_eq(arr, [0, 2, 6, 12, 20])
 /// ```
-pub fn eachi[A](self : T[A], f : (Int, A) -> Unit) -> Unit {
+pub fn[A] eachi(self : T[A], f : (Int, A) -> Unit) -> Unit {
   self.tree.eachi(f, self.shift, 0)
 }
 
@@ -296,9 +332,9 @@ pub fn eachi[A](self : T[A], f : (Int, A) -> Unit) -> Unit {
 /// # Example
 /// ```
 /// let v = @array.of([1, 2, 3, 4, 5])
-/// assert_eq!(v.fold(fn(a, b) { a + b }, init=0), 15)
+/// assert_eq(v.fold(fn(a, b) { a + b }, init=0), 15)
 /// ```
-pub fn fold[A, B](self : T[A], init~ : B, f : (B, A) -> B) -> B {
+pub fn[A, B] fold(self : T[A], init~ : B, f : (B, A) -> B) -> B {
   self.tree.fold(init, f)
 }
 
@@ -308,9 +344,9 @@ pub fn fold[A, B](self : T[A], init~ : B, f : (B, A) -> B) -> B {
 /// # Example
 /// ```
 /// let v = @array.of([1, 2, 3, 4, 5])
-/// assert_eq!(v.rev_fold(fn(a, b) { a + b }, init=0), 15)
+/// assert_eq(v.rev_fold(fn(a, b) { a + b }, init=0), 15)
 /// ```
-pub fn rev_fold[A, B](self : T[A], init~ : B, f : (B, A) -> B) -> B {
+pub fn[A, B] rev_fold(self : T[A], init~ : B, f : (B, A) -> B) -> B {
   self.tree.rev_fold(init, f)
 }
 
@@ -320,11 +356,11 @@ pub fn rev_fold[A, B](self : T[A], init~ : B, f : (B, A) -> B) -> B {
 /// # Example
 /// ```
 /// let v = @array.of([1, 2, 3, 4, 5])
-/// assert_eq!(v.fold(fn(a, b) { a + b }, init=0), 15)
+/// assert_eq(v.fold(fn(a, b) { a + b }, init=0), 15)
 /// ```
 #deprecated("Use `fold` instead")
 #coverage.skip
-pub fn fold_left[A](self : T[A], f : (A, A) -> A, init~ : A) -> A {
+pub fn[A] fold_left(self : T[A], f : (A, A) -> A, init~ : A) -> A {
   self.fold(init~, f)
 }
 
@@ -334,11 +370,11 @@ pub fn fold_left[A](self : T[A], f : (A, A) -> A, init~ : A) -> A {
 /// # Example
 /// ```
 /// let v = @array.of([1, 2, 3, 4, 5])
-/// assert_eq!(v.rev_fold(fn(a, b) { a + b }, init=0), 15)
+/// assert_eq(v.rev_fold(fn(a, b) { a + b }, init=0), 15)
 /// ```
 #deprecated("Use `rev_fold` instead")
 #coverage.skip
-pub fn fold_right[A](self : T[A], f : (A, A) -> A, init~ : A) -> A {
+pub fn[A] fold_right(self : T[A], f : (A, A) -> A, init~ : A) -> A {
   self.rev_fold(init~, f)
 }
 
@@ -348,9 +384,9 @@ pub fn fold_right[A](self : T[A], f : (A, A) -> A, init~ : A) -> A {
 /// # Example
 /// ```
 /// let v = @array.of([1, 2, 3, 4, 5])
-/// assert_eq!(v.map(fn(e) { e * 2 }), @array.of([2, 4, 6, 8, 10]))
+/// assert_eq(v.map(fn(e) { e * 2 }), @array.of([2, 4, 6, 8, 10]))
 /// ```
-pub fn map[A, B](self : T[A], f : (A) -> B) -> T[B] {
+pub fn[A, B] map(self : T[A], f : (A) -> B) -> T[B] {
   { tree: self.tree.map(f), size: self.size, shift: self.shift }
 }
 
@@ -409,10 +445,10 @@ pub impl[A : Show] Show for T[A] with output(self, logger) {
 ///   let arr1 = @array.of([1, 2, 3])
 ///   let arr2 = @array.of([1, 2, 4])
 ///   let arr3 = @array.of([1, 2])
-///   assert_eq!(arr1.compare(arr2), -1) // arr1 < arr2
-///   assert_eq!(arr1.compare(arr3), 1) // arr2 > arr1
-///   assert_eq!(arr3.compare(arr1), -1) // arr1 > arr3 (longer)
-///   assert_eq!(arr1.compare(arr1), 0) // arr1 = arr1
+///   assert_eq(arr1.compare(arr2), -1) // arr1 < arr2
+///   assert_eq(arr1.compare(arr3), 1) // arr2 > arr1
+///   assert_eq(arr3.compare(arr1), -1) // arr1 > arr3 (longer)
+///   assert_eq(arr1.compare(arr1), 0) // arr1 = arr1
 /// }
 /// ```
 pub impl[A : Compare] Compare for T[A] with compare(self, other) {
@@ -423,7 +459,6 @@ pub impl[A : Compare] Compare for T[A] with compare(self, other) {
   for i in 0..<len_self {
     let cmp = self[i].compare(other[i])
     guard cmp is 0 else { break cmp }
-
   } else {
     return 0
   }
@@ -434,7 +469,7 @@ pub impl[A : Compare] Compare for T[A] with compare(self, other) {
 //-----------------------------------------------------------------------------
 
 ///|
-fn from_leaves[A](
+fn[A] from_leaves(
   leaves : @core/array.View[FixedArray[A]],
   cap : Int
 ) -> Tree[A] {
@@ -478,10 +513,4 @@ fn shift_cap_of_size(size : Int) -> (Int, Int) {
   }
   let shift = num_bits * depth
   (shift, cap)
-}
-
-///|
-/// Print the tree structure of the internal tree. For debug use.
-fn to_debug_string[A : Show](self : T[A]) -> String {
-  self.tree.to_string()
 }

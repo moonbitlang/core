@@ -3,111 +3,112 @@ package "moonbitlang/core/array"
 import(
   "moonbitlang/core/bytes"
   "moonbitlang/core/quickcheck"
+  "moonbitlang/core/string"
 )
 
 // Values
-fn copy[T](Array[T]) -> Array[T]
+fn[T] copy(Array[T]) -> Array[T]
 
-fn filter_map[A, B](Array[A], (A) -> B?) -> Array[B]
+fn[A, B] filter_map(Array[A], (A) -> B??Error) -> Array[B]?Error
 
-fn join(Array[String], String) -> String
+fn join(Array[String], @string.StringView) -> String
 
-fn last[A](Array[A]) -> A?
+fn[A] last(Array[A]) -> A?
 
-fn push_iter[T](Array[T], Iter[T]) -> Unit
+fn[T] push_iter(Array[T], Iter[T]) -> Unit
 
-fn shuffle[T](Array[T], rand~ : (Int) -> Int) -> Array[T]
+fn[T] shuffle(Array[T], rand~ : (Int) -> Int) -> Array[T]
 
-fn shuffle_in_place[T](Array[T], rand~ : (Int) -> Int) -> Unit
+fn[T] shuffle_in_place(Array[T], rand~ : (Int) -> Int) -> Unit
 
-fn sort[T : Compare](Array[T]) -> Unit
+fn[T : Compare] sort(Array[T]) -> Unit
 
-fn sort_by[T](Array[T], (T, T) -> Int) -> Unit
+fn[T] sort_by(Array[T], (T, T) -> Int) -> Unit
 
-fn sort_by_key[T, K : Compare](Array[T], (T) -> K) -> Unit
+fn[T, K : Compare] sort_by_key(Array[T], (T) -> K) -> Unit
 
-fn zip[A, B](Array[A], Array[B]) -> Array[(A, B)]
+fn[T1, T2] unzip(Array[(T1, T2)]) -> (Array[T1], Array[T2])
 
-fn zip_to_iter2[A, B](Array[A], Array[B]) -> Iter2[A, B]
+fn[A, B] zip(Array[A], Array[B]) -> Array[(A, B)]
 
-fn zip_with[A, B, C](Array[A], Array[B], (A, B) -> C) -> Array[C]
+fn[A, B] zip_to_iter2(Array[A], Array[B]) -> Iter2[A, B]
+
+fn[A, B, C] zip_with(Array[A], Array[B], (A, B) -> C?Error) -> Array[C]?Error
 
 // Types and methods
-impl FixedArray {
-  all[T](Self[T], (T) -> Bool) -> Bool
-  any[T](Self[T], (T) -> Bool) -> Bool
-  blit_from_bytesview(Self[Byte], Int, @bytes.View) -> Unit
-  contains[T : Eq](Self[T], T) -> Bool
-  copy[T](Self[T]) -> Self[T]
-  each[T](Self[T], (T) -> Unit) -> Unit
-  eachi[T](Self[T], (Int, T) -> Unit) -> Unit
-  ends_with[T : Eq](Self[T], Self[T]) -> Bool
-  fold[A, B](Self[A], init~ : B, (B, A) -> B) -> B
-  foldi[A, B](Self[A], init~ : B, (Int, B, A) -> B) -> B
-  from_array[T](Array[T]) -> Self[T]
-  from_iter[T](Iter[T]) -> Self[T]
-  is_sorted[T : Compare](Self[T]) -> Bool
-  last[A](Self[A]) -> A?
-  makei[T](Int, (Int) -> T) -> Self[T]
-  map[T, U](Self[T], (T) -> U) -> Self[U]
-  mapi[T, U](Self[T], (Int, T) -> U) -> Self[U]
-  rev[T](Self[T]) -> Self[T]
-  rev_each[T](Self[T], (T) -> Unit) -> Unit
-  rev_eachi[T](Self[T], (Int, T) -> Unit) -> Unit
-  rev_fold[A, B](Self[A], init~ : B, (B, A) -> B) -> B
-  rev_foldi[A, B](Self[A], init~ : B, (Int, B, A) -> B) -> B
-  rev_inplace[T](Self[T]) -> Unit
-  search[T : Eq](Self[T], T) -> Int?
-  sort[T : Compare](Self[T]) -> Unit
-  sort_by[T](Self[T], (T, T) -> Int) -> Unit
-  sort_by_key[T, K : Compare](Self[T], (T) -> K) -> Unit
-  stable_sort[T : Compare](Self[T]) -> Unit
-  starts_with[T : Eq](Self[T], Self[T]) -> Bool
-  swap[T](Self[T], Int, Int) -> Unit
-}
+fn[T] FixedArray::all(Self[T], (T) -> Bool?Error) -> Bool?Error
+fn[T] FixedArray::any(Self[T], (T) -> Bool?Error) -> Bool?Error
+fn FixedArray::blit_from_bytesview(Self[Byte], Int, @bytes.View) -> Unit
+fn[T : Eq] FixedArray::contains(Self[T], T) -> Bool
+fn[T] FixedArray::copy(Self[T]) -> Self[T]
+fn[T] FixedArray::each(Self[T], (T) -> Unit?Error) -> Unit?Error
+fn[T] FixedArray::eachi(Self[T], (Int, T) -> Unit?Error) -> Unit?Error
+fn[T : Eq] FixedArray::ends_with(Self[T], Self[T]) -> Bool
+fn[A, B] FixedArray::fold(Self[A], init~ : B, (B, A) -> B?Error) -> B?Error
+fn[A, B] FixedArray::foldi(Self[A], init~ : B, (Int, B, A) -> B?Error) -> B?Error
+fn[T] FixedArray::from_array(Array[T]) -> Self[T]
+fn[T] FixedArray::from_iter(Iter[T]) -> Self[T]
+fn[T : Compare] FixedArray::is_sorted(Self[T]) -> Bool
+fn FixedArray::join(Self[String], @string.StringView) -> String
+fn[A] FixedArray::last(Self[A]) -> A?
+fn[T] FixedArray::makei(Int, (Int) -> T?Error) -> Self[T]?Error
+fn[T, U] FixedArray::map(Self[T], (T) -> U?Error) -> Self[U]?Error
+fn[T, U] FixedArray::mapi(Self[T], (Int, T) -> U?Error) -> Self[U]?Error
+fn[T] FixedArray::rev(Self[T]) -> Self[T]
+fn[T] FixedArray::rev_each(Self[T], (T) -> Unit?Error) -> Unit?Error
+fn[T] FixedArray::rev_eachi(Self[T], (Int, T) -> Unit?Error) -> Unit?Error
+fn[A, B] FixedArray::rev_fold(Self[A], init~ : B, (B, A) -> B?Error) -> B?Error
+fn[A, B] FixedArray::rev_foldi(Self[A], init~ : B, (Int, B, A) -> B?Error) -> B?Error
+fn[T] FixedArray::rev_inplace(Self[T]) -> Unit
+fn[T : Eq] FixedArray::search(Self[T], T) -> Int?
+fn[T : Compare] FixedArray::sort(Self[T]) -> Unit
+fn[T] FixedArray::sort_by(Self[T], (T, T) -> Int) -> Unit
+fn[T, K : Compare] FixedArray::sort_by_key(Self[T], (T) -> K) -> Unit
+fn[T : Compare] FixedArray::stable_sort(Self[T]) -> Unit
+fn[T : Eq] FixedArray::starts_with(Self[T], Self[T]) -> Bool
+fn[T] FixedArray::swap(Self[T], Int, Int) -> Unit
 impl[T] Add for FixedArray[T]
 impl[T : Compare] Compare for FixedArray[T]
 impl[T : Eq] Eq for FixedArray[T]
 impl[T : Hash] Hash for FixedArray[T]
 impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for FixedArray[X]
 
-impl Array {
-  copy[T](Self[T]) -> Self[T]
-  filter_map[A, B](Self[A], (A) -> B?) -> Self[B]
-  from_iter[T](Iter[T]) -> Self[T]
-  join(Self[String], String) -> String
-  last[A](Self[A]) -> A?
-  makei[T](Int, (Int) -> T) -> Self[T]
-  push_iter[T](Self[T], Iter[T]) -> Unit
-  shuffle[T](Self[T], rand~ : (Int) -> Int) -> Self[T]
-  shuffle_in_place[T](Self[T], rand~ : (Int) -> Int) -> Unit
-  sort[T : Compare](Self[T]) -> Unit
-  sort_by[T](Self[T], (T, T) -> Int) -> Unit
-  sort_by_key[T, K : Compare](Self[T], (T) -> K) -> Unit
-  zip[A, B](Self[A], Self[B]) -> Self[(A, B)]
-  zip_to_iter2[A, B](Self[A], Self[B]) -> Iter2[A, B]
-}
+fn[T] Array::copy(Self[T]) -> Self[T]
+fn[A, B] Array::filter_map(Self[A], (A) -> B??Error) -> Self[B]?Error
+fn[T] Array::from_iter(Iter[T]) -> Self[T]
+fn Array::join(Self[String], @string.StringView) -> String
+fn[A] Array::last(Self[A]) -> A?
+fn[T] Array::makei(Int, (Int) -> T?Error) -> Self[T]?Error
+fn[T] Array::push_iter(Self[T], Iter[T]) -> Unit
+fn[T] Array::shuffle(Self[T], rand~ : (Int) -> Int) -> Self[T]
+fn[T] Array::shuffle_in_place(Self[T], rand~ : (Int) -> Int) -> Unit
+fn[T : Compare] Array::sort(Self[T]) -> Unit
+fn[T] Array::sort_by(Self[T], (T, T) -> Int) -> Unit
+fn[T, K : Compare] Array::sort_by_key(Self[T], (T) -> K) -> Unit
+fn[T1, T2] Array::unzip(Self[(T1, T2)]) -> (Self[T1], Self[T2])
+fn[A, B] Array::zip(Self[A], Self[B]) -> Self[(A, B)]
+fn[A, B] Array::zip_to_iter2(Self[A], Self[B]) -> Iter2[A, B]
 impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Array[X]
 
-impl ArrayView {
-  all[T](Self[T], (T) -> Bool) -> Bool
-  any[T](Self[T], (T) -> Bool) -> Bool
-  contains[T : Eq](Self[T], T) -> Bool
-  each[T](Self[T], (T) -> Unit) -> Unit
-  eachi[T](Self[T], (Int, T) -> Unit) -> Unit
-  filter[T](Self[T], (T) -> Bool) -> Array[T]
-  fold[A, B](Self[A], init~ : B, (B, A) -> B) -> B
-  foldi[A, B](Self[A], init~ : B, (Int, B, A) -> B) -> B
-  iter[A](Self[A]) -> Iter[A]
-  map[T, U](Self[T], (T) -> U) -> Array[U]
-  map_inplace[T](Self[T], (T) -> T) -> Unit
-  mapi[T, U](Self[T], (Int, T) -> U) -> Array[U]
-  mapi_inplace[T](Self[T], (Int, T) -> T) -> Unit
-  rev_fold[A, B](Self[A], init~ : B, (B, A) -> B) -> B
-  rev_foldi[A, B](Self[A], init~ : B, (Int, B, A) -> B) -> B
-  rev_inplace[T](Self[T]) -> Unit
-  to_array[T](Self[T]) -> Array[T]
-}
+fn[T] ArrayView::all(Self[T], (T) -> Bool?Error) -> Bool?Error
+fn[T] ArrayView::any(Self[T], (T) -> Bool?Error) -> Bool?Error
+fn[T : Eq] ArrayView::contains(Self[T], T) -> Bool
+fn[T] ArrayView::each(Self[T], (T) -> Unit?Error) -> Unit?Error
+fn[T] ArrayView::eachi(Self[T], (Int, T) -> Unit?Error) -> Unit?Error
+fn[T] ArrayView::filter(Self[T], (T) -> Bool?Error) -> Array[T]?Error
+fn[A, B] ArrayView::fold(Self[A], init~ : B, (B, A) -> B?Error) -> B?Error
+fn[A, B] ArrayView::foldi(Self[A], init~ : B, (Int, B, A) -> B?Error) -> B?Error
+fn[A] ArrayView::iter(Self[A]) -> Iter[A]
+fn[A] ArrayView::iter2(Self[A]) -> Iter2[Int, A]
+fn ArrayView::join(Self[String], @string.StringView) -> String
+fn[T, U] ArrayView::map(Self[T], (T) -> U?Error) -> Array[U]?Error
+fn[T] ArrayView::map_inplace(Self[T], (T) -> T?Error) -> Unit?Error
+fn[T, U] ArrayView::mapi(Self[T], (Int, T) -> U?Error) -> Array[U]?Error
+fn[T] ArrayView::mapi_inplace(Self[T], (Int, T) -> T?Error) -> Unit?Error
+fn[A, B] ArrayView::rev_fold(Self[A], init~ : B, (B, A) -> B?Error) -> B?Error
+fn[A, B] ArrayView::rev_foldi(Self[A], init~ : B, (Int, B, A) -> B?Error) -> B?Error
+fn[T] ArrayView::rev_inplace(Self[T]) -> Unit
+fn[T] ArrayView::to_array(Self[T]) -> Array[T]
 impl[T : Compare] Compare for ArrayView[T]
 impl[T : Eq] Eq for ArrayView[T]
 impl[A : Hash] Hash for ArrayView[A]

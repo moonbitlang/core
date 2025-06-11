@@ -26,12 +26,12 @@
 ///
 /// ```moonbit
 /// test "trunc" {
-///   inspect!(3.7.trunc(), content="3")
-///   inspect!((-3.7).trunc(), content="-3")
-///   inspect!(0.0.trunc(), content="0")
+///   inspect(3.7.trunc(), content="3")
+///   inspect((-3.7).trunc(), content="-3")
+///   inspect(0.0.trunc(), content="0")
 /// }
 /// ```
-pub fn trunc(self : Double) -> Double = "Math" "trunc"
+pub fn Double::trunc(self : Double) -> Double = "Math" "trunc"
 
 ///|
 /// Returns the smallest integer greater than or equal to the given number.
@@ -46,12 +46,12 @@ pub fn trunc(self : Double) -> Double = "Math" "trunc"
 ///
 /// ```moonbit
 /// test "ceil" {
-///   inspect!(3.7.ceil(), content="4")
-///   inspect!((-3.7).ceil(), content="-3")
-///   inspect!(42.0.ceil(), content="42")
+///   inspect(3.7.ceil(), content="4")
+///   inspect((-3.7).ceil(), content="-3")
+///   inspect(42.0.ceil(), content="42")
 /// }
 /// ```
-pub fn ceil(self : Double) -> Double = "Math" "ceil"
+pub fn Double::ceil(self : Double) -> Double = "Math" "ceil"
 
 ///|
 /// Returns the largest integer less than or equal to the given number.
@@ -67,12 +67,12 @@ pub fn ceil(self : Double) -> Double = "Math" "ceil"
 ///
 /// ```moonbit
 /// test "floor" {
-///   inspect!(3.7.floor(), content="3")
-///   inspect!((-3.7).floor(), content="-4")
-///   inspect!(0.0.floor(), content="0")
+///   inspect(3.7.floor(), content="3")
+///   inspect((-3.7).floor(), content="-4")
+///   inspect(0.0.floor(), content="0")
 /// }
 /// ```
-pub fn floor(self : Double) -> Double = "Math" "floor"
+pub fn Double::floor(self : Double) -> Double = "Math" "floor"
 
 ///|
 /// Rounds a floating-point number to the nearest integer using "round half up"
@@ -89,10 +89,10 @@ pub fn floor(self : Double) -> Double = "Math" "floor"
 ///
 /// ```moonbit
 /// test "round" {
-///   inspect!(3.7.round(), content="4")
-///   inspect!(3.2.round(), content="3")
-///   inspect!(3.5.round(), content="4")
-///   inspect!((-3.5).round(), content="-3")
+///   inspect(3.7.round(), content="4")
+///   inspect(3.2.round(), content="3")
+///   inspect(3.5.round(), content="4")
+///   inspect((-3.5).round(), content="-3")
 /// }
 /// ```
-pub fn round(self : Double) -> Double = "Math" "round"
+pub fn Double::round(self : Double) -> Double = "Math" "round"

@@ -29,9 +29,9 @@ const INT64_MAX = 0x7fffffffffffffffL
 /// and consume the prefix.
 /// The boolean flag `allow_underscore` is used to check validity of underscores.
 fn check_and_consume_base(
-  view : @string.StringView,
+  view : @string.View,
   base : Int
-) -> (Int, @string.StringView, Bool)!StrConvError {
+) -> (Int, @string.View, Bool)!StrConvError {
   // if the base is not given, we need to determine it from the prefix
   if base == 0 {
     match view {
@@ -46,16 +46,16 @@ fn check_and_consume_base(
       ['0', 'x' | 'X', .. rest] if base == 16 => (16, rest, true)
       ['0', 'o' | 'O', .. rest] if base == 8 => (8, rest, true)
       ['0', 'b' | 'B', .. rest] if base == 2 => (2, rest, true)
-      _ => if base is (2..=36) { (base, view, false) } else { base_err!() }
+      _ => if base is (2..=36) { (base, view, false) } else { base_err() }
     }
   }
 }
 
 ///|
 test {
-  inspect!(parse_int64?("0b01", base=3), content="Err(invalid syntax)")
-  inspect!(parse_int64?("0x01", base=3), content="Err(invalid syntax)")
-  inspect!(parse_int64?("0o01", base=3), content="Err(invalid syntax)")
+  inspect(try? parse_int64("0b01", base=3), content="Err(invalid syntax)")
+  inspect(try? parse_int64("0x01", base=3), content="Err(invalid syntax)")
+  inspect(try? parse_int64("0o01", base=3), content="Err(invalid syntax)")
 }
 
 ///|
@@ -70,18 +70,18 @@ test {
 /// These underscores do not affect the value.
 /// Examples:
 /// ```
-/// inspect!(parse_int64!("123"), content="123")
-/// inspect!(parse_int64!("0xff", base=0), content="255") 
-/// inspect!(parse_int64!("0o10"), content="8")
-/// inspect!(parse_int64!("0b1010"), content="10")
-/// inspect!(parse_int64!("1_234"), content="1234")
-/// inspect!(parse_int64!("-123"), content="-123")
-/// inspect!(parse_int64!("ff", base=16), content="255")
-/// inspect!(parse_int64!("zz", base=36), content="1295")
+/// inspect(parse_int64("123"), content="123")
+/// inspect(parse_int64("0xff", base=0), content="255") 
+/// inspect(parse_int64("0o10"), content="8")
+/// inspect(parse_int64("0b1010"), content="10")
+/// inspect(parse_int64("1_234"), content="1234")
+/// inspect(parse_int64("-123"), content="-123")
+/// inspect(parse_int64("ff", base=16), content="255")
+/// inspect(parse_int64("zz", base=36), content="1295")
 /// ```
 /// 
 pub fn parse_int64(str : String, base~ : Int = 0) -> Int64!StrConvError {
-  guard str != "" else { syntax_err!() }
+  guard str != "" else { syntax_err() }
   let (neg, rest) = match str.view() {
     ['+', .. rest] => (false, rest)
     ['-', .. rest] => (true, rest)
@@ -89,20 +89,20 @@ pub fn parse_int64(str : String, base~ : Int = 0) -> Int64!StrConvError {
   }
 
   // `allow_underscore` is used to check validity of underscores
-  let (num_base, rest, allow_underscore) = check_and_consume_base!(rest, base)
+  let (num_base, rest, allow_underscore) = check_and_consume_base(rest, base)
 
   // calculate overflow threshold
   let overflow_threshold = overflow_threshold(num_base, neg)
   let has_digit = rest
     is (['0'..='9' | 'a'..='z' | 'A'..='Z', ..]
     | ['_', '0'..='9' | 'a'..='z' | 'A'..='Z', ..])
-  guard has_digit else { syntax_err!() }
+  guard has_digit else { syntax_err() }
   // convert
   loop rest, 0L, allow_underscore {
     ['_'], _, _ =>
       // the last character cannot be underscore
-      syntax_err!()
-    ['_', ..], _, false => syntax_err!()
+      syntax_err()
+    ['_', ..], _, false => syntax_err()
     ['_', .. rest], acc, true => continue rest, acc, false
     [c, .. rest], acc, _ => {
       let c = c.to_int()
@@ -110,18 +110,18 @@ pub fn parse_int64(str : String, base~ : Int = 0) -> Int64!StrConvError {
         '0'..='9' => c - '0'
         'a'..='z' => c + (10 - 'a')
         'A'..='Z' => c + (10 - 'A')
-        _ => syntax_err!()
+        _ => syntax_err()
       }
-      guard d < num_base else { syntax_err!() }
+      guard d < num_base else { syntax_err() }
       if neg {
-        guard acc >= overflow_threshold else { range_err!() }
+        guard acc >= overflow_threshold else { range_err() }
         let next_acc = acc * num_base.to_int64() - d.to_int64()
-        guard next_acc <= acc else { range_err!() }
+        guard next_acc <= acc else { range_err() }
         continue rest, next_acc, true
       } else {
-        guard acc < overflow_threshold else { range_err!() }
+        guard acc < overflow_threshold else { range_err() }
         let next_acc = acc * num_base.to_int64() + d.to_int64()
-        guard next_acc >= acc else { range_err!() }
+        guard next_acc >= acc else { range_err() }
         continue rest, next_acc, true
       }
     }
@@ -133,9 +133,9 @@ pub fn parse_int64(str : String, base~ : Int = 0) -> Int64!StrConvError {
 /// Parse a string in the given base (0, 2 to 36), return a Int number or an error.
 /// If the `~base` argument is 0, the base will be inferred by the prefix.
 pub fn parse_int(str : String, base~ : Int = 0) -> Int!StrConvError {
-  let n = parse_int64!(str, base~)
+  let n = parse_int64(str, base~)
   if n < INT_MIN.to_int64() || n > INT_MAX.to_int64() {
-    range_err!()
+    range_err()
   }
   n.to_int()
 }
@@ -223,28 +223,28 @@ fn overflow_threshold(base : Int, neg : Bool) -> Int64 {
 
 ///|
 test "check_underscore" {
-  assert_true!(check_underscore("123"))
-  assert_true!(check_underscore("0x123"))
-  assert_true!(check_underscore("0o123"))
-  assert_true!(check_underscore("0b101"))
-  assert_true!(check_underscore("1_2_3"))
-  assert_true!(check_underscore("0x_1_2_3_A_F"))
-  assert_true!(check_underscore("0o_1_2_3"))
-  assert_true!(check_underscore("0b_1_0_1"))
-  assert_false!(check_underscore("1__2_3"))
-  assert_false!(check_underscore("_123"))
-  assert_false!(check_underscore("123_"))
+  assert_true(check_underscore("123"))
+  assert_true(check_underscore("0x123"))
+  assert_true(check_underscore("0o123"))
+  assert_true(check_underscore("0b101"))
+  assert_true(check_underscore("1_2_3"))
+  assert_true(check_underscore("0x_1_2_3_A_F"))
+  assert_true(check_underscore("0o_1_2_3"))
+  assert_true(check_underscore("0b_1_0_1"))
+  assert_false(check_underscore("1__2_3"))
+  assert_false(check_underscore("_123"))
+  assert_false(check_underscore("123_"))
 }
 
 ///|
 test "determine_base" {
-  assert_eq!(determine_base("1234"), 10)
-  assert_eq!(determine_base("0x1234"), 16)
-  assert_eq!(determine_base("0X1234"), 16)
-  assert_eq!(determine_base("0o1234"), 8)
-  assert_eq!(determine_base("0O1234"), 8)
-  assert_eq!(determine_base("0b1010"), 2)
-  assert_eq!(determine_base("0B1010"), 2)
+  assert_eq(determine_base("1234"), 10)
+  assert_eq(determine_base("0x1234"), 16)
+  assert_eq(determine_base("0X1234"), 16)
+  assert_eq(determine_base("0o1234"), 8)
+  assert_eq(determine_base("0O1234"), 8)
+  assert_eq(determine_base("0b1010"), 2)
+  assert_eq(determine_base("0B1010"), 2)
 }
 
 ///|
@@ -278,10 +278,8 @@ test "parse_int64" {
   ]
   for i in 0..<tests.length() {
     let t = tests[i]
-    assert_eq!(
-      try {
-        Result::Ok(parse_int64!(t.0))
-      } catch {
+    assert_eq(
+      try Result::Ok(parse_int64(t.0)) catch {
         StrConvError(err) => Err(err)
       },
       t.1,
@@ -398,10 +396,8 @@ test "parse_int64_base" {
   ]
   for i in 0..<tests.length() {
     let t = tests[i]
-    assert_eq!(
-      try {
-        Result::Ok(parse_int64!(t.0, base=t.1))
-      } catch {
+    assert_eq(
+      try Result::Ok(parse_int64(t.0, base=t.1)) catch {
         StrConvError(err) => Err(err)
       },
       t.2,
@@ -440,10 +436,8 @@ test "parse_int" {
   ]
   for i in 0..<tests.length() {
     let t = tests[i]
-    assert_eq!(
-      try {
-        Result::Ok(parse_int!(t.0))
-      } catch {
+    assert_eq(
+      try Result::Ok(parse_int(t.0)) catch {
         StrConvError(err) => Err(err)
       },
       t.1,

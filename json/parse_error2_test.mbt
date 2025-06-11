@@ -14,8 +14,8 @@
 
 ///|
 test "parse error" {
-  inspect!(
-    @json.parse?("[1, 2, \u000c]"),
+  inspect(
+    try? @json.parse("[1, 2, \u000c]"),
     content="Err(Invalid character '\\u{0c}' at line 1, column 7)",
   )
 }

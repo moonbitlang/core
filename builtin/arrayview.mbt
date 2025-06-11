@@ -18,12 +18,15 @@
 /// # Example
 ///
 /// ```moonbit
-/// let arr = [1, 2, 3, 4, 5]
-/// let view = arr[1:4]  // Creates a view of elements at indices 1,2,3
-/// assert_eq!(view[0], 2)
-/// assert_eq!(view.length(), 3)
+/// test "arrayview_example" {
+///   let arr = [1, 2, 3, 4, 5]
+///   let view = arr[1:4]  // Creates a view of elements at indices 1,2,3
+///   assert_eq(view[0], 2)
+///   assert_eq(view.length(), 3)
+/// }
 /// ```
 #deprecated("use @array.View instead")
+#builtin.valtype
 struct ArrayView[T] {
   buf : UninitializedArray[T]
   start : Int
@@ -45,10 +48,10 @@ struct ArrayView[T] {
 /// test "ArrayView::length" {
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let view = arr[2:4]
-///   inspect!(view.length(), content="2")
+///   inspect(view.length(), content="2")
 /// }
 /// ```
-pub fn ArrayView::length[T](self : ArrayView[T]) -> Int {
+pub fn[T] ArrayView::length(self : ArrayView[T]) -> Int {
   self.len
 }
 
@@ -72,8 +75,8 @@ pub fn ArrayView::length[T](self : ArrayView[T]) -> Int {
 /// test "ArrayView::op_get" {
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let view = arr[2:4]
-///   inspect!(view[0], content="3")
-///   inspect!(view[1], content="4")
+///   inspect(view[0], content="3")
+///   inspect(view[1], content="4")
 /// }
 ///
 /// test "panic ArrayView::op_get/out_of_bounds" {
@@ -82,7 +85,7 @@ pub fn ArrayView::length[T](self : ArrayView[T]) -> Int {
 ///   ignore(view[2]) // Index out of bounds
 /// }
 /// ```
-pub fn ArrayView::op_get[T](self : ArrayView[T], index : Int) -> T {
+pub fn[T] ArrayView::op_get(self : ArrayView[T], index : Int) -> T {
   guard index >= 0 && index < self.len else {
     abort(
       "index out of bounds: the len is from 0 to \{self.len} but the index is \{index}",
@@ -109,7 +112,7 @@ pub fn ArrayView::op_get[T](self : ArrayView[T], index : Int) -> T {
 /// test "ArrayView::unsafe_get" {
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let view = arr[1:4]
-///   inspect!(view.unsafe_get(1), content="3")
+///   inspect(view.unsafe_get(1), content="3")
 /// }
 ///
 /// test "panic ArrayView::unsafe_get/out_of_bounds" {
@@ -121,7 +124,7 @@ pub fn ArrayView::op_get[T](self : ArrayView[T], index : Int) -> T {
 ///
 #intrinsic("%arrayview.unsafe_get")
 #internal(unsafe, "Panic if index is out of bounds")
-pub fn ArrayView::unsafe_get[T](self : ArrayView[T], index : Int) -> T {
+pub fn[T] ArrayView::unsafe_get(self : ArrayView[T], index : Int) -> T {
   self.buf[self.start + index]
 }
 
@@ -144,7 +147,7 @@ pub fn ArrayView::unsafe_get[T](self : ArrayView[T], index : Int) -> T {
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let view = arr[1:4] // view contains [2, 3, 4]
 ///   view.op_set(1, 42)
-///   inspect!(arr, content="[1, 2, 42, 4, 5]")
+///   inspect(arr, content="[1, 2, 42, 4, 5]")
 /// }
 ///
 /// test "panic ArrayView::op_set/out_of_bounds" {
@@ -154,7 +157,7 @@ pub fn ArrayView::unsafe_get[T](self : ArrayView[T], index : Int) -> T {
 /// }
 /// ```
 ///
-pub fn ArrayView::op_set[T](
+pub fn[T] ArrayView::op_set(
   self : ArrayView[T],
   index : Int,
   value : T
@@ -186,7 +189,7 @@ pub fn ArrayView::op_set[T](
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let view = arr[1:4] // view = [2, 3, 4]
 ///   view.swap(0, 2) // view = [4, 3, 2]
-///   inspect!(view, content="[4, 3, 2]")
+///   inspect(view, content="[4, 3, 2]")
 /// }
 ///
 /// test "panic ArrayView::swap/out_of_bounds" {
@@ -195,7 +198,7 @@ pub fn ArrayView::op_set[T](
 /// }
 /// ```
 ///
-pub fn ArrayView::swap[T](self : ArrayView[T], i : Int, j : Int) -> Unit {
+pub fn[T] ArrayView::swap(self : ArrayView[T], i : Int, j : Int) -> Unit {
   guard i >= 0 && i < self.len && j >= 0 && j < self.len else {
     abort(
       "index out of bounds: the len is from 0 to \{self.len} but the index is (\{i}, \{j})",
@@ -229,8 +232,8 @@ pub fn ArrayView::swap[T](self : ArrayView[T], i : Int, j : Int) -> Unit {
 /// test "op_as_view" {
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let view = arr[1:4] // Create a view of elements at indices 1, 2, and 3
-///   inspect!(view[0], content="2") // First element of view is arr[1]
-///   inspect!(view.length(), content="3") // View contains 3 elements
+///   inspect(view[0], content="2") // First element of view is arr[1]
+///   inspect(view.length(), content="3") // View contains 3 elements
 /// }
 ///
 /// test "panic op_as_view/invalid_range" {
@@ -238,7 +241,7 @@ pub fn ArrayView::swap[T](self : ArrayView[T], i : Int, j : Int) -> Unit {
 ///   ignore(arr[2:1]) // Panic: start index greater than end index
 /// }
 /// ```
-pub fn Array::op_as_view[T](
+pub fn[T] Array::op_as_view(
   self : Array[T],
   start~ : Int = 0,
   end? : Int
@@ -283,7 +286,7 @@ pub fn Array::op_as_view[T](
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let view = arr[1:4] // view = [2, 3, 4]
 ///   let subview = view[1:2] // subview = [3]
-///   inspect!(subview[0], content="3")
+///   inspect(subview[0], content="3")
 /// }
 /// ```
 ///
@@ -294,7 +297,7 @@ pub fn Array::op_as_view[T](
 ///   ignore(view[2:5]) // Panic: end index out of bounds
 /// }
 /// ```
-pub fn ArrayView::op_as_view[T](
+pub fn[T] ArrayView::op_as_view(
   self : ArrayView[T],
   start~ : Int = 0,
   end? : Int

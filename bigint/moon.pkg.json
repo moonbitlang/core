@@ -1,6 +1,7 @@
 {
   "import": [
     "moonbitlang/core/builtin",
+    "moonbitlang/core/char",
     "moonbitlang/core/uint",
     "moonbitlang/core/json",
     "moonbitlang/core/quickcheck",
@@ -11,5 +12,6 @@
     "bigint_nonjs.mbt": ["not", "js"],
     "bigint_js_wbtest.mbt": ["js"],
     "bigint_nonjs_wbtest.mbt": ["not", "js"]
-  }
+  },
+  "warn-list": "-29"
 }

@@ -23,7 +23,7 @@ type UninitializedArray[T] FixedArray[UnsafeMaybeUninit[T]]
 /// - `size` : The number of elements the array should hold.
 ///
 /// Returns an uninitialized array of type `T` with the specified size.
-pub fn UninitializedArray::make[T](size : Int) -> UninitializedArray[T] = "%fixedarray.make_uninit"
+pub fn[T] UninitializedArray::make(size : Int) -> UninitializedArray[T] = "%fixedarray.make_uninit"
 
 ///|
 /// Retrieves the element at the specified index from an uninitialized array.
@@ -34,7 +34,7 @@ pub fn UninitializedArray::make[T](size : Int) -> UninitializedArray[T] = "%fixe
 /// - `index` : The index of the element to retrieve.
 ///
 /// Returns the element at the specified index.
-pub fn UninitializedArray::op_get[T](
+pub fn[T] UninitializedArray::op_get(
   self : UninitializedArray[T],
   index : Int
 ) -> T = "%fixedarray.get"
@@ -47,7 +47,7 @@ pub fn UninitializedArray::op_get[T](
 /// - `array` : The uninitialized array where the value will be set.
 /// - `index` : The position in the array where the value will be set.
 /// - `value` : The value to be set at the specified index.
-pub fn UninitializedArray::op_set[T](
+pub fn[T] UninitializedArray::op_set(
   self : UninitializedArray[T],
   index : Int,
   value : T
@@ -68,7 +68,7 @@ pub fn UninitializedArray::op_set[T](
 ///
 /// Throws an error if the indices are out of bounds or if `start` is greater
 /// than `end`.
-pub fn UninitializedArray::op_as_view[T](
+pub fn[T] UninitializedArray::op_as_view(
   self : UninitializedArray[T],
   start~ : Int = 0,
   end? : Int
@@ -92,12 +92,12 @@ pub fn UninitializedArray::op_as_view[T](
 /// - `array` : The uninitialized array whose length is to be determined.
 ///
 /// Returns the length of the uninitialized array as an integer.
-pub fn UninitializedArray::length[A](self : UninitializedArray[A]) -> Int {
+pub fn[A] UninitializedArray::length(self : UninitializedArray[A]) -> Int {
   self._.length()
 }
 
 ///|
-fn UninitializedArray::unsafe_blit[T](
+fn[T] UninitializedArray::unsafe_blit(
   dst : UninitializedArray[T],
   dst_offset : Int,
   src : UninitializedArray[T],
@@ -111,8 +111,8 @@ fn UninitializedArray::unsafe_blit[T](
 test "op_as_view with valid_range" {
   let arr : UninitializedArray[Int] = UninitializedArray::make(5)
   let view = arr[1:4]
-  inspect!(view.start, content="1")
-  inspect!(view.len, content="3")
+  inspect(view.start, content="1")
+  inspect(view.len, content="3")
 }
 
 ///|

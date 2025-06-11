@@ -45,13 +45,13 @@
 ///
 /// ```moonbit
 /// test "exp" {
-///   inspect!(0.0.exp(), content="1")
-///   inspect!(1.0.exp(), content="2.718281828459045")
-///   inspect!((-1.0).exp(), content="0.36787944117144233")
-///   inspect!(not_a_number.exp().is_nan(), content="true")
+///   inspect(0.0.exp(), content="1")
+///   inspect(1.0.exp(), content="2.718281828459045")
+///   inspect((-1.0).exp(), content="0.36787944117144233")
+///   inspect(not_a_number.exp().is_nan(), content="true")
 /// }
 /// ```
-pub fn exp(self : Double) -> Double {
+pub fn Double::exp(self : Double) -> Double {
   fn get_high_word(x : Double) -> UInt {
     (x.reinterpret_as_uint64() >> 32).to_uint()
   }
@@ -179,17 +179,17 @@ pub fn exp(self : Double) -> Double {
 ///
 /// ```moonbit
 /// test "expm1" {
-///   inspect!(0.0.expm1(), content="0")
-///   inspect!(1.0.expm1(), content="1.718281828459045")
-///   inspect!(2.0.expm1(), content="6.38905609893065")
-///   inspect!((-1.0).expm1(), content="-0.6321205588285577")
-///   inspect!((-2.0).expm1(), content="-0.8646647167633873")
-///   inspect!(@double.not_a_number.expm1(), content="NaN")
-///   inspect!(@double.infinity.expm1(), content="Infinity")
-///   inspect!(@double.neg_infinity.expm1(), content="-1")
+///   inspect(0.0.expm1(), content="0")
+///   inspect(1.0.expm1(), content="1.718281828459045")
+///   inspect(2.0.expm1(), content="6.38905609893065")
+///   inspect((-1.0).expm1(), content="-0.6321205588285577")
+///   inspect((-2.0).expm1(), content="-0.8646647167633873")
+///   inspect(@double.not_a_number.expm1(), content="NaN")
+///   inspect(@double.infinity.expm1(), content="Infinity")
+///   inspect(@double.neg_infinity.expm1(), content="-1")
 /// }
 /// ```
-pub fn expm1(self : Double) -> Double {
+pub fn Double::expm1(self : Double) -> Double {
   if self.is_nan() {
     return not_a_number
   }

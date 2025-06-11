@@ -16,7 +16,8 @@
 /// A `StringView` represents a view of a String that maintains proper Unicode
 /// character boundaries. It allows safe access to a substring while handling 
 /// multi-byte characters correctly.
-/// alert deprecated "use @string.View instead"
+#deprecated("use @string.View instead")
+#builtin.valtype
 struct StringView {
   // # Fields
   //
@@ -35,7 +36,7 @@ struct StringView {
 /// A `@string.View` represents a view of a String that maintains proper Unicode
 /// character boundaries. It allows safe access to a substring while handling 
 /// multi-byte characters correctly.
-pub typealias View = StringView
+pub typealias StringView as View
 
 ///| 
 /// Returns the charcode(UTF-16 code unit) at the given index.
@@ -47,14 +48,27 @@ pub typealias View = StringView
 /// ```
 /// let str = "Hello🤣🤣🤣"
 /// let view = str[1:6]
-/// inspect!(view[0].to_char(), content="Some('e')")
-/// inspect!(view[4], content="55358")
+/// inspect(view[0].to_char(), content="Some('e')")
+/// inspect(view[4], content="55358")
 /// ```
 pub fn View::op_get(self : View, index : Int) -> Int {
   guard index >= 0 && index < self.length() else {
     abort("Index out of bounds")
   }
   self.str.unsafe_charcode_at(self.start + index)
+}
+
+///|
+/// Returns the original string that is being viewed.
+pub fn data(self : View) -> String {
+  self.str
+}
+
+///|
+/// Returns the starting offset (in UTF-16 code units) of this view into its
+/// underlying string.
+pub fn start_offset(self : View) -> Int {
+  self.start
 }
 
 ///|
@@ -73,13 +87,13 @@ pub fn length(self : View) -> Int {
 /// ```
 /// let str = "Hello🤣🤣🤣"
 /// let view1 = str.view()
-/// inspect!(view1, content=
+/// inspect(view1, content=
 ///  "Hello🤣🤣🤣"
 ///)
 /// let start_offset = str.offset_of_nth_char(1).unwrap()
 /// let end_offset = str.offset_of_nth_char(6).unwrap() // the second emoji
 /// let view2 = str.view(start_offset~, end_offset~)
-/// inspect!(view2, content=
+/// inspect(view2, content=
 ///  "ello🤣"
 ///)
 /// ```
@@ -123,13 +137,13 @@ pub fn View::view(
 /// ```
 /// let str = "Hello🤣🤣🤣"
 /// let view1 = str.charcodes()
-/// inspect!(view1, content=
+/// inspect(view1, content=
 ///  "Hello🤣🤣🤣"
 ///)
 /// let start = str.offset_of_nth_char(1).unwrap()
 /// let end = str.offset_of_nth_char(6).unwrap() // the second emoji
 /// let view2 = str.charcodes(start~, end~)
-/// inspect!(view2, content=
+/// inspect(view2, content=
 ///  "ello🤣"
 ///)
 /// ```
@@ -152,7 +166,7 @@ pub fn String::charcodes(
 /// let str = "Hello🤣🤣🤣"
 /// let view1 = str.view()
 /// let view2 = view1.charcodes(start=1, end=7) // From 2nd to 6th character
-/// inspect!(view2, content=
+/// inspect(view2, content=
 ///  "ello🤣"
 ///)
 /// ```
@@ -256,7 +270,7 @@ pub impl Show for View with output(self, logger) {
 /// ```
 /// let str = "Hello World"
 /// let view = str[0:5]  // "Hello"
-/// inspect!(view.to_string(), content="Hello")
+/// inspect(view.to_string(), content="Hello")
 /// ```
 pub impl Show for StringView with to_string(self) {
   self.str.substring(start=self.start, end=self.end)
@@ -277,7 +291,6 @@ pub fn View::iter(self : View) -> Iter[Char] {
         }
       }
       guard yield_(c1.unsafe_to_char()) is IterContinue else { break IterEnd }
-
     } else {
       IterContinue
     }
@@ -301,7 +314,6 @@ pub fn View::iter2(self : View) -> Iter2[Int, Char] {
       guard yield_(n, c1.unsafe_to_char()) is IterContinue else {
         break IterEnd
       }
-
     } else {
       IterContinue
     }
@@ -323,7 +335,6 @@ pub fn View::rev_iter(self : View) -> Iter[Char] {
         }
       }
       guard yield_(c1.unsafe_to_char()) is IterContinue else { break IterEnd }
-
     } else {
       IterContinue
     }
@@ -344,7 +355,6 @@ pub impl Eq for View with op_equal(self, other) {
       other.str.unsafe_charcode_at(other.start + i) else {
       return false
     }
-
   }
   true
 }
@@ -367,7 +377,6 @@ pub impl Compare for View with compare(self, other) {
       .unsafe_charcode_at(self.start + i)
       .compare(other.str.unsafe_charcode_at(other.start + i))
     guard cmp == 0 else { return cmp }
-
   }
   0
 }

@@ -44,9 +44,15 @@ pub impl Logger for StringBuilder with write_string(self, str) {
 }
 
 ///|
+#intrinsic("%char.to_string")
+fn char_to_string(char : Char) -> String {
+  [char]
+}
+
+///|
 /// Writes a character to the StringBuilder.
 pub impl Logger for StringBuilder with write_char(self, ch) {
-  self.val += Char::to_string(ch)
+  self.val += char_to_string(ch)
 }
 
 ///|
@@ -65,7 +71,7 @@ pub impl Logger for StringBuilder with write_char(self, ch) {
 /// test "write_substring" {
 ///   let sb = StringBuilder::new()
 ///   sb.write_substring("Hello, world!", 0, 5)
-///   assert_eq!(sb.to_string(), "Hello")
+///   assert_eq(sb.to_string(), "Hello")
 /// }
 /// ```
 pub impl Logger for StringBuilder with write_substring(

@@ -5,58 +5,59 @@ import(
 )
 
 // Values
-fn bind[T, E, U](Result[T, E], (T) -> Result[U, E]) -> Result[U, E]
+fn[T, E, U] bind(Result[T, E], (T) -> Result[U, E]) -> Result[U, E]
 
-fn err[T, E](E) -> Result[T, E]
+fn[T, E] err(E) -> Result[T, E]
 
-fn flatten[T, E](Result[Result[T, E], E]) -> Result[T, E]
+fn[T, E] flatten(Result[Result[T, E], E]) -> Result[T, E]
 
-fn fold[T, E, V](Result[T, E], (T) -> V, (E) -> V) -> V
+fn[T, E, V] fold(Result[T, E], (T) -> V, (E) -> V) -> V
 
-fn is_err[T, E](Result[T, E]) -> Bool
+fn[T, E] is_err(Result[T, E]) -> Bool
 
-fn is_ok[T, E](Result[T, E]) -> Bool
+fn[T, E] is_ok(Result[T, E]) -> Bool
 
-fn map[T, E, U](Result[T, E], (T) -> U) -> Result[U, E]
+fn[T, E, U] map(Result[T, E], (T) -> U) -> Result[U, E]
 
-fn map_err[T, E, F](Result[T, E], (E) -> F) -> Result[T, F]
+fn[T, E, F] map_err(Result[T, E], (E) -> F) -> Result[T, F]
 
-fn ok[T, E](T) -> Result[T, E]
+fn[T, E] ok(T) -> Result[T, E]
 
-fn or[T, E](Result[T, E], T) -> T
+fn[T, E] or(Result[T, E], T) -> T
 
-fn or_else[T, E](Result[T, E], () -> T) -> T
+fn[T, E] or_else(Result[T, E], () -> T) -> T
 
-fn to_option[T, E](Result[T, E]) -> T?
+fn[T, E] to_option(Result[T, E]) -> T?
 
-fn unwrap[T, E](Result[T, E]) -> T
+fn[T, E] unwrap(Result[T, E]) -> T
 
-fn unwrap_err[T, E](Result[T, E]) -> E
+fn[T, E] unwrap_err(Result[T, E]) -> E
 
-fn unwrap_or_error[T, E : Error](Result[T, E]) -> T!E
+fn[T, E : Error] unwrap_or_error(Result[T, E]) -> T!E
 
-fn wrap0[T, E : Error](f~ : () -> T!E) -> Result[T, E]
+#deprecated
+fn[T, E : Error] wrap0(f~ : () -> T!E) -> Result[T, E]
 
-fn wrap1[T, A, E : Error](f~ : (A) -> T!E, A) -> Result[T, E]
+#deprecated
+fn[T, A, E : Error] wrap1(f~ : (A) -> T!E, A) -> Result[T, E]
 
-fn wrap2[T, A, B, E : Error](f~ : (A, B) -> T!E, A, B) -> Result[T, E]
+#deprecated
+fn[T, A, B, E : Error] wrap2(f~ : (A, B) -> T!E, A, B) -> Result[T, E]
 
 // Types and methods
-impl Result {
-  bind[T, E, U](Self[T, E], (T) -> Self[U, E]) -> Self[U, E]
-  flatten[T, E](Self[Self[T, E], E]) -> Self[T, E]
-  fold[T, E, V](Self[T, E], (T) -> V, (E) -> V) -> V
-  is_err[T, E](Self[T, E]) -> Bool
-  is_ok[T, E](Self[T, E]) -> Bool
-  map[T, E, U](Self[T, E], (T) -> U) -> Self[U, E]
-  map_err[T, E, F](Self[T, E], (E) -> F) -> Self[T, F]
-  or[T, E](Self[T, E], T) -> T
-  or_else[T, E](Self[T, E], () -> T) -> T
-  to_option[T, E](Self[T, E]) -> T?
-  unwrap[T, E](Self[T, E]) -> T
-  unwrap_err[T, E](Self[T, E]) -> E
-  unwrap_or_error[T, E : Error](Self[T, E]) -> T!E
-}
+fn[T, E, U] Result::bind(Self[T, E], (T) -> Self[U, E]) -> Self[U, E]
+fn[T, E] Result::flatten(Self[Self[T, E], E]) -> Self[T, E]
+fn[T, E, V] Result::fold(Self[T, E], (T) -> V, (E) -> V) -> V
+fn[T, E] Result::is_err(Self[T, E]) -> Bool
+fn[T, E] Result::is_ok(Self[T, E]) -> Bool
+fn[T, E, U] Result::map(Self[T, E], (T) -> U) -> Self[U, E]
+fn[T, E, F] Result::map_err(Self[T, E], (E) -> F) -> Self[T, F]
+fn[T, E] Result::or(Self[T, E], T) -> T
+fn[T, E] Result::or_else(Self[T, E], () -> T) -> T
+fn[T, E] Result::to_option(Self[T, E]) -> T?
+fn[T, E] Result::unwrap(Self[T, E]) -> T
+fn[T, E] Result::unwrap_err(Self[T, E]) -> E
+fn[T, E : Error] Result::unwrap_or_error(Self[T, E]) -> T!E
 impl[T : Compare, E : Compare] Compare for Result[T, E]
 impl[T : @quickcheck.Arbitrary, E : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Result[T, E]
 

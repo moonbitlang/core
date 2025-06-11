@@ -24,11 +24,11 @@ type Iter2[A, B] ((A, B) -> IterResult) -> IterResult
 
 ///|
 //TODO: Add intrinsic for Iter::run
-pub fn Iter2::run[A, B](
+pub fn[A, B] Iter2::run(
   self : Iter2[A, B],
   f : (A, B) -> IterResult
 ) -> IterResult {
-  (self._)(f)
+  self(f)
 }
 
 ///|
@@ -42,24 +42,25 @@ pub impl[A : Show, B : Show] Show for Iter2[A, B] with output(self, logger) {
     } else {
       first = false
     }
-    logger.write_string("(")
-    logger.write_object(k)
-    logger.write_string(", ")
-    logger.write_object(v)
-    logger.write_string(")")
+    logger
+    ..write_string("(")
+    ..write_object(k)
+    ..write_string(", ")
+    ..write_object(v)
+    ..write_string(")")
   }
   logger.write_string("]")
 }
 
 ///|
-pub fn Iter2::new[A, B](
+pub fn[A, B] Iter2::new(
   f : ((A, B) -> IterResult) -> IterResult
 ) -> Iter2[A, B] {
   Iter2(f)
 }
 
 ///|
-pub fn Iter2::each[A, B](self : Iter2[A, B], f : (A, B) -> Unit) -> Unit {
+pub fn[A, B] Iter2::each(self : Iter2[A, B], f : (A, B) -> Unit) -> Unit {
   self.run(fn(a, b) {
     f(a, b)
     IterContinue
@@ -68,12 +69,12 @@ pub fn Iter2::each[A, B](self : Iter2[A, B], f : (A, B) -> Unit) -> Unit {
 }
 
 ///|
-pub fn Iter2::iter[A, B](self : Iter2[A, B]) -> Iter[(A, B)] {
+pub fn[A, B] Iter2::iter(self : Iter2[A, B]) -> Iter[(A, B)] {
   Iter::new(fn(yield_) { self.run(fn(a, b) { yield_((a, b)) }) })
 }
 
 ///|
-pub fn Iter2::iter2[A, B](self : Iter2[A, B]) -> Iter2[A, B] {
+pub fn[A, B] Iter2::iter2(self : Iter2[A, B]) -> Iter2[A, B] {
   // This is a no-op to make sure
   // `for k,v in map.iter2() { ... }`
   // still work
@@ -81,7 +82,7 @@ pub fn Iter2::iter2[A, B](self : Iter2[A, B]) -> Iter2[A, B] {
 }
 
 ///|
-pub fn Iter2::to_array[A, B](self : Iter2[A, B]) -> Array[(A, B)] {
+pub fn[A, B] Iter2::to_array(self : Iter2[A, B]) -> Array[(A, B)] {
   let arr = []
   for k, v in self {
     arr.push((k, v))
@@ -105,13 +106,13 @@ pub fn Iter2::to_array[A, B](self : Iter2[A, B]) -> Array[(A, B)] {
 ///
 /// ```moonbit
 /// test "Iter2::concat" {
-///   inspect!(
+///   inspect(
 ///     "abc".iter2().concat("def".iter2()).to_array(),
 ///     content="[(0, 'a'), (1, 'b'), (2, 'c'), (0, 'd'), (1, 'e'), (2, 'f')]",
 ///   )
 /// }
 /// ```
-pub fn Iter2::concat[A, B](
+pub fn[A, B] Iter2::concat(
   self : Iter2[A, B],
   other : Iter2[A, B]
 ) -> Iter2[A, B] {

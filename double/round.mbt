@@ -38,12 +38,12 @@ let frac_bits = 52
 ///
 /// ```moonbit
 /// test "trunc" {
-///   inspect!(3.7.trunc(), content="3")
-///   inspect!((-3.7).trunc(), content="-3")
-///   inspect!(0.0.trunc(), content="0")
+///   inspect(3.7.trunc(), content="3")
+///   inspect((-3.7).trunc(), content="-3")
+///   inspect(0.0.trunc(), content="0")
 /// }
 /// ```
-pub fn trunc(self : Double) -> Double {
+pub fn Double::trunc(self : Double) -> Double {
   let u64 = self.reinterpret_as_uint64()
   let biased_exp = ((u64 >> frac_bits) & ((0x1UL << exp_bits) - 1)).to_int()
   if biased_exp < exp_bias {
@@ -69,12 +69,12 @@ pub fn trunc(self : Double) -> Double {
 ///
 /// ```moonbit
 /// test "ceil" {
-///   inspect!(3.7.ceil(), content="4")
-///   inspect!((-3.7).ceil(), content="-3")
-///   inspect!(42.0.ceil(), content="42")
+///   inspect(3.7.ceil(), content="4")
+///   inspect((-3.7).ceil(), content="-3")
+///   inspect(42.0.ceil(), content="42")
 /// }
 /// ```
-pub fn ceil(self : Double) -> Double {
+pub fn Double::ceil(self : Double) -> Double {
   let trunced = self.trunc()
   if self > trunced {
     return trunced + 1.0
@@ -97,12 +97,12 @@ pub fn ceil(self : Double) -> Double {
 ///
 /// ```moonbit
 /// test "floor" {
-///   inspect!(3.7.floor(), content="3")
-///   inspect!((-3.7).floor(), content="-4")
-///   inspect!(0.0.floor(), content="0")
+///   inspect(3.7.floor(), content="3")
+///   inspect((-3.7).floor(), content="-4")
+///   inspect(0.0.floor(), content="0")
 /// }
 /// ```
-pub fn floor(self : Double) -> Double {
+pub fn Double::floor(self : Double) -> Double {
   let trunced = self.trunc()
   if self < trunced {
     return trunced - 1.0
@@ -126,12 +126,12 @@ pub fn floor(self : Double) -> Double {
 ///
 /// ```moonbit
 /// test "round" {
-///   inspect!(3.7.round(), content="4")
-///   inspect!(3.2.round(), content="3")
-///   inspect!(3.5.round(), content="4")
-///   inspect!((-3.5).round(), content="-3")
+///   inspect(3.7.round(), content="4")
+///   inspect(3.2.round(), content="3")
+///   inspect(3.5.round(), content="4")
+///   inspect((-3.5).round(), content="-3")
 /// }
 /// ```
-pub fn round(self : Double) -> Double {
+pub fn Double::round(self : Double) -> Double {
   floor(self + 0.5)
 }

@@ -18,7 +18,7 @@ let default_init_capacity = 8
 
 ///|
 /// Create new hash set.
-pub fn new[K](capacity~ : Int = default_init_capacity) -> T[K] {
+pub fn[K] new(capacity~ : Int = default_init_capacity) -> T[K] {
   {
     size: 0,
     capacity,
@@ -29,14 +29,14 @@ pub fn new[K](capacity~ : Int = default_init_capacity) -> T[K] {
 
 ///|
 /// Create new hash set from array.
-pub fn from_array[K : Hash + Eq](arr : Array[K]) -> T[K] {
+pub fn[K : Hash + Eq] from_array(arr : Array[K]) -> T[K] {
   let m = new()
   arr.each(fn(e) { m.add(e) })
   m
 }
 
 ///|
-pub fn of[K : Hash + Eq](arr : FixedArray[K]) -> T[K] {
+pub fn[K : Hash + Eq] of(arr : FixedArray[K]) -> T[K] {
   let m = new()
   arr.each(fn(e) { m.add(e) })
   m
@@ -46,13 +46,13 @@ pub fn of[K : Hash + Eq](arr : FixedArray[K]) -> T[K] {
 /// Insert a key into hash set.
 #deprecated("Use `add` instead.")
 #coverage.skip
-pub fn insert[K : Hash + Eq](self : T[K], key : K) -> Unit {
+pub fn[K : Hash + Eq] insert(self : T[K], key : K) -> Unit {
   self.add(key)
 }
 
 ///|
 /// Insert a key into hash set.
-pub fn add[K : Hash + Eq](self : T[K], key : K) -> Unit {
+pub fn[K : Hash + Eq] add(self : T[K], key : K) -> Unit {
   if self.capacity == 0 || self.size >= self.grow_at {
     self.grow()
   }
@@ -89,7 +89,7 @@ pub fn add[K : Hash + Eq](self : T[K], key : K) -> Unit {
 
 ///|
 /// Check if the hash set contains a key.
-pub fn contains[K : Hash + Eq](self : T[K], key : K) -> Bool {
+pub fn[K : Hash + Eq] contains(self : T[K], key : K) -> Bool {
   let hash = key.hash()
   for i = 0, idx = self.index(hash)
       i < self.capacity
@@ -111,7 +111,7 @@ pub fn contains[K : Hash + Eq](self : T[K], key : K) -> Bool {
 
 ///|
 /// Remove a key from hash set.
-pub fn remove[K : Hash + Eq](self : T[K], key : K) -> Unit {
+pub fn[K : Hash + Eq] remove(self : T[K], key : K) -> Unit {
   let hash = key.hash()
   for i = 0, idx = self.index(hash)
       i < self.capacity
@@ -129,31 +129,31 @@ pub fn remove[K : Hash + Eq](self : T[K], key : K) -> Unit {
 
 ///|
 /// Get the number of keys in the set.
-pub fn size[K](self : T[K]) -> Int {
+pub fn[K] size(self : T[K]) -> Int {
   self.size
 }
 
 ///|
 /// Get the capacity of the set.
-pub fn capacity[K](self : T[K]) -> Int {
+pub fn[K] capacity(self : T[K]) -> Int {
   self.capacity
 }
 
 ///|
 /// Check if the hash set is empty.
-pub fn is_empty[K](self : T[K]) -> Bool {
+pub fn[K] is_empty(self : T[K]) -> Bool {
   self.size == 0
 }
 
 ///|
 /// Iterate over all keys of the set.
-pub fn each[K](self : T[K], f : (K) -> Unit) -> Unit {
+pub fn[K] each(self : T[K], f : (K) -> Unit) -> Unit {
   self.eachi(fn(_i, k) { f(k) })
 }
 
 ///|
 /// Iterate over all keys of the set, with index.
-pub fn eachi[K](self : T[K], f : (Int, K) -> Unit) -> Unit {
+pub fn[K] eachi(self : T[K], f : (Int, K) -> Unit) -> Unit {
   let mut idx = 0
   for i in 0..<self.capacity {
     if self.entries[i] is Some({ key, .. }) {
@@ -165,7 +165,7 @@ pub fn eachi[K](self : T[K], f : (Int, K) -> Unit) -> Unit {
 
 ///|
 /// Clears the set, removing all keys. Keeps the allocated space.
-pub fn clear[K](self : T[K]) -> Unit {
+pub fn[K] clear(self : T[K]) -> Unit {
   for i in 0..<self.capacity {
     self.entries[i] = None
   }
@@ -174,7 +174,7 @@ pub fn clear[K](self : T[K]) -> Unit {
 
 ///|
 /// Union of two hash sets.
-pub fn union[K : Hash + Eq](self : T[K], other : T[K]) -> T[K] {
+pub fn[K : Hash + Eq] union(self : T[K], other : T[K]) -> T[K] {
   let m = new()
   self.each(fn(k) { m.add(k) })
   other.each(fn(k) { m.add(k) })
@@ -183,7 +183,7 @@ pub fn union[K : Hash + Eq](self : T[K], other : T[K]) -> T[K] {
 
 ///|
 /// Intersection of two hash sets.
-pub fn intersection[K : Hash + Eq](self : T[K], other : T[K]) -> T[K] {
+pub fn[K : Hash + Eq] intersection(self : T[K], other : T[K]) -> T[K] {
   let m = new()
   self.each(fn(k) { if other.contains(k) { m.add(k) } })
   m
@@ -191,7 +191,7 @@ pub fn intersection[K : Hash + Eq](self : T[K], other : T[K]) -> T[K] {
 
 ///|
 /// Difference of two hash sets.
-pub fn difference[K : Hash + Eq](self : T[K], other : T[K]) -> T[K] {
+pub fn[K : Hash + Eq] difference(self : T[K], other : T[K]) -> T[K] {
   let m = new()
   self.each(fn(k) { if not(other.contains(k)) { m.add(k) } })
   m
@@ -199,7 +199,7 @@ pub fn difference[K : Hash + Eq](self : T[K], other : T[K]) -> T[K] {
 
 ///|
 /// Symmetric difference of two hash sets.
-pub fn symmetric_difference[K : Hash + Eq](self : T[K], other : T[K]) -> T[K] {
+pub fn[K : Hash + Eq] symmetric_difference(self : T[K], other : T[K]) -> T[K] {
   let m = new()
   self.each(fn(k) { if not(other.contains(k)) { m.add(k) } })
   other.each(fn(k) { if not(self.contains(k)) { m.add(k) } })
@@ -208,7 +208,7 @@ pub fn symmetric_difference[K : Hash + Eq](self : T[K], other : T[K]) -> T[K] {
 
 ///|
 /// Check if two sets have no common elements.
-pub fn is_disjoint[K : Hash + Eq](self : T[K], other : T[K]) -> Bool {
+pub fn[K : Hash + Eq] is_disjoint(self : T[K], other : T[K]) -> Bool {
   if self.size() <= other.size() {
     self.iter().all(fn(k) { not(other.contains(k)) })
   } else {
@@ -218,7 +218,7 @@ pub fn is_disjoint[K : Hash + Eq](self : T[K], other : T[K]) -> Bool {
 
 ///|
 /// Check if the current set is a subset of another set.
-pub fn is_subset[K : Hash + Eq](self : T[K], other : T[K]) -> Bool {
+pub fn[K : Hash + Eq] is_subset(self : T[K], other : T[K]) -> Bool {
   if self.size() <= other.size() {
     self.iter().all(fn(k) { other.contains(k) })
   } else {
@@ -228,7 +228,7 @@ pub fn is_subset[K : Hash + Eq](self : T[K], other : T[K]) -> Bool {
 
 ///|
 /// Check if the current set is a superset of another set.
-pub fn is_superset[K : Hash + Eq](self : T[K], other : T[K]) -> Bool {
+pub fn[K : Hash + Eq] is_superset(self : T[K], other : T[K]) -> Bool {
   other.is_subset(self)
 }
 
@@ -257,12 +257,11 @@ pub impl[K : Hash + Eq] Sub for T[K] with op_sub(self, other) {
 }
 
 ///|
-pub fn iter[K](self : T[K]) -> Iter[K] {
+pub fn[K] iter(self : T[K]) -> Iter[K] {
   Iter::new(fn(yield_) {
     for entry in self.entries {
       if entry is Some({ key, .. }) {
         guard yield_(key) is IterContinue else { break IterEnd }
-
       }
     } else {
       IterContinue
@@ -271,7 +270,7 @@ pub fn iter[K](self : T[K]) -> Iter[K] {
 }
 
 ///|
-pub fn from_iter[K : Hash + Eq](iter : Iter[K]) -> T[K] {
+pub fn[K : Hash + Eq] from_iter(iter : Iter[K]) -> T[K] {
   let s = new()
   iter.each(fn(e) { s.add(e) })
   s
@@ -286,7 +285,7 @@ pub impl[X : @quickcheck.Arbitrary + Eq + Hash] @quickcheck.Arbitrary for T[X] w
 }
 
 ///|
-fn shift_back[K : Hash](self : T[K], start_index : Int) -> Unit {
+fn[K : Hash] shift_back(self : T[K], start_index : Int) -> Unit {
   for i = 0, prev = start_index, curr = self.next_index(start_index)
       i < self.entries.length()
       i = i + 1, prev = curr, curr = self.next_index(curr) {
@@ -305,7 +304,7 @@ fn shift_back[K : Hash](self : T[K], start_index : Int) -> Unit {
 }
 
 ///|
-fn grow[K : Hash + Eq](self : T[K]) -> Unit {
+fn[K : Hash + Eq] grow(self : T[K]) -> Unit {
   // handle zero capacity
   if self.capacity == 0 {
     self.capacity = default_init_capacity
@@ -327,7 +326,7 @@ fn grow[K : Hash + Eq](self : T[K]) -> Unit {
 }
 
 ///|
-fn index[K : Hash](self : T[K], hash : Int) -> Int {
+fn[K : Hash] index(self : T[K], hash : Int) -> Int {
   abs(hash) & (self.capacity - 1)
 }
 
@@ -341,7 +340,7 @@ fn abs(n : Int) -> Int {
 }
 
 ///|
-fn next_index[K : Hash](self : T[K], index : Int) -> Int {
+fn[K : Hash] next_index(self : T[K], index : Int) -> Int {
   (index + 1) & (self.capacity - 1)
 }
 
@@ -351,7 +350,7 @@ fn calc_grow_threshold(capacity : Int) -> Int {
 }
 
 ///|
-fn debug_entries[K : Show](self : T[K]) -> String {
+fn[K : Show] debug_entries(self : T[K]) -> String {
   let mut s = ""
   for i in 0..<self.entries.length() {
     if i > 0 {
@@ -398,8 +397,8 @@ test "set" {
   m.add("cd")
   m.add("c")
   m.add("d")
-  assert_eq!(m.size, 7)
-  assert_eq!(
+  assert_eq(m.size, 7)
+  assert_eq(
     m.debug_entries(),
     "_,(0,a),(1,b),(2,c),(3,d),(3,bc),(4,cd),(4,abc),_,_,_,_,_,_,_,_",
   )
@@ -419,8 +418,8 @@ test "remove" {
   m.add("abc" |> i)
   m.add("abcdef" |> i)
   m.remove("ab" |> i)
-  assert_eq!(m.size(), 5)
-  assert_eq!(m.debug_entries(), "_,(0,a),(0,bc),(1,cd),(1,abc),_,(0,abcdef),_")
+  assert_eq(m.size(), 5)
+  assert_eq(m.debug_entries(), "_,(0,a),(0,bc),(1,cd),(1,abc),_,(0,abcdef),_")
 }
 
 ///|
@@ -434,8 +433,8 @@ test "remove_unexist_key" {
   m.add("ab" |> i)
   m.add("abc" |> i)
   m.remove("d" |> i)
-  assert_eq!(m.size(), 3)
-  assert_eq!(m.debug_entries(), "_,(0,a),(0,ab),(0,abc),_,_,_,_")
+  assert_eq(m.size(), 3)
+  assert_eq(m.debug_entries(), "_,(0,a),(0,ab),(0,abc),_,_,_,_")
 }
 
 ///|
@@ -451,17 +450,17 @@ test "grow" {
   m.add("Java" |> i)
   m.add("Scala" |> i)
   m.add("Julia" |> i)
-  assert_eq!(m.size, 6)
-  assert_eq!(m.capacity, 8)
+  assert_eq(m.size, 6)
+  assert_eq(m.capacity, 8)
   m.add("Cobol" |> i)
-  assert_eq!(m.size, 7)
-  assert_eq!(m.capacity, 16)
+  assert_eq(m.size, 7)
+  assert_eq(m.capacity, 16)
   m.add("Python" |> i)
   m.add("Haskell" |> i)
   m.add("Rescript" |> i)
-  assert_eq!(m.size, 10)
-  assert_eq!(m.capacity, 16)
-  assert_eq!(
+  assert_eq(m.size, 10)
+  assert_eq(m.capacity, 16)
+  assert_eq(
     m.debug_entries(),
     "_,(0,C),(0,Go),(0,C++),(0,Java),(0,Scala),(1,Julia),(2,Cobol),(2,Python),(2,Haskell),(2,Rescript),_,_,_,_,_",
   )
@@ -471,15 +470,15 @@ test "grow" {
 test "clear" {
   let m : T[MyString] = new()
   m.clear()
-  assert_eq!(m.size(), 0)
-  assert_eq!(m.capacity(), 8)
+  assert_eq(m.size(), 0)
+  assert_eq(m.capacity(), 8)
   for i in 0..<m.capacity() {
-    @test.same_object!(m.entries[i], None)
+    @test.same_object(m.entries[i], None)
   }
 }
 
 ///|
-pub fn to_array[K](self : T[K]) -> Array[K] {
+pub fn[K] to_array(self : T[K]) -> Array[K] {
   let mut i = 0
   let res = while i < self.capacity {
     if self.entries[i] is Some({ key, .. }) {

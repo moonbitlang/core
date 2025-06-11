@@ -14,12 +14,12 @@
 
 ///|
 test {
-  @json.inspect!(1, content=1)
+  @json.inspect(1, content=1)
 }
 
 ///|
 test {
-  @json.inspect!({ "x": 1 }, content={ "x": 1 })
+  @json.inspect({ "x": 1 }, content={ "x": 1 })
 }
 
 ///|
@@ -47,9 +47,9 @@ struct Line {
 test "json inspect" {
   let p1 = { x: 0, y: 0, color: Color::Red }
   let p2 = { x: 1, y: 2, color: Color::Green }
-  @json.inspect!(p1, content={ "x": 0, "y": 0, "color": { "$tag": "Red" } })
+  @json.inspect(p1, content={ "x": 0, "y": 0, "color": { "$tag": "Red" } })
   let line = { p1, p2, color: Color::Blue }
-  @json.inspect!(line, content={
+  @json.inspect(line, content={
     "p1": { "x": 0, "y": 0, "color": { "$tag": "Red" } },
     "p2": { "x": 1, "y": 2, "color": { "$tag": "Green" } },
     "color": { "$tag": "Blue" },

@@ -30,12 +30,12 @@
 ///
 /// ```moonbit
 /// test "Float::trunc" {
-///   inspect!((1.9 : Float).trunc(), content="1")
-///   inspect!((-1.9 : Float).trunc(), content="-1")
-///   inspect!((0.1 : Float).trunc(), content="0")
+///   inspect((1.9 : Float).trunc(), content="1")
+///   inspect((-1.9 : Float).trunc(), content="-1")
+///   inspect((0.1 : Float).trunc(), content="0")
 /// }
 /// ```
-pub fn trunc(self : Float) -> Float = "(func (param $f f32) (result f32) (f32.trunc (local.get $f)))"
+pub fn Float::trunc(self : Float) -> Float = "(func (param $f f32) (result f32) (f32.trunc (local.get $f)))"
 
 ///|
 /// Returns the smallest integer greater than or equal to the given
@@ -51,12 +51,12 @@ pub fn trunc(self : Float) -> Float = "(func (param $f f32) (result f32) (f32.tr
 ///
 /// ```moonbit
 /// test "ceil" {
-///   inspect!((1.4 : Float).ceil(), content="2")
-///   inspect!((1.0 : Float).ceil(), content="1")
-///   inspect!((-1.4 : Float).ceil(), content="-1")
+///   inspect((1.4 : Float).ceil(), content="2")
+///   inspect((1.0 : Float).ceil(), content="1")
+///   inspect((-1.4 : Float).ceil(), content="-1")
 /// }
 /// ```
-pub fn ceil(self : Float) -> Float = "(func (param $f f32) (result f32) (f32.ceil (local.get $f)))"
+pub fn Float::ceil(self : Float) -> Float = "(func (param $f f32) (result f32) (f32.ceil (local.get $f)))"
 
 ///|
 /// Returns the largest integer less than or equal to the given floating-point
@@ -73,11 +73,11 @@ pub fn ceil(self : Float) -> Float = "(func (param $f f32) (result f32) (f32.cei
 ///
 /// ```moonbit
 /// test "floor" {
-///   inspect!((3.7 : Float).floor(), content="3")
-///   inspect!((-3.7 : Float).floor(), content="-4")
+///   inspect((3.7 : Float).floor(), content="3")
+///   inspect((-3.7 : Float).floor(), content="-4")
 /// }
 /// ```
-pub fn floor(self : Float) -> Float = "(func (param $f f32) (result f32) (f32.floor (local.get $f)))"
+pub fn Float::floor(self : Float) -> Float = "(func (param $f f32) (result f32) (f32.floor (local.get $f)))"
 
 ///|
 /// Rounds a floating-point number to the nearest integer value. If the
@@ -94,12 +94,12 @@ pub fn floor(self : Float) -> Float = "(func (param $f f32) (result f32) (f32.fl
 ///
 /// ```moonbit
 /// test "round" {
-///   inspect!((1.4 : Float).round(), content="1")
-///   inspect!((1.5 : Float).round(), content="2")
-///   inspect!((1.6 : Float).round(), content="2")
-///   inspect!((-1.5 : Float).round(), content="-1")
+///   inspect((1.4 : Float).round(), content="1")
+///   inspect((1.5 : Float).round(), content="2")
+///   inspect((1.6 : Float).round(), content="2")
+///   inspect((-1.5 : Float).round(), content="-1")
 /// }
 /// ```
-pub fn round(self : Float) -> Float {
+pub fn Float::round(self : Float) -> Float {
   floor(self + 0.5)
 }

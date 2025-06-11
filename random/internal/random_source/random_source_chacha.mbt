@@ -81,7 +81,7 @@ test "bytesToUInt64" {
   for i in 0..<2 {
     bytes[i] = i.to_byte()
   }
-  inspect!(bytesToUInt64(bytes), content="256")
+  inspect(bytesToUInt64(bytes), content="256")
 }
 
 ///|
@@ -173,22 +173,6 @@ pub fn State::refill(self : State) -> Unit {
   if self.c == ctrMax - ctrInc {
     self.n = (self.buffer.length() - chachaReseed).reinterpret_as_uint()
   }
-}
-
-///|
-fn State::reseed(self : State) -> Unit {
-  let seed = FixedArray::make(4, 0UL)
-  for i in 0..<4 {
-    for {
-      let x = self.next()
-      if x.1 {
-        seed[i] = x.0
-        break
-      }
-      self.refill()
-    }
-  }
-  self.init64(seed)
 }
 
 ///|
@@ -483,5 +467,5 @@ test "output" {
     1231466417883291608UL, 4918841702239877720UL, 13883670878602349637UL, 11470126477371023265UL,
     17128636052794644986UL, 205335811880395712UL, 12443170494233065292UL, 15986026963143729439UL,
   ]
-  assert_eq!(res, expected)
+  assert_eq(res, expected)
 }

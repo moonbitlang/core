@@ -15,7 +15,7 @@
 ///|
 pub fn valid(input : String) -> Bool {
   try {
-    parse!(input) |> ignore
+    parse(input) |> ignore
     true
   } catch {
     _ => return false
@@ -25,19 +25,19 @@ pub fn valid(input : String) -> Bool {
 ///|
 pub fn parse(input : String) -> JsonValue!ParseError {
   let ctx = ParseContext::make(input)
-  let val = ctx.parse_value!()
+  let val = ctx.parse_value()
   ctx.lex_skip_whitespace()
   if ctx.offset >= ctx.end_offset {
     val
   } else {
-    ctx.invalid_char!()
+    ctx.invalid_char()
   }
 }
 
 ///|
 fn ParseContext::parse_value(ctx : ParseContext) -> JsonValue!ParseError {
-  let tok = ctx.lex_value!(allow_rbracket=false)
-  ctx.parse_value2!(tok)
+  let tok = ctx.lex_value(allow_rbracket=false)
+  ctx.parse_value2(tok)
 }
 
 ///|
@@ -51,8 +51,8 @@ fn ParseContext::parse_value2(
     False => Json::boolean(false)
     Number(n) => Json::number(n)
     String(s) => Json::string(s)
-    LBrace => ctx.parse_object!()
-    LBracket => ctx.parse_array!()
+    LBrace => ctx.parse_object()
+    LBracket => ctx.parse_array()
     RBracket | RBrace | Comma => abort("unreachable")
   }
 }
@@ -60,13 +60,13 @@ fn ParseContext::parse_value2(
 ///|
 fn ParseContext::parse_object(ctx : ParseContext) -> JsonValue!ParseError {
   let map = Map::new()
-  loop ctx.lex_property_name!() {
+  loop ctx.lex_property_name() {
     RBrace => Json::object(map)
     String(name) => {
-      ctx.lex_after_property_name!()
-      map[name] = ctx.parse_value!()
-      match ctx.lex_after_object_value!() {
-        Comma => continue ctx.lex_property_name2!()
+      ctx.lex_after_property_name()
+      map[name] = ctx.parse_value()
+      match ctx.lex_after_object_value() {
+        Comma => continue ctx.lex_property_name2()
         RBrace => Json::object(map)
         _ => abort("unreachable")
       }
@@ -78,13 +78,13 @@ fn ParseContext::parse_object(ctx : ParseContext) -> JsonValue!ParseError {
 ///|
 fn ParseContext::parse_array(ctx : ParseContext) -> JsonValue!ParseError {
   let vec = []
-  loop ctx.lex_value!(allow_rbracket=true) {
+  loop ctx.lex_value(allow_rbracket=true) {
     RBracket => Json::array(vec)
     tok => {
-      vec.push(ctx.parse_value2!(tok))
-      let tok2 = ctx.lex_after_array_value!()
+      vec.push(ctx.parse_value2(tok))
+      let tok2 = ctx.lex_after_array_value()
       match tok2 {
-        Comma => continue ctx.lex_value!(allow_rbracket=false)
+        Comma => continue ctx.lex_value(allow_rbracket=false)
         RBracket => Json::array(vec)
         _ => abort("unreachable")
       }

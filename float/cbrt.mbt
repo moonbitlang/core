@@ -32,15 +32,15 @@
 ///
 /// ```moonbit
 /// test "cbrt" {
-///  inspect!((0 : Float).cbrt(), content="0")
-///  inspect!((1 : Float).cbrt(), content="1")
-///  inspect!((8 : Float).cbrt(), content="2")
-///  inspect!((-8 : Float).cbrt(), content="-2")
-///  inspect!(@float.not_a_number.cbrt(), content="NaN")
-///  inspect!(@float.infinity.cbrt(), content="Infinity")
-///  inspect!(@float.neg_infinity.cbrt(), content="-Infinity")
+///  inspect((0 : Float).cbrt(), content="0")
+///  inspect((1 : Float).cbrt(), content="1")
+///  inspect((8 : Float).cbrt(), content="2")
+///  inspect((-8 : Float).cbrt(), content="-2")
+///  inspect(@float.not_a_number.cbrt(), content="NaN")
+///  inspect(@float.infinity.cbrt(), content="Infinity")
+///  inspect(@float.neg_infinity.cbrt(), content="-Infinity")
 /// }
 /// ```
-pub fn cbrt(self : Float) -> Float {
+pub fn Float::cbrt(self : Float) -> Float {
   self.to_double().cbrt().to_float()
 }

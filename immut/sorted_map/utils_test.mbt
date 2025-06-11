@@ -21,7 +21,7 @@ test "op_get with existing key" {
     (2, "two"),
     (0, "zero"),
   ])
-  assert_eq!(map.get(3), Some("three"))
+  assert_eq(map.get(3), Some("three"))
 }
 
 ///|
@@ -33,7 +33,7 @@ test "op_get with non-existing key" {
     (2, "two"),
     (0, "zero"),
   ])
-  assert_eq!(map.get(4), None)
+  assert_eq(map.get(4), None)
 }
 
 ///|
@@ -46,7 +46,7 @@ test "op_get after insertion" {
     (0, "zero"),
   ])
   let map = map.add(4, "four")
-  assert_eq!(map.get(4), Some("four"))
+  assert_eq(map.get(4), Some("four"))
 }
 
 ///|
@@ -59,7 +59,7 @@ test "op_get after removal" {
     (0, "zero"),
   ])
   let map = map.remove(3)
-  assert_eq!(map.get(3), None)
+  assert_eq(map.get(3), None)
 }
 
 ///|
@@ -77,7 +77,7 @@ test "iter" {
     buf.write_object(kv)
     buf.write_string("\n")
   }
-  inspect!(
+  inspect(
     buf,
     content=
       #|0: "zero"
@@ -98,14 +98,14 @@ test "iter" {
 ///|
 test "op_get with empty map" {
   let map : @sorted_map.T[Int, String] = @sorted_map.new()
-  assert_eq!(map.get(3), None)
+  assert_eq(map.get(3), None)
 }
 
 ///|
 test "to_json with non-empty map" {
   let map = [(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")]
     |> @sorted_map.of
-  @json.inspect!(map.to_json(), content={
+  @json.inspect(map.to_json(), content={
     "0": "zero",
     "1": "one",
     "2": "two",
@@ -117,12 +117,12 @@ test "to_json with non-empty map" {
 ///|
 test "to_json with empty map" {
   let map : @sorted_map.T[Int, String] = @sorted_map.new()
-  @json.inspect!(map.to_json(), content={})
+  @json.inspect(map.to_json(), content={})
 }
 
 ///|
 test "from_json" {
   for xs in (@quickcheck.samples(20) : Array[@sorted_map.T[String, Int]]) {
-    assert_eq!(xs, @json.from_json!(xs.to_json()))
+    assert_eq(xs, @json.from_json(xs.to_json()))
   }
 }

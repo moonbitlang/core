@@ -24,26 +24,26 @@ fn check(x : Double, y : Double) -> Bool {
 ///|
 test "mod" {
   // normal numbers
-  inspect!(check(7.5 % 2.3, 0.6), content="true")
-  inspect!(check(-3.6 % 1.4, -0.8), content="true")
-  inspect!(check(0.7 % 0.2, 0.1), content="true")
-  inspect!(5.75 % 5.75, content="0")
-  inspect!(15.25 % 4.5, content="1.75")
-  inspect!(-8.4 % 3.2, content="-2")
-  inspect!(8.0 % 4.0, content="0")
-  inspect!(15.0 % 3.0, content="0")
+  inspect(check(7.5 % 2.3, 0.6), content="true")
+  inspect(check(-3.6 % 1.4, -0.8), content="true")
+  inspect(check(0.7 % 0.2, 0.1), content="true")
+  inspect(5.75 % 5.75, content="0")
+  inspect(15.25 % 4.5, content="1.75")
+  inspect(-8.4 % 3.2, content="-2")
+  inspect(8.0 % 4.0, content="0")
+  inspect(15.0 % 3.0, content="0")
   // subnormal numbers
-  inspect!(5.0e-324 % 5.0e-324, content="0")
-  inspect!(0.5 % 1.5e-323, content="1e-323")
-  inspect!(4.0e-310 % 3.0e-310, content="1e-310")
+  inspect(5.0e-324 % 5.0e-324, content="0")
+  inspect(0.5 % 1.5e-323, content="1e-323")
+  inspect(4.0e-310 % 3.0e-310, content="1e-310")
   // inf
-  inspect!(1.0 % @double.infinity, content="1")
-  assert_true!(@double.is_nan(@double.infinity % @double.infinity))
-  assert_true!(@double.is_nan(@double.infinity % 1))
+  inspect(1.0 % @double.infinity, content="1")
+  assert_true((@double.infinity % @double.infinity).is_nan())
+  assert_true((@double.infinity % 1).is_nan())
   // division by zero
-  assert_true!(@double.is_nan(1.0 % 0))
-  assert_true!(@double.is_nan(1.0 % -0))
+  assert_true((1.0 % 0).is_nan())
+  assert_true((1.0 % -0).is_nan())
   // nan
-  assert_true!(@double.is_nan(@double.not_a_number % 1.0))
-  assert_true!(@double.is_nan(1.0 % @double.not_a_number))
+  assert_true((@double.not_a_number % 1.0).is_nan())
+  assert_true((1.0 % @double.not_a_number).is_nan())
 }

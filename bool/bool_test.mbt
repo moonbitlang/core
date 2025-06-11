@@ -14,8 +14,8 @@
 
 ///|
 test "Bool hash function" {
-  assert_eq!(true.hash(), 1)
-  assert_eq!(false.hash(), 0)
+  assert_eq(true.hash(), 1)
+  assert_eq(false.hash(), 0)
 }
 
 ///|
@@ -29,17 +29,17 @@ test "Bool hash function with struct" {
   let m = {}
   m[{ flag: true, x: 1 }] = '3'
   m[{ flag: false, x: 1 }] = '3'
-  inspect!(m, content="{{flag: true, x: 1}: '3', {flag: false, x: 1}: '3'}")
+  inspect(m, content="{{flag: true, x: 1}: '3', {flag: false, x: 1}: '3'}")
 }
 
 ///|
 test "bool convert" {
-  inspect!(true.to_int(), content="1")
-  inspect!(false.to_int(), content="0")
-  inspect!(true.to_int64(), content="1")
-  inspect!(false.to_int64(), content="0")
-  inspect!(true.to_uint(), content="1")
-  inspect!(false.to_uint(), content="0")
-  inspect!(true.to_uint64(), content="1")
-  inspect!(false.to_uint64(), content="0")
+  inspect(true.to_int(), content="1")
+  inspect(false.to_int(), content="0")
+  inspect(true.to_int64(), content="1")
+  inspect(false.to_int64(), content="0")
+  inspect(true.to_uint(), content="1")
+  inspect(false.to_uint(), content="0")
+  inspect(true.to_uint64(), content="1")
+  inspect(false.to_uint64(), content="0")
 }

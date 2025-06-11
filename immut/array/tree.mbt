@@ -47,26 +47,17 @@ let e_max_2 : Int = E_MAX / 2
 //-----------------------------------------------------------------------------
 
 ///|
-fn Tree::empty[T]() -> Tree[T] {
+fn[T] Tree::empty() -> Tree[T] {
   Tree::Empty
 }
 
 ///|
 /// Create a new tree with a single leaf. Note that the resulting tree is a left-skewed tree.
-fn new_branch_left[T](leaf : FixedArray[T], shift : Int) -> Tree[T] {
+fn[T] new_branch_left(leaf : FixedArray[T], shift : Int) -> Tree[T] {
   match shift {
     0 => Leaf(leaf)
     s => Node([new_branch_left(leaf, s - num_bits)], None) // size is None because we can use radix indexing
   }
-}
-
-//-----------------------------------------------------------------------------
-// Properties
-//-----------------------------------------------------------------------------
-
-///|
-fn Tree::is_empty_tree[T](self : Tree[T]) -> Bool {
-  self is Empty
 }
 
 //-----------------------------------------------------------------------------
@@ -75,7 +66,7 @@ fn Tree::is_empty_tree[T](self : Tree[T]) -> Bool {
 
 ///|
 /// Get the rightmost child of a tree. 
-fn Tree::get_first[T](self : Tree[T]) -> T {
+fn[T] Tree::get_first(self : Tree[T]) -> T {
   match self {
     Leaf(leaf) => leaf[0]
     Node(node, _) => node[0].get_first()
@@ -85,7 +76,7 @@ fn Tree::get_first[T](self : Tree[T]) -> T {
 
 ///|
 /// Get the leftmost child of a tree.
-fn Tree::get_last[T](self : Tree[T]) -> T {
+fn[T] Tree::get_last(self : Tree[T]) -> T {
   match self {
     Leaf(leaf) => leaf[leaf.length() - 1]
     Node(node, _) => node[node.length() - 1].get_last()
@@ -98,7 +89,7 @@ fn Tree::get_last[T](self : Tree[T]) -> T {
 /// 
 /// Precondition:
 /// - `self` is of height `shift / num_bits`.
-fn Tree::get[T](self : Tree[T], index : Int, shift : Int) -> T {
+fn[T] Tree::get(self : Tree[T], index : Int, shift : Int) -> T {
   fn get_radix(node : Tree[T], shift : Int) -> T {
     match node {
       Leaf(leaf) => leaf[index & bitmask]
@@ -135,7 +126,7 @@ fn Tree::get[T](self : Tree[T], index : Int, shift : Int) -> T {
 /// 
 /// Precondition:
 /// - `self` is of height `shift / num_bits`.
-fn Tree::set[T](self : Tree[T], index : Int, shift : Int, value : T) -> Tree[T] {
+fn[T] Tree::set(self : Tree[T], index : Int, shift : Int, value : T) -> Tree[T] {
   // TODO: optimize this as loop
   fn set_radix(node : Tree[T], shift : Int) -> Tree[T] {
     match node {
@@ -186,7 +177,7 @@ fn Tree::set[T](self : Tree[T], index : Int, shift : Int, value : T) -> Tree[T] 
 /// Precondition:
 /// - The height of `self` = `shift` / `num_bits` (the height starts from 0).
 /// - `length` is the number of elements in the tree.
-fn Tree::push_end[T](self : Tree[T], shift : Int, value : T) -> (Tree[T], Int) {
+fn[T] Tree::push_end(self : Tree[T], shift : Int, value : T) -> (Tree[T], Int) {
   fn update_sizes_last(sizes : FixedArray[Int]?) -> FixedArray[Int]? {
     match sizes {
       Some(sizes) => {
@@ -281,7 +272,7 @@ fn Tree::push_end[T](self : Tree[T], shift : Int, value : T) -> (Tree[T], Int) {
 
 ///|
 /// For each element in the tree, apply the function `f`.
-fn Tree::each[A](self : Tree[A], f : (A) -> Unit) -> Unit {
+fn[A] Tree::each(self : Tree[A], f : (A) -> Unit) -> Unit {
   match self {
     Empty => ()
     Leaf(l) => l.each(f)
@@ -290,7 +281,7 @@ fn Tree::each[A](self : Tree[A], f : (A) -> Unit) -> Unit {
 }
 
 ///|
-fn Tree::iter[A](self : Tree[A]) -> Iter[A] {
+fn[A] Tree::iter(self : Tree[A]) -> Iter[A] {
   Iter::new(fn(yield_) {
     match self {
       Empty => IterContinue
@@ -298,7 +289,6 @@ fn Tree::iter[A](self : Tree[A]) -> Iter[A] {
       Node(ns, _) =>
         for n in ns {
           guard n.iter().run(yield_) is IterContinue else { break IterEnd }
-
         } else {
           IterContinue
         }
@@ -308,7 +298,7 @@ fn Tree::iter[A](self : Tree[A]) -> Iter[A] {
 
 ///|
 /// For each element in the tree, apply the function `f` with the index of the element.
-fn Tree::eachi[A](
+fn[A] Tree::eachi(
   self : Tree[A],
   f : (Int, A) -> Unit,
   shift : Int,
@@ -341,7 +331,7 @@ fn Tree::eachi[A](
 
 ///|
 /// Fold the tree.
-fn Tree::fold[A, B](self : Tree[A], acc : B, f : (B, A) -> B) -> B {
+fn[A, B] Tree::fold(self : Tree[A], acc : B, f : (B, A) -> B) -> B {
   match self {
     Empty => acc
     Leaf(l) => l.fold(f, init=acc)
@@ -351,7 +341,7 @@ fn Tree::fold[A, B](self : Tree[A], acc : B, f : (B, A) -> B) -> B {
 
 ///|
 /// Fold the tree in reverse order.
-fn Tree::rev_fold[A, B](self : Tree[A], acc : B, f : (B, A) -> B) -> B {
+fn[A, B] Tree::rev_fold(self : Tree[A], acc : B, f : (B, A) -> B) -> B {
   match self {
     Empty => acc
     Leaf(l) => l.rev_fold(f, init=acc)
@@ -361,7 +351,7 @@ fn Tree::rev_fold[A, B](self : Tree[A], acc : B, f : (B, A) -> B) -> B {
 
 ///|
 /// Map the tree.
-fn Tree::map[A, B](self : Tree[A], f : (A) -> B) -> Tree[B] {
+fn[A, B] Tree::map(self : Tree[A], f : (A) -> B) -> Tree[B] {
   match self {
     Empty => Empty
     Leaf(l) => Leaf(l.map(f))
@@ -384,7 +374,7 @@ fn Tree::map[A, B](self : Tree[A], f : (A) -> B) -> Tree[B] {
 /// Preconditions:
 /// - `left` and `right` are not `Empty`.
 /// - `left` and `right` are of height `left_shift / num_bits` and `right_shift / num_bits`, respectively.
-fn Tree::concat[A](
+fn[A] Tree::concat(
   left : Tree[A],
   left_shift : Int,
   right : Tree[A],
@@ -459,7 +449,7 @@ fn Tree::concat[A](
 /// Given three `Node`s of the same height (`shift` / `num_bits`), rebalance them into two.
 /// `top` is `true` if the resulting node has no upper node.
 /// Returns the new node and its shift.
-fn rebalance[A](
+fn[A] rebalance(
   left : Tree[A],
   center : Tree[A],
   right : Tree[A],
@@ -518,7 +508,7 @@ fn rebalance[A](
 /// Postconditions:
 /// - The resulting array is of length `left.size() + center.size() + right.size()`.
 /// - The height of a `Tree` in the resulting array is one less than the height of the input `Tree`s.
-fn tri_merge[A](
+fn[A] tri_merge(
   left : Tree[A],
   center : Tree[A],
   right : Tree[A]
@@ -557,7 +547,7 @@ fn tri_merge[A](
 
 ///|
 /// Create a redistribution plan for the tree.
-fn redis_plan[A](t : FixedArray[Tree[A]]) -> (FixedArray[Int], Int) {
+fn[A] redis_plan(t : FixedArray[Tree[A]]) -> (FixedArray[Int], Int) {
   let node_counts = FixedArray::makei(t.length(), fn { i => t[i].local_size() })
   let total_nodes = node_counts.fold(init=0, fn { acc, x => acc + x })
   // round up to the nearest integer of S/branching_factor
@@ -598,7 +588,7 @@ fn redis_plan[A](t : FixedArray[Tree[A]]) -> (FixedArray[Int], Int) {
 /// 
 /// Postcondition:
 /// - The resulting trees in `new_t` are of the same height as trees in `old_t`.
-fn redis[A](
+fn[A] redis(
   old_t : FixedArray[Tree[A]],
   node_counts : FixedArray[Int],
   node_nums : Int,
@@ -695,7 +685,7 @@ fn redis[A](
 
 ///|
 /// Given a list of trees as `children` with heights of (`shift` / `num_bits`), compute the sizes array of the subtrees.
-fn compute_sizes[A](
+fn[A] compute_sizes(
   children : FixedArray[Tree[A]],
   shift : Int
 ) -> FixedArray[Int]? {

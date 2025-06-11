@@ -18,9 +18,9 @@
 /// # Example
 /// ```
 /// let queue = @priority_queue.new()
-/// assert_eq!(queue.push(1).length(), 1)
+/// assert_eq(queue.push(1).length(), 1)
 /// ```
-pub fn new[A : Compare]() -> T[A] {
+pub fn[A : Compare] new() -> T[A] {
   { node: Empty, size: 0 }
 }
 
@@ -30,9 +30,9 @@ pub fn new[A : Compare]() -> T[A] {
 /// # Example
 /// ```
 /// let queue = @priority_queue.of([1, 2, 3, 4, 5])
-/// assert_eq!(queue.length(), 5)
+/// assert_eq(queue.length(), 5)
 /// ```
-pub fn from_array[A : Compare](array : Array[A]) -> T[A] {
+pub fn[A : Compare] from_array(array : Array[A]) -> T[A] {
   let mut pq = new()
   for i in 0..<array.length() {
     pq = pq.push(array[i])
@@ -41,7 +41,7 @@ pub fn from_array[A : Compare](array : Array[A]) -> T[A] {
 }
 
 ///|
-pub fn to_array[A : Compare](self : T[A]) -> Array[A] {
+pub fn[A : Compare] to_array(self : T[A]) -> Array[A] {
   let arr : Array[A] = []
   fn go(x : Node[A]) {
     match x {
@@ -61,12 +61,11 @@ pub fn to_array[A : Compare](self : T[A]) -> Array[A] {
 }
 
 ///|
-pub fn iter[A : Compare](self : T[A]) -> Iter[A] {
+pub fn[A : Compare] iter(self : T[A]) -> Iter[A] {
   Iter::new(fn(yield_) {
     let arr = self.to_array()
     for i in 0..<arr.length() {
       guard yield_(arr[i]) is IterContinue else { break IterEnd }
-
     } else {
       IterContinue
     }
@@ -74,7 +73,7 @@ pub fn iter[A : Compare](self : T[A]) -> Iter[A] {
 }
 
 ///|
-pub fn T::from_iter[A : Compare](iter : Iter[A]) -> T[A] {
+pub fn[A : Compare] T::from_iter(iter : Iter[A]) -> T[A] {
   iter.fold(init=new(), fn(s, e) { s.push(e) })
 }
 
@@ -107,9 +106,9 @@ fn next(self : Path) -> Path {
 /// ```
 /// let queue = @priority_queue.of([1, 2, 3, 4])
 /// let first = queue.pop()
-/// assert_eq!(first, Some(@priority_queue.of([1, 2, 3])))
+/// assert_eq(first, Some(@priority_queue.of([1, 2, 3])))
 /// ```
-pub fn pop[A : Compare](self : T[A]) -> T[A]? {
+pub fn[A : Compare] pop(self : T[A]) -> T[A]? {
   match self.node {
     Empty => None
     Leaf(_) => Some({ node: Empty, size: 0 })
@@ -121,7 +120,7 @@ pub fn pop[A : Compare](self : T[A]) -> T[A]? {
 }
 
 ///|
-fn remove_last_leaf[A : Compare](self : Node[A], path : Path) -> (A, Node[A]) {
+fn[A : Compare] remove_last_leaf(self : Node[A], path : Path) -> (A, Node[A]) {
   match self {
     Empty => abort("Priority queue is empty!")
     Leaf(a) => (a, Empty)
@@ -139,7 +138,7 @@ fn remove_last_leaf[A : Compare](self : Node[A], path : Path) -> (A, Node[A]) {
 
 ///|
 /// require: self is not empty
-fn change_and_down[A : Compare](self : Node[A], value : A) -> Node[A] {
+fn[A : Compare] change_and_down(self : Node[A], value : A) -> Node[A] {
   match self {
     Empty => abort("unreachable")
     Leaf(_) => Leaf(value)
@@ -171,10 +170,10 @@ fn change_and_down[A : Compare](self : Node[A], value : A) -> Node[A] {
 /// ```
 /// let queue = @priority_queue.of([1, 2, 3, 4])
 /// let first = queue.unsafe_pop()
-/// assert_eq!(first, @priority_queue.of([1, 2, 3]))
+/// assert_eq(first, @priority_queue.of([1, 2, 3]))
 /// ```
 #internal(unsafe, "Panics if the queue is empty.")
-pub fn unsafe_pop[A : Compare](self : T[A]) -> T[A] {
+pub fn[A : Compare] unsafe_pop(self : T[A]) -> T[A] {
   match self.node {
     Empty => abort("Priority queue is empty!")
     Leaf(_) => { node: Empty, size: 0 }
@@ -188,8 +187,8 @@ pub fn unsafe_pop[A : Compare](self : T[A]) -> T[A] {
 ///|
 #deprecated("Use `unsafe_pop` instead")
 #coverage.skip
-pub fn pop_exn[A : Compare](self : T[A]) -> T[A] {
-  unsafe_pop(self)
+pub fn[A : Compare] pop_exn(self : T[A]) -> T[A] {
+  self.unsafe_pop()
 }
 
 ///|
@@ -198,9 +197,9 @@ pub fn pop_exn[A : Compare](self : T[A]) -> T[A] {
 /// # Example
 /// ```
 /// let queue = @priority_queue.new()
-/// assert_eq!(queue.push(1).length(), 1)
+/// assert_eq(queue.push(1).length(), 1)
 /// ```
-pub fn push[A : Compare](self : T[A], value : A) -> T[A] {
+pub fn[A : Compare] push(self : T[A], value : A) -> T[A] {
   match self.node {
     Empty => { node: Leaf(value), size: 1 }
     Leaf(_) | Branch(_) => {
@@ -211,7 +210,7 @@ pub fn push[A : Compare](self : T[A], value : A) -> T[A] {
 }
 
 ///|
-fn Node::push[A : Compare](self : Node[A], value : A, path : Path) -> Node[A] {
+fn[A : Compare] Node::push(self : Node[A], value : A, path : Path) -> Node[A] {
   match self {
     Empty => Leaf(value)
     Leaf(a) => {
@@ -235,9 +234,9 @@ fn Node::push[A : Compare](self : Node[A], value : A, path : Path) -> Node[A] {
 /// # Example
 /// ```
 /// let queue = @priority_queue.of([1, 2, 3, 4])
-/// assert_eq!(queue.peek(), Some(4))
+/// assert_eq(queue.peek(), Some(4))
 /// ```
-pub fn peek[A](self : T[A]) -> A? {
+pub fn[A] peek(self : T[A]) -> A? {
   match self.node {
     Empty => None
     Leaf(a) => Some(a)
@@ -251,10 +250,10 @@ pub fn peek[A](self : T[A]) -> A? {
 /// # Example
 /// ```
 /// let queue = @priority_queue.new()
-/// assert_eq!(queue.is_empty(), true)
-/// assert_eq!(queue.push(1).is_empty(), false)
+/// assert_eq(queue.is_empty(), true)
+/// assert_eq(queue.push(1).is_empty(), false)
 /// ```
-pub fn is_empty[A](self : T[A]) -> Bool {
+pub fn[A] is_empty(self : T[A]) -> Bool {
   self.node is Empty
 }
 
@@ -264,15 +263,15 @@ pub fn is_empty[A](self : T[A]) -> Bool {
 /// # Example
 /// ```
 /// let queue = @priority_queue.new()
-/// assert_eq!(queue.length(), 0)
-/// assert_eq!(queue.push(1).length(), 1)
+/// assert_eq(queue.length(), 0)
+/// assert_eq(queue.push(1).length(), 1)
 /// ```
-pub fn length[A](self : T[A]) -> Int {
+pub fn[A] length(self : T[A]) -> Int {
   self.size
 }
 
 ///|
-pub fn of[A : Compare](arr : FixedArray[A]) -> T[A] {
+pub fn[A : Compare] of(arr : FixedArray[A]) -> T[A] {
   let mut pq = new()
   for i in 0..<arr.length() {
     pq = pq.push(arr[i])
@@ -330,10 +329,10 @@ pub impl[A : Hash + Compare] Hash for T[A] with hash_combine(self, hasher) {
 ///   let pq1 = @priority_queue.of([1, 2, 3])
 ///   let pq2 = @priority_queue.of([1, 2, 4])
 ///   let pq3 = @priority_queue.of([1, 2])
-///   assert_eq!(pq1.compare(pq2), -1) // pq1 < pq2
-///   assert_eq!(pq1.compare(pq3), 1)  // pq2 > pq1
-///   assert_eq!(pq3.compare(pq1), -1) // pq1 > pq3 (longer)
-///   assert_eq!(pq1.compare(pq1), 0)  // pq1 = pq1
+///   assert_eq(pq1.compare(pq2), -1) // pq1 < pq2
+///   assert_eq(pq1.compare(pq3), 1)  // pq2 > pq1
+///   assert_eq(pq3.compare(pq1), -1) // pq1 > pq3 (longer)
+///   assert_eq(pq1.compare(pq1), 0)  // pq1 = pq1
 /// }
 /// ```
 pub impl[A : Compare] Compare for T[A] with compare(self, other) {

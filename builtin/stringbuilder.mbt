@@ -14,7 +14,7 @@
 
 ///|
 /// Writes the string representation of a object to the StringBuilder.
-pub fn StringBuilder::write_object[T : Show](
+pub fn[T : Show] StringBuilder::write_object(
   self : StringBuilder,
   obj : T
 ) -> Unit {
@@ -36,7 +36,7 @@ pub fn StringBuilder::write_object[T : Show](
 ///   let sb = StringBuilder::new()
 ///   let chars = "Hello🤣".iter()
 ///   sb.write_iter(chars)
-///   assert_eq!(sb.to_string(), "Hello🤣")
+///   assert_eq(sb.to_string(), "Hello🤣")
 /// }
 /// ```
 pub fn StringBuilder::write_iter(

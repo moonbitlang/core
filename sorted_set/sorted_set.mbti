@@ -5,89 +5,87 @@ import(
 )
 
 // Values
-fn add[V : Compare](T[V], V) -> Unit
+fn[V : Compare] add(T[V], V) -> Unit
 
-fn contains[V : Compare](T[V], V) -> Bool
+fn[V : Compare] contains(T[V], V) -> Bool
 
-fn copy[V](T[V]) -> T[V]
-
-#deprecated
-fn deep_clone[V](T[V]) -> T[V]
+fn[V] copy(T[V]) -> T[V]
 
 #deprecated
-fn diff[V : Compare](T[V], T[V]) -> T[V]
-
-fn difference[V : Compare](T[V], T[V]) -> T[V]
-
-fn disjoint[V : Compare](T[V], T[V]) -> Bool
-
-fn each[V](T[V], (V) -> Unit) -> Unit
-
-fn eachi[V](T[V], (Int, V) -> Unit) -> Unit
-
-fn from_array[V : Compare](Array[V]) -> T[V]
-
-fn from_iter[V : Compare](Iter[V]) -> T[V]
+fn[V] deep_clone(T[V]) -> T[V]
 
 #deprecated
-fn intersect[V : Compare](T[V], T[V]) -> T[V]
+fn[V : Compare] diff(T[V], T[V]) -> T[V]
 
-fn intersection[V : Compare](T[V], T[V]) -> T[V]
+fn[V : Compare] difference(T[V], T[V]) -> T[V]
 
-fn is_empty[V : Compare](T[V]) -> Bool
+fn[V : Compare] disjoint(T[V], T[V]) -> Bool
 
-fn iter[V](T[V]) -> Iter[V]
+fn[V] each(T[V], (V) -> Unit?Error) -> Unit?Error
 
-fn new[V]() -> T[V]
+fn[V] eachi(T[V], (Int, V) -> Unit?Error) -> Unit?Error
+
+fn[V : Compare] from_array(Array[V]) -> T[V]
+
+fn[V : Compare] from_iter(Iter[V]) -> T[V]
 
 #deprecated
-fn of[V : Compare](Array[V]) -> T[V]
+fn[V : Compare] intersect(T[V], T[V]) -> T[V]
 
-fn range[V : Compare](T[V], V, V) -> Iter[V]
+fn[V : Compare] intersection(T[V], T[V]) -> T[V]
 
-fn remove[V : Compare](T[V], V) -> Unit
+fn[V : Compare] is_empty(T[V]) -> Bool
 
-fn singleton[V : Compare](V) -> T[V]
+fn[V] iter(T[V]) -> Iter[V]
 
-fn size[V : Compare](T[V]) -> Int
+fn[V] new() -> T[V]
 
-fn subset[V : Compare](T[V], T[V]) -> Bool
+#deprecated
+fn[V : Compare] of(Array[V]) -> T[V]
 
-fn symmetric_difference[V : Compare](T[V], T[V]) -> T[V]
+fn[V : Compare] range(T[V], V, V) -> Iter[V]
 
-fn to_array[V](T[V]) -> Array[V]
+fn[V : Compare] remove(T[V], V) -> Unit
 
-fn union[V : Compare](T[V], T[V]) -> T[V]
+fn[V : Compare] singleton(V) -> T[V]
+
+fn[V : Compare] size(T[V]) -> Int
+
+fn[V : Compare] subset(T[V], T[V]) -> Bool
+
+fn[V : Compare] symmetric_difference(T[V], T[V]) -> T[V]
+
+fn[V] to_array(T[V]) -> Array[V]
+
+fn[V : Compare] union(T[V], T[V]) -> T[V]
 
 // Types and methods
 type T[V]
-impl T {
-  add[V : Compare](Self[V], V) -> Unit
-  contains[V : Compare](Self[V], V) -> Bool
-  copy[V](Self[V]) -> Self[V]
-  #deprecated
-  deep_clone[V](Self[V]) -> Self[V]
-  #deprecated
-  diff[V : Compare](Self[V], Self[V]) -> Self[V]
-  difference[V : Compare](Self[V], Self[V]) -> Self[V]
-  disjoint[V : Compare](Self[V], Self[V]) -> Bool
-  each[V](Self[V], (V) -> Unit) -> Unit
-  eachi[V](Self[V], (Int, V) -> Unit) -> Unit
-  #deprecated
-  from_iter[V : Compare](Iter[V]) -> Self[V]
-  #deprecated
-  intersect[V : Compare](Self[V], Self[V]) -> Self[V]
-  intersection[V : Compare](Self[V], Self[V]) -> Self[V]
-  is_empty[V : Compare](Self[V]) -> Bool
-  iter[V](Self[V]) -> Iter[V]
-  range[V : Compare](Self[V], V, V) -> Iter[V]
-  remove[V : Compare](Self[V], V) -> Unit
-  size[V : Compare](Self[V]) -> Int
-  subset[V : Compare](Self[V], Self[V]) -> Bool
-  symmetric_difference[V : Compare](Self[V], Self[V]) -> Self[V]
-  to_array[V](Self[V]) -> Array[V]
-  union[V : Compare](Self[V], Self[V]) -> Self[V]
-}
+fn[V : Compare] T::add(Self[V], V) -> Unit
+fn[V : Compare] T::contains(Self[V], V) -> Bool
+fn[V] T::copy(Self[V]) -> Self[V]
+#deprecated
+fn[V] T::deep_clone(Self[V]) -> Self[V]
+#deprecated
+fn[V : Compare] T::diff(Self[V], Self[V]) -> Self[V]
+fn[V : Compare] T::difference(Self[V], Self[V]) -> Self[V]
+fn[V : Compare] T::disjoint(Self[V], Self[V]) -> Bool
+fn[V] T::each(Self[V], (V) -> Unit?Error) -> Unit?Error
+fn[V] T::eachi(Self[V], (Int, V) -> Unit?Error) -> Unit?Error
+#deprecated
+fn[V : Compare] T::from_iter(Iter[V]) -> Self[V]
+#deprecated
+fn[V : Compare] T::intersect(Self[V], Self[V]) -> Self[V]
+fn[V : Compare] T::intersection(Self[V], Self[V]) -> Self[V]
+fn[V : Compare] T::is_empty(Self[V]) -> Bool
+fn[V] T::iter(Self[V]) -> Iter[V]
+fn[V : Compare] T::range(Self[V], V, V) -> Iter[V]
+fn[V : Compare] T::remove(Self[V], V) -> Unit
+fn[V : Compare] T::size(Self[V]) -> Int
+fn[V : Compare] T::subset(Self[V], Self[V]) -> Bool
+fn[V : Compare] T::symmetric_difference(Self[V], Self[V]) -> Self[V]
+fn[V] T::to_array(Self[V]) -> Array[V]
+fn[V : Compare] T::union(Self[V], Self[V]) -> Self[V]
 impl[K] Default for T[K]
 impl[V : Compare] Eq for T[V]
 impl[V : Show] Show for T[V]

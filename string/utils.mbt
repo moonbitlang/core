@@ -31,8 +31,8 @@ fn is_leading_surrogate(c : Int) -> Bool {
 
 ///|
 test "is_leading_surrogate" {
-  inspect!(is_leading_surrogate("🤣".charcode_at(0)), content="true")
-  inspect!(is_leading_surrogate("🤣".charcode_at(1)), content="false")
+  inspect(is_leading_surrogate("🤣".charcode_at(0)), content="true")
+  inspect(is_leading_surrogate("🤣".charcode_at(1)), content="false")
 }
 
 ///|
@@ -42,8 +42,8 @@ fn is_trailing_surrogate(c : Int) -> Bool {
 
 ///|
 test "is_trailing_surrogate" {
-  inspect!(is_trailing_surrogate("🤣".charcode_at(0)), content="false")
-  inspect!(is_trailing_surrogate("🤣".charcode_at(1)), content="true")
+  inspect(is_trailing_surrogate("🤣".charcode_at(0)), content="false")
+  inspect(is_trailing_surrogate("🤣".charcode_at(1)), content="true")
 }
 
 ///|
@@ -56,5 +56,5 @@ test "code_point_of_surrogate_pair" {
   let s = "😀"
   let leading = s.charcode_at(0)
   let trailing = s.charcode_at(1)
-  inspect!(code_point_of_surrogate_pair(leading, trailing), content="😀")
+  inspect(code_point_of_surrogate_pair(leading, trailing), content="😀")
 }
