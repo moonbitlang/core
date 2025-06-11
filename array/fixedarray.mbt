@@ -27,8 +27,6 @@
 /// [1, 2, 3, 4, 5].each(fn(x){ arr.push(x) })
 /// assert_eq(arr, [1, 2, 3, 4, 5])
 /// ```
-/// TODO: change the intrinsic to match the function name
-#intrinsic("%fixedarray.iter")
 pub fn[T] FixedArray::each(
   self : FixedArray[T],
   f : (T) -> Unit?Error
