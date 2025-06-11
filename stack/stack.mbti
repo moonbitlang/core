@@ -1,0 +1,52 @@
+package "moonbitlang/core/stack"
+
+import(
+  "moonbitlang/core/quickcheck"
+)
+
+// Values
+fn[A] clear(T[A]) -> Unit
+
+fn[A] from_array(Array[A]) -> T[A]
+
+fn[A] from_iter(Iter[A]) -> T[A]
+
+fn[A] is_empty(T[A]) -> Bool
+
+fn[A] iter(T[A]) -> Iter[A]
+
+fn[A] length(T[A]) -> Int
+
+fn[A] new() -> T[A]
+
+fn[A] of(FixedArray[A]) -> T[A]
+
+fn[A] peek(T[A]) -> A?
+
+fn[A] pop(T[A]) -> A?
+
+fn[A] push(T[A], A) -> Unit
+
+fn[A] unsafe_peek(T[A]) -> A
+
+fn[A] unsafe_pop(T[A]) -> A
+
+// Types and methods
+type T[A]
+fn[A] T::clear(Self[A]) -> Unit
+fn[A] T::is_empty(Self[A]) -> Bool
+fn[A] T::iter(Self[A]) -> Iter[A]
+fn[A] T::length(Self[A]) -> Int
+fn[A] T::peek(Self[A]) -> A?
+fn[A] T::pop(Self[A]) -> A?
+fn[A] T::push(Self[A], A) -> Unit
+fn[A] T::unsafe_peek(Self[A]) -> A
+fn[A] T::unsafe_pop(Self[A]) -> A
+impl[A : Eq] Eq for T[A]
+impl[A : Show] Show for T[A]
+impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[X]
+
+// Type aliases
+
+// Traits
+
