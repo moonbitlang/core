@@ -1211,10 +1211,12 @@ pub fn FixedArray::join(
     }
   } else {
     string.write_string(self[0])
-    let separator = separator.to_string()
     for i = 1; i < len; i = i + 1 {
-      // TODO: use `write_view` when available
-      string.write_string(separator)
+      string.write_substring(
+        separator.data(),
+        separator.start_offset(),
+        separator.length(),
+      )
       string.write_string(self[i])
     }
   }
