@@ -14,7 +14,7 @@
 
 ///|
 fn test_parse(input : String, loc~ : SourceLoc = _) -> Json raise Error {
-  try @json.parse(input) catch {
+  @json.parse(input) catch {
     err => fail("Parse failed, \{loc}, \{err}")
   }
 }

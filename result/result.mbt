@@ -398,7 +398,8 @@ pub fn[T, E : Error] unwrap_or_error(self : Result[T, E]) -> T raise E {
 test "unwrap exn" {
   (try
     (Err(Failure("This is serious")) : Result[Unit, Failure]).unwrap_or_error()
-    |> Ok catch {
+    |> Ok
+  catch {
     Failure(msg) => Err(msg)
   })
   |> inspect(
