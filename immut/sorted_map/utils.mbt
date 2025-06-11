@@ -223,16 +223,18 @@ pub fn[K : Compare, V] from_array(array : Array[(K, V)]) -> T[K, V] {
 ///|
 pub fn[K, V] iter(self : T[K, V]) -> Iter[(K, V)] {
   Iter::new(fn(yield_) {
-    fn go {
-      Empty => IterContinue
-      Tree(k, value~, l, r, ..) =>
-        if go(l) is IterEnd {
-          IterEnd
-        } else if yield_((k, value)) is IterEnd {
-          IterEnd
-        } else {
-          go(r)
-        }
+    fn go(t) {
+      match t {
+        Empty => IterContinue
+        Tree(k, value~, l, r, ..) =>
+          if go(l) is IterEnd {
+            IterEnd
+          } else if yield_((k, value)) is IterEnd {
+            IterEnd
+          } else {
+            go(r)
+          }
+      }
     }
 
     go(self)
@@ -242,16 +244,18 @@ pub fn[K, V] iter(self : T[K, V]) -> Iter[(K, V)] {
 ///|
 pub fn[K, V] iter2(self : T[K, V]) -> Iter2[K, V] {
   Iter2::new(fn(yield_) {
-    fn go {
-      Empty => IterContinue
-      Tree(k, value~, l, r, ..) =>
-        if go(l) is IterEnd {
-          IterEnd
-        } else if yield_(k, value) is IterEnd {
-          IterEnd
-        } else {
-          go(r)
-        }
+    fn go(t) {
+      match t {
+        Empty => IterContinue
+        Tree(k, value~, l, r, ..) =>
+          if go(l) is IterEnd {
+            IterEnd
+          } else if yield_(k, value) is IterEnd {
+            IterEnd
+          } else {
+            go(r)
+          }
+      }
     }
 
     go(self)

@@ -1134,9 +1134,6 @@ pub impl Compare for Double with compare(self, other) = "%f64_compare"
 pub impl Default for Double with default() = "%f64_default"
 
 ///|
-fn Double::to_unchecked_int(self : Double) -> Int = "%f64_to_i32"
-
-///|
 /// Converts an unsigned 32-bit integer to a double-precision floating-point
 /// number. Since the range of unsigned 32-bit integers is smaller than what can
 /// be precisely represented by a double-precision floating-point number, this
@@ -1553,36 +1550,6 @@ pub fn[T] FixedArray::unsafe_set(
   idx : Int,
   val : T
 ) -> Unit = "%fixedarray.unsafe_set"
-
-///|
-/// Retrieves an element at the specified index from a fixed-size array. This
-/// function is similar to `op_get` but provides explicit bounds checking.
-///
-/// Parameters:
-///
-/// * `array` : The fixed-size array to access.
-/// * `index` : The position in the array from which to retrieve the element.
-///
-/// Returns the element at the specified index.
-///
-/// Throws a runtime error if the index is out of bounds (less than 0 or greater
-/// than or equal to the length of the array).
-///
-/// Example:
-///
-/// ```moonbit
-/// test "FixedArray::get" {
-///   let arr = [1, 2, 3]
-///   inspect(arr.get(1), content="Some(2)")
-/// }
-///
-/// test "FixedArray::get/out_of_bounds" {
-///   let arr = [1, 2, 3]
-///   inspect(arr.get(3), content="None")
-/// }
-/// ```
-#deprecated("use `arr.op_get(i)`(arr[i]) instead")
-pub fn[T] FixedArray::get(self : FixedArray[T], idx : Int) -> T = "%fixedarray.get"
 
 ///|
 /// Sets a value at the specified index in a fixed-size array. The original value

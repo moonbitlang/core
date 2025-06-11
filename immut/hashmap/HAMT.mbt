@@ -65,18 +65,20 @@ pub fn[K : Eq + Hash, V] find(self : T[K, V], key : K) -> V? {
 ///|
 /// Lookup a key from a hash map
 pub fn[K : Eq + Hash, V] get(self : T[K, V], key : K) -> V? {
-  loop self, key.hash() {
-    Empty, _ => None
-    Leaf(key1, value), _ => if key == key1 { Some(value) } else { None }
-    Collision(bucket), _ => bucket.find(key)
+  loop (self, key.hash()) {
+    (Empty, _) => None
+    (Leaf(key1, value), _) => if key == key1 { Some(value) } else { None }
+    (Collision(bucket), _) => bucket.find(key)
     // get the first segment (lower 5 bits) of the hash value
     // inline the hot path of Sparse_array::op_get
-    Branch(children), hash => {
+    (Branch(children), hash) => {
       let idx = hash & segment_mask
       if children.elem_info.has(idx) {
         let child = children.data[children.elem_info.index_of(idx)]
-        continue child,
-          (hash.reinterpret_as_uint() >> segment_length).reinterpret_as_int()
+        continue (
+            child,
+            (hash.reinterpret_as_uint() >> segment_length).reinterpret_as_int(),
+          )
       }
       None
     }
@@ -190,19 +192,19 @@ pub fn[K, V, A] fold_with_key(
   init~ : A,
   f : (A, K, V) -> A
 ) -> A {
-  loop @list.singleton((self, 0)), init {
-    Empty, acc => acc
-    More((node, index), tail~), acc =>
+  loop (@list.singleton((self, 0)), init) {
+    (Empty, acc) => acc
+    (More((node, index), tail~), acc) =>
       match node {
-        Empty => continue tail, acc
-        Leaf(k, v) => continue tail, f(acc, k, v)
-        Collision(bucket) => continue tail, bucket.foldl_with_key(init=acc, f)
+        Empty => continue (tail, acc)
+        Leaf(k, v) => continue (tail, f(acc, k, v))
+        Collision(bucket) => continue (tail, bucket.foldl_with_key(init=acc, f))
         Branch(children) =>
           if index < children.data.length() {
             let child = children.data.unsafe_get(index)
-            continue tail.add((node, index + 1)).add((child, 0)), acc
+            continue (tail.add((node, index + 1)).add((child, 0)), acc)
           } else {
-            continue tail, acc
+            continue (tail, acc)
           }
       }
   }
@@ -523,11 +525,11 @@ pub impl[K : Show, V : Show] Show for T[K, V] with output(self, logger) {
 
 ///|
 pub fn[K : Eq + Hash, V] from_array(arr : Array[(K, V)]) -> T[K, V] {
-  loop arr.length(), new() {
-    0, map => map
-    n, map => {
+  loop (arr.length(), new()) {
+    (0, map) => map
+    (n, map) => {
       let (k, v) = arr[n - 1]
-      continue n - 1, map.add(k, v)
+      continue (n - 1, map.add(k, v))
     }
   }
 }
@@ -550,11 +552,11 @@ pub impl[K : Eq + Hash + @quickcheck.Arbitrary, V : @quickcheck.Arbitrary] @quic
 
 ///|
 pub fn[K : Eq + Hash, V] of(arr : FixedArray[(K, V)]) -> T[K, V] {
-  loop arr.length(), new() {
-    0, map => map
-    n, map => {
+  loop (arr.length(), new()) {
+    (0, map) => map
+    (n, map) => {
       let (k, v) = arr[n - 1]
-      continue n - 1, map.add(k, v)
+      continue (n - 1, map.add(k, v))
     }
   }
 }

@@ -44,7 +44,7 @@ pub impl[A : @json.FromJson] @json.FromJson for T[A] with from_json(json, path) 
     raise @json.JsonDecodeError((path, "@immut/list.from_json: expected array"))
   }
   for i = arr.length() - 1, list = Nil; i >= 0; {
-    continue i - 1, list.add(A::from_json(arr[i], path))
+    continue i - 1, list.add(A::from_json(arr[i], path.add_index(i)))
   } else {
     list
   }
@@ -75,9 +75,9 @@ pub fn[A] from_array(arr : Array[A]) -> T[A] {
 ///|
 /// Get the length of the list.
 pub fn[A] length(self : T[A]) -> Int {
-  loop self, 0 {
-    Nil, len => len
-    Cons(_, rest), acc => continue rest, acc + 1
+  loop (self, 0) {
+    (Nil, len) => len
+    (Cons(_, rest), acc) => continue (rest, acc + 1)
   }
 }
 
@@ -112,11 +112,11 @@ pub fn[A] each(self : T[A], f : (A) -> Unit) -> Unit {
 /// assert_eq(arr, ["(0,1)", "(1,2)", "(2,3)", "(3,4)", "(4,5)"])
 /// ```
 pub fn[A] eachi(self : T[A], f : (Int, A) -> Unit) -> Unit {
-  loop self, 0 {
-    Nil, _ => ()
-    Cons(x, xs), i => {
+  loop (self, 0) {
+    (Nil, _) => ()
+    (Cons(x, xs), i) => {
       f(i, x)
-      continue xs, i + 1
+      continue (xs, i + 1)
     }
   }
 }
@@ -161,9 +161,9 @@ pub fn[A, B] mapi(self : T[A], f : (Int, A) -> B) -> T[B] {
 /// }
 /// ```
 pub fn[A, B] rev_map(self : T[A], f : (A) -> B) -> T[B] {
-  loop Nil, self {
-    acc, Nil => acc
-    acc, Cons(x, xs) => continue Cons(f(x), acc), xs
+  loop (Nil, self) {
+    (acc, Nil) => acc
+    (acc, Cons(x, xs)) => continue (Cons(f(x), acc), xs)
   }
 }
 
@@ -323,9 +323,9 @@ pub fn[A] concat(self : T[A], other : T[A]) -> T[A] {
 /// assert_eq(ls, @list.of([5, 4, 3, 2, 1, 6, 7, 8, 9, 10]))
 /// ```
 pub fn[A] rev_concat(self : T[A], other : T[A]) -> T[A] {
-  loop self, other {
-    Nil, other => other
-    Cons(head, tail), other => continue tail, Cons(head, other)
+  loop (self, other) {
+    (Nil, other) => other
+    (Cons(head, tail), other) => continue (tail, Cons(head, other))
   }
 }
 
@@ -469,13 +469,13 @@ pub fn[A, B] fold_righti(self : T[A], f : (Int, A, B) -> B, init~ : B) -> B {
 /// ```
 pub fn[A, B] zip(self : T[A], other : T[B]) -> T[(A, B)]? {
   let mut acc = Nil
-  let res = loop self, other {
-    Nil, Nil => break Some(acc)
-    Cons(x, xs), Cons(y, ys) => {
+  let res = loop (self, other) {
+    (Nil, Nil) => break Some(acc)
+    (Cons(x, xs), Cons(y, ys)) => {
       acc = Cons((x, y), acc)
-      continue xs, ys
+      continue (xs, ys)
     }
-    _, _ => break None
+    (_, _) => break None
   }
   res.map(T::rev)
 }
@@ -528,12 +528,12 @@ pub fn[A, B] flat_map(self : T[A], f : (A) -> T[B]) -> T[B] {
 /// assert_eq(r, @list.of([4, 6, 3]))
 /// ```
 pub fn[A, B] filter_map(self : T[A], f : (A) -> B?) -> T[B] {
-  loop Nil, self {
-    acc, Nil => acc.rev()
-    acc, Cons(x, xs) =>
+  loop (Nil, self) {
+    (acc, Nil) => acc.rev()
+    (acc, Cons(x, xs)) =>
       match f(x) {
-        Some(v) => continue acc.add(v), xs
-        None => continue acc, xs
+        Some(v) => continue (acc.add(v), xs)
+        None => continue (acc, xs)
       }
   }
 }
@@ -541,10 +541,10 @@ pub fn[A, B] filter_map(self : T[A], f : (A) -> B?) -> T[B] {
 ///|
 #internal(unsafe, "Panic if the index is out of bounds")
 pub fn[A] unsafe_nth(self : T[A], n : Int) -> A {
-  loop self, n {
-    Nil, _ => abort("nth: index out of bounds")
-    Cons(head, _), 0 => head
-    Cons(_, tail), n => continue tail, n - 1
+  loop (self, n) {
+    (Nil, _) => abort("nth: index out of bounds")
+    (Cons(head, _), 0) => head
+    (Cons(_, tail), n) => continue (tail, n - 1)
   }
 }
 
@@ -558,10 +558,10 @@ pub fn[A] nth_exn(self : T[A], n : Int) -> A {
 ///|
 /// Get nth element of the list or None if the index is out of bounds
 pub fn[A] nth(self : T[A], n : Int) -> A? {
-  loop self, n {
-    Nil, _ => None
-    Cons(head, _), 0 => Some(head)
-    Cons(_, tail), n => continue tail, n - 1
+  loop (self, n) {
+    (Nil, _) => None
+    (Cons(head, _), 0) => Some(head)
+    (Cons(_, tail), n) => continue (tail, n - 1)
   }
 }
 
@@ -772,10 +772,12 @@ pub fn[A, S] unfold(f : (S) -> (A, S)?, init~ : S) -> T[A] {
 /// assert_eq(r, @list.of([1, 2, 3]))
 /// ```
 pub fn[A] take(self : T[A], n : Int) -> T[A] {
-  fn go {
-    _, Nil => Nil
-    1, Cons(x, _) => Cons(x, Nil)
-    n, Cons(x, xs) => Cons(x, go(n - 1, xs))
+  fn go(n, t) {
+    match (n, t) {
+      (_, Nil) => Nil
+      (1, Cons(x, _)) => Cons(x, Nil)
+      (n, Cons(x, xs)) => Cons(x, go(n - 1, xs))
+    }
   }
 
   if n <= 0 {
@@ -797,16 +799,14 @@ pub fn[A] take(self : T[A], n : Int) -> T[A] {
 /// assert_eq(r, @list.of([4, 5]))
 /// ```
 pub fn[A] drop(self : T[A], n : Int) -> T[A] {
-  fn go {
-    _, Nil => Nil
-    1, Cons(_, xs) => xs
-    n, Cons(_, xs) => go(n - 1, xs)
-  }
-
   if n <= 0 {
     self
   } else {
-    go(n, self)
+    loop (n, self) {
+      (_, Nil) => Nil
+      (1, Cons(_, xs)) => xs
+      (n, Cons(_, xs)) => continue (n - 1, xs)
+    }
   }
 }
 
@@ -934,15 +934,15 @@ pub fn[A] find(self : T[A], f : (A) -> Bool) -> A? {
 /// assert_eq(@list.of([1, 3, 8, 5]).findi(fn(element, index) -> Bool { (element % 2 == 0) && (index == 3) }), None)
 /// ```
 pub fn[A] findi(self : T[A], f : (A, Int) -> Bool) -> A? {
-  loop self, 0 {
-    list, index =>
+  loop (self, 0) {
+    (list, index) =>
       match list {
         Nil => None
         Cons(element, list) =>
           if f(element, index) {
             Some(element)
           } else {
-            continue list, index + 1
+            continue (list, index + 1)
           }
       }
   }
@@ -994,10 +994,15 @@ pub fn[A : Eq] remove(self : T[A], elem : A) -> T[A] {
 /// assert_eq(@list.of([1, 2, 3, 4, 5]).is_prefix(@list.of([1, 2, 3])), true)
 /// ```
 pub fn[A : Eq] is_prefix(self : T[A], prefix : T[A]) -> Bool {
-  loop self, prefix {
-    _, Nil => true
-    Nil, Cons(_) => false
-    Cons(h1, t1), Cons(h2, t2) => if h1 == h2 { continue t1, t2 } else { false }
+  loop (self, prefix) {
+    (_, Nil) => true
+    (Nil, Cons(_)) => false
+    (Cons(h1, t1), Cons(h2, t2)) =>
+      if h1 == h2 {
+        continue (t1, t2)
+      } else {
+        false
+      }
   }
 }
 
@@ -1061,13 +1066,13 @@ pub fn[A] iter(self : T[A]) -> Iter[A] {
 ///|
 pub fn[A] iter2(self : T[A]) -> Iter2[Int, A] {
   Iter2::new(fn(yield_) {
-    loop self, 0 {
-      Nil, _ => IterEnd
-      Cons(head, tail), i => {
+    loop (self, 0) {
+      (Nil, _) => IterEnd
+      (Cons(head, tail), i) => {
         if yield_(i, head) == IterEnd {
           break IterEnd
         }
-        continue tail, i + 1
+        continue (tail, i + 1)
       }
     }
   })
@@ -1147,16 +1152,16 @@ pub impl[A : Hash] Hash for T[A] with hash_combine(self, hasher) {
 /// }
 /// ```
 pub impl[A : Compare] Compare for T[A] with compare(self, other) {
-  loop self, other {
-    Nil, Nil => 0
-    Nil, Cons(_, _) => -1
-    Cons(_, _), Nil => 1
-    Cons(x, xs), Cons(y, ys) => {
+  loop (self, other) {
+    (Nil, Nil) => 0
+    (Nil, Cons(_, _)) => -1
+    (Cons(_, _), Nil) => 1
+    (Cons(x, xs), Cons(y, ys)) => {
       let cmp = x.compare(y)
       if cmp != 0 {
         break cmp
       } else {
-        continue xs, ys
+        continue (xs, ys)
       }
     }
   }

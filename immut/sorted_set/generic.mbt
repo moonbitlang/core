@@ -19,16 +19,18 @@
 ///|
 pub fn[A] iter(self : T[A]) -> Iter[A] {
   Iter::new(fn(yield_) {
-    fn go {
-      Empty => IterContinue
-      Node(left~, right~, value~, ..) =>
-        if go(left) is IterEnd {
-          IterEnd
-        } else if yield_(value) is IterEnd {
-          IterEnd
-        } else {
-          go(right)
-        }
+    fn go(t) {
+      match t {
+        Empty => IterContinue
+        Node(left~, right~, value~, ..) =>
+          if go(left) is IterEnd {
+            IterEnd
+          } else if yield_(value) is IterEnd {
+            IterEnd
+          } else {
+            go(right)
+          }
+      }
     }
 
     go(self)
@@ -57,13 +59,13 @@ pub impl[A : Eq] Eq for T[A] with op_equal(self, other) -> Bool {
   // so we have to use the manual implementation below:
   let iter = InorderIterator::new(self)
   let iter1 = InorderIterator::new(other)
-  loop iter.next(), iter1.next() {
-    None, None => true
-    Some(a), Some(b) => {
+  loop (iter.next(), iter1.next()) {
+    (None, None) => true
+    (Some(a), Some(b)) => {
       guard a == b else { break false }
-      continue iter.next(), iter1.next()
+      continue (iter.next(), iter1.next())
     }
-    _, _ => false
+    (_, _) => false
   }
 }
 
@@ -71,15 +73,15 @@ pub impl[A : Eq] Eq for T[A] with op_equal(self, other) -> Bool {
 pub impl[A : Compare] Compare for T[A] with compare(self, other) -> Int {
   let iter = InorderIterator::new(self)
   let iter1 = InorderIterator::new(other)
-  loop iter.next(), iter1.next() {
-    None, None => 0
-    Some(a), Some(b) => {
+  loop (iter.next(), iter1.next()) {
+    (None, None) => 0
+    (Some(a), Some(b)) => {
       let cmp = a.compare(b)
       guard cmp == 0 else { break cmp }
-      continue iter.next(), iter1.next()
+      continue (iter.next(), iter1.next())
     }
-    Some(_), None => 1
-    None, Some(_) => -1
+    (Some(_), None) => 1
+    (None, Some(_)) => -1
   }
 }
 

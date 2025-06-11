@@ -112,35 +112,35 @@ test "pow special cases" {
 ///|
 test "pow edge cases" {
   // Test cases with very large exponents
-  assert_true(powf(1.2, 100.0).close_to(82818304.0))
-  assert_true(powf(0.8, 100.0).close_to(2.0370390096946522e-10))
+  assert_true(powf(1.2, 100.0).is_close(82818304.0))
+  assert_true(powf(0.8, 100.0).is_close(2.0370390096946522e-10))
 
   // Test cases with very small exponents
-  assert_true(powf(1.2, -100.0).close_to(1.2074625743707657e-8))
-  assert_true(powf(0.8, -100.0).close_to(4909086208.0))
+  assert_true(powf(1.2, -100.0).is_close(1.2074625743707657e-8))
+  assert_true(powf(0.8, -100.0).is_close(4909086208.0))
 
   // Test cases with small base
   let small_flt = 1.0e-5F
-  assert_true(powf(small_flt, 2.0).close_to(9.999999439624929e-11))
-  assert_true(powf(small_flt, 0.5).close_to(0.003162277629598975))
+  assert_true(powf(small_flt, 2.0).is_close(9.999999439624929e-11))
+  assert_true(powf(small_flt, 0.5).is_close(0.003162277629598975))
 
   // Test cases with large base
   let large_flt : Float = 1.0e5
-  assert_true(powf(large_flt, 2.0).close_to(10000000000.0))
-  assert_true(powf(large_flt, 0.5).close_to(316.2277526855469))
+  assert_true(powf(large_flt, 2.0).is_close(10000000000.0))
+  assert_true(powf(large_flt, 0.5).is_close(316.2277526855469))
 
   // Test negative exponent with negative base (where exponent is integer)
-  assert_true(powf(-2.0, -4.0).close_to(0.0625))
-  assert_true(powf(-2.0, -5.0).close_to(-0.03125))
+  assert_true(powf(-2.0, -4.0).is_close(0.0625))
+  assert_true(powf(-2.0, -5.0).is_close(-0.03125))
 
   // Test fractional exponents with positive base
-  assert_true(powf(4.0, 0.5).close_to(2.0))
-  assert_true(powf(9.0, 0.5).close_to(3.0))
-  assert_true(powf(16.0, 0.25).close_to(2.0))
+  assert_true(powf(4.0, 0.5).is_close(2.0))
+  assert_true(powf(9.0, 0.5).is_close(3.0))
+  assert_true(powf(16.0, 0.25).is_close(2.0))
 
   // Test powers that should closely approximate known values
-  assert_true(powf(10.0, 2.0).close_to(100.0))
-  assert_true(powf(10.0, -2.0).close_to(0.009999999776482582))
+  assert_true(powf(10.0, 2.0).is_close(100.0))
+  assert_true(powf(10.0, -2.0).is_close(0.009999999776482582))
 }
 
 ///|
@@ -152,14 +152,14 @@ test "pow with standard functions" {
   let x_flt : Float = 2.0
   let expected_exp_flt : Float = 7.3890562
   let actual_pow_flt = powf(e_flt, x_flt)
-  assert_true!((actual_pow_flt - expected_exp_flt).abs() < 0.01)
+  assert_true((actual_pow_flt - expected_exp_flt).abs() < 0.01)
 
   // Test sqrt(x) vs. pow(x, 0.5)
   let values_flt : Array[Float] = [4.0, 9.0, 16.0, 25.0]
   for value in values_flt {
     let expected_sqrt_flt = value.sqrt()
     let actual_pow_flt = powf(value, 0.5)
-    assert_true!((actual_pow_flt - expected_sqrt_flt).abs() < 0.01)
+    assert_true((actual_pow_flt - expected_sqrt_flt).abs() < 0.01)
   }
 
   // Test pow(x, y) * pow(x, z) = pow(x, y + z)
@@ -168,12 +168,12 @@ test "pow with standard functions" {
   let z_test_flt : Float = 4.0
   let left_val_flt = powf(x_test_flt, y_test_flt) * powf(x_test_flt, z_test_flt)
   let right_val_flt = powf(x_test_flt, y_test_flt + z_test_flt)
-  assert_true!((left_val_flt - right_val_flt).abs() < 0.01)
+  assert_true((left_val_flt - right_val_flt).abs() < 0.01)
 
   // Test pow(x, y)^z = pow(x, y*z)
   let left_test_flt = powf(powf(x_test_flt, y_test_flt), z_test_flt)
   let right_test_flt = powf(x_test_flt, y_test_flt * z_test_flt)
-  assert_true!((left_test_flt - right_test_flt).abs() < 0.01)
+  assert_true((left_test_flt - right_test_flt).abs() < 0.01)
 }
 
 ///|
@@ -181,12 +181,12 @@ test "pow double direct method" {
   // Test Double.pow which is provided by Double directly
   let a_dbl : Double = 2.0
   let b_dbl : Double = 10.0
-  assert_true(a_dbl.pow(b_dbl).close_to(1024.0))
+  assert_true(a_dbl.pow(b_dbl).is_close(1024.0))
 
   // Test a few more Double.pow cases
-  assert_true(10.0.pow(-3.0).close_to(0.001))
-  assert_true(5.0.pow(0.0).close_to(1.0))
-  assert_true((-3.0).pow(3.0).close_to(-27.0))
+  assert_true(10.0.pow(-3.0).is_close(0.001))
+  assert_true(5.0.pow(0.0).is_close(1.0))
+  assert_true((-3.0).pow(3.0).is_close(-27.0))
 
   // Test with infinity
   assert_true(@double.infinity.pow(2.0).is_inf())

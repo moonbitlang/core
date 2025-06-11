@@ -33,16 +33,16 @@ pub fn map(self : L, f : (Int) -> Int) -> L {
 
 ///|
 fn map_dps(f : (Int) -> Int, lst : L, dest : L) -> Unit {
-  loop lst, dest {
-    Nil, Cons(_, ..) as c => c.tail = Nil
+  loop (lst, dest) {
+    (Nil, Cons(_, ..) as c) => c.tail = Nil
     // c.tail = lst
     // this is a common error
-    Cons(head, tail~), Cons(_, ..) as c => {
+    (Cons(head, tail~), Cons(_, ..) as c) => {
       let cell = Cons(f(head), tail=Nil)
       c.tail = cell
-      continue tail, cell
+      continue (tail, cell)
     }
-    _, Nil => abort("map_dps: dest is Nil")
+    (_, Nil) => abort("map_dps: dest is Nil")
   }
 }
 

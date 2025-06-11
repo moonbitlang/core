@@ -19,12 +19,12 @@ type Iter[T] ((T) -> IterResult) -> IterResult
 ///|
 //TODO: Add intrinsic for Iter::run
 pub fn[T] Iter::run(self : Iter[T], f : (T) -> IterResult) -> IterResult {
-  (self._)(f)
+  self(f)
 }
 
 ///|
 pub fn[T] Iter::just_run(self : Iter[T], f : (T) -> IterResult) -> Unit {
-  (self._)(f) |> ignore
+  self(f) |> ignore
 }
 
 ///|
@@ -108,6 +108,7 @@ pub fn[T] Iter::eachi(self : Iter[T], f : (Int, T) -> Unit) -> Unit {
 ///
 /// Returns the final accumulator value after folding all elements of the iterator.
 #intrinsic("%iter.reduce")
+#locals(f)
 pub fn[T, B] Iter::fold(self : Iter[T], init~ : B, f : (B, T) -> B) -> B {
   let mut acc = init
   for a in self {
@@ -849,11 +850,11 @@ pub fn[T] Iter::iter(self : Iter[T]) -> Iter[T] {
 ///|
 /// Returns the last element of the iterator, or `None` if the iterator is empty.
 pub fn[A] Iter::last(self : Iter[A]) -> A? {
-  fn f(_a : A?, b : A) {
-    Some(b)
+  let mut last = None
+  for a in self {
+    last = Some(a)
   }
-
-  self.fold(init=None, f)
+  last
 }
 
 ///|
@@ -873,9 +874,16 @@ pub fn[A] Iter::last(self : Iter[A]) -> A? {
 ///
 /// # Examples
 ///
-/// ```
-/// let iter = Iter::singleton(42)
-/// assert_eq(iter.head(), Some(42))
+/// ```moonbit
+/// test "Iter::head" {
+///   let iter = Iter::singleton(42)
+///   assert_eq(iter.head(), Some(42))
+/// }
+///
+/// test "Iter::head/empty" {
+///   let iter = Iter::empty()
+///   assert_eq(iter.head(), None)
+/// }
 /// ```
 pub fn[A] Iter::head(self : Iter[A]) -> A? {
   for i in self {
@@ -895,10 +903,12 @@ pub fn[A] Iter::head(self : Iter[A]) -> A? {
 ///
 /// # Examples
 ///
-/// ```
-/// let arr = []
-/// [1, 2, 3].iter().intersperse(0).each(fn(i) {arr.push(i)})
-/// assert_eq(arr, [1, 0, 2, 0, 3])
+/// ```moonbit
+/// test "Iter::intersperse" {
+///   let arr = []
+///   [1, 2, 3].iter().intersperse(0).each(fn(i) {arr.push(i)})
+///   assert_eq(arr, [1, 0, 2, 0, 3])
+/// }
 /// ```
 pub fn[A] Iter::intersperse(self : Iter[A], sep : A) -> Iter[A] {
   fn(yield_) {

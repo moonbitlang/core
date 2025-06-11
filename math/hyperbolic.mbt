@@ -13,34 +13,7 @@
 // limitations under the License.
 
 ///|
-pub fn sinh(x : Double) -> Double {
-  x.sinh()
-}
-
-///|
-pub fn cosh(x : Double) -> Double {
-  x.cosh()
-}
-
-///|
-pub fn tanh(x : Double) -> Double {
-  x.tanh()
-}
-
-///|
-pub fn asinh(x : Double) -> Double {
-  x.asinh()
-}
-
-///|
-pub fn acosh(x : Double) -> Double {
-  x.acosh()
-}
-
-///|
-pub fn atanh(x : Double) -> Double {
-  x.atanh()
-}
+pub fnalias Double::(sinh, cosh, tanh, asinh, acosh, atanh)
 
 ///|
 fn k_expo2f(x : Float) -> Float {

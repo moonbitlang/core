@@ -20,39 +20,7 @@ pub const PI = 0x3.243F6A8885A308CA8A54
 pub let pi = 0x3.243F6A8885A308CA8A54
 
 ///|
-pub fn sin(x : Double) -> Double {
-  x.sin()
-}
-
-///|
-pub fn cos(x : Double) -> Double {
-  x.cos()
-}
-
-///|
-pub fn tan(x : Double) -> Double {
-  x.tan()
-}
-
-///|
-pub fn atan(x : Double) -> Double {
-  x.atan()
-}
-
-///|
-pub fn asin(x : Double) -> Double {
-  x.asin()
-}
-
-///|
-pub fn acos(x : Double) -> Double {
-  x.acos()
-}
-
-///|
-pub fn atan2(y : Double, x : Double) -> Double {
-  y.atan2(x)
-}
+pub fnalias Double::(sin, cos, tan, atan, asin, acos, atan2)
 
 ///|
 const SIN_SWITCHOVER : Float = 201.15625

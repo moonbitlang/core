@@ -600,8 +600,8 @@ pub impl[A : @json.FromJson + Compare] @json.FromJson for T[A] with from_json(
     )
   }
   let mut set = new()
-  for i in arr {
-    set = set.add(A::from_json(i, path))
+  for i, x in arr {
+    set = set.add(A::from_json(x, path.add_index(i)))
   }
   set
 }

@@ -216,9 +216,9 @@ pub fn[A] op_get(self : T[A], index : Int) -> A {
 /// ///|
 /// test "get" {
 ///   let v = @array.of([1, 2, 3])
-///   inspect!(v.get(1), content="Some(2)")
-///   inspect!(v.get(-1), content="None")
-///   inspect!(v.get(3), content="None")
+///   inspect(v.get(1), content="Some(2)")
+///   inspect(v.get(-1), content="None")
+///   inspect(v.get(3), content="None")
 /// }
 /// ```
 pub fn[A] get(self : T[A], index : Int) -> A? {
@@ -513,10 +513,4 @@ fn shift_cap_of_size(size : Int) -> (Int, Int) {
   }
   let shift = num_bits * depth
   (shift, cap)
-}
-
-///|
-/// Print the tree structure of the internal tree. For debug use.
-fn[A : Show] to_debug_string(self : T[A]) -> String {
-  self.tree.to_string()
 }

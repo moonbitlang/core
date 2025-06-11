@@ -51,3 +51,6 @@ pub fn Double::to_int(self : Double) -> Int {
     self.to_unchecked_int()
   }
 }
+
+///|
+fn Double::to_unchecked_int(self : Double) -> Int = "%f64_to_i32"

@@ -53,10 +53,10 @@ pub fn[A] init_(self : T[A]) -> T[A] {
 /// ```
 #deprecated("use `==` instead")
 pub fn[A : Eq] equal(self : T[A], other : T[A]) -> Bool {
-  loop self, other {
-    Nil, Nil => true
-    Cons(h, t), Cons(h1, t1) => if h == h1 { continue t, t1 } else { false }
-    _, _ => false
+  loop (self, other) {
+    (Nil, Nil) => true
+    (Cons(h, t), Cons(h1, t1)) => if h == h1 { continue (t, t1) } else { false }
+    (_, _) => false
   }
 }
 
