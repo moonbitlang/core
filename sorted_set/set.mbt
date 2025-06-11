@@ -134,16 +134,16 @@ pub fn[V : Compare] remove(self : T[V], value : V) -> Unit {
 ///|
 /// Return if a value is contained in the set.
 pub fn[V : Compare] contains(self : T[V], value : V) -> Bool {
-  loop self.root, value {
-    None, _ => false
-    Some(node), value => {
+  loop (self.root, value) {
+    (None, _) => false
+    (Some(node), value) => {
       let compare_result = value.compare(node.value)
       if compare_result == 0 {
         true
       } else if compare_result < 0 {
-        continue node.left, value
+        continue (node.left, value)
       } else {
-        continue node.right, value
+        continue (node.right, value)
       }
     }
   }

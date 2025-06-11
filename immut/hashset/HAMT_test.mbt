@@ -14,9 +14,9 @@
 
 ///|
 test "Set" {
-  let map = loop 0, @hashset.new() {
-    100, map => map
-    i, map => continue i + 1, map.add(i)
+  let map = loop (0, @hashset.new()) {
+    (100, map) => map
+    (i, map) => continue (i + 1, map.add(i))
   }
   for i in 0..<100 {
     assert_eq((i, map.contains(i)), (i, true))
@@ -37,16 +37,16 @@ test "@hashset.size" {
 
 ///|
 test "@hashset.remove" {
-  let map = loop 0, @hashset.new() {
-    100, map => map
-    i, map => continue i + 1, map.add(i)
+  let map = loop (0, @hashset.new()) {
+    (100, map) => map
+    (i, map) => continue (i + 1, map.add(i))
   }
   for i in 0..<100 {
     assert_eq((i, map.contains(i)), (i, true))
   }
-  let map = loop 0, map {
-    100, map => map.remove(100) // test for removing non-existing element
-    i, map => continue i + 2, map.remove(i)
+  let map = loop (0, map) {
+    (100, map) => map.remove(100) // test for removing non-existing element
+    (i, map) => continue (i + 2, map.remove(i))
   }
   for i = 0; i < 100; i = i + 2 {
     assert_eq(map.contains(i), false)

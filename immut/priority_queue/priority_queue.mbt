@@ -83,9 +83,9 @@ priv type Path Int
 ///|
 /// require: size >= 2
 fn path(size : Int) -> Path {
-  loop size, 0 {
-    1, y => Path(y)
-    x, y => continue x >> 1, (y << 1) | (x & 1)
+  loop (size, 0) {
+    (1, y) => Path(y)
+    (x, y) => continue (x >> 1, (y << 1) | (x & 1))
   }
 }
 

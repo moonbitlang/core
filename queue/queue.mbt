@@ -263,12 +263,12 @@ pub fn[A] each(self : T[A], f : (A) -> Unit) -> Unit {
 /// }
 /// ```
 pub fn[A] eachi(self : T[A], f : (Int, A) -> Unit) -> Unit {
-  loop self.first, 0 {
-    Some({ content, next }), index => {
+  loop (self.first, 0) {
+    (Some({ content, next }), index) => {
       f(index, content)
-      continue next, index + 1
+      continue (next, index + 1)
     }
-    None, _ => ()
+    (None, _) => ()
   }
 }
 
@@ -284,9 +284,9 @@ pub fn[A] eachi(self : T[A], f : (Int, A) -> Unit) -> Unit {
 /// }
 /// ```
 pub fn[A, B] fold(self : T[A], init~ : B, f : (B, A) -> B) -> B {
-  loop self.first, init {
-    None, acc => acc
-    Some({ content, next }), acc => continue next, f(acc, content)
+  loop (self.first, init) {
+    (None, acc) => acc
+    (Some({ content, next }), acc) => continue (next, f(acc, content))
   }
 }
 
@@ -304,13 +304,13 @@ pub fn[A, B] fold(self : T[A], init~ : B, f : (B, A) -> B) -> B {
 pub fn[A] copy(self : T[A]) -> T[A] {
   guard self.first is Some({ content, next }) else { return new() }
   let first = { content, next: None }
-  let last = loop first, next {
-    pre, Some({ content, next }) => {
+  let last = loop (first, next) {
+    (pre, Some({ content, next })) => {
       let curr = { content, next: None }
       pre.next = Some(curr)
-      continue curr, next
+      continue (curr, next)
     }
-    pre, None => pre
+    (pre, None) => pre
   }
   { length: self.length, first: Some(first), last: Some(last) }
 }

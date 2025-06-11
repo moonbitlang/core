@@ -23,9 +23,9 @@ test "HAMT::size" {
 
 ///|
 test "HAMT" {
-  let map = loop 0, @hashmap.new() {
-    100, map => map
-    i, map => continue i + 1, map.add(i, i)
+  let map = loop (0, @hashmap.new()) {
+    (100, map) => map
+    (i, map) => continue (i + 1, map.add(i, i))
   }
   for i in 0..<100 {
     assert_eq((i, map.get(i)), (i, Some(i)))
@@ -34,9 +34,9 @@ test "HAMT" {
   let map = map.add(100, 100)
   inspect((100, map.get(100)), content="(100, Some(100))")
   // test for replacement
-  let map = loop 0, map {
-    100, map => map
-    i, map => continue i + 2, map.add(i, i + 1)
+  let map = loop (0, map) {
+    (100, map) => map
+    (i, map) => continue (i + 2, map.add(i, i + 1))
   }
   for i = 0; i < 100; i = i + 2 {
     assert_eq((i, map.get(i)), (i, Some(i + 1)))
@@ -46,16 +46,16 @@ test "HAMT" {
 
 ///|
 test "HAMT::remove" {
-  let map = loop 0, @hashmap.new() {
-    100, map => map
-    i, map => continue i + 1, map.add(i, i)
+  let map = loop (0, @hashmap.new()) {
+    (100, map) => map
+    (i, map) => continue (i + 1, map.add(i, i))
   }
   for i in 0..<100 {
     assert_eq((i, map.get(i)), (i, Some(i)))
   }
-  let map = loop 0, map {
-    100, map => map.remove(100) // test for removing non-existing element
-    i, map => continue i + 2, map.remove(i)
+  let map = loop (0, map) {
+    (100, map) => map.remove(100) // test for removing non-existing element
+    (i, map) => continue (i + 2, map.remove(i))
   }
   for i = 0; i < 100; i = i + 2 {
     assert_eq(map.get(i), None)
@@ -325,9 +325,9 @@ test "filter with collision" {
 
 ///|
 test "filter with branch nodes" {
-  let map = loop 0, @hashmap.new() {
-    10, map => map
-    i, map => continue i + 1, map.add(i, i * 10)
+  let map = loop (0, @hashmap.new()) {
+    (10, map) => map
+    (i, map) => continue (i + 1, map.add(i, i * 10))
   }
   let filtered = map.filter(fn(v) { v % 20 == 0 })
   for i = 0; i < 10; i = i + 1 {
@@ -398,9 +398,9 @@ test "HAMT::map_with_key collision" {
 
 ///|
 test "HAMT::map_with_key branch" {
-  let map = loop 0, @hashmap.new() {
-    10, map => map
-    i, map => continue i + 1, map.add(i, i * 10)
+  let map = loop (0, @hashmap.new()) {
+    (10, map) => map
+    (i, map) => continue (i + 1, map.add(i, i * 10))
   } // Branch
   let mapped = map.map_with_key(fn(k, v) { k * 100 + v })
   for i = 0; i < 10; i = i + 1 {

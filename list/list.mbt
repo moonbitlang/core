@@ -100,9 +100,9 @@ pub fn[A] from_array(arr : Array[A]) -> T[A] {
 ///|
 /// Get the length of the list.
 pub fn[A] T::length(self : T[A]) -> Int {
-  loop self, 0 {
-    Empty, len => len
-    More(_, tail=rest), acc => continue rest, acc + 1
+  loop (self, 0) {
+    (Empty, len) => len
+    (More(_, tail=rest), acc) => continue (rest, acc + 1)
   }
 }
 
@@ -142,11 +142,11 @@ pub fn[A] T::each(self : T[A], f : (A) -> Unit) -> Unit {
 /// }
 /// ```
 pub fn[A] T::eachi(self : T[A], f : (Int, A) -> Unit) -> Unit {
-  loop self, 0 {
-    Empty, _ => ()
-    More(x, tail=xs), i => {
+  loop (self, 0) {
+    (Empty, _) => ()
+    (More(x, tail=xs), i) => {
       f(i, x)
-      continue xs, i + 1
+      continue (xs, i + 1)
     }
   }
 }
@@ -166,14 +166,14 @@ pub fn[A, B] T::map(self : T[A], f : (A) -> B) -> T[B] {
     Empty => Empty
     More(hd, tail~) => {
       let dest = More(f(hd), tail=Empty)
-      loop dest, tail {
-        _, Empty => ()
-        More(_) as dest, More(hd, tail~) => {
+      loop (dest, tail) {
+        (_, Empty) => ()
+        (More(_) as dest, More(hd, tail~)) => {
           dest.tail = More(f(hd), tail=Empty)
-          continue dest.tail, tail
+          continue (dest.tail, tail)
         }
         // unreachable
-        Empty, _ => panic()
+        (Empty, _) => panic()
       }
       dest
     }
@@ -187,14 +187,14 @@ pub fn[A, B] T::mapi(self : T[A], f : (Int, A) -> B) -> T[B] {
     Empty => Empty
     More(hd, tail~) => {
       let dest = More(f(0, hd), tail=Empty)
-      loop 1, dest, tail {
-        _, _, Empty => ()
-        i, More(_) as dest, More(hd, tail~) => {
+      loop (1, dest, tail) {
+        (_, _, Empty) => ()
+        (i, More(_) as dest, More(hd, tail~)) => {
           dest.tail = More(f(i, hd), tail=Empty)
-          continue i + 1, dest.tail, tail
+          continue (i + 1, dest.tail, tail)
         }
         // unreachable
-        _, Empty, _ => panic()
+        (_, Empty, _) => panic()
       }
       dest
     }
@@ -213,9 +213,9 @@ pub fn[A, B] T::mapi(self : T[A], f : (Int, A) -> B) -> T[B] {
 /// }
 /// ```
 pub fn[A, B] T::rev_map(self : T[A], f : (A) -> B) -> T[B] {
-  loop Empty, self {
-    acc, Empty => acc
-    acc, More(x, tail=xs) => continue More(f(x), tail=acc), xs
+  loop (Empty, self) {
+    (acc, Empty) => acc
+    (acc, More(x, tail=xs)) => continue (More(f(x), tail=acc), xs)
   }
 }
 
@@ -256,16 +256,16 @@ pub fn[A] T::filter(self : T[A], f : (A) -> Bool) -> T[A] {
         continue tail
       } else {
         let dest = More(head, tail=Empty)
-        loop dest, tail {
-          _, Empty => ()
-          More(_) as dest, More(hd, tail~) =>
+        loop (dest, tail) {
+          (_, Empty) => ()
+          (More(_) as dest, More(hd, tail~)) =>
             if f(hd) {
               dest.tail = More(hd, tail=Empty)
-              continue dest.tail, tail
+              continue (dest.tail, tail)
             } else {
-              continue dest, tail
+              continue (dest, tail)
             }
-          Empty, _ =>
+          (Empty, _) =>
             // unreachable
             panic()
         }
@@ -373,14 +373,14 @@ pub fn[A] T::concat(self : T[A], other : T[A]) -> T[A] {
     More(hd, tail=Empty) => More(hd, tail=other)
     More(hd, tail~) => {
       let dest = More(hd, tail=Empty)
-      loop dest, tail {
-        More(_) as dest, Empty => dest.tail = other
-        More(_) as dest, More(head, tail~) => {
+      loop (dest, tail) {
+        (More(_) as dest, Empty) => dest.tail = other
+        (More(_) as dest, More(head, tail~)) => {
           dest.tail = More(head, tail=Empty)
-          continue dest.tail, tail
+          continue (dest.tail, tail)
         }
         // unreachable
-        Empty, _ => panic()
+        (Empty, _) => panic()
       }
       dest
     }
@@ -397,9 +397,9 @@ pub fn[A] T::concat(self : T[A], other : T[A]) -> T[A] {
 /// assert_eq(ls, @list.of([5, 4, 3, 2, 1, 6, 7, 8, 9, 10]))
 /// ```
 pub fn[A] T::rev_concat(self : T[A], other : T[A]) -> T[A] {
-  loop self, other {
-    Empty, other => other
-    More(head, tail~), other => continue tail, More(head, tail=other)
+  loop (self, other) {
+    (Empty, other) => other
+    (More(head, tail~), other) => continue (tail, More(head, tail=other))
   }
 }
 
@@ -425,9 +425,9 @@ pub fn[A] T::rev(self : T[A]) -> T[A] {
 /// assert_eq(r, 15)
 /// ```
 pub fn[A, B] T::fold(self : T[A], init~ : B, f : (B, A) -> B) -> B {
-  loop self, init {
-    Empty, acc => acc
-    More(head, tail~), acc => continue tail, f(acc, head)
+  loop (self, init) {
+    (Empty, acc) => acc
+    (More(head, tail~), acc) => continue (tail, f(acc, head))
   }
 }
 
@@ -484,11 +484,11 @@ pub fn[A, B] T::rev_foldi(self : T[A], init~ : B, f : (Int, B, A) -> B) -> B {
 /// assert_eq(r, @list.from_array([(1, 6), (2, 7), (3, 8), (4, 9), (5, 10)]))
 /// ```
 pub fn[A, B] T::zip(self : T[A], other : T[B]) -> T[(A, B)] {
-  let res = loop self, other, Empty {
-    Empty, _, acc => break acc
-    _, Empty, acc => break acc
-    More(x, tail=xs), More(y, tail=ys), acc =>
-      continue xs, ys, More((x, y), tail=acc)
+  let res = loop (self, other, Empty) {
+    (Empty, _, acc) => break acc
+    (_, Empty, acc) => break acc
+    (More(x, tail=xs), More(y, tail=ys), acc) =>
+      continue (xs, ys, More((x, y), tail=acc))
   }
   res.reverse_inplace()
 }
@@ -517,26 +517,26 @@ pub fn[A, B] T::flat_map(self : T[A], f : (A) -> T[B]) -> T[B] {
         More(hd, tail=tl) => {
           let dest = More(hd, tail=Empty)
           // copy all the elements of `f(head)` first
-          let dest1 = loop dest, tl {
-            dest, Empty => dest
-            More(_) as dest, More(hd, tail~) => {
+          let dest1 = loop (dest, tl) {
+            (dest, Empty) => dest
+            (More(_) as dest, More(hd, tail~)) => {
               dest.tail = More(hd, tail=Empty)
-              continue dest.tail, tail
+              continue (dest.tail, tail)
             }
-            Empty, _ => panic()
+            (Empty, _) => panic()
           }
           // continue looping on the `tail` of `self`
-          loop_over_tail~: loop dest1, tail {
-            _, Empty => ()
-            More(_) as dest, More(t_hd, tail=Empty) => dest.tail = f(t_hd)
-            dest, More(t_hd, tail=t_tl) =>
-              loop dest, f(t_hd) {
-                dest, Empty => continue loop_over_tail~ dest, t_tl
-                More(_) as dest, More(hd, tail~) => {
+          loop_over_tail~: loop (dest1, tail) {
+            (_, Empty) => ()
+            (More(_) as dest, More(t_hd, tail=Empty)) => dest.tail = f(t_hd)
+            (dest, More(t_hd, tail=t_tl)) =>
+              loop (dest, f(t_hd)) {
+                (dest, Empty) => continue loop_over_tail~ (dest, t_tl)
+                (More(_) as dest, More(hd, tail~)) => {
                   dest.tail = More(hd, tail=Empty)
-                  continue dest.tail, tail
+                  continue (dest.tail, tail)
                 }
-                Empty, _ => panic()
+                (Empty, _) => panic()
               }
           }
           dest
@@ -565,17 +565,17 @@ pub fn[A, B] T::filter_map(self : T[A], f : (A) -> B?) -> T[B] {
         None => continue tail
         Some(head) => {
           let dest = More(head, tail=Empty)
-          loop dest, tail {
-            _, Empty => ()
-            More(_) as dest, More(hd, tail~) =>
+          loop (dest, tail) {
+            (_, Empty) => ()
+            (More(_) as dest, More(hd, tail~)) =>
               match f(hd) {
-                None => continue dest, tail
+                None => continue (dest, tail)
                 Some(head) => {
                   dest.tail = More(head, tail=Empty)
-                  continue dest.tail, tail
+                  continue (dest.tail, tail)
                 }
               }
-            Empty, _ => panic()
+            (Empty, _) => panic()
           }
           dest
         }
@@ -586,20 +586,20 @@ pub fn[A, B] T::filter_map(self : T[A], f : (A) -> B?) -> T[B] {
 ///|
 #internal(unsafe, "Panic if the index is out of bounds")
 pub fn[A] T::unsafe_nth(self : T[A], n : Int) -> A {
-  loop self, n {
-    Empty, _ => abort("nth: index out of bounds")
-    More(head, tail=_), 0 => head
-    More(_, tail~), n => continue tail, n - 1
+  loop (self, n) {
+    (Empty, _) => abort("nth: index out of bounds")
+    (More(head, tail=_), 0) => head
+    (More(_, tail~), n) => continue (tail, n - 1)
   }
 }
 
 ///|
 /// Get nth element of the list or None if the index is out of bounds
 pub fn[A] T::nth(self : T[A], n : Int) -> A? {
-  loop self, n {
-    Empty, _ => None
-    More(head, tail=_), 0 => Some(head)
-    More(_, tail~), n => continue tail, n - 1
+  loop (self, n) {
+    (Empty, _) => None
+    (More(head, tail=_), 0) => Some(head)
+    (More(_, tail~), n) => continue (tail, n - 1)
   }
 }
 
@@ -614,8 +614,8 @@ pub fn[A] T::nth(self : T[A], n : Int) -> A? {
 /// }
 /// ```
 pub fn[A] repeat(n : Int, x : A) -> T[A] {
-  loop Empty, n {
-    acc, n => if n <= 0 { acc } else { continue More(x, tail=acc), n - 1 }
+  loop (Empty, n) {
+    (acc, n) => if n <= 0 { acc } else { continue (More(x, tail=acc), n - 1) }
   }
 }
 
@@ -634,15 +634,15 @@ pub fn[A] T::intersperse(self : T[A], separator : A) -> T[A] {
     More(head, tail=Empty) => More(head, tail=Empty)
     More(head, tail~) => {
       let dest = More(head, tail=Empty)
-      loop dest, tail {
-        _, Empty => ()
-        More(_) as dest, More(hd, tail=tl) => {
+      loop (dest, tail) {
+        (_, Empty) => ()
+        (More(_) as dest, More(hd, tail=tl)) => {
           let new_tail = More(hd, tail=Empty)
           dest.tail = More(separator, tail=new_tail)
-          continue new_tail, tl
+          continue (new_tail, tl)
         }
         // unreachable
-        Empty, _ => panic()
+        (Empty, _) => panic()
       }
       dest
     }
@@ -671,14 +671,14 @@ pub fn[A, B] T::unzip(self : T[(A, B)]) -> (T[A], T[B]) {
     More((x, y), tail~) => {
       let xs = More(x, tail=Empty)
       let ys = More(y, tail=Empty)
-      loop tail, xs, ys {
-        Empty, _, _ => ()
-        More((x, y), tail~), More(_) as xptr, More(_) as yptr => {
+      loop (tail, xs, ys) {
+        (Empty, _, _) => ()
+        (More((x, y), tail~), More(_) as xptr, More(_) as yptr) => {
           xptr.tail = More(x, tail=Empty)
           yptr.tail = More(y, tail=Empty)
-          continue tail, xptr.tail, yptr.tail
+          continue (tail, xptr.tail, yptr.tail)
         }
-        _, _, _ => abort("unreachable")
+        (_, _, _) => abort("unreachable")
       }
       (xs, ys)
     }
@@ -704,26 +704,26 @@ pub fn[A] T::flatten(self : T[T[A]]) -> T[A] {
         More(hd, tail=tl) => {
           let dest = More(hd, tail=Empty)
           // copy all the elements of `head` first
-          let dest1 = loop dest, tl {
-            dest, Empty => dest
-            More(_) as dest, More(hd, tail~) => {
+          let dest1 = loop (dest, tl) {
+            (dest, Empty) => dest
+            (More(_) as dest, More(hd, tail~)) => {
               dest.tail = More(hd, tail=Empty)
-              continue dest.tail, tail
+              continue (dest.tail, tail)
             }
-            Empty, _ => panic()
+            (Empty, _) => panic()
           }
           // continue looping on the `tail` of `self`
-          loop_over_tail~: loop dest1, tail {
-            _, Empty => ()
-            More(_) as dest, More(t_hd, tail=Empty) => dest.tail = t_hd
-            dest, More(t_hd, tail=t_tl) =>
-              loop dest, t_hd {
-                dest, Empty => continue loop_over_tail~ dest, t_tl
-                More(_) as dest, More(hd, tail~) => {
+          loop_over_tail~: loop (dest1, tail) {
+            (_, Empty) => ()
+            (More(_) as dest, More(t_hd, tail=Empty)) => dest.tail = t_hd
+            (dest, More(t_hd, tail=t_tl)) =>
+              loop (dest, t_hd) {
+                (dest, Empty) => continue loop_over_tail~ (dest, t_tl)
+                (More(_) as dest, More(hd, tail~)) => {
                   dest.tail = More(hd, tail=Empty)
-                  continue dest.tail, tail
+                  continue (dest.tail, tail)
                 }
-                Empty, _ => panic()
+                (Empty, _) => panic()
               }
           }
           dest
@@ -738,10 +738,10 @@ pub fn[A : Compare] T::unsafe_maximum(self : T[A]) -> A {
   match self {
     Empty => abort("maximum: empty list")
     More(head, tail~) =>
-      loop tail, head {
-        Empty, curr_max => curr_max
-        More(item, tail~), curr_max =>
-          continue tail, if item > curr_max { item } else { curr_max }
+      loop (tail, head) {
+        (Empty, curr_max) => curr_max
+        (More(item, tail~), curr_max) =>
+          continue (tail, if item > curr_max { item } else { curr_max })
       }
   }
 }
@@ -753,10 +753,10 @@ pub fn[A : Compare] T::maximum(self : T[A]) -> A? {
   match self {
     Empty => None
     More(head, tail~) =>
-      loop tail, head {
-        Empty, curr_max => Some(curr_max)
-        More(item, tail~), curr_max =>
-          continue tail, if item > curr_max { item } else { curr_max }
+      loop (tail, head) {
+        (Empty, curr_max) => Some(curr_max)
+        (More(item, tail~), curr_max) =>
+          continue (tail, if item > curr_max { item } else { curr_max })
       }
   }
 }
@@ -767,10 +767,10 @@ pub fn[A : Compare] T::unsafe_minimum(self : T[A]) -> A {
   match self {
     Empty => abort("maximum: empty list")
     More(head, tail~) =>
-      loop tail, head {
-        Empty, curr_min => curr_min
-        More(item, tail~), curr_min =>
-          continue tail, if item < curr_min { item } else { curr_min }
+      loop (tail, head) {
+        (Empty, curr_min) => curr_min
+        (More(item, tail~), curr_min) =>
+          continue (tail, if item < curr_min { item } else { curr_min })
       }
   }
 }
@@ -781,10 +781,10 @@ pub fn[A : Compare] T::minimum(self : T[A]) -> A? {
   match self {
     Empty => None
     More(head, tail~) =>
-      loop tail, head {
-        Empty, curr_min => Some(curr_min)
-        More(item, tail~), curr_min =>
-          continue tail, if item < curr_min { item } else { curr_min }
+      loop (tail, head) {
+        (Empty, curr_min) => Some(curr_min)
+        (More(item, tail~), curr_min) =>
+          continue (tail, if item < curr_min { item } else { curr_min })
       }
   }
 }
@@ -835,13 +835,13 @@ pub fn[A, S] unfold(f : (S) -> (A, S)?, init~ : S) -> T[A] {
     None => Empty
     Some((element, new_state)) => {
       let dest = More(element, tail=Empty)
-      loop dest, f(new_state) {
-        _, None => ()
-        More(_) as dest, Some((element, new_state)) => {
+      loop (dest, f(new_state)) {
+        (_, None) => ()
+        (More(_) as dest, Some((element, new_state))) => {
           dest.tail = More(element, tail=Empty)
-          continue dest.tail, f(new_state)
+          continue (dest.tail, f(new_state))
         }
-        Empty, _ => panic()
+        (Empty, _) => panic()
       }
       dest
     }
@@ -850,9 +850,9 @@ pub fn[A, S] unfold(f : (S) -> (A, S)?, init~ : S) -> T[A] {
 
 ///|
 pub fn[A, S] rev_unfold(f : (S) -> (A, S)?, init~ : S) -> T[A] {
-  loop f(init), Empty {
-    None, acc => acc
-    Some((x, s)), acc => continue f(s), More(x, tail=acc)
+  loop (f(init), Empty) {
+    (None, acc) => acc
+    (Some((x, s)), acc) => continue (f(s), More(x, tail=acc))
   }
 }
 
@@ -875,14 +875,14 @@ pub fn[A] T::take(self : T[A], n : Int) -> T[A] {
       Empty => Empty
       More(head, tail~) => {
         let dest = More(head, tail=Empty)
-        loop dest, tail, n - 1 {
-          _, Empty, _ => ()
-          _, _, 0 => ()
-          More(_) as dest, More(x, tail=xs), n => {
+        loop (dest, tail, n - 1) {
+          (_, Empty, _) => ()
+          (_, _, 0) => ()
+          (More(_) as dest, More(x, tail=xs), n) => {
             dest.tail = More(x, tail=Empty)
-            continue dest.tail, xs, n - 1
+            continue (dest.tail, xs, n - 1)
           }
-          Empty, _, _ => panic()
+          (Empty, _, _) => panic()
         }
         dest
       }
@@ -905,10 +905,10 @@ pub fn[A] T::drop(self : T[A], n : Int) -> T[A] {
   if n <= 0 {
     self
   } else {
-    loop n, self {
-      _, Empty => Empty
-      1, More(_, tail=xs) => xs
-      n, More(_, tail=xs) => continue n - 1, xs
+    loop (n, self) {
+      (_, Empty) => Empty
+      (1, More(_, tail=xs)) => xs
+      (n, More(_, tail=xs)) => continue (n - 1, xs)
     }
   }
 }
@@ -929,14 +929,14 @@ pub fn[A] T::take_while(self : T[A], p : (A) -> Bool) -> T[A] {
     More(head, tail~) =>
       if p(head) {
         let dest = More(head, tail=Empty)
-        loop dest, tail {
-          _, Empty => ()
-          More(_) as dest, More(x, tail=xs) if p(x) => {
+        loop (dest, tail) {
+          (_, Empty) => ()
+          (More(_) as dest, More(x, tail=xs)) if p(x) => {
             dest.tail = More(x, tail=Empty)
-            continue dest.tail, xs
+            continue (dest.tail, xs)
           }
-          More(_), _ => ()
-          Empty, _ => panic()
+          (More(_), _) => ()
+          (Empty, _) => panic()
         }
         dest
       } else {
@@ -974,12 +974,12 @@ pub fn[A] T::drop_while(self : T[A], p : (A) -> Bool) -> T[A] {
 /// ```
 pub fn[A, E] T::scan_left(self : T[A], f : (E, A) -> E, init~ : E) -> T[E] {
   let dest = More(init, tail=Empty)
-  loop dest, self, init {
-    _, Empty, _ => ()
-    Empty, _, _ => panic()
-    More(_) as dest, More(x, tail=xs), acc => {
+  loop (dest, self, init) {
+    (_, Empty, _) => ()
+    (Empty, _, _) => panic()
+    (More(_) as dest, More(x, tail=xs), acc) => {
       dest.tail = More(f(acc, x), tail=Empty)
-      continue dest.tail, xs, f(acc, x)
+      continue (dest.tail, xs, f(acc, x))
     }
   }
   dest
@@ -1067,13 +1067,13 @@ pub fn[A] T::find(self : T[A], f : (A) -> Bool) -> A? {
 /// ```
 ///
 pub fn[A] T::find_index(self : Self[A], f : (A) -> Bool) -> Int? {
-  loop self, 0 {
-    Empty, _ => None
-    More(element, tail=list), idx =>
+  loop (self, 0) {
+    (Empty, _) => None
+    (More(element, tail=list), idx) =>
       if f(element) {
         Some(idx)
       } else {
-        continue list, idx + 1
+        continue (list, idx + 1)
       }
   }
 }
@@ -1090,15 +1090,15 @@ pub fn[A] T::find_index(self : Self[A], f : (A) -> Bool) -> Int? {
 /// }
 /// ```
 pub fn[A] T::findi(self : T[A], f : (A, Int) -> Bool) -> A? {
-  loop self, 0 {
-    list, index =>
+  loop (self, 0) {
+    (list, index) =>
       match list {
         Empty => None
         More(element, tail=list) =>
           if f(element, index) {
             Some(element)
           } else {
-            continue list, index + 1
+            continue (list, index + 1)
           }
       }
   }
@@ -1121,14 +1121,14 @@ pub fn[A] T::remove_at(self : T[A], index : Int) -> T[A] {
     (0, More(_, tail~)) => tail
     (n, More(head, tail~)) => {
       let dest = More(head, tail=Empty)
-      loop dest, tail, n - 1 {
-        _, Empty, _ => ()
-        More(_) as dest, More(_, tail~), 0 => dest.tail = tail
-        More(_) as dest, More(x, tail=xs), n => {
+      loop (dest, tail, n - 1) {
+        (_, Empty, _) => ()
+        (More(_) as dest, More(_, tail~), 0) => dest.tail = tail
+        (More(_) as dest, More(x, tail=xs), n) => {
           dest.tail = More(x, tail=Empty)
-          continue dest.tail, xs, n - 1
+          continue (dest.tail, xs, n - 1)
         }
-        Empty, _, _ => panic()
+        (Empty, _, _) => panic()
       }
       dest
     }
@@ -1151,16 +1151,16 @@ pub fn[A : Eq] T::remove(self : T[A], elem : A) -> T[A] {
     More(head, tail~) if head == elem => tail
     More(head, tail~) => {
       let dest = More(head, tail~)
-      loop dest, tail {
-        _, Empty => ()
-        More(_) as dest, More(x, tail=xs) =>
+      loop (dest, tail) {
+        (_, Empty) => ()
+        (More(_) as dest, More(x, tail=xs)) =>
           if x == elem {
             dest.tail = xs
           } else {
             dest.tail = More(x, tail=Empty)
-            continue dest.tail, xs
+            continue (dest.tail, xs)
           }
-        Empty, _ => panic()
+        (Empty, _) => panic()
       }
       dest
     }
@@ -1178,12 +1178,12 @@ pub fn[A : Eq] T::remove(self : T[A], elem : A) -> T[A] {
 /// }
 /// ```
 pub fn[A : Eq] T::is_prefix(self : T[A], prefix : T[A]) -> Bool {
-  loop self, prefix {
-    _, Empty => true
-    Empty, More(_) => false
-    More(h1, tail=t1), More(h2, tail=t2) =>
+  loop (self, prefix) {
+    (_, Empty) => true
+    (Empty, More(_)) => false
+    (More(h1, tail=t1), More(h2, tail=t2)) =>
       if h1 == h2 {
-        continue t1, t2
+        continue (t1, t2)
       } else {
         false
       }
@@ -1252,13 +1252,13 @@ pub fn[A] T::iter(self : T[A]) -> Iter[A] {
 ///|
 pub fn[A] T::iter2(self : T[A]) -> Iter2[Int, A] {
   Iter2::new(fn(yield_) {
-    loop self, 0 {
-      Empty, _ => IterEnd
-      More(head, tail~), i => {
+    loop (self, 0) {
+      (Empty, _) => IterEnd
+      (More(head, tail~), i) => {
         if yield_(i, head) == IterEnd {
           break IterEnd
         }
-        continue tail, i + 1
+        continue (tail, i + 1)
       }
     }
   })
@@ -1310,11 +1310,11 @@ fn[A] T::reverse_inplace(self : T[A]) -> T[A] {
   match self {
     Empty | More(_, tail=Empty) => self
     More(head, tail~) =>
-      loop More(head, tail=Empty), tail {
-        result, Empty => result
-        result, More(_, tail=xs) as new_result => {
+      loop (More(head, tail=Empty), tail) {
+        (result, Empty) => result
+        (result, More(_, tail=xs) as new_result) => {
           new_result.tail = result
-          continue new_result, xs
+          continue (new_result, xs)
         }
       }
   }
