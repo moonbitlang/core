@@ -6,7 +6,7 @@ A mutable set backed by a red-black tree.
 
 ## Create
 
-You can create an empty MutableSet or a MutableSet from other containers.
+You can create an empty SortedSet or a SortedSet from other containers.
 
 ```moonbit
 test {
@@ -17,7 +17,7 @@ test {
 ```
 ### Container Operations
 
-Add an element to the MutableSet in place.
+Add an element to the SortedSet in place.
 
 ```moonbit
 test {
@@ -28,7 +28,7 @@ test {
 }
 ```
 
-Remove an element from the MutableSet in place.
+Remove an element from the SortedSet in place.
 
 ```moonbit
 test {
@@ -108,7 +108,7 @@ test {
 
 ### Stringify
 
-MutableSet implements to_string (i.e. Show trait), which allows you to directly output it.
+SortedSet implements to_string (i.e. Show trait), which allows you to directly output it.
 
 ```moonbit
 test {
