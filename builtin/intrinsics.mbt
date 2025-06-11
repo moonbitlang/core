@@ -1828,7 +1828,7 @@ pub fn String::to_string(self : String) -> String = "%string_to_string"
 
 ///|
 // For internal use only
-priv extern type UnsafeMaybeUninit[_]
+priv type UnsafeMaybeUninit[_]
 
 ///|
 /// Converts a byte value to a 32-bit signed integer. The resulting integer will

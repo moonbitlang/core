@@ -283,7 +283,7 @@ impl[K : Show, V : ToJson] ToJson for Map[K, V]
 
 pub(all) suberror SnapshotError String
 
-pub(all) extern type SourceLoc
+pub(all) type SourceLoc
 fn SourceLoc::to_string(Self) -> String
 impl Show for SourceLoc
 
