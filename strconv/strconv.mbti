@@ -1,28 +1,28 @@
 package "moonbitlang/core/strconv"
 
 // Values
-fn[A : FromStr] parse(String) -> A!StrConvError
+fn[A : FromStr] parse(String) -> A raise StrConvError
 
-fn parse_bool(String) -> Bool!StrConvError
+fn parse_bool(String) -> Bool raise StrConvError
 
 #deprecated
-fn parse_decimal(String) -> Decimal!StrConvError
+fn parse_decimal(String) -> Decimal raise StrConvError
 
-fn parse_double(String) -> Double!StrConvError
+fn parse_double(String) -> Double raise StrConvError
 
-fn parse_int(String, base~ : Int = ..) -> Int!StrConvError
+fn parse_int(String, base~ : Int = ..) -> Int raise StrConvError
 
-fn parse_int64(String, base~ : Int = ..) -> Int64!StrConvError
+fn parse_int64(String, base~ : Int = ..) -> Int64 raise StrConvError
 
-fn parse_uint(String, base~ : Int = ..) -> UInt!StrConvError
+fn parse_uint(String, base~ : Int = ..) -> UInt raise StrConvError
 
-fn parse_uint64(String, base~ : Int = ..) -> UInt64!StrConvError
+fn parse_uint64(String, base~ : Int = ..) -> UInt64 raise StrConvError
 
 #deprecated
 fn shift(Decimal, Int) -> Unit
 
 #deprecated
-fn to_double(Decimal) -> Double!StrConvError
+fn to_double(Decimal) -> Double raise StrConvError
 
 // Types and methods
 type Decimal
@@ -31,11 +31,11 @@ fn Decimal::from_int64(Int64) -> Self
 #deprecated
 fn Decimal::new() -> Self
 #deprecated
-fn Decimal::parse_decimal(String) -> Self!StrConvError
+fn Decimal::parse_decimal(String) -> Self raise StrConvError
 #deprecated
 fn Decimal::shift(Self, Int) -> Unit
 #deprecated
-fn Decimal::to_double(Self) -> Double!StrConvError
+fn Decimal::to_double(Self) -> Double raise StrConvError
 impl Show for Decimal
 
 pub(all) suberror StrConvError String
@@ -45,7 +45,7 @@ impl Show for StrConvError
 
 // Traits
 pub(open) trait FromStr {
-  from_string(String) -> Self!StrConvError
+  from_string(String) -> Self raise StrConvError
 }
 impl FromStr for Bool
 impl FromStr for Int

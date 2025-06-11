@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-fn test_parse(input : String, loc~ : SourceLoc = _) -> Json!Error {
+fn test_parse(input : String, loc~ : SourceLoc = _) -> Json raise Error {
   try @json.parse(input) catch {
     err => fail("Parse failed, \{loc}, \{err}")
   }

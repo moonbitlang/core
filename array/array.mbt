@@ -85,8 +85,8 @@ pub fnalias Array::push_iter
 /// ```
 pub fn[T] Array::makei(
   length : Int,
-  value : (Int) -> T?Error
-) -> Array[T]?Error {
+  value : (Int) -> T raise?
+) -> Array[T] raise? {
   if length <= 0 {
     []
   } else {
@@ -158,7 +158,10 @@ pub fn[T] shuffle(self : Array[T], rand~ : (Int) -> Int) -> Array[T] {
 /// 
 /// # Returns
 /// 
-pub fn[A, B] filter_map(self : Array[A], f : (A) -> B??Error) -> Array[B]?Error {
+pub fn[A, B] filter_map(
+  self : Array[A],
+  f : (A) -> B? raise?
+) -> Array[B] raise? {
   let result = []
   for x in self {
     if f(x) is Some(x) {
@@ -277,8 +280,8 @@ pub fn[T1, T2] unzip(self : Array[(T1, T2)]) -> (Array[T1], Array[T2]) {
 pub fn[A, B, C] zip_with(
   l : Array[A],
   r : Array[B],
-  merge : (A, B) -> C?Error
-) -> Array[C]?Error {
+  merge : (A, B) -> C raise?
+) -> Array[C] raise? {
   let length = if l.length() < r.length() { l.length() } else { r.length() }
   let arr = Array::new(capacity=length)
   for i = 0; i < length; i = i + 1 {

@@ -62,6 +62,6 @@ pub fn[K : Compare, V] T::of(array : FixedArray[(K, V)]) -> T[K, V] {
 #coverage.skip
 pub fn[V : @json.FromJson] T::from_json(
   json : Json
-) -> T[String, V]!@json.JsonDecodeError {
+) -> T[String, V] raise @json.JsonDecodeError {
   @json.from_json(json)
 }

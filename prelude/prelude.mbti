@@ -7,22 +7,22 @@ import(
 // Values
 fn[T] abort(String) -> T
 
-fn[T : @builtin.Eq + @builtin.Show] assert_eq(T, T, loc~ : @builtin.SourceLoc = _) -> Unit!
+fn[T : @builtin.Eq + @builtin.Show] assert_eq(T, T, loc~ : @builtin.SourceLoc = _) -> Unit raise
 
-fn assert_false(Bool, loc~ : @builtin.SourceLoc = _) -> Unit!
+fn assert_false(Bool, loc~ : @builtin.SourceLoc = _) -> Unit raise
 
-fn[T : @builtin.Eq + @builtin.Show] assert_not_eq(T, T, loc~ : @builtin.SourceLoc = _) -> Unit!
+fn[T : @builtin.Eq + @builtin.Show] assert_not_eq(T, T, loc~ : @builtin.SourceLoc = _) -> Unit raise
 
-fn assert_true(Bool, loc~ : @builtin.SourceLoc = _) -> Unit!
+fn assert_true(Bool, loc~ : @builtin.SourceLoc = _) -> Unit raise
 
 #deprecated
 fn[T] dump(T, name? : String, loc~ : @builtin.SourceLoc = _) -> T
 
-fn[T] fail(String, loc~ : @builtin.SourceLoc = _) -> T!@builtin.Failure
+fn[T] fail(String, loc~ : @builtin.SourceLoc = _) -> T raise @builtin.Failure
 
 fn[T] ignore(T) -> Unit
 
-fn inspect(&@builtin.Show, content~ : String = .., loc~ : @builtin.SourceLoc = _, args_loc~ : @builtin.ArgsLoc = _) -> Unit!@builtin.InspectError
+fn inspect(&@builtin.Show, content~ : String = .., loc~ : @builtin.SourceLoc = _, args_loc~ : @builtin.ArgsLoc = _) -> Unit raise @builtin.InspectError
 
 fn not(Bool) -> Bool
 

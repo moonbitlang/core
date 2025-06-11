@@ -18,19 +18,19 @@ pub(all) suberror JsonDecodeError (JsonPath, String) derive(Eq, Show, ToJson)
 ///|
 /// Trait for types that can be converted from `Json`
 pub(open) trait FromJson {
-  from_json(Json, JsonPath) -> Self!JsonDecodeError
+  from_json(Json, JsonPath) -> Self raise JsonDecodeError
 }
 
 ///|
 pub fn[T : FromJson] from_json(
   json : Json,
   path~ : JsonPath = Root
-) -> T!JsonDecodeError {
+) -> T raise JsonDecodeError {
   FromJson::from_json(json, path)
 }
 
 ///|
-fn[T] decode_error(path : JsonPath, msg : String) -> T!JsonDecodeError {
+fn[T] decode_error(path : JsonPath, msg : String) -> T raise JsonDecodeError {
   raise JsonDecodeError((path, msg))
 }
 

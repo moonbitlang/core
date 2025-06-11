@@ -401,7 +401,7 @@ test "iter" {
 }
 
 ///|
-pub fn[T, Err : Error] or_error(self : T?, err : Err) -> T!Err {
+pub fn[T, Err : Error] or_error(self : T?, err : Err) -> T raise Err {
   match self {
     Some(v) => v
     None => raise err

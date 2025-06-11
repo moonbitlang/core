@@ -197,7 +197,7 @@ pub fn inspect(
   content~ : String = "",
   loc~ : SourceLoc = _,
   args_loc~ : ArgsLoc = _
-) -> Unit!InspectError {
+) -> Unit raise InspectError {
   let actual = obj.to_string()
   if actual != content {
     let loc = loc.to_string().escape()

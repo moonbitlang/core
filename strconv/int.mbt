@@ -31,7 +31,7 @@ const INT64_MAX = 0x7fffffffffffffffL
 fn check_and_consume_base(
   view : @string.View,
   base : Int
-) -> (Int, @string.View, Bool)!StrConvError {
+) -> (Int, @string.View, Bool) raise StrConvError {
   // if the base is not given, we need to determine it from the prefix
   if base == 0 {
     match view {
@@ -80,7 +80,7 @@ test {
 /// inspect(parse_int64("zz", base=36), content="1295")
 /// ```
 /// 
-pub fn parse_int64(str : String, base~ : Int = 0) -> Int64!StrConvError {
+pub fn parse_int64(str : String, base~ : Int = 0) -> Int64 raise StrConvError {
   guard str != "" else { syntax_err() }
   let (neg, rest) = match str.view() {
     ['+', .. rest] => (false, rest)
@@ -132,7 +132,7 @@ pub fn parse_int64(str : String, base~ : Int = 0) -> Int64!StrConvError {
 ///|
 /// Parse a string in the given base (0, 2 to 36), return a Int number or an error.
 /// If the `~base` argument is 0, the base will be inferred by the prefix.
-pub fn parse_int(str : String, base~ : Int = 0) -> Int!StrConvError {
+pub fn parse_int(str : String, base~ : Int = 0) -> Int raise StrConvError {
   let n = parse_int64(str, base~)
   if n < INT_MIN.to_int64() || n > INT_MAX.to_int64() {
     range_err()
