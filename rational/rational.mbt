@@ -158,7 +158,7 @@ fn[T] overflow_error() -> T!RationalError {
 }
 
 ///|
-pub(all) type! RationalError String
+pub(all) suberror RationalError String
 
 ///|
 pub impl Show for RationalError with output(self, logger) {

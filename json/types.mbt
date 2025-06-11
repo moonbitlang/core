@@ -23,7 +23,7 @@ pub(all) struct Position {
 } derive(Eq, ToJson)
 
 ///|
-pub(all) type! ParseError {
+pub(all) suberror ParseError {
   InvalidChar(Position, Char)
   InvalidEof
   InvalidNumber(Position, String)

@@ -33,7 +33,7 @@
 ///   }
 /// }
 /// ```
-pub(all) type! Failure String
+pub(all) suberror Failure String
 
 ///|
 /// Raises a `Failure` error with a given message and source location.

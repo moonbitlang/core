@@ -38,7 +38,7 @@ fn Decimal::shift(Self, Int) -> Unit
 fn Decimal::to_double(Self) -> Double!StrConvError
 impl Show for Decimal
 
-pub(all) type! StrConvError String
+pub(all) suberror StrConvError String
 impl Show for StrConvError
 
 // Type aliases
