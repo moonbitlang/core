@@ -17,7 +17,8 @@
 // generic type parameters of extern ffi
 
 ///|
-priv extern type JSValue
+#external
+priv type JSValue
 
 ///|
 fn[T] JSValue::ofAny(array : T) -> JSValue = "%identity"
@@ -26,7 +27,8 @@ fn[T] JSValue::ofAny(array : T) -> JSValue = "%identity"
 fn[T] JSValue::toAny(self : JSValue) -> T = "%identity"
 
 ///|
-priv extern type JSArray
+#external
+priv type JSArray
 
 ///|
 fn[T] JSArray::ofAnyArray(array : Array[T]) -> JSArray = "%identity"
@@ -68,7 +70,8 @@ extern "js" fn JSArray::splice1(
 ///|
 /// An `Array` is a collection of values that supports random access and can
 /// grow in size.
-extern type Array[T]
+#external
+type Array[T]
 
 ///|
 fn[T] Array::make_uninit(len : Int) -> Array[T] = "%fixedarray.make_uninit"

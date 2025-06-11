@@ -21,7 +21,7 @@
 /// opaque. Users cannot construct values of this type directly; they are
 /// automatically created by the compiler when needed.
 /// TODO: can not make a dummy loc
-pub(all) extern type SourceLoc
+pub(all) type SourceLoc
 
 ///|
 /// Converts a source location to its string representation.
