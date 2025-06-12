@@ -245,3 +245,67 @@ test "Bytes::get out of bounds" {
   let byte = bytes.get(3)
   inspect(byte, content="None")
 }
+
+///|
+/// Test ByteSource trait for Bytes, FixedArray[Byte], and Array[Byte]
+test "ByteSource trait for Bytes" {
+  let bytes : Bytes = b"\x10\x20\x30"
+  let value = ByteSource::get(bytes, 1)
+  inspect(value, content="b'\\x20'")
+}
+
+///|
+test "ByteSource trait for FixedArray[Byte]" {
+  let arr : FixedArray[Byte] = [b'\x01', b'\x02', b'\x03']
+  let value = ByteSource::get(arr, 2)
+  inspect(value, content="b'\\x03'")
+}
+
+///|
+test "ByteSource trait for Array[Byte]" {
+  let arr : Array[Byte] = [b'\x05', b'\x06', b'\x07']
+  let value = ByteSource::get(arr, 0)
+  inspect(value, content="b'\\x05'")
+}
+
+///|
+/// Test Bytes::blit_from with Bytes as source
+test "Bytes::blit_from with Bytes source" {
+  let src : Bytes = b"\xAA\xBB\xCC"
+  let dst : Bytes = b"\x00\x00\x00"
+  let result = dst.blit_from(src, dest_index=1, src_index=0, len=2)
+  inspect(
+    result,
+    content=
+      #|b"\x00\xaa\xbb"
+    ,
+  )
+}
+
+///|
+/// Test Bytes::blit_from with FixedArray[Byte] as source
+test "Bytes::blit_from with FixedArray[Byte] source" {
+  let src : FixedArray[Byte] = [b'\x11', b'\x22', b'\x33']
+  let dst : Bytes = b"\x00\x00\x00"
+  let result = dst.blit_from(src, dest_index=0, src_index=1, len=2)
+  inspect(
+    result,
+    content=
+      #|b"\x22\x33\x00"
+    ,
+  )
+}
+
+///|
+/// Test Bytes::blit_from with Array[Byte] as source
+test "Bytes::blit_from with Array[Byte] source" {
+  let src : Array[Byte] = [b'\x44', b'\x55', b'\x66']
+  let dst : Bytes = b"\x00\x00\x00"
+  let result = dst.blit_from(src, dest_index=0, src_index=0, len=3)
+  inspect(
+    result,
+    content=
+      #|b"\x44\x55\x66"
+    ,
+  )
+}
