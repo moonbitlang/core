@@ -499,3 +499,17 @@ pub impl[A : @quickcheck.Arbitrary] @quickcheck.Arbitrary for View[A] with arbit
 ) {
   Array::arbitrary(size, rs)[:]
 }
+
+///|
+/// Copies elements from this ArrayView to a destination array starting at a given index.
+pub fn[T] ArrayView::blit_to(
+  self : ArrayView[T],
+  dest : Array[T],
+  dest_index~ : Int = 0
+) -> Unit {
+  let mut i = 0
+  for v in self.iter() {
+    dest[dest_index + i] = v
+    i = i + 1
+  }
+}
