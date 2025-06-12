@@ -227,3 +227,43 @@ test "arrayview hash invariant" {
     assert_eq(v.hash(), view.hash())
   }
 }
+
+///|
+test "arrayview blit_to basic" {
+  let src = [1, 2, 3, 4, 5][1:4] // [2, 3, 4]
+  let dest = [0, 0, 0, 0, 0]
+  src.blit_to(dest, dest_index=1)
+  inspect(dest, content="[0, 2, 3, 4, 0]")
+}
+
+///|
+test "arrayview blit_to at start" {
+  let src = [10, 20, 30][:]
+  let dest = [1, 2, 3]
+  src.blit_to(dest)
+  inspect(dest, content="[10, 20, 30]")
+}
+
+///|
+test "arrayview blit_to at end" {
+  let src = [7, 8][:]
+  let dest = [0, 0, 0, 0]
+  src.blit_to(dest, dest_index=2)
+  inspect(dest, content="[0, 0, 7, 8]")
+}
+
+///|
+test "arrayview blit_to empty src" {
+  let src = [1, 2, 3][0:0]
+  let dest = [9, 9, 9]
+  src.blit_to(dest)
+  inspect(dest, content="[9, 9, 9]")
+}
+
+///|
+test "arrayview blit_to full overwrite" {
+  let src = [5, 6, 7][:]
+  let dest = [1, 2, 3]
+  src.blit_to(dest)
+  inspect(dest, content="[5, 6, 7]")
+}
