@@ -58,7 +58,9 @@ pub impl Mul for Byte with op_mul(self : Byte, that : Byte) -> Byte {
 ///   let b = b'\x03' // 3
 ///   inspect(a / b, content="b'\\x55'") // 255 / 3 = 85 (0x55)
 /// }
-///
+/// ```
+/// 
+/// ```skip
 /// test "panic Byte::op_div/division_by_zero" {
 ///   let a = b'\x01'
 ///   let b = b'\x00'

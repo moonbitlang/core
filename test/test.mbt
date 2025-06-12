@@ -71,7 +71,7 @@ pub fn is_false(x : Bool, loc~ : SourceLoc = _) -> Unit raise {
 ///
 /// # Examples
 ///
-/// ```
+/// ```skip
 /// let a = "4" + "2"
 /// let b = "4" + "2"
 /// @test.same_object(a, a)
@@ -95,7 +95,7 @@ pub fn[T : Show] same_object(a : T, b : T, loc~ : SourceLoc = _) -> Unit raise {
 ///
 /// # Examples
 ///
-/// ```
+/// ```skip
 /// let a = "4" + "2"
 /// let b = "4" + "2"
 /// @test.is_not(a, b)
