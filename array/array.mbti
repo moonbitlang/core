@@ -15,6 +15,7 @@ fn join(Array[String], @string.StringView) -> String
 
 fn[A] last(Array[A]) -> A?
 
+#deprecated
 fn[T] push_iter(Array[T], Iter[T]) -> Unit
 
 fn[T] shuffle(Array[T], rand~ : (Int) -> Int) -> Array[T]

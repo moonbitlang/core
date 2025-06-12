@@ -86,7 +86,8 @@ pub fn[Any] keep(self : T, value : Any) -> Unit {
 }
 
 ///|
-/// Internal use only
+/// Returns a JSON array string containing all collected benchmark summaries.
+/// This helper is mainly used internally for tests and diagnostics.
 #coverage.skip
 pub fn dump_summaries(self : T) -> String {
   "[\{self.buffer.to_string()}]"

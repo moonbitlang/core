@@ -57,7 +57,7 @@ pub fn[V] deep_clone(self : T[V]) -> T[V] {
 }
 
 ///|
-/// Returns a shallow copy of the MutableSet.
+/// Returns a shallow copy of the set.
 /// 
 /// It is just copying the tree structure, not the values.
 /// 
@@ -352,13 +352,13 @@ pub impl[V : Compare] Eq for T[V] with op_equal(self, other) {
 }
 
 ///|
-/// Returns if MutableSet is empty.
+/// Returns if the set is empty.
 pub fn[V : Compare] is_empty(self : T[V]) -> Bool {
   self.root is None
 }
 
 ///|
-/// Returns the number of elements in the MutableSet.
+/// Returns the number of elements in the set.
 pub fn[V : Compare] size(self : T[V]) -> Int {
   self.size
 }

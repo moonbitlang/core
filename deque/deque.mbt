@@ -524,7 +524,7 @@ pub fn[A] op_get(self : T[A], index : Int) -> A {
   if index < 0 || index >= self.len {
     let len = self.len
     abort(
-      "index out of bounds: Ahe len is from 0 to \{len} but the index is \{index}",
+      "index out of bounds: the len is from 0 to \{len} but the index is \{index}",
     )
   }
   if self.head + index < self.buf.length() {
@@ -551,7 +551,7 @@ pub fn[A] op_set(self : T[A], index : Int, value : A) -> Unit {
   if index < 0 || index >= self.len {
     let len = self.len
     abort(
-      "index out of bounds: Ahe len is from 0 to \{len} but the index is \{index}",
+      "index out of bounds: the len is from 0 to \{len} but the index is \{index}",
     )
   }
   if self.head + index < self.buf.length() {

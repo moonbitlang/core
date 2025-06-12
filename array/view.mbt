@@ -439,10 +439,12 @@ pub fn View::join(self : ArrayView[String], separator : @string.View) -> String 
           buf.write_string(s)
         }
       } else {
-        let separator = separator.to_string()
         for s in tl {
-          // TODO : use `write_view` when available
-          buf.write_string(separator)
+          buf.write_substring(
+            separator.data(),
+            separator.start_offset(),
+            separator.length(),
+          )
           buf.write_string(s)
         }
       }

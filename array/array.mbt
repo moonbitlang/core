@@ -50,11 +50,15 @@ pub fn[T] Array::from_iter(iter : Iter[T]) -> Array[T] {
 ///   assert_eq(u, [1, 2, 3, 4, 5, 6])
 /// }
 /// ```
-pub fn[T] push_iter(self : Array[T], iter : Iter[T]) -> Unit {
+pub fn[T] Array::push_iter(self : Self[T], iter : Iter[T]) -> Unit {
   for x in iter {
     self.push(x)
   }
 }
+
+///|
+#deprecated("use method call")
+pub fnalias Array::push_iter
 
 ///|
 /// Creates a new array of the specified length, where each element is
@@ -368,6 +372,12 @@ pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Array[X] with arbi
 }
 
 ///|
+/// Join an array of strings using the provided `separator`.
+///
+/// Parameters:
+///   * `separator` : The string inserted between each element.
+///
+/// Returns a single concatenated `String`.
 pub fn join(self : Array[String], separator : @string.View) -> String {
   self[:].join(separator)
 }
