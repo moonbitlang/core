@@ -335,6 +335,12 @@ pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Array[X] with arbi
 }
 
 ///|
+/// Join an array of strings using the provided `separator`.
+///
+/// Parameters:
+///   * `separator` : The string inserted between each element.
+///
+/// Returns a single concatenated `String`.
 pub fn join(self : Array[String], separator : @string.View) -> String {
   self[:].join(separator)
 }
