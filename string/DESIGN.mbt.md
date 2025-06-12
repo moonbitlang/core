@@ -80,18 +80,21 @@ test "unsafe vs safe" {
     is mostly clear. This design allows both String and View to be passed to
     functions expecting View parameters, leveraging implicit conversion.
 
-  ```moonbit
-    test "view conversion" {
-    fn process_text(text: View) -> Int { text.length() }
-  
-    let str = "Hello World"
-    let view = str.charcodes(start=0, end=5)
-  
-    // Both work due to implicit conversion
-    let _len1 = process_text(str)    // String implicitly converts to View
-    let _len2 = process_text(view)   // Direct View usage
+```moonbit
+test "view conversion" {
+  fn process_text(text : View) -> Int {
+    text.length()
   }
-  ```
+
+  let str = "Hello World"
+  let view = str.charcodes(start=0, end=5)
+
+  // Both work due to implicit conversion
+  let _len1 = process_text(str) // String implicitly converts to View
+  let _len2 = process_text(view)
+   // Direct View usage
+}
+```
 
   - **Return Type Strategy**: The return type depends on the nature of the
     operation and the input type:
