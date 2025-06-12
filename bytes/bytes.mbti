@@ -48,6 +48,7 @@ impl Compare for View
 impl Eq for View
 impl Show for View
 
+fn[T : ByteSource] Bytes::blit_from(Bytes, T, dest_index~ : Int = .., src_index~ : Int = .., len~ : Int) -> Bytes
 fn Bytes::from_array(Array[Byte]) -> Bytes
 fn Bytes::from_fixedarray(FixedArray[Byte], len? : Int) -> Bytes
 fn Bytes::from_iter(Iter[Byte]) -> Bytes
@@ -65,4 +66,10 @@ impl Hash for Bytes
 // Type aliases
 
 // Traits
+pub trait ByteSource {
+  get(Self, Int) -> Byte
+}
+impl ByteSource for FixedArray[Byte]
+impl ByteSource for Bytes
+impl ByteSource for Array[Byte]
 

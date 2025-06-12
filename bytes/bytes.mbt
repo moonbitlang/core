@@ -342,3 +342,51 @@ pub impl Add for Bytes with op_add(self : Bytes, other : Bytes) -> Bytes {
   }
   unsafe_to_bytes(rv)
 }
+
+///|
+/// Retrieves a byte from the source at the specified index.
+///
+/// Parameters:
+///           
+/// * `self` : The byte source to retrieve the byte from.
+/// * `i` : The index of the byte to retrieve.
+pub trait ByteSource {
+  get(self : Self, i : Int) -> Byte
+}
+
+///|
+/// Implements the `ByteSource` trait for the `Bytes` type.
+pub impl ByteSource for Bytes with get(self : Bytes, i : Int) -> Byte {
+  self[i]
+}
+
+///|
+/// Implements the `ByteSource` trait for the `FixedArray[Byte]` type.
+pub impl ByteSource for FixedArray[Byte] with get(
+  self : FixedArray[Byte],
+  i : Int
+) -> Byte {
+  self[i]
+}
+
+///|
+/// Implements the `ByteSource` trait for the `Array[Byte]` type.
+pub impl ByteSource for Array[Byte] with get(self : Array[Byte], i : Int) -> Byte {
+  self[i]
+}
+
+///|
+/// Blits bytes from a source to the destination bytes sequence.
+pub fn[T : ByteSource] Bytes::blit_from(
+  self : Bytes,
+  src : T,
+  dest_index~ : Int = 0,
+  src_index~ : Int = 0,
+  len~ : Int
+) -> Bytes {
+  let arr = self.to_array()
+  for i in 0..<len {
+    arr[dest_index + i] = src.get(src_index + i)
+  }
+  Bytes::from_array(arr)
+}
