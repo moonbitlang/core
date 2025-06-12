@@ -340,3 +340,21 @@ test "UInt16::to_json" {
   inspect(UInt16::to_json(66), content="Number(66)")
   inspect(UInt16::to_json(65535), content="Number(65535)")
 }
+
+///|
+test "UInt16::to_uint" {
+  inspect(UInt16::to_uint(0), content="0")
+  inspect(UInt16::to_uint(1), content="1")
+  inspect(UInt16::to_uint(65535), content="65535")
+  inspect(UInt16::to_uint(32768), content="32768")
+  inspect(UInt16::to_uint(12345), content="12345")
+}
+
+///|
+test "UInt16::to_uint64" {
+  inspect(UInt16::to_uint64(0), content="0")
+  inspect(UInt16::to_uint64(1), content="1")
+  inspect(UInt16::to_uint64(65535), content="65535")
+  inspect(UInt16::to_uint64(32768), content="32768")
+  inspect(UInt16::to_uint64(12345), content="12345")
+}
