@@ -42,7 +42,7 @@ pub fn[T] Array::from_iter(iter : Iter[T]) -> Array[T] {
 /// and adds them to the array using the `push` method.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "push_iter_example" {
 ///   let u = [1, 2, 3]
 ///   let v = [4, 5, 6]
@@ -134,13 +134,15 @@ pub fn[T] shuffle_in_place(self : Array[T], rand~ : (Int) -> Int) -> Unit {
 /// *rand n* is expected to returns a uniformly distribution integer between 0 and n - 1
 /// # Example
 /// 
-/// ```
-/// let arr = [1, 2, 3, 4, 5]
-/// fn rand(upper : Int) -> Int {
-///   let rng = @random.new()
-///   rng.int(limit=upper)
+/// ```mbt
+/// test {
+///   let arr = [1, 2, 3, 4, 5]
+///   fn rand(upper : Int) -> Int {
+///     let rng = @random.new()
+///     rng.int(limit=upper)
+///   }
+///   let _shuffled = Array::shuffle(arr, rand=rand)
 /// }
-/// let _shuffled = Array::shuffle(arr, rand=rand)
 /// ```
 pub fn[T] shuffle(self : Array[T], rand~ : (Int) -> Int) -> Array[T] {
   let new_arr = self.copy()

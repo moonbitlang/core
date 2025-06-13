@@ -26,13 +26,15 @@ pub typealias T as Buffer
 /// Buffer, since it is optimized for all targets.
 /// # Usage
 ///
-/// ```
-/// let buf = @buffer.new(size_hint=100)
-/// buf.write_string("Tes")
-/// buf.write_char('t')
-/// inspect(buf.contents(), content=
-///   #|b"\x54\x00\x65\x00\x73\x00\x74\x00"
-/// )
+/// ```mbt
+/// test {
+///   let buf = @buffer.new(size_hint=100)
+///   buf.write_string("Tes")
+///   buf.write_char('t')
+///   inspect(buf.contents(), content=
+///     #|b"\x54\x00\x65\x00\x73\x00\x74\x00"
+///   )
+/// }
 /// ```
 struct T {
   mut data : FixedArray[Byte]

@@ -246,7 +246,7 @@ fn[A] realloc(self : T[A]) -> Unit {
 /// Return the front element from a deque, or `None` if it is empty.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "Deque::front" {
 ///   let dv = @deque.of([1, 2, 3, 4, 5])
 ///   assert_eq(dv.front(), Some(1))
@@ -264,7 +264,7 @@ pub fn[A] front(self : T[A]) -> A? {
 /// Return the back element from a deque, or `None` if it is empty.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "Deque::back" {
 ///   let dv = @deque.of([1, 2, 3, 4, 5])
 ///   assert_eq(dv.back(), Some(5))
@@ -284,7 +284,7 @@ pub fn[A] back(self : T[A]) -> A? {
 /// If the deque is at capacity, it will be reallocated.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "Deque::push_front" {
 ///   let dv = @deque.of([1, 2, 3, 4, 5])
 ///   dv.push_front(0)
@@ -308,7 +308,7 @@ pub fn[A] push_front(self : T[A], value : A) -> Unit {
 /// If the deque is at capacity, it will be reallocated.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "Deque::push_back" {
 ///   let dv = @deque.of([1, 2, 3, 4, 5])
 ///   dv.push_back(6)
@@ -330,7 +330,7 @@ pub fn[A] push_back(self : T[A], value : A) -> Unit {
 /// Removes a front element from a deque.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "Deque::unsafe_pop_front" {
 ///   let dv = @deque.of([1, 2, 3, 4, 5])
 ///   dv.unsafe_pop_front()
@@ -387,7 +387,7 @@ pub fn[A] pop_front_exn(self : T[A]) -> Unit {
 /// Removes a back element from a deque.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "Deque::unsafe_pop_back" {
 ///   let dv = @deque.of([1, 2, 3, 4, 5])
 ///   dv.unsafe_pop_back()
@@ -446,7 +446,7 @@ pub fn[A] pop_back_exn(self : T[A]) -> Unit {
 /// Removes a front element from a deque and returns it, or `None` if it is empty.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "Deque::pop_front" {
 ///   let dv = @deque.of([1, 2, 3, 4, 5])
 ///   assert_eq(dv.pop_front(), Some(1))
@@ -479,7 +479,7 @@ pub fn[A] pop_front(self : T[A]) -> A? {
 /// Removes a back element from a deque and returns it, or `None` if it is empty.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "Deque::pop_back" {
 ///   let dv = @deque.of([1, 2, 3, 4, 5])
 ///   assert_eq(dv.pop_back(), Some(5))
@@ -514,7 +514,7 @@ pub fn[A] pop_back(self : T[A]) -> A? {
 /// If you try to access an index which isn't in the Deque, it will panic.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "Deque::op_get" {
 ///   let dv = @deque.of([1, 2, 3, 4, 5])
 ///   assert_eq(dv[2], 3)
@@ -540,7 +540,7 @@ pub fn[A] op_get(self : T[A], index : Int) -> A {
 /// If you try to access an index which isn't in the Deque, it will panic.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "Deque::op_set" {
 ///   let dv = @deque.of([1, 2, 3, 4, 5])
 ///   dv[2] = 1
@@ -637,7 +637,7 @@ pub impl[A : Eq] Eq for T[A] with op_equal(self, other) {
 /// Iterates over the elements of the deque.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "Deque::each" {
 ///   let dv = @deque.of([1, 2, 3, 4, 5])
 ///   let mut sum = 0
@@ -655,7 +655,7 @@ pub fn[A] each(self : T[A], f : (A) -> Unit) -> Unit {
 /// Iterates over the elements of the deque with index.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "Deque::eachi" {
 ///   let dv = @deque.of([1, 2, 3, 4, 5])
 ///   let mut idx_sum = 0
@@ -673,7 +673,7 @@ pub fn[A] eachi(self : T[A], f : (Int, A) -> Unit) -> Unit {
 /// Iterates over the elements of the deque in reversed turn.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "Deque::rev_each" {
 ///   let dv = @deque.of([1, 2, 3, 4, 5])
 ///   let mut sum = 0
@@ -691,7 +691,7 @@ pub fn[A] rev_each(self : T[A], f : (A) -> Unit) -> Unit {
 /// Iterates over the elements of the deque in reversed turn with index.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "Deque::rev_eachi" {
 ///   let dv = @deque.of([1, 2, 3, 4, 5])
 ///   let mut idx_sum = 0
@@ -711,7 +711,7 @@ pub fn[A] rev_eachi(self : T[A], f : (Int, A) -> Unit) -> Unit {
 /// This method has no effect on the allocated capacity of the deque, only setting the length to 0.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "Deque::clear" {
 ///   let dv = @deque.of([1, 2, 3, 4, 5])
 ///   dv.clear()
@@ -743,7 +743,7 @@ pub fn[A] clear(self : T[A]) -> Unit {
 /// Maps a function over the elements of the deque.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "Deque::map" {
 ///   let dv = @deque.of([3, 4, 5])
 ///   let dv2 = dv.map(fn (x) {x + 1})
@@ -766,7 +766,7 @@ pub fn[A, U] map(self : T[A], f : (A) -> U) -> T[U] {
 /// Maps a function over the elements of the deque with index.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "Deque::mapi" {
 ///   let dv = @deque.of([3, 4, 5])
 ///   let dv2 = dv.mapi(fn (i, x) {x + i}) // @deque.of([3, 5, 7])
@@ -789,7 +789,7 @@ pub fn[A, U] mapi(self : T[A], f : (Int, A) -> U) -> T[U] {
 /// Test if the deque is empty.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "Deque::is_empty" {
 ///   let dv = @deque.new()
 ///   assert_eq(dv.is_empty(), true)
@@ -860,10 +860,12 @@ pub fn[A : Eq] contains(self : T[A], value : A) -> Bool {
 ///
 /// # Example
 ///
-/// ```
-/// let dv = @deque.of([1])
-/// dv.reserve_capacity(10)
-/// assert_eq(dv.capacity(), 10)
+/// ```mbt
+/// test {
+///   let dv = @deque.of([1])
+///   dv.reserve_capacity(10)
+///   assert_eq(dv.capacity(), 10)
+/// }
 /// ```
 pub fn[A] reserve_capacity(self : T[A], capacity : Int) -> Unit {
   if self.capacity() >= capacity {
@@ -886,14 +888,16 @@ pub fn[A] reserve_capacity(self : T[A], capacity : Int) -> Unit {
 ///
 /// # Example
 ///
-/// ```
-/// let dv = @deque.new(capacity=10)
-/// dv.push_back(1)
-/// dv.push_back(2)
-/// dv.push_back(3)
-/// assert_eq(dv.capacity(), 10)
-/// dv.shrink_to_fit()
-/// assert_eq(dv.capacity(), 3)
+/// ```mbt
+/// test {
+///   let dv = @deque.new(capacity=10)
+///   dv.push_back(1)
+///   dv.push_back(2)
+///   dv.push_back(3)
+///   assert_eq(dv.capacity(), 10)
+///   dv.shrink_to_fit()
+///   assert_eq(dv.capacity(), 3)
+/// }
 /// ```
 pub fn[A] shrink_to_fit(self : T[A]) -> Unit {
   if self.capacity() <= self.length() {
