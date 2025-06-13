@@ -64,12 +64,13 @@ pub(all) type ArgsLoc Array[SourceLoc?] derive(Show)
 /// representation of a source location or "null".
 pub fn ArgsLoc::to_json(self : ArgsLoc) -> String {
   let buf = StringBuilder::new(size_hint=10)
+  let ArgsLoc(self) = self
   buf.write_char('[')
-  for i in 0..<self._.length() {
+  for i in 0..<self.length() {
     if i != 0 {
       buf.write_string(", ")
     }
-    let item = self._[i]
+    let item = self[i]
     match item {
       None => buf.write_string("null")
       Some(loc) => loc.to_string() |> Show::output(buf)

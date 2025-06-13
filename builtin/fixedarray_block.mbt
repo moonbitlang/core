@@ -19,7 +19,7 @@
 /// The arrays may overlap, in which case the copy is performed in a way that preserves the data.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "unsafe_blit_example" {
 ///   let src = FixedArray::from_array([1, 2, 3, 4, 5])
 ///   let dst = FixedArray::from_array([0, 0, 0, 0, 0])

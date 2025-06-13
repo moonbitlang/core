@@ -16,7 +16,7 @@
 /// Create a tuple with two elements.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "Tuple::pair" {
 ///   let tuple = @tuple.pair(1, 2)
 ///   assert_eq(tuple, (1, 2))
@@ -30,7 +30,7 @@ pub fn[T, U] pair(x : T, y : U) -> (T, U) {
 /// Get the first element of a tuple.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "Tuple::fst" {
 ///   let tuple = (1, 2)
 ///   let x = @tuple.fst(tuple)
@@ -45,7 +45,7 @@ pub fn[T, U] fst(tuple : (T, U)) -> T {
 /// Get the second element of a tuple.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "Tuple::snd" {
 ///   let tuple = (1, 2)
 ///   let y = @tuple.snd(tuple)
@@ -60,7 +60,7 @@ pub fn[T, U] snd(tuple : (T, U)) -> U {
 /// Map a function over the first element of a tuple.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "Tuple::map_fst" {
 ///   let tuple = (1, 2)
 ///   let mapped = @tuple.map_fst(fn(x : Int) -> Int { x + 1 }, tuple)
@@ -76,7 +76,7 @@ pub fn[T, U, V] map_fst(f : (T) -> U, tuple : (T, V)) -> (U, V) {
 /// Map a function over the second element of a tuple.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "Tuple::map_snd" {
 ///   let tuple = (1, 2)
 ///   let mapped = @tuple.map_snd(fn(x : Int) -> Int { x + 1 }, tuple)
@@ -92,7 +92,7 @@ pub fn[T, U, V] map_snd(f : (T) -> U, tuple : (V, T)) -> (V, U) {
 /// Map a function over both elements of a tuple.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "Tuple::map_both" {
 ///   let tuple = (1, 2)
 ///   let mapped = @tuple.map_both(fn(x : Int) -> Int { x + 1 }, fn(x : Int) -> Int { x - 1 }, tuple)
@@ -112,7 +112,7 @@ pub fn[T, U, V, W] map_both(
 /// Swap the elements of a tuple.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "Tuple::swap" {
 ///   let tuple = (1, 2)
 ///   let swapped = @tuple.swap(tuple)
@@ -127,7 +127,7 @@ pub fn[T, U] swap(tuple : (T, U)) -> (U, T) {
 /// Curry a function.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "Tuple::curry" {
 ///   let add = fn(x : Int, y : Int) -> Int { x + y }
 ///   let curried_add = @tuple.curry(add)
@@ -142,7 +142,7 @@ pub fn[T, U, V] curry(f : (T, U) -> V) -> (T) -> (U) -> V {
 /// Uncurry a function.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "Tuple::uncurry" {
 ///   let add = fn(x : Int) -> (Int) -> Int { fn(y : Int) -> Int { x + y } }
 ///   let uncurried_add = @tuple.uncurry(add)

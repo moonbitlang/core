@@ -17,17 +17,20 @@ type MyString String derive(Eq)
 
 ///|
 impl Hash for MyString with hash(self) {
-  self._.length()
+  let MyString(s) = self
+  s.length()
 }
 
 ///|
 impl Hash for MyString with hash_combine(self, hasher) {
-  hasher.combine_string(self._)
+  let MyString(s) = self
+  hasher.combine_string(s)
 }
 
 ///|
 impl Show for MyString with output(self, logger) {
-  logger.write_string(self._)
+  let MyString(s) = self
+  logger.write_string(s)
 }
 
 ///|

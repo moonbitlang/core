@@ -15,7 +15,7 @@
 ///|
 /// Convert char array to string.
 ///
-/// ```
+/// ```mbt
 /// test "from_array_example" {
 ///   let s = @string.from_array(['H', 'e', 'l', 'l', 'o'])
 ///   assert_eq(s, "Hello")
@@ -56,11 +56,13 @@ pub fn from_iter(iter : Iter[Char]) -> String {
 ///|
 /// Concatenate strings.
 ///
-/// ```
-/// let s = @string.concat(["Hello", ", ", "world!"])
-/// assert_eq(s, "Hello, world!")
-/// let s = @string.concat(["a", "b", "c"], separator=",")
-/// assert_eq(s, "a,b,c")
+/// ```mbt
+/// test {
+///   let s = @string.concat(["Hello", ", ", "world!"])
+///   assert_eq(s, "Hello, world!")
+///   let s = @string.concat(["a", "b", "c"], separator=",")
+///   assert_eq(s, "a,b,c")
+/// }
 /// ```
 #deprecated("Use `Array::join` instead.")
 pub fn concat(strings : Array[String], separator~ : String = "") -> String {
@@ -152,7 +154,7 @@ pub fn to_array(self : String) -> Array[Char] {
 /// Note: This iterator yields Unicode characters, not Utf16 code units.
 /// As a result, the count of characters returned by `iter().count()` may not be equal to the length of the string returned by `length()`.
 ///
-/// ```
+/// ```mbt
 /// test "iter_example" {
 ///   let s = "Hello, World!🤣";
 ///   assert_eq(s.iter().count(), 14); // Unicode characters
@@ -225,7 +227,7 @@ pub fn iter2(self : String) -> Iter2[Int, Char] {
 ///
 /// # Examples
 ///
-/// ```
+/// ```mbt
 /// test "rev_iter_example" {
 ///   let input = "Hello, World!"
 ///   let reversed = input.rev_iter().collect()

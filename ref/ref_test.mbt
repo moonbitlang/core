@@ -30,6 +30,21 @@ test "protect" {
 }
 
 ///|
+test "protect with error" {
+  let x = @ref.new(1)
+  assert_eq(x.val, 1)
+  let mut r = 0
+  let result = try? x.protect(2, fn() {
+      r = x.val
+      fail("")
+      r = -x.val
+    })
+  assert_true(result is Err(_))
+  assert_eq(r, 2)
+  assert_eq(x.val, 1)
+}
+
+///|
 test "update with increment function" {
   let a = @ref.new(1)
   a.update(fn(x) { x + 1 })

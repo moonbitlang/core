@@ -93,7 +93,8 @@ pub fn[T] UninitializedArray::op_as_view(
 ///
 /// Returns the length of the uninitialized array as an integer.
 pub fn[A] UninitializedArray::length(self : UninitializedArray[A]) -> Int {
-  self._.length()
+  let UninitializedArray(self) = self
+  self.length()
 }
 
 ///|

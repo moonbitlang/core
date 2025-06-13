@@ -85,7 +85,8 @@ pub fn Bitset::remove(self : Bitset, idx : Int) -> Bitset {
 ///
 /// Calculate the size of a bitset
 pub fn Bitset::size(self : Bitset) -> Int {
-  self._.popcnt()
+  let Bitset(self) = self
+  self.popcnt()
 }
 
 ///|

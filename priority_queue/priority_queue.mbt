@@ -16,7 +16,7 @@
 /// Creates a new empty priority queue.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "new_queue_example" {
 ///   let queue : @priority_queue.T[Int] = @priority_queue.new()
 ///   assert_eq(queue.length(), 0)
@@ -30,7 +30,7 @@ pub fn[A] new() -> T[A] {
 /// Creates a new priority queue from an array.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "from_array_example" {
 ///   let queue = @priority_queue.of([1, 2, 3, 4, 5])
 ///   assert_eq(queue.length(), 5)
@@ -65,7 +65,7 @@ fn[A] copy_node(x : Node[A]) -> Node[A] {
 /// Return a copy of the queue.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "copy_example" {
 ///   let queue = @priority_queue.of([1, 2, 3, 4])
 ///   let queue2 = @priority_queue.copy(queue)
@@ -157,10 +157,12 @@ pub fn[A] length(self : T[A]) -> Int {
 /// Pops the first value from the priority queue.
 ///
 /// # Example
-/// ```
-/// let queue = @priority_queue.of([1, 2, 3, 4])
-/// queue.unsafe_pop()
-/// assert_eq(queue.length(), 3)
+/// ```mbt
+/// test {
+///   let queue = @priority_queue.of([1, 2, 3, 4])
+///   queue.unsafe_pop()
+///   assert_eq(queue.length(), 3)
+/// }
 /// ```
 #internal(unsafe, "Panic if the queue is empty.")
 pub fn[A : Compare] unsafe_pop(self : T[A]) -> Unit {
@@ -175,7 +177,7 @@ pub fn[A : Compare] unsafe_pop(self : T[A]) -> Unit {
 /// Pops the first value from the priority queue, which returns None if the queue is empty.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "pop_example" {
 ///   let queue = @priority_queue.of([1, 2, 3, 4])
 ///   let first = queue.pop() // Some(4)
@@ -199,7 +201,7 @@ pub fn[A : Compare] pop(self : T[A]) -> A? {
 /// Adds a value to the priority queue.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "push_example" {
 ///   let queue = @priority_queue.new()
 ///   queue.push(1)
@@ -215,7 +217,7 @@ pub fn[A : Compare] push(self : T[A], value : A) -> Unit {
 /// Peeks at the first value in the priority queue, which returns None if the priority queue is empty.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "peek_example" {
 ///   let queue = @priority_queue.of([1, 2, 3, 4])
 ///   let first = queue.peek() // Some(4)
@@ -233,7 +235,7 @@ pub fn[A] peek(self : T[A]) -> A? {
 /// Clears the queue.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "clear_example" {
 ///   let queue = @priority_queue.of([1, 2, 3, 4])
 ///   queue.clear()
@@ -249,7 +251,7 @@ pub fn[A] clear(self : T[A]) -> Unit {
 /// Checks if the priority queue is empty.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "is_empty_example" {
 ///   let queue : @priority_queue.T[Int] = @priority_queue.new()
 ///   assert_eq(queue.is_empty(), true)

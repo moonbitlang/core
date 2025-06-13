@@ -6,6 +6,8 @@ let max_value : UInt16
 let min_value : UInt16
 
 // Types and methods
+fn UInt16::to_uint(UInt16) -> UInt
+fn UInt16::to_uint64(UInt16) -> UInt64
 impl Add for UInt16
 impl BitAnd for UInt16
 impl BitOr for UInt16

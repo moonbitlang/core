@@ -17,13 +17,15 @@
 ///
 /// # Example
 /// 
-/// ```
-/// let bs = b"\x00\x01\x02\x03\x04\x05"
-/// let bv = bs[1:4]
-/// assert_eq(bv.length(), 3)
-/// assert_eq(bv[0], b'\x01')
-/// assert_eq(bv[1], b'\x02')
-/// assert_eq(bv[2], b'\x03')
+/// ```mbt
+/// test {
+///   let bs = b"\x00\x01\x02\x03\x04\x05"
+///   let bv = bs[1:4]
+///   assert_eq(bv.length(), 3)
+///   assert_eq(bv[0], b'\x01')
+///   assert_eq(bv[1], b'\x02')
+///   assert_eq(bv[2], b'\x03')
+/// }
 /// ```
 type View
 
@@ -165,13 +167,15 @@ pub fn View::unsafe_get(self : View, index : Int) -> Byte {
 /// 
 /// # Example
 /// 
-/// ```
-/// let bs = b"\x00\x01\x02\x03\x04\x05"
-/// let bv = bs[1:4]
-/// assert_eq(bv.length(), 3)
-/// assert_eq(bv[0], b'\x01')
-/// assert_eq(bv[1], b'\x02')
-/// assert_eq(bv[2], b'\x03')
+/// ```mbt
+/// test {
+///   let bs = b"\x00\x01\x02\x03\x04\x05"
+///   let bv = bs[1:4]
+///   assert_eq(bv.length(), 3)
+///   assert_eq(bv[0], b'\x01')
+///   assert_eq(bv[1], b'\x02')
+///   assert_eq(bv[2], b'\x03')
+/// }
 /// ```
 pub fn Bytes::op_as_view(self : Bytes, start~ : Int = 0, end? : Int) -> View {
   let len = self.length()
@@ -191,11 +195,13 @@ pub fn Bytes::op_as_view(self : Bytes, start~ : Int = 0, end? : Int) -> View {
 /// 
 /// # Example
 /// 
-/// ```
-/// let bv = b"\x00\x01\x02\x03\x04\x05"[:]
-/// let bv2 = bv[1:4]
-/// assert_eq(bv2.length(), 3)
-/// assert_eq(bv2[1], b'\x02')
+/// ```mbt
+/// test {
+///   let bv = b"\x00\x01\x02\x03\x04\x05"[:]
+///   let bv2 = bv[1:4]
+///   assert_eq(bv2.length(), 3)
+///   assert_eq(bv2[1], b'\x02')
+/// }
 /// ```
 pub fn View::op_as_view(self : View, start~ : Int = 0, end? : Int) -> View {
   let len = self.length()
@@ -215,11 +221,13 @@ pub fn View::op_as_view(self : View, start~ : Int = 0, end? : Int) -> View {
 /// 
 /// # Example
 /// 
-/// ```
-/// let bv = b"\x00\x01\x02\x03\x04\x05"[:]
-/// let mut sum = 0
-/// bv.iter().each(fn(x) { sum = sum + x.to_int() })
-/// assert_eq(sum, 15)
+/// ```mbt
+/// test {
+///   let bv = b"\x00\x01\x02\x03\x04\x05"[:]
+///   let mut sum = 0
+///   bv.iter().each(fn(x) { sum = sum + x.to_int() })
+///   assert_eq(sum, 15)
+/// }
 /// ```
 pub fn View::iter(self : View) -> Iter[Byte] {
   Iter::new(fn(yield_) {
@@ -619,10 +627,12 @@ pub impl Show for View with output(self, logger) {
 ///
 /// Example:
 /// ```moonbit
-/// let bytes = b"abcabc"
-/// inspect(bytes[0:3] == bytes[3:6], content="true")
-/// inspect(bytes[0:3] == bytes[2:5], content="false")
-/// inspect(bytes[0:4] == bytes[3:6], content="false")
+/// test {
+///   let bytes = b"abcabc"
+///   inspect(bytes[0:3] == bytes[3:6], content="true")
+///   inspect(bytes[0:3] == bytes[2:5], content="false")
+///   inspect(bytes[0:4] == bytes[3:6], content="false")
+/// }
 /// ```
 pub impl Eq for View with op_equal(self, other) -> Bool {
   guard self.len() == other.len() else { return false }
@@ -651,12 +661,14 @@ pub impl Eq for View with op_equal(self, other) -> Bool {
 /// Example:
 ///
 /// ```moonbit
-/// let bytes = b"abcabc"
-/// inspect(bytes[0:3].compare(bytes[3:6]), content="0")  // abc = abc
-/// inspect(bytes[0:3].compare(bytes[2:5]), content="-1") // abc < cab
-/// inspect(bytes[1:4].compare(bytes[3:6]), content="1")  // bca > abc
-/// inspect(bytes[0:3].compare(bytes[0:4]), content="-1") // abc < abca
-/// inspect(bytes[1:5].compare(bytes[2:5]), content="1")  // bcab > cab
+/// test {
+///   let bytes = b"abcabc"
+///   inspect(bytes[0:3].compare(bytes[3:6]), content="0")  // abc = abc
+///   inspect(bytes[0:3].compare(bytes[2:5]), content="-1") // abc < cab
+///   inspect(bytes[1:4].compare(bytes[3:6]), content="1")  // bca > abc
+///   inspect(bytes[0:3].compare(bytes[0:4]), content="-1") // abc < abca
+///   inspect(bytes[1:5].compare(bytes[2:5]), content="1")  // bcab > cab
+/// }
 /// ```
 pub impl Compare for View with compare(self, other) -> Int {
   let self_len = self.len()

@@ -144,6 +144,7 @@ fn int(self : Random, limit~ : Int) -> Int {
   let a = 1UL << 48
   let c = 11UL
   let m = 25214903917UL
-  self._.val = (a * self._.val + c) % m
-  (self._.val.reinterpret_as_int64() % limit).to_int()
+  let Random(self) = self
+  self.val = (a * self.val + c) % m
+  (self.val.reinterpret_as_int64() % limit).to_int()
 }

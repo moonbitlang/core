@@ -30,7 +30,8 @@ fn[K, V] InorderIterator::move_left(
   loop node {
     Empty => ()
     Tree(_, left, _, ..) as curr => {
-      self._.push(curr)
+      let InorderIterator(self) = self
+      self.push(curr)
       continue left
     }
   }
@@ -38,7 +39,8 @@ fn[K, V] InorderIterator::move_left(
 
 ///|
 fn[K, V] InorderIterator::next(self : InorderIterator[K, V]) -> (K, V)? {
-  guard self._.pop() is Some(curr) else { return None }
+  let InorderIterator(s) = self
+  guard s.pop() is Some(curr) else { return None }
   guard curr is Tree(key, _, right, value~, ..)
   self.move_left(right)
   Some((key, value))

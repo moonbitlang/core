@@ -133,7 +133,7 @@ pub impl[X] Default for FixedArray[X] with default() {
 /// Fill the array with a given value.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "FixedArray::fill" {
 ///   let fa : FixedArray[Int] = [0, 0, 0, 0, 0]
 ///   fa.fill(3)
@@ -174,7 +174,7 @@ pub fn[T] FixedArray::is_empty(self : FixedArray[T]) -> Bool {
 /// Performs a binary search on a sorted array to find the index of a given element.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "FixedArray::binary_search" {
 ///   let v : FixedArray[Int] = [3, 4, 5]
 ///   let result = v.binary_search(3)

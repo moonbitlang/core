@@ -69,8 +69,10 @@ pub fn[A : Compare] to_array(self : T[A]) -> Array[A] {
 ///
 /// # Example
 ///
-/// ```
-/// assert_eq(@sorted_set.of([3, 4, 5]).remove_min(), @sorted_set.of([4, 5]))
+/// ```mbt
+/// test {
+///   assert_eq(@sorted_set.of([3, 4, 5]).remove_min(), @sorted_set.of([4, 5]))
+/// }
 /// ```
 pub fn[A : Compare] remove_min(self : T[A]) -> T[A] {
   match self {
@@ -89,8 +91,10 @@ pub fn[A : Compare] remove_min(self : T[A]) -> T[A] {
 ///
 /// # Example
 ///
-/// ```
-/// assert_eq(@sorted_set.of([6, 3, 8, 1]).add(5), @sorted_set.of([1, 3, 5, 6, 8]))
+/// ```mbt
+/// test {
+///   assert_eq(@sorted_set.of([6, 3, 8, 1]).add(5), @sorted_set.of([1, 3, 5, 6, 8]))
+/// }
 /// ```
 pub fn[A : Compare] add(self : T[A], value : A) -> T[A] {
   match self {
@@ -123,8 +127,10 @@ pub fn[A : Compare] add(self : T[A], value : A) -> T[A] {
 ///
 /// # Example
 ///
-/// ```
-/// assert_eq(@sorted_set.of([3, 8, 1]).remove(8), @sorted_set.of([1, 3]))
+/// ```mbt
+/// test {
+///   assert_eq(@sorted_set.of([3, 8, 1]).remove(8), @sorted_set.of([1, 3]))
+/// }
 /// ```
 pub fn[A : Compare] remove(self : T[A], value : A) -> T[A] {
   match self {
@@ -158,8 +164,10 @@ pub fn[A : Compare] remove(self : T[A], value : A) -> T[A] {
 ///
 /// # Example
 ///
-/// ```
-/// assert_eq(@sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).min(), 1)
+/// ```mbt
+/// test {
+///   assert_eq(@sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).min(), 1)
+/// }
 /// ```
 pub fn[A : Compare] min(self : T[A]) -> A {
   match self {
@@ -189,8 +197,10 @@ pub fn[A : Compare] min_option(self : T[A]) -> A? {
 ///
 /// # Example
 ///
-/// ```
-/// assert_eq(@sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).max(), 9)
+/// ```mbt
+/// test {
+///   assert_eq(@sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).max(), 9)
+/// }
 /// ```
 pub fn[A : Compare] max(self : T[A]) -> A {
   match self {
@@ -221,11 +231,13 @@ pub fn[A : Compare] max_option(self : T[A]) -> A? {
 ///
 /// # Example
 ///
-/// ```
-/// let (left, present, right) = @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).split(5)
-/// assert_eq(present, true)
-/// assert_eq(left, @sorted_set.of([1, 2, 3, 4]))
-/// assert_eq(right, @sorted_set.of([6, 7, 8, 9]))
+/// ```mbt
+/// test {
+///   let (left, present, right) = @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).split(5)
+///   assert_eq(present, true)
+///   assert_eq(left, @sorted_set.of([1, 2, 3, 4]))
+///   assert_eq(right, @sorted_set.of([6, 7, 8, 9]))
+/// }
 /// ```
 pub fn[A : Compare] split(self : T[A], divide : A) -> (T[A], Bool, T[A]) {
   match self {
@@ -269,8 +281,10 @@ pub fn[A : Compare] contains(self : T[A], value : A) -> Bool {
 ///
 /// # Example
 ///
-/// ```
-/// assert_eq(@sorted_set.of([3, 4, 5]).union(@sorted_set.of([4, 5, 6])), @sorted_set.of([3, 4, 5, 6]))
+/// ```mbt
+/// test {
+///   assert_eq(@sorted_set.of([3, 4, 5]).union(@sorted_set.of([4, 5, 6])), @sorted_set.of([3, 4, 5, 6]))
+/// }
 /// ```
 pub fn[A : Compare] union(self : T[A], other : T[A]) -> T[A] {
   match (self, other) {
@@ -300,8 +314,10 @@ pub fn[A : Compare] union(self : T[A], other : T[A]) -> T[A] {
 /// a convenient alias of `union`
 /// # Example
 /// 
-/// ```
-/// assert_eq(@sorted_set.of([3, 4, 5]) + (@sorted_set.of([4, 5, 6])), @sorted_set.of([3, 4, 5, 6]))
+/// ```mbt
+/// test {
+///   assert_eq(@sorted_set.of([3, 4, 5]) + (@sorted_set.of([4, 5, 6])), @sorted_set.of([3, 4, 5, 6]))
+/// }
 /// ```
 pub impl[A : Compare] Add for T[A] with op_add(self, other) {
   return self.union(other)
@@ -319,8 +335,10 @@ pub fn[A : Compare] inter(self : T[A], other : T[A]) -> T[A] {
 ///
 /// # Example
 ///
-/// ```
-/// assert_eq(@sorted_set.of([3, 4, 5]).intersection(@sorted_set.of([4, 5, 6])), @sorted_set.of([4, 5]))
+/// ```mbt
+/// test {
+///   assert_eq(@sorted_set.of([3, 4, 5]).intersection(@sorted_set.of([4, 5, 6])), @sorted_set.of([4, 5]))
+/// }
 /// ```
 pub fn[A : Compare] intersection(self : T[A], other : T[A]) -> T[A] {
   match (self, other) {
@@ -338,10 +356,11 @@ pub fn[A : Compare] intersection(self : T[A], other : T[A]) -> T[A] {
 ///
 /// # Example
 ///
+/// ```mbt
+/// test {
+///   assert_eq(@sorted_set.of([1, 2, 3]).difference(@sorted_set.of([4, 5, 1])), @sorted_set.of([2, 3]))
+/// }
 /// ```
-/// assert_eq(@sorted_set.of([1, 2, 3]).difference(@sorted_set.of([4, 5, 1])), @sorted_set.of([2, 3]))
-/// ```
-///
 #deprecated("Use `difference` instead")
 #coverage.skip
 pub fn[A : Compare] diff(self : T[A], other : T[A]) -> T[A] {
@@ -353,8 +372,10 @@ pub fn[A : Compare] diff(self : T[A], other : T[A]) -> T[A] {
 ///
 /// # Example
 ///
-/// ```
-/// assert_eq(@sorted_set.of([1, 2, 3]).difference(@sorted_set.of([4, 5, 1])), @sorted_set.of([2, 3]))
+/// ```mbt
+/// test {
+///   assert_eq(@sorted_set.of([1, 2, 3]).difference(@sorted_set.of([4, 5, 1])), @sorted_set.of([2, 3]))
+/// }
 /// ```
 pub fn[A : Compare] difference(self : T[A], other : T[A]) -> T[A] {
   match (self, other) {
@@ -411,8 +432,10 @@ pub fn[A : Compare] symmetric_difference(self : T[A], other : T[A]) -> T[A] {
 ///
 /// # Example
 ///
-/// ```
-/// assert_eq(@sorted_set.of([1, 2, 3]).subset(@sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1])), true)
+/// ```mbt
+/// test {
+///   assert_eq(@sorted_set.of([1, 2, 3]).subset(@sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1])), true)
+/// }
 /// ```
 pub fn[A : Compare] subset(self : T[A], other : T[A]) -> Bool {
   match (self, other) {
@@ -441,8 +464,10 @@ pub fn[A : Compare] subset(self : T[A], other : T[A]) -> Bool {
 ///
 /// # Example
 ///
-/// ```
-/// assert_eq(@sorted_set.of([1, 2, 3]).disjoint(@sorted_set.of([4, 5, 6])), true)
+/// ```mbt
+/// test {
+///   assert_eq(@sorted_set.of([1, 2, 3]).disjoint(@sorted_set.of([4, 5, 6])), true)
+/// }
 /// ```
 pub fn[A : Compare] disjoint(self : T[A], other : T[A]) -> Bool {
   match (self, other) {
@@ -464,10 +489,12 @@ pub fn[A : Compare] disjoint(self : T[A], other : T[A]) -> Bool {
 ///
 /// # Example
 ///
-/// ```
-/// let arr = []
-/// @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).each(fn(x) { arr.push(x) })
-/// assert_eq(arr, [1, 2, 3, 4, 5, 6, 7, 8, 9])
+/// ```mbt
+/// test {
+///   let arr = []
+///   @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).each(fn(x) { arr.push(x) })
+///   assert_eq(arr, [1, 2, 3, 4, 5, 6, 7, 8, 9])
+/// }
 /// ```
 pub fn[A] each(self : T[A], f : (A) -> Unit) -> Unit {
   match self {
@@ -485,8 +512,10 @@ pub fn[A] each(self : T[A], f : (A) -> Unit) -> Unit {
 ///
 /// # Example
 ///
-/// ```
-/// assert_eq(@sorted_set.of([1, 2, 3, 4, 5]).fold(init=0, fn(acc, x) { acc + x }), 15)
+/// ```mbt
+/// test {
+///   assert_eq(@sorted_set.of([1, 2, 3, 4, 5]).fold(init=0, fn(acc, x) { acc + x }), 15)
+/// }
 /// ```
 pub fn[A : Compare, B] fold(self : T[A], init~ : B, f : (B, A) -> B) -> B {
   match self {
@@ -501,8 +530,10 @@ pub fn[A : Compare, B] fold(self : T[A], init~ : B, f : (B, A) -> B) -> B {
 ///
 /// # Example
 ///
-/// ```
-/// assert_eq(@sorted_set.of([1, 2, 3]).map(fn(x){ x * 2}), @sorted_set.of([2, 4, 6]))
+/// ```mbt
+/// test {
+///   assert_eq(@sorted_set.of([1, 2, 3]).map(fn(x){ x * 2}), @sorted_set.of([2, 4, 6]))
+/// }
 /// ```
 pub fn[A : Compare, B : Compare] map(self : T[A], f : (A) -> B) -> T[B] {
   match self {
@@ -517,8 +548,10 @@ pub fn[A : Compare, B : Compare] map(self : T[A], f : (A) -> B) -> T[B] {
 ///
 /// # Example
 ///
-/// ```
-/// assert_eq(@sorted_set.of([2, 4, 6]).all(fn(v) { v % 2 == 0}), true)
+/// ```mbt
+/// test {
+///   assert_eq(@sorted_set.of([2, 4, 6]).all(fn(v) { v % 2 == 0}), true)
+/// }
 /// ```
 pub fn[A : Compare] all(self : T[A], f : (A) -> Bool) -> Bool {
   match self {
@@ -532,8 +565,10 @@ pub fn[A : Compare] all(self : T[A], f : (A) -> Bool) -> Bool {
 ///
 /// # Example
 ///
-/// ```
-/// assert_eq(@sorted_set.of([1, 4, 3]).any(fn(v) { v % 2 == 0}), true)
+/// ```mbt
+/// test {
+///   assert_eq(@sorted_set.of([1, 4, 3]).any(fn(v) { v % 2 == 0}), true)
+/// }
 /// ```
 pub fn[A : Compare] any(self : T[A], f : (A) -> Bool) -> Bool {
   match self {
@@ -547,8 +582,10 @@ pub fn[A : Compare] any(self : T[A], f : (A) -> Bool) -> Bool {
 ///
 /// # Example
 ///
-/// ```
-/// assert_eq(@sorted_set.of([1, 2, 3, 4, 5, 6]).filter(fn(v) { v % 2 == 0}), @sorted_set.of([2, 4, 6]))
+/// ```mbt
+/// test {
+///   assert_eq(@sorted_set.of([1, 2, 3, 4, 5, 6]).filter(fn(v) { v % 2 == 0}), @sorted_set.of([2, 4, 6]))
+/// }
 /// ```
 pub fn[A : Compare] filter(self : T[A], f : (A) -> Bool) -> T[A] {
   match self {

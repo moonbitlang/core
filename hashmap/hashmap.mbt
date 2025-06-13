@@ -537,7 +537,8 @@ priv type MyString String derive(Eq)
 ///|
 #coverage.skip
 impl Hash for MyString with hash(self) {
-  self._.length()
+  let MyString(self) = self
+  self.length()
 }
 
 ///|
