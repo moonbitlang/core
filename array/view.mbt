@@ -19,10 +19,12 @@
 /// # Example
 ///
 /// ```moonbit
-/// let arr = [1, 2, 3, 4, 5]
-/// let view = arr[1:4]  // Creates a view of elements at indices 1,2,3
-/// assert_eq(view[0], 2)
+/// test {
+///   let arr = [1, 2, 3, 4, 5]
+///   let view = arr[1:4]  // Creates a view of elements at indices 1,2,3
+///   assert_eq(view[0], 2)
 /// assert_eq(view.length(), 3)
+/// }
 /// ```
 pub typealias ArrayView as View
 
@@ -80,11 +82,13 @@ pub fn[T] View::each(self : View[T], f : (T) -> Unit raise?) -> Unit raise? {
 ///
 /// # Example
 /// 
-/// ```
-/// let v = [3, 4, 5][:]
-/// let mut sum = 0
-/// v.eachi(fn (i, x) { sum = sum + x + i })
-/// assert_eq(sum, 15)
+/// ```mbt
+/// test {
+///   let v = [3, 4, 5][:]
+///   let mut sum = 0
+///   v.eachi(fn (i, x) { sum = sum + x + i })
+///   assert_eq(sum, 15)
+/// }
 /// ```
 pub fn[T] View::eachi(
   self : View[T],
@@ -100,10 +104,12 @@ pub fn[T] View::eachi(
 /// 
 /// # Example
 /// 
-/// ```
-/// let v = [1, 4, 6, 8, 9]
-/// assert_false(v[:].all(fn(elem) { elem % 2 == 0 }))
-/// assert_true(v[1:4].all(fn(elem) { elem % 2 == 0 }))
+/// ```mbt
+/// test {
+///   let v = [1, 4, 6, 8, 9]
+///   assert_false(v[:].all(fn(elem) { elem % 2 == 0 }))
+///   assert_true(v[1:4].all(fn(elem) { elem % 2 == 0 }))
+/// }
 /// ```
 pub fn[T] View::all(self : View[T], f : (T) -> Bool raise?) -> Bool raise? {
   for v in self {
@@ -119,10 +125,12 @@ pub fn[T] View::all(self : View[T], f : (T) -> Bool raise?) -> Bool raise? {
 ///
 /// # Example
 ///
-/// ```
-/// let v = [1, 2, 3, 4, 5][:]
-/// assert_true(v.any(fn(ele) { ele < 6 }))
-/// assert_false(v.any(fn(ele) { ele < 1 }))
+/// ```mbt
+/// test {
+///   let v = [1, 2, 3, 4, 5][:]
+///   assert_true(v.any(fn(ele) { ele < 6 }))
+///   assert_false(v.any(fn(ele) { ele < 1 }))
+/// }
 /// ```
 pub fn[T] View::any(self : View[T], f : (T) -> Bool raise?) -> Bool raise? {
   for v in self {
@@ -228,9 +236,11 @@ pub fn[A] View::iter2(self : View[A]) -> Iter2[Int, A] {
 /// Fold out values from an View according to certain rules.
 ///
 /// # Example
-/// ```
-/// let sum = [1, 2, 3, 4, 5][:].fold(init=0, fn { sum, elem => sum + elem })
-/// assert_eq(sum, 15)
+/// ```mbt
+/// test {
+///   let sum = [1, 2, 3, 4, 5][:].fold(init=0, fn { sum, elem => sum + elem })
+///   assert_eq(sum, 15)
+/// }
 /// ```
 pub fn[A, B] View::fold(
   self : View[A],
@@ -248,9 +258,11 @@ pub fn[A, B] View::fold(
 /// Fold out values from an View according to certain rules in reversed turn.
 ///
 /// # Example
-/// ```
-/// let sum = [1, 2, 3, 4, 5][:].rev_fold(init=0, fn { sum, elem => sum + elem })
-/// assert_eq(sum, 15)
+/// ```mbt
+/// test {
+///   let sum = [1, 2, 3, 4, 5][:].rev_fold(init=0, fn { sum, elem => sum + elem })
+///   assert_eq(sum, 15)
+/// }
 /// ```
 pub fn[A, B] View::rev_fold(
   self : View[A],
@@ -268,9 +280,11 @@ pub fn[A, B] View::rev_fold(
 /// Fold out values from an View according to certain rules with index.
 ///
 /// # Example
-/// ```
-/// let sum = [1, 2, 3, 4, 5][:].foldi(init=0, fn { index, sum, _elem => sum + index })
-/// assert_eq(sum, 10)
+/// ```mbt
+/// test {
+///   let sum = [1, 2, 3, 4, 5][:].foldi(init=0, fn { index, sum, _elem => sum + index })
+///   assert_eq(sum, 10)
+/// }
 /// ```
 pub fn[A, B] View::foldi(
   self : View[A],
@@ -288,9 +302,11 @@ pub fn[A, B] View::foldi(
 /// Fold out values from an View according to certain rules in reversed turn with index.
 ///
 /// # Example
-/// ```
-/// let sum = [1, 2, 3, 4, 5][:].rev_foldi(init=0, fn { index, sum, _elem => sum + index })
-/// assert_eq(sum, 10)
+/// ```mbt
+/// test {
+///   let sum = [1, 2, 3, 4, 5][:].rev_foldi(init=0, fn { index, sum, _elem => sum + index })
+///   assert_eq(sum, 10)
+/// }
 /// ```
 pub fn[A, B] View::rev_foldi(
   self : View[A],
@@ -309,10 +325,12 @@ pub fn[A, B] View::rev_foldi(
 /// Maps a function over the elements of the array view.
 ///
 /// # Example
-/// ```
-/// let v = [3, 4, 5]
-/// let v2 = v[1:].map(fn (x) {x + 1})
-/// assert_eq(v2, [5, 6])
+/// ```mbt
+/// test {
+///   let v = [3, 4, 5]
+///   let v2 = v[1:].map(fn (x) {x + 1})
+///   assert_eq(v2, [5, 6])
+/// }
 /// ```
 pub fn[T, U] View::map(self : View[T], f : (T) -> U raise?) -> Array[U] raise? {
   if self.length() == 0 {
@@ -325,10 +343,12 @@ pub fn[T, U] View::map(self : View[T], f : (T) -> U raise?) -> Array[U] raise? {
 /// Maps a function over the elements of the array view in place.
 ///
 /// # Example
-/// ```
-/// let v = [3, 4, 5]
-/// v[1:].map_inplace(fn (x) {x + 1})
-/// assert_eq(v, [3, 5, 6])
+/// ```mbt
+/// test {
+///   let v = [3, 4, 5]
+///   v[1:].map_inplace(fn (x) {x + 1})
+///   assert_eq(v, [3, 5, 6])
+/// }
 /// ```
 pub fn[T] View::map_inplace(self : View[T], f : (T) -> T raise?) -> Unit raise? {
   for i, v in self {
@@ -340,10 +360,12 @@ pub fn[T] View::map_inplace(self : View[T], f : (T) -> T raise?) -> Unit raise? 
 /// Maps a function over the elements of the array view with index.
 ///
 /// # Example
-/// ```
-/// let v = [3, 4, 5]
-/// let v2 = v[1:].mapi(fn (i, x) {x + i})
-/// assert_eq(v2, [4, 6])
+/// ```mbt
+/// test {
+///   let v = [3, 4, 5]
+///   let v2 = v[1:].mapi(fn (i, x) {x + i})
+///   assert_eq(v2, [4, 6])
+/// }
 /// ```
 pub fn[T, U] View::mapi(
   self : View[T],
@@ -359,10 +381,12 @@ pub fn[T, U] View::mapi(
 /// Maps a function over the elements of the array view with index in place.
 ///
 /// # Example
-/// ```
-/// let v = [3, 4, 5]
-/// v[1:].mapi_inplace(fn (i, x) {x + i})
-/// assert_eq(v, [3, 4, 6])
+/// ```mbt
+/// test {
+///   let v = [3, 4, 5]
+///   v[1:].mapi_inplace(fn (i, x) {x + i})
+///   assert_eq(v, [3, 4, 6])
+/// }
 /// ```
 pub fn[T] View::mapi_inplace(
   self : View[T],
@@ -377,10 +401,12 @@ pub fn[T] View::mapi_inplace(
 /// Filters the array view with a predicate function.
 ///
 /// # Example
-/// ```
-/// let arr = [1, 2, 3, 4, 5, 6]
-/// let v = arr[2:].filter(fn (x) { x % 2 == 0 })
-/// assert_eq(v, [4, 6])
+/// ```mbt
+/// test {
+///   let arr = [1, 2, 3, 4, 5, 6]
+///   let v = arr[2:].filter(fn (x) { x % 2 == 0 })
+///   assert_eq(v, [4, 6])
+/// }
 /// ```
 pub fn[T] View::filter(
   self : View[T],
@@ -399,10 +425,12 @@ pub fn[T] View::filter(
 /// Copy the view elements to a new array
 ///
 /// # Example
-/// ```
-/// let view = [1, 2, 3, 4, 5, 6][2:4]
-/// let arr = view.to_array()
-/// assert_eq(arr, [3, 4])
+/// ```mbt
+/// test {
+///   let view = [1, 2, 3, 4, 5, 6][2:4]
+///   let arr = view.to_array()
+///   assert_eq(arr, [3, 4])
+/// }
 /// ```
 pub fn[T] View::to_array(self : View[T]) -> Array[T] {
   let len = self.length()

@@ -301,7 +301,7 @@ test "umul128: handles zero correctly" {
 /// The limit should not be negative.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "shuffle example" {
 ///   let r = @random.new()
 ///   let a = [1, 2, 3, 4, 5]

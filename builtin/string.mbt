@@ -18,8 +18,10 @@ fn unsafe_make_string(length : Int, value : Char) -> String = "$moonbit.unsafe_m
 ///|
 /// Create new string of `length`, where each character is `value`
 ///
-/// ```
-/// assert_eq(String::make(5,'S'), "SSSSS")
+/// ```mbt
+/// test {
+///   assert_eq(String::make(5,'S'), "SSSSS")
+/// }
 /// ```
 pub fn String::make(length : Int, value : Char) -> String {
   guard length >= 0 else { abort("invalid length") }
@@ -68,7 +70,7 @@ fn code_point_of_surrogate_pair(leading : Int, trailing : Int) -> Char {
 ///
 /// # Examples
 ///
-/// ```
+/// ```mbt
 /// test "String::charcode_at" {
 ///   let s = "Hello🤣";
 ///   inspect(s.charcode_at(0), content="72");
@@ -87,7 +89,7 @@ pub fn String::charcode_at(self : String, index : Int) -> Int = "%string_get"
 ///
 /// # Examples
 ///
-/// ```
+/// ```mbt
 /// test "String::codepoint_at" {
 ///   let s = "Hello🤣";
 ///   inspect(s.codepoint_at(0), content="H");
@@ -155,7 +157,7 @@ pub fn String::unsafe_char_at(self : String, index : Int) -> Char {
 ///
 /// # Examples
 ///
-/// ```
+/// ```mbt
 /// test "String::char_length" {
 ///   let s = "Hello🤣";
 ///   inspect(s.char_length(), content = "6"); // 6 actual characters
