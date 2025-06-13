@@ -1286,11 +1286,12 @@ pub fn[A] from_iter(iter : Iter[A]) -> T[A] {
 
 ///|
 pub fn[A] to_array(self : T[A]) -> Array[A] {
-  if self.length() == 0 {
+  let len = self.length()
+  if len == 0 {
     []
   } else {
-    let xs = Array::make(self.length(), self[0])
-    for i in 0..<self.length() {
+    let xs = Array::make(len, self[0])
+    for i in 0..<len {
       xs[i] = self[i]
     }
     xs
