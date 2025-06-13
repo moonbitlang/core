@@ -34,9 +34,10 @@ fn CharClass::of(array : Array[(Char, Char)]) -> CharClass {
 
 ///|
 fn contains(self : CharClass, c : Char) -> Bool {
-  for left = 0, right = self._.length(); left < right; {
+  let CharClass(self) = self
+  for left = 0, right = self.length(); left < right; {
     let middle = (left + right) / 2
-    let (min, max) = self._[middle]
+    let (min, max) = self[middle]
     if c < min {
       continue left, middle
     } else if c > max {
