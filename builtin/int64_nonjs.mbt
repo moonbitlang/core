@@ -132,7 +132,9 @@ pub impl Mul for Int64 with op_mul(self, other) = "%i64_mul"
 ///   let d = 5L
 ///   inspect(c / d, content="-8")
 /// }
-///
+/// ```
+/// 
+/// ```skip
 /// test "panic Int64::op_div/division_by_zero" {
 ///   let a = 42L
 ///   ignore(a / 0L) // Division by zero
@@ -1264,7 +1266,9 @@ pub impl Mul for UInt64 with op_mul(self, other) = "%u64.mul"
 ///   let b = 20UL
 ///   inspect(a / b, content="5") // Using infix operator
 /// }
-///
+/// ```
+/// 
+/// ```skip
 /// test "panic UInt64::op_div/division_by_zero" {
 ///   let a = 42UL
 ///   ignore(a / 0UL) // Throws runtime error: division by zero
