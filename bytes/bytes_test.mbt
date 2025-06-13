@@ -250,22 +250,22 @@ test "Bytes::get out of bounds" {
 /// Test ByteSource trait for Bytes, FixedArray[Byte], and Array[Byte]
 test "ByteSource trait for Bytes" {
   let bytes : Bytes = b"\x10\x20\x30"
-  let value = ByteSource::get(bytes, 1)
-  inspect(value, content="b'\\x20'")
+  let value = bytes.get(1)
+  inspect(value, content="Some(b'\\x20')")
 }
 
 ///|
 test "ByteSource trait for FixedArray[Byte]" {
   let arr : FixedArray[Byte] = [b'\x01', b'\x02', b'\x03']
-  let value = ByteSource::get(arr, 2)
-  inspect(value, content="b'\\x03'")
+  let value = arr.get(2)
+  inspect(value, content="Some(b'\\x03')")
 }
 
 ///|
 test "ByteSource trait for Array[Byte]" {
   let arr : Array[Byte] = [b'\x05', b'\x06', b'\x07']
-  let value = ByteSource::get(arr, 0)
-  inspect(value, content="b'\\x05'")
+  let value = arr.get(0)
+  inspect(value, content="Some(b'\\x05')")
 }
 
 ///|

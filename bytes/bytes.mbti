@@ -66,9 +66,7 @@ impl Hash for Bytes
 // Type aliases
 
 // Traits
-pub trait ByteSource {
-  get(Self, Int) -> Byte
-}
+trait ByteSource
 impl ByteSource for FixedArray[Byte]
 impl ByteSource for Bytes
 impl ByteSource for Array[Byte]

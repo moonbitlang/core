@@ -350,7 +350,7 @@ pub impl Add for Bytes with op_add(self : Bytes, other : Bytes) -> Bytes {
 ///           
 /// * `self` : The byte source to retrieve the byte from.
 /// * `i` : The index of the byte to retrieve.
-pub trait ByteSource {
+trait ByteSource {
   get(self : Self, i : Int) -> Byte
 }
 
@@ -384,9 +384,12 @@ pub fn[T : ByteSource] Bytes::blit_from(
   src_index~ : Int = 0,
   len~ : Int
 ) -> Bytes {
-  let arr = self.to_array()
+  let arr : FixedArray[Byte] = FixedArray::make(self.length(), 0)
+  for i in 0..<self.length() {
+    arr[i] = self[i]
+  }
   for i in 0..<len {
     arr[dest_index + i] = src.get(src_index + i)
   }
-  Bytes::from_array(arr)
+  Bytes::of(arr)
 }
