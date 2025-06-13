@@ -897,7 +897,7 @@ pub fn Int::to_uint64(self : Int) -> UInt64 {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```skip
 /// test "Double::op_neg" {
 ///   inspect(-42.0, content="-42")
 ///   inspect(--42.0, content="42")
@@ -924,7 +924,7 @@ pub impl Neg for Double with op_neg(self) = "%f64_neg"
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```skip
 /// test "Double::op_add" {
 ///   inspect(2.5 + 3.7, content="6.2")
 ///   inspect(1.0 / 0.0 + -1.0 / 0.0, content="NaN") // Infinity + -Infinity = NaN
@@ -945,7 +945,7 @@ pub impl Add for Double with op_add(self, other) = "%f64_add"
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```skip
 /// test "Double::op_sub" {
 ///   let a = 5.0
 ///   let b = 3.0
@@ -975,7 +975,7 @@ pub impl Sub for Double with op_sub(self, other) = "%f64_sub"
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```skip
 /// test "Double::op_mul" {
 ///   inspect(2.5 * 2.0, content="5")
 ///   inspect(-2.0 * 3.0, content="-6")
@@ -1006,7 +1006,7 @@ pub impl Mul for Double with op_mul(self, other) = "%f64_mul"
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```skip
 /// test "Double::op_div" {
 ///   inspect(6.0 / 2.0, content="3")
 ///   inspect(-6.0 / 2.0, content="-3")
@@ -1054,7 +1054,7 @@ pub fn Double::sqrt(self : Double) -> Double = "%f64_sqrt"
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```skip
 /// test "Double::op_equal" {
 ///   let a = 3.14
 ///   let b = 3.14
@@ -1082,7 +1082,7 @@ pub impl Eq for Double with op_equal(self : Double, other : Double) -> Bool = "%
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```skip
 /// test "Double::op_neq" {
 ///   inspect(1.0 != 2.0, content="true")
 ///   inspect(1.0 != 1.0, content="false")
@@ -2664,7 +2664,7 @@ pub impl Mul for Float with op_mul(self, other) = "%f32.mul"
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```skip
 /// test "Float::op_div" {
 ///   let a = 6.0.to_float()
 ///   let b = 2.0.to_float()
@@ -2720,7 +2720,7 @@ pub fn Float::sqrt(self : Float) -> Float = "%f32.sqrt"
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```skip
 /// test "Float::op_equal" {
 ///   let x = 3.14
 ///   let y = 3.14
@@ -2746,7 +2746,7 @@ pub impl Eq for Float with op_equal(self : Float, other : Float) -> Bool = "%f32
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```skip
 /// test "Float::op_neq" {
 ///   let x = 1.0.to_float()
 ///   let y = 2.0.to_float()

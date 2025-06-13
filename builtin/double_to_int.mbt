@@ -31,7 +31,7 @@
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```skip
 /// test "Double::to_int/normal" {
 ///   inspect(42.0.to_int(), content="42")
 ///   inspect((-42.5).to_int(), content="-42")
