@@ -444,12 +444,14 @@ pub fn[A, B] T::fold(self : T[A], init~ : B, f : (B, A) -> B) -> B {
 /// }
 /// ```
 pub fn[A, B] T::rev_fold(self : T[A], init~ : B, f : (B, A) -> B) -> B {
-  let xs = self.to_array()
-  let mut acc = init
-  for x in xs.rev_iter() {
-    acc = f(acc, x)
+  fn go(xs : T[A], f : (B, A) -> B, acc : B) -> B {
+    match xs {
+      Empty => acc
+      More(x, tail=xs) => f(go(xs, f, acc), x)
+    }
   }
-  acc
+
+  go(self, f, init)
 }
 
 ///|
@@ -472,7 +474,22 @@ pub fn[A, B] T::foldi(self : T[A], init~ : B, f : (Int, B, A) -> B) -> B {
 /// starting from 0 for the first element visited,
 /// i.e. the last element of the list would have index 0 as it's first visited.
 pub fn[A, B] T::rev_foldi(self : T[A], init~ : B, f : (Int, B, A) -> B) -> B {
-  self.rev().foldi(init~, fn(i, b, a) { f(i, b, a) })
+  fn go(xs : T[A], idx : Int, f : (Int, B, A) -> B, acc : B) -> B {
+    match xs {
+      Empty => acc
+      More(x, tail=xs) => {
+        let res = go(xs, idx - 1, f, acc)
+        f(idx, res, x)
+      }
+    }
+  }
+
+  let len = self.length()
+  if len == 0 {
+    init
+  } else {
+    go(self, len - 1, f, init)
+  }
 }
 
 ///|
