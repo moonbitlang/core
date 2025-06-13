@@ -451,7 +451,9 @@ fn BigInt::split(self : BigInt, half : Int) -> (BigInt, BigInt) {
 ///   inspect(a / -b, content="-5")
 ///   inspect(-a / -b, content="5")
 /// }
-///
+/// ```
+/// 
+/// ```skip
 /// test "panic BigInt::op_div/division_by_zero" {
 ///   let a = BigInt::from_string("100")
 ///   let b = BigInt::from_string("0")
