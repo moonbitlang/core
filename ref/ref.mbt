@@ -38,7 +38,7 @@ pub fn[T] new(x : T) -> Ref[T] {
 ///   assert_eq(@ref.new(1).map(fn(a){ a + 1 }).val, 2)
 /// }
 /// ```
-pub fn[T, R] map(self : Ref[T], f : (T) -> R?Error) -> Ref[R]?Error {
+pub fn[T, R] map(self : Ref[T], f : (T) -> R raise?) -> Ref[R] raise? {
   { val: f(self.val) }
 }
 
@@ -65,7 +65,7 @@ pub fn[T, R] map(self : Ref[T], f : (T) -> R?Error) -> Ref[R]?Error {
 ///   assert_eq(x.val, 1)
 /// }
 /// ```
-pub fn[T, R] protect(self : Ref[T], a : T, f : () -> R?Error) -> R?Error {
+pub fn[T, R] protect(self : Ref[T], a : T, f : () -> R raise?) -> R raise? {
   let old = self.val
   self.val = a
   try f() catch {
@@ -114,7 +114,7 @@ test "swap" {
 }
 
 ///|
-pub fn[T] update(self : Ref[T], f : (T) -> T?Error) -> Unit?Error {
+pub fn[T] update(self : Ref[T], f : (T) -> T raise?) -> Unit raise? {
   self.val = f(self.val)
 }
 
