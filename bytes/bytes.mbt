@@ -199,8 +199,9 @@ pub fn of(arr : FixedArray[Byte]) -> Bytes {
 /// }
 /// ```
 pub fn to_array(self : Bytes) -> Array[Byte] {
-  let rv = Array::make(self.length(), b'0')
-  for i in 0..<self.length() {
+  let len = self.length()
+  let rv = Array::make(len, b'0')
+  for i in 0..<len {
     rv[i] = self[i]
   }
   rv
@@ -330,15 +331,14 @@ fn unsafe_to_bytes(array : FixedArray[Byte]) -> Bytes = "%identity"
 /// * `other` : The second bytes sequence.
 /// TODO: marked as intrinsic, inline if it is constant
 pub impl Add for Bytes with op_add(self : Bytes, other : Bytes) -> Bytes {
-  let rv : FixedArray[Byte] = FixedArray::make(
-    self.length() + other.length(),
-    0,
-  )
-  for i in 0..<self.length() {
+  let len_self = self.length()
+  let len_other = other.length()
+  let rv : FixedArray[Byte] = FixedArray::make(len_self + len_other, 0)
+  for i in 0..<len_self {
     rv[i] = self[i]
   }
-  for i in 0..<other.length() {
-    rv[self.length() + i] = other[i]
+  for i in 0..<len_other {
+    rv[len_self + i] = other[i]
   }
   unsafe_to_bytes(rv)
 }

@@ -717,10 +717,11 @@ pub fn[T : Compare] Array::is_sorted(self : Array[T]) -> Bool {
 /// }
 /// ```
 pub fn[T] Array::rev_inplace(self : Array[T]) -> Unit {
-  for i in 0..<(self.length() / 2) {
+  let len = self.length()
+  for i in 0..<(len / 2) {
     let temp = self.unsafe_get(i)
-    self.unsafe_set(i, self.unsafe_get(self.length() - i - 1))
-    self.unsafe_set(self.length() - i - 1, temp)
+    self.unsafe_set(i, self.unsafe_get(len - i - 1))
+    self.unsafe_set(len - i - 1, temp)
   }
 }
 
@@ -744,9 +745,10 @@ pub fn[T] Array::rev_inplace(self : Array[T]) -> Unit {
 /// }
 /// ```
 pub fn[T] Array::rev(self : Array[T]) -> Array[T] {
-  let arr = Array::make_uninit(self.length())
-  for i in 0..<self.length() {
-    arr.unsafe_set(i, self.unsafe_get(self.length() - i - 1))
+  let len = self.length()
+  let arr = Array::make_uninit(len)
+  for i in 0..<len {
+    arr.unsafe_set(i, self.unsafe_get(len - i - 1))
   }
   arr
 }
