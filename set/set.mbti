@@ -13,9 +13,9 @@ fn[K : Hash + Eq] contains(Set[K], K) -> Bool
 
 fn[K : Hash + Eq] difference(Set[K], Set[K]) -> Set[K]
 
-fn[K] each(Set[K], (K) -> Unit?Error) -> Unit?Error
+fn[K] each(Set[K], (K) -> Unit raise?) -> Unit raise?
 
-fn[K] eachi(Set[K], (Int, K) -> Unit?Error) -> Unit?Error
+fn[K] eachi(Set[K], (Int, K) -> Unit raise?) -> Unit raise?
 
 #deprecated
 fn[K : Hash + Eq] insert(Set[K], K) -> Unit
@@ -46,8 +46,8 @@ fn[K] Set::capacity(Self[K]) -> Int
 fn[K] Set::clear(Self[K]) -> Unit
 fn[K : Hash + Eq] Set::contains(Self[K], K) -> Bool
 fn[K : Hash + Eq] Set::difference(Self[K], Self[K]) -> Self[K]
-fn[K] Set::each(Self[K], (K) -> Unit?Error) -> Unit?Error
-fn[K] Set::eachi(Self[K], (Int, K) -> Unit?Error) -> Unit?Error
+fn[K] Set::each(Self[K], (K) -> Unit raise?) -> Unit raise?
+fn[K] Set::eachi(Self[K], (Int, K) -> Unit raise?) -> Unit raise?
 fn[K : Hash + Eq] Set::from_array(Array[K]) -> Self[K]
 fn[K : Hash + Eq] Set::from_iter(Iter[K]) -> Self[K]
 #deprecated

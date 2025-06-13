@@ -31,7 +31,7 @@ fn[A : Compare] from_array(Array[A]) -> T[A]
 
 fn[A : Compare] from_iter(Iter[A]) -> T[A]
 
-fn[A : @json.FromJson + Compare] from_json(Json) -> T[A]!@json.JsonDecodeError
+fn[A : @json.FromJson + Compare] from_json(Json) -> T[A] raise @json.JsonDecodeError
 
 #deprecated
 fn[A : Compare] inter(T[A], T[A]) -> T[A]
@@ -94,7 +94,7 @@ fn[A : Compare] T::from_array(Array[A]) -> Self[A]
 #deprecated
 fn[A : Compare] T::from_iter(Iter[A]) -> Self[A]
 #deprecated
-fn[A : @json.FromJson + Compare] T::from_json(Json) -> Self[A]!@json.JsonDecodeError
+fn[A : @json.FromJson + Compare] T::from_json(Json) -> Self[A] raise @json.JsonDecodeError
 #deprecated
 fn[A : Compare] T::inter(Self[A], Self[A]) -> Self[A]
 fn[A : Compare] T::intersection(Self[A], Self[A]) -> Self[A]

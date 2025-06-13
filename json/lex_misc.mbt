@@ -43,7 +43,10 @@ const SURROGATE_HIGH_CHAR = 0xDFFF
 /// `ctx.expect_char(c)` check the current context is c,
 /// if it is, consume the character and return `()`,
 /// otherwise raise an error, when it is an error, the position is unspecified.
-fn ParseContext::expect_char(ctx : ParseContext, c : Char) -> Unit!ParseError {
+fn ParseContext::expect_char(
+  ctx : ParseContext,
+  c : Char
+) -> Unit raise ParseError {
   guard ctx.offset < ctx.end_offset else { raise InvalidEof }
   let c1 = ctx.input.unsafe_charcode_at(ctx.offset)
   ctx.offset += 1
@@ -77,7 +80,7 @@ fn ParseContext::expect_char(ctx : ParseContext, c : Char) -> Unit!ParseError {
 fn ParseContext::expect_ascii_char(
   ctx : ParseContext,
   c : Byte
-) -> Unit!ParseError {
+) -> Unit raise ParseError {
   guard ctx.offset < ctx.end_offset else { raise InvalidEof }
   let c1 = ctx.input.unsafe_charcode_at(ctx.offset)
   ctx.offset += 1
@@ -126,7 +129,9 @@ fn ParseContext::lex_skip_whitespace(ctx : ParseContext) -> Unit {
 }
 
 ///|
-fn ParseContext::lex_after_array_value(ctx : ParseContext) -> Token!ParseError {
+fn ParseContext::lex_after_array_value(
+  ctx : ParseContext
+) -> Token raise ParseError {
   ctx.lex_skip_whitespace()
   match ctx.read_char() {
     Some(']') => RBracket
@@ -137,7 +142,9 @@ fn ParseContext::lex_after_array_value(ctx : ParseContext) -> Token!ParseError {
 }
 
 ///|
-fn ParseContext::lex_after_property_name(ctx : ParseContext) -> Unit!ParseError {
+fn ParseContext::lex_after_property_name(
+  ctx : ParseContext
+) -> Unit raise ParseError {
   ctx.lex_skip_whitespace()
   match ctx.read_char() {
     Some(':') => ()
@@ -147,7 +154,9 @@ fn ParseContext::lex_after_property_name(ctx : ParseContext) -> Unit!ParseError 
 }
 
 ///|
-fn ParseContext::lex_after_object_value(ctx : ParseContext) -> Token!ParseError {
+fn ParseContext::lex_after_object_value(
+  ctx : ParseContext
+) -> Token raise ParseError {
   ctx.lex_skip_whitespace()
   match ctx.read_char() {
     Some('}') => RBrace
@@ -160,7 +169,9 @@ fn ParseContext::lex_after_object_value(ctx : ParseContext) -> Token!ParseError 
 ///|
 /// In the context of `{`, try to lex token `}` or a property name,
 /// otherwise raise an error.
-fn ParseContext::lex_property_name(ctx : ParseContext) -> Token!ParseError {
+fn ParseContext::lex_property_name(
+  ctx : ParseContext
+) -> Token raise ParseError {
   ctx.lex_skip_whitespace()
   match ctx.read_char() {
     Some('}') => RBrace
@@ -177,7 +188,9 @@ fn ParseContext::lex_property_name(ctx : ParseContext) -> Token!ParseError {
 /// In the context of `{ ...,` try to lex a property name,
 /// otherwise raise an error.
 /// since it is in comma context, `}` is not allowed.
-fn ParseContext::lex_property_name2(ctx : ParseContext) -> Token!ParseError {
+fn ParseContext::lex_property_name2(
+  ctx : ParseContext
+) -> Token raise ParseError {
   ctx.lex_skip_whitespace()
   match ctx.read_char() {
     Some('"') => {

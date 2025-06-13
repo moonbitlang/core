@@ -409,7 +409,7 @@ pub fn[T] Array::append(self : Array[T], other : Array[T]) -> Unit {
 /// }
 /// ```
 #locals(f)
-pub fn[T] Array::each(self : Array[T], f : (T) -> Unit?Error) -> Unit?Error {
+pub fn[T] Array::each(self : Array[T], f : (T) -> Unit raise?) -> Unit raise? {
   for v in self {
     f(v)
   }
@@ -456,8 +456,8 @@ pub fn[T] Array::rev_each(self : Array[T], f : (T) -> Unit) -> Unit {
 #locals(f)
 pub fn[T] Array::rev_eachi(
   self : Array[T],
-  f : (Int, T) -> Unit?Error
-) -> Unit?Error {
+  f : (Int, T) -> Unit raise?
+) -> Unit raise? {
   let len = self.length()
   for i in 0..<len {
     f(i, self[len - i - 1])
@@ -479,8 +479,8 @@ pub fn[T] Array::rev_eachi(
 #locals(f)
 pub fn[T] Array::eachi(
   self : Array[T],
-  f : (Int, T) -> Unit?Error
-) -> Unit?Error {
+  f : (Int, T) -> Unit raise?
+) -> Unit raise? {
   for i, v in self {
     f(i, v)
   }
@@ -515,7 +515,10 @@ pub fn[T] Array::clear(self : Array[T]) -> Unit {
 /// }
 /// ```
 #locals(f)
-pub fn[T, U] Array::map(self : Array[T], f : (T) -> U?Error) -> Array[U]?Error {
+pub fn[T, U] Array::map(
+  self : Array[T],
+  f : (T) -> U raise?
+) -> Array[U] raise? {
   let arr = Array::make_uninit(self.length())
   for i, v in self {
     arr.unsafe_set(i, f(v))
@@ -535,7 +538,10 @@ pub fn[T, U] Array::map(self : Array[T], f : (T) -> U?Error) -> Array[U]?Error {
 /// }
 /// ```
 #locals(f)
-pub fn[T] Array::map_inplace(self : Array[T], f : (T) -> T?Error) -> Unit?Error {
+pub fn[T] Array::map_inplace(
+  self : Array[T],
+  f : (T) -> T raise?
+) -> Unit raise? {
   for i, v in self {
     self[i] = f(v)
   }
@@ -555,8 +561,8 @@ pub fn[T] Array::map_inplace(self : Array[T], f : (T) -> T?Error) -> Unit?Error 
 #locals(f)
 pub fn[T, U] Array::mapi(
   self : Array[T],
-  f : (Int, T) -> U?Error
-) -> Array[U]?Error {
+  f : (Int, T) -> U raise?
+) -> Array[U] raise? {
   if self.length() == 0 {
     return []
   }
@@ -581,8 +587,8 @@ pub fn[T, U] Array::mapi(
 #locals(f)
 pub fn[T] Array::mapi_inplace(
   self : Array[T],
-  f : (Int, T) -> T?Error
-) -> Unit?Error {
+  f : (Int, T) -> T raise?
+) -> Unit raise? {
   for i, v in self {
     self[i] = f(i, v)
   }
@@ -613,8 +619,8 @@ pub fn[T] Array::mapi_inplace(
 #locals(f)
 pub fn[T] Array::filter(
   self : Array[T],
-  f : (T) -> Bool?Error
-) -> Array[T]?Error {
+  f : (T) -> Bool raise?
+) -> Array[T] raise? {
   let arr = []
   for v in self {
     if f(v) {
@@ -1246,7 +1252,7 @@ pub fn[T] Array::swap(self : Array[T], i : Int, j : Int) -> Unit {
 /// ```
 /// TODO: perf could be improved
 #locals(f)
-pub fn[T] Array::retain(self : Array[T], f : (T) -> Bool?Error) -> Unit?Error {
+pub fn[T] Array::retain(self : Array[T], f : (T) -> Bool raise?) -> Unit raise? {
   for i = 0, j = 0; i < self.length(); {
     if f(self.unsafe_get(i)) {
       self.unsafe_set(j, self.unsafe_get(i))
@@ -1359,8 +1365,8 @@ pub fn[T] Array::repeat(self : Array[T], times : Int) -> Array[T] {
 pub fn[A, B] Array::fold(
   self : Array[A],
   init~ : B,
-  f : (B, A) -> B?Error
-) -> B?Error {
+  f : (B, A) -> B raise?
+) -> B raise? {
   for i = 0, acc = init; i < self.length(); {
     continue i + 1, f(acc, self[i])
   } else {
@@ -1381,8 +1387,8 @@ pub fn[A, B] Array::fold(
 pub fn[A, B] Array::rev_fold(
   self : Array[A],
   init~ : B,
-  f : (B, A) -> B?Error
-) -> B?Error {
+  f : (B, A) -> B raise?
+) -> B raise? {
   for i = self.length() - 1, acc = init; i >= 0; {
     continue i - 1, f(acc, self[i])
   } else {
@@ -1403,8 +1409,8 @@ pub fn[A, B] Array::rev_fold(
 pub fn[A, B] Array::foldi(
   self : Array[A],
   init~ : B,
-  f : (Int, B, A) -> B?Error
-) -> B?Error {
+  f : (Int, B, A) -> B raise?
+) -> B raise? {
   for i = 0, acc = init; i < self.length(); {
     continue i + 1, f(i, acc, self[i])
   } else {
@@ -1425,8 +1431,8 @@ pub fn[A, B] Array::foldi(
 pub fn[A, B] Array::rev_foldi(
   self : Array[A],
   init~ : B,
-  f : (Int, B, A) -> B?Error
-) -> B?Error {
+  f : (Int, B, A) -> B raise?
+) -> B raise? {
   let len = self.length()
   for i = len - 1, acc = init; i >= 0; {
     continue i - 1, f(len - i - 1, acc, self[i])
@@ -1448,9 +1454,9 @@ pub fn[A, B] Array::rev_foldi(
 #coverage.skip
 pub fn[T, U] Array::fold_left(
   self : Array[T],
-  f : (U, T) -> U?Error,
+  f : (U, T) -> U raise?,
   init~ : U
-) -> U?Error {
+) -> U raise? {
   self.fold(init~, f)
 }
 
@@ -1467,9 +1473,9 @@ pub fn[T, U] Array::fold_left(
 #coverage.skip
 pub fn[T, U] Array::fold_right(
   self : Array[T],
-  f : (U, T) -> U?Error,
+  f : (U, T) -> U raise?,
   init~ : U
-) -> U?Error {
+) -> U raise? {
   self.rev_fold(init~, f)
 }
 
@@ -1486,9 +1492,9 @@ pub fn[T, U] Array::fold_right(
 #coverage.skip
 pub fn[T, U] Array::fold_lefti(
   self : Array[T],
-  f : (Int, U, T) -> U?Error,
+  f : (Int, U, T) -> U raise?,
   init~ : U
-) -> U?Error {
+) -> U raise? {
   self.foldi(init~, f)
 }
 
@@ -1505,9 +1511,9 @@ pub fn[T, U] Array::fold_lefti(
 #coverage.skip
 pub fn[T, U] Array::fold_righti(
   self : Array[T],
-  f : (Int, U, T) -> U?Error,
+  f : (Int, U, T) -> U raise?,
   init~ : U
-) -> U?Error {
+) -> U raise? {
   self.rev_foldi(init~, f)
 }
 
@@ -1670,8 +1676,8 @@ pub fn[T] Array::chunks(self : Array[T], size : Int) -> Array[Array[T]] {
 #locals(pred)
 pub fn[T] Array::chunk_by(
   self : Array[T],
-  pred : (T, T) -> Bool?Error
-) -> Array[Array[T]]?Error {
+  pred : (T, T) -> Bool raise?
+) -> Array[Array[T]] raise? {
   let chunks = []
   let mut i = 0
   while i < self.length() {
@@ -1757,8 +1763,8 @@ pub fn[T] Array::windows(self : Array[T], size : Int) -> Array[ArrayView[T]] {
 #locals(pred)
 pub fn[T] Array::split(
   self : Array[T],
-  pred : (T) -> Bool?Error
-) -> Array[Array[T]]?Error {
+  pred : (T) -> Bool raise?
+) -> Array[Array[T]] raise? {
   let chunks = []
   let mut i = 0
   while i < self.length() {

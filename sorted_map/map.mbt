@@ -123,8 +123,8 @@ pub fn[K, V] clear(self : T[K, V]) -> Unit {
 
 ///|
 /// Iterates the map.
-pub fn[K, V] each(self : T[K, V], f : (K, V) -> Unit?Error) -> Unit?Error {
-  fn dfs(root : Node[K, V]?) -> Unit?Error {
+pub fn[K, V] each(self : T[K, V], f : (K, V) -> Unit raise?) -> Unit raise? {
+  fn dfs(root : Node[K, V]?) -> Unit raise? {
     if root is Some(root) {
       dfs(root.left)
       f(root.key, root.value)
@@ -137,7 +137,10 @@ pub fn[K, V] each(self : T[K, V], f : (K, V) -> Unit?Error) -> Unit?Error {
 
 ///|
 /// Iterates the map with index.
-pub fn[K, V] eachi(self : T[K, V], f : (Int, K, V) -> Unit?Error) -> Unit?Error {
+pub fn[K, V] eachi(
+  self : T[K, V],
+  f : (Int, K, V) -> Unit raise?
+) -> Unit raise? {
   let mut i = 0
   self.each(fn(k, v) {
     f(i, k, v)

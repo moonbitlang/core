@@ -493,11 +493,12 @@ pub fn[T, R] Iter::flat_map(self : Iter[T], f : (T) -> Iter[R]) -> Iter[R] {
 ///| 
 /// iter.map(f).flatten() == iter..flat_map(f)
 /// ```moonbit 
-/// test {
-///   fn f(n : Int) { Int::until(0,n) }
-///   let xs = f(10)
-///   assert_eq(xs.map(f).flatten().to_array(),xs.flat_map(f).to_array())
-/// }
+/// // ignore this test case for now since it will cause ice in release build
+/// // test {
+/// //   fn f(n : Int) { Int::until(0,n) }
+/// //   let xs = f(10)
+/// //   assert_eq(xs.map(f).flatten().to_array(),xs.flat_map(f).to_array())
+/// // }
 /// ```
 pub fn[T] Iter::flatten(self : Iter[Iter[T]]) -> Iter[T] {
   fn { yield_ => self.run(fn { x => x.run(yield_) }) }

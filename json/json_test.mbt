@@ -38,12 +38,12 @@ test "get as bool" {
 }
 
 ///|
-fn _check!(x : String) -> Json {
+fn _check(x : String) -> Json raise {
   @json.parse(x)
 }
 
 ///|
-fn _check2!(x : String) -> Json!@json.ParseError {
+fn _check2(x : String) -> Json raise @json.ParseError {
   @json.parse(x)
 }
 

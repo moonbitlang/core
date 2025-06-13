@@ -13,7 +13,8 @@
 // limitations under the License.
 
 ///|
-extern type Timestamp
+#external
+type Timestamp
 
 ///|
 pub extern "C" fn monotonic_clock_start() -> Timestamp = "moonbit_monotonic_clock_start"

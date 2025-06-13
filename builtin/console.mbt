@@ -66,7 +66,7 @@ pub fn[T] dump(t : T, name? : String, loc~ : SourceLoc = _) -> T {
 ///   inspect(x, content="42") // Raises InspectError with detailed failure message
 /// }
 /// ```
-pub(all) type! InspectError String
+pub(all) suberror InspectError String
 
 ///|
 fn base64_encode(data : FixedArray[Byte]) -> String {
@@ -197,7 +197,7 @@ pub fn inspect(
   content~ : String = "",
   loc~ : SourceLoc = _,
   args_loc~ : ArgsLoc = _
-) -> Unit!InspectError {
+) -> Unit raise InspectError {
   let actual = obj.to_string()
   if actual != content {
     let loc = loc.to_string().escape()
@@ -229,10 +229,10 @@ pub fn inspect(
 ///   }
 /// }
 /// ```
-pub(all) type! SnapshotError String
+pub(all) suberror SnapshotError String
 
 ///|
-pub(all) type! BenchError String
+pub(all) suberror BenchError String
 
 ///|
 test "panic error case of inspect" {

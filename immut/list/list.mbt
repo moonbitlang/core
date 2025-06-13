@@ -51,7 +51,9 @@ pub impl[A : @json.FromJson] @json.FromJson for T[A] with from_json(json, path) 
 }
 
 ///|
-pub fn[A : @json.FromJson] from_json(json : Json) -> T[A]!@json.JsonDecodeError {
+pub fn[A : @json.FromJson] from_json(
+  json : Json
+) -> T[A] raise @json.JsonDecodeError {
   @json.from_json(json)
 }
 

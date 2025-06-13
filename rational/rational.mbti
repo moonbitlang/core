@@ -9,7 +9,7 @@ fn floor(T) -> Int64
 
 fn fract(T) -> T
 
-fn from_double(Double) -> T!RationalError
+fn from_double(Double) -> T raise RationalError
 
 fn is_integer(T) -> Bool
 
@@ -24,7 +24,7 @@ fn to_double(T) -> Double
 fn trunc(T) -> Int64
 
 // Types and methods
-pub(all) type! RationalError String
+pub(all) suberror RationalError String
 impl Eq for RationalError
 impl Show for RationalError
 

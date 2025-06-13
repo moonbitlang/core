@@ -49,7 +49,7 @@ test "debug_string" {
 }
 
 ///|
-fn check_invariant(a : BigInt) -> Unit! {
+fn check_invariant(a : BigInt) -> Unit raise {
   guard a.len > 0 else { fail("invariant len > 0 is broken: len = \{a.len}") }
   for i in 0..<a.len {
     guard a.limbs[i].to_uint64() < radix else {
