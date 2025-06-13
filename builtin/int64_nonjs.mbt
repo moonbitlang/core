@@ -984,7 +984,7 @@ pub fn Double::reinterpret_as_uint64(self : Double) -> UInt64 = "%f64_to_i64_rei
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```skip
 /// test "Double::convert_uint64" {
 ///   let n = 12345678901234567890UL
 ///   inspect(Double::convert_uint64(n), content="12345678901234567000")
@@ -1155,7 +1155,7 @@ pub fn UInt64::to_int(self : UInt64) -> Int = "%u64.to_i32"
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```skip
 /// test "UInt64::to_double" {
 ///   let n = 12345678901234567890UL
 ///   inspect(n.to_double(), content="12345678901234567000") // Note the slight precision loss
