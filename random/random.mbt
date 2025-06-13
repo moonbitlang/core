@@ -65,7 +65,8 @@ pub fn Rand::new(
 
 ///|
 fn next(self : Rand) -> UInt64 {
-  self._.next()
+  let Rand(s) = self
+  s.next()
 }
 
 ///|

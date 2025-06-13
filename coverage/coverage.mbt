@@ -76,7 +76,8 @@ priv type StringBuffer Array[String]
 
 ///|
 impl Output for StringBuffer with output(self : StringBuffer, content : String) -> Unit {
-  self._.push(content)
+  let StringBuffer(self) = self
+  self.push(content)
 }
 
 ///|
