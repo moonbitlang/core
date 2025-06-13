@@ -1255,9 +1255,11 @@ pub fn[T] Array::swap(self : Array[T], i : Int, j : Int) -> Unit {
 /// TODO: perf could be improved
 #locals(f)
 pub fn[T] Array::retain(self : Array[T], f : (T) -> Bool raise?) -> Unit raise? {
-  for i = 0, j = 0; i < self.length(); {
-    if f(self.unsafe_get(i)) {
-      self.unsafe_set(j, self.unsafe_get(i))
+  let len = self.length()
+  for i = 0, j = 0; i < len; {
+    let item = self.unsafe_get(i)
+    if f(item) {
+      self.unsafe_set(j, item)
       continue i + 1, j + 1
     }
     continue i + 1, j
