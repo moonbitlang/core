@@ -9,11 +9,15 @@ fn[A : Eq + Hash] add(T[A], A) -> T[A]
 
 fn[A : Eq + Hash] contains(T[A], A) -> Bool
 
+fn[A : Eq] difference(T[A], T[A]) -> T[A]
+
 fn[A] each(T[A], (A) -> Unit) -> Unit
 
 fn[A : Eq + Hash] from_array(Array[A]) -> T[A]
 
 fn[A : Eq + Hash] from_iter(Iter[A]) -> T[A]
+
+fn[A : Eq] intersection(T[A], T[A]) -> T[A]
 
 fn[A] is_empty(T[A]) -> Bool
 
@@ -25,24 +29,28 @@ fn[A : Eq + Hash] of(FixedArray[A]) -> T[A]
 
 fn[A : Eq + Hash] remove(T[A], A) -> T[A]
 
+fn[A : Hash] singleton(A) -> T[A]
+
 fn[A] size(T[A]) -> Int
+
+fn[A : Eq] union(T[A], T[A]) -> T[A]
 
 // Types and methods
 type T[A]
 fn[A : Eq + Hash] T::add(Self[A], A) -> Self[A]
 fn[A : Eq + Hash] T::contains(Self[A], A) -> Bool
-fn[K : Eq + Hash] T::difference(Self[K], Self[K]) -> Self[K]
+fn[A : Eq] T::difference(Self[A], Self[A]) -> Self[A]
 fn[A] T::each(Self[A], (A) -> Unit) -> Unit
-fn[K : Eq + Hash] T::intersection(Self[K], Self[K]) -> Self[K]
+fn[A : Eq] T::intersection(Self[A], Self[A]) -> Self[A]
 fn[A] T::is_empty(Self[A]) -> Bool
 fn[A] T::iter(Self[A]) -> Iter[A]
 fn[A : Eq + Hash] T::remove(Self[A], A) -> Self[A]
 fn[A] T::size(Self[A]) -> Int
-fn[K : Eq + Hash] T::union(Self[K], Self[K]) -> Self[K]
+fn[A : Eq] T::union(Self[A], Self[A]) -> Self[A]
 impl[A : Eq] Eq for T[A]
 impl[A : Hash] Hash for T[A]
 impl[A : Show] Show for T[A]
-impl[K : Eq + Hash + @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[K]
+impl[A : Eq + Hash + @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[A]
 
 // Type aliases
 

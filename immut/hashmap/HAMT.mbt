@@ -73,8 +73,8 @@ pub fn[K : Eq + Hash, V] get(self : T[K, V], key : K) -> V? {
     // inline the hot path of Sparse_array::op_get
     (Branch(children), hash) => {
       let idx = hash & segment_mask
-      if children.elem_info.has(idx) {
-        let child = children.data[children.elem_info.index_of(idx)]
+      if children.has(idx) {
+        let child = children[idx]
         continue (
             child,
             (hash.reinterpret_as_uint() >> segment_length).reinterpret_as_int(),
@@ -126,25 +126,22 @@ fn[K : Eq, V] add_with_hash(
     Collision(bucket) => Collision(bucket.add(key, value))
     Branch(children) => {
       let idx = hash & segment_mask
-      match children[idx] {
-        Some(child) => {
-          let child = child.add_with_hash(
-            key,
-            depth + segment_length,
-            (hash.reinterpret_as_uint() >> segment_length).reinterpret_as_int(),
-            value,
-          )
-          Branch(children.replace(idx, child))
-        }
-        None => {
-          let child = make_leaf(
-            depth + segment_length,
-            key,
-            (hash.reinterpret_as_uint() >> segment_length).reinterpret_as_int(),
-            value,
-          )
-          Branch(children.add(idx, child))
-        }
+      if children.has(idx) {
+        let child = children[idx].add_with_hash(
+          key,
+          depth + segment_length,
+          (hash.reinterpret_as_uint() >> segment_length).reinterpret_as_int(),
+          value,
+        )
+        Branch(children.replace(idx, child))
+      } else {
+        let child = make_leaf(
+          depth + segment_length,
+          key,
+          (hash.reinterpret_as_uint() >> segment_length).reinterpret_as_int(),
+          value,
+        )
+        Branch(children.add(idx, child))
       }
     }
   }
@@ -273,19 +270,19 @@ fn[K : Eq, V] remove_with_hash(
       }
     Branch(children) => {
       let idx = hash & segment_mask
-      match children[idx] {
-        None => self
-        Some(child) => {
-          let new_child = child.remove_with_hash(
-            key,
-            depth + segment_length,
-            (hash.reinterpret_as_uint() >> segment_length).reinterpret_as_int(),
-          )
-          match (children.size(), new_child) {
-            (1, Empty) => Empty
-            (_, _) => Branch(children.replace(idx, new_child))
-          }
+      if children.has(idx) {
+        let child = children[idx]
+        let new_child = child.remove_with_hash(
+          key,
+          depth + segment_length,
+          (hash.reinterpret_as_uint() >> segment_length).reinterpret_as_int(),
+        )
+        match (children.data.length(), new_child) {
+          (1, Empty) => Empty
+          (_, _) => Branch(children.replace(idx, new_child))
         }
+      } else {
+        self
       }
     }
   }
@@ -385,7 +382,9 @@ pub fn[K : Eq + Hash, V] T::intersection(
         None => Empty
       }
     (Branch(sa1), Branch(sa2)) =>
-      Branch(sa1.intersection(sa2, fn(m1, m2) { m1.intersection(m2) }))
+      Branch(
+        sa1.intersection(sa2, fn(m1, m2) { Some(m1.intersection(m2)) }).unwrap(),
+      )
     (_, _) =>
       self
       .iter()
@@ -420,7 +419,11 @@ pub fn[K : Eq + Hash, V] T::intersection_with(
         None => Empty
       }
     (Branch(sa1), Branch(sa2)) =>
-      Branch(sa1.intersection(sa2, fn(m1, m2) { m1.intersection_with(m2, f) }))
+      Branch(
+        sa1
+        .intersection(sa2, fn(m1, m2) { Some(m1.intersection_with(m2, f)) })
+        .unwrap(),
+      )
     (_, _) =>
       self
       .iter()
@@ -447,7 +450,10 @@ pub fn[K : Eq + Hash, V] T::difference(
         Some(_) => Empty
         None => Leaf(k, v)
       }
-    (Branch(sa1), Branch(sa2)) => Branch(sa1.difference(sa2))
+    (Branch(sa1), Branch(sa2)) =>
+      Branch(
+        sa1.difference(sa2, fn(m1, m2) { Some(m1.difference(m2)) }).unwrap(),
+      )
     (_, _) =>
       self
       .iter()
