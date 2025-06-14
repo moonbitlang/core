@@ -16,9 +16,11 @@
 typealias @path.Path
 
 ///|
-/// An immutable hash set data structure
-enum T[A] {
-  Empty
+/// An non-empty immutable hash set data structure
+priv enum Node[A] {
   Leaf(A, @list.T[A]) // use a list of buckets to resolve collision
-  Branch(@sparse_array.SparseArray[T[A]])
+  Branch(@sparse_array.SparseArray[Node[A]])
 }
+
+///|
+type T[A] Node[A]? derive(Eq)
