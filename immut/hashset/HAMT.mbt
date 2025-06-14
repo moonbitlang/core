@@ -37,8 +37,7 @@ pub fn[A] new() -> T[A] {
 pub fn[A : Eq + Hash] contains(self : T[A], key : A) -> Bool {
   loop (self, @path.of(key)) {
     (Empty, _) => false
-    (Leaf(key1), _) => key == key1
-    (Collision(bucket), _) => bucket.find(key)
+    (Leaf(key1, bucket), _) => key == key1 || bucket.contains(key)
     (Branch(children), path) => {
       let idx = path.idx()
       if children.has(idx) {
@@ -55,7 +54,7 @@ fn[A : Eq] add_with_path(self : T[A], key : A, path : Path) -> T[A] {
   fn make_leaf(key : A, path : Path) {
     // make sure leaf nodes always appear at the bottom of the tree
     if path.is_end() {
-      Leaf(key)
+      Leaf(key, @list.empty())
     } else {
       let child = make_leaf(key, path.next())
       Branch(@sparse_array.singleton(path.idx(), child))
@@ -64,13 +63,12 @@ fn[A : Eq] add_with_path(self : T[A], key : A, path : Path) -> T[A] {
 
   match self {
     Empty => make_leaf(key, path)
-    Leaf(key1) =>
-      if key == key1 {
-        Leaf(key)
+    Leaf(key1, bucket) =>
+      if key == key1 || bucket.contains(key) {
+        self
       } else {
-        Collision(More(key, JustOne(key1)))
+        Leaf(key, bucket.add(key1))
       }
-    Collision(bucket) => Collision(bucket.add(key))
     Branch(children) => {
       let idx = path.idx()
       if children.has(idx) {
@@ -101,12 +99,16 @@ pub fn[A : Eq + Hash] remove(self : T[A], key : A) -> T[A] {
 fn[A : Eq] remove_with_path(self : T[A], key : A, path : Path) -> T[A] {
   match self {
     Empty => self
-    Leaf(old_key) => if key == old_key { Empty } else { self }
-    Collision(bucket) =>
-      match bucket.remove(key) {
-        None => Empty
-        Some(JustOne(k)) => Leaf(k)
-        Some(new_bucket) => Collision(new_bucket)
+    Leaf(key1, bucket) =>
+      if key1 == key {
+        match bucket {
+          @list.Empty => Empty
+          More(key2, tail=xs) => Leaf(key2, xs)
+        }
+      } else if bucket.find_index(key.op_equal(_)) is Some(index) {
+        Leaf(key1, bucket.remove_at(index))
+      } else {
+        self
       }
     Branch(children) => {
       let idx = path.idx()
@@ -131,8 +133,7 @@ fn[A : Eq] remove_with_path(self : T[A], key : A, path : Path) -> T[A] {
 pub fn[A] size(self : T[A]) -> Int {
   match self {
     Empty => 0
-    Leaf(_) => 1
-    Collision(bucket) => bucket.size()
+    Leaf(_, bucket) => 1 + bucket.length()
     Branch(children) =>
       for i = 0, total_size = 0 {
         if i < children.data.length() {
@@ -150,8 +151,6 @@ pub fn[K : Eq + Hash] T::union(self : T[K], other : T[K]) -> T[K] {
   match (self, other) {
     (_, Empty) => self
     (Empty, _) => other
-    (_, Leaf(k)) => self.add(k)
-    (Leaf(k), _) => other.add(k)
     (Branch(sa1), Branch(sa2)) =>
       Branch(sa1.union(sa2, fn(m1, m2) { m1.union(m2) }))
     (_, _) => self.iter().fold(init=other, fn(m, k) { m.add(k) })
@@ -161,51 +160,17 @@ pub fn[K : Eq + Hash] T::union(self : T[K], other : T[K]) -> T[K] {
 ///|
 /// Intersect two hashsets
 pub fn[K : Eq + Hash] T::intersection(self : T[K], other : T[K]) -> T[K] {
-  match (self, other) {
-    (_, Empty) => Empty
-    (Empty, _) => Empty
-    (Leaf(k), _) => if other.contains(k) { Leaf(k) } else { Empty }
-    (_, Leaf(k)) => if self.contains(k) { Leaf(k) } else { Empty }
-    (Branch(sa1), Branch(sa2)) => {
-      let res = sa1.intersection(sa2, fn(m1, m2) { m1.intersection(m2) })
-      if res.size() == 0 {
-        Empty
-      } else {
-        Branch(res)
-      }
-    }
-    (_, _) =>
-      self
-      .iter()
-      .fold(init=Empty, fn(m, k) {
-        if other.contains(k) {
-          m.add(k)
-        } else {
-          m
-        }
-      })
-  }
+  self
+  .iter()
+  .fold(init=Empty, fn(m, k) { if other.contains(k) { m.add(k) } else { m } })
 }
 
 ///|
 /// Difference of two hashsets: elements in `self` but not in `other`
 pub fn[K : Eq + Hash] T::difference(self : T[K], other : T[K]) -> T[K] {
-  match (self, other) {
-    (Empty, _) => Empty
-    (_, Empty) => self
-    (Leaf(k), _) => if other.contains(k) { Empty } else { Leaf(k) }
-    (Branch(sa1), Branch(sa2)) => Branch(sa1.difference(sa2))
-    (_, _) =>
-      self
-      .iter()
-      .fold(init=Empty, fn(m, k) {
-        if other.contains(k) {
-          m
-        } else {
-          m.add(k)
-        }
-      })
-  }
+  self
+  .iter()
+  .fold(init=Empty, fn(m, k) { if other.contains(k) { m } else { m.add(k) } })
 }
 
 ///|
@@ -219,8 +184,10 @@ pub fn[A] is_empty(self : T[A]) -> Bool {
 pub fn[A] each(self : T[A], f : (A) -> Unit) -> Unit {
   match self {
     Empty => ()
-    Leaf(k) => f(k)
-    Collision(bucket) => bucket.each(f)
+    Leaf(k, bucket) => {
+      f(k)
+      bucket.each(f)
+    }
     Branch(children) => children.each(fn { child => child.each(f) })
   }
 }
@@ -230,8 +197,7 @@ pub fn[A] each(self : T[A], f : (A) -> Unit) -> Unit {
 pub fn[A] iter(self : T[A]) -> Iter[A] {
   match self {
     Empty => Iter::empty()
-    Leaf(k) => Iter::singleton(k)
-    Collision(bucket) => bucket.iter()
+    Leaf(k, bucket) => Iter::singleton(k) + bucket.iter()
     Branch(children) => children.data.iter().flat_map(fn { set => set.iter() })
   }
 }
@@ -277,9 +243,8 @@ pub impl[A : Hash] Hash for T[A] with hash_combine(self, hasher) {
 pub impl[A : Eq] Eq for T[A] with op_equal(self, other) {
   match (self, other) {
     (Empty, Empty) => true
-    (Leaf(x), Leaf(y)) => x == y
-    (Collision(xs), Collision(ys)) =>
-      xs.size() == ys.size() && xs.iter().all(fn(x) { ys.find(x) })
+    (Leaf(x, xs), Leaf(y, ys)) =>
+      xs.length() == ys.length() && xs.add(x).iter().all(ys.add(y).contains(_))
     (Branch(xs), Branch(ys)) => xs == ys
     _ => false
   }
