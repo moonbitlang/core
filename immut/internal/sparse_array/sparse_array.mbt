@@ -37,12 +37,8 @@ pub fn[X] has(self : SparseArray[X], idx : Int) -> Bool {
 }
 
 ///|
-pub fn[X] op_get(self : SparseArray[X], idx : Int) -> X? {
-  if self.elem_info.has(idx) {
-    Some(self.data[self.elem_info.index_of(idx)])
-  } else {
-    None
-  }
+pub fn[X] op_get(self : SparseArray[X], idx : Int) -> X {
+  self.data[self.elem_info.index_of(idx)]
 }
 
 ///|

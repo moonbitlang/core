@@ -126,25 +126,23 @@ fn[K : Eq, V] add_with_hash(
     Collision(bucket) => Collision(bucket.add(key, value))
     Branch(children) => {
       let idx = hash & segment_mask
-      match children[idx] {
-        Some(child) => {
-          let child = child.add_with_hash(
-            key,
-            depth + segment_length,
-            (hash.reinterpret_as_uint() >> segment_length).reinterpret_as_int(),
-            value,
-          )
-          Branch(children.replace(idx, child))
-        }
-        None => {
-          let child = make_leaf(
-            depth + segment_length,
-            key,
-            (hash.reinterpret_as_uint() >> segment_length).reinterpret_as_int(),
-            value,
-          )
-          Branch(children.add(idx, child))
-        }
+      if children.has(idx) {
+        let child = children[idx]
+        let child = child.add_with_hash(
+          key,
+          depth + segment_length,
+          (hash.reinterpret_as_uint() >> segment_length).reinterpret_as_int(),
+          value,
+        )
+        Branch(children.replace(idx, child))
+      } else {
+        let child = make_leaf(
+          depth + segment_length,
+          key,
+          (hash.reinterpret_as_uint() >> segment_length).reinterpret_as_int(),
+          value,
+        )
+        Branch(children.add(idx, child))
       }
     }
   }
@@ -273,19 +271,19 @@ fn[K : Eq, V] remove_with_hash(
       }
     Branch(children) => {
       let idx = hash & segment_mask
-      match children[idx] {
-        None => self
-        Some(child) => {
-          let new_child = child.remove_with_hash(
-            key,
-            depth + segment_length,
-            (hash.reinterpret_as_uint() >> segment_length).reinterpret_as_int(),
-          )
-          match (children.size(), new_child) {
-            (1, Empty) => Empty
-            (_, _) => Branch(children.replace(idx, new_child))
-          }
+      if children.has(idx) {
+        let child = children[idx]
+        let new_child = child.remove_with_hash(
+          key,
+          depth + segment_length,
+          (hash.reinterpret_as_uint() >> segment_length).reinterpret_as_int(),
+        )
+        match (children.size(), new_child) {
+          (1, Empty) => Empty
+          (_, _) => Branch(children.replace(idx, new_child))
         }
+      } else {
+        self
       }
     }
   }
