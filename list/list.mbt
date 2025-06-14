@@ -117,7 +117,7 @@ pub fn[A] length(self : T[A]) -> Int {
 ///   assert_eq(arr, [1, 2, 3, 4, 5])
 /// ```
 #locals(f)
-pub fn[A] each(self : T[A], f : (A) -> Unit) -> Unit {
+pub fn[A] each(self : T[A], f : (A) -> Unit raise?) -> Unit raise? {
   loop self {
     Empty => ()
     More(head, tail~) => {
