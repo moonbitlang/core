@@ -55,7 +55,7 @@ test "diff" {
     @sorted_set.from_array([1, 2, 3]).difference(
       @sorted_set.from_array([4, 5, 1]),
     ),
-    content="@sorted_set.of([2, 3])",
+    content="@sorted_set.from_array([2, 3])",
   )
 }
 
@@ -65,7 +65,7 @@ test "intersect" {
     @sorted_set.from_array([3, 4, 5]).intersection(
       @sorted_set.from_array([4, 5, 6]),
     ),
-    content="@sorted_set.of([4, 5])",
+    content="@sorted_set.from_array([4, 5])",
   )
 }
 
@@ -126,11 +126,11 @@ test "to_array" {
 test "to_string" {
   inspect(
     @sorted_set.from_array([1, 2, 3, 4, 5]),
-    content="@sorted_set.of([1, 2, 3, 4, 5])",
+    content="@sorted_set.from_array([1, 2, 3, 4, 5])",
   )
   inspect(
     (@sorted_set.from_array([]) : @sorted_set.T[Int]),
-    content="@sorted_set.of([])",
+    content="@sorted_set.from_array([])",
   )
 }
 
@@ -138,7 +138,7 @@ test "to_string" {
 test "from_array" {
   inspect(
     @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]),
-    content="@sorted_set.of([1, 2, 3, 4, 5, 6, 7, 8, 9])",
+    content="@sorted_set.from_array([1, 2, 3, 4, 5, 6, 7, 8, 9])",
   )
 }
 
@@ -168,9 +168,9 @@ test "singleton" {
 ///|
 test "show" {
   let set = @sorted_set.from_array([1, 2, 3, 4, 5])
-  inspect(set, content="@sorted_set.of([1, 2, 3, 4, 5])")
+  inspect(set, content="@sorted_set.from_array([1, 2, 3, 4, 5])")
   let set : @sorted_set.T[Int] = @sorted_set.from_array([])
-  inspect(set, content="@sorted_set.of([])")
+  inspect(set, content="@sorted_set.from_array([])")
 }
 
 ///|
@@ -179,34 +179,34 @@ test "mix_everything" {
   let set1 = @sorted_set.from_array([1, 2, 3, 4, 5])
   let set2 = @sorted_set.from_array([4, 5, 6, 7, 8])
   set1.add(6)
-  inspect(set1, content="@sorted_set.of([1, 2, 3, 4, 5, 6])")
+  inspect(set1, content="@sorted_set.from_array([1, 2, 3, 4, 5, 6])")
   set1.remove(6)
-  inspect(set1, content="@sorted_set.of([1, 2, 3, 4, 5])")
+  inspect(set1, content="@sorted_set.from_array([1, 2, 3, 4, 5])")
   let set3 = set1.union(set2)
-  inspect(set3, content="@sorted_set.of([1, 2, 3, 4, 5, 6, 7, 8])")
+  inspect(set3, content="@sorted_set.from_array([1, 2, 3, 4, 5, 6, 7, 8])")
   let set4 = set1.difference(set2)
-  inspect(set4, content="@sorted_set.of([1, 2, 3])")
+  inspect(set4, content="@sorted_set.from_array([1, 2, 3])")
   let set5 = set1.intersection(set2)
-  inspect(set5, content="@sorted_set.of([4, 5])")
+  inspect(set5, content="@sorted_set.from_array([4, 5])")
   inspect(set1.subset(set3), content="true")
   set3.remove(3)
-  inspect(set3, content="@sorted_set.of([1, 2, 4, 5, 6, 7, 8])")
+  inspect(set3, content="@sorted_set.from_array([1, 2, 4, 5, 6, 7, 8])")
   inspect(set3.size(), content="7")
   inspect(set3.is_empty(), content="false")
   inspect(set3.contains(1), content="true")
   inspect(set3.contains(3), content="false")
   inspect(set3.disjoint(set1), content="false")
   let set6 = set3.union(@sorted_set.from_array([]))
-  inspect(set6, content="@sorted_set.of([1, 2, 4, 5, 6, 7, 8])")
+  inspect(set6, content="@sorted_set.from_array([1, 2, 4, 5, 6, 7, 8])")
   let set7 = set3.union(@sorted_set.from_array([12, 13, 14, 33, 22]))
   inspect(
     set7,
-    content="@sorted_set.of([1, 2, 4, 5, 6, 7, 8, 12, 13, 14, 22, 33])",
+    content="@sorted_set.from_array([1, 2, 4, 5, 6, 7, 8, 12, 13, 14, 22, 33])",
   )
   for i = 1; i <= 5; i = i + 1 {
     set7.remove(i)
   }
-  inspect(set7, content="@sorted_set.of([6, 7, 8, 12, 13, 14, 22, 33])")
+  inspect(set7, content="@sorted_set.from_array([6, 7, 8, 12, 13, 14, 22, 33])")
   for i = 6; i <= 33; i = i + 1 {
     set7.remove(i)
   }
@@ -216,12 +216,12 @@ test "mix_everything" {
   set.remove(70)
   inspect(
     set,
-    content="@sorted_set.of([8, 11, 13, 35, 38, 39, 40, 44, 49, 52, 54, 58, 67, 80, 84, 90, 93, 95, 97])",
+    content="@sorted_set.from_array([8, 11, 13, 35, 38, 39, 40, 44, 49, 52, 54, 58, 67, 80, 84, 90, 93, 95, 97])",
   )
   set.remove(52)
   inspect(
     set,
-    content="@sorted_set.of([8, 11, 13, 35, 38, 39, 40, 44, 49, 54, 58, 67, 80, 84, 90, 93, 95, 97])",
+    content="@sorted_set.from_array([8, 11, 13, 35, 38, 39, 40, 44, 49, 54, 58, 67, 80, 84, 90, 93, 95, 97])",
   )
 }
 
@@ -239,23 +239,26 @@ test "op_equal" {
 test "from_iter multiple elements iter" {
   inspect(
     @sorted_set.from_iter([1, 2, 3].iter()),
-    content="@sorted_set.of([1, 2, 3])",
+    content="@sorted_set.from_array([1, 2, 3])",
   )
   inspect(
     @sorted_set.from_iter([1, 1, 1].iter()),
-    content="@sorted_set.of([1])",
+    content="@sorted_set.from_array([1])",
   )
 }
 
 ///|
 test "from_iter single element iter" {
-  inspect(@sorted_set.from_iter([1].iter()), content="@sorted_set.of([1])")
+  inspect(
+    @sorted_set.from_iter([1].iter()),
+    content="@sorted_set.from_array([1])",
+  )
 }
 
 ///|
 test "from_iter empty iter" {
   let pq : @sorted_set.T[Int] = @sorted_set.from_iter(Iter::empty())
-  inspect(pq, content="@sorted_set.of([])")
+  inspect(pq, content="@sorted_set.from_array([])")
 }
 
 ///|
@@ -271,13 +274,13 @@ test "@sorted_set.symmetric_difference/basic" {
   let set1 = @sorted_set.from_array([1, 2, 3])
   let set2 = @sorted_set.from_array([4, 5, 6])
   let result = set1.symmetric_difference(set2)
-  inspect(result, content="@sorted_set.of([1, 2, 3, 4, 5, 6])")
+  inspect(result, content="@sorted_set.from_array([1, 2, 3, 4, 5, 6])")
 
   // Test with overlapping sets
   let set3 = @sorted_set.from_array([1, 2, 3, 4])
   let set4 = @sorted_set.from_array([3, 4, 5, 6])
   let result2 = set3.symmetric_difference(set4)
-  inspect(result2, content="@sorted_set.of([1, 2, 5, 6])")
+  inspect(result2, content="@sorted_set.from_array([1, 2, 5, 6])")
 }
 
 ///|
@@ -286,14 +289,14 @@ test "@sorted_set.symmetric_difference/empty" {
   let empty1 = @sorted_set.new()
   let empty2 = @sorted_set.new()
   let result1 = empty1.symmetric_difference(empty2)
-  inspect(result1, content="@sorted_set.of([])")
+  inspect(result1, content="@sorted_set.from_array([])")
 
   // Test with one empty set
   let set1 = @sorted_set.from_array([1, 2, 3])
   let result2 = set1.symmetric_difference(empty1)
-  inspect(result2, content="@sorted_set.of([1, 2, 3])")
+  inspect(result2, content="@sorted_set.from_array([1, 2, 3])")
   let result3 = empty1.symmetric_difference(set1)
-  inspect(result3, content="@sorted_set.of([1, 2, 3])")
+  inspect(result3, content="@sorted_set.from_array([1, 2, 3])")
 }
 
 ///|
@@ -302,5 +305,5 @@ test "@sorted_set.symmetric_difference/identical" {
   let set1 = @sorted_set.from_array([1, 2, 3, 4, 5])
   let set2 = @sorted_set.from_array([1, 2, 3, 4, 5])
   let result = set1.symmetric_difference(set2)
-  inspect(result, content="@sorted_set.of([])")
+  inspect(result, content="@sorted_set.from_array([])")
 }

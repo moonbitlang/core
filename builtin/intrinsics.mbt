@@ -1276,7 +1276,7 @@ pub impl Compare for Char with compare(self, other) = "%char_compare"
 ///
 /// ```moonbit
 /// test "Char::default" {
-///   assert_true(Char::default().to_string() == "\x00")
+///   assert_true(Char::default().to_string() == "\u0000")
 /// }
 /// ```
 pub impl Default for Char with default() = "%char_default"
@@ -1726,14 +1726,14 @@ pub fn String::op_get(self : String, idx : Int) -> Char = "%string_get"
 /// ```moonbit
 /// test "String::get" {
 ///   let s = "Hello, 世界"
-///   inspect(s.get(0), content="H")
-///   inspect(s.get(7), content="世")
+///   inspect(s.charcode_at(0), content="72")
+///   inspect(s.char_at(7), content="世")
 /// }
 ///
 /// test "panic String::get/out_of_bounds" {
 ///   let s = "Hello"
-///   ignore(s.get(-1)) // Negative index
-///   ignore(s.get(5)) // Index equals length
+///   ignore(s.charcode_at(-1)) // Negative index
+///   ignore(s.charcode_at(5)) // Index equals length
 /// }
 /// ```
 #deprecated("use `charcode_at` instead")

@@ -250,8 +250,8 @@ fn[K : Hash + Eq, V] get_with_hash(self : T[K, V], key : K, hash : Int) -> V? {
 /// ```moonbit
 /// test "op_get" {
 ///   let map = @hashmap.of([("key", 42)])
-///   inspect(map["key"], content="Some(42)")
-///   inspect(map["nonexistent"], content="None")
+///   inspect(map.get("key"), content="Some(42)")
+///   inspect(map.get("nonexistent"), content="None")
 /// }
 /// ```
 #deprecated("Use `get` instead. `op_get` will return `V` instead of `Option[V]` in the future.")

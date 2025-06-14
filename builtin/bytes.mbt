@@ -64,7 +64,7 @@ pub fn Bytes::makei(length : Int, value : (Int) -> Byte) -> Bytes {
 ///
 /// ```moonbit
 /// test "Bytes::of_string" {
-///   let bytes = Bytes::of_string("ABC")
+///   let bytes = "ABC".to_bytes()
 ///   inspect(bytes, content="b\"\\x41\\x00\\x42\\x00\\x43\\x00\"")
 /// }
 /// ```

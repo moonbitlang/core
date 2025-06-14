@@ -92,8 +92,8 @@ pub fn String::charcode_at(self : String, index : Int) -> Int = "%string_get"
 /// ```mbt
 /// test "String::codepoint_at" {
 ///   let s = "Hello🤣";
-///   inspect(s.codepoint_at(0), content="H");
-///   inspect(s.codepoint_at(5), content="🤣"); // Returns full emoji character
+///   inspect(s.iter().nth(0).unwrap(), content="H");
+///   inspect(s.iter().nth(5).unwrap(), content="🤣"); // Returns full emoji character
 /// }
 /// ```
 ///
