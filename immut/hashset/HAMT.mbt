@@ -28,13 +28,6 @@
 // - <https://lampwww.epfl.ch/papers/idealhashtrees.pdf>
 
 ///|
-// The number of bits consumed at every [Branch] node
-let segment_length : Int = 5
-
-///|
-let segment_mask : Int = 0b11111
-
-///|
 pub fn[A] new() -> T[A] {
   Empty
 }
@@ -42,20 +35,14 @@ pub fn[A] new() -> T[A] {
 ///|
 /// Lookup a value from the hash set
 pub fn[A : Eq + Hash] contains(self : T[A], key : A) -> Bool {
-  loop (self, key.hash()) {
+  loop (self, @path.of(key)) {
     (Empty, _) => false
     (Leaf(key1), _) => key == key1
     (Collision(bucket), _) => bucket.find(key)
-    // get the first segment (lower 5 bits) of the hash value
-    // inline the hot path of Sparse_array::op_get
-    (Branch(children), hash) => {
-      let idx = hash & segment_mask
-      if children.elem_info.has(idx) {
-        let child = children.data[children.elem_info.index_of(idx)]
-        continue (
-            child,
-            (hash.reinterpret_as_uint() >> segment_length).reinterpret_as_int(),
-          )
+    (Branch(children), path) => {
+      let idx = path.idx()
+      if children[idx] is Some(child) {
+        continue (child, path.next())
       }
       false
     }
@@ -63,24 +50,19 @@ pub fn[A : Eq + Hash] contains(self : T[A], key : A) -> Bool {
 }
 
 ///|
-fn[A : Eq] add_with_hash(self : T[A], key : A, depth : Int, hash : Int) -> T[A] {
-  fn make_leaf(depth : Int, key : A, hash : Int) {
+fn[A : Eq] add_with_path(self : T[A], key : A, path : Path) -> T[A] {
+  fn make_leaf(key : A, path : Path) {
     // make sure leaf nodes always appear at the bottom of the tree
-    if depth >= 32 {
+    if path.is_end() {
       Leaf(key)
     } else {
-      let idx = hash & segment_mask
-      let child = make_leaf(
-        depth + segment_length,
-        key,
-        (hash.reinterpret_as_uint() >> segment_length).reinterpret_as_int(),
-      )
-      Branch(@sparse_array.singleton(idx, child))
+      let child = make_leaf(key, path.next())
+      Branch(@sparse_array.singleton(path.idx(), child))
     }
   }
 
   match self {
-    Empty => make_leaf(depth, key, hash)
+    Empty => make_leaf(key, path)
     Leaf(key1) =>
       if key == key1 {
         Leaf(key)
@@ -89,22 +71,14 @@ fn[A : Eq] add_with_hash(self : T[A], key : A, depth : Int, hash : Int) -> T[A] 
       }
     Collision(bucket) => Collision(bucket.add(key))
     Branch(children) => {
-      let idx = hash & segment_mask
+      let idx = path.idx()
       match children[idx] {
         Some(child) => {
-          let child = child.add_with_hash(
-            key,
-            depth + segment_length,
-            (hash.reinterpret_as_uint() >> segment_length).reinterpret_as_int(),
-          )
+          let child = child.add_with_path(key, path.next())
           Branch(children.replace(idx, child))
         }
         None => {
-          let child = make_leaf(
-            depth + segment_length,
-            key,
-            (hash.reinterpret_as_uint() >> segment_length).reinterpret_as_int(),
-          )
+          let child = make_leaf(key, path.next())
           Branch(children.add(idx, child))
         }
       }
@@ -115,22 +89,17 @@ fn[A : Eq] add_with_hash(self : T[A], key : A, depth : Int, hash : Int) -> T[A] 
 ///|
 /// Add a key to the hashset.
 pub fn[A : Eq + Hash] add(self : T[A], key : A) -> T[A] {
-  self.add_with_hash(key, 0, key.hash())
+  self.add_with_path(key, @path.of(key))
 }
 
 ///|
 /// Remove an element from a set
 pub fn[A : Eq + Hash] remove(self : T[A], key : A) -> T[A] {
-  self.remove_with_hash(key, 0, key.hash())
+  self.remove_with_path(key, @path.of(key))
 }
 
 ///|
-fn[A : Eq] remove_with_hash(
-  self : T[A],
-  key : A,
-  depth : Int,
-  hash : Int
-) -> T[A] {
+fn[A : Eq] remove_with_path(self : T[A], key : A, path : Path) -> T[A] {
   match self {
     Empty => self
     Leaf(old_key) => if key == old_key { Empty } else { self }
@@ -141,15 +110,11 @@ fn[A : Eq] remove_with_hash(
         Some(new_bucket) => Collision(new_bucket)
       }
     Branch(children) => {
-      let idx = hash & segment_mask
+      let idx = path.idx()
       match children[idx] {
         None => self
         Some(child) => {
-          let new_child = child.remove_with_hash(
-            key,
-            depth + segment_length,
-            (hash.reinterpret_as_uint() >> segment_length).reinterpret_as_int(),
-          )
+          let new_child = child.remove_with_path(key, path.next())
           match (children.size(), new_child) {
             (1, Empty) => Empty
             (_, _) => Branch(children.replace(idx, new_child))
