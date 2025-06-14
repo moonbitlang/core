@@ -110,7 +110,7 @@ pub fn[T] Array::makei(
 /// test "Array::shuffle_in_place" {
 ///   let arr = [1, 2, 3, 4, 5]
 ///   fn rand(upper : Int) -> Int {
-///     let rng = @random.new()
+///     let rng = @random.Rand::new()
 ///     rng.int(limit=upper)
 ///   }
 ///   Array::shuffle_in_place(arr, rand=rand)
@@ -138,7 +138,7 @@ pub fn[T] shuffle_in_place(self : Array[T], rand~ : (Int) -> Int) -> Unit {
 /// test {
 ///   let arr = [1, 2, 3, 4, 5]
 ///   fn rand(upper : Int) -> Int {
-///     let rng = @random.new()
+///     let rng = @random.Rand::new()
 ///     rng.int(limit=upper)
 ///   }
 ///   let _shuffled = Array::shuffle(arr, rand=rand)
