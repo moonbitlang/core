@@ -20,16 +20,12 @@ pub(all) type Bitset UInt derive(Eq)
 let empty_bitset : Bitset = Bitset(0)
 
 ///|
-/// `has(self: Bitset, idx: Int)`
-///
 /// Check if the given index is present in the bitset.
 pub fn Bitset::has(self : Bitset, idx : Int) -> Bool {
   (self.inner() & (1U << idx)) != 0
 }
 
 ///|
-/// `index_of(self: Bitset, idx: Int)`
-///
 /// Get the index of the bit in the bitset.
 pub fn Bitset::index_of(self : Bitset, idx : Int) -> Int {
   (self.inner() & ((1U << idx) - 1)).popcnt()
@@ -65,24 +61,18 @@ pub fn Bitset::iter(self : Bitset) -> Iter[Int] {
 }
 
 ///|
-/// `add(self: Bitset, idx: Int)`
-///
 /// Add a new index to the bitset.
 pub fn Bitset::add(self : Bitset, idx : Int) -> Bitset {
   Bitset(self.inner() | (1U << idx))
 }
 
 ///|
-/// `remove(self: Bitset, idx: Int)`
-///
 /// Remove an index from the bitset.
 pub fn Bitset::remove(self : Bitset, idx : Int) -> Bitset {
   Bitset(self.inner() ^ (1U << idx))
 }
 
 ///|
-/// `size(self: Bitset) -> Int`
-///
 /// Calculate the size of a bitset
 pub fn Bitset::size(self : Bitset) -> Int {
   let Bitset(self) = self
