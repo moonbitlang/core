@@ -223,9 +223,9 @@ test "bind" {
 /// ```mbt
 /// test "flatten_example" {
 ///   let a = Some(Some(42));
-///   assert_eq(@option.flatten(a), Some(42))
+///   assert_eq(a.flatten(), Some(42))
 ///   let b : Int?? = Some(None)
-///   assert_eq(@option.flatten(b), None)
+///   assert_eq(b.flatten(), None)
 /// }
 /// ```
 pub fn[T] flatten(self : T??) -> T? {

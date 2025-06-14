@@ -58,7 +58,7 @@ pub fn from_iter(iter : Iter[Char]) -> String {
 ///
 /// ```mbt
 /// test {
-///   let s = @string.concat(["Hello", ", ", "world!"])
+/// let s = @string.concat(["Hello", ", ", "world!"])
 ///   assert_eq(s, "Hello, world!")
 ///   let s = @string.concat(["a", "b", "c"], separator=",")
 ///   assert_eq(s, "a,b,c")

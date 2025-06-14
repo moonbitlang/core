@@ -63,7 +63,7 @@ pub fn[T, U] snd(tuple : (T, U)) -> U {
 /// ```mbt
 /// test "Tuple::map_fst" {
 ///   let tuple = (1, 2)
-///   let mapped = @tuple.map_fst(fn(x : Int) -> Int { x + 1 }, tuple)
+///   let mapped = tuple |> then(fn { (a, b) => (a + 1, b) })
 ///   assert_eq(mapped, (2, 2))
 /// }
 /// ```
@@ -79,7 +79,7 @@ pub fn[T, U, V] map_fst(f : (T) -> U, tuple : (T, V)) -> (U, V) {
 /// ```mbt
 /// test "Tuple::map_snd" {
 ///   let tuple = (1, 2)
-///   let mapped = @tuple.map_snd(fn(x : Int) -> Int { x + 1 }, tuple)
+///   let mapped = tuple|> then(fn { (a, b) => (a, b+1) })
 ///   assert_eq(mapped, (1, 3))
 /// }
 /// ```
@@ -95,7 +95,7 @@ pub fn[T, U, V] map_snd(f : (T) -> U, tuple : (V, T)) -> (V, U) {
 /// ```mbt
 /// test "Tuple::map_both" {
 ///   let tuple = (1, 2)
-///   let mapped = @tuple.map_both(fn(x : Int) -> Int { x + 1 }, fn(x : Int) -> Int { x - 1 }, tuple)
+///   let mapped = tuple |> then(fn { (a, b) => (a + 1, b - 1) })
 ///   assert_eq(mapped, (2, 1))
 /// }
 /// ```

@@ -48,7 +48,7 @@ pub typealias StringView as View
 /// ```mbt
 /// test {
 ///   let str = "Hello🤣🤣🤣"
-///   let view = str[1:6]
+///   let view = str.charcodes(start = str.offset_of_nth_char(1).unwrap(), end = str.offset_of_nth_char(6).unwrap())
 ///   inspect(view[0].to_char(), content="Some('e')")
 ///   inspect(view[4], content="55358")
 /// }
@@ -268,7 +268,7 @@ pub impl Show for View with output(self, logger) {
 /// ```mbt
 /// test {
 ///   let str = "Hello World"
-///   let view = str[0:5]  // "Hello"
+///   let view = str.charcodes(start = str.offset_of_nth_char(0).unwrap(),end   = str.offset_of_nth_char(5).unwrap()) // "Hello"
 ///   inspect(view.to_string(), content="Hello")
 /// }
 /// ```
