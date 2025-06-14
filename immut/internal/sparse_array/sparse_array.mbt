@@ -41,6 +41,23 @@ pub fn[X] op_get(self : SparseArray[X], idx : Int) -> X? {
 }
 
 ///|
+pub fn[X] doubleton(
+  idx1 : Int,
+  value1 : X,
+  idx2 : Int,
+  value2 : X
+) -> SparseArray[X] {
+  {
+    elem_info: empty_bitset.add(idx1).add(idx2),
+    data: if idx1 < idx2 {
+      [value1, value2]
+    } else {
+      [value2, value1]
+    },
+  }
+}
+
+///|
 /// Add a new element into the sparse array.
 /// `idx` must be absent from `self`
 pub fn[X] add(self : SparseArray[X], idx : Int, value : X) -> SparseArray[X] {
