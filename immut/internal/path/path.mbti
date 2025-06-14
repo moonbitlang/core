@@ -1,0 +1,17 @@
+package "moonbitlang/core/immut/internal/path"
+
+// Values
+fn[A : Hash] of(A) -> Path
+
+// Types and methods
+pub(all) type Path UInt
+fn Path::idx(Self) -> Int
+fn Path::inner(Self) -> UInt
+fn Path::is_end(Self) -> Bool
+fn Path::next(Self) -> Self
+fn Path::push(Self, Int) -> Self
+
+// Type aliases
+
+// Traits
+

@@ -13,6 +13,9 @@
 // limitations under the License.
 
 ///|
+typealias @path.Path
+
+///|
 /// A bucket is a non-empty linked list of key-value pair,
 /// used to resolve hash collision in HAMT
 priv enum Bucket[T] {
