@@ -32,6 +32,11 @@ pub fn Bitset::index_of(self : Bitset, idx : Int) -> Int {
 }
 
 ///|
+pub fn Bitset::fitst_idx(self : Bitset) -> Int {
+  self._.ctz()
+}
+
+///|
 pub fn Bitset::union(self : Bitset, other : Bitset) -> Bitset {
   Bitset(self._ | other._)
 }

@@ -3,6 +3,8 @@ package "moonbitlang/core/immut/internal/sparse_array"
 // Values
 fn[X] add(SparseArray[X], Int, X) -> SparseArray[X]
 
+fn[X] doubleton(Int, X, Int, X) -> SparseArray[X]
+
 fn[X] each(SparseArray[X], (X) -> Unit) -> Unit
 
 fn[X] empty() -> SparseArray[X]
@@ -23,6 +25,7 @@ fn[X] size(SparseArray[X]) -> Int
 pub(all) type Bitset UInt
 fn Bitset::add(Self, Int) -> Self
 fn Bitset::difference(Self, Self) -> Self
+fn Bitset::fitst_idx(Self) -> Int
 fn Bitset::has(Self, Int) -> Bool
 fn Bitset::index_of(Self, Int) -> Int
 fn Bitset::intersection(Self, Self) -> Self
