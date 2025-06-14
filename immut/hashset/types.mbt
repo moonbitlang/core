@@ -16,18 +16,9 @@
 typealias @path.Path
 
 ///|
-/// A bucket is a non-empty linked list of key-value pair,
-/// used to resolve hash collision in HAMT
-priv enum Bucket[T] {
-  JustOne(T) // must be non-empty
-  More(T, Bucket[T])
-}
-
-///|
 /// An immutable hash set data structure
 enum T[A] {
   Empty
-  Leaf(A) // optimize for the case of no collision
-  Collision(Bucket[A]) // use a list of buckets to resolve collision
+  Leaf(A, @list.T[A]) // use a list of buckets to resolve collision
   Branch(@sparse_array.SparseArray[T[A]])
 }
