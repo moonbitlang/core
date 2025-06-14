@@ -304,7 +304,7 @@ pub fn[A, B] View::foldi(
 /// # Example
 /// ```mbt
 /// test {
-///   let sum = [1, 2, 3, 4, 5][:].rev_foldi(init=0, fn { index, sum, _elem => sum + index })
+///   let sum = [1, 2, 3, 4, 5][:].rev_foldi(init=0, fn(index, sum, _elem) { sum + index })
 ///   assert_eq(sum, 10)
 /// }
 /// ```
