@@ -16,7 +16,7 @@
 /// A Path is a binary string divided into several segments, for example:
 /// 0b11_10000_10101_00100_11111_01010
 /// where the last segment is 10000, and the first segment is 01010.
-pub(all) type Path UInt
+pub(all) type Path UInt derive(Eq)
 
 ///|
 const SEGMENT_LENGTH : Int = 5
@@ -36,13 +36,13 @@ pub fn[A : Hash] of(key : A) -> Path {
 }
 
 ///|
-/// If SEGMENT_LENGTH == 5, END == 0b11
-const END : UInt = 0xffffffffU >> (SEGMENT_LENGTH * SEGMENT_NUM)
+/// If SEGMENT_LENGTH == 5, MAX_TAIL == 0b11_11111
+const MAX_TAIL : UInt = 0xffffffffU >> (SEGMENT_LENGTH * (SEGMENT_NUM - 1))
 
 ///|
-pub fn Path::is_end(self : Path) -> Bool {
+pub fn Path::is_last(self : Path) -> Bool {
   let Path(self) = self
-  self == END
+  self <= MAX_TAIL
 }
 
 ///|
