@@ -32,11 +32,6 @@ pub fn[X] singleton(idx : Int, value : X) -> SparseArray[X] {
 }
 
 ///|
-pub fn[X] has(self : SparseArray[X], idx : Int) -> Bool {
-  self.elem_info.has(idx)
-}
-
-///|
 pub fn[X] op_get(self : SparseArray[X], idx : Int) -> X? {
   if self.elem_info.has(idx) {
     Some(self.data[self.elem_info.index_of(idx)])
