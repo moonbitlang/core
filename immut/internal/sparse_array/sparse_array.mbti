@@ -28,6 +28,7 @@ fn[X] SparseArray::difference(Self[X], Self[X]) -> Self[X]
 fn[X] SparseArray::each(Self[X], (X) -> Unit raise?) -> Unit raise?
 fn[X] SparseArray::intersection(Self[X], Self[X], (X, X) -> X raise?) -> Self[X] raise?
 fn[X] SparseArray::op_get(Self[X], Int) -> X?
+fn[X] SparseArray::remove(Self[X], Int) -> Self[X]
 fn[X] SparseArray::replace(Self[X], Int, X) -> Self[X]
 fn[X] SparseArray::size(Self[X]) -> Int
 fn[X] SparseArray::union(Self[X], Self[X], (X, X) -> X raise?) -> Self[X] raise?

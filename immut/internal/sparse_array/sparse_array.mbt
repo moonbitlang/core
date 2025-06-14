@@ -60,6 +60,29 @@ pub fn[X] add(self : SparseArray[X], idx : Int, value : X) -> SparseArray[X] {
 }
 
 ///|
+/// Removes an element at the specified index from the sparse array.
+/// `idx` must be in `self`
+pub fn[X] remove(self : SparseArray[X], idx : Int) -> SparseArray[X] {
+  let old_data = self.data
+  let old_len = old_data.length()
+  let pos_of_removed_item = self.elem_info.index_of(idx)
+  let new_data = FixedArray::make(old_len - 1, old_data.unsafe_get(0))
+  old_data.blit_to(
+    new_data,
+    len=pos_of_removed_item,
+    src_offset=0,
+    dst_offset=0,
+  )
+  old_data.blit_to(
+    new_data,
+    len=old_len - pos_of_removed_item - 1,
+    src_offset=pos_of_removed_item + 1,
+    dst_offset=pos_of_removed_item,
+  )
+  { elem_info: self.elem_info.remove(idx), data: new_data }
+}
+
+///|
 /// Combine two sparse arrays into one.
 pub fn[X] SparseArray::union(
   self : SparseArray[X],
