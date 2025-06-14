@@ -46,10 +46,8 @@ pub fn[X] op_get(self : SparseArray[X], idx : Int) -> X? {
 }
 
 ///|
-/// `add(self: SparseArray[X], idx: Int, value: X)`
-///
 /// Add a new element into the sparse array.
-/// [idx] must be absent from [self]
+/// `idx` must be absent from `self`
 pub fn[X] add(self : SparseArray[X], idx : Int, value : X) -> SparseArray[X] {
   let old_data = self.data
   let old_len = old_data.length()
@@ -67,8 +65,6 @@ pub fn[X] add(self : SparseArray[X], idx : Int, value : X) -> SparseArray[X] {
 }
 
 ///|
-/// `union(self: SparseArray[X], other: SparseArray[X]) -> SparseArray[X]`
-/// 
 /// Combine two sparse arrays into one.
 pub fn[X] SparseArray::union(
   self : SparseArray[X],
@@ -103,8 +99,6 @@ pub fn[X] SparseArray::union(
 }
 
 ///|
-/// `intersection(self: SparseArray[X], other: SparseArray[X], f: (X, X) -> X) -> SparseArray[X]`
-///
 /// Only keep indices present in both sparse arrays, and merge values with f.
 pub fn[X] SparseArray::intersection(
   self : SparseArray[X],
@@ -129,8 +123,6 @@ pub fn[X] SparseArray::intersection(
 }
 
 ///|
-/// `difference(self: SparseArray[X], other: SparseArray[X]) -> SparseArray[X]`
-///
 /// Keep indices and values only present in self but not in other.
 pub fn[X] SparseArray::difference(
   self : SparseArray[X],
@@ -151,8 +143,6 @@ pub fn[X] SparseArray::difference(
 }
 
 ///|
-/// `replace(self: SparseArray[X], idx: Int, value: X)`
-///
 // replace an existing element in the sparse array.
 pub fn[X] replace(
   self : SparseArray[X],
@@ -165,16 +155,12 @@ pub fn[X] replace(
 }
 
 ///|
-/// `size(self: SparseArray[X]) -> Int`
-///
 /// Return the size of a sparse array
 pub fn[X] size(self : SparseArray[X]) -> Int {
   self.data.length()
 }
 
 ///|
-/// `each(self: SparseArray[X], f: (X) -> Unit) -> Unit`
-///
 /// Iterate through elements in a sparse array
 pub fn[X] each(self : SparseArray[X], f : (X) -> Unit raise?) -> Unit raise? {
   for i in 0..<self.elem_info.size() {
