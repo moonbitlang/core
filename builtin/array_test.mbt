@@ -750,7 +750,7 @@ test "map with error callback" {
   inspect(
     v,
     content=
-      #|Err("Failure(Error at 2)")
+      #|Err(Failure("Error at 2"))
     ,
   )
 }
@@ -785,7 +785,7 @@ test "mapi with error callback" {
   inspect(
     v,
     content=
-      #|Err("Failure(Error at 2)")
+      #|Err(Failure("Error at 2"))
     ,
   )
 }
@@ -820,7 +820,7 @@ test "filter with error callback" {
   inspect(
     v,
     content=
-      #|Err("Failure(Error at 2)")
+      #|Err(Failure("Error at 2"))
     ,
   )
 }
@@ -855,7 +855,7 @@ test "map_inplace with error callback" {
   inspect(
     v,
     content=
-      #|Err("Failure(Error at 2)")
+      #|Err(Failure("Error at 2"))
     ,
   )
 }
@@ -890,7 +890,7 @@ test "mapi_inplace with error callback" {
   inspect(
     v,
     content=
-      #|Err("Failure(Error at 2)")
+      #|Err(Failure("Error at 2"))
     ,
   )
 }

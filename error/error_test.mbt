@@ -105,7 +105,7 @@ test "protect" {
   inspect(
     x,
     content=
-      #|Err("Failure(error)")
+      #|Err(Failure("error"))
     ,
   )
 }
@@ -122,7 +122,7 @@ test "protect & finally raise error" {
   inspect(
     x,
     content=
-      #|Err("Failure(error)")
+      #|Err(Failure("error"))
     ,
   )
 }
@@ -139,7 +139,7 @@ test "protect2" {
   inspect(
     x,
     content=
-      #|Err("Failure(error)")
+      #|Err(Failure("error"))
     ,
   )
 }
@@ -156,7 +156,7 @@ test "protect2 & finally raise error" {
   inspect(
     x,
     content=
-      #|Err("Failure(finally error)")
+      #|Err(Failure("finally error"))
     ,
   )
 }
