@@ -32,24 +32,35 @@ pub fn[X] singleton(idx : Int, value : X) -> SparseArray[X] {
 }
 
 ///|
+pub fn[X] doubleton(
+  idx1 : Int,
+  value1 : X,
+  idx2 : Int,
+  value2 : X
+) -> SparseArray[X] {
+  {
+    elem_info: empty_bitset.add(idx1).add(idx2),
+    data: if idx1 < idx2 {
+      [value1, value2]
+    } else {
+      [value2, value1]
+    },
+  }
+}
+
+///|
 pub fn[X] has(self : SparseArray[X], idx : Int) -> Bool {
   self.elem_info.has(idx)
 }
 
 ///|
-pub fn[X] op_get(self : SparseArray[X], idx : Int) -> X? {
-  if self.elem_info.has(idx) {
-    Some(self.data[self.elem_info.index_of(idx)])
-  } else {
-    None
-  }
+pub fn[X] op_get(self : SparseArray[X], idx : Int) -> X {
+  self.data[self.elem_info.index_of(idx)]
 }
 
 ///|
-/// `add(self: SparseArray[X], idx: Int, value: X)`
-///
 /// Add a new element into the sparse array.
-/// [idx] must be absent from [self]
+/// `idx` must be absent from `self`
 pub fn[X] add(self : SparseArray[X], idx : Int, value : X) -> SparseArray[X] {
   let old_data = self.data
   let old_len = old_data.length()
@@ -67,8 +78,29 @@ pub fn[X] add(self : SparseArray[X], idx : Int, value : X) -> SparseArray[X] {
 }
 
 ///|
-/// `union(self: SparseArray[X], other: SparseArray[X]) -> SparseArray[X]`
-/// 
+/// Removes an element at the specified index from the sparse array.
+/// `idx` must be in `self`
+pub fn[X] remove(self : SparseArray[X], idx : Int) -> SparseArray[X] {
+  let old_data = self.data
+  let old_len = old_data.length()
+  let pos_of_removed_item = self.elem_info.index_of(idx)
+  let new_data = FixedArray::make(old_len - 1, old_data.unsafe_get(0))
+  old_data.blit_to(
+    new_data,
+    len=pos_of_removed_item,
+    src_offset=0,
+    dst_offset=0,
+  )
+  old_data.blit_to(
+    new_data,
+    len=old_len - pos_of_removed_item - 1,
+    src_offset=pos_of_removed_item + 1,
+    dst_offset=pos_of_removed_item,
+  )
+  { elem_info: self.elem_info.remove(idx), data: new_data }
+}
+
+///|
 /// Combine two sparse arrays into one.
 pub fn[X] SparseArray::union(
   self : SparseArray[X],
@@ -103,8 +135,6 @@ pub fn[X] SparseArray::union(
 }
 
 ///|
-/// `intersection(self: SparseArray[X], other: SparseArray[X], f: (X, X) -> X) -> SparseArray[X]`
-///
 /// Only keep indices present in both sparse arrays, and merge values with f.
 pub fn[X] SparseArray::intersection(
   self : SparseArray[X],
@@ -129,8 +159,6 @@ pub fn[X] SparseArray::intersection(
 }
 
 ///|
-/// `difference(self: SparseArray[X], other: SparseArray[X]) -> SparseArray[X]`
-///
 /// Keep indices and values only present in self but not in other.
 pub fn[X] SparseArray::difference(
   self : SparseArray[X],
@@ -151,8 +179,6 @@ pub fn[X] SparseArray::difference(
 }
 
 ///|
-/// `replace(self: SparseArray[X], idx: Int, value: X)`
-///
 // replace an existing element in the sparse array.
 pub fn[X] replace(
   self : SparseArray[X],
@@ -165,16 +191,12 @@ pub fn[X] replace(
 }
 
 ///|
-/// `size(self: SparseArray[X]) -> Int`
-///
 /// Return the size of a sparse array
 pub fn[X] size(self : SparseArray[X]) -> Int {
   self.data.length()
 }
 
 ///|
-/// `each(self: SparseArray[X], f: (X) -> Unit) -> Unit`
-///
 /// Iterate through elements in a sparse array
 pub fn[X] each(self : SparseArray[X], f : (X) -> Unit) -> Unit {
   for i in 0..<self.elem_info.size() {
