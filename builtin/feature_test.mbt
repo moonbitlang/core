@@ -82,3 +82,15 @@ test "labeld_break/cross_threshold" {
   let xss = [[3.0, 4.0], [5.0, 6.0]]
   inspect(labeld_break(xss), content="Some(12)")
 }
+
+///|
+test "Failure ToJson and Show" {
+  let err : Failure = Failure("Test assertion failed")
+  @json.inspect(err, content={ "$tag": "Failure", "0": "Test assertion failed" })
+  inspect(
+    err,
+    content=
+      #|Failure("Test assertion failed")
+    ,
+  )
+}
