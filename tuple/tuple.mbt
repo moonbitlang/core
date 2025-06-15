@@ -22,6 +22,7 @@
 ///   assert_eq(tuple, (1, 2))
 /// }
 /// ```
+#deprecated
 pub fn[T, U] pair(x : T, y : U) -> (T, U) {
   (x, y)
 }
@@ -37,6 +38,7 @@ pub fn[T, U] pair(x : T, y : U) -> (T, U) {
 ///   assert_eq(x, 1)
 /// }
 /// ```
+#deprecated("use `tuple.0` instead")
 pub fn[T, U] fst(tuple : (T, U)) -> T {
   tuple.0
 }
@@ -52,6 +54,7 @@ pub fn[T, U] fst(tuple : (T, U)) -> T {
 ///   assert_eq(y, 2)
 /// }
 /// ```
+#deprecated("use `tuple.1` instead")
 pub fn[T, U] snd(tuple : (T, U)) -> U {
   tuple.1
 }
@@ -119,6 +122,7 @@ pub fn[T, U, V, W] map_both(
 ///   assert_eq(swapped, (2, 1))
 /// }
 /// ```
+#deprecated
 pub fn[T, U] swap(tuple : (T, U)) -> (U, T) {
   (tuple.1, tuple.0)
 }
@@ -134,6 +138,7 @@ pub fn[T, U] swap(tuple : (T, U)) -> (U, T) {
 ///   assert_eq(curried_add(1)(2), 3)
 /// }
 /// ```
+#deprecated
 pub fn[T, U, V] curry(f : (T, U) -> V) -> (T) -> (U) -> V {
   fn(x : T) { fn(y : U) -> V { f(x, y) } }
 }
@@ -149,6 +154,7 @@ pub fn[T, U, V] curry(f : (T, U) -> V) -> (T) -> (U) -> V {
 ///   assert_eq(uncurried_add(1, 2), 3)
 /// }
 /// ```
+#deprecated
 pub fn[T, U, V] uncurry(f : (T) -> (U) -> V) -> (T, U) -> V {
   fn(x : T, y : U) { f(x)(y) }
 }

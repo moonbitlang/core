@@ -5,8 +5,10 @@ import(
 )
 
 // Values
+#deprecated
 fn[T, U, V] curry((T, U) -> V) -> (T) -> (U) -> V
 
+#deprecated
 fn[T, U] fst((T, U)) -> T
 
 #deprecated
@@ -18,12 +20,16 @@ fn[T, U, V] map_fst((T) -> U, (T, V)) -> (U, V)
 #deprecated
 fn[T, U, V] map_snd((T) -> U, (V, T)) -> (V, U)
 
+#deprecated
 fn[T, U] pair(T, U) -> (T, U)
 
+#deprecated
 fn[T, U] snd((T, U)) -> U
 
+#deprecated
 fn[T, U] swap((T, U)) -> (U, T)
 
+#deprecated
 fn[T, U, V] uncurry((T) -> (U) -> V) -> (T, U) -> V
 
 // Types and methods
