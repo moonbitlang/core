@@ -64,7 +64,7 @@ pub fn Bytes::makei(length : Int, value : (Int) -> Byte) -> Bytes {
 ///
 /// ```moonbit
 /// test "Bytes::of_string" {
-///   let bytes = Bytes::of_string("ABC")
+///   let bytes = "ABC".to_bytes()
 ///   inspect(bytes, content="b\"\\x41\\x00\\x42\\x00\\x43\\x00\"")
 /// }
 /// ```
@@ -93,9 +93,10 @@ fn unsafe_sub_string(
 pub fn Bytes::to_unchecked_string(
   self : Bytes,
   offset~ : Int = 0,
-  length~ : Int = self.length() - offset
+  length? : Int
 ) -> String {
   let len = self.length()
+  let length = if length is Some(l) { l } else { len - offset }
   guard offset >= 0 && length >= 0 && offset + length <= len
   unsafe_sub_string(self, offset, length)
 }

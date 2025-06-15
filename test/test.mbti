@@ -2,29 +2,29 @@ package "moonbitlang/core/test"
 
 // Values
 #deprecated
-fn bench(T, () -> Unit, count~ : UInt = ..) -> Unit!BenchError
+fn bench(T, () -> Unit, count~ : UInt = ..) -> Unit raise BenchError
 
 #deprecated
-fn[T : Show + Eq] eq(T, T, loc~ : SourceLoc = _) -> Unit!
+fn[T : Show + Eq] eq(T, T, loc~ : SourceLoc = _) -> Unit raise
 
-fn[T] fail(String, loc~ : SourceLoc = _) -> T!
-
-#deprecated
-fn is_false(Bool, loc~ : SourceLoc = _) -> Unit!
-
-fn[T : Show] is_not(T, T, loc~ : SourceLoc = _) -> Unit!
+fn[T] fail(String, loc~ : SourceLoc = _) -> T raise
 
 #deprecated
-fn is_true(Bool, loc~ : SourceLoc = _) -> Unit!
+fn is_false(Bool, loc~ : SourceLoc = _) -> Unit raise
+
+fn[T : Show] is_not(T, T, loc~ : SourceLoc = _) -> Unit raise
 
 #deprecated
-fn[T : Show + Eq] ne(T, T, loc~ : SourceLoc = _) -> Unit!
+fn is_true(Bool, loc~ : SourceLoc = _) -> Unit raise
+
+#deprecated
+fn[T : Show + Eq] ne(T, T, loc~ : SourceLoc = _) -> Unit raise
 
 fn new(String) -> T
 
-fn[T : Show] same_object(T, T, loc~ : SourceLoc = _) -> Unit!
+fn[T : Show] same_object(T, T, loc~ : SourceLoc = _) -> Unit raise
 
-fn snapshot(T, filename~ : String, loc~ : SourceLoc = _, args_loc~ : ArgsLoc = _) -> Unit!SnapshotError
+fn snapshot(T, filename~ : String, loc~ : SourceLoc = _, args_loc~ : ArgsLoc = _) -> Unit raise SnapshotError
 
 fn write(T, &Show) -> Unit
 
@@ -36,8 +36,8 @@ pub(all) struct T {
   buffer : StringBuilder
 }
 #deprecated
-fn T::bench(Self, () -> Unit, count~ : UInt = ..) -> Unit!BenchError
-fn T::snapshot(Self, filename~ : String, loc~ : SourceLoc = _, args_loc~ : ArgsLoc = _) -> Unit!SnapshotError
+fn T::bench(Self, () -> Unit, count~ : UInt = ..) -> Unit raise BenchError
+fn T::snapshot(Self, filename~ : String, loc~ : SourceLoc = _, args_loc~ : ArgsLoc = _) -> Unit raise SnapshotError
 fn T::write(Self, &Show) -> Unit
 fn T::writeln(Self, &Show) -> Unit
 

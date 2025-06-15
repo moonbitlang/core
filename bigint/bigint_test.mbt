@@ -727,249 +727,237 @@ test "to_uint64" {
 
 ///|
 test "equal_int" {
-  assert_true!(BigInt::equal_int(1N, 1))
-  assert_true!(BigInt::equal_int(-1N, -1))
-  assert_false!(BigInt::equal_int(1N, -1))
-  assert_false!(BigInt::equal_int(-1N, 1))
-  assert_true!(BigInt::equal_int(0N, 0))
-  assert_false!(BigInt::equal_int(0N, 1))
-  assert_false!(BigInt::equal_int(1N, 0))
+  assert_true(BigInt::equal_int(1N, 1))
+  assert_true(BigInt::equal_int(-1N, -1))
+  assert_false(BigInt::equal_int(1N, -1))
+  assert_false(BigInt::equal_int(-1N, 1))
+  assert_true(BigInt::equal_int(0N, 0))
+  assert_false(BigInt::equal_int(0N, 1))
+  assert_false(BigInt::equal_int(1N, 0))
 
   // Test with max/min int values
-  assert_true!(BigInt::equal_int(2147483647N, 2147483647))
-  assert_true!(BigInt::equal_int(-2147483648N, -2147483648))
-  assert_false!(BigInt::equal_int(2147483647N, -2147483648))
-  assert_false!(BigInt::equal_int(-2147483648N, 2147483647))
+  assert_true(BigInt::equal_int(2147483647N, 2147483647))
+  assert_true(BigInt::equal_int(-2147483648N, -2147483648))
+  assert_false(BigInt::equal_int(2147483647N, -2147483648))
+  assert_false(BigInt::equal_int(-2147483648N, 2147483647))
 
   // Test with large BigInt that doesn't fit in int
   let large = 2N.pow(32)
-  assert_false!(BigInt::equal_int(large, 0))
-  assert_false!(BigInt::equal_int(large, 1))
-  assert_false!(BigInt::equal_int(large, -1))
+  assert_false(BigInt::equal_int(large, 0))
+  assert_false(BigInt::equal_int(large, 1))
+  assert_false(BigInt::equal_int(large, -1))
 
   // Test with negative large BigInt
   let neg_large = -2N.pow(32)
-  assert_false!(BigInt::equal_int(neg_large, 0))
-  assert_false!(BigInt::equal_int(neg_large, 1))
-  assert_false!(BigInt::equal_int(neg_large, -1))
+  assert_false(BigInt::equal_int(neg_large, 0))
+  assert_false(BigInt::equal_int(neg_large, 1))
+  assert_false(BigInt::equal_int(neg_large, -1))
 }
 
 ///|
 test "equal_int64" {
-  assert_true!(BigInt::equal_int64(1N, 1L))
-  assert_true!(BigInt::equal_int64(-1N, -1L))
-  assert_false!(BigInt::equal_int64(1N, -1L))
-  assert_false!(BigInt::equal_int64(-1N, 1L))
-  assert_true!(BigInt::equal_int64(0N, 0L))
-  assert_false!(BigInt::equal_int64(0N, 1L))
-  assert_false!(BigInt::equal_int64(1N, 0L))
+  assert_true(BigInt::equal_int64(1N, 1L))
+  assert_true(BigInt::equal_int64(-1N, -1L))
+  assert_false(BigInt::equal_int64(1N, -1L))
+  assert_false(BigInt::equal_int64(-1N, 1L))
+  assert_true(BigInt::equal_int64(0N, 0L))
+  assert_false(BigInt::equal_int64(0N, 1L))
+  assert_false(BigInt::equal_int64(1N, 0L))
 
   // Test with max/min int64 values
-  assert_true!(BigInt::equal_int64(9223372036854775807N, 9223372036854775807L))
-  assert_true!(
-    BigInt::equal_int64(-9223372036854775808N, -9223372036854775808L),
-  )
-  assert_false!(
-    BigInt::equal_int64(9223372036854775807N, -9223372036854775808L),
-  )
-  assert_false!(
-    BigInt::equal_int64(-9223372036854775808N, 9223372036854775807L),
-  )
+  assert_true(BigInt::equal_int64(9223372036854775807N, 9223372036854775807L))
+  assert_true(BigInt::equal_int64(-9223372036854775808N, -9223372036854775808L))
+  assert_false(BigInt::equal_int64(9223372036854775807N, -9223372036854775808L))
+  assert_false(BigInt::equal_int64(-9223372036854775808N, 9223372036854775807L))
 
   // Test with large values that fit in int64
-  assert_true!(BigInt::equal_int64(1234567890123456789N, 1234567890123456789L))
-  assert_true!(
-    BigInt::equal_int64(-1234567890123456789N, -1234567890123456789L),
-  )
-  assert_false!(
-    BigInt::equal_int64(1234567890123456789N, -1234567890123456789L),
-  )
-  assert_false!(
-    BigInt::equal_int64(-1234567890123456789N, 1234567890123456789L),
-  )
+  assert_true(BigInt::equal_int64(1234567890123456789N, 1234567890123456789L))
+  assert_true(BigInt::equal_int64(-1234567890123456789N, -1234567890123456789L))
+  assert_false(BigInt::equal_int64(1234567890123456789N, -1234567890123456789L))
+  assert_false(BigInt::equal_int64(-1234567890123456789N, 1234567890123456789L))
 
   // Test with BigInt that doesn't fit in int64
   let large = 2N.pow(64)
-  assert_false!(BigInt::equal_int64(large, 0L))
-  assert_false!(BigInt::equal_int64(large, 1L))
-  assert_false!(BigInt::equal_int64(large, -1L))
-  assert_false!(BigInt::equal_int64(large, 9223372036854775807L))
-  assert_false!(BigInt::equal_int64(large, -9223372036854775808L))
+  assert_false(BigInt::equal_int64(large, 0L))
+  assert_false(BigInt::equal_int64(large, 1L))
+  assert_false(BigInt::equal_int64(large, -1L))
+  assert_false(BigInt::equal_int64(large, 9223372036854775807L))
+  assert_false(BigInt::equal_int64(large, -9223372036854775808L))
 
   // Test with negative large BigInt that doesn't fit in int64
   let neg_large = -2N.pow(64)
-  assert_false!(BigInt::equal_int64(neg_large, 0L))
-  assert_false!(BigInt::equal_int64(neg_large, 1L))
-  assert_false!(BigInt::equal_int64(neg_large, -1L))
-  assert_false!(BigInt::equal_int64(neg_large, 9223372036854775807L))
-  assert_false!(BigInt::equal_int64(neg_large, -9223372036854775808L))
+  assert_false(BigInt::equal_int64(neg_large, 0L))
+  assert_false(BigInt::equal_int64(neg_large, 1L))
+  assert_false(BigInt::equal_int64(neg_large, -1L))
+  assert_false(BigInt::equal_int64(neg_large, 9223372036854775807L))
+  assert_false(BigInt::equal_int64(neg_large, -9223372036854775808L))
 
   // Test edge cases around int64 boundaries
   let max_plus_one = 9223372036854775808N // 2^63
   let min_minus_one = -9223372036854775809N // -2^63 - 1
-  assert_false!(BigInt::equal_int64(max_plus_one, 9223372036854775807L))
-  assert_false!(BigInt::equal_int64(min_minus_one, -9223372036854775808L))
+  assert_false(BigInt::equal_int64(max_plus_one, 9223372036854775807L))
+  assert_false(BigInt::equal_int64(min_minus_one, -9223372036854775808L))
 
   // Test with powers of 2
-  assert_true!(BigInt::equal_int64(2N.pow(32), 4294967296L))
-  assert_true!(BigInt::equal_int64(2N.pow(62), 4611686018427387904L))
-  assert_false!(BigInt::equal_int64(2N.pow(63), 9223372036854775807L)) // This would overflow
+  assert_true(BigInt::equal_int64(2N.pow(32), 4294967296L))
+  assert_true(BigInt::equal_int64(2N.pow(62), 4611686018427387904L))
+  assert_false(BigInt::equal_int64(2N.pow(63), 9223372036854775807L)) // This would overflow
 }
 
 ///|
 test "compare_int" {
   // Test with zero
-  assert_eq!(BigInt::compare_int(0N, 0), 0)
-  assert_eq!(BigInt::compare_int(0N, 1), -1)
-  assert_eq!(BigInt::compare_int(0N, -1), 1)
+  assert_eq(BigInt::compare_int(0N, 0), 0)
+  assert_eq(BigInt::compare_int(0N, 1), -1)
+  assert_eq(BigInt::compare_int(0N, -1), 1)
 
   // Test with positive values
-  assert_eq!(BigInt::compare_int(1N, 1), 0)
-  assert_eq!(BigInt::compare_int(1N, 0), 1)
-  assert_eq!(BigInt::compare_int(1N, 2), -1)
-  assert_eq!(BigInt::compare_int(42N, 42), 0)
-  assert_eq!(BigInt::compare_int(100N, 50), 1)
-  assert_eq!(BigInt::compare_int(25N, 100), -1)
+  assert_eq(BigInt::compare_int(1N, 1), 0)
+  assert_eq(BigInt::compare_int(1N, 0), 1)
+  assert_eq(BigInt::compare_int(1N, 2), -1)
+  assert_eq(BigInt::compare_int(42N, 42), 0)
+  assert_eq(BigInt::compare_int(100N, 50), 1)
+  assert_eq(BigInt::compare_int(25N, 100), -1)
 
   // Test with negative values
-  assert_eq!(BigInt::compare_int(-1N, -1), 0)
-  assert_eq!(BigInt::compare_int(-1N, 0), -1)
-  assert_eq!(BigInt::compare_int(-1N, 1), -1)
-  assert_eq!(BigInt::compare_int(-42N, -42), 0)
-  assert_eq!(BigInt::compare_int(-25N, -100), 1)
-  assert_eq!(BigInt::compare_int(-100N, -50), -1)
+  assert_eq(BigInt::compare_int(-1N, -1), 0)
+  assert_eq(BigInt::compare_int(-1N, 0), -1)
+  assert_eq(BigInt::compare_int(-1N, 1), -1)
+  assert_eq(BigInt::compare_int(-42N, -42), 0)
+  assert_eq(BigInt::compare_int(-25N, -100), 1)
+  assert_eq(BigInt::compare_int(-100N, -50), -1)
 
   // Test with mixed signs
-  assert_eq!(BigInt::compare_int(1N, -1), 1)
-  assert_eq!(BigInt::compare_int(-1N, 1), -1)
-  assert_eq!(BigInt::compare_int(100N, -50), 1)
-  assert_eq!(BigInt::compare_int(-100N, 50), -1)
+  assert_eq(BigInt::compare_int(1N, -1), 1)
+  assert_eq(BigInt::compare_int(-1N, 1), -1)
+  assert_eq(BigInt::compare_int(100N, -50), 1)
+  assert_eq(BigInt::compare_int(-100N, 50), -1)
 
   // Test with Int boundary values
-  assert_eq!(BigInt::compare_int(2147483647N, 2147483647), 0) // Int.max_value
-  assert_eq!(BigInt::compare_int(-2147483648N, -2147483648), 0) // Int.min_value
-  assert_eq!(BigInt::compare_int(2147483647N, 2147483646), 1)
-  assert_eq!(BigInt::compare_int(2147483646N, 2147483647), -1)
-  assert_eq!(BigInt::compare_int(-2147483648N, -2147483647), -1)
-  assert_eq!(BigInt::compare_int(-2147483647N, -2147483648), 1)
+  assert_eq(BigInt::compare_int(2147483647N, 2147483647), 0) // Int.max_value
+  assert_eq(BigInt::compare_int(-2147483648N, -2147483648), 0) // Int.min_value
+  assert_eq(BigInt::compare_int(2147483647N, 2147483646), 1)
+  assert_eq(BigInt::compare_int(2147483646N, 2147483647), -1)
+  assert_eq(BigInt::compare_int(-2147483648N, -2147483647), -1)
+  assert_eq(BigInt::compare_int(-2147483647N, -2147483648), 1)
 
   // Test with BigInt that doesn't fit in Int
   let large = 2147483648N // Int.max_value + 1
-  assert_eq!(BigInt::compare_int(large, 2147483647), 1)
-  assert_eq!(BigInt::compare_int(large, -2147483648), 1)
-  assert_eq!(BigInt::compare_int(large, 0), 1)
+  assert_eq(BigInt::compare_int(large, 2147483647), 1)
+  assert_eq(BigInt::compare_int(large, -2147483648), 1)
+  assert_eq(BigInt::compare_int(large, 0), 1)
   let neg_large = -2147483649N // Int.min_value - 1
-  assert_eq!(BigInt::compare_int(neg_large, -2147483648), -1)
-  assert_eq!(BigInt::compare_int(neg_large, 2147483647), -1)
-  assert_eq!(BigInt::compare_int(neg_large, 0), -1)
+  assert_eq(BigInt::compare_int(neg_large, -2147483648), -1)
+  assert_eq(BigInt::compare_int(neg_large, 2147483647), -1)
+  assert_eq(BigInt::compare_int(neg_large, 0), -1)
 
   // Test with very large BigInt values
   let very_large = BigInt::from_string("123456789012345678901234567890")
-  assert_eq!(BigInt::compare_int(very_large, 2147483647), 1)
-  assert_eq!(BigInt::compare_int(very_large, -2147483648), 1)
-  assert_eq!(BigInt::compare_int(very_large, 0), 1)
+  assert_eq(BigInt::compare_int(very_large, 2147483647), 1)
+  assert_eq(BigInt::compare_int(very_large, -2147483648), 1)
+  assert_eq(BigInt::compare_int(very_large, 0), 1)
   let very_neg_large = BigInt::from_string("-123456789012345678901234567890")
-  assert_eq!(BigInt::compare_int(very_neg_large, 2147483647), -1)
-  assert_eq!(BigInt::compare_int(very_neg_large, -2147483648), -1)
-  assert_eq!(BigInt::compare_int(very_neg_large, 0), -1)
+  assert_eq(BigInt::compare_int(very_neg_large, 2147483647), -1)
+  assert_eq(BigInt::compare_int(very_neg_large, -2147483648), -1)
+  assert_eq(BigInt::compare_int(very_neg_large, 0), -1)
 
   // Test with powers of 2
-  assert_eq!(BigInt::compare_int(2N.pow(10), 1024), 0)
-  assert_eq!(BigInt::compare_int(2N.pow(20), 1048576), 0)
-  assert_eq!(BigInt::compare_int(2N.pow(30), 1073741824), 0)
-  assert_eq!(BigInt::compare_int(2N.pow(31), 2147483647), 1) // 2^31 > Int.max_value
+  assert_eq(BigInt::compare_int(2N.pow(10), 1024), 0)
+  assert_eq(BigInt::compare_int(2N.pow(20), 1048576), 0)
+  assert_eq(BigInt::compare_int(2N.pow(30), 1073741824), 0)
+  assert_eq(BigInt::compare_int(2N.pow(31), 2147483647), 1) // 2^31 > Int.max_value
 }
 
 ///|
 test "compare_int64" {
   // Test with zero
-  assert_eq!(BigInt::compare_int64(0N, 0L), 0)
-  assert_eq!(BigInt::compare_int64(0N, 1L), -1)
-  assert_eq!(BigInt::compare_int64(0N, -1L), 1)
+  assert_eq(BigInt::compare_int64(0N, 0L), 0)
+  assert_eq(BigInt::compare_int64(0N, 1L), -1)
+  assert_eq(BigInt::compare_int64(0N, -1L), 1)
 
   // Test with positive values
-  assert_eq!(BigInt::compare_int64(1N, 1L), 0)
-  assert_eq!(BigInt::compare_int64(42N, 42L), 0)
-  assert_eq!(BigInt::compare_int64(100N, 50L), 1)
-  assert_eq!(BigInt::compare_int64(25N, 100L), -1)
+  assert_eq(BigInt::compare_int64(1N, 1L), 0)
+  assert_eq(BigInt::compare_int64(42N, 42L), 0)
+  assert_eq(BigInt::compare_int64(100N, 50L), 1)
+  assert_eq(BigInt::compare_int64(25N, 100L), -1)
 
   // Test with negative values
-  assert_eq!(BigInt::compare_int64(-1N, -1L), 0)
-  assert_eq!(BigInt::compare_int64(-1N, 0L), -1)
-  assert_eq!(BigInt::compare_int64(-1N, 1L), -1)
-  assert_eq!(BigInt::compare_int64(-42N, -42L), 0)
-  assert_eq!(BigInt::compare_int64(-25N, -100L), 1)
-  assert_eq!(BigInt::compare_int64(-100N, -50L), -1)
+  assert_eq(BigInt::compare_int64(-1N, -1L), 0)
+  assert_eq(BigInt::compare_int64(-1N, 0L), -1)
+  assert_eq(BigInt::compare_int64(-1N, 1L), -1)
+  assert_eq(BigInt::compare_int64(-42N, -42L), 0)
+  assert_eq(BigInt::compare_int64(-25N, -100L), 1)
+  assert_eq(BigInt::compare_int64(-100N, -50L), -1)
 
   // Test with mixed signs
-  assert_eq!(BigInt::compare_int64(1N, -1L), 1)
-  assert_eq!(BigInt::compare_int64(-1N, 1L), -1)
-  assert_eq!(BigInt::compare_int64(100N, -50L), 1)
-  assert_eq!(BigInt::compare_int64(-100N, 50L), -1)
+  assert_eq(BigInt::compare_int64(1N, -1L), 1)
+  assert_eq(BigInt::compare_int64(-1N, 1L), -1)
+  assert_eq(BigInt::compare_int64(100N, -50L), 1)
+  assert_eq(BigInt::compare_int64(-100N, 50L), -1)
 
   // Test with Int64 boundary values
-  assert_eq!(
+  assert_eq(
     BigInt::compare_int64(9223372036854775807N, 9223372036854775807L),
     0,
   ) // Int64.max_value
-  assert_eq!(
+  assert_eq(
     BigInt::compare_int64(-9223372036854775808N, -9223372036854775808L),
     0,
   ) // Int64.min_value
-  assert_eq!(
+  assert_eq(
     BigInt::compare_int64(9223372036854775807N, 9223372036854775806L),
     1,
   )
-  assert_eq!(
+  assert_eq(
     BigInt::compare_int64(9223372036854775806N, 9223372036854775807L),
     -1,
   )
-  assert_eq!(
+  assert_eq(
     BigInt::compare_int64(-9223372036854775808N, -9223372036854775807L),
     -1,
   )
-  assert_eq!(
+  assert_eq(
     BigInt::compare_int64(-9223372036854775807N, -9223372036854775808L),
     1,
   )
 
   // Test with BigInt that doesn't fit in Int64
   let large = BigInt::from_string("9223372036854775808") // Int64.max_value + 1
-  assert_eq!(BigInt::compare_int64(large, 9223372036854775807L), 1)
-  assert_eq!(BigInt::compare_int64(large, -9223372036854775808L), 1)
-  assert_eq!(BigInt::compare_int64(large, 0L), 1)
+  assert_eq(BigInt::compare_int64(large, 9223372036854775807L), 1)
+  assert_eq(BigInt::compare_int64(large, -9223372036854775808L), 1)
+  assert_eq(BigInt::compare_int64(large, 0L), 1)
   let neg_large = BigInt::from_string("-9223372036854775809") // Int64.min_value - 1
-  assert_eq!(BigInt::compare_int64(neg_large, -9223372036854775808L), -1)
-  assert_eq!(BigInt::compare_int64(neg_large, 9223372036854775807L), -1)
-  assert_eq!(BigInt::compare_int64(neg_large, 0L), -1)
+  assert_eq(BigInt::compare_int64(neg_large, -9223372036854775808L), -1)
+  assert_eq(BigInt::compare_int64(neg_large, 9223372036854775807L), -1)
+  assert_eq(BigInt::compare_int64(neg_large, 0L), -1)
 
   // Test with very large BigInt values
   let very_large = BigInt::from_string("123456789012345678901234567890")
-  assert_eq!(BigInt::compare_int64(very_large, 9223372036854775807L), 1)
-  assert_eq!(BigInt::compare_int64(very_large, -9223372036854775808L), 1)
-  assert_eq!(BigInt::compare_int64(very_large, 0L), 1)
+  assert_eq(BigInt::compare_int64(very_large, 9223372036854775807L), 1)
+  assert_eq(BigInt::compare_int64(very_large, -9223372036854775808L), 1)
+  assert_eq(BigInt::compare_int64(very_large, 0L), 1)
   let very_neg_large = BigInt::from_string("-123456789012345678901234567890")
-  assert_eq!(BigInt::compare_int64(very_neg_large, 9223372036854775807L), -1)
-  assert_eq!(BigInt::compare_int64(very_neg_large, -9223372036854775808L), -1)
-  assert_eq!(BigInt::compare_int64(very_neg_large, 0L), -1)
+  assert_eq(BigInt::compare_int64(very_neg_large, 9223372036854775807L), -1)
+  assert_eq(BigInt::compare_int64(very_neg_large, -9223372036854775808L), -1)
+  assert_eq(BigInt::compare_int64(very_neg_large, 0L), -1)
 
   // Test with powers of 2
-  assert_eq!(BigInt::compare_int64(2N.pow(10), 1024L), 0)
-  assert_eq!(BigInt::compare_int64(2N.pow(20), 1048576L), 0)
-  assert_eq!(BigInt::compare_int64(2N.pow(30), 1073741824L), 0)
-  assert_eq!(BigInt::compare_int64(2N.pow(40), 1099511627776L), 0)
-  assert_eq!(BigInt::compare_int64(2N.pow(50), 1125899906842624L), 0)
-  assert_eq!(BigInt::compare_int64(2N.pow(60), 1152921504606846976L), 0)
-  assert_eq!(BigInt::compare_int64(2N.pow(62), 4611686018427387904L), 0)
-  assert_eq!(BigInt::compare_int64(2N.pow(63), 9223372036854775807L), 1) // 2^63 > Int64.max_value
+  assert_eq(BigInt::compare_int64(2N.pow(10), 1024L), 0)
+  assert_eq(BigInt::compare_int64(2N.pow(20), 1048576L), 0)
+  assert_eq(BigInt::compare_int64(2N.pow(30), 1073741824L), 0)
+  assert_eq(BigInt::compare_int64(2N.pow(40), 1099511627776L), 0)
+  assert_eq(BigInt::compare_int64(2N.pow(50), 1125899906842624L), 0)
+  assert_eq(BigInt::compare_int64(2N.pow(60), 1152921504606846976L), 0)
+  assert_eq(BigInt::compare_int64(2N.pow(62), 4611686018427387904L), 0)
+  assert_eq(BigInt::compare_int64(2N.pow(63), 9223372036854775807L), 1) // 2^63 > Int64.max_value
 
   // Test with values around 32-bit boundaries (to ensure 64-bit handling)
   let val_32bit = 4294967296N // 2^32
-  assert_eq!(BigInt::compare_int64(val_32bit, 4294967296L), 0)
-  assert_eq!(BigInt::compare_int64(val_32bit, 4294967295L), 1)
-  assert_eq!(BigInt::compare_int64(val_32bit, 4294967297L), -1)
+  assert_eq(BigInt::compare_int64(val_32bit, 4294967296L), 0)
+  assert_eq(BigInt::compare_int64(val_32bit, 4294967295L), 1)
+  assert_eq(BigInt::compare_int64(val_32bit, 4294967297L), -1)
   let neg_val_32bit = -4294967296N // -2^32
-  assert_eq!(BigInt::compare_int64(neg_val_32bit, -4294967296L), 0)
-  assert_eq!(BigInt::compare_int64(neg_val_32bit, -4294967295L), -1)
-  assert_eq!(BigInt::compare_int64(neg_val_32bit, -4294967297L), 1)
+  assert_eq(BigInt::compare_int64(neg_val_32bit, -4294967296L), 0)
+  assert_eq(BigInt::compare_int64(neg_val_32bit, -4294967295L), -1)
+  assert_eq(BigInt::compare_int64(neg_val_32bit, -4294967297L), 1)
 }

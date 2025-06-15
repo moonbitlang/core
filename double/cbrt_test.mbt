@@ -37,7 +37,7 @@ test "cbrt" {
     17.95802978703349, 18.947593347990452, 19.927655294373867, 20.02047902332293,
     20.9048606324266, 21.72014665034662,
   ]
-  fn high_accuracy_test(expect : Double, actual : Double) -> Unit!Error {
+  fn high_accuracy_test(expect : Double, actual : Double) -> Unit raise Error {
     let ulp = (expect.reinterpret_as_int64() - actual.reinterpret_as_int64()).abs()
     assert_true(ulp <= 1)
   }

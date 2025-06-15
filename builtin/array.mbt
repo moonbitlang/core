@@ -409,7 +409,7 @@ pub fn[T] Array::append(self : Array[T], other : Array[T]) -> Unit {
 /// }
 /// ```
 #locals(f)
-pub fn[T] Array::each(self : Array[T], f : (T) -> Unit?Error) -> Unit?Error {
+pub fn[T] Array::each(self : Array[T], f : (T) -> Unit raise?) -> Unit raise? {
   for v in self {
     f(v)
   }
@@ -427,11 +427,13 @@ pub fn[T] Array::each(self : Array[T], f : (T) -> Unit?Error) -> Unit?Error {
 ///
 /// Example:
 ///
-/// ```
-/// let v = [3, 4, 5]
-/// let mut sum = 0
-/// v.rev_each(fn(x) { sum = sum - x })
-/// @json.inspect(sum, content=-12)
+/// ```mbt
+/// test {
+///   let v = [3, 4, 5]
+///   let mut sum = 0
+///   v.rev_each(fn(x) { sum = sum - x })
+///   @json.inspect(sum, content=-12)
+/// }
 /// ```
 #locals(f)
 pub fn[T] Array::rev_each(self : Array[T], f : (T) -> Unit) -> Unit {
@@ -445,7 +447,7 @@ pub fn[T] Array::rev_each(self : Array[T], f : (T) -> Unit) -> Unit {
 /// Iterates over the elements of the array with index in reversed order.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "Array::rev_eachi" {
 ///   let v = [3, 4, 5]
 ///   let mut sum = 0
@@ -454,7 +456,10 @@ pub fn[T] Array::rev_each(self : Array[T], f : (T) -> Unit) -> Unit {
 /// }
 /// ```
 #locals(f)
-pub fn[T] Array::rev_eachi(self : Array[T], f : (Int, T) -> Unit) -> Unit {
+pub fn[T] Array::rev_eachi(
+  self : Array[T],
+  f : (Int, T) -> Unit raise?
+) -> Unit raise? {
   let len = self.length()
   for i in 0..<len {
     f(i, self[len - i - 1])
@@ -476,8 +481,8 @@ pub fn[T] Array::rev_eachi(self : Array[T], f : (Int, T) -> Unit) -> Unit {
 #locals(f)
 pub fn[T] Array::eachi(
   self : Array[T],
-  f : (Int, T) -> Unit?Error
-) -> Unit?Error {
+  f : (Int, T) -> Unit raise?
+) -> Unit raise? {
   for i, v in self {
     f(i, v)
   }
@@ -489,7 +494,7 @@ pub fn[T] Array::eachi(
 /// This method has no effect on the allocated capacity of the array, only setting the length to 0.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "Array::clear" {
 ///   let v = [3, 4, 5]
 ///   v.clear()
@@ -504,7 +509,7 @@ pub fn[T] Array::clear(self : Array[T]) -> Unit {
 /// Maps a function over the elements of the array.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "Array::map" {
 ///   let v = [3, 4, 5]
 ///   let v2 = v.map(fn (x) {x + 1})
@@ -512,7 +517,10 @@ pub fn[T] Array::clear(self : Array[T]) -> Unit {
 /// }
 /// ```
 #locals(f)
-pub fn[T, U] Array::map(self : Array[T], f : (T) -> U?Error) -> Array[U]?Error {
+pub fn[T, U] Array::map(
+  self : Array[T],
+  f : (T) -> U raise?
+) -> Array[U] raise? {
   let arr = Array::make_uninit(self.length())
   for i, v in self {
     arr.unsafe_set(i, f(v))
@@ -524,7 +532,7 @@ pub fn[T, U] Array::map(self : Array[T], f : (T) -> U?Error) -> Array[U]?Error {
 /// Maps a function over the elements of the array in place.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "Array::map_inplace" {
 ///   let v = [3, 4, 5]
 ///   v.map_inplace(fn (x) {x + 1})
@@ -532,7 +540,10 @@ pub fn[T, U] Array::map(self : Array[T], f : (T) -> U?Error) -> Array[U]?Error {
 /// }
 /// ```
 #locals(f)
-pub fn[T] Array::map_inplace(self : Array[T], f : (T) -> T?Error) -> Unit?Error {
+pub fn[T] Array::map_inplace(
+  self : Array[T],
+  f : (T) -> T raise?
+) -> Unit raise? {
   for i, v in self {
     self[i] = f(v)
   }
@@ -542,7 +553,7 @@ pub fn[T] Array::map_inplace(self : Array[T], f : (T) -> T?Error) -> Unit?Error 
 /// Maps a function over the elements of the array with index.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "Array::mapi" {
 ///   let v = [3, 4, 5]
 ///   let v2 = v.mapi(fn (i, x) {x + i})
@@ -552,8 +563,8 @@ pub fn[T] Array::map_inplace(self : Array[T], f : (T) -> T?Error) -> Unit?Error 
 #locals(f)
 pub fn[T, U] Array::mapi(
   self : Array[T],
-  f : (Int, T) -> U?Error
-) -> Array[U]?Error {
+  f : (Int, T) -> U raise?
+) -> Array[U] raise? {
   if self.length() == 0 {
     return []
   }
@@ -568,7 +579,7 @@ pub fn[T, U] Array::mapi(
 /// Maps a function over the elements of the array with index in place.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "Array::mapi_inplace" {
 ///   let v = [3, 4, 5]
 ///   v.mapi_inplace(fn (i, x) {x + i})
@@ -578,8 +589,8 @@ pub fn[T, U] Array::mapi(
 #locals(f)
 pub fn[T] Array::mapi_inplace(
   self : Array[T],
-  f : (Int, T) -> T?Error
-) -> Unit?Error {
+  f : (Int, T) -> T raise?
+) -> Unit raise? {
   for i, v in self {
     self[i] = f(i, v)
   }
@@ -610,8 +621,8 @@ pub fn[T] Array::mapi_inplace(
 #locals(f)
 pub fn[T] Array::filter(
   self : Array[T],
-  f : (T) -> Bool?Error
-) -> Array[T]?Error {
+  f : (T) -> Bool raise?
+) -> Array[T] raise? {
   let arr = []
   for v in self {
     if f(v) {
@@ -708,10 +719,11 @@ pub fn[T : Compare] Array::is_sorted(self : Array[T]) -> Bool {
 /// }
 /// ```
 pub fn[T] Array::rev_inplace(self : Array[T]) -> Unit {
-  for i in 0..<(self.length() / 2) {
+  let len = self.length()
+  for i in 0..<(len / 2) {
     let temp = self.unsafe_get(i)
-    self.unsafe_set(i, self.unsafe_get(self.length() - i - 1))
-    self.unsafe_set(self.length() - i - 1, temp)
+    self.unsafe_set(i, self.unsafe_get(len - i - 1))
+    self.unsafe_set(len - i - 1, temp)
   }
 }
 
@@ -735,9 +747,10 @@ pub fn[T] Array::rev_inplace(self : Array[T]) -> Unit {
 /// }
 /// ```
 pub fn[T] Array::rev(self : Array[T]) -> Array[T] {
-  let arr = Array::make_uninit(self.length())
-  for i in 0..<self.length() {
-    arr.unsafe_set(i, self.unsafe_get(self.length() - i - 1))
+  let len = self.length()
+  let arr = Array::make_uninit(len)
+  for i in 0..<len {
+    arr.unsafe_set(i, self.unsafe_get(len - i - 1))
   }
   arr
 }
@@ -747,7 +760,7 @@ pub fn[T] Array::rev(self : Array[T]) -> Array[T] {
 /// This function will panic if the index is out of bounds.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "Array::split_at" {
 ///   let v = [3, 4, 5]
 ///   let (v1, v2) = v.split_at(1)
@@ -937,7 +950,7 @@ pub fn[T : Eq] Array::strip_prefix(
 /// If the array ends with the suffix, return the array before the suffix, otherwise return None.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "Array::strip_suffix" {
 ///   let v = [3, 4, 5]
 ///   let v2 = v.strip_suffix([5])
@@ -1023,7 +1036,7 @@ pub fn[T] Array::find_index(self : Array[T], f : (T) -> Bool) -> Int? {
 ///
 /// # Example
 ///
-/// ```
+/// ```mbt
 /// test "Array::search_by" {
 ///   let v = [1, 2, 3, 4, 5]
 ///   match v.search_by(fn(x) { x == 3 }) {
@@ -1047,7 +1060,7 @@ pub fn[T] Array::search_by(self : Array[T], f : (T) -> Bool) -> Int? {
 /// Performs a binary search on a sorted array to find the index of a given element.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "Array::binary_search" {
 ///   let v = [3, 4, 5]
 ///   let result = v.binary_search(3)
@@ -1243,10 +1256,12 @@ pub fn[T] Array::swap(self : Array[T], i : Int, j : Int) -> Unit {
 /// ```
 /// TODO: perf could be improved
 #locals(f)
-pub fn[T] Array::retain(self : Array[T], f : (T) -> Bool) -> Unit {
-  for i = 0, j = 0; i < self.length(); {
-    if f(self.unsafe_get(i)) {
-      self.unsafe_set(j, self.unsafe_get(i))
+pub fn[T] Array::retain(self : Array[T], f : (T) -> Bool raise?) -> Unit raise? {
+  let len = self.length()
+  for i = 0, j = 0; i < len; {
+    let item = self.unsafe_get(i)
+    if f(item) {
+      self.unsafe_set(j, item)
       continue i + 1, j + 1
     }
     continue i + 1, j
@@ -1309,8 +1324,10 @@ pub fn[T] Array::resize(self : Array[T], new_len : Int, f : T) -> Unit {
 /// Example:
 ///
 /// ```moonbit
-/// let v = [[3, 4], [5, 6]].flatten()
-/// assert_eq(v, [3, 4, 5, 6])
+/// test {
+///   let v = [[3, 4], [5, 6]].flatten()
+///   assert_eq(v, [3, 4, 5, 6])
+/// }
 /// ```
 pub fn[T] Array::flatten(self : Array[Array[T]]) -> Array[T] {
   let mut len = 0
@@ -1332,8 +1349,10 @@ pub fn[T] Array::flatten(self : Array[Array[T]]) -> Array[T] {
 /// Example:
 ///
 /// ```moonbit
-/// let v = [3, 4].repeat(2)
-/// assert_eq(v, [3, 4, 3, 4])
+/// test {
+///   let v = [3, 4].repeat(2)
+///   assert_eq(v, [3, 4, 3, 4])
+/// }
 /// ```
 pub fn[T] Array::repeat(self : Array[T], times : Int) -> Array[T] {
   let v = Array::new(capacity=self.length() * times)
@@ -1349,11 +1368,17 @@ pub fn[T] Array::repeat(self : Array[T], times : Int) -> Array[T] {
 /// Example:
 ///
 /// ```moonbit
-/// let sum = [1, 2, 3, 4, 5].fold(init=0, fn { sum, elem => sum + elem })
-/// assert_eq(sum, 15)
+/// test {
+///   let sum = [1, 2, 3, 4, 5].fold(init=0, fn { sum, elem => sum + elem })
+///   assert_eq(sum, 15)
+/// }
 /// ```
 #locals(f)
-pub fn[A, B] Array::fold(self : Array[A], init~ : B, f : (B, A) -> B) -> B {
+pub fn[A, B] Array::fold(
+  self : Array[A],
+  init~ : B,
+  f : (B, A) -> B raise?
+) -> B raise? {
   for i = 0, acc = init; i < self.length(); {
     continue i + 1, f(acc, self[i])
   } else {
@@ -1367,11 +1392,17 @@ pub fn[A, B] Array::fold(self : Array[A], init~ : B, f : (B, A) -> B) -> B {
 /// Example:
 ///
 /// ```moonbit
-/// let sum = [1, 2, 3, 4, 5].rev_fold(init=0, fn { sum, elem => sum + elem })
-/// assert_eq(sum, 15)
+/// test {
+///   let sum = [1, 2, 3, 4, 5].rev_fold(init=0, fn { sum, elem => sum + elem })
+///   assert_eq(sum, 15)
+/// }
 /// ```
 #locals(f)
-pub fn[A, B] Array::rev_fold(self : Array[A], init~ : B, f : (B, A) -> B) -> B {
+pub fn[A, B] Array::rev_fold(
+  self : Array[A],
+  init~ : B,
+  f : (B, A) -> B raise?
+) -> B raise? {
   for i = self.length() - 1, acc = init; i >= 0; {
     continue i - 1, f(acc, self[i])
   } else {
@@ -1385,15 +1416,17 @@ pub fn[A, B] Array::rev_fold(self : Array[A], init~ : B, f : (B, A) -> B) -> B {
 /// Example:
 ///
 /// ```moonbit
-/// let sum = [1, 2, 3, 4, 5].foldi(init=0, fn { index, sum, _elem => sum + index })
-/// assert_eq(sum, 10)
+/// test {
+///   let sum = [1, 2, 3, 4, 5].foldi(init=0, fn { index, sum, _elem => sum + index })
+///   assert_eq(sum, 10)
+/// }
 /// ```
 #locals(f)
 pub fn[A, B] Array::foldi(
   self : Array[A],
   init~ : B,
-  f : (Int, B, A) -> B
-) -> B {
+  f : (Int, B, A) -> B raise?
+) -> B raise? {
   for i = 0, acc = init; i < self.length(); {
     continue i + 1, f(i, acc, self[i])
   } else {
@@ -1407,15 +1440,17 @@ pub fn[A, B] Array::foldi(
 /// Example:
 ///
 /// ```moonbit
-/// let sum = [1, 2, 3, 4, 5].rev_foldi(init=0, fn { index, sum, _elem => sum + index })
-/// assert_eq(sum, 10)
+/// test {
+///   let sum = [1, 2, 3, 4, 5].rev_foldi(init=0, fn { index, sum, _elem => sum + index })
+///   assert_eq(sum, 10)
+/// }
 /// ```
 #locals(f)
 pub fn[A, B] Array::rev_foldi(
   self : Array[A],
   init~ : B,
-  f : (Int, B, A) -> B
-) -> B {
+  f : (Int, B, A) -> B raise?
+) -> B raise? {
   let len = self.length()
   for i = len - 1, acc = init; i >= 0; {
     continue i - 1, f(len - i - 1, acc, self[i])
@@ -1430,12 +1465,18 @@ pub fn[A, B] Array::rev_foldi(
 /// Example:
 ///
 /// ```moonbit
-/// let sum = [1, 2, 3, 4, 5].fold(init=0, fn { sum, elem => sum + elem })
-/// assert_eq(sum, 15)
+/// test {
+///   let sum = [1, 2, 3, 4, 5].fold(init=0, fn { sum, elem => sum + elem })
+///   assert_eq(sum, 15)
+/// }
 /// ```
 #deprecated("Use `fold` instead.")
 #coverage.skip
-pub fn[T, U] Array::fold_left(self : Array[T], f : (U, T) -> U, init~ : U) -> U {
+pub fn[T, U] Array::fold_left(
+  self : Array[T],
+  f : (U, T) -> U raise?,
+  init~ : U
+) -> U raise? {
   self.fold(init~, f)
 }
 
@@ -1445,16 +1486,18 @@ pub fn[T, U] Array::fold_left(self : Array[T], f : (U, T) -> U, init~ : U) -> U 
 /// Example:
 ///
 /// ```moonbit
-/// let sum = [1, 2, 3, 4, 5].rev_fold(init=0, fn { sum, elem => sum + elem })
-/// assert_eq(sum, 15)
+/// test {
+///   let sum = [1, 2, 3, 4, 5].rev_fold(init=0, fn { sum, elem => sum + elem })
+///   assert_eq(sum, 15)
+/// }
 /// ```
 #deprecated("Use `rev_fold` instead.")
 #coverage.skip
 pub fn[T, U] Array::fold_right(
   self : Array[T],
-  f : (U, T) -> U,
+  f : (U, T) -> U raise?,
   init~ : U
-) -> U {
+) -> U raise? {
   self.rev_fold(init~, f)
 }
 
@@ -1464,16 +1507,18 @@ pub fn[T, U] Array::fold_right(
 /// Example:
 ///
 /// ```moonbit
-/// let sum = [1, 2, 3, 4, 5].foldi(init=0, fn { index, sum, _elem => sum + index })
-/// assert_eq(sum, 10)
+/// test {
+///   let sum = [1, 2, 3, 4, 5].foldi(init=0, fn { index, sum, _elem => sum + index })
+///   assert_eq(sum, 10)
+/// }
 /// ```
 #deprecated("Use `foldi` instead.")
 #coverage.skip
 pub fn[T, U] Array::fold_lefti(
   self : Array[T],
-  f : (Int, U, T) -> U,
+  f : (Int, U, T) -> U raise?,
   init~ : U
-) -> U {
+) -> U raise? {
   self.foldi(init~, f)
 }
 
@@ -1483,16 +1528,18 @@ pub fn[T, U] Array::fold_lefti(
 /// Example:
 ///
 /// ```moonbit
-/// let sum = [1, 2, 3, 4, 5].rev_foldi(init=0, fn { index, sum, _elem => sum + index })
-/// assert_eq(sum, 10)
+/// test {
+///   let sum = [1, 2, 3, 4, 5].rev_foldi(init=0, fn { index, sum, _elem => sum + index })
+///   assert_eq(sum, 10)
+/// }
 /// ```
 #deprecated("Use `rev_foldi` instead.")
 #coverage.skip
 pub fn[T, U] Array::fold_righti(
   self : Array[T],
-  f : (Int, U, T) -> U,
+  f : (Int, U, T) -> U raise?,
   init~ : U
-) -> U {
+) -> U raise? {
   self.rev_foldi(init~, f)
 }
 
@@ -1655,8 +1702,8 @@ pub fn[T] Array::chunks(self : Array[T], size : Int) -> Array[Array[T]] {
 #locals(pred)
 pub fn[T] Array::chunk_by(
   self : Array[T],
-  pred : (T, T) -> Bool
-) -> Array[Array[T]] {
+  pred : (T, T) -> Bool raise?
+) -> Array[Array[T]] raise? {
   let chunks = []
   let mut i = 0
   while i < self.length() {
@@ -1691,12 +1738,12 @@ pub fn[T] Array::chunk_by(
 /// test "windows" {
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let windows = arr.windows(2)
-///   inspect!(windows, content="[[1, 2], [2, 3], [3, 4], [4, 5]]")
+///   inspect(windows, content="[[1, 2], [2, 3], [3, 4], [4, 5]]")
 /// }
 ///
 /// test "empty_windows" {
-///   let arr : Array[Int] = [1, 2]
-///   inspect!(arr.windows(3), content="[]")
+///   let arr = [1, 2]
+///   inspect(arr.windows(3), content="[]")
 /// }
 /// ```
 pub fn[T] Array::windows(self : Array[T], size : Int) -> Array[ArrayView[T]] {
@@ -1740,7 +1787,10 @@ pub fn[T] Array::windows(self : Array[T], size : Int) -> Array[ArrayView[T]] {
 /// }
 /// ```
 #locals(pred)
-pub fn[T] Array::split(self : Array[T], pred : (T) -> Bool) -> Array[Array[T]] {
+pub fn[T] Array::split(
+  self : Array[T],
+  pred : (T) -> Bool raise?
+) -> Array[Array[T]] raise? {
   let chunks = []
   let mut i = 0
   while i < self.length() {
@@ -1869,9 +1919,11 @@ pub impl[T] Default for Array[T] with default() {
 ///
 /// # Example
 /// ```mbt
-/// let array = [1, 2, 3, 4, 5]
-/// array.unsafe_pop_back()
-/// assert_eq(array.last(), Some(4))
+/// test {
+///   let array = [1, 2, 3, 4, 5]
+///   array.unsafe_pop_back()
+///   assert_eq(array.last(), Some(4))
+/// }
 /// ```
 #internal(unsafe, "Panic if the array is empty on non-JS backend.")
 pub fn[A] Array::unsafe_pop_back(self : Array[A]) -> Unit {

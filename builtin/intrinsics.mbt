@@ -308,7 +308,9 @@ pub impl Mul for Int with op_mul(self, other) = "%i32_mul"
 ///   inspect(-10 / 3, content="-3")
 ///   inspect(10 / -3, content="-3")
 /// }
-///
+/// ```
+/// 
+/// ``` skip
 /// test "panic Int::op_div/division_by_zero" {
 ///   ignore(42 / 0) // Panics with division by zero
 /// }
@@ -336,7 +338,9 @@ pub impl Div for Int with op_div(self, other) = "%i32_div"
 ///   inspect(-7 % 3, content="-1")
 ///   inspect(7 % -3, content="1")
 /// }
+/// ```
 ///
+/// ```skip
 /// test "panic Int::op_mod/division_by_zero" {
 ///   ignore(7 % 0) // Panics with division by zero
 /// }
@@ -1134,9 +1138,6 @@ pub impl Compare for Double with compare(self, other) = "%f64_compare"
 pub impl Default for Double with default() = "%f64_default"
 
 ///|
-fn Double::to_unchecked_int(self : Double) -> Int = "%f64_to_i32"
-
-///|
 /// Converts an unsigned 32-bit integer to a double-precision floating-point
 /// number. Since the range of unsigned 32-bit integers is smaller than what can
 /// be precisely represented by a double-precision floating-point number, this
@@ -1275,7 +1276,7 @@ pub impl Compare for Char with compare(self, other) = "%char_compare"
 ///
 /// ```moonbit
 /// test "Char::default" {
-///   assert_true(Char::default().to_string() == "\x00")
+///   assert_true(Char::default().to_string() == "\u0000")
 /// }
 /// ```
 pub impl Default for Char with default() = "%char_default"
@@ -1536,7 +1537,9 @@ pub fn[T] FixedArray::op_get(self : FixedArray[T], idx : Int) -> T = "%fixedarra
 ///   let arr = FixedArray::make(3, 42)
 ///   inspect(arr.unsafe_get(1), content="42")
 /// }
+/// ```
 ///
+/// ```skip
 /// test "panic FixedArray::unsafe_get/out_of_bounds" {
 ///   let arr = FixedArray::make(3, 42)
 ///   ignore(arr.unsafe_get(3)) // Index out of bounds
@@ -1553,36 +1556,6 @@ pub fn[T] FixedArray::unsafe_set(
   idx : Int,
   val : T
 ) -> Unit = "%fixedarray.unsafe_set"
-
-///|
-/// Retrieves an element at the specified index from a fixed-size array. This
-/// function is similar to `op_get` but provides explicit bounds checking.
-///
-/// Parameters:
-///
-/// * `array` : The fixed-size array to access.
-/// * `index` : The position in the array from which to retrieve the element.
-///
-/// Returns the element at the specified index.
-///
-/// Throws a runtime error if the index is out of bounds (less than 0 or greater
-/// than or equal to the length of the array).
-///
-/// Example:
-///
-/// ```moonbit
-/// test "FixedArray::get" {
-///   let arr = [1, 2, 3]
-///   inspect(arr.get(1), content="Some(2)")
-/// }
-///
-/// test "FixedArray::get/out_of_bounds" {
-///   let arr = [1, 2, 3]
-///   inspect(arr.get(3), content="None")
-/// }
-/// ```
-#deprecated("use `arr.op_get(i)`(arr[i]) instead")
-pub fn[T] FixedArray::get(self : FixedArray[T], idx : Int) -> T = "%fixedarray.get"
 
 ///|
 /// Sets a value at the specified index in a fixed-size array. The original value
@@ -1753,14 +1726,14 @@ pub fn String::op_get(self : String, idx : Int) -> Char = "%string_get"
 /// ```moonbit
 /// test "String::get" {
 ///   let s = "Hello, 世界"
-///   inspect(s.get(0), content="H")
-///   inspect(s.get(7), content="世")
+///   inspect(s.charcode_at(0), content="72")
+///   inspect(s.char_at(7), content="世")
 /// }
 ///
 /// test "panic String::get/out_of_bounds" {
 ///   let s = "Hello"
-///   ignore(s.get(-1)) // Negative index
-///   ignore(s.get(5)) // Index equals length
+///   ignore(s.charcode_at(-1)) // Negative index
+///   ignore(s.charcode_at(5)) // Index equals length
 /// }
 /// ```
 #deprecated("use `charcode_at` instead")
@@ -1861,7 +1834,7 @@ pub fn String::to_string(self : String) -> String = "%string_to_string"
 
 ///|
 // For internal use only
-priv extern type UnsafeMaybeUninit[_]
+priv type UnsafeMaybeUninit[_]
 
 ///|
 /// Converts a byte value to a 32-bit signed integer. The resulting integer will
@@ -2058,7 +2031,9 @@ pub impl Mul for UInt with op_mul(self, other) = "%u32.mul"
 ///   let b = 5U
 ///   inspect(a / b, content="8") // Using infix operator
 /// }
+/// ```
 ///
+/// ```skip
 /// test "panic UInt::op_div/division_by_zero" {
 ///   let a = 42U
 ///   ignore(a / 0U) // Throws runtime error: division by zero
@@ -2087,7 +2062,9 @@ pub impl Div for UInt with op_div(self, other) = "%u32.div"
 ///   inspect(a % b, content="2") // 17 divided by 5 gives quotient 3 and remainder 2
 ///   inspect(7U % 4U, content="3")
 /// }
+/// ```
 ///
+/// ```skip
 /// test "panic UInt::op_mod/division_by_zero" {
 ///   let a = 42U
 ///   ignore(a % 0U) // Panics: division by zero

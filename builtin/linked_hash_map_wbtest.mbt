@@ -17,17 +17,20 @@ type MyString String derive(Eq)
 
 ///|
 impl Hash for MyString with hash(self) {
-  self._.length()
+  let MyString(s) = self
+  s.length()
 }
 
 ///|
 impl Hash for MyString with hash_combine(self, hasher) {
-  hasher.combine_string(self._)
+  let MyString(s) = self
+  hasher.combine_string(s)
 }
 
 ///|
 impl Show for MyString with output(self, logger) {
-  logger.write_string(self._)
+  let MyString(s) = self
+  logger.write_string(s)
 }
 
 ///|
@@ -883,4 +886,20 @@ test "op_equal_key_value_mismatch" {
   map2.set(2, 3)
   // This should return false as the values are different
   assert_eq(map1 == map2, false)
+}
+
+///|
+fn[K : Show, V : Show] Map::debug_entries(self : Map[K, V]) -> String {
+  let buf = StringBuilder::new()
+  for i in 0..<self.entries.length() {
+    if i > 0 {
+      buf.write_char(',')
+    }
+    match self.entries[i] {
+      None => buf.write_char('_')
+      Some({ psl, key, value, .. }) =>
+        buf.write_string("(\{psl},\{key},\{value})")
+    }
+  }
+  buf.to_string()
 }

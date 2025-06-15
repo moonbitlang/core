@@ -250,8 +250,8 @@ fn[K : Hash + Eq, V] get_with_hash(self : T[K, V], key : K, hash : Int) -> V? {
 /// ```moonbit
 /// test "op_get" {
 ///   let map = @hashmap.of([("key", 42)])
-///   inspect(map["key"], content="Some(42)")
-///   inspect(map["nonexistent"], content="None")
+///   inspect(map.get("key"), content="Some(42)")
+///   inspect(map.get("nonexistent"), content="None")
 /// }
 /// ```
 #deprecated("Use `get` instead. `op_get` will return `V` instead of `Option[V]` in the future.")
@@ -284,7 +284,6 @@ pub fn[K : Hash + Eq, V] op_get(self : T[K, V], key : K) -> V? {
 ///   inspect(map.get("key"), content="Some(42)")
 /// }
 /// ```
-/// TODO: improve performance to avoid calling `get_with_hash` twice
 pub fn[K : Hash + Eq, V] get_or_init(
   self : T[K, V],
   key : K,
@@ -538,7 +537,8 @@ priv type MyString String derive(Eq)
 ///|
 #coverage.skip
 impl Hash for MyString with hash(self) {
-  self._.length()
+  let MyString(self) = self
+  self.length()
 }
 
 ///|

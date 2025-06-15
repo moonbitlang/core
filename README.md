@@ -12,7 +12,7 @@ It is experimental and under active development. At this early stage, our primar
 
 ### Timeline
 
-The core is making large changes in the last few months, we are expected to reach beta-preview status in the Mid of August.
+The core is making large changes in the last few months, we are expected to reach beta-preview status in mid-August.
 
 ## Contributing
 
@@ -22,5 +22,5 @@ To contribute, please read the contribution guidelines at [CONTRIBUTING.md](./CO
 
 ### Being a collaborator
 
-Note we regularly evaluate external contributions and invite activate contributors to join us as collaborators, thank you!
-To keep the contributors managebable, we will revoke commit rights if external collaborators are not active for over 6 months.
+Note we regularly evaluate external contributions and invite active contributors to join us as collaborators, thank you!
+To keep the contributors manageable, we will revoke commit rights if external collaborators are not active for over 6 months.

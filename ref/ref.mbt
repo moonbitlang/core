@@ -33,10 +33,12 @@ pub fn[T] new(x : T) -> Ref[T] {
 ///
 /// # Example
 ///
+/// ```mbt
+/// test {
+///   assert_eq(@ref.new(1).map(fn(a){ a + 1 }).val, 2)
+/// }
 /// ```
-/// assert_eq(@ref.new(1).map(fn(a){ a + 1 }).val, 2)
-/// ```
-pub fn[T, R] map(self : Ref[T], f : (T) -> R) -> Ref[R] {
+pub fn[T, R] map(self : Ref[T], f : (T) -> R raise?) -> Ref[R] raise? {
   { val: f(self.val) }
 }
 
@@ -56,17 +58,27 @@ pub fn[T, R] map(self : Ref[T], f : (T) -> R) -> Ref[R] {
 ///
 /// # Example
 ///
+/// ```mbt
+/// test {
+///   let x = @ref.new(1)
+///   x.protect(2, fn () { x.val = 3 })
+///   assert_eq(x.val, 1)
+/// }
 /// ```
-/// let x = @ref.new(1)
-/// x.protect(2, fn () { x.val = 3 })
-/// assert_eq(x.val, 1)
-/// ```
-pub fn[T, R] protect(self : Ref[T], a : T, f : () -> R) -> R {
+pub fn[T, R] protect(self : Ref[T], a : T, f : () -> R raise?) -> R raise? {
   let old = self.val
   self.val = a
-  let r = f()
-  self.val = old
-  r
+  try f() catch {
+    err => {
+      self.val = old
+      raise err
+    }
+  } else {
+    r => {
+      self.val = old
+      r
+    }
+  }
 }
 
 ///|
@@ -74,12 +86,14 @@ pub fn[T, R] protect(self : Ref[T], a : T, f : () -> R) -> R {
 ///
 /// # Example
 ///
-/// ```
-/// let x = @ref.new(1)
-/// let y = @ref.new(2)
-/// @ref.swap(x, y)
-/// assert_eq(x.val, 2)
-/// assert_eq(y.val, 1)
+/// ```mbt
+/// test {
+///   let x = @ref.new(1)
+///   let y = @ref.new(2)
+///   @ref.swap(x, y)
+///   assert_eq(x.val, 2)
+///   assert_eq(y.val, 1)
+/// }
 /// ```
 pub fn[T] Ref::swap(self : Ref[T], that : Ref[T]) -> Unit {
   let tmp = self.val
@@ -100,7 +114,7 @@ test "swap" {
 }
 
 ///|
-pub fn[T] update(self : Ref[T], f : (T) -> T) -> Unit {
+pub fn[T] update(self : Ref[T], f : (T) -> T raise?) -> Unit raise? {
   self.val = f(self.val)
 }
 

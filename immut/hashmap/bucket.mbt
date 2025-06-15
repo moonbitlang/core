@@ -70,9 +70,9 @@ fn[K : Eq, V] Bucket::remove(self : Bucket[K, V], key : K) -> Bucket[K, V]? {
 ///|
 /// Get the size of a bucket
 fn[K, V] Bucket::size(self : Bucket[K, V]) -> Int {
-  loop self, 1 {
-    JustOne(_), acc => acc
-    More(_, _, rest), acc => continue rest, acc + 1
+  loop (self, 1) {
+    (JustOne(_), acc) => acc
+    (More(_, _, rest), acc) => continue (rest, acc + 1)
   }
 }
 

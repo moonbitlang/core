@@ -14,7 +14,7 @@
 
 ///| Extensible buffer.
 #deprecated("Use type `T` instead")
-pub(all) typealias Buffer = T
+pub typealias T as Buffer
 
 ///|
 /// Extensible buffer.
@@ -26,13 +26,15 @@ pub(all) typealias Buffer = T
 /// Buffer, since it is optimized for all targets.
 /// # Usage
 ///
-/// ```
-/// let buf = @buffer.new(size_hint=100)
-/// buf.write_string("Tes")
-/// buf.write_char('t')
-/// inspect(buf.contents(), content=
-///   #|b"\x54\x00\x65\x00\x73\x00\x74\x00"
-/// )
+/// ```mbt
+/// test {
+///   let buf = @buffer.new(size_hint=100)
+///   buf.write_string("Tes")
+///   buf.write_char('t')
+///   inspect(buf.contents(), content=
+///     #|b"\x54\x00\x65\x00\x73\x00\x74\x00"
+///   )
+/// }
 /// ```
 struct T {
   mut data : FixedArray[Byte]
@@ -43,14 +45,12 @@ struct T {
 ///|
 /// Expand the buffer size if capacity smaller than required space.
 fn grow_if_necessary(self : T, required : Int) -> Unit {
-  // TODO: get rid of mut
-  let mut enough_space = self.data.length()
-  if enough_space <= 0 {
-    enough_space = 1
-  }
-  // double the enough_space until it larger than required
-  while enough_space < required {
-    enough_space = enough_space * 2
+  let start = if self.data.length() <= 0 { 1 } else { self.data.length() }
+  let enough_space = for space = start {
+    if space >= required {
+      break space
+    }
+    continue space * 2
   }
   if enough_space != self.data.length() {
     let new_data = FixedArray::make(enough_space, Byte::default())

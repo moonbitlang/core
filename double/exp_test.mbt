@@ -69,7 +69,7 @@ test "expm1" {
     289.03453439173467, 879.0687241078031, 2669.443920676805, 7330.973539155995,
     19340.338973747792, 58687.55427461758,
   ]
-  fn high_accuracy_test(expect : Double, actual : Double) -> Unit!Error {
+  fn high_accuracy_test(expect : Double, actual : Double) -> Unit raise Error {
     let ulp = (expect.reinterpret_as_int64() - actual.reinterpret_as_int64()).abs()
     assert_true(ulp <= 1)
   }

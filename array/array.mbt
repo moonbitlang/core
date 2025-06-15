@@ -42,7 +42,7 @@ pub fn[T] Array::from_iter(iter : Iter[T]) -> Array[T] {
 /// and adds them to the array using the `push` method.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "push_iter_example" {
 ///   let u = [1, 2, 3]
 ///   let v = [4, 5, 6]
@@ -50,11 +50,15 @@ pub fn[T] Array::from_iter(iter : Iter[T]) -> Array[T] {
 ///   assert_eq(u, [1, 2, 3, 4, 5, 6])
 /// }
 /// ```
-pub fn[T] push_iter(self : Array[T], iter : Iter[T]) -> Unit {
+pub fn[T] Array::push_iter(self : Self[T], iter : Iter[T]) -> Unit {
   for x in iter {
     self.push(x)
   }
 }
+
+///|
+#deprecated("use method call")
+pub fnalias Array::push_iter
 
 ///|
 /// Creates a new array of the specified length, where each element is
@@ -79,7 +83,10 @@ pub fn[T] push_iter(self : Array[T], iter : Iter[T]) -> Unit {
 ///   inspect(arr, content="[0, 2, 4]")
 /// }
 /// ```
-pub fn[T] Array::makei(length : Int, value : (Int) -> T) -> Array[T] {
+pub fn[T] Array::makei(
+  length : Int,
+  value : (Int) -> T raise?
+) -> Array[T] raise? {
   if length <= 0 {
     []
   } else {
@@ -103,7 +110,7 @@ pub fn[T] Array::makei(length : Int, value : (Int) -> T) -> Array[T] {
 /// test "Array::shuffle_in_place" {
 ///   let arr = [1, 2, 3, 4, 5]
 ///   fn rand(upper : Int) -> Int {
-///     let rng = @random.new()
+///     let rng = @random.Rand::new()
 ///     rng.int(limit=upper)
 ///   }
 ///   Array::shuffle_in_place(arr, rand=rand)
@@ -127,13 +134,15 @@ pub fn[T] shuffle_in_place(self : Array[T], rand~ : (Int) -> Int) -> Unit {
 /// *rand n* is expected to returns a uniformly distribution integer between 0 and n - 1
 /// # Example
 /// 
-/// ```
-/// let arr = [1, 2, 3, 4, 5]
-/// fn rand(upper : Int) -> Int {
-///   let rng = @random.new()
-///   rng.int(limit=upper)
+/// ```mbt
+/// test {
+///   let arr = [1, 2, 3, 4, 5]
+///   fn rand(upper : Int) -> Int {
+///     let rng = @random.Rand::new()
+///     rng.int(limit=upper)
+///   }
+///   let _shuffled = Array::shuffle(arr, rand=rand)
 /// }
-/// let _shuffled = Array::shuffle(arr, rand=rand)
 /// ```
 pub fn[T] shuffle(self : Array[T], rand~ : (Int) -> Int) -> Array[T] {
   let new_arr = self.copy()
@@ -151,7 +160,10 @@ pub fn[T] shuffle(self : Array[T], rand~ : (Int) -> Int) -> Array[T] {
 /// 
 /// # Returns
 /// 
-pub fn[A, B] filter_map(self : Array[A], f : (A) -> B?) -> Array[B] {
+pub fn[A, B] filter_map(
+  self : Array[A],
+  f : (A) -> B? raise?
+) -> Array[B] raise? {
   let result = []
   for x in self {
     if f(x) is Some(x) {
@@ -223,6 +235,29 @@ pub fn[A, B] zip(self : Array[A], other : Array[B]) -> Array[(A, B)] {
   }
 }
 
+///|
+/// Splits an array of pairs into two arrays, separating the first and second elements.
+///
+/// # Example
+/// ```moonbit
+/// test "Array::unzip" {
+///   let arr = [(1, "a"), (2, "b"), (3, "c")]
+///   let (nums, strs) = arr.unzip()
+///   inspect(nums, content="[1, 2, 3]")
+///   inspect(strs, content="[\"a\", \"b\", \"c\"]")
+/// }
+/// ```
+pub fn[T1, T2] unzip(self : Array[(T1, T2)]) -> (Array[T1], Array[T2]) {
+  let arr1 : Array[T1] = Array::new(capacity=self.length())
+  let arr2 : Array[T2] = Array::new(capacity=self.length())
+  for pair in self {
+    let (x, y) = pair
+    arr1.push(x)
+    arr2.push(y)
+  }
+  (arr1, arr2)
+}
+
 ///| 
 /// Zips two arrays into a single array by applying a function to each pair of elements.
 ///
@@ -247,8 +282,8 @@ pub fn[A, B] zip(self : Array[A], other : Array[B]) -> Array[(A, B)] {
 pub fn[A, B, C] zip_with(
   l : Array[A],
   r : Array[B],
-  merge : (A, B) -> C
-) -> Array[C] {
+  merge : (A, B) -> C raise?
+) -> Array[C] raise? {
   let length = if l.length() < r.length() { l.length() } else { r.length() }
   let arr = Array::new(capacity=length)
   for i = 0; i < length; i = i + 1 {
@@ -305,6 +340,12 @@ pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Array[X] with arbi
 }
 
 ///|
+/// Join an array of strings using the provided `separator`.
+///
+/// Parameters:
+///   * `separator` : The string inserted between each element.
+///
+/// Returns a single concatenated `String`.
 pub fn join(self : Array[String], separator : @string.View) -> String {
   self[:].join(separator)
 }

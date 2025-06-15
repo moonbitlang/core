@@ -33,7 +33,7 @@
 ///   }
 /// }
 /// ```
-pub(all) type! Failure String derive(ToJson)
+pub(all) suberror Failure String derive(Json)
 
 ///|
 /// Raises a `Failure` error with a given message and source location.
@@ -57,6 +57,6 @@ pub(all) type! Failure String derive(ToJson)
 ///   fail("Something went wrong")
 /// }
 /// ```
-pub fn[T] fail(msg : String, loc~ : SourceLoc = _) -> T!Failure {
+pub fn[T] fail(msg : String, loc~ : SourceLoc = _) -> T raise Failure {
   raise Failure("FAILED: \{loc} \{msg}")
 }

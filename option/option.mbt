@@ -26,7 +26,7 @@
 ///
 /// # Example
 ///
-/// ```
+/// ```mbt
 /// test "when_example" {
 ///   let result = @option.when(true, fn(){ "Hello, World!" })
 ///   assert_eq(result, Some("Hello, World!"))
@@ -105,7 +105,7 @@ test "some" {
 ///
 /// # Example
 ///
-/// ```
+/// ```mbt
 /// test "map_example" {
 ///   let a = Some(5)
 ///   assert_eq(a.map(fn(x){ x * 2 }), Some(10))
@@ -135,7 +135,7 @@ test "map" {
 ///
 /// # Example
 ///
-/// ```
+/// ```mbt
 /// test "map_or_example" {
 ///   let a = Some(5)
 ///   assert_eq(a.map_or(3, fn(x){ x * 2 }), 10)
@@ -161,7 +161,7 @@ test "map_or" {
 ///
 /// # Example
 ///
-/// ```
+/// ```mbt
 /// test "map_or_else_example" {
 ///   let a = Some(5)
 ///   assert_eq(a.map_or_else(fn(){ 3 }, fn(x){ x * 2 }), 10)
@@ -188,7 +188,7 @@ test "map_or_else" {
 ///
 /// # Example
 ///
-/// ```
+/// ```mbt
 /// test "bind_example" {
 ///   let a = Option::Some(5)
 ///   let r1 = a.bind(fn(x){ Some(x * 2) })
@@ -220,12 +220,12 @@ test "bind" {
 ///
 /// # Example
 ///
-/// ```
+/// ```mbt
 /// test "flatten_example" {
 ///   let a = Some(Some(42));
-///   assert_eq(@option.flatten(a), Some(42))
+///   assert_eq(a.flatten(), Some(42))
 ///   let b : Int?? = Some(None)
-///   assert_eq(@option.flatten(b), None)
+///   assert_eq(b.flatten(), None)
 /// }
 /// ```
 pub fn[T] flatten(self : T??) -> T? {
@@ -264,7 +264,7 @@ test "is_empty" {
 /// the same option is returned. Otherwise, `None` is returned.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "Option::filter_example" {
 ///   let x = Some(3)
 ///   assert_eq(x.filter(fn(x){ x > 5 }), None)
@@ -401,7 +401,7 @@ test "iter" {
 }
 
 ///|
-pub fn[T, Err : Error] or_error(self : T?, err : Err) -> T!Err {
+pub fn[T, Err : Error] or_error(self : T?, err : Err) -> T raise Err {
   match self {
     Some(v) => v
     None => raise err
@@ -411,13 +411,13 @@ pub fn[T, Err : Error] or_error(self : T?, err : Err) -> T!Err {
 ///|
 test "or error" {
   assert_eq(
-    try (None : String?).or_error(Failure("This is serious")) catch {
+    (None : String?).or_error(Failure("This is serious")) catch {
       Failure(err) => err
     },
     "This is serious",
   )
   assert_eq(
-    try Some("This is ok").or_error(Failure("This is serious")) catch {
+    Some("This is ok").or_error(Failure("This is serious")) catch {
       Failure(err) => err
     },
     "This is ok",

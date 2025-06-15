@@ -104,7 +104,7 @@ pub fn[A] copy(self : T[A]) -> T[A] {
 /// Create a persistent array from an array.
 /// 
 /// # Example
-/// ```
+/// ```mbt
 /// test "from_array example" {
 ///   let v = @array.of([1, 2, 3])
 ///   assert_eq(v, @array.from_array([1, 2, 3]))
@@ -182,7 +182,7 @@ pub fn[A] length(self : T[A]) -> Int {
 /// Get a value at the given index.
 ///
 /// # Examples
-/// ```
+/// ```mbt
 /// test "op_get example" {
 ///   let v = @array.of([1, 2, 3, 4, 5])
 ///   assert_eq(v[0], 1)
@@ -216,9 +216,9 @@ pub fn[A] op_get(self : T[A], index : Int) -> A {
 /// ///|
 /// test "get" {
 ///   let v = @array.of([1, 2, 3])
-///   inspect!(v.get(1), content="Some(2)")
-///   inspect!(v.get(-1), content="None")
-///   inspect!(v.get(3), content="None")
+///   inspect(v.get(1), content="Some(2)")
+///   inspect(v.get(-1), content="None")
+///   inspect(v.get(3), content="None")
 /// }
 /// ```
 pub fn[A] get(self : T[A], index : Int) -> A? {
@@ -234,7 +234,7 @@ pub fn[A] get(self : T[A], index : Int) -> A? {
 /// Set a value at the given index (immutable).
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "set example" {
 ///   let v = @array.of([1, 2, 3, 4, 5])
 ///   assert_eq(v.set(1, 10), @array.of([1, 10, 3, 4, 5]))
@@ -252,9 +252,11 @@ pub fn[A] set(self : T[A], index : Int, value : A) -> T[A] {
 /// Push a value to the end of the array.
 ///
 /// # Example
-/// ```
-/// let v = @array.of([1, 2, 3])
-/// assert_eq(v.push(4), @array.of([1, 2, 3, 4]))
+/// ```mbt
+/// test {
+///   let v = @array.of([1, 2, 3])
+///   assert_eq(v.push(4), @array.of([1, 2, 3, 4]))
+/// }
 /// ```
 pub fn[A] push(self : T[A], value : A) -> T[A] {
   let (tree, shift) = self.tree.push_end(self.shift, value)
@@ -300,7 +302,7 @@ pub fn[A] iter(self : T[A]) -> Iter[A] {
 /// Iterate over the array.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "each example" {
 ///   let arr = []
 ///   let v = @array.of([1, 2, 3, 4, 5])
@@ -316,11 +318,13 @@ pub fn[A] each(self : T[A], f : (A) -> Unit) -> Unit {
 /// Iterate over the array with index.
 ///
 /// # Example
-/// ```
-/// let arr = []
-/// let v = @array.of([1, 2, 3, 4, 5])
-/// v.eachi(fn(i, e) { arr.push(i * e) })
-/// assert_eq(arr, [0, 2, 6, 12, 20])
+/// ```mbt
+/// test {
+///   let arr = []
+///   let v = @array.of([1, 2, 3, 4, 5])
+///   v.eachi(fn(i, e) { arr.push(i * e) })
+///   assert_eq(arr, [0, 2, 6, 12, 20])
+/// }
 /// ```
 pub fn[A] eachi(self : T[A], f : (Int, A) -> Unit) -> Unit {
   self.tree.eachi(f, self.shift, 0)
@@ -330,9 +334,11 @@ pub fn[A] eachi(self : T[A], f : (Int, A) -> Unit) -> Unit {
 /// Fold the array.
 ///
 /// # Example
-/// ```
-/// let v = @array.of([1, 2, 3, 4, 5])
-/// assert_eq(v.fold(fn(a, b) { a + b }, init=0), 15)
+/// ```mbt
+/// test {
+///   let v = @array.of([1, 2, 3, 4, 5])
+///   assert_eq(v.fold(fn(a, b) { a + b }, init=0), 15)
+/// }
 /// ```
 pub fn[A, B] fold(self : T[A], init~ : B, f : (B, A) -> B) -> B {
   self.tree.fold(init, f)
@@ -342,9 +348,11 @@ pub fn[A, B] fold(self : T[A], init~ : B, f : (B, A) -> B) -> B {
 /// Fold the array in reverse order.
 ///
 /// # Example
-/// ```
-/// let v = @array.of([1, 2, 3, 4, 5])
-/// assert_eq(v.rev_fold(fn(a, b) { a + b }, init=0), 15)
+/// ```mbt
+/// test {
+///   let v = @array.of([1, 2, 3, 4, 5])
+///   assert_eq(v.rev_fold(fn(a, b) { a + b }, init=0), 15)
+/// }
 /// ```
 pub fn[A, B] rev_fold(self : T[A], init~ : B, f : (B, A) -> B) -> B {
   self.tree.rev_fold(init, f)
@@ -354,9 +362,11 @@ pub fn[A, B] rev_fold(self : T[A], init~ : B, f : (B, A) -> B) -> B {
 /// Fold the array from left to right.
 ///
 /// # Example
-/// ```
-/// let v = @array.of([1, 2, 3, 4, 5])
-/// assert_eq(v.fold(fn(a, b) { a + b }, init=0), 15)
+/// ```mbt
+/// test {
+///   let v = @array.of([1, 2, 3, 4, 5])
+///   assert_eq(v.fold(fn(a, b) { a + b }, init=0), 15)
+/// }
 /// ```
 #deprecated("Use `fold` instead")
 #coverage.skip
@@ -368,9 +378,11 @@ pub fn[A] fold_left(self : T[A], f : (A, A) -> A, init~ : A) -> A {
 /// Fold the array from right to left.
 ///
 /// # Example
-/// ```
-/// let v = @array.of([1, 2, 3, 4, 5])
-/// assert_eq(v.rev_fold(fn(a, b) { a + b }, init=0), 15)
+/// ```mbt
+/// test {
+///   let v = @array.of([1, 2, 3, 4, 5])
+///   assert_eq(v.rev_fold(fn(a, b) { a + b }, init=0), 15)
+/// }
 /// ```
 #deprecated("Use `rev_fold` instead")
 #coverage.skip
@@ -382,9 +394,11 @@ pub fn[A] fold_right(self : T[A], f : (A, A) -> A, init~ : A) -> A {
 /// Map a function over the array.
 ///
 /// # Example
-/// ```
-/// let v = @array.of([1, 2, 3, 4, 5])
-/// assert_eq(v.map(fn(e) { e * 2 }), @array.of([2, 4, 6, 8, 10]))
+/// ```mbt
+/// test {
+///   let v = @array.of([1, 2, 3, 4, 5])
+///   assert_eq(v.map(fn(e) { e * 2 }), @array.of([2, 4, 6, 8, 10]))
+/// }
 /// ```
 pub fn[A, B] map(self : T[A], f : (A) -> B) -> T[B] {
   { tree: self.tree.map(f), size: self.size, shift: self.shift }
@@ -513,10 +527,4 @@ fn shift_cap_of_size(size : Int) -> (Int, Int) {
   }
   let shift = num_bits * depth
   (shift, cap)
-}
-
-///|
-/// Print the tree structure of the internal tree. For debug use.
-fn[A : Show] to_debug_string(self : T[A]) -> String {
-  self.tree.to_string()
 }

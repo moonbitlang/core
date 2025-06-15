@@ -34,9 +34,11 @@
 ///
 /// # Examples
 ///
-/// ```
-/// assert_eq(@math.maximum(1, 2), 2)
-/// assert_eq(@math.maximum(2, 2), 2)
+/// ```mbt
+/// test {
+///   assert_eq(@math.maximum(1, 2), 2)
+///   assert_eq(@math.maximum(2, 2), 2)
+/// }
 /// ```
 pub fn[T : Compare] maximum(x : T, y : T) -> T {
   if x > y {
@@ -53,9 +55,11 @@ pub fn[T : Compare] maximum(x : T, y : T) -> T {
 ///
 /// # Examples
 ///
-/// ```
-/// assert_eq(@math.minimum(1, 2), 1)
-/// assert_eq(@math.minimum(2, 2), 2)
+/// ```mbt
+/// test {
+///   assert_eq(@math.minimum(1, 2), 1)
+///   assert_eq(@math.minimum(2, 2), 2)
+/// }
 /// ```
 pub fn[T : Compare] minimum(x : T, y : T) -> T {
   if x > y {
@@ -66,30 +70,20 @@ pub fn[T : Compare] minimum(x : T, y : T) -> T {
 }
 
 ///|
-/// Calculates the cube root of a number.
-///
-/// # Examples
-///
-/// ```
-/// assert_eq(@math.cbrt(1), 1)
-/// assert_eq(@math.cbrt(27), 3)
-/// assert_eq(@math.cbrt(125), 5)
-/// assert_eq(@math.cbrt(1000), 10)
-/// ```
-pub fn cbrt(x : Double) -> Double {
-  x.cbrt()
-}
+pub fnalias Double::(cbrt, hypot)
 
 ///|
 /// Calculates the cube root of a number.
 ///
 /// # Examples
 ///
-/// ```
-/// assert_eq(@math.cbrtf(1), 1)
-/// assert_eq(@math.cbrtf(27), 3)
-/// assert_eq(@math.cbrtf(125), 5)
-/// assert_eq(@math.cbrtf(1000), 10)
+/// ```mbt
+/// test {
+///   assert_eq(@math.cbrtf(1), 1)
+///   assert_eq(@math.cbrtf(27), 3)
+///   assert_eq(@math.cbrtf(125), 5)
+///   assert_eq(@math.cbrtf(1000), 10)
+/// }
 /// ```
 pub fn cbrtf(x : Float) -> Float {
   let b1 : UInt = 709958130 // B1 = (127-127.0/3-0.03306235651)*2**23 */
@@ -142,24 +136,12 @@ pub fn cbrtf(x : Float) -> Float {
 ///
 /// # Examples
 ///
-/// ```
-/// assert_eq(@math.hypot(3, 4), 5)
-/// assert_eq(@math.hypot(5, 12), 13)
-/// assert_eq(@math.hypot(8, 15), 17)
-/// ```
-pub fn hypot(x : Double, y : Double) -> Double {
-  x.hypot(y)
-}
-
-///|
-/// Returns the hypotenuse of a right-angled triangle whose legs are `x` and `y`.
-///
-/// # Examples
-///
-/// ```
-/// assert_eq(@math.hypotf(3, 4), 5)
-/// assert_eq(@math.hypotf(5, 12), 13)
-/// assert_eq(@math.hypotf(8, 15), 17)
+/// ```mbt
+/// test {
+///   assert_eq(@math.hypotf(3, 4), 5)
+///   assert_eq(@math.hypotf(5, 12), 13)
+///   assert_eq(@math.hypotf(8, 15), 17)
+/// }
 /// ```
 pub fn hypotf(x : Float, y : Float) -> Float {
   let epsilon : Float = 1.1920928955078125e-7

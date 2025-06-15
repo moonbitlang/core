@@ -5,22 +5,22 @@ import(
 )
 
 // Values
-fn[T, R] map(Ref[T], (T) -> R) -> Ref[R]
+fn[T, R] map(Ref[T], (T) -> R raise?) -> Ref[R] raise?
 
 fn[T] new(T) -> Ref[T]
 
-fn[T, R] protect(Ref[T], T, () -> R) -> R
+fn[T, R] protect(Ref[T], T, () -> R raise?) -> R raise?
 
 fn[T] swap(Ref[T], Ref[T]) -> Unit
 
-fn[T] update(Ref[T], (T) -> T) -> Unit
+fn[T] update(Ref[T], (T) -> T raise?) -> Unit raise?
 
 // Types and methods
-fn[T, R] Ref::map(Self[T], (T) -> R) -> Self[R]
+fn[T, R] Ref::map(Self[T], (T) -> R raise?) -> Self[R] raise?
 fn[T] Ref::new(T) -> Self[T]
-fn[T, R] Ref::protect(Self[T], T, () -> R) -> R
+fn[T, R] Ref::protect(Self[T], T, () -> R raise?) -> R raise?
 fn[T] Ref::swap(Self[T], Self[T]) -> Unit
-fn[T] Ref::update(Self[T], (T) -> T) -> Unit
+fn[T] Ref::update(Self[T], (T) -> T raise?) -> Unit raise?
 impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Ref[X]
 
 // Type aliases

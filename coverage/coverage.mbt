@@ -76,7 +76,8 @@ priv type StringBuffer Array[String]
 
 ///|
 impl Output for StringBuffer with output(self : StringBuffer, content : String) -> Unit {
-  self._.push(content)
+  let StringBuffer(self) = self
+  self.push(content)
 }
 
 ///|
@@ -154,8 +155,8 @@ fn coverage_log(
     }
   }
   print("{ ")
-  loop counters, 0 {
-    MCons((name, counter), xs), ix => {
+  loop (counters, 0) {
+    (MCons((name, counter), xs), ix) => {
       if ix != 0 {
         print(", ")
       }
@@ -163,9 +164,9 @@ fn coverage_log(
       print(": ")
       let counter_dump = counter.to_string()
       println(counter_dump)
-      continue xs, ix + 1
+      continue (xs, ix + 1)
     }
-    MNil, _ => ()
+    (MNil, _) => ()
   }
   print("}")
 }

@@ -36,7 +36,7 @@ struct StringView {
 /// A `@string.View` represents a view of a String that maintains proper Unicode
 /// character boundaries. It allows safe access to a substring while handling 
 /// multi-byte characters correctly.
-pub typealias View = StringView
+pub typealias StringView as View
 
 ///| 
 /// Returns the charcode(UTF-16 code unit) at the given index.
@@ -45,11 +45,13 @@ pub typealias View = StringView
 /// 
 /// # Example
 /// 
-/// ```
-/// let str = "Hello🤣🤣🤣"
-/// let view = str[1:6]
-/// inspect(view[0].to_char(), content="Some('e')")
-/// inspect(view[4], content="55358")
+/// ```mbt
+/// test {
+///   let str = "Hello🤣🤣🤣"
+///   let view = str.charcodes(start = str.offset_of_nth_char(1).unwrap(), end = str.offset_of_nth_char(6).unwrap())
+///   inspect(view[0].to_char(), content="Some('e')")
+///   inspect(view[4], content="55358")
+/// }
 /// ```
 pub fn View::op_get(self : View, index : Int) -> Int {
   guard index >= 0 && index < self.length() else {
@@ -84,24 +86,27 @@ pub fn length(self : View) -> Int {
 /// 
 /// # Example
 /// 
-/// ```
-/// let str = "Hello🤣🤣🤣"
-/// let view1 = str.view()
-/// inspect(view1, content=
-///  "Hello🤣🤣🤣"
-///)
-/// let start_offset = str.offset_of_nth_char(1).unwrap()
-/// let end_offset = str.offset_of_nth_char(6).unwrap() // the second emoji
-/// let view2 = str.view(start_offset~, end_offset~)
-/// inspect(view2, content=
-///  "ello🤣"
-///)
+/// ```mbt
+/// test {
+///   let str = "Hello🤣🤣🤣"
+///   let view1 = str.view()
+///   inspect(view1, content=
+///    "Hello🤣🤣🤣"
+///   )
+///   let start_offset = str.offset_of_nth_char(1).unwrap()
+///   let end_offset = str.offset_of_nth_char(6).unwrap() // the second emoji
+///   let view2 = str.view(start_offset~, end_offset~)
+///   inspect(view2, content=
+///    "ello🤣"
+///   )
+/// }
 /// ```
 pub fn String::view(
   self : String,
   start_offset~ : Int = 0,
-  end_offset~ : Int = self.length()
+  end_offset? : Int
 ) -> View {
+  let end_offset = if end_offset is Some(o) { o } else { self.length() }
   guard start_offset >= 0 &&
     start_offset <= end_offset &&
     end_offset <= self.length() else {
@@ -115,8 +120,9 @@ pub fn String::view(
 pub fn View::view(
   self : View,
   start_offset~ : Int = 0,
-  end_offset~ : Int = self.length()
+  end_offset? : Int
 ) -> View {
+  let end_offset = if end_offset is Some(o) { o } else { self.length() }
   guard start_offset >= 0 &&
     start_offset <= end_offset &&
     end_offset <= self.length() else {
@@ -134,27 +140,21 @@ pub fn View::view(
 /// 
 /// # Example
 /// 
-/// ```
-/// let str = "Hello🤣🤣🤣"
-/// let view1 = str.charcodes()
-/// inspect(view1, content=
-///  "Hello🤣🤣🤣"
-///)
-/// let start = str.offset_of_nth_char(1).unwrap()
-/// let end = str.offset_of_nth_char(6).unwrap() // the second emoji
-/// let view2 = str.charcodes(start~, end~)
-/// inspect(view2, content=
-///  "ello🤣"
-///)
+/// ```mbt
+/// test {
+///   let str = "Hello🤣🤣🤣"
+///   let view1 = str.charcodes()
+///   inspect(view1, content="Hello🤣🤣🤣")
+///   let start = str.offset_of_nth_char(1).unwrap()
+///   let end = str.offset_of_nth_char(6).unwrap() // the second emoji
+///   let view2 = str.charcodes(start~, end~)
+///   inspect(view2, content="ello🤣")
+/// }
 /// ```
 /// 
 /// This method has O(1) complexity.
-pub fn String::charcodes(
-  self : String,
-  start~ : Int = 0,
-  end~ : Int = self.length()
-) -> View {
-  self.view(start_offset=start, end_offset=end)
+pub fn String::charcodes(self : String, start~ : Int = 0, end? : Int) -> View {
+  self.view(start_offset=start, end_offset?=end)
 }
 
 ///|
@@ -162,25 +162,23 @@ pub fn String::charcodes(
 /// 
 /// # Example
 /// 
-/// ```
-/// let str = "Hello🤣🤣🤣"
-/// let view1 = str.view()
-/// let view2 = view1.charcodes(start=1, end=7) // From 2nd to 6th character
-/// inspect(view2, content=
-///  "ello🤣"
-///)
+/// ```mbt
+/// test {
+///   let str = "Hello🤣🤣🤣"
+///   let view1 = str.view()
+///   let view2 = view1.charcodes(start=1, end=7) // From 2nd to 6th character
+///   inspect(view2, content=
+///    "ello🤣"
+///   )
+/// }
 /// ```
 /// 
 /// This method is similar to `String::charcodes` but operates on an existing view.
 /// It allows you to create a sub-view of an existing view with the specified character range.
 /// 
 /// This method has O(1) complexity.
-pub fn View::charcodes(
-  self : View,
-  start~ : Int = 0,
-  end~ : Int = self.length()
-) -> View {
-  self.view(start_offset=start, end_offset=end)
+pub fn View::charcodes(self : View, start~ : Int = 0, end? : Int) -> View {
+  self.view(start_offset=start, end_offset?=end)
 }
 
 ///|
@@ -267,10 +265,12 @@ pub impl Show for View with output(self, logger) {
 /// 
 /// # Examples
 /// 
-/// ```
-/// let str = "Hello World"
-/// let view = str[0:5]  // "Hello"
-/// inspect(view.to_string(), content="Hello")
+/// ```mbt
+/// test {
+///   let str = "Hello World"
+///   let view = str.charcodes(start = str.offset_of_nth_char(0).unwrap(),end   = str.offset_of_nth_char(5).unwrap()) // "Hello"
+///   inspect(view.to_string(), content="Hello")
+/// }
 /// ```
 pub impl Show for StringView with to_string(self) {
   self.str.substring(start=self.start, end=self.end)

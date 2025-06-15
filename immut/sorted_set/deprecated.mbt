@@ -38,7 +38,7 @@ pub fn[A : Compare] T::from_array(array : Array[A]) -> T[A] {
 #coverage.skip
 pub fn[A : @json.FromJson + Compare] T::from_json(
   json : Json
-) -> T[A]!@json.JsonDecodeError {
+) -> T[A] raise @json.JsonDecodeError {
   @json.from_json(json)
 }
 

@@ -23,9 +23,9 @@ test "HAMT::size" {
 
 ///|
 test "HAMT" {
-  let map = loop 0, @hashmap.new() {
-    100, map => map
-    i, map => continue i + 1, map.add(i, i)
+  let map = loop (0, @hashmap.new()) {
+    (100, map) => map
+    (i, map) => continue (i + 1, map.add(i, i))
   }
   for i in 0..<100 {
     assert_eq((i, map.get(i)), (i, Some(i)))
@@ -34,9 +34,9 @@ test "HAMT" {
   let map = map.add(100, 100)
   inspect((100, map.get(100)), content="(100, Some(100))")
   // test for replacement
-  let map = loop 0, map {
-    100, map => map
-    i, map => continue i + 2, map.add(i, i + 1)
+  let map = loop (0, map) {
+    (100, map) => map
+    (i, map) => continue (i + 2, map.add(i, i + 1))
   }
   for i = 0; i < 100; i = i + 2 {
     assert_eq((i, map.get(i)), (i, Some(i + 1)))
@@ -46,16 +46,16 @@ test "HAMT" {
 
 ///|
 test "HAMT::remove" {
-  let map = loop 0, @hashmap.new() {
-    100, map => map
-    i, map => continue i + 1, map.add(i, i)
+  let map = loop (0, @hashmap.new()) {
+    (100, map) => map
+    (i, map) => continue (i + 1, map.add(i, i))
   }
   for i in 0..<100 {
     assert_eq((i, map.get(i)), (i, Some(i)))
   }
-  let map = loop 0, map {
-    100, map => map.remove(100) // test for removing non-existing element
-    i, map => continue i + 2, map.remove(i)
+  let map = loop (0, map) {
+    (100, map) => map.remove(100) // test for removing non-existing element
+    (i, map) => continue (i + 2, map.remove(i))
   }
   for i = 0; i < 100; i = i + 2 {
     assert_eq(map.get(i), None)
@@ -325,9 +325,9 @@ test "filter with collision" {
 
 ///|
 test "filter with branch nodes" {
-  let map = loop 0, @hashmap.new() {
-    10, map => map
-    i, map => continue i + 1, map.add(i, i * 10)
+  let map = loop (0, @hashmap.new()) {
+    (10, map) => map
+    (i, map) => continue (i + 1, map.add(i, i * 10))
   }
   let filtered = map.filter(fn(v) { v % 20 == 0 })
   for i = 0; i < 10; i = i + 1 {
@@ -398,9 +398,9 @@ test "HAMT::map_with_key collision" {
 
 ///|
 test "HAMT::map_with_key branch" {
-  let map = loop 0, @hashmap.new() {
-    10, map => map
-    i, map => continue i + 1, map.add(i, i * 10)
+  let map = loop (0, @hashmap.new()) {
+    (10, map) => map
+    (i, map) => continue (i + 1, map.add(i, i * 10))
   } // Branch
   let mapped = map.map_with_key(fn(k, v) { k * 100 + v })
   for i = 0; i < 10; i = i + 1 {
@@ -584,8 +584,8 @@ test "HAMT::union leaf to non-overlapping map" {
 test "HAMT::intersection with empty" {
   let m1 = @hashmap.of([(1, 1)])
   let m2 = @hashmap.new()
-  assert_eq!(m1.intersection(m2).size(), 0)
-  assert_eq!(m2.intersection(m1).size(), 0)
+  assert_eq(m1.intersection(m2).size(), 0)
+  assert_eq(m2.intersection(m1).size(), 0)
 }
 
 ///|
@@ -593,9 +593,9 @@ test "HAMT::intersection with leaf" {
   let m1 = @hashmap.of([(1, 1), (2, 2)])
   let m2 = @hashmap.singleton(2, 2)
   let m3 = @hashmap.singleton(3, 3)
-  assert_eq!(m1.intersection(m2).get(2), Some(2))
-  assert_eq!(m1.intersection(m3).get(3), None)
-  assert_eq!(m2.intersection(m1).get(2), Some(2))
+  assert_eq(m1.intersection(m2).get(2), Some(2))
+  assert_eq(m1.intersection(m3).get(3), None)
+  assert_eq(m2.intersection(m1).get(2), Some(2))
 }
 
 ///|
@@ -603,18 +603,18 @@ test "HAMT::intersection with branch" {
   let m1 = @hashmap.of([(1, 1), (2, 2), (3, 3)])
   let m2 = @hashmap.of([(2, 2), (3, 30), (4, 4)])
   let inter = m1.intersection(m2)
-  assert_eq!(inter.get(1), None)
-  assert_eq!(inter.get(2), Some(2))
-  assert_eq!(inter.get(3), Some(3))
-  assert_eq!(inter.get(4), None)
+  assert_eq(inter.get(1), None)
+  assert_eq(inter.get(2), Some(2))
+  assert_eq(inter.get(3), Some(3))
+  assert_eq(inter.get(4), None)
 }
 
 ///|
 test "HAMT::intersection_with with empty" {
   let m1 = @hashmap.of([(1, 1)])
   let m2 = @hashmap.new()
-  assert_eq!(m1.intersection_with(m2, fn(_k, v1, v2) { v1 + v2 }).size(), 0)
-  assert_eq!(m2.intersection_with(m1, fn(_k, v1, v2) { v1 + v2 }).size(), 0)
+  assert_eq(m1.intersection_with(m2, fn(_k, v1, v2) { v1 + v2 }).size(), 0)
+  assert_eq(m2.intersection_with(m1, fn(_k, v1, v2) { v1 + v2 }).size(), 0)
 }
 
 ///|
@@ -622,12 +622,12 @@ test "HAMT::intersection_with with leaf" {
   let m1 = @hashmap.of([(1, 1), (2, 2)])
   let m2 = @hashmap.singleton(2, 20)
   let m3 = @hashmap.singleton(3, 30)
-  assert_eq!(
+  assert_eq(
     m1.intersection_with(m2, fn(_k, v1, v2) { v1 + v2 }).get(2),
     Some(22),
   )
-  assert_eq!(m1.intersection_with(m3, fn(_k, v1, v2) { v1 + v2 }).get(3), None)
-  assert_eq!(
+  assert_eq(m1.intersection_with(m3, fn(_k, v1, v2) { v1 + v2 }).get(3), None)
+  assert_eq(
     m2.intersection_with(m1, fn(_k, v1, v2) { v1 + v2 }).get(2),
     Some(22),
   )
@@ -638,18 +638,18 @@ test "HAMT::intersection_with with branch" {
   let m1 = @hashmap.of([(1, 1), (2, 2), (3, 3)])
   let m2 = @hashmap.of([(2, 20), (3, 30), (4, 4)])
   let inter = m1.intersection_with(m2, fn(_k, v1, v2) { v1 * v2 })
-  assert_eq!(inter.get(1), None)
-  assert_eq!(inter.get(2), Some(40))
-  assert_eq!(inter.get(3), Some(90))
-  assert_eq!(inter.get(4), None)
+  assert_eq(inter.get(1), None)
+  assert_eq(inter.get(2), Some(40))
+  assert_eq(inter.get(3), Some(90))
+  assert_eq(inter.get(4), None)
 }
 
 ///|
 test "HAMT::difference with empty" {
   let m1 = @hashmap.of([(1, 1)])
   let m2 = @hashmap.new()
-  assert_eq!(m1.difference(m2), m1)
-  assert_eq!(m2.difference(m1).size(), 0)
+  assert_eq(m1.difference(m2), m1)
+  assert_eq(m2.difference(m1).size(), 0)
 }
 
 ///|
@@ -657,9 +657,9 @@ test "HAMT::difference with leaf" {
   let m1 = @hashmap.of([(1, 1), (2, 2)])
   let m2 = @hashmap.singleton(2, 2)
   let m3 = @hashmap.singleton(3, 3)
-  assert_eq!(m1.difference(m2).get(2), None)
-  assert_eq!(m1.difference(m3).get(1), Some(1))
-  assert_eq!(m2.difference(m1).size(), 0)
+  assert_eq(m1.difference(m2).get(2), None)
+  assert_eq(m1.difference(m3).get(1), Some(1))
+  assert_eq(m2.difference(m1).size(), 0)
 }
 
 ///|
@@ -667,10 +667,10 @@ test "HAMT::difference with branch" {
   let m1 = @hashmap.of([(1, 1), (2, 2), (3, 3)])
   let m2 = @hashmap.of([(2, 2), (3, 30), (4, 4)])
   let diff = m1.difference(m2)
-  assert_eq!(diff.get(1), Some(1))
-  assert_eq!(diff.get(2), None)
-  assert_eq!(diff.get(3), None)
-  assert_eq!(diff.get(4), None)
+  assert_eq(diff.get(1), Some(1))
+  assert_eq(diff.get(2), None)
+  assert_eq(diff.get(3), None)
+  assert_eq(diff.get(4), None)
 }
 
 ///|

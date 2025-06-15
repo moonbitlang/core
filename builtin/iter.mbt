@@ -19,12 +19,12 @@ type Iter[T] ((T) -> IterResult) -> IterResult
 ///|
 //TODO: Add intrinsic for Iter::run
 pub fn[T] Iter::run(self : Iter[T], f : (T) -> IterResult) -> IterResult {
-  (self._)(f)
+  self(f)
 }
 
 ///|
 pub fn[T] Iter::just_run(self : Iter[T], f : (T) -> IterResult) -> Unit {
-  (self._)(f) |> ignore
+  self(f) |> ignore
 }
 
 ///|
@@ -108,6 +108,7 @@ pub fn[T] Iter::eachi(self : Iter[T], f : (Int, T) -> Unit) -> Unit {
 ///
 /// Returns the final accumulator value after folding all elements of the iterator.
 #intrinsic("%iter.reduce")
+#locals(f)
 pub fn[T, B] Iter::fold(self : Iter[T], init~ : B, f : (B, T) -> B) -> B {
   let mut acc = init
   for a in self {
@@ -492,11 +493,12 @@ pub fn[T, R] Iter::flat_map(self : Iter[T], f : (T) -> Iter[R]) -> Iter[R] {
 ///| 
 /// iter.map(f).flatten() == iter..flat_map(f)
 /// ```moonbit 
-/// test {
-///   fn f(n : Int) { Int::until(0,n) }
-///   let xs = f(10)
-///   assert_eq(xs.map(f).flatten().to_array(),xs.flat_map(f).to_array())
-/// }
+/// // ignore this test case for now since it will cause ice in release build
+/// // test {
+/// //   fn f(n : Int) { Int::until(0,n) }
+/// //   let xs = f(10)
+/// //   assert_eq(xs.map(f).flatten().to_array(),xs.flat_map(f).to_array())
+/// // }
 /// ```
 pub fn[T] Iter::flatten(self : Iter[Iter[T]]) -> Iter[T] {
   fn { yield_ => self.run(fn { x => x.run(yield_) }) }
@@ -737,7 +739,7 @@ pub fn[T] Iter::peek(self : Iter[T]) -> T? {
 /// # Returns
 ///
 /// Returns a new iterator with the element `a` prepended to the original iterator.
-#deprecated("Use `self + [a].iter()` or `self + Iter::singleton(a)` instead")
+#deprecated("Use `[a].iter() + self` or `Iter::singleton(a) + self` instead")
 pub fn[T] Iter::prepend(self : Iter[T], a : T) -> Iter[T] {
   fn(yield_) {
     if yield_(a) == IterContinue {
@@ -763,7 +765,7 @@ pub fn[T] Iter::prepend(self : Iter[T], a : T) -> Iter[T] {
 /// # Returns
 ///
 /// Returns a new iterator with the element `a` appended to the original iterator.
-#deprecated("Use `[a].iter() + self` or `Iter::singleton(a) + self` instead")
+#deprecated("Use `self + [a].iter()` or `self + Iter::singleton(a)` instead")
 pub fn[T] Iter::append(self : Iter[T], a : T) -> Iter[T] {
   fn(yield_) {
     if self.run(yield_) == IterContinue {
@@ -849,11 +851,11 @@ pub fn[T] Iter::iter(self : Iter[T]) -> Iter[T] {
 ///|
 /// Returns the last element of the iterator, or `None` if the iterator is empty.
 pub fn[A] Iter::last(self : Iter[A]) -> A? {
-  fn f(_a : A?, b : A) {
-    Some(b)
+  let mut last = None
+  for a in self {
+    last = Some(a)
   }
-
-  self.fold(init=None, f)
+  last
 }
 
 ///|
@@ -873,9 +875,16 @@ pub fn[A] Iter::last(self : Iter[A]) -> A? {
 ///
 /// # Examples
 ///
-/// ```
-/// let iter = Iter::singleton(42)
-/// assert_eq(iter.head(), Some(42))
+/// ```moonbit
+/// test "Iter::head" {
+///   let iter = Iter::singleton(42)
+///   assert_eq(iter.head(), Some(42))
+/// }
+///
+/// test "Iter::head/empty" {
+///   let iter = Iter::empty()
+///   assert_eq(iter.head(), None)
+/// }
 /// ```
 pub fn[A] Iter::head(self : Iter[A]) -> A? {
   for i in self {
@@ -895,10 +904,12 @@ pub fn[A] Iter::head(self : Iter[A]) -> A? {
 ///
 /// # Examples
 ///
-/// ```
-/// let arr = []
-/// [1, 2, 3].iter().intersperse(0).each(fn(i) {arr.push(i)})
-/// assert_eq(arr, [1, 0, 2, 0, 3])
+/// ```moonbit
+/// test "Iter::intersperse" {
+///   let arr = []
+///   [1, 2, 3].iter().intersperse(0).each(fn(i) {arr.push(i)})
+///   assert_eq(arr, [1, 0, 2, 0, 3])
+/// }
 /// ```
 pub fn[A] Iter::intersperse(self : Iter[A], sep : A) -> Iter[A] {
   fn(yield_) {

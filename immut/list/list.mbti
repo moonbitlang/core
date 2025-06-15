@@ -66,7 +66,7 @@ fn[A] from_iter(Iter[A]) -> T[A]
 
 fn[A] from_iter_rev(Iter[A]) -> T[A]
 
-fn[A : @json.FromJson] from_json(Json) -> T[A]!@json.JsonDecodeError
+fn[A : @json.FromJson] from_json(Json) -> T[A] raise @json.JsonDecodeError
 
 fn[A] head(T[A]) -> A?
 
@@ -202,7 +202,7 @@ fn[A] T::from_array(Array[A]) -> Self[A]
 #deprecated
 fn[A] T::from_iter(Iter[A]) -> Self[A]
 #deprecated
-fn[A : @json.FromJson] T::from_json(Json) -> Self[A]!@json.JsonDecodeError
+fn[A : @json.FromJson] T::from_json(Json) -> Self[A] raise @json.JsonDecodeError
 fn[A] T::head(Self[A]) -> A?
 #deprecated
 fn[A] T::head_exn(Self[A]) -> A

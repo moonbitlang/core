@@ -19,12 +19,12 @@ priv trait OpaqueValue {}
 struct T {
   buffer : StringBuilder
   summaries : Array[Summary]
-  mut storage : &OpaqueValue
+  mut _storage : &OpaqueValue
 }
 
 ///|
 pub fn new() -> T {
   let buffer = StringBuilder::new()
   let summaries = Array::new()
-  { buffer, summaries, storage: () }
+  { buffer, summaries, _storage: () }
 }

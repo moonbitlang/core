@@ -31,7 +31,7 @@ fn offset_to_position(input : String, offset : Int) -> Position {
 fn[T] ParseContext::invalid_char(
   ctx : ParseContext,
   shift~ : Int = 0
-) -> T!ParseError {
+) -> T raise ParseError {
   let offset = ctx.offset + shift
   // FIXME: this should check the surrogate pair
   raise InvalidChar(

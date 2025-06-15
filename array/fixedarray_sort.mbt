@@ -19,10 +19,12 @@
 /// 
 /// # Example
 /// 
-/// ```
-/// let arr: FixedArray[Int] = [5, 4, 3, 2, 1]
-/// arr.stable_sort()
-/// assert_eq(arr, [1, 2, 3, 4, 5])
+/// ```mbt
+/// test {
+///   let arr: FixedArray[Int] = [5, 4, 3, 2, 1]
+///   arr.stable_sort()
+///   assert_eq(arr, [1, 2, 3, 4, 5])
+/// }
 /// ```
 pub fn[T : Compare] FixedArray::stable_sort(self : FixedArray[T]) -> Unit {
   timsort({ array: self, start: 0, end: self.length() })
@@ -204,10 +206,12 @@ fn collapse(runs : Array[TimSortRun], stop : Int) -> Int? {
 /// 
 /// # Example
 /// 
-/// ```
-/// let arr = [5, 4, 3, 2, 1]
-/// arr.sort()
-/// assert_eq(arr, [1, 2, 3, 4, 5])
+/// ```mbt
+/// test {
+///   let arr = [5, 4, 3, 2, 1]
+///   arr.sort()
+///   assert_eq(arr, [1, 2, 3, 4, 5])
+/// }
 /// ```
 pub fn[T : Compare] FixedArray::sort(self : FixedArray[T]) -> Unit {
   fixed_quick_sort(
@@ -436,7 +440,7 @@ fn[T : Compare] fixed_sift_down(arr : FixedArraySlice[T], index : Int) -> Unit {
 }
 
 ///|
-fn fixed_test_sort(f : (FixedArray[Int]) -> Unit) -> Unit! {
+fn fixed_test_sort(f : (FixedArray[Int]) -> Unit) -> Unit raise {
   let arr : FixedArray[_] = [5, 4, 3, 2, 1]
   f(arr)
   assert_eq(arr, [1, 2, 3, 4, 5])

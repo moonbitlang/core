@@ -28,7 +28,7 @@ test "bind with Err" {
 
 ///|
 test "wrap0 with error" {
-  let f = fn() -> Int!Failure { raise Failure("error") }
+  let f = fn() -> Int raise Failure { raise Failure("error") }
   let result = try? f()
   inspect(
     result,
@@ -40,7 +40,7 @@ test "wrap0 with error" {
 
 ///|
 test "wrap2 with error result" {
-  let f = fn(_, _) -> Unit!Failure { raise Failure("error") }
+  let f = fn(_, _) -> Unit raise Failure { raise Failure("error") }
   let r = try? f(1, 2)
   inspect(
     r,

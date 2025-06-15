@@ -19,10 +19,12 @@
 ///
 /// # Example
 ///
-/// ```
-/// let arr = [5, 4, 3, 2, 1]
-/// arr.sort()
-/// assert_eq(arr, [1, 2, 3, 4, 5])
+/// ```mbt
+/// test {
+///   let arr = [5, 4, 3, 2, 1]
+///   arr.sort()
+///   assert_eq(arr, [1, 2, 3, 4, 5])
+/// }
 /// ```
 pub fn[T : Compare] sort(self : Array[T]) -> Unit {
   let len = self.length()
@@ -229,7 +231,7 @@ fn[T : Compare] sift_down(arr : ArrayView[T], index : Int) -> Unit {
 }
 
 ///|
-fn test_sort(f : (Array[Int]) -> Unit) -> Unit! {
+fn test_sort(f : (Array[Int]) -> Unit) -> Unit raise {
   let arr = [5, 4, 3, 2, 1]
   f(arr)
   assert_eq(arr, [1, 2, 3, 4, 5])

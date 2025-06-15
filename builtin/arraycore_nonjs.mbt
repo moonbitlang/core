@@ -207,7 +207,7 @@ fn[T] Array::realloc(self : Array[T]) -> Unit {
 ///
 /// # Example
 ///
-/// ```
+/// ```mbt
 /// test "reserve_capacity_example" {
 ///   let v = [1]
 ///   v.reserve_capacity(10)
@@ -226,7 +226,7 @@ pub fn[T] Array::reserve_capacity(self : Array[T], capacity : Int) -> Unit {
 ///
 /// # Example
 ///
-/// ```
+/// ```mbt
 /// test "shrink_to_fit_example" {
 ///   let v = Array::new(capacity=10)
 ///   v.push(1)
@@ -249,7 +249,7 @@ pub fn[T] Array::shrink_to_fit(self : Array[T]) -> Unit {
 /// If the array is at capacity, it will be reallocated.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "push_example" {
 ///   let v = []
 ///   v.push(3)
@@ -268,7 +268,7 @@ pub fn[T] Array::push(self : Array[T], value : T) -> Unit {
 /// Removes the last element from a array and returns it, or `None` if it is empty.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "pop_example" {
 ///   let v = [1, 2, 3]
 ///   assert_eq(v.pop(), Some(3))
@@ -337,7 +337,7 @@ pub fn[T] Array::unsafe_pop(self : Array[T]) -> T {
 /// This function will panic if the index is out of bounds.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "remove_example" {
 ///   let v = [3, 4, 5]
 ///   assert_eq(v.remove(1), 4)
@@ -370,7 +370,7 @@ pub fn[T] Array::remove(self : Array[T], index : Int) -> T {
 /// This function will panic if the index is out of bounds.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "drain_example" {
 ///   let v = [3, 4, 5]
 ///   let vv = v.drain(1, 2) // vv = [4], v = [3, 5]
@@ -399,7 +399,7 @@ pub fn[T] Array::drain(self : Array[T], begin : Int, end : Int) -> Array[T] {
 /// This function will panic if the index is out of bounds.
 ///
 /// # Example
-/// ```
+/// ```mbt
 /// test "insert_example" {
 ///   [3, 4, 5].insert(1, 6)
 /// }

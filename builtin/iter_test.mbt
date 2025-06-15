@@ -805,3 +805,14 @@ test "iter2" {
     assert_eq(i, x)
   }
 }
+
+///|
+test "Iter::iter2" {
+  let iter = [0, 1, 2].iter()
+  for i, x in iter.iter2() {
+    assert_eq(i, x)
+  }
+  for i, x in iter {
+    assert_eq(i, x)
+  }
+}

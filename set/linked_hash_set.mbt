@@ -316,31 +316,16 @@ fn[K : Hash + Eq] grow(self : Set[K]) -> Unit {
 // Utils
 
 ///|
-fn[K : Show] debug_entries(self : Set[K]) -> String {
-  let buf = StringBuilder::new()
-  for i in 0..<self.entries.length() {
-    if i > 0 {
-      buf.write_char(',')
-    }
-    match self.entries[i] {
-      None => buf.write_char('_')
-      Some({ psl, key, .. }) => buf.write_string("(\{psl},\{key})")
-    }
-  }
-  buf.to_string()
-}
-
-///|
 pub impl[K : Show] Show for Set[K] with output(self, logger) {
   logger.write_string("{")
-  loop 0, self.head {
-    _, None => logger.write_string("}")
-    i, Some({ key, idx, .. }) => {
+  loop (0, self.head) {
+    (_, None) => logger.write_string("}")
+    (i, Some({ key, idx, .. })) => {
       if i > 0 {
         logger.write_string(", ")
       }
       logger.write_object(key)
-      continue i + 1, self.list[idx].next
+      continue (i + 1, self.list[idx].next)
     }
   }
 }
@@ -370,7 +355,7 @@ pub fn[K] is_empty(self : Set[K]) -> Bool {
 
 ///|
 /// Iterate over all keys of the set in the order of insertion.
-pub fn[K] each(self : Set[K], f : (K) -> Unit) -> Unit {
+pub fn[K] each(self : Set[K], f : (K) -> Unit raise?) -> Unit raise? {
   loop self.head {
     Some({ key, idx, .. }) => {
       f(key)
@@ -382,13 +367,13 @@ pub fn[K] each(self : Set[K], f : (K) -> Unit) -> Unit {
 
 ///|
 /// Iterate over all keys of the set in the order of insertion, with index.
-pub fn[K] eachi(self : Set[K], f : (Int, K) -> Unit) -> Unit {
-  loop 0, self.head {
-    i, Some({ key, idx, .. }) => {
+pub fn[K] eachi(self : Set[K], f : (Int, K) -> Unit raise?) -> Unit raise? {
+  loop (0, self.head) {
+    (i, Some({ key, idx, .. })) => {
       f(i, key)
-      continue i + 1, self.list[idx].next
+      continue (i + 1, self.list[idx].next)
     }
-    _, None => break
+    (_, None) => break
   }
 }
 
