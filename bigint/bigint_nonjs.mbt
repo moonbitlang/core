@@ -1202,15 +1202,13 @@ pub fn BigInt::to_hex(self : BigInt, uppercase~ : Bool = true) -> String {
     if i != self.len - 1 && tmp.length() < radix_bit_len / 4 {
       let pad = radix_bit_len / 4 - tmp.length()
       // pad with zeros if not the last limb(the front of the BigInt)
-      for j in 0..<pad {
-        tmp = "0" + tmp
-      }
+      tmp = "0".repeat(pad) + tmp
     }
-    result = result + tmp
+    result += tmp // CR: weird coverage visualized
   }
   if result == "" {
-    "0"
-  } else if self.sign == Negative {
+    "0" // CR: weird coverage visualized
+  } else if self.sign is Negative {
     "-" + result
   } else {
     result

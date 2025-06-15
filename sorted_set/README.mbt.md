@@ -113,7 +113,7 @@ SortedSet implements to_string (i.e. Show trait), which allows you to directly o
 ```moonbit
 test {
     let set = @sorted_set.from_array([1, 2, 3])
-    assert_eq(set.to_string(), "@sorted_set.of([1, 2, 3])")
+    assert_eq(set.to_string(), "@sorted_set.from_array([1, 2, 3])")
 }
 ```
 
