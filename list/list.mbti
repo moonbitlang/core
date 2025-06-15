@@ -104,8 +104,10 @@ fn[A] rev(T[A]) -> T[A]
 
 fn[A] rev_concat(T[A], T[A]) -> T[A]
 
+#deprecated
 fn[A, B] rev_fold(T[A], init~ : B, (B, A) -> B) -> B
 
+#deprecated
 fn[A, B] rev_foldi(T[A], init~ : B, (Int, B, A) -> B) -> B
 
 fn[A, B] rev_map(T[A], (A) -> B) -> T[B]
@@ -190,7 +192,9 @@ fn[A : Eq] T::remove(Self[A], A) -> Self[A]
 fn[A] T::remove_at(Self[A], Int) -> Self[A]
 fn[A] T::rev(Self[A]) -> Self[A]
 fn[A] T::rev_concat(Self[A], Self[A]) -> Self[A]
+#deprecated
 fn[A, B] T::rev_fold(Self[A], init~ : B, (B, A) -> B) -> B
+#deprecated
 fn[A, B] T::rev_foldi(Self[A], init~ : B, (Int, B, A) -> B) -> B
 fn[A, B] T::rev_map(Self[A], (A) -> B) -> Self[B]
 fn[A, E] T::scan_left(Self[A], (E, A) -> E, init~ : E) -> Self[E]

@@ -457,6 +457,7 @@ pub fn[A, B] T::fold(self : T[A], init~ : B, f : (B, A) -> B) -> B {
 ///   assert_eq(r, 15)
 /// }
 /// ```
+#deprecated("use `_.rev().fold(...)` instead")
 pub fn[A, B] T::rev_fold(self : T[A], init~ : B, f : (B, A) -> B) -> B {
   let xs = self.to_array()
   let mut acc = init
@@ -485,6 +486,7 @@ pub fn[A, B] T::foldi(self : T[A], init~ : B, f : (Int, B, A) -> B) -> B {
 /// The index parameter corresponds to the order of traversal, 
 /// starting from 0 for the first element visited,
 /// i.e. the last element of the list would have index 0 as it's first visited.
+#deprecated("use `_.rev().foldi(...)` instead")
 pub fn[A, B] T::rev_foldi(self : T[A], init~ : B, f : (Int, B, A) -> B) -> B {
   self.rev().foldi(init~, fn(i, b, a) { f(i, b, a) })
 }
@@ -1399,8 +1401,6 @@ pub fnalias T::(
   remove_at,
   rev,
   rev_concat,
-  rev_fold,
-  rev_foldi,
   rev_map,
   scan_left,
   scan_right,
@@ -1418,3 +1418,7 @@ pub fnalias T::(
   unzip,
   zip
 )
+
+///|
+#deprecated
+pub fnalias T::(rev_fold, rev_foldi)
