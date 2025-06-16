@@ -31,7 +31,7 @@ fn[K : Compare, V] from_array(Array[(K, V)]) -> T[K, V]
 
 fn[K : Compare, V] from_iter(Iter[(K, V)]) -> T[K, V]
 
-fn[V : @json.FromJson] from_json(Json) -> T[String, V]!@json.JsonDecodeError
+fn[V : @json.FromJson] from_json(Json) -> T[String, V] raise @json.JsonDecodeError
 
 fn[K : Compare, V] get(T[K, V], K) -> V?
 
@@ -92,7 +92,7 @@ fn[K : Compare, V] T::from_array(Array[(K, V)]) -> Self[K, V]
 #deprecated
 fn[K : Compare, V] T::from_iter(Iter[(K, V)]) -> Self[K, V]
 #deprecated
-fn[V : @json.FromJson] T::from_json(Json) -> Self[String, V]!@json.JsonDecodeError
+fn[V : @json.FromJson] T::from_json(Json) -> Self[String, V] raise @json.JsonDecodeError
 fn[K : Compare, V] T::get(Self[K, V], K) -> V?
 #deprecated
 fn[K : Compare, V] T::insert(Self[K, V], K, V) -> Self[K, V]

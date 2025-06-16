@@ -46,6 +46,24 @@ pub fn[A] new(capacity~ : Int = 0) -> T[A] {
 }
 
 ///|
+/// Implements the `Show` trait for deque, enabling string representation of
+/// deque elements for display purposes.
+///
+/// Parameters:
+///
+/// * `self` : The deque to be displayed.
+/// * `logger` : The output buffer where the string representation will be
+/// written.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "T::output" {
+///   let dq = @deque.of([1, 2, 3])
+///   inspect(dq, content="@deque.of([1, 2, 3])")
+/// }
+/// ```
+///
 pub impl[A : Show] Show for T[A] with output(self, logger) {
   logger.write_iter(self.iter(), prefix="@deque.of([", suffix="])")
 }
@@ -506,7 +524,7 @@ pub fn[A] op_get(self : T[A], index : Int) -> A {
   if index < 0 || index >= self.len {
     let len = self.len
     abort(
-      "index out of bounds: Ahe len is from 0 to \{len} but the index is \{index}",
+      "index out of bounds: the len is from 0 to \{len} but the index is \{index}",
     )
   }
   if self.head + index < self.buf.length() {
@@ -533,7 +551,7 @@ pub fn[A] op_set(self : T[A], index : Int, value : A) -> Unit {
   if index < 0 || index >= self.len {
     let len = self.len
     abort(
-      "index out of bounds: Ahe len is from 0 to \{len} but the index is \{index}",
+      "index out of bounds: the len is from 0 to \{len} but the index is \{index}",
     )
   }
   if self.head + index < self.buf.length() {
@@ -1392,6 +1410,21 @@ pub fn[A] T::flatten(self : T[T[A]]) -> T[A] {
 }
 
 ///|
+/// Converts a deque to its JSON representation as an array.
+///
+/// Parameters:
+///
+/// * `self` : The deque to be converted to JSON.
+///
+/// Returns a JSON array containing all elements from the deque converted to
+/// their JSON representations.
+/// test "T::to_json" {
+///   let dq = @deque.of([1, 2, 3])
+///   let json = dq.to_json()
+///   inspect(json, content="Array([Number(1), Number(2), Number(3)])")
+/// }
+/// ```
+///
 pub impl[A : ToJson] ToJson for T[A] with to_json(self : T[A]) -> Json {
   let res = Array::make(self.length(), Json::null())
   for i, x in self {

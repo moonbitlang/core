@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-extern type BigInt
+type BigInt
 
 ///|
 pub fn BigInt::from_string(str : String) -> BigInt {
@@ -290,6 +290,29 @@ extern "js" fn BigInt::js_lor(self : BigInt, other : BigInt) -> BigInt =
   #|(x, y) => x | y
 
 ///|
+/// Performs a bitwise OR operation between two arbitrary-precision integers,
+/// following two's complement representation for negative numbers.
+///
+/// Parameters:
+///
+/// * `self` : The first arbitrary-precision integer operand.
+/// * `other` : The second arbitrary-precision integer operand.
+///
+/// Returns a new `BigInt` representing the result of the bitwise OR operation.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "BigInt::lor" {
+///   let a = BigInt::from_string("42")
+///   let b = BigInt::from_string("-12")
+///   inspect(a | b, content="-2")
+///   let c = BigInt::from_string("-8")
+///   let d = BigInt::from_string("-4")
+///   inspect(c | d, content="-4")
+/// }
+/// ```
+///
 pub impl BitOr for BigInt with lor(self, other) {
   self.js_lor(other)
 }
@@ -299,6 +322,43 @@ extern "js" fn BigInt::js_lxor(self : BigInt, other : BigInt) -> BigInt =
   #|(x, y) => x ^ y
 
 ///|
+/// Performs a bitwise XOR (exclusive OR) operation between two
+/// arbitrary-precision integers, treating them as two's complement binary
+/// numbers.
+///
+/// The XOR operation compares each bit position of both operands and returns 1
+/// if the bits are different, 0 if they are the same. For negative numbers, the
+/// operation is performed using two's complement representation.
+///
+/// Parameters:
+///
+/// * `self` : The first `BigInt` operand for the XOR operation.
+/// * `other` : The second `BigInt` operand for the XOR operation.
+///
+/// Returns a new `BigInt` value representing the bitwise XOR of the two
+/// operands.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "BigInt::lxor" {
+///   let a = BigInt::from_string("42")  // 0b101010
+///   let b = BigInt::from_string("25")  // 0b011001
+///   inspect(a.lxor(b), content="51")   // 0b110011
+/// }
+///
+/// test "BigInt::lxor/negative" {
+///   let a = BigInt::from_string("42")
+///   let b = BigInt::from_string("-7")
+///   inspect(a.lxor(b), content="-45")
+/// }
+///
+/// test "BigInt::lxor/self_cancellation" {
+///   let a = BigInt::from_string("42")
+///   inspect(a.lxor(a), content="0")    // XOR with self gives 0
+/// }
+/// ```
+///
 pub impl BitXOr for BigInt with lxor(self, other) {
   self.js_lxor(other)
 }

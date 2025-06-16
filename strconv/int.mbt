@@ -31,7 +31,7 @@ const INT64_MAX = 0x7fffffffffffffffL
 fn check_and_consume_base(
   view : @string.View,
   base : Int
-) -> (Int, @string.View, Bool)!StrConvError {
+) -> (Int, @string.View, Bool) raise StrConvError {
   // if the base is not given, we need to determine it from the prefix
   if base == 0 {
     match view {
@@ -53,9 +53,9 @@ fn check_and_consume_base(
 
 ///|
 test {
-  inspect(parse_int64?("0b01", base=3), content="Err(invalid syntax)")
-  inspect(parse_int64?("0x01", base=3), content="Err(invalid syntax)")
-  inspect(parse_int64?("0o01", base=3), content="Err(invalid syntax)")
+  inspect(try? parse_int64("0b01", base=3), content="Err(invalid syntax)")
+  inspect(try? parse_int64("0x01", base=3), content="Err(invalid syntax)")
+  inspect(try? parse_int64("0o01", base=3), content="Err(invalid syntax)")
 }
 
 ///|
@@ -70,17 +70,17 @@ test {
 /// These underscores do not affect the value.
 /// Examples:
 /// ```
-/// inspect(parse_int64!("123"), content="123")
-/// inspect(parse_int64!("0xff", base=0), content="255") 
-/// inspect(parse_int64!("0o10"), content="8")
-/// inspect(parse_int64!("0b1010"), content="10")
-/// inspect(parse_int64!("1_234"), content="1234")
-/// inspect(parse_int64!("-123"), content="-123")
-/// inspect(parse_int64!("ff", base=16), content="255")
-/// inspect(parse_int64!("zz", base=36), content="1295")
+/// inspect(parse_int64("123"), content="123")
+/// inspect(parse_int64("0xff", base=0), content="255") 
+/// inspect(parse_int64("0o10"), content="8")
+/// inspect(parse_int64("0b1010"), content="10")
+/// inspect(parse_int64("1_234"), content="1234")
+/// inspect(parse_int64("-123"), content="-123")
+/// inspect(parse_int64("ff", base=16), content="255")
+/// inspect(parse_int64("zz", base=36), content="1295")
 /// ```
 /// 
-pub fn parse_int64(str : String, base~ : Int = 0) -> Int64!StrConvError {
+pub fn parse_int64(str : String, base~ : Int = 0) -> Int64 raise StrConvError {
   guard str != "" else { syntax_err() }
   let (neg, rest) = match str.view() {
     ['+', .. rest] => (false, rest)
@@ -98,13 +98,13 @@ pub fn parse_int64(str : String, base~ : Int = 0) -> Int64!StrConvError {
     | ['_', '0'..='9' | 'a'..='z' | 'A'..='Z', ..])
   guard has_digit else { syntax_err() }
   // convert
-  loop rest, 0L, allow_underscore {
-    ['_'], _, _ =>
+  loop (rest, 0L, allow_underscore) {
+    (['_'], _, _) =>
       // the last character cannot be underscore
       syntax_err()
-    ['_', ..], _, false => syntax_err()
-    ['_', .. rest], acc, true => continue rest, acc, false
-    [c, .. rest], acc, _ => {
+    (['_', ..], _, false) => syntax_err()
+    (['_', .. rest], acc, true) => continue (rest, acc, false)
+    ([c, .. rest], acc, _) => {
       let c = c.to_int()
       let d = match c {
         '0'..='9' => c - '0'
@@ -117,23 +117,23 @@ pub fn parse_int64(str : String, base~ : Int = 0) -> Int64!StrConvError {
         guard acc >= overflow_threshold else { range_err() }
         let next_acc = acc * num_base.to_int64() - d.to_int64()
         guard next_acc <= acc else { range_err() }
-        continue rest, next_acc, true
+        continue (rest, next_acc, true)
       } else {
         guard acc < overflow_threshold else { range_err() }
         let next_acc = acc * num_base.to_int64() + d.to_int64()
         guard next_acc >= acc else { range_err() }
-        continue rest, next_acc, true
+        continue (rest, next_acc, true)
       }
     }
-    [], acc, _ => acc
+    ([], acc, _) => acc
   }
 }
 
 ///|
 /// Parse a string in the given base (0, 2 to 36), return a Int number or an error.
 /// If the `~base` argument is 0, the base will be inferred by the prefix.
-pub fn parse_int(str : String, base~ : Int = 0) -> Int!StrConvError {
-  let n = parse_int64!(str, base~)
+pub fn parse_int(str : String, base~ : Int = 0) -> Int raise StrConvError {
+  let n = parse_int64(str, base~)
   if n < INT_MIN.to_int64() || n > INT_MAX.to_int64() {
     range_err()
   }
@@ -167,26 +167,26 @@ fn check_underscore(str : String) -> Bool {
 
   // Track whether the previous character was an underscore
   let follow_underscore = false
-  loop rest, allow_underscore, follow_underscore {
+  loop (rest, allow_underscore, follow_underscore) {
     // Empty string is valid
-    [], _, _ => true
+    ([], _, _) => true
     // String ending with underscore is invalid
-    ['_'], _, _ => false
+    (['_'], _, _) => false
     // Underscore not allowed in current position (e.g., between non-digits)
-    ['_', ..], false, _ => false
+    (['_', ..], false, _) => false
     // Valid underscore - continue but mark that next char must be a digit
-    ['_', .. rest], true, _ => continue rest, false, true
+    (['_', .. rest], true, _) => continue (rest, false, true)
     // Handle non-underscore character
-    [c, .. rest], _, follow_underscore =>
+    ([c, .. rest], _, follow_underscore) =>
       if is_digit(c) {
         // Digit found - allow underscore in next position
-        continue rest, true, false
+        continue (rest, true, false)
       } else if follow_underscore {
         // Non-digit found after underscore - invalid
         false
       } else {
         // Non-digit found (not after underscore) - continue but don't allow underscores
-        continue rest, false, false
+        continue (rest, false, false)
       }
   }
 }
@@ -279,7 +279,7 @@ test "parse_int64" {
   for i in 0..<tests.length() {
     let t = tests[i]
     assert_eq(
-      try Result::Ok(parse_int64!(t.0)) catch {
+      Result::Ok(parse_int64(t.0)) catch {
         StrConvError(err) => Err(err)
       },
       t.1,
@@ -397,7 +397,7 @@ test "parse_int64_base" {
   for i in 0..<tests.length() {
     let t = tests[i]
     assert_eq(
-      try Result::Ok(parse_int64!(t.0, base=t.1)) catch {
+      Result::Ok(parse_int64(t.0, base=t.1)) catch {
         StrConvError(err) => Err(err)
       },
       t.2,
@@ -437,7 +437,7 @@ test "parse_int" {
   for i in 0..<tests.length() {
     let t = tests[i]
     assert_eq(
-      try Result::Ok(parse_int(t.0)) catch {
+      Result::Ok(parse_int(t.0)) catch {
         StrConvError(err) => Err(err)
       },
       t.1,

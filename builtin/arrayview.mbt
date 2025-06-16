@@ -114,7 +114,9 @@ pub fn[T] ArrayView::op_get(self : ArrayView[T], index : Int) -> T {
 ///   let view = arr[1:4]
 ///   inspect(view.unsafe_get(1), content="3")
 /// }
+/// ```
 ///
+/// ```skip
 /// test "panic ArrayView::unsafe_get/out_of_bounds" {
 ///   let arr = [1, 2, 3]
 ///   let view = arr[1:]

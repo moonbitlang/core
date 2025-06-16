@@ -14,7 +14,7 @@
 
 ///|
 /// Parse a string and return the represented boolean value or an error.
-pub fn parse_bool(str : String) -> Bool!StrConvError {
+pub fn parse_bool(str : String) -> Bool raise StrConvError {
   match str {
     "1" | "t" | "T" | "true" | "TRUE" | "True" => true
     "0" | "f" | "F" | "false" | "FALSE" | "False" => false
@@ -43,7 +43,7 @@ test "parse_bool" {
   for i in 0..<tests.length() {
     let t = tests[i]
     assert_eq(
-      try Result::Ok(parse_bool(t.0)) catch {
+      Result::Ok(parse_bool(t.0)) catch {
         StrConvError(err) => Err(err)
       },
       t.1,

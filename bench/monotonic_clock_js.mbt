@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-extern type Timestamp
+type Timestamp
 
 ///|
 pub extern "js" fn monotonic_clock_start() -> Timestamp =

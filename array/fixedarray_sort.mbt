@@ -436,7 +436,7 @@ fn[T : Compare] fixed_sift_down(arr : FixedArraySlice[T], index : Int) -> Unit {
 }
 
 ///|
-fn fixed_test_sort(f : (FixedArray[Int]) -> Unit) -> Unit! {
+fn fixed_test_sort(f : (FixedArray[Int]) -> Unit) -> Unit raise {
   let arr : FixedArray[_] = [5, 4, 3, 2, 1]
   f(arr)
   assert_eq(arr, [1, 2, 3, 4, 5])

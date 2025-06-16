@@ -42,13 +42,12 @@ fn iter_count(name? : String, inner : () -> Unit, count : UInt) -> Summary {
   } else {
     target_batch_size.ceil().to_int()
   }
-  let samples = Array::new(capacity=count)
-  samples.resize(count, 0.0)
-  for i in 0..<count {
-    samples[i] = iter_n_microseconds(inner, batch_size) / batch_size.to_double()
-  }
-  winsorize(samples, 5.0)
-  Summary::new(name?, samples, batch_size)
+  let samples = Array::makei(count, fn(_) {
+    iter_n_microseconds(inner, batch_size) / batch_size.to_double()
+  })
+  samples.sort()
+  winsorize(sorted_data=samples, 5.0)
+  Summary::new(name?, sorted_data=samples, batch_size)
 }
 
 ///|
@@ -83,17 +82,12 @@ pub fn single_bench(
 /// the calculation that produces it.
 pub fn[Any] keep(self : T, value : Any) -> Unit {
   let trait_object : &OpaqueValue = value
-  self.storage = trait_object
+  self._storage = trait_object
 }
 
 ///|
-/// Suppress field never-read warning
-fn touch_storage(self : T) -> Unit {
-  self.storage |> ignore
-}
-
-///|
-/// Internal use only
+/// Returns a JSON array string containing all collected benchmark summaries.
+/// This helper is mainly used internally for tests and diagnostics.
 #coverage.skip
 pub fn dump_summaries(self : T) -> String {
   "[\{self.buffer.to_string()}]"

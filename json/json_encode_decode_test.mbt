@@ -35,12 +35,12 @@ fn to_json(self : AllThree) -> Json {
 }
 
 ///|
-type! DecodeError {
+suberror DecodeError {
   DecodeError(String)
 } derive(Eq, Show)
 
 ///|
-fn of_json(jv : Json) -> AllThree!DecodeError {
+fn of_json(jv : Json) -> AllThree raise DecodeError {
   match jv {
     {
       "ints": Array(ints),

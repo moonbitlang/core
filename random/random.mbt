@@ -102,8 +102,8 @@ pub fn int(self : Rand, limit~ : Int = 0) -> Int {
 pub fn int64(self : Rand, limit~ : Int64 = 0) -> Int64 {
   if limit == 0 {
     // range [0, 2^63)
-    // Create a mask that has all bits set to 1 except the highest bit
-    let mask : UInt64 = 1UL << 63
+    // Create a mask that keeps the lower 63 bits
+    let mask : UInt64 = (1UL << 63) - 1UL
     return (self.next() & mask).reinterpret_as_int64()
   } else {
     self.uint64(limit=limit.reinterpret_as_uint64()).reinterpret_as_int64()

@@ -36,7 +36,7 @@ struct StringView {
 /// A `@string.View` represents a view of a String that maintains proper Unicode
 /// character boundaries. It allows safe access to a substring while handling 
 /// multi-byte characters correctly.
-pub typealias View = StringView
+pub typealias StringView as View
 
 ///| 
 /// Returns the charcode(UTF-16 code unit) at the given index.
@@ -56,6 +56,19 @@ pub fn View::op_get(self : View, index : Int) -> Int {
     abort("Index out of bounds")
   }
   self.str.unsafe_charcode_at(self.start + index)
+}
+
+///|
+/// Returns the original string that is being viewed.
+pub fn data(self : View) -> String {
+  self.str
+}
+
+///|
+/// Returns the starting offset (in UTF-16 code units) of this view into its
+/// underlying string.
+pub fn start_offset(self : View) -> Int {
+  self.start
 }
 
 ///|
@@ -87,8 +100,9 @@ pub fn length(self : View) -> Int {
 pub fn String::view(
   self : String,
   start_offset~ : Int = 0,
-  end_offset~ : Int = self.length()
+  end_offset? : Int
 ) -> View {
+  let end_offset = if end_offset is Some(o) { o } else { self.length() }
   guard start_offset >= 0 &&
     start_offset <= end_offset &&
     end_offset <= self.length() else {
@@ -102,8 +116,9 @@ pub fn String::view(
 pub fn View::view(
   self : View,
   start_offset~ : Int = 0,
-  end_offset~ : Int = self.length()
+  end_offset? : Int
 ) -> View {
+  let end_offset = if end_offset is Some(o) { o } else { self.length() }
   guard start_offset >= 0 &&
     start_offset <= end_offset &&
     end_offset <= self.length() else {
@@ -136,12 +151,8 @@ pub fn View::view(
 /// ```
 /// 
 /// This method has O(1) complexity.
-pub fn String::charcodes(
-  self : String,
-  start~ : Int = 0,
-  end~ : Int = self.length()
-) -> View {
-  self.view(start_offset=start, end_offset=end)
+pub fn String::charcodes(self : String, start~ : Int = 0, end? : Int) -> View {
+  self.view(start_offset=start, end_offset?=end)
 }
 
 ///|
@@ -162,12 +173,8 @@ pub fn String::charcodes(
 /// It allows you to create a sub-view of an existing view with the specified character range.
 /// 
 /// This method has O(1) complexity.
-pub fn View::charcodes(
-  self : View,
-  start~ : Int = 0,
-  end~ : Int = self.length()
-) -> View {
-  self.view(start_offset=start, end_offset=end)
+pub fn View::charcodes(self : View, start~ : Int = 0, end? : Int) -> View {
+  self.view(start_offset=start, end_offset?=end)
 }
 
 ///|

@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-fn check_invariant(_a : BigInt) -> Unit! {
+fn check_invariant(_a : BigInt) -> Unit raise {
   assert_true(true)
 }
 

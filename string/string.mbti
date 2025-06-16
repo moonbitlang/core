@@ -8,6 +8,8 @@ fn contains(String, StringView) -> Bool
 
 fn contains_char(String, Char) -> Bool
 
+fn data(StringView) -> String
+
 fn default() -> String
 
 #deprecated
@@ -37,7 +39,7 @@ fn iter(String) -> Iter[Char]
 fn iter2(String) -> Iter2[Int, Char]
 
 #deprecated
-fn last_index_of(String, String, from~ : Int = ..) -> Int
+fn last_index_of(String, String, from? : Int) -> Int
 
 fn length(StringView) -> Int
 
@@ -58,6 +60,8 @@ fn[A] rev_fold(String, init~ : A, (A, Char) -> A) -> A
 fn rev_iter(String) -> Iter[Char]
 
 fn split(String, StringView) -> Iter[StringView]
+
+fn start_offset(StringView) -> Int
 
 #deprecated
 fn starts_with(String, String) -> Bool
@@ -89,9 +93,10 @@ fn StringView::char_length(Self) -> Int
 fn StringView::char_length_eq(Self, Int) -> Bool
 fn StringView::char_length_ge(Self, Int) -> Bool
 fn StringView::charcode_at(Self, Int) -> Int
-fn StringView::charcodes(Self, start~ : Int = .., end~ : Int = ..) -> Self
+fn StringView::charcodes(Self, start~ : Int = .., end? : Int) -> Self
 fn StringView::contains(Self, Self) -> Bool
 fn StringView::contains_char(Self, Char) -> Bool
+fn StringView::data(Self) -> String
 fn StringView::find(Self, Self) -> Int?
 fn StringView::find_by(Self, (Char) -> Bool) -> Int?
 fn[A] StringView::fold(Self, init~ : A, (A, Char) -> A) -> A
@@ -119,6 +124,7 @@ fn StringView::rev_find(Self, Self) -> Int?
 fn[A] StringView::rev_fold(Self, init~ : A, (A, Char) -> A) -> A
 fn StringView::rev_iter(Self) -> Iter[Char]
 fn StringView::split(Self, Self) -> Iter[Self]
+fn StringView::start_offset(Self) -> Int
 fn StringView::to_lower(Self) -> Self
 fn StringView::to_upper(Self) -> Self
 fn StringView::trim(Self, Self) -> Self
@@ -126,7 +132,7 @@ fn StringView::trim_end(Self, Self) -> Self
 fn StringView::trim_space(Self) -> Self
 fn StringView::trim_start(Self, Self) -> Self
 fn StringView::unsafe_charcode_at(Self, Int) -> Int
-fn StringView::view(Self, start_offset~ : Int = .., end_offset~ : Int = ..) -> Self
+fn StringView::view(Self, start_offset~ : Int = .., end_offset? : Int) -> Self
 impl Compare for StringView
 impl Default for StringView
 impl Eq for StringView
@@ -135,9 +141,9 @@ impl Show for StringView
 impl ToJson for StringView
 
 fn String::char_at(String, Int) -> Char
-fn String::char_length_eq(String, Int, start_offset~ : Int = .., end_offset~ : Int = ..) -> Bool
-fn String::char_length_ge(String, Int, start_offset~ : Int = .., end_offset~ : Int = ..) -> Bool
-fn String::charcodes(String, start~ : Int = .., end~ : Int = ..) -> StringView
+fn String::char_length_eq(String, Int, start_offset~ : Int = .., end_offset? : Int) -> Bool
+fn String::char_length_ge(String, Int, start_offset~ : Int = .., end_offset? : Int) -> Bool
+fn String::charcodes(String, start~ : Int = .., end? : Int) -> StringView
 #deprecated
 fn String::concat(Array[String], separator~ : String = ..) -> String
 fn String::contains(String, StringView) -> Bool
@@ -162,8 +168,8 @@ fn String::is_empty(String) -> Bool
 fn String::iter(String) -> Iter[Char]
 fn String::iter2(String) -> Iter2[Int, Char]
 #deprecated
-fn String::last_index_of(String, String, from~ : Int = ..) -> Int
-fn String::offset_of_nth_char(String, Int, start_offset~ : Int = .., end_offset~ : Int = ..) -> Int?
+fn String::last_index_of(String, String, from? : Int) -> Int
+fn String::offset_of_nth_char(String, Int, start_offset~ : Int = .., end_offset? : Int) -> Int?
 #deprecated
 fn String::op_as_view(String, start~ : Int = .., end? : Int) -> StringView
 fn String::pad_end(String, Int, Char) -> String
@@ -186,7 +192,7 @@ fn String::trim(String, StringView) -> StringView
 fn String::trim_end(String, StringView) -> StringView
 fn String::trim_space(String) -> StringView
 fn String::trim_start(String, StringView) -> StringView
-fn String::view(String, start_offset~ : Int = .., end_offset~ : Int = ..) -> StringView
+fn String::view(String, start_offset~ : Int = .., end_offset? : Int) -> StringView
 impl Compare for String
 impl Default for String
 

@@ -83,7 +83,7 @@ test "trigonometric functions" {
     7.306955375206259, -1.500312072006621, -0.5518927161160188, 0.7803809841437486,
     7.606099243270125,
   ]
-  fn high_accuracy_test(expect : Double, actual : Double) -> Unit!Error {
+  fn high_accuracy_test(expect : Double, actual : Double) -> Unit raise Error {
     let ulp = (expect.reinterpret_as_int64() - actual.reinterpret_as_int64()).abs()
     assert_eq(ulp <= 1, true)
   }
@@ -143,7 +143,7 @@ test "Inverse trigonometric functions" {
     2.319923687347004, 2.4848742888410893, 2.6747638630382777, 3.031993295758154,
     1.6945620578879512,
   ]
-  fn high_accuracy_test(expect : Double, actual : Double) -> Unit!Error {
+  fn high_accuracy_test(expect : Double, actual : Double) -> Unit raise Error {
     let ulp = (expect.reinterpret_as_int64() - actual.reinterpret_as_int64()).abs()
     assert_eq(ulp <= 1, true)
   }
@@ -185,7 +185,7 @@ test "atan" {
     1.5707963186948966, -1.570796319430718, -1.5707963240010128, -1.5707963095310986,
     -1.5707962006068632, -1.5707952453419127, -1.570755809814455, -1.5705827077279444,
   ]
-  fn high_accuracy_test(expect : Double, actual : Double) -> Unit!Error {
+  fn high_accuracy_test(expect : Double, actual : Double) -> Unit raise Error {
     let ulp = (expect.reinterpret_as_int64() - actual.reinterpret_as_int64()).abs()
     assert_eq(ulp <= 1, true)
   }
@@ -223,7 +223,7 @@ test "atan2" {
     1.4487689576369092, 1.2363766288700382, 1.0509901103283912, 0.8978026526840324,
     0.7853981633974483,
   ]
-  fn high_accuracy_test(expect : Double, actual : Double) -> Unit!Error {
+  fn high_accuracy_test(expect : Double, actual : Double) -> Unit raise Error {
     let ulp = (expect.reinterpret_as_int64() - actual.reinterpret_as_int64()).abs()
     assert_eq(ulp <= 1, true)
   }

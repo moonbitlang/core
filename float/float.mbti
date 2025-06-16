@@ -96,6 +96,7 @@ fn Float::exp(Float) -> Float
 fn Float::expm1(Float) -> Float
 fn Float::floor(Float) -> Float
 fn Float::hypot(Float, Float) -> Float
+fn Float::is_close(Float, Float, relative_tolerance~ : Float = .., absolute_tolerance~ : Float = ..) -> Bool
 fn Float::is_inf(Float) -> Bool
 fn Float::is_nan(Float) -> Bool
 fn Float::is_neg_inf(Float) -> Bool

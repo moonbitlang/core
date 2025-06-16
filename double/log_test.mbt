@@ -15,6 +15,7 @@
 ///|
 test "log2 log10" {
   // log2
+  inspect(4.0.log2(), content="2")
   inspect(3.0.log2(), content="1.584962500721156")
   inspect(2.0.log2(), content="1")
   inspect(1.0.log2(), content="0")
@@ -24,6 +25,7 @@ test "log2 log10" {
 
   // log10
   inspect(0.2.log10(), content="-0.6989700043360187")
+  inspect(10.0.log10(), content="1")
   inspect(15.0.log10(), content="1.1760912590556813")
 }
 
@@ -39,6 +41,8 @@ test "ln" {
   inspect(2.0.ln(), content="0.6931471805599453")
   inspect(1.1125369292536007e-308.ln(), content="-709.0895657128241")
   inspect(5.562684646268003e-309.ln(), content="-709.782712893384")
+  let e = 2.718281828459045
+  inspect(e.ln(), content="1")
 }
 
 ///|
@@ -69,7 +73,7 @@ test "ln_1p" {
     -0.41551544396166584, -0.5978370007556204, -0.8209805520698303, -1.1086626245216111,
     -1.5141277326297757, -2.207274913189721, -2.302585092994046, -3.912023005428145,
   ]
-  fn high_accuracy_test(expect : Double, actual : Double) -> Unit!Error {
+  fn high_accuracy_test(expect : Double, actual : Double) -> Unit raise Error {
     let ulp = (expect.reinterpret_as_int64() - actual.reinterpret_as_int64()).abs()
     assert_true(ulp <= 1)
   }

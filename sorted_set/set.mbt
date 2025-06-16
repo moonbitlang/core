@@ -57,7 +57,7 @@ pub fn[V] deep_clone(self : T[V]) -> T[V] {
 }
 
 ///|
-/// Returns a shallow copy of the MutableSet.
+/// Returns a shallow copy of the set.
 /// 
 /// It is just copying the tree structure, not the values.
 /// 
@@ -134,16 +134,16 @@ pub fn[V : Compare] remove(self : T[V], value : V) -> Unit {
 ///|
 /// Return if a value is contained in the set.
 pub fn[V : Compare] contains(self : T[V], value : V) -> Bool {
-  loop self.root, value {
-    None, _ => false
-    Some(node), value => {
+  loop (self.root, value) {
+    (None, _) => false
+    (Some(node), value) => {
       let compare_result = value.compare(node.value)
       if compare_result == 0 {
         true
       } else if compare_result < 0 {
-        continue node.left, value
+        continue (node.left, value)
       } else {
-        continue node.right, value
+        continue (node.right, value)
       }
     }
   }
@@ -352,21 +352,21 @@ pub impl[V : Compare] Eq for T[V] with op_equal(self, other) {
 }
 
 ///|
-/// Returns if MutableSet is empty.
+/// Returns if the set is empty.
 pub fn[V : Compare] is_empty(self : T[V]) -> Bool {
   self.root is None
 }
 
 ///|
-/// Returns the number of elements in the MutableSet.
+/// Returns the number of elements in the set.
 pub fn[V : Compare] size(self : T[V]) -> Int {
   self.size
 }
 
 ///|
 /// Iterates the set.
-pub fn[V] each(self : T[V], f : (V) -> Unit) -> Unit {
-  fn dfs(root : Node[V]?) -> Unit {
+pub fn[V] each(self : T[V], f : (V) -> Unit raise?) -> Unit raise? {
+  fn dfs(root : Node[V]?) -> Unit raise? {
     if root is Some(root) {
       dfs(root.left)
       f(root.value)
@@ -379,7 +379,7 @@ pub fn[V] each(self : T[V], f : (V) -> Unit) -> Unit {
 
 ///|
 /// Iterates the set with index.
-pub fn[V] eachi(self : T[V], f : (Int, V) -> Unit) -> Unit {
+pub fn[V] eachi(self : T[V], f : (Int, V) -> Unit raise?) -> Unit raise? {
   let mut i = 0
   self.each(fn(v) {
     f(i, v)

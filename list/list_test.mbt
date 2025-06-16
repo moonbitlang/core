@@ -820,8 +820,8 @@ test "list manual grouping implementation" {
   // Check our manual implementation
   inspect(evens, content="@list.of([2, 4, 6, 8])")
   inspect(odds, content="@list.of([1, 3, 5, 7, 9])")
-  assert_eq!(evens.length(), 4)
-  assert_eq!(odds.length(), 5)
+  assert_eq(evens.length(), 4)
+  assert_eq(odds.length(), 5)
 }
 
 ///|
@@ -834,10 +834,10 @@ test "equality" {
   let l5 = @list.of([1, 2, 3, 4])
 
   // Test equality
-  assert_eq!(l1, l2)
-  assert_not_eq!(l1, l3)
-  assert_not_eq!(l1, l4)
-  assert_not_eq!(l1, l5)
+  assert_eq(l1, l2)
+  assert_not_eq(l1, l3)
+  assert_not_eq(l1, l4)
+  assert_not_eq(l1, l5)
 }
 
 ///|
@@ -861,9 +861,9 @@ test "advanced folding operations" {
     init=list.head().unwrap(),
   )
   let product = list.fold(fn(acc, x) { acc * x }, init=1)
-  assert_eq!(sum, 150)
-  assert_eq!(max, 50)
-  assert_eq!(product, 12000000)
+  assert_eq(sum, 150)
+  assert_eq(max, 50)
+  assert_eq(product, 12000000)
 }
 
 ///|
@@ -976,17 +976,17 @@ test "complex list recursion safety" {
   })
 
   // Verify operations on large list work correctly without stack overflow
-  assert_eq!(large.length(), 10000)
-  assert_eq!(large.nth(9999), Some(9999))
-  assert_eq!(large.last(), Some(9999))
+  assert_eq(large.length(), 10000)
+  assert_eq(large.nth(9999), Some(9999))
+  assert_eq(large.last(), Some(9999))
 
   // Test operations that traverse the entire list
   let sum = large.fold(fn(acc, x) { acc + x }, init=0)
-  assert_eq!(sum, 49995000) // Sum of numbers 0 to 9999
+  assert_eq(sum, 49995000) // Sum of numbers 0 to 9999
 
   // Test filter on large list
   let filtered = large.filter(fn(x) { x % 1000 == 0 })
-  assert_eq!(filtered.length(), 10)
+  assert_eq(filtered.length(), 10)
 }
 
 ///|
@@ -994,23 +994,38 @@ test "is_prefix and is_suffix complex cases" {
   let l = @list.of([1, 2, 3, 4, 5])
 
   // Test is_prefix with various scenarios
-  assert_true!(l.is_prefix(@list.of([1])))
-  assert_true!(l.is_prefix(@list.of([1, 2])))
-  assert_true!(l.is_prefix(@list.of([1, 2, 3])))
-  assert_false!(l.is_prefix(@list.of([2, 3])))
-  assert_false!(l.is_prefix(@list.of([0, 1, 2])))
+  assert_true(l.is_prefix(@list.of([1])))
+  assert_true(l.is_prefix(@list.of([1, 2])))
+  assert_true(l.is_prefix(@list.of([1, 2, 3])))
+  assert_false(l.is_prefix(@list.of([2, 3])))
+  assert_false(l.is_prefix(@list.of([0, 1, 2])))
 
   // Test is_suffix with various scenarios
-  assert_true!(l.is_suffix(@list.of([5])))
-  assert_true!(l.is_suffix(@list.of([4, 5])))
-  assert_true!(l.is_suffix(@list.of([3, 4, 5])))
-  assert_false!(l.is_suffix(@list.of([2, 5])))
-  assert_false!(l.is_suffix(@list.of([3, 4, 6])))
+  assert_true(l.is_suffix(@list.of([5])))
+  assert_true(l.is_suffix(@list.of([4, 5])))
+  assert_true(l.is_suffix(@list.of([3, 4, 5])))
+  assert_false(l.is_suffix(@list.of([2, 5])))
+  assert_false(l.is_suffix(@list.of([3, 4, 6])))
 
   // Test with empty list
   let empty : @list.T[Int] = @list.empty()
-  assert_true!(empty.is_prefix(@list.of([])))
-  assert_true!(empty.is_suffix(@list.of([])))
-  assert_true!(l.is_prefix(@list.of([])))
-  assert_true!(l.is_suffix(@list.of([])))
+  assert_true(empty.is_prefix(@list.of([])))
+  assert_true(empty.is_suffix(@list.of([])))
+  assert_true(l.is_prefix(@list.of([])))
+  assert_true(l.is_suffix(@list.of([])))
+}
+
+///|
+test "find_index" {
+  // empty
+  let empty = @list.empty()
+  inspect(empty.find_index(fn(x) { x > 0 }), content="None")
+  // basic
+  let ls = @list.of([1, 2, 3, 4, 5])
+  inspect(ls.find_index(fn(x) { x > 3 }), content="Some(3)")
+  inspect(ls.find_index(fn(x) { x < 0 }), content="None")
+  inspect(ls.find_index(fn(x) { x == 1 }), content="Some(0)")
+  // all-match
+  let ls = @list.of([2, 4, 6, 8, 10])
+  inspect(ls.find_index(fn(x) { x % 2 == 0 }), content="Some(0)")
 }

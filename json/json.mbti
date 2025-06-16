@@ -21,13 +21,13 @@ fn as_object(Json) -> Map[String, Json]?
 
 fn as_string(Json) -> String?
 
-fn[T : FromJson] from_json(Json, path~ : JsonPath = ..) -> T!JsonDecodeError
+fn[T : FromJson] from_json(Json, path~ : JsonPath = ..) -> T raise JsonDecodeError
 
-fn inspect(&ToJson, content? : Json, loc~ : SourceLoc = _, args_loc~ : ArgsLoc = _) -> Unit!InspectError
+fn inspect(&ToJson, content? : Json, loc~ : SourceLoc = _, args_loc~ : ArgsLoc = _) -> Unit raise InspectError
 
 fn item(Json, Int) -> Json?
 
-fn parse(String) -> Json!ParseError
+fn parse(String) -> Json raise ParseError
 
 fn stringify(Json, escape_slash~ : Bool = .., indent~ : Int = ..) -> String
 
@@ -36,7 +36,7 @@ fn valid(String) -> Bool
 fn value(Json, String) -> Json?
 
 // Types and methods
-pub(all) type! JsonDecodeError (JsonPath, String)
+pub(all) suberror JsonDecodeError (JsonPath, String)
 impl Eq for JsonDecodeError
 impl Show for JsonDecodeError
 impl ToJson for JsonDecodeError
@@ -48,7 +48,7 @@ impl Eq for JsonPath
 impl Show for JsonPath
 impl ToJson for JsonPath
 
-pub(all) type! ParseError {
+pub(all) suberror ParseError {
   InvalidChar(Position, Char)
   InvalidEof
   InvalidNumber(Position, String)
@@ -82,7 +82,7 @@ pub typealias JsonValue = Json
 
 // Traits
 pub(open) trait FromJson {
-  from_json(Json, JsonPath) -> Self!JsonDecodeError
+  from_json(Json, JsonPath) -> Self raise JsonDecodeError
 }
 impl FromJson for Unit
 impl FromJson for Bool

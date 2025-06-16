@@ -14,7 +14,7 @@
 
 ///|
 #deprecated("Definition of json is moved to builtin package, use `Json` instead")
-pub(all) typealias JsonValue = Json
+pub typealias Json as JsonValue
 
 ///|
 pub(all) struct Position {
@@ -23,7 +23,7 @@ pub(all) struct Position {
 } derive(Eq, ToJson)
 
 ///|
-pub(all) type! ParseError {
+pub(all) suberror ParseError {
   InvalidChar(Position, Char)
   InvalidEof
   InvalidNumber(Position, String)

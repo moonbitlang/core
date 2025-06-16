@@ -28,7 +28,7 @@ let non_ascii_whitespace : CharClass = CharClass::of([
 fn ParseContext::lex_value(
   ctx : ParseContext,
   allow_rbracket~ : Bool
-) -> Token!ParseError {
+) -> Token raise ParseError {
   for {
     match ctx.read_char() {
       Some('\t' | ' ' | '\n' | '\r') => continue

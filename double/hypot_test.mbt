@@ -34,7 +34,7 @@ test "hypot" {
     6.876772498781678, 11.113955191559844, 10.178899744078432, 9.280086206496145,
     8.429116205154607, 7.6419892698171195,
   ]
-  fn high_accuracy_test(expect : Double, actual : Double) -> Unit!Error {
+  fn high_accuracy_test(expect : Double, actual : Double) -> Unit raise Error {
     let ulp = (expect.reinterpret_as_int64() - actual.reinterpret_as_int64()).abs()
     assert_true(ulp <= 1)
   }

@@ -28,7 +28,7 @@ pub fn[A, B] Iter2::run(
   self : Iter2[A, B],
   f : (A, B) -> IterResult
 ) -> IterResult {
-  (self._)(f)
+  self(f)
 }
 
 ///|
@@ -42,11 +42,12 @@ pub impl[A : Show, B : Show] Show for Iter2[A, B] with output(self, logger) {
     } else {
       first = false
     }
-    logger.write_string("(")
-    logger.write_object(k)
-    logger.write_string(", ")
-    logger.write_object(v)
-    logger.write_string(")")
+    logger
+    ..write_string("(")
+    ..write_object(k)
+    ..write_string(", ")
+    ..write_object(v)
+    ..write_string(")")
   }
   logger.write_string("]")
 }

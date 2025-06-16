@@ -364,3 +364,56 @@ pub fn is_neg_inf(self : Float) -> Bool {
 pub fn is_nan(self : Float) -> Bool {
   self != self
 }
+
+///|
+/// Determines whether two floating-point numbers are approximately equal within
+/// specified tolerances.
+/// The implementation follows the algorithm described in PEP 485 for Python's
+/// `math.isclose()`.
+///
+/// Parameters:
+///
+/// * `self` : The first floating-point number to compare.
+/// * `other` : The second floating-point number to compare.
+/// * `relative_tolerance` : The relative tolerance for the comparison. Must be
+/// non-negative. Defaults to 1e-9.
+/// * `absolute_tolerance` : The absolute tolerance for the comparison. Must be
+/// non-negative. Defaults to 0.0.
+///
+/// Returns whether the two numbers are considered approximately equal. Returns
+/// `true` if the numbers are exactly equal or if they are within either the
+/// relative or absolute tolerance. Returns `false` if either number is infinite.
+///
+/// Example:
+///
+/// ```moonbit
+/// test "is_close" {
+///   let x = 1.0
+///   let y = 1.000000001
+///   inspect(x.is_close(y), content="false")
+///   inspect(x.is_close(y, relative_tolerance=1.0e-10), content="false")
+///   inspect(infinity.is_close(infinity), content="true")
+/// }
+/// ```
+pub fn Float::is_close(
+  self : Self,
+  other : Self,
+  relative_tolerance~ : Self = 1.0e-09,
+  absolute_tolerance~ : Self = 0.0
+) -> Bool {
+  if relative_tolerance < 0.0 || absolute_tolerance < 0.0 {
+    abort("Tolerances must be non-negative")
+  }
+  if self == other {
+    return true
+  }
+  if self.is_inf() || other.is_inf() {
+    return false
+  }
+  let diff = (other - self).abs()
+  return (
+      diff <= (relative_tolerance * other).abs() ||
+      diff <= (relative_tolerance * self).abs()
+    ) ||
+    diff <= absolute_tolerance
+}

@@ -20,7 +20,7 @@
 
 ///|
 pub(open) trait FromStr {
-  from_string(String) -> Self!StrConvError
+  from_string(String) -> Self raise StrConvError
 }
 
 ///|
@@ -35,7 +35,7 @@ pub impl FromStr for Int with from_string(str) {
 
 ///|
 pub impl FromStr for Int64 with from_string(str) {
-  parse_int64!(str)
+  parse_int64(str)
 }
 
 ///|
@@ -45,7 +45,7 @@ pub impl FromStr for UInt with from_string(str) {
 
 ///|
 pub impl FromStr for UInt64 with from_string(str) {
-  parse_uint64!(str)
+  parse_uint64(str)
 }
 
 ///|
@@ -54,34 +54,22 @@ pub impl FromStr for Double with from_string(str) {
 }
 
 ///|
-pub fn[A : FromStr] parse(str : String) -> A!StrConvError {
+pub fn[A : FromStr] parse(str : String) -> A raise StrConvError {
   A::from_string(str)
 }
 
 ///|
 test "parse" {
-  let b : Bool = try parse("true") catch {
-    _ => panic()
-  }
+  let b : Bool = parse("true") catch { _ => panic() }
   assert_eq(b, true)
-  let i : Int = try parse("12345") catch {
-    _ => panic()
-  }
+  let i : Int = parse("12345") catch { _ => panic() }
   assert_eq(i, 12345)
-  let i64 : Int64 = try parse("9223372036854775807") catch {
-    _ => panic()
-  }
+  let i64 : Int64 = parse("9223372036854775807") catch { _ => panic() }
   assert_eq(i64, 9223372036854775807L)
-  let ui : UInt = try parse("4294967295") catch {
-    _ => panic()
-  }
+  let ui : UInt = parse("4294967295") catch { _ => panic() }
   assert_eq(ui, 4294967295)
-  let ui64 : UInt64 = try parse("18446744073709551615") catch {
-    _ => panic()
-  }
+  let ui64 : UInt64 = parse("18446744073709551615") catch { _ => panic() }
   assert_eq(ui64, 18446744073709551615UL)
-  let d : Double = try parse("1234.56789") catch {
-    _ => panic()
-  }
+  let d : Double = parse("1234.56789") catch { _ => panic() }
   assert_eq(d, 1234.56789)
 }

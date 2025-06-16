@@ -15,13 +15,13 @@
 ///|
 test "parse_uint64 overflow check" {
   let largest_uint64 = "18446744073709551615" // Maximum UInt64 value
-  let result = @strconv.parse_uint64!(largest_uint64)
+  let result = @strconv.parse_uint64(largest_uint64)
   inspect(result, content="18446744073709551615")
 
   // Test overflow with very large value
   try {
     let overflow_val = "18446744073709551616" // One more than max UInt64
-    let _ = @strconv.parse_uint64!(overflow_val)
+    let _ = @strconv.parse_uint64(overflow_val)
     fail("Expected range error for overflow value")
   } catch {
     @strconv.StrConvError(err) => assert_eq(err, "value out of range")
@@ -31,7 +31,7 @@ test "parse_uint64 overflow check" {
   // Test overflow with large base 16 value
   try {
     let overflow_hex = "ffffffffffffffff1" // Larger than max UInt64 in hex
-    let _ = @strconv.parse_uint64!(overflow_hex, base=16)
+    let _ = @strconv.parse_uint64(overflow_hex, base=16)
     fail("Expected range error for overflow hex value")
   } catch {
     @strconv.StrConvError(err) => assert_eq(err, "value out of range")

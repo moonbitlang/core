@@ -22,7 +22,7 @@ fn[T : Show] debug_string(t : T) -> String {
 ///|
 #deprecated("Use built-in `assert_eq` instead")
 #coverage.skip
-pub fn[T : Show + Eq] eq(a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
+pub fn[T : Show + Eq] eq(a : T, b : T, loc~ : SourceLoc = _) -> Unit raise {
   if a != b {
     let a = debug_string(a)
     let b = debug_string(b)
@@ -33,7 +33,7 @@ pub fn[T : Show + Eq] eq(a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
 ///|
 #deprecated("Use built-in `assert_not_eq` instead")
 #coverage.skip
-pub fn[T : Show + Eq] ne(a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
+pub fn[T : Show + Eq] ne(a : T, b : T, loc~ : SourceLoc = _) -> Unit raise {
   if not(a != b) {
     let a = debug_string(a)
     let b = debug_string(b)
@@ -44,7 +44,7 @@ pub fn[T : Show + Eq] ne(a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
 ///|
 #deprecated("Use built-in `assert_true` instead")
 #coverage.skip
-pub fn is_true(x : Bool, loc~ : SourceLoc = _) -> Unit! {
+pub fn is_true(x : Bool, loc~ : SourceLoc = _) -> Unit raise {
   if not(x) {
     let x = debug_string(x)
     fail("`\{x}` is not true", loc~)
@@ -54,7 +54,7 @@ pub fn is_true(x : Bool, loc~ : SourceLoc = _) -> Unit! {
 ///|
 #deprecated("Use built-in `assert_false` instead")
 #coverage.skip
-pub fn is_false(x : Bool, loc~ : SourceLoc = _) -> Unit! {
+pub fn is_false(x : Bool, loc~ : SourceLoc = _) -> Unit raise {
   if x {
     let x = debug_string(x)
     fail("`\{x}` is not false", loc~)
@@ -71,13 +71,13 @@ pub fn is_false(x : Bool, loc~ : SourceLoc = _) -> Unit! {
 ///
 /// # Examples
 ///
-/// ```
+/// ```skip
 /// let a = "4" + "2"
 /// let b = "4" + "2"
 /// @test.same_object(a, a)
 /// @test.is_not(a, b)
 /// ```
-pub fn[T : Show] same_object(a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
+pub fn[T : Show] same_object(a : T, b : T, loc~ : SourceLoc = _) -> Unit raise {
   if not(physical_equal(a, b)) {
     let a = debug_string(a)
     let b = debug_string(b)
@@ -95,13 +95,13 @@ pub fn[T : Show] same_object(a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
 ///
 /// # Examples
 ///
-/// ```
+/// ```skip
 /// let a = "4" + "2"
 /// let b = "4" + "2"
 /// @test.is_not(a, b)
 /// @test.same_object(a, a)
 /// ```
-pub fn[T : Show] is_not(a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
+pub fn[T : Show] is_not(a : T, b : T, loc~ : SourceLoc = _) -> Unit raise {
   if physical_equal(a, b) {
     let a = debug_string(a)
     let b = debug_string(b)
@@ -113,8 +113,8 @@ pub fn[T : Show] is_not(a : T, b : T, loc~ : SourceLoc = _) -> Unit! {
 /// Expected to be used in test blocks, don't catch this error.
 ///  
 /// Produces an error message similar to @builtin.fail.
-pub fn[T] fail(msg : String, loc~ : SourceLoc = _) -> T! {
-  @builtin.fail!(msg, loc~)
+pub fn[T] fail(msg : String, loc~ : SourceLoc = _) -> T raise {
+  @builtin.fail(msg, loc~)
 }
 
 ///|
@@ -141,7 +141,7 @@ pub fn writeln(self : T, obj : &Show) -> Unit {
 ///  test {
 ///   let t = new("test.txt")
 ///   t.writeln("hello")
-///   t.snapshot!(filename="test.txt") // actual test block end
+///   t.snapshot(filename="test.txt") // actual test block end
 /// }
 /// ```
 ///
@@ -151,7 +151,7 @@ pub fn snapshot(
   filename~ : String,
   loc~ : SourceLoc = _,
   args_loc~ : ArgsLoc = _
-) -> Unit!SnapshotError {
+) -> Unit raise SnapshotError {
   let loc = loc.to_string().escape()
   let args_loc = args_loc.to_json().escape()
   let actual = self.buffer.to_string().escape()
@@ -164,7 +164,11 @@ pub fn snapshot(
 
 ///|
 #deprecated("Use `@bench.single_bench` instead")
-pub fn bench(self : T, f : () -> Unit, count~ : UInt = 10) -> Unit!BenchError {
+pub fn bench(
+  self : T,
+  f : () -> Unit,
+  count~ : UInt = 10
+) -> Unit raise BenchError {
   ignore(self)
   let summary = @bench.single_bench(f, count~)
   raise BenchError("@BENCH \{summary.to_json().stringify()}\n")
