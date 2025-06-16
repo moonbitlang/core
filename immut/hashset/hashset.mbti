@@ -9,7 +9,7 @@ fn[A : Eq + Hash] add(T[A], A) -> T[A]
 
 fn[A : Eq + Hash] contains(T[A], A) -> Bool
 
-fn[A] each(T[A], (A) -> Unit?Error) -> Unit?Error
+fn[A] each(T[A], (A) -> Unit raise?) -> Unit raise?
 
 fn[A : Eq + Hash] from_array(Array[A]) -> T[A]
 
@@ -32,7 +32,7 @@ type T[A]
 fn[A : Eq + Hash] T::add(Self[A], A) -> Self[A]
 fn[A : Eq + Hash] T::contains(Self[A], A) -> Bool
 fn[K : Eq + Hash] T::difference(Self[K], Self[K]) -> Self[K]
-fn[A] T::each(Self[A], (A) -> Unit?Error) -> Unit?Error
+fn[A] T::each(Self[A], (A) -> Unit raise?) -> Unit raise?
 fn[K : Eq + Hash] T::intersection(Self[K], Self[K]) -> Self[K]
 fn[A] T::is_empty(Self[A]) -> Bool
 fn[A] T::iter(Self[A]) -> Iter[A]

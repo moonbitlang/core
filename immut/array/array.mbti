@@ -10,17 +10,17 @@ fn[A] concat(T[A], T[A]) -> T[A]
 #deprecated
 fn[A] copy(T[A]) -> T[A]
 
-fn[A] each(T[A], (A) -> Unit?Error) -> Unit?Error
+fn[A] each(T[A], (A) -> Unit raise?) -> Unit raise?
 
-fn[A] eachi(T[A], (Int, A) -> Unit?Error) -> Unit?Error
+fn[A] eachi(T[A], (Int, A) -> Unit raise?) -> Unit raise?
 
-fn[A, B] fold(T[A], init~ : B, (B, A) -> B?Error) -> B?Error
-
-#deprecated
-fn[A] fold_left(T[A], (A, A) -> A?Error, init~ : A) -> A?Error
+fn[A, B] fold(T[A], init~ : B, (B, A) -> B raise?) -> B raise?
 
 #deprecated
-fn[A] fold_right(T[A], (A, A) -> A?Error, init~ : A) -> A?Error
+fn[A] fold_left(T[A], (A, A) -> A raise?, init~ : A) -> A raise?
+
+#deprecated
+fn[A] fold_right(T[A], (A, A) -> A raise?, init~ : A) -> A raise?
 
 fn[A] from_array(Array[A]) -> T[A]
 
@@ -36,9 +36,9 @@ fn[A] length(T[A]) -> Int
 
 fn[A] make(Int, A) -> T[A]
 
-fn[A] makei(Int, (Int) -> A?Error) -> T[A]?Error
+fn[A] makei(Int, (Int) -> A raise?) -> T[A] raise?
 
-fn[A, B] map(T[A], (A) -> B?Error) -> T[B]?Error
+fn[A, B] map(T[A], (A) -> B raise?) -> T[B] raise?
 
 fn[A] new() -> T[A]
 
@@ -48,7 +48,7 @@ fn[A] op_get(T[A], Int) -> A
 
 fn[A] push(T[A], A) -> T[A]
 
-fn[A, B] rev_fold(T[A], init~ : B, (B, A) -> B?Error) -> B?Error
+fn[A, B] rev_fold(T[A], init~ : B, (B, A) -> B raise?) -> B raise?
 
 fn[A] set(T[A], Int, A) -> T[A]
 
@@ -59,13 +59,13 @@ type T[A]
 fn[A] T::concat(Self[A], Self[A]) -> Self[A]
 #deprecated
 fn[A] T::copy(Self[A]) -> Self[A]
-fn[A] T::each(Self[A], (A) -> Unit?Error) -> Unit?Error
-fn[A] T::eachi(Self[A], (Int, A) -> Unit?Error) -> Unit?Error
-fn[A, B] T::fold(Self[A], init~ : B, (B, A) -> B?Error) -> B?Error
+fn[A] T::each(Self[A], (A) -> Unit raise?) -> Unit raise?
+fn[A] T::eachi(Self[A], (Int, A) -> Unit raise?) -> Unit raise?
+fn[A, B] T::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 #deprecated
-fn[A] T::fold_left(Self[A], (A, A) -> A?Error, init~ : A) -> A?Error
+fn[A] T::fold_left(Self[A], (A, A) -> A raise?, init~ : A) -> A raise?
 #deprecated
-fn[A] T::fold_right(Self[A], (A, A) -> A?Error, init~ : A) -> A?Error
+fn[A] T::fold_right(Self[A], (A, A) -> A raise?, init~ : A) -> A raise?
 #deprecated
 fn[A] T::from_array(Array[A]) -> Self[A]
 #deprecated
@@ -78,14 +78,14 @@ fn[A] T::length(Self[A]) -> Int
 fn[A] T::make(Int, A) -> Self[A]
 #deprecated
 fn[A] T::makei(Int, (Int) -> A) -> Self[A]
-fn[A, B] T::map(Self[A], (A) -> B?Error) -> Self[B]?Error
+fn[A, B] T::map(Self[A], (A) -> B raise?) -> Self[B] raise?
 #deprecated
 fn[A] T::new() -> Self[A]
 #deprecated
 fn[A] T::of(FixedArray[A]) -> Self[A]
 fn[A] T::op_get(Self[A], Int) -> A
 fn[A] T::push(Self[A], A) -> Self[A]
-fn[A, B] T::rev_fold(Self[A], init~ : B, (B, A) -> B?Error) -> B?Error
+fn[A, B] T::rev_fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 fn[A] T::set(Self[A], Int, A) -> Self[A]
 fn[A] T::to_array(Self[A]) -> Array[A]
 impl[A] Add for T[A]

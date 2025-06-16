@@ -496,7 +496,7 @@ pub fn[A : Compare] disjoint(self : T[A], other : T[A]) -> Bool {
 ///   assert_eq(arr, [1, 2, 3, 4, 5, 6, 7, 8, 9])
 /// }
 /// ```
-pub fn[A] each(self : T[A], f : (A) -> Unit?Error) -> Unit?Error {
+pub fn[A] each(self : T[A], f : (A) -> Unit raise?) -> Unit raise? {
   match self {
     Empty => ()
     Node(left~, value~, right~, ..) => {
@@ -520,8 +520,8 @@ pub fn[A] each(self : T[A], f : (A) -> Unit?Error) -> Unit?Error {
 pub fn[A : Compare, B] fold(
   self : T[A],
   init~ : B,
-  f : (B, A) -> B?Error
-) -> B?Error {
+  f : (B, A) -> B raise?
+) -> B raise? {
   match self {
     Empty => init
     Node(left~, value~, right~, ..) =>
@@ -541,8 +541,8 @@ pub fn[A : Compare, B] fold(
 /// ```
 pub fn[A : Compare, B : Compare] map(
   self : T[A],
-  f : (A) -> B?Error
-) -> T[B]?Error {
+  f : (A) -> B raise?
+) -> T[B] raise? {
   match self {
     Empty => Empty
     Node(left~, value~, right~, ..) =>
@@ -560,7 +560,7 @@ pub fn[A : Compare, B : Compare] map(
 ///   assert_eq(@sorted_set.of([2, 4, 6]).all(fn(v) { v % 2 == 0}), true)
 /// }
 /// ```
-pub fn[A : Compare] all(self : T[A], f : (A) -> Bool?Error) -> Bool?Error {
+pub fn[A : Compare] all(self : T[A], f : (A) -> Bool raise?) -> Bool raise? {
   match self {
     Empty => true
     Node(left~, value~, right~, ..) => f(value) && left.all(f) && right.all(f)
@@ -577,7 +577,7 @@ pub fn[A : Compare] all(self : T[A], f : (A) -> Bool?Error) -> Bool?Error {
 ///   assert_eq(@sorted_set.of([1, 4, 3]).any(fn(v) { v % 2 == 0}), true)
 /// }
 /// ```
-pub fn[A : Compare] any(self : T[A], f : (A) -> Bool?Error) -> Bool?Error {
+pub fn[A : Compare] any(self : T[A], f : (A) -> Bool raise?) -> Bool raise? {
   match self {
     Empty => false
     Node(left~, value~, right~, ..) => f(value) || left.any(f) || right.any(f)
@@ -594,7 +594,7 @@ pub fn[A : Compare] any(self : T[A], f : (A) -> Bool?Error) -> Bool?Error {
 ///   assert_eq(@sorted_set.of([1, 2, 3, 4, 5, 6]).filter(fn(v) { v % 2 == 0}), @sorted_set.of([2, 4, 6]))
 /// }
 /// ```
-pub fn[A : Compare] filter(self : T[A], f : (A) -> Bool?Error) -> T[A]?Error {
+pub fn[A : Compare] filter(self : T[A], f : (A) -> Bool raise?) -> T[A] raise? {
   match self {
     Empty => Empty
     Node(left~, value~, right~, ..) => {

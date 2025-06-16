@@ -8,9 +8,9 @@ import(
 // Values
 fn[A] add(T[A], A) -> T[A]
 
-fn[A] all(T[A], (A) -> Bool?Error) -> Bool?Error
+fn[A] all(T[A], (A) -> Bool raise?) -> Bool raise?
 
-fn[A] any(T[A], (A) -> Bool?Error) -> Bool?Error
+fn[A] any(T[A], (A) -> Bool raise?) -> Bool raise?
 
 fn[A] concat(T[A], T[A]) -> T[A]
 
@@ -23,42 +23,42 @@ fn[X] default() -> T[X]
 
 fn[A] drop(T[A], Int) -> T[A]
 
-fn[A] drop_while(T[A], (A) -> Bool?Error) -> T[A]?Error
+fn[A] drop_while(T[A], (A) -> Bool raise?) -> T[A] raise?
 
-fn[A] each(T[A], (A) -> Unit?Error) -> Unit?Error
+fn[A] each(T[A], (A) -> Unit raise?) -> Unit raise?
 
-fn[A] eachi(T[A], (Int, A) -> Unit?Error) -> Unit?Error
+fn[A] eachi(T[A], (Int, A) -> Unit raise?) -> Unit raise?
 
 #deprecated
 fn[A : Eq] equal(T[A], T[A]) -> Bool
 
-fn[A] filter(T[A], (A) -> Bool?Error) -> T[A]?Error
+fn[A] filter(T[A], (A) -> Bool raise?) -> T[A] raise?
 
-fn[A, B] filter_map(T[A], (A) -> B??Error) -> T[B]?Error
+fn[A, B] filter_map(T[A], (A) -> B?) -> T[B]
 
-fn[A] find(T[A], (A) -> Bool?Error) -> A??Error
+fn[A] find(T[A], (A) -> Bool raise?) -> A? raise?
 
-fn[A] findi(T[A], (A, Int) -> Bool?Error) -> A??Error
+fn[A] findi(T[A], (A, Int) -> Bool raise?) -> A? raise?
 
-fn[A, B] flat_map(T[A], (A) -> T[B]?Error) -> T[B]?Error
+fn[A, B] flat_map(T[A], (A) -> T[B] raise?) -> T[B] raise?
 
 fn[A] flatten(T[T[A]]) -> T[A]
 
-fn[A, B] fold(T[A], init~ : B, (B, A) -> B?Error) -> B?Error
+fn[A, B] fold(T[A], init~ : B, (B, A) -> B raise?) -> B raise?
 
 #deprecated
-fn[A, B] fold_left(T[A], (B, A) -> B?Error, init~ : B) -> B?Error
+fn[A, B] fold_left(T[A], (B, A) -> B raise?, init~ : B) -> B raise?
 
 #deprecated
-fn[A, B] fold_lefti(T[A], (Int, B, A) -> B?Error, init~ : B) -> B?Error
+fn[A, B] fold_lefti(T[A], (Int, B, A) -> B raise?, init~ : B) -> B raise?
 
 #deprecated
-fn[A, B] fold_right(T[A], (A, B) -> B?Error, init~ : B) -> B?Error
+fn[A, B] fold_right(T[A], (A, B) -> B raise?, init~ : B) -> B raise?
 
 #deprecated
-fn[A, B] fold_righti(T[A], (Int, A, B) -> B?Error, init~ : B) -> B?Error
+fn[A, B] fold_righti(T[A], (Int, A, B) -> B raise?, init~ : B) -> B raise?
 
-fn[A, B] foldi(T[A], init~ : B, (Int, B, A) -> B?Error) -> B?Error
+fn[A, B] foldi(T[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
 
 fn[A] from_array(Array[A]) -> T[A]
 
@@ -96,9 +96,9 @@ fn[A] length(T[A]) -> Int
 
 fn[A : Eq, B] lookup(T[(A, B)], A) -> B?
 
-fn[A, B] map(T[A], (A) -> B?Error) -> T[B]?Error
+fn[A, B] map(T[A], (A) -> B) -> T[B]
 
-fn[A, B] mapi(T[A], (Int, A) -> B?Error) -> T[B]?Error
+fn[A, B] mapi(T[A], (Int, A) -> B raise?) -> T[B] raise?
 
 fn[A : Compare] maximum(T[A]) -> A?
 
@@ -121,15 +121,15 @@ fn[A] rev(T[A]) -> T[A]
 
 fn[A] rev_concat(T[A], T[A]) -> T[A]
 
-fn[A, B] rev_fold(T[A], init~ : B, (A, B) -> B?Error) -> B?Error
+fn[A, B] rev_fold(T[A], init~ : B, (A, B) -> B raise?) -> B raise?
 
-fn[A, B] rev_foldi(T[A], init~ : B, (Int, A, B) -> B?Error) -> B?Error
+fn[A, B] rev_foldi(T[A], init~ : B, (Int, A, B) -> B raise?) -> B raise?
 
-fn[A, B] rev_map(T[A], (A) -> B?Error) -> T[B]?Error
+fn[A, B] rev_map(T[A], (A) -> B raise?) -> T[B] raise?
 
-fn[A, E] scan_left(T[A], (E, A) -> E?Error, init~ : E) -> T[E]?Error
+fn[A, E] scan_left(T[A], (E, A) -> E raise?, init~ : E) -> T[E] raise?
 
-fn[A, B] scan_right(T[A], (A, B) -> B?Error, init~ : B) -> T[B]?Error
+fn[A, B] scan_right(T[A], (A, B) -> B raise?, init~ : B) -> T[B] raise?
 
 fn[A] singleton(A) -> T[A]
 
@@ -145,7 +145,7 @@ fn[A] to_array(T[A]) -> Array[A]
 
 fn[A : ToJson] to_json(T[A]) -> Json
 
-fn[A, S] unfold((S) -> (A, S)??Error, init~ : S) -> T[A]?Error
+fn[A, S] unfold((S) -> (A, S)? raise?, init~ : S) -> T[A] raise?
 
 fn[A] unsafe_head(T[A]) -> A
 
@@ -167,8 +167,8 @@ pub(all) enum T[A] {
   Cons(A, T[A])
 }
 fn[A] T::add(Self[A], A) -> Self[A]
-fn[A] T::all(Self[A], (A) -> Bool?Error) -> Bool?Error
-fn[A] T::any(Self[A], (A) -> Bool?Error) -> Bool?Error
+fn[A] T::all(Self[A], (A) -> Bool raise?) -> Bool raise?
+fn[A] T::any(Self[A], (A) -> Bool raise?) -> Bool raise?
 fn[A] T::concat(Self[A], Self[A]) -> Self[A]
 #deprecated
 fn[A, B] T::concat_map(Self[A], (A) -> Self[B]) -> Self[B]
@@ -176,27 +176,27 @@ fn[A : Eq] T::contains(Self[A], A) -> Bool
 #deprecated
 fn[X] T::default() -> Self[X]
 fn[A] T::drop(Self[A], Int) -> Self[A]
-fn[A] T::drop_while(Self[A], (A) -> Bool?Error) -> Self[A]?Error
-fn[A] T::each(Self[A], (A) -> Unit?Error) -> Unit?Error
-fn[A] T::eachi(Self[A], (Int, A) -> Unit?Error) -> Unit?Error
+fn[A] T::drop_while(Self[A], (A) -> Bool raise?) -> Self[A] raise?
+fn[A] T::each(Self[A], (A) -> Unit raise?) -> Unit raise?
+fn[A] T::eachi(Self[A], (Int, A) -> Unit raise?) -> Unit raise?
 #deprecated
 fn[A : Eq] T::equal(Self[A], Self[A]) -> Bool
-fn[A] T::filter(Self[A], (A) -> Bool?Error) -> Self[A]?Error
-fn[A, B] T::filter_map(Self[A], (A) -> B??Error) -> Self[B]?Error
-fn[A] T::find(Self[A], (A) -> Bool?Error) -> A??Error
-fn[A] T::findi(Self[A], (A, Int) -> Bool?Error) -> A??Error
-fn[A, B] T::flat_map(Self[A], (A) -> Self[B]?Error) -> Self[B]?Error
+fn[A] T::filter(Self[A], (A) -> Bool raise?) -> Self[A] raise?
+fn[A, B] T::filter_map(Self[A], (A) -> B?) -> Self[B]
+fn[A] T::find(Self[A], (A) -> Bool raise?) -> A? raise?
+fn[A] T::findi(Self[A], (A, Int) -> Bool raise?) -> A? raise?
+fn[A, B] T::flat_map(Self[A], (A) -> Self[B] raise?) -> Self[B] raise?
 fn[A] T::flatten(Self[Self[A]]) -> Self[A]
-fn[A, B] T::fold(Self[A], init~ : B, (B, A) -> B?Error) -> B?Error
+fn[A, B] T::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 #deprecated
-fn[A, B] T::fold_left(Self[A], (B, A) -> B?Error, init~ : B) -> B?Error
+fn[A, B] T::fold_left(Self[A], (B, A) -> B raise?, init~ : B) -> B raise?
 #deprecated
-fn[A, B] T::fold_lefti(Self[A], (Int, B, A) -> B?Error, init~ : B) -> B?Error
+fn[A, B] T::fold_lefti(Self[A], (Int, B, A) -> B raise?, init~ : B) -> B raise?
 #deprecated
-fn[A, B] T::fold_right(Self[A], (A, B) -> B?Error, init~ : B) -> B?Error
+fn[A, B] T::fold_right(Self[A], (A, B) -> B raise?, init~ : B) -> B raise?
 #deprecated
-fn[A, B] T::fold_righti(Self[A], (Int, A, B) -> B?Error, init~ : B) -> B?Error
-fn[A, B] T::foldi(Self[A], init~ : B, (Int, B, A) -> B?Error) -> B?Error
+fn[A, B] T::fold_righti(Self[A], (Int, A, B) -> B raise?, init~ : B) -> B raise?
+fn[A, B] T::foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
 #deprecated
 fn[A] T::from_array(Array[A]) -> Self[A]
 #deprecated
@@ -218,8 +218,8 @@ fn[A] T::iter2(Self[A]) -> Iter2[Int, A]
 fn[A] T::last(Self[A]) -> A?
 fn[A] T::length(Self[A]) -> Int
 fn[A : Eq, B] T::lookup(Self[(A, B)], A) -> B?
-fn[A, B] T::map(Self[A], (A) -> B?Error) -> Self[B]?Error
-fn[A, B] T::mapi(Self[A], (Int, A) -> B?Error) -> Self[B]?Error
+fn[A, B] T::map(Self[A], (A) -> B) -> Self[B]
+fn[A, B] T::mapi(Self[A], (Int, A) -> B raise?) -> Self[B] raise?
 fn[A : Compare] T::maximum(Self[A]) -> A?
 fn[A : Compare] T::minimum(Self[A]) -> A?
 fn[A] T::nth(Self[A], Int) -> A?
@@ -231,11 +231,11 @@ fn[A : Eq] T::remove(Self[A], A) -> Self[A]
 fn[A] T::remove_at(Self[A], Int) -> Self[A]
 fn[A] T::rev(Self[A]) -> Self[A]
 fn[A] T::rev_concat(Self[A], Self[A]) -> Self[A]
-fn[A, B] T::rev_fold(Self[A], init~ : B, (A, B) -> B?Error) -> B?Error
-fn[A, B] T::rev_foldi(Self[A], init~ : B, (Int, A, B) -> B?Error) -> B?Error
-fn[A, B] T::rev_map(Self[A], (A) -> B?Error) -> Self[B]?Error
-fn[A, E] T::scan_left(Self[A], (E, A) -> E?Error, init~ : E) -> Self[E]?Error
-fn[A, B] T::scan_right(Self[A], (A, B) -> B?Error, init~ : B) -> Self[B]?Error
+fn[A, B] T::rev_fold(Self[A], init~ : B, (A, B) -> B raise?) -> B raise?
+fn[A, B] T::rev_foldi(Self[A], init~ : B, (Int, A, B) -> B raise?) -> B raise?
+fn[A, B] T::rev_map(Self[A], (A) -> B raise?) -> Self[B] raise?
+fn[A, E] T::scan_left(Self[A], (E, A) -> E raise?, init~ : E) -> Self[E] raise?
+fn[A, B] T::scan_right(Self[A], (A, B) -> B raise?, init~ : B) -> Self[B] raise?
 fn[A : Compare] T::sort(Self[A]) -> Self[A]
 fn[A] T::tail(Self[A]) -> Self[A]
 fn[A] T::take(Self[A], Int) -> Self[A]

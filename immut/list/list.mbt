@@ -97,7 +97,7 @@ pub fn[A] length(self : T[A]) -> Int {
 ///   assert_eq(arr, [1, 2, 3, 4, 5])
 /// }
 /// ```
-pub fn[A] each(self : T[A], f : (A) -> Unit?Error) -> Unit?Error {
+pub fn[A] each(self : T[A], f : (A) -> Unit raise?) -> Unit raise? {
   loop self {
     Nil => ()
     Cons(head, tail) => {
@@ -119,7 +119,7 @@ pub fn[A] each(self : T[A], f : (A) -> Unit?Error) -> Unit?Error {
 ///   assert_eq(arr, ["(0,1)", "(1,2)", "(2,3)", "(3,4)", "(4,5)"])
 /// }
 /// ```
-pub fn[A] eachi(self : T[A], f : (Int, A) -> Unit?Error) -> Unit?Error {
+pub fn[A] eachi(self : T[A], f : (Int, A) -> Unit raise?) -> Unit raise? {
   loop (self, 0) {
     (Nil, _) => ()
     (Cons(x, xs), i) => {
@@ -148,8 +148,8 @@ pub fn[A, B] map(self : T[A], f : (A) -> B) -> T[B] {
 
 ///|
 /// Maps the list with index.
-pub fn[A, B] mapi(self : T[A], f : (Int, A) -> B?Error) -> T[B]?Error {
-  fn go(xs : T[A], i : Int, f : (Int, A) -> B?Error) -> T[B]?Error {
+pub fn[A, B] mapi(self : T[A], f : (Int, A) -> B raise?) -> T[B] raise? {
+  fn go(xs : T[A], i : Int, f : (Int, A) -> B raise?) -> T[B] raise? {
     match xs {
       Nil => Nil
       Cons(x, xs) => Cons(f(i, x), go(xs, i + 1, f))
@@ -170,7 +170,7 @@ pub fn[A, B] mapi(self : T[A], f : (Int, A) -> B?Error) -> T[B]?Error {
 ///   assert_eq(@list.of([1, 2, 3, 4, 5]).rev_map(fn(x) { x * 2 }), @list.of([10, 8, 6, 4, 2]))
 /// }
 /// ```
-pub fn[A, B] rev_map(self : T[A], f : (A) -> B?Error) -> T[B]?Error {
+pub fn[A, B] rev_map(self : T[A], f : (A) -> B raise?) -> T[B] raise? {
   loop (Nil, self) {
     (acc, Nil) => acc
     (acc, Cons(x, xs)) => continue (Cons(f(x), acc), xs)
@@ -206,7 +206,7 @@ pub fn[A] to_array(self : T[A]) -> Array[A] {
 ///   assert_eq(@list.of([1, 2, 3, 4, 5]).filter(fn(x){ x % 2 == 0}), @list.of([2, 4]))
 /// }
 /// ```
-pub fn[A] filter(self : T[A], f : (A) -> Bool?Error) -> T[A]?Error {
+pub fn[A] filter(self : T[A], f : (A) -> Bool raise?) -> T[A] raise? {
   match self {
     Nil => Nil
     Cons(head, tail) =>
@@ -220,7 +220,7 @@ pub fn[A] filter(self : T[A], f : (A) -> Bool?Error) -> T[A]?Error {
 
 ///|
 /// Test if all elements of the list satisfy the predicate.
-pub fn[A] all(self : T[A], f : (A) -> Bool?Error) -> Bool?Error {
+pub fn[A] all(self : T[A], f : (A) -> Bool raise?) -> Bool raise? {
   loop self {
     Nil => true
     Cons(head, tail) => if f(head) { continue tail } else { false }
@@ -229,7 +229,7 @@ pub fn[A] all(self : T[A], f : (A) -> Bool?Error) -> Bool?Error {
 
 ///|
 /// Test if any element of the list satisfies the predicate.
-pub fn[A] any(self : T[A], f : (A) -> Bool?Error) -> Bool?Error {
+pub fn[A] any(self : T[A], f : (A) -> Bool raise?) -> Bool raise? {
   match self {
     Nil => false
     Cons(head, tail) => f(head) || tail.any(f)
@@ -376,7 +376,7 @@ pub fn[A] rev(self : T[A]) -> T[A] {
 ///   assert_eq(r, 15)
 /// }
 /// ```
-pub fn[A, B] fold(self : T[A], init~ : B, f : (B, A) -> B?Error) -> B?Error {
+pub fn[A, B] fold(self : T[A], init~ : B, f : (B, A) -> B raise?) -> B raise? {
   match self {
     Nil => init
     Cons(head, tail) => tail.fold(f, init=f(init, head))
@@ -393,7 +393,11 @@ pub fn[A, B] fold(self : T[A], init~ : B, f : (B, A) -> B?Error) -> B?Error {
 ///   assert_eq(r, 15)
 /// }
 /// ```
-pub fn[A, B] rev_fold(self : T[A], init~ : B, f : (A, B) -> B?Error) -> B?Error {
+pub fn[A, B] rev_fold(
+  self : T[A],
+  init~ : B,
+  f : (A, B) -> B raise?
+) -> B raise? {
   let xs = self.to_array()
   let mut acc = init
   for x in xs.rev_iter() {
@@ -417,9 +421,9 @@ pub fn[A, B] rev_fold(self : T[A], init~ : B, f : (A, B) -> B?Error) -> B?Error 
 #coverage.skip
 pub fn[A, B] fold_left(
   self : T[A],
-  f : (B, A) -> B?Error,
+  f : (B, A) -> B raise?,
   init~ : B
-) -> B?Error {
+) -> B raise? {
   self.fold(init~, f)
 }
 
@@ -428,9 +432,9 @@ pub fn[A, B] fold_left(
 #coverage.skip
 pub fn[A, B] fold_right(
   self : T[A],
-  f : (A, B) -> B?Error,
+  f : (A, B) -> B raise?,
   init~ : B
-) -> B?Error {
+) -> B raise? {
   match self {
     Nil => init
     Cons(head, tail) => f(head, tail.rev_fold(f, init~))
@@ -442,9 +446,9 @@ pub fn[A, B] fold_right(
 pub fn[A, B] foldi(
   self : T[A],
   init~ : B,
-  f : (Int, B, A) -> B?Error
-) -> B?Error {
-  fn go(xs : T[A], i : Int, f : (Int, B, A) -> B?Error, acc : B) -> B?Error {
+  f : (Int, B, A) -> B raise?
+) -> B raise? {
+  fn go(xs : T[A], i : Int, f : (Int, B, A) -> B raise?, acc : B) -> B raise? {
     match xs {
       Nil => acc
       Cons(x, xs) => go(xs, i + 1, f, f(i, acc, x))
@@ -459,9 +463,9 @@ pub fn[A, B] foldi(
 pub fn[A, B] rev_foldi(
   self : T[A],
   init~ : B,
-  f : (Int, A, B) -> B?Error
-) -> B?Error {
-  fn go(xs : T[A], i : Int, f : (Int, A, B) -> B?Error, acc : B) -> B?Error {
+  f : (Int, A, B) -> B raise?
+) -> B raise? {
+  fn go(xs : T[A], i : Int, f : (Int, A, B) -> B raise?, acc : B) -> B raise? {
     match xs {
       Nil => acc
       Cons(x, xs) => f(i, x, go(xs, i + 1, f, acc))
@@ -477,10 +481,10 @@ pub fn[A, B] rev_foldi(
 #coverage.skip
 pub fn[A, B] fold_lefti(
   self : T[A],
-  f : (Int, B, A) -> B?Error,
+  f : (Int, B, A) -> B raise?,
   init~ : B
-) -> B?Error {
-  fn go(xs : T[A], i : Int, f : (Int, B, A) -> B?Error, acc : B) -> B?Error {
+) -> B raise? {
+  fn go(xs : T[A], i : Int, f : (Int, B, A) -> B raise?, acc : B) -> B raise? {
     match xs {
       Nil => acc
       Cons(x, xs) => go(xs, i + 1, f, f(i, acc, x))
@@ -496,10 +500,10 @@ pub fn[A, B] fold_lefti(
 #coverage.skip
 pub fn[A, B] fold_righti(
   self : T[A],
-  f : (Int, A, B) -> B?Error,
+  f : (Int, A, B) -> B raise?,
   init~ : B
-) -> B?Error {
-  fn go(xs : T[A], i : Int, f : (Int, A, B) -> B?Error, acc : B) -> B?Error {
+) -> B raise? {
+  fn go(xs : T[A], i : Int, f : (Int, A, B) -> B raise?, acc : B) -> B raise? {
     match xs {
       Nil => acc
       Cons(x, xs) => f(i, x, go(xs, i + 1, f, acc))
@@ -568,7 +572,7 @@ pub fn[A, B] concat_map(self : T[A], f : (A) -> T[B]) -> T[B] {
 ///   assert_eq(r, @list.from_array([1, 2, 2, 4, 3, 6]))
 /// }
 /// ```
-pub fn[A, B] flat_map(self : T[A], f : (A) -> T[B]?Error) -> T[B]?Error {
+pub fn[A, B] flat_map(self : T[A], f : (A) -> T[B] raise?) -> T[B] raise? {
   match self {
     Nil => Nil
     Cons(head, tail) => f(head).concat(tail.flat_map(f))
@@ -825,7 +829,7 @@ pub fn[A : Eq] contains(self : T[A], value : A) -> Bool {
 ///   assert_eq(r, @list.from_array([0, 1, 2]))
 /// }
 /// ```
-pub fn[A, S] unfold(f : (S) -> (A, S)??Error, init~ : S) -> T[A]?Error {
+pub fn[A, S] unfold(f : (S) -> (A, S)? raise?, init~ : S) -> T[A] raise? {
   match f(init) {
     Some((element, new_state)) => Cons(element, unfold(init=new_state, f))
     None => Nil
@@ -917,7 +921,7 @@ pub fn[A] take_while(self : T[A], p : (A) -> Bool) -> T[A] {
 ///   assert_eq(r, @list.of([3, 4]))
 /// }
 /// ```
-pub fn[A] drop_while(self : T[A], p : (A) -> Bool?Error) -> T[A]?Error {
+pub fn[A] drop_while(self : T[A], p : (A) -> Bool raise?) -> T[A] raise? {
   loop self {
     Nil => Nil
     Cons(x, xs) => if p(x) { continue xs } else { Cons(x, xs) }
@@ -938,9 +942,9 @@ pub fn[A] drop_while(self : T[A], p : (A) -> Bool?Error) -> T[A]?Error {
 /// ```
 pub fn[A, E] scan_left(
   self : T[A],
-  f : (E, A) -> E?Error,
+  f : (E, A) -> E raise?,
   init~ : E
-) -> T[E]?Error {
+) -> T[E] raise? {
   Cons(
     init,
     match self {
@@ -965,9 +969,9 @@ pub fn[A, E] scan_left(
 /// ```
 pub fn[A, B] scan_right(
   self : T[A],
-  f : (A, B) -> B?Error,
+  f : (A, B) -> B raise?,
   init~ : B
-) -> T[B]?Error {
+) -> T[B] raise? {
   match self {
     Nil => Cons(init, Nil)
     Cons(x, xs) => {
@@ -1006,7 +1010,7 @@ pub fn[A : Eq, B] lookup(self : T[(A, B)], v : A) -> B? {
 ///   assert_eq(@list.of([1, 3, 5]).find(fn(element) -> Bool { element % 2 == 0}), None)
 /// }
 /// ```
-pub fn[A] find(self : T[A], f : (A) -> Bool?Error) -> A??Error {
+pub fn[A] find(self : T[A], f : (A) -> Bool raise?) -> A? raise? {
   loop self {
     Nil => None
     Cons(element, list) =>
@@ -1029,7 +1033,7 @@ pub fn[A] find(self : T[A], f : (A) -> Bool?Error) -> A??Error {
 ///   assert_eq(@list.of([1, 3, 8, 5]).findi(fn(element, index) -> Bool { (element % 2 == 0) && (index == 3) }), None)
 /// }
 /// ```
-pub fn[A] findi(self : T[A], f : (A, Int) -> Bool?Error) -> A??Error {
+pub fn[A] findi(self : T[A], f : (A, Int) -> Bool raise?) -> A? raise? {
   loop (self, 0) {
     (list, index) =>
       match list {
