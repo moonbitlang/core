@@ -83,7 +83,6 @@ fn[T] Array::shuffle_in_place(Self[T], rand~ : (Int) -> Int) -> Unit
 fn[T : Compare] Array::sort(Self[T]) -> Unit
 fn[T] Array::sort_by(Self[T], (T, T) -> Int) -> Unit
 fn[T, K : Compare] Array::sort_by_key(Self[T], (T) -> K) -> Unit
-fn[A] Array::truncate(Self[A], Int) -> Unit
 fn[A, B] Array::zip(Self[A], Self[B]) -> Self[(A, B)]
 fn[A, B] Array::zip_to_iter2(Self[A], Self[B]) -> Iter2[A, B]
 impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Array[X]
