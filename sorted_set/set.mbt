@@ -152,15 +152,18 @@ pub fn[V : Compare] contains(self : T[V], value : V) -> Bool {
 ///|
 /// Returns the union of two sets.
 pub fn[V : Compare] union(self : T[V], src : T[V]) -> T[V] {
-  fn aux(a : Node[V]?, b : Node[V]?) -> Node[V]? {
+  fn aux(a : Node[V]?, b : Node[V]?) -> (Node[V]?, Int) {
     match (a, b) {
-      (Some(_), None) => a
-      (None, Some(_)) => b
+      (Some(_), None) => (a, count_nodes(a))
+      (None, Some(_)) => (b, count_nodes(b))
       (Some({ value: va, left: la, right: ra, .. }), Some(_)) => {
         let (l, r) = split(b, va)
-        Some(join(aux(la, l), va, aux(ra, r)))
+        let (l, lc) = aux(la, l)
+        let (r, rc) = aux(ra, r)
+        let node = Some(join(l, va, r))
+        (node, lc + rc + 1)
       }
-      (None, None) => None
+      (None, None) => (None, 0)
     }
   }
 
@@ -168,12 +171,8 @@ pub fn[V : Compare] union(self : T[V], src : T[V]) -> T[V] {
     (Some(_), Some(_)) => {
       let t1 = copy_tree(self.root)
       let t2 = copy_tree(src.root)
-      let t = aux(t1, t2)
-      let mut ct = 0
-      let ret = { root: t, size: 0 }
-      // TODO: optimize this. Avoid counting the size of the set.
-      ret.each(fn(_x) { ct = ct + 1 })
-      ret.size = ct
+      let (t, s) = aux(t1, t2)
+      let ret = { root: t, size: s }
       ret
     }
     (Some(_), None) => { root: copy_tree(self.root), size: self.size }

@@ -27,6 +27,14 @@ fn max(x : Int, y : Int) -> Int {
 }
 
 ///|
+fn[V] count_nodes(node : Node[V]?) -> Int {
+  match node {
+    None => 0
+    Some(n) => 1 + count_nodes(n.left) + count_nodes(n.right)
+  }
+}
+
+///|
 fn[V] height(node : Node[V]?) -> Int {
   match node {
     None => 0
