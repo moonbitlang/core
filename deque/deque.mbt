@@ -358,32 +358,6 @@ pub fn[A] unsafe_pop_front(self : T[A]) -> Unit {
 }
 
 ///|
-/// Removes and discards the first element from the deque. This function is a
-/// deprecated version of `unsafe_pop_front`.
-///
-/// Parameters:
-///
-/// * `self` : The deque to remove the first element from.
-///
-/// Throws a runtime error if the deque is empty.
-///
-/// Example:
-///
-/// ```moonbit
-/// test "pop_front_exn" {
-///   let dq = @deque.of([1, 2, 3])
-///   dq.unsafe_pop_front()
-///   inspect(dq, content="@deque.of([2, 3])")
-/// }
-/// ```
-///
-#deprecated("Use `unsafe_pop_front` instead")
-#coverage.skip
-pub fn[A] pop_front_exn(self : T[A]) -> Unit {
-  self.unsafe_pop_front()
-}
-
-///|
 /// Removes a back element from a deque.
 ///
 /// # Example
@@ -412,34 +386,6 @@ pub fn[A] unsafe_pop_back(self : T[A]) -> Unit {
       self.len -= 1
     }
   }
-}
-
-///|
-/// Removes and discards the last element from a deque.
-///
-/// Parameters:
-///
-/// * `deque` : The deque to remove the last element from.
-///
-/// Throws a runtime error if the deque is empty.
-///
-/// Example:
-///
-/// ```moonbit
-/// test "pop_back_exn" {
-///   let dq = @deque.of([1, 2, 3])
-///   // Deprecated way:
-///   // dq.pop_back_exn()
-///   // Recommended way:
-///   dq.unsafe_pop_back()
-///   inspect(dq, content="@deque.of([1, 2])")
-/// }
-/// ```
-///
-#deprecated("Use `unsafe_pop_back` instead")
-#coverage.skip
-pub fn[A] pop_back_exn(self : T[A]) -> Unit {
-  self.unsafe_pop_back()
 }
 
 ///|

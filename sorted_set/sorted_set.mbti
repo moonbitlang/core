@@ -14,9 +14,6 @@ fn[V] copy(T[V]) -> T[V]
 #deprecated
 fn[V] deep_clone(T[V]) -> T[V]
 
-#deprecated
-fn[V : Compare] diff(T[V], T[V]) -> T[V]
-
 fn[V : Compare] difference(T[V], T[V]) -> T[V]
 
 fn[V : Compare] disjoint(T[V], T[V]) -> Bool
@@ -66,8 +63,6 @@ fn[V : Compare] T::contains(Self[V], V) -> Bool
 fn[V] T::copy(Self[V]) -> Self[V]
 #deprecated
 fn[V] T::deep_clone(Self[V]) -> Self[V]
-#deprecated
-fn[V : Compare] T::diff(Self[V], Self[V]) -> Self[V]
 fn[V : Compare] T::difference(Self[V], Self[V]) -> Self[V]
 fn[V : Compare] T::disjoint(Self[V], Self[V]) -> Bool
 fn[V] T::each(Self[V], (V) -> Unit raise?) -> Unit raise?

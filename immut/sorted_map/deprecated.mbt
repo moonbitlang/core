@@ -13,16 +13,6 @@
 // limitations under the License.
 
 ///|
-/// Create a new map with a key-value pair inserted.
-/// O(log n).
-///
-#deprecated("Use `add` instead")
-#coverage.skip
-pub fn[K : Compare, V] insert(self : T[K, V], key : K, value : V) -> T[K, V] {
-  self.add(key, value)
-}
-
-///|
 #deprecated("use `@immut/sorted_map.new` instead")
 #coverage.skip
 pub fn[K, V] T::new() -> T[K, V] {
@@ -55,13 +45,4 @@ pub fn[K : Compare, V] T::from_iter(iter : Iter[(K, V)]) -> T[K, V] {
 #coverage.skip
 pub fn[K : Compare, V] T::of(array : FixedArray[(K, V)]) -> T[K, V] {
   of(array)
-}
-
-///|
-#deprecated("use `@immut/sorted_map.from_json` instead")
-#coverage.skip
-pub fn[V : @json.FromJson] T::from_json(
-  json : Json
-) -> T[String, V] raise @json.JsonDecodeError {
-  @json.from_json(json)
 }

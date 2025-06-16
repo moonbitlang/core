@@ -14,9 +14,6 @@ fn[A] any(T[A], (A) -> Bool raise?) -> Bool raise?
 
 fn[A] concat(T[A], T[A]) -> T[A]
 
-#deprecated
-fn[A, B] concat_map(T[A], (A) -> T[B]) -> T[B]
-
 fn[A : Eq] contains(T[A], A) -> Bool
 
 fn[X] default() -> T[X]
@@ -28,9 +25,6 @@ fn[A] drop_while(T[A], (A) -> Bool raise?) -> T[A] raise?
 fn[A] each(T[A], (A) -> Unit raise?) -> Unit raise?
 
 fn[A] eachi(T[A], (Int, A) -> Unit raise?) -> Unit raise?
-
-#deprecated
-fn[A : Eq] equal(T[A], T[A]) -> Bool
 
 fn[A] filter(T[A], (A) -> Bool raise?) -> T[A] raise?
 
@@ -46,18 +40,6 @@ fn[A] flatten(T[T[A]]) -> T[A]
 
 fn[A, B] fold(T[A], init~ : B, (B, A) -> B raise?) -> B raise?
 
-#deprecated
-fn[A, B] fold_left(T[A], (B, A) -> B raise?, init~ : B) -> B raise?
-
-#deprecated
-fn[A, B] fold_lefti(T[A], (Int, B, A) -> B raise?, init~ : B) -> B raise?
-
-#deprecated
-fn[A, B] fold_right(T[A], (A, B) -> B raise?, init~ : B) -> B raise?
-
-#deprecated
-fn[A, B] fold_righti(T[A], (Int, A, B) -> B raise?, init~ : B) -> B raise?
-
 fn[A, B] foldi(T[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
 
 fn[A] from_array(Array[A]) -> T[A]
@@ -69,12 +51,6 @@ fn[A] from_iter_rev(Iter[A]) -> T[A]
 fn[A : @json.FromJson] from_json(Json) -> T[A] raise @json.JsonDecodeError
 
 fn[A] head(T[A]) -> A?
-
-#deprecated
-fn[A] head_exn(T[A]) -> A
-
-#deprecated
-fn[A] init_(T[A]) -> T[A]
 
 fn[A] intercalate(T[T[A]], T[A]) -> T[A]
 
@@ -105,9 +81,6 @@ fn[A : Compare] maximum(T[A]) -> A?
 fn[A : Compare] minimum(T[A]) -> A?
 
 fn[A] nth(T[A], Int) -> A?
-
-#deprecated
-fn[A] nth_exn(T[A], Int) -> A
 
 fn[A] of(FixedArray[A]) -> T[A]
 
@@ -170,17 +143,11 @@ fn[A] T::add(Self[A], A) -> Self[A]
 fn[A] T::all(Self[A], (A) -> Bool raise?) -> Bool raise?
 fn[A] T::any(Self[A], (A) -> Bool raise?) -> Bool raise?
 fn[A] T::concat(Self[A], Self[A]) -> Self[A]
-#deprecated
-fn[A, B] T::concat_map(Self[A], (A) -> Self[B]) -> Self[B]
 fn[A : Eq] T::contains(Self[A], A) -> Bool
-#deprecated
-fn[X] T::default() -> Self[X]
 fn[A] T::drop(Self[A], Int) -> Self[A]
 fn[A] T::drop_while(Self[A], (A) -> Bool raise?) -> Self[A] raise?
 fn[A] T::each(Self[A], (A) -> Unit raise?) -> Unit raise?
 fn[A] T::eachi(Self[A], (Int, A) -> Unit raise?) -> Unit raise?
-#deprecated
-fn[A : Eq] T::equal(Self[A], Self[A]) -> Bool
 fn[A] T::filter(Self[A], (A) -> Bool raise?) -> Self[A] raise?
 fn[A, B] T::filter_map(Self[A], (A) -> B?) -> Self[B]
 fn[A] T::find(Self[A], (A) -> Bool raise?) -> A? raise?
@@ -188,26 +155,12 @@ fn[A] T::findi(Self[A], (A, Int) -> Bool raise?) -> A? raise?
 fn[A, B] T::flat_map(Self[A], (A) -> Self[B] raise?) -> Self[B] raise?
 fn[A] T::flatten(Self[Self[A]]) -> Self[A]
 fn[A, B] T::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
-#deprecated
-fn[A, B] T::fold_left(Self[A], (B, A) -> B raise?, init~ : B) -> B raise?
-#deprecated
-fn[A, B] T::fold_lefti(Self[A], (Int, B, A) -> B raise?, init~ : B) -> B raise?
-#deprecated
-fn[A, B] T::fold_right(Self[A], (A, B) -> B raise?, init~ : B) -> B raise?
-#deprecated
-fn[A, B] T::fold_righti(Self[A], (Int, A, B) -> B raise?, init~ : B) -> B raise?
 fn[A, B] T::foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
 #deprecated
 fn[A] T::from_array(Array[A]) -> Self[A]
 #deprecated
 fn[A] T::from_iter(Iter[A]) -> Self[A]
-#deprecated
-fn[A : @json.FromJson] T::from_json(Json) -> Self[A] raise @json.JsonDecodeError
 fn[A] T::head(Self[A]) -> A?
-#deprecated
-fn[A] T::head_exn(Self[A]) -> A
-#deprecated
-fn[A] T::init_(Self[A]) -> Self[A]
 fn[A] T::intercalate(Self[Self[A]], Self[A]) -> Self[A]
 fn[A] T::intersperse(Self[A], A) -> Self[A]
 fn[A] T::is_empty(Self[A]) -> Bool
@@ -223,8 +176,6 @@ fn[A, B] T::mapi(Self[A], (Int, A) -> B raise?) -> Self[B] raise?
 fn[A : Compare] T::maximum(Self[A]) -> A?
 fn[A : Compare] T::minimum(Self[A]) -> A?
 fn[A] T::nth(Self[A], Int) -> A?
-#deprecated
-fn[A] T::nth_exn(Self[A], Int) -> A
 #deprecated
 fn[A] T::of(FixedArray[A]) -> Self[A]
 fn[A : Eq] T::remove(Self[A], A) -> Self[A]

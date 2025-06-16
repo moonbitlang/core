@@ -13,69 +13,10 @@
 // limitations under the License.
 
 ///|
-#deprecated("use `@immut/list.from_json` instead")
-#coverage.skip
-pub fn[A : @json.FromJson] T::from_json(
-  json : Json
-) -> T[A] raise @json.JsonDecodeError {
-  @json.from_json(json)
-}
-
-///|
-/// Init of the list.
-///
-/// # Example
-///
-/// ```mbt
-/// test {
-///   assert_eq(@list.of([1, 2, 3, 4, 5]).init_(), @list.of([1, 2, 3, 4]))
-/// }
-/// ```
-#deprecated
-#coverage.skip
-pub fn[A] init_(self : T[A]) -> T[A] {
-  fn aux(self) {
-    match self {
-      Nil => Nil
-      Cons(_, Nil) => Nil
-      Cons(head, tail) => Cons(head, aux(tail))
-    }
-  }
-
-  aux(self)
-}
-
-///|
-/// Compares two lists for equality.
-///
-/// # Example
-///
-/// ```mbt
-/// test {
-///   assert_eq(@list.of([1, 2, 3]) == @list.of([1, 2, 3]), true)
-/// }
-/// ```
-#deprecated("use `==` instead")
-pub fn[A : Eq] equal(self : T[A], other : T[A]) -> Bool {
-  loop (self, other) {
-    (Nil, Nil) => true
-    (Cons(h, t), Cons(h1, t1)) => if h == h1 { continue (t, t1) } else { false }
-    (_, _) => false
-  }
-}
-
-///|
 #deprecated("use `@immut/list.from_array` instead")
 #coverage.skip
 pub fn[A] T::from_array(arr : Array[A]) -> T[A] {
   from_array(arr)
-}
-
-///|
-#deprecated("use `@immut/list.default` instead")
-#coverage.skip
-pub fn[X] T::default() -> T[X] {
-  Nil
 }
 
 ///|

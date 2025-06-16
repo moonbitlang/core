@@ -34,15 +34,6 @@ pub fn[A : Compare] T::from_array(array : Array[A]) -> T[A] {
 }
 
 ///|
-#deprecated("use `@immut/sorted_set.from_json` instead")
-#coverage.skip
-pub fn[A : @json.FromJson + Compare] T::from_json(
-  json : Json
-) -> T[A] raise @json.JsonDecodeError {
-  @json.from_json(json)
-}
-
-///|
 #deprecated("use `@immut/sorted_set.of` instead")
 #coverage.skip
 pub fn[A : Compare] T::of(array : FixedArray[A]) -> T[A] {
