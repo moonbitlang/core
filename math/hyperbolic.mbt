@@ -55,7 +55,7 @@ fn k_expo2f(x : Float) -> Float {
 pub fn sinhf(x : Float) -> Float {
   let mut h : Float = 0.5
   let mut ix = x.reinterpret_as_uint()
-  if (ix >> 31) != 0 {
+  if ix >> 31 != 0 {
     h = -h
   }
   // |x|
@@ -162,7 +162,7 @@ pub fn coshf(x : Float) -> Float {
 /// ```
 pub fn tanhf(x : Float) -> Float {
   let mut ix = x.reinterpret_as_uint()
-  let sign = (ix >> 31) != 0
+  let sign = ix >> 31 != 0
   ix = ix & 0x7fffffff
   let x = ix.reinterpret_as_float()
   let w = ix
@@ -223,7 +223,7 @@ pub fn tanhf(x : Float) -> Float {
 pub fn asinhf(x : Float) -> Float {
   let u = x.reinterpret_as_uint()
   let i = u & 0x7fffffff
-  let sign = (u >> 31) != 0
+  let sign = u >> 31 != 0
   let ln2 : Float = 0.693147180559945309417232121458176568
   let x = i.reinterpret_as_float()
   let x = if i >= 0x3f800000U + (12U << 23) {
@@ -325,7 +325,7 @@ pub fn acoshf(x : Float) -> Float {
 /// ```
 pub fn atanhf(x : Float) -> Float {
   let u = x.reinterpret_as_uint()
-  let sign = (u >> 31) != 0
+  let sign = u >> 31 != 0
   let u = u & 0x7fffffff
   let x = u.reinterpret_as_float()
   let x = if u < 0x3f800000U - (1U << 23) {

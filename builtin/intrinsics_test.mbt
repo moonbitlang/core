@@ -41,9 +41,9 @@ test "Int::lxor should perform bitwise XOR operation" {
 ///| test Int::op_shl
 test "Int::op_shl should perform left shift operation" {
   inspect(7 << 1, content="14")
-  inspect((0b101 << 1) == 0b1010, content="true")
-  inspect((0xffff_ffff << 1) == 0xffff_fffe, content="true")
-  inspect((0xffff_ffff << 0) == 0xffff_ffff, content="true")
+  inspect(0b101 << 1 == 0b1010, content="true")
+  inspect(0xffff_ffff << 1 == 0xffff_fffe, content="true")
+  inspect(0xffff_ffff << 0 == 0xffff_ffff, content="true")
   inspect(0xffff_ffff << 3, content="-8")
   let arr = Array::make(33, 0).mapi((i, _) => i)
   inspect(

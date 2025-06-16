@@ -183,7 +183,7 @@ pub fn powf(base : Float, exponent : Float) -> Float {
     } else if iy >= 0x3f800000 {
       k = (iy >> 23) - 0x7f // exponent
       j = iy >> (23 - k)
-      if (j << (23 - k)) == iy {
+      if j << (23 - k) == iy {
         yisint = 2 - (j & 1)
       }
     }
@@ -394,7 +394,7 @@ pub fn powf(base : Float, exponent : Float) -> Float {
   z = (1.0 : Float) - (r - z)
   j = z.reinterpret_as_int()
   j += n << 23
-  if (j >> 23) <= 0 {
+  if j >> 23 <= 0 {
     // subnormal output
     z = scalbnf(z, n)
   } else {

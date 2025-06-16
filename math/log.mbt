@@ -162,14 +162,14 @@ pub fn ln_1pf(x : Float) -> Float {
   let mut iu : UInt = 0
   let one : Float = 1.0
   let mut k = 1
-  if ui < 0x3ed413d0 || (ui >> 31) > 0 {
+  if ui < 0x3ed413d0 || ui >> 31 > 0 {
     if ui >= 0xbf800000 {
       if x == -1.0 {
         return x / 0.0
       }
       return (x - x) / 0.0
     }
-    if (ui << 1) < (0x33800000U << 1) {
+    if ui << 1 < 0x33800000U << 1 {
       return x
     }
     if ui <= 0xbe95f619 {

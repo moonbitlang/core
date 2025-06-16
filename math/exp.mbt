@@ -156,7 +156,7 @@ pub fn expm1f(x : Float) -> Float {
   let q1 : Float = -3.3333212137e-2 // -0x888868.0p-28
   let q2 : Float = 1.5807170421e-3 //  0xcf3010.0p-33
   let mut hx = x.reinterpret_as_uint()
-  let sign = (hx >> 31) != 0
+  let sign = hx >> 31 != 0
   hx = hx & 0x7fffffff
 
   // filter out huge and non-finite argument

@@ -121,26 +121,26 @@ test "panic array_as_view_swap_index_error" {
 test "panic op_div coverage for division by zero" {
   let a = BigInt::from_int(123456789)
   let b = BigInt::from_int(0)
-  a / b |> ignore
+  (a / b) |> ignore
 }
 
 ///|
 test "panic op_mod coverage for modulo by zero" {
   let a = BigInt::from_int(123456789)
   let b = BigInt::from_int(0)
-  a % b |> ignore
+  (a % b) |> ignore
 }
 
 ///|
 test "panic op_shl coverage for negative shift" {
   let a = BigInt::from_int(123456789)
-  a << -1 |> ignore
+  (a << -1) |> ignore
 }
 
 ///|
 test "panic op_shr coverage for negative shift" {
   let a = BigInt::from_int(123456789)
-  a >> -1 |> ignore
+  (a >> -1) |> ignore
 }
 
 ///|
@@ -167,26 +167,26 @@ test "panic from_hex coverage for invalid character" {
 test "panic op_div coverage for division by zero" {
   let a = BigInt::from_int(123456789)
   let b = BigInt::from_int(0)
-  a / b |> ignore
+  (a / b) |> ignore
 }
 
 ///|
 test "panic op_mod coverage for modulo by zero" {
   let a = BigInt::from_int(123456789)
   let b = BigInt::from_int(0)
-  a % b |> ignore
+  (a % b) |> ignore
 }
 
 ///|
 test "panic op_shl coverage for negative shift" {
   let a = BigInt::from_int(123456789)
-  a << -1 |> ignore
+  (a << -1) |> ignore
 }
 
 ///|
 test "panic op_shr coverage for negative shift" {
   let a = BigInt::from_int(123456789)
-  a >> -1 |> ignore
+  (a >> -1) |> ignore
 }
 
 ///|
