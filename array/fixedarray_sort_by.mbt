@@ -287,14 +287,13 @@ fn[T] fixed_choose_pivot_by(
   if len >= 8 {
     let a = len / 4 * 1
     let c = len / 4 * 3
-    fn sort_2(a : Int, b : Int) {
+    letrec sort_2 = fn(a : Int, b : Int) {
       if cmp(arr[a], arr[b]) > 0 {
         arr.swap(a, b)
         swaps += 1
       }
     }
-
-    fn sort_3(a : Int, b : Int, c : Int) {
+    and sort_3 = fn(a : Int, b : Int, c : Int) {
       sort_2(a, b)
       sort_2(b, c)
       sort_2(a, b)
