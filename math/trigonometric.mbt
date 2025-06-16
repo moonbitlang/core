@@ -317,7 +317,7 @@ pub fn asinf(x : Float) -> Float {
   let z = ((1.0 : Float) - x.abs()) * 0.5
   let s = z.to_double().sqrt()
   let x = (pio2 - 2.0 * (s + s * r(z).to_double())).to_float()
-  if (hx >> 31) != 0 {
+  if hx >> 31 != 0 {
     -x
   } else {
     x
@@ -365,7 +365,7 @@ pub fn acosf(x : Float) -> Float {
   let ix = hx & 0x7fffffff
   if ix >= 0x3f800000 {
     if ix == 0x3f800000 {
-      if (hx >> 31) != 0 {
+      if hx >> 31 != 0 {
         return two * pio2_hi + 0x1.0p-120
       }
       return 0.0
@@ -378,7 +378,7 @@ pub fn acosf(x : Float) -> Float {
     }
     return pio2_hi - (x - (pio2_lo - x * r(x * x)))
   }
-  if (hx >> 31) != 0 {
+  if hx >> 31 != 0 {
     let z = (x + 1.0) * 0.5
     let s = z.sqrt()
     let w = r(z) * s - pio2_lo
