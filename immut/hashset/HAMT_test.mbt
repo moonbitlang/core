@@ -58,7 +58,11 @@ test "@hashset.remove" {
 test "@hashset.iter" {
   let data = @hashset.of(["a", "b", "d", "e", "f"])
   let mut s = ""
-  data.iter().each(fn { k => s += " \{k}" })
+  data
+  .iter()
+  .each(k => {
+    s += " \{k}"
+  })
   inspect(s, content=" e f b a d")
 }
 
@@ -111,7 +115,7 @@ test "@hashset.is_empty" {
 test "@hashset.iter" {
   let set = @hashset.new().add(1).add(2).add(3)
   let result = []
-  set.each(fn { x => result.push(x) })
+  set.each(x => result.push(x))
   result.sort()
   assert_eq(result, [1, 2, 3])
 }
@@ -120,7 +124,7 @@ test "@hashset.iter" {
 test "@hashset.iter" {
   let set = @hashset.new().add(1).add(2).add(3)
   let result = []
-  set.iter().each(fn { x => result.push(x) })
+  set.iter().each(x => result.push(x))
   result.sort()
   assert_eq(result, [1, 2, 3])
 }

@@ -147,12 +147,10 @@ fn coverage_log(
   counters : MList[(String, CoverageCounter)],
   io : &Output
 ) -> Unit {
-  let print = fn { x => io.output(x) }
-  let println = fn {
-    x => {
-      io.output(x)
-      io.output("\n")
-    }
+  let print = x => io.output(x)
+  let println = x => {
+    io.output(x)
+    io.output("\n")
   }
   print("{ ")
   loop (counters, 0) {

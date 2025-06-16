@@ -85,7 +85,11 @@ test "HAMT::values" {
 test "HAMT::iter" {
   let data = @hashmap.of([(0, "a"), (2, "b"), (3, "d"), (5, "e"), (11111, "f")])
   let mut s = ""
-  data.iter().each(fn { (k, v) => s += " \{k},\{v}" })
+  data
+  .iter()
+  .each(p => {
+    s += " \{p.0},\{p.1}"
+  })
   inspect(s, content=" 0,a 5,e 3,d 11111,f 2,b")
 }
 
@@ -93,7 +97,11 @@ test "HAMT::iter" {
 test "HAMT::iter2" {
   let data = @hashmap.of([(0, "a"), (2, "b"), (3, "d"), (5, "e"), (11111, "f")])
   let mut s = ""
-  data.iter2().each(fn { k, v => s += " \{k},\{v}" })
+  data
+  .iter2()
+  .each((k, v) => {
+    s += " \{k},\{v}"
+  })
   inspect(s, content=" 0,a 5,e 3,d 11111,f 2,b")
 }
 

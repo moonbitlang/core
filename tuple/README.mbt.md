@@ -36,8 +36,8 @@ You can transform the tuple using the matrix functions combined with `then`.
 ```moonbit  
 test {
     let tuple = (1, 2)
-    let _tuple2 = (fn { (x, y) => (x + 1, y) })(tuple) // tuple2 = (2, 2)
-    let _tuple3 = tuple |> then(fn { (x, y) => (x, y + 1) }) // tuple3 = (1, 3)
+    let _tuple2 = ({ (pair: (Int, Int)) => (pair.0 + 1, pair.1) })(tuple) // tuple2 = (2, 2)
+    let _tuple3 = tuple |> then({ pair => (pair.0, pair.1 + 1) }) // tuple3 = (1, 3)
     let _mapped = tuple |> then(fn(pair) { (pair.0 + 1, pair.1 - 1) }) // _mapped = 2, 1
 }
 ```

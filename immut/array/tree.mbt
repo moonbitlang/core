@@ -556,8 +556,8 @@ fn[A] tri_merge(
 ///|
 /// Create a redistribution plan for the tree.
 fn[A] redis_plan(t : FixedArray[Tree[A]]) -> (FixedArray[Int], Int) {
-  let node_counts = FixedArray::makei(t.length(), fn { i => t[i].local_size() })
-  let total_nodes = node_counts.fold(init=0, fn { acc, x => acc + x })
+  let node_counts = FixedArray::makei(t.length(), i => t[i].local_size())
+  let total_nodes = node_counts.fold(init=0, (acc, x) => acc + x)
   // round up to the nearest integer of S/branching_factor
   let opt_len = (total_nodes + branching_factor - 1) / branching_factor
   let mut new_len = t.length()

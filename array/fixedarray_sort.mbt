@@ -533,7 +533,7 @@ pub fn[T : Compare] FixedArray::is_sorted(arr : FixedArray[T]) -> Bool {
 ///|
 test "stable_sort_complex" {
   let run_lens = [86, 64, 21, 20, 22]
-  let total_len = run_lens.fold(init=0, fn { acc, x => acc + x })
+  let total_len = run_lens.fold(init=0, (acc, x) => acc + x)
   let arr = FixedArray::make(total_len, 0)
   let mut index = 0
   for i = 0, len = run_lens.length(); i < len; i = i + 1 {
