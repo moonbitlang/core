@@ -16,6 +16,7 @@ fn T::abs(Self) -> Self
 fnalias T::abs
 fn T::ceil(Self) -> Int64
 fnalias T::ceil
+fn T::checked_add(Self, Self) -> Self?
 fn T::floor(Self) -> Int64
 fnalias T::floor
 fn T::fract(Self) -> Self
