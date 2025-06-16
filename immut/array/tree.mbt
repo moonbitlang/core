@@ -719,7 +719,7 @@ impl[A : Show] Show for Tree[A] with output(self, logger : &Logger) {
     String::make(indent, ' ') + s
   }
 
-  fn rec(t : Tree[A], ident : Int) {
+  fn aux(t : Tree[A], ident : Int) {
     match t {
       Empty => indent_str("Empty", ident)
       Leaf(l) => {
@@ -736,12 +736,12 @@ impl[A : Show] Show for Tree[A] with output(self, logger : &Logger) {
       Node(children, _sizes) => {
         let mut s = indent_str("Node(", ident) + "\n"
         for i in 0..<children.length() {
-          s += rec(children[i], ident + 2)
+          s += aux(children[i], ident + 2)
         }
         s + indent_str(")", ident) + "\n"
       }
     }
   }
 
-  logger.write_string(rec(self, 0))
+  logger.write_string(aux(self, 0))
 }
