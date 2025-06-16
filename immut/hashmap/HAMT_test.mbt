@@ -398,7 +398,7 @@ test "HAMT::map_with_key leaf" {
 ///|
 test "HAMT::map_with_key collision" {
   let map = @hashmap.of([(MyString("a"), 1), (MyString("b"), 2)]) // Collision
-  let mapped = map.map_with_key(fn(k, v) { k._ + ":" + v.to_string() })
+  let mapped = map.map_with_key(fn(k, v) { k.inner() + ":" + v.to_string() })
   assert_eq(mapped.get(MyString("a")), Some("a:1"))
   assert_eq(mapped.get(MyString("b")), Some("b:2"))
   assert_eq(mapped.get(MyString("c")), None)
@@ -435,7 +435,7 @@ impl Hash for MyString with hash_combine(_self, hasher) {
 
 ///|
 impl Eq for MyString with op_equal(self, other) {
-  self._ == other._
+  self.inner() == other.inner()
 }
 
 ///|

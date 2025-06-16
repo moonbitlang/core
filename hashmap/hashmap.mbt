@@ -521,13 +521,13 @@ impl Hash for MyString with hash(self) {
 ///|
 #coverage.skip
 impl Hash for MyString with hash_combine(self, hasher) {
-  hasher.combine_string(self._)
+  hasher.combine_string(self.inner())
 }
 
 ///|
 #coverage.skip
 impl Show for MyString with output(self, logger) {
-  logger.write_string(self._)
+  logger.write_string(self.inner())
 }
 
 ///|

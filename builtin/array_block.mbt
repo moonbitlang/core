@@ -52,9 +52,9 @@ pub fn[A] Array::unsafe_blit(
   len : Int
 ) -> Unit {
   FixedArray::unsafe_blit(
-    dst.buffer()._,
+    dst.buffer().inner(),
     dst_offset,
-    src.buffer()._,
+    src.buffer().inner(),
     src_offset,
     len,
   )
