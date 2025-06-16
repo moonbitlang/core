@@ -1144,7 +1144,7 @@ pub fn[T] Array::swap(self : Array[T], i : Int, j : Int) -> Unit {
 ///   inspect(arr, content="[]")
 ///
 ///   let arr = [1, 2, 3]
-///   arr.retain(fn { _ => true })
+///   arr.retain(_ => true)
 ///   inspect(arr, content="[1, 2, 3]")
 /// ```
 /// TODO: perf could be improved
@@ -1248,7 +1248,7 @@ pub fn[T] Array::repeat(self : Array[T], times : Int) -> Array[T] {
 /// Example:
 ///
 /// ```moonbit
-///   let sum = [1, 2, 3, 4, 5].fold(init=0, fn { sum, elem => sum + elem })
+///   let sum = [1, 2, 3, 4, 5].fold(init=0, (sum, elem) => sum + elem)
 ///   assert_eq(sum, 15)
 /// ```
 #locals(f)
@@ -1270,7 +1270,7 @@ pub fn[A, B] Array::fold(
 /// Example:
 ///
 /// ```moonbit
-///   let sum = [1, 2, 3, 4, 5].rev_fold(init=0, fn { sum, elem => sum + elem })
+///   let sum = [1, 2, 3, 4, 5].rev_fold(init=0, (sum, elem) => sum + elem)
 ///   assert_eq(sum, 15)
 /// ```
 #locals(f)
@@ -1292,7 +1292,7 @@ pub fn[A, B] Array::rev_fold(
 /// Example:
 ///
 /// ```moonbit
-///   let sum = [1, 2, 3, 4, 5].foldi(init=0, fn { index, sum, _elem => sum + index })
+///   let sum = [1, 2, 3, 4, 5].foldi(init=0, (index, sum, _elem) => sum + index)
 ///   assert_eq(sum, 10)
 /// ```
 #locals(f)
@@ -1314,7 +1314,7 @@ pub fn[A, B] Array::foldi(
 /// Example:
 ///
 /// ```moonbit
-///   let sum = [1, 2, 3, 4, 5].rev_foldi(init=0, fn { index, sum, _elem => sum + index })
+///   let sum = [1, 2, 3, 4, 5].rev_foldi(init=0, (index, sum, _elem) => sum + index)
 ///   assert_eq(sum, 10)
 /// ```
 #locals(f)
@@ -1337,7 +1337,7 @@ pub fn[A, B] Array::rev_foldi(
 /// Example:
 ///
 /// ```moonbit
-///   let sum = [1, 2, 3, 4, 5].fold(init=0, fn { sum, elem => sum + elem })
+///   let sum = [1, 2, 3, 4, 5].fold(init=0, (sum, elem) => sum + elem)
 ///   assert_eq(sum, 15)
 /// ```
 #deprecated("Use `fold` instead.")
@@ -1356,7 +1356,7 @@ pub fn[T, U] Array::fold_left(
 /// Example:
 ///
 /// ```moonbit
-///   let sum = [1, 2, 3, 4, 5].rev_fold(init=0, fn { sum, elem => sum + elem })
+///   let sum = [1, 2, 3, 4, 5].rev_fold(init=0, (sum, elem) => sum + elem)
 ///   assert_eq(sum, 15)
 /// ```
 #deprecated("Use `rev_fold` instead.")
@@ -1375,7 +1375,7 @@ pub fn[T, U] Array::fold_right(
 /// Example:
 ///
 /// ```moonbit
-///   let sum = [1, 2, 3, 4, 5].foldi(init=0, fn { index, sum, _elem => sum + index })
+///   let sum = [1, 2, 3, 4, 5].foldi(init=0, (index, sum, _elem) => sum + index)
 ///   assert_eq(sum, 10)
 /// ```
 #deprecated("Use `foldi` instead.")
@@ -1394,7 +1394,7 @@ pub fn[T, U] Array::fold_lefti(
 /// Example:
 ///
 /// ```moonbit
-///   let sum = [1, 2, 3, 4, 5].rev_foldi(init=0, fn { index, sum, _elem => sum + index })
+///   let sum = [1, 2, 3, 4, 5].rev_foldi(init=0, (index, sum, _elem) => sum + index)
 ///   assert_eq(sum, 10)
 /// ```
 #deprecated("Use `rev_foldi` instead.")

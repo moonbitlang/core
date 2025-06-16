@@ -385,7 +385,7 @@ test "from_array" {
 ///
 /// # Example
 /// ```mbt
-///   let sum = [1, 2, 3, 4, 5].fold(init=0, fn { sum, elem => sum + elem })
+///   let sum = [1, 2, 3, 4, 5].fold(init=0, (sum, elem) => sum + elem)
 ///   assert_eq(sum, 15)
 /// ```
 pub fn[A, B] FixedArray::fold(
@@ -416,7 +416,7 @@ test "fold" {
 ///
 /// # Example
 /// ```mbt
-///   let sum = [1, 2, 3, 4, 5].rev_fold(init=0, fn { sum, elem => sum + elem })
+///   let sum = [1, 2, 3, 4, 5].rev_fold(init=0, (sum, elem) => sum + elem)
 ///   assert_eq(sum, 15)
 /// ```
 pub fn[A, B] FixedArray::rev_fold(
@@ -447,7 +447,7 @@ test "rev_fold" {
 ///
 /// # Example
 /// ```mbt
-///   let sum = [1, 2, 3, 4, 5].foldi(init=0, fn { index, sum, _elem => sum + index })
+///   let sum = [1, 2, 3, 4, 5].foldi(init=0, (index, sum, _elem) => sum + index)
 ///   assert_eq(sum, 10)
 /// ```
 pub fn[A, B] FixedArray::foldi(
@@ -482,7 +482,7 @@ test "fold_lefti" {
 ///
 /// # Example
 /// ```mbt
-///   let sum = [1, 2, 3, 4, 5].rev_foldi(init=0, fn { index, sum, _elem => sum + index })
+///   let sum = [1, 2, 3, 4, 5].rev_foldi(init=0, (index, sum, _elem) => sum + index)
 ///   assert_eq(sum, 10)
 /// ```
 pub fn[A, B] FixedArray::rev_foldi(
