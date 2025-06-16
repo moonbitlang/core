@@ -52,7 +52,6 @@ pub impl[T : Show] Show for Iter[T] with output(self, logger) {
 /// - `self`: The iterator to consume.
 /// - `f`: A function that takes an element of type `T` and returns `Unit`. This function is applied to each element of the iterator.
 /// TODO: change the intrinsic to match the function name
-#intrinsic("%iter.iter")
 pub fn[T] Iter::each(self : Iter[T], f : (T) -> Unit raise?) -> Unit raise? {
   for a in self {
     f(a)
