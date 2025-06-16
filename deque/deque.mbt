@@ -1335,21 +1335,20 @@ pub fn T::join(self : T[String], separator : String) -> String {
 /// ```
 pub fn[A] T::drain(self : T[A], begin : Int, end : Int) -> T[A] {
   guard begin >= 0 && end <= self.length() && begin <= end
-  let deque = self.copy()
-  deque.clear()
+  let dq = new(capacity=(end - begin))
   let length = self.length()
   for i = 0; i < length; i = i + 1 {
     match self.pop_front() {
       Some(pop) =>
         if i > begin - 1 && i < end {
-          deque.push_back(pop)
+          dq.push_back(pop)
         } else {
           self.push_back(pop)
         }
       None => ()
     }
   }
-  deque
+  dq
 }
 
 ///|
