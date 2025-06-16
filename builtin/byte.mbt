@@ -322,36 +322,3 @@ pub impl Shl for Byte with op_shl(self : Byte, count : Int) -> Byte {
 pub impl Shr for Byte with op_shr(self : Byte, count : Int) -> Byte {
   (self.to_uint() >> count).reinterpret_as_int().to_byte()
 }
-
-///|
-/// positions.
-///
-/// Parameters:
-///
-/// - `byte_value` : The `Byte` value whose bits are to be shifted.
-/// - `shift_count` : The number of bit positions to shift the `byte_value` to
-///   the left.
-///
-/// Returns the resulting `Byte` value after the bitwise left shift operation.
-///
-#deprecated("Use infix operator `<<` instead")
-#coverage.skip
-pub fn Byte::lsl(self : Byte, count : Int) -> Byte {
-  (self.to_int() << count).to_byte()
-}
-
-///|
-/// bits.
-///
-/// Parameters:
-///
-/// - `value` : The `Byte` value to be shifted.
-/// - `count` : The number of bits to shift the `value` to the right.
-///
-/// Returns the result of the logical shift right operation as a `Byte`.
-///
-#deprecated("Use infix operator `>>` instead")
-#coverage.skip
-pub fn Byte::lsr(self : Byte, count : Int) -> Byte {
-  (self.to_uint() >> count).reinterpret_as_int().to_byte()
-}

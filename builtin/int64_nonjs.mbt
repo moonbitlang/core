@@ -266,139 +266,6 @@ pub impl BitOr for Int64 with lor(self, other) = "%i64_lor"
 pub impl BitXOr for Int64 with lxor(self, other) = "%i64_lxor"
 
 ///|
-/// Performs a left shift operation on a 64-bit signed integer. Shifts each bit
-/// in the integer to the left by the specified number of positions, filling the
-/// vacated bit positions with zeros.
-///
-/// Parameters:
-///
-/// * `self` : The 64-bit signed integer to be shifted.
-/// * `shift` : The number of positions to shift. Must be non-negative and less
-/// than 64.
-///
-/// Returns a new 64-bit integer with bits shifted left by the specified number
-/// of positions.
-///
-/// Example:
-///
-/// ```moonbit
-/// test "Int64::lsl" {
-///   let x = 1L
-///   inspect(x << 2, content="4") // Binary: 1 -> 100
-/// }
-/// ```
-///
-#deprecated("Use infix operator `<<` instead")
-#coverage.skip
-pub fn Int64::lsl(self : Int64, other : Int) -> Int64 = "%i64_shl"
-
-///|
-/// Performs a left shift operation on a 64-bit integer value. Shifts the bits of
-/// the integer to the left by a specified number of positions, filling the
-/// rightmost positions with zeros.
-///
-/// Parameters:
-///
-/// * `self` : The 64-bit integer value to be shifted.
-/// * `shift` : The number of positions to shift the bits to the left.
-///
-/// Returns a new 64-bit integer value after performing the left shift operation.
-///
-/// Example:
-///
-/// ```moonbit
-/// test "Int64::shl" {
-///   let x = 1L
-///   inspect(x << 3, content="8") // Equivalent to x << 3
-/// }
-/// ```
-///
-#deprecated("Use infix operator `<<` instead")
-#coverage.skip
-pub fn Int64::shl(self : Int64, other : Int) -> Int64 = "%i64_shl"
-
-///|
-/// **DEPRECATED:** Use `UInt64` type and infix operator `>>` instead.
-///
-/// Performs a logical right shift on a 64-bit integer value. In a logical right
-/// shift, zeros are shifted in from the left, regardless of the sign bit.
-///
-/// Parameters:
-///
-/// * `value` : The 64-bit integer value to be shifted.
-/// * `shift` : The number of positions to shift right. Must be non-negative.
-///
-/// Returns a new 64-bit integer value that is the result of shifting the bits of
-/// `value` right by `shift` positions.
-///
-/// Example:
-///
-/// ```moonbit
-/// test "Int64::lsr" {
-///   let x = (-4L).reinterpret_as_uint64() // Convert to UInt64 first
-///   inspect(x >> 1, content="9223372036854775806") // Using the recommended operator
-/// }
-/// ```
-///
-#deprecated("Use UInt64 type and infix operator `>>` instead")
-#coverage.skip
-pub fn Int64::lsr(self : Int64, other : Int) -> Int64 = "%u64.shr"
-
-///|
-/// DEPRECATED: Use the infix operator `>>` instead.
-///
-/// Performs an arithmetic right shift operation on a 64-bit integer. In an
-/// arithmetic right shift, the leftmost bit (sign bit) is copied to fill in from
-/// the left. This preserves the sign of the number.
-///
-/// Parameters:
-///
-/// * `self` : The 64-bit integer to be shifted.
-/// * `positions` : The number of positions to shift right. Must be non-negative.
-///
-/// Returns a new 64-bit integer that is the result of shifting `self` right by
-/// `positions` bits, with sign extension.
-///
-/// Example:
-///
-/// ```moonbit
-/// test "Int64::asr" {
-///   let x = -240L // 0b1111_1111_0001_0000 in two's complement
-///   inspect(x >> 4, content="-15") // 0b1111_1111_1111_0001, using recommended syntax
-/// }
-/// ```
-///
-#deprecated("Use infix operator `>>` instead")
-#coverage.skip
-pub fn Int64::asr(self : Int64, other : Int) -> Int64 = "%i64_shr"
-
-///|
-/// Performs an arithmetic right shift operation on a 64-bit integer value,
-/// shifting the bits to the right by the specified number of positions. The sign
-/// bit is copied to fill the leftmost positions.
-///
-/// Parameters:
-///
-/// * `self` : The 64-bit integer value to be shifted.
-/// * `shift` : The number of bit positions to shift right. Must be non-negative.
-///
-/// Returns a new `Int64` value representing the result of the arithmetic right
-/// shift operation.
-///
-/// Example:
-///
-/// ```moonbit
-/// test "Int64::shr" {
-///   let n = -1024L
-///   inspect(n >> 3, content="-128") // Preserves sign bit
-/// }
-/// ```
-///
-#deprecated("Use infix operator `>>` instead")
-#coverage.skip
-pub fn Int64::shr(self : Int64, other : Int) -> Int64 = "%i64_shr"
-
-///|
 /// Performs a left shift operation on a 64-bit integer value. Shifts the bits of
 /// the first operand to the left by the number of positions specified by the
 /// second operand. The rightmost positions are filled with zeros.
@@ -873,33 +740,6 @@ pub fn UInt16::to_int64(self : UInt16) -> Int64 = "%u16_to_i64"
 
 ///|
 /// Reinterprets the bits of a double-precision floating-point number as a 64-bit
-/// signed integer without any conversion. This is a low-level operation that
-/// simply reinterprets the bit pattern of the input value.
-///
-/// Parameters:
-///
-/// * `value` : The double-precision floating-point number whose bits are to be
-/// reinterpreted.
-///
-/// Returns a 64-bit signed integer that has the same bit pattern as the input
-/// double-precision floating-point number.
-///
-/// Example:
-///
-/// ```moonbit
-/// test "Double::reinterpret_as_i64" {
-///   let d = 1.0
-///   // 1.0 in IEEE 754 double format has the bit pattern 0x3FF0000000000000
-///   inspect(d.reinterpret_as_int64(), content="4607182418800017408")
-/// }
-/// ```
-///
-#deprecated("Use `reinterpret_as_int64` instead")
-#coverage.skip
-pub fn Double::reinterpret_as_i64(self : Double) -> Int64 = "%f64_to_i64_reinterpret"
-
-///|
-/// Reinterprets the bits of a double-precision floating-point number as a 64-bit
 /// signed integer without performing any conversion. Preserves the exact bit
 /// pattern of the input value.
 ///
@@ -922,33 +762,6 @@ pub fn Double::reinterpret_as_i64(self : Double) -> Int64 = "%f64_to_i64_reinter
 /// }
 /// ```
 pub fn Double::reinterpret_as_int64(self : Double) -> Int64 = "%f64_to_i64_reinterpret"
-
-///|
-/// Reinterprets the bits of a double-precision floating-point number as an
-/// unsigned 64-bit integer. The bit pattern is preserved during the conversion,
-/// with no mathematical conversion performed.
-///
-/// Parameters:
-///
-/// * `self` : The double-precision floating-point number to be reinterpreted.
-///
-/// Returns an unsigned 64-bit integer containing the same bit pattern as the
-/// input floating-point number.
-///
-/// Example:
-///
-/// ```moonbit
-/// test "Double::reinterpret_as_u64" {
-///   let zero = 0.0
-///   let positive = 1.0
-///   inspect(zero.reinterpret_as_uint64(), content="0")
-///   inspect(positive.reinterpret_as_uint64(), content="4607182418800017408")
-/// }
-/// ```
-///
-#deprecated("Use `reinterpret_as_uint64` instead")
-#coverage.skip
-pub fn Double::reinterpret_as_u64(self : Double) -> UInt64 = "%f64_to_i64_reinterpret"
 
 ///|
 /// Reinterprets the bits of a double-precision floating-point number as an
@@ -998,34 +811,6 @@ pub fn Double::convert_uint64(val : UInt64) -> Double = "%u64.to_f64"
 
 ///|
 /// Reinterprets a 64-bit signed integer as an unsigned 64-bit integer without
-/// changing its bits. When the value is non-negative, i.e., within the range
-/// \[0, 2^63-1], the value remains the same. When the value is negative, it
-/// becomes a large number in the range \[2^63, 2^64-1].
-///
-/// Parameters:
-///
-/// * `value` : The 64-bit signed integer (`Int64`) to be reinterpreted.
-///
-/// Returns an unsigned 64-bit integer (`UInt64`) containing the same bit pattern
-/// as the input.
-///
-/// Example:
-///
-/// ```moonbit
-/// test "Int64::to_uint64" {
-///   let pos = 42L
-///   let neg = -1L
-///   inspect(pos.reinterpret_as_uint64(), content="42")
-///   inspect(neg.reinterpret_as_uint64(), content="18446744073709551615") // 2^64 - 1
-/// }
-/// ```
-///
-#deprecated("Use `reinterpret_as_uint64` instead")
-#coverage.skip
-pub fn Int64::to_uint64(self : Int64) -> UInt64 = "%i64.to_u64_reinterpret"
-
-///|
-/// Reinterprets a 64-bit signed integer as an unsigned 64-bit integer without
 /// changing its bit pattern. The reinterpretation follows the standard two's
 /// complement representation rules.
 ///
@@ -1046,31 +831,6 @@ pub fn Int64::to_uint64(self : Int64) -> UInt64 = "%i64.to_u64_reinterpret"
 /// }
 /// ```
 pub fn Int64::reinterpret_as_uint64(self : Int64) -> UInt64 = "%i64.to_u64_reinterpret"
-
-///|
-/// Reinterprets a 64-bit unsigned integer as a 64-bit signed integer. The bits
-/// of the number remain unchanged; only the interpretation of these bits
-/// changes. This function is deprecated; use `reinterpret_as_int64` instead.
-///
-/// Parameters:
-///
-/// * `value` : The 64-bit unsigned integer to be reinterpreted.
-///
-/// Returns a 64-bit signed integer representing the same bit pattern as the
-/// input.
-///
-/// Example:
-///
-/// ```moonbit
-/// test "UInt64::reinterpret_as_int64" {
-///   let max = 18446744073709551615UL
-///   inspect(max.reinterpret_as_int64(), content="-1")
-/// }
-/// ```
-///
-#deprecated("Use `reinterpret_as_int64` instead")
-#coverage.skip
-pub fn UInt64::to_int64(self : UInt64) -> Int64 = "%u64.to_i64_reinterpret"
 
 ///|
 /// Reinterprets the bits of an unsigned 64-bit integer as a signed 64-bit
@@ -1446,110 +1206,6 @@ pub impl BitXOr for UInt64 with lxor(self, other) = "%u64.bitxor"
 /// }
 /// ```
 pub fn UInt64::lnot(self : UInt64) -> UInt64 = "%u64.bitnot"
-
-///|
-/// Performs a left shift operation on a 64-bit unsigned integer by a specified
-/// number of bits.
-///
-/// Parameters:
-///
-/// * `value` : The 64-bit unsigned integer to be shifted.
-/// * `shift` : The number of positions to shift left. Only the lowest 6 bits are
-/// used, effectively making the shift value wrap around at 64.
-///
-/// Returns a new `UInt64` value representing the result of shifting the bits
-/// left by the specified number of positions. Bits shifted beyond the 64-bit
-/// boundary are discarded, and zeros are shifted in from the right.
-///
-/// Example:
-///
-/// ```moonbit
-/// test "UInt64::lsl" {
-///   let x = 1UL
-///   inspect(x << 4, content="16") // 1 << 4 = 16
-/// }
-/// ```
-///
-#deprecated("Use infix operator `<<` instead")
-#coverage.skip
-pub fn UInt64::lsl(self : UInt64, shift : Int) -> UInt64 = "%u64.shl"
-
-///|
-/// Performs a left shift operation on an unsigned 64-bit integer value, shifting
-/// bits to the left by the specified number of positions.
-///
-/// Parameters:
-///
-/// * `number` : The unsigned 64-bit integer to be shifted.
-/// * `shift` : The number of positions to shift the bits left. Must be
-/// non-negative.
-///
-/// Returns an unsigned 64-bit integer representing the result of the left shift
-/// operation.
-///
-/// Example:
-///
-/// ```moonbit
-/// test "UInt64::shl" {
-///   let x = 1UL
-///   inspect(x << 2, content="4") // 1 << 2 = 4
-/// }
-/// ```
-///
-#deprecated("Use infix operator `<<` instead")
-#coverage.skip
-pub fn UInt64::shl(self : UInt64, shift : Int) -> UInt64 = "%u64.shl"
-
-///|
-/// Performs a logical right shift on an unsigned 64-bit integer by a specified
-/// number of bit positions. All bits shifted in from the left are zeros.
-///
-/// Parameters:
-///
-/// * `self` : The unsigned 64-bit integer to be shifted.
-/// * `shift` : The number of positions to shift right.
-///
-/// Returns the result of shifting the bits in `self` right by `shift` positions.
-///
-/// Example:
-///
-/// ```moonbit
-/// test "UInt64::shr" {
-///   let x = 0xFF00000000000000UL
-///   inspect(x >> 8, content="71776119061217280")
-/// }
-/// ```
-///
-#deprecated("Use infix operator `>>` instead")
-#coverage.skip
-pub fn UInt64::shr(self : UInt64, shift : Int) -> UInt64 = "%u64.shr"
-
-///|
-/// Performs a logical right shift operation on a 64-bit unsigned integer. Moves
-/// all bits to the right by a specified number of positions, filling the
-/// leftmost bits with zeros.
-///
-/// Parameters:
-///
-/// * `self` : The 64-bit unsigned integer to be shifted.
-/// * `shift` : The number of positions to shift right. If this value is negative
-/// or greater than 63, the behavior is undefined.
-///
-/// Returns a new `UInt64` value containing the result of the right shift
-/// operation.
-///
-/// Example:
-///
-/// ```moonbit
-/// test "UInt64::lsr" {
-///   let x = 0xF000000000000000UL
-///   inspect(x >> 4, content="1080863910568919040") // 0x0F00000000000000
-/// }
-/// ```
-///
-#deprecated("Use infix operator `>>` instead")
-#coverage.skip
-pub fn UInt64::lsr(self : UInt64, shift : Int) -> UInt64 = "%u64.shr"
 
 ///|
 /// Performs a bitwise left shift operation on an unsigned 64-bit integer.

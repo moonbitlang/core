@@ -31,13 +31,7 @@ fn[A] of(FixedArray[A]) -> T[A]
 
 fn[A] peek(T[A]) -> A?
 
-#deprecated
-fn[A] peek_exn(T[A]) -> A
-
 fn[A] pop(T[A]) -> A?
-
-#deprecated
-fn[A] pop_exn(T[A]) -> A
 
 fn[A] push(T[A], A) -> Unit
 
@@ -58,11 +52,7 @@ fn[A] T::is_empty(Self[A]) -> Bool
 fn[A] T::iter(Self[A]) -> Iter[A]
 fn[A] T::length(Self[A]) -> Int
 fn[A] T::peek(Self[A]) -> A?
-#deprecated
-fn[A] T::peek_exn(Self[A]) -> A
 fn[A] T::pop(Self[A]) -> A?
-#deprecated
-fn[A] T::pop_exn(Self[A]) -> A
 fn[A] T::push(Self[A], A) -> Unit
 fn[A] T::transfer(Self[A], Self[A]) -> Unit
 fn[A] T::unsafe_peek(Self[A]) -> A

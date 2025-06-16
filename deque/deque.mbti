@@ -50,13 +50,7 @@ fn[A] op_set(T[A], Int, A) -> Unit
 
 fn[A] pop_back(T[A]) -> A?
 
-#deprecated
-fn[A] pop_back_exn(T[A]) -> Unit
-
 fn[A] pop_front(T[A]) -> A?
-
-#deprecated
-fn[A] pop_front_exn(T[A]) -> Unit
 
 fn[A] push_back(T[A], A) -> Unit
 
@@ -110,11 +104,7 @@ fn[A, U] T::mapi(Self[A], (Int, A) -> U) -> Self[U]
 fn[A] T::op_get(Self[A], Int) -> A
 fn[A] T::op_set(Self[A], Int, A) -> Unit
 fn[A] T::pop_back(Self[A]) -> A?
-#deprecated
-fn[A] T::pop_back_exn(Self[A]) -> Unit
 fn[A] T::pop_front(Self[A]) -> A?
-#deprecated
-fn[A] T::pop_front_exn(Self[A]) -> Unit
 fn[A] T::push_back(Self[A], A) -> Unit
 fn[A] T::push_front(Self[A], A) -> Unit
 fn[A] T::reserve_capacity(Self[A], Int) -> Unit

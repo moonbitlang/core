@@ -17,9 +17,6 @@ fn[K] each(Set[K], (K) -> Unit raise?) -> Unit raise?
 
 fn[K] eachi(Set[K], (Int, K) -> Unit raise?) -> Unit raise?
 
-#deprecated
-fn[K : Hash + Eq] insert(Set[K], K) -> Unit
-
 fn[K : Hash + Eq] intersection(Set[K], Set[K]) -> Set[K]
 
 fn[K] is_empty(Set[K]) -> Bool
@@ -50,8 +47,6 @@ fn[K] Set::each(Self[K], (K) -> Unit raise?) -> Unit raise?
 fn[K] Set::eachi(Self[K], (Int, K) -> Unit raise?) -> Unit raise?
 fn[K : Hash + Eq] Set::from_array(Array[K]) -> Self[K]
 fn[K : Hash + Eq] Set::from_iter(Iter[K]) -> Self[K]
-#deprecated
-fn[K : Hash + Eq] Set::insert(Self[K], K) -> Unit
 fn[K : Hash + Eq] Set::intersection(Self[K], Self[K]) -> Self[K]
 fn[K] Set::is_empty(Self[K]) -> Bool
 fn[K] Set::iter(Self[K]) -> Iter[K]

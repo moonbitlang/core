@@ -265,17 +265,6 @@ fn[V : Compare] join_right(l : Node[V]?, v : V, r : Node[V]?) -> Node[V] {
 
 ///|
 /// Returns the difference of two sets.
-/// 
-#deprecated("Use `difference` instead")
-#coverage.skip
-pub fn[V : Compare] diff(self : T[V], src : T[V]) -> T[V] {
-  let ret = new()
-  self.each(fn(x) { if not(src.contains(x)) { ret.add(x) } })
-  ret
-}
-
-///|
-/// Returns the difference of two sets.
 pub fn[V : Compare] difference(self : T[V], src : T[V]) -> T[V] {
   let ret = new()
   self.each(fn(x) { if not(src.contains(x)) { ret.add(x) } })

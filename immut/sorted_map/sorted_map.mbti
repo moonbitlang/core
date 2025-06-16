@@ -35,9 +35,6 @@ fn[V : @json.FromJson] from_json(Json) -> T[String, V] raise @json.JsonDecodeErr
 
 fn[K : Compare, V] get(T[K, V], K) -> V?
 
-#deprecated
-fn[K : Compare, V] insert(T[K, V], K, V) -> T[K, V]
-
 fn[K, V] is_empty(T[K, V]) -> Bool
 
 fn[K, V] iter(T[K, V]) -> Iter[(K, V)]
@@ -91,11 +88,7 @@ fn[K, V, A] T::foldr_with_key(Self[K, V], (A, K, V) -> A, init~ : A) -> A
 fn[K : Compare, V] T::from_array(Array[(K, V)]) -> Self[K, V]
 #deprecated
 fn[K : Compare, V] T::from_iter(Iter[(K, V)]) -> Self[K, V]
-#deprecated
-fn[V : @json.FromJson] T::from_json(Json) -> Self[String, V] raise @json.JsonDecodeError
 fn[K : Compare, V] T::get(Self[K, V], K) -> V?
-#deprecated
-fn[K : Compare, V] T::insert(Self[K, V], K, V) -> Self[K, V]
 fn[K, V] T::is_empty(Self[K, V]) -> Bool
 fn[K, V] T::iter(Self[K, V]) -> Iter[(K, V)]
 fn[K, V] T::iter2(Self[K, V]) -> Iter2[K, V]

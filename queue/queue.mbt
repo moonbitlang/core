@@ -149,13 +149,6 @@ pub fn[A] unsafe_peek(self : T[A]) -> A {
 }
 
 ///|
-#deprecated("Use `unsafe_peek` instead")
-#coverage.skip
-pub fn[A] peek_exn(self : T[A]) -> A {
-  self.unsafe_peek()
-}
-
-///|
 /// Peeks at the first value in the queue, which returns None if the queue is empty.
 ///
 /// # Example
@@ -196,13 +189,6 @@ pub fn[A] unsafe_pop(self : T[A]) -> A {
       content
     }
   }
-}
-
-///|
-#deprecated("Use `unsafe_pop` instead")
-#coverage.skip
-pub fn[A] pop_exn(self : T[A]) -> A {
-  self.unsafe_pop()
 }
 
 ///|

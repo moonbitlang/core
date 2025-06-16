@@ -264,13 +264,6 @@ pub fn[A] unsafe_head(self : T[A]) -> A {
 }
 
 ///|
-#deprecated("Use `unsafe_head` instead")
-#coverage.skip
-pub fn[A] head_exn(self : T[A]) -> A {
-  self.unsafe_head()
-}
-
-///|
 /// Get first element of the list.
 ///
 /// # Example
@@ -407,41 +400,6 @@ pub fn[A, B] rev_fold(
 }
 
 ///|
-/// Fold the list from left.
-///
-/// # Example
-///
-/// ```mbt
-/// test {
-///   let r = @list.of([1, 2, 3, 4, 5]).fold(init=0, fn(acc, x) { acc + x })
-///   assert_eq(r, 15)
-/// }
-/// ```
-#deprecated("Use `fold` instead")
-#coverage.skip
-pub fn[A, B] fold_left(
-  self : T[A],
-  f : (B, A) -> B raise?,
-  init~ : B
-) -> B raise? {
-  self.fold(init~, f)
-}
-
-///|
-#deprecated("Use `rev_fold` instead")
-#coverage.skip
-pub fn[A, B] fold_right(
-  self : T[A],
-  f : (A, B) -> B raise?,
-  init~ : B
-) -> B raise? {
-  match self {
-    Nil => init
-    Cons(head, tail) => f(head, tail.rev_fold(f, init~))
-  }
-}
-
-///|
 /// Fold the list from left with index.
 pub fn[A, B] foldi(
   self : T[A],
@@ -476,44 +434,6 @@ pub fn[A, B] rev_foldi(
 }
 
 ///|
-/// Fold the list from left with index.
-#deprecated("Use `foldi` instead")
-#coverage.skip
-pub fn[A, B] fold_lefti(
-  self : T[A],
-  f : (Int, B, A) -> B raise?,
-  init~ : B
-) -> B raise? {
-  fn go(xs : T[A], i : Int, f : (Int, B, A) -> B raise?, acc : B) -> B raise? {
-    match xs {
-      Nil => acc
-      Cons(x, xs) => go(xs, i + 1, f, f(i, acc, x))
-    }
-  }
-
-  go(self, 0, f, init)
-}
-
-///|
-/// Fold the list from right with index.
-#deprecated("Use `rev_foldi` instead")
-#coverage.skip
-pub fn[A, B] fold_righti(
-  self : T[A],
-  f : (Int, A, B) -> B raise?,
-  init~ : B
-) -> B raise? {
-  fn go(xs : T[A], i : Int, f : (Int, A, B) -> B raise?, acc : B) -> B raise? {
-    match xs {
-      Nil => acc
-      Cons(x, xs) => f(i, x, go(xs, i + 1, f, acc))
-    }
-  }
-
-  go(self, 0, f, init)
-}
-
-///|
 /// Zip two lists.
 /// If the lists have different lengths, it will return None.
 ///
@@ -536,26 +456,6 @@ pub fn[A, B] zip(self : T[A], other : T[B]) -> T[(A, B)]? {
     (_, _) => break None
   }
   res.map(T::rev)
-}
-
-///|
-/// map over the list and concat all results.
-///
-/// `concat_map(f, ls)` equal to `ls.map(f).fold(Nil, fn(acc, x) { acc.concat(x) })))`
-///
-/// # Example
-///
-/// ```mbt
-/// test {
-///   let ls = @list.from_array([1, 2, 3])
-///   let r = ls.flat_map(fn(x) { @list.from_array([x, x * 2]) })
-///   assert_eq(r, @list.from_array([1, 2, 2, 4, 3, 6]))
-/// }
-/// ```
-#deprecated("Use `flat_map` instead")
-#coverage.skip
-pub fn[A, B] concat_map(self : T[A], f : (A) -> T[B]) -> T[B] {
-  self.flat_map(f)
 }
 
 ///|
@@ -610,13 +510,6 @@ pub fn[A] unsafe_nth(self : T[A], n : Int) -> A {
     (Cons(head, _), 0) => head
     (Cons(_, tail), n) => continue (tail, n - 1)
   }
-}
-
-///|
-#deprecated("Use `unsafe_nth` instead")
-#coverage.skip
-pub fn[A] nth_exn(self : T[A], n : Int) -> A {
-  self.unsafe_nth(n)
 }
 
 ///|

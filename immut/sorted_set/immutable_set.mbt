@@ -324,13 +324,6 @@ pub impl[A : Compare] Add for T[A] with op_add(self, other) {
 }
 
 ///|
-#deprecated("Use `intersection` instead")
-#coverage.skip
-pub fn[A : Compare] inter(self : T[A], other : T[A]) -> T[A] {
-  self.intersection(other)
-}
-
-///|
 /// Returns the intersection of self with other.
 ///
 /// # Example
@@ -349,22 +342,6 @@ pub fn[A : Compare] intersection(self : T[A], other : T[A]) -> T[A] {
         (l2, true, r2) => join(l1.intersection(l2), v1, r1.intersection(r2))
       }
   }
-}
-
-///|
-/// Returns the difference between self and other.
-///
-/// # Example
-///
-/// ```mbt
-/// test {
-///   assert_eq(@sorted_set.of([1, 2, 3]).difference(@sorted_set.of([4, 5, 1])), @sorted_set.of([2, 3]))
-/// }
-/// ```
-#deprecated("Use `difference` instead")
-#coverage.skip
-pub fn[A : Compare] diff(self : T[A], other : T[A]) -> T[A] {
-  self.difference(other)
 }
 
 ///|
