@@ -341,12 +341,12 @@ pub fn[T] FixedArray::makei(
 
 ///|
 test "fixedarray_new_with_index" {
-  let empty = FixedArray::makei(0, fn { i => i })
+  let empty = FixedArray::makei(0, i => i)
   assert_eq(empty.length(), 0)
-  let simple_arr = FixedArray::makei(1, fn { i => i })
+  let simple_arr = FixedArray::makei(1, i => i)
   assert_eq(simple_arr.length(), 1)
   assert_eq(simple_arr[0], 0)
-  let arr = FixedArray::makei(2, fn { i => i })
+  let arr = FixedArray::makei(2, i => i)
   assert_eq(arr.length(), 2)
   assert_eq(arr[0], 0)
   assert_eq(arr[1], 1)
@@ -402,13 +402,12 @@ pub fn[A, B] FixedArray::fold(
 
 ///|
 test "fold" {
-  let sum = ([] : FixedArray[_]).fold(init=1, fn { sum, elem => sum + elem })
+  let sum = ([] : FixedArray[_]).fold(init=1, (sum, elem) => sum + elem)
   assert_eq(sum, 1)
-  let sum = ([1] : FixedArray[_]).fold(init=2, fn { sum, elem => sum + elem })
+  let sum = ([1] : FixedArray[_]).fold(init=2, (sum, elem) => sum + elem)
   assert_eq(sum, 3)
-  let sum = ([1, 2, 3, 4, 5] : FixedArray[_]).fold(init=0, fn {
-    sum, elem => sum + elem
-  })
+  let sum = ([1, 2, 3, 4, 5] : FixedArray[_]).fold(init=0, (sum, elem) => sum +
+    elem)
   assert_eq(sum, 15)
 }
 
@@ -434,15 +433,12 @@ pub fn[A, B] FixedArray::rev_fold(
 
 ///|
 test "rev_fold" {
-  let sum = ([] : FixedArray[_]).rev_fold(init=1, fn { sum, elem => sum + elem })
+  let sum = ([] : FixedArray[_]).rev_fold(init=1, (sum, elem) => sum + elem)
   assert_eq(sum, 1)
-  let sum = ([1] : FixedArray[_]).rev_fold(init=2, fn {
-    sum, elem => sum + elem
-  })
+  let sum = ([1] : FixedArray[_]).rev_fold(init=2, (sum, elem) => sum + elem)
   assert_eq(sum, 3)
-  let sum = ([1, 2, 3, 4, 5] : FixedArray[_]).rev_fold(init=0, fn {
-    sum, elem => sum + elem
-  })
+  let sum = ([1, 2, 3, 4, 5] : FixedArray[_]).rev_fold(init=0, (sum, elem) => sum +
+    elem)
   assert_eq(sum, 15)
 }
 
@@ -468,7 +464,7 @@ pub fn[A, B] FixedArray::foldi(
 
 ///|
 test "fold_lefti" {
-  let f = fn { index, sum, elem => index + sum + elem }
+  let f = (index, sum, elem) => index + sum + elem
   {
     let sum = ([] : FixedArray[_]).foldi(init=1, f)
     assert_eq(sum, 1)
@@ -504,7 +500,7 @@ pub fn[A, B] FixedArray::rev_foldi(
 
 ///|
 test "rev_foldi" {
-  let f = fn { index, sum, elem => index + sum + elem }
+  let f = (index, sum, elem) => index + sum + elem
   {
     let sum = ([] : FixedArray[_]).rev_foldi(init=1, f)
     assert_eq(sum, 1)
