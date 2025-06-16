@@ -23,7 +23,7 @@ struct Summary {
   max : Double
   mean : Double
   median : Double
-  var : Double
+  variable : Double
   std_dev : Double
   std_dev_pct : Double
   median_abs_dev : Double
@@ -45,8 +45,8 @@ fn Summary::new(
   let max = max(sorted_data~)
   let mean = mean(sorted_data, sum~)
   let median = median(sorted_data~)
-  let var = var(sorted_data, mean~)
-  let std_dev = std_dev(var~)
+  let variable = variable(sorted_data, mean~)
+  let std_dev = std_dev(variable~)
   let std_dev_pct = std_dev_pct(mean~, std_dev~)
   let median_abs_dev = median_abs_dev(sorted_data, median_=median)
   let median_abs_dev_pct = median_abs_dev_pct(median~, median_abs_dev~)
@@ -59,7 +59,7 @@ fn Summary::new(
     max,
     mean,
     median,
-    var,
+    variable,
     std_dev,
     std_dev_pct,
     median_abs_dev,
@@ -102,7 +102,7 @@ fn median(sorted_data~ : Array[Double]) -> Double {
 }
 
 ///|
-fn var(data : Array[Double], mean~ : Double) -> Double {
+fn variable(data : Array[Double], mean~ : Double) -> Double {
   if data.length() < 2 {
     return 0.0
   }
@@ -115,8 +115,8 @@ fn var(data : Array[Double], mean~ : Double) -> Double {
 }
 
 ///|
-fn std_dev(var~ : Double) -> Double {
-  var.sqrt()
+fn std_dev(variable~ : Double) -> Double {
+  variable.sqrt()
 }
 
 ///|
@@ -200,7 +200,7 @@ test {
   assert_true(summary.max.is_close(33.3))
   assert_true(summary.mean.is_close(11.5875))
   assert_true(summary.median.is_close(8.5))
-  assert_true(summary.var.is_close(127.64125))
+  assert_true(summary.variable.is_close(127.64125))
   assert_true(summary.std_dev.is_close(11.297842714430043))
   assert_true(summary.std_dev_pct.is_close(97.50026075020534))
   assert_true(summary.median_abs_dev.is_close(9.04386))

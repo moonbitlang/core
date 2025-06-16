@@ -496,7 +496,7 @@ pub fn[A : Compare] disjoint(self : T[A], other : T[A]) -> Bool {
 ///   assert_eq(arr, [1, 2, 3, 4, 5, 6, 7, 8, 9])
 /// }
 /// ```
-pub fn[A] each(self : T[A], f : (A) -> Unit) -> Unit {
+pub fn[A] each(self : T[A], f : (A) -> Unit raise?) -> Unit raise? {
   match self {
     Empty => ()
     Node(left~, value~, right~, ..) => {
@@ -517,7 +517,11 @@ pub fn[A] each(self : T[A], f : (A) -> Unit) -> Unit {
 ///   assert_eq(@sorted_set.of([1, 2, 3, 4, 5]).fold(init=0, fn(acc, x) { acc + x }), 15)
 /// }
 /// ```
-pub fn[A : Compare, B] fold(self : T[A], init~ : B, f : (B, A) -> B) -> B {
+pub fn[A : Compare, B] fold(
+  self : T[A],
+  init~ : B,
+  f : (B, A) -> B raise?
+) -> B raise? {
   match self {
     Empty => init
     Node(left~, value~, right~, ..) =>
@@ -535,7 +539,10 @@ pub fn[A : Compare, B] fold(self : T[A], init~ : B, f : (B, A) -> B) -> B {
 ///   assert_eq(@sorted_set.of([1, 2, 3]).map(fn(x){ x * 2}), @sorted_set.of([2, 4, 6]))
 /// }
 /// ```
-pub fn[A : Compare, B : Compare] map(self : T[A], f : (A) -> B) -> T[B] {
+pub fn[A : Compare, B : Compare] map(
+  self : T[A],
+  f : (A) -> B raise?
+) -> T[B] raise? {
   match self {
     Empty => Empty
     Node(left~, value~, right~, ..) =>
@@ -553,7 +560,7 @@ pub fn[A : Compare, B : Compare] map(self : T[A], f : (A) -> B) -> T[B] {
 ///   assert_eq(@sorted_set.of([2, 4, 6]).all(fn(v) { v % 2 == 0}), true)
 /// }
 /// ```
-pub fn[A : Compare] all(self : T[A], f : (A) -> Bool) -> Bool {
+pub fn[A : Compare] all(self : T[A], f : (A) -> Bool raise?) -> Bool raise? {
   match self {
     Empty => true
     Node(left~, value~, right~, ..) => f(value) && left.all(f) && right.all(f)
@@ -570,7 +577,7 @@ pub fn[A : Compare] all(self : T[A], f : (A) -> Bool) -> Bool {
 ///   assert_eq(@sorted_set.of([1, 4, 3]).any(fn(v) { v % 2 == 0}), true)
 /// }
 /// ```
-pub fn[A : Compare] any(self : T[A], f : (A) -> Bool) -> Bool {
+pub fn[A : Compare] any(self : T[A], f : (A) -> Bool raise?) -> Bool raise? {
   match self {
     Empty => false
     Node(left~, value~, right~, ..) => f(value) || left.any(f) || right.any(f)
@@ -587,7 +594,7 @@ pub fn[A : Compare] any(self : T[A], f : (A) -> Bool) -> Bool {
 ///   assert_eq(@sorted_set.of([1, 2, 3, 4, 5, 6]).filter(fn(v) { v % 2 == 0}), @sorted_set.of([2, 4, 6]))
 /// }
 /// ```
-pub fn[A : Compare] filter(self : T[A], f : (A) -> Bool) -> T[A] {
+pub fn[A : Compare] filter(self : T[A], f : (A) -> Bool raise?) -> T[A] raise? {
   match self {
     Empty => Empty
     Node(left~, value~, right~, ..) => {

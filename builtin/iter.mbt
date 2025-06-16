@@ -52,8 +52,7 @@ pub impl[T : Show] Show for Iter[T] with output(self, logger) {
 /// - `self`: The iterator to consume.
 /// - `f`: A function that takes an element of type `T` and returns `Unit`. This function is applied to each element of the iterator.
 /// TODO: change the intrinsic to match the function name
-#intrinsic("%iter.iter")
-pub fn[T] Iter::each(self : Iter[T], f : (T) -> Unit) -> Unit {
+pub fn[T] Iter::each(self : Iter[T], f : (T) -> Unit raise?) -> Unit raise? {
   for a in self {
     f(a)
   }
@@ -82,7 +81,10 @@ pub fn[T] Iter::all(self : Iter[T], f : (T) -> Bool) -> Bool {
 /// - `self`: The iterator to consume.
 /// - `f`: A function that takes an index of type `Int` and an element of type `T` and returns `Unit`. This function is applied to each element of the iterator.
 /// TODO: Add intrinsic
-pub fn[T] Iter::eachi(self : Iter[T], f : (Int, T) -> Unit) -> Unit {
+pub fn[T] Iter::eachi(
+  self : Iter[T],
+  f : (Int, T) -> Unit raise?
+) -> Unit raise? {
   let mut i = 0
   for a in self {
     f(i, a)
@@ -109,7 +111,11 @@ pub fn[T] Iter::eachi(self : Iter[T], f : (Int, T) -> Unit) -> Unit {
 /// Returns the final accumulator value after folding all elements of the iterator.
 #intrinsic("%iter.reduce")
 #locals(f)
-pub fn[T, B] Iter::fold(self : Iter[T], init~ : B, f : (B, T) -> B) -> B {
+pub fn[T, B] Iter::fold(
+  self : Iter[T],
+  init~ : B,
+  f : (B, T) -> B raise?
+) -> B raise? {
   let mut acc = init
   for a in self {
     acc = f(acc, a)

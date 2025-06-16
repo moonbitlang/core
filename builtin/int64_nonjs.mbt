@@ -164,7 +164,9 @@ pub impl Div for Int64 with op_div(self, other) = "%i64_div"
 ///   inspect(-7L % 3L, content="-1")
 ///   inspect(7L % -3L, content="1")
 /// }
-///
+/// ```
+/// 
+/// ```skip
 /// test "panic Int64::op_mod/division_by_zero" {
 ///   ignore(7L % 0L) // Panics with division by zero
 /// }
@@ -1297,7 +1299,9 @@ pub impl Div for UInt64 with op_div(self, other) = "%u64.div"
 ///   inspect(a % b, content="2") // 17 divided by 5 gives quotient 3 and remainder 2
 ///   inspect(7UL % 4UL, content="3")
 /// }
-///
+/// ```
+/// 
+/// ```skip
 /// test "panic UInt64::op_mod/division_by_zero" {
 ///   let a = 42UL
 ///   ignore(a % 0UL) // Panics: division by zero
