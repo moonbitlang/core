@@ -49,9 +49,10 @@ fn index_at_(
   offset_by : Int,
   start~ : StringIndex = 0
 ) -> StringIndex? {
-  if self.offset_of_nth_char(offset_by, start_offset=start._) is Some(index) {
+  if self.offset_of_nth_char(offset_by, start_offset=start.inner())
+    is Some(index) {
     Some(index)
-  } else if offset_by == self.char_length(start_offset=start._) {
+  } else if offset_by == self.char_length(start_offset=start.inner()) {
     Some(self.length())
   } else {
     None
@@ -68,7 +69,7 @@ fn index_at_rev_(
     Some(end) =>
       if offset_by == 0 {
         Some(end)
-      } else if self.offset_of_nth_char(-offset_by, end_offset=end._)
+      } else if self.offset_of_nth_char(-offset_by, end_offset=end.inner())
         is Some(index) {
         Some(index)
       } else {
@@ -91,16 +92,16 @@ fn index_at_rev_(
 pub fn String::op_as_view(self : String, start~ : Int = 0, end? : Int) -> View {
   let str_len = self.length()
   let start = if start >= 0 {
-    self.index_at_(start, start=0).unwrap()._
+    self.index_at_(start, start=0).unwrap().inner()
   } else {
-    self.index_at_rev_(-start, end=str_len).unwrap()._
+    self.index_at_rev_(-start, end=str_len).unwrap().inner()
   }
   let end = match end {
     Some(end) =>
       if end >= 0 {
-        self.index_at_(end, start=0).unwrap()._
+        self.index_at_(end, start=0).unwrap().inner()
       } else {
-        self.index_at_rev_(-end, end=str_len).unwrap()._
+        self.index_at_rev_(-end, end=str_len).unwrap().inner()
       }
     None => str_len
   }
@@ -115,16 +116,16 @@ pub fn String::op_as_view(self : String, start~ : Int = 0, end? : Int) -> View {
 #coverage.skip
 pub fn View::op_as_view(self : View, start~ : Int = 0, end? : Int) -> View {
   let start = if start >= 0 {
-    self.str.index_at_(start, start=self.start).unwrap()._
+    self.str.index_at_(start, start=self.start).unwrap().inner()
   } else {
-    self.str.index_at_rev_(-start, end=self.end).unwrap()._
+    self.str.index_at_rev_(-start, end=self.end).unwrap().inner()
   }
   let end = match end {
     Some(end) =>
       if end >= 0 {
-        self.str.index_at_(end, start=self.start).unwrap()._
+        self.str.index_at_(end, start=self.start).unwrap().inner()
       } else {
-        self.str.index_at_rev_(-end, end=self.end).unwrap()._
+        self.str.index_at_rev_(-end, end=self.end).unwrap().inner()
       }
     None => self.end
   }
