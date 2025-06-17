@@ -186,8 +186,8 @@ test "fold" {
 test "rev_fold" {
   let ls = @list.of(["1", "2", "3", "4", "5"])
   let el : @list.T[String] = @list.empty()
-  inspect(ls.rev_fold(fn(acc, x) { x + acc }, init=""), content="12345")
-  inspect(el.rev_fold(fn(acc, x) { x + acc }, init="init"), content="init")
+  inspect(ls.rev().fold(fn(acc, x) { x + acc }, init=""), content="12345")
+  inspect(el.rev().fold(fn(acc, x) { x + acc }, init="init"), content="init")
 }
 
 ///|
@@ -202,8 +202,8 @@ test "foldi" {
 test "rev_foldi" {
   let ls = @list.of([1, 2, 3, 4, 5])
   let el : @list.T[Int] = @list.empty()
-  inspect(ls.rev_foldi(fn(i, acc, x) { x * i + acc }, init=0), content="20")
-  inspect(el.rev_foldi(fn(i, acc, x) { x * i + acc }, init=0), content="0")
+  inspect(ls.rev().foldi(fn(i, acc, x) { x * i + acc }, init=0), content="20")
+  inspect(el.rev().foldi(fn(i, acc, x) { x * i + acc }, init=0), content="0")
 }
 
 ///|

@@ -19,10 +19,8 @@
 /// # Examples
 ///
 /// ```mbt
-/// test {
 ///   inspect(@cmp.maximum_by_key(-2, 1, @int.abs), content="-2")
 ///   inspect(@cmp.maximum_by_key(-2, 2, @int.abs), content="2")
-/// }
 /// ```
 pub fn[T, K : Compare] maximum_by_key(x : T, y : T, f : (T) -> K) -> T {
   if f(x) > f(y) {
@@ -39,10 +37,8 @@ pub fn[T, K : Compare] maximum_by_key(x : T, y : T, f : (T) -> K) -> T {
 /// # Examples
 ///
 /// ```mbt
-/// test {
 ///   inspect(@cmp.minimum_by_key(-2, 1, @int.abs), content="1")
 ///   inspect(@cmp.minimum_by_key(-2, 2, @int.abs), content="-2")
-/// }
 /// ```
 pub fn[T, K : Compare] minimum_by_key(x : T, y : T, f : (T) -> K) -> T {
   if f(x) > f(y) {

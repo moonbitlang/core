@@ -53,19 +53,19 @@ test "show error" {
 /// If it does throw, which error should be raised?
 /// here `protect` raise the `work` error
 fn[A, E : Error] protect(
-  finally~ : () -> Unit raise?,
+  finalize~ : () -> Unit raise?,
   work : () -> A raise E
 ) -> A raise E {
   try work() catch {
     e => {
-      finally() catch {
+      finalize() catch {
         _ => ()
       }
       raise e
     }
   } else {
     x => {
-      finally() catch {
+      finalize() catch {
         _ => ()
       }
       x
@@ -79,15 +79,15 @@ fn[A, E : Error] protect(
 /// However, due to the error comes from multiple sources,
 /// it is hard to track which error is the original one
 /// in the type system
-fn[A] protect2(finally~ : () -> Unit raise?, work : () -> A raise) -> A raise {
+fn[A] protect2(finalize~ : () -> Unit raise?, work : () -> A raise) -> A raise {
   try work() catch {
     e => {
-      finally()
+      finalize()
       raise e
     }
   } else {
     x => {
-      finally()
+      finalize()
       x
     }
   }
@@ -95,7 +95,7 @@ fn[A] protect2(finally~ : () -> Unit raise?, work : () -> A raise) -> A raise {
 
 ///|
 test "protect" {
-  let x = try? protect(finally=fn() {  }, fn() {
+  let x = try? protect(finalize=fn() {  }, fn() {
       if true {
         raise Failure("error")
       } else {
@@ -112,7 +112,7 @@ test "protect" {
 
 ///|
 test "protect & finally raise error" {
-  let x = try? protect(finally=fn() { raise Failure("finally error") }, fn() {
+  let x = try? protect(finalize=fn() { raise Failure("finally error") }, fn() {
       if true {
         raise Failure("error")
       } else {
@@ -129,7 +129,7 @@ test "protect & finally raise error" {
 
 ///|
 test "protect2" {
-  let x = try? protect2(finally=fn() {  }, fn() {
+  let x = try? protect2(finalize=fn() {  }, fn() {
       if true {
         raise Failure("error")
       } else {
@@ -146,7 +146,7 @@ test "protect2" {
 
 ///|
 test "protect2 & finally raise error" {
-  let x = try? protect2(finally=fn() { raise Failure("finally error") }, fn() {
+  let x = try? protect2(finalize=fn() { raise Failure("finally error") }, fn() {
       if true {
         raise Failure("error")
       } else {

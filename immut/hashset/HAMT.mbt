@@ -252,7 +252,7 @@ pub fn[A] is_empty(self : T[A]) -> Bool {
 
 ///|
 /// Iterate through the elements in a hash set
-pub fn[A] each(self : T[A], f : (A) -> Unit) -> Unit {
+pub fn[A] each(self : T[A], f : (A) -> Unit raise?) -> Unit raise? {
   match self {
     Empty => ()
     Leaf(k) => f(k)

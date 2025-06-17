@@ -42,12 +42,10 @@ test "copy" {
 /// Example:
 ///
 /// ```mbt
-/// test {
 ///  let arr = FixedArray::make(4, b'\x00')
 ///  let view = b"\x01\x02\x03"[1:]
 ///  arr.blit_from_bytesview(1, view)
 ///  inspect(arr, content="[b'\\x00', b'\\x02', b'\\x03', b'\\x00']")
-/// }
 /// ```
 pub fn FixedArray::blit_from_bytesview(
   self : FixedArray[Byte],

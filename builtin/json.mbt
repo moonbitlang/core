@@ -32,9 +32,7 @@ pub(all) enum Json {
 /// Example:
 ///
 /// ```moonbit
-/// test "null" {
 ///   inspect(Json::null(), content="Null")
-/// }
 /// ```
 pub fn Json::null() -> Json {
   return Null
@@ -53,9 +51,7 @@ pub fn Json::null() -> Json {
 /// Example:
 ///
 /// ```moonbit
-/// test "number" {
 ///   inspect(Json::number(3.14), content="Number(3.14)")
-/// }
 /// ```
 pub fn Json::number(number : Double) -> Json {
   return Number(number)
@@ -73,9 +69,7 @@ pub fn Json::number(number : Double) -> Json {
 /// Example:
 ///
 /// ```moonbit
-/// test "string" {
 ///   inspect(Json::string("hello"), content="String(\"hello\")")
-/// }
 /// ```
 pub fn Json::string(string : String) -> Json {
   return String(string)
@@ -93,10 +87,8 @@ pub fn Json::string(string : String) -> Json {
 /// Example:
 ///
 /// ```moonbit
-/// test "boolean" {
 ///   inspect(Json::boolean(true), content="True")
 ///   inspect(Json::boolean(false), content="False")
-/// }
 /// ```
 pub fn Json::boolean(boolean : Bool) -> Json {
   if boolean {
@@ -118,13 +110,11 @@ pub fn Json::boolean(boolean : Bool) -> Json {
 /// Example:
 ///
 /// ```moonbit
-/// test "array" {
 ///   let values : Array[Json] = [1.0, "hello"]
 ///   inspect(
 ///     Json::array(values),
 ///     content="Array([Number(1), String(\"hello\")])",
 ///   )
-/// }
 /// ```
 pub fn Json::array(array : Array[Json]) -> Json {
   return Array(array)
@@ -143,13 +133,11 @@ pub fn Json::array(array : Array[Json]) -> Json {
 /// Example:
 ///
 /// ```moonbit
-/// test "object" {
 ///   let map : Map[String, Json] = { "name": "John", "age": 42.0 }
 ///   inspect(
 ///     Json::object(map),
 ///     content="Object({\"name\": String(\"John\"), \"age\": Number(42)})",
 ///   )
-/// }
 /// ```
 pub fn Json::object(object : Map[String, Json]) -> Json {
   return Object(object)

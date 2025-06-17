@@ -30,9 +30,7 @@ pub let min_value = -9223372036854775808L
 /// Example:
 ///
 /// ```moonbit
-/// test "Int64::from_int" {
 ///   inspect(@int64.from_int(42), content="42")
-/// }
 /// ```
 pub fn Int64::from_int(i : Int) -> Int64 {
   i.to_int64()
@@ -56,11 +54,9 @@ pub fn from_int(i : Int) -> Int64 {
 /// Example:
 ///
 /// ```moonbit
-/// test "abs" {
 ///   inspect(42L.abs(), content="42")
 ///   inspect((-42L).abs(), content="42")
 ///   inspect(0L.abs(), content="0")
-/// }
 /// ```
 pub fn Int64::abs(self : Int64) -> Int64 {
   if self < 0L {

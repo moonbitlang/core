@@ -29,11 +29,9 @@ fn[T] any_to_string(any : T) -> String = "%any.to_string"
 /// Example:
 ///
 /// ```moonbit skip
-/// test "println" {
 ///   println(42)
 ///   println("Hello, World!")
 ///   println([1, 2, 3])
-/// }
 /// ```
 pub fn[T : Show] println(input : T) -> Unit {
   println_mono(input.to_string())
@@ -61,10 +59,8 @@ pub fn[T] dump(t : T, name? : String, loc~ : SourceLoc = _) -> T {
 /// Example:
 ///
 /// ```moonbit
-/// test "inspect/failure" {
 ///   let x : Int = 42
 ///   inspect(x, content="42") // Raises InspectError with detailed failure message
-/// }
 /// ```
 pub(all) suberror InspectError String
 
@@ -186,11 +182,9 @@ test {
 /// Example:
 ///
 /// ```moonbit skip
-/// test "inspect/basic" {
 ///   inspect(42, content="42")
 ///   inspect("hello", content="hello")
 ///   inspect([1, 2, 3], content="[1, 2, 3]")
-/// }
 /// ```
 pub fn inspect(
   obj : &Show,
@@ -222,12 +216,10 @@ pub fn inspect(
 /// Example:
 ///
 /// ```moonbit
-/// test "SnapshotError" {
 ///   let err : SnapshotError = SnapshotError("failed to load snapshot")
 ///   match err {
 ///     SnapshotError(msg) => assert_eq(msg, "failed to load snapshot")
 ///   }
-/// }
 /// ```
 pub(all) suberror SnapshotError String
 

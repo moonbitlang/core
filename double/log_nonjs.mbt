@@ -96,12 +96,10 @@ fn frexp(f : Double) -> (Double, Int) {
 /// Example:
 ///
 /// ```moonbit
-/// test "ln" {
 ///   inspect(2.0.ln(), content="0.6931471805599453")
 ///   inspect(1.0.ln(), content="0")
 ///   inspect((-1.0).ln(), content="NaN")
 ///   inspect(0.0.ln(), content="-Infinity")
-/// }
 /// ```
 pub fn Double::ln(self : Double) -> Double {
   if self < 0.0 {
@@ -139,11 +137,9 @@ pub fn Double::ln(self : Double) -> Double {
 /// Example:
 ///
 /// ```moonbit
-/// test "log2" {
 ///   inspect(2.0.log2(), content="1")
 ///   inspect(0.5.log2(), content="-1")
 ///   inspect(3.0.log2(), content="1.584962500721156")
-/// }
 /// ```
 pub fn Double::log2(self : Double) -> Double {
   let (f, e) = frexp(self)
@@ -167,13 +163,11 @@ pub fn Double::log2(self : Double) -> Double {
 /// Example:
 ///
 /// ```moonbit
-/// test "log10" {
 ///   inspect(0.1.log10(), content="-1")
 ///   inspect(1.0.log10(), content="0")
 ///   inspect(10.0.log10(), content="1")
 ///   inspect(100.0.log10(), content="2")
 ///   inspect(15.0.log10(), content="1.1760912590556813")
-/// }
 /// ```
 pub fn Double::log10(self : Double) -> Double {
   if self < 0.0 {
@@ -214,7 +208,6 @@ pub fn Double::log10(self : Double) -> Double {
 /// Example:
 ///
 /// ```moonbit
-/// test "ln_1p" {
 ///   inspect(0.0.ln_1p(), content="0")
 ///   inspect(1.0.ln_1p(), content="0.6931471805599453")
 ///   inspect(2.0.ln_1p(), content="1.0986122886681096")
@@ -223,7 +216,6 @@ pub fn Double::log10(self : Double) -> Double {
 ///   inspect((-2.0).ln_1p(), content="NaN")
 ///   inspect(@double.infinity.ln_1p(), content="Infinity")
 ///   inspect(@double.neg_infinity.ln_1p(), content="NaN")
-/// }
 /// ```
 pub fn Double::ln_1p(self : Double) -> Double {
   if self < -1.0 || self.is_nan() {

@@ -46,7 +46,6 @@
 /// Example:
 ///
 /// ```moonbit
-/// test "sinh" {
 ///   inspect(0.0.sinh(), content="0")
 ///   inspect((-0.0).sinh(), content="0")
 ///   inspect(1.0.sinh(), content="1.1752011936438014")
@@ -56,7 +55,6 @@
 ///   inspect(@double.not_a_number.sinh(), content="NaN")
 ///   inspect(@double.infinity.sinh(), content="Infinity")
 ///   inspect(@double.neg_infinity.sinh(), content="-Infinity")
-/// }
 /// ```
 pub fn Double::sinh(self : Double) -> Double {
   if self.is_nan() || self.is_inf() {
@@ -106,7 +104,6 @@ pub fn Double::sinh(self : Double) -> Double {
 /// Example
 ///
 /// ```moonbit
-/// test "cosh" {
 ///   inspect(0.0.cosh(), content="1")
 ///   inspect((-0.0).cosh(), content="1")
 ///   inspect(1.0.cosh(), content="1.5430806348152437")
@@ -116,7 +113,6 @@ pub fn Double::sinh(self : Double) -> Double {
 ///   inspect(@double.not_a_number.cosh(), content="NaN")
 ///   inspect(@double.infinity.cosh(), content="Infinity")
 ///   inspect(@double.neg_infinity.cosh(), content="Infinity")
-/// }
 /// ```
 pub fn Double::cosh(self : Double) -> Double {
   if self.is_nan() {
@@ -168,7 +164,6 @@ pub fn Double::cosh(self : Double) -> Double {
 /// Example
 ///
 /// ```moobit
-/// test "tanh" {
 ///   inspect(0.0.tanh(), content="0")
 ///   inspect((-0.0).tanh(), content="0")
 ///   inspect(1.0.tanh(), content="0.7615941559557649")
@@ -178,7 +173,6 @@ pub fn Double::cosh(self : Double) -> Double {
 ///   inspect(@double.not_a_number.tanh(), content="NaN")
 ///   inspect(@double.infinity.tanh(), content="1")
 ///   inspect(@double.neg_infinity.tanh(), content="-1")
-/// }
 /// ```
 pub fn Double::tanh(self : Double) -> Double {
   if self.is_nan() {
@@ -229,7 +223,6 @@ pub fn Double::tanh(self : Double) -> Double {
 /// Example
 ///
 /// ```moonbit
-/// test "asinh" {
 ///   inspect(0.0.asinh(), content="0")
 ///   inspect((-0.0).asinh(), content="0")
 ///   inspect(1.0.asinh(), content="0.881373587019543")
@@ -239,7 +232,6 @@ pub fn Double::tanh(self : Double) -> Double {
 ///   inspect(@double.not_a_number.asinh(), content="NaN")
 ///   inspect(@double.infinity.asinh(), content="Infinity")
 ///   inspect(@double.neg_infinity.asinh(), content="-Infinity")
-/// }
 /// ```
 pub fn Double::asinh(self : Double) -> Double {
   if self.is_nan() || self.is_inf() {
@@ -290,7 +282,6 @@ pub fn Double::asinh(self : Double) -> Double {
 /// Example
 ///
 /// ```moonbit
-/// test "acosh" {
 ///   inspect(1.0.acosh(), content="0")
 ///   inspect(2.0.acosh(), content="1.3169578969248166")
 ///   inspect(1000.0.acosh(), content="7.600902209541989")
@@ -299,7 +290,6 @@ pub fn Double::asinh(self : Double) -> Double {
 ///   inspect((-1.0).acosh(), content="NaN")
 ///   inspect((-2.0).acosh(), content="NaN")
 ///   inspect(@double.neg_infinity.acosh(), content="NaN")
-/// }
 /// ```
 pub fn Double::acosh(self : Double) -> Double {
   let one = 1.0
@@ -339,7 +329,6 @@ pub fn Double::acosh(self : Double) -> Double {
 /// Example
 ///
 /// ```moonbit
-/// test "atanh" {
 ///   inspect(0.0.atanh(), content="0")
 ///   inspect((-0.0).atanh(), content="0")
 ///   inspect(0.5.atanh(), content="0.5493061443340548")
@@ -350,7 +339,6 @@ pub fn Double::acosh(self : Double) -> Double {
 ///   inspect(@double.not_a_number.atanh(), content="NaN")
 ///   inspect(@double.infinity.atanh(), content="NaN")
 ///   inspect(@double.neg_infinity.atanh(), content="NaN")
-/// }
 /// ```
 pub fn Double::atanh(self : Double) -> Double {
   let hx : Int = get_high_word(self).reinterpret_as_int()

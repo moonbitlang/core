@@ -57,14 +57,12 @@ let max_mantissa_fast_path : UInt64 = 2UL << mantissa_explicit_bits
 ///
 /// Examples:
 /// ```mbt
-/// test {
 ///   inspect(parse_double("123"), content="123")
 ///   inspect(parse_double("12.34"), content="12.34")
 ///   inspect(parse_double(".123"), content="0.123")
 ///   inspect(parse_double("1e5"), content="100000")
 ///   inspect(parse_double("1.2e-3"), content="0.0012")
 ///   inspect(parse_double("1_234.5"), content="1234.5")
-/// }
 /// ```
 ///
 /// An exponent value exp scales the mantissa (significand) by 10^exp.

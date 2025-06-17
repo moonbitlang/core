@@ -37,12 +37,10 @@
 /// Example:
 ///
 /// ```moonbit
-/// test "Array::unsafe_blit" {
 ///   let src = [1, 2, 3, 4, 5]
 ///   let dst = [0, 0, 0, 0, 0]
 ///   Array::unsafe_blit(dst, 1, src, 2, 2)
 ///   inspect(dst, content="[0, 3, 4, 0, 0]")
-/// }
 /// ```
 ///
 #internal(unsafe, "Panic if the indices or length are out of bounds")
@@ -80,7 +78,6 @@ pub fn[A] Array::unsafe_blit(
 /// Example:
 ///
 /// ```moonbit
-/// test "Array::unsafe_blit_fixed" {
 ///   let src = FixedArray::make(5, 0)
 ///   let dst = Array::make(5, 0)
 ///   for i in 0..<5 {
@@ -88,7 +85,6 @@ pub fn[A] Array::unsafe_blit(
 ///   }
 ///   Array::unsafe_blit_fixed(dst, 1, src, 0, 2)
 ///   inspect(dst, content="[0, 1, 2, 0, 0]")
-/// }
 /// ```
 pub fn[A] Array::unsafe_blit_fixed(
   dst : Array[A],
@@ -124,12 +120,10 @@ pub fn[A] Array::unsafe_blit_fixed(
 /// Example:
 ///
 /// ```moonbit
-/// test "Array::blit_to/basic" {
 ///   let src = [1, 2, 3, 4, 5]
 ///   let dst = [0, 0]
 ///   src.blit_to(dst, len=3, dst_offset=1)
 ///   inspect(dst, content="[0, 1, 2, 3]")
-/// }
 /// ```
 ///
 /// Panics if:

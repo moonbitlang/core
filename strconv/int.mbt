@@ -70,7 +70,6 @@ test {
 /// These underscores do not affect the value.
 /// Examples:
 /// ```mbt
-/// test {
 ///   inspect(parse_int64("123"), content="123")
 ///   inspect(parse_int64("0xff", base=0), content="255") 
 ///   inspect(parse_int64("0o10"), content="8")
@@ -79,7 +78,6 @@ test {
 ///   inspect(parse_int64("-123"), content="-123")
 ///   inspect(parse_int64("ff", base=16), content="255")
 ///   inspect(parse_int64("zz", base=36), content="1295")
-/// }
 /// ```
 /// 
 pub fn parse_int64(str : String, base~ : Int = 0) -> Int64 raise StrConvError {

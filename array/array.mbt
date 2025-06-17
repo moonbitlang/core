@@ -25,11 +25,9 @@
 /// Example:
 ///
 /// ```moonbit
-/// test "Array::from_iter" {
 ///   let iter = Iter::singleton(42)
 ///   let arr = Array::from_iter(iter)
 ///   inspect(arr, content="[42]")
-/// }
 /// ```
 pub fn[T] Array::from_iter(iter : Iter[T]) -> Array[T] {
   iter.collect()
@@ -43,12 +41,10 @@ pub fn[T] Array::from_iter(iter : Iter[T]) -> Array[T] {
 ///
 /// # Example
 /// ```mbt
-/// test "push_iter_example" {
 ///   let u = [1, 2, 3]
 ///   let v = [4, 5, 6]
 ///   u.push_iter(v.iter())
 ///   assert_eq(u, [1, 2, 3, 4, 5, 6])
-/// }
 /// ```
 pub fn[T] Array::push_iter(self : Self[T], iter : Iter[T]) -> Unit {
   for x in iter {
@@ -78,10 +74,8 @@ pub fnalias Array::push_iter
 /// Example:
 ///
 /// ```moonbit
-/// test "Array::makei" {
 ///   let arr = Array::makei(3, fn(i) { i * 2 })
 ///   inspect(arr, content="[0, 2, 4]")
-/// }
 /// ```
 pub fn[T] Array::makei(
   length : Int,
@@ -107,14 +101,12 @@ pub fn[T] Array::makei(
 /// # Example
 /// 
 /// ```moonbit
-/// test "Array::shuffle_in_place" {
 ///   let arr = [1, 2, 3, 4, 5]
 ///   fn rand(upper : Int) -> Int {
 ///     let rng = @random.Rand::new()
 ///     rng.int(limit=upper)
 ///   }
 ///   Array::shuffle_in_place(arr, rand=rand)
-/// }
 /// ```
 pub fn[T] shuffle_in_place(self : Array[T], rand~ : (Int) -> Int) -> Unit {
   let n = self.length()
@@ -135,14 +127,12 @@ pub fn[T] shuffle_in_place(self : Array[T], rand~ : (Int) -> Int) -> Unit {
 /// # Example
 /// 
 /// ```mbt
-/// test {
 ///   let arr = [1, 2, 3, 4, 5]
 ///   fn rand(upper : Int) -> Int {
 ///     let rng = @random.Rand::new()
 ///     rng.int(limit=upper)
 ///   }
 ///   let _shuffled = Array::shuffle(arr, rand=rand)
-/// }
 /// ```
 pub fn[T] shuffle(self : Array[T], rand~ : (Int) -> Int) -> Array[T] {
   let new_arr = self.copy()
@@ -187,12 +177,10 @@ pub fn[A, B] filter_map(
 /// Example:
 ///
 /// ```moonbit
-/// test "last" {
 ///   let arr = [1, 2, 3]
 ///   inspect(arr.last(), content="Some(3)")
 ///   let empty : Array[Int] = []
 ///   inspect(empty.last(), content="None")
-/// }
 /// ```
 pub fn[A] last(self : Array[A]) -> A? {
   match self {
@@ -215,11 +203,9 @@ pub fn[A] last(self : Array[A]) -> A? {
 /// Example:
 ///
 /// ```moonbit
-/// test "zip" {
 ///   let arr1 = [1, 2, 3]
 ///   let arr2 = ['a', 'b', 'c']
 ///   inspect(arr1.zip(arr2), content="[(1, 'a'), (2, 'b'), (3, 'c')]")
-/// }
 /// ```
 pub fn[A, B] zip(self : Array[A], other : Array[B]) -> Array[(A, B)] {
   let length = if self.length() < other.length() {
@@ -240,12 +226,10 @@ pub fn[A, B] zip(self : Array[A], other : Array[B]) -> Array[(A, B)] {
 ///
 /// # Example
 /// ```moonbit
-/// test "Array::unzip" {
 ///   let arr = [(1, "a"), (2, "b"), (3, "c")]
 ///   let (nums, strs) = arr.unzip()
 ///   inspect(nums, content="[1, 2, 3]")
 ///   inspect(strs, content="[\"a\", \"b\", \"c\"]")
-/// }
 /// ```
 pub fn[T1, T2] unzip(self : Array[(T1, T2)]) -> (Array[T1], Array[T2]) {
   let arr1 : Array[T1] = Array::new(capacity=self.length())
@@ -272,12 +256,10 @@ pub fn[T1, T2] unzip(self : Array[(T1, T2)]) -> (Array[T1], Array[T2]) {
 /// Example:
 ///
 /// ```moonbit
-/// test "zip_with" {
 ///   let arr1 = [1, 2, 3]
 ///   let arr2 = [4, 5, 6]
 ///   let add = fn(a, b) { a + b }
 ///   inspect(zip_with(arr1, arr2, add), content="[5, 7, 9]")
-/// }
 /// ```
 pub fn[A, B, C] zip_with(
   l : Array[A],
@@ -307,11 +289,9 @@ pub fn[A, B, C] zip_with(
 /// Example:
 ///
 /// ```moonbit
-/// test "zip_to_iter2" {
 ///   let arr1 = [1, 2, 3]
 ///   let arr2 = ['a', 'b', 'c']
 ///   inspect(arr1.zip_to_iter2(arr2).to_array(), content="[(1, 'a'), (2, 'b'), (3, 'c')]")
-/// }
 /// ```
 pub fn[A, B] zip_to_iter2(self : Array[A], other : Array[B]) -> Iter2[A, B] {
   Iter2::new(fn(yield_) {

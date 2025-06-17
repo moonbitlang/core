@@ -17,10 +17,8 @@
 ///
 /// # Example
 /// ```mbt
-/// test "new_queue_example" {
 ///   let queue : @priority_queue.T[Int] = @priority_queue.new()
 ///   assert_eq(queue.length(), 0)
-/// }
 /// ```
 pub fn[A] new() -> T[A] {
   { len: 0, top: Nil }
@@ -31,10 +29,8 @@ pub fn[A] new() -> T[A] {
 ///
 /// # Example
 /// ```mbt
-/// test "from_array_example" {
 ///   let queue = @priority_queue.of([1, 2, 3, 4, 5])
 ///   assert_eq(queue.length(), 5)
-/// }
 /// ```
 pub fn[A : Compare] from_array(arr : Array[A]) -> T[A] {
   // CR: bad formatting
@@ -66,11 +62,9 @@ fn[A] copy_node(x : Node[A]) -> Node[A] {
 ///
 /// # Example
 /// ```mbt
-/// test "copy_example" {
 ///   let queue = @priority_queue.of([1, 2, 3, 4])
 ///   let queue2 = queue.copy()
 ///   assert_eq(queue2.length(), 4)
-/// }
 /// ```
 pub fn[A] copy(self : T[A]) -> T[A] {
   let new_que : T[A] = { len: self.len, top: copy_node(self.top) }
@@ -158,11 +152,9 @@ pub fn[A] length(self : T[A]) -> Int {
 ///
 /// # Example
 /// ```mbt
-/// test {
 ///   let queue = @priority_queue.of([1, 2, 3, 4])
 ///   queue.unsafe_pop()
 ///   assert_eq(queue.length(), 3)
-/// }
 /// ```
 #internal(unsafe, "Panic if the queue is empty.")
 pub fn[A : Compare] unsafe_pop(self : T[A]) -> Unit {
@@ -178,12 +170,10 @@ pub fn[A : Compare] unsafe_pop(self : T[A]) -> Unit {
 ///
 /// # Example
 /// ```mbt
-/// test "pop_example" {
 ///   let queue = @priority_queue.of([1, 2, 3, 4])
 ///   let first = queue.pop() // Some(4)
 ///   assert_eq(first, Some(4))
 ///   assert_eq(queue.length(), 3)
-/// }
 /// ```
 pub fn[A : Compare] pop(self : T[A]) -> A? {
   let result = self.peek()
@@ -202,11 +192,9 @@ pub fn[A : Compare] pop(self : T[A]) -> A? {
 ///
 /// # Example
 /// ```mbt
-/// test "push_example" {
 ///   let queue = @priority_queue.new()
 ///   queue.push(1)
 ///   assert_eq(queue.length(), 1)
-/// }
 /// ```
 pub fn[A : Compare] push(self : T[A], value : A) -> Unit {
   self.top = meld(self.top, Cons(content=value, sibling=Nil, child=Nil))
@@ -218,11 +206,9 @@ pub fn[A : Compare] push(self : T[A], value : A) -> Unit {
 ///
 /// # Example
 /// ```mbt
-/// test "peek_example" {
 ///   let queue = @priority_queue.of([1, 2, 3, 4])
 ///   let first = queue.peek() // Some(4)
 ///   assert_eq(first, Some(4))
-/// }
 /// ```
 pub fn[A] peek(self : T[A]) -> A? {
   match self.top {
@@ -236,11 +222,9 @@ pub fn[A] peek(self : T[A]) -> A? {
 ///
 /// # Example
 /// ```mbt
-/// test "clear_example" {
 ///   let queue = @priority_queue.of([1, 2, 3, 4])
 ///   queue.clear()
 ///   assert_eq(queue.length(), 0)
-/// }
 /// ```
 pub fn[A] clear(self : T[A]) -> Unit {
   self.top = Nil
@@ -252,10 +236,8 @@ pub fn[A] clear(self : T[A]) -> Unit {
 ///
 /// # Example
 /// ```mbt
-/// test "is_empty_example" {
 ///   let queue : @priority_queue.T[Int] = @priority_queue.new()
 ///   assert_eq(queue.is_empty(), true)
-/// }
 /// ```
 pub fn[A] is_empty(self : T[A]) -> Bool {
   self.len == 0

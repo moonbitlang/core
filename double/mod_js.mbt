@@ -29,12 +29,10 @@
 /// Example:
 ///
 /// ```moonbit
-/// test "op_mod" {
 ///   inspect(5.0.op_mod(3.0), content="2")
 ///   inspect((-5.0).op_mod(3.0), content="-2")
 ///   inspect(5.0.op_mod(not_a_number), content="NaN")
 ///   inspect(infinity.op_mod(3.0), content="NaN")
-/// }
 /// ```
 extern "js" fn mod_ffi(self : Double, other : Double) -> Double =
   #| (a, b) => (a % b)

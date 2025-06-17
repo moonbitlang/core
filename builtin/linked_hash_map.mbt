@@ -34,13 +34,11 @@ impl[K : Eq, V] Eq for Entry[K, V] with op_equal(self, other) {
 /// # Example
 ///
 /// ```mbt
-/// test "linked_hash_map_example" {
 ///   let map = { 3: "three", 8 :  "eight", 1 :  "one"}
 ///   assert_eq(map.get(2), None)
 ///   assert_eq(map.get(3), Some("three"))
 ///   map.set(3, "updated")
 ///   assert_eq(map.get(3), Some("updated"))
-/// }
 /// ```
 struct Map[K, V] {
   mut entries : FixedArray[Entry[K, V]?]
@@ -219,11 +217,9 @@ pub fn[K : Hash + Eq, V] Map::op_get(self : Map[K, V], key : K) -> V? {
 /// Example:
 ///
 /// ```moonbit
-/// test "get_or_default" {
 ///   let map = { "a": 1, "b": 2 }
 ///   inspect(map.get_or_default("a", 0), content="1")
 ///   inspect(map.get_or_default("c", 42), content="42")
-/// }
 /// ```
 pub fn[K : Hash + Eq, V] Map::get_or_default(
   self : Map[K, V],
@@ -297,12 +293,10 @@ pub fn[K : Hash + Eq, V] Map::contains(self : Map[K, V], key : K) -> Bool {
 ///
 /// ```moonbit
 /// 
-/// test "Map::contains_kv" {
 ///   let map = { "a": 1, "b": 2 }
 ///   inspect(map.contains_kv("a", 1), content="true")
 ///   inspect(map.contains_kv("a", 2), content="false")
 ///   inspect(map.contains_kv("c", 3), content="false")
-/// }
 /// ```
 pub fn[K : Hash + Eq, V : Eq] Map::contains_kv(
   self : Map[K, V],

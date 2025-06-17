@@ -38,12 +38,10 @@ fn[K : Show, V : Show] debug_entries(self : T[K, V]) -> String {
 /// Example:
 ///
 /// ```moonbit
-/// test "clear" {
 ///   let map = @hashmap.of([("a", 1), ("b", 2)])
 ///   map.clear()
 ///   inspect(map.size(), content="0")
 ///   inspect(map.get("a"), content="None")
-/// }
 /// ```
 pub fn[K, V] clear(self : T[K, V]) -> Unit {
   self.entries.fill(None)
@@ -63,13 +61,11 @@ pub fn[K, V] clear(self : T[K, V]) -> Unit {
 /// Example:
 ///
 /// ```moonbit
-/// test "iter" {
 ///   let map = @hashmap.of([(1, "one"), (2, "two")])
 ///   let pairs = map.iter().to_array()
 ///   inspect(pairs.length(), content="2")
 ///   inspect(pairs.contains((1, "one")), content="true")
 ///   inspect(pairs.contains((2, "two")), content="true")
-/// }
 /// ```
 pub fn[K, V] iter(self : T[K, V]) -> Iter[(K, V)] {
   Iter::new(fn(yield_) {
@@ -98,12 +94,10 @@ pub fn[K, V] iter(self : T[K, V]) -> Iter[(K, V)] {
 /// Example:
 ///
 /// ```moonbit
-/// test "iter2" {
 ///   let map = @hashmap.of([(1, "one"), (2, "two")])
 ///   let mut sum = 0
 ///   map.iter2().each(fn(k, _) { sum = sum + k })
 ///   inspect(sum, content="3")
-/// }
 /// ```
 pub fn[K, V] iter2(self : T[K, V]) -> Iter2[K, V] {
   Iter2::new(fn(yield_) {
@@ -132,7 +126,6 @@ pub fn[K, V] iter2(self : T[K, V]) -> Iter2[K, V] {
 /// Example:
 ///
 /// ```moonbit
-/// test "from_iter" {
 ///   let arr = [(1, "one"), (2, "two")]
 ///   let iter = Iter::new(fn(yield_) {
 ///     for pair in arr {
@@ -146,7 +139,6 @@ pub fn[K, V] iter2(self : T[K, V]) -> Iter2[K, V] {
 ///   let map = @hashmap.from_iter(iter)
 ///   inspect(map.get(1), content="Some(\"one\")")
 ///   inspect(map.get(2), content="Some(\"two\")")
-/// }
 /// ```
 pub fn[K : Hash + Eq, V] from_iter(iter : Iter[(K, V)]) -> T[K, V] {
   let m = new()
@@ -167,13 +159,11 @@ pub fn[K : Hash + Eq, V] from_iter(iter : Iter[(K, V)]) -> T[K, V] {
 /// Example:
 ///
 /// ```moonbit
-/// test "to_array" {
 ///   let map = @hashmap.of([(1, "one"), (2, "two")])
 ///   let arr = map.to_array()
 ///   inspect(arr, content=
 ///   #|[(2, "two"), (1, "one")]
 /// )
-/// }
 /// ```
 pub fn[K, V] to_array(self : T[K, V]) -> Array[(K, V)] {
   let mut i = 0
@@ -211,10 +201,8 @@ pub fn[K, V] to_array(self : T[K, V]) -> Array[(K, V)] {
 /// Example:
 ///
 /// ```moonbit
-/// test "size" {
 ///   let map = @hashmap.of([("a", 1), ("b", 2), ("c", 3)])
 ///   inspect(map.size(), content="3")
-/// }
 /// ```
 pub fn[K, V] size(self : T[K, V]) -> Int {
   self.size
@@ -235,10 +223,8 @@ pub fn[K, V] size(self : T[K, V]) -> Int {
 /// Example:
 ///
 /// ```moonbit
-/// test "capacity" {
 ///   let map : @hashmap.T[Int, String] = @hashmap.new(capacity=16)
 ///   inspect(map.capacity(), content="16")
-/// }
 /// ```
 pub fn[K, V] capacity(self : T[K, V]) -> Int {
   self.capacity
@@ -257,12 +243,10 @@ pub fn[K, V] capacity(self : T[K, V]) -> Int {
 /// Example:
 ///
 /// ```moonbit
-/// test "is_empty" {
 ///   let map : @hashmap.T[String, Int] = @hashmap.new()
 ///   inspect(map.is_empty(), content="true")
 ///   map.set("key", 42)
 ///   inspect(map.is_empty(), content="false")
-/// }
 /// ```
 pub fn[K, V] is_empty(self : T[K, V]) -> Bool {
   self.size == 0
@@ -281,12 +265,10 @@ pub fn[K, V] is_empty(self : T[K, V]) -> Bool {
 /// Example:
 ///
 /// ```moonbit
-/// test "each" {
 ///   let map = @hashmap.of([(1, "one"), (2, "two")])
 ///   let mut result = ""
 ///   map.each(fn(k, v) { result = result + "\{k}:\{v}," })
 ///   inspect(result, content="2:two,1:one,")
-/// }
 /// ```
 pub fn[K, V] each(self : T[K, V], f : (K, V) -> Unit) -> Unit {
   for i in 0..<self.capacity {
@@ -312,13 +294,11 @@ pub fn[K, V] each(self : T[K, V], f : (K, V) -> Unit) -> Unit {
 /// Example:
 ///
 /// ```moonbit
-/// test "eachi" {
 ///   let map = @hashmap.of([("a", 1), ("b", 2), ("c", 3)])
 ///   let mut result = 0
 ///   map.eachi(fn(i, k, _) { if k == "b" { result = i } })
 ///   // "b" is at index 1
 ///   inspect(result, content="2")
-/// }
 /// ```
 pub fn[K, V] eachi(self : T[K, V], f : (Int, K, V) -> Unit) -> Unit {
   for i = 0, idx = 0; i < self.capacity; {
@@ -343,12 +323,10 @@ pub fn[K, V] eachi(self : T[K, V], f : (Int, K, V) -> Unit) -> Unit {
 /// Example:
 ///
 /// ```moonbit
-/// test "show" {
 ///   let map = @hashmap.of([(1, "one"), (2, "two")])
 ///   inspect(map, content=
 ///   #|HashMap::of([(2, "two"), (1, "one")])
 /// )
-/// }
 /// ```
 pub impl[K : Show, V : Show] Show for T[K, V] with output(self, logger) {
   logger.write_string("HashMap::of([")

@@ -24,13 +24,11 @@
 /// Example:
 ///
 /// ```moonbit
-/// test "Bytes::from_array" {
 ///   let arr = [b'h', b'i']
 ///   let bytes = @bytes.from_array(arr)
 ///   inspect(bytes, content=
 ///     #|b"\x68\x69"
 ///   )
-/// }
 /// ```
 pub fn Bytes::from_array(arr : Array[Byte]) -> Bytes {
   Bytes::makei(arr.length(), fn(i) { arr[i] })
@@ -59,13 +57,11 @@ pub fn from_array(arr : Array[Byte]) -> Bytes {
 /// Example:
 ///
 /// ```moonbit
-/// test "Bytes::from_fixedarray" {
 ///   let arr : FixedArray[Byte] = [b'h', b'e', b'l', b'l', b'o']
 ///   let bytes = @bytes.from_fixedarray(arr, len=3)
 ///   inspect(bytes, content=
 ///     #|b"\x68\x65\x6c"
 ///   )
-/// }
 /// ```
 pub fn Bytes::from_fixedarray(arr : FixedArray[Byte], len? : Int) -> Bytes {
   let len = match len {
@@ -98,13 +94,11 @@ pub fn from_fixedarray(arr : FixedArray[Byte], len? : Int) -> Bytes {
 /// Example:
 ///
 /// ```moonbit
-/// test "Bytes::to_fixedarray" {
 ///   let bytes = b"hello"
 ///   let arr = bytes.to_fixedarray()
 ///   inspect(arr, content="[b'\\x68', b'\\x65', b'\\x6C', b'\\x6C', b'\\x6F']")
 ///   let arr2 = bytes.to_fixedarray(len=3)
 ///   inspect(arr2, content="[b'\\x68', b'\\x65', b'\\x6C']")
-/// }
 /// ```
 pub fn to_fixedarray(self : Bytes, len? : Int) -> FixedArray[Byte] {
   let len = match len {
@@ -130,13 +124,11 @@ pub fn to_fixedarray(self : Bytes, len? : Int) -> FixedArray[Byte] {
 /// Example:
 ///
 /// ```moonbit
-/// test "from_iter" {
 ///   let iter = Iter::singleton(b'h')
 ///   let bytes = @bytes.from_iter(iter)
 ///   inspect(bytes, content=
 ///     #|b"\x68"
 ///   )
-/// }
 /// ```
 pub fn Bytes::from_iter(iter : Iter[Byte]) -> Bytes {
   from_array(iter.collect())
@@ -161,13 +153,11 @@ pub fn from_iter(iter : Iter[Byte]) -> Bytes {
 /// Example:
 ///
 /// ```moonbit
-/// test "of" {
 ///   let arr : FixedArray[Byte] = [b'h', b'e', b'l', b'l', b'o']
 ///   let bytes = @bytes.of(arr)
 ///   inspect(bytes, content=
 ///     #|b"\x68\x65\x6c\x6c\x6f"
 ///   )
-/// }
 /// ```
 /// TODO: marked as intrinsic, inline if it is constant
 pub fn Bytes::of(arr : FixedArray[Byte]) -> Bytes {
@@ -192,11 +182,9 @@ pub fn of(arr : FixedArray[Byte]) -> Bytes {
 /// Example:
 ///
 /// ```moonbit
-/// test "Bytes::to_array" {
 ///   let bytes = b"hello"
 ///   let arr = bytes.to_array()
 ///   inspect(arr, content="[b'\\x68', b'\\x65', b'\\x6C', b'\\x6C', b'\\x6F']")
-/// }
 /// ```
 pub fn to_array(self : Bytes) -> Array[Byte] {
   let len = self.length()
@@ -219,12 +207,10 @@ pub fn to_array(self : Bytes) -> Array[Byte] {
 /// Example:
 ///
 /// ```moonbit
-/// test "Bytes::iter" {
 ///   let bytes = Bytes::from_array([b'h', b'i'])
 ///   let mut sum = 0
 ///   bytes.iter().each(fn(b) { sum = sum + b.to_int() })
 ///   inspect(sum, content="209") // ASCII values: 'h'(104) + 'i'(105) = 209
-/// }
 /// ```
 pub fn iter(self : Bytes) -> Iter[Byte] {
   Iter::new(fn(yield_) {
@@ -243,7 +229,6 @@ pub fn iter(self : Bytes) -> Iter[Byte] {
 /// indices start from 0.
 /// 
 /// Example:
-/// test "iter2" {
 ///   let buf = StringBuilder::new(size_hint=5)
 ///   let keys = []
 ///   b"abcde".iter2().each(fn(i, x) {
@@ -252,7 +237,6 @@ pub fn iter(self : Bytes) -> Iter[Byte] {
 ///   })
 ///   inspect(buf, content="b'\\x61'b'\\x62'b'\\x63'b'\\x64'b'\\x65'")
 ///   inspect(keys, content="[0, 1, 2, 3, 4]")
-/// }
 pub fn iter2(self : Bytes) -> Iter2[Int, Byte] {
   Iter2::new(fn(yield_) {
     for i = 0, len = self.length(); i < len; i = i + 1 {
@@ -273,11 +257,9 @@ pub fn iter2(self : Bytes) -> Iter2[Int, Byte] {
 /// Example:
 ///
 /// ```moonbit
-/// test "default" {
 ///   let bytes = @bytes.default()
 ///   inspect(bytes, content="b\"\"")
 ///   inspect(bytes.length(), content="0")
-/// }
 /// ```
 pub impl Default for Bytes with default() {
   b""
@@ -296,16 +278,12 @@ pub impl Default for Bytes with default() {
 /// Example:
 /// 
 /// ```moonbit
-/// test "Bytes::get" {
 ///   let bytes = b"\x01\x02\x03"
 ///   let byte = bytes.get(1)
 ///   inspect(byte, content="Some(b'\\x02')")
-/// }
-/// test "Bytes::get/out_of_bounds" {
 ///   let bytes = b"\x01\x02\x03"
 ///   let byte = bytes.get(3)
 ///   inspect(byte, content="None")
-/// }
 /// ```
 pub fn get(self : Bytes, index : Int) -> Byte? {
   guard index >= 0 && index < self.length() else { None }

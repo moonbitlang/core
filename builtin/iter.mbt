@@ -52,8 +52,7 @@ pub impl[T : Show] Show for Iter[T] with output(self, logger) {
 /// - `self`: The iterator to consume.
 /// - `f`: A function that takes an element of type `T` and returns `Unit`. This function is applied to each element of the iterator.
 /// TODO: change the intrinsic to match the function name
-#intrinsic("%iter.iter")
-pub fn[T] Iter::each(self : Iter[T], f : (T) -> Unit) -> Unit {
+pub fn[T] Iter::each(self : Iter[T], f : (T) -> Unit raise?) -> Unit raise? {
   for a in self {
     f(a)
   }
@@ -82,7 +81,10 @@ pub fn[T] Iter::all(self : Iter[T], f : (T) -> Bool) -> Bool {
 /// - `self`: The iterator to consume.
 /// - `f`: A function that takes an index of type `Int` and an element of type `T` and returns `Unit`. This function is applied to each element of the iterator.
 /// TODO: Add intrinsic
-pub fn[T] Iter::eachi(self : Iter[T], f : (Int, T) -> Unit) -> Unit {
+pub fn[T] Iter::eachi(
+  self : Iter[T],
+  f : (Int, T) -> Unit raise?
+) -> Unit raise? {
   let mut i = 0
   for a in self {
     f(i, a)
@@ -109,7 +111,11 @@ pub fn[T] Iter::eachi(self : Iter[T], f : (Int, T) -> Unit) -> Unit {
 /// Returns the final accumulator value after folding all elements of the iterator.
 #intrinsic("%iter.reduce")
 #locals(f)
-pub fn[T, B] Iter::fold(self : Iter[T], init~ : B, f : (B, T) -> B) -> B {
+pub fn[T, B] Iter::fold(
+  self : Iter[T],
+  init~ : B,
+  f : (B, T) -> B raise?
+) -> B raise? {
   let mut acc = init
   for a in self {
     acc = f(acc, a)
@@ -876,15 +882,11 @@ pub fn[A] Iter::last(self : Iter[A]) -> A? {
 /// # Examples
 ///
 /// ```moonbit
-/// test "Iter::head" {
 ///   let iter = Iter::singleton(42)
 ///   assert_eq(iter.head(), Some(42))
-/// }
 ///
-/// test "Iter::head/empty" {
 ///   let iter = Iter::empty()
 ///   assert_eq(iter.head(), None)
-/// }
 /// ```
 pub fn[A] Iter::head(self : Iter[A]) -> A? {
   for i in self {
@@ -905,11 +907,9 @@ pub fn[A] Iter::head(self : Iter[A]) -> A? {
 /// # Examples
 ///
 /// ```moonbit
-/// test "Iter::intersperse" {
 ///   let arr = []
 ///   [1, 2, 3].iter().intersperse(0).each(fn(i) {arr.push(i)})
 ///   assert_eq(arr, [1, 0, 2, 0, 3])
-/// }
 /// ```
 pub fn[A] Iter::intersperse(self : Iter[A], sep : A) -> Iter[A] {
   fn(yield_) {
@@ -960,16 +960,12 @@ pub fn[A] Iter::op_as_view(
 /// Example:
 ///
 /// ```moonbit
-/// test "Iter::contains" {
 ///   let iter = [1, 2, 3, 4, 5].iter()
 ///   inspect(iter.contains(3), content="true")
 ///   inspect(iter.contains(6), content="false")
-/// }
 ///
-/// test "Iter::contains/empty" {
 ///   let iter = Iter::empty()
 ///   inspect(iter.contains(1), content="false")
-/// }
 /// ```
 pub fn[A : Eq] Iter::contains(self : Iter[A], value : A) -> Bool {
   for v in self {
@@ -1028,13 +1024,11 @@ pub fn[T : Compare] Iter::minimum(self : Iter[T]) -> T? {
 /// # Example
 ///
 /// ```moonbit
-/// test "group_by" {
 ///   let iter = [1, 1, 2, 3, 2, 2, 1].iter()
 ///   let result = iter.group_by(fn(x) { x })
 ///   assert_eq(result.get(1), Some([1, 1, 1]))
 ///   assert_eq(result.get(2), Some([2, 2, 2]))
 ///   assert_eq(result.get(3), Some([3]))
-/// }
 #deprecated
 pub fn[T, K : Eq + Hash] Iter::group_by(
   self : Iter[T],

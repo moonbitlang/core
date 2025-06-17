@@ -33,7 +33,6 @@
 /// Example:
 ///
 /// ```moonbit
-/// test "hypot" {
 ///   inspect(3.0.hypot(4.0), content="5")
 ///   inspect(5.0.hypot(12.0), content="13")
 ///   inspect(8.0.hypot(15.0), content="17")
@@ -44,7 +43,6 @@
 ///   inspect(1.0.hypot(@double.infinity), content="Infinity")
 ///   inspect(@double.neg_infinity.hypot(1.0), content="Infinity")
 ///   inspect(1.0.hypot(@double.neg_infinity), content="Infinity")
-/// }
 /// ```
 pub fn Double::hypot(self : Double, y : Double) -> Double {
   if self.is_nan() || y.is_nan() {

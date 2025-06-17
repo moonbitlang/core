@@ -20,11 +20,9 @@
 /// # Example
 ///
 /// ```mbt
-/// test {
 ///   let arr = [5, 3, 2, 4, 1]
 ///   arr.sort_by_key(fn (x) {-x})
 ///   assert_eq(arr, [5, 4, 3, 2, 1])
-/// }
 /// ```
 pub fn[T, K : Compare] FixedArray::sort_by_key(
   self : FixedArray[T],
@@ -56,11 +54,9 @@ test "@array.sort_by_key/basic" {
 /// # Example
 ///
 /// ```mbt
-/// test {
 ///   let arr = [5, 3, 2, 4, 1]
 ///   arr.sort_by(fn (a, b) { a - b })
 ///   assert_eq(arr, [1, 2, 3, 4, 5])
-/// }
 /// ```
 pub fn[T] FixedArray::sort_by(
   self : FixedArray[T],

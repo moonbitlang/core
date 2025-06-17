@@ -43,7 +43,6 @@
 /// Example
 ///
 /// ```moonbit
-/// test "cbrt" {
 ///   inspect(1.0.cbrt(), content="1")
 ///   inspect(3.0.cbrt(), content="1.4422495703074083")
 ///   inspect((-3.0).cbrt(), content="-1.4422495703074083")
@@ -52,7 +51,6 @@
 ///   inspect(@double.not_a_number.cbrt(), content="NaN")
 ///   inspect(@double.infinity, content="Infinity")
 ///   inspect(@double.neg_infinity, content="-Infinity")
-/// }
 /// ```
 pub fn Double::cbrt(self : Double) -> Double {
   if self.is_inf() || self.is_nan() || self == 0.0 {

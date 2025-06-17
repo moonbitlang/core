@@ -298,12 +298,10 @@ pub fn[V : Compare] difference(self : T[V], src : T[V]) -> T[V] {
 /// Example:
 ///
 /// ```moonbit
-/// test "symmetric_difference" {
 ///   let set1 = @sorted_set.from_array([1, 2, 3, 4])
 ///   let set2 = @sorted_set.from_array([3, 4, 5, 6])
 ///   let diff = set1.symmetric_difference(set2)
 ///   inspect(diff, content="@sorted_set.from_array([1, 2, 5, 6])")
-/// }
 /// ```
 pub fn[V : Compare] symmetric_difference(self : T[V], other : T[V]) -> T[V] {
   // TODO: Optimize this function to avoid creating two intermediate sets.

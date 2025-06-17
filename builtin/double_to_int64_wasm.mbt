@@ -32,13 +32,11 @@
 /// Example:
 ///
 /// ```moonbit
-/// test "Double::to_int64" {
 ///   inspect(42.0.to_int64(), content="42")
 ///   inspect((-42.5).to_int64(), content="-42")
 ///   inspect((0.0 / 0.0).to_int64(), content="0") // NaN
 ///   inspect((1.0 / 0.0).to_int64(), content="9223372036854775807") // Infinity
 ///   inspect((-1.0 / 0.0).to_int64(), content="-9223372036854775808") // -Infinity
-/// }
 /// ```
 pub fn Double::to_int64(self : Double) -> Int64 = "%f64_to_i64_saturate"
 
@@ -61,11 +59,9 @@ pub fn Double::to_int64(self : Double) -> Int64 = "%f64_to_i64_saturate"
 /// Example:
 ///
 /// ```moonbit
-/// test "Double::to_uint64" {
 ///   inspect(42.0.to_uint64(), content="42")
 ///   inspect((-42.5).to_uint64(), content="0")
 ///   inspect((0.0 / 0.0).to_uint64(), content="0") // NaN
 ///   inspect((1.0 / 0.0).to_uint64(), content="18446744073709551615") // Infinity
-/// }
 /// ```
 pub fn Double::to_uint64(self : Double) -> UInt64 = "%f64.to_u64_saturate"

@@ -37,11 +37,9 @@ let frac_bits = 52
 /// Example:
 ///
 /// ```moonbit
-/// test "trunc" {
 ///   inspect(3.7.trunc(), content="3")
 ///   inspect((-3.7).trunc(), content="-3")
 ///   inspect(0.0.trunc(), content="0")
-/// }
 /// ```
 pub fn Double::trunc(self : Double) -> Double {
   let u64 = self.reinterpret_as_uint64()
@@ -68,11 +66,9 @@ pub fn Double::trunc(self : Double) -> Double {
 /// Example:
 ///
 /// ```moonbit
-/// test "ceil" {
 ///   inspect(3.7.ceil(), content="4")
 ///   inspect((-3.7).ceil(), content="-3")
 ///   inspect(42.0.ceil(), content="42")
-/// }
 /// ```
 pub fn Double::ceil(self : Double) -> Double {
   let trunced = self.trunc()
@@ -96,11 +92,9 @@ pub fn Double::ceil(self : Double) -> Double {
 /// Example:
 ///
 /// ```moonbit
-/// test "floor" {
 ///   inspect(3.7.floor(), content="3")
 ///   inspect((-3.7).floor(), content="-4")
 ///   inspect(0.0.floor(), content="0")
-/// }
 /// ```
 pub fn Double::floor(self : Double) -> Double {
   let trunced = self.trunc()
@@ -125,12 +119,10 @@ pub fn Double::floor(self : Double) -> Double {
 /// Example:
 ///
 /// ```moonbit
-/// test "round" {
 ///   inspect(3.7.round(), content="4")
 ///   inspect(3.2.round(), content="3")
 ///   inspect(3.5.round(), content="4")
 ///   inspect((-3.5).round(), content="-3")
-/// }
 /// ```
 pub fn Double::round(self : Double) -> Double {
   floor(self + 0.5)

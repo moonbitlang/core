@@ -27,10 +27,8 @@
 /// # Example
 ///
 /// ```mbt
-/// test "when_example" {
 ///   let result = @option.when(true, fn(){ "Hello, World!" })
 ///   assert_eq(result, Some("Hello, World!"))
-/// }
 /// ```
 pub fn[T] when(condition : Bool, value : () -> T) -> T? {
   if condition {
@@ -106,13 +104,11 @@ test "some" {
 /// # Example
 ///
 /// ```mbt
-/// test "map_example" {
 ///   let a = Some(5)
 ///   assert_eq(a.map(fn(x){ x * 2 }), Some(10))
 ///
 ///   let b = None
 ///   assert_eq(b.map(fn(x){ x * 2 }), None)
-/// }
 /// ```
 pub fn[T, U] map(self : T?, f : (T) -> U) -> U? {
   match self {
@@ -136,10 +132,8 @@ test "map" {
 /// # Example
 ///
 /// ```mbt
-/// test "map_or_example" {
 ///   let a = Some(5)
 ///   assert_eq(a.map_or(3, fn(x){ x * 2 }), 10)
-/// }
 /// ```
 pub fn[T, U] map_or(self : T?, default : U, f : (T) -> U) -> U {
   match self {
@@ -162,10 +156,8 @@ test "map_or" {
 /// # Example
 ///
 /// ```mbt
-/// test "map_or_else_example" {
 ///   let a = Some(5)
 ///   assert_eq(a.map_or_else(fn(){ 3 }, fn(x){ x * 2 }), 10)
-/// }
 /// ```
 pub fn[T, U] map_or_else(self : T?, default : () -> U, f : (T) -> U) -> U {
   match self {
@@ -189,14 +181,12 @@ test "map_or_else" {
 /// # Example
 ///
 /// ```mbt
-/// test "bind_example" {
 ///   let a = Option::Some(5)
 ///   let r1 = a.bind(fn(x){ Some(x * 2) })
 ///   assert_eq(r1, Some(10))
 ///   let b : Option[Int] = None
 ///   let r2 = b.bind(fn(x){ Some(x * 2) })
 ///   assert_eq(r2, None)
-/// }
 /// ```
 pub fn[T, U] bind(self : T?, f : (T) -> U?) -> U? {
   match self {
@@ -221,12 +211,10 @@ test "bind" {
 /// # Example
 ///
 /// ```mbt
-/// test "flatten_example" {
 ///   let a = Some(Some(42));
 ///   assert_eq(a.flatten(), Some(42))
 ///   let b : Int?? = Some(None)
 ///   assert_eq(b.flatten(), None)
-/// }
 /// ```
 pub fn[T] flatten(self : T??) -> T? {
   match self {
@@ -265,11 +253,9 @@ test "is_empty" {
 ///
 /// # Example
 /// ```mbt
-/// test "Option::filter_example" {
 ///   let x = Some(3)
 ///   assert_eq(x.filter(fn(x){ x > 5 }), None)
 ///   assert_eq(x.filter(fn(x){ x < 5 }), Some(3))
-/// }
 /// ```
 pub fn[T] filter(self : T?, f : (T) -> Bool) -> T? {
   match self {

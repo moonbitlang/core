@@ -25,7 +25,6 @@
 /// Example:
 ///
 /// ```moonbit
-/// test "sin" {
 ///   inspect(0.0.sin(), content="0")
 ///   inspect(1.570796326794897.sin(), content="1") // pi / 2
 ///   inspect(2.0.sin(), content="0.9092974268256817")
@@ -34,7 +33,6 @@
 ///   inspect(@double.not_a_number.sin(), content="NaN")
 ///   inspect(@double.infinity.sin(), content="NaN")
 ///   inspect(@double.neg_infinity.sin(), content="NaN")
-/// }
 /// ```
 pub fn Double::sin(self : Double) -> Double = "Math" "sin"
 
@@ -51,7 +49,6 @@ pub fn Double::sin(self : Double) -> Double = "Math" "sin"
 /// Example:
 ///
 /// ```moonbit
-/// test "cos" {
 ///   inspect(0.0.cos(), content="1")
 ///   inspect(2.5.cos(), content="-0.8011436155469337")
 ///   inspect((-3.141592653589793).cos(), content="-1") // -pi
@@ -60,7 +57,6 @@ pub fn Double::sin(self : Double) -> Double = "Math" "sin"
 ///   inspect(@double.not_a_number.cos(), content="NaN")
 ///   inspect(@double.infinity.cos(), content="NaN")
 ///   inspect(@double.neg_infinity.cos(), content="NaN")
-/// }
 /// ```
 pub fn Double::cos(self : Double) -> Double = "Math" "cos"
 
@@ -77,7 +73,6 @@ pub fn Double::cos(self : Double) -> Double = "Math" "cos"
 /// Example:
 ///
 /// ```moonbit
-/// test "tan" {
 ///   inspect(0.0.tan(), content="0")
 ///   inspect(0.7853981633974483.tan(), content="0.9999999999999999")
 ///   inspect(4.0.tan(), content="1.1578212823495777")
@@ -86,7 +81,6 @@ pub fn Double::cos(self : Double) -> Double = "Math" "cos"
 ///   inspect(@double.not_a_number.tan(), content="NaN")
 ///   inspect(@double.infinity.tan(), content="NaN")
 ///   inspect(@double.neg_infinity.tan(), content="NaN")
-/// }
 /// ```
 pub fn Double::tan(self : Double) -> Double = "Math" "tan"
 
@@ -106,14 +100,12 @@ pub fn Double::tan(self : Double) -> Double = "Math" "tan"
 /// Example:
 ///
 /// ```moonbit
-/// test "asin" {
 ///   inspect(0.0.asin(), content="0")
 ///   inspect(1.0.asin(), content="1.5707963267948966")
 ///   inspect((-1.0).asin(), content="-1.5707963267948966")
 ///   inspect(@double.not_a_number.asin(), content="NaN")
 ///   inspect(@double.infinity.asin(), content="NaN")
 ///   inspect(@double.neg_infinity.asin(), content="NaN")
-/// }
 /// ```
 pub fn Double::asin(self : Double) -> Double = "Math" "asin"
 
@@ -132,7 +124,6 @@ pub fn Double::asin(self : Double) -> Double = "Math" "asin"
 /// Example:
 ///
 /// ```moonbit
-/// test "acos" {
 ///   inspect(0.0.acos(), content="1.5707963267948966")
 ///   inspect(1.0.acos(), content="0")
 ///   inspect((-1.0).acos(), content="3.141592653589793")
@@ -140,7 +131,6 @@ pub fn Double::asin(self : Double) -> Double = "Math" "asin"
 ///   inspect(@double.infinity.acos(), content="NaN")
 ///   inspect(@double.neg_infinity.acos(), content="NaN")
 ///   inspect(0.0.acos(), content="1.5707963267948966")
-/// }
 /// ```
 pub fn Double::acos(self : Double) -> Double = "Math" "acos"
 
@@ -158,14 +148,12 @@ pub fn Double::acos(self : Double) -> Double = "Math" "acos"
 /// * Returns NaN if the input is NaN.
 ///
 /// ```moonbit
-/// test "atan" {
 ///   inspect(0.0.atan(), content="0")
 ///   inspect(1.0.atan(), content="0.7853981633974483")
 ///   inspect((-1.0).atan(), content="-0.7853981633974483")
 ///   inspect(@double.not_a_number.atan(), content="NaN")
 ///   inspect(@double.infinity.atan(), content="1.5707963267948966")
 ///   inspect(@double.neg_infinity.atan(), content="-1.5707963267948966")
-/// }
 /// ```
 pub fn Double::atan(self : Double) -> Double = "Math" "atan"
 
@@ -184,7 +172,6 @@ pub fn Double::atan(self : Double) -> Double = "Math" "atan"
 /// Example:
 ///
 /// ```moonbit
-/// test "atan2" {
 ///   inspect(0.0.atan2(-1.0), content="3.141592653589793")
 ///   inspect(1.0.atan2(0.0), content="1.5707963267948966")
 ///   inspect(1.0.atan2(1.0), content="0.7853981633974483")
@@ -198,6 +185,5 @@ pub fn Double::atan(self : Double) -> Double = "Math" "atan"
 ///   inspect(neg_infinity.atan2(neg_infinity), content="-2.356194490192345")
 ///   inspect(infinity.atan2(neg_infinity), content="2.356194490192345")
 ///   inspect(neg_infinity.atan2(infinity), content="-0.7853981633974483")
-/// }
 /// ```
 pub fn Double::atan2(self : Double, x : Double) -> Double = "Math" "atan2"
