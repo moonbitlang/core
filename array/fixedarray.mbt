@@ -23,11 +23,9 @@
 /// # Example
 ///
 /// ```mbt
-/// test {
 ///   let arr = []
 ///   [1, 2, 3, 4, 5].each(fn(x){ arr.push(x) })
 ///   assert_eq(arr, [1, 2, 3, 4, 5])
-/// }
 /// ```
 pub fn[T] FixedArray::each(
   self : FixedArray[T],
@@ -77,13 +75,11 @@ test "each" {
 /// # Example
 ///
 /// ```mbt
-/// test {
 ///   let arr = []
 ///   [1, 2, 3, 4, 5].eachi(fn(index, elem){
 ///     arr.push((index, elem))
 ///   })
 ///   assert_eq(arr, [(0, 1), (1, 2), (2, 3), (3, 4), (4, 5)])
-/// }
 /// ```
 pub fn[T] FixedArray::eachi(
   self : FixedArray[T],
@@ -133,11 +129,9 @@ test "eachi" {
 /// # Example
 ///
 /// ```mbt
-/// test {
 ///   let arr = []
 ///   [1, 2, 3, 4, 5].rev_each(fn(x){ arr.push(x) })
 ///   assert_eq(arr, [5, 4, 3, 2, 1])
-/// }
 /// ```
 pub fn[T] FixedArray::rev_each(
   self : FixedArray[T],
@@ -187,13 +181,11 @@ test "rev_each" {
 /// # Example
 ///
 /// ```mbt
-/// test {
 ///   let arr = []
 ///   [1, 2, 3, 4, 5].rev_eachi(fn(index, elem){
 ///     arr.push((index, elem))
 ///   })
 ///   assert_eq(arr, [(0, 5), (1, 4), (2, 3), (3, 2), (4, 1)])
-/// }
 /// ```
 pub fn[T] FixedArray::rev_eachi(
   self : FixedArray[T],
@@ -247,11 +239,9 @@ test "rev_eachi" {
 /// # Example
 ///
 /// ```mbt
-/// test {
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let doubled = arr.map(fn(x){ x * 2 })
 ///   assert_eq(doubled, [2, 4, 6, 8, 10])
-/// }
 /// ```
 pub fn[T, U] FixedArray::map(
   self : FixedArray[T],
@@ -284,11 +274,9 @@ test "map" {
 ///
 /// # Example
 /// ```mbt
-/// test {
 ///   let arr = [3, 4, 5]
 ///   let added = arr.mapi(fn (i, x) { x + i })
 ///   assert_eq(added, [3, 5, 7])
-/// }
 /// ```
 pub fn[T, U] FixedArray::mapi(
   self : FixedArray[T],
@@ -333,10 +321,8 @@ test "mapi" {
 /// Example:
 ///
 /// ```moonbit
-/// test "FixedArray::makei" {
 ///   let arr = FixedArray::makei(3, fn(i) { i * 2 })
 ///   inspect(arr, content="[0, 2, 4]")
-/// }
 /// ```
 pub fn[T] FixedArray::makei(
   length : Int,
@@ -380,11 +366,9 @@ test "fixedarray_new_with_index" {
 /// Example:
 ///
 /// ```moonbit
-/// test "FixedArray::from_array" {
 ///   let dynamic_array = [1, 2, 3, 4, 5]
 ///   let fixed_array = FixedArray::from_array(dynamic_array)
 ///   inspect(fixed_array, content="[1, 2, 3, 4, 5]")
-/// }
 /// ```
 pub fn[T] FixedArray::from_array(array : Array[T]) -> FixedArray[T] {
   FixedArray::makei(array.length(), fn(i) { array[i] })
@@ -401,10 +385,8 @@ test "from_array" {
 ///
 /// # Example
 /// ```mbt
-/// test {
 ///   let sum = [1, 2, 3, 4, 5].fold(init=0, fn { sum, elem => sum + elem })
 ///   assert_eq(sum, 15)
-/// }
 /// ```
 pub fn[A, B] FixedArray::fold(
   self : FixedArray[A],
@@ -435,10 +417,8 @@ test "fold" {
 ///
 /// # Example
 /// ```mbt
-/// test {
 ///   let sum = [1, 2, 3, 4, 5].rev_fold(init=0, fn { sum, elem => sum + elem })
 ///   assert_eq(sum, 15)
-/// }
 /// ```
 pub fn[A, B] FixedArray::rev_fold(
   self : FixedArray[A],
@@ -471,10 +451,8 @@ test "rev_fold" {
 ///
 /// # Example
 /// ```mbt
-/// test {
 ///   let sum = [1, 2, 3, 4, 5].foldi(init=0, fn { index, sum, _elem => sum + index })
 ///   assert_eq(sum, 10)
-/// }
 /// ```
 pub fn[A, B] FixedArray::foldi(
   self : FixedArray[A],
@@ -508,10 +486,8 @@ test "fold_lefti" {
 ///
 /// # Example
 /// ```mbt
-/// test {
 ///   let sum = [1, 2, 3, 4, 5].rev_foldi(init=0, fn { index, sum, _elem => sum + index })
 ///   assert_eq(sum, 10)
-/// }
 /// ```
 pub fn[A, B] FixedArray::rev_foldi(
   self : FixedArray[A],
@@ -552,11 +528,9 @@ test "rev_foldi" {
 /// Example:
 ///
 /// ```moonbit
-/// test "rev_inplace" {
 ///   let arr : FixedArray[_] = [1, 2, 3, 4, 5]
 ///   arr.rev_inplace()
 ///   inspect(arr, content="[5, 4, 3, 2, 1]")
-/// }
 /// ```
 pub fn[T] FixedArray::rev_inplace(self : FixedArray[T]) -> Unit {
   let mid_len = self.length() / 2
@@ -581,12 +555,10 @@ pub fn[T] FixedArray::rev_inplace(self : FixedArray[T]) -> Unit {
 /// Example:
 ///
 /// ```moonbit
-/// test "FixedArray::rev" {
 ///   let arr : FixedArray[Int] = [1, 2, 3, 4, 5]
 ///   inspect(arr.rev(), content="[5, 4, 3, 2, 1]")
 ///   // Original array remains unchanged
 ///   inspect(arr, content="[1, 2, 3, 4, 5]")
-/// }
 /// ```
 pub fn[T] FixedArray::rev(self : FixedArray[T]) -> FixedArray[T] {
   match self {
@@ -657,11 +629,9 @@ test "rev" {
 /// # Example
 ///
 /// ```mbt
-/// test {
 ///   let arr = [1, 2, 3, 4, 5]
 ///   arr.swap(0, 1)
 ///   assert_eq(arr, [2, 1, 3, 4, 5])
-/// }
 /// ```
 pub fn[T] FixedArray::swap(self : FixedArray[T], i : Int, j : Int) -> Unit {
   let temp = self[i]
@@ -696,11 +666,9 @@ test "swap" {
 /// # Example
 ///
 /// ```mbt
-/// test {
 ///   let arr: FixedArray[Int] = [1, 2, 3, 4, 5]
 ///   assert_true(arr.all(fn(ele) { ele < 6 }))
 ///   assert_false(arr.all(fn(ele) { ele < 5 }))
-/// }
 /// ```
 pub fn[T] FixedArray::all(
   self : FixedArray[T],
@@ -737,11 +705,9 @@ test "all" {
 /// # Example
 ///
 /// ```mbt
-/// test {
 ///   let arr: FixedArray[Int] = [1, 2, 3, 4, 5]
 ///   assert_true(arr.any(fn(ele) { ele < 6 }))
 ///   assert_true(arr.any(fn(ele) { ele < 5 }))
-/// }
 /// ```
 pub fn[T] FixedArray::any(
   self : FixedArray[T],
@@ -794,10 +760,8 @@ test "fill" {
 ///
 /// # Example
 /// ```mbt
-/// test {
 ///   let arr: FixedArray[Int] = [3, 4, 5]
 ///   assert_eq(arr.search(3), Some(0))
-/// }
 /// ```
 pub fn[T : Eq] FixedArray::search(self : FixedArray[T], value : T) -> Int? {
   for i in 0..<self.length() {
@@ -832,10 +796,8 @@ test "search" {
 ///
 /// # Example
 /// ```mbt
-/// test {
 ///   let arr: FixedArray[Int] = [3, 4, 5]
 ///   assert_true(arr.contains(3))
-/// }
 /// ```
 pub fn[T : Eq] FixedArray::contains(self : FixedArray[T], value : T) -> Bool {
   for i in 0..<self.length() {
@@ -870,10 +832,8 @@ test "contains" {
 ///
 /// # Example
 /// ```mbt
-/// test {
 ///   let arr: FixedArray[Int] = [3, 4, 5]
 ///   assert_true(arr.starts_with([3, 4]))
-/// }
 /// ```
 pub fn[T : Eq] FixedArray::starts_with(
   self : FixedArray[T],
@@ -920,10 +880,8 @@ test "starts_with" {
 ///
 /// # Example
 /// ```mbt
-/// test {
 ///   let v: FixedArray[Int] = [3, 4, 5]
 ///   assert_true(v.ends_with([5]))
-/// }
 /// ```
 pub fn[T : Eq] FixedArray::ends_with(
   self : FixedArray[T],
@@ -988,13 +946,11 @@ test "ends_with" {
 /// Example:
 ///
 /// ```moonbit
-/// test "FixedArray::op_equal" {
 ///   let arr1 : FixedArray[Int] = [1, 2, 3]
 ///   let arr2 : FixedArray[Int] = [1, 2, 3]
 ///   let arr3 : FixedArray[Int] = [1, 2, 4]
 ///   inspect(arr1 == arr2, content="true")
 ///   inspect(arr1 == arr3, content="false")
-/// }
 /// ```
 pub impl[T : Eq] Eq for FixedArray[T] with op_equal(
   self : FixedArray[T],
@@ -1058,7 +1014,6 @@ test "op_equal" {
 /// Example:
 ///
 /// ```moonbit
-/// test "FixedArray::compare" {
 ///   let arr1 = [1, 2, 3]
 ///   let arr2 = [1, 2, 4]
 ///   let arr3 = [1, 2]
@@ -1066,7 +1021,6 @@ test "op_equal" {
 ///   inspect(arr2.compare(arr1), content="1") // arr2 > arr1
 ///   inspect(arr1.compare(arr3), content="1") // arr1 > arr3 (longer)
 ///   inspect(arr1.compare(arr1), content="0") // arr1 = arr1
-/// }
 /// ```
 pub impl[T : Compare] Compare for FixedArray[T] with compare(self, other) {
   let len_self = self.length()
@@ -1097,11 +1051,9 @@ pub impl[T : Compare] Compare for FixedArray[T] with compare(self, other) {
 /// Example:
 ///
 /// ```moonbit
-/// test "op_add" {
 ///   let arr1 : FixedArray[Int] = [1, 2, 3]
 ///   let arr2 : FixedArray[Int] = [4, 5, 6]
 ///   inspect(arr1 + arr2, content="[1, 2, 3, 4, 5, 6]")
-/// }
 /// ```
 pub impl[T] Add for FixedArray[T] with op_add(self, other) {
   let slen = self.length()
@@ -1177,11 +1129,9 @@ test "iter" {
 /// Example:
 ///
 /// ```moonbit
-/// test "FixedArray::from_iter" {
 ///   let arr = [1, 2, 3]
 ///   let fixed_arr = FixedArray::from_iter(arr.iter())
 ///   inspect(fixed_arr, content="[1, 2, 3]")
-/// }
 /// ```
 pub fn[T] FixedArray::from_iter(iter : Iter[T]) -> FixedArray[T] {
   FixedArray::from_array(iter.collect())
@@ -1200,12 +1150,10 @@ pub fn[T] FixedArray::from_iter(iter : Iter[T]) -> FixedArray[T] {
 /// Example:
 ///
 /// ```moonbit
-/// test "FixedArray::last" {
 ///   let array : FixedArray[Int] = [1, 2, 3]
 ///   inspect(array.last(), content="Some(3)")
 ///   let empty : FixedArray[Int] = []
 ///   inspect(empty.last(), content="None")
-/// }
 /// ```
 pub fn[A] FixedArray::last(self : FixedArray[A]) -> A? {
   match self {
@@ -1220,10 +1168,8 @@ pub fn[A] FixedArray::last(self : FixedArray[A]) -> A? {
 /// Example:
 /// 
 /// ```moonbit
-/// test "FixedArray::join" {
 ///   let fixed_array : FixedArray[String] = ["1", "2", "3"]
 ///   inspect(fixed_array.join(","), content="1,2,3")
-/// }
 /// ```
 pub fn FixedArray::join(
   self : FixedArray[String],
