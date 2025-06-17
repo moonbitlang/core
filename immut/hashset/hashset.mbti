@@ -17,14 +17,14 @@ fn[A : Eq + Hash] of(FixedArray[A]) -> T[A]
 type T[A]
 fn[A : Eq + Hash] T::add(Self[A], A) -> Self[A]
 fn[A : Eq + Hash] T::contains(Self[A], A) -> Bool
-fn[K : Eq + Hash] T::difference(Self[K], Self[K]) -> Self[K]
+fn[K : Eq] T::difference(Self[K], Self[K]) -> Self[K]
 fn[A] T::each(Self[A], (A) -> Unit raise?) -> Unit raise?
-fn[K : Eq + Hash] T::intersection(Self[K], Self[K]) -> Self[K]
+fn[K : Eq] T::intersection(Self[K], Self[K]) -> Self[K]
 fn[A] T::is_empty(Self[A]) -> Bool
 fn[A] T::iter(Self[A]) -> Iter[A]
 fn[A : Eq + Hash] T::remove(Self[A], A) -> Self[A]
 fn[A] T::size(Self[A]) -> Int
-fn[K : Eq + Hash] T::union(Self[K], Self[K]) -> Self[K]
+fn[K : Eq] T::union(Self[K], Self[K]) -> Self[K]
 impl[A : Eq] Eq for T[A]
 impl[A : Hash] Hash for T[A]
 impl[A : Show] Show for T[A]
