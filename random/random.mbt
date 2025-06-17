@@ -208,11 +208,9 @@ pub fn float(self : Rand) -> Float {
 /// Example:
 ///
 /// ```moonbit
-/// test "Rand::bigint" {
 ///   let rand = Rand::new()
 ///   let n = rand.bigint(8) // Generate random 8-bit number
 ///   inspect(n.bit_length() <= 8, content="true")
-/// }
 /// ```
 pub fn bigint(self : Rand, bits : Int) -> @bigint.BigInt {
   let mod = bits % 8
@@ -303,7 +301,6 @@ test "umul128: handles zero correctly" {
 ///
 /// # Example
 /// ```mbt
-/// test "shuffle example" {
 ///   let r = Rand::new()
 ///   let a = [1, 2, 3, 4, 5]
 ///   r.shuffle(
@@ -314,7 +311,6 @@ test "umul128: handles zero correctly" {
 ///       a[j] = t
 ///     },
 ///   )
-/// }
 /// ```
 pub fn shuffle(self : Rand, limit : Int, swap : (Int, Int) -> Unit) -> Unit {
   if limit < 0 {

@@ -26,10 +26,8 @@
 /// Example:
 ///
 /// ```moonbit
-/// test "trunc" {
 ///   inspect((3.7 : Float).trunc(), content="3")
 ///   inspect((-3.7 : Float).trunc(), content="-3")
-/// }
 /// ```
 pub fn Float::trunc(self : Float) -> Float = "Math" "trunc"
 
@@ -46,10 +44,8 @@ pub fn Float::trunc(self : Float) -> Float = "Math" "trunc"
 /// Example:
 ///
 /// ```moonbit
-/// test "ceil" {
 ///   inspect((1.5 : Float).ceil(), content="2")
 ///   inspect((-1.5 : Float).ceil(), content="-1")
-/// }
 /// ```
 pub fn Float::ceil(self : Float) -> Float = "Math" "ceil"
 
@@ -67,10 +63,8 @@ pub fn Float::ceil(self : Float) -> Float = "Math" "ceil"
 /// Example:
 ///
 /// ```moonbit
-/// test "floor" {
 ///   inspect((3.7 : Float).floor(), content="3")
 ///   inspect((-3.7 : Float).floor(), content="-4")
-/// }
 /// ```
 pub fn Float::floor(self : Float) -> Float = "Math" "floor"
 
@@ -87,11 +81,9 @@ pub fn Float::floor(self : Float) -> Float = "Math" "floor"
 /// Example:
 ///
 /// ```moonbit
-/// test "round" {
 ///   inspect((1.4 : Float).round(), content="1")
 ///   inspect((1.5 : Float).round(), content="2")
 ///   inspect((1.6 : Float).round(), content="2")
 ///   inspect((-1.5 : Float).round(), content="-1")
-/// }
 /// ```
 pub fn Float::round(self : Float) -> Float = "Math" "round"

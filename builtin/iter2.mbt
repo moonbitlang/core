@@ -105,12 +105,10 @@ pub fn[A, B] Iter2::to_array(self : Iter2[A, B]) -> Array[(A, B)] {
 /// # Examples
 ///
 /// ```moonbit
-/// test "Iter2::concat" {
 ///   inspect(
 ///     "abc".iter2().concat("def".iter2()).to_array(),
 ///     content="[(0, 'a'), (1, 'b'), (2, 'c'), (0, 'd'), (1, 'e'), (2, 'f')]",
 ///   )
-/// }
 /// ```
 pub fn[A, B] Iter2::concat(
   self : Iter2[A, B],

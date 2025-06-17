@@ -42,16 +42,12 @@ fn[T] Array::make_uninit(len : Int) -> Array[T] {
 /// Example:
 ///
 /// ```moonbit
-/// test "Array::new" {
 ///   let arr : Array[Int] = Array::new(capacity=10)
 ///   inspect(arr.length(), content="0")
 ///   inspect(arr.capacity(), content="10")
-/// }
 ///
-/// test "Array::new/default" {
 ///   let arr : Array[Int] = Array::new()
 ///   inspect(arr.length(), content="0")
-/// }
 /// ```
 pub fn[T] Array::new(capacity~ : Int = 0) -> Array[T] {
   if capacity == 0 {
@@ -73,12 +69,10 @@ pub fn[T] Array::new(capacity~ : Int = 0) -> Array[T] {
 /// Example:
 ///
 /// ```moonbit
-/// test "Array::length" {
 ///   let arr = [1, 2, 3]
 ///   inspect(arr.length(), content="3")
 ///   let empty : Array[Int] = []
 ///   inspect(empty.length(), content="0")
-/// }
 /// ```
 #intrinsic("%array.length")
 pub fn[T] Array::length(self : Array[T]) -> Int {
@@ -208,11 +202,9 @@ fn[T] Array::realloc(self : Array[T]) -> Unit {
 /// # Example
 ///
 /// ```mbt
-/// test "reserve_capacity_example" {
 ///   let v = [1]
 ///   v.reserve_capacity(10)
 ///   assert_eq(v.capacity(), 10)
-/// }
 /// ```
 pub fn[T] Array::reserve_capacity(self : Array[T], capacity : Int) -> Unit {
   if self.capacity() >= capacity {
@@ -227,14 +219,12 @@ pub fn[T] Array::reserve_capacity(self : Array[T], capacity : Int) -> Unit {
 /// # Example
 ///
 /// ```mbt
-/// test "shrink_to_fit_example" {
 ///   let v = Array::new(capacity=10)
 ///   v.push(1)
 ///   v.push(2)
 ///   v.push(3)
 ///   v.shrink_to_fit()
 ///   assert_eq(v.capacity(), 3)
-/// }
 /// ```
 pub fn[T] Array::shrink_to_fit(self : Array[T]) -> Unit {
   if self.capacity() <= self.length() {
@@ -250,10 +240,8 @@ pub fn[T] Array::shrink_to_fit(self : Array[T]) -> Unit {
 ///
 /// # Example
 /// ```mbt
-/// test "push_example" {
 ///   let v = []
 ///   v.push(3)
-/// }
 /// ```
 pub fn[T] Array::push(self : Array[T], value : T) -> Unit {
   if self.length() == self.buffer()._.length() {
@@ -269,11 +257,9 @@ pub fn[T] Array::push(self : Array[T], value : T) -> Unit {
 ///
 /// # Example
 /// ```mbt
-/// test "pop_example" {
 ///   let v = [1, 2, 3]
 ///   assert_eq(v.pop(), Some(3))
 ///   assert_eq(v, [1, 2])
-/// }
 /// ```
 pub fn[T] Array::pop(self : Array[T]) -> T? {
   let len = self.length()
@@ -307,16 +293,9 @@ pub fn[T] Array::pop_exn(self : Array[T]) -> T {
 /// Example:
 ///
 /// ```moonbit
-/// test "unsafe_pop" {
 ///   let arr = [1, 2, 3]
 ///   inspect(arr.unsafe_pop(), content="3")
 ///   inspect(arr, content="[1, 2]")
-/// }
-///
-/// test "panic unsafe_pop/empty" {
-///   let arr : Array[Int] = []
-///   ignore(arr.unsafe_pop()) // Panics when array is empty
-/// }
 /// ```
 ///
 #internal(unsafe, "Panic if the array is empty.")
@@ -338,11 +317,9 @@ pub fn[T] Array::unsafe_pop(self : Array[T]) -> T {
 ///
 /// # Example
 /// ```mbt
-/// test "remove_example" {
 ///   let v = [3, 4, 5]
 ///   assert_eq(v.remove(1), 4)
 ///   assert_eq(v, [3, 5])
-/// }
 /// ```
 pub fn[T] Array::remove(self : Array[T], index : Int) -> T {
   guard index >= 0 && index < self.length() else {
@@ -371,12 +348,10 @@ pub fn[T] Array::remove(self : Array[T], index : Int) -> T {
 ///
 /// # Example
 /// ```mbt
-/// test "drain_example" {
 ///   let v = [3, 4, 5]
 ///   let vv = v.drain(1, 2) // vv = [4], v = [3, 5]
 ///   assert_eq(vv, [4])
 ///   assert_eq(v, [3, 5])
-/// }
 /// ```
 pub fn[T] Array::drain(self : Array[T], begin : Int, end : Int) -> Array[T] {
   guard begin >= 0 && end <= self.length() && begin <= end
@@ -400,9 +375,7 @@ pub fn[T] Array::drain(self : Array[T], begin : Int, end : Int) -> Array[T] {
 ///
 /// # Example
 /// ```mbt
-/// test "insert_example" {
 ///   [3, 4, 5].insert(1, 6)
-/// }
 /// ```
 pub fn[T] Array::insert(self : Array[T], index : Int, value : T) -> Unit {
   guard index >= 0 && index <= self.length() else {

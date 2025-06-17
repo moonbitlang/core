@@ -26,12 +26,10 @@
 /// Example:
 ///
 /// ```moonbit
-/// test "copy" {
 ///   let original = [1, 2, 3]
 ///   let copied = original.copy()
 ///   inspect(copied, content="[1, 2, 3]")
 ///   inspect(physical_equal(original, copied), content="false")
-/// }
 /// ```
 pub fn[T] FixedArray::copy(self : FixedArray[T]) -> FixedArray[T] {
   JSArray::ofAnyFixedArray(self).copy().toAnyFixedArray()

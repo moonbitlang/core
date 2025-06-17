@@ -882,15 +882,11 @@ pub fn[A] Iter::last(self : Iter[A]) -> A? {
 /// # Examples
 ///
 /// ```moonbit
-/// test "Iter::head" {
 ///   let iter = Iter::singleton(42)
 ///   assert_eq(iter.head(), Some(42))
-/// }
 ///
-/// test "Iter::head/empty" {
 ///   let iter = Iter::empty()
 ///   assert_eq(iter.head(), None)
-/// }
 /// ```
 pub fn[A] Iter::head(self : Iter[A]) -> A? {
   for i in self {
@@ -911,11 +907,9 @@ pub fn[A] Iter::head(self : Iter[A]) -> A? {
 /// # Examples
 ///
 /// ```moonbit
-/// test "Iter::intersperse" {
 ///   let arr = []
 ///   [1, 2, 3].iter().intersperse(0).each(fn(i) {arr.push(i)})
 ///   assert_eq(arr, [1, 0, 2, 0, 3])
-/// }
 /// ```
 pub fn[A] Iter::intersperse(self : Iter[A], sep : A) -> Iter[A] {
   fn(yield_) {
@@ -966,16 +960,12 @@ pub fn[A] Iter::op_as_view(
 /// Example:
 ///
 /// ```moonbit
-/// test "Iter::contains" {
 ///   let iter = [1, 2, 3, 4, 5].iter()
 ///   inspect(iter.contains(3), content="true")
 ///   inspect(iter.contains(6), content="false")
-/// }
 ///
-/// test "Iter::contains/empty" {
 ///   let iter = Iter::empty()
 ///   inspect(iter.contains(1), content="false")
-/// }
 /// ```
 pub fn[A : Eq] Iter::contains(self : Iter[A], value : A) -> Bool {
   for v in self {
@@ -1034,13 +1024,11 @@ pub fn[T : Compare] Iter::minimum(self : Iter[T]) -> T? {
 /// # Example
 ///
 /// ```moonbit
-/// test "group_by" {
 ///   let iter = [1, 1, 2, 3, 2, 2, 1].iter()
 ///   let result = iter.group_by(fn(x) { x })
 ///   assert_eq(result.get(1), Some([1, 1, 1]))
 ///   assert_eq(result.get(2), Some([2, 2, 2]))
 ///   assert_eq(result.get(3), Some([3]))
-/// }
 #deprecated
 pub fn[T, K : Eq + Hash] Iter::group_by(
   self : Iter[T],

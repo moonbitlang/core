@@ -32,13 +32,11 @@ priv struct Entry[K, V] {
 /// # Example
 ///
 /// ```mbt
-/// test {
 ///   let map = @hashmap.of([(3, "three"), (8, "eight"), (1, "one")])
 ///   assert_eq(map.get(2), None)
 ///   assert_eq(map.get(3), Some("three"))
 ///   map.set(3, "updated")
 ///   assert_eq(map.get(3), Some("updated"))
-/// }
 /// ```
 struct T[K, V] {
   mut entries : FixedArray[Entry[K, V]?]

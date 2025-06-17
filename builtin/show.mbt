@@ -153,11 +153,9 @@ pub impl Show for String with output(self, logger) {
 /// # Examples
 /// 
 /// ```mbt
-/// test {
 ///   let str = "Hello \n"
 ///   inspect(str.to_string(), content="Hello \n")
 ///   inspect(str.escape(), content="\"Hello \\n\"")
-/// }
 /// ```
 pub impl Show for String with to_string(self) {
   self

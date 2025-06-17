@@ -25,7 +25,6 @@
 /// Example:
 ///
 /// ```moonbit
-/// test "hypot" {
 ///   inspect((3.0 : Float).hypot(4.0), content="5")
 ///   inspect((5.0 : Float).hypot(12.0), content="13")
 ///   inspect((8.0 : Float).hypot(15.0), content="17")
@@ -36,7 +35,6 @@
 ///   inspect((1.0 : Float).hypot(@float.infinity), content="Infinity")
 ///   inspect(@float.neg_infinity.hypot(1.0), content="Infinity")
 ///   inspect((1.0 : Float).hypot(@float.neg_infinity), content="Infinity")
-/// }
 /// ```
 pub fn Float::hypot(self : Float, y : Float) -> Float {
   self.to_double().hypot(y.to_double()).to_float()
