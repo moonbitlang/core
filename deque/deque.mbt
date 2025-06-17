@@ -1323,8 +1323,9 @@ pub fn[A] to_array(self : T[A]) -> Array[A] {
 ///   inspect(s2, content="a,b,c")
 /// }
 /// ```
-pub fn T::join(self : T[String], separator : String) -> String {
-  self.iter().join(separator)
+pub fn T::join(self : T[String], separator : @string.View) -> String {
+  let str = separator.to_string()
+  self.iter().join(str)
 }
 
 ///|
