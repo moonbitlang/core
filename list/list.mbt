@@ -457,7 +457,7 @@ pub fn[A, B] T::fold(self : T[A], init~ : B, f : (B, A) -> B) -> B {
 ///   assert_eq(r, 15)
 /// }
 /// ```
-#deprecated("use `_.rev().fold(...)` instead")
+#deprecated("use `_.to_array().rev_fold(...)` instead")
 pub fn[A, B] T::rev_fold(self : T[A], init~ : B, f : (B, A) -> B) -> B {
   let xs = self.to_array()
   let mut acc = init
