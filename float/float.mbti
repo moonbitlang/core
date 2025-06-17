@@ -3,42 +3,57 @@ package "moonbitlang/core/float"
 // Values
 fn abs(Float) -> Float
 
+#deprecated
 fn acos(Float) -> Float
 
+#deprecated
 fn acosh(Float) -> Float
 
+#deprecated
 fn asin(Float) -> Float
 
+#deprecated
 fn asinh(Float) -> Float
 
+#deprecated
 fn atan(Float) -> Float
 
+#deprecated
 fn atan2(Float, Float) -> Float
 
+#deprecated
 fn atanh(Float) -> Float
 
+#deprecated
 fn cbrt(Float) -> Float
 
 fn ceil(Float) -> Float
 
+#deprecated
 fn cos(Float) -> Float
 
+#deprecated
 fn cosh(Float) -> Float
 
 fn default() -> Float
 
+#deprecated
 fn exp(Float) -> Float
 
+#deprecated
 fn expm1(Float) -> Float
 
 fn floor(Float) -> Float
 
+#deprecated
 fn hypot(Float, Float) -> Float
 
 let infinity : Float
 
+#deprecated
 fn ln(Float) -> Float
 
+#deprecated
 fn ln_1p(Float) -> Float
 
 let max_value : Float
@@ -55,45 +70,68 @@ fn pow(Float, Float) -> Float
 
 fn round(Float) -> Float
 
+#deprecated
 fn sin(Float) -> Float
 
+#deprecated
 fn sinh(Float) -> Float
 
+#deprecated
 fn tan(Float) -> Float
 
+#deprecated
 fn tanh(Float) -> Float
 
 fn trunc(Float) -> Float
 
 // Types and methods
 fn Float::abs(Float) -> Float
+#deprecated
 fn Float::acos(Float) -> Float
+#deprecated
 fn Float::acosh(Float) -> Float
+#deprecated
 fn Float::asin(Float) -> Float
+#deprecated
 fn Float::asinh(Float) -> Float
+#deprecated
 fn Float::atan(Float) -> Float
+#deprecated
 fn Float::atan2(Float, Float) -> Float
+#deprecated
 fn Float::atanh(Float) -> Float
+#deprecated
 fn Float::cbrt(Float) -> Float
 fn Float::ceil(Float) -> Float
+#deprecated
 fn Float::cos(Float) -> Float
+#deprecated
 fn Float::cosh(Float) -> Float
+#deprecated
 fn Float::exp(Float) -> Float
+#deprecated
 fn Float::expm1(Float) -> Float
 fn Float::floor(Float) -> Float
+#deprecated
 fn Float::hypot(Float, Float) -> Float
 fn Float::is_close(Float, Float, relative_tolerance~ : Float = .., absolute_tolerance~ : Float = ..) -> Bool
 fn Float::is_inf(Float) -> Bool
 fn Float::is_nan(Float) -> Bool
 fn Float::is_neg_inf(Float) -> Bool
 fn Float::is_pos_inf(Float) -> Bool
+#deprecated
 fn Float::ln(Float) -> Float
+#deprecated
 fn Float::ln_1p(Float) -> Float
 fn Float::pow(Float, Float) -> Float
 fn Float::round(Float) -> Float
+#deprecated
 fn Float::sin(Float) -> Float
+#deprecated
 fn Float::sinh(Float) -> Float
+#deprecated
 fn Float::tan(Float) -> Float
+#deprecated
 fn Float::tanh(Float) -> Float
 fn Float::to_be_bytes(Float) -> Bytes
 fn Float::to_int(Float) -> Int

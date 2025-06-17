@@ -29,9 +29,6 @@
 //
 
 ///|
-pub fnalias Double::(ln, log2, log10, ln_1p)
-
-///|
 let logf_off = 0x3f330000U
 
 ///|

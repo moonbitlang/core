@@ -13,9 +13,6 @@
 // limitations under the License.
 
 ///|
-pub fnalias Double::(sinh, cosh, tanh, asinh, acosh, atanh)
-
-///|
 fn k_expo2f(x : Float) -> Float {
   let k = 235
   let k_ln2 = (0x4322e3bc).reinterpret_as_float()

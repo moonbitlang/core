@@ -13,29 +13,19 @@
 // limitations under the License.
 
 ///|
-/// Calculates the the square root of the sum of the squares of its arguments.
-///
-/// Parameters:
-///
-/// * `self` : The number to be used as the first argument.
-/// * `y` : The number to be used as the second argument.
-///
-/// Returns the hypotenuse of a right-angled triangle whose legs are `self` and `y`.
-///
-/// Example:
-///
-/// ```moonbit
-///   inspect((3.0 : Float).hypot(4.0), content="5")
-///   inspect((5.0 : Float).hypot(12.0), content="13")
-///   inspect((8.0 : Float).hypot(15.0), content="17")
-///   inspect((7.0 : Float).hypot(24.0), content="25")
-///   inspect(@float.not_a_number.hypot(1.0), content="NaN")
-///   inspect((1.0 : Float).hypot(@float.not_a_number), content="NaN")
-///   inspect(@float.infinity.hypot(1.0), content="Infinity")
-///   inspect((1.0 : Float).hypot(@float.infinity), content="Infinity")
-///   inspect(@float.neg_infinity.hypot(1.0), content="Infinity")
-///   inspect((1.0 : Float).hypot(@float.neg_infinity), content="Infinity")
-/// ```
+#deprecated("use `@math.hypotf` instead")
+#coverage.skip
 pub fn Float::hypot(self : Float, y : Float) -> Float {
-  self.to_double().hypot(y.to_double()).to_float()
+  let epsilon : Float = 1.1920928955078125e-7
+  let x = self.abs()
+  let y = y.abs()
+  if self.is_inf() || y.is_inf() {
+    return infinity
+  }
+  let (x, y) = if y > x { (y, x) } else { (x, y) }
+  if x * epsilon >= y {
+    return x
+  }
+  let rat = y / x
+  x * (rat * rat + 1.0).sqrt()
 }
