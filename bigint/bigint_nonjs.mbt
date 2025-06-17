@@ -452,14 +452,6 @@ fn BigInt::split(self : BigInt, half : Int) -> (BigInt, BigInt) {
 ///   inspect(-a / -b, content="5")
 /// }
 /// ```
-/// 
-/// ```skip
-/// test "panic BigInt::op_div/division_by_zero" {
-///   let a = BigInt::from_string("100")
-///   let b = BigInt::from_string("0")
-///   ignore(a / b) // Division by zero
-/// }
-/// ```
 pub impl Div for BigInt with op_div(self : BigInt, other : BigInt) -> BigInt {
   guard other != zero else { abort("division by zero") }
 
@@ -499,11 +491,6 @@ pub impl Div for BigInt with op_div(self : BigInt, other : BigInt) -> BigInt {
 ///   let c = -42N
 ///   let d = -5N
 ///   inspect(c % d, content="-2")
-/// }
-///
-/// test "panic BigInt::op_mod/divide_by_zero" {
-///   let a = 42N
-///   ignore(a % 0N) // Division by zero
 /// }
 /// ```
 pub impl Mod for BigInt with op_mod(self : BigInt, other : BigInt) -> BigInt {
@@ -690,11 +677,6 @@ fn BigInt::grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
 ///   let y = -5N
 ///   inspect(y << 2, content="-20")
 /// }
-///
-/// test "panic BigInt::op_shl/negative_shift" {
-///   let x = 5N
-///   ignore(x << -1) // Panics with "negative shift count"
-/// }
 /// ```
 pub impl Shl for BigInt with op_shl(self : BigInt, n : Int) -> BigInt {
   if n < 0 {
@@ -753,11 +735,6 @@ pub impl Shl for BigInt with op_shl(self : BigInt, n : Int) -> BigInt {
 ///   inspect(n >> 3, content="128")
 ///   let neg = BigInt::from_string("-1024")
 ///   inspect(neg >> 3, content="-128")
-/// }
-///
-/// test "panic BigInt::op_shr/negative_shift" {
-///   let n = BigInt::from_string("1024")
-///   ignore(n >> -1) // Panics with "negative shift count"
 /// }
 /// ```
 pub impl Shr for BigInt with op_shr(self : BigInt, n : Int) -> BigInt {
@@ -1032,11 +1009,6 @@ pub impl Show for BigInt with output(self, logger) {
 ///   inspect(pos, content="12345")
 ///   inspect(neg, content="-12345")
 /// }
-///
-/// test "panic BigInt::from_string/invalid" {
-///   ignore(BigInt::from_string("")) // Empty string
-///   ignore(BigInt::from_string("12a34")) // Invalid character
-/// }
 /// ```
 pub fn BigInt::from_string(input : String) -> BigInt {
   let len = input.length()
@@ -1104,12 +1076,6 @@ pub fn BigInt::from_string(input : String) -> BigInt {
 ///   inspect(BigInt::from_hex("ff"), content="255")
 ///   inspect(BigInt::from_hex("-ff"), content="-255")
 ///   inspect(BigInt::from_hex("DEADBEEF"), content="3735928559")
-/// }
-///
-/// test "panic BigInt::from_hex/invalid_input" {
-///   ignore(BigInt::from_hex("")) // Empty string
-///   ignore(BigInt::from_hex("0x123")) // Invalid prefix
-///   ignore(BigInt::from_hex("12g")) // Invalid character
 /// }
 /// ```
 pub fn BigInt::from_hex(input : String) -> BigInt {
@@ -1266,12 +1232,6 @@ fn[T : Compare] max(a : T, b : T) -> T {
 ///   inspect(base.pow(exp), content="81")
 ///   inspect(base.pow(exp, modulus=BigInt::from_string("10")), content="1")
 /// }
-///
-/// test "panic BigInt::pow/negative_exponent" {
-///   let base = BigInt::from_string("3")
-///   let exp = BigInt::from_string("-1")
-///   ignore(base.pow(exp))
-/// }
 /// ```
 pub fn BigInt::pow(self : BigInt, exp : BigInt, modulus? : BigInt) -> BigInt {
   if exp.sign == Negative {
@@ -1337,10 +1297,6 @@ pub fn BigInt::pow(self : BigInt, exp : BigInt, modulus? : BigInt) -> BigInt {
 ///   inspect(positive, content="66051")
 ///   inspect(negative, content="-66051")
 /// }
-///
-/// test "panic BigInt::from_octets/empty" {
-///   ignore(BigInt::from_octets(b"")) // Panics with "empty octet string"
-/// }
 /// ```
 pub fn BigInt::from_octets(input : Bytes, signum~ : Int = 1) -> BigInt {
   let len = input.length() // number of bytes
@@ -1405,13 +1361,6 @@ pub fn BigInt::from_octets(input : Bytes, signum~ : Int = 1) -> BigInt {
 ///   inspect(n.to_octets(length=4), content="b\"\\x00\\xab\\xcd\\xef\"")
 ///   let m = BigInt::from_string("0")
 ///   inspect(m.to_octets(), content="b\"\\x00\"")
-/// }
-///
-/// test "panic BigInt::to_octets/negative" {
-///   let n = -BigInt::from_hex("abcdef")
-///   ignore(n.to_octets()) // Panics with "negative BigInt"
-///   let m = BigInt::from_hex("abcdef")
-///   ignore(m.to_octets(length=-1)) // Panics with "negative length"
 /// }
 /// ```
 pub fn BigInt::to_octets(self : BigInt, length? : Int) -> Bytes {

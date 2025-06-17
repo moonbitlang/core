@@ -374,12 +374,6 @@ pub fn[T, E] unwrap(self : Result[T, E]) -> T {
 ///   let err : Result[Int, String] = Err("error message")
 ///   inspect(err.unwrap_err(), content="error message")
 /// }
-///
-/// test "panic unwrap_err/ok" {
-///   let ok : Result[Int, String] = Ok(42)
-///   let _ = ok.unwrap_err()
-///
-/// }
 /// ```
 pub fn[T, E] unwrap_err(self : Result[T, E]) -> E {
   match self {

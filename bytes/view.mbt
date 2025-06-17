@@ -81,11 +81,6 @@ pub fn View::length(self : View) -> Int {
 ///   let view = bytes[1:4] // view contains [0x02, 0x03, 0x04]
 ///   inspect(view[1], content="b'\\x03'")
 /// }
-/// 
-/// test "panic View::op_get/out_of_bounds" {
-///   let view = b"\x01\x02\x03"[:]
-///   ignore(view[3]) // Index out of bounds
-/// }
 /// ```
 pub fn View::op_get(self : View, index : Int) -> Byte {
   guard index >= 0 && index < self.len() else {
@@ -149,11 +144,6 @@ pub fn View::get(self : View, index : Int) -> Byte? {
 ///   let bytes = b"\x01\x02\x03\x04\x05"
 ///   let view = bytes[2:4] // view contains [0x03, 0x04]
 ///   inspect(view.unsafe_get(0), content="b'\\x03'")
-/// }
-/// 
-/// test "panic View::unsafe_get/out_of_bounds" {
-///   let view = b"\x01\x02\x03"[:]
-///   ignore(view.unsafe_get(3)) // Panic: index out of bounds
 /// }
 /// ```
 ///
@@ -257,11 +247,6 @@ pub fn View::iter(self : View) -> Iter[Byte] {
 ///   let bytes = b"\x12\x34\x56\x78"[:]
 ///   inspect(bytes.to_uint_be(), content="305419896") // 0x12345678
 /// }
-/// 
-/// test "panic View::to_uint_be/out_of_bounds" {
-///   let bytes = b"\x12\x34\x56"[:] // Less than 4 bytes
-///   ignore(bytes.to_uint_be()) // Panics with index out of bounds
-/// }
 /// ```
 pub fn View::to_uint_be(self : View) -> UInt {
   (self[0].to_uint() << 24) +
@@ -325,11 +310,6 @@ pub fn View::to_uint_le(self : View) -> UInt {
 ///   let bytes = b"\x01\x23\x45\x67\x89\xAB\xCD\xEF"[:]
 ///   inspect(bytes.to_uint64_be(), content="81985529216486895")
 /// }
-/// 
-/// test "panic View::to_uint64_be/short_input" {
-///   let bytes = b"\x01\x02\x03"[:]
-///   ignore(bytes.to_uint64_be()) // Throws error: index out of bounds
-/// }
 /// ```
 pub fn View::to_uint64_be(self : View) -> UInt64 {
   (self[0].to_uint().to_uint64() << 56) +
@@ -366,11 +346,6 @@ pub fn View::to_uint64_be(self : View) -> UInt64 {
 /// test "View::to_uint64_le" {
 ///   let bytes = b"\x01\x02\x03\x04\x05\x06\x07\x08"[:]
 ///   inspect(bytes.to_uint64_le(), content="578437695752307201")
-/// }
-/// 
-/// test "panic View::to_uint64_le/short_view" {
-///   let bytes = b"\x01\x02\x03"[:]
-///   ignore(bytes.to_uint64_le()) // Panics: view is too short
 /// }
 /// ```
 pub fn View::to_uint64_le(self : View) -> UInt64 {

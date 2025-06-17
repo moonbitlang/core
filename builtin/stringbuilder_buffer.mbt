@@ -90,11 +90,9 @@ pub impl Logger for StringBuilder with write_char(self, ch) {
 /// Example:
 ///
 /// ```moonbit
-/// test "write_substring" {
 ///   let sb = StringBuilder::new()
 ///   sb.write_substring("Hello, world!", 0, 5)
 ///   assert_eq(sb.to_string(), "Hello")
-/// }
 /// ```
 pub impl Logger for StringBuilder with write_substring(
   self : StringBuilder,

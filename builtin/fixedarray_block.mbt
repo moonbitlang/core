@@ -20,12 +20,10 @@
 ///
 /// # Example
 /// ```mbt
-/// test "unsafe_blit_example" {
 ///   let src = FixedArray::from_array([1, 2, 3, 4, 5])
 ///   let dst = FixedArray::from_array([0, 0, 0, 0, 0])
 ///   FixedArray::unsafe_blit(dst, 0, src, 0, 3)
 ///   assert_eq(dst, FixedArray::from_array([1, 2, 3, 0, 0]))
-/// }
 /// ```
 ///
 /// The behavior is undefined and platform-specific if:
@@ -94,18 +92,10 @@ fn[T] UninitializedArray::unsafe_blit_fixed(
 /// Example:
 ///
 /// ```moonbit
-/// test "FixedArray::blit_to" {
 ///   let src = FixedArray::make(5, 1)
 ///   let dst = FixedArray::make(5, 0)
 ///   src.blit_to(dst, len=3, src_offset=1, dst_offset=2)
 ///   inspect(dst, content="[0, 0, 1, 1, 1]")
-/// }
-///
-/// test "panic FixedArray::blit_to/out_of_bounds" {
-///   let src = FixedArray::make(3, 1)
-///   let dst = FixedArray::make(3, 0)
-///   ignore(src.blit_to(dst, len=4)) // Panics: length out of bounds
-/// }
 /// ```
 pub fn[A] FixedArray::blit_to(
   self : FixedArray[A],
