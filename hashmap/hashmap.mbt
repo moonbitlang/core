@@ -53,11 +53,9 @@ test "power_2_above" {
 /// Example:
 ///
 /// ```moonbit
-/// test "new" {
 ///   let map : @hashmap.T[String, Int] = @hashmap.new(capacity=16)
 ///   inspect(map.capacity(), content="16")
 ///   inspect(map.is_empty(), content="true")
-/// }
 /// ```
 pub fn[K, V] new(capacity~ : Int = 8) -> T[K, V] {
   let capacity = power_2_above(8, capacity)
@@ -84,12 +82,10 @@ pub fn[K, V] new(capacity~ : Int = 8) -> T[K, V] {
 /// Example:
 ///
 /// ```moonbit
-/// test "from_array" {
 ///   let arr = [(1, "one"), (2, "two"), (1, "ONE")]
 ///   let map = @hashmap.from_array(arr)
 ///   inspect(map.get(1), content="Some(\"ONE\")")
 ///   inspect(map.get(2), content="Some(\"two\")")
-/// }
 /// ```
 pub fn[K : Hash + Eq, V] from_array(arr : Array[(K, V)]) -> T[K, V] {
   let m = new(capacity=arr.length())
@@ -111,13 +107,11 @@ pub fn[K : Hash + Eq, V] from_array(arr : Array[(K, V)]) -> T[K, V] {
 /// Example:
 ///
 /// ```moonbit
-/// test "set" {
 ///   let map : @hashmap.T[String, Int] = @hashmap.new()
 ///   map.set("key", 42)
 ///   inspect(map.get("key"), content="Some(42)")
 ///   map.set("key", 24) // update existing key
 ///   inspect(map.get("key"), content="Some(24)")
-/// }
 /// ```
 pub fn[K : Hash + Eq, V] set(self : T[K, V], key : K, value : V) -> Unit {
   self.set_with_hash(key, value, key.hash())
@@ -174,11 +168,9 @@ fn[K : Eq, V] set_with_hash(
 /// Example:
 ///
 /// ```moonbit
-/// test "op_set" {
 ///   let map : @hashmap.T[String, Int] = @hashmap.new()
 ///   map["key"] = 42
 ///   inspect(map.get("key"), content="Some(42)")
-/// }
 /// ```
 pub fn[K : Hash + Eq, V] op_set(self : T[K, V], key : K, value : V) -> Unit {
   self.set(key, value)
@@ -197,11 +189,9 @@ pub fn[K : Hash + Eq, V] op_set(self : T[K, V], key : K, value : V) -> Unit {
 /// Example:
 ///
 /// ```moonbit
-/// test "get" {
 ///   let map = @hashmap.of([("key", 42)])
 ///   inspect(map.get("key"), content="Some(42)")
 ///   inspect(map.get("nonexistent"), content="None")
-/// }
 /// ```
 pub fn[K : Hash + Eq, V] get(self : T[K, V], key : K) -> V? {
   // self.get_with_hash(key, key.hash())
@@ -248,11 +238,9 @@ fn[K : Hash + Eq, V] get_with_hash(self : T[K, V], key : K, hash : Int) -> V? {
 /// Example:
 ///
 /// ```moonbit
-/// test "op_get" {
 ///   let map = @hashmap.of([("key", 42)])
 ///   inspect(map.get("key"), content="Some(42)")
 ///   inspect(map.get("nonexistent"), content="None")
-/// }
 /// ```
 #deprecated("Use `get` instead. `op_get` will return `V` instead of `Option[V]` in the future.")
 pub fn[K : Hash + Eq, V] op_get(self : T[K, V], key : K) -> V? {
@@ -277,12 +265,10 @@ pub fn[K : Hash + Eq, V] op_get(self : T[K, V], key : K) -> V? {
 /// Example:
 ///
 /// ```moonbit
-/// test "get_or_init" {
 ///   let map : @hashmap.T[String, Int] = @hashmap.new()
 ///   let value = map.get_or_init("key", fn() { 42 })
 ///   inspect(value, content="42")
 ///   inspect(map.get("key"), content="Some(42)")
-/// }
 /// ```
 pub fn[K : Hash + Eq, V] get_or_init(
   self : T[K, V],
@@ -316,11 +302,9 @@ pub fn[K : Hash + Eq, V] get_or_init(
 /// Example:
 ///
 /// ```moonbit
-/// test "get_or_default" {
 ///   let map = @hashmap.of([("a", 1), ("b", 2)])
 ///   inspect(map.get_or_default("a", 0), content="1")
 ///   inspect(map.get_or_default("c", 0), content="0")
-/// }
 /// ```
 pub fn[K : Hash + Eq, V] get_or_default(
   self : T[K, V],
@@ -353,11 +337,9 @@ pub fn[K : Hash + Eq, V] get_or_default(
 /// Example:
 ///
 /// ```moonbit
-/// test "contains" {
 ///   let map = @hashmap.of([("a", 1), ("b", 2)])
 ///   inspect(map.contains("a"), content="true")
 ///   inspect(map.contains("c"), content="false")
-/// }
 /// ```
 pub fn[K : Hash + Eq, V] contains(self : T[K, V], key : K) -> Bool {
   let hash = key.hash()
@@ -406,12 +388,10 @@ pub fn[K : Hash + Eq, V : Eq] contains_kv(
 /// Example:
 ///
 /// ```moonbit
-/// test "remove" {
 ///   let map = @hashmap.of([("a", 1), ("b", 2)])
 ///   map.remove("a")
 ///   inspect(map.get("a"), content="None")
 ///   inspect(map.size(), content="1")
-/// }
 /// ```
 pub fn[K : Hash + Eq, V] remove(self : T[K, V], key : K) -> Unit {
   let hash = key.hash()
@@ -481,11 +461,9 @@ fn[K : Eq, V] grow(self : T[K, V]) -> Unit {
 /// Example:
 ///
 /// ```moonbit
-/// test "of" {
 ///   let map = @hashmap.of([(1, "one"), (2, "two")])
 ///   inspect(map.get(1), content="Some(\"one\")")
 ///   inspect(map.get(2), content="Some(\"two\")")
-/// }
 /// ```
 pub fn[K : Eq + Hash, V] of(arr : FixedArray[(K, V)]) -> T[K, V] {
   let m = new(capacity=arr.length())
@@ -515,10 +493,8 @@ test "of" {
 /// Example:
 ///
 /// ```moonbit
-/// test "arbitrary" {
 ///   let samples : Array[@hashmap.T[Int, String]] = @quickcheck.samples(5)
 ///   inspect(samples.length(), content="5")
-/// }
 /// ```
 pub impl[K : @quickcheck.Arbitrary + Hash + Eq, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[
   K,

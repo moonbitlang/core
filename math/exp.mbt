@@ -85,11 +85,9 @@ let exp2f_data : Exp2fData = {
 /// Example:
 ///
 /// ```moonbit
-/// test "exp" {
 ///   inspect(expf(0), content="1")
 ///   inspect(expf(1), content="2.7182817459106445")
 ///   inspect(expf(@float.neg_infinity), content="0")
-/// }
 /// ```
 pub fn expf(x : Float) -> Float {
   let xd = x.to_double()
@@ -143,14 +141,12 @@ pub fn expf(x : Float) -> Float {
 /// Example
 ///
 /// ```moonbit
-/// test "expm1" {
 ///  inspect(expm1f(0), content="0")
 ///  inspect(expm1f(1), content="1.7182817459106445")
 ///  inspect(expm1f(-1), content="-0.6321205496788025")
 ///  inspect(expm1f(@float.not_a_number), content="NaN")
 ///  inspect(expm1f(@float.infinity), content="Infinity")
 ///  inspect(expm1f(@float.neg_infinity), content="-1")
-/// }
 /// ```
 pub fn expm1f(x : Float) -> Float {
   let float_ln2_hi : Float = 6.9314575195e-01 // 0x3f317200

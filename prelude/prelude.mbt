@@ -92,12 +92,10 @@ pub fnalias @builtin.(
 ///
 /// # Examples
 /// ```mbt
-/// test {
 ///   let val : Ref[Int] = { val : 1 }
 ///   let x : Int = 5
 ///   assert_eq(x |> tap(fn(n) { val.val += n }), 5)
 ///   assert_eq(val.val, 6)
-/// }
 /// ```
 pub fn[T] tap(value : T, f : (T) -> Unit) -> T {
   f(value)
@@ -116,11 +114,9 @@ pub fn[T] tap(value : T, f : (T) -> Unit) -> T {
 ///
 /// # Examples
 /// ```moonbit
-/// test {
 ///   let x = 5
 ///   let result = x |> then(fn(n) { n * 2 })
 ///   assert_eq(result, 10)
-/// }
 /// ```
 pub fn[T, R] then(value : T, f : (T) -> R) -> R {
   f(value)
