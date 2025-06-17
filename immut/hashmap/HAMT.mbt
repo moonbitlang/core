@@ -376,30 +376,13 @@ pub fn[K : Eq + Hash, V] T::intersection(
   self : T[K, V],
   other : T[K, V]
 ) -> T[K, V] {
-  match (self, other) {
-    (_, Empty) => Empty
-    (Empty, _) => Empty
-    (Leaf(k, v), _) =>
-      match other.get(k) {
-        Some(_) => Leaf(k, v)
-        None => Empty
-      }
-    (_, Leaf(k, _)) =>
-      match self.get(k) {
-        Some(v) => Leaf(k, v)
-        None => Empty
-      }
-    (Branch(sa1), Branch(sa2)) =>
-      Branch(sa1.intersection(sa2, (m1, m2) => m1.intersection(m2)))
-    (_, _) =>
-      self
-      .iter()
-      .fold(init=Empty, (m, kv) => if other.get(kv.0) is Some(_) {
-        m.add(kv.0, kv.1)
-      } else {
-        m
-      })
-  }
+  self
+  .iter()
+  .fold(init=Empty, (m, kv) => if other.get(kv.0) is Some(_) {
+    m.add(kv.0, kv.1)
+  } else {
+    m
+  })
 }
 
 ///|
@@ -409,29 +392,12 @@ pub fn[K : Eq + Hash, V] T::intersection_with(
   other : T[K, V],
   f : (K, V, V) -> V raise?
 ) -> T[K, V] raise? {
-  match (self, other) {
-    (_, Empty) => Empty
-    (Empty, _) => Empty
-    (Leaf(k, v), _) =>
-      match other.get(k) {
-        Some(v2) => Leaf(k, f(k, v, v2))
-        None => Empty
-      }
-    (_, Leaf(k, v2)) =>
-      match self.get(k) {
-        Some(v1) => Leaf(k, f(k, v1, v2))
-        None => Empty
-      }
-    (Branch(sa1), Branch(sa2)) =>
-      Branch(sa1.intersection(sa2, (m1, m2) => m1.intersection_with(m2, f)))
-    (_, _) =>
-      self
-      .iter()
-      .fold(init=Empty, (m, kv) => match other.get(kv.0) {
-        Some(v2) => m.add(kv.0, f(kv.0, kv.1, v2))
-        None => m
-      })
-  }
+  self
+  .iter()
+  .fold(init=Empty, (m, kv) => match other.get(kv.0) {
+    Some(v2) => m.add(kv.0, f(kv.0, kv.1, v2))
+    None => m
+  })
 }
 
 ///|
@@ -440,24 +406,13 @@ pub fn[K : Eq + Hash, V] T::difference(
   self : T[K, V],
   other : T[K, V]
 ) -> T[K, V] {
-  match (self, other) {
-    (Empty, _) => Empty
-    (_, Empty) => self
-    (Leaf(k, v), _) =>
-      match other.get(k) {
-        Some(_) => Empty
-        None => Leaf(k, v)
-      }
-    (Branch(sa1), Branch(sa2)) => Branch(sa1.difference(sa2))
-    (_, _) =>
-      self
-      .iter()
-      .fold(init=Empty, (m, kv) => if other.get(kv.0) is None {
-        m.add(kv.0, kv.1)
-      } else {
-        m
-      })
-  }
+  self
+  .iter()
+  .fold(init=Empty, (m, kv) => if other.get(kv.0) is None {
+    m.add(kv.0, kv.1)
+  } else {
+    m
+  })
 }
 
 ///|

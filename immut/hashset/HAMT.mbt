@@ -35,8 +35,12 @@ pub fn[A] new() -> T[A] {
 ///|
 /// Lookup a value from the hash set
 pub fn[A : Eq + Hash] contains(self : T[A], key : A) -> Bool {
-  guard self.inner() is Some(node) else { return false }
-  loop (node, @path.of(key)) {
+  self.inner() is Some(node) && node.contains(key, @path.of(key))
+}
+
+///|
+fn[A : Eq] Node::contains(self : Node[A], key : A, path : Path) -> Bool {
+  loop (self, path) {
     (Leaf(key1, bucket), _) => key == key1 || bucket.contains(key)
     (Flat(key1, path1), path) => path == path1 && key == key1
     (Branch(children), path) => {
@@ -188,24 +192,103 @@ pub fn[A] size(self : T[A]) -> Int {
 
 ///|
 /// Union two hashsets
-pub fn[K : Eq + Hash] T::union(self : T[K], other : T[K]) -> T[K] {
-  self.iter().fold(init=other, T::add)
+pub fn[K : Eq] T::union(self : T[K], other : T[K]) -> T[K] {
+  fn go(node1, node2) {
+    match (node1, node2) {
+      (node, Flat(key, path)) | (Flat(key, path), node) =>
+        node.add_with_path(key, path)
+      (Branch(children1), Branch(children2)) =>
+        Branch(children1.union(children2, go))
+      (Leaf(key1, bucket1), Leaf(key2, bucket2)) => {
+        let keys1 = bucket1.add(key1)
+        let keys2 = bucket2.add(key2)
+        match keys1.filter(k => not(keys2.contains(k))) {
+          Empty => node2
+          More(head, tail~) => Leaf(key2, bucket2 + tail.add(head))
+        }
+      }
+      _ => abort("Unreachable")
+    }
+  }
+
+  match (self.inner(), other.inner()) {
+    (None, x) | (x, None) => x
+    (Some(a), Some(b)) => Some(go(a, b))
+  }
 }
 
 ///|
 /// Intersect two hashsets
-pub fn[K : Eq + Hash] T::intersection(self : T[K], other : T[K]) -> T[K] {
-  self
-  .iter()
-  .fold(init=T(None), (m, k) => if other.contains(k) { m.add(k) } else { m })
+pub fn[K : Eq] T::intersection(self : T[K], other : T[K]) -> T[K] {
+  fn go(node1, node2) {
+    match (node1, node2) {
+      (node, Flat(key, path) as flat) | (Flat(key, path) as flat, node) =>
+        if node.contains(key, path) {
+          Some(flat)
+        } else {
+          None
+        }
+      (Branch(children1), Branch(children2)) =>
+        match children1.intersection(children2, go) {
+          None => None
+          Some({ data: [Flat(key, path)], elem_info }) =>
+            Some(Flat(key, path.push(elem_info.first_idx())))
+          Some(children) => Some(Branch(children))
+        }
+      (Leaf(key1, bucket1), Leaf(key2, bucket2)) => {
+        let keys1 = bucket1.add(key1)
+        let keys2 = bucket2.add(key2)
+        match keys1.filter(keys2.contains(_)) {
+          Empty => None
+          More(head, tail~) => Some(Leaf(head, tail))
+        }
+      }
+      _ => abort("Unreachable")
+    }
+  }
+
+  match (self.inner(), other.inner()) {
+    (None, _) | (_, None) => None
+    (Some(a), Some(b)) => go(a, b)
+  }
 }
 
 ///|
 /// Difference of two hashsets: elements in `self` but not in `other`
-pub fn[K : Eq + Hash] T::difference(self : T[K], other : T[K]) -> T[K] {
-  self
-  .iter()
-  .fold(init=T(None), (m, k) => if other.contains(k) { m } else { m.add(k) })
+pub fn[K : Eq] T::difference(self : T[K], other : T[K]) -> T[K] {
+  fn go(node1 : Node[_], node2) {
+    match (node1, node2) {
+      (node, Flat(k, path)) => node.remove_with_path(k, path)
+      (Flat(key, path) as flat, node) =>
+        if node.contains(key, path) {
+          None
+        } else {
+          Some(flat)
+        }
+      (Branch(children1), Branch(children2)) =>
+        match children1.difference(children2, go) {
+          None => None
+          Some({ data: [Flat(key, path)], elem_info }) =>
+            Some(Flat(key, path.push(elem_info.first_idx())))
+          Some(children) => Some(Branch(children))
+        }
+      (Leaf(key1, bucket1), Leaf(key2, bucket2)) => {
+        let keys1 = bucket1.add(key1)
+        let keys2 = bucket2.add(key2)
+        match keys1.filter(k => not(keys2.contains(k))) {
+          Empty => None
+          More(head, tail~) => Some(Leaf(head, tail))
+        }
+      }
+      _ => abort("Unreachable")
+    }
+  }
+
+  match (self.inner(), other.inner()) {
+    (None, _) => None
+    (_, None) => self
+    (Some(a), Some(b)) => go(a, b)
+  }
 }
 
 ///|
