@@ -23,7 +23,7 @@ struct Summary {
   max : Double
   mean : Double
   median : Double
-  variable : Double
+  variance : Double
   std_dev : Double
   std_dev_pct : Double
   median_abs_dev : Double
@@ -32,7 +32,7 @@ struct Summary {
   iqr : Double
   batch_size : Int
   runs : Int
-} derive(ToJson)
+} derive(ToJson(fields(variance(rename="var"))))
 
 ///|
 fn Summary::new(
@@ -45,8 +45,8 @@ fn Summary::new(
   let max = max(sorted_data~)
   let mean = mean(sorted_data, sum~)
   let median = median(sorted_data~)
-  let variable = variable(sorted_data, mean~)
-  let std_dev = std_dev(variable~)
+  let variance = variance(sorted_data, mean~)
+  let std_dev = std_dev(variance~)
   let std_dev_pct = std_dev_pct(mean~, std_dev~)
   let median_abs_dev = median_abs_dev(sorted_data, median_=median)
   let median_abs_dev_pct = median_abs_dev_pct(median~, median_abs_dev~)
@@ -59,7 +59,7 @@ fn Summary::new(
     max,
     mean,
     median,
-    variable,
+    variance,
     std_dev,
     std_dev_pct,
     median_abs_dev,
@@ -102,7 +102,7 @@ fn median(sorted_data~ : Array[Double]) -> Double {
 }
 
 ///|
-fn variable(data : Array[Double], mean~ : Double) -> Double {
+fn variance(data : Array[Double], mean~ : Double) -> Double {
   if data.length() < 2 {
     return 0.0
   }
@@ -115,8 +115,8 @@ fn variable(data : Array[Double], mean~ : Double) -> Double {
 }
 
 ///|
-fn std_dev(variable~ : Double) -> Double {
-  variable.sqrt()
+fn std_dev(variance~ : Double) -> Double {
+  variance.sqrt()
 }
 
 ///|
@@ -200,7 +200,7 @@ test {
   assert_true(summary.max.is_close(33.3))
   assert_true(summary.mean.is_close(11.5875))
   assert_true(summary.median.is_close(8.5))
-  assert_true(summary.variable.is_close(127.64125))
+  assert_true(summary.variance.is_close(127.64125))
   assert_true(summary.std_dev.is_close(11.297842714430043))
   assert_true(summary.std_dev_pct.is_close(97.50026075020534))
   assert_true(summary.median_abs_dev.is_close(9.04386))
@@ -212,4 +212,20 @@ test {
   assert_true(summary.iqr.is_close(13.125))
   assert_true(summary.batch_size == 3)
   assert_true(summary.runs == 8)
+  @json.inspect(summary, content={
+    "sum": 92.69999999999999,
+    "min": 1.1,
+    "max": 33.3,
+    "mean": 11.587499999999999,
+    "median": 8.5,
+    "var": 127.64124999999999,
+    "std_dev": 11.297842714430042,
+    "std_dev_pct": 97.50026075020534,
+    "median_abs_dev": 9.043859999999999,
+    "median_abs_dev_pct": 106.39835294117646,
+    "quartiles": [3.025, 8.5, 16.15],
+    "iqr": 13.124999999999998,
+    "batch_size": 3,
+    "runs": 8,
+  })
 }
