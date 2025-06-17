@@ -5,31 +5,7 @@ import(
 )
 
 // Values
-fn[T, U] bind(T?, (T) -> U?) -> U?
-
 fn[T] empty() -> T?
-
-fn[T] filter(T?, (T) -> Bool) -> T?
-
-fn[T] flatten(T??) -> T?
-
-fn[T] is_empty(T?) -> Bool
-
-fn[T] iter(T?) -> Iter[T]
-
-fn[T, U] map(T?, (T) -> U) -> U?
-
-fn[T, U] map_or(T?, U, (T) -> U) -> U
-
-fn[T, U] map_or_else(T?, () -> U, (T) -> U) -> U
-
-fn[T] or(T?, T) -> T
-
-fn[T : Default] or_default(T?) -> T
-
-fn[T] or_else(T?, () -> T) -> T
-
-fn[T, Err : Error] or_error(T?, Err) -> T raise Err
 
 fn[T] some(T) -> T?
 

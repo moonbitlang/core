@@ -7,28 +7,9 @@ import(
 // Values
 fn[A : Compare] from_array(Array[A]) -> T[A]
 
-fn[A] is_empty(T[A]) -> Bool
-
-fn[A : Compare] iter(T[A]) -> Iter[A]
-
-fn[A] length(T[A]) -> Int
-
 fn[A : Compare] new() -> T[A]
 
 fn[A : Compare] of(FixedArray[A]) -> T[A]
-
-fn[A] peek(T[A]) -> A?
-
-fn[A : Compare] pop(T[A]) -> T[A]?
-
-#deprecated
-fn[A : Compare] pop_exn(T[A]) -> T[A]
-
-fn[A : Compare] push(T[A], A) -> T[A]
-
-fn[A : Compare] to_array(T[A]) -> Array[A]
-
-fn[A : Compare] unsafe_pop(T[A]) -> T[A]
 
 // Types and methods
 type T[A]

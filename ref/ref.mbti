@@ -5,15 +5,9 @@ import(
 )
 
 // Values
-fn[T, R] map(Ref[T], (T) -> R raise?) -> Ref[R] raise?
-
 fn[T] new(T) -> Ref[T]
 
-fn[T, R] protect(Ref[T], T, () -> R raise?) -> R raise?
-
 fn[T] swap(Ref[T], Ref[T]) -> Unit
-
-fn[T] update(Ref[T], (T) -> T raise?) -> Unit raise?
 
 // Types and methods
 fn[T, R] Ref::map(Self[T], (T) -> R raise?) -> Self[R] raise?

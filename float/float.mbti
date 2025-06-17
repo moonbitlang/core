@@ -37,14 +37,6 @@ fn hypot(Float, Float) -> Float
 
 let infinity : Float
 
-fn is_inf(Float) -> Bool
-
-fn is_nan(Float) -> Bool
-
-fn is_neg_inf(Float) -> Bool
-
-fn is_pos_inf(Float) -> Bool
-
 fn ln(Float) -> Float
 
 fn ln_1p(Float) -> Float
@@ -70,12 +62,6 @@ fn sinh(Float) -> Float
 fn tan(Float) -> Float
 
 fn tanh(Float) -> Float
-
-fn to_be_bytes(Float) -> Bytes
-
-fn to_int(Float) -> Int
-
-fn to_le_bytes(Float) -> Bytes
 
 fn trunc(Float) -> Float
 
