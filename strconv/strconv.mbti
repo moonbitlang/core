@@ -18,12 +18,6 @@ fn parse_uint(String, base~ : Int = ..) -> UInt raise StrConvError
 
 fn parse_uint64(String, base~ : Int = ..) -> UInt64 raise StrConvError
 
-#deprecated
-fn shift(Decimal, Int) -> Unit
-
-#deprecated
-fn to_double(Decimal) -> Double raise StrConvError
-
 // Types and methods
 type Decimal
 #deprecated

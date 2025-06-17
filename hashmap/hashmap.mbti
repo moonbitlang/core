@@ -5,50 +5,13 @@ import(
 )
 
 // Values
-fn[K, V] capacity(T[K, V]) -> Int
-
-fn[K, V] clear(T[K, V]) -> Unit
-
-fn[K : Hash + Eq, V] contains(T[K, V], K) -> Bool
-
-fn[K : Hash + Eq, V : Eq] contains_kv(T[K, V], K, V) -> Bool
-
-fn[K, V] each(T[K, V], (K, V) -> Unit) -> Unit
-
-fn[K, V] eachi(T[K, V], (Int, K, V) -> Unit) -> Unit
-
 fn[K : Hash + Eq, V] from_array(Array[(K, V)]) -> T[K, V]
 
 fn[K : Hash + Eq, V] from_iter(Iter[(K, V)]) -> T[K, V]
 
-fn[K : Hash + Eq, V] get(T[K, V], K) -> V?
-
-fn[K : Hash + Eq, V] get_or_default(T[K, V], K, V) -> V
-
-fn[K : Hash + Eq, V] get_or_init(T[K, V], K, () -> V) -> V
-
-fn[K, V] is_empty(T[K, V]) -> Bool
-
-fn[K, V] iter(T[K, V]) -> Iter[(K, V)]
-
-fn[K, V] iter2(T[K, V]) -> Iter2[K, V]
-
 fn[K, V] new(capacity~ : Int = ..) -> T[K, V]
 
 fn[K : Eq + Hash, V] of(FixedArray[(K, V)]) -> T[K, V]
-
-#deprecated
-fn[K : Hash + Eq, V] op_get(T[K, V], K) -> V?
-
-fn[K : Hash + Eq, V] op_set(T[K, V], K, V) -> Unit
-
-fn[K : Hash + Eq, V] remove(T[K, V], K) -> Unit
-
-fn[K : Hash + Eq, V] set(T[K, V], K, V) -> Unit
-
-fn[K, V] size(T[K, V]) -> Int
-
-fn[K, V] to_array(T[K, V]) -> Array[(K, V)]
 
 // Types and methods
 type T[K, V]

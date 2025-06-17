@@ -5,59 +5,16 @@ import(
 )
 
 // Values
-fn[V : Compare] add(T[V], V) -> Unit
-
-fn[V : Compare] contains(T[V], V) -> Bool
-
-fn[V] copy(T[V]) -> T[V]
-
-#deprecated
-fn[V] deep_clone(T[V]) -> T[V]
-
-#deprecated
-fn[V : Compare] diff(T[V], T[V]) -> T[V]
-
-fn[V : Compare] difference(T[V], T[V]) -> T[V]
-
-fn[V : Compare] disjoint(T[V], T[V]) -> Bool
-
-fn[V] each(T[V], (V) -> Unit raise?) -> Unit raise?
-
-fn[V] eachi(T[V], (Int, V) -> Unit raise?) -> Unit raise?
-
 fn[V : Compare] from_array(Array[V]) -> T[V]
 
 fn[V : Compare] from_iter(Iter[V]) -> T[V]
-
-#deprecated
-fn[V : Compare] intersect(T[V], T[V]) -> T[V]
-
-fn[V : Compare] intersection(T[V], T[V]) -> T[V]
-
-fn[V : Compare] is_empty(T[V]) -> Bool
-
-fn[V] iter(T[V]) -> Iter[V]
 
 fn[V] new() -> T[V]
 
 #deprecated
 fn[V : Compare] of(Array[V]) -> T[V]
 
-fn[V : Compare] range(T[V], V, V) -> Iter[V]
-
-fn[V : Compare] remove(T[V], V) -> Unit
-
 fn[V : Compare] singleton(V) -> T[V]
-
-fn[V : Compare] size(T[V]) -> Int
-
-fn[V : Compare] subset(T[V], T[V]) -> Bool
-
-fn[V : Compare] symmetric_difference(T[V], T[V]) -> T[V]
-
-fn[V] to_array(T[V]) -> Array[V]
-
-fn[V : Compare] union(T[V], T[V]) -> T[V]
 
 // Types and methods
 type T[V]

@@ -5,10 +5,6 @@ let max_value : Byte
 
 let min_value : Byte
 
-fn popcnt(Byte) -> Int
-
-fn to_uint64(Byte) -> UInt64
-
 // Types and methods
 fn Byte::popcnt(Byte) -> Int
 fn Byte::to_uint64(Byte) -> UInt64

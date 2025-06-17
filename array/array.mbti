@@ -7,32 +7,8 @@ import(
 )
 
 // Values
-fn[T] copy(Array[T]) -> Array[T]
-
-fn[A, B] filter_map(Array[A], (A) -> B? raise?) -> Array[B] raise?
-
-fn join(Array[String], @string.StringView) -> String
-
-fn[A] last(Array[A]) -> A?
-
 #deprecated
 fn[T] push_iter(Array[T], Iter[T]) -> Unit
-
-fn[T] shuffle(Array[T], rand~ : (Int) -> Int) -> Array[T]
-
-fn[T] shuffle_in_place(Array[T], rand~ : (Int) -> Int) -> Unit
-
-fn[T : Compare] sort(Array[T]) -> Unit
-
-fn[T] sort_by(Array[T], (T, T) -> Int) -> Unit
-
-fn[T, K : Compare] sort_by_key(Array[T], (T) -> K) -> Unit
-
-fn[T1, T2] unzip(Array[(T1, T2)]) -> (Array[T1], Array[T2])
-
-fn[A, B] zip(Array[A], Array[B]) -> Array[(A, B)]
-
-fn[A, B] zip_to_iter2(Array[A], Array[B]) -> Iter2[A, B]
 
 fn[A, B, C] zip_with(Array[A], Array[B], (A, B) -> C raise?) -> Array[C] raise?
 
@@ -117,7 +93,7 @@ impl[X : Show] Show for ArrayView[X]
 impl[A : @quickcheck.Arbitrary] @quickcheck.Arbitrary for ArrayView[A]
 
 // Type aliases
-pub typealias View[T] = ArrayView[T]
+pub typealias ArrayView as View
 
 // Traits
 

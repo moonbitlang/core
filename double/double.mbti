@@ -39,14 +39,6 @@ let infinity : Double
 
 fn is_close(Double, Double, relative_tolerance~ : Double = .., absolute_tolerance~ : Double = ..) -> Bool
 
-fn is_inf(Double) -> Bool
-
-fn is_nan(Double) -> Bool
-
-fn is_neg_inf(Double) -> Bool
-
-fn is_pos_inf(Double) -> Bool
-
 fn ln(Double) -> Double
 
 fn ln_1p(Double) -> Double
@@ -69,8 +61,6 @@ fn pow(Double, Double) -> Double
 
 fn round(Double) -> Double
 
-fn signum(Double) -> Double
-
 fn sin(Double) -> Double
 
 fn sinh(Double) -> Double
@@ -78,14 +68,6 @@ fn sinh(Double) -> Double
 fn tan(Double) -> Double
 
 fn tanh(Double) -> Double
-
-fn to_be_bytes(Double) -> Bytes
-
-fn to_le_bytes(Double) -> Bytes
-
-fn to_string(Double) -> String
-
-fn to_uint(Double) -> UInt
 
 fn trunc(Double) -> Double
 
