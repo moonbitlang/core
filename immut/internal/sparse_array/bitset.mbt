@@ -47,25 +47,6 @@ pub fn Bitset::intersection(self : Bitset, other : Bitset) -> Bitset {
 }
 
 ///|
-pub fn Bitset::difference(self : Bitset, other : Bitset) -> Bitset {
-  Bitset(self.inner() & other.inner().lnot())
-}
-
-///|
-pub fn Bitset::iter(self : Bitset) -> Iter[Int] {
-  Iter::new(yield_ => {
-    let mut bs = self.inner()
-    while bs != 0 {
-      let next = bs & (-bs.reinterpret_as_int()).reinterpret_as_uint()
-      guard yield_(bs.ctz()) is IterContinue else { break IterEnd }
-      bs = bs ^ next
-    } else {
-      IterContinue
-    }
-  })
-}
-
-///|
 /// Add a new index to the bitset.
 pub fn Bitset::add(self : Bitset, idx : Int) -> Bitset {
   Bitset(self.inner() | (1U << idx))
@@ -131,24 +112,6 @@ test "Bitset::intersection" {
   inspect(b3.has(1), content="false")
   inspect(b3.has(2), content="true")
   inspect(b3.has(3), content="false")
-}
-
-///|
-test "Bitset::difference" {
-  let b1 = empty_bitset.add(2).add(3)
-  let b2 = empty_bitset.add(0).add(1).add(2)
-  let b3 = b1.difference(b2)
-  inspect(b3.has(0), content="false")
-  inspect(b3.has(1), content="false")
-  inspect(b3.has(2), content="false")
-  inspect(b3.has(3), content="true")
-}
-
-///|
-test "Bitset::iter" {
-  let b = empty_bitset.add(0).add(1).add(31)
-  let arr = b.iter().collect()
-  inspect(arr, content="[0, 1, 31]")
 }
 
 ///|
