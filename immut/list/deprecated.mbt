@@ -22,13 +22,6 @@ pub fn[A : @json.FromJson] T::from_json(
 }
 
 ///|
-/// Init of the list.
-///
-/// # Example
-///
-/// ```
-/// assert_eq(@list.of([1, 2, 3, 4, 5]).init_(), @list.of([1, 2, 3, 4]))
-/// ```
 #deprecated
 #coverage.skip
 pub fn[A] init_(self : T[A]) -> T[A] {
@@ -48,8 +41,8 @@ pub fn[A] init_(self : T[A]) -> T[A] {
 ///
 /// # Example
 ///
-/// ```
-/// assert_eq(@list.of([1, 2, 3]) == @list.of([1, 2, 3]), true)
+/// ```mbt
+///   assert_eq(@list.of([1, 2, 3]) == @list.of([1, 2, 3]), true)
 /// ```
 #deprecated("use `==` instead")
 pub fn[A : Eq] equal(self : T[A], other : T[A]) -> Bool {

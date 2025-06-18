@@ -272,7 +272,7 @@ fn[T] Tree::push_end(self : Tree[T], shift : Int, value : T) -> (Tree[T], Int) {
 
 ///|
 /// For each element in the tree, apply the function `f`.
-fn[A] Tree::each(self : Tree[A], f : (A) -> Unit) -> Unit {
+fn[A] Tree::each(self : Tree[A], f : (A) -> Unit raise?) -> Unit raise? {
   match self {
     Empty => ()
     Leaf(l) => l.each(f)
@@ -300,10 +300,10 @@ fn[A] Tree::iter(self : Tree[A]) -> Iter[A] {
 /// For each element in the tree, apply the function `f` with the index of the element.
 fn[A] Tree::eachi(
   self : Tree[A],
-  f : (Int, A) -> Unit,
+  f : (Int, A) -> Unit raise?,
   shift : Int,
   start : Int
-) -> Unit {
+) -> Unit raise? {
   match self {
     Empty => ()
     Leaf(l) =>
@@ -331,7 +331,11 @@ fn[A] Tree::eachi(
 
 ///|
 /// Fold the tree.
-fn[A, B] Tree::fold(self : Tree[A], acc : B, f : (B, A) -> B) -> B {
+fn[A, B] Tree::fold(
+  self : Tree[A],
+  acc : B,
+  f : (B, A) -> B raise?
+) -> B raise? {
   match self {
     Empty => acc
     Leaf(l) => l.fold(f, init=acc)
@@ -341,7 +345,11 @@ fn[A, B] Tree::fold(self : Tree[A], acc : B, f : (B, A) -> B) -> B {
 
 ///|
 /// Fold the tree in reverse order.
-fn[A, B] Tree::rev_fold(self : Tree[A], acc : B, f : (B, A) -> B) -> B {
+fn[A, B] Tree::rev_fold(
+  self : Tree[A],
+  acc : B,
+  f : (B, A) -> B raise?
+) -> B raise? {
   match self {
     Empty => acc
     Leaf(l) => l.rev_fold(f, init=acc)
@@ -351,7 +359,7 @@ fn[A, B] Tree::rev_fold(self : Tree[A], acc : B, f : (B, A) -> B) -> B {
 
 ///|
 /// Map the tree.
-fn[A, B] Tree::map(self : Tree[A], f : (A) -> B) -> Tree[B] {
+fn[A, B] Tree::map(self : Tree[A], f : (A) -> B raise?) -> Tree[B] raise? {
   match self {
     Empty => Empty
     Leaf(l) => Leaf(l.map(f))
@@ -548,8 +556,8 @@ fn[A] tri_merge(
 ///|
 /// Create a redistribution plan for the tree.
 fn[A] redis_plan(t : FixedArray[Tree[A]]) -> (FixedArray[Int], Int) {
-  let node_counts = FixedArray::makei(t.length(), fn { i => t[i].local_size() })
-  let total_nodes = node_counts.fold(init=0, fn { acc, x => acc + x })
+  let node_counts = FixedArray::makei(t.length(), i => t[i].local_size())
+  let total_nodes = node_counts.fold(init=0, (acc, x) => acc + x)
   // round up to the nearest integer of S/branching_factor
   let opt_len = (total_nodes + branching_factor - 1) / branching_factor
   let mut new_len = t.length()
@@ -719,7 +727,7 @@ impl[A : Show] Show for Tree[A] with output(self, logger : &Logger) {
     String::make(indent, ' ') + s
   }
 
-  fn rec(t : Tree[A], ident : Int) {
+  fn aux(t : Tree[A], ident : Int) {
     match t {
       Empty => indent_str("Empty", ident)
       Leaf(l) => {
@@ -736,12 +744,12 @@ impl[A : Show] Show for Tree[A] with output(self, logger : &Logger) {
       Node(children, _sizes) => {
         let mut s = indent_str("Node(", ident) + "\n"
         for i in 0..<children.length() {
-          s += rec(children[i], ident + 2)
+          s += aux(children[i], ident + 2)
         }
         s + indent_str(")", ident) + "\n"
       }
     }
   }
 
-  logger.write_string(rec(self, 0))
+  logger.write_string(aux(self, 0))
 }

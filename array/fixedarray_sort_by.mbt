@@ -19,10 +19,10 @@
 ///
 /// # Example
 ///
-/// ```
-/// let arr = [5, 3, 2, 4, 1]
-/// arr.sort_by_key(fn (x) {-x})
-/// assert_eq(arr, [5, 4, 3, 2, 1])
+/// ```mbt
+///   let arr = [5, 3, 2, 4, 1]
+///   arr.sort_by_key(fn (x) {-x})
+///   assert_eq(arr, [5, 4, 3, 2, 1])
 /// ```
 pub fn[T, K : Compare] FixedArray::sort_by_key(
   self : FixedArray[T],
@@ -53,10 +53,10 @@ test "@array.sort_by_key/basic" {
 ///
 /// # Example
 ///
-/// ```
-/// let arr = [5, 3, 2, 4, 1]
-/// arr.sort_by(fn (a, b) { a - b })
-/// assert_eq(arr, [1, 2, 3, 4, 5])
+/// ```mbt
+///   let arr = [5, 3, 2, 4, 1]
+///   arr.sort_by(fn (a, b) { a - b })
+///   assert_eq(arr, [1, 2, 3, 4, 5])
 /// ```
 pub fn[T] FixedArray::sort_by(
   self : FixedArray[T],
@@ -287,14 +287,13 @@ fn[T] fixed_choose_pivot_by(
   if len >= 8 {
     let a = len / 4 * 1
     let c = len / 4 * 3
-    fn sort_2(a : Int, b : Int) {
+    letrec sort_2 = fn(a : Int, b : Int) {
       if cmp(arr[a], arr[b]) > 0 {
         arr.swap(a, b)
         swaps += 1
       }
     }
-
-    fn sort_3(a : Int, b : Int, c : Int) {
+    and sort_3 = fn(a : Int, b : Int, c : Int) {
       sort_2(a, b)
       sort_2(b, c)
       sort_2(a, b)

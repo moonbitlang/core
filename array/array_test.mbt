@@ -401,15 +401,15 @@ test "flatten" {
 
 ///|
 test "fold" {
-  let sum = [1, 2, 3, 4, 5].fold(init=0, fn { sum, elem => sum + elem })
+  let sum = [1, 2, 3, 4, 5].fold(init=0, (sum, elem) => sum + elem)
   assert_eq(sum, 15)
 }
 
 ///|
 test "rev_fold" {
-  let sum = [1, 2, 3, 4, 5].rev_fold(init=0, fn { sum, elem => sum + elem })
+  let sum = [1, 2, 3, 4, 5].rev_fold(init=0, (sum, elem) => sum + elem)
   assert_eq(sum, 15)
-  let op = fn { sum, elem => sum - elem }
+  let op = (sum, elem) => sum - elem
   let data = [1, 2, 3, 4, 5]
   let ss0 = data.rev_fold(init=0, op)
   let ss1 = data.rev().fold(init=0, op)
@@ -418,19 +418,15 @@ test "rev_fold" {
 
 ///|
 test "foldi" {
-  let sum = [1, 2, 3, 4, 5].foldi(init=0, fn {
-    index, sum, _elem => sum + index
-  })
+  let sum = [1, 2, 3, 4, 5].foldi(init=0, (index, sum, _elem) => sum + index)
   assert_eq(sum, 10)
 }
 
 ///|
 test "rev_foldi" {
-  let sum = [1, 2, 3, 4, 5].rev_foldi(init=0, fn {
-    index, sum, _elem => sum + index
-  })
+  let sum = [1, 2, 3, 4, 5].rev_foldi(init=0, (index, sum, _elem) => sum + index)
   assert_eq(sum, 10)
-  let op = fn { index, sum, elem => index - sum - elem }
+  let op = (index, sum, elem) => index - sum - elem
   let data = [1, 2, 3, 4, 5, 10]
   let v0 = data.rev_foldi(init=0, op)
   let v1 = data.rev().foldi(init=0, op)
@@ -514,13 +510,10 @@ test "shrink_to_fit_2" {
 ///|
 test "iter" {
   let buf = StringBuilder::new(size_hint=5)
-  [1, 2, 3, 4, 5].iter().each(fn { x => buf.write_string(x.to_string()) })
+  [1, 2, 3, 4, 5].iter().each(x => buf.write_string(x.to_string()))
   inspect(buf, content="12345")
   buf.reset()
-  [1, 2, 3, 4, 5]
-  .iter()
-  .take(2)
-  .each(fn { x => buf.write_string(x.to_string()) })
+  [1, 2, 3, 4, 5].iter().take(2).each(x => buf.write_string(x.to_string()))
   inspect(buf, content="12")
 }
 

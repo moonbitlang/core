@@ -45,11 +45,11 @@ pub typealias StringView as View
 /// 
 /// # Example
 /// 
-/// ```
-/// let str = "Hello🤣🤣🤣"
-/// let view = str[1:6]
-/// inspect(view[0].to_char(), content="Some('e')")
-/// inspect(view[4], content="55358")
+/// ```mbt
+///   let str = "Hello🤣🤣🤣"
+///   let view = str.charcodes(start = str.offset_of_nth_char(1).unwrap(), end = str.offset_of_nth_char(6).unwrap())
+///   inspect(view[0].to_char(), content="Some('e')")
+///   inspect(view[4], content="55358")
 /// ```
 pub fn View::op_get(self : View, index : Int) -> Int {
   guard index >= 0 && index < self.length() else {
@@ -84,18 +84,18 @@ pub fn length(self : View) -> Int {
 /// 
 /// # Example
 /// 
-/// ```
-/// let str = "Hello🤣🤣🤣"
-/// let view1 = str.view()
-/// inspect(view1, content=
-///  "Hello🤣🤣🤣"
-///)
-/// let start_offset = str.offset_of_nth_char(1).unwrap()
-/// let end_offset = str.offset_of_nth_char(6).unwrap() // the second emoji
-/// let view2 = str.view(start_offset~, end_offset~)
-/// inspect(view2, content=
-///  "ello🤣"
-///)
+/// ```mbt
+///   let str = "Hello🤣🤣🤣"
+///   let view1 = str.view()
+///   inspect(view1, content=
+///    "Hello🤣🤣🤣"
+///   )
+///   let start_offset = str.offset_of_nth_char(1).unwrap()
+///   let end_offset = str.offset_of_nth_char(6).unwrap() // the second emoji
+///   let view2 = str.view(start_offset~, end_offset~)
+///   inspect(view2, content=
+///    "ello🤣"
+///   )
 /// ```
 pub fn String::view(
   self : String,
@@ -136,18 +136,14 @@ pub fn View::view(
 /// 
 /// # Example
 /// 
-/// ```
-/// let str = "Hello🤣🤣🤣"
-/// let view1 = str.charcodes()
-/// inspect(view1, content=
-///  "Hello🤣🤣🤣"
-///)
-/// let start = str.offset_of_nth_char(1).unwrap()
-/// let end = str.offset_of_nth_char(6).unwrap() // the second emoji
-/// let view2 = str.charcodes(start~, end~)
-/// inspect(view2, content=
-///  "ello🤣"
-///)
+/// ```mbt
+///   let str = "Hello🤣🤣🤣"
+///   let view1 = str.charcodes()
+///   inspect(view1, content="Hello🤣🤣🤣")
+///   let start = str.offset_of_nth_char(1).unwrap()
+///   let end = str.offset_of_nth_char(6).unwrap() // the second emoji
+///   let view2 = str.charcodes(start~, end~)
+///   inspect(view2, content="ello🤣")
 /// ```
 /// 
 /// This method has O(1) complexity.
@@ -160,13 +156,13 @@ pub fn String::charcodes(self : String, start~ : Int = 0, end? : Int) -> View {
 /// 
 /// # Example
 /// 
-/// ```
-/// let str = "Hello🤣🤣🤣"
-/// let view1 = str.view()
-/// let view2 = view1.charcodes(start=1, end=7) // From 2nd to 6th character
-/// inspect(view2, content=
-///  "ello🤣"
-///)
+/// ```mbt
+///   let str = "Hello🤣🤣🤣"
+///   let view1 = str.view()
+///   let view2 = view1.charcodes(start=1, end=7) // From 2nd to 6th character
+///   inspect(view2, content=
+///    "ello🤣"
+///   )
 /// ```
 /// 
 /// This method is similar to `String::charcodes` but operates on an existing view.
@@ -261,10 +257,10 @@ pub impl Show for View with output(self, logger) {
 /// 
 /// # Examples
 /// 
-/// ```
-/// let str = "Hello World"
-/// let view = str[0:5]  // "Hello"
-/// inspect(view.to_string(), content="Hello")
+/// ```mbt
+///   let str = "Hello World"
+///   let view = str.charcodes(start = str.offset_of_nth_char(0).unwrap(),end   = str.offset_of_nth_char(5).unwrap()) // "Hello"
+///   inspect(view.to_string(), content="Hello")
 /// ```
 pub impl Show for StringView with to_string(self) {
   self.str.substring(start=self.start, end=self.end)

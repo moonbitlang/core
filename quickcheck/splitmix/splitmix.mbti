@@ -1,29 +1,7 @@
 package "moonbitlang/core/quickcheck/splitmix"
 
 // Values
-fn clone(RandomState) -> RandomState
-
 fn new(seed~ : UInt64 = ..) -> RandomState
-
-fn next(RandomState) -> Unit
-
-fn next_double(RandomState) -> Double
-
-fn next_float(RandomState) -> Float
-
-fn next_int(RandomState) -> Int
-
-fn next_int64(RandomState) -> Int64
-
-fn next_positive_int(RandomState) -> Int
-
-fn next_two_uint(RandomState) -> (UInt, UInt)
-
-fn next_uint(RandomState) -> UInt
-
-fn next_uint64(RandomState) -> UInt64
-
-fn split(RandomState) -> RandomState
 
 // Types and methods
 type RandomState

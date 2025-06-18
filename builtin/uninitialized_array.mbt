@@ -93,7 +93,8 @@ pub fn[T] UninitializedArray::op_as_view(
 ///
 /// Returns the length of the uninitialized array as an integer.
 pub fn[A] UninitializedArray::length(self : UninitializedArray[A]) -> Int {
-  self._.length()
+  let UninitializedArray(self) = self
+  self.length()
 }
 
 ///|
@@ -104,7 +105,7 @@ fn[T] UninitializedArray::unsafe_blit(
   src_offset : Int,
   len : Int
 ) -> Unit {
-  FixedArray::unsafe_blit(dst._, dst_offset, src._, src_offset, len)
+  FixedArray::unsafe_blit(dst.inner(), dst_offset, src.inner(), src_offset, len)
 }
 
 ///|

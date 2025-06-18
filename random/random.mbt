@@ -65,7 +65,8 @@ pub fn Rand::new(
 
 ///|
 fn next(self : Rand) -> UInt64 {
-  self._.next()
+  let Rand(s) = self
+  s.next()
 }
 
 ///|
@@ -207,11 +208,9 @@ pub fn float(self : Rand) -> Float {
 /// Example:
 ///
 /// ```moonbit
-/// test "Rand::bigint" {
-///   let rand = @random.new()
+///   let rand = Rand::new()
 ///   let n = rand.bigint(8) // Generate random 8-bit number
 ///   inspect(n.bit_length() <= 8, content="true")
-/// }
 /// ```
 pub fn bigint(self : Rand, bits : Int) -> @bigint.BigInt {
   let mod = bits % 8
@@ -301,9 +300,8 @@ test "umul128: handles zero correctly" {
 /// The limit should not be negative.
 ///
 /// # Example
-/// ```
-/// test "shuffle example" {
-///   let r = @random.new()
+/// ```mbt
+///   let r = Rand::new()
 ///   let a = [1, 2, 3, 4, 5]
 ///   r.shuffle(
 ///     a.length(),
@@ -313,7 +311,6 @@ test "umul128: handles zero correctly" {
 ///       a[j] = t
 ///     },
 ///   )
-/// }
 /// ```
 pub fn shuffle(self : Rand, limit : Int, swap : (Int, Int) -> Unit) -> Unit {
   if limit < 0 {

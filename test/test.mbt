@@ -137,12 +137,10 @@ pub fn writeln(self : T, obj : &Show) -> Unit {
 ///|
 /// Take a snapshot of the current buffer and write to a file.
 /// 
-/// ```
-///  test {
+/// ```mbt
 ///   let t = new("test.txt")
 ///   t.writeln("hello")
 ///   t.snapshot(filename="test.txt") // actual test block end
-/// }
 /// ```
 ///
 /// Currently it can only be used once and should be used as the last step.

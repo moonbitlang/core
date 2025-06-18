@@ -7,19 +7,11 @@ fn ceil(T) -> Int64
 
 fn floor(T) -> Int64
 
-fn fract(T) -> T
-
 fn from_double(Double) -> T raise RationalError
-
-fn is_integer(T) -> Bool
 
 fn neg(T) -> T
 
 fn new(Int64, Int64) -> T?
-
-fn reciprocal(T) -> T
-
-fn to_double(T) -> Double
 
 fn trunc(T) -> Int64
 

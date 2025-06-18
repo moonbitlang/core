@@ -102,7 +102,7 @@ test "from_double NaN check" {
 fn from_double_array(
   a : Array[Double]
 ) -> Array[Result[@rational.T, @rational.RationalError]] {
-  a.map(fn { x => try? @rational.from_double(x) })
+  a.map(x => try? @rational.from_double(x))
 }
 
 ///|

@@ -27,7 +27,6 @@
 /// Example:
 ///
 /// ```moonbit
-/// test "pow" {
 ///   let x = 2.0
 ///   inspect(x.pow(3.0), content="8")
 ///   inspect(x.pow(0.5), content="1.4142135623730951")
@@ -35,6 +34,5 @@
 ///   inspect((-1.0).pow(2.0), content="1")
 ///   inspect(0.0.pow(0.0), content="1")
 ///   inspect(infinity.pow(-1.0), content="0")
-/// }
 /// ```
 pub fn Double::pow(self : Double, other : Double) -> Double = "Math" "pow"

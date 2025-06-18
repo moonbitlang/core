@@ -29,13 +29,11 @@
 /// Example:
 ///
 /// ```moonbit
-/// test "BigInt::to_json" {
 ///   let big = 12345678901234567890N
 ///   let json = big.to_json()
 ///   inspect(json, content=
 ///   #|String("12345678901234567890")
 /// )
-/// }
 /// ```
 ///
 pub impl ToJson for BigInt with to_json(self : BigInt) -> Json {
@@ -81,13 +79,11 @@ pub impl @quickcheck.Arbitrary for BigInt with arbitrary(size, rs) {
 /// Example:
 ///
 /// ```moonbit
-/// test "BigInt::equal_int" {
 ///   let big = 42N
 ///   inspect(big.equal_int(42), content="true")
 ///   inspect(big.equal_int(41), content="false")
 ///   let large = 9223372036854775808N // Beyond Int64 range
 ///   inspect(large.equal_int(42), content="false")
-/// }
 /// ```
 ///
 pub fn BigInt::equal_int(self : BigInt, other : Int) -> Bool {
@@ -112,14 +108,12 @@ pub fn BigInt::equal_int(self : BigInt, other : Int) -> Bool {
 /// Example:
 ///
 /// ```moonbit
-/// test "BigInt::equal_int64" {
 ///   let big = BigInt::from_int64(9223372036854775807L) // Int64 max value
 ///   inspect(big.equal_int64(9223372036854775807L), content="true")
 ///   inspect(big.equal_int64(42L), content="false")
 ///   
 ///   let overflow = BigInt::from_string("9223372036854775808") // Beyond Int64 range
 ///   inspect(overflow.equal_int64(9223372036854775807L), content="false")
-/// }
 /// ```
 ///
 pub fn BigInt::equal_int64(self : BigInt, other : Int64) -> Bool {
@@ -143,12 +137,10 @@ pub fn BigInt::equal_int64(self : BigInt, other : Int64) -> Bool {
 /// Example:
 ///
 /// ```moonbit
-/// test "BigInt::compare_int" {
 ///   let big = 42N
 ///   inspect(big.compare_int(24), content="1") // 42 > 24
 ///   inspect(big.compare_int(42), content="0") // 42 = 42
 ///   inspect(big.compare_int(100), content="-1") // 42 < 100
-/// }
 /// ```
 ///
 pub fn BigInt::compare_int(self : BigInt, other : Int) -> Int {

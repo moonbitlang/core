@@ -29,11 +29,9 @@
 /// Example:
 ///
 /// ```moonbit
-/// test "Float::trunc" {
 ///   inspect((1.9 : Float).trunc(), content="1")
 ///   inspect((-1.9 : Float).trunc(), content="-1")
 ///   inspect((0.1 : Float).trunc(), content="0")
-/// }
 /// ```
 pub fn Float::trunc(self : Float) -> Float = "(func (param $f f32) (result f32) (f32.trunc (local.get $f)))"
 
@@ -50,11 +48,9 @@ pub fn Float::trunc(self : Float) -> Float = "(func (param $f f32) (result f32) 
 /// Example:
 ///
 /// ```moonbit
-/// test "ceil" {
 ///   inspect((1.4 : Float).ceil(), content="2")
 ///   inspect((1.0 : Float).ceil(), content="1")
 ///   inspect((-1.4 : Float).ceil(), content="-1")
-/// }
 /// ```
 pub fn Float::ceil(self : Float) -> Float = "(func (param $f f32) (result f32) (f32.ceil (local.get $f)))"
 
@@ -72,10 +68,8 @@ pub fn Float::ceil(self : Float) -> Float = "(func (param $f f32) (result f32) (
 /// Example:
 ///
 /// ```moonbit
-/// test "floor" {
 ///   inspect((3.7 : Float).floor(), content="3")
 ///   inspect((-3.7 : Float).floor(), content="-4")
-/// }
 /// ```
 pub fn Float::floor(self : Float) -> Float = "(func (param $f f32) (result f32) (f32.floor (local.get $f)))"
 
@@ -93,12 +87,10 @@ pub fn Float::floor(self : Float) -> Float = "(func (param $f f32) (result f32) 
 /// Example:
 ///
 /// ```moonbit
-/// test "round" {
 ///   inspect((1.4 : Float).round(), content="1")
 ///   inspect((1.5 : Float).round(), content="2")
 ///   inspect((1.6 : Float).round(), content="2")
 ///   inspect((-1.5 : Float).round(), content="-1")
-/// }
 /// ```
 pub fn Float::round(self : Float) -> Float {
   floor(self + 0.5)

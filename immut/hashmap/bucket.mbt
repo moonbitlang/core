@@ -78,7 +78,10 @@ fn[K, V] Bucket::size(self : Bucket[K, V]) -> Int {
 
 ///|
 /// Iterate through elements of a bucket
-fn[K, V] Bucket::each(self : Bucket[K, V], f : (K, V) -> Unit) -> Unit {
+fn[K, V] Bucket::each(
+  self : Bucket[K, V],
+  f : (K, V) -> Unit raise?
+) -> Unit raise? {
   loop self {
     JustOne(k, v) => f(k, v)
     More(k, v, rest) => {
@@ -89,7 +92,10 @@ fn[K, V] Bucket::each(self : Bucket[K, V], f : (K, V) -> Unit) -> Unit {
 }
 
 ///|
-fn[K, V] Bucket::filter(self : Bucket[K, V], f : (V) -> Bool) -> Bucket[K, V]? {
+fn[K, V] Bucket::filter(
+  self : Bucket[K, V],
+  f : (V) -> Bool raise?
+) -> Bucket[K, V]? raise? {
   match self {
     JustOne(k, v) => if f(v) { Some(JustOne(k, v)) } else { None }
     More(k, v, rest) => {
@@ -116,16 +122,13 @@ test "Bucket::filter" {
 
 ///|
 fn[K, V] Bucket::iter(self : Bucket[K, V]) -> Iter[(K, V)] {
-  Iter::new(fn {
-    f =>
-      loop self {
-        JustOne(k, v) => f((k, v))
-        More(k, v, rest) =>
-          if f((k, v)) == IterContinue {
-            continue rest
-          } else {
-            IterEnd
-          }
+  Iter::new(f => loop self {
+    JustOne(k, v) => f((k, v))
+    More(k, v, rest) =>
+      if f((k, v)) == IterContinue {
+        continue rest
+      } else {
+        IterEnd
       }
   })
 }
@@ -171,17 +174,15 @@ test "Bucket::iter" {
   let mut is_first = true
   b
   .iter()
-  .each(fn {
-    (k, v) => {
-      // weird syntax conventions that
-      // braces needed here
-      if is_first {
-        is_first = false
-      } else {
-        buf.write_string(", ")
-      }
-      buf.write_string("\{k} => \{v}")
+  .each(kv => {
+    // weird syntax conventions that
+    // braces needed here
+    if is_first {
+      is_first = false
+    } else {
+      buf.write_string(", ")
     }
+    buf.write_string("\{kv.0} => \{kv.1}")
   })
   inspect(buf.to_string(), content="0 => 0, 1 => 1, 31 => 31")
 }
@@ -191,9 +192,9 @@ test "Bucket::iter" {
 ///
 fn[K, V, A] Bucket::foldl_with_key(
   self : Bucket[K, V],
-  f : (A, K, V) -> A,
+  f : (A, K, V) -> A raise?,
   init~ : A
-) -> A {
+) -> A raise? {
   match self {
     JustOne(k, v) => f(init, k, v)
     More(k, v, rest) => rest.foldl_with_key(init=f(init, k, v), f)
@@ -210,8 +211,8 @@ test "foldl_with_key" {
 ///|
 fn[K, V, A] Bucket::map_with_key(
   self : Bucket[K, V],
-  f : (K, V) -> A
-) -> Bucket[K, A] {
+  f : (K, V) -> A raise?
+) -> Bucket[K, A] raise? {
   match self {
     JustOne(k, v) => JustOne(k, f(k, v))
     More(k, v, rest) => More(k, f(k, v), rest.map_with_key(f))
@@ -228,7 +229,10 @@ test "Bucket::map_with_key" {
 }
 
 ///|
-fn[K, V, A] Bucket::map(self : Bucket[K, V], f : (V) -> A) -> Bucket[K, A] {
+fn[K, V, A] Bucket::map(
+  self : Bucket[K, V],
+  f : (V) -> A raise?
+) -> Bucket[K, A] raise? {
   self.map_with_key(fn(_k, v) { f(v) })
 }
 

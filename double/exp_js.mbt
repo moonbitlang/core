@@ -32,12 +32,10 @@
 /// Example:
 ///
 /// ```moonbit
-/// test "exp" {
 ///   inspect(0.0.exp(), content="1")
 ///   inspect(1.0.exp(), content="2.718281828459045")
 ///   inspect((-1.0).exp(), content="0.36787944117144233")
 ///   inspect(not_a_number.exp().is_nan(), content="true")
-/// }
 /// ```
 pub fn Double::exp(self : Double) -> Double = "Math" "exp"
 
@@ -59,7 +57,6 @@ pub fn Double::exp(self : Double) -> Double = "Math" "exp"
 /// Example
 ///
 /// ```moonbit
-/// test "expm1" {
 ///   inspect(0.0.expm1(), content="0")
 ///   inspect(1.0.expm1(), content="1.718281828459045")
 ///   inspect(2.0.expm1(), content="6.38905609893065")
@@ -68,6 +65,5 @@ pub fn Double::exp(self : Double) -> Double = "Math" "exp"
 ///   inspect(@double.not_a_number.expm1(), content="NaN")
 ///   inspect(@double.infinity.expm1(), content="Infinity")
 ///   inspect(@double.neg_infinity.expm1(), content="-1")
-/// }
 /// ```
 pub fn Double::expm1(self : Double) -> Double = "Math" "expm1"
