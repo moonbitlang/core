@@ -1354,20 +1354,19 @@ pub fn T::join(self : T[String], separator : @string.View) -> String {
 /// ```
 pub fn[A] T::drain(self : T[A], begin : Int, end : Int) -> T[A] {
   guard begin >= 0 && end <= self.length() && begin <= end
-  let dq = new(capacity=(end - begin))
-  let length = self.length()
-  for i = 0; i < length; i = i + 1 {
-    match self.pop_front() {
-      Some(pop) =>
-        if i > begin - 1 && i < end {
-          dq.push_back(pop)
-        } else {
-          self.push_back(pop)
-        }
-      None => ()
-    }
+  let long = end - begin
+  let dq = new(capacity=long)
+  dq.buf = self.buf.blit(dq.buf, len = long, src_offset = begin, dst_offset = 0)
+  ignore(self.buf.blit(self.buf, len = self.length() - end, src_offset = end, dst_offset = begin))
+  self.tail = self.length() - end
+  self.len = self.length() - long
+  let deq1 = T::{
+    buf: dq.buf,
+    len: long,
+    head: 0,
+    tail: long - 1,
   }
-  dq
+  deq1
 }
 
 ///|

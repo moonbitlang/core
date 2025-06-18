@@ -108,6 +108,53 @@ fn[T] UninitializedArray::unsafe_blit(
 }
 
 ///|
+/// Copies a range of elements from one `UninitializedArray` to another, ensuring the destination array has enough space.
+///
+/// If the destination array is not large enough to hold the copied elements at the specified offset, a new larger array is created and returned.
+///
+/// Parameters:
+///
+/// * `self` : The source array (not modified).
+/// * `dst` : The destination array. May be modified in-place or replaced by a new array.
+/// * `len` : Number of elements to copy.
+/// * `src_offset` : Start index in the source array (default: 0).
+/// * `dst_offset` : Start index in the destination array (default: 0).
+///
+/// Returns:
+///   A new array if reallocation was necessary, otherwise the original `dst`.
+///
+/// Important:
+///   - Requires: `len >= 0`
+///   - Requires: `src_offset >= 0`
+///   - Requires: `dst_offset >= 0`
+///   - Requires: `src_offset + len <= self.length()`
+///   - Ensures: `dst_offset + len <= dst.length()` after call (either by expanding `dst` or using a new array)
+///   - Does not initialize or drop values; assumes caller handles memory safety.
+///
+pub fn[A] UninitializedArray::blit(
+  self : UninitializedArray[A],
+  dst : UninitializedArray[A],
+  len~ : Int,
+  src_offset~ : Int = 0,
+  dst_offset~ : Int = 0
+) -> UninitializedArray[A] {
+  guard len >= 0 &&
+    dst_offset >= 0 &&
+    src_offset >= 0 &&
+    dst_offset <= dst.length() &&
+    src_offset + len <= self.length()
+  if dst_offset + len > dst.length() {
+    let new_dst = UninitializedArray::make(dst_offset + len)
+    UninitializedArray::unsafe_blit(new_dst, 0, dst, 0, dst.length())
+    UninitializedArray::unsafe_blit(new_dst, dst_offset, self, src_offset, len)
+    new_dst
+  } else{
+    UninitializedArray::unsafe_blit(dst, dst_offset, self, src_offset, len)
+    dst
+  }
+}
+
+///|
 test "op_as_view with valid_range" {
   let arr : UninitializedArray[Int] = UninitializedArray::make(5)
   let view = arr[1:4]
