@@ -1394,19 +1394,23 @@ pub fn[A] T::drain(self : T[A], begin : Int, end : Int) -> T[A] {
 /// }
 /// ```
 pub fn[A] T::flatten(self : T[T[A]]) -> T[A] {
-  let deque = self[0].copy()
-  let len = self.length()
-  let mut selflen = 0
-  for i = 1; i < len; i = i + 1 {
-    selflen = self[i].length()
-    for j = 0; j < selflen; j = j + 1 {
-      match self[i].pop_front() {
-        Some(pop) => deque.push_back(pop)
-        None => ()
-      }
-    }
+  let mut len = 0
+  for i in self {
+    len += i.length()
   }
-  deque
+  let dq = new(capacity=len)
+  let mut i = 0
+  for t in self {
+    dq.buf=t.buf.blit(dq.buf, len=t.length(), dst_offset=i, src_offset=0)
+    i += t.length()
+  }
+  let deq = T::{
+    buf: dq.buf,
+    len: len,
+    head: 0,
+    tail: len - 1,
+  }
+  deq
 }
 
 ///|
