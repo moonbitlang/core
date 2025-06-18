@@ -52,14 +52,6 @@ pub fn from_iter(iter : Iter[Char]) -> String {
 }
 
 ///|
-/// Concatenate strings.
-///
-/// ```mbt
-/// let s = @string.concat(["Hello", ", ", "world!"])
-///   assert_eq(s, "Hello, world!")
-///   let s = @string.concat(["a", "b", "c"], separator=",")
-///   assert_eq(s, "a,b,c")
-/// ```
 #deprecated("Use `Array::join` instead.")
 pub fn concat(strings : Array[String], separator~ : String = "") -> String {
   match strings {

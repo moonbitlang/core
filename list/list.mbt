@@ -422,13 +422,6 @@ pub fn[A, B] T::fold(self : T[A], init~ : B, f : (B, A) -> B) -> B {
 }
 
 ///|
-/// Fold the list from right.
-///
-/// # Example
-/// ```mbt
-///   let r = @list.of([1, 2, 3, 4, 5]).rev_fold(fn(acc, x) { x + acc }, init=0)
-///   assert_eq(r, 15)
-/// ```
 #deprecated("use `_.rev().fold(...)` instead")
 pub fn[A, B] T::rev_fold(self : T[A], init~ : B, f : (B, A) -> B) -> B {
   let xs = self.to_array()

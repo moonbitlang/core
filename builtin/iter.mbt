@@ -874,7 +874,7 @@ pub fn[A] Iter::last(self : Iter[A]) -> A? {
 ///   let iter = Iter::singleton(42)
 ///   assert_eq(iter.head(), Some(42))
 ///
-///   let iter = Iter::empty()
+///   let iter : Iter[Int]= Iter::empty()
 ///   assert_eq(iter.head(), None)
 /// ```
 pub fn[A] Iter::head(self : Iter[A]) -> A? {
