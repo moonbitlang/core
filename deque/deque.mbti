@@ -2,6 +2,7 @@ package "moonbitlang/core/deque"
 
 import(
   "moonbitlang/core/json"
+  "moonbitlang/core/string"
 )
 
 // Values
@@ -106,7 +107,7 @@ fn[A] T::front(Self[A]) -> A?
 fn[A] T::is_empty(Self[A]) -> Bool
 fn[A] T::iter(Self[A]) -> Iter[A]
 fn[A] T::iter2(Self[A]) -> Iter2[Int, A]
-fn T::join(Self[String], String) -> String
+fn T::join(Self[String], @string.StringView) -> String
 fn[A] T::length(Self[A]) -> Int
 fn[A, U] T::map(Self[A], (A) -> U) -> Self[U]
 fn[A, U] T::mapi(Self[A], (Int, A) -> U) -> Self[U]
