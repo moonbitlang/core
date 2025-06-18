@@ -212,12 +212,10 @@ test "can_convert_to_int64" {
 /// Example:
 ///
 /// ```moonbit
-/// test "BigInt::hash_combine" {
 ///   let hasher = Hasher::new()
 ///   let big = 12345N
 ///   hasher.combine(big)
 ///   inspect(hasher.finalize(), content="890579181")
-/// }
 /// ```
 pub impl Hash for BigInt with hash_combine(self, hasher) {
   hasher.combine(self.signum())
