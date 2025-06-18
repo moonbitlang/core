@@ -1235,14 +1235,12 @@ pub fn[A] to_array(self : T[A]) -> Array[A] {
 /// Example:
 ///
 /// ```moonbit
-/// test "join" {
 ///   let deque = @deque.of(["a","b","c"])
 ///   let s1 = deque.join("")
 ///   inspect(s1, content="abc")
 /// 
 ///   let s2 = deque.join(",")
 ///   inspect(s2, content="a,b,c")
-/// }
 /// ```
 pub fn T::join(self : T[String], separator : @string.View) -> String {
   let str = separator.to_string()
@@ -1266,12 +1264,10 @@ pub fn T::join(self : T[String], separator : @string.View) -> String {
 /// Example:
 ///
 /// ```moonbit
-/// test "drain" {
 ///   let deque = @deque.of([1,2,3,4,5,6,7,8,9])
 ///   let deque_test = deque.drain(2, 6)
 ///   inspect(deque_test, content="@deque.of([3, 4, 5, 6])")
 ///   inspect(deque, content="@deque.of([1, 2, 7, 8, 9])")
-/// }
 /// ```
 pub fn[A] T::drain(self : T[A], begin : Int, end : Int) -> T[A] {
   guard begin >= 0 && end <= self.length() && begin <= end
@@ -1308,11 +1304,9 @@ pub fn[A] T::drain(self : T[A], begin : Int, end : Int) -> T[A] {
 /// Example:
 ///
 /// ```moonbit
-/// test "flatten" {
 ///   let deque = @deque.of([@deque.of([1,2,3]),@deque.of([4,5,6]),@deque.of([7,8])])
 ///   let deque_test = deque.flatten()
 ///   inspect(deque_test, content="@deque.of([1, 2, 3, 4, 5, 6, 7, 8])")
-/// }
 /// ```
 pub fn[A] T::flatten(self : T[T[A]]) -> T[A] {
   let mut len = 0
