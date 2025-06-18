@@ -6,89 +6,31 @@ import(
 )
 
 // Values
-fn[A : Compare] add(T[A], A) -> T[A]
-
-fn[A : Compare] all(T[A], (A) -> Bool) -> Bool
-
-fn[A : Compare] any(T[A], (A) -> Bool) -> Bool
-
-fn[A : Compare] contains(T[A], A) -> Bool
-
-#deprecated
-fn[A : Compare] diff(T[A], T[A]) -> T[A]
-
-fn[A : Compare] difference(T[A], T[A]) -> T[A]
-
-fn[A : Compare] disjoint(T[A], T[A]) -> Bool
-
-fn[A] each(T[A], (A) -> Unit) -> Unit
-
-fn[A : Compare] filter(T[A], (A) -> Bool) -> T[A]
-
-fn[A : Compare, B] fold(T[A], init~ : B, (B, A) -> B) -> B
-
 fn[A : Compare] from_array(Array[A]) -> T[A]
 
 fn[A : Compare] from_iter(Iter[A]) -> T[A]
 
 fn[A : @json.FromJson + Compare] from_json(Json) -> T[A] raise @json.JsonDecodeError
 
-#deprecated
-fn[A : Compare] inter(T[A], T[A]) -> T[A]
-
-fn[A : Compare] intersection(T[A], T[A]) -> T[A]
-
-fn[A : Compare] is_empty(T[A]) -> Bool
-
-fn[A] iter(T[A]) -> Iter[A]
-
-fn[A : Compare, B : Compare] map(T[A], (A) -> B) -> T[B]
-
-fn[A : Compare] max(T[A]) -> A
-
-fn[A : Compare] max_option(T[A]) -> A?
-
-fn[A : Compare] min(T[A]) -> A
-
-fn[A : Compare] min_option(T[A]) -> A?
-
 fn[A] new() -> T[A]
 
 fn[A : Compare] of(FixedArray[A]) -> T[A]
 
-fn[A : Compare] remove(T[A], A) -> T[A]
-
-fn[A : Compare] remove_min(T[A]) -> T[A]
-
 fn[A : Compare] singleton(A) -> T[A]
-
-fn[A : Compare] size(T[A]) -> Int
-
-fn[A : Compare] split(T[A], A) -> (T[A], Bool, T[A])
-
-fn[A : Compare] subset(T[A], T[A]) -> Bool
-
-fn[A : Compare] symmetric_difference(T[A], T[A]) -> T[A]
-
-fn[A : Compare] to_array(T[A]) -> Array[A]
-
-fn[A : ToJson] to_json(T[A]) -> Json
-
-fn[A : Compare] union(T[A], T[A]) -> T[A]
 
 // Types and methods
 type T[A]
 fn[A : Compare] T::add(Self[A], A) -> Self[A]
-fn[A : Compare] T::all(Self[A], (A) -> Bool) -> Bool
-fn[A : Compare] T::any(Self[A], (A) -> Bool) -> Bool
+fn[A : Compare] T::all(Self[A], (A) -> Bool raise?) -> Bool raise?
+fn[A : Compare] T::any(Self[A], (A) -> Bool raise?) -> Bool raise?
 fn[A : Compare] T::contains(Self[A], A) -> Bool
 #deprecated
 fn[A : Compare] T::diff(Self[A], Self[A]) -> Self[A]
 fn[A : Compare] T::difference(Self[A], Self[A]) -> Self[A]
 fn[A : Compare] T::disjoint(Self[A], Self[A]) -> Bool
-fn[A] T::each(Self[A], (A) -> Unit) -> Unit
-fn[A : Compare] T::filter(Self[A], (A) -> Bool) -> Self[A]
-fn[A : Compare, B] T::fold(Self[A], init~ : B, (B, A) -> B) -> B
+fn[A] T::each(Self[A], (A) -> Unit raise?) -> Unit raise?
+fn[A : Compare] T::filter(Self[A], (A) -> Bool raise?) -> Self[A] raise?
+fn[A : Compare, B] T::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 #deprecated
 fn[A : Compare] T::from_array(Array[A]) -> Self[A]
 #deprecated
@@ -100,7 +42,7 @@ fn[A : Compare] T::inter(Self[A], Self[A]) -> Self[A]
 fn[A : Compare] T::intersection(Self[A], Self[A]) -> Self[A]
 fn[A : Compare] T::is_empty(Self[A]) -> Bool
 fn[A] T::iter(Self[A]) -> Iter[A]
-fn[A : Compare, B : Compare] T::map(Self[A], (A) -> B) -> Self[B]
+fn[A : Compare, B : Compare] T::map(Self[A], (A) -> B raise?) -> Self[B] raise?
 fn[A : Compare] T::max(Self[A]) -> A
 fn[A : Compare] T::max_option(Self[A]) -> A?
 fn[A : Compare] T::min(Self[A]) -> A

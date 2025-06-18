@@ -41,7 +41,7 @@ test "copy" {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt
 ///  let arr = FixedArray::make(4, b'\x00')
 ///  let view = b"\x01\x02\x03"[1:]
 ///  arr.blit_from_bytesview(1, view)

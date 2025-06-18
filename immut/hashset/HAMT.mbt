@@ -252,12 +252,12 @@ pub fn[A] is_empty(self : T[A]) -> Bool {
 
 ///|
 /// Iterate through the elements in a hash set
-pub fn[A] each(self : T[A], f : (A) -> Unit) -> Unit {
+pub fn[A] each(self : T[A], f : (A) -> Unit raise?) -> Unit raise? {
   match self {
     Empty => ()
     Leaf(k) => f(k)
     Collision(bucket) => bucket.each(f)
-    Branch(children) => children.each(fn { child => child.each(f) })
+    Branch(children) => children.each(child => child.each(f))
   }
 }
 
@@ -268,7 +268,7 @@ pub fn[A] iter(self : T[A]) -> Iter[A] {
     Empty => Iter::empty()
     Leaf(k) => Iter::singleton(k)
     Collision(bucket) => bucket.iter()
-    Branch(children) => children.data.iter().flat_map(fn { set => set.iter() })
+    Branch(children) => children.data.iter().flat_map(set => set.iter())
   }
 }
 

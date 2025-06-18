@@ -5,49 +5,14 @@ import(
 )
 
 // Values
-fn[K : Compare, V] add(T[K, V], K, V) -> Unit
-
-fn[K, V] clear(T[K, V]) -> Unit
-
-fn[K : Compare, V] contains(T[K, V], K) -> Bool
-
-fn[K, V] each(T[K, V], (K, V) -> Unit raise?) -> Unit raise?
-
-fn[K, V] eachi(T[K, V], (Int, K, V) -> Unit raise?) -> Unit raise?
-
 fn[K : Compare, V] from_array(Array[(K, V)]) -> T[K, V]
 
 fn[K : Compare, V] from_iter(Iter[(K, V)]) -> T[K, V]
-
-fn[K : Compare, V] get(T[K, V], K) -> V?
-
-fn[K, V] is_empty(T[K, V]) -> Bool
-
-fn[K, V] iter(T[K, V]) -> Iter[(K, V)]
-
-fn[K, V] iter2(T[K, V]) -> Iter2[K, V]
-
-fn[K, V] keys(T[K, V]) -> Array[K]
 
 fn[K, V] new() -> T[K, V]
 
 #deprecated
 fn[K : Compare, V] of(Array[(K, V)]) -> T[K, V]
-
-#deprecated
-fn[K : Compare, V] op_get(T[K, V], K) -> V?
-
-fn[K : Compare, V] op_set(T[K, V], K, V) -> Unit
-
-fn[K : Compare, V] range(T[K, V], K, K) -> Iter2[K, V]
-
-fn[K : Compare, V] remove(T[K, V], K) -> Unit
-
-fn[K, V] size(T[K, V]) -> Int
-
-fn[K, V] to_array(T[K, V]) -> Array[(K, V)]
-
-fn[K, V] values(T[K, V]) -> Array[V]
 
 // Types and methods
 type T[K, V]

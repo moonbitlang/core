@@ -41,7 +41,7 @@ test "copy" {
 
 ///|
 test "set_utf8_char (ASCII)" {
-  let arr = FixedArray::makei(4, fn { _ => b'\x00' })
+  let arr = FixedArray::makei(4, _ => b'\x00')
   let char = 'A'
   let len = arr.set_utf8_char(0, char)
   let bytes = @bytes.from_fixedarray(arr)
@@ -56,7 +56,7 @@ test "set_utf8_char (ASCII)" {
 
 ///|
 test "set_utf8_char (CJK)" {
-  let arr = FixedArray::makei(4, fn { _ => b'\x00' })
+  let arr = FixedArray::makei(4, _ => b'\x00')
   let char = '拼'
   let len = arr.set_utf8_char(0, char)
   let bytes = @bytes.from_fixedarray(arr)
@@ -71,7 +71,7 @@ test "set_utf8_char (CJK)" {
 
 ///|
 test "set_utf8_char (0x600)" {
-  let arr = FixedArray::makei(4, fn { _ => b'\x00' })
+  let arr = FixedArray::makei(4, _ => b'\x00')
   let char = '؀'
   inspect(char.to_int(), content="1536")
   let len = arr.set_utf8_char(0, char)
@@ -87,7 +87,7 @@ test "set_utf8_char (0x600)" {
 
 ///|
 test "set_utf8_char (Emoji)" {
-  let arr = FixedArray::makei(4, fn { _ => b'\x00' })
+  let arr = FixedArray::makei(4, _ => b'\x00')
   let char = '🙅'
   let len = arr.set_utf8_char(0, char)
   let bytes = @bytes.from_fixedarray(arr)
@@ -102,7 +102,7 @@ test "set_utf8_char (Emoji)" {
 
 ///|
 test "set_utf16le_char" {
-  let arr = FixedArray::makei(4, fn { _ => b'\x00' })
+  let arr = FixedArray::makei(4, _ => b'\x00')
   let char = 'A'
   let len = arr.set_utf16le_char(0, char)
   let bytes = @bytes.from_fixedarray(arr)
@@ -118,7 +118,7 @@ test "set_utf16le_char" {
 
 ///|
 test "set_utf16le_char (surrogate pair)" {
-  let arr = FixedArray::makei(4, fn { _ => b'\x00' })
+  let arr = FixedArray::makei(4, _ => b'\x00')
   let char = '🉑'
   let len = arr.set_utf16le_char(0, char)
   let bytes = @bytes.from_fixedarray(arr)
@@ -134,7 +134,7 @@ test "set_utf16le_char (surrogate pair)" {
 
 ///|
 test "set_utf16be_char" {
-  let arr = FixedArray::makei(4, fn { _ => b'\x00' })
+  let arr = FixedArray::makei(4, _ => b'\x00')
   let char = 'A'
   let len = arr.set_utf16be_char(0, char)
   let bytes = @bytes.from_fixedarray(arr)

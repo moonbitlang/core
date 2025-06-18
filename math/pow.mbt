@@ -40,7 +40,6 @@
 /// Example:
 ///
 /// ```moonbit
-/// test "scalbnf" {
 ///   inspect(scalbnf(1.5, 2), content="6")
 ///   inspect(scalbnf(2, -1), content="1")
 ///   inspect(scalbnf(3, 0), content="3")
@@ -50,7 +49,6 @@
 ///   inspect(scalbnf(@float.not_a_number, 1), content="NaN")
 ///   inspect(scalbnf(-2, 1), content="-4")
 ///   inspect(scalbnf(-2, 128), content="-Infinity")
-/// }
 /// ```
 pub fn scalbnf(y : Float, exp : Int) -> Float {
   let mut y = y
@@ -94,11 +92,9 @@ pub fn scalbnf(y : Float, exp : Int) -> Float {
 /// Example:
 ///
 /// ```moonbit
-/// test "pow" {
 ///   inspect((2.0 : Float).pow(3.0), content="8")
 ///   inspect((4.0 : Float).pow(0.5), content="2")
 ///   inspect((1.0 : Float).pow(-1.0), content="1")
-/// }
 /// ```
 pub fn powf(base : Float, exponent : Float) -> Float {
   let huge : Float = 1.0e30
@@ -187,7 +183,7 @@ pub fn powf(base : Float, exponent : Float) -> Float {
     } else if iy >= 0x3f800000 {
       k = (iy >> 23) - 0x7f // exponent
       j = iy >> (23 - k)
-      if (j << (23 - k)) == iy {
+      if j << (23 - k) == iy {
         yisint = 2 - (j & 1)
       }
     }
@@ -398,7 +394,7 @@ pub fn powf(base : Float, exponent : Float) -> Float {
   z = (1.0 : Float) - (r - z)
   j = z.reinterpret_as_int()
   j += n << 23
-  if (j >> 23) <= 0 {
+  if j >> 23 <= 0 {
     // subnormal output
     z = scalbnf(z, n)
   } else {

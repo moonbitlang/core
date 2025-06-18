@@ -186,8 +186,8 @@ test "fold" {
 test "rev_fold" {
   let ls = @list.of(["1", "2", "3", "4", "5"])
   let el : @list.T[String] = @list.empty()
-  inspect(ls.rev_fold(fn(acc, x) { x + acc }, init=""), content="12345")
-  inspect(el.rev_fold(fn(acc, x) { x + acc }, init="init"), content="init")
+  inspect(ls.rev().fold(fn(acc, x) { x + acc }, init=""), content="12345")
+  inspect(el.rev().fold(fn(acc, x) { x + acc }, init="init"), content="init")
 }
 
 ///|
@@ -202,8 +202,8 @@ test "foldi" {
 test "rev_foldi" {
   let ls = @list.of([1, 2, 3, 4, 5])
   let el : @list.T[Int] = @list.empty()
-  inspect(ls.rev_foldi(fn(i, acc, x) { x * i + acc }, init=0), content="20")
-  inspect(el.rev_foldi(fn(i, acc, x) { x * i + acc }, init=0), content="0")
+  inspect(ls.rev().foldi(fn(i, acc, x) { x * i + acc }, init=0), content="20")
+  inspect(el.rev().foldi(fn(i, acc, x) { x * i + acc }, init=0), content="0")
 }
 
 ///|
@@ -323,7 +323,7 @@ test "sort" {
 
 ///|
 test "sort-stack-safety" {
-  let arr = FixedArray::makei(100_000, fn { x => x })
+  let arr = FixedArray::makei(100_000, x => x)
   arr.rev_inplace()
   let ls = @list.of(arr)
   ls.sort() |> ignore
@@ -341,16 +341,20 @@ test "contain" {
 
 ///|
 test "unfold" {
-  let ls = @list.unfold(init=0, fn {
-    i => if i == 3 { None } else { Some((i, i + 1)) }
+  let ls = @list.unfold(init=0, i => if i == 3 {
+    None
+  } else {
+    Some((i, i + 1))
   })
   inspect(ls, content="@list.of([0, 1, 2])")
 }
 
 ///|
 test "rev_unfold" {
-  let ls = @list.rev_unfold(init=0, fn {
-    i => if i == 3 { None } else { Some((i, i + 1)) }
+  let ls = @list.rev_unfold(init=0, i => if i == 3 {
+    None
+  } else {
+    Some((i, i + 1))
   })
   inspect(ls, content="@list.of([2, 1, 0])")
 }
@@ -971,8 +975,10 @@ test "complex list recursion safety" {
   // Create very large lists and ensure operations are stack safe
 
   // Create a large list using unfold
-  let large = @list.unfold(init=0, fn {
-    i => if i < 10000 { Some((i, i + 1)) } else { None }
+  let large = @list.unfold(init=0, i => if i < 10000 {
+    Some((i, i + 1))
+  } else {
+    None
   })
 
   // Verify operations on large list work correctly without stack overflow

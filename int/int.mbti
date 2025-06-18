@@ -7,10 +7,6 @@ let max_value : Int
 
 let min_value : Int
 
-fn to_be_bytes(Int) -> Bytes
-
-fn to_le_bytes(Int) -> Bytes
-
 // Types and methods
 fn Int::abs(Int) -> Int
 fn Int::to_be_bytes(Int) -> Bytes

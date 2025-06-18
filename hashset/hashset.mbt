@@ -374,17 +374,20 @@ priv type MyString String derive(Eq)
 
 ///|
 impl Hash for MyString with hash(self) {
-  self._.length()
+  let MyString(self) = self
+  self.length()
 }
 
 ///|
 impl Hash for MyString with hash_combine(self, hasher) {
-  hasher.combine_string(self._)
+  let MyString(self) = self
+  hasher.combine_string(self)
 }
 
 ///|
 impl Show for MyString with output(self, logger) {
-  logger.write_string(self._)
+  let MyString(self) = self
+  logger.write_string(self)
 }
 
 ///|

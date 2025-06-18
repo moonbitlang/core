@@ -85,7 +85,11 @@ test "HAMT::values" {
 test "HAMT::iter" {
   let data = @hashmap.of([(0, "a"), (2, "b"), (3, "d"), (5, "e"), (11111, "f")])
   let mut s = ""
-  data.iter().each(fn { (k, v) => s += " \{k},\{v}" })
+  data
+  .iter()
+  .each(p => {
+    s += " \{p.0},\{p.1}"
+  })
   inspect(s, content=" 0,a 5,e 3,d 11111,f 2,b")
 }
 
@@ -93,7 +97,11 @@ test "HAMT::iter" {
 test "HAMT::iter2" {
   let data = @hashmap.of([(0, "a"), (2, "b"), (3, "d"), (5, "e"), (11111, "f")])
   let mut s = ""
-  data.iter2().each(fn { k, v => s += " \{k},\{v}" })
+  data
+  .iter2()
+  .each((k, v) => {
+    s += " \{k},\{v}"
+  })
   inspect(s, content=" 0,a 5,e 3,d 11111,f 2,b")
 }
 
@@ -390,7 +398,7 @@ test "HAMT::map_with_key leaf" {
 ///|
 test "HAMT::map_with_key collision" {
   let map = @hashmap.of([(MyString("a"), 1), (MyString("b"), 2)]) // Collision
-  let mapped = map.map_with_key(fn(k, v) { k._ + ":" + v.to_string() })
+  let mapped = map.map_with_key(fn(k, v) { k.inner() + ":" + v.to_string() })
   assert_eq(mapped.get(MyString("a")), Some("a:1"))
   assert_eq(mapped.get(MyString("b")), Some("b:2"))
   assert_eq(mapped.get(MyString("c")), None)
@@ -427,7 +435,7 @@ impl Hash for MyString with hash_combine(_self, hasher) {
 
 ///|
 impl Eq for MyString with op_equal(self, other) {
-  self._ == other._
+  self.inner() == other.inner()
 }
 
 ///|

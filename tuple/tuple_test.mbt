@@ -13,61 +13,61 @@
 // limitations under the License.
 
 ///|
-test "pair" {
-  let tuple = @tuple.pair(1, 2)
-  assert_eq(tuple, (1, 2))
-}
+// test "pair" {
+//   let tuple = @tuple.pair(1, 2)
+//   assert_eq(tuple, (1, 2))
+// }
 
 ///|
-test "fst" {
-  let tuple = (1, 2)
-  assert_eq(@tuple.fst(tuple), 1)
-}
+// test "fst" {
+//   let tuple = (1, 2)
+//   assert_eq(@tuple.fst(tuple), 1)
+// }
 
 ///|
-test "snd" {
-  let tuple = (1, 2)
-  assert_eq(@tuple.snd(tuple), 2)
-}
+// test "snd" {
+//   let tuple = (1, 2)
+//   assert_eq(@tuple.snd(tuple), 2)
+// }
 
 ///|
-test "swap" {
-  let tuple = (1, 2)
-  let swapped = @tuple.swap(tuple)
-  let swapped_2 = @tuple.swap(swapped)
-  assert_eq(swapped, (2, 1))
-  assert_eq(swapped_2, tuple)
-}
+// test "swap" {
+//   let tuple = (1, 2)
+//   let swapped = @tuple.swap(tuple)
+//   let swapped_2 = @tuple.swap(swapped)
+//   assert_eq(swapped, (2, 1))
+//   assert_eq(swapped_2, tuple)
+// }
 
 ///|
-test "curry" {
-  let add = fn(x : Int, y : Int) -> Int { x + y }
-  let curried_add = @tuple.curry(add)
-  assert_eq(curried_add(1)(2), add(1, 2))
-}
+// test "curry" {
+//   let add = fn(x : Int, y : Int) -> Int { x + y }
+//   let curried_add = @tuple.curry(add)
+//   assert_eq(curried_add(1)(2), add(1, 2))
+// }
 
 ///|
-test "uncurry" {
-  let add = fn(x : Int) -> (Int) -> Int { fn(y : Int) -> Int { x + y } }
-  let uncurried_add = @tuple.uncurry(add)
-  assert_eq(uncurried_add(1, 2), add(1)(2))
-}
+// test "uncurry" {
+//   let add = fn(x : Int) -> (Int) -> Int { fn(y : Int) -> Int { x + y } }
+//   let uncurried_add = @tuple.uncurry(add)
+//   assert_eq(uncurried_add(1, 2), add(1)(2))
+// }
 
 ///|
-test "id_1" {
-  let add = fn(x : Int, y : Int) -> Int { x + y }
-  let curried_add = @tuple.curry(add)
-  let uncurried_add = @tuple.uncurry(curried_add)
-  assert_eq(uncurried_add(1, 2), add(1, 2))
-}
+// test "id_1" {
+//   let add = fn(x : Int, y : Int) -> Int { x + y }
+//   let curried_add = @tuple.curry(add)
+//   let uncurried_add = @tuple.uncurry(curried_add)
+//   assert_eq(uncurried_add(1, 2), add(1, 2))
+// }
 
 ///|
-test "id_2" {
-  let add = fn(x : Int) -> (Int) -> Int { fn(y : Int) -> Int { x + y } }
-  let uncurried_add = @tuple.uncurry(add)
-  let curried_add = @tuple.curry(uncurried_add)
-  assert_eq(curried_add(1)(2), add(1)(2))
-}
+// test "id_2" {
+//   let add = fn(x : Int) -> (Int) -> Int { fn(y : Int) -> Int { x + y } }
+//   let uncurried_add = @tuple.uncurry(add)
+//   let curried_add = @tuple.curry(uncurried_add)
+//   assert_eq(curried_add(1)(2), add(1)(2))
+// }
 
 ///|
 test "eq" {

@@ -24,7 +24,7 @@ let empty_bitset : Bitset = Bitset(0)
 ///
 /// Check if the given index is present in the bitset.
 pub fn Bitset::has(self : Bitset, idx : Int) -> Bool {
-  (self._ & (1U << idx)) != 0
+  (self.inner() & (1U << idx)) != 0
 }
 
 ///|
@@ -32,28 +32,28 @@ pub fn Bitset::has(self : Bitset, idx : Int) -> Bool {
 ///
 /// Get the index of the bit in the bitset.
 pub fn Bitset::index_of(self : Bitset, idx : Int) -> Int {
-  (self._ & ((1U << idx) - 1)).popcnt()
+  (self.inner() & ((1U << idx) - 1)).popcnt()
 }
 
 ///|
 pub fn Bitset::union(self : Bitset, other : Bitset) -> Bitset {
-  Bitset(self._ | other._)
+  Bitset(self.inner() | other.inner())
 }
 
 ///|
 pub fn Bitset::intersection(self : Bitset, other : Bitset) -> Bitset {
-  Bitset(self._ & other._)
+  Bitset(self.inner() & other.inner())
 }
 
 ///|
 pub fn Bitset::difference(self : Bitset, other : Bitset) -> Bitset {
-  Bitset(self._ & other._.lnot())
+  Bitset(self.inner() & other.inner().lnot())
 }
 
 ///|
 pub fn Bitset::iter(self : Bitset) -> Iter[Int] {
   Iter::new(fn(yield_) {
-    let mut bs = self._
+    let mut bs = self.inner()
     while bs != 0 {
       let next = bs & (-bs.reinterpret_as_int()).reinterpret_as_uint()
       guard yield_(bs.ctz()) is IterContinue else { break IterEnd }
@@ -69,7 +69,7 @@ pub fn Bitset::iter(self : Bitset) -> Iter[Int] {
 ///
 /// Add a new index to the bitset.
 pub fn Bitset::add(self : Bitset, idx : Int) -> Bitset {
-  Bitset(self._ | (1U << idx))
+  Bitset(self.inner() | (1U << idx))
 }
 
 ///|
@@ -77,7 +77,7 @@ pub fn Bitset::add(self : Bitset, idx : Int) -> Bitset {
 ///
 /// Remove an index from the bitset.
 pub fn Bitset::remove(self : Bitset, idx : Int) -> Bitset {
-  Bitset(self._ ^ (1U << idx))
+  Bitset(self.inner() ^ (1U << idx))
 }
 
 ///|
@@ -85,7 +85,8 @@ pub fn Bitset::remove(self : Bitset, idx : Int) -> Bitset {
 ///
 /// Calculate the size of a bitset
 pub fn Bitset::size(self : Bitset) -> Int {
-  self._.popcnt()
+  let Bitset(self) = self
+  self.popcnt()
 }
 
 ///|
@@ -196,7 +197,7 @@ test "Bitset::size" {
 ///|
 test "Bitset::ctpop" {
   inspect(
-    ([0, 0xf0f0f0f0, 0x3c3c0ff0] : Array[_]).map(fn { x => x.popcnt() }),
+    ([0, 0xf0f0f0f0, 0x3c3c0ff0] : Array[_]).map(x => x.popcnt()),
     content="[0, 16, 16]",
   )
 }

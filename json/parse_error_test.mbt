@@ -13,6 +13,7 @@
 // limitations under the License.
 
 //region errors
+
 ///|
 test "throws on empty documents" {
   inspect(try? @json.parse(""), content="Err(Unexpected end of file)")

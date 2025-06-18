@@ -17,10 +17,10 @@
 ///
 /// # Example
 ///
-/// ```
-/// let x: Result[Int, Unit] = Ok(6)
-/// let y = x.map(fn (v : Int) { v * 7 })
-/// assert_eq(y, Ok(42))
+/// ```mbt
+///   let x: Result[Int, Unit] = Ok(6)
+///   let y = x.map(fn (v : Int) { v * 7 })
+///   assert_eq(y, Ok(42))
 /// ```
 pub fn[T, E, U] map(self : Result[T, E], f : (T) -> U) -> Result[U, E] {
   match self {
@@ -44,10 +44,10 @@ test "map" {
 ///
 /// # Example
 ///
-/// ```
-/// let x: Result[Int, String] = Err("error")
-/// let y = x.map_err(fn (v : String) { v + "!" })
-/// assert_eq(y, Err("error!"))
+/// ```mbt
+///   let x: Result[Int, String] = Err("error")
+///   let y = x.map_err(fn (v : String) { v + "!" })
+///   assert_eq(y, Err("error!"))
 /// ```
 pub fn[T, E, F] map_err(self : Result[T, E], f : (E) -> F) -> Result[T, F] {
   match self {
@@ -71,9 +71,9 @@ test "map_err" {
 ///
 /// # Example
 ///
-/// ```
-/// let x: Result[Int, String] = Err("error")
-/// assert_eq(x, Err("error"))
+/// ```mbt
+///   let x: Result[Int, String] = Err("error")
+///   assert_eq(x, Err("error"))
 /// ```
 pub fn[T, E] err(value : E) -> Result[T, E] {
   Err(value)
@@ -90,9 +90,9 @@ test "err" {
 ///
 /// # Example
 ///
-/// ```
-/// let x: Result[String, Unit] = Ok("yes")
-/// assert_true(x.is_ok())
+/// ```mbt
+///   let x: Result[String, Unit] = Ok("yes")
+///   assert_true(x.is_ok())
 /// ```
 pub fn[T, E] ok(value : T) -> Result[T, E] {
   Ok(value)
@@ -137,10 +137,10 @@ test "is_err" {
 ///
 /// # Example
 ///
-/// ```
-/// let x: Result[Int, String] = Ok(6)
-/// let y = x.or(0)
-/// assert_eq(y, 6)
+/// ```mbt
+///   let x: Result[Int, String] = Ok(6)
+///   let y = x.or(0)
+///   assert_eq(y, 6)
 /// ```
 pub fn[T, E] or(self : Result[T, E], default : T) -> T {
   match self {
@@ -165,10 +165,10 @@ test "or" {
 /// Default is lazily evaluated.
 /// # Example
 ///
-/// ```
-/// let x: Result[Int, String] = Ok(6)
-/// let y = x.or_else(fn() { 0 })
-/// assert_eq(y, 6)
+/// ```mbt
+///   let x: Result[Int, String] = Ok(6)
+///   let y = x.or_else(fn() { 0 })
+///   assert_eq(y, 6)
 /// ```
 pub fn[T, E] or_else(self : Result[T, E], default : () -> T) -> T {
   match self {
@@ -194,10 +194,10 @@ test "or_else" {
 ///
 /// # Example
 ///
-/// ```
-/// let x: Result[Result[Int, String], String] = Ok(Ok(6))
-/// let y = x.flatten()
-/// assert_eq(y, Ok(6))
+/// ```mbt
+///   let x: Result[Result[Int, String], String] = Ok(Ok(6))
+///   let y = x.flatten()
+///   assert_eq(y, Ok(6))
 /// ```
 pub fn[T, E] flatten(self : Result[Result[T, E], E]) -> Result[T, E] {
   match self {
@@ -221,10 +221,10 @@ test "flatten" {
 ///
 /// # Example
 ///
-/// ```
-/// let x: Result[Int, String] = Ok(6)
-/// let y = x.bind(fn(v : Int) { Ok(v * 7) })
-/// assert_eq(y, Ok(42))
+/// ```mbt
+///   let x: Result[Int, String] = Ok(6)
+///   let y = x.bind(fn(v : Int) { Ok(v * 7) })
+///   assert_eq(y, Ok(42))
 /// ```
 pub fn[T, E, U] bind(
   self : Result[T, E],
@@ -249,10 +249,10 @@ test "bind" {
 /// If the `Result` is an `Ok`, the `ok` function is applied to the value. If the `Result` is an `Err`, the `err` function is applied to the value.
 /// # Example
 ///
-/// ```
-/// let x = Ok(6)
-/// let y = x.fold(fn(v : Int) -> Int { v * 7 }, fn(_e : String) -> Int { 0 })
-/// assert_eq(y, 42)
+/// ```mbt
+///   let x = Ok(6)
+///   let y = x.fold(fn(v : Int) -> Int { v * 7 }, fn(_e : String) -> Int { 0 })
+///   assert_eq(y, 42)
 /// ```
 pub fn[T, E, V] fold(self : Result[T, E], ok : (T) -> V, err : (E) -> V) -> V {
   match self {
@@ -278,10 +278,10 @@ test "fold" {
 ///
 /// # Example
 ///
-/// ```
-/// let x: Result[Int, String] = Ok(6)
-/// let y = x.to_option()
-/// assert_eq(y, Some(6))
+/// ```mbt
+///   let x: Result[Int, String] = Ok(6)
+///   let y = x.to_option()
+///   assert_eq(y, Some(6))
 /// ```
 pub fn[T, E] to_option(self : Result[T, E]) -> T? {
   match self {
@@ -350,16 +350,8 @@ pub fn[T, E] unwrap(self : Result[T, E]) -> T {
 /// Example:
 ///
 /// ```moonbit
-/// test "unwrap_err" {
 ///   let err : Result[Int, String] = Err("error message")
 ///   inspect(err.unwrap_err(), content="error message")
-/// }
-///
-/// test "panic unwrap_err/ok" {
-///   let ok : Result[Int, String] = Ok(42)
-///   let _ = ok.unwrap_err()
-///
-/// }
 /// ```
 pub fn[T, E] unwrap_err(self : Result[T, E]) -> E {
   match self {

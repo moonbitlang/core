@@ -42,6 +42,7 @@ fn[T : Show] repr(T) -> String
 
 // Types and methods
 pub(all) type ArgsLoc Array[SourceLoc?]
+fn ArgsLoc::inner(Self) -> Array[SourceLoc?]
 fn ArgsLoc::to_json(Self) -> String
 impl Show for ArgsLoc
 
@@ -176,15 +177,15 @@ fn[A : Eq] Iter::contains(Self[A], A) -> Bool
 fn[T] Iter::count(Self[T]) -> Int
 fn[T] Iter::drop(Self[T], Int) -> Self[T]
 fn[T] Iter::drop_while(Self[T], (T) -> Bool) -> Self[T]
-fn[T] Iter::each(Self[T], (T) -> Unit) -> Unit
-fn[T] Iter::eachi(Self[T], (Int, T) -> Unit) -> Unit
+fn[T] Iter::each(Self[T], (T) -> Unit raise?) -> Unit raise?
+fn[T] Iter::eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?
 fn[T] Iter::empty() -> Self[T]
 fn[T] Iter::filter(Self[T], (T) -> Bool) -> Self[T]
 fn[A, B] Iter::filter_map(Self[A], (A) -> B?) -> Self[B]
 fn[T] Iter::find_first(Self[T], (T) -> Bool) -> T?
 fn[T, R] Iter::flat_map(Self[T], (T) -> Self[R]) -> Self[R]
 fn[T] Iter::flatten(Self[Self[T]]) -> Self[T]
-fn[T, B] Iter::fold(Self[T], init~ : B, (B, T) -> B) -> B
+fn[T, B] Iter::fold(Self[T], init~ : B, (B, T) -> B raise?) -> B raise?
 #deprecated
 fn[T, K : Eq + Hash] Iter::group_by(Self[T], (T) -> K) -> Map[K, Array[T]]
 fn[A] Iter::head(Self[A]) -> A?
