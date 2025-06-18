@@ -13,13 +13,6 @@
 // limitations under the License.
 
 ///|
-/// Create a tuple with two elements.
-///
-/// # Example
-/// ```mbt
-///   let tuple = @tuple.pair(1, 2)
-///   assert_eq(tuple, (1, 2))
-/// ```
 #deprecated
 #coverage.skip
 pub fn[T, U] pair(x : T, y : U) -> (T, U) {
@@ -27,14 +20,6 @@ pub fn[T, U] pair(x : T, y : U) -> (T, U) {
 }
 
 ///|
-/// Get the first element of a tuple.
-///
-/// # Example
-/// ```mbt
-///   let tuple = (1, 2)
-///   let x = @tuple.fst(tuple)
-///   assert_eq(x, 1)
-/// ```
 #deprecated("use `tuple.0` instead")
 #coverage.skip
 pub fn[T, U] fst(tuple : (T, U)) -> T {
@@ -42,14 +27,6 @@ pub fn[T, U] fst(tuple : (T, U)) -> T {
 }
 
 ///|
-/// Get the second element of a tuple.
-///
-/// # Example
-/// ```mbt
-///   let tuple = (1, 2)
-///   let y = @tuple.snd(tuple)
-///   assert_eq(y, 2)
-/// ```
 #deprecated("use `tuple.1` instead")
 #coverage.skip
 pub fn[T, U] snd(tuple : (T, U)) -> U {
@@ -83,13 +60,6 @@ pub fn[T, U, V, W] map_both(
 
 ///|
 /// Swap the elements of a tuple.
-///
-/// # Example
-/// ```mbt
-///   let tuple = (1, 2)
-///   let swapped = @tuple.swap(tuple)
-///   assert_eq(swapped, (2, 1))
-/// ```
 #deprecated
 #coverage.skip
 pub fn[T, U] swap(tuple : (T, U)) -> (U, T) {
@@ -98,13 +68,6 @@ pub fn[T, U] swap(tuple : (T, U)) -> (U, T) {
 
 ///|
 /// Curry a function.
-///
-/// # Example
-/// ```mbt
-///   let add = fn(x : Int, y : Int) -> Int { x + y }
-///   let curried_add = @tuple.curry(add)
-///   assert_eq(curried_add(1)(2), 3)
-/// ```
 #deprecated
 #coverage.skip
 pub fn[T, U, V] curry(f : (T, U) -> V) -> (T) -> (U) -> V {
@@ -112,14 +75,6 @@ pub fn[T, U, V] curry(f : (T, U) -> V) -> (T) -> (U) -> V {
 }
 
 ///|
-/// Uncurry a function.
-///
-/// # Example
-/// ```mbt
-///   let add = fn(x : Int) -> (Int) -> Int { fn(y : Int) -> Int { x + y } }
-///   let uncurried_add = @tuple.uncurry(add)
-///   assert_eq(uncurried_add(1, 2), 3)
-/// ```
 #deprecated
 #coverage.skip
 pub fn[T, U, V] uncurry(f : (T) -> (U) -> V) -> (T, U) -> V {

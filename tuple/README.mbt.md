@@ -6,26 +6,28 @@ Tuple is a fixed-size collection of elements of different types. It is a lightwe
 
 ## Create
 
-Create a new tuple by `pair` or using the tuple literal syntax.
+Create a new tuple using the tuple literal syntax.
 
 ```moonbit
 test {
-    let _tuple = @tuple.pair(1, 2)
-    let _tuple2 = (1, 2)
+    let tuple2 = (1, 2)
+    let tuple3 = (1, 2, 3)
+    inspect((tuple2,tuple3), content="((1, 2), (1, 2, 3))")
 }
 ```
 
 ## Access
 
-You can access the elements of the tuple using the `fst` and `snd` methods (Shortly use dot access).
+You can access the elements of the tuple using pattern match or  dot access.
 
 ```moonbit
 test {
     let tuple = (1, 2)
     assert_eq(tuple.0, 1)
     assert_eq(tuple.1, 2)
-    assert_eq(@tuple.fst(tuple), 1)
-    assert_eq(@tuple.snd(tuple), 2)
+    let (a, b) = tuple
+    assert_eq(a, 1)
+    assert_eq(b, 2)
 }
 ```
 
@@ -35,41 +37,17 @@ You can transform the tuple using the matrix functions combined with `then`.
 
 ```moonbit  
 test {
-    let tuple = (1, 2)
-    let _tuple2 = ({ (pair: (Int, Int)) => (pair.0 + 1, pair.1) })(tuple) // tuple2 = (2, 2)
-    let _tuple3 = tuple |> then({ pair => (pair.0, pair.1 + 1) }) // tuple3 = (1, 3)
-    let _mapped = tuple |> then(fn(pair) { (pair.0 + 1, pair.1 - 1) }) // _mapped = 2, 1
+  let tuple = (1, 2)
+  let tuple2 = ((pair : (Int, Int)) => (pair.0 + 1, pair.1))(tuple)
+  inspect(tuple2, content="(2, 2)")
+  let tuple3 = tuple |> then(pair => (pair.0, pair.1 + 1))
+  inspect(tuple3, content="(1, 3)")
+  let mapped = tuple |> then(pair => (pair.0 + 1, pair.1 - 1))
+  inspect(mapped, content="(2, 1)")
 }
 ```
 
-## Conversion
-Swap the elements of the tuple using the `swap` method.
 
-```moonbit
-test {
-    let tuple = (1, 2)
-    let _swapped = @tuple.swap(tuple) // swapped = (2, 1)
-}
-```
 
-## Currying
-Moonbit provides a currying method for the tuple. You can use the `curry` method to convert a function into a curried function.
 
-```moonbit
-test {
-    let add = fn(a, b) { a + b }
-    let curried_add = @tuple.curry(add)
-    let _result = curried_add(1)(2) // result = 3
-}
-```
-
-The dual of the `curry` method is the `uncurry` method, which converts a curried function back to a normal function.
-
-```moonbit
-test {
-    let add = fn(a) { fn(b) { a + b } }
-    let uncurried_add = @tuple.uncurry(add)
-    let _result = uncurried_add(1, 2) // result = 3
-}
-```
 
