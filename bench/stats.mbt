@@ -32,7 +32,7 @@ struct Summary {
   iqr : Double
   batch_size : Int
   runs : Int
-} derive(ToJson(fields(variance(rename="var"))))
+} derive(ToJson)
 
 ///|
 fn Summary::new(
@@ -218,7 +218,7 @@ test {
     "max": 33.3,
     "mean": 11.587499999999999,
     "median": 8.5,
-    "var": 127.64124999999999,
+    "variance": 127.64124999999999,
     "std_dev": 11.297842714430042,
     "std_dev_pct": 97.50026075020534,
     "median_abs_dev": 9.043859999999999,
