@@ -23,6 +23,7 @@ impl Show for RationalError
 type T
 fn T::abs(Self) -> Self
 fn T::ceil(Self) -> Int64
+fn T::checked_add(Self, Self) -> Self?
 fn T::floor(Self) -> Int64
 fn T::fract(Self) -> Self
 fn T::is_integer(Self) -> Bool

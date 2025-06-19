@@ -65,12 +65,36 @@ fn new_unchecked(numerator : Int64, denominator : Int64) -> T {
 
 ///|
 /// NOTE: we don't check overflow here, to align with the `op_add` of `Int64`.
-/// TODO: add a `checked_add` method.
 pub impl Add for T with op_add(self : T, other : T) -> T {
   new_unchecked(
     self.numerator * other.denominator + other.numerator * self.denominator,
     self.denominator * other.denominator,
   )
+}
+
+///|
+/// Checked addition for rational numbers.
+/// Returns `None` if any intermediate calculation overflows,
+/// otherwise returns the correctly reduced rational.
+pub fn T::checked_add(self : T, other : T) -> T? {
+  let (a, b) = (self, other)
+  let lhs = a.numerator * b.denominator
+  if a.numerator != 0L && lhs / a.numerator != b.denominator {
+    return None
+  }
+  let rhs = b.numerator * a.denominator
+  if b.numerator != 0L && rhs / b.numerator != a.denominator {
+    return None
+  }
+  let num = lhs + rhs
+  if (lhs ^ rhs) >= 0L && (lhs ^ num) < 0L {
+    return None
+  }
+  let den = a.denominator * b.denominator
+  if a.denominator != 0L && den / a.denominator != b.denominator {
+    return None
+  }
+  new(num, den)
 }
 
 ///|
@@ -364,6 +388,26 @@ test "op_add" {
   let c = a + b
   assert_eq(c.numerator, -1L)
   assert_eq(c.denominator, 1L)
+}
+
+///|
+test "checked_add" {
+  // 1/2 + 1/3 = 5/6
+  let a = new_unchecked(1L, 2L)
+  let b = new_unchecked(1L, 3L)
+  let c = a.checked_add(b)
+  assert_eq(c, Some(new_unchecked(5L, 6L)))
+
+  // -1/2 + 1/2 = 0
+  let a = new_unchecked(-1L, 2L)
+  let b = new_unchecked(1L, 2L)
+  let c = a.checked_add(b)
+  assert_eq(c, Some(new_unchecked(0L, 1L)))
+
+  // Large overflow case: MAX + MAX
+  let big = new_unchecked(@int64.max_value, 1L)
+  let c = big.checked_add(big)
+  assert_eq(c, None)
 }
 
 ///|
