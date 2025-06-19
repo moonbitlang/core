@@ -110,6 +110,10 @@ fn[T] Array::unsafe_truncate_to_length(self : Array[T], new_len : Int) -> Unit {
   self.len = new_len
 }
 
+pub fn[T] Array::truncate_to_length(self : Array[T], len : Int) -> Unit {
+  self.unsafe_truncate_to_length(len)
+}
+
 ///|
 test "unsafe_truncate_to_length" {
   let arr = [1, 2, 3, 4, 5]
