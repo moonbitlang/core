@@ -45,6 +45,7 @@ impl BitXOr for BigInt
 impl Compare for BigInt
 impl Div for BigInt
 impl Eq for BigInt
+impl Hash for BigInt
 impl Mod for BigInt
 impl Mul for BigInt
 impl Neg for BigInt

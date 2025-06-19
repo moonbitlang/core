@@ -32,13 +32,11 @@
 /// Example:
 ///
 /// ```skip
-/// test "Double::to_int/normal" {
 ///   inspect(42.0.to_int(), content="42")
 ///   inspect((-42.5).to_int(), content="-42")
 ///   inspect((0.0 / 0.0).to_int(), content="0") // NaN
 ///   inspect((1.0 / 0.0).to_int(), content="2147483647") // Infinity
 ///   inspect((-1.0 / 0.0).to_int(), content="-2147483648") // -Infinity
-/// }
 /// ```
 pub fn Double::to_int(self : Double) -> Int {
   if self != self {

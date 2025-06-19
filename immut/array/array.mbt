@@ -105,10 +105,8 @@ pub fn[A] copy(self : T[A]) -> T[A] {
 /// 
 /// # Example
 /// ```mbt
-/// test "from_array example" {
 ///   let v = @array.of([1, 2, 3])
 ///   assert_eq(v, @array.from_array([1, 2, 3]))
-/// }
 /// ```
 pub fn[A] from_array(arr : Array[A]) -> T[A] {
   makei(arr.length(), fn(i) { arr[i] })
@@ -183,10 +181,8 @@ pub fn[A] length(self : T[A]) -> Int {
 ///
 /// # Examples
 /// ```mbt
-/// test "op_get example" {
 ///   let v = @array.of([1, 2, 3, 4, 5])
 ///   assert_eq(v[0], 1)
-/// }
 /// ```
 pub fn[A] op_get(self : T[A], index : Int) -> A {
   if index == 0 {
@@ -214,12 +210,10 @@ pub fn[A] op_get(self : T[A], index : Int) -> A {
 ///
 /// ```moonbit
 /// ///|
-/// test "get" {
 ///   let v = @array.of([1, 2, 3])
 ///   inspect(v.get(1), content="Some(2)")
 ///   inspect(v.get(-1), content="None")
 ///   inspect(v.get(3), content="None")
-/// }
 /// ```
 pub fn[A] get(self : T[A], index : Int) -> A? {
   guard 0 <= index && index < self.size else { None }
@@ -235,10 +229,8 @@ pub fn[A] get(self : T[A], index : Int) -> A? {
 ///
 /// # Example
 /// ```mbt
-/// test "set example" {
 ///   let v = @array.of([1, 2, 3, 4, 5])
 ///   assert_eq(v.set(1, 10), @array.of([1, 10, 3, 4, 5]))
-/// }
 /// ```
 pub fn[A] set(self : T[A], index : Int, value : A) -> T[A] {
   {
@@ -253,10 +245,8 @@ pub fn[A] set(self : T[A], index : Int, value : A) -> T[A] {
 ///
 /// # Example
 /// ```mbt
-/// test {
 ///   let v = @array.of([1, 2, 3])
 ///   assert_eq(v.push(4), @array.of([1, 2, 3, 4]))
-/// }
 /// ```
 pub fn[A] push(self : T[A], value : A) -> T[A] {
   let (tree, shift) = self.tree.push_end(self.shift, value)
@@ -303,12 +293,10 @@ pub fn[A] iter(self : T[A]) -> Iter[A] {
 ///
 /// # Example
 /// ```mbt
-/// test "each example" {
 ///   let arr = []
 ///   let v = @array.of([1, 2, 3, 4, 5])
 ///   v.each(fn(e) { arr.push(e) })
 ///   assert_eq(arr, [1, 2, 3, 4, 5])
-/// }
 /// ```
 pub fn[A] each(self : T[A], f : (A) -> Unit raise?) -> Unit raise? {
   self.tree.each(f)
@@ -319,12 +307,10 @@ pub fn[A] each(self : T[A], f : (A) -> Unit raise?) -> Unit raise? {
 ///
 /// # Example
 /// ```mbt
-/// test {
 ///   let arr = []
 ///   let v = @array.of([1, 2, 3, 4, 5])
 ///   v.eachi(fn(i, e) { arr.push(i * e) })
 ///   assert_eq(arr, [0, 2, 6, 12, 20])
-/// }
 /// ```
 pub fn[A] eachi(self : T[A], f : (Int, A) -> Unit raise?) -> Unit raise? {
   self.tree.eachi(f, self.shift, 0)
@@ -335,10 +321,8 @@ pub fn[A] eachi(self : T[A], f : (Int, A) -> Unit raise?) -> Unit raise? {
 ///
 /// # Example
 /// ```mbt
-/// test {
 ///   let v = @array.of([1, 2, 3, 4, 5])
 ///   assert_eq(v.fold(fn(a, b) { a + b }, init=0), 15)
-/// }
 /// ```
 pub fn[A, B] fold(self : T[A], init~ : B, f : (B, A) -> B raise?) -> B raise? {
   self.tree.fold(init, f)
@@ -349,10 +333,8 @@ pub fn[A, B] fold(self : T[A], init~ : B, f : (B, A) -> B raise?) -> B raise? {
 ///
 /// # Example
 /// ```mbt
-/// test {
 ///   let v = @array.of([1, 2, 3, 4, 5])
 ///   assert_eq(v.rev_fold(fn(a, b) { a + b }, init=0), 15)
-/// }
 /// ```
 pub fn[A, B] rev_fold(
   self : T[A],
@@ -367,10 +349,8 @@ pub fn[A, B] rev_fold(
 ///
 /// # Example
 /// ```mbt
-/// test {
 ///   let v = @array.of([1, 2, 3, 4, 5])
 ///   assert_eq(v.fold(fn(a, b) { a + b }, init=0), 15)
-/// }
 /// ```
 #deprecated("Use `fold` instead")
 #coverage.skip
@@ -383,10 +363,8 @@ pub fn[A] fold_left(self : T[A], f : (A, A) -> A raise?, init~ : A) -> A raise? 
 ///
 /// # Example
 /// ```mbt
-/// test {
 ///   let v = @array.of([1, 2, 3, 4, 5])
 ///   assert_eq(v.rev_fold(fn(a, b) { a + b }, init=0), 15)
-/// }
 /// ```
 #deprecated("Use `rev_fold` instead")
 #coverage.skip
@@ -403,10 +381,8 @@ pub fn[A] fold_right(
 ///
 /// # Example
 /// ```mbt
-/// test {
 ///   let v = @array.of([1, 2, 3, 4, 5])
 ///   assert_eq(v.map(fn(e) { e * 2 }), @array.of([2, 4, 6, 8, 10]))
-/// }
 /// ```
 pub fn[A, B] map(self : T[A], f : (A) -> B raise?) -> T[B] raise? {
   { tree: self.tree.map(f), size: self.size, shift: self.shift }
@@ -463,7 +439,6 @@ pub impl[A : Show] Show for T[A] with output(self, logger) {
 /// Example:
 ///
 /// ```moonbit
-/// test "Array::compare" {
 ///   let arr1 = @array.of([1, 2, 3])
 ///   let arr2 = @array.of([1, 2, 4])
 ///   let arr3 = @array.of([1, 2])
@@ -471,7 +446,6 @@ pub impl[A : Show] Show for T[A] with output(self, logger) {
 ///   assert_eq(arr1.compare(arr3), 1) // arr2 > arr1
 ///   assert_eq(arr3.compare(arr1), -1) // arr1 > arr3 (longer)
 ///   assert_eq(arr1.compare(arr1), 0) // arr1 = arr1
-/// }
 /// ```
 pub impl[A : Compare] Compare for T[A] with compare(self, other) {
   let len_self = self.length()

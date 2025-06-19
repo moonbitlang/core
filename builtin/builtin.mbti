@@ -42,6 +42,7 @@ fn[T : Show] repr(T) -> String
 
 // Types and methods
 pub(all) type ArgsLoc Array[SourceLoc?]
+fn ArgsLoc::inner(Self) -> Array[SourceLoc?]
 fn ArgsLoc::to_json(Self) -> String
 impl Show for ArgsLoc
 

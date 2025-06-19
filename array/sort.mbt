@@ -20,11 +20,9 @@
 /// # Example
 ///
 /// ```mbt
-/// test {
 ///   let arr = [5, 4, 3, 2, 1]
 ///   arr.sort()
 ///   assert_eq(arr, [1, 2, 3, 4, 5])
-/// }
 /// ```
 pub fn[T : Compare] sort(self : Array[T]) -> Unit {
   let len = self.length()
@@ -172,14 +170,13 @@ fn[T : Compare] choose_pivot(arr : ArrayView[T]) -> (Int, Bool) {
   if len >= 8 {
     let a = len / 4 * 1
     let c = len / 4 * 3
-    fn sort_2(a : Int, b : Int) {
+    letrec sort_2 = fn(a : Int, b : Int) {
       if arr[a] > arr[b] {
         arr.swap(a, b)
         swaps += 1
       }
     }
-
-    fn sort_3(a : Int, b : Int, c : Int) {
+    and sort_3 = fn(a : Int, b : Int, c : Int) {
       sort_2(a, b)
       sort_2(b, c)
       sort_2(a, b)

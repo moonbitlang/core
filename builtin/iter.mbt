@@ -138,7 +138,7 @@ pub fn[T, B] Iter::fold(
 ///
 /// Returns the number of elements in the iterator.
 pub fn[T] Iter::count(self : Iter[T]) -> Int {
-  self.fold(fn { acc, _ => acc + 1 }, init=0)
+  self.fold((acc, _) => acc + 1, init=0)
 }
 
 // Producers
@@ -160,7 +160,7 @@ pub fn[T] Iter::new(f : ((T) -> IterResult) -> IterResult) -> Iter[T] {
 ///
 /// Returns an empty iterator of type `Iter[T]`.
 pub fn[T] Iter::empty() -> Iter[T] {
-  fn { _ => IterContinue }
+  _ => IterContinue
 }
 
 ///|
@@ -178,7 +178,7 @@ pub fn[T] Iter::empty() -> Iter[T] {
 ///
 /// Returns an iterator of type `Iter[T]` that contains the single element `a`.
 pub fn[T] Iter::singleton(a : T) -> Iter[T] {
-  fn { yield_ => yield_(a) }
+  yield_ => yield_(a)
 }
 
 ///|
@@ -396,9 +396,7 @@ pub fn Double::until(
 /// A new iterator that only contains the elements for which the predicate function returns `IterContinue`.
 #intrinsic("%iter.filter")
 pub fn[T] Iter::filter(self : Iter[T], f : (T) -> Bool) -> Iter[T] {
-  fn(yield_) {
-    self.run(fn { a => if f(a) { yield_(a) } else { IterContinue } })
-  }
+  fn(yield_) { self.run(a => if f(a) { yield_(a) } else { IterContinue }) }
 }
 
 ///|
@@ -419,7 +417,7 @@ pub fn[T] Iter::filter(self : Iter[T], f : (T) -> Bool) -> Iter[T] {
 /// A new iterator that contains the transformed elements.
 #intrinsic("%iter.map")
 pub fn[T, R] Iter::map(self : Iter[T], f : (T) -> R) -> Iter[R] {
-  fn { yield_ => self.run(fn { a => yield_(f(a)) }) }
+  yield_ => self.run(a => yield_(f(a)))
 }
 
 ///|
@@ -439,16 +437,12 @@ pub fn[T, R] Iter::map(self : Iter[T], f : (T) -> R) -> Iter[R] {
 ///
 /// A new iterator that contains the transformed elements.
 pub fn[T, R] Iter::mapi(self : Iter[T], f : (Int, T) -> R) -> Iter[R] {
-  fn {
-    yield_ => {
-      let mut i = -1
-      self.run(fn {
-        a => {
-          i = i + 1
-          yield_(f(i, a))
-        }
-      })
-    }
+  yield_ => {
+    let mut i = -1
+    self.run(a => {
+      i = i + 1
+      yield_(f(i, a))
+    })
   }
 }
 
@@ -493,7 +487,7 @@ pub fn[A, B] Iter::map_option(self : Iter[A], f : (A) -> B?) -> Iter[B] {
 /// A new iterator that contains the flattened elements.
 #intrinsic("%iter.flat_map")
 pub fn[T, R] Iter::flat_map(self : Iter[T], f : (T) -> Iter[R]) -> Iter[R] {
-  fn { yield_ => self.run(fn { x => f(x).run(yield_) }) }
+  yield_ => self.run(x => f(x).run(yield_))
 }
 
 ///| 
@@ -507,7 +501,7 @@ pub fn[T, R] Iter::flat_map(self : Iter[T], f : (T) -> Iter[R]) -> Iter[R] {
 /// // }
 /// ```
 pub fn[T] Iter::flatten(self : Iter[Iter[T]]) -> Iter[T] {
-  fn { yield_ => self.run(fn { x => x.run(yield_) }) }
+  yield_ => self.run(x => x.run(yield_))
 }
 
 ///|
@@ -526,11 +520,9 @@ pub fn[T] Iter::flatten(self : Iter[Iter[T]]) -> Iter[T] {
 ///
 /// The same iterator.
 pub fn[T] Iter::tap(self : Iter[T], f : (T) -> Unit) -> Iter[T] {
-  self.map(fn {
-    a => {
-      f(a)
-      a
-    }
+  self.map(a => {
+    f(a)
+    a
   })
 }
 
@@ -558,19 +550,16 @@ pub fn[T] Iter::take(self : Iter[T], n : Int) -> Iter[T] {
   fn(yield_) {
     let mut i = 0
     let mut r = IterContinue
-    self.just_run(fn {
-      a =>
-        if i < n {
-          if yield_(a) == IterContinue {
-            i = i + 1
-            IterContinue
-          } else {
-            r = IterEnd
-            IterEnd
-          }
-        } else {
-          IterEnd
-        }
+    self.just_run(a => if i < n {
+      if yield_(a) == IterContinue {
+        i = i + 1
+        IterContinue
+      } else {
+        r = IterEnd
+        IterEnd
+      }
+    } else {
+      IterEnd
     })
     r
   }
@@ -882,15 +871,11 @@ pub fn[A] Iter::last(self : Iter[A]) -> A? {
 /// # Examples
 ///
 /// ```moonbit
-/// test "Iter::head" {
 ///   let iter = Iter::singleton(42)
 ///   assert_eq(iter.head(), Some(42))
-/// }
 ///
-/// test "Iter::head/empty" {
-///   let iter = Iter::empty()
+///   let iter : Iter[Int]= Iter::empty()
 ///   assert_eq(iter.head(), None)
-/// }
 /// ```
 pub fn[A] Iter::head(self : Iter[A]) -> A? {
   for i in self {
@@ -911,11 +896,9 @@ pub fn[A] Iter::head(self : Iter[A]) -> A? {
 /// # Examples
 ///
 /// ```moonbit
-/// test "Iter::intersperse" {
 ///   let arr = []
 ///   [1, 2, 3].iter().intersperse(0).each(fn(i) {arr.push(i)})
 ///   assert_eq(arr, [1, 0, 2, 0, 3])
-/// }
 /// ```
 pub fn[A] Iter::intersperse(self : Iter[A], sep : A) -> Iter[A] {
   fn(yield_) {
@@ -966,16 +949,12 @@ pub fn[A] Iter::op_as_view(
 /// Example:
 ///
 /// ```moonbit
-/// test "Iter::contains" {
 ///   let iter = [1, 2, 3, 4, 5].iter()
 ///   inspect(iter.contains(3), content="true")
 ///   inspect(iter.contains(6), content="false")
-/// }
 ///
-/// test "Iter::contains/empty" {
 ///   let iter = Iter::empty()
 ///   inspect(iter.contains(1), content="false")
-/// }
 /// ```
 pub fn[A : Eq] Iter::contains(self : Iter[A], value : A) -> Bool {
   for v in self {
@@ -1034,13 +1013,11 @@ pub fn[T : Compare] Iter::minimum(self : Iter[T]) -> T? {
 /// # Example
 ///
 /// ```moonbit
-/// test "group_by" {
 ///   let iter = [1, 1, 2, 3, 2, 2, 1].iter()
 ///   let result = iter.group_by(fn(x) { x })
 ///   assert_eq(result.get(1), Some([1, 1, 1]))
 ///   assert_eq(result.get(2), Some([2, 2, 2]))
 ///   assert_eq(result.get(3), Some([3]))
-/// }
 #deprecated
 pub fn[T, K : Eq + Hash] Iter::group_by(
   self : Iter[T],
@@ -1060,13 +1037,11 @@ pub fn[T, K : Eq + Hash] Iter::group_by(
 ///|
 /// Returns an iterator that iterates over the index and the element of the iterator.
 pub fn[T] Iter::iter2(self : Iter[T]) -> Iter2[Int, T] {
-  fn {
-    yield_ => {
-      let mut index = -1
-      self.run(fn(i) {
-        index += 1
-        yield_(index, i)
-      })
-    }
+  yield_ => {
+    let mut index = -1
+    self.run(fn(i) {
+      index += 1
+      yield_(index, i)
+    })
   }
 }

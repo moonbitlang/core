@@ -5,52 +5,13 @@ import(
 )
 
 // Values
-fn[K : Hash + Eq] add(T[K], K) -> Unit
-
-fn[K] capacity(T[K]) -> Int
-
-fn[K] clear(T[K]) -> Unit
-
-fn[K : Hash + Eq] contains(T[K], K) -> Bool
-
-fn[K : Hash + Eq] difference(T[K], T[K]) -> T[K]
-
-fn[K] each(T[K], (K) -> Unit) -> Unit
-
-fn[K] eachi(T[K], (Int, K) -> Unit) -> Unit
-
 fn[K : Hash + Eq] from_array(Array[K]) -> T[K]
 
 fn[K : Hash + Eq] from_iter(Iter[K]) -> T[K]
 
-#deprecated
-fn[K : Hash + Eq] insert(T[K], K) -> Unit
-
-fn[K : Hash + Eq] intersection(T[K], T[K]) -> T[K]
-
-fn[K : Hash + Eq] is_disjoint(T[K], T[K]) -> Bool
-
-fn[K] is_empty(T[K]) -> Bool
-
-fn[K : Hash + Eq] is_subset(T[K], T[K]) -> Bool
-
-fn[K : Hash + Eq] is_superset(T[K], T[K]) -> Bool
-
-fn[K] iter(T[K]) -> Iter[K]
-
 fn[K] new(capacity~ : Int = ..) -> T[K]
 
 fn[K : Hash + Eq] of(FixedArray[K]) -> T[K]
-
-fn[K : Hash + Eq] remove(T[K], K) -> Unit
-
-fn[K] size(T[K]) -> Int
-
-fn[K : Hash + Eq] symmetric_difference(T[K], T[K]) -> T[K]
-
-fn[K] to_array(T[K]) -> Array[K]
-
-fn[K : Hash + Eq] union(T[K], T[K]) -> T[K]
 
 // Types and methods
 type T[K]

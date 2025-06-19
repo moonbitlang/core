@@ -17,6 +17,7 @@
 fnalias @builtin.inspect
 
 ///| shadow
+
 ///|
 test "parse invalid decimal exponent sign" {
   inspect(try? @json.parse("1e"), content="Err(Unexpected end of file)")

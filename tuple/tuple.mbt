@@ -13,15 +13,6 @@
 // limitations under the License.
 
 ///|
-/// Create a tuple with two elements.
-///
-/// # Example
-/// ```mbt
-/// test "Tuple::pair" {
-///   let tuple = @tuple.pair(1, 2)
-///   assert_eq(tuple, (1, 2))
-/// }
-/// ```
 #deprecated
 #coverage.skip
 pub fn[T, U] pair(x : T, y : U) -> (T, U) {
@@ -29,16 +20,6 @@ pub fn[T, U] pair(x : T, y : U) -> (T, U) {
 }
 
 ///|
-/// Get the first element of a tuple.
-///
-/// # Example
-/// ```mbt
-/// test "Tuple::fst" {
-///   let tuple = (1, 2)
-///   let x = @tuple.fst(tuple)
-///   assert_eq(x, 1)
-/// }
-/// ```
 #deprecated("use `tuple.0` instead")
 #coverage.skip
 pub fn[T, U] fst(tuple : (T, U)) -> T {
@@ -46,16 +27,6 @@ pub fn[T, U] fst(tuple : (T, U)) -> T {
 }
 
 ///|
-/// Get the second element of a tuple.
-///
-/// # Example
-/// ```mbt
-/// test "Tuple::snd" {
-///   let tuple = (1, 2)
-///   let y = @tuple.snd(tuple)
-///   assert_eq(y, 2)
-/// }
-/// ```
 #deprecated("use `tuple.1` instead")
 #coverage.skip
 pub fn[T, U] snd(tuple : (T, U)) -> U {
@@ -63,16 +34,6 @@ pub fn[T, U] snd(tuple : (T, U)) -> U {
 }
 
 ///|
-/// Map a function over the first element of a tuple.
-///
-/// # Example
-/// ```mbt
-/// test "Tuple::map_fst" {
-///   let tuple = (1, 2)
-///   let mapped = tuple |> then(fn { (a, b) => (a + 1, b) })
-///   assert_eq(mapped, (2, 2))
-/// }
-/// ```
 #deprecated("use `tuple |> then(fn { (a, b) => (f(a), b) })` instead")
 #coverage.skip
 pub fn[T, U, V] map_fst(f : (T) -> U, tuple : (T, V)) -> (U, V) {
@@ -80,16 +41,6 @@ pub fn[T, U, V] map_fst(f : (T) -> U, tuple : (T, V)) -> (U, V) {
 }
 
 ///|
-/// Map a function over the second element of a tuple.
-///
-/// # Example
-/// ```mbt
-/// test "Tuple::map_snd" {
-///   let tuple = (1, 2)
-///   let mapped = tuple|> then(fn { (a, b) => (a, b+1) })
-///   assert_eq(mapped, (1, 3))
-/// }
-/// ```
 #deprecated("use `tuple |> then(fn { (a, b) => (a, f(b)) })` instead")
 #coverage.skip
 pub fn[T, U, V] map_snd(f : (T) -> U, tuple : (V, T)) -> (V, U) {
@@ -97,16 +48,6 @@ pub fn[T, U, V] map_snd(f : (T) -> U, tuple : (V, T)) -> (V, U) {
 }
 
 ///|
-/// Map a function over both elements of a tuple.
-///
-/// # Example
-/// ```mbt
-/// test "Tuple::map_both" {
-///   let tuple = (1, 2)
-///   let mapped = tuple |> then(fn { (a, b) => (a + 1, b - 1) })
-///   assert_eq(mapped, (2, 1))
-/// }
-/// ```
 #deprecated("use `tuple |> then(fn { (a, b) => (f(a), g(b)) })` instead")
 #coverage.skip
 pub fn[T, U, V, W] map_both(
@@ -119,15 +60,6 @@ pub fn[T, U, V, W] map_both(
 
 ///|
 /// Swap the elements of a tuple.
-///
-/// # Example
-/// ```mbt
-/// test "Tuple::swap" {
-///   let tuple = (1, 2)
-///   let swapped = @tuple.swap(tuple)
-///   assert_eq(swapped, (2, 1))
-/// }
-/// ```
 #deprecated
 #coverage.skip
 pub fn[T, U] swap(tuple : (T, U)) -> (U, T) {
@@ -136,15 +68,6 @@ pub fn[T, U] swap(tuple : (T, U)) -> (U, T) {
 
 ///|
 /// Curry a function.
-///
-/// # Example
-/// ```mbt
-/// test "Tuple::curry" {
-///   let add = fn(x : Int, y : Int) -> Int { x + y }
-///   let curried_add = @tuple.curry(add)
-///   assert_eq(curried_add(1)(2), 3)
-/// }
-/// ```
 #deprecated
 #coverage.skip
 pub fn[T, U, V] curry(f : (T, U) -> V) -> (T) -> (U) -> V {
@@ -152,16 +75,6 @@ pub fn[T, U, V] curry(f : (T, U) -> V) -> (T) -> (U) -> V {
 }
 
 ///|
-/// Uncurry a function.
-///
-/// # Example
-/// ```mbt
-/// test "Tuple::uncurry" {
-///   let add = fn(x : Int) -> (Int) -> Int { fn(y : Int) -> Int { x + y } }
-///   let uncurried_add = @tuple.uncurry(add)
-///   assert_eq(uncurried_add(1, 2), 3)
-/// }
-/// ```
 #deprecated
 #coverage.skip
 pub fn[T, U, V] uncurry(f : (T) -> (U) -> V) -> (T, U) -> V {

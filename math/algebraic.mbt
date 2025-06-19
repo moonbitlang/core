@@ -27,6 +27,14 @@
 // is preserved.
 // ====================================================
 
+// origin: boost_1_81_0/boost/math/special_functions/hypot.hpp
+//
+// This implementation is inspired by the hypot function from the Boost C++ Libraries.
+// Original Boost implementation (C) Copyright John Maddock 2005-2006.
+// Boost Software License, Version 1.0. (See accompanying file
+// LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+// The algorithm has been adapted and implemented independently in this code.
+
 ///|
 /// Compares and returns the maximum of two values.
 ///
@@ -35,10 +43,8 @@
 /// # Examples
 ///
 /// ```mbt
-/// test {
 ///   assert_eq(@math.maximum(1, 2), 2)
 ///   assert_eq(@math.maximum(2, 2), 2)
-/// }
 /// ```
 pub fn[T : Compare] maximum(x : T, y : T) -> T {
   if x > y {
@@ -56,10 +62,8 @@ pub fn[T : Compare] maximum(x : T, y : T) -> T {
 /// # Examples
 ///
 /// ```mbt
-/// test {
 ///   assert_eq(@math.minimum(1, 2), 1)
 ///   assert_eq(@math.minimum(2, 2), 2)
-/// }
 /// ```
 pub fn[T : Compare] minimum(x : T, y : T) -> T {
   if x > y {
@@ -70,20 +74,15 @@ pub fn[T : Compare] minimum(x : T, y : T) -> T {
 }
 
 ///|
-pub fnalias Double::(cbrt, hypot)
-
-///|
 /// Calculates the cube root of a number.
 ///
 /// # Examples
 ///
 /// ```mbt
-/// test {
 ///   assert_eq(@math.cbrtf(1), 1)
 ///   assert_eq(@math.cbrtf(27), 3)
 ///   assert_eq(@math.cbrtf(125), 5)
 ///   assert_eq(@math.cbrtf(1000), 10)
-/// }
 /// ```
 pub fn cbrtf(x : Float) -> Float {
   let b1 : UInt = 709958130 // B1 = (127-127.0/3-0.03306235651)*2**23 */
@@ -132,16 +131,21 @@ pub fn cbrtf(x : Float) -> Float {
 }
 
 ///|
+/// Calculates the the square root of the sum of the squares of its arguments.
+///
+/// Parameters:
+///
+/// * `x` : The number to be used as the first argument.
+/// * `y` : The number to be used as the second argument.
+///
 /// Returns the hypotenuse of a right-angled triangle whose legs are `x` and `y`.
 ///
 /// # Examples
 ///
 /// ```mbt
-/// test {
 ///   assert_eq(@math.hypotf(3, 4), 5)
 ///   assert_eq(@math.hypotf(5, 12), 13)
 ///   assert_eq(@math.hypotf(8, 15), 17)
-/// }
 /// ```
 pub fn hypotf(x : Float, y : Float) -> Float {
   let epsilon : Float = 1.1920928955078125e-7

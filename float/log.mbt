@@ -48,30 +48,8 @@ let logf_data : LogfData = {
 }
 
 ///|
-/// Calculates the natural logarithm of a floating-point number.
-///
-/// Parameters:
-///
-/// * `value` : The floating-point number to calculate the natural logarithm of.
-///
-/// Returns the natural logarithm of the input value. Special cases are handled
-/// as follows:
-///
-/// * Returns `0.0` when the input is `1.0`
-/// * Returns `neg_infinity` when the input is `0.0`
-/// * Returns `not_a_number` when the input is negative
-/// * Returns `infinity` when the input is `infinity`
-/// * Returns `not_a_number` when the input is `not_a_number`
-///
-/// Example:
-///
-/// ```moonbit
-/// test "ln" {
-///   inspect((1.0 : Float).ln(), content="0")
-///   inspect((2.718281828459045 : Float).ln(), content="0.9999999403953552")
-///   inspect((0.0 : Float).ln(), content="-Infinity")
-/// }
-/// ```
+#deprecated("use `@math.lnf` instead")
+#coverage.skip
 pub fn Float::ln(self : Float) -> Float {
   let mut ix : UInt = self.reinterpret_as_int().reinterpret_as_uint()
   if ix == 0x3f800000U {
@@ -107,33 +85,62 @@ pub fn Float::ln(self : Float) -> Float {
 }
 
 ///|
-/// Calculates ln(1 + x) accurately even when x is close to zero.
-///
-/// Parameters:
-///
-/// * `x` : The number to which 1 is added before calculating the logarithm.
-///
-/// Returns the natural logarithm of 1 + `x`.
-///
-/// Special Cases:
-///
-/// * Returns `NaN` if `x` is `NaN` or less than -1.
-/// * Returns `-Infinity` if `x` is -1.
-/// * Returns `+Infinity` if `x` is `+Infinity`.
-///
-/// Example:
-///
-/// ```moonbit
-/// test "ln_1p" {
-///   inspect((0 : Float).ln_1p(), content="0")
-///   inspect((1 : Float).ln_1p(), content="0.6931471824645996")
-///   inspect((-1 : Float).ln_1p(), content="-Infinity")
-///   inspect((-2 : Float).ln_1p(), content="NaN")
-///   inspect(@float.not_a_number.ln_1p(), content="NaN")
-///   inspect(@float.infinity.ln_1p(), content="Infinity")
-///   inspect(@float.neg_infinity.ln_1p(), content="NaN")
-/// }
-/// ```
+#deprecated("use `@math.ln_1pf` instead")
+#coverage.skip
 pub fn Float::ln_1p(self : Float) -> Float {
-  self.to_double().ln_1p().to_float()
+  let lg1_f : Float = 0.66666662693
+  let lg2_f : Float = 0.40000972152
+  let lg3_f : Float = 0.28498786688
+  let lg4_f : Float = 0.24279078841
+  let float_ln2_hi : Float = 6.9314575195e-01 // 0x3f317200
+  let float_ln2_lo : Float = 1.4286067653e-06 // 0x35bfbe8e
+  let mut ui : UInt = self.reinterpret_as_uint()
+  let mut f : Float = 0
+  let mut c : Float = 0
+  let mut iu : UInt = 0
+  let one : Float = 1.0
+  let mut k = 1
+  if ui < 0x3ed413d0 || ui >> 31 > 0 {
+    if ui >= 0xbf800000 {
+      if self == -1.0 {
+        return self / 0.0
+      }
+      return (self - self) / 0.0
+    }
+    if ui << 1 < 0x33800000U << 1 {
+      return self
+    }
+    if ui <= 0xbe95f619 {
+      k = 0
+      c = 0.0
+      f = self
+    }
+  } else if ui >= 0x7f800000 {
+    return self
+  }
+  if k > 0 {
+    ui = (one + self).reinterpret_as_uint()
+    iu = ui
+    iu += 0x3f800000U - 0x3f3504f3U
+    k = (iu >> 23).reinterpret_as_int() - 0x7f
+    if k < 25 {
+      let fui = ui.reinterpret_as_float()
+      c = if k >= 2 { one - (fui - self) } else { self - (fui - 1.0) }
+      c /= ui.reinterpret_as_float()
+    } else {
+      c = 0.0
+    }
+    iu = (iu & 0x007fffff) + 0x3f3504f3
+    ui = iu
+    f = ui.reinterpret_as_float() - 1.0
+  }
+  let s = f / (f + 2.0)
+  let z = s * s
+  let w = z * z
+  let t1 = w * (lg2_f + w * lg4_f)
+  let t2 = z * (lg1_f + w * lg3_f)
+  let r = t2 + t1
+  let hfsq = f * f * 0.5
+  let dk = k.to_float()
+  s * (hfsq + r) + (dk * float_ln2_lo + c) - hfsq + f + dk * float_ln2_hi
 }

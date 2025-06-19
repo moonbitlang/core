@@ -20,11 +20,9 @@
 /// # Example
 /// 
 /// ```mbt
-/// test {
 ///   let arr: FixedArray[Int] = [5, 4, 3, 2, 1]
 ///   arr.stable_sort()
 ///   assert_eq(arr, [1, 2, 3, 4, 5])
-/// }
 /// ```
 pub fn[T : Compare] FixedArray::stable_sort(self : FixedArray[T]) -> Unit {
   timsort({ array: self, start: 0, end: self.length() })
@@ -207,11 +205,9 @@ fn collapse(runs : Array[TimSortRun], stop : Int) -> Int? {
 /// # Example
 /// 
 /// ```mbt
-/// test {
 ///   let arr = [5, 4, 3, 2, 1]
 ///   arr.sort()
 ///   assert_eq(arr, [1, 2, 3, 4, 5])
-/// }
 /// ```
 pub fn[T : Compare] FixedArray::sort(self : FixedArray[T]) -> Unit {
   fixed_quick_sort(
@@ -381,14 +377,13 @@ fn[T : Compare] fixed_choose_pivot(arr : FixedArraySlice[T]) -> (Int, Bool) {
   if len >= 8 {
     let a = len / 4 * 1
     let c = len / 4 * 3
-    fn sort_2(a : Int, b : Int) {
+    letrec sort_2 = fn(a : Int, b : Int) {
       if arr[a] > arr[b] {
         arr.swap(a, b)
         swaps += 1
       }
     }
-
-    fn sort_3(a : Int, b : Int, c : Int) {
+    and sort_3 = fn(a : Int, b : Int, c : Int) {
       sort_2(a, b)
       sort_2(b, c)
       sort_2(a, b)
@@ -519,12 +514,10 @@ test "stable_sort" {
 /// Example:
 ///
 /// ```moonbit
-/// test "FixedArray::is_sorted" {
 ///   let sorted : FixedArray[Int] = [1, 2, 3, 4, 5]
 ///   let unsorted : FixedArray[Int] = [5, 4, 3, 2, 1]
 ///   inspect(FixedArray::is_sorted(sorted), content="true")
 ///   inspect(FixedArray::is_sorted(unsorted), content="false")
-/// }
 /// ```
 pub fn[T : Compare] FixedArray::is_sorted(arr : FixedArray[T]) -> Bool {
   for i in 1..<arr.length() {
@@ -539,7 +532,7 @@ pub fn[T : Compare] FixedArray::is_sorted(arr : FixedArray[T]) -> Bool {
 ///|
 test "stable_sort_complex" {
   let run_lens = [86, 64, 21, 20, 22]
-  let total_len = run_lens.fold(init=0, fn { acc, x => acc + x })
+  let total_len = run_lens.fold(init=0, (acc, x) => acc + x)
   let arr = FixedArray::make(total_len, 0)
   let mut index = 0
   for i = 0, len = run_lens.length(); i < len; i = i + 1 {

@@ -121,26 +121,26 @@ test "panic array_as_view_swap_index_error" {
 test "panic op_div coverage for division by zero" {
   let a = BigInt::from_int(123456789)
   let b = BigInt::from_int(0)
-  a / b |> ignore
+  (a / b) |> ignore
 }
 
 ///|
 test "panic op_mod coverage for modulo by zero" {
   let a = BigInt::from_int(123456789)
   let b = BigInt::from_int(0)
-  a % b |> ignore
+  (a % b) |> ignore
 }
 
 ///|
 test "panic op_shl coverage for negative shift" {
   let a = BigInt::from_int(123456789)
-  a << -1 |> ignore
+  (a << -1) |> ignore
 }
 
 ///|
 test "panic op_shr coverage for negative shift" {
   let a = BigInt::from_int(123456789)
-  a >> -1 |> ignore
+  (a >> -1) |> ignore
 }
 
 ///|
@@ -167,26 +167,26 @@ test "panic from_hex coverage for invalid character" {
 test "panic op_div coverage for division by zero" {
   let a = BigInt::from_int(123456789)
   let b = BigInt::from_int(0)
-  a / b |> ignore
+  (a / b) |> ignore
 }
 
 ///|
 test "panic op_mod coverage for modulo by zero" {
   let a = BigInt::from_int(123456789)
   let b = BigInt::from_int(0)
-  a % b |> ignore
+  (a % b) |> ignore
 }
 
 ///|
 test "panic op_shl coverage for negative shift" {
   let a = BigInt::from_int(123456789)
-  a << -1 |> ignore
+  (a << -1) |> ignore
 }
 
 ///|
 test "panic op_shr coverage for negative shift" {
   let a = BigInt::from_int(123456789)
-  a >> -1 |> ignore
+  (a >> -1) |> ignore
 }
 
 ///|
@@ -294,14 +294,14 @@ test "panic blit_from_string with invalid str_offset + length" {
 
 ///|
 test "panic set_utf16le_char with invalid code point" {
-  let arr = FixedArray::makei(10, fn { _ => b'\x00' })
+  let arr = FixedArray::makei(10, _ => b'\x00')
   let char = (0x110000).unsafe_to_char()
   arr.set_utf16le_char(0, char) |> ignore
 }
 
 ///|
 test "panic set_utf16be_char with invalid code point" {
-  let arr = FixedArray::makei(10, fn { _ => b'\x00' })
+  let arr = FixedArray::makei(10, _ => b'\x00')
   let char = (0x110000).unsafe_to_char()
   arr.set_utf16le_char(0, char) |> ignore
 }

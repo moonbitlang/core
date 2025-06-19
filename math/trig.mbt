@@ -20,9 +20,6 @@ pub const PI = 0x3.243F6A8885A308CA8A54
 pub let pi = 0x3.243F6A8885A308CA8A54
 
 ///|
-pub fnalias Double::(sin, cos, tan, atan, asin, acos, atan2)
-
-///|
 const SIN_SWITCHOVER : Float = 201.15625
 
 ///|
@@ -185,14 +182,12 @@ fn tanf_poly(x : Float, odd : Bool) -> Float {
 /// Example:
 ///
 /// ```moonbit
-/// test "sin" {
-///   inspect(sinf(0), content="0")
-///   inspect(sinf(2), content="0.9092974066734314")
-///   inspect(sinf(-5), content="0.9589242935180664")
-///   inspect(sinf(@float.not_a_number), content="NaN")
-///   inspect(sinf(@float.infinity), content="NaN")
-///   inspect(sinf(@float.neg_infinity), content="NaN")
-/// }
+/// inspect(sinf(0), content="0")
+/// inspect(sinf(2), content="0.9092974066734314")
+/// inspect(sinf(-5), content="0.9589242935180664")
+/// inspect(sinf(@float.not_a_number), content="NaN")
+/// inspect(sinf(@float.infinity), content="NaN")
+/// inspect(sinf(@float.neg_infinity), content="NaN")
 /// ```
 pub fn sinf(x : Float) -> Float {
   if x.is_nan() || x.is_inf() {
@@ -217,14 +212,12 @@ pub fn sinf(x : Float) -> Float {
 /// Example:
 ///
 /// ```moonbit
-/// test "cos" {
-///   inspect(cosf(0), content="1")
-///   inspect(cosf(2), content="-0.41614681482315063")
-///   inspect(cosf(-5), content="0.28366217017173767")
-///   inspect(cosf(@float.not_a_number), content="NaN")
-///   inspect(cosf(@float.infinity), content="NaN")
-///   inspect(cosf(@float.neg_infinity), content="NaN")
-/// }
+/// inspect(cosf(0), content="1")
+/// inspect(cosf(2), content="-0.41614681482315063")
+/// inspect(cosf(-5), content="0.28366217017173767")
+/// inspect(cosf(@float.not_a_number), content="NaN")
+/// inspect(cosf(@float.infinity), content="NaN")
+/// inspect(cosf(@float.neg_infinity), content="NaN")
 /// ```
 pub fn cosf(x : Float) -> Float {
   if x.is_nan() || x.is_inf() {
@@ -249,14 +242,12 @@ pub fn cosf(x : Float) -> Float {
 /// Example:
 ///
 /// ```moonbit
-/// test "tan" {
-///   inspect(tanf(0), content="0")
-///   inspect(tanf(2), content="-2.18503999710083")
-///   inspect(tanf(-5), content="3.3805150985717773")
-///   inspect(tanf(@float.not_a_number), content="NaN")
-///   inspect(tanf(@float.infinity), content="NaN")
-///   inspect(tanf(@float.neg_infinity), content="NaN")
-/// }
+/// inspect(tanf(0), content="0")
+/// inspect(tanf(2), content="-2.18503999710083")
+/// inspect(tanf(-5), content="3.3805150985717773")
+/// inspect(tanf(@float.not_a_number), content="NaN")
+/// inspect(tanf(@float.infinity), content="NaN")
+/// inspect(tanf(@float.neg_infinity), content="NaN")
 /// ```
 pub fn tanf(x : Float) -> Float {
   if x.is_nan() || x.is_inf() {
@@ -284,14 +275,12 @@ pub fn tanf(x : Float) -> Float {
 /// Example:
 ///
 /// ```moonbit
-/// test "asin" {
-///   inspect(asinf(0), content="0")
-///   inspect(asinf(1), content="1.5707963705062866")
-///   inspect(asinf(-1), content="-1.5707963705062866")
-///   inspect(asinf(@float.not_a_number), content="NaN")
-///   inspect(asinf(@float.infinity), content="NaN")
-///   inspect(asinf(@float.neg_infinity), content="NaN")
-/// }
+/// inspect(asinf(0), content="0")
+/// inspect(asinf(1), content="1.5707963705062866")
+/// inspect(asinf(-1), content="-1.5707963705062866")
+/// inspect(asinf(@float.not_a_number), content="NaN")
+/// inspect(asinf(@float.infinity), content="NaN")
+/// inspect(asinf(@float.neg_infinity), content="NaN")
 /// ```
 pub fn asinf(x : Float) -> Float {
   let x1p120 = 0x3870000000000000UL.reinterpret_as_double()
@@ -325,7 +314,7 @@ pub fn asinf(x : Float) -> Float {
   let z = ((1.0 : Float) - x.abs()) * 0.5
   let s = z.to_double().sqrt()
   let x = (pio2 - 2.0 * (s + s * r(z).to_double())).to_float()
-  if (hx >> 31) != 0 {
+  if hx >> 31 != 0 {
     -x
   } else {
     x
@@ -347,14 +336,12 @@ pub fn asinf(x : Float) -> Float {
 /// Example:
 ///
 /// ```moonbit
-/// test "acos" {
-///   inspect(acosf(0), content="1.570796251296997")
-///   inspect(acosf(1), content="0")
-///   inspect(acosf(-1), content="3.141592502593994")
-///   inspect(acosf(@float.not_a_number), content="NaN")
-///   inspect(acosf(@float.infinity), content="NaN")
-///   inspect(acosf(@float.neg_infinity), content="NaN")
-/// }
+/// inspect(acosf(0), content="1.570796251296997")
+/// inspect(acosf(1), content="0")
+/// inspect(acosf(-1), content="3.141592502593994")
+/// inspect(acosf(@float.not_a_number), content="NaN")
+/// inspect(acosf(@float.infinity), content="NaN")
+/// inspect(acosf(@float.neg_infinity), content="NaN")
 /// ```
 pub fn acosf(x : Float) -> Float {
   let pio2_hi : Float = 1.5707962513
@@ -375,7 +362,7 @@ pub fn acosf(x : Float) -> Float {
   let ix = hx & 0x7fffffff
   if ix >= 0x3f800000 {
     if ix == 0x3f800000 {
-      if (hx >> 31) != 0 {
+      if hx >> 31 != 0 {
         return two * pio2_hi + 0x1.0p-120
       }
       return 0.0
@@ -388,7 +375,7 @@ pub fn acosf(x : Float) -> Float {
     }
     return pio2_hi - (x - (pio2_lo - x * r(x * x)))
   }
-  if (hx >> 31) != 0 {
+  if hx >> 31 != 0 {
     let z = (x + 1.0) * 0.5
     let s = z.sqrt()
     let w = r(z) * s - pio2_lo
@@ -416,14 +403,12 @@ pub fn acosf(x : Float) -> Float {
 /// * Returns NaN if the input is NaN.
 ///
 /// ```moonbit
-/// test "atan" {
-///   inspect(atanf(0), content="0")
-///   inspect(atanf(1), content="0.7853981852531433")
-///   inspect(atanf(-1), content="-0.7853981852531433")
-///   inspect(atanf(@float.not_a_number), content="NaN")
-///   inspect(atanf(@float.infinity), content="1.570796251296997")
-///   inspect(atanf(@float.neg_infinity), content="-1.570796251296997")
-/// }
+/// inspect(atanf(0), content="0")
+/// inspect(atanf(1), content="0.7853981852531433")
+/// inspect(atanf(-1), content="-0.7853981852531433")
+/// inspect(atanf(@float.not_a_number), content="NaN")
+/// inspect(atanf(@float.infinity), content="1.570796251296997")
+/// inspect(atanf(@float.neg_infinity), content="-1.570796251296997")
 /// ```
 pub fn atanf(x : Float) -> Float {
   let atanhi : Array[Float] = [
@@ -496,28 +481,26 @@ pub fn atanf(x : Float) -> Float {
 /// * `y` : The numerator of the quotient.
 /// * `x` : The denominator of the quotient.
 ///
-/// Returns the arctangent of the quotient `self / x`.
+/// Returns the arctangent of the quotient `x / x`.
 ///
-/// * Returns NaN if self or x is NaN.
+/// * Returns NaN if x or x is NaN.
 ///
 /// Example:
 ///
 /// ```moonbit
-/// test "atan2" {
-///   inspect(atan2f(0.0, -1.0), content="3.1415927410125732")
-///   inspect(atan2f(1.0, 0.0), content="1.5707963705062866")
-///   inspect(atan2f(1.0, 1.0), content="0.7853981852531433")
-///   inspect(atan2f(@float.not_a_number, 1.0), content="NaN")
-///   inspect(atan2f(1.0, @float.not_a_number), content="NaN")
-///   inspect(atan2f(@float.infinity, 1.0), content="1.570796251296997")
-///   inspect(atan2f(1.0, @float.infinity), content="0")
-///   inspect(atan2f(@float.neg_infinity, 1.0), content="-1.570796251296997")
-///   inspect(atan2f(1.0, @float.neg_infinity), content="3.1415927410125732")
-///   inspect(atan2f(@float.infinity, @float.infinity), content="0.7853981852531433")
-///   inspect(atan2f(@float.neg_infinity, @float.neg_infinity), content="-2.356194496154785")
-///   inspect(atan2f(@float.infinity, @float.neg_infinity), content="2.356194496154785")
-///   inspect(atan2f(@float.neg_infinity, @float.infinity), content="-0.7853981852531433")
-/// }
+/// inspect(atan2f(0.0, -1.0), content="3.1415927410125732")
+/// inspect(atan2f(1.0, 0.0), content="1.5707963705062866")
+/// inspect(atan2f(1.0, 1.0), content="0.7853981852531433")
+/// inspect(atan2f(@float.not_a_number, 1.0), content="NaN")
+/// inspect(atan2f(1.0, @float.not_a_number), content="NaN")
+/// inspect(atan2f(@float.infinity, 1.0), content="1.570796251296997")
+/// inspect(atan2f(1.0, @float.infinity), content="0")
+/// inspect(atan2f(@float.neg_infinity, 1.0), content="-1.570796251296997")
+/// inspect(atan2f(1.0, @float.neg_infinity), content="3.1415927410125732")
+/// inspect(atan2f(@float.infinity, @float.infinity), content="0.7853981852531433")
+/// inspect(atan2f(@float.neg_infinity, @float.neg_infinity), content="-2.356194496154785")
+/// inspect(atan2f(@float.infinity, @float.neg_infinity), content="2.356194496154785")
+/// inspect(atan2f(@float.neg_infinity, @float.infinity), content="-0.7853981852531433")
 /// ```
 pub fn atan2f(y : Float, x : Float) -> Float {
   if x.is_nan() || y.is_nan() {
