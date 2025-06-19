@@ -1779,11 +1779,9 @@ pub fn[A] Array::unsafe_pop_back(self : Array[A]) -> Unit {
 /// Example:
 ///
 /// ```moonbit
-/// test "truncate" {
-///   let arr = [1, 2, 3, 4, 5]
-///   arr.truncate(3)
-///   inspect(arr, content="[1, 2, 3]")
-/// }
+/// let arr = [1, 2, 3, 4, 5]
+/// arr.truncate(3)
+/// inspect(arr, content="[1, 2, 3]")
 /// ```
 pub fn[A] Array::truncate(self : Array[A], len : Int) -> Unit {
   guard len >= 0 && len < self.length() else { return }

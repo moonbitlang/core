@@ -1290,16 +1290,18 @@ pub fn[A] T::drain(self : T[A], begin : Int, end : Int) -> T[A] {
   guard begin >= 0 && end <= self.length() && begin <= end
   let long = end - begin
   let dq = new(capacity=long)
-  dq.buf = self.buf.blit(dq.buf, len = long, src_offset = begin, dst_offset = 0)
-  ignore(self.buf.blit(self.buf, len = self.length() - end, src_offset = end, dst_offset = begin))
+  dq.buf = self.buf.blit(dq.buf, len=long, src_offset=begin, dst_offset=0)
+  ignore(
+    self.buf.blit(
+      self.buf,
+      len=self.length() - end,
+      src_offset=end,
+      dst_offset=begin,
+    ),
+  )
   self.tail = self.length() - end
   self.len = self.length() - long
-  let deq1 = T::{
-    buf: dq.buf,
-    len: long,
-    head: 0,
-    tail: long - 1,
-  }
+  let deq1 = T::{ buf: dq.buf, len: long, head: 0, tail: long - 1 }
   deq1
 }
 
@@ -1333,15 +1335,10 @@ pub fn[A] T::flatten(self : T[T[A]]) -> T[A] {
   let dq = new(capacity=len)
   let mut i = 0
   for t in self {
-    dq.buf=t.buf.blit(dq.buf, len=t.length(), dst_offset=i, src_offset=0)
+    dq.buf = t.buf.blit(dq.buf, len=t.length(), dst_offset=i, src_offset=0)
     i += t.length()
   }
-  let deq = T::{
-    buf: dq.buf,
-    len: len,
-    head: 0,
-    tail: len - 1,
-  }
+  let deq = T::{ buf: dq.buf, len, head: 0, tail: len - 1 }
   deq
 }
 

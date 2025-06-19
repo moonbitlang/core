@@ -149,7 +149,7 @@ pub fn[A] UninitializedArray::blit(
     UninitializedArray::unsafe_blit(new_dst, 0, dst, 0, dst.length())
     UninitializedArray::unsafe_blit(new_dst, dst_offset, self, src_offset, len)
     new_dst
-  } else{
+  } else {
     UninitializedArray::unsafe_blit(dst, dst_offset, self, src_offset, len)
     dst
   }
