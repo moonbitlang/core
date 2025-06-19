@@ -382,31 +382,17 @@ fn[T] overflow_error() -> T raise RationalError {
 ///
 /// ```moonbit
 /// let error = RationalError::RationalError("division by zero")
-/// println(error) // outputs: division by zero
+/// inspect(
+///   error,
+///   content=
+///     #|RationalError("division by zero")
+///   ,
+/// )
 /// ```
 ///
-pub(all) suberror RationalError String
+pub(all) suberror RationalError String derive(Show, ToJson)
 
-///|
-/// Provides a string representation of a `RationalError` for display purposes.
-///
-/// Parameters:
-///
-/// * `self` : The `RationalError` to be displayed.
-/// * `logger` : The output logger to write the string representation to.
-///
-/// Example:
-///
-/// ```moonbit
-/// let error = @rational.RationalError("division by zero")
-/// println(error) // Output: division by zero
-/// ```
-///
-pub impl Show for RationalError with output(self, logger) {
-  match self {
-    RationalError(e) => Show::output(e, logger)
-  }
-}
+
 
 ///|
 /// Compares two `RationalError` values for equality.
@@ -684,16 +670,16 @@ pub fn fract(self : T) -> T {
 ///
 /// ```moonbit
 /// let zero = @rational.new(0, 1).unwrap()
-/// println(zero) // Output: "0"
+/// inspect(zero, content="0") 
 ///
 /// let integer = @rational.new(5, 1).unwrap()
-/// println(integer) // Output: "5"
+/// inspect(integer, content="5")
 ///
 /// let fraction = @rational.new(3, 4).unwrap()
-/// println(fraction) // Output: "3/4"
+/// inspect(fraction, content="3/4") 
 ///
 /// let negative = @rational.new(-7, 3).unwrap()
-/// println(negative) // Output: "-7/3"
+/// inspect(negative, content="-7/3") 
 /// ```
 ///
 pub impl Show for T with output(self, logger) {
