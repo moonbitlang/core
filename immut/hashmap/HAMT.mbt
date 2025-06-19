@@ -170,9 +170,7 @@ pub fn[K : Eq + Hash, V] filter(
       children.each(child => child
         .filter(pred)
         .iter()
-        .each(kv => {
-          result = result.add(kv.0, kv.1)
-        }))
+        .each(kv => result = result.add(kv.0, kv.1)))
       result
     }
   }
