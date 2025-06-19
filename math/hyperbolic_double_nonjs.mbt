@@ -34,14 +34,14 @@
 ///
 /// Parameters:
 ///
-/// * `self` : The number for which to calculate the hyperbolic sine.
+/// * `x` : The number for which to calculate the hyperbolic sine.
 ///
-/// Returns the hyperbolic sine of `self`.
+/// Returns the hyperbolic sine of `x`.
 ///
 /// Special cases:
 ///
-/// * Returns `infinity` if `self` is `infinity`
-/// * Returns `NaN` if `self` is `NaN`
+/// * Returns `infinity` if `x` is `infinity`
+/// * Returns `NaN` if `x` is `NaN`
 ///
 /// Example:
 ///
@@ -92,14 +92,14 @@ pub fn sinh(x : Double) -> Double {
 ///
 /// Parameters:
 ///
-/// * `self` : The number for which to calculate the hyperbolic cosine.
+/// * `x` : The number for which to calculate the hyperbolic cosine.
 ///
-/// Returns the hyperbolic cosine of `self`.
+/// Returns the hyperbolic cosine of `x`.
 ///
 /// Special cases:
 ///
-/// * Returns `infinity` if `self` is `infinity`
-/// * Returns `NaN` if `self` is `NaN`
+/// * Returns `infinity` if `x` is `infinity`
+/// * Returns `NaN` if `x` is `NaN`
 ///
 /// Example
 ///
@@ -151,15 +151,15 @@ pub fn cosh(x : Double) -> Double {
 ///
 /// Parameters:
 ///
-/// * `self` : The number for which to calculate the hyperbolic tangent.
+/// * `x` : The number for which to calculate the hyperbolic tangent.
 ///
-/// Returns the hyperbolic tangent of `self`.
+/// Returns the hyperbolic tangent of `x`.
 ///
 /// Special cases:
 ///
-/// * Returns `NaN` if `self` is `NaN`
-/// * Returns `1` if `self` is `infinity`
-/// * Returns `-1` if `self` is `-infinity`
+/// * Returns `NaN` if `x` is `NaN`
+/// * Returns `1` if `x` is `infinity`
+/// * Returns `-1` if `x` is `-infinity`
 ///
 /// Example
 ///
@@ -211,14 +211,14 @@ pub fn tanh(x : Double) -> Double {
 ///
 /// Parameters:
 ///
-/// * `self` : The number for which to calculate the inverse hyperbolic sine.
+/// * `x` : The number for which to calculate the inverse hyperbolic sine.
 ///
-/// Returns the inverse hyperbolic sine of `self`.
+/// Returns the inverse hyperbolic sine of `x`.
 ///
 /// Special cases:
 ///
-/// * Returns `NaN` if `self` is `NaN`
-/// * Returns `infinity` if `self` is `infinity`
+/// * Returns `NaN` if `x` is `NaN`
+/// * Returns `infinity` if `x` is `infinity`
 ///
 /// Example
 ///
@@ -268,16 +268,16 @@ pub fn asinh(x : Double) -> Double {
 ///
 /// Parameters:
 ///
-/// * `self` : The number for which to calculate the inverse hyperbolic cosine.
+/// * `x` : The number for which to calculate the inverse hyperbolic cosine.
 ///
-/// Returns the inverse hyperbolic cosine of `self`.
+/// Returns the inverse hyperbolic cosine of `x`.
 ///
 /// Special cases:
 ///
-/// * Returns `NaN` if `self` is less than `1`.
-/// * Returns `NaN` if `self` is `NaN`.
-/// * Returns `0` if `self` is `1`.
-/// * Returns `infinity` if `self` is `infinity` (Positive infinity).
+/// * Returns `NaN` if `x` is less than `1`.
+/// * Returns `NaN` if `x` is `NaN`.
+/// * Returns `0` if `x` is `1`.
+/// * Returns `infinity` if `x` is `infinity` (Positive infinity).
 ///
 /// Example
 ///
@@ -316,15 +316,15 @@ pub fn acosh(x : Double) -> Double {
 ///
 /// Parameters:
 ///
-/// * `self` : The number for which to calculate the inverse hyperbolic tangent.
+/// * `x` : The number for which to calculate the inverse hyperbolic tangent.
 ///
-/// Returns the inverse hyperbolic tangent of `self`.
+/// Returns the inverse hyperbolic tangent of `x`.
 ///
 /// Special cases:
 ///
-/// * Returns `NaN` if `self` is less than `-1` or greater than `1`.
-/// * Returns `infinity` if `self` is `1`.
-/// * Returns `-infinity` if `self` is `-1`.
+/// * Returns `NaN` if `x` is less than `-1` or greater than `1`.
+/// * Returns `infinity` if `x` is `1`.
+/// * Returns `-infinity` if `x` is `-1`.
 ///
 /// Example
 ///

@@ -17,7 +17,7 @@
 ///
 /// Parameters:
 ///
-/// * `self`: The input number.
+/// * `x`: The input number.
 ///
 /// Returns the natural logarithm of the input number, with the following special
 /// cases:
@@ -59,7 +59,7 @@ pub fn log2(x : Double) -> Double = "Math" "log2"
 ///
 /// Parameters:
 ///
-/// * `self` : The double-precision floating-point number to calculate the
+/// * `x` : The double-precision floating-point number to calculate the
 /// logarithm of.
 ///
 /// Returns a double-precision floating-point number representing the base-10
@@ -79,15 +79,15 @@ pub fn log10(x : Double) -> Double = "Math" "log10"
 ///
 /// Parameters:
 ///
-/// * `self` : The number to which 1 is added before calculating the logarithm.
+/// * `x` : The number to which 1 is added before calculating the logarithm.
 ///
-/// Returns the natural logarithm of 1 + `self`.
+/// Returns the natural logarithm of 1 + `x`.
 ///
 /// Special Cases:
 ///
-/// * Returns NaN if `self` is NaN or less than -1.
-/// * Returns -INF if `self` is -1.
-/// * Returns +INF if `self` is +INF.
+/// * Returns NaN if `x` is NaN or less than -1.
+/// * Returns -INF if `x` is -1.
+/// * Returns +INF if `x` is +INF.
 ///
 /// Example:
 ///

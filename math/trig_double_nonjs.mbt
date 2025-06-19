@@ -395,12 +395,12 @@ pub fn atan(x : Double) -> Double {
 ///
 /// Parameters:
 ///
-/// * `self` : The numerator of the quotient.
+/// * `x` : The numerator of the quotient.
 /// * `x` : The denominator of the quotient.
 ///
-/// Returns the arctangent of the quotient `self / x`.
+/// Returns the arctangent of the quotient `x / x`.
 ///
-/// * Returns NaN if self or x is NaN.
+/// * Returns NaN if x or x is NaN.
 ///
 /// Example:
 ///

@@ -17,7 +17,7 @@
 ///
 /// Parameters:
 ///
-/// * `self` : The exponent value to compute `e^x`.
+/// * `x` : The exponent value to compute `e^x`.
 ///
 /// Returns the value of `e^x`, where `e` is Euler's number (approximately
 /// 2.71828).
@@ -44,15 +44,15 @@ pub fn exp(x : Double) -> Double = "Math" "exp"
 ///
 /// Parameters:
 ///
-/// * `self` : The exponent.
+/// * `x` : The exponent.
 ///
-/// Returns e raised to the power of `self`, minus 1.
+/// Returns e raised to the power of `x`, minus 1.
 ///
 /// Special Cases:
 ///
-/// * Returns NaN if `self` is NaN.
-/// * Returns -1 if `self` is negative infinity.
-/// * Returns `Infinity` if `self` is positive infinity.
+/// * Returns NaN if `x` is NaN.
+/// * Returns -1 if `x` is negative infinity.
+/// * Returns `Infinity` if `x` is positive infinity.
 ///
 /// Example
 ///

@@ -60,7 +60,7 @@ pub fn sinhf(x : Float) -> Float {
   let absx = ix.reinterpret_as_float()
   let w = ix
 
-  // |self| < log(FLT_MAX)
+  // |x| < log(FLT_MAX)
   if w < 0x42b17217 {
     let t = expm1f(absx)
     if w < 0x3f800000 {
@@ -72,7 +72,7 @@ pub fn sinhf(x : Float) -> Float {
     return h * (t + t / (t + 1.0))
   }
 
-  // |self| > logf(FLT_MAX) or nan
+  // |x| > logf(FLT_MAX) or nan
   h * k_expo2f(absx) * 2.0
 }
 

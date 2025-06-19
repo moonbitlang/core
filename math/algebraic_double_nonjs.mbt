@@ -17,16 +17,16 @@
 ///
 /// Parameters:
 ///
-/// * `self` : The number for which to calculate the cube root.
+/// * `x` : The number for which to calculate the cube root.
 ///
-/// Returns the cube root of `self`.
+/// Returns the cube root of `x`.
 ///
 /// Special Cases:
 ///
-/// * Return `NaN` if `self` is `NaN`.
-/// * Return `±0` if `self` is `±0`.
-/// * Return `Infinity` if `self` is `Infinity`.
-/// * Return `-Infinity` if `self` is `-Infinity`.
+/// * Return `NaN` if `x` is `NaN`.
+/// * Return `±0` if `x` is `±0`.
+/// * Return `Infinity` if `x` is `Infinity`.
+/// * Return `-Infinity` if `x` is `-Infinity`.
 ///
 /// Example
 ///
@@ -83,10 +83,10 @@ pub fn cbrt(x : Double) -> Double {
 ///
 /// Parameters:
 ///
-/// * `self` : The number to be used as the first argument.
+/// * `x` : The number to be used as the first argument.
 /// * `y` : The number to be used as the second argument.
 ///
-/// Returns the hypotenuse of a right-angled triangle whose legs are `self` and `y`.
+/// Returns the hypotenuse of a right-angled triangle whose legs are `x` and `y`.
 ///
 /// Example:
 ///
