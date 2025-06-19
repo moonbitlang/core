@@ -329,35 +329,3 @@ pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Array[X] with arbi
 pub fn join(self : Array[String], separator : @string.View) -> String {
   self[:].join(separator)
 }
-
-///|
-/// Truncates the array in-place to the specified length.
-///
-/// If `len` is greater than or equal to the current array length, 
-/// the function does nothing. If `len` is 0, the array is cleared.
-/// Otherwise, removes elements from the end until the array reaches the given length.
-///
-/// Parameters:
-///
-/// * `self` : The target array (modified in-place).
-/// * `len` : The new desired length (must be non-negative).
-///
-/// Important: 
-///   - If `len` is negative, the function does nothing.
-///   - If `len` exceeds current length, the array remains unchanged.
-///
-/// Example:
-///
-/// ```moonbit
-///   let arr = [1, 2, 3, 4, 5]
-///   arr.truncate(3)
-///   inspect(arr, content="[1, 2, 3]")
-/// ```
-pub fn[A] Array::truncate(self : Array[A], len : Int) -> Unit {
-  guard len >= 0 && len < self.length() else { return }
-  if len == 0 {
-    self.clear()
-    return
-  }
-  self.truncate_to_length(len)
-}

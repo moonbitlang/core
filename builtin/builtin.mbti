@@ -118,7 +118,7 @@ fn[T : Eq] Array::starts_with(Self[T], Self[T]) -> Bool
 fn[T : Eq] Array::strip_prefix(Self[T], Self[T]) -> Self[T]?
 fn[T : Eq] Array::strip_suffix(Self[T], Self[T]) -> Self[T]?
 fn[T] Array::swap(Self[T], Int, Int) -> Unit
-fn[T] Array::truncate_to_length(Self[A], Int) -> Unit
+fn[A] Array::truncate(Self[A], Int) -> Unit
 fn[A] Array::unsafe_blit(Self[A], Int, Self[A], Int, Int) -> Unit
 fn[A] Array::unsafe_blit_fixed(Self[A], Int, FixedArray[A], Int, Int) -> Unit
 fn[T] Array::unsafe_get(Self[T], Int) -> T
