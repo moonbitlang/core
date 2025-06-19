@@ -50,3 +50,48 @@ test "ln_1p" {
   inspect(ln_1pf(@float.infinity), content="Infinity")
   inspect(ln_1pf(@float.neg_infinity), content="NaN")
 }
+
+///|
+test "log2 log10" {
+  // log2
+  assert_eq(log2(3.0), 1.584962500721156)
+  assert_eq(log2(2.0), 1.0)
+  assert_eq(log2(1.0), 0.0)
+  assert_eq(log2(0.5), -1.0)
+  assert_eq(log2(0.25), -2.0)
+  assert_eq(log2(0.1), -3.321928094887362)
+
+  // log10
+  assert_eq(log10(0.2), -0.6989700043360187)
+  assert_eq(log10(0.1), -1)
+  assert_eq(log10(1.0), 0.0)
+  assert_eq(log10(10.0), 1.0)
+  assert_eq(log10(100.0), 2.0)
+  assert_eq(log10(1000.0), 3.0)
+  assert_eq(log10(3.0), 0.47712125471966244)
+  assert_eq(log10(11.0), 1.041392685158225)
+  assert_eq(log10(15.0), 1.1760912590556813)
+}
+
+///|
+test "ln" {
+  assert_true(ln(@double.not_a_number).is_nan())
+  assert_true(ln(@double.infinity).is_pos_inf())
+  assert_true(ln(@double.neg_infinity).is_nan())
+  assert_true(ln(-1.0).is_nan())
+  assert_true(ln(0.0).is_neg_inf())
+  assert_true(ln(-0.0).is_neg_inf())
+  assert_eq(ln(50.0), 3.912023005428146)
+  assert_eq(ln(2.0), 0.6931471805599453)
+  assert_eq(ln(1.1125369292536007e-308), -709.0895657128241)
+  assert_eq(ln(5.562684646268003e-309), -709.782712893384)
+}
+
+///|
+test "ln_1p" {
+  assert_true(ln_1p(@double.not_a_number).is_nan())
+  assert_true(ln_1p(@double.infinity).is_pos_inf())
+  assert_true(ln_1p(@double.neg_infinity).is_nan())
+  assert_true(ln_1p(-1.0).is_neg_inf())
+  assert_eq(ln_1p(0.0), 0.0)
+}

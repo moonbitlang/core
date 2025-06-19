@@ -3,48 +3,65 @@ package "moonbitlang/core/double"
 // Values
 fn abs(Double) -> Double
 
+#deprecated
 fn acos(Double) -> Double
 
+#deprecated
 fn acosh(Double) -> Double
 
+#deprecated
 fn asin(Double) -> Double
 
+#deprecated
 fn asinh(Double) -> Double
 
+#deprecated
 fn atan(Double) -> Double
 
+#deprecated
 fn atan2(Double, Double) -> Double
 
+#deprecated
 fn atanh(Double) -> Double
 
+#deprecated
 fn cbrt(Double) -> Double
 
 fn ceil(Double) -> Double
 
+#deprecated
 fn cos(Double) -> Double
 
+#deprecated
 fn cosh(Double) -> Double
 
+#deprecated
 fn exp(Double) -> Double
 
+#deprecated
 fn expm1(Double) -> Double
 
 fn floor(Double) -> Double
 
 fn from_int(Int) -> Double
 
+#deprecated
 fn hypot(Double, Double) -> Double
 
 let infinity : Double
 
 fn is_close(Double, Double, relative_tolerance~ : Double = .., absolute_tolerance~ : Double = ..) -> Bool
 
+#deprecated
 fn ln(Double) -> Double
 
+#deprecated
 fn ln_1p(Double) -> Double
 
+#deprecated
 fn log10(Double) -> Double
 
+#deprecated
 fn log2(Double) -> Double
 
 let max_value : Double
@@ -61,33 +78,50 @@ fn pow(Double, Double) -> Double
 
 fn round(Double) -> Double
 
+#deprecated
 fn sin(Double) -> Double
 
+#deprecated
 fn sinh(Double) -> Double
 
+#deprecated
 fn tan(Double) -> Double
 
+#deprecated
 fn tanh(Double) -> Double
 
 fn trunc(Double) -> Double
 
 // Types and methods
 fn Double::abs(Double) -> Double
+#deprecated
 fn Double::acos(Double) -> Double
+#deprecated
 fn Double::acosh(Double) -> Double
+#deprecated
 fn Double::asin(Double) -> Double
+#deprecated
 fn Double::asinh(Double) -> Double
+#deprecated
 fn Double::atan(Double) -> Double
+#deprecated
 fn Double::atan2(Double, Double) -> Double
+#deprecated
 fn Double::atanh(Double) -> Double
+#deprecated
 fn Double::cbrt(Double) -> Double
 fn Double::ceil(Double) -> Double
+#deprecated
 fn Double::cos(Double) -> Double
+#deprecated
 fn Double::cosh(Double) -> Double
+#deprecated
 fn Double::exp(Double) -> Double
+#deprecated
 fn Double::expm1(Double) -> Double
 fn Double::floor(Double) -> Double
 fn Double::from_int(Int) -> Double
+#deprecated
 fn Double::hypot(Double, Double) -> Double
 #deprecated
 fn Double::inf(Int) -> Double
@@ -96,9 +130,13 @@ fn Double::is_inf(Double) -> Bool
 fn Double::is_nan(Double) -> Bool
 fn Double::is_neg_inf(Double) -> Bool
 fn Double::is_pos_inf(Double) -> Bool
+#deprecated
 fn Double::ln(Double) -> Double
+#deprecated
 fn Double::ln_1p(Double) -> Double
+#deprecated
 fn Double::log10(Double) -> Double
+#deprecated
 fn Double::log2(Double) -> Double
 #deprecated
 fn Double::min_normal() -> Double
@@ -107,9 +145,13 @@ fn Double::nan() -> Double
 fn Double::pow(Double, Double) -> Double
 fn Double::round(Double) -> Double
 fn Double::signum(Double) -> Double
+#deprecated
 fn Double::sin(Double) -> Double
+#deprecated
 fn Double::sinh(Double) -> Double
+#deprecated
 fn Double::tan(Double) -> Double
+#deprecated
 fn Double::tanh(Double) -> Double
 fn Double::to_be_bytes(Double) -> Bytes
 fn Double::to_le_bytes(Double) -> Bytes

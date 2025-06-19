@@ -25,9 +25,31 @@
 //
 
 ///|
-#deprecated("use `@math.exp` instead")
-#coverage.skip
-pub fn Double::exp(self : Double) -> Double {
+/// Computes `e` raised to the power of a given number.
+///
+/// Parameters:
+///
+/// * `x` : The exponent value to compute `e^x`.
+///
+/// Returns the value of `e^x`, where `e` is Euler's number (approximately
+/// 2.71828).
+///
+/// Special cases:
+///
+/// * Returns `x` if `x` is `infinity` (positive infinity)
+/// * Returns `0` if `x` is negative infinity
+/// * Returns `NaN` if `x` is `NaN`
+/// * Returns `1` if `x` is `0`
+///
+/// Example:
+///
+/// ```moonbit
+/// inspect(@math.exp(0.0), content="1")
+/// inspect(@math.exp(1.0), content="2.718281828459045")
+/// inspect(@math.exp((-1.0)), content="0.36787944117144233")
+/// inspect(@math.exp(@double.not_a_number), content="NaN")
+/// ```
+pub fn exp(x : Double) -> Double {
   fn get_high_word(x : Double) -> UInt {
     (x.reinterpret_as_uint64() >> 32).to_uint()
   }
@@ -43,7 +65,8 @@ pub fn Double::exp(self : Double) -> Double {
     bits.reinterpret_as_double()
   }
 
-  let mut x = self
+  let ori_x = x
+  let mut x = x
   let one = 1.0
   let halF = [0.5, -0.5]
   let o_threshold = 7.09782712893383973096e+02
@@ -63,39 +86,39 @@ pub fn Double::exp(self : Double) -> Double {
   let twom1000 = 9.33263618503218878990e-302
   let two1023 = 8.988465674311579539e307
   let mut k : Int = 0
-  let mut hx : UInt = get_high_word(self)
+  let mut hx : UInt = get_high_word(ori_x)
   let xsb : Int = ((hx >> 31) & 1).reinterpret_as_int()
   hx = hx & 0x7FFFFFFF
   if hx >= 0x40862E42 {
     if hx >= 0x7FF00000 {
-      let lx : UInt = get_low_word(self)
+      let lx : UInt = get_low_word(ori_x)
       if ((hx & 0xFFFFF) | lx) != 0 {
-        return self + self
+        return ori_x + ori_x
       } else if xsb == 0 {
-        return self
+        return ori_x
       } else {
         return 0.0
       }
     }
-    if self > o_threshold {
+    if ori_x > o_threshold {
       return huge * huge
     }
-    if self < u_threshold {
+    if ori_x < u_threshold {
       return twom1000 * twom1000
     }
   }
   if hx > 0x3FD62E42 {
     if hx < 0x3FF0A2B2 {
-      if self == 1.0 {
+      if ori_x == 1.0 {
         return e
       }
-      hi = self - ln2HI[xsb]
+      hi = ori_x - ln2HI[xsb]
       lo = ln2LO[xsb]
       k = 1 - xsb - xsb
     } else {
-      k = (invln2 * self + halF[xsb]).to_int()
+      k = (invln2 * ori_x + halF[xsb]).to_int()
       let t = k.to_double()
-      hi = self - t * ln2HI[0]
+      hi = ori_x - t * ln2HI[0]
       lo = t * ln2LO[0]
     }
     x = hi - lo
@@ -137,17 +160,41 @@ pub fn Double::exp(self : Double) -> Double {
 }
 
 ///|
-#deprecated("use `@math.expm1` instead")
-#coverage.skip
-pub fn Double::expm1(self : Double) -> Double {
-  if self.is_nan() {
-    return not_a_number
+/// Calculates exp(x) - 1 accurately even when x is close to zero.
+///
+/// Parameters:
+///
+/// * `x` : The exponent.
+///
+/// Returns e raised to the power of `x`, minus 1.
+///
+/// Special Cases:
+///
+/// * Returns NaN if `x` is NaN.
+/// * Returns -1 if `x` is negative infinity.
+/// * Returns `Infinity` if `x` is positive infinity.
+///
+/// Example
+///
+/// ```moonbit
+/// inspect(@math.expm1(0.0), content="0")
+/// inspect(@math.expm1(1.0), content="1.718281828459045")
+/// inspect(@math.expm1(2.0), content="6.38905609893065")
+/// inspect(@math.expm1((-1.0)), content="-0.6321205588285577")
+/// inspect(@math.expm1((-2.0)), content="-0.8646647167633873")
+/// inspect(@math.expm1(@double.not_a_number), content="NaN")
+/// inspect(@math.expm1(@double.infinity), content="Infinity")
+/// inspect(@math.expm1(@double.neg_infinity), content="-1")
+/// ```
+pub fn expm1(x : Double) -> Double {
+  if x.is_nan() {
+    return @double.not_a_number
   }
   let o_threshold = 7.09782712893383973096e+02
-  if self > o_threshold {
-    return infinity
+  if x > o_threshold {
+    return @double.infinity
   }
-  if self.is_inf() {
+  if x.is_inf() {
     return -1.0
   }
   let huge = 1.0e+300
@@ -160,7 +207,7 @@ pub fn Double::expm1(self : Double) -> Double {
   let q3 = -7.93650757867487942473e-05
   let q4 = 4.00821782732936239552e-06
   let q5 = -2.01099218183624371326e-07
-  let mut x = self
+  let mut x = x
   let mut hx = get_high_word(x)
   let xsb : Int = (hx & 0x80000000).reinterpret_as_int()
   let mut y : Double = if xsb == 0 { x } else { -x }
