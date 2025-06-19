@@ -58,11 +58,7 @@ test "@hashset.remove" {
 test "@hashset.iter" {
   let data = @hashset.of(["a", "b", "d", "e", "f"])
   let mut s = ""
-  data
-  .iter()
-  .each(k => {
-    s += " \{k}"
-  })
+  data.iter().each(k => s += " \{k}")
   inspect(s, content=" e f b a d")
 }
 
