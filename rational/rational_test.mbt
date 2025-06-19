@@ -121,7 +121,6 @@ test "from_double array" {
   |> inspect(
     content=
       #|[Err(RationalError("Rational::from_double: overflow")), Err(RationalError("Rational::from_double: overflow")), Err(RationalError("Rational::from_double: overflow")), Err(RationalError("Rational::from_double: overflow")), Err(RationalError("Rational::from_double: cannot convert NaN"))]
-
     ,
   )
   inspect(
@@ -132,7 +131,6 @@ test "from_double array" {
     |> from_double_array,
     content=
       #|[Ok(1/4503599627370496), Ok(0), Ok(0), Ok(9223372036800000000), Err(RationalError("Rational::from_double: overflow")), Err(RationalError("Rational::from_double: overflow"))]
-
     ,
   )
   // content="[Ok(1/4503599627370496), Ok(0), Ok(0), Ok(9223372036800000000)]")

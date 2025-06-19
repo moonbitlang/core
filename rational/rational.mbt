@@ -392,8 +392,6 @@ fn[T] overflow_error() -> T raise RationalError {
 ///
 pub(all) suberror RationalError String derive(Show, ToJson)
 
-
-
 ///|
 /// Compares two `RationalError` values for equality.
 ///
