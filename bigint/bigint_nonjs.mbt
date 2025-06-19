@@ -1836,3 +1836,8 @@ test "limb length" {
   inspect(4294967296N.len, content="2") // 2^32
   inspect((-4294967296N).len, content="2") // -2^32
 }
+
+///|
+fn BigInt::limbs(self : Self) -> Iter[UInt] {
+  self.limbs.iter().take(self.len)
+}
