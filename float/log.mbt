@@ -100,14 +100,14 @@ pub fn Float::ln_1p(self : Float) -> Float {
   let mut iu : UInt = 0
   let one : Float = 1.0
   let mut k = 1
-  if ui < 0x3ed413d0 || (ui >> 31) > 0 {
+  if ui < 0x3ed413d0 || ui >> 31 > 0 {
     if ui >= 0xbf800000 {
       if self == -1.0 {
         return self / 0.0
       }
       return (self - self) / 0.0
     }
-    if (ui << 1) < (0x33800000U << 1) {
+    if ui << 1 < 0x33800000U << 1 {
       return self
     }
     if ui <= 0xbe95f619 {

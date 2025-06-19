@@ -31,16 +31,14 @@
 /// Example
 ///
 /// ```moonbit
-/// test "cbrt" {
-///   inspect(1.0.cbrt(), content="1")
-///   inspect(3.0.cbrt(), content="1.4422495703074083")
-///   inspect((-3.0).cbrt(), content="-1.4422495703074083")
-///   inspect(10.0.cbrt(), content="2.154434690031884")
-///   inspect(1000.0.cbrt(), content="10")
-///   inspect(@double.not_a_number.cbrt(), content="NaN")
-///   inspect(@double.infinity, content="Infinity")
-///   inspect(@double.neg_infinity, content="-Infinity")
-/// }
+/// inspect(@math.cbrt(1.0), content="1")
+/// inspect(@math.cbrt(3.0), content="1.4422495703074083")
+/// inspect(@math.cbrt((-3.0)), content="-1.4422495703074083")
+/// inspect(@math.cbrt(10.0), content="2.154434690031884")
+/// inspect(@math.cbrt(1000.0), content="10")
+/// inspect(@math.cbrt(@double.not_a_number), content="NaN")
+/// inspect(@math.cbrt(@double.infinity), content="Infinity")
+/// inspect(@math.cbrt(@double.neg_infinity), content="-Infinity")
 /// ```
 pub fn cbrt(x : Double) -> Double {
   if x.is_inf() || x.is_nan() || x == 0.0 {
@@ -93,18 +91,16 @@ pub fn cbrt(x : Double) -> Double {
 /// Example:
 ///
 /// ```moonbit
-/// test "hypot" {
-///   inspect(@math.hypot(3.0, 4.0), content="5")
-///   inspect(@math.hypot(5.0, 12.0), content="13")
-///   inspect(@math.hypot(8.0, 15.0), content="17")
-///   inspect(@math.hypot(7.0, 24.0), content="25")
-///   inspect(@math.hypot(@double.not_a_number, 1.0), content="NaN")
-///   inspect(@math.hypot(1.0, @double.not_a_number), content="NaN")
-///   inspect(@math.hypot(@double.infinity, 1.0), content="Infinity")
-///   inspect(@math.hypot(1.0, @double.infinity), content="Infinity")
-///   inspect(@math.hypot(@double.neg_infinity, 1.0), content="Infinity")
-///   inspect(@math.hypot(1.0, @double.neg_infinity), content="Infinity")
-/// }
+/// inspect(@math.hypot(3.0, 4.0), content="5")
+/// inspect(@math.hypot(5.0, 12.0), content="13")
+/// inspect(@math.hypot(8.0, 15.0), content="17")
+/// inspect(@math.hypot(7.0, 24.0), content="25")
+/// inspect(@math.hypot(@double.not_a_number, 1.0), content="NaN")
+/// inspect(@math.hypot(1.0, @double.not_a_number), content="NaN")
+/// inspect(@math.hypot(@double.infinity, 1.0), content="Infinity")
+/// inspect(@math.hypot(1.0, @double.infinity), content="Infinity")
+/// inspect(@math.hypot(@double.neg_infinity, 1.0), content="Infinity")
+/// inspect(@math.hypot(1.0, @double.neg_infinity), content="Infinity")
 /// ```
 pub fn hypot(x : Double, y : Double) -> Double {
   if x.is_nan() || y.is_nan() {

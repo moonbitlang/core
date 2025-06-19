@@ -46,17 +46,15 @@
 /// Example:
 ///
 /// ```moonbit
-/// test "sinh" {
-///   inspect(@math.sinh(0.0), content="0")
-///   inspect(@math.sinh(-0.0), content="0")
-///   inspect(@math.sinh(1.0), content="1.1752011936438014")
-///   inspect(@math.sinh(2.0), content="3.626860407847019")
-///   inspect(@math.sinh(1000.0), content="Infinity")
-///   inspect(@math.sinh(-1000.0), content="-Infinity")
-///   inspect(@math.sinh(@double.not_a_number), content="NaN")
-///   inspect(@math.sinh(@double.infinity), content="Infinity")
-///   inspect(@math.sinh(@double.neg_infinity), content="-Infinity")
-/// }
+/// inspect(@math.sinh(0.0), content="0")
+/// inspect(@math.sinh(-0.0), content="0")
+/// inspect(@math.sinh(1.0), content="1.1752011936438014")
+/// inspect(@math.sinh(2.0), content="3.626860407847019")
+/// inspect(@math.sinh(1000.0), content="Infinity")
+/// inspect(@math.sinh(-1000.0), content="-Infinity")
+/// inspect(@math.sinh(@double.not_a_number), content="NaN")
+/// inspect(@math.sinh(@double.infinity), content="Infinity")
+/// inspect(@math.sinh(@double.neg_infinity), content="-Infinity")
 /// ```
 pub fn sinh(x : Double) -> Double {
   if x.is_nan() || x.is_inf() {
@@ -106,17 +104,15 @@ pub fn sinh(x : Double) -> Double {
 /// Example
 ///
 /// ```moonbit
-/// test "cosh" {
-///   inspect(@math.cosh(0.0), content="1")
-///   inspect(@math.cosh(-0.0), content="1")
-///   inspect(@math.cosh(1.0), content="1.5430806348152437")
-///   inspect(@math.cosh(2.0), content="3.7621956910836314")
-///   inspect(@math.cosh(1000.0), content="Infinity")
-///   inspect(@math.cosh(-1000.0), content="Infinity")
-///   inspect(@math.cosh(@double.not_a_number), content="NaN")
-///   inspect(@math.cosh(@double.infinity), content="Infinity")
-///   inspect(@math.cosh(@double.neg_infinity), content="Infinity")
-/// }
+/// inspect(@math.cosh(0.0), content="1")
+/// inspect(@math.cosh(-0.0), content="1")
+/// inspect(@math.cosh(1.0), content="1.5430806348152437")
+/// inspect(@math.cosh(2.0), content="3.7621956910836314")
+/// inspect(@math.cosh(1000.0), content="Infinity")
+/// inspect(@math.cosh(-1000.0), content="Infinity")
+/// inspect(@math.cosh(@double.not_a_number), content="NaN")
+/// inspect(@math.cosh(@double.infinity), content="Infinity")
+/// inspect(@math.cosh(@double.neg_infinity), content="Infinity")
 /// ```
 pub fn cosh(x : Double) -> Double {
   if x.is_nan() {
@@ -139,7 +135,7 @@ pub fn cosh(x : Double) -> Double {
     return 0.5 * t + 0.5 / t
   }
   if ix < 0x40862E42 {
-    return 0.5 * x.abs() |> exp
+    return (0.5 * x.abs()) |> exp
   }
   let lx = get_low_word(x).reinterpret_as_int()
   if ix < 0x408633ce || (ix == 0x408633ce && lx <= 0x8fb9f87d) {
@@ -168,17 +164,15 @@ pub fn cosh(x : Double) -> Double {
 /// Example
 ///
 /// ```moobit
-/// test "tanh" {
-///   inspect(@math.tanh(0.0), content="0")
-///   inspect(@math.tanh(-0.0), content="0")
-///   inspect(@math.tanh(1.0), content="0.7615941559557649")
-///   inspect(@math.tanh(2.0), content="0.9640275800758169")
-///   inspect(@math.tanh(1000.0), content="1")
-///   inspect(@math.tanh(-1000.0), content="-1")
-///   inspect(@math.tanh(@double.not_a_number), content="NaN")
-///   inspect(@math.tanh(@double.infinity), content="1")
-///   inspect(@math.tanh(@double.neg_infinity), content="-1")
-/// }
+///  inspect(@math.tanh(0.0), content="0")
+///  inspect(@math.tanh(-0.0), content="0")
+///  inspect(@math.tanh(1.0), content="0.7615941559557649")
+///  inspect(@math.tanh(2.0), content="0.9640275800758169")
+///  inspect(@math.tanh(1000.0), content="1")
+///  inspect(@math.tanh(-1000.0), content="-1")
+///  inspect(@math.tanh(@double.not_a_number), content="NaN")
+///  inspect(@math.tanh(@double.infinity), content="1")
+///  inspect(@math.tanh(@double.neg_infinity), content="-1")
 /// ```
 pub fn tanh(x : Double) -> Double {
   if x.is_nan() {
@@ -196,10 +190,10 @@ pub fn tanh(x : Double) -> Double {
     if ix < 0x3c800000 {
       x * (1.0 + x)
     } else if ix >= 0x3ff00000 {
-      let t = 2.0 * x.abs() |> expm1
+      let t = (2.0 * x.abs()) |> expm1
       1.0 - 2.0 / (t + 2.0)
     } else {
-      let t = -2.0 * x.abs() |> expm1
+      let t = (-2.0 * x.abs()) |> expm1
       -t / (t + 2.0)
     }
   } else {
@@ -229,17 +223,15 @@ pub fn tanh(x : Double) -> Double {
 /// Example
 ///
 /// ```moonbit
-/// test "asinh" {
-///   inspect(@math.asinh(0.0), content="0")
-///   inspect(@math.asinh(-0.0), content="0")
-///   inspect(@math.asinh(1.0), content="0.881373587019543")
-///   inspect(@math.asinh(2.0), content="1.4436354751788103")
-///   inspect(@math.asinh(1000.0), content="7.600902709541988")
-///   inspect(@math.asinh(-1000.0), content="-7.600902709541988")
-///   inspect(@math.asinh(@double.not_a_number), content="NaN")
-///   inspect(@math.asinh(@double.infinity), content="Infinity")
-///   inspect(@math.asinh(@double.neg_infinity), content="-Infinity")
-/// }
+///  inspect(@math.asinh(0.0), content="0")
+///  inspect(@math.asinh(-0.0), content="0")
+///  inspect(@math.asinh(1.0), content="0.881373587019543")
+///  inspect(@math.asinh(2.0), content="1.4436354751788103")
+///  inspect(@math.asinh(1000.0), content="7.600902709541988")
+///  inspect(@math.asinh(-1000.0), content="-7.600902709541988")
+///  inspect(@math.asinh(@double.not_a_number), content="NaN")
+///  inspect(@math.asinh(@double.infinity), content="Infinity")
+///  inspect(@math.asinh(@double.neg_infinity), content="-Infinity")
 /// ```
 pub fn asinh(x : Double) -> Double {
   if x.is_nan() || x.is_inf() {
@@ -259,10 +251,10 @@ pub fn asinh(x : Double) -> Double {
     ln(x.abs()) + ln2
   } else if ix > 0x40000000 {
     let t = x.abs()
-    2.0 * t + one / ((x * x + one).sqrt() + t) |> ln
+    (2.0 * t + one / ((x * x + one).sqrt() + t)) |> ln
   } else {
     let t = x * x
-    x.abs() + t / (one + (one + t).sqrt()) |> ln_1p
+    (x.abs() + t / (one + (one + t).sqrt())) |> ln_1p
   }
   if hx > 0 {
     w
@@ -290,17 +282,15 @@ pub fn asinh(x : Double) -> Double {
 /// Example
 ///
 /// ```moonbit
-/// test "acosh" {
-///   inspect(@math.acosh(1.0), content="0")
-///   inspect(@math.acosh(2.0), content="1.3169578969248166")
-///   inspect(@math.acosh(1000.0), content="7.600902209541989")
-///   inspect(@math.acosh(@double.not_a_number), content="NaN")
-///   inspect(@math.acosh(@double.infinity), content="Infinity")
-///   inspect(@math.acosh(-1.0), content="NaN")
-///   inspect(@math.acosh(-2.0), content="NaN")
-///   inspect(@math.acosh(@double.neg_infinity), content="NaN")
-/// }
-/// ```
+///  inspect(@math.acosh(1.0), content="0")
+///  inspect(@math.acosh(2.0), content="1.3169578969248166")
+///  inspect(@math.acosh(1000.0), content="7.600902209541989")
+///  inspect(@math.acosh(@double.not_a_number), content="NaN")
+///  inspect(@math.acosh(@double.infinity), content="Infinity")
+///  inspect(@math.acosh(-1.0), content="NaN")
+///  inspect(@math.acosh(-2.0), content="NaN")
+///  inspect(@math.acosh(@double.neg_infinity), content="NaN")
+/// 
 pub fn acosh(x : Double) -> Double {
   let one = 1.0
   let hx = get_high_word(x).reinterpret_as_int()
@@ -314,10 +304,10 @@ pub fn acosh(x : Double) -> Double {
     return ln(x) + LN2
   } else if hx > 0x40000000 {
     let t = x * x
-    return 2.0 * x - one / (x + (t - one).sqrt()) |> ln
+    return (2.0 * x - one / (x + (t - one).sqrt())) |> ln
   } else {
     let t = x - one
-    return t + (2.0 * t + t * t).sqrt() |> ln_1p
+    return (t + (2.0 * t + t * t).sqrt()) |> ln_1p
   }
 }
 
@@ -339,18 +329,15 @@ pub fn acosh(x : Double) -> Double {
 /// Example
 ///
 /// ```moonbit
-/// test "atanh" {
-///   inspect(@math.atanh(0.0), content="0")
-///   inspect(@math.atanh(-0.0), content="0")
-///   inspect(@math.atanh(0.5), content="0.5493061443340548")
-///   inspect(@math.atanh(-0.5), content="-0.5493061443340548")
-///   inspect(@math.atanh(1.0), content="Infinity")
-///   inspect(@math.atanh(-1.0), content="-Infinity")
-///   inspect(@math.atanh(1.5), content="NaN")
-///   inspect(@math.atanh(@double.not_a_number), content="NaN")
-///   inspect(@math.atanh(@double.infinity), content="NaN")
-///   inspect(@math.atanh(@double.neg_infinity), content="NaN")
-/// }
+/// inspect(@math.atanh(0.0), content="0")
+/// inspect(@math.atanh(-0.0), content="0")
+/// inspect(@math.atanh(0.5), content="0.5493061443340548")
+/// inspect(@math.atanh(-0.5), content="-0.5493061443340548")
+/// inspect(@math.atanh(1.0), content="Infinity")
+/// inspect(@math.atanh(-1.0), content="-Infinity")
+/// inspect(@math.atanh(1.5), content="NaN")
+/// inspect(@math.atanh(@double.not_a_number), content="NaN")
+/// inspect(@math.atanh(@double.infinity), content="NaN")
 /// ```
 pub fn atanh(x : Double) -> Double {
   let hx : Int = get_high_word(x).reinterpret_as_int()
