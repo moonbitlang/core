@@ -1205,6 +1205,23 @@ pub fn[A] from_iter(iter : Iter[A]) -> T[A] {
 }
 
 ///|
+/// Converts the deque to a new array containing all elements in the same order.
+///
+/// Parameters:
+///
+/// * `self` : The deque to be converted to an array.
+///
+/// Returns a new array containing all elements from the deque. If the deque is
+/// empty, returns an empty array.
+///
+/// Example:
+///
+/// ```moonbit
+///   let dq = @deque.of([1, 2, 3, 4, 5])
+///   let arr = dq.to_array()
+///   inspect(arr, content="[1, 2, 3, 4, 5]")
+/// ```
+///
 pub fn[A] to_array(self : T[A]) -> Array[A] {
   let len = self.length()
   if len == 0 {
@@ -1352,6 +1369,28 @@ pub impl[A : ToJson] ToJson for T[A] with to_json(self : T[A]) -> Json {
 }
 
 ///|
+/// Implements JSON deserialization for deque, converting a JSON array into a
+/// deque containing elements of type `A`.
+///
+/// Parameters:
+///
+/// * `json` : The JSON value to be converted to a deque.
+/// * `path` : The JSON path used for error reporting during deserialization.
+///
+/// Returns a new deque containing all elements from the JSON array converted to
+/// type `A`.
+///
+/// Throws an error of type `@json.JsonDecodeError` if the JSON value is not an
+/// array or if any element in the array cannot be converted to type `A`.
+///
+/// Example:
+///
+/// ```moonbit
+///   let json = @json.parse("[1, 2, 3]")
+///   let dq : @deque.T[Int] = @json.from_json(json)
+///   inspect(dq, content="@deque.of([1, 2, 3])")
+/// ```
+///
 pub impl[A : @json.FromJson] @json.FromJson for T[A] with from_json(json, path) {
   guard json is Array(arr) else {
     raise @json.JsonDecodeError((path, "Deque::from_json: expected array"))
