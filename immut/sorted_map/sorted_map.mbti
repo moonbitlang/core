@@ -59,8 +59,7 @@ fn[K, X, Y] T::map_with_key(Self[K, X], (K, X) -> Y) -> Self[K, Y]
 fn[K, V] T::new() -> Self[K, V]
 #deprecated
 fn[K : Compare, V] T::of(FixedArray[(K, V)]) -> Self[K, V]
-#deprecated
-fn[K : Compare, V] T::op_get(Self[K, V], K) -> V?
+fn[K : Compare, V] T::op_get(Self[K, V], K) -> V
 fn[K : Compare, V] T::remove(Self[K, V], K) -> Self[K, V]
 #deprecated
 fn[K, V] T::singleton(K, V) -> Self[K, V]
