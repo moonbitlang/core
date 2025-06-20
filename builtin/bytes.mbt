@@ -14,7 +14,14 @@
 
 ///|
 /// Reinterpret the byte sequence as Bytes.
-fn FixedArray::unsafe_to_bytes(self : FixedArray[Byte]) -> Bytes = "%identity"
+/// 
+/// Notice that this will make the `Bytes` object to be a view of the original
+/// byte sequence, so any modification to the original byte sequence will be
+/// reflected in the `Bytes` object.
+#internal(unsafe, "Creating mutable Bytes")
+pub fn FixedArray::unsafe_reinterpret_as_bytes(
+  self : FixedArray[Byte]
+) -> Bytes = "%identity"
 
 ///| 
 /// Creates a new byte sequence of the specified length, where each byte is
@@ -44,7 +51,7 @@ pub fn Bytes::makei(length : Int, value : (Int) -> Byte) -> Bytes {
   for i in 1..<length {
     arr[i] = value(i)
   }
-  FixedArray::unsafe_to_bytes(arr)
+  FixedArray::unsafe_reinterpret_as_bytes(arr)
 }
 
 ///|
@@ -68,7 +75,7 @@ pub fn Bytes::makei(length : Int, value : (Int) -> Byte) -> Bytes {
 pub fn Bytes::of_string(str : String) -> Bytes {
   FixedArray::make(str.length() * 2, Byte::default())
   ..blit_from_string(0, str, 0, str.length())
-  .unsafe_to_bytes()
+  .unsafe_reinterpret_as_bytes()
 }
 
 ///|
