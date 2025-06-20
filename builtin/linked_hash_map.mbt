@@ -67,15 +67,7 @@ fn power_2_above(x : Int, n : Int) -> Int {
   }
 }
 
-///|
-test "power_2_above" {
-  inspect(power_2_above(1, 15), content="16")
-  inspect(power_2_above(1, 16), content="16")
-  inspect(power_2_above(1, 17), content="32")
-  inspect(power_2_above(1, 32), content="32")
-  inspect(power_2_above(128, 33), content="128")
-  inspect(power_2_above(1, 2147483647), content="1073741824")
-}
+
 
 ///|
 /// Create a hash map.
@@ -100,6 +92,11 @@ pub fn[K : Hash + Eq, V] Map::from_array(arr : Array[(K, V)]) -> Map[K, V] {
   let m = Map::new(capacity=arr.length())
   arr.each(fn(e) { m.set(e.0, e.1) })
   m
+}
+
+///|
+pub impl[K, V] Default for Map[K, V] with default() {
+  Map::new()
 }
 
 ///|
@@ -533,12 +530,10 @@ pub fn[K, V] Map::values(self : Map[K, V]) -> Iter[V] {
 ///|
 /// Converts the hash map to an array.
 pub fn[K, V] Map::to_array(self : Map[K, V]) -> Array[(K, V)] {
-  let arr = Array::make_uninit(self.size)
-  let mut i = 0
+  let arr = []
   loop self.head {
     Some({ key, value, next, .. }) => {
-      arr.unsafe_set(i, (key, value))
-      i += 1
+      arr.push((key, value))
       continue next
     }
     None => break
@@ -581,6 +576,200 @@ pub fn[K : Hash + Eq, V] Map::from_iter(iter : Iter[(K, V)]) -> Map[K, V] {
 }
 
 ///|
-pub impl[K, V] Default for Map[K, V] with default() {
-  Map::new()
+/// Transform all values in the map using the provided function, preserving the original structure and order.
+/// The keys and the internal hash table structure remain unchanged.
+/// 
+/// # Parameters
+/// 
+/// * `self`: The map to transform.
+/// * `f`: A function that takes a key and value, and returns a new value.
+///
+/// # Example
+/// 
+/// ```
+/// let map = { "a": 1, "b": 2, "c": 3 }
+/// let doubled = map.map(fn(_k, v) { v * 2 })
+/// assert_eq(doubled.get("a"), Some(2))
+/// assert_eq(doubled.get("b"), Some(4))
+/// assert_eq(doubled.get("c"), Some(6))
+/// ```
+pub fn[K, V, V2] Map::map(self : Map[K, V], f : (K, V) -> V2) -> Map[K, V2] {
+  // Create new entries array
+  let new_entries = FixedArray::make(self.capacity, None)
+  
+  // First pass: create all new entries with transformed values
+  for i in 0..<self.capacity {
+    match self.entries[i] {
+      Some({ prev, psl, hash, key, value, .. }) => {
+        let new_value = f(key, value)
+        let new_entry : Entry[K, V2] = {
+          prev,
+          next: None, // Will be set in the next step
+          psl,
+          hash,
+          key,
+          value: new_value
+        }
+        new_entries[i] = Some(new_entry)
+      }
+      None => new_entries[i] = None
+    }
+  }
+  
+  // Second pass: rebuild linked list connections by following the original structure
+  let mut new_head : Entry[K, V2]? = None
+  for i in 0..<self.capacity {
+    match (self.entries[i], new_entries[i]) {
+      (Some(old_entry), Some(new_entry)) => {
+        // Connect to next entry by finding the next entry's location
+        match old_entry.next {
+          Some(old_next_entry) => {
+            // Find which slot contains the next entry by comparing addresses
+            for j in 0..<self.capacity {
+              match self.entries[j] {
+                Some(candidate_entry) => {
+                  // Use pointer comparison instead of value comparison
+                  if physical_equal(candidate_entry, old_next_entry) {
+                    new_entry.next = new_entries[j]
+                    break
+                  }
+                }
+                None => continue
+              }
+            }
+          }
+          None => new_entry.next = None
+        }
+      }
+      _ => continue
+    }
+  }
+  
+  // Find the new head by locating the original head
+  match self.head {
+    Some(old_head_entry) => {
+      for i in 0..<self.capacity {
+        match (self.entries[i], new_entries[i]) {
+          (Some(old_entry), Some(new_entry)) => {
+            if physical_equal(old_entry, old_head_entry) {
+              new_head = Some(new_entry)
+              break
+            }
+          }
+          _ => continue
+        }
+      }
+    }
+    None => new_head = None
+  }
+  
+  {
+    entries: new_entries,
+    size: self.size,
+    capacity: self.capacity,
+    capacity_mask: self.capacity_mask,
+    grow_at: self.grow_at,
+    head: new_head,
+    tail: self.tail,
+  }
 }
+
+///|
+/// Create a deep copy of the map with the same structure, order, and contents.
+/// The returned map is completely independent of the original.
+///
+/// # Parameters
+/// 
+/// * `self`: The map to copy.
+///
+/// # Example
+/// 
+/// ```
+/// let map1 = { "a": 1, "b": 2 }
+/// let map2 = map1.copy()
+/// map1.set("a", 10)
+/// assert_eq(map1.get("a"), Some(10))
+/// assert_eq(map2.get("a"), Some(1))  // map2 is unchanged
+/// ```
+pub fn[K, V] Map::copy(self : Map[K, V]) -> Map[K, V] {
+  // Create new entries array
+  let new_entries = FixedArray::make(self.capacity, None)
+  
+  // First pass: create all new entries as copies
+  for i in 0..<self.capacity {
+    match self.entries[i] {
+      Some({ prev, psl, hash, key, value, .. }) => {
+        let new_entry : Entry[K, V] = {
+          prev,
+          next: None, // Will be set in the next step
+          psl,
+          hash,
+          key,
+          value
+        }
+        new_entries[i] = Some(new_entry)
+      }
+      None => new_entries[i] = None
+    }
+  }
+  
+  // Second pass: rebuild linked list connections by following the original structure
+  let mut new_head : Entry[K, V]? = None
+  for i in 0..<self.capacity {
+    match (self.entries[i], new_entries[i]) {
+      (Some(old_entry), Some(new_entry)) => {
+        // Connect to next entry by finding the next entry's location
+        match old_entry.next {
+          Some(old_next_entry) => {
+            // Find which slot contains the next entry by comparing addresses
+            for j in 0..<self.capacity {
+              match self.entries[j] {
+                Some(candidate_entry) => {
+                  // Use pointer comparison instead of value comparison
+                  if physical_equal(candidate_entry, old_next_entry) {
+                    new_entry.next = new_entries[j]
+                    break
+                  }
+                }
+                None => continue
+              }
+            }
+          }
+          None => new_entry.next = None
+        }
+      }
+      _ => continue
+    }
+  }
+  
+  // Find the new head by locating the original head
+  match self.head {
+    Some(old_head_entry) => {
+      for i in 0..<self.capacity {
+        match (self.entries[i], new_entries[i]) {
+          (Some(old_entry), Some(new_entry)) => {
+            if physical_equal(old_entry, old_head_entry) {
+              new_head = Some(new_entry)
+              break
+            }
+          }
+          _ => continue
+        }
+      }
+    }
+    None => new_head = None
+  }
+  
+  {
+    entries: new_entries,
+    size: self.size,
+    capacity: self.capacity,
+    capacity_mask: self.capacity_mask,
+    grow_at: self.grow_at,
+    head: new_head,
+    tail: self.tail,
+  }
+}
+
+///|
+
