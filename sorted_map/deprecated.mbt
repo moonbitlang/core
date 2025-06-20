@@ -11,3 +11,17 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+///|
+#deprecated("Use `get` instead. `op_get` will return `V` instead of `Option[V]` in the future.")
+pub fn[K : Compare, V] op_get(self : T[K, V], key : K) -> V? {
+  self.get(key)
+}
+
+///|
+#deprecated("Use @sorted_map.from_array instead")
+pub fn[K : Compare, V] of(entries : Array[(K, V)]) -> T[K, V] {
+  let map = { root: None, size: 0 }
+  entries.each(fn(e) { map.add(e.0, e.1) })
+  map
+}

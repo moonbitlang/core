@@ -11,3 +11,17 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+///|
+#deprecated("Use `unsafe_peek` instead")
+#coverage.skip
+pub fn[A] peek_exn(self : T[A]) -> A {
+  self.unsafe_peek()
+}
+
+///|
+#deprecated("Use `unsafe_pop` instead")
+#coverage.skip
+pub fn[A] pop_exn(self : T[A]) -> A {
+  self.unsafe_pop()
+}

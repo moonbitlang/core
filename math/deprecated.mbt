@@ -11,3 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+///|
+#deprecated("Use `PI` instead")
+pub let pi = 0x3.243F6A8885A308CA8A54
