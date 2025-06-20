@@ -19,6 +19,7 @@ fn trunc(T) -> Int64
 pub(all) suberror RationalError String
 impl Eq for RationalError
 impl Show for RationalError
+impl ToJson for RationalError
 
 type T
 fn T::abs(Self) -> Self

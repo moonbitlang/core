@@ -80,27 +80,8 @@ fn frexp(f : Double) -> (Double, Int) {
 }
 
 ///|
-/// Calculates the natural logarithm of a double-precision floating-point number.
-///
-/// Parameters:
-///
-/// * `self`: The input number.
-///
-/// Returns the natural logarithm of the input number, with the following special
-/// cases:
-///
-/// * Returns NaN if the input is NaN or negative
-/// * Returns negative infinity if the input is zero
-/// * Returns the input if it is positive infinity
-///
-/// Example:
-///
-/// ```moonbit
-///   inspect(2.0.ln(), content="0.6931471805599453")
-///   inspect(1.0.ln(), content="0")
-///   inspect((-1.0).ln(), content="NaN")
-///   inspect(0.0.ln(), content="-Infinity")
-/// ```
+#deprecated("use `@math.ln` instead")
+#coverage.skip
 pub fn Double::ln(self : Double) -> Double {
   if self < 0.0 {
     return not_a_number
@@ -126,21 +107,8 @@ pub fn Double::ln(self : Double) -> Double {
 }
 
 ///|
-/// Calculates the base-2 logarithm of a double-precision floating-point number.
-///
-/// Parameters:
-///
-/// * `x` : A double-precision floating-point number.
-///
-/// Returns the base-2 logarithm of the input number.
-///
-/// Example:
-///
-/// ```moonbit
-///   inspect(2.0.log2(), content="1")
-///   inspect(0.5.log2(), content="-1")
-///   inspect(3.0.log2(), content="1.584962500721156")
-/// ```
+#deprecated("use `@math.log2` instead")
+#coverage.skip
 pub fn Double::log2(self : Double) -> Double {
   let (f, e) = frexp(self)
   if f == 0.5 {
@@ -150,25 +118,8 @@ pub fn Double::log2(self : Double) -> Double {
 }
 
 ///|
-/// Calculates the base-10 logarithm of a double-precision floating-point number.
-///
-/// Parameters:
-///
-/// * `self` : The double-precision floating-point number to calculate the
-/// logarithm of.
-///
-/// Returns a double-precision floating-point number representing the base-10
-/// logarithm of the input.
-///
-/// Example:
-///
-/// ```moonbit
-///   inspect(0.1.log10(), content="-1")
-///   inspect(1.0.log10(), content="0")
-///   inspect(10.0.log10(), content="1")
-///   inspect(100.0.log10(), content="2")
-///   inspect(15.0.log10(), content="1.1760912590556813")
-/// ```
+#deprecated("use `@math.log10` instead")
+#coverage.skip
 pub fn Double::log10(self : Double) -> Double {
   if self < 0.0 {
     return not_a_number
@@ -191,32 +142,8 @@ pub fn Double::log10(self : Double) -> Double {
 }
 
 ///|
-/// Calculates ln(1 + x) accurately even when x is close to zero.
-///
-/// Parameters:
-///
-/// * `self` : The number to which 1 is added before calculating the logarithm.
-///
-/// Returns the natural logarithm of 1 + `self`.
-///
-/// Special Cases:
-///
-/// * Returns `NaN` if `self` is `NaN` or less than -1.
-/// * Returns `-Infinity` if `self` is -1.
-/// * Returns `+Infinity` if `self` is `+Infinity`.
-///
-/// Example:
-///
-/// ```moonbit
-///   inspect(0.0.ln_1p(), content="0")
-///   inspect(1.0.ln_1p(), content="0.6931471805599453")
-///   inspect(2.0.ln_1p(), content="1.0986122886681096")
-///   inspect(@double.not_a_number.ln_1p(), content="NaN")
-///   inspect((-1.0).ln_1p(), content="-Infinity")
-///   inspect((-2.0).ln_1p(), content="NaN")
-///   inspect(@double.infinity.ln_1p(), content="Infinity")
-///   inspect(@double.neg_infinity.ln_1p(), content="NaN")
-/// ```
+#deprecated("use `@math.ln_1p` instead")
+#coverage.skip
 pub fn Double::ln_1p(self : Double) -> Double {
   if self < -1.0 || self.is_nan() {
     return not_a_number
@@ -312,67 +239,4 @@ pub fn Double::ln_1p(self : Double) -> Double {
     return k.to_double() * ln2_hi -
       (hfsq - (s * (hfsq + r) + (k.to_double() * ln2_lo + c)) - f)
   }
-}
-
-///|
-test "log2 log10" {
-  // log2
-  assert_eq(3.0.log2(), 1.584962500721156)
-  assert_eq(2.0.log2(), 1.0)
-  assert_eq(1.0.log2(), 0.0)
-  assert_eq(0.5.log2(), -1.0)
-  assert_eq(0.25.log2(), -2.0)
-  assert_eq(0.1.log2(), -3.321928094887362)
-
-  // log10
-  assert_eq(0.2.log10(), -0.6989700043360187)
-  assert_eq(0.1.log10(), -1)
-  assert_eq(1.0.log10(), 0.0)
-  assert_eq(10.0.log10(), 1.0)
-  assert_eq(100.0.log10(), 2.0)
-  assert_eq(1000.0.log10(), 3.0)
-  assert_eq(3.0.log10(), 0.47712125471966244)
-  assert_eq(11.0.log10(), 1.041392685158225)
-  assert_eq(15.0.log10(), 1.1760912590556813)
-}
-
-///|
-test "ln" {
-  assert_true(not_a_number.ln().is_nan())
-  assert_true(infinity.ln().is_pos_inf())
-  assert_true(neg_infinity.ln().is_nan())
-  assert_true((-1.0).ln().is_nan())
-  assert_true(0.0.ln().is_neg_inf())
-  assert_true((-0.0).ln().is_neg_inf())
-  assert_eq(50.0.ln(), 3.912023005428146)
-  assert_eq(2.0.ln(), 0.6931471805599453)
-  assert_eq(1.1125369292536007e-308.ln(), -709.0895657128241)
-  assert_eq(5.562684646268003e-309.ln(), -709.782712893384)
-  assert_true(
-    match frexp(0.0) {
-      (0.0, 0) => true
-      _ => false
-    },
-  )
-  assert_true(
-    match frexp(infinity) {
-      (f, 0) => if f.is_pos_inf() { true } else { false }
-      _ => false
-    },
-  )
-  assert_true(
-    match frexp(not_a_number) {
-      (f, 0) => if f.is_nan() { true } else { false }
-      _ => false
-    },
-  )
-}
-
-///|
-test "ln_1p" {
-  assert_true(not_a_number.ln_1p().is_nan())
-  assert_true(infinity.ln_1p().is_pos_inf())
-  assert_true(neg_infinity.ln_1p().is_nan())
-  assert_true((-1.0).ln_1p().is_neg_inf())
-  assert_eq(0.0.ln_1p(), 0.0)
 }

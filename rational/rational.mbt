@@ -38,7 +38,45 @@ fn gcd(a : Int64, b : Int64) -> Int64 {
 }
 
 ///|
-/// Creates a rational number.
+/// Creates a rational number from the given numerator and denominator.
+///
+/// Parameters:
+///
+/// * `numerator` : The numerator of the rational number.
+/// * `denominator` : The denominator of the rational number.
+///
+/// Returns `Some(rational)` if the denominator is non-zero, where the rational
+/// number is automatically reduced to its simplest form with a positive
+/// denominator. Returns `None` if the denominator is zero.
+///
+/// Example:
+///
+/// ```moonbit
+/// // Create 3/4
+/// let r1 = @rational.new(3L, 4L)
+/// inspect(r1, content="Some(3/4)")
+///
+/// // Create -1/2 (negative numerator)
+/// let r2 = @rational.new(-1L, 2L)
+/// inspect(r2, content="Some(-1/2)")
+///
+/// // Create -1/2 (negative denominator gets normalized)
+/// let r3 = @rational.new(1L, -2L)
+/// inspect(r3, content="Some(-1/2)")
+///
+/// // Create 1/2 (double negatives cancel out)
+/// let r4 = @rational.new(-1L, -2L)
+/// inspect(r4, content="Some(1/2)")
+///
+/// // Automatic reduction to simplest form
+/// let r5 = @rational.new(6L, 9L)
+/// inspect(r5, content="Some(2/3)")
+///
+/// // Division by zero returns None
+/// let r6 = @rational.new(1L, 0L)
+/// inspect(r6, content="None")
+/// ```
+///
 pub fn new(numerator : Int64, denominator : Int64) -> T? {
   if denominator == 0L {
     None
@@ -74,6 +112,23 @@ pub impl Add for T with op_add(self : T, other : T) -> T {
 }
 
 ///|
+/// Subtracts one rational number from another.
+///
+/// Parameters:
+///
+/// * `self` : The minuend (rational number to subtract from).
+/// * `other` : The subtrahend (rational number to subtract).
+///
+/// Returns the difference of the two rational numbers.
+///
+/// Example:
+///
+/// ```moonbit
+/// let a = @rational.new(1L, 2L).unwrap() // 1/2
+/// let b = @rational.new(1L, 3L).unwrap() // 1/3
+/// inspect(a - b, content="1/6") // 1/2 - 1/3 = 1/6
+/// ```
+///
 pub impl Sub for T with op_sub(self : T, other : T) -> T {
   new_unchecked(
     self.numerator * other.denominator - other.numerator * self.denominator,
@@ -82,6 +137,24 @@ pub impl Sub for T with op_sub(self : T, other : T) -> T {
 }
 
 ///|
+/// Multiplies two rational numbers.
+///
+/// Parameters:
+///
+/// * `self` : The first rational number.
+/// * `other` : The second rational number to multiply with.
+///
+/// Returns the product of the two rational numbers.
+///
+/// Example:
+///
+/// ```moonbit
+/// let a = @rational.new(1L, 2L).unwrap() // 1/2
+/// let b = @rational.new(2L, 3L).unwrap() // 2/3
+/// let c = a * b // 1/3
+/// inspect(c, content="1/3")
+/// ```
+///
 pub impl Mul for T with op_mul(self : T, other : T) -> T {
   new_unchecked(
     self.numerator * other.numerator,
@@ -90,6 +163,29 @@ pub impl Mul for T with op_mul(self : T, other : T) -> T {
 }
 
 ///|
+/// Divides one rational number by another.
+///
+/// Parameters:
+///
+/// * `self` : The dividend rational number.
+/// * `other` : The divisor rational number.
+///
+/// Returns the quotient of the division as a rational number.
+///
+/// Example:
+///
+/// ```moonbit
+/// let a = @rational.new(1L, 2L) // 1/2
+/// let b = @rational.new(2L, 3L) // 2/3
+/// match (a, b) {
+///   (Some(x), Some(y)) => {
+///     let result = x / y // 3/4
+///     inspect(result, content="3/4")
+///   }
+///   _ => ()
+/// }
+/// ```
+///
 pub impl Div for T with op_div(self : T, other : T) -> T {
   if other.numerator < 0L {
     new_unchecked(
@@ -105,7 +201,26 @@ pub impl Div for T with op_div(self : T, other : T) -> T {
 }
 
 ///|
-/// Returns the reciprocal of a rational number.
+/// Returns the multiplicative inverse of a rational number.
+///
+/// Parameters:
+///
+/// * `self` : The rational number to find the reciprocal of.
+///
+/// Returns a new rational number that is the reciprocal of the input.
+///
+/// Example:
+///
+/// ```moonbit
+/// let half = @rational.new(1L, 2L).unwrap()
+/// let two = half.reciprocal()
+/// inspect(two, content="2")
+///
+/// let negative_third = @rational.new(-1L, 3L).unwrap()
+/// let negative_three = negative_third.reciprocal()
+/// inspect(negative_three, content="-3")
+/// ```
+///
 pub fn reciprocal(self : T) -> T {
   if self.numerator < 0L {
     new_unchecked(-self.denominator, -self.numerator)
@@ -116,24 +231,104 @@ pub fn reciprocal(self : T) -> T {
 
 ///|
 /// Returns the negation of a rational number.
+///
+/// Parameters:
+///
+/// * `self` : The rational number to negate.
+///
+/// Returns a new rational number with the opposite sign.
+///
+/// Example:
+///
+/// ```moonbit
+/// let positive = @rational.new(3L, 4L).unwrap()
+/// let negative = positive.neg()
+/// inspect(negative.to_string(), content="-3/4")
+///
+/// let negative_original = @rational.new(-5L, 2L).unwrap()
+/// let positive_result = negative_original.neg()
+/// inspect(positive_result.to_string(), content="5/2")
+/// ```
+///
 pub fn T::neg(self : T) -> T {
   new_unchecked(-self.numerator, self.denominator)
 }
 
 ///|
 /// Returns the absolute value of a rational number.
+///
+/// Parameters:
+///
+/// * `self` : The rational number to get the absolute value of.
+///
+/// Returns a new rational number representing the absolute value of the input.
+///
+/// Example:
+///
+/// ```moonbit
+/// let positive = @rational.new(3L, 4L).unwrap()
+/// let negative = @rational.new(-3L, 4L).unwrap()
+/// inspect(positive.abs(), content="3/4")
+/// inspect(negative.abs(), content="3/4")
+/// ```
+///
 pub fn T::abs(self : T) -> T {
   new_unchecked(self.numerator.abs(), self.denominator.abs())
 }
 
 ///|
-/// Equal to operator for rational numbers.
+/// Compares two rational numbers for equality.
+///
+/// Parameters:
+///
+/// * `self` : The first rational number.
+/// * `other` : The second rational number.
+///
+/// Returns `true` if the two rational numbers are equal, `false` otherwise.
+///
+/// Example:
+///
+/// ```moonbit
+/// let a = @rational.new(1L, 2L).unwrap()  // 1/2
+/// let b = @rational.new(2L, 4L).unwrap()  // 2/4 = 1/2
+/// inspect(a == b, content="true")
+///
+/// let c = @rational.new(1L, 3L).unwrap()  // 1/3
+/// inspect(a == c, content="false")
+/// ```
+///
 pub impl Eq for T with op_equal(self : T, other : T) -> Bool {
   self.numerator * other.denominator == other.numerator * self.denominator
 }
 
 ///|
-/// Compares two rational numbers.
+/// Compares two rational numbers and returns their ordering.
+///
+/// Parameters:
+///
+/// * `self` : The first rational number to compare.
+/// * `other` : The second rational number to compare.
+///
+/// Returns an integer indicating the relative order: negative if `self` is less
+/// than `other`, zero if they are equal, and positive if `self` is greater than
+/// `other`.
+///
+/// Example:
+///
+/// ```moonbit
+/// let a = @rational.new(1L, 2L).unwrap()  // 1/2
+/// let b = @rational.new(2L, 3L).unwrap()  // 2/3
+/// inspect(a.compare(b), content="-1")     // 1/2 < 2/3
+///
+/// let c = @rational.new(3L, 4L).unwrap()  // 3/4
+/// let d = @rational.new(3L, 4L).unwrap()  // 3/4
+/// inspect(c.compare(d), content="0")      // 3/4 == 3/4
+///
+/// let e = @rational.new(5L, 6L).unwrap()  // 5/6
+/// let f = @rational.new(1L, 2L).unwrap()  // 1/2
+/// inspect(e.compare(f), content="1")      // 5/6 > 1/2
+/// ```
+///
 pub impl Compare for T with compare(self : T, other : T) -> Int {
   let left = self.numerator * other.denominator
   let right = other.numerator * self.denominator
@@ -141,7 +336,26 @@ pub impl Compare for T with compare(self : T, other : T) -> Int {
 }
 
 ///|
-/// Returns the approximate double value of a rational number.
+/// Converts the rational number to its approximate double-precision
+/// floating-point representation.
+///
+/// Parameters:
+///
+/// * `self` : The rational number to convert.
+///
+/// Returns the double-precision floating-point approximation of the rational
+/// number.
+///
+/// Example:
+///
+/// ```moonbit
+/// let rational = @rational.new(1L, 2L).unwrap()
+/// inspect(rational.to_double(), content="0.5")
+///
+/// let negative = @rational.new(-3L, 4L).unwrap()
+/// inspect(negative.to_double(), content="-0.75")
+/// ```
+///
 pub fn to_double(self : T) -> Double {
   // TODO: complete algorithm
   self.numerator.to_double() / self.denominator.to_double()
@@ -158,16 +372,47 @@ fn[T] overflow_error() -> T raise RationalError {
 }
 
 ///|
-pub(all) suberror RationalError String
+/// Error type for rational number operations.
+///
+/// Constructor:
+///
+/// * `RationalError(String)` : Error with a descriptive message.
+///
+/// Example:
+///
+/// ```moonbit
+/// let error = RationalError::RationalError("division by zero")
+/// inspect(
+///   error,
+///   content=
+///     #|RationalError("division by zero")
+///   ,
+/// )
+/// ```
+///
+pub(all) suberror RationalError String derive(Show, ToJson)
 
 ///|
-pub impl Show for RationalError with output(self, logger) {
-  match self {
-    RationalError(e) => Show::output(e, logger)
-  }
-}
-
-///|
+/// Compares two `RationalError` values for equality.
+///
+/// Parameters:
+///
+/// * `self` : The first `RationalError` to compare.
+/// * `other` : The second `RationalError` to compare.
+///
+/// Returns `true` if both `RationalError` values contain the same error message,
+/// `false` otherwise.
+///
+/// Example:
+///
+/// ```moonbit
+/// let error1 = @rational.RationalError("division by zero")
+/// let error2 = @rational.RationalError("division by zero")
+/// let error3 = @rational.RationalError("overflow")
+/// inspect(error1 == error2, content="true")
+/// inspect(error1 == error3, content="false")
+/// ```
+///
 pub impl Eq for RationalError with op_equal(
   self : RationalError,
   other : RationalError
@@ -178,7 +423,31 @@ pub impl Eq for RationalError with op_equal(
 }
 
 ///|
-/// Returns the approximate rational value of a double.
+/// Converts a floating-point number to its rational representation using a
+/// continued fraction algorithm.
+///
+/// Parameters:
+///
+/// * `value` : The double-precision floating-point number to convert to a
+/// rational.
+///
+/// Returns a rational number that approximates the input value.
+///
+/// Throws an error of type `RationalError` if the input is NaN or if the
+/// conversion would result in integer overflow.
+///
+/// Example:
+///
+/// ```moonbit
+/// // Convert 0.5 to rational 1/2
+/// let half = @rational.from_double(0.5)
+/// inspect(half, content="1/2")
+///
+/// // Convert 0.333... to a close rational approximation
+/// let third = @rational.from_double(1.0 / 3.0)
+/// inspect(third, content="1/3")
+/// ```
+///
 pub fn from_double(value : Double) -> T raise RationalError {
   // continued fraction algorithm
   // Ported from https://github.com/rust-num/num
@@ -255,7 +524,27 @@ pub fn from_double(value : Double) -> T raise RationalError {
 }
 
 ///|
-/// Ceils a rational number towards positive infinity.
+/// Returns the smallest integer greater than or equal to the rational number.
+///
+/// Parameters:
+///
+/// * `self` : The rational number to ceiling.
+///
+/// Returns the ceiling of the rational number as an `Int64`.
+///
+/// Example:
+///
+/// ```moonbit
+/// let r1 = @rational.new(3L, 2L).unwrap()  // 3/2 = 1.5
+/// inspect(r1.ceil(), content="2")
+///
+/// let r2 = @rational.new(-3L, 2L).unwrap() // -3/2 = -1.5
+/// inspect(r2.ceil(), content="-1")
+///
+/// let r3 = @rational.new(4L, 2L).unwrap()  // 4/2 = 2.0
+/// inspect(r3.ceil(), content="2")
+/// ```
+///
 pub fn T::ceil(self : T) -> Int64 {
   let sign = if self.numerator < 0L { -1L } else { 1L }
   let quotient = self.numerator / self.denominator
@@ -267,7 +556,28 @@ pub fn T::ceil(self : T) -> Int64 {
 }
 
 ///|
-/// Floors a rational number towards negative infinity.
+/// Computes the largest integer that is less than or equal to the rational
+/// number.
+///
+/// Parameters:
+///
+/// * `self` : The rational number to floor.
+///
+/// Returns the largest `Int64` value that is less than or equal to `self`.
+///
+/// Example:
+///
+/// ```moonbit
+/// let r1 = @rational.new(7L, 3L).unwrap()  // 7/3 ≈ 2.33
+/// inspect(r1.floor(), content="2")
+///
+/// let r2 = @rational.new(-7L, 3L).unwrap()  // -7/3 ≈ -2.33
+/// inspect(r2.floor(), content="-3")
+///
+/// let r3 = @rational.new(6L, 3L).unwrap()  // 6/3 = 2.0
+/// inspect(r3.floor(), content="2")
+/// ```
+///
 pub fn T::floor(self : T) -> Int64 {
   let sign = if self.numerator < 0L { -1L } else { 1L }
   let quotient = self.numerator / self.denominator
@@ -279,7 +589,30 @@ pub fn T::floor(self : T) -> Int64 {
 }
 
 ///|
-/// Rounds a rational number towards zero.
+/// Truncates a rational number towards zero, returning the integer part.
+///
+/// Parameters:
+///
+/// * `self` : The rational number to truncate.
+///
+/// Returns the integer part of the rational number as an `Int64`.
+///
+/// Example:
+///
+/// ```moonbit
+/// let a = @rational.new(7L, 3L).unwrap() // 7/3 = 2.333...
+/// inspect(@rational.trunc(a), content="2")
+///
+/// let b = @rational.new(-7L, 3L).unwrap() // -7/3 = -2.333...
+/// inspect(@rational.trunc(b), content="-2")
+///
+/// let c = @rational.new(5L, 2L).unwrap() // 5/2 = 2.5
+/// inspect(@rational.trunc(c), content="2")
+///
+/// let d = @rational.new(-5L, 2L).unwrap() // -5/2 = -2.5
+/// inspect(@rational.trunc(d), content="-2")
+/// ```
+///
 pub fn T::trunc(self : T) -> Int64 {
   if self.numerator < 0L {
     -(-self.numerator / self.denominator)
@@ -289,13 +622,64 @@ pub fn T::trunc(self : T) -> Int64 {
 }
 
 ///|
-/// Fractional part of a rational number.
-/// Same as `self - self.trunc()`.
+/// Returns the fractional part of a rational number, which is the remainder
+/// after removing the integer part.
+///
+/// Parameters:
+///
+/// * `self` : The rational number to get the fractional part from.
+///
+/// Returns a new rational number representing the fractional part of `self`.
+/// This is equivalent to `self - self.trunc()`.
+///
+/// Example:
+///
+/// ```moonbit
+/// let r1 = @rational.new(7L, 2L).unwrap()  // 7/2 = 3.5
+/// inspect(r1.fract(), content="1/2")      // fractional part is 0.5 = 1/2
+///
+/// let r2 = @rational.new(-7L, 2L).unwrap() // -7/2 = -3.5  
+/// inspect(r2.fract(), content="-1/2")     // fractional part is -0.5 = -1/2
+///
+/// let r3 = @rational.new(5L, 1L).unwrap()  // 5/1 = 5
+/// inspect(r3.fract(), content="0")        // fractional part is 0
+/// ```
+///
 pub fn fract(self : T) -> T {
   new_unchecked(self.numerator % self.denominator, self.denominator)
 }
 
 ///|
+/// Converts a rational number to its string representation.
+///
+/// Parameters:
+///
+/// * `self` : The rational number to convert.
+/// * `logger` : The output logger to write the string representation to.
+///
+/// The string representation follows these rules:
+///
+/// * If the numerator is zero, outputs "0"
+/// * If the denominator is 1 (i.e., the rational is an integer), outputs just
+/// the numerator
+/// * Otherwise, outputs in the format "numerator/denominator"
+///
+/// Example:
+///
+/// ```moonbit
+/// let zero = @rational.new(0, 1).unwrap()
+/// inspect(zero, content="0") 
+///
+/// let integer = @rational.new(5, 1).unwrap()
+/// inspect(integer, content="5")
+///
+/// let fraction = @rational.new(3, 4).unwrap()
+/// inspect(fraction, content="3/4") 
+///
+/// let negative = @rational.new(-7, 3).unwrap()
+/// inspect(negative, content="-7/3") 
+/// ```
+///
 pub impl Show for T with output(self, logger) {
   if self.numerator == 0L {
     logger.write_char('0')
@@ -323,6 +707,28 @@ pub impl @quickcheck.Arbitrary for T with arbitrary(size, rs) {
 }
 
 ///|
+/// Checks whether the rational number represents an integer value.
+///
+/// Parameters:
+///
+/// * `self` : The rational number to check.
+///
+/// Returns `true` if the rational number is an integer (has a denominator of 1),
+/// `false` otherwise.
+///
+/// Examples:
+///
+/// ```moonbit
+/// let half = @rational.new(1L, 2L).unwrap()
+/// inspect(half.is_integer(), content="false")
+///
+/// let whole = @rational.new(5L, 1L).unwrap()
+/// inspect(whole.is_integer(), content="true")
+///
+/// let zero = @rational.new(0L, 1L).unwrap()
+/// inspect(zero.is_integer(), content="true")
+/// ```
+///
 pub fn is_integer(self : T) -> Bool {
   self.denominator == 1L
 }

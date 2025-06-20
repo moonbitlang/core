@@ -26,7 +26,8 @@
     "cbrt_js.mbt" : ["js"],
     "cbrt_nonjs.mbt" : ["not", "js"],
     "hypot_js.mbt" : ["js"],
-    "hypot_nonjs.mbt" : ["not", "js"]
+    "hypot_nonjs.mbt" : ["not", "js"],
+    "scalbn.mbt" : ["not", "js"]
   },
   "test-import": [
     "moonbitlang/core/test",

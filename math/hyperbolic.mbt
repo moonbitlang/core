@@ -13,9 +13,6 @@
 // limitations under the License.
 
 ///|
-pub fnalias Double::(sinh, cosh, tanh, asinh, acosh, atanh)
-
-///|
 fn k_expo2f(x : Float) -> Float {
   let k = 235
   let k_ln2 = (0x4322e3bc).reinterpret_as_float()
@@ -63,7 +60,7 @@ pub fn sinhf(x : Float) -> Float {
   let absx = ix.reinterpret_as_float()
   let w = ix
 
-  // |self| < log(FLT_MAX)
+  // |x| < log(FLT_MAX)
   if w < 0x42b17217 {
     let t = expm1f(absx)
     if w < 0x3f800000 {
@@ -75,7 +72,7 @@ pub fn sinhf(x : Float) -> Float {
     return h * (t + t / (t + 1.0))
   }
 
-  // |self| > logf(FLT_MAX) or nan
+  // |x| > logf(FLT_MAX) or nan
   h * k_expo2f(absx) * 2.0
 }
 

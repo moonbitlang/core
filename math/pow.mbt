@@ -16,7 +16,6 @@
 //
 // Conversion to float by Ian Lance Taylor, Cygnus Support, ian@cygnus.com.
 //
-//
 // ====================================================
 // Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
 //
@@ -26,57 +25,6 @@
 // is preserved.
 // ====================================================
 ///
-
-///| 
-/// Calculcates x * 2 **n where x is a single-precision floating number and n is an integer.
-///
-/// Parameters:
-///
-/// - `y` - The floating number to be scaled.
-/// - `exp` - The exponent to scale by.
-///
-/// Returns the scaled floating number.
-///
-/// Example:
-///
-/// ```moonbit
-///   inspect(scalbnf(1.5, 2), content="6")
-///   inspect(scalbnf(2, -1), content="1")
-///   inspect(scalbnf(3, 0), content="3")
-///   inspect(scalbnf(1, 128), content="Infinity")
-///   inspect(scalbnf(1, -150), content="0")
-///   inspect(scalbnf(1, 254), content="Infinity")
-///   inspect(scalbnf(@float.not_a_number, 1), content="NaN")
-///   inspect(scalbnf(-2, 1), content="-4")
-///   inspect(scalbnf(-2, 128), content="-Infinity")
-/// ```
-pub fn scalbnf(y : Float, exp : Int) -> Float {
-  let mut y = y
-  let mut n = exp
-  if n > 127 {
-    y *= (0x1.0p127 : Float)
-    n -= 127
-    if n > 127 {
-      y *= (0x1.0p127 : Float)
-      n -= 127
-      if n > 127 {
-        n = 127
-      }
-    }
-  } else if n < -126 {
-    y *= (0x1.0p-126 : Float) * 0x1.0p24
-    n += 126 - 24
-    if n < -126 {
-      y *= (0x1.0p-126 : Float) * 0x1.0p24
-      n += 126 - 24
-      if n < -126 {
-        n = -126
-      }
-    }
-  }
-  let u = (0x7f + n) << 23
-  return y * u.reinterpret_as_float()
-}
 
 ///|
 /// Calculates the power of a floating-point number raised to another
