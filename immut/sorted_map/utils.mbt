@@ -98,9 +98,22 @@ pub fn[K : Compare, V] get(self : T[K, V], key : K) -> V? {
 }
 
 ///|
-#deprecated("Use `get` instead. `op_get` will return `V` instead of `Option[V]` in the future.")
-pub fn[K : Compare, V] op_get(self : T[K, V], key : K) -> V? {
-  self.get(key)
+/// Get the value associated with a key.
+/// O(log n).
+pub fn[K : Compare, V] op_get(self : T[K, V], key : K) -> V {
+  loop self {
+    Empty => panic()
+    Tree(k, value~, l, r, ..) => {
+      let c = key.compare(k)
+      if c == 0 {
+        value
+      } else if c < 0 {
+        continue l
+      } else {
+        continue r
+      }
+    }
+  }
 }
 
 ///|
