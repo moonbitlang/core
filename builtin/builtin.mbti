@@ -145,6 +145,7 @@ pub(all) suberror BenchError String
 
 pub(all) suberror Failure String
 impl Show for Failure
+impl ToJson for Failure
 
 type Hasher
 fn[T : Hash] Hasher::combine(Self, T) -> Unit
