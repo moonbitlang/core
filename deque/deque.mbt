@@ -1286,7 +1286,7 @@ pub fn T::join(self : T[String], separator : @string.View) -> String {
 ///   inspect(deque_test, content="@deque.of([3, 4, 5, 6])")
 ///   inspect(deque, content="@deque.of([1, 2, 7, 8, 9])")
 /// ```
-pub fn[A] T::drain(self : T[A], begin : Int, end : Int) -> T[A] {
+pub fn[A] T::drain(self : T[A], start~ : Int, len~ : Int) -> T[A] {
   guard begin >= 0 && end <= self.length() && begin <= end
   let long = end - begin
   let dq = new(capacity=long)
