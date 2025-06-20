@@ -71,19 +71,18 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-File `float/exp.mbt`, `float/log.mbt`, `double/mod_nonjs.mbt` and `double/scalbn.mbt` is adapted from
+File `float/advanced.mbt`, `double/mod_nonjs.mbt` and `double/scalbn.mbt` is adapted from
 [musl](https://www.musl-libc.org/). Specifically:
 
-- `float/log.mbt` is adapted from `src/math/logf.c`, `src/math/logf_data.h`,
-  and `src/math/logf_data.c`.
-- `float/exp.mbt` is adapted from `src/math/expf.c`, `src/math/exp2f_data.h`,
-  and `src/math/exp2f_data.c`.
+- `float/advanced.mbt` is adapted from `src/math/logf.c`, `src/math/logf_data.h`,
+  `src/math/logf_data.c`, `src/math/expf.c`, and `src/math/exp2f_data.h`,
+  as well as `src/math/exp2f_data.c`.
 - `double/mod_nonjs.mbt` is adapted from `src/math/fmod.c`.
 - `double/scalbn.mbt` is adapted from `src/math/scalbn.c`.
 - `math/hyperbolic.mbt` is adapted from `src/math/sinh.c`, `src/math/cosh.c`,
 `src/math/tanh.c`, `src/math/asinh.c`, `src/math/acosh.c`, and `src/math/atanh.c`.
 
-`float/log.mbt` and `float/exp.mbt` files are Copyright (c) 2017-2018 Arm Limited and licensed under the MIT
+`float/advanced.mbt` file is adapted from the same sources and is Copyright (c) 2017-2018 Arm Limited and licensed under the MIT
 license.
 
 Here is a copy of MIT license:
