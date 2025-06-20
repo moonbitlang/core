@@ -13,9 +13,6 @@
 // limitations under the License.
 
 ///|
-pub fnalias Double::(sinh, cosh, tanh, asinh, acosh, atanh)
-
-///|
 fn k_expo2f(x : Float) -> Float {
   let k = 235
   let k_ln2 = (0x4322e3bc).reinterpret_as_float()
@@ -55,7 +52,7 @@ fn k_expo2f(x : Float) -> Float {
 pub fn sinhf(x : Float) -> Float {
   let mut h : Float = 0.5
   let mut ix = x.reinterpret_as_uint()
-  if (ix >> 31) != 0 {
+  if ix >> 31 != 0 {
     h = -h
   }
   // |x|
@@ -63,7 +60,7 @@ pub fn sinhf(x : Float) -> Float {
   let absx = ix.reinterpret_as_float()
   let w = ix
 
-  // |self| < log(FLT_MAX)
+  // |x| < log(FLT_MAX)
   if w < 0x42b17217 {
     let t = expm1f(absx)
     if w < 0x3f800000 {
@@ -75,7 +72,7 @@ pub fn sinhf(x : Float) -> Float {
     return h * (t + t / (t + 1.0))
   }
 
-  // |self| > logf(FLT_MAX) or nan
+  // |x| > logf(FLT_MAX) or nan
   h * k_expo2f(absx) * 2.0
 }
 
@@ -162,7 +159,7 @@ pub fn coshf(x : Float) -> Float {
 /// ```
 pub fn tanhf(x : Float) -> Float {
   let mut ix = x.reinterpret_as_uint()
-  let sign = (ix >> 31) != 0
+  let sign = ix >> 31 != 0
   ix = ix & 0x7fffffff
   let x = ix.reinterpret_as_float()
   let w = ix
@@ -223,7 +220,7 @@ pub fn tanhf(x : Float) -> Float {
 pub fn asinhf(x : Float) -> Float {
   let u = x.reinterpret_as_uint()
   let i = u & 0x7fffffff
-  let sign = (u >> 31) != 0
+  let sign = u >> 31 != 0
   let ln2 : Float = 0.693147180559945309417232121458176568
   let x = i.reinterpret_as_float()
   let x = if i >= 0x3f800000U + (12U << 23) {
@@ -325,7 +322,7 @@ pub fn acoshf(x : Float) -> Float {
 /// ```
 pub fn atanhf(x : Float) -> Float {
   let u = x.reinterpret_as_uint()
-  let sign = (u >> 31) != 0
+  let sign = u >> 31 != 0
   let u = u & 0x7fffffff
   let x = u.reinterpret_as_float()
   let x = if u < 0x3f800000U - (1U << 23) {

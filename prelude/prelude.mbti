@@ -41,75 +41,75 @@ fn[T, R] then(T, (T) -> R) -> R
 // Types and methods
 
 // Type aliases
-pub typealias ArgsLoc = @builtin.ArgsLoc
+pub typealias @builtin.ArgsLoc as ArgsLoc
 
-pub typealias Array[T] = @builtin.Array[T]
+pub typealias @builtin.Array as Array
 
-pub typealias ArrayView[T] = @builtin.ArrayView[T]
+pub typealias @builtin.ArrayView as ArrayView
 
-pub typealias BigInt = @moonbitlang/core/bigint.BigInt
+pub typealias @moonbitlang/core/bigint.BigInt as BigInt
 
-pub typealias Failure = @builtin.Failure
+pub typealias @builtin.Failure as Failure
 
-pub typealias Hasher = @builtin.Hasher
+pub typealias @builtin.Hasher as Hasher
 
-pub typealias InspectError = @builtin.InspectError
+pub typealias @builtin.InspectError as InspectError
 
-pub typealias Iter[T] = @builtin.Iter[T]
+pub typealias @builtin.Iter as Iter
 
-pub typealias Iter2[A, B] = @builtin.Iter2[A, B]
+pub typealias @builtin.Iter2 as Iter2
 
-pub typealias IterResult = @builtin.IterResult
+pub typealias @builtin.IterResult as IterResult
 
-pub typealias Json = @builtin.Json
+pub typealias @builtin.Json as Json
 
-pub typealias Map[K, V] = @builtin.Map[K, V]
+pub typealias @builtin.Map as Map
 
-pub typealias Set[K] = @moonbitlang/core/set.Set[K]
+pub typealias @moonbitlang/core/set.Set as Set
 
-pub typealias SnapshotError = @builtin.SnapshotError
+pub typealias @builtin.SnapshotError as SnapshotError
 
-pub typealias SourceLoc = @builtin.SourceLoc
+pub typealias @builtin.SourceLoc as SourceLoc
 
-pub typealias StringBuilder = @builtin.StringBuilder
+pub typealias @builtin.StringBuilder as StringBuilder
 
-pub typealias UninitializedArray[T] = @builtin.UninitializedArray[T]
+pub typealias @builtin.UninitializedArray as UninitializedArray
 
-pub traitalias Add = @builtin.Add
+pub traitalias @builtin.Add as Add
 
-pub traitalias BitAnd = @builtin.BitAnd
+pub traitalias @builtin.BitAnd as BitAnd
 
-pub traitalias BitOr = @builtin.BitOr
+pub traitalias @builtin.BitOr as BitOr
 
-pub traitalias BitXOr = @builtin.BitXOr
+pub traitalias @builtin.BitXOr as BitXOr
 
-pub traitalias Compare = @builtin.Compare
+pub traitalias @builtin.Compare as Compare
 
-pub traitalias Default = @builtin.Default
+pub traitalias @builtin.Default as Default
 
-pub traitalias Div = @builtin.Div
+pub traitalias @builtin.Div as Div
 
-pub traitalias Eq = @builtin.Eq
+pub traitalias @builtin.Eq as Eq
 
-pub traitalias Hash = @builtin.Hash
+pub traitalias @builtin.Hash as Hash
 
-pub traitalias Logger = @builtin.Logger
+pub traitalias @builtin.Logger as Logger
 
-pub traitalias Mod = @builtin.Mod
+pub traitalias @builtin.Mod as Mod
 
-pub traitalias Mul = @builtin.Mul
+pub traitalias @builtin.Mul as Mul
 
-pub traitalias Neg = @builtin.Neg
+pub traitalias @builtin.Neg as Neg
 
-pub traitalias Shl = @builtin.Shl
+pub traitalias @builtin.Shl as Shl
 
-pub traitalias Show = @builtin.Show
+pub traitalias @builtin.Show as Show
 
-pub traitalias Shr = @builtin.Shr
+pub traitalias @builtin.Shr as Shr
 
-pub traitalias Sub = @builtin.Sub
+pub traitalias @builtin.Sub as Sub
 
-pub traitalias ToJson = @builtin.ToJson
+pub traitalias @builtin.ToJson as ToJson
 
 // Traits
 

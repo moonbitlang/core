@@ -54,53 +54,6 @@ test "rounding functions" {
 }
 ```
 
-## Trigonometric Functions
-
-The package includes a complete set of trigonometric functions:
-
-```moonbit
-test "trigonometric functions" {
-  // Basic trigonometric functions
-  inspect(@float.sin(0.0), content="0")
-  inspect(@float.cos(0.0), content="1")
-  inspect(@float.tan(0.0), content="0")
-
-  // Inverse trigonometric functions
-  let y = @float.sin(0.5)
-  inspect(@float.asin(y), content="0.5")
-
-  // Hyperbolic functions
-  inspect(@float.sinh(0.0), content="0")
-  inspect(@float.cosh(0.0), content="1")
-  inspect(@float.tanh(0.0), content="0")
-
-  // Inverse hyperbolic functions
-  inspect(@float.asinh(0.0), content="0")
-  inspect(@float.acosh(1.0), content="0")
-  inspect(@float.atanh(0.0), content="0")
-}
-```
-
-## Exponential and Logarithmic Functions
-
-Functions for exponential and logarithmic calculations:
-
-```moonbit
-test "exp and log functions" {
-  // Exponential
-  inspect(@float.exp(0.0), content="1")
-  inspect(@float.expm1(0.0), content="0") // exp(x) - 1
-
-  // Natural logarithm
-  inspect(@float.ln(1.0), content="0")
-  inspect(@float.ln_1p(0.0), content="0") // ln(1 + x)
-
-  // Power functions
-  inspect(@float.pow(2.0, 3.0), content="8")
-  inspect(@float.cbrt(8.0), content="2") // cube root
-}
-```
-
 ## Utility Functions
 
 Other useful operations on floats:
@@ -109,9 +62,6 @@ Other useful operations on floats:
 test "utility functions" {
   // Absolute value
   inspect(@float.abs(-3.14), content="3.140000104904175")
-
-  // Hypotenuse calculation
-  inspect(@float.hypot(3.0, 4.0), content="5")
 
   // Conversion to integer
   inspect((3.14).to_int(), content="3")

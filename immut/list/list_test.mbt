@@ -328,8 +328,10 @@ test "contain" {
 
 ///|
 test "unfold" {
-  let ls = @list.unfold(init=0, fn {
-    i => if i == 3 { None } else { Some((i, i + 1)) }
+  let ls = @list.unfold(init=0, i => if i == 3 {
+    None
+  } else {
+    Some((i, i + 1))
   })
   inspect(ls, content="@list.of([0, 1, 2])")
 }

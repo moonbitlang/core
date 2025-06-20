@@ -35,74 +35,15 @@ test "basic operations" {
   inspect(@double.round(3.5), content="4")
   inspect(@double.trunc(3.7), content="3")
 
+  // Pow function
+  inspect(2.0.pow(3), content="8")
+
   // Sign
   inspect((-3.14).signum(), content="-1")
   inspect((2.0).signum(), content="1")
 
   // Type conversion
   inspect(@double.from_int(42), content="42")
-}
-```
-
-## Trigonometric Functions
-
-Complete set of trigonometric functions and their inverses:
-
-```moonbit
-test "trigonometric functions" {
-  // Basic trigonometric functions
-  inspect(@double.sin(0.0), content="0")
-  inspect(@double.cos(0.0), content="1")
-  inspect(@double.tan(0.0), content="0")
-
-  // Inverse trigonometric functions
-  inspect(@double.asin(0.0), content="0")
-  inspect(@double.acos(1.0), content="0")
-  inspect(@double.atan(0.0), content="0")
-
-  // Two-argument arctangent
-  inspect(@double.atan2(0.0, 1.0), content="0")
-}
-```
-
-## Hyperbolic Functions
-
-Complete set of hyperbolic functions and their inverses:
-
-```moonbit
-test "hyperbolic functions" {
-  // Basic hyperbolic functions
-  inspect(@double.sinh(0.0), content="0")
-  inspect(@double.cosh(0.0), content="1")
-  inspect(@double.tanh(0.0), content="0")
-
-  // Inverse hyperbolic functions
-  inspect(@double.asinh(0.0), content="0")
-  inspect(@double.acosh(1.0), content="0")
-  inspect(@double.atanh(0.0), content="0")
-}
-```
-
-## Exponential and Logarithmic Functions
-
-Various exponential and logarithmic functions:
-
-```moonbit
-test "exponential and logarithmic" {
-  // Exponential functions
-  inspect(@double.exp(0.0), content="1")
-  inspect(@double.expm1(0.0), content="0") // exp(x) - 1
-
-  // Logarithmic functions
-  inspect(@double.ln(1.0), content="0") // Natural logarithm
-  inspect(@double.ln_1p(0.0), content="0") // ln(1 + x)
-  inspect(@double.log2(1.0), content="0") // Base-2 logarithm
-  inspect(@double.log10(1.0), content="0") // Base-10 logarithm
-
-  // Power functions
-  inspect(@double.pow(2.0, 3.0), content="8")
-  inspect(@double.cbrt(8.0), content="2") // Cube root
-  inspect(@double.hypot(3.0, 4.0), content="5") // sqrt(x^2 + y^2)
 }
 ```
 

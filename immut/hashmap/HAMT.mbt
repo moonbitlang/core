@@ -167,13 +167,10 @@ pub fn[K : Eq + Hash, V] filter(
       }
     Branch(children) => {
       let mut result = Empty
-      children.each(fn {
-        child =>
-          child
-          .filter(pred)
-          .iter()
-          .each(fn { (k, v) => result = result.add(k, v) })
-      })
+      children.each(child => child
+        .filter(pred)
+        .iter()
+        .each(kv => result = result.add(kv.0, kv.1)))
       result
     }
   }
@@ -239,10 +236,10 @@ pub fn[K : Eq + Hash, V, A] map_with_key(
       Collision(bucket) => Collision(bucket.map_with_key(f))
       Branch(children) => {
         let result = []
-        children.each(fn {
-          child =>
-            child.map_with_key(f).iter().each(fn { kv => result.push(kv) })
-        })
+        children.each(child => child
+          .map_with_key(f)
+          .iter()
+          .each(kv => result.push(kv)))
         from_array(result)
       }
     }
@@ -478,20 +475,20 @@ pub fn[K, V] each(self : T[K, V], f : (K, V) -> Unit raise?) -> Unit raise? {
     Empty => ()
     Leaf(k, v) => f(k, v)
     Collision(bucket) => bucket.each(f)
-    Branch(children) => children.each(fn { child => child.each(f) })
+    Branch(children) => children.each(child => child.each(f))
   }
 }
 
 ///|
 /// Returns all keys of the map
 pub fn[K, V] keys(self : T[K, V]) -> Iter[K] {
-  self.iter().map(fn { (k, _) => k })
+  self.iter().map(p => p.0)
 }
 
 ///|
 /// Returns all values of the map
 pub fn[K, V] values(self : T[K, V]) -> Iter[V] {
-  self.iter().map(fn { (_, v) => v })
+  self.iter().map(p => p.1)
 }
 
 ///|
@@ -508,7 +505,7 @@ pub fn[K, V] iter(self : T[K, V]) -> Iter[(K, V)] {
     Empty => Iter::empty()
     Leaf(k, v) => Iter::singleton((k, v))
     Collision(bucket) => bucket.iter()
-    Branch(children) => children.data.iter().flat_map(fn { map => map.iter() })
+    Branch(children) => children.data.iter().flat_map(map => map.iter())
   }
 }
 

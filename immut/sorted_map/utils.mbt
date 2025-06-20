@@ -270,13 +270,13 @@ pub fn[K : Compare, V] from_iter(iter : Iter[(K, V)]) -> T[K, V] {
 ///|
 /// Return all keys of the map in ascending order.
 pub fn[K, V] keys(self : T[K, V]) -> Array[K] {
-  self.iter().map(fn { (k, _) => k }).collect()
+  self.iter().map(p => p.0).collect()
 }
 
 ///|
 /// Return all elements of the map in the ascending order of their keys.
 pub fn[K, V] values(self : T[K, V]) -> Iter[V] {
-  self.iter().map(fn { (_, v) => v })
+  self.iter().map(p => p.1)
 }
 
 ///|

@@ -175,22 +175,3 @@ test "pow with standard functions" {
   let right_test_flt = powf(x_test_flt, y_test_flt * z_test_flt)
   assert_true((left_test_flt - right_test_flt).abs() < 0.01)
 }
-
-///|
-test "pow double direct method" {
-  // Test Double.pow which is provided by Double directly
-  let a_dbl : Double = 2.0
-  let b_dbl : Double = 10.0
-  assert_true(a_dbl.pow(b_dbl).is_close(1024.0))
-
-  // Test a few more Double.pow cases
-  assert_true(10.0.pow(-3.0).is_close(0.001))
-  assert_true(5.0.pow(0.0).is_close(1.0))
-  assert_true((-3.0).pow(3.0).is_close(-27.0))
-
-  // Test with infinity
-  assert_true(@double.infinity.pow(2.0).is_inf())
-
-  // Test with negative base and fractional exponent (should be NaN)
-  assert_true((-2.0).pow(2.5).is_nan())
-}

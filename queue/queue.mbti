@@ -5,47 +5,13 @@ import(
 )
 
 // Values
-fn[A] clear(T[A]) -> Unit
-
-fn[A] copy(T[A]) -> T[A]
-
-fn[A] each(T[A], (A) -> Unit) -> Unit
-
-fn[A] eachi(T[A], (Int, A) -> Unit) -> Unit
-
-fn[A, B] fold(T[A], init~ : B, (B, A) -> B) -> B
-
 fn[A] from_array(Array[A]) -> T[A]
 
 fn[A] from_iter(Iter[A]) -> T[A]
 
-fn[A] is_empty(T[A]) -> Bool
-
-fn[A] iter(T[A]) -> Iter[A]
-
-fn[A] length(T[A]) -> Int
-
 fn[A] new() -> T[A]
 
 fn[A] of(FixedArray[A]) -> T[A]
-
-fn[A] peek(T[A]) -> A?
-
-#deprecated
-fn[A] peek_exn(T[A]) -> A
-
-fn[A] pop(T[A]) -> A?
-
-#deprecated
-fn[A] pop_exn(T[A]) -> A
-
-fn[A] push(T[A], A) -> Unit
-
-fn[A] transfer(T[A], T[A]) -> Unit
-
-fn[A] unsafe_peek(T[A]) -> A
-
-fn[A] unsafe_pop(T[A]) -> A
 
 // Types and methods
 type T[A]

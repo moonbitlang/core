@@ -238,7 +238,7 @@ fn to_double_priv(self : Decimal) -> Double raise StrConvError {
   mantissa = self.rounded_integer()
 
   // rounding might have added a bit, shift down.
-  if mantissa == (2L << double_info.mantissa_bits) {
+  if mantissa == 2L << double_info.mantissa_bits {
     mantissa = mantissa << 1
     exponent += 1
     if exponent - double_info.bias >= (1 << double_info.exponent_bits) - 1 {
@@ -378,9 +378,9 @@ fn right_shift(self : Decimal, s : Int) -> Unit {
 
   // read enough leading digits to start a shift
   let mut acc = 0UL
-  while (acc >> s) == 0 {
+  while acc >> s == 0 {
     if read_index >= self.digits_num {
-      while (acc >> s) == 0 {
+      while acc >> s == 0 {
         acc *= 10
         read_index += 1
       }

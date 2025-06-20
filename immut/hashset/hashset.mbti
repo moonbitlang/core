@@ -5,27 +5,13 @@ import(
 )
 
 // Values
-fn[A : Eq + Hash] add(T[A], A) -> T[A]
-
-fn[A : Eq + Hash] contains(T[A], A) -> Bool
-
-fn[A] each(T[A], (A) -> Unit raise?) -> Unit raise?
-
 fn[A : Eq + Hash] from_array(Array[A]) -> T[A]
 
 fn[A : Eq + Hash] from_iter(Iter[A]) -> T[A]
 
-fn[A] is_empty(T[A]) -> Bool
-
-fn[A] iter(T[A]) -> Iter[A]
-
 fn[A] new() -> T[A]
 
 fn[A : Eq + Hash] of(FixedArray[A]) -> T[A]
-
-fn[A : Eq + Hash] remove(T[A], A) -> T[A]
-
-fn[A] size(T[A]) -> Int
 
 // Types and methods
 type T[A]

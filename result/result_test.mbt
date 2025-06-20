@@ -33,7 +33,7 @@ test "wrap0 with error" {
   inspect(
     result,
     content=
-      #|Err("Failure(error)")
+      #|Err(Failure("error"))
     ,
   )
 }
@@ -45,7 +45,7 @@ test "wrap2 with error result" {
   inspect(
     r,
     content=
-      #|Err("Failure(error)")
+      #|Err(Failure("error"))
     ,
   )
 }

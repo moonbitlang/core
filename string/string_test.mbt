@@ -161,6 +161,7 @@ test "iter2" {
 }
 
 // test here to avlid cyclic dependency between assertion and builtin
+
 ///|
 test "Buffer::to_bytes" {
   let buffer = StringBuilder::new(size_hint=16)

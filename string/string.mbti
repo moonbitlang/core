@@ -4,83 +4,11 @@ package "moonbitlang/core/string"
 #deprecated
 fn concat(Array[String], separator~ : String = ..) -> String
 
-fn contains(String, StringView) -> Bool
-
-fn contains_char(String, Char) -> Bool
-
-fn data(StringView) -> String
-
 fn default() -> String
-
-#deprecated
-fn ends_with(String, String) -> Bool
-
-fn[A] fold(String, init~ : A, (A, Char) -> A) -> A
 
 fn from_array(Array[Char]) -> String
 
 fn from_iter(Iter[Char]) -> String
-
-#deprecated
-fn index_at(String, Int, start~ : StringIndex = ..) -> StringIndex?
-
-#deprecated
-fn index_at_rev(String, Int, end? : StringIndex) -> StringIndex?
-
-#deprecated
-fn index_of(String, String, from~ : Int = ..) -> Int
-
-fn is_blank(String) -> Bool
-
-fn is_empty(String) -> Bool
-
-fn iter(String) -> Iter[Char]
-
-fn iter2(String) -> Iter2[Int, Char]
-
-#deprecated
-fn last_index_of(String, String, from? : Int) -> Int
-
-fn length(StringView) -> Int
-
-fn pad_end(String, Int, Char) -> String
-
-fn pad_start(String, Int, Char) -> String
-
-fn repeat(String, Int) -> String
-
-fn replace(String, old~ : StringView, new~ : StringView) -> String
-
-fn replace_all(String, old~ : StringView, new~ : StringView) -> String
-
-fn rev(String) -> String
-
-fn[A] rev_fold(String, init~ : A, (A, Char) -> A) -> A
-
-fn rev_iter(String) -> Iter[Char]
-
-fn split(String, StringView) -> Iter[StringView]
-
-fn start_offset(StringView) -> Int
-
-#deprecated
-fn starts_with(String, String) -> Bool
-
-fn to_array(String) -> Array[Char]
-
-fn to_bytes(String) -> Bytes
-
-fn to_lower(String) -> String
-
-fn to_upper(String) -> String
-
-fn trim(String, StringView) -> StringView
-
-fn trim_end(String, StringView) -> StringView
-
-fn trim_space(String) -> StringView
-
-fn trim_start(String, StringView) -> StringView
 
 // Types and methods
 type StringIndex
@@ -197,7 +125,7 @@ impl Compare for String
 impl Default for String
 
 // Type aliases
-pub typealias View = StringView
+pub typealias StringView as View
 
 // Traits
 

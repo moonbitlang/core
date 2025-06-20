@@ -5,33 +5,13 @@ import(
 )
 
 // Values
-fn[A] clear(T[A]) -> Unit
-
-fn[A] copy(T[A]) -> T[A]
-
 fn[A : Compare] from_array(Array[A]) -> T[A]
 
 fn[K : Compare] from_iter(Iter[K]) -> T[K]
 
-fn[A] is_empty(T[A]) -> Bool
-
-fn[A : Compare] iter(T[A]) -> Iter[A]
-
-fn[A] length(T[A]) -> Int
-
 fn[A] new() -> T[A]
 
 fn[A : Compare] of(FixedArray[A]) -> T[A]
-
-fn[A] peek(T[A]) -> A?
-
-fn[A : Compare] pop(T[A]) -> A?
-
-fn[A : Compare] push(T[A], A) -> Unit
-
-fn[A : Compare] to_array(T[A]) -> Array[A]
-
-fn[A : Compare] unsafe_pop(T[A]) -> Unit
 
 // Types and methods
 type T[A]

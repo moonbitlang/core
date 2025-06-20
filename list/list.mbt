@@ -422,13 +422,6 @@ pub fn[A, B] T::fold(self : T[A], init~ : B, f : (B, A) -> B) -> B {
 }
 
 ///|
-/// Fold the list from right.
-///
-/// # Example
-/// ```mbt
-///   let r = @list.of([1, 2, 3, 4, 5]).rev_fold(fn(acc, x) { x + acc }, init=0)
-///   assert_eq(r, 15)
-/// ```
 #deprecated("use `_.rev().fold(...)` instead")
 pub fn[A, B] T::rev_fold(self : T[A], init~ : B, f : (B, A) -> B) -> B {
   let xs = self.to_array()
@@ -811,7 +804,7 @@ pub fn[A : Eq] T::contains(self : T[A], value : A) -> Bool {
 /// # Example
 ///
 /// ```mbt
-///   let r = @list.unfold(init=0, fn { i => if i == 3 { None } else { Some((i, i + 1)) } })
+///   let r = @list.unfold(init=0, i => if i == 3 { None } else { Some((i, i + 1)) })
 ///   assert_eq(r, @list.from_array([0, 1, 2]))
 /// ```
 pub fn[A, S] unfold(f : (S) -> (A, S)?, init~ : S) -> T[A] {

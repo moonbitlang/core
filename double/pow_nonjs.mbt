@@ -213,12 +213,12 @@ pub fn Double::pow(self : Double, other : Double) -> Double {
       k = (iy >> 20) - 0x3ff // exponent
       if k > 20 {
         j = (ly >> (52 - k)).reinterpret_as_int()
-        if (j << (52 - k)) == ly.reinterpret_as_int() {
+        if j << (52 - k) == ly.reinterpret_as_int() {
           yisint = 2 - (j & 1)
         }
       } else if ly == 0 {
         j = iy >> (20 - k)
-        if (j << (20 - k)) == iy {
+        if j << (20 - k) == iy {
           yisint = 2 - (j & 1)
         }
       }
@@ -431,7 +431,7 @@ pub fn Double::pow(self : Double, other : Double) -> Double {
   z = ONE - (r - z)
   j = get_high_word(z).reinterpret_as_int()
   j += (n.reinterpret_as_uint() << 20).reinterpret_as_int()
-  if (j >> 20) <= 0 {
+  if j >> 20 <= 0 {
     z = scalbn(z, n)
   } else { // subnormal output */
     let tmp = get_high_word(z).reinterpret_as_int()

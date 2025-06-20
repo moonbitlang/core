@@ -84,11 +84,15 @@ fn[T : Compare] minimum(T, T) -> T
 
 let pi : Double
 
+fn pow(Double, Double) -> Double
+
 fn powf(Float, Float) -> Float
 
 fn probable_prime(Int, @random.Rand) -> @bigint.BigInt
 
 fn round(Double) -> Double
+
+fn scalbn(Double, Int) -> Double
 
 fn scalbnf(Float, Int) -> Float
 

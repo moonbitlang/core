@@ -198,3 +198,39 @@ test "can_convert_to_int64" {
   assert_false(can_convert_to_int64(18446744073709551616N)) // 2^64
   assert_false(can_convert_to_int64(-18446744073709551616N)) // -2^64
 }
+
+///|
+/// Implements the `Hash` trait for `BigInt` type by providing a `hash_combine`
+/// method that combines a BigInt value with a hasher using the computed hash.
+///
+/// Parameters:
+///
+/// * `self`: The BigInt value to be hashed.
+/// * `hasher`: The hasher object that will be used to combine the BigInt hash
+///   into its internal state.
+///
+/// Example:
+///
+/// ```moonbit
+///   let hasher = Hasher::new()
+///   let big = 12345N
+///   hasher.combine(big)
+///   inspect(hasher.finalize(), content="890579181")
+/// ```
+pub impl Hash for BigInt with hash_combine(self, hasher) {
+  hasher.combine(self.signum())
+  for limb in self.limbs() {
+    hasher.combine(limb)
+  }
+}
+
+///|
+fn BigInt::signum(self : Self) -> Int {
+  if self.is_zero() {
+    0
+  } else if is_neg(self) {
+    -1
+  } else {
+    1
+  }
+}

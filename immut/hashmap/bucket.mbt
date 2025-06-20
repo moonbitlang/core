@@ -122,16 +122,13 @@ test "Bucket::filter" {
 
 ///|
 fn[K, V] Bucket::iter(self : Bucket[K, V]) -> Iter[(K, V)] {
-  Iter::new(fn {
-    f =>
-      loop self {
-        JustOne(k, v) => f((k, v))
-        More(k, v, rest) =>
-          if f((k, v)) == IterContinue {
-            continue rest
-          } else {
-            IterEnd
-          }
+  Iter::new(f => loop self {
+    JustOne(k, v) => f((k, v))
+    More(k, v, rest) =>
+      if f((k, v)) == IterContinue {
+        continue rest
+      } else {
+        IterEnd
       }
   })
 }
@@ -177,17 +174,15 @@ test "Bucket::iter" {
   let mut is_first = true
   b
   .iter()
-  .each(fn {
-    (k, v) => {
-      // weird syntax conventions that
-      // braces needed here
-      if is_first {
-        is_first = false
-      } else {
-        buf.write_string(", ")
-      }
-      buf.write_string("\{k} => \{v}")
+  .each(kv => {
+    // weird syntax conventions that
+    // braces needed here
+    if is_first {
+      is_first = false
+    } else {
+      buf.write_string(", ")
     }
+    buf.write_string("\{kv.0} => \{kv.1}")
   })
   inspect(buf.to_string(), content="0 => 0, 1 => 1, 31 => 31")
 }

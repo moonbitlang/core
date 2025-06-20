@@ -77,6 +77,7 @@ pub fn single_bench(
 }
 
 // NOTE: use a type parameter `Any` to avoid exposing `trait OpaqueValue` to users
+
 ///|
 /// Keep a value to prevent the optimizer from removing 
 /// the calculation that produces it.

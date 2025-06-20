@@ -5,35 +5,9 @@ import(
 )
 
 // Values
-fn[T, E, U] bind(Result[T, E], (T) -> Result[U, E]) -> Result[U, E]
-
 fn[T, E] err(E) -> Result[T, E]
 
-fn[T, E] flatten(Result[Result[T, E], E]) -> Result[T, E]
-
-fn[T, E, V] fold(Result[T, E], (T) -> V, (E) -> V) -> V
-
-fn[T, E] is_err(Result[T, E]) -> Bool
-
-fn[T, E] is_ok(Result[T, E]) -> Bool
-
-fn[T, E, U] map(Result[T, E], (T) -> U) -> Result[U, E]
-
-fn[T, E, F] map_err(Result[T, E], (E) -> F) -> Result[T, F]
-
 fn[T, E] ok(T) -> Result[T, E]
-
-fn[T, E] or(Result[T, E], T) -> T
-
-fn[T, E] or_else(Result[T, E], () -> T) -> T
-
-fn[T, E] to_option(Result[T, E]) -> T?
-
-fn[T, E] unwrap(Result[T, E]) -> T
-
-fn[T, E] unwrap_err(Result[T, E]) -> E
-
-fn[T, E : Error] unwrap_or_error(Result[T, E]) -> T raise E
 
 #deprecated
 fn[T, E : Error] wrap0(f~ : () -> T raise E) -> Result[T, E]

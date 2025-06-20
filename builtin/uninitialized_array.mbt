@@ -105,7 +105,7 @@ fn[T] UninitializedArray::unsafe_blit(
   src_offset : Int,
   len : Int
 ) -> Unit {
-  FixedArray::unsafe_blit(dst._, dst_offset, src._, src_offset, len)
+  FixedArray::unsafe_blit(dst.inner(), dst_offset, src.inner(), src_offset, len)
 }
 
 ///|

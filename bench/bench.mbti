@@ -1,12 +1,6 @@
 package "moonbitlang/core/bench"
 
 // Values
-fn bench(T, name? : String, () -> Unit, count~ : UInt = ..) -> Unit
-
-fn dump_summaries(T) -> String
-
-fn[Any] keep(T, Any) -> Unit
-
 fn monotonic_clock_end(Timestamp) -> Double
 
 fn monotonic_clock_start() -> Timestamp

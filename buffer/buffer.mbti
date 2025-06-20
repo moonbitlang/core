@@ -6,59 +6,13 @@ import(
 )
 
 // Values
-fn contents(T) -> Bytes
-
 fn from_array(Array[Byte]) -> T
 
 fn from_bytes(Bytes) -> T
 
 fn from_iter(Iter[Byte]) -> T
 
-fn is_empty(T) -> Bool
-
-fn length(T) -> Int
-
 fn new(size_hint~ : Int = ..) -> T
-
-fn reset(T) -> Unit
-
-fn to_bytes(T) -> Bytes
-
-fn write_byte(T, Byte) -> Unit
-
-fn write_bytes(T, Bytes) -> Unit
-
-fn write_bytesview(T, @bytes.View) -> Unit
-
-fn write_double_be(T, Double) -> Unit
-
-fn write_double_le(T, Double) -> Unit
-
-fn write_float_be(T, Float) -> Unit
-
-fn write_float_le(T, Float) -> Unit
-
-fn write_int64_be(T, Int64) -> Unit
-
-fn write_int64_le(T, Int64) -> Unit
-
-fn write_int_be(T, Int) -> Unit
-
-fn write_int_le(T, Int) -> Unit
-
-fn write_iter(T, Iter[Byte]) -> Unit
-
-fn write_object(T, &Show) -> Unit
-
-fn write_stringview(T, @string.StringView) -> Unit
-
-fn write_uint64_be(T, UInt64) -> Unit
-
-fn write_uint64_le(T, UInt64) -> Unit
-
-fn write_uint_be(T, UInt) -> Unit
-
-fn write_uint_le(T, UInt) -> Unit
 
 // Types and methods
 type T
@@ -89,7 +43,7 @@ impl Logger for T
 impl Show for T
 
 // Type aliases
-pub typealias Buffer = T
+pub typealias T as Buffer
 
 // Traits
 

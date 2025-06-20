@@ -506,3 +506,16 @@ extern "js" fn can_convert_to_int64(x : BigInt) -> Bool =
 ///|
 extern "js" fn is_neg(x : BigInt) -> Bool =
   #|(x) => x < 0n
+
+///|
+fn BigInt::limbs(self : Self) -> Iter[UInt] {
+  guard not(self.is_zero()) else { Iter::singleton(0) }
+  Iter::new(fn(yield_) {
+    for n = self * BigInt::from_int(self.signum()); n > 0; n = n >> 32 {
+      let limb = n.to_uint()
+      guard yield_(limb) is IterContinue else { break IterEnd }
+    } else {
+      IterContinue
+    }
+  })
+}

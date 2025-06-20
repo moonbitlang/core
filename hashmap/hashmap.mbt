@@ -501,9 +501,10 @@ pub impl[K : @quickcheck.Arbitrary + Hash + Eq, V : @quickcheck.Arbitrary] @quic
   V,
 ] with arbitrary(size, rs) {
   let m = new()
-  (@quickcheck.Arbitrary::arbitrary(size, rs) : Iter[(K, V)]).each(fn {
-    (k, v) => m.set(k, v)
-  })
+  (@quickcheck.Arbitrary::arbitrary(size, rs) : Iter[(K, V)]).each(kv => m.set(
+    kv.0,
+    kv.1,
+  ))
   m
 }
 
@@ -520,13 +521,13 @@ impl Hash for MyString with hash(self) {
 ///|
 #coverage.skip
 impl Hash for MyString with hash_combine(self, hasher) {
-  hasher.combine_string(self._)
+  hasher.combine_string(self.inner())
 }
 
 ///|
 #coverage.skip
 impl Show for MyString with output(self, logger) {
-  logger.write_string(self._)
+  logger.write_string(self.inner())
 }
 
 ///|

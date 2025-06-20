@@ -257,6 +257,8 @@ pub fn[T] Array::remove(self : Array[T], index : Int) -> T {
 /// ```mbt
 ///   let v = [3, 4, 5]
 ///   let vv = v.drain(1, 2) // vv = [4], v = [3, 5]
+///   assert_eq(vv, [4])
+///   assert_eq(v, [3, 5])
 /// ```
 pub fn[T] Array::drain(self : Array[T], begin : Int, end : Int) -> Array[T] {
   guard begin >= 0 && end <= self.length() && begin <= end else {

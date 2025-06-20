@@ -82,10 +82,6 @@ jobs:
         run: |
           moon test --target native --release
 
-      - name: moon test --doc
-        run: |
-          moon test --doc
-
       - name: moon bundle
         run: moon bundle --all
 
@@ -226,10 +222,6 @@ jobs:
           moon test --target wasm
         env: 
           MOONC_INTERNAL_PARAMS: allocator = tlsf-mbt |
-
-      - name: moon test --doc
-        run: |
-          moon test --doc
 
       - name: moon check
         run: moon check

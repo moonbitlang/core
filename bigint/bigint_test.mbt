@@ -961,3 +961,58 @@ test "compare_int64" {
   assert_eq(BigInt::compare_int64(neg_val_32bit, -4294967295L), -1)
   assert_eq(BigInt::compare_int64(neg_val_32bit, -4294967297L), 1)
 }
+
+///|
+test "BigInt::hash" {
+  // Test zero
+  inspect(0N.hash(), content="-813420232")
+  assert_eq(0N.hash(), (-0N).hash())
+
+  // Positive and negative of same magnitude should have different hashes
+  assert_not_eq(1N.hash(), (-1N).hash())
+
+  // Test small positive numbers
+  inspect(42N.hash(), content="2103260413")
+
+  // Test small negative numbers
+  inspect((-42N).hash(), content="-504604139")
+
+  // Test larger numbers
+  let large = 123456789N
+  assert_not_eq(large.hash(), (-large).hash())
+
+  // Test very large numbers (multi-limb)
+  let very_large = 12345678901234567890123456789N
+  inspect(very_large.hash(), content="2115080653")
+  inspect((-very_large).hash(), content="-1781872667")
+  assert_not_eq(very_large.hash(), (-very_large).hash())
+
+  // Test that equal BigInts have equal hashes
+  let a = 987654321098765432N
+  let b = BigInt::from_string("00987654321098765432")
+  inspect(a.hash(), content="-1950963429")
+  assert_eq(a.hash(), b.hash())
+
+  // Test that different BigInts have different hashes (usually)
+  let c = a + 1N
+  inspect(c.hash(), content="-959383658")
+  assert_not_eq(a.hash(), c.hash())
+}
+
+///|
+test "BigInt::hash consistency" {
+  // Test that hash is consistent across multiple calls
+  let big = 999888777666555444333222111N
+  let hash1 = big.hash()
+  let hash2 = big.hash()
+  let hash3 = big.hash()
+  assert_eq(hash1, hash2)
+  assert_eq(hash1, hash3)
+
+  // Test with negative number
+  let neg_big = -big
+  let neg_hash1 = neg_big.hash()
+  let neg_hash2 = neg_big.hash()
+  assert_eq(neg_hash1, neg_hash2)
+  assert_not_eq(hash1, neg_hash1)
+}

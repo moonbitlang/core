@@ -5,88 +5,13 @@ import(
 )
 
 // Values
-fn[A] back(T[A]) -> A?
-
-fn[A] capacity(T[A]) -> Int
-
-fn[A] clear(T[A]) -> Unit
-
-fn[A : Eq] contains(T[A], A) -> Bool
-
-fn[A] copy(T[A]) -> T[A]
-
-fn[A] each(T[A], (A) -> Unit) -> Unit
-
-fn[A] eachi(T[A], (Int, A) -> Unit) -> Unit
-
-#deprecated
-fn[A] filter_map_inplace(T[A], (A) -> A?) -> Unit
-
 fn[A] from_array(Array[A]) -> T[A]
 
 fn[A] from_iter(Iter[A]) -> T[A]
 
-fn[A] front(T[A]) -> A?
-
-fn[A] is_empty(T[A]) -> Bool
-
-fn[A] iter(T[A]) -> Iter[A]
-
-fn[A] iter2(T[A]) -> Iter2[Int, A]
-
-fn[A] length(T[A]) -> Int
-
-fn[A, U] map(T[A], (A) -> U) -> T[U]
-
-fn[A, U] mapi(T[A], (Int, A) -> U) -> T[U]
-
 fn[A] new(capacity~ : Int = ..) -> T[A]
 
 fn[A] of(FixedArray[A]) -> T[A]
-
-fn[A] op_get(T[A], Int) -> A
-
-fn[A] op_set(T[A], Int, A) -> Unit
-
-fn[A] pop_back(T[A]) -> A?
-
-#deprecated
-fn[A] pop_back_exn(T[A]) -> Unit
-
-fn[A] pop_front(T[A]) -> A?
-
-#deprecated
-fn[A] pop_front_exn(T[A]) -> Unit
-
-fn[A] push_back(T[A], A) -> Unit
-
-fn[A] push_front(T[A], A) -> Unit
-
-fn[A] reserve_capacity(T[A], Int) -> Unit
-
-fn[A] retain(T[A], (A) -> Bool) -> Unit
-
-fn[A] retain_map(T[A], (A) -> A?) -> Unit
-
-fn[A] rev_each(T[A], (A) -> Unit) -> Unit
-
-fn[A] rev_eachi(T[A], (Int, A) -> Unit) -> Unit
-
-fn[A] rev_iter(T[A]) -> Iter[A]
-
-fn[A] rev_iter2(T[A]) -> Iter2[Int, A]
-
-fn[A : Eq] search(T[A], A) -> Int?
-
-fn[A] shrink_to_fit(T[A]) -> Unit
-
-fn[A] to_array(T[A]) -> Array[A]
-
-fn[A] truncate(T[A], Int) -> Unit
-
-fn[A] unsafe_pop_back(T[A]) -> Unit
-
-fn[A] unsafe_pop_front(T[A]) -> Unit
 
 // Types and methods
 type T[A]

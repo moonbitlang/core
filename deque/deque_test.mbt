@@ -198,7 +198,7 @@ test "iter2" {
   v.unsafe_pop_front()
   v.unsafe_pop_back()
   let mut sum = 0
-  v.each(fn { x => sum += x })
+  v.each(x => sum += x)
   inspect(sum, content="9")
 }
 
