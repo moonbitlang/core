@@ -466,7 +466,7 @@ pub fn[A, B] rev_foldi(self : T[A], init~ : B, f : (Int, B, A) -> B) -> B {
 ///   let r = @list.zip(@list.of([1, 2, 3, 4, 5]), @list.of([6, 7, 8, 9, 10]))
 ///   assert_eq(r, @list.from_array([(1, 6), (2, 7), (3, 8), (4, 9), (5, 10)]))
 /// ```
-pub fn[A, B] zip(self : T[A], other : T[B]) -> T[(A, B)] {
+pub fn[A, B] T::zip(self : T[A], other : T[B]) -> T[(A, B)] {
   let res = loop (self, other, Empty) {
     (Empty, _, acc) => break acc
     (_, Empty, acc) => break acc
@@ -602,7 +602,7 @@ pub fn[A] repeat(n : Int, x : A) -> T[A] {
 /// # Example
 ///
 /// ```mbt
-///   let ls = @list.intersperse(@list.from_array(["1", "2", "3", "4", "5"]), "|")
+///   let ls = @list.from_array(["1", "2", "3", "4", "5"]).intersperse("|")
 ///   assert_eq(ls, @list.from_array(["1", "|", "2", "|", "3", "|", "4", "|", "5"]))
 /// ```
 pub fn[A] intersperse(self : T[A], separator : A) -> T[A] {
@@ -638,7 +638,7 @@ pub fn[A] is_empty(self : T[A]) -> Bool {
 /// # Example
 ///
 /// ```mbt
-///   let (a,b) = @list.unzip(@list.from_array([(1,2),(3,4),(5,6)]))
+///   let (a,b) = @list.from_array([(1,2),(3,4),(5,6)]).unzip()
 ///   assert_eq(a, @list.from_array([1, 3, 5]))
 ///   assert_eq(b, @list.from_array([2, 4, 6]))
 /// ```
@@ -668,7 +668,7 @@ pub fn[A, B] unzip(self : T[(A, B)]) -> (T[A], T[B]) {
 /// # Example
 ///
 /// ```mbt
-///   let ls = @list.flatten(@list.from_array([@list.from_array([1,2,3]), @list.from_array([4,5,6]), @list.from_array([7,8,9])]))
+///   let ls = @list.from_array([@list.from_array([1,2,3]), @list.from_array([4,5,6]), @list.from_array([7,8,9])]).flatten()
 ///   assert_eq(ls, @list.from_array([1, 2, 3, 4, 5, 6, 7, 8, 9]))
 /// ```
 pub fn[A] flatten(self : T[T[A]]) -> T[A] {
@@ -772,7 +772,7 @@ pub fn[A : Compare] minimum(self : T[A]) -> A? {
 /// # Example
 ///
 /// ```mbt
-///   let ls = @list.sort(@list.from_array([1,123,52,3,6,0,-6,-76]))
+///   let ls = @list.from_array([1,123,52,3,6,0,-6,-76]).sort()
 ///   assert_eq(ls, @list.from_array([-76, -6, 0, 1, 3, 6, 52, 123]))
 /// ```
 pub fn[A : Compare] sort(self : T[A]) -> T[A] {
@@ -1276,3 +1276,6 @@ fn[A] reverse_inplace(self : T[A]) -> T[A] {
       }
   }
 }
+
+///|
+pub fnalias T::zip
