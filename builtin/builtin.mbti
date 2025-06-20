@@ -3,13 +3,13 @@ package "moonbitlang/core/builtin"
 // Values
 fn[T] abort(String) -> T
 
-fn[T : Eq + Show] assert_eq(T, T, loc~ : SourceLoc = _) -> Unit raise
+fn[T : Eq + Show] assert_eq(T, T, msg? : String, loc~ : SourceLoc = _) -> Unit raise
 
-fn assert_false(Bool, loc~ : SourceLoc = _) -> Unit raise
+fn assert_false(Bool, msg? : String, loc~ : SourceLoc = _) -> Unit raise
 
-fn[T : Eq + Show] assert_not_eq(T, T, loc~ : SourceLoc = _) -> Unit raise
+fn[T : Eq + Show] assert_not_eq(T, T, msg? : String, loc~ : SourceLoc = _) -> Unit raise
 
-fn assert_true(Bool, loc~ : SourceLoc = _) -> Unit raise
+fn assert_true(Bool, msg? : String, loc~ : SourceLoc = _) -> Unit raise
 
 #deprecated
 fn[T] dump(T, name? : String, loc~ : SourceLoc = _) -> T

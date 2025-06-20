@@ -44,11 +44,6 @@ pub fn[K : Hash + Eq] of(arr : FixedArray[K]) -> T[K] {
 
 ///|
 /// Insert a key into hash set.
-#deprecated("Use `add` instead.")
-#coverage.skip
-pub fn[K : Hash + Eq] insert(self : T[K], key : K) -> Unit {
-  self.add(key)
-}
 
 ///|
 /// Insert a key into hash set.

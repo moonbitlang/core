@@ -402,35 +402,6 @@ test "unwrap exn" {
 }
 
 ///|
-#deprecated("use try? instead")
-#coverage.skip
-pub fn[T, E : Error] wrap0(f~ : () -> T raise E) -> Result[T, E] {
-  try f() |> Ok catch {
-    e => Err(e)
-  }
-}
-
-///|
-#deprecated("use try? instead")
-#coverage.skip
-pub fn[T, A, E : Error] wrap1(f~ : (A) -> T raise E, a : A) -> Result[T, E] {
-  try f(a) |> Ok catch {
-    e => Err(e)
-  }
-}
-
-///|
-#deprecated("use try? instead")
-#coverage.skip
-pub fn[T, A, B, E : Error] wrap2(
-  f~ : (A, B) -> T raise E,
-  a : A,
-  b : B
-) -> Result[T, E] {
-  try f(a, b) |> Ok catch {
-    e => Err(e)
-  }
-}
 
 ///|
 pub impl[T : @quickcheck.Arbitrary, E : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Result[

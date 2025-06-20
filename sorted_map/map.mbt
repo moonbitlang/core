@@ -18,10 +18,6 @@ pub fn[K : Compare, V] op_set(self : T[K, V], key : K, value : V) -> Unit {
 }
 
 ///|
-#deprecated("Use `get` instead. `op_get` will return `V` instead of `Option[V]` in the future.")
-pub fn[K : Compare, V] op_get(self : T[K, V], key : K) -> V? {
-  self.get(key)
-}
 
 ///|
 pub impl[K : Eq, V : Eq] Eq for T[K, V] with op_equal(self, other) {
@@ -35,12 +31,6 @@ pub fn[K, V] new() -> T[K, V] {
 }
 
 ///|
-#deprecated("Use @sorted_map.from_array instead")
-pub fn[K : Compare, V] of(entries : Array[(K, V)]) -> T[K, V] {
-  let map = { root: None, size: 0 }
-  entries.each(fn(e) { map.add(e.0, e.1) })
-  map
-}
 
 ///| Creates a sorted map from a array of key-value pairs.
 pub fn[K : Compare, V] from_array(entries : Array[(K, V)]) -> T[K, V] {
