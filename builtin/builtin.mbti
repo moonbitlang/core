@@ -535,6 +535,7 @@ fn[A] FixedArray::unsafe_blit(Self[A], Int, Self[A], Int, Int) -> Unit
 fn[T] FixedArray::unsafe_get(Self[T], Int) -> T
 fn[T] FixedArray::unsafe_set(Self[T], Int, T) -> Unit
 
+#deprecated
 fn Bytes::copy(Bytes) -> Bytes
 fn Bytes::length(Bytes) -> Int
 fn Bytes::make(Int, Byte) -> Bytes
