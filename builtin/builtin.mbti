@@ -257,6 +257,7 @@ fn[K, V] Map::capacity(Self[K, V]) -> Int
 fn[K, V] Map::clear(Self[K, V]) -> Unit
 fn[K : Hash + Eq, V] Map::contains(Self[K, V], K) -> Bool
 fn[K : Hash + Eq, V : Eq] Map::contains_kv(Self[K, V], K, V) -> Bool
+fn[K : Hash + Eq, V] Map::copy(Self[K, V]) -> Self[K, V]
 fn[K, V] Map::each(Self[K, V], (K, V) -> Unit raise?) -> Unit raise?
 fn[K, V] Map::eachi(Self[K, V], (Int, K, V) -> Unit raise?) -> Unit raise?
 fn[K : Hash + Eq, V] Map::from_array(Array[(K, V)]) -> Self[K, V]
@@ -268,8 +269,7 @@ fn[K, V] Map::is_empty(Self[K, V]) -> Bool
 fn[K, V] Map::iter(Self[K, V]) -> Iter[(K, V)]
 fn[K, V] Map::iter2(Self[K, V]) -> Iter2[K, V]
 fn[K, V] Map::keys(Self[K, V]) -> Iter[K]
-fn[K : Hash + Eq, V, V2] Map::map(Self[K, V], (V) -> V2) -> Self[K, V2]
-fn[K : Hash + Eq, V, V2] Map::map_with_key(Self[K, V], (K, V) -> V2) -> Self[K, V2]
+fn[K : Hash + Eq, V, V2] Map::map(Self[K, V], (K, V) -> V2) -> Self[K, V2]
 fn[K, V] Map::new(capacity~ : Int = ..) -> Self[K, V]
 fn[K : Hash + Eq, V] Map::of(FixedArray[(K, V)]) -> Self[K, V]
 #deprecated
