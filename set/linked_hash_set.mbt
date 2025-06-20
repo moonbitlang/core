@@ -77,11 +77,6 @@ pub fn[K : Hash + Eq] Set::from_array(arr : Array[K]) -> Set[K] {
 ///|
 /// Insert a key into the hash set.
 ///
-#deprecated("Use `add` instead.")
-#coverage.skip
-pub fn[K : Hash + Eq] insert(self : Set[K], key : K) -> Unit {
-  self.add(key)
-}
 
 ///|
 /// Insert a key into the hash set.if the key exists return false
