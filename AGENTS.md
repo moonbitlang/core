@@ -11,7 +11,7 @@ block by block independently.
 - You should run `moon fmt` to check your code is formatted correctly.
 
 - You should run `moon info` to update the generated interface of interface file, each package
-has a generated interface file `.mbti` file, it is a breif formal description of the package, it is 
+has a generated interface file `.mbti` file, it is a breif formal description of the package, if 
 nothing changes, this means your change does not bring the visible changes to the external package users.
 
 - Youd should run `moon test` to check the test is passed. MoonBit supports snapshot testing, so in some cases,
