@@ -6,6 +6,8 @@ This is the standard library for [MoonBit](docs.moonbitlang.com).
 the order of each block is irrelevant. In some refactorings, you can process
 block by block independently.
 
+- Try to keep deprecated blocks in file called `deprecated.mbt`  in each directory.
+
 - You should run `moon fmt` to check your code is formatted correctly.
 
 - You should run `moon info` to update the generated interface of interface file, each package
