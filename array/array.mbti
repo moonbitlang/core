@@ -70,7 +70,7 @@ impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Array[X]
 
 fn[T] ArrayView::all(Self[T], (T) -> Bool raise?) -> Bool raise?
 fn[T] ArrayView::any(Self[T], (T) -> Bool raise?) -> Bool raise?
-fn[T] ArrayView::blit_to(Self[T], Array[T], dest_index~ : Int = ..) -> Unit
+fn[T] ArrayView::blit_to(Self[T], Self[T], len~ : Int, src_offset~ : Int = .., dst_offset~ : Int = ..) -> Unit
 fn[T : Eq] ArrayView::contains(Self[T], T) -> Bool
 fn[T] ArrayView::each(Self[T], (T) -> Unit raise?) -> Unit raise?
 fn[T] ArrayView::eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?

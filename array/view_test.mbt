@@ -229,41 +229,41 @@ test "arrayview hash invariant" {
 }
 
 ///|
-test "arrayview blit_to basic" {
-  let src = [1, 2, 3, 4, 5][1:4] // [2, 3, 4]
-  let dest = [0, 0, 0, 0, 0]
-  src.blit_to(dest, dest_index=1)
-  inspect(dest, content="[0, 2, 3, 4, 0]")
+test "arrayview_blit_to basic" {
+  let src = [1, 2, 3, 4, 5][:]
+  let dst = [0, 0, 0, 0, 0][:]
+  src[:].blit_to(dst[:], len=3)
+  assert_eq(dst, [1, 2, 3, 0, 0])
 }
 
 ///|
-test "arrayview blit_to at start" {
-  let src = [10, 20, 30][:]
-  let dest = [1, 2, 3]
-  src.blit_to(dest)
-  inspect(dest, content="[10, 20, 30]")
+test "arrayview_blit_to with offsets" {
+  let src = [10, 20, 30, 40, 50][:]
+  let dst = [0, 0, 0, 0, 0][:]
+  src[:].blit_to(dst[:], len=2, src_offset=2, dst_offset=1)
+  assert_eq(dst, [0, 30, 40, 0, 0])
 }
 
 ///|
-test "arrayview blit_to at end" {
-  let src = [7, 8][:]
-  let dest = [0, 0, 0, 0]
-  src.blit_to(dest, dest_index=2)
-  inspect(dest, content="[0, 0, 7, 8]")
+test "arrayview_blit_to full copy" {
+  let src = [7, 8, 9][:]
+  let dst = [0, 0, 0][:]
+  src[:].blit_to(dst[:], len=3)
+  assert_eq(dst, [7, 8, 9])
 }
 
 ///|
-test "arrayview blit_to empty src" {
-  let src = [1, 2, 3][0:0]
-  let dest = [9, 9, 9]
-  src.blit_to(dest)
-  inspect(dest, content="[9, 9, 9]")
+test "arrayview_blit_to partial overlapping" {
+  let arr = [1, 2, 3, 4, 5][:]
+  let dst = [9, 9, 9, 9, 9][:]
+  arr[1:4].blit_to(dst[2:], len=2)
+  assert_eq(dst, [9, 9, 2, 3, 9])
 }
 
 ///|
-test "arrayview blit_to full overwrite" {
-  let src = [5, 6, 7][:]
-  let dest = [1, 2, 3]
-  src.blit_to(dest)
-  inspect(dest, content="[5, 6, 7]")
+test "arrayview_blit_to zero length" {
+  let src : ArrayView[Int] = [1, 2, 3][:]
+  let dst : ArrayView[Int] = [4, 5, 6][:]
+  src[:].blit_to(dst[:], len=0)
+  assert_eq(dst, [4, 5, 6])
 }
