@@ -31,8 +31,7 @@ fn[K, V] T::iter2(Self[K, V]) -> Iter2[K, V]
 #deprecated
 fn[K, V] T::keys(Self[K, V]) -> Array[K]
 fn[K, V] T::keys_as_iter(Self[K, V]) -> Iter[K]
-#deprecated
-fn[K : Compare, V] T::op_get(Self[K, V], K) -> V?
+fn[K : Compare, V] T::op_get(Self[K, V], K) -> V
 fn[K : Compare, V] T::op_set(Self[K, V], K, V) -> Unit
 fn[K : Compare, V] T::range(Self[K, V], K, K) -> Iter2[K, V]
 fn[K : Compare, V] T::remove(Self[K, V], K) -> Unit
