@@ -176,21 +176,7 @@ pub fn FixedArray::blit_from_bytes(
 }
 
 ///|
-/// Creates a new byte sequence by copying all bytes from the input sequence.
-///
-/// Parameters:
-///
-/// * `bytes` : The byte sequence to be copied.
-///
-/// Returns a new `Bytes` containing the same sequence of bytes as the input.
-///
-/// Example:
-///
-/// ```moonbit
-///   let original = b"\x01\x02\x03"
-///   let copy = original.copy()
-///   inspect(copy, content="b\"\\x01\\x02\\x03\"")
-/// ```
+#deprecated("Bytes are immutable. Use `FixedArray::blit_from_bytes` if it's really necessary.")
 pub fn Bytes::copy(self : Bytes) -> Bytes {
   Bytes::makei(self.length(), fn(i) { self[i] })
 }
