@@ -67,6 +67,9 @@ test "get" {
   assert_eq(m.get("b"), Some(2))
   assert_eq(m.get("c"), Some(3))
   assert_eq(m.get("d"), None)
+
+  // pattern
+  guard m is { "a": 1, "b": 2, "c": 3, "d"? : None, .. }
 }
 
 ///|
@@ -115,9 +118,16 @@ test "op_get" {
   let m : Map[String, Int] = Map::new()
   m.set("a", 1)
   m.set("b", 2)
-  assert_eq(m["a"], Some(1))
-  assert_eq(m["b"], Some(2))
-  assert_eq(m["c"], None)
+  assert_eq(m["a"], 1)
+  assert_eq(m["b"], 2)
+}
+
+///|
+test "panic op_get" {
+  let m : Map[String, Int] = Map::new()
+  m.set("a", 1)
+  m.set("b", 2)
+  m["c"] |> ignore
 }
 
 ///|
@@ -734,7 +744,7 @@ test "hash collision" {
   m.set("a", 1)
   m.set("ab", 2)
   m.set("abc", 3)
-  inspect(m["d"], content="None")
+  inspect(m.get("d"), content="None")
 }
 
 ///|
