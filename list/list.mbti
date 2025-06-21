@@ -46,7 +46,7 @@ fn[A] T::concat(Self[A], Self[A]) -> Self[A]
 fn[A : Eq] T::contains(Self[A], A) -> Bool
 fn[A] T::drop(Self[A], Int) -> Self[A]
 fn[A] T::drop_while(Self[A], (A) -> Bool) -> Self[A]
-fn[A] T::each(Self[A], (A) -> Unit) -> Unit
+fn[A] T::each(Self[A], (A) -> Unit raise?) -> Unit raise?
 fn[A] T::eachi(Self[A], (Int, A) -> Unit) -> Unit
 fn[A] T::filter(Self[A], (A) -> Bool) -> Self[A]
 fn[A, B] T::filter_map(Self[A], (A) -> B?) -> Self[B]
