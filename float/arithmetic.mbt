@@ -33,3 +33,23 @@
 pub fn Float::pow(self : Float, other : Float) -> Float {
   self.to_double().pow(other.to_double()).to_float()
 }
+
+///|
+/// Calculates the modulo operation between two floating-point numbers.
+///
+/// Parameters:
+///
+/// * `self` : The dividend floating-point number.
+/// * `other` : The divisor floating-point number.
+///
+/// Returns the remainder of the division of `self` by `other`.
+///
+/// Example:
+///
+/// ```moonbit
+///   inspect((5.7 : Float).op_mod(2.0), content="1.6999998092651367")
+///   inspect((-5.7 : Float).op_mod(2.0), content="-1.6999998092651367")
+/// ```
+pub impl Mod for Float with op_mod(self : Float, other : Float) -> Float {
+  (self.to_double() % other.to_double()).to_float()
+}
