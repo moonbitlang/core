@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-test "op_get with existing key" {
+test "get with existing key" {
   let map = @sorted_map.of([
     (3, "three"),
     (8, "eight"),
@@ -25,7 +25,7 @@ test "op_get with existing key" {
 }
 
 ///|
-test "op_get with non-existing key" {
+test "get with non-existing key" {
   let map = @sorted_map.of([
     (3, "three"),
     (8, "eight"),
@@ -37,7 +37,20 @@ test "op_get with non-existing key" {
 }
 
 ///|
-test "op_get after insertion" {
+test "get with pattern" {
+  let map = @sorted_map.of([
+    (3, "three"),
+    (8, "eight"),
+    (1, "one"),
+    (2, "two"),
+    (0, "zero"),
+  ])
+  guard map
+    is { 3: "three", 8: "eight", 1: "one", 2: "two", 0: "zero", 4? : None, .. }
+}
+
+///|
+test "get after insertion" {
   let map = @sorted_map.of([
     (3, "three"),
     (8, "eight"),
@@ -50,7 +63,7 @@ test "op_get after insertion" {
 }
 
 ///|
-test "op_get after removal" {
+test "get after removal" {
   let map = @sorted_map.of([
     (3, "three"),
     (8, "eight"),
@@ -60,6 +73,56 @@ test "op_get after removal" {
   ])
   let map = map.remove(3)
   assert_eq(map.get(3), None)
+}
+
+///|
+test "op_get with existing key" {
+  let map = @sorted_map.of([
+    (3, "three"),
+    (8, "eight"),
+    (1, "one"),
+    (2, "two"),
+    (0, "zero"),
+  ])
+  assert_eq(map[3], "three")
+}
+
+///|
+test "panic op_get with non-existing key" {
+  let map = @sorted_map.of([
+    (3, "three"),
+    (8, "eight"),
+    (1, "one"),
+    (2, "two"),
+    (0, "zero"),
+  ])
+  map[4] |> ignore
+}
+
+///|
+test "op_get after insertion" {
+  let map = @sorted_map.of([
+    (3, "three"),
+    (8, "eight"),
+    (1, "one"),
+    (2, "two"),
+    (0, "zero"),
+  ])
+  let map = map.add(4, "four")
+  assert_eq(map[4], "four")
+}
+
+///|
+test "panic op_get after removal" {
+  let map = @sorted_map.of([
+    (3, "three"),
+    (8, "eight"),
+    (1, "one"),
+    (2, "two"),
+    (0, "zero"),
+  ])
+  let map = map.remove(3)
+  map[3] |> ignore
 }
 
 ///|
@@ -96,9 +159,15 @@ test "iter" {
 }
 
 ///|
-test "op_get with empty map" {
+test "get with empty map" {
   let map : @sorted_map.T[Int, String] = @sorted_map.new()
   assert_eq(map.get(3), None)
+}
+
+///|
+test "panic op_get with empty map" {
+  let map : @sorted_map.T[Int, String] = @sorted_map.new()
+  map[3] |> ignore
 }
 
 ///|
