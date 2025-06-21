@@ -109,7 +109,7 @@ test "to_array" {
 ///|
 test "keys" {
   let m = @sorted_map.of([(1, "one"), (2, "two"), (3, "three")])
-  assert_eq(m.keys(), [1, 2, 3])
+  assert_eq(m.keys_as_iter().collect(), [1, 2, 3])
 }
 
 ///|

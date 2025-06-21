@@ -269,8 +269,16 @@ pub fn[K : Compare, V] from_iter(iter : Iter[(K, V)]) -> T[K, V] {
 
 ///|
 /// Return all keys of the map in ascending order.
+#deprecated("Use `keys_as_iter` instead. `keys` will return `Iter[K]` instead of `Array[K]` in the future.")
+#coverage.skip
 pub fn[K, V] keys(self : T[K, V]) -> Array[K] {
   self.iter().map(p => p.0).collect()
+}
+
+///|
+/// Return all keys of the map in ascending order.
+pub fn[K, V] keys_as_iter(self : T[K, V]) -> Iter[K] {
+  self.iter().map(p => p.0)
 }
 
 ///|

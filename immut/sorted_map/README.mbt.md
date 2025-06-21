@@ -24,7 +24,7 @@ Also, you can construct it from an array using `of()` or `from_array()`.
 test {
   let map = @sorted_map.of([("a", 1), ("b", 2), ("c", 3)])
   assert_eq(map.values().collect(), [1, 2, 3])
-  assert_eq(map.keys(), ["a", "b", "c"])
+  assert_eq(map.keys_as_iter().collect(), ["a", "b", "c"])
 }
 ```
 
@@ -131,10 +131,10 @@ test {
   let map = @sorted_map.of([("a", 1), ("b", 2), ("c", 3)])
   let map = map.filter((v) => { v > 1 })
   assert_eq(map.values().collect(), [2, 3])
-  assert_eq(map.keys(), ["b", "c"])
+  assert_eq(map.keys_as_iter().collect(), ["b", "c"])
   let map = map.filter_with_key((k, v) => { k > "a" && v > 1 })
   assert_eq(map.values().collect(), [2, 3])
-  assert_eq(map.keys(), ["b", "c"])
+  assert_eq(map.keys_as_iter().collect(), ["b", "c"])
 }
 ```
 
@@ -155,8 +155,8 @@ Use `keys()` to get all keys of the map in ascending order.
 ```moonbit
 test {
   let map = @sorted_map.of([("a", 1), ("b", 2), ("c", 3)])
-  let keys = map.keys() // ["a", "b", "c"]
-  assert_eq(keys, ["a", "b", "c"])
+  let keys = map.keys_as_iter() // ["a", "b", "c"]
+  assert_eq(keys.collect(), ["a", "b", "c"])
 }
 ```
 
