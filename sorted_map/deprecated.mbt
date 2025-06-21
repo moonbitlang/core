@@ -25,3 +25,21 @@ pub fn[K : Compare, V] of(entries : Array[(K, V)]) -> T[K, V] {
   entries.each(e => map.add(e.0, e.1))
   map
 }
+
+///|
+#deprecated("Use `keys_as_iter` instead. `keys` will return `Iter[K]` instead of `Array[K]` in the future.")
+#coverage.skip
+pub fn[K, V] keys(self : T[K, V]) -> Array[K] {
+  let keys = Array::new(capacity=self.size)
+  self.each(fn(k, _v) { keys.push(k) })
+  keys
+}
+
+///|
+#deprecated("Use `values_as_iter` instead. `values` will return `Iter[V]` instead of `Array[V]` in the future.")
+#coverage.skip
+pub fn[K, V] values(self : T[K, V]) -> Array[V] {
+  let values = Array::new(capacity=self.size)
+  self.each(fn(_k, v) { values.push(v) })
+  values
+}
