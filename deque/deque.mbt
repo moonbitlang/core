@@ -1311,14 +1311,13 @@ pub impl[A : @json.FromJson] @json.FromJson for T[A] with from_json(json, path) 
 /// inspect(dq.join(",", fn(x) { x.to_string() }), content="1,2,3")
 /// ```
 pub fn[A] join(
-  self: T[A],
-  separator: String,
-  to_string: (A) -> String
+  self : T[A],
+  separator : String,
+  to_string : (A) -> String
 ) -> String {
   if self.is_empty() {
     return ""
   }
-
   let mut result = to_string(self[0])
   for i in 1..<self.length() {
     result = result + separator + to_string(self[i])
@@ -1326,7 +1325,7 @@ pub fn[A] join(
   result
 }
 
-/// Appends an element to the end of the deque (O(1) amortized time)
+///| Appends an element to the end of the deque (O(1) amortized time)
 ///
 /// Example:
 /// ```moonbit
@@ -1335,8 +1334,8 @@ pub fn[A] join(
 /// inspect(dq, content="@deque.of([1, 2, 3, 4])")
 /// ```
 pub fn[A] append(
-  self: T[A],  // The deque to modify
-  elem: A      // The element to append
+  self : T[A], // The deque to modify
+  elem : A // The element to append
 ) -> Unit {
-  self.push_back(elem)  // Standard name in deque implementations
+  self.push_back(elem) // Standard name in deque implementations
 }
