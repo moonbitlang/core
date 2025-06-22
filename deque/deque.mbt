@@ -1297,3 +1297,46 @@ pub impl[A : @json.FromJson] @json.FromJson for T[A] with from_json(json, path) 
   }
   { len, buf, head, tail }
 }
+
+///|
+/// Concatenates deque elements with separator
+/// 
+/// Parameters:
+///   * `separator` - String inserted between elements
+///   * `to_string` - Function to convert elements to String (must take exactly 1 argument)
+///
+/// Example:
+/// ```moonbit
+/// let dq = @deque.of([1, 2, 3])
+/// inspect(dq.join(",", fn(x) { x.to_string() }), content="1,2,3")
+/// ```
+pub fn[A] join(
+  self: T[A],
+  separator: String,
+  to_string: (A) -> String
+) -> String {
+  if self.is_empty() {
+    return ""
+  }
+
+  let mut result = to_string(self[0])
+  for i in 1..<self.length() {
+    result = result + separator + to_string(self[i])
+  }
+  result
+}
+
+/// Appends an element to the end of the deque (O(1) amortized time)
+///
+/// Example:
+/// ```moonbit
+/// let dq = @deque.of([1, 2, 3])
+/// dq.append(4)
+/// inspect(dq, content="@deque.of([1, 2, 3, 4])")
+/// ```
+pub fn[A] append(
+  self: T[A],  // The deque to modify
+  elem: A      // The element to append
+) -> Unit {
+  self.push_back(elem)  // Standard name in deque implementations
+}
