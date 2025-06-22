@@ -587,10 +587,7 @@ pub impl[K, V] Default for Map[K, V] with default() {
 
 ///|
 /// Applies a function to each key-value pair in the map and returns a new map with the results, using the original keys.
-pub fn[K : Hash + Eq, V, V2] Map::map(
-  self : Map[K, V],
-  f : (K, V) -> V2
-) -> Map[K, V2] {
+pub fn[K, V, V2] Map::map(self : Map[K, V], f : (K, V) -> V2) -> Map[K, V2] {
   // copy structure
   let other = {
     capacity: self.capacity,
@@ -622,7 +619,7 @@ pub fn[K : Hash + Eq, V, V2] Map::map(
 
 ///|
 /// Copy the map, creating a new map with the same key-value pairs and order of insertion.
-pub fn[K : Hash + Eq, V] Map::copy(self : Map[K, V]) -> Map[K, V] {
+pub fn[K, V] Map::copy(self : Map[K, V]) -> Map[K, V] {
   // copy structure
   let other = {
     capacity: self.capacity,
