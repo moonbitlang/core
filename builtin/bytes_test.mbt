@@ -34,12 +34,6 @@ test "blit_from_string" {
 }
 
 ///|
-test "copy" {
-  let copy_bytes = HELLO_WORLD.copy()
-  assert_eq(copy_bytes.to_unchecked_string(), HELLO_WORLD.to_unchecked_string())
-}
-
-///|
 test "set_utf8_char (ASCII)" {
   let arr = FixedArray::makei(4, _ => b'\x00')
   let char = 'A'
@@ -149,7 +143,9 @@ test "set_utf16be_char" {
 
 ///|
 test "op_equal" {
-  let copy_bytes = HELLO_WORLD.copy()
+  let copy_bytes = FixedArray::make(HELLO_WORLD.length(), Byte::default())
+  copy_bytes.blit_from_bytes(0, HELLO_WORLD, 0, HELLO_WORLD.length())
+  let copy_bytes = Bytes::from_fixedarray(copy_bytes)
   assert_eq(HELLO_WORLD, copy_bytes)
   assert_not_eq(HELLO_WORLD, Bytes::new(10))
 }

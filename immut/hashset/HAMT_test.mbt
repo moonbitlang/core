@@ -219,41 +219,155 @@ test "union 2 hashsets" {
 }
 
 ///|
-test "@hashset.intersection with overlapping sets" {
+test "HAMT::union with empty" {
+  let m1 = @hashset.of([1])
+  let m2 = @hashset.new()
+  assert_eq(m1.union(m2), m1)
+  assert_eq(m2.union(m1), m1)
+}
+
+///|
+test "HAMT::union with leaf" {
+  let m1 = @hashset.of([1, 2])
+  let m2 = @hashset.of([3])
+  let m3 = @hashset.of([2])
+  assert_eq(m1.union(m2), @hashset.of([1, 2, 3]))
+  assert_eq(m1.union(m3), @hashset.of([1, 2]))
+  assert_eq(m3.union(m1), @hashset.of([1, 2]))
+}
+
+///|
+test "HAMT::union with branch" {
+  let m1 = @hashset.of([1, 2, 3])
+  let m2 = @hashset.of([4, 5, 6])
+  let u = m1.union(m2)
+  for i in 1..=6 {
+    assert_eq(u.contains(i), true)
+  }
+}
+
+///|
+type MyString String
+
+///|
+impl Hash for MyString with hash_combine(_self, hasher) {
+  hasher.combine(1)
+}
+
+///|
+impl Eq for MyString with op_equal(self, other) {
+  self.inner() == other.inner()
+}
+
+///|
+impl Show for MyString with to_string(self) {
+  self.inner()
+}
+
+///|
+impl Show for MyString with output(self, logger) {
+  logger.write_string(self.inner())
+}
+
+///|
+test "HAMT::remove_with_hash collision" {
+  let set = @hashset.of([MyString("a"), MyString("b")])
+  let set1 = set.remove(MyString("c"))
+  assert_eq(set1.size(), 2)
+  let set2 = set.remove(MyString("a"))
+  assert_eq(set2.contains(MyString("a")), false)
+  assert_eq(set2.contains(MyString("b")), true)
+  assert_eq(set2.size(), 1)
+  let set3 = set2.remove(MyString("b"))
+  assert_eq(set3.size(), 0)
+}
+
+///|
+test "HAMT::union with collision" {
+  let m1 = @hashset.of([MyString("a"), MyString("b")])
+  let m2 = @hashset.of([MyString("b"), MyString("c")])
+  let u = m1.union(m2)
+  assert_eq(u.contains(MyString("a")), true)
+  assert_eq(u.contains(MyString("b")), true)
+  assert_eq(u.contains(MyString("c")), true)
+}
+
+///|
+test "HAMT::union all cases" {
+  let empty = @hashset.new()
+  let leaf = @hashset.of([1])
+  let branch = @hashset.of([1, 2])
+  let collision = @hashset.of([MyString("a"), MyString("b")])
+  assert_eq(empty.union(leaf).contains(1), true)
+  assert_eq(leaf.union(branch).contains(2), true)
+  let u1 = branch.union(branch)
+  assert_eq(u1.contains(1), true)
+  assert_eq(u1.contains(2), true)
+  let collision2 = @hashset.of([MyString("b"), MyString("c")])
+  let u2 = collision.union(collision2)
+  assert_eq(u2.contains(MyString("a")), true)
+  assert_eq(u2.contains(MyString("b")), true)
+  assert_eq(u2.contains(MyString("c")), true)
+}
+
+///|
+test "HAMT::union leaf to non-overlapping map" {
+  let leaf = @hashset.of([42])
+  let other = @hashset.of([1, 2])
+  let u = leaf.union(other)
+  assert_eq(u.contains(42), true)
+  assert_eq(u.contains(1), true)
+  assert_eq(u.contains(2), true)
+}
+
+///|
+test "@hashset.difference patch" {
   let set1 = @hashset.of([1, 2, 3, 4])
   let set2 = @hashset.of([3, 4, 5, 6])
-  let result = set1.intersection(set2)
-  inspect(result, content="@immut/hashset.of([3, 4])")
+  let set3 = @hashset.of([])
+  let set4 = @hashset.of([1, 2, 3, 4, 5, 6])
+  let leaf = @hashset.of([1])
+  inspect(set1.difference(set2), content="@immut/hashset.of([2, 1])")
+  inspect(set1.difference(set3), content="@immut/hashset.of([3, 2, 4, 1])")
+  inspect(set3.difference(set1), content="@immut/hashset.of([])")
+  inspect(set2.difference(set4), content="@immut/hashset.of([])")
+  inspect(leaf.difference(set1), content="@immut/hashset.of([])")
+  inspect(set1.difference(leaf), content="@immut/hashset.of([3, 2, 4])")
 }
 
 ///|
-test "@hashset.intersection with disjoint sets" {
-  let set1 = @hashset.of([1, 2])
-  let set2 = @hashset.of([3, 4])
-  let result = set1.intersection(set2)
-  inspect(result.is_empty(), content="true")
-}
-
-///|
-test "@hashset.intersection with one empty set" {
-  let set1 = @hashset.of([1, 2, 3])
-  let set2 = @hashset.new()
-  let result = set1.intersection(set2)
-  inspect(result.is_empty(), content="true")
-}
-
-///|
-test "@hashset.intersection with identical sets" {
-  let set1 = @hashset.of([1, 2, 3])
-  let set2 = @hashset.of([1, 2, 3])
-  let result = set1.intersection(set2)
-  inspect(result == set1, content="true")
-}
-
-///|
-test "@hashset.intersection with subset" {
+test "@hashset.intersection patch" {
   let set1 = @hashset.of([1, 2, 3, 4])
-  let set2 = @hashset.of([2, 3])
-  let result = set1.intersection(set2)
-  inspect(result == @hashset.of([2, 3]), content="true")
+  let set2 = @hashset.of([3, 4, 5, 6])
+  let set3 = @hashset.of([])
+  let set4 = @hashset.of([1, 2, 3, 4, 5, 6])
+  let set5 = @hashset.of([7, 8, 9, 10])
+  let leaf = @hashset.of([1])
+  inspect(set1.intersection(set2), content="@immut/hashset.of([3, 4])")
+  inspect(set1.intersection(set3), content="@immut/hashset.of([])")
+  inspect(set3.intersection(set1), content="@immut/hashset.of([])")
+  inspect(set2.intersection(set4), content="@immut/hashset.of([5, 3, 6, 4])")
+  inspect(leaf.intersection(set1), content="@immut/hashset.of([1])")
+  inspect(set1.intersection(leaf), content="@immut/hashset.of([1])")
+  inspect(set5.intersection(set1), content="@immut/hashset.of([])")
+}
+
+///|
+test "@hashset collision" {
+  let a = MyString("a")
+  let b = MyString("b")
+  let c = MyString("c")
+  let set = @hashset.new().add(a).add(b).add(c)
+  inspect(set.iter().to_array(), content="[b, c, a]")
+  set.each(fn(x : MyString) -> Unit { x |> ignore })
+  inspect(set.size(), content="3")
+}
+
+///|
+test "collision op_equal coverage" {
+  let a = MyString("a")
+  let b = MyString("b")
+  let set1 = @hashset.new().add(a).add(b)
+  let set2 = @hashset.new().add(b).add(a)
+  assert_eq(set1, set2)
 }
