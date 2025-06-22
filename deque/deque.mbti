@@ -5,6 +5,7 @@ import(
 )
 
 // Values
+fn[A] join(Self[A], String, (A) -> String) -> String
 fn[A] from_array(Array[A]) -> T[A]
 
 fn[A] from_iter(Iter[A]) -> T[A]
