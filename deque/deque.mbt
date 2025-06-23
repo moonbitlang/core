@@ -1295,16 +1295,14 @@ pub impl[A : @json.FromJson] @json.FromJson for T[A] with from_json(json, path) 
 /// Example:
 /// ```moonbit
 /// let dq = @deque.of([1, 2])
-/// dq.append([3, 4])  // ✅ Correct
+/// dq.append([3, 4])  
 /// inspect(dq, content="@deque.of([1, 2, 3, 4])")
 /// ```
 pub fn[A] append(self : T[A], other : Array[A]) -> Unit {
   let add_len = other.length()
-  guard add_len > 0 else { return } // 空数组快速返回
+  guard add_len > 0 else { return }
   let old_len = self.length()
   let new_len = old_len + add_len
-
-  // 1. 容量检查与扩容（手动实现 next_power_of_two 逻辑）
   if new_len > self.capacity() {
     let mut new_capacity = 1
     while new_capacity < new_len {
@@ -1312,25 +1310,18 @@ pub fn[A] append(self : T[A], other : Array[A]) -> Unit {
     }
     self.reserve_capacity(new_capacity)
   }
-
-  // 2. 环形缓冲区处理
   let tail_pos = self.tail
   let buf_cap = self.buf.length()
-
-  // Case 1: 尾部有连续空间
   if tail_pos + add_len <= buf_cap {
     for i = 0; i < add_len; i = i + 1 {
       self.buf[tail_pos + i] = other[i]
     }
     self.tail = (tail_pos + add_len) % buf_cap
-    // Case 2: 需要环绕写入
   } else {
     let first_chunk_len = buf_cap - tail_pos
-    // 写入第一个分段
     for i = 0; i < first_chunk_len; i = i + 1 {
       self.buf[tail_pos + i] = other[i]
     }
-    // 写入剩余部分到头部
     for i = 0; i < add_len - first_chunk_len; i = i + 1 {
       self.buf[i] = other[first_chunk_len + i]
     }

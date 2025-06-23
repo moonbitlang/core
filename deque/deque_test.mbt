@@ -1022,11 +1022,12 @@ test "append empty array" {
   dq.append([])
   inspect(dq, content="@deque.of([1, 2])")
 }
+
 ///|
 test "append triggers exact capacity expansion" {
   let dq = @deque.new(capacity=2)
-  dq.append([1, 2])    // Fill initial capacity
-  dq.append([3])       // Trigger expansion
+  dq.append([1, 2]) // Fill initial capacity
+  dq.append([3]) // Trigger expansion
   assert_true(dq.capacity() >= 3)
   inspect(dq, content="@deque.of([1, 2, 3])")
 }
@@ -1034,8 +1035,8 @@ test "append triggers exact capacity expansion" {
 ///|
 test "append triggers double capacity expansion" {
   let dq = @deque.new(capacity=4)
-  dq.append([1, 2, 3, 4])  // Fill capacity
-  dq.append([5])            // Trigger 2x expansion
+  dq.append([1, 2, 3, 4]) // Fill capacity
+  dq.append([5]) // Trigger 2x expansion
   assert_true(dq.capacity() >= 8)
   inspect(dq[4], content="5")
 }
