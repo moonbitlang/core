@@ -21,8 +21,5 @@
     "hyperbolic_double_js.mbt": ["js"],
     "hyperbolic_double_nonjs.mbt": ["not", "js"],
     "utils.mbt": ["not", "js"]
-  },
-  "test-import": [
-    "moonbitlang/core/test"
-  ]
+  }
 }

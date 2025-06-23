@@ -3,6 +3,8 @@
     "moonbitlang/core/builtin"
   ],
   "test-import": [
-    "moonbitlang/core/int"
+    "moonbitlang/core/int",
+    "moonbitlang/core/double",
+    "moonbitlang/core/test"
   ]
 }

@@ -1109,38 +1109,43 @@ pub fn BigInt::from_hex(input : String) -> BigInt {
 ///   inspect(0N.to_hex(), content="0")
 /// ```
 pub fn BigInt::to_hex(self : BigInt, uppercase~ : Bool = true) -> String {
+  if self.is_zero() {
+    return "0"
+  }
   // WARN: this implementation assumes that `radix_bit_len` is a multiple of 4.
-  let mut result = ""
+  let digits_per_limb = radix_bit_len / 4
+  let buf = if self.sign is Negative {
+    let builder = StringBuilder::new(size_hint=self.len * digits_per_limb + 2)
+    builder.write_char('-')
+    builder
+  } else {
+    StringBuilder::new(size_hint=self.len * digits_per_limb)
+  }
   for i = self.len - 1; i >= 0; i = i - 1 { // TODO: reverse iteration would be a bit faster.
     // split the limb into 4-bit chunks
     let mut x = self.limbs[i]
-    let mut tmp = ""
+    let digits = FixedArray::make(digits_per_limb, '0')
+    let mut idx = 0
     while x > 0 {
       let y = x % 16
       x /= 16
-      tmp = (if y < 10 {
-          (y.reinterpret_as_int() + 48).unsafe_to_char().to_string()
-        } else if uppercase {
-          (y.reinterpret_as_int() + 55).unsafe_to_char().to_string()
-        } else {
-          (y.reinterpret_as_int() + 87).unsafe_to_char().to_string()
-        }) +
-        tmp
+      digits[idx] = if y < 10 {
+        (y.reinterpret_as_int() + '0'.to_int()).unsafe_to_char()
+      } else if uppercase {
+        (y.reinterpret_as_int() - 10 + 'A'.to_int()).unsafe_to_char()
+      } else {
+        (y.reinterpret_as_int() - 10 + 'a'.to_int()).unsafe_to_char()
+      }
+      idx += 1
     }
-    if i != self.len - 1 && tmp.length() < radix_bit_len / 4 {
-      let pad = radix_bit_len / 4 - tmp.length()
-      // pad with zeros if not the last limb(the front of the BigInt)
-      tmp = "0".repeat(pad) + tmp
+    if i != self.len - 1 {
+      idx = digits_per_limb
     }
-    result += tmp // CR: weird coverage visualized
+    for j in 0..<idx {
+      buf.write_char(digits[idx - 1 - j])
+    }
   }
-  if result == "" {
-    "0" // CR: weird coverage visualized
-  } else if self.sign is Negative {
-    "-" + result
-  } else {
-    result
-  }
+  buf.to_string()
 }
 
 ///|

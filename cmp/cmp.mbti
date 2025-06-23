@@ -1,7 +1,11 @@
 package "moonbitlang/core/cmp"
 
 // Values
+fn[T : Compare] maximum(T, T) -> T
+
 fn[T, K : Compare] maximum_by_key(T, T, (T) -> K) -> T
+
+fn[T : Compare] minimum(T, T) -> T
 
 fn[T, K : Compare] minimum_by_key(T, T, (T) -> K) -> T
 

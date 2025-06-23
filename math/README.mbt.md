@@ -114,19 +114,3 @@ test "special functions" {
   inspect(@math.cbrt(8.0), content="2")
 }
 ```
-
-## Generic Comparison Functions
-
-The library provides generic comparison functions that work with any type implementing the `Compare` trait:
-
-```moonbit
-test "generic comparison" {
-  // Works with numbers
-  inspect(@math.maximum(3, 4), content="4")
-  inspect(@math.minimum(3, 4), content="3")
-
-  // Works with floating point
-  inspect(@math.maximum(3.14, 2.718), content="3.14")
-  inspect(@math.minimum(3.14, 2.718), content="2.718")
-}
-```
