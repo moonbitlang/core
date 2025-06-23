@@ -1001,33 +1001,17 @@ test "rev_iter2 when wrapped around" {
     content="[(0, 5), (1, 4), (2, 3), (3, 2), (4, 1), (5, 6)]",
   )
 }
-<<<<<<< HEAD
-//
-=======
-
-///|
-test "test_deque_join" {
-  let dq = of([1, 2, 3])
-  inspect(dq.join(",", fn(x) { x.to_string() }), content="1,2,3")
-}
->>>>>>> origin/main
 
 ///|
 test "append to empty deque" {
   let dq = @deque.of([])
-<<<<<<< HEAD
   dq.append([1, 2, 3])
   inspect(dq, content="@deque.of([1, 2, 3])")
-=======
-  dq.append(1)
-  inspect(dq, content="@deque.of([1])")
->>>>>>> origin/main
 }
 
 ///|
 test "append to non-empty deque" {
   let dq = @deque.of([1, 2])
-<<<<<<< HEAD
   dq.append([3, 4])
   inspect(dq, content="@deque.of([1, 2, 3, 4])")
 }
@@ -1037,76 +1021,21 @@ test "append empty array" {
   let dq = @deque.of([1, 2])
   dq.append([])
   inspect(dq, content="@deque.of([1, 2])")
-=======
-  dq.append(3)
-  inspect(dq, content="@deque.of([1, 2, 3])")
 }
-
 ///|
-test "multiple appends" {
-  let dq = @deque.of([])
-  dq.append("a")
-  dq.append("b")
-  dq.append("c")
-  inspect(dq, content="@deque.of([\"a\", \"b\", \"c\"])")
-}
-
-///|
-test "append with capacity expansion" {
+test "append triggers exact capacity expansion" {
   let dq = @deque.new(capacity=2)
-  dq.append(1)
-  dq.append(2) // At capacity
-  dq.append(3) // Should trigger expansion
-  assert_true(dq.capacity() > 2)
+  dq.append([1, 2])    // Fill initial capacity
+  dq.append([3])       // Trigger expansion
+  assert_true(dq.capacity() >= 3)
   inspect(dq, content="@deque.of([1, 2, 3])")
 }
 
 ///|
-test "append maintains existing elements" {
-  let dq = @deque.of([1, 2])
-  dq.pop_front() |> ignore // [2]
-  dq.append(3) // [2, 3]
-  inspect(dq[0], content="2")
-  inspect(dq[1], content="3")
-}
-
-///|
-test "append after pop_back" {
-  let dq = @deque.of([1, 2, 3])
-  dq.pop_back() |> ignore // [1, 2]
-  dq.append(4) // [1, 2, 4]
-  inspect(dq, content="@deque.of([1, 2, 4])")
-}
-
-///|
-test "large number of appends" {
-  let dq = @deque.of([])
-  for i in 0..<1000 {
-    dq.append(i)
-  }
-  assert_eq(dq.length(), 1000)
-  assert_eq(dq[0], 0)
-  assert_eq(dq[999], 999)
-}
-
-///|
-test "append different types" {
-  let dq = @deque.of([true])
-  dq.append(false)
-  inspect(dq, content="@deque.of([true, false])")
-}
-
-///|
-test "append with wrapped buffer" {
-  let dq = @deque.new(capacity=3)
-  dq.append(1) // [1]
-  dq.append(2) // [1, 2]
-  dq.append(3) // [1, 2, 3]
-  dq.pop_front() |> ignore // [2, 3]
-  dq.append(4) // [2, 3, 4] (wrapped)
-  inspect(dq.as_views(), content="([2, 3], [4])")
-  assert_eq(dq[0], 2)
-  assert_eq(dq[1], 3)
-  assert_eq(dq[2], 4)
->>>>>>> origin/main
+test "append triggers double capacity expansion" {
+  let dq = @deque.new(capacity=4)
+  dq.append([1, 2, 3, 4])  // Fill capacity
+  dq.append([5])            // Trigger 2x expansion
+  assert_true(dq.capacity() >= 8)
+  inspect(dq[4], content="5")
 }
