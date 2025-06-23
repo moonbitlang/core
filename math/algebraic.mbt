@@ -36,16 +36,7 @@
 // The algorithm has been adapted and implemented independently in this code.
 
 ///|
-/// Compares and returns the maximum of two values.
-///
-/// Returns the second argument if the comparison determines them to be equal.
-///
-/// # Examples
-///
-/// ```mbt
-///   assert_eq(@math.maximum(1, 2), 2)
-///   assert_eq(@math.maximum(2, 2), 2)
-/// ```
+#deprecated("Use @cmp.maximum instead")
 pub fn[T : Compare] maximum(x : T, y : T) -> T {
   if x > y {
     x
@@ -55,16 +46,7 @@ pub fn[T : Compare] maximum(x : T, y : T) -> T {
 }
 
 ///|
-/// Compares and returns the minimum of two values.
-///
-/// Returns the first argument if the comparison determines them to be equal.
-///
-/// # Examples
-///
-/// ```mbt
-///   assert_eq(@math.minimum(1, 2), 1)
-///   assert_eq(@math.minimum(2, 2), 2)
-/// ```
+#deprecated("Use @cmp.minimum instead")
 pub fn[T : Compare] minimum(x : T, y : T) -> T {
   if x > y {
     y
