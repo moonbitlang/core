@@ -11,7 +11,7 @@ block by block independently.
 - `moon fmt` is used to format your code properly.
 
 - `moon info` is used to update the generated interface of the package, each package
-has a generated interface file `.mbti` file, it is a brief formal description of the package. 
+has a generated interface file `.mbti`, it is a brief formal description of the package. 
 If nothing in `.mbti` changes, this means your change does not bring the visible changes to the external package users, 
 it is typically a safe refactoring.
 
