@@ -18,7 +18,7 @@ it is typically a safe refactoring.
 - So in the last step, you typically run `moon info && moon fmt` to update the interface and format the code. You also
 check the diffs of `.mbti` file to see if the changes are expected.
 
-- Youd should run `moon test` to check the test is passed. MoonBit supports snapshot testing, so in some cases,
+- You should run `moon test` to check the test is passed. MoonBit supports snapshot testing, so in some cases,
 your changes indeed change the behavior of the code, you should run `moon test --update` to update the snapshot.
 
 - You can run `moon check` to check the code is linted correctly.
