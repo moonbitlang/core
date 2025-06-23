@@ -584,3 +584,66 @@ pub fn[K : Hash + Eq, V] Map::from_iter(iter : Iter[(K, V)]) -> Map[K, V] {
 pub impl[K, V] Default for Map[K, V] with default() {
   Map::new()
 }
+
+///|
+/// Applies a function to each key-value pair in the map and returns a new map with the results, using the original keys.
+pub fn[K, V, V2] Map::map(self : Map[K, V], f : (K, V) -> V2) -> Map[K, V2] {
+  // copy structure
+  let other = {
+    capacity: self.capacity,
+    entries: FixedArray::make(self.capacity, None),
+    size: self.size,
+    capacity_mask: self.capacity_mask,
+    grow_at: self.grow_at,
+    head: None,
+    tail: self.tail,
+  }
+  if self.size == 0 {
+    return other
+  }
+  guard self.entries[self.tail] is Some(last)
+  loop (last, self.tail, None) {
+    ({ prev, psl, hash, key, value, .. }, idx, next) => {
+      let new_value = f(key, value)
+      let new_entry = { prev, next, psl, hash, key, value: new_value }
+      other.entries[idx] = Some(new_entry)
+      if prev != -1 {
+        continue (self.entries[prev].unwrap(), prev, Some(new_entry))
+      } else {
+        other.head = Some(new_entry)
+      }
+    }
+  }
+  other
+}
+
+///|
+/// Copy the map, creating a new map with the same key-value pairs and order of insertion.
+pub fn[K, V] Map::copy(self : Map[K, V]) -> Map[K, V] {
+  // copy structure
+  let other = {
+    capacity: self.capacity,
+    entries: FixedArray::make(self.capacity, None),
+    size: self.size,
+    capacity_mask: self.capacity_mask,
+    grow_at: self.grow_at,
+    head: None,
+    tail: self.tail,
+  }
+  if self.size == 0 {
+    return other
+  }
+  guard self.entries[self.tail] is Some(last)
+  loop (last, self.tail, None) {
+    ({ prev, psl, hash, key, value, .. }, idx, next) => {
+      let new_entry = { prev, next, psl, hash, key, value }
+      other.entries[idx] = Some(new_entry)
+      if prev != -1 {
+        continue (self.entries[prev].unwrap(), prev, Some(new_entry))
+      } else {
+        other.head = Some(new_entry)
+      }
+    }
+  }
+  other
+}

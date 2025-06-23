@@ -2,6 +2,22 @@
 
 This package provides utility functions for comparing values.
 
+## Generic Comparison Functions
+
+The library provides generic comparison functions that work with any type implementing the `Compare` trait:
+
+```moonbit
+test "generic comparison" {
+  // Works with numbers
+  inspect(@cmp.maximum(3, 4), content="4")
+  inspect(@cmp.minimum(3, 4), content="3")
+
+  // Works with floating point
+  inspect(@cmp.maximum(3.14, 2.718), content="3.14")
+  inspect(@cmp.minimum(3.14, 2.718), content="2.718")
+}
+```
+
 ## Comparison by Key
 
 With `@cmp.maximum_by_key()` and `@cmp.minimum_by_key()`, it is possible to compare values based on arbitrary keys derived from the them. This is particularly useful when you need to compare complex objects based on some specific aspect or field.

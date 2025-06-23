@@ -349,11 +349,6 @@ pub fn[A] unsafe_pop_front(self : T[A]) -> Unit {
 ///   inspect(dq, content="@deque.of([2, 3])")
 /// ```
 ///
-#deprecated("Use `unsafe_pop_front` instead")
-#coverage.skip
-pub fn[A] pop_front_exn(self : T[A]) -> Unit {
-  self.unsafe_pop_front()
-}
 
 ///|
 /// Removes a back element from a deque.
@@ -404,11 +399,6 @@ pub fn[A] unsafe_pop_back(self : T[A]) -> Unit {
 ///   inspect(dq, content="@deque.of([1, 2])")
 /// ```
 ///
-#deprecated("Use `unsafe_pop_back` instead")
-#coverage.skip
-pub fn[A] pop_back_exn(self : T[A]) -> Unit {
-  self.unsafe_pop_back()
-}
 
 ///|
 /// Removes a front element from a deque and returns it, or `None` if it is empty.
@@ -953,10 +943,6 @@ pub fn[A] retain_map(self : T[A], f : (A) -> A?) -> Unit {
 /// deque to retain only elements for which the provided function returns `Some`,
 /// and updates those elements with the values inside the `Some` variant.
 ///
-#deprecated("Use `@deque.retain_map` instead")
-pub fn[A] filter_map_inplace(self : T[A], f : (A) -> A?) -> Unit {
-  self.retain_map(f)
-}
 
 ///|
 /// Filters elements in-place by retaining only the elements that satisfy the
@@ -1299,6 +1285,7 @@ pub impl[A : @json.FromJson] @json.FromJson for T[A] with from_json(json, path) 
 }
 
 ///|
+<<<<<<< HEAD
 /// Appends all elements from an array to the end of the deque (in-place).
 /// Exactly matches Array::append behavior.
 ///
@@ -1353,3 +1340,45 @@ pub fn[A] append(self : T[A], other : Array[A]) -> Unit {
   self.len = new_len
 }
  
+=======
+/// Concatenates deque elements with separator
+/// 
+/// Parameters:
+///   * `separator` - String inserted between elements
+///   * `to_string` - Function to convert elements to String (must take exactly 1 argument)
+///
+/// Example:
+/// ```moonbit
+/// let dq = @deque.of([1, 2, 3])
+/// inspect(dq.join(",", fn(x) { x.to_string() }), content="1,2,3")
+/// ```
+pub fn[A] join(
+  self : T[A],
+  separator : String,
+  to_string : (A) -> String
+) -> String {
+  if self.is_empty() {
+    return ""
+  }
+  let mut result = to_string(self[0])
+  for i in 1..<self.length() {
+    result = result + separator + to_string(self[i])
+  }
+  result
+}
+
+///| Appends an element to the end of the deque (O(1) amortized time)
+///
+/// Example:
+/// ```moonbit
+/// let dq = @deque.of([1, 2, 3])
+/// dq.append(4)
+/// inspect(dq, content="@deque.of([1, 2, 3, 4])")
+/// ```
+pub fn[A] append(
+  self : T[A], // The deque to modify
+  elem : A // The element to append
+) -> Unit {
+  self.push_back(elem) // Standard name in deque implementations
+}
+>>>>>>> origin/main
