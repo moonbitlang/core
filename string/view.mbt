@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 ///|
 /// A `@string.View` represents a view of a String that maintains proper Unicode
 /// character boundaries. It allows safe access to a substring while handling 
