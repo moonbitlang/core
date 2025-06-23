@@ -1352,3 +1352,4 @@ pub fn[A] append(self : T[A], other : Array[A]) -> Unit {
   }
   self.len = new_len
 }
+ 
