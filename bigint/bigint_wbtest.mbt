@@ -555,7 +555,7 @@ test "to_hex" {
   // Test to_hex where limbs is zero in the middle
   let a = BigInt::from_hex("1000000000000000000000000")
   check_invariant(a)
-  inspect(a.to_hex(), content="1000")
+  inspect(a.to_hex(), content="1000000000000000000000000")
 }
 
 ///|
