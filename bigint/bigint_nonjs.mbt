@@ -1109,9 +1109,18 @@ pub fn BigInt::from_hex(input : String) -> BigInt {
 ///   inspect(0N.to_hex(), content="0")
 /// ```
 pub fn BigInt::to_hex(self : BigInt, uppercase~ : Bool = true) -> String {
+  if self.is_zero() {
+    return "0"
+  }
   // WARN: this implementation assumes that `radix_bit_len` is a multiple of 4.
   let digits_per_limb = radix_bit_len / 4
-  let buf = StringBuilder::new(size_hint=self.len * digits_per_limb)
+  let buf = if self.sign is Negative {
+    let builder = StringBuilder::new(size_hint=self.len * digits_per_limb + 2)
+    builder.write_char('-')
+    builder
+  } else {
+    StringBuilder::new(size_hint=self.len * digits_per_limb)
+  }
   for i = self.len - 1; i >= 0; i = i - 1 { // TODO: reverse iteration would be a bit faster.
     // split the limb into 4-bit chunks
     let mut x = self.limbs[i]
@@ -1130,27 +1139,15 @@ pub fn BigInt::to_hex(self : BigInt, uppercase~ : Bool = true) -> String {
       idx += 1
     }
     if idx == 0 {
-      digits[0] = '0'
       idx = 1
-    }
-    if i != self.len - 1 && idx < digits_per_limb {
-      for j in idx..<digits_per_limb {
-        digits[j] = '0'
-      }
+    } else if i != self.len - 1 && idx < digits_per_limb {
       idx = digits_per_limb
     }
     for j in 0..<idx {
       buf.write_char(digits[idx - 1 - j])
     }
   }
-  let result = buf.to_string()
-  if result == "" {
-    "0" // CR: weird coverage visualized
-  } else if self.sign is Negative {
-    "-" + result
-  } else {
-    result
-  }
+  buf.to_string()
 }
 
 ///|
