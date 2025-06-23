@@ -551,6 +551,11 @@ test "to_hex" {
     a.to_hex(),
     content="-11E3444DC1F35F057AD2CBC2791737468140A426FAC3CBA7AF8C92A8F34E",
   )
+
+  // Test to_hex where limbs is zero in the middle
+  let a = BigInt::from_hex("1000000000000000000000000")
+  check_invariant(a)
+  inspect(a.to_hex(), content="1000")
 }
 
 ///|
