@@ -18,3 +18,42 @@
 pub fn[V : Compare] T::from_iter(iter : Iter[V]) -> T[V] {
   from_iter(iter)
 }
+
+///|
+#deprecated("Use @sorted_set.from_array instead")
+pub fn[V : Compare] of(array : Array[V]) -> T[V] {
+  let set = new()
+  for i in 0..<array.length() {
+    set.add(array[i])
+  }
+  set
+}
+
+///|
+/// It is just copying the tree structure, not the values.
+/// It requires a Clone trait on T, which we don't have yet.
+///
+#deprecated("Use `copy` instead")
+#coverage.skip
+pub fn[V] deep_clone(self : T[V]) -> T[V] {
+  self.copy()
+}
+
+///|
+/// Returns the difference of two sets.
+///
+#deprecated("Use `difference` instead")
+#coverage.skip
+pub fn[V : Compare] diff(self : T[V], src : T[V]) -> T[V] {
+  let ret = new()
+  self.each(fn(x) { if not(src.contains(x)) { ret.add(x) } })
+  ret
+}
+
+///|
+/// Returns the intersection of two sets.
+#deprecated("Use `intersection` instead")
+#coverage.skip
+pub fn[V : Compare] intersect(self : T[V], src : T[V]) -> T[V] {
+  self.intersection(src)
+}
