@@ -91,60 +91,7 @@ pub fn signum(self : Double) -> Double {
   }
 }
 
-///|
-/// \[DEPRECATED] Returns a "not-a-number" (NaN) value.
-///
-/// This function is deprecated. Use `@double.not_a_number` instead.
-///
-/// Returns a double-precision floating-point NaN value.
-///
-/// Example:
-///
-/// ```moonbit
-///   let nan = @double.not_a_number
-///   inspect(nan.is_nan(), content="true")
-/// ```
-///
-#deprecated("Use `@double.not_a_number` instead")
-#coverage.skip
-pub fn Double::nan() -> Double {
-  not_a_number
-}
-
-///|
-/// Returns positive infinity if sign >= 0, negative infinity if sign < 0.
-#deprecated("Use `@double.infinity` and `@double.neg_infinity` instead")
-#coverage.skip
-pub fn Double::inf(sign : Int) -> Double {
-  if sign >= 0 {
-    infinity
-  } else {
-    neg_infinity
-  }
-}
-
-///|
-/// Returns the smallest positive normal value of a double-precision
-/// floating-point number.
-///
-/// Returns a `Double` value that represents the smallest positive normal number
-/// that can be represented by a double-precision floating-point number
-/// (approximately 2.2250738585072014e-308).
-///
-/// Example:
-///
-/// ```moonbit
-///   inspect(@double.min_positive, content="2.2250738585072014e-308")
-/// ```
-///
-#deprecated("Use `@double.min_positive` instead")
-#coverage.skip
-pub fn Double::min_normal() -> Double {
-  min_positive
-}
-
-///|
-/// Checks whether a double-precision floating-point number represents a "Not a
+///| Checks whether a double-precision floating-point number represents a "Not a
 /// Number" (NaN) value.
 ///
 /// Parameters:

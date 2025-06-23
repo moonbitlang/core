@@ -37,26 +37,6 @@ pub fn[V : Compare] from_array(array : Array[V]) -> T[V] {
 }
 
 ///|
-#deprecated("Use @sorted_set.from_array instead")
-pub fn[V : Compare] of(array : Array[V]) -> T[V] {
-  let set = new()
-  for i in 0..<array.length() {
-    set.add(array[i])
-  }
-  set
-}
-
-///|
-/// It is just copying the tree structure, not the values.
-/// It requires a Clone trait on T, which we don't have yet.
-///
-#deprecated("Use `copy` instead")
-#coverage.skip
-pub fn[V] deep_clone(self : T[V]) -> T[V] {
-  self.copy()
-}
-
-///|
 /// Returns a shallow copy of the set.
 /// 
 /// It is just copying the tree structure, not the values.
@@ -265,17 +245,6 @@ fn[V : Compare] join_right(l : Node[V]?, v : V, r : Node[V]?) -> Node[V] {
 
 ///|
 /// Returns the difference of two sets.
-/// 
-#deprecated("Use `difference` instead")
-#coverage.skip
-pub fn[V : Compare] diff(self : T[V], src : T[V]) -> T[V] {
-  let ret = new()
-  self.each(fn(x) { if not(src.contains(x)) { ret.add(x) } })
-  ret
-}
-
-///|
-/// Returns the difference of two sets.
 pub fn[V : Compare] difference(self : T[V], src : T[V]) -> T[V] {
   let ret = new()
   self.each(fn(x) { if not(src.contains(x)) { ret.add(x) } })
@@ -308,14 +277,6 @@ pub fn[V : Compare] symmetric_difference(self : T[V], other : T[V]) -> T[V] {
   let set1 = self.difference(other)
   let set2 = other.difference(self)
   set1.union(set2)
-}
-
-///|
-/// Returns the intersection of two sets.
-#deprecated("Use `intersection` instead")
-#coverage.skip
-pub fn[V : Compare] intersect(self : T[V], src : T[V]) -> T[V] {
-  self.intersection(src)
 }
 
 ///|
