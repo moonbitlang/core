@@ -8,11 +8,15 @@ block by block independently.
 
 - Try to keep deprecated blocks in file called `deprecated.mbt`  in each directory.
 
-- You should run `moon fmt` to check your code is formatted correctly.
+- `moon fmt` is used to format your code properly.
 
-- You should run `moon info` to update the generated interface of interface file, each package
-has a generated interface file `.mbti` file, it is a breif formal description of the package, if 
-nothing changes, this means your change does not bring the visible changes to the external package users.
+- `moon info` is used to update the generated interface of the package, each package
+has a generated interface file `.mbti` file, it is a brief formal description of the package. 
+If nothing in `.mbti` changes, this means your change does not bring the visible changes to the external package users, 
+it is typically a safe refactoring.
+
+- So in the last step, you typically run `moon info && moon fmt` to update the interface and format the code. You also
+check the diffs of `.mbti` file to see if the changes are expected.
 
 - Youd should run `moon test` to check the test is passed. MoonBit supports snapshot testing, so in some cases,
 your changes indeed change the behavior of the code, you should run `moon test --update` to update the snapshot.
