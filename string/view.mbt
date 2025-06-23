@@ -12,25 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-///| 
-/// A `StringView` represents a view of a String that maintains proper Unicode
-/// character boundaries. It allows safe access to a substring while handling 
-/// multi-byte characters correctly.
-#deprecated("use @string.View instead")
-#builtin.valtype
-struct StringView {
-  // # Fields
-  //
-  // - `str`: The source String being viewed
-  // - `start`: Starting UTF-16 code unit index into the string
-  // - `end`: Ending UTF-16 code unit index into the string (not included)
-  //
-  // `len` is not included because it will make the operation of `op_as_view`
-  // has complexity O(n) where n is the length of the code points in the view.
-  str : String
-  start : Int
-  end : Int
-}
 
 ///|
 /// A `@string.View` represents a view of a String that maintains proper Unicode
