@@ -1138,9 +1138,7 @@ pub fn BigInt::to_hex(self : BigInt, uppercase~ : Bool = true) -> String {
       }
       idx += 1
     }
-    if idx == 0 {
-      idx = 1
-    } else if i != self.len - 1 && idx < digits_per_limb {
+    if i != self.len - 1 {
       idx = digits_per_limb
     }
     for j in 0..<idx {
