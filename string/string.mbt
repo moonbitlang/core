@@ -52,34 +52,6 @@ pub fn from_iter(iter : Iter[Char]) -> String {
 }
 
 ///|
-#deprecated("Use `Array::join` instead.")
-pub fn concat(strings : Array[String], separator~ : String = "") -> String {
-  match strings {
-    [] => ""
-    [hd, .. tl] => {
-      let mut size_hint = hd.length()
-      for s in tl {
-        size_hint += s.length() + separator.length()
-      }
-      size_hint = size_hint << 1
-      let buf = StringBuilder::new(size_hint~)
-      buf.write_string(hd)
-      if separator == "" {
-        for s in tl {
-          buf.write_string(s)
-        }
-      } else {
-        for s in tl {
-          buf.write_string(separator)
-          buf.write_string(s)
-        }
-      }
-      buf.to_string()
-    }
-  }
-}
-
-///|
 /// Strings are ordered lexicographically by their charcodes(code unit). This 
 /// orders Unicode characters based on their positions in the code charts. This is
 /// not necessarily the same as "alphabetical" order, which varies by language
@@ -240,66 +212,9 @@ pub fn rev_iter(self : String) -> Iter[Char] {
 }
 
 ///|
-#deprecated("Use `s.find(substr)` instead. If the optional argument `from` is not 0, take view from the string first. Please do not use an invalid `from` argument.")
-pub fn index_of(self : String, str : String, from~ : Int = 0) -> Int {
-  if from <= 0 {
-    if self.find(str.view()) is Some(idx) {
-      idx
-    } else {
-      -1
-    }
-  } else if from > self.length() {
-    if str.length() == 0 {
-      self.length()
-    } else {
-      -1
-    }
-  } else if self.view(start_offset=from).find(str.view()) is Some(idx) {
-    idx + from
-  } else {
-    -1
-  }
-}
-
-///|
 /// Returns the last index of the sub string.
-#deprecated("Use `s.rev_find(substr)` instead. If the optional argument `from` is not 0, take view from the string first. Please do not use an invalid `from` argument.")
-pub fn last_index_of(self : String, str : String, from? : Int) -> Int {
-  let from = if from is Some(f) { f } else { self.length() }
-  if from >= self.length() {
-    if self.rev_find(str.view()) is Some(idx) {
-      idx
-    } else {
-      -1
-    }
-  } else if from < 0 {
-    if str.length() == 0 {
-      self.length()
-    } else {
-      -1
-    }
-  } else if self.view(end_offset=from).rev_find(str.view()) is Some(idx) {
-    idx
-  } else {
-    -1
-  }
-}
-
-///|
 /// Returns true if this string starts with a sub string.
-#deprecated("Use `s.has_prefix(str)` instead.")
-pub fn starts_with(self : String, str : String) -> Bool {
-  self.has_prefix(str.view())
-}
-
-///|
 /// Returns true if this string ends with a sub string.
-#deprecated("Use `s.has_suffix(str)` instead.")
-pub fn ends_with(self : String, str : String) -> Bool {
-  self.has_suffix(str.view())
-}
-
-///|
 /// Returns the index of the n-th (zero-indexed) character within the range [start, end).
 fn String::offset_of_nth_char_forward(
   self : String,
