@@ -1299,43 +1299,56 @@ pub impl[A : @json.FromJson] @json.FromJson for T[A] with from_json(json, path) 
 }
 
 ///|
-/// Concatenates deque elements with separator
-/// 
+/// Appends all elements from an array to the end of the deque (in-place).
+/// Exactly matches Array::append behavior.
+///
 /// Parameters:
-///   * `separator` - String inserted between elements
-///   * `to_string` - Function to convert elements to String (must take exactly 1 argument)
+///   * `self` : The deque to modify
+///   * `other` : The array to append (must be Array[T])
 ///
 /// Example:
 /// ```moonbit
-/// let dq = @deque.of([1, 2, 3])
-/// inspect(dq.join(",", fn(x) { x.to_string() }), content="1,2,3")
-/// ```
-pub fn[A] join(
-  self : T[A],
-  separator : String,
-  to_string : (A) -> String
-) -> String {
-  if self.is_empty() {
-    return ""
-  }
-  let mut result = to_string(self[0])
-  for i in 1..<self.length() {
-    result = result + separator + to_string(self[i])
-  }
-  result
-}
-
-///| Appends an element to the end of the deque (O(1) amortized time)
-///
-/// Example:
-/// ```moonbit
-/// let dq = @deque.of([1, 2, 3])
-/// dq.append(4)
+/// let dq = @deque.of([1, 2])
+/// dq.append([3, 4])  // ✅ Correct
 /// inspect(dq, content="@deque.of([1, 2, 3, 4])")
 /// ```
-pub fn[A] append(
-  self : T[A], // The deque to modify
-  elem : A // The element to append
-) -> Unit {
-  self.push_back(elem) // Standard name in deque implementations
+pub fn[A] append(self : T[A], other : Array[A]) -> Unit {
+  let add_len = other.length()
+  guard add_len > 0 else { return } // 空数组快速返回
+  let old_len = self.length()
+  let new_len = old_len + add_len
+
+  // 1. 容量检查与扩容（手动实现 next_power_of_two 逻辑）
+  if new_len > self.capacity() {
+    let mut new_capacity = 1
+    while new_capacity < new_len {
+      new_capacity = new_capacity * 2
+    }
+    self.reserve_capacity(new_capacity)
+  }
+
+  // 2. 环形缓冲区处理
+  let tail_pos = self.tail
+  let buf_cap = self.buf.length()
+
+  // Case 1: 尾部有连续空间
+  if tail_pos + add_len <= buf_cap {
+    for i = 0; i < add_len; i = i + 1 {
+      self.buf[tail_pos + i] = other[i]
+    }
+    self.tail = (tail_pos + add_len) % buf_cap
+    // Case 2: 需要环绕写入
+  } else {
+    let first_chunk_len = buf_cap - tail_pos
+    // 写入第一个分段
+    for i = 0; i < first_chunk_len; i = i + 1 {
+      self.buf[tail_pos + i] = other[i]
+    }
+    // 写入剩余部分到头部
+    for i = 0; i < add_len - first_chunk_len; i = i + 1 {
+      self.buf[i] = other[first_chunk_len + i]
+    }
+    self.tail = add_len - first_chunk_len - 1
+  }
+  self.len = new_len
 }
