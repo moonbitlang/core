@@ -684,9 +684,9 @@ test "rev" {
 pub fn View::split(self : View, sep : View) -> Iter[View] {
   let sep_len = sep.length()
   if sep_len == 0 {
-    return self.iter().map(fn(c) { c.to_string().view() })
+    return self.iter().map(c => c.to_string().view())
   }
-  Iter::new(fn(yield_) {
+  Iter::new(yield_ => {
     let mut view = self
     while view.find(sep) is Some(end) {
       guard yield_(view.view(end_offset=end)) is IterContinue else {

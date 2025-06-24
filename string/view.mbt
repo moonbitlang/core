@@ -249,7 +249,7 @@ pub impl Show for StringView with to_string(self) {
 ///|
 /// Returns an iterator over the Unicode characters in the string view.
 pub fn View::iter(self : View) -> Iter[Char] {
-  Iter::new(fn(yield_) {
+  Iter::new(yield_ => {
     for index in self.start..<self.end {
       let c1 = self.str.unsafe_charcode_at(index)
       if is_leading_surrogate(c1) && index + 1 < self.end {
@@ -269,7 +269,7 @@ pub fn View::iter(self : View) -> Iter[Char] {
 
 ///|
 pub fn View::iter2(self : View) -> Iter2[Int, Char] {
-  Iter2::new(fn(yield_) {
+  Iter2::new(yield_ => {
     let len = self.length()
     for index = 0, n = 0; index < len; index = index + 1, n = n + 1 {
       let c1 = self.str.unsafe_charcode_at(self.start + index)
@@ -293,7 +293,7 @@ pub fn View::iter2(self : View) -> Iter2[Int, Char] {
 ///|
 /// Returns an iterator over the Unicode characters in the string view in reverse order.
 pub fn View::rev_iter(self : View) -> Iter[Char] {
-  Iter::new(fn(yield_) {
+  Iter::new(yield_ => {
     for index = self.end - 1; index >= self.start; index = index - 1 {
       let c1 = self.str.unsafe_charcode_at(index)
       if is_trailing_surrogate(c1) && index - 1 >= 0 {

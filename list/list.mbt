@@ -1171,30 +1171,26 @@ pub fn[X] default() -> T[X] {
 
 ///|
 pub fn[A] iter(self : T[A]) -> Iter[A] {
-  Iter::new(fn(yield_) {
-    loop self {
-      Empty => IterContinue
-      More(head, tail~) => {
-        if yield_(head) == IterEnd {
-          break IterEnd
-        }
-        continue tail
+  Iter::new(yield_ => loop self {
+    Empty => IterContinue
+    More(head, tail~) => {
+      if yield_(head) == IterEnd {
+        break IterEnd
       }
+      continue tail
     }
   })
 }
 
 ///|
 pub fn[A] iter2(self : T[A]) -> Iter2[Int, A] {
-  Iter2::new(fn(yield_) {
-    loop (self, 0) {
-      (Empty, _) => IterEnd
-      (More(head, tail~), i) => {
-        if yield_(i, head) == IterEnd {
-          break IterEnd
-        }
-        continue (tail, i + 1)
+  Iter2::new(yield_ => loop (self, 0) {
+    (Empty, _) => IterEnd
+    (More(head, tail~), i) => {
+      if yield_(i, head) == IterEnd {
+        break IterEnd
       }
+      continue (tail, i + 1)
     }
   })
 }
