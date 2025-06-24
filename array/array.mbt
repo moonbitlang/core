@@ -294,7 +294,7 @@ pub fn[A, B, C] zip_with(
 ///   inspect(arr1.zip_to_iter2(arr2).to_array(), content="[(1, 'a'), (2, 'b'), (3, 'c')]")
 /// ```
 pub fn[A, B] zip_to_iter2(self : Array[A], other : Array[B]) -> Iter2[A, B] {
-  Iter2::new(fn(yield_) {
+  Iter2::new(yield_ => {
     let length = if self.length() < other.length() {
       self.length()
     } else {
