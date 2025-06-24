@@ -40,19 +40,25 @@ impl Source for @random_source.ChaCha8 with next(self : @random_source.ChaCha8) 
 ///|
 /// Create a new random number generator with [seed].
 /// @alert unsafe "Panic if seed is not 32 bytes long"
-pub fn chacha8(seed~ : Bytes = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456") -> &Source {
+pub fn Rand::chacha8(
+  seed~ : Bytes = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456"
+) -> Rand {
   if seed.length() != 32 {
     abort("seed must be 32 bytes long")
   }
-  @random_source.ChaCha8::new(seed) as &Source
+  Rand(@random_source.ChaCha8::new(seed) as &Source)
 }
 
 ///|
+pub fnalias Rand::chacha8
+
+///|
 /// Create a new random number generator with a given [Gen] source.
-pub fn Rand::new(
-  generator~ : &Source = chacha8(seed=b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456")
-) -> Rand {
-  generator
+pub fn Rand::new(generator? : &Source) -> Rand {
+  match generator {
+    None => chacha8()
+    Some(gen) => Rand(gen)
+  }
 }
 
 ///|
