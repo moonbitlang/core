@@ -817,7 +817,7 @@ pub fn Int::to_uint64(self : Int) -> UInt64 {
 ///
 /// Example:
 ///
-/// ```skip
+/// ```moonbit
 ///   inspect(-42.0, content="-42")
 ///   inspect(--42.0, content="42")
 ///   inspect(-(0.0 / 0.0), content="NaN") // Negating NaN returns NaN
@@ -842,7 +842,7 @@ pub impl Neg for Double with op_neg(self) = "%f64_neg"
 ///
 /// Example:
 ///
-/// ```skip
+/// ```moonbit
 ///   inspect(2.5 + 3.7, content="6.2")
 ///   inspect(1.0 / 0.0 + -1.0 / 0.0, content="NaN") // Infinity + -Infinity = NaN
 /// ```
@@ -861,7 +861,7 @@ pub impl Add for Double with op_add(self, other) = "%f64_add"
 ///
 /// Example:
 ///
-/// ```skip
+/// ```moonbit
 ///   let a = 5.0
 ///   let b = 3.0
 ///   inspect(a - b, content="2")
@@ -889,7 +889,7 @@ pub impl Sub for Double with op_sub(self, other) = "%f64_sub"
 ///
 /// Example:
 ///
-/// ```skip
+/// ```moonbit
 ///   inspect(2.5 * 2.0, content="5")
 ///   inspect(-2.0 * 3.0, content="-6")
 ///   let nan = 0.0 / 0.0 // NaN
@@ -918,7 +918,7 @@ pub impl Mul for Double with op_mul(self, other) = "%f64_mul"
 ///
 /// Example:
 ///
-/// ```skip
+/// ```moonbit
 ///   inspect(6.0 / 2.0, content="3")
 ///   inspect(-6.0 / 2.0, content="-3")
 ///   inspect(1.0 / 0.0, content="Infinity")
@@ -962,7 +962,7 @@ pub fn Double::sqrt(self : Double) -> Double = "%f64_sqrt"
 ///
 /// Example:
 ///
-/// ```skip
+/// ```moonbit
 ///   let a = 3.14
 ///   let b = 3.14
 ///   let c = 2.718
@@ -988,7 +988,7 @@ pub impl Eq for Double with op_equal(self : Double, other : Double) -> Bool = "%
 ///
 /// Example:
 ///
-/// ```skip
+/// ```moonbit
 ///   inspect(1.0 != 2.0, content="true")
 ///   inspect(1.0 != 1.0, content="false")
 ///   inspect(0.0 / 0.0 != 0.0 / 0.0, content="true") // NaN != NaN
@@ -2390,7 +2390,7 @@ pub impl Mul for Float with op_mul(self, other) = "%f32.mul"
 ///
 /// Example:
 ///
-/// ```skip
+/// ```moonbit
 ///   let a = 6.0.to_float()
 ///   let b = 2.0.to_float()
 ///   let result = (a / b).to_double()
@@ -2442,7 +2442,7 @@ pub fn Float::sqrt(self : Float) -> Float = "%f32.sqrt"
 ///
 /// Example:
 ///
-/// ```skip
+/// ```moonbit
 ///   let x = 3.14
 ///   let y = 3.14
 ///   let z = 0.0 / 0.0 // NaN
@@ -2466,7 +2466,7 @@ pub impl Eq for Float with op_equal(self : Float, other : Float) -> Bool = "%f32
 ///
 /// Example:
 ///
-/// ```skip
+/// ```moonbit
 ///   let x = 1.0.to_float()
 ///   let y = 2.0.to_float()
 ///   let nan = (0.0 / 0.0).to_float()

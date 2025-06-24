@@ -242,10 +242,6 @@ fn[K : Hash + Eq, V] get_with_hash(self : T[K, V], key : K, hash : Int) -> V? {
 ///   inspect(map.get("key"), content="Some(42)")
 ///   inspect(map.get("nonexistent"), content="None")
 /// ```
-#deprecated("Use `get` instead. `op_get` will return `V` instead of `Option[V]` in the future.")
-pub fn[K : Hash + Eq, V] op_get(self : T[K, V], key : K) -> V? {
-  self.get(key)
-}
 
 ///|
 /// Gets the value associated with the given key. If the key doesn't exist in the

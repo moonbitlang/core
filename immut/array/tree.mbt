@@ -721,7 +721,6 @@ fn[A] compute_sizes(
 
 ///|
 /// Print the tree structure. For debug use only.
-#coverage.skip
 impl[A : Show] Show for Tree[A] with output(self, logger : &Logger) {
   fn indent_str(s : String, indent : Int) -> String {
     String::make(indent, ' ') + s
@@ -752,4 +751,27 @@ impl[A : Show] Show for Tree[A] with output(self, logger : &Logger) {
   }
 
   logger.write_string(aux(self, 0))
+}
+
+///|
+test "Show for Tree" {
+  inspect((Empty : Tree[Int]), content="Empty")
+  inspect(
+    Node([Leaf([4, 2])], Some([2])),
+    content=
+      #|Node(
+      #|  Leaf(4, 2)
+      #|)
+      #|
+    ,
+  )
+  inspect(
+    Node([Empty, Leaf([42])], Some([0, 1])),
+    content=
+      #|Node(
+      #|  Empty  Leaf(42)
+      #|)
+      #|
+    ,
+  )
 }

@@ -47,3 +47,41 @@ pub fn[T, K : Compare] minimum_by_key(x : T, y : T, f : (T) -> K) -> T {
     x
   }
 }
+
+///|
+/// Compares and returns the maximum of two values.
+///
+/// Returns the second argument if the comparison determines them to be equal.
+///
+/// # Examples
+///
+/// ```mbt
+///   assert_eq(@cmp.maximum(1, 2), 2)
+///   assert_eq(@cmp.maximum(2, 2), 2)
+/// ```
+pub fn[T : Compare] maximum(x : T, y : T) -> T {
+  if x > y {
+    x
+  } else {
+    y
+  }
+}
+
+///|
+/// Compares and returns the minimum of two values.
+///
+/// Returns the first argument if the comparison determines them to be equal.
+///
+/// # Examples
+///
+/// ```mbt
+///   assert_eq(@cmp.minimum(1, 2), 1)
+///   assert_eq(@cmp.minimum(2, 2), 2)
+/// ```
+pub fn[T : Compare] minimum(x : T, y : T) -> T {
+  if x > y {
+    y
+  } else {
+    x
+  }
+}
