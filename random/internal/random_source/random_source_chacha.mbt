@@ -26,15 +26,11 @@ pub(all) struct ChaCha8 {
 ///|
 /// [seed] must be 32 bytes long.
 pub fn ChaCha8::new(seed : Bytes) -> ChaCha8 {
-  let self = {
-    buffer: FixedArray::make(32, 0UL),
-    seed: FixedArray::makei(4, i => bytes_to_uint64(seed, i * 8)),
-    i: 0U,
-    n: chunk,
-    c: 0U,
-  }
-  self.chacha_block_u64()
-  self
+  let buffer = FixedArray::make(32, 0UL)
+  let seed = FixedArray::makei(4, i => bytes_to_uint64(seed, i * 8))
+  let c = 0U
+  chacha_block(seed, c).bilt_to_fixedarray_uint64(buffer)
+  { buffer, seed, i: 0U, n: chunk, c }
 }
 
 ///|
@@ -86,7 +82,7 @@ pub fn ChaCha8::refill(self : ChaCha8) -> Unit {
     }
     self.c = 0
   }
-  self.chacha_block_u64()
+  chacha_block(self.seed, self.c).bilt_to_fixedarray_uint64(self.buffer)
   self.i = 0
   self.n = (if self.c == ctr_max - ctr_inc {
     self.buffer.length() - chacha_reseed
@@ -96,15 +92,15 @@ pub fn ChaCha8::refill(self : ChaCha8) -> Unit {
 }
 
 ///|
-fn ChaCha8::chacha_block_u64(self : ChaCha8) -> Unit {
-  let buffer = chacha_block(self.seed, self.c)
-  // concat 2 u32 to u64 and store in self.buffer
+fn bilt_to_fixedarray_uint64(
+  self : FixedArray[FixedArray[UInt]],
+  dst : FixedArray[UInt64]
+) -> Unit {
   for i in 0..<16 {
     for j = 0; j < 4; j = j + 2 {
-      let lo = buffer[i][j]
-      let hi = buffer[i][j + 1]
-      let u64 : UInt64 = (hi.to_uint64() << 32) | lo.to_uint64()
-      self.buffer[i * 2 + j / 2] = u64
+      let lo = self[i][j]
+      let hi = self[i][j + 1]
+      dst[i * 2 + j / 2] = (hi.to_uint64() << 32) | lo.to_uint64()
     }
   }
 }
