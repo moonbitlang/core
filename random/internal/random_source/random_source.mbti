@@ -4,19 +4,15 @@ package "moonbitlang/core/random/internal/random_source"
 
 // Types and methods
 pub(all) struct ChaCha8 {
-  state : State
-}
-fn ChaCha8::new(Bytes) -> Self
-
-pub(all) struct State {
   mut buffer : FixedArray[UInt64]
   mut seed : FixedArray[UInt64]
   mut i : UInt
   mut n : UInt
   mut c : UInt
 }
-fn State::next(Self) -> (UInt64, Bool)
-fn State::refill(Self) -> Unit
+fn ChaCha8::new(Bytes) -> Self
+fn ChaCha8::next(Self) -> (UInt64, Bool)
+fn ChaCha8::refill(Self) -> Unit
 
 // Type aliases
 

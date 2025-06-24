@@ -14,18 +14,6 @@
 
 ///|
 pub(all) struct ChaCha8 {
-  state : State
-}
-
-///|
-pub fn ChaCha8::new(seed : Bytes) -> ChaCha8 {
-  let c = { state: State::new() }
-  c.state.init(seed)
-  c
-}
-
-///|
-pub(all) struct State {
   mut buffer : FixedArray[UInt64] // size=[32]
   mut seed : FixedArray[UInt64] // size=[4]
   mut i : UInt
@@ -34,14 +22,16 @@ pub(all) struct State {
 }
 
 ///|
-fn State::new() -> State {
-  {
+pub fn ChaCha8::new(seed : Bytes) -> ChaCha8 {
+  let c = {
     buffer: FixedArray::make(32, 0UL),
     seed: FixedArray::make(4, 0UL),
     i: 0U,
     n: 0U,
     c: 0U,
   }
+  c.init(seed)
+  c
 }
 
 ///|
@@ -57,7 +47,7 @@ let chunk = 32U
 let chachaReseed = 4
 
 ///|
-pub fn State::next(self : State) -> (UInt64, Bool) {
+pub fn ChaCha8::next(self : ChaCha8) -> (UInt64, Bool) {
   let i = self.i
   if i >= self.n {
     return (0, false)
@@ -86,7 +76,7 @@ test "bytesToUInt64" {
 
 ///|
 /// [seed] must be 32 bytes long.
-fn State::init(self : State, seed : Bytes) -> Unit {
+fn ChaCha8::init(self : ChaCha8, seed : Bytes) -> Unit {
   let seed0 = FixedArray::make(8, Byte::default())
   let seed1 = FixedArray::make(8, Byte::default())
   let seed2 = FixedArray::make(8, Byte::default())
@@ -106,7 +96,7 @@ fn State::init(self : State, seed : Bytes) -> Unit {
 }
 
 ///|
-fn State::init64(self : State, seed : FixedArray[UInt64]) -> Unit {
+fn ChaCha8::init64(self : ChaCha8, seed : FixedArray[UInt64]) -> Unit {
   self.seed = seed
   // convert FixedArray[UInt64] size=[32] to FixedArray[FixedArray[UInt]] size=[16][4]
   let buffer = FixedArray::makei(16, fn(_i) { FixedArray::make(4, 0U) })
@@ -136,7 +126,7 @@ fn State::init64(self : State, seed : FixedArray[UInt64]) -> Unit {
 }
 
 ///|
-pub fn State::refill(self : State) -> Unit {
+pub fn ChaCha8::refill(self : ChaCha8) -> Unit {
   self.c = self.c + ctrInc
   if self.c == ctrMax {
     // reseed
@@ -354,11 +344,9 @@ fn setup(
 
 ///|
 test "output" {
-  let s = State::new()
-  let seed = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456"
+  let s = ChaCha8::new(b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456")
   let res = Array::new(capacity=372)
-  s.init(seed)
-  fn uint64(s : State) -> UInt64 {
+  fn uint64(s : ChaCha8) -> UInt64 {
     for {
       let x = s.next()
       if x.1 {
