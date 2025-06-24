@@ -14,8 +14,10 @@
 
 ///|
 pub(all) struct ChaCha8 {
-  mut buffer : FixedArray[UInt64] // size=[32]
-  mut seed : FixedArray[UInt64] // size=[4]
+  /// length = 32
+  mut buffer : FixedArray[UInt64]
+  /// length = 4
+  mut seed : FixedArray[UInt64]
   mut i : UInt
   mut n : UInt
   mut c : UInt
@@ -26,7 +28,7 @@ pub(all) struct ChaCha8 {
 pub fn ChaCha8::new(seed : Bytes) -> ChaCha8 {
   let self = {
     buffer: FixedArray::make(32, 0UL),
-    seed: FixedArray::makei(4, i => bytesToUInt64(seed, i * 8)),
+    seed: FixedArray::makei(4, i => bytes_to_uint64(seed, i * 8)),
     i: 0U,
     n: chunk,
     c: 0U,
@@ -36,16 +38,16 @@ pub fn ChaCha8::new(seed : Bytes) -> ChaCha8 {
 }
 
 ///|
-let ctrInc = 4U
+let ctr_inc = 4U
 
 ///|
-let ctrMax = 16U
+let ctr_max = 16U
 
 ///|
 let chunk = 32U
 
 ///|
-let chachaReseed = 4
+let chacha_reseed = 4
 
 ///|
 pub fn ChaCha8::next(self : ChaCha8) -> UInt64? {
@@ -58,7 +60,7 @@ pub fn ChaCha8::next(self : ChaCha8) -> UInt64? {
 }
 
 ///|
-fn bytesToUInt64(b : Bytes, offset : Int) -> UInt64 {
+fn bytes_to_uint64(b : Bytes, offset : Int) -> UInt64 {
   let mut result = 0UL
   for i in 0..<8 {
     result = result |
@@ -68,29 +70,29 @@ fn bytesToUInt64(b : Bytes, offset : Int) -> UInt64 {
 }
 
 ///|
-test "bytesToUInt64" {
+test "bytes_to_uint64" {
   let bytes : Bytes = [0, 1, 0, 0, 0, 0, 0, 0]
-  inspect(bytesToUInt64(bytes, 0), content="256")
+  inspect(bytes_to_uint64(bytes, 0), content="256")
 }
 
 ///|
 pub fn ChaCha8::refill(self : ChaCha8) -> Unit {
-  self.c = self.c + ctrInc
-  if self.c == ctrMax {
+  self.c += ctr_inc
+  if self.c == ctr_max {
     // reseed
     let len = self.buffer.length()
-    self.seed[0] = self.buffer[len - chachaReseed + 0]
-    self.seed[1] = self.buffer[len - chachaReseed + 1]
-    self.seed[2] = self.buffer[len - chachaReseed + 2]
-    self.seed[3] = self.buffer[len - chachaReseed + 3]
+    for i in 0..<chacha_reseed {
+      self.seed[i] = self.buffer[len - chacha_reseed + i]
+    }
     self.c = 0
   }
   self.chacha_block_u64()
   self.i = 0
-  self.n = self.buffer.length().reinterpret_as_uint()
-  if self.c == ctrMax - ctrInc {
-    self.n = (self.buffer.length() - chachaReseed).reinterpret_as_uint()
-  }
+  self.n = (if self.c == ctr_max - ctr_inc {
+    self.buffer.length() - chacha_reseed
+  } else {
+    self.buffer.length()
+  }).reinterpret_as_uint()
 }
 
 ///|
@@ -150,7 +152,7 @@ fn chacha_block(
     let mut b13 = buf[13][i]
     let mut b14 = buf[14][i]
     let mut b15 = buf[15][i]
-    for round in 0..<4 {
+    for _ in 0..<4 {
       let tb1 = qr((b0, b4, b8, b12))
       b0 = tb1.0
       b4 = tb1.1
@@ -196,14 +198,14 @@ fn chacha_block(
     buf[1][i] = b1
     buf[2][i] = b2
     buf[3][i] = b3
-    buf[4][i] = buf[4][i] + b4
-    buf[5][i] = buf[5][i] + b5
-    buf[6][i] = buf[6][i] + b6
-    buf[7][i] = buf[7][i] + b7
-    buf[8][i] = buf[8][i] + b8
-    buf[9][i] = buf[9][i] + b9
-    buf[10][i] = buf[10][i] + b10
-    buf[11][i] = buf[11][i] + b11
+    buf[4][i] += b4
+    buf[5][i] += b5
+    buf[6][i] += b6
+    buf[7][i] += b7
+    buf[8][i] += b8
+    buf[9][i] += b9
+    buf[10][i] += b10
+    buf[11][i] += b11
     buf[12][i] = b12
     buf[13][i] = b13
     buf[14][i] = b14
