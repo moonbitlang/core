@@ -1287,21 +1287,21 @@ pub fn T::join(self : T[String], separator : @string.View) -> String {
 ///   inspect(deque, content="@deque.of([1, 2, 7, 8, 9])")
 /// ```
 pub fn[A] T::drain(self : T[A], start~ : Int, len~ : Int) -> T[A] {
-  guard begin >= 0 && end <= self.length() && begin <= end
-  let long = end - begin
-  let dq = new(capacity=long)
-  dq.buf = self.buf.blit(dq.buf, len=long, src_offset=begin, dst_offset=0)
+  let end = start + len
+  guard start >= 0 && end <= self.length()
+  let dq = new(capacity=len)
+  dq.buf = self.buf.blit(dq.buf, len=len, src_offset=start, dst_offset=0)
   ignore(
     self.buf.blit(
       self.buf,
       len=self.length() - end,
       src_offset=end,
-      dst_offset=begin,
+      dst_offset=start,
     ),
   )
   self.tail = self.length() - end
-  self.len = self.length() - long
-  let deq1 = T::{ buf: dq.buf, len: long, head: 0, tail: long - 1 }
+  self.len = self.length() - len
+  let deq1 = T::{ buf: dq.buf, len: len, head: 0, tail: len - 1 }
   deq1
 }
 
