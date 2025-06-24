@@ -57,47 +57,25 @@ pub fn ChaCha8::next(self : ChaCha8) -> (UInt64, Bool) {
 }
 
 ///|
-fn bytesToUInt64(b : FixedArray[Byte]) -> UInt64 {
+fn bytesToUInt64(b : Bytes, offset : Int) -> UInt64 {
   let mut result = 0UL
   for i in 0..<8 {
-    result = result | (b[i].to_int64().reinterpret_as_uint64() << (i * 8))
+    result = result |
+      (b[offset + i].to_int64().reinterpret_as_uint64() << (i * 8))
   }
   result
 }
 
 ///|
 test "bytesToUInt64" {
-  let bytes = FixedArray::make(8, Byte::default())
-  for i in 0..<2 {
-    bytes[i] = i.to_byte()
-  }
-  inspect(bytesToUInt64(bytes), content="256")
+  let bytes : Bytes = [0, 1, 0, 0, 0, 0, 0, 0]
+  inspect(bytesToUInt64(bytes, 0), content="256")
 }
 
 ///|
 /// [seed] must be 32 bytes long.
 fn ChaCha8::init(self : ChaCha8, seed : Bytes) -> Unit {
-  let seed0 = FixedArray::make(8, Byte::default())
-  let seed1 = FixedArray::make(8, Byte::default())
-  let seed2 = FixedArray::make(8, Byte::default())
-  let seed3 = FixedArray::make(8, Byte::default())
-  for i in 0..<8 {
-    seed0[i] = seed[i]
-    seed1[i] = seed[8 + i]
-    seed2[i] = seed[16 + i]
-    seed3[i] = seed[24 + i]
-  }
-  let arr = FixedArray::make(4, 0UL)
-  arr[0] = bytesToUInt64(seed0)
-  arr[1] = bytesToUInt64(seed1)
-  arr[2] = bytesToUInt64(seed2)
-  arr[3] = bytesToUInt64(seed3)
-  self.init64(arr)
-}
-
-///|
-fn ChaCha8::init64(self : ChaCha8, seed : FixedArray[UInt64]) -> Unit {
-  self.seed = seed
+  self.seed = FixedArray::makei(4, i => bytesToUInt64(seed, i * 8))
   // convert FixedArray[UInt64] size=[32] to FixedArray[FixedArray[UInt]] size=[16][4]
   let buffer = FixedArray::makei(16, fn(_i) { FixedArray::make(4, 0U) })
   // split u64 to 2 u32 and store in buffer to meet the function signature
