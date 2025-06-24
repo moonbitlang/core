@@ -486,11 +486,3 @@ pub impl[A : Hash] Hash for View[A] with hash_combine(self, hasher) {
     hasher.combine(e)
   }
 }
-
-///|
-pub impl[A : @quickcheck.Arbitrary] @quickcheck.Arbitrary for View[A] with arbitrary(
-  size,
-  rs
-) {
-  Array::arbitrary(size, rs)[:]
-}

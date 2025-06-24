@@ -311,15 +311,6 @@ pub fn[A, B] zip_to_iter2(self : Array[A], other : Array[B]) -> Iter2[A, B] {
 }
 
 ///|
-pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Array[X] with arbitrary(
-  size,
-  rs
-) {
-  let len = if size == 0 { 0 } else { rs.next_positive_int() % size }
-  Array::makei(len, fn(x) { X::arbitrary(x, rs) })
-}
-
-///|
 /// Join an array of strings using the provided `separator`.
 ///
 /// Parameters:

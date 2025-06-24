@@ -1240,12 +1240,3 @@ test "FixedArray::join" {
   let fixed_array_empty : FixedArray[String] = []
   inspect(fixed_array_empty.join(","), content="")
 }
-
-///|
-pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for FixedArray[X] with arbitrary(
-  size,
-  rs
-) {
-  let len = if size == 0 { 0 } else { rs.next_positive_int() % size }
-  FixedArray::makei(len, fn(x) { X::arbitrary(x, rs) })
-}

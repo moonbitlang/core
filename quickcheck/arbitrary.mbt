@@ -18,7 +18,7 @@ pub(open) trait Arbitrary {
   // `arbitrary` function takes a random number generator and a number that 
   // determines the size of the generated value as arguments, and returns a
   // randomly generated value of certain type.
-  arbitrary(Int, @splitmix.RandomState) -> Self
+  arbitrary(Int, &@random.Source) -> Self
 }
 
 ///|
@@ -124,13 +124,38 @@ pub impl[X : Arbitrary] Arbitrary for Iter[X] with arbitrary(size, rs) {
 }
 
 ///|
-pub fn[T : Arbitrary] gen(size? : Int, state? : @splitmix.RandomState) -> T {
+pub impl[X : Arbitrary] Arbitrary for Array[X] with arbitrary(size, rs) {
+  let len = if size == 0 { 0 } else { rs.next_positive_int() % size }
+  Array::makei(len, fn(x) { X::arbitrary(x, rs) })
+}
+
+///|
+pub impl[X : Arbitrary] Arbitrary for FixedArray[X] with arbitrary(size, rs) {
+  let len = if size == 0 { 0 } else { rs.next_positive_int() % size }
+  FixedArray::makei(len, fn(x) { X::arbitrary(x, rs) })
+}
+
+///|
+pub impl[A : Arbitrary] Arbitrary for @array.View[A] with arbitrary(size, rs) {
+  (Arbitrary::arbitrary(size, rs) : Array[A])[:]
+}
+
+///|
+pub impl Arbitrary for @bigint.BigInt with arbitrary(size, rs) {
+  let len = if size == 0 { 0 } else { rs.next_positive_int() % size }
+  rs.next_bigint(len)
+}
+
+///|
+pub fn[T : Arbitrary] gen(size? : Int, state? : &@random.Source) -> T {
   let size = match size {
     None => 0
     Some(x) => x
   }
   let state = match state {
-    None => @splitmix.RandomState::default()
+    None => {
+      @splitmix.RandomState::default() as &@random.Source
+    }
     Some(x) => x
   }
   Arbitrary::arbitrary(size, state)

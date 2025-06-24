@@ -52,15 +52,6 @@ pub impl @json.FromJson for BigInt with from_json(json, path) {
 }
 
 ///|
-pub impl @quickcheck.Arbitrary for BigInt with arbitrary(size, rs) {
-  if size == 0 {
-    0
-  } else {
-    rs.next_int64() |> BigInt::from_int64
-  }
-}
-
-///|
 /// Tests equality between a `BigInt` and an `Int` value.
 ///
 /// This function performs a safe comparison by first checking if the `BigInt`
