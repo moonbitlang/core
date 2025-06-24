@@ -89,7 +89,7 @@ pub fn[K, V] new(capacity~ : Int = 8) -> T[K, V] {
 /// ```
 pub fn[K : Hash + Eq, V] from_array(arr : Array[(K, V)]) -> T[K, V] {
   let m = new(capacity=arr.length())
-  arr.each(fn(e) { m.set(e.0, e.1) })
+  arr.each(e => m.set(e.0, e.1))
   m
 }
 
@@ -463,7 +463,7 @@ fn[K : Eq, V] grow(self : T[K, V]) -> Unit {
 /// ```
 pub fn[K : Eq + Hash, V] of(arr : FixedArray[(K, V)]) -> T[K, V] {
   let m = new(capacity=arr.length())
-  arr.each(fn(e) { m.set(e.0, e.1) })
+  arr.each(e => m.set(e.0, e.1))
   m
 }
 
@@ -627,8 +627,8 @@ test "grow" {
 ///|
 test "get_or_init" {
   let m : T[MyString, Int] = new()
-  inspect(m.get_or_init("a", fn() { 1 }), content="1")
+  inspect(m.get_or_init("a", () => 1), content="1")
   inspect(m.get("a"), content="Some(1)")
-  inspect(m.get_or_init("a", fn() { 2 }), content="1")
+  inspect(m.get_or_init("a", () => 2), content="1")
   inspect(m.get("a"), content="Some(1)")
 }
