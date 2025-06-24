@@ -249,21 +249,19 @@ pub impl Show for StringView with to_string(self) {
 ///|
 /// Returns an iterator over the Unicode characters in the string view.
 pub fn View::iter(self : View) -> Iter[Char] {
-  Iter::new(yield_ => {
-    for index in self.start..<self.end {
-      let c1 = self.str.unsafe_charcode_at(index)
-      if is_leading_surrogate(c1) && index + 1 < self.end {
-        let c2 = self.str.unsafe_charcode_at(index + 1)
-        if is_trailing_surrogate(c2) {
-          let c = code_point_of_surrogate_pair(c1, c2)
-          guard yield_(c) is IterContinue else { break IterEnd }
-          continue index + 2
-        }
+  Iter::new(yield_ => for index in self.start..<self.end {
+    let c1 = self.str.unsafe_charcode_at(index)
+    if is_leading_surrogate(c1) && index + 1 < self.end {
+      let c2 = self.str.unsafe_charcode_at(index + 1)
+      if is_trailing_surrogate(c2) {
+        let c = code_point_of_surrogate_pair(c1, c2)
+        guard yield_(c) is IterContinue else { break IterEnd }
+        continue index + 2
       }
-      guard yield_(c1.unsafe_to_char()) is IterContinue else { break IterEnd }
-    } else {
-      IterContinue
     }
+    guard yield_(c1.unsafe_to_char()) is IterContinue else { break IterEnd }
+  } else {
+    IterContinue
   })
 }
 
@@ -293,21 +291,21 @@ pub fn View::iter2(self : View) -> Iter2[Int, Char] {
 ///|
 /// Returns an iterator over the Unicode characters in the string view in reverse order.
 pub fn View::rev_iter(self : View) -> Iter[Char] {
-  Iter::new(yield_ => {
-    for index = self.end - 1; index >= self.start; index = index - 1 {
-      let c1 = self.str.unsafe_charcode_at(index)
-      if is_trailing_surrogate(c1) && index - 1 >= 0 {
-        let c2 = self.str.unsafe_charcode_at(index - 1)
-        if is_leading_surrogate(c2) {
-          let c = code_point_of_surrogate_pair(c2, c1)
-          guard yield_(c) is IterContinue else { break IterEnd }
-          continue index - 2
-        }
+  Iter::new(yield_ => for index = self.end - 1
+                          index >= self.start
+                          index = index - 1 {
+    let c1 = self.str.unsafe_charcode_at(index)
+    if is_trailing_surrogate(c1) && index - 1 >= 0 {
+      let c2 = self.str.unsafe_charcode_at(index - 1)
+      if is_leading_surrogate(c2) {
+        let c = code_point_of_surrogate_pair(c2, c1)
+        guard yield_(c) is IterContinue else { break IterEnd }
+        continue index - 2
       }
-      guard yield_(c1.unsafe_to_char()) is IterContinue else { break IterEnd }
-    } else {
-      IterContinue
     }
+    guard yield_(c1.unsafe_to_char()) is IterContinue else { break IterEnd }
+  } else {
+    IterContinue
   })
 }
 
