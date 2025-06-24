@@ -22,16 +22,17 @@ pub(all) struct ChaCha8 {
 }
 
 ///|
+/// [seed] must be 32 bytes long.
 pub fn ChaCha8::new(seed : Bytes) -> ChaCha8 {
-  let c = {
+  let self = {
     buffer: FixedArray::make(32, 0UL),
-    seed: FixedArray::make(4, 0UL),
+    seed: FixedArray::makei(4, i => bytesToUInt64(seed, i * 8)),
     i: 0U,
-    n: 0U,
+    n: chunk,
     c: 0U,
   }
-  c.init(seed)
-  c
+  self.chacha_block_u64()
+  self
 }
 
 ///|
@@ -70,16 +71,6 @@ fn bytesToUInt64(b : Bytes, offset : Int) -> UInt64 {
 test "bytesToUInt64" {
   let bytes : Bytes = [0, 1, 0, 0, 0, 0, 0, 0]
   inspect(bytesToUInt64(bytes, 0), content="256")
-}
-
-///|
-/// [seed] must be 32 bytes long.
-fn ChaCha8::init(self : ChaCha8, seed : Bytes) -> Unit {
-  self.seed = FixedArray::makei(4, i => bytesToUInt64(seed, i * 8))
-  self.c = 0
-  self.chacha_block_u64()
-  self.i = 0
-  self.n = chunk
 }
 
 ///|
