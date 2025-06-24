@@ -104,18 +104,7 @@ pub fn ChaCha8::refill(self : ChaCha8) -> Unit {
 
 ///|
 fn ChaCha8::chacha_block_u64(self : ChaCha8) -> Unit {
-  // convert FixedArray[UInt64] size=[32] to FixedArray[FixedArray[UInt]] size=[16][4]
-  let buffer = FixedArray::makei(16, fn(_i) { FixedArray::make(4, 0U) })
-  // split u64 to 2 u32 and store in buffer to meet the function signature
-  for i in 0..<16 {
-    let hi = self.buffer[i * 2]
-    let lo = self.buffer[i * 2 + 1]
-    buffer[i][0] = (hi >> 32).to_uint()
-    buffer[i][1] = hi.to_uint()
-    buffer[i][2] = (lo >> 32).to_uint()
-    buffer[i][3] = lo.to_uint()
-  }
-  chacha_block(self.seed, buffer, self.c)
+  let buffer = chacha_block(self.seed, self.c)
   // concat 2 u32 to u64 and store in self.buffer
   for i in 0..<16 {
     for j = 0; j < 4; j = j + 2 {
@@ -130,9 +119,8 @@ fn ChaCha8::chacha_block_u64(self : ChaCha8) -> Unit {
 ///|
 fn chacha_block(
   seed : FixedArray[UInt64],
-  buf : FixedArray[FixedArray[UInt]],
   counter : UInt
-) -> Unit {
+) -> FixedArray[FixedArray[UInt]] {
   fn qr(t : (UInt, UInt, UInt, UInt)) -> (UInt, UInt, UInt, UInt) {
     let a = t.0
     let b = t.1
@@ -153,7 +141,7 @@ fn chacha_block(
     return (a, b, c, d)
   }
 
-  setup(seed, buf, counter)
+  let buf = setup(seed, counter)
   for i in 0..<buf[0].length() {
     let mut b0 = buf[0][i]
     let mut b1 = buf[1][i]
@@ -230,14 +218,15 @@ fn chacha_block(
     buf[14][i] = b14
     buf[15][i] = b15
   }
+  buf
 }
 
 ///|
 fn setup(
   seed : FixedArray[UInt64],
-  b32 : FixedArray[FixedArray[UInt]],
   counter : UInt
-) -> Unit {
+) -> FixedArray[FixedArray[UInt]] {
+  let b32 = FixedArray::makei(16, _ => FixedArray::make(4, 0U))
   b32[0][0] = 0x61707865
   b32[0][1] = 0x61707865
   b32[0][2] = 0x61707865
@@ -302,6 +291,7 @@ fn setup(
   b32[15][1] = 0
   b32[15][2] = 0
   b32[15][3] = 0
+  b32
 }
 
 ///|
