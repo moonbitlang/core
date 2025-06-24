@@ -24,3 +24,9 @@ To contribute, please read the contribution guidelines at [CONTRIBUTING.md](./CO
 
 Note we regularly evaluate external contributions and invite active contributors to join us as collaborators, thank you!
 To keep the contributors manageable, we will revoke commit rights if external collaborators are not active for over 6 months.
+
+### Arrow Functions
+
+MoonBit now supports JavaScript-like arrow functions. They offer a concise way
+to write closures and short functions using the `=>` syntax. Existing `fn` style
+closures continue to work, but arrow functions are preferred for new code.
