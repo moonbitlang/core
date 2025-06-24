@@ -1282,7 +1282,7 @@ pub fn T::join(self : T[String], separator : @string.View) -> String {
 ///
 /// ```moonbit
 ///   let deque = @deque.of([1,2,3,4,5,6,7,8,9])
-///   let deque_test = deque.drain(2, 6)
+///   let deque_test = deque.drain(start=2, len=4)
 ///   inspect(deque_test, content="@deque.of([3, 4, 5, 6])")
 ///   inspect(deque, content="@deque.of([1, 2, 7, 8, 9])")
 /// ```
