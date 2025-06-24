@@ -16,10 +16,6 @@
 pub const PI = 0x3.243F6A8885A308CA8A54
 
 ///|
-#deprecated("Use `PI` instead")
-pub let pi = 0x3.243F6A8885A308CA8A54
-
-///|
 const SIN_SWITCHOVER : Float = 201.15625
 
 ///|

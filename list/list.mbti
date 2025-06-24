@@ -6,47 +6,11 @@ import(
 )
 
 // Values
-fn[A] add(T[A], A) -> T[A]
-
-fn[A] all(T[A], (A) -> Bool) -> Bool
-
-fn[A] any(T[A], (A) -> Bool) -> Bool
-
-fn[A] concat(T[A], T[A]) -> T[A]
-
 fn[A] construct(A, T[A]) -> T[A]
-
-fn[A : Eq] contains(T[A], A) -> Bool
 
 fn[X] default() -> T[X]
 
-fn[A] drop(T[A], Int) -> T[A]
-
-fn[A] drop_while(T[A], (A) -> Bool) -> T[A]
-
-fn[A] each(T[A], (A) -> Unit) -> Unit
-
-fn[A] eachi(T[A], (Int, A) -> Unit) -> Unit
-
 fn[A] empty() -> T[A]
-
-fn[A] filter(T[A], (A) -> Bool) -> T[A]
-
-fn[A, B] filter_map(T[A], (A) -> B?) -> T[B]
-
-fn[A] find(T[A], (A) -> Bool) -> A?
-
-fn[A] find_index(T[A], (A) -> Bool) -> Int?
-
-fn[A] findi(T[A], (A, Int) -> Bool) -> A?
-
-fn[A, B] flat_map(T[A], (A) -> T[B]) -> T[B]
-
-fn[A] flatten(T[T[A]]) -> T[A]
-
-fn[A, B] fold(T[A], init~ : B, (B, A) -> B) -> B
-
-fn[A, B] foldi(T[A], init~ : B, (Int, B, A) -> B) -> B
 
 fn[A] from_array(Array[A]) -> T[A]
 
@@ -56,95 +20,17 @@ fn[A] from_iter_rev(Iter[A]) -> T[A]
 
 fn[A : @json.FromJson] from_json(Json) -> T[A] raise @json.JsonDecodeError
 
-fn[A] head(T[A]) -> A?
-
-fn[A] intercalate(T[T[A]], T[A]) -> T[A]
-
-fn[A] intersperse(T[A], A) -> T[A]
-
-fn[A] is_empty(T[A]) -> Bool
-
-fn[A : Eq] is_prefix(T[A], T[A]) -> Bool
-
-fn[A : Eq] is_suffix(T[A], T[A]) -> Bool
-
-fn[A] iter(T[A]) -> Iter[A]
-
-fn[A] iter2(T[A]) -> Iter2[Int, A]
-
-fn[A] last(T[A]) -> A?
-
-fn[A] length(T[A]) -> Int
-
-fn[A : Eq, B] lookup(T[(A, B)], A) -> B?
-
-fn[A, B] map(T[A], (A) -> B) -> T[B]
-
-fn[A, B] mapi(T[A], (Int, A) -> B) -> T[B]
-
-fn[A : Compare] maximum(T[A]) -> A?
-
-fn[A : Compare] minimum(T[A]) -> A?
-
 fn[A] new() -> T[A]
-
-fn[A] nth(T[A], Int) -> A?
 
 fn[A] of(FixedArray[A]) -> T[A]
 
-fn[A] prepend(T[A], A) -> T[A]
-
-fn[A : Eq] remove(T[A], A) -> T[A]
-
-fn[A] remove_at(T[A], Int) -> T[A]
-
 fn[A] repeat(Int, A) -> T[A]
-
-fn[A] rev(T[A]) -> T[A]
-
-fn[A] rev_concat(T[A], T[A]) -> T[A]
-
-#deprecated
-fn[A, B] rev_fold(T[A], init~ : B, (B, A) -> B) -> B
-
-#deprecated
-fn[A, B] rev_foldi(T[A], init~ : B, (Int, B, A) -> B) -> B
-
-fn[A, B] rev_map(T[A], (A) -> B) -> T[B]
 
 fn[A, S] rev_unfold((S) -> (A, S)?, init~ : S) -> T[A]
 
-fn[A, E] scan_left(T[A], (E, A) -> E, init~ : E) -> T[E]
-
-fn[A, B] scan_right(T[A], (B, A) -> B, init~ : B) -> T[B]
-
 fn[A] singleton(A) -> T[A]
 
-fn[A : Compare] sort(T[A]) -> T[A]
-
-fn[A] tail(T[A]) -> T[A]
-
-fn[A] take(T[A], Int) -> T[A]
-
-fn[A] take_while(T[A], (A) -> Bool) -> T[A]
-
-fn[A] to_array(T[A]) -> Array[A]
-
-fn[A : ToJson] to_json(T[A]) -> Json
-
 fn[A, S] unfold((S) -> (A, S)?, init~ : S) -> T[A]
-
-fn[A] unsafe_head(T[A]) -> A
-
-fn[A] unsafe_last(T[A]) -> A
-
-fn[A : Compare] unsafe_maximum(T[A]) -> A
-
-fn[A : Compare] unsafe_minimum(T[A]) -> A
-
-fn[A] unsafe_nth(T[A], Int) -> A
-
-fn[A, B] unzip(T[(A, B)]) -> (T[A], T[B])
 
 fn[A, B] zip(T[A], T[B]) -> T[(A, B)]
 

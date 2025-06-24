@@ -12,20 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-///|
-#deprecated("use `@math.hypotf` instead")
-#coverage.skip
-pub fn Float::hypot(self : Float, y : Float) -> Float {
-  let epsilon : Float = 1.1920928955078125e-7
-  let x = self.abs()
-  let y = y.abs()
-  if self.is_inf() || y.is_inf() {
-    return infinity
-  }
-  let (x, y) = if y > x { (y, x) } else { (x, y) }
-  if x * epsilon >= y {
-    return x
-  }
-  let rat = y / x
-  x * (rat * rat + 1.0).sqrt()
-}
+///| Extensible buffer.
+#deprecated("Use type `T` instead")
+pub typealias T as Buffer
