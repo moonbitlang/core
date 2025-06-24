@@ -64,6 +64,11 @@ After making your changes, it's important to test them to ensure they work as ex
   moon info // Generate mbti files, these files should be tracked by git
   ```
 
+## Testing guidelines
+
+- Prefer `assert_true`, `assert_false` and other `assert_*` helpers over using `inspect` to check results.
+- Keep test names concise and descriptive, e.g. `test "push adds an element"`.
+
 ## Step 4: Submit a pull request and request a review
 
 Simply follow the standard [GitHub flow](https://docs.github.com/en/get-started/using-github/github-flow) to submit your pull request.
@@ -77,20 +82,26 @@ After submitting your pull request, request a review from the project maintainer
 
 - Standalone packages with good functionalities, for example, bigint package
 
-- Fast and efficient abstractions are preferred over *theoretically perfect* abstractions
+  - Fast and efficient abstractions are preferred over *theoretically perfect* abstractions
 
-   MoonBit is a pragmatic language, we care about both compile time and runtime performance. Take `+` for example, it is a trait method in Rust,
-   it could be the same in MoonBit, but we care about compile time performance so much that we would prefer it as a simple function to make sure 
-   both compile time and runtime are fast
+    MoonBit is a pragmatic language, we care about both compile time and runtime performance. `+` used to be implemented as a simple
+    function for this reason. It is now a trait method, but performance is still a major consideration when designing APIs.
 
 - Large changes are encouraged to communicate earlier before the implementation
 
    The core library is coupled with the compiler to some extent, it is better to communicate your ideas first if you 
-   plan to make large structural changes.  
+  plan to make large structural changes.
+
+# API design principles
+
+- Use methods when the behavior naturally belongs to a type, otherwise prefer free functions.
+- Only include functions in the standard library when they have broad usage or provide significant performance advantages.
+- Prefer `for i in 0..<length` or `for x in array` style loops over `for i = 0; i < length; i = i + 1`.
+- Use `arr[i]` for bounds-checked access and `arr.unsafe_get(i)` only when the index is known to be valid.
 
 # Naming conventions
 
 - function names, `snake_case` is preferred.
-- type parameters, one character starting from `A` is preferred, e.g, `fn[A,B] Array::map(self : Array[A], f : (A) -> (B)) -> Array[B]`, for some established
-  conventions, `Map[K,V]` it is also accepted.
+- type parameters use single letters starting from `A` by default. For example `fn[A,B] Array::map(self : Array[A], f : (A) -> (B)) -> Array[B]`.
+  Map-like containers continue to use `Map[K,V]` and sets may use `[K]` when the elements are treated as keys.
 - type names, `CamelCase` is preferred, if one package is centered around one specific type, short name `T` is preferred, e.g, `@sorted_set.T`.
