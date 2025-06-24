@@ -55,8 +55,6 @@ jobs:
           moon test --target all
           moon test --release --target all
           moon test --target native
-          moon test --target native --release
-
 
       - name: Setup MSVC
         if: ${{ matrix.os == 'windows-latest' }}
@@ -76,11 +74,6 @@ jobs:
         if: ${{ matrix.os == 'windows-latest' }}
         run: |
           moon test --target native
-      
-      - name: Run moon test on Windows (--release + --target native)
-        if: ${{ matrix.os == 'windows-latest' }}
-        run: |
-          moon test --target native --release
 
       - name: moon bundle
         run: moon bundle --all
@@ -190,7 +183,6 @@ jobs:
           moon test --target all
           moon test --release --target all
           moon test --target native
-          moon test --target native --release
 
       - name: Setup MSVC
         if: ${{ matrix.os == 'windows-latest' }}
@@ -210,11 +202,6 @@ jobs:
         if: ${{ matrix.os == 'windows-latest' }}
         run: |
           moon test --target native
-      
-      - name: Run moon test on Windows (--release + --target native)
-        if: ${{ matrix.os == 'windows-latest' }}
-        run: |
-          moon test --target native --release
 
       - name: Test new allocator
         run: |
