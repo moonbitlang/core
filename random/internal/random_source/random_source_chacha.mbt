@@ -215,72 +215,31 @@ fn setup(
   seed : FixedArray[UInt64],
   counter : UInt
 ) -> FixedArray[FixedArray[UInt]] {
-  let b32 = FixedArray::makei(16, _ => FixedArray::make(4, 0U))
-  b32[0][0] = 0x61707865
-  b32[0][1] = 0x61707865
-  b32[0][2] = 0x61707865
-  b32[0][3] = 0x61707865
-  b32[1][0] = 0x3320646e
-  b32[1][1] = 0x3320646e
-  b32[1][2] = 0x3320646e
-  b32[1][3] = 0x3320646e
-  b32[2][0] = 0x79622d32
-  b32[2][1] = 0x79622d32
-  b32[2][2] = 0x79622d32
-  b32[2][3] = 0x79622d32
-  b32[3][0] = 0x6b206574
-  b32[3][1] = 0x6b206574
-  b32[3][2] = 0x6b206574
-  b32[3][3] = 0x6b206574
-  b32[4][0] = seed[0].to_uint()
-  b32[4][1] = seed[0].to_uint()
-  b32[4][2] = seed[0].to_uint()
-  b32[4][3] = seed[0].to_uint()
-  b32[5][0] = (seed[0] >> 32).to_uint()
-  b32[5][1] = (seed[0] >> 32).to_uint()
-  b32[5][2] = (seed[0] >> 32).to_uint()
-  b32[5][3] = (seed[0] >> 32).to_uint()
-  b32[6][0] = seed[1].to_uint()
-  b32[6][1] = seed[1].to_uint()
-  b32[6][2] = seed[1].to_uint()
-  b32[6][3] = seed[1].to_uint()
-  b32[7][0] = (seed[1] >> 32).to_uint()
-  b32[7][1] = (seed[1] >> 32).to_uint()
-  b32[7][2] = (seed[1] >> 32).to_uint()
-  b32[7][3] = (seed[1] >> 32).to_uint()
-  b32[8][0] = seed[2].to_uint()
-  b32[8][1] = seed[2].to_uint()
-  b32[8][2] = seed[2].to_uint()
-  b32[8][3] = seed[2].to_uint()
-  b32[9][0] = (seed[2] >> 32).to_uint()
-  b32[9][1] = (seed[2] >> 32).to_uint()
-  b32[9][2] = (seed[2] >> 32).to_uint()
-  b32[9][3] = (seed[2] >> 32).to_uint()
-  b32[10][0] = seed[3].to_uint()
-  b32[10][1] = seed[3].to_uint()
-  b32[10][2] = seed[3].to_uint()
-  b32[10][3] = seed[3].to_uint()
-  b32[11][0] = (seed[3] >> 32).to_uint()
-  b32[11][1] = (seed[3] >> 32).to_uint()
-  b32[11][2] = (seed[3] >> 32).to_uint()
-  b32[11][3] = (seed[3] >> 32).to_uint()
-  b32[12][0] = counter + 0
-  b32[12][1] = counter + 1
-  b32[12][2] = counter + 2
-  b32[12][3] = counter + 3
-  b32[13][0] = 0
-  b32[13][1] = 0
-  b32[13][2] = 0
-  b32[13][3] = 0
-  b32[14][0] = 0
-  b32[14][1] = 0
-  b32[14][2] = 0
-  b32[14][3] = 0
-  b32[15][0] = 0
-  b32[15][1] = 0
-  b32[15][2] = 0
-  b32[15][3] = 0
-  b32
+  let (lo_0, hi_0) = (seed[0].to_uint(), (seed[0] >> 32).to_uint())
+  let (lo_1, hi_1) = (seed[1].to_uint(), (seed[1] >> 32).to_uint())
+  let (lo_2, hi_2) = (seed[2].to_uint(), (seed[2] >> 32).to_uint())
+  let (lo_3, hi_3) = (seed[3].to_uint(), (seed[3] >> 32).to_uint())
+  [
+    [0x61707865, 0x61707865, 0x61707865, 0x61707865],
+    [0x3320646e, 0x3320646e, 0x3320646e, 0x3320646e],
+    [0x79622d32, 0x79622d32, 0x79622d32, 0x79622d32],
+    [0x6b206574, 0x6b206574, 0x6b206574, 0x6b206574],
+    //
+    [lo_0, lo_0, lo_0, lo_0],
+    [hi_0, hi_0, hi_0, hi_0],
+    [lo_1, lo_1, lo_1, lo_1],
+    [hi_1, hi_1, hi_1, hi_1],
+    //
+    [lo_2, lo_2, lo_2, lo_2],
+    [hi_2, hi_2, hi_2, hi_2],
+    [lo_3, lo_3, lo_3, lo_3],
+    [hi_3, hi_3, hi_3, hi_3],
+    //
+    [counter + 0, counter + 1, counter + 2, counter + 3],
+    [0, 0, 0, 0],
+    [0, 0, 0, 0],
+    [0, 0, 0, 0],
+  ]
 }
 
 ///|
