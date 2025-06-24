@@ -1290,7 +1290,7 @@ pub fn[A] T::drain(self : T[A], start~ : Int, len~ : Int) -> T[A] {
   let end = start + len
   guard start >= 0 && end <= self.length()
   let dq = new(capacity=len)
-  dq.buf = self.buf.blit(dq.buf, len=len, src_offset=start, dst_offset=0)
+  dq.buf = self.buf.blit(dq.buf, len~, src_offset=start, dst_offset=0)
   ignore(
     self.buf.blit(
       self.buf,
@@ -1301,7 +1301,7 @@ pub fn[A] T::drain(self : T[A], start~ : Int, len~ : Int) -> T[A] {
   )
   self.tail = self.length() - end
   self.len = self.length() - len
-  let deq1 = T::{ buf: dq.buf, len: len, head: 0, tail: len - 1 }
+  let deq1 = T::{ buf: dq.buf, len, head: 0, tail: len - 1 }
   deq1
 }
 
