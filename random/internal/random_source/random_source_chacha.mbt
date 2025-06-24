@@ -76,29 +76,8 @@ test "bytesToUInt64" {
 /// [seed] must be 32 bytes long.
 fn ChaCha8::init(self : ChaCha8, seed : Bytes) -> Unit {
   self.seed = FixedArray::makei(4, i => bytesToUInt64(seed, i * 8))
-  // convert FixedArray[UInt64] size=[32] to FixedArray[FixedArray[UInt]] size=[16][4]
-  let buffer = FixedArray::makei(16, fn(_i) { FixedArray::make(4, 0U) })
-  // split u64 to 2 u32 and store in buffer to meet the function signature
-  for i in 0..<16 {
-    let hi = self.buffer[i * 2]
-    let lo = self.buffer[i * 2 + 1]
-    buffer[i][0] = (hi >> 32).to_uint()
-    buffer[i][1] = hi.to_uint()
-    buffer[i][2] = (lo >> 32).to_uint()
-    buffer[i][3] = lo.to_uint()
-  }
-  // [buffer] is changed in chacha_block
-  chacha_block(self.seed, buffer, 0)
-  // concat 2 u32 to u64 and store in self.buffer
-  for i in 0..<16 {
-    for j = 0; j < 4; j = j + 2 {
-      let lo = buffer[i][j]
-      let hi = buffer[i][j + 1]
-      let u64 : UInt64 = (hi.to_uint64() << 32) | lo.to_uint64()
-      self.buffer[i * 2 + j / 2] = u64
-    }
-  }
   self.c = 0
+  self.chacha_block_u64()
   self.i = 0
   self.n = chunk
 }
@@ -115,6 +94,16 @@ pub fn ChaCha8::refill(self : ChaCha8) -> Unit {
     self.seed[3] = self.buffer[len - chachaReseed + 3]
     self.c = 0
   }
+  self.chacha_block_u64()
+  self.i = 0
+  self.n = self.buffer.length().reinterpret_as_uint()
+  if self.c == ctrMax - ctrInc {
+    self.n = (self.buffer.length() - chachaReseed).reinterpret_as_uint()
+  }
+}
+
+///|
+fn ChaCha8::chacha_block_u64(self : ChaCha8) -> Unit {
   // convert FixedArray[UInt64] size=[32] to FixedArray[FixedArray[UInt]] size=[16][4]
   let buffer = FixedArray::makei(16, fn(_i) { FixedArray::make(4, 0U) })
   // split u64 to 2 u32 and store in buffer to meet the function signature
@@ -135,11 +124,6 @@ pub fn ChaCha8::refill(self : ChaCha8) -> Unit {
       let u64 : UInt64 = (hi.to_uint64() << 32) | lo.to_uint64()
       self.buffer[i * 2 + j / 2] = u64
     }
-  }
-  self.i = 0
-  self.n = self.buffer.length().reinterpret_as_uint()
-  if self.c == ctrMax - ctrInc {
-    self.n = (self.buffer.length() - chachaReseed).reinterpret_as_uint()
   }
 }
 
