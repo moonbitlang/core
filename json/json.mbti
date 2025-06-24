@@ -5,6 +5,8 @@ import(
 )
 
 // Values
+fn[T] decode_error(JsonPath, String) -> T raise JsonDecodeError
+
 fn[T : FromJson] from_json(Json, path~ : JsonPath = ..) -> T raise JsonDecodeError
 
 fn inspect(&ToJson, content? : Json, loc~ : SourceLoc = _, args_loc~ : ArgsLoc = _) -> Unit raise InspectError

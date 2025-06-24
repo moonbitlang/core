@@ -30,7 +30,10 @@ pub fn[T : FromJson] from_json(
 }
 
 ///|
-fn[T] decode_error(path : JsonPath, msg : String) -> T raise JsonDecodeError {
+pub fn[T] decode_error(
+  path : JsonPath,
+  msg : String
+) -> T raise JsonDecodeError {
   raise JsonDecodeError((path, msg))
 }
 
