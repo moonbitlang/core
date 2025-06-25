@@ -11,7 +11,7 @@ pub(all) struct ChaCha8 {
   mut c : UInt
 }
 fn ChaCha8::new(Bytes) -> Self
-fn ChaCha8::next(Self) -> (UInt64, Bool)
+fn ChaCha8::next(Self) -> UInt64?
 fn ChaCha8::refill(Self) -> Unit
 
 // Type aliases

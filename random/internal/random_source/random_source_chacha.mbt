@@ -49,13 +49,13 @@ let chunk = 32U
 let chacha_reseed = 4
 
 ///|
-pub fn ChaCha8::next(self : ChaCha8) -> (UInt64, Bool) {
+pub fn ChaCha8::next(self : ChaCha8) -> UInt64? {
   let i = self.i
   if i >= self.n {
-    return (0, false)
+    return None
   }
   self.i = i + 1
-  (self.buffer[i.reinterpret_as_int() & 31], true)
+  Some(self.buffer[i.reinterpret_as_int() & 31])
 }
 
 ///|
@@ -350,9 +350,8 @@ test "output" {
   let res = Array::new(capacity=372)
   fn uint64(s : ChaCha8) -> UInt64 {
     for {
-      let x = s.next()
-      if x.1 {
-        return x.0
+      if s.next() is Some(x) {
+        return x
       }
       s.refill()
     }
