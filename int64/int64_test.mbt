@@ -197,3 +197,14 @@ test "to_le_bytes of negative Int64" {
     ,
   )
 }
+
+///|
+test "abs" {
+  assert_eq(Int64::abs(42L), 42L)
+  assert_eq(Int64::abs(-42L), 42L)
+  assert_eq(Int64::abs(0L), 0L)
+  assert_eq(Int64::abs(@int64.max_value), @int64.max_value)
+
+  // overflow case
+  assert_eq(Int64::abs(@int64.min_value), @int64.min_value)
+}
