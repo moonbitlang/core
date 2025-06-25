@@ -14,35 +14,36 @@
 
 ///|
 struct ChaCha8 {
-  /// length = 32 * 2
+  /// length = BUFFER_CHUNK_NUM * 2
   buffer : FixedArray[UInt]
-  /// length = 4 * 2
+  /// length = SEED_CHUNK_NUM * 2
   seed : FixedArray[UInt]
   mut i : UInt
   mut n : UInt
-  mut c : UInt
+  mut counter : UInt
 }
 
 ///|
 /// [seed] must be 32 bytes long.
 pub fn ChaCha8::new(seed : Bytes) -> ChaCha8 {
-  let seed = FixedArray::makei(4 * 2, i => seed[i * 4:i * 4 + 4].to_uint_le())
-  let buffer = FixedArray::make(32 * 2, 0U)
+  let seed = FixedArray::makei(SEED_CHUNK_NUM * 2, i => seed[i * 4:i * 4 + 4].to_uint_le())
+  let buffer = FixedArray::make(BUFFER_CHUNK_NUM * 2, 0U)
   chacha_block(seed, buffer, 0)
-  { seed, buffer, c: 0, i: 0, n: chunk }
+  { seed, buffer, counter: 0, i: 0, n: BUFFER_CHUNK_NUM.reinterpret_as_uint() }
 }
 
 ///|
-let ctr_inc = 4U
+const COUNTER_INC = 4U
 
 ///|
-let ctr_max = 16U
+const COUNTER_MAX = 16U
 
 ///|
-let chunk = 32U
+/// Must be a power of 2
+const BUFFER_CHUNK_NUM = 32
 
 ///|
-let chacha_reseed = 4
+const SEED_CHUNK_NUM = 4
 
 ///|
 pub fn ChaCha8::next(self : ChaCha8) -> UInt64? {
@@ -51,7 +52,7 @@ pub fn ChaCha8::next(self : ChaCha8) -> UInt64? {
     return None
   }
   self.i = i + 1
-  let index = i.reinterpret_as_int() & 31
+  let index = i.reinterpret_as_int() & (BUFFER_CHUNK_NUM - 1)
   let lo = self.buffer[index * 2].to_uint64()
   let hi = self.buffer[index * 2 + 1].to_uint64()
   Some((hi << 32) | lo)
@@ -59,24 +60,23 @@ pub fn ChaCha8::next(self : ChaCha8) -> UInt64? {
 
 ///|
 pub fn ChaCha8::refill(self : ChaCha8) -> Unit {
-  self.c += ctr_inc
-  // Treat [self.seed] and [self.buffer] as FixedArray[UInt64]
-  let self_buffer_as_u64_length = self.buffer.length() / 2
-  if self.c == ctr_max {
+  self.counter += COUNTER_INC
+  if self.counter == COUNTER_MAX {
     // reseed
+    // 1 chunk = 64 bits = number of bits in UInt * 2
     self.buffer.blit_to(
       self.seed,
-      len=chacha_reseed * 2,
-      src_offset=(self_buffer_as_u64_length - chacha_reseed) * 2,
+      len=SEED_CHUNK_NUM * 2,
+      src_offset=(BUFFER_CHUNK_NUM - SEED_CHUNK_NUM) * 2,
     )
-    self.c = 0
+    self.counter = 0
   }
-  chacha_block(self.seed, self.buffer, self.c)
+  chacha_block(self.seed, self.buffer, self.counter)
   self.i = 0
-  self.n = if self.c == ctr_max - ctr_inc {
-    (self_buffer_as_u64_length - chacha_reseed).reinterpret_as_uint()
+  self.n = if self.counter == COUNTER_MAX - COUNTER_INC {
+    (BUFFER_CHUNK_NUM - SEED_CHUNK_NUM).reinterpret_as_uint()
   } else {
-    self_buffer_as_u64_length.reinterpret_as_uint()
+    BUFFER_CHUNK_NUM.reinterpret_as_uint()
   }
 }
 
@@ -239,6 +239,7 @@ fn setup(
   b32[11 * 4 + 1] = seed[7]
   b32[11 * 4 + 2] = seed[7]
   b32[11 * 4 + 3] = seed[7]
+  // from counter to counter + (COUNTER_INC - 1)
   b32[12 * 4 + 0] = counter + 0
   b32[12 * 4 + 1] = counter + 1
   b32[12 * 4 + 2] = counter + 2
