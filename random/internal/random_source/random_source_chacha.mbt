@@ -26,8 +26,10 @@ pub fn ChaCha8::new(seed : Bytes) -> ChaCha8 {
 
 ///|
 pub(all) struct State {
-  mut buffer : FixedArray[UInt64] // size=[32]
-  mut seed : FixedArray[UInt64] // size=[4]
+  /// length = 32
+  mut buffer : FixedArray[UInt64]
+  /// length = 4
+  mut seed : FixedArray[UInt64]
   mut i : UInt
   mut n : UInt
   mut c : UInt
@@ -45,16 +47,16 @@ fn State::new() -> State {
 }
 
 ///|
-let ctrInc = 4U
+let ctr_inc = 4U
 
 ///|
-let ctrMax = 16U
+let ctr_max = 16U
 
 ///|
 let chunk = 32U
 
 ///|
-let chachaReseed = 4
+let chacha_reseed = 4
 
 ///|
 pub fn State::next(self : State) -> (UInt64, Bool) {
@@ -67,7 +69,7 @@ pub fn State::next(self : State) -> (UInt64, Bool) {
 }
 
 ///|
-fn bytesToUInt64(b : FixedArray[Byte]) -> UInt64 {
+fn bytes_to_uint64(b : FixedArray[Byte]) -> UInt64 {
   let mut result = 0UL
   for i in 0..<8 {
     result = result | (b[i].to_int64().reinterpret_as_uint64() << (i * 8))
@@ -76,12 +78,12 @@ fn bytesToUInt64(b : FixedArray[Byte]) -> UInt64 {
 }
 
 ///|
-test "bytesToUInt64" {
+test "bytes_to_uint64" {
   let bytes = FixedArray::make(8, Byte::default())
   for i in 0..<2 {
     bytes[i] = i.to_byte()
   }
-  inspect(bytesToUInt64(bytes), content="256")
+  inspect(bytes_to_uint64(bytes), content="256")
 }
 
 ///|
@@ -98,10 +100,10 @@ fn State::init(self : State, seed : Bytes) -> Unit {
     seed3[i] = seed[24 + i]
   }
   let arr = FixedArray::make(4, 0UL)
-  arr[0] = bytesToUInt64(seed0)
-  arr[1] = bytesToUInt64(seed1)
-  arr[2] = bytesToUInt64(seed2)
-  arr[3] = bytesToUInt64(seed3)
+  arr[0] = bytes_to_uint64(seed0)
+  arr[1] = bytes_to_uint64(seed1)
+  arr[2] = bytes_to_uint64(seed2)
+  arr[3] = bytes_to_uint64(seed3)
   self.init64(arr)
 }
 
@@ -137,14 +139,13 @@ fn State::init64(self : State, seed : FixedArray[UInt64]) -> Unit {
 
 ///|
 pub fn State::refill(self : State) -> Unit {
-  self.c = self.c + ctrInc
-  if self.c == ctrMax {
+  self.c = self.c + ctr_inc
+  if self.c == ctr_max {
     // reseed
     let len = self.buffer.length()
-    self.seed[0] = self.buffer[len - chachaReseed + 0]
-    self.seed[1] = self.buffer[len - chachaReseed + 1]
-    self.seed[2] = self.buffer[len - chachaReseed + 2]
-    self.seed[3] = self.buffer[len - chachaReseed + 3]
+    for i in 0..<chacha_reseed {
+      self.seed[i] = self.buffer[len - chacha_reseed + i]
+    }
     self.c = 0
   }
   // convert FixedArray[UInt64] size=[32] to FixedArray[FixedArray[UInt]] size=[16][4]
@@ -169,9 +170,10 @@ pub fn State::refill(self : State) -> Unit {
     }
   }
   self.i = 0
-  self.n = self.buffer.length().reinterpret_as_uint()
-  if self.c == ctrMax - ctrInc {
-    self.n = (self.buffer.length() - chachaReseed).reinterpret_as_uint()
+  self.n = if self.c == ctr_max - ctr_inc {
+    (self.buffer.length() - chacha_reseed).reinterpret_as_uint()
+  } else {
+    self.buffer.length().reinterpret_as_uint()
   }
 }
 
@@ -265,14 +267,14 @@ fn chacha_block(
     buf[1][i] = b1
     buf[2][i] = b2
     buf[3][i] = b3
-    buf[4][i] = buf[4][i] + b4
-    buf[5][i] = buf[5][i] + b5
-    buf[6][i] = buf[6][i] + b6
-    buf[7][i] = buf[7][i] + b7
-    buf[8][i] = buf[8][i] + b8
-    buf[9][i] = buf[9][i] + b9
-    buf[10][i] = buf[10][i] + b10
-    buf[11][i] = buf[11][i] + b11
+    buf[4][i] += b4
+    buf[5][i] += b5
+    buf[6][i] += b6
+    buf[7][i] += b7
+    buf[8][i] += b8
+    buf[9][i] += b9
+    buf[10][i] += b10
+    buf[11][i] += b11
     buf[12][i] = b12
     buf[13][i] = b13
     buf[14][i] = b14
