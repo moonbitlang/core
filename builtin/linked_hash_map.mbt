@@ -24,11 +24,6 @@ priv struct Entry[K, V] {
 } derive(Show)
 
 ///|
-impl[K : Eq, V] Eq for Entry[K, V] with op_equal(self, other) {
-  self.hash == other.hash && self.key == other.key
-}
-
-///|
 /// Mutable linked hash map that maintains the order of insertion, not thread safe.
 ///
 /// # Example

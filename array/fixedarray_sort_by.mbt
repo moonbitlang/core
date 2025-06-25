@@ -287,18 +287,17 @@ fn[T] fixed_choose_pivot_by(
   if len >= 8 {
     let a = len / 4 * 1
     let c = len / 4 * 3
-    letrec sort_2 = fn(a : Int, b : Int) {
+    let sort_2 = fn(a : Int, b : Int) {
       if cmp(arr[a], arr[b]) > 0 {
         arr.swap(a, b)
         swaps += 1
       }
     }
-    and sort_3 = fn(a : Int, b : Int, c : Int) {
+    let sort_3 = fn(a : Int, b : Int, c : Int) {
       sort_2(a, b)
       sort_2(b, c)
       sort_2(a, b)
     }
-
     if len > use_median_of_medians {
       sort_3(a - 1, a, a + 1)
       sort_3(b - 1, b, b + 1)

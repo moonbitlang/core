@@ -178,12 +178,10 @@ pub fn[T : Eq] View::contains(self : View[T], value : T) -> Bool {
 ///   inspect(sum, content="5")
 /// ```
 pub fn[A] View::iter(self : View[A]) -> Iter[A] {
-  Iter::new(fn(yield_) {
-    for v in self {
-      guard yield_(v) is IterContinue else { break IterEnd }
-    } else {
-      IterContinue
-    }
+  Iter::new(yield_ => for v in self {
+    guard yield_(v) is IterContinue else { break IterEnd }
+  } else {
+    IterContinue
   })
 }
 
@@ -205,12 +203,10 @@ pub fn[A] View::iter(self : View[A]) -> Iter[A] {
 ///   inspect(sum_keys, content="1")
 /// ```
 pub fn[A] View::iter2(self : View[A]) -> Iter2[Int, A] {
-  Iter2::new(fn(yield_) {
-    for i, v in self {
-      guard yield_(i, v) is IterContinue else { break IterEnd }
-    } else {
-      IterContinue
-    }
+  Iter2::new(yield_ => for i, v in self {
+    guard yield_(i, v) is IterContinue else { break IterEnd }
+  } else {
+    IterContinue
   })
 }
 

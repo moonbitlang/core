@@ -152,7 +152,7 @@ pub fn[V : Compare] union(self : T[V], src : T[V]) -> T[V] {
       let mut ct = 0
       let ret = { root: t, size: 0 }
       // TODO: optimize this. Avoid counting the size of the set.
-      ret.each(fn(_x) { ct = ct + 1 })
+      ret.each(_x => ct = ct + 1)
       ret.size = ct
       ret
     }
@@ -247,7 +247,7 @@ fn[V : Compare] join_right(l : Node[V]?, v : V, r : Node[V]?) -> Node[V] {
 /// Returns the difference of two sets.
 pub fn[V : Compare] difference(self : T[V], src : T[V]) -> T[V] {
   let ret = new()
-  self.each(fn(x) { if not(src.contains(x)) { ret.add(x) } })
+  self.each(x => if not(src.contains(x)) { ret.add(x) })
   ret
 }
 
@@ -283,7 +283,7 @@ pub fn[V : Compare] symmetric_difference(self : T[V], other : T[V]) -> T[V] {
 /// Returns the intersection of two sets.
 pub fn[V : Compare] intersection(self : T[V], src : T[V]) -> T[V] {
   let ret = new()
-  self.each(fn(x) { if src.contains(x) { ret.add(x) } })
+  self.each(x => if src.contains(x) { ret.add(x) })
   ret
 }
 
@@ -291,7 +291,7 @@ pub fn[V : Compare] intersection(self : T[V], src : T[V]) -> T[V] {
 /// Returns if a set is a subset of another set.
 pub fn[V : Compare] subset(self : T[V], src : T[V]) -> Bool {
   let mut ret = true
-  self.each(fn(x) { if not(src.contains(x)) { ret = false } })
+  self.each(x => if not(src.contains(x)) { ret = false })
   ret
 }
 
@@ -299,7 +299,7 @@ pub fn[V : Compare] subset(self : T[V], src : T[V]) -> Bool {
 /// Returns if two sets are disjoint.
 pub fn[V : Compare] disjoint(self : T[V], src : T[V]) -> Bool {
   let mut ret = true
-  self.each(fn(x) { if src.contains(x) { ret = false } })
+  self.each(x => if src.contains(x) { ret = false })
   ret
 }
 
@@ -340,7 +340,7 @@ pub fn[V] each(self : T[V], f : (V) -> Unit raise?) -> Unit raise? {
 /// Iterates the set with index.
 pub fn[V] eachi(self : T[V], f : (Int, V) -> Unit raise?) -> Unit raise? {
   let mut i = 0
-  self.each(fn(v) {
+  self.each(v => {
     f(i, v)
     i = i + 1
   })
@@ -372,7 +372,7 @@ pub fn[V] to_array(self : T[V]) -> Array[V] {
 ///|
 /// Returns a iterator.
 pub fn[V] iter(self : T[V]) -> Iter[V] {
-  Iter::new(fn(yield_) {
+  Iter::new(yield_ => {
     fn go(x : Node[V]?) {
       match x {
         None => IterContinue
@@ -394,7 +394,7 @@ pub fn[V] iter(self : T[V]) -> Iter[V] {
 ///|
 pub fn[V : Compare] from_iter(iter : Iter[V]) -> T[V] {
   let s = new()
-  iter.each(fn(e) { s.add(e) })
+  iter.each(e => s.add(e))
   s
 }
 
@@ -420,7 +420,7 @@ impl[T : Show] Show for Node[T] with output(self, logger) {
 
 ///|
 pub fn[V : Compare] range(self : T[V], low : V, high : V) -> Iter[V] {
-  Iter::new(fn(yield_) {
+  Iter::new(yield_ => {
     fn go(x : Node[V]?) {
       match x {
         None => IterContinue
