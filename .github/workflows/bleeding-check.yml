@@ -90,3 +90,49 @@ jobs:
         run: |
           moon fmt
           git diff
+
+  bleeding-native-opt-test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, macos-13, windows-latest]
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    if: |
+      (github.event_name == 'pull_request' && startsWith(github.head_ref, 'bleeding/')) ||
+      (github.event_name == 'push' && github.ref == 'refs/heads/main')
+    continue-on-error: false
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: install
+        if: ${{ matrix.os != 'windows-latest' }}
+        run: |
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash -s bleeding
+          echo "$HOME/.moon/bin" >> $GITHUB_PATH
+
+      - name: install on windows
+        env:
+          MOONBIT_INSTALL_VERSION: bleeding
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: |
+          Set-ExecutionPolicy RemoteSigned -Scope CurrentUser; irm https://cli.moonbitlang.com/install/powershell.ps1 | iex
+          "C:\Users\runneradmin\.moon\bin" | Out-File -FilePath $env:GITHUB_PATH -Append
+
+      - name: moon version
+        run: |
+          moon version --all
+
+      - name: Set ulimit and run moon test (--release + --target native)
+        if: ${{ matrix.os != 'windows-latest' }}
+        run: |
+          ulimit -s 8176
+          moon test --target native --release
+
+      - name: Setup MSVC
+        if: ${{ matrix.os == 'windows-latest' }}
+        uses: ilammy/msvc-dev-cmd@v1
+      
+      - name: Run moon test on Windows (--release + --target native)
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: |
+          moon test --target native --release
