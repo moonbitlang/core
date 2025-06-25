@@ -1,3 +1,7 @@
 {
-  "import": ["moonbitlang/core/builtin", "moonbitlang/core/uint"]
+  "import": ["moonbitlang/core/builtin", "moonbitlang/core/uint"],
+  "targets": {
+    "int_js.mbt": ["js"],
+    "int_nonjs.mbt": ["not", "js"]
+  }
 }

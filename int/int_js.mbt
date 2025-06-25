@@ -13,22 +13,25 @@
 // limitations under the License.
 
 ///|
-/// Maximum value of an integer.
-pub let max_value = 2147483647
-
-///|
-/// Minimum value of an integer.
-pub let min_value = -2147483648
-
-///|
-pub fnalias Int::abs
-
-///| Converts the Int to a Bytes in big-endian byte order.
-pub fn to_be_bytes(self : Int) -> Bytes {
-  self.reinterpret_as_uint().to_be_bytes()
-}
-
-///| Converts the Int to a Bytes in little-endian byte order.
-pub fn to_le_bytes(self : Int) -> Bytes {
-  self.reinterpret_as_uint().to_le_bytes()
+/// Computes the absolute value of an integer.
+///
+/// Parameters:
+///
+/// * `self` : The integer whose absolute value is to be computed.
+///
+/// Returns the absolute value of the integer.
+///
+/// Example:
+///
+/// ```moonbit
+///   inspect(@int.abs(42), content="42")
+///   inspect(@int.abs(-42), content="42")
+///   inspect(@int.abs(0), content="0")
+/// ```
+pub fn Int::abs(self : Int) -> Int {
+  if self < 0 {
+    -self | 0
+  } else {
+    self
+  }
 }
