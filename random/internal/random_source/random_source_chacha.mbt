@@ -17,23 +17,19 @@ struct ChaCha8 {
   /// length = 32 * 2
   buffer : FixedArray[UInt]
   /// length = 4 * 2
-  mut seed : FixedArray[UInt]
+  seed : FixedArray[UInt]
   mut i : UInt
   mut n : UInt
   mut c : UInt
 }
 
 ///|
+/// [seed] must be 32 bytes long.
 pub fn ChaCha8::new(seed : Bytes) -> ChaCha8 {
-  let c = {
-    buffer: FixedArray::make(32 * 2, 0U),
-    seed: FixedArray::make(4 * 2, 0U),
-    i: 0U,
-    n: 0U,
-    c: 0U,
-  }
-  c.init(seed)
-  c
+  let seed = FixedArray::makei(4 * 2, i => seed[i * 4:i * 4 + 4].to_uint_le())
+  let buffer = FixedArray::make(32 * 2, 0U)
+  chacha_block(seed, buffer, 0)
+  { seed, buffer, c: 0, i: 0, n: chunk }
 }
 
 ///|
@@ -55,31 +51,10 @@ pub fn ChaCha8::next(self : ChaCha8) -> UInt64? {
     return None
   }
   self.i = i + 1
-  Some(self.buffer.get_uint64_le(i.reinterpret_as_int() & 31))
-}
-
-///|
-fn FixedArray::get_uint64_le(self : FixedArray[UInt], index : Int) -> UInt64 {
-  let lo = self[index * 2].to_uint64()
-  let hi = self[index * 2 + 1].to_uint64()
-  (hi << 32) | lo
-}
-
-///|
-/// [seed] must be 32 bytes long.
-fn ChaCha8::init(self : ChaCha8, seed : Bytes) -> Unit {
-  let arr = FixedArray::makei(4 * 2, i => seed[i * 4:i * 4 + 4].to_uint_le())
-  self.init64(arr)
-}
-
-///|
-fn ChaCha8::init64(self : ChaCha8, seed : FixedArray[UInt]) -> Unit {
-  self.seed = seed
-  // [self.buffer] is changed in chacha_block
-  chacha_block(self.seed, self.buffer, 0)
-  self.c = 0
-  self.i = 0
-  self.n = chunk
+  let index = i.reinterpret_as_int() & 31
+  let lo = self.buffer[index * 2].to_uint64()
+  let hi = self.buffer[index * 2 + 1].to_uint64()
+  Some((hi << 32) | lo)
 }
 
 ///|
