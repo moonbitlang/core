@@ -1,9 +1,10 @@
-name: check
+name: bleeding-check
 
 on:
   push:
     branches:
       - main
+  pull_request:
 
 jobs:
   bleeding-check:
@@ -12,6 +13,9 @@ jobs:
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest, macos-13]
     runs-on: ${{ matrix.os }}
+    if: |
+      (github.event_name == 'pull_request' && startsWith(github.head_ref, 'bleeding/')) ||
+      (github.event_name == 'push' && github.ref == 'refs/heads/main')
     steps:
       - uses: actions/checkout@v4
 
