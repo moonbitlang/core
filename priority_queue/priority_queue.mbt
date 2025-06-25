@@ -64,7 +64,7 @@ fn[A] copy_node(x : Node[A]) -> Node[A] {
 /// ```mbt
 ///   let queue = @priority_queue.of([1, 2, 3, 4])
 ///   let queue2 = queue.copy()
-///   assert_eq(queue2.length(), 4)
+/// inspect(queue2.length(), content="4")
 /// ```
 pub fn[A] copy(self : T[A]) -> T[A] {
   let new_que : T[A] = { len: self.len, top: copy_node(self.top) }
