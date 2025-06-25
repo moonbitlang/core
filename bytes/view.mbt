@@ -25,19 +25,12 @@
 ///   assert_eq(bv[1], b'\x02')
 ///   assert_eq(bv[2], b'\x03')
 /// ```
-type View
-
-///|
-fn View::bytes(self : View) -> Bytes = "%bytesview.bytes"
-
-///|
-fn View::start(self : View) -> Int = "%bytesview.start"
-
-///|
-fn View::len(self : View) -> Int = "%bytesview.len"
-
-///|
-fn View::make(b : Bytes, start : Int, len : Int) -> View = "%bytesview.make"
+#builtin.valtype
+struct View {
+  bytes : Bytes
+  start : Int
+  len : Int
+}
 
 ///|
 /// Returns the number of bytes in the view.
@@ -56,7 +49,7 @@ fn View::make(b : Bytes, start : Int, len : Int) -> View = "%bytesview.make"
 ///   inspect(view.length(), content="2")
 /// ```
 pub fn View::length(self : View) -> Int {
-  self.len()
+  self.len
 }
 
 ///|
@@ -77,12 +70,12 @@ pub fn View::length(self : View) -> Int {
 ///   inspect(view[1], content="b'\\x03'")
 /// ```
 pub fn View::op_get(self : View, index : Int) -> Byte {
-  guard index >= 0 && index < self.len() else {
+  guard index >= 0 && index < self.len else {
     abort(
-      "index out of bounds: the len is from 0 to \{self.len()} but the index is \{index}",
+      "index out of bounds: the len is from 0 to \{self.len} but the index is \{index}",
     )
   }
-  self.bytes()[self.start() + index]
+  self.bytes[self.start + index]
 }
 
 ///|
@@ -108,8 +101,8 @@ pub fn View::op_get(self : View, index : Int) -> Byte {
 ///   inspect(result, content="None")
 /// ```
 pub fn View::get(self : View, index : Int) -> Byte? {
-  guard index >= 0 && index < self.len() else { None }
-  Some(self.bytes().unsafe_get(self.start() + index))
+  guard index >= 0 && index < self.len else { None }
+  Some(self.bytes.unsafe_get(self.start + index))
 }
 
 ///|
@@ -137,7 +130,7 @@ pub fn View::get(self : View, index : Int) -> Byte? {
 ///
 #internal(unsafe, "Panic if index is out of bounds")
 pub fn View::unsafe_get(self : View, index : Int) -> Byte {
-  self.bytes()[self.start() + index]
+  self.bytes[self.start + index]
 }
 
 ///|
@@ -163,7 +156,7 @@ pub fn Bytes::op_as_view(self : Bytes, start~ : Int = 0, end? : Int) -> View {
   guard start >= 0 && start <= end && end <= len else {
     abort("Invalid index for View")
   }
-  View::make(self, start, end - start)
+  { bytes: self, start, len: end - start }
 }
 
 ///|
@@ -187,7 +180,7 @@ pub fn View::op_as_view(self : View, start~ : Int = 0, end? : Int) -> View {
   guard start >= 0 && start <= end && end <= len else {
     abort("Invalid index for View")
   }
-  View::make(self.bytes(), self.start() + start, end - start)
+  { bytes: self.bytes, start: self.start + start, len: end - start }
 }
 
 ///|
@@ -203,7 +196,7 @@ pub fn View::op_as_view(self : View, start~ : Int = 0, end? : Int) -> View {
 /// ```
 pub fn View::iter(self : View) -> Iter[Byte] {
   Iter::new(fn(yield_) {
-    for i in 0..<self.len() {
+    for i in 0..<self.len {
       guard yield_(self[i]) is IterContinue else { break IterEnd }
     } else {
       IterContinue
@@ -537,7 +530,7 @@ pub impl Show for View with output(self, logger) {
   }
 
   logger.write_string("b\"")
-  for i in 0..<self.len() {
+  for i in 0..<self.len {
     let byte = self[i].to_int()
     logger
     ..write_string("\\x")
@@ -566,8 +559,8 @@ pub impl Show for View with output(self, logger) {
 ///   inspect(bytes[0:4] == bytes[3:6], content="false")
 /// ```
 pub impl Eq for View with op_equal(self, other) -> Bool {
-  guard self.len() == other.len() else { return false }
-  for i in 0..<self.len() {
+  guard self.len == other.len else { return false }
+  for i in 0..<self.len {
     guard self.unsafe_get(i) == other.unsafe_get(i) else { return false }
   }
   true
@@ -600,8 +593,8 @@ pub impl Eq for View with op_equal(self, other) -> Bool {
 ///   inspect(bytes[1:5].compare(bytes[2:5]), content="1")  // bcab > cab
 /// ```
 pub impl Compare for View with compare(self, other) -> Int {
-  let self_len = self.len()
-  let other_len = other.len()
+  let self_len = self.len
+  let other_len = other.len
   let cmp = self_len.compare(other_len)
   guard cmp == 0 else { return cmp }
   for i in 0..<self_len {
@@ -616,21 +609,21 @@ pub impl Compare for View with compare(self, other) -> Int {
 ///|
 /// Retrieves the underlying `Bytes` from a `View`.
 pub fn View::data(self : View) -> Bytes {
-  self.bytes()
+  self.bytes
 }
 
 ///|
 /// Retrieves the start index of the view.
 pub fn View::start_offset(self : View) -> Int {
-  self.start()
+  self.start
 }
 
 ///|
 pub fn View::to_bytes(self : View) -> Bytes {
-  if self.len() == 0 && self.len() == self.bytes().length() {
-    return self.bytes()
+  if self.len == 0 && self.len == self.bytes.length() {
+    return self.bytes
   }
-  let bytes = FixedArray::make(self.len(), (0 : Byte))
-  bytes.blit_from_bytes(0, self.bytes(), self.start_offset(), self.len())
+  let bytes = FixedArray::make(self.len, (0 : Byte))
+  bytes.blit_from_bytes(0, self.bytes, self.start, self.len)
   unsafe_to_bytes(bytes)
 }
