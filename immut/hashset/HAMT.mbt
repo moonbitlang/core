@@ -375,7 +375,12 @@ pub impl[A : Hash] Hash for T[A] with hash_combine(self, hasher) {
 impl[A : Eq] Eq for Node[A] with op_equal(self, other) {
   match (self, other) {
     (Leaf(x, xs), Leaf(y, ys)) =>
-      xs.length() == ys.length() && xs.add(x).iter().all(ys.add(y).contains(_))
+      xs.length() == ys.length() &&
+      {
+        let keys1 = xs.add(x)
+        let keys2 = ys.add(y)
+        keys1.iter().all(keys2.contains(_))
+      }
     (Flat(x, pathx), Flat(y, pathy)) => pathx == pathy && x == y
     (Branch(xs), Branch(ys)) => xs == ys
     _ => false
