@@ -20,7 +20,7 @@ priv struct SEntry[K] {
   mut psl : Int
   hash : Int
   key : K
-} derive(Show)
+}
 
 ///|
 impl[K : Eq] Eq for SEntry[K] with op_equal(self, other) {

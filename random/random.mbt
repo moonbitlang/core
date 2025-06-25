@@ -236,7 +236,7 @@ test "bigint" {
 priv struct UInt128 {
   mut hi : UInt64
   mut lo : UInt64
-} derive(Eq)
+}
 
 ///|
 let gUInt128 : UInt128 = { hi: 0UL, lo: 0UL }

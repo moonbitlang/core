@@ -23,6 +23,14 @@ impl Show for MyBigInt with output(self, logger) {
 }
 
 ///|
+impl Show for Sign with output(self, logger) {
+  match self {
+    Positive => logger.write_string("Positive")
+    Negative => logger.write_string("Negative")
+  }
+}
+
+///|
 test "debug_string" {
   let buf = StringBuilder::new()
   let v : Array[MyBigInt] = [0, 1, 2, 3, 4, -0, -1, -2, -3]
