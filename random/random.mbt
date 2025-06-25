@@ -26,11 +26,11 @@ pub(open) trait Source {
 ///|
 impl Source for @random_source.ChaCha8 with next(self : @random_source.ChaCha8) -> UInt64 {
   for {
-    let x = self.state.next()
+    let x = self.next()
     if x.1 {
       return x.0
     }
-    self.state.refill()
+    self.refill()
   }
 }
 
