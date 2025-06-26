@@ -104,13 +104,15 @@ pub fn[A : Compare] iter(self : T[A]) -> Iter[A] {
   })
 }
 
-pub impl[A: ToJson + Compare] ToJson for T[A] with to_json(self) {
+///|
+pub impl[A : ToJson + Compare] ToJson for T[A] with to_json(self) {
   let arr = []
   for x in self {
     arr.push(x.to_json())
   }
   Json::array(arr)
 }
+
 ///|
 pub fn[K : Compare] from_iter(iter : Iter[K]) -> T[K] {
   let s = new()
