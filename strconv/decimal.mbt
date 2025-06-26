@@ -74,17 +74,17 @@ fn Decimal::from_int64_priv(v : Int64) -> Decimal {
 
 ///|
 #deprecated("use `@strconv.parse_double` instead")
-pub fn parse_decimal(str : String) -> Decimal!StrConvError {
+pub fn parse_decimal(str : String) -> Decimal raise StrConvError {
   parse_decimal_from_view(str.view())
 }
 
 ///|
-fn parse_decimal_priv(str : String) -> Decimal!StrConvError {
+fn parse_decimal_priv(str : String) -> Decimal raise StrConvError {
   parse_decimal_from_view(str.view())
 }
 
 ///|
-fn parse_decimal_from_view(str : @string.View) -> Decimal!StrConvError {
+fn parse_decimal_from_view(str : @string.View) -> Decimal raise StrConvError {
   let d = Decimal::new_priv()
   let mut has_dp = false
   let mut has_digits = false
@@ -162,19 +162,19 @@ fn parse_decimal_from_view(str : @string.View) -> Decimal!StrConvError {
 
 ///|
 #deprecated("use `@strconv.parse_double` instead")
-pub fn Decimal::parse_decimal(str : String) -> Decimal!StrConvError {
+pub fn Decimal::parse_decimal(str : String) -> Decimal raise StrConvError {
   parse_decimal_from_view(str.view())
 }
 
 ///|
 /// Convert the decimal to Double.
 #deprecated("use `@strconv.parse_double` instead to avoid using this method.")
-pub fn to_double(self : Decimal) -> Double!StrConvError {
+pub fn to_double(self : Decimal) -> Double raise StrConvError {
   self.to_double_priv()
 }
 
 ///|
-fn to_double_priv(self : Decimal) -> Double!StrConvError {
+fn to_double_priv(self : Decimal) -> Double raise StrConvError {
   let mut exponent = 0
   let mut mantissa = 0L
   // check the underflow and overflow
@@ -238,7 +238,7 @@ fn to_double_priv(self : Decimal) -> Double!StrConvError {
   mantissa = self.rounded_integer()
 
   // rounding might have added a bit, shift down.
-  if mantissa == (2L << double_info.mantissa_bits) {
+  if mantissa == 2L << double_info.mantissa_bits {
     mantissa = mantissa << 1
     exponent += 1
     if exponent - double_info.bias >= (1 << double_info.exponent_bits) - 1 {
@@ -378,9 +378,9 @@ fn right_shift(self : Decimal, s : Int) -> Unit {
 
   // read enough leading digits to start a shift
   let mut acc = 0UL
-  while (acc >> s) == 0 {
+  while acc >> s == 0 {
     if read_index >= self.digits_num {
-      while (acc >> s) == 0 {
+      while acc >> s == 0 {
         acc *= 10
         read_index += 1
       }
@@ -635,13 +635,9 @@ test "from_int64" {
 ///|
 test "parse_decimal" {
   let s = "0.0000000000000000000000000000007888609052210118054117285652827862296732064351090230047702789306640625"
-  let hpd = try parse_decimal_priv(s) catch {
-    _ => panic()
-  }
+  let hpd = parse_decimal_priv(s) catch { _ => panic() }
   assert_eq(hpd.to_string(), s)
-  let hpd = try parse_decimal_priv("1.0e-10") catch {
-    _ => panic()
-  }
+  let hpd = parse_decimal_priv("1.0e-10") catch { _ => panic() }
   assert_eq(hpd.to_string(), "0.0000000001")
 }
 

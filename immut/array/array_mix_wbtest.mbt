@@ -21,7 +21,7 @@ test "random property tests" {
 }
 
 ///|
-fn run_test(seed : UInt64, rep : Int, max_lvl : Int) -> Unit! {
+fn run_test(seed : UInt64, rep : Int, max_lvl : Int) -> Unit raise {
   let rng = Random({ val: seed })
   let rs = random_test_gen(rng, rep, max_lvl)
   execute_array_test(rs)

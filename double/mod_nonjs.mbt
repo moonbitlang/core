@@ -29,12 +29,10 @@
 /// Example:
 ///
 /// ```moonbit
-/// test "op_mod" {
 ///   inspect(5.0.op_mod(3.0), content="2")
 ///   inspect((-5.0).op_mod(3.0), content="-2")
 ///   inspect(5.0.op_mod(not_a_number), content="NaN")
 ///   inspect(infinity.op_mod(3.0), content="NaN")
-/// }
 /// ```
 pub impl Mod for Double with op_mod(self : Double, other : Double) -> Double {
   let x = self
@@ -45,11 +43,11 @@ pub impl Mod for Double with op_mod(self : Double, other : Double) -> Double {
   let mut ey = ((uint64_y >> 52) & 0x7FF).to_int()
   let sign_x = uint64_x >> 63
   let mut i : UInt64 = 0
-  if (uint64_y << 1) == 0 || y.is_nan() || ex == 0x7ff {
+  if uint64_y << 1 == 0 || y.is_nan() || ex == 0x7ff {
     return x * y / (x * y)
   }
-  if (uint64_x << 1) <= (uint64_y << 1) {
-    if (uint64_x << 1) == (uint64_y << 1) {
+  if uint64_x << 1 <= uint64_y << 1 {
+    if uint64_x << 1 == uint64_y << 1 {
       return 0.0 * x
     }
     return x
@@ -57,7 +55,7 @@ pub impl Mod for Double with op_mod(self : Double, other : Double) -> Double {
   // normalize x and y
   if ex == 0 {
     i = uint64_x << 12
-    while (i >> 63) == 0 {
+    while i >> 63 == 0 {
       ex -= 1
       i = i << 1
     }
@@ -68,7 +66,7 @@ pub impl Mod for Double with op_mod(self : Double, other : Double) -> Double {
   }
   if ey == 0 {
     i = uint64_y << 12
-    while (i >> 63) == 0 {
+    while i >> 63 == 0 {
       ey -= 1
       i = i << 1
     }
@@ -80,7 +78,7 @@ pub impl Mod for Double with op_mod(self : Double, other : Double) -> Double {
   // x mod y
   while ex > ey {
     i = uint64_x - uint64_y
-    if (i >> 63) == 0 {
+    if i >> 63 == 0 {
       if i == 0 {
         return 0.0 * x
       }
@@ -90,13 +88,13 @@ pub impl Mod for Double with op_mod(self : Double, other : Double) -> Double {
     ex -= 1
   }
   i = uint64_x - uint64_y
-  if (i >> 63) == 0 {
+  if i >> 63 == 0 {
     if i == 0 {
       return 0.0 * x
     }
     uint64_x = i
   }
-  while (uint64_x >> 52) == 0 {
+  while uint64_x >> 52 == 0 {
     uint64_x = uint64_x << 1
     ex -= 1
   }

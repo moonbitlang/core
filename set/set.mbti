@@ -1,42 +1,6 @@
 package "moonbitlang/core/set"
 
 // Values
-fn[K : Hash + Eq] add(Set[K], K) -> Unit
-
-fn[K : Hash + Eq] add_and_check(Set[K], K) -> Bool
-
-fn[K] capacity(Set[K]) -> Int
-
-fn[K] clear(Set[K]) -> Unit
-
-fn[K : Hash + Eq] contains(Set[K], K) -> Bool
-
-fn[K : Hash + Eq] difference(Set[K], Set[K]) -> Set[K]
-
-fn[K] each(Set[K], (K) -> Unit) -> Unit
-
-fn[K] eachi(Set[K], (Int, K) -> Unit) -> Unit
-
-#deprecated
-fn[K : Hash + Eq] insert(Set[K], K) -> Unit
-
-fn[K : Hash + Eq] intersection(Set[K], Set[K]) -> Set[K]
-
-fn[K] is_empty(Set[K]) -> Bool
-
-fn[K] iter(Set[K]) -> Iter[K]
-
-fn[K : Hash + Eq] remove(Set[K], K) -> Unit
-
-fn[K : Hash + Eq] remove_and_check(Set[K], K) -> Bool
-
-fn[K] size(Set[K]) -> Int
-
-fn[K : Hash + Eq] symmetric_difference(Set[K], Set[K]) -> Set[K]
-
-fn[K] to_array(Set[K]) -> Array[K]
-
-fn[K : Hash + Eq] union(Set[K], Set[K]) -> Set[K]
 
 // Types and methods
 type Set[K]
@@ -46,8 +10,8 @@ fn[K] Set::capacity(Self[K]) -> Int
 fn[K] Set::clear(Self[K]) -> Unit
 fn[K : Hash + Eq] Set::contains(Self[K], K) -> Bool
 fn[K : Hash + Eq] Set::difference(Self[K], Self[K]) -> Self[K]
-fn[K] Set::each(Self[K], (K) -> Unit) -> Unit
-fn[K] Set::eachi(Self[K], (Int, K) -> Unit) -> Unit
+fn[K] Set::each(Self[K], (K) -> Unit raise?) -> Unit raise?
+fn[K] Set::eachi(Self[K], (Int, K) -> Unit raise?) -> Unit raise?
 fn[K : Hash + Eq] Set::from_array(Array[K]) -> Self[K]
 fn[K : Hash + Eq] Set::from_iter(Iter[K]) -> Self[K]
 #deprecated

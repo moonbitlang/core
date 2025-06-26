@@ -76,7 +76,8 @@ priv type StringBuffer Array[String]
 
 ///|
 impl Output for StringBuffer with output(self : StringBuffer, content : String) -> Unit {
-  self._.push(content)
+  let StringBuffer(self) = self
+  self.push(content)
 }
 
 ///|
@@ -105,8 +106,8 @@ pub fn end() -> Unit {
   let sbuf = StringBuffer::StringBuffer([])
   coverage_log(counters.val, sbuf)
   let line_buf = StringBuilder::new()
-  for i in 0..<sbuf._.length() {
-    let str = sbuf._[i]
+  for i in 0..<sbuf.inner().length() {
+    let str = sbuf.inner()[i]
     let mut start = 0
     for j in 0..<str.length() {
       if str.unsafe_charcode_at(j) == '\n' {
@@ -146,16 +147,14 @@ fn coverage_log(
   counters : MList[(String, CoverageCounter)],
   io : &Output
 ) -> Unit {
-  let print = fn { x => io.output(x) }
-  let println = fn {
-    x => {
-      io.output(x)
-      io.output("\n")
-    }
+  let print = x => io.output(x)
+  let println = x => {
+    io.output(x)
+    io.output("\n")
   }
   print("{ ")
-  loop counters, 0 {
-    MCons((name, counter), xs), ix => {
+  loop (counters, 0) {
+    (MCons((name, counter), xs), ix) => {
       if ix != 0 {
         print(", ")
       }
@@ -163,9 +162,9 @@ fn coverage_log(
       print(": ")
       let counter_dump = counter.to_string()
       println(counter_dump)
-      continue xs, ix + 1
+      continue (xs, ix + 1)
     }
-    MNil, _ => ()
+    (MNil, _) => ()
   }
   print("}")
 }

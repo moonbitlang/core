@@ -12,26 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-///| 
-/// A `StringView` represents a view of a String that maintains proper Unicode
-/// character boundaries. It allows safe access to a substring while handling 
-/// multi-byte characters correctly.
-#deprecated("use @string.View instead")
-#builtin.valtype
-struct StringView {
-  // # Fields
-  //
-  // - `str`: The source String being viewed
-  // - `start`: Starting UTF-16 code unit index into the string
-  // - `end`: Ending UTF-16 code unit index into the string (not included)
-  //
-  // `len` is not included because it will make the operation of `op_as_view`
-  // has complexity O(n) where n is the length of the code points in the view.
-  str : String
-  start : Int
-  end : Int
-}
-
 ///|
 /// A `@string.View` represents a view of a String that maintains proper Unicode
 /// character boundaries. It allows safe access to a substring while handling 
@@ -45,11 +25,11 @@ pub typealias StringView as View
 /// 
 /// # Example
 /// 
-/// ```
-/// let str = "Hello🤣🤣🤣"
-/// let view = str[1:6]
-/// inspect(view[0].to_char(), content="Some('e')")
-/// inspect(view[4], content="55358")
+/// ```mbt
+///   let str = "Hello🤣🤣🤣"
+///   let view = str.charcodes(start = str.offset_of_nth_char(1).unwrap(), end = str.offset_of_nth_char(6).unwrap())
+///   inspect(view[0].to_char(), content="Some('e')")
+///   inspect(view[4], content="55358")
 /// ```
 pub fn View::op_get(self : View, index : Int) -> Int {
   guard index >= 0 && index < self.length() else {
@@ -84,24 +64,25 @@ pub fn length(self : View) -> Int {
 /// 
 /// # Example
 /// 
-/// ```
-/// let str = "Hello🤣🤣🤣"
-/// let view1 = str.view()
-/// inspect(view1, content=
-///  "Hello🤣🤣🤣"
-///)
-/// let start_offset = str.offset_of_nth_char(1).unwrap()
-/// let end_offset = str.offset_of_nth_char(6).unwrap() // the second emoji
-/// let view2 = str.view(start_offset~, end_offset~)
-/// inspect(view2, content=
-///  "ello🤣"
-///)
+/// ```mbt
+///   let str = "Hello🤣🤣🤣"
+///   let view1 = str.view()
+///   inspect(view1, content=
+///    "Hello🤣🤣🤣"
+///   )
+///   let start_offset = str.offset_of_nth_char(1).unwrap()
+///   let end_offset = str.offset_of_nth_char(6).unwrap() // the second emoji
+///   let view2 = str.view(start_offset~, end_offset~)
+///   inspect(view2, content=
+///    "ello🤣"
+///   )
 /// ```
 pub fn String::view(
   self : String,
   start_offset~ : Int = 0,
-  end_offset~ : Int = self.length()
+  end_offset? : Int
 ) -> View {
+  let end_offset = if end_offset is Some(o) { o } else { self.length() }
   guard start_offset >= 0 &&
     start_offset <= end_offset &&
     end_offset <= self.length() else {
@@ -115,8 +96,9 @@ pub fn String::view(
 pub fn View::view(
   self : View,
   start_offset~ : Int = 0,
-  end_offset~ : Int = self.length()
+  end_offset? : Int
 ) -> View {
+  let end_offset = if end_offset is Some(o) { o } else { self.length() }
   guard start_offset >= 0 &&
     start_offset <= end_offset &&
     end_offset <= self.length() else {
@@ -134,27 +116,19 @@ pub fn View::view(
 /// 
 /// # Example
 /// 
-/// ```
-/// let str = "Hello🤣🤣🤣"
-/// let view1 = str.charcodes()
-/// inspect(view1, content=
-///  "Hello🤣🤣🤣"
-///)
-/// let start = str.offset_of_nth_char(1).unwrap()
-/// let end = str.offset_of_nth_char(6).unwrap() // the second emoji
-/// let view2 = str.charcodes(start~, end~)
-/// inspect(view2, content=
-///  "ello🤣"
-///)
+/// ```mbt
+///   let str = "Hello🤣🤣🤣"
+///   let view1 = str.charcodes()
+///   inspect(view1, content="Hello🤣🤣🤣")
+///   let start = str.offset_of_nth_char(1).unwrap()
+///   let end = str.offset_of_nth_char(6).unwrap() // the second emoji
+///   let view2 = str.charcodes(start~, end~)
+///   inspect(view2, content="ello🤣")
 /// ```
 /// 
 /// This method has O(1) complexity.
-pub fn String::charcodes(
-  self : String,
-  start~ : Int = 0,
-  end~ : Int = self.length()
-) -> View {
-  self.view(start_offset=start, end_offset=end)
+pub fn String::charcodes(self : String, start~ : Int = 0, end? : Int) -> View {
+  self.view(start_offset=start, end_offset?=end)
 }
 
 ///|
@@ -162,25 +136,21 @@ pub fn String::charcodes(
 /// 
 /// # Example
 /// 
-/// ```
-/// let str = "Hello🤣🤣🤣"
-/// let view1 = str.view()
-/// let view2 = view1.charcodes(start=1, end=7) // From 2nd to 6th character
-/// inspect(view2, content=
-///  "ello🤣"
-///)
+/// ```mbt
+///   let str = "Hello🤣🤣🤣"
+///   let view1 = str.view()
+///   let view2 = view1.charcodes(start=1, end=7) // From 2nd to 6th character
+///   inspect(view2, content=
+///    "ello🤣"
+///   )
 /// ```
 /// 
 /// This method is similar to `String::charcodes` but operates on an existing view.
 /// It allows you to create a sub-view of an existing view with the specified character range.
 /// 
 /// This method has O(1) complexity.
-pub fn View::charcodes(
-  self : View,
-  start~ : Int = 0,
-  end~ : Int = self.length()
-) -> View {
-  self.view(start_offset=start, end_offset=end)
+pub fn View::charcodes(self : View, start~ : Int = 0, end? : Int) -> View {
+  self.view(start_offset=start, end_offset?=end)
 }
 
 ///|
@@ -201,9 +171,9 @@ pub fn View::offset_of_nth_char(self : View, i : Int) -> Int? {
 }
 
 ///|
-/// Returns the Unicode character at the given index.
+/// Returns the Unicode character at the given index. Note this is not the n-th character.
 /// 
-/// This method has O(n) complexity.
+/// This method has O(1) complexity.
 pub fn View::char_at(self : View, index : Int) -> Char {
   guard index >= 0 && index < self.length() else {
     abort("Index out of bounds")
@@ -267,10 +237,10 @@ pub impl Show for View with output(self, logger) {
 /// 
 /// # Examples
 /// 
-/// ```
-/// let str = "Hello World"
-/// let view = str[0:5]  // "Hello"
-/// inspect(view.to_string(), content="Hello")
+/// ```mbt
+///   let str = "Hello World"
+///   let view = str.charcodes(start = str.offset_of_nth_char(0).unwrap(),end   = str.offset_of_nth_char(5).unwrap()) // "Hello"
+///   inspect(view.to_string(), content="Hello")
 /// ```
 pub impl Show for StringView with to_string(self) {
   self.str.substring(start=self.start, end=self.end)
@@ -279,27 +249,25 @@ pub impl Show for StringView with to_string(self) {
 ///|
 /// Returns an iterator over the Unicode characters in the string view.
 pub fn View::iter(self : View) -> Iter[Char] {
-  Iter::new(fn(yield_) {
-    for index in self.start..<self.end {
-      let c1 = self.str.unsafe_charcode_at(index)
-      if is_leading_surrogate(c1) && index + 1 < self.end {
-        let c2 = self.str.unsafe_charcode_at(index + 1)
-        if is_trailing_surrogate(c2) {
-          let c = code_point_of_surrogate_pair(c1, c2)
-          guard yield_(c) is IterContinue else { break IterEnd }
-          continue index + 2
-        }
+  Iter::new(yield_ => for index in self.start..<self.end {
+    let c1 = self.str.unsafe_charcode_at(index)
+    if is_leading_surrogate(c1) && index + 1 < self.end {
+      let c2 = self.str.unsafe_charcode_at(index + 1)
+      if is_trailing_surrogate(c2) {
+        let c = code_point_of_surrogate_pair(c1, c2)
+        guard yield_(c) is IterContinue else { break IterEnd }
+        continue index + 2
       }
-      guard yield_(c1.unsafe_to_char()) is IterContinue else { break IterEnd }
-    } else {
-      IterContinue
     }
+    guard yield_(c1.unsafe_to_char()) is IterContinue else { break IterEnd }
+  } else {
+    IterContinue
   })
 }
 
 ///|
 pub fn View::iter2(self : View) -> Iter2[Int, Char] {
-  Iter2::new(fn(yield_) {
+  Iter2::new(yield_ => {
     let len = self.length()
     for index = 0, n = 0; index < len; index = index + 1, n = n + 1 {
       let c1 = self.str.unsafe_charcode_at(self.start + index)
@@ -323,21 +291,21 @@ pub fn View::iter2(self : View) -> Iter2[Int, Char] {
 ///|
 /// Returns an iterator over the Unicode characters in the string view in reverse order.
 pub fn View::rev_iter(self : View) -> Iter[Char] {
-  Iter::new(fn(yield_) {
-    for index = self.end - 1; index >= self.start; index = index - 1 {
-      let c1 = self.str.unsafe_charcode_at(index)
-      if is_trailing_surrogate(c1) && index - 1 >= 0 {
-        let c2 = self.str.unsafe_charcode_at(index - 1)
-        if is_leading_surrogate(c2) {
-          let c = code_point_of_surrogate_pair(c2, c1)
-          guard yield_(c) is IterContinue else { break IterEnd }
-          continue index - 2
-        }
+  Iter::new(yield_ => for index = self.end - 1
+                          index >= self.start
+                          index = index - 1 {
+    let c1 = self.str.unsafe_charcode_at(index)
+    if is_trailing_surrogate(c1) && index - 1 >= 0 {
+      let c2 = self.str.unsafe_charcode_at(index - 1)
+      if is_leading_surrogate(c2) {
+        let c = code_point_of_surrogate_pair(c2, c1)
+        guard yield_(c) is IterContinue else { break IterEnd }
+        continue index - 2
       }
-      guard yield_(c1.unsafe_to_char()) is IterContinue else { break IterEnd }
-    } else {
-      IterContinue
     }
+    guard yield_(c1.unsafe_to_char()) is IterContinue else { break IterEnd }
+  } else {
+    IterContinue
   })
 }
 

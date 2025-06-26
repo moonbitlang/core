@@ -152,19 +152,13 @@ pub impl Show for String with output(self, logger) {
 /// we want to show the original string, not the escaped one.
 /// # Examples
 /// 
-/// ```
-/// let str = "Hello \n"
-/// inspect(str.to_string(), content="Hello \n")
-/// inspect(str.escape(), content="\"Hello \\n\"")
+/// ```mbt
+///   let str = "Hello \n"
+///   inspect(str.to_string(), content="Hello \n")
+///   inspect(str.escape(), content="\"Hello \\n\"")
 /// ```
 pub impl Show for String with to_string(self) {
   self
-}
-
-///|
-pub impl Show for Failure with output(self, logger) {
-  let Failure(msg) = self
-  "Failure(\{msg})".output(logger)
 }
 
 ///|

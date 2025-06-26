@@ -37,27 +37,7 @@ pub fn[V : Compare] from_array(array : Array[V]) -> T[V] {
 }
 
 ///|
-#deprecated("Use @sorted_set.from_array instead")
-pub fn[V : Compare] of(array : Array[V]) -> T[V] {
-  let set = new()
-  for i in 0..<array.length() {
-    set.add(array[i])
-  }
-  set
-}
-
-///|
-/// It is just copying the tree structure, not the values.
-/// It requires a Clone trait on T, which we don't have yet.
-///
-#deprecated("Use `copy` instead")
-#coverage.skip
-pub fn[V] deep_clone(self : T[V]) -> T[V] {
-  self.copy()
-}
-
-///|
-/// Returns a shallow copy of the MutableSet.
+/// Returns a shallow copy of the set.
 /// 
 /// It is just copying the tree structure, not the values.
 /// 
@@ -134,16 +114,16 @@ pub fn[V : Compare] remove(self : T[V], value : V) -> Unit {
 ///|
 /// Return if a value is contained in the set.
 pub fn[V : Compare] contains(self : T[V], value : V) -> Bool {
-  loop self.root, value {
-    None, _ => false
-    Some(node), value => {
+  loop (self.root, value) {
+    (None, _) => false
+    (Some(node), value) => {
       let compare_result = value.compare(node.value)
       if compare_result == 0 {
         true
       } else if compare_result < 0 {
-        continue node.left, value
+        continue (node.left, value)
       } else {
-        continue node.right, value
+        continue (node.right, value)
       }
     }
   }
@@ -172,7 +152,7 @@ pub fn[V : Compare] union(self : T[V], src : T[V]) -> T[V] {
       let mut ct = 0
       let ret = { root: t, size: 0 }
       // TODO: optimize this. Avoid counting the size of the set.
-      ret.each(fn(_x) { ct = ct + 1 })
+      ret.each(_x => ct = ct + 1)
       ret.size = ct
       ret
     }
@@ -265,20 +245,9 @@ fn[V : Compare] join_right(l : Node[V]?, v : V, r : Node[V]?) -> Node[V] {
 
 ///|
 /// Returns the difference of two sets.
-/// 
-#deprecated("Use `difference` instead")
-#coverage.skip
-pub fn[V : Compare] diff(self : T[V], src : T[V]) -> T[V] {
-  let ret = new()
-  self.each(fn(x) { if not(src.contains(x)) { ret.add(x) } })
-  ret
-}
-
-///|
-/// Returns the difference of two sets.
 pub fn[V : Compare] difference(self : T[V], src : T[V]) -> T[V] {
   let ret = new()
-  self.each(fn(x) { if not(src.contains(x)) { ret.add(x) } })
+  self.each(x => if not(src.contains(x)) { ret.add(x) })
   ret
 }
 
@@ -298,12 +267,10 @@ pub fn[V : Compare] difference(self : T[V], src : T[V]) -> T[V] {
 /// Example:
 ///
 /// ```moonbit
-/// test "symmetric_difference" {
-///   let set1 = @sorted_set.of([1, 2, 3, 4])
-///   let set2 = @sorted_set.of([3, 4, 5, 6])
+///   let set1 = @sorted_set.from_array([1, 2, 3, 4])
+///   let set2 = @sorted_set.from_array([3, 4, 5, 6])
 ///   let diff = set1.symmetric_difference(set2)
-///   inspect(diff, content="@sorted_set.of([1, 2, 5, 6])")
-/// }
+///   inspect(diff, content="@sorted_set.from_array([1, 2, 5, 6])")
 /// ```
 pub fn[V : Compare] symmetric_difference(self : T[V], other : T[V]) -> T[V] {
   // TODO: Optimize this function to avoid creating two intermediate sets.
@@ -314,17 +281,9 @@ pub fn[V : Compare] symmetric_difference(self : T[V], other : T[V]) -> T[V] {
 
 ///|
 /// Returns the intersection of two sets.
-#deprecated("Use `intersection` instead")
-#coverage.skip
-pub fn[V : Compare] intersect(self : T[V], src : T[V]) -> T[V] {
-  self.intersection(src)
-}
-
-///|
-/// Returns the intersection of two sets.
 pub fn[V : Compare] intersection(self : T[V], src : T[V]) -> T[V] {
   let ret = new()
-  self.each(fn(x) { if src.contains(x) { ret.add(x) } })
+  self.each(x => if src.contains(x) { ret.add(x) })
   ret
 }
 
@@ -332,7 +291,7 @@ pub fn[V : Compare] intersection(self : T[V], src : T[V]) -> T[V] {
 /// Returns if a set is a subset of another set.
 pub fn[V : Compare] subset(self : T[V], src : T[V]) -> Bool {
   let mut ret = true
-  self.each(fn(x) { if not(src.contains(x)) { ret = false } })
+  self.each(x => if not(src.contains(x)) { ret = false })
   ret
 }
 
@@ -340,7 +299,7 @@ pub fn[V : Compare] subset(self : T[V], src : T[V]) -> Bool {
 /// Returns if two sets are disjoint.
 pub fn[V : Compare] disjoint(self : T[V], src : T[V]) -> Bool {
   let mut ret = true
-  self.each(fn(x) { if src.contains(x) { ret = false } })
+  self.each(x => if src.contains(x) { ret = false })
   ret
 }
 
@@ -352,21 +311,21 @@ pub impl[V : Compare] Eq for T[V] with op_equal(self, other) {
 }
 
 ///|
-/// Returns if MutableSet is empty.
+/// Returns if the set is empty.
 pub fn[V : Compare] is_empty(self : T[V]) -> Bool {
   self.root is None
 }
 
 ///|
-/// Returns the number of elements in the MutableSet.
+/// Returns the number of elements in the set.
 pub fn[V : Compare] size(self : T[V]) -> Int {
   self.size
 }
 
 ///|
 /// Iterates the set.
-pub fn[V] each(self : T[V], f : (V) -> Unit) -> Unit {
-  fn dfs(root : Node[V]?) -> Unit {
+pub fn[V] each(self : T[V], f : (V) -> Unit raise?) -> Unit raise? {
+  fn dfs(root : Node[V]?) -> Unit raise? {
     if root is Some(root) {
       dfs(root.left)
       f(root.value)
@@ -379,9 +338,9 @@ pub fn[V] each(self : T[V], f : (V) -> Unit) -> Unit {
 
 ///|
 /// Iterates the set with index.
-pub fn[V] eachi(self : T[V], f : (Int, V) -> Unit) -> Unit {
+pub fn[V] eachi(self : T[V], f : (Int, V) -> Unit raise?) -> Unit raise? {
   let mut i = 0
-  self.each(fn(v) {
+  self.each(v => {
     f(i, v)
     i = i + 1
   })
@@ -413,7 +372,7 @@ pub fn[V] to_array(self : T[V]) -> Array[V] {
 ///|
 /// Returns a iterator.
 pub fn[V] iter(self : T[V]) -> Iter[V] {
-  Iter::new(fn(yield_) {
+  Iter::new(yield_ => {
     fn go(x : Node[V]?) {
       match x {
         None => IterContinue
@@ -435,14 +394,14 @@ pub fn[V] iter(self : T[V]) -> Iter[V] {
 ///|
 pub fn[V : Compare] from_iter(iter : Iter[V]) -> T[V] {
   let s = new()
-  iter.each(fn(e) { s.add(e) })
+  iter.each(e => s.add(e))
   s
 }
 
 ///|
 /// Converts the set to string.
 pub impl[V : Show] Show for T[V] with output(self, logger) {
-  logger.write_iter(self.iter(), prefix="@sorted_set.of([", suffix="])")
+  logger.write_iter(self.iter(), prefix="@sorted_set.from_array([", suffix="])")
 }
 
 ///|
@@ -461,7 +420,7 @@ impl[T : Show] Show for Node[T] with output(self, logger) {
 
 ///|
 pub fn[V : Compare] range(self : T[V], low : V, high : V) -> Iter[V] {
-  Iter::new(fn(yield_) {
+  Iter::new(yield_ => {
     fn go(x : Node[V]?) {
       match x {
         None => IterContinue
@@ -649,11 +608,11 @@ fn[V : Compare] delete_node(root : Node[V], value : V) -> (Node[V]?, Bool) {
 test "copy" {
   let set = from_array([1, 2, 3, 4, 5])
   let copied_set = set.copy()
-  inspect(copied_set, content="@sorted_set.of([1, 2, 3, 4, 5])")
+  inspect(copied_set, content="@sorted_set.from_array([1, 2, 3, 4, 5])")
   inspect(set.debug_tree() == copied_set.debug_tree(), content="true")
   let set : T[Int] = from_array([])
   let copied_set = set.copy()
-  inspect(copied_set, content="@sorted_set.of([])")
+  inspect(copied_set, content="@sorted_set.from_array([])")
   inspect(set.debug_tree() == copied_set.debug_tree(), content="true")
 }
 
@@ -663,7 +622,7 @@ test "union" {
   let set1 = from_array([1, 2, 3])
   let set2 = from_array([4, 5, 6])
   let set3 = set1.union(set2)
-  inspect(set3, content="@sorted_set.of([1, 2, 3, 4, 5, 6])")
+  inspect(set3, content="@sorted_set.from_array([1, 2, 3, 4, 5, 6])")
   inspect(
     set3.debug_tree(),
     content="([3]3,([2]2,([1]1,_,_),_),([2]5,([1]4,_,_),([1]6,_,_)))",
@@ -673,33 +632,33 @@ test "union" {
   let set1 = from_array([1, 2, 3])
   let set2 = from_array([2, 3, 4])
   let set3 = set1.union(set2)
-  inspect(set3, content="@sorted_set.of([1, 2, 3, 4])")
+  inspect(set3, content="@sorted_set.from_array([1, 2, 3, 4])")
   inspect(set3.debug_tree(), content="([3]2,([1]1,_,_),([2]3,_,([1]4,_,_)))")
 
   // Test 3: Union of two sets where one is a subset of the other
   let set1 = from_array([1, 2, 3])
   let set2 = from_array([2, 3])
   let set3 = set1.union(set2)
-  inspect(set3, content="@sorted_set.of([1, 2, 3])")
+  inspect(set3, content="@sorted_set.from_array([1, 2, 3])")
   inspect(set3.debug_tree(), content="([2]2,([1]1,_,_),([1]3,_,_))")
 
   // Test 4: Union of two empty sets
   let set1 : T[Int] = new()
   let set2 = new()
   let set3 = set1.union(set2)
-  inspect(set3, content="@sorted_set.of([])")
+  inspect(set3, content="@sorted_set.from_array([])")
   inspect(set3.debug_tree(), content="_")
 
   // Test 5: Union of an empty set with a non-empty set
   let set1 = from_array([1, 2, 3])
   let set2 = from_array([])
   let set3 = set1.union(set2)
-  inspect(set3, content="@sorted_set.of([1, 2, 3])")
+  inspect(set3, content="@sorted_set.from_array([1, 2, 3])")
   inspect(set3.debug_tree(), content="([2]2,([1]1,_,_),([1]3,_,_))")
   let set1 = from_array([])
   let set2 = from_array([1, 2, 3])
   let set3 = set1.union(set2)
-  inspect(set3, content="@sorted_set.of([1, 2, 3])")
+  inspect(set3, content="@sorted_set.from_array([1, 2, 3])")
   inspect(set3.debug_tree(), content="([2]2,([1]1,_,_),([1]3,_,_))")
 
   // Test 6: Union of two large sets with no common elements
@@ -708,7 +667,7 @@ test "union" {
   let set3 = set1.union(set2)
   inspect(
     set3,
-    content="@sorted_set.of([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20])",
+    content="@sorted_set.from_array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20])",
   )
   inspect(
     set3.debug_tree(),
@@ -721,7 +680,7 @@ test "union" {
   let set3 = set1.union(set2)
   inspect(
     set3,
-    content="@sorted_set.of([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15])",
+    content="@sorted_set.from_array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15])",
   )
   inspect(
     set3.debug_tree(),
@@ -732,7 +691,10 @@ test "union" {
   let set1 = from_array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
   let set2 = from_array([6, 7, 8, 9, 10])
   let set3 = set1.union(set2)
-  inspect(set3, content="@sorted_set.of([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])")
+  inspect(
+    set3,
+    content="@sorted_set.from_array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])",
+  )
   inspect(
     set3.debug_tree(),
     content="([4]4,([2]2,([1]1,_,_),([1]3,_,_)),([3]8,([2]6,([1]5,_,_),([1]7,_,_)),([2]9,_,([1]10,_,_))))",
@@ -844,7 +806,7 @@ test "add multiple values" {
 test "add_and_remove" {
   let set = from_array([7, 2, 9, 4, 5, 6, 3, 8, 1])
   set.remove(8)
-  inspect(set, content="@sorted_set.of([1, 2, 3, 4, 5, 6, 7, 9])")
+  inspect(set, content="@sorted_set.from_array([1, 2, 3, 4, 5, 6, 7, 9])")
   inspect(
     set.debug_tree(),
     content="([4]5,([3]3,([2]2,([1]1,_,_),_),([1]4,_,_)),([2]7,([1]6,_,_),([1]9,_,_)))",
@@ -853,25 +815,25 @@ test "add_and_remove" {
 
   // Test 1: Remove elements
   set.remove(1)
-  inspect(set, content="@sorted_set.of([2, 3, 4, 5, 6, 7, 8, 9, 10])")
+  inspect(set, content="@sorted_set.from_array([2, 3, 4, 5, 6, 7, 8, 9, 10])")
   inspect(
     set.debug_tree(),
     content="([4]4,([2]2,_,([1]3,_,_)),([3]8,([2]6,([1]5,_,_),([1]7,_,_)),([2]9,_,([1]10,_,_))))",
   )
   set.remove(5)
-  inspect(set, content="@sorted_set.of([2, 3, 4, 6, 7, 8, 9, 10])")
+  inspect(set, content="@sorted_set.from_array([2, 3, 4, 6, 7, 8, 9, 10])")
   inspect(
     set.debug_tree(),
     content="([4]4,([2]2,_,([1]3,_,_)),([3]8,([2]6,_,([1]7,_,_)),([2]9,_,([1]10,_,_))))",
   )
   set.remove(10)
-  inspect(set, content="@sorted_set.of([2, 3, 4, 6, 7, 8, 9])")
+  inspect(set, content="@sorted_set.from_array([2, 3, 4, 6, 7, 8, 9])")
   inspect(
     set.debug_tree(),
     content="([4]4,([2]2,_,([1]3,_,_)),([3]8,([2]6,_,([1]7,_,_)),([1]9,_,_)))",
   )
   set.remove(4)
-  inspect(set, content="@sorted_set.of([2, 3, 6, 7, 8, 9])")
+  inspect(set, content="@sorted_set.from_array([2, 3, 6, 7, 8, 9])")
   inspect(
     set.debug_tree(),
     content="([3]6,([2]2,_,([1]3,_,_)),([2]8,([1]7,_,_),([1]9,_,_)))",
@@ -879,25 +841,28 @@ test "add_and_remove" {
 
   // Test 2: Add elements
   set.add(1)
-  inspect(set, content="@sorted_set.of([1, 2, 3, 6, 7, 8, 9])")
+  inspect(set, content="@sorted_set.from_array([1, 2, 3, 6, 7, 8, 9])")
   inspect(
     set.debug_tree(),
     content="([3]6,([2]2,([1]1,_,_),([1]3,_,_)),([2]8,([1]7,_,_),([1]9,_,_)))",
   )
   set.add(5)
-  inspect(set, content="@sorted_set.of([1, 2, 3, 5, 6, 7, 8, 9])")
+  inspect(set, content="@sorted_set.from_array([1, 2, 3, 5, 6, 7, 8, 9])")
   inspect(
     set.debug_tree(),
     content="([4]6,([3]2,([1]1,_,_),([2]3,_,([1]5,_,_))),([2]8,([1]7,_,_),([1]9,_,_)))",
   )
   set.add(10)
-  inspect(set, content="@sorted_set.of([1, 2, 3, 5, 6, 7, 8, 9, 10])")
+  inspect(set, content="@sorted_set.from_array([1, 2, 3, 5, 6, 7, 8, 9, 10])")
   inspect(
     set.debug_tree(),
     content="([4]6,([3]2,([1]1,_,_),([2]3,_,([1]5,_,_))),([3]8,([1]7,_,_),([2]9,_,([1]10,_,_))))",
   )
   set.add(4)
-  inspect(set, content="@sorted_set.of([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])")
+  inspect(
+    set,
+    content="@sorted_set.from_array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])",
+  )
   inspect(
     set.debug_tree(),
     content="([4]6,([3]2,([1]1,_,_),([2]4,([1]3,_,_),([1]5,_,_))),([3]8,([1]7,_,_),([2]9,_,([1]10,_,_))))",
@@ -905,13 +870,19 @@ test "add_and_remove" {
 
   // Test 3: Add and remove the same element
   set.add(11)
-  inspect(set, content="@sorted_set.of([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11])")
+  inspect(
+    set,
+    content="@sorted_set.from_array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11])",
+  )
   inspect(
     set.debug_tree(),
     content="([4]6,([3]2,([1]1,_,_),([2]4,([1]3,_,_),([1]5,_,_))),([3]8,([1]7,_,_),([2]10,([1]9,_,_),([1]11,_,_))))",
   )
   set.remove(11)
-  inspect(set, content="@sorted_set.of([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])")
+  inspect(
+    set,
+    content="@sorted_set.from_array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])",
+  )
   inspect(
     set.debug_tree(),
     content="([4]6,([3]2,([1]1,_,_),([2]4,([1]3,_,_),([1]5,_,_))),([3]8,([1]7,_,_),([2]10,([1]9,_,_),_)))",
@@ -919,91 +890,97 @@ test "add_and_remove" {
 
   // Test 4: Remove an element that doesn't exist
   set.remove(12)
-  inspect(set, content="@sorted_set.of([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])")
+  inspect(
+    set,
+    content="@sorted_set.from_array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])",
+  )
 
   // Test 5: Add an element that already exists
   set.add(10)
-  inspect(set, content="@sorted_set.of([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])")
+  inspect(
+    set,
+    content="@sorted_set.from_array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])",
+  )
 
   // Test 6: Remove all elements
   set.remove(1)
-  inspect(set, content="@sorted_set.of([2, 3, 4, 5, 6, 7, 8, 9, 10])")
+  inspect(set, content="@sorted_set.from_array([2, 3, 4, 5, 6, 7, 8, 9, 10])")
   inspect(
     set.debug_tree(),
     content="([4]6,([3]4,([2]2,_,([1]3,_,_)),([1]5,_,_)),([3]8,([1]7,_,_),([2]10,([1]9,_,_),_)))",
   )
   set.remove(2)
-  inspect(set, content="@sorted_set.of([3, 4, 5, 6, 7, 8, 9, 10])")
+  inspect(set, content="@sorted_set.from_array([3, 4, 5, 6, 7, 8, 9, 10])")
   inspect(
     set.debug_tree(),
     content="([4]6,([2]4,([1]3,_,_),([1]5,_,_)),([3]8,([1]7,_,_),([2]10,([1]9,_,_),_)))",
   )
   set.remove(3)
-  inspect(set, content="@sorted_set.of([4, 5, 6, 7, 8, 9, 10])")
+  inspect(set, content="@sorted_set.from_array([4, 5, 6, 7, 8, 9, 10])")
   inspect(
     set.debug_tree(),
     content="([4]6,([2]4,_,([1]5,_,_)),([3]8,([1]7,_,_),([2]10,([1]9,_,_),_)))",
   )
   set.remove(4)
-  inspect(set, content="@sorted_set.of([5, 6, 7, 8, 9, 10])")
+  inspect(set, content="@sorted_set.from_array([5, 6, 7, 8, 9, 10])")
   inspect(
     set.debug_tree(),
     content="([3]8,([2]6,([1]5,_,_),([1]7,_,_)),([2]10,([1]9,_,_),_))",
   )
   set.remove(5)
-  inspect(set, content="@sorted_set.of([6, 7, 8, 9, 10])")
+  inspect(set, content="@sorted_set.from_array([6, 7, 8, 9, 10])")
   inspect(
     set.debug_tree(),
     content="([3]8,([2]6,_,([1]7,_,_)),([2]10,([1]9,_,_),_))",
   )
   set.remove(6)
-  inspect(set, content="@sorted_set.of([7, 8, 9, 10])")
+  inspect(set, content="@sorted_set.from_array([7, 8, 9, 10])")
   inspect(set.debug_tree(), content="([3]8,([1]7,_,_),([2]10,([1]9,_,_),_))")
   set.remove(7)
-  inspect(set, content="@sorted_set.of([8, 9, 10])")
+  inspect(set, content="@sorted_set.from_array([8, 9, 10])")
   inspect(set.debug_tree(), content="([2]9,([1]8,_,_),([1]10,_,_))")
   set.remove(8)
-  inspect(set, content="@sorted_set.of([9, 10])")
+  inspect(set, content="@sorted_set.from_array([9, 10])")
   inspect(set.debug_tree(), content="([2]9,_,([1]10,_,_))")
   set.remove(9)
-  inspect(set, content="@sorted_set.of([10])")
+  inspect(set, content="@sorted_set.from_array([10])")
   inspect(set.debug_tree(), content="([1]10,_,_)")
   set.remove(10)
-  inspect(set, content="@sorted_set.of([])")
+  inspect(set, content="@sorted_set.from_array([])")
   inspect(set.debug_tree(), content="_")
   let set = from_array([7, 2, 9, 4, 5, 6, 3, 1])
   set.remove(3)
-  inspect(set, content="@sorted_set.of([1, 2, 4, 5, 6, 7, 9])")
+  inspect(set, content="@sorted_set.from_array([1, 2, 4, 5, 6, 7, 9])")
   inspect(
     set.debug_tree(),
     content="([3]5,([2]2,([1]1,_,_),([1]4,_,_)),([2]7,([1]6,_,_),([1]9,_,_)))",
   )
   set.remove(2)
-  inspect(set, content="@sorted_set.of([1, 4, 5, 6, 7, 9])")
+  inspect(set, content="@sorted_set.from_array([1, 4, 5, 6, 7, 9])")
   inspect(
     set.debug_tree(),
     content="([3]5,([2]4,([1]1,_,_),_),([2]7,([1]6,_,_),([1]9,_,_)))",
   )
   set.remove(5)
-  inspect(set, content="@sorted_set.of([1, 4, 6, 7, 9])")
+  inspect(set, content="@sorted_set.from_array([1, 4, 6, 7, 9])")
   inspect(
     set.debug_tree(),
     content="([3]6,([2]4,([1]1,_,_),_),([2]7,_,([1]9,_,_)))",
   )
   set.remove(9)
-  inspect(set, content="@sorted_set.of([1, 4, 6, 7])")
+  inspect(set, content="@sorted_set.from_array([1, 4, 6, 7])")
   inspect(set.debug_tree(), content="([3]6,([2]4,([1]1,_,_),_),([1]7,_,_))")
   set.remove(1)
-  inspect(set, content="@sorted_set.of([4, 6, 7])")
+  inspect(set, content="@sorted_set.from_array([4, 6, 7])")
   inspect(set.debug_tree(), content="([2]6,([1]4,_,_),([1]7,_,_))")
   set.remove(7)
-  inspect(set, content="@sorted_set.of([4, 6])")
+  inspect(set, content="@sorted_set.from_array([4, 6])")
   inspect(set.debug_tree(), content="([2]6,([1]4,_,_),_)")
   set.remove(4)
-  inspect(set, content="@sorted_set.of([6])")
+  inspect(set, content="@sorted_set.from_array([6])")
   inspect(set.debug_tree(), content="([1]6,_,_)")
   set.remove(6)
-  inspect(set, content="@sorted_set.of([])")
+  inspect(set, content="@sorted_set.from_array([])")
   inspect(set.debug_tree(), content="_")
 }
 

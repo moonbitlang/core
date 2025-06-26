@@ -7,7 +7,19 @@
     "moonbitlang/core/bigint",
     "moonbitlang/core/random"
   ],
-  "test-import": [
-    "moonbitlang/core/test"
-  ]
+  "targets" : {
+    "algebraic_double_js.mbt": ["js"],
+    "algebraic_double_nonjs.mbt": ["not", "js"],
+    "exp_double_js.mbt": ["js"],
+    "exp_double_nonjs.mbt": ["not", "js"],
+    "log_double_js.mbt": ["js"],
+    "log_double_nonjs.mbt": ["not", "js"],
+    "pow_double_js.mbt": ["js"],
+    "pow_double_nonjs.mbt": ["not", "js"],
+    "trig_double_js.mbt": ["js"],
+    "trig_double_nonjs.mbt": ["not", "js"],
+    "hyperbolic_double_js.mbt": ["js"],
+    "hyperbolic_double_nonjs.mbt": ["not", "js"],
+    "utils.mbt": ["not", "js"]
+  }
 }

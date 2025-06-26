@@ -210,7 +210,7 @@ pub fn inspect(
   content? : Json,
   loc~ : SourceLoc = _,
   args_loc~ : ArgsLoc = _
-) -> Unit!InspectError {
+) -> Unit raise InspectError {
   let loc = loc.to_string().escape()
   let args_loc = args_loc.to_json().escape()
   let actual = obj.to_json().stringify(escape_slash=false)

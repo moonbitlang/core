@@ -56,15 +56,15 @@ fn[T : Eq] Bucket::remove(self : Bucket[T], key : T) -> Bucket[T]? {
 ///|
 /// Get the size of a bucket
 fn[T] Bucket::size(self : Bucket[T]) -> Int {
-  loop self, 1 {
-    JustOne(_), acc => acc
-    More(_, rest), acc => continue rest, acc + 1
+  loop (self, 1) {
+    (JustOne(_), acc) => acc
+    (More(_, rest), acc) => continue (rest, acc + 1)
   }
 }
 
 ///|
 /// Iterate through elements of a bucket
-fn[T] Bucket::each(self : Bucket[T], f : (T) -> Unit) -> Unit {
+fn[T] Bucket::each(self : Bucket[T], f : (T) -> Unit raise?) -> Unit raise? {
   loop self {
     JustOne(k) => f(k)
     More(k, rest) => {
@@ -76,17 +76,9 @@ fn[T] Bucket::each(self : Bucket[T], f : (T) -> Unit) -> Unit {
 
 ///|
 fn[T] Bucket::iter(self : Bucket[T]) -> Iter[T] {
-  Iter::new(fn {
-    f =>
-      loop self {
-        JustOne(k) => f(k)
-        More(k, rest) =>
-          if f(k) == IterContinue {
-            continue rest
-          } else {
-            IterEnd
-          }
-      }
+  Iter::new(f => loop self {
+    JustOne(k) => f(k)
+    More(k, rest) => if f(k) == IterContinue { continue rest } else { IterEnd }
   })
 }
 
@@ -131,17 +123,15 @@ test "Bucket::iter" {
   let mut is_first = true
   b
   .iter()
-  .each(fn {
-    k => {
-      // weird syntax conventions that
-      // braces needed here
-      if is_first {
-        is_first = false
-      } else {
-        buf.write_string(", ")
-      }
-      buf.write_string("\{k}")
+  .each(k => {
+    // weird syntax conventions that
+    // braces needed here
+    if is_first {
+      is_first = false
+    } else {
+      buf.write_string(", ")
     }
+    buf.write_string("\{k}")
   })
   inspect(buf.to_string(), content="0, 1, 31")
 }
@@ -215,15 +205,13 @@ test "Bucket iter" {
   let mut is_first = true
   b2
   .iter()
-  .each(fn {
-    k => {
-      if is_first {
-        is_first = false
-      } else {
-        buf.write_string(", ")
-      }
-      buf.write_string("\{k}")
+  .each(k => {
+    if is_first {
+      is_first = false
+    } else {
+      buf.write_string(", ")
     }
+    buf.write_string("\{k}")
   })
   inspect(buf, content="1, 2, 0")
 }

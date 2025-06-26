@@ -198,7 +198,7 @@ test "iter2" {
   v.unsafe_pop_front()
   v.unsafe_pop_back()
   let mut sum = 0
-  v.each(fn { x => sum += x })
+  v.each(x => sum += x)
   inspect(sum, content="9")
 }
 
@@ -657,7 +657,7 @@ test "test_from_vec" {
 
 ///|
 test "test_from_array" {
-  fn test_fn!(n : Int) -> Unit {
+  fn test_fn(n : Int) -> Unit raise {
     let array : FixedArray[Int] = FixedArray::make(n, 0)
     for index in 0..<n {
       array[index] = index
@@ -704,7 +704,7 @@ test "test_clone_from" {
 test "deque guard iter coverage improvement" {
   let dq = @deque.new(capacity=15)
   // Use push_front only
-  fn test_n_via_push_front(n : Int) -> Unit! {
+  fn test_n_via_push_front(n : Int) -> Unit raise {
     for i in 0..=n {
       dq.push_front(i)
     }
@@ -761,7 +761,7 @@ test "deque guard iter after push_front and push_back" {
 test "deque guard iter2 coverage improvement" {
   let dq = @deque.new(capacity=15)
   // Use push_front only
-  fn test_n_via_push_front(n : Int) -> Unit! {
+  fn test_n_via_push_front(n : Int) -> Unit raise {
     for i in 0..=n {
       dq.push_front(i)
     }
@@ -849,7 +849,7 @@ test "deque retain" {
   @json.inspect(dq.as_views(), content=[[2, 4], []])
 
   // Test split case (head_len < len)
-  fn dq!() {
+  fn dq() raise {
     // Push and pop to create a wrap-around situation
     let dq = @deque.of([1, 2, 3, 4, 5, 6])
     dq
@@ -893,7 +893,7 @@ test "deque retain_map" {
   @json.inspect(dq.as_views(), content=[[3, 5], []])
 
   // Test split case (head_len < len)
-  fn dq!() {
+  fn dq() raise {
     // Push and pop to create a wrap-around situation
     let dq = @deque.of([1, 2, 3, 4, 5, 6])
     dq

@@ -13,10 +13,6 @@
 // limitations under the License.
 
 ///|
-#deprecated("Use `@array.View` instead")
-pub typealias @array.View as ArrayView
-
-///|
 pub typealias @builtin.(
   ArgsLoc,
   Array,
@@ -91,10 +87,12 @@ pub fnalias @builtin.(
 /// The original value, unchanged.
 ///
 /// # Examples
-/// ```moonbit
+/// ```mbt
 /// let val : Ref[Int] = { val : 1 }
 /// let x : Int = 5
 /// assert_eq(x |> tap(fn(n) { val.val += n }), 5)
+/// // This is not allowed
+/// // x |> (val.val += _)
 /// assert_eq(val.val, 6)
 /// ```
 pub fn[T] tap(value : T, f : (T) -> Unit) -> T {
@@ -116,6 +114,8 @@ pub fn[T] tap(value : T, f : (T) -> Unit) -> T {
 /// ```moonbit
 /// let x = 5
 /// let result = x |> then(fn(n) { n * 2 })
+/// // This is not allowed
+/// // x |> (_ * 2)
 /// assert_eq(result, 10)
 /// ```
 pub fn[T, R] then(value : T, f : (T) -> R) -> R {

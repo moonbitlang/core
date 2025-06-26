@@ -97,3 +97,13 @@ pub impl Default for UInt16 with default() {
 pub impl ToJson for UInt16 with to_json(self : UInt16) -> Json {
   Json::number(self.to_int().to_double())
 }
+
+///|
+pub fn UInt16::to_uint(self : UInt16) -> UInt {
+  self.to_int().reinterpret_as_uint()
+}
+
+///|
+pub fn UInt16::to_uint64(self : UInt16) -> UInt64 {
+  self.to_int().to_uint64()
+}

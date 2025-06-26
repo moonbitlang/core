@@ -17,7 +17,8 @@
 // generic type parameters of extern ffi
 
 ///|
-priv extern type JSValue
+#external
+priv type JSValue
 
 ///|
 fn[T] JSValue::ofAny(array : T) -> JSValue = "%identity"
@@ -26,7 +27,8 @@ fn[T] JSValue::ofAny(array : T) -> JSValue = "%identity"
 fn[T] JSValue::toAny(self : JSValue) -> T = "%identity"
 
 ///|
-priv extern type JSArray
+#external
+priv type JSArray
 
 ///|
 fn[T] JSArray::ofAnyArray(array : Array[T]) -> JSArray = "%identity"
@@ -68,7 +70,8 @@ extern "js" fn JSArray::splice1(
 ///|
 /// An `Array` is a collection of values that supports random access and can
 /// grow in size.
-extern type Array[T]
+#external
+type Array[T]
 
 ///|
 fn[T] Array::make_uninit(len : Int) -> Array[T] = "%fixedarray.make_uninit"
@@ -138,12 +141,10 @@ test "UninitializedArray::unsafe_blit_fixed" {
 /// **NOTE**: This method does nothing on js platform.
 /// # Example
 ///
-/// ```
-/// test "reserve_capacity_example" {
+/// ```mbt
 ///   let v = [1]
 ///   v.reserve_capacity(10)
 ///   assert_eq(v.capacity(), 1)
-/// }
 /// ```
 pub fn[T] Array::reserve_capacity(self : Array[T], capacity : Int) -> Unit {
   ignore(self)
@@ -156,8 +157,7 @@ pub fn[T] Array::reserve_capacity(self : Array[T], capacity : Int) -> Unit {
 /// **NOTE**: This method does nothing on js platform.
 /// # Example
 ///
-/// ```
-/// test "shrink_to_fit_example" {
+/// ```mbt
 ///   let v = Array::new(capacity=10)
 ///   v.push(1)
 ///   v.push(2)
@@ -165,7 +165,6 @@ pub fn[T] Array::reserve_capacity(self : Array[T], capacity : Int) -> Unit {
 ///   assert_eq(v.capacity(), 3)
 ///   v.shrink_to_fit()
 ///   assert_eq(v.capacity(), 3)
-/// }
 /// ```
 pub fn[T] Array::shrink_to_fit(self : Array[T]) -> Unit {
   ignore(self)
@@ -177,11 +176,9 @@ pub fn[T] Array::shrink_to_fit(self : Array[T]) -> Unit {
 /// If the array is at capacity, it will be reallocated.
 ///
 /// # Example
-/// ```
-/// test "push_example" {
+/// ```mbt
 ///   let v = []
 ///   v.push(3)
-/// }
 /// ```
 pub fn[T] Array::push(self : Array[T], value : T) -> Unit {
   JSArray::ofAnyArray(self).push(JSValue::ofAny(value))
@@ -191,13 +188,11 @@ pub fn[T] Array::push(self : Array[T], value : T) -> Unit {
 /// Removes the last element from a array and returns it, or `None` if it is empty.
 ///
 /// # Example
-/// ```
-/// test "pop_example" {
+/// ```mbt
 ///   let v = [1, 2, 3]
 ///   let vv = v.pop()
 ///   assert_eq(vv, Some(3))
 ///   assert_eq(v, [1, 2])
-/// }
 /// ```
 pub fn[T] Array::pop(self : Array[T]) -> T? {
   if self.length() == 0 {
@@ -234,13 +229,11 @@ pub fn[T] Array::unsafe_pop(self : Array[T]) -> T {
 /// This function will panic if the index is out of bounds.
 ///
 /// # Example
-/// ```
-/// test "remove_example" {
+/// ```mbt
 ///   let v = [3, 4, 5]
 ///   let vv = v.remove(1)
 ///   assert_eq(vv, 4)
 ///   assert_eq(v, [3, 5])
-/// }
 /// ```
 pub fn[T] Array::remove(self : Array[T], index : Int) -> T {
   guard index >= 0 && index < self.length() else {
@@ -261,11 +254,11 @@ pub fn[T] Array::remove(self : Array[T], index : Int) -> T {
 /// This function will panic if the index is out of bounds.
 ///
 /// # Example
-/// ```
-/// test "drain_example" {
+/// ```mbt
 ///   let v = [3, 4, 5]
 ///   let vv = v.drain(1, 2) // vv = [4], v = [3, 5]
-/// }
+///   assert_eq(vv, [4])
+///   assert_eq(v, [3, 5])
 /// ```
 pub fn[T] Array::drain(self : Array[T], begin : Int, end : Int) -> Array[T] {
   guard begin >= 0 && end <= self.length() && begin <= end else {
@@ -282,10 +275,8 @@ pub fn[T] Array::drain(self : Array[T], begin : Int, end : Int) -> Array[T] {
 /// This function will panic if the index is out of bounds.
 ///
 /// # Example
-/// ```
-/// test "insert_example" {
+/// ```mbt
 ///   [3, 4, 5].insert(1, 6)
-/// }
 /// ```
 pub fn[T] Array::insert(self : Array[T], index : Int, value : T) -> Unit {
   guard index >= 0 && index <= self.length() else {

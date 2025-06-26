@@ -29,81 +29,6 @@
 //
 
 ///|
-/// Calculates the natural logarithm (base e) of the input.
-///
-/// Parameters:
-///
-/// - `input` : The floating-point number for which to calculate the natural
-///   logarithm.
-///
-/// Returns the natural logarithm of the input.
-///
-/// Examples:
-///
-/// ```
-/// assert_eq(ln(1.0), 0.0)
-/// assert_eq(ln(0.5), -0.6931471805599453)
-/// ```
-pub fn ln(input : Double) -> Double {
-  input.ln()
-}
-
-///|
-/// Calculates the base-2 logarithm of the input number.
-///
-/// Parameters:
-///
-/// - `input` : The floating-point number for which the logarithm is to be
-///   calculated.
-///
-/// Returns the base-2 logarithm of the input number.
-///
-/// Example:
-///
-/// ```
-/// assert_eq(log2(8.0), 3.0)
-/// ```
-pub fn log2(input : Double) -> Double {
-  input.log2()
-}
-
-///|
-/// Calculates the base-10 logarithm of the input number.
-///
-/// Parameters:
-///
-/// - `input` : The floating-point number for which to calculate the logarithm.
-///
-/// Returns the base-10 logarithm of the input number.
-///
-/// Example:
-///
-/// ```
-/// assert_eq(log10(100.0), 2.0)
-/// ```
-pub fn log10(input : Double) -> Double {
-  input.log10()
-}
-
-///|
-/// Calculates ln(1 + x) accurately even when x is close to zero.
-///
-/// Parameters:
-///
-/// * `input` : The number to which 1 is added before calculating the logarithm.
-///
-/// Returns the natural logarithm of 1 + `input`.
-///
-/// Special Cases:
-///
-/// * Returns `NaN` if `x` is `NaN` or less than -1.
-/// * Returns `-Infinity` if `x` is -1.
-/// * Returns `+Infinity` if `x` is `+Infinity`.
-pub fn ln_1p(input : Double) -> Double {
-  input.ln_1p()
-}
-
-///|
 let logf_off = 0x3f330000U
 
 ///|
@@ -157,11 +82,9 @@ let logf_data : LogfData = {
 /// Example:
 ///
 /// ```moonbit
-/// test "ln" {
 ///   inspect(lnf(1), content="0")
 ///   inspect(lnf(2.718281828459045), content="0.9999999403953552")
 ///   inspect(lnf(0), content="-Infinity")
-/// }
 /// ```
 pub fn lnf(x : Float) -> Float {
   let mut ix : UInt = x.reinterpret_as_int().reinterpret_as_uint()
@@ -215,7 +138,6 @@ pub fn lnf(x : Float) -> Float {
 /// Example:
 ///
 /// ```moonbit
-/// test "ln_1p" {
 ///   inspect(ln_1pf(0), content="0")
 ///   inspect(ln_1pf(1), content="0.6931471824645996")
 ///   inspect(ln_1pf(-1), content="-Infinity")
@@ -223,7 +145,6 @@ pub fn lnf(x : Float) -> Float {
 ///   inspect(ln_1pf(@float.not_a_number), content="NaN")
 ///   inspect(ln_1pf(@float.infinity), content="Infinity")
 ///   inspect(ln_1pf(@float.neg_infinity), content="NaN")
-/// }
 /// ```
 pub fn ln_1pf(x : Float) -> Float {
   let lg1_f : Float = 0.66666662693
@@ -238,14 +159,14 @@ pub fn ln_1pf(x : Float) -> Float {
   let mut iu : UInt = 0
   let one : Float = 1.0
   let mut k = 1
-  if ui < 0x3ed413d0 || (ui >> 31) > 0 {
+  if ui < 0x3ed413d0 || ui >> 31 > 0 {
     if ui >= 0xbf800000 {
       if x == -1.0 {
         return x / 0.0
       }
       return (x - x) / 0.0
     }
-    if (ui << 1) < (0x33800000U << 1) {
+    if ui << 1 < 0x33800000U << 1 {
       return x
     }
     if ui <= 0xbe95f619 {

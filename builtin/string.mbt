@@ -18,8 +18,8 @@ fn unsafe_make_string(length : Int, value : Char) -> String = "$moonbit.unsafe_m
 ///|
 /// Create new string of `length`, where each character is `value`
 ///
-/// ```
-/// assert_eq(String::make(5,'S'), "SSSSS")
+/// ```mbt
+///   assert_eq(String::make(5,'S'), "SSSSS")
 /// ```
 pub fn String::make(length : Int, value : Char) -> String {
   guard length >= 0 else { abort("invalid length") }
@@ -68,13 +68,11 @@ fn code_point_of_surrogate_pair(leading : Int, trailing : Int) -> Char {
 ///
 /// # Examples
 ///
-/// ```
-/// test "String::charcode_at" {
+/// ```mbt
 ///   let s = "Hello🤣";
 ///   inspect(s.charcode_at(0), content="72");
 ///   inspect(s.charcode_at(5), content="55358"); // First surrogate of 🤣
 ///   inspect(s.charcode_at(6), content="56611"); // Second surrogate of 🤣
-/// }
 /// ```
 ///
 pub fn String::charcode_at(self : String, index : Int) -> Int = "%string_get"
@@ -87,12 +85,10 @@ pub fn String::charcode_at(self : String, index : Int) -> Int = "%string_get"
 ///
 /// # Examples
 ///
-/// ```
-/// test "String::codepoint_at" {
+/// ```mbt
 ///   let s = "Hello🤣";
-///   inspect(s.codepoint_at(0), content="H");
-///   inspect(s.codepoint_at(5), content="🤣"); // Returns full emoji character
-/// }
+///   inspect(s.iter().nth(0).unwrap(), content="H");
+///   inspect(s.iter().nth(5).unwrap(), content="🤣"); // Returns full emoji character
 /// ```
 ///
 /// # Panics
@@ -155,18 +151,17 @@ pub fn String::unsafe_char_at(self : String, index : Int) -> Char {
 ///
 /// # Examples
 ///
-/// ```
-/// test "String::char_length" {
+/// ```mbt
 ///   let s = "Hello🤣";
 ///   inspect(s.char_length(), content = "6"); // 6 actual characters
 ///   inspect(s.length(), content = "7");  // 5 ASCII chars + 2 surrogate pairs
-/// }
 /// ```
 pub fn String::char_length(
   self : String,
   start_offset~ : Int = 0,
-  end_offset~ : Int = self.length()
+  end_offset? : Int
 ) -> Int {
+  let end_offset = if end_offset is Some(o) { o } else { self.length() }
   guard start_offset >= 0 &&
     start_offset <= end_offset &&
     end_offset <= self.length() else {
@@ -194,9 +189,9 @@ pub fn String::char_length(
 pub fn String::codepoint_length(
   self : String,
   start_offset~ : Int = 0,
-  end_offset~ : Int = self.length()
+  end_offset? : Int
 ) -> Int {
-  self.char_length(start_offset~, end_offset~)
+  self.char_length(start_offset~, end_offset?)
 }
 
 ///|
@@ -205,7 +200,7 @@ fn unsafe_substring(str : String, start : Int, end : Int) -> String {
   let len = end - start
   let bytes = FixedArray::make(len * 2, Byte::default())
   bytes.blit_from_string(0, str, start, len)
-  bytes.unsafe_to_bytes().to_unchecked_string()
+  bytes.unsafe_reinterpret_as_bytes().to_unchecked_string()
 }
 
 ///|
@@ -224,25 +219,14 @@ fn unsafe_substring(str : String, start : Int, end : Int) -> String {
 /// Example:
 ///
 /// ```moonbit
-/// test "substring/basic" {
 ///   let s = "Hello world"
 ///   inspect(s.substring(start=0, end=5), content="Hello")
 ///   inspect(s.substring(start=6, end=11), content="world")
 ///   inspect(s.substring(), content="Hello world")
-/// }
 ///
-/// test "substring/empty" {
 ///   let s = "test"
 ///   inspect(s.substring(start=2, end=2), content="")
 ///   inspect("".substring(), content="")
-/// }
-///
-/// test "panic substring/invalid_range" {
-///   let s = "test"
-///   ignore(s.substring(start=-1))
-///   ignore(s.substring(end=5))
-///   ignore(s.substring(start=3, end=2))
-/// }
 /// ```
 pub fn String::substring(self : String, start~ : Int = 0, end? : Int) -> String {
   let len = self.length()

@@ -15,11 +15,9 @@
 ///|
 /// Convert char array to string.
 ///
-/// ```
-/// test "from_array_example" {
+/// ```mbt
 ///   let s = @string.from_array(['H', 'e', 'l', 'l', 'o'])
 ///   assert_eq(s, "Hello")
-/// }
 /// ```
 ///
 /// Do not convert large datas to `Array[Char]` and build a string with `String::from_array`.
@@ -51,42 +49,6 @@ pub fn String::from_iter(iter : Iter[Char]) -> String {
 pub fn from_iter(iter : Iter[Char]) -> String {
   let chars = iter.collect()
   String::from_array(chars)
-}
-
-///|
-/// Concatenate strings.
-///
-/// ```
-/// let s = @string.concat(["Hello", ", ", "world!"])
-/// assert_eq(s, "Hello, world!")
-/// let s = @string.concat(["a", "b", "c"], separator=",")
-/// assert_eq(s, "a,b,c")
-/// ```
-#deprecated("Use `Array::join` instead.")
-pub fn concat(strings : Array[String], separator~ : String = "") -> String {
-  match strings {
-    [] => ""
-    [hd, .. tl] => {
-      let mut size_hint = hd.length()
-      for s in tl {
-        size_hint += s.length() + separator.length()
-      }
-      size_hint = size_hint << 1
-      let buf = StringBuilder::new(size_hint~)
-      buf.write_string(hd)
-      if separator == "" {
-        for s in tl {
-          buf.write_string(s)
-        }
-      } else {
-        for s in tl {
-          buf.write_string(separator)
-          buf.write_string(s)
-        }
-      }
-      buf.to_string()
-    }
-  }
 }
 
 ///|
@@ -152,15 +114,13 @@ pub fn to_array(self : String) -> Array[Char] {
 /// Note: This iterator yields Unicode characters, not Utf16 code units.
 /// As a result, the count of characters returned by `iter().count()` may not be equal to the length of the string returned by `length()`.
 ///
-/// ```
-/// test "iter_example" {
+/// ```mbt
 ///   let s = "Hello, World!🤣";
 ///   assert_eq(s.iter().count(), 14); // Unicode characters
 ///   assert_eq(s.length(), 15); // Utf16 code units
-/// }
 /// ```
 pub fn iter(self : String) -> Iter[Char] {
-  Iter::new(fn(yield_) {
+  Iter::new(yield_ => {
     let len = self.length()
     for index in 0..<len {
       let c1 = self.unsafe_charcode_at(index)
@@ -225,15 +185,13 @@ pub fn iter2(self : String) -> Iter2[Int, Char] {
 ///
 /// # Examples
 ///
-/// ```
-/// test "rev_iter_example" {
+/// ```mbt
 ///   let input = "Hello, World!"
 ///   let reversed = input.rev_iter().collect()
 ///   assert_eq(reversed, ['!', 'd', 'l', 'r', 'o', 'W', ' ', ',', 'o', 'l', 'l', 'e', 'H'])
-/// }
 /// ```
 pub fn rev_iter(self : String) -> Iter[Char] {
-  Iter::new(fn(yield_) {
+  Iter::new(yield_ => {
     let len = self.length()
     for index = len - 1; index >= 0; index = index - 1 {
       let c1 = self.unsafe_charcode_at(index)
@@ -251,69 +209,6 @@ pub fn rev_iter(self : String) -> Iter[Char] {
       IterContinue
     }
   })
-}
-
-///|
-#deprecated("Use `s.find(substr)` instead. If the optional argument `from` is not 0, take view from the string first. Please do not use an invalid `from` argument.")
-pub fn index_of(self : String, str : String, from~ : Int = 0) -> Int {
-  if from <= 0 {
-    if self.find(str.view()) is Some(idx) {
-      idx
-    } else {
-      -1
-    }
-  } else if from > self.length() {
-    if str.length() == 0 {
-      self.length()
-    } else {
-      -1
-    }
-  } else if self.view(start_offset=from).find(str.view()) is Some(idx) {
-    idx + from
-  } else {
-    -1
-  }
-}
-
-///|
-/// Returns the last index of the sub string.
-#deprecated("Use `s.rev_find(substr)` instead. If the optional argument `from` is not 0, take view from the string first. Please do not use an invalid `from` argument.")
-pub fn last_index_of(
-  self : String,
-  str : String,
-  from~ : Int = self.length()
-) -> Int {
-  if from >= self.length() {
-    if self.rev_find(str.view()) is Some(idx) {
-      idx
-    } else {
-      -1
-    }
-  } else if from < 0 {
-    if str.length() == 0 {
-      self.length()
-    } else {
-      -1
-    }
-  } else if self.view(end_offset=from).rev_find(str.view()) is Some(idx) {
-    idx
-  } else {
-    -1
-  }
-}
-
-///|
-/// Returns true if this string starts with a sub string.
-#deprecated("Use `s.has_prefix(str)` instead.")
-pub fn starts_with(self : String, str : String) -> Bool {
-  self.has_prefix(str.view())
-}
-
-///|
-/// Returns true if this string ends with a sub string.
-#deprecated("Use `s.has_suffix(str)` instead.")
-pub fn ends_with(self : String, str : String) -> Bool {
-  self.has_suffix(str.view())
 }
 
 ///|
@@ -390,8 +285,9 @@ pub fn String::offset_of_nth_char(
   self : String,
   i : Int,
   start_offset~ : Int = 0,
-  end_offset~ : Int = self.length()
+  end_offset? : Int
 ) -> Int? {
+  let end_offset = if end_offset is Some(o) { o } else { self.length() }
   if i >= 0 {
     // forward case
     self.offset_of_nth_char_forward(i, start_offset~, end_offset~)
@@ -420,8 +316,9 @@ pub fn String::char_length_eq(
   self : String,
   len : Int,
   start_offset~ : Int = 0,
-  end_offset~ : Int = self.length()
+  end_offset? : Int
 ) -> Bool {
+  let end_offset = if end_offset is Some(o) { o } else { self.length() }
   for index = start_offset, count = 0
       index < end_offset && count < len
       index = index + 1, count = count + 1 {
@@ -447,8 +344,9 @@ pub fn String::char_length_ge(
   self : String,
   len : Int,
   start_offset~ : Int = 0,
-  end_offset~ : Int = self.length()
+  end_offset? : Int
 ) -> Bool {
+  let end_offset = if end_offset is Some(o) { o } else { self.length() }
   for index = start_offset, count = 0
       index < end_offset && count < len
       index = index + 1, count = count + 1 {

@@ -95,7 +95,7 @@ pub impl Arbitrary for Double with arbitrary(_, rs) {
 ///|
 pub impl Arbitrary for Char with arbitrary(_, rs) {
   // Choose only ASCII characters
-  (rs.next_uint() % 128 |> UInt::reinterpret_as_int).unsafe_to_char()
+  ((rs.next_uint() % 128) |> UInt::reinterpret_as_int).unsafe_to_char()
 }
 
 ///|
@@ -112,14 +112,12 @@ pub impl Arbitrary for String with arbitrary(size, rs) {
 ///|
 pub impl[X : Arbitrary] Arbitrary for Iter[X] with arbitrary(size, rs) {
   let len = if size == 0 { 0 } else { rs.next_positive_int() % size }
-  Iter::new(fn(yield_) {
-    for i in 0..<len {
-      if yield_(X::arbitrary(i, rs)) == IterEnd {
-        break IterEnd
-      }
-    } else {
-      IterContinue
+  Iter::new(yield_ => for i in 0..<len {
+    if yield_(X::arbitrary(i, rs)) == IterEnd {
+      break IterEnd
     }
+  } else {
+    IterContinue
   })
 }
 

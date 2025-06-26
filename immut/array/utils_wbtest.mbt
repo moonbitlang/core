@@ -76,7 +76,7 @@ fn random_test_gen(rng : Random, times : Int, max_lvl : Int) -> Array[Op] {
 /// 2. set
 /// 
 /// The `rs` array is a sequence of operations to be executed.
-fn execute_array_test(rs : Array[Op]) -> Unit! {
+fn execute_array_test(rs : Array[Op]) -> Unit raise {
   let mut t = new()
   let a : Array[Int] = []
   for op in rs {
@@ -120,7 +120,7 @@ fn branching_factor_power(a : Int) -> Int {
 /// Use this function to check if the array and the @immut/array are equal.
 /// If we `inspect` the array, it will raise an error if the arrays are too long.
 /// I guess that's because it exceeds the heap limit of the VM.
-fn check_array_eq(a : Array[Int], t : T[Int]) -> Unit! {
+fn check_array_eq(a : Array[Int], t : T[Int]) -> Unit raise {
   assert_eq(a.length(), t.size)
   let len = t.size
   for i in 0..<len {
@@ -144,6 +144,7 @@ fn int(self : Random, limit~ : Int) -> Int {
   let a = 1UL << 48
   let c = 11UL
   let m = 25214903917UL
-  self._.val = (a * self._.val + c) % m
-  (self._.val.reinterpret_as_int64() % limit).to_int()
+  let Random(self) = self
+  self.val = (a * self.val + c) % m
+  (self.val.reinterpret_as_int64() % limit).to_int()
 }

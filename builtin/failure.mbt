@@ -26,14 +26,12 @@
 /// Example:
 ///
 /// ```moonbit
-/// test "Failure" {
 ///   let err : Failure = Failure("Test assertion failed")
 ///   match err {
 ///     Failure(msg) => inspect(msg, content="Test assertion failed")
 ///   }
-/// }
 /// ```
-pub(all) type! Failure String
+pub(all) suberror Failure String derive(ToJson, Show)
 
 ///|
 /// Raises a `Failure` error with a given message and source location.
@@ -49,14 +47,6 @@ pub(all) type! Failure String
 ///
 /// Throws an error of type `Failure` with a message that includes both the
 /// source location and the provided error message.
-///
-/// Example:
-///
-/// ```moonbit
-/// test "panic fail" {
-///   fail("Something went wrong")
-/// }
-/// ```
-pub fn[T] fail(msg : String, loc~ : SourceLoc = _) -> T!Failure {
+pub fn[T] fail(msg : String, loc~ : SourceLoc = _) -> T raise Failure {
   raise Failure("FAILED: \{loc} \{msg}")
 }

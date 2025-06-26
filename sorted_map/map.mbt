@@ -18,10 +18,6 @@ pub fn[K : Compare, V] op_set(self : T[K, V], key : K, value : V) -> Unit {
 }
 
 ///|
-#deprecated("Use `get` instead. `op_get` will return `V` instead of `Option[V]` in the future.")
-pub fn[K : Compare, V] op_get(self : T[K, V], key : K) -> V? {
-  self.get(key)
-}
 
 ///|
 pub impl[K : Eq, V : Eq] Eq for T[K, V] with op_equal(self, other) {
@@ -35,12 +31,6 @@ pub fn[K, V] new() -> T[K, V] {
 }
 
 ///|
-#deprecated("Use @sorted_map.from_array instead")
-pub fn[K : Compare, V] of(entries : Array[(K, V)]) -> T[K, V] {
-  let map = { root: None, size: 0 }
-  entries.each(fn(e) { map.add(e.0, e.1) })
-  map
-}
 
 ///| Creates a sorted map from a array of key-value pairs.
 pub fn[K : Compare, V] from_array(entries : Array[(K, V)]) -> T[K, V] {
@@ -123,8 +113,8 @@ pub fn[K, V] clear(self : T[K, V]) -> Unit {
 
 ///|
 /// Iterates the map.
-pub fn[K, V] each(self : T[K, V], f : (K, V) -> Unit) -> Unit {
-  fn dfs(root : Node[K, V]?) -> Unit {
+pub fn[K, V] each(self : T[K, V], f : (K, V) -> Unit raise?) -> Unit raise? {
+  fn dfs(root : Node[K, V]?) -> Unit raise? {
     if root is Some(root) {
       dfs(root.left)
       f(root.key, root.value)
@@ -137,9 +127,12 @@ pub fn[K, V] each(self : T[K, V], f : (K, V) -> Unit) -> Unit {
 
 ///|
 /// Iterates the map with index.
-pub fn[K, V] eachi(self : T[K, V], f : (Int, K, V) -> Unit) -> Unit {
+pub fn[K, V] eachi(
+  self : T[K, V],
+  f : (Int, K, V) -> Unit raise?
+) -> Unit raise? {
   let mut i = 0
-  self.each(fn(k, v) {
+  self.each((k, v) => {
     f(i, k, v)
     i = i + 1
   })
@@ -149,7 +142,7 @@ pub fn[K, V] eachi(self : T[K, V], f : (Int, K, V) -> Unit) -> Unit {
 /// Returns all keys in the map.
 pub fn[K, V] keys(self : T[K, V]) -> Array[K] {
   let keys = Array::new(capacity=self.size)
-  self.each(fn(k, _v) { keys.push(k) })
+  self.each((k, _v) => keys.push(k))
   keys
 }
 
@@ -157,7 +150,7 @@ pub fn[K, V] keys(self : T[K, V]) -> Array[K] {
 /// Returns all values in the map.
 pub fn[K, V] values(self : T[K, V]) -> Array[V] {
   let values = Array::new(capacity=self.size)
-  self.each(fn(_k, v) { values.push(v) })
+  self.each((_k, v) => values.push(v))
   values
 }
 
@@ -165,13 +158,13 @@ pub fn[K, V] values(self : T[K, V]) -> Array[V] {
 /// Converts the map to an array.
 pub fn[K, V] to_array(self : T[K, V]) -> Array[(K, V)] {
   let arr = Array::new(capacity=self.size)
-  self.each(fn(k, v) { arr.push((k, v)) })
+  self.each((k, v) => arr.push((k, v)))
   arr
 }
 
 ///|
 pub fn[K, V] iter(self : T[K, V]) -> Iter[(K, V)] {
-  Iter::new(fn(yield_) {
+  Iter::new(yield_ => {
     fn go(x : Node[K, V]?) {
       match x {
         None => IterContinue
@@ -192,7 +185,7 @@ pub fn[K, V] iter(self : T[K, V]) -> Iter[(K, V)] {
 
 ///|
 pub fn[K, V] iter2(self : T[K, V]) -> Iter2[K, V] {
-  Iter2::new(fn(yield_) {
+  Iter2::new(yield_ => {
     fn go(x : Node[K, V]?) {
       match x {
         None => IterContinue
@@ -214,7 +207,7 @@ pub fn[K, V] iter2(self : T[K, V]) -> Iter2[K, V] {
 ///|
 pub fn[K : Compare, V] from_iter(iter : Iter[(K, V)]) -> T[K, V] {
   let m = new()
-  iter.each(fn(e) { m[e.0] = e.1 })
+  iter.each(e => m[e.0] = e.1)
   m
 }
 
@@ -228,7 +221,7 @@ pub impl[K : @quickcheck.Arbitrary + Compare, V : @quickcheck.Arbitrary] @quickc
 
 ///|Returns a new array of key-value pairs that are within the specified range [low, high].
 pub fn[K : Compare, V] range(self : T[K, V], low : K, high : K) -> Iter2[K, V] {
-  Iter2::new(fn(yield_) {
+  Iter2::new(yield_ => {
     fn go(x : Node[K, V]?) {
       match x {
         None => IterContinue

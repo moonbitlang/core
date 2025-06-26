@@ -33,16 +33,16 @@ pub fn map(self : L, f : (Int) -> Int) -> L {
 
 ///|
 fn map_dps(f : (Int) -> Int, lst : L, dest : L) -> Unit {
-  loop lst, dest {
-    Nil, Cons(_, ..) as c => c.tail = Nil
+  loop (lst, dest) {
+    (Nil, Cons(_, ..) as c) => c.tail = Nil
     // c.tail = lst
     // this is a common error
-    Cons(head, tail~), Cons(_, ..) as c => {
+    (Cons(head, tail~), Cons(_, ..) as c) => {
       let cell = Cons(f(head), tail=Nil)
       c.tail = cell
-      continue tail, cell
+      continue (tail, cell)
     }
-    _, Nil => abort("map_dps: dest is Nil")
+    (_, Nil) => abort("map_dps: dest is Nil")
   }
 }
 
@@ -52,7 +52,7 @@ test "map" {
     1,
     tail=Cons(2, tail=Cons(3, tail=Cons(4, tail=Cons(5, tail=Nil)))),
   )
-  let lst : L = lstL.map(fn { x => x * 2 })
+  let lst : L = lstL.map(x => x * 2)
   inspect(
     lst,
     content="Cons(2, tail=Cons(4, tail=Cons(6, tail=Cons(8, tail=Cons(10, tail=Nil)))))",

@@ -13,194 +13,152 @@
 // limitations under the License.
 
 ///|
-/// Calculates the sine of a floating-point number in radians.
-///
-/// Parameters:
-///
-/// * `x` : The angle in radians for which to calculate the sine.
-///
-/// Returns the sine of the angle `x`.
-///
-/// Example:
-///
-/// ```moonbit
-/// test "sin" {
-///   inspect((0.0 : Float).sin(), content="0")
-///   inspect((2.0 : Float).sin(), content="0.9092974066734314")
-///   inspect((-5.0 : Float).sin(), content="0.9589242935180664")
-///   inspect(@float.not_a_number.sin(), content="NaN")
-///   inspect(@float.infinity.sin(), content="NaN")
-///   inspect(@float.neg_infinity.sin(), content="NaN")
-/// }
-/// ```
-pub fn Float::sin(self : Float) -> Float {
-  self.to_double().sin().to_float()
+const SIN_SWITCHOVER : Float = 201.15625
+
+///|
+const COS_SWITCHOVER : Float = 142.90625
+
+///|
+fn mulh(a : UInt, b : UInt) -> UInt {
+  let a = a.to_uint64()
+  let b = b.to_uint64()
+  let res = a * b
+  (res >> 32).to_uint()
 }
 
 ///|
-/// Calculates the cosine of a floating-point number in radians.
-///
-/// Parameters:
-///
-/// * `x` : The angle in radians for which to calculate the cosine.
-///
-/// Returns the cosine of the angle `x`.
-///
-/// Example:
-///
-/// ```moonbit
-/// test "cos" {
-///   inspect((0.0 : Float).cos(), content="1")
-///   inspect((2.0 : Float).cos(), content="-0.416146844625473")
-///   inspect((-5.0 : Float).cos(), content="0.28366219997406006")
-///   inspect(@float.not_a_number.cos(), content="NaN")
-///   inspect(@float.infinity.cos(), content="NaN")
-///   inspect(@float.neg_infinity.cos(), content="NaN")
-/// }
-/// ```
-pub fn Float::cos(self : Float) -> Float {
-  self.to_double().cos().to_float()
+fn mul(a : UInt, b : UInt) -> (UInt, UInt) {
+  let a = a.to_uint64()
+  let b = b.to_uint64()
+  let res = a * b
+  ((res >> 32).to_uint(), res.to_uint())
 }
 
 ///|
-/// Calculates the tangent of a floating-point number in radians.
-///
-/// Parameters:
-///
-/// * `x` : The angle in radians for which to calculate the tangent.
-///
-/// Returns the tangent of the angle `x`.
-///
-/// Example:
-///
-/// ```moonbit
-/// test "tan" {
-///   inspect((0.0 : Float).tan(), content="0")
-///   inspect((2.0 : Float).tan(), content="-2.185039758682251")
-///   inspect((-5.0 : Float).tan(), content="3.3805150985717773")
-///   inspect(@float.not_a_number.tan(), content="NaN")
-///   inspect(@float.infinity.tan(), content="NaN")
-///   inspect(@float.neg_infinity.tan(), content="NaN")
-/// }
-/// ```
-pub fn Float::tan(self : Float) -> Float {
-  self.to_double().tan().to_float()
+fn trig_reduce(x : Float, switch_over : Float) -> (Float, Int) {
+  if x.abs() <= switch_over {
+    let mut j : Float = 0.0
+    let mut r : Float = 0.0
+    j = x * (0x3f22f983).reinterpret_as_float() +
+      (0x4b40_0000).reinterpret_as_float()
+    j = (j.reinterpret_as_int() - 0x4b40_0000).to_float()
+    r = x - j * (0x3fc90f80).reinterpret_as_float()
+    r = r - j * (0x37354440).reinterpret_as_float()
+    r = r - j * (0x2c34611a).reinterpret_as_float()
+    return (r, j.to_int())
+  }
+  let xispos = x > 0.0
+  let mut exp : Int = ((x.reinterpret_as_int() >> 23) & 0xff) - 126
+  let ix = ((x.reinterpret_as_uint() & 0x007fffff) << 8) | 0x80000000
+  let ind = exp >> 5
+  exp = exp & 0x1f
+  let two_over_pi : Array[UInt] = [
+    0x00000000, 0x28be60db, 0x9391054a, 0x7f09d5f4, 0x7d4d3770, 0x36d8a566, 0x4f10e410,
+    0000000000,
+  ]
+  let mut hi = two_over_pi[ind]
+  let mut mi = two_over_pi[ind + 1]
+  let mut lo = two_over_pi[ind + 2]
+  let tp = two_over_pi[ind + 3]
+  if exp > 0 {
+    hi = (hi << exp) | (mi >> (32 - exp))
+    mi = (mi << exp) | (lo >> (32 - exp))
+    lo = (lo << exp) | (tp >> (32 - exp))
+  }
+  let phi = 0U
+  let (h, l) = mul(ix, lo)
+  let plo = phi + l
+  let phi = h + (if plo < l { 1 } else { 0 })
+  let (h, l) = mul(ix, mi)
+  let mut plo = phi + l
+  let phi = h + (if plo < l { 1 } else { 0 })
+  let l = ix * hi
+  let mut phi = phi + l
+  let mut q : Int = (phi >> 30).reinterpret_as_int()
+  phi = phi & 0x3fffffff
+  if (phi & 0x2000_0000) != 0 {
+    phi = phi - 0x4000_0000
+    q = q + 1
+  }
+  let s : UInt = phi & 0x8000_0000
+  if phi >= 0x8000_0000 {
+    phi = phi.lnot()
+    plo = 0U - plo
+    //phi += (plo == 0).to_uint()
+    phi += if plo == 0 { 1 } else { 0 }
+  }
+  exp = 0
+  while phi < 0x8000_0000 {
+    phi = (phi << 1) | (plo >> 31)
+    plo = plo << 1
+    exp = exp - 1
+  }
+  phi = mulh(phi, 0xc90f_daa2)
+  if phi < 0x8000_0000 {
+    phi = phi << 1
+    exp = exp - 1
+  }
+  let mut r = s +
+    ((exp + 128) << 23).reinterpret_as_uint() +
+    (phi >> 8) +
+    (if (phi & 0xff) > 0x7e { 1 } else { 0 })
+  if not(xispos) {
+    r = r ^ 0x8000_0000
+    q = -q
+  }
+  let r = r.reinterpret_as_float()
+  return (r, q)
 }
 
 ///|
-/// Calculates the arcsine of a floating-point number.
-///
-/// Parameters:
-///
-/// * `x` : The number for which to calculate the arcsine.
-///
-/// Returns the arcsine of the number `x`.
-///
-/// * Returns NaN if the input is NaN.
-/// * Returns NaN if the input is less than -1 or greater than 1.
-///
-/// Example:
-///
-/// ```moonbit
-/// test "asin" {
-///   inspect((0.0 : Float).asin(), content="0")
-///   inspect((1.0 : Float).asin(), content="1.5707963705062866")
-///   inspect((-1.0 : Float).asin(), content="-1.5707963705062866")
-///   inspect(@float.not_a_number.asin(), content="NaN")
-///   inspect(@float.infinity.asin(), content="NaN")
-///   inspect(@float.neg_infinity.asin(), content="NaN")
-/// }
-/// ```
-pub fn Float::asin(self : Float) -> Float {
-  self.to_double().asin().to_float()
+fn sinf_poly(x : Float) -> Float {
+  let s = x * x
+  let mut r = (0x3640_5000).reinterpret_as_float()
+  r = r * s - (0x3950_3486).reinterpret_as_float()
+  r = r * s + (0x3c08_88c1).reinterpret_as_float()
+  r = r * s - (0x3e2a_aaab).reinterpret_as_float()
+  let t = x * s
+  r = r * t + x
+  r
 }
 
 ///|
-/// Calculates the arccosine of a floating-point number.
-///
-/// Parameters:
-///
-/// * `x` : The number for which to calculate the arccosine.
-///
-/// Returns the arccosine of the number `x`.
-///
-/// * Returns NaN if the input is NaN.
-/// * Returns NaN if the input is less than -1 or greater than 1.
-///
-/// Example:
-///
-/// ```moonbit
-/// test "acos" {
-///   inspect((0.0 : Float).acos(), content="1.5707963705062866")
-///   inspect((1.0 : Float).acos(), content="0")
-///   inspect((-1.0 : Float).acos(), content="3.1415927410125732")
-///   inspect(@float.not_a_number.acos(), content="NaN")
-///   inspect(@float.infinity.acos(), content="NaN")
-///   inspect(@float.neg_infinity.acos(), content="NaN")
-/// }
-/// ```
-pub fn Float::acos(self : Float) -> Float {
-  self.to_double().acos().to_float()
+fn cosf_poly(x : Float) -> Float {
+  let s = x * x
+  let mut r = (0x37cd_4000).reinterpret_as_float()
+  r = r * s - (0x3ab6_077d).reinterpret_as_float()
+  r = r * s + (0x3d2a_aaa8).reinterpret_as_float()
+  r = r * s - (0x3f00_0000).reinterpret_as_float()
+  r = r * s + (0x3f80_0000).reinterpret_as_float()
+  r
 }
 
 ///|
-/// Calculates the arctangent of a floating-point number.
-///
-/// Parameters:
-///
-/// * `x` : The number for which to calculate the arctangent.
-///
-/// Returns the arctangent of the number `x`.
-///
-/// Example:
-///
-/// * Returns NaN if the input is NaN.
-///
-/// ```moonbit
-/// test "atan" {
-///   inspect((0.0 : Float).atan(), content="0")
-///   inspect((1.0 : Float).atan(), content="0.7853981852531433")
-///   inspect((-1.0 : Float).atan(), content="-0.7853981852531433")
-///   inspect(@float.not_a_number.atan(), content="NaN")
-///   inspect(@float.infinity.atan(), content="1.5707963705062866")
-///   inspect(@float.neg_infinity.atan(), content="-1.5707963705062866")
-/// }
-/// ```
-pub fn Float::atan(self : Float) -> Float {
-  self.to_double().atan().to_float()
+fn sin_cos_core(x : Float, q : Int) -> Float {
+  let mut r = if (q & 1) != 0 { cosf_poly(x) } else { sinf_poly(x) }
+  if (q & 2) != 0 {
+    r = -r
+  }
+  r
 }
 
 ///|
-/// Calculates the arctangent of the quotient of two floating-point numbers.
-///
-/// Parameters:
-///
-/// * `self` : The numerator of the quotient.
-/// * `x` : The denominator of the quotient.
-///
-/// Returns the arctangent of the quotient `self / x`.
-///
-/// * Returns NaN if self or x is NaN.
-///
-/// Example:
-///
-/// ```moonbit
-/// test "atan2" {
-///   inspect((0.0 : Float).atan2(-1.0), content="3.1415927410125732")
-///   inspect((1.0 : Float).atan2(0.0), content="1.5707963705062866")
-///   inspect((1.0 : Float).atan2(1.0), content="0.7853981852531433")
-///   inspect(@float.not_a_number.atan2(1.0), content="NaN")
-///   inspect((1.0 : Float).atan2(not_a_number), content="NaN")
-///   inspect(@float.infinity.atan2(1.0), content="1.5707963705062866")
-///   inspect((1.0 : Float).atan2(infinity), content="0")
-///   inspect(@float.neg_infinity.atan2(1.0), content="-1.5707963705062866")
-///   inspect((1.0 : Float).atan2(@float.neg_infinity), content="3.1415927410125732")
-///   inspect(@float.infinity.atan2(@float.infinity), content="0.7853981852531433")
-///   inspect(@float.neg_infinity.atan2(@float.neg_infinity), content="-2.356194496154785")
-///   inspect(@float.infinity.atan2(@float.neg_infinity), content="2.356194496154785")
-///   inspect(@float.neg_infinity.atan2(@float.infinity), content="-0.7853981852531433")
-/// }
-/// ```
-pub fn Float::atan2(self : Float, other : Float) -> Float {
-  self.to_double().atan2(other.to_double()).to_float()
+fn tanf_poly(x : Float, odd : Bool) -> Float {
+  let x = x.to_double()
+  let coef : FixedArray[Double] = [
+    0.333331395030791399758, // 0x15554d3418c99f.0p-54 */
+     0.133392002712976742718, // 0x1112fd38999f72.0p-55 */
+     0.0533812378445670393523, // 0x1b54c91d865afe.0p-57 */
+     0.0245283181166547278873, // 0x191df3908c33ce.0p-58 */
+     0.00297435743359967304927, // 0x185dadfcecf44e.0p-61 */
+     0.00946564784943673166728, // 0x1362b9bf971bcd.0p-59 */
+  ]
+  let z = x * x
+  let mut r = coef[4] + z * coef[5]
+  let t = coef[2] + z * coef[3]
+  let w = z * z
+  let s = z * x
+  let u = coef[0] + z * coef[1]
+  r = x + s * u + s * w * (t + w * r)
+  (if odd { -1.0 / r } else { r }).to_float()
 }

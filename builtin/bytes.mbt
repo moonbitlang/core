@@ -14,7 +14,14 @@
 
 ///|
 /// Reinterpret the byte sequence as Bytes.
-fn FixedArray::unsafe_to_bytes(self : FixedArray[Byte]) -> Bytes = "%identity"
+/// 
+/// Notice that this will make the `Bytes` object to be a view of the original
+/// byte sequence, so any modification to the original byte sequence will be
+/// reflected in the `Bytes` object.
+#internal(unsafe, "Creating mutable Bytes")
+pub fn FixedArray::unsafe_reinterpret_as_bytes(
+  self : FixedArray[Byte]
+) -> Bytes = "%identity"
 
 ///| 
 /// Creates a new byte sequence of the specified length, where each byte is
@@ -33,10 +40,8 @@ fn FixedArray::unsafe_to_bytes(self : FixedArray[Byte]) -> Bytes = "%identity"
 /// Example:
 ///
 /// ```moonbit
-/// test "Bytes::makei" {
 ///   let bytes = Bytes::makei(3, fn(i) { (i + 65).to_byte() })
 ///   assert_eq(bytes, b"ABC")
-/// }
 /// ```
 pub fn Bytes::makei(length : Int, value : (Int) -> Byte) -> Bytes {
   if length <= 0 {
@@ -46,7 +51,7 @@ pub fn Bytes::makei(length : Int, value : (Int) -> Byte) -> Bytes {
   for i in 1..<length {
     arr[i] = value(i)
   }
-  FixedArray::unsafe_to_bytes(arr)
+  FixedArray::unsafe_reinterpret_as_bytes(arr)
 }
 
 ///|
@@ -63,16 +68,14 @@ pub fn Bytes::makei(length : Int, value : (Int) -> Byte) -> Bytes {
 /// Example:
 ///
 /// ```moonbit
-/// test "Bytes::of_string" {
-///   let bytes = Bytes::of_string("ABC")
+///   let bytes = "ABC".to_bytes()
 ///   inspect(bytes, content="b\"\\x41\\x00\\x42\\x00\\x43\\x00\"")
-/// }
 /// ```
 #deprecated("Use `str.to_bytes()` instead")
 pub fn Bytes::of_string(str : String) -> Bytes {
   FixedArray::make(str.length() * 2, Byte::default())
   ..blit_from_string(0, str, 0, str.length())
-  .unsafe_to_bytes()
+  .unsafe_reinterpret_as_bytes()
 }
 
 ///|
@@ -93,9 +96,10 @@ fn unsafe_sub_string(
 pub fn Bytes::to_unchecked_string(
   self : Bytes,
   offset~ : Int = 0,
-  length~ : Int = self.length() - offset
+  length? : Int
 ) -> String {
   let len = self.length()
+  let length = if length is Some(l) { l } else { len - offset }
   guard offset >= 0 && length >= 0 && offset + length <= len
   unsafe_sub_string(self, offset, length)
 }
@@ -127,13 +131,11 @@ pub fn Bytes::to_unchecked_string(
 /// Example:
 ///
 /// ```moonbit
-/// test "FixedArray::blit_from_string" {
 ///   let bytes = FixedArray::make(6, b'\x00')
 ///   bytes.blit_from_string(0, "ABC", 0, 3)
 ///   inspect(bytes[0], content="b'\\x41'") // 'A'
 ///   inspect(bytes[1], content="b'\\x00'")
 ///   inspect(bytes[2], content="b'\\x42'") // 'B'
-/// }
 /// ```
 pub fn FixedArray::blit_from_string(
   self : FixedArray[Byte],
@@ -181,23 +183,7 @@ pub fn FixedArray::blit_from_bytes(
 }
 
 ///|
-/// Creates a new byte sequence by copying all bytes from the input sequence.
-///
-/// Parameters:
-///
-/// * `bytes` : The byte sequence to be copied.
-///
-/// Returns a new `Bytes` containing the same sequence of bytes as the input.
-///
-/// Example:
-///
-/// ```moonbit
-/// test "Bytes::copy" {
-///   let original = b"\x01\x02\x03"
-///   let copy = original.copy()
-///   inspect(copy, content="b\"\\x01\\x02\\x03\"")
-/// }
-/// ```
+#deprecated("Bytes are immutable. Use `FixedArray::blit_from_bytes` if it's really necessary.")
 pub fn Bytes::copy(self : Bytes) -> Bytes {
   Bytes::makei(self.length(), fn(i) { self[i] })
 }
@@ -225,19 +211,12 @@ pub fn Bytes::copy(self : Bytes) -> Bytes {
 /// Example:
 ///
 /// ```moonbit
-/// test "FixedArray::set_utf8_char" {
 ///   let buf = FixedArray::make(4, b'\x00')
 ///   let written = buf.set_utf8_char(0, '€') // Euro symbol (U+20AC)
 ///   inspect(written, content="3") // UTF-8 encoding takes 3 bytes
 ///   inspect(buf[0], content="b'\\xE2'")
 ///   inspect(buf[1], content="b'\\x82'")
 ///   inspect(buf[2], content="b'\\xAC'")
-/// }
-/// 
-/// test "panic FixedArray::set_utf8_char/invalid_char" {
-///   let buf = FixedArray::make(4, b'\x00')
-///   ignore(buf.set_utf8_char(0, (0x110000).unsafe_to_char())) // Invalid Unicode code point
-/// }
 /// ```
 pub fn FixedArray::set_utf8_char(
   self : FixedArray[Byte],
@@ -344,13 +323,11 @@ pub fn FixedArray::set_utf16be_char(
 /// Example:
 ///
 /// ```moonbit
-/// test "Bytes::op_equal" {
 ///   let bytes1 = b"\x01\x02\x03"
 ///   let bytes2 = b"\x01\x02\x03"
 ///   let bytes3 = b"\x01\x02\x04"
 ///   inspect(bytes1 == bytes2, content="true")
 ///   inspect(bytes1 == bytes3, content="false")
-/// }
 /// ```
 pub impl Eq for Bytes with op_equal(self : Bytes, other : Bytes) -> Bool {
   if self.length() != other.length() {
@@ -386,20 +363,16 @@ pub impl Eq for Bytes with op_equal(self : Bytes, other : Bytes) -> Bool {
 /// Example:
 ///
 /// ```moonbit
-/// test "Bytes::compare" {
 ///   let a = b"\x01\x02\x03"
 ///   let b = b"\x01\x02\x04"
 ///   inspect(a.compare(b), content="-1") // a < b
 ///   inspect(b.compare(a), content="1") // b > a
 ///   inspect(a.compare(a), content="0") // a = a
-/// }
 /// 
-/// test "Bytes::compare/different_lengths" {
 ///   let a = b"\x01\x02"
 ///   let b = b"\x01\x02\x03"
 ///   inspect(a.compare(b), content="-1") // shorter sequence is less
 ///   inspect(b.compare(a), content="1") // longer sequence is greater
-/// }
 /// ```
 pub impl Compare for Bytes with compare(self, other) {
   let self_len = self.length()

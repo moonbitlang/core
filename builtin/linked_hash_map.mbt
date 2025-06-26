@@ -24,23 +24,16 @@ priv struct Entry[K, V] {
 } derive(Show)
 
 ///|
-impl[K : Eq, V] Eq for Entry[K, V] with op_equal(self, other) {
-  self.hash == other.hash && self.key == other.key
-}
-
-///|
 /// Mutable linked hash map that maintains the order of insertion, not thread safe.
 ///
 /// # Example
 ///
-/// ```
-/// test "linked_hash_map_example" {
+/// ```mbt
 ///   let map = { 3: "three", 8 :  "eight", 1 :  "one"}
 ///   assert_eq(map.get(2), None)
 ///   assert_eq(map.get(3), Some("three"))
 ///   map.set(3, "updated")
 ///   assert_eq(map.get(3), Some("updated"))
-/// }
 /// ```
 struct Map[K, V] {
   mut entries : FixedArray[Entry[K, V]?]
@@ -219,11 +212,9 @@ pub fn[K : Hash + Eq, V] Map::op_get(self : Map[K, V], key : K) -> V? {
 /// Example:
 ///
 /// ```moonbit
-/// test "get_or_default" {
 ///   let map = { "a": 1, "b": 2 }
 ///   inspect(map.get_or_default("a", 0), content="1")
 ///   inspect(map.get_or_default("c", 42), content="42")
-/// }
 /// ```
 pub fn[K : Hash + Eq, V] Map::get_or_default(
   self : Map[K, V],
@@ -297,12 +288,10 @@ pub fn[K : Hash + Eq, V] Map::contains(self : Map[K, V], key : K) -> Bool {
 ///
 /// ```moonbit
 /// 
-/// test "Map::contains_kv" {
 ///   let map = { "a": 1, "b": 2 }
 ///   inspect(map.contains_kv("a", 1), content="true")
 ///   inspect(map.contains_kv("a", 2), content="false")
 ///   inspect(map.contains_kv("c", 3), content="false")
-/// }
 /// ```
 pub fn[K : Hash + Eq, V : Eq] Map::contains_kv(
   self : Map[K, V],
@@ -412,14 +401,14 @@ fn calc_grow_threshold(capacity : Int) -> Int {
 ///|
 pub impl[K : Show, V : Show] Show for Map[K, V] with output(self, logger) {
   logger.write_string("{")
-  loop 0, self.head {
-    _, None => logger.write_string("}")
-    i, Some({ key, value, next, .. }) => {
+  loop (0, self.head) {
+    (_, None) => logger.write_string("}")
+    (i, Some({ key, value, next, .. })) => {
       if i > 0 {
         logger.write_string(", ")
       }
       logger..write_object(key)..write_string(": ")..write_object(value)
-      continue i + 1, next
+      continue (i + 1, next)
     }
   }
 }
@@ -447,8 +436,8 @@ pub fn[K, V] Map::is_empty(self : Map[K, V]) -> Bool {
 #locals(f)
 pub fn[K, V] Map::each(
   self : Map[K, V],
-  f : (K, V) -> Unit?Error
-) -> Unit?Error {
+  f : (K, V) -> Unit raise?
+) -> Unit raise? {
   loop self.head {
     Some({ key, value, next, .. }) => {
       f(key, value)
@@ -463,14 +452,14 @@ pub fn[K, V] Map::each(
 #locals(f)
 pub fn[K, V] Map::eachi(
   self : Map[K, V],
-  f : (Int, K, V) -> Unit?Error
-) -> Unit?Error {
-  loop 0, self.head {
-    i, Some({ key, value, next, .. }) => {
+  f : (Int, K, V) -> Unit raise?
+) -> Unit raise? {
+  loop (0, self.head) {
+    (i, Some({ key, value, next, .. })) => {
       f(i, key, value)
-      continue i + 1, next
+      continue (i + 1, next)
     }
-    _, None => break
+    (_, None) => break
   }
 }
 
@@ -589,4 +578,67 @@ pub fn[K : Hash + Eq, V] Map::from_iter(iter : Iter[(K, V)]) -> Map[K, V] {
 ///|
 pub impl[K, V] Default for Map[K, V] with default() {
   Map::new()
+}
+
+///|
+/// Applies a function to each key-value pair in the map and returns a new map with the results, using the original keys.
+pub fn[K, V, V2] Map::map(self : Map[K, V], f : (K, V) -> V2) -> Map[K, V2] {
+  // copy structure
+  let other = {
+    capacity: self.capacity,
+    entries: FixedArray::make(self.capacity, None),
+    size: self.size,
+    capacity_mask: self.capacity_mask,
+    grow_at: self.grow_at,
+    head: None,
+    tail: self.tail,
+  }
+  if self.size == 0 {
+    return other
+  }
+  guard self.entries[self.tail] is Some(last)
+  loop (last, self.tail, None) {
+    ({ prev, psl, hash, key, value, .. }, idx, next) => {
+      let new_value = f(key, value)
+      let new_entry = { prev, next, psl, hash, key, value: new_value }
+      other.entries[idx] = Some(new_entry)
+      if prev != -1 {
+        continue (self.entries[prev].unwrap(), prev, Some(new_entry))
+      } else {
+        other.head = Some(new_entry)
+      }
+    }
+  }
+  other
+}
+
+///|
+/// Copy the map, creating a new map with the same key-value pairs and order of insertion.
+pub fn[K, V] Map::copy(self : Map[K, V]) -> Map[K, V] {
+  // copy structure
+  let other = {
+    capacity: self.capacity,
+    entries: FixedArray::make(self.capacity, None),
+    size: self.size,
+    capacity_mask: self.capacity_mask,
+    grow_at: self.grow_at,
+    head: None,
+    tail: self.tail,
+  }
+  if self.size == 0 {
+    return other
+  }
+  guard self.entries[self.tail] is Some(last)
+  loop (last, self.tail, None) {
+    ({ prev, psl, hash, key, value, .. }, idx, next) => {
+      let new_entry = { prev, next, psl, hash, key, value }
+      other.entries[idx] = Some(new_entry)
+      if prev != -1 {
+        continue (self.entries[prev].unwrap(), prev, Some(new_entry))
+      } else {
+        other.head = Some(new_entry)
+      }
+    }
+  }
+  other
 }

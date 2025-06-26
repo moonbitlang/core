@@ -13,6 +13,32 @@
 // limitations under the License.
 
 ///|
+/// Retrieves an element at the specified index from a fixed-size array. 
+///
+/// Parameters:
+///
+/// * `array` : The fixed-size array to access.
+/// * `index` : The position in the array from which to retrieve the element.
+///
+/// Returns `Some(element)` if the index is within bounds, or `None` if the index
+/// is out of bounds.
+///
+/// Example:
+///
+/// ```moonbit
+///   let arr : FixedArray[Int] = [1, 2, 3]
+///   inspect(arr.get(1), content="Some(2)")
+///
+///   let arr : FixedArray[Int] = [1, 2, 3]
+///   inspect(arr.get(3), content="None")
+/// ```
+pub fn[T] FixedArray::get(self : FixedArray[T], idx : Int) -> T? {
+  let len = self.length()
+  guard idx >= 0 && idx < len else { None }
+  Some(self.unsafe_get(idx))
+}
+
+///|
 ///
 /// Creates an iterator over the elements of a fixed-size array, providing
 /// sequential access to each element.
@@ -27,12 +53,10 @@
 /// Example:
 ///
 /// ```moonbit
-/// test "FixedArray::iter" {
 ///   let arr = FixedArray::make(3, 42)
 ///   let mut sum = 0
 ///   arr.iter().each(fn(x) { sum = sum + x })
 ///   inspect(sum, content="126")
-/// }
 /// ```
 #intrinsic("%iter.from_array")
 pub fn[T] FixedArray::iter(self : FixedArray[T]) -> Iter[T] {
@@ -60,12 +84,10 @@ pub fn[T] FixedArray::iter(self : FixedArray[T]) -> Iter[T] {
 /// Example:
 ///
 /// ```moonbit
-/// test "FixedArray::iter2" {
 ///   let arr = FixedArray::make(3, 10)
 ///   let mut sum = 0
 ///   arr.iter2().each(fn(i, x) { sum = sum + i + x })
 ///   inspect(sum, content="33") // (0 + 10) + (1 + 10) + (2 + 10) = 33
-/// }
 /// ```
 pub fn[T] FixedArray::iter2(self : FixedArray[T]) -> Iter2[Int, T] {
   Iter2::new(fn(yield_) {
@@ -89,11 +111,9 @@ pub fn[T] FixedArray::iter2(self : FixedArray[T]) -> Iter2[Int, T] {
 /// Example:
 ///
 /// ```moonbit
-/// test "FixedArray::default" {
 ///   let arr : FixedArray[Int] = FixedArray::default()
 ///   inspect(arr.length(), content="0")
 ///   inspect(arr.is_empty(), content="true")
-/// }
 /// ```
 pub impl[X] Default for FixedArray[X] with default() {
   []
@@ -103,12 +123,10 @@ pub impl[X] Default for FixedArray[X] with default() {
 /// Fill the array with a given value.
 ///
 /// # Example
-/// ```
-/// test "FixedArray::fill" {
+/// ```mbt
 ///   let fa : FixedArray[Int] = [0, 0, 0, 0, 0]
 ///   fa.fill(3)
 ///   assert_eq(fa[0], 3)
-/// }
 /// ```
 pub fn[T] FixedArray::fill(self : FixedArray[T], value : T) -> Unit {
   for i in 0..<self.length() {
@@ -128,12 +146,10 @@ pub fn[T] FixedArray::fill(self : FixedArray[T], value : T) -> Unit {
 /// Example:
 ///
 /// ```moonbit
-/// test "FixedArray::is_empty" {
 ///   let empty : FixedArray[Int] = []
 ///   inspect(empty.is_empty(), content="true")
 ///   let non_empty = [1, 2, 3]
 ///   inspect(non_empty.is_empty(), content="false")
-/// }
 /// ```
 pub fn[T] FixedArray::is_empty(self : FixedArray[T]) -> Bool {
   self.length() == 0
@@ -144,12 +160,10 @@ pub fn[T] FixedArray::is_empty(self : FixedArray[T]) -> Bool {
 /// Performs a binary search on a sorted array to find the index of a given element.
 ///
 /// # Example
-/// ```
-/// test "FixedArray::binary_search" {
+/// ```mbt
 ///   let v : FixedArray[Int] = [3, 4, 5]
 ///   let result = v.binary_search(3)
 ///   assert_eq(result, Ok(0)) // The element 3 is found at index 0
-/// }
 /// ```
 ///
 /// # Arguments
@@ -212,7 +226,6 @@ pub fn[T : Compare] FixedArray::binary_search(
 /// Example:
 ///
 /// ```moonbit
-/// test "binary_search_by" {
 ///   let arr : FixedArray[Int] = [1, 3, 5, 7, 9]
 ///   let find_3 = arr.binary_search_by(fn(x) {
 ///     if x < 3 {
@@ -234,7 +247,6 @@ pub fn[T : Compare] FixedArray::binary_search(
 ///     }
 ///   })
 ///   inspect(find_4, content="Err(2)")
-/// }
 /// ```
 ///
 /// Notes:
@@ -247,8 +259,8 @@ pub fn[T : Compare] FixedArray::binary_search(
 #locals(cmp)
 pub fn[T] FixedArray::binary_search_by(
   self : FixedArray[T],
-  cmp : (T) -> Int?Error
-) -> Result[Int, Int]?Error {
+  cmp : (T) -> Int raise?
+) -> Result[Int, Int] raise? {
   let len = self.length()
   for i = 0, j = len; i < j; {
     let h = i + (j - i) / 2

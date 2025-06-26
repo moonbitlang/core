@@ -20,7 +20,7 @@ priv struct SEntry[K] {
   mut psl : Int
   hash : Int
   key : K
-} derive(Show)
+}
 
 ///|
 impl[K : Eq] Eq for SEntry[K] with op_equal(self, other) {
@@ -70,18 +70,13 @@ pub fn[K] Set::new(capacity~ : Int = 8) -> Set[K] {
 /// Create a hash set from array.
 pub fn[K : Hash + Eq] Set::from_array(arr : Array[K]) -> Set[K] {
   let m = Set::new(capacity=arr.length())
-  arr.each(fn(e) { m.add(e) })
+  arr.each(e => m.add(e))
   m
 }
 
 ///|
 /// Insert a key into the hash set.
 ///
-#deprecated("Use `add` instead.")
-#coverage.skip
-pub fn[K : Hash + Eq] insert(self : Set[K], key : K) -> Unit {
-  self.add(key)
-}
 
 ///|
 /// Insert a key into the hash set.if the key exists return false
@@ -318,14 +313,14 @@ fn[K : Hash + Eq] grow(self : Set[K]) -> Unit {
 ///|
 pub impl[K : Show] Show for Set[K] with output(self, logger) {
   logger.write_string("{")
-  loop 0, self.head {
-    _, None => logger.write_string("}")
-    i, Some({ key, idx, .. }) => {
+  loop (0, self.head) {
+    (_, None) => logger.write_string("}")
+    (i, Some({ key, idx, .. })) => {
       if i > 0 {
         logger.write_string(", ")
       }
       logger.write_object(key)
-      continue i + 1, self.list[idx].next
+      continue (i + 1, self.list[idx].next)
     }
   }
 }
@@ -355,7 +350,7 @@ pub fn[K] is_empty(self : Set[K]) -> Bool {
 
 ///|
 /// Iterate over all keys of the set in the order of insertion.
-pub fn[K] each(self : Set[K], f : (K) -> Unit) -> Unit {
+pub fn[K] each(self : Set[K], f : (K) -> Unit raise?) -> Unit raise? {
   loop self.head {
     Some({ key, idx, .. }) => {
       f(key)
@@ -367,13 +362,13 @@ pub fn[K] each(self : Set[K], f : (K) -> Unit) -> Unit {
 
 ///|
 /// Iterate over all keys of the set in the order of insertion, with index.
-pub fn[K] eachi(self : Set[K], f : (Int, K) -> Unit) -> Unit {
-  loop 0, self.head {
-    i, Some({ key, idx, .. }) => {
+pub fn[K] eachi(self : Set[K], f : (Int, K) -> Unit raise?) -> Unit raise? {
+  loop (0, self.head) {
+    (i, Some({ key, idx, .. })) => {
       f(i, key)
-      continue i + 1, self.list[idx].next
+      continue (i + 1, self.list[idx].next)
     }
-    _, None => break
+    (_, None) => break
   }
 }
 
@@ -389,16 +384,14 @@ pub fn[K] clear(self : Set[K]) -> Unit {
 ///|
 /// Returns the iterator of the hash set, provide elements in the order of insertion.
 pub fn[K] iter(self : Set[K]) -> Iter[K] {
-  Iter::new(fn(yield_) {
-    loop self.head {
-      Some({ key, idx, .. }) => {
-        if yield_(key) == IterEnd {
-          break IterEnd
-        }
-        continue self.list[idx].next
+  Iter::new(yield_ => loop self.head {
+    Some({ key, idx, .. }) => {
+      if yield_(key) == IterEnd {
+        break IterEnd
       }
-      None => break IterContinue
+      continue self.list[idx].next
     }
+    None => break IterContinue
   })
 }
 
@@ -447,14 +440,14 @@ pub fn[K : Hash + Eq] Set::of(arr : FixedArray[K]) -> Set[K] {
 ///|
 pub fn[K : Hash + Eq] Set::from_iter(iter : Iter[K]) -> Set[K] {
   let m = Set::new()
-  iter.each(fn(e) { m.add(e) })
+  iter.each(e => m.add(e))
   m
 }
 
 ///|
 pub fn[K : Hash + Eq] difference(self : Set[K], other : Set[K]) -> Set[K] {
   let m = Set::new()
-  self.each(fn(k) { if not(other.contains(k)) { m.add(k) } })
+  self.each(k => if not(other.contains(k)) { m.add(k) })
   m
 }
 
@@ -464,23 +457,23 @@ pub fn[K : Hash + Eq] symmetric_difference(
   other : Set[K]
 ) -> Set[K] {
   let m = Set::new()
-  self.each(fn(k) { if not(other.contains(k)) { m.add(k) } })
-  other.each(fn(k) { if not(self.contains(k)) { m.add(k) } })
+  self.each(k => if not(other.contains(k)) { m.add(k) })
+  other.each(k => if not(self.contains(k)) { m.add(k) })
   m
 }
 
 ///|
 pub fn[K : Hash + Eq] union(self : Set[K], other : Set[K]) -> Set[K] {
   let m = Set::new()
-  self.each(fn(k) { m.add(k) })
-  other.each(fn(k) { m.add(k) })
+  self.each(k => m.add(k))
+  other.each(k => m.add(k))
   m
 }
 
 ///|
 pub fn[K : Hash + Eq] intersection(self : Set[K], other : Set[K]) -> Set[K] {
   let m = Set::new()
-  self.each(fn(k) { if other.contains(k) { m.add(k) } })
+  self.each(k => if other.contains(k) { m.add(k) })
   m
 }
 

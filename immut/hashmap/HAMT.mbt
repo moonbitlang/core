@@ -65,18 +65,20 @@ pub fn[K : Eq + Hash, V] find(self : T[K, V], key : K) -> V? {
 ///|
 /// Lookup a key from a hash map
 pub fn[K : Eq + Hash, V] get(self : T[K, V], key : K) -> V? {
-  loop self, key.hash() {
-    Empty, _ => None
-    Leaf(key1, value), _ => if key == key1 { Some(value) } else { None }
-    Collision(bucket), _ => bucket.find(key)
+  loop (self, key.hash()) {
+    (Empty, _) => None
+    (Leaf(key1, value), _) => if key == key1 { Some(value) } else { None }
+    (Collision(bucket), _) => bucket.find(key)
     // get the first segment (lower 5 bits) of the hash value
     // inline the hot path of Sparse_array::op_get
-    Branch(children), hash => {
+    (Branch(children), hash) => {
       let idx = hash & segment_mask
       if children.elem_info.has(idx) {
         let child = children.data[children.elem_info.index_of(idx)]
-        continue child,
-          (hash.reinterpret_as_uint() >> segment_length).reinterpret_as_int()
+        continue (
+            child,
+            (hash.reinterpret_as_uint() >> segment_length).reinterpret_as_int(),
+          )
       }
       None
     }
@@ -150,7 +152,10 @@ fn[K : Eq, V] add_with_hash(
 
 ///|
 /// Filter values that satisfy the predicate
-pub fn[K : Eq + Hash, V] filter(self : T[K, V], pred : (V) -> Bool) -> T[K, V] {
+pub fn[K : Eq + Hash, V] filter(
+  self : T[K, V],
+  pred : (V) -> Bool raise?
+) -> T[K, V] raise? {
   match self {
     Empty => Empty
     Leaf(k, v) => if pred(v) { Leaf(k, v) } else { Empty }
@@ -162,13 +167,10 @@ pub fn[K : Eq + Hash, V] filter(self : T[K, V], pred : (V) -> Bool) -> T[K, V] {
       }
     Branch(children) => {
       let mut result = Empty
-      children.each(fn {
-        child =>
-          child
-          .filter(pred)
-          .iter()
-          .each(fn { (k, v) => result = result.add(k, v) })
-      })
+      children.each(child => child
+        .filter(pred)
+        .iter()
+        .each(kv => result = result.add(kv.0, kv.1)))
       result
     }
   }
@@ -176,7 +178,11 @@ pub fn[K : Eq + Hash, V] filter(self : T[K, V], pred : (V) -> Bool) -> T[K, V] {
 
 ///|
 /// Fold the values in the map
-pub fn[K, V, A] fold(self : T[K, V], init~ : A, f : (A, V) -> A) -> A {
+pub fn[K, V, A] fold(
+  self : T[K, V],
+  init~ : A,
+  f : (A, V) -> A raise?
+) -> A raise? {
   self.fold_with_key(fn(acc, _k, v) { f(acc, v) }, init~)
 }
 
@@ -188,21 +194,21 @@ pub fn[K, V, A] fold(self : T[K, V], init~ : A, f : (A, V) -> A) -> A {
 pub fn[K, V, A] fold_with_key(
   self : T[K, V],
   init~ : A,
-  f : (A, K, V) -> A
-) -> A {
-  loop @list.singleton((self, 0)), init {
-    Empty, acc => acc
-    More((node, index), tail~), acc =>
+  f : (A, K, V) -> A raise?
+) -> A raise? {
+  loop (@list.singleton((self, 0)), init) {
+    (Empty, acc) => acc
+    (More((node, index), tail~), acc) =>
       match node {
-        Empty => continue tail, acc
-        Leaf(k, v) => continue tail, f(acc, k, v)
-        Collision(bucket) => continue tail, bucket.foldl_with_key(init=acc, f)
+        Empty => continue (tail, acc)
+        Leaf(k, v) => continue (tail, f(acc, k, v))
+        Collision(bucket) => continue (tail, bucket.foldl_with_key(init=acc, f))
         Branch(children) =>
           if index < children.data.length() {
             let child = children.data.unsafe_get(index)
-            continue tail.add((node, index + 1)).add((child, 0)), acc
+            continue (tail.add((node, index + 1)).add((child, 0)), acc)
           } else {
-            continue tail, acc
+            continue (tail, acc)
           }
       }
   }
@@ -210,7 +216,10 @@ pub fn[K, V, A] fold_with_key(
 
 ///|
 /// Maps over the values in the map
-pub fn[K : Eq + Hash, V, A] map(self : T[K, V], f : (V) -> A) -> T[K, A] {
+pub fn[K : Eq + Hash, V, A] map(
+  self : T[K, V],
+  f : (V) -> A raise?
+) -> T[K, A] raise? {
   self.map_with_key(fn(_k, v) { f(v) })
 }
 
@@ -218,19 +227,19 @@ pub fn[K : Eq + Hash, V, A] map(self : T[K, V], f : (V) -> A) -> T[K, A] {
 /// Maps over the key-value pairs in the map
 pub fn[K : Eq + Hash, V, A] map_with_key(
   self : T[K, V],
-  f : (K, V) -> A
-) -> T[K, A] {
-  fn go(m : T[K, V]) {
+  f : (K, V) -> A raise?
+) -> T[K, A] raise? {
+  fn go(m : T[K, V]) -> T[K, A] raise? {
     match m {
       Empty => Empty
       Leaf(k, v) => Leaf(k, f(k, v))
       Collision(bucket) => Collision(bucket.map_with_key(f))
       Branch(children) => {
         let result = []
-        children.each(fn {
-          child =>
-            child.map_with_key(f).iter().each(fn { kv => result.push(kv) })
-        })
+        children.each(child => child
+          .map_with_key(f)
+          .iter()
+          .each(kv => result.push(kv)))
         from_array(result)
       }
     }
@@ -334,8 +343,8 @@ pub fn[K : Eq + Hash, V] T::union(self : T[K, V], other : T[K, V]) -> T[K, V] {
 pub fn[K : Eq + Hash, V] T::union_with(
   self : T[K, V],
   other : T[K, V],
-  f : (K, V, V) -> V
-) -> T[K, V] {
+  f : (K, V, V) -> V raise?
+) -> T[K, V] raise? {
   match (self, other) {
     (_, Empty) => self
     (Empty, _) => other
@@ -402,8 +411,8 @@ pub fn[K : Eq + Hash, V] T::intersection(
 pub fn[K : Eq + Hash, V] T::intersection_with(
   self : T[K, V],
   other : T[K, V],
-  f : (K, V, V) -> V
-) -> T[K, V] {
+  f : (K, V, V) -> V raise?
+) -> T[K, V] raise? {
   match (self, other) {
     (_, Empty) => Empty
     (Empty, _) => Empty
@@ -461,25 +470,25 @@ pub fn[K : Eq + Hash, V] T::difference(
 
 ///|
 /// Iterate through the elements in a hash map
-pub fn[K, V] each(self : T[K, V], f : (K, V) -> Unit) -> Unit {
+pub fn[K, V] each(self : T[K, V], f : (K, V) -> Unit raise?) -> Unit raise? {
   match self {
     Empty => ()
     Leaf(k, v) => f(k, v)
     Collision(bucket) => bucket.each(f)
-    Branch(children) => children.each(fn { child => child.each(f) })
+    Branch(children) => children.each(child => child.each(f))
   }
 }
 
 ///|
 /// Returns all keys of the map
 pub fn[K, V] keys(self : T[K, V]) -> Iter[K] {
-  self.iter().map(fn { (k, _) => k })
+  self.iter().map(p => p.0)
 }
 
 ///|
 /// Returns all values of the map
 pub fn[K, V] values(self : T[K, V]) -> Iter[V] {
-  self.iter().map(fn { (_, v) => v })
+  self.iter().map(p => p.1)
 }
 
 ///|
@@ -496,7 +505,7 @@ pub fn[K, V] iter(self : T[K, V]) -> Iter[(K, V)] {
     Empty => Iter::empty()
     Leaf(k, v) => Iter::singleton((k, v))
     Collision(bucket) => bucket.iter()
-    Branch(children) => children.data.iter().flat_map(fn { map => map.iter() })
+    Branch(children) => children.data.iter().flat_map(map => map.iter())
   }
 }
 
@@ -523,11 +532,11 @@ pub impl[K : Show, V : Show] Show for T[K, V] with output(self, logger) {
 
 ///|
 pub fn[K : Eq + Hash, V] from_array(arr : Array[(K, V)]) -> T[K, V] {
-  loop arr.length(), new() {
-    0, map => map
-    n, map => {
+  loop (arr.length(), new()) {
+    (0, map) => map
+    (n, map) => {
       let (k, v) = arr[n - 1]
-      continue n - 1, map.add(k, v)
+      continue (n - 1, map.add(k, v))
     }
   }
 }
@@ -550,11 +559,11 @@ pub impl[K : Eq + Hash + @quickcheck.Arbitrary, V : @quickcheck.Arbitrary] @quic
 
 ///|
 pub fn[K : Eq + Hash, V] of(arr : FixedArray[(K, V)]) -> T[K, V] {
-  loop arr.length(), new() {
-    0, map => map
-    n, map => {
+  loop (arr.length(), new()) {
+    (0, map) => map
+    (n, map) => {
       let (k, v) = arr[n - 1]
-      continue n - 1, map.add(k, v)
+      continue (n - 1, map.add(k, v))
     }
   }
 }

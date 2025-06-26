@@ -269,18 +269,18 @@ test "compare" {
 ///|
 test "@array.get/normal" {
   let arr = @array.of([1, 2, 3, 4, 5])
-  inspect!(arr.get(2), content="Some(3)")
+  inspect(arr.get(2), content="Some(3)")
 }
 
 ///|
 test "@array.get/first" {
   let arr = @array.of([42])
-  inspect!(arr.get(0), content="Some(42)")
+  inspect(arr.get(0), content="Some(42)")
 }
 
 ///|
 test "@array.get/out_of_bounds" {
   let arr = @array.of([1, 2, 3])
-  inspect!(arr.get(-1), content="None")
-  inspect!(arr.get(3), content="None")
+  inspect(arr.get(-1), content="None")
+  inspect(arr.get(3), content="None")
 }

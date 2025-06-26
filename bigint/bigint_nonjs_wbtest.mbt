@@ -23,6 +23,14 @@ impl Show for MyBigInt with output(self, logger) {
 }
 
 ///|
+impl Show for Sign with output(self, logger) {
+  match self {
+    Positive => logger.write_string("Positive")
+    Negative => logger.write_string("Negative")
+  }
+}
+
+///|
 test "debug_string" {
   let buf = StringBuilder::new()
   let v : Array[MyBigInt] = [0, 1, 2, 3, 4, -0, -1, -2, -3]
@@ -49,7 +57,7 @@ test "debug_string" {
 }
 
 ///|
-fn check_invariant(a : BigInt) -> Unit! {
+fn check_invariant(a : BigInt) -> Unit raise {
   guard a.len > 0 else { fail("invariant len > 0 is broken: len = \{a.len}") }
   for i in 0..<a.len {
     guard a.limbs[i].to_uint64() < radix else {

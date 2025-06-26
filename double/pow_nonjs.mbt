@@ -122,7 +122,6 @@ const POW_ivln2_l = 1.92596299112661746887e-08
 /// Example:
 ///
 /// ```moonbit
-/// test "pow" {
 ///   let x = 2.0
 ///   inspect(x.pow(3.0), content="8")
 ///   inspect(x.pow(0.5), content="1.4142135623730951")
@@ -130,7 +129,6 @@ const POW_ivln2_l = 1.92596299112661746887e-08
 ///   inspect((-1.0).pow(2.0), content="1")
 ///   inspect(0.0.pow(0.0), content="1")
 ///   inspect(infinity.pow(-1.0), content="0")
-/// }
 /// ```
 pub fn Double::pow(self : Double, other : Double) -> Double {
   fn set_low_word(d : Double, v : UInt) -> Double {
@@ -215,12 +213,12 @@ pub fn Double::pow(self : Double, other : Double) -> Double {
       k = (iy >> 20) - 0x3ff // exponent
       if k > 20 {
         j = (ly >> (52 - k)).reinterpret_as_int()
-        if (j << (52 - k)) == ly.reinterpret_as_int() {
+        if j << (52 - k) == ly.reinterpret_as_int() {
           yisint = 2 - (j & 1)
         }
       } else if ly == 0 {
         j = iy >> (20 - k)
-        if (j << (20 - k)) == iy {
+        if j << (20 - k) == iy {
           yisint = 2 - (j & 1)
         }
       }
@@ -433,7 +431,7 @@ pub fn Double::pow(self : Double, other : Double) -> Double {
   z = ONE - (r - z)
   j = get_high_word(z).reinterpret_as_int()
   j += (n.reinterpret_as_uint() << 20).reinterpret_as_int()
-  if (j >> 20) <= 0 {
+  if j >> 20 <= 0 {
     z = scalbn(z, n)
   } else { // subnormal output */
     let tmp = get_high_word(z).reinterpret_as_int()

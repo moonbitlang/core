@@ -21,31 +21,8 @@
 // The algorithm has been adapted and implemented independently in this code.
 
 ///|
-/// Calculates the the square root of the sum of the squares of its arguments.
-///
-/// Parameters:
-///
-/// * `self` : The number to be used as the first argument.
-/// * `y` : The number to be used as the second argument.
-///
-/// Returns the hypotenuse of a right-angled triangle whose legs are `self` and `y`.
-///
-/// Example:
-///
-/// ```moonbit
-/// test "hypot" {
-///   inspect(3.0.hypot(4.0), content="5")
-///   inspect(5.0.hypot(12.0), content="13")
-///   inspect(8.0.hypot(15.0), content="17")
-///   inspect(7.0.hypot(24.0), content="25")
-///   inspect(@double.not_a_number.hypot(1.0), content="NaN")
-///   inspect(1.0.hypot(@double.not_a_number), content="NaN")
-///   inspect(@double.infinity.hypot(1.0), content="Infinity")
-///   inspect(1.0.hypot(@double.infinity), content="Infinity")
-///   inspect(@double.neg_infinity.hypot(1.0), content="Infinity")
-///   inspect(1.0.hypot(@double.neg_infinity), content="Infinity")
-/// }
-/// ```
+#deprecated("use `@math.hypot` instead")
+#coverage.skip
 pub fn Double::hypot(self : Double, y : Double) -> Double {
   if self.is_nan() || y.is_nan() {
     return not_a_number

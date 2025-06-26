@@ -13,13 +13,14 @@
 // limitations under the License.
 
 ///|
-fn test_parse(input : String, loc~ : SourceLoc = _) -> Json!Error {
-  try @json.parse(input) catch {
+fn test_parse(input : String, loc~ : SourceLoc = _) -> Json raise Error {
+  @json.parse(input) catch {
     err => fail("Parse failed, \{loc}, \{err}")
   }
 }
 
 //region objects
+
 ///|
 test "parses empty object" {
   inspect(try? @json.parse("{}"), content="Ok(Object({}))")
@@ -63,6 +64,7 @@ test "parses nested objects" {
 //endregion
 
 //region arrays
+
 ///|
 test "parses empty arrays" {
   let json = test_parse("[]")
@@ -95,6 +97,7 @@ test "parses nested arrays" {
 //endregion
 
 //region nulls
+
 ///|
 test "parses nulls" {
   let json = test_parse("null")
@@ -103,6 +106,7 @@ test "parses nulls" {
 //endregion
 
 //region booleans
+
 ///|
 test "parses true" {
   let json = test_parse("true")
@@ -117,6 +121,7 @@ test "parses false" {
 //endregion
 
 //region numbers
+
 ///|
 test "parses leading zeroes" {
   let json = test_parse("[0,0.0,0e0]")
@@ -192,6 +197,7 @@ test "parses +1.23e100" {
 //endregion
 
 //region strings
+
 ///|
 test "parses string" {
   let json = test_parse("\"abc\"")
@@ -212,6 +218,7 @@ test "parses escaped characters" {
 //endregion
 
 //region whitespace
+
 ///|
 test "parses whitespace" {
   let json = test_parse("{\t \u00A0\uFEFF\n\r\u2028\u2029\u2003}")

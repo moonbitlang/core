@@ -42,16 +42,12 @@ fn[T] Array::make_uninit(len : Int) -> Array[T] {
 /// Example:
 ///
 /// ```moonbit
-/// test "Array::new" {
 ///   let arr : Array[Int] = Array::new(capacity=10)
 ///   inspect(arr.length(), content="0")
 ///   inspect(arr.capacity(), content="10")
-/// }
 ///
-/// test "Array::new/default" {
 ///   let arr : Array[Int] = Array::new()
 ///   inspect(arr.length(), content="0")
-/// }
 /// ```
 pub fn[T] Array::new(capacity~ : Int = 0) -> Array[T] {
   if capacity == 0 {
@@ -73,12 +69,10 @@ pub fn[T] Array::new(capacity~ : Int = 0) -> Array[T] {
 /// Example:
 ///
 /// ```moonbit
-/// test "Array::length" {
 ///   let arr = [1, 2, 3]
 ///   inspect(arr.length(), content="3")
 ///   let empty : Array[Int] = []
 ///   inspect(empty.length(), content="0")
-/// }
 /// ```
 #intrinsic("%array.length")
 pub fn[T] Array::length(self : Array[T]) -> Int {
@@ -132,7 +126,7 @@ fn[T] Array::buffer(self : Array[T]) -> UninitializedArray[T] {
 fn[T] Array::resize_buffer(self : Array[T], new_capacity : Int) -> Unit {
   let new_buf = UninitializedArray::make(new_capacity)
   let old_buf = self.buf
-  let old_cap = old_buf._.length()
+  let old_cap = old_buf.inner().length()
   let copy_len = if old_cap < new_capacity { old_cap } else { new_capacity }
   UninitializedArray::unsafe_blit(new_buf, 0, old_buf, 0, copy_len)
   self.buf = new_buf
@@ -183,7 +177,7 @@ test "Array::resize_buffer" {
   arr.push(1)
   arr.push(2)
   arr.resize_buffer(4)
-  assert_eq(arr.buffer()._.length() >= 4, true)
+  assert_eq(arr.buffer().inner().length() >= 4, true)
   arr.push(3)
   arr.push(4)
   assert_eq(arr.length(), 4)
@@ -207,12 +201,10 @@ fn[T] Array::realloc(self : Array[T]) -> Unit {
 ///
 /// # Example
 ///
-/// ```
-/// test "reserve_capacity_example" {
+/// ```mbt
 ///   let v = [1]
 ///   v.reserve_capacity(10)
 ///   assert_eq(v.capacity(), 10)
-/// }
 /// ```
 pub fn[T] Array::reserve_capacity(self : Array[T], capacity : Int) -> Unit {
   if self.capacity() >= capacity {
@@ -226,15 +218,13 @@ pub fn[T] Array::reserve_capacity(self : Array[T], capacity : Int) -> Unit {
 ///
 /// # Example
 ///
-/// ```
-/// test "shrink_to_fit_example" {
+/// ```mbt
 ///   let v = Array::new(capacity=10)
 ///   v.push(1)
 ///   v.push(2)
 ///   v.push(3)
 ///   v.shrink_to_fit()
 ///   assert_eq(v.capacity(), 3)
-/// }
 /// ```
 pub fn[T] Array::shrink_to_fit(self : Array[T]) -> Unit {
   if self.capacity() <= self.length() {
@@ -249,14 +239,12 @@ pub fn[T] Array::shrink_to_fit(self : Array[T]) -> Unit {
 /// If the array is at capacity, it will be reallocated.
 ///
 /// # Example
-/// ```
-/// test "push_example" {
+/// ```mbt
 ///   let v = []
 ///   v.push(3)
-/// }
 /// ```
 pub fn[T] Array::push(self : Array[T], value : T) -> Unit {
-  if self.length() == self.buffer()._.length() {
+  if self.length() == self.buffer().inner().length() {
     self.realloc()
   }
   let length = self.length()
@@ -268,12 +256,10 @@ pub fn[T] Array::push(self : Array[T], value : T) -> Unit {
 /// Removes the last element from a array and returns it, or `None` if it is empty.
 ///
 /// # Example
-/// ```
-/// test "pop_example" {
+/// ```mbt
 ///   let v = [1, 2, 3]
 ///   assert_eq(v.pop(), Some(3))
 ///   assert_eq(v, [1, 2])
-/// }
 /// ```
 pub fn[T] Array::pop(self : Array[T]) -> T? {
   let len = self.length()
@@ -307,16 +293,9 @@ pub fn[T] Array::pop_exn(self : Array[T]) -> T {
 /// Example:
 ///
 /// ```moonbit
-/// test "unsafe_pop" {
 ///   let arr = [1, 2, 3]
 ///   inspect(arr.unsafe_pop(), content="3")
 ///   inspect(arr, content="[1, 2]")
-/// }
-///
-/// test "panic unsafe_pop/empty" {
-///   let arr : Array[Int] = []
-///   ignore(arr.unsafe_pop()) // Panics when array is empty
-/// }
 /// ```
 ///
 #internal(unsafe, "Panic if the array is empty.")
@@ -337,12 +316,10 @@ pub fn[T] Array::unsafe_pop(self : Array[T]) -> T {
 /// This function will panic if the index is out of bounds.
 ///
 /// # Example
-/// ```
-/// test "remove_example" {
+/// ```mbt
 ///   let v = [3, 4, 5]
 ///   assert_eq(v.remove(1), 4)
 ///   assert_eq(v, [3, 5])
-/// }
 /// ```
 pub fn[T] Array::remove(self : Array[T], index : Int) -> T {
   guard index >= 0 && index < self.length() else {
@@ -370,13 +347,11 @@ pub fn[T] Array::remove(self : Array[T], index : Int) -> T {
 /// This function will panic if the index is out of bounds.
 ///
 /// # Example
-/// ```
-/// test "drain_example" {
+/// ```mbt
 ///   let v = [3, 4, 5]
 ///   let vv = v.drain(1, 2) // vv = [4], v = [3, 5]
 ///   assert_eq(vv, [4])
 ///   assert_eq(v, [3, 5])
-/// }
 /// ```
 pub fn[T] Array::drain(self : Array[T], begin : Int, end : Int) -> Array[T] {
   guard begin >= 0 && end <= self.length() && begin <= end
@@ -399,10 +374,8 @@ pub fn[T] Array::drain(self : Array[T], begin : Int, end : Int) -> Array[T] {
 /// This function will panic if the index is out of bounds.
 ///
 /// # Example
-/// ```
-/// test "insert_example" {
+/// ```mbt
 ///   [3, 4, 5].insert(1, 6)
-/// }
 /// ```
 pub fn[T] Array::insert(self : Array[T], index : Int, value : T) -> Unit {
   guard index >= 0 && index <= self.length() else {
@@ -410,7 +383,7 @@ pub fn[T] Array::insert(self : Array[T], index : Int, value : T) -> Unit {
       "index out of bounds: the len is from 0 to \{self.length()} but the index is \{index}",
     )
   }
-  if self.length() == self.buffer()._.length() {
+  if self.length() == self.buffer().inner().length() {
     self.realloc()
   }
   UninitializedArray::unsafe_blit(

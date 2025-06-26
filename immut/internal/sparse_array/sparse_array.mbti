@@ -1,21 +1,9 @@
 package "moonbitlang/core/immut/internal/sparse_array"
 
 // Values
-fn[X] add(SparseArray[X], Int, X) -> SparseArray[X]
-
-fn[X] each(SparseArray[X], (X) -> Unit) -> Unit
-
 fn[X] empty() -> SparseArray[X]
 
-fn[X] has(SparseArray[X], Int) -> Bool
-
-fn[X] op_get(SparseArray[X], Int) -> X?
-
-fn[X] replace(SparseArray[X], Int, X) -> SparseArray[X]
-
 fn[X] singleton(Int, X) -> SparseArray[X]
-
-fn[X] size(SparseArray[X]) -> Int
 
 // Types and methods
 pub(all) type Bitset UInt
@@ -23,6 +11,7 @@ fn Bitset::add(Self, Int) -> Self
 fn Bitset::difference(Self, Self) -> Self
 fn Bitset::has(Self, Int) -> Bool
 fn Bitset::index_of(Self, Int) -> Int
+fn Bitset::inner(Self) -> UInt
 fn Bitset::intersection(Self, Self) -> Self
 fn Bitset::iter(Self) -> Iter[Int]
 fn Bitset::remove(Self, Int) -> Self
@@ -36,13 +25,13 @@ pub(all) struct SparseArray[X] {
 }
 fn[X] SparseArray::add(Self[X], Int, X) -> Self[X]
 fn[X] SparseArray::difference(Self[X], Self[X]) -> Self[X]
-fn[X] SparseArray::each(Self[X], (X) -> Unit) -> Unit
+fn[X] SparseArray::each(Self[X], (X) -> Unit raise?) -> Unit raise?
 fn[X] SparseArray::has(Self[X], Int) -> Bool
-fn[X] SparseArray::intersection(Self[X], Self[X], (X, X) -> X) -> Self[X]
+fn[X] SparseArray::intersection(Self[X], Self[X], (X, X) -> X raise?) -> Self[X] raise?
 fn[X] SparseArray::op_get(Self[X], Int) -> X?
 fn[X] SparseArray::replace(Self[X], Int, X) -> Self[X]
 fn[X] SparseArray::size(Self[X]) -> Int
-fn[X] SparseArray::union(Self[X], Self[X], (X, X) -> X) -> Self[X]
+fn[X] SparseArray::union(Self[X], Self[X], (X, X) -> X raise?) -> Self[X] raise?
 impl[X : Eq] Eq for SparseArray[X]
 
 // Type aliases

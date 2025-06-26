@@ -17,17 +17,20 @@ type MyString String derive(Eq)
 
 ///|
 impl Hash for MyString with hash(self) {
-  self._.length()
+  let MyString(s) = self
+  s.length()
 }
 
 ///|
 impl Hash for MyString with hash_combine(self, hasher) {
-  hasher.combine_string(self._)
+  let MyString(s) = self
+  hasher.combine_string(s)
 }
 
 ///|
 impl Show for MyString with output(self, logger) {
-  logger.write_string(self._)
+  let MyString(s) = self
+  logger.write_string(s)
 }
 
 ///|
@@ -899,4 +902,9 @@ fn[K : Show, V : Show] Map::debug_entries(self : Map[K, V]) -> String {
     }
   }
   buf.to_string()
+}
+
+///|
+impl[K : Eq, V] Eq for Entry[K, V] with op_equal(self, other) {
+  self.hash == other.hash && self.key == other.key
 }

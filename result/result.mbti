@@ -5,44 +5,18 @@ import(
 )
 
 // Values
-fn[T, E, U] bind(Result[T, E], (T) -> Result[U, E]) -> Result[U, E]
-
 fn[T, E] err(E) -> Result[T, E]
-
-fn[T, E] flatten(Result[Result[T, E], E]) -> Result[T, E]
-
-fn[T, E, V] fold(Result[T, E], (T) -> V, (E) -> V) -> V
-
-fn[T, E] is_err(Result[T, E]) -> Bool
-
-fn[T, E] is_ok(Result[T, E]) -> Bool
-
-fn[T, E, U] map(Result[T, E], (T) -> U) -> Result[U, E]
-
-fn[T, E, F] map_err(Result[T, E], (E) -> F) -> Result[T, F]
 
 fn[T, E] ok(T) -> Result[T, E]
 
-fn[T, E] or(Result[T, E], T) -> T
-
-fn[T, E] or_else(Result[T, E], () -> T) -> T
-
-fn[T, E] to_option(Result[T, E]) -> T?
-
-fn[T, E] unwrap(Result[T, E]) -> T
-
-fn[T, E] unwrap_err(Result[T, E]) -> E
-
-fn[T, E : Error] unwrap_or_error(Result[T, E]) -> T!E
+#deprecated
+fn[T, E : Error] wrap0(f~ : () -> T raise E) -> Result[T, E]
 
 #deprecated
-fn[T, E : Error] wrap0(f~ : () -> T!E) -> Result[T, E]
+fn[T, A, E : Error] wrap1(f~ : (A) -> T raise E, A) -> Result[T, E]
 
 #deprecated
-fn[T, A, E : Error] wrap1(f~ : (A) -> T!E, A) -> Result[T, E]
-
-#deprecated
-fn[T, A, B, E : Error] wrap2(f~ : (A, B) -> T!E, A, B) -> Result[T, E]
+fn[T, A, B, E : Error] wrap2(f~ : (A, B) -> T raise E, A, B) -> Result[T, E]
 
 // Types and methods
 fn[T, E, U] Result::bind(Self[T, E], (T) -> Self[U, E]) -> Self[U, E]
@@ -57,7 +31,7 @@ fn[T, E] Result::or_else(Self[T, E], () -> T) -> T
 fn[T, E] Result::to_option(Self[T, E]) -> T?
 fn[T, E] Result::unwrap(Self[T, E]) -> T
 fn[T, E] Result::unwrap_err(Self[T, E]) -> E
-fn[T, E : Error] Result::unwrap_or_error(Self[T, E]) -> T!E
+fn[T, E : Error] Result::unwrap_or_error(Self[T, E]) -> T raise E
 impl[T : Compare, E : Compare] Compare for Result[T, E]
 impl[T : @quickcheck.Arbitrary, E : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Result[T, E]
 

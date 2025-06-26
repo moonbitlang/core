@@ -7,26 +7,19 @@ fn ceil(T) -> Int64
 
 fn floor(T) -> Int64
 
-fn fract(T) -> T
-
-fn from_double(Double) -> T!RationalError
-
-fn is_integer(T) -> Bool
+fn from_double(Double) -> T raise RationalError
 
 fn neg(T) -> T
 
 fn new(Int64, Int64) -> T?
 
-fn reciprocal(T) -> T
-
-fn to_double(T) -> Double
-
 fn trunc(T) -> Int64
 
 // Types and methods
-pub(all) type! RationalError String
+pub(all) suberror RationalError String
 impl Eq for RationalError
 impl Show for RationalError
+impl ToJson for RationalError
 
 type T
 fn T::abs(Self) -> Self

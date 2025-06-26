@@ -684,9 +684,9 @@ test "rev" {
 pub fn View::split(self : View, sep : View) -> Iter[View] {
   let sep_len = sep.length()
   if sep_len == 0 {
-    return self.iter().map(fn(c) { c.to_string().view() })
+    return self.iter().map(c => c.to_string().view())
   }
-  Iter::new(fn(yield_) {
+  Iter::new(yield_ => {
     let mut view = self
     while view.find(sep) is Some(end) {
       guard yield_(view.view(end_offset=end)) is IterContinue else {
@@ -799,7 +799,7 @@ pub fn View::replace_all(self : View, old~ : View, new~ : View) -> View {
   let buf = StringBuilder::new(size_hint=len)
   let old_len = old.length()
   let new = new.to_string()
-  // todo: improve performance by providing write_view method to StringBuilder
+  // use write_substring to avoid intermediate allocations
   if old_len == 0 {
     buf.write_string(new)
     for c in self {
@@ -811,13 +811,18 @@ pub fn View::replace_all(self : View, old~ : View, new~ : View) -> View {
     let first_end = self.find(old)
     if first_end is Some(end) {
       for view = self, end = end {
-        buf.write_string(view.view(end_offset=end).to_string())
+        let seg = view.view(end_offset=end)
+        buf.write_substring(seg.data(), seg.start_offset(), seg.length())
         buf.write_string(new)
         // check if there is no more characters after the last occurrence of `old`
         guard end + old_len <= len else { break }
         let next_view = view.view(start_offset=end + old_len)
         guard next_view.find(old) is Some(next_end) else {
-          buf.write_string(next_view.to_string())
+          buf.write_substring(
+            next_view.data(),
+            next_view.start_offset(),
+            next_view.length(),
+          )
           break
         }
         continue next_view, next_end
@@ -840,7 +845,7 @@ pub fn replace_all(self : String, old~ : View, new~ : View) -> String {
   let buf = StringBuilder::new(size_hint=len)
   let old_len = old.length()
   let new = new.to_string()
-  // todo: improve performance
+  // use write_substring to avoid intermediate allocations
   if old_len == 0 {
     buf.write_string(new)
     for c in self {
@@ -852,13 +857,18 @@ pub fn replace_all(self : String, old~ : View, new~ : View) -> String {
     let first_end = self.find(old)
     if first_end is Some(end) {
       for view = self[:], end = end {
-        buf.write_string(view.view(end_offset=end).to_string())
+        let seg = view.view(end_offset=end)
+        buf.write_substring(seg.data(), seg.start_offset(), seg.length())
         buf.write_string(new)
         // check if there is no more characters after the last occurrence of `old`
         guard end + old_len <= len else { break }
         let next_view = view.view(start_offset=end + old_len)
         guard next_view.find(old) is Some(next_end) else {
-          buf.write_string(next_view.to_string())
+          buf.write_substring(
+            next_view.data(),
+            next_view.start_offset(),
+            next_view.length(),
+          )
           break
         }
         continue next_view, next_end
@@ -938,7 +948,8 @@ pub fn View::to_lower(self : View) -> View {
   // TODO: deal with non-ascii characters
   guard self.find_by(_.is_ascii_uppercase()) is Some(idx) else { return self }
   let buf = StringBuilder::new(size_hint=self.length())
-  buf.write_string(self.view(end_offset=idx).to_string())
+  let head = self.view(end_offset=idx)
+  buf.write_substring(head.data(), head.start_offset(), head.length())
   for c in self.view(start_offset=idx) {
     if c.is_ascii_uppercase() {
       // 'A' is 65 in ASCII, 'a' is 97, the difference is 32
@@ -956,7 +967,8 @@ pub fn to_lower(self : String) -> String {
   // TODO: deal with non-ascii characters
   guard self.find_by(_.is_ascii_uppercase()) is Some(idx) else { return self }
   let buf = StringBuilder::new(size_hint=self.length())
-  buf.write_string(self.view(end_offset=idx).to_string())
+  let head = self.view(end_offset=idx)
+  buf.write_substring(head.data(), head.start_offset(), head.length())
   for c in self.view(start_offset=idx) {
     if c.is_ascii_uppercase() {
       // 'A' is 65 in ASCII, 'a' is 97, the difference is 32
@@ -988,7 +1000,8 @@ pub fn View::to_upper(self : View) -> View {
   // TODO: deal with non-ascii characters
   guard self.find_by(_.is_ascii_lowercase()) is Some(idx) else { return self }
   let buf = StringBuilder::new(size_hint=self.length())
-  buf.write_string(self.view(end_offset=idx).to_string())
+  let head = self.view(end_offset=idx)
+  buf.write_substring(head.data(), head.start_offset(), head.length())
   for c in self.view(start_offset=idx) {
     if c.is_ascii_lowercase() {
       buf.write_char((c.to_int() - 32).unsafe_to_char())
@@ -1005,7 +1018,8 @@ pub fn to_upper(self : String) -> String {
   // TODO: deal with non-ascii characters
   guard self.find_by(_.is_ascii_lowercase()) is Some(idx) else { return self }
   let buf = StringBuilder::new(size_hint=self.length())
-  buf.write_string(self.view(end_offset=idx).to_string())
+  let head = self.view(end_offset=idx)
+  buf.write_substring(head.data(), head.start_offset(), head.length())
   for c in self.view(start_offset=idx) {
     if c.is_ascii_lowercase() {
       buf.write_char((c.to_int() - 32).unsafe_to_char())

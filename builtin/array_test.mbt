@@ -502,11 +502,11 @@ test "chunks_by" {
 test "array_windows" {
   let arr = [1, 2, 3, 4, 5, 6]
   let windows = arr.windows(11)
-  inspect!(windows, content="[]")
+  inspect(windows, content="[]")
   let windows = arr.windows(5)
-  inspect!(windows, content="[[1, 2, 3, 4, 5], [2, 3, 4, 5, 6]]")
+  inspect(windows, content="[[1, 2, 3, 4, 5], [2, 3, 4, 5, 6]]")
   let windows = arr.windows(1)
-  inspect!(windows, content="[[1], [2], [3], [4], [5], [6]]")
+  inspect(windows, content="[[1], [2], [3], [4], [5], [6]]")
 }
 
 ///|
@@ -691,7 +691,8 @@ test "each with error callback 2" {
         fail("Error at 2")
       }
       sum += x
-    }) catch {
+    })
+  catch {
     Failure(_) => {
       inspect(sum, content="1")
       assert_true(true)
@@ -725,7 +726,8 @@ test "eachi with error callback 2" {
         fail("Error at 2")
       }
       sum += x + i
-    }) catch {
+    })
+  catch {
     Failure(_) => {
       inspect(sum, content="1")
       assert_true(true)
@@ -748,7 +750,7 @@ test "map with error callback" {
   inspect(
     v,
     content=
-      #|Err("Failure(Error at 2)")
+      #|Err(Failure("Error at 2"))
     ,
   )
 }
@@ -762,7 +764,8 @@ test "map with error callback 2" {
         fail("Error at 2")
       }
       x + 1
-    }) catch {
+    })
+  catch {
     Failure(_) => assert_true(true)
   } else {
     _ => assert_true(false)
@@ -782,7 +785,7 @@ test "mapi with error callback" {
   inspect(
     v,
     content=
-      #|Err("Failure(Error at 2)")
+      #|Err(Failure("Error at 2"))
     ,
   )
 }
@@ -796,7 +799,8 @@ test "mapi with error callback 2" {
         raise Failure("Error at 2")
       }
       x + i
-    }) catch {
+    })
+  catch {
     Failure(_) => assert_true(true)
   } else {
     _ => assert_true(false)
@@ -816,7 +820,7 @@ test "filter with error callback" {
   inspect(
     v,
     content=
-      #|Err("Failure(Error at 2)")
+      #|Err(Failure("Error at 2"))
     ,
   )
 }
@@ -830,7 +834,8 @@ test "filter with error callback 2" {
         raise Failure("Error at 2")
       }
       x % 2 == 0
-    }) catch {
+    })
+  catch {
     Failure(_) => assert_true(true)
   } else {
     _ => assert_true(false)
@@ -850,7 +855,7 @@ test "map_inplace with error callback" {
   inspect(
     v,
     content=
-      #|Err("Failure(Error at 2)")
+      #|Err(Failure("Error at 2"))
     ,
   )
 }
@@ -864,7 +869,8 @@ test "map_inplace with error callback 2" {
         raise Failure("Error at 2")
       }
       x + 1
-    }) catch {
+    })
+  catch {
     Failure(_) => assert_true(true)
   } else {
     _ => assert_true(false)
@@ -884,7 +890,7 @@ test "mapi_inplace with error callback" {
   inspect(
     v,
     content=
-      #|Err("Failure(Error at 2)")
+      #|Err(Failure("Error at 2"))
     ,
   )
 }

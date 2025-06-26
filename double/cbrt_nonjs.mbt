@@ -25,35 +25,8 @@
 //
 
 ///|
-/// Calculates the cube root of a number.
-///
-/// Parameters:
-///
-/// * `self` : The number for which to calculate the cube root.
-///
-/// Returns the cube root of `self`.
-///
-/// Special Cases:
-///
-/// * Return `NaN` if `self` is `NaN`.
-/// * Return `±0` if `self` is `±0`.
-/// * Return `Infinity` if `self` is `Infinity`.
-/// * Return `-Infinity` if `self` is `-Infinity`.
-///
-/// Example
-///
-/// ```moonbit
-/// test "cbrt" {
-///   inspect(1.0.cbrt(), content="1")
-///   inspect(3.0.cbrt(), content="1.4422495703074083")
-///   inspect((-3.0).cbrt(), content="-1.4422495703074083")
-///   inspect(10.0.cbrt(), content="2.154434690031884")
-///   inspect(1000.0.cbrt(), content="10")
-///   inspect(@double.not_a_number.cbrt(), content="NaN")
-///   inspect(@double.infinity, content="Infinity")
-///   inspect(@double.neg_infinity, content="-Infinity")
-/// }
-/// ```
+#deprecated("use `@math.cbrt` instead")
+#coverage.skip
 pub fn Double::cbrt(self : Double) -> Double {
   if self.is_inf() || self.is_nan() || self == 0.0 {
     return self

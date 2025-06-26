@@ -90,11 +90,9 @@ pub impl Logger for StringBuilder with write_char(self, ch) {
 /// Example:
 ///
 /// ```moonbit
-/// test "write_substring" {
 ///   let sb = StringBuilder::new()
 ///   sb.write_substring("Hello, world!", 0, 5)
 ///   assert_eq(sb.to_string(), "Hello")
-/// }
 /// ```
 pub impl Logger for StringBuilder with write_substring(
   self : StringBuilder,
@@ -111,14 +109,18 @@ pub impl Logger for StringBuilder with write_substring(
 ///| 
 /// Returns the current content of the StringBuilder as a string.
 pub fn StringBuilder::to_string(self : StringBuilder) -> String {
-  self.data.unsafe_to_bytes().to_unchecked_string(offset=0, length=self.len)
+  self.data
+  .unsafe_reinterpret_as_bytes()
+  .to_unchecked_string(offset=0, length=self.len)
 }
 
 ///|
 /// TODO: improve perf
 pub impl Show for StringBuilder with output(self, logger) {
   logger.write_string(
-    self.data.unsafe_to_bytes().to_unchecked_string(offset=0, length=self.len),
+    self.data
+    .unsafe_reinterpret_as_bytes()
+    .to_unchecked_string(offset=0, length=self.len),
   )
 }
 

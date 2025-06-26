@@ -223,16 +223,18 @@ pub fn[K : Compare, V] from_array(array : Array[(K, V)]) -> T[K, V] {
 ///|
 pub fn[K, V] iter(self : T[K, V]) -> Iter[(K, V)] {
   Iter::new(fn(yield_) {
-    fn go {
-      Empty => IterContinue
-      Tree(k, value~, l, r, ..) =>
-        if go(l) is IterEnd {
-          IterEnd
-        } else if yield_((k, value)) is IterEnd {
-          IterEnd
-        } else {
-          go(r)
-        }
+    fn go(t) {
+      match t {
+        Empty => IterContinue
+        Tree(k, value~, l, r, ..) =>
+          if go(l) is IterEnd {
+            IterEnd
+          } else if yield_((k, value)) is IterEnd {
+            IterEnd
+          } else {
+            go(r)
+          }
+      }
     }
 
     go(self)
@@ -242,16 +244,18 @@ pub fn[K, V] iter(self : T[K, V]) -> Iter[(K, V)] {
 ///|
 pub fn[K, V] iter2(self : T[K, V]) -> Iter2[K, V] {
   Iter2::new(fn(yield_) {
-    fn go {
-      Empty => IterContinue
-      Tree(k, value~, l, r, ..) =>
-        if go(l) is IterEnd {
-          IterEnd
-        } else if yield_(k, value) is IterEnd {
-          IterEnd
-        } else {
-          go(r)
-        }
+    fn go(t) {
+      match t {
+        Empty => IterContinue
+        Tree(k, value~, l, r, ..) =>
+          if go(l) is IterEnd {
+            IterEnd
+          } else if yield_(k, value) is IterEnd {
+            IterEnd
+          } else {
+            go(r)
+          }
+      }
     }
 
     go(self)
@@ -266,13 +270,13 @@ pub fn[K : Compare, V] from_iter(iter : Iter[(K, V)]) -> T[K, V] {
 ///|
 /// Return all keys of the map in ascending order.
 pub fn[K, V] keys(self : T[K, V]) -> Array[K] {
-  self.iter().map(fn { (k, _) => k }).collect()
+  self.iter().map(p => p.0).collect()
 }
 
 ///|
 /// Return all elements of the map in the ascending order of their keys.
 pub fn[K, V] values(self : T[K, V]) -> Iter[V] {
-  self.iter().map(fn { (_, v) => v })
+  self.iter().map(p => p.1)
 }
 
 ///|
@@ -300,6 +304,6 @@ pub fn[K : Show, V : ToJson] to_json(self : T[K, V]) -> Json {
 ///|
 pub fn[V : @json.FromJson] from_json(
   json : Json
-) -> T[String, V]!@json.JsonDecodeError {
+) -> T[String, V] raise @json.JsonDecodeError {
   @json.from_json(json)
 }

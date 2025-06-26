@@ -75,22 +75,30 @@ After submitting your pull request, request a review from the project maintainer
 
 - Test, documentation and bug fixes 
 
-- Standalone packages with good functionalities, for example, bigint package
+- Standalone packages with good functionalities, for example, bigint or bigdecimal package
 
 - Fast and efficient abstractions are preferred over *theoretically perfect* abstractions
 
-   MoonBit is a pragmatic language, we care about both compile time and runtime performance. Take `+` for example, it is a trait method in Rust,
-   it could be the same in MoonBit, but we care about compile time performance so much that we would prefer it as a simple function to make sure 
-   both compile time and runtime are fast
+   MoonBit is a pragmatic language, we care about both compile time and runtime performance. We don't encourage to add traits for non pervasive abstractions.
 
-- Large changes are encourgaged to communicate earlier before the implementation
+- Large changes are encouraged to communicate earlier before the implementation
 
    The core library is coupled with the compiler to some extent, it is better to communicate your ideas first if you 
    plan to make large structural changes.  
 
+- Testing guidelines
+
+  We encourage you to use `inspect` over `assert` in tests, as `inspect` provides more information about the values being tested and can
+  be updated easilly. For testing in the loop, you may use `assert_` since snapshot testing does not work well in the loop.
+
+- New APIs with real meat
+
+  We encourage you to add new APIs that are useful and have real meat, rather than just adding APIs for the sake of completeness.
+  If the new API can be composed with existing APIs without loosing efficiency, it is better to use the existing APIs instead of adding new ones, this is due to our current limited bandwidth of the core library.
+
 # Naming conventions
 
 - function names, `snake_case` is preferred.
-- type parameters, one character starting from `A` is preferred, e.g, `fn map[A,B](self : Array[A], f : (A) -> (B)) -> Array[B]`, for some established
+- type parameters, one character starting from `A` is preferred, e.g, `fn[A,B] Array::map(self : Array[A], f : (A) -> (B)) -> Array[B]`, for some established
   conventions, `Map[K,V]` it is also accepted.
-- type names, `CamlCase` is preferred, if one package is centered around one specific type, short name `T` is preferred, e.g, `@sorted_set.T`.
+- type names, `CamelCase` is preferred, if one package is centered around one specific type, short name `T` is preferred, e.g, `@sorted_set.T`.

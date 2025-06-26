@@ -13,7 +13,8 @@
 // limitations under the License.
 
 ///|
-extern type Timestamp
+#external
+type Timestamp
 
 ///|
 fn instant_elapsed_as_secs_f64(x : Timestamp) -> Double = "__moonbit_time_unstable" "instant_elapsed_as_secs_f64"
