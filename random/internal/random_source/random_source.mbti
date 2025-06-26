@@ -3,13 +3,7 @@ package "moonbitlang/core/random/internal/random_source"
 // Values
 
 // Types and methods
-pub(all) struct ChaCha8 {
-  mut buffer : FixedArray[UInt64]
-  mut seed : FixedArray[UInt64]
-  mut i : UInt
-  mut n : UInt
-  mut c : UInt
-}
+type ChaCha8
 fn ChaCha8::new(Bytes) -> Self
 fn ChaCha8::next(Self) -> UInt64?
 fn ChaCha8::refill(Self) -> Unit
