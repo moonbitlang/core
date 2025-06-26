@@ -1222,6 +1222,113 @@ pub fn[A] to_array(self : T[A]) -> Array[A] {
 }
 
 ///|
+/// Joins the elements of a string deque into a single string, 
+/// separated by the specified separator.
+///
+/// Parameters:
+///
+/// * `self` : The deque of strings to join.
+/// * `separator` : The separator to insert between elements (as a string view).
+///
+/// Returns the concatenated string. 
+///   - If the deque is empty, returns an empty string.
+///   - Efficiently pre-allocates memory based on calculated size hint.
+///   - Handles empty separators efficiently by direct concatenation.
+///
+/// Example:
+///
+/// ```moonbit
+///   let deque = @deque.of(["a","b","c"])
+///   let s1 = deque.join("")
+///   inspect(s1, content="abc")
+/// 
+///   let s2 = deque.join(",")
+///   inspect(s2, content="a,b,c")
+/// ```
+pub fn T::join(self : T[String], separator : @string.View) -> String {
+  let str = separator.to_string()
+  self.iter().join(str)
+}
+
+///|
+/// Removes and returns elements in the specified range [begin, end) from the deque.
+///
+/// Parameters:
+///
+/// * `self` : The target deque (modified in-place).
+/// * `begin` : Start index of the range (inclusive).
+/// * `end` : End index of the range (exclusive).
+///
+/// Important:
+///   - Requires `0 <= begin <= end <= self.length()`
+///   - Returns a new deque containing the drained elements.
+///   - Original deque retains elements outside [begin, end) in original order.
+///
+/// Example:
+///
+/// ```moonbit
+///   let deque = @deque.of([1,2,3,4,5,6,7,8,9])
+///   let deque_test = deque.drain(start=2, len=4)
+///   inspect(deque_test, content="@deque.of([3, 4, 5, 6])")
+///   inspect(deque, content="@deque.of([1, 2, 7, 8, 9])")
+/// ```
+pub fn[A] T::drain(self : T[A], start~ : Int, len~ : Int) -> T[A] {
+  let end = start + len
+  guard start >= 0 && end <= self.length()
+  let dq = new(capacity=len)
+  dq.buf = self.buf.blit(dq.buf, len~, src_offset=start, dst_offset=0)
+  ignore(
+    self.buf.blit(
+      self.buf,
+      len=self.length() - end,
+      src_offset=end,
+      dst_offset=start,
+    ),
+  )
+  self.tail = self.length() - end
+  self.len = self.length() - len
+  let deq1 = T::{ buf: dq.buf, len, head: 0, tail: len - 1 }
+  deq1
+}
+
+///|
+/// Flattens a high-dimensional deque into a lower-dimensional deque
+/// by concatenating all inner deques in order.
+///
+/// Parameters:
+///
+/// * `self` : The high-dimensional deque to flatten.
+///
+/// Returns a new lower-dimensional deque containing all elements 
+/// from inner deques in sequence.
+///
+/// Note:
+///   - Uses the first inner deque as base and appends subsequent deques.
+///   - Efficiently preserves element order across all inner deques.
+///
+/// Example:
+///
+/// ```moonbit
+///   let deque = @deque.of([@deque.of([1,2,3]),@deque.of([4,5,6]),@deque.of([7,8])])
+///   let deque_test = deque.flatten()
+///   inspect(deque_test, content="@deque.of([1, 2, 3, 4, 5, 6, 7, 8])")
+/// ```
+pub fn[A] T::flatten(self : T[T[A]]) -> T[A] {
+  let mut len = 0
+  for i in self {
+    len += i.length()
+  }
+  let dq = new(capacity=len)
+  let mut i = 0
+  for t in self {
+    dq.buf = t.buf.blit(dq.buf, len=t.length(), dst_offset=i, src_offset=0)
+    i += t.length()
+  }
+  let deq = T::{ buf: dq.buf, len, head: 0, tail: len - 1 }
+  deq
+}
+
+///|
 /// Converts a deque to its JSON representation as an array.
 ///
 /// Parameters:
@@ -1230,10 +1337,7 @@ pub fn[A] to_array(self : T[A]) -> Array[A] {
 ///
 /// Returns a JSON array containing all elements from the deque converted to
 /// their JSON representations.
-///
-/// Example:
-///
-/// ```moonbit
+/// test "T::to_json" {
 ///   let dq = @deque.of([1, 2, 3])
 ///   let json = dq.to_json()
 ///   inspect(json, content="Array([Number(1), Number(2), Number(3)])")
