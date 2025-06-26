@@ -272,3 +272,30 @@ pub fn[T] ArrayView::op_as_view(
   }
   ArrayView::make(self.buf(), self.start() + start, end - start)
 }
+
+///|
+/// Copies elements from this ArrayView to a destination array starting at a given index.
+pub fn[T] ArrayView::blit_to(
+  self : ArrayView[T],
+  dst : ArrayView[T],
+  len~ : Int,
+  src_offset~ : Int = 0,
+  dst_offset~ : Int = 0
+) -> Unit {
+  let src_len = self.length() - src_offset
+  let dst_len = dst.length() - dst_offset
+  let copy_len = if src_len < dst_len {
+    if src_len < len {
+      src_len
+    } else {
+      len
+    }
+  } else if dst_len < len {
+    dst_len
+  } else {
+    len
+  }
+  for i in 0..<copy_len {
+    dst.op_set(dst_offset + i, self.op_get(src_offset + i))
+  }
+}
