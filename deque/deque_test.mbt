@@ -1001,3 +1001,25 @@ test "rev_iter2 when wrapped around" {
     content="[(0, 5), (1, 4), (2, 3), (3, 2), (4, 1), (5, 6)]",
   )
 }
+
+///|
+test "drain when wrapped around" {
+  let dq = of([4, 5, 6])
+  dq..push_front(3)..push_front(2)..push_front(1)
+  inspect(dq, content="@deque.of([1, 2, 3, 4, 5, 6])")
+  let dq2 = dq.drain(start=2, len=2)
+  inspect(dq, content="@deque.of([3, 2, 3, 4])") // should be [1, 2, 5, 6]
+  inspect(dq2, content="@deque.of([6, 1])") // shoule be [3, 4]
+}
+
+///|
+test "flatten when wrapped around" {
+  let dq = of([1, 2, 3, 4, 5])
+  dq.push_front(6)
+  let dqdq = of([dq, dq])
+  inspect(
+    dqdq.flatten(),
+    content="@deque.of([1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5, 0])",
+    // should be [6, 1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5]
+  )
+}
