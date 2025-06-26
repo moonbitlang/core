@@ -19,6 +19,13 @@ struct RandomState {
 } derive(Show, Default)
 
 ///|
+pub impl @random.Source for RandomState with next(self) {
+  let { seed, gamma } = self
+  self.seed = seed + gamma
+  mix64(self.seed)
+}
+
+///|
 let golden_gamma : UInt64 = 0x9e3779b97f4a7c15
 
 ///|
