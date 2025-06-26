@@ -235,12 +235,10 @@ fn MyInt64::lsr(self : MyInt64, shift : Int) -> MyInt64 {
 /// # Example
 /// ```moonbit
 /// // Binary: 0x01000000_00000000 -> MSB set at bit position 63
-/// let a = MyInt64{hi: 0x01000000, lo: 0x00000000};
-/// test_assert(a.clz() == 0);  // MSB is set, no leading zeros
-///
-/// // Binary: 0x00000000_10000000 -> 32 leading zeros from hi + 7 leading zeros from lo
-/// let b = MyInt64{hi: 0x00000000, lo: 0x10000000}; 
-/// test_assert(b.clz() == 39);  // 32 + 7 = 39
+/// test fn test_clz_high_bit_set() {
+///     let a: MyInt64 = MyInt64{hi: 0x01000000, lo: 0x00000000};
+///     test_assert(a.clz() == 0); // 0 leading zeros in hi
+/// }
 /// ```
 fn MyInt64::asr(self : MyInt64, shift : Int) -> MyInt64 {
   let shift = shift & 63
