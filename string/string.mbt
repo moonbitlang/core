@@ -120,7 +120,7 @@ pub fn to_array(self : String) -> Array[Char] {
 ///   assert_eq(s.length(), 15); // Utf16 code units
 /// ```
 pub fn iter(self : String) -> Iter[Char] {
-  Iter::new(fn(yield_) {
+  Iter::new(yield_ => {
     let len = self.length()
     for index in 0..<len {
       let c1 = self.unsafe_charcode_at(index)
@@ -191,7 +191,7 @@ pub fn iter2(self : String) -> Iter2[Int, Char] {
 ///   assert_eq(reversed, ['!', 'd', 'l', 'r', 'o', 'W', ' ', ',', 'o', 'l', 'l', 'e', 'H'])
 /// ```
 pub fn rev_iter(self : String) -> Iter[Char] {
-  Iter::new(fn(yield_) {
+  Iter::new(yield_ => {
     let len = self.length()
     for index = len - 1; index >= 0; index = index - 1 {
       let c1 = self.unsafe_charcode_at(index)
