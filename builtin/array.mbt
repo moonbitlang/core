@@ -1780,9 +1780,5 @@ pub fn[A] Array::unsafe_pop_back(self : Array[A]) -> Unit {
 /// ```
 pub fn[A] Array::truncate(self : Array[A], len : Int) -> Unit {
   guard len >= 0 && len < self.length() else { return }
-  if len == 0 {
-    self.clear()
-    return
-  }
   self.unsafe_truncate_to_length(len)
 }
