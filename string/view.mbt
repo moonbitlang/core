@@ -12,26 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-///| 
-/// A `StringView` represents a view of a String that maintains proper Unicode
-/// character boundaries. It allows safe access to a substring while handling 
-/// multi-byte characters correctly.
-#deprecated("use @string.View instead")
-#builtin.valtype
-struct StringView {
-  // # Fields
-  //
-  // - `str`: The source String being viewed
-  // - `start`: Starting UTF-16 code unit index into the string
-  // - `end`: Ending UTF-16 code unit index into the string (not included)
-  //
-  // `len` is not included because it will make the operation of `op_as_view`
-  // has complexity O(n) where n is the length of the code points in the view.
-  str : String
-  start : Int
-  end : Int
-}
-
 ///|
 /// A `@string.View` represents a view of a String that maintains proper Unicode
 /// character boundaries. It allows safe access to a substring while handling 
@@ -269,27 +249,25 @@ pub impl Show for StringView with to_string(self) {
 ///|
 /// Returns an iterator over the Unicode characters in the string view.
 pub fn View::iter(self : View) -> Iter[Char] {
-  Iter::new(fn(yield_) {
-    for index in self.start..<self.end {
-      let c1 = self.str.unsafe_charcode_at(index)
-      if is_leading_surrogate(c1) && index + 1 < self.end {
-        let c2 = self.str.unsafe_charcode_at(index + 1)
-        if is_trailing_surrogate(c2) {
-          let c = code_point_of_surrogate_pair(c1, c2)
-          guard yield_(c) is IterContinue else { break IterEnd }
-          continue index + 2
-        }
+  Iter::new(yield_ => for index in self.start..<self.end {
+    let c1 = self.str.unsafe_charcode_at(index)
+    if is_leading_surrogate(c1) && index + 1 < self.end {
+      let c2 = self.str.unsafe_charcode_at(index + 1)
+      if is_trailing_surrogate(c2) {
+        let c = code_point_of_surrogate_pair(c1, c2)
+        guard yield_(c) is IterContinue else { break IterEnd }
+        continue index + 2
       }
-      guard yield_(c1.unsafe_to_char()) is IterContinue else { break IterEnd }
-    } else {
-      IterContinue
     }
+    guard yield_(c1.unsafe_to_char()) is IterContinue else { break IterEnd }
+  } else {
+    IterContinue
   })
 }
 
 ///|
 pub fn View::iter2(self : View) -> Iter2[Int, Char] {
-  Iter2::new(fn(yield_) {
+  Iter2::new(yield_ => {
     let len = self.length()
     for index = 0, n = 0; index < len; index = index + 1, n = n + 1 {
       let c1 = self.str.unsafe_charcode_at(self.start + index)
@@ -313,21 +291,21 @@ pub fn View::iter2(self : View) -> Iter2[Int, Char] {
 ///|
 /// Returns an iterator over the Unicode characters in the string view in reverse order.
 pub fn View::rev_iter(self : View) -> Iter[Char] {
-  Iter::new(fn(yield_) {
-    for index = self.end - 1; index >= self.start; index = index - 1 {
-      let c1 = self.str.unsafe_charcode_at(index)
-      if is_trailing_surrogate(c1) && index - 1 >= 0 {
-        let c2 = self.str.unsafe_charcode_at(index - 1)
-        if is_leading_surrogate(c2) {
-          let c = code_point_of_surrogate_pair(c2, c1)
-          guard yield_(c) is IterContinue else { break IterEnd }
-          continue index - 2
-        }
+  Iter::new(yield_ => for index = self.end - 1
+                          index >= self.start
+                          index = index - 1 {
+    let c1 = self.str.unsafe_charcode_at(index)
+    if is_trailing_surrogate(c1) && index - 1 >= 0 {
+      let c2 = self.str.unsafe_charcode_at(index - 1)
+      if is_leading_surrogate(c2) {
+        let c = code_point_of_surrogate_pair(c2, c1)
+        guard yield_(c) is IterContinue else { break IterEnd }
+        continue index - 2
       }
-      guard yield_(c1.unsafe_to_char()) is IterContinue else { break IterEnd }
-    } else {
-      IterContinue
     }
+    guard yield_(c1.unsafe_to_char()) is IterContinue else { break IterEnd }
+  } else {
+    IterContinue
   })
 }
 

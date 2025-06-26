@@ -13,19 +13,23 @@
 // limitations under the License.
 
 ///|
-#deprecated("use `@math.hypotf` instead")
+#deprecated("Use `unsafe_pop_front` instead")
 #coverage.skip
-pub fn Float::hypot(self : Float, y : Float) -> Float {
-  let epsilon : Float = 1.1920928955078125e-7
-  let x = self.abs()
-  let y = y.abs()
-  if self.is_inf() || y.is_inf() {
-    return infinity
-  }
-  let (x, y) = if y > x { (y, x) } else { (x, y) }
-  if x * epsilon >= y {
-    return x
-  }
-  let rat = y / x
-  x * (rat * rat + 1.0).sqrt()
+pub fn[A] pop_front_exn(self : T[A]) -> Unit {
+  self.unsafe_pop_front()
 }
+
+///|
+#deprecated("Use `unsafe_pop_back` instead")
+#coverage.skip
+pub fn[A] pop_back_exn(self : T[A]) -> Unit {
+  self.unsafe_pop_back()
+}
+
+///|
+#deprecated("Use `@deque.retain_map` instead")
+pub fn[A] filter_map_inplace(self : T[A], f : (A) -> A?) -> Unit {
+  self.retain_map(f)
+}
+
+///|

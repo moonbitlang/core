@@ -13,11 +13,20 @@
 // limitations under the License.
 
 ///|
-fn k_expo2f(x : Float) -> Float {
-  let k = 235
-  let k_ln2 = (0x4322e3bc).reinterpret_as_float()
-  // note that k is odd and scale*scale overflows */
-  let scale = ((0x7f + k / 2) << 23).reinterpret_as_float()
-  // exp(x - k ln2) * 2**(k-1) */
-  (x - k_ln2).exp() * scale * scale
+#deprecated("use `_.to_array().rev_fold(...)` instead")
+pub fn[A, B] rev_fold(self : T[A], init~ : B, f : (B, A) -> B) -> B {
+  let xs = self.to_array()
+  let mut acc = init
+  for x in xs.rev_iter() {
+    acc = f(acc, x)
+  }
+  acc
 }
+
+///|
+#deprecated("use `_.rev().foldi(...)` instead")
+pub fn[A, B] rev_foldi(self : T[A], init~ : B, f : (Int, B, A) -> B) -> B {
+  self.rev().foldi(init~, fn(i, b, a) { f(i, b, a) })
+}
+
+///|

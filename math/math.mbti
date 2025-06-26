@@ -78,8 +78,10 @@ fn log10(Double) -> Double
 
 fn log2(Double) -> Double
 
+#deprecated
 fn[T : Compare] maximum(T, T) -> T
 
+#deprecated
 fn[T : Compare] minimum(T, T) -> T
 
 let pi : Double

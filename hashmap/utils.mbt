@@ -68,14 +68,12 @@ pub fn[K, V] clear(self : T[K, V]) -> Unit {
 ///   inspect(pairs.contains((2, "two")), content="true")
 /// ```
 pub fn[K, V] iter(self : T[K, V]) -> Iter[(K, V)] {
-  Iter::new(fn(yield_) {
-    for entry in self.entries {
-      if entry is Some({ key, value, .. }) {
-        guard yield_((key, value)) is IterContinue else { break IterEnd }
-      }
-    } else {
-      IterContinue
+  Iter::new(yield_ => for entry in self.entries {
+    if entry is Some({ key, value, .. }) {
+      guard yield_((key, value)) is IterContinue else { break IterEnd }
     }
+  } else {
+    IterContinue
   })
 }
 
@@ -100,14 +98,12 @@ pub fn[K, V] iter(self : T[K, V]) -> Iter[(K, V)] {
 ///   inspect(sum, content="3")
 /// ```
 pub fn[K, V] iter2(self : T[K, V]) -> Iter2[K, V] {
-  Iter2::new(fn(yield_) {
-    for entry in self.entries {
-      if entry is Some({ key, value, .. }) {
-        guard yield_(key, value) is IterContinue else { break IterEnd }
-      }
-    } else {
-      IterContinue
+  Iter2::new(yield_ => for entry in self.entries {
+    if entry is Some({ key, value, .. }) {
+      guard yield_(key, value) is IterContinue else { break IterEnd }
     }
+  } else {
+    IterContinue
   })
 }
 
@@ -142,7 +138,7 @@ pub fn[K, V] iter2(self : T[K, V]) -> Iter2[K, V] {
 /// ```
 pub fn[K : Hash + Eq, V] from_iter(iter : Iter[(K, V)]) -> T[K, V] {
   let m = new()
-  iter.each(fn(e) { m[e.0] = e.1 })
+  iter.each(e => m[e.0] = e.1)
   m
 }
 
@@ -330,7 +326,7 @@ pub fn[K, V] eachi(self : T[K, V], f : (Int, K, V) -> Unit) -> Unit {
 /// ```
 pub impl[K : Show, V : Show] Show for T[K, V] with output(self, logger) {
   logger.write_string("HashMap::of([")
-  self.eachi(fn(i, k, v) {
+  self.eachi((i, k, v) => {
     if i > 0 {
       logger.write_string(", ")
     }

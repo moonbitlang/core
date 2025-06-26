@@ -422,17 +422,6 @@ pub fn[A, B] fold(self : T[A], init~ : B, f : (B, A) -> B) -> B {
 }
 
 ///|
-#deprecated("use `_.to_array().rev_fold(...)` instead")
-pub fn[A, B] rev_fold(self : T[A], init~ : B, f : (B, A) -> B) -> B {
-  let xs = self.to_array()
-  let mut acc = init
-  for x in xs.rev_iter() {
-    acc = f(acc, x)
-  }
-  acc
-}
-
-///|
 /// Fold the list from left with index.
 pub fn[A, B] foldi(self : T[A], init~ : B, f : (Int, B, A) -> B) -> B {
   fn go(xs : T[A], i : Int, f : (Int, B, A) -> B, acc : B) -> B {
@@ -443,17 +432,6 @@ pub fn[A, B] foldi(self : T[A], init~ : B, f : (Int, B, A) -> B) -> B {
   }
 
   go(self, 0, f, init)
-}
-
-///|
-/// Fold the list from right with index.
-/// 
-/// The index parameter corresponds to the order of traversal, 
-/// starting from 0 for the first element visited,
-/// i.e. the last element of the list would have index 0 as it's first visited.
-#deprecated("use `_.rev().foldi(...)` instead")
-pub fn[A, B] rev_foldi(self : T[A], init~ : B, f : (Int, B, A) -> B) -> B {
-  self.rev().foldi(init~, fn(i, b, a) { f(i, b, a) })
 }
 
 ///|
@@ -1193,30 +1171,26 @@ pub fn[X] default() -> T[X] {
 
 ///|
 pub fn[A] iter(self : T[A]) -> Iter[A] {
-  Iter::new(fn(yield_) {
-    loop self {
-      Empty => IterContinue
-      More(head, tail~) => {
-        if yield_(head) == IterEnd {
-          break IterEnd
-        }
-        continue tail
+  Iter::new(yield_ => loop self {
+    Empty => IterContinue
+    More(head, tail~) => {
+      if yield_(head) == IterEnd {
+        break IterEnd
       }
+      continue tail
     }
   })
 }
 
 ///|
 pub fn[A] iter2(self : T[A]) -> Iter2[Int, A] {
-  Iter2::new(fn(yield_) {
-    loop (self, 0) {
-      (Empty, _) => IterEnd
-      (More(head, tail~), i) => {
-        if yield_(i, head) == IterEnd {
-          break IterEnd
-        }
-        continue (tail, i + 1)
+  Iter2::new(yield_ => loop (self, 0) {
+    (Empty, _) => IterEnd
+    (More(head, tail~), i) => {
+      if yield_(i, head) == IterEnd {
+        break IterEnd
       }
+      continue (tail, i + 1)
     }
   })
 }
