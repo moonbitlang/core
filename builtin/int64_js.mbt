@@ -215,34 +215,7 @@ fn MyInt64::lsr(self : MyInt64, shift : Int) -> MyInt64 {
 }
 
 ///|
-/// Counts the number of leading zero bits (most significant bits) in this 64-bit integer.
-///
-/// The operation uses an optimized approach for 64-bit values composed of two 32-bit parts:
-/// - When the high 32-bits (`hi`) are non-zero, returns the count of leading zeros in `hi`
-/// - When `hi` is zero, returns `32 +` the count of leading zeros in the low 32-bits (`lo`)
-///
-/// Parameters:
-///
-/// - `self` : The `MyInt64` instance for which to count leading zeros.
-///
-/// Returns an `Int` representing the number of consecutive zero bits starting from the
-/// most significant bit (MSB) position until the first set bit (1-bit) is encountered.
-///
-/// # Edge Cases
-/// - Returns 64 when all bits are zero (both `hi` and `lo` are zero)
-/// - Returns 0 when the most significant bit is set (MSB = 1)
-///
-/// # Example
-/// ```moonbit
-/// // Binary: 0x01000000_00000000 -> MSB set at bit position 63
-/// let a = MyInt64{hi: 0x01000000, lo: 0x00000000};
-/// test_assert(a.clz() == 0);  // MSB is set, no leading zeros
-///
-/// // Binary: 0x00000000_10000000 -> 32 leading zeros from hi + 7 leading zeros from lo
-/// let b = MyInt64{hi: 0x00000000, lo: 0x10000000}; 
-/// test_assert(b.clz() == 39);  // 32 + 7 = 39
-/// ```
-pub fn MyInt64::asr(self : MyInt64, shift : Int) -> MyInt64 {
+fn MyInt64::asr(self : MyInt64, shift : Int) -> MyInt64 {
   let shift = shift & 63
   if shift == 0 {
     self
@@ -267,32 +240,7 @@ fn MyInt64::clz(self : MyInt64) -> Int {
 }
 
 ///|
-/// Counts the number of trailing zero bits (least significant bits) in this 64-bit integer.
-///
-/// The operation uses an optimized approach for 64-bit values composed of two 32-bit parts:
-/// - When the low 32-bits (`lo`) are non-zero, returns the count of trailing zeros in `lo`
-/// - When `lo` is zero, returns `32 +` the count of trailing zeros in the high 32-bits (`hi`)
-///
-/// Parameters:
-///
-/// - `self` : The `MyInt64` instance for which to count trailing zeros.
-///
-/// Returns an `Int` representing the number of consecutive zero bits starting from the
-/// least significant bit (LSB) position until the first set bit (1-bit) is encountered.
-///
-/// # Edge Cases
-/// - Returns 64 when all bits are zero (both `hi` and `lo` are zero)
-/// - Returns 0 when the least significant bit is set (LSB = 1)
-///
-/// # Example
-/// ```moonbit
-/// let a = MyInt64{hi: 0x00010000, lo: 0x80000000}; // Binary: ...0001 0000 ... 1000 ... 0000
-/// test_assert(a.ctz() == 31);  // 31 trailing zeros in lo
-///
-/// let b = MyInt64{hi: 0x00000001, lo: 0x00000000}; // Binary: ...0001 ... followed by 32 zeros
-/// test_assert(b.ctz() == 32);  // 32 (from zero lo) + 0 trailing zeros in hi = 32
-/// ```
- pub fn MyInt64::ctz(self : MyInt64) -> Int {
+fn MyInt64::ctz(self : MyInt64) -> Int {
   if self.lo != 0 {
     self.lo.ctz()
   } else {
@@ -318,7 +266,7 @@ fn MyInt64::clz(self : MyInt64) -> Int {
 /// let value = MyInt64{hi: 0x01, lo: 0xFF};
 /// test_assert(value.popcnt() == 9);  // 1 bit in hi + 8 bits in lo
 /// ```
-pub fn MyInt64::popcnt(self : MyInt64) -> Int {
+fn MyInt64::popcnt(self : MyInt64) -> Int {
   self.hi.popcnt() + self.lo.popcnt()
 }
 
