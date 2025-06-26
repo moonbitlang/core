@@ -214,7 +214,7 @@ pub fn to_array(self : Bytes) -> Array[Byte] {
 /// ```
 pub fn iter(self : Bytes) -> Iter[Byte] {
   Iter::new(fn(yield_) {
-    for i = 0, len = self.length(); i < len; i = i + 1 {
+    for i in 0..<self.length() {
       if yield_(self[i]) == IterEnd {
         break IterEnd
       }
@@ -239,7 +239,7 @@ pub fn iter(self : Bytes) -> Iter[Byte] {
 ///   inspect(keys, content="[0, 1, 2, 3, 4]")
 pub fn iter2(self : Bytes) -> Iter2[Int, Byte] {
   Iter2::new(fn(yield_) {
-    for i = 0, len = self.length(); i < len; i = i + 1 {
+    for i in 0..<self.length() {
       if yield_(i, self[i]) == IterEnd {
         break IterEnd
       }

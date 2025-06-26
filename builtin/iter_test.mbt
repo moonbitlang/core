@@ -316,7 +316,7 @@ test "concat" {
 test "collect" {
   let arr = ['1', '2', '3', '4', '5']
   let iter = Iter::new(fn(yield_) {
-    for i = 0, len = arr.length(); i < len; i = i + 1 {
+    for i in 0..<arr.length() {
       yield_(arr[i]) |> ignore
     }
     IterContinue

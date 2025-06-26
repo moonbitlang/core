@@ -82,7 +82,7 @@ fn[T : Compare] timsort(arr : FixedArraySlice[T]) -> Unit {
 fn[T : Compare] FixedArraySlice::insertion_sort(
   arr : FixedArraySlice[T]
 ) -> Unit {
-  for i = 1, len = arr.length(); i < len; i = i + 1 {
+  for i in 1..<arr.length() {
     for j = i; j > 0 && arr[j] < arr[j - 1]; j = j - 1 {
       arr.swap(j, j - 1)
     }
@@ -538,7 +538,7 @@ test "stable_sort_complex" {
   let total_len = run_lens.fold(init=0, (acc, x) => acc + x)
   let arr = FixedArray::make(total_len, 0)
   let mut index = 0
-  for i = 0, len = run_lens.length(); i < len; i = i + 1 {
+  for i in 0..<run_lens.length() {
     for j in 0..<run_lens[i] {
       arr[index] = j
       index += 1
