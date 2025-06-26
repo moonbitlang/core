@@ -235,12 +235,14 @@ fn MyInt64::lsr(self : MyInt64, shift : Int) -> MyInt64 {
 /// # Example
 /// ```moonbit
 /// // Binary: 0x01000000_00000000 -> MSB set at bit position 63
-/// test fn test_clz_high_bit_set() {
-///     let a: MyInt64 = MyInt64{hi: 0x01000000, lo: 0x00000000};
-///     test_assert(a.clz() == 0); // 0 leading zeros in hi
-/// }
+/// let a = MyInt64{hi: 0x01000000, lo: 0x00000000};
+/// test_assert(a.clz() == 0);  // MSB is set, no leading zeros
+///
+/// // Binary: 0x00000000_10000000 -> 32 leading zeros from hi + 7 leading zeros from lo
+/// let b = MyInt64{hi: 0x00000000, lo: 0x10000000}; 
+/// test_assert(b.clz() == 39);  // 32 + 7 = 39
 /// ```
-fn MyInt64::asr(self : MyInt64, shift : Int) -> MyInt64 {
+pub fn MyInt64::asr(self : MyInt64, shift : Int) -> MyInt64 {
   let shift = shift & 63
   if shift == 0 {
     self
@@ -290,7 +292,7 @@ fn MyInt64::clz(self : MyInt64) -> Int {
 /// let b = MyInt64{hi: 0x00000001, lo: 0x00000000}; // Binary: ...0001 ... followed by 32 zeros
 /// test_assert(b.ctz() == 32);  // 32 (from zero lo) + 0 trailing zeros in hi = 32
 /// ```
-fn MyInt64::ctz(self : MyInt64) -> Int {
+ pub fn MyInt64::ctz(self : MyInt64) -> Int {
   if self.lo != 0 {
     self.lo.ctz()
   } else {
@@ -316,7 +318,7 @@ fn MyInt64::ctz(self : MyInt64) -> Int {
 /// let value = MyInt64{hi: 0x01, lo: 0xFF};
 /// test_assert(value.popcnt() == 9);  // 1 bit in hi + 8 bits in lo
 /// ```
-fn MyInt64::popcnt(self : MyInt64) -> Int {
+pub fn MyInt64::popcnt(self : MyInt64) -> Int {
   self.hi.popcnt() + self.lo.popcnt()
 }
 
