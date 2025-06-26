@@ -180,33 +180,45 @@ fn MyInt64::lxor(self : MyInt64, other : MyInt64) -> MyInt64 {
 
 ///|
 fn MyInt64::lsl(self : MyInt64, shift : Int) -> MyInt64 {
+  // Mask shift value to be within 0 to 63 (mod 64)
   let shift = shift & 63
+  // If shift is 0, return the original value
   if shift == 0 {
     self
-  } else if shift < 32 {
+  } 
+   // If shift < 32, perform mixed shift on hi and lo
+  else if shift < 32 {
     let { hi, lo } = self
     let hi = hi.reinterpret_as_uint()
     let lo = lo.reinterpret_as_uint()
     let hi = (hi << shift) | (lo >> (32 - shift))
     let lo = lo << shift
     { hi: hi.reinterpret_as_int(), lo: lo.reinterpret_as_int() }
-  } else {
+  } 
+  // If shift is 32 or greater, all bits from `lo` shift into `hi`, `lo` becomes 0
+  else {
     { hi: self.lo << (shift - 32), lo: 0 }
   }
 }
 
 ///|
 fn MyInt64::lsr(self : MyInt64, shift : Int) -> MyInt64 {
+  // Ensure shift is within 0 to 63 by masking with 63
   let shift = shift & 63
+  // If shift is 0, return the original value
   if shift == 0 {
     self
-  } else if shift < 32 {
+  } 
+  // If shift < 32, shift both hi and lo parts accordingly
+  else if shift < 32 {
     {
       hi: (self.hi.reinterpret_as_uint() >> shift).reinterpret_as_int(),
       lo: (self.lo.reinterpret_as_uint() >> shift).reinterpret_as_int() |
       (self.hi << (32 - shift)),
     }
-  } else {
+  } 
+  // If shift >= 32, all of hi moves into lo, hi becomes 0
+  else {
     {
       hi: 0,
       lo: (self.hi.reinterpret_as_uint() >> (shift - 32)).reinterpret_as_int(),
@@ -232,24 +244,29 @@ fn MyInt64::asr(self : MyInt64, shift : Int) -> MyInt64 {
 
 ///|
 fn MyInt64::clz(self : MyInt64) -> Int {
+  // If the high 32 bits are not zero, compute the leading zeros in `hi`
   if self.hi != 0 {
     self.hi.clz()
   } else {
+    // Otherwise, high 32 bits are all zeros, so return 32 plus leading zeros in `lo`
     32 + self.lo.clz()
   }
 }
 
 ///|
 fn MyInt64::ctz(self : MyInt64) -> Int {
+  // If the low 32 bits are not zero, compute the trailing zeros in `lo`
   if self.lo != 0 {
     self.lo.ctz()
   } else {
+    // Otherwise, low 32 bits are all zeros, so return 32 plus trailing zeros in `hi`
     32 + self.hi.ctz()
   }
 }
 
 ///|
 fn MyInt64::popcnt(self : MyInt64) -> Int {
+  // Perform popcnt on the high 32 bits and low 32 bits separately, then sum the results
   self.hi.popcnt() + self.lo.popcnt()
 }
 
