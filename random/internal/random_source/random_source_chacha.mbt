@@ -13,9 +13,9 @@
 // limitations under the License.
 
 ///|
-pub(all) struct ChaCha8 {
+struct ChaCha8 {
   /// length = 32
-  mut buffer : FixedArray[UInt64]
+  buffer : FixedArray[UInt64]
   /// length = 4
   mut seed : FixedArray[UInt64]
   mut i : UInt
