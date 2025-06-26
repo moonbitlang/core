@@ -233,14 +233,14 @@ fn MyInt64::lsr(self : MyInt64, shift : Int) -> MyInt64 {
 /// - Returns 0 when the most significant bit is set (MSB = 1)
 ///
 /// # Example
-/// ```
+/// ```moonbit
 /// // Binary: 0x01000000_00000000 -> MSB set at bit position 63
 /// let a = MyInt64{hi: 0x01000000, lo: 0x00000000};
-/// assert(a.clz() == 0);  // MSB is set, no leading zeros
+/// test_assert(a.clz() == 0);  // MSB is set, no leading zeros
 ///
 /// // Binary: 0x00000000_10000000 -> 32 leading zeros from hi + 7 leading zeros from lo
 /// let b = MyInt64{hi: 0x00000000, lo: 0x10000000}; 
-/// assert(b.clz() == 39);  // 32 + 7 = 39
+/// test_assert(b.clz() == 39);  // 32 + 7 = 39
 /// ```
 fn MyInt64::asr(self : MyInt64, shift : Int) -> MyInt64 {
   let shift = shift & 63
@@ -285,12 +285,12 @@ fn MyInt64::clz(self : MyInt64) -> Int {
 /// - Returns 0 when the least significant bit is set (LSB = 1)
 ///
 /// # Example
-/// ```
+/// ```moonbit
 /// let a = MyInt64{hi: 0x00010000, lo: 0x80000000}; // Binary: ...0001 0000 ... 1000 ... 0000
-/// assert(a.ctz() == 31);  // 31 trailing zeros in lo
+/// test_assert(a.ctz() == 31);  // 31 trailing zeros in lo
 ///
 /// let b = MyInt64{hi: 0x00000001, lo: 0x00000000}; // Binary: ...0001 ... followed by 32 zeros
-/// assert(b.ctz() == 32);  // 32 (from zero lo) + 0 trailing zeros in hi = 32
+/// test_assert(b.ctz() == 32);  // 32 (from zero lo) + 0 trailing zeros in hi = 32
 /// ```
 fn MyInt64::ctz(self : MyInt64) -> Int {
   if self.lo != 0 {
@@ -314,9 +314,9 @@ fn MyInt64::ctz(self : MyInt64) -> Int {
 /// binary representation of the 64-bit integer.
 ///
 /// # Example
-/// ```
+/// ```moonbit
 /// let value = MyInt64{hi: 0x01, lo: 0xFF};
-/// assert(value.popcnt() == 9);  // 1 bit in hi + 8 bits in lo
+/// test_assert(value.popcnt() == 9);  // 1 bit in hi + 8 bits in lo
 /// ```
 fn MyInt64::popcnt(self : MyInt64) -> Int {
   self.hi.popcnt() + self.lo.popcnt()
