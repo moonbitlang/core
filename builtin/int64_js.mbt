@@ -263,10 +263,8 @@ fn MyInt64::ctz(self : MyInt64) -> Int {
 ///
 /// # Example
 /// ```moonbit
-/// fn init {
-///     let value: MyInt64 = MyInt64{hi: 0x01, lo: 0xFF};
-///     test_assert(value.popcnt() == 9);  // 1 bit in hi + 8 bits in lo
-/// }
+/// let value: Int64 = Int64{hi: 0x01, lo: 0xFF};
+/// test_assert(value.popcnt() == 9);  // 1 bit in hi + 8 bits in lo
 /// ```
 fn MyInt64::popcnt(self : MyInt64) -> Int {
   self.hi.popcnt() + self.lo.popcnt()
