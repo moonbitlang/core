@@ -1339,7 +1339,7 @@ pub fn Bytes::op_get(self : Bytes, idx : Int) -> Byte = "%bytes_get"
 /// ```
 ///
 #internal(unsafe, "Panic if index is out of bounds")
-pub fn Bytes::unsafe_get(self : Bytes, idx : Int) -> Byte = "%bytes_get"
+pub fn Bytes::unsafe_get(self : Bytes, idx : Int) -> Byte = "%bytes.unsafe_get"
 
 ///|
 /// Returns the number of bytes in a byte sequence.
