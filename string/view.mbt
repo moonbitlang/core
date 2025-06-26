@@ -171,9 +171,9 @@ pub fn View::offset_of_nth_char(self : View, i : Int) -> Int? {
 }
 
 ///|
-/// Returns the Unicode character at the given index.
+/// Returns the Unicode character at the given index. Note this is not the n-th character.
 /// 
-/// This method has O(n) complexity.
+/// This method has O(1) complexity.
 pub fn View::char_at(self : View, index : Int) -> Char {
   guard index >= 0 && index < self.length() else {
     abort("Index out of bounds")
