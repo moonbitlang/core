@@ -26,34 +26,35 @@ pub(open) trait Source {
 ///|
 impl Source for @random_source.ChaCha8 with next(self : @random_source.ChaCha8) -> UInt64 {
   for {
-    let x = self.state.next()
-    if x.1 {
-      return x.0
+    if self.next() is Some(x) {
+      return x
     }
-    self.state.refill()
+    self.refill()
   }
 }
 
 ///|
 /// Create a new random number generator with [seed].
 /// @alert unsafe "Panic if seed is not 32 bytes long"
-
-///|
-/// Create a new random number generator with [seed].
-/// @alert unsafe "Panic if seed is not 32 bytes long"
-pub fn chacha8(seed~ : Bytes = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456") -> &Source {
+pub fn Rand::chacha8(
+  seed~ : Bytes = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456"
+) -> Rand {
   if seed.length() != 32 {
     abort("seed must be 32 bytes long")
   }
-  @random_source.ChaCha8::new(seed) as &Source
+  Rand(@random_source.ChaCha8::new(seed) as &Source)
 }
 
 ///|
+pub fnalias Rand::chacha8
+
+///|
 /// Create a new random number generator with a given [Gen] source.
-pub fn Rand::new(
-  generator~ : &Source = chacha8(seed=b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456")
-) -> Rand {
-  generator
+pub fn Rand::new(generator? : &Source) -> Rand {
+  match generator {
+    None => chacha8()
+    Some(gen) => Rand(gen)
+  }
 }
 
 ///|
@@ -236,7 +237,7 @@ test "bigint" {
 priv struct UInt128 {
   mut hi : UInt64
   mut lo : UInt64
-} derive(Eq)
+}
 
 ///|
 let gUInt128 : UInt128 = { hi: 0UL, lo: 0UL }

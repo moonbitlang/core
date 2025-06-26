@@ -26,11 +26,11 @@ fn[A] of(FixedArray[A]) -> T[A]
 
 fn[A] repeat(Int, A) -> T[A]
 
-fn[A, S] rev_unfold((S) -> (A, S)?, init~ : S) -> T[A]
+fn[A, S] rev_unfold((S) -> (A, S)? raise?, init~ : S) -> T[A] raise?
 
 fn[A] singleton(A) -> T[A]
 
-fn[A, S] unfold((S) -> (A, S)?, init~ : S) -> T[A]
+fn[A, S] unfold((S) -> (A, S)? raise?, init~ : S) -> T[A] raise?
 
 fn[A, B] zip(T[A], T[B]) -> T[(A, B)]
 
@@ -40,23 +40,23 @@ pub enum T[A] {
   More(A, mut tail~ : T[A])
 }
 fn[A] T::add(Self[A], A) -> Self[A]
-fn[A] T::all(Self[A], (A) -> Bool) -> Bool
-fn[A] T::any(Self[A], (A) -> Bool) -> Bool
+fn[A] T::all(Self[A], (A) -> Bool raise?) -> Bool raise?
+fn[A] T::any(Self[A], (A) -> Bool raise?) -> Bool raise?
 fn[A] T::concat(Self[A], Self[A]) -> Self[A]
 fn[A : Eq] T::contains(Self[A], A) -> Bool
 fn[A] T::drop(Self[A], Int) -> Self[A]
-fn[A] T::drop_while(Self[A], (A) -> Bool) -> Self[A]
-fn[A] T::each(Self[A], (A) -> Unit) -> Unit
-fn[A] T::eachi(Self[A], (Int, A) -> Unit) -> Unit
-fn[A] T::filter(Self[A], (A) -> Bool) -> Self[A]
-fn[A, B] T::filter_map(Self[A], (A) -> B?) -> Self[B]
-fn[A] T::find(Self[A], (A) -> Bool) -> A?
-fn[A] T::find_index(Self[A], (A) -> Bool) -> Int?
-fn[A] T::findi(Self[A], (A, Int) -> Bool) -> A?
-fn[A, B] T::flat_map(Self[A], (A) -> Self[B]) -> Self[B]
+fn[A] T::drop_while(Self[A], (A) -> Bool raise?) -> Self[A] raise?
+fn[A] T::each(Self[A], (A) -> Unit raise?) -> Unit raise?
+fn[A] T::eachi(Self[A], (Int, A) -> Unit raise?) -> Unit raise?
+fn[A] T::filter(Self[A], (A) -> Bool raise?) -> Self[A] raise?
+fn[A, B] T::filter_map(Self[A], (A) -> B? raise?) -> Self[B] raise?
+fn[A] T::find(Self[A], (A) -> Bool raise?) -> A? raise?
+fn[A] T::find_index(Self[A], (A) -> Bool raise?) -> Int? raise?
+fn[A] T::findi(Self[A], (A, Int) -> Bool raise?) -> A? raise?
+fn[A, B] T::flat_map(Self[A], (A) -> Self[B] raise?) -> Self[B] raise?
 fn[A] T::flatten(Self[Self[A]]) -> Self[A]
-fn[A, B] T::fold(Self[A], init~ : B, (B, A) -> B) -> B
-fn[A, B] T::foldi(Self[A], init~ : B, (Int, B, A) -> B) -> B
+fn[A, B] T::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
+fn[A, B] T::foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
 fn[A] T::head(Self[A]) -> A?
 fn[A] T::intercalate(Self[Self[A]], Self[A]) -> Self[A]
 fn[A] T::intersperse(Self[A], A) -> Self[A]
@@ -68,8 +68,8 @@ fn[A] T::iter2(Self[A]) -> Iter2[Int, A]
 fn[A] T::last(Self[A]) -> A?
 fn[A] T::length(Self[A]) -> Int
 fn[A : Eq, B] T::lookup(Self[(A, B)], A) -> B?
-fn[A, B] T::map(Self[A], (A) -> B) -> Self[B]
-fn[A, B] T::mapi(Self[A], (Int, A) -> B) -> Self[B]
+fn[A, B] T::map(Self[A], (A) -> B raise?) -> Self[B] raise?
+fn[A, B] T::mapi(Self[A], (Int, A) -> B raise?) -> Self[B] raise?
 fn[A : Compare] T::maximum(Self[A]) -> A?
 fn[A : Compare] T::minimum(Self[A]) -> A?
 fn[A] T::nth(Self[A], Int) -> A?
@@ -82,13 +82,13 @@ fn[A] T::rev_concat(Self[A], Self[A]) -> Self[A]
 fn[A, B] T::rev_fold(Self[A], init~ : B, (B, A) -> B) -> B
 #deprecated
 fn[A, B] T::rev_foldi(Self[A], init~ : B, (Int, B, A) -> B) -> B
-fn[A, B] T::rev_map(Self[A], (A) -> B) -> Self[B]
-fn[A, E] T::scan_left(Self[A], (E, A) -> E, init~ : E) -> Self[E]
-fn[A, B] T::scan_right(Self[A], (B, A) -> B, init~ : B) -> Self[B]
+fn[A, B] T::rev_map(Self[A], (A) -> B raise?) -> Self[B] raise?
+fn[A, E] T::scan_left(Self[A], (E, A) -> E raise?, init~ : E) -> Self[E] raise?
+fn[A, B] T::scan_right(Self[A], (B, A) -> B raise?, init~ : B) -> Self[B] raise?
 fn[A : Compare] T::sort(Self[A]) -> Self[A]
 fn[A] T::tail(Self[A]) -> Self[A]
 fn[A] T::take(Self[A], Int) -> Self[A]
-fn[A] T::take_while(Self[A], (A) -> Bool) -> Self[A]
+fn[A] T::take_while(Self[A], (A) -> Bool raise?) -> Self[A] raise?
 fn[A] T::to_array(Self[A]) -> Array[A]
 fn[A : ToJson] T::to_json(Self[A]) -> Json
 fn[A] T::unsafe_head(Self[A]) -> A

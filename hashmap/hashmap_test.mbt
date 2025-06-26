@@ -110,7 +110,7 @@ test "is_empty" {
 test "iter" {
   let m = @hashmap.of([("a", 1), ("b", 2), ("c", 3)])
   let mut sum = 0
-  m.each(fn(_k, v) { sum += v })
+  m.each((_k, v) => sum += v)
   assert_eq(sum, 6)
 }
 
@@ -119,7 +119,7 @@ test "iteri" {
   let m = @hashmap.of([("a", 1), ("b", 2), ("c", 3)])
   let mut sum = 0
   let mut s = ""
-  m.eachi(fn(i, _k, v) {
+  m.eachi((i, _k, v) => {
     s += i.to_string()
     sum += v
   })
@@ -133,7 +133,7 @@ test "iter" {
   let map = @hashmap.of([(1, "one"), (2, "two"), (3, "three")])
   map
   .iter()
-  .each(fn(e) {
+  .each(e => {
     let (k, v) = e
     buf.write_string("[\{k}-\{v}]")
   })
@@ -142,7 +142,7 @@ test "iter" {
   map
   .iter()
   .take(2)
-  .each(fn(e) {
+  .each(e => {
     let (k, v) = e
     buf.write_string("[\{k}-\{v}]")
   })

@@ -5,7 +5,7 @@ import(
 )
 
 // Values
-fn chacha8(seed~ : Bytes = ..) -> &Source
+fn chacha8(seed~ : Bytes = ..) -> Rand
 
 #deprecated
 fn new(seed~ : Bytes = ..) -> Rand
@@ -13,11 +13,12 @@ fn new(seed~ : Bytes = ..) -> Rand
 // Types and methods
 type Rand
 fn Rand::bigint(Self, Int) -> @bigint.BigInt
+fn Rand::chacha8(seed~ : Bytes = ..) -> Self
 fn Rand::double(Self) -> Double
 fn Rand::float(Self) -> Float
 fn Rand::int(Self, limit~ : Int = ..) -> Int
 fn Rand::int64(Self, limit~ : Int64 = ..) -> Int64
-fn Rand::new(generator~ : &Source = ..) -> Self
+fn Rand::new(generator? : &Source) -> Self
 fn Rand::shuffle(Self, Int, (Int, Int) -> Unit) -> Unit
 fn Rand::uint(Self, limit~ : UInt = ..) -> UInt
 fn Rand::uint64(Self, limit~ : UInt64 = ..) -> UInt64

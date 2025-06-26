@@ -40,7 +40,7 @@ struct BigInt {
 priv enum Sign {
   Positive
   Negative
-} derive(Show, Eq)
+} derive(Eq)
 
 // Hyper Params
 

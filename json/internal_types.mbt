@@ -63,4 +63,4 @@ priv enum Token {
   RBracket
   Comma
   // Colon
-} derive(Eq, Show)
+}

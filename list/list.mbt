@@ -117,7 +117,7 @@ pub fn[A] length(self : T[A]) -> Int {
 ///   assert_eq(arr, [1, 2, 3, 4, 5])
 /// ```
 #locals(f)
-pub fn[A] each(self : T[A], f : (A) -> Unit) -> Unit {
+pub fn[A] each(self : T[A], f : (A) -> Unit raise?) -> Unit raise? {
   loop self {
     Empty => ()
     More(head, tail~) => {
@@ -137,7 +137,7 @@ pub fn[A] each(self : T[A], f : (A) -> Unit) -> Unit {
 ///   @list.of([1, 2, 3, 4, 5]).eachi(fn(i, x) { arr.push("(\{i},\{x})") })
 ///   assert_eq(arr, ["(0,1)", "(1,2)", "(2,3)", "(3,4)", "(4,5)"])
 /// ```
-pub fn[A] eachi(self : T[A], f : (Int, A) -> Unit) -> Unit {
+pub fn[A] eachi(self : T[A], f : (Int, A) -> Unit raise?) -> Unit raise? {
   loop (self, 0) {
     (Empty, _) => ()
     (More(x, tail=xs), i) => {
@@ -155,7 +155,7 @@ pub fn[A] eachi(self : T[A], f : (Int, A) -> Unit) -> Unit {
 /// ```mbt
 ///   assert_eq(@list.of([1, 2, 3, 4, 5]).map(fn(x){ x * 2}), @list.of([2, 4, 6, 8, 10]))
 /// ```
-pub fn[A, B] map(self : T[A], f : (A) -> B) -> T[B] {
+pub fn[A, B] map(self : T[A], f : (A) -> B raise?) -> T[B] raise? {
   match self {
     Empty => Empty
     More(hd, tail~) => {
@@ -176,7 +176,7 @@ pub fn[A, B] map(self : T[A], f : (A) -> B) -> T[B] {
 
 ///|
 /// Maps the list with index.
-pub fn[A, B] mapi(self : T[A], f : (Int, A) -> B) -> T[B] {
+pub fn[A, B] mapi(self : T[A], f : (Int, A) -> B raise?) -> T[B] raise? {
   match self {
     Empty => Empty
     More(hd, tail~) => {
@@ -204,7 +204,7 @@ pub fn[A, B] mapi(self : T[A], f : (Int, A) -> B) -> T[B] {
 /// ```mbt
 ///   assert_eq(@list.of([1, 2, 3, 4, 5]).rev_map(fn(x) { x * 2 }), @list.of([10, 8, 6, 4, 2]))
 /// ```
-pub fn[A, B] rev_map(self : T[A], f : (A) -> B) -> T[B] {
+pub fn[A, B] rev_map(self : T[A], f : (A) -> B raise?) -> T[B] raise? {
   loop (Empty, self) {
     (acc, Empty) => acc
     (acc, More(x, tail=xs)) => continue (More(f(x), tail=acc), xs)
@@ -238,7 +238,7 @@ pub fn[A] to_array(self : T[A]) -> Array[A] {
 /// ```mbt
 ///   assert_eq(@list.of([1, 2, 3, 4, 5]).filter(fn(x){ x % 2 == 0}), @list.of([2, 4]))
 /// ```
-pub fn[A] filter(self : T[A], f : (A) -> Bool) -> T[A] {
+pub fn[A] filter(self : T[A], f : (A) -> Bool raise?) -> T[A] raise? {
   loop self {
     Empty => Empty
     More(head, tail~) =>
@@ -266,7 +266,7 @@ pub fn[A] filter(self : T[A], f : (A) -> Bool) -> T[A] {
 
 ///|
 /// Test if all elements of the list satisfy the predicate.
-pub fn[A] all(self : T[A], f : (A) -> Bool) -> Bool {
+pub fn[A] all(self : T[A], f : (A) -> Bool raise?) -> Bool raise? {
   loop self {
     Empty => true
     More(head, tail~) => if f(head) { continue tail } else { false }
@@ -275,7 +275,7 @@ pub fn[A] all(self : T[A], f : (A) -> Bool) -> Bool {
 
 ///|
 /// Test if any element of the list satisfies the predicate.
-pub fn[A] any(self : T[A], f : (A) -> Bool) -> Bool {
+pub fn[A] any(self : T[A], f : (A) -> Bool raise?) -> Bool raise? {
   loop self {
     Empty => false
     More(head, tail~) => if f(head) { true } else { continue tail }
@@ -414,7 +414,7 @@ pub fn[A] rev(self : T[A]) -> T[A] {
 ///   let r = @list.of([1, 2, 3, 4, 5]).fold(init=0, fn(acc, x) { acc + x })
 ///   assert_eq(r, 15)
 /// ```
-pub fn[A, B] fold(self : T[A], init~ : B, f : (B, A) -> B) -> B {
+pub fn[A, B] fold(self : T[A], init~ : B, f : (B, A) -> B raise?) -> B raise? {
   loop (self, init) {
     (Empty, acc) => acc
     (More(head, tail~), acc) => continue (tail, f(acc, head))
@@ -423,8 +423,12 @@ pub fn[A, B] fold(self : T[A], init~ : B, f : (B, A) -> B) -> B {
 
 ///|
 /// Fold the list from left with index.
-pub fn[A, B] foldi(self : T[A], init~ : B, f : (Int, B, A) -> B) -> B {
-  fn go(xs : T[A], i : Int, f : (Int, B, A) -> B, acc : B) -> B {
+pub fn[A, B] foldi(
+  self : T[A],
+  init~ : B,
+  f : (Int, B, A) -> B raise?
+) -> B raise? {
+  fn go(xs : T[A], i : Int, f : (Int, B, A) -> B raise?, acc : B) -> B raise? {
     match xs {
       Empty => acc
       More(x, tail=xs) => go(xs, i + 1, f, f(i, acc, x))
@@ -466,7 +470,7 @@ pub fn[A, B] T::zip(self : T[A], other : T[B]) -> T[(A, B)] {
 ///   let r = ls.flat_map(fn(x) { @list.from_array([x, x * 2]) })
 ///   assert_eq(r, @list.from_array([1, 2, 2, 4, 3, 6]))
 /// ```
-pub fn[A, B] flat_map(self : T[A], f : (A) -> T[B]) -> T[B] {
+pub fn[A, B] flat_map(self : T[A], f : (A) -> T[B] raise?) -> T[B] raise? {
   loop self {
     Empty => Empty
     More(head, tail~) =>
@@ -514,7 +518,7 @@ pub fn[A, B] flat_map(self : T[A], f : (A) -> T[B]) -> T[B] {
 ///   let r = ls.filter_map(fn(x) { if (x >= 3) { Some(x) } else { None } })
 ///   assert_eq(r, @list.of([4, 6, 3]))
 /// ```
-pub fn[A, B] filter_map(self : T[A], f : (A) -> B?) -> T[B] {
+pub fn[A, B] filter_map(self : T[A], f : (A) -> B? raise?) -> T[B] raise? {
   loop self {
     Empty => Empty
     More(hd, tail~) =>
@@ -785,7 +789,7 @@ pub fn[A : Eq] contains(self : T[A], value : A) -> Bool {
 ///   let r = @list.unfold(init=0, i => if i == 3 { None } else { Some((i, i + 1)) })
 ///   assert_eq(r, @list.from_array([0, 1, 2]))
 /// ```
-pub fn[A, S] unfold(f : (S) -> (A, S)?, init~ : S) -> T[A] {
+pub fn[A, S] unfold(f : (S) -> (A, S)? raise?, init~ : S) -> T[A] raise? {
   match f(init) {
     None => Empty
     Some((element, new_state)) => {
@@ -804,7 +808,7 @@ pub fn[A, S] unfold(f : (S) -> (A, S)?, init~ : S) -> T[A] {
 }
 
 ///|
-pub fn[A, S] rev_unfold(f : (S) -> (A, S)?, init~ : S) -> T[A] {
+pub fn[A, S] rev_unfold(f : (S) -> (A, S)? raise?, init~ : S) -> T[A] raise? {
   loop (f(init), Empty) {
     (None, acc) => acc
     (Some((x, s)), acc) => continue (f(s), More(x, tail=acc))
@@ -878,7 +882,7 @@ pub fn[A] drop(self : T[A], n : Int) -> T[A] {
 ///   let r = ls.take_while(fn(x) { x < 3 })
 ///   assert_eq(r, @list.of([1, 2]))
 /// ```
-pub fn[A] take_while(self : T[A], p : (A) -> Bool) -> T[A] {
+pub fn[A] take_while(self : T[A], p : (A) -> Bool raise?) -> T[A] raise? {
   match self {
     Empty => Empty
     More(head, tail~) =>
@@ -910,7 +914,7 @@ pub fn[A] take_while(self : T[A], p : (A) -> Bool) -> T[A] {
 ///   let r = ls.drop_while(fn(x) { x < 3 })
 ///   assert_eq(r, @list.of([3, 4]))
 /// ```
-pub fn[A] drop_while(self : T[A], p : (A) -> Bool) -> T[A] {
+pub fn[A] drop_while(self : T[A], p : (A) -> Bool raise?) -> T[A] raise? {
   loop self {
     Empty => Empty
     More(x, tail=xs) => if p(x) { continue xs } else { More(x, tail=xs) }
@@ -927,7 +931,11 @@ pub fn[A] drop_while(self : T[A], p : (A) -> Bool) -> T[A] {
 ///   let r = ls.scan_left(fn(acc, x) { acc + x }, init=0)
 ///   assert_eq(r, @list.of([0, 1, 3, 6, 10, 15]))
 /// ```
-pub fn[A, E] scan_left(self : T[A], f : (E, A) -> E, init~ : E) -> T[E] {
+pub fn[A, E] scan_left(
+  self : T[A],
+  f : (E, A) -> E raise?,
+  init~ : E
+) -> T[E] raise? {
   let dest = More(init, tail=Empty)
   loop (dest, self, init) {
     (_, Empty, _) => ()
@@ -951,7 +959,11 @@ pub fn[A, E] scan_left(self : T[A], f : (E, A) -> E, init~ : E) -> T[E] {
 ///   let r = ls.scan_right(fn(acc, x) { acc + x }, init=0)
 ///   assert_eq(r, @list.of([15, 14, 12, 9, 5, 0]))
 /// ```
-pub fn[A, B] scan_right(self : T[A], f : (B, A) -> B, init~ : B) -> T[B] {
+pub fn[A, B] scan_right(
+  self : T[A],
+  f : (B, A) -> B raise?,
+  init~ : B
+) -> T[B] raise? {
   self.rev().scan_left(f, init~).reverse_inplace()
 }
 
@@ -980,7 +992,7 @@ pub fn[A : Eq, B] lookup(self : T[(A, B)], v : A) -> B? {
 ///   assert_eq(@list.of([1, 3, 5, 8]).find(fn(element) -> Bool { element % 2 == 0}), Some(8))
 ///   assert_eq(@list.of([1, 3, 5]).find(fn(element) -> Bool { element % 2 == 0}), None)
 /// ```
-pub fn[A] find(self : T[A], f : (A) -> Bool) -> A? {
+pub fn[A] find(self : T[A], f : (A) -> Bool raise?) -> A? raise? {
   loop self {
     Empty => None
     More(element, tail=list) =>
@@ -1013,7 +1025,7 @@ pub fn[A] find(self : T[A], f : (A) -> Bool) -> A? {
 ///   inspect(ls.find_index(fn(x) { x > 10 }), content="None")
 /// ```
 ///
-pub fn[A] T::find_index(self : Self[A], f : (A) -> Bool) -> Int? {
+pub fn[A] T::find_index(self : Self[A], f : (A) -> Bool raise?) -> Int? raise? {
   loop (self, 0) {
     (Empty, _) => None
     (More(element, tail=list), idx) =>
@@ -1034,7 +1046,7 @@ pub fn[A] T::find_index(self : Self[A], f : (A) -> Bool) -> Int? {
 ///   assert_eq(@list.of([1, 3, 5, 8]).findi(fn(element, index) -> Bool { (element % 2 == 0) && (index == 3) }), Some(8))
 ///   assert_eq(@list.of([1, 3, 8, 5]).findi(fn(element, index) -> Bool { (element % 2 == 0) && (index == 3) }), None)
 /// ```
-pub fn[A] findi(self : T[A], f : (A, Int) -> Bool) -> A? {
+pub fn[A] findi(self : T[A], f : (A, Int) -> Bool raise?) -> A? raise? {
   loop (self, 0) {
     (list, index) =>
       match list {
@@ -1171,30 +1183,26 @@ pub fn[X] default() -> T[X] {
 
 ///|
 pub fn[A] iter(self : T[A]) -> Iter[A] {
-  Iter::new(fn(yield_) {
-    loop self {
-      Empty => IterContinue
-      More(head, tail~) => {
-        if yield_(head) == IterEnd {
-          break IterEnd
-        }
-        continue tail
+  Iter::new(yield_ => loop self {
+    Empty => IterContinue
+    More(head, tail~) => {
+      if yield_(head) == IterEnd {
+        break IterEnd
       }
+      continue tail
     }
   })
 }
 
 ///|
 pub fn[A] iter2(self : T[A]) -> Iter2[Int, A] {
-  Iter2::new(fn(yield_) {
-    loop (self, 0) {
-      (Empty, _) => IterEnd
-      (More(head, tail~), i) => {
-        if yield_(i, head) == IterEnd {
-          break IterEnd
-        }
-        continue (tail, i + 1)
+  Iter2::new(yield_ => loop (self, 0) {
+    (Empty, _) => IterEnd
+    (More(head, tail~), i) => {
+      if yield_(i, head) == IterEnd {
+        break IterEnd
       }
+      continue (tail, i + 1)
     }
   })
 }

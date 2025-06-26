@@ -118,6 +118,7 @@ fn[T : Eq] Array::starts_with(Self[T], Self[T]) -> Bool
 fn[T : Eq] Array::strip_prefix(Self[T], Self[T]) -> Self[T]?
 fn[T : Eq] Array::strip_suffix(Self[T], Self[T]) -> Self[T]?
 fn[T] Array::swap(Self[T], Int, Int) -> Unit
+fn[A] Array::truncate(Self[A], Int) -> Unit
 fn[A] Array::unsafe_blit(Self[A], Int, Self[A], Int, Int) -> Unit
 fn[A] Array::unsafe_blit_fixed(Self[A], Int, FixedArray[A], Int, Int) -> Unit
 fn[T] Array::unsafe_get(Self[T], Int) -> T
@@ -302,6 +303,7 @@ impl Logger for StringBuilder
 impl Show for StringBuilder
 
 type UninitializedArray[T]
+fn[A] UninitializedArray::blit(Self[A], Self[A], len~ : Int, src_offset~ : Int = .., dst_offset~ : Int = ..) -> Self[A]
 fn[A] UninitializedArray::length(Self[A]) -> Int
 fn[T] UninitializedArray::make(Int) -> Self[T]
 fn[T] UninitializedArray::op_as_view(Self[T], start~ : Int = .., end? : Int) -> ArrayView[T]

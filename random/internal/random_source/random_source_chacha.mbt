@@ -13,172 +13,77 @@
 // limitations under the License.
 
 ///|
-pub(all) struct ChaCha8 {
-  state : State
-}
-
-///|
-pub fn ChaCha8::new(seed : Bytes) -> ChaCha8 {
-  let c = { state: State::new() }
-  c.state.init(seed)
-  c
-}
-
-///|
-pub(all) struct State {
-  mut buffer : FixedArray[UInt64] // size=[32]
-  mut seed : FixedArray[UInt64] // size=[4]
+struct ChaCha8 {
+  /// length = BUFFER_CHUNK_NUM * 2
+  buffer : FixedArray[UInt]
+  /// length = SEED_CHUNK_NUM * 2
+  seed : FixedArray[UInt]
   mut i : UInt
   mut n : UInt
-  mut c : UInt
-}
-
-///|
-fn State::new() -> State {
-  {
-    buffer: FixedArray::make(32, 0UL),
-    seed: FixedArray::make(4, 0UL),
-    i: 0U,
-    n: 0U,
-    c: 0U,
-  }
-}
-
-///|
-let ctrInc = 4U
-
-///|
-let ctrMax = 16U
-
-///|
-let chunk = 32U
-
-///|
-let chachaReseed = 4
-
-///|
-pub fn State::next(self : State) -> (UInt64, Bool) {
-  let i = self.i
-  if i >= self.n {
-    return (0, false)
-  }
-  self.i = i + 1
-  (self.buffer[i.reinterpret_as_int() & 31], true)
-}
-
-///|
-fn bytesToUInt64(b : FixedArray[Byte]) -> UInt64 {
-  let mut result = 0UL
-  for i in 0..<8 {
-    result = result | (b[i].to_int64().reinterpret_as_uint64() << (i * 8))
-  }
-  result
-}
-
-///|
-test "bytesToUInt64" {
-  let bytes = FixedArray::make(8, Byte::default())
-  for i in 0..<2 {
-    bytes[i] = i.to_byte()
-  }
-  inspect(bytesToUInt64(bytes), content="256")
+  mut counter : UInt
 }
 
 ///|
 /// [seed] must be 32 bytes long.
-fn State::init(self : State, seed : Bytes) -> Unit {
-  let seed0 = FixedArray::make(8, Byte::default())
-  let seed1 = FixedArray::make(8, Byte::default())
-  let seed2 = FixedArray::make(8, Byte::default())
-  let seed3 = FixedArray::make(8, Byte::default())
-  for i in 0..<8 {
-    seed0[i] = seed[i]
-    seed1[i] = seed[8 + i]
-    seed2[i] = seed[16 + i]
-    seed3[i] = seed[24 + i]
-  }
-  let arr = FixedArray::make(4, 0UL)
-  arr[0] = bytesToUInt64(seed0)
-  arr[1] = bytesToUInt64(seed1)
-  arr[2] = bytesToUInt64(seed2)
-  arr[3] = bytesToUInt64(seed3)
-  self.init64(arr)
+pub fn ChaCha8::new(seed : Bytes) -> ChaCha8 {
+  let seed = FixedArray::makei(SEED_CHUNK_NUM * 2, i => seed[i * 4:i * 4 + 4].to_uint_le())
+  let buffer = FixedArray::make(BUFFER_CHUNK_NUM * 2, 0U)
+  chacha_block(seed, buffer, 0)
+  { seed, buffer, counter: 0, i: 0, n: BUFFER_CHUNK_NUM.reinterpret_as_uint() }
 }
 
 ///|
-fn State::init64(self : State, seed : FixedArray[UInt64]) -> Unit {
-  self.seed = seed
-  // convert FixedArray[UInt64] size=[32] to FixedArray[FixedArray[UInt]] size=[16][4]
-  let buffer = FixedArray::makei(16, fn(_i) { FixedArray::make(4, 0U) })
-  // split u64 to 2 u32 and store in buffer to meet the function signature
-  for i in 0..<16 {
-    let hi = self.buffer[i * 2]
-    let lo = self.buffer[i * 2 + 1]
-    buffer[i][0] = (hi >> 32).to_uint()
-    buffer[i][1] = hi.to_uint()
-    buffer[i][2] = (lo >> 32).to_uint()
-    buffer[i][3] = lo.to_uint()
+const COUNTER_INC = 4U
+
+///|
+const COUNTER_MAX = 16U
+
+///|
+/// Must be a power of 2
+const BUFFER_CHUNK_NUM = 32
+
+///|
+const SEED_CHUNK_NUM = 4
+
+///|
+pub fn ChaCha8::next(self : ChaCha8) -> UInt64? {
+  let i = self.i
+  if i >= self.n {
+    return None
   }
-  // [buffer] is changed in chacha_block
-  chacha_block(self.seed, buffer, 0)
-  // concat 2 u32 to u64 and store in self.buffer
-  for i in 0..<16 {
-    for j = 0; j < 4; j = j + 2 {
-      let lo = buffer[i][j]
-      let hi = buffer[i][j + 1]
-      let u64 : UInt64 = (hi.to_uint64() << 32) | lo.to_uint64()
-      self.buffer[i * 2 + j / 2] = u64
-    }
-  }
-  self.c = 0
-  self.i = 0
-  self.n = chunk
+  self.i = i + 1
+  let index = i.reinterpret_as_int() & (BUFFER_CHUNK_NUM - 1)
+  let lo = self.buffer[index * 2].to_uint64()
+  let hi = self.buffer[index * 2 + 1].to_uint64()
+  Some((hi << 32) | lo)
 }
 
 ///|
-pub fn State::refill(self : State) -> Unit {
-  self.c = self.c + ctrInc
-  if self.c == ctrMax {
+pub fn ChaCha8::refill(self : ChaCha8) -> Unit {
+  self.counter += COUNTER_INC
+  if self.counter == COUNTER_MAX {
     // reseed
-    let len = self.buffer.length()
-    self.seed[0] = self.buffer[len - chachaReseed + 0]
-    self.seed[1] = self.buffer[len - chachaReseed + 1]
-    self.seed[2] = self.buffer[len - chachaReseed + 2]
-    self.seed[3] = self.buffer[len - chachaReseed + 3]
-    self.c = 0
+    // 1 chunk = 64 bits = number of bits in UInt * 2
+    self.buffer.blit_to(
+      self.seed,
+      len=SEED_CHUNK_NUM * 2,
+      src_offset=(BUFFER_CHUNK_NUM - SEED_CHUNK_NUM) * 2,
+    )
+    self.counter = 0
   }
-  // convert FixedArray[UInt64] size=[32] to FixedArray[FixedArray[UInt]] size=[16][4]
-  let buffer = FixedArray::makei(16, fn(_i) { FixedArray::make(4, 0U) })
-  // split u64 to 2 u32 and store in buffer to meet the function signature
-  for i in 0..<16 {
-    let hi = self.buffer[i * 2]
-    let lo = self.buffer[i * 2 + 1]
-    buffer[i][0] = (hi >> 32).to_uint()
-    buffer[i][1] = hi.to_uint()
-    buffer[i][2] = (lo >> 32).to_uint()
-    buffer[i][3] = lo.to_uint()
-  }
-  chacha_block(self.seed, buffer, self.c)
-  // concat 2 u32 to u64 and store in self.buffer
-  for i in 0..<16 {
-    for j = 0; j < 4; j = j + 2 {
-      let lo = buffer[i][j]
-      let hi = buffer[i][j + 1]
-      let u64 : UInt64 = (hi.to_uint64() << 32) | lo.to_uint64()
-      self.buffer[i * 2 + j / 2] = u64
-    }
-  }
+  chacha_block(self.seed, self.buffer, self.counter)
   self.i = 0
-  self.n = self.buffer.length().reinterpret_as_uint()
-  if self.c == ctrMax - ctrInc {
-    self.n = (self.buffer.length() - chachaReseed).reinterpret_as_uint()
+  self.n = if self.counter == COUNTER_MAX - COUNTER_INC {
+    (BUFFER_CHUNK_NUM - SEED_CHUNK_NUM).reinterpret_as_uint()
+  } else {
+    BUFFER_CHUNK_NUM.reinterpret_as_uint()
   }
 }
 
 ///|
 fn chacha_block(
-  seed : FixedArray[UInt64],
-  buf : FixedArray[FixedArray[UInt]],
+  seed : FixedArray[UInt],
+  buf : FixedArray[UInt],
   counter : UInt
 ) -> Unit {
   fn qr(t : (UInt, UInt, UInt, UInt)) -> (UInt, UInt, UInt, UInt) {
@@ -202,23 +107,23 @@ fn chacha_block(
   }
 
   setup(seed, buf, counter)
-  for i in 0..<buf[0].length() {
-    let mut b0 = buf[0][i]
-    let mut b1 = buf[1][i]
-    let mut b2 = buf[2][i]
-    let mut b3 = buf[3][i]
-    let mut b4 = buf[4][i]
-    let mut b5 = buf[5][i]
-    let mut b6 = buf[6][i]
-    let mut b7 = buf[7][i]
-    let mut b8 = buf[8][i]
-    let mut b9 = buf[9][i]
-    let mut b10 = buf[10][i]
-    let mut b11 = buf[11][i]
-    let mut b12 = buf[12][i]
-    let mut b13 = buf[13][i]
-    let mut b14 = buf[14][i]
-    let mut b15 = buf[15][i]
+  for i in 0..<4 {
+    let mut b0 = buf[0 * 4 + i]
+    let mut b1 = buf[1 * 4 + i]
+    let mut b2 = buf[2 * 4 + i]
+    let mut b3 = buf[3 * 4 + i]
+    let mut b4 = buf[4 * 4 + i]
+    let mut b5 = buf[5 * 4 + i]
+    let mut b6 = buf[6 * 4 + i]
+    let mut b7 = buf[7 * 4 + i]
+    let mut b8 = buf[8 * 4 + i]
+    let mut b9 = buf[9 * 4 + i]
+    let mut b10 = buf[10 * 4 + i]
+    let mut b11 = buf[11 * 4 + i]
+    let mut b12 = buf[12 * 4 + i]
+    let mut b13 = buf[13 * 4 + i]
+    let mut b14 = buf[14 * 4 + i]
+    let mut b15 = buf[15 * 4 + i]
     for round in 0..<4 {
       let tb1 = qr((b0, b4, b8, b12))
       b0 = tb1.0
@@ -261,108 +166,111 @@ fn chacha_block(
       b9 = tb8.2
       b14 = tb8.3
     }
-    buf[0][i] = b0
-    buf[1][i] = b1
-    buf[2][i] = b2
-    buf[3][i] = b3
-    buf[4][i] = buf[4][i] + b4
-    buf[5][i] = buf[5][i] + b5
-    buf[6][i] = buf[6][i] + b6
-    buf[7][i] = buf[7][i] + b7
-    buf[8][i] = buf[8][i] + b8
-    buf[9][i] = buf[9][i] + b9
-    buf[10][i] = buf[10][i] + b10
-    buf[11][i] = buf[11][i] + b11
-    buf[12][i] = b12
-    buf[13][i] = b13
-    buf[14][i] = b14
-    buf[15][i] = b15
+    buf[0 * 4 + i] = b0
+    buf[1 * 4 + i] = b1
+    buf[2 * 4 + i] = b2
+    buf[3 * 4 + i] = b3
+    buf[4 * 4 + i] += b4
+    buf[5 * 4 + i] += b5
+    buf[6 * 4 + i] += b6
+    buf[7 * 4 + i] += b7
+    buf[8 * 4 + i] += b8
+    buf[9 * 4 + i] += b9
+    buf[10 * 4 + i] += b10
+    buf[11 * 4 + i] += b11
+    buf[12 * 4 + i] = b12
+    buf[13 * 4 + i] = b13
+    buf[14 * 4 + i] = b14
+    buf[15 * 4 + i] = b15
   }
 }
 
 ///|
 fn setup(
-  seed : FixedArray[UInt64],
-  b32 : FixedArray[FixedArray[UInt]],
+  seed : FixedArray[UInt],
+  b32 : FixedArray[UInt],
   counter : UInt
 ) -> Unit {
-  b32[0][0] = 0x61707865
-  b32[0][1] = 0x61707865
-  b32[0][2] = 0x61707865
-  b32[0][3] = 0x61707865
-  b32[1][0] = 0x3320646e
-  b32[1][1] = 0x3320646e
-  b32[1][2] = 0x3320646e
-  b32[1][3] = 0x3320646e
-  b32[2][0] = 0x79622d32
-  b32[2][1] = 0x79622d32
-  b32[2][2] = 0x79622d32
-  b32[2][3] = 0x79622d32
-  b32[3][0] = 0x6b206574
-  b32[3][1] = 0x6b206574
-  b32[3][2] = 0x6b206574
-  b32[3][3] = 0x6b206574
-  b32[4][0] = seed[0].to_uint()
-  b32[4][1] = seed[0].to_uint()
-  b32[4][2] = seed[0].to_uint()
-  b32[4][3] = seed[0].to_uint()
-  b32[5][0] = (seed[0] >> 32).to_uint()
-  b32[5][1] = (seed[0] >> 32).to_uint()
-  b32[5][2] = (seed[0] >> 32).to_uint()
-  b32[5][3] = (seed[0] >> 32).to_uint()
-  b32[6][0] = seed[1].to_uint()
-  b32[6][1] = seed[1].to_uint()
-  b32[6][2] = seed[1].to_uint()
-  b32[6][3] = seed[1].to_uint()
-  b32[7][0] = (seed[1] >> 32).to_uint()
-  b32[7][1] = (seed[1] >> 32).to_uint()
-  b32[7][2] = (seed[1] >> 32).to_uint()
-  b32[7][3] = (seed[1] >> 32).to_uint()
-  b32[8][0] = seed[2].to_uint()
-  b32[8][1] = seed[2].to_uint()
-  b32[8][2] = seed[2].to_uint()
-  b32[8][3] = seed[2].to_uint()
-  b32[9][0] = (seed[2] >> 32).to_uint()
-  b32[9][1] = (seed[2] >> 32).to_uint()
-  b32[9][2] = (seed[2] >> 32).to_uint()
-  b32[9][3] = (seed[2] >> 32).to_uint()
-  b32[10][0] = seed[3].to_uint()
-  b32[10][1] = seed[3].to_uint()
-  b32[10][2] = seed[3].to_uint()
-  b32[10][3] = seed[3].to_uint()
-  b32[11][0] = (seed[3] >> 32).to_uint()
-  b32[11][1] = (seed[3] >> 32).to_uint()
-  b32[11][2] = (seed[3] >> 32).to_uint()
-  b32[11][3] = (seed[3] >> 32).to_uint()
-  b32[12][0] = counter + 0
-  b32[12][1] = counter + 1
-  b32[12][2] = counter + 2
-  b32[12][3] = counter + 3
-  b32[13][0] = 0
-  b32[13][1] = 0
-  b32[13][2] = 0
-  b32[13][3] = 0
-  b32[14][0] = 0
-  b32[14][1] = 0
-  b32[14][2] = 0
-  b32[14][3] = 0
-  b32[15][0] = 0
-  b32[15][1] = 0
-  b32[15][2] = 0
-  b32[15][3] = 0
+  b32[0 * 4 + 0] = 0x61707865
+  b32[0 * 4 + 1] = 0x61707865
+  b32[0 * 4 + 2] = 0x61707865
+  b32[0 * 4 + 3] = 0x61707865
+  b32[1 * 4 + 0] = 0x3320646e
+  b32[1 * 4 + 1] = 0x3320646e
+  b32[1 * 4 + 2] = 0x3320646e
+  b32[1 * 4 + 3] = 0x3320646e
+  b32[2 * 4 + 0] = 0x79622d32
+  b32[2 * 4 + 1] = 0x79622d32
+  b32[2 * 4 + 2] = 0x79622d32
+  b32[2 * 4 + 3] = 0x79622d32
+  b32[3 * 4 + 0] = 0x6b206574
+  b32[3 * 4 + 1] = 0x6b206574
+  b32[3 * 4 + 2] = 0x6b206574
+  b32[3 * 4 + 3] = 0x6b206574
+  b32[4 * 4 + 0] = seed[0]
+  b32[4 * 4 + 1] = seed[0]
+  b32[4 * 4 + 2] = seed[0]
+  b32[4 * 4 + 3] = seed[0]
+  b32[5 * 4 + 0] = seed[1]
+  b32[5 * 4 + 1] = seed[1]
+  b32[5 * 4 + 2] = seed[1]
+  b32[5 * 4 + 3] = seed[1]
+  b32[6 * 4 + 0] = seed[2]
+  b32[6 * 4 + 1] = seed[2]
+  b32[6 * 4 + 2] = seed[2]
+  b32[6 * 4 + 3] = seed[2]
+  b32[7 * 4 + 0] = seed[3]
+  b32[7 * 4 + 1] = seed[3]
+  b32[7 * 4 + 2] = seed[3]
+  b32[7 * 4 + 3] = seed[3]
+  b32[8 * 4 + 0] = seed[4]
+  b32[8 * 4 + 1] = seed[4]
+  b32[8 * 4 + 2] = seed[4]
+  b32[8 * 4 + 3] = seed[4]
+  b32[9 * 4 + 0] = seed[5]
+  b32[9 * 4 + 1] = seed[5]
+  b32[9 * 4 + 2] = seed[5]
+  b32[9 * 4 + 3] = seed[5]
+  b32[10 * 4 + 0] = seed[6]
+  b32[10 * 4 + 1] = seed[6]
+  b32[10 * 4 + 2] = seed[6]
+  b32[10 * 4 + 3] = seed[6]
+  b32[11 * 4 + 0] = seed[7]
+  b32[11 * 4 + 1] = seed[7]
+  b32[11 * 4 + 2] = seed[7]
+  b32[11 * 4 + 3] = seed[7]
+  // from counter to counter + (COUNTER_INC - 1)
+  b32[12 * 4 + 0] = counter + 0
+  b32[12 * 4 + 1] = counter + 1
+  b32[12 * 4 + 2] = counter + 2
+  b32[12 * 4 + 3] = counter + 3
+  b32[13 * 4 + 0] = 0
+  b32[13 * 4 + 1] = 0
+  b32[13 * 4 + 2] = 0
+  b32[13 * 4 + 3] = 0
+  b32[14 * 4 + 0] = 0
+  b32[14 * 4 + 1] = 0
+  b32[14 * 4 + 2] = 0
+  b32[14 * 4 + 3] = 0
+  b32[15 * 4 + 0] = 0
+  b32[15 * 4 + 1] = 0
+  b32[15 * 4 + 2] = 0
+  b32[15 * 4 + 3] = 0
+}
+
+///|
+test "BUFFER_CHUNK_NUM is power of 2" {
+  assert_eq(BUFFER_CHUNK_NUM.clz() + BUFFER_CHUNK_NUM.ctz(), 31)
 }
 
 ///|
 test "output" {
-  let s = State::new()
-  let seed = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456"
+  let s = ChaCha8::new(b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456")
   let res = Array::new(capacity=372)
-  s.init(seed)
-  fn uint64(s : State) -> UInt64 {
+  fn uint64(s : ChaCha8) -> UInt64 {
     for {
-      let x = s.next()
-      if x.1 {
-        return x.0
+      if s.next() is Some(x) {
+        return x
       }
       s.refill()
     }

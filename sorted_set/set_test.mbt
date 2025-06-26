@@ -73,17 +73,17 @@ test "intersect" {
 test "each" {
   let set = @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1])
   let result = StringBuilder::new(size_hint=10)
-  set.each(fn(x) { result.write_string(x.to_string()) })
+  set.each(x => result.write_string(x.to_string()))
   inspect(result.to_string(), content="123456789")
   let set : @sorted_set.T[Int] = @sorted_set.new()
-  set.each(fn(_x) { abort("Impossible to reach") })
+  set.each(_x => abort("Impossible to reach"))
 }
 
 ///|
 test "eachi" {
   let set = @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1])
   let result = StringBuilder::new(size_hint=10)
-  set.eachi(fn(i, x) { result.write_string("[\{i}-\{x}]") })
+  set.eachi((i, x) => result.write_string("[\{i}-\{x}]"))
   inspect(
     result.to_string(),
     content="[0-1][1-2][2-3][3-4][4-5][5-6][6-7][7-8][8-9]",

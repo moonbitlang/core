@@ -27,7 +27,7 @@
 /// # Example
 ///
 /// ```mbt
-///   let result = @option.when(true, fn(){ "Hello, World!" })
+///   let result = @option.when(true, () => "Hello, World!")
 ///   assert_eq(result, Some("Hello, World!"))
 /// ```
 pub fn[T] when(condition : Bool, value : () -> T) -> T? {
@@ -40,8 +40,8 @@ pub fn[T] when(condition : Bool, value : () -> T) -> T? {
 
 ///|
 test "when" {
-  let result = when(true, fn() { "Hello, World!" })
-  let result2 = when(false, fn() { "Hello, World!" })
+  let result = when(true, () => "Hello, World!")
+  let result2 = when(false, () => "Hello, World!")
   assert_eq(result, Some("Hello, World!"))
   assert_eq(result2, None)
 }
@@ -66,8 +66,8 @@ pub fn[T] unless(condition : Bool, value : () -> T) -> T? {
 
 ///|
 test "unless" {
-  let result = unless(true, fn() { "Hello, World!" })
-  let result2 = unless(false, fn() { "Hello, World!" })
+  let result = unless(true, () => "Hello, World!")
+  let result2 = unless(false, () => "Hello, World!")
   assert_eq(result, None)
   assert_eq(result2, Some("Hello, World!"))
 }
@@ -105,10 +105,10 @@ test "some" {
 ///
 /// ```mbt
 ///   let a = Some(5)
-///   assert_eq(a.map(fn(x){ x * 2 }), Some(10))
+///   assert_eq(a.map(x => x * 2), Some(10))
 ///
 ///   let b = None
-///   assert_eq(b.map(fn(x){ x * 2 }), None)
+///   assert_eq(b.map(x => x * 2), None)
 /// ```
 pub fn[T, U] map(self : T?, f : (T) -> U) -> U? {
   match self {
@@ -121,8 +121,8 @@ pub fn[T, U] map(self : T?, f : (T) -> U) -> U? {
 test "map" {
   let a = Option::Some(5)
   let b : Int? = None
-  assert_eq(a.map(fn(x) { x * 2 }), Some(10))
-  assert_eq(b.map(fn(x) { x * 2 }), None)
+  assert_eq(a.map(x => x * 2), Some(10))
+  assert_eq(b.map(x => x * 2), None)
 }
 
 ///|
@@ -133,7 +133,7 @@ test "map" {
 ///
 /// ```mbt
 ///   let a = Some(5)
-///   assert_eq(a.map_or(3, fn(x){ x * 2 }), 10)
+///   assert_eq(a.map_or(3, x => x * 2), 10)
 /// ```
 pub fn[T, U] map_or(self : T?, default : U, f : (T) -> U) -> U {
   match self {
@@ -146,8 +146,8 @@ pub fn[T, U] map_or(self : T?, default : U, f : (T) -> U) -> U {
 test "map_or" {
   let a = Option::Some("foo")
   let b : String? = Option::None
-  assert_eq(a.map_or(42, fn(x) { x.length() }), 3)
-  assert_eq(b.map_or(42, fn(x) { x.length() }), 42)
+  assert_eq(a.map_or(42, x => x.length()), 3)
+  assert_eq(b.map_or(42, x => x.length()), 42)
 }
 
 ///|
@@ -157,7 +157,7 @@ test "map_or" {
 ///
 /// ```mbt
 ///   let a = Some(5)
-///   assert_eq(a.map_or_else(fn(){ 3 }, fn(x){ x * 2 }), 10)
+///   assert_eq(a.map_or_else(() => 3, x => x * 2), 10)
 /// ```
 pub fn[T, U] map_or_else(self : T?, default : () -> U, f : (T) -> U) -> U {
   match self {
@@ -171,8 +171,8 @@ test "map_or_else" {
   let k = 21
   let a = Option::Some("foo")
   let b : String? = Option::None
-  assert_eq(a.map_or_else(fn() { 2 * k }, fn(x) { x.length() }), 3)
-  assert_eq(b.map_or_else(fn() { 2 * k }, fn(x) { x.length() }), 42)
+  assert_eq(a.map_or_else(() => 2 * k, x => x.length()), 3)
+  assert_eq(b.map_or_else(() => 2 * k, x => x.length()), 42)
 }
 
 ///|
@@ -182,10 +182,10 @@ test "map_or_else" {
 ///
 /// ```mbt
 ///   let a = Option::Some(5)
-///   let r1 = a.bind(fn(x){ Some(x * 2) })
+///   let r1 = a.bind(x => Some(x * 2))
 ///   assert_eq(r1, Some(10))
 ///   let b : Option[Int] = None
-///   let r2 = b.bind(fn(x){ Some(x * 2) })
+///   let r2 = b.bind(x => Some(x * 2))
 ///   assert_eq(r2, None)
 /// ```
 pub fn[T, U] bind(self : T?, f : (T) -> U?) -> U? {
@@ -199,8 +199,8 @@ pub fn[T, U] bind(self : T?, f : (T) -> U?) -> U? {
 test "bind" {
   let a = Option::Some(5)
   let b : Int? = None
-  assert_eq(a.bind(fn(x) { Some(x * 2) }), Some(10))
-  assert_eq(b.bind(fn(x) { Some(x * 2) }), None)
+  assert_eq(a.bind(x => Some(x * 2)), Some(10))
+  assert_eq(b.bind(x => Some(x * 2)), None)
 }
 
 ///|
@@ -254,8 +254,8 @@ test "is_empty" {
 /// # Example
 /// ```mbt
 ///   let x = Some(3)
-///   assert_eq(x.filter(fn(x){ x > 5 }), None)
-///   assert_eq(x.filter(fn(x){ x < 5 }), Some(3))
+///   assert_eq(x.filter(x => x > 5), None)
+///   assert_eq(x.filter(x => x < 5), Some(3))
 /// ```
 pub fn[T] filter(self : T?, f : (T) -> Bool) -> T? {
   match self {
@@ -267,8 +267,8 @@ pub fn[T] filter(self : T?, f : (T) -> Bool) -> T? {
 ///|
 test "filter" {
   let x = Option::Some(3)
-  assert_eq(x.filter(fn(x) { x > 5 }), None)
-  assert_eq(x.filter(fn(x) { x < 5 }), Some(3))
+  assert_eq(x.filter(x => x > 5), None)
+  assert_eq(x.filter(x => x < 5), Some(3))
 }
 
 ///|
@@ -301,8 +301,8 @@ pub fn[T] or_else(self : T?, default : () -> T) -> T {
 ///|
 test "or else" {
   let x = Option::Some(3)
-  assert_eq(x.or_else(fn() { 5 }), 3)
-  assert_eq((None : Int?).or_else(fn() { 5 }), 5)
+  assert_eq(x.or_else(() => 5), 3)
+  assert_eq((None : Int?).or_else(() => 5), 5)
 }
 
 ///|
@@ -364,7 +364,7 @@ test "iter" {
   let exb = StringBuilder::new(size_hint=0)
   x
   .iter()
-  .each(fn(x) {
+  .each(x => {
     exb.write_string(x.to_string())
     exb.write_char('\n')
   })
@@ -379,7 +379,7 @@ test "iter" {
   let y : Int? = None
   y
   .iter()
-  .each(fn(x) {
+  .each(x => {
     exb.write_string(x.to_string())
     exb.write_char('\n')
   })

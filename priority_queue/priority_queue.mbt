@@ -86,13 +86,13 @@ pub fn[A : Compare] to_array(self : T[A]) -> Array[A] {
   }
 
   go(self.top)
-  arr.sort_by(fn(x, y) { y.compare(x) })
+  arr.sort_by((x, y) => y.compare(x))
   arr
 }
 
 ///|
 pub fn[A : Compare] iter(self : T[A]) -> Iter[A] {
-  Iter::new(fn(yield_) {
+  Iter::new(yield_ => {
     let arr = self.to_array()
     for i in 0..<arr.length() {
       if yield_(arr[i]) == IterEnd {
@@ -107,7 +107,7 @@ pub fn[A : Compare] iter(self : T[A]) -> Iter[A] {
 ///|
 pub fn[K : Compare] from_iter(iter : Iter[K]) -> T[K] {
   let s = new()
-  iter.each(fn(e) { s.push(e) })
+  iter.each(e => s.push(e))
   s
 }
 
