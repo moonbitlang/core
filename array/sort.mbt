@@ -262,17 +262,17 @@ test "try_bubble_sort" {
 
 ///|
 test "heap_sort" {
-  test_sort(fn(arr) { heap_sort(arr[:]) })
+  test_sort(arr => heap_sort(arr[:]))
 }
 
 ///|
 test "insertion_sort" {
-  test_sort(fn(arr) { ArrayView::insertion_sort(arr[:]) })
+  test_sort(arr => ArrayView::insertion_sort(arr[:]))
 }
 
 ///|
 test "sort" {
-  test_sort(fn(arr) { arr.sort() })
+  test_sort(arr => arr.sort())
 }
 
 ///|

@@ -24,7 +24,7 @@
 ///
 /// ```mbt
 ///   let arr = []
-///   [1, 2, 3, 4, 5].each(fn(x){ arr.push(x) })
+///   [1, 2, 3, 4, 5].each(x => arr.push(x))
 ///   assert_eq(arr, [1, 2, 3, 4, 5])
 /// ```
 pub fn[T] FixedArray::each(
@@ -76,9 +76,7 @@ test "each" {
 ///
 /// ```mbt
 ///   let arr = []
-///   [1, 2, 3, 4, 5].eachi(fn(index, elem){
-///     arr.push((index, elem))
-///   })
+///   [1, 2, 3, 4, 5].eachi((index, elem) => arr.push((index, elem)))
 ///   assert_eq(arr, [(0, 1), (1, 2), (2, 3), (3, 4), (4, 5)])
 /// ```
 pub fn[T] FixedArray::eachi(
@@ -130,7 +128,7 @@ test "eachi" {
 ///
 /// ```mbt
 ///   let arr = []
-///   [1, 2, 3, 4, 5].rev_each(fn(x){ arr.push(x) })
+///   [1, 2, 3, 4, 5].rev_each((x) => arr.push(x))
 ///   assert_eq(arr, [5, 4, 3, 2, 1])
 /// ```
 pub fn[T] FixedArray::rev_each(
@@ -182,9 +180,7 @@ test "rev_each" {
 ///
 /// ```mbt
 ///   let arr = []
-///   [1, 2, 3, 4, 5].rev_eachi(fn(index, elem){
-///     arr.push((index, elem))
-///   })
+///   [1, 2, 3, 4, 5].rev_eachi((index, elem) => arr.push((index, elem)))
 ///   assert_eq(arr, [(0, 5), (1, 4), (2, 3), (3, 2), (4, 1)])
 /// ```
 pub fn[T] FixedArray::rev_eachi(
@@ -240,7 +236,7 @@ test "rev_eachi" {
 ///
 /// ```mbt
 ///   let arr = [1, 2, 3, 4, 5]
-///   let doubled = arr.map(fn(x){ x * 2 })
+///   let doubled = arr.map(x => x * 2)
 ///   assert_eq(doubled, [2, 4, 6, 8, 10])
 /// ```
 pub fn[T, U] FixedArray::map(
@@ -259,13 +255,13 @@ pub fn[T, U] FixedArray::map(
 
 ///|
 test "map" {
-  let empty : FixedArray[Unit] = FixedArray::default().map(fn(x) { x })
+  let empty : FixedArray[Unit] = FixedArray::default().map(x => x)
   assert_eq(empty, [])
   let simple_arr : FixedArray[_] = [6]
-  let simple_doubled = simple_arr.map(fn(x) { x * 2 })
+  let simple_doubled = simple_arr.map(x => x * 2)
   assert_eq(simple_doubled, [12])
   let arr : FixedArray[_] = [1, 2, 3, 4, 5]
-  let doubled = arr.map(fn(x) { x * 2 })
+  let doubled = arr.map(x => x * 2)
   assert_eq(doubled, [2, 4, 6, 8, 10])
 }
 
@@ -294,13 +290,13 @@ pub fn[T, U] FixedArray::mapi(
 
 ///|
 test "mapi" {
-  let empty : FixedArray[Int] = FixedArray::default().mapi(fn(i, x) { x + i })
+  let empty : FixedArray[Int] = FixedArray::default().mapi((i, x) => x + i)
   assert_eq(empty, [])
   let simple_arr : FixedArray[_] = [6]
-  let simple_doubled = simple_arr.mapi(fn(i, x) { x * 2 + i })
+  let simple_doubled = simple_arr.mapi((i, x) => x * 2 + i)
   assert_eq(simple_doubled, [12])
   let arr : FixedArray[_] = [1, 2, 3, 4, 5]
-  let doubled = arr.mapi(fn(i, x) { x * 2 + i })
+  let doubled = arr.mapi((i, x) => x * 2 + i)
   assert_eq(doubled, [2, 5, 8, 11, 14])
 }
 
@@ -321,7 +317,7 @@ test "mapi" {
 /// Example:
 ///
 /// ```moonbit
-///   let arr = FixedArray::makei(3, fn(i) { i * 2 })
+///   let arr = FixedArray::makei(3, i => i * 2)
 ///   inspect(arr, content="[0, 2, 4]")
 /// ```
 pub fn[T] FixedArray::makei(
@@ -371,7 +367,7 @@ test "fixedarray_new_with_index" {
 ///   inspect(fixed_array, content="[1, 2, 3, 4, 5]")
 /// ```
 pub fn[T] FixedArray::from_array(array : Array[T]) -> FixedArray[T] {
-  FixedArray::makei(array.length(), fn(i) { array[i] })
+  FixedArray::makei(array.length(), i => array[i])
 }
 
 ///|
@@ -663,8 +659,8 @@ test "swap" {
 ///
 /// ```mbt
 ///   let arr: FixedArray[Int] = [1, 2, 3, 4, 5]
-///   assert_true(arr.all(fn(ele) { ele < 6 }))
-///   assert_false(arr.all(fn(ele) { ele < 5 }))
+///   assert_true(arr.all(ele => ele < 6))
+///   assert_false(arr.all(ele => ele < 5))
 /// ```
 pub fn[T] FixedArray::all(
   self : FixedArray[T],
@@ -682,17 +678,17 @@ pub fn[T] FixedArray::all(
 test "all" {
   {
     let arr : FixedArray[Int] = []
-    assert_true(arr.all(fn(ele) { ele < 6 }))
-    assert_true(arr.all(fn(ele) { ele < 5 }))
+    assert_true(arr.all(ele => ele < 6))
+    assert_true(arr.all(ele => ele < 5))
   }
   {
     let arr : FixedArray[_] = [5]
-    assert_true(arr.all(fn(ele) { ele < 6 }))
-    assert_false(arr.all(fn(ele) { ele < 5 }))
+    assert_true(arr.all(ele => ele < 6))
+    assert_false(arr.all(ele => ele < 5))
   }
   let arr : FixedArray[_] = [1, 2, 3, 4, 5]
-  assert_true(arr.all(fn(ele) { ele < 6 }))
-  assert_false(arr.all(fn(ele) { ele < 5 }))
+  assert_true(arr.all(ele => ele < 6))
+  assert_false(arr.all(ele => ele < 5))
 }
 
 ///|
@@ -702,8 +698,8 @@ test "all" {
 ///
 /// ```mbt
 ///   let arr: FixedArray[Int] = [1, 2, 3, 4, 5]
-///   assert_true(arr.any(fn(ele) { ele < 6 }))
-///   assert_true(arr.any(fn(ele) { ele < 5 }))
+///   assert_true(arr.any((ele)=> { ele < 6 }))
+///   assert_true(arr.any((ele)=> { ele < 5 }))
 /// ```
 pub fn[T] FixedArray::any(
   self : FixedArray[T],
@@ -721,17 +717,17 @@ pub fn[T] FixedArray::any(
 test "any" {
   {
     let arr : FixedArray[Int] = []
-    assert_false(arr.any(fn(ele) { ele < 6 }))
-    assert_false(arr.any(fn(ele) { ele < 5 }))
+    assert_false(arr.any(ele => ele < 6))
+    assert_false(arr.any(ele => ele < 5))
   }
   {
     let arr : FixedArray[_] = [5]
-    assert_true(arr.any(fn(ele) { ele < 6 }))
-    assert_false(arr.any(fn(ele) { ele < 5 }))
+    assert_true(arr.any(ele => ele < 6))
+    assert_false(arr.any(ele => ele < 5))
   }
   let arr : FixedArray[_] = [1, 2, 3, 4, 5]
-  assert_true(arr.any(fn(ele) { ele < 6 }))
-  assert_true(arr.any(fn(ele) { ele < 5 }))
+  assert_true(arr.any(ele => ele < 6))
+  assert_true(arr.any(ele => ele < 5))
 }
 
 ///|
@@ -1247,5 +1243,5 @@ pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for FixedArray[X] with
   rs
 ) {
   let len = if size == 0 { 0 } else { rs.next_positive_int() % size }
-  FixedArray::makei(len, fn(x) { X::arbitrary(x, rs) })
+  FixedArray::makei(len, i => X::arbitrary(i, rs))
 }
