@@ -74,7 +74,7 @@ pub fnalias Array::push_iter
 /// Example:
 ///
 /// ```moonbit
-///   let arr = Array::makei(3, fn(i) { i * 2 })
+///   let arr = Array::makei(3, i => i * 2)
 ///   inspect(arr, content="[0, 2, 4]")
 /// ```
 pub fn[T] Array::makei(
@@ -258,7 +258,7 @@ pub fn[T1, T2] unzip(self : Array[(T1, T2)]) -> (Array[T1], Array[T2]) {
 /// ```moonbit
 ///   let arr1 = [1, 2, 3]
 ///   let arr2 = [4, 5, 6]
-///   let add = fn(a, b) { a + b }
+///   let add = (a, b) => a + b
 ///   inspect(zip_with(arr1, arr2, add), content="[5, 7, 9]")
 /// ```
 pub fn[A, B, C] zip_with(
@@ -316,7 +316,7 @@ pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Array[X] with arbi
   rs
 ) {
   let len = if size == 0 { 0 } else { rs.next_positive_int() % size }
-  Array::makei(len, fn(x) { X::arbitrary(x, rs) })
+  Array::makei(len, x => X::arbitrary(x, rs))
 }
 
 ///|

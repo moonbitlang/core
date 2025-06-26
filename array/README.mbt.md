@@ -12,7 +12,7 @@ test "array creation" {
   let arr1 = [1, 2, 3]
 
   // Creating with indices
-  let arr2 = Array::makei(3, fn(i) { i * 2 })
+  let arr2 = Array::makei(3, i => i * 2)
 
   // Creating from iterator
   let arr3 = Array::from_iter("hello".iter())
@@ -31,16 +31,10 @@ test "array operations" {
   let nums = [1, 2, 3, 4, 5]
 
   // Filtering out odd numbers and negating the remaining
-  let neg_evens = nums.filter_map(fn(x) {
-    if x % 2 == 0 {
-      Some(-x)
-    } else {
-      None
-    }
-  })
+  let neg_evens = nums.filter_map(x => if x % 2 == 0 { Some(-x) } else { None })
 
   // Summing array
-  let sum = nums.fold(init=0, fn(acc, x) { acc + x })
+  let sum = nums.fold(init=0, (acc, x) => acc + x)
 
   // Finding last element
   let last = nums.last()
@@ -66,7 +60,7 @@ test "sorting" {
   // Custom comparison
   let strs = ["aa", "b", "ccc"]
   let sorted2 = strs.copy()
-  sorted2.sort_by(fn(a, b) { a.length().compare(b.length()) })
+  sorted2.sort_by((a, b) => a.length().compare(b.length()))
   inspect(
     sorted2,
     content=
@@ -77,7 +71,7 @@ test "sorting" {
   // Sort by key
   let pairs = [(2, "b"), (1, "a"), (3, "c")]
   let sorted3 = pairs.copy()
-  sorted3.sort_by_key(fn(p) { p.0 })
+  sorted3.sort_by_key(p => p.0)
   inspect(
     sorted3,
     content=
@@ -97,10 +91,10 @@ test "array views" {
   let view = arr[1:4] // View of elements 1,2,3
 
   // Map view to new array
-  let doubled = view.map(fn(x) { x * 2 })
+  let doubled = view.map(x => x * 2)
 
   // Modify view in-place
-  view.map_inplace(fn(x) { x + 1 })
+  view.map_inplace(x => x + 1)
   inspect(doubled, content="[4, 6, 8]")
   inspect(arr, content="[1, 3, 4, 5, 5]")
 }

@@ -461,21 +461,25 @@ fn fixed_test_sort(f : (FixedArray[Int]) -> Unit) -> Unit raise {
 
 ///|
 test "fixed_heap_sort" {
-  fixed_test_sort(fn(arr) {
-    fixed_heap_sort({ array: arr, start: 0, end: arr.length() })
-  })
+  fixed_test_sort(arr => fixed_heap_sort({
+    array: arr,
+    start: 0,
+    end: arr.length(),
+  }))
 }
 
 ///|
 test "fixed_bubble_sort" {
-  fixed_test_sort(fn(arr) {
-    fixed_bubble_sort({ array: arr, start: 0, end: arr.length() })
-  })
+  fixed_test_sort(arr => fixed_bubble_sort({
+    array: arr,
+    start: 0,
+    end: arr.length(),
+  }))
 }
 
 ///|
 test "sort" {
-  fixed_test_sort(fn(arr) { arr.sort() })
+  fixed_test_sort(arr => arr.sort())
 }
 
 ///|
