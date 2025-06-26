@@ -259,6 +259,11 @@ fn setup(
 }
 
 ///|
+test "BUFFER_CHUNK_NUM is power of 2" {
+  assert_eq(BUFFER_CHUNK_NUM.clz() + BUFFER_CHUNK_NUM.ctz(), 31)
+}
+
+///|
 test "output" {
   let s = ChaCha8::new(b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456")
   let res = Array::new(capacity=372)
