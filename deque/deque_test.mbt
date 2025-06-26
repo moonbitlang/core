@@ -1001,3 +1001,135 @@ test "rev_iter2 when wrapped around" {
     content="[(0, 5), (1, 4), (2, 3), (3, 2), (4, 1), (5, 6)]",
   )
 }
+
+///|
+test "binary_search_by on empty deque" {
+  let dq : @deque.T[Int] = @deque.new()
+  let result = dq.binary_search_by(fn(x) { x.compare(5) })
+  inspect(result, content="Err(0)")
+}
+
+///|
+test "binary_search_by on single element deque" {
+  let dq = @deque.of([5])
+
+  // 查找存在的元素
+  let found = dq.binary_search_by(fn(x) { x.compare(5) })
+  inspect(found, content="Ok(0)")
+
+  // 查找不存在的元素（小于）
+  let not_found_less = dq.binary_search_by(fn(x) { x.compare(3) })
+  inspect(not_found_less, content="Err(0)")
+
+  // 查找不存在的元素（大于）
+  let not_found_greater = dq.binary_search_by(fn(x) { x.compare(7) })
+  inspect(not_found_greater, content="Err(1)")
+}
+
+///|
+test "binary_search_by on multiple elements deque" {
+  let dq = @deque.of([1, 3, 5, 7, 9])
+
+  // 查找存在的元素（第一个）
+  let found_first = dq.binary_search_by(fn(x) { x.compare(1) })
+  inspect(found_first, content="Ok(0)")
+
+  // 查找存在的元素（中间）
+  let found_middle = dq.binary_search_by(fn(x) { x.compare(5) })
+  inspect(found_middle, content="Ok(2)")
+
+  // 查找存在的元素（最后一个）
+  let found_last = dq.binary_search_by(fn(x) { x.compare(9) })
+  inspect(found_last, content="Ok(4)")
+
+  // 查找不存在的元素（小于所有）
+  let not_found_less = dq.binary_search_by(fn(x) { x.compare(0) })
+  inspect(not_found_less, content="Err(0)")
+
+  // 查找不存在的元素（中间位置）
+  let not_found_middle = dq.binary_search_by(fn(x) { x.compare(4) })
+  inspect(not_found_middle, content="Err(2)")
+
+  // 查找不存在的元素（大于所有）
+  let not_found_greater = dq.binary_search_by(fn(x) { x.compare(10) })
+  inspect(not_found_greater, content="Err(5)")
+}
+
+///|
+test "binary_search_by with duplicate elements" {
+  let dq = @deque.of([1, 2, 2, 2, 3, 4])
+
+  // 查找重复元素，应该返回第一个出现的位置
+  let found = dq.binary_search_by(fn(x) { x.compare(2) })
+  inspect(found, content="Ok(1)") // 第一个2的位置
+
+  // 查找不存在的元素
+  let not_found = dq.binary_search_by(fn(x) { x.compare(5) })
+  inspect(not_found, content="Err(6)")
+}
+
+///|
+test "binary_search on empty deque" {
+  let dq : @deque.T[Int] = @deque.new()
+  let result = dq.binary_search(5)
+  inspect(result, content="Err(0)")
+}
+
+///|
+test "binary_search on single element deque" {
+  let dq = @deque.of([5])
+
+  // 查找存在的元素
+  let found = dq.binary_search(5)
+  inspect(found, content="Ok(0)")
+
+  // 查找不存在的元素（小于）
+  let not_found_less = dq.binary_search(3)
+  inspect(not_found_less, content="Err(0)")
+
+  // 查找不存在的元素（大于）
+  let not_found_greater = dq.binary_search(7)
+  inspect(not_found_greater, content="Err(1)")
+}
+
+///|
+test "binary_search on multiple elements deque" {
+  let dq = @deque.of([1, 3, 5, 7, 9])
+
+  // 查找存在的元素（第一个）
+  let found_first = dq.binary_search(1)
+  inspect(found_first, content="Ok(0)")
+
+  // 查找存在的元素（中间）
+  let found_middle = dq.binary_search(5)
+  inspect(found_middle, content="Ok(2)")
+
+  // 查找存在的元素（最后一个）
+  let found_last = dq.binary_search(9)
+  inspect(found_last, content="Ok(4)")
+
+  // 查找不存在的元素（小于所有）
+  let not_found_less = dq.binary_search(0)
+  inspect(not_found_less, content="Err(0)")
+
+  // 查找不存在的元素（中间位置）
+  let not_found_middle = dq.binary_search(4)
+  inspect(not_found_middle, content="Err(2)")
+
+  // 查找不存在的元素（大于所有）
+  let not_found_greater = dq.binary_search(10)
+  inspect(not_found_greater, content="Err(5)")
+}
+
+///|
+test "binary_search with duplicate elements" {
+  let dq = @deque.of([1, 2, 2, 2, 3, 4])
+
+  // 查找重复元素，应该返回第一个出现的位置
+  let found = dq.binary_search(2)
+  inspect(found, content="Ok(1)") // 第一个2的位置
+
+  // 查找不存在的元素
+  let not_found = dq.binary_search(5)
+  inspect(not_found, content="Err(6)")
+}

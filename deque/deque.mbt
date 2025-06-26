@@ -1387,3 +1387,134 @@ pub impl[A : @json.FromJson] @json.FromJson for T[A] with from_json(json, path) 
   }
   { len, buf, head, tail }
 }
+
+///|
+/// Performs a binary search on a sorted deque using a custom comparison function.
+/// Returns the position of the matching element if found, or the position where
+/// the element could be inserted while maintaining the sorted order.
+///
+/// Parameters:
+///
+/// * `comparator` : A function that compares each element with the target value,
+/// returning:
+///  * A negative integer if the element is less than the target
+///  * Zero if the element equals the target
+///  * A positive integer if the element is greater than the target
+///
+/// Returns a `Result` containing either:
+///
+/// * `Ok(index)` if a matching element is found at position `index`
+/// * `Err(index)` if no match is found, where `index` is the position where the
+/// element could be inserted
+///
+/// Example:
+///
+/// ```moonbit
+/// let dq = @deque.of([1, 3, 5, 7, 9])
+///
+/// 
+/// let find_3 = dq.binary_search_by(fn(x) {
+///   if x < 3 {
+///     -1
+///   } else if x > 3 {
+///     1
+///   } else {
+///     0
+///   }
+/// })
+/// inspect(find_3, content="Ok(1)")
+///
+/// 
+/// let find_4 = dq.binary_search_by(fn(x) {
+///   if x < 4 {
+///     -1
+///   } else if x > 4 {
+///     1
+///   } else {
+///     0
+///   }
+/// })
+/// inspect(find_4, content="Err(2)")
+/// ```
+///
+/// Notes:
+///
+/// * Assumes the deque is sorted according to the ordering implied by the
+/// comparison function
+/// * For multiple matches, returns the leftmost matching position
+/// * Returns an insertion point that maintains the sort order when no match is
+/// found
+/// * Handles the deque's ring buffer structure internally
+/// * For empty deques, returns `Err(0)`
+pub fn[A] binary_search_by(
+  self : T[A],
+  comparator : (A) -> Int
+) -> Result[Int, Int] {
+  if self.len == 0 {
+    return Err(0)
+  }
+  let mut size = self.len
+  let mut left = 0
+  let mut right = self.len
+  while left < right {
+    let mid = left + size / 2
+    let physical_index = (self.head + mid) % self.buf.length()
+
+    // Safe access to elements (assuming initialized)
+    let element = self.buf[physical_index]
+    let cmp_result = comparator(element)
+    if cmp_result < 0 {
+      left = mid + 1
+    } else if cmp_result > 0 {
+      right = mid
+    } else {
+      // Find the matching element and continue to search leftward for the leftmost matching item
+      right = mid
+      while left < right {
+        let new_mid = left + (right - left) / 2
+        let new_physical_index = (self.head + new_mid) % self.buf.length()
+        let new_element = self.buf[new_physical_index]
+        if comparator(new_element) < 0 {
+          left = new_mid + 1
+        } else {
+          right = new_mid
+        }
+      }
+      return Ok(left)
+    }
+    size = right - left
+  }
+  Err(left)
+}
+
+///|
+/// Performs a binary search on a sorted deque for the given value.
+/// Returns the position of the value if found, or the position where
+/// the value could be inserted while maintaining the sorted order.
+///
+/// Parameters:
+///
+/// * `value` : The value to search for in the deque
+///
+/// Returns a `Result` containing either:
+///
+/// * `Ok(index)` if the value is found at position `index`
+/// * `Err(index)` if the value is not found, where `index` is the
+///   position where the value could be inserted
+///
+/// Example:
+///
+/// ```moonbit
+/// let dq = @deque.of([1, 3, 5, 7, 9])
+/// let result = dq.binary_search(5)
+/// inspect(result, content="Ok(2)")
+/// ```
+///
+/// Notes:
+///
+/// * Assumes the deque is sorted in ascending order
+/// * For multiple matches, returns the leftmost matching position
+/// * Returns an insertion point that maintains the sort order when no match is found
+pub fn[A : Compare] binary_search(self : T[A], value : A) -> Result[Int, Int] {
+  self.binary_search_by(fn(x) { x.compare(value) })
+}
