@@ -586,7 +586,7 @@ pub impl[A : Eq] Eq for T[A] with op_equal(self, other) {
 /// ```mbt
 ///   let dv = @deque.of([1, 2, 3, 4, 5])
 ///   let mut sum = 0
-///   dv.each(fn (x) {sum = sum + x})
+///   dv.each((x) => {sum = sum + x})
 ///   assert_eq(sum, 15)
 /// ```
 pub fn[A] each(self : T[A], f : (A) -> Unit) -> Unit {
@@ -602,7 +602,7 @@ pub fn[A] each(self : T[A], f : (A) -> Unit) -> Unit {
 /// ```mbt
 ///   let dv = @deque.of([1, 2, 3, 4, 5])
 ///   let mut idx_sum = 0
-///   dv.eachi(fn (i, _x) {idx_sum = idx_sum + i})
+///   dv.eachi((i, _x) => {idx_sum = idx_sum + i})
 ///   assert_eq(idx_sum, 10)
 /// ```
 pub fn[A] eachi(self : T[A], f : (Int, A) -> Unit) -> Unit {
@@ -618,7 +618,7 @@ pub fn[A] eachi(self : T[A], f : (Int, A) -> Unit) -> Unit {
 /// ```mbt
 ///   let dv = @deque.of([1, 2, 3, 4, 5])
 ///   let mut sum = 0
-///   dv.rev_each(fn (x) {sum = sum + x})
+///   dv.rev_each((x) => {sum = sum + x})
 ///   assert_eq(sum, 15)
 /// ```
 pub fn[A] rev_each(self : T[A], f : (A) -> Unit) -> Unit {
@@ -634,7 +634,7 @@ pub fn[A] rev_each(self : T[A], f : (A) -> Unit) -> Unit {
 /// ```mbt
 ///   let dv = @deque.of([1, 2, 3, 4, 5])
 ///   let mut idx_sum = 0
-///   dv.rev_eachi(fn (i, _x) {idx_sum = idx_sum + i})
+///   dv.rev_eachi((i, _x) => {idx_sum = idx_sum + i})
 ///   assert_eq(idx_sum, 10)
 /// ```
 pub fn[A] rev_eachi(self : T[A], f : (Int, A) -> Unit) -> Unit {
@@ -681,7 +681,7 @@ pub fn[A] clear(self : T[A]) -> Unit {
 /// # Example
 /// ```mbt
 ///   let dv = @deque.of([3, 4, 5])
-///   let dv2 = dv.map(fn (x) {x + 1})
+///   let dv2 = dv.map((x) => {x + 1})
 ///   assert_eq(dv2, @deque.of([4, 5, 6]))
 /// ```
 pub fn[A, U] map(self : T[A], f : (A) -> U) -> T[U] {
@@ -702,7 +702,7 @@ pub fn[A, U] map(self : T[A], f : (A) -> U) -> T[U] {
 /// # Example
 /// ```mbt
 ///   let dv = @deque.of([3, 4, 5])
-///   let dv2 = dv.mapi(fn (i, x) {x + i}) // @deque.of([3, 5, 7])
+///   let dv2 = dv.mapi((i, x) => {x + i}) // @deque.of([3, 5, 7])
 ///   assert_eq(dv2, @deque.of([3, 5, 7]))
 /// ```
 pub fn[A, U] mapi(self : T[A], f : (Int, A) -> U) -> T[U] {
@@ -902,7 +902,7 @@ pub fn[A] truncate(self : T[A], len : Int) -> Unit {
 ///
 /// ```moonbit
 ///   let dq = @deque.of([1, 2, 3, 4, 5])
-///   dq.retain_map(fn(x) { if x % 2 == 0 { Some(x * 2) } else { None } })
+///   dq.retain_map((x) => { if x % 2 == 0 { Some(x * 2) } else { None } })
 ///   inspect(dq, content="@deque.of([4, 8])")
 /// ```
 pub fn[A] retain_map(self : T[A], f : (A) -> A?) -> Unit {
@@ -959,7 +959,7 @@ pub fn[A] retain_map(self : T[A], f : (A) -> A?) -> Unit {
 ///
 /// ```moonbit
 ///   let dq = @deque.of([1, 2, 3, 4, 5])
-///   dq.retain(fn(x) { x % 2 == 0 })
+///   dq.retain((x) => { x % 2 == 0 })
 ///   inspect(dq, content="@deque.of([2, 4])")
 /// ```
 pub fn[A] retain(self : T[A], f : (A) -> Bool) -> Unit {
@@ -1010,11 +1010,11 @@ pub fn[A] retain(self : T[A], f : (A) -> Bool) -> Unit {
 /// ```moonbit
 ///   let dq = @deque.of([1, 2, 3, 4, 5])
 ///   let mut sum = 0
-///   dq.iter().each(fn(x) { sum = sum + x })
+///   dq.iter().each((x) => { sum = sum + x })
 ///   inspect(sum, content="15")
 /// ```
 pub fn[A] iter(self : T[A]) -> Iter[A] {
-  Iter::new(fn(yield_) {
+  Iter::new(yield_ => {
     guard not(self.is_empty()) else { IterContinue }
     let { head, buf, len, .. } = self
     let cap = buf.length()
@@ -1052,11 +1052,11 @@ pub fn[A] iter(self : T[A]) -> Iter[A] {
 /// ```moonbit
 ///   let dq = @deque.of([10, 20, 30])
 ///   let mut sum = 0
-///   dq.iter2().each(fn(i, x) { sum = sum + i * x })
+///   dq.iter2().each((i, x) => { sum = sum + i * x })
 ///   inspect(sum, content="80") // 0*10 + 1*20 + 2*30 = 80
 /// ```
 pub fn[A] iter2(self : T[A]) -> Iter2[Int, A] {
-  Iter2::new(fn(yield_) {
+  Iter2::new(yield_ => {
     guard not(self.is_empty()) else { IterContinue }
     let { head, buf, len, .. } = self
     let cap = buf.length()
@@ -1096,11 +1096,11 @@ pub fn[A] iter2(self : T[A]) -> Iter2[Int, A] {
 /// ```moonbit
 ///   let dq = @deque.of([1, 2, 3])
 ///   let mut sum = 0
-///   dq.rev_iter().each(fn(x) { sum = sum * 10 + x })
+///   dq.rev_iter().each((x) => { sum = sum * 10 + x })
 ///   inspect(sum, content="321")
 /// ```
 pub fn[A] rev_iter(self : T[A]) -> Iter[A] {
-  Iter::new(fn(yield_) {
+  Iter::new(yield_ => {
     guard not(self.is_empty()) else { IterContinue }
     let { head, buf, len, .. } = self
     let cap = buf.length()
@@ -1138,11 +1138,11 @@ pub fn[A] rev_iter(self : T[A]) -> Iter[A] {
 /// ```moonbit
 ///   let dq = @deque.of([1, 2, 3])
 ///   let mut s = ""
-///   dq.rev_iter2().each(fn(i, x) { s = s + "\{i}:\{x} " })
+///   dq.rev_iter2().each((i, x) => { s = s + "\{i}:\{x} " })
 ///   inspect(s, content="0:3 1:2 2:1 ")
 /// ```
 pub fn[A] rev_iter2(self : T[A]) -> Iter2[Int, A] {
-  Iter2::new(fn(yield_) {
+  Iter2::new(yield_ => {
     guard not(self.is_empty()) else { IterContinue }
     let { head, buf, len, .. } = self
     let cap = buf.length()
@@ -1186,7 +1186,7 @@ pub fn[A] rev_iter2(self : T[A]) -> Iter2[Int, A] {
 /// ```
 pub fn[A] from_iter(iter : Iter[A]) -> T[A] {
   let dq = new()
-  iter.each(fn(e) { dq.push_back(e) })
+  iter.each(e => dq.push_back(e))
   dq
 }
 

@@ -100,7 +100,7 @@ test "iter2" {
   let mut sum_keys = 0
   view
   .iter2()
-  .each(fn(i, x) {
+  .each((i, x) => {
     sum = sum + x
     sum_keys = sum_keys + i
   })

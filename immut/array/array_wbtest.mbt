@@ -33,13 +33,13 @@ test "mix" {
     v2 = v2.set(i, i * 2)
   }
   let mut ct = 0
-  v.each(fn(e) { ct = ct + e })
+  v.each(e => ct = ct + e)
   inspect(ct, content="4950")
-  v2.each(fn(e) { ct = ct + e })
+  v2.each(e => ct = ct + e)
   inspect(ct, content="14850")
-  v2 = v2.map(fn(e) { e * 2 })
-  let ct1 = v2.fold(fn(a, b) { a + b }, init=0)
-  let ct2 = v2.rev_fold(fn(a, b) { a + b }, init=0)
+  v2 = v2.map(e => e * 2)
+  let ct1 = v2.fold((a, b) => a + b, init=0)
+  let ct2 = v2.rev_fold((a, b) => a + b, init=0)
   inspect(ct1, content="19800")
   inspect(ct2, content="19800")
   inspect(v.tree.is_empty_tree(), content="false")
@@ -49,7 +49,7 @@ test "mix" {
     v = v.push(i)
   }
   let vec = []
-  v.eachi(fn(i, _e) { vec.push(i) })
+  v.eachi((i, _e) => vec.push(i))
   for i in 0..<large_const {
     assert_eq(vec[i], i)
   }
@@ -99,14 +99,14 @@ test "concat-two-leaf" {
 ///|
 test "concat-multiple-full-tree" {
   let bf = branching_factor_power(4)
-  execute_array_test(gen_concat_seq(3, fn(_i) { bf }))
+  execute_array_test(gen_concat_seq(3, _i => bf))
 }
 
 ///|
 test "concat-multiple-random-tree" {
   let bf = branching_factor_power(2)
   let rng = Random({ val: 0UL })
-  execute_array_test(gen_concat_seq(2, fn(_i) { rng.int(limit=bf) }))
+  execute_array_test(gen_concat_seq(2, _i => rng.int(limit=bf)))
 }
 
 ///|

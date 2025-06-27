@@ -35,7 +35,7 @@ pub fn[K, V] new() -> T[K, V] {
 ///| Creates a sorted map from a array of key-value pairs.
 pub fn[K : Compare, V] from_array(entries : Array[(K, V)]) -> T[K, V] {
   let map = { root: None, size: 0 }
-  entries.each(fn(e) { map.add(e.0, e.1) })
+  entries.each(e => map.add(e.0, e.1))
   map
 }
 

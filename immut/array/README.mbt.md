@@ -23,7 +23,7 @@ Or use `make()`, `makei()` to create an array with some elements.
 test {
   let arr1 = @array.make(5, 1)
   assert_eq(arr1.to_array(), [1, 1, 1, 1, 1])
-  let arr2 = @array.makei(5, fn(i){i + 1})
+  let arr2 = @array.makei(5, (i) => {i + 1})
   assert_eq(arr2.to_array(), [1, 2, 3, 4, 5])
 }
 ```
@@ -76,10 +76,10 @@ test {
   let arr = @array.of([1, 2, 3, 4, 5])
   inspect(arr.iter(), content="[1, 2, 3, 4, 5]")
   let val = []
-  arr.each(fn(v) { val.push(v) })
+  arr.each((v) => { val.push(v) })
   assert_eq(val, [1, 2, 3, 4, 5])
   let vali = []
-  arr.eachi(fn(i, v) { vali.push((i, v)) })
+  arr.eachi((i, v) => { vali.push((i, v)) })
   assert_eq(vali, [(0, 1), (1, 2), (2, 3), (3, 4), (4, 5)])
 }
 ```

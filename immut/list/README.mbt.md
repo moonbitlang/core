@@ -53,7 +53,7 @@ The standard library provides a lot of tools for iterating over a list, such as 
 test {
     let list = @list.of([1, 2, 3, 4, 5])
     let arr = []
-    list.each(fn (ele) { arr.push(ele) }) 
+    list.each((ele) => { arr.push(ele) }) 
     assert_eq(arr, [1, 2, 3, 4, 5])
 }
 ```
@@ -100,11 +100,11 @@ There are three ways to filter / reject / select multiple elements from a list:
 ```moonbit
 test {
     let ls = @list.of([1, 2, 3, 4, 5])
-    assert_eq(ls.filter(fn (ele) { ele % 2 == 0 }).to_array(), [2, 4])
+    assert_eq(ls.filter((ele) => { ele % 2 == 0 }).to_array(), [2, 4])
     assert_eq(ls.take(2).to_array(), [1, 2])
     assert_eq(ls.drop(2).to_array(), [3, 4, 5])
-    assert_eq(ls.take_while(fn (ele) { ele < 3 }).to_array(), [1, 2])
-    assert_eq(ls.drop_while(fn (ele) { ele < 3 }).to_array(), [3, 4, 5])
+    assert_eq(ls.take_while((ele) => { ele < 3 }).to_array(), [1, 2])
+    assert_eq(ls.drop_while((ele) => { ele < 3 }).to_array(), [3, 4, 5])
 }
 ```
 
@@ -143,7 +143,7 @@ You can reduce (fold) a list to a single value using the `fold()` method.
 ```moonbit
 test {
   let list = @list.of([1, 2, 3, 4, 5])
-  assert_eq(list.fold(init=0, fn(acc, x) { acc + x }), 15)
+  assert_eq(list.fold(init=0, (acc, x) => { acc + x }), 15)
 }
 ```
 
@@ -154,7 +154,7 @@ To transform list elements, you can use the `map()` method.
 ```moonbit
 test {
   let list = @list.of([1, 2, 3, 4, 5])
-  assert_eq(list.map(fn (ele) { ele * 2 }).to_array(), [2, 4, 6, 8, 10])
+  assert_eq(list.map((ele) => { ele * 2 }).to_array(), [2, 4, 6, 8, 10])
 }
 ```
 

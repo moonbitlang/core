@@ -100,7 +100,7 @@ test {
   let map = @sorted_map.from_array([(3, "three"), (1, "one"), (2, "two")])
   let keys = []
   let values = []
-  map.each(fn(k, v) {
+  map.each((k, v) => {
     keys.push(k)
     values.push(v)
   })
@@ -115,7 +115,7 @@ Iterate with index:
 test {
   let map = @sorted_map.from_array([(3, "three"), (1, "one"), (2, "two")])
   let result = []
-  map.eachi(fn(i, k, v) { result.push((i, k, v)) })
+  map.eachi((i, k, v) => { result.push((i, k, v)) })
   assert_eq(result, [(0, 1, "one"), (1, 2, "two"), (2, 3, "three")])
 }
 ```
@@ -183,7 +183,7 @@ test {
     (5, "five"),
   ])
   let range_items = []
-  map.range(2, 4).each(fn(k, v) { range_items.push((k, v)) })
+  map.range(2, 4).each((k, v) => { range_items.push((k, v)) })
   assert_eq(range_items, [(2, "two"), (3, "three"), (4, "four")])
 }
 ```
@@ -198,12 +198,12 @@ Edge cases for range operations:
 test {
   let map = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
   let range_items = []
-  map.range(0, 10).each(fn(k, v) { range_items.push((k, v)) })
+  map.range(0, 10).each((k, v) => { range_items.push((k, v)) })
   assert_eq(range_items, [(1, "one"), (2, "two"), (3, "three")])
 
   // Example with invalid range
   let empty_range : Array[(Int, String)] = []
-  map.range(10, 5).each(fn(k, v) { empty_range.push((k, v)) })
+  map.range(10, 5).each((k, v) => { empty_range.push((k, v)) })
   assert_eq(empty_range, [])
 }
 ```
@@ -236,7 +236,7 @@ Use the `iter2` method for a more convenient key-value iteration:
 test {
   let map = @sorted_map.from_array([(3, "three"), (1, "one"), (2, "two")])
   let transformed = []
-  map.iter2().each(fn(k, v) { transformed.push(k.to_string() + ": " + v) })
+  map.iter2().each((k, v) => { transformed.push(k.to_string() + ": " + v) })
   assert_eq(transformed, ["1: one", "2: two", "3: three"])
 }
 ```

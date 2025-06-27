@@ -55,17 +55,15 @@ pub fn[T] FixedArray::get(self : FixedArray[T], idx : Int) -> T? {
 /// ```moonbit
 ///   let arr = FixedArray::make(3, 42)
 ///   let mut sum = 0
-///   arr.iter().each(fn(x) { sum = sum + x })
+///   arr.iter().each((x) => { sum = sum + x })
 ///   inspect(sum, content="126")
 /// ```
 #intrinsic("%iter.from_array")
 pub fn[T] FixedArray::iter(self : FixedArray[T]) -> Iter[T] {
-  Iter::new(fn(yield_) {
-    for v in self {
-      guard yield_(v) is IterContinue else { break IterEnd }
-    } else {
-      IterContinue
-    }
+  Iter::new(yield_ => for v in self {
+    guard yield_(v) is IterContinue else { break IterEnd }
+  } else {
+    IterContinue
   })
 }
 
@@ -86,16 +84,14 @@ pub fn[T] FixedArray::iter(self : FixedArray[T]) -> Iter[T] {
 /// ```moonbit
 ///   let arr = FixedArray::make(3, 10)
 ///   let mut sum = 0
-///   arr.iter2().each(fn(i, x) { sum = sum + i + x })
+///   arr.iter2().each((i, x) => { sum = sum + i + x })
 ///   inspect(sum, content="33") // (0 + 10) + (1 + 10) + (2 + 10) = 33
 /// ```
 pub fn[T] FixedArray::iter2(self : FixedArray[T]) -> Iter2[Int, T] {
-  Iter2::new(fn(yield_) {
-    for i, v in self {
-      guard yield_(i, v) is IterContinue else { break IterEnd }
-    } else {
-      IterContinue
-    }
+  Iter2::new(yield_ => for i, v in self {
+    guard yield_(i, v) is IterContinue else { break IterEnd }
+  } else {
+    IterContinue
   })
 }
 
@@ -227,7 +223,7 @@ pub fn[T : Compare] FixedArray::binary_search(
 ///
 /// ```moonbit
 ///   let arr : FixedArray[Int] = [1, 3, 5, 7, 9]
-///   let find_3 = arr.binary_search_by(fn(x) {
+///   let find_3 = arr.binary_search_by((x) => {
 ///     if x < 3 {
 ///       -1
 ///     } else if x > 3 {
@@ -237,7 +233,7 @@ pub fn[T : Compare] FixedArray::binary_search(
 ///     }
 ///   })
 ///   inspect(find_3, content="Ok(1)")
-///   let find_4 = arr.binary_search_by(fn(x) {
+///   let find_4 = arr.binary_search_by((x) => {
 ///     if x < 4 {
 ///       -1
 ///     } else if x > 4 {

@@ -26,7 +26,7 @@ pub fn[A, B] rev_fold(self : T[A], init~ : B, f : (B, A) -> B) -> B {
 ///|
 #deprecated("use `_.rev().foldi(...)` instead")
 pub fn[A, B] rev_foldi(self : T[A], init~ : B, f : (Int, B, A) -> B) -> B {
-  self.rev().foldi(init~, fn(i, b, a) { f(i, b, a) })
+  self.rev().foldi(init~, (i, b, a) => f(i, b, a))
 }
 
 ///|

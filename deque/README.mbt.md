@@ -172,16 +172,16 @@ deque supports vector-like `iter/iteri/map/mapi` functions and their inverse for
 test {
   let dv = @deque.of([1, 2, 3, 4, 5])
   let arr = []
-  dv.each(fn(elem) { arr.push(elem) })
+  dv.each((elem) => { arr.push(elem) })
   assert_eq(arr, [1, 2, 3, 4, 5])
   let arr2 = []
-  dv.eachi(fn(i, _elem) { arr2.push(i) })
+  dv.eachi((i, _elem) => { arr2.push(i) })
   assert_eq(arr2, [0, 1, 2, 3, 4])
   let arr3 = []
-  let _ = dv.map(fn(elem) { arr3.push(elem + 1) })
+  let _ = dv.map((elem) => { arr3.push(elem + 1) })
   assert_eq(arr3, [2, 3, 4, 5, 6])
   let arr4 = []
-  let _ = dv.mapi(fn(i, elem) { arr4.push(elem + i) })
+  let _ = dv.mapi((i, elem) => { arr4.push(elem + i) })
   assert_eq(arr4, [1, 3, 5, 7, 9])
 }
 ```

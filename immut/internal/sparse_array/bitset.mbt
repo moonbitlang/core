@@ -52,7 +52,7 @@ pub fn Bitset::difference(self : Bitset, other : Bitset) -> Bitset {
 
 ///|
 pub fn Bitset::iter(self : Bitset) -> Iter[Int] {
-  Iter::new(fn(yield_) {
+  Iter::new(yield_ => {
     let mut bs = self.inner()
     while bs != 0 {
       let next = bs & (-bs.reinterpret_as_int()).reinterpret_as_uint()

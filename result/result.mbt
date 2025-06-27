@@ -19,7 +19,7 @@
 ///
 /// ```mbt
 ///   let x: Result[Int, Unit] = Ok(6)
-///   let y = x.map(fn (v : Int) { v * 7 })
+///   let y = x.map((v : Int) => { v * 7 })
 ///   assert_eq(y, Ok(42))
 /// ```
 pub fn[T, E, U] map(self : Result[T, E], f : (T) -> U) -> Result[U, E] {
@@ -32,9 +32,9 @@ pub fn[T, E, U] map(self : Result[T, E], f : (T) -> U) -> Result[U, E] {
 ///|
 test "map" {
   let x : Result[Int, Unit] = Ok(6)
-  let y = x.map(fn(v : Int) { v * 7 })
+  let y = x.map((v : Int) => v * 7)
   let z : Result[Int, Int] = Err(3)
-  let w = z.map(fn(v : Int) { v * 7 })
+  let w = z.map((v : Int) => v * 7)
   assert_eq(y, Ok(42))
   assert_eq(w, Err(3))
 }
@@ -46,7 +46,7 @@ test "map" {
 ///
 /// ```mbt
 ///   let x: Result[Int, String] = Err("error")
-///   let y = x.map_err(fn (v : String) { v + "!" })
+///   let y = x.map_err((v : String) => { v + "!" })
 ///   assert_eq(y, Err("error!"))
 /// ```
 pub fn[T, E, F] map_err(self : Result[T, E], f : (E) -> F) -> Result[T, F] {
@@ -59,9 +59,9 @@ pub fn[T, E, F] map_err(self : Result[T, E], f : (E) -> F) -> Result[T, F] {
 ///|
 test "map_err" {
   let x : Result[Int, String] = Err("error")
-  let y = x.map_err(fn(v : String) { v + "!" })
+  let y = x.map_err((v : String) => v + "!")
   let z : Result[Int, Int] = Ok(6)
-  let w = z.map_err(fn(v : Int) { v + 6 })
+  let w = z.map_err((v : Int) => v + 6)
   assert_eq(y, Err("error!"))
   assert_eq(w, Ok(6))
 }
@@ -167,7 +167,7 @@ test "or" {
 ///
 /// ```mbt
 ///   let x: Result[Int, String] = Ok(6)
-///   let y = x.or_else(fn() { 0 })
+///   let y = x.or_else(() => { 0 })
 ///   assert_eq(y, 6)
 /// ```
 pub fn[T, E] or_else(self : Result[T, E], default : () -> T) -> T {
@@ -181,8 +181,8 @@ pub fn[T, E] or_else(self : Result[T, E], default : () -> T) -> T {
 test "or_else" {
   let x : Result[Int, String] = Ok(6)
   let y : Result[Int, String] = Err("error")
-  let z = x.or_else(fn() { 0 })
-  let w = y.or_else(fn() { 0 })
+  let z = x.or_else(() => 0)
+  let w = y.or_else(() => 0)
   assert_eq(z, 6)
   assert_eq(w, 0)
 }
@@ -223,7 +223,7 @@ test "flatten" {
 ///
 /// ```mbt
 ///   let x: Result[Int, String] = Ok(6)
-///   let y = x.bind(fn(v : Int) { Ok(v * 7) })
+///   let y = x.bind((v : Int) => { Ok(v * 7) })
 ///   assert_eq(y, Ok(42))
 /// ```
 pub fn[T, E, U] bind(
@@ -239,7 +239,7 @@ pub fn[T, E, U] bind(
 ///|
 test "bind" {
   let x : Result[Int, String] = Ok(6)
-  let y = x.bind(fn(v : Int) { Ok(v * 7) })
+  let y = x.bind((v : Int) => Ok(v * 7))
   assert_eq(y, Ok(42))
 }
 
@@ -251,7 +251,7 @@ test "bind" {
 ///
 /// ```mbt
 ///   let x = Ok(6)
-///   let y = x.fold(fn(v : Int) -> Int { v * 7 }, fn(_e : String) -> Int { 0 })
+///   let y = x.fold((v : Int) => { v * 7 }, (_e : String) => { 0 })
 ///   assert_eq(y, 42)
 /// ```
 pub fn[T, E, V] fold(self : Result[T, E], ok : (T) -> V, err : (E) -> V) -> V {
@@ -264,9 +264,9 @@ pub fn[T, E, V] fold(self : Result[T, E], ok : (T) -> V, err : (E) -> V) -> V {
 ///|
 test "fold" {
   let x : Result[Int, String] = Ok(6)
-  let y = x.fold(fn(v : Int) -> Int { v * 7 }, fn(_e : String) -> Int { 0 })
+  let y = x.fold((v : Int) => v * 7, (_e : String) => 0)
   let z : Result[Int, String] = Err("error")
-  let w = z.fold(fn(v : Int) -> Int { v * 7 }, fn(_e : String) -> Int { 0 })
+  let w = z.fold((v : Int) => v * 7, (_e : String) => 0)
   assert_eq(y, 42)
   assert_eq(w, 0)
 }

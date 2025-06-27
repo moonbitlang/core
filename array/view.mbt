@@ -79,7 +79,7 @@ pub fn[T] View::each(self : View[T], f : (T) -> Unit raise?) -> Unit raise? {
 /// ```mbt
 ///   let v = [3, 4, 5][:]
 ///   let mut sum = 0
-///   v.eachi(fn (i, x) { sum = sum + x + i })
+///   v.eachi((i, x) => { sum = sum + x + i })
 ///   assert_eq(sum, 15)
 /// ```
 pub fn[T] View::eachi(
@@ -195,7 +195,7 @@ pub fn[A] View::iter(self : View[A]) -> Iter[A] {
 ///   let view = arr[1:]
 ///   let mut sum = 0
 ///   let mut sum_keys = 0
-///   view.iter2().each(fn(i, x) {
+///   view.iter2().each((i, x) => {
 ///     sum = sum + x 
 ///     sum_keys = sum_keys + i
 ///   })
@@ -297,7 +297,7 @@ pub fn[A, B] View::rev_foldi(
 /// # Example
 /// ```mbt
 ///   let v = [3, 4, 5]
-///   let v2 = v[1:].map(fn (x) {x + 1})
+///   let v2 = v[1:].map((x) => {x + 1})
 ///   assert_eq(v2, [5, 6])
 /// ```
 pub fn[T, U] View::map(self : View[T], f : (T) -> U raise?) -> Array[U] raise? {
@@ -313,7 +313,7 @@ pub fn[T, U] View::map(self : View[T], f : (T) -> U raise?) -> Array[U] raise? {
 /// # Example
 /// ```mbt
 ///   let v = [3, 4, 5]
-///   v[1:].map_inplace(fn (x) {x + 1})
+///   v[1:].map_inplace((x) => {x + 1})
 ///   assert_eq(v, [3, 5, 6])
 /// ```
 pub fn[T] View::map_inplace(self : View[T], f : (T) -> T raise?) -> Unit raise? {
@@ -328,7 +328,7 @@ pub fn[T] View::map_inplace(self : View[T], f : (T) -> T raise?) -> Unit raise? 
 /// # Example
 /// ```mbt
 ///   let v = [3, 4, 5]
-///   let v2 = v[1:].mapi(fn (i, x) {x + i})
+///   let v2 = v[1:].mapi((i, x) => {x + i})
 ///   assert_eq(v2, [4, 6])
 /// ```
 pub fn[T, U] View::mapi(
@@ -347,7 +347,7 @@ pub fn[T, U] View::mapi(
 /// # Example
 /// ```mbt
 ///   let v = [3, 4, 5]
-///   v[1:].mapi_inplace(fn (i, x) {x + i})
+///   v[1:].mapi_inplace((i, x) => {x + i})
 ///   assert_eq(v, [3, 4, 6])
 /// ```
 pub fn[T] View::mapi_inplace(
@@ -365,7 +365,7 @@ pub fn[T] View::mapi_inplace(
 /// # Example
 /// ```mbt
 ///   let arr = [1, 2, 3, 4, 5, 6]
-///   let v = arr[2:].filter(fn (x) { x % 2 == 0 })
+///   let v = arr[2:].filter((x) => { x % 2 == 0 })
 ///   assert_eq(v, [4, 6])
 /// ```
 pub fn[T] View::filter(

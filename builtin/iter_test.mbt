@@ -92,20 +92,14 @@ test "take_while3" {
 ///|
 test "take_while4" {
   let iter = test_from_array([1, 2, 3, 4, 5, 6])
-  let res = iter
-    .take_while(x => x <= 5)
-    .take(4)
-    .fold(init=0, fn(x, y) { x + y })
+  let res = iter.take_while(x => x <= 5).take(4).fold(init=0, (x, y) => x + y)
   inspect(res, content="10")
 }
 
 ///|
 test "take_while5" {
   let iter = test_from_array([1, 2, 3, 4, 5, 6])
-  let res = iter
-    .take(4)
-    .take_while(x => x >= 5)
-    .fold(fn(x, y) { x + y }, init=0)
+  let res = iter.take(4).take_while(x => x >= 5).fold((x, y) => x + y, init=0)
   inspect(res, content="0")
 }
 
@@ -146,7 +140,7 @@ test "map_while4" {
   let res = iter
     .map_while(x => if x <= 5 { Some(x) } else { None })
     .take(4)
-    .fold(init=0, fn(x, y) { x + y })
+    .fold(init=0, (x, y) => x + y)
   inspect(res, content="10")
 }
 
@@ -156,7 +150,7 @@ test "map_while5" {
   let res = iter
     .take(4)
     .map_while(x => if x >= 5 { Some(x) } else { None })
-    .fold(fn(x, y) { x + y }, init=0)
+    .fold((x, y) => x + y, init=0)
   inspect(res, content="0")
 }
 
@@ -246,10 +240,10 @@ test "filter_map" {
   let arr = [1, 2, 3, 4, 5]
   let r1 = arr
     .iter()
-    .filter_map(fn(x) { if x < 3 { None } else { Some(x) } })
+    .filter_map(x => if x < 3 { None } else { Some(x) })
     .collect()
   inspect(r1, content="[3, 4, 5]")
-  let r2 : Array[Unit] = arr.iter().filter_map(fn(_x) { None }).collect()
+  let r2 : Array[Unit] = arr.iter().filter_map(_x => None).collect()
   inspect(r2, content="[]")
   let r3 : Array[Unit] = [].iter().filter_map(Option::Some(_)).collect()
   inspect(r3, content="[]")
@@ -315,7 +309,7 @@ test "concat" {
 ///|
 test "collect" {
   let arr = ['1', '2', '3', '4', '5']
-  let iter = Iter::new(fn(yield_) {
+  let iter = Iter::new(yield_ => {
     for i in 0..<arr.length() {
       yield_(arr[i]) |> ignore
     }
@@ -477,19 +471,17 @@ enum Tree {
 
 ///|
 fn Tree::iter(self : Tree) -> Iter[Int] {
-  Iter::new(fn(yield_) {
-    match self {
-      Leaf(x) => yield_(x)
-      Node(l, v, r) =>
-        // ([ .. l, v , .. r]).apply(f)
-        if l.iter().run(yield_) == IterEnd {
-          IterEnd
-        } else if yield_(v) == IterEnd {
-          IterEnd
-        } else {
-          r.iter().run(yield_)
-        }
-    }
+  Iter::new(yield_ => match self {
+    Leaf(x) => yield_(x)
+    Node(l, v, r) =>
+      // ([ .. l, v , .. r]).apply(f)
+      if l.iter().run(yield_) == IterEnd {
+        IterEnd
+      } else if yield_(v) == IterEnd {
+        IterEnd
+      } else {
+        r.iter().run(yield_)
+      }
   })
 }
 
@@ -718,7 +710,7 @@ test "Float::until negative step" {
 ///|
 // test "group_by with consecutive identical elements" {
 //   let iter = [1, 1, 2, 2, 3, 3].iter()
-//   let grouped = iter.group_by(fn(x) { x })
+//   let grouped = iter.group_by((x) => { x })
 //   assert_eq(grouped.get(1), Some([1, 1]))
 //   assert_eq(grouped.get(2), Some([2, 2]))
 //   assert_eq(grouped.get(3), Some([3, 3]))
@@ -727,7 +719,7 @@ test "Float::until negative step" {
 ///|
 // test "group_by with non-consecutive identical elements" {
 //   let iter = [1, 2, 1, 3, 2, 1].iter()
-//   let grouped = iter.group_by(fn(x) { x })
+//   let grouped = iter.group_by((x) => { x })
 //   assert_eq(grouped.get(1), Some([1, 1, 1]))
 //   assert_eq(grouped.get(2), Some([2, 2]))
 //   assert_eq(grouped.get(3), Some([3]))
@@ -736,21 +728,21 @@ test "Float::until negative step" {
 ///|
 // test "group_by with empty input" {
 //   let iter : Iter[Int] = Iter::empty()
-//   let grouped = iter.group_by(fn(x) { x })
+//   let grouped = iter.group_by((x) => { x })
 //   assert_eq(grouped.size(), 0)
 // }
 
 ///|
 // test "group_by with single element input" {
 //   let iter = [42].iter()
-//   let grouped = iter.group_by(fn(x) { x })
+//   let grouped = iter.group_by((x) => { x })
 //   assert_eq(grouped.get(42), Some([42]))
 // }
 
 ///|
 // test "group_by with custom key function" {
 //   let iter = [1, 2, 3, 4].iter()
-//   let grouped = iter.group_by(fn(x) { x % 2 })
+//   let grouped = iter.group_by((x) => { x % 2 })
 //   assert_eq(grouped.get(0), Some([2, 4]))
 //   assert_eq(grouped.get(1), Some([1, 3]))
 // }
@@ -758,7 +750,7 @@ test "Float::until negative step" {
 ///|
 // test "group_by with strings" {
 //   let iter = ["apple", "avocado", "banana", "cherry", "blueberry"].iter()
-//   let grouped = iter.group_by(fn(s) { s.charcode_at(0) })
+//   let grouped = iter.group_by((s) => { s.charcode_at(0) })
 //   assert_eq(grouped.get('a'), Some(["apple", "avocado"]))
 //   assert_eq(grouped.get('b'), Some(["banana", "blueberry"]))
 //   assert_eq(grouped.get('c'), Some(["cherry"]))
@@ -777,8 +769,8 @@ test "Float::until negative step" {
 //     Person::{ name: "Dave", age: 35 },
 //     Person::{ name: "Eve", age: 30 },
 //   ].iter()
-//   let grouped = people.group_by(fn(p) { p.age })
-//   let groups = grouped.values().map(fn(a) { a.map(fn(p) { p.name }) }).collect()
+//   let grouped = people.group_by((p) => { p.age })
+//   let groups = grouped.values().map((a) => { a.map((p) => { p.name }) }).collect()
 //   assert_eq(groups, [["Alice", "Bob"], ["Charlie", "Eve"], ["Dave"]])
 // }
 

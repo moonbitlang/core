@@ -40,7 +40,7 @@ pub fn[T] FixedArray::each(
 test "each" {
   let mut i = 0
   let mut failed = false
-  let f = fn(elem) {
+  let f = elem => {
     if elem != i + 1 {
       failed = true
     }
@@ -92,7 +92,7 @@ pub fn[T] FixedArray::eachi(
 test "eachi" {
   let mut i = 0
   let mut failed = false
-  let f = fn(index, elem) {
+  let f = (index, elem) => {
     if index != i || elem != i + 1 {
       failed = true
     }
@@ -144,7 +144,7 @@ pub fn[T] FixedArray::rev_each(
 test "rev_each" {
   let mut i = 6
   let mut failed = false
-  let f = fn(elem) {
+  let f = elem => {
     if elem != i - 1 {
       failed = true
     }
@@ -198,7 +198,7 @@ test "rev_eachi" {
   let mut i = 6
   let mut j = 0
   let mut failed = false
-  let f = fn(index, elem) {
+  let f = (index, elem) => {
     if index != j || elem != i - 1 {
       failed = true
     }
@@ -271,7 +271,7 @@ test "map" {
 /// # Example
 /// ```mbt
 ///   let arr = [3, 4, 5]
-///   let added = arr.mapi(fn (i, x) { x + i })
+///   let added = arr.mapi((i, x) => { x + i })
 ///   assert_eq(added, [3, 5, 7])
 /// ```
 pub fn[T, U] FixedArray::mapi(
@@ -1050,12 +1050,10 @@ pub impl[T : Compare] Compare for FixedArray[T] with compare(self, other) {
 pub impl[T] Add for FixedArray[T] with op_add(self, other) {
   let slen = self.length()
   let nlen = other.length()
-  FixedArray::makei(slen + nlen, fn(i) {
-    if i < slen {
-      self[i]
-    } else {
-      other[i - slen]
-    }
+  FixedArray::makei(slen + nlen, i => if i < slen {
+    self[i]
+  } else {
+    other[i - slen]
   })
 }
 
@@ -1089,7 +1087,7 @@ test "iter" {
   let iter = arr.iter()
   let exb = StringBuilder::new()
   let mut i = 0
-  iter.each(fn(x) {
+  iter.each(x => {
     exb.write_string(x.to_string())
     exb.write_char('\n')
     i = i + 1
