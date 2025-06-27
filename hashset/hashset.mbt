@@ -278,7 +278,7 @@ pub impl[X : @quickcheck.Arbitrary + Eq + Hash] @quickcheck.Arbitrary for T[X] w
 }
 
 ///|
-fn[K : Hash] shift_back(self : T[K], start_index : Int) -> Unit {
+fn[K] shift_back(self : T[K], start_index : Int) -> Unit {
   for i = 0, prev = start_index, curr = self.next_index(start_index)
       i < self.entries.length()
       i = i + 1, prev = curr, curr = self.next_index(curr) {
@@ -319,7 +319,7 @@ fn[K : Hash + Eq] grow(self : T[K]) -> Unit {
 }
 
 ///|
-fn[K : Hash] index(self : T[K], hash : Int) -> Int {
+fn[K] index(self : T[K], hash : Int) -> Int {
   abs(hash) & (self.capacity - 1)
 }
 
@@ -333,7 +333,7 @@ fn abs(n : Int) -> Int {
 }
 
 ///|
-fn[K : Hash] next_index(self : T[K], index : Int) -> Int {
+fn[K] next_index(self : T[K], index : Int) -> Int {
   (index + 1) & (self.capacity - 1)
 }
 

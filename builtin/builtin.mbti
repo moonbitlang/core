@@ -303,7 +303,6 @@ impl Logger for StringBuilder
 impl Show for StringBuilder
 
 type UninitializedArray[T]
-fn[A] UninitializedArray::blit(Self[A], Self[A], len~ : Int, src_offset~ : Int = .., dst_offset~ : Int = ..) -> Self[A]
 fn[A] UninitializedArray::length(Self[A]) -> Int
 fn[T] UninitializedArray::make(Int) -> Self[T]
 fn[T] UninitializedArray::op_as_view(Self[T], start~ : Int = .., end? : Int) -> ArrayView[T]

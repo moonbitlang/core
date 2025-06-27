@@ -130,12 +130,7 @@ pub fn[K, V] to_array(self : T[K, V]) -> Array[(K, V)] {
 let ratio = 5
 
 ///|
-fn[K : Compare, V] balance(
-  key : K,
-  value : V,
-  l : T[K, V],
-  r : T[K, V]
-) -> T[K, V] {
+fn[K, V] balance(key : K, value : V, l : T[K, V], r : T[K, V]) -> T[K, V] {
   //       1                   2
   //      / \                 / \
   //     x   2       --->    1   z

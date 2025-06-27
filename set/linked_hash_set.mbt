@@ -225,7 +225,7 @@ pub fn[K : Hash + Eq] remove_and_check(self : Set[K], key : K) -> Bool {
 }
 
 ///|
-fn[K : Eq] add_entry_to_tail(self : Set[K], entry : SEntry[K]) -> Unit {
+fn[K] add_entry_to_tail(self : Set[K], entry : SEntry[K]) -> Unit {
   match self.tail {
     None => {
       self.head = Some(entry)
@@ -264,7 +264,7 @@ fn[K : Eq] remove_entry(self : Set[K], entry : SEntry[K]) -> Unit {
 }
 
 ///|
-fn[K : Hash] shift_back(self : Set[K], start_index : Int) -> Unit {
+fn[K] shift_back(self : Set[K], start_index : Int) -> Unit {
   for prev = start_index, curr = (start_index + 1) & self.capacity_mask {
     match (self.entries[curr], self.list[curr]) {
       (Some(entry), currNode) => {
