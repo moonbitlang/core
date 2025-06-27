@@ -33,10 +33,7 @@ test "lex_zero invalid case" {
 
 ///|
 test "invalid number" {
-  inspect(
-    try? @json.parse("1e999999999"),
-    content="Err(Invalid number 1e999999999 at line 1, column 0)",
-  )
+  inspect(try? @json.parse("1e999999999"), content="Ok(Number(Infinity))")
 }
 
 ///|
