@@ -209,6 +209,34 @@ pub fn[K : Hash + Eq, V] get(self : T[K, V], key : K) -> V? {
 }
 
 ///|
+/// Retrieves the value associated with a given key in the hash map.
+///
+/// Parameters:
+///
+/// * `self` : The hash map to search in.
+/// * `key` : The key to look up in the map.
+///
+/// Returns `value` if the key exists in the map, panic otherwise.
+///
+/// Example:
+///
+/// ```moonbit
+///   let map = @hashmap.of([("key", 42)])
+///   inspect(map["key"], content="42")
+/// ```
+pub fn[K : Hash + Eq, V] op_get(self : T[K, V], key : K) -> V {
+  let hash = key.hash()
+  for i = 0, idx = hash & self.capacity_mask {
+    guard self.entries[idx] is Some(entry)
+    if entry.hash == hash && entry.key == key {
+      break entry.value
+    }
+    guard entry.psl <= i
+    continue i + 1, (idx + 1) & self.capacity_mask
+  }
+}
+
+///|
 fn[K : Hash + Eq, V] get_with_hash(self : T[K, V], key : K, hash : Int) -> V? {
   for i = 0, idx = hash & self.capacity_mask {
     guard self.entries[idx] is Some(entry) else { break None }
