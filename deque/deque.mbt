@@ -1446,45 +1446,34 @@ pub impl[A : @json.FromJson] @json.FromJson for T[A] with from_json(json, path) 
 /// found
 /// * Handles the deque's ring buffer structure internally
 /// * For empty deques, returns `Err(0)`
-pub fn[A] binary_search_by(
-  self : T[A],
-  comparator : (A) -> Int
-) -> Result[Int, Int] {
-  if self.len == 0 {
-    return Err(0)
-  }
-  let mut size = self.len
-  let mut left = 0
-  let mut right = self.len
-  while left < right {
-    let mid = left + size / 2
-    let physical_index = (self.head + mid) % self.buf.length()
-
+#locals(cmp)
+pub fn[A] binary_search_by(self : T[A], cmp : (A) -> Int) -> Result[Int, Int] {
+  let len = self.len
+  for i = 0, j = len; i < j; {
+    let h = i + (j - i) / 2
+    let physical_index = (self.head + h) % self.buf.length()
     // Safe access to elements (assuming initialized)
     let element = self.buf[physical_index]
-    let cmp_result = comparator(element)
-    if cmp_result < 0 {
-      left = mid + 1
-    } else if cmp_result > 0 {
-      right = mid
+
+    // Continue searching even if a match is found, until the leftmost match is found
+    if cmp(element) < 0 {
+      continue h + 1, j
     } else {
-      // Find the matching element and continue to search leftward for the leftmost matching item
-      right = mid
-      while left < right {
-        let new_mid = left + (right - left) / 2
-        let new_physical_index = (self.head + new_mid) % self.buf.length()
-        let new_element = self.buf[new_physical_index]
-        if comparator(new_element) < 0 {
-          left = new_mid + 1
-        } else {
-          right = new_mid
-        }
-      }
-      return Ok(left)
+      continue i, h
     }
-    size = right - left
+  } else {
+    if i < len {
+      let physical_index = (self.head + i) % self.buf.length()
+      let element = self.buf[physical_index]
+      if cmp(element) == 0 {
+        Ok(i)
+      } else {
+        Err(i)
+      }
+    } else {
+      Err(i)
+    }
   }
-  Err(left)
 }
 
 ///|
@@ -1516,5 +1505,29 @@ pub fn[A] binary_search_by(
 /// * For multiple matches, returns the leftmost matching position
 /// * Returns an insertion point that maintains the sort order when no match is found
 pub fn[A : Compare] binary_search(self : T[A], value : A) -> Result[Int, Int] {
-  self.binary_search_by(fn(x) { x.compare(value) })
+  let len = self.len
+  for i = 0, j = len; i < j; {
+    let h = i + (j - i) / 2
+    let physical_index = (self.head + h) % self.buf.length()
+    let element = self.buf[physical_index]
+
+    // Even if a match is found, continue searching to find the leftmost match
+    if element < value {
+      continue h + 1, j
+    } else {
+      continue i, h
+    }
+  } else {
+    if i < len {
+      let physical_index = (self.head + i) % self.buf.length()
+      let element = self.buf[physical_index]
+      if element == value {
+        Ok(i)
+      } else {
+        Err(i)
+      }
+    } else {
+      Err(i)
+    }
+  }
 }
