@@ -1133,3 +1133,63 @@ test "binary_search with duplicate elements" {
   let not_found = dq.binary_search(5)
   inspect(not_found, content="Err(6)")
 }
+
+///|
+test "binary_search when wrapped around" {
+  let dq = @deque.of([5, 7, 9])
+  dq..push_front(3)..push_front(1)
+  let found_first = dq.binary_search(1)
+  inspect(found_first, content="Ok(0)")
+  let found_middle = dq.binary_search(5)
+  inspect(found_middle, content="Ok(2)")
+  let found_last = dq.binary_search(9)
+  inspect(found_last, content="Ok(4)")
+}
+
+///|
+test "binary_search with complex wrap around" {
+  let dq = @deque.new(capacity=10)
+  for i in 1..=9 {
+    dq.push_back(i)
+  }
+  for _ in 1..=5 {
+    dq.unsafe_pop_front()
+  }
+  for i in 10..=12 {
+    dq.push_back(i)
+  }
+  let found = dq.binary_search(9)
+  inspect(found, content="Ok(3)")
+  let edge_case = dq.binary_search(6)
+  inspect(edge_case, content="Ok(0)")
+  let edge_case2 = dq.binary_search(12)
+  inspect(edge_case2, content="Ok(6)")
+}
+
+///|
+test "binary_search with minimal wrap around" {
+  let dq = @deque.new(capacity=2)
+  dq..push_back(1)..push_back(2)
+  dq..unsafe_pop_front()
+  dq..push_back(3)
+  let found = dq.binary_search(2)
+  inspect(found, content="Ok(0)")
+  let not_found = dq.binary_search(1)
+  inspect(not_found, content="Err(0)")
+}
+
+///|
+test "binary_search with edge wrap around" {
+  let dq = @deque.new(capacity=4)
+  dq..push_back(1)..push_back(3)..push_back(5)..push_back(7) // 填满
+  dq..unsafe_pop_front()..unsafe_pop_front() // 弹出两个
+  dq..push_back(9)..push_back(11) // 导致环绕
+
+  // 物理布局: [9,11,X,5,7]
+  // 逻辑顺序: [5,7,9,11]
+
+  let found = dq.binary_search(7)
+  inspect(found, content="Ok(1)")
+  let not_found = dq.binary_search(8)
+  inspect(not_found, content="Err(2)")
+}
