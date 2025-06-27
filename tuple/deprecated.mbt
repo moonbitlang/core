@@ -34,21 +34,21 @@ pub fn[T, U] snd(tuple : (T, U)) -> U {
 }
 
 ///|
-#deprecated("use `tuple |> then(fn { (a, b) => (f(a), b) })` instead")
+#deprecated("use `{ let (a,b) = tuple; (f(a),b) }` instead")
 #coverage.skip
 pub fn[T, U, V] map_fst(f : (T) -> U, tuple : (T, V)) -> (U, V) {
   (f(tuple.0), tuple.1)
 }
 
 ///|
-#deprecated("use `tuple |> then(fn { (a, b) => (a, f(b)) })` instead")
+#deprecated("use `{ let (a,b) = tuple; (a,f(b)) }` instead")
 #coverage.skip
 pub fn[T, U, V] map_snd(f : (T) -> U, tuple : (V, T)) -> (V, U) {
   (tuple.0, f(tuple.1))
 }
 
 ///|
-#deprecated("use `tuple |> then(fn { (a, b) => (f(a), g(b)) })` instead")
+#deprecated("use `{ let (a,b) = tuple; (f(a),f(b)) }` instead")
 #coverage.skip
 pub fn[T, U, V, W] map_both(
   f : (T) -> U,
