@@ -1173,17 +1173,17 @@ pub fn FixedArray::join(
   }
   let first = self[0]
   let mut size_hint = first.length()
-  for i = 1; i < len; i = i + 1 {
+  for i in 1..<len {
     size_hint += separator.length() + self[i].length()
   }
   let string = StringBuilder::new(size_hint~)
   if separator.is_empty() {
-    for i = 0; i < len; i = i + 1 {
+    for i in 0..<len {
       string.write_string(self[i])
     }
   } else {
     string.write_string(self[0])
-    for i = 1; i < len; i = i + 1 {
+    for i in 1..<len {
       string.write_substring(
         separator.data(),
         separator.start_offset(),

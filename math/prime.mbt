@@ -264,7 +264,7 @@ fn trial_divisions(n : @bigint.BigInt) -> Bool {
     2048..=4096 => 1024
     _ => 2048
   }
-  for i = 1; i < td; i = i + 1 {
+  for i in 1..<td {
     if n % small_primes[i] == 0 {
       return n == small_primes[i]
     }
@@ -291,7 +291,7 @@ fn miller_rabin_test(
   // (step 3) 
   let w3_len = w3.bit_length()
   // (step 4)
-  next~: for i = 0; i < iters; i = i + 1 {
+  next~: for i in 0..<iters {
     // (step 4.1) obtain a random BigInt b where 1 < b < w-1
     let rand_b = for {
       let x = rand.bigint(w3_len)
@@ -307,7 +307,7 @@ fn miller_rabin_test(
       continue next~
     }
     // (step 4.5)
-    for j = 1; j < a; j = j + 1 {
+    for j in 1..<a {
       // (step 4.5.1) z = z^2 mod w
       z = z.pow(2, modulus=w)
       // (step 4.5.2)

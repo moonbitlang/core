@@ -1196,7 +1196,8 @@ pub fn[T] Array::resize(self : Array[T], new_len : Int, f : T) -> Unit {
   if new_len < self.length() {
     self.unsafe_truncate_to_length(new_len)
   } else {
-    for i = self.length(); i < new_len; i = i + 1 {
+    let len = self.length()
+    for _ in len..<new_len {
       self.push(f)
     }
   }
