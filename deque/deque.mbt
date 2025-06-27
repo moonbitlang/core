@@ -1309,3 +1309,49 @@ pub impl[A : @json.FromJson] @json.FromJson for T[A] with from_json(json, path) 
   }
   { len, buf, head, tail }
 }
+
+///|
+/// Flattens a high-dimensional deque into a lower-dimensional deque
+/// by concatenating all inner deques in order.
+///
+/// Parameters:
+///
+/// * `self` : The high-dimensional deque to flatten.
+///
+/// Returns a new lower-dimensional deque containing all elements 
+/// from inner deques in sequence.
+///
+/// Note:
+///   - Uses the first inner deque as base and appends subsequent deques.
+///   - Efficiently preserves element order across all inner deques.
+///
+/// Example:
+///
+/// ```moonbit
+///   let deque = @deque.of([@deque.of([1,2,3]),@deque.of([4,5,6]),@deque.of([7,8])])
+///   let deque_test = deque.flatten()
+///   inspect(deque_test, content="@deque.of([1, 2, 3, 4, 5, 6, 7, 8])")
+/// ```
+pub fn[A] T::flatten(self : T[T[A]]) -> T[A] {
+  let mut len = 0
+  for deque in self {
+    len += deque.length()
+  }
+  let target = T::{
+    buf: UninitializedArray::make(len),
+    len,
+    head: 0,
+    tail: len - 1,
+  }
+  let mut i = 0
+  for deque in self {
+    let cap = deque.buf.length()
+    let head_len = cap - deque.head
+    target.buf.unsafe_blit(i, deque.buf, deque.head, head_len)
+    if head_len < deque.len {
+      target.buf.unsafe_blit(i + head_len, deque.buf, 0, deque.len - head_len)
+    }
+    i += deque.len
+  }
+  target
+}
