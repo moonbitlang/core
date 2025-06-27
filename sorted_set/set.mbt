@@ -22,7 +22,7 @@ pub fn[V] new() -> T[V] {
 
 ///|
 /// Returns the one-value set containing only `value`.
-pub fn[V : Compare] singleton(value : V) -> T[V] {
+pub fn[V] singleton(value : V) -> T[V] {
   { root: Some({ value, left: None, right: None, height: 1 }), size: 1 }
 }
 
@@ -306,19 +306,19 @@ pub fn[V : Compare] disjoint(self : T[V], src : T[V]) -> Bool {
 // General collection operations
 
 ///|
-pub impl[V : Compare] Eq for T[V] with op_equal(self, other) {
+pub impl[V : Eq] Eq for T[V] with op_equal(self, other) {
   self.to_array() == other.to_array()
 }
 
 ///|
 /// Returns if the set is empty.
-pub fn[V : Compare] is_empty(self : T[V]) -> Bool {
+pub fn[V] is_empty(self : T[V]) -> Bool {
   self.root is None
 }
 
 ///|
 /// Returns the number of elements in the set.
-pub fn[V : Compare] size(self : T[V]) -> Int {
+pub fn[V] size(self : T[V]) -> Int {
   self.size
 }
 
@@ -484,7 +484,7 @@ fn[V] height_ge(x1 : Node[V]?, x2 : Node[V]?) -> Bool {
 }
 
 ///|
-fn[V : Compare] balance(root : Node[V]) -> Node[V] {
+fn[V] balance(root : Node[V]) -> Node[V] {
   let (l, r) = (root.left, root.right)
   let (hl, hr) = (height(l), height(r))
   let new_root = if hl > hr + 1 {
@@ -509,7 +509,7 @@ fn[V : Compare] balance(root : Node[V]) -> Node[V] {
 }
 
 ///|
-fn[V : Compare] rotate_l(n : Node[V]) -> Node[V] {
+fn[V] rotate_l(n : Node[V]) -> Node[V] {
   let r = n.right.unwrap()
   n.right = r.left
   r.left = Some(n)
@@ -519,7 +519,7 @@ fn[V : Compare] rotate_l(n : Node[V]) -> Node[V] {
 }
 
 ///|
-fn[V : Compare] rotate_r(n : Node[V]) -> Node[V] {
+fn[V] rotate_r(n : Node[V]) -> Node[V] {
   let l = n.left.unwrap()
   n.left = l.right
   l.right = Some(n)
@@ -529,7 +529,7 @@ fn[V : Compare] rotate_r(n : Node[V]) -> Node[V] {
 }
 
 ///|
-fn[V : Compare] rotate_lr(n : Node[V]) -> Node[V] {
+fn[V] rotate_lr(n : Node[V]) -> Node[V] {
   let l = n.left.unwrap()
   let v = rotate_l(l)
   n.left = Some(v)
@@ -537,7 +537,7 @@ fn[V : Compare] rotate_lr(n : Node[V]) -> Node[V] {
 }
 
 ///|
-fn[V : Compare] rotate_rl(n : Node[V]) -> Node[V] {
+fn[V] rotate_rl(n : Node[V]) -> Node[V] {
   let r = n.right.unwrap()
   let v = rotate_r(r)
   n.right = Some(v)

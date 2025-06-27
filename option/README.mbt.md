@@ -20,9 +20,9 @@ For conditional expressions, you can use the `when` function, which returns `Som
 
 ```moonbit
 test {
-    let some = @option.when(1 > 0, fn () { 42 })
+    let some = @option.when(1 > 0, () => { 42 })
     assert_eq(some, Some(42))
-    let none = @option.when(1 < 0, fn () { 42 })
+    let none = @option.when(1 < 0, () => { 42 })
     assert_eq(none, None)
 }
 ```
@@ -31,9 +31,9 @@ The dual version of `when` is the `unless` function, which returns `Some` if the
 
 ```moonbit
 test {
-    let some = @option.unless(1 < 0, fn () { 42 })
+    let some = @option.unless(1 < 0, () => { 42 })
     assert_eq(some, Some(42))
-    let none = @option.unless(1 > 0, fn () { 42 })
+    let none = @option.unless(1 > 0, () => { 42 })
     assert_eq(none, None)
 }
 ```
@@ -78,7 +78,7 @@ There is also the `or_else` method, which returns the value if it is `Some`, oth
 ```moonbit
 test {
   let none: Int? = None
-  let value = none.or_else(fn() -> Int { 0 }) // 0
+  let value = none.or_else(() => { 0 }) // 0
   assert_eq(value, 0)
 }
 ```
@@ -90,7 +90,7 @@ You can transform the value of an `Option` using the `map` method. It applies th
 ```moonbit
 test {
   let some: Int? = Some(42)
-  let new_some = some.map(fn(value: Int) { value + 1 }) // Some(43)
+  let new_some = some.map((value: Int) => { value + 1 }) // Some(43)
   assert_eq(new_some, Some(43))
 }
 ```
@@ -100,8 +100,8 @@ There is a `filter` method that applies a predicate to the value if it is `Some`
 ```moonbit
 test {
   let some: Int? = Some(42)
-  let new_some = some.filter(fn(value: Int) { value > 40 }) // Some(42)
-  let none = some.filter(fn(value: Int) { value > 50 }) // None
+  let new_some = some.filter((value: Int) => { value > 40 }) // Some(42)
+  let none = some.filter((value: Int) => { value > 50 }) // None
   assert_eq(new_some, Some(42))
   assert_eq(none, None)
 }
@@ -113,7 +113,7 @@ You can chain multiple operations that return `Option` using the `bind` method, 
 ```moonbit
 test {
   let some: Int? = Some(42)
-  let new_some = some.bind(fn(value: Int) -> Int? { Some(value + 1) }) // Some(43)
+  let new_some = some.bind((value: Int) => { Some(value + 1) }) // Some(43)
   assert_eq(new_some, Some(43))
 }
 ```

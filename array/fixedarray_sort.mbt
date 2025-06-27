@@ -82,7 +82,7 @@ fn[T : Compare] timsort(arr : FixedArraySlice[T]) -> Unit {
 fn[T : Compare] FixedArraySlice::insertion_sort(
   arr : FixedArraySlice[T]
 ) -> Unit {
-  for i = 1, len = arr.length(); i < len; i = i + 1 {
+  for i in 1..<arr.length() {
     for j = i; j > 0 && arr[j] < arr[j - 1]; j = j - 1 {
       arr.swap(j, j - 1)
     }
@@ -377,13 +377,11 @@ fn[T : Compare] fixed_choose_pivot(arr : FixedArraySlice[T]) -> (Int, Bool) {
   if len >= 8 {
     let a = len / 4 * 1
     let c = len / 4 * 3
-    let sort_2 = fn(a : Int, b : Int) {
-      if arr[a] > arr[b] {
-        arr.swap(a, b)
-        swaps += 1
-      }
+    let sort_2 = (a : Int, b : Int) => if arr[a] > arr[b] {
+      arr.swap(a, b)
+      swaps += 1
     }
-    let sort_3 = fn(a : Int, b : Int, c : Int) {
+    let sort_3 = (a : Int, b : Int, c : Int) => {
       sort_2(a, b)
       sort_2(b, c)
       sort_2(a, b)
@@ -461,21 +459,25 @@ fn fixed_test_sort(f : (FixedArray[Int]) -> Unit) -> Unit raise {
 
 ///|
 test "fixed_heap_sort" {
-  fixed_test_sort(fn(arr) {
-    fixed_heap_sort({ array: arr, start: 0, end: arr.length() })
-  })
+  fixed_test_sort(arr => fixed_heap_sort({
+    array: arr,
+    start: 0,
+    end: arr.length(),
+  }))
 }
 
 ///|
 test "fixed_bubble_sort" {
-  fixed_test_sort(fn(arr) {
-    fixed_bubble_sort({ array: arr, start: 0, end: arr.length() })
-  })
+  fixed_test_sort(arr => fixed_bubble_sort({
+    array: arr,
+    start: 0,
+    end: arr.length(),
+  }))
 }
 
 ///|
 test "sort" {
-  fixed_test_sort(fn(arr) { arr.sort() })
+  fixed_test_sort(arr => arr.sort())
 }
 
 ///|
@@ -534,7 +536,7 @@ test "stable_sort_complex" {
   let total_len = run_lens.fold(init=0, (acc, x) => acc + x)
   let arr = FixedArray::make(total_len, 0)
   let mut index = 0
-  for i = 0, len = run_lens.length(); i < len; i = i + 1 {
+  for i in 0..<run_lens.length() {
     for j in 0..<run_lens[i] {
       arr[index] = j
       index += 1

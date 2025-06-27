@@ -21,13 +21,13 @@
 ///
 /// ```mbt
 ///   let arr = [5, 3, 2, 4, 1]
-///   arr.sort_by_key(fn (x) {-x})
+///   arr.sort_by_key((x) => {-x})
 ///   assert_eq(arr, [5, 4, 3, 2, 1])
 /// ```
 pub fn[T, K : Compare] sort_by_key(self : Array[T], map : (T) -> K) -> Unit {
   quick_sort_by(
     self[:],
-    fn(a, b) { map(a).compare(map(b)) },
+    (a, b) => map(a).compare(map(b)),
     None,
     get_limit(self.length()),
   )
@@ -42,7 +42,7 @@ pub fn[T, K : Compare] sort_by_key(self : Array[T], map : (T) -> K) -> Unit {
 ///
 /// ```mbt
 ///   let arr = [5, 3, 2, 4, 1]
-///   arr.sort_by(fn (a, b) { a - b })
+///   arr.sort_by((a, b) => { a - b })
 ///   assert_eq(arr, [1, 2, 3, 4, 5])
 /// ```
 pub fn[T] sort_by(self : Array[T], cmp : (T, T) -> Int) -> Unit {
@@ -192,13 +192,11 @@ fn[T] choose_pivot_by(arr : ArrayView[T], cmp : (T, T) -> Int) -> (Int, Bool) {
   if len >= 8 {
     let a = len / 4 * 1
     let c = len / 4 * 3
-    let sort_2 = fn(a : Int, b : Int) {
-      if cmp(arr[a], arr[b]) > 0 {
-        arr.swap(a, b)
-        swaps += 1
-      }
+    let sort_2 = (a : Int, b : Int) => if cmp(arr[a], arr[b]) > 0 {
+      arr.swap(a, b)
+      swaps += 1
     }
-    let sort_3 = fn(a : Int, b : Int, c : Int) {
+    let sort_3 = (a : Int, b : Int, c : Int) => {
       sort_2(a, b)
       sort_2(b, c)
       sort_2(a, b)
@@ -255,29 +253,29 @@ fn[T] sift_down_by(
 ///|
 test "try_bubble_sort" {
   let arr = [8, 7, 6, 5, 4, 3, 2, 1]
-  let sorted = try_bubble_sort_by(arr[0:8], fn(a, b) { a - b })
+  let sorted = try_bubble_sort_by(arr[0:8], (a, b) => a - b)
   assert_eq(sorted, true)
   assert_eq(arr, [1, 2, 3, 4, 5, 6, 7, 8])
 }
 
 ///|
 test "heap_sort" {
-  test_sort(fn(arr) { heap_sort_by(arr[:], fn(a, b) { a - b }) })
+  test_sort(arr => heap_sort_by(arr[:], (a, b) => a - b))
 }
 
 ///|
 test "bubble_sort" {
-  test_sort(fn(arr) { bubble_sort_by(arr[:], fn(a, b) { a - b }) })
+  test_sort(arr => bubble_sort_by(arr[:], (a, b) => a - b))
 }
 
 ///|
 test "sort_by_key" {
   let arr = [5, 1, 3, 4, 2]
-  arr.sort_by_key(fn(x) { -x })
+  arr.sort_by_key(x => -x)
   assert_eq(arr, [5, 4, 3, 2, 1])
 }
 
 ///|
 test "sort_by" {
-  test_sort(fn(arr) { arr.sort_by(fn(a, b) { a - b }) })
+  test_sort(arr => arr.sort_by((a, b) => a - b))
 }

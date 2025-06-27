@@ -10,8 +10,10 @@ You can use `new()` or `of()` to create a priority queue.
 
 ```moonbit
 test {
-  let _queue1 : @priority_queue.T[Int] = @priority_queue.new()
-  let _queue2 = @priority_queue.of([1, 2, 3])
+  let queue1 : @priority_queue.T[Int] = @priority_queue.new()
+  let queue2 = @priority_queue.of([1, 2, 3])
+  @json.inspect(queue1, content=[])
+  @json.inspect(queue2, content=[3,2,1])
 }
 ```
 

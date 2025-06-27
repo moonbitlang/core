@@ -22,8 +22,8 @@
 /// Example:
 ///
 /// ```moonbit
-///   inspect(@float.not_a_number.is_nan(), content="true")
-///   inspect(@float.not_a_number + 1.0, content="NaN")
+/// inspect(@float.not_a_number.is_nan(), content="true")
+/// inspect(@float.not_a_number + 1.0, content="NaN")
 /// ```
 pub let not_a_number : Float = (0x7FC00000).reinterpret_as_float()
 
@@ -36,8 +36,8 @@ pub let not_a_number : Float = (0x7FC00000).reinterpret_as_float()
 /// Example:
 ///
 /// ```moonbit
-///   inspect(@float.infinity.is_pos_inf(), content="true")
-///   inspect(@float.infinity > 1.0, content="true")
+/// inspect(@float.infinity.is_pos_inf(), content="true")
+/// inspect(@float.infinity > 1.0, content="true")
 /// ```
 pub let infinity : Float = (0x7F800000).reinterpret_as_float()
 
@@ -51,8 +51,8 @@ pub let infinity : Float = (0x7F800000).reinterpret_as_float()
 /// Example:
 ///
 /// ```moonbit
-///   inspect(@float.neg_infinity.is_neg_inf(), content="true")
-///   inspect(@float.neg_infinity < (-1.0 : Float), content="true")
+/// inspect(@float.neg_infinity.is_neg_inf(), content="true")
+/// inspect(@float.neg_infinity < (-1.0 : Float), content="true")
 /// ```
 pub let neg_infinity : Float = (0xFF800000).reinterpret_as_float()
 
@@ -63,8 +63,8 @@ pub let neg_infinity : Float = (0xFF800000).reinterpret_as_float()
 /// Example:
 ///
 /// ```moonbit
-///   inspect(@float.max_value < @float.infinity, content="true")
-///   inspect(@float.max_value > 0.0, content="true")
+/// inspect(@float.max_value < @float.infinity, content="true")
+/// inspect(@float.max_value > 0.0, content="true")
 /// ```
 pub let max_value : Float = (0x7F7FFFFF).reinterpret_as_float()
 
@@ -74,8 +74,8 @@ pub let max_value : Float = (0x7F7FFFFF).reinterpret_as_float()
 /// Example:
 ///
 /// ```moonbit
-///   inspect(@float.min_value < -1.0, content="true")
-///   inspect(@float.min_value > @float.neg_infinity, content="true")
+/// inspect(@float.min_value < -1.0, content="true")
+/// inspect(@float.min_value > @float.neg_infinity, content="true")
 /// ```
 pub let min_value : Float = (0xFF7FFFFF).reinterpret_as_float()
 
@@ -86,8 +86,8 @@ pub let min_value : Float = (0xFF7FFFFF).reinterpret_as_float()
 /// Example:
 ///
 /// ```moonbit
-///   inspect(@float.min_positive > 0.0, content="true")
-///   inspect(@float.min_positive < 1.2e-38, content="true")
+/// inspect(@float.min_positive > 0.0, content="true")
+/// inspect(@float.min_positive < 1.2e-38, content="true")
 /// ```
 pub let min_positive : Float = (0x00800000).reinterpret_as_float()
 
