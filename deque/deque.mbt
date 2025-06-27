@@ -1355,3 +1355,71 @@ pub fn[A] T::flatten(self : T[T[A]]) -> T[A] {
   }
   target
 }
+
+///|
+/// Removes and returns elements in the specified range [begin, end) from the deque.
+///
+/// Parameters:
+///
+/// * `self` : The target deque (modified in-place).
+/// * `start` : Start index of the range (inclusive).
+/// * `len` : Length of the range to drain.
+///
+/// Important:
+///   - Returns a new deque containing the drained elements.
+///   - Original deque retains elements outside [start, start + len) in original order.
+///
+/// Example:
+///
+/// ```moonbit
+/// let deque = @deque.of([1,2,3,4,5,6,7,8,9])
+/// let deque_test = deque.drain(start=2, len=4)
+/// inspect(deque_test, content="@deque.of([3, 4, 5, 6])")
+/// inspect(deque, content="@deque.of([1, 2, 7, 8, 9])")
+/// ```
+pub fn[A] T::drain(self : T[A], start~ : Int, len? : Int) -> T[A] {
+  let len = match len {
+    Some(l) => if l > self.len { self.len } else { l }
+    None => self.len - start
+  }
+  if len == 0 {
+    return new()
+  }
+  let deque = T::{
+    buf: UninitializedArray::make(len),
+    len,
+    head: 0,
+    tail: len - 1,
+  }
+  let cap = self.buf.length()
+  let start_idx = (self.head + start) % cap
+  let start_len = cap - start_idx
+
+  // copy to deque
+  if start_len < len {
+    deque.buf.unsafe_blit(0, self.buf, start_idx, start_len)
+    deque.buf.unsafe_blit(start_len, self.buf, 0, len - start_len)
+    for i in 0..<start_len {
+      set_null(self.buf, (start_idx + i) % cap)
+    }
+    for i in 0..<(len - start_len) {
+      set_null(self.buf, i)
+    }
+  } else {
+    deque.buf.unsafe_blit(0, self.buf, start_idx, len)
+    for i in 0..<len {
+      set_null(self.buf, start_idx + i)
+    }
+  }
+
+  // move self
+  // TODO: use blit
+  let new_head = self.head + len
+  for i = start - 1; i >= 0; i = i - 1 {
+    self.buf[(new_head + i) % cap] = self.buf[(self.head + i) % cap]
+    set_null(self.buf, (self.head + i) % cap)
+  }
+  self.head = new_head % cap
+  self.len -= len
+  deque
+}
