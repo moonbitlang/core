@@ -209,11 +209,11 @@ fn[A] realloc(self : T[A]) -> Unit {
       }
     } else {
       let mut j = 0
-      for i = self.head; i < self.buf.length(); i = i + 1 {
+      for i in self.head..<self.buf.length() {
         new_buf[j] = self.buf[i]
         j += 1
       }
-      for i = 0; i <= self.tail; i = i + 1 {
+      for i in 0..=self.tail {
         new_buf[j] = self.buf[i]
         j += 1
       }

@@ -214,7 +214,7 @@ pub fn[A, B] zip(self : Array[A], other : Array[B]) -> Array[(A, B)] {
     other.length()
   }
   let arr = Array::new(capacity=length)
-  for i = 0; i < length; i = i + 1 {
+  for i in 0..<length {
     arr.push((self[i], other[i]))
   } else {
     return arr
@@ -268,7 +268,7 @@ pub fn[A, B, C] zip_with(
 ) -> Array[C] raise? {
   let length = if l.length() < r.length() { l.length() } else { r.length() }
   let arr = Array::new(capacity=length)
-  for i = 0; i < length; i = i + 1 {
+  for i in 0..<length {
     arr.push(merge(l[i], r[i]))
   } else {
     return arr
@@ -300,7 +300,7 @@ pub fn[A, B] zip_to_iter2(self : Array[A], other : Array[B]) -> Iter2[A, B] {
     } else {
       other.length()
     }
-    for i = 0; i < length; i = i + 1 {
+    for i in 0..<length {
       if yield_(self[i], other[i]) == IterEnd {
         break IterEnd
       }

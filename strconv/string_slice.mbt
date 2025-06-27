@@ -95,7 +95,12 @@ fn is_empty(self : StringSlice) -> Bool {
 
 ///|
 fn prefix_eq_ignore_case(self : StringSlice, s2 : String) -> Bool {
-  for i = 0; i < s2.length() && i < self.length(); i = i + 1 {
+  let end = if s2.length() < self.length() {
+    s2.length()
+  } else {
+    self.length()
+  }
+  for i in 0..<end {
     let c1 = self[i]
     let c2 = s2.unsafe_charcode_at(i).unsafe_to_char()
     if lower(c1) != lower(c2) {
