@@ -18,7 +18,7 @@ pub(all) enum Json {
   Null
   True
   False
-  Number(Double)
+  Number(Double, repr~ : String?)
   String(String)
   Array(Array[Json])
   Object(Map[String, Json])
@@ -54,7 +54,7 @@ pub fn Json::null() -> Json {
 ///   inspect(Json::number(3.14), content="Number(3.14)")
 /// ```
 pub fn Json::number(number : Double) -> Json {
-  return Number(number)
+  return Number(number, repr=None)
 }
 
 ///|
@@ -160,12 +160,12 @@ pub impl ToJson for Bool with to_json(self : Bool) -> Json {
 
 ///|
 pub impl ToJson for Byte with to_json(self : Byte) -> Json {
-  Number(self.to_double())
+  Json::number(self.to_double())
 }
 
 ///|
 pub impl ToJson for Int with to_json(self : Int) -> Json {
-  Number(self.to_double())
+  Json::number(self.to_double())
 }
 
 ///|
@@ -175,7 +175,7 @@ pub impl ToJson for Int64 with to_json(self : Int64) -> Json {
 
 ///|
 pub impl ToJson for UInt with to_json(self : UInt) -> Json {
-  Number(self.to_uint64().to_double())
+  Json::number(self.to_uint64().to_double())
 }
 
 ///|
@@ -190,12 +190,12 @@ pub impl ToJson for Double with to_json(self : Double) -> Json {
     self < 0xFFEFFFFFFFFFFFFFL.reinterpret_as_double() {
     return Null
   }
-  Number(self)
+  Json::number(self)
 }
 
 ///|
 pub impl ToJson for Float with to_json(self : Float) -> Json {
-  Number(self.to_double())
+  Json::number(self.to_double())
 }
 
 ///|
