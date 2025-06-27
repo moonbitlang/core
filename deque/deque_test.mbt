@@ -1021,3 +1021,30 @@ test "flatten when wrapped around" {
     content="@deque.of([6, 1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5])",
   )
 }
+
+///|
+test "drain when wrapped around" {
+  // when the area to be drained is wrapped around
+  let dq = of([4, 5, 6])
+  dq..push_front(3)..push_front(2)..push_front(1)
+  inspect(dq.as_views(), content="([1, 2, 3], [4, 5, 6])")
+  let dq2 = dq.drain(start=2, len=2)
+  inspect(dq.as_views(), content="([1], [2, 5, 6])")
+  inspect(dq2, content="@deque.of([3, 4])")
+
+  // when the area to be drained is not wrapped around
+  let dq = of([4, 5, 6])
+  dq..push_front(3)..push_front(2)..push_front(1)
+  inspect(dq.as_views(), content="([1, 2, 3], [4, 5, 6])")
+  let dq2 = dq.drain(start=1, len=2)
+  inspect(dq.as_views(), content="([1], [4, 5, 6])")
+  inspect(dq2, content="@deque.of([2, 3])")
+
+  // when the start is larger than len
+  let dq = of([5, 6])
+  dq..push_front(4)..push_front(3)..push_front(2)..push_front(1)
+  inspect(dq.as_views(), content="([1, 2], [3, 4, 5, 6])")
+  let dq2 = dq.drain(start=3, len=2)
+  inspect(dq.as_views(), content="([1, 2, 3, 6], [])")
+  inspect(dq2, content="@deque.of([4, 5])")
+}
