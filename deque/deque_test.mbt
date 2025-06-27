@@ -995,3 +995,29 @@ test "rev_iter2 when wrapped around" {
     content="[(0, 5), (1, 4), (2, 3), (3, 2), (4, 1), (5, 6)]",
   )
 }
+
+///|
+test "flatten with empty deque" {
+  let dq : @deque.T[@deque.T[Int]] = @deque.of([])
+  inspect(dq.flatten(), content="@deque.of([])")
+  let dq : @deque.T[@deque.T[Int]] = @deque.of([@deque.of([]), @deque.of([])])
+  inspect(dq.flatten(), content="@deque.of([])")
+  let dq : @deque.T[@deque.T[Int]] = @deque.of([
+    @deque.of([1, 2, 3]),
+    @deque.of([]),
+    @deque.of([4, 5, 6]),
+  ])
+  inspect(dq.flatten(), content="@deque.of([1, 2, 3, 4, 5, 6])")
+}
+
+///|
+test "flatten when wrapped around" {
+  let dq = of([1, 2, 3, 4, 5])
+  dq.push_front(6)
+  inspect(dq.as_views(), content="([6], [1, 2, 3, 4, 5])")
+  let dqdq = of([dq, dq])
+  inspect(
+    dqdq.flatten(),
+    content="@deque.of([6, 1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5])",
+  )
+}
