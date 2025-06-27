@@ -366,13 +366,15 @@ fn BigInt::grade_school_mul(self : BigInt, other : BigInt) -> BigInt {
   let limbs = FixedArray::make(len, 0U)
   for i in 0..<self_len {
     let mut carry = 0UL
-    for j = 0; j < other_len || carry != 0; j = j + 1 {
+    let mut j = 0
+    while j < other_len || carry != 0 {
       let product = limbs[i + j].to_uint64() +
         self.limbs[i].to_uint64() *
         (if j < other_len { other.limbs[j].to_uint64() } else { 0 }) +
         carry
       limbs[i + j] = (product % radix).to_uint()
       carry = product / radix
+      j += 1
     }
   }
   if limbs[self_len + other_len - 1] == 0 {
@@ -1338,10 +1340,12 @@ pub fn BigInt::to_octets(self : BigInt, length? : Int) -> Bytes {
   let len = (head_bits + 7) / 8 + tail_len * (radix_bit_len / 8)
   let len = max(length, len)
   let result = FixedArray::make(len, Byte::default())
-  for i = 0; i < len && i / 4 < self.len; i = i + 1 {
+  let mut i = 0
+  while i < len && i / 4 < self.len {
     result[len - 1 - i] = ((self.limbs[i / 4] >> (i % 4 * 8)) & 0xffU)
       .reinterpret_as_int()
       .to_byte()
+    i += 1
   }
   unsafe_fixedarray_to_bytes(result)
 }

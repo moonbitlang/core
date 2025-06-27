@@ -269,22 +269,27 @@ pub fn View::iter(self : View) -> Iter[Char] {
 pub fn View::iter2(self : View) -> Iter2[Int, Char] {
   Iter2::new(yield_ => {
     let len = self.length()
-    for index = 0, n = 0; index < len; index = index + 1, n = n + 1 {
+    let mut index = 0
+    let mut n = 0
+    while index < len {
       let c1 = self.str.unsafe_charcode_at(self.start + index)
       if is_leading_surrogate(c1) && index + 1 < len {
         let c2 = self.str.unsafe_charcode_at(self.start + index + 1)
         if is_trailing_surrogate(c2) {
           let c = code_point_of_surrogate_pair(c1, c2)
           guard yield_(n, c) is IterContinue else { break IterEnd }
-          continue index + 2, n + 1
+          index += 2
+          n += 1
+          continue
         }
       }
       guard yield_(n, c1.unsafe_to_char()) is IterContinue else {
         break IterEnd
       }
-    } else {
-      IterContinue
+      index += 1
+      n += 1
     }
+    IterContinue
   })
 }
 

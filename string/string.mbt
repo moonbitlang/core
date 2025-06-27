@@ -144,23 +144,28 @@ pub fn iter(self : String) -> Iter[Char] {
 pub fn iter2(self : String) -> Iter2[Int, Char] {
   Iter2::new(yield_ => {
     let len = self.length()
-    for index = 0, n = 0; index < len; index = index + 1, n = n + 1 {
+    let mut index = 0
+    let mut n = 0
+    while index < len {
       let c1 = self.unsafe_charcode_at(index)
       if is_leading_surrogate(c1) && index + 1 < len {
         let c2 = self.unsafe_charcode_at(index + 1)
         if is_trailing_surrogate(c2) {
           let c = code_point_of_surrogate_pair(c1, c2)
           guard yield_(n, c) is IterContinue else { break IterEnd }
-          continue index + 2, n + 1
+          index += 2
+          n += 1
+          continue
         }
       }
       //TODO: handle garbage input
       guard yield_(n, c1.unsafe_to_char()) is IterContinue else {
         break IterEnd
       }
-    } else {
-      IterContinue
+      index += 1
+      n += 1
     }
+    IterContinue
   })
 }
 
@@ -319,21 +324,24 @@ pub fn String::char_length_eq(
   end_offset? : Int
 ) -> Bool {
   let end_offset = if end_offset is Some(o) { o } else { self.length() }
-  for index = start_offset, count = 0
-      index < end_offset && count < len
-      index = index + 1, count = count + 1 {
+  let mut index = start_offset
+  let mut count = 0
+  while index < end_offset && count < len {
     let c1 = self.unsafe_charcode_at(index)
     if is_leading_surrogate(c1) && index + 1 < end_offset {
       let c2 = self.unsafe_charcode_at(index + 1)
       if is_trailing_surrogate(c2) {
-        continue index + 2, count + 1
+        index += 2
+        count += 1
+        continue
       } else {
         abort("invalid surrogate pair")
       }
     }
-  } else {
-    count == len && index == end_offset
+    index += 1
+    count += 1
   }
+  count == len && index == end_offset
 }
 
 ///|
@@ -347,19 +355,22 @@ pub fn String::char_length_ge(
   end_offset? : Int
 ) -> Bool {
   let end_offset = if end_offset is Some(o) { o } else { self.length() }
-  for index = start_offset, count = 0
-      index < end_offset && count < len
-      index = index + 1, count = count + 1 {
+  let mut index = start_offset
+  let mut count = 0
+  while index < end_offset && count < len {
     let c1 = self.unsafe_charcode_at(index)
     if is_leading_surrogate(c1) && index + 1 < end_offset {
       let c2 = self.unsafe_charcode_at(index + 1)
       if is_trailing_surrogate(c2) {
-        continue index + 2, count + 1
+        index += 2
+        count += 1
+        continue
       } else {
         abort("invalid surrogate pair")
       }
     }
-  } else {
-    count >= len
+    index += 1
+    count += 1
   }
+  count >= len
 }
