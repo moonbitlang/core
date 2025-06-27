@@ -129,7 +129,7 @@ test "each_rev" {
   v.push(4)
   v.push(5)
   let mut sum = 0
-  v.rev_each(fn(x) { sum = sum + x })
+  v.rev_each(x => sum = sum + x)
   assert_eq(sum, 12)
 }
 
@@ -148,7 +148,7 @@ test "eachi" {
 test "rev_eachi" {
   let v = [3, 4, 5]
   let mut sum = 0
-  v.rev_eachi(fn(i, x) { sum = sum + x + i })
+  v.rev_eachi((i, x) => sum = sum + x + i)
   assert_eq(sum, 15)
 }
 
@@ -163,14 +163,14 @@ test "clear" {
 test "map" {
   let v = [3, 4, 5]
   let e : Array[Int] = []
-  inspect(v.map(fn(x) { x + 1 }), content="[4, 5, 6]")
+  inspect(v.map(x => x + 1), content="[4, 5, 6]")
   inspect(
-    v.map(fn(x) { x.to_string() }),
+    v.map(_.to_string()),
     content=
       #|["3", "4", "5"]
     ,
   )
-  inspect(e.map(fn(x) { x + 1 }), content="[]")
+  inspect(e.map(x => x + 1), content="[]")
   // Is it correct?
   inspect(
     ["a", "b", "c"],
@@ -184,8 +184,8 @@ test "map" {
 test "map_inplace" {
   let v = [3, 4, 5]
   let e : Array[Int] = []
-  v.map_inplace(fn(x) { x + 1 })
-  e.map_inplace(fn(x) { x + 1 })
+  v.map_inplace(x => x + 1)
+  e.map_inplace(x => x + 1)
   inspect(v, content="[4, 5, 6]")
   inspect(e, content="[]")
 }
@@ -194,22 +194,22 @@ test "map_inplace" {
 test "mapi" {
   let v = [3, 4, 5]
   let e : Array[Int] = []
-  inspect(v.mapi(fn(i, x) { x + i }), content="[3, 5, 7]")
+  inspect(v.mapi((i, x) => x + i), content="[3, 5, 7]")
   inspect(
-    v.mapi(fn(i, x) { (x + i).to_string() }),
+    v.mapi((i, x) => (x + i).to_string()),
     content=
       #|["3", "5", "7"]
     ,
   )
-  inspect(e.mapi(fn(_i, x) { x + 1 }), content="[]")
+  inspect(e.mapi((_i, x) => x + 1), content="[]")
 }
 
 ///|
 test "mapi_inplace" {
   let v = [3, 4, 5]
   let e : Array[Int] = []
-  v.mapi_inplace(fn(i, x) { x + i })
-  e.mapi_inplace(fn(_i, x) { x + 1 })
+  v.mapi_inplace((i, x) => x + i)
+  e.mapi_inplace((_i, x) => x + 1)
   inspect(v, content="[3, 5, 7]")
   inspect(e, content="[]")
 }
@@ -217,7 +217,7 @@ test "mapi_inplace" {
 ///|
 test "filter" {
   let arr = [1, 2, 3, 4, 5, 6]
-  inspect(arr.filter(fn(x) { x % 2 == 0 }), content="[2, 4, 6]")
+  inspect(arr.filter(x => x % 2 == 0), content="[2, 4, 6]")
 }
 
 ///|
@@ -351,7 +351,7 @@ test "remove" {
 ///|
 test "retain" {
   let v = [3, 4, 5]
-  v.retain(fn(x) { x > 3 })
+  v.retain(x => x > 3)
   assert_eq(v, [4, 5])
 }
 
@@ -444,7 +444,7 @@ test "dedup" {
 ///|
 test "extract_if" {
   let v = [3, 4, 5]
-  let vv = v.extract_if(fn(x) { x > 3 })
+  let vv = v.extract_if(x => x > 3)
   assert_eq(v, [3])
   assert_eq(v.length(), 1)
   assert_eq(vv, [4, 5])
@@ -462,7 +462,7 @@ test "chunks" {
 ///|
 test "chunk_by" {
   let v = [1, 1, 2, 3, 2, 3, 2, 3, 4]
-  let chunks = v.chunk_by(fn(x, y) { x <= y })
+  let chunks = v.chunk_by((x, y) => x <= y)
   assert_eq(chunks[0], [1, 1, 2, 3])
   assert_eq(chunks[1], [2, 3])
   assert_eq(chunks[2], [2, 3, 4])
@@ -471,7 +471,7 @@ test "chunk_by" {
 ///|
 test "split" {
   let v = [1, 0, 2, 0, 3, 0, 4]
-  let chunks = v.split(fn(x) { x == 0 })
+  let chunks = v.split(x => x == 0)
   assert_eq(chunks, [[1], [2], [3], [4]])
   assert_eq(chunks.length(), 4)
 }
@@ -534,7 +534,7 @@ test "shuffle_in_place" {
 ///|
 test "search_by" {
   let arr : Array[Int] = [1, 2, 3, 4, 5, 6, 7]
-  let index = arr.search_by(fn(x) { x == 3 })
+  let index = arr.search_by(x => x == 3)
   assert_eq(index, Some(2))
 }
 
@@ -549,26 +549,26 @@ test "copy" {
 
 ///|
 test "Array::makei with positive length" {
-  let arr = Array::makei(5, fn(i) { i * 2 })
+  let arr = Array::makei(5, i => i * 2)
   assert_eq(arr, [0, 2, 4, 6, 8])
 }
 
 ///|
 test "Array::makei with zero length" {
-  let arr = Array::makei(0, fn(i) { i * 2 })
+  let arr = Array::makei(0, i => i * 2)
   assert_eq(arr, [])
 }
 
 ///|
 test "Array::makei with negative length" {
-  let arr = Array::makei(-1, fn(i) { i * 2 })
+  let arr = Array::makei(-1, i => i * 2)
   assert_eq(arr, [])
 }
 
 ///|
 test "filter_map" {
   let arr = [1, 2, 3, 4, 5]
-  let mapped = arr.filter_map(fn(x) { if x % 2 == 0 { Some(x) } else { None } })
+  let mapped = arr.filter_map(x => if x % 2 == 0 { Some(x) } else { None })
   inspect(mapped, content="[2, 4]")
 }
 
@@ -585,10 +585,10 @@ test "Array::iter2" {
   let arr = [1, 2, 3]
   let v = arr.iter2()
   let mut res = ""
-  v.each(fn(k, v) { res = res + k.to_string() + v.to_string() })
+  v.each((k, v) => res = res + k.to_string() + v.to_string())
   inspect(res, content="011223")
   res = ""
-  arr.iter2().iter().each(fn(x) { res = res + x.to_string() })
+  arr.iter2().iter().each(x => res = res + x.to_string())
   inspect(res, content="(0, 1)(1, 2)(2, 3)")
 }
 
@@ -654,7 +654,7 @@ test "zip_with" {
   // Test with two non-empty arrays and a function
   let arr1 = [1, 2, 3]
   let arr2 = [4, 5, 6]
-  let add = fn(a, b) { a + b }
+  let add = (a, b) => a + b
   inspect(zip_with(arr1, arr2, add), content="[5, 7, 9]")
 
   // Test with arrays of different lengths and a function

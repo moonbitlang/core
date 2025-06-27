@@ -121,7 +121,7 @@ test "size" {
 test "each" {
   let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
   let buf = StringBuilder::new()
-  map.each(fn(k, v) { buf.write_string("\{k}\{v}") })
+  map.each((k, v) => buf.write_string("\{k}\{v}"))
   inspect(buf.to_string(), content="1a2b3c")
 }
 
@@ -129,7 +129,7 @@ test "each" {
 test "eachi" {
   let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
   let buf = StringBuilder::new()
-  map.eachi(fn(i, k, v) { buf.write_string("[\{i}]\{k}\{v}") })
+  map.eachi((i, k, v) => buf.write_string("[\{i}]\{k}\{v}"))
   inspect(buf.to_string(), content="[0]1a[1]2b[2]3c")
 }
 

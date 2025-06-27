@@ -41,21 +41,21 @@
 
 ///|
 // test "curry" {
-//   let add = fn(x : Int, y : Int) -> Int { x + y }
+//   let add = (x : Int, y : Int) => { x + y }
 //   let curried_add = @tuple.curry(add)
 //   assert_eq(curried_add(1)(2), add(1, 2))
 // }
 
 ///|
 // test "uncurry" {
-//   let add = fn(x : Int) -> (Int) -> Int { fn(y : Int) -> Int { x + y } }
+//   let add = (x : Int) => { fn(y : Int) -> Int { x + y } }
 //   let uncurried_add = @tuple.uncurry(add)
 //   assert_eq(uncurried_add(1, 2), add(1)(2))
 // }
 
 ///|
 // test "id_1" {
-//   let add = fn(x : Int, y : Int) -> Int { x + y }
+//   let add = (x : Int, y : Int) => { x + y }
 //   let curried_add = @tuple.curry(add)
 //   let uncurried_add = @tuple.uncurry(curried_add)
 //   assert_eq(uncurried_add(1, 2), add(1, 2))
@@ -63,7 +63,7 @@
 
 ///|
 // test "id_2" {
-//   let add = fn(x : Int) -> (Int) -> Int { fn(y : Int) -> Int { x + y } }
+//   let add = (x : Int) => { fn(y : Int) -> Int { x + y } }
 //   let uncurried_add = @tuple.uncurry(add)
 //   let curried_add = @tuple.curry(uncurried_add)
 //   assert_eq(curried_add(1)(2), add(1)(2))

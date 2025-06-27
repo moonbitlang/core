@@ -209,13 +209,11 @@ pub fn float(self : Rand) -> Float {
 pub fn bigint(self : Rand, bits : Int) -> @bigint.BigInt {
   let mod = bits % 8
   let len = if mod == 0 { bits / 8 } else { bits / 8 + 1 }
-  let bytes = Bytes::makei(len, fn(i) {
-    if i == 0 && mod != 0 {
-      let mask = (1U << mod) - 1U
-      (self.uint(limit=256) & mask).to_byte()
-    } else {
-      self.uint(limit=256).to_byte()
-    }
+  let bytes = Bytes::makei(len, i => if i == 0 && mod != 0 {
+    let mask = (1U << mod) - 1U
+    (self.uint(limit=256) & mask).to_byte()
+  } else {
+    self.uint(limit=256).to_byte()
   })
   @bigint.BigInt::from_octets(bytes)
 }
@@ -299,7 +297,7 @@ test "umul128: handles zero correctly" {
 ///   let a = [1, 2, 3, 4, 5]
 ///   r.shuffle(
 ///     a.length(),
-///     fn(i : Int, j : Int) {
+///     (i : Int, j : Int) => {
 ///       let t = a[i]
 ///       a[i] = a[j]
 ///       a[j] = t
@@ -320,7 +318,7 @@ pub fn shuffle(self : Rand, limit : Int, swap : (Int, Int) -> Unit) -> Unit {
 test "shuffle" {
   let r = new()
   let a = [1, 2, 3, 4, 5]
-  r.shuffle(a.length(), fn(i : Int, j : Int) {
+  r.shuffle(a.length(), (i : Int, j : Int) => {
     let t = a[i]
     a[i] = a[j]
     a[j] = t

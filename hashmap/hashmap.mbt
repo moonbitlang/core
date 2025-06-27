@@ -262,7 +262,7 @@ fn[K : Hash + Eq, V] get_with_hash(self : T[K, V], key : K, hash : Int) -> V? {
 ///
 /// ```moonbit
 ///   let map : @hashmap.T[String, Int] = @hashmap.new()
-///   let value = map.get_or_init("key", fn() { 42 })
+///   let value = map.get_or_init("key", () => { 42 })
 ///   inspect(value, content="42")
 ///   inspect(map.get("key"), content="Some(42)")
 /// ```

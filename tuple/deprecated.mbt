@@ -71,12 +71,12 @@ pub fn[T, U] swap(tuple : (T, U)) -> (U, T) {
 #deprecated
 #coverage.skip
 pub fn[T, U, V] curry(f : (T, U) -> V) -> (T) -> (U) -> V {
-  fn(x : T) { fn(y : U) -> V { f(x, y) } }
+  (x : T) => (y : U) => f(x, y)
 }
 
 ///|
 #deprecated
 #coverage.skip
 pub fn[T, U, V] uncurry(f : (T) -> (U) -> V) -> (T, U) -> V {
-  fn(x : T, y : U) { f(x)(y) }
+  (x : T, y : U) => f(x)(y)
 }

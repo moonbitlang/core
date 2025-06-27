@@ -27,7 +27,7 @@
 #deprecated("Use `..<` in for loop or `until` method instead")
 #coverage.skip
 pub fn Int::upto(self : Int, end : Int, inclusive~ : Bool = false) -> Iter[Int] {
-  fn(yield_) {
+  yield_ => {
     let mut i = self
     while i < end || (inclusive && i == end) {
       if yield_(i) == IterEnd {
@@ -62,7 +62,7 @@ pub fn UInt::upto(
   end : UInt,
   inclusive~ : Bool = false
 ) -> Iter[UInt] {
-  fn(yield_) {
+  yield_ => {
     let mut i = self
     while i < end || (inclusive && i == end) {
       if yield_(i) == IterEnd {
@@ -97,7 +97,7 @@ pub fn UInt64::upto(
   end : UInt64,
   inclusive~ : Bool = false
 ) -> Iter[UInt64] {
-  fn(yield_) {
+  yield_ => {
     let mut i = self
     while i < end || (inclusive && i == end) {
       if yield_(i) == IterEnd {
@@ -132,7 +132,7 @@ pub fn Int64::upto(
   end : Int64,
   inclusive~ : Bool = false
 ) -> Iter[Int64] {
-  fn(yield_) {
+  yield_ => {
     let mut i = self
     while i < end || (inclusive && i == end) {
       if yield_(i) == IterEnd {
@@ -167,7 +167,7 @@ pub fn Float::upto(
   end : Float,
   inclusive~ : Bool = false
 ) -> Iter[Float] {
-  fn(yield_) {
+  yield_ => {
     let mut i = self
     while i < end || (inclusive && i == end) {
       if yield_(i) == IterEnd {
@@ -202,7 +202,7 @@ pub fn Double::upto(
   end : Double,
   inclusive~ : Bool = false
 ) -> Iter[Double] {
-  fn(yield_) {
+  yield_ => {
     let mut i = self
     while i < end || (inclusive && i == end) {
       if yield_(i) == IterEnd {

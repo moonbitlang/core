@@ -198,16 +198,14 @@ pub fn View::op_as_view(self : View, start~ : Int = 0, end? : Int) -> View {
 /// ```mbt
 ///   let bv = b"\x00\x01\x02\x03\x04\x05"[:]
 ///   let mut sum = 0
-///   bv.iter().each(fn(x) { sum = sum + x.to_int() })
+///   bv.iter().each((x) => { sum = sum + x.to_int() })
 ///   assert_eq(sum, 15)
 /// ```
 pub fn View::iter(self : View) -> Iter[Byte] {
-  Iter::new(fn(yield_) {
-    for i in 0..<self.len() {
-      guard yield_(self[i]) is IterContinue else { break IterEnd }
-    } else {
-      IterContinue
-    }
+  Iter::new(yield_ => for i in 0..<self.len() {
+    guard yield_(self[i]) is IterContinue else { break IterEnd }
+  } else {
+    IterContinue
   })
 }
 

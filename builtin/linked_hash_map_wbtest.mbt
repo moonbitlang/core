@@ -84,9 +84,9 @@ test "get_or_default" {
 ///|
 test "get_or_init" {
   let m : Map[String, Array[Int]] = Map::new()
-  m.get_or_init("a", fn() { Array::new() }).push(1)
-  m.get_or_init("b", fn() { Array::new() }).push(2)
-  m.get_or_init("a", fn() { Array::new() }).push(3)
+  m.get_or_init("a", () => Array::new()).push(1)
+  m.get_or_init("b", () => Array::new()).push(2)
+  m.get_or_init("a", () => Array::new()).push(3)
   assert_eq(m.get("a"), Some([1, 3]))
   assert_eq(m.get("b"), Some([2]))
 }
@@ -94,9 +94,9 @@ test "get_or_init" {
 ///|
 test "get_or_init" {
   let m : Map[String, Array[Int]] = Map::new()
-  m.get_or_init("a", fn() { Array::new() }).push(1)
-  m.get_or_init("b", fn() { Array::new() }).push(2)
-  m.get_or_init("a", fn() { Array::new() }).push(3)
+  m.get_or_init("a", () => Array::new()).push(1)
+  m.get_or_init("b", () => Array::new()).push(2)
+  m.get_or_init("a", () => Array::new()).push(3)
   assert_eq(m.get("a"), Some([1, 3]))
   assert_eq(m.get("b"), Some([2]))
 }
@@ -170,7 +170,7 @@ test "is_empty" {
 test "iter" {
   let m = { "a": 1, "b": 2, "c": 3 }
   let mut sum = 0
-  m.each(fn(_k, v) { sum += v })
+  m.each((_k, v) => sum += v)
   assert_eq(sum, 6)
 }
 
@@ -179,7 +179,7 @@ test "iteri" {
   let m = { "a": 1, "b": 2, "c": 3 }
   let mut sum = 0
   let mut s = ""
-  m.eachi(fn(i, _k, v) {
+  m.eachi((i, _k, v) => {
     s += i.to_string()
     sum += v
   })
@@ -231,7 +231,7 @@ test "iter" {
   let map = { 1: "one", 2: "two", 3: "three" }
   map
   .iter()
-  .each(fn(e) {
+  .each(e => {
     let (k, v) = e
     buf.write_string("[\{k}-\{v}]")
   })
@@ -240,7 +240,7 @@ test "iter" {
   map
   .iter()
   .take(2)
-  .each(fn(e) {
+  .each(e => {
     let (k, v) = e
     buf.write_string("[\{k}-\{v}]")
   })
@@ -253,7 +253,7 @@ test "iter order" {
   m["three"] = 3
   m["two"] = 2
   let buf = StringBuilder::new(size_hint=0)
-  m.each(fn(k, v) { buf.write_string("[\{k}-\{v}]") })
+  m.each((k, v) => buf.write_string("[\{k}-\{v}]"))
   inspect(buf.to_string(), content="[one-1][three-3][two-2]")
 }
 
@@ -422,7 +422,7 @@ test "iter" {
   m.set("b", 2)
   m.set("c", 3)
   let mut sum = 0
-  m.each(fn(_k, v) { sum += v })
+  m.each((_k, v) => sum += v)
   assert_eq(sum, 6)
 }
 
@@ -434,7 +434,7 @@ test "iteri" {
   m.set("c", 3)
   let mut sum = 0
   let mut s = ""
-  m.eachi(fn(i, _k, v) {
+  m.eachi((i, _k, v) => {
     s += i.to_string()
     sum += v
   })
@@ -520,7 +520,7 @@ test "iter" {
   m.set("b", 2)
   m.set("c", 3)
   let mut sum = 0
-  m.each(fn(_k, v) { sum += v })
+  m.each((_k, v) => sum += v)
   assert_eq(sum, 6)
 }
 
@@ -532,7 +532,7 @@ test "iteri" {
   m.set("c", 3)
   let mut sum = 0
   let mut s = ""
-  m.eachi(fn(i, _k, v) {
+  m.eachi((i, _k, v) => {
     s += i.to_string()
     sum += v
   })
@@ -656,7 +656,7 @@ test "iter" {
   m.set("b", 2)
   m.set("c", 3)
   let mut sum = 0
-  m.each(fn(_k, v) { sum += v })
+  m.each((_k, v) => sum += v)
   assert_eq(sum, 6)
 }
 
@@ -668,7 +668,7 @@ test "iteri" {
   m.set("c", 3)
   let mut sum = 0
   let mut s = ""
-  m.eachi(fn(i, _k, v) {
+  m.eachi((i, _k, v) => {
     s += i.to_string()
     sum += v
   })

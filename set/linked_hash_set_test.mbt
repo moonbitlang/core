@@ -82,7 +82,7 @@ test "is_empty" {
 test "iter" {
   let m = Set::of(["a", "b", "c"])
   let mut sum = ""
-  m.each(fn(k) { sum += k })
+  m.each(k => sum += k)
   inspect(sum, content="abc")
 }
 
@@ -91,7 +91,7 @@ test "iteri" {
   let m = Set::of(["1", "2", "3"])
   let mut s = ""
   let mut sum = 0
-  m.eachi(fn(i, k) {
+  m.eachi((i, k) => {
     s += k
     sum += i
   })
@@ -151,10 +151,10 @@ test "symmetric_difference" {
 test "iter" {
   let buf = StringBuilder::new(size_hint=20)
   let map = Set::of(["a", "b", "c"])
-  map.iter().each(fn(e) { buf.write_string("[\{e}]") })
+  map.iter().each(e => buf.write_string("[\{e}]"))
   inspect(buf, content="[a][b][c]")
   buf.reset()
-  map.iter().take(2).each(fn(e) { buf.write_string("[\{e}]") })
+  map.iter().take(2).each(e => buf.write_string("[\{e}]"))
   inspect(buf, content="[a][b]")
 }
 

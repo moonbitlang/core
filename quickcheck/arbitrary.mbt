@@ -60,7 +60,7 @@ pub impl Arbitrary for Bytes with arbitrary(size, rs) {
     Bytes::new(0)
   } else {
     let sz = rs.next_positive_int() % size
-    Bytes::makei(sz, fn(_) { Arbitrary::arbitrary(size, rs) })
+    Bytes::makei(sz, _ => Arbitrary::arbitrary(size, rs))
   }
 }
 

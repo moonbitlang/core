@@ -54,7 +54,7 @@ Iterates over the elements in the set.
 ```moonbit
 test {
     let arr = []
-    @sorted_set.from_array([1, 2, 3, 4]).each(fn(v) { arr.push(v) })
+    @sorted_set.from_array([1, 2, 3, 4]).each((v) => { arr.push(v) })
     assert_eq(arr, [1, 2, 3, 4])
 }
 ```

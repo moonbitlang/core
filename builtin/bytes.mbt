@@ -40,7 +40,7 @@ pub fn FixedArray::unsafe_reinterpret_as_bytes(
 /// Example:
 ///
 /// ```moonbit
-///   let bytes = Bytes::makei(3, fn(i) { (i + 65).to_byte() })
+///   let bytes = Bytes::makei(3, (i) => { (i + 65).to_byte() })
 ///   assert_eq(bytes, b"ABC")
 /// ```
 pub fn Bytes::makei(length : Int, value : (Int) -> Byte) -> Bytes {
@@ -185,7 +185,7 @@ pub fn FixedArray::blit_from_bytes(
 ///|
 #deprecated("Bytes are immutable. Use `FixedArray::blit_from_bytes` if it's really necessary.")
 pub fn Bytes::copy(self : Bytes) -> Bytes {
-  Bytes::makei(self.length(), fn(i) { self[i] })
+  Bytes::makei(self.length(), i => self[i])
 }
 
 ///|

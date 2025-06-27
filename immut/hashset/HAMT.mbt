@@ -189,8 +189,8 @@ pub fn[K : Eq + Hash] T::union(self : T[K], other : T[K]) -> T[K] {
     (_, Leaf(k)) => self.add(k)
     (Leaf(k), _) => other.add(k)
     (Branch(sa1), Branch(sa2)) =>
-      Branch(sa1.union(sa2, fn(m1, m2) { m1.union(m2) }))
-    (_, _) => self.iter().fold(init=other, fn(m, k) { m.add(k) })
+      Branch(sa1.union(sa2, (m1, m2) => m1.union(m2)))
+    (_, _) => self.iter().fold(init=other, (m, k) => m.add(k))
   }
 }
 
@@ -203,7 +203,7 @@ pub fn[K : Eq + Hash] T::intersection(self : T[K], other : T[K]) -> T[K] {
     (Leaf(k), _) => if other.contains(k) { Leaf(k) } else { Empty }
     (_, Leaf(k)) => if self.contains(k) { Leaf(k) } else { Empty }
     (Branch(sa1), Branch(sa2)) => {
-      let res = sa1.intersection(sa2, fn(m1, m2) { m1.intersection(m2) })
+      let res = sa1.intersection(sa2, (m1, m2) => m1.intersection(m2))
       if res.size() == 0 {
         Empty
       } else {
@@ -213,13 +213,7 @@ pub fn[K : Eq + Hash] T::intersection(self : T[K], other : T[K]) -> T[K] {
     (_, _) =>
       self
       .iter()
-      .fold(init=Empty, fn(m, k) {
-        if other.contains(k) {
-          m.add(k)
-        } else {
-          m
-        }
-      })
+      .fold(init=Empty, (m, k) => if other.contains(k) { m.add(k) } else { m })
   }
 }
 
@@ -234,13 +228,7 @@ pub fn[K : Eq + Hash] T::difference(self : T[K], other : T[K]) -> T[K] {
     (_, _) =>
       self
       .iter()
-      .fold(init=Empty, fn(m, k) {
-        if other.contains(k) {
-          m
-        } else {
-          m.add(k)
-        }
-      })
+      .fold(init=Empty, (m, k) => if other.contains(k) { m } else { m.add(k) })
   }
 }
 
@@ -274,7 +262,7 @@ pub fn[A] iter(self : T[A]) -> Iter[A] {
 
 ///|
 pub fn[A : Eq + Hash] from_iter(iter : Iter[A]) -> T[A] {
-  iter.fold(init=new(), fn(s, e) { s.add(e) })
+  iter.fold(init=new(), (s, e) => s.add(e))
 }
 
 ///|
@@ -306,7 +294,7 @@ pub fn[A : Eq + Hash] of(arr : FixedArray[A]) -> T[A] {
 
 ///|
 pub impl[A : Hash] Hash for T[A] with hash_combine(self, hasher) {
-  hasher.combine(self.iter().fold(init=0, fn(x, y) { x ^ y.hash() }))
+  hasher.combine(self.iter().fold(init=0, (x, y) => x ^ y.hash()))
 }
 
 ///|
@@ -315,7 +303,7 @@ pub impl[A : Eq] Eq for T[A] with op_equal(self, other) {
     (Empty, Empty) => true
     (Leaf(x), Leaf(y)) => x == y
     (Collision(xs), Collision(ys)) =>
-      xs.size() == ys.size() && xs.iter().all(fn(x) { ys.find(x) })
+      xs.size() == ys.size() && xs.iter().all(x => ys.find(x))
     (Branch(xs), Branch(ys)) => xs == ys
     _ => false
   }

@@ -105,7 +105,7 @@ test "Bucket::iter" {
   let b : Bucket[_] = More(0, More(1, JustOne(31)))
   let buf = StringBuilder::new(size_hint=0)
   let mut is_first = true
-  b.each(fn(k) {
+  b.each(k => {
     if is_first {
       is_first = false
     } else {
@@ -185,7 +185,7 @@ test "Bucket iter" {
   let b2 = b1.add(2)
   let buf = StringBuilder::new(size_hint=0)
   let mut is_first = true
-  b2.each(fn(k) {
+  b2.each(k => {
     if is_first {
       is_first = false
     } else {

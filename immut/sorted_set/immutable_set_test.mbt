@@ -121,27 +121,27 @@ test "union" {
 ///|
 test "map" {
   inspect(
-    @sorted_set.of([1, 2, 3, 4, 5]).map(fn(x) { x * 2 }),
+    @sorted_set.of([1, 2, 3, 4, 5]).map(x => x * 2),
     content="@immut/sorted_set.of([2, 4, 6, 8, 10])",
   )
 }
 
 ///|
 test "all" {
-  inspect(@sorted_set.of([2, 4, 6]).all(fn(v) { v % 2 == 0 }), content="true")
-  inspect(@sorted_set.of([1, 3, 5]).all(fn(v) { v % 2 == 0 }), content="false")
+  inspect(@sorted_set.of([2, 4, 6]).all(v => v % 2 == 0), content="true")
+  inspect(@sorted_set.of([1, 3, 5]).all(v => v % 2 == 0), content="false")
 }
 
 ///|
 test "any" {
-  inspect(@sorted_set.of([1, 4, 3]).any(fn(v) { v % 2 == 0 }), content="true")
-  inspect(@sorted_set.of([1, 5, 3]).any(fn(v) { v % 2 == 0 }), content="false")
+  inspect(@sorted_set.of([1, 4, 3]).any(v => v % 2 == 0), content="true")
+  inspect(@sorted_set.of([1, 5, 3]).any(v => v % 2 == 0), content="false")
 }
 
 ///|
 test "fold" {
   inspect(
-    @sorted_set.of([1, 2, 3, 4, 5]).fold(init=0, fn(acc, x) { acc + x }),
+    @sorted_set.of([1, 2, 3, 4, 5]).fold(init=0, (acc, x) => acc + x),
     content="15",
   )
 }
@@ -149,7 +149,7 @@ test "fold" {
 ///|
 test "filter" {
   inspect(
-    @sorted_set.of([1, 2, 3, 4, 5, 6]).filter(fn(v) { v % 2 == 0 }),
+    @sorted_set.of([1, 2, 3, 4, 5, 6]).filter(v => v % 2 == 0),
     content="@immut/sorted_set.of([2, 4, 6])",
   )
 }
@@ -353,11 +353,11 @@ test "from_json" {
 ///|
 test "iter" {
   let mut s = ""
-  @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).each(fn(x) { s += x.to_string() })
+  @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).each(x => s += x.to_string())
   inspect(s, content="123456789")
   let empty : @sorted_set.T[Int] = @sorted_set.of([])
   s = ""
-  empty.each(fn(x) { s += x.to_string() })
+  empty.each(x => s += x.to_string())
   inspect(s, content="")
 }
 

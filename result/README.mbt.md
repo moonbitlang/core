@@ -70,7 +70,7 @@ There is a lazy version of `or` called `or_else`, which takes a function that re
 ```moonbit
 test {
     let result: Result[Int, String] = Err("error")
-    let value = result.or_else(fn() { 0 })
+    let value = result.or_else(() => { 0 })
     assert_eq(value, 0)
 }
 ```
@@ -81,7 +81,7 @@ and remains unchanged if it is `Err`.
 ```moonbit
 test {
     let result: Result[Int, String] = Ok(42)
-    let new_result = result.map(fn(x) { x + 1 })
+    let new_result = result.map((x) => { x + 1 })
     assert_eq(new_result, Ok(43))
 }
 ```
@@ -90,7 +90,7 @@ A dual method to `map` is `map_err`, which applies a function to the error value
 ```moonbit
 test {
     let result: Result[Int, String] = Err("error")
-    let new_result = result.map_err(fn(x) { x + "!" })
+    let new_result = result.map_err((x) => { x + "!" })
     assert_eq(new_result, Err("error!"))
 }
 ```
@@ -121,7 +121,7 @@ The `bind` method is similar to `map`, but the function passed to it should retu
 ```moonbit
 test {
     let result: Result[Int, String] = Ok(42)
-    let new_result = result.bind(fn(x) { Ok(x + 1) })
+    let new_result = result.bind((x) => { Ok(x + 1) })
     assert_eq(new_result, Ok(43))
 }
 ```
