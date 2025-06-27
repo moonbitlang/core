@@ -115,11 +115,15 @@ test "any" {
 }
 
 ///|
-test "tail" {
+test "unsafe_tail" {
   let ls = @list.of([1, 2, 3, 4, 5])
-  let el : @list.T[Int] = @list.empty()
-  inspect(ls.tail(), content="@list.of([2, 3, 4, 5])")
-  inspect(el.tail(), content="@list.of([])")
+  inspect(ls.unsafe_tail(), content="@list.of([2, 3, 4, 5])")
+}
+
+///|
+test "panic unsafe_tail" {
+  let ls : @list.T[Int] = @list.empty()
+  inspect(ls.unsafe_tail())
 }
 
 ///|

@@ -30,3 +30,10 @@ pub fn[A, B] rev_foldi(self : T[A], init~ : B, f : (Int, B, A) -> B) -> B {
 }
 
 ///|
+#deprecated("use `unsafe_tail` instead")
+pub fn[A] tail(self : T[A]) -> T[A] {
+  match self {
+    Empty => Empty
+    More(_, tail~) => tail
+  }
+}
