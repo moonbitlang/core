@@ -61,7 +61,7 @@ pub impl Show for JsonValue with output(self, logger) {
     Null => logger.write_string("Null")
     True => logger.write_string("True")
     False => logger.write_string("False")
-    Number(n) => {
+    Number(n, repr=_) => {
       logger.write_string("Number(")
       Show::output(n, logger)
       logger.write_string(")")
