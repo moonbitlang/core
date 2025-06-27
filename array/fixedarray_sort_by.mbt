@@ -21,7 +21,7 @@
 ///
 /// ```mbt
 ///   let arr = [5, 3, 2, 4, 1]
-///   arr.sort_by_key(fn (x) {-x})
+///   arr.sort_by_key((x) => {-x})
 ///   assert_eq(arr, [5, 4, 3, 2, 1])
 /// ```
 pub fn[T, K : Compare] FixedArray::sort_by_key(
@@ -55,7 +55,7 @@ test "@array.sort_by_key/basic" {
 ///
 /// ```mbt
 ///   let arr = [5, 3, 2, 4, 1]
-///   arr.sort_by(fn (a, b) { a - b })
+///   arr.sort_by((a, b) => { a - b })
 ///   assert_eq(arr, [1, 2, 3, 4, 5])
 /// ```
 pub fn[T] FixedArray::sort_by(
@@ -283,13 +283,11 @@ fn[T] fixed_choose_pivot_by(
   if len >= 8 {
     let a = len / 4 * 1
     let c = len / 4 * 3
-    let sort_2 = fn(a : Int, b : Int) {
-      if cmp(arr[a], arr[b]) > 0 {
-        arr.swap(a, b)
-        swaps += 1
-      }
+    let sort_2 = (a : Int, b : Int) => if cmp(arr[a], arr[b]) > 0 {
+      arr.swap(a, b)
+      swaps += 1
     }
-    let sort_3 = fn(a : Int, b : Int, c : Int) {
+    let sort_3 = (a : Int, b : Int, c : Int) => {
       sort_2(a, b)
       sort_2(b, c)
       sort_2(a, b)
@@ -375,15 +373,11 @@ test "sort_by" {
 test "sort_by_fallback" {
   // Creating a large array that will trigger heap sort
   let arr = FixedArray::makei(100, i => if i % 2 == 0 { 1 } else { 0 })
-  arr.sort_by(fn(a, b) {
+  arr.sort_by(
     // this comparison function always returns -1 or 1
     // which creates many imbalanced partitions
     // and eventually triggers heap sort when limit reaches 0
-    if a < b {
-      -1
-    } else {
-      1
-    }
-  })
+    (a, b) => if a < b { -1 } else { 1 },
+  )
   assert_true(arr.is_sorted())
 }

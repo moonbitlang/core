@@ -463,7 +463,7 @@ pub fn[A : Compare] disjoint(self : T[A], other : T[A]) -> Bool {
 ///
 /// ```mbt
 ///   let arr = []
-///   @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).each(fn(x) { arr.push(x) })
+///   @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).each((x) => { arr.push(x) })
 ///   assert_eq(arr, [1, 2, 3, 4, 5, 6, 7, 8, 9])
 /// ```
 pub fn[A] each(self : T[A], f : (A) -> Unit raise?) -> Unit raise? {
@@ -483,7 +483,7 @@ pub fn[A] each(self : T[A], f : (A) -> Unit raise?) -> Unit raise? {
 /// # Example
 ///
 /// ```mbt
-///   assert_eq(@sorted_set.of([1, 2, 3, 4, 5]).fold(init=0, fn(acc, x) { acc + x }), 15)
+///   assert_eq(@sorted_set.of([1, 2, 3, 4, 5]).fold(init=0, (acc, x) => { acc + x }), 15)
 /// ```
 pub fn[A : Compare, B] fold(
   self : T[A],
@@ -503,7 +503,7 @@ pub fn[A : Compare, B] fold(
 /// # Example
 ///
 /// ```mbt
-///   assert_eq(@sorted_set.of([1, 2, 3]).map(fn(x){ x * 2}), @sorted_set.of([2, 4, 6]))
+///   assert_eq(@sorted_set.of([1, 2, 3]).map((x) => { x * 2}), @sorted_set.of([2, 4, 6]))
 /// ```
 pub fn[A : Compare, B : Compare] map(
   self : T[A],
@@ -522,7 +522,7 @@ pub fn[A : Compare, B : Compare] map(
 /// # Example
 ///
 /// ```mbt
-///   assert_eq(@sorted_set.of([2, 4, 6]).all(fn(v) { v % 2 == 0}), true)
+///   assert_eq(@sorted_set.of([2, 4, 6]).all((v) => { v % 2 == 0}), true)
 /// ```
 pub fn[A : Compare] all(self : T[A], f : (A) -> Bool raise?) -> Bool raise? {
   match self {
@@ -537,7 +537,7 @@ pub fn[A : Compare] all(self : T[A], f : (A) -> Bool raise?) -> Bool raise? {
 /// # Example
 ///
 /// ```mbt
-///   assert_eq(@sorted_set.of([1, 4, 3]).any(fn(v) { v % 2 == 0}), true)
+///   assert_eq(@sorted_set.of([1, 4, 3]).any((v) => { v % 2 == 0}), true)
 /// ```
 pub fn[A : Compare] any(self : T[A], f : (A) -> Bool raise?) -> Bool raise? {
   match self {
@@ -552,7 +552,7 @@ pub fn[A : Compare] any(self : T[A], f : (A) -> Bool raise?) -> Bool raise? {
 /// # Example
 ///
 /// ```mbt
-///   assert_eq(@sorted_set.of([1, 2, 3, 4, 5, 6]).filter(fn(v) { v % 2 == 0}), @sorted_set.of([2, 4, 6]))
+///   assert_eq(@sorted_set.of([1, 2, 3, 4, 5, 6]).filter((v) => { v % 2 == 0}), @sorted_set.of([2, 4, 6]))
 /// ```
 pub fn[A : Compare] filter(self : T[A], f : (A) -> Bool raise?) -> T[A] raise? {
   match self {
@@ -584,7 +584,7 @@ pub impl[A : ToJson] ToJson for T[A] with to_json(self) {
   let capacity = self.iter().count()
   guard capacity != 0 else { return Json::array([]) }
   let jsons = Array::new(capacity~)
-  self.each(fn(a) { jsons.push(a.to_json()) })
+  self.each(a => jsons.push(a.to_json()))
   Json::array(jsons)
 }
 
@@ -650,7 +650,7 @@ impl[T : Show] Show for SplitBis[T] with output(self, logger) {
 /// The right is computed on demand.
 fn[A : Compare] split_bis(self : T[A], value : A) -> SplitBis[A] {
   match self {
-    Empty => NotFound(Empty, fn() -> T[A] { Empty })
+    Empty => NotFound(Empty, () => Empty)
     Node(left~, value=node_value, right~, ..) => {
       let compare_result = value.compare(node_value)
       if compare_result == 0 {
@@ -658,8 +658,7 @@ fn[A : Compare] split_bis(self : T[A], value : A) -> SplitBis[A] {
       } else if compare_result < 0 {
         match left.split_bis(value) {
           Found => Found
-          NotFound(ll, rl) =>
-            NotFound(ll, fn() -> T[A] { join(rl(), node_value, right) })
+          NotFound(ll, rl) => NotFound(ll, () => join(rl(), node_value, right))
         }
       } else {
         match right.split_bis(value) {

@@ -54,7 +54,7 @@ test "from_array_1" {
 test "from_array_2" {
   let q : @queue.T[Int] = @queue.from_array([])
   inspect(q, content="@queue.of([])")
-  let array = Array::makei(3, fn(idx) { idx + 1 })
+  let array = Array::makei(3, idx => idx + 1)
   let q : @queue.T[Int] = @queue.from_array(array)
   inspect(q, content="@queue.of([1, 2, 3])")
   let q : @queue.T[Int] = @queue.from_array(Array::new(capacity=10))
@@ -132,11 +132,11 @@ test "pop" {
 test "iter" {
   let queue : @queue.T[Int] = @queue.new()
   let mut sum = 0
-  queue.each(fn(x) { sum = sum + x })
+  queue.each(x => sum = sum + x)
   assert_eq(sum, 0)
   @queue.of([1, 2, 3, 4]).transfer(queue)
   sum = 0
-  queue.each(fn(x) { sum = sum + x })
+  queue.each(x => sum = sum + x)
   assert_eq(sum, 10)
 }
 
@@ -144,26 +144,26 @@ test "iter" {
 test "iteri" {
   let queue : @queue.T[Int] = @queue.new()
   let mut sum = 0
-  queue.eachi(fn(x, i) { sum = sum + x * i })
+  queue.eachi((x, i) => sum = sum + x * i)
   assert_eq(sum, 0)
   @queue.of([1, 2, 3, 4]).transfer(queue)
   sum = 0
-  queue.eachi(fn(x, i) { sum = sum + x * i })
+  queue.eachi((x, i) => sum = sum + x * i)
   assert_eq(sum, 20)
 }
 
 ///|
 test "fold" {
   let queue : @queue.T[Int] = @queue.new()
-  let sum = queue.fold(init=0, fn(acc, x) { acc + x })
+  let sum = queue.fold(init=0, (acc, x) => acc + x)
   assert_eq(sum, 0)
   @queue.of([1, 2, 3, 4]).transfer(queue)
-  let sum = queue.fold(init=0, fn(acc, x) { acc + x })
+  let sum = queue.fold(init=0, (acc, x) => acc + x)
   assert_eq(sum, 10)
-  let sum2 = @queue.of([1, 2, 3, 4]).fold(init=0, fn(acc, x) { acc + x })
+  let sum2 = @queue.of([1, 2, 3, 4]).fold(init=0, (acc, x) => acc + x)
   assert_eq(sum2, 10)
   inspect(
-    @queue.of([1, 2, 3, 4]).fold(init=0L, fn(acc, x) { acc + x.to_int64() }),
+    @queue.of([1, 2, 3, 4]).fold(init=0L, (acc, x) => acc + x.to_int64()),
     content="10",
   )
 }
@@ -178,7 +178,7 @@ test "length" {
 ///|
 test "iter" {
   let q = @queue.of([1, 2, 3, 4, 5])
-  inspect(q.iter().fold(fn(x, y) { x + y }, init=0), content="15")
+  inspect(q.iter().fold((x, y) => x + y, init=0), content="15")
 }
 
 ///|

@@ -61,7 +61,7 @@ pub fn[A, B] Iter2::new(
 
 ///|
 pub fn[A, B] Iter2::each(self : Iter2[A, B], f : (A, B) -> Unit) -> Unit {
-  self.run(fn(a, b) {
+  self.run((a, b) => {
     f(a, b)
     IterContinue
   })
@@ -70,7 +70,7 @@ pub fn[A, B] Iter2::each(self : Iter2[A, B], f : (A, B) -> Unit) -> Unit {
 
 ///|
 pub fn[A, B] Iter2::iter(self : Iter2[A, B]) -> Iter[(A, B)] {
-  Iter::new(fn(yield_) { self.run(fn(a, b) { yield_((a, b)) }) })
+  Iter::new(yield_ => self.run((a, b) => yield_((a, b))))
 }
 
 ///|
@@ -114,7 +114,7 @@ pub fn[A, B] Iter2::concat(
   self : Iter2[A, B],
   other : Iter2[A, B]
 ) -> Iter2[A, B] {
-  fn(yield_) {
+  yield_ => {
     guard self.run(yield_) == IterContinue else { IterEnd }
     other.run(yield_)
   }

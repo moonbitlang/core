@@ -20,9 +20,9 @@ The `update` function allows modifying the contained value using a transformatio
 ```moonbit
 test "updating refs" {
   let counter = @ref.new(0)
-  counter.update(fn(x) { x + 1 })
+  counter.update((x) => { x + 1 })
   inspect(counter.val, content="1")
-  counter.update(fn(x) { x * 2 })
+  counter.update((x) => { x * 2 })
   inspect(counter.val, content="2")
 }
 ```
@@ -34,9 +34,9 @@ The `map` function transforms a reference while preserving the reference wrapper
 ```moonbit
 test "mapping refs" {
   let num = @ref.new(10)
-  let doubled = num.map(fn(x) { x * 2 })
+  let doubled = num.map((x) => { x * 2 })
   inspect(doubled.val, content="20")
-  let squared = num.map(fn(x) { x * x })
+  let squared = num.map((x) => { x * x })
   inspect(squared.val, content="100")
 }
 ```
@@ -63,7 +63,7 @@ The `protect` function temporarily sets a reference to a value and restores it a
 test "protected updates" {
   let state = @ref.new(100)
   let mut middle = 0
-  let result = state.protect(50, fn() {
+  let result = state.protect(50, () => {
     middle = state.val
     42
   })

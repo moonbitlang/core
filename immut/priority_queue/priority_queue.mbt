@@ -56,13 +56,13 @@ pub fn[A : Compare] to_array(self : T[A]) -> Array[A] {
   }
 
   go(self.node)
-  arr.sort_by(fn(x, y) { y.compare(x) })
+  arr.sort_by((x, y) => y.compare(x))
   arr
 }
 
 ///|
 pub fn[A : Compare] iter(self : T[A]) -> Iter[A] {
-  Iter::new(fn(yield_) {
+  Iter::new(yield_ => {
     let arr = self.to_array()
     for i in 0..<arr.length() {
       guard yield_(arr[i]) is IterContinue else { break IterEnd }
@@ -74,7 +74,7 @@ pub fn[A : Compare] iter(self : T[A]) -> Iter[A] {
 
 ///|
 pub fn[A : Compare] T::from_iter(iter : Iter[A]) -> T[A] {
-  iter.fold(init=new(), fn(s, e) { s.push(e) })
+  iter.fold(init=new(), (s, e) => s.push(e))
 }
 
 ///|

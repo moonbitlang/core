@@ -276,23 +276,21 @@ fn[A] Tree::each(self : Tree[A], f : (A) -> Unit raise?) -> Unit raise? {
   match self {
     Empty => ()
     Leaf(l) => l.each(f)
-    Node(ns, _) => ns.each(fn(t) { t.each(f) })
+    Node(ns, _) => ns.each(t => t.each(f))
   }
 }
 
 ///|
 fn[A] Tree::iter(self : Tree[A]) -> Iter[A] {
-  Iter::new(fn(yield_) {
-    match self {
-      Empty => IterContinue
-      Leaf(l) => l.iter().run(yield_)
-      Node(ns, _) =>
-        for n in ns {
-          guard n.iter().run(yield_) is IterContinue else { break IterEnd }
-        } else {
-          IterContinue
-        }
-    }
+  Iter::new(yield_ => match self {
+    Empty => IterContinue
+    Leaf(l) => l.iter().run(yield_)
+    Node(ns, _) =>
+      for n in ns {
+        guard n.iter().run(yield_) is IterContinue else { break IterEnd }
+      } else {
+        IterContinue
+      }
   })
 }
 
@@ -339,7 +337,7 @@ fn[A, B] Tree::fold(
   match self {
     Empty => acc
     Leaf(l) => l.fold(f, init=acc)
-    Node(n, _) => n.fold(fn(acc, t) { t.fold(acc, f) }, init=acc)
+    Node(n, _) => n.fold((acc, t) => t.fold(acc, f), init=acc)
   }
 }
 
@@ -353,7 +351,7 @@ fn[A, B] Tree::rev_fold(
   match self {
     Empty => acc
     Leaf(l) => l.rev_fold(f, init=acc)
-    Node(n, _) => n.rev_fold(fn(acc, t) { t.rev_fold(acc, f) }, init=acc)
+    Node(n, _) => n.rev_fold((acc, t) => t.rev_fold(acc, f), init=acc)
   }
 }
 
@@ -364,10 +362,7 @@ fn[A, B] Tree::map(self : Tree[A], f : (A) -> B raise?) -> Tree[B] raise? {
     Empty => Empty
     Leaf(l) => Leaf(l.map(f))
     Node(n, szs) =>
-      Node(
-        FixedArray::makei(n.length(), fn(i) { n[i].map(f) }),
-        copy_sizes(szs),
-      )
+      Node(FixedArray::makei(n.length(), i => n[i].map(f)), copy_sizes(szs))
   }
 }
 
@@ -419,12 +414,10 @@ fn[A] Tree::concat(
     if top && len <= branching_factor {
       return (
         Leaf(
-          FixedArray::makei(len, fn(i : Int) {
-            if i < left_len {
-              left_elems[i]
-            } else {
-              right_elems[i - left_len]
-            }
+          FixedArray::makei(len, (i : Int) => if i < left_len {
+            left_elems[i]
+          } else {
+            right_elems[i - left_len]
           }),
         ),
         0,
@@ -480,12 +473,9 @@ fn[A] rebalance(
       // return H height node, no upper node so no need to add another layer on top of it
     }
   } else {
-    let new_child_1 = FixedArray::makei(branching_factor, fn(i) { new_t[i] })
-    let new_child_2 = FixedArray::makei(new_t.length() - branching_factor, fn(
-      i
-    ) {
-      new_t[i + branching_factor]
-    })
+    let new_child_1 = FixedArray::makei(branching_factor, i => new_t[i])
+    let new_child_2 = FixedArray::makei(new_t.length() - branching_factor, i => new_t[i +
+      branching_factor])
     let new_node_1 = Node(
       new_child_1,
       compute_sizes(new_child_1, shift - num_bits),
@@ -540,16 +530,14 @@ fn[A] tri_merge(
   let center_len = center_children.length()
   let right_len = right_children.length()
   let right_len = if right_len == 0 { 0 } else { right_len - 1 }
-  FixedArray::makei(left_len + center_len + right_len, fn(i) {
-    if i < left_len {
-      left_children[i]
-    } else if i < left_len + center_len {
-      center_children[i - left_len]
-    } else if right_len > 0 {
-      right_children[1 + i - left_len - center_len]
-    } else {
-      abort("Unreachable")
-    }
+  FixedArray::makei(left_len + center_len + right_len, i => if i < left_len {
+    left_children[i]
+  } else if i < left_len + center_len {
+    center_children[i - left_len]
+  } else if right_len > 0 {
+    right_children[1 + i - left_len - center_len]
+  } else {
+    abort("Unreachable")
   })
 }
 

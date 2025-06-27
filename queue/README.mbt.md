@@ -60,7 +60,7 @@ You can traverse the queue using the `each` method.
 test {
     let queue = @queue.of([1,2,3])
     let mut sum = 0
-    queue.each(fn(x) { sum += x })
+    queue.each((x) => { sum += x })
     assert_eq(sum, 6)
 }
 ```
@@ -69,7 +69,7 @@ You can fold the queue using the `fold` method.
 ```moonbit
 test {
     let queue = @queue.of([1,2,3])
-    let sum = queue.fold(init = 0, fn(acc, x) { acc + x })
+    let sum = queue.fold(init = 0, (acc, x) => { acc + x })
     assert_eq(sum, 6)
 }
 ```

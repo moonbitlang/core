@@ -105,10 +105,10 @@ You can use `each()` or `eachi()` to iterate through all key-value pairs in the 
 test {
   let map = { "a": 1, "b": 2, "c": 3 }
   let arr = []
-  map.each(fn(k, v) { arr.push((k, v)) })
+  map.each((k, v) => { arr.push((k, v)) })
   @json.inspect(arr, content=[["a", 1], ["b", 2], ["c", 3]])
   let arr2 = []
-  map.eachi(fn(i, k, v) { arr2.push((i, k, v)) })
+  map.eachi((i, k, v) => { arr2.push((i, k, v)) })
   @json.inspect(arr2, content=[[0, "a", 1], [1, "b", 2], [2, "c", 3]])
 }
 ```

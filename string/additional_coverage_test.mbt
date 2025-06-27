@@ -28,7 +28,7 @@ test "String iter2 with surrogate pairs" {
   let mut i = 0
   s
   .iter2()
-  .each(fn(idx, c) {
+  .each((idx, c) => {
     if i < 3 {
       result.push((idx, c))
     }
@@ -38,7 +38,7 @@ test "String iter2 with surrogate pairs" {
 
   // Count characters using iter2
   let mut count = 0
-  s.iter2().each(fn(_, _) { count = count + 1 })
+  s.iter2().each((_, _) => count = count + 1)
   inspect(count, content="11") // 5 chars + emoji + 5 chars
 }
 

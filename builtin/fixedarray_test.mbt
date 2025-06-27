@@ -46,7 +46,7 @@ test "fixed array iter with early termination" {
   let arr : FixedArray[Int] = [1, 2, 3]
   let mut count = 0
   let iter = arr.iter()
-  let _ = iter.run(fn(x) {
+  let _ = iter.run(x => {
     count = count + 1
     if x == 2 {
       IterEnd
@@ -61,7 +61,7 @@ test "fixed array iter with early termination" {
 test "FixedArray::iter2 with empty array" {
   let arr : FixedArray[Int] = []
   let mut count = 0
-  arr.iter2().each(fn(_, _) { count = count + 1 })
+  arr.iter2().each((_, _) => count = count + 1)
   inspect(count, content="0")
 }
 
@@ -69,7 +69,7 @@ test "FixedArray::iter2 with empty array" {
 test "FixedArray::iter2 with single element" {
   let arr = FixedArray::make(1, 42)
   let pairs : Array[(Int, Int)] = []
-  arr.iter2().each(fn(i, x) { pairs.push((i, x)) })
+  arr.iter2().each((i, x) => pairs.push((i, x)))
   inspect(pairs, content="[(0, 42)]")
 }
 

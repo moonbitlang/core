@@ -31,13 +31,13 @@
 ///   )
 /// ```
 pub fn Bytes::from_array(arr : Array[Byte]) -> Bytes {
-  Bytes::makei(arr.length(), fn(i) { arr[i] })
+  Bytes::makei(arr.length(), i => arr[i])
 }
 
 ///|
 /// same as `Bytes::from_array`
 pub fn from_array(arr : Array[Byte]) -> Bytes {
-  Bytes::makei(arr.length(), fn(i) { arr[i] })
+  Bytes::makei(arr.length(), i => arr[i])
 }
 
 ///|
@@ -68,7 +68,7 @@ pub fn Bytes::from_fixedarray(arr : FixedArray[Byte], len? : Int) -> Bytes {
     None => arr.length()
     Some(x) => x
   }
-  Bytes::makei(len, fn(i) { arr[i] })
+  Bytes::makei(len, i => arr[i])
 }
 
 ///|
@@ -161,13 +161,13 @@ pub fn from_iter(iter : Iter[Byte]) -> Bytes {
 /// ```
 /// TODO: marked as intrinsic, inline if it is constant
 pub fn Bytes::of(arr : FixedArray[Byte]) -> Bytes {
-  Bytes::makei(arr.length(), fn(i) { arr[i] })
+  Bytes::makei(arr.length(), i => arr[i])
 }
 
 ///|
 /// same as `Bytes::of`
 pub fn of(arr : FixedArray[Byte]) -> Bytes {
-  Bytes::makei(arr.length(), fn(i) { arr[i] })
+  Bytes::makei(arr.length(), i => arr[i])
 }
 
 ///|
@@ -209,18 +209,16 @@ pub fn to_array(self : Bytes) -> Array[Byte] {
 /// ```moonbit
 ///   let bytes = Bytes::from_array([b'h', b'i'])
 ///   let mut sum = 0
-///   bytes.iter().each(fn(b) { sum = sum + b.to_int() })
+///   bytes.iter().each((b) => { sum = sum + b.to_int() })
 ///   inspect(sum, content="209") // ASCII values: 'h'(104) + 'i'(105) = 209
 /// ```
 pub fn iter(self : Bytes) -> Iter[Byte] {
-  Iter::new(fn(yield_) {
-    for i in 0..<self.length() {
-      if yield_(self[i]) == IterEnd {
-        break IterEnd
-      }
-    } else {
-      IterContinue
+  Iter::new(yield_ => for i in 0..<self.length() {
+    if yield_(self[i]) == IterEnd {
+      break IterEnd
     }
+  } else {
+    IterContinue
   })
 }
 
@@ -231,21 +229,19 @@ pub fn iter(self : Bytes) -> Iter[Byte] {
 /// Example:
 ///   let buf = StringBuilder::new(size_hint=5)
 ///   let keys = []
-///   b"abcde".iter2().each(fn(i, x) {
+///   b"abcde".iter2().each((i, x) => {
 ///     buf.write_string(x.to_string())
 ///     keys.push( i )
 ///   })
 ///   inspect(buf, content="b'\\x61'b'\\x62'b'\\x63'b'\\x64'b'\\x65'")
 ///   inspect(keys, content="[0, 1, 2, 3, 4]")
 pub fn iter2(self : Bytes) -> Iter2[Int, Byte] {
-  Iter2::new(fn(yield_) {
-    for i in 0..<self.length() {
-      if yield_(i, self[i]) == IterEnd {
-        break IterEnd
-      }
-    } else {
-      IterContinue
+  Iter2::new(yield_ => for i in 0..<self.length() {
+    if yield_(i, self[i]) == IterEnd {
+      break IterEnd
     }
+  } else {
+    IterContinue
   })
 }
 

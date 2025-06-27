@@ -42,7 +42,7 @@ test "Iter2::concat" {
 
 ///|
 test "Iter2::concat with early return" {
-  let first = Iter2::new(fn(y) {
+  let first = Iter2::new(y => {
     for i, v in "abcde" {
       ignore(y(i, v))
     }

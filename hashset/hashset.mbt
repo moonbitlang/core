@@ -31,14 +31,14 @@ pub fn[K] new(capacity~ : Int = default_init_capacity) -> T[K] {
 /// Create new hash set from array.
 pub fn[K : Hash + Eq] from_array(arr : Array[K]) -> T[K] {
   let m = new()
-  arr.each(fn(e) { m.add(e) })
+  arr.each(e => m.add(e))
   m
 }
 
 ///|
 pub fn[K : Hash + Eq] of(arr : FixedArray[K]) -> T[K] {
   let m = new()
-  arr.each(fn(e) { m.add(e) })
+  arr.each(e => m.add(e))
   m
 }
 
@@ -143,7 +143,7 @@ pub fn[K] is_empty(self : T[K]) -> Bool {
 ///|
 /// Iterate over all keys of the set.
 pub fn[K] each(self : T[K], f : (K) -> Unit) -> Unit {
-  self.eachi(fn(_i, k) { f(k) })
+  self.eachi((_i, k) => f(k))
 }
 
 ///|
@@ -171,8 +171,8 @@ pub fn[K] clear(self : T[K]) -> Unit {
 /// Union of two hash sets.
 pub fn[K : Hash + Eq] union(self : T[K], other : T[K]) -> T[K] {
   let m = new()
-  self.each(fn(k) { m.add(k) })
-  other.each(fn(k) { m.add(k) })
+  self.each(k => m.add(k))
+  other.each(k => m.add(k))
   m
 }
 
@@ -180,7 +180,7 @@ pub fn[K : Hash + Eq] union(self : T[K], other : T[K]) -> T[K] {
 /// Intersection of two hash sets.
 pub fn[K : Hash + Eq] intersection(self : T[K], other : T[K]) -> T[K] {
   let m = new()
-  self.each(fn(k) { if other.contains(k) { m.add(k) } })
+  self.each(k => if other.contains(k) { m.add(k) })
   m
 }
 
@@ -188,7 +188,7 @@ pub fn[K : Hash + Eq] intersection(self : T[K], other : T[K]) -> T[K] {
 /// Difference of two hash sets.
 pub fn[K : Hash + Eq] difference(self : T[K], other : T[K]) -> T[K] {
   let m = new()
-  self.each(fn(k) { if not(other.contains(k)) { m.add(k) } })
+  self.each(k => if not(other.contains(k)) { m.add(k) })
   m
 }
 
@@ -196,8 +196,8 @@ pub fn[K : Hash + Eq] difference(self : T[K], other : T[K]) -> T[K] {
 /// Symmetric difference of two hash sets.
 pub fn[K : Hash + Eq] symmetric_difference(self : T[K], other : T[K]) -> T[K] {
   let m = new()
-  self.each(fn(k) { if not(other.contains(k)) { m.add(k) } })
-  other.each(fn(k) { if not(self.contains(k)) { m.add(k) } })
+  self.each(k => if not(other.contains(k)) { m.add(k) })
+  other.each(k => if not(self.contains(k)) { m.add(k) })
   m
 }
 
@@ -205,9 +205,9 @@ pub fn[K : Hash + Eq] symmetric_difference(self : T[K], other : T[K]) -> T[K] {
 /// Check if two sets have no common elements.
 pub fn[K : Hash + Eq] is_disjoint(self : T[K], other : T[K]) -> Bool {
   if self.size() <= other.size() {
-    self.iter().all(fn(k) { not(other.contains(k)) })
+    self.iter().all(k => not(other.contains(k)))
   } else {
-    other.iter().all(fn(k) { not(self.contains(k)) })
+    other.iter().all(k => not(self.contains(k)))
   }
 }
 
@@ -215,7 +215,7 @@ pub fn[K : Hash + Eq] is_disjoint(self : T[K], other : T[K]) -> Bool {
 /// Check if the current set is a subset of another set.
 pub fn[K : Hash + Eq] is_subset(self : T[K], other : T[K]) -> Bool {
   if self.size() <= other.size() {
-    self.iter().all(fn(k) { other.contains(k) })
+    self.iter().all(k => other.contains(k))
   } else {
     false
   }
@@ -253,21 +253,19 @@ pub impl[K : Hash + Eq] Sub for T[K] with op_sub(self, other) {
 
 ///|
 pub fn[K] iter(self : T[K]) -> Iter[K] {
-  Iter::new(fn(yield_) {
-    for entry in self.entries {
-      if entry is Some({ key, .. }) {
-        guard yield_(key) is IterContinue else { break IterEnd }
-      }
-    } else {
-      IterContinue
+  Iter::new(yield_ => for entry in self.entries {
+    if entry is Some({ key, .. }) {
+      guard yield_(key) is IterContinue else { break IterEnd }
     }
+  } else {
+    IterContinue
   })
 }
 
 ///|
 pub fn[K : Hash + Eq] from_iter(iter : Iter[K]) -> T[K] {
   let s = new()
-  iter.each(fn(e) { s.add(e) })
+  iter.each(e => s.add(e))
   s
 }
 

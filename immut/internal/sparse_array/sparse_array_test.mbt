@@ -44,7 +44,7 @@ test "SparseArray::union" {
     .add(4, 4)
     .add(5, 5)
   let arr2 = @sparse_array.singleton(1, 10).add(2, 2).add(4, 40).add(31, 31)
-  let arr3 = arr1.union(arr2, fn(_x, y) { y })
+  let arr3 = arr1.union(arr2, (_x, y) => y)
   inspect(
     [
       (arr3.has(0), arr3[0]),
@@ -64,7 +64,7 @@ test "SparseArray::iter" {
   let arr = @sparse_array.singleton(0, 0).add(1, 1).add(3, 3).add(31, 31)
   let buf = StringBuilder::new(size_hint=0)
   let mut is_first = true
-  arr.each(fn(x) {
+  arr.each(x => {
     if is_first {
       is_first = false
     } else {

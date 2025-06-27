@@ -138,7 +138,7 @@ test "utilities" {
   let nums = [1, 2, 3, 4, 5]
   // Using deterministic `rand` function below for demonstration
   // NOTE: When using a normal `rand` function, the actual result may vary
-  let shuffled = nums.shuffle(rand=fn(_) { 1 })
+  let shuffled = nums.shuffle(rand=(_) => { 1 })
   inspect(joined, content="hello world")
   inspect(shuffled, content="[1, 3, 4, 5, 2]")
 }

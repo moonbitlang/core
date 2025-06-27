@@ -135,7 +135,7 @@ pub impl[X : FromJson] FromJson for Array[X] with from_json(json, path) {
     decode_error(path, "Array::from_json: expected array")
   }
   guard Index(path, index=0) is (Index(_) as new_path)
-  a.mapi(fn(i, x) {
+  a.mapi((i, x) => {
     new_path.index = i
     FromJson::from_json(x, new_path)
   })

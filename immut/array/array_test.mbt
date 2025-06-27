@@ -53,10 +53,10 @@ test "to_array" {
 test "iter" {
   let buf = StringBuilder::new(size_hint=20)
   let v = @array.of([1, 2, 3])
-  v.iter().each(fn(e) { buf.write_string("[\{e}]") })
+  v.iter().each(e => buf.write_string("[\{e}]"))
   inspect(buf, content="[1][2][3]")
   buf.reset()
-  v.iter().take(2).each(fn(e) { buf.write_string("[\{e}]") })
+  v.iter().take(2).each(e => buf.write_string("[\{e}]"))
   inspect(buf, content="[1][2]")
 }
 
@@ -111,22 +111,22 @@ test "from_array" {
 test "iter" {
   let v = @array.of([1, 2, 3, 4, 5])
   let mut s = 0
-  v.each(fn(e) { s = s + e })
+  v.each(e => s = s + e)
   inspect(s, content="15")
   let v : @array.T[Int] = @array.new()
-  v.each(fn(_e) { abort("never reach") })
+  v.each(_e => abort("never reach"))
 }
 
 ///|
 test "iteri" {
   let v : @array.T[Int] = @array.new()
-  v.eachi(fn(_i, _e) { abort("never reach") })
+  v.eachi((_i, _e) => abort("never reach"))
   let v = @array.of([1, 2, 3, 4, 5])
   let mut s = 0
-  v.eachi(fn(i, e) { s = s + i * e })
+  v.eachi((i, e) => s = s + i * e)
   inspect(s, content="40")
   let vec = []
-  v.eachi(fn(i, _e) { vec.push(i) })
+  v.eachi((i, _e) => vec.push(i))
   inspect(vec, content="[0, 1, 2, 3, 4]")
 }
 
@@ -150,34 +150,34 @@ test "op_equal" {
 test "fold" {
   let e = @array.new()
   let v = @array.of([1, 2, 3, 4, 5])
-  inspect(e.fold(fn(a, b) { a + b }, init=0), content="0")
-  inspect(v.fold(fn(a, b) { a + b }, init=0), content="15")
+  inspect(e.fold((a, b) => a + b, init=0), content="0")
+  inspect(v.fold((a, b) => a + b, init=0), content="15")
 }
 
 ///|
 test "rev_fold" {
   let e = @array.new()
-  inspect(e.rev_fold(fn(a, b) { a + b }, init=0), content="0")
+  inspect(e.rev_fold((a, b) => a + b, init=0), content="0")
   let v = @array.of([1, 2, 3, 4, 5])
-  inspect(e.fold(fn(a, b) { a + b }, init=0), content="0")
-  inspect(v.rev_fold(fn(a, b) { a + b }, init=0), content="15")
+  inspect(e.fold((a, b) => a + b, init=0), content="0")
+  inspect(v.rev_fold((a, b) => a + b, init=0), content="15")
 }
 
 ///|
 test "map" {
   let v = @array.of([1, 2, 3, 4, 5])
-  inspect(v.map(fn(e) { e * 2 }), content="@immut/array.of([2, 4, 6, 8, 10])")
+  inspect(v.map(e => e * 2), content="@immut/array.of([2, 4, 6, 8, 10])")
   inspect(
-    v.map(fn(e) { e.to_string() }),
+    v.map(e => e.to_string()),
     content=
       #|@immut/array.of(["1", "2", "3", "4", "5"])
     ,
   )
   inspect(
-    v.map(fn(e) { e % 2 == 0 }),
+    v.map(e => e % 2 == 0),
     content="@immut/array.of([false, true, false, true, false])",
   )
-  inspect(@array.new().map(fn(e : Int) { e }), content="@immut/array.of([])")
+  inspect(@array.new().map((e : Int) => e), content="@immut/array.of([])")
 }
 
 ///|
@@ -193,8 +193,8 @@ test "new" {
 
 ///|
 test "new_with" {
-  let v = @array.makei(5, fn(i) { i })
-  let v2 = @array.makei(33, fn(i) { i * 10 })
+  let v = @array.makei(5, i => i)
+  let v2 = @array.makei(33, i => i * 10)
   inspect(v, content="@immut/array.of([0, 1, 2, 3, 4])")
   inspect(
     v2,

@@ -217,9 +217,9 @@ test "panic set_utf16be_char with out of range code point" {
 
 ///|
 test "Bytes::makei with non-positive length" {
-  let bytes = Bytes::makei(0, fn(_i) { b'\x00' })
+  let bytes = Bytes::makei(0, _i => b'\x00')
   inspect(bytes, content="b\"\"")
-  let bytes2 = Bytes::makei(-1, fn(_i) { b'\x00' })
+  let bytes2 = Bytes::makei(-1, _i => b'\x00')
   inspect(bytes2, content="b\"\"")
 }
 

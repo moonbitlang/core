@@ -18,7 +18,7 @@
 
 ///|
 pub fn[A] iter(self : T[A]) -> Iter[A] {
-  Iter::new(fn(yield_) {
+  Iter::new(yield_ => {
     fn go(t) {
       match t {
         Empty => IterContinue
@@ -39,7 +39,7 @@ pub fn[A] iter(self : T[A]) -> Iter[A] {
 
 ///|
 pub fn[A : Compare] from_iter(iter : Iter[A]) -> T[A] {
-  iter.fold(init=new(), fn(s, e) { s.add(e) })
+  iter.fold(init=new(), (s, e) => s.add(e))
 }
 
 ///|
