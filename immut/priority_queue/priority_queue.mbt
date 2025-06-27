@@ -20,7 +20,7 @@
 ///   let queue = @priority_queue.new()
 ///   assert_eq(queue.push(1).length(), 1)
 /// ```
-pub fn[A : Compare] new() -> T[A] {
+pub fn[A] new() -> T[A] {
   { node: Empty, size: 0 }
 }
 
