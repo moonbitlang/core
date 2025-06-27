@@ -286,7 +286,7 @@ fn[K, V] height_ge(x1 : Node[K, V]?, x2 : Node[K, V]?) -> Bool {
 }
 
 ///|
-fn[K : Compare, V] balance(root : Node[K, V]) -> Node[K, V] {
+fn[K, V] balance(root : Node[K, V]) -> Node[K, V] {
   let (l, r) = (root.left, root.right)
   let (hl, hr) = (height(l), height(r))
   let new_root = if hl > hr + 1 {
@@ -311,7 +311,7 @@ fn[K : Compare, V] balance(root : Node[K, V]) -> Node[K, V] {
 }
 
 ///|
-fn[K : Compare, V] rotate_l(n : Node[K, V]) -> Node[K, V] {
+fn[K, V] rotate_l(n : Node[K, V]) -> Node[K, V] {
   let r = n.right.unwrap()
   n.right = r.left
   r.left = Some(n)
@@ -321,7 +321,7 @@ fn[K : Compare, V] rotate_l(n : Node[K, V]) -> Node[K, V] {
 }
 
 ///|
-fn[K : Compare, V] rotate_r(n : Node[K, V]) -> Node[K, V] {
+fn[K, V] rotate_r(n : Node[K, V]) -> Node[K, V] {
   let l = n.left.unwrap()
   n.left = l.right
   l.right = Some(n)
@@ -331,7 +331,7 @@ fn[K : Compare, V] rotate_r(n : Node[K, V]) -> Node[K, V] {
 }
 
 ///|
-fn[K : Compare, V] rotate_lr(n : Node[K, V]) -> Node[K, V] {
+fn[K, V] rotate_lr(n : Node[K, V]) -> Node[K, V] {
   let l = n.left.unwrap()
   let v = rotate_l(l)
   n.left = Some(v)
@@ -339,7 +339,7 @@ fn[K : Compare, V] rotate_lr(n : Node[K, V]) -> Node[K, V] {
 }
 
 ///|
-fn[K : Compare, V] rotate_rl(n : Node[K, V]) -> Node[K, V] {
+fn[K, V] rotate_rl(n : Node[K, V]) -> Node[K, V] {
   let r = n.right.unwrap()
   let v = rotate_r(r)
   n.right = Some(v)

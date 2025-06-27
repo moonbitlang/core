@@ -29,7 +29,7 @@ pub impl[A] Default for T[A] with default() {
 
 ///|
 /// Returns the one-value ImmutableSet containing only `value`.
-pub fn[A : Compare] singleton(value : A) -> T[A] {
+pub fn[A] singleton(value : A) -> T[A] {
   Node(left=Empty, value~, right=Empty, size=1)
 }
 
@@ -45,7 +45,7 @@ pub fn[A : Compare] from_array(array : Array[A]) -> T[A] {
 
 ///|
 /// Convert ImmutableSet[T] to Array[T], the result must be ordered.
-pub fn[A : Compare] to_array(self : T[A]) -> Array[A] {
+pub fn[A] to_array(self : T[A]) -> Array[A] {
   let arr = []
   fn aux(set : T[A]) {
     match set {
@@ -247,7 +247,7 @@ pub fn[A : Compare] split(self : T[A], divide : A) -> (T[A], Bool, T[A]) {
 
 ///|
 /// Returns true if sorted_set is empty
-pub fn[A : Compare] is_empty(self : T[A]) -> Bool {
+pub fn[A] is_empty(self : T[A]) -> Bool {
   self is Empty
 }
 
@@ -638,7 +638,7 @@ priv enum SplitBis[A] {
 }
 
 ///|
-impl[T : Show] Show for SplitBis[T] with output(self, logger) {
+impl[T] Show for SplitBis[T] with output(self, logger) {
   match self {
     Found => logger.write_string("Found")
     NotFound(_) => logger.write_string("NotFound")
@@ -672,7 +672,7 @@ fn[A : Compare] split_bis(self : T[A], value : A) -> SplitBis[A] {
 
 ///|
 /// Get the height of set.
-pub fn[A : Compare] size(self : T[A]) -> Int {
+pub fn[A] size(self : T[A]) -> Int {
   match self {
     Empty => 0
     Node(size~, ..) => size
@@ -681,13 +681,13 @@ pub fn[A : Compare] size(self : T[A]) -> Int {
 
 ///|
 /// Creates a new node.
-fn[A : Compare] create(left : T[A], value : A, right : T[A]) -> T[A] {
+fn[A] create(left : T[A], value : A, right : T[A]) -> T[A] {
   Node(left~, right~, value~, size=left.size() + right.size() + 1)
 }
 
 ///|
 /// Same as create, but performs one step of rebalancing if necessary.
-fn[A : Compare] balance(left : T[A], value : A, right : T[A]) -> T[A] {
+fn[A] balance(left : T[A], value : A, right : T[A]) -> T[A] {
   let left_size = left.size()
   let right_size = right.size()
   if left_size + right_size < 2 {

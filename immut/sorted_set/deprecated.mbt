@@ -22,7 +22,7 @@ pub fn[A] T::new() -> T[A] {
 ///|
 #deprecated("use `immut/sorted_set.singleton` instead")
 #coverage.skip
-pub fn[A : Compare] T::singleton(value : A) -> T[A] {
+pub fn[A] T::singleton(value : A) -> T[A] {
   singleton(value)
 }
 
