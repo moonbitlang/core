@@ -53,10 +53,6 @@ pub fn[T] Array::push_iter(self : Self[T], iter : Iter[T]) -> Unit {
 }
 
 ///|
-#deprecated("use method call")
-pub fnalias Array::push_iter
-
-///|
 /// Creates a new array of the specified length, where each element is
 /// initialized using an index-based initialization function.
 ///

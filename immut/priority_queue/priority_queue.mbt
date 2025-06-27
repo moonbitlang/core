@@ -184,15 +184,7 @@ pub fn[A : Compare] unsafe_pop(self : T[A]) -> T[A] {
   }
 }
 
-///|
-#deprecated("Use `unsafe_pop` instead")
-#coverage.skip
-pub fn[A : Compare] pop_exn(self : T[A]) -> T[A] {
-  self.unsafe_pop()
-}
-
-///|
-/// Adds a value to the immutable priority queue.
+///| Adds a value to the immutable priority queue.
 ///
 /// # Example
 /// ```mbt
