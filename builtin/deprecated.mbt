@@ -217,3 +217,255 @@ pub fn Double::upto(
     }
   }
 }
+
+///|
+/// Searches the array for the first element that satisfies the predicate
+/// function.
+///
+/// Parameters:
+///
+/// * `array` : The array to search in.
+/// * `predicate` : A function that takes an element and returns a boolean
+/// indicating whether the element satisfies the search condition.
+///
+/// Returns the index of the first element that satisfies the predicate, or
+/// `None` if no such element is found.
+///
+/// Example:
+///
+/// ```moonbit
+///   let arr = [1, 2, 3, 4, 5]
+///   inspect(arr.search_by((x) => { x > 3 }), content="Some(3)")
+///   inspect(arr.search_by((x) => { x > 10 }), content="None")
+/// ```
+///
+#deprecated("Use `search_by` instead.")
+#coverage.skip
+pub fn[T] Array::find_index(self : Array[T], f : (T) -> Bool) -> Int? {
+  self.search_by(f)
+}
+
+///|
+/// Search the index of the first element that satisfies the predicate.
+///
+
+///|
+/// Fold out values from an array according to certain rules.
+///
+/// Example:
+///
+/// ```moonbit
+///   let sum = [1, 2, 3, 4, 5].fold(init=0, (sum, elem) => sum + elem)
+///   assert_eq(sum, 15)
+/// ```
+#deprecated("Use `fold` instead.")
+#coverage.skip
+pub fn[T, U] Array::fold_left(
+  self : Array[T],
+  f : (U, T) -> U raise?,
+  init~ : U
+) -> U raise? {
+  self.fold(init~, f)
+}
+
+///|
+/// Fold out values from an array according to certain rules in reversed turn.
+///
+/// Example:
+///
+/// ```moonbit
+///   let sum = [1, 2, 3, 4, 5].rev_fold(init=0, (sum, elem) => sum + elem)
+///   assert_eq(sum, 15)
+/// ```
+#deprecated("Use `rev_fold` instead.")
+#coverage.skip
+pub fn[T, U] Array::fold_right(
+  self : Array[T],
+  f : (U, T) -> U raise?,
+  init~ : U
+) -> U raise? {
+  self.rev_fold(init~, f)
+}
+
+///|
+/// Fold out values from an array according to certain rules with index.
+///
+/// Example:
+///
+/// ```moonbit
+///   let sum = [1, 2, 3, 4, 5].foldi(init=0, (index, sum, _elem) => sum + index)
+///   assert_eq(sum, 10)
+/// ```
+#deprecated("Use `foldi` instead.")
+#coverage.skip
+pub fn[T, U] Array::fold_lefti(
+  self : Array[T],
+  f : (Int, U, T) -> U raise?,
+  init~ : U
+) -> U raise? {
+  self.foldi(init~, f)
+}
+
+///|
+/// Fold out values from an array according to certain rules in reversed turn with index.
+///
+/// Example:
+///
+/// ```moonbit
+///   let sum = [1, 2, 3, 4, 5].rev_foldi(init=0, (index, sum, _elem) => sum + index)
+///   assert_eq(sum, 10)
+/// ```
+#deprecated("Use `rev_foldi` instead.")
+#coverage.skip
+pub fn[T, U] Array::fold_righti(
+  self : Array[T],
+  f : (Int, U, T) -> U raise?,
+  init~ : U
+) -> U raise? {
+  self.rev_foldi(init~, f)
+}
+
+///|
+#deprecated("Use `unsafe_pop` instead")
+#coverage.skip
+pub fn[T] Array::pop_exn(self : Array[T]) -> T {
+  self.unsafe_pop()
+}
+
+///|
+/// Creates a byte sequence from a UTF-16 encoded string. Each character in the
+/// string is encoded as a pair of bytes in little-endian order.
+///
+/// Parameters:
+///
+/// * `string` : The input string to be converted to a byte sequence.
+///
+/// Returns a new byte sequence containing the UTF-16LE encoded representation of
+/// the input string.
+///
+/// Example:
+///
+/// ```moonbit
+///   let bytes = "ABC".to_bytes()
+///   inspect(bytes, content="b\"\\x41\\x00\\x42\\x00\\x43\\x00\"")
+/// ```
+#deprecated("Use `str.to_bytes()` instead")
+pub fn Bytes::of_string(str : String) -> Bytes {
+  FixedArray::make(str.length() * 2, Byte::default())
+  ..blit_from_string(0, str, 0, str.length())
+  .unsafe_reinterpret_as_bytes()
+}
+
+///|
+#deprecated("Bytes are immutable. Use `FixedArray::blit_from_bytes` if it's really necessary.")
+pub fn Bytes::copy(self : Bytes) -> Bytes {
+  Bytes::makei(self.length(), i => self[i])
+}
+
+///|
+/// positions.
+///
+/// Parameters:
+///
+/// - `byte_value` : The `Byte` value whose bits are to be shifted.
+/// - `shift_count` : The number of bit positions to shift the `byte_value` to
+///   the left.
+///
+/// Returns the resulting `Byte` value after the bitwise left shift operation.
+///
+#deprecated("Use infix operator `<<` instead")
+#coverage.skip
+pub fn Byte::lsl(self : Byte, count : Int) -> Byte {
+  (self.to_int() << count).to_byte()
+}
+
+///|
+/// bits.
+///
+/// Parameters:
+///
+/// - `value` : The `Byte` value to be shifted.
+/// - `count` : The number of bits to shift the `value` to the right.
+///
+/// Returns the result of the logical shift right operation as a `Byte`.
+///
+#deprecated("Use infix operator `>>` instead")
+#coverage.skip
+pub fn Byte::lsr(self : Byte, count : Int) -> Byte {
+  (self.to_uint() >> count).reinterpret_as_int().to_byte()
+}
+
+///|
+/// Prints and returns the value of a given expression for quick and dirty debugging.
+#deprecated("This function is for debugging only and should not be used in production")
+pub fn[T] dump(t : T, name? : String, loc~ : SourceLoc = _) -> T {
+  let name = match name {
+    Some(name) => name
+    None => ""
+  }
+  println("dump(\{name}@\{loc}) = \{any_to_string(t)}")
+  t
+}
+
+///|
+/// Returns the Unicode code point at the given index.
+///
+/// This method counts Unicode code points (characters) rather than UTF-16 code units.
+/// It properly handles surrogate pairs to return the correct Unicode character.
+///
+/// # Examples
+///
+/// ```mbt
+///   let s = "Hello🤣";
+///   inspect(s.iter().nth(0).unwrap(), content="H");
+///   inspect(s.iter().nth(5).unwrap(), content="🤣"); // Returns full emoji character
+/// ```
+///
+/// # Panics
+///
+/// Panics if:
+/// - The index is out of bounds
+/// - The string contains an invalid surrogate pair
+#deprecated("The index will be changed to utf16 index. If you want to access n-th character, use `str.iter().nth(n).unwrap()` instead.")
+pub fn String::codepoint_at(self : String, index : Int) -> Char {
+  let charcode_len = self.length()
+  guard index >= 0 && index < charcode_len else { abort("index out of bounds") }
+  for char_count = 0, utf16_offset = 0
+      char_count < charcode_len && utf16_offset < index
+      char_count = char_count + 1, utf16_offset = utf16_offset + 1 {
+    let c1 = self.unsafe_charcode_at(char_count)
+    if is_leading_surrogate(c1) && char_count + 1 < charcode_len {
+      let c2 = self.unsafe_charcode_at(char_count + 1)
+      if is_trailing_surrogate(c2) {
+        continue char_count + 2, utf16_offset + 1
+      } else {
+        abort("invalid surrogate pair")
+      }
+    }
+  } else {
+    guard utf16_offset == index && char_count < charcode_len else {
+      abort("index out of bounds")
+    }
+    let c1 = self.unsafe_charcode_at(char_count)
+    if is_leading_surrogate(c1) && char_count + 1 < charcode_len {
+      let c2 = self.unsafe_charcode_at(char_count + 1)
+      if is_trailing_surrogate(c2) {
+        code_point_of_surrogate_pair(c1, c2)
+      } else {
+        abort("invalid surrogate pair")
+      }
+    } else {
+      c1.unsafe_to_char()
+    }
+  }
+}
+
+///|
+#deprecated("Use `char_length` instead.")
+pub fn String::codepoint_length(
+  self : String,
+  start_offset~ : Int = 0,
+  end_offset? : Int
+) -> Int {
+  self.char_length(start_offset~, end_offset?)
+}
