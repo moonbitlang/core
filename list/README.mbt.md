@@ -114,7 +114,7 @@ Get the list without its first element.
 ```moonbit
 test {
   let list = @list.of([1, 2, 3, 4, 5])
-  assert_eq(list.tail(), @list.of([2, 3, 4, 5]))
+  assert_eq(list.unsafe_tail(), @list.of([2, 3, 4, 5]))
 }
 ```
 

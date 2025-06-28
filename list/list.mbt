@@ -283,27 +283,20 @@ pub fn[A] any(self : T[A], f : (A) -> Bool raise?) -> Bool raise? {
 }
 
 ///|
-/// Tail of the list.
-///
-/// # Example
-///
-/// ```mbt
-///   assert_eq(@list.of([1, 2, 3, 4, 5]).tail(), @list.of([2, 3, 4, 5]))
-/// ```
-pub fn[A] tail(self : T[A]) -> T[A] {
-  match self {
-    Empty => Empty
-    More(_, tail~) => tail
-  }
-}
-
-///|
 /// Get first element of the list.
 #internal(unsafe, "Panic if the list is empty")
 pub fn[A] unsafe_head(self : T[A]) -> A {
   match self {
     Empty => abort("head of empty list")
     More(head, tail=_) => head
+  }
+}
+
+///|
+pub fn[A] unsafe_tail(self : T[A]) -> T[A] {
+  match self {
+    Empty => abort("tail of empty list")
+    More(_, tail~) => tail
   }
 }
 
