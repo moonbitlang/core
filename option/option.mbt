@@ -13,86 +13,7 @@
 // limitations under the License.
 
 ///|
-/// Creates an `Option` containing a value if the given condition is true, otherwise returns `None`.
-///
-/// # Arguments
-///
-/// * `condition`: A boolean value indicating whether the option should contain a value.
-/// * `value`: A function that returns the value to be contained in the option.
-///
-/// # Returns
-///
-/// An `Option` containing the value if the condition is true, otherwise `None`.
-///
-/// # Example
-///
-/// ```mbt
-///   let result = @option.when(true, () => "Hello, World!")
-///   assert_eq(result, Some("Hello, World!"))
-/// ```
-pub fn[T] when(condition : Bool, value : () -> T) -> T? {
-  if condition {
-    Some(value())
-  } else {
-    None
-  }
-}
-
-///|
-test "when" {
-  let result = when(true, () => "Hello, World!")
-  let result2 = when(false, () => "Hello, World!")
-  assert_eq(result, Some("Hello, World!"))
-  assert_eq(result2, None)
-}
-
-///|
-/// The `unless` function returns an `Option` value based on a condition.
-///
-/// `unless(condition, value)` is equivalent to `when(not(condition), value)`.
-///
-/// # Arguments
-///
-/// * `condition`: A boolean value indicating whether the condition is true or false.
-/// * `value`: A function that returns a value of type `T`.
-///
-/// # Returns
-///
-/// An `Option` value that is `Some(value())` if the condition is false, otherwise `None`.
-///
-pub fn[T] unless(condition : Bool, value : () -> T) -> T? {
-  when(not(condition), value)
-}
-
-///|
-test "unless" {
-  let result = unless(true, () => "Hello, World!")
-  let result2 = unless(false, () => "Hello, World!")
-  assert_eq(result, None)
-  assert_eq(result2, Some("Hello, World!"))
-}
-
-///|
-/// Creates an empty `Option` of type `T`.
-pub fn[T] empty() -> T? {
-  None
-}
-
-///|
-test "empty" {
-  let x : Int? = None
-  let y : Int? = empty()
-  assert_eq(x, y)
-}
-
-///|
-/// Creates an `Option` that contains a value.
-pub fn[T] some(value : T) -> T? {
-  Some(value)
-}
-
-///|
-test "some" {
+test "some equals to Some" {
   let x : Int? = Some(5)
   let y : Int? = some(5)
   assert_eq(x, y)
@@ -119,7 +40,7 @@ pub fn[T, U] map(self : T?, f : (T) -> U) -> U? {
 
 ///|
 test "map" {
-  let a = Option::Some(5)
+  let a = Some(5)
   let b : Int? = None
   assert_eq(a.map(x => x * 2), Some(10))
   assert_eq(b.map(x => x * 2), None)
