@@ -38,18 +38,6 @@ pub fn[T : Show] println(input : T) -> Unit {
 }
 
 ///|
-/// Prints and returns the value of a given expression for quick and dirty debugging.
-#deprecated("This function is for debugging only and should not be used in production")
-pub fn[T] dump(t : T, name? : String, loc~ : SourceLoc = _) -> T {
-  let name = match name {
-    Some(name) => name
-    None => ""
-  }
-  println("dump(\{name}@\{loc}) = \{any_to_string(t)}")
-  t
-}
-
-///|
 /// Represents an error type used by the `inspect` function to indicate failures
 /// in value inspection. Contains a string message describing the nature of the
 /// inspection failure.

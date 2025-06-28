@@ -275,13 +275,6 @@ pub fn[T] Array::pop(self : Array[T]) -> T? {
 }
 
 ///|
-#deprecated("Use `unsafe_pop` instead")
-#coverage.skip
-pub fn[T] Array::pop_exn(self : Array[T]) -> T {
-  self.unsafe_pop()
-}
-
-///|
 /// Removes and returns the last element from the array.
 ///
 /// Parameters:
