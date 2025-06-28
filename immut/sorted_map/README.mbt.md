@@ -92,10 +92,10 @@ Use `each()` or `eachi()` to iterate through all key-value pairs.
 test {
   let map = @sorted_map.of([("a", 1), ("b", 2), ("c", 3)])
   let arr = []
-  map.each(fn(k, v) { arr.push("key:\{k}, value:\{v}") })
+  map.each((k, v) => { arr.push("key:\{k}, value:\{v}") })
   assert_eq(arr, ["key:a, value:1", "key:b, value:2", "key:c, value:3"])
   let arr = []
-  map.eachi(fn(i, k, v) { arr.push("index:\{i}, key:\{k}, value:\{v}") })
+  map.eachi((i, k, v) => { arr.push("index:\{i}, key:\{k}, value:\{v}") })
   assert_eq(arr, ["index:0, key:a, value:1", "index:1, key:b, value:2", "index:2, key:c, value:3"])
 }
 ```
@@ -105,9 +105,9 @@ Use `map()` or `map_with_key()` to map a function over all values.
 ```moonbit
 test {
   let map = @sorted_map.of([("a", 1), ("b", 2), ("c", 3)])
-  let map = map.map(fn(v) { v + 1 })
+  let map = map.map((v) => { v + 1 })
   assert_eq(map.values().collect(), [2, 3, 4])
-  let map = map.map_with_key(fn(_k, v) { v + 1 })
+  let map = map.map_with_key((_k, v) => { v + 1 })
   assert_eq(map.values().collect(), [3, 4, 5])
 }
 ```
@@ -118,9 +118,9 @@ Similarly, you can use `foldr_with_key()` to do a Post-order fold.
 ```moonbit
 test {
   let map = @sorted_map.of([("a", 1), ("b", 2), ("c", 3)])
-  assert_eq(map.fold(fn (acc, v) { acc + v }, init=0), 6) // 6
-  assert_eq(map.foldl_with_key(fn (acc, k, v) { acc + k + v.to_string() }, init=""), "a1b2c3") // "a1b2c3"
-  assert_eq(map.foldr_with_key(fn (acc, k, v) { acc + k + v.to_string() }, init=""), "c3b2a1") // "c3b2a1"
+  assert_eq(map.fold((acc, v) => { acc + v }, init=0), 6) // 6
+  assert_eq(map.foldl_with_key((acc, k, v) => { acc + k + v.to_string() }, init=""), "a1b2c3") // "a1b2c3"
+  assert_eq(map.foldr_with_key((acc, k, v) => { acc + k + v.to_string() }, init=""), "c3b2a1") // "c3b2a1"
 }
 ```
 
@@ -129,10 +129,10 @@ Use `filter()` or `filter_with_key()` to filter all keys/values that satisfy the
 ```moonbit
 test {
   let map = @sorted_map.of([("a", 1), ("b", 2), ("c", 3)])
-  let map = map.filter(fn (v) { v > 1 })
+  let map = map.filter((v) => { v > 1 })
   assert_eq(map.values().collect(), [2, 3])
   assert_eq(map.keys(), ["b", "c"])
-  let map = map.filter_with_key(fn (k, v) { k > "a" && v > 1 })
+  let map = map.filter_with_key((k, v) => { k > "a" && v > 1 })
   assert_eq(map.values().collect(), [2, 3])
   assert_eq(map.keys(), ["b", "c"])
 }

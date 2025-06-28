@@ -137,7 +137,7 @@ test "iter2" {
   let keys = []
   b"abcde"
   .iter2()
-  .each(fn(i, x) {
+  .each((i, x) => {
     buf.write_string(x.to_string())
     keys.push(i)
   })

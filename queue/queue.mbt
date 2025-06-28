@@ -29,7 +29,7 @@ pub fn[A] new() -> T[A] {
 ///
 /// # Example
 /// ```mbt
-///   let array = Array::makei(3, fn(idx) { idx + 1 })
+///   let array = Array::makei(3, (idx) => { idx + 1 })
 ///   let queue : @queue.T[Int] = @queue.from_array(array)
 ///   assert_eq(queue.length(), 3)
 /// ```
@@ -203,7 +203,7 @@ pub fn[A] pop(self : T[A]) -> A? {
 /// ```mbt
 ///   let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
 ///   let mut sum = 0
-///   queue.each(fn(x) { sum = sum + x })
+///   queue.each((x) => { sum = sum + x })
 /// ```
 pub fn[A] each(self : T[A], f : (A) -> Unit) -> Unit {
   loop self.first {
@@ -222,7 +222,7 @@ pub fn[A] each(self : T[A], f : (A) -> Unit) -> Unit {
 /// ```mbt
 ///   let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
 ///   let mut sum = 0
-///   queue.eachi(fn(x, i) { sum = sum + x * i })
+///   queue.eachi((x, i) => { sum = sum + x * i })
 /// ```
 pub fn[A] eachi(self : T[A], f : (Int, A) -> Unit) -> Unit {
   loop (self.first, 0) {
@@ -240,7 +240,7 @@ pub fn[A] eachi(self : T[A], f : (Int, A) -> Unit) -> Unit {
 /// # Example
 /// ```mbt
 ///   let queue : @queue.T[Int] = @queue.new()
-///   let sum = queue.fold(init=0, fn(acc, x) { acc + x })
+///   let sum = queue.fold(init=0, (acc, x) => { acc + x })
 ///   assert_eq(sum, 0)
 /// ```
 pub fn[A, B] fold(self : T[A], init~ : B, f : (B, A) -> B) -> B {
@@ -309,20 +309,18 @@ pub fn[A] transfer(self : T[A], dst : T[A]) -> Unit {
 /// # Example
 /// ```mbt
 ///   let queue : @queue.T[Int] = @queue.of([5, 6, 7, 8])
-///   let sum = queue.iter().fold(fn(x, y) { x + y }, init=0)
+///   let sum = queue.iter().fold((x, y) => { x + y }, init=0)
 ///   assert_eq(sum, 26)
 /// ```
 pub fn[A] iter(self : T[A]) -> Iter[A] {
-  Iter::new(fn(yield_) {
-    loop self.first {
-      Some({ content, next }) => {
-        if yield_(content) == IterEnd {
-          break IterEnd
-        }
-        continue next
+  Iter::new(yield_ => loop self.first {
+    Some({ content, next }) => {
+      if yield_(content) == IterEnd {
+        break IterEnd
       }
-      None => IterContinue
+      continue next
     }
+    None => IterContinue
   })
 }
 
@@ -336,7 +334,7 @@ pub fn[A] iter(self : T[A]) -> Iter[A] {
 /// ```
 pub fn[A] from_iter(iter : Iter[A]) -> T[A] {
   let q = new()
-  iter.each(fn(e) { q.push(e) })
+  iter.each(e => q.push(e))
   q
 }
 

@@ -13,5 +13,29 @@
 // limitations under the License.
 
 ///|
-#deprecated("use method call")
-pub fnalias Array::push_iter
+#deprecated("inline instead for such tiny function")
+pub fn[T] when(condition : Bool, value : () -> T) -> T? {
+  if condition {
+    Some(value())
+  } else {
+    None
+  }
+}
+
+///|
+#deprecated("inline instead for such tiny function")
+pub fn[T] unless(condition : Bool, value : () -> T) -> T? {
+  when(not(condition), value)
+}
+
+///|
+#deprecated("inline instead for such tiny function")
+pub fn[T] empty() -> T? {
+  None
+}
+
+///|
+#deprecated("inline instead for such tiny function")
+pub fn[T] some(value : T) -> T? {
+  Some(value)
+}

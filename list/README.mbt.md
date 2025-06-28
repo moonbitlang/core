@@ -114,7 +114,7 @@ Get the list without its first element.
 ```moonbit
 test {
   let list = @list.of([1, 2, 3, 4, 5])
-  assert_eq(list.tail(), @list.of([2, 3, 4, 5]))
+  assert_eq(list.unsafe_tail(), @list.of([2, 3, 4, 5]))
 }
 ```
 
@@ -140,7 +140,7 @@ Iterate over the elements of the list.
 ```moonbit
 test {
   let arr = []
-  @list.of([1, 2, 3, 4, 5]).each(fn(x) { arr.push(x) })
+  @list.of([1, 2, 3, 4, 5]).each(x => arr.push(x))
   assert_eq(arr, [1, 2, 3, 4, 5])
 }
 ```
@@ -151,7 +151,7 @@ Transform each element of the list.
 
 ```moonbit
 test {
-  let list = @list.of([1, 2, 3, 4, 5]).map(fn(x) { x * 2 })
+  let list = @list.of([1, 2, 3, 4, 5]).map(x => x * 2)
   assert_eq(list, @list.of([2, 4, 6, 8, 10]))
 }
 ```
@@ -162,7 +162,7 @@ Keep elements that satisfy a predicate.
 
 ```moonbit
 test {
-  let list = @list.of([1, 2, 3, 4, 5]).filter(fn(x) { x % 2 == 0 })
+  let list = @list.of([1, 2, 3, 4, 5]).filter(x => x % 2 == 0)
   assert_eq(list, @list.of([2, 4]))
 }
 ```

@@ -95,12 +95,10 @@ fn[A] protect2(finalize~ : () -> Unit raise?, work : () -> A raise) -> A raise {
 
 ///|
 test "protect" {
-  let x = try? protect(finalize=fn() {  }, fn() {
-      if true {
-        raise Failure("error")
-      } else {
-        1
-      }
+  let x = try? protect(finalize=() => (), () => if true {
+      raise Failure("error")
+    } else {
+      1
     })
   inspect(
     x,
@@ -112,12 +110,10 @@ test "protect" {
 
 ///|
 test "protect & finally raise error" {
-  let x = try? protect(finalize=fn() { raise Failure("finally error") }, fn() {
-      if true {
-        raise Failure("error")
-      } else {
-        1
-      }
+  let x = try? protect(finalize=() => raise Failure("finally error"), () => if true {
+      raise Failure("error")
+    } else {
+      1
     })
   inspect(
     x,
@@ -129,12 +125,10 @@ test "protect & finally raise error" {
 
 ///|
 test "protect2" {
-  let x = try? protect2(finalize=fn() {  }, fn() {
-      if true {
-        raise Failure("error")
-      } else {
-        1
-      }
+  let x = try? protect2(finalize=() => (), () => if true {
+      raise Failure("error")
+    } else {
+      1
     })
   inspect(
     x,
@@ -146,12 +140,10 @@ test "protect2" {
 
 ///|
 test "protect2 & finally raise error" {
-  let x = try? protect2(finalize=fn() { raise Failure("finally error") }, fn() {
-      if true {
-        raise Failure("error")
-      } else {
-        1
-      }
+  let x = try? protect2(finalize=() => raise Failure("finally error"), () => if true {
+      raise Failure("error")
+    } else {
+      1
     })
   inspect(
     x,

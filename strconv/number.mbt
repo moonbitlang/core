@@ -36,9 +36,8 @@ fn to_digit(c : Char) -> Int {
 ///|
 /// Returns the remaining slice, the parsed number, and the number of digits parsed.
 fn parse_digits(s : StringSlice, x : UInt64) -> (StringSlice, UInt64, Int) {
-  s.fold_digits(x, fn(digit, acc : UInt64) {
-    acc * 10UL + UInt64::extend_uint(digit.reinterpret_as_uint())
-  })
+  s.fold_digits(x, (digit, acc : UInt64) => acc * 10UL +
+    UInt64::extend_uint(digit.reinterpret_as_uint()))
 }
 
 ///|
@@ -74,12 +73,11 @@ fn parse_scientific(s : StringSlice) -> (StringSlice, Int64)? {
     s = s.step_1_unchecked()
   }
   if s.first_is_digit() {
-    let (s, exp_num, _) = s.fold_digits(exp_num, fn(digit, exp_num : Int64) {
-      if exp_num < 0x10000L {
-        10L * exp_num + digit.to_int64() // no overflows here
-      } else {
-        exp_num
-      }
+    let (s, exp_num, _) = s.fold_digits(exp_num, (digit, exp_num : Int64) => if exp_num <
+      0x10000L {
+      10L * exp_num + digit.to_int64() // no overflows here
+    } else {
+      exp_num
     })
     if neg_exp {
       Some((s, -exp_num))

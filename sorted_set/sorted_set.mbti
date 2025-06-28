@@ -14,7 +14,7 @@ fn[V] new() -> T[V]
 #deprecated
 fn[V : Compare] of(Array[V]) -> T[V]
 
-fn[V : Compare] singleton(V) -> T[V]
+fn[V] singleton(V) -> T[V]
 
 // Types and methods
 type T[V]
@@ -34,17 +34,17 @@ fn[V : Compare] T::from_iter(Iter[V]) -> Self[V]
 #deprecated
 fn[V : Compare] T::intersect(Self[V], Self[V]) -> Self[V]
 fn[V : Compare] T::intersection(Self[V], Self[V]) -> Self[V]
-fn[V : Compare] T::is_empty(Self[V]) -> Bool
+fn[V] T::is_empty(Self[V]) -> Bool
 fn[V] T::iter(Self[V]) -> Iter[V]
 fn[V : Compare] T::range(Self[V], V, V) -> Iter[V]
 fn[V : Compare] T::remove(Self[V], V) -> Unit
-fn[V : Compare] T::size(Self[V]) -> Int
+fn[V] T::size(Self[V]) -> Int
 fn[V : Compare] T::subset(Self[V], Self[V]) -> Bool
 fn[V : Compare] T::symmetric_difference(Self[V], Self[V]) -> Self[V]
 fn[V] T::to_array(Self[V]) -> Array[V]
 fn[V : Compare] T::union(Self[V], Self[V]) -> Self[V]
 impl[K] Default for T[K]
-impl[V : Compare] Eq for T[V]
+impl[V : Eq] Eq for T[V]
 impl[V : Show] Show for T[V]
 impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for T[X]
 

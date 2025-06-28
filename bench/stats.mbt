@@ -129,7 +129,7 @@ fn std_dev_pct(mean~ : Double, std_dev~ : Double) -> Double {
 
 ///|
 fn median_abs_dev(data : Array[Double], median_~ : Double) -> Double {
-  let abs_devs = data.map(fn(x) { (median_ - x).abs() })
+  let abs_devs = data.map(x => (median_ - x).abs())
   abs_devs.sort()
   // https://en.wikipedia.org/wiki/Median_absolute_deviation
   median(sorted_data=abs_devs) * 1.4826

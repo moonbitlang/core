@@ -95,9 +95,9 @@ You can use `each()` or `eachi()` to iterate through all key-value pairs.
 test {
    let map = @hashmap.of([("a", 1), ("b", 2), ("c", 3)])
    let arr = []
-    map.each(fn(k, v) { arr.push((k, v)) })
+    map.each((k, v) => { arr.push((k, v)) })
     let arr2 = []
-    map.eachi(fn(i, k, v) { arr2.push((i, k, v)) })
+    map.eachi((i, k, v) => { arr2.push((i, k, v)) })
 }
 ```
 

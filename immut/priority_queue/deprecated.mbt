@@ -13,5 +13,8 @@
 // limitations under the License.
 
 ///|
-#deprecated("use method call")
-pub fnalias Array::push_iter
+#deprecated("Use `unsafe_pop` instead")
+#coverage.skip
+pub fn[A : Compare] pop_exn(self : T[A]) -> T[A] {
+  self.unsafe_pop()
+}

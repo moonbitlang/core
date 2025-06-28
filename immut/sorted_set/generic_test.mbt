@@ -32,13 +32,11 @@ test "iter early termination - value" {
   let mut count = 0
   let _ = set
     .iter()
-    .run(fn(x) {
-      if x == 2 {
-        IterEnd
-      } else {
-        count = count + 1
-        IterContinue
-      }
+    .run(x => if x == 2 {
+      IterEnd
+    } else {
+      count = count + 1
+      IterContinue
     })
   assert_eq(count, 1)
 }
@@ -61,7 +59,7 @@ test "iter with early termination on left subtree" {
   // Create an iterator that stops after processing the left subtree
   let mut count = 0
   let iter = set.iter()
-  let _ = iter.run(fn(_ : Int) -> IterResult {
+  let _ = iter.run((_ : Int) => {
     count = count + 1
     if count == 1 {
       IterEnd

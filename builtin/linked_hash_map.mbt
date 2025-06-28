@@ -93,7 +93,7 @@ pub fn[K, V] Map::new(capacity~ : Int = 8) -> Map[K, V] {
 /// Create a hash map from array.
 pub fn[K : Hash + Eq, V] Map::from_array(arr : Array[(K, V)]) -> Map[K, V] {
   let m = Map::new(capacity=arr.length())
-  arr.each(fn(e) { m.set(e.0, e.1) })
+  arr.each(e => m.set(e.0, e.1))
   m
 }
 
@@ -475,53 +475,45 @@ pub fn[K, V] Map::clear(self : Map[K, V]) -> Unit {
 ///|
 /// Returns the iterator of the hash map, provide elements in the order of insertion.
 pub fn[K, V] Map::iter(self : Map[K, V]) -> Iter[(K, V)] {
-  Iter::new(fn(yield_) {
-    loop self.head {
-      Some({ key, value, next, .. }) => {
-        guard yield_((key, value)) is IterContinue else { break IterEnd }
-        continue next
-      }
-      None => break IterContinue
+  Iter::new(yield_ => loop self.head {
+    Some({ key, value, next, .. }) => {
+      guard yield_((key, value)) is IterContinue else { break IterEnd }
+      continue next
     }
+    None => break IterContinue
   })
 }
 
 ///|
 pub fn[K, V] Map::iter2(self : Map[K, V]) -> Iter2[K, V] {
-  Iter2::new(fn(yield_) {
-    loop self.head {
-      Some({ key, value, next, .. }) => {
-        guard yield_(key, value) is IterContinue else { break IterEnd }
-        continue next
-      }
-      None => IterContinue
+  Iter2::new(yield_ => loop self.head {
+    Some({ key, value, next, .. }) => {
+      guard yield_(key, value) is IterContinue else { break IterEnd }
+      continue next
     }
+    None => IterContinue
   })
 }
 
 ///|
 pub fn[K, V] Map::keys(self : Map[K, V]) -> Iter[K] {
-  Iter::new(fn(yield_) {
-    loop self.head {
-      Some({ key, next, .. }) => {
-        guard yield_(key) is IterContinue else { break IterEnd }
-        continue next
-      }
-      None => IterContinue
+  Iter::new(yield_ => loop self.head {
+    Some({ key, next, .. }) => {
+      guard yield_(key) is IterContinue else { break IterEnd }
+      continue next
     }
+    None => IterContinue
   })
 }
 
 ///|
 pub fn[K, V] Map::values(self : Map[K, V]) -> Iter[V] {
-  Iter::new(fn(yield_) {
-    loop self.head {
-      Some({ value, next, .. }) => {
-        guard yield_(value) is IterContinue else { break IterEnd }
-        continue next
-      }
-      None => IterContinue
+  Iter::new(yield_ => loop self.head {
+    Some({ value, next, .. }) => {
+      guard yield_(value) is IterContinue else { break IterEnd }
+      continue next
     }
+    None => IterContinue
   })
 }
 
@@ -558,7 +550,7 @@ pub impl[K : Hash + Eq, V : Eq] Eq for Map[K, V] with op_equal(
 pub fn[K : Hash + Eq, V] Map::of(arr : FixedArray[(K, V)]) -> Map[K, V] {
   let length = arr.length()
   let m = Map::new(capacity=length)
-  // arr.iter(fn(e) { m.set(e.0, e.1) })
+  // arr.iter((e) => { m.set(e.0, e.1) })
   for i in 0..<length {
     let e = arr[i]
     m.set(e.0, e.1)

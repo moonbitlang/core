@@ -96,7 +96,7 @@ pub fn BigInt::to_octets(self : BigInt, length? : Int) -> Bytes {
         abort("negative length")
       }
       if len > buf_len {
-        Bytes::makei(len, fn(i) {
+        Bytes::makei(len, i => {
           let padding = len - buf_len
           if i < padding {
             0
@@ -105,10 +105,10 @@ pub fn BigInt::to_octets(self : BigInt, length? : Int) -> Bytes {
           }
         })
       } else {
-        Bytes::makei(buf_len, fn(i) { buf[buf_len - i - 1] })
+        Bytes::makei(buf_len, i => buf[buf_len - i - 1])
       }
     }
-    None => Bytes::makei(buf_len, fn(i) { buf[buf_len - i - 1] })
+    None => Bytes::makei(buf_len, i => buf[buf_len - i - 1])
   }
 }
 
@@ -510,12 +510,12 @@ extern "js" fn is_neg(x : BigInt) -> Bool =
 ///|
 fn BigInt::limbs(self : Self) -> Iter[UInt] {
   guard not(self.is_zero()) else { Iter::singleton(0) }
-  Iter::new(fn(yield_) {
-    for n = self * BigInt::from_int(self.signum()); n > 0; n = n >> 32 {
-      let limb = n.to_uint()
-      guard yield_(limb) is IterContinue else { break IterEnd }
-    } else {
-      IterContinue
-    }
+  Iter::new(yield_ => for n = self * BigInt::from_int(self.signum())
+                          n > 0
+                          n = n >> 32 {
+    let limb = n.to_uint()
+    guard yield_(limb) is IterContinue else { break IterEnd }
+  } else {
+    IterContinue
   })
 }

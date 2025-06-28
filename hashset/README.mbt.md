@@ -80,9 +80,9 @@ You can use `each()` or `eachi()` to iterate through all keys.
 test {
   let set = @hashset.of(["a", "b", "c"])
   let arr = []
-  set.each(fn(k) { arr.push(k) })
+  set.each((k) => { arr.push(k) })
   let arr2 = []
-  set.eachi(fn(i, k) { arr2.push((i, k)) })
+  set.eachi((i, k) => { arr2.push((i, k)) })
 }
 ```
 

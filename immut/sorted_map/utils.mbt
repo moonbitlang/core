@@ -157,7 +157,7 @@ pub fn[K, X, Y] map_with_key(self : T[K, X], f : (K, X) -> Y) -> T[K, Y] {
 /// Fold the values in the map.
 /// O(n).
 pub fn[K, V, A] fold(self : T[K, V], init~ : A, f : (A, V) -> A) -> A {
-  self.foldl_with_key(fn(acc, _k, v) { f(acc, v) }, init~)
+  self.foldl_with_key((acc, _k, v) => f(acc, v), init~)
 }
 
 ///|
@@ -222,7 +222,7 @@ pub fn[K : Compare, V] from_array(array : Array[(K, V)]) -> T[K, V] {
 
 ///|
 pub fn[K, V] iter(self : T[K, V]) -> Iter[(K, V)] {
-  Iter::new(fn(yield_) {
+  Iter::new(yield_ => {
     fn go(t) {
       match t {
         Empty => IterContinue
@@ -243,7 +243,7 @@ pub fn[K, V] iter(self : T[K, V]) -> Iter[(K, V)] {
 
 ///|
 pub fn[K, V] iter2(self : T[K, V]) -> Iter2[K, V] {
-  Iter2::new(fn(yield_) {
+  Iter2::new(yield_ => {
     fn go(t) {
       match t {
         Empty => IterContinue
@@ -264,7 +264,7 @@ pub fn[K, V] iter2(self : T[K, V]) -> Iter2[K, V] {
 
 ///|
 pub fn[K : Compare, V] from_iter(iter : Iter[(K, V)]) -> T[K, V] {
-  iter.fold(init=new(), fn(m, e) { m.add(e.0, e.1) })
+  iter.fold(init=new(), (m, e) => m.add(e.0, e.1))
 }
 
 ///|

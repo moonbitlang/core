@@ -57,24 +57,24 @@ test "iteri" {
 test "map" {
   let ls = @list.of([1, 2, 3, 4, 5])
   let rs : @list.T[Int] = @list.Nil
-  inspect(ls.map(fn(x) { x * 2 }), content="@list.of([2, 4, 6, 8, 10])")
-  inspect(rs.map(fn(x) { x * 2 }), content="@list.of([])")
+  inspect(ls.map(x => x * 2), content="@list.of([2, 4, 6, 8, 10])")
+  inspect(rs.map(x => x * 2), content="@list.of([])")
 }
 
 ///|
 test "mapi" {
   let ls = @list.of([1, 2, 3, 4, 5])
   let el : @list.T[Int] = @list.Nil
-  inspect(ls.mapi(fn(i, x) { i * x }), content="@list.of([0, 2, 6, 12, 20])")
-  inspect(el.mapi(fn(i, x) { i * x }), content="@list.of([])")
+  inspect(ls.mapi((i, x) => i * x), content="@list.of([0, 2, 6, 12, 20])")
+  inspect(el.mapi((i, x) => i * x), content="@list.of([])")
 }
 
 ///|
 test "rev_map" {
   let ls = @list.of([1, 2, 3, 4, 5])
   let rs : @list.T[Int] = @list.Nil
-  inspect(ls.rev_map(fn(x) { x * 2 }), content="@list.of([10, 8, 6, 4, 2])")
-  inspect(rs.rev_map(fn(x) { x * 2 }), content="@list.of([])")
+  inspect(ls.rev_map(x => x * 2), content="@list.of([10, 8, 6, 4, 2])")
+  inspect(rs.rev_map(x => x * 2), content="@list.of([])")
 }
 
 ///|
@@ -91,22 +91,22 @@ test "to_array" {
 test "filter" {
   let ls = @list.of([1, 2, 3, 4, 5])
   let rs : @list.T[Int] = @list.Nil
-  inspect(ls.filter(fn(x) { x % 2 == 0 }), content="@list.of([2, 4])")
-  inspect(rs.filter(fn(x) { x % 2 == 0 }), content="@list.of([])")
+  inspect(ls.filter(x => x % 2 == 0), content="@list.of([2, 4])")
+  inspect(rs.filter(x => x % 2 == 0), content="@list.of([])")
 }
 
 ///|
 test "all" {
   let ls = @list.of([1, 2, 3, 4, 5])
-  inspect(ls.all(fn(x) { x > 0 }), content="true")
-  inspect(ls.all(fn(x) { x > 1 }), content="false")
+  inspect(ls.all(x => x > 0), content="true")
+  inspect(ls.all(x => x > 1), content="false")
 }
 
 ///|
 test "any" {
   let ls = @list.of([1, 2, 3, 4, 5])
-  inspect(ls.any(fn(x) { x > 4 }), content="true")
-  inspect(ls.any(fn(x) { x > 5 }), content="false")
+  inspect(ls.any(x => x > 4), content="true")
+  inspect(ls.any(x => x > 5), content="false")
 }
 
 ///|
@@ -173,32 +173,32 @@ test "rev" {
 test "fold" {
   let ls = @list.of([1, 2, 3, 4, 5])
   let el : @list.T[Int] = @list.Nil
-  inspect(el.fold(fn(acc, x) { acc + x }, init=0), content="0")
-  inspect(ls.fold(fn(acc, x) { acc + x }, init=0), content="15")
+  inspect(el.fold((acc, x) => acc + x, init=0), content="0")
+  inspect(ls.fold((acc, x) => acc + x, init=0), content="15")
 }
 
 ///|
 test "rev_fold" {
   let ls = @list.of(["1", "2", "3", "4", "5"])
   let el : @list.T[String] = @list.Nil
-  inspect(ls.rev_fold(fn(x, acc) { x + acc }, init=""), content="12345")
-  inspect(el.rev_fold(fn(x, acc) { x + acc }, init="init"), content="init")
+  inspect(ls.rev_fold((x, acc) => x + acc, init=""), content="12345")
+  inspect(el.rev_fold((x, acc) => x + acc, init="init"), content="init")
 }
 
 ///|
 test "foldi" {
   let ls = @list.of([1, 2, 3, 4, 5])
   let el : @list.T[Int] = @list.Nil
-  inspect(ls.foldi(fn(i, acc, x) { acc + i * x }, init=0), content="40")
-  inspect(el.foldi(fn(i, acc, x) { acc + i * x }, init=0), content="0")
+  inspect(ls.foldi((i, acc, x) => acc + i * x, init=0), content="40")
+  inspect(el.foldi((i, acc, x) => acc + i * x, init=0), content="0")
 }
 
 ///|
 test "rev_foldi" {
   let ls = @list.of([1, 2, 3, 4, 5])
   let el : @list.T[Int] = @list.Nil
-  inspect(ls.rev_foldi(fn(i, x, acc) { x * i + acc }, init=0), content="40")
-  inspect(el.rev_foldi(fn(i, x, acc) { x * i + acc }, init=0), content="0")
+  inspect(ls.rev_foldi((i, x, acc) => x * i + acc, init=0), content="40")
+  inspect(el.rev_foldi((i, x, acc) => x * i + acc, init=0), content="0")
 }
 
 ///|
@@ -215,9 +215,9 @@ test "zip" {
 test "flat_map" {
   let ls = @list.of([1, 2, 3])
   let rs : @list.T[Int] = @list.Nil
-  inspect(rs.flat_map(fn(x) { @list.of([x, x * 2]) }), content="@list.of([])")
+  inspect(rs.flat_map(x => @list.of([x, x * 2])), content="@list.of([])")
   inspect(
-    ls.flat_map(fn(x) { @list.of([x, x * 2]) }),
+    ls.flat_map(x => @list.of([x, x * 2])),
     content="@list.of([1, 2, 2, 4, 3, 6])",
   )
 }
@@ -227,11 +227,11 @@ test "filter_map" {
   let ls = @list.of([4, 2, 2, 6, 3, 1])
   let rs : @list.T[Int] = @list.Nil
   inspect(
-    ls.filter_map(fn(x) { if x >= 3 { Some(x) } else { None } }),
+    ls.filter_map(x => if x >= 3 { Some(x) } else { None }),
     content="@list.of([4, 6, 3])",
   )
   inspect(
-    rs.filter_map(fn(x) { if x >= 3 { Some(x) } else { None } }),
+    rs.filter_map(x => if x >= 3 { Some(x) } else { None }),
     content="@list.of([])",
   )
 }
@@ -360,25 +360,25 @@ test "drop" {
 
 ///|
 test "take_while" {
-  let ls = @list.of([0, 1, 2, 3, 4]).take_while(fn(x) { x < 3 })
-  let el : @list.T[Int] = @list.Nil.take_while(fn(_e) { true })
+  let ls = @list.of([0, 1, 2, 3, 4]).take_while(x => x < 3)
+  let el : @list.T[Int] = @list.Nil.take_while(_e => true)
   inspect(ls, content="@list.of([0, 1, 2])")
   inspect(el, content="@list.of([])")
 }
 
 ///|
 test "drop_while" {
-  let ls = @list.of([0, 1, 2, 3, 4]).drop_while(fn(x) { x < 3 })
-  let el : @list.T[Int] = @list.Nil.drop_while(fn(_e) { true })
+  let ls = @list.of([0, 1, 2, 3, 4]).drop_while(x => x < 3)
+  let el : @list.T[Int] = @list.Nil.drop_while(_e => true)
   inspect(ls, content="@list.of([3, 4])")
   inspect(el, content="@list.of([])")
 }
 
 ///|
 test "scan_left" {
-  let el = @list.Nil.scan_left(fn(acc, x) { acc + x }, init=0)
-  let ls = @list.of([1, 2, 3, 4, 5]).scan_left(fn(acc, x) { acc + x }, init=0)
-  let ls2 = @list.of([1, 2, 3, 4]).scan_left(fn(acc, x) { acc - x }, init=100)
+  let el = @list.Nil.scan_left((acc, x) => acc + x, init=0)
+  let ls = @list.of([1, 2, 3, 4, 5]).scan_left((acc, x) => acc + x, init=0)
+  let ls2 = @list.of([1, 2, 3, 4]).scan_left((acc, x) => acc - x, init=100)
   inspect(el, content="@list.of([0])")
   inspect(ls, content="@list.of([0, 1, 3, 6, 10, 15])")
   inspect(ls2, content="@list.of([100, 99, 97, 94, 90])")
@@ -386,9 +386,9 @@ test "scan_left" {
 
 ///|
 test "scan_right" {
-  let el = @list.Nil.scan_right(fn(x, acc) { x + acc }, init=0)
-  let ls = @list.of([1, 2, 3, 4]).scan_right(fn(x, acc) { x + acc }, init=0)
-  let ls2 = @list.of([1, 2, 3, 4]).scan_right(fn(x, acc) { x - acc }, init=100)
+  let el = @list.Nil.scan_right((x, acc) => x + acc, init=0)
+  let ls = @list.of([1, 2, 3, 4]).scan_right((x, acc) => x + acc, init=0)
+  let ls2 = @list.of([1, 2, 3, 4]).scan_right((x, acc) => x - acc, init=100)
   inspect(el, content="@list.of([0])")
   inspect(ls, content="@list.of([10, 9, 7, 4, 0])")
   inspect(ls2, content="@list.of([98, -97, 99, -96, 100])")
@@ -411,15 +411,15 @@ test "lookup" {
 ///|
 test "find" {
   inspect(
-    @list.of([1, 3, 5, 8]).find(fn(element) -> Bool { element % 2 == 0 }),
+    @list.of([1, 3, 5, 8]).find(element => element % 2 == 0),
     content="Some(8)",
   )
   inspect(
-    @list.of([1, 3, 5, 7]).find(fn(element) -> Bool { element % 2 == 0 }),
+    @list.of([1, 3, 5, 7]).find(element => element % 2 == 0),
     content="None",
   )
   inspect(
-    (@list.Nil : @list.T[Int]).find(fn(element) -> Bool { element % 2 == 0 }),
+    (@list.Nil : @list.T[Int]).find(element => element % 2 == 0),
     content="None",
   )
 }
@@ -427,21 +427,15 @@ test "find" {
 ///|
 test "findi" {
   inspect(
-    @list.of([1, 3, 5, 8]).findi(fn(element, i) -> Bool {
-      element % 2 == 0 && i == 3
-    }),
+    @list.of([1, 3, 5, 8]).findi((element, i) => element % 2 == 0 && i == 3),
     content="Some(8)",
   )
   inspect(
-    @list.of([1, 3, 8, 5]).findi(fn(element, i) -> Bool {
-      element % 2 == 0 && i == 3
-    }),
+    @list.of([1, 3, 8, 5]).findi((element, i) => element % 2 == 0 && i == 3),
     content="None",
   )
   inspect(
-    (@list.Nil : @list.T[Int]).findi(fn(element, i) -> Bool {
-      element % 2 == 0 && i == 3
-    }),
+    (@list.Nil : @list.T[Int]).findi((element, i) => element % 2 == 0 && i == 3),
     content="None",
   )
 }
@@ -538,10 +532,7 @@ test "default" {
 ///|
 test "iter" {
   let ls = @list.of([1, 2, 3, 4, 5])
-  inspect(
-    ls.iter().map(fn(x) { x + 1 }).fold(fn(a, b) { a + b }, init=0),
-    content="20",
-  )
+  inspect(ls.iter().map(x => x + 1).fold((a, b) => a + b, init=0), content="20")
 }
 
 ///|
@@ -687,15 +678,15 @@ test "stackover flow" {
   let iter = Int::until(0, 1 << 20)
   let lst = from_iter(iter)
   inspect(
-    lst.fold(init=0.0, fn(acc, x) { acc + x.to_double() }),
+    lst.fold(init=0.0, (acc, x) => acc + x.to_double()),
     content="549755289600",
   )
   inspect(
-    lst.rev_fold(init=0.0, fn(x, acc) { acc + x.to_double() }),
+    lst.rev_fold(init=0.0, (x, acc) => acc + x.to_double()),
     content="549755289600",
   )
   inspect(
-    lst.rev().fold(init=0.0, fn(acc, x) { acc + x.to_double() }),
+    lst.rev().fold(init=0.0, (acc, x) => acc + x.to_double()),
     content="549755289600",
   )
 }

@@ -30,7 +30,7 @@ test "prng" {
   assert_eq(r.int64(limit=10), 8)
   assert_eq(r.uint64(), 3951155890335085418)
   let a = [1, 2, 3, 4, 5]
-  r.shuffle(a.length(), fn(i : Int, j : Int) {
+  r.shuffle(a.length(), (i : Int, j : Int) => {
     let t = a[i]
     a[i] = a[j]
     a[j] = t
@@ -59,7 +59,7 @@ test "panic random with invalid seed length" {
 test "panic negative limit in shuffle" {
   let r = @random.Rand::new()
   let arr = [1, 2, 3]
-  r.shuffle(-1, fn(i : Int, j : Int) {
+  r.shuffle(-1, (i : Int, j : Int) => {
     let t = arr[i]
     arr[i] = arr[j]
     arr[j] = t
