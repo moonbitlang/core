@@ -80,7 +80,7 @@ test "iter" {
   let iter = dv.iter()
   let buf = StringBuilder::new(size_hint=0)
   let mut i = 0
-  iter.each(fn(x) {
+  iter.each(x => {
     buf.write_string(x.to_string())
     buf.write_char('\n')
     i = i + 1
@@ -98,7 +98,7 @@ test "iter" {
     ,
   )
   inspect(
-    iter.take(4).filter(fn(x) { x % 2 == 0 }).fold(fn(a, x) { a + x }, init=0),
+    iter.take(4).filter(x => x % 2 == 0).fold((a, x) => a + x, init=0),
     content="6",
   )
 }
@@ -130,19 +130,19 @@ test "reserve and push" {
 ///|
 test "mapi" {
   let dv = @deque.of([3, 4, 5])
-  let dvp = dv.mapi(fn(i, x) { x + i })
+  let dvp = dv.mapi((i, x) => x + i)
   inspect(dvp[0], content="3")
   inspect(dvp[1], content="5")
   inspect(dvp[2], content="7")
   let dve = @deque.of(([] : FixedArray[Int]))
-  inspect(dve.mapi(fn(_idx, x) { x }), content="@deque.of([])")
+  inspect(dve.mapi((_idx, x) => x), content="@deque.of([])")
 }
 
 ///|
 test "rev_each" {
   let mut i = 6
   let mut failed = false
-  @deque.of([1, 2, 3, 4, 5]).rev_each(fn(elem) {
+  @deque.of([1, 2, 3, 4, 5]).rev_each(elem => {
     if elem != i - 1 {
       failed = true
     }
@@ -156,7 +156,7 @@ test "rev_eachi" {
   let mut i = 6
   let mut j = 0
   let mut failed = false
-  @deque.of([1, 2, 3, 4, 5]).rev_eachi(fn(index, elem) {
+  @deque.of([1, 2, 3, 4, 5]).rev_eachi((index, elem) => {
     if index != j || elem != i - 1 {
       failed = true
     }
@@ -170,7 +170,7 @@ test "rev_eachi" {
 test "iteri" {
   let mut i = 0
   let mut failed = false
-  @deque.of([1, 2, 3, 4, 5]).eachi(fn(index, elem) {
+  @deque.of([1, 2, 3, 4, 5]).eachi((index, elem) => {
     if index != i || elem != i + 1 {
       failed = true
     }
@@ -183,7 +183,7 @@ test "iteri" {
 test "iter" {
   let mut i = 0
   let mut failed = false
-  @deque.of([1, 2, 3, 4, 5]).each(fn(elem) {
+  @deque.of([1, 2, 3, 4, 5]).each(elem => {
     if elem != i + 1 {
       failed = true
     }
@@ -262,12 +262,12 @@ test "clear" {
 ///|
 test "map" {
   let dv = @deque.of([3, 4, 5])
-  let dvp = dv.map(fn(x) { x + 1 })
+  let dvp = dv.map(x => x + 1)
   assert_eq(dvp[0], 4)
   assert_eq(dvp[1], 5)
   assert_eq(dvp[2], 6)
   let dve = @deque.of(([] : FixedArray[Int]))
-  inspect(dve.map(fn(x) { x }), content="@deque.of([])")
+  inspect(dve.map(x => x), content="@deque.of([])")
 }
 
 ///|
@@ -346,7 +346,7 @@ test "realloc" {
   dv.push_back(10)
   let result = Array::make(7, 0)
   let mut i = 0
-  dv.each(fn(x) {
+  dv.each(x => {
     result[i] = x
     i += 1
   })
@@ -469,8 +469,8 @@ test "iter when tail needs to wrap around" {
   dq.unsafe_pop_front() // head = 1
   dq.push_back(3) // tail = 0 (wraps around)
   inspect(dq.iter().to_array(), content="[2, 3]")
-  inspect(dq.iter().filter(fn(x) { x % 2 == 0 }).to_array(), content="[2]")
-  inspect(dq.iter().filter(fn(x) { x % 2 != 0 }).to_array(), content="[3]")
+  inspect(dq.iter().filter(x => x % 2 == 0).to_array(), content="[2]")
+  inspect(dq.iter().filter(x => x % 2 != 0).to_array(), content="[3]")
 }
 
 ///|
@@ -836,7 +836,7 @@ test "deque truncate" {
 
 ///|
 test "deque retain" {
-  let is_even = fn(x) { x % 2 == 0 }
+  let is_even = x => x % 2 == 0
 
   // Empty deque
   let dq : @deque.T[Int] = @deque.new()
@@ -864,22 +864,16 @@ test "deque retain" {
   }
 
   @json.inspect(dq()..retain(is_even).as_views(), content=[[4, 6, 8], []])
-  @json.inspect(dq()..retain(fn(x) { x >= 5 }).as_views(), content=[
-    [5, 6, 7],
-    [8],
-  ])
-  @json.inspect(dq()..retain(fn(x) { x >= 7 }).as_views(), content=[[7, 8], []])
-  @json.inspect(dq()..retain(fn(_) { false }).as_views(), content=[[], []])
-  @json.inspect(dq()..retain(fn(_) { true }).as_views(), content=[
-    [4, 5, 6],
-    [7, 8],
-  ])
+  @json.inspect(dq()..retain(x => x >= 5).as_views(), content=[[5, 6, 7], [8]])
+  @json.inspect(dq()..retain(x => x >= 7).as_views(), content=[[7, 8], []])
+  @json.inspect(dq()..retain(_ => false).as_views(), content=[[], []])
+  @json.inspect(dq()..retain(_ => true).as_views(), content=[[4, 5, 6], [7, 8]])
 }
 
 ///|
 test "deque retain_map" {
-  let inc_if = fn(pred) { fn(x) { if pred(x) { Some(x + 1) } else { None } } }
-  let is_even = fn(x) { x % 2 == 0 }
+  let inc_if = pred => x => if pred(x) { Some(x + 1) } else { None }
+  let is_even = x => x % 2 == 0
   let inc_if_even = inc_if(is_even)
 
   // Empty deque
@@ -911,11 +905,11 @@ test "deque retain_map" {
     [5, 7, 9],
     [],
   ])
-  @json.inspect(dq()..retain_map(inc_if(fn(x) { x >= 5 })).as_views(), content=[
+  @json.inspect(dq()..retain_map(inc_if(x => x >= 5)).as_views(), content=[
     [6, 7, 8],
     [9],
   ])
-  @json.inspect(dq()..retain_map(inc_if(fn(x) { x >= 7 })).as_views(), content=[
+  @json.inspect(dq()..retain_map(inc_if(x => x >= 7)).as_views(), content=[
     [8, 9],
     [],
   ])
