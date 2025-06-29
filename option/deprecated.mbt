@@ -39,3 +39,30 @@ pub fn[T] empty() -> T? {
 pub fn[T] some(value : T) -> T? {
   Some(value)
 }
+
+///|
+#deprecated("use unwrap_or instead")
+pub fn[T] Option::or(self : T?, default : T) -> T {
+  match self {
+    None => default
+    Some(t) => t
+  }
+}
+
+///|
+#deprecated("use unwrap_or_else instead")
+pub fn[T] Option::or_else(self : T?, default : () -> T) -> T {
+  match self {
+    None => default()
+    Some(t) => t
+  }
+}
+
+///|
+#deprecated("use unwrap_or_default instead")
+pub fn[T : Default] Option::or_default(self : T?) -> T {
+  match self {
+    None => T::default()
+    Some(t) => t
+  }
+}

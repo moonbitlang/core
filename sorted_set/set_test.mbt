@@ -203,11 +203,11 @@ test "mix_everything" {
     set7,
     content="@sorted_set.from_array([1, 2, 4, 5, 6, 7, 8, 12, 13, 14, 22, 33])",
   )
-  for i = 1; i <= 5; i = i + 1 {
+  for i in 1..=5 {
     set7.remove(i)
   }
   inspect(set7, content="@sorted_set.from_array([6, 7, 8, 12, 13, 14, 22, 33])")
-  for i = 6; i <= 33; i = i + 1 {
+  for i in 6..=33 {
     set7.remove(i)
   }
   let set = @sorted_set.from_array([
