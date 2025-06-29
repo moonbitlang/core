@@ -1371,30 +1371,45 @@ pub impl[A : @json.FromJson] @json.FromJson for T[A] with from_json(json, path) 
 #locals(cmp)
 pub fn[A] binary_search_by(self : T[A], cmp : (A) -> Int) -> Result[Int, Int] {
   let len = self.len
-  for i = 0, j = len; i < j; {
+  let mut i = 0
+  let mut j = len
+  while i < j {
     let h = i + (j - i) / 2
-    let physical_index = (self.head + h) % self.buf.length()
-    // Safe access to elements (assuming initialized)
-    let element = self.buf[physical_index]
+    match self.get(h) {
+      Some(element) =>
+        match cmp(element) {
+          -1 => i = h + 1 // Continue searching right
+          1 => j = h // Continue searching left
+          _ => { // Found match, find leftmost
+            j = h
+            while i < j {
+              let mid = i + (j - i) / 2
+              match self.get(mid) {
+                Some(v) =>
+                  match cmp(v) {
+                    0 => j = mid
+                    _ => i = mid + 1
+                  }
+                None => break
+              }
+            }
+            return Ok(i)
+          }
+        }
+      None => return Err(i)
+    }
+  }
+  Err(i)
+}
 
-    // Continue searching even if a match is found, until the leftmost match is found
-    if cmp(element) < 0 {
-      continue h + 1, j
-    } else {
-      continue i, h
-    }
+///|
+/// Safe element access with bounds checking
+pub fn[A] get(self : T[A], index : Int) -> A? {
+  if index >= 0 && index < self.len {
+    let physical_index = (self.head + index) % self.buf.length()
+    Some(self.buf[physical_index])
   } else {
-    if i < len {
-      let physical_index = (self.head + i) % self.buf.length()
-      let element = self.buf[physical_index]
-      if cmp(element) == 0 {
-        Ok(i)
-      } else {
-        Err(i)
-      }
-    } else {
-      Err(i)
-    }
+    None
   }
 }
 
@@ -1427,29 +1442,5 @@ pub fn[A] binary_search_by(self : T[A], cmp : (A) -> Int) -> Result[Int, Int] {
 /// * For multiple matches, returns the leftmost matching position
 /// * Returns an insertion point that maintains the sort order when no match is found
 pub fn[A : Compare] binary_search(self : T[A], value : A) -> Result[Int, Int] {
-  let len = self.len
-  for i = 0, j = len; i < j; {
-    let h = i + (j - i) / 2
-    let physical_index = (self.head + h) % self.buf.length()
-    let element = self.buf[physical_index]
-
-    // Even if a match is found, continue searching to find the leftmost match
-    if element < value {
-      continue h + 1, j
-    } else {
-      continue i, h
-    }
-  } else {
-    if i < len {
-      let physical_index = (self.head + i) % self.buf.length()
-      let element = self.buf[physical_index]
-      if element == value {
-        Ok(i)
-      } else {
-        Err(i)
-      }
-    } else {
-      Err(i)
-    }
-  }
+  self.binary_search_by(fn(x) { x.compare(value) })
 }

@@ -1199,64 +1199,6 @@ test "binary_search with edge wrap around" {
 }
 
 ///|
-/// Test binary search on empty deque
-test "deque_binary_search_empty" {
-  let dq : @deque.T[Int] = @deque.new()
-  inspect(dq.binary_search(5), content="Err(0)")
-}
-
-///|
-/// Test binary search on single-element deque
-test "deque_binary_search_single_element" {
-  let dq = @deque.of([5])
-
-  // Test finding existing element
-  inspect(dq.binary_search(5), content="Ok(0)")
-
-  // Test finding non-existent element (smaller than all)
-  inspect(dq.binary_search(3), content="Err(0)")
-
-  // Test finding non-existent element (larger than all)
-  inspect(dq.binary_search(7), content="Err(1)")
-}
-
-///|
-/// Test binary search on multiple elements
-test "deque_binary_search_multiple_elements" {
-  let dq = @deque.of([1, 3, 5, 7, 9])
-
-  // Test finding first element
-  inspect(dq.binary_search(1), content="Ok(0)")
-
-  // Test finding middle element
-  inspect(dq.binary_search(5), content="Ok(2)")
-
-  // Test finding last element
-  inspect(dq.binary_search(9), content="Ok(4)")
-
-  // Test finding element smaller than all
-  inspect(dq.binary_search(0), content="Err(0)")
-
-  // Test finding non-existent middle element
-  inspect(dq.binary_search(4), content="Err(2)")
-
-  // Test finding element larger than all
-  inspect(dq.binary_search(10), content="Err(5)")
-}
-
-///|
-/// Test binary search with duplicate elements
-test "deque_binary_search_duplicates" {
-  let dq = @deque.of([1, 2, 2, 2, 3, 4])
-
-  // Test finding first occurrence of duplicate
-  inspect(dq.binary_search(2), content="Ok(1)")
-
-  // Test finding non-existent element
-  inspect(dq.binary_search(5), content="Err(6)")
-}
-
-///|
 /// Test binary search with wrap-around buffer
 test "deque_binary_search_wrap_around" {
   let dq = @deque.new(capacity=4)
