@@ -9,32 +9,15 @@ Note that some methods of the Option are defined in the `core/builtin` package.
 # Usage
 
 ## Create
+
 You can create an `Option` value using the `Some` and `None` constructors, remember to give proper type annotations.
 
 ```moonbit
-let _some: Int? = Some(42)
-let _none: String? = None
-```
-
-For conditional expressions, you can use the `when` function, which returns `Some` if the condition is true, otherwise `None`. Note that the value is lazily evaluated.
-
-```moonbit
 test {
-    let some = @option.when(1 > 0, () => { 42 })
-    assert_eq(some, Some(42))
-    let none = @option.when(1 < 0, () => { 42 })
-    assert_eq(none, None)
-}
-```
-
-The dual version of `when` is the `unless` function, which returns `Some` if the condition is false, otherwise `None`.
-
-```moonbit
-test {
-    let some = @option.unless(1 < 0, () => { 42 })
-    assert_eq(some, Some(42))
-    let none = @option.unless(1 > 0, () => { 42 })
-    assert_eq(none, None)
+  let some: Int? = Some(42)
+  let none: String? = None
+  inspect(some, content="Some(42)")
+  inspect(none, content="None")
 }
 ```
 
@@ -108,6 +91,7 @@ test {
 ```
 
 ## Monadic operations
+
 You can chain multiple operations that return `Option` using the `bind` method, which applies a function to the value if it is `Some`, otherwise, it returns `None`. Different from `map`, the function in argument returns an `Option`.
 
 ```moonbit

@@ -286,31 +286,18 @@ test "parse_double" {
 
 ///|
 test "parse_double_inf" {
-  assert_eq(parse_double("inf") catch { _ => panic() }, @double.infinity)
-  assert_eq(parse_double("+Inf") catch { _ => panic() }, @double.infinity)
-  assert_eq(parse_double("-Inf") catch { _ => panic() }, @double.neg_infinity)
-  assert_eq(parse_double("+Infinity") catch { _ => panic() }, @double.infinity)
-  assert_eq(
-    parse_double("-Infinity") catch {
-      _ => panic()
-    },
-    @double.neg_infinity,
-  )
-  assert_eq(parse_double("+INFINITY") catch { _ => panic() }, @double.infinity)
-  assert_eq(
-    parse_double("-INFINITY") catch {
-      _ => panic()
-    },
-    @double.neg_infinity,
-  )
+  assert_eq(parse_double("inf"), @double.infinity)
+  assert_eq(parse_double("+Inf"), @double.infinity)
+  assert_eq(parse_double("-Inf"), @double.neg_infinity)
+  assert_eq(parse_double("+Infinity"), @double.infinity)
+  assert_eq(parse_double("-Infinity"), @double.neg_infinity)
+  assert_eq(parse_double("+INFINITY"), @double.infinity)
+  assert_eq(parse_double("-INFINITY"), @double.neg_infinity)
 }
 
 ///|
 test "parse_double_nan" {
-  let nan = parse_double("nan") catch { _ => panic() }
-  assert_true(nan.is_nan())
-  let nan = parse_double("NaN") catch { _ => panic() }
-  assert_true(nan.is_nan())
-  let nan = parse_double("NAN") catch { _ => panic() }
-  assert_true(nan.is_nan())
+  assert_true(parse_double("nan").is_nan())
+  assert_true(parse_double("NaN").is_nan())
+  assert_true(parse_double("NAN").is_nan())
 }

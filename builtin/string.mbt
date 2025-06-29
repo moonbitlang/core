@@ -78,59 +78,6 @@ fn code_point_of_surrogate_pair(leading : Int, trailing : Int) -> Char {
 pub fn String::charcode_at(self : String, index : Int) -> Int = "%string_get"
 
 ///|
-/// Returns the Unicode code point at the given index.
-///
-/// This method counts Unicode code points (characters) rather than UTF-16 code units.
-/// It properly handles surrogate pairs to return the correct Unicode character.
-///
-/// # Examples
-///
-/// ```mbt
-///   let s = "Hello🤣";
-///   inspect(s.iter().nth(0).unwrap(), content="H");
-///   inspect(s.iter().nth(5).unwrap(), content="🤣"); // Returns full emoji character
-/// ```
-///
-/// # Panics
-///
-/// Panics if:
-/// - The index is out of bounds
-/// - The string contains an invalid surrogate pair
-#deprecated("The index will be changed to utf16 index. If you want to access n-th character, use `str.iter().nth(n).unwrap()` instead.")
-pub fn String::codepoint_at(self : String, index : Int) -> Char {
-  let charcode_len = self.length()
-  guard index >= 0 && index < charcode_len else { abort("index out of bounds") }
-  for char_count = 0, utf16_offset = 0
-      char_count < charcode_len && utf16_offset < index
-      char_count = char_count + 1, utf16_offset = utf16_offset + 1 {
-    let c1 = self.unsafe_charcode_at(char_count)
-    if is_leading_surrogate(c1) && char_count + 1 < charcode_len {
-      let c2 = self.unsafe_charcode_at(char_count + 1)
-      if is_trailing_surrogate(c2) {
-        continue char_count + 2, utf16_offset + 1
-      } else {
-        abort("invalid surrogate pair")
-      }
-    }
-  } else {
-    guard utf16_offset == index && char_count < charcode_len else {
-      abort("index out of bounds")
-    }
-    let c1 = self.unsafe_charcode_at(char_count)
-    if is_leading_surrogate(c1) && char_count + 1 < charcode_len {
-      let c2 = self.unsafe_charcode_at(char_count + 1)
-      if is_trailing_surrogate(c2) {
-        code_point_of_surrogate_pair(c1, c2)
-      } else {
-        abort("invalid surrogate pair")
-      }
-    } else {
-      c1.unsafe_to_char()
-    }
-  }
-}
-
-///|
 /// Returns the Unicode code point at the given index without bounds checking.
 pub fn String::unsafe_char_at(self : String, index : Int) -> Char {
   let c1 = self.unsafe_charcode_at(index)
@@ -185,16 +132,6 @@ pub fn String::char_length(
 }
 
 ///|
-#deprecated("Use `char_length` instead.")
-pub fn String::codepoint_length(
-  self : String,
-  start_offset~ : Int = 0,
-  end_offset? : Int
-) -> Int {
-  self.char_length(start_offset~, end_offset?)
-}
-
-///|
 #intrinsic("%string.substring")
 fn unsafe_substring(str : String, start : Int, end : Int) -> String {
   let len = end - start
@@ -236,14 +173,6 @@ pub fn String::substring(self : String, start~ : Int = 0, end? : Int) -> String 
   }
   guard start >= 0 && start <= end && end <= len
   unsafe_substring(self, start, end)
-}
-
-///|
-test "substring/basic" {
-  let s = "hello, world"
-  inspect(s.substring(start=0, end=5), content="hello")
-  inspect(s.substring(start=7, end=12), content="world")
-  inspect(s.substring(), content="hello, world")
 }
 
 ///|
