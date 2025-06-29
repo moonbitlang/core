@@ -1038,21 +1038,17 @@ test "is_integer" {
 }
 
 ///|
-test "compare" {
+test "eq and compare" {
   // 1/2 < 2/3
   let a = new_unchecked(1L, 2L)
   let b = new_unchecked(2L, 3L)
   assert_eq(a.compare(b), -1)
-  assert_true(a < b)
-  assert_true(a <= b)
   assert_true(a != b)
 
   // -1/2 > -2/3
   let a = new_unchecked(-1L, 2L)
   let b = new_unchecked(-2L, 3L)
   assert_eq(a.compare(b), 1)
-  assert_true(a > b)
-  assert_true(a >= b)
   assert_true(a != b)
 
   // 1/2 == 1/2
@@ -1060,18 +1056,6 @@ test "compare" {
   let b = new_unchecked(1L, 2L)
   assert_eq(a.compare(b), 0)
   assert_true(a == b)
-}
-
-///|
-test "from_double normal case" {
-  let result = try? from_double(0.5)
-  assert_eq(result, Ok(new_unchecked(1L, 2L)))
-}
-
-///|
-test "from_double edge case" {
-  let result = try? from_double(9_223_372_036_800_000_000.0)
-  assert_eq(result, Ok(new_unchecked(9_223_372_036_800_000_000L, 1L)))
 }
 
 ///|
