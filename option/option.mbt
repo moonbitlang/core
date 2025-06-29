@@ -194,7 +194,7 @@ test "filter" {
 
 ///|
 /// Return the contained `Some` value or the provided default.
-pub fn[T] or(self : T?, default : T) -> T {
+pub fn[T] Option::unwrap_or(self : T?, default : T) -> T {
   match self {
     None => default
     Some(t) => t
@@ -202,17 +202,17 @@ pub fn[T] or(self : T?, default : T) -> T {
 }
 
 ///|
-test "or" {
+test "unwrap_or" {
   let x = Option::Some(3)
-  assert_eq(x.or(5), 3)
-  assert_eq((None : Int?).or(5), 5)
+  assert_eq(x.unwrap_or(5), 3)
+  assert_eq((None : Int?).unwrap_or(5), 5)
 }
 
 ///|
 /// Return the contained `Some` value or the provided default.
 ///
 /// Default is lazily evaluated
-pub fn[T] or_else(self : T?, default : () -> T) -> T {
+pub fn[T] Option::unwrap_or_else(self : T?, default : () -> T) -> T {
   match self {
     None => default()
     Some(t) => t
@@ -222,13 +222,13 @@ pub fn[T] or_else(self : T?, default : () -> T) -> T {
 ///|
 test "or else" {
   let x = Option::Some(3)
-  assert_eq(x.or_else(() => 5), 3)
-  assert_eq((None : Int?).or_else(() => 5), 5)
+  assert_eq(x.unwrap_or_else(() => 5), 3)
+  assert_eq(None.unwrap_or_else(() => 5), 5)
 }
 
 ///|
 /// Return the contained `Some` value or the result of the `T::default()`.
-pub fn[T : Default] or_default(self : T?) -> T {
+pub fn[T : Default] Option::unwrap_or_default(self : T?) -> T {
   match self {
     None => T::default()
     Some(t) => t
@@ -238,8 +238,8 @@ pub fn[T : Default] or_default(self : T?) -> T {
 ///|
 test "or default" {
   let x = Option::Some(3)
-  assert_eq(x.or_default(), 3)
-  assert_eq((None : Int?).or_default(), 0)
+  assert_eq(x.unwrap_or_default(), 3)
+  assert_eq((None : Int?).unwrap_or_default(), 0)
 }
 
 ///|
