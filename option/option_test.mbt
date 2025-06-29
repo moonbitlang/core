@@ -38,8 +38,8 @@ test "Option::default should return None for Bool" {
 
 ///|
 fn test_option_arg(x? : Int, y? : Int) -> Int {
-  let x = x.or(3)
-  let y = y.or(4)
+  let x = x.unwrap_or(3)
+  let y = y.unwrap_or(4)
   x + y
 }
 
