@@ -995,3 +995,226 @@ test "rev_iter2 when wrapped around" {
     content="[(0, 5), (1, 4), (2, 3), (3, 2), (4, 1), (5, 6)]",
   )
 }
+
+///|
+test "binary_search_by on empty deque" {
+  let dq : @deque.T[Int] = @deque.new()
+  let result = dq.binary_search_by(fn(x) { x.compare(5) })
+  inspect(result, content="Err(0)")
+}
+
+///|
+test "binary_search_by on single element deque" {
+  let dq = @deque.of([5])
+
+  // Find existing elements
+  let found = dq.binary_search_by(fn(x) { x.compare(5) })
+  inspect(found, content="Ok(0)")
+
+  // Find non-existent elements (less than)
+  let not_found_less = dq.binary_search_by(fn(x) { x.compare(3) })
+  inspect(not_found_less, content="Err(0)")
+
+  // Find non-existent elements (greater than)
+  let not_found_greater = dq.binary_search_by(fn(x) { x.compare(7) })
+  inspect(not_found_greater, content="Err(1)")
+}
+
+///|
+test "binary_search_by on multiple elements deque" {
+  let dq = @deque.of([1, 3, 5, 7, 9])
+
+  // Find the element that exists (the first one)
+  let found_first = dq.binary_search_by(fn(x) { x.compare(1) })
+  inspect(found_first, content="Ok(0)")
+
+  // Find the element that exists (middle)
+  let found_middle = dq.binary_search_by(fn(x) { x.compare(5) })
+  inspect(found_middle, content="Ok(2)")
+
+  // Find the last element that exists
+  let found_last = dq.binary_search_by(fn(x) { x.compare(9) })
+  inspect(found_last, content="Ok(4)")
+
+  // Find non-existent elements (less than all)
+  let not_found_less = dq.binary_search_by(fn(x) { x.compare(0) })
+  inspect(not_found_less, content="Err(0)")
+
+  //Find the non-existent element (middle position)
+  let not_found_middle = dq.binary_search_by(fn(x) { x.compare(4) })
+  inspect(not_found_middle, content="Err(2)")
+
+  // Find non-existent elements (greater than all)
+  let not_found_greater = dq.binary_search_by(fn(x) { x.compare(10) })
+  inspect(not_found_greater, content="Err(5)")
+}
+
+///|
+test "binary_search_by with duplicate elements" {
+  let dq = @deque.of([1, 2, 2, 2, 3, 4])
+
+  //Find duplicate elements and return the first occurrence.
+  let found = dq.binary_search_by(fn(x) { x.compare(2) })
+  inspect(found, content="Ok(1)")
+
+  // Finding non-existent elements
+  let not_found = dq.binary_search_by(fn(x) { x.compare(5) })
+  inspect(not_found, content="Err(6)")
+}
+
+///|
+test "binary_search on empty deque" {
+  let dq : @deque.T[Int] = @deque.new()
+  let result = dq.binary_search(5)
+  inspect(result, content="Err(0)")
+}
+
+///|
+test "binary_search on single element deque" {
+  let dq = @deque.of([5])
+
+  // Test finding existing element
+  let found = dq.binary_search(5)
+  inspect(found, content="Ok(0)")
+
+  // Test finding non-existent element (smaller than all)
+  let not_found_less = dq.binary_search(3)
+  inspect(not_found_less, content="Err(0)")
+
+  // Test finding non-existent element (larger than all)
+  let not_found_greater = dq.binary_search(7)
+  inspect(not_found_greater, content="Err(1)")
+}
+
+///|
+test "binary_search on multiple elements deque" {
+  let dq = @deque.of([1, 3, 5, 7, 9])
+
+  // Test finding first element
+  let found_first = dq.binary_search(1)
+  inspect(found_first, content="Ok(0)")
+
+  // Test finding middle element
+  let found_middle = dq.binary_search(5)
+  inspect(found_middle, content="Ok(2)")
+
+  // Test finding last element
+  let found_last = dq.binary_search(9)
+  inspect(found_last, content="Ok(4)")
+
+  // Test finding element smaller than all
+  let not_found_less = dq.binary_search(0)
+  inspect(not_found_less, content="Err(0)")
+
+  // Test finding non-existent middle element
+  let not_found_middle = dq.binary_search(4)
+  inspect(not_found_middle, content="Err(2)")
+
+  // Test finding element larger than all
+  let not_found_greater = dq.binary_search(10)
+  inspect(not_found_greater, content="Err(5)")
+}
+
+///|
+test "binary_search with duplicate elements" {
+  let dq = @deque.of([1, 2, 2, 2, 3, 4])
+
+  // Test finding first occurrence of duplicate
+  let found = dq.binary_search(2)
+  inspect(found, content="Ok(1)")
+
+  // Test finding non-existent element
+  let not_found = dq.binary_search(5)
+  inspect(not_found, content="Err(6)")
+}
+
+///|
+test "binary_search when wrapped around" {
+  let dq = @deque.of([5, 7, 9])
+  dq..push_front(3)..push_front(1)
+  let found_first = dq.binary_search(1)
+  inspect(found_first, content="Ok(0)")
+  let found_middle = dq.binary_search(5)
+  inspect(found_middle, content="Ok(2)")
+  let found_last = dq.binary_search(9)
+  inspect(found_last, content="Ok(4)")
+}
+
+///|
+test "binary_search with complex wrap around" {
+  let dq = @deque.new(capacity=10)
+  for i in 1..=9 {
+    dq.push_back(i)
+  }
+  for _ in 1..=5 {
+    dq.unsafe_pop_front()
+  }
+  for i in 10..=12 {
+    dq.push_back(i)
+  }
+  let found = dq.binary_search(9)
+  inspect(found, content="Ok(3)")
+  let edge_case = dq.binary_search(6)
+  inspect(edge_case, content="Ok(0)")
+  let edge_case2 = dq.binary_search(12)
+  inspect(edge_case2, content="Ok(6)")
+}
+
+///|
+test "binary_search with minimal wrap around" {
+  let dq = @deque.new(capacity=2)
+  dq..push_back(1)..push_back(2)
+  dq..unsafe_pop_front()
+  dq..push_back(3)
+  let found = dq.binary_search(2)
+  inspect(found, content="Ok(0)")
+  let not_found = dq.binary_search(1)
+  inspect(not_found, content="Err(0)")
+}
+
+///|
+test "binary_search with edge wrap around" {
+  let dq = @deque.new(capacity=4)
+  // Fill buffer completely (capacity=4)
+  dq..push_back(1)..push_back(3)..push_back(5)..push_back(7)
+  inspect(dq.as_views(), content="([1, 3, 5, 7], [])") // Verify full buffer
+
+  // Remove two elements from front
+  dq..unsafe_pop_front()..unsafe_pop_front()
+  inspect(dq.as_views(), content="([5, 7], [])") // Verify after removal
+
+  // Add two elements to cause wrap-around
+  dq..push_back(9)..push_back(11)
+  inspect(dq.as_views(), content="([5, 7], [9, 11])") // Verify wrapped state
+  let found = dq.binary_search(7) // Find existing element
+  inspect(found, content="Ok(1)")
+  let not_found = dq.binary_search(8) // Find insertion point
+  inspect(not_found, content="Err(2)")
+}
+
+///|
+/// Test binary search with wrap-around buffer
+test "deque_binary_search_wrap_around" {
+  let dq = @deque.new(capacity=4)
+
+  // 1. Fill buffer completely
+  dq..push_back(1)..push_back(3)..push_back(5)..push_back(7)
+  inspect(dq.as_views(), content="([1, 3, 5, 7], [])")
+
+  // 2. Remove two elements from front
+  dq..unsafe_pop_front()..unsafe_pop_front()
+  inspect(dq.as_views(), content="([5, 7], [])")
+
+  // 3. Add new elements to cause wrap-around
+  dq..push_back(9)..push_back(11)
+
+  // 4. Verify binary search functionality
+  inspect(dq.binary_search(7), content="Ok(1)")
+  inspect(dq.binary_search(8), content="Err(2)")
+
+  // 5. Verify logical order
+  inspect(dq[0], content="5")
+  inspect(dq[1], content="7")
+  inspect(dq[2], content="9")
+  inspect(dq[3], content="11")
+}
