@@ -139,7 +139,8 @@ test "from_double array" {
 ///|
 test "rational arbitrary" {
   let samples : Array[@rational.T] = @quickcheck.samples(20)
-  inspect(samples[1:5], content="[0, 0, 0, 1/-1]")
-  inspect(samples[5:10], content="[-1/-2, 5/-4, 1/6, 3/-1, -1/2]")
-  inspect(samples[10:15], content="[9/-4, 5/3, -2, 7/-11, -1/-4]")
+  inspect(
+    samples,
+    content="[0, 0, 0, 0, 2/3, -2/5, 1, 1/6, 3/2, -1/2, 9/5, 5/3, -2, 7/12, -2/9, -8/15, 0, -5/6, 3/4, -3/7]",
+  )
 }

@@ -697,8 +697,8 @@ pub impl @quickcheck.Arbitrary for T with arbitrary(size, rs) {
   let numerator : Int64 = @quickcheck.Arbitrary::arbitrary(size, rs)
   let denominator : Int64 = {
     let d : Int64 = @quickcheck.Arbitrary::arbitrary(size, rs)
-    if d == 0 {
-      1
+    if d <= 0 {
+      -d + 1
     } else {
       d
     }
