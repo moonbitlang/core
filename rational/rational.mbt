@@ -97,7 +97,7 @@ pub fn new(numerator : Int64, denominator : Int64) -> T? {
 ///|
 /// Creates a rational number without enforcing invariants.
 fn new_unchecked(numerator : Int64, denominator : Int64) -> T {
-  let gcd = gcd(numerator.abs(), denominator).abs()
+  let gcd = gcd(numerator.abs(), denominator)
   { numerator: numerator / gcd, denominator: denominator / gcd }
 }
 
@@ -273,7 +273,7 @@ pub fn T::neg(self : T) -> T {
 /// ```
 ///
 pub fn T::abs(self : T) -> T {
-  new_unchecked(self.numerator.abs(), self.denominator.abs())
+  new_unchecked(self.numerator.abs(), self.denominator)
 }
 
 ///|
