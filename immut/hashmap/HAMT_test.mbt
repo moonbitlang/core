@@ -330,7 +330,7 @@ test "filter with branch nodes" {
     (i, map) => continue (i + 1, map.add(i, i * 10))
   }
   let filtered = map.filter(v => v % 20 == 0)
-  for i = 0; i < 10; i = i + 1 {
+  for i in 0..<10 {
     if i * 10 % 20 == 0 {
       assert_eq(filtered.get(i), Some(i * 10))
     } else {
@@ -403,7 +403,7 @@ test "HAMT::map_with_key branch" {
     (i, map) => continue (i + 1, map.add(i, i * 10))
   } // Branch
   let mapped = map.map_with_key((k, v) => k * 100 + v)
-  for i = 0; i < 10; i = i + 1 {
+  for i in 0..<10 {
     assert_eq(mapped.get(i), Some(i * 100 + i * 10))
   }
   assert_eq(mapped.get(100), None)
