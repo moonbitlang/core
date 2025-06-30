@@ -1102,7 +1102,7 @@ test "binary_search with complex wrap around" {
   for i in 10..=12 {
     dq.push_back(i)
   }
-  inspect(dq.as_views())
+  inspect(dq.as_views(),content="([6, 7, 8, 9, 10], [11, 12])")
   let found = dq.binary_search(9)
   inspect(found, content="Ok(3)")
   let edge_case = dq.binary_search(6)
@@ -1129,7 +1129,7 @@ test "binary_search with edge wrap around" {
   dq..push_back(1)..push_back(3)..push_back(5)..push_back(7)
   dq..unsafe_pop_front()..unsafe_pop_front()
   dq..push_back(9)..push_back(11)
-  inspect(dq.as_views()) // Verify wrapped state
+  inspect(dq.as_views(),content="([5, 7], [9, 11])") // Verify wrapped state
   let found = dq.binary_search(7) // Find existing element
   inspect(found, content="Ok(1)")
   let not_found = dq.binary_search(8) // Find insertion point
@@ -1143,7 +1143,7 @@ test "deque_binary_search_wrap_around" {
   dq..push_back(1)..push_back(3)..push_back(5)..push_back(7)
   dq..unsafe_pop_front()..unsafe_pop_front()
   dq..push_back(9)..push_back(11)
-  inspect(dq.as_views())
+  inspect(dq.as_views(),content="([5, 7], [9, 11])")
   // 4. Verify binary search functionality
   inspect(dq.binary_search(7), content="Ok(1)")
   inspect(dq.binary_search(8), content="Err(2)")
