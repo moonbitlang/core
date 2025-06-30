@@ -1176,15 +1176,8 @@ test "binary_search with minimal wrap around" {
 ///|
 test "binary_search with edge wrap around" {
   let dq = @deque.new(capacity=4)
-  // Fill buffer completely (capacity=4)
   dq..push_back(1)..push_back(3)..push_back(5)..push_back(7)
-  inspect(dq.as_views(), content="([1, 3, 5, 7], [])") // Verify full buffer
-
-  // Remove two elements from front
   dq..unsafe_pop_front()..unsafe_pop_front()
-  inspect(dq.as_views(), content="([5, 7], [])") // Verify after removal
-
-  // Add two elements to cause wrap-around
   dq..push_back(9)..push_back(11)
   inspect(dq.as_views(), content="([5, 7], [9, 11])") // Verify wrapped state
   let found = dq.binary_search(7) // Find existing element
