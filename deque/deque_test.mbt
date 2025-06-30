@@ -1152,6 +1152,7 @@ test "binary_search with complex wrap around" {
   for i in 10..=12 {
     dq.push_back(i)
   }
+  inspect(dq.as_view())
   let found = dq.binary_search(9)
   inspect(found, content="Ok(3)")
   let edge_case = dq.binary_search(6)
