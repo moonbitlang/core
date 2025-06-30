@@ -1091,7 +1091,7 @@ test "binary_search when wrapped around" {
 }
 
 ///|
-test "binary_search with complex wrap around" {
+test "binary_search on wrapped deque with first/mid/last checks" {
   let dq = @deque.new(capacity=10)
   for i in 1..=9 {
     dq.push_back(i)
