@@ -239,7 +239,7 @@ pub(all) enum Json {
   Null
   True
   False
-  Number(Double)
+  Number(Double, repr~ : String?)
   String(String)
   Array(Array[Json])
   Object(Map[String, Json])

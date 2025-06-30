@@ -45,7 +45,9 @@ pub impl FromJson for Bool with from_json(json, path) {
 
 ///|
 pub impl FromJson for Int with from_json(json, path) {
-  guard json is Number(n) else {
+  guard json is Number(n, ..) &&
+    n != @double.infinity &&
+    n != @double.neg_infinity else {
     decode_error(path, "Int::from_json: expected number")
   }
   n.to_int()
@@ -65,7 +67,9 @@ pub impl FromJson for Int64 with from_json(json, path) {
 
 ///|
 pub impl FromJson for UInt with from_json(json, path) {
-  guard json is Number(n) else {
+  guard json is Number(n, ..) &&
+    n != @double.infinity &&
+    n != @double.neg_infinity else {
     decode_error(path, "UInt::from_json: expected number")
   }
   n.to_uint()
@@ -85,7 +89,9 @@ pub impl FromJson for UInt64 with from_json(json, path) {
 
 ///|
 pub impl FromJson for Double with from_json(json, path) {
-  guard json is Number(n) else {
+  guard json is Number(n, ..) &&
+    n != @double.infinity &&
+    n != @double.neg_infinity else {
     decode_error(path, "Double::from_json: expected number")
   }
   n
