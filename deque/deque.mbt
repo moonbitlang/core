@@ -1423,3 +1423,138 @@ pub fn[A] T::drain(self : T[A], start~ : Int, len? : Int) -> T[A] {
   self.len -= len
   deque
 }
+
+///|
+/// Performs a binary search on a sorted deque using a custom comparison function.
+/// Returns the position of the matching element if found, or the position where
+/// the element could be inserted while maintaining the sorted order.
+///
+/// Parameters:
+///
+/// * `comparator` : A function that compares each element with the target value,
+/// returning:
+///  * A negative integer if the element is less than the target
+///  * Zero if the element equals the target
+///  * A positive integer if the element is greater than the target
+///
+/// Returns a `Result` containing either:
+///
+/// * `Ok(index)` if a matching element is found at position `index`
+/// * `Err(index)` if no match is found, where `index` is the position where the
+/// element could be inserted
+///
+/// Example:
+///
+/// ```moonbit
+/// let dq = @deque.of([1, 3, 5, 7, 9])
+///
+/// 
+/// let find_3 = dq.binary_search_by(fn(x) {
+///   if x < 3 {
+///     -1
+///   } else if x > 3 {
+///     1
+///   } else {
+///     0
+///   }
+/// })
+/// inspect(find_3, content="Ok(1)")
+///
+/// 
+/// let find_4 = dq.binary_search_by(fn(x) {
+///   if x < 4 {
+///     -1
+///   } else if x > 4 {
+///     1
+///   } else {
+///     0
+///   }
+/// })
+/// inspect(find_4, content="Err(2)")
+/// ```
+///
+/// Notes:
+///
+/// * Assumes the deque is sorted according to the ordering implied by the
+/// comparison function
+/// * For multiple matches, returns the leftmost matching position
+/// * Returns an insertion point that maintains the sort order when no match is
+/// found
+/// * Handles the deque's ring buffer structure internally
+/// * For empty deques, returns `Err(0)`
+#locals(cmp)
+pub fn[A] binary_search_by(self : T[A], cmp : (A) -> Int) -> Result[Int, Int] {
+  let len = self.len
+  let mut i = 0
+  let mut j = len
+  while i < j {
+    let h = i + (j - i) / 2
+    match self.get(h) {
+      Some(element) =>
+        match cmp(element) {
+          -1 => i = h + 1 // Continue searching right
+          1 => j = h // Continue searching left
+          _ => { // Found match, find leftmost
+            j = h
+            while i < j {
+              let mid = i + (j - i) / 2
+              match self.get(mid) {
+                Some(v) =>
+                  match cmp(v) {
+                    0 => j = mid
+                    _ => i = mid + 1
+                  }
+                None => break
+              }
+            }
+            return Ok(i)
+          }
+        }
+      None => return Err(i)
+    }
+  }
+  Err(i)
+}
+
+///|
+/// Safe element access with bounds checking
+pub fn[A] get(self : T[A], index : Int) -> A? {
+  if index >= 0 && index < self.len {
+    let physical_index = (self.head + index) % self.buf.length()
+    Some(self.buf[physical_index])
+  } else {
+    None
+  }
+}
+
+///|
+/// Performs a binary search on a sorted deque for the given value.
+/// Returns the position of the value if found, or the position where
+/// the value could be inserted while maintaining the sorted order.
+///
+/// Parameters:
+///
+/// * `value` : The value to search for in the deque
+///
+/// Returns a `Result` containing either:
+///
+/// * `Ok(index)` if the value is found at position `index`
+/// * `Err(index)` if the value is not found, where `index` is the
+///   position where the value could be inserted
+///
+/// Example:
+///
+/// ```moonbit
+/// let dq = @deque.of([1, 3, 5, 7, 9])
+/// let result = dq.binary_search(5)
+/// inspect(result, content="Ok(2)")
+/// ```
+///
+/// Notes:
+///
+/// * Assumes the deque is sorted in ascending order
+/// * For multiple matches, returns the leftmost matching position
+/// * Returns an insertion point that maintains the sort order when no match is found
+pub fn[A : Compare] binary_search(self : T[A], value : A) -> Result[Int, Int] {
+  self.binary_search_by(fn(x) { x.compare(value) })
+}
