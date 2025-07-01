@@ -278,12 +278,18 @@ pub fn[T] ArrayView::op_as_view(
 pub fn[T] ArrayView::blit_to(
   self : ArrayView[T],
   dst : ArrayView[T],
-  len~ : Int,
-  src_offset~ : Int = 0,
-  dst_offset~ : Int = 0
+  len : Int
 ) -> Unit {
-  let src_len = self.length() - src_offset
-  let dst_len = dst.length() - dst_offset
+  let src_len = self.length()
+  let dst_len = dst.length()
+  let src_arr = Array::new(capacity=src_len)
+  for i in 0..<src_len {
+    src_arr.push(self.unsafe_get(i))
+  }
+  let dst_arr = Array::new(capacity=dst_len)
+  for i in 0..<dst_len {
+    dst_arr.push(dst.unsafe_get(i))
+  }
   let copy_len = if src_len < dst_len {
     if src_len < len {
       src_len
@@ -295,7 +301,8 @@ pub fn[T] ArrayView::blit_to(
   } else {
     len
   }
+  Array::blit_to(src_arr, dst_arr, len=copy_len, src_offset=0, dst_offset=0)
   for i in 0..<copy_len {
-    dst.op_set(dst_offset + i, self.op_get(src_offset + i))
+    dst.op_set(i, dst_arr[i])
   }
 }
