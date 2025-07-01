@@ -3,7 +3,9 @@
     "moonbitlang/core/builtin",
     "moonbitlang/core/array",
     "moonbitlang/core/immut/internal/sparse_array",
-    "moonbitlang/core/quickcheck"
+    "moonbitlang/core/quickcheck",
+    "moonbitlang/core/immut/internal/path",
+    "moonbitlang/core/list"
   ],
   "test-import": ["moonbitlang/core/string", "moonbitlang/core/int"]
 }
