@@ -141,30 +141,7 @@ fn unsafe_substring(str : String, start : Int, end : Int) -> String {
 }
 
 ///|
-/// Returns a new string containing characters from the original string starting
-/// at `start` index up to (but not including) `end` index.
-///
-/// Parameters:
-///
-/// * `string` : The source string from which to extract the substring.
-/// * `start` : The starting index of the substring (inclusive). Defaults to 0.
-/// * `end` : The ending index of the substring (exclusive). Defaults to the
-/// length of the string.
-///
-/// Returns a new string containing the specified substring.
-///
-/// Example:
-///
-/// ```moonbit
-///   let s = "Hello world"
-///   inspect(s.substring(start=0, end=5), content="Hello")
-///   inspect(s.substring(start=6, end=11), content="world")
-///   inspect(s.substring(), content="Hello world")
-///
-///   let s = "test"
-///   inspect(s.substring(start=2, end=2), content="")
-///   inspect("".substring(), content="")
-/// ```
+#deprecated("Use `string.charcodes(start~, end~).to_string()` instead")
 pub fn String::substring(self : String, start~ : Int = 0, end? : Int) -> String {
   let len = self.length()
   let end = match end {
