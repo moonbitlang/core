@@ -1492,8 +1492,8 @@ pub fn[A] binary_search_by(self : T[A], cmp : (A) -> Int) -> Result[Int, Int] {
     match self.get(h) {
       Some(element) =>
         match cmp(element) {
-          -1 => i = h + 1 // Continue searching right
-          1 => j = h // Continue searching left
+          _..<0 => i = h + 1 // Continue searching right
+          1..<_ => j = h // Continue searching left
           _ => { // Found match, find leftmost
             j = h
             while i < j {
