@@ -18,7 +18,7 @@
 ///|
 fn string_from_bytes(bytes : FixedArray[Byte], from : Int, to : Int) -> String {
   let buf = StringBuilder::new(size_hint=bytes.length())
-  for i = from; i < to; i = i + 1 {
+  for i in from..<to {
     buf.write_char(bytes[i].to_char())
   }
   buf.to_string()
@@ -563,7 +563,7 @@ fn to_chars(v : FloatingDecimal64, sign : Bool) -> String {
         output /= 10
       }
       index += olength
-      for i = olength; i < exp + 1; i = i + 1 {
+      for i in olength..<(exp + 1) {
         result[index] = b'0'
         index += 1
       }

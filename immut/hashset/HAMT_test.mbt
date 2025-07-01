@@ -358,7 +358,7 @@ test "@hashset collision" {
   let b = MyString("b")
   let c = MyString("c")
   let set = @hashset.new().add(a).add(b).add(c)
-  inspect(set.iter().to_array(), content="[b, c, a]")
+  inspect(set.iter().to_array(), content="[c, b, a]")
   set.each((x : MyString) => x |> ignore)
   inspect(set.size(), content="3")
 }

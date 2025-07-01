@@ -98,7 +98,8 @@ pub fn[A] UninitializedArray::length(self : UninitializedArray[A]) -> Int {
 }
 
 ///|
-fn[T] UninitializedArray::unsafe_blit(
+#internal(unsafe, "For internal use only.")
+pub fn[T] UninitializedArray::unsafe_blit(
   dst : UninitializedArray[T],
   dst_offset : Int,
   src : UninitializedArray[T],

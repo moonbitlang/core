@@ -564,7 +564,7 @@ fn[A] redis_plan(t : FixedArray[Tree[A]]) -> (FixedArray[Int], Int) {
       remaining_nodes = remaining_nodes + node_counts[i + 1] - min_size
       i += 1
     }
-    for j = i; j < new_len - 1; j = j + 1 {
+    for j in i..<(new_len - 1) {
       node_counts[j] = node_counts[j + 1]
     }
     new_len -= 1

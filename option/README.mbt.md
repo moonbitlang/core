@@ -51,7 +51,7 @@ A safer alternative to `unwrap` is the `or` method, which returns the value if i
 ```moonbit
 test {
   let none: Int? = None
-  let value = none.or(0) // 0
+  let value = none.unwrap_or(0) // 0
   assert_eq(value, 0)
 }
 ```
@@ -60,8 +60,8 @@ There is also the `or_else` method, which returns the value if it is `Some`, oth
 
 ```moonbit
 test {
-  let none: Int? = None
-  let value = none.or_else(() => { 0 }) // 0
+  let none : Int? = None
+  let value = none.unwrap_or_else(() => 0) // 0
   assert_eq(value, 0)
 }
 ```
@@ -72,8 +72,8 @@ You can transform the value of an `Option` using the `map` method. It applies th
 
 ```moonbit
 test {
-  let some: Int? = Some(42)
-  let new_some = some.map((value: Int) => { value + 1 }) // Some(43)
+  let some : Int? = Some(42)
+  let new_some = some.map((value : Int) => value + 1) // Some(43)
   assert_eq(new_some, Some(43))
 }
 ```
