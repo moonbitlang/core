@@ -42,4 +42,8 @@ test "bool convert" {
   inspect(false.to_uint(), content="0")
   inspect(true.to_uint64(), content="1")
   inspect(false.to_uint64(), content="0")
+  inspect(true.to_uint16(), content="1")
+  inspect(false.to_uint16(), content="0")
+  inspect(true.to_int16(), content="1")
+  inspect(false.to_int16(), content="0")
 }
