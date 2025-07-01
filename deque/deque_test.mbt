@@ -657,7 +657,7 @@ test "test_from_vec" {
 
 ///|
 test "test_from_array" {
-  fn test_fn(n : Int) -> Unit raise {
+  let test_fn : (Int) -> Unit raise = (n : Int) => {
     let array : FixedArray[Int] = FixedArray::make(n, 0)
     for index in 0..<n {
       array[index] = index
@@ -668,7 +668,6 @@ test "test_from_array" {
     }
     assert_eq(deq.length(), array.length())
   }
-
   test_fn(0)
   test_fn(1)
   test_fn(2)
@@ -1054,27 +1053,27 @@ test "binary_search_by on multiple elements deque" {
   let dq = @deque.of([1, 3, 5, 7, 9])
 
   // Find the element that exists (the first one)
-  let found_first = dq.binary_search_by(fn(x) { x.compare(1) })
+  let found_first = dq.binary_search_by(x => x.compare(1))
   inspect(found_first, content="Ok(0)")
 
   // Find the element that exists (middle)
-  let found_middle = dq.binary_search_by(fn(x) { x.compare(5) })
+  let found_middle = dq.binary_search_by(x => x.compare(5))
   inspect(found_middle, content="Ok(2)")
 
   // Find the last element that exists
-  let found_last = dq.binary_search_by(fn(x) { x.compare(9) })
+  let found_last = dq.binary_search_by(x => x.compare(9))
   inspect(found_last, content="Ok(4)")
 
   // Find non-existent elements (less than all)
-  let not_found_less = dq.binary_search_by(fn(x) { x.compare(0) })
+  let not_found_less = dq.binary_search_by(x => x.compare(0))
   inspect(not_found_less, content="Err(0)")
 
   //Find the non-existent element (middle position)
-  let not_found_middle = dq.binary_search_by(fn(x) { x.compare(4) })
+  let not_found_middle = dq.binary_search_by(x => x.compare(4))
   inspect(not_found_middle, content="Err(2)")
 
   // Find non-existent elements (greater than all)
-  let not_found_greater = dq.binary_search_by(fn(x) { x.compare(10) })
+  let not_found_greater = dq.binary_search_by(x => x.compare(10))
   inspect(not_found_greater, content="Err(5)")
 }
 

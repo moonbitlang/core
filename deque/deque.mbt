@@ -1556,5 +1556,5 @@ pub fn[A] get(self : T[A], index : Int) -> A? {
 /// * For multiple matches, returns the leftmost matching position
 /// * Returns an insertion point that maintains the sort order when no match is found
 pub fn[A : Compare] binary_search(self : T[A], value : A) -> Result[Int, Int] {
-  self.binary_search_by(fn(x) { x.compare(value) })
+  self.binary_search_by(x => x.compare(value))
 }
