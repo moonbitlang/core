@@ -57,8 +57,12 @@ pub fn[K : Eq + Hash, V] find(self : T[K, V], key : K) -> V? {
 pub fn[K : Eq + Hash, V] get(self : T[K, V], key : K) -> V? {
   loop (self, @path.of(key)) {
     (Empty, _) => None
-    (Leaf(key1, value), _) => if key == key1 { Some(value) } else { None }
-    (Collision(bucket), _) => bucket.find(key)
+    (Leaf(key1, value1, bucket), _) =>
+      if key == key1 {
+        Some(value1)
+      } else {
+        bucket.lookup(key)
+      }
     (Branch(children), path) => {
       let idx = path.idx()
       if children[idx] is Some(child) {
@@ -79,7 +83,7 @@ pub fn[K : Eq + Hash, V] op_get(self : T[K, V], key : K) -> V? {
 fn[K, V] make_leaf(key : K, value : V, path : Path) -> T[K, V] {
   // make sure leaf nodes always appear at the bottom of the tree
   if path.is_last() {
-    Branch(@sparse_array.singleton(path.idx(), Leaf(key, value)))
+    Branch(@sparse_array.singleton(path.idx(), Leaf(key, value, @list.empty())))
   } else {
     let child = make_leaf(key, value, path.next())
     Branch(@sparse_array.singleton(path.idx(), child))
@@ -95,13 +99,16 @@ fn[K : Eq, V] add_with_path(
 ) -> T[K, V] {
   match self {
     Empty => make_leaf(key, value, path)
-    Leaf(key1, value1) =>
+    Leaf(key1, value1, bucket) =>
       if key == key1 {
-        Leaf(key, value)
+        Leaf(key, value, bucket)
       } else {
-        Collision(More(key, value, JustOne(key1, value1)))
+        let new_bucket = match bucket.find_index(kv => kv.0 == key) {
+          None => bucket
+          Some(index) => bucket.remove_at(index)
+        }
+        Leaf(key, value, new_bucket.add((key1, value1)))
       }
-    Collision(bucket) => Collision(bucket.add(key, value))
     Branch(children) => {
       let idx = path.idx()
       match children[idx] {
@@ -126,13 +133,17 @@ pub fn[K : Eq + Hash, V] filter(
 ) -> T[K, V] raise? {
   match self {
     Empty => Empty
-    Leaf(k, v) => if pred(v) { Leaf(k, v) } else { Empty }
-    Collision(bucket) =>
-      match bucket.filter(pred) {
-        Some(JustOne(k, v)) => Leaf(k, v)
-        Some(b) => Collision(b)
-        None => Empty
+    Leaf(key1, value1, bucket) => {
+      let new_bucket = bucket.filter(kv => pred(kv.1))
+      if pred(value1) {
+        Leaf(key1, value1, new_bucket)
+      } else {
+        match new_bucket {
+          Empty => Empty
+          More((k1, v1), tail~) => Leaf(k1, v1, tail)
+        }
       }
+    }
     Branch(children) => {
       let mut result = Empty
       children.each(child => child
@@ -157,7 +168,7 @@ pub fn[K, V, A] fold(
 ///|
 /// Fold the values in the map with key
 /// TODO: can not mark `f` as `#locals(f)` because 
-/// it will be shadowed by the `f` in the `fold_with_key` function
+/// it will be shadowed by the `f` in the `@list.T::fold` function
 /// TO make it more useful in the future, we may need propagate
 pub fn[K, V, A] fold_with_key(
   self : T[K, V],
@@ -169,8 +180,11 @@ pub fn[K, V, A] fold_with_key(
     (More((node, index), tail~), acc) =>
       match node {
         Empty => continue (tail, acc)
-        Leaf(k, v) => continue (tail, f(acc, k, v))
-        Collision(bucket) => continue (tail, bucket.foldl_with_key(init=acc, f))
+        Leaf(k, v, bucket) =>
+          continue (
+              tail,
+              bucket.fold(init=f(acc, k, v), (acc, kv) => f(acc, kv.0, kv.1)),
+            )
         Branch(children) =>
           if index < children.data.length() {
             let child = children.data.unsafe_get(index)
@@ -200,8 +214,8 @@ pub fn[K : Eq + Hash, V, A] map_with_key(
   fn go(m : T[K, V]) -> T[K, A] raise? {
     match m {
       Empty => Empty
-      Leaf(k, v) => Leaf(k, f(k, v))
-      Collision(bucket) => Collision(bucket.map_with_key(f))
+      Leaf(k, v, bucket) =>
+        Leaf(k, f(k, v), bucket.map(kv => (kv.0, f(kv.0, kv.1))))
       Branch(children) => {
         let result = []
         children.each(child => child
@@ -234,12 +248,16 @@ pub fn[K : Eq + Hash, V] remove(self : T[K, V], key : K) -> T[K, V] {
 fn[K : Eq, V] remove_with_path(self : T[K, V], key : K, path : Path) -> T[K, V] {
   match self {
     Empty => self
-    Leaf(old_key, _) => if key == old_key { Empty } else { self }
-    Collision(bucket) =>
-      match bucket.remove(key) {
-        None => Empty
-        Some(JustOne(k, v)) => Leaf(k, v)
-        Some(new_bucket) => Collision(new_bucket)
+    Leaf(key1, value1, bucket) =>
+      if key1 == key {
+        match bucket {
+          @list.Empty => Empty
+          More((key2, value2), tail~) => Leaf(key2, value2, tail)
+        }
+      } else if bucket.find_index(kv => kv.0 == key) is Some(index) {
+        Leaf(key1, value1, bucket.remove_at(index))
+      } else {
+        self
       }
     Branch(children) => {
       let idx = path.idx()
@@ -264,8 +282,7 @@ fn[K : Eq, V] remove_with_path(self : T[K, V], key : K, path : Path) -> T[K, V] 
 pub fn[K, V] size(self : T[K, V]) -> Int {
   match self {
     Empty => 0
-    Leaf(_) => 1
-    Collision(bucket) => bucket.size()
+    Leaf(_, _, bucket) => 1 + bucket.length()
     Branch(children) =>
       for i = 0, total_size = 0 {
         if i < children.data.length() {
@@ -290,29 +307,12 @@ pub fn[K : Eq + Hash, V] T::union_with(
   other : T[K, V],
   f : (K, V, V) -> V raise?
 ) -> T[K, V] raise? {
-  match (self, other) {
-    (_, Empty) => self
-    (Empty, _) => other
-    (_, Leaf(k, v)) =>
-      match self.get(k) {
-        Some(v1) => self.add(k, f(k, v1, v))
-        None => self.add(k, v)
-      }
-    (Leaf(k, v), _) =>
-      match other.get(k) {
-        Some(v2) => other.add(k, f(k, v, v2))
-        None => other.add(k, v)
-      }
-    (Branch(sa1), Branch(sa2)) =>
-      Branch(sa1.union(sa2, (m1, m2) => m1.union_with(m2, f)))
-    (_, _) =>
-      self
-      .iter()
-      .fold(init=other, (m, kv) => match m.get(kv.0) {
-        Some(v2) => m.add(kv.0, f(kv.0, kv.1, v2))
-        None => m.add(kv.0, kv.1)
-      })
-  }
+  other
+  .iter()
+  .fold(init=self, (m, kv) => match m.get(kv.0) {
+    Some(v2) => m.add(kv.0, f(kv.0, kv.1, v2))
+    None => m.add(kv.0, kv.1)
+  })
 }
 
 ///|
@@ -365,8 +365,10 @@ pub fn[K : Eq + Hash, V] T::difference(
 pub fn[K, V] each(self : T[K, V], f : (K, V) -> Unit raise?) -> Unit raise? {
   match self {
     Empty => ()
-    Leaf(k, v) => f(k, v)
-    Collision(bucket) => bucket.each(f)
+    Leaf(k, v, bucket) => {
+      f(k, v)
+      bucket.each(kv => f(kv.0, kv.1))
+    }
     Branch(children) => children.each(child => child.each(f))
   }
 }
@@ -395,8 +397,7 @@ pub fn[K, V] elems(self : T[K, V]) -> Iter[V] {
 pub fn[K, V] iter(self : T[K, V]) -> Iter[(K, V)] {
   match self {
     Empty => Iter::empty()
-    Leaf(k, v) => Iter::singleton((k, v))
-    Collision(bucket) => bucket.iter()
+    Leaf(k, v, bucket) => Iter::singleton((k, v)) + bucket.iter()
     Branch(children) => children.data.iter().flat_map(map => map.iter())
   }
 }
