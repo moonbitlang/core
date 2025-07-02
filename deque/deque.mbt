@@ -1572,12 +1572,10 @@ pub fn[A : Compare] binary_search(self : T[A], value : A) -> Result[Int, Int] {
 /// Example:
 ///
 /// ```moonbit
-/// test "append" {
-///   let deque1 = @deque.of([1, 2, 3])
-///   let deque2 = @deque.of([4, 5, 6])
-///   deque1.append(deque2)
-///   inspect(deque1, content="@deque.of([1, 2, 3, 4, 5, 6])")
-/// }
+/// let deque1 = @deque.of([1, 2, 3])
+/// let deque2 = @deque.of([4, 5, 6])
+/// deque1.append(deque2)
+/// inspect(deque1, content="@deque.of([1, 2, 3, 4, 5, 6])")
 /// ```
 pub fn[A] T::append(self : T[A], other : T[A]) -> Unit {
   let dst_len = self.length()
@@ -1588,4 +1586,52 @@ pub fn[A] T::append(self : T[A], other : T[A]) -> Unit {
   self.buf = new_dst
   self.len = dst_len + src_len
   self.tail = self.tail + src_len
+}
+
+///|
+/// Copies a segment of elements from the source deque into a destination deque.
+///
+/// Copies `len` elements starting from `src_offset` in the source deque (`self`) 
+/// into the destination deque (`dst`) starting at `dst_offset`. Modifies the destination deque in place.
+///
+/// *   If `dst_offset + len` exceeds the destination deque's current length,  
+///     the destination is automatically **resized** to accommodate the new elements.  
+/// *   If the destination has sufficient capacity, elements are overwritten in-place.
+///
+///
+/// Parameters:
+/// *   `self` : Source deque (`T[A]`) to copy elements from.
+/// *   `dst` : Destination deque (`T[A]`) to copy elements into (modified in place).
+/// *   `len~` : Number of elements to copy (labeled argument).
+/// *   `src_offset~` : Starting index in source deque (default = 0).
+/// *   `dst_offset~` : Starting index in destination deque (default = 0).
+///
+/// ```moonbit
+/// let src = @deque.of([10, 20, 30, 40])
+/// let dst = @deque.of([1, 2, 3, 4])
+/// src.blit_to(dst, len=3, src_offset=1, dst_offset=3)
+/// inspect(dst, content="@deque.of([1, 2, 3, 20, 30, 40])")
+/// ```
+pub fn[A] T::blit_to(
+  self : T[A],
+  dst : T[A],
+  len~ : Int,
+  src_offset~ : Int = 0,
+  dst_offset~ : Int = 0
+) -> Unit {
+  guard len >= 0 &&
+    dst_offset >= 0 &&
+    src_offset >= 0 &&
+    dst_offset <= dst.length() &&
+    src_offset + len <= self.length()
+  if dst_offset + len > dst.length() {
+    let new_dst = UninitializedArray::make(dst_offset + len)
+    UninitializedArray::unsafe_blit(new_dst, 0, dst.buf, 0, dst.length())
+    UninitializedArray::unsafe_blit(new_dst, dst_offset, self.buf, src_offset, len)
+    dst.buf = new_dst
+    dst.len = dst_offset + len
+    dst.tail = dst.len - 1
+  } else {
+    UninitializedArray::unsafe_blit(dst.buf, dst_offset, self.buf, src_offset, len)
+  }
 }
