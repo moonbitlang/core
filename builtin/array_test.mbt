@@ -86,9 +86,13 @@ test "array_compare" {
 
 ///|
 test "array_add" {
-  let arr1 = [1, 2, 3]
-  let arr2 = [4, 5, 6]
-  inspect(arr1 + arr2, content="[1, 2, 3, 4, 5, 6]")
+  inspect(([] : Array[Int]) + [], content="[]")
+  inspect([] + [1, 2, 3, 4, 5], content="[1, 2, 3, 4, 5]")
+  inspect([1, 2, 3, 4, 5] + [], content="[1, 2, 3, 4, 5]")
+  inspect(
+    [1, 2, 3, 4, 5] + [6, 7, 8, 9, 10],
+    content="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]",
+  )
 }
 
 ///|
@@ -241,8 +245,15 @@ test "array_is_empty" {
 
 ///|
 test "array_is_sorted" {
+  assert_true(([] : Array[Int]).is_sorted())
   assert_true([1, 2, 3].is_sorted())
   assert_false([1, 3, 2].is_sorted())
+}
+
+///|
+test "array_rev" {
+  inspect([1, 2, 3].rev(), content="[3, 2, 1]")
+  inspect(([] : Array[Int]).rev(), content="[]")
 }
 
 ///|
@@ -250,12 +261,17 @@ test "array_rev_inplace" {
   let arr = [1, 2, 3]
   arr.rev_inplace()
   inspect(arr, content="[3, 2, 1]")
+  let arr : Array[Int] = []
+  arr.rev_inplace()
+  inspect(arr, content="[]")
 }
 
 ///|
 test "array_split_at" {
   let arr = [1, 2, 3, 4, 5]
   inspect(arr.split_at(2), content="([1, 2], [3, 4, 5])")
+  inspect(arr.split_at(0), content="([], [1, 2, 3, 4, 5])")
+  inspect(arr.split_at(5), content="([1, 2, 3, 4, 5], [])")
 }
 
 ///|
@@ -309,6 +325,13 @@ test "array_swap" {
   let arr = [1, 2, 3]
   arr.swap(0, 2)
   inspect(arr, content="[3, 2, 1]")
+}
+
+///|
+test "array_retain" {
+  let arr = [1, 2, 3]
+  arr.retain(x => x > 1)
+  inspect(arr, content="[2, 3]")
 }
 
 ///|
@@ -452,11 +475,49 @@ test "array_reserve_capacity" {
 }
 
 ///|
+test "array_shrink_to_fit" {
+  let arr = Array::new(capacity=10)
+  arr.push(1)
+  arr.push(2)
+  arr.push(3)
+  // Only test that it doesn't panic
+  arr.shrink_to_fit()
+}
+
+///|
+test "array_shrink_to_fit_2" {
+  let arr = [1, 2, 3]
+  // Only test that it doesn't panic
+  arr.shrink_to_fit()
+}
+
+///|
 test "array_split" {
   inspect(
     [1, 2, 3, 4, 5, 6, 7].split(x => x % 2 == 1),
     content="[[], [2], [4], [6]]",
   )
+}
+
+///|
+test "array_iter" {
+  let arr = [1, 2, 3]
+  inspect(arr.iter(), content="[1, 2, 3]")
+  inspect(arr.iter().take(1), content="[1]")
+}
+
+///|
+test "array_iter2" {
+  let arr = [1, 2, 3]
+  inspect(arr.iter2(), content="[(0, 1), (1, 2), (2, 3)]")
+  inspect(arr.iter2().iter().take(1), content="[(0, 1)]")
+}
+
+///|
+test "array_unsafe_pop_back" {
+  let arr = [1]
+  arr.unsafe_pop_back()
+  inspect(arr, content="[]")
 }
 
 ///|
