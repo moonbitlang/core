@@ -981,12 +981,13 @@ pub fn[T : Compare] Iter::minimum(self : Iter[T]) -> T? {
 ///
 /// # Example
 ///
-/// ```moonbit
+/// ```moonbit,notest
 ///   let iter = [1, 1, 2, 3, 2, 2, 1].iter()
-///   let result = iter.group_by((x) => { x })
+///   let result = iter.group_by((x) => x)
 ///   assert_eq(result.get(1), Some([1, 1, 1]))
 ///   assert_eq(result.get(2), Some([2, 2, 2]))
 ///   assert_eq(result.get(3), Some([3]))
+/// ```
 #deprecated
 pub fn[T, K : Eq + Hash] Iter::group_by(
   self : Iter[T],
