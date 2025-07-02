@@ -1016,3 +1016,9 @@ test "BigInt::hash consistency" {
   assert_eq(neg_hash1, neg_hash2)
   assert_not_eq(hash1, neg_hash1)
 }
+
+///|
+test "default" {
+  let a = BigInt::default()
+  assert_eq(a, 0N)
+}
