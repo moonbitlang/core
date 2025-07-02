@@ -78,10 +78,7 @@ test "Int16::from_int64" {
 
 ///|
 test "Int16::op_add" {
-  fn add(a : Int16, b : Int16) -> Int16 {
-    a + b
-  }
-
+  let add = (a : Int16, b : Int16) => a + b
   inspect(add(1, 2), content="3")
   inspect(add(0, 0), content="0")
   inspect(add(32767, 1), content="-32768") // Overflow case
@@ -98,10 +95,7 @@ test "Int16::op_add" {
 
 ///|
 test "Int16::op_sub" {
-  fn sub(a : Int16, b : Int16) -> Int16 {
-    a - b
-  }
-
+  let sub = (a : Int16, b : Int16) => a - b
   inspect(sub(3, 2), content="1")
   inspect(sub(0, 0), content="0")
   inspect(sub(-32768, 1), content="32767") // Underflow case
@@ -118,10 +112,7 @@ test "Int16::op_sub" {
 
 ///|
 test "Int16::op_mul" {
-  fn mul(a : Int16, b : Int16) -> Int16 {
-    a * b
-  }
-
+  let mul = (a : Int16, b : Int16) => a * b
   inspect(mul(0, 0), content="0")
   inspect(mul(1, 1), content="1")
   inspect(mul(-1, -1), content="1")
@@ -140,10 +131,7 @@ test "Int16::op_mul" {
 
 ///|
 test "Int16::op_div" {
-  fn div(a : Int16, b : Int16) -> Int16 {
-    a / b
-  }
-
+  let div = (a : Int16, b : Int16) => a / b
   inspect(div(6, 2), content="3")
   inspect(div(0, 1), content="0")
   inspect(div(1, 1), content="1")
@@ -207,10 +195,7 @@ test "Int16::op_equal" {
 
 ///|
 test "Int16::op_shl" {
-  fn shl(a : Int16, b : Int) -> Int16 {
-    a << b
-  }
-
+  let shl = (a : Int16, b : Int) => a << b
   inspect(shl(0, 0), content="0")
   inspect(shl(1, 0), content="1")
   inspect(shl(1, 1), content="2")
@@ -269,10 +254,7 @@ test "Int16::op_shl" {
 
 ///|
 test "Int16::op_shr" {
-  fn shr(a : Int16, b : Int) -> Int16 {
-    a >> b
-  }
-
+  let shr = (a : Int16, b : Int) => a >> b
   inspect(shr(0, 0), content="0")
   inspect(shr(1, 0), content="1")
   inspect(shr(2, 1), content="1")
@@ -345,10 +327,7 @@ test "Int16::op_shr" {
 
 ///|
 test "Int16::lor" {
-  fn lor(a : Int16, b : Int16) -> Int16 {
-    a | b
-  }
-
+  let lor = (a : Int16, b : Int16) => a | b
   inspect(lor(0, 0), content="0")
   inspect(lor(1, 0), content="1")
   inspect(lor(0, 1), content="1")
@@ -369,10 +348,7 @@ test "Int16::lor" {
 
 ///|
 test "Int16::land" {
-  fn land(a : Int16, b : Int16) -> Int16 {
-    a & b
-  }
-
+  let land = (a : Int16, b : Int16) => a & b
   inspect(land(0, 0), content="0")
   inspect(land(1, 0), content="0")
   inspect(land(0, 1), content="0")
@@ -393,10 +369,7 @@ test "Int16::land" {
 
 ///|
 test "Int16::lxor" {
-  fn lxor(a : Int16, b : Int16) -> Int16 {
-    a ^ b
-  }
-
+  let lxor = (a : Int16, b : Int16) => a ^ b
   inspect(lxor(0, 0), content="0")
   inspect(lxor(1, 0), content="1")
   inspect(lxor(0, 1), content="1")
@@ -408,10 +381,7 @@ test "Int16::lxor" {
 
 ///|
 test "Int16::op_mod" {
-  fn mod(a : Int16, b : Int16) -> Int16 {
-    a % b
-  }
-
+  let mod = (a : Int16, b : Int16) => a % b
   inspect(mod(10, 3), content="1")
   inspect(mod(10, 2), content="0")
   inspect(mod(10, 10), content="0")
@@ -429,10 +399,7 @@ test "Int16::op_mod" {
 
 ///|
 test "Int16::op_neg" {
-  fn neg(a : Int16) -> Int16 {
-    -a
-  }
-
+  let neg = (a : Int16) => -a
   inspect(neg(10), content="-10")
   inspect(neg(-10), content="10")
   inspect(neg(0), content="0")
@@ -443,10 +410,7 @@ test "Int16::op_neg" {
 
 ///|
 test "Int16::abs" {
-  fn abs(a : Int16) -> Int16 {
-    a.abs()
-  }
-
+  let abs = (a : Int16) => a.abs()
   inspect(abs(10), content="10")
   inspect(abs(-10), content="10")
   inspect(abs(0), content="0")
