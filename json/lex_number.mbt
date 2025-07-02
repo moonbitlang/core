@@ -149,7 +149,7 @@ fn ParseContext::lex_number_end(
   start : Int,
   end : Int
 ) -> Double raise ParseError {
-  let s = ctx.input.charcodes(start~, end~).to_string()
+  let s = ctx.input.substring(start~, end~)
   @strconv.parse_double(s) catch {
     _ => raise InvalidNumber(offset_to_position(ctx.input, start), s)
   }
