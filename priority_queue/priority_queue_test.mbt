@@ -167,11 +167,10 @@ test "pop" {
 
 ///|
 test "complex" {
-  fn rand(upper : Int) -> Int {
+  let rand = (upper : Int) => {
     let rng = @random.Rand::new()
     rng.int(limit=upper)
   }
-
   let arr = (0).until(1000, inclusive=true).collect()
   arr.shuffle_in_place(rand~)
   let pq = new()

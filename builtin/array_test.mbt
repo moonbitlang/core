@@ -592,16 +592,13 @@ struct TestStruct {
 test "array_binary_search_by_test" {
   let arr = [{ num: 10 }, { num: 22 }, { num: 35 }, { num: 48 }]
   let mut target = { num: 22 }
-  fn cmp(val : TestStruct) {
-    if val.num < target.num {
-      -1
-    } else if val.num == target.num {
-      0
-    } else {
-      1
-    }
+  let cmp = (val : TestStruct) => if val.num < target.num {
+    -1
+  } else if val.num == target.num {
+    0
+  } else {
+    1
   }
-
   assert_eq(arr.binary_search_by(cmp), Ok(1))
   target = { num: 48 }
   assert_eq(arr.binary_search_by(cmp), Ok(3))
