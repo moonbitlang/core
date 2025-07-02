@@ -1558,3 +1558,34 @@ pub fn[A] get(self : T[A], index : Int) -> A? {
 pub fn[A : Compare] binary_search(self : T[A], value : A) -> Result[Int, Int] {
   self.binary_search_by(x => x.compare(value))
 }
+
+///|
+/// Appends all elements from one deque to the end of another deque.
+///
+/// Parameters:
+///
+/// * `self` : The deque to which elements will be appended.
+/// * `other` : The deque whose elements will be appended to `self`.
+///
+/// Returns nothing (`Unit`). Modifies `self` in place by pushing 
+///
+/// Example:
+///
+/// ```moonbit
+/// test "append" {
+///   let deque1 = @deque.of([1, 2, 3])
+///   let deque2 = @deque.of([4, 5, 6])
+///   deque1.append(deque2)
+///   inspect(deque1, content="@deque.of([1, 2, 3, 4, 5, 6])")
+/// }
+/// ```
+pub fn[A] T::append(self : T[A], other : T[A]) -> Unit {
+  let dst_len = self.length()
+  let src_len = other.length()
+  let new_dst = UninitializedArray::make(dst_len + src_len)
+  UninitializedArray::unsafe_blit(new_dst, 0, self.buf, 0, dst_len)
+  UninitializedArray::unsafe_blit(new_dst, dst_len, other.buf, 0, src_len)
+  self.buf = new_dst
+  self.len = dst_len + src_len
+  self.tail = self.tail + src_len
+}
