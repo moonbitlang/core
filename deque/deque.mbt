@@ -1449,7 +1449,7 @@ pub fn[A] T::drain(self : T[A], start~ : Int, len? : Int) -> T[A] {
 /// let dq = @deque.of([1, 3, 5, 7, 9])
 ///
 /// 
-/// let find_3 = dq.binary_search_by(fn(x) {
+/// let find_3 = dq.binary_search_by(x => {
 ///   if x < 3 {
 ///     -1
 ///   } else if x > 3 {
@@ -1461,7 +1461,7 @@ pub fn[A] T::drain(self : T[A], start~ : Int, len? : Int) -> T[A] {
 /// inspect(find_3, content="Ok(1)")
 ///
 /// 
-/// let find_4 = dq.binary_search_by(fn(x) {
+/// let find_4 = dq.binary_search_by(x => {
 ///   if x < 4 {
 ///     -1
 ///   } else if x > 4 {
