@@ -20,7 +20,7 @@
 ///   let queue = @priority_queue.new()
 ///   assert_eq(queue.push(1).length(), 1)
 /// ```
-pub fn[A : Compare] new() -> T[A] {
+pub fn[A] new() -> T[A] {
   { node: Empty, size: 0 }
 }
 
@@ -56,13 +56,13 @@ pub fn[A : Compare] to_array(self : T[A]) -> Array[A] {
   }
 
   go(self.node)
-  arr.sort_by(fn(x, y) { y.compare(x) })
+  arr.sort_by((x, y) => y.compare(x))
   arr
 }
 
 ///|
 pub fn[A : Compare] iter(self : T[A]) -> Iter[A] {
-  Iter::new(fn(yield_) {
+  Iter::new(yield_ => {
     let arr = self.to_array()
     for i in 0..<arr.length() {
       guard yield_(arr[i]) is IterContinue else { break IterEnd }
@@ -74,7 +74,7 @@ pub fn[A : Compare] iter(self : T[A]) -> Iter[A] {
 
 ///|
 pub fn[A : Compare] T::from_iter(iter : Iter[A]) -> T[A] {
-  iter.fold(init=new(), fn(s, e) { s.push(e) })
+  iter.fold(init=new(), (s, e) => s.push(e))
 }
 
 ///|
@@ -184,15 +184,7 @@ pub fn[A : Compare] unsafe_pop(self : T[A]) -> T[A] {
   }
 }
 
-///|
-#deprecated("Use `unsafe_pop` instead")
-#coverage.skip
-pub fn[A : Compare] pop_exn(self : T[A]) -> T[A] {
-  self.unsafe_pop()
-}
-
-///|
-/// Adds a value to the immutable priority queue.
+///| Adds a value to the immutable priority queue.
 ///
 /// # Example
 /// ```mbt

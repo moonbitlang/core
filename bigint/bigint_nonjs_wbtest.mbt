@@ -23,6 +23,14 @@ impl Show for MyBigInt with output(self, logger) {
 }
 
 ///|
+impl Show for Sign with output(self, logger) {
+  match self {
+    Positive => logger.write_string("Positive")
+    Negative => logger.write_string("Negative")
+  }
+}
+
+///|
 test "debug_string" {
   let buf = StringBuilder::new()
   let v : Array[MyBigInt] = [0, 1, 2, 3, 4, -0, -1, -2, -3]
@@ -58,7 +66,7 @@ fn check_invariant(a : BigInt) -> Unit raise {
       )
     }
   }
-  if a.limbs.iter().take(a.len).any(fn(x) { x > 0 }) {
+  if a.limbs.iter().take(a.len).any(x => x > 0) {
     guard a.limbs[a.len - 1] > 0 else {
       fail(
         "invariant (exists 0 <= i < len. limbs[i] > 0) => limbs[len-1] > 0 is broken",
@@ -71,7 +79,7 @@ fn check_invariant(a : BigInt) -> Unit raise {
       )
     }
   }
-  guard a.limbs.iter().drop(a.len).all(fn(x) { x == 0 }) else {
+  guard a.limbs.iter().drop(a.len).all(x => x == 0) else {
     fail(
       "invariant forall len <= i < limbs.length(). limbs[i] == 0 is broken: len = \{a.len}, limbs = \{a.limbs}",
     )

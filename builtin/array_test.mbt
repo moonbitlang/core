@@ -151,7 +151,7 @@ test "array_append" {
 test "array_each" {
   let arr = [1, 2, 3]
   let mut sum = 0
-  arr.each(fn(x) { sum = sum + x })
+  arr.each(x => sum = sum + x)
   assert_eq(sum, 6)
 }
 
@@ -159,7 +159,7 @@ test "array_each" {
 test "array_each_rev" {
   let arr = [1, 2, 3]
   let mut sum = 0
-  arr.rev_each(fn(x) { sum = sum + x })
+  arr.rev_each(x => sum = sum + x)
   inspect(sum, content="6")
 }
 
@@ -167,7 +167,7 @@ test "array_each_rev" {
 test "array_eachi" {
   let arr = [1, 2, 3]
   let mut sum = 0
-  // arr.eachi(fn(i, x) { sum = sum + i + x })
+  // arr.eachi((i, x) => { sum = sum + i + x })
   for i, x in arr {
     sum += i + x
   }
@@ -178,7 +178,7 @@ test "array_eachi" {
 test "array_eachi_rev" {
   let arr = [1, 2, 3]
   let mut sum = 0
-  arr.rev_eachi(fn(i, x) { sum = sum + i + x })
+  arr.rev_eachi((i, x) => sum = sum + i + x)
   inspect(sum, content="9")
 }
 
@@ -186,13 +186,11 @@ test "array_eachi_rev" {
 test "array_eachi_rev_2" {
   let arr = ['a', 'b', 'c']
   let buf = StringBuilder::new()
-  arr.rev_eachi(fn(i, x) {
-    buf
+  arr.rev_eachi((i, x) => buf
     ..write_object(i)
     ..write_string(": ")
     ..write_object(x)
-    ..write_string("\n")
-  })
+    ..write_string("\n"))
   inspect(
     buf,
     content=
@@ -214,18 +212,18 @@ test "array_clear" {
 ///|
 test "array_map" {
   let arr = [1, 2, 3]
-  let mapped = arr.map(fn(x) { x * 2 })
+  let mapped = arr.map(x => x * 2)
   assert_eq(mapped.length(), 3)
   assert_eq(mapped[0], 2)
   assert_eq(mapped[1], 4)
   assert_eq(mapped[2], 6)
-  @json.inspect(([] : Array[Int]).map(fn(x) { x }), content=[])
+  @json.inspect(([] : Array[Int]).map(x => x), content=[])
 }
 
 ///|
 test "array_map_inplace" {
   let arr = [1, 2, 3]
-  arr.map_inplace(fn(x) { x * 2 })
+  arr.map_inplace(x => x * 2)
   assert_eq(arr.length(), 3)
   assert_eq(arr[0], 2)
   assert_eq(arr[1], 4)
@@ -235,18 +233,18 @@ test "array_map_inplace" {
 ///|
 test "array_mapi" {
   let arr = [1, 2, 3]
-  let mapped = arr.mapi(fn(i, x) { i + x })
+  let mapped = arr.mapi((i, x) => i + x)
   assert_eq(mapped.length(), 3)
   assert_eq(mapped[0], 1)
   assert_eq(mapped[1], 3)
   assert_eq(mapped[2], 5)
-  inspect(([] : Array[Int]).mapi(fn(_idx, x) { x }), content="[]")
+  inspect(([] : Array[Int]).mapi((_idx, x) => x), content="[]")
 }
 
 ///|
 test "array_mapi_inplace" {
   let arr = [1, 2, 3]
-  arr.mapi_inplace(fn(i, x) { i + x })
+  arr.mapi_inplace((i, x) => i + x)
   assert_eq(arr.length(), 3)
   assert_eq(arr[0], 1)
   assert_eq(arr[1], 3)
@@ -256,7 +254,7 @@ test "array_mapi_inplace" {
 ///|
 test "array_filter" {
   let arr = [1, 2, 3, 4, 5]
-  let filtered = arr.filter(fn(x) { x % 2 == 0 })
+  let filtered = arr.filter(x => x % 2 == 0)
   assert_eq(filtered.length(), 2)
   assert_eq(filtered[0], 2)
   assert_eq(filtered[1], 4)
@@ -414,28 +412,28 @@ test "array_repeat" {
 ///|
 test "array_fold" {
   let arr = [1, 2, 3]
-  let sum = arr.fold(fn(acc, x) { acc + x }, init=0)
+  let sum = arr.fold((acc, x) => acc + x, init=0)
   assert_eq(sum, 6)
 }
 
 ///|
 test "array_rev_fold" {
   let arr = [1, 2, 3]
-  let sum = arr.rev_fold(fn(acc, x) { acc + x }, init=0)
+  let sum = arr.rev_fold((acc, x) => acc + x, init=0)
   assert_eq(sum, 6)
 }
 
 ///|
 test "array_foldi" {
   let arr = [1, 2, 3]
-  let sum = arr.foldi(fn(i, acc, x) { acc + i + x }, init=0)
+  let sum = arr.foldi((i, acc, x) => acc + i + x, init=0)
   assert_eq(sum, 9)
 }
 
 ///|
 test "array_rev_foldi" {
   let arr = [1, 2, 3]
-  let sum = arr.rev_foldi(fn(i, acc, x) { acc + i + x }, init=0)
+  let sum = arr.rev_foldi((i, acc, x) => acc + i + x, init=0)
   assert_eq(sum, 9)
 }
 
@@ -452,7 +450,7 @@ test "array_dedup" {
 ///|
 test "array_extract_if" {
   let arr = [1, 2, 3, 4, 5]
-  let extracted = arr.extract_if(fn(x) { x % 2 == 0 })
+  let extracted = arr.extract_if(x => x % 2 == 0)
   assert_eq(extracted.length(), 2)
   assert_eq(extracted[0], 2)
   assert_eq(extracted[1], 4)
@@ -484,7 +482,7 @@ test "array_chunks" {
 test "chunks_by" {
   let v = [1, 1, 2, 3, 2, 3, 2, 3, 4]
   inspect(
-    v.chunk_by(fn(x, y) { x <= y }),
+    v.chunk_by((x, y) => x <= y),
     content="[[1, 1, 2, 3], [2, 3], [2, 3, 4]]",
   )
 }
@@ -493,7 +491,7 @@ test "chunks_by" {
 test "chunks_by" {
   let v = [1, 1, 2, 3, 2, 3, 2, 3, 4]
   inspect(
-    v.chunk_by(fn(x, y) { x <= y }),
+    v.chunk_by((x, y) => x <= y),
     content="[[1, 1, 2, 3], [2, 3], [2, 3, 4]]",
   )
 }
@@ -533,15 +531,15 @@ test "array_reserve" {
 ///|
 test "array_split" {
   inspect(
-    [1, 2, 3, 4, 5, 6, 7].split(fn(x) { x % 2 == 1 }),
+    [1, 2, 3, 4, 5, 6, 7].split(x => x % 2 == 1),
     content="[[], [2], [4], [6]]",
   )
 }
 
 ///|
 test "array_search_by" {
-  inspect([1, 2, 3, 4, 5].search_by(fn(x) { x % 2 == 0 }), content="Some(1)")
-  inspect([1, 2, 3, 4, 5].search_by(fn(x) { x > 5 }), content="None")
+  inspect([1, 2, 3, 4, 5].search_by(x => x % 2 == 0), content="Some(1)")
+  inspect([1, 2, 3, 4, 5].search_by(x => x > 5), content="None")
 }
 
 ///|
@@ -671,7 +669,7 @@ test "array view implicit conversion" {
 test "each with error callback" {
   let arr = [1, 2, 3]
   let mut sum = 0
-  let v = try? arr.each(fn(x) {
+  let v = try? arr.each(x => {
       if x == 2 {
         fail("Error at 2")
       }
@@ -686,7 +684,7 @@ test "each with error callback 2" {
   let arr = [1, 2, 3]
   let mut sum = 0
   try
-    arr.each(fn(x) {
+    arr.each(x => {
       if x == 2 {
         fail("Error at 2")
       }
@@ -706,7 +704,7 @@ test "each with error callback 2" {
 test "eachi with error callback" {
   let arr = [1, 2, 3]
   let mut sum = 0
-  let v = try? arr.eachi(fn(i, x) {
+  let v = try? arr.eachi((i, x) => {
       if x == 2 {
         fail("Error at 2")
       }
@@ -721,7 +719,7 @@ test "eachi with error callback 2" {
   let arr = [1, 2, 3]
   let mut sum = 0
   try
-    arr.eachi(fn(i, x) {
+    arr.eachi((i, x) => {
       if x == 2 {
         fail("Error at 2")
       }
@@ -740,7 +738,7 @@ test "eachi with error callback 2" {
 ///|
 test "map with error callback" {
   let arr = [1, 2, 3]
-  let v = try? arr.map(fn(x) {
+  let v = try? arr.map(x => {
       if x == 2 {
         raise Failure("Error at 2")
       }
@@ -759,7 +757,7 @@ test "map with error callback" {
 test "map with error callback 2" {
   let arr = [1, 2, 3]
   try
-    arr.map(fn(x) {
+    arr.map(x => {
       if x == 2 {
         fail("Error at 2")
       }
@@ -775,7 +773,7 @@ test "map with error callback 2" {
 ///|
 test "mapi with error callback" {
   let arr = [1, 2, 3]
-  let v = try? arr.mapi(fn(i, x) {
+  let v = try? arr.mapi((i, x) => {
       if x == 2 {
         raise Failure("Error at 2")
       }
@@ -794,7 +792,7 @@ test "mapi with error callback" {
 test "mapi with error callback 2" {
   let arr = [1, 2, 3]
   try
-    arr.mapi(fn(i, x) {
+    arr.mapi((i, x) => {
       if x == 2 {
         raise Failure("Error at 2")
       }
@@ -810,7 +808,7 @@ test "mapi with error callback 2" {
 ///|
 test "filter with error callback" {
   let arr = [1, 2, 3]
-  let v = try? arr.filter(fn(x) {
+  let v = try? arr.filter(x => {
       if x == 2 {
         raise Failure("Error at 2")
       }
@@ -829,7 +827,7 @@ test "filter with error callback" {
 test "filter with error callback 2" {
   let arr = [1, 2, 3]
   try
-    arr.filter(fn(x) {
+    arr.filter(x => {
       if x == 2 {
         raise Failure("Error at 2")
       }
@@ -845,7 +843,7 @@ test "filter with error callback 2" {
 ///|
 test "map_inplace with error callback" {
   let arr = [1, 2, 3]
-  let v = try? arr.map_inplace(fn(x) {
+  let v = try? arr.map_inplace(x => {
       if x == 2 {
         raise Failure("Error at 2")
       }
@@ -864,7 +862,7 @@ test "map_inplace with error callback" {
 test "map_inplace with error callback 2" {
   let arr = [1, 2, 3]
   try
-    arr.map_inplace(fn(x) {
+    arr.map_inplace(x => {
       if x == 2 {
         raise Failure("Error at 2")
       }
@@ -880,7 +878,7 @@ test "map_inplace with error callback 2" {
 ///|
 test "mapi_inplace with error callback" {
   let arr = [1, 2, 3]
-  let v = try? arr.mapi_inplace(fn(i, x) {
+  let v = try? arr.mapi_inplace((i, x) => {
       if x == 2 {
         raise Failure("Error at 2")
       }

@@ -26,34 +26,39 @@ pub(open) trait Source {
 ///|
 impl Source for @random_source.ChaCha8 with next(self : @random_source.ChaCha8) -> UInt64 {
   for {
-    let x = self.state.next()
-    if x.1 {
-      return x.0
+    if self.next() is Some(x) {
+      return x
     }
-    self.state.refill()
+    self.refill()
   }
 }
 
 ///|
 /// Create a new random number generator with [seed].
 /// @alert unsafe "Panic if seed is not 32 bytes long"
-
-///|
-/// Create a new random number generator with [seed].
-/// @alert unsafe "Panic if seed is not 32 bytes long"
-pub fn chacha8(seed~ : Bytes = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456") -> &Source {
+pub fn Rand::chacha8(
+  seed~ : Bytes = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456"
+) -> Rand {
   if seed.length() != 32 {
     abort("seed must be 32 bytes long")
   }
-  @random_source.ChaCha8::new(seed) as &Source
+  Rand(@random_source.ChaCha8::new(seed) as &Source)
+}
+
+///|
+/// Create a new random number generator with [seed].
+#deprecated("You may use `Rand::chacha8(seed~)` instead of `Rand::new(chacha8(seed~))")
+pub fn chacha8(seed~ : Bytes = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456") -> &Source {
+  @random_source.ChaCha8::new(seed)
 }
 
 ///|
 /// Create a new random number generator with a given [Gen] source.
-pub fn Rand::new(
-  generator~ : &Source = chacha8(seed=b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456")
-) -> Rand {
-  generator
+pub fn Rand::new(generator? : &Source) -> Rand {
+  match generator {
+    None => chacha8()
+    Some(gen) => Rand(gen)
+  }
 }
 
 ///|
@@ -208,13 +213,11 @@ pub fn float(self : Rand) -> Float {
 pub fn bigint(self : Rand, bits : Int) -> @bigint.BigInt {
   let mod = bits % 8
   let len = if mod == 0 { bits / 8 } else { bits / 8 + 1 }
-  let bytes = Bytes::makei(len, fn(i) {
-    if i == 0 && mod != 0 {
-      let mask = (1U << mod) - 1U
-      (self.uint(limit=256) & mask).to_byte()
-    } else {
-      self.uint(limit=256).to_byte()
-    }
+  let bytes = Bytes::makei(len, i => if i == 0 && mod != 0 {
+    let mask = (1U << mod) - 1U
+    (self.uint(limit=256) & mask).to_byte()
+  } else {
+    self.uint(limit=256).to_byte()
   })
   @bigint.BigInt::from_octets(bytes)
 }
@@ -236,7 +239,7 @@ test "bigint" {
 priv struct UInt128 {
   mut hi : UInt64
   mut lo : UInt64
-} derive(Eq)
+}
 
 ///|
 let gUInt128 : UInt128 = { hi: 0UL, lo: 0UL }
@@ -298,7 +301,7 @@ test "umul128: handles zero correctly" {
 ///   let a = [1, 2, 3, 4, 5]
 ///   r.shuffle(
 ///     a.length(),
-///     fn(i : Int, j : Int) {
+///     (i : Int, j : Int) => {
 ///       let t = a[i]
 ///       a[i] = a[j]
 ///       a[j] = t
@@ -319,7 +322,7 @@ pub fn shuffle(self : Rand, limit : Int, swap : (Int, Int) -> Unit) -> Unit {
 test "shuffle" {
   let r = new()
   let a = [1, 2, 3, 4, 5]
-  r.shuffle(a.length(), fn(i : Int, j : Int) {
+  r.shuffle(a.length(), (i : Int, j : Int) => {
     let t = a[i]
     a[i] = a[j]
     a[j] = t

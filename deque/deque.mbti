@@ -18,17 +18,20 @@ fn[A] of(FixedArray[A]) -> T[A]
 type T[A]
 fn[A] T::as_views(Self[A]) -> (ArrayView[A], ArrayView[A])
 fn[A] T::back(Self[A]) -> A?
+fn[A : Compare] T::binary_search(Self[A], A) -> Result[Int, Int]
+fn[A] T::binary_search_by(Self[A], (A) -> Int) -> Result[Int, Int]
 fn[A] T::capacity(Self[A]) -> Int
 fn[A] T::clear(Self[A]) -> Unit
 fn[A : Eq] T::contains(Self[A], A) -> Bool
 fn[A] T::copy(Self[A]) -> Self[A]
-fn[A] T::drain(Self[A], start~ : Int, len~ : Int) -> Self[A]
+fn[A] T::drain(Self[A], start~ : Int, len? : Int) -> Self[A]
 fn[A] T::each(Self[A], (A) -> Unit) -> Unit
 fn[A] T::eachi(Self[A], (Int, A) -> Unit) -> Unit
 #deprecated
 fn[A] T::filter_map_inplace(Self[A], (A) -> A?) -> Unit
 fn[A] T::flatten(Self[Self[A]]) -> Self[A]
 fn[A] T::front(Self[A]) -> A?
+fn[A] T::get(Self[A], Int) -> A?
 fn[A] T::is_empty(Self[A]) -> Bool
 fn[A] T::iter(Self[A]) -> Iter[A]
 fn[A] T::iter2(Self[A]) -> Iter2[Int, A]

@@ -60,7 +60,7 @@ pub impl Arbitrary for Bytes with arbitrary(size, rs) {
     Bytes::new(0)
   } else {
     let sz = rs.next_positive_int() % size
-    Bytes::makei(sz, fn(_) { Arbitrary::arbitrary(size, rs) })
+    Bytes::makei(sz, _ => Arbitrary::arbitrary(size, rs))
   }
 }
 
@@ -112,14 +112,12 @@ pub impl Arbitrary for String with arbitrary(size, rs) {
 ///|
 pub impl[X : Arbitrary] Arbitrary for Iter[X] with arbitrary(size, rs) {
   let len = if size == 0 { 0 } else { rs.next_positive_int() % size }
-  Iter::new(fn(yield_) {
-    for i in 0..<len {
-      if yield_(X::arbitrary(i, rs)) == IterEnd {
-        break IterEnd
-      }
-    } else {
-      IterContinue
+  Iter::new(yield_ => for i in 0..<len {
+    if yield_(X::arbitrary(i, rs)) == IterEnd {
+      break IterEnd
     }
+  } else {
+    IterContinue
   })
 }
 

@@ -68,14 +68,12 @@ pub fn[K, V] clear(self : T[K, V]) -> Unit {
 ///   inspect(pairs.contains((2, "two")), content="true")
 /// ```
 pub fn[K, V] iter(self : T[K, V]) -> Iter[(K, V)] {
-  Iter::new(fn(yield_) {
-    for entry in self.entries {
-      if entry is Some({ key, value, .. }) {
-        guard yield_((key, value)) is IterContinue else { break IterEnd }
-      }
-    } else {
-      IterContinue
+  Iter::new(yield_ => for entry in self.entries {
+    if entry is Some({ key, value, .. }) {
+      guard yield_((key, value)) is IterContinue else { break IterEnd }
     }
+  } else {
+    IterContinue
   })
 }
 
@@ -96,18 +94,16 @@ pub fn[K, V] iter(self : T[K, V]) -> Iter[(K, V)] {
 /// ```moonbit
 ///   let map = @hashmap.of([(1, "one"), (2, "two")])
 ///   let mut sum = 0
-///   map.iter2().each(fn(k, _) { sum = sum + k })
+///   map.iter2().each((k, _) => { sum = sum + k })
 ///   inspect(sum, content="3")
 /// ```
 pub fn[K, V] iter2(self : T[K, V]) -> Iter2[K, V] {
-  Iter2::new(fn(yield_) {
-    for entry in self.entries {
-      if entry is Some({ key, value, .. }) {
-        guard yield_(key, value) is IterContinue else { break IterEnd }
-      }
-    } else {
-      IterContinue
+  Iter2::new(yield_ => for entry in self.entries {
+    if entry is Some({ key, value, .. }) {
+      guard yield_(key, value) is IterContinue else { break IterEnd }
     }
+  } else {
+    IterContinue
   })
 }
 
@@ -127,7 +123,7 @@ pub fn[K, V] iter2(self : T[K, V]) -> Iter2[K, V] {
 ///
 /// ```moonbit
 ///   let arr = [(1, "one"), (2, "two")]
-///   let iter = Iter::new(fn(yield_) {
+///   let iter = Iter::new((yield_) => {
 ///     for pair in arr {
 ///       if yield_(pair) == IterEnd {
 ///         break IterEnd
@@ -142,7 +138,7 @@ pub fn[K, V] iter2(self : T[K, V]) -> Iter2[K, V] {
 /// ```
 pub fn[K : Hash + Eq, V] from_iter(iter : Iter[(K, V)]) -> T[K, V] {
   let m = new()
-  iter.each(fn(e) { m[e.0] = e.1 })
+  iter.each(e => m[e.0] = e.1)
   m
 }
 
@@ -267,7 +263,7 @@ pub fn[K, V] is_empty(self : T[K, V]) -> Bool {
 /// ```moonbit
 ///   let map = @hashmap.of([(1, "one"), (2, "two")])
 ///   let mut result = ""
-///   map.each(fn(k, v) { result = result + "\{k}:\{v}," })
+///   map.each((k, v) => { result = result + "\{k}:\{v}," })
 ///   inspect(result, content="2:two,1:one,")
 /// ```
 pub fn[K, V] each(self : T[K, V], f : (K, V) -> Unit) -> Unit {
@@ -296,7 +292,7 @@ pub fn[K, V] each(self : T[K, V], f : (K, V) -> Unit) -> Unit {
 /// ```moonbit
 ///   let map = @hashmap.of([("a", 1), ("b", 2), ("c", 3)])
 ///   let mut result = 0
-///   map.eachi(fn(i, k, _) { if k == "b" { result = i } })
+///   map.eachi((i, k, _) => { if k == "b" { result = i } })
 ///   // "b" is at index 1
 ///   inspect(result, content="2")
 /// ```
@@ -330,7 +326,7 @@ pub fn[K, V] eachi(self : T[K, V], f : (Int, K, V) -> Unit) -> Unit {
 /// ```
 pub impl[K : Show, V : Show] Show for T[K, V] with output(self, logger) {
   logger.write_string("HashMap::of([")
-  self.eachi(fn(i, k, v) {
+  self.eachi((i, k, v) => {
     if i > 0 {
       logger.write_string(", ")
     }

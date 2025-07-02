@@ -113,7 +113,7 @@ You can use `filter` to filter the elements in the set.
 ```moonbit
 test {
     let set = @sorted_set.of([1, 2, 3, 4, 5, 6])
-    assert_eq(set.filter(fn(v) { v % 2 == 0}).to_array(), [2, 4, 6])
+    assert_eq(set.filter((v) => { v % 2 == 0}).to_array(), [2, 4, 6])
 }
 ```
 
@@ -135,12 +135,12 @@ Like other sequential containers, set also has iterative methods such as `iter`,
 ```moonbit
 test {
     let arr = []
-    @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).each(fn(v) { arr.push(v) })
+    @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).each((v) => { arr.push(v) })
     assert_eq(arr, [1, 2, 3, 4, 5, 6, 7, 8, 9])
-    let val = @sorted_set.of([1, 2, 3, 4, 5]).fold(init=0, fn(acc, x) { acc + x })
+    let val = @sorted_set.of([1, 2, 3, 4, 5]).fold(init=0, (acc, x) => { acc + x })
     assert_eq(val, 15)
     let set = @sorted_set.of([1, 2, 3])
-    assert_eq(set.map(fn(x){ x * 2}).to_array(), [2, 4, 6])
+    assert_eq(set.map((x) => { x * 2}).to_array(), [2, 4, 6])
 }
 ```
 
@@ -150,8 +150,8 @@ test {
 
 ```moonbit
 test {
-    assert_eq(@sorted_set.of([2, 4, 6]).all(fn(v) { v % 2 == 0}), true)
-    assert_eq(@sorted_set.of([1, 4, 3]).any(fn(v) { v % 2 == 0}), true)
+    assert_eq(@sorted_set.of([2, 4, 6]).all((v) => { v % 2 == 0}), true)
+    assert_eq(@sorted_set.of([1, 4, 3]).any((v) => { v % 2 == 0}), true)
 }
 ```
 

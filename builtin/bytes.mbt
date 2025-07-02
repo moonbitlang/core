@@ -40,7 +40,7 @@ pub fn FixedArray::unsafe_reinterpret_as_bytes(
 /// Example:
 ///
 /// ```moonbit
-///   let bytes = Bytes::makei(3, fn(i) { (i + 65).to_byte() })
+///   let bytes = Bytes::makei(3, (i) => { (i + 65).to_byte() })
 ///   assert_eq(bytes, b"ABC")
 /// ```
 pub fn Bytes::makei(length : Int, value : (Int) -> Byte) -> Bytes {
@@ -52,30 +52,6 @@ pub fn Bytes::makei(length : Int, value : (Int) -> Byte) -> Bytes {
     arr[i] = value(i)
   }
   FixedArray::unsafe_reinterpret_as_bytes(arr)
-}
-
-///|
-/// Creates a byte sequence from a UTF-16 encoded string. Each character in the
-/// string is encoded as a pair of bytes in little-endian order.
-///
-/// Parameters:
-///
-/// * `string` : The input string to be converted to a byte sequence.
-///
-/// Returns a new byte sequence containing the UTF-16LE encoded representation of
-/// the input string.
-///
-/// Example:
-///
-/// ```moonbit
-///   let bytes = "ABC".to_bytes()
-///   inspect(bytes, content="b\"\\x41\\x00\\x42\\x00\\x43\\x00\"")
-/// ```
-#deprecated("Use `str.to_bytes()` instead")
-pub fn Bytes::of_string(str : String) -> Bytes {
-  FixedArray::make(str.length() * 2, Byte::default())
-  ..blit_from_string(0, str, 0, str.length())
-  .unsafe_reinterpret_as_bytes()
 }
 
 ///|
@@ -183,12 +159,6 @@ pub fn FixedArray::blit_from_bytes(
 }
 
 ///|
-#deprecated("Bytes are immutable. Use `FixedArray::blit_from_bytes` if it's really necessary.")
-pub fn Bytes::copy(self : Bytes) -> Bytes {
-  Bytes::makei(self.length(), fn(i) { self[i] })
-}
-
-///|
 /// Encodes a Unicode character into UTF-8 bytes and writes them into a fixed
 /// array of bytes at the specified offset.
 ///
@@ -205,11 +175,6 @@ pub fn Bytes::copy(self : Bytes) -> Bytes {
 /// Throws a panic if:
 ///
 /// * The character's code point is greater than 0x10FFFF.
-/// * The array's size is insufficient to store the encoded bytes at the given
-/// offset.
-///
-/// Example:
-///
 /// ```moonbit
 ///   let buf = FixedArray::make(4, b'\x00')
 ///   let written = buf.set_utf8_char(0, '€') // Euro symbol (U+20AC)

@@ -62,9 +62,9 @@ fn[A] copy_node(x : Node[A]) -> Node[A] {
 ///
 /// # Example
 /// ```mbt
-///   let queue = @priority_queue.of([1, 2, 3, 4])
-///   let queue2 = queue.copy()
-///   assert_eq(queue2.length(), 4)
+/// let queue = @priority_queue.of([1, 2, 3, 4])
+/// let queue2 = queue.copy()
+/// inspect(queue2.length(), content="4")
 /// ```
 pub fn[A] copy(self : T[A]) -> T[A] {
   let new_que : T[A] = { len: self.len, top: copy_node(self.top) }
@@ -86,13 +86,13 @@ pub fn[A : Compare] to_array(self : T[A]) -> Array[A] {
   }
 
   go(self.top)
-  arr.sort_by(fn(x, y) { y.compare(x) })
+  arr.sort_by((x, y) => y.compare(x))
   arr
 }
 
 ///|
 pub fn[A : Compare] iter(self : T[A]) -> Iter[A] {
-  Iter::new(fn(yield_) {
+  Iter::new(yield_ => {
     let arr = self.to_array()
     for i in 0..<arr.length() {
       if yield_(arr[i]) == IterEnd {
@@ -105,9 +105,18 @@ pub fn[A : Compare] iter(self : T[A]) -> Iter[A] {
 }
 
 ///|
+pub impl[A : ToJson + Compare] ToJson for T[A] with to_json(self) {
+  let arr = []
+  for x in self {
+    arr.push(x.to_json())
+  }
+  Json::array(arr)
+}
+
+///|
 pub fn[K : Compare] from_iter(iter : Iter[K]) -> T[K] {
   let s = new()
-  iter.each(fn(e) { s.push(e) })
+  iter.each(e => s.push(e))
   s
 }
 
@@ -152,9 +161,9 @@ pub fn[A] length(self : T[A]) -> Int {
 ///
 /// # Example
 /// ```mbt
-///   let queue = @priority_queue.of([1, 2, 3, 4])
-///   queue.unsafe_pop()
-///   assert_eq(queue.length(), 3)
+/// let queue = @priority_queue.of([1, 2, 3, 4])
+/// queue.unsafe_pop()
+/// inspect(queue.length(), content="3")
 /// ```
 #internal(unsafe, "Panic if the queue is empty.")
 pub fn[A : Compare] unsafe_pop(self : T[A]) -> Unit {
@@ -170,10 +179,10 @@ pub fn[A : Compare] unsafe_pop(self : T[A]) -> Unit {
 ///
 /// # Example
 /// ```mbt
-///   let queue = @priority_queue.of([1, 2, 3, 4])
-///   let first = queue.pop() // Some(4)
-///   assert_eq(first, Some(4))
-///   assert_eq(queue.length(), 3)
+/// let queue = @priority_queue.of([1, 2, 3, 4])
+/// let first = queue.pop() // Some(4)
+/// inspect(first, content="Some(4)")
+/// inspect(queue.length(), content="3")
 /// ```
 pub fn[A : Compare] pop(self : T[A]) -> A? {
   let result = self.peek()
@@ -192,9 +201,9 @@ pub fn[A : Compare] pop(self : T[A]) -> A? {
 ///
 /// # Example
 /// ```mbt
-///   let queue = @priority_queue.new()
-///   queue.push(1)
-///   assert_eq(queue.length(), 1)
+/// let queue = @priority_queue.new()
+/// queue.push(1)
+/// assert_eq(queue.length(), 1)
 /// ```
 pub fn[A : Compare] push(self : T[A], value : A) -> Unit {
   self.top = meld(self.top, Cons(content=value, sibling=Nil, child=Nil))
@@ -222,9 +231,9 @@ pub fn[A] peek(self : T[A]) -> A? {
 ///
 /// # Example
 /// ```mbt
-///   let queue = @priority_queue.of([1, 2, 3, 4])
-///   queue.clear()
-///   assert_eq(queue.length(), 0)
+/// let queue = @priority_queue.of([1, 2, 3, 4])
+/// queue.clear()
+/// assert_eq(queue.length(), 0)
 /// ```
 pub fn[A] clear(self : T[A]) -> Unit {
   self.top = Nil

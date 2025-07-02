@@ -28,7 +28,7 @@
 ///   let x = 42
 ///   ignore(x) // Explicitly ignore the value
 ///   let mut sum = 0
-///   ignore([1, 2, 3].iter().each(fn(x) { sum = sum + x })) // Ignore the Unit return value of each()
+///   ignore([1, 2, 3].iter().each((x) => { sum = sum + x })) // Ignore the Unit return value of each()
 /// ```
 pub fn[T] ignore(t : T) -> Unit = "%ignore"
 
@@ -1217,7 +1217,7 @@ pub fn Bytes::op_get(self : Bytes, idx : Int) -> Byte = "%bytes_get"
 /// ```
 ///
 #internal(unsafe, "Panic if index is out of bounds")
-pub fn Bytes::unsafe_get(self : Bytes, idx : Int) -> Byte = "%bytes_get"
+pub fn Bytes::unsafe_get(self : Bytes, idx : Int) -> Byte = "%bytes.unsafe_get"
 
 ///|
 /// Returns the number of bytes in a byte sequence.

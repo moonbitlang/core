@@ -20,7 +20,7 @@ priv struct SEntry[K] {
   mut psl : Int
   hash : Int
   key : K
-} derive(Show)
+}
 
 ///|
 impl[K : Eq] Eq for SEntry[K] with op_equal(self, other) {
@@ -70,7 +70,7 @@ pub fn[K] Set::new(capacity~ : Int = 8) -> Set[K] {
 /// Create a hash set from array.
 pub fn[K : Hash + Eq] Set::from_array(arr : Array[K]) -> Set[K] {
   let m = Set::new(capacity=arr.length())
-  arr.each(fn(e) { m.add(e) })
+  arr.each(e => m.add(e))
   m
 }
 
@@ -225,7 +225,7 @@ pub fn[K : Hash + Eq] remove_and_check(self : Set[K], key : K) -> Bool {
 }
 
 ///|
-fn[K : Eq] add_entry_to_tail(self : Set[K], entry : SEntry[K]) -> Unit {
+fn[K] add_entry_to_tail(self : Set[K], entry : SEntry[K]) -> Unit {
   match self.tail {
     None => {
       self.head = Some(entry)
@@ -264,7 +264,7 @@ fn[K : Eq] remove_entry(self : Set[K], entry : SEntry[K]) -> Unit {
 }
 
 ///|
-fn[K : Hash] shift_back(self : Set[K], start_index : Int) -> Unit {
+fn[K] shift_back(self : Set[K], start_index : Int) -> Unit {
   for prev = start_index, curr = (start_index + 1) & self.capacity_mask {
     match (self.entries[curr], self.list[curr]) {
       (Some(entry), currNode) => {
@@ -384,16 +384,14 @@ pub fn[K] clear(self : Set[K]) -> Unit {
 ///|
 /// Returns the iterator of the hash set, provide elements in the order of insertion.
 pub fn[K] iter(self : Set[K]) -> Iter[K] {
-  Iter::new(fn(yield_) {
-    loop self.head {
-      Some({ key, idx, .. }) => {
-        if yield_(key) == IterEnd {
-          break IterEnd
-        }
-        continue self.list[idx].next
+  Iter::new(yield_ => loop self.head {
+    Some({ key, idx, .. }) => {
+      if yield_(key) == IterEnd {
+        break IterEnd
       }
-      None => break IterContinue
+      continue self.list[idx].next
     }
+    None => break IterContinue
   })
 }
 
@@ -431,7 +429,7 @@ pub impl[K : Hash + Eq] Eq for Set[K] with op_equal(self, other) {
 pub fn[K : Hash + Eq] Set::of(arr : FixedArray[K]) -> Set[K] {
   let length = arr.length()
   let m = Set::new(capacity=length)
-  // arr.iter(fn(e) { m.set(e.0, e.1) })
+  // arr.iter((e) => { m.set(e.0, e.1) })
   for i in 0..<length {
     let e = arr[i]
     m.add(e)
@@ -442,14 +440,14 @@ pub fn[K : Hash + Eq] Set::of(arr : FixedArray[K]) -> Set[K] {
 ///|
 pub fn[K : Hash + Eq] Set::from_iter(iter : Iter[K]) -> Set[K] {
   let m = Set::new()
-  iter.each(fn(e) { m.add(e) })
+  iter.each(e => m.add(e))
   m
 }
 
 ///|
 pub fn[K : Hash + Eq] difference(self : Set[K], other : Set[K]) -> Set[K] {
   let m = Set::new()
-  self.each(fn(k) { if not(other.contains(k)) { m.add(k) } })
+  self.each(k => if not(other.contains(k)) { m.add(k) })
   m
 }
 
@@ -459,23 +457,23 @@ pub fn[K : Hash + Eq] symmetric_difference(
   other : Set[K]
 ) -> Set[K] {
   let m = Set::new()
-  self.each(fn(k) { if not(other.contains(k)) { m.add(k) } })
-  other.each(fn(k) { if not(self.contains(k)) { m.add(k) } })
+  self.each(k => if not(other.contains(k)) { m.add(k) })
+  other.each(k => if not(self.contains(k)) { m.add(k) })
   m
 }
 
 ///|
 pub fn[K : Hash + Eq] union(self : Set[K], other : Set[K]) -> Set[K] {
   let m = Set::new()
-  self.each(fn(k) { m.add(k) })
-  other.each(fn(k) { m.add(k) })
+  self.each(k => m.add(k))
+  other.each(k => m.add(k))
   m
 }
 
 ///|
 pub fn[K : Hash + Eq] intersection(self : Set[K], other : Set[K]) -> Set[K] {
   let m = Set::new()
-  self.each(fn(k) { if other.contains(k) { m.add(k) } })
+  self.each(k => if other.contains(k) { m.add(k) })
   m
 }
 

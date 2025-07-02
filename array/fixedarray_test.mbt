@@ -93,12 +93,12 @@ test "FixedArray::arbitrary" {
 
 ///|
 test "FixedArray::makei" {
-  let empty = FixedArray::makei(0, fn(_i) { { val: 3 } })
+  let empty = FixedArray::makei(0, _i => Ref::{ val: 3 })
   assert_eq(empty.length(), 0)
-  let simple_arr = FixedArray::makei(1, fn(_i) { { val: 2 } })
+  let simple_arr = FixedArray::makei(1, _i => Ref::{ val: 2 })
   assert_eq(simple_arr.length(), 1)
   assert_eq(simple_arr[0].val, 2)
-  let arr = FixedArray::makei(2, fn(_i) { { val: 1 } })
+  let arr = FixedArray::makei(2, _i => Ref::{ val: 1 })
   assert_eq(arr.length(), 2)
   @test.is_not(arr[0], arr[1])
   assert_eq(arr[0].val, 1)

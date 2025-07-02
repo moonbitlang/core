@@ -35,7 +35,7 @@ pub fn[K, V] new() -> T[K, V] {
 ///| Creates a sorted map from a array of key-value pairs.
 pub fn[K : Compare, V] from_array(entries : Array[(K, V)]) -> T[K, V] {
   let map = { root: None, size: 0 }
-  entries.each(fn(e) { map.add(e.0, e.1) })
+  entries.each(e => map.add(e.0, e.1))
   map
 }
 
@@ -132,7 +132,7 @@ pub fn[K, V] eachi(
   f : (Int, K, V) -> Unit raise?
 ) -> Unit raise? {
   let mut i = 0
-  self.each(fn(k, v) {
+  self.each((k, v) => {
     f(i, k, v)
     i = i + 1
   })
@@ -142,7 +142,7 @@ pub fn[K, V] eachi(
 /// Returns all keys in the map.
 pub fn[K, V] keys(self : T[K, V]) -> Array[K] {
   let keys = Array::new(capacity=self.size)
-  self.each(fn(k, _v) { keys.push(k) })
+  self.each((k, _v) => keys.push(k))
   keys
 }
 
@@ -150,7 +150,7 @@ pub fn[K, V] keys(self : T[K, V]) -> Array[K] {
 /// Returns all values in the map.
 pub fn[K, V] values(self : T[K, V]) -> Array[V] {
   let values = Array::new(capacity=self.size)
-  self.each(fn(_k, v) { values.push(v) })
+  self.each((_k, v) => values.push(v))
   values
 }
 
@@ -158,13 +158,13 @@ pub fn[K, V] values(self : T[K, V]) -> Array[V] {
 /// Converts the map to an array.
 pub fn[K, V] to_array(self : T[K, V]) -> Array[(K, V)] {
   let arr = Array::new(capacity=self.size)
-  self.each(fn(k, v) { arr.push((k, v)) })
+  self.each((k, v) => arr.push((k, v)))
   arr
 }
 
 ///|
 pub fn[K, V] iter(self : T[K, V]) -> Iter[(K, V)] {
-  Iter::new(fn(yield_) {
+  Iter::new(yield_ => {
     fn go(x : Node[K, V]?) {
       match x {
         None => IterContinue
@@ -185,7 +185,7 @@ pub fn[K, V] iter(self : T[K, V]) -> Iter[(K, V)] {
 
 ///|
 pub fn[K, V] iter2(self : T[K, V]) -> Iter2[K, V] {
-  Iter2::new(fn(yield_) {
+  Iter2::new(yield_ => {
     fn go(x : Node[K, V]?) {
       match x {
         None => IterContinue
@@ -207,7 +207,7 @@ pub fn[K, V] iter2(self : T[K, V]) -> Iter2[K, V] {
 ///|
 pub fn[K : Compare, V] from_iter(iter : Iter[(K, V)]) -> T[K, V] {
   let m = new()
-  iter.each(fn(e) { m[e.0] = e.1 })
+  iter.each(e => m[e.0] = e.1)
   m
 }
 
@@ -221,7 +221,7 @@ pub impl[K : @quickcheck.Arbitrary + Compare, V : @quickcheck.Arbitrary] @quickc
 
 ///|Returns a new array of key-value pairs that are within the specified range [low, high].
 pub fn[K : Compare, V] range(self : T[K, V], low : K, high : K) -> Iter2[K, V] {
-  Iter2::new(fn(yield_) {
+  Iter2::new(yield_ => {
     fn go(x : Node[K, V]?) {
       match x {
         None => IterContinue
@@ -286,7 +286,7 @@ fn[K, V] height_ge(x1 : Node[K, V]?, x2 : Node[K, V]?) -> Bool {
 }
 
 ///|
-fn[K : Compare, V] balance(root : Node[K, V]) -> Node[K, V] {
+fn[K, V] balance(root : Node[K, V]) -> Node[K, V] {
   let (l, r) = (root.left, root.right)
   let (hl, hr) = (height(l), height(r))
   let new_root = if hl > hr + 1 {
@@ -311,7 +311,7 @@ fn[K : Compare, V] balance(root : Node[K, V]) -> Node[K, V] {
 }
 
 ///|
-fn[K : Compare, V] rotate_l(n : Node[K, V]) -> Node[K, V] {
+fn[K, V] rotate_l(n : Node[K, V]) -> Node[K, V] {
   let r = n.right.unwrap()
   n.right = r.left
   r.left = Some(n)
@@ -321,7 +321,7 @@ fn[K : Compare, V] rotate_l(n : Node[K, V]) -> Node[K, V] {
 }
 
 ///|
-fn[K : Compare, V] rotate_r(n : Node[K, V]) -> Node[K, V] {
+fn[K, V] rotate_r(n : Node[K, V]) -> Node[K, V] {
   let l = n.left.unwrap()
   n.left = l.right
   l.right = Some(n)
@@ -331,7 +331,7 @@ fn[K : Compare, V] rotate_r(n : Node[K, V]) -> Node[K, V] {
 }
 
 ///|
-fn[K : Compare, V] rotate_lr(n : Node[K, V]) -> Node[K, V] {
+fn[K, V] rotate_lr(n : Node[K, V]) -> Node[K, V] {
   let l = n.left.unwrap()
   let v = rotate_l(l)
   n.left = Some(v)
@@ -339,7 +339,7 @@ fn[K : Compare, V] rotate_lr(n : Node[K, V]) -> Node[K, V] {
 }
 
 ///|
-fn[K : Compare, V] rotate_rl(n : Node[K, V]) -> Node[K, V] {
+fn[K, V] rotate_rl(n : Node[K, V]) -> Node[K, V] {
   let r = n.right.unwrap()
   let v = rotate_r(r)
   n.right = Some(v)

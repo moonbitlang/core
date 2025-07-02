@@ -42,9 +42,8 @@ fn iter_count(name? : String, inner : () -> Unit, count : UInt) -> Summary {
   } else {
     target_batch_size.ceil().to_int()
   }
-  let samples = Array::makei(count, fn(_) {
-    iter_n_microseconds(inner, batch_size) / batch_size.to_double()
-  })
+  let samples = Array::makei(count, _ => iter_n_microseconds(inner, batch_size) /
+    batch_size.to_double())
   samples.sort()
   winsorize(sorted_data=samples, 5.0)
   Summary::new(name?, sorted_data=samples, batch_size)
@@ -97,7 +96,7 @@ pub fn dump_summaries(self : T) -> String {
 ///|
 test "bench - single_bench basic functionality" {
   let bench_result = single_bench(
-    fn() {
+    () => {
       // Simple operation
       let x = 1 + 1
       ignore(x)
@@ -116,7 +115,7 @@ test "bench - single_bench basic functionality" {
 test "bench - Summary struct properties" {
   // Create a very simple bench and extract the summary
   let bench_result = single_bench(
-    fn() {
+    () => {
       // Simple operation
       let x = 1
       ignore(x)
@@ -151,7 +150,7 @@ test "bench - T struct and bench method" {
 
   // Run a benchmark
   bench_obj.bench(
-    fn() {
+    () => {
       // Simple operation
       let x = 20 * 20
       ignore(x)
@@ -165,7 +164,7 @@ test "bench - T struct and bench method" {
 
   // Run another benchmark to ensure we can add multiple
   bench_obj.bench(
-    fn() {
+    () => {
       // Another operation
       let y = 30 * 30
       ignore(y)

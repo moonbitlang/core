@@ -62,7 +62,7 @@ pub fn[T] View::rev_inplace(self : View[T]) -> Unit {
 /// ```moonbit
 ///   let arr = [1, 2, 3][:]
 ///   let mut sum = 0
-///   arr.each(fn(x) { sum = sum + x })
+///   arr.each(x => sum = sum + x)
 ///   inspect(sum, content="6")
 /// ```
 pub fn[T] View::each(self : View[T], f : (T) -> Unit raise?) -> Unit raise? {
@@ -79,7 +79,7 @@ pub fn[T] View::each(self : View[T], f : (T) -> Unit raise?) -> Unit raise? {
 /// ```mbt
 ///   let v = [3, 4, 5][:]
 ///   let mut sum = 0
-///   v.eachi(fn (i, x) { sum = sum + x + i })
+///   v.eachi((i, x) => { sum = sum + x + i })
 ///   assert_eq(sum, 15)
 /// ```
 pub fn[T] View::eachi(
@@ -98,8 +98,8 @@ pub fn[T] View::eachi(
 /// 
 /// ```mbt
 ///   let v = [1, 4, 6, 8, 9]
-///   assert_false(v[:].all(fn(elem) { elem % 2 == 0 }))
-///   assert_true(v[1:4].all(fn(elem) { elem % 2 == 0 }))
+///   assert_false(v[:].all(elem => elem % 2 == 0))
+///   assert_true(v[1:4].all(elem => elem % 2 == 0))
 /// ```
 pub fn[T] View::all(self : View[T], f : (T) -> Bool raise?) -> Bool raise? {
   for v in self {
@@ -117,8 +117,8 @@ pub fn[T] View::all(self : View[T], f : (T) -> Bool raise?) -> Bool raise? {
 ///
 /// ```mbt
 ///   let v = [1, 2, 3, 4, 5][:]
-///   assert_true(v.any(fn(ele) { ele < 6 }))
-///   assert_false(v.any(fn(ele) { ele < 1 }))
+///   assert_true(v.any(ele => ele < 6))
+///   assert_false(v.any(ele => ele < 1))
 /// ```
 pub fn[T] View::any(self : View[T], f : (T) -> Bool raise?) -> Bool raise? {
   for v in self {
@@ -174,16 +174,14 @@ pub fn[T : Eq] View::contains(self : View[T], value : T) -> Bool {
 ///   let arr = [1, 2, 3]
 ///   let view = arr[1:]
 ///   let mut sum = 0
-///   view.iter().each(fn(x) { sum = sum + x })
+///   view.iter().each(x => sum = sum + x)
 ///   inspect(sum, content="5")
 /// ```
 pub fn[A] View::iter(self : View[A]) -> Iter[A] {
-  Iter::new(fn(yield_) {
-    for v in self {
-      guard yield_(v) is IterContinue else { break IterEnd }
-    } else {
-      IterContinue
-    }
+  Iter::new(yield_ => for v in self {
+    guard yield_(v) is IterContinue else { break IterEnd }
+  } else {
+    IterContinue
   })
 }
 
@@ -197,7 +195,7 @@ pub fn[A] View::iter(self : View[A]) -> Iter[A] {
 ///   let view = arr[1:]
 ///   let mut sum = 0
 ///   let mut sum_keys = 0
-///   view.iter2().each(fn(i, x) {
+///   view.iter2().each((i, x) => {
 ///     sum = sum + x 
 ///     sum_keys = sum_keys + i
 ///   })
@@ -205,12 +203,10 @@ pub fn[A] View::iter(self : View[A]) -> Iter[A] {
 ///   inspect(sum_keys, content="1")
 /// ```
 pub fn[A] View::iter2(self : View[A]) -> Iter2[Int, A] {
-  Iter2::new(fn(yield_) {
-    for i, v in self {
-      guard yield_(i, v) is IterContinue else { break IterEnd }
-    } else {
-      IterContinue
-    }
+  Iter2::new(yield_ => for i, v in self {
+    guard yield_(i, v) is IterContinue else { break IterEnd }
+  } else {
+    IterContinue
   })
 }
 
@@ -279,7 +275,7 @@ pub fn[A, B] View::foldi(
 ///
 /// # Example
 /// ```mbt
-///   let sum = [1, 2, 3, 4, 5][:].rev_foldi(init=0, fn(index, sum, _elem) { sum + index })
+///   let sum = [1, 2, 3, 4, 5][:].rev_foldi(init=0, (index, sum, _elem)=> { sum + index })
 ///   assert_eq(sum, 10)
 /// ```
 pub fn[A, B] View::rev_foldi(
@@ -301,14 +297,14 @@ pub fn[A, B] View::rev_foldi(
 /// # Example
 /// ```mbt
 ///   let v = [3, 4, 5]
-///   let v2 = v[1:].map(fn (x) {x + 1})
+///   let v2 = v[1:].map((x) => {x + 1})
 ///   assert_eq(v2, [5, 6])
 /// ```
 pub fn[T, U] View::map(self : View[T], f : (T) -> U raise?) -> Array[U] raise? {
   if self.length() == 0 {
     return []
   }
-  Array::makei(self.length(), fn(i) { f(self[i]) })
+  Array::makei(self.length(), i => f(self[i]))
 }
 
 ///|
@@ -317,7 +313,7 @@ pub fn[T, U] View::map(self : View[T], f : (T) -> U raise?) -> Array[U] raise? {
 /// # Example
 /// ```mbt
 ///   let v = [3, 4, 5]
-///   v[1:].map_inplace(fn (x) {x + 1})
+///   v[1:].map_inplace((x) => {x + 1})
 ///   assert_eq(v, [3, 5, 6])
 /// ```
 pub fn[T] View::map_inplace(self : View[T], f : (T) -> T raise?) -> Unit raise? {
@@ -332,7 +328,7 @@ pub fn[T] View::map_inplace(self : View[T], f : (T) -> T raise?) -> Unit raise? 
 /// # Example
 /// ```mbt
 ///   let v = [3, 4, 5]
-///   let v2 = v[1:].mapi(fn (i, x) {x + i})
+///   let v2 = v[1:].mapi((i, x) => {x + i})
 ///   assert_eq(v2, [4, 6])
 /// ```
 pub fn[T, U] View::mapi(
@@ -342,7 +338,7 @@ pub fn[T, U] View::mapi(
   if self.length() == 0 {
     return []
   }
-  Array::makei(self.length(), fn(i) { f(i, self[i]) })
+  Array::makei(self.length(), i => f(i, self[i]))
 }
 
 ///|
@@ -351,7 +347,7 @@ pub fn[T, U] View::mapi(
 /// # Example
 /// ```mbt
 ///   let v = [3, 4, 5]
-///   v[1:].mapi_inplace(fn (i, x) {x + i})
+///   v[1:].mapi_inplace((i, x) => {x + i})
 ///   assert_eq(v, [3, 4, 6])
 /// ```
 pub fn[T] View::mapi_inplace(
@@ -369,7 +365,7 @@ pub fn[T] View::mapi_inplace(
 /// # Example
 /// ```mbt
 ///   let arr = [1, 2, 3, 4, 5, 6]
-///   let v = arr[2:].filter(fn (x) { x % 2 == 0 })
+///   let v = arr[2:].filter((x) => { x % 2 == 0 })
 ///   assert_eq(v, [4, 6])
 /// ```
 pub fn[T] View::filter(

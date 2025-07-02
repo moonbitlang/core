@@ -22,7 +22,7 @@ test "array_capacity" {
 test "array_retain" {
   let arr = [1, 2, 3, 4, 5]
   assert_eq(arr.capacity(), 5)
-  arr.retain(fn(x) { x % 2 == 0 })
+  arr.retain(x => x % 2 == 0)
   assert_eq(arr.length(), 2)
   assert_eq(arr.capacity(), 5)
   assert_eq(arr[0], 2)

@@ -89,7 +89,7 @@ pub fn[K, V] new(capacity~ : Int = 8) -> T[K, V] {
 /// ```
 pub fn[K : Hash + Eq, V] from_array(arr : Array[(K, V)]) -> T[K, V] {
   let m = new(capacity=arr.length())
-  arr.each(fn(e) { m.set(e.0, e.1) })
+  arr.each(e => m.set(e.0, e.1))
   m
 }
 
@@ -209,7 +209,7 @@ pub fn[K : Hash + Eq, V] get(self : T[K, V], key : K) -> V? {
 }
 
 ///|
-fn[K : Hash + Eq, V] get_with_hash(self : T[K, V], key : K, hash : Int) -> V? {
+fn[K : Eq, V] get_with_hash(self : T[K, V], key : K, hash : Int) -> V? {
   for i = 0, idx = hash & self.capacity_mask {
     guard self.entries[idx] is Some(entry) else { break None }
     if entry.hash == hash && entry.key == key {
@@ -262,7 +262,7 @@ fn[K : Hash + Eq, V] get_with_hash(self : T[K, V], key : K, hash : Int) -> V? {
 ///
 /// ```moonbit
 ///   let map : @hashmap.T[String, Int] = @hashmap.new()
-///   let value = map.get_or_init("key", fn() { 42 })
+///   let value = map.get_or_init("key", () => { 42 })
 ///   inspect(value, content="42")
 ///   inspect(map.get("key"), content="Some(42)")
 /// ```
@@ -411,7 +411,7 @@ pub fn[K : Hash + Eq, V] remove(self : T[K, V], key : K) -> Unit {
 }
 
 ///|
-fn[K : Hash, V] shift_back(self : T[K, V], start_index : Int) -> Unit {
+fn[K, V] shift_back(self : T[K, V], start_index : Int) -> Unit {
   for prev = start_index, curr = (start_index + 1) & self.capacity_mask {
     match self.entries[curr] {
       Some({ psl, hash, key, value }) => {
@@ -463,7 +463,7 @@ fn[K : Eq, V] grow(self : T[K, V]) -> Unit {
 /// ```
 pub fn[K : Eq + Hash, V] of(arr : FixedArray[(K, V)]) -> T[K, V] {
   let m = new(capacity=arr.length())
-  arr.each(fn(e) { m.set(e.0, e.1) })
+  arr.each(e => m.set(e.0, e.1))
   m
 }
 
@@ -627,8 +627,8 @@ test "grow" {
 ///|
 test "get_or_init" {
   let m : T[MyString, Int] = new()
-  inspect(m.get_or_init("a", fn() { 1 }), content="1")
+  inspect(m.get_or_init("a", () => 1), content="1")
   inspect(m.get("a"), content="Some(1)")
-  inspect(m.get_or_init("a", fn() { 2 }), content="1")
+  inspect(m.get_or_init("a", () => 2), content="1")
   inspect(m.get("a"), content="Some(1)")
 }

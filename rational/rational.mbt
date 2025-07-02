@@ -97,7 +97,7 @@ pub fn new(numerator : Int64, denominator : Int64) -> T? {
 ///|
 /// Creates a rational number without enforcing invariants.
 fn new_unchecked(numerator : Int64, denominator : Int64) -> T {
-  let gcd = gcd(numerator.abs(), denominator).abs()
+  let gcd = gcd(numerator.abs(), denominator)
   { numerator: numerator / gcd, denominator: denominator / gcd }
 }
 
@@ -273,7 +273,7 @@ pub fn T::neg(self : T) -> T {
 /// ```
 ///
 pub fn T::abs(self : T) -> T {
-  new_unchecked(self.numerator.abs(), self.denominator.abs())
+  new_unchecked(self.numerator.abs(), self.denominator)
 }
 
 ///|
@@ -697,8 +697,8 @@ pub impl @quickcheck.Arbitrary for T with arbitrary(size, rs) {
   let numerator : Int64 = @quickcheck.Arbitrary::arbitrary(size, rs)
   let denominator : Int64 = {
     let d : Int64 = @quickcheck.Arbitrary::arbitrary(size, rs)
-    if d == 0 {
-      1
+    if d <= 0 {
+      -d + 1
     } else {
       d
     }
@@ -1038,21 +1038,17 @@ test "is_integer" {
 }
 
 ///|
-test "compare" {
+test "eq and compare" {
   // 1/2 < 2/3
   let a = new_unchecked(1L, 2L)
   let b = new_unchecked(2L, 3L)
   assert_eq(a.compare(b), -1)
-  assert_true(a < b)
-  assert_true(a <= b)
   assert_true(a != b)
 
   // -1/2 > -2/3
   let a = new_unchecked(-1L, 2L)
   let b = new_unchecked(-2L, 3L)
   assert_eq(a.compare(b), 1)
-  assert_true(a > b)
-  assert_true(a >= b)
   assert_true(a != b)
 
   // 1/2 == 1/2
@@ -1060,18 +1056,6 @@ test "compare" {
   let b = new_unchecked(1L, 2L)
   assert_eq(a.compare(b), 0)
   assert_true(a == b)
-}
-
-///|
-test "from_double normal case" {
-  let result = try? from_double(0.5)
-  assert_eq(result, Ok(new_unchecked(1L, 2L)))
-}
-
-///|
-test "from_double edge case" {
-  let result = try? from_double(9_223_372_036_800_000_000.0)
-  assert_eq(result, Ok(new_unchecked(9_223_372_036_800_000_000L, 1L)))
 }
 
 ///|

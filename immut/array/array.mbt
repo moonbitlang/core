@@ -49,17 +49,17 @@ pub fn[A] makei(len : Int, f : (Int) -> A raise?) -> T[A] raise? {
   let quot = len / branching_factor
   let rem = len % branching_factor
   let leaves = if rem == 0 {
-    Array::makei(quot, fn(k) {
-      FixedArray::makei(branching_factor, fn(i) { f(k * branching_factor + i) })
-    })
+    Array::makei(quot, k => FixedArray::makei(branching_factor, i => f(
+      k * branching_factor + i,
+    )))
   } else {
     let arr : Array[FixedArray[A]] = Array::make(quot + 1, [])
     for k in 0..<quot {
-      arr[k] = FixedArray::makei(branching_factor, fn(i) {
-        f(k * branching_factor + i)
-      })
+      arr[k] = FixedArray::makei(branching_factor, i => f(
+        k * branching_factor + i,
+      ))
     }
-    arr[quot] = FixedArray::makei(rem, fn(i) { f(quot * branching_factor + i) })
+    arr[quot] = FixedArray::makei(rem, i => f(quot * branching_factor + i))
     arr
   }
   let size = len
@@ -71,7 +71,7 @@ pub fn[A] makei(len : Int, f : (Int) -> A raise?) -> T[A] raise? {
 ///|
 /// Convert a FixedArray to an @immut/array.
 pub fn[A] of(arr : FixedArray[A]) -> T[A] {
-  makei(arr.length(), fn(i) { arr[i] })
+  makei(arr.length(), i => arr[i])
 }
 
 ///|
@@ -88,7 +88,7 @@ pub fn[A] copy(self : T[A]) -> T[A] {
       Empty => Empty
       Node(node, sizes) =>
         Node(
-          FixedArray::makei(node.length(), fn(i) { copy(node[i]) }),
+          FixedArray::makei(node.length(), i => copy(node[i])),
           match sizes {
             Some(sizes) => Some(FixedArray::copy(sizes))
             None => None
@@ -109,7 +109,7 @@ pub fn[A] copy(self : T[A]) -> T[A] {
 ///   assert_eq(v, @array.from_array([1, 2, 3]))
 /// ```
 pub fn[A] from_array(arr : Array[A]) -> T[A] {
-  makei(arr.length(), fn(i) { arr[i] })
+  makei(arr.length(), i => arr[i])
 }
 
 ///|
@@ -117,18 +117,16 @@ pub fn[A] from_iter(iter : Iter[A]) -> T[A] {
   let mut buf : FixedArray[A] = []
   let mut index = 0
   let leaves = []
-  iter.each(fn(x) {
-    if index == 0 {
-      buf = FixedArray::make(branching_factor, x)
-      index += 1
-    } else if index < branching_factor {
-      buf[index] = x
-      index += 1
-    } else {
-      leaves.push(buf)
-      index = 1
-      buf = FixedArray::make(branching_factor, x)
-    }
+  iter.each(x => if index == 0 {
+    buf = FixedArray::make(branching_factor, x)
+    index += 1
+  } else if index < branching_factor {
+    buf[index] = x
+    index += 1
+  } else {
+    leaves.push(buf)
+    index = 1
+    buf = FixedArray::make(branching_factor, x)
   })
   if index == branching_factor {
     leaves.push(buf)
@@ -137,7 +135,7 @@ pub fn[A] from_iter(iter : Iter[A]) -> T[A] {
     buf.blit_to(res, len=index)
     leaves.push(res)
   }
-  let size = leaves.fold(init=0, fn(acc, xs) { acc + xs.length() })
+  let size = leaves.fold(init=0, (acc, xs) => acc + xs.length())
   let (shift, cap) = shift_cap_of_size(size)
   let tree = if size == 0 { Empty } else { from_leaves(leaves[:], cap) }
   { shift, tree, size }
@@ -153,7 +151,7 @@ pub fn[A] to_array(self : T[A]) -> Array[A] {
     []
   } else {
     let arr = Array::make(self.length(), self[0])
-    self.eachi(fn(i, v) { arr[i] = v })
+    self.eachi((i, v) => arr[i] = v)
     arr
   }
 }
@@ -295,7 +293,7 @@ pub fn[A] iter(self : T[A]) -> Iter[A] {
 /// ```mbt
 ///   let arr = []
 ///   let v = @array.of([1, 2, 3, 4, 5])
-///   v.each(fn(e) { arr.push(e) })
+///   v.each((e) => { arr.push(e) })
 ///   assert_eq(arr, [1, 2, 3, 4, 5])
 /// ```
 pub fn[A] each(self : T[A], f : (A) -> Unit raise?) -> Unit raise? {
@@ -309,7 +307,7 @@ pub fn[A] each(self : T[A], f : (A) -> Unit raise?) -> Unit raise? {
 /// ```mbt
 ///   let arr = []
 ///   let v = @array.of([1, 2, 3, 4, 5])
-///   v.eachi(fn(i, e) { arr.push(i * e) })
+///   v.eachi((i, e) => { arr.push(i * e) })
 ///   assert_eq(arr, [0, 2, 6, 12, 20])
 /// ```
 pub fn[A] eachi(self : T[A], f : (Int, A) -> Unit raise?) -> Unit raise? {
@@ -322,7 +320,7 @@ pub fn[A] eachi(self : T[A], f : (Int, A) -> Unit raise?) -> Unit raise? {
 /// # Example
 /// ```mbt
 ///   let v = @array.of([1, 2, 3, 4, 5])
-///   assert_eq(v.fold(fn(a, b) { a + b }, init=0), 15)
+///   assert_eq(v.fold((a, b) => { a + b }, init=0), 15)
 /// ```
 pub fn[A, B] fold(self : T[A], init~ : B, f : (B, A) -> B raise?) -> B raise? {
   self.tree.fold(init, f)
@@ -334,7 +332,7 @@ pub fn[A, B] fold(self : T[A], init~ : B, f : (B, A) -> B raise?) -> B raise? {
 /// # Example
 /// ```mbt
 ///   let v = @array.of([1, 2, 3, 4, 5])
-///   assert_eq(v.rev_fold(fn(a, b) { a + b }, init=0), 15)
+///   assert_eq(v.rev_fold((a, b) => { a + b }, init=0), 15)
 /// ```
 pub fn[A, B] rev_fold(
   self : T[A],
@@ -350,7 +348,7 @@ pub fn[A, B] rev_fold(
 /// # Example
 /// ```mbt
 ///   let v = @array.of([1, 2, 3, 4, 5])
-///   assert_eq(v.fold(fn(a, b) { a + b }, init=0), 15)
+///   assert_eq(v.fold((a, b) => { a + b }, init=0), 15)
 /// ```
 #deprecated("Use `fold` instead")
 #coverage.skip
@@ -364,7 +362,7 @@ pub fn[A] fold_left(self : T[A], f : (A, A) -> A raise?, init~ : A) -> A raise? 
 /// # Example
 /// ```mbt
 ///   let v = @array.of([1, 2, 3, 4, 5])
-///   assert_eq(v.rev_fold(fn(a, b) { a + b }, init=0), 15)
+///   assert_eq(v.rev_fold((a, b) => { a + b }, init=0), 15)
 /// ```
 #deprecated("Use `rev_fold` instead")
 #coverage.skip
@@ -382,7 +380,7 @@ pub fn[A] fold_right(
 /// # Example
 /// ```mbt
 ///   let v = @array.of([1, 2, 3, 4, 5])
-///   assert_eq(v.map(fn(e) { e * 2 }), @array.of([2, 4, 6, 8, 10]))
+///   assert_eq(v.map((e) => { e * 2 }), @array.of([2, 4, 6, 8, 10]))
 /// ```
 pub fn[A, B] map(self : T[A], f : (A) -> B raise?) -> T[B] raise? {
   { tree: self.tree.map(f), size: self.size, shift: self.shift }
@@ -484,9 +482,10 @@ fn[A] from_leaves(
     let rem = len % child_cap
     let times = child_cap / branching_factor
     let arr = if rem == 0 {
-      FixedArray::makei(quot, fn(i) {
-        from_leaves(leaves[i * times:(i + 1) * times], child_cap)
-      })
+      FixedArray::makei(quot, i => from_leaves(
+        leaves[i * times:(i + 1) * times],
+        child_cap,
+      ))
     } else {
       let arr = FixedArray::make(quot + 1, Tree::Empty)
       for i in 0..<quot {

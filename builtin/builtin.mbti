@@ -309,6 +309,7 @@ fn[T] UninitializedArray::make(Int) -> Self[T]
 fn[T] UninitializedArray::op_as_view(Self[T], start~ : Int = .., end? : Int) -> ArrayView[T]
 fn[T] UninitializedArray::op_get(Self[T], Int) -> T
 fn[T] UninitializedArray::op_set(Self[T], Int, T) -> Unit
+fn[T] UninitializedArray::unsafe_blit(Self[T], Int, Self[T], Int, Int) -> Unit
 
 #deprecated
 fn Bool::op_compare(Bool, Bool) -> Int

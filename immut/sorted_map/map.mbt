@@ -97,7 +97,7 @@ pub fn[K : Compare, V] filter(
   self : T[K, V],
   pred : (V) -> Bool raise?
 ) -> T[K, V] raise? {
-  self.filter_with_key(fn(_k, v) { pred(v) })
+  self.filter_with_key((_k, v) => pred(v))
 }
 
 ///|
@@ -121,7 +121,7 @@ pub fn[K : Compare, V] filter_with_key(
 /// Convert to an array of key-value pairs.
 pub fn[K, V] to_array(self : T[K, V]) -> Array[(K, V)] {
   let arr = []
-  self.each(fn(k, v) { arr.push((k, v)) })
+  self.each((k, v) => arr.push((k, v)))
   arr
 }
 
@@ -130,12 +130,7 @@ pub fn[K, V] to_array(self : T[K, V]) -> Array[(K, V)] {
 let ratio = 5
 
 ///|
-fn[K : Compare, V] balance(
-  key : K,
-  value : V,
-  l : T[K, V],
-  r : T[K, V]
-) -> T[K, V] {
+fn[K, V] balance(key : K, value : V, l : T[K, V], r : T[K, V]) -> T[K, V] {
   //       1                   2
   //      / \                 / \
   //     x   2       --->    1   z
@@ -257,7 +252,7 @@ test "contains" {
 ///|
 test "map" {
   let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
-  let n = m.map(fn(v) { v + "X" })
+  let n = m.map(v => v + "X")
   assert_eq(
     n.debug_tree(),
     "(3,threeX,(1,oneX,(0,zeroX,_,_),(2,twoX,_,_)),(8,eightX,_,_))",
@@ -267,7 +262,7 @@ test "map" {
 ///|
 test "map_with_key" {
   let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
-  let n = m.map_with_key(fn(k, v) { "\{k}-\{v}" })
+  let n = m.map_with_key((k, v) => "\{k}-\{v}")
   assert_eq(
     n.debug_tree(),
     "(3,3-three,(1,1-one,(0,0-zero,_,_),(2,2-two,_,_)),(8,8-eight,_,_))",
@@ -277,14 +272,14 @@ test "map_with_key" {
 ///|
 test "filter" {
   let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
-  let fm = m.filter(fn(v) { v.length() > 3 })
+  let fm = m.filter(v => v.length() > 3)
   assert_eq(fm.debug_tree(), "(3,three,(0,zero,_,_),(8,eight,_,_))")
 }
 
 ///|
 test "filter_with_key" {
   let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
-  let fm = m.filter_with_key(fn(k, v) { k > 3 && v.length() > 3 })
+  let fm = m.filter_with_key((k, v) => k > 3 && v.length() > 3)
   assert_eq(fm.debug_tree(), "(8,eight,_,_)")
 }
 
@@ -319,14 +314,14 @@ test "remove" {
 ///|
 test "filter" {
   let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
-  let fm = m.filter(fn(v) { v.length() > 3 })
+  let fm = m.filter(v => v.length() > 3)
   assert_eq(fm.debug_tree(), "(3,three,(0,zero,_,_),(8,eight,_,_))")
 }
 
 ///|
 test "filter_with_key" {
   let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
-  let fm = m.filter_with_key(fn(k, v) { k > 3 && v.length() > 3 })
+  let fm = m.filter_with_key((k, v) => k > 3 && v.length() > 3)
   assert_eq(fm.debug_tree(), "(8,eight,_,_)")
 }
 

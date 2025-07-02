@@ -13,22 +13,6 @@
 // limitations under the License.
 
 ///|
-/// High Precision Decimal structure for "Simple Decimal Conversion" algorithm.
-/// Developed by Ken. Thompson, Russ Cox, Robert Griesemer, Nigel Tao.
-/// 
-/// reference:
-/// - <https://nigeltao.github.io/blog/2020/parse-number-f64-simple.html>
-/// - <https://nigeltao.github.io/blog/2020/eisel-lemire.html>
-#deprecated("Decimal will be changed to private. Use `@strconv.parse_double` instead")
-struct Decimal {
-  digits : FixedArray[Byte]
-  mut digits_num : Int
-  mut decimal_point : Int
-  mut negative : Bool
-  mut truncated : Bool
-}
-
-///|
 /// Maximum shift that we can do in one pass without overflow.
 /// We have to be able to accommodate 9 << max_shift.
 let max_shift = 59
@@ -39,13 +23,6 @@ let max_shift = 59
 let powtab = [
   1, 3, 6, 9, 13, 16, 19, 23, 26, 29, 33, 36, 39, 43, 46, 49, 53, 56, 59,
 ]
-
-///|
-/// Create a zero decimal.
-#deprecated("Decimal will be changed to private. Use `@strconv.parse_double` instead")
-pub fn Decimal::new() -> Decimal {
-  Decimal::new_priv()
-}
 
 ///|
 fn Decimal::new_priv() -> Decimal {
@@ -59,23 +36,10 @@ fn Decimal::new_priv() -> Decimal {
 }
 
 ///|
-/// Create a decimal with an Int64 value.
-#deprecated("Decimal will be changed to private. Use `@strconv.parse_double` instead")
-pub fn Decimal::from_int64(v : Int64) -> Decimal {
-  Decimal::from_int64_priv(v)
-}
-
-///|
 fn Decimal::from_int64_priv(v : Int64) -> Decimal {
   let d = Decimal::new_priv()
   d.assign(v)
   d
-}
-
-///|
-#deprecated("use `@strconv.parse_double` instead")
-pub fn parse_decimal(str : String) -> Decimal raise StrConvError {
-  parse_decimal_from_view(str.view())
 }
 
 ///|
@@ -161,19 +125,6 @@ fn parse_decimal_from_view(str : @string.View) -> Decimal raise StrConvError {
 }
 
 ///|
-#deprecated("use `@strconv.parse_double` instead")
-pub fn Decimal::parse_decimal(str : String) -> Decimal raise StrConvError {
-  parse_decimal_from_view(str.view())
-}
-
-///|
-/// Convert the decimal to Double.
-#deprecated("use `@strconv.parse_double` instead to avoid using this method.")
-pub fn to_double(self : Decimal) -> Double raise StrConvError {
-  self.to_double_priv()
-}
-
-///|
 fn to_double_priv(self : Decimal) -> Double raise StrConvError {
   let mut exponent = 0
   let mut mantissa = 0L
@@ -255,14 +206,6 @@ fn to_double_priv(self : Decimal) -> Double raise StrConvError {
   // combining the 52 mantissa bits with the 11 exponent bits and 1 sign bit
   let bits = assemble_bits(mantissa, exponent, self.negative)
   bits.reinterpret_as_double()
-}
-
-///|
-/// Binary shift left (s > 0) or right (s < 0).
-/// The shift count must not larger than the max_shift to avoid overflow.
-#deprecated("use `@strconv.parse_double` instead to avoid using this method.")
-pub fn shift(self : Decimal, s : Int) -> Unit {
-  self.shift_priv(s)
 }
 
 ///|
@@ -635,10 +578,8 @@ test "from_int64" {
 ///|
 test "parse_decimal" {
   let s = "0.0000000000000000000000000000007888609052210118054117285652827862296732064351090230047702789306640625"
-  let hpd = parse_decimal_priv(s) catch { _ => panic() }
-  assert_eq(hpd.to_string(), s)
-  let hpd = parse_decimal_priv("1.0e-10") catch { _ => panic() }
-  assert_eq(hpd.to_string(), "0.0000000001")
+  assert_eq(parse_decimal_priv(s).to_string(), s)
+  assert_eq(parse_decimal_priv("1.0e-10").to_string(), "0.0000000001")
 }
 
 ///|
@@ -694,14 +635,8 @@ test "parse decimal error" {
 
 ///|
 test "parse decimal with large numbers" {
-  let mut s = ""
-  for i in 0..<100 {
-    s += "9"
-  }
-  inspect(
-    parse_decimal_priv(s),
-    content="9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
-  )
+  let s = String::make(100, '9')
+  inspect(parse_decimal_priv(s), content=s)
 }
 
 ///|
@@ -715,14 +650,8 @@ test "should_round_up when truncated and half-way" {
 ///|
 test "parse_decimal with large numbers and truncation" {
   // Construct a very large number to trigger truncation
-  let mut s = "1"
-  for i in 0..<1000 {
-    s += "0"
-  }
-  inspect(
-    parse_decimal_priv(s),
-    content="10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
-  )
+  let s = String::make(1000, '9')
+  inspect(parse_decimal_priv(s), content=String::make(800, '9'))
 }
 
 ///|

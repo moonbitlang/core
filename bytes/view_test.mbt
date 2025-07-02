@@ -442,7 +442,7 @@ test "iter break early" {
   view
   .iter()
   .take(2)
-  .each(fn(x) {
+  .each(x => {
     count = count + 1
     total = total + x.to_int()
   })

@@ -16,7 +16,7 @@ fn[A] new() -> T[A]
 
 fn[A : Compare] of(FixedArray[A]) -> T[A]
 
-fn[A : Compare] singleton(A) -> T[A]
+fn[A] singleton(A) -> T[A]
 
 // Types and methods
 type T[A]
@@ -40,7 +40,7 @@ fn[A : @json.FromJson + Compare] T::from_json(Json) -> Self[A] raise @json.JsonD
 #deprecated
 fn[A : Compare] T::inter(Self[A], Self[A]) -> Self[A]
 fn[A : Compare] T::intersection(Self[A], Self[A]) -> Self[A]
-fn[A : Compare] T::is_empty(Self[A]) -> Bool
+fn[A] T::is_empty(Self[A]) -> Bool
 fn[A] T::iter(Self[A]) -> Iter[A]
 fn[A : Compare, B : Compare] T::map(Self[A], (A) -> B raise?) -> Self[B] raise?
 fn[A : Compare] T::max(Self[A]) -> A
@@ -54,12 +54,12 @@ fn[A : Compare] T::of(FixedArray[A]) -> Self[A]
 fn[A : Compare] T::remove(Self[A], A) -> Self[A]
 fn[A : Compare] T::remove_min(Self[A]) -> Self[A]
 #deprecated
-fn[A : Compare] T::singleton(A) -> Self[A]
-fn[A : Compare] T::size(Self[A]) -> Int
+fn[A] T::singleton(A) -> Self[A]
+fn[A] T::size(Self[A]) -> Int
 fn[A : Compare] T::split(Self[A], A) -> (Self[A], Bool, Self[A])
 fn[A : Compare] T::subset(Self[A], Self[A]) -> Bool
 fn[A : Compare] T::symmetric_difference(Self[A], Self[A]) -> Self[A]
-fn[A : Compare] T::to_array(Self[A]) -> Array[A]
+fn[A] T::to_array(Self[A]) -> Array[A]
 fn[A : ToJson] T::to_json(Self[A]) -> Json
 fn[A : Compare] T::union(Self[A], Self[A]) -> Self[A]
 impl[A : Compare] Add for T[A]

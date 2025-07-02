@@ -53,10 +53,6 @@ pub fn[T] Array::push_iter(self : Self[T], iter : Iter[T]) -> Unit {
 }
 
 ///|
-#deprecated("use method call")
-pub fnalias Array::push_iter
-
-///|
 /// Creates a new array of the specified length, where each element is
 /// initialized using an index-based initialization function.
 ///
@@ -74,7 +70,7 @@ pub fnalias Array::push_iter
 /// Example:
 ///
 /// ```moonbit
-///   let arr = Array::makei(3, fn(i) { i * 2 })
+///   let arr = Array::makei(3, i => i * 2)
 ///   inspect(arr, content="[0, 2, 4]")
 /// ```
 pub fn[T] Array::makei(
@@ -214,7 +210,7 @@ pub fn[A, B] zip(self : Array[A], other : Array[B]) -> Array[(A, B)] {
     other.length()
   }
   let arr = Array::new(capacity=length)
-  for i = 0; i < length; i = i + 1 {
+  for i in 0..<length {
     arr.push((self[i], other[i]))
   } else {
     return arr
@@ -258,7 +254,7 @@ pub fn[T1, T2] unzip(self : Array[(T1, T2)]) -> (Array[T1], Array[T2]) {
 /// ```moonbit
 ///   let arr1 = [1, 2, 3]
 ///   let arr2 = [4, 5, 6]
-///   let add = fn(a, b) { a + b }
+///   let add = (a, b) => a + b
 ///   inspect(zip_with(arr1, arr2, add), content="[5, 7, 9]")
 /// ```
 pub fn[A, B, C] zip_with(
@@ -268,7 +264,7 @@ pub fn[A, B, C] zip_with(
 ) -> Array[C] raise? {
   let length = if l.length() < r.length() { l.length() } else { r.length() }
   let arr = Array::new(capacity=length)
-  for i = 0; i < length; i = i + 1 {
+  for i in 0..<length {
     arr.push(merge(l[i], r[i]))
   } else {
     return arr
@@ -294,13 +290,13 @@ pub fn[A, B, C] zip_with(
 ///   inspect(arr1.zip_to_iter2(arr2).to_array(), content="[(1, 'a'), (2, 'b'), (3, 'c')]")
 /// ```
 pub fn[A, B] zip_to_iter2(self : Array[A], other : Array[B]) -> Iter2[A, B] {
-  Iter2::new(fn(yield_) {
+  Iter2::new(yield_ => {
     let length = if self.length() < other.length() {
       self.length()
     } else {
       other.length()
     }
-    for i = 0; i < length; i = i + 1 {
+    for i in 0..<length {
       if yield_(self[i], other[i]) == IterEnd {
         break IterEnd
       }
@@ -316,7 +312,7 @@ pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Array[X] with arbi
   rs
 ) {
   let len = if size == 0 { 0 } else { rs.next_positive_int() % size }
-  Array::makei(len, fn(x) { X::arbitrary(x, rs) })
+  Array::makei(len, x => X::arbitrary(x, rs))
 }
 
 ///|

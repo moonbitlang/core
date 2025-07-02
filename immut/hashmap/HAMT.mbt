@@ -183,7 +183,7 @@ pub fn[K, V, A] fold(
   init~ : A,
   f : (A, V) -> A raise?
 ) -> A raise? {
-  self.fold_with_key(fn(acc, _k, v) { f(acc, v) }, init~)
+  self.fold_with_key((acc, _k, v) => f(acc, v), init~)
 }
 
 ///|
@@ -220,7 +220,7 @@ pub fn[K : Eq + Hash, V, A] map(
   self : T[K, V],
   f : (V) -> A raise?
 ) -> T[K, A] raise? {
-  self.map_with_key(fn(_k, v) { f(v) })
+  self.map_with_key((_k, v) => f(v))
 }
 
 ///|
@@ -333,8 +333,8 @@ pub fn[K : Eq + Hash, V] T::union(self : T[K, V], other : T[K, V]) -> T[K, V] {
         None => other.add(k, v)
       }
     (Branch(sa1), Branch(sa2)) =>
-      Branch(sa1.union(sa2, fn(m1, m2) { m1.union(m2) }))
-    (_, _) => self.iter().fold(init=other, fn(m, kv) { m.add(kv.0, kv.1) })
+      Branch(sa1.union(sa2, (m1, m2) => m1.union(m2)))
+    (_, _) => self.iter().fold(init=other, (m, kv) => m.add(kv.0, kv.1))
   }
 }
 
@@ -359,15 +359,13 @@ pub fn[K : Eq + Hash, V] T::union_with(
         None => other.add(k, v)
       }
     (Branch(sa1), Branch(sa2)) =>
-      Branch(sa1.union(sa2, fn(m1, m2) { m1.union_with(m2, f) }))
+      Branch(sa1.union(sa2, (m1, m2) => m1.union_with(m2, f)))
     (_, _) =>
       self
       .iter()
-      .fold(init=other, fn(m, kv) {
-        match m.get(kv.0) {
-          Some(v2) => m.add(kv.0, f(kv.0, kv.1, v2))
-          None => m.add(kv.0, kv.1)
-        }
+      .fold(init=other, (m, kv) => match m.get(kv.0) {
+        Some(v2) => m.add(kv.0, f(kv.0, kv.1, v2))
+        None => m.add(kv.0, kv.1)
       })
   }
 }
@@ -378,32 +376,13 @@ pub fn[K : Eq + Hash, V] T::intersection(
   self : T[K, V],
   other : T[K, V]
 ) -> T[K, V] {
-  match (self, other) {
-    (_, Empty) => Empty
-    (Empty, _) => Empty
-    (Leaf(k, v), _) =>
-      match other.get(k) {
-        Some(_) => Leaf(k, v)
-        None => Empty
-      }
-    (_, Leaf(k, _)) =>
-      match self.get(k) {
-        Some(v) => Leaf(k, v)
-        None => Empty
-      }
-    (Branch(sa1), Branch(sa2)) =>
-      Branch(sa1.intersection(sa2, fn(m1, m2) { m1.intersection(m2) }))
-    (_, _) =>
-      self
-      .iter()
-      .fold(init=Empty, fn(m, kv) {
-        if other.get(kv.0) is Some(_) {
-          m.add(kv.0, kv.1)
-        } else {
-          m
-        }
-      })
-  }
+  self
+  .iter()
+  .fold(init=Empty, (m, kv) => if other.get(kv.0) is Some(_) {
+    m.add(kv.0, kv.1)
+  } else {
+    m
+  })
 }
 
 ///|
@@ -413,31 +392,12 @@ pub fn[K : Eq + Hash, V] T::intersection_with(
   other : T[K, V],
   f : (K, V, V) -> V raise?
 ) -> T[K, V] raise? {
-  match (self, other) {
-    (_, Empty) => Empty
-    (Empty, _) => Empty
-    (Leaf(k, v), _) =>
-      match other.get(k) {
-        Some(v2) => Leaf(k, f(k, v, v2))
-        None => Empty
-      }
-    (_, Leaf(k, v2)) =>
-      match self.get(k) {
-        Some(v1) => Leaf(k, f(k, v1, v2))
-        None => Empty
-      }
-    (Branch(sa1), Branch(sa2)) =>
-      Branch(sa1.intersection(sa2, fn(m1, m2) { m1.intersection_with(m2, f) }))
-    (_, _) =>
-      self
-      .iter()
-      .fold(init=Empty, fn(m, kv) {
-        match other.get(kv.0) {
-          Some(v2) => m.add(kv.0, f(kv.0, kv.1, v2))
-          None => m
-        }
-      })
-  }
+  self
+  .iter()
+  .fold(init=Empty, (m, kv) => match other.get(kv.0) {
+    Some(v2) => m.add(kv.0, f(kv.0, kv.1, v2))
+    None => m
+  })
 }
 
 ///|
@@ -446,26 +406,13 @@ pub fn[K : Eq + Hash, V] T::difference(
   self : T[K, V],
   other : T[K, V]
 ) -> T[K, V] {
-  match (self, other) {
-    (Empty, _) => Empty
-    (_, Empty) => self
-    (Leaf(k, v), _) =>
-      match other.get(k) {
-        Some(_) => Empty
-        None => Leaf(k, v)
-      }
-    (Branch(sa1), Branch(sa2)) => Branch(sa1.difference(sa2))
-    (_, _) =>
-      self
-      .iter()
-      .fold(init=Empty, fn(m, kv) {
-        if other.get(kv.0) is None {
-          m.add(kv.0, kv.1)
-        } else {
-          m
-        }
-      })
-  }
+  self
+  .iter()
+  .fold(init=Empty, (m, kv) => if other.get(kv.0) is None {
+    m.add(kv.0, kv.1)
+  } else {
+    m
+  })
 }
 
 ///|
@@ -511,18 +458,16 @@ pub fn[K, V] iter(self : T[K, V]) -> Iter[(K, V)] {
 
 ///|
 pub fn[K, V] iter2(self : T[K, V]) -> Iter2[K, V] {
-  Iter2::new(fn(yield_) {
-    for kv in self {
-      guard yield_(kv.0, kv.1) is IterContinue else { break IterEnd }
-    } else {
-      IterContinue
-    }
+  Iter2::new(yield_ => for kv in self {
+    guard yield_(kv.0, kv.1) is IterContinue else { break IterEnd }
+  } else {
+    IterContinue
   })
 }
 
 ///|
 pub fn[K : Eq + Hash, V] from_iter(iter : Iter[(K, V)]) -> T[K, V] {
-  iter.fold(init=new(), fn(m, e) { m.add(e.0, e.1) })
+  iter.fold(init=new(), (m, e) => m.add(e.0, e.1))
 }
 
 ///|
@@ -545,7 +490,7 @@ pub fn[K : Eq + Hash, V] from_array(arr : Array[(K, V)]) -> T[K, V] {
 /// Convert to an array of key-value pairs.
 pub fn[K, V] to_array(self : T[K, V]) -> Array[(K, V)] {
   let arr = Array::new(capacity=self.size())
-  self.each(fn(k, v) { arr.push((k, v)) })
+  self.each((k, v) => arr.push((k, v)))
   arr
 }
 
@@ -579,5 +524,5 @@ pub impl[K : Eq + Hash, V : Eq] Eq for T[K, V] with op_equal(self, other) {
 
 ///|
 pub impl[K : Hash, V : Hash] Hash for T[K, V] with hash_combine(self, hasher) {
-  self.each(fn(k, v) { hasher..combine(k)..combine(v) })
+  self.each((k, v) => hasher..combine(k)..combine(v))
 }

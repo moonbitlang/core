@@ -209,11 +209,11 @@ fn[A] realloc(self : T[A]) -> Unit {
       }
     } else {
       let mut j = 0
-      for i = self.head; i < self.buf.length(); i = i + 1 {
+      for i in self.head..<self.buf.length() {
         new_buf[j] = self.buf[i]
         j += 1
       }
-      for i = 0; i <= self.tail; i = i + 1 {
+      for i in 0..=self.tail {
         new_buf[j] = self.buf[i]
         j += 1
       }
@@ -586,7 +586,7 @@ pub impl[A : Eq] Eq for T[A] with op_equal(self, other) {
 /// ```mbt
 ///   let dv = @deque.of([1, 2, 3, 4, 5])
 ///   let mut sum = 0
-///   dv.each(fn (x) {sum = sum + x})
+///   dv.each((x) => {sum = sum + x})
 ///   assert_eq(sum, 15)
 /// ```
 pub fn[A] each(self : T[A], f : (A) -> Unit) -> Unit {
@@ -602,7 +602,7 @@ pub fn[A] each(self : T[A], f : (A) -> Unit) -> Unit {
 /// ```mbt
 ///   let dv = @deque.of([1, 2, 3, 4, 5])
 ///   let mut idx_sum = 0
-///   dv.eachi(fn (i, _x) {idx_sum = idx_sum + i})
+///   dv.eachi((i, _x) => {idx_sum = idx_sum + i})
 ///   assert_eq(idx_sum, 10)
 /// ```
 pub fn[A] eachi(self : T[A], f : (Int, A) -> Unit) -> Unit {
@@ -618,7 +618,7 @@ pub fn[A] eachi(self : T[A], f : (Int, A) -> Unit) -> Unit {
 /// ```mbt
 ///   let dv = @deque.of([1, 2, 3, 4, 5])
 ///   let mut sum = 0
-///   dv.rev_each(fn (x) {sum = sum + x})
+///   dv.rev_each((x) => {sum = sum + x})
 ///   assert_eq(sum, 15)
 /// ```
 pub fn[A] rev_each(self : T[A], f : (A) -> Unit) -> Unit {
@@ -634,7 +634,7 @@ pub fn[A] rev_each(self : T[A], f : (A) -> Unit) -> Unit {
 /// ```mbt
 ///   let dv = @deque.of([1, 2, 3, 4, 5])
 ///   let mut idx_sum = 0
-///   dv.rev_eachi(fn (i, _x) {idx_sum = idx_sum + i})
+///   dv.rev_eachi((i, _x) => {idx_sum = idx_sum + i})
 ///   assert_eq(idx_sum, 10)
 /// ```
 pub fn[A] rev_eachi(self : T[A], f : (Int, A) -> Unit) -> Unit {
@@ -681,7 +681,7 @@ pub fn[A] clear(self : T[A]) -> Unit {
 /// # Example
 /// ```mbt
 ///   let dv = @deque.of([3, 4, 5])
-///   let dv2 = dv.map(fn (x) {x + 1})
+///   let dv2 = dv.map((x) => {x + 1})
 ///   assert_eq(dv2, @deque.of([4, 5, 6]))
 /// ```
 pub fn[A, U] map(self : T[A], f : (A) -> U) -> T[U] {
@@ -702,7 +702,7 @@ pub fn[A, U] map(self : T[A], f : (A) -> U) -> T[U] {
 /// # Example
 /// ```mbt
 ///   let dv = @deque.of([3, 4, 5])
-///   let dv2 = dv.mapi(fn (i, x) {x + i}) // @deque.of([3, 5, 7])
+///   let dv2 = dv.mapi((i, x) => {x + i}) // @deque.of([3, 5, 7])
 ///   assert_eq(dv2, @deque.of([3, 5, 7]))
 /// ```
 pub fn[A, U] mapi(self : T[A], f : (Int, A) -> U) -> T[U] {
@@ -902,7 +902,7 @@ pub fn[A] truncate(self : T[A], len : Int) -> Unit {
 ///
 /// ```moonbit
 ///   let dq = @deque.of([1, 2, 3, 4, 5])
-///   dq.retain_map(fn(x) { if x % 2 == 0 { Some(x * 2) } else { None } })
+///   dq.retain_map((x) => { if x % 2 == 0 { Some(x * 2) } else { None } })
 ///   inspect(dq, content="@deque.of([4, 8])")
 /// ```
 pub fn[A] retain_map(self : T[A], f : (A) -> A?) -> Unit {
@@ -959,7 +959,7 @@ pub fn[A] retain_map(self : T[A], f : (A) -> A?) -> Unit {
 ///
 /// ```moonbit
 ///   let dq = @deque.of([1, 2, 3, 4, 5])
-///   dq.retain(fn(x) { x % 2 == 0 })
+///   dq.retain((x) => { x % 2 == 0 })
 ///   inspect(dq, content="@deque.of([2, 4])")
 /// ```
 pub fn[A] retain(self : T[A], f : (A) -> Bool) -> Unit {
@@ -1010,11 +1010,11 @@ pub fn[A] retain(self : T[A], f : (A) -> Bool) -> Unit {
 /// ```moonbit
 ///   let dq = @deque.of([1, 2, 3, 4, 5])
 ///   let mut sum = 0
-///   dq.iter().each(fn(x) { sum = sum + x })
+///   dq.iter().each((x) => { sum = sum + x })
 ///   inspect(sum, content="15")
 /// ```
 pub fn[A] iter(self : T[A]) -> Iter[A] {
-  Iter::new(fn(yield_) {
+  Iter::new(yield_ => {
     guard not(self.is_empty()) else { IterContinue }
     let { head, buf, len, .. } = self
     let cap = buf.length()
@@ -1052,11 +1052,11 @@ pub fn[A] iter(self : T[A]) -> Iter[A] {
 /// ```moonbit
 ///   let dq = @deque.of([10, 20, 30])
 ///   let mut sum = 0
-///   dq.iter2().each(fn(i, x) { sum = sum + i * x })
+///   dq.iter2().each((i, x) => { sum = sum + i * x })
 ///   inspect(sum, content="80") // 0*10 + 1*20 + 2*30 = 80
 /// ```
 pub fn[A] iter2(self : T[A]) -> Iter2[Int, A] {
-  Iter2::new(fn(yield_) {
+  Iter2::new(yield_ => {
     guard not(self.is_empty()) else { IterContinue }
     let { head, buf, len, .. } = self
     let cap = buf.length()
@@ -1096,11 +1096,11 @@ pub fn[A] iter2(self : T[A]) -> Iter2[Int, A] {
 /// ```moonbit
 ///   let dq = @deque.of([1, 2, 3])
 ///   let mut sum = 0
-///   dq.rev_iter().each(fn(x) { sum = sum * 10 + x })
+///   dq.rev_iter().each((x) => { sum = sum * 10 + x })
 ///   inspect(sum, content="321")
 /// ```
 pub fn[A] rev_iter(self : T[A]) -> Iter[A] {
-  Iter::new(fn(yield_) {
+  Iter::new(yield_ => {
     guard not(self.is_empty()) else { IterContinue }
     let { head, buf, len, .. } = self
     let cap = buf.length()
@@ -1138,11 +1138,11 @@ pub fn[A] rev_iter(self : T[A]) -> Iter[A] {
 /// ```moonbit
 ///   let dq = @deque.of([1, 2, 3])
 ///   let mut s = ""
-///   dq.rev_iter2().each(fn(i, x) { s = s + "\{i}:\{x} " })
+///   dq.rev_iter2().each((i, x) => { s = s + "\{i}:\{x} " })
 ///   inspect(s, content="0:3 1:2 2:1 ")
 /// ```
 pub fn[A] rev_iter2(self : T[A]) -> Iter2[Int, A] {
-  Iter2::new(fn(yield_) {
+  Iter2::new(yield_ => {
     guard not(self.is_empty()) else { IterContinue }
     let { head, buf, len, .. } = self
     let cap = buf.length()
@@ -1186,7 +1186,7 @@ pub fn[A] rev_iter2(self : T[A]) -> Iter2[Int, A] {
 /// ```
 pub fn[A] from_iter(iter : Iter[A]) -> T[A] {
   let dq = new()
-  iter.each(fn(e) { dq.push_back(e) })
+  iter.each(e => dq.push_back(e))
   dq
 }
 
@@ -1251,84 +1251,6 @@ pub fn T::join(self : T[String], separator : @string.View) -> String {
 }
 
 ///|
-/// Removes and returns elements in the specified range [begin, end) from the deque.
-///
-/// Parameters:
-///
-/// * `self` : The target deque (modified in-place).
-/// * `begin` : Start index of the range (inclusive).
-/// * `end` : End index of the range (exclusive).
-///
-/// Important:
-///   - Requires `0 <= begin <= end <= self.length()`
-///   - Returns a new deque containing the drained elements.
-///   - Original deque retains elements outside [begin, end) in original order.
-///
-/// Example:
-///
-/// ```moonbit
-///   let deque = @deque.of([1,2,3,4,5,6,7,8,9])
-///   let deque_test = deque.drain(start=2, len=4)
-///   inspect(deque_test, content="@deque.of([3, 4, 5, 6])")
-///   inspect(deque, content="@deque.of([1, 2, 7, 8, 9])")
-/// ```
-pub fn[A] T::drain(self : T[A], start~ : Int, len~ : Int) -> T[A] {
-  let end = start + len
-  guard start >= 0 && end <= self.length()
-  let dq = new(capacity=len)
-  dq.buf = self.buf.blit(dq.buf, len~, src_offset=start, dst_offset=0)
-  ignore(
-    self.buf.blit(
-      self.buf,
-      len=self.length() - end,
-      src_offset=end,
-      dst_offset=start,
-    ),
-  )
-  self.tail = self.length() - end
-  self.len = self.length() - len
-  let deq1 = T::{ buf: dq.buf, len, head: 0, tail: len - 1 }
-  deq1
-}
-
-///|
-/// Flattens a high-dimensional deque into a lower-dimensional deque
-/// by concatenating all inner deques in order.
-///
-/// Parameters:
-///
-/// * `self` : The high-dimensional deque to flatten.
-///
-/// Returns a new lower-dimensional deque containing all elements 
-/// from inner deques in sequence.
-///
-/// Note:
-///   - Uses the first inner deque as base and appends subsequent deques.
-///   - Efficiently preserves element order across all inner deques.
-///
-/// Example:
-///
-/// ```moonbit
-///   let deque = @deque.of([@deque.of([1,2,3]),@deque.of([4,5,6]),@deque.of([7,8])])
-///   let deque_test = deque.flatten()
-///   inspect(deque_test, content="@deque.of([1, 2, 3, 4, 5, 6, 7, 8])")
-/// ```
-pub fn[A] T::flatten(self : T[T[A]]) -> T[A] {
-  let mut len = 0
-  for i in self {
-    len += i.length()
-  }
-  let dq = new(capacity=len)
-  let mut i = 0
-  for t in self {
-    dq.buf = t.buf.blit(dq.buf, len=t.length(), dst_offset=i, src_offset=0)
-    i += t.length()
-  }
-  let deq = T::{ buf: dq.buf, len, head: 0, tail: len - 1 }
-  deq
-}
-
-///|
 /// Converts a deque to its JSON representation as an array.
 ///
 /// Parameters:
@@ -1386,4 +1308,253 @@ pub impl[A : @json.FromJson] @json.FromJson for T[A] with from_json(json, path) 
     buf[i] = @json.FromJson::from_json(x, path.add_index(i))
   }
   { len, buf, head, tail }
+}
+
+///|
+/// Flattens a high-dimensional deque into a lower-dimensional deque
+/// by concatenating all inner deques in order.
+///
+/// Parameters:
+///
+/// * `self` : The high-dimensional deque to flatten.
+///
+/// Returns a new lower-dimensional deque containing all elements 
+/// from inner deques in sequence.
+///
+/// Note:
+///   - Uses the first inner deque as base and appends subsequent deques.
+///   - Efficiently preserves element order across all inner deques.
+///
+/// Example:
+///
+/// ```moonbit
+///   let deque = @deque.of([@deque.of([1,2,3]),@deque.of([4,5,6]),@deque.of([7,8])])
+///   let deque_test = deque.flatten()
+///   inspect(deque_test, content="@deque.of([1, 2, 3, 4, 5, 6, 7, 8])")
+/// ```
+pub fn[A] T::flatten(self : T[T[A]]) -> T[A] {
+  let mut len = 0
+  for deque in self {
+    len += deque.length()
+  }
+  let target = T::{
+    buf: UninitializedArray::make(len),
+    len,
+    head: 0,
+    tail: len - 1,
+  }
+  let mut i = 0
+  for deque in self {
+    let cap = deque.buf.length()
+    let head_len = cap - deque.head
+    target.buf.unsafe_blit(i, deque.buf, deque.head, head_len)
+    if head_len < deque.len {
+      target.buf.unsafe_blit(i + head_len, deque.buf, 0, deque.len - head_len)
+    }
+    i += deque.len
+  }
+  target
+}
+
+///|
+/// Removes and returns elements in the specified range [begin, end) from the deque.
+///
+/// Parameters:
+///
+/// * `self` : The target deque (modified in-place).
+/// * `start` : Start index of the range (inclusive).
+/// * `len` : Length of the range to drain.
+///
+/// Important:
+///   - Returns a new deque containing the drained elements.
+///   - Original deque retains elements outside [start, start + len) in original order.
+///
+/// Example:
+///
+/// ```moonbit
+/// let deque = @deque.of([1,2,3,4,5,6,7,8,9])
+/// let deque_test = deque.drain(start=2, len=4)
+/// inspect(deque_test, content="@deque.of([3, 4, 5, 6])")
+/// inspect(deque, content="@deque.of([1, 2, 7, 8, 9])")
+/// ```
+pub fn[A] T::drain(self : T[A], start~ : Int, len? : Int) -> T[A] {
+  let len = match len {
+    Some(l) => if l > self.len { self.len } else { l }
+    None => self.len - start
+  }
+  if len == 0 {
+    return new()
+  }
+  let deque = T::{
+    buf: UninitializedArray::make(len),
+    len,
+    head: 0,
+    tail: len - 1,
+  }
+  let cap = self.buf.length()
+  let start_idx = (self.head + start) % cap
+  let start_len = cap - start_idx
+
+  // copy to deque
+  if start_len < len {
+    deque.buf.unsafe_blit(0, self.buf, start_idx, start_len)
+    deque.buf.unsafe_blit(start_len, self.buf, 0, len - start_len)
+    for i in 0..<start_len {
+      set_null(self.buf, (start_idx + i) % cap)
+    }
+    for i in 0..<(len - start_len) {
+      set_null(self.buf, i)
+    }
+  } else {
+    deque.buf.unsafe_blit(0, self.buf, start_idx, len)
+    for i in 0..<len {
+      set_null(self.buf, start_idx + i)
+    }
+  }
+
+  // move self
+  // TODO: use blit
+  let new_head = self.head + len
+  for i = start - 1; i >= 0; i = i - 1 {
+    self.buf[(new_head + i) % cap] = self.buf[(self.head + i) % cap]
+    set_null(self.buf, (self.head + i) % cap)
+  }
+  self.head = new_head % cap
+  self.len -= len
+  deque
+}
+
+///|
+/// Performs a binary search on a sorted deque using a custom comparison function.
+/// Returns the position of the matching element if found, or the position where
+/// the element could be inserted while maintaining the sorted order.
+///
+/// Parameters:
+///
+/// * `comparator` : A function that compares each element with the target value,
+/// returning:
+///  * A negative integer if the element is less than the target
+///  * Zero if the element equals the target
+///  * A positive integer if the element is greater than the target
+///
+/// Returns a `Result` containing either:
+///
+/// * `Ok(index)` if a matching element is found at position `index`
+/// * `Err(index)` if no match is found, where `index` is the position where the
+/// element could be inserted
+///
+/// Example:
+///
+/// ```moonbit
+/// let dq = @deque.of([1, 3, 5, 7, 9])
+///
+/// 
+/// let find_3 = dq.binary_search_by(fn(x) {
+///   if x < 3 {
+///     -1
+///   } else if x > 3 {
+///     1
+///   } else {
+///     0
+///   }
+/// })
+/// inspect(find_3, content="Ok(1)")
+///
+/// 
+/// let find_4 = dq.binary_search_by(fn(x) {
+///   if x < 4 {
+///     -1
+///   } else if x > 4 {
+///     1
+///   } else {
+///     0
+///   }
+/// })
+/// inspect(find_4, content="Err(2)")
+/// ```
+///
+/// Notes:
+///
+/// * Assumes the deque is sorted according to the ordering implied by the
+/// comparison function
+/// * For multiple matches, returns the leftmost matching position
+/// * Returns an insertion point that maintains the sort order when no match is
+/// found
+/// * Handles the deque's ring buffer structure internally
+/// * For empty deques, returns `Err(0)`
+#locals(cmp)
+pub fn[A] binary_search_by(self : T[A], cmp : (A) -> Int) -> Result[Int, Int] {
+  let len = self.len
+  let mut i = 0
+  let mut j = len
+  while i < j {
+    let h = i + (j - i) / 2
+    match self.get(h) {
+      Some(element) =>
+        match cmp(element) {
+          _..<0 => i = h + 1 // Continue searching right
+          1..<_ => j = h // Continue searching left
+          _ => { // Found match, find leftmost
+            j = h
+            while i < j {
+              let mid = i + (j - i) / 2
+              match self.get(mid) {
+                Some(v) =>
+                  match cmp(v) {
+                    0 => j = mid
+                    _ => i = mid + 1
+                  }
+                None => break
+              }
+            }
+            return Ok(i)
+          }
+        }
+      None => return Err(i)
+    }
+  }
+  Err(i)
+}
+
+///|
+/// Safe element access with bounds checking
+pub fn[A] get(self : T[A], index : Int) -> A? {
+  if index >= 0 && index < self.len {
+    let physical_index = (self.head + index) % self.buf.length()
+    Some(self.buf[physical_index])
+  } else {
+    None
+  }
+}
+
+///|
+/// Performs a binary search on a sorted deque for the given value.
+/// Returns the position of the value if found, or the position where
+/// the value could be inserted while maintaining the sorted order.
+///
+/// Parameters:
+///
+/// * `value` : The value to search for in the deque
+///
+/// Returns a `Result` containing either:
+///
+/// * `Ok(index)` if the value is found at position `index`
+/// * `Err(index)` if the value is not found, where `index` is the
+///   position where the value could be inserted
+///
+/// Example:
+///
+/// ```moonbit
+/// let dq = @deque.of([1, 3, 5, 7, 9])
+/// let result = dq.binary_search(5)
+/// inspect(result, content="Ok(2)")
+/// ```
+///
+/// Notes:
+///
+/// * Assumes the deque is sorted in ascending order
+/// * For multiple matches, returns the leftmost matching position
+/// * Returns an insertion point that maintains the sort order when no match is found
+pub fn[A : Compare] binary_search(self : T[A], value : A) -> Result[Int, Int] {
+  self.binary_search_by(x => x.compare(value))
 }

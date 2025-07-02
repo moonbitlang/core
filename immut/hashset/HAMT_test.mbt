@@ -148,7 +148,7 @@ test "from_iter empty iter" {
 test "each on empty set" {
   let s = @hashset.new()
   let mut count = 0
-  s.each(fn(_x : Int) -> Unit { count = count + 1 })
+  s.each((_x : Int) => count = count + 1)
   inspect(count, content="0")
 }
 
@@ -358,8 +358,8 @@ test "@hashset collision" {
   let b = MyString("b")
   let c = MyString("c")
   let set = @hashset.new().add(a).add(b).add(c)
-  inspect(set.iter().to_array(), content="[b, c, a]")
-  set.each(fn(x : MyString) -> Unit { x |> ignore })
+  inspect(set.iter().to_array(), content="[c, b, a]")
+  set.each((x : MyString) => x |> ignore)
   inspect(set.size(), content="3")
 }
 

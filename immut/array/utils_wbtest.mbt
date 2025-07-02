@@ -132,7 +132,7 @@ fn check_array_eq(a : Array[Int], t : T[Int]) -> Unit raise {
 /// Generate a random array of length `n`.
 fn random_array(n : Int) -> Array[Int] {
   let rng = Random({ val: 0 })
-  Array::makei(n, fn(i) { rng.int(limit=i) })
+  Array::makei(n, i => rng.int(limit=i))
 }
 
 ///|

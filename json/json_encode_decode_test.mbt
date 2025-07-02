@@ -28,7 +28,7 @@ fn[T] array_to_json(arr : Array[T], f~ : (T) -> Json) -> Json {
 fn to_json(self : AllThree) -> Json {
   let { ints, floats, strings } = self
   {
-    "ints": ints |> array_to_json(f=fn(x) { Json::number(x.to_double()) }),
+    "ints": ints |> array_to_json(f=x => Json::number(x.to_double())),
     "floats": floats |> array_to_json(f=Json::number(_)),
     "strings": strings |> array_to_json(f=Json::string(_)),
   }

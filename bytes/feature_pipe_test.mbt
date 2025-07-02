@@ -17,7 +17,7 @@ test "feature pipe" {
   let b : Bytes = "hello"
   let mut u = Bytes::new(b.length())
   let v = b
-    |> tap(fn(x) { u = x })
+    |> tap(x => u = x)
     |> _.length() // test _.length()
     |> _.to_int64() // test _.to_int()
   inspect(v, content="5")
