@@ -137,7 +137,7 @@ test "buffer with size hint" {
   let buf = @buffer.new(size_hint=1024)
 
   // Write some data
-  for i = 0; i < 100; i = i + 1 {
+  for i in 0..<100 {
     buf.write_int_le(i)
   }
 
