@@ -5,7 +5,8 @@ import(
 )
 
 // Values
-fn chacha8(seed~ : Bytes = ..) -> Rand
+#deprecated
+fn chacha8(seed~ : Bytes = ..) -> &Source
 
 #deprecated
 fn new(seed~ : Bytes = ..) -> Rand
