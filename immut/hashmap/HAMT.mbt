@@ -28,30 +28,20 @@
 // - <https://lampwww.epfl.ch/papers/idealhashtrees.pdf>
 
 ///|
-// The number of bits consumed at every [Branch] node
-let segment_length : Int = 5
-
-///|
-let segment_mask : Int = 0b11111
-
-///|
 pub fn[K, V] new() -> T[K, V] {
   Empty
 }
 
 ///|
 /// Create a map with a single key-value pair.
-pub fn[K, V] singleton(key : K, value : V) -> T[K, V] {
-  Leaf(key, value)
+pub fn[K : Hash, V] singleton(key : K, value : V) -> T[K, V] {
+  make_leaf(key, value, @path.of(key))
 }
 
 ///|
 /// Check if the map contains a key.
 pub fn[K : Eq + Hash, V] contains(self : T[K, V], key : K) -> Bool {
-  match self.get(key) {
-    Some(_) => true
-    None => false
-  }
+  self.get(key) is Some(_)
 }
 
 ///|
@@ -65,20 +55,14 @@ pub fn[K : Eq + Hash, V] find(self : T[K, V], key : K) -> V? {
 ///|
 /// Lookup a key from a hash map
 pub fn[K : Eq + Hash, V] get(self : T[K, V], key : K) -> V? {
-  loop (self, key.hash()) {
+  loop (self, @path.of(key)) {
     (Empty, _) => None
     (Leaf(key1, value), _) => if key == key1 { Some(value) } else { None }
     (Collision(bucket), _) => bucket.find(key)
-    // get the first segment (lower 5 bits) of the hash value
-    // inline the hot path of Sparse_array::op_get
-    (Branch(children), hash) => {
-      let idx = hash & segment_mask
-      if children.elem_info.has(idx) {
-        let child = children.data[children.elem_info.index_of(idx)]
-        continue (
-            child,
-            (hash.reinterpret_as_uint() >> segment_length).reinterpret_as_int(),
-          )
+    (Branch(children), path) => {
+      let idx = path.idx()
+      if children[idx] is Some(child) {
+        continue (child, path.next())
       }
       None
     }
@@ -92,31 +76,25 @@ pub fn[K : Eq + Hash, V] op_get(self : T[K, V], key : K) -> V? {
 }
 
 ///|
-fn[K : Eq, V] add_with_hash(
+fn[K, V] make_leaf(key : K, value : V, path : Path) -> T[K, V] {
+  // make sure leaf nodes always appear at the bottom of the tree
+  if path.is_last() {
+    Branch(@sparse_array.singleton(path.idx(), Leaf(key, value)))
+  } else {
+    let child = make_leaf(key, value, path.next())
+    Branch(@sparse_array.singleton(path.idx(), child))
+  }
+}
+
+///|
+fn[K : Eq, V] add_with_path(
   self : T[K, V],
   key : K,
-  depth : Int,
-  hash : Int,
-  value : V
+  value : V,
+  path : Path
 ) -> T[K, V] {
-  // make sure leaf nodes always appear at the bottom of the tree
-  fn make_leaf(depth : Int, key : K, hash : Int, value : V) {
-    if depth >= 32 {
-      T::Leaf(key, value)
-    } else {
-      let idx = hash & segment_mask
-      let child = make_leaf(
-        depth + segment_length,
-        key,
-        (hash.reinterpret_as_uint() >> segment_length).reinterpret_as_int(),
-        value,
-      )
-      T::Branch(@sparse_array.singleton(idx, child))
-    }
-  }
-
   match self {
-    Empty => make_leaf(depth, key, hash, value)
+    Empty => make_leaf(key, value, path)
     Leaf(key1, value1) =>
       if key == key1 {
         Leaf(key, value)
@@ -125,24 +103,14 @@ fn[K : Eq, V] add_with_hash(
       }
     Collision(bucket) => Collision(bucket.add(key, value))
     Branch(children) => {
-      let idx = hash & segment_mask
+      let idx = path.idx()
       match children[idx] {
         Some(child) => {
-          let child = child.add_with_hash(
-            key,
-            depth + segment_length,
-            (hash.reinterpret_as_uint() >> segment_length).reinterpret_as_int(),
-            value,
-          )
+          let child = child.add_with_path(key, value, path.next())
           Branch(children.replace(idx, child))
         }
         None => {
-          let child = make_leaf(
-            depth + segment_length,
-            key,
-            (hash.reinterpret_as_uint() >> segment_length).reinterpret_as_int(),
-            value,
-          )
+          let child = make_leaf(key, value, path.next())
           Branch(children.add(idx, child))
         }
       }
@@ -253,22 +221,17 @@ pub fn[K : Eq + Hash, V, A] map_with_key(
 ///
 /// If a pair with the same key already exists, the old one is replaced
 pub fn[K : Eq + Hash, V] add(self : T[K, V], key : K, value : V) -> T[K, V] {
-  self.add_with_hash(key, 0, key.hash(), value)
+  self.add_with_path(key, value, @path.of(key))
 }
 
 ///|
 /// Remove an element from a map
 pub fn[K : Eq + Hash, V] remove(self : T[K, V], key : K) -> T[K, V] {
-  self.remove_with_hash(key, 0, key.hash())
+  self.remove_with_path(key, @path.of(key))
 }
 
 ///|
-fn[K : Eq, V] remove_with_hash(
-  self : T[K, V],
-  key : K,
-  depth : Int,
-  hash : Int
-) -> T[K, V] {
+fn[K : Eq, V] remove_with_path(self : T[K, V], key : K, path : Path) -> T[K, V] {
   match self {
     Empty => self
     Leaf(old_key, _) => if key == old_key { Empty } else { self }
@@ -279,15 +242,11 @@ fn[K : Eq, V] remove_with_hash(
         Some(new_bucket) => Collision(new_bucket)
       }
     Branch(children) => {
-      let idx = hash & segment_mask
+      let idx = path.idx()
       match children[idx] {
         None => self
         Some(child) => {
-          let new_child = child.remove_with_hash(
-            key,
-            depth + segment_length,
-            (hash.reinterpret_as_uint() >> segment_length).reinterpret_as_int(),
-          )
+          let new_child = child.remove_with_path(key, path.next())
           match (children.size(), new_child) {
             (1, Empty) => Empty
             (_, _) => Branch(children.replace(idx, new_child))
