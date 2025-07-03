@@ -319,23 +319,9 @@ pub fn[K, V] size(self : T[K, V]) -> Int {
 }
 
 ///|
-/// Union two hashmaps
+/// Union two hashmaps, right-hand side element is prioritized
 pub fn[K : Eq + Hash, V] T::union(self : T[K, V], other : T[K, V]) -> T[K, V] {
-  match (self, other) {
-    (_, Empty) => self
-    (Empty, _) => other
-    (_, Leaf(k, v)) => self.add(k, v)
-    (Leaf(k, v), _) =>
-      // right-hand side element is prioritized
-      // like Clojure's merge
-      match other.get(k) {
-        Some(_) => other
-        None => other.add(k, v)
-      }
-    (Branch(sa1), Branch(sa2)) =>
-      Branch(sa1.union(sa2, (m1, m2) => m1.union(m2)))
-    (_, _) => self.iter().fold(init=other, (m, kv) => m.add(kv.0, kv.1))
-  }
+  other.iter().fold(init=self, (m, kv) => m.add(kv.0, kv.1))
 }
 
 ///|
@@ -371,15 +357,15 @@ pub fn[K : Eq + Hash, V] T::union_with(
 }
 
 ///|
-/// Intersect two hashmaps
+/// Intersect two hashmaps, right-hand side element is prioritized
 pub fn[K : Eq + Hash, V] T::intersection(
   self : T[K, V],
   other : T[K, V]
 ) -> T[K, V] {
   self
   .iter()
-  .fold(init=Empty, (m, kv) => if other.get(kv.0) is Some(_) {
-    m.add(kv.0, kv.1)
+  .fold(init=Empty, (m, kv) => if other.get(kv.0) is Some(v2) {
+    m.add(kv.0, v2)
   } else {
     m
   })

@@ -548,7 +548,7 @@ test "HAMT::union with collision" {
   let m2 = @hashmap.of([(MyString("b"), 20), (MyString("c"), 3)])
   let u = m1.union(m2)
   assert_eq(u.get(MyString("a")), Some(1))
-  assert_eq(u.get(MyString("b")), Some(2))
+  assert_eq(u.get(MyString("b")), Some(20))
   assert_eq(u.get(MyString("c")), Some(3))
 }
 
@@ -566,7 +566,7 @@ test "HAMT::union all cases" {
   let collision2 = @hashmap.of([(MyString("b"), 20), (MyString("c"), 3)])
   let u2 = collision.union(collision2)
   assert_eq(u2.get(MyString("a")), Some(1))
-  assert_eq(u2.get(MyString("b")), Some(2))
+  assert_eq(u2.get(MyString("b")), Some(20))
   assert_eq(u2.get(MyString("c")), Some(3))
 }
 
@@ -605,7 +605,7 @@ test "HAMT::intersection with branch" {
   let inter = m1.intersection(m2)
   assert_eq(inter.get(1), None)
   assert_eq(inter.get(2), Some(2))
-  assert_eq(inter.get(3), Some(3))
+  assert_eq(inter.get(3), Some(30))
   assert_eq(inter.get(4), None)
 }
 
