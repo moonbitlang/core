@@ -18,9 +18,6 @@ fn check_invariant(_a : BigInt) -> Unit raise {
 }
 
 ///|
-let zero = 0N
-
-///|
 test "BigInt::to_uint" {
   assert_eq(BigInt::from_int64(-1L).to_uint(), (-1).reinterpret_as_uint())
 }
