@@ -207,7 +207,6 @@ pub fn[A] op_get(self : T[A], index : Int) -> A {
 /// Example:
 ///
 /// ```moonbit
-/// ///|
 ///   let v = @array.of([1, 2, 3])
 ///   inspect(v.get(1), content="Some(2)")
 ///   inspect(v.get(-1), content="None")
