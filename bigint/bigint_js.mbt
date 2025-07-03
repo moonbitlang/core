@@ -453,7 +453,6 @@ pub fn BigInt::to_int64(self : BigInt) -> Int64 {
 /// Example:
 ///
 /// ```moonbit
-/// ///|
 ///   let pos = 16N // 10000
 ///   inspect(pos.bit_length(), content="5")
 ///   let neg = -16N // 
