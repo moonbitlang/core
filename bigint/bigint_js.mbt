@@ -16,6 +16,9 @@
 type BigInt
 
 ///|
+let zero = 0N
+
+///|
 pub fn BigInt::from_string(str : String) -> BigInt {
   if str.length() == 0 {
     abort("empty string")
