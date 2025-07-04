@@ -51,10 +51,14 @@ pub fn Json::null() -> Json {
 /// Example:
 ///
 /// ```moonbit
-///   inspect(Json::number(3.14), content="Number(3.14)")
+/// inspect(Json::number(3.14), content="Number(3.14)")
+/// inspect(
+///   Json::number(@double.infinity, repr="1e9999999999999999999999999999999").stringify(), 
+///   content="1e9999999999999999999999999999999"
+/// )
 /// ```
-pub fn Json::number(number : Double) -> Json {
-  return Number(number, repr=None)
+pub fn Json::number(number : Double, repr? : String) -> Json {
+  return Number(number, repr~)
 }
 
 ///|

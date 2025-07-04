@@ -150,14 +150,32 @@ fn ParseContext::lex_number_end(
   end : Int
 ) -> (Double, String?) {
   let s = ctx.input.substring(start~, end~)
-  (@strconv.parse_double(s), None) catch {
-    _ =>
-      // If parsing fails, determine if it's positive or negative infinity
-      // based on the first character being '-'
-      if s is ['-', ..] {
-        (@double.neg_infinity, Some(s))
-      } else {
-        (@double.infinity, Some(s))
-      }
+  if not(s.contains(".")) && not(s.contains("e")) && not(s.contains("E")) {
+    // If the string does not contain a decimal point or exponent, it is likely an integer
+    // We can try to parse it as an integer first
+    let parsed_int = try? @strconv.parse_int64(s)
+    match parsed_int {
+      Ok(i) if i <= 9007199254740991 && i >= -9007199254740991 =>
+        return (i.to_double(), None)
+      _ =>
+        return if s is ['-', ..] {
+          (@double.neg_infinity, Some(s))
+        } else {
+          (@double.infinity, Some(s))
+        }
+    }
+  } else {
+    let parsed_double = try? @strconv.parse_double(s)
+    match parsed_double {
+      // For normal values, return without string representation
+      Ok(d) => (d, None)
+      // If parsing fails as a double, treat it as infinity and preserve the string
+      Err(_) =>
+        if s is ['-', ..] {
+          (@double.neg_infinity, Some(s))
+        } else {
+          (@double.infinity, Some(s))
+        }
+    }
   }
 }

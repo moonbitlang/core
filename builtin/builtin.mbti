@@ -247,7 +247,7 @@ pub(all) enum Json {
 fn Json::array(Array[Self]) -> Self
 fn Json::boolean(Bool) -> Self
 fn Json::null() -> Self
-fn Json::number(Double) -> Self
+fn Json::number(Double, repr? : String) -> Self
 fn Json::object(Map[String, Self]) -> Self
 fn Json::string(String) -> Self
 impl Default for Json

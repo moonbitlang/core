@@ -386,6 +386,12 @@ test "stringify number" {
   for json in nums {
     match (try? @json.parse(json.stringify())) {
       Err(e) => err.push(e.to_string())
+      Ok(Number(_, repr~) as newjson) =>
+        if repr is Some(_) {
+          assert_eq(newjson.stringify(), json.stringify())
+        } else {
+          assert_eq(newjson, json)
+        }
       Ok(newjson) => assert_eq(newjson, json)
     }
   }
