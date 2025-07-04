@@ -401,12 +401,19 @@ fn BigInt::split(self : BigInt, half : Int) -> (BigInt, BigInt) {
   if self.len <= half {
     return ({ ..self, sign: Positive }, zero)
   }
-  let lower = FixedArray::make(half, 0U)
-  lower.unsafe_blit(0, self.limbs, 0, half)
+  let lower_len = for i = half - 1; i > 0; i = i - 1 {
+    if self.limbs[i] > 0 {
+      break i + 1
+    }
+  } else {
+    1
+  }
+  let lower = FixedArray::make(lower_len, 0U)
+  lower.unsafe_blit(0, self.limbs, 0, lower_len)
   let upper = FixedArray::make(self.len - half, 0U)
   upper.unsafe_blit(0, self.limbs, half, self.len - half)
   (
-    { limbs: lower, sign: Positive, len: half },
+    { limbs: lower, sign: Positive, len: lower_len },
     { limbs: upper, sign: Positive, len: self.len - half },
   )
 }
