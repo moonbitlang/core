@@ -30,15 +30,15 @@ test "parses empty object" {
 test "parses object" {
   inspect(
     try? @json.parse("{\"a\":1}"),
-    content=
+    content=(
       #|Ok(Object({"a": Number(1)}))
-    ,
+    ),
   )
   inspect(
     try? @json.parse("{\"a\":1,\"b\":2}"),
-    content=
+    content=(
       #|Ok(Object({"a": Number(1), "b": Number(2)}))
-    ,
+    ),
   )
 }
 
@@ -46,9 +46,9 @@ test "parses object" {
 test "parses multiple properties" {
   inspect(
     try? @json.parse("{\"abc\":1,\"def\":2}"),
-    content=
+    content=(
       #|Ok(Object({"abc": Number(1), "def": Number(2)}))
-    ,
+    ),
   )
 }
 
@@ -56,9 +56,9 @@ test "parses multiple properties" {
 test "parses nested objects" {
   inspect(
     try? @json.parse("{\"a\":{\"b\":2}}"),
-    content=
+    content=(
       #|Ok(Object({"a": Object({"b": Number(2)})}))
-    ,
+    ),
   )
 }
 //endregion
@@ -327,28 +327,30 @@ test "parse unexpected token in array" {
 ///|
 test "parse multi-lines json" {
   let result = try? @json.parse(
-      #|{
-      #|  "a":2,
-      #|  "b":3
-      #|}
-      ,
+      (
+        #|{
+        #|  "a":2,
+        #|  "b":3
+        #|}
+      ),
     )
   inspect(
     result,
-    content=
+    content=(
       #|Ok(Object({"a": Number(2), "b": Number(3)}))
-    ,
+    ),
   )
 }
 
 ///|
 test "parse multi-lines json error" {
   let result = try? @json.parse(
-      #|{
-      #|  "a":2,
-      #|  "b":a
-      #|}
-      ,
+      (
+        #|{
+        #|  "a":2,
+        #|  "b":a
+        #|}
+      ),
     )
   inspect(result, content="Err(Invalid character 'a' at line 3, column 6)")
 }

@@ -531,15 +531,15 @@ test "arbitrary" {
   let samples : Array[T[String, Int]] = @quickcheck.samples(20)
   inspect(
     samples[5:10],
-    content=
+    content=(
       #|[HashMap::of([]), HashMap::of([]), HashMap::of([("", 0)]), HashMap::of([("", 0)]), HashMap::of([("", 0)])]
-    ,
+    ),
   )
   inspect(
     samples[11:15],
-    content=
+    content=(
       #|[HashMap::of([("Q", 1), ("", 0), ("\u{1e}", 0)]), HashMap::of([("", 0)]), HashMap::of([("F:", 0), ("A&", 2), ("v\b", 0), ("", 0), ("#", 0)]), HashMap::of([("p(", -2), ("^\u{1e}", 3), ("2x", 1), ("", 3)])]
-    ,
+    ),
   )
 }
 

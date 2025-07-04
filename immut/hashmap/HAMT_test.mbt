@@ -115,21 +115,21 @@ test "HAMT::from_array" {
   let map = @hashmap.of([(1, "1"), (2, "2"), (42, "42")])
   inspect(
     (1, map.get(1)),
-    content=
+    content=(
       #|(1, Some("1"))
-    ,
+    ),
   )
   inspect(
     (2, map.get(2)),
-    content=
+    content=(
       #|(2, Some("2"))
-    ,
+    ),
   )
   inspect(
     (42, map.get(42)),
-    content=
+    content=(
       #|(42, Some("42"))
-    ,
+    ),
   )
   inspect((43, map.get(43)), content="(43, None)")
 }

@@ -1095,14 +1095,14 @@ test "iter" {
   assert_eq(i, arr.length())
   inspect(
     exb,
-    content=
+    content=(
       #|1
       #|2
       #|3
       #|4
       #|5
       #|
-    ,
+    ),
   )
 }
 
