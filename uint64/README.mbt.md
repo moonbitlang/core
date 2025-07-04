@@ -103,18 +103,18 @@ test "UInt64 byte conversion" {
   let be_bytes = (0x123456789ABCDEF0UL).to_be_bytes()
   inspect(
     be_bytes,
-    content=
+    content=(
       #|b"\x12\x34\x56\x78\x9a\xbc\xde\xf0"
-    ,
+    ),
   )
 
   // Convert to bytes in little-endian order (least significant byte first)
   let le_bytes = (0x123456789ABCDEF0UL).to_le_bytes()
   inspect(
     le_bytes,
-    content=
+    content=(
       #|b"\xf0\xde\xbc\x9a\x78\x56\x34\x12"
-    ,
+    ),
   )
 }
 ```
@@ -194,9 +194,9 @@ test "UInt64 hexadecimal literals" {
   let bytes = value.to_be_bytes()
   inspect(
     bytes,
-    content=
+    content=(
       #|b"\x00\x00\x00\x00\xde\xad\xbe\xef"
-    ,
+    ),
   )
 }
 ```

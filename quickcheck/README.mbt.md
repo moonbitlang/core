@@ -30,15 +30,9 @@ test "multiple samples" {
   let strings : Array[String] = @quickcheck.samples(12)
   inspect(
     strings[5:10],
-    content=
-      
-  #|["E\b\u{0f} ", "", "K\u{1f}[", "!@", "xvLxb"]
-
-
-
-
-
-    ,
+    content=(
+      #|["E\b\u{0f} ", "", "K\u{1f}[", "!@", "xvLxb"]
+    ),
   )
 }
 ```
@@ -60,9 +54,9 @@ test "builtin types" {
   let v : (String, Bytes, Iter[Int]) = @quickcheck.gen()
   inspect(
     v,
-    content=
+    content=(
       #|("", b"", [])
-    ,
+    ),
   )
 }
 ```

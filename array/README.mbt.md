@@ -63,9 +63,9 @@ test "sorting" {
   sorted2.sort_by((a, b) => a.length().compare(b.length()))
   inspect(
     sorted2,
-    content=
+    content=(
       #|["b", "aa", "ccc"]
-    ,
+    ),
   )
 
   // Sort by key
