@@ -74,9 +74,9 @@ test "get as string" {
   inspect(Json::number(1.0).as_string(), content="None")
   inspect(
     Json::string("Hello World").as_string(),
-    content=
+    content=(
       #|Some("Hello World")
-    ,
+    ),
   )
   inspect(
     Json::array([Json::string("Hello World")]).as_string(),
@@ -99,15 +99,15 @@ test "get as array" {
   inspect(Json::string("Hello World").as_array(), content="None")
   inspect(
     Json::array([Json::string("Hello World")]).as_array(),
-    content=
+    content=(
       #|Some([String("Hello World")])
-    ,
+    ),
   )
   inspect(
     Json::array([Json::string("Hello World")]).item(0).bind(Json::as_string),
-    content=
+    content=(
       #|Some("Hello World")
-    ,
+    ),
   )
   inspect(
     Json::array([Json::string("Hello World")]).item(1).bind(Json::as_string),
@@ -145,9 +145,9 @@ test "get as object" {
     )
     .as_object()
     .map(_.to_array()),
-    content=
+    content=(
       #|Some([("key", String("key")), ("value", Number(100))])
-    ,
+    ),
   )
   inspect(
     Json::object(
@@ -155,9 +155,9 @@ test "get as object" {
     )
     .value("key")
     .bind(_.as_string()),
-    content=
+    content=(
       #|Some("key")
-    ,
+    ),
   )
   inspect(
     Json::object(
@@ -207,9 +207,9 @@ test "deep access" {
   )
   inspect(
     json.value("key").bind(_.as_array()),
-    content=
+    content=(
       #|Some([Number(1), True, Null, Array([]), Object({"key": String("value"), "value": Number(100)})])
-    ,
+    ),
   )
   inspect(
     json.value("key").bind(_.item(3)).bind(_.as_array()),
@@ -217,9 +217,9 @@ test "deep access" {
   )
   inspect(
     json.value("key").bind(_.item(4)).bind(_.as_object()).map(_.to_array()),
-    content=
+    content=(
       #|Some([("key", String("value")), ("value", Number(100))])
-    ,
+    ),
   )
   inspect(
     json.value("obj").bind(_.as_object()).map(_.to_array()),
@@ -239,9 +239,9 @@ test "stringify" {
   }
   inspect(
     json.stringify(),
-    content=
+    content=(
       #|{"key":[1,true,null,[],{"key":"value","value":100}],"int":12345,"double":123.45,"null":null,"bool":false,"obj":{}}
-    ,
+    ),
   )
 
   // not mut once we have `try except else` syntax
@@ -270,9 +270,9 @@ let json : Json = {
 test "stringify escape 1 " {
   inspect(
     json.stringify(),
-    content=
+    content=(
       #|{"\b":"\"hello\"","\n":"\n\r\t\f","\\":"/","\u001f":"\u0001","actual":"a,\"b\",c","escape":"\u0000"}
-    ,
+    ),
   )
 }
 
@@ -280,9 +280,9 @@ test "stringify escape 1 " {
 test "stringify escape 2" {
   inspect(
     json.stringify(escape_slash=true),
-    content=
+    content=(
       #|{"\b":"\"hello\"","\n":"\n\r\t\f","\\":"\/","\u001f":"\u0001","actual":"a,\"b\",c","escape":"\u0000"}
-    ,
+    ),
   )
 }
 
@@ -290,7 +290,7 @@ test "stringify escape 2" {
 test "stringify escape 3" {
   inspect(
     json.stringify(escape_slash=false, indent=2),
-    content=
+    content=(
       #|{
       #|  "\b": "\"hello\"",
       #|  "\n": "\n\r\t\f",
@@ -299,7 +299,7 @@ test "stringify escape 3" {
       #|  "actual": "a,\"b\",c",
       #|  "escape": "\u0000"
       #|}
-    ,
+    ),
   )
 }
 
@@ -307,9 +307,9 @@ test "stringify escape 3" {
 test "stringify escape 4" {
   inspect(
     json.stringify(escape_slash=false),
-    content=
+    content=(
       #|{"\b":"\"hello\"","\n":"\n\r\t\f","\\":"/","\u001f":"\u0001","actual":"a,\"b\",c","escape":"\u0000"}
-    ,
+    ),
   )
 }
 
@@ -340,15 +340,15 @@ test "escape" {
   let s = "http://example.com/"
   inspect(
     Json::string(s).stringify(escape_slash=true),
-    content=
+    content=(
       #|"http:\/\/example.com\/"
-    ,
+    ),
   )
   inspect(
     Json::string(s).stringify(),
-    content=
+    content=(
       #|"http://example.com/"
-    ,
+    ),
   )
 }
 
@@ -410,13 +410,13 @@ test "stringify with indent" {
   }
   inspect(
     json.stringify(indent=0),
-    content=
+    content=(
       #|{"key":[1,true,null,[],{"key":"value","value":100}],"int":12345,"double":123.45,"null":null,"bool":false,"obj":{}}
-    ,
+    ),
   )
   inspect(
     json.stringify(indent=1),
-    content=
+    content=(
       #|{
       #| "key": [
       #|  1,
@@ -434,11 +434,11 @@ test "stringify with indent" {
       #| "bool": false,
       #| "obj": {}
       #|}
-    ,
+    ),
   )
   inspect(
     json.stringify(indent=2),
-    content=
+    content=(
       #|{
       #|  "key": [
       #|    1,
@@ -456,11 +456,11 @@ test "stringify with indent" {
       #|  "bool": false,
       #|  "obj": {}
       #|}
-    ,
+    ),
   )
   inspect(
     json.stringify(indent=4),
-    content=
+    content=(
       #|{
       #|    "key": [
       #|        1,
@@ -478,7 +478,7 @@ test "stringify with indent" {
       #|    "bool": false,
       #|    "obj": {}
       #|}
-    ,
+    ),
   )
 }
 

@@ -16,27 +16,27 @@
 test "String::escape" {
   inspect(
     "abc,def".escape(),
-    content=
+    content=(
       #|"abc,def"
-    ,
+    ),
   )
   inspect(
     "\n\t\\".escape(),
-    content=
+    content=(
       #|"\n\t\\"
-    ,
+    ),
   )
   inspect(
     "\"'".escape(),
-    content=
+    content=(
       #|"\"'"
-    ,
+    ),
   )
   inspect(
     "\u{00}\u{01}\u{20}\u{21}".escape(),
-    content=
+    content=(
       #|"\u{00}\u{01} !"
-    ,
+    ),
   )
 }
 

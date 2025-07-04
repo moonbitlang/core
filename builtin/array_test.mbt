@@ -184,12 +184,12 @@ test "array_rev_eachi" {
     ..write_string("\n"))
   inspect(
     buf,
-    content=
+    content=(
       #|0: 'c'
       #|1: 'b'
       #|2: 'a'
       #|
-    ,
+    ),
   )
 }
 
@@ -621,7 +621,7 @@ test "each with error callback 2" {
     })
   catch {
     Failure(_) => inspect(sum, content="1")
-  } else {
+  } noraise {
     _ => assert_true(false)
   }
 }
@@ -653,7 +653,7 @@ test "eachi with error callback 2" {
     })
   catch {
     Failure(_) => inspect(sum, content="1")
-  } else {
+  } noraise {
     _ => assert_true(false)
   }
 }
@@ -669,9 +669,9 @@ test "map with error callback" {
     })
   inspect(
     v,
-    content=
+    content=(
       #|Err(Failure("Error at 2"))
-    ,
+    ),
   )
 }
 
@@ -687,7 +687,7 @@ test "map with error callback 2" {
     })
   catch {
     Failure(_) => ()
-  } else {
+  } noraise {
     _ => assert_true(false)
   }
 }
@@ -703,9 +703,9 @@ test "mapi with error callback" {
     })
   inspect(
     v,
-    content=
+    content=(
       #|Err(Failure("Error at 2"))
-    ,
+    ),
   )
 }
 
@@ -721,7 +721,7 @@ test "mapi with error callback 2" {
     })
   catch {
     Failure(_) => ()
-  } else {
+  } noraise {
     _ => assert_true(false)
   }
 }
@@ -737,9 +737,9 @@ test "filter with error callback" {
     })
   inspect(
     v,
-    content=
+    content=(
       #|Err(Failure("Error at 2"))
-    ,
+    ),
   )
 }
 
@@ -755,7 +755,7 @@ test "filter with error callback 2" {
     })
   catch {
     Failure(_) => ()
-  } else {
+  } noraise {
     _ => assert_true(false)
   }
 }
@@ -771,9 +771,9 @@ test "map_inplace with error callback" {
     })
   inspect(
     v,
-    content=
+    content=(
       #|Err(Failure("Error at 2"))
-    ,
+    ),
   )
 }
 
@@ -789,7 +789,7 @@ test "map_inplace with error callback 2" {
     })
   catch {
     Failure(_) => ()
-  } else {
+  } noraise {
     _ => assert_true(false)
   }
 }
@@ -805,8 +805,8 @@ test "mapi_inplace with error callback" {
     })
   inspect(
     v,
-    content=
+    content=(
       #|Err(Failure("Error at 2"))
-    ,
+    ),
   )
 }

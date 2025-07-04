@@ -55,9 +55,9 @@ test "to_le_bytes" {
   let bytes = (0x12345678).to_le_bytes()
   inspect(
     bytes,
-    content=
+    content=(
       #|b"\x78\x56\x34\x12"
-    ,
+    ),
   )
 }
 
@@ -66,8 +66,8 @@ test "to_be_bytes" {
   let bytes = (0x12345678).to_be_bytes()
   inspect(
     bytes,
-    content=
+    content=(
       #|b"\x12\x34\x56\x78"
-    ,
+    ),
   )
 }

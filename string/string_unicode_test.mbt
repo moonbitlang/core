@@ -21,16 +21,16 @@ test {
   // TODO: the data type annotation is not needed
   inspect(
     data,
-    content=
+    content=(
       #|{val: "Hello, 世界\t\n!"}
-    ,
+    ),
   )
   let v = "\u{00AD}Hello, \u{2060}世界\t\n!\u{1D173}"
   inspect(
     repr(v),
-    content=
+    content=(
       #|"­Hello, ⁠世界\t\n!𝅳"
-    ,
+    ),
   )
   // FIXME:The output is not ideal, we would prefer
   // to see the Unicode code points, e.g.

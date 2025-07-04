@@ -23,14 +23,14 @@ test "feature pipe" {
   inspect(v, content="5")
   inspect(
     b,
-    content=
+    content=(
       #|b"\x68\x65\x6c\x6c\x6f"
-    ,
+    ),
   )
   inspect(
     u,
-    content=
+    content=(
       #|b"\x68\x65\x6c\x6c\x6f"
-    ,
+    ),
   )
 }

@@ -164,9 +164,9 @@ test "to_array" {
   let map = @hashmap.of([(1, "one"), (2, "two"), (3, "three")])
   inspect(
     map.to_array(),
-    content=
+    content=(
       #|[(2, "two"), (1, "one"), (3, "three")]
-    ,
+    ),
   )
 }
 
