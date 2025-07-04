@@ -1,19 +1,9 @@
 package "moonbitlang/core/rational"
 
 // Values
-fn abs(T) -> T
-
-fn ceil(T) -> Int64
-
-fn floor(T) -> Int64
-
 fn from_double(Double) -> T raise RationalError
 
-fn neg(T) -> T
-
 fn new(Int64, Int64) -> T?
-
-fn trunc(T) -> Int64
 
 // Types and methods
 pub(all) suberror RationalError String
@@ -23,14 +13,19 @@ impl ToJson for RationalError
 
 type T
 fn T::abs(Self) -> Self
+fnalias T::abs
 fn T::ceil(Self) -> Int64
+fnalias T::ceil
 fn T::floor(Self) -> Int64
+fnalias T::floor
 fn T::fract(Self) -> Self
 fn T::is_integer(Self) -> Bool
 fn T::neg(Self) -> Self
+fnalias T::neg
 fn T::reciprocal(Self) -> Self
 fn T::to_double(Self) -> Double
 fn T::trunc(Self) -> Int64
+fnalias T::trunc
 impl Add for T
 impl Compare for T
 impl Div for T

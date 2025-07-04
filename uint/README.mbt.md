@@ -29,18 +29,18 @@ test "uint byte conversion" {
   let be_bytes = num.to_be_bytes()
   inspect(
     be_bytes,
-    content=
+    content=(
       #|b"\x00\x00\x01\x02"
-    ,
+    ),
   )
 
   // Little-endian bytes (least significant byte first)
   let le_bytes = num.to_le_bytes()
   inspect(
     le_bytes,
-    content=
+    content=(
       #|b"\x02\x01\x00\x00"
-    ,
+    ),
   )
 }
 ```
@@ -68,15 +68,15 @@ test "uint methods" {
   inspect(num.to_int64(), content="1000")
   inspect(
     num.to_be_bytes(),
-    content=
+    content=(
       #|b"\x00\x00\x03\xe8"
-    ,
+    ),
   )
   inspect(
     num.to_le_bytes(),
-    content=
+    content=(
       #|b"\xe8\x03\x00\x00"
-    ,
+    ),
   )
 }
 ```

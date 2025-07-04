@@ -384,9 +384,9 @@ fn[T] overflow_error() -> T raise RationalError {
 /// let error = RationalError::RationalError("division by zero")
 /// inspect(
 ///   error,
-///   content=
+///   content=(
 ///     #|RationalError("division by zero")
-///   ,
+///   ),
 /// )
 /// ```
 ///

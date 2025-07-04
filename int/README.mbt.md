@@ -30,18 +30,18 @@ test "byte conversions" {
   let be_bytes = num.to_be_bytes()
   inspect(
     be_bytes.to_string(),
-    content=
+    content=(
       #|b"\x00\x00\x01\x02"
-    ,
+    ),
   )
 
   // Little-endian conversion (least significant byte first)
   let le_bytes = num.to_le_bytes()
   inspect(
     le_bytes.to_string(),
-    content=
+    content=(
       #|b"\x02\x01\x00\x00"
-    ,
+    ),
   )
 }
 ```
@@ -62,15 +62,15 @@ test "method syntax" {
   let le = n.to_le_bytes()
   inspect(
     be.to_string(),
-    content=
+    content=(
       #|b"\xff\xff\xff\xd6"
-    ,
+    ),
   )
   inspect(
     le.to_string(),
-    content=
+    content=(
       #|b"\xd6\xff\xff\xff"
-    ,
+    ),
   )
 }
 ```
