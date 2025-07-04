@@ -79,7 +79,7 @@ test "iter" {
   }
   inspect(
     buf,
-    content=
+    content=(
       #|0: "zero"
       #|1: "one"
       #|2: "two"
@@ -91,7 +91,7 @@ test "iter" {
       #|(3, "three")
       #|(8, "eight")
       #|
-    ,
+    ),
   )
 }
 

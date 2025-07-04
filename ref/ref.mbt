@@ -69,7 +69,7 @@ pub fn[T, R] protect(self : Ref[T], a : T, f : () -> R raise?) -> R raise? {
       self.val = old
       raise err
     }
-  } else {
+  } noraise {
     r => {
       self.val = old
       r

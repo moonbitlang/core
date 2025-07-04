@@ -85,9 +85,9 @@ test {
   let json = all_three.to_json()
   inspect(
     try? of_json(json),
-    content=
+    content=(
       #|Ok({ints: [1, 2, 3], floats: [1, 2, 3], strings: ["a", "b", "c"]})
-    ,
+    ),
   )
   // FIXME:
   // note try? `body_no_error` is confusing

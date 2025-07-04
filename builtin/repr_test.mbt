@@ -22,8 +22,8 @@ test "repr" {
   inspect(repr('a'), content="'a'")
   inspect(
     repr((1, "x", '\n', ['a'])),
-    content=
+    content=(
       #|(1, "x", '\n', ['a'])
-    ,
+    ),
   )
 }

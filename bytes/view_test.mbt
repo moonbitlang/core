@@ -105,93 +105,93 @@ test "negative index1" {
   let bv = bs[-1:]
   inspect(
     bv,
-    content=
+    content=(
       #|b"\x03"
-    ,
+    ),
   )
   let bv = bs[-2:]
   inspect(
     bv,
-    content=
+    content=(
       #|b"\x02\x03"
-    ,
+    ),
   )
   let bv = bs[-3:]
   inspect(
     bv,
-    content=
+    content=(
       #|b"\x01\x02\x03"
-    ,
+    ),
   )
   let bv = bs[:-1]
   inspect(
     bv,
-    content=
+    content=(
       #|b"\x01\x02"
-    ,
+    ),
   )
   let bv = bs[:-2]
   inspect(
     bv,
-    content=
+    content=(
       #|b"\x01"
-    ,
+    ),
   )
   let bv = bs[:-3]
   inspect(
     bv,
-    content=
+    content=(
       #|b""
-    ,
+    ),
   )
   let bv = bs[-3:-3]
   inspect(
     bv,
-    content=
+    content=(
       #|b""
-    ,
+    ),
   )
   let bv = bs[-3:-2]
   inspect(
     bv,
-    content=
+    content=(
       #|b"\x01"
-    ,
+    ),
   )
   let bv = bs[-3:-1]
   inspect(
     bv,
-    content=
+    content=(
       #|b"\x01\x02"
-    ,
+    ),
   )
   let bv = bs[-3:0]
   inspect(
     bv,
-    content=
+    content=(
       #|b""
-    ,
+    ),
   )
   let bv = bs[-3:1]
   inspect(
     bv,
-    content=
+    content=(
       #|b"\x01"
-    ,
+    ),
   )
   let bv = bs[-3:2]
   inspect(
     bv,
-    content=
+    content=(
       #|b"\x01\x02"
-    ,
+    ),
   )
   let bv = bs[-3:3]
   inspect(
     bv,
-    content=
+    content=(
       #|b"\x01\x02\x03"
-    ,
+    ),
   )
 }
 
@@ -201,93 +201,93 @@ test "negative index2" {
   let bv = bs[-1:]
   inspect(
     bv,
-    content=
+    content=(
       #|b"\x03"
-    ,
+    ),
   )
   let bv = bs[-2:]
   inspect(
     bv,
-    content=
+    content=(
       #|b"\x02\x03"
-    ,
+    ),
   )
   let bv = bs[-3:]
   inspect(
     bv,
-    content=
+    content=(
       #|b"\x01\x02\x03"
-    ,
+    ),
   )
   let bv = bs[:-1]
   inspect(
     bv,
-    content=
+    content=(
       #|b"\x01\x02"
-    ,
+    ),
   )
   let bv = bs[:-2]
   inspect(
     bv,
-    content=
+    content=(
       #|b"\x01"
-    ,
+    ),
   )
   let bv = bs[:-3]
   inspect(
     bv,
-    content=
+    content=(
       #|b""
-    ,
+    ),
   )
   let bv = bs[-3:-3]
   inspect(
     bv,
-    content=
+    content=(
       #|b""
-    ,
+    ),
   )
   let bv = bs[-3:-2]
   inspect(
     bv,
-    content=
+    content=(
       #|b"\x01"
-    ,
+    ),
   )
   let bv = bs[-3:-1]
   inspect(
     bv,
-    content=
+    content=(
       #|b"\x01\x02"
-    ,
+    ),
   )
   let bv = bs[-3:0]
   inspect(
     bv,
-    content=
+    content=(
       #|b""
-    ,
+    ),
   )
   let bv = bs[-3:1]
   inspect(
     bv,
-    content=
+    content=(
       #|b"\x01"
-    ,
+    ),
   )
   let bv = bs[-3:2]
   inspect(
     bv,
-    content=
+    content=(
       #|b"\x01\x02"
-    ,
+    ),
   )
   let bv = bs[-3:3]
   inspect(
     bv,
-    content=
+    content=(
       #|b"\x01\x02\x03"
-    ,
+    ),
   )
 }
 
@@ -493,24 +493,24 @@ test "View::to_bytes" {
   let view = bytes[1:4]
   inspect(
     view.to_bytes(),
-    content=
+    content=(
       #|b"\x62\x63\x61"
-    ,
+    ),
   )
   let bytes = b"abcabc"
   let view = bytes[:]
   inspect(
     view.to_bytes(),
-    content=
+    content=(
       #|b"\x61\x62\x63\x61\x62\x63"
-    ,
+    ),
   )
   let bytes = b"abcabc"
   let view = bytes[0:0]
   inspect(
     view.to_bytes(),
-    content=
+    content=(
       #|b""
-    ,
+    ),
   )
 }
