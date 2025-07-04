@@ -13,16 +13,29 @@
 // limitations under the License.
 
 ///|
-#visibility(change_to="readonly", "Use helper functions like `Json::object(...)` instead")
-pub(all) enum Json {
+pub enum Json {
   Null
   True
   False
-  Number(Double, repr~ : String?)
+  Number(Double, repr~ : String?) // 1.0000000000000000000e100 
   String(String)
   Array(Array[Json])
   Object(Map[String, Json])
-} derive(Eq)
+}
+
+///|
+pub impl Eq for Json with op_equal(a, b) {
+  match (a, b) {
+    (Null, Null) => true
+    (True, True) => true
+    (False, False) => true
+    (Number(a_num, ..), Number(b_num, ..)) => a_num == b_num
+    (String(a_str), String(b_str)) => a_str == b_str
+    (Array(a_arr), Array(b_arr)) => a_arr == b_arr
+    (Object(a_obj), Object(b_obj)) => a_obj == b_obj
+    _ => false
+  }
+}
 
 ///|
 /// Creates a JSON null value.
