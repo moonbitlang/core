@@ -45,9 +45,9 @@ test {
   map.remove("a")
   inspect(
     map,
-    content=
+    content=(
       #|{"b": 2, "c": 3}
-    ,
+    ),
   )
 }
 ```
