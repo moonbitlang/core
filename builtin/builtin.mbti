@@ -235,7 +235,7 @@ pub(all) enum IterResult {
 }
 impl Eq for IterResult
 
-pub(all) enum Json {
+pub enum Json {
   Null
   True
   False
