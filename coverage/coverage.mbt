@@ -197,11 +197,11 @@ test "log" {
   coverage_log(counters, buf)
   inspect(
     buf,
-    content=
+    content=(
       #|{ "foo/foo": [1, 0]
       #|, "foo/bar": [0, 1]
       #|}
-    ,
+    ),
   )
 }
 
@@ -225,22 +225,22 @@ test "reset" {
   coverage_log(counters, buf)
   inspect(
     buf,
-    content=
+    content=(
       #|{ "foo/foo": [1, 0]
       #|, "foo/bar": [0, 1]
       #|}
-    ,
+    ),
   )
   coverage_reset(counters)
   let buf = StringBuilder::new(size_hint=1024)
   coverage_log(counters, buf)
   inspect(
     buf,
-    content=
+    content=(
       #|{ "foo/foo": [0, 0]
       #|, "foo/bar": [0, 0]
       #|}
-    ,
+    ),
   )
 }
 

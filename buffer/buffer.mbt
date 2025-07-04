@@ -26,8 +26,11 @@
 ///   let buf = @buffer.new(size_hint=100)
 ///   buf.write_string("Tes")
 ///   buf.write_char('t')
-///   inspect(buf.contents(), content=
-///     #|b"\x54\x00\x65\x00\x73\x00\x74\x00"
+///   inspect(
+///     buf.contents(), 
+///     content=(
+///       #|b"\x54\x00\x65\x00\x73\x00\x74\x00"
+///     ),
 ///   )
 /// ```
 struct T {
@@ -111,9 +114,9 @@ pub fn is_empty(self : T) -> Bool {
 ///   buf.write_string("Test")
 ///   inspect(
 ///     buf.contents(),
-///     content=
+///     content=(
 ///       #|b"\x54\x00\x65\x00\x73\x00\x74\x00"
-///     ,
+///     ),
 ///   )
 /// ```
 pub fn contents(self : T) -> Bytes {
@@ -208,9 +211,9 @@ pub fn from_iter(iter : Iter[Byte]) -> T {
 ///   // 't' -> [0x74, 0x00]
 ///   inspect(
 ///     buf.contents(),
-///     content=
+///     content=(
 ///       #|b"\x54\x00\x65\x00\x73\x00\x74\x00"
-///     ,
+///     ),
 ///   )
 /// ```
 pub impl Logger for T with write_string(self, value) {
@@ -236,9 +239,9 @@ pub impl Logger for T with write_string(self, value) {
 ///   // Bytes are written in big-endian order
 ///   inspect(
 ///     buf.contents(),
-///     content=
+///     content=(
 ///       #|b"\xaa\xbb\xcc\xdd\x11\x22\x33\x44"
-///     ,
+///     ),
 ///   )
 /// ```
 pub fn write_uint64_be(self : T, value : UInt64) -> Unit {
@@ -268,9 +271,9 @@ pub fn write_uint64_be(self : T, value : UInt64) -> Unit {
 ///   buf.write_uint64_le(0x0123456789ABCDEF)
 ///   inspect(
 ///     buf.contents(),
-///     content=
+///     content=(
 ///       #|b"\xef\xcd\xab\x89\x67\x45\x23\x01"
-///     ,
+///     ),
 ///   )
 /// ```
 pub fn write_uint64_le(self : T, value : UInt64) -> Unit {
@@ -300,9 +303,9 @@ pub fn write_uint64_le(self : T, value : UInt64) -> Unit {
 ///   buf.write_int64_be(0x0102030405060708L)
 ///   inspect(
 ///     buf.contents(),
-///     content=
+///     content=(
 ///       #|b"\x01\x02\x03\x04\x05\x06\x07\x08"
-///     ,
+///     ),
 ///   )
 /// ```
 pub fn write_int64_be(self : T, value : Int64) -> Unit {
@@ -322,9 +325,12 @@ pub fn write_int64_be(self : T, value : Int64) -> Unit {
 /// ```moonbit
 ///   let buf = @buffer.new()
 ///   buf.write_int64_le(-1L)
-///   inspect(buf.contents(), content=
-///   #|b"\xff\xff\xff\xff\xff\xff\xff\xff"
-/// )
+///   inspect(
+///     buf.contents(), 
+///     content=(
+///       #|b"\xff\xff\xff\xff\xff\xff\xff\xff"
+///     ),
+///   )
 /// ```
 pub fn write_int64_le(self : T, value : Int64) -> Unit {
   self.write_uint64_le(value.reinterpret_as_uint64())
@@ -541,9 +547,9 @@ pub fn write_object(self : T, value : &Show) -> Unit {
 ///   buf.write_bytes(b"Test")
 ///   inspect(
 ///     buf.contents(),
-///     content=
+///     content=(
 ///       #|b"\x54\x65\x73\x74"
-///     ,
+///     ),
 ///   )
 /// ```
 pub fn write_bytes(self : T, value : Bytes) -> Unit {
@@ -569,9 +575,9 @@ pub fn write_bytes(self : T, value : Bytes) -> Unit {
 ///   buf.write_bytesview(view)
 ///   inspect(
 ///     buf.contents(),
-///     content=
+///     content=(
 ///       #|b"\x65\x73"
-///     ,
+///     ),
 ///   )
 /// ```
 pub fn write_bytesview(self : T, value : @bytes.View) -> Unit {
@@ -605,9 +611,9 @@ pub fn write_bytesview(self : T, value : @bytes.View) -> Unit {
 ///   buf.write_substring("Hello, World!", 0, 5)
 ///   inspect(
 ///     buf.contents(),
-///     content=
+///     content=(
 ///       #|b"\x48\x00\x65\x00\x6c\x00\x6c\x00\x6f\x00"
-///     ,
+///     ),
 ///   )
 /// ```
 pub impl Logger for T with write_substring(
@@ -648,9 +654,12 @@ pub fn write_stringview(self : T, value : @string.View) -> Unit {
 /// ```moonbit
 ///   let buf = @buffer.new()
 ///   buf.write_char('A')
-///   inspect(buf.contents(), content=
-///   #|b"\x41\x00"
-/// )
+///   inspect(
+///     buf.contents(), 
+///     content=(
+///       #|b"\x41\x00"
+///     ),
+///   )
 /// ```
 pub impl Logger for T with write_char(self : T, value : Char) -> Unit {
   self.grow_if_necessary(self.len + 4)
@@ -694,9 +703,12 @@ pub fn write_byte(self : T, value : Byte) -> Unit {
 ///   let buf = @buffer.new()
 ///   let bytes = b"Hello"
 ///   buf.write_iter(bytes.iter())
-///   inspect(buf.contents(), content=
-///   #|b"\x48\x65\x6c\x6c\x6f"
-/// )
+///   inspect(
+///     buf.contents(), 
+///     content=(
+///       #|b"\x48\x65\x6c\x6c\x6f"
+///     ),
+///   )
 /// ```
 pub fn write_iter(self : T, iter : Iter[Byte]) -> Unit {
   for byte in iter {

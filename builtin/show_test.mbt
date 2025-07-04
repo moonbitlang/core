@@ -74,15 +74,15 @@ test "Show for UInt16" {
 test "Show for Bytes" {
   inspect(
     Show::to_string(b"abcdefg"),
-    content=
+    content=(
       #|b"\x61\x62\x63\x64\x65\x66\x67"
-    ,
+    ),
   )
   inspect(
     Show::to_string(b"\x00\xff\x63"),
-    content=
+    content=(
       #|b"\x00\xff\x63"
-    ,
+    ),
   )
 }
 
@@ -90,15 +90,15 @@ test "Show for Bytes" {
 test "Show for BytesView" {
   inspect(
     b"abcdefg"[1:5].to_string(),
-    content=
+    content=(
       #|b"\x62\x63\x64\x65"
-    ,
+    ),
   )
   inspect(
     b"\x00\xff\x63"[:].to_string(),
-    content=
+    content=(
       #|b"\x00\xff\x63"
-    ,
+    ),
   )
 }
 
@@ -112,24 +112,24 @@ test "Show for String" {
 
   inspect(
     to_string_using_output("abcdefg中文字符"),
-    content=
+    content=(
       #|"abcdefg中文字符"
-    ,
+    ),
   )
   inspect(Show::to_string("abcdefg中文字符"), content="abcdefg中文字符")
   inspect(
     to_string_using_output("---\"---'---\\---\n---\t---\u{67}---"),
-    content=
+    content=(
       #|"---\"---'---\\---\n---\t---g---"
-    ,
+    ),
   )
   // should be identity
   inspect(
     Show::to_string("---\"---'---\\---\n---\t---\u{67}---"),
-    content=
+    content=(
       #|---"---'---\---
       #|---	---g---
-    ,
+    ),
   )
 }
 
@@ -142,15 +142,15 @@ test "Show for Result" {
 
   inspect(
     result_to_string(Ok("abc")),
-    content=
+    content=(
       #|Ok("abc")
-    ,
+    ),
   )
   inspect(
     result_to_string(Err("def")),
-    content=
+    content=(
       #|Err("def")
-    ,
+    ),
   )
 }
 
@@ -158,9 +158,9 @@ test "Show for Result" {
 test "Show for Ref" {
   inspect(
     { val: "abc" }.to_string(),
-    content=
+    content=(
       #|{val: "abc"}
-    ,
+    ),
   )
 }
 
@@ -168,9 +168,9 @@ test "Show for Ref" {
 test "Show for FixedArray" {
   inspect(
     (["a", "b", "c"] : FixedArray[_]).to_string(),
-    content=
+    content=(
       #|["a", "b", "c"]
-    ,
+    ),
   )
   inspect(([] : FixedArray[String]).to_string(), content="[]")
 }
@@ -179,9 +179,9 @@ test "Show for FixedArray" {
 test "Show for Array" {
   inspect(
     ["a", "b", "c"].to_string(),
-    content=
+    content=(
       #|["a", "b", "c"]
-    ,
+    ),
   )
   inspect(([] : Array[String]).to_string(), content="[]")
 }
@@ -191,9 +191,9 @@ test "Show for ArrayView" {
   let arr = ["a", "b", "c", "d"]
   inspect(
     arr[1:3].to_string(),
-    content=
+    content=(
       #|["b", "c"]
-    ,
+    ),
   )
   inspect(arr[2:2].to_string(), content="[]")
 }
@@ -204,17 +204,17 @@ test "Show for Char" {
   inspect(Show::to_string('字'), content="字")
   inspect(
     Show::to_string('\n'),
-    content=
+    content=(
       #|
       #|
-    ,
+    ),
   )
   inspect(Show::to_string('\t'), content="\t")
   inspect(
     Show::to_string('"'),
-    content=
+    content=(
       #|"
-    ,
+    ),
   )
   inspect(Show::to_string('\''), content="'")
   inspect(Show::to_string('\\'), content="\\")
@@ -222,17 +222,17 @@ test "Show for Char" {
   inspect('字'.to_string(), content="字")
   inspect(
     '\n'.to_string(),
-    content=
+    content=(
       #|
       #|
-    ,
+    ),
   )
   inspect('\t'.to_string(), content="\t")
   inspect(
     '"'.to_string(),
-    content=
+    content=(
       #|"
-    ,
+    ),
   )
   inspect('\''.to_string(), content="'")
   inspect('\\'.to_string(), content="\\")
@@ -258,9 +258,9 @@ test "Show for Failure" {
   let f = Failure("test error message")
   inspect(
     f.to_string(),
-    content=
+    content=(
       #|Failure("test error message")
-    ,
+    ),
   )
 }
 

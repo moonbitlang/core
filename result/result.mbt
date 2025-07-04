@@ -365,16 +365,16 @@ test "show" {
   let ok : Result[_, String] = Ok("hello")
   inspect(
     ok,
-    content=
+    content=(
       #|Ok("hello")
-    ,
+    ),
   )
   let err : Result[String, _] = Err("world")
   inspect(
     err,
-    content=
+    content=(
       #|Err("world")
-    ,
+    ),
   )
 }
 
@@ -395,9 +395,9 @@ test "unwrap exn" {
     Failure(msg) => Err(msg)
   })
   |> inspect(
-    content=
+    content=(
       #|Err("This is serious")
-    ,
+    ),
   )
 }
 

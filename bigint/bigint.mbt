@@ -31,9 +31,12 @@
 /// ```moonbit
 ///   let big = 12345678901234567890N
 ///   let json = big.to_json()
-///   inspect(json, content=
-///   #|String("12345678901234567890")
-/// )
+///   inspect(
+///     json, 
+///     content=(
+///       #|String("12345678901234567890")
+///     ),
+///   )
 /// ```
 ///
 pub impl ToJson for BigInt with to_json(self : BigInt) -> Json {

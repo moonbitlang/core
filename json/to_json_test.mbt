@@ -32,21 +32,21 @@ test "UInt::to_json" {
 test "Int64::to_json" {
   inspect(
     42L.to_json(),
-    content=
+    content=(
       #|String("42")
-    ,
+    ),
   )
   inspect(
     (-9223372036854775808L).to_json(),
-    content=
+    content=(
       #|String("-9223372036854775808")
-    ,
+    ),
   )
   inspect(
     9223372036854775807L.to_json(),
-    content=
+    content=(
       #|String("9223372036854775807")
-    ,
+    ),
   )
 }
 
@@ -54,15 +54,15 @@ test "Int64::to_json" {
 test "UInt64::to_json" {
   inspect(
     42UL.to_json(),
-    content=
+    content=(
       #|String("42")
-    ,
+    ),
   )
   inspect(
     18446744073709551615UL.to_json(),
-    content=
+    content=(
       #|String("18446744073709551615")
-    ,
+    ),
   )
 }
 
@@ -83,39 +83,39 @@ test "Float::to_json" {
 test "String::to_json" {
   inspect(
     "abc".to_json(),
-    content=
+    content=(
       #|String("abc")
-    ,
+    ),
   )
   inspect(
     "a,\"b\",c".to_json(),
-    content=
+    content=(
       #|String("a,\"b\",c")
-    ,
+    ),
   )
   inspect(
     "\"".to_json(),
-    content=
+    content=(
       #|String("\"")
-    ,
+    ),
   )
   inspect(
     "\u{00}".to_json(),
-    content=
+    content=(
       #|String("\u{00}")
-    ,
+    ),
   )
   inspect(
     "\n\r\b\t\\".to_json(),
-    content=
+    content=(
       #|String("\n\r\b\t\\")
-    ,
+    ),
   )
   inspect(
     "\u{0c}\u{0d}\u{0f}".to_json(),
-    content=
+    content=(
       #|String("\u{0c}\r\u{0f}")
-    ,
+    ),
   )
 }
 
@@ -123,15 +123,15 @@ test "String::to_json" {
 test "Char::to_json" {
   inspect(
     'a'.to_json(),
-    content=
+    content=(
       #|String("a")
-    ,
+    ),
   )
   inspect(
     '字'.to_json(),
-    content=
+    content=(
       #|String("字")
-    ,
+    ),
   )
 }
 
@@ -151,9 +151,9 @@ test "Array::to_json" {
   )
   inspect(
     [[], ["1"], ["1", "2"]].to_json(),
-    content=
+    content=(
       #|Array([Array([]), Array([String("1")]), Array([String("1"), String("2")])])
-    ,
+    ),
   )
 }
 
@@ -165,9 +165,9 @@ test "FixedArray::to_json" {
   )
   inspect(
     [[], ["1"], ["1", "2"]].to_json(),
-    content=
+    content=(
       #|Array([Array([]), Array([String("1")]), Array([String("1"), String("2")])])
-    ,
+    ),
   )
 }
 
@@ -175,9 +175,9 @@ test "FixedArray::to_json" {
 test "Map::to_json" {
   inspect(
     { "x": [1], "y": [2] }.to_json(),
-    content=
+    content=(
       #|Object({"x": Array([Number(1)]), "y": Array([Number(2)])})
-    ,
+    ),
   )
 }
 
@@ -207,9 +207,9 @@ test "optional field" {
   ]
   inspect(
     opt.to_json().stringify(),
-    content=
+    content=(
       #|[{"x":42,"t":[42]},{},{"t":null}]
-    ,
+    ),
   )
 }
 

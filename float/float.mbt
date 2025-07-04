@@ -218,9 +218,12 @@ pub impl Hash for Float with hash_combine(self, hasher) {
 ///
 /// ```moonbit
 ///   let x : Float = 1.0
-///   inspect(x.to_be_bytes(), content=
-///   #|b"\x3f\x80\x00\x00"
-/// )
+///   inspect(
+///     x.to_be_bytes(), 
+///     content=(
+///       #|b"\x3f\x80\x00\x00"
+///     ),
+///   )
 /// ```
 pub fn to_be_bytes(self : Float) -> Bytes {
   self.reinterpret_as_uint().to_be_bytes()

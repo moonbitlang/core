@@ -146,14 +146,14 @@ test "Float::to_be_bytes with various values" {
 test "to_le_bytes for zero" {
   inspect(
     (0.0 : Float).to_le_bytes(),
-    content=
+    content=(
       #|b"\x00\x00\x00\x00"
-    ,
+    ),
   )
   inspect(
     (-0.0 : Float).to_le_bytes(),
-    content=
+    content=(
       #|b"\x00\x00\x00\x80"
-    ,
+    ),
   )
 }

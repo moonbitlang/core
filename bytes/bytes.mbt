@@ -26,8 +26,11 @@
 /// ```moonbit
 ///   let arr = [b'h', b'i']
 ///   let bytes = @bytes.from_array(arr)
-///   inspect(bytes, content=
-///     #|b"\x68\x69"
+///   inspect(
+///     bytes, 
+///     content=(
+///       #|b"\x68\x69"
+///     ),
 ///   )
 /// ```
 pub fn Bytes::from_array(arr : Array[Byte]) -> Bytes {
@@ -59,8 +62,11 @@ pub fn from_array(arr : Array[Byte]) -> Bytes {
 /// ```moonbit
 ///   let arr : FixedArray[Byte] = [b'h', b'e', b'l', b'l', b'o']
 ///   let bytes = @bytes.from_fixedarray(arr, len=3)
-///   inspect(bytes, content=
-///     #|b"\x68\x65\x6c"
+///   inspect(
+///     bytes, 
+///     content=(
+///       #|b"\x68\x65\x6c"
+///     ),
 ///   )
 /// ```
 pub fn Bytes::from_fixedarray(arr : FixedArray[Byte], len? : Int) -> Bytes {
@@ -126,8 +132,11 @@ pub fn to_fixedarray(self : Bytes, len? : Int) -> FixedArray[Byte] {
 /// ```moonbit
 ///   let iter = Iter::singleton(b'h')
 ///   let bytes = @bytes.from_iter(iter)
-///   inspect(bytes, content=
-///     #|b"\x68"
+///   inspect(
+///     bytes, 
+///     content=(
+///       #|b"\x68"
+///     ),
 ///   )
 /// ```
 pub fn Bytes::from_iter(iter : Iter[Byte]) -> Bytes {
@@ -155,8 +164,11 @@ pub fn from_iter(iter : Iter[Byte]) -> Bytes {
 /// ```moonbit
 ///   let arr : FixedArray[Byte] = [b'h', b'e', b'l', b'l', b'o']
 ///   let bytes = @bytes.of(arr)
-///   inspect(bytes, content=
-///     #|b"\x68\x65\x6c\x6c\x6f"
+///   inspect(
+///     bytes, 
+///     content=(
+///       #|b"\x68\x65\x6c\x6c\x6f"
+///     ),
 ///   )
 /// ```
 /// TODO: marked as intrinsic, inline if it is constant

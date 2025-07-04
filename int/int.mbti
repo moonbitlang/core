@@ -1,14 +1,13 @@
 package "moonbitlang/core/int"
 
 // Values
-fn abs(Int) -> Int
-
 let max_value : Int
 
 let min_value : Int
 
 // Types and methods
 fn Int::abs(Int) -> Int
+fnalias Int::abs
 fn Int::to_be_bytes(Int) -> Bytes
 fn Int::to_le_bytes(Int) -> Bytes
 
