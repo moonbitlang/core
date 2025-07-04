@@ -32,8 +32,6 @@ fn[A] singleton(A) -> T[A]
 
 fn[A, S] unfold((S) -> (A, S)? raise?, init~ : S) -> T[A] raise?
 
-fn[A, B] zip(T[A], T[B]) -> T[(A, B)]
-
 // Types and methods
 pub enum T[A] {
   Empty
@@ -100,6 +98,7 @@ fn[A] T::unsafe_nth(Self[A], Int) -> A
 fn[A] T::unsafe_tail(Self[A]) -> Self[A]
 fn[A, B] T::unzip(Self[(A, B)]) -> (Self[A], Self[B])
 fn[A, B] T::zip(Self[A], Self[B]) -> Self[(A, B)]
+fnalias T::zip
 impl[A] Add for T[A]
 impl[X] Default for T[X]
 impl[A : Eq] Eq for T[A]

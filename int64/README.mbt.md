@@ -34,15 +34,15 @@ test "binary conversion" {
   // Convert to String for inspection
   inspect(
     be_bytes.to_string(),
-    content=
+    content=(
       #|b"\x00\x00\x00\x00\x00\x00\x01\x02"
-    ,
+    ),
   )
   inspect(
     le_bytes.to_string(),
-    content=
+    content=(
       #|b"\x02\x01\x00\x00\x00\x00\x00\x00"
-    ,
+    ),
   )
 
   // We can verify they represent the same number but in different byte orders
@@ -65,9 +65,9 @@ test "method style" {
   // Binary conversions as methods
   inspect(
     x.to_be_bytes(),
-    content=
+    content=(
       #|b"\xff\xff\xff\xff\xff\xff\xff\xd6"
-    ,
+    ),
   )
 }
 ```

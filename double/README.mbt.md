@@ -80,15 +80,15 @@ test "binary representation" {
   // Different byte orders should produce different results
   inspect(
     num.to_be_bytes(),
-    content=
+    content=(
       #|b"\x3f\xf0\x00\x00\x00\x00\x00\x00"
-    ,
+    ),
   )
   inspect(
     num.to_le_bytes(),
-    content=
+    content=(
       #|b"\x00\x00\x00\x00\x00\x00\xf0\x3f"
-    ,
+    ),
   )
 }
 ```
