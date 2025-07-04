@@ -55,7 +55,7 @@ priv enum Token {
   Null
   True
   False
-  Number(Double)
+  Number(Double, String?)
   String(String)
   LBrace
   RBrace
