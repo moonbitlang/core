@@ -65,16 +65,16 @@ test "FixedArray::last" {
   inspect(FixedArray::last([1, 2, 3]), content="Some(3)")
   inspect(
     FixedArray::last(["a", "b", "c"]),
-    content=
+    content=(
       #|Some("c")
-    ,
+    ),
   )
   inspect(FixedArray::last([1]), content="Some(1)")
   inspect(
     FixedArray::last(["single"]),
-    content=
+    content=(
       #|Some("single")
-    ,
+    ),
   )
 }
 

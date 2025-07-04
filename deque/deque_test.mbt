@@ -88,14 +88,14 @@ test "iter" {
   assert_eq(i, dv.length())
   inspect(
     buf,
-    content=
+    content=(
       #|1
       #|2
       #|3
       #|4
       #|5
       #|
-    ,
+    ),
   )
   inspect(
     iter.take(4).filter(x => x % 2 == 0).fold((a, x) => a + x, init=0),
@@ -519,15 +519,15 @@ test "deque push_front when empty" {
   let d = @deque.of(["a", "b"])
   inspect(
     d.pop_back(),
-    content=
+    content=(
       #|Some("b")
-    ,
+    ),
   )
   inspect(
     d.pop_back(),
-    content=
+    content=(
       #|Some("a")
-    ,
+    ),
   )
   d.push_front("a")
   inspect(d, content="@deque.of([\"a\"])")

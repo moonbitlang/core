@@ -27,16 +27,16 @@ test {
   let ej = e.to_json()
   inspect(
     ej.stringify(),
-    content=
+    content=(
       #|{"$tag":"Add","0":{"$tag":"Val","0":"x"},"1":{"$tag":"Val","0":"y"}}
-    ,
+    ),
   )
   let e0 : Expr = @json.from_json(ej)
   inspect(
     e0,
-    content=
+    content=(
       #|Add(Val("x"), Val("y"))
-    ,
+    ),
   )
   assert_eq(e0, e)
 }

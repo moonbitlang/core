@@ -746,20 +746,20 @@ test "Show for Tree" {
   inspect((Empty : Tree[Int]), content="Empty")
   inspect(
     Node([Leaf([4, 2])], Some([2])),
-    content=
+    content=(
       #|Node(
       #|  Leaf(4, 2)
       #|)
       #|
-    ,
+    ),
   )
   inspect(
     Node([Empty, Leaf([42])], Some([0, 1])),
-    content=
+    content=(
       #|Node(
       #|  Empty  Leaf(42)
       #|)
       #|
-    ,
+    ),
   )
 }

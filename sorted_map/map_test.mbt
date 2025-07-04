@@ -41,21 +41,21 @@ test "get" {
   let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
   inspect(
     map.get(1),
-    content=
+    content=(
       #|Some("a")
-    ,
+    ),
   )
   inspect(
     map.get(2),
-    content=
+    content=(
       #|Some("b")
-    ,
+    ),
   )
   inspect(
     map.get(3),
-    content=
+    content=(
       #|Some("c")
-    ,
+    ),
   )
   inspect(map.get(4), content="None")
 }
@@ -74,21 +74,21 @@ test "op_get" {
   let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
   inspect(
     map.get(1),
-    content=
+    content=(
       #|Some("a")
-    ,
+    ),
   )
   inspect(
     map.get(2),
-    content=
+    content=(
       #|Some("b")
-    ,
+    ),
   )
   inspect(
     map.get(3),
-    content=
+    content=(
       #|Some("c")
-    ,
+    ),
   )
   inspect(map.get(4), content="None")
 }
@@ -144,9 +144,9 @@ test "values" {
   let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
   inspect(
     map.values(),
-    content=
+    content=(
       #|["a", "b", "c"]
-    ,
+    ),
   )
 }
 
@@ -155,9 +155,9 @@ test "to_array" {
   let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
   inspect(
     map.to_array(),
-    content=
+    content=(
       #|[(1, "a"), (2, "b"), (3, "c")]
-    ,
+    ),
   )
 }
 
@@ -166,15 +166,15 @@ test "iter" {
   let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
   inspect(
     map.iter().collect(),
-    content=
+    content=(
       #|[(1, "a"), (2, "b"), (3, "c")]
-    ,
+    ),
   )
   inspect(
     map.iter().take(2).collect(),
-    content=
+    content=(
       #|[(1, "a"), (2, "b")]
-    ,
+    ),
   )
 }
 

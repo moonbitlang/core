@@ -29,9 +29,9 @@ test {
   let h : TestX = @json.from_json(j)
   inspect(
     (j, h),
-    content=
+    content=(
       #|(Object({"x": Number(3), "y": Number(4)}), {"x": 3, "y": 4})
-    ,
+    ),
   )
 }
 
@@ -41,9 +41,9 @@ test {
   let v : Result[Array[Int], _] = try? @json.from_json(u)
   inspect(
     v,
-    content=
+    content=(
       #|Err(JsonDecodeError(($[1], "Int::from_json: expected number")))
-    ,
+    ),
   )
 }
 
@@ -56,9 +56,9 @@ test {
   let v : Result[Map[String, Map[String, Double]], _] = try? @json.from_json(u)
   inspect(
     v,
-    content=
+    content=(
       #|Err(JsonDecodeError(($.y.yy, "Double::from_json: expected number")))
-    ,
+    ),
   )
 }
 
@@ -282,9 +282,9 @@ test "tuple failure" {
   let v : Result[(Int, Int, Int), _] = try? @json.from_json(u.to_json())
   inspect(
     v.unwrap_err(),
-    content=
+    content=(
       #|JsonDecodeError(($, "expected tuple of size 3"))
-    ,
+    ),
   )
   let u = ((1, 2), (3, 4))
   let v : Result[((Int, Int), Int), _] = try? @json.from_json(
@@ -292,9 +292,9 @@ test "tuple failure" {
     )
   inspect(
     v.unwrap_err(),
-    content=
+    content=(
       #|JsonDecodeError(($[1], "Int::from_json: expected number"))
-    ,
+    ),
   )
 }
 
@@ -307,9 +307,9 @@ test "fixedarray" {
   let v : FixedArray[String] = @json.from_json(u.to_json())
   inspect(
     v,
-    content=
+    content=(
       #|["123", "456"]
-    ,
+    ),
   )
   let u = ([(), ()] : FixedArray[Unit])
   let v : FixedArray[Unit] = @json.from_json(u.to_json())
@@ -380,17 +380,17 @@ test "jsonvalue" {
   let v : Json = @json.from_json(u)
   inspect(
     v,
-    content=
+    content=(
       #|Array([Number(1), String("str")])
-    ,
+    ),
   )
   let u = Json::object({ "x": Json::number(1) })
   let v : Json = @json.from_json(u)
   inspect(
     v,
-    content=
+    content=(
       #|Object({"x": Number(1)})
-    ,
+    ),
   )
 }
 
@@ -462,9 +462,9 @@ test "unicode" {
   let u = "\u{1F600}".to_json()
   inspect(
     u,
-    content=
+    content=(
       #|String("😀")
-    ,
+    ),
   )
   let v : Char = @json.from_json(u)
   inspect(v, content="\u{1F600}")
@@ -477,9 +477,9 @@ test "unicode" {
   let v : Result[Char, _] = try? @json.from_json(u)
   inspect(
     v,
-    content=
+    content=(
       #|Err(JsonDecodeError(($, "Char::from_json: invalid surrogate pair")))
-    ,
+    ),
   )
 }
 
@@ -488,9 +488,9 @@ test "char to/from json roundtrip" {
   let u = 'a'.to_json()
   inspect(
     u,
-    content=
+    content=(
       #|String("a")
-    ,
+    ),
   )
   let v : Char = @json.from_json(u)
   inspect(v, content="a")
@@ -499,9 +499,9 @@ test "char to/from json roundtrip" {
   let u = '😀'.to_json()
   inspect(
     u,
-    content=
+    content=(
       #|String("😀")
-    ,
+    ),
   )
   let v : Char = @json.from_json(u)
   inspect(v, content="😀")
@@ -510,9 +510,9 @@ test "char to/from json roundtrip" {
   let u = '中'.to_json()
   inspect(
     u,
-    content=
+    content=(
       #|String("中")
-    ,
+    ),
   )
   let v : Char = @json.from_json(u)
   inspect(v, content="中")
@@ -637,9 +637,9 @@ test "BigInt from_json error handling" {
   let result : Result[BigInt, _] = try? @json.from_json(json_number)
   inspect(
     result,
-    content=
+    content=(
       #|Err(JsonDecodeError(($, "BigInt::from_json: expected number in string representation")))
-    ,
+    ),
   )
 }
 

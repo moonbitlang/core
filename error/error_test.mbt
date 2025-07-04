@@ -27,9 +27,9 @@ test "show error" {
 
   inspect(
     try? f(true),
-    content=
+    content=(
       #|Ok("ok")
-    ,
+    ),
   )
   inspect(
     try? f(false),
@@ -63,7 +63,7 @@ fn[A, E : Error] protect(
       }
       raise e
     }
-  } else {
+  } noraise {
     x => {
       finalize() catch {
         _ => ()
@@ -85,7 +85,7 @@ fn[A] protect2(finalize~ : () -> Unit raise?, work : () -> A raise) -> A raise {
       finalize()
       raise e
     }
-  } else {
+  } noraise {
     x => {
       finalize()
       x
@@ -102,9 +102,9 @@ test "protect" {
     })
   inspect(
     x,
-    content=
+    content=(
       #|Err(Failure("error"))
-    ,
+    ),
   )
 }
 
@@ -117,9 +117,9 @@ test "protect & finally raise error" {
     })
   inspect(
     x,
-    content=
+    content=(
       #|Err(Failure("error"))
-    ,
+    ),
   )
 }
 
@@ -132,9 +132,9 @@ test "protect2" {
     })
   inspect(
     x,
-    content=
+    content=(
       #|Err(Failure("error"))
-    ,
+    ),
   )
 }
 
@@ -147,9 +147,9 @@ test "protect2 & finally raise error" {
     })
   inspect(
     x,
-    content=
+    content=(
       #|Err(Failure("finally error"))
-    ,
+    ),
   )
 }
 
@@ -174,14 +174,14 @@ test "error to json" {
 
   inspect(
     j(ErrWithToJson(42)),
-    content=
+    content=(
       #|Object({"$tag": String("ErrWithToJson"), "0": Number(42)})
-    ,
+    ),
   )
   inspect(
     j(ErrWithoutToJson(42)),
-    content=
+    content=(
       #|String("moonbitlang/core/error_blackbox_test.ErrWithoutToJson.ErrWithoutToJson")
-    ,
+    ),
   )
 }
