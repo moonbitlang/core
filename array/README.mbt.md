@@ -74,9 +74,9 @@ test "sorting" {
   sorted3.sort_by_key(p => p.0)
   inspect(
     sorted3,
-    content=
+    content=(
       #|[(1, "a"), (2, "b"), (3, "c")]
-    ,
+    ),
   )
 }
 ```
