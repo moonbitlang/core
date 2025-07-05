@@ -62,5 +62,5 @@ fn[K : Show, V : Show] debug_tree(self : T[K, V]) -> String {
 
 ///|
 pub impl[K : Show, V : Show] Show for T[K, V] with output(self, logger) {
-  logger.write_iter(self.iter(), prefix="@sorted_map.of([", suffix="])")
+  logger.write_iter(self.iter(), prefix="@sorted_map.from_array([", suffix="])")
 }
