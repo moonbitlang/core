@@ -709,12 +709,19 @@ pub fn[K : Eq + Hash, V] of(arr : FixedArray[(K, V)]) -> T[K, V] {
 }
 
 ///|
-pub impl[K : Eq + Hash, V : Eq] Eq for T[K, V] with op_equal(self, other) {
-  guard self.size() == other.size() else { return false }
-  for kv in self {
-    guard other.get(kv.0) is Some(v) && v == kv.1 else { return false }
+impl[K : Eq, V : Eq] Eq for Node[K, V] with op_equal(self, other) {
+  match (self, other) {
+    (Flat(key1, value1, path1), Flat(key2, value2, path2)) =>
+      path1 == path2 && key1 == key2 && value1 == value2
+    (Branch(children1), Branch(children2)) => children1 == children2
+    (Leaf(key1, value1, bucket1), Leaf(key2, value2, bucket2)) => {
+      guard bucket1.length() == bucket2.length() else { return false }
+      let kvs1 = bucket1.add((key1, value1))
+      let kvs2 = bucket2.add((key2, value2))
+      kvs1.all(kv => kvs2.lookup(kv.0) is Some(v) && kv.1 == v)
+    }
+    _ => false
   }
-  true
 }
 
 ///|

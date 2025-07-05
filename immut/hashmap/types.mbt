@@ -25,4 +25,4 @@ priv enum Node[K, V] {
 }
 
 ///|
-type T[K, V] Node[K, V]?
+type T[K, V] Node[K, V]? derive(Eq)

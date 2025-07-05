@@ -44,7 +44,7 @@ fn[K, V] T::to_array(Self[K, V]) -> Array[(K, V)]
 fn[K : Eq, V] T::union(Self[K, V], Self[K, V]) -> Self[K, V]
 fn[K : Eq, V] T::union_with(Self[K, V], Self[K, V], (K, V, V) -> V raise?) -> Self[K, V] raise?
 fn[K, V] T::values(Self[K, V]) -> Iter[V]
-impl[K : Eq + Hash, V : Eq] Eq for T[K, V]
+impl[K : Eq, V : Eq] Eq for T[K, V]
 impl[K : Hash, V : Hash] Hash for T[K, V]
 impl[K : Show, V : Show] Show for T[K, V]
 impl[K : Eq + Hash + @quickcheck.Arbitrary, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[K, V]
