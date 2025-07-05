@@ -17,8 +17,10 @@ typealias @path.Path
 
 ///|
 /// An immutable hash-map data structure
-enum T[K, V] {
-  Empty
+priv enum Node[K, V] {
   Leaf(K, V, @list.T[(K, V)])
-  Branch(@sparse_array.SparseArray[T[K, V]])
+  Branch(@sparse_array.SparseArray[Node[K, V]])
 }
+
+///|
+type T[K, V] Node[K, V]?
