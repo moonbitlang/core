@@ -29,13 +29,13 @@
 
 ///|
 pub fn[K, V] new() -> T[K, V] {
-  Empty
+  None
 }
 
 ///|
 /// Create a map with a single key-value pair.
 pub fn[K : Hash, V] singleton(key : K, value : V) -> T[K, V] {
-  make_leaf(key, value, @path.of(key))
+  Some(make_leaf(key, value, @path.of(key)))
 }
 
 ///|
@@ -55,8 +55,8 @@ pub fn[K : Eq + Hash, V] find(self : T[K, V], key : K) -> V? {
 ///|
 /// Lookup a key from a hash map
 pub fn[K : Eq + Hash, V] get(self : T[K, V], key : K) -> V? {
-  loop (self, @path.of(key)) {
-    (Empty, _) => None
+  guard self.inner() is Some(node) else { return None }
+  loop (node, @path.of(key)) {
     (Leaf(key1, value1, bucket), _) =>
       if key == key1 {
         Some(value1)
@@ -80,7 +80,7 @@ pub fn[K : Eq + Hash, V] op_get(self : T[K, V], key : K) -> V? {
 }
 
 ///|
-fn[K, V] make_leaf(key : K, value : V, path : Path) -> T[K, V] {
+fn[K, V] make_leaf(key : K, value : V, path : Path) -> Node[K, V] {
   // make sure leaf nodes always appear at the bottom of the tree
   if path.is_last() {
     Branch(@sparse_array.singleton(path.idx(), Leaf(key, value, @list.empty())))
@@ -92,13 +92,12 @@ fn[K, V] make_leaf(key : K, value : V, path : Path) -> T[K, V] {
 
 ///|
 fn[K : Eq, V] add_with_path(
-  self : T[K, V],
+  self : Node[K, V],
   key : K,
   value : V,
   path : Path
-) -> T[K, V] {
+) -> Node[K, V] {
   match self {
-    Empty => make_leaf(key, value, path)
     Leaf(key1, value1, bucket) =>
       if key == key1 {
         Leaf(key, value, bucket)
@@ -127,31 +126,34 @@ fn[K : Eq, V] add_with_path(
 
 ///|
 /// Filter values that satisfy the predicate
-pub fn[K : Eq + Hash, V] filter(
+pub fn[K, V] filter(
   self : T[K, V],
   pred : (V) -> Bool raise?
 ) -> T[K, V] raise? {
-  match self {
-    Empty => Empty
-    Leaf(key1, value1, bucket) => {
-      let new_bucket = bucket.filter(kv => pred(kv.1))
-      if pred(value1) {
-        Leaf(key1, value1, new_bucket)
-      } else {
-        match new_bucket {
-          Empty => Empty
-          More((k1, v1), tail~) => Leaf(k1, v1, tail)
+  fn go(node) raise? {
+    match node {
+      Leaf(key1, value1, bucket) => {
+        let new_bucket = bucket.filter(kv => pred(kv.1))
+        if pred(value1) {
+          Some(Leaf(key1, value1, new_bucket))
+        } else {
+          match new_bucket {
+            Empty => None
+            More((k1, v1), tail~) => Some(Leaf(k1, v1, tail))
+          }
         }
       }
+      Branch(children) =>
+        match children.filter(go) {
+          None => None
+          Some(new_children) => Some(Branch(new_children))
+        }
     }
-    Branch(children) => {
-      let mut result = Empty
-      children.each(child => child
-        .filter(pred)
-        .iter()
-        .each(kv => result = result.add(kv.0, kv.1)))
-      result
-    }
+  }
+
+  match self.inner() {
+    None => None
+    Some(node) => go(node)
   }
 }
 
@@ -175,11 +177,11 @@ pub fn[K, V, A] fold_with_key(
   init~ : A,
   f : (A, K, V) -> A raise?
 ) -> A raise? {
-  loop (@list.singleton((self, 0)), init) {
+  guard self.inner() is Some(node) else { return init }
+  loop (@list.singleton((node, 0)), init) {
     (Empty, acc) => acc
     (More((node, index), tail~), acc) =>
       match node {
-        Empty => continue (tail, acc)
         Leaf(k, v, bucket) =>
           continue (
               tail,
@@ -198,36 +200,28 @@ pub fn[K, V, A] fold_with_key(
 
 ///|
 /// Maps over the values in the map
-pub fn[K : Eq + Hash, V, A] map(
-  self : T[K, V],
-  f : (V) -> A raise?
-) -> T[K, A] raise? {
+pub fn[K, V, A] map(self : T[K, V], f : (V) -> A raise?) -> T[K, A] raise? {
   self.map_with_key((_k, v) => f(v))
 }
 
 ///|
 /// Maps over the key-value pairs in the map
-pub fn[K : Eq + Hash, V, A] map_with_key(
+pub fn[K, V, A] map_with_key(
   self : T[K, V],
   f : (K, V) -> A raise?
 ) -> T[K, A] raise? {
-  fn go(m : T[K, V]) -> T[K, A] raise? {
+  fn go(m : Node[K, V]) -> Node[K, A] raise? {
     match m {
-      Empty => Empty
       Leaf(k, v, bucket) =>
         Leaf(k, f(k, v), bucket.map(kv => (kv.0, f(kv.0, kv.1))))
-      Branch(children) => {
-        let result = []
-        children.each(child => child
-          .map_with_key(f)
-          .iter()
-          .each(kv => result.push(kv)))
-        from_array(result)
-      }
+      Branch(children) => Branch(children.map(go))
     }
   }
 
-  go(self)
+  match self.inner() {
+    None => None
+    Some(node) => Some(go(node))
+  }
 }
 
 ///|
@@ -235,39 +229,50 @@ pub fn[K : Eq + Hash, V, A] map_with_key(
 ///
 /// If a pair with the same key already exists, the old one is replaced
 pub fn[K : Eq + Hash, V] add(self : T[K, V], key : K, value : V) -> T[K, V] {
-  self.add_with_path(key, value, @path.of(key))
+  match self.inner() {
+    None => Some(make_leaf(key, value, @path.of(key)))
+    Some(node) => Some(node.add_with_path(key, value, @path.of(key)))
+  }
 }
 
 ///|
 /// Remove an element from a map
 pub fn[K : Eq + Hash, V] remove(self : T[K, V], key : K) -> T[K, V] {
-  self.remove_with_path(key, @path.of(key))
+  match self.inner() {
+    None => None
+    Some(node) => node.remove_with_path(key, @path.of(key))
+  }
 }
 
 ///|
-fn[K : Eq, V] remove_with_path(self : T[K, V], key : K, path : Path) -> T[K, V] {
+fn[K : Eq, V] remove_with_path(
+  self : Node[K, V],
+  key : K,
+  path : Path
+) -> Node[K, V]? {
   match self {
-    Empty => self
     Leaf(key1, value1, bucket) =>
       if key1 == key {
         match bucket {
-          @list.Empty => Empty
-          More((key2, value2), tail~) => Leaf(key2, value2, tail)
+          @list.Empty => None
+          More((key2, value2), tail~) => Some(Leaf(key2, value2, tail))
         }
       } else if bucket.find_index(kv => kv.0 == key) is Some(index) {
-        Leaf(key1, value1, bucket.remove_at(index))
+        Some(Leaf(key1, value1, bucket.remove_at(index)))
       } else {
-        self
+        Some(self)
       }
     Branch(children) => {
       let idx = path.idx()
       match children[idx] {
-        None => self
+        None => Some(self)
         Some(child) => {
           let new_child = child.remove_with_path(key, path.next())
           match (children.size(), new_child) {
-            (1, Empty) => Empty
-            (_, _) => Branch(children.replace(idx, new_child))
+            (1, None) => None
+            (_, None) => Some(Branch(children.remove(idx)))
+            (_, Some(new_child)) =>
+              Some(Branch(children.replace(idx, new_child)))
           }
         }
       }
@@ -280,17 +285,21 @@ fn[K : Eq, V] remove_with_path(self : T[K, V], key : K, path : Path) -> T[K, V] 
 ///
 /// WARNING: this operation is `O(N)` in map size
 pub fn[K, V] size(self : T[K, V]) -> Int {
-  match self {
-    Empty => 0
-    Leaf(_, _, bucket) => 1 + bucket.length()
-    Branch(children) =>
-      for i = 0, total_size = 0 {
-        if i < children.data.length() {
-          continue i + 1, total_size + children.data[i].size()
+  fn node_size(node) {
+    match node {
+      Leaf(_, _, bucket) => 1 + bucket.length()
+      Branch(children) =>
+        for i = 0, total_size = 0; i < children.data.length(); {
+          continue i + 1, total_size + node_size(children.data[i])
         } else {
-          break total_size
+          total_size
         }
-      }
+    }
+  }
+
+  match self.inner() {
+    None => 0
+    Some(node) => node_size(node)
   }
 }
 
@@ -323,7 +332,7 @@ pub fn[K : Eq + Hash, V] T::intersection(
 ) -> T[K, V] {
   self
   .iter()
-  .fold(init=Empty, (m, kv) => if other.get(kv.0) is Some(v2) {
+  .fold(init=T(None), (m, kv) => if other.get(kv.0) is Some(v2) {
     m.add(kv.0, v2)
   } else {
     m
@@ -339,7 +348,7 @@ pub fn[K : Eq + Hash, V] T::intersection_with(
 ) -> T[K, V] raise? {
   self
   .iter()
-  .fold(init=Empty, (m, kv) => match other.get(kv.0) {
+  .fold(init=T(None), (m, kv) => match other.get(kv.0) {
     Some(v2) => m.add(kv.0, f(kv.0, kv.1, v2))
     None => m
   })
@@ -353,7 +362,7 @@ pub fn[K : Eq + Hash, V] T::difference(
 ) -> T[K, V] {
   self
   .iter()
-  .fold(init=Empty, (m, kv) => if other.get(kv.0) is None {
+  .fold(init=T(None), (m, kv) => if other.get(kv.0) is None {
     m.add(kv.0, kv.1)
   } else {
     m
@@ -363,13 +372,19 @@ pub fn[K : Eq + Hash, V] T::difference(
 ///|
 /// Iterate through the elements in a hash map
 pub fn[K, V] each(self : T[K, V], f : (K, V) -> Unit raise?) -> Unit raise? {
-  match self {
-    Empty => ()
-    Leaf(k, v, bucket) => {
-      f(k, v)
-      bucket.each(kv => f(kv.0, kv.1))
+  fn go(node) raise? {
+    match node {
+      Leaf(k, v, bucket) => {
+        f(k, v)
+        bucket.each(kv => f(kv.0, kv.1))
+      }
+      Branch(children) => children.each(go)
     }
-    Branch(children) => children.each(child => child.each(f))
+  }
+
+  match self.inner() {
+    None => ()
+    Some(node) => go(node)
   }
 }
 
@@ -395,10 +410,16 @@ pub fn[K, V] elems(self : T[K, V]) -> Iter[V] {
 ///|
 /// Converted to Iter
 pub fn[K, V] iter(self : T[K, V]) -> Iter[(K, V)] {
-  match self {
-    Empty => Iter::empty()
-    Leaf(k, v, bucket) => Iter::singleton((k, v)) + bucket.iter()
-    Branch(children) => children.data.iter().flat_map(map => map.iter())
+  fn go(node) -> Iter[(K, V)] {
+    match node {
+      Leaf(k, v, bucket) => Iter::singleton((k, v)) + bucket.iter()
+      Branch(children) => children.data.iter().flat_map(go)
+    }
+  }
+
+  match self.inner() {
+    None => Iter::empty()
+    Some(node) => go(node)
   }
 }
 
