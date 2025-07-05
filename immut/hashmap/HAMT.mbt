@@ -55,8 +55,19 @@ pub fn[K : Eq + Hash, V] find(self : T[K, V], key : K) -> V? {
 ///|
 /// Lookup a key from a hash map
 pub fn[K : Eq + Hash, V] get(self : T[K, V], key : K) -> V? {
-  guard self.inner() is Some(node) else { return None }
-  loop (node, @path.of(key)) {
+  match self.inner() {
+    None => None
+    Some(node) => node.get_with_path(key, @path.of(key))
+  }
+}
+
+///|
+fn[K : Eq, V] Node::get_with_path(
+  self : Node[K, V],
+  key : K,
+  path : Path
+) -> V? {
+  loop (self, path) {
     (Leaf(key1, value1, bucket), _) =>
       if key == key1 {
         Some(value1)
@@ -355,68 +366,233 @@ pub fn[K, V] size(self : T[K, V]) -> Int {
 
 ///|
 /// Union two hashmaps, right-hand side element is prioritized
-pub fn[K : Eq + Hash, V] T::union(self : T[K, V], other : T[K, V]) -> T[K, V] {
-  other.iter().fold(init=self, (m, kv) => m.add(kv.0, kv.1))
+pub fn[K : Eq, V] T::union(self : T[K, V], other : T[K, V]) -> T[K, V] {
+  fn go(node1 : Node[_], node2) {
+    match (node1, node2) {
+      (_, Flat(key2, value2, path2)) => node1.add_with_path(key2, value2, path2)
+      (Flat(key1, value1, path1), _) =>
+        match node2.get_with_path(key1, path1) {
+          Some(_) => node2
+          None => node2.add_with_path(key1, value1, path1)
+        }
+      (Branch(children1), Branch(children2)) =>
+        Branch(children1.union(children2, go))
+      (Leaf(key1, value1, bucket1), Leaf(key2, value2, bucket2)) => {
+        let kvs1 = bucket1.add((key1, value1))
+        let kvs2 = bucket2.add((key2, value2))
+        match kvs1.filter(kv => kvs2.lookup(kv.0) is None) {
+          Empty => node2
+          More(head, tail~) => Leaf(key2, value2, bucket2 + tail.add(head))
+        }
+      }
+      _ => abort("Unreachable")
+    }
+  }
+
+  match (self.inner(), other.inner()) {
+    (None, x) | (x, None) => x
+    (Some(a), Some(b)) => Some(go(a, b))
+  }
 }
 
 ///|
 /// Union two hashmaps with a function
-pub fn[K : Eq + Hash, V] T::union_with(
+pub fn[K : Eq, V] T::union_with(
   self : T[K, V],
   other : T[K, V],
   f : (K, V, V) -> V raise?
 ) -> T[K, V] raise? {
-  other
-  .iter()
-  .fold(init=self, (m, kv) => match m.get(kv.0) {
-    Some(v2) => m.add(kv.0, f(kv.0, kv.1, v2))
-    None => m.add(kv.0, kv.1)
-  })
+  fn go(node1 : Node[_], node2) raise? {
+    match (node1, node2) {
+      (_, Flat(key2, value2, path2)) => {
+        let new_value = match node1.get_with_path(key2, path2) {
+          Some(value1) => f(key2, value1, value2)
+          None => value2
+        }
+        node1.add_with_path(key2, new_value, path2)
+      }
+      (Flat(key1, value1, path1), _) => {
+        let new_value = match node2.get_with_path(key1, path1) {
+          Some(value2) => f(key1, value1, value2)
+          None => value1
+        }
+        node2.add_with_path(key1, new_value, path1)
+      }
+      (Branch(children1), Branch(children2)) =>
+        Branch(children1.union(children2, go))
+      (Leaf(key1, value1, bucket1), Leaf(key2, value2, bucket2)) => {
+        let kvs1 = bucket1.add((key1, value1))
+        let kvs2 = bucket2.add((key2, value2))
+        kvs1.union_with(kvs2, f)
+      }
+      _ => abort("Unreachable")
+    }
+  }
+
+  match (self.inner(), other.inner()) {
+    (None, x) | (x, None) => x
+    (Some(a), Some(b)) => Some(go(a, b))
+  }
+}
+
+///|
+fn[K : Eq, V] @list.T::union_with(
+  self : Self[(K, V)],
+  other : Self[(K, V)],
+  f : (K, V, V) -> V raise?
+) -> Node[K, V] raise? {
+  let res = self.to_array()
+  for kv2 in other {
+    for i, kv1 in res {
+      if kv1.0 == kv2.0 {
+        res[i] = (kv1.0, f(kv1.0, kv1.1, kv2.1))
+        break
+      }
+    } else {
+      res.push(kv2)
+    }
+  }
+  guard @list.from_array(res) is More((k, v), tail~)
+  Leaf(k, v, tail)
 }
 
 ///|
 /// Intersect two hashmaps, right-hand side element is prioritized
-pub fn[K : Eq + Hash, V] T::intersection(
-  self : T[K, V],
-  other : T[K, V]
-) -> T[K, V] {
-  self
-  .iter()
-  .fold(init=T(None), (m, kv) => if other.get(kv.0) is Some(v2) {
-    m.add(kv.0, v2)
-  } else {
-    m
-  })
+pub fn[K : Eq, V] T::intersection(self : T[K, V], other : T[K, V]) -> T[K, V] {
+  fn go(node1 : Node[_], node2) {
+    match (node1, node2) {
+      (_, Flat(key2, _, path2)) =>
+        match node1.get_with_path(key2, path2) {
+          Some(_) => Some(node2)
+          None => None
+        }
+      (Flat(key1, _, path1), _) =>
+        match node2.get_with_path(key1, path1) {
+          Some(value2) => Some(Flat(key1, value2, path1))
+          None => None
+        }
+      (Branch(children1), Branch(children2)) =>
+        match children1.intersection(children2, go) {
+          None => None
+          Some({ data: [Flat(key, value, path)], elem_info }) =>
+            Some(Flat(key, value, path.push(elem_info.first_idx())))
+          Some(children) => Some(Branch(children))
+        }
+      (Leaf(key1, value1, bucket1), Leaf(key2, value2, bucket2)) => {
+        let kvs1 = bucket1.add((key1, value1))
+        let kvs2 = bucket2.add((key2, value2))
+        match kvs2.filter(kv => kvs1.lookup(kv.0) is Some(_)) {
+          Empty => None
+          More(head, tail~) => Some(Leaf(head.0, head.1, tail))
+        }
+      }
+      _ => abort("Unreachable")
+    }
+  }
+
+  match (self.inner(), other.inner()) {
+    (None, _) | (_, None) => None
+    (Some(a), Some(b)) => go(a, b)
+  }
 }
 
 ///|
 /// Intersection two hashmaps with a function
-pub fn[K : Eq + Hash, V] T::intersection_with(
+pub fn[K : Eq, V] T::intersection_with(
   self : T[K, V],
   other : T[K, V],
   f : (K, V, V) -> V raise?
 ) -> T[K, V] raise? {
-  self
-  .iter()
-  .fold(init=T(None), (m, kv) => match other.get(kv.0) {
-    Some(v2) => m.add(kv.0, f(kv.0, kv.1, v2))
-    None => m
-  })
+  fn go(node1 : Node[_], node2) raise? {
+    match (node1, node2) {
+      (_, Flat(key2, value2, path2)) =>
+        match node1.get_with_path(key2, path2) {
+          Some(value1) => Some(Flat(key2, f(key2, value1, value2), path2))
+          None => None
+        }
+      (Flat(key1, value1, path1), _) =>
+        match node2.get_with_path(key1, path1) {
+          Some(value2) => Some(Flat(key1, f(key1, value1, value2), path1))
+          None => None
+        }
+      (Branch(children1), Branch(children2)) =>
+        match children1.intersection(children2, go) {
+          None => None
+          Some({ data: [Flat(key, value, path)], elem_info }) =>
+            Some(Flat(key, value, path.push(elem_info.first_idx())))
+          Some(children) => Some(Branch(children))
+        }
+      (Leaf(key1, value1, bucket1), Leaf(key2, value2, bucket2)) => {
+        let kvs1 = bucket1.add((key1, value1))
+        let kvs2 = bucket2.add((key2, value2))
+        kvs1.intersection_with(kvs2, f)
+      }
+      _ => abort("Unreachable")
+    }
+  }
+
+  match (self.inner(), other.inner()) {
+    (None, _) | (_, None) => None
+    (Some(a), Some(b)) => go(a, b)
+  }
+}
+
+///|
+fn[K : Eq, V] @list.T::intersection_with(
+  self : Self[(K, V)],
+  other : Self[(K, V)],
+  f : (K, V, V) -> V raise?
+) -> Node[K, V]? raise? {
+  let res = []
+  for kv1 in self {
+    for kv2 in other {
+      if kv1.0 == kv2.0 {
+        res.push((kv1.0, f(kv1.0, kv1.1, kv2.1)))
+        break
+      }
+    }
+  }
+  match @list.from_array(res) {
+    Empty => None
+    More((k, v), tail~) => Some(Leaf(k, v, tail))
+  }
 }
 
 ///|
 /// Difference of two hashmaps: elements in `self` but not in `other`
-pub fn[K : Eq + Hash, V] T::difference(
-  self : T[K, V],
-  other : T[K, V]
-) -> T[K, V] {
-  self
-  .iter()
-  .fold(init=T(None), (m, kv) => if other.get(kv.0) is None {
-    m.add(kv.0, kv.1)
-  } else {
-    m
-  })
+pub fn[K : Eq, V] T::difference(self : T[K, V], other : T[K, V]) -> T[K, V] {
+  fn go(node1 : Node[_], node2) {
+    match (node1, node2) {
+      (node, Flat(k, _, path)) => node.remove_with_path(k, path)
+      (Flat(key, _, path), _) =>
+        match node2.get_with_path(key, path) {
+          Some(_) => None
+          None => Some(node1)
+        }
+      (Branch(children1), Branch(children2)) =>
+        match children1.difference(children2, go) {
+          None => None
+          Some({ data: [Flat(key, value, path)], elem_info }) =>
+            Some(Flat(key, value, path.push(elem_info.first_idx())))
+          Some(children) => Some(Branch(children))
+        }
+      (Leaf(key1, value1, bucket1), Leaf(key2, value2, bucket2)) => {
+        let kvs1 = bucket1.add((key1, value1))
+        let kvs2 = bucket2.add((key2, value2))
+        match kvs1.filter(kv => not(kvs2.lookup(kv.0) is Some(_))) {
+          Empty => None
+          More(head, tail~) => Some(Leaf(head.0, head.1, tail))
+        }
+      }
+      _ => abort("Unreachable")
+    }
+  }
+
+  match (self.inner(), other.inner()) {
+    (None, _) => None
+    (_, None) => self
+    (Some(a), Some(b)) => go(a, b)
+  }
 }
 
 ///|
