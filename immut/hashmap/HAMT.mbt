@@ -35,7 +35,7 @@ pub fn[K, V] new() -> T[K, V] {
 ///|
 /// Create a map with a single key-value pair.
 pub fn[K : Hash, V] singleton(key : K, value : V) -> T[K, V] {
-  Some(make_leaf(key, value, @path.of(key)))
+  Some(Flat(key, value, @path.of(key)))
 }
 
 ///|
@@ -63,6 +63,12 @@ pub fn[K : Eq + Hash, V] get(self : T[K, V], key : K) -> V? {
       } else {
         bucket.lookup(key)
       }
+    (Flat(key1, value1, path1), path) =>
+      if path == path1 && key == key1 {
+        Some(value1)
+      } else {
+        None
+      }
     (Branch(children), path) => {
       let idx = path.idx()
       if children[idx] is Some(child) {
@@ -80,13 +86,31 @@ pub fn[K : Eq + Hash, V] op_get(self : T[K, V], key : K) -> V? {
 }
 
 ///|
-fn[K, V] make_leaf(key : K, value : V, path : Path) -> Node[K, V] {
-  // make sure leaf nodes always appear at the bottom of the tree
-  if path.is_last() {
-    Branch(@sparse_array.singleton(path.idx(), Leaf(key, value, @list.empty())))
+/// require: key1 != key2, path1 and path2 has the same length
+fn[K, V] join_2(
+  key1 : K,
+  value1 : V,
+  path1 : Path,
+  key2 : K,
+  value2 : V,
+  path2 : Path
+) -> Node[K, V] {
+  let idx1 = path1.idx()
+  let idx2 = path2.idx()
+  if idx1 == idx2 {
+    let node = if path1.is_last() {
+      Leaf(key2, value2, @list.singleton((key1, value1)))
+    } else {
+      join_2(key1, value1, path1.next(), key2, value2, path2.next())
+    }
+    Branch(@sparse_array.singleton(idx1, node))
   } else {
-    let child = make_leaf(key, value, path.next())
-    Branch(@sparse_array.singleton(path.idx(), child))
+    let (node1, node2) = if path1.is_last() {
+      (Leaf(key1, value1, @list.empty()), Leaf(key2, value2, @list.empty()))
+    } else {
+      (Flat(key1, value1, path1.next()), Flat(key2, value2, path2.next()))
+    }
+    Branch(@sparse_array.doubleton(idx1, node1, idx2, node2))
   }
 }
 
@@ -108,6 +132,12 @@ fn[K : Eq, V] add_with_path(
         }
         Leaf(key, value, new_bucket.add((key1, value1)))
       }
+    Flat(key1, value1, path1) =>
+      if path == path1 && key == key1 {
+        Flat(key1, value, path1)
+      } else {
+        join_2(key1, value1, path1, key, value, path)
+      }
     Branch(children) => {
       let idx = path.idx()
       match children[idx] {
@@ -116,7 +146,7 @@ fn[K : Eq, V] add_with_path(
           Branch(children.replace(idx, child))
         }
         None => {
-          let child = make_leaf(key, value, path.next())
+          let child = Flat(key, value, path.next())
           Branch(children.add(idx, child))
         }
       }
@@ -143,6 +173,7 @@ pub fn[K, V] filter(
           }
         }
       }
+      Flat(_, value1, _) => if pred(value1) { Some(node) } else { None }
       Branch(children) =>
         match children.filter(go) {
           None => None
@@ -187,6 +218,7 @@ pub fn[K, V, A] fold_with_key(
               tail,
               bucket.fold(init=f(acc, k, v), (acc, kv) => f(acc, kv.0, kv.1)),
             )
+        Flat(k, v, _) => continue (tail, f(acc, k, v))
         Branch(children) =>
           if index < children.data.length() {
             let child = children.data.unsafe_get(index)
@@ -214,6 +246,7 @@ pub fn[K, V, A] map_with_key(
     match m {
       Leaf(k, v, bucket) =>
         Leaf(k, f(k, v), bucket.map(kv => (kv.0, f(kv.0, kv.1))))
+      Flat(k, v, path) => Flat(k, f(k, v), path)
       Branch(children) => Branch(children.map(go))
     }
   }
@@ -230,7 +263,7 @@ pub fn[K, V, A] map_with_key(
 /// If a pair with the same key already exists, the old one is replaced
 pub fn[K : Eq + Hash, V] add(self : T[K, V], key : K, value : V) -> T[K, V] {
   match self.inner() {
-    None => Some(make_leaf(key, value, @path.of(key)))
+    None => Some(Flat(key, value, @path.of(key)))
     Some(node) => Some(node.add_with_path(key, value, @path.of(key)))
   }
 }
@@ -262,17 +295,33 @@ fn[K : Eq, V] remove_with_path(
       } else {
         Some(self)
       }
+    Flat(key1, _, path1) =>
+      if path == path1 && key == key1 {
+        None
+      } else {
+        Some(self)
+      }
     Branch(children) => {
       let idx = path.idx()
       match children[idx] {
         None => Some(self)
         Some(child) => {
           let new_child = child.remove_with_path(key, path.next())
-          match (children.size(), new_child) {
-            (1, None) => None
-            (_, None) => Some(Branch(children.remove(idx)))
-            (_, Some(new_child)) =>
-              Some(Branch(children.replace(idx, new_child)))
+          let new_children = match (children.size(), new_child) {
+            (1, None) => return None
+            (_, None) => children.remove(idx)
+            (_, Some(new_child)) => children.replace(idx, new_child)
+          }
+          match new_children.data {
+            [Flat(key1, value1, path1)] =>
+              Some(
+                Flat(
+                  key1,
+                  value1,
+                  path1.push(new_children.elem_info.first_idx()),
+                ),
+              )
+            _ => Some(Branch(new_children))
           }
         }
       }
@@ -288,6 +337,7 @@ pub fn[K, V] size(self : T[K, V]) -> Int {
   fn node_size(node) {
     match node {
       Leaf(_, _, bucket) => 1 + bucket.length()
+      Flat(_) => 1
       Branch(children) =>
         for i = 0, total_size = 0; i < children.data.length(); {
           continue i + 1, total_size + node_size(children.data[i])
@@ -378,6 +428,7 @@ pub fn[K, V] each(self : T[K, V], f : (K, V) -> Unit raise?) -> Unit raise? {
         f(k, v)
         bucket.each(kv => f(kv.0, kv.1))
       }
+      Flat(k, v, _) => f(k, v)
       Branch(children) => children.each(go)
     }
   }
@@ -413,6 +464,7 @@ pub fn[K, V] iter(self : T[K, V]) -> Iter[(K, V)] {
   fn go(node) -> Iter[(K, V)] {
     match node {
       Leaf(k, v, bucket) => Iter::singleton((k, v)) + bucket.iter()
+      Flat(k, v, _) => Iter::singleton((k, v))
       Branch(children) => children.data.iter().flat_map(go)
     }
   }
