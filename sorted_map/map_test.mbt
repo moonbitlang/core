@@ -182,7 +182,7 @@ test "iter" {
 test "from_iter multiple elements iter" {
   inspect(
     @sorted_map.from_iter([(1, 1), (2, 2), (3, 3)].iter()),
-    content="@sorted_map.of([(1, 1), (2, 2), (3, 3)])",
+    content="@sorted_map.from_array([(1, 1), (2, 2), (3, 3)])",
   )
 }
 
@@ -190,14 +190,14 @@ test "from_iter multiple elements iter" {
 test "from_iter single element iter" {
   inspect(
     @sorted_map.from_iter([(1, 1)].iter()),
-    content="@sorted_map.of([(1, 1)])",
+    content="@sorted_map.from_array([(1, 1)])",
   )
 }
 
 ///|
 test "from_iter empty iter" {
   let pq : @sorted_map.T[Int, Int] = @sorted_map.from_iter(Iter::empty())
-  inspect(pq, content="@sorted_map.of([])")
+  inspect(pq, content="@sorted_map.from_array([])")
 }
 
 ///|
@@ -205,11 +205,11 @@ test "arbitrary" {
   let map : Array[@sorted_map.T[Int, UInt]] = @quickcheck.samples(20)
   inspect(
     map[5:10],
-    content="[@sorted_map.of([]), @sorted_map.of([]), @sorted_map.of([(0, 0)]), @sorted_map.of([(0, 0)]), @sorted_map.of([(0, 0)])]",
+    content="[@sorted_map.from_array([]), @sorted_map.from_array([]), @sorted_map.from_array([(0, 0)]), @sorted_map.from_array([(0, 0)]), @sorted_map.from_array([(0, 0)])]",
   )
   inspect(
     map[11:15],
-    content="[@sorted_map.of([(-3, 2), (-1, 1), (0, 0), (2, 1)]), @sorted_map.of([(0, 0)]), @sorted_map.of([(-8, 1), (-2, 5), (0, 3), (3, 6), (7, 6)]), @sorted_map.of([(0, 0)])]",
+    content="[@sorted_map.from_array([(-3, 2), (-1, 1), (0, 0), (2, 1)]), @sorted_map.from_array([(0, 0)]), @sorted_map.from_array([(-8, 1), (-2, 5), (0, 3), (3, 6), (7, 6)]), @sorted_map.from_array([(0, 0)])]",
   )
 }
 
