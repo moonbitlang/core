@@ -176,7 +176,6 @@ pub fn[X] SparseArray::difference(
   f : (X, X) -> X?
 ) -> SparseArray[X]? {
   let self_elem_info = self.elem_info
-  guard self_elem_info != empty_bitset else { return None }
   let data = FixedArray::make(self_elem_info.size(), self.data[0])
   for rest = self_elem_info, index = 0, elem_info = self_elem_info; rest !=
      empty_bitset; {
@@ -194,6 +193,42 @@ pub fn[X] SparseArray::difference(
             continue rest.remove(idx), index + 1, elem_info
           }
         }
+    }
+  } else {
+    if elem_info == empty_bitset {
+      None
+    } else if elem_info == self_elem_info {
+      Some({ elem_info, data })
+    } else {
+      Some({ elem_info, data: data.copy_prefix(len=index) })
+    }
+  }
+}
+
+///|
+pub fn[X, Y] SparseArray::map(
+  self : SparseArray[X],
+  f : (X) -> Y raise?
+) -> SparseArray[Y] raise? {
+  { elem_info: self.elem_info, data: self.data.map(f) }
+}
+
+///|
+pub fn[X] SparseArray::filter(
+  self : SparseArray[X],
+  pred : (X) -> X? raise?
+) -> SparseArray[X]? raise? {
+  let self_elem_info = self.elem_info
+  let data = FixedArray::make(self_elem_info.size(), self.data[0])
+  for rest = self_elem_info, index = 0, elem_info = self_elem_info; rest !=
+     empty_bitset; {
+    let idx = rest.first_idx()
+    match pred(self.unsafe_get(idx)) {
+      None => continue rest.remove(idx), index, elem_info.remove(idx)
+      Some(v) => {
+        data[index] = v
+        continue rest.remove(idx), index + 1, elem_info
+      }
     }
   } else {
     if elem_info == empty_bitset {
