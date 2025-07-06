@@ -1682,7 +1682,10 @@ pub fn[A] Array::truncate(self : Array[A], len : Int) -> Unit {
 /// })
 /// // arr is now [4, 8]
 /// ```
-pub fn[A] Array::retain_map(self : Array[A], f : (A) -> A?) -> Unit {
+pub fn[A] Array::retain_map(
+  self : Array[A],
+  f : (A) -> A? raise?
+) -> Unit raise? {
   if self.is_empty() {
     return
   }
@@ -1699,6 +1702,5 @@ pub fn[A] Array::retain_map(self : Array[A], f : (A) -> A?) -> Unit {
       None => ()
     }
   }
-  let _ = self.unsafe_truncate_to_length(write_idx)
-
+  self.unsafe_truncate_to_length(write_idx)
 }
