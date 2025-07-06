@@ -810,3 +810,10 @@ test "mapi_inplace with error callback" {
     ),
   )
 }
+
+///|
+test "retain_map" {
+  let arr = [2, 3, 4]
+  arr.retain_map(x => if x < 4 { Some(x + 1) } else { None })
+  inspect(arr, content="[3, 4]")
+}
