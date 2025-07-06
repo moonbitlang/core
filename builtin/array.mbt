@@ -1690,15 +1690,15 @@ pub fn[A] Array::retain_map(self : Array[A], f : (A) -> A?) -> Unit {
   let len = self.length()
   let mut write_idx = 0
   for read_idx in 0..<len {
-    match f(buf[read_idx]) {
+    let val = buf[read_idx]
+    match f(val) {
       Some(new_val) => {
-        if write_idx != read_idx {
-          buf[write_idx] = new_val
-        }
+        buf[write_idx] = new_val
         write_idx += 1
       }
       None => ()
     }
   }
-  self.unsafe_truncate_to_length(write_idx)
+  let _ = self.unsafe_truncate_to_length(write_idx)
+
 }
