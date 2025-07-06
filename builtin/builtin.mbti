@@ -102,7 +102,7 @@ fn[T] Array::repeat(Self[T], Int) -> Self[T]
 fn[T] Array::reserve_capacity(Self[T], Int) -> Unit
 fn[T] Array::resize(Self[T], Int, T) -> Unit
 fn[T] Array::retain(Self[T], (T) -> Bool raise?) -> Unit raise?
-fn[A] Array::retain_map(Self[A], (A) -> A?) -> Unit
+fn[A] Array::retain_map(Self[A], (A) -> A? raise?) -> Unit raise?
 fn[T] Array::rev(Self[T]) -> Self[T]
 fn[T] Array::rev_each(Self[T], (T) -> Unit) -> Unit
 fn[T] Array::rev_eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?
