@@ -1680,7 +1680,7 @@ pub fn[A] Array::truncate(self : Array[A], len : Int) -> Unit {
 ///     None
 ///   }
 /// })
-/// // arr is now [4, 8]
+/// inspect(arr,content = "[4, 8]")
 /// ```
 pub fn[A] Array::retain_map(
   self : Array[A],
