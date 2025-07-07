@@ -85,3 +85,12 @@ pub fn[T : Compare] minimum(x : T, y : T) -> T {
     x
   }
 }
+
+///|
+pub const Less : Int = -1
+
+///|
+pub const Equal : Int = 0
+
+///|
+pub const Greater : Int = 1
