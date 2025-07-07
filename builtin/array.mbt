@@ -1703,4 +1703,4 @@ pub fn[A] Array::retain_map(
     }
   }
   self.unsafe_truncate_to_length(write_idx)
-} 
+}
