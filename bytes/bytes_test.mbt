@@ -246,12 +246,11 @@ test "Bytes::get out of bounds" {
   inspect(byte, content="None")
 }
 
+///|
 test "using regex" {
   match "hell123o" using regex {
-    ["hell[0-9]+" as x ,..rest] => {
-      assert_eq(x, "hell123")
-      assert_eq(rest, "o")
-    
+    ["hell[0-9]+" as x, .. rest] => {
+      guard x is "hell123" && rest is "o" else { fail("Regex match failed") }
     }
     _ => fail("impossible")
   }
