@@ -224,23 +224,11 @@ pub fn[T : Compare] FixedArray::binary_search(
 /// ```moonbit
 ///   let arr : FixedArray[Int] = [1, 3, 5, 7, 9]
 ///   let find_3 = arr.binary_search_by((x) => {
-///     if x < 3 {
-///       -1
-///     } else if x > 3 {
-///       1
-///     } else {
-///       0
-///     }
+///     x.compare(3)
 ///   })
 ///   inspect(find_3, content="Ok(1)")
 ///   let find_4 = arr.binary_search_by((x) => {
-///     if x < 4 {
-///       -1
-///     } else if x > 4 {
-///       1
-///     } else {
-///       0
-///     }
+///     x.compare(4)
 ///   })
 ///   inspect(find_4, content="Err(2)")
 /// ```
