@@ -63,21 +63,45 @@ test "parse numbers" {
 test "parse and stringify large integers" {
   // Test integers at Int boundaries
   let min_int = "-2147483648" // Int.min_value
-  let parsed_min_str = @json.parse("\"" + min_int + "\"").stringify()
-  assert_eq(parsed_min_str, "\"" + min_int + "\"")
+  let parsed_min = @json.parse("\{min_int}")
+  inspect(parsed_min, content="Number(-2147483648)")
+  inspect(parsed_min.stringify(), content="-2147483648")
   let max_int = "2147483647" // Int.max_value
-  let parsed_max_str = @json.parse("\"" + max_int + "\"").stringify()
-  assert_eq(parsed_max_str, "\"" + max_int + "\"")
+  let parsed_max = @json.parse("\{max_int}")
+  inspect(parsed_max, content="Number(2147483647)")
+  inspect(parsed_max.stringify(), content="2147483647")
 
   // Test integers beyond safe JavaScript integer precision (±2^53)
   let beyond_js_safe = "9007199254740993" // 2^53 + 1
-  let json_beyond = "\"" + beyond_js_safe + "\""
-  let parsed_beyond_str = @json.parse(json_beyond).stringify()
-  assert_eq(parsed_beyond_str, json_beyond)
+  let parsed_beyond = @json.parse(beyond_js_safe)
+  inspect(
+    parsed_beyond,
+    content=
+      #|Number(Infinity, repr=Some("9007199254740993"))
+    ,
+  )
+  inspect(parsed_beyond.stringify(), content="9007199254740993")
 
   // Test very large integers
   let very_large = "12345678901234567890123456789"
-  let json_large = "\"" + very_large + "\""
-  let parsed_large_str = @json.parse(json_large).stringify()
-  assert_eq(parsed_large_str, json_large)
+  let parsed_large = @json.parse(very_large)
+  inspect(
+    parsed_large,
+    content=
+      #|Number(Infinity, repr=Some("12345678901234567890123456789"))
+    ,
+  )
+  inspect(parsed_large.stringify(), content="12345678901234567890123456789")
+}
+
+///|
+test "parse and stringify large double" {
+  let very_large = "10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000003.141592653589793238462643383279"
+  let parsed_large = @json.parse(very_large)
+  inspect(
+    parsed_large,
+    content=
+      #|Number(Infinity, repr=Some("10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000003.141592653589793238462643383279"))
+    ,
+  )
 }

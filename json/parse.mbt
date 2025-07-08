@@ -49,7 +49,7 @@ fn ParseContext::parse_value2(
     Null => Json::null()
     True => Json::boolean(true)
     False => Json::boolean(false)
-    Number(n, repr) => Number(n, repr~)
+    Number(n, repr) => Json::number(n, repr?)
     String(s) => Json::string(s)
     LBrace => ctx.parse_object()
     LBracket => ctx.parse_array()
