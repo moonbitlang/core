@@ -235,11 +235,11 @@ pub(all) enum IterResult {
 }
 impl Eq for IterResult
 
-pub(all) enum Json {
+pub enum Json {
   Null
   True
   False
-  Number(Double)
+  Number(Double, repr~ : String?)
   String(String)
   Array(Array[Json])
   Object(Map[String, Json])
@@ -247,7 +247,7 @@ pub(all) enum Json {
 fn Json::array(Array[Self]) -> Self
 fn Json::boolean(Bool) -> Self
 fn Json::null() -> Self
-fn Json::number(Double) -> Self
+fn Json::number(Double, repr? : String) -> Self
 fn Json::object(Map[String, Self]) -> Self
 fn Json::string(String) -> Self
 impl Default for Json

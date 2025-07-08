@@ -248,7 +248,7 @@ test "stringify" {
   // we do come across issues like ParseError not unified with String
   let newjson = @json.parse(json.stringify())
   match json {
-    { "key": [_, _, _, _, { "value": Number(i), .. }, ..], .. } =>
+    { "key": [_, _, _, _, { "value": Number(i, ..), .. }, ..], .. } =>
       inspect(i, content="100")
     _ => fail("Failed to match the JSON")
   }
@@ -386,6 +386,12 @@ test "stringify number" {
   for json in nums {
     match (try? @json.parse(json.stringify())) {
       Err(e) => err.push(e.to_string())
+      Ok(Number(_, repr~) as newjson) =>
+        if repr is Some(_) {
+          assert_eq(newjson.stringify(), json.stringify())
+        } else {
+          assert_eq(newjson, json)
+        }
       Ok(newjson) => assert_eq(newjson, json)
     }
   }
