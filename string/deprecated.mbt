@@ -108,7 +108,7 @@ pub fn String::op_as_view(self : String, start~ : Int = 0, end? : Int) -> View {
   guard start >= 0 && start <= end && end <= str_len else {
     abort("Invalid index for View")
   }
-  { str: self, start, end }
+  View::make_view(self, start, end)
 }
 
 ///|
@@ -116,27 +116,27 @@ pub fn String::op_as_view(self : String, start~ : Int = 0, end? : Int) -> View {
 #coverage.skip
 pub fn View::op_as_view(self : View, start~ : Int = 0, end? : Int) -> View {
   let start = if start >= 0 {
-    self.str.index_at_(start, start=self.start).unwrap().inner()
+    self.str().index_at_(start, start=self.start()).unwrap().inner()
   } else {
-    self.str.index_at_rev_(-start, end=self.end).unwrap().inner()
+    self.str().index_at_rev_(-start, end=self.end()).unwrap().inner()
   }
   let end = match end {
     Some(end) =>
       if end >= 0 {
-        self.str.index_at_(end, start=self.start).unwrap().inner()
+        self.str().index_at_(end, start=self.start()).unwrap().inner()
       } else {
-        self.str.index_at_rev_(-end, end=self.end).unwrap().inner()
+        self.str().index_at_rev_(-end, end=self.end()).unwrap().inner()
       }
-    None => self.end
+    None => self.end()
   }
-  guard start >= self.start &&
-    start <= self.end &&
-    end >= self.start &&
-    end <= self.end &&
+  guard start >= self.start() &&
+    start <= self.end() &&
+    end >= self.start() &&
+    end <= self.end() &&
     start <= end else {
     abort("Invalid index for View")
   }
-  { str: self.str, start, end }
+  View::make_view(self.str(), start, end)
 }
 
 ///|
@@ -233,16 +233,4 @@ pub fn ends_with(self : String, str : String) -> Bool {
 /// multi-byte characters correctly.
 #deprecated("use @string.View instead")
 #builtin.valtype
-struct StringView {
-  // # Fields
-  //
-  // - `str`: The source String being viewed
-  // - `start`: Starting UTF-16 code unit index into the string
-  // - `end`: Ending UTF-16 code unit index into the string (not included)
-  //
-  // `len` is not included because it will make the operation of `op_as_view`
-  // has complexity O(n) where n is the length of the code points in the view.
-  str : String
-  start : Int
-  end : Int
-}
+type StringView
