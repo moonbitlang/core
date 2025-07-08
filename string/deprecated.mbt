@@ -112,19 +112,7 @@ pub fn ends_with(self : String, str : String) -> Bool {
 /// multi-byte characters correctly.
 #deprecated("use @string.View instead")
 #builtin.valtype
-struct StringView {
-  // # Fields
-  //
-  // - `str`: The source String being viewed
-  // - `start`: Starting UTF-16 code unit index into the string
-  // - `end`: Ending UTF-16 code unit index into the string (not included)
-  //
-  // `len` is not included because it will make the operation of `op_as_view`
-  // has complexity O(n) where n is the length of the code points in the view.
-  str : String
-  start : Int
-  end : Int
-}
+type StringView
 
 ///|
 /// Returns the charcode(code unit) at the given index.
@@ -135,7 +123,7 @@ pub fn View::charcode_at(self : View, index : Int) -> Int {
   guard index >= 0 && index < self.length() else {
     abort("Index out of bounds")
   }
-  self.str.unsafe_charcode_at(self.start + index)
+  self.str().unsafe_charcode_at(self.start() + index)
 }
 
 ///|

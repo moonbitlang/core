@@ -18,6 +18,21 @@
 /// multi-byte characters correctly.
 pub typealias StringView as View
 
+///|
+/// Returns the source string being viewed.
+fn View::str(self : View) -> String = "%stringview.str"
+
+///|
+/// Returns the starting UTF-16 code unit index into the string.
+fn View::start(self : View) -> Int = "%stringview.start"
+
+///|
+/// Returns the ending UTF-16 code unit index into the string (not included).
+fn View::end(self : View) -> Int = "%stringview.end"
+
+///|
+fn View::make_view(str : String, start : Int, end : Int) -> View = "%stringview.make"
+
 ///| 
 /// Returns the charcode(UTF-16 code unit) at the given index.
 /// 
@@ -35,20 +50,20 @@ pub fn View::op_get(self : View, index : Int) -> Int {
   guard index >= 0 && index < self.length() else {
     abort("Index out of bounds")
   }
-  self.str.unsafe_charcode_at(self.start + index)
+  self.str().unsafe_charcode_at(self.start() + index)
 }
 
 ///|
 /// Returns the original string that is being viewed.
 pub fn data(self : View) -> String {
-  self.str
+  self.str()
 }
 
 ///|
 /// Returns the starting offset (in UTF-16 code units) of this view into its
 /// underlying string.
 pub fn start_offset(self : View) -> Int {
-  self.start
+  self.start()
 }
 
 ///|
@@ -56,7 +71,7 @@ pub fn start_offset(self : View) -> Int {
 /// 
 /// This method counts the charcodes(code unit) in the view and has O(1) complexity.
 pub fn length(self : View) -> Int {
-  self.end - self.start
+  self.end() - self.start()
 }
 
 ///|
@@ -88,7 +103,7 @@ pub fn String::view(
     end_offset <= self.length() else {
     abort("Invalid index for View")
   }
-  { str: self, start: start_offset, end: end_offset }
+  View::make_view(self, start_offset, end_offset)
 }
 
 ///|
@@ -104,11 +119,11 @@ pub fn View::view(
     end_offset <= self.length() else {
     abort("Invalid index for View")
   }
-  {
-    str: self.str,
-    start: self.start + start_offset,
-    end: self.start + end_offset,
-  }
+  View::make_view(
+    self.str(),
+    self.start() + start_offset,
+    self.start() + end_offset,
+  )
 }
 
 ///|
@@ -158,13 +173,11 @@ pub fn View::charcodes(self : View, start~ : Int = 0, end? : Int) -> View {
 /// the view. If i is negative, it returns the index of the (n + i)-th character
 /// where n is the total number of Unicode characters in the view.
 pub fn View::offset_of_nth_char(self : View, i : Int) -> Int? {
-  if self.str.offset_of_nth_char(
-      i,
-      start_offset=self.start,
-      end_offset=self.end,
-    )
+  if self
+    .str()
+    .offset_of_nth_char(i, start_offset=self.start(), end_offset=self.end())
     is Some(index) {
-    Some(index - self.start)
+    Some(index - self.start())
   } else {
     None
   }
@@ -176,7 +189,7 @@ pub fn View::offset_of_nth_char(self : View, i : Int) -> Int? {
 /// 
 /// This method has O(1) complexity.
 pub fn View::unsafe_charcode_at(self : View, index : Int) -> Int {
-  self.str.unsafe_charcode_at(self.start + index)
+  self.str().unsafe_charcode_at(self.start() + index)
 }
 
 ///| 
@@ -185,7 +198,7 @@ pub fn View::unsafe_charcode_at(self : View, index : Int) -> Int {
 /// Note this has O(n) complexity where n is the length of the code points in 
 /// the view.
 pub fn View::char_length(self : View) -> Int {
-  self.str.char_length(start_offset=self.start, end_offset=self.end)
+  self.str().char_length(start_offset=self.start(), end_offset=self.end())
 }
 
 ///|
@@ -193,7 +206,9 @@ pub fn View::char_length(self : View) -> Int {
 /// 
 /// This has O(n) complexity where n is the length in the parameter.
 pub fn View::char_length_eq(self : View, len : Int) -> Bool {
-  self.str.char_length_eq(len, start_offset=self.start, end_offset=self.end)
+  self
+  .str()
+  .char_length_eq(len, start_offset=self.start(), end_offset=self.end())
 }
 
 ///|
@@ -201,12 +216,14 @@ pub fn View::char_length_eq(self : View, len : Int) -> Bool {
 /// 
 /// This has O(n) complexity where n is the length in the parameter.
 pub fn View::char_length_ge(self : View, len : Int) -> Bool {
-  self.str.char_length_ge(len, start_offset=self.start, end_offset=self.end)
+  self
+  .str()
+  .char_length_ge(len, start_offset=self.start(), end_offset=self.end())
 }
 
 ///|
 pub impl Show for View with output(self, logger) {
-  let substr = self.str.substring(start=self.start, end=self.end)
+  let substr = self.str().substring(start=self.start(), end=self.end())
   String::output(substr, logger)
 }
 
@@ -221,16 +238,16 @@ pub impl Show for View with output(self, logger) {
 ///   inspect(view.to_string(), content="Hello")
 /// ```
 pub impl Show for StringView with to_string(self) {
-  self.str.substring(start=self.start, end=self.end)
+  self.str().substring(start=self.start(), end=self.end())
 }
 
 ///|
 /// Returns an iterator over the Unicode characters in the string view.
 pub fn View::iter(self : View) -> Iter[Char] {
-  Iter::new(yield_ => for index in self.start..<self.end {
-    let c1 = self.str.unsafe_charcode_at(index)
-    if is_leading_surrogate(c1) && index + 1 < self.end {
-      let c2 = self.str.unsafe_charcode_at(index + 1)
+  Iter::new(yield_ => for index in self.start()..<self.end() {
+    let c1 = self.str().unsafe_charcode_at(index)
+    if is_leading_surrogate(c1) && index + 1 < self.end() {
+      let c2 = self.str().unsafe_charcode_at(index + 1)
       if is_trailing_surrogate(c2) {
         let c = code_point_of_surrogate_pair(c1, c2)
         guard yield_(c) is IterContinue else { break IterEnd }
@@ -248,9 +265,9 @@ pub fn View::iter2(self : View) -> Iter2[Int, Char] {
   Iter2::new(yield_ => {
     let len = self.length()
     for index = 0, n = 0; index < len; index = index + 1, n = n + 1 {
-      let c1 = self.str.unsafe_charcode_at(self.start + index)
+      let c1 = self.str().unsafe_charcode_at(self.start() + index)
       if is_leading_surrogate(c1) && index + 1 < len {
-        let c2 = self.str.unsafe_charcode_at(self.start + index + 1)
+        let c2 = self.str().unsafe_charcode_at(self.start() + index + 1)
         if is_trailing_surrogate(c2) {
           let c = code_point_of_surrogate_pair(c1, c2)
           guard yield_(n, c) is IterContinue else { break IterEnd }
@@ -269,12 +286,12 @@ pub fn View::iter2(self : View) -> Iter2[Int, Char] {
 ///|
 /// Returns an iterator over the Unicode characters in the string view in reverse order.
 pub fn View::rev_iter(self : View) -> Iter[Char] {
-  Iter::new(yield_ => for index = self.end - 1
-                          index >= self.start
+  Iter::new(yield_ => for index = self.end() - 1
+                          index >= self.start()
                           index = index - 1 {
-    let c1 = self.str.unsafe_charcode_at(index)
+    let c1 = self.str().unsafe_charcode_at(index)
     if is_trailing_surrogate(c1) && index - 1 >= 0 {
-      let c2 = self.str.unsafe_charcode_at(index - 1)
+      let c2 = self.str().unsafe_charcode_at(index - 1)
       if is_leading_surrogate(c2) {
         let c = code_point_of_surrogate_pair(c2, c1)
         guard yield_(c) is IterContinue else { break IterEnd }
@@ -293,12 +310,12 @@ pub fn View::rev_iter(self : View) -> Iter[Char] {
 pub impl Eq for View with op_equal(self, other) {
   let len = self.length()
   guard len == other.length() else { return false }
-  if physical_equal(self.str, other.str) && self.start == other.start {
+  if physical_equal(self.str(), other.str()) && self.start() == other.start() {
     return true
   }
   for i in 0..<len {
-    guard self.str.unsafe_charcode_at(self.start + i) ==
-      other.str.unsafe_charcode_at(other.start + i) else {
+    guard self.str().unsafe_charcode_at(self.start() + i) ==
+      other.str().unsafe_charcode_at(other.start() + i) else {
       return false
     }
   }
@@ -315,13 +332,14 @@ pub impl Compare for View with compare(self, other) {
   let other_len = other.length()
   let cmp = self_len.compare(other_len)
   guard cmp == 0 else { return cmp }
-  if physical_equal(self.str, other.str) && self.start == other.start {
+  if physical_equal(self.str(), other.str()) && self.start() == other.start() {
     return 0
   }
   for i in 0..<self_len {
-    let cmp = self.str
-      .unsafe_charcode_at(self.start + i)
-      .compare(other.str.unsafe_charcode_at(other.start + i))
+    let cmp = self
+      .str()
+      .unsafe_charcode_at(self.start() + i)
+      .compare(other.str().unsafe_charcode_at(other.start() + i))
     guard cmp == 0 else { return cmp }
   }
   0
@@ -442,7 +460,7 @@ pub fn String::op_as_view(
   if end < len && is_trailing_surrogate(self.unsafe_charcode_at(end)) {
     raise InvalidIndex
   }
-  { str: self, start, end }
+  View::make_view(self, start, end)
 }
 
 ///|
@@ -495,28 +513,34 @@ pub fn View::op_as_view(
   start~ : Int = 0,
   end? : Int,
 ) -> View raise CreatingViewError {
-  let str_len = self.str.length()
+  let str_len = self.str().length()
 
   // Calculate absolute positions in the original string
   let abs_end = match end {
-    None => self.end
-    Some(end) => if end < 0 { self.end + end } else { self.start + end }
+    None => self.end()
+    Some(end) => if end < 0 { self.end() + end } else { self.start() + end }
   }
-  let abs_start = if start < 0 { self.end + start } else { self.start + start }
+  let abs_start = if start < 0 {
+    self.end() + start
+  } else {
+    self.start() + start
+  }
 
   // Validate bounds against the original string
-  guard abs_start >= self.start && abs_start <= abs_end && abs_end <= self.end else {
+  guard abs_start >= self.start() &&
+    abs_start <= abs_end &&
+    abs_end <= self.end() else {
     raise IndexOutOfBounds
   }
 
   // Check for surrogate pair boundaries
   if abs_start < str_len &&
-    is_trailing_surrogate(self.str.unsafe_charcode_at(abs_start)) {
+    is_trailing_surrogate(self.str().unsafe_charcode_at(abs_start)) {
     raise InvalidIndex
   }
   if abs_end < str_len &&
-    is_trailing_surrogate(self.str.unsafe_charcode_at(abs_end)) {
+    is_trailing_surrogate(self.str().unsafe_charcode_at(abs_end)) {
     raise InvalidIndex
   }
-  { str: self.str, start: abs_start, end: abs_end }
+  View::make_view(self.str(), abs_start, abs_end)
 }

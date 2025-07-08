@@ -25,11 +25,23 @@
 /// ```
 #deprecated("use @array.View instead")
 #builtin.valtype
-struct ArrayView[T] {
-  buf : UninitializedArray[T]
-  start : Int
-  len : Int
-}
+type ArrayView[T]
+
+///|
+fn[T] ArrayView::buf(self : ArrayView[T]) -> UninitializedArray[T] = "%arrayview.buf"
+
+///|
+fn[T] ArrayView::start(self : ArrayView[T]) -> Int = "%arrayview.start"
+
+///|
+fn[T] ArrayView::len(self : ArrayView[T]) -> Int = "%arrayview.len"
+
+///|
+fn[T] ArrayView::make(
+  buf : UninitializedArray[T],
+  start : Int,
+  len : Int,
+) -> ArrayView[T] = "%arrayview.make"
 
 ///|
 /// Returns the length (number of elements) of an array view.
@@ -48,7 +60,7 @@ struct ArrayView[T] {
 ///   inspect(view.length(), content="2")
 /// ```
 pub fn[T] ArrayView::length(self : ArrayView[T]) -> Int {
-  self.len
+  self.len()
 }
 
 ///|
@@ -74,12 +86,12 @@ pub fn[T] ArrayView::length(self : ArrayView[T]) -> Int {
 ///   inspect(view[1], content="4")
 /// ```
 pub fn[T] ArrayView::op_get(self : ArrayView[T], index : Int) -> T {
-  guard index >= 0 && index < self.len else {
+  guard index >= 0 && index < self.len() else {
     abort(
-      "index out of bounds: the len is from 0 to \{self.len} but the index is \{index}",
+      "index out of bounds: the len is from 0 to \{self.len()} but the index is \{index}",
     )
   }
-  self.buf[self.start + index]
+  self.buf()[self.start() + index]
 }
 
 ///|
@@ -104,7 +116,7 @@ pub fn[T] ArrayView::op_get(self : ArrayView[T], index : Int) -> T {
 #intrinsic("%arrayview.unsafe_get")
 #internal(unsafe, "Panic if index is out of bounds")
 pub fn[T] ArrayView::unsafe_get(self : ArrayView[T], index : Int) -> T {
-  self.buf[self.start + index]
+  self.buf()[self.start() + index]
 }
 
 ///|
@@ -133,12 +145,12 @@ pub fn[T] ArrayView::op_set(
   index : Int,
   value : T,
 ) -> Unit {
-  guard index >= 0 && index < self.len else {
+  guard index >= 0 && index < self.len() else {
     abort(
-      "index out of bounds: the len is from 0 to \{self.len} but the index is \{index}",
+      "index out of bounds: the len is from 0 to \{self.len()} but the index is \{index}",
     )
   }
-  self.buf[self.start + index] = value
+  self.buf()[self.start() + index] = value
 }
 
 ///|
@@ -163,14 +175,14 @@ pub fn[T] ArrayView::op_set(
 /// ```
 ///
 pub fn[T] ArrayView::swap(self : ArrayView[T], i : Int, j : Int) -> Unit {
-  guard i >= 0 && i < self.len && j >= 0 && j < self.len else {
+  guard i >= 0 && i < self.len() && j >= 0 && j < self.len() else {
     abort(
-      "index out of bounds: the len is from 0 to \{self.len} but the index is (\{i}, \{j})",
+      "index out of bounds: the len is from 0 to \{self.len()} but the index is (\{i}, \{j})",
     )
   }
-  let temp = self.buf[self.start + i]
-  self.buf[self.start + i] = self.buf[self.start + j]
-  self.buf[self.start + j] = temp
+  let temp = self.buf()[self.start() + i]
+  self.buf()[self.start() + i] = self.buf()[self.start() + j]
+  self.buf()[self.start() + j] = temp
 }
 
 ///|
@@ -212,7 +224,7 @@ pub fn[T] Array::op_as_view(
   guard start >= 0 && start <= end && end <= len else {
     abort("View index out of bounds")
   }
-  ArrayView::{ buf: self.buffer(), start, len: end - start }
+  ArrayView::make(self.buffer(), start, end - start)
 }
 
 ///|
@@ -258,5 +270,5 @@ pub fn[T] ArrayView::op_as_view(
   guard start >= 0 && start <= end && end <= len else {
     abort("View index out of bounds")
   }
-  ArrayView::{ buf: self.buf, start: self.start + start, len: end - start }
+  ArrayView::make(self.buf(), self.start() + start, end - start)
 }
