@@ -25,6 +25,7 @@
 ///   assert_eq(bv[1], b'\x02')
 ///   assert_eq(bv[2], b'\x03')
 /// ```
+#builtin.valtype
 type View
 
 ///|
