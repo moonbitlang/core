@@ -21,9 +21,9 @@ test "basic buffer operations" {
   let bytes = buf.contents()
   inspect(
     bytes,
-    content=
+    content=(
       #|b"\x48\x69"
-    ,
+    ),
   )
 
   // Reset buffer
@@ -44,9 +44,9 @@ test "number serialization" {
     ..write_int_be(42)
     ..write_int_le(42)
     .to_bytes(),
-    content=
+    content=(
       #|b"\x00\x00\x00\x2a\x2a\x00\x00\x00"
-    ,
+    ),
   )
   inspect(
     @buffer.new()
@@ -54,9 +54,9 @@ test "number serialization" {
     ..write_float_be(3.14)
     ..write_float_le(3.14)
     .to_bytes(),
-    content=
+    content=(
       #|b"\x40\x48\xf5\xc3\xc3\xf5\x48\x40"
-    ,
+    ),
   )
   inspect(
     @buffer.new()
@@ -64,9 +64,9 @@ test "number serialization" {
     ..write_int64_be(0xAABBCCDDEEL)
     ..write_int64_le(0xAABBCCDDEEL)
     .to_bytes(),
-    content=
+    content=(
       #|b"\x00\x00\x00\xaa\xbb\xcc\xdd\xee\xee\xdd\xcc\xbb\xaa\x00\x00\x00"
-    ,
+    ),
   )
   inspect(
     @buffer.new()
@@ -74,9 +74,9 @@ test "number serialization" {
     ..write_uint_be(0x2077U)
     ..write_uint_le(0x2077U)
     .to_bytes(),
-    content=
+    content=(
       #|b"\x00\x00\x20\x77\x77\x20\x00\x00"
-    ,
+    ),
   )
 }
 ```
@@ -98,9 +98,9 @@ test "byte sequence writing" {
   let contents = buf.to_bytes()
   inspect(
     contents,
-    content=
+    content=(
       #|b"\x48\x65\x6c\x6c\x6f\x48\x65\x6c\x6c\x6f"
-    ,
+    ),
   ) // "Hello" written twice
 }
 ```
@@ -120,9 +120,9 @@ test "object writing" {
   let contents = buf.contents()
   inspect(
     contents,
-    content=
+    content=(
       #|b"\x34\x00\x32\x00"
-    ,
+    ),
   )
 }
 ```
@@ -160,9 +160,9 @@ test "buffer as logger" {
   let contents = buf.contents()
   inspect(
     contents,
-    content=
+    content=(
       #|b"\x5b\x00\x31\x00\x2c\x00\x20\x00\x32\x00\x2c\x00\x20\x00\x33\x00\x5d\x00"
-    ,
+    ),
   )
 }
 ```
@@ -180,9 +180,9 @@ test "buffer conversion" {
   let bytes = buf.to_bytes()
   inspect(
     bytes,
-    content=
+    content=(
       #|b"\x61\x62\x63"
-    ,
+    ),
   )
 }
 ```
@@ -201,9 +201,9 @@ test "byte view writing" {
   let contents = buf.to_bytes()
   inspect(
     contents,
-    content=
+    content=(
       #|b"\x48\x65\x6c\x6c\x6f"
-    ,
+    ),
   )
 }
 ```
