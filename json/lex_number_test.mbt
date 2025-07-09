@@ -53,9 +53,9 @@ test "parse numbers" {
   // Very large number
   inspect(
     try? @json.parse("1e999999999"),
-    content=
+    content=(
       #|Ok(Number(Infinity, repr=Some("1e999999999")))
-    ,
+    ),
   )
 }
 
@@ -76,9 +76,9 @@ test "parse and stringify large integers" {
   let parsed_beyond = @json.parse(beyond_js_safe)
   inspect(
     parsed_beyond,
-    content=
+    content=(
       #|Number(Infinity, repr=Some("9007199254740993"))
-    ,
+    ),
   )
   inspect(parsed_beyond.stringify(), content="9007199254740993")
 
@@ -87,9 +87,9 @@ test "parse and stringify large integers" {
   let parsed_large = @json.parse(very_large)
   inspect(
     parsed_large,
-    content=
+    content=(
       #|Number(Infinity, repr=Some("12345678901234567890123456789"))
-    ,
+    ),
   )
   inspect(parsed_large.stringify(), content="12345678901234567890123456789")
 }
@@ -100,8 +100,8 @@ test "parse and stringify large double" {
   let parsed_large = @json.parse(very_large)
   inspect(
     parsed_large,
-    content=
+    content=(
       #|Number(Infinity, repr=Some("10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000003.141592653589793238462643383279"))
-    ,
+    ),
   )
 }

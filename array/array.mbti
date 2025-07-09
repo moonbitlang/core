@@ -7,9 +7,6 @@ import(
 )
 
 // Values
-#deprecated
-fn[T] push_iter(Array[T], Iter[T]) -> Unit
-
 fn[A, B, C] zip_with(Array[A], Array[B], (A, B) -> C raise?) -> Array[C] raise?
 
 // Types and methods
@@ -57,6 +54,7 @@ fn Array::join(Self[String], @string.StringView) -> String
 fn[A] Array::last(Self[A]) -> A?
 fn[T] Array::makei(Int, (Int) -> T raise?) -> Self[T] raise?
 fn[T] Array::push_iter(Self[T], Iter[T]) -> Unit
+fnalias Array::push_iter
 fn[T] Array::shuffle(Self[T], rand~ : (Int) -> Int) -> Self[T]
 fn[T] Array::shuffle_in_place(Self[T], rand~ : (Int) -> Int) -> Unit
 fn[T : Compare] Array::sort(Self[T]) -> Unit

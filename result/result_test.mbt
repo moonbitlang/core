@@ -32,9 +32,9 @@ test "wrap0 with error" {
   let result = try? f()
   inspect(
     result,
-    content=
+    content=(
       #|Err(Failure("error"))
-    ,
+    ),
   )
 }
 
@@ -44,8 +44,8 @@ test "wrap2 with error result" {
   let r = try? f(1, 2)
   inspect(
     r,
-    content=
+    content=(
       #|Err(Failure("error"))
-    ,
+    ),
   )
 }
