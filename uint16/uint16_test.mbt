@@ -222,139 +222,113 @@ test "UInt16::op_shr" {
   }
 
   inspect(shr(0, 0), content="0")
-  inspect(shr(1, 0), content="1")
-  inspect(shr(2, 1), content="1")
-  inspect(shr(4, 2), content="1")
   inspect(shr(8, 3), content="1")
-  inspect(shr(16, 4), content="1")
-  inspect(shr(32, 5), content="1")
-  inspect(shr(64, 6), content="1")
-  inspect(shr(128, 7), content="1")
-  inspect(shr(256, 8), content="1")
-  inspect(shr(512, 9), content="1")
-  inspect(shr(1024, 10), content="1")
-  inspect(shr(2048, 11), content="1")
-  inspect(shr(4096, 12), content="1")
-  inspect(shr(8192, 13), content="1")
-  inspect(shr(16384, 14), content="1")
-  inspect(shr(32768, 15), content="1")
-  inspect(shr(0, 16), content="0")
+  inspect(shr(65535, 1), content="32767") // Right shift max value by 1
+  inspect(shr(65535, 15), content="1") // Right shift max value by 15
+  inspect(shr(65535, 16), content="0") // Right shift max value by 16 (all bits)
+  inspect(shr(32768, 1), content="16384") // Half max right shift by 1
+  inspect(shr(1024, 4), content="64") // 1024 >> 4 = 64
+  inspect(shr(65280, 8), content="255") // Shift byte boundary
+  inspect(shr(49152, 2), content="12288") // 3/4 max >> 2
+  inspect(shr(4096, 12), content="1") // Large shift
 }
 
 ///|
-test "UInt16::lor" {
-  fn lor(a : UInt16, b : UInt16) -> UInt16 {
-    a | b
-  }
-
-  inspect(lor(0, 0), content="0")
-  inspect(lor(1, 0), content="1")
-  inspect(lor(0, 1), content="1")
-  inspect(lor(1, 1), content="1")
-  inspect(lor(0, 65535), content="65535")
-  inspect(lor(65535, 0), content="65535")
-  inspect(lor(65535, 65535), content="65535")
-  inspect(lor(32768, 32768), content="32768")
-  inspect(lor(32768, 16384), content="49152")
-  inspect(lor(16384, 32768), content="49152")
-  inspect(lor(16384, 16384), content="16384")
-  inspect(lor(1000, 2000), content="2040")
-  inspect(lor(2000, 1000), content="2040")
-  inspect(lor(50000, 50000), content="50000")
-  inspect(lor(50000, 40000), content="57168")
-  inspect(lor(40000, 50000), content="57168")
-}
-
-///|
-test "UInt16::land" {
-  fn land(a : UInt16, b : UInt16) -> UInt16 {
-    a & b
-  }
-
-  inspect(land(0, 0), content="0")
-  inspect(land(1, 0), content="0")
-  inspect(land(0, 1), content="0")
-  inspect(land(1, 1), content="1")
-  inspect(land(65535, 65535), content="65535")
-  inspect(land(65535, 0), content="0")
-  inspect(land(0, 65535), content="0")
-  inspect(land(32768, 32768), content="32768")
-  inspect(land(32768, 16384), content="0")
-  inspect(land(16384, 32768), content="0")
-  inspect(land(1000, 2000), content="960")
-  inspect(land(2000, 1000), content="960")
-  inspect(land(50000, 50000), content="50000")
-  inspect(land(50000, 40000), content="32832")
-  inspect(land(40000, 50000), content="32832")
-}
-
-///|
-test "UInt16::lxor" {
-  fn lxor(a : UInt16, b : UInt16) -> UInt16 {
-    a ^ b
-  }
-
-  inspect(lxor(0, 0), content="0")
-  inspect(lxor(1, 0), content="1")
-  inspect(lxor(0, 1), content="1")
-  inspect(lxor(1, 1), content="0")
-  inspect(lxor(65535, 65535), content="0")
-  inspect(lxor(65535, 0), content="65535")
-  inspect(lxor(0, 65535), content="65535")
-  inspect(lxor(32768, 32768), content="0")
-  inspect(lxor(32768, 16384), content="49152")
-  inspect(lxor(16384, 32768), content="49152")
-  inspect(lxor(1000, 2000), content="1080")
-  inspect(lxor(2000, 1000), content="1080")
-  inspect(lxor(50000, 50000), content="0")
-  inspect(lxor(50000, 40000), content="24336")
-  inspect(lxor(40000, 50000), content="24336")
-}
-
-///|
-test "UInt16::op_mod" {
+test "UInt16::op_mod comprehensive testing" {
   fn mod(a : UInt16, b : UInt16) -> UInt16 {
     a % b
   }
 
-  inspect(mod(10, 3), content="1")
-  inspect(mod(10, 2), content="0")
-  inspect(mod(10, 10), content="0")
-  inspect(mod(10, 11), content="10")
   inspect(mod(0, 1), content="0")
   inspect(mod(1, 1), content="0")
-  inspect(mod(65535, 10000), content="5535")
-  inspect(mod(65535, 2), content="1")
-  inspect(mod(65535, 65535), content="0")
-  inspect(mod(32768, 10000), content="2768")
-  inspect(mod(50000, 10000), content="0")
-  inspect(mod(50000, 9999), content="5")
-  inspect(mod(1234, 1000), content="234")
-  inspect(mod(1234, 1235), content="1234")
+  inspect(mod(5, 3), content="2")
+  inspect(mod(65535, 2), content="1") // Max value mod 2
+  inspect(mod(65535, 3), content="0") // Max value mod 3
+  inspect(mod(65535, 10), content="5") // Max value mod 10
+  inspect(mod(32768, 7), content="1") // Half max mod 7
+  inspect(mod(10000, 13), content="3") // 10000 % 13 = 3, not 10
+  inspect(mod(65534, 2), content="0") // Even number mod 2
+  inspect(mod(1000, 7), content="6") // Mid range mod
+  inspect(mod(65535, 65535), content="0") // Max mod itself
+  inspect(mod(65534, 65535), content="65534") // Just less than divisor
 }
 
 ///|
-test "UInt16::to_json" {
-  inspect(UInt16::to_json(0), content="Number(0)")
-  inspect(UInt16::to_json(1), content="Number(1)")
-  inspect(UInt16::to_json(66), content="Number(66)")
-  inspect(UInt16::to_json(65535), content="Number(65535)")
+test "UInt16 bitwise operations comprehensive testing" {
+  // Test BitOr (lor)
+  fn test_or(a : UInt16, b : UInt16) -> UInt16 {
+    a | b
+  }
+
+  inspect(test_or(0, 0), content="0")
+  inspect(test_or(1, 2), content="3")
+  inspect(test_or(65535, 0), content="65535")
+  inspect(test_or(32768, 16384), content="49152") // Two high bits
+  inspect(test_or(255, 65280), content="65535") // Low byte | high byte
+  inspect(test_or(4369, 8738), content="13107") // Mixed bits: 4369 | 8738 = 13107
+
+  // Test BitAnd (land)
+  fn test_and(a : UInt16, b : UInt16) -> UInt16 {
+    a & b
+  }
+
+  inspect(test_and(0, 0), content="0")
+  inspect(test_and(65535, 65535), content="65535")
+  inspect(test_and(65535, 0), content="0")
+  inspect(test_and(255, 65535), content="255") // Low byte & all
+  inspect(test_and(32768, 49152), content="32768") // Overlapping high bits
+  inspect(test_and(4369, 8738), content="0") // Mixed bits: 4369 & 8738 = 0
+
+  // Test BitXOr (lxor)
+  fn test_xor(a : UInt16, b : UInt16) -> UInt16 {
+    a ^ b
+  }
+
+  inspect(test_xor(0, 0), content="0")
+  inspect(test_xor(65535, 65535), content="0")
+  inspect(test_xor(65535, 0), content="65535")
+  inspect(test_xor(255, 65280), content="65535") // Low ^ high
+  inspect(test_xor(32768, 16384), content="49152") // Different bits
+  inspect(test_xor(4369, 8738), content="13107") // Mixed XOR: 4369 ^ 8738 = 13107
 }
 
 ///|
-test "UInt16::to_uint" {
-  inspect(UInt16::to_uint(0), content="0")
-  inspect(UInt16::to_uint(1), content="1")
-  inspect(UInt16::to_uint(65535), content="65535")
-  inspect(UInt16::to_uint(32768), content="32768")
-  inspect(UInt16::to_uint(12345), content="12345")
+test "UInt16 conversion functions comprehensive testing" {
+  // Test to_uint
+  let a : UInt16 = 0
+  let result_a = a.to_uint()
+  inspect(result_a, content="0")
+  let b : UInt16 = 123
+  let result_b = b.to_uint()
+  inspect(result_b, content="123")
+  let c : UInt16 = 65535
+  let result_c = c.to_uint()
+  inspect(result_c, content="65535")
+
+  // Test to_uint64
+  let d : UInt16 = 0
+  let result_d = d.to_uint64()
+  inspect(result_d, content="0")
+  let e : UInt16 = 1000
+  let result_e = e.to_uint64()
+  inspect(result_e, content="1000")
+  let f : UInt16 = 65535
+  let result_f = f.to_uint64()
+  inspect(result_f, content="65535")
 }
 
 ///|
-test "UInt16::to_uint64" {
-  inspect(UInt16::to_uint64(0), content="0")
-  inspect(UInt16::to_uint64(1), content="1")
-  inspect(UInt16::to_uint64(65535), content="65535")
-  inspect(UInt16::to_uint64(32768), content="32768")
-  inspect(UInt16::to_uint64(12345), content="12345")
+test "UInt16 to_json comprehensive testing" {
+  let a : UInt16 = 0
+  let json_a = a.to_json()
+  inspect(json_a, content="Number(0)")
+  let b : UInt16 = 123
+  let json_b = b.to_json()
+  inspect(json_b, content="Number(123)")
+  let c : UInt16 = 65535
+  let json_c = c.to_json()
+  inspect(json_c, content="Number(65535)")
+  let d : UInt16 = 32768
+  let json_d = d.to_json()
+  inspect(json_d, content="Number(32768)")
 }

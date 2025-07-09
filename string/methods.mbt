@@ -988,6 +988,31 @@ test "to_lower" {
 }
 
 ///|
+test "to_lower comprehensive case conversion" {
+  // Test strings that actually need lowercase conversion
+  assert_eq("ABC".to_lower(), "abc")
+  assert_eq("Hello World".to_lower(), "hello world")
+  assert_eq("MIX3D_C4S3S".to_lower(), "mix3d_c4s3s")
+  assert_eq("UPPERCASE_STRING_123".to_lower(), "uppercase_string_123")
+  assert_eq("TestCamelCase".to_lower(), "testcamelcase")
+
+  // Test edge cases
+  assert_eq("A".to_lower(), "a")
+  assert_eq("Z".to_lower(), "z")
+  assert_eq("123ABC".to_lower(), "123abc")
+  assert_eq("SPECIAL!@#$%CHARS".to_lower(), "special!@#$%chars")
+
+  // Test strings with no uppercase (should return same string)
+  assert_eq("already_lowercase".to_lower(), "already_lowercase")
+  assert_eq("123!@#".to_lower(), "123!@#")
+  assert_eq("".to_lower(), "")
+
+  // Test mixed case strings
+  assert_eq("MiXeD_CaSe".to_lower(), "mixed_case")
+  assert_eq("HTML5Parser".to_lower(), "html5parser")
+}
+
+///|
 test "View::to_lower" {
   assert_eq("Hello"[:].to_lower(), "hello")
   assert_eq("HELLO"[:].to_lower(), "hello")
@@ -1038,6 +1063,31 @@ test "to_upper" {
 }
 
 ///|
+test "to_upper comprehensive case conversion" {
+  // Test strings that actually need uppercase conversion
+  assert_eq("abc".to_upper(), "ABC")
+  assert_eq("hello world".to_upper(), "HELLO WORLD")
+  assert_eq("mix3d_c4s3s".to_upper(), "MIX3D_C4S3S")
+  assert_eq("lowercase_string_123".to_upper(), "LOWERCASE_STRING_123")
+  assert_eq("testCamelCase".to_upper(), "TESTCAMELCASE")
+
+  // Test edge cases
+  assert_eq("a".to_upper(), "A")
+  assert_eq("z".to_upper(), "Z")
+  assert_eq("123abc".to_upper(), "123ABC")
+  assert_eq("special!@#$%chars".to_upper(), "SPECIAL!@#$%CHARS")
+
+  // Test strings with no lowercase (should return same string)
+  assert_eq("ALREADY_UPPERCASE".to_upper(), "ALREADY_UPPERCASE")
+  assert_eq("123!@#".to_upper(), "123!@#")
+  assert_eq("".to_upper(), "")
+
+  // Test mixed case strings
+  assert_eq("MiXeD_CaSe".to_upper(), "MIXED_CASE")
+  assert_eq("html5Parser".to_upper(), "HTML5PARSER")
+}
+
+///|
 test "View::to_upper" {
   assert_eq("hello"[:].to_upper(), "HELLO")
   assert_eq("HELLO"[:].to_upper(), "HELLO")
@@ -1075,6 +1125,25 @@ test "fold" {
 }
 
 ///|
+test "fold comprehensive testing" {
+  // Test basic fold operations that will exercise the fold function
+  let result = "hello".fold(init=0, fn(acc, c) { acc + c.to_int() })
+  assert_eq(result, 532) // h(104) + e(101) + l(108) + l(108) + o(111)
+
+  // Test fold with string building
+  let result2 = "abc".fold(init="", fn(acc, c) { acc + c.to_string() + "!" })
+  assert_eq(result2, "a!b!c!")
+
+  // Test empty string fold
+  let result3 = "".fold(init=42, fn(acc, c) { acc + c.to_int() })
+  assert_eq(result3, 42)
+
+  // Test single character fold
+  let result4 = "x".fold(init=0, fn(acc, _) { acc + 1 })
+  assert_eq(result4, 1)
+}
+
+///|
 pub fn[A] View::rev_fold(self : View, init~ : A, f : (A, Char) -> A) -> A {
   let mut rv = init
   for c in self.rev_iter() {
@@ -1101,4 +1170,23 @@ test "rev_fold" {
     "hello".rev_fold(init=0, (acc, c) => acc + c.to_int()),
     111 + 108 + 108 + 101 + 104,
   )
+}
+
+///|
+test "rev_fold comprehensive testing" {
+  // Test basic rev_fold operations that will exercise the rev_fold function
+  let result = "hello".rev_fold(init=0, fn(acc, c) { acc + c.to_int() })
+  assert_eq(result, 532) // Same total as fold, just different order
+
+  // Test rev_fold with string building to see the reverse order
+  let result2 = "abc".rev_fold(init="", fn(acc, c) { acc + c.to_string() })
+  assert_eq(result2, "cba")
+
+  // Test empty string rev_fold
+  let result3 = "".rev_fold(init=42, fn(acc, c) { acc + c.to_int() })
+  assert_eq(result3, 42)
+
+  // Test single character rev_fold
+  let result4 = "x".rev_fold(init=0, fn(acc, _) { acc + 1 })
+  assert_eq(result4, 1)
 }
