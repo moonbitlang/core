@@ -63,9 +63,9 @@ test "sorting" {
   sorted2.sort_by((a, b) => a.length().compare(b.length()))
   inspect(
     sorted2,
-    content=
+    content=(
       #|["b", "aa", "ccc"]
-    ,
+    ),
   )
 
   // Sort by key
@@ -74,9 +74,9 @@ test "sorting" {
   sorted3.sort_by_key(p => p.0)
   inspect(
     sorted3,
-    content=
+    content=(
       #|[(1, "a"), (2, "b"), (3, "c")]
-    ,
+    ),
   )
 }
 ```
