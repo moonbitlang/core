@@ -352,29 +352,28 @@ pub impl Compare for View with compare(self, other) {
 ///|
 /// The empty view of a string
 pub impl Default for View with default() {
-  // todo: remove .view() in new version
-  "".view()
+  { str: "", start: 0, end: 0 }
 }
 
 ///|
 /// Convert char array to string view.
 pub fn View::from_array(chars : Array[Char]) -> View {
-  // todo: remove .view() in new version
-  String::from_array(chars).view()
+  let str = String::from_array(chars)
+  { str, start: 0, end: str.length() }
 }
 
 ///|
 /// Convert char iterator to string view.
 pub fn View::from_iter(iter : Iter[Char]) -> View {
-  // todo: remove .view() in new version
-  String::from_iter(iter).view()
+  let str = String::from_iter(iter)
+  { str, start: 0, end: str.length() }
 }
 
 ///|
 /// Create a new string by repeating the given character `value` `length` times.
 pub fn View::make(length : Int, value : Char) -> View {
-  // todo: remove .view() in new version
-  String::make(length, value).view()
+  let str = String::make(length, value)
+  { str, start: 0, end: str.length() }
 }
 
 ///|

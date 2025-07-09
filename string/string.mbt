@@ -130,10 +130,16 @@ pub fn iter(self : String) -> Iter[Char] {
           let c = code_point_of_surrogate_pair(c1, c2)
           guard yield_(c) is IterContinue else { break IterEnd }
           continue index + 2
+        } else {
+          // Invalid surrogate pair - treat leading surrogate as replacement character
+          guard yield_('\uFFFD') is IterContinue else { break IterEnd }
         }
+      } else if is_trailing_surrogate(c1) {
+        // Isolated trailing surrogate - treat as replacement character
+        guard yield_('\uFFFD') is IterContinue else { break IterEnd }
+      } else {
+        guard yield_(c1.unsafe_to_char()) is IterContinue else { break IterEnd }
       }
-      //TODO: handle garbage input
-      guard yield_(c1.unsafe_to_char()) is IterContinue else { break IterEnd }
     } else {
       IterContinue
     }
@@ -152,11 +158,17 @@ pub fn iter2(self : String) -> Iter2[Int, Char] {
           let c = code_point_of_surrogate_pair(c1, c2)
           guard yield_(n, c) is IterContinue else { break IterEnd }
           continue index + 2, n + 1
+        } else {
+          // Invalid surrogate pair - treat leading surrogate as replacement character
+          guard yield_(n, '\uFFFD') is IterContinue else { break IterEnd }
         }
-      }
-      //TODO: handle garbage input
-      guard yield_(n, c1.unsafe_to_char()) is IterContinue else {
-        break IterEnd
+      } else if is_trailing_surrogate(c1) {
+        // Isolated trailing surrogate - treat as replacement character
+        guard yield_(n, '\uFFFD') is IterContinue else { break IterEnd }
+      } else {
+        guard yield_(n, c1.unsafe_to_char()) is IterContinue else {
+          break IterEnd
+        }
       }
     } else {
       IterContinue
@@ -201,10 +213,16 @@ pub fn rev_iter(self : String) -> Iter[Char] {
           let c = code_point_of_surrogate_pair(c2, c1)
           guard yield_(c) is IterContinue else { break IterEnd }
           continue index - 2
+        } else {
+          // Invalid surrogate pair - treat trailing surrogate as replacement character
+          guard yield_('\uFFFD') is IterContinue else { break IterEnd }
         }
+      } else if is_leading_surrogate(c1) {
+        // Isolated leading surrogate - treat as replacement character
+        guard yield_('\uFFFD') is IterContinue else { break IterEnd }
+      } else {
+        guard yield_(c1.unsafe_to_char()) is IterContinue else { break IterEnd }
       }
-      // TODO: handle garbage input
-      guard yield_(c1.unsafe_to_char()) is IterContinue else { break IterEnd }
     } else {
       IterContinue
     }
