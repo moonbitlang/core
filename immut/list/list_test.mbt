@@ -262,9 +262,9 @@ test "intersperse" {
   let el : @list.T[String] = Nil
   inspect(
     ls.intersperse("|"),
-    content=
+    content=(
       #|@list.of(["1", "|", "2", "|", "3", "|", "4", "|", "5"])
-    ,
+    ),
   )
   inspect(el.intersperse("|"), content="@list.of([])")
 }
@@ -401,9 +401,9 @@ test "lookup" {
   inspect(el.lookup(1), content="None")
   inspect(
     ls.lookup(3),
-    content=
+    content=(
       #|Some("c")
-    ,
+    ),
   )
   inspect(ls.lookup(4), content="None")
 }
@@ -447,15 +447,15 @@ test "remove_at" {
   inspect(ls.remove_at(0), content="@list.of([2, 3, 4, 5])")
   inspect(
     @list.of(["a", "b", "c", "d", "e"]).remove_at(2),
-    content=
+    content=(
       #|@list.of(["a", "b", "d", "e"])
-    ,
+    ),
   )
   inspect(
     @list.of(["a", "b", "c", "d", "e"]).remove_at(5),
-    content=
+    content=(
       #|@list.of(["a", "b", "c", "d", "e"])
-    ,
+    ),
   )
 }
 
@@ -464,15 +464,15 @@ test "remove" {
   inspect(@list.of([1, 2, 3, 4, 5]).remove(3), content="@list.of([1, 2, 4, 5])")
   inspect(
     @list.of(["a", "b", "c", "d", "e"]).remove("c"),
-    content=
+    content=(
       #|@list.of(["a", "b", "d", "e"])
-    ,
+    ),
   )
   inspect(
     @list.of(["a", "b", "c", "d", "e"]).remove("f"),
-    content=
+    content=(
       #|@list.of(["a", "b", "c", "d", "e"])
-    ,
+    ),
   )
 }
 

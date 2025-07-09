@@ -268,44 +268,44 @@ test "linked list" {
   m["five"] = 5
   inspect(
     m,
-    content=
+    content=(
       #|{"one": 1, "two": 2, "three": 3, "four": 4, "five": 5}
-    ,
+    ),
   )
   m.remove("three")
   inspect(
     m,
-    content=
+    content=(
       #|{"one": 1, "two": 2, "four": 4, "five": 5}
-    ,
+    ),
   )
   m.set("two", 20)
   inspect(
     m,
-    content=
+    content=(
       #|{"one": 1, "two": 20, "four": 4, "five": 5}
-    ,
+    ),
   )
   m.remove("one")
   inspect(
     m,
-    content=
+    content=(
       #|{"two": 20, "four": 4, "five": 5}
-    ,
+    ),
   )
   m.remove("five")
   inspect(
     m,
-    content=
+    content=(
       #|{"two": 20, "four": 4}
-    ,
+    ),
   )
   m.remove("two")
   inspect(
     m,
-    content=
+    content=(
       #|{"four": 4}
-    ,
+    ),
   )
   m.remove("four")
   inspect(m, content="{}")
@@ -316,9 +316,9 @@ test "to_array" {
   let map = { 1: "one", 2: "two", 3: "three" }
   inspect(
     map.to_array(),
-    content=
+    content=(
       #|[(1, "one"), (2, "two"), (3, "three")]
-    ,
+    ),
   )
 }
 
@@ -715,16 +715,16 @@ test "to_string" {
   m.set("c", 3)
   inspect(
     m.to_string(),
-    content=
+    content=(
       #|{"a": 1, "b": 2, "c": 3}
-    ,
+    ),
   )
   let nested_m = { "a": { "b": 2 }, "B": { "C": 3 } }
   inspect(
     nested_m.to_string(),
-    content=
+    content=(
       #|{"a": {"b": 2}, "B": {"C": 3}}
-    ,
+    ),
   )
 }
 
