@@ -417,7 +417,7 @@ pub impl[K : Hash + Eq] Eq for Set[K] with op_equal(self, other) {
   loop self.head {
     None => true
     Some({ key, idx, .. }) => {
-      if not(other.contains(key)) {
+      if !other.contains(key) {
         return false
       }
       continue self.list[idx].next
@@ -447,7 +447,7 @@ pub fn[K : Hash + Eq] Set::from_iter(iter : Iter[K]) -> Set[K] {
 ///|
 pub fn[K : Hash + Eq] difference(self : Set[K], other : Set[K]) -> Set[K] {
   let m = Set::new()
-  self.each(k => if not(other.contains(k)) { m.add(k) })
+  self.each(k => if !other.contains(k) { m.add(k) })
   m
 }
 
@@ -457,8 +457,8 @@ pub fn[K : Hash + Eq] symmetric_difference(
   other : Set[K]
 ) -> Set[K] {
   let m = Set::new()
-  self.each(k => if not(other.contains(k)) { m.add(k) })
-  other.each(k => if not(self.contains(k)) { m.add(k) })
+  self.each(k => if !other.contains(k) { m.add(k) })
+  other.each(k => if !self.contains(k) { m.add(k) })
   m
 }
 

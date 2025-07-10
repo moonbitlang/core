@@ -1520,7 +1520,7 @@ pub fn[T] Array::split(
   let mut i = 0
   while i < self.length() {
     let chunk = []
-    while i < self.length() && not(pred(self[i])) {
+    while i < self.length() && !pred(self[i]) {
       chunk.push(self[i])
       i = i + 1
     }

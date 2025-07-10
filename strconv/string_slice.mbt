@@ -131,7 +131,7 @@ fn[T] fold_digits(
   let mut len = 0
   // let len = self.length()
   for i in 0..<self.length() {
-    if not(is_digit(self[i]) || self[i] == '_') {
+    if !(is_digit(self[i]) || self[i] == '_') {
       return (self.subfix_unchecked(i), ret, len)
     }
     if self[i] != '_' {

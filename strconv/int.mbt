@@ -204,7 +204,7 @@ fn determine_base(s : String) -> Int {
 
 ///|
 fn overflow_threshold(base : Int, neg : Bool) -> Int64 {
-  if not(neg) {
+  if !neg {
     if base == 10 {
       INT64_MAX / 10L + 1L
     } else if base == 16 {

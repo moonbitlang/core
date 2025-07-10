@@ -247,7 +247,7 @@ fn[V : Compare] join_right(l : Node[V]?, v : V, r : Node[V]?) -> Node[V] {
 /// Returns the difference of two sets.
 pub fn[V : Compare] difference(self : T[V], src : T[V]) -> T[V] {
   let ret = new()
-  self.each(x => if not(src.contains(x)) { ret.add(x) })
+  self.each(x => if !src.contains(x) { ret.add(x) })
   ret
 }
 
@@ -291,7 +291,7 @@ pub fn[V : Compare] intersection(self : T[V], src : T[V]) -> T[V] {
 /// Returns if a set is a subset of another set.
 pub fn[V : Compare] subset(self : T[V], src : T[V]) -> Bool {
   let mut ret = true
-  self.each(x => if not(src.contains(x)) { ret = false })
+  self.each(x => if !src.contains(x) { ret = false })
   ret
 }
 
