@@ -159,7 +159,7 @@ fn[T] fixed_quick_sort_by(
     let (pivot, partitioned) = fixed_partition_by(arr, cmp, pivot_index)
     was_partitioned = partitioned
     balanced = minimum(pivot, len - pivot) >= len / 8
-    if not(balanced) {
+    if !balanced {
       limit -= 1
     }
     if pred is Some(pred) {
@@ -206,7 +206,7 @@ fn[T] fixed_try_bubble_sort_by(
       sorted = false
       arr.swap(j, j - 1)
     }
-    if not(sorted) {
+    if !sorted {
       tries += 1
       if tries > max_tries {
         return false

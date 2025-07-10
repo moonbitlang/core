@@ -102,7 +102,7 @@ fn trig_reduce(x : Float, switch_over : Float) -> (Float, Int) {
     ((exp + 128) << 23).reinterpret_as_uint() +
     (phi >> 8) +
     (if (phi & 0xff) > 0x7e { 1 } else { 0 })
-  if not(xispos) {
+  if !xispos {
     r = r ^ 0x8000_0000
     q = -q
   }

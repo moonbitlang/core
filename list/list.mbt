@@ -242,7 +242,7 @@ pub fn[A] filter(self : T[A], f : (A) -> Bool raise?) -> T[A] raise? {
   loop self {
     Empty => Empty
     More(head, tail~) =>
-      if not(f(head)) {
+      if !f(head) {
         continue tail
       } else {
         let dest = More(head, tail=Empty)
