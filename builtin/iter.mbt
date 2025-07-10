@@ -65,7 +65,7 @@ pub fn[T] Iter::any(self : Iter[T], f : (T) -> Bool) -> Bool {
 
 ///|
 pub fn[T] Iter::all(self : Iter[T], f : (T) -> Bool) -> Bool {
-  self.run(k => if not(f(k)) { IterEnd } else { IterContinue }) == IterContinue
+  self.run(k => if !f(k) { IterEnd } else { IterContinue }) == IterContinue
 }
 
 ///|

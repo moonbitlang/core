@@ -154,7 +154,7 @@ pub fn Float::expm1(self : Float) -> Float {
     // if  |x| > 0.5 ln2
     if hx < 0x3F851592 {
       // and |x| < 1.5 ln2
-      if not(sign) {
+      if !sign {
         hi = x - float_ln2_hi
         lo = float_ln2_lo
         k = 1
@@ -204,7 +204,7 @@ pub fn Float::expm1(self : Float) -> Float {
     return (1.0 : Float) + (2.0 : Float) * (x - e)
   }
   let twopk = ((0x7f + k) << 23).reinterpret_as_float() // 2^k
-  if not(k is (0..=56)) {
+  if !(k is (0..=56)) {
     // suffice to return exp(x)-1
     let mut y = x - e + 1.0
     if k == 128 {

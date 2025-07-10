@@ -667,7 +667,7 @@ pub impl Shl for BigInt with op_shl(self : BigInt, n : Int) -> BigInt {
   if n < 0 {
     abort("negative shift count")
   }
-  if not(self.is_zero()) {
+  if !self.is_zero() {
     let new_limbs = FixedArray::make(
       self.len + (n + radix_bit_len - 1) / radix_bit_len, // ceiling(n / radix_bit_len)
       0U,
@@ -1222,7 +1222,7 @@ pub fn BigInt::pow(self : BigInt, exp : BigInt, modulus? : BigInt) -> BigInt {
       result
     }
     Some(modulus) => {
-      guard not(modulus.is_zero() || modulus.sign == Negative)
+      guard !(modulus.is_zero() || modulus.sign == Negative)
       let mut result = 1N
       let mut base = self
       let mut exp = exp

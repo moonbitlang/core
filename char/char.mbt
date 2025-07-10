@@ -421,7 +421,7 @@ pub impl Show for Char with output(self, logger) {
     '\t' => logger.write_string("\\t")
     ' '..='~' => logger.write_char(self)
     _ =>
-      if not(self.is_printable()) {
+      if !self.is_printable() {
         let code = self.to_int()
         let hex_len = if code <= 0xFF {
           2

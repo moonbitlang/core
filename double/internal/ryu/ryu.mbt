@@ -435,8 +435,7 @@ fn d2d(ieeeMantissa : UInt64, ieeeExponent : UInt) -> FloatingDecimal64 {
       lastRemovedDigit = 4
     }
     output = vr +
-      ((vr == vm && (not(even) || not(vmIsTrailingZeros))) ||
-      lastRemovedDigit >= 5)
+      ((vr == vm && (!even || !vmIsTrailingZeros)) || lastRemovedDigit >= 5)
       .to_int64()
       .reinterpret_as_uint64()
   } else {
@@ -490,7 +489,7 @@ fn to_chars(v : FloatingDecimal64, sign : Bool) -> String {
   let mut output = v.mantissa
   let olength = decimal_length17(output)
   let mut exp : Int = v.exponent + olength - 1
-  let scientificNotation = not(exp >= -6 && exp < 21)
+  let scientificNotation = !(exp >= -6 && exp < 21)
   if scientificNotation {
     // Print the decimal digits.
     for i in 0..<(olength - 1) {

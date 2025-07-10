@@ -58,7 +58,7 @@ pub fn bench(
   count~ : UInt = 10
 ) -> Unit {
   let summary = iter_count(name?, f, count)
-  if not(self.buffer.is_empty()) {
+  if !self.buffer.is_empty() {
     self.buffer.write_char(',')
   }
   self.buffer.write_string(summary.to_json().stringify(escape_slash=true))

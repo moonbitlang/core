@@ -39,5 +39,5 @@ pub fn[T : Compare] op_ge(self_ : T, other : T) -> Bool {
 ///|
 #coverage.skip
 pub fn[T : Eq] op_notequal(x : T, y : T) -> Bool {
-  not(x == y)
+  !(x == y)
 }

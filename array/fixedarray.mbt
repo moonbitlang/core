@@ -667,7 +667,7 @@ pub fn[T] FixedArray::all(
   f : (T) -> Bool raise?
 ) -> Bool raise? {
   for i in 0..<self.length() {
-    if not(f(self[i])) {
+    if !f(self[i]) {
       return false
     }
   }

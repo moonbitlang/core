@@ -78,8 +78,8 @@ pub fn[T] panic() -> T = "%panic"
 /// Example:
 ///
 /// ```moonbit
-///   inspect(not(true), content="false")
-///   inspect(not(false), content="true")
+///   inspect(!(true), content="false")
+///   inspect(!(false), content="true")
 /// ```
 pub fn not(x : Bool) -> Bool = "%bool_not"
 

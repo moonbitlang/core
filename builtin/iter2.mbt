@@ -36,7 +36,7 @@ pub impl[A : Show, B : Show] Show for Iter2[A, B] with output(self, logger) {
   logger.write_string("[")
   let mut first = true
   for k, v in self {
-    if not(first) {
+    if !first {
       // AI: support !first ?
       logger.write_string(", ")
     } else {

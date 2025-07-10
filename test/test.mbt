@@ -38,7 +38,7 @@ fn[T : Show] debug_string(t : T) -> String {
 /// @test.is_not(a, b)
 /// ```
 pub fn[T : Show] same_object(a : T, b : T, loc~ : SourceLoc = _) -> Unit raise {
-  if not(physical_equal(a, b)) {
+  if !physical_equal(a, b) {
     let a = debug_string(a)
     let b = debug_string(b)
     fail("`\{a} is \{b}`", loc~)
@@ -65,7 +65,7 @@ pub fn[T : Show] is_not(a : T, b : T, loc~ : SourceLoc = _) -> Unit raise {
   if physical_equal(a, b) {
     let a = debug_string(a)
     let b = debug_string(b)
-    fail("`not(\{a} is \{b})`", loc~)
+    fail("`!(\{a} is \{b})`", loc~)
   }
 }
 

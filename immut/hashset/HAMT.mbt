@@ -202,7 +202,7 @@ pub fn[K : Eq] T::union(self : T[K], other : T[K]) -> T[K] {
       (Leaf(key1, bucket1), Leaf(key2, bucket2)) => {
         let keys1 = bucket1.add(key1)
         let keys2 = bucket2.add(key2)
-        match keys1.filter(k => not(keys2.contains(k))) {
+        match keys1.filter(k => !keys2.contains(k)) {
           Empty => node2
           More(head, tail~) => Leaf(key2, bucket2 + tail.add(head))
         }
@@ -275,7 +275,7 @@ pub fn[K : Eq] T::difference(self : T[K], other : T[K]) -> T[K] {
       (Leaf(key1, bucket1), Leaf(key2, bucket2)) => {
         let keys1 = bucket1.add(key1)
         let keys2 = bucket2.add(key2)
-        match keys1.filter(k => not(keys2.contains(k))) {
+        match keys1.filter(k => !keys2.contains(k)) {
           Empty => None
           More(head, tail~) => Some(Leaf(head, tail))
         }

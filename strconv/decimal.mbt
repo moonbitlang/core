@@ -65,7 +65,7 @@ fn parse_decimal_from_view(str : @string.View) -> Decimal raise StrConvError {
   let rest = loop rest {
     ['_', .. rest] => continue rest
     ['.', .. rest] => {
-      guard not(has_dp) else { syntax_err() }
+      guard !has_dp else { syntax_err() }
       has_dp = true
       d.decimal_point = d.digits_num
       continue rest
@@ -88,7 +88,7 @@ fn parse_decimal_from_view(str : @string.View) -> Decimal raise StrConvError {
     rest => rest
   }
   guard has_digits else { syntax_err() }
-  if not(has_dp) {
+  if !has_dp {
     d.decimal_point = d.digits_num
   }
   // read exponent part

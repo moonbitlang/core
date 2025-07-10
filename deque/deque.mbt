@@ -906,7 +906,7 @@ pub fn[A] truncate(self : T[A], len : Int) -> Unit {
 ///   inspect(dq, content="@deque.of([4, 8])")
 /// ```
 pub fn[A] retain_map(self : T[A], f : (A) -> A?) -> Unit {
-  guard not(self.is_empty()) else { return }
+  guard !self.is_empty() else { return }
   let { head, buf, .. } = self
   let cap = buf.length()
   let head_len = cap - head
@@ -963,7 +963,7 @@ pub fn[A] retain_map(self : T[A], f : (A) -> A?) -> Unit {
 ///   inspect(dq, content="@deque.of([2, 4])")
 /// ```
 pub fn[A] retain(self : T[A], f : (A) -> Bool) -> Unit {
-  guard not(self.is_empty()) else { return }
+  guard !self.is_empty() else { return }
   let { head, buf, .. } = self
   let cap = buf.length()
   let head_len = cap - head
@@ -1015,7 +1015,7 @@ pub fn[A] retain(self : T[A], f : (A) -> Bool) -> Unit {
 /// ```
 pub fn[A] iter(self : T[A]) -> Iter[A] {
   Iter::new(yield_ => {
-    guard not(self.is_empty()) else { IterContinue }
+    guard !self.is_empty() else { IterContinue }
     let { head, buf, len, .. } = self
     let cap = buf.length()
     let head_len = cap - head
@@ -1057,7 +1057,7 @@ pub fn[A] iter(self : T[A]) -> Iter[A] {
 /// ```
 pub fn[A] iter2(self : T[A]) -> Iter2[Int, A] {
   Iter2::new(yield_ => {
-    guard not(self.is_empty()) else { IterContinue }
+    guard !self.is_empty() else { IterContinue }
     let { head, buf, len, .. } = self
     let cap = buf.length()
     let head_len = cap - head
@@ -1101,7 +1101,7 @@ pub fn[A] iter2(self : T[A]) -> Iter2[Int, A] {
 /// ```
 pub fn[A] rev_iter(self : T[A]) -> Iter[A] {
   Iter::new(yield_ => {
-    guard not(self.is_empty()) else { IterContinue }
+    guard !self.is_empty() else { IterContinue }
     let { head, buf, len, .. } = self
     let cap = buf.length()
     let head_len = cap - head
@@ -1143,7 +1143,7 @@ pub fn[A] rev_iter(self : T[A]) -> Iter[A] {
 /// ```
 pub fn[A] rev_iter2(self : T[A]) -> Iter2[Int, A] {
   Iter2::new(yield_ => {
-    guard not(self.is_empty()) else { IterContinue }
+    guard !self.is_empty() else { IterContinue }
     let { head, buf, len, .. } = self
     let cap = buf.length()
     let head_len = cap - head

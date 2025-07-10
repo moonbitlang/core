@@ -27,7 +27,7 @@ pub fn[T : Show + Eq] eq(a : T, b : T, loc~ : SourceLoc = _) -> Unit raise {
 #deprecated("Use built-in `assert_not_eq` instead")
 #coverage.skip
 pub fn[T : Show + Eq] ne(a : T, b : T, loc~ : SourceLoc = _) -> Unit raise {
-  if not(a != b) {
+  if !(a != b) {
     let a = debug_string(a)
     let b = debug_string(b)
     fail("`\{a} != \{b}`", loc~)
@@ -38,7 +38,7 @@ pub fn[T : Show + Eq] ne(a : T, b : T, loc~ : SourceLoc = _) -> Unit raise {
 #deprecated("Use built-in `assert_true` instead")
 #coverage.skip
 pub fn is_true(x : Bool, loc~ : SourceLoc = _) -> Unit raise {
-  if not(x) {
+  if !x {
     let x = debug_string(x)
     fail("`\{x}` is not true", loc~)
   }
