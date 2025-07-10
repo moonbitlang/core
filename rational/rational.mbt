@@ -472,7 +472,7 @@ pub fn from_double(value : Double) -> T raise RationalError {
     overflow_error()
   }
   for i in 0..<max_iteration {
-    if not(q >= -9223372036854775808.0 && q < 9223372036854775808.0) {
+    if !(q >= -9223372036854775808.0 && q < 9223372036854775808.0) {
       break // overflow
     }
     let a = q.to_int64()
@@ -480,7 +480,7 @@ pub fn from_double(value : Double) -> T raise RationalError {
     let f = q - a_f
 
     // Prevent overflow
-    if not(a == 0L) &&
+    if !(a == 0L) &&
       (
         n1 > t_max / a ||
         d1 > t_max / a ||
@@ -496,7 +496,7 @@ pub fn from_double(value : Double) -> T raise RationalError {
     n1 = n
     d1 = d
     let g = gcd(n1, d1)
-    if not(g == 0L) {
+    if !(g == 0L) {
       n1 = n1 / g
       d1 = d1 / g
     }

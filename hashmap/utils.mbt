@@ -175,7 +175,7 @@ pub fn[K, V] to_array(self : T[K, V]) -> Array[(K, V)] {
   } else {
     []
   }
-  if not(res.is_empty()) {
+  if !res.is_empty() {
     let mut res_idx = 1
     while res_idx < res.length() && i < self.capacity {
       if self.entries[i] is Some({ key, value, .. }) {
