@@ -169,9 +169,9 @@ test "map" {
   inspect(v.map(e => e * 2), content="@immut/array.of([2, 4, 6, 8, 10])")
   inspect(
     v.map(e => e.to_string()),
-    content=
+    content=(
       #|@immut/array.of(["1", "2", "3", "4", "5"])
-    ,
+    ),
   )
   inspect(
     v.map(e => e % 2 == 0),
