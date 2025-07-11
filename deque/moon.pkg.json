@@ -5,9 +5,6 @@
     "moonbitlang/core/array",
     "moonbitlang/core/string",
   ],
-  "test-import" : [
-      "moonbitlang/core/random",
-  ],
   "targets": {
     "panic_test.mbt": ["not", "native", "llvm"]
   }
