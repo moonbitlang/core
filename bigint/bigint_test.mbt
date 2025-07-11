@@ -1029,3 +1029,24 @@ test "default" {
   let a = BigInt::default()
   assert_eq(a, 0N)
 }
+
+///|
+test "BigInt::from_int16" {
+  // Normal values
+  inspect(BigInt::from_int16(0), content="0")
+  inspect(BigInt::from_int16(42), content="42")
+  inspect(BigInt::from_int16(-42), content="-42")
+
+  // Boundary values
+  inspect(BigInt::from_int16(@int16.max_value), content="32767") // Int16.max_value
+  inspect(BigInt::from_int16(@int16.min_value), content="-32768") // Int16.min_value
+}
+
+///|
+test "BigInt::from_uint16" {
+  // Normal values
+  inspect(BigInt::from_uint16(0), content="0")
+  inspect(BigInt::from_uint16(42), content="42")
+  inspect(BigInt::from_uint16(@uint16.min_value), content="0") // Int16.min_value
+  inspect(BigInt::from_uint16(@uint16.max_value), content="65535") // Int16.min_value
+}
