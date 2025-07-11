@@ -1180,8 +1180,3 @@ test "shuffle_in_place" {
 }
 
 ///|
-fn assert_true(condition : Bool) -> Unit {
-  if !condition {
-    abort("Assertion failed")
-  }
-}
