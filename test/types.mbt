@@ -23,3 +23,35 @@ pub(all) struct T {
 pub fn new(name : String) -> T {
   { name, buffer: StringBuilder::new() }
 }
+
+///|
+test "T struct construction and usage" {
+  // Test basic construction
+  let t1 = new("test1")
+  assert_eq(t1.name, "test1")
+
+  // Test with different names
+  let t2 = new("hello")
+  assert_eq(t2.name, "hello")
+  let t3 = new("")
+  assert_eq(t3.name, "")
+
+  // Test with longer names
+  let t4 = new("this is a longer test name")
+  assert_eq(t4.name, "this is a longer test name")
+
+  // Test that buffer is properly initialized
+  let t5 = new("buffer_test")
+  assert_eq(t5.name, "buffer_test")
+  // The buffer should be empty initially
+  let buffer_str = t5.buffer.to_string()
+  assert_eq(buffer_str, "")
+
+  // Test with special characters
+  let t6 = new("test!@#$%^&*()")
+  assert_eq(t6.name, "test!@#$%^&*()")
+
+  // Test with Unicode characters
+  let t7 = new("测试🚀🎯")
+  assert_eq(t7.name, "测试🚀🎯")
+}
