@@ -1153,3 +1153,35 @@ test "deque_binary_search_wrap_around" {
   inspect(dq[2], content="9")
   inspect(dq[3], content="11")
 }
+
+///|
+test "shuffle_in_place" {
+  let original = @deque.of([1, 2, 3, 4, 5, 6, 7])
+  let dq = original.copy()
+
+  // Simple deterministic "random" function for testing
+  fn rand(upper : Int) -> Int {
+    (upper * 3 + 7) % (upper + 1) // Deterministic pseudo-random for testing
+  }
+
+  // Shuffle in place
+  T::shuffle_in_place(dq, rand~)
+
+  // Verify properties of shuffle:
+  assert_eq(dq.length(), original.length())
+  assert_eq(dq.to_array().sort(), original.to_array().sort())
+  assert_true(dq != original)
+
+  // Test non-in-place version
+  let shuffled = T::shuffle(original, rand~)
+  assert_eq(shuffled.length(), original.length())
+  assert_eq(shuffled.to_array().sort(), original.to_array().sort())
+  assert_true(shuffled != original)
+}
+
+///|
+fn assert_true(condition : Bool) -> Unit {
+  if !condition {
+    abort("Assertion failed")
+  }
+}
