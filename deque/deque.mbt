@@ -1586,7 +1586,7 @@ pub fn[A] shuffle(self : T[A], rand~ : (Int) -> Int) -> T[A] {
   let new_deque = self.copy()
 
   // Shuffle the copy in place
-  T::shuffle_in_place(new_deque, rand~)
+  new_deque.shuffle_in_place(rand~)
 
   // Return the shuffled copy
   new_deque
