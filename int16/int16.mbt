@@ -111,3 +111,18 @@ pub impl Default for Int16 with default() {
 pub impl ToJson for Int16 with to_json(self : Int16) -> Json {
   Json::number(self.to_int().to_double())
 }
+
+///| reinterpret as an unsigned integer with binary complement
+pub fn Int16::reinterpret_as_uint16(self : Int16) -> UInt16 {
+  self.to_int().to_uint16()
+}
+
+///| Sign extend to 32 bits and reinterpret as an unsigned integer with binary complement
+pub fn Int16::to_uint(self : Int16) -> UInt {
+  self.to_int().reinterpret_as_uint()
+}
+
+///| Sign extend to 64 bits and reinterpret as an unsigned integer with binary complement
+pub fn Int16::to_uint64(self : Int16) -> UInt64 {
+  self.to_int64().reinterpret_as_uint64()
+}
