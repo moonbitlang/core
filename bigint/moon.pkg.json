@@ -6,7 +6,8 @@
     "moonbitlang/core/json",
     "moonbitlang/core/quickcheck",
     "moonbitlang/core/quickcheck/splitmix",
-    "moonbitlang/core/string"
+    "moonbitlang/core/string",
+    "moonbitlang/core/uint16"
   ],
   "targets": {
     "bigint_js.mbt": ["js"],
@@ -14,5 +15,8 @@
     "bigint_js_wbtest.mbt": ["js"],
     "bigint_nonjs_wbtest.mbt": ["not", "js"]
   },
-  "warn-list": "-29"
+  "warn-list": "-29",
+  "test-import": [
+    "moonbitlang/core/int16"
+  ]
 }
