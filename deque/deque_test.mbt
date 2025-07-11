@@ -1161,7 +1161,7 @@ test "shuffle_in_place" {
 
   // Simple deterministic "random" function for testing
   fn rand(upper : Int) -> Int {
-    (upper * 3 + 7) % (upper + 1) // Deterministic pseudo-random for testing
+    (upper * 3 + 7) % upper // Deterministic pseudo-random for testing
   }
 
   // Shuffle in place
