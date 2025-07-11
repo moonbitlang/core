@@ -426,3 +426,24 @@ test "Int16::to_json" {
   inspect(Int16::to_json(32767), content="Number(32767)")
   inspect(Int16::to_json(-32768), content="Number(-32768)")
 }
+
+///|
+test "Int16::reinterpret_as_uint16" {
+  assert_eq((-1 : Int16).reinterpret_as_uint16(), @uint16.max_value)
+  assert_eq((0 : Int16).reinterpret_as_uint16(), (0 : UInt16))
+  assert_eq((1 : Int16).reinterpret_as_uint16(), (1 : UInt16))
+}
+
+///|
+test "Int16::reinterpret_as_uint64" {
+  assert_eq((-1 : Int16).to_uint(), @uint.max_value)
+  assert_eq((0 : Int16).to_uint(), (0 : UInt))
+  assert_eq((1 : Int16).to_uint(), (1 : UInt))
+}
+
+///|
+test "Int16::reinterpret_as_uint64" {
+  assert_eq((-1 : Int16).to_uint64(), @uint64.max_value)
+  assert_eq((0 : Int16).to_uint64(), (0 : UInt64))
+  assert_eq((1 : Int16).to_uint64(), (1 : UInt64))
+}
