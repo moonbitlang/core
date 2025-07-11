@@ -103,7 +103,7 @@ pub fn[T] View::eachi(
 /// ```
 pub fn[T] View::all(self : View[T], f : (T) -> Bool raise?) -> Bool raise? {
   for v in self {
-    if not(f(v)) {
+    if !f(v) {
       return false
     }
   }
@@ -454,7 +454,7 @@ pub impl[T : Eq] Eq for View[T] with op_equal(self, other) -> Bool {
     return false
   }
   for i in 0..<self.length() {
-    if not(self[i] == other[i]) {
+    if !(self[i] == other[i]) {
       return false
     }
   } else {

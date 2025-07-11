@@ -157,9 +157,12 @@ pub fn[K : Hash + Eq, V] from_iter(iter : Iter[(K, V)]) -> T[K, V] {
 /// ```moonbit
 ///   let map = @hashmap.of([(1, "one"), (2, "two")])
 ///   let arr = map.to_array()
-///   inspect(arr, content=
-///   #|[(2, "two"), (1, "one")]
-/// )
+///   inspect(
+///     arr, 
+///     content=(
+///       #|[(2, "two"), (1, "one")]
+///     ),
+///   )
 /// ```
 pub fn[K, V] to_array(self : T[K, V]) -> Array[(K, V)] {
   let mut i = 0
@@ -172,7 +175,7 @@ pub fn[K, V] to_array(self : T[K, V]) -> Array[(K, V)] {
   } else {
     []
   }
-  if not(res.is_empty()) {
+  if !res.is_empty() {
     let mut res_idx = 1
     while res_idx < res.length() && i < self.capacity {
       if self.entries[i] is Some({ key, value, .. }) {
@@ -320,8 +323,11 @@ pub fn[K, V] eachi(self : T[K, V], f : (Int, K, V) -> Unit) -> Unit {
 ///
 /// ```moonbit
 ///   let map = @hashmap.of([(1, "one"), (2, "two")])
-///   inspect(map, content=
-///   #|HashMap::of([(2, "two"), (1, "one")])
+///   inspect(
+///     map, 
+///     content=(
+///       #|HashMap::of([(2, "two"), (1, "one")])
+///     ),
 /// )
 /// ```
 pub impl[K : Show, V : Show] Show for T[K, V] with output(self, logger) {

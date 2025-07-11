@@ -46,9 +46,9 @@ test "json object navigation" {
   let string_opt = json.value("string").unwrap().as_string()
   inspect(
     string_opt,
-    content=
+    content=(
       #|Some("hello")
-    ,
+    ),
   )
 
   // Access number
@@ -108,9 +108,9 @@ test "json decode" {
   let map : Map[String, Int] = @json.from_json(json_map)
   inspect(
     map,
-    content=
+    content=(
       #|{"a": 1, "b": 2}
-    ,
+    ),
   )
 }
 ```

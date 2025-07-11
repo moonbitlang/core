@@ -25,7 +25,7 @@ pub fn[T] when(condition : Bool, value : () -> T) -> T? {
 ///|
 #deprecated("inline instead for such tiny function")
 pub fn[T] unless(condition : Bool, value : () -> T) -> T? {
-  when(not(condition), value)
+  when(!condition, value)
 }
 
 ///|
