@@ -18,10 +18,12 @@ fn BigInt::equal_int(Self, Int) -> Bool
 fn BigInt::equal_int64(Self, Int64) -> Bool
 fn BigInt::from_hex(String) -> Self
 fn BigInt::from_int(Int) -> Self
+fn BigInt::from_int16(Int16) -> Self
 fn BigInt::from_int64(Int64) -> Self
 fn BigInt::from_octets(Bytes, signum~ : Int = ..) -> Self
 fn BigInt::from_string(String) -> Self
 fn BigInt::from_uint(UInt) -> Self
+fn BigInt::from_uint16(UInt16) -> Self
 fn BigInt::from_uint64(UInt64) -> Self
 fn BigInt::is_zero(Self) -> Bool
 #deprecated

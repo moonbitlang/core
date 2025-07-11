@@ -291,3 +291,46 @@ pub fn BigInt::to_uint16(self : BigInt) -> UInt16 {
 pub fn BigInt::to_int16(self : BigInt) -> Int16 {
   self.to_int().to_int16()
 }
+
+///|
+/// Converts a 16-bit signed integer to a `BigInt` value.
+///
+/// Parameters:
+///
+/// * `value` : The 16-bit signed integer to be converted.
+///
+/// Returns a `BigInt` representing the same numerical value as the input.
+///
+/// Example:
+///
+/// ```moonbit
+/// let small = BigInt::from_int16(42)
+/// inspect(small.to_string(), content="42")
+///
+/// let negative = BigInt::from_int16(-42)
+/// inspect(negative.to_string(), content="-42")
+/// ```
+///
+pub fn BigInt::from_int16(x : Int16) -> BigInt {
+  BigInt::from_int(x.to_int())
+}
+
+///|
+/// Converts an unsigned 16-bit integer to a `BigInt` value.
+///
+/// Parameters:
+///
+/// * `value` : The `UInt16` value to be converted.
+///
+/// Returns a `BigInt` representing the same numerical value as the input.
+///
+/// Example:
+///
+/// ```moonbit
+/// let n : UInt16 = 42
+/// inspect(BigInt::from_uint16(n), content="42")
+/// ```
+///
+pub fn BigInt::from_uint16(x : UInt16) -> BigInt {
+  BigInt::from_uint(x.to_uint())
+}
