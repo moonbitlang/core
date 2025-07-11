@@ -291,10 +291,10 @@ test "iter" {
   })
   inspect(
     exb,
-    content=
+    content=(
       #|42
       #|
-    ,
+    ),
   )
   exb.reset()
   let y : Int? = None

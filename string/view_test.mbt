@@ -667,9 +667,9 @@ test "to_json" {
   let v = "hello".view(start_offset=1, end_offset=4)
   inspect(
     v.to_json(),
-    content=
+    content=(
       #|String("ell")
-    ,
+    ),
   )
 }
 

@@ -88,14 +88,14 @@ test "iter" {
   assert_eq(i, dv.length())
   inspect(
     buf,
-    content=
+    content=(
       #|1
       #|2
       #|3
       #|4
       #|5
       #|
-    ,
+    ),
   )
   inspect(
     iter.take(4).filter(x => x % 2 == 0).fold((a, x) => a + x, init=0),
@@ -519,15 +519,15 @@ test "deque push_front when empty" {
   let d = @deque.of(["a", "b"])
   inspect(
     d.pop_back(),
-    content=
+    content=(
       #|Some("b")
-    ,
+    ),
   )
   inspect(
     d.pop_back(),
-    content=
+    content=(
       #|Some("a")
-    ,
+    ),
   )
   d.push_front("a")
   inspect(d, content="@deque.of([\"a\"])")
@@ -1182,10 +1182,11 @@ test "rev_inplace" {
   dq.rev_inplace()
   assert_eq(dq, @deque.of([1, 2, 3, 4, 5]))
 
-  // Test with single element
-  let dq = @deque.of([42])
-  dq.rev_inplace()
-  assert_eq(dq, @deque.of([42]))
+  // Test with snapped deque (NEW)
+  let dq = @deque.of([1, 2, 3, 4])
+  let snapped = dq.copy()
+  snapped.rev_inplace()
+  assert_eq(snapped, @deque.of([4, 3, 2, 1]))
 }
 
 ///|
@@ -1217,6 +1218,11 @@ test "rev" {
   let even_reversed = even.rev()
   assert_eq(even, @deque.of([1, 2, 3, 4]))
   assert_eq(even_reversed, @deque.of([4, 3, 2, 1]))
+  let original = @deque.of([1, 2, 3, 4])
+  let copied = original.copy()
+  let copied_reversed = copied.rev()
+  assert_eq(original, @deque.of([1, 2, 3, 4])) // Original unchanged
+  assert_eq(copied_reversed, @deque.of([4, 3, 2, 1])) // Copied and reversed
 
   // Test with larger deque
   let large = @deque.of([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])

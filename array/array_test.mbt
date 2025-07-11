@@ -119,9 +119,9 @@ test "zip" {
   let arr4 = ["a", "b", "c"]
   inspect(
     arr3.zip(arr4),
-    content=
+    content=(
       #|[(1, "a"), (2, "b")]
-    ,
+    ),
   )
 
   // Test with an empty array
@@ -179,9 +179,9 @@ test "zip_to_iter2" {
   let arr4 = ["a", "b", "c"]
   inspect(
     arr3.zip_to_iter2(arr4).to_array(),
-    content=
+    content=(
       #|[(1, "a"), (2, "b")]
-    ,
+    ),
   )
 
   // Test with an empty array

@@ -42,9 +42,9 @@ test "set_utf8_char (ASCII)" {
   assert_eq(len, 1)
   inspect(
     bytes,
-    content=
+    content=(
       #|b"\x41\x00\x00\x00"
-    ,
+    ),
   )
 }
 
@@ -57,9 +57,9 @@ test "set_utf8_char (CJK)" {
   assert_eq(len, 3)
   inspect(
     bytes,
-    content=
+    content=(
       #|b"\xe6\x8b\xbc\x00"
-    ,
+    ),
   )
 }
 
@@ -73,9 +73,9 @@ test "set_utf8_char (0x600)" {
   assert_eq(len, 2)
   inspect(
     bytes,
-    content=
+    content=(
       #|b"\xd8\x80\x00\x00"
-    ,
+    ),
   )
 }
 
@@ -88,9 +88,9 @@ test "set_utf8_char (Emoji)" {
   assert_eq(len, 4)
   inspect(
     bytes,
-    content=
+    content=(
       #|b"\xf0\x9f\x99\x85"
-    ,
+    ),
   )
 }
 
@@ -104,9 +104,9 @@ test "set_utf16le_char" {
   assert_eq(bytes.to_unchecked_string(offset=0, length=2), "A")
   inspect(
     bytes,
-    content=
+    content=(
       #|b"\x41\x00\x00\x00"
-    ,
+    ),
   )
 }
 
@@ -120,9 +120,9 @@ test "set_utf16le_char (surrogate pair)" {
   assert_eq(bytes.to_unchecked_string(offset=0, length=4), "🉑")
   inspect(
     bytes,
-    content=
+    content=(
       #|b"\x3c\xd8\x51\xde"
-    ,
+    ),
   )
 }
 
@@ -135,9 +135,9 @@ test "set_utf16be_char" {
   assert_eq(len, 2)
   inspect(
     bytes,
-    content=
+    content=(
       #|b"\x00\x41\x00\x00"
-    ,
+    ),
   )
 }
 

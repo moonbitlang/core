@@ -21,9 +21,9 @@ test "new_with_capacity_then_add " {
   set.add(("None", "Hash"))
   inspect(
     set,
-    content=
+    content=(
       #|@hashset.of([("None", "Hash")])
-    ,
+    ),
   )
 }
 
