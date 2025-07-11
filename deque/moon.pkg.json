@@ -3,7 +3,7 @@
     "moonbitlang/core/builtin",
     "moonbitlang/core/json",
     "moonbitlang/core/array",
-    "moonbitlang/core/string",
+    "moonbitlang/core/string"
   ],
   "targets": {
     "panic_test.mbt": ["not", "native", "llvm"]
