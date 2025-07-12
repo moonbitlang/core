@@ -192,3 +192,13 @@ test "bench - monotonic clock functionality" {
   // Elapsed time should be non-negative
   inspect(elapsed >= 0.0, content="true")
 }
+
+///|
+test "bench - keep stores value" {
+  let b = new()
+  assert_eq(b.summaries.length(), 0)
+  b.keep(123)
+  assert_eq(b.summaries.length(), 0)
+  b.keep(456)
+  assert_eq(b.summaries.length(), 0)
+}

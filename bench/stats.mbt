@@ -229,3 +229,19 @@ test {
     "runs": 8,
   })
 }
+
+///|
+test "std_dev_pct zero mean" {
+  assert_eq(std_dev_pct(mean=0.0, std_dev=5.0), 0.0)
+}
+
+///|
+test "median_abs_dev_pct zero median" {
+  assert_eq(median_abs_dev_pct(median=0.0, median_abs_dev=3.0), 0.0)
+}
+
+///|
+test "percentile edge cases" {
+  assert_eq(percentile(sorted_data=[42.0], pct=50.0), 42.0)
+  assert_eq(percentile(sorted_data=[1.0, 2.0, 3.0], pct=100.0), 3.0)
+}
