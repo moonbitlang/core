@@ -121,3 +121,25 @@ pub fn[T] tap(value : T, f : (T) -> Unit) -> T {
 pub fn[T, R] then(value : T, f : (T) -> R) -> R {
   f(value)
 }
+
+///|
+pub typealias @internal.(
+  int as Int,
+  int16 as Int16,
+  int64 as Int64,
+  uint as UInt,
+  uint16 as UInt16,
+  uint64 as UInt64,
+  float as Float,
+  double as Double,
+  byte as Byte,
+  bytes as Bytes,
+  ref_ as Ref,
+  fixedarray as FixedArray,
+  result as Result,
+  option as Option,
+  unit as Unit,
+  char as Char,
+  bool as Bool,
+  string as String
+)
