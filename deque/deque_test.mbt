@@ -39,9 +39,9 @@ test "reserve_capacity" {
   dv.pop_front() |> ignore() // 4, 5, 1
   dv.reserve_capacity(10)
   assert_true(dv.capacity() == 10)
-  assert_eq(dv[0], 4)
-  assert_eq(dv[1], 5)
-  assert_eq(dv[2], 1)
+  inspect(dv[0], content="4")
+  inspect(dv[1], content="5")
+  inspect(dv[2], content="1")
 }
 
 ///|
@@ -61,9 +61,9 @@ test "shrink_to_fit" {
   assert_true(dv.capacity() == 5)
   dv.shrink_to_fit()
   assert_true(dv.capacity() == 3)
-  assert_eq(dv[0], 4)
-  assert_eq(dv[1], 5)
-  assert_eq(dv[2], 1)
+  inspect(dv[0], content="4")
+  inspect(dv[1], content="5")
+  inspect(dv[2], content="1")
 }
 
 ///|
@@ -233,7 +233,7 @@ test "copy" {
 test "op_set" {
   let dv = @deque.of([1, 2, 3, 4, 5])
   dv[1] = 3
-  assert_eq(dv[1], 3)
+  inspect(dv[1], content="3")
 }
 
 ///|
@@ -255,17 +255,17 @@ test "op_equal" {
 test "clear" {
   let dv = @deque.of([3, 4, 5])
   dv.clear()
-  assert_eq(dv.length(), 0)
-  assert_eq(dv.capacity(), 3)
+  inspect(dv.length(), content="0")
+  inspect(dv.capacity(), content="3")
 }
 
 ///|
 test "map" {
   let dv = @deque.of([3, 4, 5])
   let dvp = dv.map(x => x + 1)
-  assert_eq(dvp[0], 4)
-  assert_eq(dvp[1], 5)
-  assert_eq(dvp[2], 6)
+  inspect(dvp[0], content="4")
+  inspect(dvp[1], content="5")
+  inspect(dvp[2], content="6")
   let dve = @deque.of(([] : FixedArray[Int]))
   inspect(dve.map(x => x), content="@deque.of([])")
 }
@@ -274,19 +274,19 @@ test "map" {
 test "push_and_pop" {
   let dv = @deque.of([1, 2, 3, 4, 5])
   assert_eq(dv.pop_back(), Some(5))
-  assert_eq(dv.length(), 4)
+  inspect(dv.length(), content="4")
   assert_eq(dv.back(), Some(4))
   assert_eq(dv.pop_front(), Some(1))
-  assert_eq(dv.length(), 3)
+  inspect(dv.length(), content="3")
   assert_eq(dv.front(), Some(2))
   dv.push_front(5)
   dv.push_front(6)
   dv.push_back(7)
   dv.push_back(8)
-  assert_eq(dv.length(), 7)
+  inspect(dv.length(), content="7")
   assert_eq(dv.pop_front(), Some(6))
   assert_eq(dv.front(), Some(5))
-  assert_eq(dv.length(), 6)
+  inspect(dv.length(), content="6")
   assert_eq(dv.pop_back(), Some(8))
   assert_eq(dv.back(), Some(7))
   let dv = @deque.of([1])
@@ -306,9 +306,9 @@ test "is_empty" {
 ///|
 test "of" {
   let d = @deque.of([1, 2, 3])
-  assert_eq(d[0], 1)
-  assert_eq(d[1], 2)
-  assert_eq(d[2], 3)
+  inspect(d[0], content="1")
+  inspect(d[1], content="2")
+  inspect(d[2], content="3")
 }
 
 ///|
@@ -324,13 +324,13 @@ test "front_and_back" {
 ///|
 test "new_with_capacity" {
   let d : @deque.T[Int] = @deque.new(capacity=0)
-  assert_eq(d.capacity(), 0)
+  inspect(d.capacity(), content="0")
 }
 
 ///|
 test "new_with_capacity_non_zero" {
   let d : @deque.T[Int] = @deque.new(capacity=10)
-  assert_eq(d.capacity(), 10)
+  inspect(d.capacity(), content="10")
 }
 
 ///|
@@ -409,7 +409,7 @@ test "from_iter empty iter" {
 test "from_array with single element" {
   let arr = [42]
   let deque = @deque.from_array(arr)
-  assert_eq(deque.length(), 1)
+  inspect(deque.length(), content="1")
   assert_eq(deque.front(), Some(42))
   assert_eq(deque.back(), Some(42))
 }
@@ -574,27 +574,27 @@ test "test_get" {
   tester.push_back(1)
   tester.push_back(2)
   tester.push_back(35)
-  assert_eq(tester.length(), 3)
-  assert_eq(tester[1], 2)
-  assert_eq(tester[2], 35)
-  assert_eq(tester[0], 1)
+  inspect(tester.length(), content="3")
+  inspect(tester[1], content="2")
+  inspect(tester[2], content="35")
+  inspect(tester[0], content="1")
   let _ = tester.pop_front()
-  assert_eq(tester.length(), 2)
-  assert_eq(tester[0], 2)
-  assert_eq(tester[1], 35)
+  inspect(tester.length(), content="2")
+  inspect(tester[0], content="2")
+  inspect(tester[1], content="35")
 }
 
 ///|
 test "test_reserve_capacity" {
   let tester : @deque.T[Int] = @deque.new(capacity=1)
-  assert_eq(tester.capacity(), 1)
+  inspect(tester.capacity(), content="1")
   tester.reserve_capacity(2)
-  assert_eq(tester.capacity(), 2)
+  inspect(tester.capacity(), content="2")
   tester.reserve_capacity(1)
   // reserving won't shrink the buffer
-  assert_eq(tester.capacity(), 2)
+  inspect(tester.capacity(), content="2")
   tester.reserve_capacity(35)
-  assert_eq(tester.capacity(), 35)
+  inspect(tester.capacity(), content="35")
 }
 
 ///|

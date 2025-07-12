@@ -30,7 +30,7 @@ pub fn[A] new() -> T[A] {
 /// # Example
 /// ```mbt
 ///   let queue = @priority_queue.of([1, 2, 3, 4, 5])
-///   assert_eq(queue.length(), 5)
+///   inspect(queue.length(), content="5")
 /// ```
 pub fn[A : Compare] from_array(array : Array[A]) -> T[A] {
   let mut pq = new()
@@ -242,7 +242,7 @@ pub fn[A] peek(self : T[A]) -> A? {
 /// # Example
 /// ```mbt
 ///   let queue = @priority_queue.new()
-///   assert_eq(queue.is_empty(), true)
+///   inspect(queue.is_empty(), content="true")
 ///   assert_eq(queue.push(1).is_empty(), false)
 /// ```
 pub fn[A] is_empty(self : T[A]) -> Bool {
@@ -255,7 +255,7 @@ pub fn[A] is_empty(self : T[A]) -> Bool {
 /// # Example
 /// ```mbt
 ///   let queue = @priority_queue.new()
-///   assert_eq(queue.length(), 0)
+///   inspect(queue.length(), content="0")
 ///   assert_eq(queue.push(1).length(), 1)
 /// ```
 pub fn[A] length(self : T[A]) -> Int {
@@ -320,10 +320,10 @@ pub impl[A : Hash + Compare] Hash for T[A] with hash_combine(self, hasher) {
 ///   let pq1 = @priority_queue.of([1, 2, 3])
 ///   let pq2 = @priority_queue.of([1, 2, 4])
 ///   let pq3 = @priority_queue.of([1, 2])
-///   assert_eq(pq1.compare(pq2), -1) // pq1 < pq2
-///   assert_eq(pq1.compare(pq3), 1)  // pq2 > pq1
-///   assert_eq(pq3.compare(pq1), -1) // pq1 > pq3 (longer)
-///   assert_eq(pq1.compare(pq1), 0)  // pq1 = pq1
+///   inspect(pq1.compare(pq2), content="-1") // pq1 < pq2
+///   inspect(pq1.compare(pq3), content="1")  // pq2 > pq1
+///   inspect(pq3.compare(pq1), content="-1") // pq1 > pq3 (longer)
+///   inspect(pq1.compare(pq1), content="0")  // pq1 = pq1
 /// ```
 pub impl[A : Compare] Compare for T[A] with compare(self, other) {
   let len_cmp = self.length().compare(other.length())

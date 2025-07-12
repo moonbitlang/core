@@ -50,18 +50,18 @@ test "each" {
     i = 0
     ([] : FixedArray[_]).each(f)
     assert_false(failed)
-    assert_eq(i, 0)
+    inspect(i, content="0")
   }
   {
     i = 0
     ([1] : FixedArray[_]).each(f)
     assert_false(failed)
-    assert_eq(i, 1)
+    inspect(i, content="1")
   }
   i = 0
   ([1, 2, 3, 4, 5] : FixedArray[_]).each(f)
   assert_false(failed)
-  assert_eq(i, 5)
+  inspect(i, content="5")
 }
 
 ///|
@@ -102,18 +102,18 @@ test "eachi" {
     i = 0
     ([] : FixedArray[_]).eachi(f)
     assert_false(failed)
-    assert_eq(i, 0)
+    inspect(i, content="0")
   }
   {
     i = 0
     ([1] : FixedArray[_]).eachi(f)
     assert_false(failed)
-    assert_eq(i, 1)
+    inspect(i, content="1")
   }
   i = 0
   ([1, 2, 3, 4, 5] : FixedArray[_]).eachi(f)
   assert_false(failed)
-  assert_eq(i, 5)
+  inspect(i, content="5")
 }
 
 ///|
@@ -154,18 +154,18 @@ test "rev_each" {
     i = 1
     ([] : FixedArray[_]).rev_each(f)
     assert_false(failed)
-    assert_eq(i, 1)
+    inspect(i, content="1")
   }
   {
     i = 2
     ([1] : FixedArray[_]).rev_each(f)
     assert_false(failed)
-    assert_eq(i, 1)
+    inspect(i, content="1")
   }
   i = 6
   ([1, 2, 3, 4, 5] : FixedArray[_]).rev_each(f)
   assert_false(failed)
-  assert_eq(i, 1)
+  inspect(i, content="1")
 }
 
 ///|
@@ -210,23 +210,23 @@ test "rev_eachi" {
     j = 0
     ([] : FixedArray[_]).rev_eachi(f)
     assert_false(failed)
-    assert_eq(i, 1)
-    assert_eq(j, 0)
+    inspect(i, content="1")
+    inspect(j, content="0")
   }
   {
     i = 2
     j = 0
     ([1] : FixedArray[_]).rev_eachi(f)
     assert_false(failed)
-    assert_eq(i, 1)
-    assert_eq(j, 1)
+    inspect(i, content="1")
+    inspect(j, content="1")
   }
   i = 6
   j = 0
   ([1, 2, 3, 4, 5] : FixedArray[_]).rev_eachi(f)
   assert_false(failed)
-  assert_eq(i, 1)
-  assert_eq(j, 5)
+  inspect(i, content="1")
+  inspect(j, content="5")
 }
 
 ///|
@@ -338,14 +338,14 @@ pub fn[T] FixedArray::makei(
 ///|
 test "fixedarray_new_with_index" {
   let empty = FixedArray::makei(0, i => i)
-  assert_eq(empty.length(), 0)
+  inspect(empty.length(), content="0")
   let simple_arr = FixedArray::makei(1, i => i)
-  assert_eq(simple_arr.length(), 1)
-  assert_eq(simple_arr[0], 0)
+  inspect(simple_arr.length(), content="1")
+  inspect(simple_arr[0], content="0")
   let arr = FixedArray::makei(2, i => i)
-  assert_eq(arr.length(), 2)
-  assert_eq(arr[0], 0)
-  assert_eq(arr[1], 1)
+  inspect(arr.length(), content="2")
+  inspect(arr[0], content="0")
+  inspect(arr[1], content="1")
 }
 
 ///|
@@ -382,7 +382,7 @@ test "from_array" {
 /// # Example
 /// ```mbt
 ///   let sum = [1, 2, 3, 4, 5].fold(init=0, (sum, elem) => sum + elem)
-///   assert_eq(sum, 15)
+///   inspect(sum, content="15")
 /// ```
 pub fn[A, B] FixedArray::fold(
   self : FixedArray[A],
@@ -399,12 +399,12 @@ pub fn[A, B] FixedArray::fold(
 ///|
 test "fold" {
   let sum = ([] : FixedArray[_]).fold(init=1, (sum, elem) => sum + elem)
-  assert_eq(sum, 1)
+  inspect(sum, content="1")
   let sum = ([1] : FixedArray[_]).fold(init=2, (sum, elem) => sum + elem)
-  assert_eq(sum, 3)
+  inspect(sum, content="3")
   let sum = ([1, 2, 3, 4, 5] : FixedArray[_]).fold(init=0, (sum, elem) => sum +
     elem)
-  assert_eq(sum, 15)
+  inspect(sum, content="15")
 }
 
 ///|
@@ -413,7 +413,7 @@ test "fold" {
 /// # Example
 /// ```mbt
 ///   let sum = [1, 2, 3, 4, 5].rev_fold(init=0, (sum, elem) => sum + elem)
-///   assert_eq(sum, 15)
+///   inspect(sum, content="15")
 /// ```
 pub fn[A, B] FixedArray::rev_fold(
   self : FixedArray[A],
@@ -430,12 +430,12 @@ pub fn[A, B] FixedArray::rev_fold(
 ///|
 test "rev_fold" {
   let sum = ([] : FixedArray[_]).rev_fold(init=1, (sum, elem) => sum + elem)
-  assert_eq(sum, 1)
+  inspect(sum, content="1")
   let sum = ([1] : FixedArray[_]).rev_fold(init=2, (sum, elem) => sum + elem)
-  assert_eq(sum, 3)
+  inspect(sum, content="3")
   let sum = ([1, 2, 3, 4, 5] : FixedArray[_]).rev_fold(init=0, (sum, elem) => sum +
     elem)
-  assert_eq(sum, 15)
+  inspect(sum, content="15")
 }
 
 ///|
@@ -444,7 +444,7 @@ test "rev_fold" {
 /// # Example
 /// ```mbt
 ///   let sum = [1, 2, 3, 4, 5].foldi(init=0, (index, sum, _elem) => sum + index)
-///   assert_eq(sum, 10)
+///   inspect(sum, content="10")
 /// ```
 pub fn[A, B] FixedArray::foldi(
   self : FixedArray[A],
@@ -463,14 +463,14 @@ test "fold_lefti" {
   let f = (index, sum, elem) => index + sum + elem
   {
     let sum = ([] : FixedArray[_]).foldi(init=1, f)
-    assert_eq(sum, 1)
+    inspect(sum, content="1")
   }
   {
     let sum = ([1] : FixedArray[_]).foldi(init=2, f)
-    assert_eq(sum, 3)
+    inspect(sum, content="3")
   }
   let sum = ([1, 2, 3, 4, 5] : FixedArray[_]).foldi(init=0, f)
-  assert_eq(sum, 25)
+  inspect(sum, content="25")
 }
 
 ///|
@@ -479,7 +479,7 @@ test "fold_lefti" {
 /// # Example
 /// ```mbt
 ///   let sum = [1, 2, 3, 4, 5].rev_foldi(init=0, (index, sum, _elem) => sum + index)
-///   assert_eq(sum, 10)
+///   inspect(sum, content="10")
 /// ```
 pub fn[A, B] FixedArray::rev_foldi(
   self : FixedArray[A],
@@ -499,14 +499,14 @@ test "rev_foldi" {
   let f = (index, sum, elem) => index + sum + elem
   {
     let sum = ([] : FixedArray[_]).rev_foldi(init=1, f)
-    assert_eq(sum, 1)
+    inspect(sum, content="1")
   }
   {
     let sum = ([1] : FixedArray[_]).rev_foldi(init=2, f)
-    assert_eq(sum, 3)
+    inspect(sum, content="3")
   }
   let sum = ([1, 2, 3, 4, 5] : FixedArray[_]).rev_foldi(init=0, f)
-  assert_eq(sum, 25)
+  inspect(sum, content="25")
 }
 
 ///|

@@ -697,9 +697,9 @@ test "compare" {
   let list2 = @list.of([1, 2, 4])
   let list3 = @list.of([1, 2])
   let empty : @list.T[Int] = @list.Nil
-  assert_eq(list1.compare(list2), -1)
-  assert_eq(list1.compare(list3), 1)
-  assert_eq(list3.compare(list1), -1)
-  assert_eq(list1.compare(list1), 0)
-  assert_eq(empty.compare(empty), 0)
+  inspect(list1.compare(list2), content="-1")
+  inspect(list1.compare(list3), content="1")
+  inspect(list3.compare(list1), content="-1")
+  inspect(list1.compare(list1), content="0")
+  inspect(empty.compare(empty), content="0")
 }

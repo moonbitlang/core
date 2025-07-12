@@ -24,7 +24,7 @@ test "parse_uint64 overflow check" {
     let _ = @strconv.parse_uint64(overflow_val)
     fail("Expected range error for overflow value")
   } catch {
-    @strconv.StrConvError(err) => assert_eq(err, "value out of range")
+    @strconv.StrConvError(err) => inspect(err, content="value out of range")
     _ => fail("Expected StrConvError but got different error")
   }
 
@@ -34,7 +34,7 @@ test "parse_uint64 overflow check" {
     let _ = @strconv.parse_uint64(overflow_hex, base=16)
     fail("Expected range error for overflow hex value")
   } catch {
-    @strconv.StrConvError(err) => assert_eq(err, "value out of range")
+    @strconv.StrConvError(err) => inspect(err, content="value out of range")
     _ => fail("Expected StrConvError but got different error")
   }
 }

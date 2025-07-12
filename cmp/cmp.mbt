@@ -56,8 +56,8 @@ pub fn[T, K : Compare] minimum_by_key(x : T, y : T, f : (T) -> K) -> T {
 /// # Examples
 ///
 /// ```mbt
-///   assert_eq(@cmp.maximum(1, 2), 2)
-///   assert_eq(@cmp.maximum(2, 2), 2)
+///   inspect(@cmp.maximum(1, 2), content="2")
+///   inspect(@cmp.maximum(2, 2), content="2")
 /// ```
 pub fn[T : Compare] maximum(x : T, y : T) -> T {
   if x > y {
@@ -75,8 +75,8 @@ pub fn[T : Compare] maximum(x : T, y : T) -> T {
 /// # Examples
 ///
 /// ```mbt
-///   assert_eq(@cmp.minimum(1, 2), 1)
-///   assert_eq(@cmp.minimum(2, 2), 2)
+///   inspect(@cmp.minimum(1, 2), content="1")
+///   inspect(@cmp.minimum(2, 2), content="2")
 /// ```
 pub fn[T : Compare] minimum(x : T, y : T) -> T {
   if x > y {

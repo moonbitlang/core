@@ -98,7 +98,7 @@ test "to_bytes method" {
   let buf = @buffer.new(size_hint=10)
   buf.write_string("Test")
   let bytes = buf.to_bytes()
-  assert_eq(bytes.length(), 8) // Each character in "Test" is 2 bytes
+  inspect(bytes.length(), content="8") // Each character in "Test" is 2 bytes
 }
 
 ///|
@@ -137,7 +137,7 @@ test "to_bytes method" {
   let buf = @buffer.new(size_hint=10)
   buf.write_string("Test")
   let bytes = buf.to_bytes()
-  assert_eq(bytes.length(), 8) // Each character in "Test" is 2 bytes
+  inspect(bytes.length(), content="8") // Each character in "Test" is 2 bytes
 }
 
 ///|
@@ -183,7 +183,7 @@ test "to_bytes method" {
   let buf = @buffer.new(size_hint=10)
   buf.write_string("Test")
   let bytes = buf.to_bytes()
-  assert_eq(bytes.length(), 8) // Each character in "Test" is 2 bytes
+  inspect(bytes.length(), content="8") // Each character in "Test" is 2 bytes
 }
 
 ///|

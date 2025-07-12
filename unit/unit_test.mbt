@@ -30,20 +30,20 @@ test {
 test {
   let unit = ()
   assert_eq(@unit.default(), unit)
-  assert_eq(unit.to_string(), "()")
+  inspect(unit.to_string(), content="()")
 }
 
 ///|
 test {
   let unit1 = ()
   let unit2 = ()
-  assert_eq(unit1.compare(unit2), 0)
+  inspect(unit1.compare(unit2), content="0")
 }
 
 ///|
 test {
   let unit = ()
-  assert_eq(unit.hash(), 0)
+  inspect(unit.hash(), content="0")
 }
 
 ///|

@@ -244,9 +244,9 @@ test "contains" {
     m.debug_tree(),
     content="(3,three,(1,one,(0,zero,_,_),(2,two,_,_)),(8,eight,_,_))",
   )
-  assert_eq(m.contains(8), true)
-  assert_eq(m.contains(2), true)
-  assert_eq(m.contains(4), false)
+  inspect(m.contains(8), content="true")
+  inspect(m.contains(2), content="true")
+  inspect(m.contains(4), content="false")
 }
 
 ///|
@@ -273,20 +273,20 @@ test "map_with_key" {
 test "filter" {
   let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
   let fm = m.filter(v => v.length() > 3)
-  assert_eq(fm.debug_tree(), "(3,three,(0,zero,_,_),(8,eight,_,_))")
+  inspect(fm.debug_tree(), content="(3,three,(0,zero,_,_),(8,eight,_,_))")
 }
 
 ///|
 test "filter_with_key" {
   let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
   let fm = m.filter_with_key((k, v) => k > 3 && v.length() > 3)
-  assert_eq(fm.debug_tree(), "(8,eight,_,_)")
+  inspect(fm.debug_tree(), content="(8,eight,_,_)")
 }
 
 ///|
 test "singleton" {
   let m = singleton(3, "three")
-  assert_eq(m.debug_tree(), "(3,three,_,_)")
+  inspect(m.debug_tree(), content="(3,three,_,_)")
 }
 
 ///|
@@ -308,27 +308,27 @@ test "remove" {
     content="(3,three,(1,one,(0,zero,_,_),(2,two,_,_)),(8,eight,_,_))",
   )
   let m = m.remove(1).remove(3)
-  assert_eq(m.debug_tree(), "(2,two,(0,zero,_,_),(8,eight,_,_))")
+  inspect(m.debug_tree(), content="(2,two,(0,zero,_,_),(8,eight,_,_))")
 }
 
 ///|
 test "filter" {
   let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
   let fm = m.filter(v => v.length() > 3)
-  assert_eq(fm.debug_tree(), "(3,three,(0,zero,_,_),(8,eight,_,_))")
+  inspect(fm.debug_tree(), content="(3,three,(0,zero,_,_),(8,eight,_,_))")
 }
 
 ///|
 test "filter_with_key" {
   let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
   let fm = m.filter_with_key((k, v) => k > 3 && v.length() > 3)
-  assert_eq(fm.debug_tree(), "(8,eight,_,_)")
+  inspect(fm.debug_tree(), content="(8,eight,_,_)")
 }
 
 ///|
 test "empty" {
   let m : T[Int, Int] = new()
-  assert_eq(m.debug_tree(), "_")
+  inspect(m.debug_tree(), content="_")
 }
 
 ///|
@@ -339,9 +339,12 @@ test "split_max" {
     "(3,three,(1,one,(0,zero,_,_),(2,two,_,_)),(8,eight,_,_))",
   )
   let (k, v, r) = m.split_max()
-  assert_eq(k, 8)
-  assert_eq(v, "eight")
-  assert_eq(r.debug_tree(), "(2,two,(1,one,(0,zero,_,_),_),(3,three,_,_))")
+  inspect(k, content="8")
+  inspect(v, content="eight")
+  inspect(
+    r.debug_tree(),
+    content="(2,two,(1,one,(0,zero,_,_),_),(3,three,_,_))",
+  )
 }
 
 ///|
@@ -352,9 +355,12 @@ test "split_min" {
     "(3,three,(1,one,(0,zero,_,_),(2,two,_,_)),(8,eight,_,_))",
   )
   let (k, v, r) = m.split_min()
-  assert_eq(k, 0)
-  assert_eq(v, "zero")
-  assert_eq(r.debug_tree(), "(3,three,(1,one,_,(2,two,_,_)),(8,eight,_,_))")
+  inspect(k, content="0")
+  inspect(v, content="zero")
+  inspect(
+    r.debug_tree(),
+    content="(3,three,(1,one,_,(2,two,_,_)),(8,eight,_,_))",
+  )
 }
 
 ///|
@@ -369,7 +375,10 @@ test "glue" {
     _ => abort("unreachable")
   }
   let m = glue(l, r)
-  assert_eq(m.debug_tree(), "(2,two,(1,one,(0,zero,_,_),_),(8,eight,_,_))")
+  inspect(
+    m.debug_tree(),
+    content="(2,two,(1,one,(0,zero,_,_),_),(8,eight,_,_))",
+  )
 }
 
 ///|

@@ -14,8 +14,8 @@
 
 ///|
 test "Bool hash function" {
-  assert_eq(true.hash(), 1)
-  assert_eq(false.hash(), 0)
+  inspect(true.hash(), content="1")
+  inspect(false.hash(), content="0")
 }
 
 ///|

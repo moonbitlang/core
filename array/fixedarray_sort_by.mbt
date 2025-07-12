@@ -238,7 +238,7 @@ test "try_bubble_sort" {
   let arr : FixedArray[_] = [8, 7, 6, 5, 4, 3, 2, 1]
   let sorted = fixed_try_bubble_sort_by({ array: arr, start: 0, end: 8 }, (a, b) => a -
     b)
-  assert_eq(sorted, true)
+  inspect(sorted, content="true")
   assert_eq(arr, [1, 2, 3, 4, 5, 6, 7, 8])
 }
 

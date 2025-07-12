@@ -470,7 +470,7 @@ pub fn[A] pop_back(self : T[A]) -> A? {
 /// # Example
 /// ```mbt
 ///   let dv = @deque.of([1, 2, 3, 4, 5])
-///   assert_eq(dv[2], 3)
+///   inspect(dv[2], content="3")
 /// ```
 pub fn[A] op_get(self : T[A], index : Int) -> A {
   if index < 0 || index >= self.len {
@@ -495,7 +495,7 @@ pub fn[A] op_get(self : T[A], index : Int) -> A {
 /// ```mbt
 ///   let dv = @deque.of([1, 2, 3, 4, 5])
 ///   dv[2] = 1
-///   assert_eq(dv[2], 1)
+///   inspect(dv[2], content="1")
 /// ```
 pub fn[A] op_set(self : T[A], index : Int, value : A) -> Unit {
   if index < 0 || index >= self.len {
@@ -587,7 +587,7 @@ pub impl[A : Eq] Eq for T[A] with op_equal(self, other) {
 ///   let dv = @deque.of([1, 2, 3, 4, 5])
 ///   let mut sum = 0
 ///   dv.each((x) => {sum = sum + x})
-///   assert_eq(sum, 15)
+///   inspect(sum, content="15")
 /// ```
 pub fn[A] each(self : T[A], f : (A) -> Unit) -> Unit {
   for v in self {
@@ -603,7 +603,7 @@ pub fn[A] each(self : T[A], f : (A) -> Unit) -> Unit {
 ///   let dv = @deque.of([1, 2, 3, 4, 5])
 ///   let mut idx_sum = 0
 ///   dv.eachi((i, _x) => {idx_sum = idx_sum + i})
-///   assert_eq(idx_sum, 10)
+///   inspect(idx_sum, content="10")
 /// ```
 pub fn[A] eachi(self : T[A], f : (Int, A) -> Unit) -> Unit {
   for i, v in self {
@@ -619,7 +619,7 @@ pub fn[A] eachi(self : T[A], f : (Int, A) -> Unit) -> Unit {
 ///   let dv = @deque.of([1, 2, 3, 4, 5])
 ///   let mut sum = 0
 ///   dv.rev_each((x) => {sum = sum + x})
-///   assert_eq(sum, 15)
+///   inspect(sum, content="15")
 /// ```
 pub fn[A] rev_each(self : T[A], f : (A) -> Unit) -> Unit {
   for v in self.rev_iter() {
@@ -635,7 +635,7 @@ pub fn[A] rev_each(self : T[A], f : (A) -> Unit) -> Unit {
 ///   let dv = @deque.of([1, 2, 3, 4, 5])
 ///   let mut idx_sum = 0
 ///   dv.rev_eachi((i, _x) => {idx_sum = idx_sum + i})
-///   assert_eq(idx_sum, 10)
+///   inspect(idx_sum, content="10")
 /// ```
 pub fn[A] rev_eachi(self : T[A], f : (Int, A) -> Unit) -> Unit {
   for i, v in self.rev_iter2() {
@@ -652,7 +652,7 @@ pub fn[A] rev_eachi(self : T[A], f : (Int, A) -> Unit) -> Unit {
 /// ```mbt
 ///   let dv = @deque.of([1, 2, 3, 4, 5])
 ///   dv.clear()
-///   assert_eq(dv.length(), 0)
+///   inspect(dv.length(), content="0")
 /// ```
 pub fn[A] clear(self : T[A]) -> Unit {
   let { head, buf, len, .. } = self
@@ -723,9 +723,9 @@ pub fn[A, U] mapi(self : T[A], f : (Int, A) -> U) -> T[U] {
 /// # Example
 /// ```mbt
 ///   let dv = @deque.new()
-///   assert_eq(dv.is_empty(), true)
+///   inspect(dv.is_empty(), content="true")
 ///   dv.push_back(1)
-///   assert_eq(dv.is_empty(), false)
+///   inspect(dv.is_empty(), content="false")
 /// ```
 pub fn[A] is_empty(self : T[A]) -> Bool {
   self.len == 0
@@ -789,7 +789,7 @@ pub fn[A : Eq] contains(self : T[A], value : A) -> Bool {
 /// ```mbt
 ///   let dv = @deque.of([1])
 ///   dv.reserve_capacity(10)
-///   assert_eq(dv.capacity(), 10)
+///   inspect(dv.capacity(), content="10")
 /// ```
 pub fn[A] reserve_capacity(self : T[A], capacity : Int) -> Unit {
   if self.capacity() >= capacity {
@@ -817,9 +817,9 @@ pub fn[A] reserve_capacity(self : T[A], capacity : Int) -> Unit {
 ///   dv.push_back(1)
 ///   dv.push_back(2)
 ///   dv.push_back(3)
-///   assert_eq(dv.capacity(), 10)
+///   inspect(dv.capacity(), content="10")
 ///   dv.shrink_to_fit()
-///   assert_eq(dv.capacity(), 3)
+///   inspect(dv.capacity(), content="3")
 /// ```
 pub fn[A] shrink_to_fit(self : T[A]) -> Unit {
   if self.capacity() <= self.length() {
