@@ -1569,26 +1569,27 @@ pub fn[A : Compare] binary_search(self : T[A], value : A) -> Result[Int, Int] {
 pub fn[A] T::rev_inplace(self : T[A]) -> Unit {
   let len = self.len
   let cap = self.buf.length()
-  // Only swap elements if deque is not empty
-  if len > 0 {
-    // Initialize two pointers
-    let mut left = self.head
-    let mut right = self.tail
-    let mut count = 0
-    // Swap elements until we reach the middle
-    while count < len / 2 {
-      // Swap elements at left and right indices
-      let temp = self.buf[left]
-      self.buf[left] = self.buf[right]
-      self.buf[right] = temp
-      // Move pointers in opposite directions
-      left = (left + 1) % cap
-      right = (right - 1 + cap) % cap
-      count += 1
-    }
-    // No need to update head and tail as the elements are swapped in place
-    // The structure remains the same, just the order of elements is reversed
+  // Early exit for empty or single-element deques
+  if len <= 1 {
+    return
   }
+  // Initialize two pointers
+  let mut left = self.head
+  let mut right = self.tail
+  let mut count = 0
+  // Swap elements until we reach the middle
+  while count < len / 2 {
+    // Swap elements at left and right indices
+    let temp = self.buf[left]
+    self.buf[left] = self.buf[right]
+    self.buf[right] = temp
+    // Move pointers in opposite directions
+    left = (left + 1) % cap
+    right = (right - 1 + cap) % cap
+    count += 1
+  }
+  // No need to update head and tail as the elements are swapped in place
+  // The structure remains the same, just the order of elements is reversed
 }
 
 ///|
