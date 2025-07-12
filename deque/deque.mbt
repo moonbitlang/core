@@ -1576,9 +1576,8 @@ pub fn[A] T::rev_inplace(self : T[A]) -> Unit {
   // Initialize two pointers
   let mut left = self.head
   let mut right = self.tail
-  let mut count = 0
   // Swap elements until we reach the middle
-  while count < len / 2 {
+  for _ in 0..<len / 2 {
     // Swap elements at left and right indices
     let temp = self.buf[left]
     self.buf[left] = self.buf[right]
