@@ -147,3 +147,11 @@ fn h16bytes(input : Bytes, cur : Int, len : Int, seed : Int) -> Int {
     seed - gPRIME1,
   )
 }
+
+///|
+test "Bytes hash_combine" {
+  let data : Bytes = [1, 2, 3, 4]
+  let hasher = Hasher::new()
+  data.hash_combine(hasher)
+  assert_true(hasher.finalize() != 0)
+}
