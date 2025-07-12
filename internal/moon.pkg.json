@@ -1,0 +1,4 @@
+{
+  "import": ["moonbitlang/core/builtin"],
+  "warn-list": "-3"
+}
