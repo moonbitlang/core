@@ -35,17 +35,17 @@ test "size" {
     (2, "two"),
     (0, "zero"),
   ])
-  assert_eq(m.size(), 5)
+  inspect(m.size(), content="5")
   let m = m.remove(1).remove(3)
-  assert_eq(m.size(), 3)
+  inspect(m.size(), content="3")
 }
 
 ///|
 test "is_empty" {
   let m : @sorted_map.T[Int, Int] = @sorted_map.new()
-  assert_eq(m.is_empty(), true)
+  inspect(m.is_empty(), content="true")
   let m = m.add(1, 1)
-  assert_eq(m.is_empty(), false)
+  inspect(m.is_empty(), content="false")
 }
 
 ///|
@@ -59,7 +59,7 @@ test "iter" {
   ])
   let mut s = ""
   m.each((k, v) => s = s + "(\{k},\{v})")
-  assert_eq(s, "(0,zero)(1,one)(2,two)(3,three)(8,eight)")
+  inspect(s, content="(0,zero)(1,one)(2,two)(3,three)(8,eight)")
 }
 
 ///|
@@ -73,7 +73,7 @@ test "iteri" {
   ])
   let mut s = ""
   m.eachi((i, k, v) => s = s + "(\{i},\{k},\{v})")
-  assert_eq(s, "(0,0,zero)(1,1,one)(2,2,two)(3,3,three)(4,8,eight)")
+  inspect(s, content="(0,0,zero)(1,1,one)(2,2,two)(3,3,three)(4,8,eight)")
 }
 
 ///|
@@ -135,8 +135,8 @@ test "op_equal" {
     (0, "zero"),
   ])
   let m3 = @sorted_map.of([(3, "three"), (8, "eight"), (1, "one"), (2, "two")])
-  assert_eq(m1 == m2, true)
-  assert_eq(m1 == m3, false)
+  inspect(m1 == m2, content="true")
+  inspect(m1 == m3, content="false")
 }
 
 ///|
@@ -194,8 +194,8 @@ test "op_equal" {
     (0, "zero"),
   ])
   let m3 = @sorted_map.of([(3, "three"), (8, "eight"), (1, "one"), (2, "two")])
-  assert_eq(m1 == m2, true)
-  assert_eq(m1 == m3, false)
+  inspect(m1 == m2, content="true")
+  inspect(m1 == m3, content="false")
 }
 
 ///|

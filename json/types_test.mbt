@@ -31,7 +31,7 @@ test "ParseError::to_string coverage" {
     invalidCharError.to_string(),
     "Invalid character 'a' at line 1, column 0",
   )
-  assert_eq(invalidEofError.to_string(), "Unexpected end of file")
+  inspect(invalidEofError.to_string(), content="Unexpected end of file")
   assert_eq(
     invalidNumberError.to_string(),
     "Invalid number 123abc at line 1, column 0",

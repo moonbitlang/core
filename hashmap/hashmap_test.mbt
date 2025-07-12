@@ -16,7 +16,7 @@
 test "new" {
   let m : @hashmap.T[Int, Int] = @hashmap.new()
   inspect(m.capacity(), content="8")
-  assert_eq(m.size(), 0)
+  inspect(m.size(), content="0")
 }
 
 ///|
@@ -37,10 +37,10 @@ test "get_or_default" {
   m.set("a", 1)
   m.set("b", 2)
   m.set("c", 3)
-  assert_eq(m.get_or_default("a", 42), 1)
-  assert_eq(m.get_or_default("b", 42), 2)
-  assert_eq(m.get_or_default("c", 42), 3)
-  assert_eq(m.get_or_default("d", 42), 42)
+  inspect(m.get_or_default("a", 42), content="1")
+  inspect(m.get_or_default("b", 42), content="2")
+  inspect(m.get_or_default("c", 42), content="3")
+  inspect(m.get_or_default("d", 42), content="42")
 }
 
 ///|
@@ -76,8 +76,8 @@ test "set_update" {
 test "contains" {
   let m = @hashmap.new()
   m.set("a", 1)
-  assert_eq(m.contains("a"), true)
-  assert_eq(m.contains("b"), false)
+  inspect(m.contains("a"), content="true")
+  inspect(m.contains("b"), content="false")
 }
 
 ///|
@@ -91,19 +91,19 @@ test "from_array" {
 ///|
 test "size" {
   let m = @hashmap.new()
-  assert_eq(m.size(), 0)
+  inspect(m.size(), content="0")
   m.set("a", 1)
-  assert_eq(m.size(), 1)
+  inspect(m.size(), content="1")
 }
 
 ///|
 test "is_empty" {
   let m = @hashmap.new()
-  assert_eq(m.is_empty(), true)
+  inspect(m.is_empty(), content="true")
   m.set("a", 1)
-  assert_eq(m.is_empty(), false)
+  inspect(m.is_empty(), content="false")
   m.remove("a")
-  assert_eq(m.is_empty(), true)
+  inspect(m.is_empty(), content="true")
 }
 
 ///|
@@ -111,7 +111,7 @@ test "iter" {
   let m = @hashmap.of([("a", 1), ("b", 2), ("c", 3)])
   let mut sum = 0
   m.each((_k, v) => sum += v)
-  assert_eq(sum, 6)
+  inspect(sum, content="6")
 }
 
 ///|
@@ -123,8 +123,8 @@ test "iteri" {
     s += i.to_string()
     sum += v
   })
-  assert_eq(s, "012")
-  assert_eq(sum, 6)
+  inspect(s, content="012")
+  inspect(sum, content="6")
 }
 
 ///|
@@ -184,7 +184,7 @@ test "remove_nonexistent_key" {
   m.set("a", 1)
   m.set("b", 2)
   m.remove("c")
-  assert_eq(m.size(), 2)
+  inspect(m.size(), content="2")
 }
 
 ///|
@@ -201,7 +201,7 @@ test "remove_nonexistent_key" {
   m.set("a", 1)
   m.set("b", 2)
   m.remove("c")
-  assert_eq(m.size(), 2)
+  inspect(m.size(), content="2")
 }
 
 ///|
@@ -218,7 +218,7 @@ test "remove_nonexistent_key" {
   m.set("a", 1)
   m.set("b", 2)
   m.remove("c")
-  assert_eq(m.size(), 2)
+  inspect(m.size(), content="2")
 }
 
 ///|
@@ -235,7 +235,7 @@ test "remove_nonexistent_key" {
   m.set("a", 1)
   m.set("b", 2)
   m.remove("c")
-  assert_eq(m.size(), 2)
+  inspect(m.size(), content="2")
 }
 
 ///|

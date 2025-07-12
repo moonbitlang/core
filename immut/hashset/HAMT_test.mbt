@@ -88,23 +88,23 @@ test "@hashset.is_empty" {
 ///|
 test "@hashset.size" {
   let set = @hashset.new()
-  assert_eq(set.size(), 0)
+  inspect(set.size(), content="0")
   let set = set.add(1)
-  assert_eq(set.size(), 1)
+  inspect(set.size(), content="1")
   let set = set.add(2)
-  assert_eq(set.size(), 2)
+  inspect(set.size(), content="2")
   let set = set.remove(1)
-  assert_eq(set.size(), 1)
+  inspect(set.size(), content="1")
 }
 
 ///|
 test "@hashset.is_empty" {
   let set = @hashset.new()
-  assert_eq(set.is_empty(), true)
+  inspect(set.is_empty(), content="true")
   let set = set.add(1)
-  assert_eq(set.is_empty(), false)
+  inspect(set.is_empty(), content="false")
   let set = set.remove(1)
-  assert_eq(set.is_empty(), true)
+  inspect(set.is_empty(), content="true")
 }
 
 ///|
@@ -273,13 +273,13 @@ impl Show for MyString with output(self, logger) {
 test "HAMT::remove_with_hash collision" {
   let set = @hashset.of([MyString("a"), MyString("b")])
   let set1 = set.remove(MyString("c"))
-  assert_eq(set1.size(), 2)
+  inspect(set1.size(), content="2")
   let set2 = set.remove(MyString("a"))
   assert_eq(set2.contains(MyString("a")), false)
   assert_eq(set2.contains(MyString("b")), true)
-  assert_eq(set2.size(), 1)
+  inspect(set2.size(), content="1")
   let set3 = set2.remove(MyString("b"))
-  assert_eq(set3.size(), 0)
+  inspect(set3.size(), content="0")
 }
 
 ///|
@@ -301,8 +301,8 @@ test "HAMT::union all cases" {
   assert_eq(empty.union(leaf).contains(1), true)
   assert_eq(leaf.union(branch).contains(2), true)
   let u1 = branch.union(branch)
-  assert_eq(u1.contains(1), true)
-  assert_eq(u1.contains(2), true)
+  inspect(u1.contains(1), content="true")
+  inspect(u1.contains(2), content="true")
   let collision2 = @hashset.of([MyString("b"), MyString("c")])
   let u2 = collision.union(collision2)
   assert_eq(u2.contains(MyString("a")), true)
@@ -315,9 +315,9 @@ test "HAMT::union leaf to non-overlapping map" {
   let leaf = @hashset.of([42])
   let other = @hashset.of([1, 2])
   let u = leaf.union(other)
-  assert_eq(u.contains(42), true)
-  assert_eq(u.contains(1), true)
-  assert_eq(u.contains(2), true)
+  inspect(u.contains(42), content="true")
+  inspect(u.contains(1), content="true")
+  inspect(u.contains(2), content="true")
 }
 
 ///|

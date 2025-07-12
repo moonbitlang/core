@@ -562,17 +562,17 @@ fn Decimal::to_string(self : Decimal) -> String {
 ///|
 test "new" {
   let hpd = Decimal::from_int64_priv(1L)
-  assert_eq(hpd.digits.length(), 800)
-  assert_eq(hpd.digits_num, 1)
-  assert_eq(hpd.decimal_point, 1)
-  assert_eq(hpd.negative, false)
-  assert_eq(hpd.truncated, false)
+  inspect(hpd.digits.length(), content="800")
+  inspect(hpd.digits_num, content="1")
+  inspect(hpd.decimal_point, content="1")
+  inspect(hpd.negative, content="false")
+  inspect(hpd.truncated, content="false")
 }
 
 ///|
 test "from_int64" {
   let hpd = Decimal::from_int64_priv(123456789L)
-  assert_eq(hpd.to_string(), "123456789")
+  inspect(hpd.to_string(), content="123456789")
 }
 
 ///|
@@ -586,13 +586,13 @@ test "parse_decimal" {
 test "to_string" {
   let hpd = Decimal::from_int64_priv(123456789L)
   hpd.decimal_point = 1
-  assert_eq(hpd.to_string(), "1.23456789")
+  inspect(hpd.to_string(), content="1.23456789")
   hpd.decimal_point = 0
-  assert_eq(hpd.to_string(), "0.123456789")
+  inspect(hpd.to_string(), content="0.123456789")
   hpd.decimal_point = -1
-  assert_eq(hpd.to_string(), "0.0123456789")
+  inspect(hpd.to_string(), content="0.0123456789")
   hpd.decimal_point = 10
-  assert_eq(hpd.to_string(), "1234567890")
+  inspect(hpd.to_string(), content="1234567890")
 }
 
 ///|

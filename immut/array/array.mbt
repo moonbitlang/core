@@ -180,7 +180,7 @@ pub fn[A] length(self : T[A]) -> Int {
 /// # Examples
 /// ```mbt
 ///   let v = @array.of([1, 2, 3, 4, 5])
-///   assert_eq(v[0], 1)
+///   inspect(v[0], content="1")
 /// ```
 pub fn[A] op_get(self : T[A], index : Int) -> A {
   if index == 0 {
@@ -439,10 +439,10 @@ pub impl[A : Show] Show for T[A] with output(self, logger) {
 ///   let arr1 = @array.of([1, 2, 3])
 ///   let arr2 = @array.of([1, 2, 4])
 ///   let arr3 = @array.of([1, 2])
-///   assert_eq(arr1.compare(arr2), -1) // arr1 < arr2
-///   assert_eq(arr1.compare(arr3), 1) // arr2 > arr1
-///   assert_eq(arr3.compare(arr1), -1) // arr1 > arr3 (longer)
-///   assert_eq(arr1.compare(arr1), 0) // arr1 = arr1
+///   inspect(arr1.compare(arr2), content="-1") // arr1 < arr2
+///   inspect(arr1.compare(arr3), content="1") // arr2 > arr1
+///   inspect(arr3.compare(arr1), content="-1") // arr1 > arr3 (longer)
+///   inspect(arr1.compare(arr1), content="0") // arr1 = arr1
 /// ```
 pub impl[A : Compare] Compare for T[A] with compare(self, other) {
   let len_self = self.length()

@@ -238,13 +238,13 @@ test "check_underscore" {
 
 ///|
 test "determine_base" {
-  assert_eq(determine_base("1234"), 10)
-  assert_eq(determine_base("0x1234"), 16)
-  assert_eq(determine_base("0X1234"), 16)
-  assert_eq(determine_base("0o1234"), 8)
-  assert_eq(determine_base("0O1234"), 8)
-  assert_eq(determine_base("0b1010"), 2)
-  assert_eq(determine_base("0B1010"), 2)
+  inspect(determine_base("1234"), content="10")
+  inspect(determine_base("0x1234"), content="16")
+  inspect(determine_base("0X1234"), content="16")
+  inspect(determine_base("0o1234"), content="8")
+  inspect(determine_base("0O1234"), content="8")
+  inspect(determine_base("0b1010"), content="2")
+  inspect(determine_base("0B1010"), content="2")
 }
 
 ///|

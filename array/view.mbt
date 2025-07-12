@@ -19,10 +19,10 @@
 /// # Example
 ///
 /// ```moonbit
-///   let arr = [1, 2, 3, 4, 5]
-///   let view = arr[1:4]  // Creates a view of elements at indices 1,2,3
-///   assert_eq(view[0], 2)
-/// assert_eq(view.length(), 3)
+/// let arr = [1, 2, 3, 4, 5]
+/// let view = arr[1:4] // Creates a view of elements at indices 1,2,3
+/// inspect(view[0], content="2")
+/// inspect(view.length(), content="3")
 /// ```
 pub typealias ArrayView as View
 
@@ -80,7 +80,7 @@ pub fn[T] View::each(self : View[T], f : (T) -> Unit raise?) -> Unit raise? {
 ///   let v = [3, 4, 5][:]
 ///   let mut sum = 0
 ///   v.eachi((i, x) => { sum = sum + x + i })
-///   assert_eq(sum, 15)
+///   inspect(sum, content="15")
 /// ```
 pub fn[T] View::eachi(
   self : View[T],
@@ -216,7 +216,7 @@ pub fn[A] View::iter2(self : View[A]) -> Iter2[Int, A] {
 /// # Example
 /// ```mbt
 ///   let sum = [1, 2, 3, 4, 5][:].fold(init=0, (sum, elem) => sum + elem)
-///   assert_eq(sum, 15)
+///   inspect(sum, content="15")
 /// ```
 pub fn[A, B] View::fold(
   self : View[A],
@@ -236,7 +236,7 @@ pub fn[A, B] View::fold(
 /// # Example
 /// ```mbt
 ///   let sum = [1, 2, 3, 4, 5][:].rev_fold(init=0, (sum, elem) => sum + elem)
-///   assert_eq(sum, 15)
+///   inspect(sum, content="15")
 /// ```
 pub fn[A, B] View::rev_fold(
   self : View[A],
@@ -256,7 +256,7 @@ pub fn[A, B] View::rev_fold(
 /// # Example
 /// ```mbt
 ///   let sum = [1, 2, 3, 4, 5][:].foldi(init=0, (index, sum, _elem) => sum + index)
-///   assert_eq(sum, 10)
+///   inspect(sum, content="10")
 /// ```
 pub fn[A, B] View::foldi(
   self : View[A],
@@ -276,7 +276,7 @@ pub fn[A, B] View::foldi(
 /// # Example
 /// ```mbt
 ///   let sum = [1, 2, 3, 4, 5][:].rev_foldi(init=0, (index, sum, _elem)=> { sum + index })
-///   assert_eq(sum, 10)
+///   inspect(sum, content="10")
 /// ```
 pub fn[A, B] View::rev_foldi(
   self : View[A],

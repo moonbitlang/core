@@ -61,13 +61,13 @@ pub fn[A : FromStr] parse(str : String) -> A raise StrConvError {
 ///|
 test "parse" {
   let b : Bool = parse("true")
-  assert_eq(b, true)
+  inspect(b, content="true")
   let i : Int = parse("12345")
-  assert_eq(i, 12345)
+  inspect(i, content="12345")
   let i64 : Int64 = parse("9223372036854775807")
   assert_eq(i64, 9223372036854775807L)
   let ui : UInt = parse("4294967295")
-  assert_eq(ui, 4294967295)
+  inspect(ui, content="4294967295")
   let ui64 : UInt64 = parse("18446744073709551615")
   assert_eq(ui64, 18446744073709551615UL)
   let d : Double = parse("1234.56789")

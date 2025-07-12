@@ -14,8 +14,8 @@
 
 ///|
 test "byte to uint" {
-  assert_eq(b'\xFF'.to_uint(), 255)
-  assert_eq(b'\x00'.to_uint(), 0)
+  inspect(b'\xFF'.to_uint(), content="255")
+  inspect(b'\x00'.to_uint(), content="0")
 }
 
 ///|

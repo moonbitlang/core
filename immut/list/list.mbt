@@ -348,7 +348,7 @@ pub fn[A] rev(self : T[A]) -> T[A] {
 ///
 /// ```mbt
 ///   let r = @list.of([1, 2, 3, 4, 5]).fold(init=0, (acc, x) => { acc + x })
-///   assert_eq(r, 15)
+///   inspect(r, content="15")
 /// ```
 pub fn[A, B] fold(self : T[A], init~ : B, f : (B, A) -> B raise?) -> B raise? {
   match self {
@@ -363,7 +363,7 @@ pub fn[A, B] fold(self : T[A], init~ : B, f : (B, A) -> B raise?) -> B raise? {
 /// # Example
 /// ```mbt
 ///   let r = @list.of([1, 2, 3, 4, 5]).rev_fold((x, acc) => { x + acc }, init=0)
-///   assert_eq(r, 15)
+///   inspect(r, content="15")
 /// ```
 pub fn[A, B] rev_fold(
   self : T[A],
@@ -385,7 +385,7 @@ pub fn[A, B] rev_fold(
 ///
 /// ```mbt
 ///   let r = @list.of([1, 2, 3, 4, 5]).fold(init=0, (acc, x) => { acc + x })
-///   assert_eq(r, 15)
+///   inspect(r, content="15")
 /// ```
 #deprecated("Use `fold` instead")
 #coverage.skip
@@ -1170,10 +1170,10 @@ pub impl[A : Hash] Hash for T[A] with hash_combine(self, hasher) {
 ///   let list1 = @list.of([1, 2, 3])
 ///   let list2 = @list.of([1, 2, 4])
 ///   let list3 = @list.of([1, 2])
-///   assert_eq(list1.compare(list2), -1) // list1 < list2
-///   assert_eq(list1.compare(list3), 1) // list2 > list1
-///   assert_eq(list3.compare(list1), -1) // list1 > list3 (longer)
-///   assert_eq(list1.compare(list1), 0) // list1 = list1
+///   inspect(list1.compare(list2), content="-1") // list1 < list2
+///   inspect(list1.compare(list3), content="1") // list2 > list1
+///   inspect(list3.compare(list1), content="-1") // list1 > list3 (longer)
+///   inspect(list1.compare(list1), content="0") // list1 = list1
 /// ```
 pub impl[A : Compare] Compare for T[A] with compare(self, other) {
   loop (self, other) {

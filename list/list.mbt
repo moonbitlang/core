@@ -405,7 +405,7 @@ pub fn[A] rev(self : T[A]) -> T[A] {
 ///
 /// ```mbt
 ///   let r = @list.of([1, 2, 3, 4, 5]).fold(init=0, (acc, x) => acc + x)
-///   assert_eq(r, 15)
+///   inspect(r, content="15")
 /// ```
 pub fn[A, B] fold(self : T[A], init~ : B, f : (B, A) -> B raise?) -> B raise? {
   loop (self, init) {

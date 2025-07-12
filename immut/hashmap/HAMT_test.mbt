@@ -67,18 +67,18 @@ test "HAMT::remove" {
 test "keys" {
   let m = @hashmap.of([(1, "one"), (2, "two")])
   let keys = m.keys()
-  assert_eq(keys.contains(1), true)
-  assert_eq(keys.contains(2), true)
-  assert_eq(keys.contains(3), false)
+  inspect(keys.contains(1), content="true")
+  inspect(keys.contains(2), content="true")
+  inspect(keys.contains(3), content="false")
 }
 
 ///|
 test "HAMT::values" {
   let m = @hashmap.of([(1, "one"), (2, "two")])
   let values = m.values()
-  assert_eq(values.contains("one"), true)
-  assert_eq(values.contains("two"), true)
-  assert_eq(values.contains("three"), false)
+  inspect(values.contains("one"), content="true")
+  inspect(values.contains("two"), content="true")
+  inspect(values.contains("three"), content="false")
 }
 
 ///|
@@ -138,7 +138,7 @@ test "HAMT::from_array" {
 test "to_array" {
   let m = @hashmap.of([(1, "one"), (2, "two")])
   let arr = m.to_array()
-  assert_eq(arr.length(), 2)
+  inspect(arr.length(), content="2")
   assert_eq(arr.contains((1, "one")), true)
   assert_eq(arr.contains((2, "two")), true)
   assert_eq(arr.contains((3, "three")), false)
@@ -279,30 +279,30 @@ test "union 2 hashmaps, without conflict" {
 ///|
 test "HAMT::contains" {
   let map = @hashmap.of([(1, "one")])
-  assert_eq(map.contains(1), true)
-  assert_eq(map.contains(2), false)
+  inspect(map.contains(1), content="true")
+  inspect(map.contains(2), content="false")
   let map2 = map.add(2, "two")
-  assert_eq(map2.contains(2), true)
+  inspect(map2.contains(2), content="true")
   let map3 = map.remove(2)
-  assert_eq(map3.contains(2), false)
+  inspect(map3.contains(2), content="false")
 }
 
 ///|
 test "filter with simple predicate" {
   let map = @hashmap.of([(1, 1), (2, 2), (3, 3), (4, 4)])
   let only_even = map.filter(v => v % 2 == 0)
-  assert_eq(only_even.contains(1), false)
-  assert_eq(only_even.contains(2), true)
-  assert_eq(only_even.contains(3), false)
-  assert_eq(only_even.contains(4), true)
+  inspect(only_even.contains(1), content="false")
+  inspect(only_even.contains(2), content="true")
+  inspect(only_even.contains(3), content="false")
+  inspect(only_even.contains(4), content="true")
 }
 
 ///|
 test "filter with all elements matching" {
   let map = @hashmap.of([(1, 1), (2, 2)])
   let filtered = map.filter(v => v > 0)
-  assert_eq(filtered.contains(1), true)
-  assert_eq(filtered.contains(2), true)
+  inspect(filtered.contains(1), content="true")
+  inspect(filtered.contains(2), content="true")
 }
 
 ///|
@@ -312,7 +312,7 @@ test "filter with no elements matching" {
   assert_eq(filtered.get(1), None)
   assert_eq(filtered.get(2), None)
   assert_eq(filtered.get(3), None)
-  assert_eq(filtered.size(), 0)
+  inspect(filtered.size(), content="0")
 }
 
 ///|
@@ -344,15 +344,15 @@ test "HAMT::fold_with_key" {
   let map = @hashmap.of([(1, "a"), (2, "b")])
   let result = map.fold_with_key(init="", (acc, k, v) => acc + "\{k}:\{v}, ")
   // order of elements is not guaranteed, so we check for substrings
-  assert_eq(result.contains("1:a"), true)
-  assert_eq(result.contains("2:b"), true)
+  inspect(result.contains("1:a"), content="true")
+  inspect(result.contains("2:b"), content="true")
 }
 
 ///|
 test "HAMT::fold" {
   let map = @hashmap.of([(1, 10), (2, 20), (3, 30)])
   let result = map.fold(init=0, (acc, v) => acc + v)
-  assert_eq(result, 60)
+  inspect(result, content="60")
 }
 
 ///|
@@ -376,7 +376,7 @@ test "HAMT::map with overflow" {
 test "HAMT::map_with_key empty" {
   let map : @hashmap.T[Int, Int] = @hashmap.new()
   let mapped = map.map_with_key((_k, v) => v)
-  assert_eq(mapped.size(), 0)
+  inspect(mapped.size(), content="0")
 }
 
 ///|
@@ -384,7 +384,7 @@ test "HAMT::map_with_key leaf" {
   let map = @hashmap.singleton(42, 100) // Leaf
   let mapped = map.map_with_key((k, v) => k + v)
   assert_eq(mapped.get(42), Some(142))
-  assert_eq(mapped.size(), 1)
+  inspect(mapped.size(), content="1")
 }
 
 ///|
@@ -412,7 +412,7 @@ test "HAMT::map_with_key branch" {
 ///|
 test "HAMT::singleton" {
   let map = @hashmap.singleton(1, "one")
-  assert_eq(map.size(), 1)
+  inspect(map.size(), content="1")
   assert_eq(map.get(1), Some("one"))
   assert_eq(map.get(2), None)
 }
@@ -459,21 +459,21 @@ test "add_with_hash collision" {
 test "empty filtering" {
   let map : @hashmap.T[Int, Int] = @hashmap.of([])
   let _filtered = map.filter(v => v > 2)
-  assert_eq(map.size(), 0)
+  inspect(map.size(), content="0")
 }
 
 ///|
 test "filter with collision - all removed" {
   let map = @hashmap.of([(MyString("a"), 1), (MyString("b"), 2)])
   let filtered = map.filter(v => v > 2)
-  assert_eq(filtered.size(), 0)
+  inspect(filtered.size(), content="0")
 }
 
 ///|
 test "filter with collision - one left" {
   let map = @hashmap.of([(MyString("a"), 1), (MyString("b"), 2)])
   let filtered = map.filter(v => v == 1)
-  assert_eq(filtered.size(), 1)
+  inspect(filtered.size(), content="1")
 }
 
 ///|
@@ -484,34 +484,34 @@ test "filter with collision - more than one left" {
     (MyString("c"), 3),
   ])
   let filtered = map.filter(v => v > 1)
-  assert_eq(filtered.size(), 2)
+  inspect(filtered.size(), content="2")
 }
 
 ///|
 test "HAMT::fold_with_key on empty" {
   let map : @hashmap.T[Int, Int] = @hashmap.new()
   let result = map.fold_with_key(init=0, (acc, _k, _v) => acc + 1)
-  assert_eq(result, 0)
+  inspect(result, content="0")
 }
 
 ///|
 test "HAMT::fold_with_key on collision" {
   let map = @hashmap.of([(MyString("a"), 1), (MyString("b"), 2)])
   let result = map.fold_with_key(init=0, (acc, _k, v) => acc + v)
-  assert_eq(result, 3)
+  inspect(result, content="3")
 }
 
 ///|
 test "HAMT::remove_with_hash collision" {
   let map = @hashmap.of([(MyString("a"), 1), (MyString("b"), 2)])
   let map1 = map.remove(MyString("c"))
-  assert_eq(map1.size(), 2)
+  inspect(map1.size(), content="2")
   let map2 = map.remove(MyString("a"))
   assert_eq(map2.get(MyString("a")), None)
   assert_eq(map2.get(MyString("b")), Some(2))
-  assert_eq(map2.size(), 1)
+  inspect(map2.size(), content="1")
   let map3 = map2.remove(MyString("b"))
-  assert_eq(map3.size(), 0)
+  inspect(map3.size(), content="0")
 }
 
 ///|
@@ -538,7 +538,7 @@ test "HAMT::union with branch" {
   let m2 = @hashmap.of([(4, 4), (5, 5), (6, 6)])
   let u = m1.union(m2)
   for i in 1..=6 {
-    assert_eq(u.contains(i), true)
+    inspect(u.contains(i), content="true")
   }
 }
 
@@ -672,23 +672,23 @@ test "HAMT::each" {
   let empty = @hashmap.new()
   let mut sum = 0
   empty.each((k : Int, v : Int) => sum = sum + k + v)
-  assert_eq(sum, 0)
+  inspect(sum, content="0")
   let leaf = @hashmap.singleton(1, 10)
   let mut sum_leaf = 0
   leaf.each((k, v) => sum_leaf = sum_leaf + k + v)
-  assert_eq(sum_leaf, 11)
+  inspect(sum_leaf, content="11")
   let collision = @hashmap.of([(MyString("a"), 1), (MyString("b"), 2)])
   let mut sum_collision = 0
   collision.each((_k : MyString, v : Int) => sum_collision = sum_collision + v)
-  assert_eq(sum_collision, 3)
+  inspect(sum_collision, content="3")
   let branch = @hashmap.of([(1, 1), (2, 2), (3, 3), (4, 4)])
   let mut sum_branch = 0
   branch.each((_k, v) => sum_branch = sum_branch + v)
-  assert_eq(sum_branch, 10)
+  inspect(sum_branch, content="10")
 }
 
 ///|
 test "arbitary" {
   let m : Array[@hashmap.T[Int, Int]] = @quickcheck.samples(10)
-  assert_eq(m.length(), 10)
+  inspect(m.length(), content="10")
 }

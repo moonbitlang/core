@@ -14,7 +14,7 @@
 
 ///|
 test "to_string" {
-  assert_eq('a'.to_string(), "a")
+  inspect('a'.to_string(), content="a")
 }
 
 ///|
@@ -25,14 +25,14 @@ test "show output" {
     buf.to_string()
   }
 
-  assert_eq(repr('a'), "'a'")
-  assert_eq(repr('\''), "'\\''")
-  assert_eq(repr('"'), "'\"'")
-  assert_eq(repr('\\'), "'\\\\'")
-  assert_eq(repr('\n'), "'\\n'")
-  assert_eq(repr('\r'), "'\\r'")
-  assert_eq(repr('\b'), "'\\b'")
-  assert_eq(repr('\t'), "'\\t'")
+  inspect(repr('a'), content="'a'")
+  inspect(repr('\''), content="'\\''")
+  inspect(repr('"'), content="'\"'")
+  inspect(repr('\\'), content="'\\\\'")
+  inspect(repr('\n'), content="'\\n'")
+  inspect(repr('\r'), content="'\\r'")
+  inspect(repr('\b'), content="'\\b'")
+  inspect(repr('\t'), content="'\\t'")
   assert_eq(repr((0).unsafe_to_char()), "'\\u{00}'")
 }
 
@@ -267,21 +267,21 @@ test "is_control" {
 
 ///|
 test "is_digit" {
-  assert_eq(true, 'a'.is_digit(11))
-  assert_eq(true, 'a'.is_digit(12))
-  assert_eq(true, 'a'.is_digit(13))
-  assert_eq(true, 'a'.is_digit(14))
-  assert_eq(true, 'a'.is_digit(15))
-  assert_eq(true, 'a'.is_digit(16))
-  assert_eq(true, 'A'.is_digit(11))
-  assert_eq(true, 'B'.is_digit(12))
-  assert_eq(true, 'C'.is_digit(13))
-  assert_eq(true, 'D'.is_digit(14))
-  assert_eq(true, 'E'.is_digit(15))
-  assert_eq(true, 'F'.is_digit(16))
-  assert_eq(false, 'A'.is_digit(8))
-  assert_eq(true, '1'.is_digit(2))
-  assert_eq(true, 'z'.is_digit(36))
+  inspect('a'.is_digit(11), content="true")
+  inspect('a'.is_digit(12), content="true")
+  inspect('a'.is_digit(13), content="true")
+  inspect('a'.is_digit(14), content="true")
+  inspect('a'.is_digit(15), content="true")
+  inspect('a'.is_digit(16), content="true")
+  inspect('A'.is_digit(11), content="true")
+  inspect('B'.is_digit(12), content="true")
+  inspect('C'.is_digit(13), content="true")
+  inspect('D'.is_digit(14), content="true")
+  inspect('E'.is_digit(15), content="true")
+  inspect('F'.is_digit(16), content="true")
+  inspect('A'.is_digit(8), content="false")
+  inspect('1'.is_digit(2), content="true")
+  inspect('z'.is_digit(36), content="true")
 }
 
 ///|
