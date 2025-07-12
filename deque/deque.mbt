@@ -1546,3 +1546,76 @@ pub fn[A] get(self : T[A], index : Int) -> A? {
 pub fn[A : Compare] binary_search(self : T[A], value : A) -> Result[Int, Int] {
   self.binary_search_by(x => x.compare(value))
 }
+
+///|
+/// Reverses the order of elements in the deque in place, modifying the original
+/// deque.
+///
+/// Parameters:
+///
+/// * `self` : The deque to be reversed.
+///
+/// Example:
+///
+/// ```moonbit
+///   let dq = @deque.of([1, 2, 3, 4, 5])
+///   dq.rev_inplace()
+///   inspect(dq, content="@deque.of([5, 4, 3, 2, 1])")
+///
+///   let dq : @deque.T[Int] = @deque.new()
+///   dq.rev_inplace()
+///   inspect(dq, content="@deque.of([])")
+/// ```
+pub fn[A] T::rev_inplace(self : T[A]) -> Unit {
+  let len = self.len
+  let cap = self.buf.length()
+  // Early exit for empty or single-element deques
+  if len <= 1 {
+    return
+  }
+  // Initialize two pointers
+  let mut left = self.head
+  let mut right = self.tail
+  // Swap elements until we reach the middle
+  for _ in 0..<len / 2 {
+    // Swap elements at left and right indices
+    let temp = self.buf[left]
+    self.buf[left] = self.buf[right]
+    self.buf[right] = temp
+    // Move pointers in opposite directions
+    left = (left + 1) % cap
+    right = (right - 1 + cap) % cap
+    count += 1
+  }
+  // No need to update head and tail as the elements are swapped in place
+  // The structure remains the same, just the order of elements is reversed
+}
+
+///|
+/// Creates a new deque with elements in reversed order.
+///
+/// Parameters:
+///
+/// * `self` : The deque to be reversed.
+///
+/// Returns a new deque containing the same elements as the input deque but in
+/// reverse order. The original deque remains unchanged.
+///
+/// Example:
+///
+/// ```moonbit
+///   let dq = @deque.of([1, 2, 3, 4, 5])
+///   inspect(dq.rev(), content="@deque.of([5, 4, 3, 2, 1])")
+///   inspect(dq, content="@deque.of([1, 2, 3, 4, 5])") // original deque unchanged
+/// ```
+pub fn[A] T::rev(self : T[A]) -> T[A] {
+  let len = self.len
+  let new_buf = UninitializedArray::make(len)
+  // Copy elements in reverse order
+  for i in 0..<len {
+    let src_idx = (self.head + len - i - 1) % self.buf.length()
+    new_buf[i] = self.buf[src_idx]
+  }
+  // Create new deque with reversed elements
+  T::{ buf: new_buf, len, head: 0, tail: if len == 0 { 0 } else { len - 1 } }
+}
