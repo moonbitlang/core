@@ -49,11 +49,31 @@ pub typealias @builtin.ArrayView as ArrayView
 
 pub typealias @moonbitlang/core/bigint.BigInt as BigInt
 
+pub typealias Bool as Bool
+
+pub typealias Byte as Byte
+
+pub typealias Bytes as Bytes
+
+pub typealias Char as Char
+
+pub typealias Double as Double
+
 pub typealias @builtin.Failure as Failure
+
+pub typealias FixedArray as FixedArray
+
+pub typealias Float as Float
 
 pub typealias @builtin.Hasher as Hasher
 
 pub typealias @builtin.InspectError as InspectError
+
+pub typealias Int as Int
+
+pub typealias Int16 as Int16
+
+pub typealias Int64 as Int64
 
 pub typealias @builtin.Iter as Iter
 
@@ -65,15 +85,31 @@ pub typealias @builtin.Json as Json
 
 pub typealias @builtin.Map as Map
 
+pub typealias Option as Option
+
+pub typealias Ref as Ref
+
+pub typealias Result as Result
+
 pub typealias @moonbitlang/core/set.Set as Set
 
 pub typealias @builtin.SnapshotError as SnapshotError
 
 pub typealias @builtin.SourceLoc as SourceLoc
 
+pub typealias String as String
+
 pub typealias @builtin.StringBuilder as StringBuilder
 
+pub typealias UInt as UInt
+
+pub typealias UInt16 as UInt16
+
+pub typealias UInt64 as UInt64
+
 pub typealias @builtin.UninitializedArray as UninitializedArray
+
+pub typealias Unit as Unit
 
 pub traitalias @builtin.Add as Add
 
