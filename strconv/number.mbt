@@ -234,7 +234,7 @@ fn checked_mul(a : UInt64, b : UInt64) -> UInt64? {
     return None
   }
   let r : UInt64 = @uint64.max_value / b
-  let q : UInt64 = 1UL / b
+  let q : UInt64 = 1 / b
   if r + r + q < a {
     return None
   }
