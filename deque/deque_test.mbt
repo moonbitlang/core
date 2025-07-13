@@ -1153,3 +1153,14 @@ test "deque_binary_search_wrap_around" {
   inspect(dq[2], content="9")
   inspect(dq[3], content="11")
 }
+
+///|
+test "deque_compare" {
+  let dq1 = @deque.of([1, 2, 3])
+  let dq2 = @deque.of([1, 2, 4])
+  let dq3 = @deque.of([1, 2])
+  inspect(dq1.compare(dq2), content="-1")
+  inspect(dq1.compare(dq3), content="1")
+  inspect(dq3.compare(dq1), content="-1")
+  inspect(dq1.compare(dq1), content="0")
+}

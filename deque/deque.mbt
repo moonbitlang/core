@@ -1546,3 +1546,45 @@ pub fn[A] get(self : T[A], index : Int) -> A? {
 pub fn[A : Compare] binary_search(self : T[A], value : A) -> Result[Int, Int] {
   self.binary_search_by(x => x.compare(value))
 }
+
+///|
+/// Compares two deques lexicographically.
+///
+/// First compares the lengths of the deques. If they differ, returns -1 if the
+/// first deque is shorter, 1 if it's longer. If the lengths are equal, compares
+/// elements pairwise until a difference is found or all elements have been
+/// compared.
+///
+/// Parameters:
+///
+/// * `self` : The first deque to compare.
+/// * `other` : The second deque to compare.
+///
+/// Returns an integer that indicates the relative order:
+///
+/// * A negative value if `self` is less than `other`
+/// * Zero if `self` equals `other`
+/// * A positive value if `self` is greater than `other`
+///
+/// Example:
+///
+/// ```moonbit
+///   let dq1 = @deque.of([1, 2, 3])
+///   let dq2 = @deque.of([1, 2, 4])
+///   let dq3 = @deque.of([1, 2])
+///   inspect(dq1.compare(dq2), content="-1") // dq1 < dq2
+///   inspect(dq2.compare(dq1), content="1") // dq2 > dq1
+///   inspect(dq1.compare(dq3), content="1") // dq1 > dq3 (longer)
+///   inspect(dq1.compare(dq1), content="0") // dq1 = dq1
+/// ```
+pub impl[A : Compare] Compare for T[A] with compare(self, other) {
+  let len_self = self.length()
+  let len_other = other.length()
+  let cmp = len_self.compare(len_other)
+  guard cmp is 0 else { return cmp }
+  for i in 0..<len_self {
+    let cmp = self[i].compare(other[i])
+    guard cmp is 0 else { return cmp }
+  }
+  0
+}
