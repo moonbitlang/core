@@ -1,5 +1,8 @@
 {
   "virtual": {
     "has-default": true
+  },
+  "targets": {
+    "panic_test.mbt": ["not", "native", "llvm"]
   }
 }
