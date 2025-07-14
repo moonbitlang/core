@@ -232,12 +232,12 @@ fn checked_mul(a : UInt64, b : UInt64) -> UInt64? {
   if b == 1UL {
     return Some(a)
   }
-  if b < 0UL || a < 0UL {
+  // Can only multiply by 1 or 0, which is handled above.
+  if b.clz() == 0 || a.clz() == 0 {
     return None
   }
-  let r : UInt64 = @uint64.max_value / b
-  let q : UInt64 = 1 / b
-  if r + r + q < a {
+  let quotient : UInt64 = @uint64.max_value / b
+  if a > quotient {
     return None
   }
   Some(a * b)
