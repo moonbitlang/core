@@ -9,6 +9,7 @@
   "test-import": [
     "moonbitlang/core/double"
   ],
+  "alert-list": "-deprecated",
   "targets": {
     "panic_test.mbt": ["not", "native", "llvm"]
   }
