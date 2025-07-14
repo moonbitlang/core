@@ -435,15 +435,20 @@ test "Int16::reinterpret_as_uint16" {
 }
 
 ///|
-test "Int16::reinterpret_as_uint64" {
-  assert_eq((-1 : Int16).to_uint(), @uint.max_value)
-  assert_eq((0 : Int16).to_uint(), (0 : UInt))
-  assert_eq((1 : Int16).to_uint(), (1 : UInt))
+test "Int16::to_uint" {
+  inspect((-1 : Int16).to_uint(), content="4294967295")
+  inspect((-1 : Int16).to_uint().to_string(radix=16), content="ffffffff")
+  inspect((0 : Int16).to_uint(), content="0")
+  inspect((1 : Int16).to_uint(), content="1")
 }
 
 ///|
-test "Int16::reinterpret_as_uint64" {
-  assert_eq((-1 : Int16).to_uint64(), @uint64.max_value)
-  assert_eq((0 : Int16).to_uint64(), (0 : UInt64))
-  assert_eq((1 : Int16).to_uint64(), (1 : UInt64))
+test "Int16::to_uint64" {
+  inspect((-1 : Int16).to_uint64(), content="18446744073709551615")
+  inspect(
+    (-1 : Int16).to_uint64().to_string(radix=16),
+    content="ffffffffffffffff",
+  )
+  inspect((0 : Int16).to_uint64(), content="0")
+  inspect((1 : Int16).to_uint64(), content="1")
 }
