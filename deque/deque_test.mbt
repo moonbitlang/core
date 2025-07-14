@@ -1164,3 +1164,80 @@ test "deque_compare" {
   inspect(dq3.compare(dq1), content="-1")
   inspect(dq1.compare(dq1), content="0")
 }
+
+///|
+test "rev_inplace" {
+  // Test with odd number of elements
+  let dq = @deque.of([3, 4, 5])
+  dq.rev_inplace()
+  assert_eq(dq, @deque.of([5, 4, 3]))
+  dq.rev_inplace()
+  assert_eq(dq, @deque.of([3, 4, 5]))
+
+  // Test with even number of elements
+  let dq = @deque.of([3, 4])
+  dq.rev_inplace()
+  assert_eq(dq, @deque.of([4, 3]))
+  dq.rev_inplace()
+  assert_eq(dq, @deque.of([3, 4]))
+
+  // Test with empty deque
+  let empty : @deque.T[Int] = @deque.new()
+  empty.rev_inplace()
+  assert_eq(empty, @deque.of([]))
+
+  // Additional test with more elements
+  let dq = @deque.of([1, 2, 3, 4, 5])
+  dq.rev_inplace()
+  assert_eq(dq, @deque.of([5, 4, 3, 2, 1]))
+  dq.rev_inplace()
+  assert_eq(dq, @deque.of([1, 2, 3, 4, 5]))
+
+  // Test with snapped deque (NEW)
+  let dq = @deque.of([1, 2, 3, 4])
+  let snapped = dq.copy()
+  snapped.rev_inplace()
+  assert_eq(snapped, @deque.of([4, 3, 2, 1]))
+}
+
+///|
+test "rev" {
+  // Test with basic case
+  let dq = @deque.of([3, 4, 5])
+  let reversed = dq.rev()
+  assert_eq(dq, @deque.of([3, 4, 5])) // Original unchanged
+  assert_eq(reversed, @deque.of([5, 4, 3])) // Reversed order
+
+  // Test double reversal returns to original
+  let reversed_back = reversed.rev()
+  assert_eq(reversed_back, @deque.of([3, 4, 5]))
+
+  // Test with empty deque
+  let empty : @deque.T[Int] = @deque.new()
+  let empty_reversed = empty.rev()
+  assert_eq(empty, @deque.of([]))
+  assert_eq(empty_reversed, @deque.of([]))
+
+  // Test with single element
+  let single = @deque.of([42])
+  let single_reversed = single.rev()
+  assert_eq(single, @deque.of([42]))
+  assert_eq(single_reversed, @deque.of([42]))
+
+  // Test with even number of elements
+  let even = @deque.of([1, 2, 3, 4])
+  let even_reversed = even.rev()
+  assert_eq(even, @deque.of([1, 2, 3, 4]))
+  assert_eq(even_reversed, @deque.of([4, 3, 2, 1]))
+  let original = @deque.of([1, 2, 3, 4])
+  let copied = original.copy()
+  let copied_reversed = copied.rev()
+  assert_eq(original, @deque.of([1, 2, 3, 4])) // Original unchanged
+  assert_eq(copied_reversed, @deque.of([4, 3, 2, 1])) // Copied and reversed
+
+  // Test with larger deque
+  let large = @deque.of([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+  let large_reversed = large.rev()
+  assert_eq(large, @deque.of([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]))
+  assert_eq(large_reversed, @deque.of([10, 9, 8, 7, 6, 5, 4, 3, 2, 1]))
+}

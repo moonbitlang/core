@@ -52,8 +52,10 @@ fn[A] T::push_front(Self[A], A) -> Unit
 fn[A] T::reserve_capacity(Self[A], Int) -> Unit
 fn[A] T::retain(Self[A], (A) -> Bool) -> Unit
 fn[A] T::retain_map(Self[A], (A) -> A?) -> Unit
+fn[A] T::rev(Self[A]) -> Self[A]
 fn[A] T::rev_each(Self[A], (A) -> Unit) -> Unit
 fn[A] T::rev_eachi(Self[A], (Int, A) -> Unit) -> Unit
+fn[A] T::rev_inplace(Self[A]) -> Unit
 fn[A] T::rev_iter(Self[A]) -> Iter[A]
 fn[A] T::rev_iter2(Self[A]) -> Iter2[Int, A]
 fn[A : Eq] T::search(Self[A], A) -> Int?
