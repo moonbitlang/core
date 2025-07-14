@@ -19,13 +19,11 @@ pub fn[A] add(self : T[A], head : A) -> T[A] {
 }
 
 ///|
-#deprecated("use `@list` instead")
 pub impl[A : Show] Show for T[A] with output(xs, logger) {
   logger.write_iter(xs.iter(), prefix="@list.of([", suffix="])")
 }
 
 ///|
-#deprecated("use `@list` instead")
 pub impl[A : ToJson] ToJson for T[A] with to_json(self) {
   let capacity = self.length()
   guard capacity != 0 else { return [] }
@@ -43,7 +41,6 @@ pub fn[A : ToJson] to_json(self : T[A]) -> Json {
 }
 
 ///|
-#deprecated("use `@list` instead")
 pub impl[A : @json.FromJson] @json.FromJson for T[A] with from_json(json, path) {
   guard json is Array(arr) else {
     raise @json.JsonDecodeError((path, "@immut/list.from_json: expected array"))
@@ -808,7 +805,6 @@ pub fn[A : Compare] sort(self : T[A]) -> T[A] {
 /// Concatenate two lists.
 ///
 /// `a + b` equal to `a.concat(b)`
-#deprecated("use `@list` instead")
 pub impl[A] Add for T[A] with op_add(self, other) {
   self.concat(other)
 }
@@ -1136,7 +1132,6 @@ pub fn[A] intercalate(self : T[T[A]], sep : T[A]) -> T[A] {
 }
 
 ///|
-#deprecated("use `@list` instead")
 pub impl[X] Default for T[X] with default() {
   Nil
 }
@@ -1202,7 +1197,6 @@ pub fn[A] of(arr : FixedArray[A]) -> T[A] {
 }
 
 ///|
-#deprecated("use `@list` instead")
 pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[X] with arbitrary(
   size,
   rs
@@ -1217,7 +1211,6 @@ pub fn[A] singleton(x : A) -> T[A] {
 }
 
 ///|
-#deprecated("use `@list` instead")
 pub impl[A : Hash] Hash for T[A] with hash_combine(self, hasher) {
   for e in self {
     hasher.combine(e)
@@ -1253,7 +1246,6 @@ pub impl[A : Hash] Hash for T[A] with hash_combine(self, hasher) {
 ///   inspect(list3.compare(list1), content="-1") // list1 > list3 (longer)
 ///   inspect(list1.compare(list1), content="0") // list1 = list1
 /// ```
-#deprecated("use `@list` instead")
 pub impl[A : Compare] Compare for T[A] with compare(self, other) {
   loop (self, other) {
     (Nil, Nil) => 0
