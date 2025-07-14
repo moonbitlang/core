@@ -23,10 +23,10 @@ let logf_n : UInt = 1U << logf_table_bits
 
 ///|
 priv struct LogfData {
-  invc : Array[Double]
-  logc : Array[Double]
+  invc : FixedArray[Double]
+  logc : FixedArray[Double]
   ln2 : Double
-  poly : Array[Double]
+  poly : FixedArray[Double]
 }
 
 ///|
