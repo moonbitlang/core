@@ -129,14 +129,32 @@ test "checked_mul basic cases" {
 }
 
 ///|
-/// TODO: there is a bug in `checked_mul` that it does not handle
-/// potential overflow correctly, so we skip this test for now.
-// test "checked_mul edge cases" {
-//   // Test potential overflow
-//   let large_val = 0xFFFFFFFFFFFFFFFFUL // max uint64
-//   inspect(checked_mul(large_val, 2UL), content="None")
-//   inspect(checked_mul(2UL, large_val), content="Some(18446744073709551614)")
+test "checked_mul edge cases" {
+  // Test potential overflow
+  let large_val = 0xFFFFFFFFFFFFFFFFUL // max uint64
+  inspect(checked_mul(large_val, 2UL), content="None")
+  inspect(checked_mul(2UL, large_val), content="None")
 
-//   // Test small multiplication that should work
-//   inspect(checked_mul(2UL, 3UL), content="Some(6)")
-// }
+  // Test small multiplication that should work
+  inspect(checked_mul(2UL, 3UL), content="Some(6)")
+
+  // Test corner case
+  inspect(
+    checked_mul(5UL, 3689348814741910323UL),
+    content="Some(18446744073709551615)",
+  )
+  inspect(
+    checked_mul(3689348814741910323UL, 5UL),
+    content="Some(18446744073709551615)",
+  )
+  inspect(
+    checked_mul(4UL, 4611686018427387903UL),
+    content="Some(18446744073709551612)",
+  )
+  inspect(
+    checked_mul(4611686018427387903UL, 4UL),
+    content="Some(18446744073709551612)",
+  )
+  inspect(checked_mul(4611686018427387904UL, 4UL), content="None")
+  inspect(checked_mul(4UL, 4611686018427387904UL), content="None")
+}
