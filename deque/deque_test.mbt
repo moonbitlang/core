@@ -1170,9 +1170,9 @@ test "shuffle_in_place" {
   let original = @deque.of([1, 2, 3, 4, 5, 6, 7])
   let dq = original.copy()
 
-  // Simple deterministic "random" function for testing
+  // Better deterministic "random" function for testing
   fn rand(upper : Int) -> Int {
-    (upper * 3 + 7) % upper // Deterministic pseudo-random for testing
+    (upper * 123 + 456) % (upper + 1) // More varied results
   }
 
   // Shuffle in place
@@ -1189,5 +1189,3 @@ test "shuffle_in_place" {
   assert_eq(shuffled.to_array().sort(), original.to_array().sort())
   assert_true(shuffled != original)
 }
-
-///|
