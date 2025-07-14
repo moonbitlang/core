@@ -8,8 +8,6 @@ let min_value : Int16
 // Types and methods
 fn Int16::abs(Int16) -> Int16
 fn Int16::reinterpret_as_uint16(Int16) -> UInt16
-fn Int16::to_uint(Int16) -> UInt
-fn Int16::to_uint64(Int16) -> UInt64
 impl Add for Int16
 impl BitAnd for Int16
 impl BitOr for Int16
