@@ -429,7 +429,7 @@ test "Int16::to_json" {
 
 ///|
 test "Int16::reinterpret_as_uint16" {
-  assert_eq((-1 : Int16).reinterpret_as_uint16(), @uint16.max_value)
-  assert_eq((0 : Int16).reinterpret_as_uint16(), (0 : UInt16))
-  assert_eq((1 : Int16).reinterpret_as_uint16(), (1 : UInt16))
+  inspect((-1 : Int16).reinterpret_as_uint16(), content="65535")
+  inspect((0 : Int16).reinterpret_as_uint16(), content="0")
+  inspect((1 : Int16).reinterpret_as_uint16(), content="1")
 }
