@@ -13,16 +13,19 @@
 // limitations under the License.
 
 ///|
+#deprecated("use `@list` instead")
 pub fn[A] add(self : T[A], head : A) -> T[A] {
   Cons(head, self)
 }
 
 ///|
+#deprecated("use `@list` instead")
 pub impl[A : Show] Show for T[A] with output(xs, logger) {
   logger.write_iter(xs.iter(), prefix="@list.of([", suffix="])")
 }
 
 ///|
+#deprecated("use `@list` instead")
 pub impl[A : ToJson] ToJson for T[A] with to_json(self) {
   let capacity = self.length()
   guard capacity != 0 else { return [] }
@@ -34,11 +37,13 @@ pub impl[A : ToJson] ToJson for T[A] with to_json(self) {
 }
 
 ///|
+#deprecated("use `@list` instead")
 pub fn[A : ToJson] to_json(self : T[A]) -> Json {
   ToJson::to_json(self)
 }
 
 ///|
+#deprecated("use `@list` instead")
 pub impl[A : @json.FromJson] @json.FromJson for T[A] with from_json(json, path) {
   guard json is Array(arr) else {
     raise @json.JsonDecodeError((path, "@immut/list.from_json: expected array"))
@@ -51,6 +56,7 @@ pub impl[A : @json.FromJson] @json.FromJson for T[A] with from_json(json, path) 
 }
 
 ///|
+#deprecated("use `@list` instead")
 pub fn[A : @json.FromJson] from_json(
   json : Json
 ) -> T[A] raise @json.JsonDecodeError {
@@ -66,6 +72,7 @@ pub fn[A : @json.FromJson] from_json(
 ///   let ls = @list.of([1, 2, 3, 4, 5])
 ///   assert_eq(ls, @list.from_array([1, 2, 3, 4, 5]))
 /// ```
+#deprecated("use `@list` instead")
 pub fn[A] from_array(arr : Array[A]) -> T[A] {
   for i = arr.length() - 1, list = Nil; i >= 0; {
     continue i - 1, Cons(arr[i], list)
@@ -76,6 +83,7 @@ pub fn[A] from_array(arr : Array[A]) -> T[A] {
 
 ///|
 /// Get the length of the list.
+#deprecated("use `@list` instead")
 pub fn[A] length(self : T[A]) -> Int {
   loop (self, 0) {
     (Nil, len) => len
@@ -93,6 +101,7 @@ pub fn[A] length(self : T[A]) -> Int {
 ///   @list.of([1, 2, 3, 4, 5]).each((x) => { arr.push(x) })
 ///   assert_eq(arr, [1, 2, 3, 4, 5])
 /// ```
+#deprecated("use `@list` instead")
 pub fn[A] each(self : T[A], f : (A) -> Unit raise?) -> Unit raise? {
   loop self {
     Nil => ()
@@ -113,6 +122,7 @@ pub fn[A] each(self : T[A], f : (A) -> Unit raise?) -> Unit raise? {
 ///   @list.of([1, 2, 3, 4, 5]).eachi((i, x) => { arr.push("(\{i},\{x})") })
 ///   assert_eq(arr, ["(0,1)", "(1,2)", "(2,3)", "(3,4)", "(4,5)"])
 /// ```
+#deprecated("use `@list` instead")
 pub fn[A] eachi(self : T[A], f : (Int, A) -> Unit raise?) -> Unit raise? {
   loop (self, 0) {
     (Nil, _) => ()
@@ -131,6 +141,7 @@ pub fn[A] eachi(self : T[A], f : (Int, A) -> Unit raise?) -> Unit raise? {
 /// ```mbt
 ///   assert_eq(@list.of([1, 2, 3, 4, 5]).map((x) => { x * 2}), @list.of([2, 4, 6, 8, 10]))
 /// ```
+#deprecated("use `@list` instead")
 pub fn[A, B] map(self : T[A], f : (A) -> B) -> T[B] {
   match self {
     Nil => Nil
@@ -140,6 +151,7 @@ pub fn[A, B] map(self : T[A], f : (A) -> B) -> T[B] {
 
 ///|
 /// Maps the list with index.
+#deprecated("use `@list` instead")
 pub fn[A, B] mapi(self : T[A], f : (Int, A) -> B raise?) -> T[B] raise? {
   fn go(xs : T[A], i : Int, f : (Int, A) -> B raise?) -> T[B] raise? {
     match xs {
@@ -160,6 +172,7 @@ pub fn[A, B] mapi(self : T[A], f : (Int, A) -> B raise?) -> T[B] raise? {
 /// ```mbt
 ///   assert_eq(@list.of([1, 2, 3, 4, 5]).rev_map((x) => { x * 2 }), @list.of([10, 8, 6, 4, 2]))
 /// ```
+#deprecated("use `@list` instead")
 pub fn[A, B] rev_map(self : T[A], f : (A) -> B raise?) -> T[B] raise? {
   loop (Nil, self) {
     (acc, Nil) => acc
@@ -169,6 +182,7 @@ pub fn[A, B] rev_map(self : T[A], f : (A) -> B raise?) -> T[B] raise? {
 
 ///|
 /// Convert list to array.
+#deprecated("use `@list` instead")
 pub fn[A] to_array(self : T[A]) -> Array[A] {
   match self {
     Nil => []
@@ -194,6 +208,7 @@ pub fn[A] to_array(self : T[A]) -> Array[A] {
 /// ```mbt
 ///   assert_eq(@list.of([1, 2, 3, 4, 5]).filter((x) => { x % 2 == 0}), @list.of([2, 4]))
 /// ```
+#deprecated("use `@list` instead")
 pub fn[A] filter(self : T[A], f : (A) -> Bool raise?) -> T[A] raise? {
   match self {
     Nil => Nil
@@ -208,6 +223,7 @@ pub fn[A] filter(self : T[A], f : (A) -> Bool raise?) -> T[A] raise? {
 
 ///|
 /// Test if all elements of the list satisfy the predicate.
+#deprecated("use `@list` instead")
 pub fn[A] all(self : T[A], f : (A) -> Bool raise?) -> Bool raise? {
   loop self {
     Nil => true
@@ -217,6 +233,7 @@ pub fn[A] all(self : T[A], f : (A) -> Bool raise?) -> Bool raise? {
 
 ///|
 /// Test if any element of the list satisfies the predicate.
+#deprecated("use `@list` instead")
 pub fn[A] any(self : T[A], f : (A) -> Bool raise?) -> Bool raise? {
   match self {
     Nil => false
@@ -232,6 +249,7 @@ pub fn[A] any(self : T[A], f : (A) -> Bool raise?) -> Bool raise? {
 /// ```mbt
 ///   assert_eq(@list.of([1, 2, 3, 4, 5]).tail(), @list.of([2, 3, 4, 5]))
 /// ```
+#deprecated("use `@list` instead")
 pub fn[A] tail(self : T[A]) -> T[A] {
   match self {
     Nil => Nil
@@ -242,6 +260,7 @@ pub fn[A] tail(self : T[A]) -> T[A] {
 ///|
 /// Get first element of the list.
 #internal(unsafe, "Panic if the list is empty")
+#deprecated("use `@list` instead")
 pub fn[A] unsafe_head(self : T[A]) -> A {
   match self {
     Nil => abort("head of empty list")
@@ -252,6 +271,7 @@ pub fn[A] unsafe_head(self : T[A]) -> A {
 ///|
 #deprecated("Use `unsafe_head` instead")
 #coverage.skip
+#deprecated("use `@list` instead")
 pub fn[A] head_exn(self : T[A]) -> A {
   self.unsafe_head()
 }
@@ -264,6 +284,7 @@ pub fn[A] head_exn(self : T[A]) -> A {
 /// ```mbt
 ///   assert_eq(@list.of([1, 2, 3, 4, 5]).head(), Some(1))
 /// ```
+#deprecated("use `@list` instead")
 pub fn[A] head(self : T[A]) -> A? {
   match self {
     Nil => None
@@ -273,6 +294,7 @@ pub fn[A] head(self : T[A]) -> A? {
 
 ///|
 #internal(unsafe, "Panic if the list is empty")
+#deprecated("use `@list` instead")
 pub fn[A] unsafe_last(self : T[A]) -> A {
   loop self {
     Nil => abort("last of empty list")
@@ -289,6 +311,7 @@ pub fn[A] unsafe_last(self : T[A]) -> A {
 /// ```mbt
 ///   assert_eq(@list.of([1, 2, 3, 4, 5]).last(), Some(5))
 /// ```
+#deprecated("use `@list` instead")
 pub fn[A] last(self : T[A]) -> A? {
   loop self {
     Nil => None
@@ -306,6 +329,7 @@ pub fn[A] last(self : T[A]) -> A? {
 ///   let ls = @list.of([1, 2, 3, 4, 5]).concat(@list.of([6, 7, 8, 9, 10]))
 ///   assert_eq(ls, @list.of([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]))
 /// ```
+#deprecated("use `@list` instead")
 pub fn[A] concat(self : T[A], other : T[A]) -> T[A] {
   match self {
     Nil => other
@@ -322,6 +346,7 @@ pub fn[A] concat(self : T[A], other : T[A]) -> T[A] {
 ///   let ls = @list.of([1, 2, 3, 4, 5]).rev_concat(@list.of([6, 7, 8, 9, 10]))
 ///   assert_eq(ls, @list.of([5, 4, 3, 2, 1, 6, 7, 8, 9, 10]))
 /// ```
+#deprecated("use `@list` instead")
 pub fn[A] rev_concat(self : T[A], other : T[A]) -> T[A] {
   loop (self, other) {
     (Nil, other) => other
@@ -337,6 +362,7 @@ pub fn[A] rev_concat(self : T[A], other : T[A]) -> T[A] {
 /// ```mbt
 ///   assert_eq(@list.of([1, 2, 3, 4, 5]).rev(), @list.of([5, 4, 3, 2, 1]))
 /// ```
+#deprecated("use `@list` instead")
 pub fn[A] rev(self : T[A]) -> T[A] {
   self.rev_concat(Nil)
 }
@@ -350,6 +376,7 @@ pub fn[A] rev(self : T[A]) -> T[A] {
 ///   let r = @list.of([1, 2, 3, 4, 5]).fold(init=0, (acc, x) => { acc + x })
 ///   inspect(r, content="15")
 /// ```
+#deprecated("use `@list` instead")
 pub fn[A, B] fold(self : T[A], init~ : B, f : (B, A) -> B raise?) -> B raise? {
   match self {
     Nil => init
@@ -365,6 +392,7 @@ pub fn[A, B] fold(self : T[A], init~ : B, f : (B, A) -> B raise?) -> B raise? {
 ///   let r = @list.of([1, 2, 3, 4, 5]).rev_fold((x, acc) => { x + acc }, init=0)
 ///   inspect(r, content="15")
 /// ```
+#deprecated("use `@list` instead")
 pub fn[A, B] rev_fold(
   self : T[A],
   init~ : B,
@@ -389,6 +417,7 @@ pub fn[A, B] rev_fold(
 /// ```
 #deprecated("Use `fold` instead")
 #coverage.skip
+#deprecated("use `@list` instead")
 pub fn[A, B] fold_left(
   self : T[A],
   f : (B, A) -> B raise?,
@@ -400,6 +429,7 @@ pub fn[A, B] fold_left(
 ///|
 #deprecated("Use `rev_fold` instead")
 #coverage.skip
+#deprecated("use `@list` instead")
 pub fn[A, B] fold_right(
   self : T[A],
   f : (A, B) -> B raise?,
@@ -413,6 +443,7 @@ pub fn[A, B] fold_right(
 
 ///|
 /// Fold the list from left with index.
+#deprecated("use `@list` instead")
 pub fn[A, B] foldi(
   self : T[A],
   init~ : B,
@@ -430,6 +461,7 @@ pub fn[A, B] foldi(
 
 ///|
 /// Fold the list from right with index.
+#deprecated("use `@list` instead")
 pub fn[A, B] rev_foldi(
   self : T[A],
   init~ : B,
@@ -449,6 +481,7 @@ pub fn[A, B] rev_foldi(
 /// Fold the list from left with index.
 #deprecated("Use `foldi` instead")
 #coverage.skip
+#deprecated("use `@list` instead")
 pub fn[A, B] fold_lefti(
   self : T[A],
   f : (Int, B, A) -> B raise?,
@@ -468,6 +501,7 @@ pub fn[A, B] fold_lefti(
 /// Fold the list from right with index.
 #deprecated("Use `rev_foldi` instead")
 #coverage.skip
+#deprecated("use `@list` instead")
 pub fn[A, B] fold_righti(
   self : T[A],
   f : (Int, A, B) -> B raise?,
@@ -493,6 +527,7 @@ pub fn[A, B] fold_righti(
 ///   let r = @list.of([1, 2, 3, 4, 5]).zip(@list.of([6, 7, 8, 9, 10]))
 ///   assert_eq(r, Some(@list.from_array([(1, 6), (2, 7), (3, 8), (4, 9), (5, 10)])))
 /// ```
+#deprecated("use `@list` instead")
 pub fn[A, B] zip(self : T[A], other : T[B]) -> T[(A, B)]? {
   let mut acc = Nil
   let res = loop (self, other) {
@@ -520,6 +555,7 @@ pub fn[A, B] zip(self : T[A], other : T[B]) -> T[(A, B)]? {
 /// ```
 #deprecated("Use `flat_map` instead")
 #coverage.skip
+#deprecated("use `@list` instead")
 pub fn[A, B] concat_map(self : T[A], f : (A) -> T[B]) -> T[B] {
   self.flat_map(f)
 }
@@ -536,6 +572,7 @@ pub fn[A, B] concat_map(self : T[A], f : (A) -> T[B]) -> T[B] {
 ///   let r = ls.flat_map((x) => { @list.from_array([x, x * 2]) })
 ///   assert_eq(r, @list.from_array([1, 2, 2, 4, 3, 6]))
 /// ```
+#deprecated("use `@list` instead")
 pub fn[A, B] flat_map(self : T[A], f : (A) -> T[B] raise?) -> T[B] raise? {
   match self {
     Nil => Nil
@@ -553,6 +590,7 @@ pub fn[A, B] flat_map(self : T[A], f : (A) -> T[B] raise?) -> T[B] raise? {
 ///   let r = ls.filter_map((x) => { if (x >= 3) { Some(x) } else { None } })
 ///   assert_eq(r, @list.of([4, 6, 3]))
 /// ```
+#deprecated("use `@list` instead")
 pub fn[A, B] filter_map(self : T[A], f : (A) -> B?) -> T[B] {
   loop (Nil, self) {
     (acc, Nil) => acc.rev()
@@ -566,6 +604,7 @@ pub fn[A, B] filter_map(self : T[A], f : (A) -> B?) -> T[B] {
 
 ///|
 #internal(unsafe, "Panic if the index is out of bounds")
+#deprecated("use `@list` instead")
 pub fn[A] unsafe_nth(self : T[A], n : Int) -> A {
   loop (self, n) {
     (Nil, _) => abort("nth: index out of bounds")
@@ -577,12 +616,14 @@ pub fn[A] unsafe_nth(self : T[A], n : Int) -> A {
 ///|
 #deprecated("Use `unsafe_nth` instead")
 #coverage.skip
+#deprecated("use `@list` instead")
 pub fn[A] nth_exn(self : T[A], n : Int) -> A {
   self.unsafe_nth(n)
 }
 
 ///|
 /// Get nth element of the list or None if the index is out of bounds
+#deprecated("use `@list` instead")
 pub fn[A] nth(self : T[A], n : Int) -> A? {
   loop (self, n) {
     (Nil, _) => None
@@ -599,6 +640,7 @@ pub fn[A] nth(self : T[A], n : Int) -> A? {
 /// ```mbt
 ///   assert_eq(@list.repeat(5, 1), @list.from_array([1, 1, 1, 1, 1]))
 /// ```
+#deprecated("use `@list` instead")
 pub fn[A] repeat(n : Int, x : A) -> T[A] {
   if n == 0 {
     Nil
@@ -616,6 +658,7 @@ pub fn[A] repeat(n : Int, x : A) -> T[A] {
 ///   let ls = (@list.from_array(["1", "2", "3", "4", "5"])).intersperse("|")
 ///   assert_eq(ls, @list.from_array(["1", "|", "2", "|", "3", "|", "4", "|", "5"]))
 /// ```
+#deprecated("use `@list` instead")
 pub fn[A] intersperse(self : T[A], separator : A) -> T[A] {
   match self {
     Nil => Nil
@@ -626,6 +669,7 @@ pub fn[A] intersperse(self : T[A], separator : A) -> T[A] {
 
 ///|
 /// Check if the list is empty.
+#deprecated("use `@list` instead")
 pub fn[A] is_empty(self : T[A]) -> Bool {
   self is Nil
 }
@@ -640,6 +684,7 @@ pub fn[A] is_empty(self : T[A]) -> Bool {
 ///   assert_eq(a, @list.from_array([1, 3, 5]))
 ///   assert_eq(b, @list.from_array([2, 4, 6]))
 /// ```
+#deprecated("use `@list` instead")
 pub fn[A, B] unzip(self : T[(A, B)]) -> (T[A], T[B]) {
   let mut xs = Nil
   let mut ys = Nil
@@ -663,6 +708,7 @@ pub fn[A, B] unzip(self : T[(A, B)]) -> (T[A], T[B]) {
 ///   let ls = (@list.from_array([@list.from_array([1,2,3]), @list.from_array([4,5,6]), @list.from_array([7,8,9])])).flatten()
 ///   assert_eq(ls, @list.from_array([1, 2, 3, 4, 5, 6, 7, 8, 9]))
 /// ```
+#deprecated("use `@list` instead")
 pub fn[A] flatten(self : T[T[A]]) -> T[A] {
   match self {
     Nil => Nil
@@ -672,6 +718,7 @@ pub fn[A] flatten(self : T[T[A]]) -> T[A] {
 
 ///|
 #internal(unsafe, "Panic if the list is empty")
+#deprecated("use `@list` instead")
 pub fn[A : Compare] unsafe_maximum(self : T[A]) -> A {
   match self {
     Nil => abort("maximum: empty list")
@@ -690,6 +737,7 @@ pub fn[A : Compare] unsafe_maximum(self : T[A]) -> A {
 ///|
 /// Get maximum element of the list.
 /// Returns None if the list is empty.
+#deprecated("use `@list` instead")
 pub fn[A : Compare] maximum(self : T[A]) -> A? {
   match self {
     Nil => None
@@ -704,6 +752,7 @@ pub fn[A : Compare] maximum(self : T[A]) -> A? {
 
 ///|
 #internal(unsafe, "Panic if the list is empty")
+#deprecated("use `@list` instead")
 pub fn[A : Compare] unsafe_minimum(self : T[A]) -> A {
   match self {
     Nil => abort("minimum: empty list")
@@ -721,6 +770,7 @@ pub fn[A : Compare] unsafe_minimum(self : T[A]) -> A {
 
 ///|
 /// Get minimum element of the list.
+#deprecated("use `@list` instead")
 pub fn[A : Compare] minimum(self : T[A]) -> A? {
   match self {
     Nil => None
@@ -742,6 +792,7 @@ pub fn[A : Compare] minimum(self : T[A]) -> A? {
 ///   let ls = (@list.from_array([1,123,52,3,6,0,-6,-76])).sort()
 ///   assert_eq(ls, @list.from_array([-76, -6, 0, 1, 3, 6, 52, 123]))
 /// ```
+#deprecated("use `@list` instead")
 pub fn[A : Compare] sort(self : T[A]) -> T[A] {
   match self {
     Nil => Nil
@@ -757,12 +808,14 @@ pub fn[A : Compare] sort(self : T[A]) -> T[A] {
 /// Concatenate two lists.
 ///
 /// `a + b` equal to `a.concat(b)`
+#deprecated("use `@list` instead")
 pub impl[A] Add for T[A] with op_add(self, other) {
   self.concat(other)
 }
 
 ///|
 /// Check if the list contains the value.
+#deprecated("use `@list` instead")
 pub fn[A : Eq] contains(self : T[A], value : A) -> Bool {
   loop self {
     Nil => false
@@ -779,6 +832,7 @@ pub fn[A : Eq] contains(self : T[A], value : A) -> Bool {
 ///   let r = @list.unfold(init=0, i => if i == 3 { None } else { Some((i, i + 1)) })
 ///   assert_eq(r, @list.from_array([0, 1, 2]))
 /// ```
+#deprecated("use `@list` instead")
 pub fn[A, S] unfold(f : (S) -> (A, S)? raise?, init~ : S) -> T[A] raise? {
   match f(init) {
     Some((element, new_state)) => Cons(element, unfold(init=new_state, f))
@@ -797,6 +851,7 @@ pub fn[A, S] unfold(f : (S) -> (A, S)? raise?, init~ : S) -> T[A] raise? {
 ///   let r = ls.take(3)
 ///   assert_eq(r, @list.of([1, 2, 3]))
 /// ```
+#deprecated("use `@list` instead")
 pub fn[A] take(self : T[A], n : Int) -> T[A] {
   fn go(n, t) {
     match (n, t) {
@@ -824,6 +879,7 @@ pub fn[A] take(self : T[A], n : Int) -> T[A] {
 ///   let r = ls.drop(3)
 ///   assert_eq(r, @list.of([4, 5]))
 /// ```
+#deprecated("use `@list` instead")
 pub fn[A] drop(self : T[A], n : Int) -> T[A] {
   if n <= 0 {
     self
@@ -846,6 +902,7 @@ pub fn[A] drop(self : T[A], n : Int) -> T[A] {
 ///   let r = ls.take_while((x) => { x < 3 })
 ///   assert_eq(r, @list.of([1, 2]))
 /// ```
+#deprecated("use `@list` instead")
 pub fn[A] take_while(self : T[A], p : (A) -> Bool) -> T[A] {
   match self {
     Nil => Nil
@@ -863,6 +920,7 @@ pub fn[A] take_while(self : T[A], p : (A) -> Bool) -> T[A] {
 ///   let r = ls.drop_while((x) => { x < 3 })
 ///   assert_eq(r, @list.of([3, 4]))
 /// ```
+#deprecated("use `@list` instead")
 pub fn[A] drop_while(self : T[A], p : (A) -> Bool raise?) -> T[A] raise? {
   loop self {
     Nil => Nil
@@ -880,6 +938,7 @@ pub fn[A] drop_while(self : T[A], p : (A) -> Bool raise?) -> T[A] raise? {
 ///   let r = ls.scan_left((acc, x) => { acc + x }, init=0)
 ///   assert_eq(r, @list.of([0, 1, 3, 6, 10, 15]))
 /// ```
+#deprecated("use `@list` instead")
 pub fn[A, E] scan_left(
   self : T[A],
   f : (E, A) -> E raise?,
@@ -905,6 +964,7 @@ pub fn[A, E] scan_left(
 ///   let r = ls.scan_right((x, acc) => { acc + x }, init=0)
 ///   assert_eq(r, @list.of([15, 14, 12, 9, 5, 0]))
 /// ```
+#deprecated("use `@list` instead")
 pub fn[A, B] scan_right(
   self : T[A],
   f : (A, B) -> B raise?,
@@ -928,6 +988,7 @@ pub fn[A, B] scan_right(
 ///   let ls = @list.from_array([(1, "a"), (2, "b"), (3, "c")])
 ///   assert_eq(ls.lookup(3), Some("c"))
 /// ```
+#deprecated("use `@list` instead")
 pub fn[A : Eq, B] lookup(self : T[(A, B)], v : A) -> B? {
   loop self {
     Nil => None
@@ -944,6 +1005,7 @@ pub fn[A : Eq, B] lookup(self : T[(A, B)], v : A) -> B? {
 ///   assert_eq(@list.of([1, 3, 5, 8]).find((element) => { element % 2 == 0}), Some(8))
 ///   assert_eq(@list.of([1, 3, 5]).find((element) => { element % 2 == 0}), None)
 /// ```
+#deprecated("use `@list` instead")
 pub fn[A] find(self : T[A], f : (A) -> Bool raise?) -> A? raise? {
   loop self {
     Nil => None
@@ -965,6 +1027,7 @@ pub fn[A] find(self : T[A], f : (A) -> Bool raise?) -> A? raise? {
 ///   assert_eq(@list.of([1, 3, 5, 8]).findi((element, index) => { (element % 2 == 0) && (index == 3) }), Some(8))
 ///   assert_eq(@list.of([1, 3, 8, 5]).findi((element, index) => { (element % 2 == 0) && (index == 3) }), None)
 /// ```
+#deprecated("use `@list` instead")
 pub fn[A] findi(self : T[A], f : (A, Int) -> Bool raise?) -> A? raise? {
   loop (self, 0) {
     (list, index) =>
@@ -988,6 +1051,7 @@ pub fn[A] findi(self : T[A], f : (A, Int) -> Bool raise?) -> A? raise? {
 /// ```mbt
 ///   assert_eq(@list.of([1, 2, 3, 4, 5]).remove_at(2), @list.of([1, 2, 4, 5]))
 /// ```
+#deprecated("use `@list` instead")
 pub fn[A] remove_at(self : T[A], index : Int) -> T[A] {
   match (index, self) {
     (0, Cons(_, tail)) => tail
@@ -1005,6 +1069,7 @@ pub fn[A] remove_at(self : T[A], index : Int) -> T[A] {
 /// ```mbt
 ///   assert_eq(@list.of([1, 2, 3, 4, 5]).remove(3), @list.of([1, 2, 4, 5]))
 /// ```
+#deprecated("use `@list` instead")
 pub fn[A : Eq] remove(self : T[A], elem : A) -> T[A] {
   match self {
     Nil => Nil
@@ -1025,6 +1090,7 @@ pub fn[A : Eq] remove(self : T[A], elem : A) -> T[A] {
 /// ```mbt
 ///   assert_eq(@list.of([1, 2, 3, 4, 5]).is_prefix(@list.of([1, 2, 3])), true)
 /// ```
+#deprecated("use `@list` instead")
 pub fn[A : Eq] is_prefix(self : T[A], prefix : T[A]) -> Bool {
   loop (self, prefix) {
     (_, Nil) => true
@@ -1046,6 +1112,7 @@ pub fn[A : Eq] is_prefix(self : T[A], prefix : T[A]) -> Bool {
 /// ```mbt
 ///   assert_eq(@list.of([1, 2, 3, 4, 5]).is_suffix(@list.of([3, 4, 5])), true)
 /// ```
+#deprecated("use `@list` instead")
 pub fn[A : Eq] is_suffix(self : T[A], suffix : T[A]) -> Bool {
   self.rev().is_prefix(suffix.rev())
 }
@@ -1063,22 +1130,26 @@ pub fn[A : Eq] is_suffix(self : T[A], suffix : T[A]) -> Bool {
 ///   let r = ls.intercalate(@list.of([0]))
 ///   assert_eq(r, @list.of([1, 2, 3, 0, 4, 5, 6, 0, 7, 8, 9]))
 /// ```
+#deprecated("use `@list` instead")
 pub fn[A] intercalate(self : T[T[A]], sep : T[A]) -> T[A] {
   self.intersperse(sep).flatten()
 }
 
 ///|
+#deprecated("use `@list` instead")
 pub impl[X] Default for T[X] with default() {
   Nil
 }
 
 ///|
 /// The empty list
+#deprecated("use `@list` instead")
 pub fn[X] default() -> T[X] {
   Nil
 }
 
 ///|
+#deprecated("use `@list` instead")
 pub fn[A] iter(self : T[A]) -> Iter[A] {
   Iter::new(yield_ => loop self {
     Nil => IterContinue
@@ -1092,6 +1163,7 @@ pub fn[A] iter(self : T[A]) -> Iter[A] {
 }
 
 ///|
+#deprecated("use `@list` instead")
 pub fn[A] iter2(self : T[A]) -> Iter2[Int, A] {
   Iter2::new(yield_ => loop (self, 0) {
     (Nil, _) => IterEnd
@@ -1108,16 +1180,19 @@ pub fn[A] iter2(self : T[A]) -> Iter2[Int, A] {
 /// Convert the iterator into a list. Preserves order of elements.
 /// This function is tail-recursive, but consumes 2*n memory. 
 /// If the order of elements is not important, use `from_iter_rev` instead.
+#deprecated("use `@list` instead")
 pub fn[A] from_iter(iter : Iter[A]) -> T[A] {
   iter.fold(init=Nil, (acc, e) => Cons(e, acc)).rev()
 }
 
 ///|
+#deprecated("use `@list` instead")
 pub fn[A] from_iter_rev(iter : Iter[A]) -> T[A] {
   iter.fold(init=Nil, (acc, e) => Cons(e, acc))
 }
 
 ///|
+#deprecated("use `@list` instead")
 pub fn[A] of(arr : FixedArray[A]) -> T[A] {
   for i = arr.length() - 1, list = Nil; i >= 0; {
     continue i - 1, Cons(arr[i], list)
@@ -1127,6 +1202,7 @@ pub fn[A] of(arr : FixedArray[A]) -> T[A] {
 }
 
 ///|
+#deprecated("use `@list` instead")
 pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[X] with arbitrary(
   size,
   rs
@@ -1135,11 +1211,13 @@ pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[X] with arbitrar
 }
 
 ///|
+#deprecated("use `@list` instead")
 pub fn[A] singleton(x : A) -> T[A] {
   Cons(x, Nil)
 }
 
 ///|
+#deprecated("use `@list` instead")
 pub impl[A : Hash] Hash for T[A] with hash_combine(self, hasher) {
   for e in self {
     hasher.combine(e)
@@ -1175,6 +1253,7 @@ pub impl[A : Hash] Hash for T[A] with hash_combine(self, hasher) {
 ///   inspect(list3.compare(list1), content="-1") // list1 > list3 (longer)
 ///   inspect(list1.compare(list1), content="0") // list1 = list1
 /// ```
+#deprecated("use `@list` instead")
 pub impl[A : Compare] Compare for T[A] with compare(self, other) {
   loop (self, other) {
     (Nil, Nil) => 0
