@@ -13,6 +13,7 @@
 // limitations under the License.
 
 ///|
+#deprecated("use `@list` instead")
 pub(all) enum T[A] {
   Nil
   Cons(A, T[A])
