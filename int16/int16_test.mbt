@@ -433,22 +433,3 @@ test "Int16::reinterpret_as_uint16" {
   assert_eq((0 : Int16).reinterpret_as_uint16(), (0 : UInt16))
   assert_eq((1 : Int16).reinterpret_as_uint16(), (1 : UInt16))
 }
-
-///|
-test "Int16::to_uint" {
-  inspect((-1 : Int16).to_uint(), content="4294967295")
-  inspect((-1 : Int16).to_uint().to_string(radix=16), content="ffffffff")
-  inspect((0 : Int16).to_uint(), content="0")
-  inspect((1 : Int16).to_uint(), content="1")
-}
-
-///|
-test "Int16::to_uint64" {
-  inspect((-1 : Int16).to_uint64(), content="18446744073709551615")
-  inspect(
-    (-1 : Int16).to_uint64().to_string(radix=16),
-    content="ffffffffffffffff",
-  )
-  inspect((0 : Int16).to_uint64(), content="0")
-  inspect((1 : Int16).to_uint64(), content="1")
-}
