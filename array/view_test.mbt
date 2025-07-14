@@ -16,9 +16,9 @@
 test "slice" {
   let v = [1, 2, 3, 4, 5]
   let s = v[1:4]
-  assert_eq(s.length(), 3)
-  assert_eq(s[0], 2)
-  assert_eq(s[1], 3)
+  inspect(s.length(), content="3")
+  inspect(s[0], content="2")
+  inspect(s[1], content="3")
 }
 
 ///|
@@ -27,7 +27,7 @@ test "each" {
   let s = v[2:5]
   let mut sum = 0
   s.each(x => sum = sum + x)
-  assert_eq(sum, 12)
+  inspect(sum, content="12")
 }
 
 ///|
@@ -147,9 +147,9 @@ test "arrayview_rev_foldi" {
 test "arrayview_map" {
   let arr = [1, 2, 3]
   let mapped = arr[1:].map(x => x * 2)
-  assert_eq(mapped.length(), 2)
-  assert_eq(mapped[0], 4)
-  assert_eq(mapped[1], 6)
+  inspect(mapped.length(), content="2")
+  inspect(mapped[0], content="4")
+  inspect(mapped[1], content="6")
   @json.inspect(([1] : Array[Int])[1:].map(x => x), content=[])
 }
 
@@ -157,19 +157,19 @@ test "arrayview_map" {
 test "arrayview_map_inplace" {
   let arr = [1, 2, 3]
   arr[1:].map_inplace(x => x * 2)
-  assert_eq(arr.length(), 3)
-  assert_eq(arr[0], 1)
-  assert_eq(arr[1], 4)
-  assert_eq(arr[2], 6)
+  inspect(arr.length(), content="3")
+  inspect(arr[0], content="1")
+  inspect(arr[1], content="4")
+  inspect(arr[2], content="6")
 }
 
 ///|
 test "arrayview_mapi" {
   let arr = [1, 2, 3]
   let mapped = arr[1:].mapi((i, x) => i + x)
-  assert_eq(mapped.length(), 2)
-  assert_eq(mapped[0], 2)
-  assert_eq(mapped[1], 4)
+  inspect(mapped.length(), content="2")
+  inspect(mapped[0], content="2")
+  inspect(mapped[1], content="4")
   inspect(([1] : Array[Int])[1:].mapi((_idx, x) => x), content="[]")
 }
 
@@ -177,18 +177,18 @@ test "arrayview_mapi" {
 test "arrayview_mapi_inplace" {
   let arr = [1, 2, 3]
   arr[1:].mapi_inplace((i, x) => i + x)
-  assert_eq(arr.length(), 3)
-  assert_eq(arr[0], 1)
-  assert_eq(arr[1], 2)
-  assert_eq(arr[2], 4)
+  inspect(arr.length(), content="3")
+  inspect(arr[0], content="1")
+  inspect(arr[1], content="2")
+  inspect(arr[2], content="4")
 }
 
 ///|
 test "arrayview_filter" {
   let arr = [1, 2, 3, 4, 5]
   let filtered = arr[2:].filter(x => x % 2 == 0)
-  assert_eq(filtered.length(), 1)
-  assert_eq(filtered[0], 4)
+  inspect(filtered.length(), content="1")
+  inspect(filtered[0], content="4")
 }
 
 ///|

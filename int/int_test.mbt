@@ -43,9 +43,9 @@ test "hash" {
 ///|
 test "abs function coverage" {
   // Test cases for abs function
-  assert_eq(Int::abs(5), 5)
-  assert_eq(Int::abs(-5), 5)
-  assert_eq(Int::abs(0), 0)
+  inspect(Int::abs(5), content="5")
+  inspect(Int::abs(-5), content="5")
+  inspect(Int::abs(0), content="0")
   assert_eq(Int::abs(@int.min_value), @int.min_value.abs())
   assert_eq(Int::abs(@int.max_value), @int.max_value)
 }
@@ -55,9 +55,9 @@ test "to_le_bytes" {
   let bytes = (0x12345678).to_le_bytes()
   inspect(
     bytes,
-    content=
+    content=(
       #|b"\x78\x56\x34\x12"
-    ,
+    ),
   )
 }
 
@@ -66,8 +66,8 @@ test "to_be_bytes" {
   let bytes = (0x12345678).to_be_bytes()
   inspect(
     bytes,
-    content=
+    content=(
       #|b"\x12\x34\x56\x78"
-    ,
+    ),
   )
 }

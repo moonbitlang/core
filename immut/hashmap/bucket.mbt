@@ -205,7 +205,7 @@ fn[K, V, A] Bucket::foldl_with_key(
 test "foldl_with_key" {
   let bucket = More("a", "a", More("b", "b", JustOne("c", "c")))
   let result = bucket.foldl_with_key(init="", (init, _k, v) => init + v)
-  assert_eq(result, "abc")
+  inspect(result, content="abc")
 }
 
 ///|

@@ -188,7 +188,7 @@ pub fn[K : Hash + Eq] intersection(self : T[K], other : T[K]) -> T[K] {
 /// Difference of two hash sets.
 pub fn[K : Hash + Eq] difference(self : T[K], other : T[K]) -> T[K] {
   let m = new()
-  self.each(k => if not(other.contains(k)) { m.add(k) })
+  self.each(k => if !other.contains(k) { m.add(k) })
   m
 }
 
@@ -196,8 +196,8 @@ pub fn[K : Hash + Eq] difference(self : T[K], other : T[K]) -> T[K] {
 /// Symmetric difference of two hash sets.
 pub fn[K : Hash + Eq] symmetric_difference(self : T[K], other : T[K]) -> T[K] {
   let m = new()
-  self.each(k => if not(other.contains(k)) { m.add(k) })
-  other.each(k => if not(self.contains(k)) { m.add(k) })
+  self.each(k => if !other.contains(k) { m.add(k) })
+  other.each(k => if !self.contains(k) { m.add(k) })
   m
 }
 
@@ -205,9 +205,9 @@ pub fn[K : Hash + Eq] symmetric_difference(self : T[K], other : T[K]) -> T[K] {
 /// Check if two sets have no common elements.
 pub fn[K : Hash + Eq] is_disjoint(self : T[K], other : T[K]) -> Bool {
   if self.size() <= other.size() {
-    self.iter().all(k => not(other.contains(k)))
+    self.iter().all(k => !other.contains(k))
   } else {
-    other.iter().all(k => not(self.contains(k)))
+    other.iter().all(k => !self.contains(k))
   }
 }
 
@@ -393,7 +393,7 @@ test "set" {
   m.add("cd")
   m.add("c")
   m.add("d")
-  assert_eq(m.size, 7)
+  inspect(m.size, content="7")
   assert_eq(
     m.debug_entries(),
     "_,(0,a),(1,b),(2,c),(3,d),(3,bc),(4,cd),(4,abc),_,_,_,_,_,_,_,_",
@@ -414,8 +414,11 @@ test "remove" {
   m.add("abc" |> i)
   m.add("abcdef" |> i)
   m.remove("ab" |> i)
-  assert_eq(m.size(), 5)
-  assert_eq(m.debug_entries(), "_,(0,a),(0,bc),(1,cd),(1,abc),_,(0,abcdef),_")
+  inspect(m.size(), content="5")
+  inspect(
+    m.debug_entries(),
+    content="_,(0,a),(0,bc),(1,cd),(1,abc),_,(0,abcdef),_",
+  )
 }
 
 ///|
@@ -429,8 +432,8 @@ test "remove_unexist_key" {
   m.add("ab" |> i)
   m.add("abc" |> i)
   m.remove("d" |> i)
-  assert_eq(m.size(), 3)
-  assert_eq(m.debug_entries(), "_,(0,a),(0,ab),(0,abc),_,_,_,_")
+  inspect(m.size(), content="3")
+  inspect(m.debug_entries(), content="_,(0,a),(0,ab),(0,abc),_,_,_,_")
 }
 
 ///|
@@ -446,16 +449,16 @@ test "grow" {
   m.add("Java" |> i)
   m.add("Scala" |> i)
   m.add("Julia" |> i)
-  assert_eq(m.size, 6)
-  assert_eq(m.capacity, 8)
+  inspect(m.size, content="6")
+  inspect(m.capacity, content="8")
   m.add("Cobol" |> i)
-  assert_eq(m.size, 7)
-  assert_eq(m.capacity, 16)
+  inspect(m.size, content="7")
+  inspect(m.capacity, content="16")
   m.add("Python" |> i)
   m.add("Haskell" |> i)
   m.add("Rescript" |> i)
-  assert_eq(m.size, 10)
-  assert_eq(m.capacity, 16)
+  inspect(m.size, content="10")
+  inspect(m.capacity, content="16")
   assert_eq(
     m.debug_entries(),
     "_,(0,C),(0,Go),(0,C++),(0,Java),(0,Scala),(1,Julia),(2,Cobol),(2,Python),(2,Haskell),(2,Rescript),_,_,_,_,_",
@@ -466,8 +469,8 @@ test "grow" {
 test "clear" {
   let m : T[MyString] = new()
   m.clear()
-  assert_eq(m.size(), 0)
-  assert_eq(m.capacity(), 8)
+  inspect(m.size(), content="0")
+  inspect(m.capacity(), content="8")
   for i in 0..<m.capacity() {
     @test.same_object(m.entries[i], None)
   }
@@ -485,7 +488,7 @@ pub fn[K] to_array(self : T[K]) -> Array[K] {
   } else {
     []
   }
-  if not(res.is_empty()) {
+  if !res.is_empty() {
     let mut res_idx = 1
     while res_idx < res.length() && i < self.capacity {
       if self.entries[i] is Some({ key, .. }) {

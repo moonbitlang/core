@@ -13,9 +13,9 @@ test "bytes creation" {
   let bytes1 = @bytes.from_array(arr)
   inspect(
     bytes1,
-    content=
+    content=(
       #|b"\x68\x65\x6c\x6c\x6f"
-    ,
+    ),
   )
 
   // Create from fixed array
@@ -23,27 +23,27 @@ test "bytes creation" {
   let bytes2 = @bytes.of(fixed)
   inspect(
     bytes2,
-    content=
+    content=(
       #|b"\x61\x61\x61"
-    ,
+    ),
   )
 
   // Create empty bytes
   let empty = @bytes.default()
   inspect(
     empty,
-    content=
+    content=(
       #|b""
-    ,
+    ),
   )
 
   // Create from iterator
   let iter_bytes = @bytes.from_iter(arr.iter())
   inspect(
     iter_bytes,
-    content=
+    content=(
       #|b"\x68\x65\x6c\x6c\x6f"
-    ,
+    ),
   )
 }
 ```
@@ -127,9 +127,9 @@ test "bytes operations" {
   let combined = b1 + b2
   inspect(
     combined,
-    content=
+    content=(
       #|b"\x61\x62\x63\x64"
-    ,
+    ),
   )
 
   // Comparison

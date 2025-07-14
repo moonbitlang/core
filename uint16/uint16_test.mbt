@@ -358,3 +358,16 @@ test "UInt16::to_uint64" {
   inspect(UInt16::to_uint64(32768), content="32768")
   inspect(UInt16::to_uint64(12345), content="12345")
 }
+
+///|
+test "UInt16::hash_combine" {
+  let hasher = @builtin.Hasher::new()
+  let value : UInt16 = 42
+  value.hash_combine(hasher)
+  inspect(hasher.finalize(), content="1161967057")
+}
+
+///|
+test "UInt16::default" {
+  inspect(UInt16::default(), content="0")
+}

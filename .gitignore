@@ -8,3 +8,5 @@ bisect.coverage
 
 .DS_Store
 .ai/
+.auto-coder/
+.moonagent/

@@ -169,9 +169,9 @@ test "map" {
   inspect(v.map(e => e * 2), content="@immut/array.of([2, 4, 6, 8, 10])")
   inspect(
     v.map(e => e.to_string()),
-    content=
+    content=(
       #|@immut/array.of(["1", "2", "3", "4", "5"])
-    ,
+    ),
   )
   inspect(
     v.map(e => e % 2 == 0),
@@ -259,11 +259,11 @@ test "compare" {
   let arr2 = @array.of([1, 2, 4])
   let arr3 = @array.of([1, 2])
   let empty : @array.T[Int] = @array.new()
-  assert_eq(arr1.compare(arr2), -1)
-  assert_eq(arr1.compare(arr3), 1)
-  assert_eq(arr3.compare(arr1), -1)
-  assert_eq(arr1.compare(arr1), 0)
-  assert_eq(empty.compare(empty), 0)
+  inspect(arr1.compare(arr2), content="-1")
+  inspect(arr1.compare(arr3), content="1")
+  inspect(arr3.compare(arr1), content="-1")
+  inspect(arr1.compare(arr1), content="0")
+  inspect(empty.compare(empty), content="0")
 }
 
 ///|

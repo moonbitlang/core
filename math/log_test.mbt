@@ -63,7 +63,7 @@ test "log2 log10" {
 
   // log10
   assert_eq(log10(0.2), -0.6989700043360187)
-  assert_eq(log10(0.1), -1)
+  inspect(log10(0.1), content="-1")
   assert_eq(log10(1.0), 0.0)
   assert_eq(log10(10.0), 1.0)
   assert_eq(log10(100.0), 2.0)

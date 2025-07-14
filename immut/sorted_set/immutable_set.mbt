@@ -223,7 +223,7 @@ pub fn[A : Compare] max_option(self : T[A]) -> A? {
 ///
 /// ```mbt
 ///   let (left, present, right) = @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).split(5)
-///   assert_eq(present, true)
+///   inspect(present, content="true")
 ///   assert_eq(left, @sorted_set.of([1, 2, 3, 4]))
 ///   assert_eq(right, @sorted_set.of([6, 7, 8, 9]))
 /// ```

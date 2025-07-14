@@ -1010,23 +1010,11 @@ pub fn[T : Compare] Array::binary_search(
 /// ```moonbit
 ///   let arr = [1, 3, 5, 7, 9]
 ///   let find_3 = arr.binary_search_by((x) => {
-///     if x < 3 {
-///       -1
-///     } else if x > 3 {
-///       1
-///     } else {
-///       0
-///     }
+///     x.compare(3)
 ///   })
 ///   inspect(find_3, content="Ok(1)")
 ///   let find_4 = arr.binary_search_by((x) => {
-///     if x < 4 {
-///       -1
-///     } else if x > 4 {
-///       1
-///     } else {
-///       0
-///     }
+///     x.compare(4)
 ///   })
 ///   inspect(find_4, content="Err(2)")
 /// ```
@@ -1532,7 +1520,7 @@ pub fn[T] Array::split(
   let mut i = 0
   while i < self.length() {
     let chunk = []
-    while i < self.length() && not(pred(self[i])) {
+    while i < self.length() && !pred(self[i]) {
       chunk.push(self[i])
       i = i + 1
     }

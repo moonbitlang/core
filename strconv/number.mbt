@@ -220,6 +220,8 @@ fn parse_inf_nan(s : String) -> (Double, Int)? {
 ///|
 /// Returns None if the multiplication might overflow (there are some false-negative corner cases).
 /// Otherwise, returns Some(m), where m = self * b.
+/// WARNING: Note this function is only used internally in the strconv module, 
+/// the current implementation is not completely safe against overflows.
 fn checked_mul(a : UInt64, b : UInt64) -> UInt64? {
   if a == 0UL || b == 0UL {
     return Some(0UL)
@@ -230,12 +232,12 @@ fn checked_mul(a : UInt64, b : UInt64) -> UInt64? {
   if b == 1UL {
     return Some(a)
   }
-  if b < 0UL || a < 0UL {
+  // Can only multiply by 1 or 0, which is handled above.
+  if b.clz() == 0 || a.clz() == 0 {
     return None
   }
-  let r : UInt64 = @uint64.max_value / b
-  let q : UInt64 = 1UL / b
-  if r + r + q < a {
+  let quotient : UInt64 = @uint64.max_value / b
+  if a > quotient {
     return None
   }
   Some(a * b)

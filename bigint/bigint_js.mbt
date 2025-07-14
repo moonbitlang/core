@@ -16,6 +16,9 @@
 type BigInt
 
 ///|
+let zero = 0N
+
+///|
 pub fn BigInt::from_string(str : String) -> BigInt {
   if str.length() == 0 {
     abort("empty string")
@@ -453,7 +456,6 @@ pub fn BigInt::to_int64(self : BigInt) -> Int64 {
 /// Example:
 ///
 /// ```moonbit
-/// ///|
 ///   let pos = 16N // 10000
 ///   inspect(pos.bit_length(), content="5")
 ///   let neg = -16N // 
@@ -509,7 +511,7 @@ extern "js" fn is_neg(x : BigInt) -> Bool =
 
 ///|
 fn BigInt::limbs(self : Self) -> Iter[UInt] {
-  guard not(self.is_zero()) else { Iter::singleton(0) }
+  guard !self.is_zero() else { Iter::singleton(0) }
   Iter::new(yield_ => for n = self * BigInt::from_int(self.signum())
                           n > 0
                           n = n >> 32 {

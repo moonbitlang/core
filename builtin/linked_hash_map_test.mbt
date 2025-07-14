@@ -18,9 +18,9 @@ test "Map keys iter" {
   let v = map.keys()
   inspect(
     v,
-    content=
+    content=(
       #|["a", "b", "c"]
-    ,
+    ),
   )
   inspect(map.values(), content="[1, 2, 3]")
   inspect(({} : Map[String, Int]).keys(), content="[]")
@@ -33,9 +33,9 @@ test "Map::from_iter" {
   let map = Map::from_iter(iter)
   inspect(
     map,
-    content=
+    content=(
       #|{"a": 1, "b": 2, "c": 3}
-    ,
+    ),
   )
 }
 
@@ -66,9 +66,9 @@ test "Map::map" {
   let v = map.map((k, v) => k + v.to_string())
   inspect(
     v,
-    content=
+    content=(
       #|{"a": "a1", "b": "b2", "c": "c3"}
-    ,
+    ),
   )
   map["d"] = 10
   map["e"] = 20
@@ -76,9 +76,9 @@ test "Map::map" {
   let v = map.map((k, v) => k + v.to_string())
   inspect(
     v,
-    content=
+    content=(
       #|{"a": "a1", "b": "b2", "d": "d10", "e": "e20"}
-    ,
+    ),
   )
   let v : Map[String, String] = {}.map((k, v) => k + v)
   inspect(v, content="{}")
@@ -90,9 +90,9 @@ test "Map::copy" {
   let copy = map.copy()
   inspect(
     copy,
-    content=
+    content=(
       #|{"a": 1, "b": 2, "c": 3}
-    ,
+    ),
   )
   map["d"] = 10
   map["e"] = 20
@@ -100,9 +100,9 @@ test "Map::copy" {
   let copy = map.copy()
   inspect(
     copy,
-    content=
+    content=(
       #|{"a": 1, "b": 2, "d": 10, "e": 20}
-    ,
+    ),
   )
   let copy : Map[String, String] = {}.copy()
   inspect(copy, content="{}")

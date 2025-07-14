@@ -14,25 +14,25 @@
 
 ///|
 test "maximum_by_key" {
-  assert_eq(@cmp.maximum_by_key(1, -2, @int.abs), -2)
-  assert_eq(@cmp.maximum_by_key(-2, 1, @int.abs), -2)
-  assert_eq(@cmp.maximum_by_key(-2, 2, @int.abs), 2)
+  inspect(@cmp.maximum_by_key(1, -2, @int.abs), content="-2")
+  inspect(@cmp.maximum_by_key(-2, 1, @int.abs), content="-2")
+  inspect(@cmp.maximum_by_key(-2, 2, @int.abs), content="2")
 }
 
 ///|
 test "minimum_by_key" {
-  assert_eq(@cmp.minimum_by_key(1, -2, @int.abs), 1)
-  assert_eq(@cmp.minimum_by_key(-2, 1, @int.abs), 1)
-  assert_eq(@cmp.minimum_by_key(-2, 2, @int.abs), -2)
+  inspect(@cmp.minimum_by_key(1, -2, @int.abs), content="1")
+  inspect(@cmp.minimum_by_key(-2, 1, @int.abs), content="1")
+  inspect(@cmp.minimum_by_key(-2, 2, @int.abs), content="-2")
 }
 
 ///|
 test "maximum.value" {
-  // assert_eq(@math.maximum(1, 2), 2)
+  // inspect(@math.maximum(1, 2), content="2")
   inspect(1 |> maximum(2), content="2")
-  // assert_eq(@math.maximum(2, 1), 2)
+  // inspect(@math.maximum(2, 1), content="2")
   inspect(2 |> maximum(1), content="2")
-  // assert_eq(@math.maximum(2, 2), 2)
+  // inspect(@math.maximum(2, 2), content="2")
   inspect(2 |> maximum(2), content="2")
 }
 
@@ -54,9 +54,9 @@ test "maximum.ref" {
 
 ///|
 test "minimum.value" {
-  assert_eq(@cmp.minimum(1, 2), 1)
-  assert_eq(@cmp.minimum(2, 1), 1)
-  assert_eq(@cmp.minimum(2, 2), 2)
+  inspect(@cmp.minimum(1, 2), content="1")
+  inspect(@cmp.minimum(2, 1), content="1")
+  inspect(@cmp.minimum(2, 2), content="2")
 }
 
 ///|

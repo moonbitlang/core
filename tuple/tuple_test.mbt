@@ -13,63 +13,6 @@
 // limitations under the License.
 
 ///|
-// test "pair" {
-//   let tuple = @tuple.pair(1, 2)
-//   assert_eq(tuple, (1, 2))
-// }
-
-///|
-// test "fst" {
-//   let tuple = (1, 2)
-//   assert_eq(@tuple.fst(tuple), 1)
-// }
-
-///|
-// test "snd" {
-//   let tuple = (1, 2)
-//   assert_eq(@tuple.snd(tuple), 2)
-// }
-
-///|
-// test "swap" {
-//   let tuple = (1, 2)
-//   let swapped = @tuple.swap(tuple)
-//   let swapped_2 = @tuple.swap(swapped)
-//   assert_eq(swapped, (2, 1))
-//   assert_eq(swapped_2, tuple)
-// }
-
-///|
-// test "curry" {
-//   let add = (x : Int, y : Int) => { x + y }
-//   let curried_add = @tuple.curry(add)
-//   assert_eq(curried_add(1)(2), add(1, 2))
-// }
-
-///|
-// test "uncurry" {
-//   let add = (x : Int) => { fn(y : Int) -> Int { x + y } }
-//   let uncurried_add = @tuple.uncurry(add)
-//   assert_eq(uncurried_add(1, 2), add(1)(2))
-// }
-
-///|
-// test "id_1" {
-//   let add = (x : Int, y : Int) => { x + y }
-//   let curried_add = @tuple.curry(add)
-//   let uncurried_add = @tuple.uncurry(curried_add)
-//   assert_eq(uncurried_add(1, 2), add(1, 2))
-// }
-
-///|
-// test "id_2" {
-//   let add = (x : Int) => { fn(y : Int) -> Int { x + y } }
-//   let uncurried_add = @tuple.uncurry(add)
-//   let curried_add = @tuple.curry(uncurried_add)
-//   assert_eq(curried_add(1)(2), add(1)(2))
-// }
-
-///|
 test "eq" {
   inspect((1, 2) == (1, 2), content="true")
   inspect((1, 2) == (2, 1), content="false")
@@ -196,9 +139,9 @@ test "show" {
   inspect(tuple4, content="(1, 2, 3, \"hello\")")
   inspect(
     tuple5,
-    content=
+    content=(
       #|([1], "2", 3, [4], 5)
-    ,
+    ),
   )
 }
 
@@ -211,21 +154,21 @@ test "to_string" {
   inspect(tuple2, content="(1, 2)")
   inspect(
     tuple3,
-    content=
+    content=(
       #|("a", "b", "c")
-    ,
+    ),
   )
   inspect(
     tuple4,
-    content=
+    content=(
       #|(1, 2, 3, "hello")
-    ,
+    ),
   )
   inspect(
     tuple5,
-    content=
+    content=(
       #|([1], "2", 3, [4], 5)
-    ,
+    ),
   )
   inspect((1, 2, 3, 4, 5, 6), content="(1, 2, 3, 4, 5, 6)")
   inspect((1, 2, 3, 4, 5, 6, 7), content="(1, 2, 3, 4, 5, 6, 7)")
@@ -236,45 +179,45 @@ test "arbitrary" {
   let t : Array[(Int, String)] = @quickcheck.samples(5)
   inspect(
     t,
-    content=
+    content=(
       #|[(0, ""), (0, ""), (0, ""), (-2, "=l"), (2, "m")]
-    ,
+    ),
   )
   let t : Array[(Int, String, UInt)] = @quickcheck.samples(5)
   inspect(
     t,
-    content=
+    content=(
       #|[(0, "", 0), (0, "", 0), (0, "", 1), (-2, "@>", 0), (2, "\u{1a}", 0)]
-    ,
+    ),
   )
   let t : Array[(Int, String, UInt, Byte)] = @quickcheck.samples(5)
   inspect(
     t,
-    content=
+    content=(
       #|[(0, "", 0, b'\x2A'), (0, "", 0, b'\x77'), (0, "", 1, b'\x0D'), (-2, "@>", 1, b'\x4A'), (2, "\u{1a}", 0, b'\xE5')]
-    ,
+    ),
   )
   let t : Array[(Int, String, UInt, Byte, Char)] = @quickcheck.samples(5)
   inspect(
     t,
-    content=
+    content=(
       #|[(0, "", 0, b'\x89', '%'), (0, "", 0, b'\x3B', '\u{16}'), (0, "", 1, b'\x08', 'l'), (-2, "@>", 1, b'\x23', 't'), (2, "\u{1a}", 0, b'\xB7', 'q')]
-    ,
+    ),
   )
   let t : Array[(Int, String, UInt, Byte, Char, Bool)] = @quickcheck.samples(5)
   inspect(
     t,
-    content=
+    content=(
       #|[(0, "", 0, b'\x89', '3', true), (0, "", 0, b'\x3B', 'x', true), (0, "", 1, b'\x08', 'P', true), (-2, "@>", 1, b'\x23', 'd', false), (2, "\u{1a}", 0, b'\xB7', '\u{1d}', true)]
-    ,
+    ),
   )
   let t : Array[(Int, String, UInt, Byte, Char, Bool, Unit)] = @quickcheck.samples(
     5,
   )
   inspect(
     t,
-    content=
+    content=(
       #|[(0, "", 0, b'\x89', '3', false, ()), (0, "", 0, b'\x3B', 'x', true, ()), (0, "", 1, b'\x08', 'P', true, ()), (-2, "@>", 1, b'\x23', 'd', true, ()), (2, "\u{1a}", 0, b'\xB7', '\u{1d}', true, ())]
-    ,
+    ),
   )
 }

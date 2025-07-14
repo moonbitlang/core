@@ -577,6 +577,13 @@ test "to_hex" {
 }
 
 ///|
+test "pow" {
+  let x = 2N.pow(5664N).to_hex()
+  assert_eq(x.charcode_at(0), '1')
+  assert_eq(x.charcodes(start=1), String::make(5664 / 4, '0')[:])
+}
+
+///|
 test "land_1" {
   let a = BigInt::from_string("-10")
   let b = BigInt::from_string("11")
@@ -1015,4 +1022,10 @@ test "BigInt::hash consistency" {
   let neg_hash2 = neg_big.hash()
   assert_eq(neg_hash1, neg_hash2)
   assert_not_eq(hash1, neg_hash1)
+}
+
+///|
+test "default" {
+  let a = BigInt::default()
+  assert_eq(a, 0N)
 }

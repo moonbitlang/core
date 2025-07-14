@@ -271,9 +271,9 @@ test "intersperse" {
   let el : @list.T[String] = empty()
   inspect(
     ls.intersperse("|"),
-    content=
+    content=(
       #|@list.of(["1", "|", "2", "|", "3", "|", "4", "|", "5"])
-    ,
+    ),
   )
   inspect(el.intersperse("|"), content="@list.of([])")
 }
@@ -428,9 +428,9 @@ test "lookup" {
   inspect(el.lookup(1), content="None")
   inspect(
     ls.lookup(3),
-    content=
+    content=(
       #|Some("c")
-    ,
+    ),
   )
   inspect(ls.lookup(4), content="None")
 }
@@ -475,15 +475,15 @@ test "remove_at" {
   inspect(ls.remove_at(0), content="@list.of([2, 3, 4, 5])")
   inspect(
     @list.of(["a", "b", "c", "d", "e"]).remove_at(2),
-    content=
+    content=(
       #|@list.of(["a", "b", "d", "e"])
-    ,
+    ),
   )
   inspect(
     @list.of(["a", "b", "c", "d", "e"]).remove_at(5),
-    content=
+    content=(
       #|@list.of(["a", "b", "c", "d", "e"])
-    ,
+    ),
   )
 }
 
@@ -492,15 +492,15 @@ test "remove" {
   inspect(@list.of([1, 2, 3, 4, 5]).remove(3), content="@list.of([1, 2, 4, 5])")
   inspect(
     @list.of(["a", "b", "c", "d", "e"]).remove("c"),
-    content=
+    content=(
       #|@list.of(["a", "b", "d", "e"])
-    ,
+    ),
   )
   inspect(
     @list.of(["a", "b", "c", "d", "e"]).remove("f"),
-    content=
+    content=(
       #|@list.of(["a", "b", "c", "d", "e"])
-    ,
+    ),
   )
 }
 
@@ -623,7 +623,7 @@ test "eachi" {
   let list = @list.of([1, 2, 3, 4, 5])
   let mut acc = 0
   list.eachi((i, x) => acc += x * i)
-  assert_eq(acc, 40)
+  inspect(acc, content="40")
 }
 
 ///|
@@ -817,8 +817,8 @@ test "list manual grouping implementation" {
   // Check our manual implementation
   inspect(evens, content="@list.of([2, 4, 6, 8])")
   inspect(odds, content="@list.of([1, 3, 5, 7, 9])")
-  assert_eq(evens.length(), 4)
-  assert_eq(odds.length(), 5)
+  inspect(evens.length(), content="4")
+  inspect(odds.length(), content="5")
 }
 
 ///|
@@ -858,9 +858,9 @@ test "advanced folding operations" {
     init=list.head().unwrap(),
   )
   let product = list.fold((acc, x) => acc * x, init=1)
-  assert_eq(sum, 150)
-  assert_eq(max, 50)
-  assert_eq(product, 12000000)
+  inspect(sum, content="150")
+  inspect(max, content="50")
+  inspect(product, content="12000000")
 }
 
 ///|
@@ -973,17 +973,17 @@ test "complex list recursion safety" {
   })
 
   // Verify operations on large list work correctly without stack overflow
-  assert_eq(large.length(), 10000)
+  inspect(large.length(), content="10000")
   assert_eq(large.nth(9999), Some(9999))
   assert_eq(large.last(), Some(9999))
 
   // Test operations that traverse the entire list
   let sum = large.fold((acc, x) => acc + x, init=0)
-  assert_eq(sum, 49995000) // Sum of numbers 0 to 9999
+  inspect(sum, content="49995000") // Sum of numbers 0 to 9999
 
   // Test filter on large list
   let filtered = large.filter(x => x % 1000 == 0)
-  assert_eq(filtered.length(), 10)
+  inspect(filtered.length(), content="10")
 }
 
 ///|

@@ -401,12 +401,19 @@ fn BigInt::split(self : BigInt, half : Int) -> (BigInt, BigInt) {
   if self.len <= half {
     return ({ ..self, sign: Positive }, zero)
   }
-  let lower = FixedArray::make(half, 0U)
-  lower.unsafe_blit(0, self.limbs, 0, half)
+  let lower_len = for i = half - 1; i > 0; i = i - 1 {
+    if self.limbs[i] > 0 {
+      break i + 1
+    }
+  } else {
+    1
+  }
+  let lower = FixedArray::make(lower_len, 0U)
+  lower.unsafe_blit(0, self.limbs, 0, lower_len)
   let upper = FixedArray::make(self.len - half, 0U)
   upper.unsafe_blit(0, self.limbs, half, self.len - half)
   (
-    { limbs: lower, sign: Positive, len: half },
+    { limbs: lower, sign: Positive, len: lower_len },
     { limbs: upper, sign: Positive, len: self.len - half },
   )
 }
@@ -660,7 +667,7 @@ pub impl Shl for BigInt with op_shl(self : BigInt, n : Int) -> BigInt {
   if n < 0 {
     abort("negative shift count")
   }
-  if not(self.is_zero()) {
+  if !self.is_zero() {
     let new_limbs = FixedArray::make(
       self.len + (n + radix_bit_len - 1) / radix_bit_len, // ceiling(n / radix_bit_len)
       0U,
@@ -1215,7 +1222,7 @@ pub fn BigInt::pow(self : BigInt, exp : BigInt, modulus? : BigInt) -> BigInt {
       result
     }
     Some(modulus) => {
-      guard not(modulus.is_zero() || modulus.sign == Negative)
+      guard !(modulus.is_zero() || modulus.sign == Negative)
       let mut result = 1N
       let mut base = self
       let mut exp = exp
@@ -1745,7 +1752,6 @@ pub fn BigInt::to_uint64(self : BigInt) -> UInt64 {
 /// Example:
 ///
 /// ```moonbit
-/// ///|
 ///   let pos = 16N // 10000
 ///   inspect(pos.bit_length(), content="5")
 ///   let neg = -16N // 

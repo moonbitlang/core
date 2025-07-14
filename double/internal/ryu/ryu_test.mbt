@@ -14,15 +14,15 @@
 
 ///|
 test "Basic" {
-  assert_eq(@ryu.ryu_to_string(0.0), "0")
-  assert_eq(@ryu.ryu_to_string(-0.0), "0")
-  assert_eq(@ryu.ryu_to_string(1.e0), "1")
-  assert_eq(@ryu.ryu_to_string(-1.e0), "-1")
-  assert_eq(@ryu.ryu_to_string(0.0 / 0.0), "NaN")
-  assert_eq(@ryu.ryu_to_string(1.0 / 0.0), "Infinity")
-  assert_eq(@ryu.ryu_to_string(-1.0 / 0.0), "-Infinity")
-  assert_eq(@ryu.ryu_to_string(3.1415926), "3.1415926")
-  assert_eq(@ryu.ryu_to_string(1234000000000000.0), "1234000000000000")
+  inspect(@ryu.ryu_to_string(0.0), content="0")
+  inspect(@ryu.ryu_to_string(-0.0), content="0")
+  inspect(@ryu.ryu_to_string(1.e0), content="1")
+  inspect(@ryu.ryu_to_string(-1.e0), content="-1")
+  inspect(@ryu.ryu_to_string(0.0 / 0.0), content="NaN")
+  inspect(@ryu.ryu_to_string(1.0 / 0.0), content="Infinity")
+  inspect(@ryu.ryu_to_string(-1.0 / 0.0), content="-Infinity")
+  inspect(@ryu.ryu_to_string(3.1415926), content="3.1415926")
+  inspect(@ryu.ryu_to_string(1234000000000000.0), content="1234000000000000")
 }
 
 ///|
@@ -48,24 +48,54 @@ test "Min and Max" {
 
 ///|
 test "Lots of Trailing Zeros" {
-  assert_eq(@ryu.ryu_to_string(2.98023223876953125e-8), "2.9802322387695312e-8")
+  inspect(
+    @ryu.ryu_to_string(2.98023223876953125e-8),
+    content="2.9802322387695312e-8",
+  )
 }
 
 ///|
 test "Regression" {
-  assert_eq(@ryu.ryu_to_string(-2.109808898695963e16), "-21098088986959630")
-  assert_eq(@ryu.ryu_to_string(4.940656e-318), "4.940656e-318")
-  assert_eq(@ryu.ryu_to_string(1.18575755e-316), "1.18575755e-316")
-  assert_eq(@ryu.ryu_to_string(2.989102097996e-312), "2.989102097996e-312")
-  assert_eq(@ryu.ryu_to_string(9.0608011534336e15), "9060801153433600")
-  assert_eq(@ryu.ryu_to_string(4.708356024711512e18), "4708356024711512000")
-  assert_eq(@ryu.ryu_to_string(9.409340012568248e18), "9409340012568248000")
-  assert_eq(@ryu.ryu_to_string(1.2345678), "1.2345678")
-  assert_eq(@ryu.ryu_to_string(1.8531501765868567e21), "1.8531501765868567e+21")
-  assert_eq(@ryu.ryu_to_string(-3.347727380279489e33), "-3.347727380279489e+33")
-  assert_eq(@ryu.ryu_to_string(1.9430376160308388e16), "19430376160308388")
-  assert_eq(@ryu.ryu_to_string(-6.9741824662760956e19), "-69741824662760956000")
-  assert_eq(@ryu.ryu_to_string(4.3816050601147837e18), "4381605060114783700")
+  inspect(
+    @ryu.ryu_to_string(-2.109808898695963e16),
+    content="-21098088986959630",
+  )
+  inspect(@ryu.ryu_to_string(4.940656e-318), content="4.940656e-318")
+  inspect(@ryu.ryu_to_string(1.18575755e-316), content="1.18575755e-316")
+  inspect(
+    @ryu.ryu_to_string(2.989102097996e-312),
+    content="2.989102097996e-312",
+  )
+  inspect(@ryu.ryu_to_string(9.0608011534336e15), content="9060801153433600")
+  inspect(
+    @ryu.ryu_to_string(4.708356024711512e18),
+    content="4708356024711512000",
+  )
+  inspect(
+    @ryu.ryu_to_string(9.409340012568248e18),
+    content="9409340012568248000",
+  )
+  inspect(@ryu.ryu_to_string(1.2345678), content="1.2345678")
+  inspect(
+    @ryu.ryu_to_string(1.8531501765868567e21),
+    content="1.8531501765868567e+21",
+  )
+  inspect(
+    @ryu.ryu_to_string(-3.347727380279489e33),
+    content="-3.347727380279489e+33",
+  )
+  inspect(
+    @ryu.ryu_to_string(1.9430376160308388e16),
+    content="19430376160308388",
+  )
+  inspect(
+    @ryu.ryu_to_string(-6.9741824662760956e19),
+    content="-69741824662760956000",
+  )
+  inspect(
+    @ryu.ryu_to_string(4.3816050601147837e18),
+    content="4381605060114783700",
+  )
 }
 
 ///|
@@ -86,32 +116,32 @@ test "Looks Like Pow5" {
 
 ///|
 test "Output Length" {
-  assert_eq(@ryu.ryu_to_string(1.0), "1")
-  assert_eq(@ryu.ryu_to_string(1.2), "1.2")
-  assert_eq(@ryu.ryu_to_string(1.23), "1.23")
-  assert_eq(@ryu.ryu_to_string(1.234), "1.234")
-  assert_eq(@ryu.ryu_to_string(1.2345), "1.2345")
-  assert_eq(@ryu.ryu_to_string(1.23456), "1.23456")
-  assert_eq(@ryu.ryu_to_string(1.234567), "1.234567")
-  assert_eq(@ryu.ryu_to_string(1.2345678), "1.2345678")
-  assert_eq(@ryu.ryu_to_string(1.23456789), "1.23456789")
-  assert_eq(@ryu.ryu_to_string(1.234567895), "1.234567895")
-  assert_eq(@ryu.ryu_to_string(1.2345678901), "1.2345678901")
-  assert_eq(@ryu.ryu_to_string(1.23456789012), "1.23456789012")
-  assert_eq(@ryu.ryu_to_string(1.234567890123), "1.234567890123")
-  assert_eq(@ryu.ryu_to_string(1.2345678901234), "1.2345678901234")
-  assert_eq(@ryu.ryu_to_string(1.23456789012345), "1.23456789012345")
-  assert_eq(@ryu.ryu_to_string(1.234567890123456), "1.234567890123456")
-  assert_eq(@ryu.ryu_to_string(1.2345678901234567), "1.2345678901234567")
+  inspect(@ryu.ryu_to_string(1.0), content="1")
+  inspect(@ryu.ryu_to_string(1.2), content="1.2")
+  inspect(@ryu.ryu_to_string(1.23), content="1.23")
+  inspect(@ryu.ryu_to_string(1.234), content="1.234")
+  inspect(@ryu.ryu_to_string(1.2345), content="1.2345")
+  inspect(@ryu.ryu_to_string(1.23456), content="1.23456")
+  inspect(@ryu.ryu_to_string(1.234567), content="1.234567")
+  inspect(@ryu.ryu_to_string(1.2345678), content="1.2345678")
+  inspect(@ryu.ryu_to_string(1.23456789), content="1.23456789")
+  inspect(@ryu.ryu_to_string(1.234567895), content="1.234567895")
+  inspect(@ryu.ryu_to_string(1.2345678901), content="1.2345678901")
+  inspect(@ryu.ryu_to_string(1.23456789012), content="1.23456789012")
+  inspect(@ryu.ryu_to_string(1.234567890123), content="1.234567890123")
+  inspect(@ryu.ryu_to_string(1.2345678901234), content="1.2345678901234")
+  inspect(@ryu.ryu_to_string(1.23456789012345), content="1.23456789012345")
+  inspect(@ryu.ryu_to_string(1.234567890123456), content="1.234567890123456")
+  inspect(@ryu.ryu_to_string(1.2345678901234567), content="1.2345678901234567")
 }
 
 ///|
 test "32-bit chunking" {
-  assert_eq(@ryu.ryu_to_string(4.294967294), "4.294967294")
-  assert_eq(@ryu.ryu_to_string(4.294967295), "4.294967295")
-  assert_eq(@ryu.ryu_to_string(4.294967296), "4.294967296")
-  assert_eq(@ryu.ryu_to_string(4.294967297), "4.294967297")
-  assert_eq(@ryu.ryu_to_string(4.294967298), "4.294967298")
+  inspect(@ryu.ryu_to_string(4.294967294), content="4.294967294")
+  inspect(@ryu.ryu_to_string(4.294967295), content="4.294967295")
+  inspect(@ryu.ryu_to_string(4.294967296), content="4.294967296")
+  inspect(@ryu.ryu_to_string(4.294967297), content="4.294967297")
+  inspect(@ryu.ryu_to_string(4.294967298), content="4.294967298")
 }
 
 ///|
@@ -157,129 +187,132 @@ test "Min Max Shift" {
 ///|
 test "Small Integers" {
   // 2^53-1
-  assert_eq(@ryu.ryu_to_string(9007199254740991.0), "9007199254740991")
+  inspect(@ryu.ryu_to_string(9007199254740991.0), content="9007199254740991")
   // 2^53
-  assert_eq(@ryu.ryu_to_string(9007199254740992.0), "9007199254740992")
-  assert_eq(@ryu.ryu_to_string(1.0e+0), "1")
-  assert_eq(@ryu.ryu_to_string(1.2e+1), "12")
-  assert_eq(@ryu.ryu_to_string(1.23e+2), "123")
-  assert_eq(@ryu.ryu_to_string(1.234e+3), "1234")
-  assert_eq(@ryu.ryu_to_string(1.2345e+4), "12345")
-  assert_eq(@ryu.ryu_to_string(1.23456e+5), "123456")
-  assert_eq(@ryu.ryu_to_string(1.234567e+6), "1234567")
-  assert_eq(@ryu.ryu_to_string(1.2345678e+7), "12345678")
-  assert_eq(@ryu.ryu_to_string(1.23456789e+8), "123456789")
-  assert_eq(@ryu.ryu_to_string(1.23456789e+9), "1234567890")
-  assert_eq(@ryu.ryu_to_string(1.234567895e+9), "1234567895")
-  assert_eq(@ryu.ryu_to_string(1.2345678901e+10), "12345678901")
-  assert_eq(@ryu.ryu_to_string(1.23456789012e+11), "123456789012")
-  assert_eq(@ryu.ryu_to_string(1.234567890123e+12), "1234567890123")
-  assert_eq(@ryu.ryu_to_string(1.2345678901234e+13), "12345678901234")
-  assert_eq(@ryu.ryu_to_string(1.23456789012345e+14), "123456789012345")
-  assert_eq(@ryu.ryu_to_string(1.234567890123456e+15), "1234567890123456")
+  inspect(@ryu.ryu_to_string(9007199254740992.0), content="9007199254740992")
+  inspect(@ryu.ryu_to_string(1.0e+0), content="1")
+  inspect(@ryu.ryu_to_string(1.2e+1), content="12")
+  inspect(@ryu.ryu_to_string(1.23e+2), content="123")
+  inspect(@ryu.ryu_to_string(1.234e+3), content="1234")
+  inspect(@ryu.ryu_to_string(1.2345e+4), content="12345")
+  inspect(@ryu.ryu_to_string(1.23456e+5), content="123456")
+  inspect(@ryu.ryu_to_string(1.234567e+6), content="1234567")
+  inspect(@ryu.ryu_to_string(1.2345678e+7), content="12345678")
+  inspect(@ryu.ryu_to_string(1.23456789e+8), content="123456789")
+  inspect(@ryu.ryu_to_string(1.23456789e+9), content="1234567890")
+  inspect(@ryu.ryu_to_string(1.234567895e+9), content="1234567895")
+  inspect(@ryu.ryu_to_string(1.2345678901e+10), content="12345678901")
+  inspect(@ryu.ryu_to_string(1.23456789012e+11), content="123456789012")
+  inspect(@ryu.ryu_to_string(1.234567890123e+12), content="1234567890123")
+  inspect(@ryu.ryu_to_string(1.2345678901234e+13), content="12345678901234")
+  inspect(@ryu.ryu_to_string(1.23456789012345e+14), content="123456789012345")
+  inspect(@ryu.ryu_to_string(1.234567890123456e+15), content="1234567890123456")
 }
 
 ///|
 test "10^i" {
-  assert_eq(@ryu.ryu_to_string(1.0e-15), "1e-15")
-  assert_eq(@ryu.ryu_to_string(1.0e-14), "1e-14")
-  assert_eq(@ryu.ryu_to_string(1.0e-13), "1e-13")
-  assert_eq(@ryu.ryu_to_string(1.0e-12), "1e-12")
-  assert_eq(@ryu.ryu_to_string(1.0e-11), "1e-11")
-  assert_eq(@ryu.ryu_to_string(1.0e-10), "1e-10")
-  assert_eq(@ryu.ryu_to_string(1.0e-9), "1e-9")
-  assert_eq(@ryu.ryu_to_string(1.0e-8), "1e-8")
-  assert_eq(@ryu.ryu_to_string(1.0e-7), "1e-7")
-  assert_eq(@ryu.ryu_to_string(1.0e-6), "0.000001")
-  assert_eq(@ryu.ryu_to_string(1.0e-5), "0.00001")
-  assert_eq(@ryu.ryu_to_string(1.0e-4), "0.0001")
-  assert_eq(@ryu.ryu_to_string(1.0e-3), "0.001")
-  assert_eq(@ryu.ryu_to_string(1.0e-2), "0.01")
-  assert_eq(@ryu.ryu_to_string(1.0e-1), "0.1")
-  assert_eq(@ryu.ryu_to_string(1.0e+0), "1")
-  assert_eq(@ryu.ryu_to_string(1.0e+1), "10")
-  assert_eq(@ryu.ryu_to_string(1.0e+2), "100")
-  assert_eq(@ryu.ryu_to_string(1.0e+3), "1000")
-  assert_eq(@ryu.ryu_to_string(1.0e+4), "10000")
-  assert_eq(@ryu.ryu_to_string(1.0e+5), "100000")
-  assert_eq(@ryu.ryu_to_string(1.0e+6), "1000000")
-  assert_eq(@ryu.ryu_to_string(1.0e+7), "10000000")
-  assert_eq(@ryu.ryu_to_string(1.0e+8), "100000000")
-  assert_eq(@ryu.ryu_to_string(1.0e+9), "1000000000")
-  assert_eq(@ryu.ryu_to_string(1.0e+10), "10000000000")
-  assert_eq(@ryu.ryu_to_string(1.0e+11), "100000000000")
-  assert_eq(@ryu.ryu_to_string(1.0e+12), "1000000000000")
-  assert_eq(@ryu.ryu_to_string(1.0e+13), "10000000000000")
-  assert_eq(@ryu.ryu_to_string(1.0e+14), "100000000000000")
-  assert_eq(@ryu.ryu_to_string(1.0e+15), "1000000000000000")
+  inspect(@ryu.ryu_to_string(1.0e-15), content="1e-15")
+  inspect(@ryu.ryu_to_string(1.0e-14), content="1e-14")
+  inspect(@ryu.ryu_to_string(1.0e-13), content="1e-13")
+  inspect(@ryu.ryu_to_string(1.0e-12), content="1e-12")
+  inspect(@ryu.ryu_to_string(1.0e-11), content="1e-11")
+  inspect(@ryu.ryu_to_string(1.0e-10), content="1e-10")
+  inspect(@ryu.ryu_to_string(1.0e-9), content="1e-9")
+  inspect(@ryu.ryu_to_string(1.0e-8), content="1e-8")
+  inspect(@ryu.ryu_to_string(1.0e-7), content="1e-7")
+  inspect(@ryu.ryu_to_string(1.0e-6), content="0.000001")
+  inspect(@ryu.ryu_to_string(1.0e-5), content="0.00001")
+  inspect(@ryu.ryu_to_string(1.0e-4), content="0.0001")
+  inspect(@ryu.ryu_to_string(1.0e-3), content="0.001")
+  inspect(@ryu.ryu_to_string(1.0e-2), content="0.01")
+  inspect(@ryu.ryu_to_string(1.0e-1), content="0.1")
+  inspect(@ryu.ryu_to_string(1.0e+0), content="1")
+  inspect(@ryu.ryu_to_string(1.0e+1), content="10")
+  inspect(@ryu.ryu_to_string(1.0e+2), content="100")
+  inspect(@ryu.ryu_to_string(1.0e+3), content="1000")
+  inspect(@ryu.ryu_to_string(1.0e+4), content="10000")
+  inspect(@ryu.ryu_to_string(1.0e+5), content="100000")
+  inspect(@ryu.ryu_to_string(1.0e+6), content="1000000")
+  inspect(@ryu.ryu_to_string(1.0e+7), content="10000000")
+  inspect(@ryu.ryu_to_string(1.0e+8), content="100000000")
+  inspect(@ryu.ryu_to_string(1.0e+9), content="1000000000")
+  inspect(@ryu.ryu_to_string(1.0e+10), content="10000000000")
+  inspect(@ryu.ryu_to_string(1.0e+11), content="100000000000")
+  inspect(@ryu.ryu_to_string(1.0e+12), content="1000000000000")
+  inspect(@ryu.ryu_to_string(1.0e+13), content="10000000000000")
+  inspect(@ryu.ryu_to_string(1.0e+14), content="100000000000000")
+  inspect(@ryu.ryu_to_string(1.0e+15), content="1000000000000000")
 }
 
 ///|
 test "10^15 + 10^i" {
-  assert_eq(@ryu.ryu_to_string(1.0e+15 + 1.0e+0), "1000000000000001")
-  assert_eq(@ryu.ryu_to_string(1.0e+15 + 1.0e+1), "1000000000000010")
-  assert_eq(@ryu.ryu_to_string(1.0e+15 + 1.0e+2), "1000000000000100")
-  assert_eq(@ryu.ryu_to_string(1.0e+15 + 1.0e+3), "1000000000001000")
-  assert_eq(@ryu.ryu_to_string(1.0e+15 + 1.0e+4), "1000000000010000")
-  assert_eq(@ryu.ryu_to_string(1.0e+15 + 1.0e+5), "1000000000100000")
-  assert_eq(@ryu.ryu_to_string(1.0e+15 + 1.0e+6), "1000000001000000")
-  assert_eq(@ryu.ryu_to_string(1.0e+15 + 1.0e+7), "1000000010000000")
-  assert_eq(@ryu.ryu_to_string(1.0e+15 + 1.0e+8), "1000000100000000")
-  assert_eq(@ryu.ryu_to_string(1.0e+15 + 1.0e+9), "1000001000000000")
-  assert_eq(@ryu.ryu_to_string(1.0e+15 + 1.0e+10), "1000010000000000")
-  assert_eq(@ryu.ryu_to_string(1.0e+15 + 1.0e+11), "1000100000000000")
-  assert_eq(@ryu.ryu_to_string(1.0e+15 + 1.0e+12), "1001000000000000")
-  assert_eq(@ryu.ryu_to_string(1.0e+15 + 1.0e+13), "1010000000000000")
-  assert_eq(@ryu.ryu_to_string(1.0e+15 + 1.0e+14), "1100000000000000")
+  inspect(@ryu.ryu_to_string(1.0e+15 + 1.0e+0), content="1000000000000001")
+  inspect(@ryu.ryu_to_string(1.0e+15 + 1.0e+1), content="1000000000000010")
+  inspect(@ryu.ryu_to_string(1.0e+15 + 1.0e+2), content="1000000000000100")
+  inspect(@ryu.ryu_to_string(1.0e+15 + 1.0e+3), content="1000000000001000")
+  inspect(@ryu.ryu_to_string(1.0e+15 + 1.0e+4), content="1000000000010000")
+  inspect(@ryu.ryu_to_string(1.0e+15 + 1.0e+5), content="1000000000100000")
+  inspect(@ryu.ryu_to_string(1.0e+15 + 1.0e+6), content="1000000001000000")
+  inspect(@ryu.ryu_to_string(1.0e+15 + 1.0e+7), content="1000000010000000")
+  inspect(@ryu.ryu_to_string(1.0e+15 + 1.0e+8), content="1000000100000000")
+  inspect(@ryu.ryu_to_string(1.0e+15 + 1.0e+9), content="1000001000000000")
+  inspect(@ryu.ryu_to_string(1.0e+15 + 1.0e+10), content="1000010000000000")
+  inspect(@ryu.ryu_to_string(1.0e+15 + 1.0e+11), content="1000100000000000")
+  inspect(@ryu.ryu_to_string(1.0e+15 + 1.0e+12), content="1001000000000000")
+  inspect(@ryu.ryu_to_string(1.0e+15 + 1.0e+13), content="1010000000000000")
+  inspect(@ryu.ryu_to_string(1.0e+15 + 1.0e+14), content="1100000000000000")
 }
 
 ///|
 test "Largest power of 2 <= 10^(i+1)" {
-  assert_eq(@ryu.ryu_to_string(8.0), "8")
-  assert_eq(@ryu.ryu_to_string(64.0), "64")
-  assert_eq(@ryu.ryu_to_string(512.0), "512")
-  assert_eq(@ryu.ryu_to_string(8192.0), "8192")
-  assert_eq(@ryu.ryu_to_string(65536.0), "65536")
-  assert_eq(@ryu.ryu_to_string(524288.0), "524288")
-  assert_eq(@ryu.ryu_to_string(8388608.0), "8388608")
-  assert_eq(@ryu.ryu_to_string(67108864.0), "67108864")
-  assert_eq(@ryu.ryu_to_string(536870912.0), "536870912")
-  assert_eq(@ryu.ryu_to_string(8589934592.0), "8589934592")
-  assert_eq(@ryu.ryu_to_string(68719476736.0), "68719476736")
-  assert_eq(@ryu.ryu_to_string(549755813888.0), "549755813888")
-  assert_eq(@ryu.ryu_to_string(8796093022208.0), "8796093022208")
-  assert_eq(@ryu.ryu_to_string(70368744177664.0), "70368744177664")
-  assert_eq(@ryu.ryu_to_string(562949953421312.0), "562949953421312")
-  assert_eq(@ryu.ryu_to_string(9007199254740992.0), "9007199254740992")
+  inspect(@ryu.ryu_to_string(8.0), content="8")
+  inspect(@ryu.ryu_to_string(64.0), content="64")
+  inspect(@ryu.ryu_to_string(512.0), content="512")
+  inspect(@ryu.ryu_to_string(8192.0), content="8192")
+  inspect(@ryu.ryu_to_string(65536.0), content="65536")
+  inspect(@ryu.ryu_to_string(524288.0), content="524288")
+  inspect(@ryu.ryu_to_string(8388608.0), content="8388608")
+  inspect(@ryu.ryu_to_string(67108864.0), content="67108864")
+  inspect(@ryu.ryu_to_string(536870912.0), content="536870912")
+  inspect(@ryu.ryu_to_string(8589934592.0), content="8589934592")
+  inspect(@ryu.ryu_to_string(68719476736.0), content="68719476736")
+  inspect(@ryu.ryu_to_string(549755813888.0), content="549755813888")
+  inspect(@ryu.ryu_to_string(8796093022208.0), content="8796093022208")
+  inspect(@ryu.ryu_to_string(70368744177664.0), content="70368744177664")
+  inspect(@ryu.ryu_to_string(562949953421312.0), content="562949953421312")
+  inspect(@ryu.ryu_to_string(9007199254740992.0), content="9007199254740992")
 }
 
 ///|
 test "1000 * (Largest power of 2 <= 10^(i+1))" {
-  assert_eq(@ryu.ryu_to_string(8.0e+3), "8000")
-  assert_eq(@ryu.ryu_to_string(64.0e+3), "64000")
-  assert_eq(@ryu.ryu_to_string(512.0e+3), "512000")
-  assert_eq(@ryu.ryu_to_string(8192.0e+3), "8192000")
-  assert_eq(@ryu.ryu_to_string(65536.0e+3), "65536000")
-  assert_eq(@ryu.ryu_to_string(524288.0e+3), "524288000")
-  assert_eq(@ryu.ryu_to_string(8388608.0e+3), "8388608000")
-  assert_eq(@ryu.ryu_to_string(67108864.0e+3), "67108864000")
-  assert_eq(@ryu.ryu_to_string(536870912.0e+3), "536870912000")
-  assert_eq(@ryu.ryu_to_string(8589934592.0e+3), "8589934592000")
-  assert_eq(@ryu.ryu_to_string(68719476736.0e+3), "68719476736000")
-  assert_eq(@ryu.ryu_to_string(549755813888.0e+3), "549755813888000")
-  assert_eq(@ryu.ryu_to_string(8796093022208.0e+3), "8796093022208000")
+  inspect(@ryu.ryu_to_string(8.0e+3), content="8000")
+  inspect(@ryu.ryu_to_string(64.0e+3), content="64000")
+  inspect(@ryu.ryu_to_string(512.0e+3), content="512000")
+  inspect(@ryu.ryu_to_string(8192.0e+3), content="8192000")
+  inspect(@ryu.ryu_to_string(65536.0e+3), content="65536000")
+  inspect(@ryu.ryu_to_string(524288.0e+3), content="524288000")
+  inspect(@ryu.ryu_to_string(8388608.0e+3), content="8388608000")
+  inspect(@ryu.ryu_to_string(67108864.0e+3), content="67108864000")
+  inspect(@ryu.ryu_to_string(536870912.0e+3), content="536870912000")
+  inspect(@ryu.ryu_to_string(8589934592.0e+3), content="8589934592000")
+  inspect(@ryu.ryu_to_string(68719476736.0e+3), content="68719476736000")
+  inspect(@ryu.ryu_to_string(549755813888.0e+3), content="549755813888000")
+  inspect(@ryu.ryu_to_string(8796093022208.0e+3), content="8796093022208000")
 }
 
 ///|
 test "boundary conditions" {
   // x = 1.0e7
-  assert_eq(@ryu.ryu_to_string(1.0e7), "10000000")
+  inspect(@ryu.ryu_to_string(1.0e7), content="10000000")
   // x < 1.0e7
-  assert_eq(@ryu.ryu_to_string(9999999.999999998), "9999999.999999998")
+  inspect(@ryu.ryu_to_string(9999999.999999998), content="9999999.999999998")
   // x = 1.0e-3
-  assert_eq(@ryu.ryu_to_string(0.001), "0.001")
+  inspect(@ryu.ryu_to_string(0.001), content="0.001")
   // x < 1.0e-3
-  assert_eq(@ryu.ryu_to_string(0.0009999999999999998), "0.0009999999999999998")
+  inspect(
+    @ryu.ryu_to_string(0.0009999999999999998),
+    content="0.0009999999999999998",
+  )
 }
 
 ///|
@@ -312,8 +345,8 @@ test "double/ryu.mbt:403" {
   } else {
     vp = vp - 1L
   }
-  assert_eq(vrIsTrailingZeros, true)
-  assert_eq(vmIsTrailingZeros, true)
+  inspect(vrIsTrailingZeros, content="true")
+  inspect(vmIsTrailingZeros, content="true")
   assert_eq(vp, 10L)
 }
 
@@ -337,7 +370,7 @@ test "double/ryu.mbt:403" {
   } else {
     vp = vp - 1L
   }
-  assert_eq(vrIsTrailingZeros, true)
-  assert_eq(vmIsTrailingZeros, true)
+  inspect(vrIsTrailingZeros, content="true")
+  inspect(vmIsTrailingZeros, content="true")
   assert_eq(vp, 10L)
 }

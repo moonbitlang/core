@@ -31,9 +31,12 @@
 /// ```moonbit
 ///   let big = 12345678901234567890N
 ///   let json = big.to_json()
-///   inspect(json, content=
-///   #|String("12345678901234567890")
-/// )
+///   inspect(
+///     json, 
+///     content=(
+///       #|String("12345678901234567890")
+///     ),
+///   )
 /// ```
 ///
 pub impl ToJson for BigInt with to_json(self : BigInt) -> Json {
@@ -58,6 +61,12 @@ pub impl @quickcheck.Arbitrary for BigInt with arbitrary(size, rs) {
   } else {
     rs.next_int64() |> BigInt::from_int64
   }
+}
+
+///| 
+/// Returns the default value `0` for `BigInt`
+pub impl Default for BigInt with default() {
+  zero
 }
 
 ///|
@@ -233,4 +242,52 @@ fn BigInt::signum(self : Self) -> Int {
   } else {
     1
   }
+}
+
+///|
+/// Converts a `BigInt` value to an unsigned 16-bit integer (`UInt16`).
+///
+/// Parameters:
+///
+/// * `self` : The `BigInt` value to be converted.
+///
+/// Returns a `UInt16` value representing the lower 16 bits of the input
+/// `BigInt`.
+///
+/// Example:
+///
+/// ```moonbit
+/// let n = 42N
+/// inspect(n.to_uint16(), content="42")
+/// let neg = -1N
+/// inspect(neg.to_uint16(), content="65535") // 2^16 - 1
+/// ```
+///
+pub fn BigInt::to_uint16(self : BigInt) -> UInt16 {
+  self.to_int().to_uint16()
+}
+
+///|
+/// Converts a `BigInt` value to a signed 16-bit integer (`Int16`).
+///
+/// Parameters:
+///
+/// * `self` : The `BigInt` value to be converted.
+///
+/// Returns a 16-bit signed integer representing the lower 16 bits of the input
+/// `BigInt`.
+///
+/// Example:
+///
+/// ```moonbit
+/// let n = 42N
+/// inspect(n.to_int16(), content="42")
+/// let neg = -1N
+/// inspect(neg.to_int16(), content="-1")
+/// let big = 32768N // 2^15
+/// inspect(big.to_int16(), content="-32768") // Overflow to Int16.min_value
+/// ```
+///
+pub fn BigInt::to_int16(self : BigInt) -> Int16 {
+  self.to_int().to_int16()
 }

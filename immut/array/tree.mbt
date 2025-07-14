@@ -465,7 +465,7 @@ fn[A] rebalance(
   if nc_len <= branching_factor {
     // All nodes can be accommodated in a single node
     let node = Node(new_t, compute_sizes(new_t, shift - num_bits)) // node of H height
-    if not(top) {
+    if !top {
       return (Node(FixedArray::from_array([node]), None), shift + num_bits)
       // return (H+1) height node, add another layer to align with the case at the end of the thisfunction
     } else {
@@ -511,7 +511,7 @@ fn[A] tri_merge(
   center : Tree[A],
   right : Tree[A]
 ) -> FixedArray[Tree[A]] {
-  if left.is_leaf() || not(center.is_node()) || right.is_leaf() {
+  if left.is_leaf() || !center.is_node() || right.is_leaf() {
     abort("Unreachable: input to merge is invalid")
   }
   fn get_children(self : Tree[A]) -> FixedArray[Tree[A]] {
@@ -746,20 +746,20 @@ test "Show for Tree" {
   inspect((Empty : Tree[Int]), content="Empty")
   inspect(
     Node([Leaf([4, 2])], Some([2])),
-    content=
+    content=(
       #|Node(
       #|  Leaf(4, 2)
       #|)
       #|
-    ,
+    ),
   )
   inspect(
     Node([Empty, Leaf([42])], Some([0, 1])),
-    content=
+    content=(
       #|Node(
       #|  Empty  Leaf(42)
       #|)
       #|
-    ,
+    ),
   )
 }

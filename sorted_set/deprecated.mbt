@@ -46,7 +46,7 @@ pub fn[V] deep_clone(self : T[V]) -> T[V] {
 #coverage.skip
 pub fn[V : Compare] diff(self : T[V], src : T[V]) -> T[V] {
   let ret = new()
-  self.each(x => if not(src.contains(x)) { ret.add(x) })
+  self.each(x => if !src.contains(x) { ret.add(x) })
   ret
 }
 

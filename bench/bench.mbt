@@ -58,7 +58,7 @@ pub fn bench(
   count~ : UInt = 10
 ) -> Unit {
   let summary = iter_count(name?, f, count)
-  if not(self.buffer.is_empty()) {
+  if !self.buffer.is_empty() {
     self.buffer.write_char(',')
   }
   self.buffer.write_string(summary.to_json().stringify(escape_slash=true))
@@ -191,4 +191,14 @@ test "bench - monotonic clock functionality" {
 
   // Elapsed time should be non-negative
   inspect(elapsed >= 0.0, content="true")
+}
+
+///|
+test "bench - keep stores value" {
+  let b = new()
+  assert_eq(b.summaries.length(), 0)
+  b.keep(123)
+  assert_eq(b.summaries.length(), 0)
+  b.keep(456)
+  assert_eq(b.summaries.length(), 0)
 }

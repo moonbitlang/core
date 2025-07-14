@@ -79,23 +79,23 @@ pub fn decode_utf8(bytes : Bytes) -> String {
 test "decode_utf8_basic" {
   // Test ASCII characters
   let ascii = b"Hello, World!"
-  assert_eq(decode_utf8(ascii), "Hello, World!")
+  inspect(decode_utf8(ascii), content="Hello, World!")
 
   // Test 2-byte sequences (Latin, Greek, Cyrillic, etc.)
   let two_byte = b"\xC3\xA9\xC3\xB1\xC3\xBC" // é ñ ü
-  assert_eq(decode_utf8(two_byte), "éñü")
+  inspect(decode_utf8(two_byte), content="éñü")
 
   // Test 3-byte sequences (Chinese, Japanese, etc.)
   let three_byte = b"\xE4\xBD\xA0\xE5\xA5\xBD" // 你好
-  assert_eq(decode_utf8(three_byte), "你好")
+  inspect(decode_utf8(three_byte), content="你好")
 
   // Test 4-byte sequences (Emoji, etc.)
   let four_byte = b"\xF0\x9F\x98\x80\xF0\x9F\x98\x81" // 😀😁
-  assert_eq(decode_utf8(four_byte), "😀😁")
+  inspect(decode_utf8(four_byte), content="😀😁")
 
   // Test mixed byte sequences
   let mixed = b"Hello \xE4\xB8\x96\xE7\x95\x8C!" // Hello 世界!
-  assert_eq(decode_utf8(mixed), "Hello 世界!")
+  inspect(decode_utf8(mixed), content="Hello 世界!")
 }
 
 ///|
@@ -115,12 +115,12 @@ test "decode_utf8_invalid" {
 
   // Mixed valid and invalid
   let mixed_valid_invalid = b"A\xC3B\xE4\xBD\xA0"
-  assert_eq(decode_utf8(mixed_valid_invalid), "AB你")
+  inspect(decode_utf8(mixed_valid_invalid), content="AB你")
 }
 
 ///|
 /// Test function that demonstrates decoding a longer text with mixed character types
 test "decode_utf8_long_text" {
   let text = b"UTF-8 \xE6\xB5\x8B\xE8\xAF\x95 (Test): \xD0\x9F\xD1\x80\xD0\xB8\xD0\xB2\xD0\xB5\xD1\x82 \xF0\x9F\x8C\x8D"
-  assert_eq(decode_utf8(text), "UTF-8 测试 (Test): Привет 🌍")
+  inspect(decode_utf8(text), content="UTF-8 测试 (Test): Привет 🌍")
 }

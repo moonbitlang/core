@@ -98,9 +98,9 @@ test "escape control characters" {
   let json = str.to_json()
   inspect(
     json,
-    content=
+    content=(
       #|String("abc\u{01}def")
-    ,
+    ),
   )
 }
 
@@ -110,9 +110,9 @@ test "test carriage return and backspace" {
   let json = test_string.to_json()
   inspect(
     json,
-    content=
+    content=(
       #|String("CR\rBS\b")
-    ,
+    ),
   )
 }
 
@@ -122,9 +122,9 @@ test "test form feed" {
   let json = test_string.to_json()
   inspect(
     json,
-    content=
+    content=(
       #|String("Form\u{0c}Feed")
-    ,
+    ),
   )
 }
 

@@ -159,6 +159,8 @@ test "to_string with radix" {
     1.0.reinterpret_as_uint64().to_string(radix=16),
     content="3ff0000000000000",
   )
+  inspect(0b101L.to_string(radix=2), content="101")
+  inspect(0o17L.to_string(radix=8), content="17")
 
   // UInt64
   inspect(0UL.to_string(radix=16), content="0")

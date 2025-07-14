@@ -86,7 +86,7 @@ fn[T] quick_sort_by(
     let (pivot, partitioned) = partition_by(arr, cmp, pivot_index)
     was_partitioned = partitioned
     balanced = minimum(pivot, len - pivot) >= len / 8
-    if not(balanced) {
+    if !balanced {
       limit -= 1
     }
     if pred is Some(pred) {
@@ -130,7 +130,7 @@ fn[T] try_bubble_sort_by(arr : ArrayView[T], cmp : (T, T) -> Int) -> Bool {
       sorted = false
       arr.swap(j, j - 1)
     }
-    if not(sorted) {
+    if !sorted {
       tries += 1
       if tries > max_tries {
         return false
@@ -254,7 +254,7 @@ fn[T] sift_down_by(
 test "try_bubble_sort" {
   let arr = [8, 7, 6, 5, 4, 3, 2, 1]
   let sorted = try_bubble_sort_by(arr[0:8], (a, b) => a - b)
-  assert_eq(sorted, true)
+  inspect(sorted, content="true")
   assert_eq(arr, [1, 2, 3, 4, 5, 6, 7, 8])
 }
 

@@ -16,28 +16,36 @@
 test "String::escape" {
   inspect(
     "abc,def".escape(),
-    content=
+    content=(
       #|"abc,def"
-    ,
+    ),
   )
   inspect(
     "\n\t\\".escape(),
-    content=
+    content=(
       #|"\n\t\\"
-    ,
+    ),
   )
   inspect(
     "\"'".escape(),
-    content=
+    content=(
       #|"\"'"
-    ,
+    ),
   )
   inspect(
     "\u{00}\u{01}\u{20}\u{21}".escape(),
-    content=
+    content=(
       #|"\u{00}\u{01} !"
-    ,
+    ),
   )
+}
+
+///|
+test "substring" {
+  assert_eq("abc".substring(), "abc")
+  assert_eq("abc".substring(start=1), "bc")
+  assert_eq("abc".substring(end=2), "ab")
+  assert_eq("abc".substring(start=1, end=2), "b")
 }
 
 ///|

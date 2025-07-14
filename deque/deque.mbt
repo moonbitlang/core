@@ -470,7 +470,7 @@ pub fn[A] pop_back(self : T[A]) -> A? {
 /// # Example
 /// ```mbt
 ///   let dv = @deque.of([1, 2, 3, 4, 5])
-///   assert_eq(dv[2], 3)
+///   inspect(dv[2], content="3")
 /// ```
 pub fn[A] op_get(self : T[A], index : Int) -> A {
   if index < 0 || index >= self.len {
@@ -495,7 +495,7 @@ pub fn[A] op_get(self : T[A], index : Int) -> A {
 /// ```mbt
 ///   let dv = @deque.of([1, 2, 3, 4, 5])
 ///   dv[2] = 1
-///   assert_eq(dv[2], 1)
+///   inspect(dv[2], content="1")
 /// ```
 pub fn[A] op_set(self : T[A], index : Int, value : A) -> Unit {
   if index < 0 || index >= self.len {
@@ -587,7 +587,7 @@ pub impl[A : Eq] Eq for T[A] with op_equal(self, other) {
 ///   let dv = @deque.of([1, 2, 3, 4, 5])
 ///   let mut sum = 0
 ///   dv.each((x) => {sum = sum + x})
-///   assert_eq(sum, 15)
+///   inspect(sum, content="15")
 /// ```
 pub fn[A] each(self : T[A], f : (A) -> Unit) -> Unit {
   for v in self {
@@ -603,7 +603,7 @@ pub fn[A] each(self : T[A], f : (A) -> Unit) -> Unit {
 ///   let dv = @deque.of([1, 2, 3, 4, 5])
 ///   let mut idx_sum = 0
 ///   dv.eachi((i, _x) => {idx_sum = idx_sum + i})
-///   assert_eq(idx_sum, 10)
+///   inspect(idx_sum, content="10")
 /// ```
 pub fn[A] eachi(self : T[A], f : (Int, A) -> Unit) -> Unit {
   for i, v in self {
@@ -619,7 +619,7 @@ pub fn[A] eachi(self : T[A], f : (Int, A) -> Unit) -> Unit {
 ///   let dv = @deque.of([1, 2, 3, 4, 5])
 ///   let mut sum = 0
 ///   dv.rev_each((x) => {sum = sum + x})
-///   assert_eq(sum, 15)
+///   inspect(sum, content="15")
 /// ```
 pub fn[A] rev_each(self : T[A], f : (A) -> Unit) -> Unit {
   for v in self.rev_iter() {
@@ -635,7 +635,7 @@ pub fn[A] rev_each(self : T[A], f : (A) -> Unit) -> Unit {
 ///   let dv = @deque.of([1, 2, 3, 4, 5])
 ///   let mut idx_sum = 0
 ///   dv.rev_eachi((i, _x) => {idx_sum = idx_sum + i})
-///   assert_eq(idx_sum, 10)
+///   inspect(idx_sum, content="10")
 /// ```
 pub fn[A] rev_eachi(self : T[A], f : (Int, A) -> Unit) -> Unit {
   for i, v in self.rev_iter2() {
@@ -652,7 +652,7 @@ pub fn[A] rev_eachi(self : T[A], f : (Int, A) -> Unit) -> Unit {
 /// ```mbt
 ///   let dv = @deque.of([1, 2, 3, 4, 5])
 ///   dv.clear()
-///   assert_eq(dv.length(), 0)
+///   inspect(dv.length(), content="0")
 /// ```
 pub fn[A] clear(self : T[A]) -> Unit {
   let { head, buf, len, .. } = self
@@ -723,9 +723,9 @@ pub fn[A, U] mapi(self : T[A], f : (Int, A) -> U) -> T[U] {
 /// # Example
 /// ```mbt
 ///   let dv = @deque.new()
-///   assert_eq(dv.is_empty(), true)
+///   inspect(dv.is_empty(), content="true")
 ///   dv.push_back(1)
-///   assert_eq(dv.is_empty(), false)
+///   inspect(dv.is_empty(), content="false")
 /// ```
 pub fn[A] is_empty(self : T[A]) -> Bool {
   self.len == 0
@@ -789,7 +789,7 @@ pub fn[A : Eq] contains(self : T[A], value : A) -> Bool {
 /// ```mbt
 ///   let dv = @deque.of([1])
 ///   dv.reserve_capacity(10)
-///   assert_eq(dv.capacity(), 10)
+///   inspect(dv.capacity(), content="10")
 /// ```
 pub fn[A] reserve_capacity(self : T[A], capacity : Int) -> Unit {
   if self.capacity() >= capacity {
@@ -817,9 +817,9 @@ pub fn[A] reserve_capacity(self : T[A], capacity : Int) -> Unit {
 ///   dv.push_back(1)
 ///   dv.push_back(2)
 ///   dv.push_back(3)
-///   assert_eq(dv.capacity(), 10)
+///   inspect(dv.capacity(), content="10")
 ///   dv.shrink_to_fit()
-///   assert_eq(dv.capacity(), 3)
+///   inspect(dv.capacity(), content="3")
 /// ```
 pub fn[A] shrink_to_fit(self : T[A]) -> Unit {
   if self.capacity() <= self.length() {
@@ -906,7 +906,7 @@ pub fn[A] truncate(self : T[A], len : Int) -> Unit {
 ///   inspect(dq, content="@deque.of([4, 8])")
 /// ```
 pub fn[A] retain_map(self : T[A], f : (A) -> A?) -> Unit {
-  guard not(self.is_empty()) else { return }
+  guard !self.is_empty() else { return }
   let { head, buf, .. } = self
   let cap = buf.length()
   let head_len = cap - head
@@ -963,7 +963,7 @@ pub fn[A] retain_map(self : T[A], f : (A) -> A?) -> Unit {
 ///   inspect(dq, content="@deque.of([2, 4])")
 /// ```
 pub fn[A] retain(self : T[A], f : (A) -> Bool) -> Unit {
-  guard not(self.is_empty()) else { return }
+  guard !self.is_empty() else { return }
   let { head, buf, .. } = self
   let cap = buf.length()
   let head_len = cap - head
@@ -1015,7 +1015,7 @@ pub fn[A] retain(self : T[A], f : (A) -> Bool) -> Unit {
 /// ```
 pub fn[A] iter(self : T[A]) -> Iter[A] {
   Iter::new(yield_ => {
-    guard not(self.is_empty()) else { IterContinue }
+    guard !self.is_empty() else { IterContinue }
     let { head, buf, len, .. } = self
     let cap = buf.length()
     let head_len = cap - head
@@ -1057,7 +1057,7 @@ pub fn[A] iter(self : T[A]) -> Iter[A] {
 /// ```
 pub fn[A] iter2(self : T[A]) -> Iter2[Int, A] {
   Iter2::new(yield_ => {
-    guard not(self.is_empty()) else { IterContinue }
+    guard !self.is_empty() else { IterContinue }
     let { head, buf, len, .. } = self
     let cap = buf.length()
     let head_len = cap - head
@@ -1101,7 +1101,7 @@ pub fn[A] iter2(self : T[A]) -> Iter2[Int, A] {
 /// ```
 pub fn[A] rev_iter(self : T[A]) -> Iter[A] {
   Iter::new(yield_ => {
-    guard not(self.is_empty()) else { IterContinue }
+    guard !self.is_empty() else { IterContinue }
     let { head, buf, len, .. } = self
     let cap = buf.length()
     let head_len = cap - head
@@ -1143,7 +1143,7 @@ pub fn[A] rev_iter(self : T[A]) -> Iter[A] {
 /// ```
 pub fn[A] rev_iter2(self : T[A]) -> Iter2[Int, A] {
   Iter2::new(yield_ => {
-    guard not(self.is_empty()) else { IterContinue }
+    guard !self.is_empty() else { IterContinue }
     let { head, buf, len, .. } = self
     let cap = buf.length()
     let head_len = cap - head
@@ -1449,26 +1449,14 @@ pub fn[A] T::drain(self : T[A], start~ : Int, len? : Int) -> T[A] {
 /// let dq = @deque.of([1, 3, 5, 7, 9])
 ///
 /// 
-/// let find_3 = dq.binary_search_by(fn(x) {
-///   if x < 3 {
-///     -1
-///   } else if x > 3 {
-///     1
-///   } else {
-///     0
-///   }
+/// let find_3 = dq.binary_search_by((x) => {
+///   x.compare(3)
 /// })
 /// inspect(find_3, content="Ok(1)")
 ///
 /// 
-/// let find_4 = dq.binary_search_by(fn(x) {
-///   if x < 4 {
-///     -1
-///   } else if x > 4 {
-///     1
-///   } else {
-///     0
-///   }
+/// let find_4 = dq.binary_search_by((x) => {
+///   x.compare(4)
 /// })
 /// inspect(find_4, content="Err(2)")
 /// ```
@@ -1557,4 +1545,46 @@ pub fn[A] get(self : T[A], index : Int) -> A? {
 /// * Returns an insertion point that maintains the sort order when no match is found
 pub fn[A : Compare] binary_search(self : T[A], value : A) -> Result[Int, Int] {
   self.binary_search_by(x => x.compare(value))
+}
+
+///|
+/// Compares two deques lexicographically.
+///
+/// First compares the lengths of the deques. If they differ, returns -1 if the
+/// first deque is shorter, 1 if it's longer. If the lengths are equal, compares
+/// elements pairwise until a difference is found or all elements have been
+/// compared.
+///
+/// Parameters:
+///
+/// * `self` : The first deque to compare.
+/// * `other` : The second deque to compare.
+///
+/// Returns an integer that indicates the relative order:
+///
+/// * A negative value if `self` is less than `other`
+/// * Zero if `self` equals `other`
+/// * A positive value if `self` is greater than `other`
+///
+/// Example:
+///
+/// ```moonbit
+///   let dq1 = @deque.of([1, 2, 3])
+///   let dq2 = @deque.of([1, 2, 4])
+///   let dq3 = @deque.of([1, 2])
+///   inspect(dq1.compare(dq2), content="-1") // dq1 < dq2
+///   inspect(dq2.compare(dq1), content="1") // dq2 > dq1
+///   inspect(dq1.compare(dq3), content="1") // dq1 > dq3 (longer)
+///   inspect(dq1.compare(dq1), content="0") // dq1 = dq1
+/// ```
+pub impl[A : Compare] Compare for T[A] with compare(self, other) {
+  let len_self = self.length()
+  let len_other = other.length()
+  let cmp = len_self.compare(len_other)
+  guard cmp is 0 else { return cmp }
+  for i in 0..<len_self {
+    let cmp = self[i].compare(other[i])
+    guard cmp is 0 else { return cmp }
+  }
+  0
 }

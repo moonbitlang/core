@@ -253,7 +253,7 @@ fn[T : Compare] fixed_quick_sort(
     let (pivot, partitioned) = fixed_partition(arr, pivot_index)
     was_partitioned = partitioned
     balanced = minimum(pivot, len - pivot) >= len / 8
-    if not(balanced) {
+    if !balanced {
       limit -= 1
     }
     if pred is Some(pred) {
@@ -308,7 +308,7 @@ fn[T : Compare] fixed_try_bubble_sort(arr : FixedArraySlice[T]) -> Bool {
       sorted = false
       arr.swap(j, j - 1)
     }
-    if not(sorted) {
+    if !sorted {
       tries += 1
       if tries > max_tries {
         return false
@@ -336,7 +336,7 @@ fn[T : Compare] fixed_bubble_sort(arr : FixedArraySlice[T]) -> Unit {
 test "fixed_try_bubble_sort" {
   let arr : FixedArray[_] = [8, 7, 6, 5, 4, 3, 2, 1]
   let sorted = fixed_try_bubble_sort({ array: arr, start: 0, end: 8 })
-  assert_eq(sorted, true)
+  inspect(sorted, content="true")
   assert_eq(arr, [1, 2, 3, 4, 5, 6, 7, 8])
 }
 
@@ -551,39 +551,39 @@ test "stable_sort_complex" {
 test "find_streak with empty array" {
   let arr : FixedArray[Int] = []
   let (streak_end, was_reversed) = find_streak({ array: arr, start: 0, end: 0 })
-  assert_eq(streak_end, 0)
-  assert_eq(was_reversed, false)
+  inspect(streak_end, content="0")
+  inspect(was_reversed, content="false")
 }
 
 ///|
 test "find_streak with single element array" {
   let arr : FixedArray[_] = [1]
   let (streak_end, was_reversed) = find_streak({ array: arr, start: 0, end: 1 })
-  assert_eq(streak_end, 1)
-  assert_eq(was_reversed, false)
+  inspect(streak_end, content="1")
+  inspect(was_reversed, content="false")
 }
 
 ///|
 test "find_streak with increasing elements" {
   let arr : FixedArray[_] = [1, 2, 3, 4, 5]
   let (streak_end, was_reversed) = find_streak({ array: arr, start: 0, end: 5 })
-  assert_eq(streak_end, 5)
-  assert_eq(was_reversed, false)
+  inspect(streak_end, content="5")
+  inspect(was_reversed, content="false")
 }
 
 ///|
 test "find_streak with decreasing elements" {
   let arr : FixedArray[_] = [5, 4, 3, 2, 1]
   let (streak_end, was_reversed) = find_streak({ array: arr, start: 0, end: 5 })
-  assert_eq(streak_end, 5)
-  assert_eq(was_reversed, true)
+  inspect(streak_end, content="5")
+  inspect(was_reversed, content="true")
 }
 
 ///|
 test "provide_sorted_batch with long run" {
   let arr : FixedArray[_] = [1, 2, 3, 4, 5]
   let end = provide_sorted_batch({ array: arr, start: 0, end: 5 }, 0, 5)
-  assert_eq(end, 5)
+  inspect(end, content="5")
 }
 
 ///|

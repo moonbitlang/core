@@ -71,7 +71,7 @@ pub fn parse_double(str : String) -> Double raise StrConvError {
   if str.length() == 0 {
     syntax_err()
   }
-  if not(check_underscore(str)) {
+  if !check_underscore(str) {
     syntax_err()
   }
   // validate its a number
@@ -107,7 +107,7 @@ fn is_fast_path(self : Number) -> Bool {
   min_exponent_fast_path <= self.exponent &&
   self.exponent <= max_exponent_disguised_fast_path &&
   self.mantissa <= max_mantissa_fast_path &&
-  not(self.many_digits)
+  !self.many_digits
 }
 
 ///|

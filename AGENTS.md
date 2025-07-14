@@ -28,4 +28,5 @@ Each package has its files and blackbox test files (common, ending in `_test.mbt
 
 - In the toplevel directory, this is a `moon.mod.json` file listing about the module and some meta information.
 
-
+- When writing tests, you are encouraged to use `inspect` and run `moon test --update` to update the snapshots, only use assertions
+  like `assert_eq` when you are in some loops where each snapshot may vary. You can use `moon coverage analyze > uncovered.log` to see which parts of your code are not covered by tests.

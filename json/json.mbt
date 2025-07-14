@@ -32,7 +32,7 @@ pub fn as_bool(self : JsonValue) -> Bool? {
 ///|
 /// Try to get this element as a Number
 pub fn as_number(self : JsonValue) -> Double? {
-  guard self is Number(n) else { return None }
+  guard self is Number(n, ..) else { return None }
   Some(n)
 }
 
@@ -146,7 +146,11 @@ pub fn stringify(
         ..write_char('\"')
         .to_string()
       }
-      Number(n) => n.to_string()
+      Number(n, repr~) =>
+        match repr {
+          None => n.to_string()
+          Some(r) => r
+        }
       True => "true"
       False => "false"
       Null => "null"

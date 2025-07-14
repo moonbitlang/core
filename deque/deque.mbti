@@ -62,6 +62,7 @@ fn[A] T::to_array(Self[A]) -> Array[A]
 fn[A] T::truncate(Self[A], Int) -> Unit
 fn[A] T::unsafe_pop_back(Self[A]) -> Unit
 fn[A] T::unsafe_pop_front(Self[A]) -> Unit
+impl[A : Compare] Compare for T[A]
 impl[A : Eq] Eq for T[A]
 impl[A : Show] Show for T[A]
 impl[A : ToJson] ToJson for T[A]

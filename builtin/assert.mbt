@@ -84,7 +84,7 @@ pub fn[T : Eq + Show] assert_not_eq(
   msg? : String,
   loc~ : SourceLoc = _
 ) -> Unit raise {
-  if not(a != b) {
+  if !(a != b) {
     let fail_msg = match msg {
       Some(msg) => msg
       None => "`\{debug_string(a)} == \{debug_string(b)}`"
@@ -113,7 +113,7 @@ pub fn[T : Eq + Show] assert_not_eq(
 /// ```
 #coverage.skip
 pub fn assert_true(x : Bool, msg? : String, loc~ : SourceLoc = _) -> Unit raise {
-  if not(x) {
+  if !x {
     let fail_msg = match msg {
       Some(msg) => msg
       None => "`\{x}` is not true"

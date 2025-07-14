@@ -40,13 +40,13 @@ test "byte_op_equal" {
   let b1 = b'\x00'
   let b2 = b'\x0F'
   let b3 = b'\xFF'
-  assert_true(b1.op_equal(b1))
-  assert_true(b1.op_equal(b2) |> not)
-  assert_true(b2.op_equal(b1) |> not)
-  assert_true(b2.op_equal(b2))
-  assert_true(b2.op_equal(b3) |> not)
-  assert_true(b3.op_equal(b2) |> not)
-  assert_true(b3.op_equal(b3))
+  assert_true(b1 == b1)
+  assert_true(b1 != b2)
+  assert_true(b2 != b1)
+  assert_true(b2 == b2)
+  assert_true(b2 != b3)
+  assert_true(b3 != b2)
+  assert_true(b3 == b3)
 }
 
 ///|

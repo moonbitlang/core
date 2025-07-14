@@ -38,7 +38,7 @@ test "iter early termination - value" {
       count = count + 1
       IterContinue
     })
-  assert_eq(count, 1)
+  inspect(count, content="1")
 }
 
 ///|

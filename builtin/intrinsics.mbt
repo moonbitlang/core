@@ -1253,9 +1253,12 @@ pub fn Bytes::length(self : Bytes) -> Int = "%bytes_length"
 ///
 /// ```moonbit
 ///   let bytes = Bytes::make(3, b'\xFF')
-///   inspect(bytes, content=
-///   #|b"\xff\xff\xff"
-/// )
+///   inspect(
+///     bytes, 
+///     content=(
+///       #|b"\xff\xff\xff"
+///     ),
+///   )
 ///   let empty = Bytes::make(0, b'\x00')
 ///   inspect(empty, content="b\"\"")
 /// ```

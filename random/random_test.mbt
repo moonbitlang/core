@@ -51,7 +51,7 @@ test {
 ///|
 test "panic random with invalid seed length" {
   let short_seed = b"short seed"
-  let _ = @random.chacha8(seed=short_seed)
+  let _ = @random.Rand::chacha8(seed=short_seed)
 
 }
 
