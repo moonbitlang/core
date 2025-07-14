@@ -266,7 +266,6 @@ pub fn[A] unsafe_head(self : T[A]) -> A {
 }
 
 ///|
-#deprecated("Use `unsafe_head` instead")
 #coverage.skip
 #deprecated("use `@list` instead")
 pub fn[A] head_exn(self : T[A]) -> A {
@@ -412,7 +411,6 @@ pub fn[A, B] rev_fold(
 ///   let r = @list.of([1, 2, 3, 4, 5]).fold(init=0, (acc, x) => { acc + x })
 ///   inspect(r, content="15")
 /// ```
-#deprecated("Use `fold` instead")
 #coverage.skip
 #deprecated("use `@list` instead")
 pub fn[A, B] fold_left(
@@ -550,7 +548,6 @@ pub fn[A, B] zip(self : T[A], other : T[B]) -> T[(A, B)]? {
 ///   let r = ls.flat_map((x) => { @list.from_array([x, x * 2]) })
 ///   assert_eq(r, @list.from_array([1, 2, 2, 4, 3, 6]))
 /// ```
-#deprecated("Use `flat_map` instead")
 #coverage.skip
 #deprecated("use `@list` instead")
 pub fn[A, B] concat_map(self : T[A], f : (A) -> T[B]) -> T[B] {
@@ -611,7 +608,6 @@ pub fn[A] unsafe_nth(self : T[A], n : Int) -> A {
 }
 
 ///|
-#deprecated("Use `unsafe_nth` instead")
 #coverage.skip
 #deprecated("use `@list` instead")
 pub fn[A] nth_exn(self : T[A], n : Int) -> A {
