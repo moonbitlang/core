@@ -81,7 +81,7 @@ pub fn[T] UninitializedArray::op_as_view(
   guard start >= 0 && start <= end && end <= len else {
     abort("View start index out of bounds")
   }
-  { buf: self, start, len: end - start }
+  ArrayView::make(self, start, end - start)
 }
 
 ///|
@@ -113,8 +113,8 @@ pub fn[T] UninitializedArray::unsafe_blit(
 test "op_as_view with valid_range" {
   let arr : UninitializedArray[Int] = UninitializedArray::make(5)
   let view = arr[1:4]
-  inspect(view.start, content="1")
-  inspect(view.len, content="3")
+  inspect(view.start(), content="1")
+  inspect(view.len(), content="3")
 }
 
 ///|
