@@ -35,25 +35,13 @@ pub fn String::make(length : Int, value : Char) -> String {
 }
 
 ///|
-let min_leading_surrogate = 0xD800
-
-///|
-let max_leading_surrogate = 0xDBFF
-
-///|
-let min_trailing_surrogate = 0xDC00
-
-///|
-let max_trailing_surrogate = 0xDFFF
-
-///|
 fn is_leading_surrogate(c : Int) -> Bool {
-  min_leading_surrogate <= c && c <= max_leading_surrogate
+  c is (0xD800..=0xDBFF)
 }
 
 ///|
 fn is_trailing_surrogate(c : Int) -> Bool {
-  min_trailing_surrogate <= c && c <= max_trailing_surrogate
+  c is (0xDC00..=0xDFFF)
 }
 
 ///|
