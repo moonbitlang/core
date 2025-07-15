@@ -1661,3 +1661,44 @@ pub fn[A] T::rev(self : T[A]) -> T[A] {
   // Create new deque with reversed elements
   T::{ buf: new_buf, len, head: 0, tail: if len == 0 { 0 } else { len - 1 } }
 }
+
+///|
+/// Shuffle the deque in place using Knuth shuffle (Fisher-Yates algorithm)
+/// 
+/// To use this function, you need to provide a rand function, which takes an integer as its upper bound
+/// and returns an integer.
+/// *rand n* is expected to return a uniformly distributed integer between 0 and n - 1
+/// 
+/// # Note
+/// This function handles the circular buffer nature of the deque internally.
+pub fn[A] T::shuffle_in_place(self : T[A], rand~ : (Int) -> Int) -> Unit {
+  let n = self.len
+  let buf_length = self.buf.length()
+  for i = n - 1; i > 0; i = i - 1 {
+    let j = rand(i + 1)
+    // Calculate circular buffer positions
+    let i_pos = (self.head + i) % buf_length
+    let j_pos = (self.head + j) % buf_length
+    // Swap elements
+    let tmp = self.buf[i_pos]
+    self.buf[i_pos] = self.buf[j_pos]
+    self.buf[j_pos] = tmp
+  }
+}
+
+///|
+/// Shuffle the deque using Knuth shuffle (Fisher-Yates algorithm)
+/// 
+/// Returns a new shuffled deque without modifying the original deque.
+/// 
+/// To use this function, you need to provide a rand function, which takes an integer as its upper bound
+/// and returns an integer.
+/// *rand n* is expected to return a uniformly distributed integer between 0 and n - 1
+pub fn[A] shuffle(self : T[A], rand~ : (Int) -> Int) -> T[A] {
+  // Create a copy of the original deque
+  let new_deque = self.copy()
+  // Shuffle the copy in place
+  new_deque.shuffle_in_place(rand~)
+  // Return the shuffled copy
+  new_deque
+}
