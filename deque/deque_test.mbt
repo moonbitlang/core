@@ -1193,11 +1193,17 @@ test "rev_inplace" {
   dq.rev_inplace()
   assert_eq(dq, @deque.of([1, 2, 3, 4, 5]))
 
-  // Test with snapped deque (NEW)
-  let dq = @deque.of([1, 2, 3, 4])
-  let snapped = dq.copy()
-  snapped.rev_inplace()
-  assert_eq(snapped, @deque.of([4, 3, 2, 1]))
+  // Test split case (head_len < len)
+  let dq3 = @deque.of([1, 2, 3, 4])
+  // Push and pop to create a wrap-around situation
+  dq3.unsafe_pop_front()
+  dq3.unsafe_pop_front()
+  dq3.push_back(5)
+  dq3.push_back(6)
+  // Now the deque should be [3, 4, 5, 6] with internal wrap-around
+  @json.inspect(dq3.as_views(), content=[[3, 4], [5, 6]])
+  dq3.rev_inplace()
+  @json.inspect(dq3.as_views(), content=[[6, 5], [4, 3]])
 }
 
 ///|
@@ -1240,4 +1246,16 @@ test "rev" {
   let large_reversed = large.rev()
   assert_eq(large, @deque.of([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]))
   assert_eq(large_reversed, @deque.of([10, 9, 8, 7, 6, 5, 4, 3, 2, 1]))
+
+  // Test split case (head_len < len)
+  let dq3 = @deque.of([1, 2, 3, 4])
+  // Push and pop to create a wrap-around situation
+  dq3.unsafe_pop_front()
+  dq3.unsafe_pop_front()
+  dq3.push_back(5)
+  dq3.push_back(6)
+  // Now the deque should be [3, 4, 5, 6] with internal wrap-around
+  @json.inspect(dq3.as_views(), content=[[3, 4], [5, 6]])
+  let dq3_reversed = dq3.rev()
+  @json.inspect(dq3_reversed.as_views(), content=[[6, 5, 4, 3], []])
 }
