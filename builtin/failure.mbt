@@ -16,7 +16,7 @@
 /// Represents a generic test failure type used primarily in test assertions and
 /// validations.
 ///
-/// Since this is a type definition using `type!` syntax, it creates an error
+/// Since this is a type definition using `suberror` syntax, it creates an error
 /// type `Failure` that wraps a `String` value containing the failure message.
 ///
 /// Parameters:
