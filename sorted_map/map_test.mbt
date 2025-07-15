@@ -249,3 +249,45 @@ test "range" {
   }
   inspect(buf, content="[2b][3c][4d]")
 }
+
+///|
+// Additional tests for iterator early exits and default
+
+test "iter early break" {
+  let map = @sorted_map.from_array([(1, "a"), (2, "b"), (3, "c")])
+  inspect(
+    map.iter().take(1).to_array(),
+    content=(
+      #|[(1, "a")]
+    ),
+  )
+}
+
+///|
+test "iter2 early break" {
+  let map = @sorted_map.from_array([(1, "a"), (2, "b"), (3, "c")])
+  inspect(
+    map.iter2().iter().take(1).to_array(),
+    content=(
+      #|[(1, "a")]
+    ),
+  )
+}
+
+///|
+test "range early break" {
+  let map = @sorted_map.from_array([(1, "a"), (2, "b"), (3, "c")])
+  let r = map.range(1, 3)
+  inspect(
+    r.iter().take(1).to_array(),
+    content=(
+      #|[(1, "a")]
+    ),
+  )
+}
+
+///|
+test "default impl" {
+  let map : @sorted_map.T[Int, String] = Default::default()
+  inspect(map.size(), content="0")
+}
