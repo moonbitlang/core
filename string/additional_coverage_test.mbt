@@ -64,3 +64,38 @@ test "panic String::char_at with out of bounds offset" {
   let last = s.char_at(len - 1)
   inspect(last, content="'o'")
 }
+
+///|
+// Tests for deprecated String utilities
+
+test "String::concat deprecated" {
+  let result = String::concat(["a", "b", "c"], separator=",")
+  inspect(result, content="a,b,c")
+  inspect(String::concat([], separator=","), content="")
+  inspect(String::concat(["x"], separator="-"), content="x")
+}
+
+///|
+test "index_of deprecated" {
+  inspect("banana".index_of("na", from=0), content="2")
+  inspect("banana".index_of("na", from=3), content="4")
+  inspect("banana".index_of("xyz", from=0), content="-1")
+  inspect("abc".index_of("", from=0), content="0")
+  inspect("abc".index_of("", from=10), content="3")
+}
+
+///|
+test "last_index_of deprecated" {
+  inspect("banana".last_index_of("na"), content="4")
+  inspect("banana".last_index_of("na", from=4), content="2")
+  inspect("banana".last_index_of("xyz"), content="-1")
+  inspect("abc".last_index_of("", from=-1), content="3")
+}
+
+///|
+test "starts_with and ends_with deprecated" {
+  inspect("hello".starts_with("he"), content="true")
+  inspect("hello".starts_with("lo"), content="false")
+  inspect("hello".ends_with("lo"), content="true")
+  inspect("hello".ends_with("he"), content="false")
+}
