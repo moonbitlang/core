@@ -61,6 +61,8 @@ fn[A] T::rev_iter(Self[A]) -> Iter[A]
 fn[A] T::rev_iter2(Self[A]) -> Iter2[Int, A]
 fn[A : Eq] T::search(Self[A], A) -> Int?
 fn[A] T::shrink_to_fit(Self[A]) -> Unit
+fn[A] T::shuffle(Self[A], rand~ : (Int) -> Int) -> Self[A]
+fn[A] T::shuffle_in_place(Self[A], rand~ : (Int) -> Int) -> Unit
 fn[A] T::to_array(Self[A]) -> Array[A]
 fn[A] T::truncate(Self[A], Int) -> Unit
 fn[A] T::unsafe_pop_back(Self[A]) -> Unit

@@ -1259,3 +1259,28 @@ test "rev" {
   let dq3_reversed = dq3.rev()
   @json.inspect(dq3_reversed.as_views(), content=[[6, 5, 4, 3], []])
 }
+
+///|
+test "shuffle_in_place" {
+  let original = @deque.of([1, 2, 3, 4, 5, 6, 7])
+  let dq = original.copy()
+
+  // Better deterministic "random" function for testing
+  fn rand(upper : Int) -> Int {
+    (upper * 123 + 456) % (upper + 1) // More varied results
+  }
+
+  // Shuffle in place
+  T::shuffle_in_place(dq, rand~)
+
+  // Verify properties of shuffle:
+  assert_eq(dq.length(), original.length())
+  assert_eq(dq.to_array().sort(), original.to_array().sort())
+  assert_true(dq != original)
+
+  // Test non-in-place version
+  let shuffled = T::shuffle(original, rand~)
+  assert_eq(shuffled.length(), original.length())
+  assert_eq(shuffled.to_array().sort(), original.to_array().sort())
+  assert_true(shuffled != original)
+}
