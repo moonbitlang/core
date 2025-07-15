@@ -1259,3 +1259,73 @@ test "rev" {
   let dq3_reversed = dq3.rev()
   @json.inspect(dq3_reversed.as_views(), content=[[6, 5, 4, 3], []])
 }
+
+///|
+/// Test suite for deque.extract_if
+///
+
+///| Basic functionality test
+test "extract_if basic" {
+  let dq = @deque.of([1, 2, 3, 4, 5])
+  let extracted = dq.extract_if(fn(x) { x % 2 == 0 })
+
+  // Verify extracted elements
+  inspect(extracted, content="@deque.of([2, 4])")
+  // Verify remaining elements
+  inspect(dq, content="@deque.of([1, 3, 5])")
+  // Verify lengths
+  inspect(extracted.length(), content="2")
+  inspect(dq.length(), content="3")
+}
+
+///| Test with no elements extracted
+test "extract_if empty result" {
+  let dq = @deque.of([1, 3, 5])
+  let extracted = dq.extract_if(fn(x) { x % 2 == 0 })
+  inspect(extracted.is_empty(), content="true")
+  inspect(dq.length(), content="0")
+}
+
+///| Test with all elements extracted
+test "extract_if all elements" {
+  let dq = @deque.of([2, 4, 6])
+  let extracted = dq.extract_if(fn(x) { x % 2 == 0 })
+  inspect(extracted.length(), content="3")
+  inspect(dq.is_empty(), content="true")
+}
+
+///| Test with circular buffer wrap-around
+test "extract_if with wrap-around" {
+  // Create deque that forces buffer wrap
+  let dq = @deque.new(capacity=3)
+  dq.push_back(1)
+  dq.push_back(2)
+  dq.push_back(3)
+  dq.pop_front() |> ignore
+  let extracted = dq.extract_if(fn(x) { x >= 2 })
+  inspect(extracted, content="@deque.of([2, 3])")
+}
+
+///| Test order preservation
+test "extract_if order preservation" {
+  let dq = @deque.of([3, 1, 4, 1, 5, 9])
+  let extracted = dq.extract_if(fn(x) { x % 2 != 0 })
+  inspect(extracted, content="@deque.of([3, 1, 1, 5, 9])")
+  inspect(dq, content="@deque.of([4])")
+}
+
+///| Test with large deque
+test "extract_if large deque" {
+  let dq = @deque.new(capacity=100)
+  for i in 1..=100 {
+    dq.push_back(i)
+  }
+  let extracted = dq.extract_if(fn(x) { x % 7 == 0 })
+
+  // Should extract 14 elements (100/7 ≈ 14)
+  inspect(extracted.length(), content="14")
+  inspect(dq.length(), content="86")
+  // Verify first/last extracted
+  inspect(extracted.front(), content="Some(7)")
+  inspect(extracted.back(), content="Some(98)")
+}
