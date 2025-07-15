@@ -81,3 +81,39 @@ test "to_be_bytes" {
   let n = 4294967295U // maximum UInt value
   inspect(n.to_be_bytes(), content="b\"\\xff\\xff\\xff\\xff\"")
 }
+
+///|
+test "to_int64 comprehensive testing" {
+  // Test basic conversion
+  let a = 0U
+  let result_a = a.to_int64()
+  inspect(result_a, content="0")
+
+  // Test small positive values
+  let b = 123U
+  let result_b = b.to_int64()
+  inspect(result_b, content="123")
+
+  // Test larger values
+  let c = 65535U
+  let result_c = c.to_int64()
+  inspect(result_c, content="65535")
+
+  // Test maximum UInt value
+  let d = 4294967295U // max UInt value
+  let result_d = d.to_int64()
+  inspect(result_d, content="4294967295")
+
+  // Test middle range values
+  let e = 1000000U
+  let result_e = e.to_int64()
+  inspect(result_e, content="1000000")
+
+  // Test powers of 2
+  let f = 1024U
+  let result_f = f.to_int64()
+  inspect(result_f, content="1024")
+  let g = 1048576U // 2^20
+  let result_g = g.to_int64()
+  inspect(result_g, content="1048576")
+}
