@@ -1,0 +1,17 @@
+{
+  "name": "core",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.mjs",
+  "keywords": [],
+  "author": "",
+  "license": "Apache-2.0",
+  "packageManager": "pnpm@10.7.0",
+  "dependencies": {
+    "@langchain/core": "^0.3.63",
+    "@langchain/openai": "^0.6.1",
+    "fs-extra": "^11.3.0",
+    "openai": "^5.9.0",
+    "zod": "^3.25.76"
+  }
+}

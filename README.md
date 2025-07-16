@@ -20,6 +20,30 @@ We are actively developing moonbitlang/core and appreciate your help!
 
 To contribute, please read the contribution guidelines at [CONTRIBUTING.md](./CONTRIBUTING.md).
 
+## MBTI Reviewer Tool
+
+The repository includes a tool to review MoonBit interface (MBTI) definitions using OpenAI. This tool:
+
+1. Extracts the interface definitions for specified MoonBit types using `mbti-inspector.exe`
+2. Stores these interfaces in a readable format
+3. Uses OpenAI to review the interfaces and provide feedback on API design
+4. Saves the AI-generated review for further analysis
+
+### How to Use
+
+1. Make sure you have Node.js installed
+2. Copy `.env.example` to `.env` and add your OpenAI API key
+3. Ensure `mbti-inspector.exe` is available in your PATH
+4. Run the tool:
+
+```bash
+node index.mjs
+```
+
+The tool will:
+- Extract and save interfaces to the `mbti_data` directory
+- Generate and save reviews to the `mbti_reviews` directory
+
 ### Being a collaborator
 
 Note we regularly evaluate external contributions and invite active contributors to join us as collaborators, thank you!
