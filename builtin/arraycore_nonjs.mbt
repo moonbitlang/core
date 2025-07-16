@@ -75,7 +75,13 @@ pub fn[T] Array::new(capacity~ : Int = 0) -> Array[T] {
 ///   inspect(empty.length(), content="0")
 /// ```
 #intrinsic("%array.length")
+#deprecated("use _.len() instead")
 pub fn[T] Array::length(self : Array[T]) -> Int {
+  self.len
+}
+
+#intrinsic("%array.length")
+pub fn[T] Array::len(self : Array[T]) -> Int {
   self.len
 }
 
