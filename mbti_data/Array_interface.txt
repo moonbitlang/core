@@ -1,176 +1,103 @@
-fn[T] Array::copy(Self[T]) -> Self[T]        // .//array/array.mbti:50:50
-fn[A, B] Array::filter_map(Self[A], (A) -> B? raise?) -> Self[B] raise?        // .//array/array.mbti:51:51
-fn[T] Array::from_iter(Iter[T]) -> Self[T]        // .//array/array.mbti:52:52
-fn Array::join(Self[String], @string.StringView) -> String        // .//array/array.mbti:53:53
-fn[A] Array::last(Self[A]) -> A?        // .//array/array.mbti:54:54
-fn[T] Array::makei(Int, (Int) -> T raise?) -> Self[T] raise?        // .//array/array.mbti:55:55
-fn[T] Array::push_iter(Self[T], Iter[T]) -> Unit        // .//array/array.mbti:56:56
-fn[T] Array::shuffle(Self[T], rand~ : (Int) -> Int) -> Self[T]        // .//array/array.mbti:58:58
-fn[T] Array::shuffle_in_place(Self[T], rand~ : (Int) -> Int) -> Unit        // .//array/array.mbti:59:59
-fn[T : Compare] Array::sort(Self[T]) -> Unit        // .//array/array.mbti:60:60
-fn[T] Array::sort_by(Self[T], (T, T) -> Int) -> Unit        // .//array/array.mbti:61:61
-fn[T, K : Compare] Array::sort_by_key(Self[T], (T) -> K) -> Unit        // .//array/array.mbti:62:62
-fn[T1, T2] Array::unzip(Self[(T1, T2)]) -> (Self[T1], Self[T2])        // .//array/array.mbti:63:63
-fn[A, B] Array::zip(Self[A], Self[B]) -> Self[(A, B)]        // .//array/array.mbti:64:64
-fn[A, B] Array::zip_to_iter2(Self[A], Self[B]) -> Iter2[A, B]        // .//array/array.mbti:65:65
-fn[T] Array::append(Self[T], Self[T]) -> Unit        // .//builtin/builtin.mbti:50:50
-fn[T : Compare] Array::binary_search(Self[T], T) -> Result[Int, Int]        // .//builtin/builtin.mbti:51:51
-fn[T] Array::binary_search_by(Self[T], (T) -> Int) -> Result[Int, Int]        // .//builtin/builtin.mbti:52:52
-fn[A] Array::blit_to(Self[A], Self[A], len~ : Int, src_offset~ : Int = .., dst_offset~ : Int = ..) -> Unit        // .//builtin/builtin.mbti:53:53
-fn[T] Array::capacity(Self[T]) -> Int        // .//builtin/builtin.mbti:54:54
-fn[T] Array::chunk_by(Self[T], (T, T) -> Bool raise?) -> Self[Self[T]] raise?        // .//builtin/builtin.mbti:55:55
-fn[T] Array::chunks(Self[T], Int) -> Self[Self[T]]        // .//builtin/builtin.mbti:56:56
-fn[T] Array::clear(Self[T]) -> Unit        // .//builtin/builtin.mbti:57:57
-fn[T : Eq] Array::contains(Self[T], T) -> Bool        // .//builtin/builtin.mbti:58:58
-fn[T : Eq] Array::dedup(Self[T]) -> Unit        // .//builtin/builtin.mbti:59:59
-fn[T] Array::drain(Self[T], Int, Int) -> Self[T]        // .//builtin/builtin.mbti:60:60
-fn[T] Array::each(Self[T], (T) -> Unit raise?) -> Unit raise?        // .//builtin/builtin.mbti:61:61
-fn[T] Array::eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?        // .//builtin/builtin.mbti:62:62
-fn[T : Eq] Array::ends_with(Self[T], Self[T]) -> Bool        // .//builtin/builtin.mbti:63:63
-fn[T] Array::extract_if(Self[T], (T) -> Bool) -> Self[T]        // .//builtin/builtin.mbti:64:64
-fn[T] Array::filter(Self[T], (T) -> Bool raise?) -> Self[T] raise?        // .//builtin/builtin.mbti:65:65
-fn[T] Array::find_index(Self[T], (T) -> Bool) -> Int?        // .//builtin/builtin.mbti:67:67
-fn[T] Array::flatten(Self[Self[T]]) -> Self[T]        // .//builtin/builtin.mbti:68:68
-fn[A, B] Array::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?        // .//builtin/builtin.mbti:69:69
-fn[T, U] Array::fold_left(Self[T], (U, T) -> U raise?, init~ : U) -> U raise?        // .//builtin/builtin.mbti:71:71
-fn[T, U] Array::fold_lefti(Self[T], (Int, U, T) -> U raise?, init~ : U) -> U raise?        // .//builtin/builtin.mbti:73:73
-fn[T, U] Array::fold_right(Self[T], (U, T) -> U raise?, init~ : U) -> U raise?        // .//builtin/builtin.mbti:75:75
-fn[T, U] Array::fold_righti(Self[T], (Int, U, T) -> U raise?, init~ : U) -> U raise?        // .//builtin/builtin.mbti:77:77
-fn[A, B] Array::foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?        // .//builtin/builtin.mbti:78:78
-fn[T] Array::from_fixed_array(FixedArray[T]) -> Self[T]        // .//builtin/builtin.mbti:79:79
-fn[T] Array::get(Self[T], Int) -> T?        // .//builtin/builtin.mbti:80:80
-fn[T] Array::insert(Self[T], Int, T) -> Unit        // .//builtin/builtin.mbti:81:81
-fn[T] Array::is_empty(Self[T]) -> Bool        // .//builtin/builtin.mbti:82:82
-fn[T : Compare] Array::is_sorted(Self[T]) -> Bool        // .//builtin/builtin.mbti:83:83
-fn[T] Array::iter(Self[T]) -> Iter[T]        // .//builtin/builtin.mbti:84:84
-fn[A] Array::iter2(Self[A]) -> Iter2[Int, A]        // .//builtin/builtin.mbti:85:85
-fn[T] Array::length(Self[T]) -> Int        // .//builtin/builtin.mbti:86:86
-fn[T] Array::make(Int, T) -> Self[T]        // .//builtin/builtin.mbti:87:87
-fn[T, U] Array::map(Self[T], (T) -> U raise?) -> Self[U] raise?        // .//builtin/builtin.mbti:88:88
-fn[T] Array::map_inplace(Self[T], (T) -> T raise?) -> Unit raise?        // .//builtin/builtin.mbti:89:89
-fn[T, U] Array::mapi(Self[T], (Int, T) -> U raise?) -> Self[U] raise?        // .//builtin/builtin.mbti:90:90
-fn[T] Array::mapi_inplace(Self[T], (Int, T) -> T raise?) -> Unit raise?        // .//builtin/builtin.mbti:91:91
-fn[T] Array::new(capacity~ : Int = ..) -> Self[T]        // .//builtin/builtin.mbti:92:92
-fn[T] Array::op_as_view(Self[T], start~ : Int = .., end? : Int) -> ArrayView[T]        // .//builtin/builtin.mbti:93:93
-fn[T] Array::op_get(Self[T], Int) -> T        // .//builtin/builtin.mbti:94:94
-fn[T] Array::op_set(Self[T], Int, T) -> Unit        // .//builtin/builtin.mbti:95:95
-fn[T] Array::pop(Self[T]) -> T?        // .//builtin/builtin.mbti:96:96
-fn[T] Array::pop_exn(Self[T]) -> T        // .//builtin/builtin.mbti:98:98
-fn[T] Array::push(Self[T], T) -> Unit        // .//builtin/builtin.mbti:99:99
-fn[T] Array::remove(Self[T], Int) -> T        // .//builtin/builtin.mbti:100:100
-fn[T] Array::repeat(Self[T], Int) -> Self[T]        // .//builtin/builtin.mbti:101:101
-fn[T] Array::reserve_capacity(Self[T], Int) -> Unit        // .//builtin/builtin.mbti:102:102
-fn[T] Array::resize(Self[T], Int, T) -> Unit        // .//builtin/builtin.mbti:103:103
-fn[T] Array::retain(Self[T], (T) -> Bool raise?) -> Unit raise?        // .//builtin/builtin.mbti:104:104
-fn[A] Array::retain_map(Self[A], (A) -> A?) -> Unit        // .//builtin/builtin.mbti:105:105
-fn[T] Array::rev(Self[T]) -> Self[T]        // .//builtin/builtin.mbti:106:106
-fn[T] Array::rev_each(Self[T], (T) -> Unit) -> Unit        // .//builtin/builtin.mbti:107:107
-fn[T] Array::rev_eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?        // .//builtin/builtin.mbti:108:108
-fn[A, B] Array::rev_fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?        // .//builtin/builtin.mbti:109:109
-fn[A, B] Array::rev_foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?        // .//builtin/builtin.mbti:110:110
-fn[T] Array::rev_inplace(Self[T]) -> Unit        // .//builtin/builtin.mbti:111:111
-fn[T] Array::rev_iter(Self[T]) -> Iter[T]        // .//builtin/builtin.mbti:112:112
-fn[T : Eq] Array::search(Self[T], T) -> Int?        // .//builtin/builtin.mbti:113:113
-fn[T] Array::search_by(Self[T], (T) -> Bool) -> Int?        // .//builtin/builtin.mbti:114:114
-fn[T] Array::shrink_to_fit(Self[T]) -> Unit        // .//builtin/builtin.mbti:115:115
-fn[T] Array::split(Self[T], (T) -> Bool raise?) -> Self[Self[T]] raise?        // .//builtin/builtin.mbti:116:116
-fn[T] Array::split_at(Self[T], Int) -> (Self[T], Self[T])        // .//builtin/builtin.mbti:117:117
-fn[T : Eq] Array::starts_with(Self[T], Self[T]) -> Bool        // .//builtin/builtin.mbti:118:118
-fn[T : Eq] Array::strip_prefix(Self[T], Self[T]) -> Self[T]?        // .//builtin/builtin.mbti:119:119
-fn[T : Eq] Array::strip_suffix(Self[T], Self[T]) -> Self[T]?        // .//builtin/builtin.mbti:120:120
-fn[T] Array::swap(Self[T], Int, Int) -> Unit        // .//builtin/builtin.mbti:121:121
-fn[A] Array::truncate(Self[A], Int) -> Unit        // .//builtin/builtin.mbti:122:122
-fn[A] Array::unsafe_blit(Self[A], Int, Self[A], Int, Int) -> Unit        // .//builtin/builtin.mbti:123:123
-fn[A] Array::unsafe_blit_fixed(Self[A], Int, FixedArray[A], Int, Int) -> Unit        // .//builtin/builtin.mbti:124:124
-fn[T] Array::unsafe_get(Self[T], Int) -> T        // .//builtin/builtin.mbti:125:125
-fn[T] Array::unsafe_pop(Self[T]) -> T        // .//builtin/builtin.mbti:126:126
-fn[A] Array::unsafe_pop_back(Self[A]) -> Unit        // .//builtin/builtin.mbti:127:127
-fn[T] Array::windows(Self[T], Int) -> Self[ArrayView[T]]        // .//builtin/builtin.mbti:128:128
-fn[T] Array::copy(Self[T]) -> Self[T]        // .//target/wasm-gc/release/check/array/array.mbti:50:50
-fn[A, B] Array::filter_map(Self[A], (A) -> B? raise?) -> Self[B] raise?        // .//target/wasm-gc/release/check/array/array.mbti:51:51
-fn[T] Array::from_iter(Iter[T]) -> Self[T]        // .//target/wasm-gc/release/check/array/array.mbti:52:52
-fn Array::join(Self[String], @string.StringView) -> String        // .//target/wasm-gc/release/check/array/array.mbti:53:53
-fn[A] Array::last(Self[A]) -> A?        // .//target/wasm-gc/release/check/array/array.mbti:54:54
-fn[T] Array::makei(Int, (Int) -> T raise?) -> Self[T] raise?        // .//target/wasm-gc/release/check/array/array.mbti:55:55
-fn[T] Array::push_iter(Self[T], Iter[T]) -> Unit        // .//target/wasm-gc/release/check/array/array.mbti:56:56
-fn[T] Array::shuffle(Self[T], rand~ : (Int) -> Int) -> Self[T]        // .//target/wasm-gc/release/check/array/array.mbti:58:58
-fn[T] Array::shuffle_in_place(Self[T], rand~ : (Int) -> Int) -> Unit        // .//target/wasm-gc/release/check/array/array.mbti:59:59
-fn[T : Compare] Array::sort(Self[T]) -> Unit        // .//target/wasm-gc/release/check/array/array.mbti:60:60
-fn[T] Array::sort_by(Self[T], (T, T) -> Int) -> Unit        // .//target/wasm-gc/release/check/array/array.mbti:61:61
-fn[T, K : Compare] Array::sort_by_key(Self[T], (T) -> K) -> Unit        // .//target/wasm-gc/release/check/array/array.mbti:62:62
-fn[T1, T2] Array::unzip(Self[(T1, T2)]) -> (Self[T1], Self[T2])        // .//target/wasm-gc/release/check/array/array.mbti:63:63
-fn[A, B] Array::zip(Self[A], Self[B]) -> Self[(A, B)]        // .//target/wasm-gc/release/check/array/array.mbti:64:64
-fn[A, B] Array::zip_to_iter2(Self[A], Self[B]) -> Iter2[A, B]        // .//target/wasm-gc/release/check/array/array.mbti:65:65
-fn[T] Array::append(Self[T], Self[T]) -> Unit        // .//target/wasm-gc/release/check/builtin/builtin.mbti:50:50
-fn[T : Compare] Array::binary_search(Self[T], T) -> Result[Int, Int]        // .//target/wasm-gc/release/check/builtin/builtin.mbti:51:51
-fn[T] Array::binary_search_by(Self[T], (T) -> Int) -> Result[Int, Int]        // .//target/wasm-gc/release/check/builtin/builtin.mbti:52:52
-fn[A] Array::blit_to(Self[A], Self[A], len~ : Int, src_offset~ : Int = .., dst_offset~ : Int = ..) -> Unit        // .//target/wasm-gc/release/check/builtin/builtin.mbti:53:53
-fn[T] Array::capacity(Self[T]) -> Int        // .//target/wasm-gc/release/check/builtin/builtin.mbti:54:54
-fn[T] Array::chunk_by(Self[T], (T, T) -> Bool raise?) -> Self[Self[T]] raise?        // .//target/wasm-gc/release/check/builtin/builtin.mbti:55:55
-fn[T] Array::chunks(Self[T], Int) -> Self[Self[T]]        // .//target/wasm-gc/release/check/builtin/builtin.mbti:56:56
-fn[T] Array::clear(Self[T]) -> Unit        // .//target/wasm-gc/release/check/builtin/builtin.mbti:57:57
-fn[T : Eq] Array::contains(Self[T], T) -> Bool        // .//target/wasm-gc/release/check/builtin/builtin.mbti:58:58
-fn[T : Eq] Array::dedup(Self[T]) -> Unit        // .//target/wasm-gc/release/check/builtin/builtin.mbti:59:59
-fn[T] Array::drain(Self[T], Int, Int) -> Self[T]        // .//target/wasm-gc/release/check/builtin/builtin.mbti:60:60
-fn[T] Array::each(Self[T], (T) -> Unit raise?) -> Unit raise?        // .//target/wasm-gc/release/check/builtin/builtin.mbti:61:61
-fn[T] Array::eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?        // .//target/wasm-gc/release/check/builtin/builtin.mbti:62:62
-fn[T : Eq] Array::ends_with(Self[T], Self[T]) -> Bool        // .//target/wasm-gc/release/check/builtin/builtin.mbti:63:63
-fn[T] Array::extract_if(Self[T], (T) -> Bool) -> Self[T]        // .//target/wasm-gc/release/check/builtin/builtin.mbti:64:64
-fn[T] Array::filter(Self[T], (T) -> Bool raise?) -> Self[T] raise?        // .//target/wasm-gc/release/check/builtin/builtin.mbti:65:65
-fn[T] Array::find_index(Self[T], (T) -> Bool) -> Int?        // .//target/wasm-gc/release/check/builtin/builtin.mbti:67:67
-fn[T] Array::flatten(Self[Self[T]]) -> Self[T]        // .//target/wasm-gc/release/check/builtin/builtin.mbti:68:68
-fn[A, B] Array::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?        // .//target/wasm-gc/release/check/builtin/builtin.mbti:69:69
-fn[T, U] Array::fold_left(Self[T], (U, T) -> U raise?, init~ : U) -> U raise?        // .//target/wasm-gc/release/check/builtin/builtin.mbti:71:71
-fn[T, U] Array::fold_lefti(Self[T], (Int, U, T) -> U raise?, init~ : U) -> U raise?        // .//target/wasm-gc/release/check/builtin/builtin.mbti:73:73
-fn[T, U] Array::fold_right(Self[T], (U, T) -> U raise?, init~ : U) -> U raise?        // .//target/wasm-gc/release/check/builtin/builtin.mbti:75:75
-fn[T, U] Array::fold_righti(Self[T], (Int, U, T) -> U raise?, init~ : U) -> U raise?        // .//target/wasm-gc/release/check/builtin/builtin.mbti:77:77
-fn[A, B] Array::foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?        // .//target/wasm-gc/release/check/builtin/builtin.mbti:78:78
-fn[T] Array::from_fixed_array(FixedArray[T]) -> Self[T]        // .//target/wasm-gc/release/check/builtin/builtin.mbti:79:79
-fn[T] Array::get(Self[T], Int) -> T?        // .//target/wasm-gc/release/check/builtin/builtin.mbti:80:80
-fn[T] Array::insert(Self[T], Int, T) -> Unit        // .//target/wasm-gc/release/check/builtin/builtin.mbti:81:81
-fn[T] Array::is_empty(Self[T]) -> Bool        // .//target/wasm-gc/release/check/builtin/builtin.mbti:82:82
-fn[T : Compare] Array::is_sorted(Self[T]) -> Bool        // .//target/wasm-gc/release/check/builtin/builtin.mbti:83:83
-fn[T] Array::iter(Self[T]) -> Iter[T]        // .//target/wasm-gc/release/check/builtin/builtin.mbti:84:84
-fn[A] Array::iter2(Self[A]) -> Iter2[Int, A]        // .//target/wasm-gc/release/check/builtin/builtin.mbti:85:85
-fn[T] Array::length(Self[T]) -> Int        // .//target/wasm-gc/release/check/builtin/builtin.mbti:86:86
-fn[T] Array::make(Int, T) -> Self[T]        // .//target/wasm-gc/release/check/builtin/builtin.mbti:87:87
-fn[T, U] Array::map(Self[T], (T) -> U raise?) -> Self[U] raise?        // .//target/wasm-gc/release/check/builtin/builtin.mbti:88:88
-fn[T] Array::map_inplace(Self[T], (T) -> T raise?) -> Unit raise?        // .//target/wasm-gc/release/check/builtin/builtin.mbti:89:89
-fn[T, U] Array::mapi(Self[T], (Int, T) -> U raise?) -> Self[U] raise?        // .//target/wasm-gc/release/check/builtin/builtin.mbti:90:90
-fn[T] Array::mapi_inplace(Self[T], (Int, T) -> T raise?) -> Unit raise?        // .//target/wasm-gc/release/check/builtin/builtin.mbti:91:91
-fn[T] Array::new(capacity~ : Int = ..) -> Self[T]        // .//target/wasm-gc/release/check/builtin/builtin.mbti:92:92
-fn[T] Array::op_as_view(Self[T], start~ : Int = .., end? : Int) -> ArrayView[T]        // .//target/wasm-gc/release/check/builtin/builtin.mbti:93:93
-fn[T] Array::op_get(Self[T], Int) -> T        // .//target/wasm-gc/release/check/builtin/builtin.mbti:94:94
-fn[T] Array::op_set(Self[T], Int, T) -> Unit        // .//target/wasm-gc/release/check/builtin/builtin.mbti:95:95
-fn[T] Array::pop(Self[T]) -> T?        // .//target/wasm-gc/release/check/builtin/builtin.mbti:96:96
-fn[T] Array::pop_exn(Self[T]) -> T        // .//target/wasm-gc/release/check/builtin/builtin.mbti:98:98
-fn[T] Array::push(Self[T], T) -> Unit        // .//target/wasm-gc/release/check/builtin/builtin.mbti:99:99
-fn[T] Array::remove(Self[T], Int) -> T        // .//target/wasm-gc/release/check/builtin/builtin.mbti:100:100
-fn[T] Array::repeat(Self[T], Int) -> Self[T]        // .//target/wasm-gc/release/check/builtin/builtin.mbti:101:101
-fn[T] Array::reserve_capacity(Self[T], Int) -> Unit        // .//target/wasm-gc/release/check/builtin/builtin.mbti:102:102
-fn[T] Array::resize(Self[T], Int, T) -> Unit        // .//target/wasm-gc/release/check/builtin/builtin.mbti:103:103
-fn[T] Array::retain(Self[T], (T) -> Bool raise?) -> Unit raise?        // .//target/wasm-gc/release/check/builtin/builtin.mbti:104:104
-fn[A] Array::retain_map(Self[A], (A) -> A?) -> Unit        // .//target/wasm-gc/release/check/builtin/builtin.mbti:105:105
-fn[T] Array::rev(Self[T]) -> Self[T]        // .//target/wasm-gc/release/check/builtin/builtin.mbti:106:106
-fn[T] Array::rev_each(Self[T], (T) -> Unit) -> Unit        // .//target/wasm-gc/release/check/builtin/builtin.mbti:107:107
-fn[T] Array::rev_eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?        // .//target/wasm-gc/release/check/builtin/builtin.mbti:108:108
-fn[A, B] Array::rev_fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?        // .//target/wasm-gc/release/check/builtin/builtin.mbti:109:109
-fn[A, B] Array::rev_foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?        // .//target/wasm-gc/release/check/builtin/builtin.mbti:110:110
-fn[T] Array::rev_inplace(Self[T]) -> Unit        // .//target/wasm-gc/release/check/builtin/builtin.mbti:111:111
-fn[T] Array::rev_iter(Self[T]) -> Iter[T]        // .//target/wasm-gc/release/check/builtin/builtin.mbti:112:112
-fn[T : Eq] Array::search(Self[T], T) -> Int?        // .//target/wasm-gc/release/check/builtin/builtin.mbti:113:113
-fn[T] Array::search_by(Self[T], (T) -> Bool) -> Int?        // .//target/wasm-gc/release/check/builtin/builtin.mbti:114:114
-fn[T] Array::shrink_to_fit(Self[T]) -> Unit        // .//target/wasm-gc/release/check/builtin/builtin.mbti:115:115
-fn[T] Array::split(Self[T], (T) -> Bool raise?) -> Self[Self[T]] raise?        // .//target/wasm-gc/release/check/builtin/builtin.mbti:116:116
-fn[T] Array::split_at(Self[T], Int) -> (Self[T], Self[T])        // .//target/wasm-gc/release/check/builtin/builtin.mbti:117:117
-fn[T : Eq] Array::starts_with(Self[T], Self[T]) -> Bool        // .//target/wasm-gc/release/check/builtin/builtin.mbti:118:118
-fn[T : Eq] Array::strip_prefix(Self[T], Self[T]) -> Self[T]?        // .//target/wasm-gc/release/check/builtin/builtin.mbti:119:119
-fn[T : Eq] Array::strip_suffix(Self[T], Self[T]) -> Self[T]?        // .//target/wasm-gc/release/check/builtin/builtin.mbti:120:120
-fn[T] Array::swap(Self[T], Int, Int) -> Unit        // .//target/wasm-gc/release/check/builtin/builtin.mbti:121:121
-fn[A] Array::truncate(Self[A], Int) -> Unit        // .//target/wasm-gc/release/check/builtin/builtin.mbti:122:122
-fn[A] Array::unsafe_blit(Self[A], Int, Self[A], Int, Int) -> Unit        // .//target/wasm-gc/release/check/builtin/builtin.mbti:123:123
-fn[A] Array::unsafe_blit_fixed(Self[A], Int, FixedArray[A], Int, Int) -> Unit        // .//target/wasm-gc/release/check/builtin/builtin.mbti:124:124
-fn[T] Array::unsafe_get(Self[T], Int) -> T        // .//target/wasm-gc/release/check/builtin/builtin.mbti:125:125
-fn[T] Array::unsafe_pop(Self[T]) -> T        // .//target/wasm-gc/release/check/builtin/builtin.mbti:126:126
-fn[A] Array::unsafe_pop_back(Self[A]) -> Unit        // .//target/wasm-gc/release/check/builtin/builtin.mbti:127:127
-fn[T] Array::windows(Self[T], Int) -> Self[ArrayView[T]]        // .//target/wasm-gc/release/check/builtin/builtin.mbti:128:128
+fn[T] Array::copy(Self[T]) -> Self[T]        // ./array/array.mbti:50:50
+fn[A, B] Array::filter_map(Self[A], (A) -> B? raise?) -> Self[B] raise?        // ./array/array.mbti:51:51
+fn[T] Array::from_iter(Iter[T]) -> Self[T]        // ./array/array.mbti:52:52
+fn Array::join(Self[String], @string.StringView) -> String        // ./array/array.mbti:53:53
+fn[A] Array::last(Self[A]) -> A?        // ./array/array.mbti:54:54
+fn[T] Array::makei(Int, (Int) -> T raise?) -> Self[T] raise?        // ./array/array.mbti:55:55
+fn[T] Array::push_iter(Self[T], Iter[T]) -> Unit        // ./array/array.mbti:56:56
+fn[T] Array::shuffle(Self[T], rand~ : (Int) -> Int) -> Self[T]        // ./array/array.mbti:58:58
+fn[T] Array::shuffle_in_place(Self[T], rand~ : (Int) -> Int) -> Unit        // ./array/array.mbti:59:59
+fn[T : Compare] Array::sort(Self[T]) -> Unit        // ./array/array.mbti:60:60
+fn[T] Array::sort_by(Self[T], (T, T) -> Int) -> Unit        // ./array/array.mbti:61:61
+fn[T, K : Compare] Array::sort_by_key(Self[T], (T) -> K) -> Unit        // ./array/array.mbti:62:62
+fn[T1, T2] Array::unzip(Self[(T1, T2)]) -> (Self[T1], Self[T2])        // ./array/array.mbti:63:63
+fn[A, B] Array::zip(Self[A], Self[B]) -> Self[(A, B)]        // ./array/array.mbti:64:64
+fn[A, B] Array::zip_to_iter2(Self[A], Self[B]) -> Iter2[A, B]        // ./array/array.mbti:65:65
+impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Array[X]        // ./array/array.mbti:66:66
+fn[T] Array::append(Self[T], Self[T]) -> Unit        // ./builtin/builtin.mbti:50:50
+fn[T : Compare] Array::binary_search(Self[T], T) -> Result[Int, Int]        // ./builtin/builtin.mbti:51:51
+fn[T] Array::binary_search_by(Self[T], (T) -> Int) -> Result[Int, Int]        // ./builtin/builtin.mbti:52:52
+fn[A] Array::blit_to(Self[A], Self[A], len~ : Int, src_offset~ : Int = .., dst_offset~ : Int = ..) -> Unit        // ./builtin/builtin.mbti:53:53
+fn[T] Array::capacity(Self[T]) -> Int        // ./builtin/builtin.mbti:54:54
+fn[T] Array::chunk_by(Self[T], (T, T) -> Bool raise?) -> Self[Self[T]] raise?        // ./builtin/builtin.mbti:55:55
+fn[T] Array::chunks(Self[T], Int) -> Self[Self[T]]        // ./builtin/builtin.mbti:56:56
+fn[T] Array::clear(Self[T]) -> Unit        // ./builtin/builtin.mbti:57:57
+fn[T : Eq] Array::contains(Self[T], T) -> Bool        // ./builtin/builtin.mbti:58:58
+fn[T : Eq] Array::dedup(Self[T]) -> Unit        // ./builtin/builtin.mbti:59:59
+fn[T] Array::drain(Self[T], Int, Int) -> Self[T]        // ./builtin/builtin.mbti:60:60
+fn[T] Array::each(Self[T], (T) -> Unit raise?) -> Unit raise?        // ./builtin/builtin.mbti:61:61
+fn[T] Array::eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?        // ./builtin/builtin.mbti:62:62
+fn[T : Eq] Array::ends_with(Self[T], Self[T]) -> Bool        // ./builtin/builtin.mbti:63:63
+fn[T] Array::extract_if(Self[T], (T) -> Bool) -> Self[T]        // ./builtin/builtin.mbti:64:64
+fn[T] Array::filter(Self[T], (T) -> Bool raise?) -> Self[T] raise?        // ./builtin/builtin.mbti:65:65
+#deprecated
+fn[T] Array::find_index(Self[T], (T) -> Bool) -> Int?         // ./builtin/builtin.mbti:67:67
+fn[T] Array::flatten(Self[Self[T]]) -> Self[T]        // ./builtin/builtin.mbti:68:68
+fn[A, B] Array::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?        // ./builtin/builtin.mbti:69:69
+#deprecated
+fn[T, U] Array::fold_left(Self[T], (U, T) -> U raise?, init~ : U) -> U raise?         // ./builtin/builtin.mbti:71:71
+#deprecated
+fn[T, U] Array::fold_lefti(Self[T], (Int, U, T) -> U raise?, init~ : U) -> U raise?         // ./builtin/builtin.mbti:73:73
+#deprecated
+fn[T, U] Array::fold_right(Self[T], (U, T) -> U raise?, init~ : U) -> U raise?         // ./builtin/builtin.mbti:75:75
+#deprecated
+fn[T, U] Array::fold_righti(Self[T], (Int, U, T) -> U raise?, init~ : U) -> U raise?         // ./builtin/builtin.mbti:77:77
+fn[A, B] Array::foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?        // ./builtin/builtin.mbti:78:78
+fn[T] Array::from_fixed_array(FixedArray[T]) -> Self[T]        // ./builtin/builtin.mbti:79:79
+fn[T] Array::get(Self[T], Int) -> T?        // ./builtin/builtin.mbti:80:80
+fn[T] Array::insert(Self[T], Int, T) -> Unit        // ./builtin/builtin.mbti:81:81
+fn[T] Array::is_empty(Self[T]) -> Bool        // ./builtin/builtin.mbti:82:82
+fn[T : Compare] Array::is_sorted(Self[T]) -> Bool        // ./builtin/builtin.mbti:83:83
+fn[T] Array::iter(Self[T]) -> Iter[T]        // ./builtin/builtin.mbti:84:84
+fn[A] Array::iter2(Self[A]) -> Iter2[Int, A]        // ./builtin/builtin.mbti:85:85
+fn[T] Array::length(Self[T]) -> Int        // ./builtin/builtin.mbti:86:86
+fn[T] Array::make(Int, T) -> Self[T]        // ./builtin/builtin.mbti:87:87
+fn[T, U] Array::map(Self[T], (T) -> U raise?) -> Self[U] raise?        // ./builtin/builtin.mbti:88:88
+fn[T] Array::map_inplace(Self[T], (T) -> T raise?) -> Unit raise?        // ./builtin/builtin.mbti:89:89
+fn[T, U] Array::mapi(Self[T], (Int, T) -> U raise?) -> Self[U] raise?        // ./builtin/builtin.mbti:90:90
+fn[T] Array::mapi_inplace(Self[T], (Int, T) -> T raise?) -> Unit raise?        // ./builtin/builtin.mbti:91:91
+fn[T] Array::new(capacity~ : Int = ..) -> Self[T]        // ./builtin/builtin.mbti:92:92
+fn[T] Array::op_as_view(Self[T], start~ : Int = .., end? : Int) -> ArrayView[T]        // ./builtin/builtin.mbti:93:93
+fn[T] Array::op_get(Self[T], Int) -> T        // ./builtin/builtin.mbti:94:94
+fn[T] Array::op_set(Self[T], Int, T) -> Unit        // ./builtin/builtin.mbti:95:95
+fn[T] Array::pop(Self[T]) -> T?        // ./builtin/builtin.mbti:96:96
+#deprecated
+fn[T] Array::pop_exn(Self[T]) -> T         // ./builtin/builtin.mbti:98:98
+fn[T] Array::push(Self[T], T) -> Unit        // ./builtin/builtin.mbti:99:99
+fn[T] Array::remove(Self[T], Int) -> T        // ./builtin/builtin.mbti:100:100
+fn[T] Array::repeat(Self[T], Int) -> Self[T]        // ./builtin/builtin.mbti:101:101
+fn[T] Array::reserve_capacity(Self[T], Int) -> Unit        // ./builtin/builtin.mbti:102:102
+fn[T] Array::resize(Self[T], Int, T) -> Unit        // ./builtin/builtin.mbti:103:103
+fn[T] Array::retain(Self[T], (T) -> Bool raise?) -> Unit raise?        // ./builtin/builtin.mbti:104:104
+fn[A] Array::retain_map(Self[A], (A) -> A?) -> Unit        // ./builtin/builtin.mbti:105:105
+fn[T] Array::rev(Self[T]) -> Self[T]        // ./builtin/builtin.mbti:106:106
+fn[T] Array::rev_each(Self[T], (T) -> Unit) -> Unit        // ./builtin/builtin.mbti:107:107
+fn[T] Array::rev_eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?        // ./builtin/builtin.mbti:108:108
+fn[A, B] Array::rev_fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?        // ./builtin/builtin.mbti:109:109
+fn[A, B] Array::rev_foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?        // ./builtin/builtin.mbti:110:110
+fn[T] Array::rev_inplace(Self[T]) -> Unit        // ./builtin/builtin.mbti:111:111
+fn[T] Array::rev_iter(Self[T]) -> Iter[T]        // ./builtin/builtin.mbti:112:112
+fn[T : Eq] Array::search(Self[T], T) -> Int?        // ./builtin/builtin.mbti:113:113
+fn[T] Array::search_by(Self[T], (T) -> Bool) -> Int?        // ./builtin/builtin.mbti:114:114
+fn[T] Array::shrink_to_fit(Self[T]) -> Unit        // ./builtin/builtin.mbti:115:115
+fn[T] Array::split(Self[T], (T) -> Bool raise?) -> Self[Self[T]] raise?        // ./builtin/builtin.mbti:116:116
+fn[T] Array::split_at(Self[T], Int) -> (Self[T], Self[T])        // ./builtin/builtin.mbti:117:117
+fn[T : Eq] Array::starts_with(Self[T], Self[T]) -> Bool        // ./builtin/builtin.mbti:118:118
+fn[T : Eq] Array::strip_prefix(Self[T], Self[T]) -> Self[T]?        // ./builtin/builtin.mbti:119:119
+fn[T : Eq] Array::strip_suffix(Self[T], Self[T]) -> Self[T]?        // ./builtin/builtin.mbti:120:120
+fn[T] Array::swap(Self[T], Int, Int) -> Unit        // ./builtin/builtin.mbti:121:121
+fn[A] Array::truncate(Self[A], Int) -> Unit        // ./builtin/builtin.mbti:122:122
+fn[A] Array::unsafe_blit(Self[A], Int, Self[A], Int, Int) -> Unit        // ./builtin/builtin.mbti:123:123
+fn[A] Array::unsafe_blit_fixed(Self[A], Int, FixedArray[A], Int, Int) -> Unit        // ./builtin/builtin.mbti:124:124
+fn[T] Array::unsafe_get(Self[T], Int) -> T        // ./builtin/builtin.mbti:125:125
+fn[T] Array::unsafe_pop(Self[T]) -> T        // ./builtin/builtin.mbti:126:126
+fn[A] Array::unsafe_pop_back(Self[A]) -> Unit        // ./builtin/builtin.mbti:127:127
+fn[T] Array::windows(Self[T], Int) -> Self[ArrayView[T]]        // ./builtin/builtin.mbti:128:128
+impl[T] Add for Array[T]        // ./builtin/builtin.mbti:129:129
+impl[T : Compare] Compare for Array[T]        // ./builtin/builtin.mbti:130:130
+impl[T] Default for Array[T]        // ./builtin/builtin.mbti:131:131
+impl[T : Eq] Eq for Array[T]        // ./builtin/builtin.mbti:132:132
+impl[T : Hash] Hash for Array[T]        // ./builtin/builtin.mbti:133:133
+impl[X : Show] Show for Array[X]        // ./builtin/builtin.mbti:134:134
+impl[X : ToJson] ToJson for Array[X]        // ./builtin/builtin.mbti:135:135
+impl[X : FromJson] FromJson for Array[X]        // ./json/json.mbti:77:77
