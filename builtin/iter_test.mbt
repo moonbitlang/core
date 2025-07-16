@@ -310,13 +310,21 @@ test "concat" {
 test "collect" {
   let arr = ['1', '2', '3', '4', '5']
   let iter = Iter::new(yield_ => {
-    for i in 0..<arr.length() {
+    for i in 0..<arr.len() {
       yield_(arr[i]) |> ignore
     }
     IterContinue
   })
   let vec = iter.collect()
-  assert_eq(vec, ['1', '2', '3', '4', '5'])
+  let expected = ['1', '2', '3', '4', '5']
+  if vec.len() != expected.len() {
+    abort("Length mismatch")
+  }
+  for i in 0..<vec.len() {
+    if vec[i] != expected[i] {
+      abort("Element mismatch")
+    }
+  }
 }
 
 ///|
@@ -434,7 +442,7 @@ test "eachi" {
 ///|
 // For testing purposes
 fn[T] test_from_array(arr : Array[T]) -> Iter[T] {
-  Iter::new(yield_ => for i in 0..<arr.length() {
+  Iter::new(yield_ => for i in 0..<arr.len() {
     if yield_(arr[i]) == IterEnd {
       break IterEnd
     }

@@ -43,11 +43,11 @@ fn[T] Array::make_uninit(len : Int) -> Array[T] {
 ///
 /// ```moonbit
 ///   let arr : Array[Int] = Array::new(capacity=10)
-///   inspect(arr.length(), content="0")
+///   inspect(arr.len(), content="0")
 ///   inspect(arr.capacity(), content="10")
 ///
 ///   let arr : Array[Int] = Array::new()
-///   inspect(arr.length(), content="0")
+///   inspect(arr.len(), content="0")
 /// ```
 pub fn[T] Array::new(capacity~ : Int = 0) -> Array[T] {
   if capacity == 0 {
@@ -70,9 +70,9 @@ pub fn[T] Array::new(capacity~ : Int = 0) -> Array[T] {
 ///
 /// ```moonbit
 ///   let arr = [1, 2, 3]
-///   inspect(arr.length(), content="3")
+///   inspect(arr.len(), content="3")
 ///   let empty : Array[Int] = []
-///   inspect(empty.length(), content="0")
+///   inspect(empty.len(), content="0")
 /// ```
 #intrinsic("%array.length")
 #deprecated("use _.len() instead")
@@ -80,6 +80,7 @@ pub fn[T] Array::length(self : Array[T]) -> Int {
   self.len
 }
 
+///|
 #intrinsic("%array.length")
 pub fn[T] Array::len(self : Array[T]) -> Int {
   self.len

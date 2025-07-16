@@ -36,7 +36,7 @@ pub fn[A] singleton(value : A) -> T[A] {
 ///|
 /// Initialize an ImmutableSet[T] from a Array[T]
 pub fn[A : Compare] from_array(array : Array[A]) -> T[A] {
-  for i = array.length() - 1, set = Empty; i >= 0; {
+  for i = array.len() - 1, set = Empty; i >= 0; {
     continue i - 1, set.add(array[i])
   } else {
     set

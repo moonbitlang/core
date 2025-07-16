@@ -490,7 +490,7 @@ pub fn[K] to_array(self : T[K]) -> Array[K] {
   }
   if !res.is_empty() {
     let mut res_idx = 1
-    while res_idx < res.length() && i < self.capacity {
+    while res_idx < res.len() && i < self.capacity {
       if self.entries[i] is Some({ key, .. }) {
         res[res_idx] = key
         res_idx += 1

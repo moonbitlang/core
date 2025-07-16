@@ -114,7 +114,7 @@ test "parse_uint64" {
     ("12345_", Err(syntax_err_str)),
     ("12345%", Err(syntax_err_str)),
   ]
-  for i in 0..<tests.length() {
+  for i in 0..<tests.len() {
     let t = tests[i]
     assert_eq(
       Result::Ok(parse_uint64(t.0)) catch {
@@ -212,7 +212,7 @@ test "parse_uint64_base" {
     ("0x+f", 0, Err(syntax_err_str)),
     ("0x-f", 0, Err(syntax_err_str)),
   ]
-  for i in 0..<tests.length() {
+  for i in 0..<tests.len() {
     let t = tests[i]
     assert_eq(
       Result::Ok(parse_uint64(t.0, base=t.1)) catch {
@@ -247,7 +247,7 @@ test "parse_uint" {
     ("12345_", Err(syntax_err_str)),
     ("123%45", Err(syntax_err_str)),
   ]
-  for i in 0..<tests.length() {
+  for i in 0..<tests.len() {
     let t = tests[i]
     assert_eq(
       Result::Ok(parse_uint(t.0)) catch {

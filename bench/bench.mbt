@@ -160,7 +160,7 @@ test "bench - T struct and bench method" {
 
   // After running, the buffer should not be empty and there should be one summary
   inspect(bench_obj.buffer.is_empty(), content="false")
-  inspect(bench_obj.summaries.length(), content="1")
+  inspect(bench_obj.summaries.len(), content="1")
 
   // Run another benchmark to ensure we can add multiple
   bench_obj.bench(
@@ -173,7 +173,7 @@ test "bench - T struct and bench method" {
   )
 
   // Should now have two summaries
-  inspect(bench_obj.summaries.length(), content="2")
+  inspect(bench_obj.summaries.len(), content="2")
 }
 
 ///|
@@ -196,9 +196,9 @@ test "bench - monotonic clock functionality" {
 ///|
 test "bench - keep stores value" {
   let b = new()
-  assert_eq(b.summaries.length(), 0)
+  assert_eq(b.summaries.len(), 0)
   b.keep(123)
-  assert_eq(b.summaries.length(), 0)
+  assert_eq(b.summaries.len(), 0)
   b.keep(456)
-  assert_eq(b.summaries.length(), 0)
+  assert_eq(b.summaries.len(), 0)
 }

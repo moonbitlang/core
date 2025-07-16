@@ -106,7 +106,7 @@ pub fn end() -> Unit {
   let sbuf = StringBuffer::StringBuffer([])
   coverage_log(counters.val, sbuf)
   let line_buf = StringBuilder::new()
-  for i in 0..<sbuf.inner().length() {
+  for i in 0..<sbuf.inner().len() {
     let str = sbuf.inner()[i]
     let mut start = 0
     for j in 0..<str.length() {

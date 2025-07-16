@@ -88,7 +88,7 @@ pub fn[K, V] new(capacity~ : Int = 8) -> T[K, V] {
 ///   inspect(map.get(2), content="Some(\"two\")")
 /// ```
 pub fn[K : Hash + Eq, V] from_array(arr : Array[(K, V)]) -> T[K, V] {
-  let m = new(capacity=arr.length())
+  let m = new(capacity=arr.len())
   arr.each(e => m.set(e.0, e.1))
   m
 }
@@ -490,7 +490,7 @@ test "of" {
 ///
 /// ```moonbit
 ///   let samples : Array[@hashmap.T[Int, String]] = @quickcheck.samples(5)
-///   inspect(samples.length(), content="5")
+///   inspect(samples.len(), content="5")
 /// ```
 pub impl[K : @quickcheck.Arbitrary + Hash + Eq, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[
   K,

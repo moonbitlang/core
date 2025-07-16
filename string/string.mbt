@@ -24,7 +24,7 @@
 ///
 /// For efficiency considerations, it's recommended to use `Buffer` instead.
 pub fn String::from_array(chars : Array[Char]) -> String {
-  let buf = StringBuilder::new(size_hint=chars.length() * 4)
+  let buf = StringBuilder::new(size_hint=chars.len() * 4)
   for c in chars {
     buf.write_char(c)
   }

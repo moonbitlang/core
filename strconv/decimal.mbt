@@ -146,7 +146,7 @@ fn to_double_priv(self : Decimal) -> Double raise StrConvError {
   // right shift
   while self.decimal_point > 0 {
     let mut n = 0
-    if self.decimal_point >= powtab.length() {
+    if self.decimal_point >= powtab.len() {
       n = 60
     } else {
       n = powtab[self.decimal_point]
@@ -158,7 +158,7 @@ fn to_double_priv(self : Decimal) -> Double raise StrConvError {
   while self.decimal_point < 0 ||
         (self.decimal_point == 0 && self.digits[0].to_int() < 5) {
     let mut n = 0
-    if -self.decimal_point >= powtab.length() {
+    if -self.decimal_point >= powtab.len() {
       n = 60
     } else {
       n = powtab[-self.decimal_point]
@@ -609,7 +609,7 @@ test "shift" {
     (195312L, 9, "99999744"),
     (1953125L, 9, "1000000000"),
   ]
-  for i in 0..<tests.length() {
+  for i in 0..<tests.len() {
     let t = tests[i]
     let d = Decimal::from_int64_priv(t.0)
     d.shift_priv(t.1)

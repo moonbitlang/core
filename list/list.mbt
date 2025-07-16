@@ -66,7 +66,7 @@ pub impl[A : @json.FromJson] @json.FromJson for T[A] with from_json(json, path) 
   guard json is Array(arr) else {
     raise @json.JsonDecodeError((path, "@list.from_json: expected array"))
   }
-  for i = arr.length() - 1, list = Empty; i >= 0; {
+  for i = arr.len() - 1, list = Empty; i >= 0; {
     continue i - 1, list.prepend(A::from_json(arr[i], path.add_index(i)))
   } else {
     list
@@ -90,7 +90,7 @@ pub fn[A : @json.FromJson] from_json(
 ///   assert_eq(ls, @list.from_array([1, 2, 3, 4, 5]))
 /// ```
 pub fn[A] from_array(arr : Array[A]) -> T[A] {
-  for i = arr.length() - 1, list = Empty; i >= 0; {
+  for i = arr.len() - 1, list = Empty; i >= 0; {
     continue i - 1, More(arr[i], tail=list)
   } else {
     list

@@ -23,7 +23,7 @@ pub fn[V : Compare] T::from_iter(iter : Iter[V]) -> T[V] {
 #deprecated("Use @sorted_set.from_array instead")
 pub fn[V : Compare] of(array : Array[V]) -> T[V] {
   let set = new()
-  for i in 0..<array.length() {
+  for i in 0..<array.len() {
     set.add(array[i])
   }
   set

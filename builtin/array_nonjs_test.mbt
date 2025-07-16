@@ -23,7 +23,7 @@ test "array_retain" {
   let arr = [1, 2, 3, 4, 5]
   assert_eq(arr.capacity(), 5)
   arr.retain(x => x % 2 == 0)
-  assert_eq(arr.length(), 2)
+  assert_eq(arr.len(), 2)
   assert_eq(arr.capacity(), 5)
   assert_eq(arr[0], 2)
   assert_eq(arr[1], 4)

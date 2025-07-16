@@ -138,7 +138,7 @@ test "HAMT::from_array" {
 test "to_array" {
   let m = @hashmap.of([(1, "one"), (2, "two")])
   let arr = m.to_array()
-  inspect(arr.length(), content="2")
+  inspect(arr.len(), content="2")
   assert_eq(arr.contains((1, "one")), true)
   assert_eq(arr.contains((2, "two")), true)
   assert_eq(arr.contains((3, "three")), false)
@@ -690,5 +690,5 @@ test "HAMT::each" {
 ///|
 test "arbitary" {
   let m : Array[@hashmap.T[Int, Int]] = @quickcheck.samples(10)
-  inspect(m.length(), content="10")
+  inspect(m.len(), content="10")
 }

@@ -30,7 +30,7 @@ pub fn[V] singleton(value : V) -> T[V] {
 /// Initialize an set from an array.
 pub fn[V : Compare] from_array(array : Array[V]) -> T[V] {
   let set = new()
-  for i in 0..<array.length() {
+  for i in 0..<array.len() {
     set.add(array[i])
   }
   set

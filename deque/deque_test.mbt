@@ -647,7 +647,7 @@ test "test_from_vec" {
         vec.push(i)
       }
       let vd = @deque.from_array(vec)
-      assert_eq(vd.length(), vec.length())
+      assert_eq(vd.length(), vec.len())
       for i in 0..<vd.length() {
         assert_eq(vd[i], vec[i])
       }

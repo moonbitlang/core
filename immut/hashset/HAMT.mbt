@@ -346,7 +346,7 @@ pub impl[A : Show] Show for T[A] with output(self, logger) {
 
 ///|
 pub fn[A : Eq + Hash] from_array(arr : Array[A]) -> T[A] {
-  loop (arr.length(), new()) {
+  loop (arr.len(), new()) {
     (0, set) => set
     (n, set) => {
       let k = arr[n - 1]

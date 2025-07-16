@@ -69,7 +69,7 @@ pub fn[K] Set::new(capacity~ : Int = 8) -> Set[K] {
 ///|
 /// Create a hash set from array.
 pub fn[K : Hash + Eq] Set::from_array(arr : Array[K]) -> Set[K] {
-  let m = Set::new(capacity=arr.length())
+  let m = Set::new(capacity=arr.len())
   arr.each(e => m.add(e))
   m
 }
@@ -427,7 +427,7 @@ pub impl[K : Hash + Eq] Eq for Set[K] with op_equal(self, other) {
 
 ///|
 pub fn[K : Hash + Eq] Set::of(arr : FixedArray[K]) -> Set[K] {
-  let length = arr.length()
+  let length = arr.len()
   let m = Set::new(capacity=length)
   // arr.iter((e) => { m.set(e.0, e.1) })
   for i in 0..<length {

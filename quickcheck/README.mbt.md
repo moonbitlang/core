@@ -15,7 +15,7 @@ test "basic generation" {
 
   // Generate with size parameter
   let sized : Array[Int] = @quickcheck.gen(size=5)
-  inspect(sized.length() <= 5, content="true")
+  inspect(sized.len() <= 5, content="true")
 }
 ```
 

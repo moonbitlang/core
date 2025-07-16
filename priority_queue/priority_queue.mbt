@@ -34,7 +34,7 @@ pub fn[A] new() -> T[A] {
 /// ```
 pub fn[A : Compare] from_array(arr : Array[A]) -> T[A] {
   // CR: bad formatting
-  let len = arr.length()
+  let len = arr.len()
   for i = 0, acc = Node::Nil {
     if i < len {
       continue i + 1, meld(acc, Cons(content=arr[i], sibling=Nil, child=Nil))
@@ -94,7 +94,7 @@ pub fn[A : Compare] to_array(self : T[A]) -> Array[A] {
 pub fn[A : Compare] iter(self : T[A]) -> Iter[A] {
   Iter::new(yield_ => {
     let arr = self.to_array()
-    for i in 0..<arr.length() {
+    for i in 0..<arr.len() {
       if yield_(arr[i]) == IterEnd {
         break IterEnd
       }

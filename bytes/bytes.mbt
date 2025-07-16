@@ -34,13 +34,13 @@
 ///   )
 /// ```
 pub fn Bytes::from_array(arr : Array[Byte]) -> Bytes {
-  Bytes::makei(arr.length(), i => arr[i])
+  Bytes::makei(arr.len(), i => arr[i])
 }
 
 ///|
 /// same as `Bytes::from_array`
 pub fn from_array(arr : Array[Byte]) -> Bytes {
-  Bytes::makei(arr.length(), i => arr[i])
+  Bytes::makei(arr.len(), i => arr[i])
 }
 
 ///|

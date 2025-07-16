@@ -63,7 +63,7 @@ pub fn[K, V] clear(self : T[K, V]) -> Unit {
 /// ```moonbit
 ///   let map = @hashmap.of([(1, "one"), (2, "two")])
 ///   let pairs = map.iter().to_array()
-///   inspect(pairs.length(), content="2")
+///   inspect(pairs.len(), content="2")
 ///   inspect(pairs.contains((1, "one")), content="true")
 ///   inspect(pairs.contains((2, "two")), content="true")
 /// ```
@@ -177,7 +177,7 @@ pub fn[K, V] to_array(self : T[K, V]) -> Array[(K, V)] {
   }
   if !res.is_empty() {
     let mut res_idx = 1
-    while res_idx < res.length() && i < self.capacity {
+    while res_idx < res.len() && i < self.capacity {
       if self.entries[i] is Some({ key, value, .. }) {
         res[res_idx] = (key, value)
         res_idx += 1

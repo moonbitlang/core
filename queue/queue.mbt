@@ -34,8 +34,8 @@ pub fn[A] new() -> T[A] {
 ///   assert_eq(queue.length(), 3)
 /// ```
 pub fn[A] from_array(arr : Array[A]) -> T[A] {
-  guard arr.length() > 0 else { return new() }
-  let length = arr.length()
+  guard arr.len() > 0 else { return new() }
+  let length = arr.len()
   let last = { content: arr[length - 1], next: None }
   let first = for i = length - 2, x = last; i >= 0; {
     continue i - 1, { content: arr[i], next: Some(x) }
