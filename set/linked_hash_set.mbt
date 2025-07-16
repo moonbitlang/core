@@ -427,7 +427,7 @@ pub impl[K : Hash + Eq] Eq for Set[K] with op_equal(self, other) {
 
 ///|
 pub fn[K : Hash + Eq] Set::of(arr : FixedArray[K]) -> Set[K] {
-  let length = arr.len()
+  let length = arr.length()
   let m = Set::new(capacity=length)
   // arr.iter((e) => { m.set(e.0, e.1) })
   for i in 0..<length {
