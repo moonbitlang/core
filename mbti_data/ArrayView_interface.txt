@@ -1,0 +1,50 @@
+fn[T] ArrayView::all(Self[T], (T) -> Bool raise?) -> Bool raise?        // .//array/array.mbti:68:68
+fn[T] ArrayView::any(Self[T], (T) -> Bool raise?) -> Bool raise?        // .//array/array.mbti:69:69
+fn[T : Eq] ArrayView::contains(Self[T], T) -> Bool        // .//array/array.mbti:70:70
+fn[T] ArrayView::each(Self[T], (T) -> Unit raise?) -> Unit raise?        // .//array/array.mbti:71:71
+fn[T] ArrayView::eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?        // .//array/array.mbti:72:72
+fn[T] ArrayView::filter(Self[T], (T) -> Bool raise?) -> Array[T] raise?        // .//array/array.mbti:73:73
+fn[A, B] ArrayView::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?        // .//array/array.mbti:74:74
+fn[A, B] ArrayView::foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?        // .//array/array.mbti:75:75
+fn[A] ArrayView::iter(Self[A]) -> Iter[A]        // .//array/array.mbti:76:76
+fn[A] ArrayView::iter2(Self[A]) -> Iter2[Int, A]        // .//array/array.mbti:77:77
+fn ArrayView::join(Self[String], @string.StringView) -> String        // .//array/array.mbti:78:78
+fn[T, U] ArrayView::map(Self[T], (T) -> U raise?) -> Array[U] raise?        // .//array/array.mbti:79:79
+fn[T] ArrayView::map_inplace(Self[T], (T) -> T raise?) -> Unit raise?        // .//array/array.mbti:80:80
+fn[T, U] ArrayView::mapi(Self[T], (Int, T) -> U raise?) -> Array[U] raise?        // .//array/array.mbti:81:81
+fn[T] ArrayView::mapi_inplace(Self[T], (Int, T) -> T raise?) -> Unit raise?        // .//array/array.mbti:82:82
+fn[A, B] ArrayView::rev_fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?        // .//array/array.mbti:83:83
+fn[A, B] ArrayView::rev_foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?        // .//array/array.mbti:84:84
+fn[T] ArrayView::rev_inplace(Self[T]) -> Unit        // .//array/array.mbti:85:85
+fn[T] ArrayView::to_array(Self[T]) -> Array[T]        // .//array/array.mbti:86:86
+fn[T] ArrayView::length(Self[T]) -> Int        // .//builtin/builtin.mbti:138:138
+fn[T] ArrayView::op_as_view(Self[T], start~ : Int = .., end? : Int) -> Self[T]        // .//builtin/builtin.mbti:139:139
+fn[T] ArrayView::op_get(Self[T], Int) -> T        // .//builtin/builtin.mbti:140:140
+fn[T] ArrayView::op_set(Self[T], Int, T) -> Unit        // .//builtin/builtin.mbti:141:141
+fn[T] ArrayView::swap(Self[T], Int, Int) -> Unit        // .//builtin/builtin.mbti:142:142
+fn[T] ArrayView::unsafe_get(Self[T], Int) -> T        // .//builtin/builtin.mbti:143:143
+fn[T] ArrayView::all(Self[T], (T) -> Bool raise?) -> Bool raise?        // .//target/wasm-gc/release/check/array/array.mbti:68:68
+fn[T] ArrayView::any(Self[T], (T) -> Bool raise?) -> Bool raise?        // .//target/wasm-gc/release/check/array/array.mbti:69:69
+fn[T : Eq] ArrayView::contains(Self[T], T) -> Bool        // .//target/wasm-gc/release/check/array/array.mbti:70:70
+fn[T] ArrayView::each(Self[T], (T) -> Unit raise?) -> Unit raise?        // .//target/wasm-gc/release/check/array/array.mbti:71:71
+fn[T] ArrayView::eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?        // .//target/wasm-gc/release/check/array/array.mbti:72:72
+fn[T] ArrayView::filter(Self[T], (T) -> Bool raise?) -> Array[T] raise?        // .//target/wasm-gc/release/check/array/array.mbti:73:73
+fn[A, B] ArrayView::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?        // .//target/wasm-gc/release/check/array/array.mbti:74:74
+fn[A, B] ArrayView::foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?        // .//target/wasm-gc/release/check/array/array.mbti:75:75
+fn[A] ArrayView::iter(Self[A]) -> Iter[A]        // .//target/wasm-gc/release/check/array/array.mbti:76:76
+fn[A] ArrayView::iter2(Self[A]) -> Iter2[Int, A]        // .//target/wasm-gc/release/check/array/array.mbti:77:77
+fn ArrayView::join(Self[String], @string.StringView) -> String        // .//target/wasm-gc/release/check/array/array.mbti:78:78
+fn[T, U] ArrayView::map(Self[T], (T) -> U raise?) -> Array[U] raise?        // .//target/wasm-gc/release/check/array/array.mbti:79:79
+fn[T] ArrayView::map_inplace(Self[T], (T) -> T raise?) -> Unit raise?        // .//target/wasm-gc/release/check/array/array.mbti:80:80
+fn[T, U] ArrayView::mapi(Self[T], (Int, T) -> U raise?) -> Array[U] raise?        // .//target/wasm-gc/release/check/array/array.mbti:81:81
+fn[T] ArrayView::mapi_inplace(Self[T], (Int, T) -> T raise?) -> Unit raise?        // .//target/wasm-gc/release/check/array/array.mbti:82:82
+fn[A, B] ArrayView::rev_fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?        // .//target/wasm-gc/release/check/array/array.mbti:83:83
+fn[A, B] ArrayView::rev_foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?        // .//target/wasm-gc/release/check/array/array.mbti:84:84
+fn[T] ArrayView::rev_inplace(Self[T]) -> Unit        // .//target/wasm-gc/release/check/array/array.mbti:85:85
+fn[T] ArrayView::to_array(Self[T]) -> Array[T]        // .//target/wasm-gc/release/check/array/array.mbti:86:86
+fn[T] ArrayView::length(Self[T]) -> Int        // .//target/wasm-gc/release/check/builtin/builtin.mbti:138:138
+fn[T] ArrayView::op_as_view(Self[T], start~ : Int = .., end? : Int) -> Self[T]        // .//target/wasm-gc/release/check/builtin/builtin.mbti:139:139
+fn[T] ArrayView::op_get(Self[T], Int) -> T        // .//target/wasm-gc/release/check/builtin/builtin.mbti:140:140
+fn[T] ArrayView::op_set(Self[T], Int, T) -> Unit        // .//target/wasm-gc/release/check/builtin/builtin.mbti:141:141
+fn[T] ArrayView::swap(Self[T], Int, Int) -> Unit        // .//target/wasm-gc/release/check/builtin/builtin.mbti:142:142
+fn[T] ArrayView::unsafe_get(Self[T], Int) -> T        // .//target/wasm-gc/release/check/builtin/builtin.mbti:143:143
