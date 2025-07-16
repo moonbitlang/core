@@ -1,0 +1,51 @@
+fn StringView::char_at(Self, Int) -> Char        // ./string/string.mbti:19:19
+fn StringView::char_length(Self) -> Int        // ./string/string.mbti:20:20
+fn StringView::char_length_eq(Self, Int) -> Bool        // ./string/string.mbti:21:21
+fn StringView::char_length_ge(Self, Int) -> Bool        // ./string/string.mbti:22:22
+fn StringView::charcode_at(Self, Int) -> Int        // ./string/string.mbti:23:23
+fn StringView::charcodes(Self, start~ : Int = .., end? : Int) -> Self        // ./string/string.mbti:24:24
+fn StringView::contains(Self, Self) -> Bool        // ./string/string.mbti:25:25
+fn StringView::contains_char(Self, Char) -> Bool        // ./string/string.mbti:26:26
+fn StringView::data(Self) -> String        // ./string/string.mbti:27:27
+fn StringView::find(Self, Self) -> Int?        // ./string/string.mbti:28:28
+fn StringView::find_by(Self, (Char) -> Bool) -> Int?        // ./string/string.mbti:29:29
+fn[A] StringView::fold(Self, init~ : A, (A, Char) -> A) -> A        // ./string/string.mbti:30:30
+fn StringView::from_array(Array[Char]) -> Self        // ./string/string.mbti:31:31
+fn StringView::from_iter(Iter[Char]) -> Self        // ./string/string.mbti:32:32
+fn StringView::has_prefix(Self, Self) -> Bool        // ./string/string.mbti:33:33
+fn StringView::has_suffix(Self, Self) -> Bool        // ./string/string.mbti:34:34
+fn StringView::is_blank(Self) -> Bool        // ./string/string.mbti:35:35
+fn StringView::is_empty(Self) -> Bool        // ./string/string.mbti:36:36
+fn StringView::iter(Self) -> Iter[Char]        // ./string/string.mbti:37:37
+fn StringView::iter2(Self) -> Iter2[Int, Char]        // ./string/string.mbti:38:38
+fn StringView::length(Self) -> Int        // ./string/string.mbti:39:39
+fn StringView::make(Int, Char) -> Self        // ./string/string.mbti:40:40
+fn StringView::offset_of_nth_char(Self, Int) -> Int?        // ./string/string.mbti:41:41
+#deprecated
+fn StringView::op_as_view(Self, start~ : Int = .., end? : Int) -> Self         // ./string/string.mbti:43:43
+fn StringView::op_get(Self, Int) -> Int        // ./string/string.mbti:44:44
+fn StringView::pad_end(Self, Int, Char) -> String        // ./string/string.mbti:45:45
+fn StringView::pad_start(Self, Int, Char) -> String        // ./string/string.mbti:46:46
+fn StringView::repeat(Self, Int) -> Self        // ./string/string.mbti:47:47
+fn StringView::replace(Self, old~ : Self, new~ : Self) -> Self        // ./string/string.mbti:48:48
+fn StringView::replace_all(Self, old~ : Self, new~ : Self) -> Self        // ./string/string.mbti:49:49
+fn StringView::rev(Self) -> String        // ./string/string.mbti:50:50
+fn StringView::rev_find(Self, Self) -> Int?        // ./string/string.mbti:51:51
+fn[A] StringView::rev_fold(Self, init~ : A, (A, Char) -> A) -> A        // ./string/string.mbti:52:52
+fn StringView::rev_iter(Self) -> Iter[Char]        // ./string/string.mbti:53:53
+fn StringView::split(Self, Self) -> Iter[Self]        // ./string/string.mbti:54:54
+fn StringView::start_offset(Self) -> Int        // ./string/string.mbti:55:55
+fn StringView::to_lower(Self) -> Self        // ./string/string.mbti:56:56
+fn StringView::to_upper(Self) -> Self        // ./string/string.mbti:57:57
+fn StringView::trim(Self, Self) -> Self        // ./string/string.mbti:58:58
+fn StringView::trim_end(Self, Self) -> Self        // ./string/string.mbti:59:59
+fn StringView::trim_space(Self) -> Self        // ./string/string.mbti:60:60
+fn StringView::trim_start(Self, Self) -> Self        // ./string/string.mbti:61:61
+fn StringView::unsafe_charcode_at(Self, Int) -> Int        // ./string/string.mbti:62:62
+fn StringView::view(Self, start_offset~ : Int = .., end_offset? : Int) -> Self        // ./string/string.mbti:63:63
+impl Compare for StringView        // ./string/string.mbti:64:64
+impl Default for StringView        // ./string/string.mbti:65:65
+impl Eq for StringView        // ./string/string.mbti:66:66
+impl Hash for StringView        // ./string/string.mbti:67:67
+impl Show for StringView        // ./string/string.mbti:68:68
+impl ToJson for StringView        // ./string/string.mbti:69:69
