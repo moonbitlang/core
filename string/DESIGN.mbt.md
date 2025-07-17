@@ -44,7 +44,7 @@
 test "unsafe vs safe" {
   // Unsafe: May split surrogate pairs
   let emoji = "🎉"
-  let _ = emoji.char_at(1) // Gets second half of surrogate pair
+  let _ = emoji.get_char(1) // Gets second half of surrogate pair
   // Safe: Uses iterator
   for c in "Hello 🌍".iter() {
     // Properly handles both ASCII and Unicode chars
