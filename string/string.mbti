@@ -18,10 +18,12 @@ pub suberror CreatingViewError {
 impl Show for CreatingViewError
 
 type StringView
+#deprecated
 fn StringView::char_at(Self, Int) -> Char
 fn StringView::char_length(Self) -> Int
 fn StringView::char_length_eq(Self, Int) -> Bool
 fn StringView::char_length_ge(Self, Int) -> Bool
+#deprecated
 fn StringView::charcode_at(Self, Int) -> Int
 fn StringView::charcodes(Self, start~ : Int = .., end? : Int) -> Self
 fn StringView::contains(Self, Self) -> Bool
@@ -71,6 +73,7 @@ impl Hash for StringView
 impl Show for StringView
 impl ToJson for StringView
 
+#deprecated
 fn String::char_at(String, Int) -> Char
 fn String::char_length_eq(String, Int, start_offset~ : Int = .., end_offset? : Int) -> Bool
 fn String::char_length_ge(String, Int, start_offset~ : Int = .., end_offset? : Int) -> Bool
