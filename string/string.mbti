@@ -32,6 +32,8 @@ fn StringView::find_by(Self, (Char) -> Bool) -> Int?
 fn[A] StringView::fold(Self, init~ : A, (A, Char) -> A) -> A
 fn StringView::from_array(Array[Char]) -> Self
 fn StringView::from_iter(Iter[Char]) -> Self
+fn StringView::get(Self, Int) -> Int?
+fn StringView::get_char(Self, Int) -> Char?
 fn StringView::has_prefix(Self, Self) -> Bool
 fn StringView::has_suffix(Self, Self) -> Bool
 fn StringView::is_blank(Self) -> Bool
@@ -84,6 +86,8 @@ fn String::find_by(String, (Char) -> Bool) -> Int?
 fn[A] String::fold(String, init~ : A, (A, Char) -> A) -> A
 fn String::from_array(Array[Char]) -> String
 fn String::from_iter(Iter[Char]) -> String
+fn String::get(String, Int) -> Int?
+fn String::get_char(String, Int) -> Char?
 fn String::has_prefix(String, StringView) -> Bool
 fn String::has_suffix(String, StringView) -> Bool
 #deprecated
