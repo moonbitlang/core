@@ -388,3 +388,151 @@ pub impl Hash for View with hash_combine(self : View, hasher : Hasher) -> Unit {
     hasher.combine_uint(self.unsafe_charcode_at(i).reinterpret_as_uint())
   }
 }
+
+///|
+pub suberror CreatingViewError {
+  IndexOutOfBounds
+  InvalidIndex
+} derive(Show)
+
+///|
+/// Creates a view of a string with proper UTF-16 boundary validation.
+/// 
+/// # Parameters
+/// 
+/// - `start` : Starting UTF-16 code unit index (default: 0)
+///   - If positive: counts from the beginning of the string
+///   - If negative: counts from the end of the string (e.g., -1 means last position)
+/// - `end` : Ending UTF-16 code unit index (optional)
+///   - If `None`: extends to the end of the string
+///   - If positive: counts from the beginning of the string
+///   - If negative: counts from the end of the string
+/// 
+/// # Returns
+/// 
+/// - A `View` representing the specified substring range
+/// 
+/// # Errors
+/// 
+/// - `IndexOutOfBounds` : If start or end indices are out of valid range
+/// - `InvalidIndex` : If start or end position would split a UTF-16 surrogate pair
+/// 
+/// This prevents creating views that would split surrogate pairs, which would
+/// result in invalid Unicode characters.
+/// 
+/// # Performance
+/// 
+/// This function has O(1) complexity as it only performs boundary checks
+/// without scanning the string content.
+/// 
+/// # Examples
+/// 
+/// ```mbt
+///   let str = "Hello🤣World"
+///   let view1 = try? str[0:5]
+///   inspect(view1, content=(
+///   #|Ok("Hello")
+/// ))
+///   let view2 = try? str[-5:]
+///   inspect(view2, content=(
+///   #|Ok("World")
+/// ))
+///   let view3 = try? str[:6]
+///   inspect(view3, content="Err(InvalidIndex)")
+/// ```
+pub fn String::op_as_view(
+  self : String,
+  start~ : Int = 0,
+  end? : Int
+) -> View raise CreatingViewError {
+  let len = self.length()
+  let end = match end {
+    None => len
+    Some(end) => if end < 0 { len + end } else { end }
+  }
+  let start = if start < 0 { len + start } else { start }
+  guard start >= 0 && start <= end && end <= len else { raise IndexOutOfBounds }
+  if start < len && is_trailing_surrogate(self.unsafe_charcode_at(start)) {
+    raise InvalidIndex
+  }
+  if end < len && is_trailing_surrogate(self.unsafe_charcode_at(end)) {
+    raise InvalidIndex
+  }
+  { str: self, start, end }
+}
+
+///|
+/// Creates a subview of an existing view with proper UTF-16 boundary validation.
+/// 
+/// # Parameters
+/// 
+/// - `start` : Starting UTF-16 code unit index relative to this view (default: 0)
+///   - If positive: counts from the beginning of this view
+///   - If negative: counts from the end of this view
+/// - `end` : Ending UTF-16 code unit index relative to this view (optional)
+///   - If `None`: extends to the end of this view
+///   - If positive: counts from the beginning of this view
+///   - If negative: counts from the end of this view
+/// 
+/// # Returns
+/// 
+/// - A `View` representing the specified subrange of this view
+/// 
+/// # Errors
+/// 
+/// - `IndexOutOfBounds` : If start or end indices are out of this view's range
+/// - `InvalidIndex` : If start or end position would split a UTF-16 surrogate pair
+/// 
+/// This prevents creating views that would split surrogate pairs, which would
+/// result in invalid Unicode characters.
+/// 
+/// # Performance
+/// 
+/// This function has O(1) complexity as it only performs boundary checks
+/// without scanning the string content.
+/// 
+/// # Examples
+/// 
+/// ```mbt
+///   let str = "Hello🤣World"[1:-1] // "ello🤣Worl"
+///   let view1 = try? str[0:6]
+///   inspect(view1, content=(
+///   #|Ok("ello🤣")
+/// ))
+///   let view2 = try? str[-2:]
+///   inspect(view2, content=(
+///   #|Ok("rl")
+/// ))
+///   let view3 = try? str[:5]
+///   inspect(view3, content=("Err(InvalidIndex)"))
+/// ```
+pub fn View::op_as_view(
+  self : View,
+  start~ : Int = 0,
+  end? : Int
+) -> View raise CreatingViewError {
+  let str_len = self.str.length()
+
+  // Calculate absolute positions in the original string
+  let abs_end = match end {
+    None => self.end
+    Some(end) => if end < 0 { self.end + end } else { self.start + end }
+  }
+  let abs_start = if start < 0 { self.end + start } else { self.start + start }
+
+  // Validate bounds against the original string
+  guard abs_start >= self.start && abs_start <= abs_end && abs_end <= self.end else {
+    raise IndexOutOfBounds
+  }
+
+  // Check for surrogate pair boundaries
+  if abs_start < str_len &&
+    is_trailing_surrogate(self.str.unsafe_charcode_at(abs_start)) {
+    raise InvalidIndex
+  }
+  if abs_end < str_len &&
+    is_trailing_surrogate(self.str.unsafe_charcode_at(abs_end)) {
+    raise InvalidIndex
+  }
+  { str: self.str, start: abs_start, end: abs_end }
+}

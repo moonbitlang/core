@@ -11,6 +11,12 @@ fn from_array(Array[Char]) -> String
 fn from_iter(Iter[Char]) -> String
 
 // Types and methods
+pub suberror CreatingViewError {
+  IndexOutOfBounds
+  InvalidIndex
+}
+impl Show for CreatingViewError
+
 type StringView
 fn StringView::char_at(Self, Int) -> Char
 fn StringView::char_length(Self) -> Int
@@ -35,8 +41,7 @@ fn StringView::iter2(Self) -> Iter2[Int, Char]
 fn StringView::length(Self) -> Int
 fn StringView::make(Int, Char) -> Self
 fn StringView::offset_of_nth_char(Self, Int) -> Int?
-#deprecated
-fn StringView::op_as_view(Self, start~ : Int = .., end? : Int) -> Self
+fn StringView::op_as_view(Self, start~ : Int = .., end? : Int) -> Self raise CreatingViewError
 fn StringView::op_get(Self, Int) -> Int
 fn StringView::pad_end(Self, Int, Char) -> String
 fn StringView::pad_start(Self, Int, Char) -> String
@@ -90,8 +95,7 @@ fn String::iter2(String) -> Iter2[Int, Char]
 #deprecated
 fn String::last_index_of(String, String, from? : Int) -> Int
 fn String::offset_of_nth_char(String, Int, start_offset~ : Int = .., end_offset? : Int) -> Int?
-#deprecated
-fn String::op_as_view(String, start~ : Int = .., end? : Int) -> StringView
+fn String::op_as_view(String, start~ : Int = .., end? : Int) -> StringView raise CreatingViewError
 fn String::pad_end(String, Int, Char) -> String
 fn String::pad_start(String, Int, Char) -> String
 fn String::repeat(String, Int) -> String
