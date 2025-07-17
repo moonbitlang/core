@@ -1259,3 +1259,101 @@ test "rev" {
   let dq3_reversed = dq3.rev()
   @json.inspect(dq3_reversed.as_views(), content=[[6, 5, 4, 3], []])
 }
+
+///|
+test "filter_map basic" {
+  let dq = @deque.of([1, 2, 3, 4, 5])
+
+  // Keep even numbers and convert to strings
+  let result = dq.filter_map(fn(x) {
+    if x % 2 == 0 {
+      Some(x.to_string())
+    } else {
+      None
+    }
+  })
+  inspect(result, content="@deque.of([\"2\", \"4\"])")
+}
+
+///| Test filter_map with all elements filtered out
+test "filter_map empty result" {
+  let dq = @deque.of([1, 3, 5])
+  let result = dq.filter_map(fn(x) {
+    if x % 2 == 0 {
+      Some(x.to_string())
+    } else {
+      None
+    }
+  })
+  inspect(result.length(), content="0")
+  inspect(result.capacity(), content="3")
+}
+
+///| Test filter_map with error propagation
+test "filter_map error propagation" {
+  let dq = @deque.of([1, 2, 3])
+  let v = try? dq.filter_map(fn(x) {
+      if x == 2 {
+        raise Failure("Error at 2")
+      }
+      Some(x * 2)
+    })
+  inspect(
+    v,
+    content=(
+      #|Err(Failure("Error at 2"))
+    ),
+  )
+}
+
+///| Basic filter test
+test "filter basic" {
+  let dq = @deque.of([1, 2, 3, 4, 5])
+  let evens = dq.filter(fn(x) { x % 2 == 0 })
+  inspect(evens, content="@deque.of([2, 4])")
+  inspect(evens.capacity(), content="5") // Should retain original capacity
+}
+
+///| Test filter with empty result
+test "filter empty result" {
+  let dq = @deque.of([1, 3, 5])
+  let result = dq.filter(fn(x) { x % 2 == 0 })
+  inspect(result.length(), content="0")
+  inspect(result.is_empty(), content="true")
+}
+
+///| Test filter with error propagation
+test "filter error propagation" {
+  let dq = @deque.of([1, 2, 3])
+  try
+    dq.filter(fn(x) {
+      if x == 2 {
+        raise Failure("Error at 2")
+      }
+      x % 2 == 0
+    })
+  catch {
+    Failure(msg) => inspect(msg, content="Error at 2")
+  } noraise {
+    _ => assert_true(false)
+  }
+}
+
+///| Test filter preserves order
+test "filter order preservation" {
+  let dq = @deque.of([3, 1, 4, 1, 5, 9, 2])
+  let odds = dq.filter(fn(x) { x % 2 != 0 })
+  inspect(odds, content="@deque.of([3, 1, 1, 5, 9])")
+}
+
+///| Test filter with large deque
+test "filter large deque" {
+  let dq = @deque.new(capacity=100)
+  for i in 1..=100 {
+    dq.push_back(i)
+  }
+  let multiples_of_7 = dq.filter(fn(x) { x % 7 == 0 })
+  inspect(multiples_of_7.length(), content="14") // 100/7 ≈ 14
+  inspect(multiples_of_7.front(), content="Some(7)")
+  inspect(multiples_of_7.back(), content="Some(98)")
+}

@@ -1661,3 +1661,68 @@ pub fn[A] T::rev(self : T[A]) -> T[A] {
   // Create new deque with reversed elements
   T::{ buf: new_buf, len, head: 0, tail: if len == 0 { 0 } else { len - 1 } }
 }
+
+///|
+/// Creates a new deque containing all elements from the input deque that satisfy
+/// the given predicate function.
+///
+/// Parameters:
+///
+/// * `self` : The deque to filter.
+/// * `f` : A function that takes an element and returns a boolean
+/// indicating whether the element should be included in the result.
+///
+/// Returns a new deque containing only the elements for which the predicate
+/// function returns `true`. The relative order of the elements is preserved.
+///
+/// Example:
+///
+/// ```moonbit
+///   let dq = @deque.of([1, 2, 3, 4, 5])
+///   let evens = dq.filter((x) => { x % 2 == 0 })
+///   inspect(evens, content="@deque.of([2, 4])")
+/// ```
+pub fn[A] filter(self : T[A], f : (A) -> Bool raise?) -> T[A] raise? {
+  let result = new(capacity=self.capacity())
+  for v in self {
+    if f(v) {
+      result.push_back(v)
+    }
+  }
+  result
+}
+
+///| Reverses the order of elements in the deque in place, modifying the original
+/// deque.
+///
+/// Parameters:
+///
+/// * `self` : The deque to be reversed.
+///
+/// Example:
+///
+/// ```moonbit
+///   let dq = @deque.of([1, 2, 3, 4, 5])
+///   
+///   // Keep even numbers and convert them to strings
+///   let result = dq.filter_map(fn(x) {
+///     if x % 2 == 0 {
+///       Some(x.to_string())
+///     } else {
+///       None
+///     }
+///   })
+///   
+///   inspect(result, content="@deque.of([\"2\", \"4\"])")
+/// ```
+///
+pub fn[A, B] filter_map(self : T[A], f : (A) -> B? raise?) -> T[B] raise? {
+  let result = new(capacity=self.capacity())
+  for x in self {
+    match f(x) {
+      Some(y) => result.push_back(y)
+      None => continue
+    }
+  }
+  result
+}

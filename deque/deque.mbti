@@ -27,6 +27,8 @@ fn[A] T::copy(Self[A]) -> Self[A]
 fn[A] T::drain(Self[A], start~ : Int, len? : Int) -> Self[A]
 fn[A] T::each(Self[A], (A) -> Unit) -> Unit
 fn[A] T::eachi(Self[A], (Int, A) -> Unit) -> Unit
+fn[A] T::filter(Self[A], (A) -> Bool raise?) -> Self[A] raise?
+fn[A, B] T::filter_map(Self[A], (A) -> B? raise?) -> Self[B] raise?
 #deprecated
 fn[A] T::filter_map_inplace(Self[A], (A) -> A?) -> Unit
 fn[A] T::flatten(Self[Self[A]]) -> Self[A]
