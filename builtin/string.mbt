@@ -50,34 +50,6 @@ fn code_point_of_surrogate_pair(leading : Int, trailing : Int) -> Char {
 }
 
 ///|
-/// Returns the UTF-16 code unit at the given index.
-/// 
-/// This function will panic if the index is out of bounds.
-///
-/// # Examples
-///
-/// ```mbt
-///   let s = "Hello🤣";
-///   inspect(s.charcode_at(0), content="72");
-///   inspect(s.charcode_at(5), content="55358"); // First surrogate of 🤣
-///   inspect(s.charcode_at(6), content="56611"); // Second surrogate of 🤣
-/// ```
-///
-pub fn String::charcode_at(self : String, index : Int) -> Int = "%string_get"
-
-///|
-/// Returns the Unicode code point at the given index without bounds checking.
-pub fn String::unsafe_char_at(self : String, index : Int) -> Char {
-  let c1 = self.unsafe_charcode_at(index)
-  if is_leading_surrogate(c1) {
-    let c2 = self.unsafe_charcode_at(index + 1)
-    code_point_of_surrogate_pair(c1, c2)
-  } else {
-    c1.unsafe_to_char()
-  }
-}
-
-///|
 /// Returns the number of Unicode code points (characters) in the string.
 ///
 /// This method counts actual Unicode characters, properly handling surrogate pairs

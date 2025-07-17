@@ -496,6 +496,7 @@ fn Double::until(Double, Double, step~ : Double = .., inclusive~ : Bool = ..) ->
 fn Double::upto(Double, Double, inclusive~ : Bool = ..) -> Iter[Double]
 
 fn String::char_length(String, start_offset~ : Int = .., end_offset? : Int) -> Int
+#deprecated
 fn String::charcode_at(String, Int) -> Int
 #deprecated
 fn String::charcode_length(String) -> Int
@@ -504,14 +505,12 @@ fn String::codepoint_at(String, Int) -> Char
 #deprecated
 fn String::codepoint_length(String, start_offset~ : Int = .., end_offset? : Int) -> Int
 fn String::escape(String) -> String
-#deprecated
-fn String::get(String, Int) -> Char
 fn String::length(String) -> Int
 fn String::make(Int, Char) -> String
-#deprecated
-fn String::op_get(String, Int) -> Char
+fn String::op_get(String, Int) -> Int
 fn String::substring(String, start~ : Int = .., end? : Int) -> String
 fn String::to_string(String) -> String
+#deprecated
 fn String::unsafe_char_at(String, Int) -> Char
 fn String::unsafe_charcode_at(String, Int) -> Int
 
