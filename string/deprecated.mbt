@@ -19,40 +19,6 @@ pub fn String::concat(self : Array[String], separator~ : String = "") -> String 
 }
 
 ///|
-fn index_at_(self : String, offset_by : Int, start~ : Int = 0) -> Int? {
-  if self.offset_of_nth_char(offset_by, start_offset=start) is Some(index) {
-    Some(index)
-  } else if offset_by == self.char_length(start_offset=start) {
-    Some(self.length())
-  } else {
-    None
-  }
-}
-
-///|
-fn index_at_rev_(self : String, offset_by : Int, end? : Int) -> Int? {
-  match end {
-    Some(end) =>
-      if offset_by == 0 {
-        Some(end)
-      } else if self.offset_of_nth_char(-offset_by, end_offset=end)
-        is Some(index) {
-        Some(index)
-      } else {
-        None
-      }
-    None =>
-      if offset_by == 0 {
-        Some(self.length())
-      } else if self.offset_of_nth_char(-offset_by) is Some(index) {
-        Some(index)
-      } else {
-        None
-      }
-  }
-}
-
-///|
 #deprecated("Use `Array::join` instead.")
 pub fn concat(strings : Array[String], separator~ : String = "") -> String {
   match strings {
