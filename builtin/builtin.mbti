@@ -504,8 +504,6 @@ fn String::codepoint_at(String, Int) -> Char
 #deprecated
 fn String::codepoint_length(String, start_offset~ : Int = .., end_offset? : Int) -> Int
 fn String::escape(String) -> String
-#deprecated
-fn String::get(String, Int) -> Char
 fn String::length(String) -> Int
 fn String::make(Int, Char) -> String
 fn String::op_get(String, Int) -> Int

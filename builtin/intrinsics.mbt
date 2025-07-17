@@ -1539,29 +1539,6 @@ pub fn String::charcode_length(self : String) -> Int = "%string_length"
 pub fn String::op_get(self : String, idx : Int) -> Int = "%string_get"
 
 ///|
-/// Retrieves the character at the specified index in a string.
-///
-/// Parameters:
-///
-/// * `string` : The string to access.
-/// * `index` : The position in the string from which to retrieve the character.
-///
-/// Returns a Unicode character at the specified position in the string.
-///
-/// Throws a runtime error if the index is negative or greater than or equal to
-/// the length of the string.
-///
-/// Example:
-///
-/// ```moonbit
-///   let s = "Hello, 世界"
-///   inspect(s.charcode_at(0), content="72")
-///   inspect(s.char_at(7), content="世")
-/// ```
-#deprecated("use `charcode_at` instead")
-pub fn String::get(self : String, idx : Int) -> Char = "%string_get"
-
-///|
 /// Returns the UTF-16 code unit at a given position in the string without
 /// performing bounds checking. This is a low-level function that provides direct
 /// access to the internal representation of the string.
