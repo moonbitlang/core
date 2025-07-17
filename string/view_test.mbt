@@ -705,3 +705,285 @@ test "View::split take" {
     ),
   )
 }
+
+///|
+test "String::op_as_view basic usage" {
+  let str = "Hello🤣World"
+
+  // Basic usage - positive indices
+  let view1 = str[0:5]
+  inspect(view1, content="Hello")
+
+  // Negative indexing from end
+  let view2 = str[-5:]
+  inspect(view2, content="World")
+
+  // Full string view
+  let view3 = str[:]
+  inspect(view3, content="Hello🤣World")
+
+  // Start from middle
+  let view4 = str[5:]
+  inspect(view4, content="🤣World")
+
+  // End before middle
+  let view5 = str[:5]
+  inspect(view5, content="Hello")
+}
+
+///|
+test "String::op_as_view error cases" {
+  let str = "Hello🤣World"
+
+  // InvalidIndex - splits surrogate pair
+  let view1 = try? str[:6]
+  inspect(view1, content="Err(InvalidIndex)")
+
+  // IndexOutOfBounds - beyond string length
+  let view2 = try? str[0:20]
+  inspect(view2, content="Err(IndexOutOfBounds)")
+
+  // IndexOutOfBounds - negative index too large
+  let view3 = try? str[-20:]
+  inspect(view3, content="Err(IndexOutOfBounds)")
+
+  // IndexOutOfBounds - start > end
+  let view4 = try? str[5:3]
+  inspect(view4, content="Err(IndexOutOfBounds)")
+
+  // InvalidIndex - start on trailing surrogate
+  let view5 = try? str[6:8]
+  inspect(view5, content="Err(InvalidIndex)")
+}
+
+///|
+test "String::op_as_view with surrogate pairs" {
+  let str = "Hello🤣😭😂World"
+
+  // View containing complete emoji
+  let view1 = str[5:7]
+  inspect(view1, content="🤣")
+
+  // View containing multiple emojis
+  let view2 = str[5:11]
+  inspect(view2, content="🤣😭😂")
+
+  // View from middle of emoji sequence
+  let view3 = str[7:9]
+  inspect(view3, content="😭")
+
+  // Invalid - splits first emoji
+  let view4 = try? str[5:6]
+  inspect(view4, content="Err(InvalidIndex)")
+
+  // Invalid - splits second emoji
+  let view5 = try? str[7:8]
+  inspect(view5, content="Err(InvalidIndex)")
+}
+
+///|
+test "View::op_as_view basic usage" {
+  let str = "Hello🤣World"[1:-1] // "ello🤣Worl"
+
+  // Basic subview creation
+  let view1 = str[0:6]
+  inspect(view1, content="ello🤣")
+
+  // Negative indexing within view
+  let view2 = str[-2:]
+  inspect(view2, content="rl")
+
+  // Full view
+  let view3 = str[:]
+  inspect(view3, content="ello🤣Worl")
+
+  // Start from middle
+  let view4 = str[4:]
+  inspect(view4, content="🤣Worl")
+
+  // End before middle
+  let view5 = str[:4]
+  inspect(view5, content="ello")
+}
+
+///|
+test "View::op_as_view error cases" {
+  let str = "Hello🤣World"[1:-1] // "ello🤣Worl"
+
+  // IndexOutOfBounds - beyond view range
+  let view1 = try? str[0:15]
+  inspect(view1, content="Err(IndexOutOfBounds)")
+
+  // IndexOutOfBounds - negative index too large
+  let view2 = try? str[-20:]
+  inspect(view2, content="Err(IndexOutOfBounds)")
+
+  // IndexOutOfBounds - start > end
+  let view3 = try? str[5:3]
+  inspect(view3, content="Err(IndexOutOfBounds)")
+
+  // InvalidIndex - splits surrogate pair
+  let view4 = try? str[:5]
+  inspect(view4, content="Err(InvalidIndex)")
+
+  // IndexOutOfBounds - start beyond view
+  let view5 = try? str[11:]
+  inspect(view5, content="Err(IndexOutOfBounds)")
+}
+
+///|
+test "View::op_as_view with surrogate pairs" {
+  let str = "Hello🤣😭😂World"[1:-1] // "ello🤣😭😂Worl"
+
+  // View containing complete emoji
+  let view1 = str[4:6]
+  inspect(view1, content="🤣")
+
+  // View containing multiple emojis
+  let view2 = str[4:10]
+  inspect(view2, content="🤣😭😂")
+
+  // View from middle of emoji sequence
+  let view3 = str[6:8]
+  inspect(view3, content="😭")
+
+  // Invalid - splits first emoji
+  let view4 = try? str[4:5]
+  inspect(view4, content="Err(InvalidIndex)")
+
+  // Invalid - splits second emoji
+  let view5 = try? str[6:7]
+  inspect(view5, content="Err(InvalidIndex)")
+}
+
+///|
+test "nested View::op_as_view operations" {
+  let str = "Hello🤣World"
+
+  // Create first view
+  let view1 = str[1:-1] // "ello🤣Worl"
+  inspect(view1, content="ello🤣Worl")
+
+  // Create subview from first view
+  let view2 = view1[2:6] // "lo🤣"
+  inspect(view2, content="lo🤣")
+
+  // Create subview from second view
+  let view3 = view2[2:] // "🤣"
+  inspect(view3, content="🤣")
+
+  // Create subview with negative indexing
+  let view4 = view1[-4:-1] // "Wor"
+  inspect(view4, content="Wor")
+}
+
+///|
+test "View::op_as_view edge cases" {
+  let str = "Hello🤣World"
+
+  // Empty view at start
+  let view1 = str[0:0]
+  inspect(view1, content="")
+
+  // Empty view at end
+  let view2 = str[str.length():str.length()]
+  inspect(view2, content="")
+
+  // Single character view
+  let view3 = str[0:1]
+  inspect(view3, content="H")
+
+  // Single emoji view
+  let view4 = str[5:7]
+  inspect(view4, content="🤣")
+
+  // View with only ASCII characters
+  let view5 = str[0:5]
+  inspect(view5, content="Hello")
+}
+
+///|
+test "View::op_as_view with complex Unicode" {
+  let str = "Hello🤣😭😂🌍World"
+
+  // View with multiple emojis
+  let view1 = str[5:13]
+  inspect(view1, content="🤣😭😂🌍")
+
+  // View with mixed content
+  let view2 = str[4:14]
+  inspect(view2, content="o🤣😭😂🌍W")
+
+  // View ending with emoji
+  let view3 = str[-7:]
+  inspect(view3, content="🌍World")
+
+  // View starting with emoji
+  let view4 = str[5:]
+  inspect(view4, content="🤣😭😂🌍World")
+
+  // Invalid - splits emoji
+  let view5 = try? str[5:6]
+  inspect(view5, content="Err(InvalidIndex)")
+}
+
+///|
+test "View::op_as_view performance characteristics" {
+  let str = "Hello🤣World"
+
+  // Test that operations are O(1) - multiple operations
+  let view1 = str[1:-1]
+  let view2 = view1[1:-1]
+  let view3 = view2[1:-1]
+  let view4 = view3[1:-1]
+  inspect(view4, content="o🤣W")
+
+  // Test with longer string
+  let long_str = "Hello🤣WorldHello🤣WorldHello🤣World"
+  let long_view1 = long_str[5:15]
+  let long_view2 = long_view1[2:8]
+  inspect(long_view2, content="WorldH")
+}
+
+///|
+test "View::op_as_view with empty and single character strings" {
+  let empty_str = ""
+
+  // Empty string operations
+  let view1 = empty_str[:]
+  inspect(view1, content="")
+  let view2 = empty_str[0:0]
+  inspect(view2, content="")
+
+  // Single character string
+  let single_str = "A"
+  let view3 = single_str[:]
+  inspect(view3, content="A")
+  let view4 = single_str[0:1]
+  inspect(view4, content="A")
+  let view5 = single_str[0:0]
+  inspect(view5, content="")
+}
+
+///|
+test "View::op_as_view boundary validation" {
+  let str = "Hello🤣World"
+
+  // Test boundary conditions
+  let view1 = str[0:str.length()]
+  inspect(view1, content="Hello🤣World")
+  let view2 = str[str.length():str.length()]
+  inspect(view2, content="")
+
+  // Test negative boundary conditions
+  let view3 = str[-str.length():]
+  inspect(view3, content="Hello🤣World")
+  let view4 = str[-1:]
+  inspect(view4, content="d")
+
+  // Test invalid boundaries
+  let view5 = try? str[str.length() + 1:]
+  inspect(view5, content="Err(IndexOutOfBounds)")
+  let view6 = try? str[-str.length() - 1:]
+  inspect(view6, content="Err(IndexOutOfBounds)")
+}
