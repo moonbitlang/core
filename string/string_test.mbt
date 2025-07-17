@@ -297,7 +297,7 @@ test "String::index_of basic matching" {
 test "String::index_of overlapping patterns" {
   // Testing overlapping patterns
   inspect("aaa".find("aa"), content="Some(0)")
-  inspect("aaa".view(start_offset=1).find("aa"), content="Some(0)")
+  inspect("aaa"[1:].find("aa"), content="Some(0)")
 }
 
 ///|
