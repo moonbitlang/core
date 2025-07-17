@@ -216,11 +216,11 @@ test "has_prefix" {
 /// # Example
 /// 
 /// ```moonbit
-///   inspect("hello world".remove_suffix(" world"), content="Some(\"hello\")")
-///   inspect("hello world".remove_suffix(" moon"), content="None")
-///   inspect("hello".remove_suffix("hello"), content="Some(\"\")")
+///   inspect("hello world".strip_suffix(" world"), content="Some(\"hello\")")
+///   inspect("hello world".strip_suffix(" moon"), content="None")
+///   inspect("hello".strip_suffix("hello"), content="Some(\"\")")
 /// ```
-pub fn remove_suffix(self : String, suffix : View) -> String? {
+pub fn strip_suffix(self : String, suffix : View) -> String? {
   if self.has_suffix(suffix) {
     Some(self.charcodes(end=self.length() - suffix.length()).to_string())
   } else {
@@ -229,27 +229,27 @@ pub fn remove_suffix(self : String, suffix : View) -> String? {
 }
 
 ///|
-test "remove_prefix" {
-  inspect("hello world".remove_prefix("hello "), content="Some(\"world\")")
-  inspect("hello world".remove_prefix("hi "), content="None")
-  inspect("hello".remove_prefix("hello"), content="Some(\"\")")
-  inspect("".remove_prefix(""), content="Some(\"\")")
-  inspect("".remove_prefix("a"), content="None")
-  inspect("abc".remove_prefix(""), content="Some(\"abc\")")
-  inspect("😀hello".remove_prefix("😀"), content="Some(\"hello\")")
-  inspect("😀😃hello".remove_prefix("😀😃"), content="Some(\"hello\")")
+test "strip_prefix" {
+  inspect("hello world".strip_prefix("hello "), content="Some(\"world\")")
+  inspect("hello world".strip_prefix("hi "), content="None")
+  inspect("hello".strip_prefix("hello"), content="Some(\"\")")
+  inspect("".strip_prefix(""), content="Some(\"\")")
+  inspect("".strip_prefix("a"), content="None")
+  inspect("abc".strip_prefix(""), content="Some(\"abc\")")
+  inspect("😀hello".strip_prefix("😀"), content="Some(\"hello\")")
+  inspect("😀😃hello".strip_prefix("😀😃"), content="Some(\"hello\")")
 }
 
 ///|
-test "remove_suffix" {
-  inspect("hello world".remove_suffix(" world"), content="Some(\"hello\")")
-  inspect("hello world".remove_suffix(" moon"), content="None")
-  inspect("hello".remove_suffix("hello"), content="Some(\"\")")
-  inspect("".remove_suffix(""), content="Some(\"\")")
-  inspect("".remove_suffix("a"), content="None")
-  inspect("abc".remove_suffix(""), content="Some(\"abc\")")
-  inspect("hello😀".remove_suffix("😀"), content="Some(\"hello\")")
-  inspect("hello😀😃".remove_suffix("😀😃"), content="Some(\"hello\")")
+test "strip_suffix" {
+  inspect("hello world".strip_suffix(" world"), content="Some(\"hello\")")
+  inspect("hello world".strip_suffix(" moon"), content="None")
+  inspect("hello".strip_suffix("hello"), content="Some(\"\")")
+  inspect("".strip_suffix(""), content="Some(\"\")")
+  inspect("".strip_suffix("a"), content="None")
+  inspect("abc".strip_suffix(""), content="Some(\"abc\")")
+  inspect("hello😀".strip_suffix("😀"), content="Some(\"hello\")")
+  inspect("hello😀😃".strip_suffix("😀😃"), content="Some(\"hello\")")
 }
 
 ///|
@@ -262,11 +262,11 @@ test "remove_suffix" {
 /// # Example
 /// 
 /// ```moonbit
-///   inspect("hello world".remove_prefix("hello "), content="Some(\"world\")")
-///   inspect("hello world".remove_prefix("hi "), content="None")
-///   inspect("hello".remove_prefix("hello"), content="Some(\"\")")
+///   inspect("hello world".strip_prefix("hello "), content="Some(\"world\")")
+///   inspect("hello world".strip_prefix("hi "), content="None")
+///   inspect("hello".strip_prefix("hello"), content="Some(\"\")")
 /// ```
-pub fn remove_prefix(self : String, prefix : View) -> String? {
+pub fn strip_prefix(self : String, prefix : View) -> String? {
   if self.has_prefix(prefix) {
     Some(self.charcodes(start=prefix.length()).to_string())
   } else {
