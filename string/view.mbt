@@ -406,17 +406,23 @@ pub suberror CreatingViewError {
 /// # Examples
 /// 
 /// ```mbt
-///   let str = "Hello🤣World"
-///   let view1 = try? str[0:5]
-///   inspect(view1, content=(
-///   #|Ok("Hello")
-/// ))
-///   let view2 = try? str[-5:]
-///   inspect(view2, content=(
-///   #|Ok("World")
-/// ))
-///   let view3 = try? str[:6]
-///   inspect(view3, content="Err(InvalidIndex)")
+/// let str = "Hello🤣World"
+/// let view1 = try? str[0:5]
+/// inspect(
+///   view1,
+///   content=(
+///     #|Ok("Hello")
+///   ),
+/// )
+/// let view2 = try? str[-5:]
+/// inspect(
+///   view2,
+///   content=(
+///     #|Ok("World")
+///   ),
+/// )
+/// let view3 = try? str[:6]
+/// inspect(view3, content="Err(InvalidIndex)")
 /// ```
 pub fn String::op_as_view(
   self : String,
