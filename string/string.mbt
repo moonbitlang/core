@@ -298,17 +298,6 @@ pub fn String::offset_of_nth_char(
 }
 
 ///|
-/// Returns the Unicode character at the given offset. Note this is not the n-th character.
-/// 
-/// This has O(1) complexity.
-pub fn String::char_at(self : String, offset : Int) -> Char {
-  guard offset >= 0 && offset < self.length() else {
-    abort("offset out of bounds")
-  }
-  self.unsafe_char_at(offset)
-}
-
-///|
 /// Test if the length of the string is equal to the given length.
 ///
 /// This has O(n) complexity where n is the length in the parameter.

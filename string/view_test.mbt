@@ -430,30 +430,6 @@ test "index_of_nth_char" {
 }
 
 ///|
-test "char_at" {
-  let str = "aa😭b😂cc"
-  let view = str.view(start_offset=1, end_offset=8)
-  inspect(view.char_at(0), content="a")
-  inspect(view.char_at(1), content="😭")
-  inspect(view.char_at(3), content="b")
-  inspect(view.char_at(4), content="😂")
-  inspect(view.char_at(6), content="c")
-}
-
-///|
-test "charcode_at" {
-  let str = "aa😭b😂cc"
-  let view = str.view(start_offset=1, end_offset=8)
-  inspect(view.charcode_at(0), content="97")
-  inspect(view.charcode_at(1), content="55357")
-  inspect(view.charcode_at(2), content="56877")
-  inspect(view.charcode_at(3), content="98")
-  inspect(view.charcode_at(4), content="55357")
-  inspect(view.charcode_at(5), content="56834")
-  inspect(view.charcode_at(6), content="99")
-}
-
-///|
 test "char_length" {
   let str = "aa😭b😂cc"
   let view = str.view(start_offset=1, end_offset=8)
