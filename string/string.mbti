@@ -105,6 +105,8 @@ fn String::offset_of_nth_char(String, Int, start_offset~ : Int = .., end_offset?
 fn String::op_as_view(String, start~ : Int = .., end? : Int) -> StringView raise CreatingViewError
 fn String::pad_end(String, Int, Char) -> String
 fn String::pad_start(String, Int, Char) -> String
+fn String::remove_prefix(String, StringView) -> String?
+fn String::remove_suffix(String, StringView) -> String?
 fn String::repeat(String, Int) -> String
 fn String::replace(String, old~ : StringView, new~ : StringView) -> String
 fn String::replace_all(String, old~ : StringView, new~ : StringView) -> String
