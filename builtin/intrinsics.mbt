@@ -1528,8 +1528,15 @@ pub fn String::length(self : String) -> Int = "%string_length"
 pub fn String::charcode_length(self : String) -> Int = "%string_length"
 
 ///|
-#deprecated("use `String::charcode_at` and `Int::to_char` instead")
-pub fn String::op_get(self : String, idx : Int) -> Char = "%string_get"
+/// Returns the UTF-16 code unit at the given index.
+///
+/// Parameters:
+///
+/// * `string` : The string to access.
+/// * `index` : The position in the string from which to retrieve the code unit.
+///
+/// This method has O(1) complexity.
+pub fn String::op_get(self : String, idx : Int) -> Int = "%string_get"
 
 ///|
 /// Retrieves the character at the specified index in a string.
