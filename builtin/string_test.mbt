@@ -56,25 +56,6 @@ test "panic codepoint_at1" {
 }
 
 ///|
-// test "panic codepoint_at2" {
-//   let str = "Hello🤣🤣🤣"
-//   let _ = str.iter().nth(-1).unwrap()
-
-// }
-
-///|
-test "panic charcode_at with negative index" {
-  let s = "Hello"
-  ignore(s.charcode_at(-1))
-}
-
-///|
-test "charcode_at with valid index" {
-  let s = "Hello"
-  inspect(s.charcode_at(0), content="72")
-}
-
-///|
 test "codepoint_at regular character at end of string" {
   let s = "Hello"
   inspect(s.iter().nth(4).unwrap(), content="o")
@@ -84,16 +65,6 @@ test "codepoint_at regular character at end of string" {
 test "codepoint_at emoji" {
   let s = "👋"
   inspect(s.iter().nth(0).unwrap(), content="👋")
-}
-
-///|
-test "unsafe_char_at" {
-  let s = "a👋b"
-  inspect(s.unsafe_char_at(0), content="a")
-  inspect(s.unsafe_char_at(1), content="👋")
-  // invalid char cannot be inspected
-  inspect(s.unsafe_char_at(2).to_int(), content="56395")
-  inspect(s.unsafe_char_at(3), content="b")
 }
 
 ///|

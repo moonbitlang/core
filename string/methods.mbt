@@ -1102,3 +1102,125 @@ test "rev_fold" {
     111 + 108 + 108 + 101 + 104,
   )
 }
+
+///|
+/// Returns the UTF-16 code unit at the given index. Returns `None` if the index
+/// is out of bounds.
+pub fn String::get(self : String, idx : Int) -> Int? {
+  guard idx >= 0 && idx < self.length() else { return None }
+  Some(self.unsafe_charcode_at(idx))
+}
+
+///|
+/// Returns the UTF-16 code unit at the given index. Returns `None` if the index
+/// is out of bounds.
+pub fn View::get(self : View, idx : Int) -> Int? {
+  guard idx >= 0 && idx < self.length() else { return None }
+  Some(self.unsafe_charcode_at(idx))
+}
+
+///|
+test "String::get supports emoji (surrogate pair)" {
+  let s = "hello"
+  inspect(s.get(0), content="Some(104)")
+  inspect(s.get(4), content="Some(111)")
+  inspect(s.get(5), content="None")
+  inspect(s.get(-1), content="None")
+  let s = "a🤣b"
+  inspect(s.get(0), content="Some(97)")
+  inspect(s.get(1), content="Some(55358)")
+  inspect(s.get(2), content="Some(56611)")
+  inspect(s.get(3), content="Some(98)")
+  inspect(s.get(4), content="None")
+}
+
+///|
+test "View::get basic cases" {
+  let v = "hello"[1:-1]
+  inspect(v.get(0), content="Some(101)")
+  inspect(v.get(2), content="Some(108)")
+  inspect(v.get(3), content="None")
+  inspect(v.get(-1), content="None")
+  let v = "ab🤣cd"[1:-1]
+  inspect(v.get(0), content="Some(98)")
+  inspect(v.get(1), content="Some(55358)")
+  inspect(v.get(2), content="Some(56611)")
+}
+
+///|
+/// Returns the character at the given index. Returns `None` if the index is out
+/// of bounds or the index splits a surrogate pair.
+pub fn String::get_char(self : String, idx : Int) -> Char? {
+  guard idx >= 0 && idx < self.length() else { return None }
+  let c = self.unsafe_charcode_at(idx)
+  if is_leading_surrogate(c) {
+    guard idx + 1 < self.length() else { return None }
+    let next = self.unsafe_charcode_at(idx + 1)
+    if is_trailing_surrogate(next) {
+      Some(code_point_of_surrogate_pair(c, next))
+    } else {
+      None
+    }
+  } else if is_trailing_surrogate(c) {
+    None
+  } else {
+    Some(c.unsafe_to_char())
+  }
+}
+
+///|
+/// Returns the character at the given index. Returns `None` if the index is out
+/// of bounds or the index splits a surrogate pair.
+pub fn View::get_char(self : View, idx : Int) -> Char? {
+  guard idx >= 0 && idx < self.length() else { return None }
+  let c = self.unsafe_charcode_at(idx)
+  if is_leading_surrogate(c) {
+    guard idx + 1 < self.length() else { return None }
+    let next = self.unsafe_charcode_at(idx + 1)
+    if is_trailing_surrogate(next) {
+      Some(code_point_of_surrogate_pair(c, next))
+    } else {
+      None
+    }
+  } else if is_trailing_surrogate(c) {
+    None
+  } else {
+    Some(c.unsafe_to_char())
+  }
+}
+
+///|
+test "String::get_char basic cases" {
+  // Basic ASCII characters
+  let s = "hello"
+  inspect(s.get_char(0), content="Some('h')")
+  inspect(s.get_char(1), content="Some('e')")
+  inspect(s.get_char(4), content="Some('o')")
+  inspect(s.get_char(5), content="None")
+  inspect(s.get_char(-1), content="None")
+
+  // Contains emoji (surrogate pair)
+  let s = "a🤣b"
+  inspect(s.get_char(0), content="Some('a')")
+  inspect(s.get_char(1), content="Some('🤣')")
+  inspect(s.get_char(2), content="None") // Second half of surrogate pair is not a valid char
+  inspect(s.get_char(3), content="Some('b')")
+  inspect(s.get_char(4), content="None")
+}
+
+///|
+test "View::get_char basic cases" {
+  let s = "a🤣b"
+  let v = s[0:-1]
+  inspect(v.get_char(0), content="Some('a')")
+  inspect(v.get_char(1), content="Some('🤣')")
+  inspect(v.get_char(2), content="None")
+  inspect(v.get_char(3), content="None")
+  inspect(v.get_char(4), content="None")
+
+  // Test substring view
+  let v2 = s[1:3] // Only contains the emoji surrogate pair
+  inspect(v2.get_char(0), content="Some('🤣')")
+  inspect(v2.get_char(1), content="None")
+  inspect(v2.get_char(2), content="None")
+}

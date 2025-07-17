@@ -297,7 +297,7 @@ test "String::index_of basic matching" {
 test "String::index_of overlapping patterns" {
   // Testing overlapping patterns
   inspect("aaa".find("aa"), content="Some(0)")
-  inspect("aaa".view(start_offset=1).find("aa"), content="Some(0)")
+  inspect("aaa"[1:].find("aa"), content="Some(0)")
 }
 
 ///|
@@ -682,7 +682,7 @@ test "offset_of_nth_char property" {
   let n = s.char_length()
   for i in 0..<n {
     let index = s.offset_of_nth_char(i).unwrap()
-    assert_eq(s.unsafe_char_at(index), s.iter().nth(i).unwrap())
+    assert_eq(s.get_char(index).unwrap(), s.iter().nth(i).unwrap())
   }
 }
 
@@ -692,7 +692,7 @@ test "offset_of_nth_char property negative" {
   let n = s.char_length()
   for i in 1..=n {
     let index = s.offset_of_nth_char(-i).unwrap()
-    assert_eq(s.unsafe_char_at(index), s.rev_iter().nth(i - 1).unwrap())
+    assert_eq(s.get_char(index).unwrap(), s.rev_iter().nth(i - 1).unwrap())
   }
 }
 
