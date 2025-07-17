@@ -53,7 +53,7 @@ test "write_iter" {
   let sb = StringBuilder::new()
   sb.write_iter(str.iter())
   inspect(sb.to_string(), content="Hello🤣🤣🤣")
-  let str_view = str.view(start_offset=1, end_offset=7)
+  let str_view = str[1:7]
   sb.write_iter(str_view.iter())
   inspect(sb.to_string(), content="Hello🤣🤣🤣ello🤣")
 }

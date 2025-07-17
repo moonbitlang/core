@@ -50,17 +50,3 @@ test "String::offset_of_nth_char_forward with special case" {
   let result2 = s.offset_of_nth_char(5) // Beyond last character
   inspect(result2, content="None")
 }
-
-///|
-test "panic String::char_at with out of bounds offset" {
-  let s = "Hello"
-
-  // Valid index should work
-  let c = s.char_at(0)
-  inspect(c, content="'H'")
-
-  // As this would abort, we do a different test
-  let len = s.length()
-  let last = s.char_at(len - 1)
-  inspect(last, content="'o'")
-}

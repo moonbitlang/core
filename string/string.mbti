@@ -11,11 +11,19 @@ fn from_array(Array[Char]) -> String
 fn from_iter(Iter[Char]) -> String
 
 // Types and methods
+pub suberror CreatingViewError {
+  IndexOutOfBounds
+  InvalidIndex
+}
+impl Show for CreatingViewError
+
 type StringView
+#deprecated
 fn StringView::char_at(Self, Int) -> Char
 fn StringView::char_length(Self) -> Int
 fn StringView::char_length_eq(Self, Int) -> Bool
 fn StringView::char_length_ge(Self, Int) -> Bool
+#deprecated
 fn StringView::charcode_at(Self, Int) -> Int
 fn StringView::charcodes(Self, start~ : Int = .., end? : Int) -> Self
 fn StringView::contains(Self, Self) -> Bool
@@ -26,6 +34,8 @@ fn StringView::find_by(Self, (Char) -> Bool) -> Int?
 fn[A] StringView::fold(Self, init~ : A, (A, Char) -> A) -> A
 fn StringView::from_array(Array[Char]) -> Self
 fn StringView::from_iter(Iter[Char]) -> Self
+fn StringView::get(Self, Int) -> Int?
+fn StringView::get_char(Self, Int) -> Char?
 fn StringView::has_prefix(Self, Self) -> Bool
 fn StringView::has_suffix(Self, Self) -> Bool
 fn StringView::is_blank(Self) -> Bool
@@ -35,8 +45,7 @@ fn StringView::iter2(Self) -> Iter2[Int, Char]
 fn StringView::length(Self) -> Int
 fn StringView::make(Int, Char) -> Self
 fn StringView::offset_of_nth_char(Self, Int) -> Int?
-#deprecated
-fn StringView::op_as_view(Self, start~ : Int = .., end? : Int) -> Self
+fn StringView::op_as_view(Self, start~ : Int = .., end? : Int) -> Self raise CreatingViewError
 fn StringView::op_get(Self, Int) -> Int
 fn StringView::pad_end(Self, Int, Char) -> String
 fn StringView::pad_start(Self, Int, Char) -> String
@@ -64,6 +73,7 @@ impl Hash for StringView
 impl Show for StringView
 impl ToJson for StringView
 
+#deprecated
 fn String::char_at(String, Int) -> Char
 fn String::char_length_eq(String, Int, start_offset~ : Int = .., end_offset? : Int) -> Bool
 fn String::char_length_ge(String, Int, start_offset~ : Int = .., end_offset? : Int) -> Bool
@@ -79,6 +89,8 @@ fn String::find_by(String, (Char) -> Bool) -> Int?
 fn[A] String::fold(String, init~ : A, (A, Char) -> A) -> A
 fn String::from_array(Array[Char]) -> String
 fn String::from_iter(Iter[Char]) -> String
+fn String::get(String, Int) -> Int?
+fn String::get_char(String, Int) -> Char?
 fn String::has_prefix(String, StringView) -> Bool
 fn String::has_suffix(String, StringView) -> Bool
 #deprecated
@@ -90,8 +102,7 @@ fn String::iter2(String) -> Iter2[Int, Char]
 #deprecated
 fn String::last_index_of(String, String, from? : Int) -> Int
 fn String::offset_of_nth_char(String, Int, start_offset~ : Int = .., end_offset? : Int) -> Int?
-#deprecated
-fn String::op_as_view(String, start~ : Int = .., end? : Int) -> StringView
+fn String::op_as_view(String, start~ : Int = .., end? : Int) -> StringView raise CreatingViewError
 fn String::pad_end(String, Int, Char) -> String
 fn String::pad_start(String, Int, Char) -> String
 fn String::repeat(String, Int) -> String
