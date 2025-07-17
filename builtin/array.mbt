@@ -1666,3 +1666,38 @@ pub fn[A] Array::truncate(self : Array[A], len : Int) -> Unit {
   guard len >= 0 && len < self.length() else { return }
   self.unsafe_truncate_to_length(len)
 }
+
+///|
+/// In-place filter and map for Array
+///
+/// # Example
+/// ```moonbit
+/// let arr = [1, 2, 3, 4, 5]
+/// arr.retain_map(fn(x) {
+///   if x % 2 == 0 {
+///     Some(x * 2)
+///   } else {
+///     None
+///   }
+/// })
+/// inspect(arr,content = "[4, 8]")
+/// ```
+pub fn[A] Array::retain_map(self : Array[A], f : (A) -> A?) -> Unit {
+  if self.is_empty() {
+    return
+  }
+  let buf = self.buffer()
+  let len = self.length()
+  let mut write_idx = 0
+  for read_idx in 0..<len {
+    let val = buf[read_idx]
+    match f(val) {
+      Some(new_val) => {
+        buf[write_idx] = new_val
+        write_idx += 1
+      }
+      None => ()
+    }
+  }
+  self.unsafe_truncate_to_length(write_idx)
+}

@@ -22,7 +22,7 @@ fn abs(x : Double) -> Double {
 }
 
 ///|
-let two_over_pi : Array[Int] = [
+let two_over_pi : FixedArray[Int] = [
   0xA2F983, 0x6E4E44, 0x1529FC, 0x2757D1, 0xF534DD, 0xC0DB62, 0x95993C, 0x439041,
   0xFE5163, 0xABDEBB, 0xC561B7, 0x246E3A, 0x424DD2, 0xE00649, 0x2EEA09, 0xD1921C,
   0xFE1DEB, 0x1CB129, 0xA73EE8, 0x8235F5, 0x2EBB44, 0x84E99C, 0x7026B4, 0x5F7E41,
@@ -35,7 +35,7 @@ let two_over_pi : Array[Int] = [
 ]
 
 ///|
-let pi_over_2 : Array[Double] = [
+let pi_over_2 : FixedArray[Double] = [
   1.57079625129699707031e+00, // 0x3FF921FB, 0x40000000 */
    7.54978941586159635335e-08, // 0x3E74442D, 0x00000000 */
    5.39030252995776476554e-15, // 0x3CF84698, 0x80000000 */
@@ -47,7 +47,7 @@ let pi_over_2 : Array[Double] = [
 ]
 
 ///|
-let npio2_hw : Array[Int] = [
+let npio2_hw : FixedArray[Int] = [
   0x3FF921FB, 0x400921FB, 0x4012D97C, 0x401921FB, 0x401F6A7A, 0x4022D97C, 0x4025FDBB,
   0x402921FB, 0x402C463A, 0x402F6A7A, 0x4031475C, 0x4032D97C, 0x40346B9C, 0x4035FDBB,
   0x40378FDB, 0x403921FB, 0x403AB41B, 0x403C463A, 0x403DD85A, 0x403F6A7A, 0x40407E4C,

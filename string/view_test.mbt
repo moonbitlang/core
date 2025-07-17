@@ -681,3 +681,27 @@ test "hash" {
   assert_eq(a.hash(), c.hash())
   assert_not_eq(a.hash(), b.hash())
 }
+
+///|
+test "View::replace" {
+  inspect("hello"[:].replace(old="o", new="a"), content="hella")
+  inspect("hello"[:].replace(old="world", new="x"), content="hello")
+  inspect("abc"[:].replace(old="", new="x"), content="xabc")
+}
+
+///|
+test "View::repeat" {
+  inspect("ab"[:].repeat(1), content="ab")
+  inspect("ab"[:].repeat(0), content="")
+  inspect("ab"[:].repeat(-2), content="")
+}
+
+///|
+test "View::split take" {
+  inspect(
+    "a,b,c,d"[:].split(",").take(2).map(View::to_string).collect(),
+    content=(
+      #|["a", "b"]
+    ),
+  )
+}

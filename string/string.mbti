@@ -11,10 +11,6 @@ fn from_array(Array[Char]) -> String
 fn from_iter(Iter[Char]) -> String
 
 // Types and methods
-type StringIndex
-impl Eq for StringIndex
-impl Show for StringIndex
-
 type StringView
 fn StringView::char_at(Self, Int) -> Char
 fn StringView::char_length(Self) -> Int
@@ -85,10 +81,6 @@ fn String::from_array(Array[Char]) -> String
 fn String::from_iter(Iter[Char]) -> String
 fn String::has_prefix(String, StringView) -> Bool
 fn String::has_suffix(String, StringView) -> Bool
-#deprecated
-fn String::index_at(String, Int, start~ : StringIndex = ..) -> StringIndex?
-#deprecated
-fn String::index_at_rev(String, Int, end? : StringIndex) -> StringIndex?
 #deprecated
 fn String::index_of(String, String, from~ : Int = ..) -> Int
 fn String::is_blank(String) -> Bool
