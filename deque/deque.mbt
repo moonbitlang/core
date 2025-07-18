@@ -1683,7 +1683,12 @@ pub fn[A] T::rev(self : T[A]) -> T[A] {
 ///   inspect(evens, content="@deque.of([2, 4])")
 /// ```
 pub fn[A] filter(self : T[A], f : (A) -> Bool raise?) -> T[A] raise? {
-  let result = new(capacity=self.capacity())
+  let initial_capacity = if self.capacity() < self.length() {
+    self.capacity()
+  } else {
+    self.length()
+  }
+  let result = new(capacity=initial_capacity)
   for v in self {
     if f(v) {
       result.push_back(v)
@@ -1717,7 +1722,12 @@ pub fn[A] filter(self : T[A], f : (A) -> Bool raise?) -> T[A] raise? {
 /// ```
 ///
 pub fn[A, B] filter_map(self : T[A], f : (A) -> B? raise?) -> T[B] raise? {
-  let result = new(capacity=self.capacity())
+  let initial_capacity = if self.capacity() < self.length() {
+    self.capacity()
+  } else {
+    self.length()
+  }
+  let result = new(capacity=initial_capacity)
   for x in self {
     match f(x) {
       Some(y) => result.push_back(y)
