@@ -45,13 +45,27 @@ pub impl ToJson for BigInt with to_json(self : BigInt) -> Json {
 
 ///|
 pub impl @json.FromJson for BigInt with from_json(json, path) {
-  guard json is String(s) else {
-    raise @json.JsonDecodeError(
-      (path, "BigInt::from_json: expected number in string representation"),
-    )
+  match json {
+    Number(n, repr~) =>
+      if n != @double.infinity && n != @double.neg_infinity {
+        if n < 0 {
+          BigInt::from_int64(n.to_int64())
+        } else {
+          BigInt::from_uint64(n.to_uint64())
+        }
+      } else {
+        raise @json.JsonDecodeError(
+          (path, "BigInt::from_json: invalid number representation \{repr}"),
+        )
+      }
+    String(s) => BigInt::from_string(s)
+    _ =>
+      raise @json.JsonDecodeError(
+        (
+          path, "BigInt::from_json: expected number in number or string representation",
+        ),
+      )
   }
-  // TODO: Capture parse failure
-  BigInt::from_string(s)
 }
 
 ///|
