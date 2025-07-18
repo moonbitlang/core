@@ -544,10 +544,7 @@ test "Bool from_json error handling" {
 test "Int64 from_json error handling" {
   let json_number = Json::number(123)
   let result : Result[Int64, _] = try? @json.from_json(json_number)
-  inspect(
-    result,
-    content="Err(JsonDecodeError(($, \"Int64::from_json: expected number in string representation\")))",
-  )
+  inspect(result, content="Ok(123)")
   let json_invalid_string = Json::string("not a number")
   let result : Result[Int64, _] = try? @json.from_json(json_invalid_string)
   inspect(
@@ -570,15 +567,14 @@ test "UInt from_json error handling" {
 test "UInt64 from_json error handling" {
   let json_number = Json::number(123)
   let result : Result[UInt64, _] = try? @json.from_json(json_number)
-  inspect(
-    result,
-    content="Err(JsonDecodeError(($, \"UInt64::from_json: expected number in string representation\")))",
-  )
+  inspect(result, content="Ok(123)")
   let json_invalid_string = Json::string("not a number")
   let result : Result[UInt64, _] = try? @json.from_json(json_invalid_string)
   inspect(
     result,
-    content="Err(JsonDecodeError(($, \"UInt64::from_json: parsing failure invalid syntax\")))",
+    content=(
+      #|Err(JsonDecodeError(($, "UInt64::from_json: parsing failure invalid syntax")))
+    ),
   )
 }
 
@@ -628,12 +624,22 @@ test "Char from_json error handling" {
 test "BigInt from_json error handling" {
   let json_number = Json::number(123)
   let result : Result[BigInt, _] = try? @json.from_json(json_number)
+  inspect(result, content="Ok(123)")
+  let json_number = Json::number(@double.infinity)
+  let result : Result[BigInt, _] = try? @json.from_json(json_number)
   inspect(
     result,
     content=(
-      #|Err(JsonDecodeError(($, "BigInt::from_json: expected number in string representation")))
+      #|Err(JsonDecodeError(($, "BigInt::from_json: invalid number representation None")))
     ),
   )
+}
+
+///|
+test "panic BigInt from_json invalid input" {
+  let json_invalid_string = Json::string("not a number")
+  let _ : Result[BigInt, _] = try? @json.from_json(json_invalid_string)
+
 }
 
 ///|
