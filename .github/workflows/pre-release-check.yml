@@ -11,7 +11,6 @@ jobs:
     strategy:
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest, macos-13]
-      fail-fast: false
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -37,16 +36,6 @@ jobs:
 
       - name: moon check
         run: moon check --deny-warn
-
-      - name: moon info
-        run: |
-          moon info --target wasm,wasm-gc,js,native
-          git diff --exit-code
-
-      - name: format diff
-        run: |
-          moon fmt
-          git diff --exit-code
 
       - name: Set ulimit and run moon test
         if: ${{ matrix.os != 'windows-latest' }}
@@ -87,6 +76,16 @@ jobs:
 
       - name: moon bundle
         run: moon bundle --all
+
+      - name: moon info
+        run: |
+          moon info --target wasm,wasm-gc,js,native
+          git diff --exit-code
+
+      - name: format diff
+        run: |
+          moon fmt
+          git diff --exit-code
 
       - name: check core size
         if: ${{ matrix.os != 'windows-latest' }}
