@@ -82,3 +82,13 @@ test "labeld_break/cross_threshold" {
   let xss = [[3.0, 4.0], [5.0, 6.0]]
   inspect(labeld_break(xss), content="Some(12)")
 }
+
+///|
+test "try!" {
+  let a = "hello world"
+  fn hello() noraise {
+    try! a[1:]
+  }
+
+  inspect(hello(), content="ello world")
+}
