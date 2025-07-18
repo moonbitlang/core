@@ -219,25 +219,18 @@ pub fn[K, V, A] fold_with_key(
   init~ : A,
   f : (A, K, V) -> A raise?
 ) -> A raise? {
-  guard self.inner() is Some(node) else { return init }
-  loop (@list.singleton((node, 0)), init) {
-    (Empty, acc) => acc
-    (More((node, index), tail~), acc) =>
-      match node {
-        Leaf(k, v, bucket) =>
-          continue (
-              tail,
-              bucket.fold(init=f(acc, k, v), (acc, kv) => f(acc, kv.0, kv.1)),
-            )
-        Flat(k, v, _) => continue (tail, f(acc, k, v))
-        Branch(children) =>
-          if index < children.data.length() {
-            let child = children.data.unsafe_get(index)
-            continue (tail.add((node, index + 1)).add((child, 0)), acc)
-          } else {
-            continue (tail, acc)
-          }
-      }
+  fn go(acc, node) raise? {
+    match node {
+      Leaf(k, v, bucket) =>
+        bucket.fold(init=f(acc, k, v), (acc, kv) => f(acc, kv.0, kv.1))
+      Flat(k, v, _) => f(acc, k, v)
+      Branch(children) => children.data.fold(init=acc, go)
+    }
+  }
+
+  match self.inner() {
+    None => init
+    Some(node) => go(init, node)
   }
 }
 
