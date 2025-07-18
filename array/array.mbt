@@ -105,7 +105,7 @@ pub fn[T] Array::makei(
 ///   Array::shuffle_in_place(arr, rand=rand)
 /// ```
 pub fn[T] shuffle_in_place(self : Array[T], rand~ : (Int) -> Int) -> Unit {
-  let n = self.length()
+  let n = self.len()
   for i = n - 1; i > 0; i = i - 1 {
     let j = rand(i + 1) % (i + 1)
     // for safety, perf is not a concern here

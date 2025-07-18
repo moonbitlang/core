@@ -212,7 +212,7 @@ fn[K : Show, V : Show] debug_tree(self : T[K, V]) -> String {
 /// Build a map from an array of key-value pairs.
 /// O(n*log n).
 pub fn[K : Compare, V] from_array(array : Array[(K, V)]) -> T[K, V] {
-  for i = 0, mp = Empty; i < array.length(); {
+  for i = 0, mp = Empty; i < array.len(); {
     let (k, v) = array[i]
     continue i + 1, mp.add(k, v)
   } else {

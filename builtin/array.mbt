@@ -451,7 +451,7 @@ pub fn[T] Array::eachi(
 /// ```mbt
 ///   let v = [3, 4, 5]
 ///   v.clear()
-///   assert_eq(v.length(), 0)
+///   assert_eq(v.len(), 0)
 /// ```
 pub fn[T] Array::clear(self : Array[T]) -> Unit {
   self.unsafe_truncate_to_length(0)
@@ -1618,7 +1618,7 @@ pub fn[A] Array::iter2(self : Array[A]) -> Iter2[Int, A] {
 ///
 /// ```moonbit
 ///   let arr : Array[Int] = Array::default()
-///   inspect(arr.length(), content="0")
+///   inspect(arr.len(), content="0")
 ///   inspect(arr.is_empty(), content="true")
 /// ```
 pub impl[T] Default for Array[T] with default() {

@@ -81,12 +81,12 @@ pub impl[A : Show] Show for T[A] with output(self, logger) {
 /// ```
 pub fn[A] from_array(arr : Array[A]) -> T[A] {
   let deq = T::{
-    buf: UninitializedArray::make(arr.length()),
-    len: arr.length(),
+    buf: UninitializedArray::make(arr.len()),
+    len: arr.len(),
     head: 0,
-    tail: arr.length() - 1,
+    tail: arr.len() - 1,
   }
-  for i in 0..<arr.length() {
+  for i in 0..<arr.len() {
     deq.buf[i] = arr[i]
   }
   deq
@@ -1300,7 +1300,7 @@ pub impl[A : @json.FromJson] @json.FromJson for T[A] with from_json(json, path) 
   guard json is Array(arr) else {
     raise @json.JsonDecodeError((path, "Deque::from_json: expected array"))
   }
-  let len = arr.length()
+  let len = arr.len()
   let buf = UninitializedArray::make(len)
   let head = 0
   let tail = len

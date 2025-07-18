@@ -463,7 +463,7 @@ pub impl[K : Show, V : Show] Show for T[K, V] with output(self, logger) {
 
 ///|
 pub fn[K : Eq + Hash, V] from_array(arr : Array[(K, V)]) -> T[K, V] {
-  loop (arr.length(), new()) {
+  loop (arr.len(), new()) {
     (0, map) => map
     (n, map) => {
       let (k, v) = arr[n - 1]

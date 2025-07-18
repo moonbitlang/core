@@ -405,7 +405,7 @@ test "panic_length_ge invalid surrogate pair" {
 test "take first character from surrogate pairs" {
   let str = "Hello😀😃"
   let view = str.view()
-  let result = view.iter().take(6).collect().length()
+  let result = view.iter().take(6).collect().len()
   // 6 characters total: 5 ASCII + 1 emoji
   inspect(result, content="6")
 }

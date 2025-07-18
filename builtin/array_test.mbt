@@ -15,14 +15,14 @@
 ///|
 test "array_new" {
   let arr : Array[Int] = Array::new()
-  assert_eq(arr.length(), 0)
+  assert_eq(arr.len(), 0)
 }
 
 ///|
 test "array_from_fixed_array" {
   let fixed_arr : FixedArray[Int] = [1, 2, 3]
   let arr = Array::from_fixed_array(fixed_arr)
-  assert_eq(arr.length(), 3)
+  assert_eq(arr.len(), 3)
   assert_eq(arr[0], 1)
   assert_eq(arr[1], 2)
   assert_eq(arr[2], 3)
@@ -31,7 +31,7 @@ test "array_from_fixed_array" {
 ///|
 test "array_make" {
   let arr = Array::make(5, 42)
-  assert_eq(arr.length(), 5)
+  assert_eq(arr.len(), 5)
   for i in 0..<5 {
     assert_eq(arr[i], 42)
   }
@@ -43,7 +43,7 @@ test "array_realloc" {
   arr.push(1)
   arr.push(2)
   arr.push(3) // This should trigger a reallocation
-  assert_eq(arr.length(), 3)
+  assert_eq(arr.len(), 3)
   assert_eq(arr[0], 1)
   assert_eq(arr[1], 2)
   assert_eq(arr[2], 3)
@@ -99,7 +99,7 @@ test "array_add" {
 test "array_pop" {
   let arr = [1, 2, 3]
   assert_eq(arr.pop(), Some(3))
-  assert_eq(arr.length(), 2)
+  assert_eq(arr.len(), 2)
 }
 
 ///|
@@ -112,14 +112,14 @@ test "array_pop_empty" {
 test "array_unsafe_pop" {
   let arr = [1, 2, 3]
   assert_eq(arr.unsafe_pop(), 3)
-  assert_eq(arr.length(), 2)
+  assert_eq(arr.len(), 2)
 }
 
 ///|
 test "array_push" {
   let arr = [1, 2, 3]
   arr.push(4)
-  assert_eq(arr.length(), 4)
+  assert_eq(arr.len(), 4)
   assert_eq(arr[3], 4)
 }
 
@@ -136,14 +136,14 @@ test "array_append" {
   let arr1 = [1, 2, 3]
   let arr2 = [4, 5, 6]
   arr1.append(arr2)
-  assert_eq(arr1.length(), 6)
+  assert_eq(arr1.len(), 6)
   // assert_eq(arr1.capacity(), 6)
   assert_eq(arr1[3], 4)
   let cap = 20
   let arr3 = Array::new(capacity=cap)
   arr3.resize(cap, 10)
   arr1.append(arr3)
-  assert_eq(arr1.length(), 6 + cap)
+  assert_eq(arr1.len(), 6 + cap)
   // assert_eq(arr1.capacity(), arr1.length())
   // Not testing capacity as it may be platform/algorithm
   // dependent and not guaranteed to be equal to length
@@ -197,7 +197,7 @@ test "array_rev_eachi" {
 test "array_clear" {
   let arr = [1, 2, 3]
   arr.clear()
-  assert_eq(arr.length(), 0)
+  assert_eq(arr.len(), 0)
 }
 
 ///|

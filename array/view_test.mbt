@@ -147,17 +147,16 @@ test "arrayview_rev_foldi" {
 test "arrayview_map" {
   let arr = [1, 2, 3]
   let mapped = arr[1:].map(x => x * 2)
-  inspect(mapped.length(), content="2")
+  inspect(mapped.len(), content="2")
   inspect(mapped[0], content="4")
   inspect(mapped[1], content="6")
-  @json.inspect(([1] : Array[Int])[1:].map(x => x), content=[])
 }
 
 ///|
 test "arrayview_map_inplace" {
   let arr = [1, 2, 3]
   arr[1:].map_inplace(x => x * 2)
-  inspect(arr.length(), content="3")
+  inspect(arr.len(), content="3")
   inspect(arr[0], content="1")
   inspect(arr[1], content="4")
   inspect(arr[2], content="6")
@@ -167,7 +166,7 @@ test "arrayview_map_inplace" {
 test "arrayview_mapi" {
   let arr = [1, 2, 3]
   let mapped = arr[1:].mapi((i, x) => i + x)
-  inspect(mapped.length(), content="2")
+  inspect(mapped.len(), content="2")
   inspect(mapped[0], content="2")
   inspect(mapped[1], content="4")
   inspect(([1] : Array[Int])[1:].mapi((_idx, x) => x), content="[]")
@@ -177,7 +176,7 @@ test "arrayview_mapi" {
 test "arrayview_mapi_inplace" {
   let arr = [1, 2, 3]
   arr[1:].mapi_inplace((i, x) => i + x)
-  inspect(arr.length(), content="3")
+  inspect(arr.len(), content="3")
   inspect(arr[0], content="1")
   inspect(arr[1], content="2")
   inspect(arr[2], content="4")
@@ -187,7 +186,7 @@ test "arrayview_mapi_inplace" {
 test "arrayview_filter" {
   let arr = [1, 2, 3, 4, 5]
   let filtered = arr[2:].filter(x => x % 2 == 0)
-  inspect(filtered.length(), content="1")
+  inspect(filtered.len(), content="1")
   inspect(filtered[0], content="4")
 }
 

@@ -34,7 +34,7 @@ pub fn[A] new() -> T[A] {
 /// ```
 pub fn[A : Compare] from_array(array : Array[A]) -> T[A] {
   let mut pq = new()
-  for i in 0..<array.length() {
+  for i in 0..<array.len() {
     pq = pq.push(array[i])
   }
   pq
@@ -64,7 +64,7 @@ pub fn[A : Compare] to_array(self : T[A]) -> Array[A] {
 pub fn[A : Compare] iter(self : T[A]) -> Iter[A] {
   Iter::new(yield_ => {
     let arr = self.to_array()
-    for i in 0..<arr.length() {
+    for i in 0..<arr.len() {
       guard yield_(arr[i]) is IterContinue else { break IterEnd }
     } else {
       IterContinue
@@ -332,7 +332,7 @@ pub impl[A : Compare] Compare for T[A] with compare(self, other) {
   }
   let self_arr = self.to_array()
   let other_arr = other.to_array()
-  for i in 0..<self_arr.length() {
+  for i in 0..<self_arr.len() {
     let cmp = self_arr[i].compare(other_arr[i])
     if cmp != 0 {
       return cmp
