@@ -1283,7 +1283,7 @@ test "extract_if empty result" {
   let dq = @deque.of([1, 3, 5])
   let extracted = dq.extract_if(fn(x) { x % 2 == 0 })
   inspect(extracted.is_empty(), content="true")
-  inspect(dq.length(), content="0")
+  inspect(dq.length(), content="3")
 }
 
 ///| Test with all elements extracted

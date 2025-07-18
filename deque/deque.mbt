@@ -1691,32 +1691,17 @@ pub fn[A] T::rev(self : T[A]) -> T[A] {
 /// ```
 pub fn[A] extract_if(self : T[A], f : (A) -> Bool) -> T[A] {
   let result = new()
-  let mut processed = 0
-  let mut write_pos = self.head
-  while processed < self.len {
-    let read_pos = (self.head + processed) % self.buf.length()
-    let element = self.buf[read_pos]
-    if f(element) {
-      result.push_back(element)
-      set_null(self.buf, read_pos)
+  let to_keep = new()
+  for x in self {
+    if f(x) {
+      result.push_back(x)
     } else {
-      if write_pos != read_pos {
-        self.buf[write_pos] = element
-        set_null(self.buf, read_pos)
-      }
-      write_pos = (write_pos + 1) % self.buf.length()
+      to_keep.push_back(x)
     }
-    processed += 1
   }
-  self.len = if write_pos >= self.head {
-    write_pos - self.head
-  } else {
-    self.buf.length() - self.head + write_pos
-  }
-  self.tail = if self.len > 0 {
-    (write_pos - 1 + self.buf.length()) % self.buf.length()
-  } else {
-    0
+  self.clear()
+  for x in to_keep {
+    self.push_back(x)
   }
   result
 }
