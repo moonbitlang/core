@@ -542,14 +542,44 @@ test "Bool from_json error handling" {
 
 ///|
 test "Int64 from_json error handling" {
+  // Parse from valid number, which were invalid
   let json_number = Json::number(123)
   let result : Result[Int64, _] = try? @json.from_json(json_number)
   inspect(result, content="Ok(123)")
+  let json_number = Json::number(
+    @double.infinity,
+    repr=@int64.max_value.to_string(),
+  )
+  let result : Result[Int64, _] = try? @json.from_json(json_number)
+  assert_eq(result, Ok(@int64.max_value))
+  let json_number = Json::number(
+    @double.infinity,
+    repr=@int64.min_value.to_string(),
+  )
+  let result : Result[Int64, _] = try? @json.from_json(json_number)
+  assert_eq(result, Ok(@int64.min_value))
+
+  // Parse from invalid string representation
   let json_invalid_string = Json::string("not a number")
   let result : Result[Int64, _] = try? @json.from_json(json_invalid_string)
   inspect(
     result,
     content="Err(JsonDecodeError(($, \"Int64::from_json: parsing failure invalid syntax\")))",
+  )
+  let json_invalid_string = Json::number(@double.infinity, repr="not a number")
+  let result : Result[Int64, _] = try? @json.from_json(json_invalid_string)
+  inspect(
+    result,
+    content="Err(JsonDecodeError(($, \"Int64::from_json: parsing failure invalid syntax\")))",
+  )
+  // Parse from invalid number representation
+  let json_invalid_number = Json::boolean(true)
+  let result : Result[Int64, _] = try? @json.from_json(json_invalid_number)
+  inspect(
+    result,
+    content=(
+      #|Err(JsonDecodeError(($, "Int64::from_json: expected number in number or string representation")))
+    ),
   )
 }
 
@@ -565,15 +595,41 @@ test "UInt from_json error handling" {
 
 ///|
 test "UInt64 from_json error handling" {
+  // Parse from valid number, which were invalid
   let json_number = Json::number(123)
   let result : Result[UInt64, _] = try? @json.from_json(json_number)
   inspect(result, content="Ok(123)")
+  let json_number = Json::number(
+    @double.infinity,
+    repr=@uint64.max_value.to_string(),
+  )
+  let result : Result[UInt64, _] = try? @json.from_json(json_number)
+  assert_eq(result, Ok(@uint64.max_value))
+
+  // Parse from invalid string representation
   let json_invalid_string = Json::string("not a number")
   let result : Result[UInt64, _] = try? @json.from_json(json_invalid_string)
   inspect(
     result,
     content=(
       #|Err(JsonDecodeError(($, "UInt64::from_json: parsing failure invalid syntax")))
+    ),
+  )
+  let json_invalid_string = Json::number(@double.infinity, repr="not a number")
+  let result : Result[UInt64, _] = try? @json.from_json(json_invalid_string)
+  inspect(
+    result,
+    content=(
+      #|Err(JsonDecodeError(($, "UInt64::from_json: parsing failure invalid syntax")))
+    ),
+  )
+  // Parse from invalid number representation
+  let json_invalid_number = Json::boolean(true)
+  let result : Result[UInt64, _] = try? @json.from_json(json_invalid_number)
+  inspect(
+    result,
+    content=(
+      #|Err(JsonDecodeError(($, "UInt64::from_json: expected number in number or string representation")))
     ),
   )
 }
