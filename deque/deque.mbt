@@ -1661,3 +1661,47 @@ pub fn[A] T::rev(self : T[A]) -> T[A] {
   // Create new deque with reversed elements
   T::{ buf: new_buf, len, head: 0, tail: if len == 0 { 0 } else { len - 1 } }
 }
+
+///|
+/// Extracts elements from a deque that satisfy a given predicate function. The
+/// extracted elements are removed from the original deque and returned as a new
+/// deque. The relative order of the extracted elements is preserved.
+///
+/// Parameters:
+///
+/// * `self` : The deque to extract elements from (will be modified).
+/// * `f` : A predicate function that:
+///   - Takes an element of type `A`
+///   - Returns `true` to extract the element, `false` to leave it
+///
+/// Returns a new deque containing all extracted elements in their original order.
+///
+/// Implementation notes:
+/// - Uses O(n) time and O(k) extra space (where k = number of extracted elements)
+/// - Preserves deque's ring buffer structure during extraction
+/// - Maintains correct head/tail pointers after modification
+///
+/// Example:
+///
+/// ```moonbit
+///   let dq = @deque.of([1, 2, 3, 4, 5])
+///   let extracted = dq.extract_if((x) => { x % 2 == 0 })
+///   inspect(extracted, content="@deque.of([2, 4])")
+///   inspect(dq, content="@deque.of([1, 3, 5])")
+/// ```
+pub fn[A] extract_if(self : T[A], f : (A) -> Bool) -> T[A] {
+  let result = new()
+  let to_keep = new()
+  for x in self {
+    if f(x) {
+      result.push_back(x)
+    } else {
+      to_keep.push_back(x)
+    }
+  }
+  self.clear()
+  for x in to_keep {
+    self.push_back(x)
+  }
+  result
+}
