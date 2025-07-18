@@ -81,16 +81,25 @@ pub fn ChaCha8::refill(self : ChaCha8) -> Unit {
 }
 
 ///|
+#valtype
+priv struct Quadruple {
+  _0 : UInt
+  _1 : UInt
+  _2 : UInt
+  _3 : UInt
+}
+
+///|
 fn chacha_block(
   seed : FixedArray[UInt],
   buf : FixedArray[UInt],
-  counter : UInt
+  counter : UInt,
 ) -> Unit {
-  fn qr(t : (UInt, UInt, UInt, UInt)) -> (UInt, UInt, UInt, UInt) {
-    let a = t.0
-    let b = t.1
-    let c = t.2
-    let d = t.3
+  fn qr(t : Quadruple) -> Quadruple {
+    let a = t._0
+    let b = t._1
+    let c = t._2
+    let d = t._3
     let a = a + b
     let d = d ^ a
     let d = (d << 16) | (d >> 16)
@@ -103,7 +112,7 @@ fn chacha_block(
     let c = c + d
     let b = b ^ c
     let b = (b << 7) | (b >> 25)
-    return (a, b, c, d)
+    { _0: a, _1: b, _2: c, _3: d }
   }
 
   setup(seed, buf, counter)
@@ -125,46 +134,46 @@ fn chacha_block(
     let mut b14 = buf[14 * 4 + i]
     let mut b15 = buf[15 * 4 + i]
     for round in 0..<4 {
-      let tb1 = qr((b0, b4, b8, b12))
-      b0 = tb1.0
-      b4 = tb1.1
-      b8 = tb1.2
-      b12 = tb1.3
-      let tb2 = qr((b1, b5, b9, b13))
-      b1 = tb2.0
-      b5 = tb2.1
-      b9 = tb2.2
-      b13 = tb2.3
-      let tb3 = qr((b2, b6, b10, b14))
-      b2 = tb3.0
-      b6 = tb3.1
-      b10 = tb3.2
-      b14 = tb3.3
-      let tb4 = qr((b3, b7, b11, b15))
-      b3 = tb4.0
-      b7 = tb4.1
-      b11 = tb4.2
-      b15 = tb4.3
-      let tb5 = qr((b0, b5, b10, b15))
-      b0 = tb5.0
-      b5 = tb5.1
-      b10 = tb5.2
-      b15 = tb5.3
-      let tb6 = qr((b1, b6, b11, b12))
-      b1 = tb6.0
-      b6 = tb6.1
-      b11 = tb6.2
-      b12 = tb6.3
-      let tb7 = qr((b2, b7, b8, b13))
-      b2 = tb7.0
-      b7 = tb7.1
-      b8 = tb7.2
-      b13 = tb7.3
-      let tb8 = qr((b3, b4, b9, b14))
-      b3 = tb8.0
-      b4 = tb8.1
-      b9 = tb8.2
-      b14 = tb8.3
+      let tb1 = qr({ _0: b0, _1: b4, _2: b8, _3: b12 })
+      b0 = tb1._0
+      b4 = tb1._1
+      b8 = tb1._2
+      b12 = tb1._3
+      let tb2 = qr({ _0: b1, _1: b5, _2: b9, _3: b13 })
+      b1 = tb2._0
+      b5 = tb2._1
+      b9 = tb2._2
+      b13 = tb2._3
+      let tb3 = qr({ _0: b2, _1: b6, _2: b10, _3: b14 })
+      b2 = tb3._0
+      b6 = tb3._1
+      b10 = tb3._2
+      b14 = tb3._3
+      let tb4 = qr({ _0: b3, _1: b7, _2: b11, _3: b15 })
+      b3 = tb4._0
+      b7 = tb4._1
+      b11 = tb4._2
+      b15 = tb4._3
+      let tb5 = qr({ _0: b0, _1: b5, _2: b10, _3: b15 })
+      b0 = tb5._0
+      b5 = tb5._1
+      b10 = tb5._2
+      b15 = tb5._3
+      let tb6 = qr({ _0: b1, _1: b6, _2: b11, _3: b12 })
+      b1 = tb6._0
+      b6 = tb6._1
+      b11 = tb6._2
+      b12 = tb6._3
+      let tb7 = qr({ _0: b2, _1: b7, _2: b8, _3: b13 })
+      b2 = tb7._0
+      b7 = tb7._1
+      b8 = tb7._2
+      b13 = tb7._3
+      let tb8 = qr({ _0: b3, _1: b4, _2: b9, _3: b14 })
+      b3 = tb8._0
+      b4 = tb8._1
+      b9 = tb8._2
+      b14 = tb8._3
     }
     buf[0 * 4 + i] = b0
     buf[1 * 4 + i] = b1
@@ -189,7 +198,7 @@ fn chacha_block(
 fn setup(
   seed : FixedArray[UInt],
   b32 : FixedArray[UInt],
-  counter : UInt
+  counter : UInt,
 ) -> Unit {
   b32[0 * 4 + 0] = 0x61707865
   b32[0 * 4 + 1] = 0x61707865
