@@ -1261,7 +1261,7 @@ test "rev" {
 }
 
 ///|
-test "shuffle_in_place" {
+test "shuffle maintains elements with deterministic rand" {
   let original = @deque.of([1, 2, 3, 4, 5, 6, 7])
   let dq = original.copy()
 
