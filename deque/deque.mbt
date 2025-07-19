@@ -1683,12 +1683,7 @@ pub fn[A] T::rev(self : T[A]) -> T[A] {
 ///   inspect(evens, content="@deque.of([2, 4])")
 /// ```
 pub fn[A] filter(self : T[A], f : (A) -> Bool raise?) -> T[A] raise? {
-  let initial_capacity = if self.capacity() < self.length() {
-    self.capacity()
-  } else {
-    self.length()
-  }
-  let result = new(capacity=initial_capacity)
+  let result = new()
   for v in self {
     if f(v) {
       result.push_back(v)
@@ -1697,8 +1692,7 @@ pub fn[A] filter(self : T[A], f : (A) -> Bool raise?) -> T[A] raise? {
   result
 }
 
-///| Reverses the order of elements in the deque in place, modifying the original
-/// deque.
+///| deque.
 ///
 /// Parameters:
 ///

@@ -1311,7 +1311,6 @@ test "filter basic" {
   let dq = @deque.of([1, 2, 3, 4, 5])
   let evens = dq.filter(fn(x) { x % 2 == 0 })
   inspect(evens, content="@deque.of([2, 4])")
-  inspect(evens.capacity(), content="5") // Should retain original capacity
 }
 
 ///| Test filter with empty result
