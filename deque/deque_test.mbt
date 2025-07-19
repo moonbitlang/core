@@ -1286,7 +1286,7 @@ test "filter_map empty result" {
     }
   })
   inspect(result.length(), content="0")
-  inspect(result.capacity(), content="3")
+  inspect(result.capacity(), content="0")
 }
 
 ///| Test filter_map with error propagation

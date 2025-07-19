@@ -1692,7 +1692,8 @@ pub fn[A] filter(self : T[A], f : (A) -> Bool raise?) -> T[A] raise? {
   result
 }
 
-///| deque.
+///|
+/// Creates a new deque by applying `f` to each element and keeping `Some` results.
 ///
 /// Parameters:
 ///
@@ -1716,12 +1717,7 @@ pub fn[A] filter(self : T[A], f : (A) -> Bool raise?) -> T[A] raise? {
 /// ```
 ///
 pub fn[A, B] filter_map(self : T[A], f : (A) -> B? raise?) -> T[B] raise? {
-  let initial_capacity = if self.capacity() < self.length() {
-    self.capacity()
-  } else {
-    self.length()
-  }
-  let result = new(capacity=initial_capacity)
+  let result = new()
   for x in self {
     match f(x) {
       Some(y) => result.push_back(y)
