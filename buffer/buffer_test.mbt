@@ -386,7 +386,7 @@ test "write_bytesview" {
 ///|
 test "write_stringview" {
   let buf = @buffer.new()
-  buf.write_stringview("hello".view(start_offset=1, end_offset=3))
+  buf.write_stringview("hello"[1:3])
   inspect(
     buf.contents(),
     content=(

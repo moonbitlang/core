@@ -579,7 +579,7 @@ test "to_hex" {
 ///|
 test "pow" {
   let x = 2N.pow(5664N).to_hex()
-  assert_eq(x.charcode_at(0), '1')
+  assert_eq(x.get_char(0).unwrap(), '1')
   assert_eq(x.charcodes(start=1), String::make(5664 / 4, '0')[:])
 }
 
