@@ -384,15 +384,20 @@ test "stringify number" {
   inspect(nums[12].stringify(), content="null")
   let err : Array[String] = []
   for json in nums {
-    match (try? @json.parse(json.stringify())) {
-      Err(e) => err.push(e.to_string())
-      Ok(Number(_, repr~) as newjson) =>
+    let json = @json.parse(json.stringify()) catch {
+      e => {
+        err.push(e.to_string())
+        continue
+      }
+    }
+    match json {
+      Number(_, repr~) as newjson =>
         if repr is Some(_) {
           assert_eq(newjson.stringify(), json.stringify())
         } else {
           assert_eq(newjson, json)
         }
-      Ok(newjson) => assert_eq(newjson, json)
+      newjson => assert_eq(newjson, json)
     }
   }
   inspect(err, content="[]")
