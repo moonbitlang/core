@@ -442,7 +442,9 @@ fn BigInt::split(self : BigInt, half : Int) -> (BigInt, BigInt) {
 ///   inspect(-a / -b, content="5")
 /// ```
 pub impl Div for BigInt with op_div(self : BigInt, other : BigInt) -> BigInt {
-  guard other != zero else { abort("division by zero") }
+  if other is 0 {
+    abort("division by zero")
+  }
 
   // Handle negative numbers
   if self.sign == Negative {
