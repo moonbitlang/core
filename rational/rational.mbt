@@ -1060,8 +1060,8 @@ test "eq and compare" {
 
 ///|
 test "from_double normal case" {
-  let result = try? from_double(0.5)
-  assert_eq(result, Ok(new_unchecked(1L, 2L)))
+  let result = try! from_double(0.5)
+  assert_eq(result, new_unchecked(1L, 2L))
 }
 
 ///|
