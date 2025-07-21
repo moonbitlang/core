@@ -26,9 +26,9 @@ test "show error" {
   }
 
   inspect(
-    try? f(true),
+    try! f(true),
     content=(
-      #|Ok("ok")
+      "ok"
     ),
   )
   inspect(
