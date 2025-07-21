@@ -115,6 +115,8 @@ fn String::rev_iter(String) -> Iter[Char]
 fn String::split(String, StringView) -> Iter[StringView]
 #deprecated
 fn String::starts_with(String, String) -> Bool
+fn String::strip_prefix(String, StringView) -> StringView?
+fn String::strip_suffix(String, StringView) -> StringView?
 fn String::to_array(String) -> Array[Char]
 fn String::to_bytes(String) -> Bytes
 fn String::to_lower(String) -> String
