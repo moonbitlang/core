@@ -1697,8 +1697,8 @@ pub fn[A] filter(self : T[A], f : (A) -> Bool raise?) -> T[A] raise? {
 ///
 /// Parameters:
 ///
-/// * `self` : The deque to be reversed.
-///
+/// * `self` : The deque to filter.
+/// * `f`: A function that takes an element and returns an `B`（generic type parameter）
 /// Example:
 ///
 /// ```moonbit
