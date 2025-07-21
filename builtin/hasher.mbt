@@ -595,7 +595,7 @@ pub impl[X : Hash] Hash for X? with hash_combine(self, hasher) {
 /// ```
 pub impl[T : Hash, E : Hash] Hash for Result[T, E] with hash_combine(
   self,
-  hasher
+  hasher,
 ) {
   match self {
     Ok(x) => hasher..combine_int(0)..combine(x)

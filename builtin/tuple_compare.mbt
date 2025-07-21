@@ -15,7 +15,7 @@
 ///|
 pub impl[T0 : Compare, T1 : Compare] Compare for (T0, T1) with compare(
   self : (T0, T1),
-  other : (T0, T1)
+  other : (T0, T1),
 ) -> Int {
   let t0 = self.0.compare(other.0)
   guard t0 == 0 else { return t0 }
@@ -25,7 +25,7 @@ pub impl[T0 : Compare, T1 : Compare] Compare for (T0, T1) with compare(
 ///|
 pub impl[T0 : Compare, T1 : Compare, T2 : Compare] Compare for (T0, T1, T2) with compare(
   self : (T0, T1, T2),
-  other : (T0, T1, T2)
+  other : (T0, T1, T2),
 ) -> Int {
   let t0 = self.0.compare(other.0)
   guard t0 == 0 else { return t0 }
@@ -70,16 +70,16 @@ pub impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare] C
 }
 
 ///|
-pub impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare] Compare for (
-  T0,
-  T1,
-  T2,
-  T3,
-  T4,
-  T5,
-) with compare(
+pub impl[
+  T0 : Compare,
+  T1 : Compare,
+  T2 : Compare,
+  T3 : Compare,
+  T4 : Compare,
+  T5 : Compare,
+] Compare for (T0, T1, T2, T3, T4, T5) with compare(
   self : (T0, T1, T2, T3, T4, T5),
-  other : (T0, T1, T2, T3, T4, T5)
+  other : (T0, T1, T2, T3, T4, T5),
 ) -> Int {
   let t0 = self.0.compare(other.0)
   guard t0 == 0 else { return t0 }
@@ -95,17 +95,17 @@ pub impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T
 }
 
 ///|
-pub impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare] Compare for (
-  T0,
-  T1,
-  T2,
-  T3,
-  T4,
-  T5,
-  T6,
-) with compare(
+pub impl[
+  T0 : Compare,
+  T1 : Compare,
+  T2 : Compare,
+  T3 : Compare,
+  T4 : Compare,
+  T5 : Compare,
+  T6 : Compare,
+] Compare for (T0, T1, T2, T3, T4, T5, T6) with compare(
   self : (T0, T1, T2, T3, T4, T5, T6),
-  other : (T0, T1, T2, T3, T4, T5, T6)
+  other : (T0, T1, T2, T3, T4, T5, T6),
 ) -> Int {
   let t0 = self.0.compare(other.0)
   guard t0 == 0 else { return t0 }
@@ -123,18 +123,18 @@ pub impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T
 }
 
 ///|
-pub impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare] Compare for (
-  T0,
-  T1,
-  T2,
-  T3,
-  T4,
-  T5,
-  T6,
-  T7,
-) with compare(
+pub impl[
+  T0 : Compare,
+  T1 : Compare,
+  T2 : Compare,
+  T3 : Compare,
+  T4 : Compare,
+  T5 : Compare,
+  T6 : Compare,
+  T7 : Compare,
+] Compare for (T0, T1, T2, T3, T4, T5, T6, T7) with compare(
   self : (T0, T1, T2, T3, T4, T5, T6, T7),
-  other : (T0, T1, T2, T3, T4, T5, T6, T7)
+  other : (T0, T1, T2, T3, T4, T5, T6, T7),
 ) -> Int {
   let t0 = self.0.compare(other.0)
   guard t0 == 0 else { return t0 }
@@ -154,19 +154,19 @@ pub impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T
 }
 
 ///|
-pub impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare] Compare for (
-  T0,
-  T1,
-  T2,
-  T3,
-  T4,
-  T5,
-  T6,
-  T7,
-  T8,
-) with compare(
+pub impl[
+  T0 : Compare,
+  T1 : Compare,
+  T2 : Compare,
+  T3 : Compare,
+  T4 : Compare,
+  T5 : Compare,
+  T6 : Compare,
+  T7 : Compare,
+  T8 : Compare,
+] Compare for (T0, T1, T2, T3, T4, T5, T6, T7, T8) with compare(
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8),
-  other : (T0, T1, T2, T3, T4, T5, T6, T7, T8)
+  other : (T0, T1, T2, T3, T4, T5, T6, T7, T8),
 ) -> Int {
   let t0 = self.0.compare(other.0)
   guard t0 == 0 else { return t0 }
@@ -188,20 +188,20 @@ pub impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T
 }
 
 ///|
-pub impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare] Compare for (
-  T0,
-  T1,
-  T2,
-  T3,
-  T4,
-  T5,
-  T6,
-  T7,
-  T8,
-  T9,
-) with compare(
+pub impl[
+  T0 : Compare,
+  T1 : Compare,
+  T2 : Compare,
+  T3 : Compare,
+  T4 : Compare,
+  T5 : Compare,
+  T6 : Compare,
+  T7 : Compare,
+  T8 : Compare,
+  T9 : Compare,
+] Compare for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9) with compare(
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9),
-  other : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9)
+  other : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9),
 ) -> Int {
   let t0 = self.0.compare(other.0)
   guard t0 == 0 else { return t0 }
@@ -225,21 +225,21 @@ pub impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T
 }
 
 ///|
-pub impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare] Compare for (
-  T0,
-  T1,
-  T2,
-  T3,
-  T4,
-  T5,
-  T6,
-  T7,
-  T8,
-  T9,
-  T10,
-) with compare(
+pub impl[
+  T0 : Compare,
+  T1 : Compare,
+  T2 : Compare,
+  T3 : Compare,
+  T4 : Compare,
+  T5 : Compare,
+  T6 : Compare,
+  T7 : Compare,
+  T8 : Compare,
+  T9 : Compare,
+  T10 : Compare,
+] Compare for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10) with compare(
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10),
-  other : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)
+  other : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10),
 ) -> Int {
   let t0 = self.0.compare(other.0)
   guard t0 == 0 else { return t0 }
@@ -265,22 +265,22 @@ pub impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T
 }
 
 ///|
-pub impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare] Compare for (
-  T0,
-  T1,
-  T2,
-  T3,
-  T4,
-  T5,
-  T6,
-  T7,
-  T8,
-  T9,
-  T10,
-  T11,
-) with compare(
+pub impl[
+  T0 : Compare,
+  T1 : Compare,
+  T2 : Compare,
+  T3 : Compare,
+  T4 : Compare,
+  T5 : Compare,
+  T6 : Compare,
+  T7 : Compare,
+  T8 : Compare,
+  T9 : Compare,
+  T10 : Compare,
+  T11 : Compare,
+] Compare for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11) with compare(
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11),
-  other : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11)
+  other : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11),
 ) -> Int {
   let t0 = self.0.compare(other.0)
   guard t0 == 0 else { return t0 }
@@ -308,23 +308,23 @@ pub impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T
 }
 
 ///|
-pub impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare] Compare for (
-  T0,
-  T1,
-  T2,
-  T3,
-  T4,
-  T5,
-  T6,
-  T7,
-  T8,
-  T9,
-  T10,
-  T11,
-  T12,
-) with compare(
+pub impl[
+  T0 : Compare,
+  T1 : Compare,
+  T2 : Compare,
+  T3 : Compare,
+  T4 : Compare,
+  T5 : Compare,
+  T6 : Compare,
+  T7 : Compare,
+  T8 : Compare,
+  T9 : Compare,
+  T10 : Compare,
+  T11 : Compare,
+  T12 : Compare,
+] Compare for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12) with compare(
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12),
-  other : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12)
+  other : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12),
 ) -> Int {
   let t0 = self.0.compare(other.0)
   guard t0 == 0 else { return t0 }
@@ -354,24 +354,24 @@ pub impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T
 }
 
 ///|
-pub impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare] Compare for (
-  T0,
-  T1,
-  T2,
-  T3,
-  T4,
-  T5,
-  T6,
-  T7,
-  T8,
-  T9,
-  T10,
-  T11,
-  T12,
-  T13,
-) with compare(
+pub impl[
+  T0 : Compare,
+  T1 : Compare,
+  T2 : Compare,
+  T3 : Compare,
+  T4 : Compare,
+  T5 : Compare,
+  T6 : Compare,
+  T7 : Compare,
+  T8 : Compare,
+  T9 : Compare,
+  T10 : Compare,
+  T11 : Compare,
+  T12 : Compare,
+  T13 : Compare,
+] Compare for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13) with compare(
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13),
-  other : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13)
+  other : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13),
 ) -> Int {
   let t0 = self.0.compare(other.0)
   guard t0 == 0 else { return t0 }
@@ -403,25 +403,25 @@ pub impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T
 }
 
 ///|
-pub impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare, T14 : Compare] Compare for (
-  T0,
-  T1,
-  T2,
-  T3,
-  T4,
-  T5,
-  T6,
-  T7,
-  T8,
-  T9,
-  T10,
-  T11,
-  T12,
-  T13,
-  T14,
-) with compare(
+pub impl[
+  T0 : Compare,
+  T1 : Compare,
+  T2 : Compare,
+  T3 : Compare,
+  T4 : Compare,
+  T5 : Compare,
+  T6 : Compare,
+  T7 : Compare,
+  T8 : Compare,
+  T9 : Compare,
+  T10 : Compare,
+  T11 : Compare,
+  T12 : Compare,
+  T13 : Compare,
+  T14 : Compare,
+] Compare for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14) with compare(
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14),
-  other : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14)
+  other : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14),
 ) -> Int {
   let t0 = self.0.compare(other.0)
   guard t0 == 0 else { return t0 }
@@ -455,7 +455,24 @@ pub impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T
 }
 
 ///|
-pub impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare, T14 : Compare, T15 : Compare] Compare for (
+pub impl[
+  T0 : Compare,
+  T1 : Compare,
+  T2 : Compare,
+  T3 : Compare,
+  T4 : Compare,
+  T5 : Compare,
+  T6 : Compare,
+  T7 : Compare,
+  T8 : Compare,
+  T9 : Compare,
+  T10 : Compare,
+  T11 : Compare,
+  T12 : Compare,
+  T13 : Compare,
+  T14 : Compare,
+  T15 : Compare,
+] Compare for (
   T0,
   T1,
   T2,
@@ -474,7 +491,7 @@ pub impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T
   T15,
 ) with compare(
   self : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15),
-  other : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15)
+  other : (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15),
 ) -> Int {
   let t0 = self.0.compare(other.0)
   guard t0 == 0 else { return t0 }

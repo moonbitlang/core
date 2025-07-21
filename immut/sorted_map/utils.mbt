@@ -166,7 +166,7 @@ pub fn[K, V, A] fold(self : T[K, V], init~ : A, f : (A, V) -> A) -> A {
 pub fn[K, V, A] foldr_with_key(
   self : T[K, V],
   f : (A, K, V) -> A,
-  init~ : A
+  init~ : A,
 ) -> A {
   fn go(m : T[K, V], acc) {
     match m {
@@ -184,7 +184,7 @@ pub fn[K, V, A] foldr_with_key(
 pub fn[K, V, A] foldl_with_key(
   self : T[K, V],
   f : (A, K, V) -> A,
-  init~ : A
+  init~ : A,
 ) -> A {
   fn go(m : T[K, V], acc) {
     match m {
@@ -303,7 +303,7 @@ pub fn[K : Show, V : ToJson] to_json(self : T[K, V]) -> Json {
 
 ///|
 pub fn[V : @json.FromJson] from_json(
-  json : Json
+  json : Json,
 ) -> T[String, V] raise @json.JsonDecodeError {
   @json.from_json(json)
 }

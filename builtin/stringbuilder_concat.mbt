@@ -76,7 +76,7 @@ pub impl Logger for StringBuilder with write_substring(
   self : StringBuilder,
   str : String,
   start : Int,
-  len : Int
+  len : Int,
 ) -> Unit {
   self.val += str.substring(start~, end=start + len)
 }

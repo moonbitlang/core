@@ -620,7 +620,7 @@ pub impl Logger for T with write_substring(
   self : T,
   value : String,
   start : Int,
-  len : Int
+  len : Int,
 ) -> Unit {
   guard start >= 0 && len >= 0 && start + len <= value.length()
   self.grow_if_necessary(self.len + len * 2)

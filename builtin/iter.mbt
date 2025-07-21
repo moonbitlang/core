@@ -82,7 +82,7 @@ pub fn[T] Iter::all(self : Iter[T], f : (T) -> Bool) -> Bool {
 /// TODO: Add intrinsic
 pub fn[T] Iter::eachi(
   self : Iter[T],
-  f : (Int, T) -> Unit raise?
+  f : (Int, T) -> Unit raise?,
 ) -> Unit raise? {
   let mut i = 0
   for a in self {
@@ -113,7 +113,7 @@ pub fn[T] Iter::eachi(
 pub fn[T, B] Iter::fold(
   self : Iter[T],
   init~ : B,
-  f : (B, T) -> B raise?
+  f : (B, T) -> B raise?,
 ) -> B raise? {
   let mut acc = init
   for a in self {
@@ -220,7 +220,7 @@ pub fn Int::until(
   self : Int,
   end : Int,
   step~ : Int = 1,
-  inclusive~ : Bool = false
+  inclusive~ : Bool = false,
 ) -> Iter[Int] {
   if step == 0 {
     return Iter::empty()
@@ -263,7 +263,7 @@ pub fn Int64::until(
   self : Int64,
   end : Int64,
   step~ : Int64 = 1L,
-  inclusive~ : Bool = false
+  inclusive~ : Bool = false,
 ) -> Iter[Int64] {
   if step == 0 {
     return Iter::empty()
@@ -306,7 +306,7 @@ pub fn Float::until(
   self : Float,
   end : Float,
   step~ : Float = 1.0,
-  inclusive~ : Bool = false
+  inclusive~ : Bool = false,
 ) -> Iter[Float] {
   if step == 0.0 {
     return Iter::empty()
@@ -349,7 +349,7 @@ pub fn Double::until(
   self : Double,
   end : Double,
   step~ : Double = 1.0,
-  inclusive~ : Bool = false
+  inclusive~ : Bool = false,
 ) -> Iter[Double] {
   if step == 0.0 {
     return Iter::empty()
@@ -889,7 +889,7 @@ pub fn[A] Iter::intersperse(self : Iter[A], sep : A) -> Iter[A] {
 pub fn[A] Iter::op_as_view(
   self : Iter[A],
   start~ : Int = 0,
-  end? : Int
+  end? : Int,
 ) -> Iter[A] {
   // Note here we mark `end` as an optional parameter
   // since the meaningful default value of `end` is the length of the iterator
@@ -991,7 +991,7 @@ pub fn[T : Compare] Iter::minimum(self : Iter[T]) -> T? {
 #deprecated
 pub fn[T, K : Eq + Hash] Iter::group_by(
   self : Iter[T],
-  f : (T) -> K
+  f : (T) -> K,
 ) -> Map[K, Array[T]] {
   let result = Map::new()
   for element in self {

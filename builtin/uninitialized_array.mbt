@@ -36,7 +36,7 @@ pub fn[T] UninitializedArray::make(size : Int) -> UninitializedArray[T] = "%fixe
 /// Returns the element at the specified index.
 pub fn[T] UninitializedArray::op_get(
   self : UninitializedArray[T],
-  index : Int
+  index : Int,
 ) -> T = "%fixedarray.get"
 
 ///|
@@ -50,7 +50,7 @@ pub fn[T] UninitializedArray::op_get(
 pub fn[T] UninitializedArray::op_set(
   self : UninitializedArray[T],
   index : Int,
-  value : T
+  value : T,
 ) = "%fixedarray.set"
 
 ///|
@@ -71,7 +71,7 @@ pub fn[T] UninitializedArray::op_set(
 pub fn[T] UninitializedArray::op_as_view(
   self : UninitializedArray[T],
   start~ : Int = 0,
-  end? : Int
+  end? : Int,
 ) -> ArrayView[T] {
   let len = self.length()
   let end = match end {
@@ -104,7 +104,7 @@ pub fn[T] UninitializedArray::unsafe_blit(
   dst_offset : Int,
   src : UninitializedArray[T],
   src_offset : Int,
-  len : Int
+  len : Int,
 ) -> Unit {
   FixedArray::unsafe_blit(dst.inner(), dst_offset, src.inner(), src_offset, len)
 }

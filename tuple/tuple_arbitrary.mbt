@@ -18,7 +18,7 @@ traitalias @quickcheck.Arbitrary
 ///|
 pub impl[A : Arbitrary, B : Arbitrary] Arbitrary for (A, B) with arbitrary(
   size,
-  r0
+  r0,
 ) {
   let r1 = r0.split()
   (Arbitrary::arbitrary(size, r0), Arbitrary::arbitrary(size, r1))
@@ -27,7 +27,7 @@ pub impl[A : Arbitrary, B : Arbitrary] Arbitrary for (A, B) with arbitrary(
 ///|
 pub impl[A : Arbitrary, B : Arbitrary, C : Arbitrary] Arbitrary for (A, B, C) with arbitrary(
   size,
-  r0
+  r0,
 ) {
   let r1 = r0.split()
   let (v1, v2) = Arbitrary::arbitrary(size, r1)
@@ -47,42 +47,42 @@ pub impl[A : Arbitrary, B : Arbitrary, C : Arbitrary, D : Arbitrary] Arbitrary f
 }
 
 ///|
-pub impl[A : Arbitrary, B : Arbitrary, C : Arbitrary, D : Arbitrary, E : Arbitrary] Arbitrary for (
-  A,
-  B,
-  C,
-  D,
-  E,
-) with arbitrary(size, r0) {
+pub impl[
+  A : Arbitrary,
+  B : Arbitrary,
+  C : Arbitrary,
+  D : Arbitrary,
+  E : Arbitrary,
+] Arbitrary for (A, B, C, D, E) with arbitrary(size, r0) {
   let r1 = r0.split()
   let (v1, v2, v3, v4) = Arbitrary::arbitrary(size, r1)
   (Arbitrary::arbitrary(size, r0), v1, v2, v3, v4)
 }
 
 ///|
-pub impl[A : Arbitrary, B : Arbitrary, C : Arbitrary, D : Arbitrary, E : Arbitrary, F : Arbitrary] Arbitrary for (
-  A,
-  B,
-  C,
-  D,
-  E,
-  F,
-) with arbitrary(size, r0) {
+pub impl[
+  A : Arbitrary,
+  B : Arbitrary,
+  C : Arbitrary,
+  D : Arbitrary,
+  E : Arbitrary,
+  F : Arbitrary,
+] Arbitrary for (A, B, C, D, E, F) with arbitrary(size, r0) {
   let r1 = r0.split()
   let (v1, v2, v3, v4, v5) = Arbitrary::arbitrary(size, r1)
   (Arbitrary::arbitrary(size, r0), v1, v2, v3, v4, v5)
 }
 
 ///|
-pub impl[A : Arbitrary, B : Arbitrary, C : Arbitrary, D : Arbitrary, E : Arbitrary, F : Arbitrary, G : Arbitrary] Arbitrary for (
-  A,
-  B,
-  C,
-  D,
-  E,
-  F,
-  G,
-) with arbitrary(size, r0) {
+pub impl[
+  A : Arbitrary,
+  B : Arbitrary,
+  C : Arbitrary,
+  D : Arbitrary,
+  E : Arbitrary,
+  F : Arbitrary,
+  G : Arbitrary,
+] Arbitrary for (A, B, C, D, E, F, G) with arbitrary(size, r0) {
   let r1 = r0.split()
   let (v1, v2, v3, v4, v5, v6) = Arbitrary::arbitrary(size, r1)
   (Arbitrary::arbitrary(size, r0), v1, v2, v3, v4, v5, v6)

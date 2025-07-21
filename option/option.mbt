@@ -334,7 +334,7 @@ test "or error" {
 ///|
 pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for X? with arbitrary(
   i,
-  rs
+  rs,
 ) {
   if rs.next_double() < 0.3 {
     None

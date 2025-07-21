@@ -60,7 +60,7 @@ pub fn Int::upto(self : Int, end : Int, inclusive~ : Bool = false) -> Iter[Int] 
 pub fn UInt::upto(
   self : UInt,
   end : UInt,
-  inclusive~ : Bool = false
+  inclusive~ : Bool = false,
 ) -> Iter[UInt] {
   yield_ => {
     let mut i = self
@@ -95,7 +95,7 @@ pub fn UInt::upto(
 pub fn UInt64::upto(
   self : UInt64,
   end : UInt64,
-  inclusive~ : Bool = false
+  inclusive~ : Bool = false,
 ) -> Iter[UInt64] {
   yield_ => {
     let mut i = self
@@ -130,7 +130,7 @@ pub fn UInt64::upto(
 pub fn Int64::upto(
   self : Int64,
   end : Int64,
-  inclusive~ : Bool = false
+  inclusive~ : Bool = false,
 ) -> Iter[Int64] {
   yield_ => {
     let mut i = self
@@ -165,7 +165,7 @@ pub fn Int64::upto(
 pub fn Float::upto(
   self : Float,
   end : Float,
-  inclusive~ : Bool = false
+  inclusive~ : Bool = false,
 ) -> Iter[Float] {
   yield_ => {
     let mut i = self
@@ -200,7 +200,7 @@ pub fn Float::upto(
 pub fn Double::upto(
   self : Double,
   end : Double,
-  inclusive~ : Bool = false
+  inclusive~ : Bool = false,
 ) -> Iter[Double] {
   yield_ => {
     let mut i = self
@@ -263,7 +263,7 @@ pub fn[T] Array::find_index(self : Array[T], f : (T) -> Bool) -> Int? {
 pub fn[T, U] Array::fold_left(
   self : Array[T],
   f : (U, T) -> U raise?,
-  init~ : U
+  init~ : U,
 ) -> U raise? {
   self.fold(init~, f)
 }
@@ -282,7 +282,7 @@ pub fn[T, U] Array::fold_left(
 pub fn[T, U] Array::fold_right(
   self : Array[T],
   f : (U, T) -> U raise?,
-  init~ : U
+  init~ : U,
 ) -> U raise? {
   self.rev_fold(init~, f)
 }
@@ -301,7 +301,7 @@ pub fn[T, U] Array::fold_right(
 pub fn[T, U] Array::fold_lefti(
   self : Array[T],
   f : (Int, U, T) -> U raise?,
-  init~ : U
+  init~ : U,
 ) -> U raise? {
   self.foldi(init~, f)
 }
@@ -320,7 +320,7 @@ pub fn[T, U] Array::fold_lefti(
 pub fn[T, U] Array::fold_righti(
   self : Array[T],
   f : (Int, U, T) -> U raise?,
-  init~ : U
+  init~ : U,
 ) -> U raise? {
   self.rev_foldi(init~, f)
 }
@@ -465,7 +465,7 @@ pub fn String::codepoint_at(self : String, index : Int) -> Char {
 pub fn String::codepoint_length(
   self : String,
   start_offset~ : Int = 0,
-  end_offset? : Int
+  end_offset? : Int,
 ) -> Int {
   self.char_length(start_offset~, end_offset?)
 }

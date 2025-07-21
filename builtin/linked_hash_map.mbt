@@ -128,7 +128,7 @@ pub fn[K : Hash + Eq, V] Map::set(self : Map[K, V], key : K, value : V) -> Unit 
 fn[K, V] Map::push_away(
   self : Map[K, V],
   idx : Int,
-  entry : Entry[K, V]
+  entry : Entry[K, V],
 ) -> Unit {
   for psl = entry.psl + 1, idx = (idx + 1) & self.capacity_mask, entry = entry {
     match self.entries[idx] {
@@ -155,7 +155,7 @@ fn[K, V] Map::push_away(
 fn[K, V] Map::set_entry(
   self : Map[K, V],
   entry : Entry[K, V],
-  new_idx : Int
+  new_idx : Int,
 ) -> Unit {
   self.entries[new_idx] = Some(entry)
   match entry.next {
@@ -168,7 +168,7 @@ fn[K, V] Map::set_entry(
 pub fn[K : Hash + Eq, V] Map::op_set(
   self : Map[K, V],
   key : K,
-  value : V
+  value : V,
 ) -> Unit {
   self.set(key, value)
 }
@@ -219,7 +219,7 @@ pub fn[K : Hash + Eq, V] Map::op_get(self : Map[K, V], key : K) -> V? {
 pub fn[K : Hash + Eq, V] Map::get_or_default(
   self : Map[K, V],
   key : K,
-  default : V
+  default : V,
 ) -> V {
   let hash = key.hash()
   for i = 0, idx = hash & self.capacity_mask {
@@ -243,7 +243,7 @@ pub fn[K : Hash + Eq, V] Map::get_or_default(
 pub fn[K : Hash + Eq, V] Map::get_or_init(
   self : Map[K, V],
   key : K,
-  default : () -> V
+  default : () -> V,
 ) -> V {
   match self.get(key) {
     Some(v) => v
@@ -296,7 +296,7 @@ pub fn[K : Hash + Eq, V] Map::contains(self : Map[K, V], key : K) -> Bool {
 pub fn[K : Hash + Eq, V : Eq] Map::contains_kv(
   self : Map[K, V],
   key : K,
-  value : V
+  value : V,
 ) -> Bool {
   // inline Map::get to avoid boxing
   let hash = key.hash()
@@ -335,7 +335,7 @@ pub fn[K : Hash + Eq, V] Map::remove(self : Map[K, V], key : K) -> Unit {
 fn[K, V] Map::add_entry_to_tail(
   self : Map[K, V],
   idx : Int,
-  entry : Entry[K, V]
+  entry : Entry[K, V],
 ) -> Unit {
   match self.tail {
     -1 => self.head = Some(entry)
@@ -436,7 +436,7 @@ pub fn[K, V] Map::is_empty(self : Map[K, V]) -> Bool {
 #locals(f)
 pub fn[K, V] Map::each(
   self : Map[K, V],
-  f : (K, V) -> Unit raise?
+  f : (K, V) -> Unit raise?,
 ) -> Unit raise? {
   loop self.head {
     Some({ key, value, next, .. }) => {
@@ -452,7 +452,7 @@ pub fn[K, V] Map::each(
 #locals(f)
 pub fn[K, V] Map::eachi(
   self : Map[K, V],
-  f : (Int, K, V) -> Unit raise?
+  f : (Int, K, V) -> Unit raise?,
 ) -> Unit raise? {
   loop (0, self.head) {
     (i, Some({ key, value, next, .. })) => {
@@ -536,7 +536,7 @@ pub fn[K, V] Map::to_array(self : Map[K, V]) -> Array[(K, V)] {
 ///|
 pub impl[K : Hash + Eq, V : Eq] Eq for Map[K, V] with op_equal(
   self : Map[K, V],
-  that : Map[K, V]
+  that : Map[K, V],
 ) -> Bool {
   guard self.size == that.size else { return false }
   for k, v in self {

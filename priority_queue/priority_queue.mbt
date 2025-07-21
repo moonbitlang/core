@@ -284,7 +284,7 @@ pub impl[A : Show + Compare] Show for T[A] with output(self, logger) {
 ///|
 pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for T[X] with arbitrary(
   size,
-  rs
+  rs,
 ) {
   let len : Int = if size == 0 { 0 } else { rs.next_positive_int() % size }
   for i = 0, acc = Node::Nil {

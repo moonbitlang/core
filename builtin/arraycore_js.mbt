@@ -52,7 +52,7 @@ extern "js" fn JSArray::pop(self : JSArray) -> JSValue =
 extern "js" fn JSArray::splice(
   self : JSArray,
   index : Int,
-  count : Int
+  count : Int,
 ) -> JSArray =
   #| (arr, idx, cnt) => arr.splice(idx, cnt)
 
@@ -61,7 +61,7 @@ extern "js" fn JSArray::splice1(
   self : JSArray,
   index : Int,
   count : Int,
-  value : JSValue
+  value : JSValue,
 ) -> JSArray =
   #| (arr, idx, cnt, val) => arr.splice(idx, cnt, val)
 

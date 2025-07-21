@@ -50,7 +50,7 @@ pub fn[X] doubleton(
   idx1 : Int,
   value1 : X,
   idx2 : Int,
-  value2 : X
+  value2 : X,
 ) -> SparseArray[X] {
   {
     elem_info: empty_bitset.add(idx1).add(idx2),
@@ -109,7 +109,7 @@ pub fn[X] remove(self : SparseArray[X], idx : Int) -> SparseArray[X] {
 pub fn[X] SparseArray::union(
   self : SparseArray[X],
   other : SparseArray[X],
-  f : (X, X) -> X raise?
+  f : (X, X) -> X raise?,
 ) -> SparseArray[X] raise? {
   let union_elem_info = self.elem_info.union(other.elem_info)
   let data = FixedArray::make(union_elem_info.size(), self.data[0])
@@ -131,7 +131,7 @@ pub fn[X] SparseArray::union(
 ///|
 fn[A] FixedArray::copy_prefix(
   self : FixedArray[A],
-  len~ : Int
+  len~ : Int,
 ) -> FixedArray[A] {
   let res = FixedArray::make(len, self[0])
   FixedArray::unsafe_blit(res, 0, self, 0, len)
@@ -143,7 +143,7 @@ fn[A] FixedArray::copy_prefix(
 pub fn[X] SparseArray::intersection(
   self : SparseArray[X],
   other : SparseArray[X],
-  f : (X, X) -> X? raise?
+  f : (X, X) -> X? raise?,
 ) -> SparseArray[X]? raise? {
   let inter_elem_info = self.elem_info.intersection(other.elem_info)
   guard inter_elem_info != 0 else { return None }
@@ -173,7 +173,7 @@ pub fn[X] SparseArray::intersection(
 pub fn[X] SparseArray::difference(
   self : SparseArray[X],
   other : SparseArray[X],
-  f : (X, X) -> X?
+  f : (X, X) -> X?,
 ) -> SparseArray[X]? {
   let self_elem_info = self.elem_info
   let data = FixedArray::make(self_elem_info.size(), self.data[0])
@@ -208,7 +208,7 @@ pub fn[X] SparseArray::difference(
 ///|
 pub fn[X, Y] SparseArray::map(
   self : SparseArray[X],
-  f : (X) -> Y raise?
+  f : (X) -> Y raise?,
 ) -> SparseArray[Y] raise? {
   { elem_info: self.elem_info, data: self.data.map(f) }
 }
@@ -216,7 +216,7 @@ pub fn[X, Y] SparseArray::map(
 ///|
 pub fn[X] SparseArray::filter(
   self : SparseArray[X],
-  pred : (X) -> X? raise?
+  pred : (X) -> X? raise?,
 ) -> SparseArray[X]? raise? {
   let self_elem_info = self.elem_info
   let data = FixedArray::make(self_elem_info.size(), self.data[0])
@@ -246,7 +246,7 @@ pub fn[X] SparseArray::filter(
 pub fn[X] replace(
   self : SparseArray[X],
   idx : Int,
-  value : X
+  value : X,
 ) -> SparseArray[X] {
   let new_data = self.data.copy()
   new_data[self.elem_info.index_of(idx)] = value

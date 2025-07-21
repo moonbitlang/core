@@ -45,7 +45,7 @@ pub fn[T : Eq + Show] assert_eq(
   a : T,
   b : T,
   msg? : String,
-  loc~ : SourceLoc = _
+  loc~ : SourceLoc = _,
 ) -> Unit raise {
   if a != b {
     let fail_msg = match msg {
@@ -82,7 +82,7 @@ pub fn[T : Eq + Show] assert_not_eq(
   a : T,
   b : T,
   msg? : String,
-  loc~ : SourceLoc = _
+  loc~ : SourceLoc = _,
 ) -> Unit raise {
   if !(a != b) {
     let fail_msg = match msg {
@@ -145,7 +145,7 @@ pub fn assert_true(x : Bool, msg? : String, loc~ : SourceLoc = _) -> Unit raise 
 pub fn assert_false(
   x : Bool,
   msg? : String,
-  loc~ : SourceLoc = _
+  loc~ : SourceLoc = _,
 ) -> Unit raise {
   if x {
     let fail_msg = match msg {

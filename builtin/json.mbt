@@ -270,7 +270,7 @@ pub impl[T : ToJson] ToJson for T? with to_json(self) {
 
 ///|
 pub impl[Ok : ToJson, Err : ToJson] ToJson for Result[Ok, Err] with to_json(
-  self : Result[Ok, Err]
+  self : Result[Ok, Err],
 ) -> Json {
   match self {
     Ok(ok) => { "Ok": ok.to_json() }

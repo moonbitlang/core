@@ -53,7 +53,7 @@ pub fn[T, U, V] map_snd(f : (T) -> U, tuple : (V, T)) -> (V, U) {
 pub fn[T, U, V, W] map_both(
   f : (T) -> U,
   g : (V) -> W,
-  tuple : (T, V)
+  tuple : (T, V),
 ) -> (U, W) {
   (f(tuple.0), g(tuple.1))
 }

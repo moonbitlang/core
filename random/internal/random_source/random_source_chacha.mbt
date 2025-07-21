@@ -84,7 +84,7 @@ pub fn ChaCha8::refill(self : ChaCha8) -> Unit {
 fn chacha_block(
   seed : FixedArray[UInt],
   buf : FixedArray[UInt],
-  counter : UInt
+  counter : UInt,
 ) -> Unit {
   fn qr(t : (UInt, UInt, UInt, UInt)) -> (UInt, UInt, UInt, UInt) {
     let a = t.0
@@ -189,7 +189,7 @@ fn chacha_block(
 fn setup(
   seed : FixedArray[UInt],
   b32 : FixedArray[UInt],
-  counter : UInt
+  counter : UInt,
 ) -> Unit {
   b32[0 * 4 + 0] = 0x61707865
   b32[0 * 4 + 1] = 0x61707865

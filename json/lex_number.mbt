@@ -15,7 +15,7 @@
 ///|
 fn ParseContext::lex_decimal_integer(
   ctx : ParseContext,
-  start~ : Int
+  start~ : Int,
 ) -> (Double, String?) raise ParseError {
   for {
     match ctx.read_char() {
@@ -36,7 +36,7 @@ fn ParseContext::lex_decimal_integer(
 ///|
 fn ParseContext::lex_decimal_point(
   ctx : ParseContext,
-  start~ : Int
+  start~ : Int,
 ) -> (Double, String?) raise ParseError {
   match ctx.read_char() {
     Some(c) =>
@@ -52,7 +52,7 @@ fn ParseContext::lex_decimal_point(
 ///|
 fn ParseContext::lex_decimal_fraction(
   ctx : ParseContext,
-  start~ : Int
+  start~ : Int,
 ) -> (Double, String?) raise ParseError {
   for {
     match ctx.read_char() {
@@ -72,7 +72,7 @@ fn ParseContext::lex_decimal_fraction(
 ///|
 fn ParseContext::lex_decimal_exponent(
   ctx : ParseContext,
-  start~ : Int
+  start~ : Int,
 ) -> (Double, String?) raise ParseError {
   match ctx.read_char() {
     Some('+') | Some('-') => return ctx.lex_decimal_exponent_sign(start~)
@@ -90,7 +90,7 @@ fn ParseContext::lex_decimal_exponent(
 ///|
 fn ParseContext::lex_decimal_exponent_sign(
   ctx : ParseContext,
-  start~ : Int
+  start~ : Int,
 ) -> (Double, String?) raise ParseError {
   match ctx.read_char() {
     Some(c) => {
@@ -107,7 +107,7 @@ fn ParseContext::lex_decimal_exponent_sign(
 ///|
 fn ParseContext::lex_decimal_exponent_integer(
   ctx : ParseContext,
-  start~ : Int
+  start~ : Int,
 ) -> (Double, String?) {
   for {
     match ctx.read_char() {
@@ -126,7 +126,7 @@ fn ParseContext::lex_decimal_exponent_integer(
 ///|
 fn ParseContext::lex_zero(
   ctx : ParseContext,
-  start~ : Int
+  start~ : Int,
 ) -> (Double, String?) raise ParseError {
   match ctx.read_char() {
     Some('.') => ctx.lex_decimal_point(start~)
@@ -147,7 +147,7 @@ fn ParseContext::lex_zero(
 fn ParseContext::lex_number_end(
   ctx : ParseContext,
   start : Int,
-  end : Int
+  end : Int,
 ) -> (Double, String?) {
   let s = ctx.input.substring(start~, end~)
   if !s.contains(".") && !s.contains("e") && !s.contains("E") {

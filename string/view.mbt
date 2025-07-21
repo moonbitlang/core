@@ -80,7 +80,7 @@ pub fn length(self : View) -> Int {
 pub fn String::view(
   self : String,
   start_offset~ : Int = 0,
-  end_offset? : Int
+  end_offset? : Int,
 ) -> View {
   let end_offset = if end_offset is Some(o) { o } else { self.length() }
   guard start_offset >= 0 &&
@@ -96,7 +96,7 @@ pub fn String::view(
 pub fn View::view(
   self : View,
   start_offset~ : Int = 0,
-  end_offset? : Int
+  end_offset? : Int,
 ) -> View {
   let end_offset = if end_offset is Some(o) { o } else { self.length() }
   guard start_offset >= 0 &&
@@ -427,7 +427,7 @@ pub suberror CreatingViewError {
 pub fn String::op_as_view(
   self : String,
   start~ : Int = 0,
-  end? : Int
+  end? : Int,
 ) -> View raise CreatingViewError {
   let len = self.length()
   let end = match end {
@@ -493,7 +493,7 @@ pub fn String::op_as_view(
 pub fn View::op_as_view(
   self : View,
   start~ : Int = 0,
-  end? : Int
+  end? : Int,
 ) -> View raise CreatingViewError {
   let str_len = self.str.length()
 

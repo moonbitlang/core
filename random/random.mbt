@@ -37,7 +37,7 @@ impl Source for @random_source.ChaCha8 with next(self : @random_source.ChaCha8) 
 /// Create a new random number generator with [seed].
 /// @alert unsafe "Panic if seed is not 32 bytes long"
 pub fn Rand::chacha8(
-  seed~ : Bytes = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456"
+  seed~ : Bytes = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456",
 ) -> Rand {
   if seed.length() != 32 {
     abort("seed must be 32 bytes long")

@@ -25,7 +25,7 @@ fn[K, V] InorderIterator::new(root : T[K, V]) -> InorderIterator[K, V] {
 ///|
 fn[K, V] InorderIterator::move_left(
   self : InorderIterator[K, V],
-  node : T[K, V]
+  node : T[K, V],
 ) -> Unit {
   loop node {
     Empty => ()

@@ -66,7 +66,7 @@ fn code_point_of_surrogate_pair(leading : Int, trailing : Int) -> Char {
 pub fn String::char_length(
   self : String,
   start_offset~ : Int = 0,
-  end_offset? : Int
+  end_offset? : Int,
 ) -> Int {
   let end_offset = if end_offset is Some(o) { o } else { self.length() }
   guard start_offset >= 0 &&

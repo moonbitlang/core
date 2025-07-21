@@ -75,7 +75,7 @@ pub fn[T] Array::push_iter(self : Self[T], iter : Iter[T]) -> Unit {
 /// ```
 pub fn[T] Array::makei(
   length : Int,
-  value : (Int) -> T raise?
+  value : (Int) -> T raise?,
 ) -> Array[T] raise? {
   if length <= 0 {
     []
@@ -148,7 +148,7 @@ pub fn[T] shuffle(self : Array[T], rand~ : (Int) -> Int) -> Array[T] {
 /// 
 pub fn[A, B] filter_map(
   self : Array[A],
-  f : (A) -> B? raise?
+  f : (A) -> B? raise?,
 ) -> Array[B] raise? {
   let result = []
   for x in self {
@@ -260,7 +260,7 @@ pub fn[T1, T2] unzip(self : Array[(T1, T2)]) -> (Array[T1], Array[T2]) {
 pub fn[A, B, C] zip_with(
   l : Array[A],
   r : Array[B],
-  merge : (A, B) -> C raise?
+  merge : (A, B) -> C raise?,
 ) -> Array[C] raise? {
   let length = if l.length() < r.length() { l.length() } else { r.length() }
   let arr = Array::new(capacity=length)
@@ -309,7 +309,7 @@ pub fn[A, B] zip_to_iter2(self : Array[A], other : Array[B]) -> Iter2[A, B] {
 ///|
 pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Array[X] with arbitrary(
   size,
-  rs
+  rs,
 ) {
   let len = if size == 0 { 0 } else { rs.next_positive_int() % size }
   Array::makei(len, x => X::arbitrary(x, rs))

@@ -16,7 +16,7 @@
 #deprecated("use `@immut/list.from_json` instead")
 #coverage.skip
 pub fn[A : @json.FromJson] T::from_json(
-  json : Json
+  json : Json,
 ) -> T[A] raise @json.JsonDecodeError {
   @json.from_json(json)
 }

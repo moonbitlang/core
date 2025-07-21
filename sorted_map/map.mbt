@@ -129,7 +129,7 @@ pub fn[K, V] each(self : T[K, V], f : (K, V) -> Unit raise?) -> Unit raise? {
 /// Iterates the map with index.
 pub fn[K, V] eachi(
   self : T[K, V],
-  f : (Int, K, V) -> Unit raise?
+  f : (Int, K, V) -> Unit raise?,
 ) -> Unit raise? {
   let mut i = 0
   self.each((k, v) => {
@@ -252,7 +252,7 @@ pub fn[K : Compare, V] range(self : T[K, V], low : K, high : K) -> Iter2[K, V] {
 ///|
 fn[K : Compare, V] replace_root_with_min(
   root : Node[K, V],
-  node : Node[K, V]
+  node : Node[K, V],
 ) -> Node[K, V]? {
   let (l, r) = (node.left, node.right)
   match l {
@@ -350,7 +350,7 @@ fn[K, V] rotate_rl(n : Node[K, V]) -> Node[K, V] {
 fn[K : Compare, V] add_node(
   root : Node[K, V]?,
   key : K,
-  value : V
+  value : V,
 ) -> (Node[K, V]?, Bool) {
   match root {
     None => (Some(new_node(key, value)), true)
@@ -376,7 +376,7 @@ fn[K : Compare, V] add_node(
 ///|
 fn[K : Compare, V] delete_node(
   root : Node[K, V],
-  key : K
+  key : K,
 ) -> (Node[K, V]?, Bool) {
   if key == root.key {
     let (l, r) = (root.left, root.right)

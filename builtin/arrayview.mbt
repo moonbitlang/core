@@ -131,7 +131,7 @@ pub fn[T] ArrayView::unsafe_get(self : ArrayView[T], index : Int) -> T {
 pub fn[T] ArrayView::op_set(
   self : ArrayView[T],
   index : Int,
-  value : T
+  value : T,
 ) -> Unit {
   guard index >= 0 && index < self.len else {
     abort(
@@ -201,7 +201,7 @@ pub fn[T] ArrayView::swap(self : ArrayView[T], i : Int, j : Int) -> Unit {
 pub fn[T] Array::op_as_view(
   self : Array[T],
   start~ : Int = 0,
-  end? : Int
+  end? : Int,
 ) -> ArrayView[T] {
   let len = self.length()
   let end = match end {
@@ -247,7 +247,7 @@ pub fn[T] Array::op_as_view(
 pub fn[T] ArrayView::op_as_view(
   self : ArrayView[T],
   start~ : Int = 0,
-  end? : Int
+  end? : Int,
 ) -> ArrayView[T] {
   let len = self.length()
   let end = match end {

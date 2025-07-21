@@ -43,7 +43,7 @@ fn ParseContext::parse_value(ctx : ParseContext) -> JsonValue raise ParseError {
 ///|
 fn ParseContext::parse_value2(
   ctx : ParseContext,
-  tok : Token
+  tok : Token,
 ) -> JsonValue raise ParseError {
   match tok {
     Null => Json::null()

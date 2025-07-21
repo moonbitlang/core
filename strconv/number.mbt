@@ -43,7 +43,7 @@ fn parse_digits(s : StringSlice, x : UInt64) -> (StringSlice, UInt64, Int) {
 ///|
 fn try_parse_19digits(
   s : StringSlice,
-  x : UInt64
+  x : UInt64,
 ) -> (StringSlice, UInt64, Int) {
   let mut x = x
   let mut s = s

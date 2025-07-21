@@ -44,7 +44,7 @@ pub fn StringBuilder::is_empty(self : StringBuilder) -> Bool {
 ///|
 fn StringBuilder::grow_if_necessary(
   self : StringBuilder,
-  required : Int
+  required : Int,
 ) -> Unit {
   let current_len = self.data.length()
   if required <= current_len {
@@ -98,7 +98,7 @@ pub impl Logger for StringBuilder with write_substring(
   self : StringBuilder,
   str : String,
   start : Int,
-  len : Int
+  len : Int,
 ) -> Unit {
   guard start >= 0 && len >= 0 && start + len <= str.length()
   self.grow_if_necessary(self.len + len * 2)

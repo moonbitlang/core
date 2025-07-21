@@ -415,7 +415,7 @@ pub(all) suberror RationalError String derive(Show, ToJson)
 ///
 pub impl Eq for RationalError with op_equal(
   self : RationalError,
-  other : RationalError
+  other : RationalError,
 ) -> Bool {
   match (self, other) {
     (RationalError(e1), RationalError(e2)) => e1 == e2

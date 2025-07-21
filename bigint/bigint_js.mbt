@@ -46,7 +46,7 @@ pub extern "js" fn BigInt::from_hex(str : String) -> BigInt =
 ///|
 pub extern "js" fn BigInt::to_hex(
   self : BigInt,
-  uppercase~ : Bool = true
+  uppercase~ : Bool = true,
 ) -> String =
   #|(x, uppercase) => {
   #|  const r = x.toString(16);
@@ -211,7 +211,7 @@ pub impl Mod for BigInt with op_mod(self, other) {
 extern "js" fn BigInt::modpow_ffi(
   self : BigInt,
   exponent : BigInt,
-  modulus : BigInt
+  modulus : BigInt,
 ) -> BigInt =
   #|(x, y, z) => {
   #|  if (z === 1n) return 0n;
@@ -235,7 +235,7 @@ extern "js" fn BigInt::pow_ffi(self : BigInt, exponent : BigInt) -> BigInt =
 pub fn BigInt::pow(
   self : BigInt,
   exponent : BigInt,
-  modulus? : BigInt
+  modulus? : BigInt,
 ) -> BigInt {
   if exponent < 0 {
     abort("negative exponent")

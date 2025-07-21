@@ -15,7 +15,7 @@
 ///|
 pub impl[A : FromJson, B : FromJson] FromJson for (A, B) with from_json(
   json,
-  path
+  path,
 ) {
   match json {
     [a, b] => {
@@ -30,7 +30,7 @@ pub impl[A : FromJson, B : FromJson] FromJson for (A, B) with from_json(
 ///|
 pub impl[A : FromJson, B : FromJson, C : FromJson] FromJson for (A, B, C) with from_json(
   json,
-  path
+  path,
 ) {
   match json {
     [a, b, c] => {
@@ -84,14 +84,14 @@ pub impl[A : FromJson, B : FromJson, C : FromJson, D : FromJson, E : FromJson] F
 }
 
 ///|
-pub impl[A : FromJson, B : FromJson, C : FromJson, D : FromJson, E : FromJson, F : FromJson] FromJson for (
-  A,
-  B,
-  C,
-  D,
-  E,
-  F,
-) with from_json(json, path) {
+pub impl[
+  A : FromJson,
+  B : FromJson,
+  C : FromJson,
+  D : FromJson,
+  E : FromJson,
+  F : FromJson,
+] FromJson for (A, B, C, D, E, F) with from_json(json, path) {
   match json {
     [a, b, c, d, e, f] => {
       let a : A = FromJson::from_json(a, path.add_index(0))
@@ -107,15 +107,15 @@ pub impl[A : FromJson, B : FromJson, C : FromJson, D : FromJson, E : FromJson, F
 }
 
 ///|
-pub impl[A : FromJson, B : FromJson, C : FromJson, D : FromJson, E : FromJson, F : FromJson, G : FromJson] FromJson for (
-  A,
-  B,
-  C,
-  D,
-  E,
-  F,
-  G,
-) with from_json(json, path) {
+pub impl[
+  A : FromJson,
+  B : FromJson,
+  C : FromJson,
+  D : FromJson,
+  E : FromJson,
+  F : FromJson,
+  G : FromJson,
+] FromJson for (A, B, C, D, E, F, G) with from_json(json, path) {
   match json {
     [a, b, c, d, e, f, g] => {
       let a : A = FromJson::from_json(a, path.add_index(0))
@@ -132,16 +132,16 @@ pub impl[A : FromJson, B : FromJson, C : FromJson, D : FromJson, E : FromJson, F
 }
 
 ///|
-pub impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJson, T5 : FromJson, T6 : FromJson, T7 : FromJson] FromJson for (
-  T0,
-  T1,
-  T2,
-  T3,
-  T4,
-  T5,
-  T6,
-  T7,
-) with from_json(json, path) {
+pub impl[
+  T0 : FromJson,
+  T1 : FromJson,
+  T2 : FromJson,
+  T3 : FromJson,
+  T4 : FromJson,
+  T5 : FromJson,
+  T6 : FromJson,
+  T7 : FromJson,
+] FromJson for (T0, T1, T2, T3, T4, T5, T6, T7) with from_json(json, path) {
   match json {
     [x0, x1, x2, x3, x4, x5, x6, x7] => {
       let x0 : T0 = FromJson::from_json(x0, path.add_index(0))
@@ -159,17 +159,17 @@ pub impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJs
 }
 
 ///|
-pub impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJson, T5 : FromJson, T6 : FromJson, T7 : FromJson, T8 : FromJson] FromJson for (
-  T0,
-  T1,
-  T2,
-  T3,
-  T4,
-  T5,
-  T6,
-  T7,
-  T8,
-) with from_json(json, path) {
+pub impl[
+  T0 : FromJson,
+  T1 : FromJson,
+  T2 : FromJson,
+  T3 : FromJson,
+  T4 : FromJson,
+  T5 : FromJson,
+  T6 : FromJson,
+  T7 : FromJson,
+  T8 : FromJson,
+] FromJson for (T0, T1, T2, T3, T4, T5, T6, T7, T8) with from_json(json, path) {
   match json {
     [x0, x1, x2, x3, x4, x5, x6, x7, x8] => {
       let x0 : T0 = FromJson::from_json(x0, path.add_index(0))
@@ -188,18 +188,21 @@ pub impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJs
 }
 
 ///|
-pub impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJson, T5 : FromJson, T6 : FromJson, T7 : FromJson, T8 : FromJson, T9 : FromJson] FromJson for (
-  T0,
-  T1,
-  T2,
-  T3,
-  T4,
-  T5,
-  T6,
-  T7,
-  T8,
-  T9,
-) with from_json(json, path) {
+pub impl[
+  T0 : FromJson,
+  T1 : FromJson,
+  T2 : FromJson,
+  T3 : FromJson,
+  T4 : FromJson,
+  T5 : FromJson,
+  T6 : FromJson,
+  T7 : FromJson,
+  T8 : FromJson,
+  T9 : FromJson,
+] FromJson for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9) with from_json(
+  json,
+  path,
+) {
   match json {
     [x0, x1, x2, x3, x4, x5, x6, x7, x8, x9] => {
       let x0 : T0 = FromJson::from_json(x0, path.add_index(0))
@@ -219,19 +222,22 @@ pub impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJs
 }
 
 ///|
-pub impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJson, T5 : FromJson, T6 : FromJson, T7 : FromJson, T8 : FromJson, T9 : FromJson, T10 : FromJson] FromJson for (
-  T0,
-  T1,
-  T2,
-  T3,
-  T4,
-  T5,
-  T6,
-  T7,
-  T8,
-  T9,
-  T10,
-) with from_json(json, path) {
+pub impl[
+  T0 : FromJson,
+  T1 : FromJson,
+  T2 : FromJson,
+  T3 : FromJson,
+  T4 : FromJson,
+  T5 : FromJson,
+  T6 : FromJson,
+  T7 : FromJson,
+  T8 : FromJson,
+  T9 : FromJson,
+  T10 : FromJson,
+] FromJson for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10) with from_json(
+  json,
+  path,
+) {
   match json {
     [x0, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10] => {
       let x0 : T0 = FromJson::from_json(x0, path.add_index(0))
@@ -252,20 +258,23 @@ pub impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJs
 }
 
 ///|
-pub impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJson, T5 : FromJson, T6 : FromJson, T7 : FromJson, T8 : FromJson, T9 : FromJson, T10 : FromJson, T11 : FromJson] FromJson for (
-  T0,
-  T1,
-  T2,
-  T3,
-  T4,
-  T5,
-  T6,
-  T7,
-  T8,
-  T9,
-  T10,
-  T11,
-) with from_json(json, path) {
+pub impl[
+  T0 : FromJson,
+  T1 : FromJson,
+  T2 : FromJson,
+  T3 : FromJson,
+  T4 : FromJson,
+  T5 : FromJson,
+  T6 : FromJson,
+  T7 : FromJson,
+  T8 : FromJson,
+  T9 : FromJson,
+  T10 : FromJson,
+  T11 : FromJson,
+] FromJson for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11) with from_json(
+  json,
+  path,
+) {
   match json {
     [x0, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11] => {
       let x0 : T0 = FromJson::from_json(x0, path.add_index(0))
@@ -287,21 +296,24 @@ pub impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJs
 }
 
 ///|
-pub impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJson, T5 : FromJson, T6 : FromJson, T7 : FromJson, T8 : FromJson, T9 : FromJson, T10 : FromJson, T11 : FromJson, T12 : FromJson] FromJson for (
-  T0,
-  T1,
-  T2,
-  T3,
-  T4,
-  T5,
-  T6,
-  T7,
-  T8,
-  T9,
-  T10,
-  T11,
-  T12,
-) with from_json(json, path) {
+pub impl[
+  T0 : FromJson,
+  T1 : FromJson,
+  T2 : FromJson,
+  T3 : FromJson,
+  T4 : FromJson,
+  T5 : FromJson,
+  T6 : FromJson,
+  T7 : FromJson,
+  T8 : FromJson,
+  T9 : FromJson,
+  T10 : FromJson,
+  T11 : FromJson,
+  T12 : FromJson,
+] FromJson for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12) with from_json(
+  json,
+  path,
+) {
   match json {
     [x0, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12] => {
       let x0 : T0 = FromJson::from_json(x0, path.add_index(0))
@@ -324,22 +336,25 @@ pub impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJs
 }
 
 ///|
-pub impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJson, T5 : FromJson, T6 : FromJson, T7 : FromJson, T8 : FromJson, T9 : FromJson, T10 : FromJson, T11 : FromJson, T12 : FromJson, T13 : FromJson] FromJson for (
-  T0,
-  T1,
-  T2,
-  T3,
-  T4,
-  T5,
-  T6,
-  T7,
-  T8,
-  T9,
-  T10,
-  T11,
-  T12,
-  T13,
-) with from_json(json, path) {
+pub impl[
+  T0 : FromJson,
+  T1 : FromJson,
+  T2 : FromJson,
+  T3 : FromJson,
+  T4 : FromJson,
+  T5 : FromJson,
+  T6 : FromJson,
+  T7 : FromJson,
+  T8 : FromJson,
+  T9 : FromJson,
+  T10 : FromJson,
+  T11 : FromJson,
+  T12 : FromJson,
+  T13 : FromJson,
+] FromJson for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13) with from_json(
+  json,
+  path,
+) {
   match json {
     [x0, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13] => {
       let x0 : T0 = FromJson::from_json(x0, path.add_index(0))
@@ -363,23 +378,26 @@ pub impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJs
 }
 
 ///|
-pub impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJson, T5 : FromJson, T6 : FromJson, T7 : FromJson, T8 : FromJson, T9 : FromJson, T10 : FromJson, T11 : FromJson, T12 : FromJson, T13 : FromJson, T14 : FromJson] FromJson for (
-  T0,
-  T1,
-  T2,
-  T3,
-  T4,
-  T5,
-  T6,
-  T7,
-  T8,
-  T9,
-  T10,
-  T11,
-  T12,
-  T13,
-  T14,
-) with from_json(json, path) {
+pub impl[
+  T0 : FromJson,
+  T1 : FromJson,
+  T2 : FromJson,
+  T3 : FromJson,
+  T4 : FromJson,
+  T5 : FromJson,
+  T6 : FromJson,
+  T7 : FromJson,
+  T8 : FromJson,
+  T9 : FromJson,
+  T10 : FromJson,
+  T11 : FromJson,
+  T12 : FromJson,
+  T13 : FromJson,
+  T14 : FromJson,
+] FromJson for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14) with from_json(
+  json,
+  path,
+) {
   match json {
     [x0, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14] => {
       let x0 : T0 = FromJson::from_json(x0, path.add_index(0))
@@ -404,7 +422,24 @@ pub impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJs
 }
 
 ///|
-pub impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJson, T5 : FromJson, T6 : FromJson, T7 : FromJson, T8 : FromJson, T9 : FromJson, T10 : FromJson, T11 : FromJson, T12 : FromJson, T13 : FromJson, T14 : FromJson, T15 : FromJson] FromJson for (
+pub impl[
+  T0 : FromJson,
+  T1 : FromJson,
+  T2 : FromJson,
+  T3 : FromJson,
+  T4 : FromJson,
+  T5 : FromJson,
+  T6 : FromJson,
+  T7 : FromJson,
+  T8 : FromJson,
+  T9 : FromJson,
+  T10 : FromJson,
+  T11 : FromJson,
+  T12 : FromJson,
+  T13 : FromJson,
+  T14 : FromJson,
+  T15 : FromJson,
+] FromJson for (
   T0,
   T1,
   T2,

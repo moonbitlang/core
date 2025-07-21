@@ -336,7 +336,7 @@ pub fn[A, B] fold(self : T[A], init~ : B, f : (B, A) -> B raise?) -> B raise? {
 pub fn[A, B] rev_fold(
   self : T[A],
   init~ : B,
-  f : (B, A) -> B raise?
+  f : (B, A) -> B raise?,
 ) -> B raise? {
   self.tree.rev_fold(init, f)
 }
@@ -368,7 +368,7 @@ pub fn[A] fold_left(self : T[A], f : (A, A) -> A raise?, init~ : A) -> A raise? 
 pub fn[A] fold_right(
   self : T[A],
   f : (A, A) -> A raise?,
-  init~ : A
+  init~ : A,
 ) -> A raise? {
   self.rev_fold(init~, f)
 }
@@ -392,7 +392,7 @@ pub fn[A, B] map(self : T[A], f : (A) -> B raise?) -> T[B] raise? {
 ///|
 pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[X] with arbitrary(
   size,
-  rs
+  rs,
 ) {
   @quickcheck.Arbitrary::arbitrary(size, rs) |> from_array
 }
@@ -464,7 +464,7 @@ pub impl[A : Compare] Compare for T[A] with compare(self, other) {
 ///|
 fn[A] from_leaves(
   leaves : @core/array.View[FixedArray[A]],
-  cap : Int
+  cap : Int,
 ) -> Tree[A] {
   if cap == branching_factor {
     Leaf(leaves[0])

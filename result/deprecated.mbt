@@ -36,7 +36,7 @@ pub fn[T, A, E : Error] wrap1(f~ : (A) -> T raise E, a : A) -> Result[T, E] {
 pub fn[T, A, B, E : Error] wrap2(
   f~ : (A, B) -> T raise E,
   a : A,
-  b : B
+  b : B,
 ) -> Result[T, E] {
   try f(a, b) |> Ok catch {
     e => Err(e)

@@ -88,7 +88,7 @@ fn indent_str(level : Int, indent : Int) -> String {
 pub fn stringify(
   self : JsonValue,
   escape_slash~ : Bool = false,
-  indent~ : Int = 0
+  indent~ : Int = 0,
 ) -> String {
   fn stringify_inner(value : JsonValue, level : Int) -> String {
     match value {
@@ -213,7 +213,7 @@ pub fn inspect(
   obj : &ToJson,
   content? : Json,
   loc~ : SourceLoc = _,
-  args_loc~ : ArgsLoc = _
+  args_loc~ : ArgsLoc = _,
 ) -> Unit raise InspectError {
   let loc = loc.to_string().escape()
   let args_loc = args_loc.to_json().escape()

@@ -206,7 +206,7 @@ let small_primes : Array[@bigint.BigInt] = [
 pub fn is_probable_prime(
   number : @bigint.BigInt,
   rand : @random.Rand,
-  iters~ : Int = DEFAULT_PRIME_TEST_ITERS
+  iters~ : Int = DEFAULT_PRIME_TEST_ITERS,
 ) -> Bool {
   if iters <= 0 {
     abort("non-positive iters for probably prime")
@@ -277,7 +277,7 @@ fn trial_divisions(n : @bigint.BigInt) -> Bool {
 fn miller_rabin_test(
   w : @bigint.BigInt,
   iters : Int,
-  rand : @random.Rand
+  rand : @random.Rand,
 ) -> Bool {
   if w <= 3N {
     abort("candidate of miller rabin test must larger than 3")

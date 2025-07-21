@@ -80,7 +80,7 @@ fn[T : Compare] timsort(arr : FixedArraySlice[T]) -> Unit {
 
 ///|
 fn[T : Compare] FixedArraySlice::insertion_sort(
-  arr : FixedArraySlice[T]
+  arr : FixedArraySlice[T],
 ) -> Unit {
   for i in 1..<arr.length() {
     for j = i; j > 0 && arr[j] < arr[j - 1]; j = j - 1 {
@@ -150,7 +150,7 @@ fn[T : Compare] find_streak(arr : FixedArraySlice[T]) -> (Int, Bool) {
 fn[T : Compare] provide_sorted_batch(
   arr : FixedArraySlice[T],
   start : Int,
-  end : Int
+  end : Int,
 ) -> Int {
   let len = arr.length()
   // This value is a balance between least comparisons and best performance, as
@@ -221,7 +221,7 @@ pub fn[T : Compare] FixedArray::sort(self : FixedArray[T]) -> Unit {
 fn[T : Compare] fixed_quick_sort(
   arr : FixedArraySlice[T],
   pred : T?,
-  limit : Int
+  limit : Int,
 ) -> Unit {
   let mut limit = limit
   let mut arr = arr
@@ -343,7 +343,7 @@ test "fixed_try_bubble_sort" {
 ///|
 fn[T : Compare] fixed_partition(
   arr : FixedArraySlice[T],
-  pivot_index : Int
+  pivot_index : Int,
 ) -> (Int, Bool) {
   arr.swap(pivot_index, arr.length() - 1)
   let pivot = arr[arr.length() - 1]

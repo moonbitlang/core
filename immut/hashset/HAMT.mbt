@@ -390,7 +390,7 @@ impl[A : Eq] Eq for Node[A] with op_equal(self, other) {
 ///|
 pub impl[K : Eq + Hash + @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[K] with arbitrary(
   size,
-  rs
+  rs,
 ) {
   @quickcheck.Arbitrary::arbitrary(size, rs) |> from_array
 }

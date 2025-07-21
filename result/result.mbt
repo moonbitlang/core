@@ -228,7 +228,7 @@ test "flatten" {
 /// ```
 pub fn[T, E, U] bind(
   self : Result[T, E],
-  g : (T) -> Result[U, E]
+  g : (T) -> Result[U, E],
 ) -> Result[U, E] {
   match self {
     Ok(value) => g(value)
@@ -303,7 +303,7 @@ test "to_option" {
 ///|
 pub impl[T : Compare, E : Compare] Compare for Result[T, E] with compare(
   self : Result[T, E],
-  other : Result[T, E]
+  other : Result[T, E],
 ) -> Int {
   match (self, other) {
     (Ok(x), Ok(y)) => x.compare(y)

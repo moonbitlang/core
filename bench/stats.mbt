@@ -38,7 +38,7 @@ struct Summary {
 fn Summary::new(
   name? : String,
   sorted_data~ : Array[Double],
-  batch_size : Int
+  batch_size : Int,
 ) -> Summary {
   let sum = sum(sorted_data)
   let min = min(sorted_data~)

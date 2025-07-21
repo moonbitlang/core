@@ -86,7 +86,7 @@ fn mulShiftAll64(
   m : UInt64,
   mul : (UInt64, UInt64),
   j : Int,
-  mmShift : Bool
+  mmShift : Bool,
 ) -> (UInt64, UInt64, UInt64) {
   let m = m << 1
   let (lo, tmp) = umul128(m, mul.0)
@@ -586,7 +586,7 @@ fn to_chars(v : FloatingDecimal64, sign : Bool) -> String {
 ///|
 fn d2d_small_int(
   ieeeMantissa : UInt64,
-  ieeeExponent : Int
+  ieeeExponent : Int,
 ) -> FloatingDecimal64? {
   let m2 : UInt64 = (1UL << gDOUBLE_MANTISSA_BITS) | ieeeMantissa
   let e2 : Int = ieeeExponent - gDOUBLE_BIAS - gDOUBLE_MANTISSA_BITS

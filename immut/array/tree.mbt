@@ -300,7 +300,7 @@ fn[A] Tree::eachi(
   self : Tree[A],
   f : (Int, A) -> Unit raise?,
   shift : Int,
-  start : Int
+  start : Int,
 ) -> Unit raise? {
   match self {
     Empty => ()
@@ -332,7 +332,7 @@ fn[A] Tree::eachi(
 fn[A, B] Tree::fold(
   self : Tree[A],
   acc : B,
-  f : (B, A) -> B raise?
+  f : (B, A) -> B raise?,
 ) -> B raise? {
   match self {
     Empty => acc
@@ -346,7 +346,7 @@ fn[A, B] Tree::fold(
 fn[A, B] Tree::rev_fold(
   self : Tree[A],
   acc : B,
-  f : (B, A) -> B raise?
+  f : (B, A) -> B raise?,
 ) -> B raise? {
   match self {
     Empty => acc
@@ -382,7 +382,7 @@ fn[A] Tree::concat(
   left_shift : Int,
   right : Tree[A],
   right_shift : Int,
-  top : Bool
+  top : Bool,
 ) -> (Tree[A], Int) {
   if left_shift > right_shift {
     let (c, c_shift) = Tree::concat(
@@ -455,7 +455,7 @@ fn[A] rebalance(
   center : Tree[A],
   right : Tree[A],
   shift : Int,
-  top : Bool
+  top : Bool,
 ) -> (Tree[A], Int) {
   // Suppose H = shift / num_bits
   let t = tri_merge(left, center, right) // t is a list of trees of (H-1) height
@@ -509,7 +509,7 @@ fn[A] rebalance(
 fn[A] tri_merge(
   left : Tree[A],
   center : Tree[A],
-  right : Tree[A]
+  right : Tree[A],
 ) -> FixedArray[Tree[A]] {
   if left.is_leaf() || !center.is_node() || right.is_leaf() {
     abort("Unreachable: input to merge is invalid")
@@ -588,7 +588,7 @@ fn[A] redis(
   old_t : FixedArray[Tree[A]],
   node_counts : FixedArray[Int],
   node_nums : Int,
-  shift : Int
+  shift : Int,
 ) -> FixedArray[Tree[A]] {
   let old_len = old_t.length()
   let new_t = FixedArray::make(node_nums, Empty)
@@ -683,7 +683,7 @@ fn[A] redis(
 /// Given a list of trees as `children` with heights of (`shift` / `num_bits`), compute the sizes array of the subtrees.
 fn[A] compute_sizes(
   children : FixedArray[Tree[A]],
-  shift : Int
+  shift : Int,
 ) -> FixedArray[Int]? {
   let len = children.length()
   let sizes = FixedArray::make(len, 0)
