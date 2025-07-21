@@ -33,7 +33,7 @@ fn[T] FixedArraySlice::op_get(self : FixedArraySlice[T], index : Int) -> T {
 fn[T] FixedArraySlice::op_set(
   self : FixedArraySlice[T],
   index : Int,
-  value : T
+  value : T,
 ) -> Unit {
   self.array[self.start + index] = value
 }
@@ -42,7 +42,7 @@ fn[T] FixedArraySlice::op_set(
 fn[T] FixedArraySlice::swap(
   self : FixedArraySlice[T],
   a : Int,
-  b : Int
+  b : Int,
 ) -> Unit {
   self.array.swap(self.start + a, self.start + b)
 }
@@ -61,7 +61,7 @@ fn[T] FixedArraySlice::rev_inplace(self : FixedArraySlice[T]) -> Unit {
 fn[T] FixedArraySlice::slice(
   self : FixedArraySlice[T],
   start : Int,
-  end : Int
+  end : Int,
 ) -> FixedArraySlice[T] {
   { array: self.array, start: self.start + start, end: self.start + end }
 }

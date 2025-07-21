@@ -84,7 +84,7 @@ pub fn[T] View::each(self : View[T], f : (T) -> Unit raise?) -> Unit raise? {
 /// ```
 pub fn[T] View::eachi(
   self : View[T],
-  f : (Int, T) -> Unit raise?
+  f : (Int, T) -> Unit raise?,
 ) -> Unit raise? {
   for i, v in self {
     f(i, v)
@@ -221,7 +221,7 @@ pub fn[A] View::iter2(self : View[A]) -> Iter2[Int, A] {
 pub fn[A, B] View::fold(
   self : View[A],
   init~ : B,
-  f : (B, A) -> B raise?
+  f : (B, A) -> B raise?,
 ) -> B raise? {
   for i = 0, acc = init; i < self.length(); {
     continue i + 1, f(acc, self[i])
@@ -241,7 +241,7 @@ pub fn[A, B] View::fold(
 pub fn[A, B] View::rev_fold(
   self : View[A],
   init~ : B,
-  f : (B, A) -> B raise?
+  f : (B, A) -> B raise?,
 ) -> B raise? {
   for i = self.length() - 1, acc = init; i >= 0; {
     continue i - 1, f(acc, self[i])
@@ -261,7 +261,7 @@ pub fn[A, B] View::rev_fold(
 pub fn[A, B] View::foldi(
   self : View[A],
   init~ : B,
-  f : (Int, B, A) -> B raise?
+  f : (Int, B, A) -> B raise?,
 ) -> B raise? {
   for i = 0, acc = init; i < self.length(); {
     continue i + 1, f(i, acc, self[i])
@@ -281,7 +281,7 @@ pub fn[A, B] View::foldi(
 pub fn[A, B] View::rev_foldi(
   self : View[A],
   init~ : B,
-  f : (Int, B, A) -> B raise?
+  f : (Int, B, A) -> B raise?,
 ) -> B raise? {
   let len = self.length()
   for i = len - 1, acc = init; i >= 0; {
@@ -333,7 +333,7 @@ pub fn[T] View::map_inplace(self : View[T], f : (T) -> T raise?) -> Unit raise? 
 /// ```
 pub fn[T, U] View::mapi(
   self : View[T],
-  f : (Int, T) -> U raise?
+  f : (Int, T) -> U raise?,
 ) -> Array[U] raise? {
   if self.length() == 0 {
     return []
@@ -352,7 +352,7 @@ pub fn[T, U] View::mapi(
 /// ```
 pub fn[T] View::mapi_inplace(
   self : View[T],
-  f : (Int, T) -> T raise?
+  f : (Int, T) -> T raise?,
 ) -> Unit raise? {
   for i, v in self {
     self[i] = f(i, v)
@@ -370,7 +370,7 @@ pub fn[T] View::mapi_inplace(
 /// ```
 pub fn[T] View::filter(
   self : View[T],
-  f : (T) -> Bool raise?
+  f : (T) -> Bool raise?,
 ) -> Array[T] raise? {
   let arr = []
   for v in self {
@@ -486,7 +486,7 @@ pub impl[A : Hash] Hash for View[A] with hash_combine(self, hasher) {
 ///|
 pub impl[A : @quickcheck.Arbitrary] @quickcheck.Arbitrary for View[A] with arbitrary(
   size,
-  rs
+  rs,
 ) {
   Array::arbitrary(size, rs)[:]
 }

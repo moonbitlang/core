@@ -177,7 +177,7 @@ pub fn[T] FixedArray::is_empty(self : FixedArray[T]) -> Bool {
 /// - If the array is not sorted, the returned result is undefined and should not be relied on.
 pub fn[T : Compare] FixedArray::binary_search(
   self : FixedArray[T],
-  value : T
+  value : T,
 ) -> Result[Int, Int] {
   let len = self.length()
   for i = 0, j = len; i < j; {
@@ -243,7 +243,7 @@ pub fn[T : Compare] FixedArray::binary_search(
 #locals(cmp)
 pub fn[T] FixedArray::binary_search_by(
   self : FixedArray[T],
-  cmp : (T) -> Int raise?
+  cmp : (T) -> Int raise?,
 ) -> Result[Int, Int] raise? {
   let len = self.length()
   for i = 0, j = len; i < j; {

@@ -61,7 +61,7 @@ pub fn[K : Compare, V] T::of(array : FixedArray[(K, V)]) -> T[K, V] {
 #deprecated("use `@immut/sorted_map.from_json` instead")
 #coverage.skip
 pub fn[V : @json.FromJson] T::from_json(
-  json : Json
+  json : Json,
 ) -> T[String, V] raise @json.JsonDecodeError {
   @json.from_json(json)
 }

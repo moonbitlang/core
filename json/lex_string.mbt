@@ -64,7 +64,7 @@ fn ParseContext::lex_string(ctx : ParseContext) -> String raise ParseError {
 ///|
 fn ParseContext::lex_hex_digits(
   ctx : ParseContext,
-  n : Int
+  n : Int,
 ) -> Int raise ParseError {
   let mut r = 0
   for i in 0..<n {

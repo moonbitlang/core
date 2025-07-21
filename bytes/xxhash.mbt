@@ -118,7 +118,7 @@ fn _h16bytes(
   v1 : Int,
   v2 : Int,
   v3 : Int,
-  v4 : Int
+  v4 : Int,
 ) -> Int {
   if remain >= 16 {
     _h16bytes(

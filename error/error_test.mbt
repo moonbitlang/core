@@ -54,7 +54,7 @@ test "show error" {
 /// here `protect` raise the `work` error
 fn[A, E : Error] protect(
   finalize~ : () -> Unit raise?,
-  work : () -> A raise E
+  work : () -> A raise E,
 ) -> A raise E {
   try work() catch {
     e => {

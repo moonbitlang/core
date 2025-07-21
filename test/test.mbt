@@ -108,7 +108,7 @@ pub fn snapshot(
   self : T,
   filename~ : String,
   loc~ : SourceLoc = _,
-  args_loc~ : ArgsLoc = _
+  args_loc~ : ArgsLoc = _,
 ) -> Unit raise SnapshotError {
   let loc = loc.to_string().escape()
   let args_loc = args_loc.to_json().escape()

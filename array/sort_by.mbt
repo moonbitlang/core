@@ -54,7 +54,7 @@ fn[T] quick_sort_by(
   arr : ArrayView[T],
   cmp : (T, T) -> Int,
   pred : T?,
-  limit : Int
+  limit : Int,
 ) -> Unit {
   let mut limit = limit
   let mut arr = arr
@@ -158,7 +158,7 @@ fn[T] bubble_sort_by(arr : ArrayView[T], cmp : (T, T) -> Int) -> Unit {
 fn[T] partition_by(
   arr : ArrayView[T],
   cmp : (T, T) -> Int,
-  pivot_index : Int
+  pivot_index : Int,
 ) -> (Int, Bool) {
   arr.swap(pivot_index, arr.length() - 1)
   let pivot = arr[arr.length() - 1]
@@ -232,7 +232,7 @@ fn[T] heap_sort_by(arr : ArrayView[T], cmp : (T, T) -> Int) -> Unit {
 fn[T] sift_down_by(
   arr : ArrayView[T],
   index : Int,
-  cmp : (T, T) -> Int
+  cmp : (T, T) -> Int,
 ) -> Unit {
   let mut index = index
   let len = arr.length()

@@ -16,7 +16,7 @@
 /// Writes the string representation of a object to the StringBuilder.
 pub fn[T : Show] StringBuilder::write_object(
   self : StringBuilder,
-  obj : T
+  obj : T,
 ) -> Unit {
   obj.output(self)
 }
@@ -39,7 +39,7 @@ pub fn[T : Show] StringBuilder::write_object(
 /// ```
 pub fn StringBuilder::write_iter(
   self : StringBuilder,
-  iter : Iter[Char]
+  iter : Iter[Char],
 ) -> Unit {
   for ch in iter {
     self.write_char(ch)

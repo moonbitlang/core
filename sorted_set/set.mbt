@@ -66,7 +66,7 @@ fn[V] new_node(
   value : V,
   left~ : Node[V]? = None,
   right~ : Node[V]? = None,
-  height~ : Int = 1
+  height~ : Int = 1,
 ) -> Node[V] {
   { value, left, right, height }
 }
@@ -75,7 +75,7 @@ fn[V] new_node(
 fn[V] new_node_update_height(
   value : V,
   left~ : Node[V]?,
-  right~ : Node[V]?
+  right~ : Node[V]?,
 ) -> Node[V] {
   { value, left, right, height: max(height(left), height(right)) + 1 }
 }
@@ -407,7 +407,7 @@ pub impl[V : Show] Show for T[V] with output(self, logger) {
 ///|
 pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for T[X] with arbitrary(
   size,
-  rs
+  rs,
 ) {
   @quickcheck.Arbitrary::arbitrary(size, rs) |> from_iter
 }
@@ -451,7 +451,7 @@ pub fn[V : Compare] range(self : T[V], low : V, high : V) -> Iter[V] {
 ///|
 fn[V : Compare] replace_root_with_min(
   root : Node[V],
-  node : Node[V]
+  node : Node[V],
 ) -> Node[V]? {
   let (l, r) = (node.left, node.right)
   match l {

@@ -51,7 +51,7 @@ struct T[K, V] {
 ///|
 pub impl[K : Hash + Eq, V : Eq] Eq for T[K, V] with op_equal(
   self : T[K, V],
-  that : T[K, V]
+  that : T[K, V],
 ) -> Bool {
   guard self.size == that.size else { return false }
   for k, v in self {

@@ -454,7 +454,7 @@ pub fn[K : Hash + Eq] difference(self : Set[K], other : Set[K]) -> Set[K] {
 ///|
 pub fn[K : Hash + Eq] symmetric_difference(
   self : Set[K],
-  other : Set[K]
+  other : Set[K],
 ) -> Set[K] {
   let m = Set::new()
   self.each(k => if !other.contains(k) { m.add(k) })

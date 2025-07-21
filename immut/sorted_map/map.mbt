@@ -95,7 +95,7 @@ pub fn[K : Compare, V] remove(self : T[K, V], key : K) -> T[K, V] {
 /// Filter values that satisfy the predicate
 pub fn[K : Compare, V] filter(
   self : T[K, V],
-  pred : (V) -> Bool raise?
+  pred : (V) -> Bool raise?,
 ) -> T[K, V] raise? {
   self.filter_with_key((_k, v) => pred(v))
 }
@@ -104,7 +104,7 @@ pub fn[K : Compare, V] filter(
 /// Filter key-value pairs that satisfy the predicate
 pub fn[K : Compare, V] filter_with_key(
   self : T[K, V],
-  pred : (K, V) -> Bool raise?
+  pred : (K, V) -> Bool raise?,
 ) -> T[K, V] raise? {
   match self {
     Empty => Empty

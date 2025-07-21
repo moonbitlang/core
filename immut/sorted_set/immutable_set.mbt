@@ -488,7 +488,7 @@ pub fn[A] each(self : T[A], f : (A) -> Unit raise?) -> Unit raise? {
 pub fn[A : Compare, B] fold(
   self : T[A],
   init~ : B,
-  f : (B, A) -> B raise?
+  f : (B, A) -> B raise?,
 ) -> B raise? {
   match self {
     Empty => init
@@ -507,7 +507,7 @@ pub fn[A : Compare, B] fold(
 /// ```
 pub fn[A : Compare, B : Compare] map(
   self : T[A],
-  f : (A) -> B raise?
+  f : (A) -> B raise?,
 ) -> T[B] raise? {
   match self {
     Empty => Empty
@@ -596,7 +596,7 @@ pub fn[A : ToJson] to_json(self : T[A]) -> Json {
 ///|
 pub impl[A : @json.FromJson + Compare] @json.FromJson for T[A] with from_json(
   json,
-  path
+  path,
 ) {
   guard json is Array(arr) else {
     raise @json.JsonDecodeError(
@@ -612,7 +612,7 @@ pub impl[A : @json.FromJson + Compare] @json.FromJson for T[A] with from_json(
 
 ///|
 pub fn[A : @json.FromJson + Compare] from_json(
-  json : Json
+  json : Json,
 ) -> T[A] raise @json.JsonDecodeError {
   @json.from_json(json)
 }
@@ -620,7 +620,7 @@ pub fn[A : @json.FromJson + Compare] from_json(
 ///|
 pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for T[X] with arbitrary(
   size,
-  rs
+  rs,
 ) {
   @quickcheck.Arbitrary::arbitrary(size, rs) |> from_array
 }

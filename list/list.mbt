@@ -75,7 +75,7 @@ pub impl[A : @json.FromJson] @json.FromJson for T[A] with from_json(json, path) 
 
 ///|
 pub fn[A : @json.FromJson] from_json(
-  json : Json
+  json : Json,
 ) -> T[A] raise @json.JsonDecodeError {
   @json.from_json(json)
 }
@@ -419,7 +419,7 @@ pub fn[A, B] fold(self : T[A], init~ : B, f : (B, A) -> B raise?) -> B raise? {
 pub fn[A, B] foldi(
   self : T[A],
   init~ : B,
-  f : (Int, B, A) -> B raise?
+  f : (Int, B, A) -> B raise?,
 ) -> B raise? {
   fn go(xs : T[A], i : Int, f : (Int, B, A) -> B raise?, acc : B) -> B raise? {
     match xs {
@@ -927,7 +927,7 @@ pub fn[A] drop_while(self : T[A], p : (A) -> Bool raise?) -> T[A] raise? {
 pub fn[A, E] scan_left(
   self : T[A],
   f : (E, A) -> E raise?,
-  init~ : E
+  init~ : E,
 ) -> T[E] raise? {
   let dest = More(init, tail=Empty)
   loop (dest, self, init) {
@@ -955,7 +955,7 @@ pub fn[A, E] scan_left(
 pub fn[A, B] scan_right(
   self : T[A],
   f : (B, A) -> B raise?,
-  init~ : B
+  init~ : B,
 ) -> T[B] raise? {
   self.rev().scan_left(f, init~).reverse_inplace()
 }
@@ -1224,7 +1224,7 @@ pub fn[A] of(arr : FixedArray[A]) -> T[A] {
 ///|
 pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[X] with arbitrary(
   size,
-  rs
+  rs,
 ) {
   @quickcheck.Arbitrary::arbitrary(size, rs) |> from_array
 }

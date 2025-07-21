@@ -98,7 +98,7 @@ fn[A] InorderIterator::new(root : T[A]) -> InorderIterator[A] {
 ///|
 fn[A] InorderIterator::move_left(
   self : InorderIterator[A],
-  node : T[A]
+  node : T[A],
 ) -> Unit {
   loop node {
     Empty => ()

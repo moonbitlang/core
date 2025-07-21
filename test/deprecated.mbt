@@ -59,7 +59,7 @@ pub fn is_false(x : Bool, loc~ : SourceLoc = _) -> Unit raise {
 pub fn bench(
   self : T,
   f : () -> Unit,
-  count~ : UInt = 10
+  count~ : UInt = 10,
 ) -> Unit raise BenchError {
   ignore(self)
   let summary = @bench.single_bench(f, count~)

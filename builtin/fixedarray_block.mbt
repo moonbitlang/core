@@ -40,7 +40,7 @@ pub fn[A] FixedArray::unsafe_blit(
   dst_offset : Int,
   src : FixedArray[A],
   src_offset : Int,
-  len : Int
+  len : Int,
 ) -> Unit {
   if physical_equal(dst, src) && dst_offset < src_offset {
     for i in 0..<len {
@@ -63,7 +63,7 @@ fn[T] UninitializedArray::unsafe_blit_fixed(
   dst_offset : Int,
   src : FixedArray[T],
   src_offset : Int,
-  len : Int
+  len : Int,
 ) -> Unit {
   for i = len - 1; i >= 0; i = i - 1 {
     dst[dst_offset + i] = src[src_offset + i]
@@ -102,7 +102,7 @@ pub fn[A] FixedArray::blit_to(
   dst : FixedArray[A],
   len~ : Int,
   src_offset~ : Int = 0,
-  dst_offset~ : Int = 0
+  dst_offset~ : Int = 0,
 ) -> Unit {
   guard dst_offset >= 0 &&
     src_offset >= 0 &&

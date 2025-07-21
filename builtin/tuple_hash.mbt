@@ -21,7 +21,7 @@ pub impl[A : Hash, B : Hash] Hash for (A, B) with hash_combine(self, hasher) {
 ///|
 pub impl[A : Hash, B : Hash, C : Hash] Hash for (A, B, C) with hash_combine(
   self,
-  hasher
+  hasher,
 ) {
   let (a, b, c) = self
   hasher..combine(a)..combine(b)..combine(c)
@@ -30,7 +30,7 @@ pub impl[A : Hash, B : Hash, C : Hash] Hash for (A, B, C) with hash_combine(
 ///|
 pub impl[A : Hash, B : Hash, C : Hash, D : Hash] Hash for (A, B, C, D) with hash_combine(
   self,
-  hasher
+  hasher,
 ) {
   let (a, b, c, d) = self
   hasher..combine(a)..combine(b)..combine(c)..combine(d)

@@ -20,7 +20,7 @@
 /// reflected in the `Bytes` object.
 #internal(unsafe, "Creating mutable Bytes")
 pub fn FixedArray::unsafe_reinterpret_as_bytes(
-  self : FixedArray[Byte]
+  self : FixedArray[Byte],
 ) -> Bytes = "%identity"
 
 ///| 
@@ -59,7 +59,7 @@ pub fn Bytes::makei(length : Int, value : (Int) -> Byte) -> Bytes {
 fn unsafe_sub_string(
   bytes : Bytes,
   byte_offset : Int,
-  byte_length : Int
+  byte_length : Int,
 ) -> String = "$moonbit.unsafe_bytes_sub_string"
 
 ///|
@@ -72,7 +72,7 @@ fn unsafe_sub_string(
 pub fn Bytes::to_unchecked_string(
   self : Bytes,
   offset~ : Int = 0,
-  length? : Int
+  length? : Int,
 ) -> String {
   let len = self.length()
   let length = if length is Some(l) { l } else { len - offset }
@@ -118,7 +118,7 @@ pub fn FixedArray::blit_from_string(
   bytes_offset : Int,
   str : String,
   str_offset : Int,
-  length : Int
+  length : Int,
 ) -> Unit {
   let s1 = bytes_offset
   let s2 = str_offset
@@ -143,7 +143,7 @@ pub fn FixedArray::blit_from_bytes(
   bytes_offset : Int,
   src : Bytes,
   src_offset : Int,
-  length : Int
+  length : Int,
 ) -> Unit {
   let s1 = bytes_offset
   let s2 = src_offset
@@ -186,7 +186,7 @@ pub fn FixedArray::blit_from_bytes(
 pub fn FixedArray::set_utf8_char(
   self : FixedArray[Byte],
   offset : Int,
-  value : Char
+  value : Char,
 ) -> Int {
   let code = value.to_uint()
   match code {
@@ -224,7 +224,7 @@ pub fn FixedArray::set_utf8_char(
 pub fn FixedArray::set_utf16le_char(
   self : FixedArray[Byte],
   offset : Int,
-  value : Char
+  value : Char,
 ) -> Int {
   let code = value.to_uint()
   if code < 0x10000 {
@@ -253,7 +253,7 @@ pub fn FixedArray::set_utf16le_char(
 pub fn FixedArray::set_utf16be_char(
   self : FixedArray[Byte],
   offset : Int,
-  value : Char
+  value : Char,
 ) -> Int {
   let code = value.to_uint()
   if code < 0x10000 {

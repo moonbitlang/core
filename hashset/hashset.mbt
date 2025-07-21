@@ -272,7 +272,7 @@ pub fn[K : Hash + Eq] from_iter(iter : Iter[K]) -> T[K] {
 ///|
 pub impl[X : @quickcheck.Arbitrary + Eq + Hash] @quickcheck.Arbitrary for T[X] with arbitrary(
   size,
-  rs
+  rs,
 ) {
   @quickcheck.Arbitrary::arbitrary(size, rs) |> from_iter
 }

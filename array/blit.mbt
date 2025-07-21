@@ -50,7 +50,7 @@ test "copy" {
 pub fn FixedArray::blit_from_bytesview(
   self : FixedArray[Byte],
   bytes_offset : Int,
-  src : @bytes.View
+  src : @bytes.View,
 ) -> Unit {
   let src_len = src.length()
   guard bytes_offset >= 0 && bytes_offset + src_len - 1 < self.length()

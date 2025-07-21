@@ -24,7 +24,7 @@ pub(open) trait FromJson {
 ///|
 pub fn[T : FromJson] from_json(
   json : Json,
-  path~ : JsonPath = Root
+  path~ : JsonPath = Root,
 ) -> T raise JsonDecodeError {
   FromJson::from_json(json, path)
 }
@@ -200,7 +200,7 @@ pub impl[T : FromJson] FromJson for T? with from_json(json, path) {
 ///|
 pub impl[Ok : FromJson, Err : FromJson] FromJson for Result[Ok, Err] with from_json(
   json,
-  path
+  path,
 ) {
   guard json is Object(obj) else {
     decode_error(path, "Result::from_json: expected object")

@@ -125,7 +125,7 @@ fn lower(c : Char) -> Char {
 fn[T] fold_digits(
   self : StringSlice,
   init : T,
-  f : (Int, T) -> T
+  f : (Int, T) -> T,
 ) -> (StringSlice, T, Int) {
   let mut ret = init
   let mut len = 0

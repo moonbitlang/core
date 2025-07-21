@@ -414,7 +414,7 @@ pub fn[T] Array::rev_each(self : Array[T], f : (T) -> Unit) -> Unit {
 #locals(f)
 pub fn[T] Array::rev_eachi(
   self : Array[T],
-  f : (Int, T) -> Unit raise?
+  f : (Int, T) -> Unit raise?,
 ) -> Unit raise? {
   let len = self.length()
   for i in 0..<len {
@@ -435,7 +435,7 @@ pub fn[T] Array::rev_eachi(
 #locals(f)
 pub fn[T] Array::eachi(
   self : Array[T],
-  f : (Int, T) -> Unit raise?
+  f : (Int, T) -> Unit raise?,
 ) -> Unit raise? {
   for i, v in self {
     f(i, v)
@@ -469,7 +469,7 @@ pub fn[T] Array::clear(self : Array[T]) -> Unit {
 #locals(f)
 pub fn[T, U] Array::map(
   self : Array[T],
-  f : (T) -> U raise?
+  f : (T) -> U raise?,
 ) -> Array[U] raise? {
   let arr = Array::make_uninit(self.length())
   for i, v in self {
@@ -490,7 +490,7 @@ pub fn[T, U] Array::map(
 #locals(f)
 pub fn[T] Array::map_inplace(
   self : Array[T],
-  f : (T) -> T raise?
+  f : (T) -> T raise?,
 ) -> Unit raise? {
   for i, v in self {
     self[i] = f(v)
@@ -509,7 +509,7 @@ pub fn[T] Array::map_inplace(
 #locals(f)
 pub fn[T, U] Array::mapi(
   self : Array[T],
-  f : (Int, T) -> U raise?
+  f : (Int, T) -> U raise?,
 ) -> Array[U] raise? {
   if self.length() == 0 {
     return []
@@ -533,7 +533,7 @@ pub fn[T, U] Array::mapi(
 #locals(f)
 pub fn[T] Array::mapi_inplace(
   self : Array[T],
-  f : (Int, T) -> T raise?
+  f : (Int, T) -> T raise?,
 ) -> Unit raise? {
   for i, v in self {
     self[i] = f(i, v)
@@ -563,7 +563,7 @@ pub fn[T] Array::mapi_inplace(
 #locals(f)
 pub fn[T] Array::filter(
   self : Array[T],
-  f : (T) -> Bool raise?
+  f : (T) -> Bool raise?,
 ) -> Array[T] raise? {
   let arr = []
   for v in self {
@@ -845,7 +845,7 @@ pub fn[T : Eq] Array::ends_with(self : Array[T], suffix : Array[T]) -> Bool {
 /// ```
 pub fn[T : Eq] Array::strip_prefix(
   self : Array[T],
-  prefix : Array[T]
+  prefix : Array[T],
 ) -> Array[T]? {
   if self.starts_with(prefix) {
     let v = Array::make_uninit(self.length() - prefix.length())
@@ -875,7 +875,7 @@ pub fn[T : Eq] Array::strip_prefix(
 /// ```
 pub fn[T : Eq] Array::strip_suffix(
   self : Array[T],
-  suffix : Array[T]
+  suffix : Array[T],
 ) -> Array[T]? {
   if self.ends_with(suffix) {
     let v = Array::make_uninit(self.length() - suffix.length())
@@ -963,7 +963,7 @@ pub fn[T] Array::search_by(self : Array[T], f : (T) -> Bool) -> Int? {
 /// - If the array is not sorted, the returned result is undefined and should not be relied on.
 pub fn[T : Compare] Array::binary_search(
   self : Array[T],
-  value : T
+  value : T,
 ) -> Result[Int, Int] {
   let len = self.length()
   for i = 0, j = len; i < j; {
@@ -1029,7 +1029,7 @@ pub fn[T : Compare] Array::binary_search(
 #locals(cmp)
 pub fn[T] Array::binary_search_by(
   self : Array[T],
-  cmp : (T) -> Int
+  cmp : (T) -> Int,
 ) -> Result[Int, Int] {
   let len = self.length()
   for i = 0, j = len; i < j; {
@@ -1216,7 +1216,7 @@ pub fn[T] Array::repeat(self : Array[T], times : Int) -> Array[T] {
 pub fn[A, B] Array::fold(
   self : Array[A],
   init~ : B,
-  f : (B, A) -> B raise?
+  f : (B, A) -> B raise?,
 ) -> B raise? {
   for i = 0, acc = init; i < self.length(); {
     continue i + 1, f(acc, self[i])
@@ -1238,7 +1238,7 @@ pub fn[A, B] Array::fold(
 pub fn[A, B] Array::rev_fold(
   self : Array[A],
   init~ : B,
-  f : (B, A) -> B raise?
+  f : (B, A) -> B raise?,
 ) -> B raise? {
   for i = self.length() - 1, acc = init; i >= 0; {
     continue i - 1, f(acc, self[i])
@@ -1260,7 +1260,7 @@ pub fn[A, B] Array::rev_fold(
 pub fn[A, B] Array::foldi(
   self : Array[A],
   init~ : B,
-  f : (Int, B, A) -> B raise?
+  f : (Int, B, A) -> B raise?,
 ) -> B raise? {
   for i = 0, acc = init; i < self.length(); {
     continue i + 1, f(i, acc, self[i])
@@ -1282,7 +1282,7 @@ pub fn[A, B] Array::foldi(
 pub fn[A, B] Array::rev_foldi(
   self : Array[A],
   init~ : B,
-  f : (Int, B, A) -> B raise?
+  f : (Int, B, A) -> B raise?,
 ) -> B raise? {
   let len = self.length()
   for i = len - 1, acc = init; i >= 0; {
@@ -1435,7 +1435,7 @@ pub fn[T] Array::chunks(self : Array[T], size : Int) -> Array[Array[T]] {
 #locals(pred)
 pub fn[T] Array::chunk_by(
   self : Array[T],
-  pred : (T, T) -> Bool raise?
+  pred : (T, T) -> Bool raise?,
 ) -> Array[Array[T]] raise? {
   let chunks = []
   let mut i = 0
@@ -1514,7 +1514,7 @@ pub fn[T] Array::windows(self : Array[T], size : Int) -> Array[ArrayView[T]] {
 #locals(pred)
 pub fn[T] Array::split(
   self : Array[T],
-  pred : (T) -> Bool raise?
+  pred : (T) -> Bool raise?,
 ) -> Array[Array[T]] raise? {
   let chunks = []
   let mut i = 0

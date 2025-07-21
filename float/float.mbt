@@ -364,7 +364,7 @@ pub fn Float::is_close(
   self : Self,
   other : Self,
   relative_tolerance~ : Self = 1.0e-09,
-  absolute_tolerance~ : Self = 0.0
+  absolute_tolerance~ : Self = 0.0,
 ) -> Bool {
   if relative_tolerance < 0.0 || absolute_tolerance < 0.0 {
     abort("Tolerances must be non-negative")

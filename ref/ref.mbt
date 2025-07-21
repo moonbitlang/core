@@ -133,7 +133,7 @@ test "incr" {
 ///|
 pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Ref[X] with arbitrary(
   size,
-  rs
+  rs,
 ) {
   new(X::arbitrary(size, rs))
 }

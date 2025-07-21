@@ -96,7 +96,7 @@ pub fn[T : Show] &Logger::write_iter(
   prefix~ : String = "[",
   suffix~ : String = "]",
   sep~ : String = ", ",
-  trailing~ : Bool = false
+  trailing~ : Bool = false,
 ) -> Unit {
   self.write_string(prefix)
   if trailing {

@@ -1403,7 +1403,7 @@ pub fn[T] FixedArray::unsafe_get(self : FixedArray[T], idx : Int) -> T = "%fixed
 pub fn[T] FixedArray::unsafe_set(
   self : FixedArray[T],
   idx : Int,
-  val : T
+  val : T,
 ) -> Unit = "%fixedarray.unsafe_set"
 
 ///|

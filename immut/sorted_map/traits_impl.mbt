@@ -79,7 +79,7 @@ pub impl[K : Show, V : ToJson] ToJson for T[K, V] with to_json(self) {
 ///|
 pub impl[V : @json.FromJson] @json.FromJson for T[String, V] with from_json(
   json,
-  path
+  path,
 ) {
   guard json is Object(obj) else {
     raise @json.JsonDecodeError(

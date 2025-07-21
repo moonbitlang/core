@@ -122,7 +122,7 @@ fn[K : Eq, V] set_with_hash(
   self : T[K, V],
   key : K,
   value : V,
-  hash : Int
+  hash : Int,
 ) -> Unit {
   if self.size >= self.capacity / 2 {
     self.grow()
@@ -269,7 +269,7 @@ fn[K : Eq, V] get_with_hash(self : T[K, V], key : K, hash : Int) -> V? {
 pub fn[K : Hash + Eq, V] get_or_init(
   self : T[K, V],
   key : K,
-  init : () -> V
+  init : () -> V,
 ) -> V {
   let hash = key.hash()
   match self.get_with_hash(key, hash) {
@@ -305,7 +305,7 @@ pub fn[K : Hash + Eq, V] get_or_init(
 pub fn[K : Hash + Eq, V] get_or_default(
   self : T[K, V],
   key : K,
-  default : V
+  default : V,
 ) -> V {
   let hash = key.hash()
   for i = 0, idx = hash & self.capacity_mask {
@@ -355,7 +355,7 @@ pub fn[K : Hash + Eq, V] contains(self : T[K, V], key : K) -> Bool {
 pub fn[K : Hash + Eq, V : Eq] contains_kv(
   self : T[K, V],
   key : K,
-  value : V
+  value : V,
 ) -> Bool {
   let hash = key.hash()
   for i = 0, idx = hash & self.capacity_mask {

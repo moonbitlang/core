@@ -65,7 +65,7 @@ pub fn[K : Eq + Hash, V] get(self : T[K, V], key : K) -> V? {
 fn[K : Eq, V] Node::get_with_path(
   self : Node[K, V],
   key : K,
-  path : Path
+  path : Path,
 ) -> V? {
   loop (self, path) {
     (Leaf(key1, value1, bucket), _) =>
@@ -104,7 +104,7 @@ fn[K, V] join_2(
   path1 : Path,
   key2 : K,
   value2 : V,
-  path2 : Path
+  path2 : Path,
 ) -> Node[K, V] {
   let idx1 = path1.idx()
   let idx2 = path2.idx()
@@ -130,7 +130,7 @@ fn[K : Eq, V] add_with_path(
   self : Node[K, V],
   key : K,
   value : V,
-  path : Path
+  path : Path,
 ) -> Node[K, V] {
   match self {
     Leaf(key1, value1, bucket) =>
@@ -169,7 +169,7 @@ fn[K : Eq, V] add_with_path(
 /// Filter values that satisfy the predicate
 pub fn[K, V] filter(
   self : T[K, V],
-  pred : (V) -> Bool raise?
+  pred : (V) -> Bool raise?,
 ) -> T[K, V] raise? {
   fn go(node) raise? {
     match node {
@@ -204,7 +204,7 @@ pub fn[K, V] filter(
 pub fn[K, V, A] fold(
   self : T[K, V],
   init~ : A,
-  f : (A, V) -> A raise?
+  f : (A, V) -> A raise?,
 ) -> A raise? {
   self.fold_with_key((acc, _k, v) => f(acc, v), init~)
 }
@@ -217,7 +217,7 @@ pub fn[K, V, A] fold(
 pub fn[K, V, A] fold_with_key(
   self : T[K, V],
   init~ : A,
-  f : (A, K, V) -> A raise?
+  f : (A, K, V) -> A raise?,
 ) -> A raise? {
   fn go(acc, node) raise? {
     match node {
@@ -244,7 +244,7 @@ pub fn[K, V, A] map(self : T[K, V], f : (V) -> A raise?) -> T[K, A] raise? {
 /// Maps over the key-value pairs in the map
 pub fn[K, V, A] map_with_key(
   self : T[K, V],
-  f : (K, V) -> A raise?
+  f : (K, V) -> A raise?,
 ) -> T[K, A] raise? {
   fn go(m : Node[K, V]) -> Node[K, A] raise? {
     match m {
@@ -285,7 +285,7 @@ pub fn[K : Eq + Hash, V] remove(self : T[K, V], key : K) -> T[K, V] {
 fn[K : Eq, V] remove_with_path(
   self : Node[K, V],
   key : K,
-  path : Path
+  path : Path,
 ) -> Node[K, V]? {
   match self {
     Leaf(key1, value1, bucket) =>
@@ -393,7 +393,7 @@ pub fn[K : Eq, V] T::union(self : T[K, V], other : T[K, V]) -> T[K, V] {
 pub fn[K : Eq, V] T::union_with(
   self : T[K, V],
   other : T[K, V],
-  f : (K, V, V) -> V raise?
+  f : (K, V, V) -> V raise?,
 ) -> T[K, V] raise? {
   fn go(node1 : Node[_], node2) raise? {
     match (node1, node2) {
@@ -432,7 +432,7 @@ pub fn[K : Eq, V] T::union_with(
 fn[K : Eq, V] @list.T::union_with(
   self : Self[(K, V)],
   other : Self[(K, V)],
-  f : (K, V, V) -> V raise?
+  f : (K, V, V) -> V raise?,
 ) -> Node[K, V] raise? {
   let res = self.to_array()
   for kv2 in other {
@@ -494,7 +494,7 @@ pub fn[K : Eq, V] T::intersection(self : T[K, V], other : T[K, V]) -> T[K, V] {
 pub fn[K : Eq, V] T::intersection_with(
   self : T[K, V],
   other : T[K, V],
-  f : (K, V, V) -> V raise?
+  f : (K, V, V) -> V raise?,
 ) -> T[K, V] raise? {
   fn go(node1 : Node[_], node2) raise? {
     match (node1, node2) {
@@ -534,7 +534,7 @@ pub fn[K : Eq, V] T::intersection_with(
 fn[K : Eq, V] @list.T::intersection_with(
   self : Self[(K, V)],
   other : Self[(K, V)],
-  f : (K, V, V) -> V raise?
+  f : (K, V, V) -> V raise?,
 ) -> Node[K, V]? raise? {
   let res = []
   for kv1 in self {

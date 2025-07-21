@@ -217,7 +217,7 @@ fn String::offset_of_nth_char_forward(
   self : String,
   n : Int,
   start_offset~ : Int,
-  end_offset~ : Int
+  end_offset~ : Int,
 ) -> Int? {
   guard start_offset >= 0 && start_offset <= end_offset else {
     abort("Invalid start index")
@@ -252,7 +252,7 @@ fn String::offset_of_nth_char_backward(
   self : String,
   n : Int,
   start_offset~ : Int,
-  end_offset~ : Int
+  end_offset~ : Int,
 ) -> Int? {
   let mut char_count = 0
   let mut utf16_offset = end_offset
@@ -285,7 +285,7 @@ pub fn String::offset_of_nth_char(
   self : String,
   i : Int,
   start_offset~ : Int = 0,
-  end_offset? : Int
+  end_offset? : Int,
 ) -> Int? {
   let end_offset = if end_offset is Some(o) { o } else { self.length() }
   if i >= 0 {
@@ -305,7 +305,7 @@ pub fn String::char_length_eq(
   self : String,
   len : Int,
   start_offset~ : Int = 0,
-  end_offset? : Int
+  end_offset? : Int,
 ) -> Bool {
   let end_offset = if end_offset is Some(o) { o } else { self.length() }
   for index = start_offset, count = 0
@@ -333,7 +333,7 @@ pub fn String::char_length_ge(
   self : String,
   len : Int,
   start_offset~ : Int = 0,
-  end_offset? : Int
+  end_offset? : Int,
 ) -> Bool {
   let end_offset = if end_offset is Some(o) { o } else { self.length() }
   for index = start_offset, count = 0

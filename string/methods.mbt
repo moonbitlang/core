@@ -654,7 +654,7 @@ test "is_blank" {
 pub fn View::pad_start(
   self : View,
   total_width : Int,
-  padding_char : Char
+  padding_char : Char,
 ) -> String {
   let len = self.char_length()
   guard len < total_width else { return self.to_string() }
@@ -669,7 +669,7 @@ pub fn View::pad_start(
 pub fn pad_start(
   self : String,
   total_width : Int,
-  padding_char : Char
+  padding_char : Char,
 ) -> String {
   self[:].pad_start(total_width, padding_char)
 }
@@ -706,7 +706,7 @@ test "pad_start" {
 pub fn View::pad_end(
   self : View,
   total_width : Int,
-  padding_char : Char
+  padding_char : Char,
 ) -> String {
   let len = self.char_length()
   guard len < total_width else { return self.to_string() }

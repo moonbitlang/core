@@ -604,7 +604,7 @@ fn __kernel_rem_pio2(
   y : Array[Double],
   e0 : Int,
   nx : Int,
-  prec : Int
+  prec : Int,
 ) -> Int {
   let init_jk = [2, 3, 4, 6]
   let two24 : Double = 16777216.0 // 0x41700000, 0x00000000
