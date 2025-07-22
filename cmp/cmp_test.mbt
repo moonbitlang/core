@@ -80,3 +80,41 @@ test "minimum.ref" {
 priv struct T {
   x : Int
 } derive(Show, Eq, Compare)
+
+///|
+test "maximum_by_key with tuples" {
+  let t1 = ("Alice", 85)
+  let t2 = ("Bob", 92)
+  let t3 = ("Charlie", 92)
+  let max1 = @cmp.maximum_by_key(t1, t2, t => t.1)
+  assert_eq(max1.0, "Bob")
+
+  // When equal, returns second argument
+  let max2 = @cmp.maximum_by_key(t2, t3, t => t.1)
+  assert_eq(max2.0, "Charlie")
+}
+
+///|
+test "minimum_by_key with strings" {
+  let s1 = "hello"
+  let s2 = "hi"
+  let s3 = "hey"
+  let min1 = @cmp.minimum_by_key(s1, s2, s => s.length())
+  assert_eq(min1, "hi")
+
+  // When equal, returns first argument
+  let min2 = @cmp.minimum_by_key(s2, s3, s => s.length())
+  assert_eq(min2, "hi")
+}
+
+///|
+test "maximum and minimum with negative numbers" {
+  assert_eq(@cmp.maximum(-5, -3), -3)
+  assert_eq(@cmp.maximum(-3, -5), -3)
+  assert_eq(@cmp.minimum(-5, -3), -5)
+  assert_eq(@cmp.minimum(-3, -5), -5)
+
+  // Edge case with zero
+  assert_eq(@cmp.maximum(0, -1), 0)
+  assert_eq(@cmp.minimum(0, -1), -1)
+}

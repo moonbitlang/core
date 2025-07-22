@@ -50,3 +50,37 @@ test {
   inspect(test_option_arg(y=2), content="5")
   inspect(test_option_arg(x=1, y=2), content="3")
 }
+
+///|
+test "filter with predicate" {
+  let some_even = Some(4)
+  let some_odd = Some(3)
+  let none : Int? = None
+  assert_eq(some_even.filter(x => x % 2 == 0), Some(4))
+  assert_eq(some_odd.filter(x => x % 2 == 0), None)
+  assert_eq(none.filter(x => x % 2 == 0), None)
+}
+
+///|
+test "bind chaining" {
+  let safe_divide = (x : Int) => if x == 0 { None } else { Some(100 / x) }
+  let some_value = Some(4)
+  let result = some_value.bind(x => safe_divide(x))
+  assert_eq(result, Some(25))
+  let zero_value = Some(0)
+  let result2 = zero_value.bind(x => safe_divide(x))
+  assert_eq(result2, None)
+  let none_value : Int? = None
+  let result3 = none_value.bind(x => safe_divide(x))
+  assert_eq(result3, None)
+}
+
+///|
+test "unwrap_or with default value" {
+  let x = Some(2)
+  let y : Int? = None
+  assert_eq(x.unwrap_or(100), 2)
+  assert_eq(y.unwrap_or(100), 100)
+  let none1 : Int? = None
+  assert_eq(none1.unwrap_or(42), 42)
+}
