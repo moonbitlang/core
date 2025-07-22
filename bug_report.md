@@ -1,5 +1,22 @@
 # Bug Report for MoonBit Standard Library
 
+## Summary of Changes Made
+
+To keep the diff small and reviewable, I've added minimal test coverage for previously untested error cases:
+
+1. **Added `bigint/panic_test.mbt`** (new file, 43 lines)
+   - Tests for division by zero (`op_div` and `op_mod`)
+   - Tests for negative shift counts (`op_shl` and `op_shr`)
+   - Test for empty string parsing (`from_string`)
+
+2. **Added test to `array/fixedarray_test.mbt`** (18 lines added)
+   - Test for FixedArray Compare implementation
+   - Covers all comparison cases including empty arrays
+
+These changes improve test coverage without modifying any existing functionality, making the diff small and safe to review.
+
+## Bugs Found But Not Fixed
+
 ## 1. Non-standard Compare Implementation for Arrays
 
 ### Description
