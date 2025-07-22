@@ -172,39 +172,29 @@ fn parse_number(s : @string.View) -> (Number, Int)? {
 ///|
 /// Parse the number from the string, returning the number and the length of the parsed string.
 fn parse_inf_nan(s : @string.View) -> (Double, Int)? {
-  fn parse_inf_rest(s : @string.View) -> Int {
-    if s.length() >= 8 && (try? s[3:].to_lower()) is Ok([.. "inity", ..]) {
-      8
+  let mut s = s
+  let mut pos = true
+  let mut len = 0
+  if s is ['-' | '+' as ch, .. rest] {
+    pos = ch == '+'
+    s = rest
+    len += 1
+  }
+  if s is ['n' | 'N', 'a' | 'A', 'n' | 'N', ..] {
+    Some((@double.not_a_number, len + 3))
+  } else if s is ['i' | 'I', 'n' | 'N', 'f' | 'F', .. rest] {
+    len += 3
+    if rest is ['i' | 'I', 'n' | 'N', 'i' | 'I', 't' | 'T', 'y' | 'Y', ..] {
+      len += 5
+    }
+    if pos {
+      Some((@double.infinity, len))
     } else {
-      3
+      Some((@double.neg_infinity, len))
     }
+  } else {
+    None
   }
-
-  let s = s
-  if s.length() >= 3 {
-    if s.to_lower() is [.. "nan", ..] {
-      return Some((@double.not_a_number, 3))
-    } else if s.to_lower() is [.. "inf", ..] {
-      return Some((@double.infinity, parse_inf_rest(s)))
-    } else if s.length() >= 4 {
-      if s is ['+', .. rest] {
-        let s = rest
-        if s.to_lower() is [.. "nan", ..] {
-          return Some((@double.not_a_number, 4))
-        } else if s.to_lower() is [.. "inf", ..] {
-          return Some((@double.infinity, 1 + parse_inf_rest(s)))
-        }
-      } else if s is ['-', .. rest] {
-        let s = rest
-        if s.to_lower() is [.. "nan", ..] {
-          return Some((@double.not_a_number, 4))
-        } else if s.to_lower() is [.. "inf", ..] {
-          return Some((@double.neg_infinity, 1 + parse_inf_rest(s)))
-        }
-      }
-    }
-  }
-  None
 }
 
 ///|
