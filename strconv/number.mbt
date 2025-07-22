@@ -24,43 +24,33 @@ priv struct Number {
 }
 
 ///|
-fn is_digit(c : Char) -> Bool {
-  c >= '0' && c <= '9'
-}
-
-///|
-fn to_digit(c : Char) -> Int {
-  c.to_int() - 48
-}
-
-///|
 /// Returns the remaining slice, the parsed number, and the number of digits parsed.
-fn parse_digits(s : StringSlice, x : UInt64) -> (StringSlice, UInt64, Int) {
+fn parse_digits(s : @string.View, x : UInt64) -> (@string.View, UInt64, Int) {
   s.fold_digits(x, (digit, acc : UInt64) => acc * 10UL +
     UInt64::extend_uint(digit.reinterpret_as_uint()))
 }
 
 ///|
 fn try_parse_19digits(
-  s : StringSlice,
+  s : @string.View,
   x : UInt64,
-) -> (StringSlice, UInt64, Int) {
+) -> (@string.View, UInt64, Int) {
   let mut x = x
-  let mut s = s
   let mut len = 0
-  while (x < min_19digit_int && s.first_is_digit()) || s.first_is('_') {
-    if s.first_is('_') {
-      s = s.step_1_unchecked()
+  loop s {
+    ['0'..='9' as ch, .. rest] if x < min_19digit_int => {
+      len += 1
+      x = x * 10UL +
+        UInt64::extend_uint((ch.to_int() - '0').reinterpret_as_uint()) // no overflows here
+      continue rest
     }
-    len += 1
-    x = x * 10UL + UInt64::extend_uint(to_digit(s[0]).reinterpret_as_uint()) // no overflows here
-    s = s.step_1_unchecked()
+    ['_', .. rest] => continue rest
+    s => return (s, x, len)
   }
-  (s, x, len)
 }
 
 ///|
-fn parse_scientific(s : StringSlice) -> (StringSlice, Int64)? {
+fn parse_scientific(s : @string.View) -> (@string.View, Int64)? {
   // the first character is 'e'/'E' and scientific mode is enabled
   let mut s = match s.step(1) {
     Some(s) => s
@@ -68,11 +58,11 @@ fn parse_scientific(s : StringSlice) -> (StringSlice, Int64)? {
   }
   let exp_num = 0L
   let mut neg_exp = false
-  if s.first_is_either('-', '+') {
-    neg_exp = s[0] == '-'
-    s = s.step_1_unchecked()
+  if s is ['+' | '-' as ch, .. rest] {
+    neg_exp = ch == '-'
+    s = rest
   }
-  if s.first_is_digit() {
+  if s is ['0'..='9', ..] {
     let (s, exp_num, _) = s.fold_digits(exp_num, (digit, exp_num : Int64) => if exp_num <
       0x10000L {
       10L * exp_num + digit.to_int64() // no overflows here
@@ -91,17 +81,17 @@ fn parse_scientific(s : StringSlice) -> (StringSlice, Int64)? {
 
 ///|
 /// Parse the number from the string, returning the number and the length of the parsed string.
-fn parse_number(s : String) -> (Number, Int)? {
-  let mut s = full_slice(s)
+fn parse_number(s : @string.View) -> (Number, Int)? {
+  let mut s = s
   let start = s
 
   // handle optional +/- sign
   let mut negative = false
-  if s.first_is('-') {
+  if s is ['-', .. rest] {
     negative = true
-    s = s.step_1_unchecked()
-  } else if s.first_is('+') {
-    s = s.step_1_unchecked()
+    s = rest
+  } else if s is ['+', .. rest] {
+    s = rest
   }
   if s.is_empty() {
     return None
@@ -116,8 +106,8 @@ fn parse_number(s : String) -> (Number, Int)? {
   // handle dot with the following digits
   let mut n_after_dot = 0
   let mut exponent = 0L
-  if s.first_is('.') {
-    s = s.step_1_unchecked()
+  if s is ['.', .. rest] {
+    s = rest
     // TODO: optimization chance. In the original Rust implementation,
     // the the digits are stored as consecutive bytes in the string.
     // It directly reads 8 bytes to `u64`.
@@ -134,7 +124,7 @@ fn parse_number(s : String) -> (Number, Int)? {
 
   // handle scientific format
   let exp_number = 0L
-  if s.first_is_either('e', 'E') {
+  if s is ['e' | 'E', ..] {
     let (new_s, exp_number) = match parse_scientific(s) {
       Some(res) => res
       None => return None
@@ -151,9 +141,9 @@ fn parse_number(s : String) -> (Number, Int)? {
   n_digits -= 19
   let mut many_digits = false
   let mut p = start
-  while p.first_is_either('0', '.') {
-    n_digits -= (p[0].to_int() - 46) / 2 // '0' = b'.' + 2
-    p = p.step_1_unchecked()
+  while p is ['0' | '.' as ch, .. rest] {
+    n_digits -= (ch.to_int() - 46) / 2 // '0' = b'.' + 2
+    p = rest
   }
   let mut mantissa = mantissa
   if n_digits > 0 {
@@ -181,34 +171,34 @@ fn parse_number(s : String) -> (Number, Int)? {
 
 ///|
 /// Parse the number from the string, returning the number and the length of the parsed string.
-fn parse_inf_nan(s : String) -> (Double, Int)? {
-  fn parse_inf_rest(s : StringSlice) -> Int {
-    if s.length() >= 8 && s.subfix_unchecked(3).prefix_eq_ignore_case("inity") {
+fn parse_inf_nan(s : @string.View) -> (Double, Int)? {
+  fn parse_inf_rest(s : @string.View) -> Int {
+    if s.length() >= 8 && (try? s[3:].to_lower()) is Ok("inity") {
       8
     } else {
       3
     }
   }
 
-  let s = full_slice(s)
+  let s = s
   if s.length() >= 3 {
-    if s.prefix_eq_ignore_case("nan") {
+    if s.to_lower() is [.. "nan", ..] {
       return Some((@double.not_a_number, 3))
-    } else if s.prefix_eq_ignore_case("inf") {
+    } else if s.to_lower() is [.. "inf", ..] {
       return Some((@double.infinity, parse_inf_rest(s)))
     } else if s.length() >= 4 {
-      if s.first_is('+') {
-        let s = s.step_1_unchecked()
-        if s.prefix_eq_ignore_case("nan") {
+      if s is ['+', .. rest] {
+        let s = rest
+        if s.to_lower() is [.. "nan", ..] {
           return Some((@double.not_a_number, 4))
-        } else if s.prefix_eq_ignore_case("inf") {
+        } else if s.to_lower() is [.. "inf", ..] {
           return Some((@double.infinity, 1 + parse_inf_rest(s)))
         }
-      } else if s.first_is('-') {
-        let s = s.step_1_unchecked()
-        if s.prefix_eq_ignore_case("nan") {
+      } else if s is ['-', .. rest] {
+        let s = rest
+        if s.to_lower() is [.. "nan", ..] {
           return Some((@double.not_a_number, 4))
-        } else if s.prefix_eq_ignore_case("inf") {
+        } else if s.to_lower() is [.. "inf", ..] {
           return Some((@double.neg_infinity, 1 + parse_inf_rest(s)))
         }
       }

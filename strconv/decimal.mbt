@@ -43,8 +43,8 @@ fn Decimal::from_int64_priv(v : Int64) -> Decimal {
 }
 
 ///|
-fn parse_decimal_priv(str : String) -> Decimal raise StrConvError {
-  parse_decimal_from_view(str.view())
+fn parse_decimal_priv(str : @string.View) -> Decimal raise StrConvError {
+  parse_decimal_from_view(str)
 }
 
 ///|
