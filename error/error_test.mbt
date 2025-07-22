@@ -25,12 +25,7 @@ test "show error" {
     }
   }
 
-  inspect(
-    try! f(true),
-    content=(
-      "ok"
-    ),
-  )
+  inspect(try! f(true), content="ok")
   inspect(
     try? f(false),
     content="Err(moonbitlang/core/error_blackbox_test.IntError.IntError)",
