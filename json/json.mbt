@@ -90,13 +90,14 @@ pub fn stringify(
   escape_slash~ : Bool = false,
   indent~ : Int = 0,
 ) -> String {
-  fn stringify_inner(value : JsonValue, level : Int) -> String {
+  let buf = StringBuilder::new(size_hint=0)
+  fn stringify_inner(value : JsonValue, level : Int) -> Unit {
     match value {
       Object(members) => {
         if members.is_empty() {
-          return "{}"
+          buf.write_string("{}")
+          return
         }
-        let buf = StringBuilder::new(size_hint=0)
         buf.write_char('{')
         buf.write_string(indent_str(level + 1, indent))
         let mut first = true
@@ -116,16 +117,16 @@ pub fn stringify(
           } else {
             buf.write_string(": ")
           }
-          buf.write_string(stringify_inner(v, level + 1))
+          stringify_inner(v, level + 1)
         }
         buf.write_string(indent_str(level, indent))
-        buf..write_char('}').to_string()
+        buf.write_char('}')
       }
       Array(arr) => {
         if arr.is_empty() {
-          return "[]"
+          buf.write_string("[]")
+          return
         }
-        let buf = StringBuilder::new(size_hint=0)
         buf.write_char('[')
         buf.write_string(indent_str(level + 1, indent))
         for i, v in arr {
@@ -133,31 +134,29 @@ pub fn stringify(
             buf.write_char(',')
             buf.write_string(indent_str(level + 1, indent))
           }
-          buf.write_string(stringify_inner(v, level + 1))
+          stringify_inner(v, level + 1)
         }
         buf.write_string(indent_str(level, indent))
-        buf..write_char(']').to_string()
+        buf.write_char(']')
       }
-      String(s) => {
-        let buf = StringBuilder::new(size_hint=0)
+      String(s) =>
         buf
         ..write_char('\"')
         ..write_string(escape(s, escape_slash~))
         ..write_char('\"')
-        .to_string()
-      }
       Number(n, repr~) =>
         match repr {
-          None => n.to_string()
-          Some(r) => r
+          None => buf.write_object(n)
+          Some(r) => buf.write_string(r)
         }
-      True => "true"
-      False => "false"
-      Null => "null"
+      True => buf.write_string("true")
+      False => buf.write_string("false")
+      Null => buf.write_string("null")
     }
   }
 
   stringify_inner(self, 0)
+  buf.to_string()
 }
 
 ///|
