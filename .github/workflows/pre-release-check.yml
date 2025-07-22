@@ -6,11 +6,63 @@ on:
       - "pre-release*"
 
 jobs:
+  moon-info-check:
+    continue-on-error: true
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: install
+        run: |
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash -s pre-release
+          echo "$HOME/.moon/bin" >> $GITHUB_PATH
+
+      - name: moon version
+        run: |
+          moon version --all
+          moonrun --version
+
+      - name: moon info
+        run: |
+          moon info --target wasm,wasm-gc,js,native
+          git diff --exit-code
+
+  moon-fmt-check:
+    continue-on-error: true
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: install
+        if: ${{ matrix.os != 'windows-latest' }}
+        run: |
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash -s pre-release
+          echo "$HOME/.moon/bin" >> $GITHUB_PATH
+
+      - name: moon version
+        run: |
+          moon version --all
+          moonrun --version
+
+      - name: format diff
+        run: |
+          moon fmt
+          git diff --exit-code
+
   pre-release-check:
     continue-on-error: true
     strategy:
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest, macos-13]
+      fail-fast: false
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
