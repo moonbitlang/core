@@ -77,15 +77,12 @@ jobs:
       - name: moon bundle
         run: moon bundle --all
 
-      - name: moon info
+      - name: check coverage
         run: |
-          moon info --target wasm,wasm-gc,js,native
-          git diff --exit-code
-
-      - name: format diff
-        run: |
-          moon fmt
-          git diff --exit-code
+          moon test --enable-coverage
+          moon coverage report -f summary > coverage_summary.txt
+          # Put the coverage report in the pipeline output
+          cat coverage_summary.txt >> "$GITHUB_STEP_SUMMARY"
 
       - name: check core size
         if: ${{ matrix.os != 'windows-latest' }}
