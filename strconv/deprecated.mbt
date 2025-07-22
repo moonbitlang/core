@@ -44,14 +44,14 @@ pub fn Decimal::from_int64(v : Int64) -> Decimal {
 
 ///|
 #deprecated("use `@strconv.parse_double` instead")
-pub fn parse_decimal(str : String) -> Decimal raise StrConvError {
-  parse_decimal_from_view(str.view())
+pub fn parse_decimal(str : @string.View) -> Decimal raise StrConvError {
+  parse_decimal_from_view(str)
 }
 
 ///|
 #deprecated("use `@strconv.parse_double` instead")
-pub fn Decimal::parse_decimal(str : String) -> Decimal raise StrConvError {
-  parse_decimal_from_view(str.view())
+pub fn Decimal::parse_decimal(str : @string.View) -> Decimal raise StrConvError {
+  parse_decimal_from_view(str)
 }
 
 ///|

@@ -14,7 +14,7 @@
 
 ///|
 /// Parse a string and return the represented boolean value or an error.
-pub fn parse_bool(str : String) -> Bool raise StrConvError {
+pub fn parse_bool(str : @string.View) -> Bool raise StrConvError {
   match str {
     "1" | "t" | "T" | "true" | "TRUE" | "True" => true
     "0" | "f" | "F" | "false" | "FALSE" | "False" => false
