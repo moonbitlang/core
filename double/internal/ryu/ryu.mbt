@@ -355,12 +355,11 @@ fn d2d(ieeeMantissa : UInt64, ieeeExponent : UInt) -> FloatingDecimal64 {
         // <=> e2 + (~mm & 1) >= q && pow5Factor(mm) >= q
         // <=> true && pow5Factor(mm) >= q, since e2 >= q.
         vmIsTrailingZeros = multipleOfPowerOf5(
-          mv - 1UL - mmShift.to_int64().reinterpret_as_uint64(),
+          mv - 1UL - mmShift.to_uint64(),
           q,
         )
       } else {
-        vp = vp -
-          multipleOfPowerOf5(mv + 2UL, q).to_int64().reinterpret_as_uint64()
+        vp = vp - multipleOfPowerOf5(mv + 2UL, q).to_uint64()
       }
     }
   } else {
@@ -470,7 +469,7 @@ fn d2d(ieeeMantissa : UInt64, ieeeExponent : UInt) -> FloatingDecimal64 {
       vm = vmDiv10
       removed = removed + 1
     }
-    output = vr + (vr == vm || roundUp).to_int64().reinterpret_as_uint64()
+    output = vr + (vr == vm || roundUp).to_uint64()
   }
   let exp : Int = e10 + removed
   let fd : FloatingDecimal64 = { mantissa: output, exponent: exp }

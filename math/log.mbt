@@ -87,7 +87,7 @@ let logf_data : LogfData = {
 ///   inspect(lnf(0), content="-Infinity")
 /// ```
 pub fn lnf(x : Float) -> Float {
-  let mut ix : UInt = x.reinterpret_as_int().reinterpret_as_uint()
+  let mut ix : UInt = x.reinterpret_as_uint()
   if ix == 0x3f800000U {
     return 0.0
   }
@@ -101,7 +101,7 @@ pub fn lnf(x : Float) -> Float {
     if (ix & 0x80000000U) != 0 || ix * 2 >= 0xff000000U {
       return @float.not_a_number
     }
-    ix = (x * 0x1.0p23).reinterpret_as_int().reinterpret_as_uint()
+    ix = (x * 0x1.0p23).reinterpret_as_uint()
     ix -= (23 << 23).reinterpret_as_uint()
   }
   let tmp = ix - logf_off
@@ -110,7 +110,7 @@ pub fn lnf(x : Float) -> Float {
   let iz = ix - (tmp & 0xff800000U)
   let invc = logf_data.invc[i]
   let logc = logf_data.logc[i]
-  let z = iz.reinterpret_as_int().reinterpret_as_float().to_double()
+  let z = iz.reinterpret_as_float().to_double()
   let r = z * invc - 1
   let y0 = logc + k.to_double() * logf_data.ln2
   let r2 = r * r

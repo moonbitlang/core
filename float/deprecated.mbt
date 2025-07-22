@@ -86,8 +86,7 @@ pub fn Float::exp(self : Float) -> Float {
   let xd = self.to_double()
   let abstop = top12(self) & 0x7ff
   if abstop >= top12(88.0) {
-    if self.reinterpret_as_int().reinterpret_as_uint() ==
-      neg_infinity.reinterpret_as_int().reinterpret_as_uint() {
+    if self.reinterpret_as_uint() == neg_infinity.reinterpret_as_uint() {
       return 0.0
     }
     if abstop >= top12(infinity) {
@@ -403,7 +402,7 @@ pub fn Float::atanh(self : Float) -> Float {
 #deprecated("use `@math.lnf` instead")
 #coverage.skip
 pub fn Float::ln(self : Float) -> Float {
-  let mut ix : UInt = self.reinterpret_as_int().reinterpret_as_uint()
+  let mut ix : UInt = self.reinterpret_as_uint()
   if ix == 0x3f800000U {
     return 0.0
   }
@@ -417,7 +416,7 @@ pub fn Float::ln(self : Float) -> Float {
     if (ix & 0x80000000U) != 0 || ix * 2 >= 0xff000000U {
       return not_a_number
     }
-    ix = (self * 0x1.0p23).reinterpret_as_int().reinterpret_as_uint()
+    ix = (self * 0x1.0p23).reinterpret_as_uint()
     ix -= (23 << 23).reinterpret_as_uint()
   }
   let tmp = ix - logf_off
@@ -426,7 +425,7 @@ pub fn Float::ln(self : Float) -> Float {
   let iz = ix - (tmp & 0xff800000U)
   let invc = logf_data.invc[i]
   let logc = logf_data.logc[i]
-  let z = iz.reinterpret_as_int().reinterpret_as_float().to_double()
+  let z = iz.reinterpret_as_float().to_double()
   let r = z * invc - 1
   let y0 = logc + k.to_double() * logf_data.ln2
   let r2 = r * r

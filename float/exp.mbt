@@ -14,7 +14,7 @@
 
 ///|
 fn top12(x : Float) -> UInt {
-  x.reinterpret_as_int().reinterpret_as_uint() >> 20
+  x.reinterpret_as_uint() >> 20
 }
 
 ///|
@@ -44,7 +44,7 @@ priv struct Exp2fData {
 }
 
 ///|
-let expf_n : UInt64 = (1 << exp2f_table_bits).to_int64().reinterpret_as_uint64()
+let expf_n : UInt64 = (1 << exp2f_table_bits).to_uint64()
 
 ///|
 let exp2f_data_n : Double = (1 << exp2f_table_bits).to_double()
