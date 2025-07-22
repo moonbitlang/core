@@ -105,6 +105,39 @@ test "parse_inf_nan with infinity suffix" {
 }
 
 ///|
+test "parse_inf_nan with trailing strings" {
+  // Test trailing characters after 'inf'
+  let result_trailing = parse_inf_nan("infabc")
+  match result_trailing {
+    Some((value, length)) => {
+      inspect(value.is_inf() && value > 0.0, content="true")
+      inspect(length, content="3") // should only parse 'inf'
+    }
+    None => fail("Expected to parse 'inf' but got None")
+  }
+
+  // Test trailing characters after 'nan'
+  let result_nan_trailing = parse_inf_nan("nanxyz")
+  match result_nan_trailing {
+    Some((value, length)) => {
+      inspect(value.is_nan(), content="true")
+      inspect(length, content="3") // should only parse 'nan'
+    }
+    None => fail("Expected to parse 'nan' but got None")
+  }
+
+  // Test trailing characters after signed infinity
+  let result_signed_trailing = parse_inf_nan("+infinity123")
+  match result_signed_trailing {
+    Some((value, length)) => {
+      inspect(value.is_inf() && value > 0.0, content="true")
+      inspect(length, content="9") // should only parse '+infinity'
+    }
+    None => fail("Expected to parse '+infinity' but got None")
+  }
+}
+
+///|
 test "parse_inf_nan failures" {
   // Test invalid input
   inspect(parse_inf_nan("hello"), content="None")

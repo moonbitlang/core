@@ -173,7 +173,7 @@ fn parse_number(s : @string.View) -> (Number, Int)? {
 /// Parse the number from the string, returning the number and the length of the parsed string.
 fn parse_inf_nan(s : @string.View) -> (Double, Int)? {
   fn parse_inf_rest(s : @string.View) -> Int {
-    if s.length() >= 8 && (try? s[3:].to_lower()) is Ok("inity") {
+    if s.length() >= 8 && (try? s[3:].to_lower()) is Ok([.. "inity", ..]) {
       8
     } else {
       3
