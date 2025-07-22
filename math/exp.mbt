@@ -26,7 +26,7 @@
 
 ///|
 fn top12(x : Float) -> UInt {
-  x.reinterpret_as_int().reinterpret_as_uint() >> 20
+  x.reinterpret_as_uint() >> 20
 }
 
 ///|
@@ -56,7 +56,7 @@ priv struct Exp2fData {
 }
 
 ///|
-let expf_n : UInt64 = (1 << exp2f_table_bits).to_int64().reinterpret_as_uint64()
+let expf_n : UInt64 = (1 << exp2f_table_bits).to_uint64()
 
 ///|
 let exp2f_data_n : Double = (1 << exp2f_table_bits).to_double()
@@ -102,8 +102,7 @@ pub fn expf(x : Float) -> Float {
   let xd = x.to_double()
   let abstop = top12(x) & 0x7ff
   if abstop >= top12(88.0) {
-    if x.reinterpret_as_int().reinterpret_as_uint() ==
-      @float.neg_infinity.reinterpret_as_int().reinterpret_as_uint() {
+    if x.reinterpret_as_uint() == @float.neg_infinity.reinterpret_as_uint() {
       return 0.0
     }
     if abstop >= top12(@float.infinity) {
