@@ -80,3 +80,92 @@ test "minimum.ref" {
 priv struct T {
   x : Int
 } derive(Show, Eq, Compare)
+
+///|
+/// Test comparison functions with various numeric types
+test "cmp functions with different numeric types" {
+  // Test with Double
+  inspect(@cmp.maximum(1.5, 2.7), content="2.7")
+  inspect(@cmp.minimum(1.5, 2.7), content="1.5")
+  inspect(@cmp.maximum(3.14, 3.14), content="3.14")
+
+  // Test with UInt
+  inspect(@cmp.maximum(10U, 5U), content="10")
+  inspect(@cmp.minimum(10U, 5U), content="5")
+
+  // Test with Int64  
+  inspect(@cmp.maximum(100L, 200L), content="200")
+  inspect(@cmp.minimum(100L, 200L), content="100")
+}
+
+///|
+/// Test comparison edge cases with equal values
+test "comparison with equal values" {
+  // Test maximum returns second when equal
+  let a = 42
+  let b = 42
+  let max_result = @cmp.maximum(a, b)
+  @test.same_object(max_result, b)
+
+  // Test minimum returns first when equal
+  let min_result = @cmp.minimum(a, b)
+  @test.same_object(min_result, a)
+
+  // Test with different objects but equal values
+  let obj1 = T::{ x: 10 }
+  let obj2 = T::{ x: 10 }
+  @test.same_object(@cmp.maximum(obj1, obj2), obj2)
+  @test.same_object(@cmp.minimum(obj1, obj2), obj1)
+}
+
+///|
+/// Test comparison functions with extreme values
+test "comparison with extreme values" {
+  // Test with maximum and minimum integers
+  let max_int = 2147483647 // Int max
+  let min_int = -2147483648 // Int min
+  assert_eq(@cmp.maximum(max_int, min_int), max_int)
+  assert_eq(@cmp.minimum(max_int, min_int), min_int)
+
+  // Test with zero
+  assert_eq(@cmp.maximum(0, -1), 0)
+  assert_eq(@cmp.minimum(0, 1), 0)
+
+  // Test with very close doubles
+  let d1 = 1.0000000001
+  let d2 = 1.0000000002
+  assert_eq(@cmp.maximum(d1, d2), d2)
+  assert_eq(@cmp.minimum(d1, d2), d1)
+}
+
+///|
+/// Test chaining comparison operations
+test "chained comparison operations" {
+  let values = [1, 5, 3, 9, 2]
+
+  // Find maximum of first two, then compare with third
+  let partial_max = @cmp.maximum(values[0], values[1])
+  let extended_max = @cmp.maximum(partial_max, values[2])
+  assert_eq(extended_max, 5)
+
+  // Chain multiple minimum operations
+  let min1 = @cmp.minimum(values[0], values[1])
+  let min2 = @cmp.minimum(min1, values[4])
+  assert_eq(min2, 1)
+}
+
+///|
+/// Test maximum_by_key and minimum_by_key with simple key functions
+test "key-based comparison with simple key functions" {
+  // Test with absolute value
+  inspect(@cmp.maximum_by_key(-2, 1, @int.abs), content="-2")
+  inspect(@cmp.minimum_by_key(-2, 1, @int.abs), content="1")
+
+  // Test with negative transformation
+  fn negate(x : Int) -> Int {
+    -x
+  }
+
+  inspect(@cmp.maximum_by_key(3, 5, negate), content="3") // -3 > -5
+  inspect(@cmp.minimum_by_key(3, 5, negate), content="5") // -5 < -3
+}
