@@ -23,6 +23,9 @@ fn[T, U] Option::bind(T?, (T) -> U?) -> U?
 fn[T] Option::filter(T?, (T) -> Bool) -> T?
 fn[T] Option::flatten(T??) -> T?
 fn[T] Option::is_empty(T?) -> Bool
+#deprecated
+fn[T] Option::is_none(T?) -> Bool
+#deprecated
 fn[T] Option::is_some(T?) -> Bool
 fn[T] Option::iter(T?) -> Iter[T]
 fn[T, U] Option::map(T?, (T) -> U) -> U?

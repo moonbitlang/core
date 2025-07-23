@@ -66,3 +66,17 @@ pub fn[T : Default] Option::or_default(self : T?) -> T {
     Some(t) => t
   }
 }
+
+///|
+/// Checks if the option contains a value.
+#deprecated("use `x is Some(_)` instead")
+pub fn[T] is_some(self : T?) -> Bool {
+  self is Some(_)
+}
+
+///|
+/// Checks if the option is None.
+#deprecated("use `x is None` instead")
+pub fn[T] is_none(self : T?) -> Bool {
+  self is None
+}
