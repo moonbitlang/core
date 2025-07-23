@@ -167,20 +167,6 @@ test "is_empty" {
 }
 
 ///|
-/// Checks if the option contains a value.
-pub fn[T] is_some(self : T?) -> Bool {
-  self is Some(_)
-}
-
-///|
-test "is_some" {
-  let x = Option::Some(3)
-  let y : Int? = None
-  assert_true(x.is_some())
-  assert_false(y.is_some())
-}
-
-///|
 /// Filters the option by applying the given predicate function `f`.
 ///
 /// If the predicate function `f` returns `true` for the value contained in the option,
