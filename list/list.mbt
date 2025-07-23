@@ -1539,7 +1539,22 @@ pub fn[A] iter2(self : T[A]) -> Iter2[Int, A] {
 /// assert_eq(ls, @list.of([1, 2, 3, 4, 5]))
 /// ```
 pub fn[A] from_iter(iter : Iter[A]) -> T[A] {
-  iter.fold(init=Empty, (acc, e) => More(e, tail=acc)).reverse_inplace()
+  let mut res = Empty
+  let mut ptr = Empty
+  for x in iter {
+    match (res, ptr) {
+      (Empty, _) => {
+        res = More(x, tail=Empty)
+        ptr = res
+      }
+      (More(_), More(_) as ptr_) => {
+        ptr_.tail = More(x, tail=Empty)
+        ptr = ptr_.tail
+      }
+      (_, _) => panic()
+    }
+  }
+  res
 }
 
 ///|
