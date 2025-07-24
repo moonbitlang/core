@@ -371,12 +371,24 @@ test "parser error" {
   )
 }
 
-// TODO: fix the error message below
-// test "emojoi" {
-//  inspect(
-//     // test first char is emoji
-//     try? @json.parse("\u{1F600}"),
-
-//     content="Err(Invalid character '�' at line 1, column 1)",
-//   )
-// }
+///|
+test "emojoi" {
+  inspect(
+    // test first char is emoji
+    try? @json.parse("\u{1F600}"),
+    content="Err(Invalid character '😀' at line 1, column 0)",
+  )
+  inspect(
+    try? @json.parse("a😀"),
+    content="Err(Invalid character 'a' at line 1, column 0)",
+  )
+  inspect(
+    try? @json.parse("a"),
+    content="Err(Invalid character 'a' at line 1, column 0)",
+  )
+  inspect(
+    // test first char is emoji
+    try? @json.parse("😀"),
+    content="Err(Invalid character '😀' at line 1, column 0)",
+  )
+}
