@@ -463,3 +463,29 @@ pub impl Show for Char with output(self, logger) {
 pub impl ToJson for Char with to_json(self : Char) -> Json {
   Json::string(self.to_string())
 }
+
+///|
+/// Returns the number of UTF-16 code units required to encode this character.
+///
+/// Parameters:
+///
+/// * `self` : The character to analyze.
+///
+/// Returns the number of UTF-16 code units (1 or 2) needed to represent this
+/// character.
+///
+/// Example:
+///
+/// ```moonbit
+/// inspect('A'.utf16_len(), content="1")
+/// inspect('🌟'.utf16_len(), content="2")
+/// ```
+///
+pub fn Char::utf16_len(self : Self) -> Int {
+  let code = self.to_int()
+  if code <= 0xFFFF {
+    1
+  } else {
+    2
+  }
+}
