@@ -136,6 +136,10 @@ pub fn FixedArray::blit_from_string(
 }
 
 ///|
+/// TODO: specific copy
+fn unsafe_from_bytes(bytes : Bytes) -> FixedArray[Byte] = "%identity"
+
+///|
 /// Copy `length` chars from byte sequence `src`, starting at `src_offset`,
 /// into byte sequence `self`, starting at `bytes_offset`.
 pub fn FixedArray::blit_from_bytes(
@@ -152,10 +156,13 @@ pub fn FixedArray::blit_from_bytes(
   let len1 = self.length()
   let len2 = src.length()
   guard length >= 0 && s1 >= 0 && e1 < len1 && s2 >= 0 && e2 < len2
-  let end_src_offset = src_offset + length
-  for i = src_offset, j = bytes_offset; i < end_src_offset; i = i + 1, j = j + 1 {
-    self[j] = src[i]
-  }
+  FixedArray::unsafe_blit(
+    self,
+    bytes_offset,
+    unsafe_from_bytes(src),
+    src_offset,
+    length,
+  )
 }
 
 ///|
