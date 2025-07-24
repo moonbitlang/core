@@ -387,7 +387,7 @@ test "emoji" {
     content="Err(Invalid character 'a' at line 1, column 0)",
   )
   inspect(
-    // test first char is emoji
+    // test first char is emoji (standalone emoji)
     try? @json.parse("😀"),
     content="Err(Invalid character '😀' at line 1, column 0)",
   )
