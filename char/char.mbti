@@ -22,6 +22,7 @@ fn Char::is_printable(Char) -> Bool
 fn Char::is_whitespace(Char) -> Bool
 fn Char::to_ascii_lowercase(Char) -> Char
 fn Char::to_ascii_uppercase(Char) -> Char
+fn Char::utf16_len(Char) -> Int
 impl Hash for Char
 impl Show for Char
 impl ToJson for Char
