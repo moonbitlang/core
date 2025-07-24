@@ -33,9 +33,9 @@ fn[T] ParseContext::invalid_char(
   shift~ : Int = 0,
 ) -> T raise ParseError {
   let offset = ctx.offset + shift
-  // FIXME: this should check the surrogate pair
+  let replacement_char : Char = '\u{fffd}'
   raise InvalidChar(
     offset_to_position(ctx.input, offset),
-    ctx.input.unsafe_charcode_at(offset).unsafe_to_char(),
+    ctx.input.get_char(offset).unwrap_or(replacement_char),
   )
 }
