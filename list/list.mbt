@@ -13,39 +13,91 @@
 // limitations under the License.
 
 ///|
-/// Creates an empty list
+/// Creates an empty list.
+///
+/// # Example
+///
+/// ```moonbit
+/// let ls : @list.T[Int] = @list.new()
+/// assert_eq(ls, @list.empty())
+/// ```
 pub fn[A] new() -> T[A] {
   Empty
 }
 
 ///|
-/// Creates an empty list
+/// Creates an empty list.
+///
+/// # Example
+///
+/// ```moonbit
+/// let ls : @list.T[Int] = @list.empty()
+/// assert_eq(ls.length(), 0)
+/// ```
 pub fn[A] empty() -> T[A] {
   Empty
 }
 
 ///|
 /// Prepend an element to the list and create a new list.
+/// 
+/// This function constructs a new list with the given element as the head
+/// and the provided list as the tail.
+/// 
+/// A more familiar name of this function is `cons`.
+///
+/// # Example
+///
+/// ```moonbit
+/// let tail = @list.of([2, 3, 4])
+/// let ls = @list.construct(1, tail)
+/// assert_eq(ls, @list.of([1, 2, 3, 4]))
+/// ```
 pub fn[A] construct(head : A, tail : T[A]) -> T[A] {
   More(head, tail~)
 }
 
 ///|
+/// Prepend an element to the front of the list.
+/// 
+/// Creates a new list with the given element added to the beginning.
+///
+/// # Example
+///
+/// ```moonbit
+/// let ls = @list.of([2, 3, 4]).prepend(1)
+/// assert_eq(ls, @list.of([1, 2, 3, 4]))
+/// ```
 pub fn[A] prepend(self : T[A], head : A) -> T[A] {
   More(head, tail=self)
 }
 
 ///|
+/// Add an element to the front of the list.
+/// 
+/// This is an alias for `prepend` - it creates a new list with the given 
+/// element added to the beginning.
+///
+/// # Example
+///
+/// ```moonbit
+/// let ls = @list.of([2, 3, 4]).add(1)
+/// assert_eq(ls, @list.of([1, 2, 3, 4]))
+/// ```
 pub fn[A] add(self : T[A], head : A) -> T[A] {
   More(head, tail=self)
 }
 
 ///|
+/// Show implementation for List.
+/// Outputs the list in the format @list.of([element1, element2, ...]).
 pub impl[A : Show] Show for T[A] with output(xs, logger) {
   logger.write_iter(xs.iter(), prefix="@list.of([", suffix="])")
 }
 
 ///|
+/// ToJson implementation for List.
+/// Converts a list to a JSON array.
 pub impl[A : ToJson] ToJson for T[A] with to_json(self) {
   let capacity = self.length()
   guard capacity != 0 else { return [] }
@@ -57,11 +109,22 @@ pub impl[A : ToJson] ToJson for T[A] with to_json(self) {
 }
 
 ///|
+/// Convert a list to JSON.
+/// 
+/// # Example
+///
+/// ```moonbit
+/// let ls = @list.of([1, 2, 3])
+/// let json = ls.to_json()
+/// inspect(json, content="Array([Number(1), Number(2), Number(3)])")
+/// ```
 pub fn[A : ToJson] to_json(self : T[A]) -> Json {
   ToJson::to_json(self)
 }
 
 ///|
+/// FromJson implementation for List.
+/// Parses a JSON array into a list.
 pub impl[A : @json.FromJson] @json.FromJson for T[A] with from_json(json, path) {
   guard json is Array(arr) else {
     raise @json.JsonDecodeError((path, "@list.from_json: expected array"))
@@ -74,6 +137,9 @@ pub impl[A : @json.FromJson] @json.FromJson for T[A] with from_json(json, path) 
 }
 
 ///|
+/// Parse JSON into a list.
+/// 
+/// Converts a JSON array into a list of the specified type.
 pub fn[A : @json.FromJson] from_json(
   json : Json,
 ) -> T[A] raise @json.JsonDecodeError {
@@ -86,8 +152,8 @@ pub fn[A : @json.FromJson] from_json(
 /// # Example
 ///
 /// ```mbt
-///   let ls = @list.of([1, 2, 3, 4, 5])
-///   assert_eq(ls, @list.from_array([1, 2, 3, 4, 5]))
+/// let ls = @list.of([1, 2, 3, 4, 5])
+/// assert_eq(ls, @list.from_array([1, 2, 3, 4, 5]))
 /// ```
 pub fn[A] from_array(arr : Array[A]) -> T[A] {
   for i = arr.length() - 1, list = Empty; i >= 0; {
@@ -112,9 +178,9 @@ pub fn[A] length(self : T[A]) -> Int {
 /// # Example
 ///
 /// ```mbt
-///   let arr = []
-///   @list.of([1, 2, 3, 4, 5]).each(x => arr.push(x))
-///   assert_eq(arr, [1, 2, 3, 4, 5])
+/// let arr = []
+/// @list.of([1, 2, 3, 4, 5]).each(x => arr.push(x))
+/// assert_eq(arr, [1, 2, 3, 4, 5])
 /// ```
 #locals(f)
 pub fn[A] each(self : T[A], f : (A) -> Unit raise?) -> Unit raise? {
@@ -153,7 +219,7 @@ pub fn[A] eachi(self : T[A], f : (Int, A) -> Unit raise?) -> Unit raise? {
 /// # Example
 ///
 /// ```mbt
-///   assert_eq(@list.of([1, 2, 3, 4, 5]).map(x => x * 2), @list.of([2, 4, 6, 8, 10]))
+/// assert_eq(@list.of([1, 2, 3, 4, 5]).map(x => x * 2), @list.of([2, 4, 6, 8, 10]))
 /// ```
 pub fn[A, B] map(self : T[A], f : (A) -> B raise?) -> T[B] raise? {
   match self {
@@ -176,6 +242,17 @@ pub fn[A, B] map(self : T[A], f : (A) -> B raise?) -> T[B] raise? {
 
 ///|
 /// Maps the list with index.
+/// 
+/// Applies a function to each element and its index, creating a new list
+/// with the results.
+///
+/// # Example
+///
+/// ```moonbit
+/// let ls = @list.of([10, 20, 30])
+/// let result = ls.mapi((i, x) => x + i)
+/// assert_eq(result, @list.of([10, 21, 32]))
+/// ```
 pub fn[A, B] mapi(self : T[A], f : (Int, A) -> B raise?) -> T[B] raise? {
   match self {
     Empty => Empty
@@ -202,7 +279,7 @@ pub fn[A, B] mapi(self : T[A], f : (Int, A) -> B raise?) -> T[B] raise? {
 ///
 /// # Example
 /// ```mbt
-///   assert_eq(@list.of([1, 2, 3, 4, 5]).rev_map(x => x * 2), @list.of([10, 8, 6, 4, 2]))
+/// assert_eq(@list.of([1, 2, 3, 4, 5]).rev_map(x => x * 2), @list.of([10, 8, 6, 4, 2]))
 /// ```
 pub fn[A, B] rev_map(self : T[A], f : (A) -> B raise?) -> T[B] raise? {
   loop (Empty, self) {
@@ -213,6 +290,16 @@ pub fn[A, B] rev_map(self : T[A], f : (A) -> B raise?) -> T[B] raise? {
 
 ///|
 /// Convert list to array.
+/// 
+/// Creates a new array containing all elements from the list in the same order.
+///
+/// # Example
+///
+/// ```moonbit
+/// let ls = @list.of([1, 2, 3, 4, 5])
+/// let arr = ls.to_array()
+/// assert_eq(arr, [1, 2, 3, 4, 5])
+/// ```
 pub fn[A] to_array(self : T[A]) -> Array[A] {
   match self {
     Empty => []
@@ -236,7 +323,7 @@ pub fn[A] to_array(self : T[A]) -> Array[A] {
 /// # Example
 ///
 /// ```mbt
-///   assert_eq(@list.of([1, 2, 3, 4, 5]).filter(x => x % 2 == 0), @list.of([2, 4]))
+/// assert_eq(@list.of([1, 2, 3, 4, 5]).filter(x => x % 2 == 0), @list.of([2, 4]))
 /// ```
 pub fn[A] filter(self : T[A], f : (A) -> Bool raise?) -> T[A] raise? {
   loop self {
@@ -266,6 +353,19 @@ pub fn[A] filter(self : T[A], f : (A) -> Bool raise?) -> T[A] raise? {
 
 ///|
 /// Test if all elements of the list satisfy the predicate.
+/// 
+/// Returns `true` if every element satisfies the predicate, or if the list is empty.
+/// Returns `false` as soon as an element that doesn't satisfy the predicate is found.
+///
+/// # Example
+///
+/// ```moonbit
+/// let ls = @list.of([2, 4, 6, 8])
+/// assert_eq(ls.all(x => x % 2 == 0), true)
+/// 
+/// let ls2 = @list.of([2, 3, 6, 8])
+/// assert_eq(ls2.all(x => x % 2 == 0), false)
+/// ```
 pub fn[A] all(self : T[A], f : (A) -> Bool raise?) -> Bool raise? {
   loop self {
     Empty => true
@@ -275,6 +375,19 @@ pub fn[A] all(self : T[A], f : (A) -> Bool raise?) -> Bool raise? {
 
 ///|
 /// Test if any element of the list satisfies the predicate.
+/// 
+/// Returns `true` as soon as an element that satisfies the predicate is found.
+/// Returns `false` if no element satisfies the predicate, or if the list is empty.
+///
+/// # Example
+///
+/// ```moonbit
+/// let ls = @list.of([1, 3, 5, 6])
+/// assert_eq(ls.any(x => x % 2 == 0), true)
+/// 
+/// let ls2 = @list.of([1, 3, 5, 7])
+/// assert_eq(ls2.any(x => x % 2 == 0), false)
+/// ```
 pub fn[A] any(self : T[A], f : (A) -> Bool raise?) -> Bool raise? {
   loop self {
     Empty => false
@@ -293,6 +406,22 @@ pub fn[A] unsafe_head(self : T[A]) -> A {
 }
 
 ///|
+/// Get the tail (all elements except the first) of the list.
+/// 
+/// **Warning**: This function panics if the list is empty.
+/// Use pattern matching or other safe methods for empty lists.
+///
+/// # Example
+///
+/// ```moonbit
+/// let ls = @list.of([1, 2, 3, 4, 5])
+/// let tail = ls.unsafe_tail()
+/// assert_eq(tail, @list.of([2, 3, 4, 5]))
+/// ```
+/// 
+/// # Panics
+/// 
+/// Panics if the list is empty.
 pub fn[A] unsafe_tail(self : T[A]) -> T[A] {
   match self {
     Empty => abort("tail of empty list")
@@ -306,7 +435,7 @@ pub fn[A] unsafe_tail(self : T[A]) -> T[A] {
 /// # Example
 ///
 /// ```mbt
-///   assert_eq(@list.of([1, 2, 3, 4, 5]).head(), Some(1))
+/// assert_eq(@list.of([1, 2, 3, 4, 5]).head(), Some(1))
 /// ```
 pub fn[A] head(self : T[A]) -> A? {
   match self {
@@ -316,6 +445,21 @@ pub fn[A] head(self : T[A]) -> A? {
 }
 
 ///|
+/// Get the last element of the list.
+/// 
+/// **Warning**: This function panics if the list is empty.
+/// Use `last()` for a safe alternative that returns `Option`.
+///
+/// # Example
+///
+/// ```moonbit
+/// let ls = @list.of([1, 2, 3, 4, 5])
+/// assert_eq(ls.unsafe_last(), 5)
+/// ```
+/// 
+/// # Panics
+/// 
+/// Panics if the list is empty.
 #internal(unsafe, "Panic if the list is empty")
 pub fn[A] unsafe_last(self : T[A]) -> A {
   loop self {
@@ -331,7 +475,7 @@ pub fn[A] unsafe_last(self : T[A]) -> A {
 /// # Example
 ///
 /// ```mbt
-///   assert_eq(@list.of([1, 2, 3, 4, 5]).last(), Some(5))
+/// assert_eq(@list.of([1, 2, 3, 4, 5]).last(), Some(5))
 /// ```
 pub fn[A] last(self : T[A]) -> A? {
   loop self {
@@ -347,8 +491,8 @@ pub fn[A] last(self : T[A]) -> A? {
 /// # Example
 ///
 /// ```mbt
-///   let ls = @list.of([1, 2, 3, 4, 5]).concat(@list.of([6, 7, 8, 9, 10]))
-///   assert_eq(ls, @list.of([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]))
+/// let ls = @list.of([1, 2, 3, 4, 5]).concat(@list.of([6, 7, 8, 9, 10]))
+/// assert_eq(ls, @list.of([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]))
 /// ```
 pub fn[A] concat(self : T[A], other : T[A]) -> T[A] {
   match self {
@@ -376,8 +520,8 @@ pub fn[A] concat(self : T[A], other : T[A]) -> T[A] {
 /// # Example
 ///
 /// ```mbt
-///   let ls = @list.of([1, 2, 3, 4, 5]).rev_concat(@list.of([6, 7, 8, 9, 10]))
-///   assert_eq(ls, @list.of([5, 4, 3, 2, 1, 6, 7, 8, 9, 10]))
+/// let ls = @list.of([1, 2, 3, 4, 5]).rev_concat(@list.of([6, 7, 8, 9, 10]))
+/// assert_eq(ls, @list.of([5, 4, 3, 2, 1, 6, 7, 8, 9, 10]))
 /// ```
 pub fn[A] rev_concat(self : T[A], other : T[A]) -> T[A] {
   loop (self, other) {
@@ -392,7 +536,7 @@ pub fn[A] rev_concat(self : T[A], other : T[A]) -> T[A] {
 /// # Example
 ///
 /// ```mbt
-///   assert_eq(@list.of([1, 2, 3, 4, 5]).rev(), @list.of([5, 4, 3, 2, 1]))
+/// assert_eq(@list.of([1, 2, 3, 4, 5]).rev(), @list.of([5, 4, 3, 2, 1]))
 /// ```
 pub fn[A] rev(self : T[A]) -> T[A] {
   self.rev_concat(Empty)
@@ -404,8 +548,8 @@ pub fn[A] rev(self : T[A]) -> T[A] {
 /// # Example
 ///
 /// ```mbt
-///   let r = @list.of([1, 2, 3, 4, 5]).fold(init=0, (acc, x) => acc + x)
-///   inspect(r, content="15")
+/// let r = @list.of([1, 2, 3, 4, 5]).fold(init=0, (acc, x) => acc + x)
+/// inspect(r, content="15")
 /// ```
 pub fn[A, B] fold(self : T[A], init~ : B, f : (B, A) -> B raise?) -> B raise? {
   loop (self, init) {
@@ -416,6 +560,17 @@ pub fn[A, B] fold(self : T[A], init~ : B, f : (B, A) -> B raise?) -> B raise? {
 
 ///|
 /// Fold the list from left with index.
+/// 
+/// Similar to `fold`, but the accumulator function also receives the index
+/// of the current element.
+///
+/// # Example
+///
+/// ```moonbit
+/// let ls = @list.of([10, 20, 30])
+/// let result = ls.foldi(init=0, (i, acc, x) => acc + x * i)
+/// inspect(result, content="80") // 0*10 + 1*20 + 2*30 = 80
+/// ```
 pub fn[A, B] foldi(
   self : T[A],
   init~ : B,
@@ -432,14 +587,19 @@ pub fn[A, B] foldi(
 }
 
 ///|
-/// Zip two lists.
-/// If the lists have different lengths, it will return a list with shorter length.
+/// Zip two lists together into a list of tuples.
+/// 
+/// Combines elements from two lists pairwise. If the lists have different 
+/// lengths, the result will have the length of the shorter list.
 ///
 /// # Example
 ///
 /// ```moonbit
-///   let r = @list.zip(@list.of([1, 2, 3, 4, 5]), @list.of([6, 7, 8, 9, 10]))
-///   assert_eq(r, @list.from_array([(1, 6), (2, 7), (3, 8), (4, 9), (5, 10)]))
+/// let r = @list.zip(@list.of([1, 2, 3, 4, 5]), @list.of([6, 7, 8, 9, 10]))
+/// assert_eq(r, @list.from_array([(1, 6), (2, 7), (3, 8), (4, 9), (5, 10)]))
+/// 
+/// let r2 = @list.zip(@list.of([1, 2]), @list.of([6, 7, 8, 9, 10]))
+/// assert_eq(r2, @list.from_array([(1, 6), (2, 7)]))
 /// ```
 pub fn[A, B] T::zip(self : T[A], other : T[B]) -> T[(A, B)] {
   let res = loop (self, other, Empty) {
@@ -459,9 +619,9 @@ pub fn[A, B] T::zip(self : T[A], other : T[B]) -> T[(A, B)] {
 /// # Example
 ///
 /// ```mbt
-///   let ls = @list.from_array([1, 2, 3])
-///   let r = ls.flat_map(x => @list.from_array([x, x * 2]))
-///   assert_eq(r, @list.from_array([1, 2, 2, 4, 3, 6]))
+/// let ls = @list.from_array([1, 2, 3])
+/// let r = ls.flat_map(x => @list.from_array([x, x * 2]))
+/// assert_eq(r, @list.from_array([1, 2, 2, 4, 3, 6]))
 /// ```
 pub fn[A, B] flat_map(self : T[A], f : (A) -> T[B] raise?) -> T[B] raise? {
   loop self {
@@ -507,9 +667,9 @@ pub fn[A, B] flat_map(self : T[A], f : (A) -> T[B] raise?) -> T[B] raise? {
 /// # Example
 ///
 /// ```mbt
-///   let ls = @list.of([4, 2, 2, 6, 3, 1])
-///   let r = ls.filter_map(x => if (x >= 3) { Some(x) } else { None })
-///   assert_eq(r, @list.of([4, 6, 3]))
+/// let ls = @list.of([4, 2, 2, 6, 3, 1])
+/// let r = ls.filter_map(x => if (x >= 3) { Some(x) } else { None })
+/// assert_eq(r, @list.of([4, 6, 3]))
 /// ```
 pub fn[A, B] filter_map(self : T[A], f : (A) -> B? raise?) -> T[B] raise? {
   loop self {
@@ -538,6 +698,21 @@ pub fn[A, B] filter_map(self : T[A], f : (A) -> B? raise?) -> T[B] raise? {
 }
 
 ///|
+/// Get the nth element of the list.
+/// 
+/// **Warning**: This function panics if the index is out of bounds.
+/// Use `nth()` for a safe alternative that returns `Option`.
+///
+/// # Example
+///
+/// ```moonbit
+/// let ls = @list.of([1, 2, 3, 4, 5])
+/// assert_eq(ls.unsafe_nth(2), 3)
+/// ```
+/// 
+/// # Panics
+/// 
+/// Panics if the index is out of bounds.
 #internal(unsafe, "Panic if the index is out of bounds")
 pub fn[A] unsafe_nth(self : T[A], n : Int) -> A {
   loop (self, n) {
@@ -548,7 +723,18 @@ pub fn[A] unsafe_nth(self : T[A], n : Int) -> A {
 }
 
 ///|
-/// Get nth element of the list or None if the index is out of bounds
+/// Get the nth element of the list.
+/// 
+/// Returns `Some(element)` if the index is valid, or `None` if the index
+/// is out of bounds.
+///
+/// # Example
+///
+/// ```moonbit
+/// let ls = @list.of([1, 2, 3, 4, 5])
+/// assert_eq(ls.nth(2), Some(3))
+/// assert_eq(ls.nth(10), None)
+/// ```
 pub fn[A] nth(self : T[A], n : Int) -> A? {
   loop (self, n) {
     (Empty, _) => None
@@ -603,6 +789,18 @@ pub fn[A] intersperse(self : T[A], separator : A) -> T[A] {
 
 ///|
 /// Check if the list is empty.
+/// 
+/// Returns `true` if the list contains no elements, `false` otherwise.
+///
+/// # Example
+///
+/// ```moonbit
+/// let empty_list : @list.T[Int] = @list.empty()
+/// assert_eq(empty_list.is_empty(), true)
+/// 
+/// let non_empty = @list.of([1, 2, 3])
+/// assert_eq(non_empty.is_empty(), false)
+/// ```
 pub fn[A] is_empty(self : T[A]) -> Bool {
   self is Empty
 }
@@ -613,9 +811,9 @@ pub fn[A] is_empty(self : T[A]) -> Bool {
 /// # Example
 ///
 /// ```mbt
-///   let (a,b) = @list.from_array([(1,2),(3,4),(5,6)]).unzip()
-///   assert_eq(a, @list.from_array([1, 3, 5]))
-///   assert_eq(b, @list.from_array([2, 4, 6]))
+/// let (a,b) = @list.from_array([(1,2),(3,4),(5,6)]).unzip()
+/// assert_eq(a, @list.from_array([1, 3, 5]))
+/// assert_eq(b, @list.from_array([2, 4, 6]))
 /// ```
 pub fn[A, B] unzip(self : T[(A, B)]) -> (T[A], T[B]) {
   match self {
@@ -643,8 +841,8 @@ pub fn[A, B] unzip(self : T[(A, B)]) -> (T[A], T[B]) {
 /// # Example
 ///
 /// ```mbt
-///   let ls = @list.from_array([@list.from_array([1,2,3]), @list.from_array([4,5,6]), @list.from_array([7,8,9])]).flatten()
-///   assert_eq(ls, @list.from_array([1, 2, 3, 4, 5, 6, 7, 8, 9]))
+/// let ls = @list.from_array([@list.from_array([1,2,3]), @list.from_array([4,5,6]), @list.from_array([7,8,9])]).flatten()
+/// assert_eq(ls, @list.from_array([1, 2, 3, 4, 5, 6, 7, 8, 9]))
 /// ```
 pub fn[A] flatten(self : T[T[A]]) -> T[A] {
   loop self {
@@ -685,6 +883,21 @@ pub fn[A] flatten(self : T[T[A]]) -> T[A] {
 }
 
 ///|
+/// Get the maximum element of the list.
+/// 
+/// **Warning**: This function panics if the list is empty.
+/// Use `maximum()` for a safe alternative that returns `Option`.
+///
+/// # Example
+///
+/// ```moonbit
+/// let ls = @list.of([1, 3, 2, 5, 4])
+/// assert_eq(ls.unsafe_maximum(), 5)
+/// ```
+/// 
+/// # Panics
+/// 
+/// Panics if the list is empty.
 #internal(unsafe, "Panic if the list is empty")
 pub fn[A : Compare] unsafe_maximum(self : T[A]) -> A {
   match self {
@@ -699,8 +912,20 @@ pub fn[A : Compare] unsafe_maximum(self : T[A]) -> A {
 }
 
 ///|
-/// Get maximum element of the list.
-/// Returns None if the list is empty.
+/// Get the maximum element of the list.
+/// 
+/// Returns `Some(element)` with the largest element, or `None` if the list is empty.
+/// Elements are compared using the `Compare` trait.
+///
+/// # Example
+///
+/// ```moonbit
+///   let ls = @list.of([1, 3, 2, 5, 4])
+///   assert_eq(ls.maximum(), Some(5))
+///   
+///   let empty : @list.T[Int] = @list.empty()
+///   assert_eq(empty.maximum(), None)
+/// ```
 pub fn[A : Compare] maximum(self : T[A]) -> A? {
   match self {
     Empty => None
@@ -714,10 +939,25 @@ pub fn[A : Compare] maximum(self : T[A]) -> A? {
 }
 
 ///|
+/// Get the minimum element of the list.
+/// 
+/// **Warning**: This function panics if the list is empty.
+/// Use `minimum()` for a safe alternative that returns `Option`.
+///
+/// # Example
+///
+/// ```moonbit
+/// let ls = @list.of([1, 3, 2, 5, 4])
+/// assert_eq(ls.unsafe_minimum(), 1)
+/// ```
+/// 
+/// # Panics
+/// 
+/// Panics if the list is empty.
 #internal(unsafe, "Panic if the list is empty")
 pub fn[A : Compare] unsafe_minimum(self : T[A]) -> A {
   match self {
-    Empty => abort("maximum: empty list")
+    Empty => abort("minimum: empty list")
     More(head, tail~) =>
       loop (tail, head) {
         (Empty, curr_min) => curr_min
@@ -728,7 +968,20 @@ pub fn[A : Compare] unsafe_minimum(self : T[A]) -> A {
 }
 
 ///|
-/// Get minimum element of the list.
+/// Get the minimum element of the list.
+/// 
+/// Returns `Some(element)` with the smallest element, or `None` if the list is empty.
+/// Elements are compared using the `Compare` trait.
+///
+/// # Example
+///
+/// ```moonbit
+/// let ls = @list.of([1, 3, 2, 5, 4])
+/// assert_eq(ls.minimum(), Some(1))
+/// 
+/// let empty : @list.T[Int] = @list.empty()
+/// assert_eq(empty.minimum(), None)
+/// ```
 pub fn[A : Compare] minimum(self : T[A]) -> A? {
   match self {
     Empty => None
@@ -757,15 +1010,36 @@ pub fn[A : Compare] sort(self : T[A]) -> T[A] {
 }
 
 ///|
-/// Concatenate two lists.
+/// Add implementation for List - concatenates two lists.
+/// 
+/// The `+` operator for lists performs concatenation.
+/// `a + b` is equivalent to `a.concat(b)`.
 ///
-/// `a + b` equal to `a.concat(b)`
+/// # Example
+///
+/// ```moonbit
+/// let a = @list.of([1, 2, 3])
+/// let b = @list.of([4, 5, 6])
+/// let result = a + b
+/// assert_eq(result, @list.of([1, 2, 3, 4, 5, 6]))
+/// ```
 pub impl[A] Add for T[A] with op_add(self, other) {
   self.concat(other)
 }
 
 ///|
-/// Check if the list contains the value.
+/// Check if the list contains the specified value.
+/// 
+/// Returns `true` if any element in the list is equal to the given value,
+/// `false` otherwise.
+///
+/// # Example
+///
+/// ```moonbit
+/// let ls = @list.of([1, 2, 3, 4, 5])
+/// assert_eq(ls.contains(3), true)
+/// assert_eq(ls.contains(6), false)
+/// ```
 pub fn[A : Eq] contains(self : T[A], value : A) -> Bool {
   loop self {
     Empty => false
@@ -801,6 +1075,18 @@ pub fn[A, S] unfold(f : (S) -> (A, S)? raise?, init~ : S) -> T[A] raise? {
 }
 
 ///|
+/// Produces a list iteratively in reverse order.
+/// 
+/// Similar to `unfold`, but the resulting list will be in reverse order
+/// compared to the generation order. This can be more efficient when
+/// you don't need to preserve the generation order.
+///
+/// # Example
+///
+/// ```moonbit
+/// let r = @list.rev_unfold(i => if i == 3 { None } else { Some((i, i + 1)) }, init=0)
+/// assert_eq(r, @list.from_array([2, 1, 0]))
+/// ```
 pub fn[A, S] rev_unfold(f : (S) -> (A, S)? raise?, init~ : S) -> T[A] raise? {
   loop (f(init), Empty) {
     (None, acc) => acc
@@ -1147,10 +1433,14 @@ pub fn[A : Eq] is_suffix(self : T[A], suffix : T[A]) -> Bool {
 }
 
 ///|
-/// Similar to intersperse but with a list of values.
+/// Insert separator lists between lists and flatten the result.
+/// 
+/// Similar to `intersperse`, but works with lists of lists. Inserts the
+/// separator list between each list in the input, then flattens everything
+/// into a single list.
 ///
 /// # Example
-/// ```mbt
+/// ```moonbit
 ///   let ls = @list.of([
 ///      @list.of([1, 2, 3]),
 ///      @list.of([4, 5, 6]),
@@ -1164,17 +1454,39 @@ pub fn[A] intercalate(self : T[T[A]], sep : T[A]) -> T[A] {
 }
 
 ///|
+/// Default implementation for List.
+/// 
+/// Returns an empty list as the default value.
 pub impl[X] Default for T[X] with default() {
   Empty
 }
 
 ///|
-/// The empty list
+/// Return the default value for a list (empty list).
+/// 
+/// # Example
+///
+/// ```moonbit
+///   let ls : @list.T[Int] = @list.default()
+///   assert_eq(ls.is_empty(), true)
+/// ```
 pub fn[X] default() -> T[X] {
   Empty
 }
 
 ///|
+/// Create an iterator over the list elements.
+/// 
+/// Returns an iterator that yields each element of the list in order.
+///
+/// # Example
+///
+/// ```moonbit
+/// let ls = @list.of([1, 2, 3, 4, 5])
+/// let iter = ls.iter()
+/// let sum = iter.fold(init=0, (acc, x) => acc + x)
+/// inspect(sum, content="15")
+/// ```
 pub fn[A] iter(self : T[A]) -> Iter[A] {
   Iter::new(yield_ => loop self {
     Empty => IterContinue
@@ -1188,6 +1500,18 @@ pub fn[A] iter(self : T[A]) -> Iter[A] {
 }
 
 ///|
+/// Create an iterator over the list elements with indices.
+/// 
+/// Returns an iterator that yields pairs of (index, element) for each
+/// element in the list.
+///
+/// # Example
+///
+/// ```moonbit
+/// let ls = @list.of([10, 20, 30])
+/// let iter = ls.iter2()
+/// inspect(iter, content="[(0, 10), (1, 20), (2, 30)]")
+/// ```
 pub fn[A] iter2(self : T[A]) -> Iter2[Int, A] {
   Iter2::new(yield_ => loop (self, 0) {
     (Empty, _) => IterEnd
@@ -1201,18 +1525,53 @@ pub fn[A] iter2(self : T[A]) -> Iter2[Int, A] {
 }
 
 ///|
-/// Convert the iterator into a list. Preserves order of elements.
-/// If the order of elements is not important, use `from_iter_rev` instead.
+/// Convert an iterator into a list, preserving order of elements.
+/// 
+/// Creates a list from an iterator, maintaining the same order as the iterator.
+/// If order is not important, consider using `from_iter_rev` for better performance.
+///
+/// # Example
+///
+/// ```moonbit
+/// let arr = [1, 2, 3, 4, 5]
+/// let iter = arr.iter()
+/// let ls = @list.from_iter(iter)
+/// assert_eq(ls, @list.of([1, 2, 3, 4, 5]))
+/// ```
 pub fn[A] from_iter(iter : Iter[A]) -> T[A] {
   iter.fold(init=Empty, (acc, e) => More(e, tail=acc)).reverse_inplace()
 }
 
 ///|
+/// Convert an iterator into a list in reverse order.
+/// 
+/// Creates a list from an iterator, but the resulting list will have elements
+/// in reverse order compared to the iterator. This is more efficient than
+/// `from_iter` when order doesn't matter.
+///
+/// # Example
+///
+/// ```moonbit
+///   let arr = [1, 2, 3, 4, 5]
+///   let iter = arr.iter()
+///   let ls = @list.from_iter_rev(iter)
+///   assert_eq(ls, @list.of([5, 4, 3, 2, 1]))
+/// ```
 pub fn[A] from_iter_rev(iter : Iter[A]) -> T[A] {
   iter.fold(init=Empty, (acc, e) => More(e, tail=acc))
 }
 
 ///|
+/// Create a list from a FixedArray.
+/// 
+/// Converts a FixedArray into a list with the same elements in the same order.
+///
+/// # Example
+///
+/// ```moonbit
+/// let ls = @list.of([1, 2, 3, 4, 5])
+/// assert_eq(ls.to_array(), [1, 2, 3, 4, 5])
+/// ```
 pub fn[A] of(arr : FixedArray[A]) -> T[A] {
   for i = arr.length() - 1, list = Empty; i >= 0; {
     continue i - 1, More(arr[i], tail=list)
@@ -1222,6 +1581,9 @@ pub fn[A] of(arr : FixedArray[A]) -> T[A] {
 }
 
 ///|
+/// Arbitrary implementation for quickcheck testing.
+/// 
+/// Generates random lists for property-based testing with quickcheck.
 pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[X] with arbitrary(
   size,
   rs,
@@ -1230,11 +1592,26 @@ pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[X] with arbitrar
 }
 
 ///|
+/// Create a list with a single element.
+/// 
+/// Returns a list containing only the given element.
+///
+/// # Example
+///
+/// ```moonbit
+///   let ls = @list.singleton(42)
+///   assert_eq(ls, @list.of([42]))
+///   assert_eq(ls.length(), 1)
+/// ```
 pub fn[A] singleton(x : A) -> T[A] {
   More(x, tail=Empty)
 }
 
 ///|
+/// Hash implementation for List.
+/// 
+/// Computes the hash value for a list by combining the hash values
+/// of all its elements.
 pub impl[A : Hash] Hash for T[A] with hash_combine(self, hasher) {
   for e in self {
     hasher.combine(e)
@@ -1242,6 +1619,10 @@ pub impl[A : Hash] Hash for T[A] with hash_combine(self, hasher) {
 }
 
 ///|
+/// Reverse a list in-place (internal function).
+/// 
+/// This is an internal helper function that efficiently reverses a list
+/// by modifying the existing structure rather than creating a completely new one.
 fn[A] reverse_inplace(self : T[A]) -> T[A] {
   match self {
     Empty | More(_, tail=Empty) => self
@@ -1257,4 +1638,7 @@ fn[A] reverse_inplace(self : T[A]) -> T[A] {
 }
 
 ///|
+/// Function alias for zip operation.
+/// 
+/// Provides an alternative way to access the zip functionality.
 pub fnalias T::zip
