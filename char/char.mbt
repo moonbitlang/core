@@ -473,7 +473,8 @@ pub impl ToJson for Char with to_json(self : Char) -> Json {
 ///
 /// Returns the number of UTF-16 code units (1 or 2) needed to represent this
 /// character.
-///
+/// Note surrogate pairs are counted as 2, it should not happen in general since 
+/// surrogate pair is Int instead of Char.
 /// Example:
 ///
 /// ```moonbit
