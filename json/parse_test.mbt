@@ -372,7 +372,7 @@ test "parser error" {
 }
 
 ///|
-test "emojoi" {
+test "emoji" {
   inspect(
     // test first char is emoji
     try? @json.parse("\u{1F600}"),
