@@ -13,31 +13,6 @@
 // limitations under the License.
 
 ///|
-fn power_2_above(x : Int, n : Int) -> Int {
-  for i = x {
-    if i >= n {
-      break i
-    }
-    let next = i << 1
-    if next < 0 {
-      // overflow happened
-      break i
-    }
-    continue next
-  }
-}
-
-///|
-test "power_2_above" {
-  inspect(power_2_above(1, 15), content="16")
-  inspect(power_2_above(1, 16), content="16")
-  inspect(power_2_above(1, 17), content="32")
-  inspect(power_2_above(1, 32), content="32")
-  inspect(power_2_above(128, 33), content="128")
-  inspect(power_2_above(1, 2147483647), content="1073741824")
-}
-
-///|
 /// Creates a new empty hash map with the specified initial capacity. The actual
 /// capacity will be rounded up to the next power of 2 that is greater than or
 /// equal to the requested capacity, with a minimum of 8.
@@ -58,7 +33,7 @@ test "power_2_above" {
 ///   inspect(map.is_empty(), content="true")
 /// ```
 pub fn[K, V] new(capacity~ : Int = 8) -> T[K, V] {
-  let capacity = power_2_above(8, capacity)
+  let capacity = @cmp.maximum(8, capacity).next_power_of_two()
   {
     size: 0,
     capacity,
