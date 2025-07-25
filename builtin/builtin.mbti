@@ -594,6 +594,8 @@ impl BitXOr for UInt64
 
 pub(open) trait Compare : Eq {
   compare(Self, Self) -> Int
+  max(Self, Self) -> Self = _
+  min(Self, Self) -> Self = _
 }
 impl Compare for Bool
 impl Compare for Byte
