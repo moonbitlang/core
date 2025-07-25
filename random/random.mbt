@@ -150,14 +150,14 @@ pub fn uint64(self : Rand, limit~ : UInt64 = 0) -> UInt64 {
     // limit is a power of 2, mask to get the unbiased result.
     return self.next() & (limit - 1)
   }
-  umul128(self.next(), limit)
-  if gUInt128.lo < limit {
+  let mut r = umul128(self.next(), limit)
+  if r.lo < limit {
     let thresh = limit.lnot() % limit
-    while gUInt128.lo < thresh {
-      umul128(self.next(), limit)
+    while r.lo < thresh {
+      r = umul128(self.next(), limit)
     }
   }
-  gUInt128.hi
+  r.hi
 }
 
 ///|
@@ -236,13 +236,11 @@ test "bigint" {
 }
 
 ///|
+#valtype
 priv struct UInt128 {
-  mut hi : UInt64
-  mut lo : UInt64
+  hi : UInt64
+  lo : UInt64
 }
-
-///|
-let gUInt128 : UInt128 = { hi: 0UL, lo: 0UL }
 
 ///|
 /// [umul128] returns the 128-bit product of x and y: (hi, lo) = x * y
@@ -250,7 +248,7 @@ let gUInt128 : UInt128 = { hi: 0UL, lo: 0UL }
 /// half returned in lo.
 ///
 /// This function's execution time does not depend on the inputs.
-fn umul128(a : UInt64, b : UInt64) -> Unit {
+fn umul128(a : UInt64, b : UInt64) -> UInt128 {
   let aLo = a & 0xffffffff
   let aHi = a >> 32
   let bLo = b & 0xffffffff
@@ -259,36 +257,35 @@ fn umul128(a : UInt64, b : UInt64) -> Unit {
   let y = aHi * bLo + (x >> 32)
   let z = aLo * bHi + (y & 0xffffffff)
   let w = aHi * bHi + (y >> 32) + (z >> 32)
-  gUInt128.hi = w
-  gUInt128.lo = a * b
+  { hi: w, lo: a * b }
 }
 
 ///|
 test "umul128" {
-  umul128(0x123456789ABCDEF0, 0xFEDCBA9876543210)
-  assert_eq(gUInt128.hi, 1305938385386173474UL)
-  assert_eq(gUInt128.lo, 2552847189736476416UL)
+  let r = umul128(0x123456789ABCDEF0, 0xFEDCBA9876543210)
+  assert_eq(r.hi, 1305938385386173474UL)
+  assert_eq(r.lo, 2552847189736476416UL)
 }
 
 ///|
 test "umul128: handles small numbers correctly" {
-  umul128(1UL, 1UL)
-  assert_eq(gUInt128.hi, 0UL)
-  assert_eq(gUInt128.lo, 1UL)
+  let r = umul128(1UL, 1UL)
+  assert_eq(r.hi, 0UL)
+  assert_eq(r.lo, 1UL)
 }
 
 ///|
 test "umul128: handles large numbers correctly" {
-  umul128(1UL, 0xFFFFFFFFFFFFFFFFUL)
-  assert_eq(gUInt128.hi, 0UL)
-  assert_eq(gUInt128.lo, 0xFFFFFFFFFFFFFFFFUL)
+  let r = umul128(1UL, 0xFFFFFFFFFFFFFFFFUL)
+  assert_eq(r.hi, 0UL)
+  assert_eq(r.lo, 0xFFFFFFFFFFFFFFFFUL)
 }
 
 ///|
 test "umul128: handles zero correctly" {
-  umul128(0UL, 0UL)
-  assert_eq(gUInt128.hi, 0UL)
-  assert_eq(gUInt128.lo, 0UL)
+  let r = umul128(0UL, 0UL)
+  assert_eq(r.hi, 0UL)
+  assert_eq(r.lo, 0UL)
 }
 
 ///|
