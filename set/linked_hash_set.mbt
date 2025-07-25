@@ -53,7 +53,7 @@ struct Set[K] {
 /// The capacity of the set will be the smallest power of 2 that is
 /// greater than or equal to the provided [capacity].
 pub fn[K] Set::new(capacity~ : Int = 8) -> Set[K] {
-  let capacity = power_2_above(8, capacity)
+  let capacity = @cmp.maximum(8, capacity).next_power_of_two()
   {
     size: 0,
     capacity,

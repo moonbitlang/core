@@ -1,6 +1,8 @@
 {
   "import": [
-    "moonbitlang/core/builtin"
+    "moonbitlang/core/builtin",
+    "moonbitlang/core/int",
+    "moonbitlang/core/cmp"
   ],
   "test-import": [
     "moonbitlang/core/json",
