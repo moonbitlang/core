@@ -55,13 +55,30 @@ pub impl FromJson for Int with from_json(json, path) {
 
 ///|
 pub impl FromJson for Int64 with from_json(json, path) {
-  guard json is String(str) else {
-    decode_error(
-      path, "Int64::from_json: expected number in string representation",
-    )
-  }
-  @strconv.parse_int64(str) catch {
-    error => decode_error(path, "Int64::from_json: parsing failure \{error}")
+  match json {
+    Number(n, repr~) =>
+      if n != @double.infinity && n != @double.neg_infinity {
+        n.to_int64()
+      } else if repr is Some(str) {
+        @strconv.parse_int64(str) catch {
+          error =>
+            decode_error(path, "Int64::from_json: parsing failure \{error}")
+        }
+      } else {
+        decode_error(
+          path,
+          "Int64::from_json: invalid number representation \{repr}",
+        )
+      }
+    String(str) =>
+      @strconv.parse_int64(str) catch {
+        error =>
+          decode_error(path, "Int64::from_json: parsing failure \{error}")
+      }
+    _ =>
+      decode_error(
+        path, "Int64::from_json: expected number in number or string representation",
+      )
   }
 }
 
@@ -77,13 +94,30 @@ pub impl FromJson for UInt with from_json(json, path) {
 
 ///|
 pub impl FromJson for UInt64 with from_json(json, path) {
-  guard json is String(str) else {
-    decode_error(
-      path, "UInt64::from_json: expected number in string representation",
-    )
-  }
-  @strconv.parse_uint64(str) catch {
-    error => decode_error(path, "UInt64::from_json: parsing failure \{error}")
+  match json {
+    Number(n, repr~) =>
+      if n != @double.infinity && n != @double.neg_infinity {
+        n.to_uint64()
+      } else if repr is Some(str) {
+        @strconv.parse_uint64(str) catch {
+          error =>
+            decode_error(path, "UInt64::from_json: parsing failure \{error}")
+        }
+      } else {
+        decode_error(
+          path,
+          "UInt64::from_json: invalid number representation \{repr}",
+        )
+      }
+    String(str) =>
+      @strconv.parse_uint64(str) catch {
+        error =>
+          decode_error(path, "UInt64::from_json: parsing failure \{error}")
+      }
+    _ =>
+      decode_error(
+        path, "UInt64::from_json: expected number in number or string representation",
+      )
   }
 }
 
