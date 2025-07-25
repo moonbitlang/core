@@ -446,6 +446,13 @@ test "array_chunks" {
 }
 
 ///|
+test "panic_array_chunks_by_zero" {
+  let arr = [1, 2, 3, 4, 5]
+  let _ = arr.chunks(0)
+
+}
+
+///|
 test "array_chunks_by" {
   let v = [1, 1, 2, 3, 2, 3, 2, 3, 4]
   inspect(
@@ -463,6 +470,13 @@ test "array_windows" {
   inspect(windows, content="[[1, 2, 3, 4, 5], [2, 3, 4, 5, 6]]")
   let windows = arr.windows(1)
   inspect(windows, content="[[1], [2], [3], [4], [5], [6]]")
+}
+
+///|
+test "panic_array_windows_by_zero" {
+  let arr = [1, 2, 3, 4, 5]
+  let _ = arr.windows(0)
+
 }
 
 ///|
