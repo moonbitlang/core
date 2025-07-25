@@ -378,7 +378,7 @@ test "is_printable" {
   assert_false(paragraph_separator.is_printable())
   assert_false(byte_order_mark.is_printable())
   inspect(
-    ['\t', '\n', '\r', '\b', '\\'].map(is_printable),
+    ['\t', '\n', '\r', '\b', '\\'].map(Char::is_printable),
     content="[false, false, false, false, true]",
   )
 }
