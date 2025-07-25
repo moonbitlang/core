@@ -1,3 +1,4 @@
 {
-    "testing.gutterEnabled": false
+    "testing.gutterEnabled": false,
+    "editor.fontSize": 16
 }
