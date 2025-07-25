@@ -248,8 +248,8 @@ test "is_ascii_whitespace" {
   let space = ' '
   let tab = '\t'
   let lf = '\n'
-  let vt = '\u{0B}'  // vertical tab
-  let ff = '\u{0C}'  // form feed
+  let vt = '\u{0B}' // vertical tab
+  let ff = '\u{0C}' // form feed
   let cr = '\r'
   let esc = '\u{1B}'
   assert_false(uppercase_a.is_ascii_whitespace())
