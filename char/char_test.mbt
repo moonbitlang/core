@@ -246,7 +246,11 @@ test "is_ascii_whitespace" {
   let zero = '0'
   let percent = '%'
   let space = ' '
+  let tab = '\t'
   let lf = '\n'
+  let vt = '\u{0B}'  // vertical tab
+  let ff = '\u{0C}'  // form feed
+  let cr = '\r'
   let esc = '\u{1B}'
   assert_false(uppercase_a.is_ascii_whitespace())
   assert_false(uppercase_g.is_ascii_whitespace())
@@ -255,7 +259,11 @@ test "is_ascii_whitespace" {
   assert_false(zero.is_ascii_whitespace())
   assert_false(percent.is_ascii_whitespace())
   assert_true(space.is_ascii_whitespace())
+  assert_true(tab.is_ascii_whitespace())
   assert_true(lf.is_ascii_whitespace())
+  assert_true(vt.is_ascii_whitespace())
+  assert_true(ff.is_ascii_whitespace())
+  assert_true(cr.is_ascii_whitespace())
   assert_false(esc.is_ascii_whitespace())
 }
 

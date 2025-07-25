@@ -93,9 +93,9 @@ pub fn Char::is_ascii_uppercase(self : Self) -> Bool {
 }
 
 ///| Checks if the value is an ASCII whitespace character:
-/// U+0020 SPACE, U+0009 HORIZONTAL TAB, U+000A LINE FEED, U+000C FORM FEED, or U+000D CARRIAGE RETURN.
+/// U+0020 SPACE, U+0009 HORIZONTAL TAB, U+000A LINE FEED, U+000B VERTICAL TAB, U+000C FORM FEED, or U+000D CARRIAGE RETURN.
 pub fn Char::is_ascii_whitespace(self : Self) -> Bool {
-  self is ('\u{20}' | '\u{09}' | '\u{0A}' | '\u{0C}' | '\u{0D}')
+  self is ('\u{20}' | '\u{09}' | '\u{0A}' | '\u{0B}' | '\u{0C}' | '\u{0D}')
 }
 
 ///| Returns true if this char has the general category for control codes.
