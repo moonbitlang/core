@@ -9,7 +9,6 @@ let min_value : Int
 // Types and methods
 fn Int::abs(Int) -> Int
 fnalias Int::abs
-fn Int::next_power_of_two(Int) -> Int
 fn Int::to_be_bytes(Int) -> Bytes
 fn Int::to_le_bytes(Int) -> Bytes
 
