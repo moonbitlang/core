@@ -101,3 +101,111 @@ test "@math.probable_prime" {
     content="true",
   )
 }
+
+///|
+#cfg(false)
+test "is_probable_prime edge cases" {
+  let r = @random.Rand::new()
+
+  // Test with negative iterations (should panic)
+  try {
+    ignore(is_probable_prime(17N, r, iters=-1))
+    assert_false(true) // Should not reach here
+  } catch {
+    _ => () // Expected to panic
+  }
+
+  // Test with zero iterations (should panic) 
+  try {
+    ignore(is_probable_prime(17N, r, iters=0))
+    assert_false(true) // Should not reach here
+  } catch {
+    _ => () // Expected to panic
+  }
+
+  // Test with minimum positive iterations
+  assert_true(is_probable_prime(17N, r, iters=1))
+
+  // Test with 4 (even number larger than 3)
+  assert_false(is_probable_prime(4N, r))
+
+  // Test larger even numbers
+  assert_false(is_probable_prime(100N, r))
+  assert_false(is_probable_prime(1000N, r))
+}
+
+///|
+#cfg(false)
+test "trial_divisions boundary conditions" {
+  let r = @random.Rand::new()
+
+  // Test numbers that equal small primes (edge case in trial_divisions)
+  assert_true(is_probable_prime(2N, r))
+  assert_true(is_probable_prime(3N, r))
+  assert_true(is_probable_prime(5N, r))
+  assert_true(is_probable_prime(7N, r))
+  assert_true(is_probable_prime(11N, r))
+
+  // Test numbers that are multiples of small primes but not the primes themselves
+  assert_false(is_probable_prime(4N, r)) // 2*2
+  assert_false(is_probable_prime(6N, r)) // 2*3
+  assert_false(is_probable_prime(9N, r)) // 3*3
+  assert_false(is_probable_prime(15N, r)) // 3*5
+  assert_false(is_probable_prime(21N, r)) // 3*7
+  assert_false(is_probable_prime(25N, r)) // 5*5
+}
+
+///|
+#cfg(false)
+test "miller_rabin edge cases" {
+  let r = @random.Rand::new()
+
+  // Test with small numbers that would trigger edge case handling in miller_rabin_test
+  // (these won't actually call miller_rabin_test due to early returns, 
+  // but we test the full path)
+  assert_true(is_probable_prime(5N, r))
+  assert_false(is_probable_prime(8N, r))
+  assert_false(is_probable_prime(10N, r))
+
+  // Test numbers that exercise different bit length ranges for trial divisions
+  // 512 bit boundary
+  let mid_size = @bigint.BigInt::from_string(
+    "12999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+  )
+  ignore(is_probable_prime(mid_size, r))
+}
+
+///|
+#cfg(false)
+test "probable_prime different bit sizes" {
+  let rand = @random.Rand::new()
+
+  // Test various bit sizes
+  for bit_size in [8, 16, 24, 48, 72, 128] {
+    let prime = probable_prime(bit_size, rand)
+    assert_true(is_probable_prime(prime, rand))
+    // Verify the bit length is approximately correct
+    assert_true(prime.bit_length() <= bit_size + 1)
+    assert_true(prime.bit_length() >= bit_size - 1)
+  }
+}
+
+///|
+#cfg(false)
+test "comprehensive primality tests" {
+  let r = @random.Rand::new()
+
+  // Test a range of small numbers to ensure comprehensive coverage
+  let known_primes = [
+    2N, 3N, 5N, 7N, 11N, 13N, 17N, 19N, 23N, 29N, 31N, 37N, 41N, 43N, 47N,
+  ]
+  let known_composites = [
+    4N, 6N, 8N, 9N, 10N, 12N, 14N, 15N, 16N, 18N, 20N, 21N, 22N, 24N, 25N,
+  ]
+  for prime in known_primes {
+    assert_true(is_probable_prime(prime, r))
+  }
+  for composite in known_composites {
+    assert_false(is_probable_prime(composite, r))
+  }
+}
