@@ -192,7 +192,7 @@ test "clear" {
   let m = { "a": 1, "b": 2, "c": 3 }
   m.clear()
   assert_eq(m.size, 0)
-  assert_eq(m.capacity, 8)
+  inspect(m.capacity, content="4")
   assert_eq(m.head, None)
   assert_eq(m.tail, -1)
   for i in 0..<m.capacity {
