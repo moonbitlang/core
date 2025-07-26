@@ -337,6 +337,7 @@ fn Char::to_uint(Char) -> UInt
 
 #deprecated
 fn Int::asr(Int, Int) -> Int
+fn Int::clamp(Int, min~ : Int, max~ : Int) -> Int
 fn Int::clz(Int) -> Int
 fn Int::ctz(Int) -> Int
 fn Int::is_neg(Int) -> Bool
@@ -351,6 +352,8 @@ fn Int::lsl(Int, Int) -> Int
 #deprecated
 fn Int::lsr(Int, Int) -> Int
 fn Int::lxor(Int, Int) -> Int
+fn Int::max(Int, Int) -> Int
+fn Int::min(Int, Int) -> Int
 fn Int::next_power_of_two(Int) -> Int
 fn Int::popcnt(Int) -> Int
 fn Int::reinterpret_as_float(Int) -> Float
