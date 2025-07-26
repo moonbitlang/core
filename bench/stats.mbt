@@ -67,7 +67,7 @@ fn Summary::new(
     quartiles,
     iqr,
     batch_size,
-    runs: sorted_data.length(),
+    runs: sorted_data.len(),
   }
 }
 
@@ -87,12 +87,12 @@ fn min(sorted_data~ : Array[Double]) -> Double {
 
 ///|
 fn max(sorted_data~ : Array[Double]) -> Double {
-  sorted_data[sorted_data.length() - 1]
+  sorted_data[sorted_data.len() - 1]
 }
 
 ///|
 fn mean(data : Array[Double], sum~ : Double) -> Double {
-  let count = data.length()
+  let count = data.len()
   sum / count.to_double()
 }
 
@@ -103,7 +103,7 @@ fn median(sorted_data~ : Array[Double]) -> Double {
 
 ///|
 fn variance(data : Array[Double], mean~ : Double) -> Double {
-  if data.length() < 2 {
+  if data.len() < 2 {
     return 0.0
   }
   let mut v = 0.0
@@ -111,7 +111,7 @@ fn variance(data : Array[Double], mean~ : Double) -> Double {
     let d = i - mean
     v += d * d
   }
-  v / (data.length() - 1).to_double()
+  v / (data.len() - 1).to_double()
 }
 
 ///|
@@ -159,15 +159,15 @@ fn iqr(quartiles~ : (Double, Double, Double)) -> Double {
 
 ///|
 fn percentile(sorted_data~ : Array[Double], pct~ : Double) -> Double {
-  guard sorted_data.length() > 0
+  guard sorted_data.len() > 0
   guard pct >= 0.0 && pct <= 100.0
-  if sorted_data.length() == 1 {
+  if sorted_data.len() == 1 {
     return sorted_data[0]
   }
   if pct == 100.0 {
-    return sorted_data[sorted_data.length() - 1]
+    return sorted_data[sorted_data.len() - 1]
   }
-  let length = (sorted_data.length() - 1).to_double()
+  let length = (sorted_data.len() - 1).to_double()
   let rank = pct / 100 * length
   let lrank = rank.floor()
   let d = rank - lrank

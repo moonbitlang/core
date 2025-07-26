@@ -162,7 +162,7 @@ pub fn from_bytes(bytes : Bytes) -> T {
 ///|
 /// Create a buffer from an array.
 pub fn from_array(arr : Array[Byte]) -> T {
-  let buf = new(size_hint=arr.length())
+  let buf = new(size_hint=arr.len())
   for byte in arr {
     // inline write_byte, skip grow_if_necessary check
     // SAFETY: known array size

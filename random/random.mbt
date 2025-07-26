@@ -300,7 +300,7 @@ test "umul128: handles zero correctly" {
 ///   let r = Rand::new()
 ///   let a = [1, 2, 3, 4, 5]
 ///   r.shuffle(
-///     a.length(),
+///     a.len(),
 ///     (i : Int, j : Int) => {
 ///       let t = a[i]
 ///       a[i] = a[j]
@@ -322,7 +322,7 @@ pub fn shuffle(self : Rand, limit : Int, swap : (Int, Int) -> Unit) -> Unit {
 test "shuffle" {
   let r = new()
   let a = [1, 2, 3, 4, 5]
-  r.shuffle(a.length(), (i : Int, j : Int) => {
+  r.shuffle(a.len(), (i : Int, j : Int) => {
     let t = a[i]
     a[i] = a[j]
     a[j] = t

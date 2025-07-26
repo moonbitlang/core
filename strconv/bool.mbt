@@ -40,7 +40,7 @@ test "parse_bool" {
     ("true", Ok(true)),
     ("True", Ok(true)),
   ]
-  for i in 0..<tests.length() {
+  for i in 0..<tests.len() {
     let t = tests[i]
     assert_eq(
       Result::Ok(parse_bool(t.0)) catch {

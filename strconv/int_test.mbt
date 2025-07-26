@@ -48,7 +48,7 @@ test "parse_int64_uncovered_lines" {
     ("[", 16, Err(syntax_err)),
     ("{", 16, Err(syntax_err)),
   ]
-  for i in 0..<tests.length() {
+  for i in 0..<tests.len() {
     let t = tests[i]
     assert_eq(parse_as_result(t.0, base=t.1), t.2)
   }

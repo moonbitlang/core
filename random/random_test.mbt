@@ -30,7 +30,7 @@ test "prng" {
   assert_eq(r.int64(limit=10), 8)
   assert_eq(r.uint64(), 3951155890335085418)
   let a = [1, 2, 3, 4, 5]
-  r.shuffle(a.length(), (i : Int, j : Int) => {
+  r.shuffle(a.len(), (i : Int, j : Int) => {
     let t = a[i]
     a[i] = a[j]
     a[j] = t

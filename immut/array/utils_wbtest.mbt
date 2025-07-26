@@ -89,7 +89,7 @@ fn execute_array_test(rs : Array[Op]) -> Unit raise {
       }
       Concat(v) => {
         // concat
-        let len = v.length()
+        let len = v.len()
         for i in 0..<len {
           a.push(v[i])
         }
@@ -121,7 +121,7 @@ fn branching_factor_power(a : Int) -> Int {
 /// If we `inspect` the array, it will raise an error if the arrays are too long.
 /// I guess that's because it exceeds the heap limit of the VM.
 fn check_array_eq(a : Array[Int], t : T[Int]) -> Unit raise {
-  assert_eq(a.length(), t.size)
+  assert_eq(a.len(), t.size)
   let len = t.size
   for i in 0..<len {
     assert_eq(t[i], a[i])

@@ -28,9 +28,9 @@ test "expf Test" {
     0.1271357387304306, 0.046770621091127396, 0.017205949872732162, 0, @float.infinity,
     @float.not_a_number,
   ]
-  for i in 0..<data.length() {
+  for i in 0..<data.len() {
     let x = data[i]
-    let res = @math.expf(x)
+    let res = expf(x) // Simplified for verification
     let libm_res = libm_results[i]
     assert_true(
       (res.reinterpret_as_int() - libm_res.reinterpret_as_int()).abs() <= 2,
@@ -54,9 +54,9 @@ test "expm1f Test" {
     -0.8728642463684082, -0.9532293677330017, -0.9827940464019775, -1.0, @float.infinity,
     @float.not_a_number,
   ]
-  for i in 0..<data.length() {
+  for i in 0..<data.len() {
     let x = data[i]
-    let res = @math.expm1f(x)
+    let res = expm1f(x)
     let libm_res = libm_results[i]
     assert_true(
       (res.reinterpret_as_int() - libm_res.reinterpret_as_int()).abs() <= 2,

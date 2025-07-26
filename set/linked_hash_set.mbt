@@ -69,7 +69,7 @@ pub fn[K] Set::new(capacity~ : Int = 8) -> Set[K] {
 ///|
 /// Create a hash set from array.
 pub fn[K : Hash + Eq] Set::from_array(arr : Array[K]) -> Set[K] {
-  let m = Set::new(capacity=arr.length())
+  let m = Set::new(capacity=arr.len())
   arr.each(e => m.add(e))
   m
 }

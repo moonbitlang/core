@@ -109,7 +109,7 @@ pub fn[A] copy(self : T[A]) -> T[A] {
 ///   assert_eq(v, @array.from_array([1, 2, 3]))
 /// ```
 pub fn[A] from_array(arr : Array[A]) -> T[A] {
-  makei(arr.length(), i => arr[i])
+  makei(arr.len(), i => arr[i])
 }
 
 ///|

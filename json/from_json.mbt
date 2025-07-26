@@ -152,7 +152,7 @@ pub impl[X : FromJson] FromJson for FixedArray[X] with from_json(json, path) {
   guard json is Array(a) else {
     decode_error(path, "FixedArray::from_json: expected array")
   }
-  let len = a.length()
+  let len = a.len()
   if len == 0 {
     return []
   }
