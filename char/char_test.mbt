@@ -410,3 +410,125 @@ test "to ascii lowercase" {
   assert_eq('_', '_'.to_ascii_lowercase())
   assert_eq('❤', '❤'.to_ascii_lowercase())
 }
+
+///|
+test "Hash implementation edge cases" {
+  // Test that hash function works for various characters
+  let hash_a = 'a'.hash()
+  let hash_b = 'b'.hash()
+  assert_true(hash_a >= 0)
+  assert_true(hash_b >= 0)
+  assert_false(hash_a == hash_b) // Different characters should have different hashes
+
+  // Test with null character
+  let null_hash = '\u{0000}'.hash()
+  assert_true(null_hash >= 0)
+
+  // Test with high Unicode characters
+  let unicode_hash = '🚀'.hash()
+  assert_true(unicode_hash >= 0)
+}
+
+///|
+test "ToJson implementation" {
+  // Test that to_json works without crashing for various characters
+  let json_a = 'a'.to_json()
+  let json_quote = '"'.to_json()
+  // let json_backslash = '\\'.to_json()
+  let json_newline = '\n'.to_json()
+  let json_tab = '\t'.to_json()
+  let json_null = '\u{0000}'.to_json()
+  let json_unicode = '🚀'.to_json()
+
+  // Basic validation that JSON objects were created
+  assert_true(json_a != json_quote) // Different characters produce different JSON
+  assert_true(json_newline != json_tab)
+  assert_true(json_null != json_unicode)
+}
+
+///|
+test "is_digit boundary cases with maximum radix" {
+  // Test maximum valid radix (36)
+  assert_true('z'.is_digit(36))
+  assert_true('Z'.is_digit(36))
+  assert_false('z'.is_digit(35))
+
+  // Test minimum valid radix (2)
+  assert_true('0'.is_digit(2))
+  assert_true('1'.is_digit(2))
+  assert_false('2'.is_digit(2))
+
+  // Test digits at boundaries
+  assert_true('9'.is_digit(10))
+  assert_false('9'.is_digit(9))
+  assert_true('a'.is_digit(11))
+  assert_false('a'.is_digit(10))
+}
+
+///|
+test "ASCII boundaries and edge characters" {
+  // Test the exact boundary of ASCII range
+  assert_true('\u{007F}'.is_ascii()) // Last ASCII character (DEL)
+  assert_false('\u{0080}'.is_ascii()) // First non-ASCII character
+
+  // Test control character boundaries
+  assert_true('\u{001F}'.is_ascii_control()) // Last in first control range
+  assert_false('\u{0020}'.is_ascii_control()) // SPACE (not control)
+  assert_true('\u{007F}'.is_ascii_control()) // DEL character
+  assert_false('\u{0080}'.is_ascii_control()) // Beyond ASCII
+
+  // Test graphic character boundaries
+  assert_true('\u{0021}'.is_ascii_graphic()) // First graphic character (!)
+  assert_false('\u{0020}'.is_ascii_graphic()) // SPACE (not graphic)
+  assert_true('\u{007E}'.is_ascii_graphic()) // Last graphic character (~)
+  assert_false('\u{007F}'.is_ascii_graphic()) // DEL (not graphic)
+}
+
+///|
+test "Unicode edge cases for numeric detection" {
+  // Test various Unicode numeric characters
+  assert_true('\u{00BC}'.is_numeric()) // ¼ (vulgar fraction one quarter)
+  assert_true('\u{2160}'.is_numeric()) // Ⅰ (Roman numeral one)
+  assert_true('\u{1D7CE}'.is_numeric()) // Mathematical monospace digit zero
+
+  // Test non-numeric characters that might be confused with numbers
+  assert_false('O'.is_numeric()) // Letter O (not zero)
+  assert_false('l'.is_numeric()) // Letter l (not one)
+  assert_false('I'.is_numeric()) // Letter I (not Roman numeral)
+}
+
+///|
+test "Whitespace edge cases" {
+  // Test all ASCII whitespace characters
+  assert_true('\u{0009}'.is_ascii_whitespace()) // TAB
+  assert_true('\u{000A}'.is_ascii_whitespace()) // LF
+  assert_true('\u{000B}'.is_ascii_whitespace()) // VT
+  assert_true('\u{000C}'.is_ascii_whitespace()) // FF
+  assert_true('\u{000D}'.is_ascii_whitespace()) // CR
+  assert_true('\u{0020}'.is_ascii_whitespace()) // SPACE
+
+  // Test characters that are not ASCII whitespace
+  assert_false('\u{00A0}'.is_ascii_whitespace()) // NBSP (Unicode whitespace but not ASCII)
+  assert_false('\u{0085}'.is_ascii_whitespace()) // NEL (not ASCII)
+
+  // But they should be Unicode whitespace
+  assert_true('\u{00A0}'.is_whitespace()) // NBSP
+  assert_true('\u{0085}'.is_whitespace()) // NEL
+}
+
+///|
+test "Case conversion with non-letters" {
+  // Test symbols and numbers remain unchanged
+  assert_eq('0'.to_ascii_lowercase(), '0')
+  assert_eq('9'.to_ascii_uppercase(), '9')
+  assert_eq('!'.to_ascii_lowercase(), '!')
+  assert_eq('@'.to_ascii_uppercase(), '@')
+  assert_eq(' '.to_ascii_lowercase(), ' ')
+  assert_eq(' '.to_ascii_uppercase(), ' ')
+
+  // Test boundary letters
+  assert_eq('A'.to_ascii_lowercase(), 'a')
+  assert_eq('Z'.to_ascii_lowercase(), 'z')
+  assert_eq('a'.to_ascii_uppercase(), 'A')
+  assert_eq('z'.to_ascii_uppercase(), 'Z')
+}
