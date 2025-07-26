@@ -48,36 +48,11 @@ struct Map[K, V] {
 // Implementations
 
 ///|
-fn power_2_above(x : Int, n : Int) -> Int {
-  for i = x {
-    if i >= n {
-      break i
-    }
-    let next = i << 1
-    if next < 0 {
-      // overflow happened
-      break i
-    }
-    continue next
-  }
-}
-
-///|
-test "power_2_above" {
-  inspect(power_2_above(1, 15), content="16")
-  inspect(power_2_above(1, 16), content="16")
-  inspect(power_2_above(1, 17), content="32")
-  inspect(power_2_above(1, 32), content="32")
-  inspect(power_2_above(128, 33), content="128")
-  inspect(power_2_above(1, 2147483647), content="1073741824")
-}
-
-///|
 /// Create a hash map.
 /// The capacity of the map will be the smallest power of 2 that is
 /// greater than or equal to the provided [capacity].
 pub fn[K, V] Map::new(capacity~ : Int = 8) -> Map[K, V] {
-  let capacity = power_2_above(8, capacity)
+  let capacity = capacity.next_power_of_two()
   {
     size: 0,
     capacity,

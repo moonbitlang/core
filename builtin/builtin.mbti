@@ -351,6 +351,7 @@ fn Int::lsl(Int, Int) -> Int
 #deprecated
 fn Int::lsr(Int, Int) -> Int
 fn Int::lxor(Int, Int) -> Int
+fn Int::next_power_of_two(Int) -> Int
 fn Int::popcnt(Int) -> Int
 fn Int::reinterpret_as_float(Int) -> Float
 fn Int::reinterpret_as_uint(Int) -> UInt
