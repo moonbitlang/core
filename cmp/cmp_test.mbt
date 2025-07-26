@@ -118,3 +118,11 @@ test "maximum and minimum with negative numbers" {
   assert_eq(@cmp.maximum(0, -1), 0)
   assert_eq(@cmp.minimum(0, -1), -1)
 }
+
+///|
+test "max and min fn" {
+  let v1 = 1
+  let v2 = 2
+  assert_eq(v1.max(2), v2)
+  assert_eq(v1.min(1), v1)
+}

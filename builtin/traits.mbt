@@ -20,13 +20,34 @@ pub(open) trait Eq {
 
 ///|
 /// Trait for types whose elements are ordered
-///
-/// The return value of [compare] is:
-/// - zero, if the two arguments are equal
-/// - negative, if the first argument is smaller
-/// - positive, if the first argument is greater
 pub(open) trait Compare: Eq {
+  // Compares two values and returns an integer indicating their order.
+  // - zero, if the two arguments are equal
+  // - negative, if the first argument is smaller
+  // - positive, if the first argument is greater
   compare(Self, Self) -> Int
+  // Compares and returns the maximum of two values.
+  max(Self, Self) -> Self = _
+  // Compares and returns the minimum of two values.
+  min(Self, Self) -> Self = _
+}
+
+///|
+impl Compare with max(self, other) {
+  if self > other {
+    self
+  } else {
+    other
+  }
+}
+
+///|
+impl Compare with min(self, other) {
+  if self < other {
+    self
+  } else {
+    other
+  }
 }
 
 ///|
