@@ -41,3 +41,55 @@ pub fn Int::next_power_of_two(self : Int) -> Int {
   // 2147483647 is the largest value of an integer
   (2147483647 >> ((self - 1).clz() - 1)) + 1
 }
+
+///|
+/// Returns the minimum of two integers.
+///
+/// Example:
+/// ```moonbit
+///   inspect((1).min(2), content="1")
+///   inspect((2).min(1), content="1")
+/// ```
+pub fn Int::min(self : Int, other : Int) -> Int {
+  if self < other {
+    self
+  } else {
+    other
+  }
+}
+
+///|
+/// Returns the maximum of two integers.
+///
+/// Example:
+/// ```moonbit
+///   inspect((1).max(2), content="2")
+///   inspect((2).max(1), content="2")
+/// ```
+pub fn Int::max(self : Int, other : Int) -> Int {
+  if self > other {
+    self
+  } else {
+    other
+  }
+}
+
+///|
+/// Clamps the value `self` between `min` and `max`.
+///
+/// Example:
+/// ```moonbit
+///   inspect((1).clamp(min=0, max=2), content="1")
+///   inspect((-1).clamp(min=0, max=2), content="0")
+///   inspect((3).clamp(min=0, max=2), content="2")
+///   inspect((-1).clamp(min=0, max=2), content="0")
+/// ```
+pub fn Int::clamp(self : Int, min~ : Int, max~ : Int) -> Int {
+  if self < min {
+    min
+  } else if self > max {
+    max
+  } else {
+    self
+  }
+}
