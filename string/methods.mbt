@@ -1108,7 +1108,9 @@ test "View::replace_all" {
 /// Converts this string to lowercase.
 pub fn View::to_lower(self : View) -> View {
   // TODO: deal with non-ascii characters
-  guard self.find_by(_.is_ascii_uppercase()) is Some(idx) else { return self }
+  guard self.find_by(x => x.is_ascii_uppercase()) is Some(idx) else {
+    return self
+  }
   let buf = StringBuilder::new(size_hint=self.length())
   let head = self.view(end_offset=idx)
   buf.write_substring(head.data(), head.start_offset(), head.length())
@@ -1127,7 +1129,9 @@ pub fn View::to_lower(self : View) -> View {
 /// Converts this string to lowercase.
 pub fn to_lower(self : String) -> String {
   // TODO: deal with non-ascii characters
-  guard self.find_by(_.is_ascii_uppercase()) is Some(idx) else { return self }
+  guard self.find_by(x => x.is_ascii_uppercase()) is Some(idx) else {
+    return self
+  }
   let buf = StringBuilder::new(size_hint=self.length())
   let head = self.view(end_offset=idx)
   buf.write_substring(head.data(), head.start_offset(), head.length())
