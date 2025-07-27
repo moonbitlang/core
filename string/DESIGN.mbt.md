@@ -87,11 +87,11 @@ test "view conversion" {
   }
 
   let str = "Hello World"
-  let view = str.charcodes(start=0, end=5)
+  let view = str.view(start_offset=0, end_offset=5)
 
   // Both work due to implicit conversion
-  let _len1 = process_text(str) // String implicitly converts to View
-  let _len2 = process_text(view)
+  let _ = process_text(str) // String implicitly converts to View
+  let _ = process_text(view)
    // Direct View usage
 }
 ```

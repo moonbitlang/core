@@ -26,6 +26,7 @@ fn StringView::char_length_eq(Self, Int) -> Bool
 fn StringView::char_length_ge(Self, Int) -> Bool
 #deprecated
 fn StringView::charcode_at(Self, Int) -> Int
+#deprecated
 fn StringView::charcodes(Self, start~ : Int = .., end? : Int) -> Self
 fn StringView::contains(Self, Self) -> Bool
 fn StringView::contains_char(Self, Char) -> Bool
@@ -78,6 +79,7 @@ impl ToJson for StringView
 fn String::char_at(String, Int) -> Char
 fn String::char_length_eq(String, Int, start_offset~ : Int = .., end_offset? : Int) -> Bool
 fn String::char_length_ge(String, Int, start_offset~ : Int = .., end_offset? : Int) -> Bool
+#deprecated
 fn String::charcodes(String, start~ : Int = .., end? : Int) -> StringView
 #deprecated
 fn String::concat(Array[String], separator~ : String = ..) -> String
