@@ -656,7 +656,7 @@ pub fn View::pad_start(
   total_width : Int,
   padding_char : Char,
 ) -> String {
-  let len = self.char_length()
+  let len = self.length()
   guard len < total_width else { return self.to_string() }
   let padding = String::make(total_width - len, padding_char)
   [..padding, ..self]
@@ -671,7 +671,10 @@ pub fn pad_start(
   total_width : Int,
   padding_char : Char,
 ) -> String {
-  self[:].pad_start(total_width, padding_char)
+  let len = self.length()
+  guard len < total_width else { return self }
+  let padding = String::make(total_width - len, padding_char)
+  [..padding, ..self]
 }
 
 ///|
@@ -692,7 +695,7 @@ test "pad_start" {
   inspect(view.pad_start(5, 'x'), content="xxllo")
 
   // Test with Unicode characters
-  inspect("🌟".pad_start(3, '✨'), content="✨✨🌟")
+  inspect("🌟".pad_start(3, '✨'), content="✨🌟")
 
   // Edge cases
   inspect("abc".pad_start(0, 'x'), content="abc") // width less than string length
@@ -708,7 +711,7 @@ pub fn View::pad_end(
   total_width : Int,
   padding_char : Char,
 ) -> String {
-  let len = self.char_length()
+  let len = self.length()
   guard len < total_width else { return self.to_string() }
   let padding = String::make(total_width - len, padding_char)
   [..self, ..padding]
@@ -718,8 +721,15 @@ pub fn View::pad_end(
 /// Returns a new string with `padding_char`s appended to `self` if
 /// `self.length() < total_width`. The number of unicode characters in
 /// the returned string is `total_width` if padding is added.
-pub fn pad_end(self : String, total_width : Int, padding_char : Char) -> String {
-  self[:].pad_end(total_width, padding_char)
+pub fn String::pad_end(
+  self : String,
+  total_width : Int,
+  padding_char : Char,
+) -> String {
+  let len = self.length()
+  guard len < total_width else { return self }
+  let padding = String::make(total_width - len, padding_char)
+  [..self, ..padding]
 }
 
 ///|
@@ -740,7 +750,7 @@ test "pad_end" {
   inspect(view.pad_end(5, 'x'), content="lloxx")
 
   // Test with Unicode characters
-  inspect("🌟".pad_end(3, '✨'), content="🌟✨✨")
+  inspect("🌟".pad_end(3, '✨'), content="🌟✨")
 
   // Edge cases
   inspect("abc".pad_end(0, 'x'), content="abc") // width less than string length
