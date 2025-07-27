@@ -345,6 +345,7 @@ fn Int::is_neg(Int) -> Bool
 fn Int::is_non_neg(Int) -> Bool
 fn Int::is_non_pos(Int) -> Bool
 fn Int::is_pos(Int) -> Bool
+fn Int::is_surrogate(Int) -> Bool
 fn Int::is_trailing_surrogate(Int) -> Bool
 fn Int::land(Int, Int) -> Int
 fn Int::lnot(Int) -> Int

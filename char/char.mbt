@@ -337,7 +337,7 @@ pub fn Char::is_printable(self : Self) -> Bool {
     return false
   }
   // Surrogate (Cs)
-  if self >= 0xD800 && self <= 0xDFFF {
+  if self.is_surrogate() {
     return false
   }
 

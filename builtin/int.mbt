@@ -101,10 +101,10 @@ pub fn Int::clamp(self : Int, min~ : Int, max~ : Int) -> Int {
 ///
 /// Example:
 /// ```moonbit
-///   inspect((0xD800).is_leading_surrogate(), content="true")
-///   inspect((0xDBFF).is_leading_surrogate(), content="true")
-///   inspect((0xDC00).is_leading_surrogate(), content="false")
-///   inspect((0x41).is_leading_surrogate(), content="false") // 'A'
+/// inspect((0xD800).is_leading_surrogate(), content="true")
+/// inspect((0xDBFF).is_leading_surrogate(), content="true")
+/// inspect((0xDC00).is_leading_surrogate(), content="false")
+/// inspect((0x41).is_leading_surrogate(), content="false") // 'A'
 /// ```
 pub fn Int::is_leading_surrogate(self : Int) -> Bool {
   0xD800 <= self && self <= 0xDBFF
@@ -123,4 +123,20 @@ pub fn Int::is_leading_surrogate(self : Int) -> Bool {
 /// ```
 pub fn Int::is_trailing_surrogate(self : Int) -> Bool {
   0xDC00 <= self && self <= 0xDFFF
+}
+
+///|
+/// Checks if the integer value represents any UTF-16 surrogate (leading or trailing).
+/// Surrogates are in the range 0xD800 to 0xDFFF.
+///
+/// Example:
+/// ```moonbit
+///   inspect((0xD800).is_surrogate(), content="true")  // leading surrogate
+///   inspect((0xDC00).is_surrogate(), content="true")  // trailing surrogate
+///   inspect((0xDFFF).is_surrogate(), content="true")  // trailing surrogate
+///   inspect((0x41).is_surrogate(), content="false")   // 'A'
+///   inspect((0x1F600).is_surrogate(), content="false") // 😀 emoji codepoint
+/// ```
+pub fn Int::is_surrogate(self : Int) -> Bool {
+  0xD800 <= self && self <= 0xDFFF
 }

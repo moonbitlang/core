@@ -36,3 +36,14 @@ test "is_trailing_surrogate" {
   inspect("🤣".charcode_at(0).is_trailing_surrogate(), content="false")
   inspect("🤣".charcode_at(1).is_trailing_surrogate(), content="true")
 }
+
+///|
+test "is_surrogate" {
+  inspect((0xD800).is_surrogate(), content="true")  // Leading surrogate
+  inspect((0xDBFF).is_surrogate(), content="true")  // Leading surrogate
+  inspect((0xDC00).is_surrogate(), content="true")  // Trailing surrogate
+  inspect((0xDFFF).is_surrogate(), content="true")  // Trailing surrogate
+  inspect((0xD7FF).is_surrogate(), content="false") // Just before surrogates
+  inspect((0xE000).is_surrogate(), content="false") // Just after surrogates
+  inspect((0x41).is_surrogate(), content="false")   // Regular ASCII 'A'
+}
