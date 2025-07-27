@@ -416,9 +416,9 @@ pub fn[T] dump(t : T, name? : String, loc~ : SourceLoc = _) -> T {
 /// # Examples
 ///
 /// ```mbt
-///   let s = "Hello🤣";
-///   inspect(s.iter().nth(0).unwrap(), content="H");
-///   inspect(s.iter().nth(5).unwrap(), content="🤣"); // Returns full emoji character
+/// let s = "Hello🤣"
+/// inspect(s.get_char(0).unwrap(), content="H")
+/// inspect(s.get_char(5).unwrap(), content="🤣")
 /// ```
 ///
 /// # Panics
