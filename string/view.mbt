@@ -42,7 +42,7 @@ fn View::make_view(str : String, start : Int, end : Int) -> View = "%stringview.
 /// 
 /// ```mbt
 ///   let str = "Hello🤣🤣🤣"
-///   let view = str.charcodes(start = str.offset_of_nth_char(1).unwrap(), end = str.offset_of_nth_char(6).unwrap())
+///   let view = str.view(start_offset = str.offset_of_nth_char(1).unwrap(), end_offset = str.offset_of_nth_char(6).unwrap())
 ///   inspect(view[0].to_char(), content="Some('e')")
 ///   inspect(view[4], content="55358")
 /// ```
@@ -133,15 +133,16 @@ pub fn View::view(
 /// 
 /// ```mbt
 ///   let str = "Hello🤣🤣🤣"
-///   let view1 = str.charcodes()
+///   let view1 = str.view()
 ///   inspect(view1, content="Hello🤣🤣🤣")
 ///   let start = str.offset_of_nth_char(1).unwrap()
 ///   let end = str.offset_of_nth_char(6).unwrap() // the second emoji
-///   let view2 = str.charcodes(start~, end~)
+///   let view2 = str.view(start_offset=start, end_offset=end)
 ///   inspect(view2, content="ello🤣")
 /// ```
 /// 
 /// This method has O(1) complexity.
+#deprecated("use view instead")
 pub fn String::charcodes(self : String, start~ : Int = 0, end? : Int) -> View {
   self.view(start_offset=start, end_offset?=end)
 }
@@ -154,7 +155,7 @@ pub fn String::charcodes(self : String, start~ : Int = 0, end? : Int) -> View {
 /// ```mbt
 ///   let str = "Hello🤣🤣🤣"
 ///   let view1 = str.view()
-///   let view2 = view1.charcodes(start=1, end=7) // From 2nd to 6th character
+///   let view2 = view1.view(start_offset=1, end_offset=7) // From 2nd to 6th character
 ///   inspect(view2, content=
 ///    "ello🤣"
 ///   )
@@ -164,6 +165,7 @@ pub fn String::charcodes(self : String, start~ : Int = 0, end? : Int) -> View {
 /// It allows you to create a sub-view of an existing view with the specified character range.
 /// 
 /// This method has O(1) complexity.
+#deprecated("use view instead")
 pub fn View::charcodes(self : View, start~ : Int = 0, end? : Int) -> View {
   self.view(start_offset=start, end_offset?=end)
 }
@@ -234,7 +236,7 @@ pub impl Show for View with output(self, logger) {
 /// 
 /// ```mbt
 ///   let str = "Hello World"
-///   let view = str.charcodes(start = str.offset_of_nth_char(0).unwrap(),end   = str.offset_of_nth_char(5).unwrap()) // "Hello"
+///   let view = str.view(start_offset = str.offset_of_nth_char(0).unwrap(),end_offset = str.offset_of_nth_char(5).unwrap()) // "Hello"
 ///   inspect(view.to_string(), content="Hello")
 /// ```
 pub impl Show for StringView with to_string(self) {
