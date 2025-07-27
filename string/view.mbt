@@ -248,9 +248,9 @@ pub impl Show for StringView with to_string(self) {
 pub fn View::iter(self : View) -> Iter[Char] {
   Iter::new(yield_ => for index in self.start()..<self.end() {
     let c1 = self.str().unsafe_charcode_at(index)
-    if is_leading_surrogate(c1) && index + 1 < self.end() {
+    if c1.is_leading_surrogate() && index + 1 < self.end() {
       let c2 = self.str().unsafe_charcode_at(index + 1)
-      if is_trailing_surrogate(c2) {
+      if c2.is_trailing_surrogate() {
         let c = code_point_of_surrogate_pair(c1, c2)
         guard yield_(c) is IterContinue else { break IterEnd }
         continue index + 2
@@ -268,9 +268,9 @@ pub fn View::iter2(self : View) -> Iter2[Int, Char] {
     let len = self.length()
     for index = 0, n = 0; index < len; index = index + 1, n = n + 1 {
       let c1 = self.str().unsafe_charcode_at(self.start() + index)
-      if is_leading_surrogate(c1) && index + 1 < len {
+      if c1.is_leading_surrogate() && index + 1 < len {
         let c2 = self.str().unsafe_charcode_at(self.start() + index + 1)
-        if is_trailing_surrogate(c2) {
+        if c2.is_trailing_surrogate() {
           let c = code_point_of_surrogate_pair(c1, c2)
           guard yield_(n, c) is IterContinue else { break IterEnd }
           continue index + 2, n + 1
@@ -292,9 +292,9 @@ pub fn View::rev_iter(self : View) -> Iter[Char] {
                           index >= self.start()
                           index = index - 1 {
     let c1 = self.str().unsafe_charcode_at(index)
-    if is_trailing_surrogate(c1) && index - 1 >= 0 {
+    if c1.is_trailing_surrogate() && index - 1 >= 0 {
       let c2 = self.str().unsafe_charcode_at(index - 1)
-      if is_leading_surrogate(c2) {
+      if c2.is_leading_surrogate() {
         let c = code_point_of_surrogate_pair(c2, c1)
         guard yield_(c) is IterContinue else { break IterEnd }
         continue index - 2
@@ -456,10 +456,10 @@ pub fn String::op_as_view(
   }
   let start = if start < 0 { len + start } else { start }
   guard start >= 0 && start <= end && end <= len else { raise IndexOutOfBounds }
-  if start < len && is_trailing_surrogate(self.unsafe_charcode_at(start)) {
+  if start < len && self.unsafe_charcode_at(start).is_trailing_surrogate() {
     raise InvalidIndex
   }
-  if end < len && is_trailing_surrogate(self.unsafe_charcode_at(end)) {
+  if end < len && self.unsafe_charcode_at(end).is_trailing_surrogate() {
     raise InvalidIndex
   }
   View::make_view(self, start, end)
@@ -537,11 +537,11 @@ pub fn View::op_as_view(
 
   // Check for surrogate pair boundaries
   if abs_start < str_len &&
-    is_trailing_surrogate(self.str().unsafe_charcode_at(abs_start)) {
+    self.str().unsafe_charcode_at(abs_start).is_trailing_surrogate() {
     raise InvalidIndex
   }
   if abs_end < str_len &&
-    is_trailing_surrogate(self.str().unsafe_charcode_at(abs_end)) {
+    self.str().unsafe_charcode_at(abs_end).is_trailing_surrogate() {
     raise InvalidIndex
   }
   View::make_view(self.str(), abs_start, abs_end)

@@ -35,16 +35,6 @@ pub fn String::make(length : Int, value : Char) -> String {
 }
 
 ///|
-fn is_leading_surrogate(c : Int) -> Bool {
-  c is (0xD800..=0xDBFF)
-}
-
-///|
-fn is_trailing_surrogate(c : Int) -> Bool {
-  c is (0xDC00..=0xDFFF)
-}
-
-///|
 fn code_point_of_surrogate_pair(leading : Int, trailing : Int) -> Char {
   ((leading - 0xD800) * 0x400 + trailing - 0xDC00 + 0x10000).unsafe_to_char()
 }
@@ -78,9 +68,9 @@ pub fn String::char_length(
       utf16_index < end_offset
       utf16_index = utf16_index + 1, char_count = char_count + 1 {
     let c1 = self.unsafe_charcode_at(utf16_index)
-    if is_leading_surrogate(c1) && utf16_index + 1 < end_offset {
+    if c1.is_leading_surrogate() && utf16_index + 1 < end_offset {
       let c2 = self.unsafe_charcode_at(utf16_index + 1)
-      if is_trailing_surrogate(c2) {
+      if c2.is_trailing_surrogate() {
         continue utf16_index + 2, char_count + 1
       } else {
         abort("invalid surrogate pair")

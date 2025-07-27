@@ -124,9 +124,9 @@ pub fn iter(self : String) -> Iter[Char] {
     let len = self.length()
     for index in 0..<len {
       let c1 = self.unsafe_charcode_at(index)
-      if is_leading_surrogate(c1) && index + 1 < len {
+      if c1.is_leading_surrogate() && index + 1 < len {
         let c2 = self.unsafe_charcode_at(index + 1)
-        if is_trailing_surrogate(c2) {
+        if c2.is_trailing_surrogate() {
           let c = code_point_of_surrogate_pair(c1, c2)
           guard yield_(c) is IterContinue else { break IterEnd }
           continue index + 2
@@ -146,9 +146,9 @@ pub fn iter2(self : String) -> Iter2[Int, Char] {
     let len = self.length()
     for index = 0, n = 0; index < len; index = index + 1, n = n + 1 {
       let c1 = self.unsafe_charcode_at(index)
-      if is_leading_surrogate(c1) && index + 1 < len {
+      if c1.is_leading_surrogate() && index + 1 < len {
         let c2 = self.unsafe_charcode_at(index + 1)
-        if is_trailing_surrogate(c2) {
+        if c2.is_trailing_surrogate() {
           let c = code_point_of_surrogate_pair(c1, c2)
           guard yield_(n, c) is IterContinue else { break IterEnd }
           continue index + 2, n + 1
@@ -195,9 +195,9 @@ pub fn rev_iter(self : String) -> Iter[Char] {
     let len = self.length()
     for index = len - 1; index >= 0; index = index - 1 {
       let c1 = self.unsafe_charcode_at(index)
-      if is_trailing_surrogate(c1) && index - 1 >= 0 {
+      if c1.is_trailing_surrogate() && index - 1 >= 0 {
         let c2 = self.unsafe_charcode_at(index - 1)
-        if is_leading_surrogate(c2) {
+        if c2.is_leading_surrogate() {
           let c = code_point_of_surrogate_pair(c2, c1)
           guard yield_(c) is IterContinue else { break IterEnd }
           continue index - 2
@@ -227,7 +227,7 @@ fn String::offset_of_nth_char_forward(
   while utf16_offset < end_offset && char_count < n {
     let c = self.unsafe_charcode_at(utf16_offset)
     // check if this is a surrogate pair
-    if is_leading_surrogate(c) {
+    if c.is_leading_surrogate() {
       utf16_offset = utf16_offset + 2
     } else {
       utf16_offset = utf16_offset + 1
@@ -260,7 +260,7 @@ fn String::offset_of_nth_char_backward(
   // Invariant: utf16_offset always points to the previous character
   while utf16_offset - 1 >= start_offset && char_count < n {
     let c = self.unsafe_charcode_at(utf16_offset - 1)
-    if is_trailing_surrogate(c) {
+    if c.is_trailing_surrogate() {
       utf16_offset = utf16_offset - 2
     } else {
       utf16_offset = utf16_offset - 1
@@ -312,9 +312,9 @@ pub fn String::char_length_eq(
       index < end_offset && count < len
       index = index + 1, count = count + 1 {
     let c1 = self.unsafe_charcode_at(index)
-    if is_leading_surrogate(c1) && index + 1 < end_offset {
+    if c1.is_leading_surrogate() && index + 1 < end_offset {
       let c2 = self.unsafe_charcode_at(index + 1)
-      if is_trailing_surrogate(c2) {
+      if c2.is_trailing_surrogate() {
         continue index + 2, count + 1
       } else {
         abort("invalid surrogate pair")
@@ -340,9 +340,9 @@ pub fn String::char_length_ge(
       index < end_offset && count < len
       index = index + 1, count = count + 1 {
     let c1 = self.unsafe_charcode_at(index)
-    if is_leading_surrogate(c1) && index + 1 < end_offset {
+    if c1.is_leading_surrogate() && index + 1 < end_offset {
       let c2 = self.unsafe_charcode_at(index + 1)
-      if is_trailing_surrogate(c2) {
+      if c2.is_trailing_surrogate() {
         continue index + 2, count + 1
       } else {
         abort("invalid surrogate pair")
