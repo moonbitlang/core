@@ -85,6 +85,7 @@ pub fn Int::max(self : Int, other : Int) -> Int {
 ///   inspect((-1).clamp(min=0, max=2), content="0")
 /// ```
 pub fn Int::clamp(self : Int, min~ : Int, max~ : Int) -> Int {
+  guard min <= max
   if self < min {
     min
   } else if self > max {
