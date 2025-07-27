@@ -94,3 +94,33 @@ pub fn Int::clamp(self : Int, min~ : Int, max~ : Int) -> Int {
     self
   }
 }
+
+///|
+/// Checks if the integer value represents a UTF-16 leading surrogate.
+/// Leading surrogates are in the range 0xD800 to 0xDBFF.
+///
+/// Example:
+/// ```moonbit
+///   inspect((0xD800).is_leading_surrogate(), content="true")
+///   inspect((0xDBFF).is_leading_surrogate(), content="true")
+///   inspect((0xDC00).is_leading_surrogate(), content="false")
+///   inspect((0x41).is_leading_surrogate(), content="false") // 'A'
+/// ```
+pub fn Int::is_leading_surrogate(self : Int) -> Bool {
+  0xD800 <= self && self <= 0xDBFF
+}
+
+///|
+/// Checks if the integer value represents a UTF-16 trailing surrogate.
+/// Trailing surrogates are in the range 0xDC00 to 0xDFFF.
+///
+/// Example:
+/// ```moonbit
+///   inspect((0xDC00).is_trailing_surrogate(), content="true")
+///   inspect((0xDFFF).is_trailing_surrogate(), content="true")
+///   inspect((0xD800).is_trailing_surrogate(), content="false")
+///   inspect((0x41).is_trailing_surrogate(), content="false") // 'A'
+/// ```
+pub fn Int::is_trailing_surrogate(self : Int) -> Bool {
+  0xDC00 <= self && self <= 0xDFFF
+}

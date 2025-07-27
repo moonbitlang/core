@@ -434,9 +434,9 @@ pub fn String::codepoint_at(self : String, index : Int) -> Char {
       char_count < charcode_len && utf16_offset < index
       char_count = char_count + 1, utf16_offset = utf16_offset + 1 {
     let c1 = self.unsafe_charcode_at(char_count)
-    if is_leading_surrogate(c1) && char_count + 1 < charcode_len {
+    if c1.is_leading_surrogate() && char_count + 1 < charcode_len {
       let c2 = self.unsafe_charcode_at(char_count + 1)
-      if is_trailing_surrogate(c2) {
+      if c2.is_trailing_surrogate() {
         continue char_count + 2, utf16_offset + 1
       } else {
         abort("invalid surrogate pair")
@@ -447,9 +447,9 @@ pub fn String::codepoint_at(self : String, index : Int) -> Char {
       abort("index out of bounds")
     }
     let c1 = self.unsafe_charcode_at(char_count)
-    if is_leading_surrogate(c1) && char_count + 1 < charcode_len {
+    if c1.is_leading_surrogate() && char_count + 1 < charcode_len {
       let c2 = self.unsafe_charcode_at(char_count + 1)
-      if is_trailing_surrogate(c2) {
+      if c2.is_trailing_surrogate() {
         code_point_of_surrogate_pair(c1, c2)
       } else {
         abort("invalid surrogate pair")
@@ -481,7 +481,7 @@ pub fn String::charcode_at(self : String, index : Int) -> Int {
 #deprecated("Use `s.get_char(i).unwrap()` instead")
 pub fn String::unsafe_char_at(self : String, index : Int) -> Char {
   let c1 = self.unsafe_charcode_at(index)
-  if is_leading_surrogate(c1) {
+  if c1.is_leading_surrogate() {
     let c2 = self.unsafe_charcode_at(index + 1)
     code_point_of_surrogate_pair(c1, c2)
   } else {

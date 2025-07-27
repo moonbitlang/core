@@ -340,10 +340,12 @@ fn Int::asr(Int, Int) -> Int
 fn Int::clamp(Int, min~ : Int, max~ : Int) -> Int
 fn Int::clz(Int) -> Int
 fn Int::ctz(Int) -> Int
+fn Int::is_leading_surrogate(Int) -> Bool
 fn Int::is_neg(Int) -> Bool
 fn Int::is_non_neg(Int) -> Bool
 fn Int::is_non_pos(Int) -> Bool
 fn Int::is_pos(Int) -> Bool
+fn Int::is_trailing_surrogate(Int) -> Bool
 fn Int::land(Int, Int) -> Int
 fn Int::lnot(Int) -> Int
 fn Int::lor(Int, Int) -> Int

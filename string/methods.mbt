@@ -1329,15 +1329,15 @@ test "View::get basic cases" {
 pub fn String::get_char(self : String, idx : Int) -> Char? {
   guard idx >= 0 && idx < self.length() else { return None }
   let c = self.unsafe_charcode_at(idx)
-  if is_leading_surrogate(c) {
+  if c.is_leading_surrogate() {
     guard idx + 1 < self.length() else { return None }
     let next = self.unsafe_charcode_at(idx + 1)
-    if is_trailing_surrogate(next) {
+    if next.is_trailing_surrogate() {
       Some(code_point_of_surrogate_pair(c, next))
     } else {
       None
     }
-  } else if is_trailing_surrogate(c) {
+  } else if c.is_trailing_surrogate() {
     None
   } else {
     Some(c.unsafe_to_char())
@@ -1350,15 +1350,15 @@ pub fn String::get_char(self : String, idx : Int) -> Char? {
 pub fn View::get_char(self : View, idx : Int) -> Char? {
   guard idx >= 0 && idx < self.length() else { return None }
   let c = self.unsafe_charcode_at(idx)
-  if is_leading_surrogate(c) {
+  if c.is_leading_surrogate() {
     guard idx + 1 < self.length() else { return None }
     let next = self.unsafe_charcode_at(idx + 1)
-    if is_trailing_surrogate(next) {
+    if next.is_trailing_surrogate() {
       Some(code_point_of_surrogate_pair(c, next))
     } else {
       None
     }
-  } else if is_trailing_surrogate(c) {
+  } else if c.is_trailing_surrogate() {
     None
   } else {
     Some(c.unsafe_to_char())
