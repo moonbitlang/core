@@ -20,8 +20,6 @@ fn[T : Show] debug_string(t : T) -> String {
 }
 
 ///|
-
-///|
 /// Assert referential equality of two values.
 ///
 /// Returns Ok if the two arguments are the same object by reference, using

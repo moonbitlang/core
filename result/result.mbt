@@ -402,8 +402,6 @@ test "unwrap exn" {
 }
 
 ///|
-
-///|
 pub impl[T : @quickcheck.Arbitrary, E : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Result[
   T,
   E,
