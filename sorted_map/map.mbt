@@ -18,8 +18,6 @@ pub fn[K : Compare, V] op_set(self : T[K, V], key : K, value : V) -> Unit {
 }
 
 ///|
-
-///|
 pub impl[K : Eq, V : Eq] Eq for T[K, V] with op_equal(self, other) {
   self.to_array() == other.to_array()
 }
@@ -29,8 +27,6 @@ pub impl[K : Eq, V : Eq] Eq for T[K, V] with op_equal(self, other) {
 pub fn[K, V] new() -> T[K, V] {
   { root: None, size: 0 }
 }
-
-///|
 
 ///| Creates a sorted map from a array of key-value pairs.
 pub fn[K : Compare, V] from_array(entries : Array[(K, V)]) -> T[K, V] {
