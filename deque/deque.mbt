@@ -839,7 +839,7 @@ pub fn[A] shrink_to_fit(self : T[A]) -> Unit {
 /// Shortens the deque in-place, keeping the first `len` elements and dropping
 /// the rest.
 ///
-/// If `len` is greater than or equal to the deque's current length or negative, 
+/// If `len` is greater than or equal to the deque's current length or negative,
 /// this has no effect
 ///
 /// Parameters:
@@ -1222,7 +1222,7 @@ pub fn[A] to_array(self : T[A]) -> Array[A] {
 }
 
 ///|
-/// Joins the elements of a string deque into a single string, 
+/// Joins the elements of a string deque into a single string,
 /// separated by the specified separator.
 ///
 /// Parameters:
@@ -1230,7 +1230,7 @@ pub fn[A] to_array(self : T[A]) -> Array[A] {
 /// * `self` : The deque of strings to join.
 /// * `separator` : The separator to insert between elements (as a string view).
 ///
-/// Returns the concatenated string. 
+/// Returns the concatenated string.
 ///   - If the deque is empty, returns an empty string.
 ///   - Efficiently pre-allocates memory based on calculated size hint.
 ///   - Handles empty separators efficiently by direct concatenation.
@@ -1241,7 +1241,7 @@ pub fn[A] to_array(self : T[A]) -> Array[A] {
 ///   let deque = @deque.of(["a","b","c"])
 ///   let s1 = deque.join("")
 ///   inspect(s1, content="abc")
-/// 
+///
 ///   let s2 = deque.join(",")
 ///   inspect(s2, content="a,b,c")
 /// ```
@@ -1318,7 +1318,7 @@ pub impl[A : @json.FromJson] @json.FromJson for T[A] with from_json(json, path) 
 ///
 /// * `self` : The high-dimensional deque to flatten.
 ///
-/// Returns a new lower-dimensional deque containing all elements 
+/// Returns a new lower-dimensional deque containing all elements
 /// from inner deques in sequence.
 ///
 /// Note:
@@ -1448,13 +1448,13 @@ pub fn[A] T::drain(self : T[A], start~ : Int, len? : Int) -> T[A] {
 /// ```moonbit
 /// let dq = @deque.of([1, 3, 5, 7, 9])
 ///
-/// 
+///
 /// let find_3 = dq.binary_search_by((x) => {
 ///   x.compare(3)
 /// })
 /// inspect(find_3, content="Ok(1)")
 ///
-/// 
+///
 /// let find_4 = dq.binary_search_by((x) => {
 ///   x.compare(4)
 /// })
@@ -1475,6 +1475,7 @@ pub fn[A] binary_search_by(self : T[A], cmp : (A) -> Int) -> Result[Int, Int] {
   let len = self.len
   let mut i = 0
   let mut j = len
+  let mut found = false
   while i < j {
     let h = i + (j - i) / 2
     match self.get(h) {
@@ -1482,26 +1483,19 @@ pub fn[A] binary_search_by(self : T[A], cmp : (A) -> Int) -> Result[Int, Int] {
         match cmp(element) {
           _..<0 => i = h + 1 // Continue searching right
           1..<_ => j = h // Continue searching left
-          _ => { // Found match, find leftmost
+          0 => { // Found match, find leftmost
             j = h
-            while i < j {
-              let mid = i + (j - i) / 2
-              match self.get(mid) {
-                Some(v) =>
-                  match cmp(v) {
-                    0 => j = mid
-                    _ => i = mid + 1
-                  }
-                None => break
-              }
-            }
-            return Ok(i)
+            found = true
           }
         }
       None => return Err(i)
     }
   }
-  Err(i)
+  if found {
+    Ok(i)
+  } else {
+    Err(i)
+  }
 }
 
 ///|
@@ -1653,11 +1647,11 @@ pub fn[A] T::rev(self : T[A]) -> T[A] {
 
 ///|
 /// Shuffle the deque in place using Knuth shuffle (Fisher-Yates algorithm)
-/// 
+///
 /// To use this function, you need to provide a rand function, which takes an integer as its upper bound
 /// and returns an integer.
 /// *rand n* is expected to return a uniformly distributed integer between 0 and n - 1
-/// 
+///
 /// # Note
 /// This function handles the circular buffer nature of the deque internally.
 pub fn[A] T::shuffle_in_place(self : T[A], rand~ : (Int) -> Int) -> Unit {
@@ -1677,9 +1671,9 @@ pub fn[A] T::shuffle_in_place(self : T[A], rand~ : (Int) -> Int) -> Unit {
 
 ///|
 /// Shuffle the deque using Knuth shuffle (Fisher-Yates algorithm)
-/// 
+///
 /// Returns a new shuffled deque without modifying the original deque.
-/// 
+///
 /// To use this function, you need to provide a rand function, which takes an integer as its upper bound
 /// and returns an integer.
 /// *rand n* is expected to return a uniformly distributed integer between 0 and n - 1
