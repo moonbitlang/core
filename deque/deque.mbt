@@ -1609,27 +1609,16 @@ pub impl[A : Compare] Compare for T[A] with compare(self, other) {
 ///   inspect(dq, content="@deque.of([])")
 /// ```
 pub fn[A] T::rev_inplace(self : T[A]) -> Unit {
-  let len = self.len
+  guard self.len > 0 else { return }
   let cap = self.buf.length()
-  // Only swap elements if deque is not empty
-  if len > 0 {
-    // Initialize two pointers
-    let mut left = self.head
-    let mut right = self.tail
-    let mut count = 0
-    // Swap elements until we reach the middle
-    while count < len / 2 {
-      // Swap elements at left and right indices
-      let temp = self.buf[left]
-      self.buf[left] = self.buf[right]
-      self.buf[right] = temp
-      // Move pointers in opposite directions
-      left = (left + 1) % cap
-      right = (right - 1 + cap) % cap
-      count += 1
-    }
-    // No need to update head and tail as the elements are swapped in place
-    // The structure remains the same, just the order of elements is reversed
+  let mut left = self.head
+  let mut right = self.tail
+  for _ in 0..<(self.len / 2) {
+    let temp = self.buf[left]
+    self.buf[left] = self.buf[right]
+    self.buf[right] = temp
+    left = (left + 1) % cap
+    right = (right - 1 + cap) % cap
   }
 }
 
