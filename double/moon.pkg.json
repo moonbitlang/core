@@ -30,8 +30,6 @@
     "scalbn.mbt" : ["not", "js"]
   },
   "test-import": [
-    "moonbitlang/core/test",
-    "moonbitlang/core/bench"
-  ],
-  "warn-list": "-29"
+    "moonbitlang/core/test"
+  ]
 }
