@@ -7,7 +7,6 @@
   ],
   "test-import": [
     "moonbitlang/core/float",
-    "moonbitlang/core/bench",
-    "moonbitlang/core/test"
+    "moonbitlang/core/bench"
   ]
 }
