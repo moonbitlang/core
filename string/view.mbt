@@ -546,3 +546,21 @@ pub fn View::op_as_view(
   }
   View::make_view(self.str(), abs_start, abs_end)
 }
+
+///|
+/// Converts the StringView into an array of Chars.
+pub fn View::to_array(self : View) -> Array[Char] {
+  self
+  .iter()
+  .fold(init=Array::new(capacity=self.length()), (rv, c) => {
+    rv.push(c)
+    rv
+  })
+}
+
+///|
+/// `StringView` holds a view of a sequence of UTF-16 code units encoded in little endian format
+pub fn View::to_bytes(self : View) -> Bytes {
+  let str = self.to_string()
+  str.to_bytes()
+}

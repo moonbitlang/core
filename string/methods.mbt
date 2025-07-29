@@ -759,10 +759,10 @@ test "pad_end" {
 
 ///|
 /// Returns a new string with `self` repeated `n` times.
-pub fn View::repeat(self : View, n : Int) -> View {
+pub fn View::repeat(self : View, n : Int) -> String {
   match n {
     _..=0 => ""
-    1 => self
+    1 => self.to_string()
     _ => {
       let len = self.length()
       let buf = StringBuilder::new(size_hint=len * n)
@@ -920,7 +920,7 @@ test "split" {
 /// 
 /// If `old` is empty, it matches the beginning of the string, and `new` is
 /// prepended to the string.
-pub fn View::replace(self : View, old~ : View, new~ : View) -> View {
+pub fn View::replace(self : View, old~ : View, new~ : View) -> String {
   match self.find(old) {
     Some(end) =>
       [
@@ -928,7 +928,7 @@ pub fn View::replace(self : View, old~ : View, new~ : View) -> View {
         ..new,
         ..self.view(start_offset=end + old.length()),
       ]
-    None => self
+    None => self.to_string()
   }
 }
 
@@ -966,7 +966,7 @@ test "replace" {
 /// If `old` is empty, it matches at the beginning of the string and after each
 /// character in the string, so `new` is inserted at the beginning of the string
 /// and after each character.
-pub fn View::replace_all(self : View, old~ : View, new~ : View) -> View {
+pub fn View::replace_all(self : View, old~ : View, new~ : View) -> String {
   let len = self.length()
   let buf = StringBuilder::new(size_hint=len)
   let old_len = old.length()
@@ -1001,7 +1001,7 @@ pub fn View::replace_all(self : View, old~ : View, new~ : View) -> View {
       }
       buf.to_string()
     } else {
-      self
+      self.to_string()
     }
   }
 }
@@ -1116,10 +1116,10 @@ test "View::replace_all" {
 
 ///|
 /// Converts this string to lowercase.
-pub fn View::to_lower(self : View) -> View {
+pub fn View::to_lower(self : View) -> String {
   // TODO: deal with non-ascii characters
   guard self.find_by(x => x.is_ascii_uppercase()) is Some(idx) else {
-    return self
+    return self.to_string()
   }
   let buf = StringBuilder::new(size_hint=self.length())
   let head = self.view(end_offset=idx)
@@ -1172,9 +1172,9 @@ test "View::to_lower" {
 
 ///|
 /// Converts this string to uppercase.
-pub fn View::to_upper(self : View) -> View {
+pub fn View::to_upper(self : View) -> String {
   // TODO: deal with non-ascii characters
-  guard self.find_by(_.is_ascii_lowercase()) is Some(idx) else { return self }
+  guard self.find_by(_.is_ascii_lowercase()) is Some(idx) else { return self.to_string() }
   let buf = StringBuilder::new(size_hint=self.length())
   let head = self.view(end_offset=idx)
   buf.write_substring(head.data(), head.start_offset(), head.length())

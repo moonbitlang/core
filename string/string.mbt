@@ -352,3 +352,21 @@ pub fn String::char_length_ge(
     count >= len
   }
 }
+
+
+
+
+
+///|
+/// Returns the starting offset (in UTF-16 code units) of this string into itself.
+/// This is always 0 for String, but provided for API consistency with StringView.
+pub fn String::start_offset(_ : String) -> Int {
+  0
+}
+
+///|
+/// Returns the original string that is being viewed. 
+/// For String, this returns the string itself.
+pub fn String::data(self : String) -> String {
+  self
+}

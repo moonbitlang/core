@@ -52,17 +52,19 @@ fn StringView::op_as_view(Self, start~ : Int = .., end? : Int) -> Self raise Cre
 fn StringView::op_get(Self, Int) -> Int
 fn StringView::pad_end(Self, Int, Char) -> String
 fn StringView::pad_start(Self, Int, Char) -> String
-fn StringView::repeat(Self, Int) -> Self
-fn StringView::replace(Self, old~ : Self, new~ : Self) -> Self
-fn StringView::replace_all(Self, old~ : Self, new~ : Self) -> Self
+fn StringView::repeat(Self, Int) -> String
+fn StringView::replace(Self, old~ : Self, new~ : Self) -> String
+fn StringView::replace_all(Self, old~ : Self, new~ : Self) -> String
 fn StringView::rev(Self) -> String
 fn StringView::rev_find(Self, Self) -> Int?
 fn[A] StringView::rev_fold(Self, init~ : A, (A, Char) -> A) -> A
 fn StringView::rev_iter(Self) -> Iter[Char]
 fn StringView::split(Self, Self) -> Iter[Self]
 fn StringView::start_offset(Self) -> Int
-fn StringView::to_lower(Self) -> Self
-fn StringView::to_upper(Self) -> Self
+fn StringView::to_array(Self) -> Array[Char]
+fn StringView::to_bytes(Self) -> Bytes
+fn StringView::to_lower(Self) -> String
+fn StringView::to_upper(Self) -> String
 fn StringView::trim(Self, Self) -> Self
 fn StringView::trim_end(Self, Self) -> Self
 fn StringView::trim_space(Self) -> Self
@@ -86,6 +88,7 @@ fn String::charcodes(String, start~ : Int = .., end? : Int) -> StringView
 fn String::concat(Array[String], separator~ : String = ..) -> String
 fn String::contains(String, StringView) -> Bool
 fn String::contains_char(String, Char) -> Bool
+fn String::data(String) -> String
 #deprecated
 fn String::ends_with(String, String) -> Bool
 fn String::find(String, StringView) -> Int?
@@ -117,6 +120,7 @@ fn String::rev_find(String, StringView) -> Int?
 fn[A] String::rev_fold(String, init~ : A, (A, Char) -> A) -> A
 fn String::rev_iter(String) -> Iter[Char]
 fn String::split(String, StringView) -> Iter[StringView]
+fn String::start_offset(String) -> Int
 #deprecated
 fn String::starts_with(String, String) -> Bool
 fn String::strip_prefix(String, StringView) -> StringView?
