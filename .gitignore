@@ -5,6 +5,7 @@ target/
 moonbit-coverage-*.txt
 _coverage
 bisect.coverage
+*.log
 
 .DS_Store
 .ai/

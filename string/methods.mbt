@@ -85,6 +85,18 @@ fn boyer_moore_horspool_find(haystack : View, needle : View) -> Int? {
 }
 
 ///|
+test "boyer_moore_horspool_find edge cases" {
+  inspect(boyer_moore_horspool_find("abc"[:], ""[:]), content="Some(0)")
+  inspect(boyer_moore_horspool_find("ab"[:], "abcd"[:]), content="None")
+}
+
+///|
+test "boyer_moore_horspool_rev_find edge cases" {
+  inspect(boyer_moore_horspool_rev_find("abc"[:], ""[:]), content="Some(3)")
+  inspect(boyer_moore_horspool_rev_find("ab"[:], "abcd"[:]), content="None")
+}
+
+///|
 /// Returns the offset of the first occurrence of the given substring. If the
 /// substring is not found, it returns None.
 pub fn String::find(self : String, str : View) -> Int? {
