@@ -34,6 +34,8 @@ fn[A] singleton(A) -> T[A]
 #deprecated
 fn[A, S] unfold((S) -> (A, S)? raise?, init~ : S) -> T[A] raise?
 
+// Errors
+
 // Types and methods
 pub(all) enum T[A] {
   Nil

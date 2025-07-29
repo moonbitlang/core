@@ -6,6 +6,8 @@ let max_value : Int16
 
 let min_value : Int16
 
+// Errors
+
 // Types and methods
 fn Int16::abs(Int16) -> Int16
 fn Int16::reinterpret_as_uint16(Int16) -> UInt16

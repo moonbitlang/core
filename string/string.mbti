@@ -11,13 +11,14 @@ fn from_array(Array[Char]) -> String
 
 fn from_iter(Iter[Char]) -> String
 
-// Types and methods
+// Errors
 pub suberror CreatingViewError {
   IndexOutOfBounds
   InvalidIndex
 }
 impl Show for CreatingViewError
 
+// Types and methods
 type StringView
 #deprecated
 fn StringView::char_at(Self, Int) -> Char

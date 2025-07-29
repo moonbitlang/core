@@ -12,6 +12,8 @@ fn chacha8(seed~ : Bytes = ..) -> &Source
 #deprecated
 fn new(seed~ : Bytes = ..) -> Rand
 
+// Errors
+
 // Types and methods
 type Rand
 fn Rand::bigint(Self, Int) -> @bigint.BigInt

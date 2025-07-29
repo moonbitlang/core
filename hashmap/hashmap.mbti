@@ -14,6 +14,8 @@ fn[K, V] new(capacity~ : Int = ..) -> T[K, V]
 
 fn[K : Eq + Hash, V] of(FixedArray[(K, V)]) -> T[K, V]
 
+// Errors
+
 // Types and methods
 type T[K, V]
 fn[K, V] T::capacity(Self[K, V]) -> Int

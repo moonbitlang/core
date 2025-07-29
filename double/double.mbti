@@ -16,6 +16,8 @@ let neg_infinity : Double
 
 let not_a_number : Double
 
+// Errors
+
 // Types and methods
 fn Double::abs(Double) -> Double
 fnalias Double::abs

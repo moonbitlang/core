@@ -33,6 +33,8 @@ fn[A] singleton(A) -> T[A]
 
 fn[A, S] unfold((S) -> (A, S)? raise?, init~ : S) -> T[A] raise?
 
+// Errors
+
 // Types and methods
 pub enum T[A] {
   Empty

@@ -8,6 +8,8 @@ fn[X] empty() -> SparseArray[X]
 
 fn[X] singleton(Int, X) -> SparseArray[X]
 
+// Errors
+
 // Types and methods
 pub(all) type Bitset UInt
 fn Bitset::add(Self, Int) -> Self

@@ -10,6 +10,8 @@ fn new() -> T
 
 fn single_bench(name? : String, () -> Unit, count~ : UInt = ..) -> Summary
 
+// Errors
+
 // Types and methods
 type Summary
 impl ToJson for Summary

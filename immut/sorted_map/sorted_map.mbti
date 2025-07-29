@@ -19,6 +19,8 @@ fn[K : Compare, V] of(FixedArray[(K, V)]) -> T[K, V]
 
 fn[K, V] singleton(K, V) -> T[K, V]
 
+// Errors
+
 // Types and methods
 type T[K, V]
 fn[K : Compare, V] T::add(Self[K, V], K, V) -> Self[K, V]

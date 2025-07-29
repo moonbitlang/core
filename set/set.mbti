@@ -3,6 +3,8 @@ package "moonbitlang/core/set"
 
 // Values
 
+// Errors
+
 // Types and methods
 type Set[K]
 fn[K : Hash + Eq] Set::add(Self[K], K) -> Unit
