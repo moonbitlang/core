@@ -22,6 +22,8 @@ fn new(String) -> T
 
 fn[T : Show] same_object(T, T, loc~ : SourceLoc = _) -> Unit raise
 
+// Errors
+
 // Types and methods
 pub(all) struct T {
   name : String

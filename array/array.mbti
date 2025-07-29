@@ -10,6 +10,8 @@ import(
 // Values
 fn[A, B, C] zip_with(Array[A], Array[B], (A, B) -> C raise?) -> Array[C] raise?
 
+// Errors
+
 // Types and methods
 fn[T] FixedArray::all(Self[T], (T) -> Bool raise?) -> Bool raise?
 fn[T] FixedArray::any(Self[T], (T) -> Bool raise?) -> Bool raise?

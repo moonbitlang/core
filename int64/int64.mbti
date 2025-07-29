@@ -8,6 +8,8 @@ let max_value : Int64
 
 let min_value : Int64
 
+// Errors
+
 // Types and methods
 fn Int64::abs(Int64) -> Int64
 fnalias Int64::abs

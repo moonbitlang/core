@@ -12,6 +12,8 @@ fn from_iter(Iter[Byte]) -> Bytes
 
 fn of(FixedArray[Byte]) -> Bytes
 
+// Errors
+
 // Types and methods
 type View
 fn View::data(Self) -> Bytes

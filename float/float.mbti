@@ -16,6 +16,8 @@ let neg_infinity : Float
 
 let not_a_number : Float
 
+// Errors
+
 // Types and methods
 fn Float::abs(Float) -> Float
 fnalias Float::abs

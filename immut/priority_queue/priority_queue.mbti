@@ -12,6 +12,8 @@ fn[A] new() -> T[A]
 
 fn[A : Compare] of(FixedArray[A]) -> T[A]
 
+// Errors
+
 // Types and methods
 type T[A]
 fn[A : Compare] T::from_iter(Iter[A]) -> Self[A]

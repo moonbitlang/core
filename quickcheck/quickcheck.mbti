@@ -10,6 +10,8 @@ fn[T : Arbitrary] gen(size? : Int, state? : @splitmix.RandomState) -> T
 
 fn[X : Arbitrary] samples(Int) -> Array[X]
 
+// Errors
+
 // Types and methods
 
 // Type aliases

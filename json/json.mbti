@@ -14,18 +14,11 @@ fn parse(String) -> Json raise ParseError
 
 fn valid(String) -> Bool
 
-// Types and methods
+// Errors
 pub(all) suberror JsonDecodeError (JsonPath, String)
 impl Eq for JsonDecodeError
 impl Show for JsonDecodeError
 impl ToJson for JsonDecodeError
-
-type JsonPath
-fn JsonPath::add_index(Self, Int) -> Self
-fn JsonPath::add_key(Self, String) -> Self
-impl Eq for JsonPath
-impl Show for JsonPath
-impl ToJson for JsonPath
 
 pub(all) suberror ParseError {
   InvalidChar(Position, Char)
@@ -36,6 +29,14 @@ pub(all) suberror ParseError {
 impl Eq for ParseError
 impl Show for ParseError
 impl ToJson for ParseError
+
+// Types and methods
+type JsonPath
+fn JsonPath::add_index(Self, Int) -> Self
+fn JsonPath::add_key(Self, String) -> Self
+impl Eq for JsonPath
+impl Show for JsonPath
+impl ToJson for JsonPath
 
 pub(all) struct Position {
   line : Int

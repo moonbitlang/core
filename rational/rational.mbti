@@ -8,12 +8,13 @@ fn from_double(Double) -> T raise RationalError
 #deprecated
 fn new(Int64, Int64) -> T?
 
-// Types and methods
+// Errors
 pub(all) suberror RationalError String
 impl Eq for RationalError
 impl Show for RationalError
 impl ToJson for RationalError
 
+// Types and methods
 type T
 #deprecated
 fn T::abs(Self) -> Self

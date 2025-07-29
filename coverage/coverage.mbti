@@ -6,6 +6,8 @@ fn end() -> Unit
 
 fn track(String, CoverageCounter) -> Unit
 
+// Errors
+
 // Types and methods
 type CoverageCounter
 fn CoverageCounter::incr(Self, Int) -> Unit

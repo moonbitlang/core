@@ -41,6 +41,17 @@ fn[T : Show] println(T) -> Unit
 
 fn[T : Show] repr(T) -> String
 
+// Errors
+pub(all) suberror BenchError String
+
+pub(all) suberror Failure String
+impl Show for Failure
+impl ToJson for Failure
+
+pub(all) suberror InspectError String
+
+pub(all) suberror SnapshotError String
+
 // Types and methods
 pub(all) type ArgsLoc Array[SourceLoc?]
 fn ArgsLoc::inner(Self) -> Array[SourceLoc?]
@@ -144,12 +155,6 @@ fn[T] ArrayView::swap(Self[T], Int, Int) -> Unit
 fn[T] ArrayView::unsafe_get(Self[T], Int) -> T
 impl[X : ToJson] ToJson for ArrayView[X]
 
-pub(all) suberror BenchError String
-
-pub(all) suberror Failure String
-impl Show for Failure
-impl ToJson for Failure
-
 type Hasher
 fn[T : Hash] Hasher::combine(Self, T) -> Unit
 fn Hasher::combine_bool(Self, Bool) -> Unit
@@ -166,8 +171,6 @@ fn Hasher::combine_uint64(Self, UInt64) -> Unit
 fn Hasher::combine_unit(Self) -> Unit
 fn Hasher::finalize(Self) -> Int
 fn Hasher::new(seed~ : Int = ..) -> Self
-
-pub(all) suberror InspectError String
 
 type Iter[T]
 fn[T] Iter::all(Self[T], (T) -> Bool) -> Bool
@@ -287,8 +290,6 @@ impl[K, V] Default for Map[K, V]
 impl[K : Hash + Eq, V : Eq] Eq for Map[K, V]
 impl[K : Show, V : Show] Show for Map[K, V]
 impl[K : Show, V : ToJson] ToJson for Map[K, V]
-
-pub(all) suberror SnapshotError String
 
 pub(all) type SourceLoc
 fn SourceLoc::to_string(Self) -> String

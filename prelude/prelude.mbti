@@ -39,6 +39,8 @@ fn[T] tap(T, (T) -> Unit) -> T
 
 fn[T, R] then(T, (T) -> R) -> R
 
+// Errors
+
 // Types and methods
 
 // Type aliases

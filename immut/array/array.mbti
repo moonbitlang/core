@@ -18,6 +18,8 @@ fn[A] new() -> T[A]
 
 fn[A] of(FixedArray[A]) -> T[A]
 
+// Errors
+
 // Types and methods
 type T[A]
 fn[A] T::concat(Self[A], Self[A]) -> Self[A]

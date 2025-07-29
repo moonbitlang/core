@@ -4,6 +4,8 @@ package "moonbitlang/core/immut/internal/path"
 // Values
 fn[A : Hash] of(A) -> Path
 
+// Errors
+
 // Types and methods
 pub(all) type Path UInt
 fn Path::idx(Self) -> Int

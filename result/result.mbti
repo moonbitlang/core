@@ -19,6 +19,8 @@ fn[T, A, E : Error] wrap1(f~ : (A) -> T raise E, A) -> Result[T, E]
 #deprecated
 fn[T, A, B, E : Error] wrap2(f~ : (A, B) -> T raise E, A, B) -> Result[T, E]
 
+// Errors
+
 // Types and methods
 fn[T, E, U] Result::bind(Self[T, E], (T) -> Self[U, E]) -> Self[U, E]
 fn[T, E] Result::flatten(Self[Self[T, E], E]) -> Self[T, E]

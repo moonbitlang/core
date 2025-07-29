@@ -33,6 +33,8 @@ fn[T, U] swap((T, U)) -> (U, T)
 #deprecated
 fn[T, U, V] uncurry((T) -> (U) -> V) -> (T, U) -> V
 
+// Errors
+
 // Types and methods
 impl[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary] @quickcheck.Arbitrary for (A, B)
 

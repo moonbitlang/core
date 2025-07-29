@@ -3,6 +3,8 @@ package "moonbitlang/core/char"
 
 // Values
 
+// Errors
+
 // Types and methods
 fn Char::is_ascii(Char) -> Bool
 fn Char::is_ascii_alphabetic(Char) -> Bool

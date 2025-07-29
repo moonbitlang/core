@@ -4,6 +4,8 @@ package "moonbitlang/core/quickcheck/splitmix"
 // Values
 fn new(seed~ : UInt64 = ..) -> RandomState
 
+// Errors
+
 // Types and methods
 type RandomState
 fn RandomState::clone(Self) -> Self

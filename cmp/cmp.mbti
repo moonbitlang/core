@@ -10,6 +10,8 @@ fn[T : Compare] minimum(T, T) -> T
 
 fn[T, K : Compare] minimum_by_key(T, T, (T) -> K) -> T
 
+// Errors
+
 // Types and methods
 
 // Type aliases
