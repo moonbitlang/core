@@ -14,7 +14,7 @@
 
 ///|
 /// Reinterpret the byte sequence as Bytes.
-/// 
+///
 /// Notice that this will make the `Bytes` object to be a view of the original
 /// byte sequence, so any modification to the original byte sequence will be
 /// reflected in the `Bytes` object.
@@ -23,7 +23,7 @@ pub fn FixedArray::unsafe_reinterpret_as_bytes(
   self : FixedArray[Byte],
 ) -> Bytes = "%identity"
 
-///| 
+///|
 /// Creates a new byte sequence of the specified length, where each byte is
 /// initialized using a function that maps indices to bytes.
 ///
@@ -63,11 +63,11 @@ fn unsafe_sub_string(
 ) -> String = "$moonbit.unsafe_bytes_sub_string"
 
 ///|
-/// Return an unchecked string, containing the subsequence of `self` that starts at 
-/// `offset` and has length `length`. Both `offset` and `length` 
+/// Return an unchecked string, containing the subsequence of `self` that starts at
+/// `offset` and has length `length`. Both `offset` and `length`
 /// are indexed by byte.
-/// 
-/// Note this function does not validate the encoding of the byte sequence, 
+///
+/// Note this function does not validate the encoding of the byte sequence,
 /// it simply copy the bytes into a new String.
 pub fn Bytes::to_unchecked_string(
   self : Bytes,
@@ -226,7 +226,7 @@ pub fn FixedArray::set_utf8_char(
 ///|
 /// Fill UTF16LE encoded char `value` into byte sequence `self`, starting at `offset`.
 /// It return the length of bytes has been written.
-/// 
+///
 /// This function will panic if the `value` is out of range.
 pub fn FixedArray::set_utf16le_char(
   self : FixedArray[Byte],
@@ -255,7 +255,7 @@ pub fn FixedArray::set_utf16le_char(
 ///|
 /// Fill UTF16BE encoded char `value` into byte sequence `self`, starting at `offset`.
 /// It return the length of bytes has been written.
-/// 
+///
 /// This function will panic if the `value` is out of range.
 pub fn FixedArray::set_utf16be_char(
   self : FixedArray[Byte],
@@ -264,7 +264,7 @@ pub fn FixedArray::set_utf16be_char(
 ) -> Int {
   let code = value.to_uint()
   if code < 0x10000 {
-    self[offset] = (code >> 0xFF).to_byte()
+    self[offset] = (code >> 8).to_byte()
     self[offset + 1] = (code & 0xFF).to_byte()
     2
   } else if code < 0x110000 {
@@ -340,7 +340,7 @@ pub impl Eq for Bytes with op_equal(self : Bytes, other : Bytes) -> Bool {
 ///   inspect(a.compare(b), content="-1") // a < b
 ///   inspect(b.compare(a), content="1") // b > a
 ///   inspect(a.compare(a), content="0") // a = a
-/// 
+///
 ///   let a = b"\x01\x02"
 ///   let b = b"\x01\x02\x03"
 ///   inspect(a.compare(b), content="-1") // shorter sequence is less
