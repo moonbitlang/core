@@ -146,3 +146,110 @@ test "fixedarray_binary_search_by_test" {
   target = { num2: 49 }
   assert_eq(arr.binary_search_by(cmp), Err(4))
 }
+
+///|
+test "fixedarray_fill - basic functionality" {
+  let fa : FixedArray[Int] = [1, 2, 3, 4, 5]
+  fa.fill(42)
+  inspect(fa, content="[42, 42, 42, 42, 42]")
+}
+
+///|
+test "fixedarray_fill - with start parameter only" {
+  let fa : FixedArray[Int] = [1, 2, 3, 4, 5]
+  fa.fill(99, start=2)
+  inspect(fa, content="[1, 2, 99, 99, 99]")
+}
+
+///|
+test "fixedarray_fill - with start and end parameters" {
+  let fa : FixedArray[Int] = [1, 2, 3, 4, 5]
+  fa.fill(77, start=1, end=3)
+  inspect(fa, content="[1, 77, 77, 4, 5]")
+}
+
+///|
+test "fixedarray_fill - start equals end" {
+  let fa : FixedArray[Int] = [1, 2, 3, 4, 5]
+  fa.fill(88, start=2, end=2)
+  inspect(fa, content="[1, 2, 3, 4, 5]") // No change expected
+}
+
+///|
+test "fixedarray_fill - start at beginning" {
+  let fa : FixedArray[Int] = [1, 2, 3, 4, 5]
+  fa.fill(10, start=0, end=2)
+  inspect(fa, content="[10, 10, 3, 4, 5]")
+}
+
+///|
+test "fixedarray_fill - end at array length" {
+  let fa : FixedArray[Int] = [1, 2, 3, 4, 5]
+  fa.fill(20, start=3, end=5)
+  inspect(fa, content="[1, 2, 3, 20, 20]")
+}
+
+///|
+test "fixedarray_fill - single element" {
+  let fa : FixedArray[Int] = [100]
+  fa.fill(50)
+  inspect(fa, content="[50]")
+}
+
+///|
+test "fixedarray_fill - empty array" {
+  let fa : FixedArray[Int] = []
+  fa.fill(123)
+  inspect(fa, content="[]") // Should remain empty
+}
+
+///|
+test "fixedarray_fill - with different types" {
+  let str_fa : FixedArray[String] = ["a", "b", "c", "d"]
+  str_fa.fill("x", start=1, end=3)
+  inspect(str_fa, content="[\"a\", \"x\", \"x\", \"d\"]")
+  let bool_fa : FixedArray[Bool] = [true, false, true, false]
+  bool_fa.fill(true, start=0, end=2)
+  inspect(bool_fa, content="[true, true, true, false]")
+}
+
+///|
+test "fixedarray_fill - boundary conditions start" {
+  let fa : FixedArray[Int] = [1, 2, 3, 4, 5]
+  // Test with start at last valid index
+  fa.fill(555, start=4, end=5)
+  inspect(fa, content="[1, 2, 3, 4, 555]")
+}
+
+///|
+test "fixedarray_fill - boundary conditions end" {
+  let fa : FixedArray[Int] = [1, 2, 3, 4, 5]
+  // Test with end at array length
+  fa.fill(666, start=2, end=5)
+  inspect(fa, content="[1, 2, 666, 666, 666]")
+}
+
+///|
+test "fixedarray_fill - full range explicit" {
+  let fa : FixedArray[Int] = [1, 2, 3, 4, 5]
+  fa.fill(777, start=0, end=5)
+  inspect(fa, content="[777, 777, 777, 777, 777]")
+}
+
+///|
+test "fixedarray_fill - test with FixedArray::make" {
+  let fa = FixedArray::make(4, 0)
+  fa.fill(42, start=1, end=3)
+  inspect(fa, content="[0, 42, 42, 0]")
+}
+
+///|
+test "fixedarray_fill - existing documentation example" {
+  let fa : FixedArray[Int] = [0, 0, 0, 0, 0]
+  fa.fill(3)
+  assert_eq(fa[0], 3)
+  assert_eq(fa[1], 3)
+  assert_eq(fa[2], 3)
+  assert_eq(fa[3], 3)
+  assert_eq(fa[4], 3)
+}
