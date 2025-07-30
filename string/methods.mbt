@@ -381,6 +381,151 @@ pub fn strip_prefix(self : String, prefix : View) -> View? {
 }
 
 ///|
+/// Removes the given prefix from the view if it exists.
+/// 
+/// Returns `Some(suffix)` if the view starts with the given prefix,
+/// where `suffix` is the view without the prefix.
+/// Returns `None` if the view does not start with the prefix.
+/// 
+/// # Example
+/// 
+/// ```moonbit
+///   let view = "hello world"[:]
+///   inspect(view.strip_prefix("hello "), content="Some(\"world\")")
+///   inspect(view.strip_prefix("hi "), content="None")
+///   inspect(view.strip_prefix("hello world"), content="Some(\"\")")
+/// ```
+pub fn View::strip_prefix(self : View, prefix : View) -> View? {
+  if self.has_prefix(prefix) {
+    Some(self.view(start_offset=prefix.length()))
+  } else {
+    None
+  }
+}
+
+///|
+/// Removes the given suffix from the view if it exists.
+/// 
+/// Returns `Some(prefix)` if the view ends with the given suffix,
+/// where `prefix` is the view without the suffix.
+/// Returns `None` if the view does not end with the suffix.
+/// 
+/// # Example
+/// 
+/// ```moonbit
+///   let view = "hello world"[:]
+///   inspect(view.strip_suffix(" world"), content="Some(\"hello\")")
+///   inspect(view.strip_suffix(" moon"), content="None")
+///   inspect(view.strip_suffix("hello world"), content="Some(\"\")")
+/// ```
+pub fn View::strip_suffix(self : View, suffix : View) -> View? {
+  if self.has_suffix(suffix) {
+    Some(self.view(end_offset=self.length() - suffix.length()))
+  } else {
+    None
+  }
+}
+
+///|
+/// Converts the View into an array of Chars.
+/// 
+/// # Example
+/// 
+/// ```moonbit
+///   let view = "Hello🤣xa"[1:-1]
+///   let chars = view.to_array()
+///   inspect(chars, content="['e', 'l', 'l', 'o', '🤣', 'x']")
+/// ```
+pub fn View::to_array(self : View) -> Array[Char] {
+  self
+  .iter()
+  .fold(init=Array::new(capacity=self.length()), (rv, c) => {
+    rv.push(c)
+    rv
+  })
+}
+
+///|
+/// Converts the View into bytes using UTF-16 little endian format.
+/// 
+/// # Example
+/// 
+/// ```moonbit
+///   let view = "Hellox"[1:-1]
+///   let bytes = view.to_bytes()
+///   inspect(bytes.to_unchecked_string(), content="ello")
+/// ```
+pub fn View::to_bytes(self : View) -> Bytes {
+  let array = FixedArray::make(self.length() * 2, Byte::default())
+  array.blit_from_string(0, self.data(), self.start_offset(), self.length())
+  array |> unsafe_to_bytes
+}
+
+///|
+test "View::strip_prefix" {
+  let view = "hello world"[:]
+  inspect(view.strip_prefix("hello "), content="Some(\"world\")")
+  inspect(view.strip_prefix("hi "), content="None")
+  inspect(view.strip_prefix("hello world"), content="Some(\"\")")
+  inspect(view.strip_prefix(""), content="Some(\"hello world\")")
+  
+  let empty_view = ""[:]
+  inspect(empty_view.strip_prefix(""), content="Some(\"\")")
+  inspect(empty_view.strip_prefix("a"), content="None")
+  
+  let unicode_view = "😀hello😃"[:]
+  inspect(unicode_view.strip_prefix("😀"), content="Some(\"hello😃\")")
+  inspect(unicode_view.strip_prefix("😃"), content="None")
+}
+
+///|
+test "View::strip_suffix" {
+  let view = "hello world"[:]
+  inspect(view.strip_suffix(" world"), content="Some(\"hello\")")
+  inspect(view.strip_suffix(" moon"), content="None")
+  inspect(view.strip_suffix("hello world"), content="Some(\"\")")
+  inspect(view.strip_suffix(""), content="Some(\"hello world\")")
+  
+  let empty_view = ""[:]
+  inspect(empty_view.strip_suffix(""), content="Some(\"\")")
+  inspect(empty_view.strip_suffix("a"), content="None")
+  
+  let unicode_view = "😀hello😃"[:]
+  inspect(unicode_view.strip_suffix("😃"), content="Some(\"😀hello\")")
+  inspect(unicode_view.strip_suffix("😀"), content="None")
+}
+
+///|
+test "View::to_array" {
+  let view = "Hello🤣"[:]
+  let chars = view.to_array()
+  assert_eq(chars, ['H', 'e', 'l', 'l', 'o', '🤣'])
+  
+  let empty_view = ""[:]
+  let empty_chars = empty_view.to_array()
+  assert_eq(empty_chars, [])
+  
+  let sub_view = "Hello World"[6:11] // "World"
+  let sub_chars = sub_view.to_array()
+  assert_eq(sub_chars, ['W', 'o', 'r', 'l', 'd'])
+}
+
+///|
+test "View::to_bytes" {
+  let view = "Hello"[:]
+  let bytes = view.to_bytes()
+  assert_eq(bytes.to_unchecked_string(), "Hello")
+  
+  let unicode_view = "🤣🤔"[:]
+  let unicode_bytes = unicode_view.to_bytes()
+  assert_eq(unicode_bytes.to_unchecked_string(), "🤣🤔")
+  
+  let sub_view = "Hello World"[0:5] // "Hello"
+  let sub_bytes = sub_view.to_bytes()
+  assert_eq(sub_bytes.to_unchecked_string(), "Hello")
+}
+
+///|
 /// Returns true if this string contains the given substring.
 pub fn View::contains(self : View, str : View) -> Bool {
   self.find(str) is Some(_)
