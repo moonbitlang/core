@@ -122,7 +122,7 @@ pub fn FixedArray::blit_from_string(
 ) -> Unit {
   let s1 = bytes_offset
   let s2 = str_offset
-  let e1 = bytes_offset + length - 1
+  let e1 = bytes_offset + length * 2 - 1
   let e2 = str_offset + length - 1
   let len1 = self.length()
   let len2 = str.length()
