@@ -61,6 +61,10 @@ fn[A] StringView::rev_fold(Self, init~ : A, (A, Char) -> A) -> A
 fn StringView::rev_iter(Self) -> Iter[Char]
 fn StringView::split(Self, Self) -> Iter[Self]
 fn StringView::start_offset(Self) -> Int
+fn StringView::strip_prefix(Self, Self) -> Self?
+fn StringView::strip_suffix(Self, Self) -> Self?
+fn StringView::to_array(Self) -> Array[Char]
+fn StringView::to_bytes(Self) -> Bytes
 fn StringView::to_lower(Self) -> Self
 fn StringView::to_upper(Self) -> Self
 fn StringView::trim(Self, Self) -> Self
