@@ -468,11 +468,9 @@ test "View::strip_prefix" {
   inspect(view.strip_prefix("hi "), content="None")
   inspect(view.strip_prefix("hello world"), content="Some(\"\")")
   inspect(view.strip_prefix(""), content="Some(\"hello world\")")
-  
   let empty_view = ""[:]
   inspect(empty_view.strip_prefix(""), content="Some(\"\")")
   inspect(empty_view.strip_prefix("a"), content="None")
-  
   let unicode_view = "😀hello😃"[:]
   inspect(unicode_view.strip_prefix("😀"), content="Some(\"hello😃\")")
   inspect(unicode_view.strip_prefix("😃"), content="None")
@@ -485,11 +483,9 @@ test "View::strip_suffix" {
   inspect(view.strip_suffix(" moon"), content="None")
   inspect(view.strip_suffix("hello world"), content="Some(\"\")")
   inspect(view.strip_suffix(""), content="Some(\"hello world\")")
-  
   let empty_view = ""[:]
   inspect(empty_view.strip_suffix(""), content="Some(\"\")")
   inspect(empty_view.strip_suffix("a"), content="None")
-  
   let unicode_view = "😀hello😃"[:]
   inspect(unicode_view.strip_suffix("😃"), content="Some(\"😀hello\")")
   inspect(unicode_view.strip_suffix("😀"), content="None")
@@ -500,11 +496,9 @@ test "View::to_array" {
   let view = "Hello🤣"[:]
   let chars = view.to_array()
   assert_eq(chars, ['H', 'e', 'l', 'l', 'o', '🤣'])
-  
   let empty_view = ""[:]
   let empty_chars = empty_view.to_array()
   assert_eq(empty_chars, [])
-  
   let sub_view = "Hello World"[6:11] // "World"
   let sub_chars = sub_view.to_array()
   assert_eq(sub_chars, ['W', 'o', 'r', 'l', 'd'])
@@ -515,11 +509,9 @@ test "View::to_bytes" {
   let view = "Hello"[:]
   let bytes = view.to_bytes()
   assert_eq(bytes.to_unchecked_string(), "Hello")
-  
   let unicode_view = "🤣🤔"[:]
   let unicode_bytes = unicode_view.to_bytes()
   assert_eq(unicode_bytes.to_unchecked_string(), "🤣🤔")
-  
   let sub_view = "Hello World"[0:5] // "Hello"
   let sub_bytes = sub_view.to_bytes()
   assert_eq(sub_bytes.to_unchecked_string(), "Hello")
