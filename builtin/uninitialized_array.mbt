@@ -128,3 +128,17 @@ test "panic op_as_view with invalid_end" {
   let arr : UninitializedArray[Int] = UninitializedArray::make(5)
   ignore(arr[2:10])
 }
+
+///|
+#intrinsic("%fixedarray.fill")
+#cfg(not(target="js"))
+fn[T] UninitializedArray::unchecked_fill(
+  self : UninitializedArray[T],
+  start : Int,
+  value : T,
+  len : Int,
+) -> Unit {
+  for i in start..<(start + len) {
+    self[i] = value
+  }
+}
