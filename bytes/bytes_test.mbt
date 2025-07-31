@@ -248,7 +248,7 @@ test "Bytes::get out of bounds" {
 
 ///|
 test "using regex" {
-  match "hell123o" using regex {
+  match b"hell123o" using regex {
     ["hell[0-9]+" as x, .. rest] => {
       guard x is "hell123" && rest is "o" else { fail("Regex match failed") }
     }
