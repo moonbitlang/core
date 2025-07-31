@@ -43,7 +43,7 @@ pub fn FixedArray::unsafe_reinterpret_as_bytes(
 ///   let bytes = Bytes::makei(3, (i) => { (i + 65).to_byte() })
 ///   assert_eq(bytes, b"ABC")
 /// ```
-pub fn Bytes::makei(length : Int, value : (Int) -> Byte) -> Bytes {
+pub fn Bytes::makei(length : Int, value : (Int) -> Byte raise?) -> Bytes raise? {
   if length <= 0 {
     return []
   }
