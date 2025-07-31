@@ -511,3 +511,188 @@ test "nested json" {
     },
   })
 }
+
+///|
+test "to_yaml - null value" {
+  let json = Json::null()
+  inspect(json.to_yaml(), content="null")
+}
+
+///|
+test "to_yaml - boolean values" {
+  let json_true = Json::boolean(true)
+  let json_false = Json::boolean(false)
+  inspect(json_true.to_yaml(), content="true")
+  inspect(json_false.to_yaml(), content="false")
+}
+
+///|
+test "to_yaml - number values" {
+  let json = Json::number(42.5)
+  inspect(json.to_yaml(), content="42.5")
+  let json_with_repr = Json::number(1.0 / 0.0, repr="Infinity")
+  inspect(json_with_repr.to_yaml(), content="Infinity")
+}
+
+///|
+test "to_yaml - string values" {
+  // Simple string
+  let json = Json::string("hello")
+  inspect(json.to_yaml(), content="hello")
+
+  // String that needs quotes (looks like number)
+  let json_num = Json::string("123")
+  inspect(json_num.to_yaml(), content="\"123\"")
+
+  // String that needs quotes (looks like boolean)
+  let json_bool = Json::string("true")
+  inspect(json_bool.to_yaml(), content="\"true\"")
+
+  // String with special characters
+  let json_special = Json::string("hello: world")
+  inspect(json_special.to_yaml(), content="\"hello: world\"")
+
+  // String with newline
+  let json_newline = Json::string("hello\nworld")
+  inspect(json_newline.to_yaml(), content="\"hello\\nworld\"")
+
+  // Empty string
+  let json_empty = Json::string("")
+  inspect(json_empty.to_yaml(), content="\"\"")
+}
+
+///|
+test "to_yaml - empty array" {
+  let json = Json::array([])
+  inspect(json.to_yaml(), content="[]")
+}
+
+///|
+test "to_yaml - simple array" {
+  let json = Json::array([
+    Json::number(1.0),
+    Json::string("hello"),
+    Json::boolean(true),
+    Json::null(),
+  ])
+  let yaml = json.to_yaml()
+  inspect(yaml, content="- 1\n- hello\n- true\n- null")
+}
+
+///|
+test "to_yaml - nested array" {
+  let json = Json::array([
+    Json::number(1.0),
+    Json::array([Json::number(2.0), Json::number(3.0)]),
+    Json::string("end"),
+  ])
+  let yaml = json.to_yaml()
+  inspect(yaml, content="- 1\n- - 2\n  - 3\n- end")
+}
+
+///|
+test "to_yaml - empty object" {
+  let json = Json::object({})
+  inspect(json.to_yaml(), content="{}")
+}
+
+///|
+test "to_yaml - simple object" {
+  let json = Json::object({
+    "name": Json::string("John"),
+    "age": Json::number(30.0),
+    "active": Json::boolean(true),
+  })
+  // Note: Map iteration order might not be guaranteed
+  let yaml = json.to_yaml()
+  assert_true(yaml.contains("name: John"))
+  assert_true(yaml.contains("age: 30"))
+  assert_true(yaml.contains("active: true"))
+}
+
+///|
+test "to_yaml - nested object" {
+  let json = Json::object({
+    "person": Json::object({
+      "name": Json::string("John"),
+      "age": Json::number(30.0),
+    }),
+    "items": Json::array([Json::string("item1"), Json::string("item2")]),
+  })
+  let yaml = json.to_yaml()
+  inspect(yaml, content=(
+    #|person:
+    #|  name: John
+    #|  age: 30
+    #|items:
+    #|  - item1
+    #|  - item2
+  ))
+}
+
+///|
+test "to_yaml - array of objects" {
+  let json = Json::array([
+    Json::object({ "id": Json::number(1.0), "name": Json::string("First") }),
+    Json::object({ "id": Json::number(2.0), "name": Json::string("Second") }),
+  ])
+  let yaml = json.to_yaml()
+  inspect(yaml, content=(
+    #|- id: 1
+    #|  name: First
+    #|- id: 2
+    #|  name: Second
+  ))
+}
+
+///|
+test "to_yaml - object with array inside" {
+  let json = Json::object({
+    "fruits": Json::array([
+      Json::string("apple"),
+      Json::string("banana"),
+      Json::string("orange"),
+    ]),
+  })
+  let yaml = json.to_yaml()
+  inspect(yaml, content=(
+    #|fruits:
+    #|  - apple
+    #|  - banana
+    #|  - orange
+  ))
+}
+
+///|
+test "to_yaml - custom indent" {
+  let json = Json::object({
+    "level1": Json::object({ "level2": Json::string("value") }),
+  })
+  let yaml_2 = json.to_yaml(indent=2)
+  let yaml_4 = json.to_yaml(indent=4)
+  inspect(yaml_2, content=(
+    #|level1:
+    #|  level2: value
+
+  ))
+  inspect(yaml_4, content=(
+    #|level1:
+    #|    level2: value
+
+  ))
+}
+
+///|
+test "to_yaml - special string keys" {
+  let json = Json::object({
+    "123": Json::string("numeric key"),
+    "true": Json::string("boolean key"),
+    "key:with:colons": Json::string("special chars"),
+  })
+  let yaml = json.to_yaml()
+  inspect(yaml, content=(
+    #|"123": numeric key
+    #|"true": boolean key
+    #|"key:with:colons": special chars
+  ))
+}
