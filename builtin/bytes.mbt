@@ -109,9 +109,11 @@ pub fn Bytes::to_unchecked_string(
 /// ```moonbit
 ///   let bytes = FixedArray::make(6, b'\x00')
 ///   bytes.blit_from_string(0, "ABC", 0, 3)
-///   inspect(bytes[0], content="b'\\x41'") // 'A'
-///   inspect(bytes[1], content="b'\\x00'")
-///   inspect(bytes[2], content="b'\\x42'") // 'B'
+///   @json.inspect(bytes, content=[65,0,66,0,67,0]) // 'A'
+///   bytes.blit_from_string(0, "你好啊", 0, 3)
+///   @json.inspect(bytes, content=[96,79,125,89,74,85]) // '你好啊'
+///   bytes.blit_from_string(0, "😈", 0, 2)
+///   @json.inspect(bytes, content=[61,216,8,222,74,85]) // '😈'
 /// ```
 pub fn FixedArray::blit_from_string(
   self : FixedArray[Byte],
