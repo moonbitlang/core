@@ -25,4 +25,4 @@ priv enum Node[A] {
 }
 
 ///|
-type T[A] Node[A]? derive(Eq)
+struct T[A](Node[A]?) derive(Eq)

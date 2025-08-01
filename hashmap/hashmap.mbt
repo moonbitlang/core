@@ -480,7 +480,7 @@ pub impl[K : @quickcheck.Arbitrary + Hash + Eq, V : @quickcheck.Arbitrary] @quic
 }
 
 ///|
-priv type MyString String derive(Eq)
+priv struct MyString(String) derive(Eq)
 
 ///|
 #coverage.skip

@@ -78,7 +78,7 @@ pub fn[A : Compare] T::from_iter(iter : Iter[A]) -> T[A] {
 }
 
 ///|
-priv type Path Int
+priv struct Path(Int)
 
 ///|
 /// require: size >= 2

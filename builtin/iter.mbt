@@ -14,7 +14,7 @@
 
 ///|
 // Types
-type Iter[T] ((T) -> IterResult) -> IterResult
+struct Iter[T](((T) -> IterResult) -> IterResult)
 
 ///|
 //TODO: Add intrinsic for Iter::run
