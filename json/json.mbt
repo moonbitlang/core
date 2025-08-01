@@ -208,11 +208,12 @@ pub impl ToJson for JsonValue with to_json(self) {
 }
 
 ///|
+#autofill_callsite(args_loc, loc)
 pub fn inspect(
   obj : &ToJson,
   content? : Json,
-  loc~ : SourceLoc = _,
-  args_loc~ : ArgsLoc = _,
+  loc~ : SourceLoc,
+  args_loc~ : ArgsLoc,
 ) -> Unit raise InspectError {
   let loc = loc.to_string().escape()
   let args_loc = args_loc.to_json().escape()

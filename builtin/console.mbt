@@ -174,11 +174,12 @@ test {
 ///   inspect("hello", content="hello")
 ///   inspect([1, 2, 3], content="[1, 2, 3]")
 /// ```
+#autofill_callsite(args_loc, loc)
 pub fn inspect(
   obj : &Show,
   content~ : String = "",
-  loc~ : SourceLoc = _,
-  args_loc~ : ArgsLoc = _,
+  loc~ : SourceLoc,
+  args_loc~ : ArgsLoc,
 ) -> Unit raise InspectError {
   let actual = obj.to_string()
   if actual != content {
