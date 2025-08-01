@@ -963,3 +963,22 @@ test "View::op_as_view boundary validation" {
   let view6 = try? str[-str.length() - 1:]
   inspect(view6, content="Err(IndexOutOfBounds)")
 }
+
+///|
+test "StringView add" {
+  let str = "Hello🤣World"
+  let view1 = str[0:5]
+  let view2 = str[5:]
+  inspect(view1 + view2, content="Hello🤣World")
+
+  // more tests
+  let view3 = str[0:5]
+  let view4 = str[5:]
+  inspect(view3 + view4, content="Hello🤣World")
+  let view5 = str[0:5]
+  let view6 = str[5:]
+  inspect(view5 + view6, content="Hello🤣World")
+  let view7 = str[0:5]
+  let view8 = str[5:]
+  inspect(view7 + view8, content="Hello🤣World")
+}

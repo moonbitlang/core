@@ -546,3 +546,8 @@ pub fn View::op_as_view(
   }
   View::make_view(self.str(), abs_start, abs_end)
 }
+
+///|
+pub impl Add for View with op_add(self, other) {
+  [..self, ..other]
+}
