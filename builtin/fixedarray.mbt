@@ -117,15 +117,69 @@ pub impl[X] Default for FixedArray[X] with default() {
 
 ///|
 /// Fill the array with a given value.
-///
+/// 
+/// This method fills all or part of a FixedArray with the given value.
+/// 
+/// # Parameters
+/// - `value`: The value to fill the array with
+/// - `start`: The starting index (inclusive, default: 0)
+/// - `end`: The ending index (exclusive, optional)
+/// 
+/// If `end` is not provided, fills from `start` to the end of the array.
+/// If `start` equals `end`, no elements are modified.
+/// 
+/// # Panics
+/// - Panics if `start` is negative or greater than or equal to the array length
+/// - Panics if `end` is provided and is less than `start` or greater than array length
+/// - Does nothing if the array is empty
+/// 
 /// # Example
-/// ```mbt
-///   let fa : FixedArray[Int] = [0, 0, 0, 0, 0]
-///   fa.fill(3)
-///   assert_eq(fa[0], 3)
+/// ```moonbit
+/// // Fill entire array
+/// let fa : FixedArray[Int] = [0, 0, 0, 0, 0]
+/// fa.fill(3)
+/// inspect(fa, content="[3, 3, 3, 3, 3]")
+/// 
+/// // Fill from index 1 to 3 (exclusive)
+/// let fa2 : FixedArray[Int] = [0, 0, 0, 0, 0]
+/// fa2.fill(9, start=1, end=3)
+/// inspect(fa2, content="[0, 9, 9, 0, 0]")
+/// 
+/// // Fill from index 2 to end
+/// let fa3 : FixedArray[String] = ["a", "b", "c", "d"]
+/// fa3.fill("x", start=2)
+/// inspect(fa3, content=(
+///   #|["a", "b", "x", "x"]
+/// ))
 /// ```
-pub fn[T] FixedArray::fill(self : FixedArray[T], value : T) -> Unit {
-  for i in 0..<self.length() {
+pub fn[T] FixedArray::fill(
+  self : FixedArray[T],
+  value : T,
+  start~ : Int = 0,
+  end? : Int,
+) -> Unit {
+  let array_length = self.length()
+  guard array_length > 0 else { return }
+  guard start >= 0 && start < array_length
+  let length = match end {
+    None => array_length - start
+    Some(e) => {
+      guard e >= start && e <= array_length
+      e - start
+    }
+  }
+  self.unchecked_fill(start, value, length)
+}
+
+///|
+#intrinsic("%fixedarray.fill")
+fn[T] FixedArray::unchecked_fill(
+  self : FixedArray[T],
+  start : Int,
+  value : T,
+  len : Int,
+) -> Unit {
+  for i in start..<(start + len) {
     self[i] = value
   }
 }
