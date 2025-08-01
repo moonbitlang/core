@@ -100,48 +100,79 @@ pub impl Show for Bytes with output(self, logger) {
 ///|
 pub impl Show for String with output(self, logger) {
   logger.write_char('"')
-  let mut segment_start = 0
-  fn flush_segment(i : Int) {
-    if i > segment_start {
-      logger.write_substring(self, segment_start, i - segment_start)
+
+  // The loop keeps two pieces of state:
+  //   i   : the current scanning position
+  //   seg : the beginning index of the current "plain" segment that has
+  //         no escaping requirements. Whenever we meet a character that
+  //         needs escaping, we flush the segment [seg, i) and reset seg.
+  for i = 0, seg = 0; i < self.length(); {
+    let code = self.unsafe_charcode_at(i)
+
+    match code {
+      '"' | '\\' as c => {
+        if i > seg {
+          logger.write_substring(self, seg, i - seg)
+        }
+        logger..write_char('\\')..write_char(c.unsafe_to_char())
+        // Advance both pointers: continue with next index, new segment starts after current char
+        continue i + 1, i + 1
+      }
+
+      '\n' => {
+        if i > seg {
+          logger.write_substring(self, seg, i - seg)
+        }
+        logger.write_string("\\n")
+        continue i + 1, i + 1
+      }
+
+      '\r' => {
+        if i > seg {
+          logger.write_substring(self, seg, i - seg)
+        }
+        logger.write_string("\\r")
+        continue i + 1, i + 1
+      }
+
+      '\b' => {
+        if i > seg {
+          logger.write_substring(self, seg, i - seg)
+        }
+        logger.write_string("\\b")
+        continue i + 1, i + 1
+      }
+
+      '\t' => {
+        if i > seg {
+          logger.write_substring(self, seg, i - seg)
+        }
+        logger.write_string("\\t")
+        continue i + 1, i + 1
+      }
+
+      code => if code < ' ' {
+        if i > seg {
+          logger.write_substring(self, seg, i - seg)
+        }
+        logger
+        ..write_string("\\u{")
+        ..write_char(to_hex_digit(code / 16))
+        ..write_char(to_hex_digit(code % 16))
+        ..write_char('}')
+        continue i + 1, i + 1
+      } else {
+        // Normal character, keep scanning; only advance index.
+        continue i + 1, seg
+      }
     }
-    segment_start = i + 1
+  } else {
+    // Flush any remaining plain segment at the end of the string.
+    if self.length() > seg {
+      logger.write_substring(self, seg, self.length() - seg)
+    }
   }
 
-  for i in 0..<self.length() {
-    match self.unsafe_charcode_at(i) {
-      '"' | '\\' as c => {
-        flush_segment(i)
-        logger..write_char('\\')..write_char(c.unsafe_to_char())
-      }
-      '\n' => {
-        flush_segment(i)
-        logger.write_string("\\n")
-      }
-      '\r' => {
-        flush_segment(i)
-        logger.write_string("\\r")
-      }
-      '\b' => {
-        flush_segment(i)
-        logger.write_string("\\b")
-      }
-      '\t' => {
-        flush_segment(i)
-        logger.write_string("\\t")
-      }
-      code =>
-        if code < ' ' {
-          flush_segment(i)
-          logger
-          ..write_string("\\u{")
-          ..write_char(to_hex_digit(code / 16))
-          ..write_char(to_hex_digit(code % 16))
-          ..write_char('}')
-        }
-    }
-  }
-  flush_segment(self.length())
   logger.write_char('"')
 }
 
