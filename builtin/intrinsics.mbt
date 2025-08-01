@@ -1553,12 +1553,15 @@ pub fn String::op_get(self : String, idx : Int) -> Int = "%string_get"
 /// Example:
 ///
 /// ```moonbit
-///   let s = "Hello🤣"
-///   inspect(s.unsafe_charcode_at(0), content="72") // 'H'
-///   inspect(s.unsafe_charcode_at(5), content="55358") // First surrogate of 🤣
-///   inspect(s.unsafe_charcode_at(6), content="56611") // Second surrogate of 🤣
+///   let str = "B🤣🤣C"
+///   inspect(str.unsafe_charcode_at(0), content="66") // 'B'
+///   inspect(str.unsafe_charcode_at(1), content="55358") // First surrogate of 🤣
+///   inspect(str.unsafe_charcode_at(2), content="56611") // Second surrogate of 🤣
+///   inspect(str.unsafe_charcode_at(3), content="55358") // First surrogate of 🤣
+///   inspect(str.unsafe_charcode_at(4), content="56611") // Second surrogate of 🤣
+///   inspect(str.unsafe_charcode_at(5), content="67") // 'C'
 /// ```
-///
+/// TODO: rename to `unsafe_get`
 #internal(unsafe, "Panic if index is out of bounds.")
 pub fn String::unsafe_charcode_at(self : String, idx : Int) -> Int = "%string.unsafe_get"
 

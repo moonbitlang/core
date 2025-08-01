@@ -190,6 +190,19 @@ pub fn View::offset_of_nth_char(self : View, i : Int) -> Int? {
 /// index is within bounds.
 /// 
 /// This method has O(1) complexity.
+/// #Example
+/// 
+/// ```mbt
+///   let str = "B🤣🤣C"
+///   let view = str[:]
+///   inspect(view.unsafe_charcode_at(0), content="66")
+///   inspect(view.unsafe_charcode_at(1), content="55358")
+///   inspect(view.unsafe_charcode_at(2), content="56611")
+///   inspect(view.unsafe_charcode_at(3), content="55358")
+///   inspect(view.unsafe_charcode_at(4), content="56611")
+///   inspect(view.unsafe_charcode_at(5), content="67")
+/// ```
+/// TODO: rename to `unsafe_get`
 pub fn View::unsafe_charcode_at(self : View, index : Int) -> Int {
   self.str().unsafe_charcode_at(self.start() + index)
 }
