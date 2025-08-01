@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-type UninitializedArray[T] FixedArray[UnsafeMaybeUninit[T]]
+struct UninitializedArray[T](FixedArray[UnsafeMaybeUninit[T]])
 
 ///|
 /// Creates an uninitialized array of the specified size.

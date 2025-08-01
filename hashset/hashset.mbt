@@ -363,7 +363,7 @@ pub impl[K : Show] Show for T[K] with output(self, logger) {
 }
 
 ///|
-priv type MyString String derive(Eq)
+priv struct MyString(String) derive(Eq)
 
 ///|
 impl Hash for MyString with hash(self) {
