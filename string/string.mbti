@@ -73,6 +73,7 @@ fn StringView::trim_space(Self) -> Self
 fn StringView::trim_start(Self, Self) -> Self
 fn StringView::unsafe_charcode_at(Self, Int) -> Int
 fn StringView::view(Self, start_offset~ : Int = .., end_offset? : Int) -> Self
+impl Add for StringView
 impl Compare for StringView
 impl Default for StringView
 impl Eq for StringView
