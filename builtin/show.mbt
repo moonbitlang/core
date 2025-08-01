@@ -164,6 +164,13 @@ pub impl Show for String with to_string(self) {
 ///|
 /// Returns a valid MoonBit string literal representation of a string,
 /// add quotes and escape special characters.
+/// # Examples
+/// 
+/// ```mbt
+///   let str = "Hello \n"
+///   inspect(str.to_string(), content="Hello \n")
+///   inspect(str.escape(), content="\"Hello \\n\"")
+/// ```
 pub fn String::escape(self : String) -> String {
   let buf = StringBuilder::new()
   Show::output(self, buf)
