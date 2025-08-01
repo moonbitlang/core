@@ -1473,28 +1473,30 @@ pub fn[A] T::drain(self : T[A], start~ : Int, len? : Int) -> T[A] {
 #locals(cmp)
 pub fn[A] binary_search_by(self : T[A], cmp : (A) -> Int) -> Result[Int, Int] {
   let len = self.len
-  let mut i = 0
-  let mut j = len
-  let mut found = false
-  while i < j {
+
+  // Functional loop with two evolving bounds `i` (inclusive) and `j` (exclusive).
+  // `continue new_i, new_j` updates the pair for the next iteration, eliminating
+  // the need for mutable variables.
+  for i = 0, j = len; i < j; {
     let h = i + (j - i) / 2
-    match self.get(h) {
-      Some(element) =>
-        match cmp(element) {
-          _..<0 => i = h + 1 // Continue searching right
-          1..<_ => j = h // Continue searching left
-          0 => { // Found match, find leftmost
-            j = h
-            found = true
-          }
-        }
-      None => return Err(i)
+    let ord = cmp(self[h])
+    if ord < 0 {
+      // Search the right half
+      continue h + 1, j
+    } else {
+      // ord == 0 (match) or ord > 0 (too large): keep searching left half to
+      // guarantee we land on the left-most occurrence.
+      continue i, h
     }
-  }
-  if found {
-    Ok(i)
   } else {
-    Err(i)
+    // When the loop finishes, `i == j`.  If the deque is non-empty and the
+    // element at `i` matches, we found the left-most index; otherwise `i` is
+    // the correct insertion point.
+    if i < len && cmp(self[i]) == 0 {
+      Ok(i)
+    } else {
+      Err(i)
+    }
   }
 }
 
