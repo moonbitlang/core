@@ -30,3 +30,5 @@ Each package has its files and blackbox test files (common, ending in `_test.mbt
 
 - When writing tests, you are encouraged to use `inspect` and run `moon test --update` to update the snapshots, only use assertions
   like `assert_eq` when you are in some loops where each snapshot may vary. You can use `moon coverage analyze > uncovered.log` to see which parts of your code are not covered by tests.
+
+- agent-todo.md has some small taks that are easy for AI to pick up, agent is welcome to finish the taks and check the box when you are done
