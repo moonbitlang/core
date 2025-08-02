@@ -100,56 +100,55 @@ pub impl Show for Bytes with output(self, logger) {
 ///|
 pub impl Show for String with output(self, logger) {
   logger.write_char('"')
-
+  fn flush_segment(seg : Int, i : Int) {
+    if i > seg {
+      logger.write_substring(self, seg, i - seg)
+    }
+  }
   // The loop keeps two pieces of state:
   //   i   : the current scanning position
   //   seg : the beginning index of the current "plain" segment that has
   //         no escaping requirements. Whenever we meet a character that
   //         needs escaping, we flush the segment [seg, i) and reset seg.
-  for i = 0, seg = 0; i < self.length(); {
+  let len = self.length()
+  for i = 0, seg = 0 {
+    if i >= len {
+      // If we reached the end of the string, flush any remaining segment
+      // and break out of the loop.
+      flush_segment(seg, i)
+      break
+    }
     let code = self.unsafe_charcode_at(i)
     match code {
       '"' | '\\' as c => {
-        if i > seg {
-          logger.write_substring(self, seg, i - seg)
-        }
+        flush_segment(seg, i)
         logger..write_char('\\')..write_char(c.unsafe_to_char())
         // Advance both pointers: continue with next index, new segment starts after current char
         continue i + 1, i + 1
       }
       '\n' => {
-        if i > seg {
-          logger.write_substring(self, seg, i - seg)
-        }
+        flush_segment(seg, i)
         logger.write_string("\\n")
         continue i + 1, i + 1
       }
       '\r' => {
-        if i > seg {
-          logger.write_substring(self, seg, i - seg)
-        }
+        flush_segment(seg, i)
         logger.write_string("\\r")
         continue i + 1, i + 1
       }
       '\b' => {
-        if i > seg {
-          logger.write_substring(self, seg, i - seg)
-        }
+        flush_segment(seg, i)
         logger.write_string("\\b")
         continue i + 1, i + 1
       }
       '\t' => {
-        if i > seg {
-          logger.write_substring(self, seg, i - seg)
-        }
+        flush_segment(seg, i)
         logger.write_string("\\t")
         continue i + 1, i + 1
       }
       code =>
         if code < ' ' {
-          if i > seg {
-            logger.write_substring(self, seg, i - seg)
-          }
+          flush_segment(seg, i)
           logger
           ..write_string("\\u{")
           ..write_char(to_hex_digit(code / 16))
@@ -160,11 +159,6 @@ pub impl Show for String with output(self, logger) {
           // Normal character, keep scanning; only advance index.
           continue i + 1, seg
         }
-    }
-  } else {
-    // Flush any remaining plain segment at the end of the string.
-    if self.length() > seg {
-      logger.write_substring(self, seg, self.length() - seg)
     }
   }
   logger.write_char('"')
