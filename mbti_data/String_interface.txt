@@ -1,0 +1,81 @@
+fn String::char_at(String, Int) -> Char        // ./string/string.mbti:71:71
+fn String::char_length_eq(String, Int, start_offset~ : Int = .., end_offset? : Int) -> Bool        // ./string/string.mbti:72:72
+fn String::char_length_ge(String, Int, start_offset~ : Int = .., end_offset? : Int) -> Bool        // ./string/string.mbti:73:73
+fn String::charcodes(String, start~ : Int = .., end? : Int) -> StringView        // ./string/string.mbti:74:74
+#deprecated
+fn String::concat(Array[String], separator~ : String = ..) -> String         // ./string/string.mbti:76:76
+fn String::contains(String, StringView) -> Bool        // ./string/string.mbti:77:77
+fn String::contains_char(String, Char) -> Bool        // ./string/string.mbti:78:78
+#deprecated
+fn String::ends_with(String, String) -> Bool         // ./string/string.mbti:80:80
+fn String::find(String, StringView) -> Int?        // ./string/string.mbti:81:81
+fn String::find_by(String, (Char) -> Bool) -> Int?        // ./string/string.mbti:82:82
+fn[A] String::fold(String, init~ : A, (A, Char) -> A) -> A        // ./string/string.mbti:83:83
+fn String::from_array(Array[Char]) -> String        // ./string/string.mbti:84:84
+fn String::from_iter(Iter[Char]) -> String        // ./string/string.mbti:85:85
+fn String::has_prefix(String, StringView) -> Bool        // ./string/string.mbti:86:86
+fn String::has_suffix(String, StringView) -> Bool        // ./string/string.mbti:87:87
+#deprecated
+fn String::index_at(String, Int, start~ : StringIndex = ..) -> StringIndex?         // ./string/string.mbti:89:89
+#deprecated
+fn String::index_at_rev(String, Int, end? : StringIndex) -> StringIndex?         // ./string/string.mbti:91:91
+#deprecated
+fn String::index_of(String, String, from~ : Int = ..) -> Int         // ./string/string.mbti:93:93
+fn String::is_blank(String) -> Bool        // ./string/string.mbti:94:94
+fn String::is_empty(String) -> Bool        // ./string/string.mbti:95:95
+fn String::iter(String) -> Iter[Char]        // ./string/string.mbti:96:96
+fn String::iter2(String) -> Iter2[Int, Char]        // ./string/string.mbti:97:97
+#deprecated
+fn String::last_index_of(String, String, from? : Int) -> Int         // ./string/string.mbti:99:99
+fn String::offset_of_nth_char(String, Int, start_offset~ : Int = .., end_offset? : Int) -> Int?        // ./string/string.mbti:100:100
+#deprecated
+fn String::op_as_view(String, start~ : Int = .., end? : Int) -> StringView         // ./string/string.mbti:102:102
+fn String::pad_end(String, Int, Char) -> String        // ./string/string.mbti:103:103
+fn String::pad_start(String, Int, Char) -> String        // ./string/string.mbti:104:104
+fn String::repeat(String, Int) -> String        // ./string/string.mbti:105:105
+fn String::replace(String, old~ : StringView, new~ : StringView) -> String        // ./string/string.mbti:106:106
+fn String::replace_all(String, old~ : StringView, new~ : StringView) -> String        // ./string/string.mbti:107:107
+fn String::rev(String) -> String        // ./string/string.mbti:108:108
+fn String::rev_find(String, StringView) -> Int?        // ./string/string.mbti:109:109
+fn[A] String::rev_fold(String, init~ : A, (A, Char) -> A) -> A        // ./string/string.mbti:110:110
+fn String::rev_iter(String) -> Iter[Char]        // ./string/string.mbti:111:111
+fn String::split(String, StringView) -> Iter[StringView]        // ./string/string.mbti:112:112
+#deprecated
+fn String::starts_with(String, String) -> Bool         // ./string/string.mbti:114:114
+fn String::to_array(String) -> Array[Char]        // ./string/string.mbti:115:115
+fn String::to_bytes(String) -> Bytes        // ./string/string.mbti:116:116
+fn String::to_lower(String) -> String        // ./string/string.mbti:117:117
+fn String::to_upper(String) -> String        // ./string/string.mbti:118:118
+fn String::trim(String, StringView) -> StringView        // ./string/string.mbti:119:119
+fn String::trim_end(String, StringView) -> StringView        // ./string/string.mbti:120:120
+fn String::trim_space(String) -> StringView        // ./string/string.mbti:121:121
+fn String::trim_start(String, StringView) -> StringView        // ./string/string.mbti:122:122
+fn String::view(String, start_offset~ : Int = .., end_offset? : Int) -> StringView        // ./string/string.mbti:123:123
+impl Compare for StringView        // ./string/string.mbti:124:124
+impl Default for StringView        // ./string/string.mbti:125:125
+impl Arbitrary for String        // ./quickcheck/quickcheck.mbti:30:30
+fn String::char_length(String, start_offset~ : Int = .., end_offset? : Int) -> Int        // ./builtin/builtin.mbti:498:498
+fn String::charcode_at(String, Int) -> Int        // ./builtin/builtin.mbti:499:499
+#deprecated
+fn String::charcode_length(String) -> Int         // ./builtin/builtin.mbti:501:501
+#deprecated
+fn String::codepoint_at(String, Int) -> Char         // ./builtin/builtin.mbti:503:503
+#deprecated
+fn String::codepoint_length(String, start_offset~ : Int = .., end_offset? : Int) -> Int         // ./builtin/builtin.mbti:505:505
+fn String::escape(String) -> String        // ./builtin/builtin.mbti:506:506
+#deprecated
+fn String::get(String, Int) -> Char         // ./builtin/builtin.mbti:508:508
+fn String::length(String) -> Int        // ./builtin/builtin.mbti:509:509
+fn String::make(Int, Char) -> String        // ./builtin/builtin.mbti:510:510
+#deprecated
+fn String::op_get(String, Int) -> Char         // ./builtin/builtin.mbti:512:512
+fn String::substring(String, start~ : Int = .., end? : Int) -> String        // ./builtin/builtin.mbti:513:513
+fn String::to_string(String) -> String        // ./builtin/builtin.mbti:514:514
+fn String::unsafe_char_at(String, Int) -> Char        // ./builtin/builtin.mbti:515:515
+fn String::unsafe_charcode_at(String, Int) -> Int        // ./builtin/builtin.mbti:516:516
+impl Add for String        // ./builtin/builtin.mbti:572:572
+impl Eq for String        // ./builtin/builtin.mbti:660:660
+impl Hash for String        // ./builtin/builtin.mbti:688:688
+impl Show for StringBuilder        // ./builtin/builtin.mbti:754:754
+impl ToJson for String        // ./builtin/builtin.mbti:808:808
+impl FromJson for String        // ./json/json.mbti:73:73
