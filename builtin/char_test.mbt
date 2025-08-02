@@ -12,11 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
+///|
 enum H {
   A(Char)
 } derive(Show)
 
+///|
 test "char nested" {
   inspect(H::A('中'), content="A('中')")
   inspect(H::A('\b'), content="A('\\b')")
@@ -29,6 +30,7 @@ test "char nested" {
   // emoji
   inspect(H::A('🚀'), content="A('🚀')")
 }
+
 ///|
 test "char show" {
   assert_eq('\b'.to_string(), "\u0008")
