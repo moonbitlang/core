@@ -18,7 +18,7 @@ trait FromString {
 }
 
 ///|
-type MyInt Int derive(Show)
+struct MyInt(Int) derive(Show)
 
 ///|
 // _ allow in names
@@ -27,7 +27,7 @@ impl FromString for MyInt with from_string(_s) {
 }
 
 ///|
-type MyString String derive(Show)
+struct MyString(String) derive(Show)
 
 ///|
 impl FromString for MyString with from_string(_s) {

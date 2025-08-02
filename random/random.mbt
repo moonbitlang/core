@@ -15,7 +15,7 @@
 ///|
 /// `Rand` is a pseudo-random number generator (PRNG) that provides various
 /// methods to generate random numbers of different types.
-type Rand &Source
+struct Rand(&Source)
 
 ///|
 /// The [Source] trait defines a method to generate random numbers.

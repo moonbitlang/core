@@ -35,7 +35,8 @@ fn[T : Show] debug_string(t : T) -> String {
 /// @test.same_object(a, a)
 /// @test.is_not(a, b)
 /// ```
-pub fn[T : Show] same_object(a : T, b : T, loc~ : SourceLoc = _) -> Unit raise {
+#autofill_callsite(loc)
+pub fn[T : Show] same_object(a : T, b : T, loc~ : SourceLoc) -> Unit raise {
   if !physical_equal(a, b) {
     let a = debug_string(a)
     let b = debug_string(b)
@@ -59,7 +60,8 @@ pub fn[T : Show] same_object(a : T, b : T, loc~ : SourceLoc = _) -> Unit raise {
 /// @test.is_not(a, b)
 /// @test.same_object(a, a)
 /// ```
-pub fn[T : Show] is_not(a : T, b : T, loc~ : SourceLoc = _) -> Unit raise {
+#autofill_callsite(loc)
+pub fn[T : Show] is_not(a : T, b : T, loc~ : SourceLoc) -> Unit raise {
   if physical_equal(a, b) {
     let a = debug_string(a)
     let b = debug_string(b)
@@ -71,7 +73,8 @@ pub fn[T : Show] is_not(a : T, b : T, loc~ : SourceLoc = _) -> Unit raise {
 /// Expected to be used in test blocks, don't catch this error.
 ///  
 /// Produces an error message similar to @builtin.fail.
-pub fn[T] fail(msg : String, loc~ : SourceLoc = _) -> T raise {
+#autofill_callsite(loc)
+pub fn[T] fail(msg : String, loc~ : SourceLoc) -> T raise {
   @builtin.fail(msg, loc~)
 }
 
@@ -102,11 +105,12 @@ pub fn writeln(self : T, obj : &Show) -> Unit {
 /// ```
 ///
 /// Currently it can only be used once and should be used as the last step.
+#autofill_callsite(args_loc, loc)
 pub fn snapshot(
   self : T,
   filename~ : String,
-  loc~ : SourceLoc = _,
-  args_loc~ : ArgsLoc = _,
+  loc~ : SourceLoc,
+  args_loc~ : ArgsLoc,
 ) -> Unit raise SnapshotError {
   let loc = loc.to_string().escape()
   let args_loc = args_loc.to_json().escape()

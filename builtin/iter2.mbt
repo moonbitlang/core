@@ -20,7 +20,7 @@
 // ```
 //    for k, v in map { ... }
 // ```
-type Iter2[A, B] ((A, B) -> IterResult) -> IterResult
+struct Iter2[A, B](((A, B) -> IterResult) -> IterResult)
 
 ///|
 //TODO: Add intrinsic for Iter::run

@@ -72,7 +72,7 @@ priv trait Output {
 }
 
 ///|
-priv type StringBuffer Array[String]
+priv struct StringBuffer(Array[String])
 
 ///|
 impl Output for StringBuffer with output(self : StringBuffer, content : String) -> Unit {

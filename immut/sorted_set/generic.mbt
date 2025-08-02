@@ -86,7 +86,7 @@ pub impl[A : Compare] Compare for T[A] with compare(self, other) -> Int {
 }
 
 ///|
-priv type InorderIterator[A] Array[T[A]]
+priv struct InorderIterator[A](Array[T[A]])
 
 ///|
 fn[A] InorderIterator::new(root : T[A]) -> InorderIterator[A] {

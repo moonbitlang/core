@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-priv type InorderIterator[K, V] Array[T[K, V]]
+priv struct InorderIterator[K, V](Array[T[K, V]])
 
 ///|
 fn[K, V] InorderIterator::new(root : T[K, V]) -> InorderIterator[K, V] {

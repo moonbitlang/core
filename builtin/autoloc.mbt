@@ -49,7 +49,7 @@ pub impl Show for SourceLoc with output(self, logger) {
 /// array of optional source locations, where each element corresponds to an
 /// argument's location in the source code. Used internally by the compiler for
 /// error reporting and debugging purposes.
-pub(all) type ArgsLoc Array[SourceLoc?] derive(Show)
+pub(all) struct ArgsLoc(Array[SourceLoc?]) derive(Show)
 
 ///|
 /// Converts an array of optional source locations to its JSON string

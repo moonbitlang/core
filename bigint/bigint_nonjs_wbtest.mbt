@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-type MyBigInt BigInt
+struct MyBigInt(BigInt)
 
 ///|
 impl Show for MyBigInt with output(self, logger) {

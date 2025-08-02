@@ -418,7 +418,7 @@ test "HAMT::singleton" {
 }
 
 ///|
-type MyString String
+struct MyString(String)
 
 ///|
 impl Hash for MyString with hash_combine(_self, hasher) {
