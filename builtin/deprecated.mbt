@@ -397,8 +397,9 @@ pub fn Byte::lsr(self : Byte, count : Int) -> Byte {
 
 ///|
 /// Prints and returns the value of a given expression for quick and dirty debugging.
+#callsite(autofill(loc))
 #deprecated("This function is for debugging only and should not be used in production")
-pub fn[T] dump(t : T, name? : String, loc~ : SourceLoc = _) -> T {
+pub fn[T] dump(t : T, name? : String, loc~ : SourceLoc) -> T {
   let name = match name {
     Some(name) => name
     None => ""
