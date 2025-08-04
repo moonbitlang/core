@@ -3,8 +3,6 @@ import { exec } from "node:child_process";
 import { promisify } from "node:util";
 import fs from "fs-extra";
 import { ChatOpenAI } from "@langchain/openai";
-import { DynamicStructuredTool } from "@langchain/core/tools";
-import { z } from "zod";
 import { randomUUID } from "node:crypto";
 
 const systemMessage = `
@@ -64,64 +62,6 @@ async function extractMbti(typeName) {
 }
 
 /**
- * Create the read_file_block tool using LangChain's DynamicStructuredTool
- */
-const extractCommentTool = new DynamicStructuredTool({
-  name: "extract_comment_tool",
-  description:
-    "Get the comment of a MoonBit interface by reading the file block up to a specific line number.",
-  schema: z.object({
-    file: z.string().describe("The path to the file to read"),
-    line: z
-      .number()
-      .int()
-      .positive()
-      .describe("The target line number to read up to (1-indexed)"),
-  }),
-  func: async ({ file, line }) => {
-    try {
-      console.log(`Reading file block from ${file} up to line ${line}...`);
-
-      // Read the entire file
-      const content = await fs.readFile(file, "utf-8");
-      const lines = content.split("\n");
-
-      // Validate target line
-      if (line < 1 || line > lines.length) {
-        throw new Error(
-          `Target line ${line} is out of range. File has ${lines.length} lines.`
-        );
-      }
-
-      // Find the closest `///|` marker before the target line
-      let blockStartLine = 0; // Default to start of file if no marker found
-
-      for (let i = line - 2; i >= 0; i--) {
-        // line - 1 for 0-indexed, -1 more to look before
-        if (lines[i].trim() === "///|") {
-          blockStartLine = i;
-          break;
-        }
-      }
-
-      // Extract lines from block start to target line (inclusive)
-      const blockLines = lines.slice(blockStartLine, line);
-      const result = blockLines.join("\n");
-
-      console.log(
-        `Found block starting at line ${blockStartLine + 1}, reading ${
-          blockLines.length
-        } lines`
-      );
-      return result;
-    } catch (error) {
-      console.error(`Error reading file block from ${file}:`, error);
-      throw error;
-    }
-  },
-});
-
-/**
  * Review MBTI interfaces using LangChain ChatOpenAI with tools
  * @param {Object} interfaces - Object containing interface names and their content
  * @param {string} model - The OpenAI model to use for the review
@@ -139,7 +79,7 @@ async function reviewInterfaces(interfaces, model) {
     });
 
     // Bind tools to the model
-    const llmWithTools = llm.bindTools([extractCommentTool]);
+    const llmWithTools = llm.bindTools([]);
 
     const prompt = Object.entries(interfaces)
       .map(([name, content]) => `${name} Interface:\n${content}\n\n`)
