@@ -348,7 +348,10 @@ pub fn[A] Array::fill(
   guard start >= 0 && start < array_length
   let end = match end {
     None => array_length
-    Some(e) => e
+    Some(e) => {
+      guard e >= 0 && e <= array_length
+      e
+    }
   }
   JSArray::ofAnyArray(self).fill(JSValue::ofAny(value), start, end)
 }
