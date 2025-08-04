@@ -1,0 +1,32 @@
+fn[K, V] Map::capacity(Self[K, V]) -> Int        // ./builtin/builtin.mbti:262:262
+fn[K, V] Map::clear(Self[K, V]) -> Unit        // ./builtin/builtin.mbti:263:263
+fn[K : Hash + Eq, V] Map::contains(Self[K, V], K) -> Bool        // ./builtin/builtin.mbti:264:264
+fn[K : Hash + Eq, V : Eq] Map::contains_kv(Self[K, V], K, V) -> Bool        // ./builtin/builtin.mbti:265:265
+fn[K, V] Map::copy(Self[K, V]) -> Self[K, V]        // ./builtin/builtin.mbti:266:266
+fn[K, V] Map::each(Self[K, V], (K, V) -> Unit raise?) -> Unit raise?        // ./builtin/builtin.mbti:267:267
+fn[K, V] Map::eachi(Self[K, V], (Int, K, V) -> Unit raise?) -> Unit raise?        // ./builtin/builtin.mbti:268:268
+fn[K : Hash + Eq, V] Map::from_array(Array[(K, V)]) -> Self[K, V]        // ./builtin/builtin.mbti:269:269
+fn[K : Hash + Eq, V] Map::from_iter(Iter[(K, V)]) -> Self[K, V]        // ./builtin/builtin.mbti:270:270
+fn[K : Hash + Eq, V] Map::get(Self[K, V], K) -> V?        // ./builtin/builtin.mbti:271:271
+fn[K : Hash + Eq, V] Map::get_or_default(Self[K, V], K, V) -> V        // ./builtin/builtin.mbti:272:272
+fn[K : Hash + Eq, V] Map::get_or_init(Self[K, V], K, () -> V) -> V        // ./builtin/builtin.mbti:273:273
+fn[K, V] Map::is_empty(Self[K, V]) -> Bool        // ./builtin/builtin.mbti:274:274
+fn[K, V] Map::iter(Self[K, V]) -> Iter[(K, V)]        // ./builtin/builtin.mbti:275:275
+fn[K, V] Map::iter2(Self[K, V]) -> Iter2[K, V]        // ./builtin/builtin.mbti:276:276
+fn[K, V] Map::keys(Self[K, V]) -> Iter[K]        // ./builtin/builtin.mbti:277:277
+fn[K, V, V2] Map::map(Self[K, V], (K, V) -> V2) -> Self[K, V2]        // ./builtin/builtin.mbti:278:278
+fn[K, V] Map::new(capacity~ : Int = ..) -> Self[K, V]        // ./builtin/builtin.mbti:279:279
+fn[K : Hash + Eq, V] Map::of(FixedArray[(K, V)]) -> Self[K, V]        // ./builtin/builtin.mbti:280:280
+#deprecated
+fn[K : Hash + Eq, V] Map::op_get(Self[K, V], K) -> V?         // ./builtin/builtin.mbti:282:282
+fn[K : Hash + Eq, V] Map::op_set(Self[K, V], K, V) -> Unit        // ./builtin/builtin.mbti:283:283
+fn[K : Hash + Eq, V] Map::remove(Self[K, V], K) -> Unit        // ./builtin/builtin.mbti:284:284
+fn[K : Hash + Eq, V] Map::set(Self[K, V], K, V) -> Unit        // ./builtin/builtin.mbti:285:285
+fn[K, V] Map::size(Self[K, V]) -> Int        // ./builtin/builtin.mbti:286:286
+fn[K, V] Map::to_array(Self[K, V]) -> Array[(K, V)]        // ./builtin/builtin.mbti:287:287
+fn[K, V] Map::values(Self[K, V]) -> Iter[V]        // ./builtin/builtin.mbti:288:288
+impl[K, V] Default for Map[K, V]        // ./builtin/builtin.mbti:289:289
+impl[K : Hash + Eq, V : Eq] Eq for Map[K, V]        // ./builtin/builtin.mbti:290:290
+impl[K : Show, V : Show] Show for Map[K, V]        // ./builtin/builtin.mbti:291:291
+impl[K : Show, V : ToJson] ToJson for Map[K, V]        // ./builtin/builtin.mbti:292:292
+impl[V : FromJson] FromJson for Map[String, V]        // ./json/json.mbti:81:81
