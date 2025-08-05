@@ -74,18 +74,17 @@ pub fn[A] copy(self : T[A]) -> T[A] {
 ///|
 pub fn[A : Compare] to_array(self : T[A]) -> Array[A] {
   let arr = Array::new(capacity=self.len)
-  fn go(x : Node[A]) {
-    match x {
-      Cons(_) as x => {
-        arr.push(x.content)
-        go(x.sibling)
-        go(x.child)
-      }
+  let stack : Array[Node[A]] = [self.top]
+  while stack.pop() is Some(node) {
+    match node {
       Nil => ()
+      Cons(content~, sibling~, child~) => {
+        arr.push(content)
+        stack.push(sibling)
+        stack.push(child)
+      }
     }
   }
-
-  go(self.top)
   arr.sort()
   arr.rev_inplace()
   arr

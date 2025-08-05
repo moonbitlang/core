@@ -43,19 +43,18 @@ pub fn[A : Compare] from_array(array : Array[A]) -> T[A] {
 ///|
 pub fn[A : Compare] to_array(self : T[A]) -> Array[A] {
   let arr : Array[A] = []
-  fn go(x : Node[A]) {
-    match x {
-      Empty => return
+  let stack : Array[Node[A]] = [self.node]
+  while stack.pop() is Some(node) {
+    match node {
+      Empty => ()
       Leaf(a) => arr.push(a)
       Branch(a, left=l, right=r) => {
         arr.push(a)
-        go(l)
-        go(r)
+        stack.push(l)
+        stack.push(r)
       }
     }
   }
-
-  go(self.node)
   arr.sort()
   arr.rev_inplace()
   arr
