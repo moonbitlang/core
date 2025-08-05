@@ -75,10 +75,19 @@ pub fn[K : Hash + Eq, V] Map::from_array(arr : Array[(K, V)]) -> Map[K, V] {
 ///|
 /// Set a key-value pair into the hash map.
 pub fn[K : Hash + Eq, V] Map::set(self : Map[K, V], key : K, value : V) -> Unit {
+  self.set_with_hash(key, value, key.hash())
+}
+
+///|
+fn[K : Eq, V] set_with_hash(
+  self : Map[K, V],
+  key : K,
+  value : V,
+  hash : Int,
+) -> Unit {
   if self.size >= self.grow_at {
     self.grow()
   }
-  let hash = key.hash()
   let (idx, psl) = for psl = 0, idx = hash & self.capacity_mask {
     match self.entries[idx] {
       None => break (idx, psl)
@@ -347,7 +356,7 @@ fn[K, V] Map::shift_back(self : Map[K, V], idx : Int) -> Unit {
 }
 
 ///|
-fn[K : Hash + Eq, V] Map::grow(self : Map[K, V]) -> Unit {
+fn[K : Eq, V] Map::grow(self : Map[K, V]) -> Unit {
   let old_head = self.head
   let new_capacity = self.capacity << 1
   self.entries = FixedArray::make(new_capacity, None)
@@ -358,8 +367,8 @@ fn[K : Hash + Eq, V] Map::grow(self : Map[K, V]) -> Unit {
   self.head = None
   self.tail = -1
   loop old_head {
-    Some({ next, key, value, .. }) => {
-      self.set(key, value)
+    Some({ next, key, value, hash, .. }) => {
+      self.set_with_hash(key, value, hash)
       continue next
     }
     None => break
