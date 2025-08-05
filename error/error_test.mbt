@@ -171,7 +171,6 @@ test "error to json" {
     j(ErrWithToJson(42)),
     content=(
       #|Array([String("ErrWithToJson"), Number(42)])
-
     ),
   )
   inspect(
