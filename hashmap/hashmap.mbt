@@ -198,27 +198,6 @@ fn[K : Eq, V] get_with_hash(self : T[K, V], key : K, hash : Int) -> V? {
 }
 
 ///|
-/// Retrieves a value from the hash map using the index operator syntax. This
-/// method is automatically called when using the square bracket notation
-/// `map[key]`.
-///
-/// Parameters:
-///
-/// * `map` : The hash map to retrieve the value from.
-/// * `key` : The key to look up in the map. Must implement both `Hash` and `Eq`
-/// traits.
-///
-/// Returns `Some(value)` if the key exists in the map, `None` otherwise.
-///
-/// Example:
-///
-/// ```moonbit
-///   let map = @hashmap.of([("key", 42)])
-///   inspect(map.get("key"), content="Some(42)")
-///   inspect(map.get("nonexistent"), content="None")
-/// ```
-
-///|
 /// Gets the value associated with the given key. If the key doesn't exist in the
 /// map, initializes it with the result of calling the provided initialization
 /// function.
