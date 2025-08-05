@@ -17,6 +17,7 @@ fn Char::is_ascii_octdigit(Char) -> Bool
 fn Char::is_ascii_punctuation(Char) -> Bool
 fn Char::is_ascii_uppercase(Char) -> Bool
 fn Char::is_ascii_whitespace(Char) -> Bool
+fn Char::is_bmp(Char) -> Bool
 fn Char::is_control(Char) -> Bool
 fn Char::is_digit(Char, UInt) -> Bool
 fn Char::is_numeric(Char) -> Bool
