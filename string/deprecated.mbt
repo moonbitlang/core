@@ -92,20 +92,6 @@ pub fn last_index_of(self : String, str : String, from? : Int) -> Int {
   }
 }
 
-///|
-/// Returns true if this string starts with a sub string.
-#deprecated("Use `s.has_prefix(str)` instead.")
-pub fn starts_with(self : String, str : String) -> Bool {
-  self.has_prefix(str.view())
-}
-
-///|
-/// Returns true if this string ends with a sub string.
-#deprecated("Use `s.has_suffix(str)` instead.")
-pub fn ends_with(self : String, str : String) -> Bool {
-  self.has_suffix(str.view())
-}
-
 ///| 
 /// A `StringView` represents a view of a String that maintains proper Unicode
 /// character boundaries. It allows safe access to a substring while handling 

@@ -91,8 +91,6 @@ fn String::charcodes(String, start? : Int, end? : Int) -> StringView
 fn String::concat(Array[String], separator? : String) -> String
 fn String::contains(String, StringView) -> Bool
 fn String::contains_char(String, Char) -> Bool
-#deprecated
-fn String::ends_with(String, String) -> Bool
 fn String::find(String, StringView) -> Int?
 fn String::find_by(String, (Char) -> Bool) -> Int?
 fn[A] String::fold(String, init~ : A, (A, Char) -> A) -> A
@@ -122,9 +120,9 @@ fn String::rev_find(String, StringView) -> Int?
 fn[A] String::rev_fold(String, init~ : A, (A, Char) -> A) -> A
 fn String::rev_iter(String) -> Iter[Char]
 fn String::split(String, StringView) -> Iter[StringView]
-#deprecated
-fn String::starts_with(String, String) -> Bool
+#alias(starts_with, deprecated)
 fn String::strip_prefix(String, StringView) -> StringView?
+#alias(ends_with, deprecated)
 fn String::strip_suffix(String, StringView) -> StringView?
 fn String::to_array(String) -> Array[Char]
 fn String::to_bytes(String) -> Bytes

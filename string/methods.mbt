@@ -326,6 +326,7 @@ test "has_prefix" {
 ///   inspect("hello world".strip_suffix(" moon"), content="None")
 ///   inspect("hello".strip_suffix("hello"), content="Some(\"\")")
 /// ```
+#alias(ends_with, deprecated)
 pub fn strip_suffix(self : String, suffix : View) -> View? {
   if self.has_suffix(suffix) {
     Some(self.charcodes(end=self.length() - suffix.length()))
@@ -372,6 +373,7 @@ test "strip_suffix" {
 ///   inspect("hello world".strip_prefix("hi "), content="None")
 ///   inspect("hello".strip_prefix("hello"), content="Some(\"\")")
 /// ```
+#alias(starts_with, deprecated)
 pub fn strip_prefix(self : String, prefix : View) -> View? {
   if self.has_prefix(prefix) {
     Some(self.charcodes(start=prefix.length()))
