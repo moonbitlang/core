@@ -269,7 +269,8 @@ pub fn[K, V] is_empty(self : T[K, V]) -> Bool {
 ///   map.each((k, v) => { result = result + "\{k}:\{v}," })
 ///   inspect(result, content="2:two,1:one,")
 /// ```
-pub fn[K, V] each(self : T[K, V], f : (K, V) -> Unit) -> Unit {
+#locals(f)
+pub fn[K, V] each(self : T[K, V], f : (K, V) -> Unit raise?) -> Unit raise? {
   for i in 0..<self.capacity {
     if self.entries[i] is Some({ key, value, .. }) {
       f(key, value)
@@ -299,7 +300,11 @@ pub fn[K, V] each(self : T[K, V], f : (K, V) -> Unit) -> Unit {
 ///   // "b" is at index 1
 ///   inspect(result, content="2")
 /// ```
-pub fn[K, V] eachi(self : T[K, V], f : (Int, K, V) -> Unit) -> Unit {
+#locals(f)
+pub fn[K, V] eachi(
+  self : T[K, V],
+  f : (Int, K, V) -> Unit raise?,
+) -> Unit raise? {
   for i = 0, idx = 0; i < self.capacity; {
     match self.entries[i] {
       Some({ key, value, .. }) => {
@@ -344,4 +349,64 @@ pub impl[K : Show, V : Show] Show for T[K, V] with output(self, logger) {
     ..write_string(")")
   })
   logger.write_string("])")
+}
+
+///|
+/// Returns an iterator over all keys in the hash map.
+///
+/// Parameters:
+///
+/// * `self` : The hash map to iterate over.
+///
+/// Returns an iterator that yields each key in the hash map in unspecified order.
+/// The keys are yielded in the same order as they appear in the internal storage.
+///
+/// Example:
+///
+/// ```moonbit
+///   let map = @hashmap.of([(1, "one"), (2, "two"), (3, "three")])
+///   let keys = map.keys().to_array()
+///   inspect(keys.length(), content="3")
+///   inspect(keys.contains(1), content="true")
+///   inspect(keys.contains(2), content="true")
+///   inspect(keys.contains(3), content="true")
+/// ```
+pub fn[K, V] T::keys(self : T[K, V]) -> Iter[K] {
+  Iter::new(yield_ => for entry in self.entries {
+    if entry is Some({ key, .. }) {
+      guard yield_(key) is IterContinue else { break IterEnd }
+    }
+  } else {
+    IterContinue
+  })
+}
+
+///|
+/// Returns an iterator over all values in the hash map.
+///
+/// Parameters:
+///
+/// * `self` : The hash map to iterate over.
+///
+/// Returns an iterator that yields each value in the hash map in unspecified order.
+/// The values are yielded in the same order as they appear in the internal storage.
+///
+/// Example:
+///
+/// ```moonbit
+///   let map = @hashmap.of([("a", 1), ("b", 2), ("c", 3)])
+///   let values = map.values().to_array()
+///   inspect(values.length(), content="3")
+///   inspect(values.contains(1), content="true")
+///   inspect(values.contains(2), content="true")
+///   inspect(values.contains(3), content="true")
+/// ```
+pub fn[K, V] T::values(self : T[K, V]) -> Iter[V] {
+  Iter::new(yield_ => for entry in self.entries {
+    if entry is Some({ value, .. }) {
+      guard yield_(value) is IterContinue else { break IterEnd }
+    }
+  } else {
+    IterContinue
+  })
 }
