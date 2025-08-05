@@ -185,4 +185,10 @@ test "Map::update" {
   })
   inspect(empty_map.get("new"), content="Some(42)")
   inspect(empty_map.size(), content="1")
+
+  // Test adding to empty map
+  let empty_map : Map[String, Int] = Map::new(capacity=1)
+  empty_map.update("a", _ => Some(1))
+  empty_map.update("b", _ => Some(2))
+  empty_map.update("c", _ => Some(3))
 }
