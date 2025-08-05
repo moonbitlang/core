@@ -285,6 +285,7 @@ fn[K : Hash + Eq, V] Map::remove(Self[K, V], K) -> Unit
 fn[K : Hash + Eq, V] Map::set(Self[K, V], K, V) -> Unit
 fn[K, V] Map::size(Self[K, V]) -> Int
 fn[K, V] Map::to_array(Self[K, V]) -> Array[(K, V)]
+fn[K : Hash + Eq, V] Map::update(Self[K, V], K, (V?) -> V?) -> Unit
 fn[K, V] Map::values(Self[K, V]) -> Iter[V]
 impl[K, V] Default for Map[K, V]
 impl[K : Hash + Eq, V : Eq] Eq for Map[K, V]
