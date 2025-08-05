@@ -429,7 +429,7 @@ pub fn[K : Eq, V] T::union_with(
 }
 
 ///|
-fn[K : Eq, V] @list.T::union_with(
+fn[K : Eq, V] @list.List::union_with(
   self : Self[(K, V)],
   other : Self[(K, V)],
   f : (K, V, V) -> V raise?,
@@ -531,7 +531,7 @@ pub fn[K : Eq, V] T::intersection_with(
 }
 
 ///|
-fn[K : Eq, V] @list.T::intersection_with(
+fn[K : Eq, V] @list.List::intersection_with(
   self : Self[(K, V)],
   other : Self[(K, V)],
   f : (K, V, V) -> V raise?,
