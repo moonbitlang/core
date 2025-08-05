@@ -56,7 +56,8 @@ pub fn[A : Compare] to_array(self : T[A]) -> Array[A] {
   }
 
   go(self.node)
-  arr.sort_by((x, y) => y.compare(x))
+  arr.sort()
+  arr.rev_inplace()
   arr
 }
 
