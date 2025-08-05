@@ -699,6 +699,19 @@ pub fn[K : Hash + Eq, V] Map::update(
       }
     }
   }
-  let entry = { prev: self.tail, next: None, psl, hash, key, value: new_value }
-  self.add_entry_to_tail(idx, entry)
+  if self.size >= self.grow_at {
+    // Slow path, we need to resize
+    self.grow()
+    self.set(key, new_value)
+  } else {
+    let entry = {
+      prev: self.tail,
+      next: None,
+      psl,
+      hash,
+      key,
+      value: new_value,
+    }
+    self.add_entry_to_tail(idx, entry)
+  }
 }
