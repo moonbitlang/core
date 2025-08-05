@@ -609,3 +609,96 @@ pub fn[K, V] Map::copy(self : Map[K, V]) -> Map[K, V] {
   }
   other
 }
+
+///|
+/// Updates a value in the map based on the existing value.
+///
+/// This method allows you to conditionally update, insert, or remove a key-value pair
+/// based on whether the key already exists in the map. The provided function `f` is
+/// called with `Some(current_value)` if the key exists, or `None` if it doesn't.
+///
+/// Parameters:
+///
+/// * `self` : The map to update.
+/// * `key` : The key to update.
+/// * `f` : A function that takes the current value (wrapped in `Option`) and returns
+///   the new value (wrapped in `Option`). Returning `None` will remove the key-value
+///   pair from the map.
+///
+/// Behavior:
+///
+/// * If the key exists and `f` returns `Some(new_value)`, the value is updated.
+/// * If the key exists and `f` returns `None`, the key-value pair is removed.
+/// * If the key doesn't exist and `f` returns `Some(new_value)`, a new pair is inserted.
+/// * If the key doesn't exist and `f` returns `None`, no operation is performed.
+///
+/// Example:
+///
+/// ```moonbit
+/// let map = { "a": 1, "b": 2 }
+///
+/// // Update existing value
+/// map.update("a", fn(v) { 
+///   match v { 
+///     Some(x) => Some(x + 10) 
+///     None => Some(0) 
+///   } 
+/// })
+/// inspect(map, content=(
+///   #|{"a": 11, "b": 2}
+/// ))
+///
+/// // Insert new value
+/// map.update("c", fn(v) { 
+///   match v { 
+///     Some(x) => Some(x) 
+///     None => Some(3) 
+///   } 
+/// })
+/// inspect(map, content=(
+///   #|{"a": 11, "b": 2, "c": 3}
+/// ))
+///
+/// // Remove existing value
+/// map.update("b", fn(_) { None })
+/// inspect(map, content=(
+///   #|{"a": 11, "c": 3}
+/// ))
+/// ```
+pub fn[K : Hash + Eq, V] Map::update(
+  self : Map[K, V],
+  key : K,
+  f : (V?) -> V?,
+) -> Unit {
+  let hash = key.hash()
+  let (idx, psl, new_value) = for psl = 0, idx = hash & self.capacity_mask {
+    match self.entries[idx] {
+      Some(entry) => {
+        if entry.hash == hash && entry.key == key {
+          // Found the entry, update its value
+          if f(Some(entry.value)) is Some(new_value) {
+            entry.value = new_value
+          } else {
+            // Remove the entry since the new value is None
+            self.remove_entry(entry)
+            self.shift_back(idx)
+            self.size -= 1
+          }
+          return
+        }
+        if psl > entry.psl {
+          guard f(None) is Some(new_value) else { return }
+          self.push_away(idx, entry)
+          break (idx, psl, new_value)
+        }
+        continue psl + 1, (idx + 1) & self.capacity_mask
+      }
+      None => {
+        guard f(None) is Some(new_value) else { return }
+        break (idx, psl, new_value)
+      }
+    }
+  }
+  let entry = { prev: self.tail, next: None, psl, hash, key, value: new_value }
+  self.add_entry_to_tail(idx, entry)
+}
