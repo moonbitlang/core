@@ -229,14 +229,42 @@ pub fn[K : Hash + Eq, V] Map::get_or_init(
   key : K,
   default : () -> V,
 ) -> V {
-  match self.get(key) {
-    Some(v) => v
-    None => {
-      let v = default()
-      self.set(key, v)
-      v
+  let hash = key.hash()
+  let (idx, psl, new_value) = for psl = 0, idx = hash & self.capacity_mask {
+    match self.entries[idx] {
+      Some(entry) => {
+        if entry.hash == hash && entry.key == key {
+          return entry.value
+        }
+        if psl > entry.psl {
+          let new_value = default()
+          self.push_away(idx, entry)
+          break (idx, psl, new_value)
+        }
+        continue psl + 1, (idx + 1) & self.capacity_mask
+      }
+      None => {
+        let new_value = default()
+        break (idx, psl, new_value)
+      }
     }
   }
+  if self.size >= self.grow_at {
+    // Slow path, we need to resize
+    self.grow()
+    self.set_with_hash(key, new_value, hash)
+  } else {
+    let entry = {
+      prev: self.tail,
+      next: None,
+      psl,
+      hash,
+      key,
+      value: new_value,
+    }
+    self.add_entry_to_tail(idx, entry)
+  }
+  new_value
 }
 
 ///|

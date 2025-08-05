@@ -102,27 +102,46 @@ fn[K : Eq, V] set_with_hash(
   if self.size >= self.capacity / 2 {
     self.grow()
   }
-  for idx = hash & self.capacity_mask, entry = { psl: 0, hash, key, value } {
+  let (idx, psl) = for psl = 0, idx = hash & self.capacity_mask {
+    match self.entries[idx] {
+      None => break (idx, psl)
+      Some(curr_entry) => {
+        if curr_entry.hash == hash && curr_entry.key == key {
+          curr_entry.value = value
+          return
+        }
+        if psl > curr_entry.psl {
+          self.push_away(idx, curr_entry)
+          break (idx, psl)
+        }
+        continue psl + 1, (idx + 1) & self.capacity_mask
+      }
+    }
+  }
+  let entry = { psl, key, value, hash }
+  self.entries[idx] = Some(entry)
+  self.size += 1
+}
+
+///|
+fn[K, V] T::push_away(self : T[K, V], idx : Int, entry : Entry[K, V]) -> Unit {
+  for psl = entry.psl + 1, idx = (idx + 1) & self.capacity_mask, entry = entry {
     match self.entries[idx] {
       None => {
+        entry.psl = psl
         self.entries[idx] = Some(entry)
-        self.size += 1
         break
       }
-      Some(curr_entry) => {
-        if curr_entry.hash == entry.hash && curr_entry.key == entry.key {
-          curr_entry.value = entry.value
-          break
-        }
-        let curr_entry = if entry.psl > curr_entry.psl {
+      Some(curr_entry) =>
+        if psl > curr_entry.psl {
+          entry.psl = psl
           self.entries[idx] = Some(entry)
-          curr_entry
+          continue curr_entry.psl + 1,
+            (idx + 1) & self.capacity_mask,
+            curr_entry
         } else {
-          entry
+          continue psl + 1, (idx + 1) & self.capacity_mask, entry
         }
-        curr_entry.psl += 1
-        continue (idx + 1) & self.capacity_mask, curr_entry
-      }
     }
   }
 }
@@ -184,20 +203,6 @@ pub fn[K : Hash + Eq, V] get(self : T[K, V], key : K) -> V? {
 }
 
 ///|
-fn[K : Eq, V] get_with_hash(self : T[K, V], key : K, hash : Int) -> V? {
-  for i = 0, idx = hash & self.capacity_mask {
-    guard self.entries[idx] is Some(entry) else { break None }
-    if entry.hash == hash && entry.key == key {
-      break Some(entry.value)
-    }
-    if i > entry.psl {
-      break None
-    }
-    continue i + 1, (idx + 1) & self.capacity_mask
-  }
-}
-
-///|
 /// Gets the value associated with the given key. If the key doesn't exist in the
 /// map, initializes it with the result of calling the provided initialization
 /// function.
@@ -226,14 +231,35 @@ pub fn[K : Hash + Eq, V] get_or_init(
   init : () -> V,
 ) -> V {
   let hash = key.hash()
-  match self.get_with_hash(key, hash) {
-    Some(v) => v
-    None => {
-      let v = init()
-      self.set_with_hash(key, v, hash)
-      v
+  let (idx, psl, new_value) = for psl = 0, idx = hash & self.capacity_mask {
+    match self.entries[idx] {
+      Some(entry) => {
+        if entry.hash == hash && entry.key == key {
+          return entry.value
+        }
+        if psl > entry.psl {
+          let new_value = init()
+          self.push_away(idx, entry)
+          break (idx, psl, new_value)
+        }
+        continue psl + 1, (idx + 1) & self.capacity_mask
+      }
+      None => {
+        let new_value = init()
+        break (idx, psl, new_value)
+      }
     }
   }
+  if self.size >= self.capacity / 2 {
+    // Slow path, we need to resize
+    self.grow()
+    self.set_with_hash(key, new_value, hash)
+  } else {
+    let entry = { psl, hash, key, value: new_value }
+    self.entries[idx] = Some(entry)
+    self.size += 1
+  }
+  new_value
 }
 
 ///|
