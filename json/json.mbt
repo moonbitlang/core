@@ -160,6 +160,145 @@ pub fn stringify(
 }
 
 ///|
+/// Convert a JsonValue to YAML string format
+pub fn to_yaml(self : JsonValue, indent~ : Int = 2) -> String {
+  let buf = StringBuilder::new(size_hint=0)
+  fn needs_quotes(s : String) -> Bool {
+    if s.is_empty() {
+      return true
+    }
+
+    // Check if string looks like a number, boolean, or null
+    match s {
+      "true" | "false" | "null" | "~" => true
+      _ => {
+        // Check if it starts with special characters
+        let first_char = s[0]
+        if first_char == '-' ||
+          first_char == ':' ||
+          first_char == '[' ||
+          first_char == '{' ||
+          first_char == '!' ||
+          first_char == '&' ||
+          first_char == '*' ||
+          first_char == '|' ||
+          first_char == '>' ||
+          first_char == '\'' ||
+          first_char == '"' ||
+          first_char == '#' ||
+          first_char == '@' ||
+          first_char == '`' {
+          return true
+        }
+
+        // Check if string contains special characters that need quoting
+        for c in s {
+          match c {
+            ':' | '#' | '\n' | '\r' | '\t' => return true
+            _ => continue
+          }
+        }
+
+        // Check if string could be parsed as a number
+        try {
+          let _ = @strconv.parse_double(s)
+          true
+        } catch {
+          _ => false
+        }
+      }
+    }
+  }
+
+  fn write_string_value(s : String) -> Unit {
+    if needs_quotes(s) {
+      // Use JSON-style escaping for quoted strings
+      buf.write_char('"')
+      buf.write_string(escape(s, escape_slash=false))
+      buf.write_char('"')
+    } else {
+      buf.write_string(s)
+    }
+  }
+
+  fn yaml_inner(
+    value : JsonValue,
+    level : Int,
+    is_array_element : Bool,
+  ) -> Unit {
+    let indent_str = " ".repeat(indent * level)
+    match value {
+      Object(members) => {
+        if members.is_empty() {
+          buf.write_string("{}")
+          return
+        }
+        let mut first = true
+        for k, v in members {
+          if not(is_array_element) || not(first) {
+            buf.write_string(indent_str)
+          }
+          if first {
+            first = false
+          }
+          write_string_value(k)
+          match v {
+            Object(_) | Array(_) => {
+              buf.write_string(":")
+              buf.write_char('\n')
+              yaml_inner(v, level + 1, false)
+            }
+            _ => {
+              buf.write_string(": ")
+              yaml_inner(v, level, false)
+              buf.write_char('\n')
+            }
+          }
+        }
+      }
+      Array(arr) => {
+        if arr.is_empty() {
+          buf.write_string("[]")
+          return
+        }
+        for i, v in arr {
+          if i > 0 || not(is_array_element) {
+            buf.write_string(indent_str)
+          }
+          buf.write_string("- ")
+          match v {
+            Object(_) | Array(_) => yaml_inner(v, level + 1, true)
+            _ => {
+              yaml_inner(v, level, false)
+              buf.write_char('\n')
+            }
+          }
+        }
+      }
+      String(s) => write_string_value(s)
+      Number(n, repr~) =>
+        match repr {
+          None => buf.write_object(n)
+          Some(r) => buf.write_string(r)
+        }
+      True => buf.write_string("true")
+      False => buf.write_string("false")
+      Null => buf.write_string("null")
+    }
+  }
+
+  yaml_inner(self, 0, false)
+
+  // Remove trailing newline if present
+  let result = buf.to_string()
+  if result.has_suffix("\n") {
+    result.substring(end=result.length() - 1)
+  } else {
+    result
+  }
+}
+
+///|
 fn escape(str : String, escape_slash~ : Bool) -> String {
   fn to_hex_digit(i : Int) -> Char {
     if i < 10 {

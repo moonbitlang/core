@@ -53,6 +53,7 @@ fn Json::as_object(Self) -> Map[String, Self]?
 fn Json::as_string(Self) -> String?
 fn Json::item(Self, Int) -> Self?
 fn Json::stringify(Self, escape_slash~ : Bool = .., indent~ : Int = ..) -> String
+fn Json::to_yaml(Self, indent~ : Int = ..) -> String
 fn Json::value(Self, String) -> Self?
 impl Show for Json
 impl ToJson for Json
