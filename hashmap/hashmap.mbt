@@ -396,7 +396,6 @@ pub fn[K : Hash + Eq, V] remove(self : T[K, V], key : K) -> Unit {
     match self.entries[idx] {
       Some(entry) => {
         if entry.hash == hash && entry.key == key {
-          self.entries[idx] = None
           self.shift_back(idx)
           self.size -= 1
           break
@@ -412,18 +411,14 @@ pub fn[K : Hash + Eq, V] remove(self : T[K, V], key : K) -> Unit {
 }
 
 ///|
-fn[K, V] shift_back(self : T[K, V], start_index : Int) -> Unit {
-  for prev = start_index, curr = (start_index + 1) & self.capacity_mask {
-    match self.entries[curr] {
-      Some({ psl, hash, key, value }) => {
-        if psl == 0 {
-          break
-        }
-        self.entries[prev] = Some({ psl: psl - 1, hash, key, value })
-        self.entries[curr] = None
-        continue curr, (curr + 1) & self.capacity_mask
-      }
-      None => break
+fn[K, V] shift_back(self : T[K, V], idx : Int) -> Unit {
+  let next = (idx + 1) & self.capacity_mask
+  match self.entries[next] {
+    None | Some({ psl: 0, .. }) => self.entries[idx] = None
+    Some(entry) => {
+      entry.psl -= 1
+      self.entries[idx] = Some(entry)
+      self.shift_back(next)
     }
   }
 }
