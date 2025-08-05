@@ -490,3 +490,29 @@ pub fn Char::utf16_len(self : Self) -> Int {
     2
   }
 }
+
+///| Returns true if this character is in the Basic Multilingual Plane (BMP).
+/// 
+/// The BMP (Basic Multilingual Plane) contains 65,536 code points (U+0000 to U+FFFF)
+/// distributed as follows:
+/// 
+/// - **~57,022 actual Unicode character positions** (87% of BMP)
+/// - **2,048 surrogate code points** (U+D800-U+DFFF) - reserved for UTF-16 encoding
+///   - High surrogates: U+D800-U+DBFF (1,024 code points)
+///   - Low surrogates: U+DC00-U+DFFF (1,024 code points)
+/// - **6,400 private use area** (U+E000-U+F8FF) - for custom characters
+/// - **66 permanent noncharacters** (including U+FFFE, U+FFFF, U+FDD0-U+FDEF)
+/// 
+/// Note: Surrogate code points are not actual characters but encoding mechanisms
+/// for representing characters outside the BMP in UTF-16.
+/// 
+/// Example:
+///
+/// ```moonbit
+/// inspect('A'.is_bmp(), content="true")
+/// inspect('🌟'.is_bmp(), content="false")
+/// ```
+/// 
+pub fn Char::is_bmp(self : Self) -> Bool {
+  self.to_int() <= 0xFFFF
+}
