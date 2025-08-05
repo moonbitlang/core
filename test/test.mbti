@@ -30,7 +30,7 @@ pub(all) struct T {
   buffer : StringBuilder
 }
 #deprecated
-fn T::bench(Self, () -> Unit, count~ : UInt = ..) -> Unit raise BenchError
+fn T::bench(Self, () -> Unit, count? : UInt) -> Unit raise BenchError
 fn T::snapshot(Self, filename~ : String, loc~ : SourceLoc = _, args_loc~ : ArgsLoc = _) -> Unit raise SnapshotError
 fn T::write(Self, &Show) -> Unit
 fn T::writeln(Self, &Show) -> Unit

@@ -11,7 +11,7 @@ fn[A] from_array(Array[A]) -> T[A]
 
 fn[A] from_iter(Iter[A]) -> T[A]
 
-fn[A] new(capacity~ : Int = ..) -> T[A]
+fn[A] new(capacity? : Int) -> T[A]
 
 fn[A] of(FixedArray[A]) -> T[A]
 

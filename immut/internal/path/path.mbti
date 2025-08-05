@@ -7,7 +7,7 @@ fn[A : Hash] of(A) -> Path
 // Errors
 
 // Types and methods
-pub(all) type Path UInt
+pub(all) struct Path(UInt)
 fn Path::idx(Self) -> Int
 fn Path::inner(Self) -> UInt
 fn Path::is_last(Self) -> Bool
