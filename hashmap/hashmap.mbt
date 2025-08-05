@@ -501,6 +501,52 @@ pub impl[K : @quickcheck.Arbitrary + Hash + Eq, V : @quickcheck.Arbitrary] @quic
 }
 
 ///|
+pub impl[K, V] Default for T[K, V] with default() {
+  new()
+}
+
+///|
+/// Applies a function to each key-value pair in the map and 
+/// returns a new map with the results, using the original keys.
+pub fn[K, V, V2] T::map(self : T[K, V], f : (K, V) -> V2) -> T[K, V2] {
+  let other = {
+    capacity: self.capacity,
+    entries: FixedArray::make(self.capacity, None),
+    size: self.size,
+    capacity_mask: self.capacity_mask,
+  }
+  if self.size == 0 {
+    return other
+  }
+  for i in 0..<self.capacity {
+    if self.entries[i] is Some({ key, value, hash, psl }) {
+      other.entries[i] = Some({ psl, key, value: f(key, value), hash })
+    }
+  }
+  other
+}
+
+///|
+/// Copy the map, creating a new map with the same key-value pairs.
+pub fn[K, V] T::copy(self : T[K, V]) -> T[K, V] {
+  let other = {
+    capacity: self.capacity,
+    entries: FixedArray::make(self.capacity, None),
+    size: self.size,
+    capacity_mask: self.capacity_mask,
+  }
+  if self.size == 0 {
+    return other
+  }
+  for i in 0..<self.capacity {
+    if self.entries[i] is Some({ key, value, hash, psl }) {
+      other.entries[i] = Some({ psl, key, value, hash })
+    }
+  }
+  other
+}
+
+///|
 priv struct MyString(String) derive(Eq)
 
 ///|
