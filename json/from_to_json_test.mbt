@@ -19,7 +19,7 @@ enum Expr {
   Mul(Expr, Expr)
   Div(Expr, Expr)
   Val(String)
-} derive(ToJson, FromJson, Show, Eq)
+} derive(ToJson(style="legacy"), FromJson(style="legacy"), Show, Eq)
 
 ///|
 test {

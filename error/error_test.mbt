@@ -149,7 +149,7 @@ test "protect2 & finally raise error" {
 }
 
 ///|
-suberror ErrWithToJson Int derive(ToJson)
+suberror ErrWithToJson Int derive(ToJson(style="legacy"))
 
 ///|
 suberror ErrWithoutToJson Int

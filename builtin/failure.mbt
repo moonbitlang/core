@@ -31,7 +31,7 @@
 ///     Failure(msg) => inspect(msg, content="Test assertion failed")
 ///   }
 /// ```
-pub(all) suberror Failure String derive(ToJson, Show)
+pub(all) suberror Failure String derive(ToJson(style="legacy"), Show)
 
 ///|
 /// Raises a `Failure` error with a given message and source location.
