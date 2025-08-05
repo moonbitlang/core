@@ -19,7 +19,7 @@ typealias @path.Path
 /// An non-empty immutable hash set data structure
 priv enum Node[K, V] {
   Flat(K, V, Path)
-  Leaf(K, V, @list.T[(K, V)]) // use a list of buckets to resolve collision
+  Leaf(K, V, @list.List[(K, V)]) // use a list of buckets to resolve collision
   /// number of all its leaf > 1. If equals 1, it should be represented as `Flat`
   Branch(@sparse_array.SparseArray[Node[K, V]])
 }

@@ -48,7 +48,7 @@ You can create an empty list or a list from an array.
 
 ```moonbit
 test {
-  let empty_list : @list.T[Int] = @list.new()
+  let empty_list : @list.List[Int] = @list.new()
   assert_true(empty_list.is_empty())
   let list = @list.of([1, 2, 3, 4, 5])
   assert_eq(list, @list.of([1, 2, 3, 4, 5]))
@@ -87,7 +87,7 @@ Determine if the list is empty.
 
 ```moonbit
 test {
-  let empty_list : @list.T[Int] = @list.new()
+  let empty_list : @list.List[Int] = @list.new()
   assert_eq(empty_list.is_empty(), true)
 }
 ```
@@ -262,7 +262,7 @@ test {
 When accessing elements that might not exist, use pattern matching for safety:
 
 ```moonbit
-fn safe_head(list : @list.T[Int]) -> Int {
+fn safe_head(list : @list.List[Int]) -> Int {
   match list.head() {
     Some(value) => value
     None => 0 // Default value
@@ -273,7 +273,7 @@ test {
   let list = @list.of([1, 2, 3])
   assert_eq(safe_head(list), 1)
 
-  let empty_list : @list.T[Int] = @list.new()
+  let empty_list : @list.List[Int] = @list.new()
   assert_eq(safe_head(empty_list), 0)
 }
 ```
