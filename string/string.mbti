@@ -3,7 +3,7 @@ package "moonbitlang/core/string"
 
 // Values
 #deprecated
-fn concat(Array[String], separator~ : String = ..) -> String
+fn concat(Array[String], separator? : String) -> String
 
 fn default() -> String
 
@@ -28,7 +28,7 @@ fn StringView::char_length_ge(Self, Int) -> Bool
 #deprecated
 fn StringView::charcode_at(Self, Int) -> Int
 #deprecated
-fn StringView::charcodes(Self, start~ : Int = .., end? : Int) -> Self
+fn StringView::charcodes(Self, start? : Int, end? : Int) -> Self
 fn StringView::contains(Self, Self) -> Bool
 fn StringView::contains_char(Self, Char) -> Bool
 fn StringView::data(Self) -> String
@@ -48,7 +48,7 @@ fn StringView::iter2(Self) -> Iter2[Int, Char]
 fn StringView::length(Self) -> Int
 fn StringView::make(Int, Char) -> Self
 fn StringView::offset_of_nth_char(Self, Int) -> Int?
-fn StringView::op_as_view(Self, start~ : Int = .., end? : Int) -> Self raise CreatingViewError
+fn StringView::op_as_view(Self, start? : Int, end? : Int) -> Self raise CreatingViewError
 fn StringView::op_get(Self, Int) -> Int
 fn StringView::pad_end(Self, Int, Char) -> String
 fn StringView::pad_start(Self, Int, Char) -> String
@@ -72,7 +72,7 @@ fn StringView::trim_end(Self, Self) -> Self
 fn StringView::trim_space(Self) -> Self
 fn StringView::trim_start(Self, Self) -> Self
 fn StringView::unsafe_charcode_at(Self, Int) -> Int
-fn StringView::view(Self, start_offset~ : Int = .., end_offset? : Int) -> Self
+fn StringView::view(Self, start_offset? : Int, end_offset? : Int) -> Self
 impl Add for StringView
 impl Compare for StringView
 impl Default for StringView
@@ -83,12 +83,12 @@ impl ToJson for StringView
 
 #deprecated
 fn String::char_at(String, Int) -> Char
-fn String::char_length_eq(String, Int, start_offset~ : Int = .., end_offset? : Int) -> Bool
-fn String::char_length_ge(String, Int, start_offset~ : Int = .., end_offset? : Int) -> Bool
+fn String::char_length_eq(String, Int, start_offset? : Int, end_offset? : Int) -> Bool
+fn String::char_length_ge(String, Int, start_offset? : Int, end_offset? : Int) -> Bool
 #deprecated
-fn String::charcodes(String, start~ : Int = .., end? : Int) -> StringView
+fn String::charcodes(String, start? : Int, end? : Int) -> StringView
 #deprecated
-fn String::concat(Array[String], separator~ : String = ..) -> String
+fn String::concat(Array[String], separator? : String) -> String
 fn String::contains(String, StringView) -> Bool
 fn String::contains_char(String, Char) -> Bool
 #deprecated
@@ -103,15 +103,15 @@ fn String::get_char(String, Int) -> Char?
 fn String::has_prefix(String, StringView) -> Bool
 fn String::has_suffix(String, StringView) -> Bool
 #deprecated
-fn String::index_of(String, String, from~ : Int = ..) -> Int
+fn String::index_of(String, String, from? : Int) -> Int
 fn String::is_blank(String) -> Bool
 fn String::is_empty(String) -> Bool
 fn String::iter(String) -> Iter[Char]
 fn String::iter2(String) -> Iter2[Int, Char]
 #deprecated
 fn String::last_index_of(String, String, from? : Int) -> Int
-fn String::offset_of_nth_char(String, Int, start_offset~ : Int = .., end_offset? : Int) -> Int?
-fn String::op_as_view(String, start~ : Int = .., end? : Int) -> StringView raise CreatingViewError
+fn String::offset_of_nth_char(String, Int, start_offset? : Int, end_offset? : Int) -> Int?
+fn String::op_as_view(String, start? : Int, end? : Int) -> StringView raise CreatingViewError
 fn String::pad_end(String, Int, Char) -> String
 fn String::pad_start(String, Int, Char) -> String
 fn String::repeat(String, Int) -> String
@@ -134,7 +134,7 @@ fn String::trim(String, StringView) -> StringView
 fn String::trim_end(String, StringView) -> StringView
 fn String::trim_space(String) -> StringView
 fn String::trim_start(String, StringView) -> StringView
-fn String::view(String, start_offset~ : Int = .., end_offset? : Int) -> StringView
+fn String::view(String, start_offset? : Int, end_offset? : Int) -> StringView
 impl Compare for String
 impl Default for String
 

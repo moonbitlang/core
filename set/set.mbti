@@ -22,7 +22,7 @@ fn[K : Hash + Eq] Set::insert(Self[K], K) -> Unit
 fn[K : Hash + Eq] Set::intersection(Self[K], Self[K]) -> Self[K]
 fn[K] Set::is_empty(Self[K]) -> Bool
 fn[K] Set::iter(Self[K]) -> Iter[K]
-fn[K] Set::new(capacity~ : Int = ..) -> Self[K]
+fn[K] Set::new(capacity? : Int) -> Self[K]
 fn[K : Hash + Eq] Set::of(FixedArray[K]) -> Self[K]
 fn[K : Hash + Eq] Set::remove(Self[K], K) -> Unit
 fn[K : Hash + Eq] Set::remove_and_check(Self[K], K) -> Bool

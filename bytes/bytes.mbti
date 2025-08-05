@@ -20,7 +20,7 @@ fn View::data(Self) -> Bytes
 fn View::get(Self, Int) -> Byte?
 fn View::iter(Self) -> Iter[Byte]
 fn View::length(Self) -> Int
-fn View::op_as_view(Self, start~ : Int = .., end? : Int) -> Self
+fn View::op_as_view(Self, start? : Int, end? : Int) -> Self
 fn View::op_get(Self, Int) -> Byte
 fn View::start_offset(Self) -> Int
 fn View::to_bytes(Self) -> Bytes
@@ -48,7 +48,7 @@ fn Bytes::get(Bytes, Int) -> Byte?
 fn Bytes::iter(Bytes) -> Iter[Byte]
 fn Bytes::iter2(Bytes) -> Iter2[Int, Byte]
 fn Bytes::of(FixedArray[Byte]) -> Bytes
-fn Bytes::op_as_view(Bytes, start~ : Int = .., end? : Int) -> View
+fn Bytes::op_as_view(Bytes, start? : Int, end? : Int) -> View
 fn Bytes::to_array(Bytes) -> Array[Byte]
 fn Bytes::to_fixedarray(Bytes, len? : Int) -> FixedArray[Byte]
 impl Add for Bytes

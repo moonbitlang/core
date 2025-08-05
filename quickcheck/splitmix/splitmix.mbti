@@ -2,7 +2,7 @@
 package "moonbitlang/core/quickcheck/splitmix"
 
 // Values
-fn new(seed~ : UInt64 = ..) -> RandomState
+fn new(seed? : UInt64) -> RandomState
 
 // Errors
 
@@ -10,7 +10,7 @@ fn new(seed~ : UInt64 = ..) -> RandomState
 type RandomState
 fn RandomState::clone(Self) -> Self
 #deprecated
-fn RandomState::new(seed~ : UInt64 = ..) -> Self
+fn RandomState::new(seed? : UInt64) -> Self
 fn RandomState::next(Self) -> Unit
 fn RandomState::next_double(Self) -> Double
 fn RandomState::next_float(Self) -> Float

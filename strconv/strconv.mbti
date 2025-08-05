@@ -15,13 +15,13 @@ fn parse_decimal(@string.StringView) -> Decimal raise StrConvError
 
 fn parse_double(@string.StringView) -> Double raise StrConvError
 
-fn parse_int(@string.StringView, base~ : Int = ..) -> Int raise StrConvError
+fn parse_int(@string.StringView, base? : Int) -> Int raise StrConvError
 
-fn parse_int64(@string.StringView, base~ : Int = ..) -> Int64 raise StrConvError
+fn parse_int64(@string.StringView, base? : Int) -> Int64 raise StrConvError
 
-fn parse_uint(@string.StringView, base~ : Int = ..) -> UInt raise StrConvError
+fn parse_uint(@string.StringView, base? : Int) -> UInt raise StrConvError
 
-fn parse_uint64(@string.StringView, base~ : Int = ..) -> UInt64 raise StrConvError
+fn parse_uint64(@string.StringView, base? : Int) -> UInt64 raise StrConvError
 
 // Errors
 pub(all) suberror StrConvError String

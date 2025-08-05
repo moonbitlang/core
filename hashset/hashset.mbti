@@ -10,7 +10,7 @@ fn[K : Hash + Eq] from_array(Array[K]) -> T[K]
 
 fn[K : Hash + Eq] from_iter(Iter[K]) -> T[K]
 
-fn[K] new(capacity~ : Int = ..) -> T[K]
+fn[K] new(capacity? : Int) -> T[K]
 
 fn[K : Hash + Eq] of(FixedArray[K]) -> T[K]
 
