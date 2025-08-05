@@ -73,7 +73,25 @@ pub fn[K : Hash + Eq, V] Map::from_array(arr : Array[(K, V)]) -> Map[K, V] {
 }
 
 ///|
-/// Set a key-value pair into the hash map.
+/// Sets a key-value pair into the hash map. If the key already exists, updates
+/// its value. If the hash map is near full capacity, automatically
+/// grows the internal storage to accommodate more entries.
+///
+/// Parameters:
+///
+/// * `map` : The hash map to modify.
+/// * `key` : The key to insert or update. Must implement `Hash` and `Eq` traits.
+/// * `value` : The value to associate with the key.
+///
+/// Example:
+///
+/// ```moonbit
+///   let map : Map[String, Int] = Map::new()
+///   map.set("key", 42)
+///   inspect(map.get("key"), content="Some(42)")
+///   map.set("key", 24) // update existing key
+///   inspect(map.get("key"), content="Some(24)")
+/// ```
 pub fn[K : Hash + Eq, V] Map::set(self : Map[K, V], key : K, value : V) -> Unit {
   self.set_with_hash(key, value, key.hash())
 }
@@ -149,6 +167,25 @@ fn[K, V] Map::set_entry(
 }
 
 ///|
+/// Sets the value associated with a key in the hash map. If the key already
+/// exists, updates its value; otherwise, adds a new key-value pair. This
+/// function is automatically called when using the index assignment syntax
+/// `map[key] = value`.
+///
+/// Parameters:
+///
+/// * `map` : The hash map to modify.
+/// * `key` : The key to associate with the value. Must implement `Hash` and `Eq`
+/// traits.
+/// * `value` : The value to associate with the key.
+///
+/// Example:
+///
+/// ```moonbit
+///   let map : Map[String, Int] = Map::new()
+///   map["key"] = 42
+///   inspect(map.get("key"), content="Some(42)")
+/// ```
 pub fn[K : Hash + Eq, V] Map::op_set(
   self : Map[K, V],
   key : K,
@@ -158,7 +195,22 @@ pub fn[K : Hash + Eq, V] Map::op_set(
 }
 
 ///|
-/// Get the value associated with a key.
+/// Retrieves the value associated with a given key in the hash map.
+///
+/// Parameters:
+///
+/// * `self` : The hash map to search in.
+/// * `key` : The key to look up in the map.
+///
+/// Returns `Some(value)` if the key exists in the map, `None` otherwise.
+///
+/// Example:
+///
+/// ```moonbit
+///   let map = { "key": 42 }
+///   inspect(map.get("key"), content="Some(42)")
+///   inspect(map.get("nonexistent"), content="None")
+/// ```
 pub fn[K : Hash + Eq, V] Map::get(self : Map[K, V], key : K) -> V? {
   let hash = key.hash()
   for i = 0, idx = hash & self.capacity_mask {
@@ -325,7 +377,24 @@ pub fn[K : Hash + Eq, V : Eq] Map::contains_kv(
 }
 
 ///|
-/// Remove a key-value pair from hash map.
+/// Removes the entry for the specified key from the hash map. If the key exists
+/// in the map, removes its entry and adjusts the probe sequence length (PSL) of
+/// subsequent entries to maintain the Robin Hood hashing invariant. If the key
+/// does not exist, the map remains unchanged.
+///
+/// Parameters:
+///
+/// * `self` : The hash map to remove the entry from.
+/// * `key` : The key to remove from the map.
+///
+/// Example:
+///
+/// ```moonbit
+///   let map = { "a": 1, "b": 2 }
+///   map.remove("a")
+///   inspect(map.get("a"), content="None")
+///   inspect(map.size(), content="1")
+/// ```
 pub fn[K : Hash + Eq, V] Map::remove(self : Map[K, V], key : K) -> Unit {
   let hash = key.hash()
   for i = 0, idx = hash & self.capacity_mask {

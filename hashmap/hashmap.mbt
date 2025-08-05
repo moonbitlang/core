@@ -332,6 +332,27 @@ pub fn[K : Hash + Eq, V] contains(self : T[K, V], key : K) -> Bool {
 }
 
 ///|
+/// Checks if a map contains a specific key-value pair.
+///
+/// Parameters:
+///
+/// * `map` : A map of type `@hashmap.T[K, V]` to search in.
+/// * `key` : The key to look up in the map.
+/// * `value` : The value to be compared with the value associated with the key.
+///
+/// Returns `true` if the map contains the specified key and its associated value
+/// equals the given value, `false` otherwise.
+///
+/// Example:
+///
+/// ```moonbit
+/// 
+///   let map = @hashmap.new()
+///   map..set("a", 1)..set("b", 2)
+///   inspect(map.contains_kv("a", 1), content="true")
+///   inspect(map.contains_kv("a", 2), content="false")
+///   inspect(map.contains_kv("c", 3), content="false")
+/// ```
 pub fn[K : Hash + Eq, V : Eq] contains_kv(
   self : T[K, V],
   key : K,
