@@ -982,3 +982,25 @@ test "StringView add" {
   let view8 = str[5:]
   inspect(view7 + view8, content="Hello🤣World")
 }
+
+///|
+// Added test to ensure View::op_get abort is covered
+// Accessing an index beyond the view length should panic
+// and cover the "Index out of bounds" branch in View::op_get.
+test "panic view op_get out of bounds" {
+  let str = "Hello"
+  let view = str.view(start_offset=0, end_offset=5)
+  view[5] |> ignore
+}
+
+///|
+// Added test to cover start index pointing to trailing surrogate
+// in View::op_as_view. Using a view that begins partway through a string
+// and attempting to create a subview starting on the trailing surrogate
+// of an emoji should raise `InvalidIndex`.
+test "View::op_as_view start on trailing surrogate" {
+  let base = "Hello🤣😭😂World"
+  let view = base[1:-1] // "ello🤣😭😂Worl"
+  let result = try? view[5:]
+  inspect(result, content="Err(InvalidIndex)")
+}
