@@ -35,7 +35,7 @@ pub fn[A] new() -> T[A] {
 ///|
 /// Lookup a value from the hash set
 pub fn[A : Eq + Hash] contains(self : T[A], key : A) -> Bool {
-  self.inner() is Some(node) && node.contains(key, @path.of(key))
+  self.0 is Some(node) && node.contains(key, @path.of(key))
 }
 
 ///|
@@ -109,7 +109,7 @@ fn[A : Eq] add_with_path(self : Node[A], key : A, path : Path) -> Node[A] {
 ///|
 /// Add a key to the hashset.
 pub fn[A : Eq + Hash] add(self : T[A], key : A) -> T[A] {
-  match self.inner() {
+  match self.0 {
     None => Some(Flat(key, @path.of(key)))
     Some(node) => Some(node.add_with_path(key, @path.of(key)))
   }
@@ -118,7 +118,7 @@ pub fn[A : Eq + Hash] add(self : T[A], key : A) -> T[A] {
 ///|
 /// Remove an element from a set
 pub fn[A : Eq + Hash] remove(self : T[A], key : A) -> T[A] {
-  match self.inner() {
+  match self.0 {
     None => None
     Some(node) => node.remove_with_path(key, @path.of(key))
   }
@@ -184,7 +184,7 @@ pub fn[A] size(self : T[A]) -> Int {
     }
   }
 
-  match self.inner() {
+  match self.0 {
     None => 0
     Some(node) => node_size(node)
   }
@@ -211,7 +211,7 @@ pub fn[K : Eq] T::union(self : T[K], other : T[K]) -> T[K] {
     }
   }
 
-  match (self.inner(), other.inner()) {
+  match (self.0, other.0) {
     (None, x) | (x, None) => x
     (Some(a), Some(b)) => Some(go(a, b))
   }
@@ -247,7 +247,7 @@ pub fn[K : Eq] T::intersection(self : T[K], other : T[K]) -> T[K] {
     }
   }
 
-  match (self.inner(), other.inner()) {
+  match (self.0, other.0) {
     (None, _) | (_, None) => None
     (Some(a), Some(b)) => go(a, b)
   }
@@ -284,7 +284,7 @@ pub fn[K : Eq] T::difference(self : T[K], other : T[K]) -> T[K] {
     }
   }
 
-  match (self.inner(), other.inner()) {
+  match (self.0, other.0) {
     (None, _) => None
     (_, None) => self
     (Some(a), Some(b)) => go(a, b)
@@ -294,7 +294,7 @@ pub fn[K : Eq] T::difference(self : T[K], other : T[K]) -> T[K] {
 ///|
 /// Returns true if the hash set is empty.
 pub fn[A] is_empty(self : T[A]) -> Bool {
-  self.inner() is None
+  self.0 is None
 }
 
 ///|
@@ -311,7 +311,7 @@ pub fn[A] each(self : T[A], f : (A) -> Unit raise?) -> Unit raise? {
     }
   }
 
-  match self.inner() {
+  match self.0 {
     None => ()
     Some(node) => go(node)
   }
@@ -328,7 +328,7 @@ pub fn[A] iter(self : T[A]) -> Iter[A] {
     }
   }
 
-  match self.inner() {
+  match self.0 {
     None => Iter::empty()
     Some(node) => go(node)
   }

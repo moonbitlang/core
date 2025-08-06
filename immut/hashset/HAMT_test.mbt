@@ -256,17 +256,17 @@ impl Hash for MyString with hash_combine(_self, hasher) {
 
 ///|
 impl Eq for MyString with op_equal(self, other) {
-  self.inner() == other.inner()
+  self.0 == other.0
 }
 
 ///|
 impl Show for MyString with to_string(self) {
-  self.inner()
+  self.0
 }
 
 ///|
 impl Show for MyString with output(self, logger) {
-  logger.write_string(self.inner())
+  logger.write_string(self.0)
 }
 
 ///|

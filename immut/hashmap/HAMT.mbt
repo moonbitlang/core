@@ -55,7 +55,7 @@ pub fn[K : Eq + Hash, V] find(self : T[K, V], key : K) -> V? {
 ///|
 /// Lookup a key from a hash map
 pub fn[K : Eq + Hash, V] get(self : T[K, V], key : K) -> V? {
-  match self.inner() {
+  match self.0 {
     None => None
     Some(node) => node.get_with_path(key, @path.of(key))
   }
@@ -193,7 +193,7 @@ pub fn[K, V] filter(
     }
   }
 
-  match self.inner() {
+  match self.0 {
     None => None
     Some(node) => go(node)
   }
@@ -228,7 +228,7 @@ pub fn[K, V, A] fold_with_key(
     }
   }
 
-  match self.inner() {
+  match self.0 {
     None => init
     Some(node) => go(init, node)
   }
@@ -255,7 +255,7 @@ pub fn[K, V, A] map_with_key(
     }
   }
 
-  match self.inner() {
+  match self.0 {
     None => None
     Some(node) => Some(go(node))
   }
@@ -266,7 +266,7 @@ pub fn[K, V, A] map_with_key(
 ///
 /// If a pair with the same key already exists, the old one is replaced
 pub fn[K : Eq + Hash, V] add(self : T[K, V], key : K, value : V) -> T[K, V] {
-  match self.inner() {
+  match self.0 {
     None => Some(Flat(key, value, @path.of(key)))
     Some(node) => Some(node.add_with_path(key, value, @path.of(key)))
   }
@@ -275,7 +275,7 @@ pub fn[K : Eq + Hash, V] add(self : T[K, V], key : K, value : V) -> T[K, V] {
 ///|
 /// Remove an element from a map
 pub fn[K : Eq + Hash, V] remove(self : T[K, V], key : K) -> T[K, V] {
-  match self.inner() {
+  match self.0 {
     None => None
     Some(node) => node.remove_with_path(key, @path.of(key))
   }
@@ -351,7 +351,7 @@ pub fn[K, V] size(self : T[K, V]) -> Int {
     }
   }
 
-  match self.inner() {
+  match self.0 {
     None => 0
     Some(node) => node_size(node)
   }
@@ -382,7 +382,7 @@ pub fn[K : Eq, V] T::union(self : T[K, V], other : T[K, V]) -> T[K, V] {
     }
   }
 
-  match (self.inner(), other.inner()) {
+  match (self.0, other.0) {
     (None, x) | (x, None) => x
     (Some(a), Some(b)) => Some(go(a, b))
   }
@@ -422,7 +422,7 @@ pub fn[K : Eq, V] T::union_with(
     }
   }
 
-  match (self.inner(), other.inner()) {
+  match (self.0, other.0) {
     (None, x) | (x, None) => x
     (Some(a), Some(b)) => Some(go(a, b))
   }
@@ -483,7 +483,7 @@ pub fn[K : Eq, V] T::intersection(self : T[K, V], other : T[K, V]) -> T[K, V] {
     }
   }
 
-  match (self.inner(), other.inner()) {
+  match (self.0, other.0) {
     (None, _) | (_, None) => None
     (Some(a), Some(b)) => go(a, b)
   }
@@ -524,7 +524,7 @@ pub fn[K : Eq, V] T::intersection_with(
     }
   }
 
-  match (self.inner(), other.inner()) {
+  match (self.0, other.0) {
     (None, _) | (_, None) => None
     (Some(a), Some(b)) => go(a, b)
   }
@@ -581,7 +581,7 @@ pub fn[K : Eq, V] T::difference(self : T[K, V], other : T[K, V]) -> T[K, V] {
     }
   }
 
-  match (self.inner(), other.inner()) {
+  match (self.0, other.0) {
     (None, _) => None
     (_, None) => self
     (Some(a), Some(b)) => go(a, b)
@@ -602,7 +602,7 @@ pub fn[K, V] each(self : T[K, V], f : (K, V) -> Unit raise?) -> Unit raise? {
     }
   }
 
-  match self.inner() {
+  match self.0 {
     None => ()
     Some(node) => go(node)
   }
@@ -638,7 +638,7 @@ pub fn[K, V] iter(self : T[K, V]) -> Iter[(K, V)] {
     }
   }
 
-  match self.inner() {
+  match self.0 {
     None => Iter::empty()
     Some(node) => go(node)
   }

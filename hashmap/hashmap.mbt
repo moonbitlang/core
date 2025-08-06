@@ -492,13 +492,13 @@ impl Hash for MyString with hash(self) {
 ///|
 #coverage.skip
 impl Hash for MyString with hash_combine(self, hasher) {
-  hasher.combine_string(self.inner())
+  hasher.combine_string(self.0)
 }
 
 ///|
 #coverage.skip
 impl Show for MyString with output(self, logger) {
-  logger.write_string(self.inner())
+  logger.write_string(self.0)
 }
 
 ///|
