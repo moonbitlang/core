@@ -88,7 +88,7 @@ pub fn[T] Array::make(len : Int, elem : T) -> Array[T] {
 /// NOTE: The capacity of an array may not be consistent across different backends
 /// and/or different versions of the MoonBit compiler/core.
 pub fn[T] Array::capacity(self : Array[T]) -> Int {
-  self.buffer().inner().length()
+  self.buffer().0.length()
 }
 
 ///|

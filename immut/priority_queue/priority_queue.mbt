@@ -91,12 +91,12 @@ fn path(size : Int) -> Path {
 
 ///|
 fn is_left(self : Path) -> Bool {
-  (self.inner() & 1) == 0
+  (self.0 & 1) == 0
 }
 
 ///|
 fn next(self : Path) -> Path {
-  Path(self.inner() >> 1)
+  Path(self.0 >> 1)
 }
 
 ///|
