@@ -231,7 +231,8 @@ pub fn[K : Hash + Eq, V] get_or_init(
   init : () -> V,
 ) -> V {
   let hash = key.hash()
-  let (idx, psl, new_value) = for psl = 0, idx = hash & self.capacity_mask {
+  let (idx, psl, new_value, push_away) = for psl = 0, idx = hash &
+                                               self.capacity_mask {
     match self.entries[idx] {
       Some(entry) => {
         if entry.hash == hash && entry.key == key {
@@ -239,14 +240,13 @@ pub fn[K : Hash + Eq, V] get_or_init(
         }
         if psl > entry.psl {
           let new_value = init()
-          self.push_away(idx, entry)
-          break (idx, psl, new_value)
+          break (idx, psl, new_value, Some(entry))
         }
         continue psl + 1, (idx + 1) & self.capacity_mask
       }
       None => {
         let new_value = init()
-        break (idx, psl, new_value)
+        break (idx, psl, new_value, None)
       }
     }
   }
@@ -255,6 +255,9 @@ pub fn[K : Hash + Eq, V] get_or_init(
     self.grow()
     self.set_with_hash(key, new_value, hash)
   } else {
+    if push_away is Some(entry) {
+      self.push_away(idx, entry)
+    }
     let entry = { psl, hash, key, value: new_value }
     self.entries[idx] = Some(entry)
     self.size += 1

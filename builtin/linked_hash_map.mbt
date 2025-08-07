@@ -282,7 +282,8 @@ pub fn[K : Hash + Eq, V] Map::get_or_init(
   default : () -> V,
 ) -> V {
   let hash = key.hash()
-  let (idx, psl, new_value) = for psl = 0, idx = hash & self.capacity_mask {
+  let (idx, psl, new_value, push_away) = for psl = 0, idx = hash &
+                                               self.capacity_mask {
     match self.entries[idx] {
       Some(entry) => {
         if entry.hash == hash && entry.key == key {
@@ -291,13 +292,13 @@ pub fn[K : Hash + Eq, V] Map::get_or_init(
         if psl > entry.psl {
           let new_value = default()
           self.push_away(idx, entry)
-          break (idx, psl, new_value)
+          break (idx, psl, new_value, Some(entry))
         }
         continue psl + 1, (idx + 1) & self.capacity_mask
       }
       None => {
         let new_value = default()
-        break (idx, psl, new_value)
+        break (idx, psl, new_value, None)
       }
     }
   }
@@ -306,6 +307,9 @@ pub fn[K : Hash + Eq, V] Map::get_or_init(
     self.grow()
     self.set_with_hash(key, new_value, hash)
   } else {
+    if push_away is Some(entry) {
+      self.push_away(idx, entry)
+    }
     let entry = {
       prev: self.tail,
       next: None,
@@ -777,7 +781,8 @@ pub fn[K : Hash + Eq, V] Map::update(
   f : (V?) -> V?,
 ) -> Unit {
   let hash = key.hash()
-  let (idx, psl, new_value) = for psl = 0, idx = hash & self.capacity_mask {
+  let (idx, psl, new_value, push_away) = for psl = 0, idx = hash &
+                                               self.capacity_mask {
     match self.entries[idx] {
       Some(entry) => {
         if entry.hash == hash && entry.key == key {
@@ -794,14 +799,13 @@ pub fn[K : Hash + Eq, V] Map::update(
         }
         if psl > entry.psl {
           guard f(None) is Some(new_value) else { return }
-          self.push_away(idx, entry)
-          break (idx, psl, new_value)
+          break (idx, psl, new_value, Some(entry))
         }
         continue psl + 1, (idx + 1) & self.capacity_mask
       }
       None => {
         guard f(None) is Some(new_value) else { return }
-        break (idx, psl, new_value)
+        break (idx, psl, new_value, None)
       }
     }
   }
@@ -810,6 +814,9 @@ pub fn[K : Hash + Eq, V] Map::update(
     self.grow()
     self.set(key, new_value)
   } else {
+    if push_away is Some(entry) {
+      self.push_away(idx, entry)
+    }
     let entry = {
       prev: self.tail,
       next: None,
