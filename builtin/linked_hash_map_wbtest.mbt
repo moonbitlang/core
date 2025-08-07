@@ -89,16 +89,16 @@ test "get_or_init" {
   m.get_or_init("a", () => Array::new()).push(3)
   assert_eq(m.get("a"), Some([1, 3]))
   assert_eq(m.get("b"), Some([2]))
+  assert_eq(m.size(), 2)
 }
 
 ///|
-test "get_or_init" {
-  let m : Map[String, Array[Int]] = Map::new()
-  m.get_or_init("a", () => Array::new()).push(1)
-  m.get_or_init("b", () => Array::new()).push(2)
-  m.get_or_init("a", () => Array::new()).push(3)
-  assert_eq(m.get("a"), Some([1, 3]))
-  assert_eq(m.get("b"), Some([2]))
+test "get_or_init full" {
+  let m = Map::new(capacity=2)
+  m.get_or_init("a", () => 0) |> ignore
+  m.get_or_init("b", () => 0) |> ignore
+  m.get_or_init("c", () => 0) |> ignore
+  assert_eq(m.size(), 3)
 }
 
 ///|
