@@ -1,0 +1,26 @@
+fn[K : Hash + Eq] T::add(Self[K], K) -> Unit
+fn[K] T::capacity(Self[K]) -> Int
+fn[K] T::clear(Self[K]) -> Unit
+fn[K : Hash + Eq] T::contains(Self[K], K) -> Bool
+fn[K : Hash + Eq] T::difference(Self[K], Self[K]) -> Self[K]
+fn[K] T::each(Self[K], (K) -> Unit) -> Unit
+fn[K] T::eachi(Self[K], (Int, K) -> Unit) -> Unit
+#deprecated
+fn[K : Hash + Eq] T::insert(Self[K], K) -> Unit 
+fn[K : Hash + Eq] T::intersection(Self[K], Self[K]) -> Self[K]
+fn[K : Hash + Eq] T::is_disjoint(Self[K], Self[K]) -> Bool
+fn[K] T::is_empty(Self[K]) -> Bool
+fn[K : Hash + Eq] T::is_subset(Self[K], Self[K]) -> Bool
+fn[K : Hash + Eq] T::is_superset(Self[K], Self[K]) -> Bool
+fn[K] T::iter(Self[K]) -> Iter[K]
+fn[K : Hash + Eq] T::remove(Self[K], K) -> Unit
+fn[K] T::size(Self[K]) -> Int
+fn[K : Hash + Eq] T::symmetric_difference(Self[K], Self[K]) -> Self[K]
+fn[K] T::to_array(Self[K]) -> Array[K]
+fn[K : Hash + Eq] T::union(Self[K], Self[K]) -> Self[K]
+impl[K : Hash + Eq] BitAnd for T[K]
+impl[K : Hash + Eq] BitOr for T[K]
+impl[K : Hash + Eq] BitXOr for T[K]
+impl[K : Show] Show for T[K]
+impl[K : Hash + Eq] Sub for T[K]
+impl[X : @quickcheck.Arbitrary + Eq + Hash] @quickcheck.Arbitrary for T[X]

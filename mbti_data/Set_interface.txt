@@ -1,0 +1,1 @@
+Error: UnexpectedToken(LET, ({fname: "./math/math.mbti", lnum: 89, bol: 1325, cnum: 1325}, {fname: "./math/math.mbti", lnum: 89, bol: 1325, cnum: 1328}), [ATTRIBUTE, "fn"])
