@@ -11,6 +11,8 @@ fn from_array(Array[Char]) -> String
 
 fn from_iter(Iter[Char]) -> String
 
+fn[T : ToStringView] to_stringview(T) -> StringView
+
 // Errors
 pub suberror CreatingViewError {
   IndexOutOfBounds
@@ -80,6 +82,7 @@ impl Eq for StringView
 impl Hash for StringView
 impl Show for StringView
 impl ToJson for StringView
+impl ToStringView for StringView
 
 #deprecated
 fn String::char_at(String, Int) -> Char
@@ -140,4 +143,6 @@ impl Default for String
 pub typealias StringView as View
 
 // Traits
+trait ToStringView
+impl ToStringView for String
 
