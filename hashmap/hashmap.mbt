@@ -96,29 +96,13 @@ fn[K : Eq, V] set_with_hash(
   if self.size >= self.capacity / 2 {
     self.grow()
   }
-  for idx = hash & self.capacity_mask, entry = { psl: 0, hash, key, value } {
-    match self.entries[idx] {
-      None => {
-        self.entries[idx] = Some(entry)
-        self.size += 1
-        break
-      }
-      Some(curr_entry) => {
-        if curr_entry.hash == entry.hash && curr_entry.key == entry.key {
-          curr_entry.value = entry.value
-          break
-        }
-        let curr_entry = if entry.psl > curr_entry.psl {
-          self.entries[idx] = Some(entry)
-          curr_entry
-        } else {
-          entry
-        }
-        curr_entry.psl += 1
-        continue (idx + 1) & self.capacity_mask, curr_entry
-      }
-    }
-  }
+  self.0.insert_with_hash(
+    hash,
+    hash & self.0.capacity_mask,
+    entry => entry.key == key,
+    entry => entry.value = value,
+    psl => { psl, hash, key, value },
+  )
 }
 
 ///|

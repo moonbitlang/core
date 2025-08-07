@@ -47,34 +47,13 @@ pub fn[K : Hash + Eq] add(self : T[K], key : K) -> Unit {
     self.grow()
   }
   let hash = key.hash()
-  let entry = { psl: 0, hash, key }
-  loop (0, self.index(hash), entry) {
-    (i, idx, entry) => {
-      if i == self.capacity {
-        panic()
-      }
-      match self.entries[idx] {
-        None => {
-          self.entries[idx] = Some(entry)
-          self.size += 1
-          break
-        }
-        Some(curr_entry) => {
-          if curr_entry.hash == entry.hash && curr_entry.key == entry.key {
-            self.entries[idx] = Some(entry)
-            break
-          }
-          if entry.psl > curr_entry.psl {
-            self.entries[idx] = Some(entry)
-            curr_entry.psl += 1
-            continue (i + 1, self.next_index(idx), curr_entry)
-          }
-          entry.psl += 1
-          continue (i + 1, self.next_index(idx), entry)
-        }
-      }
-    }
-  }
+  self.0.insert_with_hash(
+    hash,
+    abs(hash) & self.0.capacity_mask,
+    entry => entry.key == key,
+    ignore,
+    psl => { psl, hash, key },
+  )
 }
 
 ///|
@@ -269,22 +248,12 @@ fn[K : Hash + Eq] grow(self : T[K]) -> Unit {
 }
 
 ///|
-fn[K] index(self : T[K], hash : Int) -> Int {
-  abs(hash) & (self.capacity - 1)
-}
-
-///|
 fn abs(n : Int) -> Int {
   if n < 0 {
     -n
   } else {
     n
   }
-}
-
-///|
-fn[K] next_index(self : T[K], index : Int) -> Int {
-  (index + 1) & self.capacity_mask
 }
 
 ///|

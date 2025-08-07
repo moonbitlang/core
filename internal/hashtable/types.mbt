@@ -39,6 +39,68 @@ pub(open) trait HashEntry {
 }
 
 ///|
+#inline
+#locals(is_)
+pub fn[K : HashEntry] HashTable::insert_with_hash(
+  table : Self[K],
+  hash : Int,
+  start_index : Int,
+  is_ : (K) -> Bool,
+  compute_if_present : (K) -> Unit,
+  create_if_absent : (Int) -> K,
+) -> Unit {
+  for psl = 0, idx = start_index {
+    match table.entries[idx] {
+      None => {
+        table.entries[idx] = Some(create_if_absent(psl))
+        table.size += 1
+        return
+      }
+      Some(curr_entry) => {
+        if curr_entry.hash() == hash && is_(curr_entry) {
+          compute_if_present(curr_entry)
+          return
+        }
+        if psl > curr_entry.psl() {
+          table.push_away(idx, curr_entry)
+          table.entries[idx] = Some(create_if_absent(psl))
+          table.size += 1
+          return
+        }
+        continue psl + 1, (idx + 1) & table.capacity_mask
+      }
+    }
+  }
+}
+
+///|
+fn[K : HashEntry] HashTable::push_away(
+  table : HashTable[K],
+  idx : Int,
+  entry : K,
+) -> Unit {
+  for psl = entry.psl() + 1, idx = (idx + 1) & table.capacity_mask, entry = entry {
+    match table.entries[idx] {
+      None => {
+        entry.set_psl(psl)
+        table.entries[idx] = Some(entry)
+        break
+      }
+      Some(curr_entry) =>
+        if psl > curr_entry.psl() {
+          entry.set_psl(psl)
+          table.entries[idx] = Some(entry)
+          continue curr_entry.psl() + 1,
+            (idx + 1) & table.capacity_mask,
+            curr_entry
+        } else {
+          continue psl + 1, (idx + 1) & table.capacity_mask, entry
+        }
+    }
+  }
+}
+
+///|
 #locals(is_)
 #inline
 pub fn[K : HashEntry] HashTable::remove(
