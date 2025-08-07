@@ -610,10 +610,7 @@ test "to_json/from_json" {
       },
     )
   @json.inspect(v, content={
-    "Err": {
-      "$tag": "JsonDecodeError",
-      "0": ["$", "@list.from_json: expected array"],
-    },
+    "Err": ["JsonDecodeError", ["$", "@list.from_json: expected array"]],
   })
   let v2 : @list.List[Int] = @list.from_json([1, 2, 3, 4])
   @json.inspect(v2, content=[1, 2, 3, 4])
