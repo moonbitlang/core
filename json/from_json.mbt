@@ -16,7 +16,7 @@
 pub(all) suberror JsonDecodeError (JsonPath, String) derive (
   Eq,
   Show,
-  ToJson(style="legacy"),
+  ToJson(style="flat"),
 )
 
 ///|
