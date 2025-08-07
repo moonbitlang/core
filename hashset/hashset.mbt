@@ -22,6 +22,7 @@ pub fn[K] new(capacity~ : Int = default_init_capacity) -> T[K] {
   {
     size: 0,
     capacity,
+    capacity_mask: -1,
     grow_at: calc_grow_threshold(capacity),
     entries: FixedArray::make(capacity, None),
   }

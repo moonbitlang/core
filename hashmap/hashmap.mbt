@@ -39,6 +39,7 @@ pub fn[K, V] new(capacity~ : Int = 8) -> T[K, V] {
     capacity,
     entries: FixedArray::make(capacity, None),
     capacity_mask: capacity - 1,
+    grow_at: -1,
   }
 }
 
@@ -565,7 +566,9 @@ test "remove_unexist_key" {
 
 ///|
 test "clear" {
-  let m : T[MyString, Int] = of([("a", 1), ("b", 2), ("c", 3)])
+  let m : T[MyString, Int] = of(
+    ([("a", 1), ("b", 2), ("c", 3)] : FixedArray[(MyString, Int)]),
+  )
   m.clear()
   inspect(m.size(), content="0")
   inspect(m.capacity(), content="8")

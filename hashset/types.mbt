@@ -35,9 +35,4 @@ priv struct Entry[K] {
 ///   set.add((4, "four"))
 ///   assert_eq(set.contains((4, "four")), true)
 /// ```
-struct T[K] {
-  mut entries : FixedArray[Entry[K]?]
-  mut size : Int // active key count
-  mut capacity : Int // current capacity
-  mut grow_at : Int // threshold that triggers grow
-}
+struct T[K](@hashtable.HashTable[Entry[K]])

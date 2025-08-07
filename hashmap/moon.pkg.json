@@ -5,7 +5,8 @@
     "moonbitlang/core/array",
     "moonbitlang/core/tuple",
     "moonbitlang/core/quickcheck",
-    "moonbitlang/core/int"
+    "moonbitlang/core/int",
+    "moonbitlang/core/internal/hashtable"
   ],
   "test-import": ["moonbitlang/core/string", "moonbitlang/core/json"]
 }

@@ -38,15 +38,7 @@ priv struct Entry[K, V] {
 ///   map.set(3, "updated")
 ///   assert_eq(map.get(3), Some("updated"))
 /// ```
-struct T[K, V] {
-  mut entries : FixedArray[Entry[K, V]?]
-  mut capacity : Int
-  mut capacity_mask : Int // capacity_mask = capacity - 1, used to find idx
-  // size of field `entries`, it is redundant but useful for performance
-  // so we don't need do `self.entries.length()` every time
-  mut size : Int // active key-value pairs count
-  // mut grow_at : Int // threshold that triggers grow
-}
+struct T[K, V](@hashtable.HashTable[Entry[K, V]])
 
 ///|
 pub impl[K : Hash + Eq, V : Eq] Eq for T[K, V] with op_equal(
