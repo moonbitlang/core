@@ -52,3 +52,18 @@ pub impl[K : Hash + Eq, V : Eq] Eq for T[K, V] with op_equal(
     true
   }
 }
+
+///|
+impl[K, V] @hashtable.HashEntry for Entry[K, V] with psl(self) {
+  self.psl
+}
+
+///|
+impl[K, V] @hashtable.HashEntry for Entry[K, V] with set_psl(self, psl) {
+  self.psl = psl
+}
+
+///|
+impl[K, V] @hashtable.HashEntry for Entry[K, V] with hash(self) {
+  self.hash
+}

@@ -33,14 +33,7 @@
 ///   inspect(map.is_empty(), content="true")
 /// ```
 pub fn[K, V] new(capacity~ : Int = 8) -> T[K, V] {
-  let capacity = capacity.next_power_of_two()
-  {
-    size: 0,
-    capacity,
-    entries: FixedArray::make(capacity, None),
-    capacity_mask: capacity - 1,
-    grow_at: -1,
-  }
+  @hashtable.HashTable::new(capacity~)
 }
 
 ///|
@@ -315,16 +308,7 @@ pub fn[K : Hash + Eq, V] get_or_default(
 /// ```
 pub fn[K : Hash + Eq, V] contains(self : T[K, V], key : K) -> Bool {
   let hash = key.hash()
-  for i = 0, idx = hash & self.capacity_mask {
-    guard self.entries[idx] is Some(entry) else { return false }
-    if entry.hash == hash && entry.key == key {
-      return true
-    }
-    if i > entry.psl {
-      return false
-    }
-    continue i + 1, (idx + 1) & self.capacity_mask
-  }
+  self.0.contains(hash, hash & self.0.capacity_mask, entry => entry.key == key)
 }
 
 ///|
@@ -334,16 +318,8 @@ pub fn[K : Hash + Eq, V : Eq] contains_kv(
   value : V,
 ) -> Bool {
   let hash = key.hash()
-  for i = 0, idx = hash & self.capacity_mask {
-    guard self.entries[idx] is Some(entry) else { return false }
-    if entry.hash == hash && entry.key == key && entry.value == value {
-      return true
-    }
-    if i > entry.psl {
-      return false
-    }
-    continue i + 1, (idx + 1) & self.capacity_mask
-  }
+  self.0.contains(hash, hash & self.0.capacity_mask, entry => entry.key == key &&
+    entry.value == value)
 }
 
 ///|
@@ -367,40 +343,7 @@ pub fn[K : Hash + Eq, V : Eq] contains_kv(
 /// ```
 pub fn[K : Hash + Eq, V] remove(self : T[K, V], key : K) -> Unit {
   let hash = key.hash()
-  for i = 0, idx = hash & self.capacity_mask {
-    match self.entries[idx] {
-      Some(entry) => {
-        if entry.hash == hash && entry.key == key {
-          self.entries[idx] = None
-          self.shift_back(idx)
-          self.size -= 1
-          break
-        }
-        if i > entry.psl {
-          break
-        }
-        continue i + 1, (idx + 1) & self.capacity_mask
-      }
-      None => break
-    }
-  }
-}
-
-///|
-fn[K, V] shift_back(self : T[K, V], start_index : Int) -> Unit {
-  for prev = start_index, curr = (start_index + 1) & self.capacity_mask {
-    match self.entries[curr] {
-      Some({ psl, hash, key, value }) => {
-        if psl == 0 {
-          break
-        }
-        self.entries[prev] = Some({ psl: psl - 1, hash, key, value })
-        self.entries[curr] = None
-        continue curr, (curr + 1) & self.capacity_mask
-      }
-      None => break
-    }
-  }
+  self.0.remove(hash, hash & self.capacity_mask, entry => entry.key == key)
 }
 
 ///|

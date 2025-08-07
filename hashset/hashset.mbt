@@ -19,13 +19,7 @@ let default_init_capacity = 8
 ///|
 /// Create new hash set.
 pub fn[K] new(capacity~ : Int = default_init_capacity) -> T[K] {
-  {
-    size: 0,
-    capacity,
-    capacity_mask: -1,
-    grow_at: calc_grow_threshold(capacity),
-    entries: FixedArray::make(capacity, None),
-  }
+  @hashtable.HashTable::new(capacity~)
 }
 
 ///|
@@ -87,40 +81,15 @@ pub fn[K : Hash + Eq] add(self : T[K], key : K) -> Unit {
 /// Check if the hash set contains a key.
 pub fn[K : Hash + Eq] contains(self : T[K], key : K) -> Bool {
   let hash = key.hash()
-  for i = 0, idx = self.index(hash)
-      i < self.capacity
-      i = i + 1, idx = self.next_index(idx) {
-    match self.entries[idx] {
-      Some(entry) => {
-        if entry.hash == hash && entry.key == key {
-          return true
-        }
-        if i > entry.psl {
-          return false
-        }
-      }
-      None => return false
-    }
-  }
-  false
+  self.0.contains(hash, abs(hash) & self.0.capacity_mask, entry => entry.key ==
+    key)
 }
 
 ///|
 /// Remove a key from hash set.
 pub fn[K : Hash + Eq] remove(self : T[K], key : K) -> Unit {
   let hash = key.hash()
-  for i = 0, idx = self.index(hash)
-      i < self.capacity
-      i = i + 1, idx = self.next_index(idx) {
-    if self.entries[idx] is Some(entry) &&
-      entry.hash == hash &&
-      entry.key == key {
-      self.entries[idx] = None
-      self.shift_back(idx)
-      self.size -= 1
-      break
-    }
-  }
+  self.0.remove(hash, abs(hash) & self.capacity_mask, entry => entry.key == key)
 }
 
 ///|
@@ -162,10 +131,7 @@ pub fn[K] eachi(self : T[K], f : (Int, K) -> Unit) -> Unit {
 ///|
 /// Clears the set, removing all keys. Keeps the allocated space.
 pub fn[K] clear(self : T[K]) -> Unit {
-  for i in 0..<self.capacity {
-    self.entries[i] = None
-  }
-  self.size = 0
+  self.0.clear()
 }
 
 ///|
@@ -279,25 +245,6 @@ pub impl[X : @quickcheck.Arbitrary + Eq + Hash] @quickcheck.Arbitrary for T[X] w
 }
 
 ///|
-fn[K] shift_back(self : T[K], start_index : Int) -> Unit {
-  for i = 0, prev = start_index, curr = self.next_index(start_index)
-      i < self.entries.length()
-      i = i + 1, prev = curr, curr = self.next_index(curr) {
-    match self.entries[curr] {
-      Some(entry) => {
-        if entry.psl == 0 {
-          break
-        }
-        entry.psl -= 1
-        self.entries[prev] = Some(entry)
-        self.entries[curr] = None
-      }
-      None => break
-    }
-  }
-}
-
-///|
 fn[K : Hash + Eq] grow(self : T[K]) -> Unit {
   // handle zero capacity
   if self.capacity == 0 {
@@ -305,11 +252,13 @@ fn[K : Hash + Eq] grow(self : T[K]) -> Unit {
     self.grow_at = calc_grow_threshold(self.capacity)
     self.size = 0
     self.entries = FixedArray::make(self.capacity, None)
+    self.capacity_mask = default_init_capacity - 1
     return
   }
   let old_entries = self.entries
   self.entries = FixedArray::make(self.capacity * 2, None)
   self.capacity = self.capacity * 2
+  self.capacity_mask = self.capacity - 1
   self.grow_at = calc_grow_threshold(self.capacity)
   self.size = 0
   for i in 0..<old_entries.length() {
@@ -335,7 +284,7 @@ fn abs(n : Int) -> Int {
 
 ///|
 fn[K] next_index(self : T[K], index : Int) -> Int {
-  (index + 1) & (self.capacity - 1)
+  (index + 1) & self.capacity_mask
 }
 
 ///|

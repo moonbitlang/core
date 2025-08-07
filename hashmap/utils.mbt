@@ -44,8 +44,7 @@ fn[K : Show, V : Show] debug_entries(self : T[K, V]) -> String {
 ///   inspect(map.get("a"), content="None")
 /// ```
 pub fn[K, V] clear(self : T[K, V]) -> Unit {
-  self.entries.fill(None)
-  self.size = 0
+  self.0.clear()
 }
 
 ///|

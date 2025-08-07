@@ -36,3 +36,18 @@ priv struct Entry[K] {
 ///   assert_eq(set.contains((4, "four")), true)
 /// ```
 struct T[K](@hashtable.HashTable[Entry[K]])
+
+///|
+impl[K] @hashtable.HashEntry for Entry[K] with psl(self) {
+  self.psl
+}
+
+///|
+impl[K] @hashtable.HashEntry for Entry[K] with set_psl(self, psl) {
+  self.psl = psl
+}
+
+///|
+impl[K] @hashtable.HashEntry for Entry[K] with hash(self) {
+  self.hash
+}
