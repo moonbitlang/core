@@ -51,7 +51,8 @@ async function extractMbti(typeName) {
   try {
     console.log(`Extracting MBTI interface for ${typeName}...`);
     const { stdout } = await execPromise(`mbti_inspector.exe ${typeName}`);
-    const outputPath = `${MBTI_DIR}/${typeName}_interface.txt`;
+    const outputPath = `${MBTI_DIR}/${typeName.replace(/\//, '_')}_interface.txt`;
+    console.log(`Saving MBTI interface to ${outputPath}`);
     await fs.writeFile(outputPath, stdout);
     console.log(`Saved ${typeName} interface to ${outputPath}`);
     return stdout;
@@ -139,7 +140,7 @@ async function main() {
     // Save the review
     const reviewPath = `${REVIEWS_DIR}/interface-review-${types.join(
       "-"
-    )}-${randomUUID()}.md`;
+    ).replace(/\//, "_")}-${randomUUID()}.md`;
     await fs.writeFile(
       reviewPath,
       `---
