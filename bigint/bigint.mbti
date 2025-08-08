@@ -22,23 +22,23 @@ fn BigInt::equal_int64(Self, Int64) -> Bool
 fn BigInt::from_hex(String) -> Self
 fn BigInt::from_int(Int) -> Self
 fn BigInt::from_int64(Int64) -> Self
-fn BigInt::from_octets(Bytes, signum? : Int) -> Self
+fn BigInt::from_octets(Bytes, signum~ : Int = ..) -> Self
 fn BigInt::from_string(String) -> Self
 fn BigInt::from_uint(UInt) -> Self
 fn BigInt::from_uint64(UInt64) -> Self
 fn BigInt::is_zero(Self) -> Bool
 #deprecated
 fn BigInt::lsl(Self, Int) -> Self
-fn BigInt::pow(Self, Self, modulus? : Self) -> Self
+fn BigInt::pow(Self, Self, modulus~ : Self = ..) -> Self
 #deprecated
 fn BigInt::shl(Self, Int) -> Self
 #deprecated
 fn BigInt::shr(Self, Int) -> Self
-fn BigInt::to_hex(Self, uppercase? : Bool) -> String
+fn BigInt::to_hex(Self, uppercase~ : Bool = ..) -> String
 fn BigInt::to_int(Self) -> Int
 fn BigInt::to_int16(Self) -> Int16
 fn BigInt::to_int64(Self) -> Int64
-fn BigInt::to_octets(Self, length? : Int) -> Bytes
+fn BigInt::to_octets(Self, length~ : Int = ..) -> Bytes
 fn BigInt::to_string(Self) -> String
 fn BigInt::to_uint(Self) -> UInt
 fn BigInt::to_uint16(Self) -> UInt16

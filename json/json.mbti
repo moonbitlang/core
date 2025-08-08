@@ -6,10 +6,9 @@ import(
 )
 
 // Values
-fn[T : FromJson] from_json(Json, path? : JsonPath) -> T raise JsonDecodeError
+fn[T : FromJson] from_json(Json, path~ : JsonPath = ..) -> T raise JsonDecodeError
 
-#callsite(autofill(args_loc, loc))
-fn inspect(&ToJson, content? : Json, loc~ : SourceLoc, args_loc~ : ArgsLoc) -> Unit raise InspectError
+fn inspect(&ToJson, content~ : Json = .., loc~ : SourceLoc = _, args_loc~ : ArgsLoc = _) -> Unit raise InspectError
 
 fn parse(String) -> Json raise ParseError
 
@@ -53,7 +52,7 @@ fn Json::as_number(Self) -> Double?
 fn Json::as_object(Self) -> Map[String, Self]?
 fn Json::as_string(Self) -> String?
 fn Json::item(Self, Int) -> Self?
-fn Json::stringify(Self, escape_slash? : Bool, indent? : Int) -> String
+fn Json::stringify(Self, escape_slash~ : Bool = .., indent~ : Int = ..) -> String
 fn Json::value(Self, String) -> Self?
 impl Show for Json
 impl ToJson for Json
@@ -80,7 +79,7 @@ impl[X : FromJson] FromJson for FixedArray[X]
 impl[X : FromJson] FromJson for Array[X]
 impl FromJson for Json
 impl[V : FromJson] FromJson for Map[String, V]
-impl FromJson for @string.StringView
+impl FromJson for @string.View
 impl[A : FromJson, B : FromJson] FromJson for (A, B)
 impl[A : FromJson, B : FromJson, C : FromJson] FromJson for (A, B, C)
 impl[A : FromJson, B : FromJson, C : FromJson, D : FromJson] FromJson for (A, B, C, D)
