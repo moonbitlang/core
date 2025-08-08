@@ -16,7 +16,8 @@
 /// A `@string.View` represents a view of a String that maintains proper Unicode
 /// character boundaries. It allows safe access to a substring while handling 
 /// multi-byte characters correctly.
-pub typealias StringView as View
+#builtin.valtype
+type View
 
 ///|
 /// Returns the source string being viewed.
@@ -252,7 +253,7 @@ pub impl Show for View with output(self, logger) {
 ///   let view = str.view(start_offset = str.offset_of_nth_char(0).unwrap(),end_offset = str.offset_of_nth_char(5).unwrap()) // "Hello"
 ///   inspect(view.to_string(), content="Hello")
 /// ```
-pub impl Show for StringView with to_string(self) {
+pub impl Show for View with to_string(self) {
   self.str().substring(start=self.start(), end=self.end())
 }
 

@@ -92,14 +92,6 @@ pub fn last_index_of(self : String, str : String, from? : Int) -> Int {
   }
 }
 
-///| 
-/// A `StringView` represents a view of a String that maintains proper Unicode
-/// character boundaries. It allows safe access to a substring while handling 
-/// multi-byte characters correctly.
-#deprecated("use @string.View instead")
-#builtin.valtype
-type StringView
-
 ///|
 /// Returns the charcode(code unit) at the given index.
 /// 
