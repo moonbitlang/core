@@ -26,12 +26,13 @@
 /// Example:
 ///
 /// ```moonbit
-///   let err : Failure = Failure("Test assertion failed")
-///   match err {
-///     Failure(msg) => inspect(msg, content="Test assertion failed")
-///   }
+/// let err : Failure = Failure("Test assertion failed")
+/// match err {
+///   Failure(msg) => inspect(msg, content="Test assertion failed")
+/// }
+/// @json.inspect(err, content=["Failure", "Test assertion failed"])
 /// ```
-pub(all) suberror Failure String derive(ToJson(style="legacy"), Show)
+pub(all) suberror Failure String derive(ToJson(style="flat"), Show)
 
 ///|
 /// Raises a `Failure` error with a given message and source location.
@@ -49,5 +50,5 @@ pub(all) suberror Failure String derive(ToJson(style="legacy"), Show)
 /// source location and the provided error message.
 #callsite(autofill(loc))
 pub fn[T] fail(msg : String, loc~ : SourceLoc) -> T raise Failure {
-  raise Failure("FAILED: \{loc} \{msg}")
+  raise Failure("\{loc} FAILED: \{msg}")
 }

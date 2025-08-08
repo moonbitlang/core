@@ -264,7 +264,7 @@ pub impl[K : Show, V : ToJson] ToJson for Map[K, V] with to_json(self) {
 pub impl[T : ToJson] ToJson for T? with to_json(self) {
   match self {
     None => Null
-    Some(value) => [value.to_json()]
+    Some(value) => [value]
   }
 }
 
@@ -273,8 +273,8 @@ pub impl[Ok : ToJson, Err : ToJson] ToJson for Result[Ok, Err] with to_json(
   self : Result[Ok, Err],
 ) -> Json {
   match self {
-    Ok(ok) => { "Ok": ok.to_json() }
-    Err(err) => { "Err": err.to_json() }
+    Ok(ok) => { "Ok": ok }
+    Err(err) => { "Err": err }
   }
 }
 
