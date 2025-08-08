@@ -413,29 +413,38 @@ pub fn[T] View::to_array(self : View[T]) -> Array[T] {
 ///   let array_view = a[:]
 ///   inspect(array_view.join(","), content="1,2,3")
 /// ```
-pub fn View::join(self : ArrayView[String], separator : @string.View) -> String {
+pub fn[A : @string.ToStringView] View::join(
+  self : ArrayView[A],
+  separator : @string.View,
+) -> String {
   match self {
     [] => ""
     [hd, .. tl] => {
+      let hd = @string.to_stringview(hd)
       let mut size_hint = hd.length()
       for s in tl {
-        size_hint += s.length() + separator.length()
+        size_hint += @string.to_stringview(s).length() + separator.length()
       }
       size_hint = size_hint << 1
       let buf = StringBuilder::new(size_hint~)
-      buf.write_string(hd)
+      // buf.write_string(hd)
+      buf.write_substring(hd.data(), hd.start_offset(), hd.length())
       if separator is "" {
         for s in tl {
-          buf.write_string(s)
+          // buf.write_string(s)
+          let s = @string.to_stringview(s)
+          buf.write_substring(s.data(), s.start_offset(), s.length())
         }
       } else {
         for s in tl {
+          let s = @string.to_stringview(s)
           buf.write_substring(
             separator.data(),
             separator.start_offset(),
             separator.length(),
           )
-          buf.write_string(s)
+          // buf.write_string(s)
+          buf.write_substring(s.data(), s.start_offset(), s.length())
         }
       }
       buf.to_string()

@@ -322,6 +322,14 @@ pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Array[X] with arbi
 ///   * `separator` : The string inserted between each element.
 ///
 /// Returns a single concatenated `String`.
-pub fn join(self : Array[String], separator : @string.View) -> String {
+/// # Example:
+/// ```moonbit
+/// let s = "hello world"
+/// inspect(s.split(" ").to_array().join(":"), content="hello:world")
+/// ```
+pub fn[A : @string.ToStringView] Array::join(
+  self : Array[A],
+  separator : @string.View,
+) -> String {
   self[:].join(separator)
 }

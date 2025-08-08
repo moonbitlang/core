@@ -129,3 +129,14 @@ pub impl Show for StringBuilder with output(self, logger) {
 pub fn StringBuilder::reset(self : StringBuilder) -> Unit {
   self.len = 0
 }
+
+// pub fn StringBuilder::write_stringview(
+//   self : StringBuilder,
+//   view : StringView,
+// ) -> Unit {
+//  self.write_substring(
+//     view.data(),
+//     view.offset(),
+//     view.length(),
+//   )
+// }
