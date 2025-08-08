@@ -17,11 +17,13 @@ fn of(FixedArray[Byte]) -> Bytes
 // Types and methods
 type View
 fn View::data(Self) -> Bytes
+fn View::find(Self, Self) -> Int?
 fn View::get(Self, Int) -> Byte?
 fn View::iter(Self) -> Iter[Byte]
 fn View::length(Self) -> Int
 fn View::op_as_view(Self, start? : Int, end? : Int) -> Self
 fn View::op_get(Self, Int) -> Byte
+fn View::rev_find(Self, Self) -> Int?
 fn View::start_offset(Self) -> Int
 fn View::to_bytes(Self) -> Bytes
 fn View::to_double_be(Self) -> Double
@@ -41,6 +43,7 @@ impl Compare for View
 impl Eq for View
 impl Show for View
 
+fn Bytes::find(Bytes, View) -> Int?
 fn Bytes::from_array(Array[Byte]) -> Bytes
 fn Bytes::from_fixedarray(FixedArray[Byte], len? : Int) -> Bytes
 fn Bytes::from_iter(Iter[Byte]) -> Bytes
@@ -49,6 +52,7 @@ fn Bytes::iter(Bytes) -> Iter[Byte]
 fn Bytes::iter2(Bytes) -> Iter2[Int, Byte]
 fn Bytes::of(FixedArray[Byte]) -> Bytes
 fn Bytes::op_as_view(Bytes, start? : Int, end? : Int) -> View
+fn Bytes::rev_find(Bytes, View) -> Int?
 fn Bytes::to_array(Bytes) -> Array[Byte]
 fn Bytes::to_fixedarray(Bytes, len? : Int) -> FixedArray[Byte]
 impl Add for Bytes
