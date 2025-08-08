@@ -3,31 +3,24 @@ package "moonbitlang/core/test"
 
 // Values
 #deprecated
-#callsite(autofill(loc))
-fn[T : Show + Eq] eq(T, T, loc~ : SourceLoc) -> Unit raise
+fn[T : Show + Eq] eq(T, T, loc~ : SourceLoc = _) -> Unit raise
 
-#callsite(autofill(loc))
-fn[T] fail(String, loc~ : SourceLoc) -> T raise
+fn[T] fail(String, loc~ : SourceLoc = _) -> T raise
 
 #deprecated
-#callsite(autofill(loc))
-fn is_false(Bool, loc~ : SourceLoc) -> Unit raise
+fn is_false(Bool, loc~ : SourceLoc = _) -> Unit raise
 
-#callsite(autofill(loc))
-fn[T : Show] is_not(T, T, loc~ : SourceLoc) -> Unit raise
+fn[T : Show] is_not(T, T, loc~ : SourceLoc = _) -> Unit raise
 
 #deprecated
-#callsite(autofill(loc))
-fn is_true(Bool, loc~ : SourceLoc) -> Unit raise
+fn is_true(Bool, loc~ : SourceLoc = _) -> Unit raise
 
 #deprecated
-#callsite(autofill(loc))
-fn[T : Show + Eq] ne(T, T, loc~ : SourceLoc) -> Unit raise
+fn[T : Show + Eq] ne(T, T, loc~ : SourceLoc = _) -> Unit raise
 
 fn new(String) -> T
 
-#callsite(autofill(loc))
-fn[T : Show] same_object(T, T, loc~ : SourceLoc) -> Unit raise
+fn[T : Show] same_object(T, T, loc~ : SourceLoc = _) -> Unit raise
 
 // Errors
 
@@ -37,9 +30,8 @@ pub(all) struct T {
   buffer : StringBuilder
 }
 #deprecated
-fn T::bench(Self, () -> Unit, count? : UInt) -> Unit raise BenchError
-#callsite(autofill(args_loc, loc))
-fn T::snapshot(Self, filename~ : String, loc~ : SourceLoc, args_loc~ : ArgsLoc) -> Unit raise SnapshotError
+fn T::bench(Self, () -> Unit, count~ : UInt = ..) -> Unit raise BenchError
+fn T::snapshot(Self, filename~ : String, loc~ : SourceLoc = _, args_loc~ : ArgsLoc = _) -> Unit raise SnapshotError
 fn T::write(Self, &Show) -> Unit
 fn T::writeln(Self, &Show) -> Unit
 

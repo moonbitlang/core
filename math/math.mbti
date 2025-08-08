@@ -65,7 +65,7 @@ fn hypot(Double, Double) -> Double
 
 fn hypotf(Float, Float) -> Float
 
-fn is_probable_prime(@bigint.BigInt, @random.Rand, iters? : Int) -> Bool
+fn is_probable_prime(@bigint.BigInt, @random.Rand, iters~ : Int = ..) -> Bool
 
 fn ln(Double) -> Double
 
