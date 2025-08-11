@@ -11,8 +11,6 @@ fn from_array(Array[Char]) -> String
 
 fn from_iter(Iter[Char]) -> String
 
-fn[T : ToStringView] to_stringview(T) -> StringView
-
 // Errors
 pub suberror CreatingViewError {
   IndexOutOfBounds
@@ -143,6 +141,8 @@ impl Default for String
 pub typealias StringView as View
 
 // Traits
-trait ToStringView
+pub trait ToStringView {
+  to_string_view(Self) -> StringView
+}
 impl ToStringView for String
 
