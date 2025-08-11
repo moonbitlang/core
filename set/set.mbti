@@ -12,6 +12,7 @@ fn[K : Hash + Eq] Set::add_and_check(Self[K], K) -> Bool
 fn[K] Set::capacity(Self[K]) -> Int
 fn[K] Set::clear(Self[K]) -> Unit
 fn[K : Hash + Eq] Set::contains(Self[K], K) -> Bool
+fn[K] Set::copy(Self[K]) -> Self[K]
 fn[K : Hash + Eq] Set::difference(Self[K], Self[K]) -> Self[K]
 fn[K] Set::each(Self[K], (K) -> Unit raise?) -> Unit raise?
 fn[K] Set::eachi(Self[K], (Int, K) -> Unit raise?) -> Unit raise?
