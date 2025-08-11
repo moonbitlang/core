@@ -94,3 +94,14 @@ test "Double::from_int with additional cases" {
   inspect(Double::from_int(2147483647), content="2147483647")
   inspect(Double::from_int(-2147483648), content="-2147483648")
 }
+
+///|
+test "json repr for nan" {
+  @json.inspect(1.0 / 0.0)
+}
+
+///|
+test "json repr" {
+  let d = 1.0 / 0.0
+  inspect(@json.stringify(d.to_json()), content="null")
+}
