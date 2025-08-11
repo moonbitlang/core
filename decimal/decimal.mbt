@@ -23,7 +23,7 @@ pub fn to_string(self: Decimal) -> String raise @string.CreatingViewError {
     self.mantissa
   };
 
-  let mantissa_str = abs_mantissa.to_string();
+  let mantissa_str = @bigint.BigInt::to_string(abs_mantissa);
   let len = mantissa_str.length();
   let scale = self.scale;
 
@@ -35,7 +35,7 @@ pub fn to_string(self: Decimal) -> String raise @string.CreatingViewError {
     "0." + "0".repeat(scale - len) + mantissa_str
   } else {
     let pivot = len - scale;
-    mantissa_str[0:pivot].data() + "." + mantissa_str[pivot:len].data()
+    mantissa_str[0:pivot].to_string() + "." + mantissa_str[pivot:len].to_string()
   };
 
   sign + result
@@ -58,19 +58,13 @@ fn normalize(d1: Decimal, d2: Decimal) -> (@bigint.BigInt, @bigint.BigInt) {
     (new_mantissa1, d2.mantissa)
   }
 }
-
-impl Eq for Decimal {
-  fn op_equal(self: Decimal, other: Decimal) -> Bool {
+impl Eq for Decimal with op_equal(self, other){
     let (m1, m2) = normalize(self, other);
     m1 == m2
-  }
 } 
 
-
-impl Compare for Decimal {
-  // 核心方法
-  fn compare(self: Decimal, other: Decimal) -> Int {
+pub impl Compare for Decimal with compare(self, other) {
     let (m1, m2) = normalize(self, other);
     @bigint.BigInt::compare(m1, m2)
   }
-}
+
