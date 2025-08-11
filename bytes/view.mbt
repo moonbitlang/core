@@ -633,3 +633,10 @@ pub fn View::to_bytes(self : View) -> Bytes {
   bytes.blit_from_bytes(0, self.bytes(), self.start_offset(), self.length())
   unsafe_to_bytes(bytes)
 }
+
+///|
+pub impl Hash for View with hash_combine(self : View, hasher : Hasher) {
+  for i in 0..<self.length() {
+    hasher.combine_byte(self.unsafe_get(i))
+  }
+}

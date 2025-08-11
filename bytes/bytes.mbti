@@ -41,6 +41,7 @@ fn View::to_uint_le(Self) -> UInt
 fn View::unsafe_get(Self, Int) -> Byte
 impl Compare for View
 impl Eq for View
+impl Hash for View
 impl Show for View
 
 fn Bytes::find(Bytes, View) -> Int?
