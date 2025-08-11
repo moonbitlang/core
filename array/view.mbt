@@ -420,10 +420,10 @@ pub fn[A : @string.ToStringView] View::join(
   match self {
     [] => ""
     [hd, .. tl] => {
-      let hd = @string.to_stringview(hd)
+      let hd = hd.to_string_view()
       let mut size_hint = hd.length()
       for s in tl {
-        size_hint += @string.to_stringview(s).length() + separator.length()
+        size_hint += s.to_string_view().length() + separator.length()
       }
       size_hint = size_hint << 1
       let buf = StringBuilder::new(size_hint~)
@@ -432,12 +432,12 @@ pub fn[A : @string.ToStringView] View::join(
       if separator is "" {
         for s in tl {
           // buf.write_string(s)
-          let s = @string.to_stringview(s)
+          let s = s.to_string_view()
           buf.write_substring(s.data(), s.start_offset(), s.length())
         }
       } else {
         for s in tl {
-          let s = @string.to_stringview(s)
+          let s = s.to_string_view()
           buf.write_substring(
             separator.data(),
             separator.start_offset(),

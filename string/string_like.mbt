@@ -13,13 +13,8 @@
 // limitations under the License.
 
 ///|
-trait ToStringView {
+pub trait ToStringView {
   to_string_view(Self) -> StringView
-}
-
-///|
-pub fn[T : ToStringView] to_stringview(x : T) -> StringView {
-  x.to_string_view()
 }
 
 ///|
