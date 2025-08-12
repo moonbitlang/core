@@ -40,7 +40,7 @@ test "double to json with positive infinity" {
       #|String("Infinity")
     ),
   )
-  @json.inspect(pos_inf, content=("Infinity"))
+  @json.inspect(pos_inf, content="Infinity")
 }
 
 ///|
@@ -53,7 +53,7 @@ test "double to json with negative infinity" {
     ),
   )
   @json.inspect(neg_inf, content="-Infinity")
-  @json.inspect(0./0., content=("NaN"))
+  @json.inspect(0.0 / 0.0, content="NaN")
 }
 
 ///|
