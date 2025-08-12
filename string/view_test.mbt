@@ -658,6 +658,18 @@ test "hash" {
   assert_not_eq(a.hash(), b.hash())
 }
 
+///| This test checks the invariance that the hash of a string and its view are the same.
+/// 
+/// This is necessary because we may want to use a string view as a key in a hash map,
+/// and we need to ensure that the hash remains consistent with the original string.
+test "string view hash invariant" {
+  let strings = ["hello", "world", "🤣🤣🤣", "abc", "def"]
+  for s in strings {
+    let view = s[:]
+    assert_eq(s.hash(), view.hash())
+  }
+}
+
 ///|
 test "View::replace" {
   inspect("hello"[:].replace(old="o", new="a"), content="hella")
