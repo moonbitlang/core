@@ -202,12 +202,15 @@ pub impl ToJson for UInt64 with to_json(self : UInt64) -> Json {
 
 ///|
 pub impl ToJson for Double with to_json(self : Double) -> Json {
-  if self != self ||
-    self > 0x7FEFFFFFFFFFFFFFL.reinterpret_as_double() ||
-    self < 0xFFEFFFFFFFFFFFFFL.reinterpret_as_double() {
-    return Null
+  if self != self {
+    Json::string("NaN")
+  } else if self > 0x7FEFFFFFFFFFFFFFL.reinterpret_as_double() {
+    Json::string("Infinity")
+  } else if self < 0xFFEFFFFFFFFFFFFFL.reinterpret_as_double() {
+    Json::string("-Infinity")
+  } else {
+    Json::number(self)
   }
-  Json::number(self)
 }
 
 ///|

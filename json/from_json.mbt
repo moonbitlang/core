@@ -93,12 +93,13 @@ pub impl FromJson for UInt64 with from_json(json, path) {
 
 ///|
 pub impl FromJson for Double with from_json(json, path) {
-  guard json is Number(n, ..) &&
-    n != @double.infinity &&
-    n != @double.neg_infinity else {
-    decode_error(path, "Double::from_json: expected number")
+  match json {
+    String("NaN") => @double.not_a_number
+    String("Infinity") => @double.infinity
+    String("-Infinity") => @double.neg_infinity
+    Number(n, ..) if n != @double.infinity && n != @double.neg_infinity => n
+    _ => decode_error(path, "Double::from_json: expected number")
   }
-  n
 }
 
 ///|
