@@ -530,7 +530,7 @@ test "impl Hash for View" {
 /// This is necessary because we may want to use a bytes view as a key in a hash map,
 /// and we need to ensure that the hash remains consistent with the original bytes.
 test "bytes view hash invariant" {
-  let bytes : Array[Bytes] = ["12345678", "56781234", "1234", "5678"]
+  let bytes : Array[Bytes] = @quickcheck.samples(20)
   for b in bytes {
     let view = b[:]
     assert_eq(view.hash(), b.hash())

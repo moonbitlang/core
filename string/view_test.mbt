@@ -663,7 +663,7 @@ test "hash" {
 /// This is necessary because we may want to use a string view as a key in a hash map,
 /// and we need to ensure that the hash remains consistent with the original string.
 test "string view hash invariant" {
-  let strings = ["hello", "world", "🤣🤣🤣", "abc", "def"]
+  let strings : Array[String] = @quickcheck.samples(20)
   for s in strings {
     let view = s[:]
     assert_eq(s.hash(), view.hash())
