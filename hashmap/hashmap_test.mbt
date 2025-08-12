@@ -186,7 +186,6 @@ test "to_array" {
     map.to_array(),
     content=(
       #|[(1, "one"), (2, "two"), (3, "three")]
-
     ),
   )
 }
@@ -368,7 +367,7 @@ test "@hashmap.from_array" {
 ///|
 test "@hashmap.from_array with int key" {
   let map = @hashmap.from_array([(1, "one"), (2, "two"), (3, "three")])
-  @json.inspect(map, content=({"1":"one","2":"two","3":"three"}))
+  @json.inspect(map, content={ "1": "one", "2": "two", "3": "three" })
 }
 
 ///|
