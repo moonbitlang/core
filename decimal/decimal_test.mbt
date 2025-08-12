@@ -12,29 +12,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
 test "from_int creates correct decimal" {
-    let d = from_int(42)
-    assert_eq(d.to_string(), "42")
+  let d = from_int(42)
+  assert_eq(d.to_string(), "42")
 }
 
+///|
 test "to_string with scale 0" {
-    let d = from_parts(@bigint.BigInt::from_int(12345), 0)
-    assert_eq(d.to_string(), "12345")
+  let d = from_parts(@bigint.BigInt::from_int(12345), 0)
+  assert_eq(d.to_string(), "12345")
 }
 
+///|
 test "to_string with scale less than length" {
-    let d = from_parts(@bigint.BigInt::from_int(12345), 2)
-    assert_eq(d.to_string(), "123.45")
+  let d = from_parts(@bigint.BigInt::from_int(12345), 2)
+  assert_eq(d.to_string(), "123.45")
 }
 
+///|
 test "to_string with scale greater than length" {
-    let d = from_parts(@bigint.BigInt::from_int(5), 3)
-    assert_eq(d.to_string(), "0.005")
+  let d = from_parts(@bigint.BigInt::from_int(5), 3)
+  assert_eq(d.to_string(), "0.005")
 }
 
+///|
 test "negative decimal string" {
-    let d = from_parts(@bigint.BigInt::from_int(-123), 1)
-    assert_eq(d.to_string(), "-12.3")
+  let d = from_parts(@bigint.BigInt::from_int(-123), 1)
+  assert_eq(d.to_string(), "-12.3")
 }
-
-
