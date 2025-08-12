@@ -33,22 +33,6 @@ pub impl Hash for Int64 with hash_combine(self, hasher) {
 }
 
 ///|
-fn slow_hash(self : Int64) -> Int {
-  let self = self.reinterpret_as_uint64()
-  let b : Bytes = [
-    (self & 0xFF).to_byte(),
-    ((self >> 8) & 0xFF).to_byte(),
-    ((self >> 16) & 0xFF).to_byte(),
-    ((self >> 24) & 0xFF).to_byte(),
-    ((self >> 32) & 0xFF).to_byte(),
-    ((self >> 40) & 0xFF).to_byte(),
-    ((self >> 48) & 0xFF).to_byte(),
-    ((self >> 56) & 0xFF).to_byte(),
-  ]
-  b.hash()
-}
-
-///|
 test "int64 hash" {
   let i0 = 9_223_372_036_854_775_807L // INT64_MAX
   let i1 = -9_223_372_036_854_775_808L // INT64_MIN
@@ -57,11 +41,11 @@ test "int64 hash" {
   let i4 = gPRIME4.to_int64()
   let i5 = gPRIME5.to_int64()
   let i6 = 0L
-  inspect(i0.hash().to_string(), content=i0.slow_hash().to_string())
-  inspect(i1.hash().to_string(), content=i1.slow_hash().to_string())
-  inspect(i2.hash().to_string(), content=i2.slow_hash().to_string())
-  inspect(i3.hash().to_string(), content=i3.slow_hash().to_string())
-  inspect(i4.hash().to_string(), content=i4.slow_hash().to_string())
-  inspect(i5.hash().to_string(), content=i5.slow_hash().to_string())
-  inspect(i6.hash().to_string(), content=i6.slow_hash().to_string())
+  inspect(i0.hash().to_string(), content="1886677411")
+  inspect(i1.hash().to_string(), content="483163611")
+  inspect(i2.hash().to_string(), content="-283106542")
+  inspect(i3.hash().to_string(), content="1841207399")
+  inspect(i4.hash().to_string(), content="-1983297055")
+  inspect(i5.hash().to_string(), content="118566791")
+  inspect(i6.hash().to_string(), content="-558656237")
 }

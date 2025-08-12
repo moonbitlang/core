@@ -174,9 +174,9 @@ test "UInt16::compare" {
 
 ///|
 test "UInt16::hash" {
-  inspect(UInt16::hash(0), content="0")
-  inspect(UInt16::hash(123), content="123")
-  inspect(UInt16::hash(65535), content="65535")
+  inspect(UInt16::hash(0), content="148298089")
+  inspect(UInt16::hash(123), content="-868461090")
+  inspect(UInt16::hash(65535), content="-888052495")
 }
 
 ///|

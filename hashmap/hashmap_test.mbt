@@ -157,7 +157,7 @@ test "iter" {
     let (k, v) = e
     buf.write_string("[\{k}-\{v}]")
   })
-  inspect(buf, content="[2-two][1-one][3-three]")
+  inspect(buf, content="[1-one][2-two][3-three]")
   buf.reset()
   map
   .iter()
@@ -166,7 +166,7 @@ test "iter" {
     let (k, v) = e
     buf.write_string("[\{k}-\{v}]")
   })
-  inspect(buf, content="[2-two][1-one]")
+  inspect(buf, content="[1-one][2-two]")
 }
 
 ///|
@@ -176,7 +176,7 @@ test "iter2" {
   for k, v in map {
     buf.write_string("[\{k}-\{v}]")
   }
-  inspect(buf, content="[2-two][1-one][3-three]")
+  inspect(buf, content="[1-one][2-two][3-three]")
 }
 
 ///|
@@ -185,7 +185,8 @@ test "to_array" {
   inspect(
     map.to_array(),
     content=(
-      #|[(2, "two"), (1, "one"), (3, "three")]
+      #|[(1, "one"), (2, "two"), (3, "three")]
+
     ),
   )
 }
@@ -319,7 +320,7 @@ test "get_nonexistent_key_with_psl" {
 test "from_iter multiple elements iter" {
   inspect(
     @hashmap.from_iter([(1, 1), (2, 2), (3, 3)].iter()),
-    content="HashMap::of([(2, 2), (1, 1), (3, 3)])",
+    content="HashMap::of([(1, 1), (2, 2), (3, 3)])",
   )
 }
 
@@ -367,7 +368,7 @@ test "@hashmap.from_array" {
 ///|
 test "@hashmap.from_array with int key" {
   let map = @hashmap.from_array([(1, "one"), (2, "two"), (3, "three")])
-  @json.inspect(map, content={ "2": "two", "1": "one", "3": "three" })
+  @json.inspect(map, content=({"1":"one","2":"two","3":"three"}))
 }
 
 ///|

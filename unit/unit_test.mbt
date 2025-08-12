@@ -43,7 +43,7 @@ test {
 ///|
 test {
   let unit = ()
-  inspect(unit.hash(), content="0")
+  inspect(unit.hash(), content="148298089")
 }
 
 ///|

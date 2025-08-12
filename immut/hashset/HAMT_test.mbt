@@ -65,7 +65,7 @@ test "@hashset.iter" {
 ///|
 test "@hashset.to_string" {
   let set = @hashset.new().add(1).add(3).add(0x0f_ff_ff_ff).add(42)
-  inspect(set, content="@immut/hashset.of([3, 42, 1, 268435455])")
+  inspect(set, content="@immut/hashset.of([268435455, 42, 1, 3])")
 }
 
 ///|
@@ -129,7 +129,7 @@ test "@hashset.iter" {
 test "from_iter multiple elements iter" {
   inspect(
     @hashset.from_iter([1, 2, 3].iter()),
-    content="@immut/hashset.of([3, 2, 1])",
+    content="@immut/hashset.of([1, 2, 3])",
   )
 }
 
@@ -179,7 +179,7 @@ test "remove non-existent key from leaf" {
 ///|
 test "from_array - non-empty array" {
   let set = @hashset.from_array([1, 2, 3])
-  inspect(set, content="@immut/hashset.of([3, 2, 1])")
+  inspect(set, content="@immut/hashset.of([1, 2, 3])")
 }
 
 ///|
@@ -327,12 +327,12 @@ test "@hashset.difference patch" {
   let set3 = @hashset.of([])
   let set4 = @hashset.of([1, 2, 3, 4, 5, 6])
   let leaf = @hashset.of([1])
-  inspect(set1.difference(set2), content="@immut/hashset.of([2, 1])")
-  inspect(set1.difference(set3), content="@immut/hashset.of([3, 2, 4, 1])")
+  inspect(set1.difference(set2), content="@immut/hashset.of([1, 2])")
+  inspect(set1.difference(set3), content="@immut/hashset.of([4, 1, 2, 3])")
   inspect(set3.difference(set1), content="@immut/hashset.of([])")
   inspect(set2.difference(set4), content="@immut/hashset.of([])")
   inspect(leaf.difference(set1), content="@immut/hashset.of([])")
-  inspect(set1.difference(leaf), content="@immut/hashset.of([3, 2, 4])")
+  inspect(set1.difference(leaf), content="@immut/hashset.of([4, 2, 3])")
 }
 
 ///|
@@ -343,10 +343,10 @@ test "@hashset.intersection patch" {
   let set4 = @hashset.of([1, 2, 3, 4, 5, 6])
   let set5 = @hashset.of([7, 8, 9, 10])
   let leaf = @hashset.of([1])
-  inspect(set1.intersection(set2), content="@immut/hashset.of([3, 4])")
+  inspect(set1.intersection(set2), content="@immut/hashset.of([4, 3])")
   inspect(set1.intersection(set3), content="@immut/hashset.of([])")
   inspect(set3.intersection(set1), content="@immut/hashset.of([])")
-  inspect(set2.intersection(set4), content="@immut/hashset.of([5, 3, 6, 4])")
+  inspect(set2.intersection(set4), content="@immut/hashset.of([6, 4, 5, 3])")
   inspect(leaf.intersection(set1), content="@immut/hashset.of([1])")
   inspect(set1.intersection(leaf), content="@immut/hashset.of([1])")
   inspect(set5.intersection(set1), content="@immut/hashset.of([])")

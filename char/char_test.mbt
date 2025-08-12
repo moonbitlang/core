@@ -422,11 +422,11 @@ test "Hash implementation edge cases" {
 
   // Test with null character
   let null_hash = '\u{0000}'.hash()
-  assert_true(null_hash >= 0)
+  inspect(null_hash, content="148298089")
 
   // Test with high Unicode characters
   let unicode_hash = '🚀'.hash()
-  assert_true(unicode_hash >= 0)
+  inspect(unicode_hash, content="-1198184377")
 }
 
 ///|

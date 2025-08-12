@@ -14,8 +14,8 @@
 
 ///|
 test "Bool hash function" {
-  inspect(true.hash(), content="1")
-  inspect(false.hash(), content="0")
+  inspect(true.hash(), content="-205818221")
+  inspect(false.hash(), content="148298089")
 }
 
 ///|

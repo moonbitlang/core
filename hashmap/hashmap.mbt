@@ -594,7 +594,7 @@ test "set" {
   inspect(m.size(), content="7")
   inspect(
     m.debug_entries(),
-    content="_,(0,a,1),(1,b,1),(2,c,1),(3,d,1),(3,bc,2),(4,cd,2),(4,abc,3),_,_,_,_,_,_,_,_",
+    content="_,(0,abc,3),_,_,(0,a,1),(0,c,1),(0,b,1),_,_,_,(0,d,1),_,_,_,(0,bc,2),(0,cd,2)",
   )
 }
 
@@ -611,7 +611,7 @@ test "remove" {
   inspect(m.size(), content="5")
   inspect(
     m.debug_entries(),
-    content="_,(0,a,1),(0,bc,2),(1,cd,2),(1,abc,3),_,(0,abcdef,6),_,_,_,_,_,_,_,_,_",
+    content="(1,cd,2),(0,abc,3),_,_,(0,a,1),_,_,_,_,_,_,_,_,_,(0,bc,2),(1,abcdef,6)",
   )
 }
 
@@ -623,7 +623,7 @@ test "remove_unexist_key" {
   m.set("abc", 3)
   m.remove("d")
   inspect(m.size(), content="3")
-  inspect(m.debug_entries(), content="_,(0,a,1),(0,ab,2),(0,abc,3),_,_,_,_")
+  inspect(m.debug_entries(), content="_,(0,abc,3),_,_,(0,a,1),(1,ab,2),_,_")
 }
 
 ///|
@@ -658,7 +658,7 @@ test "grow" {
   inspect(m.capacity(), content="32")
   inspect(
     m.debug_entries(),
-    content="_,(0,C,1),(0,Go,2),(0,C++,3),(0,Java,4),(0,Scala,5),(1,Julia,5),(2,Cobol,5),(2,Python,6),(2,Haskell,7),(2,Rescript,8),_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_",
+    content="_,_,_,_,_,(0,Haskell,7),(0,Scala,5),_,_,_,_,(0,Go,2),_,_,(0,C,1),_,_,_,_,_,_,_,(0,Java,4),_,(0,Cobol,5),(0,Rescript,8),(0,C++,3),_,(0,Julia,5),_,(0,Python,6),_",
   )
 }
 

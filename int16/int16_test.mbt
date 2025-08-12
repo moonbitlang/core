@@ -174,13 +174,13 @@ test "Int16::compare" {
 
 ///|
 test "Int16::hash" {
-  inspect(Int16::hash(1), content="1")
-  inspect(Int16::hash(-1), content="-1")
-  inspect(Int16::hash(32767), content="32767")
-  inspect(Int16::hash(-32768), content="-32768")
-  inspect(Int16::hash(0), content="0")
-  inspect(Int16::hash(12345), content="12345")
-  inspect(Int16::hash(-12345), content="-12345")
+  inspect(Int16::hash(1), content="-205818221")
+  inspect(Int16::hash(-1), content="67608159")
+  inspect(Int16::hash(32767), content="929308064")
+  inspect(Int16::hash(-32768), content="-841328155")
+  inspect(Int16::hash(0), content="148298089")
+  inspect(Int16::hash(12345), content="-393624961")
+  inspect(Int16::hash(-12345), content="1221658118")
 }
 
 ///|

@@ -32,7 +32,7 @@ test "doc" {
   let set = @hashset.of([3, 8, 1])
   set.add(3)
   set.add(4)
-  inspect(set, content="@hashset.of([3, 4, 1, 8])")
+  inspect(set, content="@hashset.of([3, 8, 1, 4])")
 }
 
 ///|
@@ -367,7 +367,7 @@ test "hashset arbitrary" {
   )
   inspect(
     samples[11:15],
-    content="[@hashset.of([0, -2, -1]), @hashset.of([0, 4, -5, -2, 8]), @hashset.of([2, 0, -1]), @hashset.of([0])]",
+    content="[@hashset.of([-2, 0, -1]), @hashset.of([-5, 0, 8, 4, -2]), @hashset.of([0, 2, -1]), @hashset.of([0])]",
   )
 }
 
@@ -391,5 +391,5 @@ test "@hashset.to_array/multiple" {
   set.add(2)
   set.add(3)
   set.add(4)
-  inspect(set.to_array(), content="[3, 4, 1, 2]")
+  inspect(set.to_array(), content="[3, 1, 2, 4]")
 }

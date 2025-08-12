@@ -105,7 +105,7 @@ test "UInt16 default value" {
 
   // Hash support is available via .hash()
   let value : UInt16 = 42
-  inspect(value.hash(), content="42")
+  inspect(value.hash(), content="1161967057")
 }
 ```
 

@@ -88,10 +88,10 @@ test "hash" {
   let b4 = @bytes.of([
     b'\x7f', b'\xff', b'\xff', b'\xff', b'\xff', b'\xff', b'\xff', b'\xff',
   ])
-  inspect(b1.hash(), content="273427599")
-  inspect(b2.hash(), content="2013728637")
-  inspect(b3.hash(), content="-983520567")
-  inspect(b4.hash(), content="-1652773543")
+  inspect(b1.hash(), content="2001377227")
+  inspect(b2.hash(), content="-1020996018")
+  inspect(b3.hash(), content="-1179260245")
+  inspect(b4.hash(), content="1208042036")
   inspect(b1.hash() == b1.hash(), content="true")
   inspect(b2.hash() == b2.hash(), content="true")
   inspect(b1.hash() == b2.hash(), content="false")

@@ -86,7 +86,7 @@ test "HAMT::iter" {
   let data = @hashmap.of([(0, "a"), (2, "b"), (3, "d"), (5, "e"), (11111, "f")])
   let mut s = ""
   data.iter().each(p => s += " \{p.0},\{p.1}")
-  inspect(s, content=" 0,a 5,e 3,d 11111,f 2,b")
+  inspect(s, content=" 0,a 11111,f 5,e 2,b 3,d")
 }
 
 ///|
@@ -94,7 +94,7 @@ test "HAMT::iter2" {
   let data = @hashmap.of([(0, "a"), (2, "b"), (3, "d"), (5, "e"), (11111, "f")])
   let mut s = ""
   data.iter2().each((k, v) => s += " \{k},\{v}")
-  inspect(s, content=" 0,a 5,e 3,d 11111,f 2,b")
+  inspect(s, content=" 0,a 11111,f 5,e 2,b 3,d")
 }
 
 ///|
@@ -106,7 +106,7 @@ test "HAMT::to_string" {
     .add(42, 42)
   inspect(
     map,
-    content="@immut/hashmap.of([(3, 3), (42, 42), (1, 1), (268435455, 268435455)])",
+    content="@immut/hashmap.of([(268435455, 268435455), (42, 42), (1, 1), (3, 3)])",
   )
 }
 
@@ -148,7 +148,7 @@ test "to_array" {
 test "from_iter multiple elements iter" {
   inspect(
     @hashmap.from_iter([(1, 1), (2, 2), (3, 3)].iter()),
-    content="@immut/hashmap.of([(3, 3), (2, 2), (1, 1)])",
+    content="@immut/hashmap.of([(1, 1), (2, 2), (3, 3)])",
   )
 }
 
