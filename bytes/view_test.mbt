@@ -524,3 +524,15 @@ test "impl Hash for View" {
   assert_not_eq(b0[0:4].hash(), b1[0:4].hash())
   assert_not_eq(b0[4:8].hash(), b1[4:8].hash())
 }
+
+///| This test checks the invariance that the hash of a bytes and its view are the same.
+/// 
+/// This is necessary because we may want to use a bytes view as a key in a hash map,
+/// and we need to ensure that the hash remains consistent with the original bytes.
+test "bytes view hash invariant" {
+  let bytes : Array[Bytes] = ["12345678", "56781234", "1234", "5678"]
+  for b in bytes {
+    let view = b[:]
+    assert_eq(view.hash(), b.hash())
+  }
+}

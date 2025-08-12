@@ -30,15 +30,19 @@ let gPRIME4 = 0x27D4EB2F
 let gPRIME5 = 0x165667B1
 
 ///|
-fn xxhash32(input : Bytes, seed : Int) -> Int {
-  let len = input.length()
+fn xxhash32(
+  input : Bytes,
+  offset~ : Int = 0,
+  len~ : Int = input.length(),
+  seed : Int,
+) -> Int {
   let h = (if len >= 16 {
-      h16bytes(input, 0, len, seed)
+      h16bytes(input, offset, len, seed)
     } else {
       seed + gPRIME5
     }) +
     len
-  finalize(h, input, len & -16, len & 0xF)
+  finalize(h, input, offset + (len & -16), len & 0xF)
 }
 
 ///|

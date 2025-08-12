@@ -640,3 +640,8 @@ pub impl Hash for View with hash_combine(self : View, hasher : Hasher) {
     hasher.combine_byte(self.unsafe_get(i))
   }
 }
+
+///|
+pub impl Hash for View with hash(self : View) -> Int {
+  xxhash32(self.data(), 0, offset=self.start_offset(), len=self.length())
+}
