@@ -554,13 +554,6 @@ priv struct MyString(String) derive(Eq)
 
 ///|
 #coverage.skip
-impl Hash for MyString with hash(self) {
-  let MyString(self) = self
-  self.length()
-}
-
-///|
-#coverage.skip
 impl Hash for MyString with hash_combine(self, hasher) {
   hasher.combine_string(self.0)
 }

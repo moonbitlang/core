@@ -19,12 +19,6 @@ pub fn to_string(self : Unit) -> String {
 }
 
 ///|
-pub impl Hash for Unit with hash(self) {
-  let _ = self
-  0
-}
-
-///|
 pub impl Hash for Unit with hash_combine(self, hasher) -> Unit {
   let _ = self
   hasher.combine_unit()

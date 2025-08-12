@@ -13,11 +13,6 @@
 // limitations under the License.
 
 ///|
-pub impl Hash for Char with hash(self) {
-  self.to_int()
-}
-
-///|
 pub impl Hash for Char with hash_combine(self, hasher) -> Unit {
   hasher.combine_char(self)
 }

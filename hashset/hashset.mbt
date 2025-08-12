@@ -366,12 +366,6 @@ pub impl[K : Show] Show for T[K] with output(self, logger) {
 priv struct MyString(String) derive(Eq)
 
 ///|
-impl Hash for MyString with hash(self) {
-  let MyString(self) = self
-  self.length()
-}
-
-///|
 impl Hash for MyString with hash_combine(self, hasher) {
   let MyString(self) = self
   hasher.combine_string(self)

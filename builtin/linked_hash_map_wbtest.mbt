@@ -16,12 +16,6 @@
 struct MyString(String) derive(Eq)
 
 ///|
-impl Hash for MyString with hash(self) {
-  let MyString(s) = self
-  s.length()
-}
-
-///|
 impl Hash for MyString with hash_combine(self, hasher) {
   let MyString(s) = self
   hasher.combine_string(s)

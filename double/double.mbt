@@ -236,11 +236,6 @@ test "min equal to neg max" {
 }
 
 ///|
-pub impl Hash for Double with hash(self) {
-  self.reinterpret_as_int64() |> Hash::hash()
-}
-
-///|
 pub impl Hash for Double with hash_combine(self, hasher) {
   hasher.combine_double(self)
 }

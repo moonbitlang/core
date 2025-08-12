@@ -54,11 +54,6 @@ pub impl Compare for UInt16 with compare(self, that) {
 }
 
 ///|
-pub impl Hash for UInt16 with hash(self) {
-  self.to_int()
-}
-
-///|
 pub impl Hash for UInt16 with hash_combine(self, hasher) {
   hasher.combine_int(self.to_int())
 }

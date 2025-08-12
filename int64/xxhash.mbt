@@ -28,28 +28,6 @@ let gPRIME4 = 0x27D4EB2FU
 let gPRIME5 = 0x165667B1U
 
 ///|
-// https://github.com/Cyan4973/xxHash/blob/dev/doc/xxhash_spec.md#xxh32-algorithm-description
-// For a more readable version, see bytes/xxhash.mbt
-pub impl Hash for Int64 with hash(self) -> Int {
-  let mut input = self.reinterpret_as_uint64()
-  let seed = 0U
-  let mut acc = seed + gPRIME5 + 8
-  let mut x = acc + input.to_uint() * gPRIME3
-  let r = 17
-  acc = ((x << r) | (x >> (32 - r))) * gPRIME4
-  input = input >> 32
-  x = acc + input.to_uint() * gPRIME3
-  acc = ((x << r) | (x >> (32 - r))) * gPRIME4
-  input = input >> 32
-  acc = acc ^ (acc >> 15)
-  acc *= gPRIME2
-  acc = acc ^ (acc >> 13)
-  acc *= gPRIME3
-  acc = acc ^ (acc >> 16)
-  acc.reinterpret_as_int()
-}
-
-///|
 pub impl Hash for Int64 with hash_combine(self, hasher) {
   hasher.combine_int64(self)
 }
