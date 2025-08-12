@@ -34,7 +34,23 @@ test "UInt to_json" {
 ///|
 test "double to json with positive infinity" {
   let pos_inf = 1.0 / 0.0
-  inspect(pos_inf.to_json(), content="Null")
+  inspect(
+    pos_inf.to_json(),
+    content=(
+      #|String("Infinity")
+    ),
+  )
+}
+
+///|
+test "double to json with negative infinity" {
+  let neg_inf = -1.0 / 0.0
+  inspect(
+    neg_inf.to_json(),
+    content=(
+      #|String("-Infinity")
+    ),
+  )
 }
 
 ///|
