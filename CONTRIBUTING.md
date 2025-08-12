@@ -101,4 +101,4 @@ After submitting your pull request, request a review from the project maintainer
 - function names, `snake_case` is preferred.
 - type parameters, one character starting from `A` is preferred, e.g, `fn[A,B] Array::map(self : Array[A], f : (A) -> (B)) -> Array[B]`, for some established
   conventions, `Map[K,V]` it is also accepted.
-- type names, `CamelCase` is preferred, if one package is centered around one specific type, short name `T` is preferred, e.g, `@sorted_set.T`.
+- type names, `CamelCase` is preferred.
