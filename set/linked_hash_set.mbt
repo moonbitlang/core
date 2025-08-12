@@ -607,3 +607,6 @@ pub impl[K : Hash + Eq] BitXOr for Set[K] with lxor(self, other) {
 pub impl[K : Hash + Eq] Sub for Set[K] with op_sub(self, other) {
   self.difference(other)
 }
+
+///|
+pub fnalias Set::(new, from_array, from_iter, of)
