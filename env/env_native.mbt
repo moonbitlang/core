@@ -82,6 +82,7 @@ fn now_internal() -> UInt64 {
 }
 
 ///|
+#borrow(ptr)
 extern "c" fn getcwd(ptr : Bytes, size : Int) -> Int = "getcwd"
 
 ///|
