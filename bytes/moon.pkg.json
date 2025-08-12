@@ -3,6 +3,7 @@
   "test-import": [
     "moonbitlang/core/array",
     "moonbitlang/core/double",
-    "moonbitlang/core/test"
+    "moonbitlang/core/test",
+    "moonbitlang/core/quickcheck"
   ]
 }
