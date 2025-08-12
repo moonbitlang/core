@@ -18,7 +18,7 @@ let default_init_capacity = 8
 
 ///|
 /// Create new hash set.
-pub fn[K] new(capacity~ : Int = default_init_capacity) -> T[K] {
+pub fn[K] T::new(capacity~ : Int = default_init_capacity) -> T[K] {
   {
     size: 0,
     capacity,
@@ -30,14 +30,14 @@ pub fn[K] new(capacity~ : Int = default_init_capacity) -> T[K] {
 
 ///|
 /// Create new hash set from array.
-pub fn[K : Hash + Eq] from_array(arr : Array[K]) -> T[K] {
+pub fn[K : Hash + Eq] T::from_array(arr : Array[K]) -> T[K] {
   let m = new()
   arr.each(e => m.add(e))
   m
 }
 
 ///|
-pub fn[K : Hash + Eq] of(arr : FixedArray[K]) -> T[K] {
+pub fn[K : Hash + Eq] T::of(arr : FixedArray[K]) -> T[K] {
   let m = new()
   arr.each(e => m.add(e))
   m
@@ -288,7 +288,7 @@ pub fn[K] to_array(self : T[K]) -> Array[K] {
 }
 
 ///|
-pub fn[K : Hash + Eq] from_iter(iter : Iter[K]) -> T[K] {
+pub fn[K : Hash + Eq] T::from_iter(iter : Iter[K]) -> T[K] {
   let s = new()
   iter.each(e => s.add(e))
   s
@@ -612,3 +612,6 @@ pub impl[X : ToJson] ToJson for T[X] with to_json(self) {
 pub impl[K] Default for T[K] with default() {
   new()
 }
+
+///|
+pub fnalias T::(new, from_array, from_iter, of)
