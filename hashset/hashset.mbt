@@ -234,7 +234,8 @@ pub fn[K] is_empty(self : T[K]) -> Bool {
 
 ///|
 /// Iterate over all keys of the set.
-pub fn[K] each(self : T[K], f : (K) -> Unit) -> Unit {
+#locals(f)
+pub fn[K] each(self : T[K], f : (K) -> Unit raise?) -> Unit raise? {
   for entry in self.entries {
     if entry is Some({ key, .. }) {
       f(key)
@@ -244,7 +245,8 @@ pub fn[K] each(self : T[K], f : (K) -> Unit) -> Unit {
 
 ///|
 /// Iterate over all keys of the set, with index.
-pub fn[K] eachi(self : T[K], f : (Int, K) -> Unit) -> Unit {
+#locals(f)
+pub fn[K] eachi(self : T[K], f : (Int, K) -> Unit raise?) -> Unit raise? {
   let mut idx = 0
   for i in 0..<self.capacity {
     if self.entries[i] is Some({ key, .. }) {
@@ -525,4 +527,88 @@ test "clear" {
   for i in 0..<m.capacity() {
     @test.same_object(m.entries[i], None)
   }
+}
+
+///|
+/// Insert a key into the hash set and returns whether the key was successfully added.
+///
+/// Parameters:
+///
+/// * `self` : The hash set to modify.
+/// * `key` : The key to insert. Must implement `Hash` and `Eq` traits.
+///
+/// Returns `true` if the key was successfully added (i.e., it wasn't already present),
+/// `false` if the key already existed in the set.
+///
+/// Example:
+///
+/// ```moonbit
+///   let set : T[String] = new()
+///   inspect(set.add_and_check("key"), content="true")  // First insertion
+///   inspect(set.add_and_check("key"), content="false") // Already exists
+///   inspect(set.size(), content="1")
+/// ```
+pub fn[K : Hash + Eq] add_and_check(self : T[K], key : K) -> Bool {
+  let old_size = self.size
+  self.add(key)
+  self.size > old_size
+}
+
+///|
+/// Remove a key from the hash set and returns whether the key was successfully removed.
+///
+/// Parameters:
+///
+/// * `self` : The hash set to modify.
+/// * `key` : The key to remove. Must implement `Hash` and `Eq` traits.
+///
+/// Returns `true` if the key was successfully removed (i.e., it was present),
+/// `false` if the key didn't exist in the set.
+///
+/// Example:
+///
+/// ```moonbit
+///   let set = of(["a", "b"])
+///   inspect(set.remove_and_check("a"), content="true")  // Successfully removed
+///   inspect(set.remove_and_check("a"), content="false") // Already removed
+///   inspect(set.size(), content="1")
+/// ```
+pub fn[K : Hash + Eq] remove_and_check(self : T[K], key : K) -> Bool {
+  let old_size = self.size
+  self.remove(key)
+  self.size < old_size
+}
+
+///|
+/// Copy the set, creating a new set with the same keys.
+pub fn[K] copy(self : T[K]) -> T[K] {
+  let other = {
+    capacity: self.capacity,
+    entries: FixedArray::make(self.capacity, None),
+    size: self.size,
+    capacity_mask: self.capacity_mask,
+    grow_at: self.grow_at,
+  }
+  for i in 0..<self.capacity {
+    other.entries[i] = self.entries[i]
+  }
+  other
+}
+
+///|
+/// ToJson implementation for hashset
+pub impl[X : ToJson] ToJson for T[X] with to_json(self) {
+  let res = Array::new(capacity=self.size)
+  for entry in self.entries {
+    if entry is Some({ key, .. }) {
+      res.push(key.to_json())
+    }
+  }
+  Json::array(res)
+}
+
+///|
+/// Default implementation for hashset
+pub impl[K] Default for T[K] with default() {
+  new()
 }
