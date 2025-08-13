@@ -543,3 +543,67 @@ pub impl[X : ToJson] ToJson for Set[X] with to_json(self) {
   }
   Json::array(res)
 }
+
+///|
+/// Check if two sets have no common elements.
+pub fn[K : Hash + Eq] is_disjoint(self : Set[K], other : Set[K]) -> Bool {
+  if self.size() <= other.size() {
+    for k in self {
+      if other.contains(k) {
+        return false
+      }
+    }
+  } else {
+    for k in other {
+      if self.contains(k) {
+        return false
+      }
+    }
+  }
+  true
+}
+
+///|
+/// Check if the current set is a subset of another set.
+pub fn[K : Hash + Eq] is_subset(self : Set[K], other : Set[K]) -> Bool {
+  if self.size() <= other.size() {
+    for k in self {
+      if !other.contains(k) {
+        return false
+      }
+    }
+    true
+  } else {
+    false
+  }
+}
+
+///|
+/// Check if the current set is a superset of another set.
+pub fn[K : Hash + Eq] is_superset(self : Set[K], other : Set[K]) -> Bool {
+  other.is_subset(self)
+}
+
+///|
+/// Intersection of two hash sets.
+pub impl[K : Hash + Eq] BitAnd for Set[K] with land(self, other) {
+  self.intersection(other)
+}
+
+///|
+/// Union of two hash sets.
+pub impl[K : Hash + Eq] BitOr for Set[K] with lor(self, other) {
+  self.union(other)
+}
+
+///|
+/// Symmetric difference of two hash sets.
+pub impl[K : Hash + Eq] BitXOr for Set[K] with lxor(self, other) {
+  self.symmetric_difference(other)
+}
+
+///|
+/// Difference of two hash sets.
+pub impl[K : Hash + Eq] Sub for Set[K] with op_sub(self, other) {
+  self.difference(other)
+}
