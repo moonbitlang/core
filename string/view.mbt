@@ -338,7 +338,7 @@ pub impl Eq for View with op_equal(self, other) {
 }
 
 ///|
-/// Views are ordered lexicographically by their charcodes(code unit). This 
+/// Views are ordered based on shortlex order by their charcodes (code units). This 
 /// orders Unicode characters based on their positions in the code charts. This is
 /// not necessarily the same as "alphabetical" order, which varies by language
 /// and locale.
