@@ -1207,7 +1207,7 @@ pub impl[A : Hash] Hash for T[A] with hash_combine(self, hasher) {
 }
 
 ///|
-/// Compares two lists lexicographically.
+/// Compares two lists based on shortlex order.
 ///
 /// First compares elements pairwise until a difference is found.
 /// If lists have different lengths and all shared elements are equal,

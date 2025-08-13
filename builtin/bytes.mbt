@@ -319,7 +319,7 @@ pub impl Eq for Bytes with op_equal(self : Bytes, other : Bytes) -> Bool {
 }
 
 ///|
-/// Compares two byte sequences lexicographically. First compares the lengths of
+/// Compares two byte sequences based on shortlex order. First compares the lengths of
 /// the sequences, then compares bytes pairwise until a difference is found or
 /// all bytes have been compared.
 ///

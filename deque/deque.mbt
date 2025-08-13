@@ -1544,7 +1544,7 @@ pub fn[A : Compare] binary_search(self : T[A], value : A) -> Result[Int, Int] {
 }
 
 ///|
-/// Compares two deques lexicographically.
+/// Compares two deques based on shortlex order.
 ///
 /// First compares the lengths of the deques. If they differ, returns -1 if the
 /// first deque is shorter, 1 if it's longer. If the lengths are equal, compares

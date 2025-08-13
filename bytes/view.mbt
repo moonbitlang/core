@@ -573,7 +573,7 @@ pub impl Eq for View with op_equal(self, other) -> Bool {
 }
 
 ///|
-/// Compares two views lexicographically. First compares the lengths of
+/// Compares two views based on shortlex order. First compares the lengths of
 /// the views, then compares bytes pairwise until a difference is found or
 /// all bytes have been compared.
 ///

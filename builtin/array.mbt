@@ -239,7 +239,7 @@ pub impl[T : Hash] Hash for Array[T] with hash_combine(self, hasher) {
 }
 
 ///|
-/// Compares two arrays lexicographically.
+/// Compares two arrays based on shortlex order.
 ///
 /// First compares the lengths of the arrays. If they differ, returns -1 if the
 /// first array is shorter, 1 if it's longer. If the lengths are equal, compares

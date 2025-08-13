@@ -301,7 +301,7 @@ pub impl[A : Hash + Compare] Hash for T[A] with hash_combine(self, hasher) {
 }
 
 ///|
-/// Compare two priority queues lexicographically by comparing their sorted contents.
+/// Compare two priority queues based on shortlex order by comparing their sorted contents.
 ///
 /// Parameters:
 ///
