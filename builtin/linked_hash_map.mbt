@@ -226,9 +226,16 @@ pub fn[K : Hash + Eq, V] Map::get(self : Map[K, V], key : K) -> V? {
 }
 
 ///|
-#deprecated("Use `get` instead. `op_get` will return `V` instead of `Option[V]` in the future.")
-pub fn[K : Hash + Eq, V] Map::op_get(self : Map[K, V], key : K) -> V? {
-  self.get(key)
+pub fn[K : Hash + Eq, V] Map::op_get(self : Map[K, V], key : K) -> V {
+  let hash = key.hash()
+  for i = 0, idx = hash & self.capacity_mask {
+    guard self.entries[idx] is Some(entry)
+    if entry.hash == hash && entry.key == key {
+      return entry.value
+    }
+    guard i <= entry.psl
+    continue i + 1, (idx + 1) & self.capacity_mask
+  }
 }
 
 ///|
