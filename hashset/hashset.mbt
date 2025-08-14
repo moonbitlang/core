@@ -18,7 +18,7 @@ let default_init_capacity = 8
 
 ///|
 /// Create new hash set.
-pub fn[K] T::new(capacity~ : Int = default_init_capacity) -> T[K] {
+pub fn[K] T::new(capacity? : Int = default_init_capacity) -> T[K] {
   {
     size: 0,
     capacity,

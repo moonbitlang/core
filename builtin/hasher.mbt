@@ -68,7 +68,7 @@ struct Hasher {
 ///   h2.combine(x)
 ///   inspect(h1.finalize() != h2.finalize(), content="true") // Different seeds produce different hashes
 /// ```
-pub fn Hasher::new(seed~ : Int = 0) -> Hasher {
+pub fn Hasher::new(seed? : Int = 0) -> Hasher {
   { acc: seed.reinterpret_as_uint() + GPRIME5 }
 }
 
