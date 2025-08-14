@@ -121,3 +121,6 @@ pub fn[T] tap(value : T, f : (T) -> Unit) -> T {
 pub fn[T, R] then(value : T, f : (T) -> R) -> R {
   f(value)
 }
+
+///|
+pub let null : Json = @builtin.null

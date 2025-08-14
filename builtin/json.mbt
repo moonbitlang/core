@@ -41,15 +41,13 @@ pub impl Eq for Json with op_equal(a, b) {
 /// Creates a JSON null value.
 ///
 /// Returns a JSON value representing `null`.
-///
-/// Example:
-///
-/// ```moonbit
-///   inspect(Json::null(), content="Null")
-/// ```
+#deprecated("Use `null` instead")
 pub fn Json::null() -> Json {
   return Null
 }
+
+///|
+pub let null : Json = Null
 
 ///|
 /// Creates a JSON number value from a double-precision floating-point number.
