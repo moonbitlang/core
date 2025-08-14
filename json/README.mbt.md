@@ -139,7 +139,7 @@ This is particularly true for deeply-nested data structures.
 
 ```moonbit
 test "json inspection" {
-  let null = Json::null() 
+  let null = null 
 
   // Simple json values
   let json_value : Json = { "key": "value", "numbers": [1, 2, 3] }

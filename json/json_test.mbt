@@ -14,7 +14,7 @@
 
 ///|
 test "get as null" {
-  inspect(Json::null().as_null(), content="Some(())")
+  inspect(null.as_null(), content="Some(())")
   inspect(Json::boolean(true).as_null(), content="None")
   inspect(Json::boolean(false).as_null(), content="None")
   inspect(Json::number(1.0).as_null(), content="None")
@@ -28,7 +28,7 @@ test "get as null" {
 
 ///|
 test "get as bool" {
-  inspect(Json::null().as_bool(), content="None")
+  inspect(null.as_bool(), content="None")
   inspect(Json::boolean(true).as_bool(), content="Some(true)")
   inspect(Json::boolean(false).as_bool(), content="Some(false)")
   inspect(Json::number(1.0).as_bool(), content="None")
@@ -49,7 +49,7 @@ fn _check2(x : String) -> Json raise @json.ParseError {
 
 ///|
 test "get as number" {
-  inspect(Json::null().as_number(), content="None")
+  inspect(null.as_number(), content="None")
   inspect(Json::boolean(false).as_number(), content="None")
   inspect(Json::boolean(true).as_number(), content="None")
   inspect(Json::number(1.0).as_number(), content="Some(1)")
@@ -68,7 +68,7 @@ test "get as number" {
 
 ///|
 test "get as string" {
-  inspect(Json::null().as_string(), content="None")
+  inspect(null.as_string(), content="None")
   inspect(Json::boolean(true).as_string(), content="None")
   inspect(Json::boolean(false).as_string(), content="None")
   inspect(Json::number(1.0).as_string(), content="None")
@@ -92,7 +92,7 @@ test "get as string" {
 
 ///|
 test "get as array" {
-  inspect(Json::null().as_array(), content="None")
+  inspect(null.as_array(), content="None")
   inspect(Json::boolean(true).as_array(), content="None")
   inspect(Json::boolean(false).as_array(), content="None")
   inspect(Json::number(1.0).as_array(), content="None")
@@ -127,7 +127,7 @@ test "get as array" {
 
 ///|
 test "get as object" {
-  inspect(Json::null().as_object().map(_.to_array()), content="None")
+  inspect(null.as_object().map(_.to_array()), content="None")
   inspect(Json::boolean(true).as_object().map(_.to_array()), content="None")
   inspect(Json::boolean(false).as_object().map(_.to_array()), content="None")
   inspect(Json::number(1.0).as_object().map(_.to_array()), content="None")
@@ -188,10 +188,10 @@ test "get as object" {
 ///|
 test "deep access" {
   let json : Json = {
-    "key": [1.0, true, Json::null(), [], { "key": "value", "value": 100.0 }],
+    "key": [1.0, true, null, [], { "key": "value", "value": 100.0 }],
     "int": 12345,
     "double": 123.45,
-    "null": Json::null(),
+    "null": null,
     "bool": false,
     "obj": {},
   }
@@ -230,10 +230,10 @@ test "deep access" {
 ///|
 test "stringify" {
   let json : Json = {
-    "key": [1.0, true, Json::null(), [], { "key": "value", "value": 100.0 }],
+    "key": [1.0, true, null, [], { "key": "value", "value": 100.0 }],
     "int": 12345,
     "double": 123.45,
-    "null": Json::null(),
+    "null": null,
     "bool": false,
     "obj": {},
   }
@@ -421,10 +421,10 @@ test "stringify number" {
 ///|
 test "stringify with indent" {
   let json : Json = {
-    "key": [1.0, true, Json::null(), [], { "key": "value", "value": 100.0 }],
+    "key": [1.0, true, null, [], { "key": "value", "value": 100.0 }],
     "int": 12345,
     "double": 123.45,
-    "null": Json::null(),
+    "null": null,
     "bool": false,
     "obj": {},
   }

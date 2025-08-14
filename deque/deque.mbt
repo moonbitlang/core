@@ -1266,7 +1266,7 @@ pub fn T::join(self : T[String], separator : @string.View) -> String {
 /// ```
 ///
 pub impl[A : ToJson] ToJson for T[A] with to_json(self : T[A]) -> Json {
-  let res = Array::make(self.length(), Json::null())
+  let res = Array::make(self.length(), null)
   for i, x in self {
     res[i] = x.to_json()
   }
