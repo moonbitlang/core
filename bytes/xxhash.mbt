@@ -32,8 +32,8 @@ let gPRIME5 = 0x165667B1
 ///|
 fn xxhash32(
   input : Bytes,
-  offset~ : Int = 0,
-  len~ : Int = input.length(),
+  offset? : Int = 0,
+  len? : Int = input.length(),
   seed : Int,
 ) -> Int {
   let h = (if len >= 16 {

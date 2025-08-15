@@ -71,7 +71,7 @@ fn unsafe_sub_string(
 /// it simply copy the bytes into a new String.
 pub fn Bytes::to_unchecked_string(
   self : Bytes,
-  offset~ : Int = 0,
+  offset? : Int = 0,
   length? : Int,
 ) -> String {
   let len = self.length()
