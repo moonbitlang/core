@@ -1,0 +1,28 @@
+// Package for high-precision decimal arithmetic
+package "decimal"
+
+// Values
+fn from_parts(@bigint.BigInt, Int) -> Decimal
+// Create a Decimal from mantissa (BigInt) and scale (number of decimal places)
+
+fn from_int(Int) -> Decimal
+// Create a Decimal from a regular integer (scale = 0)
+
+// Types and methods
+pub struct Decimal {
+    mantissa: @bigint.BigInt // integer representation of the number without decimal point
+    scale: Int               // number of decimal digits
+}
+
+// Type aliases
+// (none)
+
+// Traits
+impl Show for Decimal
+// Convert Decimal to string representation with correct decimal point placement
+
+impl Eq for Decimal
+// Equality comparison
+
+impl Compare for Decimal
+// Ordering comparison, considers normalized scale
