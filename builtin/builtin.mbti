@@ -81,7 +81,7 @@ fn[T] Array::each(Self[T], (T) -> Unit raise?) -> Unit raise?
 fn[T] Array::eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?
 fn[T : Eq] Array::ends_with(Self[T], Self[T]) -> Bool
 fn[T] Array::extract_if(Self[T], (T) -> Bool) -> Self[T]
-fn[A] Array::fill(Self[A], A, start~ : Int = .., end? : Int) -> Unit
+fn[A] Array::fill(Self[A], A, start? : Int, end? : Int) -> Unit
 fn[T] Array::filter(Self[T], (T) -> Bool raise?) -> Self[T] raise?
 #deprecated
 fn[T] Array::find_index(Self[T], (T) -> Bool) -> Int?
@@ -540,7 +540,7 @@ fn[T] FixedArray::binary_search_by(Self[T], (T) -> Int raise?) -> Result[Int, In
 fn FixedArray::blit_from_bytes(Self[Byte], Int, Bytes, Int, Int) -> Unit
 fn FixedArray::blit_from_string(Self[Byte], Int, String, Int, Int) -> Unit
 fn[A] FixedArray::blit_to(Self[A], Self[A], len~ : Int, src_offset? : Int, dst_offset? : Int) -> Unit
-fn[T] FixedArray::fill(Self[T], T) -> Unit
+fn[T] FixedArray::fill(Self[T], T, start? : Int, end? : Int) -> Unit
 fn[T] FixedArray::get(Self[T], Int) -> T?
 fn[T] FixedArray::is_empty(Self[T]) -> Bool
 fn[T] FixedArray::iter(Self[T]) -> Iter[T]
