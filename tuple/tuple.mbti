@@ -36,17 +36,41 @@ fn[T, U, V] uncurry((T) -> (U) -> V) -> (T, U) -> V
 // Errors
 
 // Types and methods
+impl[A : Default, B : Default] Default for (A, B)
 impl[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary] @quickcheck.Arbitrary for (A, B)
 
+impl[A : Default, B : Default, C : Default] Default for (A, B, C)
 impl[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary, C : @quickcheck.Arbitrary] @quickcheck.Arbitrary for (A, B, C)
 
+impl[A : Default, B : Default, C : Default, D : Default] Default for (A, B, C, D)
 impl[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary, C : @quickcheck.Arbitrary, D : @quickcheck.Arbitrary] @quickcheck.Arbitrary for (A, B, C, D)
 
+impl[A : Default, B : Default, C : Default, D : Default, E : Default] Default for (A, B, C, D, E)
 impl[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary, C : @quickcheck.Arbitrary, D : @quickcheck.Arbitrary, E : @quickcheck.Arbitrary] @quickcheck.Arbitrary for (A, B, C, D, E)
 
+impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default] Default for (A, B, C, D, E, F)
 impl[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary, C : @quickcheck.Arbitrary, D : @quickcheck.Arbitrary, E : @quickcheck.Arbitrary, F : @quickcheck.Arbitrary] @quickcheck.Arbitrary for (A, B, C, D, E, F)
 
+impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default] Default for (A, B, C, D, E, F, G)
 impl[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary, C : @quickcheck.Arbitrary, D : @quickcheck.Arbitrary, E : @quickcheck.Arbitrary, F : @quickcheck.Arbitrary, G : @quickcheck.Arbitrary] @quickcheck.Arbitrary for (A, B, C, D, E, F, G)
+
+impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default] Default for (A, B, C, D, E, F, G, H)
+
+impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default] Default for (A, B, C, D, E, F, G, H, I)
+
+impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default, J : Default] Default for (A, B, C, D, E, F, G, H, I, J)
+
+impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default, J : Default, K : Default] Default for (A, B, C, D, E, F, G, H, I, J, K)
+
+impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default, J : Default, K : Default, L : Default] Default for (A, B, C, D, E, F, G, H, I, J, K, L)
+
+impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default, J : Default, K : Default, L : Default, M : Default] Default for (A, B, C, D, E, F, G, H, I, J, K, L, M)
+
+impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default, J : Default, K : Default, L : Default, M : Default, N : Default] Default for (A, B, C, D, E, F, G, H, I, J, K, L, M, N)
+
+impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default, J : Default, K : Default, L : Default, M : Default, N : Default, O : Default] Default for (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O)
+
+impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default, J : Default, K : Default, L : Default, M : Default, N : Default, O : Default, P : Default] Default for (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P)
 
 // Type aliases
 

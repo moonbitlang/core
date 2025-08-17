@@ -649,21 +649,6 @@ impl Default for Int64
 impl Default for UInt64
 impl Default for Double
 impl[X] Default for FixedArray[X]
-impl[A : Default, B : Default] Default for (A, B)
-impl[A : Default, B : Default, C : Default] Default for (A, B, C)
-impl[A : Default, B : Default, C : Default, D : Default] Default for (A, B, C, D)
-impl[A : Default, B : Default, C : Default, D : Default, E : Default] Default for (A, B, C, D, E)
-impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default] Default for (A, B, C, D, E, F)
-impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default] Default for (A, B, C, D, E, F, G)
-impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default] Default for (A, B, C, D, E, F, G, H)
-impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default] Default for (A, B, C, D, E, F, G, H, I)
-impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default, J : Default] Default for (A, B, C, D, E, F, G, H, I, J)
-impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default, J : Default, K : Default] Default for (A, B, C, D, E, F, G, H, I, J, K)
-impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default, J : Default, K : Default, L : Default] Default for (A, B, C, D, E, F, G, H, I, J, K, L)
-impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default, J : Default, K : Default, L : Default, M : Default] Default for (A, B, C, D, E, F, G, H, I, J, K, L, M)
-impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default, J : Default, K : Default, L : Default, M : Default, N : Default] Default for (A, B, C, D, E, F, G, H, I, J, K, L, M, N)
-impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default, J : Default, K : Default, L : Default, M : Default, N : Default, O : Default] Default for (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O)
-impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default, J : Default, K : Default, L : Default, M : Default, N : Default, O : Default, P : Default] Default for (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P)
 
 pub(open) trait Div {
   op_div(Self, Self) -> Self
@@ -856,3 +841,4 @@ impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G :
 impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson, K : ToJson, L : ToJson, M : ToJson, N : ToJson] ToJson for (A, B, C, D, E, F, G, H, I, J, K, L, M, N)
 impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson, K : ToJson, L : ToJson, M : ToJson, N : ToJson, O : ToJson] ToJson for (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O)
 impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson, K : ToJson, L : ToJson, M : ToJson, N : ToJson, O : ToJson, P : ToJson] ToJson for (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P)
+
