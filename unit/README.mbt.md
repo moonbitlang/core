@@ -51,7 +51,7 @@ test "side effect patterns" {
     // Simulated side effect
     if n % 2 == 0 {
       // Would print or log in real code
-      inspect(n, content=n.to_string())
+      println(n)
     }
     () // Return unit to continue fold
   })
@@ -60,7 +60,7 @@ test "side effect patterns" {
   // Using each for side effects (more idiomatic)
   numbers.each(fn(n) {
     if n % 2 == 0 {
-      inspect(n, content=n.to_string())
+      println(n)
     }
   })
 }
@@ -82,7 +82,7 @@ test "unit string conversion" {
   }
   
   let result = perform_operation()
-  let debug_msg = "Operation completed: " + result.to_string()
+  let debug_msg = "Operation completed: \{result}"
   inspect(debug_msg, content="Operation completed: ()")
 }
 ```
@@ -100,7 +100,7 @@ test "generic unit usage" {
   items.each(fn(x) { 
     // Side effect: processing each item
     let processed = x * 2
-    inspect(processed > 0, content="true") // Simulated processing validation
+    assert_true(processed > 0) // Simulated processing validation
   })
   
   // Unit represents successful completion without meaningful return value
