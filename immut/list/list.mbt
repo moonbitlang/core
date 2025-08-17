@@ -422,9 +422,8 @@ pub fn[A, B] fold_left(
 }
 
 ///|
-#deprecated("Use `rev_fold` instead")
 #coverage.skip
-#deprecated("use `@list` instead")
+#deprecated("use `@list.rev_fold` instead")
 pub fn[A, B] fold_right(
   self : T[A],
   f : (A, B) -> B raise?,
@@ -474,9 +473,7 @@ pub fn[A, B] rev_foldi(
 
 ///|
 /// Fold the list from left with index.
-#deprecated("Use `foldi` instead")
-#coverage.skip
-#deprecated("use `@list` instead")
+#deprecated("use `@list.foldi` instead")
 pub fn[A, B] fold_lefti(
   self : T[A],
   f : (Int, B, A) -> B raise?,
@@ -494,9 +491,7 @@ pub fn[A, B] fold_lefti(
 
 ///|
 /// Fold the list from right with index.
-#deprecated("Use `rev_foldi` instead")
-#coverage.skip
-#deprecated("use `@list` instead")
+#deprecated("use `@list.rev_foldi` instead")
 pub fn[A, B] fold_righti(
   self : T[A],
   f : (Int, A, B) -> B raise?,
@@ -548,7 +543,6 @@ pub fn[A, B] zip(self : T[A], other : T[B]) -> T[(A, B)]? {
 ///   let r = ls.flat_map((x) => { @list.from_array([x, x * 2]) })
 ///   assert_eq(r, @list.from_array([1, 2, 2, 4, 3, 6]))
 /// ```
-#coverage.skip
 #deprecated("use `@list` instead")
 pub fn[A, B] concat_map(self : T[A], f : (A) -> T[B]) -> T[B] {
   self.flat_map(f)
@@ -608,7 +602,6 @@ pub fn[A] unsafe_nth(self : T[A], n : Int) -> A {
 }
 
 ///|
-#coverage.skip
 #deprecated("use `@list` instead")
 pub fn[A] nth_exn(self : T[A], n : Int) -> A {
   self.unsafe_nth(n)
@@ -1214,7 +1207,7 @@ pub impl[A : Hash] Hash for T[A] with hash_combine(self, hasher) {
 }
 
 ///|
-/// Compares two lists lexicographically.
+/// Compares two lists based on shortlex order.
 ///
 /// First compares elements pairwise until a difference is found.
 /// If lists have different lengths and all shared elements are equal,

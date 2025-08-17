@@ -3,6 +3,8 @@ package "moonbitlang/core/error"
 
 // Values
 
+// Errors
+
 // Types and methods
 impl Show for Error
 impl ToJson for Error

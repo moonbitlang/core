@@ -8,8 +8,10 @@ fn[X] empty() -> SparseArray[X]
 
 fn[X] singleton(Int, X) -> SparseArray[X]
 
+// Errors
+
 // Types and methods
-pub(all) type Bitset UInt
+pub(all) struct Bitset(UInt)
 fn Bitset::add(Self, Int) -> Self
 fn Bitset::first_idx(Self) -> Int
 fn Bitset::has(Self, Int) -> Bool

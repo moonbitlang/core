@@ -107,3 +107,88 @@ test "Map::copy" {
   let copy : Map[String, String] = {}.copy()
   inspect(copy, content="{}")
 }
+
+///|
+test "Map::update" {
+  // Test updating existing value
+  let map = { "a": 1, "b": 2, "c": 3 }
+  map.update("a", fn(v) {
+    match v {
+      Some(x) => Some(x + 10)
+      None => Some(0)
+    }
+  })
+  inspect(map.get("a"), content="Some(11)")
+  inspect(map.size(), content="3")
+
+  // Test inserting new value when key doesn't exist
+  map.update("d", fn(v) {
+    match v {
+      Some(x) => Some(x)
+      None => Some(4)
+    }
+  })
+  inspect(map.get("d"), content="Some(4)")
+  inspect(map.size(), content="4")
+  inspect(
+    map,
+    content=(
+      #|{"a": 11, "b": 2, "c": 3, "d": 4}
+    ),
+  )
+
+  // Test removing existing value by returning None
+  map.update("b", fn(_) { None })
+  inspect(map.get("b"), content="None")
+  inspect(map.size(), content="3")
+  inspect(
+    map,
+    content=(
+      #|{"a": 11, "c": 3, "d": 4}
+    ),
+  )
+
+  // Test no-op when key doesn't exist and function returns None
+  map.update("e", fn(_) { None })
+  inspect(map.get("e"), content="None")
+  inspect(map.size(), content="3")
+
+  // Test incrementing a counter (common use case)
+  let counter_map : Map[String, Int] = {}
+  counter_map.update("clicks", fn(v) {
+    match v {
+      Some(count) => Some(count + 1)
+      None => Some(1)
+    }
+  })
+  inspect(counter_map.get("clicks"), content="Some(1)")
+  counter_map.update("clicks", fn(v) {
+    match v {
+      Some(count) => Some(count + 1)
+      None => Some(1)
+    }
+  })
+  inspect(counter_map.get("clicks"), content="Some(2)")
+
+  // Test on empty map
+  let empty_map : Map[String, Int] = {}
+
+  // Test no-op on empty map
+  empty_map.update("empty", fn(_) { None })
+
+  // Test inserting new value on empty map
+  empty_map.update("new", fn(v) {
+    match v {
+      Some(x) => Some(x * 2)
+      None => Some(42)
+    }
+  })
+  inspect(empty_map.get("new"), content="Some(42)")
+  inspect(empty_map.size(), content="1")
+
+  // Test adding to empty map
+  let empty_map : Map[String, Int] = Map::new(capacity=1)
+  empty_map.update("a", _ => Some(1))
+  empty_map.update("b", _ => Some(2))
+  empty_map.update("c", _ => Some(3))
+}

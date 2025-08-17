@@ -1155,6 +1155,25 @@ test "deque_binary_search_wrap_around" {
 }
 
 ///|
+test "deque_binary_search finds leftmost duplicate" {
+  let dq1 = @deque.of([1, 2, 3, 3, 3, 4, 5])
+  let result1 = dq1.binary_search(3)
+  inspect(result1, content="Ok(2)")
+  let dq2 = @deque.of([1, 1, 1, 2, 3])
+  let result2 = dq2.binary_search(1)
+  inspect(result2, content="Ok(0)")
+  let dq3 = @deque.of([1, 2, 3, 5, 5, 5])
+  let result3 = dq3.binary_search(5)
+  inspect(result3, content="Ok(3)")
+  let dq4 = @deque.of([2, 2, 2, 2, 2])
+  let result4 = dq4.binary_search(2)
+  inspect(result4, content="Ok(0)")
+  let dq5 = @deque.of([1, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4])
+  let result5 = dq5.binary_search(3)
+  inspect(result5, content="Ok(7)")
+}
+
+///|
 test "deque_compare" {
   let dq1 = @deque.of([1, 2, 3])
   let dq2 = @deque.of([1, 2, 4])

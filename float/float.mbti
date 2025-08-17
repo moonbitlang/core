@@ -16,6 +16,8 @@ let neg_infinity : Float
 
 let not_a_number : Float
 
+// Errors
+
 // Types and methods
 fn Float::abs(Float) -> Float
 fnalias Float::abs
@@ -62,7 +64,7 @@ fnalias Float::floor
 #deprecated
 fn Float::hypot(Float, Float) -> Float
 fnalias Float::hypot
-fn Float::is_close(Float, Float, relative_tolerance~ : Float = .., absolute_tolerance~ : Float = ..) -> Bool
+fn Float::is_close(Float, Float, relative_tolerance? : Float, absolute_tolerance? : Float) -> Bool
 fn Float::is_inf(Float) -> Bool
 fn Float::is_nan(Float) -> Bool
 fn Float::is_neg_inf(Float) -> Bool

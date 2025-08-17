@@ -8,22 +8,29 @@ import(
 // Values
 fn[T] abort(String) -> T
 
-fn[T : @builtin.Eq + @builtin.Show] assert_eq(T, T, msg? : String, loc~ : @builtin.SourceLoc = _) -> Unit raise
+#callsite(autofill(loc))
+fn[T : @builtin.Eq + @builtin.Show] assert_eq(T, T, msg? : String, loc~ : @builtin.SourceLoc) -> Unit raise
 
-fn assert_false(Bool, msg? : String, loc~ : @builtin.SourceLoc = _) -> Unit raise
+#callsite(autofill(loc))
+fn assert_false(Bool, msg? : String, loc~ : @builtin.SourceLoc) -> Unit raise
 
-fn[T : @builtin.Eq + @builtin.Show] assert_not_eq(T, T, msg? : String, loc~ : @builtin.SourceLoc = _) -> Unit raise
+#callsite(autofill(loc))
+fn[T : @builtin.Eq + @builtin.Show] assert_not_eq(T, T, msg? : String, loc~ : @builtin.SourceLoc) -> Unit raise
 
-fn assert_true(Bool, msg? : String, loc~ : @builtin.SourceLoc = _) -> Unit raise
+#callsite(autofill(loc))
+fn assert_true(Bool, msg? : String, loc~ : @builtin.SourceLoc) -> Unit raise
 
 #deprecated
-fn[T] dump(T, name? : String, loc~ : @builtin.SourceLoc = _) -> T
+#callsite(autofill(loc))
+fn[T] dump(T, name? : String, loc~ : @builtin.SourceLoc) -> T
 
-fn[T] fail(String, loc~ : @builtin.SourceLoc = _) -> T raise @builtin.Failure
+#callsite(autofill(loc))
+fn[T] fail(String, loc~ : @builtin.SourceLoc) -> T raise @builtin.Failure
 
 fn[T] ignore(T) -> Unit
 
-fn inspect(&@builtin.Show, content~ : String = .., loc~ : @builtin.SourceLoc = _, args_loc~ : @builtin.ArgsLoc = _) -> Unit raise @builtin.InspectError
+#callsite(autofill(args_loc, loc))
+fn inspect(&@builtin.Show, content? : String, loc~ : @builtin.SourceLoc, args_loc~ : @builtin.ArgsLoc) -> Unit raise @builtin.InspectError
 
 fn not(Bool) -> Bool
 
@@ -38,6 +45,8 @@ fn[T : @builtin.Show] repr(T) -> String
 fn[T] tap(T, (T) -> Unit) -> T
 
 fn[T, R] then(T, (T) -> R) -> R
+
+// Errors
 
 // Types and methods
 

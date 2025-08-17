@@ -13,40 +13,6 @@
 // limitations under the License.
 
 ///|
-let min_leading_surrogate = 0xD800
-
-///|
-let max_leading_surrogate = 0xDBFF
-
-///|
-let min_trailing_surrogate = 0xDC00
-
-///|
-let max_trailing_surrogate = 0xDFFF
-
-///|
-fn is_leading_surrogate(c : Int) -> Bool {
-  min_leading_surrogate <= c && c <= max_leading_surrogate
-}
-
-///|
-test "is_leading_surrogate" {
-  inspect(is_leading_surrogate("🤣".charcode_at(0)), content="true")
-  inspect(is_leading_surrogate("🤣".charcode_at(1)), content="false")
-}
-
-///|
-fn is_trailing_surrogate(c : Int) -> Bool {
-  min_trailing_surrogate <= c && c <= max_trailing_surrogate
-}
-
-///|
-test "is_trailing_surrogate" {
-  inspect(is_trailing_surrogate("🤣".charcode_at(0)), content="false")
-  inspect(is_trailing_surrogate("🤣".charcode_at(1)), content="true")
-}
-
-///|
 fn code_point_of_surrogate_pair(leading : Int, trailing : Int) -> Char {
   ((leading - 0xD800) * 0x400 + trailing - 0xDC00 + 0x10000).unsafe_to_char()
 }
@@ -57,4 +23,27 @@ test "code_point_of_surrogate_pair" {
   let leading = s.charcode_at(0)
   let trailing = s.charcode_at(1)
   inspect(code_point_of_surrogate_pair(leading, trailing), content="😀")
+}
+
+///|
+test "is_leading_surrogate" {
+  inspect("🤣".charcode_at(0).is_leading_surrogate(), content="true")
+  inspect("🤣".charcode_at(1).is_leading_surrogate(), content="false")
+}
+
+///|
+test "is_trailing_surrogate" {
+  inspect("🤣".charcode_at(0).is_trailing_surrogate(), content="false")
+  inspect("🤣".charcode_at(1).is_trailing_surrogate(), content="true")
+}
+
+///|
+test "is_surrogate" {
+  inspect((0xD800).is_surrogate(), content="true") // Leading surrogate
+  inspect((0xDBFF).is_surrogate(), content="true") // Leading surrogate
+  inspect((0xDC00).is_surrogate(), content="true") // Trailing surrogate
+  inspect((0xDFFF).is_surrogate(), content="true") // Trailing surrogate
+  inspect((0xD7FF).is_surrogate(), content="false") // Just before surrogates
+  inspect((0xE000).is_surrogate(), content="false") // Just after surrogates
+  inspect((0x41).is_surrogate(), content="false") // Regular ASCII 'A'
 }

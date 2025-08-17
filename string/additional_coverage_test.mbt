@@ -50,3 +50,34 @@ test "String::offset_of_nth_char_forward with special case" {
   let result2 = s.offset_of_nth_char(5) // Beyond last character
   inspect(result2, content="None")
 }
+
+///|
+test "View::pad_start and pad_end no padding" {
+  let v = "abc"[1:3] // "bc"
+  inspect(v.pad_start(2, 'x'), content="bc")
+  inspect(v.pad_end(2, 'y'), content="bc")
+}
+
+///|
+test "View::compare identical" {
+  let str = "abcdef"
+  let v = str.view(start_offset=2, end_offset=4)
+  inspect(v.compare(v), content="0")
+}
+
+///|
+test "View::default and hash" {
+  let v : View = View::default()
+  inspect(v, content="")
+  let v1 = "abc".view()
+  let v2 = "abc".view()
+  assert_eq(v1.hash(), v2.hash())
+}
+
+///|
+test "get_char invalid surrogate pair" {
+  let s = String::from_array([(0xD800).unsafe_to_char(), 'A'])
+  inspect(s.get_char(0), content="None")
+  let v = s[:]
+  inspect(v.get_char(0), content="None")
+}

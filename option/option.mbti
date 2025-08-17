@@ -18,6 +18,8 @@ fn[T] unless(Bool, () -> T) -> T?
 #deprecated
 fn[T] when(Bool, () -> T) -> T?
 
+// Errors
+
 // Types and methods
 fn[T, U] Option::bind(T?, (T) -> U?) -> U?
 fn[T] Option::filter(T?, (T) -> Bool) -> T?

@@ -6,26 +6,20 @@ import(
 )
 
 // Values
-fn[T : FromJson] from_json(Json, path~ : JsonPath = ..) -> T raise JsonDecodeError
+fn[T : FromJson] from_json(Json, path? : JsonPath) -> T raise JsonDecodeError
 
-fn inspect(&ToJson, content? : Json, loc~ : SourceLoc = _, args_loc~ : ArgsLoc = _) -> Unit raise InspectError
+#callsite(autofill(args_loc, loc))
+fn inspect(&ToJson, content? : Json, loc~ : SourceLoc, args_loc~ : ArgsLoc) -> Unit raise InspectError
 
 fn parse(String) -> Json raise ParseError
 
 fn valid(String) -> Bool
 
-// Types and methods
+// Errors
 pub(all) suberror JsonDecodeError (JsonPath, String)
 impl Eq for JsonDecodeError
 impl Show for JsonDecodeError
 impl ToJson for JsonDecodeError
-
-type JsonPath
-fn JsonPath::add_index(Self, Int) -> Self
-fn JsonPath::add_key(Self, String) -> Self
-impl Eq for JsonPath
-impl Show for JsonPath
-impl ToJson for JsonPath
 
 pub(all) suberror ParseError {
   InvalidChar(Position, Char)
@@ -36,6 +30,14 @@ pub(all) suberror ParseError {
 impl Eq for ParseError
 impl Show for ParseError
 impl ToJson for ParseError
+
+// Types and methods
+type JsonPath
+fn JsonPath::add_index(Self, Int) -> Self
+fn JsonPath::add_key(Self, String) -> Self
+impl Eq for JsonPath
+impl Show for JsonPath
+impl ToJson for JsonPath
 
 pub(all) struct Position {
   line : Int
@@ -51,7 +53,7 @@ fn Json::as_number(Self) -> Double?
 fn Json::as_object(Self) -> Map[String, Self]?
 fn Json::as_string(Self) -> String?
 fn Json::item(Self, Int) -> Self?
-fn Json::stringify(Self, escape_slash~ : Bool = .., indent~ : Int = ..) -> String
+fn Json::stringify(Self, escape_slash? : Bool, indent? : Int) -> String
 fn Json::value(Self, String) -> Self?
 impl Show for Json
 impl ToJson for Json

@@ -149,7 +149,7 @@ test "protect2 & finally raise error" {
 }
 
 ///|
-suberror ErrWithToJson Int derive(ToJson)
+suberror ErrWithToJson Int derive(ToJson(style="flat"))
 
 ///|
 suberror ErrWithoutToJson Int
@@ -170,7 +170,7 @@ test "error to json" {
   inspect(
     j(ErrWithToJson(42)),
     content=(
-      #|Object({"$tag": String("ErrWithToJson"), "0": Number(42)})
+      #|Array([String("ErrWithToJson"), Number(42)])
     ),
   )
   inspect(

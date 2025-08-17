@@ -104,3 +104,21 @@ test "FixedArray::makei" {
   inspect(arr[0].val, content="1")
   inspect(arr[1].val, content="1")
 }
+
+///|
+test "FixedArray compare" {
+  let arr1 : FixedArray[Int] = [1, 2, 3]
+  let arr2 : FixedArray[Int] = [1, 2, 4]
+  let arr3 : FixedArray[Int] = [1, 2]
+  inspect(arr1.compare(arr2), content="-1") // arr1 < arr2
+  inspect(arr2.compare(arr1), content="1") // arr2 > arr1
+  inspect(arr1.compare(arr3), content="1") // arr1 > arr3 (longer)
+  inspect(arr1.compare(arr1), content="0") // arr1 = arr1
+
+  // Test empty arrays
+  let empty1 : FixedArray[Int] = []
+  let empty2 : FixedArray[Int] = []
+  inspect(empty1.compare(empty2), content="0")
+  inspect(empty1.compare(arr1), content="-1")
+  inspect(arr1.compare(empty1), content="1")
+}

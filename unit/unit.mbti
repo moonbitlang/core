@@ -4,6 +4,8 @@ package "moonbitlang/core/unit"
 // Values
 fn default() -> Unit
 
+// Errors
+
 // Types and methods
 fn Unit::to_string(Unit) -> String
 impl Compare for Unit

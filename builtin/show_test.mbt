@@ -248,6 +248,14 @@ test "char show hex digits" {
 }
 
 ///|
+test "char show hex digits extended" {
+  inspect((0x605).unsafe_to_char() |> repr, content="'\\u{605}'")
+  inspect((0xFDD0).unsafe_to_char() |> repr, content="'\\u{fdd0}'")
+  inspect((0x1FFFE).unsafe_to_char() |> repr, content="'\\u{1fffe}'")
+  inspect((0x10FFFE).unsafe_to_char() |> repr, content="'\\u{10fffe}'")
+}
+
+///|
 test "char_special" {
   inspect('\r', content="\r")
   inspect('\b', content="\u{8}")

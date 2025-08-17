@@ -218,3 +218,12 @@ test "arrayview_hash" {
   inspect(arr[5:9].hash(), content="-966877954")
   inspect(arr[10:15].hash(), content="-951019668")
 }
+
+///|
+test "arrayview hash invariant" {
+  let arr : Array[Array[Int]] = @quickcheck.samples(20)
+  for v in arr {
+    let view = v[:]
+    assert_eq(v.hash(), view.hash())
+  }
+}

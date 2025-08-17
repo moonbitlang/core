@@ -31,6 +31,15 @@ pub(open) trait Compare: Eq {
 
 ///|
 /// Trait for types that can be hashed
+/// 
+/// The `hash` method should return a hash value for the type, which is used in hash tables and other data structures.
+/// The `hash_combine` method is used to combine the hash of the current value with another hash value,
+/// typically used to hash composite types.
+/// 
+/// When two values are equal according to the `Eq` trait, they should produce the same hash value.
+/// 
+/// The `hash` method does not need to be implemented if `hash_combine` is implemented,
+/// When implemented separately, `hash` **does not need** to produce a hash value that is consistent with `hash_combine`.
 pub(open) trait Hash {
   hash_combine(Self, Hasher) -> Unit
   hash(Self) -> Int = _

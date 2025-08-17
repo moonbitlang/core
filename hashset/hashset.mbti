@@ -6,23 +6,24 @@ import(
 )
 
 // Values
-fn[K : Hash + Eq] from_array(Array[K]) -> T[K]
 
-fn[K : Hash + Eq] from_iter(Iter[K]) -> T[K]
-
-fn[K] new(capacity~ : Int = ..) -> T[K]
-
-fn[K : Hash + Eq] of(FixedArray[K]) -> T[K]
+// Errors
 
 // Types and methods
 type T[K]
 fn[K : Hash + Eq] T::add(Self[K], K) -> Unit
+fn[K : Hash + Eq] T::add_and_check(Self[K], K) -> Bool
 fn[K] T::capacity(Self[K]) -> Int
 fn[K] T::clear(Self[K]) -> Unit
 fn[K : Hash + Eq] T::contains(Self[K], K) -> Bool
+fn[K] T::copy(Self[K]) -> Self[K]
 fn[K : Hash + Eq] T::difference(Self[K], Self[K]) -> Self[K]
-fn[K] T::each(Self[K], (K) -> Unit) -> Unit
-fn[K] T::eachi(Self[K], (Int, K) -> Unit) -> Unit
+fn[K] T::each(Self[K], (K) -> Unit raise?) -> Unit raise?
+fn[K] T::eachi(Self[K], (Int, K) -> Unit raise?) -> Unit raise?
+fn[K : Hash + Eq] T::from_array(Array[K]) -> Self[K]
+fnalias T::from_array
+fn[K : Hash + Eq] T::from_iter(Iter[K]) -> Self[K]
+fnalias T::from_iter
 #deprecated
 fn[K : Hash + Eq] T::insert(Self[K], K) -> Unit
 fn[K : Hash + Eq] T::intersection(Self[K], Self[K]) -> Self[K]
@@ -31,7 +32,12 @@ fn[K] T::is_empty(Self[K]) -> Bool
 fn[K : Hash + Eq] T::is_subset(Self[K], Self[K]) -> Bool
 fn[K : Hash + Eq] T::is_superset(Self[K], Self[K]) -> Bool
 fn[K] T::iter(Self[K]) -> Iter[K]
+fn[K] T::new(capacity? : Int) -> Self[K]
+fnalias T::new
+fn[K : Hash + Eq] T::of(FixedArray[K]) -> Self[K]
+fnalias T::of
 fn[K : Hash + Eq] T::remove(Self[K], K) -> Unit
+fn[K : Hash + Eq] T::remove_and_check(Self[K], K) -> Bool
 fn[K] T::size(Self[K]) -> Int
 fn[K : Hash + Eq] T::symmetric_difference(Self[K], Self[K]) -> Self[K]
 fn[K] T::to_array(Self[K]) -> Array[K]
@@ -39,8 +45,10 @@ fn[K : Hash + Eq] T::union(Self[K], Self[K]) -> Self[K]
 impl[K : Hash + Eq] BitAnd for T[K]
 impl[K : Hash + Eq] BitOr for T[K]
 impl[K : Hash + Eq] BitXOr for T[K]
+impl[K] Default for T[K]
 impl[K : Show] Show for T[K]
 impl[K : Hash + Eq] Sub for T[K]
+impl[X : ToJson] ToJson for T[X]
 impl[X : @quickcheck.Arbitrary + Eq + Hash] @quickcheck.Arbitrary for T[X]
 
 // Type aliases

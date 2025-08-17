@@ -42,7 +42,7 @@ fn View::make_view(str : String, start : Int, end : Int) -> View = "%stringview.
 /// 
 /// ```mbt
 ///   let str = "Hello🤣🤣🤣"
-///   let view = str.charcodes(start = str.offset_of_nth_char(1).unwrap(), end = str.offset_of_nth_char(6).unwrap())
+///   let view = str.view(start_offset = str.offset_of_nth_char(1).unwrap(), end_offset = str.offset_of_nth_char(6).unwrap())
 ///   inspect(view[0].to_char(), content="Some('e')")
 ///   inspect(view[4], content="55358")
 /// ```
@@ -133,15 +133,16 @@ pub fn View::view(
 /// 
 /// ```mbt
 ///   let str = "Hello🤣🤣🤣"
-///   let view1 = str.charcodes()
+///   let view1 = str.view()
 ///   inspect(view1, content="Hello🤣🤣🤣")
 ///   let start = str.offset_of_nth_char(1).unwrap()
 ///   let end = str.offset_of_nth_char(6).unwrap() // the second emoji
-///   let view2 = str.charcodes(start~, end~)
+///   let view2 = str.view(start_offset=start, end_offset=end)
 ///   inspect(view2, content="ello🤣")
 /// ```
 /// 
 /// This method has O(1) complexity.
+#deprecated("use view instead")
 pub fn String::charcodes(self : String, start~ : Int = 0, end? : Int) -> View {
   self.view(start_offset=start, end_offset?=end)
 }
@@ -154,7 +155,7 @@ pub fn String::charcodes(self : String, start~ : Int = 0, end? : Int) -> View {
 /// ```mbt
 ///   let str = "Hello🤣🤣🤣"
 ///   let view1 = str.view()
-///   let view2 = view1.charcodes(start=1, end=7) // From 2nd to 6th character
+///   let view2 = view1.view(start_offset=1, end_offset=7) // From 2nd to 6th character
 ///   inspect(view2, content=
 ///    "ello🤣"
 ///   )
@@ -164,6 +165,7 @@ pub fn String::charcodes(self : String, start~ : Int = 0, end? : Int) -> View {
 /// It allows you to create a sub-view of an existing view with the specified character range.
 /// 
 /// This method has O(1) complexity.
+#deprecated("use view instead")
 pub fn View::charcodes(self : View, start~ : Int = 0, end? : Int) -> View {
   self.view(start_offset=start, end_offset?=end)
 }
@@ -188,6 +190,19 @@ pub fn View::offset_of_nth_char(self : View, i : Int) -> Int? {
 /// index is within bounds.
 /// 
 /// This method has O(1) complexity.
+/// #Example
+/// 
+/// ```mbt
+///   let str = "B🤣🤣C"
+///   let view = str[:]
+///   inspect(view.unsafe_charcode_at(0), content="66")
+///   inspect(view.unsafe_charcode_at(1), content="55358")
+///   inspect(view.unsafe_charcode_at(2), content="56611")
+///   inspect(view.unsafe_charcode_at(3), content="55358")
+///   inspect(view.unsafe_charcode_at(4), content="56611")
+///   inspect(view.unsafe_charcode_at(5), content="67")
+/// ```
+/// TODO: rename to `unsafe_get`
 pub fn View::unsafe_charcode_at(self : View, index : Int) -> Int {
   self.str().unsafe_charcode_at(self.start() + index)
 }
@@ -234,7 +249,7 @@ pub impl Show for View with output(self, logger) {
 /// 
 /// ```mbt
 ///   let str = "Hello World"
-///   let view = str.charcodes(start = str.offset_of_nth_char(0).unwrap(),end   = str.offset_of_nth_char(5).unwrap()) // "Hello"
+///   let view = str.view(start_offset = str.offset_of_nth_char(0).unwrap(),end_offset = str.offset_of_nth_char(5).unwrap()) // "Hello"
 ///   inspect(view.to_string(), content="Hello")
 /// ```
 pub impl Show for StringView with to_string(self) {
@@ -246,9 +261,9 @@ pub impl Show for StringView with to_string(self) {
 pub fn View::iter(self : View) -> Iter[Char] {
   Iter::new(yield_ => for index in self.start()..<self.end() {
     let c1 = self.str().unsafe_charcode_at(index)
-    if is_leading_surrogate(c1) && index + 1 < self.end() {
+    if c1.is_leading_surrogate() && index + 1 < self.end() {
       let c2 = self.str().unsafe_charcode_at(index + 1)
-      if is_trailing_surrogate(c2) {
+      if c2.is_trailing_surrogate() {
         let c = code_point_of_surrogate_pair(c1, c2)
         guard yield_(c) is IterContinue else { break IterEnd }
         continue index + 2
@@ -266,9 +281,9 @@ pub fn View::iter2(self : View) -> Iter2[Int, Char] {
     let len = self.length()
     for index = 0, n = 0; index < len; index = index + 1, n = n + 1 {
       let c1 = self.str().unsafe_charcode_at(self.start() + index)
-      if is_leading_surrogate(c1) && index + 1 < len {
+      if c1.is_leading_surrogate() && index + 1 < len {
         let c2 = self.str().unsafe_charcode_at(self.start() + index + 1)
-        if is_trailing_surrogate(c2) {
+        if c2.is_trailing_surrogate() {
           let c = code_point_of_surrogate_pair(c1, c2)
           guard yield_(n, c) is IterContinue else { break IterEnd }
           continue index + 2, n + 1
@@ -290,9 +305,9 @@ pub fn View::rev_iter(self : View) -> Iter[Char] {
                           index >= self.start()
                           index = index - 1 {
     let c1 = self.str().unsafe_charcode_at(index)
-    if is_trailing_surrogate(c1) && index - 1 >= 0 {
+    if c1.is_trailing_surrogate() && index - 1 >= 0 {
       let c2 = self.str().unsafe_charcode_at(index - 1)
-      if is_leading_surrogate(c2) {
+      if c2.is_leading_surrogate() {
         let c = code_point_of_surrogate_pair(c2, c1)
         guard yield_(c) is IterContinue else { break IterEnd }
         continue index - 2
@@ -323,7 +338,7 @@ pub impl Eq for View with op_equal(self, other) {
 }
 
 ///|
-/// Views are ordered lexicographically by their charcodes(code unit). This 
+/// Views are ordered based on shortlex order by their charcodes (code units). This 
 /// orders Unicode characters based on their positions in the code charts. This is
 /// not necessarily the same as "alphabetical" order, which varies by language
 /// and locale.
@@ -454,10 +469,10 @@ pub fn String::op_as_view(
   }
   let start = if start < 0 { len + start } else { start }
   guard start >= 0 && start <= end && end <= len else { raise IndexOutOfBounds }
-  if start < len && is_trailing_surrogate(self.unsafe_charcode_at(start)) {
+  if start < len && self.unsafe_charcode_at(start).is_trailing_surrogate() {
     raise InvalidIndex
   }
-  if end < len && is_trailing_surrogate(self.unsafe_charcode_at(end)) {
+  if end < len && self.unsafe_charcode_at(end).is_trailing_surrogate() {
     raise InvalidIndex
   }
   View::make_view(self, start, end)
@@ -535,12 +550,17 @@ pub fn View::op_as_view(
 
   // Check for surrogate pair boundaries
   if abs_start < str_len &&
-    is_trailing_surrogate(self.str().unsafe_charcode_at(abs_start)) {
+    self.str().unsafe_charcode_at(abs_start).is_trailing_surrogate() {
     raise InvalidIndex
   }
   if abs_end < str_len &&
-    is_trailing_surrogate(self.str().unsafe_charcode_at(abs_end)) {
+    self.str().unsafe_charcode_at(abs_end).is_trailing_surrogate() {
     raise InvalidIndex
   }
   View::make_view(self.str(), abs_start, abs_end)
+}
+
+///|
+pub impl Add for View with op_add(self, other) {
+  [..self, ..other]
 }

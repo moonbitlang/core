@@ -839,7 +839,7 @@ pub fn[A] shrink_to_fit(self : T[A]) -> Unit {
 /// Shortens the deque in-place, keeping the first `len` elements and dropping
 /// the rest.
 ///
-/// If `len` is greater than or equal to the deque's current length or negative, 
+/// If `len` is greater than or equal to the deque's current length or negative,
 /// this has no effect
 ///
 /// Parameters:
@@ -1222,7 +1222,7 @@ pub fn[A] to_array(self : T[A]) -> Array[A] {
 }
 
 ///|
-/// Joins the elements of a string deque into a single string, 
+/// Joins the elements of a string deque into a single string,
 /// separated by the specified separator.
 ///
 /// Parameters:
@@ -1230,7 +1230,7 @@ pub fn[A] to_array(self : T[A]) -> Array[A] {
 /// * `self` : The deque of strings to join.
 /// * `separator` : The separator to insert between elements (as a string view).
 ///
-/// Returns the concatenated string. 
+/// Returns the concatenated string.
 ///   - If the deque is empty, returns an empty string.
 ///   - Efficiently pre-allocates memory based on calculated size hint.
 ///   - Handles empty separators efficiently by direct concatenation.
@@ -1241,7 +1241,7 @@ pub fn[A] to_array(self : T[A]) -> Array[A] {
 ///   let deque = @deque.of(["a","b","c"])
 ///   let s1 = deque.join("")
 ///   inspect(s1, content="abc")
-/// 
+///
 ///   let s2 = deque.join(",")
 ///   inspect(s2, content="a,b,c")
 /// ```
@@ -1318,7 +1318,7 @@ pub impl[A : @json.FromJson] @json.FromJson for T[A] with from_json(json, path) 
 ///
 /// * `self` : The high-dimensional deque to flatten.
 ///
-/// Returns a new lower-dimensional deque containing all elements 
+/// Returns a new lower-dimensional deque containing all elements
 /// from inner deques in sequence.
 ///
 /// Note:
@@ -1448,13 +1448,13 @@ pub fn[A] T::drain(self : T[A], start~ : Int, len? : Int) -> T[A] {
 /// ```moonbit
 /// let dq = @deque.of([1, 3, 5, 7, 9])
 ///
-/// 
+///
 /// let find_3 = dq.binary_search_by((x) => {
 ///   x.compare(3)
 /// })
 /// inspect(find_3, content="Ok(1)")
 ///
-/// 
+///
 /// let find_4 = dq.binary_search_by((x) => {
 ///   x.compare(4)
 /// })
@@ -1473,35 +1473,31 @@ pub fn[A] T::drain(self : T[A], start~ : Int, len? : Int) -> T[A] {
 #locals(cmp)
 pub fn[A] binary_search_by(self : T[A], cmp : (A) -> Int) -> Result[Int, Int] {
   let len = self.len
-  let mut i = 0
-  let mut j = len
-  while i < j {
+
+  // Functional loop with two evolving bounds `i` (inclusive) and `j` (exclusive).
+  // `continue new_i, new_j` updates the pair for the next iteration, eliminating
+  // the need for mutable variables.
+  for i = 0, j = len; i < j; {
     let h = i + (j - i) / 2
-    match self.get(h) {
-      Some(element) =>
-        match cmp(element) {
-          _..<0 => i = h + 1 // Continue searching right
-          1..<_ => j = h // Continue searching left
-          _ => { // Found match, find leftmost
-            j = h
-            while i < j {
-              let mid = i + (j - i) / 2
-              match self.get(mid) {
-                Some(v) =>
-                  match cmp(v) {
-                    0 => j = mid
-                    _ => i = mid + 1
-                  }
-                None => break
-              }
-            }
-            return Ok(i)
-          }
-        }
-      None => return Err(i)
+    let ord = cmp(self[h])
+    if ord < 0 {
+      // Search the right half
+      continue h + 1, j
+    } else {
+      // ord == 0 (match) or ord > 0 (too large): keep searching left half to
+      // guarantee we land on the left-most occurrence.
+      continue i, h
+    }
+  } else {
+    // When the loop finishes, `i == j`.  If the deque is non-empty and the
+    // element at `i` matches, we found the left-most index; otherwise `i` is
+    // the correct insertion point.
+    if i < len && cmp(self[i]) == 0 {
+      Ok(i)
+    } else {
+      Err(i)
     }
   }
-  Err(i)
 }
 
 ///|
@@ -1548,7 +1544,7 @@ pub fn[A : Compare] binary_search(self : T[A], value : A) -> Result[Int, Int] {
 }
 
 ///|
-/// Compares two deques lexicographically.
+/// Compares two deques based on shortlex order.
 ///
 /// First compares the lengths of the deques. If they differ, returns -1 if the
 /// first deque is shorter, 1 if it's longer. If the lengths are equal, compares
@@ -1609,27 +1605,16 @@ pub impl[A : Compare] Compare for T[A] with compare(self, other) {
 ///   inspect(dq, content="@deque.of([])")
 /// ```
 pub fn[A] T::rev_inplace(self : T[A]) -> Unit {
-  let len = self.len
+  guard self.len > 0 else { return }
   let cap = self.buf.length()
-  // Only swap elements if deque is not empty
-  if len > 0 {
-    // Initialize two pointers
-    let mut left = self.head
-    let mut right = self.tail
-    let mut count = 0
-    // Swap elements until we reach the middle
-    while count < len / 2 {
-      // Swap elements at left and right indices
-      let temp = self.buf[left]
-      self.buf[left] = self.buf[right]
-      self.buf[right] = temp
-      // Move pointers in opposite directions
-      left = (left + 1) % cap
-      right = (right - 1 + cap) % cap
-      count += 1
-    }
-    // No need to update head and tail as the elements are swapped in place
-    // The structure remains the same, just the order of elements is reversed
+  let mut left = self.head
+  let mut right = self.tail
+  for _ in 0..<(self.len / 2) {
+    let temp = self.buf[left]
+    self.buf[left] = self.buf[right]
+    self.buf[right] = temp
+    left = (left + 1) % cap
+    right = (right - 1 + cap) % cap
   }
 }
 
@@ -1664,11 +1649,11 @@ pub fn[A] T::rev(self : T[A]) -> T[A] {
 
 ///|
 /// Shuffle the deque in place using Knuth shuffle (Fisher-Yates algorithm)
-/// 
+///
 /// To use this function, you need to provide a rand function, which takes an integer as its upper bound
 /// and returns an integer.
 /// *rand n* is expected to return a uniformly distributed integer between 0 and n - 1
-/// 
+///
 /// # Note
 /// This function handles the circular buffer nature of the deque internally.
 pub fn[A] T::shuffle_in_place(self : T[A], rand~ : (Int) -> Int) -> Unit {
@@ -1688,9 +1673,9 @@ pub fn[A] T::shuffle_in_place(self : T[A], rand~ : (Int) -> Int) -> Unit {
 
 ///|
 /// Shuffle the deque using Knuth shuffle (Fisher-Yates algorithm)
-/// 
+///
 /// Returns a new shuffled deque without modifying the original deque.
-/// 
+///
 /// To use this function, you need to provide a rand function, which takes an integer as its upper bound
 /// and returns an integer.
 /// *rand n* is expected to return a uniformly distributed integer between 0 and n - 1

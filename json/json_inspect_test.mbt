@@ -34,7 +34,7 @@ enum Color {
   Red
   Green
   Blue
-} derive(ToJson)
+} derive(ToJson(style="flat"))
 
 ///|
 struct Line {
@@ -47,11 +47,11 @@ struct Line {
 test "json inspect" {
   let p1 = { x: 0, y: 0, color: Color::Red }
   let p2 = { x: 1, y: 2, color: Color::Green }
-  @json.inspect(p1, content={ "x": 0, "y": 0, "color": { "$tag": "Red" } })
+  @json.inspect(p1, content={ "x": 0, "y": 0, "color": "Red" })
   let line = { p1, p2, color: Color::Blue }
   @json.inspect(line, content={
-    "p1": { "x": 0, "y": 0, "color": { "$tag": "Red" } },
-    "p2": { "x": 1, "y": 2, "color": { "$tag": "Green" } },
-    "color": { "$tag": "Blue" },
+    "p1": { "x": 0, "y": 0, "color": "Red" },
+    "p2": { "x": 1, "y": 2, "color": "Green" },
+    "color": "Blue",
   })
 }
