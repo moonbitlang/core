@@ -14,14 +14,14 @@
 
 ///|
 test "tuple2 default" {
-  let t : (Int, String) = Default::default()
-  inspect(t, content="(0, \"\")")
+  let t : (Int, Bool) = Default::default()
+  inspect(t, content="(0, false)")
 }
 
 ///|
 test "tuple5 default" {
-  let t : (Int, Bool, String, UInt, Int) = Default::default()
-  inspect(t, content="(0, false, \"\", 0, 0)")
+  let t : (Int, Bool, Int, Int, Int) = Default::default()
+  inspect(t, content="(0, false, 0, 0, 0)")
 }
 
 ///|
