@@ -158,102 +158,364 @@ test "extract_byte - bit patterns and edge cases" {
 // ============================================================================
 
 ///|
-test "extract_int_le - byte aligned positions" {
-  let bytes = b"\x01\x02\x03\x04\x05\x06\x07\x08"
-  let view = bytes[:]
-
-  // Test different bit lengths
-  let result9 = view.unsafe_extract_int_le(0, 9)
-  let result16 = view.unsafe_extract_int_le(0, 16)
-  let result24 = view.unsafe_extract_int_le(0, 24)
-  let result32 = view.unsafe_extract_int_le(0, 32)
-
-  // Verify using byte representation for clarity
+test "extract_int_le" {
+  let s = b"\xA5\xB6\xC7\xD8"[:]
   inspect(
-    (result9 << (32 - 9)).to_le_bytes(),
+    s.unsafe_extract_int_le(0, 9).to_be_bytes(),
     content=(
-      #|b"\x00\x00\x00\x02"
+      #|b"\x00\x00\x01\xa5"
     ),
-  ) // 9 bits shifted
-  inspect(result16.to_le_bytes(), content="b\"\\x01\\x02\\x00\\x00\"")
-  inspect(result24.to_le_bytes(), content="b\"\\x01\\x02\\x03\\x00\"")
-  inspect(result32.to_le_bytes(), content="b\"\\x01\\x02\\x03\\x04\"")
+  )
+  inspect(
+    s.unsafe_extract_int_le(0, 10).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x02\xa5"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_le(0, 11).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x05\xa5"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_le(0, 12).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x0b\xa5"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_le(0, 13).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x16\xa5"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_le(0, 14).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x2d\xa5"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_le(0, 15).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x5b\xa5"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_le(0, 16).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\xb6\xa5"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_le(0, 17).to_be_bytes(),
+    content=(
+      #|b"\x00\x01\xb6\xa5"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_le(0, 18).to_be_bytes(),
+    content=(
+      #|b"\x00\x03\xb6\xa5"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_le(0, 19).to_be_bytes(),
+    content=(
+      #|b"\x00\x06\xb6\xa5"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_le(0, 20).to_be_bytes(),
+    content=(
+      #|b"\x00\x0c\xb6\xa5"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_le(0, 21).to_be_bytes(),
+    content=(
+      #|b"\x00\x18\xb6\xa5"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_le(0, 22).to_be_bytes(),
+    content=(
+      #|b"\x00\x31\xb6\xa5"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_le(0, 23).to_be_bytes(),
+    content=(
+      #|b"\x00\x63\xb6\xa5"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_le(0, 24).to_be_bytes(),
+    content=(
+      #|b"\x00\xc7\xb6\xa5"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_le(0, 25).to_be_bytes(),
+    content=(
+      #|b"\x01\xc7\xb6\xa5"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_le(0, 26).to_be_bytes(),
+    content=(
+      #|b"\x03\xc7\xb6\xa5"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_le(0, 27).to_be_bytes(),
+    content=(
+      #|b"\x06\xc7\xb6\xa5"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_le(0, 28).to_be_bytes(),
+    content=(
+      #|b"\x0d\xc7\xb6\xa5"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_le(0, 29).to_be_bytes(),
+    content=(
+      #|b"\x1b\xc7\xb6\xa5"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_le(0, 30).to_be_bytes(),
+    content=(
+      #|b"\x36\xc7\xb6\xa5"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_le(0, 31).to_be_bytes(),
+    content=(
+      #|b"\x6c\xc7\xb6\xa5"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_le(0, 32).to_be_bytes(),
+    content=(
+      #|b"\xd8\xc7\xb6\xa5"
+    ),
+  )
 }
 
 ///|
-test "extract_int_le - non-aligned positions" {
-  let bytes = b"\xFF\x01\x02\x03\x04\x05\x06\x07" // Start with 0xFF for clear bit patterns
-  let view = bytes[:]
-
-  // Extract from bit position 1
-  let result16_offset1 = view.unsafe_extract_int_le(1, 16)
-  let result24_offset1 = view.unsafe_extract_int_le(1, 24)
-
-  // The extraction should handle the bit offset correctly
+test "extract_int_le" {
+  let s = b"\xA5\xB6\xC7\xD8"[:]
   inspect(
-    (result16_offset1 << (32 - 16)).to_le_bytes(),
+    s.unsafe_extract_int_le(0, 32).to_be_bytes(),
     content=(
-      #|b"\x00\x00\xfe\x02"
+      #|b"\xd8\xc7\xb6\xa5"
     ),
   )
   inspect(
-    (result24_offset1 << (32 - 24)).to_le_bytes(),
+    s.unsafe_extract_int_le(1, 31).to_be_bytes(),
     content=(
-      #|b"\x00\xfe\x02\x04"
+      #|b"\x58\x8f\x6d\x4b"
     ),
   )
-
-  // Extract from bit position 3
-  let result16_offset3 = view.unsafe_extract_int_le(3, 16)
   inspect(
-    (result16_offset3 << (32 - 16)).to_le_bytes(),
+    s.unsafe_extract_int_le(2, 30).to_be_bytes(),
     content=(
-      #|b"\x00\x00\xf8\x08"
+      #|b"\x18\x1f\xdb\x96"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_le(3, 29).to_be_bytes(),
+    content=(
+      #|b"\x18\x3e\xb6\x2d"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_le(4, 28).to_be_bytes(),
+    content=(
+      #|b"\x08\x7d\x6c\x5b"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_le(5, 27).to_be_bytes(),
+    content=(
+      #|b"\x00\xfb\xd8\xb6"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_le(6, 26).to_be_bytes(),
+    content=(
+      #|b"\x00\xf6\xb1\x6d"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_le(7, 25).to_be_bytes(),
+    content=(
+      #|b"\x00\xec\x63\xdb"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_le(8, 24).to_be_bytes(),
+    content=(
+      #|b"\x00\xd8\xc7\xb6"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_le(9, 23).to_be_bytes(),
+    content=(
+      #|b"\x00\x58\x8f\x6d"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_le(10, 22).to_be_bytes(),
+    content=(
+      #|b"\x00\x18\x1f\xdb"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_le(11, 21).to_be_bytes(),
+    content=(
+      #|b"\x00\x18\x3e\xb6"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_le(12, 20).to_be_bytes(),
+    content=(
+      #|b"\x00\x08\x7d\x6c"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_le(13, 19).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\xfb\xd8"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_le(14, 18).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\xf6\xb1"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_le(15, 17).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\xec\x63"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_le(16, 16).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\xd8\xc7"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_le(17, 15).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x58\x8f"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_le(18, 14).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x18\x1f"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_le(19, 13).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x18\x3e"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_le(20, 12).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x08\x7d"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_le(21, 11).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x00\xfb"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_le(22, 10).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x00\xf6"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_le(23, 9).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x00\xec"
     ),
   )
 }
 
 ///|
-test "extract_int_le - various bit lengths" {
-  let bytes = b"\x12\x34\x56\x78\x9A\xBC"
-  let view = bytes[:]
-
-  // Test all supported bit lengths
-  for bits = 9; bits <= 32; bits = bits + 1 {
-    let result = view.unsafe_extract_int_le(0, bits)
-    let shifted = result << (32 - bits)
-    // Just verify extraction doesn't crash and produces reasonable output
-    let _bytes = shifted.to_le_bytes()
-
-  }
+test "extract_int_le" {
+  let s = b"\xA5\xB6\xC7\xD8\xA5\xB6\xC7\xD8"[:]
+  inspect(
+    s.unsafe_extract_int_le(1, 32).to_be_bytes(),
+    content=(
+      #|b"\xb1\x8f\x6d\x4b"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_le(2, 32).to_be_bytes(),
+    content=(
+      #|b"\x62\x1f\xdb\x96"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_le(3, 32).to_be_bytes(),
+    content=(
+      #|b"\xc5\x3e\xb6\x2d"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_le(4, 32).to_be_bytes(),
+    content=(
+      #|b"\x8a\x7d\x6c\x5b"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_le(5, 32).to_be_bytes(),
+    content=(
+      #|b"\x14\xfb\xd8\xb6"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_le(6, 32).to_be_bytes(),
+    content=(
+      #|b"\x29\xf6\xb1\x6d"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_le(7, 32).to_be_bytes(),
+    content=(
+      #|b"\x52\xec\x63\xdb"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_le(8, 32).to_be_bytes(),
+    content=(
+      #|b"\xa5\xd8\xc7\xb6"
+    ),
+  )
 }
 
 ///|
-test "extract_int_le - edge patterns" {
-  let bytes = b"\xFF\xFF\xFF\xFF\x00\x00\x00\x00"
-  let view = bytes[:]
-
-  // Extract all ones
-  let all_ones_16 = view.unsafe_extract_int_le(0, 16)
-  let all_ones_32 = view.unsafe_extract_int_le(0, 32)
-  inspect(
-    all_ones_16.to_le_bytes(),
-    content=(
-      #|b"\xff\xff\x00\x00"
-    ),
-  )
-  inspect(
-    all_ones_32.to_le_bytes(),
-    content=(
-      #|b"\xff\xff\xff\xff"
-    ),
-  )
-
-  // Extract all zeros
-  let all_zeros_16 = view.unsafe_extract_int_le(32, 16)
-  let all_zeros_32 = view.unsafe_extract_int_le(32, 32)
-  inspect(all_zeros_16.to_le_bytes(), content="b\"\\x00\\x00\\x00\\x00\"")
-  inspect(all_zeros_32.to_le_bytes(), content="b\"\\x00\\x00\\x00\\x00\"")
+test "extract_int_le_path_consistent" {
+  let s1 = b"\xBA\xAA\xAA\xAA"[:]
+  let i1 = s1.unsafe_extract_int_le(4, 28)
+  let s2 = b"\xAA\xAA\xAA\xAB"[:]
+  let i2 = s2.unsafe_extract_int_le(0, 28)
+  inspect(i1, content="178956970")
+  inspect(i2, content="178956970")
 }
 
 // ============================================================================
@@ -261,73 +523,364 @@ test "extract_int_le - edge patterns" {
 // ============================================================================
 
 ///|
-test "extract_int_be - byte aligned positions" {
-  let bytes = b"\x01\x02\x03\x04\x05\x06\x07\x08"
-  let view = bytes[:]
-
-  // Test different bit lengths
-  let result9 = view.unsafe_extract_int_be(0, 9)
-  let result16 = view.unsafe_extract_int_be(0, 16)
-  let result24 = view.unsafe_extract_int_be(0, 24)
-  let result32 = view.unsafe_extract_int_be(0, 32)
-
-  // Verify using byte representation for clarity
+test "extract_int_be" {
+  let s = b"\xA5\xB6\xC7\xD8"[:]
   inspect(
-    (result9 << (32 - 9)).to_be_bytes(),
+    (s.unsafe_extract_int_be(0, 9) << 23).to_be_bytes(),
     content=(
-      #|b"\x01\x00\x00\x00"
+      #|b"\xa5\x80\x00\x00"
     ),
-  ) // 9 bits shifted
-  inspect(result16.to_be_bytes(), content="b\"\\x00\\x00\\x01\\x02\"")
-  inspect(result24.to_be_bytes(), content="b\"\\x00\\x01\\x02\\x03\"")
-  inspect(result32.to_be_bytes(), content="b\"\\x01\\x02\\x03\\x04\"")
+  )
+  inspect(
+    (s.unsafe_extract_int_be(0, 10) << 22).to_be_bytes(),
+    content=(
+      #|b"\xa5\x80\x00\x00"
+    ),
+  )
+  inspect(
+    (s.unsafe_extract_int_be(0, 11) << 21).to_be_bytes(),
+    content=(
+      #|b"\xa5\xa0\x00\x00"
+    ),
+  )
+  inspect(
+    (s.unsafe_extract_int_be(0, 12) << 20).to_be_bytes(),
+    content=(
+      #|b"\xa5\xb0\x00\x00"
+    ),
+  )
+  inspect(
+    (s.unsafe_extract_int_be(0, 13) << 19).to_be_bytes(),
+    content=(
+      #|b"\xa5\xb0\x00\x00"
+    ),
+  )
+  inspect(
+    (s.unsafe_extract_int_be(0, 14) << 18).to_be_bytes(),
+    content=(
+      #|b"\xa5\xb4\x00\x00"
+    ),
+  )
+  inspect(
+    (s.unsafe_extract_int_be(0, 15) << 17).to_be_bytes(),
+    content=(
+      #|b"\xa5\xb6\x00\x00"
+    ),
+  )
+  inspect(
+    (s.unsafe_extract_int_be(0, 16) << 16).to_be_bytes(),
+    content=(
+      #|b"\xa5\xb6\x00\x00"
+    ),
+  )
+  inspect(
+    (s.unsafe_extract_int_be(0, 17) << 15).to_be_bytes(),
+    content=(
+      #|b"\xa5\xb6\x80\x00"
+    ),
+  )
+  inspect(
+    (s.unsafe_extract_int_be(0, 18) << 14).to_be_bytes(),
+    content=(
+      #|b"\xa5\xb6\xc0\x00"
+    ),
+  )
+  inspect(
+    (s.unsafe_extract_int_be(0, 19) << 13).to_be_bytes(),
+    content=(
+      #|b"\xa5\xb6\xc0\x00"
+    ),
+  )
+  inspect(
+    (s.unsafe_extract_int_be(0, 20) << 12).to_be_bytes(),
+    content=(
+      #|b"\xa5\xb6\xc0\x00"
+    ),
+  )
+  inspect(
+    (s.unsafe_extract_int_be(0, 21) << 11).to_be_bytes(),
+    content=(
+      #|b"\xa5\xb6\xc0\x00"
+    ),
+  )
+  inspect(
+    (s.unsafe_extract_int_be(0, 22) << 10).to_be_bytes(),
+    content=(
+      #|b"\xa5\xb6\xc4\x00"
+    ),
+  )
+  inspect(
+    (s.unsafe_extract_int_be(0, 23) << 9).to_be_bytes(),
+    content=(
+      #|b"\xa5\xb6\xc6\x00"
+    ),
+  )
+  inspect(
+    (s.unsafe_extract_int_be(0, 24) << 8).to_be_bytes(),
+    content=(
+      #|b"\xa5\xb6\xc7\x00"
+    ),
+  )
+  inspect(
+    (s.unsafe_extract_int_be(0, 25) << 7).to_be_bytes(),
+    content=(
+      #|b"\xa5\xb6\xc7\x80"
+    ),
+  )
+  inspect(
+    (s.unsafe_extract_int_be(0, 26) << 6).to_be_bytes(),
+    content=(
+      #|b"\xa5\xb6\xc7\xc0"
+    ),
+  )
+  inspect(
+    (s.unsafe_extract_int_be(0, 27) << 5).to_be_bytes(),
+    content=(
+      #|b"\xa5\xb6\xc7\xc0"
+    ),
+  )
+  inspect(
+    (s.unsafe_extract_int_be(0, 28) << 4).to_be_bytes(),
+    content=(
+      #|b"\xa5\xb6\xc7\xd0"
+    ),
+  )
+  inspect(
+    (s.unsafe_extract_int_be(0, 29) << 3).to_be_bytes(),
+    content=(
+      #|b"\xa5\xb6\xc7\xd8"
+    ),
+  )
+  inspect(
+    (s.unsafe_extract_int_be(0, 30) << 2).to_be_bytes(),
+    content=(
+      #|b"\xa5\xb6\xc7\xd8"
+    ),
+  )
+  inspect(
+    (s.unsafe_extract_int_be(0, 31) << 1).to_be_bytes(),
+    content=(
+      #|b"\xa5\xb6\xc7\xd8"
+    ),
+  )
+  inspect(
+    (s.unsafe_extract_int_be(0, 32) << 0).to_be_bytes(),
+    content=(
+      #|b"\xa5\xb6\xc7\xd8"
+    ),
+  )
 }
 
 ///|
-test "extract_int_be - non-aligned positions" {
-  let bytes = b"\xFF\x01\x02\x03\x04\x05\x06\x07"
-  let view = bytes[:]
-
-  // Extract from bit position 1
-  let result16_offset1 = view.unsafe_extract_int_be(1, 16)
-  let result24_offset1 = view.unsafe_extract_int_be(1, 24)
+test "extract_int_be" {
+  let s = b"\xA5\xB6\xC7\xD8"[:]
   inspect(
-    (result16_offset1 << (32 - 16)).to_be_bytes(),
+    s.unsafe_extract_int_be(0, 32).to_be_bytes(),
     content=(
-      #|b"\xfe\x02\x00\x00"
+      #|b"\xa5\xb6\xc7\xd8"
     ),
   )
   inspect(
-    (result24_offset1 << (32 - 24)).to_be_bytes(),
+    s.unsafe_extract_int_be(1, 31).to_be_bytes(),
     content=(
-      #|b"\xfe\x02\x04\x00"
+      #|b"\x25\xb6\xc7\xd8"
     ),
   )
-
-  // Extract from bit position 4
-  let result16_offset4 = view.unsafe_extract_int_be(4, 16)
   inspect(
-    (result16_offset4 << (32 - 16)).to_be_bytes(),
+    s.unsafe_extract_int_be(2, 30).to_be_bytes(),
     content=(
-      #|b"\xf0\x10\x00\x00"
+      #|b"\x25\xb6\xc7\xd8"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_be(3, 29).to_be_bytes(),
+    content=(
+      #|b"\x05\xb6\xc7\xd8"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_be(4, 28).to_be_bytes(),
+    content=(
+      #|b"\x05\xb6\xc7\xd8"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_be(5, 27).to_be_bytes(),
+    content=(
+      #|b"\x05\xb6\xc7\xd8"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_be(6, 26).to_be_bytes(),
+    content=(
+      #|b"\x01\xb6\xc7\xd8"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_be(7, 25).to_be_bytes(),
+    content=(
+      #|b"\x01\xb6\xc7\xd8"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_be(8, 24).to_be_bytes(),
+    content=(
+      #|b"\x00\xb6\xc7\xd8"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_be(9, 23).to_be_bytes(),
+    content=(
+      #|b"\x00\x36\xc7\xd8"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_be(10, 22).to_be_bytes(),
+    content=(
+      #|b"\x00\x36\xc7\xd8"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_be(11, 21).to_be_bytes(),
+    content=(
+      #|b"\x00\x16\xc7\xd8"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_be(12, 20).to_be_bytes(),
+    content=(
+      #|b"\x00\x06\xc7\xd8"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_be(13, 19).to_be_bytes(),
+    content=(
+      #|b"\x00\x06\xc7\xd8"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_be(14, 18).to_be_bytes(),
+    content=(
+      #|b"\x00\x02\xc7\xd8"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_be(15, 17).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\xc7\xd8"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_be(16, 16).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\xc7\xd8"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_be(17, 15).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x47\xd8"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_be(18, 14).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x07\xd8"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_be(19, 13).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x07\xd8"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_be(20, 12).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x07\xd8"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_be(21, 11).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x07\xd8"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_be(22, 10).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x03\xd8"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_be(23, 9).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x01\xd8"
     ),
   )
 }
 
 ///|
-test "extract_int_be - comparison with little endian" {
-  let bytes = b"\x12\x34\x56\x78"
-  let view = bytes[:]
-  let le_result = view.unsafe_extract_int_le(0, 32)
-  let be_result = view.unsafe_extract_int_be(0, 32)
+test "extract_int_be" {
+  let s = b"\xA5\xB6\xC7\xD8\xA5\xB6\xC7\xD8"[:]
+  inspect(
+    s.unsafe_extract_int_be(1, 32).to_be_bytes(),
+    content=(
+      #|b"\x4b\x6d\x8f\xb1"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_be(2, 32).to_be_bytes(),
+    content=(
+      #|b"\x96\xdb\x1f\x62"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_be(3, 32).to_be_bytes(),
+    content=(
+      #|b"\x2d\xb6\x3e\xc5"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_be(4, 32).to_be_bytes(),
+    content=(
+      #|b"\x5b\x6c\x7d\x8a"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_be(5, 32).to_be_bytes(),
+    content=(
+      #|b"\xb6\xd8\xfb\x14"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_be(6, 32).to_be_bytes(),
+    content=(
+      #|b"\x6d\xb1\xf6\x29"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_be(7, 32).to_be_bytes(),
+    content=(
+      #|b"\xdb\x63\xec\x52"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int_be(8, 32).to_be_bytes(),
+    content=(
+      #|b"\xb6\xc7\xd8\xa5"
+    ),
+  )
+}
 
-  // The raw values should be different due to endianness
-  inspect(le_result.to_le_bytes(), content="b\"\\x12\\x34\\x56\\x78\"")
-  inspect(be_result.to_be_bytes(), content="b\"\\x12\\x34\\x56\\x78\"")
-
-  // But when interpreted in their respective endianness, they represent the same byte sequence
-  inspect(le_result.to_be_bytes(), content="b\"\\x78\\x56\\x34\\x12\"")
-  inspect(be_result.to_le_bytes(), content="b\"\\x78\\x56\\x34\\x12\"")
+///|
+test "extract_int_be_path_consistent" {
+  let s1 = b"\xBA\xAA\xAA\xAA"[:]
+  let i1 = s1.unsafe_extract_int_be(4, 28)
+  let s2 = b"\xAA\xAA\xAA\xAB"[:]
+  let i2 = s2.unsafe_extract_int_be(0, 28)
+  inspect(i1, content="178956970")
+  inspect(i2, content="178956970")
 }
 
 // ============================================================================
@@ -335,101 +888,407 @@ test "extract_int_be - comparison with little endian" {
 // ============================================================================
 
 ///|
-test "extract_int64_le - byte aligned positions" {
-  let bytes = b"\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0A\x0B\x0C"
-  let view = bytes[:]
-
-  // Test different bit lengths
-  let result40 = view.unsafe_extract_int64_le(0, 40) // 5 bytes
-  let result48 = view.unsafe_extract_int64_le(0, 48) // 6 bytes
-  let result56 = view.unsafe_extract_int64_le(0, 56) // 7 bytes
-  let result64 = view.unsafe_extract_int64_le(0, 64) // 8 bytes
-
-  // Verify using byte representation for clarity
+test "extract_int64_le" {
+  let s = b"\xA5\xB6\xC7\xD8\x5A\xB6\xC7\xD8"[:]
   inspect(
-    result40.to_le_bytes(),
-    content="b\"\\x01\\x02\\x03\\x04\\x05\\x00\\x00\\x00\"",
+    s.unsafe_extract_int64_le(0, 33).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x00\x00\xd8\xc7\xb6\xa5"
+    ),
   )
   inspect(
-    result48.to_le_bytes(),
-    content="b\"\\x01\\x02\\x03\\x04\\x05\\x06\\x00\\x00\"",
+    s.unsafe_extract_int64_le(0, 34).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x00\x01\xd8\xc7\xb6\xa5"
+    ),
   )
   inspect(
-    result56.to_le_bytes(),
-    content="b\"\\x01\\x02\\x03\\x04\\x05\\x06\\x07\\x00\"",
+    s.unsafe_extract_int64_le(0, 35).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x00\x02\xd8\xc7\xb6\xa5"
+    ),
   )
   inspect(
-    result64.to_le_bytes(),
-    content="b\"\\x01\\x02\\x03\\x04\\x05\\x06\\x07\\x08\"",
+    s.unsafe_extract_int64_le(0, 36).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x00\x05\xd8\xc7\xb6\xa5"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(0, 37).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x00\x0b\xd8\xc7\xb6\xa5"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(0, 38).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x00\x16\xd8\xc7\xb6\xa5"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(0, 39).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x00\x2d\xd8\xc7\xb6\xa5"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(0, 40).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x00\x5a\xd8\xc7\xb6\xa5"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(0, 41).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x01\x5a\xd8\xc7\xb6\xa5"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(0, 42).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x02\x5a\xd8\xc7\xb6\xa5"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(0, 43).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x05\x5a\xd8\xc7\xb6\xa5"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(0, 44).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x0b\x5a\xd8\xc7\xb6\xa5"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(0, 45).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x16\x5a\xd8\xc7\xb6\xa5"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(0, 46).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x2d\x5a\xd8\xc7\xb6\xa5"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(0, 47).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x5b\x5a\xd8\xc7\xb6\xa5"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(0, 48).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\xb6\x5a\xd8\xc7\xb6\xa5"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(0, 49).to_be_bytes(),
+    content=(
+      #|b"\x00\x01\xb6\x5a\xd8\xc7\xb6\xa5"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(0, 50).to_be_bytes(),
+    content=(
+      #|b"\x00\x03\xb6\x5a\xd8\xc7\xb6\xa5"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(0, 51).to_be_bytes(),
+    content=(
+      #|b"\x00\x06\xb6\x5a\xd8\xc7\xb6\xa5"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(0, 52).to_be_bytes(),
+    content=(
+      #|b"\x00\x0c\xb6\x5a\xd8\xc7\xb6\xa5"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(0, 53).to_be_bytes(),
+    content=(
+      #|b"\x00\x18\xb6\x5a\xd8\xc7\xb6\xa5"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(0, 54).to_be_bytes(),
+    content=(
+      #|b"\x00\x31\xb6\x5a\xd8\xc7\xb6\xa5"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(0, 55).to_be_bytes(),
+    content=(
+      #|b"\x00\x63\xb6\x5a\xd8\xc7\xb6\xa5"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(0, 56).to_be_bytes(),
+    content=(
+      #|b"\x00\xc7\xb6\x5a\xd8\xc7\xb6\xa5"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(0, 57).to_be_bytes(),
+    content=(
+      #|b"\x01\xc7\xb6\x5a\xd8\xc7\xb6\xa5"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(0, 58).to_be_bytes(),
+    content=(
+      #|b"\x03\xc7\xb6\x5a\xd8\xc7\xb6\xa5"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(0, 59).to_be_bytes(),
+    content=(
+      #|b"\x06\xc7\xb6\x5a\xd8\xc7\xb6\xa5"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(0, 60).to_be_bytes(),
+    content=(
+      #|b"\x0d\xc7\xb6\x5a\xd8\xc7\xb6\xa5"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(0, 61).to_be_bytes(),
+    content=(
+      #|b"\x1b\xc7\xb6\x5a\xd8\xc7\xb6\xa5"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(0, 62).to_be_bytes(),
+    content=(
+      #|b"\x36\xc7\xb6\x5a\xd8\xc7\xb6\xa5"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(0, 63).to_be_bytes(),
+    content=(
+      #|b"\x6c\xc7\xb6\x5a\xd8\xc7\xb6\xa5"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(0, 64).to_be_bytes(),
+    content=(
+      #|b"\xd8\xc7\xb6\x5a\xd8\xc7\xb6\xa5"
+    ),
   )
 }
 
 ///|
-test "extract_int64_le - non-aligned positions" {
-  let bytes = b"\xFF\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0A\x0B"
-  let view = bytes[:]
-
-  // Extract from bit position 1
-  let result40_offset1 = view.unsafe_extract_int64_le(1, 40)
-  let result64_offset1 = view.unsafe_extract_int64_le(1, 64)
-
-  // Verify the bit shifting worked correctly
+test "extract_int64_le" {
+  let s = b"\xA5\xB6\xC7\xD8\x5A\xB6\xC7\xD8"[:]
   inspect(
-    (result40_offset1 << (64 - 40)).to_le_bytes(),
+    s.unsafe_extract_int64_le(0, 64).to_be_bytes(),
     content=(
-      #|b"\x00\x00\x00\xfe\x02\x04\x06\x08"
+      #|b"\xd8\xc7\xb6\x5a\xd8\xc7\xb6\xa5"
     ),
   )
   inspect(
-    (result64_offset1 << (64 - 64)).to_le_bytes(),
+    s.unsafe_extract_int64_le(1, 63).to_be_bytes(),
     content=(
-      #|b"\xfe\x02\x04\x06\x08\x0a\x0c\x0e"
+      #|b"\x58\x8f\x6d\xb5\xb0\x8f\x6d\x4b"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(2, 62).to_be_bytes(),
+    content=(
+      #|b"\x18\x1f\xdb\x6a\x61\x1f\xdb\x96"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(3, 61).to_be_bytes(),
+    content=(
+      #|b"\x18\x3e\xb6\xd5\xc2\x3e\xb6\x2d"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(4, 60).to_be_bytes(),
+    content=(
+      #|b"\x08\x7d\x6c\xab\x85\x7d\x6c\x5b"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(5, 59).to_be_bytes(),
+    content=(
+      #|b"\x00\xfb\xd8\x56\x0b\xfb\xd8\xb6"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(6, 58).to_be_bytes(),
+    content=(
+      #|b"\x00\xf6\xb1\xad\x16\xf6\xb1\x6d"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(7, 57).to_be_bytes(),
+    content=(
+      #|b"\x00\xec\x63\x5b\x2d\xec\x63\xdb"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(8, 56).to_be_bytes(),
+    content=(
+      #|b"\x00\xd8\xc7\xb6\x5a\xd8\xc7\xb6"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(9, 55).to_be_bytes(),
+    content=(
+      #|b"\x00\x58\x8f\x6d\xb5\xb0\x8f\x6d"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(10, 54).to_be_bytes(),
+    content=(
+      #|b"\x00\x18\x1f\xdb\x6a\x61\x1f\xdb"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(11, 53).to_be_bytes(),
+    content=(
+      #|b"\x00\x18\x3e\xb6\xd5\xc2\x3e\xb6"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(12, 52).to_be_bytes(),
+    content=(
+      #|b"\x00\x08\x7d\x6c\xab\x85\x7d\x6c"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(13, 51).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\xfb\xd8\x56\x0b\xfb\xd8"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(14, 50).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\xf6\xb1\xad\x16\xf6\xb1"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(15, 49).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\xec\x63\x5b\x2d\xec\x63"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(16, 48).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\xd8\xc7\xb6\x5a\xd8\xc7"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(17, 47).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x58\x8f\x6d\xb5\xb0\x8f"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(18, 46).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x18\x1f\xdb\x6a\x61\x1f"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(19, 45).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x18\x3e\xb6\xd5\xc2\x3e"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(20, 44).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x08\x7d\x6c\xab\x85\x7d"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(21, 43).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x00\xfb\xd8\x56\x0b\xfb"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(22, 42).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x00\xf6\xb1\xad\x16\xf6"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(23, 41).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x00\xec\x63\x5b\x2d\xec"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(24, 40).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x00\xd8\xc7\xb6\x5a\xd8"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(25, 39).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x00\x58\x8f\x6d\xb5\xb0"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(26, 38).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x00\x18\x1f\xdb\x6a\x61"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(27, 37).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x00\x18\x3e\xb6\xd5\xc2"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(28, 36).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x00\x08\x7d\x6c\xab\x85"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(29, 35).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x00\x00\xfb\xd8\x56\x0b"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(30, 34).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x00\x00\xf6\xb1\xad\x16"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_le(31, 33).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x00\x00\xec\x63\x5b\x2d"
     ),
   )
 }
 
 ///|
-test "extract_int64_le - all bit lengths" {
-  let bytes = b"\x11\x22\x33\x44\x55\x66\x77\x88\x99\xAA\xBB\xCC"
-  let view = bytes[:]
-
-  // Test all supported bit lengths from 33 to 64
-  for bits = 33; bits <= 64; bits = bits + 1 {
-    let result = view.unsafe_extract_int64_le(0, bits)
-    let shifted = result << (64 - bits)
-    // Just verify extraction doesn't crash and produces reasonable output
-    let _bytes = shifted.to_le_bytes()
-
-  }
-}
-
-///|
-test "extract_int64_le - edge patterns" {
-  let bytes = b"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x00\x00\x00\x00\x00\x00\x00\x00"
-  let view = bytes[:]
-
-  // Extract all ones
-  let all_ones_40 = view.unsafe_extract_int64_le(0, 40)
-  let all_ones_64 = view.unsafe_extract_int64_le(0, 64)
-  inspect(
-    all_ones_40.to_le_bytes(),
-    content=(
-      #|b"\xff\xff\xff\xff\xff\x00\x00\x00"
-    ),
-  )
-  inspect(
-    all_ones_64.to_le_bytes(),
-    content=(
-      #|b"\xff\xff\xff\xff\xff\xff\xff\xff"
-    ),
-  )
-
-  // Extract all zeros
-  let all_zeros_40 = view.unsafe_extract_int64_le(64, 40)
-  inspect(
-    all_zeros_40.to_le_bytes(),
-    content="b\"\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\"",
-  )
+test "extract_int64_le path_consistent" {
+  let s1 = b"\xBA\xAA\xAA\xAA\xAA\xAA\xAA\xAA"[:]
+  let i1 = s1.unsafe_extract_int64_le(4, 60)
+  let s2 = b"\xAA\xAA\xAA\xAA\xAA\xAA\xAA\xAA"[:]
+  let i2 = s2.unsafe_extract_int64_le(0, 60)
+  inspect(i1, content="768614336404564650")
+  inspect(i2, content="768614336404564650")
 }
 
 // ============================================================================
@@ -437,85 +1296,407 @@ test "extract_int64_le - edge patterns" {
 // ============================================================================
 
 ///|
-test "extract_int64_be - byte aligned positions" {
-  let bytes = b"\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0A\x0B\x0C"
-  let view = bytes[:]
-
-  // Test different bit lengths
-  let result40 = view.unsafe_extract_int64_be(0, 40) // 5 bytes
-  let result48 = view.unsafe_extract_int64_be(0, 48) // 6 bytes
-  let result56 = view.unsafe_extract_int64_be(0, 56) // 7 bytes
-  let result64 = view.unsafe_extract_int64_be(0, 64) // 8 bytes
-
-  // Verify using byte representation for clarity
+test "extract_int64_be" {
+  let s = b"\xA5\xB6\xC7\xD8\x5A\xB6\xC7\xD8"[:]
   inspect(
-    result40.to_be_bytes(),
-    content="b\"\\x00\\x00\\x00\\x01\\x02\\x03\\x04\\x05\"",
+    (s.unsafe_extract_int64_be(0, 33) << 31).to_be_bytes(),
+    content=(
+      #|b"\xa5\xb6\xc7\xd8\x00\x00\x00\x00"
+    ),
   )
   inspect(
-    result48.to_be_bytes(),
-    content="b\"\\x00\\x00\\x01\\x02\\x03\\x04\\x05\\x06\"",
+    (s.unsafe_extract_int64_be(0, 34) << 30).to_be_bytes(),
+    content=(
+      #|b"\xa5\xb6\xc7\xd8\x40\x00\x00\x00"
+    ),
   )
   inspect(
-    result56.to_be_bytes(),
-    content="b\"\\x00\\x01\\x02\\x03\\x04\\x05\\x06\\x07\"",
+    (s.unsafe_extract_int64_be(0, 35) << 29).to_be_bytes(),
+    content=(
+      #|b"\xa5\xb6\xc7\xd8\x40\x00\x00\x00"
+    ),
   )
   inspect(
-    result64.to_be_bytes(),
-    content="b\"\\x01\\x02\\x03\\x04\\x05\\x06\\x07\\x08\"",
+    (s.unsafe_extract_int64_be(0, 36) << 28).to_be_bytes(),
+    content=(
+      #|b"\xa5\xb6\xc7\xd8\x50\x00\x00\x00"
+    ),
+  )
+  inspect(
+    (s.unsafe_extract_int64_be(0, 37) << 27).to_be_bytes(),
+    content=(
+      #|b"\xa5\xb6\xc7\xd8\x58\x00\x00\x00"
+    ),
+  )
+  inspect(
+    (s.unsafe_extract_int64_be(0, 38) << 26).to_be_bytes(),
+    content=(
+      #|b"\xa5\xb6\xc7\xd8\x58\x00\x00\x00"
+    ),
+  )
+  inspect(
+    (s.unsafe_extract_int64_be(0, 39) << 25).to_be_bytes(),
+    content=(
+      #|b"\xa5\xb6\xc7\xd8\x5a\x00\x00\x00"
+    ),
+  )
+  inspect(
+    (s.unsafe_extract_int64_be(0, 40) << 24).to_be_bytes(),
+    content=(
+      #|b"\xa5\xb6\xc7\xd8\x5a\x00\x00\x00"
+    ),
+  )
+  inspect(
+    (s.unsafe_extract_int64_be(0, 41) << 23).to_be_bytes(),
+    content=(
+      #|b"\xa5\xb6\xc7\xd8\x5a\x80\x00\x00"
+    ),
+  )
+  inspect(
+    (s.unsafe_extract_int64_be(0, 42) << 22).to_be_bytes(),
+    content=(
+      #|b"\xa5\xb6\xc7\xd8\x5a\x80\x00\x00"
+    ),
+  )
+  inspect(
+    (s.unsafe_extract_int64_be(0, 43) << 21).to_be_bytes(),
+    content=(
+      #|b"\xa5\xb6\xc7\xd8\x5a\xa0\x00\x00"
+    ),
+  )
+  inspect(
+    (s.unsafe_extract_int64_be(0, 44) << 20).to_be_bytes(),
+    content=(
+      #|b"\xa5\xb6\xc7\xd8\x5a\xb0\x00\x00"
+    ),
+  )
+  inspect(
+    (s.unsafe_extract_int64_be(0, 45) << 19).to_be_bytes(),
+    content=(
+      #|b"\xa5\xb6\xc7\xd8\x5a\xb0\x00\x00"
+    ),
+  )
+  inspect(
+    (s.unsafe_extract_int64_be(0, 46) << 18).to_be_bytes(),
+    content=(
+      #|b"\xa5\xb6\xc7\xd8\x5a\xb4\x00\x00"
+    ),
+  )
+  inspect(
+    (s.unsafe_extract_int64_be(0, 47) << 17).to_be_bytes(),
+    content=(
+      #|b"\xa5\xb6\xc7\xd8\x5a\xb6\x00\x00"
+    ),
+  )
+  inspect(
+    (s.unsafe_extract_int64_be(0, 48) << 16).to_be_bytes(),
+    content=(
+      #|b"\xa5\xb6\xc7\xd8\x5a\xb6\x00\x00"
+    ),
+  )
+  inspect(
+    (s.unsafe_extract_int64_be(0, 49) << 15).to_be_bytes(),
+    content=(
+      #|b"\xa5\xb6\xc7\xd8\x5a\xb6\x80\x00"
+    ),
+  )
+  inspect(
+    (s.unsafe_extract_int64_be(0, 50) << 14).to_be_bytes(),
+    content=(
+      #|b"\xa5\xb6\xc7\xd8\x5a\xb6\xc0\x00"
+    ),
+  )
+  inspect(
+    (s.unsafe_extract_int64_be(0, 51) << 13).to_be_bytes(),
+    content=(
+      #|b"\xa5\xb6\xc7\xd8\x5a\xb6\xc0\x00"
+    ),
+  )
+  inspect(
+    (s.unsafe_extract_int64_be(0, 52) << 12).to_be_bytes(),
+    content=(
+      #|b"\xa5\xb6\xc7\xd8\x5a\xb6\xc0\x00"
+    ),
+  )
+  inspect(
+    (s.unsafe_extract_int64_be(0, 53) << 11).to_be_bytes(),
+    content=(
+      #|b"\xa5\xb6\xc7\xd8\x5a\xb6\xc0\x00"
+    ),
+  )
+  inspect(
+    (s.unsafe_extract_int64_be(0, 54) << 10).to_be_bytes(),
+    content=(
+      #|b"\xa5\xb6\xc7\xd8\x5a\xb6\xc4\x00"
+    ),
+  )
+  inspect(
+    (s.unsafe_extract_int64_be(0, 55) << 9).to_be_bytes(),
+    content=(
+      #|b"\xa5\xb6\xc7\xd8\x5a\xb6\xc6\x00"
+    ),
+  )
+  inspect(
+    (s.unsafe_extract_int64_be(0, 56) << 8).to_be_bytes(),
+    content=(
+      #|b"\xa5\xb6\xc7\xd8\x5a\xb6\xc7\x00"
+    ),
+  )
+  inspect(
+    (s.unsafe_extract_int64_be(0, 57) << 7).to_be_bytes(),
+    content=(
+      #|b"\xa5\xb6\xc7\xd8\x5a\xb6\xc7\x80"
+    ),
+  )
+  inspect(
+    (s.unsafe_extract_int64_be(0, 58) << 6).to_be_bytes(),
+    content=(
+      #|b"\xa5\xb6\xc7\xd8\x5a\xb6\xc7\xc0"
+    ),
+  )
+  inspect(
+    (s.unsafe_extract_int64_be(0, 59) << 5).to_be_bytes(),
+    content=(
+      #|b"\xa5\xb6\xc7\xd8\x5a\xb6\xc7\xc0"
+    ),
+  )
+  inspect(
+    (s.unsafe_extract_int64_be(0, 60) << 4).to_be_bytes(),
+    content=(
+      #|b"\xa5\xb6\xc7\xd8\x5a\xb6\xc7\xd0"
+    ),
+  )
+  inspect(
+    (s.unsafe_extract_int64_be(0, 61) << 3).to_be_bytes(),
+    content=(
+      #|b"\xa5\xb6\xc7\xd8\x5a\xb6\xc7\xd8"
+    ),
+  )
+  inspect(
+    (s.unsafe_extract_int64_be(0, 62) << 2).to_be_bytes(),
+    content=(
+      #|b"\xa5\xb6\xc7\xd8\x5a\xb6\xc7\xd8"
+    ),
+  )
+  inspect(
+    (s.unsafe_extract_int64_be(0, 63) << 1).to_be_bytes(),
+    content=(
+      #|b"\xa5\xb6\xc7\xd8\x5a\xb6\xc7\xd8"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_be(0, 64).to_be_bytes(),
+    content=(
+      #|b"\xa5\xb6\xc7\xd8\x5a\xb6\xc7\xd8"
+    ),
   )
 }
 
 ///|
-test "extract_int64_be - non-aligned positions" {
-  let bytes = b"\xFF\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0A\x0B"
-  let view = bytes[:]
-
-  // Extract from bit position 1
-  let result40_offset1 = view.unsafe_extract_int64_be(1, 40)
-  let result64_offset1 = view.unsafe_extract_int64_be(1, 64)
-
-  // Verify the bit shifting worked correctly
+test "extract_int64_be" {
+  let s = b"\xA5\xB6\xC7\xD8\x5A\xB6\xC7\xD8"[:]
   inspect(
-    (result40_offset1 << (64 - 40)).to_be_bytes(),
+    s.unsafe_extract_int64_be(0, 64).to_be_bytes(),
     content=(
-      #|b"\xfe\x02\x04\x06\x08\x00\x00\x00"
+      #|b"\xa5\xb6\xc7\xd8\x5a\xb6\xc7\xd8"
     ),
   )
   inspect(
-    (result64_offset1 << (64 - 64)).to_be_bytes(),
+    s.unsafe_extract_int64_be(1, 63).to_be_bytes(),
     content=(
-      #|b"\xfe\x02\x04\x06\x08\x0a\x0c\x0e"
+      #|b"\x25\xb6\xc7\xd8\x5a\xb6\xc7\xd8"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_be(2, 62).to_be_bytes(),
+    content=(
+      #|b"\x25\xb6\xc7\xd8\x5a\xb6\xc7\xd8"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_be(3, 61).to_be_bytes(),
+    content=(
+      #|b"\x05\xb6\xc7\xd8\x5a\xb6\xc7\xd8"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_be(4, 60).to_be_bytes(),
+    content=(
+      #|b"\x05\xb6\xc7\xd8\x5a\xb6\xc7\xd8"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_be(5, 59).to_be_bytes(),
+    content=(
+      #|b"\x05\xb6\xc7\xd8\x5a\xb6\xc7\xd8"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_be(6, 58).to_be_bytes(),
+    content=(
+      #|b"\x01\xb6\xc7\xd8\x5a\xb6\xc7\xd8"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_be(7, 57).to_be_bytes(),
+    content=(
+      #|b"\x01\xb6\xc7\xd8\x5a\xb6\xc7\xd8"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_be(8, 56).to_be_bytes(),
+    content=(
+      #|b"\x00\xb6\xc7\xd8\x5a\xb6\xc7\xd8"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_be(9, 55).to_be_bytes(),
+    content=(
+      #|b"\x00\x36\xc7\xd8\x5a\xb6\xc7\xd8"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_be(10, 54).to_be_bytes(),
+    content=(
+      #|b"\x00\x36\xc7\xd8\x5a\xb6\xc7\xd8"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_be(11, 53).to_be_bytes(),
+    content=(
+      #|b"\x00\x16\xc7\xd8\x5a\xb6\xc7\xd8"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_be(12, 52).to_be_bytes(),
+    content=(
+      #|b"\x00\x06\xc7\xd8\x5a\xb6\xc7\xd8"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_be(13, 51).to_be_bytes(),
+    content=(
+      #|b"\x00\x06\xc7\xd8\x5a\xb6\xc7\xd8"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_be(14, 50).to_be_bytes(),
+    content=(
+      #|b"\x00\x02\xc7\xd8\x5a\xb6\xc7\xd8"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_be(15, 49).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\xc7\xd8\x5a\xb6\xc7\xd8"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_be(16, 48).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\xc7\xd8\x5a\xb6\xc7\xd8"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_be(17, 47).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x47\xd8\x5a\xb6\xc7\xd8"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_be(18, 46).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x07\xd8\x5a\xb6\xc7\xd8"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_be(19, 45).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x07\xd8\x5a\xb6\xc7\xd8"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_be(20, 44).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x07\xd8\x5a\xb6\xc7\xd8"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_be(21, 43).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x07\xd8\x5a\xb6\xc7\xd8"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_be(22, 42).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x03\xd8\x5a\xb6\xc7\xd8"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_be(23, 41).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x01\xd8\x5a\xb6\xc7\xd8"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_be(24, 40).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x00\xd8\x5a\xb6\xc7\xd8"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_be(25, 39).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x00\x58\x5a\xb6\xc7\xd8"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_be(26, 38).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x00\x18\x5a\xb6\xc7\xd8"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_be(27, 37).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x00\x18\x5a\xb6\xc7\xd8"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_be(28, 36).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x00\x08\x5a\xb6\xc7\xd8"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_be(29, 35).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x00\x00\x5a\xb6\xc7\xd8"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_be(30, 34).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x00\x00\x5a\xb6\xc7\xd8"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_int64_be(31, 33).to_be_bytes(),
+    content=(
+      #|b"\x00\x00\x00\x00\x5a\xb6\xc7\xd8"
     ),
   )
 }
 
 ///|
-test "extract_int64_be - comparison with little endian" {
-  let bytes = b"\x11\x22\x33\x44\x55\x66\x77\x88"
-  let view = bytes[:]
-  let le_result = view.unsafe_extract_int64_le(0, 64)
-  let be_result = view.unsafe_extract_int64_be(0, 64)
-
-  // The raw values should be different due to endianness
-  inspect(
-    le_result.to_le_bytes(),
-    content="b\"\\x11\\x22\\x33\\x44\\x55\\x66\\x77\\x88\"",
-  )
-  inspect(
-    be_result.to_be_bytes(),
-    content="b\"\\x11\\x22\\x33\\x44\\x55\\x66\\x77\\x88\"",
-  )
-
-  // But when interpreted in their respective endianness, they represent the same byte sequence
-  inspect(
-    le_result.to_be_bytes(),
-    content="b\"\\x88\\x77\\x66\\x55\\x44\\x33\\x22\\x11\"",
-  )
-  inspect(
-    be_result.to_le_bytes(),
-    content="b\"\\x88\\x77\\x66\\x55\\x44\\x33\\x22\\x11\"",
-  )
+test "extract_int64_be path_consistent" {
+  let s1 = b"\xBA\xAA\xAA\xAA\xAA\xAA\xAA\xAA"[:]
+  let i1 = s1.unsafe_extract_int64_be(4, 60)
+  let s2 = b"\xAA\xAA\xAA\xAA\xAA\xAA\xAA\xAA"[:]
+  let i2 = s2.unsafe_extract_int64_be(0, 60)
+  inspect(i1, content="768614336404564650")
+  inspect(i2, content="768614336404564650")
 }
 
 // ============================================================================
@@ -604,7 +1785,7 @@ test "integration - complex bit manipulations" {
   inspect(
     (int_val << (32 - 20)).to_le_bytes(),
     content=(
-      #|b"\x00\xd0\xf1\x23"
+      #|b"\x00\xe0\x1d\x2f"
     ),
   )
   inspect(
@@ -670,6 +1851,35 @@ test "integration - pattern verification" {
     int_val.to_be_bytes(),
     content=(
       #|b"\x00\x00\x55\xaa"
+    ),
+  )
+}
+
+///|
+test "misc" {
+  let s = b"\xFF\x02\x03\x04\x05\x06\x07\x08\x09\x0A\x0B\x0C\x0D\x0E\x0F\x10"[:]
+  inspect(s.unsafe_extract_byte(0, 7), content="b'\\x7F'")
+  inspect(s.unsafe_extract_int_le(7, 15), content="129")
+  inspect(s.unsafe_extract_int_le(22, 23), content="2097601")
+  inspect(s.unsafe_extract_int64_le(45, 40), content="279726645696")
+  inspect(s.unsafe_extract_byte(85, 3), content="b'\\x03'")
+  inspect(s.unsafe_extract_byte(88, 8), content="b'\\x0C'")
+  inspect(
+    s.unsafe_extract_bytesview(96, 32),
+    content=(
+      #|b"\x0d\x0e\x0f\x10"
+    ),
+  )
+  inspect(s.unsafe_extract_byte(0, 7), content="b'\\x7F'")
+  inspect(s.unsafe_extract_int_be(7, 15), content="16512")
+  inspect(s.unsafe_extract_int_be(22, 23), content="6324384")
+  inspect(s.unsafe_extract_int64_be(45, 40), content="828408668481")
+  inspect(s.unsafe_extract_byte(85, 3), content="b'\\x03'")
+  inspect(s.unsafe_extract_byte(88, 8), content="b'\\x0C'")
+  inspect(
+    s.unsafe_extract_bytesview(96, 32),
+    content=(
+      #|b"\x0d\x0e\x0f\x10"
     ),
   )
 }
