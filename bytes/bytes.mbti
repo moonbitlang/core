@@ -38,6 +38,13 @@ fn View::to_uint64_be(Self) -> UInt64
 fn View::to_uint64_le(Self) -> UInt64
 fn View::to_uint_be(Self) -> UInt
 fn View::to_uint_le(Self) -> UInt
+fn View::unsafe_extract_bit(Self, Int, Int) -> Bool
+fn View::unsafe_extract_byte(Self, Int, Int) -> Byte
+fn View::unsafe_extract_bytesview(Self, Int, Int) -> Self
+fn View::unsafe_extract_int64_be(Self, Int, Int) -> Int64
+fn View::unsafe_extract_int64_le(Self, Int, Int) -> Int64
+fn View::unsafe_extract_int_be(Self, Int, Int) -> Int
+fn View::unsafe_extract_int_le(Self, Int, Int) -> Int
 fn View::unsafe_get(Self, Int) -> Byte
 impl Compare for View
 impl Eq for View
@@ -56,6 +63,12 @@ fn Bytes::op_as_view(Bytes, start? : Int, end? : Int) -> View
 fn Bytes::rev_find(Bytes, View) -> Int?
 fn Bytes::to_array(Bytes) -> Array[Byte]
 fn Bytes::to_fixedarray(Bytes, len? : Int) -> FixedArray[Byte]
+fn Bytes::unsafe_extract_byte(Bytes, Int, Int) -> Byte
+fn Bytes::unsafe_extract_bytesview(Bytes, Int, Int) -> View
+fn Bytes::unsafe_extract_int64_be(Bytes, Int, Int) -> Int64
+fn Bytes::unsafe_extract_int64_le(Bytes, Int, Int) -> Int64
+fn Bytes::unsafe_extract_int_be(Bytes, Int, Int) -> Int
+fn Bytes::unsafe_extract_int_le(Bytes, Int, Int) -> Int
 impl Add for Bytes
 impl Default for Bytes
 impl Hash for Bytes
