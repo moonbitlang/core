@@ -1,5 +1,5 @@
 // Package for high-precision decimal arithmetic
-package "decimal"
+package "Decimal"
 
 // Values
 fn from_parts(@bigint.BigInt, Int) -> Decimal
@@ -7,6 +7,19 @@ fn from_parts(@bigint.BigInt, Int) -> Decimal
 
 fn from_int(Int) -> Decimal
 // Create a Decimal from a regular integer (scale = 0)
+
+// Adds two Decimal numbers.
+fn add(a: Decimal, b: Decimal) -> Decimal
+
+// Subtracts one Decimal number from another.
+fn sub(a: Decimal, b: Decimal) -> Decimal
+
+// Multiplies two Decimal numbers.
+fn mul(a: Decimal, b: Decimal) -> Decimal
+
+// Divides one Decimal number by another with a specified precision.
+// The default precision is 28 decimal places.
+fn div(a: Decimal, b: Decimal, precision~: Int) -> Decimal
 
 // Types and methods
 pub struct Decimal {

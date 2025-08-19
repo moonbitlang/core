@@ -59,3 +59,31 @@ test "to_string" {
   inspect(d3.to_string(), content="-12.3456")
 }
 ``` 
+
+## Basic operations of addition, subtraction, multiplication, and division
+
+Decimal implements addition, subtraction, multiplication, and division, so you can perform operations on it:
+
+```moonbit
+test "Four basic operations" {
+  let d1 = from_parts(@bigint.BigInt::from_int(123), 1)  
+  let d2 = from_parts(@bigint.BigInt::from_int(456), 1)  
+  let result = add(d1, d2)
+  inspect(result.to_string(), content="57.9")
+
+  let d1 = from_parts(@bigint.BigInt::from_int(123), 1)  
+  let d2 = from_parts(@bigint.BigInt::from_int(456), 1)  
+  let result = sub(d1, d2)
+  inspect(result.to_string(), content="-33.3")
+
+  let d1 = from_parts(@bigint.BigInt::from_int(1234), 2)  
+  let d2 = from_parts(@bigint.BigInt::from_int(56), 1)    
+  let result = mul(d1, d2)                                
+  inspect(result.to_string(), content="69.104")
+
+  let d1 = from_parts(@bigint.BigInt::from_int(123), 1)  
+  let d2 = from_parts(@bigint.BigInt::from_int(41), 1)   
+  let result = div(d1, d2)                                
+  inspect(result.to_string(), content="3.0000000000000000000000000000")
+}
+``` 
