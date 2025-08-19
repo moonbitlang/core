@@ -58,6 +58,9 @@ test "get" {
     ),
   )
   inspect(map.get(4), content="None")
+
+  // pattern
+  guard map is { 1: "a", 2: "b", 3: "c", 4? : None, .. }
 }
 
 ///|
@@ -72,25 +75,15 @@ test "contains" {
 ///|
 test "op_get" {
   let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
-  inspect(
-    map.get(1),
-    content=(
-      #|Some("a")
-    ),
-  )
-  inspect(
-    map.get(2),
-    content=(
-      #|Some("b")
-    ),
-  )
-  inspect(
-    map.get(3),
-    content=(
-      #|Some("c")
-    ),
-  )
-  inspect(map.get(4), content="None")
+  inspect(map[1], content="a")
+  inspect(map[2], content="b")
+  inspect(map[3], content="c")
+}
+
+///|
+test "panic op_get" {
+  let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
+  map[4] |> ignore
 }
 
 ///|

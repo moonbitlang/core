@@ -29,6 +29,9 @@ test "get" {
   inspect(m.get("b"), content="Some(2)")
   inspect(m.get("c"), content="Some(3)")
   inspect(m.get("d"), content="None")
+
+  // pattern
+  guard m is { "a": 1, "b": 2, "c": 3, "d"? : None, .. }
 }
 
 ///|
@@ -77,9 +80,16 @@ test "op_get" {
   let m = @hashmap.new()
   m.set("a", 1)
   m.set("b", 2)
-  assert_eq(m.get("a"), Some(1))
-  assert_eq(m.get("b"), Some(2))
-  assert_eq(m.get("c"), None)
+  assert_eq(m["a"], 1)
+  assert_eq(m["b"], 2)
+}
+
+///|
+test "panic op_get" {
+  let m = @hashmap.new()
+  m.set("a", 1)
+  m.set("b", 2)
+  m["c"] |> ignore
 }
 
 ///|

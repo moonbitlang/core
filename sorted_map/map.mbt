@@ -80,6 +80,24 @@ pub fn[K : Compare, V] get(self : T[K, V], key : K) -> V? {
 }
 
 ///|
+/// Gets a value by a key.
+pub fn[K : Compare, V] op_get(self : T[K, V], key : K) -> V {
+  loop self.root {
+    Some(node) => {
+      let cmp = key.compare(node.key)
+      if cmp == 0 {
+        break node.value
+      } else if cmp > 0 {
+        continue node.right
+      } else {
+        continue node.left
+      }
+    }
+    None => panic()
+  }
+}
+
+///|
 /// Checks if map contains a key-value pair.
 pub fn[K : Compare, V] contains(self : T[K, V], key : K) -> Bool {
   match self.get(key) {

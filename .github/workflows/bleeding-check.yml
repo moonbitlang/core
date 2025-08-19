@@ -11,7 +11,7 @@ jobs:
     continue-on-error: true
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest, macos-13]
+        os: [macos-latest, ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     if: |
       (github.event_name == 'pull_request' && startsWith(github.head_ref, 'bleeding/')) ||
@@ -59,7 +59,7 @@ jobs:
         if: ${{ matrix.os == 'windows-latest' }}
         run: |
           moon test --release --target all
-      
+
       - name: Run moon test on Windows (--target native)
         if: ${{ matrix.os == 'windows-latest' }}
         run: |
@@ -69,7 +69,7 @@ jobs:
         run: |
           moon clean
           moon test --target wasm
-        env: 
+        env:
           MOONC_INTERNAL_PARAMS: allocator = tlsf-mbt |
 
       - name: moon check
@@ -94,7 +94,7 @@ jobs:
   bleeding-native-opt-test:
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, macos-13, windows-latest]
+        os: [ubuntu-latest, macos-latest, windows-latest]
       fail-fast: false
     runs-on: ${{ matrix.os }}
     if: |
@@ -131,7 +131,7 @@ jobs:
       - name: Setup MSVC
         if: ${{ matrix.os == 'windows-latest' }}
         uses: ilammy/msvc-dev-cmd@v1
-      
+
       - name: Run moon test on Windows (--release + --target native)
         if: ${{ matrix.os == 'windows-latest' }}
         run: |
