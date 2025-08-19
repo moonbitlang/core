@@ -284,7 +284,7 @@ fn String::offset_of_nth_char_backward(
 pub fn String::offset_of_nth_char(
   self : String,
   i : Int,
-  start_offset~ : Int = 0,
+  start_offset? : Int = 0,
   end_offset? : Int,
 ) -> Int? {
   let end_offset = if end_offset is Some(o) { o } else { self.length() }
@@ -304,7 +304,7 @@ pub fn String::offset_of_nth_char(
 pub fn String::char_length_eq(
   self : String,
   len : Int,
-  start_offset~ : Int = 0,
+  start_offset? : Int = 0,
   end_offset? : Int,
 ) -> Bool {
   let end_offset = if end_offset is Some(o) { o } else { self.length() }
@@ -332,7 +332,7 @@ pub fn String::char_length_eq(
 pub fn String::char_length_ge(
   self : String,
   len : Int,
-  start_offset~ : Int = 0,
+  start_offset? : Int = 0,
   end_offset? : Int,
 ) -> Bool {
   let end_offset = if end_offset is Some(o) { o } else { self.length() }
