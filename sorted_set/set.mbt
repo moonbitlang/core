@@ -62,6 +62,20 @@ fn[V] copy_tree(node : Node[V]?) -> Node[V]? {
 }
 
 ///|
+/// Copies a tree and returns both the copied tree and its size.
+fn[V] copy_tree_with_size(node : Node[V]?) -> (Node[V]?, Int) {
+  match node {
+    None => (None, 0)
+    Some(node) => {
+      let (left, lsize) = copy_tree_with_size(node.left)
+      let (right, rsize) = copy_tree_with_size(node.right)
+      let new_node = new_node(node.value, left~, right~, height=node.height)
+      (Some(new_node), lsize + rsize + 1)
+    }
+  }
+}
+
+///|
 fn[V] new_node(
   value : V,
   left~ : Node[V]? = None,
@@ -132,29 +146,27 @@ pub fn[V : Compare] contains(self : T[V], value : V) -> Bool {
 ///|
 /// Returns the union of two sets.
 pub fn[V : Compare] union(self : T[V], src : T[V]) -> T[V] {
-  fn aux(a : Node[V]?, b : Node[V]?) -> Node[V]? {
+  fn aux(a : Node[V]?, b : Node[V]?) -> (Node[V]?, Int) {
     match (a, b) {
-      (Some(_), None) => a
-      (None, Some(_)) => b
+      (Some(_), None) => copy_tree_with_size(a)
+      (None, Some(_)) => copy_tree_with_size(b)
       (Some({ value: va, left: la, right: ra, .. }), Some(_)) => {
         let (l, r) = split(b, va)
-        Some(join(aux(la, l), va, aux(ra, r)))
+        let (left, lsize) = aux(la, l)
+        let (right, rsize) = aux(ra, r)
+        let node = join(left, va, right)
+        (Some(node), lsize + rsize + 1)
       }
-      (None, None) => None
+      (None, None) => (None, 0)
     }
   }
 
   match (self.root, src.root) {
     (Some(_), Some(_)) => {
-      let t1 = copy_tree(self.root)
-      let t2 = copy_tree(src.root)
-      let t = aux(t1, t2)
-      let mut ct = 0
-      let ret = { root: t, size: 0 }
-      // TODO: optimize this. Avoid counting the size of the set.
-      ret.each(_x => ct = ct + 1)
-      ret.size = ct
-      ret
+      let (t1, _) = copy_tree_with_size(self.root)
+      let (t2, _) = copy_tree_with_size(src.root)
+      let (t, size) = aux(t1, t2)
+      { root: t, size }
     }
     (Some(_), None) => { root: copy_tree(self.root), size: self.size }
     (None, Some(_)) => { root: copy_tree(src.root), size: src.size }
