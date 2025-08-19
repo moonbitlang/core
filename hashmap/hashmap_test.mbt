@@ -442,3 +442,90 @@ test "@hashmap.copy" {
   let copy : T[String, String] = @hashmap.new().copy()
   inspect(copy, content="HashMap::of([])")
 }
+
+///|
+test "filter" {
+  let map = @hashmap.of([("a", 1), ("b", 2), ("c", 3), ("d", 4)])
+  let filtered = map.filter((_, v) => v > 2)
+  inspect(filtered.size(), content="2")
+  inspect(filtered.contains("c"), content="true")
+  inspect(filtered.contains("d"), content="true")
+  inspect(filtered.contains("a"), content="false")
+  inspect(filtered.contains("b"), content="false")
+}
+
+///|
+test "retain" {
+  let map = @hashmap.of([("a", 1), ("b", 2), ("c", 3), ("d", 4)])
+  map.retain((_, v) => v > 2)
+  inspect(map.size(), content="2")
+  inspect(map.contains("c"), content="true")
+  inspect(map.contains("d"), content="true")
+  inspect(map.contains("a"), content="false")
+  inspect(map.contains("b"), content="false")
+}
+
+///|
+test "filter_map" {
+  let map = @hashmap.of([("a", 1), ("b", 2), ("c", 3)])
+  let result = map.filter_map((_, v) => if v > 1 { Some(v * 2) } else { None })
+  inspect(result.get("a"), content="None")
+  inspect(result.get("b"), content="Some(4)")
+  inspect(result.get("c"), content="Some(6)")
+  inspect(result.size(), content="2")
+}
+
+///|
+test "partition" {
+  let map = @hashmap.of([("a", 1), ("b", 2), ("c", 3), ("d", 4)])
+  let (evens, odds) = map.partition((_, v) => v % 2 == 0)
+  inspect(evens.size(), content="2")
+  inspect(odds.size(), content="2")
+  inspect(evens.contains("b"), content="true")
+  inspect(evens.contains("d"), content="true")
+  inspect(odds.contains("a"), content="true")
+  inspect(odds.contains("c"), content="true")
+}
+
+///|
+test "union_with" {
+  let map1 = @hashmap.of([("a", 1), ("b", 2)])
+  let map2 = @hashmap.of([("b", 3), ("c", 4)])
+  let merged = map1.union_with(map2, (_, v1, v2) => v1 + v2)
+  inspect(merged.get("a"), content="Some(1)")
+  inspect(merged.get("b"), content="Some(5)")
+  inspect(merged.get("c"), content="Some(4)")
+  inspect(merged.size(), content="3")
+}
+
+///|
+test "update" {
+  let map = @hashmap.of([("a", 1), ("b", 2)])
+
+  // Update existing value
+  map.update("a", fn(v) {
+    match v {
+      Some(x) => Some(x + 10)
+      None => Some(0)
+    }
+  })
+  inspect(map.get("a"), content="Some(11)")
+
+  // Insert new value
+  map.update("c", fn(v) {
+    match v {
+      Some(x) => Some(x)
+      None => Some(3)
+    }
+  })
+  inspect(map.get("c"), content="Some(3)")
+
+  // Remove existing value
+  map.update("b", fn(_) { None })
+  inspect(map.get("b"), content="None")
+
+  // Try to update non-existent key and return None (no-op)
+  let old_size = map.size()
+  map.update("d", fn(_) { None })
+  inspect(map.size(), content=old_size.to_string())
+}

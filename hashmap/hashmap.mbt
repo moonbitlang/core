@@ -188,8 +188,11 @@ pub fn[K : Hash + Eq, V] op_set(self : T[K, V], key : K, value : V) -> Unit {
 ///   inspect(map.get("nonexistent"), content="None")
 /// ```
 pub fn[K : Hash + Eq, V] get(self : T[K, V], key : K) -> V? {
-  // self.get_with_hash(key, key.hash())
-  let hash = key.hash()
+  self.get_with_hash(key, key.hash())
+}
+
+///|
+fn[K : Eq, V] get_with_hash(self : T[K, V], key : K, hash : Int) -> V? {
   for i = 0, idx = hash & self.capacity_mask {
     guard self.entries[idx] is Some(entry) else { break None }
     if entry.hash == hash && entry.key == key {
@@ -704,4 +707,296 @@ test "get_or_init" {
   inspect(m.get("a"), content="Some(1)")
   inspect(m.get_or_init("a", () => 2), content="1")
   inspect(m.get("a"), content="Some(1)")
+}
+
+///|
+/// Creates a new hash map containing only the key-value pairs that satisfy the given predicate.
+///
+/// Parameters:
+///
+/// * `self` : The hash map to filter.
+/// * `predicate` : A function that takes a key and value and returns `true` if the 
+///   key-value pair should be included in the result, `false` otherwise.
+///
+/// Returns a new hash map containing only the entries for which the predicate returns `true`.
+///
+/// Example:
+///
+/// ```moonbit
+///   let map = @hashmap.of([("a", 1), ("b", 2), ("c", 3), ("d", 4)])
+///   let filtered = map.filter((_, v) => v > 2)
+///   inspect(filtered.size(), content="2")
+///   inspect(filtered.contains("c"), content="true")
+///   inspect(filtered.contains("d"), content="true")
+///   inspect(filtered.contains("a"), content="false")
+/// ```
+pub fn[K : Eq, V] T::filter(
+  self : T[K, V],
+  predicate : (K, V) -> Bool raise?,
+) -> T[K, V] raise? {
+  let result = new()
+  for i in 0..<self.capacity {
+    if self.entries[i] is Some({ key, value, hash, .. }) {
+      if predicate(key, value) {
+        result.set_with_hash(key, value, hash)
+      }
+    }
+  }
+  result
+}
+
+///|
+/// Removes all key-value pairs from the hash map that do not satisfy the given predicate.
+///
+/// This operation modifies the hash map in place. Key-value pairs for which the
+/// predicate returns `false` are removed.
+///
+/// Parameters:
+///
+/// * `self` : The hash map to modify.
+/// * `predicate` : A function that takes a key and value and returns `true` if the
+///   key-value pair should be kept, `false` if it should be removed.
+///
+/// Example:
+///
+/// ```moonbit
+///   let map = @hashmap.of([("a", 1), ("b", 2), ("c", 3), ("d", 4)])
+///   map.retain((_, v) => v > 2)
+///   inspect(map.size(), content="2")
+///   inspect(map.contains("c"), content="true")
+///   inspect(map.contains("d"), content="true")
+///   inspect(map.contains("a"), content="false")
+/// ```
+pub fn[K : Hash + Eq, V] T::retain(
+  self : T[K, V],
+  predicate : (K, V) -> Bool raise?,
+) -> Unit raise? {
+  // Collect keys to remove to avoid modifying during iteration
+  let keys_to_remove : Array[K] = []
+  for i in 0..<self.capacity {
+    if self.entries[i] is Some({ key, value, .. }) {
+      if !predicate(key, value) {
+        keys_to_remove.push(key)
+      }
+    }
+  }
+  // Remove collected keys using the proper remove method
+  keys_to_remove.each(fn(key) { self.remove(key) })
+}
+
+///|
+/// Combines filtering and mapping in a single operation. 
+///
+/// Applies the given function to each key-value pair. If the function returns 
+/// `Some(new_value)`, the pair is included in the result with the new value. 
+/// If it returns `None`, the pair is excluded.
+///
+/// Parameters:
+///
+/// * `self` : The hash map to process.
+/// * `f` : A function that takes a key and value and returns an optional new value.
+///
+/// Returns a new hash map containing only the entries for which the function 
+/// returned `Some`, with their values transformed.
+///
+/// Example:
+///
+/// ```moonbit
+///   let map = @hashmap.of([("a", 1), ("b", 2), ("c", 3)])
+///   let result = map.filter_map((_, v) => if v > 1 { Some(v * 2) } else { None })
+///   inspect(result.get("a"), content="None")
+///   inspect(result.get("b"), content="Some(4)")
+///   inspect(result.get("c"), content="Some(6)")
+/// ```
+pub fn[K : Eq, V, V2] T::filter_map(
+  self : T[K, V],
+  f : (K, V) -> V2? raise?,
+) -> T[K, V2] raise? {
+  let result = new()
+  for i in 0..<self.capacity {
+    if self.entries[i] is Some({ key, value, hash, .. }) {
+      if f(key, value) is Some(new_value) {
+        result.set_with_hash(key, new_value, hash)
+      }
+    }
+  }
+  result
+}
+
+///|
+/// Splits the hash map into two maps based on a predicate.
+///
+/// Parameters:
+///
+/// * `self` : The hash map to partition.
+/// * `predicate` : A function that takes a key and value and returns `true` 
+///   for the first partition, `false` for the second.
+///
+/// Returns a tuple containing two hash maps: the first contains all entries 
+/// for which the predicate returned `true`, the second contains all entries 
+/// for which the predicate returned `false`.
+///
+/// Example:
+///
+/// ```moonbit
+///   let map = @hashmap.of([("a", 1), ("b", 2), ("c", 3), ("d", 4)])
+///   let (evens, odds) = map.partition((_, v) => v % 2 == 0)
+///   inspect(evens.size(), content="2")
+///   inspect(odds.size(), content="2")
+///   inspect(evens.contains("b"), content="true")
+///   inspect(odds.contains("a"), content="true")
+/// ```
+pub fn[K : Eq, V] T::partition(
+  self : T[K, V],
+  predicate : (K, V) -> Bool raise?,
+) -> (T[K, V], T[K, V]) raise? {
+  let true_map = new()
+  let false_map = new()
+  for i in 0..<self.capacity {
+    if self.entries[i] is Some({ key, value, hash, .. }) {
+      if predicate(key, value) {
+        true_map.set_with_hash(key, value, hash)
+      } else {
+        false_map.set_with_hash(key, value, hash)
+      }
+    }
+  }
+  (true_map, false_map)
+}
+
+///|
+/// Merges two hash maps, using a function to resolve conflicts when keys exist in both maps.
+///
+/// Parameters:
+///
+/// * `self` : The first hash map.
+/// * `other` : The second hash map to merge.
+/// * `f` : A function that takes the values from both maps for conflicting keys
+///   and returns the value to use in the result.
+///
+/// Returns a new hash map containing all entries from both maps, with conflicts 
+/// resolved by the provided function.
+///
+/// Example:
+///
+/// ```moonbit
+///   let map1 = @hashmap.of([("a", 1), ("b", 2)])
+///   let map2 = @hashmap.of([("b", 3), ("c", 4)])
+///   let merged = map1.union_with(map2, (_, v1, v2) => v1 + v2)
+///   inspect(merged.get("a"), content="Some(1)")
+///   inspect(merged.get("b"), content="Some(5)")
+///   inspect(merged.get("c"), content="Some(4)")
+/// ```
+pub fn[K : Eq, V] T::union_with(
+  self : T[K, V],
+  other : T[K, V],
+  f : (K, V, V) -> V raise?,
+) -> T[K, V] raise? {
+  let result = self.copy()
+  for i in 0..<other.capacity {
+    if other.entries[i] is Some({ key, value, hash, .. }) {
+      match result.get_with_hash(key, hash) {
+        Some(existing_value) =>
+          result.set_with_hash(key, f(key, existing_value, value), hash)
+        None => result.set_with_hash(key, value, hash)
+      }
+    }
+  }
+  result
+}
+
+///|
+/// Updates a value in the map based on the existing value.
+///
+/// This method allows you to conditionally update, insert, or remove a key-value pair
+/// based on whether the key already exists in the map. The provided function `f` is
+/// called with `Some(current_value)` if the key exists, or `None` if it doesn't.
+///
+/// Parameters:
+///
+/// * `self` : The map to update.
+/// * `key` : The key to update.
+/// * `f` : A function that takes the current value (wrapped in `Option`) and returns
+///   the new value (wrapped in `Option`). Returning `None` will remove the key-value
+///   pair from the map.
+///
+/// Behavior:
+///
+/// * If the key exists and `f` returns `Some(new_value)`, the value is updated.
+/// * If the key exists and `f` returns `None`, the key-value pair is removed.
+/// * If the key doesn't exist and `f` returns `Some(new_value)`, a new pair is inserted.
+/// * If the key doesn't exist and `f` returns `None`, no operation is performed.
+///
+/// Example:
+///
+/// ```moonbit
+/// let map = @hashmap.of([("a", 1), ("b", 2)])
+///
+/// // Update existing value
+/// map.update("a", fn(v) { 
+///   match v { 
+///     Some(x) => Some(x + 10) 
+///     None => Some(0) 
+///   } 
+/// })
+/// inspect(map.get("a"), content="Some(11)")
+///
+/// // Insert new value
+/// map.update("c", fn(v) { 
+///   match v { 
+///     Some(x) => Some(x) 
+///     None => Some(3) 
+///   } 
+/// })
+/// inspect(map.get("c"), content="Some(3)")
+///
+/// // Remove existing value
+/// map.update("b", fn(_) { None })
+/// inspect(map.get("b"), content="None")
+/// ```
+pub fn[K : Hash + Eq, V] update(
+  self : T[K, V],
+  key : K,
+  f : (V?) -> V?,
+) -> Unit {
+  let hash = key.hash()
+  let (idx, psl, new_value, push_away) = for psl = 0, idx = hash &
+                                               self.capacity_mask {
+    match self.entries[idx] {
+      Some(entry) => {
+        if entry.hash == hash && entry.key == key {
+          // Found the entry, update its value
+          if f(Some(entry.value)) is Some(new_value) {
+            entry.value = new_value
+          } else {
+            // Remove the entry since the new value is None
+            self.shift_back(idx)
+            self.size -= 1
+          }
+          return
+        }
+        if psl > entry.psl {
+          guard f(None) is Some(new_value) else { return }
+          break (idx, psl, new_value, Some(entry))
+        }
+        continue psl + 1, (idx + 1) & self.capacity_mask
+      }
+      None => {
+        guard f(None) is Some(new_value) else { return }
+        break (idx, psl, new_value, None)
+      }
+    }
+  }
+  if self.size >= self.capacity / 2 {
+    // Slow path, we need to resize
+    self.grow()
+    self.set(key, new_value)
+  } else {
+    if push_away is Some(entry) {
+      self.push_away(idx, entry)
+    }
+    let entry = { psl, hash, key, value: new_value }
+    self.entries[idx] = Some(entry)
+    self.size += 1
+  }
 }

@@ -213,6 +213,11 @@ pub fn[K : Hash + Eq, V] Map::op_set(
 /// ```
 pub fn[K : Hash + Eq, V] Map::get(self : Map[K, V], key : K) -> V? {
   let hash = key.hash()
+  self.get_with_hash(key, hash)
+}
+
+///|
+fn[K : Eq, V] Map::get_with_hash(self : Map[K, V], key : K, hash : Int) -> V? {
   for i = 0, idx = hash & self.capacity_mask {
     guard self.entries[idx] is Some(entry) else { break None }
     if entry.hash == hash && entry.key == key {
@@ -834,4 +839,210 @@ pub fn[K : Hash + Eq, V] Map::update(
     }
     self.add_entry_to_tail(idx, entry)
   }
+}
+
+///|
+/// Creates a new hash map containing only the key-value pairs that satisfy the given predicate.
+///
+/// Parameters:
+///
+/// * `self` : The hash map to filter.
+/// * `predicate` : A function that takes a key and value and returns `true` if the 
+///   key-value pair should be included in the result, `false` otherwise.
+///
+/// Returns a new hash map containing only the entries for which the predicate returns `true`.
+///
+/// Example:
+///
+/// ```moonbit
+///   let map : Map[String, Int] = { "a": 1, "b": 2, "c": 3, "d": 4 }
+///   let filtered = map.filter((_, v) => v > 2)
+///   inspect(filtered.size(), content="2")
+///   inspect(filtered.contains("c"), content="true")
+///   inspect(filtered.contains("d"), content="true")
+///   inspect(filtered.contains("a"), content="false")
+/// ```
+pub fn[K : Eq, V] Map::filter(
+  self : Map[K, V],
+  predicate : (K, V) -> Bool raise?,
+) -> Map[K, V] raise? {
+  let result = Map::new(capacity=self.capacity)
+  loop self.head {
+    Some({ key, value, next, hash, .. }) => {
+      if predicate(key, value) {
+        result.set_with_hash(key, value, hash)
+      }
+      continue next
+    }
+    None => break
+  }
+  result
+}
+
+///|
+/// Removes all key-value pairs from the hash map that do not satisfy the given predicate.
+///
+/// This operation modifies the hash map in place. Key-value pairs for which the
+/// predicate returns `false` are removed.
+///
+/// Parameters:
+///
+/// * `self` : The hash map to modify.
+/// * `predicate` : A function that takes a key and value and returns `true` if the
+///   key-value pair should be kept, `false` if it should be removed.
+///
+/// Example:
+///
+/// ```moonbit
+///   let map : Map[String, Int] = { "a": 1, "b": 2, "c": 3, "d": 4 }
+///   map.retain((_, v) => v > 2)
+///   inspect(map.size(), content="2")
+///   inspect(map.contains("c"), content="true")
+///   inspect(map.contains("d"), content="true")
+///   inspect(map.contains("a"), content="false")
+/// ```
+pub fn[K : Hash + Eq, V] Map::retain(
+  self : Map[K, V],
+  predicate : (K, V) -> Bool raise?,
+) -> Unit raise? {
+  // Collect keys to remove to avoid modifying during iteration
+  let keys_to_remove : Array[K] = []
+  loop self.head {
+    Some({ key, value, next, .. }) => {
+      if !predicate(key, value) {
+        keys_to_remove.push(key)
+      }
+      continue next
+    }
+    None => break
+  }
+  // Remove collected keys using the proper remove method
+  keys_to_remove.each(fn(key) { self.remove(key) })
+}
+
+///|
+/// Combines filtering and mapping in a single operation. 
+///
+/// Applies the given function to each key-value pair. If the function returns 
+/// `Some(new_value)`, the pair is included in the result with the new value. 
+/// If it returns `None`, the pair is excluded.
+///
+/// Parameters:
+///
+/// * `self` : The hash map to process.
+/// * `f` : A function that takes a key and value and returns an optional new value.
+///
+/// Returns a new hash map containing only the entries for which the function 
+/// returned `Some`, with their values transformed.
+///
+/// Example:
+///
+/// ```moonbit
+///   let map : Map[String, Int] = { "a": 1, "b": 2, "c": 3 }
+///   let result = map.filter_map((_, v) => if v > 1 { Some(v * 2) } else { None })
+///   inspect(result.get("a"), content="None")
+///   inspect(result.get("b"), content="Some(4)")
+///   inspect(result.get("c"), content="Some(6)")
+/// ```
+pub fn[K : Eq, V, V2] Map::filter_map(
+  self : Map[K, V],
+  f : (K, V) -> V2? raise?,
+) -> Map[K, V2] raise? {
+  let result = Map::new(capacity=self.capacity)
+  loop self.head {
+    Some({ key, value, next, hash, .. }) => {
+      if f(key, value) is Some(new_value) {
+        result.set_with_hash(key, new_value, hash)
+      }
+      continue next
+    }
+    None => break
+  }
+  result
+}
+
+///|
+/// Splits the hash map into two maps based on a predicate.
+///
+/// Parameters:
+///
+/// * `self` : The hash map to partition.
+/// * `predicate` : A function that takes a key and value and returns `true` 
+///   for the first partition, `false` for the second.
+///
+/// Returns a tuple containing two hash maps: the first contains all entries 
+/// for which the predicate returned `true`, the second contains all entries 
+/// for which the predicate returned `false`.
+///
+/// Example:
+///
+/// ```moonbit
+///   let map : Map[String, Int] = { "a": 1, "b": 2, "c": 3, "d": 4 }
+///   let (evens, odds) = map.partition((_, v) => v % 2 == 0)
+///   inspect(evens.size(), content="2")
+///   inspect(odds.size(), content="2")
+///   inspect(evens.contains("b"), content="true")
+///   inspect(odds.contains("a"), content="true")
+/// ```
+pub fn[K : Eq, V] Map::partition(
+  self : Map[K, V],
+  predicate : (K, V) -> Bool raise?,
+) -> (Map[K, V], Map[K, V]) raise? {
+  let true_map = Map::new(capacity=self.capacity)
+  let false_map = Map::new(capacity=self.capacity)
+  loop self.head {
+    Some({ key, value, next, hash, .. }) => {
+      if predicate(key, value) {
+        true_map.set_with_hash(key, value, hash)
+      } else {
+        false_map.set_with_hash(key, value, hash)
+      }
+      continue next
+    }
+    None => break
+  }
+  (true_map, false_map)
+}
+
+///|
+/// Merges two hash maps, using a function to resolve conflicts when keys exist in both maps.
+///
+/// Parameters:
+///
+/// * `self` : The first hash map.
+/// * `other` : The second hash map to merge.
+/// * `f` : A function that takes the values from both maps for conflicting keys
+///   and returns the value to use in the result.
+///
+/// Returns a new hash map containing all entries from both maps, with conflicts 
+/// resolved by the provided function.
+///
+/// Example:
+///
+/// ```moonbit
+///   let map1 : Map[String, Int] = { "a": 1, "b": 2 }
+///   let map2 : Map[String, Int] = { "b": 3, "c": 4 }
+///   let merged = map1.union_with(map2, (_, v1, v2) => v1 + v2)
+///   inspect(merged.get("a"), content="Some(1)")
+///   inspect(merged.get("b"), content="Some(5)")
+///   inspect(merged.get("c"), content="Some(4)")
+/// ```
+pub fn[K : Eq, V] Map::union_with(
+  self : Map[K, V],
+  other : Map[K, V],
+  f : (K, V, V) -> V raise?,
+) -> Map[K, V] raise? {
+  let result = self.copy()
+  loop other.head {
+    Some({ key, value, next, hash, .. }) => {
+      match result.get_with_hash(key, hash) {
+        Some(existing_value) =>
+          result.set_with_hash(key, f(key, existing_value, value), hash)
+        None => result.set_with_hash(key, value, hash)
+      }
+      continue next
+    }
+    None => break
+  }
+  result
 }
