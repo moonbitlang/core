@@ -176,6 +176,19 @@ test "incr_counter" {
 }
 
 ///|
+test "log empty" {
+  let counters = Empty
+  let buf = StringBuffer([])
+  coverage_log(counters, buf)
+  inspect(
+    buf,
+    content=(
+      "{ }"
+    ),
+  )
+}
+
+///|
 test "log" {
   let test_counter_a = CoverageCounter::new(2)
   let test_counter_b = CoverageCounter::new(2)
