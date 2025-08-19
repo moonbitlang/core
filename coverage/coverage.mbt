@@ -67,21 +67,21 @@ pub fn track(name : String, counter : CoverageCounter) -> Unit {
 }
 
 ///|
-priv trait Output {
-  output(Self, String) -> Unit
+priv trait WriteString {
+  write_string(Self, String) -> Unit
 }
 
 ///|
 priv struct StringBuffer(Array[String])
 
 ///|
-impl Output for StringBuffer with output(self : StringBuffer, content : String) -> Unit {
+impl WriteString for StringBuffer with write_string(self, content) -> Unit {
   let StringBuffer(self) = self
   self.push(content)
 }
 
 ///|
-impl Output for StringBuilder with output(self, content) -> Unit {
+impl WriteString for StringBuilder with write_string(self, content) -> Unit {
   self.write_string(content)
 }
 
@@ -143,11 +143,11 @@ fn coverage_reset(counters : CounterList) -> Unit {
 }
 
 ///|
-fn coverage_log(counters : CounterList, io : &Output) -> Unit {
-  let print = x => io.output(x)
+fn coverage_log(counters : CounterList, io : &WriteString) -> Unit {
+  let print = x => io.write_string(x)
   let println = x => {
-    io.output(x)
-    io.output("\n")
+    io.write_string(x)
+    io.write_string("\n")
   }
   print("{ ")
   loop (counters, 0) {
