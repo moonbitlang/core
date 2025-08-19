@@ -20,7 +20,6 @@ struct CoverageCounter(FixedArray[UInt])
 
 ///|
 /// Create a new coverage counter with the given size.
-///
 #coverage.skip
 pub fn CoverageCounter::new(size : Int) -> CoverageCounter {
   CoverageCounter(FixedArray::make(size, 0))
@@ -28,7 +27,6 @@ pub fn CoverageCounter::new(size : Int) -> CoverageCounter {
 
 ///|
 /// Increment the specified tracking index.
-///
 #coverage.skip
 pub fn CoverageCounter::incr(self : CoverageCounter, idx : Int) -> Unit {
   let CoverageCounter(self) = self
@@ -37,15 +35,7 @@ pub fn CoverageCounter::incr(self : CoverageCounter, idx : Int) -> Unit {
 
 ///|
 pub impl Show for CoverageCounter with output(self, logger) {
-  let CoverageCounter(self) = self
-  logger.write_char('[')
-  for i in 0..<self.length() {
-    if i != 0 {
-      logger.write_string(", ")
-    }
-    Show::output(self[i], logger)
-  }
-  logger.write_char(']')
+  self.0.output(logger)
 }
 
 ///|
@@ -60,7 +50,6 @@ let counters : Ref[CounterList] = { val: Empty }
 
 ///|
 /// Add the given counter along its ID to the tracking list.
-///
 #coverage.skip
 pub fn track(name : String, counter : CoverageCounter) -> Unit {
   counters.val = More(name, counter, counters.val)
@@ -93,9 +82,7 @@ pub fn end() -> Unit {
 fn coverage_reset(counters : CounterList) -> Unit {
   loop counters {
     More(_, CoverageCounter(counter), xs) => {
-      for i in 0..<counter.length() {
-        counter[i] = 0
-      }
+      counter.fill(0)
       continue xs
     }
     Empty => ()
@@ -105,27 +92,24 @@ fn coverage_reset(counters : CounterList) -> Unit {
 ///|
 fn coverage_log(counters : CounterList, writeln~ : (String) -> Unit) -> Unit {
   let line_buf = StringBuilder::new()
-  let print = x => line_buf.write_string(x)
-  let println = x => {
-    line_buf.write_string(x)
-    writeln(line_buf.to_string())
-    line_buf.reset()
-  }
-  print("{ ")
+  line_buf.write_string("{ ")
   loop (counters, 0) {
     (More(name, counter, xs), ix) => {
       if ix != 0 {
-        print(", ")
+        line_buf.write_string(", ")
       }
-      print(name.escape())
-      print(": ")
-      let counter_dump = counter.to_string()
-      println(counter_dump)
+      line_buf
+      ..write_string(name.escape())
+      ..write_string(": ")
+      ..write_string(counter.to_string())
+      writeln(line_buf.to_string())
+      line_buf.reset()
       continue (xs, ix + 1)
     }
     (Empty, _) => ()
   }
-  println("}")
+  line_buf.write_string("}")
+  writeln(line_buf.to_string())
 }
 
 ///|
@@ -227,10 +211,3 @@ test "reset" {
     ),
   )
 }
-
-// FIXME: formatting string does not work, this test will be destroyed by formatting
-// test "hex escape" {
-//   let s = "\x11\x12\x01\x02"
-//   let expected = "\\x11\\x12\\x01\\x02"
-//   assert_eq(s.@coverage.escape(), expected)?
-// }
