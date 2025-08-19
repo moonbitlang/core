@@ -67,20 +67,6 @@ pub fn track(name : String, counter : CoverageCounter) -> Unit {
 }
 
 ///|
-priv struct StringBuffer(Array[String])
-
-///|
-fn StringBuffer::write_string(self : StringBuffer, content : String) -> Unit {
-  let StringBuffer(self) = self
-  self.push(content)
-}
-
-///|
-impl Show for StringBuffer with output(self, logger) {
-  self.0.each(logger.write_string(_))
-}
-
-///|
 /// Output the counters to stdout for coverage report usages. The counter data
 /// is printed as a map of `{ counter_id: counter_contents }`, enclosed between
 /// a pair of delimiters.
@@ -98,28 +84,7 @@ impl Show for StringBuffer with output(self, logger) {
 #coverage.skip
 pub fn end() -> Unit {
   println("----- BEGIN MOONBIT COVERAGE -----")
-  let sbuf = StringBuffer::StringBuffer([])
-  coverage_log(counters.val, sbuf)
-  let line_buf = StringBuilder::new()
-  for i in 0..<sbuf.0.length() {
-    let str = sbuf.0[i]
-    let mut start = 0
-    for j in 0..<str.length() {
-      if str.unsafe_charcode_at(j) == '\n' {
-        line_buf.write_substring(str, start, j)
-        println(line_buf.to_string())
-        line_buf.reset()
-        start = j + 1
-      }
-    }
-    if start < str.length() {
-      line_buf.write_substring(str, start, str.length())
-    }
-  }
-  let trailing_line = line_buf.to_string()
-  if trailing_line.length() > 0 {
-    println(trailing_line)
-  }
+  coverage_log(counters.val, writeln=println)
   println("----- END MOONBIT COVERAGE -----")
   coverage_reset(counters.val) // Reset all counters to avoid double counting
 }
@@ -138,11 +103,13 @@ fn coverage_reset(counters : CounterList) -> Unit {
 }
 
 ///|
-fn coverage_log(counters : CounterList, io : StringBuffer) -> Unit {
-  let print = x => io.write_string(x)
+fn coverage_log(counters : CounterList, writeln~ : (String) -> Unit) -> Unit {
+  let line_buf = StringBuilder::new()
+  let print = x => line_buf.write_string(x)
   let println = x => {
-    io.write_string(x)
-    io.write_string("\n")
+    line_buf.write_string(x)
+    writeln(line_buf.to_string())
+    line_buf.reset()
   }
   print("{ ")
   loop (counters, 0) {
@@ -158,7 +125,7 @@ fn coverage_log(counters : CounterList, io : StringBuffer) -> Unit {
     }
     (Empty, _) => ()
   }
-  print("}")
+  println("}")
 }
 
 ///|
@@ -176,14 +143,21 @@ test "incr_counter" {
 }
 
 ///|
+fn debug_buf_and_writeln() -> (StringBuilder, (String) -> Unit) {
+  let buf = StringBuilder::new()
+  (buf, s => buf..write_string(s)..write_char('\n'))
+}
+
+///|
 test "log empty" {
   let counters = Empty
-  let buf = StringBuffer([])
-  coverage_log(counters, buf)
+  let (buf, writeln) = debug_buf_and_writeln()
+  coverage_log(counters, writeln~)
   inspect(
     buf,
     content=(
-      "{ }"
+      #|{ }
+      #|
     ),
   )
 }
@@ -199,14 +173,15 @@ test "log" {
     test_counter_a,
     More("foo/bar", test_counter_b, Empty),
   )
-  let buf = StringBuffer([])
-  coverage_log(counters, buf)
+  let (buf, writeln) = debug_buf_and_writeln()
+  coverage_log(counters, writeln~)
   inspect(
     buf,
     content=(
       #|{ "foo/foo": [1, 0]
       #|, "foo/bar": [0, 1]
       #|}
+      #|
     ),
   )
 }
@@ -228,25 +203,27 @@ test "reset" {
     test_counter_a,
     More("foo/bar", test_counter_b, Empty),
   )
-  let buf = StringBuffer([])
-  coverage_log(counters, buf)
+  let (buf, writeln) = debug_buf_and_writeln()
+  coverage_log(counters, writeln~)
   inspect(
     buf,
     content=(
       #|{ "foo/foo": [1, 0]
       #|, "foo/bar": [0, 1]
       #|}
+      #|
     ),
   )
   coverage_reset(counters)
-  let buf = StringBuffer([])
-  coverage_log(counters, buf)
+  let (buf, writeln) = debug_buf_and_writeln()
+  coverage_log(counters, writeln~)
   inspect(
     buf,
     content=(
       #|{ "foo/foo": [0, 0]
       #|, "foo/bar": [0, 0]
       #|}
+      #|
     ),
   )
 }
