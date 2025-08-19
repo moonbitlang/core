@@ -294,6 +294,12 @@ pub fn View::unsafe_extract_bytesview(
 
 ///|
 #internal(experimental, "subject to breaking change without notice")
+pub fn Bytes::unsafe_extract_bit(bs : Bytes, offset : Int, len : Int) -> Bool {
+  bs[:].unsafe_extract_bit(offset, len)
+}
+
+///|
+#internal(experimental, "subject to breaking change without notice")
 pub fn Bytes::unsafe_extract_byte(bs : Bytes, offset : Int, len : Int) -> Byte {
   bs[:].unsafe_extract_byte(offset, len)
 }
