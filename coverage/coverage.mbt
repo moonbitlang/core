@@ -16,16 +16,14 @@
 /// The `CoverageCounter` structure is used for keeping track of the number of
 /// times each chunk of code is executed. It's not very useful outside of
 /// generated code.
-struct CoverageCounter {
-  counter : FixedArray[UInt]
-}
+struct CoverageCounter(FixedArray[UInt])
 
 ///|
 /// Create a new coverage counter with the given size.
 ///
 #coverage.skip
 pub fn CoverageCounter::new(size : Int) -> CoverageCounter {
-  { counter: FixedArray::make(size, 0) }
+  CoverageCounter(FixedArray::make(size, 0))
 }
 
 ///|
@@ -33,17 +31,19 @@ pub fn CoverageCounter::new(size : Int) -> CoverageCounter {
 ///
 #coverage.skip
 pub fn CoverageCounter::incr(self : CoverageCounter, idx : Int) -> Unit {
-  self.counter.unsafe_set(idx, self.counter.unsafe_get(idx) + 1)
+  let CoverageCounter(self) = self
+  self.unsafe_set(idx, self.unsafe_get(idx) + 1)
 }
 
 ///|
 pub impl Show for CoverageCounter with output(self, logger) {
+  let CoverageCounter(self) = self
   logger.write_char('[')
-  for i in 0..<self.counter.length() {
+  for i in 0..<self.length() {
     if i != 0 {
       logger.write_string(", ")
     }
-    Show::output(self.counter[i], logger)
+    Show::output(self[i], logger)
   }
   logger.write_char(']')
 }
@@ -132,9 +132,9 @@ pub fn end() -> Unit {
 ///|
 fn coverage_reset(counters : MList[(String, CoverageCounter)]) -> Unit {
   loop counters {
-    MCons((_, counter), xs) => {
-      for i in 0..<counter.counter.length() {
-        counter.counter[i] = 0
+    MCons((_, CoverageCounter(counter)), xs) => {
+      for i in 0..<counter.length() {
+        counter[i] = 0
       }
       continue xs
     }
