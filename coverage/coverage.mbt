@@ -67,22 +67,17 @@ pub fn track(name : String, counter : CoverageCounter) -> Unit {
 }
 
 ///|
-priv trait WriteString {
-  write_string(Self, String) -> Unit
-}
-
-///|
 priv struct StringBuffer(Array[String])
 
 ///|
-impl WriteString for StringBuffer with write_string(self, content) -> Unit {
+fn StringBuffer::write_string(self : StringBuffer, content : String) -> Unit {
   let StringBuffer(self) = self
   self.push(content)
 }
 
 ///|
-impl WriteString for StringBuilder with write_string(self, content) -> Unit {
-  self.write_string(content)
+impl Show for StringBuffer with output(self, logger) {
+  self.0.each(logger.write_string(_))
 }
 
 ///|
@@ -143,7 +138,7 @@ fn coverage_reset(counters : CounterList) -> Unit {
 }
 
 ///|
-fn coverage_log(counters : CounterList, io : &WriteString) -> Unit {
+fn coverage_log(counters : CounterList, io : StringBuffer) -> Unit {
   let print = x => io.write_string(x)
   let println = x => {
     io.write_string(x)
@@ -191,7 +186,7 @@ test "log" {
     test_counter_a,
     More("foo/bar", test_counter_b, Empty),
   )
-  let buf = StringBuilder::new(size_hint=1024)
+  let buf = StringBuffer([])
   coverage_log(counters, buf)
   inspect(
     buf,
@@ -220,7 +215,7 @@ test "reset" {
     test_counter_a,
     More("foo/bar", test_counter_b, Empty),
   )
-  let buf = StringBuilder::new(size_hint=1024)
+  let buf = StringBuffer([])
   coverage_log(counters, buf)
   inspect(
     buf,
@@ -231,7 +226,7 @@ test "reset" {
     ),
   )
   coverage_reset(counters)
-  let buf = StringBuilder::new(size_hint=1024)
+  let buf = StringBuffer([])
   coverage_log(counters, buf)
   inspect(
     buf,
