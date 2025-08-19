@@ -363,22 +363,21 @@ pub impl Compare for View with compare(self, other) {
 ///|
 /// The empty view of a string
 pub impl Default for View with default() {
-  // todo: remove .view() in new version
-  "".view()
+  View::make_view("", 0, 0)
 }
 
 ///|
 /// Convert char array to string view.
 pub fn View::from_array(chars : Array[Char]) -> View {
-  // todo: remove .view() in new version
-  String::from_array(chars).view()
+  let s = String::from_array(chars)
+  View::make_view(s, 0, s.length())
 }
 
 ///|
 /// Convert char iterator to string view.
 pub fn View::from_iter(iter : Iter[Char]) -> View {
-  // todo: remove .view() in new version
-  String::from_iter(iter).view()
+  let s = String::from_iter(iter)
+  View::make_view(s, 0, s.length())
 }
 
 ///|
