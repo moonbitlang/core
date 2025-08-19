@@ -49,21 +49,21 @@ pub impl Show for CoverageCounter with output(self, logger) {
 }
 
 ///|
-priv enum MList[T] {
-  MNil
-  MCons(T, MList[T])
+priv enum CounterList {
+  Empty
+  More(String, CoverageCounter, CounterList)
 }
 
 ///|
 /// The global list of counters currently tracking.
-let counters : Ref[MList[(String, CoverageCounter)]] = { val: MNil }
+let counters : Ref[CounterList] = { val: Empty }
 
 ///|
 /// Add the given counter along its ID to the tracking list.
 ///
 #coverage.skip
 pub fn track(name : String, counter : CoverageCounter) -> Unit {
-  counters.val = MCons((name, counter), counters.val)
+  counters.val = More(name, counter, counters.val)
 }
 
 ///|
@@ -130,23 +130,20 @@ pub fn end() -> Unit {
 }
 
 ///|
-fn coverage_reset(counters : MList[(String, CoverageCounter)]) -> Unit {
+fn coverage_reset(counters : CounterList) -> Unit {
   loop counters {
-    MCons((_, CoverageCounter(counter)), xs) => {
+    More(_, CoverageCounter(counter), xs) => {
       for i in 0..<counter.length() {
         counter[i] = 0
       }
       continue xs
     }
-    MNil => ()
+    Empty => ()
   }
 }
 
 ///|
-fn coverage_log(
-  counters : MList[(String, CoverageCounter)],
-  io : &Output,
-) -> Unit {
+fn coverage_log(counters : CounterList, io : &Output) -> Unit {
   let print = x => io.output(x)
   let println = x => {
     io.output(x)
@@ -154,7 +151,7 @@ fn coverage_log(
   }
   print("{ ")
   loop (counters, 0) {
-    (MCons((name, counter), xs), ix) => {
+    (More(name, counter, xs), ix) => {
       if ix != 0 {
         print(", ")
       }
@@ -164,7 +161,7 @@ fn coverage_log(
       println(counter_dump)
       continue (xs, ix + 1)
     }
-    (MNil, _) => ()
+    (Empty, _) => ()
   }
   print("}")
 }
@@ -189,9 +186,10 @@ test "log" {
   let test_counter_b = CoverageCounter::new(2)
   test_counter_a.incr(0)
   test_counter_b.incr(1)
-  let counters : MList[(String, CoverageCounter)] = MCons(
-    ("foo/foo", test_counter_a),
-    MCons(("foo/bar", test_counter_b), MNil),
+  let counters : CounterList = More(
+    "foo/foo",
+    test_counter_a,
+    More("foo/bar", test_counter_b, Empty),
   )
   let buf = StringBuilder::new(size_hint=1024)
   coverage_log(counters, buf)
@@ -217,9 +215,10 @@ test "reset" {
   let test_counter_b = CoverageCounter::new(2)
   test_counter_a.incr(0)
   test_counter_b.incr(1)
-  let counters : MList[(String, CoverageCounter)] = MCons(
-    ("foo/foo", test_counter_a),
-    MCons(("foo/bar", test_counter_b), MNil),
+  let counters : CounterList = More(
+    "foo/foo",
+    test_counter_a,
+    More("foo/bar", test_counter_b, Empty),
   )
   let buf = StringBuilder::new(size_hint=1024)
   coverage_log(counters, buf)
