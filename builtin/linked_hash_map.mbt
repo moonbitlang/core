@@ -48,36 +48,11 @@ struct Map[K, V] {
 // Implementations
 
 ///|
-fn power_2_above(x : Int, n : Int) -> Int {
-  for i = x {
-    if i >= n {
-      break i
-    }
-    let next = i << 1
-    if next < 0 {
-      // overflow happened
-      break i
-    }
-    continue next
-  }
-}
-
-///|
-test "power_2_above" {
-  inspect(power_2_above(1, 15), content="16")
-  inspect(power_2_above(1, 16), content="16")
-  inspect(power_2_above(1, 17), content="32")
-  inspect(power_2_above(1, 32), content="32")
-  inspect(power_2_above(128, 33), content="128")
-  inspect(power_2_above(1, 2147483647), content="1073741824")
-}
-
-///|
 /// Create a hash map.
 /// The capacity of the map will be the smallest power of 2 that is
 /// greater than or equal to the provided [capacity].
 pub fn[K, V] Map::new(capacity~ : Int = 8) -> Map[K, V] {
-  let capacity = power_2_above(8, capacity)
+  let capacity = capacity.next_power_of_two()
   {
     size: 0,
     capacity,
@@ -98,12 +73,39 @@ pub fn[K : Hash + Eq, V] Map::from_array(arr : Array[(K, V)]) -> Map[K, V] {
 }
 
 ///|
-/// Set a key-value pair into the hash map.
+/// Sets a key-value pair into the hash map. If the key already exists, updates
+/// its value. If the hash map is near full capacity, automatically
+/// grows the internal storage to accommodate more entries.
+///
+/// Parameters:
+///
+/// * `map` : The hash map to modify.
+/// * `key` : The key to insert or update. Must implement `Hash` and `Eq` traits.
+/// * `value` : The value to associate with the key.
+///
+/// Example:
+///
+/// ```moonbit
+///   let map : Map[String, Int] = Map::new()
+///   map.set("key", 42)
+///   inspect(map.get("key"), content="Some(42)")
+///   map.set("key", 24) // update existing key
+///   inspect(map.get("key"), content="Some(24)")
+/// ```
 pub fn[K : Hash + Eq, V] Map::set(self : Map[K, V], key : K, value : V) -> Unit {
+  self.set_with_hash(key, value, key.hash())
+}
+
+///|
+fn[K : Eq, V] set_with_hash(
+  self : Map[K, V],
+  key : K,
+  value : V,
+  hash : Int,
+) -> Unit {
   if self.size >= self.grow_at {
     self.grow()
   }
-  let hash = key.hash()
   let (idx, psl) = for psl = 0, idx = hash & self.capacity_mask {
     match self.entries[idx] {
       None => break (idx, psl)
@@ -165,6 +167,25 @@ fn[K, V] Map::set_entry(
 }
 
 ///|
+/// Sets the value associated with a key in the hash map. If the key already
+/// exists, updates its value; otherwise, adds a new key-value pair. This
+/// function is automatically called when using the index assignment syntax
+/// `map[key] = value`.
+///
+/// Parameters:
+///
+/// * `map` : The hash map to modify.
+/// * `key` : The key to associate with the value. Must implement `Hash` and `Eq`
+/// traits.
+/// * `value` : The value to associate with the key.
+///
+/// Example:
+///
+/// ```moonbit
+///   let map : Map[String, Int] = Map::new()
+///   map["key"] = 42
+///   inspect(map.get("key"), content="Some(42)")
+/// ```
 pub fn[K : Hash + Eq, V] Map::op_set(
   self : Map[K, V],
   key : K,
@@ -174,7 +195,22 @@ pub fn[K : Hash + Eq, V] Map::op_set(
 }
 
 ///|
-/// Get the value associated with a key.
+/// Retrieves the value associated with a given key in the hash map.
+///
+/// Parameters:
+///
+/// * `self` : The hash map to search in.
+/// * `key` : The key to look up in the map.
+///
+/// Returns `Some(value)` if the key exists in the map, `None` otherwise.
+///
+/// Example:
+///
+/// ```moonbit
+///   let map = { "key": 42 }
+///   inspect(map.get("key"), content="Some(42)")
+///   inspect(map.get("nonexistent"), content="None")
+/// ```
 pub fn[K : Hash + Eq, V] Map::get(self : Map[K, V], key : K) -> V? {
   let hash = key.hash()
   for i = 0, idx = hash & self.capacity_mask {
@@ -245,14 +281,46 @@ pub fn[K : Hash + Eq, V] Map::get_or_init(
   key : K,
   default : () -> V,
 ) -> V {
-  match self.get(key) {
-    Some(v) => v
-    None => {
-      let v = default()
-      self.set(key, v)
-      v
+  let hash = key.hash()
+  let (idx, psl, new_value, push_away) = for psl = 0, idx = hash &
+                                               self.capacity_mask {
+    match self.entries[idx] {
+      Some(entry) => {
+        if entry.hash == hash && entry.key == key {
+          return entry.value
+        }
+        if psl > entry.psl {
+          let new_value = default()
+          self.push_away(idx, entry)
+          break (idx, psl, new_value, Some(entry))
+        }
+        continue psl + 1, (idx + 1) & self.capacity_mask
+      }
+      None => {
+        let new_value = default()
+        break (idx, psl, new_value, None)
+      }
     }
   }
+  if self.size >= self.grow_at {
+    // Slow path, we need to resize
+    self.grow()
+    self.set_with_hash(key, new_value, hash)
+  } else {
+    if push_away is Some(entry) {
+      self.push_away(idx, entry)
+    }
+    let entry = {
+      prev: self.tail,
+      next: None,
+      psl,
+      hash,
+      key,
+      value: new_value,
+    }
+    self.add_entry_to_tail(idx, entry)
+  }
+  new_value
 }
 
 ///|
@@ -313,7 +381,24 @@ pub fn[K : Hash + Eq, V : Eq] Map::contains_kv(
 }
 
 ///|
-/// Remove a key-value pair from hash map.
+/// Removes the entry for the specified key from the hash map. If the key exists
+/// in the map, removes its entry and adjusts the probe sequence length (PSL) of
+/// subsequent entries to maintain the Robin Hood hashing invariant. If the key
+/// does not exist, the map remains unchanged.
+///
+/// Parameters:
+///
+/// * `self` : The hash map to remove the entry from.
+/// * `key` : The key to remove from the map.
+///
+/// Example:
+///
+/// ```moonbit
+///   let map = { "a": 1, "b": 2 }
+///   map.remove("a")
+///   inspect(map.get("a"), content="None")
+///   inspect(map.size(), content="1")
+/// ```
 pub fn[K : Hash + Eq, V] Map::remove(self : Map[K, V], key : K) -> Unit {
   let hash = key.hash()
   for i = 0, idx = hash & self.capacity_mask {
@@ -372,7 +457,7 @@ fn[K, V] Map::shift_back(self : Map[K, V], idx : Int) -> Unit {
 }
 
 ///|
-fn[K : Hash + Eq, V] Map::grow(self : Map[K, V]) -> Unit {
+fn[K : Eq, V] Map::grow(self : Map[K, V]) -> Unit {
   let old_head = self.head
   let new_capacity = self.capacity << 1
   self.entries = FixedArray::make(new_capacity, None)
@@ -383,8 +468,8 @@ fn[K : Hash + Eq, V] Map::grow(self : Map[K, V]) -> Unit {
   self.head = None
   self.tail = -1
   loop old_head {
-    Some({ next, key, value, .. }) => {
-      self.set(key, value)
+    Some({ next, key, value, hash, .. }) => {
+      self.set_with_hash(key, value, hash)
       continue next
     }
     None => break
@@ -633,4 +718,113 @@ pub fn[K, V] Map::copy(self : Map[K, V]) -> Map[K, V] {
     }
   }
   other
+}
+
+///|
+/// Updates a value in the map based on the existing value.
+///
+/// This method allows you to conditionally update, insert, or remove a key-value pair
+/// based on whether the key already exists in the map. The provided function `f` is
+/// called with `Some(current_value)` if the key exists, or `None` if it doesn't.
+///
+/// Parameters:
+///
+/// * `self` : The map to update.
+/// * `key` : The key to update.
+/// * `f` : A function that takes the current value (wrapped in `Option`) and returns
+///   the new value (wrapped in `Option`). Returning `None` will remove the key-value
+///   pair from the map.
+///
+/// Behavior:
+///
+/// * If the key exists and `f` returns `Some(new_value)`, the value is updated.
+/// * If the key exists and `f` returns `None`, the key-value pair is removed.
+/// * If the key doesn't exist and `f` returns `Some(new_value)`, a new pair is inserted.
+/// * If the key doesn't exist and `f` returns `None`, no operation is performed.
+///
+/// Example:
+///
+/// ```moonbit
+/// let map = { "a": 1, "b": 2 }
+///
+/// // Update existing value
+/// map.update("a", fn(v) { 
+///   match v { 
+///     Some(x) => Some(x + 10) 
+///     None => Some(0) 
+///   } 
+/// })
+/// inspect(map, content=(
+///   #|{"a": 11, "b": 2}
+/// ))
+///
+/// // Insert new value
+/// map.update("c", fn(v) { 
+///   match v { 
+///     Some(x) => Some(x) 
+///     None => Some(3) 
+///   } 
+/// })
+/// inspect(map, content=(
+///   #|{"a": 11, "b": 2, "c": 3}
+/// ))
+///
+/// // Remove existing value
+/// map.update("b", fn(_) { None })
+/// inspect(map, content=(
+///   #|{"a": 11, "c": 3}
+/// ))
+/// ```
+pub fn[K : Hash + Eq, V] Map::update(
+  self : Map[K, V],
+  key : K,
+  f : (V?) -> V?,
+) -> Unit {
+  let hash = key.hash()
+  let (idx, psl, new_value, push_away) = for psl = 0, idx = hash &
+                                               self.capacity_mask {
+    match self.entries[idx] {
+      Some(entry) => {
+        if entry.hash == hash && entry.key == key {
+          // Found the entry, update its value
+          if f(Some(entry.value)) is Some(new_value) {
+            entry.value = new_value
+          } else {
+            // Remove the entry since the new value is None
+            self.remove_entry(entry)
+            self.shift_back(idx)
+            self.size -= 1
+          }
+          return
+        }
+        if psl > entry.psl {
+          guard f(None) is Some(new_value) else { return }
+          break (idx, psl, new_value, Some(entry))
+        }
+        continue psl + 1, (idx + 1) & self.capacity_mask
+      }
+      None => {
+        guard f(None) is Some(new_value) else { return }
+        break (idx, psl, new_value, None)
+      }
+    }
+  }
+  if self.size >= self.grow_at {
+    // Slow path, we need to resize
+    self.grow()
+    self.set(key, new_value)
+  } else {
+    if push_away is Some(entry) {
+      self.push_away(idx, entry)
+    }
+    let entry = {
+      prev: self.tail,
+      next: None,
+      psl,
+      hash,
+      key,
+      value: new_value,
+    }
+    self.add_entry_to_tail(idx, entry)
+  }
 }

@@ -8,6 +8,8 @@ let max_value : UInt
 
 let min_value : UInt
 
+// Errors
+
 // Types and methods
 fn UInt::to_be_bytes(UInt) -> Bytes
 fn UInt::to_int64(UInt) -> Int64

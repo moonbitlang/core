@@ -14,6 +14,8 @@ fn[A] new() -> T[A]
 
 fn[A : Eq + Hash] of(FixedArray[A]) -> T[A]
 
+// Errors
+
 // Types and methods
 type T[A]
 fn[A : Eq + Hash] T::add(Self[A], A) -> Self[A]

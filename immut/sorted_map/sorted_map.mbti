@@ -19,6 +19,8 @@ fn[K : Compare, V] of(FixedArray[(K, V)]) -> T[K, V]
 
 fn[K, V] singleton(K, V) -> T[K, V]
 
+// Errors
+
 // Types and methods
 type T[K, V]
 fn[K : Compare, V] T::add(Self[K, V], K, V) -> Self[K, V]
@@ -46,7 +48,9 @@ fn[K : Compare, V] T::insert(Self[K, V], K, V) -> Self[K, V]
 fn[K, V] T::is_empty(Self[K, V]) -> Bool
 fn[K, V] T::iter(Self[K, V]) -> Iter[(K, V)]
 fn[K, V] T::iter2(Self[K, V]) -> Iter2[K, V]
+#deprecated
 fn[K, V] T::keys(Self[K, V]) -> Array[K]
+fn[K, V] T::keys_as_iter(Self[K, V]) -> Iter[K]
 #deprecated
 fn[K : Compare, V] T::lookup(Self[K, V], K) -> V?
 fn[K, X, Y] T::map(Self[K, X], (X) -> Y) -> Self[K, Y]

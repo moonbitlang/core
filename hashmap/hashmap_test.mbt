@@ -44,6 +44,26 @@ test "get_or_default" {
 }
 
 ///|
+test "get_or_init" {
+  let m : @hashmap.T[String, Array[Int]] = @hashmap.new()
+  m.get_or_init("a", () => Array::new()).push(1)
+  m.get_or_init("b", () => Array::new()).push(2)
+  m.get_or_init("a", () => Array::new()).push(3)
+  assert_eq(m.get("a"), Some([1, 3]))
+  assert_eq(m.get("b"), Some([2]))
+  assert_eq(m.size(), 2)
+}
+
+///|
+test "get_or_init full" {
+  let m = @hashmap.new(capacity=2)
+  m.get_or_init("a", () => 0) |> ignore
+  m.get_or_init("b", () => 0) |> ignore
+  m.get_or_init("c", () => 0) |> ignore
+  assert_eq(m.size(), 3)
+}
+
+///|
 test "op_set" {
   let m = @hashmap.new()
   m["a"] = 1
@@ -363,4 +383,52 @@ test "@hashmap.eq" {
   let map1 = @hashmap.of([(1, "one"), (2, "two"), (3, "three")])
   let map2 = @hashmap.of([(1, "one"), (2, "two"), (3, "three")])
   inspect(map1 == map2, content="true")
+}
+
+///|
+test "@hashmap.map" {
+  let map = @hashmap.of([("a", 1), ("b", 2), ("c", 3)])
+  let v = map.map((k, v) => k + v.to_string())
+  inspect(
+    v,
+    content=(
+      #|HashMap::of([("a", "a1"), ("c", "c3"), ("b", "b2")])
+    ),
+  )
+  map["d"] = 10
+  map["e"] = 20
+  map.remove("c")
+  let v = map.map((k, v) => k + v.to_string())
+  inspect(
+    v,
+    content=(
+      #|HashMap::of([("e", "e20"), ("a", "a1"), ("b", "b2"), ("d", "d10")])
+    ),
+  )
+  let v : T[String, String] = @hashmap.new().map((k, v) => k + v)
+  inspect(v, content="HashMap::of([])")
+}
+
+///|
+test "@hashmap.copy" {
+  let map = @hashmap.of([("a", 1), ("b", 2), ("c", 3)])
+  let copy = map.copy()
+  inspect(
+    copy,
+    content=(
+      #|HashMap::of([("a", 1), ("c", 3), ("b", 2)])
+    ),
+  )
+  map["d"] = 10
+  map["e"] = 20
+  map.remove("c")
+  let copy = map.copy()
+  inspect(
+    copy,
+    content=(
+      #|HashMap::of([("e", 20), ("a", 1), ("b", 2), ("d", 10)])
+    ),
+  )
+  let copy : T[String, String] = @hashmap.new().copy()
+  inspect(copy, content="HashMap::of([])")
 }

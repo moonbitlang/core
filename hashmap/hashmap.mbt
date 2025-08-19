@@ -13,31 +13,6 @@
 // limitations under the License.
 
 ///|
-fn power_2_above(x : Int, n : Int) -> Int {
-  for i = x {
-    if i >= n {
-      break i
-    }
-    let next = i << 1
-    if next < 0 {
-      // overflow happened
-      break i
-    }
-    continue next
-  }
-}
-
-///|
-test "power_2_above" {
-  inspect(power_2_above(1, 15), content="16")
-  inspect(power_2_above(1, 16), content="16")
-  inspect(power_2_above(1, 17), content="32")
-  inspect(power_2_above(1, 32), content="32")
-  inspect(power_2_above(128, 33), content="128")
-  inspect(power_2_above(1, 2147483647), content="1073741824")
-}
-
-///|
 /// Creates a new empty hash map with the specified initial capacity. The actual
 /// capacity will be rounded up to the next power of 2 that is greater than or
 /// equal to the requested capacity, with a minimum of 8.
@@ -58,7 +33,7 @@ test "power_2_above" {
 ///   inspect(map.is_empty(), content="true")
 /// ```
 pub fn[K, V] new(capacity~ : Int = 8) -> T[K, V] {
-  let capacity = power_2_above(8, capacity)
+  let capacity = capacity.next_power_of_two()
   {
     size: 0,
     capacity,
@@ -127,27 +102,46 @@ fn[K : Eq, V] set_with_hash(
   if self.size >= self.capacity / 2 {
     self.grow()
   }
-  for idx = hash & self.capacity_mask, entry = { psl: 0, hash, key, value } {
+  let (idx, psl) = for psl = 0, idx = hash & self.capacity_mask {
+    match self.entries[idx] {
+      None => break (idx, psl)
+      Some(curr_entry) => {
+        if curr_entry.hash == hash && curr_entry.key == key {
+          curr_entry.value = value
+          return
+        }
+        if psl > curr_entry.psl {
+          self.push_away(idx, curr_entry)
+          break (idx, psl)
+        }
+        continue psl + 1, (idx + 1) & self.capacity_mask
+      }
+    }
+  }
+  let entry = { psl, key, value, hash }
+  self.entries[idx] = Some(entry)
+  self.size += 1
+}
+
+///|
+fn[K, V] T::push_away(self : T[K, V], idx : Int, entry : Entry[K, V]) -> Unit {
+  for psl = entry.psl + 1, idx = (idx + 1) & self.capacity_mask, entry = entry {
     match self.entries[idx] {
       None => {
+        entry.psl = psl
         self.entries[idx] = Some(entry)
-        self.size += 1
         break
       }
-      Some(curr_entry) => {
-        if curr_entry.hash == entry.hash && curr_entry.key == entry.key {
-          curr_entry.value = entry.value
-          break
-        }
-        let curr_entry = if entry.psl > curr_entry.psl {
+      Some(curr_entry) =>
+        if psl > curr_entry.psl {
+          entry.psl = psl
           self.entries[idx] = Some(entry)
-          curr_entry
+          continue curr_entry.psl + 1,
+            (idx + 1) & self.capacity_mask,
+            curr_entry
         } else {
-          entry
+          continue psl + 1, (idx + 1) & self.capacity_mask, entry
         }
-        curr_entry.psl += 1
-        continue (idx + 1) & self.capacity_mask, curr_entry
-      }
     }
   }
 }
@@ -209,41 +203,6 @@ pub fn[K : Hash + Eq, V] get(self : T[K, V], key : K) -> V? {
 }
 
 ///|
-fn[K : Eq, V] get_with_hash(self : T[K, V], key : K, hash : Int) -> V? {
-  for i = 0, idx = hash & self.capacity_mask {
-    guard self.entries[idx] is Some(entry) else { break None }
-    if entry.hash == hash && entry.key == key {
-      break Some(entry.value)
-    }
-    if i > entry.psl {
-      break None
-    }
-    continue i + 1, (idx + 1) & self.capacity_mask
-  }
-}
-
-///|
-/// Retrieves a value from the hash map using the index operator syntax. This
-/// method is automatically called when using the square bracket notation
-/// `map[key]`.
-///
-/// Parameters:
-///
-/// * `map` : The hash map to retrieve the value from.
-/// * `key` : The key to look up in the map. Must implement both `Hash` and `Eq`
-/// traits.
-///
-/// Returns `Some(value)` if the key exists in the map, `None` otherwise.
-///
-/// Example:
-///
-/// ```moonbit
-///   let map = @hashmap.of([("key", 42)])
-///   inspect(map.get("key"), content="Some(42)")
-///   inspect(map.get("nonexistent"), content="None")
-/// ```
-
-///|
 /// Gets the value associated with the given key. If the key doesn't exist in the
 /// map, initializes it with the result of calling the provided initialization
 /// function.
@@ -272,14 +231,38 @@ pub fn[K : Hash + Eq, V] get_or_init(
   init : () -> V,
 ) -> V {
   let hash = key.hash()
-  match self.get_with_hash(key, hash) {
-    Some(v) => v
-    None => {
-      let v = init()
-      self.set_with_hash(key, v, hash)
-      v
+  let (idx, psl, new_value, push_away) = for psl = 0, idx = hash &
+                                               self.capacity_mask {
+    match self.entries[idx] {
+      Some(entry) => {
+        if entry.hash == hash && entry.key == key {
+          return entry.value
+        }
+        if psl > entry.psl {
+          let new_value = init()
+          break (idx, psl, new_value, Some(entry))
+        }
+        continue psl + 1, (idx + 1) & self.capacity_mask
+      }
+      None => {
+        let new_value = init()
+        break (idx, psl, new_value, None)
+      }
     }
   }
+  if self.size >= self.capacity / 2 {
+    // Slow path, we need to resize
+    self.grow()
+    self.set_with_hash(key, new_value, hash)
+  } else {
+    if push_away is Some(entry) {
+      self.push_away(idx, entry)
+    }
+    let entry = { psl, hash, key, value: new_value }
+    self.entries[idx] = Some(entry)
+    self.size += 1
+  }
+  new_value
 }
 
 ///|
@@ -352,6 +335,27 @@ pub fn[K : Hash + Eq, V] contains(self : T[K, V], key : K) -> Bool {
 }
 
 ///|
+/// Checks if a map contains a specific key-value pair.
+///
+/// Parameters:
+///
+/// * `map` : A map of type `@hashmap.T[K, V]` to search in.
+/// * `key` : The key to look up in the map.
+/// * `value` : The value to be compared with the value associated with the key.
+///
+/// Returns `true` if the map contains the specified key and its associated value
+/// equals the given value, `false` otherwise.
+///
+/// Example:
+///
+/// ```moonbit
+/// 
+///   let map = @hashmap.new()
+///   map..set("a", 1)..set("b", 2)
+///   inspect(map.contains_kv("a", 1), content="true")
+///   inspect(map.contains_kv("a", 2), content="false")
+///   inspect(map.contains_kv("c", 3), content="false")
+/// ```
 pub fn[K : Hash + Eq, V : Eq] contains_kv(
   self : T[K, V],
   key : K,
@@ -395,7 +399,6 @@ pub fn[K : Hash + Eq, V] remove(self : T[K, V], key : K) -> Unit {
     match self.entries[idx] {
       Some(entry) => {
         if entry.hash == hash && entry.key == key {
-          self.entries[idx] = None
           self.shift_back(idx)
           self.size -= 1
           break
@@ -411,18 +414,14 @@ pub fn[K : Hash + Eq, V] remove(self : T[K, V], key : K) -> Unit {
 }
 
 ///|
-fn[K, V] shift_back(self : T[K, V], start_index : Int) -> Unit {
-  for prev = start_index, curr = (start_index + 1) & self.capacity_mask {
-    match self.entries[curr] {
-      Some({ psl, hash, key, value }) => {
-        if psl == 0 {
-          break
-        }
-        self.entries[prev] = Some({ psl: psl - 1, hash, key, value })
-        self.entries[curr] = None
-        continue curr, (curr + 1) & self.capacity_mask
-      }
-      None => break
+fn[K, V] shift_back(self : T[K, V], idx : Int) -> Unit {
+  let next = (idx + 1) & self.capacity_mask
+  match self.entries[next] {
+    None | Some({ psl: 0, .. }) => self.entries[idx] = None
+    Some(entry) => {
+      entry.psl -= 1
+      self.entries[idx] = Some(entry)
+      self.shift_back(next)
     }
   }
 }
@@ -505,7 +504,53 @@ pub impl[K : @quickcheck.Arbitrary + Hash + Eq, V : @quickcheck.Arbitrary] @quic
 }
 
 ///|
-priv type MyString String derive(Eq)
+pub impl[K, V] Default for T[K, V] with default() {
+  new()
+}
+
+///|
+/// Applies a function to each key-value pair in the map and 
+/// returns a new map with the results, using the original keys.
+pub fn[K, V, V2] T::map(self : T[K, V], f : (K, V) -> V2) -> T[K, V2] {
+  let other = {
+    capacity: self.capacity,
+    entries: FixedArray::make(self.capacity, None),
+    size: self.size,
+    capacity_mask: self.capacity_mask,
+  }
+  if self.size == 0 {
+    return other
+  }
+  for i in 0..<self.capacity {
+    if self.entries[i] is Some({ key, value, hash, psl }) {
+      other.entries[i] = Some({ psl, key, value: f(key, value), hash })
+    }
+  }
+  other
+}
+
+///|
+/// Copy the map, creating a new map with the same key-value pairs.
+pub fn[K, V] T::copy(self : T[K, V]) -> T[K, V] {
+  let other = {
+    capacity: self.capacity,
+    entries: FixedArray::make(self.capacity, None),
+    size: self.size,
+    capacity_mask: self.capacity_mask,
+  }
+  if self.size == 0 {
+    return other
+  }
+  for i in 0..<self.capacity {
+    if self.entries[i] is Some({ key, value, hash, psl }) {
+      other.entries[i] = Some({ psl, key, value, hash })
+    }
+  }
+  other
+}
+
+///|
+priv struct MyString(String) derive(Eq)
 
 ///|
 #coverage.skip
@@ -517,13 +562,13 @@ impl Hash for MyString with hash(self) {
 ///|
 #coverage.skip
 impl Hash for MyString with hash_combine(self, hasher) {
-  hasher.combine_string(self.inner())
+  hasher.combine_string(self.0)
 }
 
 ///|
 #coverage.skip
 impl Show for MyString with output(self, logger) {
-  logger.write_string(self.inner())
+  logger.write_string(self.0)
 }
 
 ///|

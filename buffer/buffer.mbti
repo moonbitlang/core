@@ -13,7 +13,9 @@ fn from_bytes(Bytes) -> T
 
 fn from_iter(Iter[Byte]) -> T
 
-fn new(size_hint~ : Int = ..) -> T
+fn new(size_hint? : Int) -> T
+
+// Errors
 
 // Types and methods
 type T

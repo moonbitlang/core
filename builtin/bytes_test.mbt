@@ -139,6 +139,16 @@ test "set_utf16be_char" {
       #|b"\x00\x41\x00\x00"
     ),
   )
+  let arr = FixedArray::make(2, b'\x00')
+  let _ = arr.set_utf16be_char(0, '中') // Unicode U+4E2D
+  inspect(arr[0], content="b'\\x4E'")
+  inspect(arr[1], content="b'\\x2D'")
+  let arr = FixedArray::make(4, b'\x00')
+  let _ = arr.set_utf16be_char(0, '😃') // Unicode U+1F603
+  inspect(arr[0], content="b'\\xD8'")
+  inspect(arr[1], content="b'\\x3D'")
+  inspect(arr[2], content="b'\\xDE'")
+  inspect(arr[3], content="b'\\x03'")
 }
 
 ///|

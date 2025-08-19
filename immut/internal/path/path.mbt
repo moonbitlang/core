@@ -23,7 +23,7 @@
 ///
 /// For example, `Path::of(x) = 0b11_10000_10101_00100_11111_01010`
 /// represents segments as [0b_10000, 0b_10101, 0b_00100, 0b_11111, 0b_01010]
-pub(all) type Path UInt derive(Eq)
+pub(all) struct Path(UInt) derive(Eq)
 
 ///|
 const SEGMENT_LENGTH : Int = 5

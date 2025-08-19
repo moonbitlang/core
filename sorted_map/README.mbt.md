@@ -155,8 +155,8 @@ Get all keys or values from the map.
 ```moonbit
 test {
   let map = @sorted_map.from_array([(3, "three"), (1, "one"), (2, "two")])
-  assert_eq(map.keys(), [1, 2, 3])
-  assert_eq(map.values(), ["one", "two", "three"])
+  assert_eq(map.keys_as_iter().collect(), [1, 2, 3])
+  assert_eq(map.values_as_iter().collect(), ["one", "two", "three"])
 }
 ```
 

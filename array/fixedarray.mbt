@@ -988,7 +988,7 @@ test "op_equal" {
 }
 
 ///|
-/// Compares two fixed arrays lexicographically based on their elements. First
+/// Compares two fixed arrays based on shortlex order by their elements. First
 /// compares the lengths of the arrays, then compares elements pairwise until a
 /// difference is found or all elements have been compared.
 ///

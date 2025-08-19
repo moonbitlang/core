@@ -19,7 +19,7 @@ enum Expr {
   Mul(Expr, Expr)
   Div(Expr, Expr)
   Val(String)
-} derive(ToJson, FromJson, Show, Eq)
+} derive(ToJson(style="flat"), FromJson(style="flat"), Show, Eq)
 
 ///|
 test {
@@ -28,7 +28,7 @@ test {
   inspect(
     ej.stringify(),
     content=(
-      #|{"$tag":"Add","0":{"$tag":"Val","0":"x"},"1":{"$tag":"Val","0":"y"}}
+      #|["Add",["Val","x"],["Val","y"]]
     ),
   )
   let e0 : Expr = @json.from_json(ej)

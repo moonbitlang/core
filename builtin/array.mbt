@@ -58,14 +58,14 @@ pub fn[T] Array::from_fixed_array(arr : FixedArray[T]) -> Array[T] {
 ///   let arr = Array::make(3, 42)
 ///   inspect(arr, content="[42, 42, 42]")
 /// ```
-/// 
+///
 /// WARNING: A common pitfall is creating with the same initial value, for example:
 /// ```moonbit
 ///   let two_dimension_array = Array::make(10, Array::make(10, 0))
 ///   two_dimension_array[0][5] = 10
 ///   assert_eq(two_dimension_array[5][5], 10)
 /// ```
-/// This is because all the cells reference to the same object (the Array[Int] in this case). 
+/// This is because all the cells reference to the same object (the Array[Int] in this case).
 /// One should use makei() instead which creates an object for each index.
 pub fn[T] Array::make(len : Int, elem : T) -> Array[T] {
   let arr = Array::make_uninit(len)
@@ -88,7 +88,7 @@ pub fn[T] Array::make(len : Int, elem : T) -> Array[T] {
 /// NOTE: The capacity of an array may not be consistent across different backends
 /// and/or different versions of the MoonBit compiler/core.
 pub fn[T] Array::capacity(self : Array[T]) -> Int {
-  self.buffer().inner().length()
+  self.buffer().0.length()
 }
 
 ///|
@@ -239,7 +239,7 @@ pub impl[T : Hash] Hash for Array[T] with hash_combine(self, hasher) {
 }
 
 ///|
-/// Compares two arrays lexicographically.
+/// Compares two arrays based on shortlex order.
 ///
 /// First compares the lengths of the arrays. If they differ, returns -1 if the
 /// first array is shorter, 1 if it's longer. If the lengths are equal, compares
@@ -1379,7 +1379,8 @@ pub fn[T] Array::extract_if(self : Array[T], f : (T) -> Bool) -> Array[T] {
 /// Parameters:
 ///
 /// * `array` : The array to be divided into chunks.
-/// * `size` : The size of each chunk. Must be a positive integer.
+/// * `size` : The size of each chunk. Must be a positive integer, otherwise it will panic.
+///
 ///
 /// Returns an array of arrays, where each inner array is a chunk containing
 /// elements from the original array. If the length of the original array is not
@@ -1396,6 +1397,7 @@ pub fn[T] Array::extract_if(self : Array[T], f : (T) -> Bool) -> Array[T] {
 ///   inspect(arr.chunks(3), content="[]")
 /// ```
 pub fn[T] Array::chunks(self : Array[T], size : Int) -> Array[Array[T]] {
+  guard size > 0
   let chunks = []
   let mut i = 0
   while i < self.length() {
@@ -1458,7 +1460,7 @@ pub fn[T] Array::chunk_by(
 /// Parameters:
 ///
 /// * `array` : The array to be processed with sliding windows.
-/// * `size` : The window length. Must be a positive integer.
+/// * `size` : The window length. Must be a positive integer, otherwise it will panic.
 ///
 /// Returns an array of slices, where each inner slice is a contiguous subslice
 /// of the original array. Windows are produced with a step size of 1. If the
@@ -1476,6 +1478,7 @@ pub fn[T] Array::chunk_by(
 ///   inspect(arr.windows(3), content="[]")
 /// ```
 pub fn[T] Array::windows(self : Array[T], size : Int) -> Array[ArrayView[T]] {
+  guard size > 0
   let len = self.length() - size + 1
   if len < 1 {
     return []
@@ -1642,7 +1645,7 @@ pub fn[A] Array::unsafe_pop_back(self : Array[A]) -> Unit {
 ///|
 /// Truncates the array in-place to the specified length.
 ///
-/// If `len` is greater than or equal to the current array length, 
+/// If `len` is greater than or equal to the current array length,
 /// the function does nothing. If `len` is 0, the array is cleared.
 /// Otherwise, removes elements from the end until the array reaches the given length.
 ///
@@ -1651,7 +1654,7 @@ pub fn[A] Array::unsafe_pop_back(self : Array[A]) -> Unit {
 /// * `self` : The target array (modified in-place).
 /// * `len` : The new desired length (must be non-negative).
 ///
-/// Important: 
+/// Important:
 ///   - If `len` is negative, the function does nothing.
 ///   - If `len` exceeds current length, the array remains unchanged.
 ///

@@ -446,6 +446,13 @@ test "array_chunks" {
 }
 
 ///|
+test "panic_array_chunks_by_zero" {
+  let arr = [1, 2, 3, 4, 5]
+  let _ = arr.chunks(0)
+
+}
+
+///|
 test "array_chunks_by" {
   let v = [1, 1, 2, 3, 2, 3, 2, 3, 4]
   inspect(
@@ -463,6 +470,13 @@ test "array_windows" {
   inspect(windows, content="[[1, 2, 3, 4, 5], [2, 3, 4, 5, 6]]")
   let windows = arr.windows(1)
   inspect(windows, content="[[1], [2], [3], [4], [5], [6]]")
+}
+
+///|
+test "panic_array_windows_by_zero" {
+  let arr = [1, 2, 3, 4, 5]
+  let _ = arr.windows(0)
+
 }
 
 ///|
@@ -816,4 +830,93 @@ test "retain_map" {
   let arr = [2, 3, 4]
   arr.retain_map(x => if x < 4 { Some(x + 1) } else { None })
   inspect(arr, content="[3, 4]")
+}
+
+///|
+test "array_fill - basic functionality" {
+  let arr = [1, 2, 3, 4, 5]
+  arr.fill(42)
+  inspect(arr, content="[42, 42, 42, 42, 42]")
+}
+
+///|
+test "array_fill - with start parameter only" {
+  let arr = [1, 2, 3, 4, 5]
+  arr.fill(99, start=2)
+  inspect(arr, content="[1, 2, 99, 99, 99]")
+}
+
+///|
+test "array_fill - with start and end parameters" {
+  let arr = [1, 2, 3, 4, 5]
+  arr.fill(77, start=1, end=3)
+  inspect(arr, content="[1, 77, 77, 4, 5]")
+}
+
+///|
+test "array_fill - start equals end" {
+  let arr = [1, 2, 3, 4, 5]
+  arr.fill(88, start=2, end=2)
+  inspect(arr, content="[1, 2, 3, 4, 5]") // No change expected
+}
+
+///|
+test "array_fill - start at beginning" {
+  let arr = [1, 2, 3, 4, 5]
+  arr.fill(10, start=0, end=2)
+  inspect(arr, content="[10, 10, 3, 4, 5]")
+}
+
+///|
+test "array_fill - end at array length" {
+  let arr = [1, 2, 3, 4, 5]
+  arr.fill(20, start=3, end=5)
+  inspect(arr, content="[1, 2, 3, 20, 20]")
+}
+
+///|
+test "array_fill - single element" {
+  let arr = [100]
+  arr.fill(50)
+  inspect(arr, content="[50]")
+}
+
+///|
+test "array_fill - empty array" {
+  let arr : Array[Int] = []
+  arr.fill(123)
+  inspect(arr, content="[]") // Should remain empty
+}
+
+///|
+test "array_fill - with different types" {
+  let str_arr = ["a", "b", "c", "d"]
+  str_arr.fill("x", start=1, end=3)
+  inspect(str_arr, content="[\"a\", \"x\", \"x\", \"d\"]")
+  let bool_arr = [true, false, true, false]
+  bool_arr.fill(true, start=0, end=2)
+  inspect(bool_arr, content="[true, true, true, false]")
+}
+
+///|
+test "array_fill - boundary conditions start" {
+  let arr = [1, 2, 3, 4, 5]
+  // Test with start at last valid index
+  arr.fill(555, start=4, end=5)
+  inspect(arr, content="[1, 2, 3, 4, 555]")
+}
+
+///|
+test "array_fill - boundary conditions end" {
+  let arr = [1, 2, 3, 4, 5]
+  // Test with end at array length
+  arr.fill(666, start=2, end=5)
+  inspect(arr, content="[1, 2, 666, 666, 666]")
+}
+
+///|
+test "array_fill - full range explicit" {
+  let arr = [1, 2, 3, 4, 5]
+  arr.fill(777, start=0, end=5)
+  inspect(arr, content="[777, 777, 777, 777, 777]")
 }

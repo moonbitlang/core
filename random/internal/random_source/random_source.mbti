@@ -3,6 +3,8 @@ package "moonbitlang/core/random/internal/random_source"
 
 // Values
 
+// Errors
+
 // Types and methods
 type ChaCha8
 fn ChaCha8::new(Bytes) -> Self

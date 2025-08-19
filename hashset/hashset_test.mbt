@@ -28,11 +28,47 @@ test "new_with_capacity_then_add " {
 }
 
 ///|
-test "doc" {
-  let set = @hashset.of([3, 8, 1])
-  set.add(3)
-  set.add(4)
-  inspect(set, content="@hashset.of([3, 4, 1, 8])")
+test "to_array" {
+  let v = @hashset.of([1, 2, 3, 4])
+  let arr = v.to_array()
+  arr.sort()
+  inspect(arr, content="[1, 2, 3, 4]")
+}
+
+///|
+test "add_and_check" {
+  let set : @hashset.T[String] = @hashset.new()
+  inspect(set.add_and_check("key"), content="true") // First insertion
+  inspect(set.add_and_check("key"), content="false") // Already exists
+  inspect(set.size(), content="1")
+}
+
+///|
+test "remove_and_check" {
+  let set = @hashset.of(["a", "b"])
+  inspect(set.remove_and_check("a"), content="true") // Successfully removed
+  inspect(set.remove_and_check("a"), content="false") // Already removed
+  inspect(set.size(), content="1")
+}
+
+///|
+test "copy" {
+  let set = @hashset.of(["a", "b", "c"])
+  let copied = set.copy()
+  inspect(copied.size(), content="3")
+  inspect(copied.contains("a"), content="true")
+  inspect(copied.contains("b"), content="true")
+  inspect(copied.contains("c"), content="true")
+  // Modify original, copy should be unaffected
+  set.remove("a")
+  inspect(set.size(), content="2")
+  inspect(copied.size(), content="3")
+}
+
+///|
+test "to_json" {
+  let set = @hashset.of([1, 2, 3])
+  @json.inspect(set, content=[3, 1, 2])
 }
 
 ///|

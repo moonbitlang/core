@@ -8,14 +8,16 @@ fn monotonic_clock_start() -> Timestamp
 
 fn new() -> T
 
-fn single_bench(name? : String, () -> Unit, count~ : UInt = ..) -> Summary
+fn single_bench(name? : String, () -> Unit, count? : UInt) -> Summary
+
+// Errors
 
 // Types and methods
 type Summary
 impl ToJson for Summary
 
 type T
-fn T::bench(Self, name? : String, () -> Unit, count~ : UInt = ..) -> Unit
+fn T::bench(Self, name? : String, () -> Unit, count? : UInt) -> Unit
 fn T::dump_summaries(Self) -> String
 fn[Any] T::keep(Self, Any) -> Unit
 

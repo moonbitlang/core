@@ -202,12 +202,15 @@ pub impl ToJson for UInt64 with to_json(self : UInt64) -> Json {
 
 ///|
 pub impl ToJson for Double with to_json(self : Double) -> Json {
-  if self != self ||
-    self > 0x7FEFFFFFFFFFFFFFL.reinterpret_as_double() ||
-    self < 0xFFEFFFFFFFFFFFFFL.reinterpret_as_double() {
-    return Null
+  if self != self {
+    Json::string("NaN")
+  } else if self > 0x7FEFFFFFFFFFFFFFL.reinterpret_as_double() {
+    Json::string("Infinity")
+  } else if self < 0xFFEFFFFFFFFFFFFFL.reinterpret_as_double() {
+    Json::string("-Infinity")
+  } else {
+    Json::number(self)
   }
-  Json::number(self)
 }
 
 ///|
@@ -264,7 +267,7 @@ pub impl[K : Show, V : ToJson] ToJson for Map[K, V] with to_json(self) {
 pub impl[T : ToJson] ToJson for T? with to_json(self) {
   match self {
     None => Null
-    Some(value) => [value.to_json()]
+    Some(value) => [value]
   }
 }
 
@@ -273,8 +276,8 @@ pub impl[Ok : ToJson, Err : ToJson] ToJson for Result[Ok, Err] with to_json(
   self : Result[Ok, Err],
 ) -> Json {
   match self {
-    Ok(ok) => { "Ok": ok.to_json() }
-    Err(err) => { "Err": err.to_json() }
+    Ok(ok) => { "Ok": ok }
+    Err(err) => { "Err": err }
   }
 }
 

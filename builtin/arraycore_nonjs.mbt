@@ -126,7 +126,7 @@ fn[T] Array::buffer(self : Array[T]) -> UninitializedArray[T] {
 fn[T] Array::resize_buffer(self : Array[T], new_capacity : Int) -> Unit {
   let new_buf = UninitializedArray::make(new_capacity)
   let old_buf = self.buf
-  let old_cap = old_buf.inner().length()
+  let old_cap = old_buf.0.length()
   let copy_len = if old_cap < new_capacity { old_cap } else { new_capacity }
   UninitializedArray::unsafe_blit(new_buf, 0, old_buf, 0, copy_len)
   self.buf = new_buf
@@ -177,7 +177,7 @@ test "Array::resize_buffer" {
   arr.push(1)
   arr.push(2)
   arr.resize_buffer(4)
-  assert_eq(arr.buffer().inner().length() >= 4, true)
+  assert_eq(arr.buffer().0.length() >= 4, true)
   arr.push(3)
   arr.push(4)
   assert_eq(arr.length(), 4)
@@ -244,7 +244,7 @@ pub fn[T] Array::shrink_to_fit(self : Array[T]) -> Unit {
 ///   v.push(3)
 /// ```
 pub fn[T] Array::push(self : Array[T], value : T) -> Unit {
-  if self.length() == self.buffer().inner().length() {
+  if self.length() == self.buffer().0.length() {
     self.realloc()
   }
   let length = self.length()
@@ -376,7 +376,7 @@ pub fn[T] Array::insert(self : Array[T], index : Int, value : T) -> Unit {
       "index out of bounds: the len is from 0 to \{self.length()} but the index is \{index}",
     )
   }
-  if self.length() == self.buffer().inner().length() {
+  if self.length() == self.buffer().0.length() {
     self.realloc()
   }
   UninitializedArray::unsafe_blit(
@@ -404,4 +404,59 @@ fn[T] Array::unsafe_grow_to_length(self : Array[T], new_len : Int) -> Unit {
   UninitializedArray::unsafe_blit(new_buf, 0, self.buf, 0, self.len)
   self.len = new_len
   self.buf = new_buf
+}
+
+///| Fills an Array with a specified value.
+/// 
+/// This method fills all or part of an Array with the given value.
+/// 
+/// # Parameters
+/// - `value`: The value to fill the array with
+/// - `start`: The starting index (inclusive, default: 0)
+/// - `end`: The ending index (exclusive, optional)
+/// 
+/// If `end` is not provided, fills from `start` to the end of the array.
+/// If `start` equals `end`, no elements are modified.
+/// 
+/// # Panics
+/// - Panics if `start` is negative or greater than or equal to the array length
+/// - Panics if `end` is provided and is less than `start` or greater than array length
+/// - Does nothing if the array is empty
+/// 
+/// # Example
+/// ```moonbit
+/// // Fill entire array
+/// let arr = [1, 2, 3, 4, 5]
+/// arr.fill(0)
+/// inspect(arr, content="[0, 0, 0, 0, 0]")
+/// 
+/// // Fill from index 1 to 3 (exclusive)
+/// let arr2 = [1, 2, 3, 4, 5]
+/// arr2.fill(99, start=1, end=3)
+/// inspect(arr2, content="[1, 99, 99, 4, 5]")
+/// 
+/// // Fill from index 2 to end
+/// let arr3 = ["a", "b", "c", "d"]
+/// arr3.fill("x", start=2)
+/// inspect(arr3, content=(
+///   #|["a", "b", "x", "x"]
+/// ))
+/// ```
+pub fn[A] Array::fill(
+  self : Array[A],
+  value : A,
+  start~ : Int = 0,
+  end? : Int,
+) -> Unit {
+  let array_length = self.length()
+  guard array_length > 0 else { return }
+  guard start >= 0 && start < array_length
+  let length = match end {
+    None => array_length
+    Some(e) => {
+      guard e >= start && e <= array_length
+      e
+    }
+  }
+  self.buf.unchecked_fill(start, value, length - start)
 }

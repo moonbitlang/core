@@ -462,13 +462,6 @@ pub impl Hash for String with hash_combine(self, hasher) {
 ///   let y = -42
 ///   inspect(Hash::hash(y), content="1617647962")
 /// ```
-/// TODO: This implementation is **different** from the default implementation of the hash trait. 
-/// So it will be replaced with the default implementation in the future **(breaking change)**, 
-/// and users should not rely on this particular hash value
-/// ```moonbit 
-///   let x = 42
-///   assert_not_eq(Hash::hash(x),Hasher::new()..combine(x).finalize())
-/// ```
 pub impl Hash for Int with hash(self) {
   let self = self.reinterpret_as_uint()
   let mut x = self ^ (self >> 17)

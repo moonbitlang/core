@@ -65,7 +65,7 @@ fn hypot(Double, Double) -> Double
 
 fn hypotf(Float, Float) -> Float
 
-fn is_probable_prime(@bigint.BigInt, @random.Rand, iters~ : Int = ..) -> Bool
+fn is_probable_prime(@bigint.BigInt, @random.Rand, iters? : Int) -> Bool
 
 fn ln(Double) -> Double
 
@@ -85,6 +85,7 @@ fn[T : Compare] maximum(T, T) -> T
 #deprecated
 fn[T : Compare] minimum(T, T) -> T
 
+#deprecated
 let pi : Double
 
 fn pow(Double, Double) -> Double
@@ -116,6 +117,8 @@ fn tanh(Double) -> Double
 fn tanhf(Float) -> Float
 
 fn trunc(Double) -> Double
+
+// Errors
 
 // Types and methods
 

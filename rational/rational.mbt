@@ -22,6 +22,8 @@
 /// Invariants:
 /// - The denominator is always positive.
 /// - The numerator and denominator are always coprime.
+#deprecated("Use @rational in module moonbitlang/x instead. Note that you need to rename Rational to Rational64.")
+#coverage.skip
 struct T {
   numerator : Int64
   denominator : Int64
@@ -49,34 +51,8 @@ fn gcd(a : Int64, b : Int64) -> Int64 {
 /// number is automatically reduced to its simplest form with a positive
 /// denominator. Returns `None` if the denominator is zero.
 ///
-/// Example:
-///
-/// ```moonbit
-/// // Create 3/4
-/// let r1 = @rational.new(3L, 4L)
-/// inspect(r1, content="Some(3/4)")
-///
-/// // Create -1/2 (negative numerator)
-/// let r2 = @rational.new(-1L, 2L)
-/// inspect(r2, content="Some(-1/2)")
-///
-/// // Create -1/2 (negative denominator gets normalized)
-/// let r3 = @rational.new(1L, -2L)
-/// inspect(r3, content="Some(-1/2)")
-///
-/// // Create 1/2 (double negatives cancel out)
-/// let r4 = @rational.new(-1L, -2L)
-/// inspect(r4, content="Some(1/2)")
-///
-/// // Automatic reduction to simplest form
-/// let r5 = @rational.new(6L, 9L)
-/// inspect(r5, content="Some(2/3)")
-///
-/// // Division by zero returns None
-/// let r6 = @rational.new(1L, 0L)
-/// inspect(r6, content="None")
-/// ```
-///
+#deprecated("Use @rational in module moonbitlang/x instead. Note that you need to rename Rational to Rational64.")
+#coverage.skip
 pub fn new(numerator : Int64, denominator : Int64) -> T? {
   if denominator == 0L {
     None
@@ -104,6 +80,7 @@ fn new_unchecked(numerator : Int64, denominator : Int64) -> T {
 ///|
 /// NOTE: we don't check overflow here, to align with the `op_add` of `Int64`.
 /// TODO: add a `checked_add` method.
+#coverage.skip
 pub impl Add for T with op_add(self : T, other : T) -> T {
   new_unchecked(
     self.numerator * other.denominator + other.numerator * self.denominator,
@@ -121,14 +98,7 @@ pub impl Add for T with op_add(self : T, other : T) -> T {
 ///
 /// Returns the difference of the two rational numbers.
 ///
-/// Example:
-///
-/// ```moonbit
-/// let a = @rational.new(1L, 2L).unwrap() // 1/2
-/// let b = @rational.new(1L, 3L).unwrap() // 1/3
-/// inspect(a - b, content="1/6") // 1/2 - 1/3 = 1/6
-/// ```
-///
+#coverage.skip
 pub impl Sub for T with op_sub(self : T, other : T) -> T {
   new_unchecked(
     self.numerator * other.denominator - other.numerator * self.denominator,
@@ -146,15 +116,7 @@ pub impl Sub for T with op_sub(self : T, other : T) -> T {
 ///
 /// Returns the product of the two rational numbers.
 ///
-/// Example:
-///
-/// ```moonbit
-/// let a = @rational.new(1L, 2L).unwrap() // 1/2
-/// let b = @rational.new(2L, 3L).unwrap() // 2/3
-/// let c = a * b // 1/3
-/// inspect(c, content="1/3")
-/// ```
-///
+#coverage.skip
 pub impl Mul for T with op_mul(self : T, other : T) -> T {
   new_unchecked(
     self.numerator * other.numerator,
@@ -172,20 +134,7 @@ pub impl Mul for T with op_mul(self : T, other : T) -> T {
 ///
 /// Returns the quotient of the division as a rational number.
 ///
-/// Example:
-///
-/// ```moonbit
-/// let a = @rational.new(1L, 2L) // 1/2
-/// let b = @rational.new(2L, 3L) // 2/3
-/// match (a, b) {
-///   (Some(x), Some(y)) => {
-///     let result = x / y // 3/4
-///     inspect(result, content="3/4")
-///   }
-///   _ => ()
-/// }
-/// ```
-///
+#coverage.skip
 pub impl Div for T with op_div(self : T, other : T) -> T {
   if other.numerator < 0L {
     new_unchecked(
@@ -209,18 +158,8 @@ pub impl Div for T with op_div(self : T, other : T) -> T {
 ///
 /// Returns a new rational number that is the reciprocal of the input.
 ///
-/// Example:
-///
-/// ```moonbit
-/// let half = @rational.new(1L, 2L).unwrap()
-/// let two = half.reciprocal()
-/// inspect(two, content="2")
-///
-/// let negative_third = @rational.new(-1L, 3L).unwrap()
-/// let negative_three = negative_third.reciprocal()
-/// inspect(negative_three, content="-3")
-/// ```
-///
+#deprecated("Use @rational in module moonbitlang/x instead. Note that you need to rename Rational to Rational64.")
+#coverage.skip
 pub fn reciprocal(self : T) -> T {
   if self.numerator < 0L {
     new_unchecked(-self.denominator, -self.numerator)
@@ -238,18 +177,8 @@ pub fn reciprocal(self : T) -> T {
 ///
 /// Returns a new rational number with the opposite sign.
 ///
-/// Example:
-///
-/// ```moonbit
-/// let positive = @rational.new(3L, 4L).unwrap()
-/// let negative = positive.neg()
-/// inspect(negative.to_string(), content="-3/4")
-///
-/// let negative_original = @rational.new(-5L, 2L).unwrap()
-/// let positive_result = negative_original.neg()
-/// inspect(positive_result.to_string(), content="5/2")
-/// ```
-///
+#deprecated("Use @rational in module moonbitlang/x instead. Note that you need to rename Rational to Rational64.")
+#coverage.skip
 pub fn T::neg(self : T) -> T {
   new_unchecked(-self.numerator, self.denominator)
 }
@@ -263,15 +192,8 @@ pub fn T::neg(self : T) -> T {
 ///
 /// Returns a new rational number representing the absolute value of the input.
 ///
-/// Example:
-///
-/// ```moonbit
-/// let positive = @rational.new(3L, 4L).unwrap()
-/// let negative = @rational.new(-3L, 4L).unwrap()
-/// inspect(positive.abs(), content="3/4")
-/// inspect(negative.abs(), content="3/4")
-/// ```
-///
+#deprecated("Use @rational in module moonbitlang/x instead. Note that you need to rename Rational to Rational64.")
+#coverage.skip
 pub fn T::abs(self : T) -> T {
   new_unchecked(self.numerator.abs(), self.denominator)
 }
@@ -286,17 +208,7 @@ pub fn T::abs(self : T) -> T {
 ///
 /// Returns `true` if the two rational numbers are equal, `false` otherwise.
 ///
-/// Example:
-///
-/// ```moonbit
-/// let a = @rational.new(1L, 2L).unwrap()  // 1/2
-/// let b = @rational.new(2L, 4L).unwrap()  // 2/4 = 1/2
-/// inspect(a == b, content="true")
-///
-/// let c = @rational.new(1L, 3L).unwrap()  // 1/3
-/// inspect(a == c, content="false")
-/// ```
-///
+#coverage.skip
 pub impl Eq for T with op_equal(self : T, other : T) -> Bool {
   self.numerator * other.denominator == other.numerator * self.denominator
 }
@@ -313,22 +225,7 @@ pub impl Eq for T with op_equal(self : T, other : T) -> Bool {
 /// than `other`, zero if they are equal, and positive if `self` is greater than
 /// `other`.
 ///
-/// Example:
-///
-/// ```moonbit
-/// let a = @rational.new(1L, 2L).unwrap()  // 1/2
-/// let b = @rational.new(2L, 3L).unwrap()  // 2/3
-/// inspect(a.compare(b), content="-1")     // 1/2 < 2/3
-///
-/// let c = @rational.new(3L, 4L).unwrap()  // 3/4
-/// let d = @rational.new(3L, 4L).unwrap()  // 3/4
-/// inspect(c.compare(d), content="0")      // 3/4 == 3/4
-///
-/// let e = @rational.new(5L, 6L).unwrap()  // 5/6
-/// let f = @rational.new(1L, 2L).unwrap()  // 1/2
-/// inspect(e.compare(f), content="1")      // 5/6 > 1/2
-/// ```
-///
+#coverage.skip
 pub impl Compare for T with compare(self : T, other : T) -> Int {
   let left = self.numerator * other.denominator
   let right = other.numerator * self.denominator
@@ -346,16 +243,8 @@ pub impl Compare for T with compare(self : T, other : T) -> Int {
 /// Returns the double-precision floating-point approximation of the rational
 /// number.
 ///
-/// Example:
-///
-/// ```moonbit
-/// let rational = @rational.new(1L, 2L).unwrap()
-/// inspect(rational.to_double(), content="0.5")
-///
-/// let negative = @rational.new(-3L, 4L).unwrap()
-/// inspect(negative.to_double(), content="-0.75")
-/// ```
-///
+#deprecated("Use @rational in module moonbitlang/x instead. Note that you need to rename Rational to Rational64.")
+#coverage.skip
 pub fn to_double(self : T) -> Double {
   // TODO: complete algorithm
   self.numerator.to_double() / self.denominator.to_double()
@@ -378,19 +267,9 @@ fn[T] overflow_error() -> T raise RationalError {
 ///
 /// * `RationalError(String)` : Error with a descriptive message.
 ///
-/// Example:
-///
-/// ```moonbit
-/// let error = RationalError::RationalError("division by zero")
-/// inspect(
-///   error,
-///   content=(
-///     #|RationalError("division by zero")
-///   ),
-/// )
-/// ```
-///
-pub(all) suberror RationalError String derive(Show, ToJson)
+#deprecated("Use @rational in module moonbitlang/x instead. Note that you need to rename Rational to Rational64.")
+#coverage.skip
+pub(all) suberror RationalError String derive(Show, ToJson(style="flat"))
 
 ///|
 /// Compares two `RationalError` values for equality.
@@ -403,16 +282,7 @@ pub(all) suberror RationalError String derive(Show, ToJson)
 /// Returns `true` if both `RationalError` values contain the same error message,
 /// `false` otherwise.
 ///
-/// Example:
-///
-/// ```moonbit
-/// let error1 = @rational.RationalError("division by zero")
-/// let error2 = @rational.RationalError("division by zero")
-/// let error3 = @rational.RationalError("overflow")
-/// inspect(error1 == error2, content="true")
-/// inspect(error1 == error3, content="false")
-/// ```
-///
+#coverage.skip
 pub impl Eq for RationalError with op_equal(
   self : RationalError,
   other : RationalError,
@@ -436,18 +306,8 @@ pub impl Eq for RationalError with op_equal(
 /// Throws an error of type `RationalError` if the input is NaN or if the
 /// conversion would result in integer overflow.
 ///
-/// Example:
-///
-/// ```moonbit
-/// // Convert 0.5 to rational 1/2
-/// let half = @rational.from_double(0.5)
-/// inspect(half, content="1/2")
-///
-/// // Convert 0.333... to a close rational approximation
-/// let third = @rational.from_double(1.0 / 3.0)
-/// inspect(third, content="1/3")
-/// ```
-///
+#deprecated("Use @rational in module moonbitlang/x instead. Note that you need to rename Rational to Rational64.")
+#coverage.skip
 pub fn from_double(value : Double) -> T raise RationalError {
   // continued fraction algorithm
   // Ported from https://github.com/rust-num/num
@@ -532,19 +392,8 @@ pub fn from_double(value : Double) -> T raise RationalError {
 ///
 /// Returns the ceiling of the rational number as an `Int64`.
 ///
-/// Example:
-///
-/// ```moonbit
-/// let r1 = @rational.new(3L, 2L).unwrap()  // 3/2 = 1.5
-/// inspect(r1.ceil(), content="2")
-///
-/// let r2 = @rational.new(-3L, 2L).unwrap() // -3/2 = -1.5
-/// inspect(r2.ceil(), content="-1")
-///
-/// let r3 = @rational.new(4L, 2L).unwrap()  // 4/2 = 2.0
-/// inspect(r3.ceil(), content="2")
-/// ```
-///
+#deprecated("Use @rational in module moonbitlang/x instead. Note that you need to rename Rational to Rational64.")
+#coverage.skip
 pub fn T::ceil(self : T) -> Int64 {
   let sign = if self.numerator < 0L { -1L } else { 1L }
   let quotient = self.numerator / self.denominator
@@ -565,19 +414,8 @@ pub fn T::ceil(self : T) -> Int64 {
 ///
 /// Returns the largest `Int64` value that is less than or equal to `self`.
 ///
-/// Example:
-///
-/// ```moonbit
-/// let r1 = @rational.new(7L, 3L).unwrap()  // 7/3 ≈ 2.33
-/// inspect(r1.floor(), content="2")
-///
-/// let r2 = @rational.new(-7L, 3L).unwrap()  // -7/3 ≈ -2.33
-/// inspect(r2.floor(), content="-3")
-///
-/// let r3 = @rational.new(6L, 3L).unwrap()  // 6/3 = 2.0
-/// inspect(r3.floor(), content="2")
-/// ```
-///
+#deprecated("Use @rational in module moonbitlang/x instead. Note that you need to rename Rational to Rational64.")
+#coverage.skip
 pub fn T::floor(self : T) -> Int64 {
   let sign = if self.numerator < 0L { -1L } else { 1L }
   let quotient = self.numerator / self.denominator
@@ -597,22 +435,8 @@ pub fn T::floor(self : T) -> Int64 {
 ///
 /// Returns the integer part of the rational number as an `Int64`.
 ///
-/// Example:
-///
-/// ```moonbit
-/// let a = @rational.new(7L, 3L).unwrap() // 7/3 = 2.333...
-/// inspect(@rational.trunc(a), content="2")
-///
-/// let b = @rational.new(-7L, 3L).unwrap() // -7/3 = -2.333...
-/// inspect(@rational.trunc(b), content="-2")
-///
-/// let c = @rational.new(5L, 2L).unwrap() // 5/2 = 2.5
-/// inspect(@rational.trunc(c), content="2")
-///
-/// let d = @rational.new(-5L, 2L).unwrap() // -5/2 = -2.5
-/// inspect(@rational.trunc(d), content="-2")
-/// ```
-///
+#deprecated("Use @rational in module moonbitlang/x instead. Note that you need to rename Rational to Rational64.")
+#coverage.skip
 pub fn T::trunc(self : T) -> Int64 {
   if self.numerator < 0L {
     -(-self.numerator / self.denominator)
@@ -632,19 +456,8 @@ pub fn T::trunc(self : T) -> Int64 {
 /// Returns a new rational number representing the fractional part of `self`.
 /// This is equivalent to `self - self.trunc()`.
 ///
-/// Example:
-///
-/// ```moonbit
-/// let r1 = @rational.new(7L, 2L).unwrap()  // 7/2 = 3.5
-/// inspect(r1.fract(), content="1/2")      // fractional part is 0.5 = 1/2
-///
-/// let r2 = @rational.new(-7L, 2L).unwrap() // -7/2 = -3.5  
-/// inspect(r2.fract(), content="-1/2")     // fractional part is -0.5 = -1/2
-///
-/// let r3 = @rational.new(5L, 1L).unwrap()  // 5/1 = 5
-/// inspect(r3.fract(), content="0")        // fractional part is 0
-/// ```
-///
+#deprecated("Use @rational in module moonbitlang/x instead. Note that you need to rename Rational to Rational64.")
+#coverage.skip
 pub fn fract(self : T) -> T {
   new_unchecked(self.numerator % self.denominator, self.denominator)
 }
@@ -664,22 +477,7 @@ pub fn fract(self : T) -> T {
 /// the numerator
 /// * Otherwise, outputs in the format "numerator/denominator"
 ///
-/// Example:
-///
-/// ```moonbit
-/// let zero = @rational.new(0, 1).unwrap()
-/// inspect(zero, content="0") 
-///
-/// let integer = @rational.new(5, 1).unwrap()
-/// inspect(integer, content="5")
-///
-/// let fraction = @rational.new(3, 4).unwrap()
-/// inspect(fraction, content="3/4") 
-///
-/// let negative = @rational.new(-7, 3).unwrap()
-/// inspect(negative, content="-7/3") 
-/// ```
-///
+#coverage.skip
 pub impl Show for T with output(self, logger) {
   if self.numerator == 0L {
     logger.write_char('0')
@@ -693,6 +491,7 @@ pub impl Show for T with output(self, logger) {
 }
 
 ///|
+#coverage.skip
 pub impl @quickcheck.Arbitrary for T with arbitrary(size, rs) {
   let numerator : Int64 = @quickcheck.Arbitrary::arbitrary(size, rs)
   let denominator : Int64 = {
@@ -716,356 +515,13 @@ pub impl @quickcheck.Arbitrary for T with arbitrary(size, rs) {
 /// Returns `true` if the rational number is an integer (has a denominator of 1),
 /// `false` otherwise.
 ///
-/// Examples:
-///
-/// ```moonbit
-/// let half = @rational.new(1L, 2L).unwrap()
-/// inspect(half.is_integer(), content="false")
-///
-/// let whole = @rational.new(5L, 1L).unwrap()
-/// inspect(whole.is_integer(), content="true")
-///
-/// let zero = @rational.new(0L, 1L).unwrap()
-/// inspect(zero.is_integer(), content="true")
-/// ```
-///
+#deprecated("Use @rational in module moonbitlang/x instead. Note that you need to rename Rational to Rational64.")
+#coverage.skip
 pub fn is_integer(self : T) -> Bool {
   self.denominator == 1L
 }
 
 ///|
+#deprecated("Use @rational in module moonbitlang/x instead. Note that you need to rename Rational to Rational64.")
+#coverage.skip
 pub fnalias T::(neg, abs, ceil, floor, trunc)
-
-///|
-test "op_add" {
-  // 1/2 + 1/3 = 5/6
-  let a = new_unchecked(1L, 2L)
-  let b = new_unchecked(1L, 3L)
-  let c = a + b
-  assert_eq(c.numerator, 5L)
-  assert_eq(c.denominator, 6L)
-
-  // 1/2 + 1/2 = 1
-  let a = new_unchecked(1L, 2L)
-  let b = new_unchecked(1L, 2L)
-  let c = a + b
-  assert_eq(c.numerator, 1L)
-  assert_eq(c.denominator, 1L)
-
-  // 1/2 + 1/6 = 2/3
-  let a = new_unchecked(1L, 2L)
-  let b = new_unchecked(1L, 6L)
-  let c = a + b
-  assert_eq(c.numerator, 2L)
-
-  // -1/2 + 1/2 = 0
-  let a = new_unchecked(-1L, 2L)
-  let b = new_unchecked(1L, 2L)
-  let c = a + b
-  assert_eq(c.numerator, 0L)
-
-  // -1/2 + -1/2 = -1
-  let a = new_unchecked(-1L, 2L)
-  let b = new_unchecked(-1L, 2L)
-  let c = a + b
-  assert_eq(c.numerator, -1L)
-  assert_eq(c.denominator, 1L)
-}
-
-///|
-test "op_sub" {
-  // 1/2 - 1/3 = 1/6
-  let a = new_unchecked(1L, 2L)
-  let b = new_unchecked(1L, 3L)
-  let c = a - b
-  assert_eq(c.numerator, 1L)
-  assert_eq(c.denominator, 6L)
-
-  // 1/2 - 1/2 = 0
-  let a = new_unchecked(1L, 2L)
-  let b = new_unchecked(1L, 2L)
-  let c = a - b
-  assert_eq(c.numerator, 0L)
-
-  // 1/2 - 1/6 = 1/3
-  let a = new_unchecked(1L, 2L)
-  let b = new_unchecked(1L, 6L)
-  let c = a - b
-  assert_eq(c.numerator, 1L)
-  assert_eq(c.denominator, 3L)
-
-  // -1/2 - 1/2 = -1
-  let a = new_unchecked(-1L, 2L)
-  let b = new_unchecked(1L, 2L)
-  let c = a - b
-  assert_eq(c.numerator, -1L)
-  assert_eq(c.denominator, 1L)
-
-  // -1/2 - -1/2 = 0
-  let a = new_unchecked(-1L, 2L)
-  let b = new_unchecked(-1L, 2L)
-  let c = a - b
-  assert_eq(c.numerator, 0L)
-}
-
-///|
-test "op_mul" {
-  // 1/2 * 2/3 = 1/3
-  let a = new_unchecked(1L, 2L)
-  let b = new_unchecked(2L, 3L)
-  let c = a * b
-  assert_eq(c.numerator, 1L)
-  assert_eq(c.denominator, 3L)
-
-  // -4/3 * 3/4 = -1
-  let a = new_unchecked(-4L, 3L)
-  let b = new_unchecked(3L, 4L)
-  let c = a * b
-  assert_eq(c.numerator, -1L)
-  assert_eq(c.denominator, 1L)
-
-  // 1024/42 * 0 = 0
-  let a = new_unchecked(1024L, 42L)
-  let b = new_unchecked(0L, 1L)
-  let c = a * b
-  assert_eq(c.numerator, 0L)
-  assert_eq(c.denominator, 1L)
-}
-
-///|
-test "op_div" {
-  // 1/2 / 2/3 = 3/4
-  let a = new_unchecked(1L, 2L)
-  let b = new_unchecked(2L, 3L)
-  let c = a / b
-  assert_eq(c.numerator, 3L)
-  assert_eq(c.denominator, 4L)
-
-  // 1/2 / -2/3 = -3/4
-  let a = new_unchecked(1L, 2L)
-  let b = new_unchecked(-2L, 3L)
-  let c = a / b
-  assert_eq(c.numerator, -3L)
-  assert_eq(c.denominator, 4L)
-
-  // 0 / 1 = 0
-  let a = new_unchecked(0L, 1L)
-  let b = new_unchecked(1L, 1L)
-  let c = a / b
-  assert_eq(c.numerator, 0L)
-  assert_eq(c.denominator, 1L)
-}
-
-///|
-test "reciprocal" {
-  // 1/2 -> 2/1
-  let a = new_unchecked(1L, 2L)
-  let b = a.reciprocal()
-  assert_eq(b.numerator, 2L)
-  assert_eq(b.denominator, 1L)
-
-  // -1/2 -> -2/1
-  let a = new_unchecked(-1L, 2L)
-  let b = a.reciprocal()
-  assert_eq(b.numerator, -2L)
-  assert_eq(b.denominator, 1L)
-}
-
-///|
-test "neg" {
-  // 1/2 -> -1/2
-  let a = new_unchecked(1L, 2L)
-  let b = neg(a)
-  assert_eq(b.numerator, -1L)
-  assert_eq(b.denominator, 2L)
-
-  // -1/2 -> 1/2
-  let a = new_unchecked(-1L, 2L)
-  let b = neg(a)
-  assert_eq(b.numerator, 1L)
-  assert_eq(b.denominator, 2L)
-}
-
-///|
-test "abs" {
-  // 1/2 -> 1/2
-  let a = new_unchecked(1L, 2L)
-  let b = abs(a)
-  assert_eq(b.numerator, 1L)
-  assert_eq(b.denominator, 2L)
-
-  // -1/2 -> 1/2
-  let a = new_unchecked(-1L, 2L)
-  let b = abs(a)
-  assert_eq(b.numerator, 1L)
-  assert_eq(b.denominator, 2L)
-}
-
-///|
-test "to_double" {
-  // 1/2 -> 0.5
-  let a = new_unchecked(1L, 2L)
-  let b = a.to_double()
-  assert_eq(b, 0.5)
-
-  // -1/2 -> -0.5
-  let a = new_unchecked(-1L, 2L)
-  let b = a.to_double()
-  assert_eq(b, -0.5)
-}
-
-///|
-test "ceil" {
-  // 1/2 -> 1
-  let a = new_unchecked(1L, 2L)
-  let b = ceil(a)
-  assert_eq(b, 1L)
-
-  // -1/2 -> 0
-  let a = new_unchecked(-1L, 2L)
-  let b = ceil(a)
-  assert_eq(b, 0L)
-
-  // -2/2 -> -1
-  let a = new_unchecked(-2L, 2L)
-  let b = ceil(a)
-  assert_eq(b, -1L)
-
-  // 2/2 -> 1
-  let a = new_unchecked(2L, 2L)
-  let b = ceil(a)
-  assert_eq(b, 1L)
-}
-
-///|
-test "floor" {
-  // 1/2 -> 0
-  let a = new_unchecked(1L, 2L)
-  let b = floor(a)
-  assert_eq(b, 0L)
-
-  // -1/2 -> -1
-  let a = new_unchecked(-1L, 2L)
-  let b = floor(a)
-  assert_eq(b, -1L)
-
-  // -2/2 -> -1
-  let a = new_unchecked(-2L, 2L)
-  let b = floor(a)
-  assert_eq(b, -1L)
-
-  // 2/2 -> 1
-  let a = new_unchecked(2L, 2L)
-  let b = floor(a)
-  assert_eq(b, 1L)
-}
-
-///|
-test "trunc" {
-  // 1/2 -> 0
-  let a = new_unchecked(1L, 2L)
-  let b = trunc(a)
-  assert_eq(b, 0L)
-
-  // -1/2 -> 0
-  let a = new_unchecked(-1L, 2L)
-  let b = trunc(a)
-  assert_eq(b, 0L)
-}
-
-///|
-test "fract" {
-  // 1/2 -> 1/2
-  let a = new_unchecked(1L, 2L)
-  let b = a.fract()
-  assert_eq(b.numerator, 1L)
-  assert_eq(b.denominator, 2L)
-
-  // -1/2 -> -1/2
-  let a = new_unchecked(-1L, 2L)
-  let b = a.fract()
-  assert_eq(b.numerator, -1L)
-  assert_eq(b.denominator, 2L)
-
-  // 3/2 -> 1/2
-  let a = new_unchecked(3L, 2L)
-  let b = a.fract()
-  assert_eq(b.numerator, 1L)
-  assert_eq(b.denominator, 2L)
-
-  // -3/2 -> -1/2
-  let a = new_unchecked(-3L, 2L)
-  let b = a.fract()
-  assert_eq(b.numerator, -1L)
-  assert_eq(b.denominator, 2L)
-}
-
-///|
-test "to_string" {
-  // 1/2 -> "1/2"
-  let a = new_unchecked(1L, 2L)
-  let b = a.to_string()
-  assert_eq(b, "1/2")
-
-  // 4/4 -> "1"
-  let a = new_unchecked(4L, 4L)
-  let b = a.to_string()
-  assert_eq(b, "1")
-
-  // 0/1 -> "0"
-  let a = new_unchecked(0L, 1L)
-  let b = a.to_string()
-  assert_eq(b, "0")
-}
-
-///|
-test "is_integer" {
-  // 1/2 is not an integer
-  let a = new_unchecked(1L, 2L)
-  assert_false(a.is_integer())
-
-  // 1 is an integer
-  let a = new_unchecked(1L, 1L)
-  assert_true(a.is_integer())
-
-  // 0 is an integer
-  let a = new_unchecked(0L, 1L)
-  assert_true(a.is_integer())
-
-  // -1 is an integer
-  let a = new_unchecked(-1L, 1L)
-  assert_true(a.is_integer())
-}
-
-///|
-test "eq and compare" {
-  // 1/2 < 2/3
-  let a = new_unchecked(1L, 2L)
-  let b = new_unchecked(2L, 3L)
-  assert_eq(a.compare(b), -1)
-  assert_true(a != b)
-
-  // -1/2 > -2/3
-  let a = new_unchecked(-1L, 2L)
-  let b = new_unchecked(-2L, 3L)
-  assert_eq(a.compare(b), 1)
-  assert_true(a != b)
-
-  // 1/2 == 1/2
-  let a = new_unchecked(1L, 2L)
-  let b = new_unchecked(1L, 2L)
-  assert_eq(a.compare(b), 0)
-  assert_true(a == b)
-}
-
-///|
-test "from_double normal case" {
-  let result = try! from_double(0.5)
-  assert_eq(result, new_unchecked(1L, 2L))
-}
-
-///|
-test "from_double edge case" {
-  let result = try? from_double(9_223_372_036_800_000_000.0)
-  assert_eq(result, Ok(new_unchecked(9_223_372_036_800_000_000L, 1L)))
-}

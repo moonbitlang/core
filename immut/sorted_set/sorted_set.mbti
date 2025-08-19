@@ -19,6 +19,8 @@ fn[A : Compare] of(FixedArray[A]) -> T[A]
 
 fn[A] singleton(A) -> T[A]
 
+// Errors
+
 // Types and methods
 type T[A]
 fn[A : Compare] T::add(Self[A], A) -> Self[A]

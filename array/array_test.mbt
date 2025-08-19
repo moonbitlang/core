@@ -222,7 +222,7 @@ test "Array[String]::join" {
   inspect(["a", "b", "c"].join(" "), content="a b c")
   inspect(["123", "456"].join(""), content="123456")
   inspect(["aaa", "bbb", "ccc"].join(" "), content="aaa bbb ccc")
-  inspect([].join(" "))
+  inspect(([] : Array[@string.View]).join(" "))
 }
 
 ///|
@@ -234,5 +234,35 @@ test "Array[View]::join" {
   inspect(["a", "b", "c"][:].join(" "), content="a b c")
   inspect(["123", "456"][:].join(""), content="123456")
   inspect(["aaa", "bbb", "ccc"][:].join(" "), content="aaa bbb ccc")
-  inspect([][:].join(" "))
+  inspect(([] : Array[String])[:].join(" "))
+}
+
+///|
+test "fill" {
+  let arr = [1, 2, 3, 4, 5]
+  arr.fill(0)
+  inspect(arr, content="[0, 0, 0, 0, 0]")
+  let arr2 = [1, 2, 3, 4, 5]
+  arr2.fill(99, start=1, end=3)
+  inspect(arr2, content="[1, 99, 99, 4, 5]")
+  let arr3 = ["a", "b", "c", "d"]
+  arr3.fill("x", start=2)
+  inspect(
+    arr3,
+    content=(
+      #|["a", "b", "x", "x"]
+    ),
+  )
+}
+
+///|
+test "panic fill with invalid start" {
+  let arr = [1, 2, 3, 4, 5]
+  arr.fill(0, start=-1)
+}
+
+///|
+test "panic fill with invalid end" {
+  let arr = [1, 2, 3, 4, 5]
+  arr.fill(0, start=2, end=10)
 }

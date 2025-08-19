@@ -4,22 +4,29 @@ package "moonbitlang/core/builtin"
 // Values
 fn[T] abort(String) -> T
 
-fn[T : Eq + Show] assert_eq(T, T, msg? : String, loc~ : SourceLoc = _) -> Unit raise
+#callsite(autofill(loc))
+fn[T : Eq + Show] assert_eq(T, T, msg? : String, loc~ : SourceLoc) -> Unit raise
 
-fn assert_false(Bool, msg? : String, loc~ : SourceLoc = _) -> Unit raise
+#callsite(autofill(loc))
+fn assert_false(Bool, msg? : String, loc~ : SourceLoc) -> Unit raise
 
-fn[T : Eq + Show] assert_not_eq(T, T, msg? : String, loc~ : SourceLoc = _) -> Unit raise
+#callsite(autofill(loc))
+fn[T : Eq + Show] assert_not_eq(T, T, msg? : String, loc~ : SourceLoc) -> Unit raise
 
-fn assert_true(Bool, msg? : String, loc~ : SourceLoc = _) -> Unit raise
+#callsite(autofill(loc))
+fn assert_true(Bool, msg? : String, loc~ : SourceLoc) -> Unit raise
 
 #deprecated
-fn[T] dump(T, name? : String, loc~ : SourceLoc = _) -> T
+#callsite(autofill(loc))
+fn[T] dump(T, name? : String, loc~ : SourceLoc) -> T
 
-fn[T] fail(String, loc~ : SourceLoc = _) -> T raise Failure
+#callsite(autofill(loc))
+fn[T] fail(String, loc~ : SourceLoc) -> T raise Failure
 
 fn[T] ignore(T) -> Unit
 
-fn inspect(&Show, content~ : String = .., loc~ : SourceLoc = _, args_loc~ : ArgsLoc = _) -> Unit raise InspectError
+#callsite(autofill(args_loc, loc))
+fn inspect(&Show, content? : String, loc~ : SourceLoc, args_loc~ : ArgsLoc) -> Unit raise InspectError
 
 fn not(Bool) -> Bool
 
@@ -41,8 +48,19 @@ fn[T : Show] println(T) -> Unit
 
 fn[T : Show] repr(T) -> String
 
+// Errors
+pub(all) suberror BenchError String
+
+pub(all) suberror Failure String
+impl Show for Failure
+impl ToJson for Failure
+
+pub(all) suberror InspectError String
+
+pub(all) suberror SnapshotError String
+
 // Types and methods
-pub(all) type ArgsLoc Array[SourceLoc?]
+pub(all) struct ArgsLoc(Array[SourceLoc?])
 fn ArgsLoc::inner(Self) -> Array[SourceLoc?]
 fn ArgsLoc::to_json(Self) -> String
 impl Show for ArgsLoc
@@ -51,7 +69,7 @@ type Array[T]
 fn[T] Array::append(Self[T], Self[T]) -> Unit
 fn[T : Compare] Array::binary_search(Self[T], T) -> Result[Int, Int]
 fn[T] Array::binary_search_by(Self[T], (T) -> Int) -> Result[Int, Int]
-fn[A] Array::blit_to(Self[A], Self[A], len~ : Int, src_offset~ : Int = .., dst_offset~ : Int = ..) -> Unit
+fn[A] Array::blit_to(Self[A], Self[A], len~ : Int, src_offset? : Int, dst_offset? : Int) -> Unit
 fn[T] Array::capacity(Self[T]) -> Int
 fn[T] Array::chunk_by(Self[T], (T, T) -> Bool raise?) -> Self[Self[T]] raise?
 fn[T] Array::chunks(Self[T], Int) -> Self[Self[T]]
@@ -63,6 +81,7 @@ fn[T] Array::each(Self[T], (T) -> Unit raise?) -> Unit raise?
 fn[T] Array::eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?
 fn[T : Eq] Array::ends_with(Self[T], Self[T]) -> Bool
 fn[T] Array::extract_if(Self[T], (T) -> Bool) -> Self[T]
+fn[A] Array::fill(Self[A], A, start? : Int, end? : Int) -> Unit
 fn[T] Array::filter(Self[T], (T) -> Bool raise?) -> Self[T] raise?
 #deprecated
 fn[T] Array::find_index(Self[T], (T) -> Bool) -> Int?
@@ -90,8 +109,8 @@ fn[T, U] Array::map(Self[T], (T) -> U raise?) -> Self[U] raise?
 fn[T] Array::map_inplace(Self[T], (T) -> T raise?) -> Unit raise?
 fn[T, U] Array::mapi(Self[T], (Int, T) -> U raise?) -> Self[U] raise?
 fn[T] Array::mapi_inplace(Self[T], (Int, T) -> T raise?) -> Unit raise?
-fn[T] Array::new(capacity~ : Int = ..) -> Self[T]
-fn[T] Array::op_as_view(Self[T], start~ : Int = .., end? : Int) -> ArrayView[T]
+fn[T] Array::new(capacity? : Int) -> Self[T]
+fn[T] Array::op_as_view(Self[T], start? : Int, end? : Int) -> ArrayView[T]
 fn[T] Array::op_get(Self[T], Int) -> T
 fn[T] Array::op_set(Self[T], Int, T) -> Unit
 fn[T] Array::pop(Self[T]) -> T?
@@ -137,18 +156,12 @@ impl[X : ToJson] ToJson for Array[X]
 
 type ArrayView[T]
 fn[T] ArrayView::length(Self[T]) -> Int
-fn[T] ArrayView::op_as_view(Self[T], start~ : Int = .., end? : Int) -> Self[T]
+fn[T] ArrayView::op_as_view(Self[T], start? : Int, end? : Int) -> Self[T]
 fn[T] ArrayView::op_get(Self[T], Int) -> T
 fn[T] ArrayView::op_set(Self[T], Int, T) -> Unit
 fn[T] ArrayView::swap(Self[T], Int, Int) -> Unit
 fn[T] ArrayView::unsafe_get(Self[T], Int) -> T
 impl[X : ToJson] ToJson for ArrayView[X]
-
-pub(all) suberror BenchError String
-
-pub(all) suberror Failure String
-impl Show for Failure
-impl ToJson for Failure
 
 type Hasher
 fn[T : Hash] Hasher::combine(Self, T) -> Unit
@@ -165,9 +178,7 @@ fn Hasher::combine_uint(Self, UInt) -> Unit
 fn Hasher::combine_uint64(Self, UInt64) -> Unit
 fn Hasher::combine_unit(Self) -> Unit
 fn Hasher::finalize(Self) -> Int
-fn Hasher::new(seed~ : Int = ..) -> Self
-
-pub(all) suberror InspectError String
+fn Hasher::new(seed? : Int) -> Self
 
 type Iter[T]
 fn[T] Iter::all(Self[T], (T) -> Bool) -> Bool
@@ -207,7 +218,7 @@ fn[T : Compare] Iter::maximum(Self[T]) -> T?
 fn[T : Compare] Iter::minimum(Self[T]) -> T?
 fn[T] Iter::new(((T) -> IterResult) -> IterResult) -> Self[T]
 fn[T] Iter::nth(Self[T], Int) -> T?
-fn[A] Iter::op_as_view(Self[A], start~ : Int = .., end? : Int) -> Self[A]
+fn[A] Iter::op_as_view(Self[A], start? : Int, end? : Int) -> Self[A]
 fn[T] Iter::peek(Self[T]) -> T?
 #deprecated
 fn[T] Iter::prepend(Self[T], T) -> Self[T]
@@ -273,7 +284,7 @@ fn[K, V] Map::iter(Self[K, V]) -> Iter[(K, V)]
 fn[K, V] Map::iter2(Self[K, V]) -> Iter2[K, V]
 fn[K, V] Map::keys(Self[K, V]) -> Iter[K]
 fn[K, V, V2] Map::map(Self[K, V], (K, V) -> V2) -> Self[K, V2]
-fn[K, V] Map::new(capacity~ : Int = ..) -> Self[K, V]
+fn[K, V] Map::new(capacity? : Int) -> Self[K, V]
 fn[K : Hash + Eq, V] Map::of(FixedArray[(K, V)]) -> Self[K, V]
 #deprecated
 fn[K : Hash + Eq, V] Map::op_get(Self[K, V], K) -> V?
@@ -282,13 +293,12 @@ fn[K : Hash + Eq, V] Map::remove(Self[K, V], K) -> Unit
 fn[K : Hash + Eq, V] Map::set(Self[K, V], K, V) -> Unit
 fn[K, V] Map::size(Self[K, V]) -> Int
 fn[K, V] Map::to_array(Self[K, V]) -> Array[(K, V)]
+fn[K : Hash + Eq, V] Map::update(Self[K, V], K, (V?) -> V?) -> Unit
 fn[K, V] Map::values(Self[K, V]) -> Iter[V]
 impl[K, V] Default for Map[K, V]
 impl[K : Hash + Eq, V : Eq] Eq for Map[K, V]
 impl[K : Show, V : Show] Show for Map[K, V]
 impl[K : Show, V : ToJson] ToJson for Map[K, V]
-
-pub(all) suberror SnapshotError String
 
 pub(all) type SourceLoc
 fn SourceLoc::to_string(Self) -> String
@@ -296,7 +306,7 @@ impl Show for SourceLoc
 
 type StringBuilder
 fn StringBuilder::is_empty(Self) -> Bool
-fn StringBuilder::new(size_hint~ : Int = ..) -> Self
+fn StringBuilder::new(size_hint? : Int) -> Self
 fn StringBuilder::reset(Self) -> Unit
 fn StringBuilder::to_string(Self) -> String
 fn StringBuilder::write_iter(Self, Iter[Char]) -> Unit
@@ -307,7 +317,7 @@ impl Show for StringBuilder
 type UninitializedArray[T]
 fn[A] UninitializedArray::length(Self[A]) -> Int
 fn[T] UninitializedArray::make(Int) -> Self[T]
-fn[T] UninitializedArray::op_as_view(Self[T], start~ : Int = .., end? : Int) -> ArrayView[T]
+fn[T] UninitializedArray::op_as_view(Self[T], start? : Int, end? : Int) -> ArrayView[T]
 fn[T] UninitializedArray::op_get(Self[T], Int) -> T
 fn[T] UninitializedArray::op_set(Self[T], Int, T) -> Unit
 fn[T] UninitializedArray::unsafe_blit(Self[T], Int, Self[T], Int, Int) -> Unit
@@ -337,12 +347,16 @@ fn Char::to_uint(Char) -> UInt
 
 #deprecated
 fn Int::asr(Int, Int) -> Int
+fn Int::clamp(Int, min~ : Int, max~ : Int) -> Int
 fn Int::clz(Int) -> Int
 fn Int::ctz(Int) -> Int
+fn Int::is_leading_surrogate(Int) -> Bool
 fn Int::is_neg(Int) -> Bool
 fn Int::is_non_neg(Int) -> Bool
 fn Int::is_non_pos(Int) -> Bool
 fn Int::is_pos(Int) -> Bool
+fn Int::is_surrogate(Int) -> Bool
+fn Int::is_trailing_surrogate(Int) -> Bool
 fn Int::land(Int, Int) -> Int
 fn Int::lnot(Int) -> Int
 fn Int::lor(Int, Int) -> Int
@@ -351,6 +365,9 @@ fn Int::lsl(Int, Int) -> Int
 #deprecated
 fn Int::lsr(Int, Int) -> Int
 fn Int::lxor(Int, Int) -> Int
+fn Int::max(Int, Int) -> Int
+fn Int::min(Int, Int) -> Int
+fn Int::next_power_of_two(Int) -> Int
 fn Int::popcnt(Int) -> Int
 fn Int::reinterpret_as_float(Int) -> Float
 fn Int::reinterpret_as_uint(Int) -> UInt
@@ -364,20 +381,20 @@ fn Int::to_double(Int) -> Double
 fn Int::to_float(Int) -> Float
 fn Int::to_int16(Int) -> Int16
 fn Int::to_int64(Int) -> Int64
-fn Int::to_string(Int, radix~ : Int = ..) -> String
+fn Int::to_string(Int, radix? : Int) -> String
 #deprecated
 fn Int::to_uint(Int) -> UInt
 fn Int::to_uint16(Int) -> UInt16
 fn Int::to_uint64(Int) -> UInt64
 fn Int::unsafe_to_char(Int) -> Char
-fn Int::until(Int, Int, step~ : Int = .., inclusive~ : Bool = ..) -> Iter[Int]
+fn Int::until(Int, Int, step? : Int, inclusive? : Bool) -> Iter[Int]
 #deprecated
-fn Int::upto(Int, Int, inclusive~ : Bool = ..) -> Iter[Int]
+fn Int::upto(Int, Int, inclusive? : Bool) -> Iter[Int]
 
 fn Int16::to_byte(Int16) -> Byte
 fn Int16::to_int(Int16) -> Int
 fn Int16::to_int64(Int16) -> Int64
-fn Int16::to_string(Int16, radix~ : Int = ..) -> String
+fn Int16::to_string(Int16, radix? : Int) -> String
 
 #deprecated
 fn Int64::asr(Int64, Int) -> Int64
@@ -400,13 +417,13 @@ fn Int64::to_double(Int64) -> Double
 fn Int64::to_float(Int64) -> Float
 fn Int64::to_int(Int64) -> Int
 fn Int64::to_int16(Int64) -> Int16
-fn Int64::to_string(Int64, radix~ : Int = ..) -> String
+fn Int64::to_string(Int64, radix? : Int) -> String
 fn Int64::to_uint16(Int64) -> UInt16
 #deprecated
 fn Int64::to_uint64(Int64) -> UInt64
-fn Int64::until(Int64, Int64, step~ : Int64 = .., inclusive~ : Bool = ..) -> Iter[Int64]
+fn Int64::until(Int64, Int64, step? : Int64, inclusive? : Bool) -> Iter[Int64]
 #deprecated
-fn Int64::upto(Int64, Int64, inclusive~ : Bool = ..) -> Iter[Int64]
+fn Int64::upto(Int64, Int64, inclusive? : Bool) -> Iter[Int64]
 
 fn UInt::clz(UInt) -> Int
 fn UInt::ctz(UInt) -> Int
@@ -431,16 +448,16 @@ fn UInt::to_double(UInt) -> Double
 fn UInt::to_float(UInt) -> Float
 #deprecated
 fn UInt::to_int(UInt) -> Int
-fn UInt::to_string(UInt, radix~ : Int = ..) -> String
+fn UInt::to_string(UInt, radix? : Int) -> String
 fn UInt::to_uint64(UInt) -> UInt64
 fn UInt::trunc_double(Double) -> UInt
 #deprecated
-fn UInt::upto(UInt, UInt, inclusive~ : Bool = ..) -> Iter[UInt]
+fn UInt::upto(UInt, UInt, inclusive? : Bool) -> Iter[UInt]
 
 fn UInt16::to_byte(UInt16) -> Byte
 fn UInt16::to_int(UInt16) -> Int
 fn UInt16::to_int64(UInt16) -> Int64
-fn UInt16::to_string(UInt16, radix~ : Int = ..) -> String
+fn UInt16::to_string(UInt16, radix? : Int) -> String
 
 fn UInt64::clz(UInt64) -> Int
 fn UInt64::ctz(UInt64) -> Int
@@ -463,20 +480,20 @@ fn UInt64::to_float(UInt64) -> Float
 fn UInt64::to_int(UInt64) -> Int
 #deprecated
 fn UInt64::to_int64(UInt64) -> Int64
-fn UInt64::to_string(UInt64, radix~ : Int = ..) -> String
+fn UInt64::to_string(UInt64, radix? : Int) -> String
 fn UInt64::to_uint(UInt64) -> UInt
 fn UInt64::trunc_double(Double) -> UInt64
 #deprecated
-fn UInt64::upto(UInt64, UInt64, inclusive~ : Bool = ..) -> Iter[UInt64]
+fn UInt64::upto(UInt64, UInt64, inclusive? : Bool) -> Iter[UInt64]
 
 fn Float::op_neq(Float, Float) -> Bool
 fn Float::reinterpret_as_int(Float) -> Int
 fn Float::reinterpret_as_uint(Float) -> UInt
 fn Float::sqrt(Float) -> Float
 fn Float::to_double(Float) -> Double
-fn Float::until(Float, Float, step~ : Float = .., inclusive~ : Bool = ..) -> Iter[Float]
+fn Float::until(Float, Float, step? : Float, inclusive? : Bool) -> Iter[Float]
 #deprecated
-fn Float::upto(Float, Float, inclusive~ : Bool = ..) -> Iter[Float]
+fn Float::upto(Float, Float, inclusive? : Bool) -> Iter[Float]
 
 fn Double::convert_uint(UInt) -> Double
 fn Double::convert_uint64(UInt64) -> Double
@@ -492,11 +509,11 @@ fn Double::to_float(Double) -> Float
 fn Double::to_int(Double) -> Int
 fn Double::to_int64(Double) -> Int64
 fn Double::to_uint64(Double) -> UInt64
-fn Double::until(Double, Double, step~ : Double = .., inclusive~ : Bool = ..) -> Iter[Double]
+fn Double::until(Double, Double, step? : Double, inclusive? : Bool) -> Iter[Double]
 #deprecated
-fn Double::upto(Double, Double, inclusive~ : Bool = ..) -> Iter[Double]
+fn Double::upto(Double, Double, inclusive? : Bool) -> Iter[Double]
 
-fn String::char_length(String, start_offset~ : Int = .., end_offset? : Int) -> Int
+fn String::char_length(String, start_offset? : Int, end_offset? : Int) -> Int
 #deprecated
 fn String::charcode_at(String, Int) -> Int
 #deprecated
@@ -504,12 +521,12 @@ fn String::charcode_length(String) -> Int
 #deprecated
 fn String::codepoint_at(String, Int) -> Char
 #deprecated
-fn String::codepoint_length(String, start_offset~ : Int = .., end_offset? : Int) -> Int
+fn String::codepoint_length(String, start_offset? : Int, end_offset? : Int) -> Int
 fn String::escape(String) -> String
 fn String::length(String) -> Int
 fn String::make(Int, Char) -> String
 fn String::op_get(String, Int) -> Int
-fn String::substring(String, start~ : Int = .., end? : Int) -> String
+fn String::substring(String, start? : Int, end? : Int) -> String
 fn String::to_string(String) -> String
 #deprecated
 fn String::unsafe_char_at(String, Int) -> Char
@@ -522,8 +539,8 @@ fn[T : Compare] FixedArray::binary_search(Self[T], T) -> Result[Int, Int]
 fn[T] FixedArray::binary_search_by(Self[T], (T) -> Int raise?) -> Result[Int, Int] raise?
 fn FixedArray::blit_from_bytes(Self[Byte], Int, Bytes, Int, Int) -> Unit
 fn FixedArray::blit_from_string(Self[Byte], Int, String, Int, Int) -> Unit
-fn[A] FixedArray::blit_to(Self[A], Self[A], len~ : Int, src_offset~ : Int = .., dst_offset~ : Int = ..) -> Unit
-fn[T] FixedArray::fill(Self[T], T) -> Unit
+fn[A] FixedArray::blit_to(Self[A], Self[A], len~ : Int, src_offset? : Int, dst_offset? : Int) -> Unit
+fn[T] FixedArray::fill(Self[T], T, start? : Int, end? : Int) -> Unit
 fn[T] FixedArray::get(Self[T], Int) -> T?
 fn[T] FixedArray::is_empty(Self[T]) -> Bool
 fn[T] FixedArray::iter(Self[T]) -> Iter[T]
@@ -545,15 +562,15 @@ fn[T] FixedArray::unsafe_set(Self[T], Int, T) -> Unit
 fn Bytes::copy(Bytes) -> Bytes
 fn Bytes::length(Bytes) -> Int
 fn Bytes::make(Int, Byte) -> Bytes
-fn Bytes::makei(Int, (Int) -> Byte) -> Bytes
+fn[] Bytes::makei(Int, (Int) -> Byte raise?) -> Bytes raise?
 fn Bytes::new(Int) -> Bytes
 #deprecated
 fn Bytes::of_string(String) -> Bytes
 fn Bytes::op_get(Bytes, Int) -> Byte
-fn Bytes::to_unchecked_string(Bytes, offset~ : Int = .., length? : Int) -> String
+fn Bytes::to_unchecked_string(Bytes, offset? : Int, length? : Int) -> String
 fn Bytes::unsafe_get(Bytes, Int) -> Byte
 
-fn[T : Show] Logger::write_iter(&Self, Iter[T], prefix~ : String = .., suffix~ : String = .., sep~ : String = .., trailing~ : Bool = ..) -> Unit
+fn[T : Show] Logger::write_iter(&Self, Iter[T], prefix? : String, suffix? : String, sep? : String, trailing? : Bool) -> Unit
 fn[Obj : Show] Logger::write_object(&Self, Obj) -> Unit
 
 // Type aliases

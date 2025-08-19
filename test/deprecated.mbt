@@ -13,9 +13,10 @@
 // limitations under the License.
 
 ///|
+#callsite(autofill(loc))
 #deprecated("Use built-in `assert_eq` instead")
 #coverage.skip
-pub fn[T : Show + Eq] eq(a : T, b : T, loc~ : SourceLoc = _) -> Unit raise {
+pub fn[T : Show + Eq] eq(a : T, b : T, loc~ : SourceLoc) -> Unit raise {
   if a != b {
     let a = debug_string(a)
     let b = debug_string(b)
@@ -24,9 +25,10 @@ pub fn[T : Show + Eq] eq(a : T, b : T, loc~ : SourceLoc = _) -> Unit raise {
 }
 
 ///|
+#callsite(autofill(loc))
 #deprecated("Use built-in `assert_not_eq` instead")
 #coverage.skip
-pub fn[T : Show + Eq] ne(a : T, b : T, loc~ : SourceLoc = _) -> Unit raise {
+pub fn[T : Show + Eq] ne(a : T, b : T, loc~ : SourceLoc) -> Unit raise {
   if !(a != b) {
     let a = debug_string(a)
     let b = debug_string(b)
@@ -35,9 +37,10 @@ pub fn[T : Show + Eq] ne(a : T, b : T, loc~ : SourceLoc = _) -> Unit raise {
 }
 
 ///|
+#callsite(autofill(loc))
 #deprecated("Use built-in `assert_true` instead")
 #coverage.skip
-pub fn is_true(x : Bool, loc~ : SourceLoc = _) -> Unit raise {
+pub fn is_true(x : Bool, loc~ : SourceLoc) -> Unit raise {
   if !x {
     let x = debug_string(x)
     fail("`\{x}` is not true", loc~)
@@ -45,9 +48,10 @@ pub fn is_true(x : Bool, loc~ : SourceLoc = _) -> Unit raise {
 }
 
 ///|
+#callsite(autofill(loc))
 #deprecated("Use built-in `assert_false` instead")
 #coverage.skip
-pub fn is_false(x : Bool, loc~ : SourceLoc = _) -> Unit raise {
+pub fn is_false(x : Bool, loc~ : SourceLoc) -> Unit raise {
   if x {
     let x = debug_string(x)
     fail("`\{x}` is not false", loc~)

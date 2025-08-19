@@ -72,7 +72,7 @@ priv trait Output {
 }
 
 ///|
-priv type StringBuffer Array[String]
+priv struct StringBuffer(Array[String])
 
 ///|
 impl Output for StringBuffer with output(self : StringBuffer, content : String) -> Unit {
@@ -106,8 +106,8 @@ pub fn end() -> Unit {
   let sbuf = StringBuffer::StringBuffer([])
   coverage_log(counters.val, sbuf)
   let line_buf = StringBuilder::new()
-  for i in 0..<sbuf.inner().length() {
-    let str = sbuf.inner()[i]
+  for i in 0..<sbuf.0.length() {
+    let str = sbuf.0[i]
     let mut start = 0
     for j in 0..<str.length() {
       if str.unsafe_charcode_at(j) == '\n' {

@@ -438,3 +438,61 @@ test "trigger grow" {
   }
   inspect(set, content="{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}")
 }
+
+///|
+test "is_disjoint" {
+  let set1 = Set::of(["a", "b"])
+  let set2 = Set::of(["c", "d"])
+  let set3 = Set::of(["b", "c"])
+  inspect(set1.is_disjoint(set2), content="true")
+  inspect(set1.is_disjoint(set3), content="false")
+}
+
+///|
+test "is_subset" {
+  let set1 = Set::of(["a", "b"])
+  let set2 = Set::of(["a", "b", "c"])
+  let set3 = Set::of(["a", "d"])
+  inspect(set1.is_subset(set2), content="true")
+  inspect(set1.is_subset(set3), content="false")
+  inspect(set2.is_subset(set1), content="false")
+}
+
+///|
+test "is_superset" {
+  let set1 = Set::of(["a", "b", "c"])
+  let set2 = Set::of(["a", "b"])
+  let set3 = Set::of(["a", "d"])
+  inspect(set1.is_superset(set2), content="true")
+  inspect(set1.is_superset(set3), content="false")
+  inspect(set2.is_superset(set1), content="false")
+}
+
+///|
+test "bitwise_operations" {
+  let set1 = Set::of(["a", "b", "c"])
+  let set2 = Set::of(["b", "c", "d"])
+
+  // Intersection (&)
+  let intersection = set1 & set2
+  inspect(intersection.size(), content="2")
+  inspect(intersection.contains("b"), content="true")
+  inspect(intersection.contains("c"), content="true")
+
+  // Union (|)
+  let union = set1 | set2
+  inspect(union.size(), content="4")
+  inspect(union.contains("a"), content="true")
+  inspect(union.contains("d"), content="true")
+
+  // Difference (-)
+  let diff = set1 - set2
+  inspect(diff.size(), content="1")
+  inspect(diff.contains("a"), content="true")
+
+  // Symmetric difference (^)
+  let sym_diff = set1 ^ set2
+  inspect(sym_diff.size(), content="2")
+  inspect(sym_diff.contains("a"), content="true")
+  inspect(sym_diff.contains("d"), content="true")
+}

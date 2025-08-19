@@ -34,8 +34,6 @@ pub fn new(seed~ : UInt64 = 37) -> RandomState {
 }
 
 ///|
-
-///|
 /// Clone a RandomState.
 pub fn clone(self : RandomState) -> RandomState {
   { ..self }

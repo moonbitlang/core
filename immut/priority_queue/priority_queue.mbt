@@ -78,7 +78,7 @@ pub fn[A : Compare] T::from_iter(iter : Iter[A]) -> T[A] {
 }
 
 ///|
-priv type Path Int
+priv struct Path(Int)
 
 ///|
 /// require: size >= 2
@@ -91,12 +91,12 @@ fn path(size : Int) -> Path {
 
 ///|
 fn is_left(self : Path) -> Bool {
-  (self.inner() & 1) == 0
+  (self.0 & 1) == 0
 }
 
 ///|
 fn next(self : Path) -> Path {
-  Path(self.inner() >> 1)
+  Path(self.0 >> 1)
 }
 
 ///|
@@ -301,7 +301,7 @@ pub impl[A : Hash + Compare] Hash for T[A] with hash_combine(self, hasher) {
 }
 
 ///|
-/// Compare two priority queues lexicographically by comparing their sorted contents.
+/// Compare two priority queues based on shortlex order by comparing their sorted contents.
 ///
 /// Parameters:
 ///

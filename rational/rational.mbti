@@ -2,29 +2,41 @@
 package "moonbitlang/core/rational"
 
 // Values
+#deprecated
 fn from_double(Double) -> T raise RationalError
 
+#deprecated
 fn new(Int64, Int64) -> T?
 
-// Types and methods
+// Errors
 pub(all) suberror RationalError String
 impl Eq for RationalError
 impl Show for RationalError
 impl ToJson for RationalError
 
+// Types and methods
 type T
+#deprecated
 fn T::abs(Self) -> Self
 fnalias T::abs
+#deprecated
 fn T::ceil(Self) -> Int64
 fnalias T::ceil
+#deprecated
 fn T::floor(Self) -> Int64
 fnalias T::floor
+#deprecated
 fn T::fract(Self) -> Self
+#deprecated
 fn T::is_integer(Self) -> Bool
+#deprecated
 fn T::neg(Self) -> Self
 fnalias T::neg
+#deprecated
 fn T::reciprocal(Self) -> Self
+#deprecated
 fn T::to_double(Self) -> Double
+#deprecated
 fn T::trunc(Self) -> Int64
 fnalias T::trunc
 impl Add for T

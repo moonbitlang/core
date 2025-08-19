@@ -17,6 +17,8 @@ fn[V : Compare] of(Array[V]) -> T[V]
 
 fn[V] singleton(V) -> T[V]
 
+// Errors
+
 // Types and methods
 type T[V]
 fn[V : Compare] T::add(Self[V], V) -> Unit

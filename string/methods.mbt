@@ -85,6 +85,18 @@ fn boyer_moore_horspool_find(haystack : View, needle : View) -> Int? {
 }
 
 ///|
+test "boyer_moore_horspool_find edge cases" {
+  inspect(boyer_moore_horspool_find("abc"[:], ""[:]), content="Some(0)")
+  inspect(boyer_moore_horspool_find("ab"[:], "abcd"[:]), content="None")
+}
+
+///|
+test "boyer_moore_horspool_rev_find edge cases" {
+  inspect(boyer_moore_horspool_rev_find("abc"[:], ""[:]), content="Some(3)")
+  inspect(boyer_moore_horspool_rev_find("ab"[:], "abcd"[:]), content="None")
+}
+
+///|
 /// Returns the offset of the first occurrence of the given substring. If the
 /// substring is not found, it returns None.
 pub fn String::find(self : String, str : View) -> Int? {
@@ -314,6 +326,7 @@ test "has_prefix" {
 ///   inspect("hello world".strip_suffix(" moon"), content="None")
 ///   inspect("hello".strip_suffix("hello"), content="Some(\"\")")
 /// ```
+#alias(ends_with, deprecated)
 pub fn strip_suffix(self : String, suffix : View) -> View? {
   if self.has_suffix(suffix) {
     Some(self.charcodes(end=self.length() - suffix.length()))
@@ -360,12 +373,150 @@ test "strip_suffix" {
 ///   inspect("hello world".strip_prefix("hi "), content="None")
 ///   inspect("hello".strip_prefix("hello"), content="Some(\"\")")
 /// ```
+#alias(starts_with, deprecated)
 pub fn strip_prefix(self : String, prefix : View) -> View? {
   if self.has_prefix(prefix) {
     Some(self.charcodes(start=prefix.length()))
   } else {
     None
   }
+}
+
+///|
+/// Removes the given prefix from the view if it exists.
+/// 
+/// Returns `Some(suffix)` if the view starts with the given prefix,
+/// where `suffix` is the view without the prefix.
+/// Returns `None` if the view does not start with the prefix.
+/// 
+/// # Example
+/// 
+/// ```moonbit
+///   let view = "hello world"[:]
+///   inspect(view.strip_prefix("hello "), content="Some(\"world\")")
+///   inspect(view.strip_prefix("hi "), content="None")
+///   inspect(view.strip_prefix("hello world"), content="Some(\"\")")
+/// ```
+pub fn View::strip_prefix(self : View, prefix : View) -> View? {
+  if self.has_prefix(prefix) {
+    Some(self.view(start_offset=prefix.length()))
+  } else {
+    None
+  }
+}
+
+///|
+/// Removes the given suffix from the view if it exists.
+/// 
+/// Returns `Some(prefix)` if the view ends with the given suffix,
+/// where `prefix` is the view without the suffix.
+/// Returns `None` if the view does not end with the suffix.
+/// 
+/// # Example
+/// 
+/// ```moonbit
+///   let view = "hello world"[:]
+///   inspect(view.strip_suffix(" world"), content="Some(\"hello\")")
+///   inspect(view.strip_suffix(" moon"), content="None")
+///   inspect(view.strip_suffix("hello world"), content="Some(\"\")")
+/// ```
+pub fn View::strip_suffix(self : View, suffix : View) -> View? {
+  if self.has_suffix(suffix) {
+    Some(self.view(end_offset=self.length() - suffix.length()))
+  } else {
+    None
+  }
+}
+
+///|
+/// Converts the View into an array of Chars.
+/// 
+/// # Example
+/// 
+/// ```moonbit
+///   let view = "Hello🤣xa"[1:-1]
+///   let chars = view.to_array()
+///   inspect(chars, content="['e', 'l', 'l', 'o', '🤣', 'x']")
+/// ```
+pub fn View::to_array(self : View) -> Array[Char] {
+  self
+  .iter()
+  .fold(init=Array::new(capacity=self.length()), (rv, c) => {
+    rv.push(c)
+    rv
+  })
+}
+
+///|
+/// Converts the View into bytes using UTF-16 little endian format.
+/// 
+/// # Example
+/// 
+/// ```moonbit
+///   let view = "Hellox"[1:-1]
+///   let bytes = view.to_bytes()
+///   inspect(bytes.to_unchecked_string(), content="ello")
+/// ```
+pub fn View::to_bytes(self : View) -> Bytes {
+  let array = FixedArray::make(self.length() * 2, Byte::default())
+  array.blit_from_string(0, self.data(), self.start_offset(), self.length())
+  array |> unsafe_to_bytes
+}
+
+///|
+test "View::strip_prefix" {
+  let view = "hello world"[:]
+  inspect(view.strip_prefix("hello "), content="Some(\"world\")")
+  inspect(view.strip_prefix("hi "), content="None")
+  inspect(view.strip_prefix("hello world"), content="Some(\"\")")
+  inspect(view.strip_prefix(""), content="Some(\"hello world\")")
+  let empty_view = ""[:]
+  inspect(empty_view.strip_prefix(""), content="Some(\"\")")
+  inspect(empty_view.strip_prefix("a"), content="None")
+  let unicode_view = "😀hello😃"[:]
+  inspect(unicode_view.strip_prefix("😀"), content="Some(\"hello😃\")")
+  inspect(unicode_view.strip_prefix("😃"), content="None")
+}
+
+///|
+test "View::strip_suffix" {
+  let view = "hello world"[:]
+  inspect(view.strip_suffix(" world"), content="Some(\"hello\")")
+  inspect(view.strip_suffix(" moon"), content="None")
+  inspect(view.strip_suffix("hello world"), content="Some(\"\")")
+  inspect(view.strip_suffix(""), content="Some(\"hello world\")")
+  let empty_view = ""[:]
+  inspect(empty_view.strip_suffix(""), content="Some(\"\")")
+  inspect(empty_view.strip_suffix("a"), content="None")
+  let unicode_view = "😀hello😃"[:]
+  inspect(unicode_view.strip_suffix("😃"), content="Some(\"😀hello\")")
+  inspect(unicode_view.strip_suffix("😀"), content="None")
+}
+
+///|
+test "View::to_array" {
+  let view = "Hello🤣"[:]
+  let chars = view.to_array()
+  assert_eq(chars, ['H', 'e', 'l', 'l', 'o', '🤣'])
+  let empty_view = ""[:]
+  let empty_chars = empty_view.to_array()
+  assert_eq(empty_chars, [])
+  let sub_view = "Hello World"[6:11] // "World"
+  let sub_chars = sub_view.to_array()
+  assert_eq(sub_chars, ['W', 'o', 'r', 'l', 'd'])
+}
+
+///|
+test "View::to_bytes" {
+  let view = "Hello"[:]
+  let bytes = view.to_bytes()
+  assert_eq(bytes.to_unchecked_string(), "Hello")
+  let unicode_view = "🤣🤔"[:]
+  let unicode_bytes = unicode_view.to_bytes()
+  assert_eq(unicode_bytes.to_unchecked_string(), "🤣🤔")
+  let sub_view = "Hello World"[0:5] // "Hello"
+  let sub_bytes = sub_view.to_bytes()
+  assert_eq(sub_bytes.to_unchecked_string(), "Hello")
 }
 
 ///|
@@ -656,7 +807,7 @@ pub fn View::pad_start(
   total_width : Int,
   padding_char : Char,
 ) -> String {
-  let len = self.char_length()
+  let len = self.length()
   guard len < total_width else { return self.to_string() }
   let padding = String::make(total_width - len, padding_char)
   [..padding, ..self]
@@ -671,7 +822,10 @@ pub fn pad_start(
   total_width : Int,
   padding_char : Char,
 ) -> String {
-  self[:].pad_start(total_width, padding_char)
+  let len = self.length()
+  guard len < total_width else { return self }
+  let padding = String::make(total_width - len, padding_char)
+  [..padding, ..self]
 }
 
 ///|
@@ -692,7 +846,7 @@ test "pad_start" {
   inspect(view.pad_start(5, 'x'), content="xxllo")
 
   // Test with Unicode characters
-  inspect("🌟".pad_start(3, '✨'), content="✨✨🌟")
+  inspect("🌟".pad_start(3, '✨'), content="✨🌟")
 
   // Edge cases
   inspect("abc".pad_start(0, 'x'), content="abc") // width less than string length
@@ -708,7 +862,7 @@ pub fn View::pad_end(
   total_width : Int,
   padding_char : Char,
 ) -> String {
-  let len = self.char_length()
+  let len = self.length()
   guard len < total_width else { return self.to_string() }
   let padding = String::make(total_width - len, padding_char)
   [..self, ..padding]
@@ -718,8 +872,15 @@ pub fn View::pad_end(
 /// Returns a new string with `padding_char`s appended to `self` if
 /// `self.length() < total_width`. The number of unicode characters in
 /// the returned string is `total_width` if padding is added.
-pub fn pad_end(self : String, total_width : Int, padding_char : Char) -> String {
-  self[:].pad_end(total_width, padding_char)
+pub fn String::pad_end(
+  self : String,
+  total_width : Int,
+  padding_char : Char,
+) -> String {
+  let len = self.length()
+  guard len < total_width else { return self }
+  let padding = String::make(total_width - len, padding_char)
+  [..self, ..padding]
 }
 
 ///|
@@ -740,7 +901,7 @@ test "pad_end" {
   inspect(view.pad_end(5, 'x'), content="lloxx")
 
   // Test with Unicode characters
-  inspect("🌟".pad_end(3, '✨'), content="🌟✨✨")
+  inspect("🌟".pad_end(3, '✨'), content="🌟✨")
 
   // Edge cases
   inspect("abc".pad_end(0, 'x'), content="abc") // width less than string length
@@ -1108,7 +1269,9 @@ test "View::replace_all" {
 /// Converts this string to lowercase.
 pub fn View::to_lower(self : View) -> View {
   // TODO: deal with non-ascii characters
-  guard self.find_by(_.is_ascii_uppercase()) is Some(idx) else { return self }
+  guard self.find_by(x => x.is_ascii_uppercase()) is Some(idx) else {
+    return self
+  }
   let buf = StringBuilder::new(size_hint=self.length())
   let head = self.view(end_offset=idx)
   buf.write_substring(head.data(), head.start_offset(), head.length())
@@ -1127,7 +1290,9 @@ pub fn View::to_lower(self : View) -> View {
 /// Converts this string to lowercase.
 pub fn to_lower(self : String) -> String {
   // TODO: deal with non-ascii characters
-  guard self.find_by(_.is_ascii_uppercase()) is Some(idx) else { return self }
+  guard self.find_by(x => x.is_ascii_uppercase()) is Some(idx) else {
+    return self
+  }
   let buf = StringBuilder::new(size_hint=self.length())
   let head = self.view(end_offset=idx)
   buf.write_substring(head.data(), head.start_offset(), head.length())
@@ -1315,15 +1480,15 @@ test "View::get basic cases" {
 pub fn String::get_char(self : String, idx : Int) -> Char? {
   guard idx >= 0 && idx < self.length() else { return None }
   let c = self.unsafe_charcode_at(idx)
-  if is_leading_surrogate(c) {
+  if c.is_leading_surrogate() {
     guard idx + 1 < self.length() else { return None }
     let next = self.unsafe_charcode_at(idx + 1)
-    if is_trailing_surrogate(next) {
+    if next.is_trailing_surrogate() {
       Some(code_point_of_surrogate_pair(c, next))
     } else {
       None
     }
-  } else if is_trailing_surrogate(c) {
+  } else if c.is_trailing_surrogate() {
     None
   } else {
     Some(c.unsafe_to_char())
@@ -1336,15 +1501,15 @@ pub fn String::get_char(self : String, idx : Int) -> Char? {
 pub fn View::get_char(self : View, idx : Int) -> Char? {
   guard idx >= 0 && idx < self.length() else { return None }
   let c = self.unsafe_charcode_at(idx)
-  if is_leading_surrogate(c) {
+  if c.is_leading_surrogate() {
     guard idx + 1 < self.length() else { return None }
     let next = self.unsafe_charcode_at(idx + 1)
-    if is_trailing_surrogate(next) {
+    if next.is_trailing_surrogate() {
       Some(code_point_of_surrogate_pair(c, next))
     } else {
       None
     }
-  } else if is_trailing_surrogate(c) {
+  } else if c.is_trailing_surrogate() {
     None
   } else {
     Some(c.unsafe_to_char())
