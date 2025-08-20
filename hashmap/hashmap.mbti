@@ -39,7 +39,7 @@ fn[K : Hash + Eq, V] T::op_get(Self[K, V], K) -> V
 fn[K : Hash + Eq, V] T::op_set(Self[K, V], K, V) -> Unit
 fn[K : Eq, V] T::partition(Self[K, V], (K, V) -> Bool raise?) -> (Self[K, V], Self[K, V]) raise?
 fn[K : Hash + Eq, V] T::remove(Self[K, V], K) -> Unit
-fn[K : Hash + Eq, V] T::retain(Self[K, V], (K, V) -> Bool raise?) -> Unit raise?
+fn[K, V] T::retain(Self[K, V], (K, V) -> Bool raise?) -> Unit raise?
 fn[K : Hash + Eq, V] T::set(Self[K, V], K, V) -> Unit
 fn[K, V] T::size(Self[K, V]) -> Int
 fn[K, V] T::to_array(Self[K, V]) -> Array[(K, V)]

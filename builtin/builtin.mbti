@@ -292,7 +292,7 @@ fn[K : Hash + Eq, V] Map::op_get(Self[K, V], K) -> V
 fn[K : Hash + Eq, V] Map::op_set(Self[K, V], K, V) -> Unit
 fn[K : Eq, V] Map::partition(Self[K, V], (K, V) -> Bool raise?) -> (Self[K, V], Self[K, V]) raise?
 fn[K : Hash + Eq, V] Map::remove(Self[K, V], K) -> Unit
-fn[K : Hash + Eq, V] Map::retain(Self[K, V], (K, V) -> Bool raise?) -> Unit raise?
+fn[K, V] Map::retain(Self[K, V], (K, V) -> Bool raise?) -> Unit raise?
 fn[K : Hash + Eq, V] Map::set(Self[K, V], K, V) -> Unit
 fn[K, V] Map::size(Self[K, V]) -> Int
 fn[K, V] Map::to_array(Self[K, V]) -> Array[(K, V)]

@@ -901,23 +901,28 @@ pub fn[K : Eq, V] Map::filter(
 ///   inspect(map.contains("d"), content="true")
 ///   inspect(map.contains("a"), content="false")
 /// ```
-pub fn[K : Hash + Eq, V] Map::retain(
+pub fn[K, V] Map::retain(
   self : Map[K, V],
   predicate : (K, V) -> Bool raise?,
 ) -> Unit raise? {
-  // Collect keys to remove to avoid modifying during iteration
-  let keys_to_remove : Array[K] = []
-  loop self.head {
-    Some({ key, value, next, .. }) => {
-      if !predicate(key, value) {
-        keys_to_remove.push(key)
+  // Collect entries to remove to avoid modifying during iteration
+  let entries_to_remove : Array[Int] = []
+  loop (self.head, false) {
+    (Some({ key, value, next, prev, .. }), remove_prev) => {
+      if remove_prev {
+        entries_to_remove.push(prev)
       }
-      continue next
+      continue (next, !predicate(key, value))
     }
-    None => break
+    (None, remove_prev) => if remove_prev { entries_to_remove.push(self.tail) }
   }
   // Remove collected keys using the proper remove method
-  keys_to_remove.each(fn(key) { self.remove(key) })
+  entries_to_remove.each(fn(idx) {
+    guard self.entries[idx] is Some(entry) else { return }
+    self.remove_entry(entry)
+    self.shift_back(idx)
+    self.size -= 1
+  })
 }
 
 ///|

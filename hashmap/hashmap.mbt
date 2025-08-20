@@ -767,21 +767,23 @@ pub fn[K : Eq, V] T::filter(
 ///   inspect(map.contains("d"), content="true")
 ///   inspect(map.contains("a"), content="false")
 /// ```
-pub fn[K : Hash + Eq, V] T::retain(
+pub fn[K, V] T::retain(
   self : T[K, V],
   predicate : (K, V) -> Bool raise?,
 ) -> Unit raise? {
-  // Collect keys to remove to avoid modifying during iteration
-  let keys_to_remove : Array[K] = []
+  // Collect entries to remove to avoid modifying during iteration
+  let entries_to_remove : Array[Int] = []
   for i in 0..<self.capacity {
-    if self.entries[i] is Some({ key, value, .. }) {
-      if !predicate(key, value) {
-        keys_to_remove.push(key)
-      }
+    if self.entries[i] is Some({ key, value, .. }) && !predicate(key, value) {
+      entries_to_remove.push(i)
     }
   }
   // Remove collected keys using the proper remove method
-  keys_to_remove.each(fn(key) { self.remove(key) })
+  entries_to_remove.each(fn(idx) {
+    guard self.entries[idx] is Some(_) else { return }
+    self.shift_back(idx)
+    self.size -= 1
+  })
 }
 
 ///|
