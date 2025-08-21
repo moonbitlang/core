@@ -30,6 +30,8 @@ fn inspect(&Show, content? : String, loc~ : SourceLoc, args_loc~ : ArgsLoc) -> U
 
 fn not(Bool) -> Bool
 
+let null : Json
+
 fn[T : Compare] op_ge(T, T) -> Bool
 
 fn[T : Compare] op_gt(T, T) -> Bool
