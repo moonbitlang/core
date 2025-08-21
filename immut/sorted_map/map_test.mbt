@@ -79,7 +79,7 @@ test "iteri" {
 ///|
 test "fold" {
   let m = @sorted_map.of([("a", 1), ("b", 2), ("c", 3), ("d", 4), ("e", 5)])
-  assert_eq(m.fold((acc, v) => acc + v, init=0), 15)
+  assert_eq(m.foldl_with_key((acc, _, v) => acc + v, init=0), 15)
 }
 
 ///|
