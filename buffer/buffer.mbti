@@ -37,7 +37,7 @@ fn T::write_int_be(Self, Int) -> Unit
 fn T::write_int_le(Self, Int) -> Unit
 fn T::write_iter(Self, Iter[Byte]) -> Unit
 fn T::write_object(Self, &Show) -> Unit
-fn T::write_stringview(Self, @string.StringView) -> Unit
+fn T::write_stringview(Self, @string.View) -> Unit
 fn T::write_uint64_be(Self, UInt64) -> Unit
 fn T::write_uint64_le(Self, UInt64) -> Unit
 fn T::write_uint_be(Self, UInt) -> Unit

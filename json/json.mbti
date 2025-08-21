@@ -80,7 +80,7 @@ impl[X : FromJson] FromJson for FixedArray[X]
 impl[X : FromJson] FromJson for Array[X]
 impl FromJson for Json
 impl[V : FromJson] FromJson for Map[String, V]
-impl FromJson for @string.StringView
+impl FromJson for @string.View
 impl[A : FromJson, B : FromJson] FromJson for (A, B)
 impl[A : FromJson, B : FromJson, C : FromJson] FromJson for (A, B, C)
 impl[A : FromJson, B : FromJson, C : FromJson, D : FromJson] FromJson for (A, B, C, D)
