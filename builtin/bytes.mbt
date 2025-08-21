@@ -56,6 +56,7 @@ pub fn Bytes::makei(length : Int, value : (Int) -> Byte raise?) -> Bytes raise? 
 
 ///|
 /// TODO: support local primitive declaration
+#owned(bytes)
 fn unsafe_sub_string(
   bytes : Bytes,
   byte_offset : Int,
