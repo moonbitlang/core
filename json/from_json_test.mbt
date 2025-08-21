@@ -366,7 +366,7 @@ test "jsonvalue" {
   let u = Json::boolean(false)
   let v : Json = @json.from_json(u)
   inspect(v, content="False")
-  let u = Json::null()
+  let u = null
   let v : Json = @json.from_json(u)
   inspect(v, content="Null")
   let u = Json::array([Json::number(1), Json::string("str")])
@@ -520,7 +520,7 @@ test "string view from json" {
 
 ///|
 test "Bool from_json error handling" {
-  let json_null = Json::null()
+  let json_null = null
   let result : Result[Bool, _] = try? @json.from_json(json_null)
   inspect(
     result,

@@ -46,7 +46,7 @@ fn ParseContext::parse_value2(
   tok : Token,
 ) -> JsonValue raise ParseError {
   match tok {
-    Null => Json::null()
+    Null => null
     True => Json::boolean(true)
     False => Json::boolean(false)
     Number(n, repr) => Json::number(n, repr?)

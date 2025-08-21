@@ -3,8 +3,8 @@
   "test-import": [
     "moonbitlang/core/array",
     "moonbitlang/core/double", 
-    "moonbitlang/core/int",
-    "moonbitlang/core/int64",
+    "moonbitlang/core/uint",
+    "moonbitlang/core/uint64",
     "moonbitlang/core/test",
     "moonbitlang/core/quickcheck"
   ]

@@ -15,34 +15,34 @@
 // offset and len are all in bits
 
 ///|
-fn Byte::to_uint64(b : Byte) -> UInt64 {
-  b.to_uint().to_uint64()
-}
-
-///|
 /// Extract a single bit.
 #internal(experimental, "subject to breaking change without notice")
-pub fn View::unsafe_extract_bit(bs : View, offset : Int, _len : Int) -> Bool {
+pub fn View::unsafe_extract_bit(bs : View, offset : Int, _len : Int) -> UInt {
   let byte_index = offset >> 3
   let bit_mask = (1 << (7 - (offset & 7))).to_byte()
-  (bs.unsafe_get(byte_index) & bit_mask) != 0
+  // TODO: branchless for performance
+  if (bs.unsafe_get(byte_index) & bit_mask) != 0 {
+    1
+  } else {
+    0
+  }
 }
 
 ///|
 /// Extract [2..8] bits.
 #internal(experimental, "subject to breaking change without notice")
-pub fn View::unsafe_extract_byte(bs : View, offset : Int, len : Int) -> Byte {
+pub fn View::unsafe_extract_byte(bs : View, offset : Int, len : Int) -> UInt {
   let byte_index = offset >> 3
   if (offset & 7) == 0 {
     // byte-aligned case
     let byte = bs.unsafe_get(byte_index)
-    byte >> (8 - len)
+    (byte >> (8 - len)).to_uint()
   } else if (offset & 7) + len <= 8 {
     // All bits are within the same byte - no need to read next byte
     let byte = bs.unsafe_get(byte_index).to_uint()
     let shift = 8 - ((offset & 7) + len)
     let mask = (1U << len) - 1
-    ((byte >> shift) & mask).to_byte()
+    (byte >> shift) & mask
   } else {
     // extract 16 bits at [byte_index, byte_index + 1]
     let b0 = bs.unsafe_get(byte_index).to_uint()
@@ -52,8 +52,7 @@ pub fn View::unsafe_extract_byte(bs : View, offset : Int, len : Int) -> Byte {
     let bit_mask = (1U << (16 - (offset & 7))) - 1
     let data = data & bit_mask
     let shift = 16 - ((offset & 7) + len)
-    let data = data >> shift
-    data.to_byte()
+    data >> shift
   }
 }
 
@@ -65,29 +64,26 @@ pub fn View::unsafe_extract_byte(bs : View, offset : Int, len : Int) -> Byte {
 /// - Only reads the necessary number of bytes based on the bit length
 ///
 #internal(experimental, "subject to breaking change without notice")
-pub fn View::unsafe_extract_int_le(bs : View, offset : Int, len : Int) -> Int {
+pub fn View::unsafe_extract_uint_le(bs : View, offset : Int, len : Int) -> UInt {
   let bytes_needed = (len + 7) / 8
   // TODO: add fast path for aligned case
   // non-aligned case: extract bytes using unsafe_extract_byte
-  let b0 = bs.unsafe_extract_byte(offset, 8).to_uint()
+  let b0 = bs.unsafe_extract_byte(offset, 8)
   match bytes_needed {
     2 => {
-      let b1 = bs.unsafe_extract_byte(offset + 8, len - 8).to_uint()
-      let data = (b1 << 8) | b0
-      data.reinterpret_as_int()
+      let b1 = bs.unsafe_extract_byte(offset + 8, len - 8)
+      (b1 << 8) | b0
     }
     3 => {
-      let b1 = bs.unsafe_extract_byte(offset + 8, 8).to_uint()
-      let b2 = bs.unsafe_extract_byte(offset + 16, len - 16).to_uint()
-      let data = (b2 << 16) | (b1 << 8) | b0
-      data.reinterpret_as_int()
+      let b1 = bs.unsafe_extract_byte(offset + 8, 8)
+      let b2 = bs.unsafe_extract_byte(offset + 16, len - 16)
+      (b2 << 16) | (b1 << 8) | b0
     }
     4 => {
-      let b1 = bs.unsafe_extract_byte(offset + 8, 8).to_uint()
-      let b2 = bs.unsafe_extract_byte(offset + 16, 8).to_uint()
-      let b3 = bs.unsafe_extract_byte(offset + 24, len - 24).to_uint()
-      let data = (b3 << 24) | (b2 << 16) | (b1 << 8) | b0
-      data.reinterpret_as_int()
+      let b1 = bs.unsafe_extract_byte(offset + 8, 8)
+      let b2 = bs.unsafe_extract_byte(offset + 16, 8)
+      let b3 = bs.unsafe_extract_byte(offset + 24, len - 24)
+      (b3 << 24) | (b2 << 16) | (b1 << 8) | b0
     }
     _ => abort("Invalid byte count for int32 extraction")
   }
@@ -101,32 +97,32 @@ pub fn View::unsafe_extract_int_le(bs : View, offset : Int, len : Int) -> Int {
 /// - Only reads the necessary number of bytes based on the bit length
 ///
 #internal(experimental, "subject to breaking change without notice")
-pub fn View::unsafe_extract_int_be(bs : View, offset : Int, len : Int) -> Int {
+pub fn View::unsafe_extract_uint_be(bs : View, offset : Int, len : Int) -> UInt {
   let bytes_needed = (len + 7) / 8
   // TODO: add fast path for aligned case
   // non-aligned case: extract bytes using unsafe_extract_byte
-  let b0 = bs.unsafe_extract_byte(offset, 8).to_uint()
+  let b0 = bs.unsafe_extract_byte(offset, 8)
   match bytes_needed {
     2 => {
-      let b1 = bs.unsafe_extract_byte(offset + 8, len - 8).to_uint()
+      let b1 = bs.unsafe_extract_byte(offset + 8, len - 8)
       let shift = 16 - len
       let data = (b0 << 8) | (b1 << shift)
-      (data >> shift).reinterpret_as_int()
+      data >> shift
     }
     3 => {
-      let b1 = bs.unsafe_extract_byte(offset + 8, 8).to_uint()
-      let b2 = bs.unsafe_extract_byte(offset + 16, len - 16).to_uint()
+      let b1 = bs.unsafe_extract_byte(offset + 8, 8)
+      let b2 = bs.unsafe_extract_byte(offset + 16, len - 16)
       let shift = 24 - len
       let data = (b0 << 16) | (b1 << 8) | (b2 << shift)
-      (data >> shift).reinterpret_as_int()
+      data >> shift
     }
     4 => {
-      let b1 = bs.unsafe_extract_byte(offset + 8, 8).to_uint()
-      let b2 = bs.unsafe_extract_byte(offset + 16, 8).to_uint()
-      let b3 = bs.unsafe_extract_byte(offset + 24, len - 24).to_uint()
+      let b1 = bs.unsafe_extract_byte(offset + 8, 8)
+      let b2 = bs.unsafe_extract_byte(offset + 16, 8)
+      let b3 = bs.unsafe_extract_byte(offset + 24, len - 24)
       let shift = 32 - len
       let data = (b0 << 24) | (b1 << 16) | (b2 << 8) | (b3 << shift)
-      (data >> shift).reinterpret_as_int()
+      data >> shift
     }
     _ => abort("Invalid byte count for int32 extraction")
   }
@@ -141,11 +137,11 @@ pub fn View::unsafe_extract_int_be(bs : View, offset : Int, len : Int) -> Int {
 /// - For bit lengths < 33, use unsafe_extract_int_le instead
 ///
 #internal(experimental, "subject to breaking change without notice")
-pub fn View::unsafe_extract_int64_le(
+pub fn View::unsafe_extract_uint64_le(
   bs : View,
   offset : Int,
   len : Int,
-) -> Int64 {
+) -> UInt64 {
   let bytes_needed = (len + 7) / 8
   // TODO: add fast path for aligned case
   // non-aligned case: extract bytes using unsafe_extract_byte
@@ -156,47 +152,38 @@ pub fn View::unsafe_extract_int64_le(
   match bytes_needed {
     5 => {
       let b4 = bs.unsafe_extract_byte(offset + 32, len - 32).to_uint64()
-      let data = (b4 << 32) | (b3 << 24) | (b2 << 16) | (b1 << 8) | b0
-      data.reinterpret_as_int64()
+      (b4 << 32) | (b3 << 24) | (b2 << 16) | (b1 << 8) | b0
     }
     6 => {
       let b4 = bs.unsafe_extract_byte(offset + 32, 8).to_uint64()
       let b5 = bs.unsafe_extract_byte(offset + 40, len - 40).to_uint64()
-      let data = (b5 << 40) |
-        (b4 << 32) |
-        (b3 << 24) |
-        (b2 << 16) |
-        (b1 << 8) |
-        b0
-      data.reinterpret_as_int64()
+      (b5 << 40) | (b4 << 32) | (b3 << 24) | (b2 << 16) | (b1 << 8) | b0
     }
     7 => {
       let b4 = bs.unsafe_extract_byte(offset + 32, 8).to_uint64()
       let b5 = bs.unsafe_extract_byte(offset + 40, 8).to_uint64()
       let b6 = bs.unsafe_extract_byte(offset + 48, len - 48).to_uint64()
-      let data = (b6 << 48) |
-        (b5 << 40) |
-        (b4 << 32) |
-        (b3 << 24) |
-        (b2 << 16) |
-        (b1 << 8) |
-        b0
-      data.reinterpret_as_int64()
+      (b6 << 48) |
+      (b5 << 40) |
+      (b4 << 32) |
+      (b3 << 24) |
+      (b2 << 16) |
+      (b1 << 8) |
+      b0
     }
     8 => {
       let b4 = bs.unsafe_extract_byte(offset + 32, 8).to_uint64()
       let b5 = bs.unsafe_extract_byte(offset + 40, 8).to_uint64()
       let b6 = bs.unsafe_extract_byte(offset + 48, 8).to_uint64()
       let b7 = bs.unsafe_extract_byte(offset + 56, len - 56).to_uint64()
-      let data = (b7 << 56) |
-        (b6 << 48) |
-        (b5 << 40) |
-        (b4 << 32) |
-        (b3 << 24) |
-        (b2 << 16) |
-        (b1 << 8) |
-        b0
-      data.reinterpret_as_int64()
+      (b7 << 56) |
+      (b6 << 48) |
+      (b5 << 40) |
+      (b4 << 32) |
+      (b3 << 24) |
+      (b2 << 16) |
+      (b1 << 8) |
+      b0
     }
     _ => abort("Invalid byte count for int64 extraction")
   }
@@ -211,11 +198,11 @@ pub fn View::unsafe_extract_int64_le(
 /// - For bit lengths < 33, use unsafe_extract_int_be instead
 ///
 #internal(experimental, "subject to breaking change without notice")
-pub fn View::unsafe_extract_int64_be(
+pub fn View::unsafe_extract_uint64_be(
   bs : View,
   offset : Int,
   len : Int,
-) -> Int64 {
+) -> UInt64 {
   let bytes_needed = (len + 7) / 8
   // TODO: add fast path for aligned case
   // non-aligned case: extract bytes using unsafe_extract_byte
@@ -232,7 +219,7 @@ pub fn View::unsafe_extract_int64_be(
         (b2 << 16) |
         (b3 << 8) |
         (b4 << shift)
-      (data >> shift).reinterpret_as_int64()
+      data >> shift
     }
     6 => {
       let b4 = bs.unsafe_extract_byte(offset + 32, 8).to_uint64()
@@ -244,7 +231,7 @@ pub fn View::unsafe_extract_int64_be(
         (b3 << 16) |
         (b4 << 8) |
         (b5 << shift)
-      (data >> shift).reinterpret_as_int64()
+      data >> shift
     }
     7 => {
       let b4 = bs.unsafe_extract_byte(offset + 32, 8).to_uint64()
@@ -258,7 +245,7 @@ pub fn View::unsafe_extract_int64_be(
         (b4 << 16) |
         (b5 << 8) |
         (b6 << shift)
-      (data >> shift).reinterpret_as_int64()
+      data >> shift
     }
     8 => {
       let b4 = bs.unsafe_extract_byte(offset + 32, 8).to_uint64()
@@ -274,7 +261,7 @@ pub fn View::unsafe_extract_int64_be(
         (b5 << 16) |
         (b6 << 8) |
         (b7 << shift)
-      (data >> shift).reinterpret_as_int64()
+      data >> shift
     }
     _ => abort("Invalid byte count for int64 extraction")
   }
@@ -294,46 +281,54 @@ pub fn View::unsafe_extract_bytesview(
 
 ///|
 #internal(experimental, "subject to breaking change without notice")
-pub fn Bytes::unsafe_extract_bit(bs : Bytes, offset : Int, len : Int) -> Bool {
+pub fn Bytes::unsafe_extract_bit(bs : Bytes, offset : Int, len : Int) -> UInt {
   bs[:].unsafe_extract_bit(offset, len)
 }
 
 ///|
 #internal(experimental, "subject to breaking change without notice")
-pub fn Bytes::unsafe_extract_byte(bs : Bytes, offset : Int, len : Int) -> Byte {
+pub fn Bytes::unsafe_extract_byte(bs : Bytes, offset : Int, len : Int) -> UInt {
   bs[:].unsafe_extract_byte(offset, len)
 }
 
 ///|
 #internal(experimental, "subject to breaking change without notice")
-pub fn Bytes::unsafe_extract_int_le(bs : Bytes, offset : Int, len : Int) -> Int {
-  bs[:].unsafe_extract_int_le(offset, len)
-}
-
-///|
-#internal(experimental, "subject to breaking change without notice")
-pub fn Bytes::unsafe_extract_int_be(bs : Bytes, offset : Int, len : Int) -> Int {
-  bs[:].unsafe_extract_int_be(offset, len)
-}
-
-///|
-#internal(experimental, "subject to breaking change without notice")
-pub fn Bytes::unsafe_extract_int64_le(
+pub fn Bytes::unsafe_extract_uint_le(
   bs : Bytes,
   offset : Int,
   len : Int,
-) -> Int64 {
-  bs[:].unsafe_extract_int64_le(offset, len)
+) -> UInt {
+  bs[:].unsafe_extract_uint_le(offset, len)
 }
 
 ///|
 #internal(experimental, "subject to breaking change without notice")
-pub fn Bytes::unsafe_extract_int64_be(
+pub fn Bytes::unsafe_extract_uint_be(
   bs : Bytes,
   offset : Int,
   len : Int,
-) -> Int64 {
-  bs[:].unsafe_extract_int64_be(offset, len)
+) -> UInt {
+  bs[:].unsafe_extract_uint_be(offset, len)
+}
+
+///|
+#internal(experimental, "subject to breaking change without notice")
+pub fn Bytes::unsafe_extract_uint64_le(
+  bs : Bytes,
+  offset : Int,
+  len : Int,
+) -> UInt64 {
+  bs[:].unsafe_extract_uint64_le(offset, len)
+}
+
+///|
+#internal(experimental, "subject to breaking change without notice")
+pub fn Bytes::unsafe_extract_uint64_be(
+  bs : Bytes,
+  offset : Int,
+  len : Int,
+) -> UInt64 {
+  bs[:].unsafe_extract_uint64_be(offset, len)
 }
 
 ///|

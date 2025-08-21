@@ -34,6 +34,8 @@ fn inspect(&@builtin.Show, content? : String, loc~ : @builtin.SourceLoc, args_lo
 
 fn not(Bool) -> Bool
 
+let null : @builtin.Json
+
 fn[T] panic() -> T
 
 fn[T] physical_equal(T, T) -> Bool
