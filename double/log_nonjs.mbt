@@ -114,7 +114,7 @@ pub fn Double::log2(self : Double) -> Double {
   if f == 0.5 {
     return e.to_double() - 1.0
   }
-  ln(f) / ln2 + e.to_double()
+  Double::ln(f) / ln2 + e.to_double()
 }
 
 ///|

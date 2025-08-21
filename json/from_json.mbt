@@ -231,6 +231,6 @@ pub impl FromJson for Unit with from_json(json, path) {
 }
 
 ///|
-pub impl FromJson for JsonValue with from_json(json, _path) {
+pub impl FromJson for Json with from_json(json, _path) {
   json
 }
