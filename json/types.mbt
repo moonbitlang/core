@@ -56,7 +56,7 @@ pub impl Show for ParseError with output(self, logger) {
 }
 
 ///|
-pub impl Show for JsonValue with output(self, logger) {
+pub impl Show for Json with output(self, logger) {
   match self {
     Null => logger.write_string("Null")
     True => logger.write_string("True")

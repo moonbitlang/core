@@ -56,7 +56,7 @@ pub fn Double::sinh(self : Double) -> Double {
     return h * abs_x.exp()
   }
   if abs_x.reinterpret_as_uint64() < 0x408633ce8fb9f87d {
-    let w = exp(0.5 * abs_x)
+    let w = Double::exp(0.5 * abs_x)
     let t = h * w
     return t * w
   }
@@ -91,7 +91,7 @@ pub fn Double::cosh(self : Double) -> Double {
   }
   let lx = get_low_word(self).reinterpret_as_int()
   if ix < 0x408633ce || (ix == 0x408633ce && lx <= 0x8fb9f87d) {
-    let w = exp(0.5 * self.abs())
+    let w = Double::exp(0.5 * self.abs())
     let t = 0.5 * w
     return t * w
   }
