@@ -14,14 +14,14 @@
 
 ///|
 /// Try to get this element as a Null
-pub fn as_null(self : JsonValue) -> Unit? {
+pub fn as_null(self : Json) -> Unit? {
   guard self is Null else { return None }
   Some(())
 }
 
 ///|
 /// Try to get this element as a Boolean
-pub fn as_bool(self : JsonValue) -> Bool? {
+pub fn as_bool(self : Json) -> Bool? {
   match self {
     True => Some(true)
     False => Some(false)
@@ -31,28 +31,28 @@ pub fn as_bool(self : JsonValue) -> Bool? {
 
 ///|
 /// Try to get this element as a Number
-pub fn as_number(self : JsonValue) -> Double? {
+pub fn as_number(self : Json) -> Double? {
   guard self is Number(n, ..) else { return None }
   Some(n)
 }
 
 ///|
 /// Try to get this element as a String
-pub fn as_string(self : JsonValue) -> String? {
+pub fn as_string(self : Json) -> String? {
   guard self is String(s) else { return None }
   Some(s)
 }
 
 ///|
 /// Try to get this element as an Array
-pub fn as_array(self : JsonValue) -> Array[JsonValue]? {
+pub fn as_array(self : Json) -> Array[Json]? {
   guard self is Array(arr) else { return None }
   Some(arr)
 }
 
 ///|
 /// Try to get this element as a Json Array and get the element at the `index` as a Json Value
-pub fn item(self : JsonValue, index : Int) -> JsonValue? {
+pub fn item(self : Json, index : Int) -> Json? {
   match self.as_array() {
     Some(arr) => arr.get(index)
     None => None
@@ -61,14 +61,14 @@ pub fn item(self : JsonValue, index : Int) -> JsonValue? {
 
 ///|
 /// Try to get this element as an Object
-pub fn as_object(self : JsonValue) -> Map[String, JsonValue]? {
+pub fn as_object(self : Json) -> Map[String, Json]? {
   guard self is Object(obj) else { return None }
   Some(obj)
 }
 
 ///|
 /// Try to get this element as a Json Object and get the element with the `key` as a Json Value
-pub fn value(self : JsonValue, key : String) -> JsonValue? {
+pub fn value(self : Json, key : String) -> Json? {
   match self.as_object() {
     Some(obj) => obj.get(key)
     None => None
@@ -86,12 +86,12 @@ fn indent_str(level : Int, indent : Int) -> String {
 
 ///|
 pub fn stringify(
-  self : JsonValue,
+  self : Json,
   escape_slash~ : Bool = false,
   indent~ : Int = 0,
 ) -> String {
   let buf = StringBuilder::new(size_hint=0)
-  fn stringify_inner(value : JsonValue, level : Int) -> Unit {
+  fn stringify_inner(value : Json, level : Int) -> Unit {
     match value {
       Object(members) => {
         if members.is_empty() {
@@ -203,7 +203,7 @@ fn escape(str : String, escape_slash~ : Bool) -> String {
 
 ///|
 /// Useful for json interpolation
-pub impl ToJson for JsonValue with to_json(self) {
+pub impl ToJson for Json with to_json(self) {
   self
 }
 
