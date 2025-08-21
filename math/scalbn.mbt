@@ -58,7 +58,7 @@ pub fn scalbn(x : Double, exp : Int) -> Double {
   return y * ui.reinterpret_as_double()
 }
 
-///| 
+///|
 /// Calculcates x * 2 **n where x is a single-precision floating number and n is an integer.
 ///
 /// Parameters:

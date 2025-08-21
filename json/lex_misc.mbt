@@ -33,10 +33,12 @@ fn ParseContext::read_char(ctx : ParseContext) -> Char? {
   }
 }
 
-///| low surrogate
+///|
+/// low surrogate
 const SURROGATE_LOW_CHAR = 0xD800
 
-///| high surrogate
+///|
+/// high surrogate
 const SURROGATE_HIGH_CHAR = 0xDFFF
 
 ///|

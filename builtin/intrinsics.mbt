@@ -1626,8 +1626,8 @@ pub impl Eq for String with op_equal(self : String, other : String) -> Bool = "%
 /// ```
 pub fn String::to_string(self : String) -> String = "%string_to_string"
 
-///|
 // For internal use only
+///|
 priv type UnsafeMaybeUninit[_]
 
 ///|
@@ -2640,7 +2640,8 @@ pub fn UInt::reinterpret_as_float(self : UInt) -> Float = "%i32.to_f32_reinterpr
 /// ```
 pub fn Byte::to_float(self : Byte) -> Float = "%byte.to_f32"
 
-///| TODO: use intrinsics implement this
+///|
+/// TODO: use intrinsics implement this
 pub fn Byte::to_double(self : Byte) -> Double {
   self.to_int().to_double()
 }

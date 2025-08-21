@@ -14,13 +14,13 @@
 
 ///|
 #deprecated("Use `@string.concat` instead")
-pub fn String::concat(self : Array[String], separator~ : String = "") -> String {
+pub fn String::concat(self : Array[String], separator? : String = "") -> String {
   concat(self, separator~)
 }
 
 ///|
 #deprecated("Use `Array::join` instead.")
-pub fn concat(strings : Array[String], separator~ : String = "") -> String {
+pub fn concat(strings : Array[String], separator? : String = "") -> String {
   match strings {
     [] => ""
     [hd, .. tl] => {
@@ -48,7 +48,7 @@ pub fn concat(strings : Array[String], separator~ : String = "") -> String {
 
 ///|
 #deprecated("Use `s.find(substr)` instead. If the optional argument `from` is not 0, take view from the string first. Please do not use an invalid `from` argument.")
-pub fn index_of(self : String, str : String, from~ : Int = 0) -> Int {
+pub fn index_of(self : String, str : String, from? : Int = 0) -> Int {
   if from <= 0 {
     if self.find(str.view()) is Some(idx) {
       idx

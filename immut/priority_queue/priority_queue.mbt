@@ -184,7 +184,8 @@ pub fn[A : Compare] unsafe_pop(self : T[A]) -> T[A] {
   }
 }
 
-///| Adds a value to the immutable priority queue.
+///|
+/// Adds a value to the immutable priority queue.
 ///
 /// # Example
 /// ```mbt

@@ -76,7 +76,7 @@ pub fnalias @builtin.(
   dump
 )
 
-///| 
+///|
 /// Applies a function to a value and returns the original value.
 ///
 /// # Parameters
@@ -100,7 +100,7 @@ pub fn[T] tap(value : T, f : (T) -> Unit) -> T {
   value
 }
 
-///| 
+///|
 /// Applies a function to a value and returns the result of the function.
 ///
 /// # Parameters

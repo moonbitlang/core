@@ -349,8 +349,8 @@ pub impl Mul for BigInt with op_mul(self : BigInt, other : BigInt) -> BigInt {
   { ..ret, sign: if self.sign == other.sign { Positive } else { Negative } }
 }
 
-///|
 // Simplest way to multiply two BigInts.
+///|
 fn BigInt::grade_school_mul(self : BigInt, other : BigInt) -> BigInt {
   let self_len = self.len
   let other_len = other.len
@@ -373,8 +373,8 @@ fn BigInt::grade_school_mul(self : BigInt, other : BigInt) -> BigInt {
   { limbs, sign: Positive, len }
 }
 
-///|
 // Karatsuba multiplication
+///|
 fn BigInt::karatsuba_mul(self : BigInt, other : BigInt) -> BigInt {
   let half = (max(self.len, other.len) + 1) / 2
   let (xl, xh) = self.split(half)
@@ -387,8 +387,8 @@ fn BigInt::karatsuba_mul(self : BigInt, other : BigInt) -> BigInt {
   p2
 }
 
-///|
 // Get the lower half of the number.
+///|
 fn BigInt::split(self : BigInt, half : Int) -> (BigInt, BigInt) {
   if self.len <= half {
     return ({ ..self, sign: Positive }, zero)
@@ -492,9 +492,9 @@ pub impl Mod for BigInt with op_mod(self : BigInt, other : BigInt) -> BigInt {
   }
 }
 
-///|
 // Simplest way to divide two BigInts.
 // Assumption: other != zero.
+///|
 fn BigInt::grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
   // Handle edge cases
   if self < other {
@@ -1105,7 +1105,7 @@ pub fn BigInt::from_hex(input : String) -> BigInt {
 ///   inspect(pos.to_hex(uppercase=false), content="ff")
 ///   inspect(0N.to_hex(), content="0")
 /// ```
-pub fn BigInt::to_hex(self : BigInt, uppercase~ : Bool = true) -> String {
+pub fn BigInt::to_hex(self : BigInt, uppercase? : Bool = true) -> String {
   if self.is_zero() {
     return "0"
   }
@@ -1256,7 +1256,7 @@ pub fn BigInt::pow(self : BigInt, exp : BigInt, modulus? : BigInt) -> BigInt {
 ///   inspect(positive, content="66051")
 ///   inspect(negative, content="-66051")
 /// ```
-pub fn BigInt::from_octets(input : Bytes, signum~ : Int = 1) -> BigInt {
+pub fn BigInt::from_octets(input : Bytes, signum? : Int = 1) -> BigInt {
   let len = input.length() // number of bytes
   if signum == 0 {
     return zero
@@ -1766,7 +1766,8 @@ pub fn BigInt::bit_length(self : BigInt) -> Int {
   bit_length
 }
 
-///| Returns the number of trailing zero bits in the binary representation of 
+///|
+/// Returns the number of trailing zero bits in the binary representation of 
 /// the absolute value of this BigInt.
 ///
 /// Example:

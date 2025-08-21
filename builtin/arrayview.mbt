@@ -212,7 +212,7 @@ pub fn[T] ArrayView::swap(self : ArrayView[T], i : Int, j : Int) -> Unit {
 /// ```
 pub fn[T] Array::op_as_view(
   self : Array[T],
-  start~ : Int = 0,
+  start? : Int = 0,
   end? : Int,
 ) -> ArrayView[T] {
   let len = self.length()
@@ -258,7 +258,7 @@ pub fn[T] Array::op_as_view(
 /// ```
 pub fn[T] ArrayView::op_as_view(
   self : ArrayView[T],
-  start~ : Int = 0,
+  start? : Int = 0,
   end? : Int,
 ) -> ArrayView[T] {
   let len = self.length()

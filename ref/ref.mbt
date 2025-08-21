@@ -23,7 +23,8 @@ test "to_string" {
   inspect(new(3), content="{val: 3}")
 }
 
-///| same as `Ref::new`
+///|
+/// same as `Ref::new`
 pub fn[T] new(x : T) -> Ref[T] {
   { val: x }
 }

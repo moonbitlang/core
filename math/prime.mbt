@@ -206,7 +206,7 @@ let small_primes : Array[@bigint.BigInt] = [
 pub fn is_probable_prime(
   number : @bigint.BigInt,
   rand : @random.Rand,
-  iters~ : Int = DEFAULT_PRIME_TEST_ITERS,
+  iters? : Int = DEFAULT_PRIME_TEST_ITERS,
 ) -> Bool {
   if iters <= 0 {
     abort("non-positive iters for probably prime")

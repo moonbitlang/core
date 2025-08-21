@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-///|
 // Default initial capacity
+///|
 let default_init_capacity = 8
 
 ///|
 /// Create new hash set.
-pub fn[K] T::new(capacity~ : Int = default_init_capacity) -> T[K] {
+pub fn[K] T::new(capacity? : Int = default_init_capacity) -> T[K] {
   {
     size: 0,
     capacity,

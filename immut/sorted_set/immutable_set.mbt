@@ -16,8 +16,8 @@
 // The types stored in set need to implement the Compare trait.
 // All operations over sets are purely applicative (no side-effects).
 
-///|
 // Construct a empty ImmutableSet.
+///|
 pub fn[A] new() -> T[A] {
   Empty
 }

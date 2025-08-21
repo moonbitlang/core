@@ -22,38 +22,44 @@ pub impl Hash for Char with hash_combine(self, hasher) -> Unit {
   hasher.combine_char(self)
 }
 
-///| Checks if the value is within the ASCII range.
+///|
+/// Checks if the value is within the ASCII range.
 pub fn Char::is_ascii(self : Self) -> Bool {
   self is ('\u{00}'..='\u{7F}')
 }
 
-///| Checks if the value is an ASCII alphabetic  character:
+///|
+/// Checks if the value is an ASCII alphabetic  character:
 /// - U+0041 'A' ..= U+005A 'Z'
 /// - U+0061 'a' ..= U+007A 'z'
 pub fn Char::is_ascii_alphabetic(self : Self) -> Bool {
   self is ('A'..='Z' | 'a'..='z')
 }
 
-///| Checks if the value is an ASCII control character:
+///|
+/// Checks if the value is an ASCII control character:
 /// U+0000 NUL ..= U+001F UNIT SEPARATOR, or U+007F DELETE.
 /// Note that most ASCII whitespace characters are control characters, but SPACE is not.
 pub fn Char::is_ascii_control(self : Self) -> Bool {
   self is ('\u{00}'..='\u{1F}' | '\u{7F}')
 }
 
-///| Checks if the value is an ASCII decimal digit:
+///|
+/// Checks if the value is an ASCII decimal digit:
 /// U+0030 '0' ..= U+0039 '9'
 pub fn Char::is_ascii_digit(self : Self) -> Bool {
   self is ('0'..='9')
 }
 
-///| Checks if the value is an ASCII graphic character:
+///|
+/// Checks if the value is an ASCII graphic character:
 /// U+0021 '!' ..= U+007E '~'
 pub fn Char::is_ascii_graphic(self : Self) -> Bool {
   self is ('\u{21}'..='\u{7E}')
 }
 
-///| Checks if the value is an ASCII hexadecimal digit:
+///|
+/// Checks if the value is an ASCII hexadecimal digit:
 /// - U+0030 '0' ..= U+0039 '9'
 /// - U+0041 'A' ..= U+0046 'F'
 /// - U+0061 'a' ..= U+0066 'f'
@@ -61,19 +67,22 @@ pub fn Char::is_ascii_hexdigit(self : Self) -> Bool {
   self is ('0'..='9' | 'A'..='F' | 'a'..='f')
 }
 
-///| Checks if the value is an ASCII lowercase character:
+///|
+/// Checks if the value is an ASCII lowercase character:
 /// U+0061 'a' ..= U+007A 'z'.
 pub fn Char::is_ascii_lowercase(self : Self) -> Bool {
   self is ('a'..='z')
 }
 
-///| Checks if the value is an ASCII octal digit:
+///|
+/// Checks if the value is an ASCII octal digit:
 /// U+0030 '0' ..= U+0037 '7'
 pub fn Char::is_ascii_octdigit(self : Self) -> Bool {
   self is ('0'..='7')
 }
 
-///| Checks if the value is an ASCII punctuation character:
+///|
+/// Checks if the value is an ASCII punctuation character:
 /// - U+0021 ..= U+002F ! " # $ % & ' ( ) * + , - . /
 /// - U+003A ..= U+0040 : ; < = > ? @
 /// - U+005B ..= U+0060 [ \ ] ^ _ `
@@ -86,24 +95,27 @@ pub fn Char::is_ascii_punctuation(self : Self) -> Bool {
   | '\u{7B}'..='\u{7E}')
 }
 
-///| Checks if the value is an ASCII uppercase character:
+///|
+/// Checks if the value is an ASCII uppercase character:
 /// U+0041 'A' ..= U+005A 'Z'
 pub fn Char::is_ascii_uppercase(self : Self) -> Bool {
   self is ('A'..='Z')
 }
 
-///| Checks if the value is an ASCII whitespace character:
+///|
+/// Checks if the value is an ASCII whitespace character:
 /// U+0020 SPACE, U+0009 HORIZONTAL TAB, U+000A LINE FEED, U+000B VERTICAL TAB, U+000C FORM FEED, or U+000D CARRIAGE RETURN.
 pub fn Char::is_ascii_whitespace(self : Self) -> Bool {
   self is ('\u{20}' | '\u{09}' | '\u{0A}' | '\u{0B}' | '\u{0C}' | '\u{0D}')
 }
 
-///| Returns true if this char has the general category for control codes.
+///|
+/// Returns true if this char has the general category for control codes.
 pub fn Char::is_control(self : Self) -> Bool {
   self is ('\u0000'..='\u001F' | '\u007F'..='\u009F')
 }
 
-///| 
+///|
 /// Checks if a char is a digit in the given radix (range from 2 to 36).
 /// 
 /// panic if the radix is invalid.
@@ -119,7 +131,8 @@ pub fn Char::is_digit(self : Self, radix : UInt) -> Bool {
   }
 }
 
-///| Returns true if this char has the White_Space property.
+///|
+/// Returns true if this char has the White_Space property.
 pub fn Char::is_whitespace(self : Self) -> Bool {
   self
   is ('\u0009'..='\u000D'
@@ -135,7 +148,8 @@ pub fn Char::is_whitespace(self : Self) -> Bool {
   | '\u3000')
 }
 
-///| Returns true if this char has one of the general categories for numbers.
+///|
+/// Returns true if this char has one of the general categories for numbers.
 pub fn Char::is_numeric(self : Self) -> Bool {
   self
   is ('\u0030'..='\u0039'
@@ -283,7 +297,8 @@ pub fn Char::is_numeric(self : Self) -> Bool {
   | '\u{1FBF0}'..='\u{1FBF9}')
 }
 
-///| Returns true if this character is printable (visible when displayed).
+///|
+/// Returns true if this character is printable (visible when displayed).
 /// Aligns with Unicode standard categories for printable characters.
 /// Characters are considered printable if they are:
 /// - Letters (L*)
@@ -371,7 +386,8 @@ pub fn Char::is_printable(self : Self) -> Bool {
   true
 }
 
-///| Makes a copy of the value in its ASCII lower case equivalent.
+///|
+/// Makes a copy of the value in its ASCII lower case equivalent.
 /// ASCII letters 'A' to 'Z' are mapped to 'a' to 'z',
 /// but non-ASCII letters are unchanged.
 pub fn Char::to_ascii_lowercase(self : Self) -> Char {
@@ -381,7 +397,8 @@ pub fn Char::to_ascii_lowercase(self : Self) -> Char {
   self
 }
 
-///| Makes a copy of the value in its ASCII upper case equivalent.
+///|
+/// Makes a copy of the value in its ASCII upper case equivalent.
 /// ASCII letters 'a' to 'z' are mapped to 'A' to 'Z',
 /// but non-ASCII letters are unchanged.
 pub fn Char::to_ascii_uppercase(self : Self) -> Char {
@@ -391,12 +408,14 @@ pub fn Char::to_ascii_uppercase(self : Self) -> Char {
   self
 }
 
-///| Convert Char to String
+///|
+/// Convert Char to String
 pub impl Show for Char with to_string(self : Char) -> String {
   char_to_string(self)
 }
 
-///| TODO: support attributes for impl
+///|
+/// TODO: support attributes for impl
 #intrinsic("%char.to_string")
 fn char_to_string(char : Char) -> String {
   [char]
@@ -491,7 +510,8 @@ pub fn Char::utf16_len(self : Self) -> Int {
   }
 }
 
-///| Returns true if this character is in the Basic Multilingual Plane (BMP).
+///|
+/// Returns true if this character is in the Basic Multilingual Plane (BMP).
 /// 
 /// The BMP (Basic Multilingual Plane) contains 65,536 code points (U+0000 to U+FFFF)
 /// distributed as follows:

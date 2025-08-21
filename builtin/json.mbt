@@ -278,8 +278,8 @@ pub impl[Ok : ToJson, Err : ToJson] ToJson for Result[Ok, Err] with to_json(
   }
 }
 
-///|
 //| unit
+///|
 pub impl ToJson for Unit with to_json(_self) {
   Null
 }

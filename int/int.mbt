@@ -47,12 +47,14 @@ pub fn Int::abs(self : Int) -> Int {
 ///|
 pub fnalias Int::abs
 
-///| Converts the Int to a Bytes in big-endian byte order.
+///|
+/// Converts the Int to a Bytes in big-endian byte order.
 pub fn to_be_bytes(self : Int) -> Bytes {
   self.reinterpret_as_uint().to_be_bytes()
 }
 
-///| Converts the Int to a Bytes in little-endian byte order.
+///|
+/// Converts the Int to a Bytes in little-endian byte order.
 pub fn to_le_bytes(self : Int) -> Bytes {
   self.reinterpret_as_uint().to_le_bytes()
 }

@@ -28,7 +28,8 @@ pub fn[K, V] new() -> T[K, V] {
   { root: None, size: 0 }
 }
 
-///| Creates a sorted map from a array of key-value pairs.
+///|
+/// Creates a sorted map from a array of key-value pairs.
 pub fn[K : Compare, V] from_array(entries : Array[(K, V)]) -> T[K, V] {
   let map = { root: None, size: 0 }
   entries.each(e => map.add(e.0, e.1))
@@ -261,7 +262,8 @@ pub impl[K : @quickcheck.Arbitrary + Compare, V : @quickcheck.Arbitrary] @quickc
   @quickcheck.Arbitrary::arbitrary(size, rs) |> from_iter
 }
 
-///|Returns a new array of key-value pairs that are within the specified range [low, high].
+///|
+///Returns a new array of key-value pairs that are within the specified range [low, high].
 pub fn[K : Compare, V] range(self : T[K, V], low : K, high : K) -> Iter2[K, V] {
   Iter2::new(yield_ => {
     fn go(x : Node[K, V]?) {

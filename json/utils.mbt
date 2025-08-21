@@ -30,7 +30,7 @@ fn offset_to_position(input : String, offset : Int) -> Position {
 ///|
 fn[T] ParseContext::invalid_char(
   ctx : ParseContext,
-  shift~ : Int = 0,
+  shift? : Int = 0,
 ) -> T raise ParseError {
   let offset = ctx.offset + shift
   let replacement_char : Char = '\u{fffd}'
