@@ -12,7 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-///| Returns the element that gives the maximum value from the specified function.
+///|
+/// Returns the element that gives the maximum value from the specified function.
 ///
 /// Returns the second argument if the comparison determines them to be equal.
 ///
@@ -30,7 +31,8 @@ pub fn[T, K : Compare] maximum_by_key(x : T, y : T, f : (T) -> K) -> T {
   }
 }
 
-///| Returns the element that gives the minimum value from the specified function.
+///|
+/// Returns the element that gives the minimum value from the specified function.
 ///
 /// Returns the first argument if the comparison determines them to be equal.
 ///

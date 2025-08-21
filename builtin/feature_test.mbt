@@ -18,10 +18,10 @@ struct RangeImpl[T] {
   hi : T
 } derive(Show, ToJson)
 
-///|
 // pub
 // priv
 // default to abstract
+///|
 trait Range {
   range(Self, Self) -> RangeImpl[Self]
 }

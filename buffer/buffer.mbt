@@ -142,13 +142,14 @@ pub fn contents(self : T) -> Bytes {
 ///   buf.write_string("test")
 ///   inspect(buf.length(), content="8")
 /// ```
-pub fn new(size_hint~ : Int = 0) -> T {
+pub fn new(size_hint? : Int = 0) -> T {
   let initial = if size_hint < 1 { 1 } else { size_hint }
   let data = FixedArray::make(initial, Byte::default())
   { data, len: 0, initial_data: data }
 }
 
-///| Create a buffer from a bytes.
+///|
+/// Create a buffer from a bytes.
 pub fn from_bytes(bytes : Bytes) -> T {
   let val_len = bytes.length()
   let buf = new(size_hint=val_len)

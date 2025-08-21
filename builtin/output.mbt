@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-fn Int64::output(self : Int64, logger : &Logger, radix~ : Int = 10) -> Unit {
+fn Int64::output(self : Int64, logger : &Logger, radix? : Int = 10) -> Unit {
   fn abs(n : Int64) -> Int64 {
     if n < 0L {
       0L - n
@@ -40,7 +40,7 @@ fn Int64::output(self : Int64, logger : &Logger, radix~ : Int = 10) -> Unit {
 }
 
 ///|
-fn Int::output(self : Int, logger : &Logger, radix~ : Int = 10) -> Unit {
+fn Int::output(self : Int, logger : &Logger, radix? : Int = 10) -> Unit {
   fn abs(n : Int) -> Int {
     if n < 0 {
       0 - n
@@ -64,7 +64,7 @@ fn Int::output(self : Int, logger : &Logger, radix~ : Int = 10) -> Unit {
 }
 
 ///|
-fn UInt::output(self : UInt, logger : &Logger, radix~ : Int = 10) -> Unit {
+fn UInt::output(self : UInt, logger : &Logger, radix? : Int = 10) -> Unit {
   let radix : UInt = radix.reinterpret_as_uint()
   fn write_digits(num : UInt) {
     let num2 = num / radix
@@ -80,7 +80,7 @@ fn UInt::output(self : UInt, logger : &Logger, radix~ : Int = 10) -> Unit {
 }
 
 ///|
-fn UInt64::output(self : UInt64, logger : &Logger, radix~ : Int = 10) -> Unit {
+fn UInt64::output(self : UInt64, logger : &Logger, radix? : Int = 10) -> Unit {
   let radix : UInt64 = radix.to_uint64()
   fn write_digits(num : UInt64) {
     let num2 = num / radix
@@ -96,7 +96,7 @@ fn UInt64::output(self : UInt64, logger : &Logger, radix~ : Int = 10) -> Unit {
 }
 
 ///|
-fn Int64::output_size_hint(radix~ : Int = 10) -> Int {
+fn Int64::output_size_hint(radix? : Int = 10) -> Int {
   match radix {
     2..<7 => 70 // max length is 64, 70 is enough
     8..<15 => 30 // max length is 23, 30 is enough
@@ -106,7 +106,7 @@ fn Int64::output_size_hint(radix~ : Int = 10) -> Int {
 }
 
 ///|
-fn Int::output_size_hint(radix~ : Int = 10) -> Int {
+fn Int::output_size_hint(radix? : Int = 10) -> Int {
   match radix {
     2..<7 => 36 // max length is 32, 36 is enough
     8..<15 => 18 // max length is 12, 18 is enough
@@ -116,11 +116,11 @@ fn Int::output_size_hint(radix~ : Int = 10) -> Int {
 }
 
 ///|
-fn UInt::output_size_hint(radix~ : Int = 10) -> Int {
+fn UInt::output_size_hint(radix? : Int = 10) -> Int {
   Int::output_size_hint(radix~)
 }
 
 ///|
-fn UInt64::output_size_hint(radix~ : Int = 10) -> Int {
+fn UInt64::output_size_hint(radix? : Int = 10) -> Int {
   Int64::output_size_hint(radix~)
 }

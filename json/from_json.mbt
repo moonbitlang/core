@@ -28,7 +28,7 @@ pub(open) trait FromJson {
 ///|
 pub fn[T : FromJson] from_json(
   json : Json,
-  path~ : JsonPath = Root,
+  path? : JsonPath = Root,
 ) -> T raise JsonDecodeError {
   FromJson::from_json(json, path)
 }

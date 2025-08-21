@@ -916,7 +916,8 @@ pub fn[T : Eq] Array::search(self : Array[T], value : T) -> Int? {
   }
 }
 
-///| Search the index of the first element that satisfies the predicate.
+///|
+/// Search the index of the first element that satisfies the predicate.
 ///
 /// # Example
 ///

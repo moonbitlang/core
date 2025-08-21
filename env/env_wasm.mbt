@@ -23,7 +23,8 @@ priv type XExternString
 ///|
 fn begin_read_string(s : XExternString) -> XStringReadHandle = "__moonbit_fs_unstable" "begin_read_string"
 
-///| Read one char from the string, returns -1 if the end of the string is reached.
+///|
+/// Read one char from the string, returns -1 if the end of the string is reached.
 /// The number returned is the unicode codepoint of the character.
 fn string_read_char(handle : XStringReadHandle) -> Int = "__moonbit_fs_unstable" "string_read_char"
 

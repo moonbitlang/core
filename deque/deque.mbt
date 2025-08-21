@@ -37,7 +37,7 @@ fn[T] set_null(buffer : UninitializedArray[T], index : Int) = "%fixedarray.set_n
 ///   inspect(dq.length(), content="0")
 ///   inspect(dq.capacity(), content="10")
 /// ```
-pub fn[A] new(capacity~ : Int = 0) -> T[A] {
+pub fn[A] new(capacity? : Int = 0) -> T[A] {
   T::{ buf: UninitializedArray::make(capacity), len: 0, head: 0, tail: 0 }
 }
 

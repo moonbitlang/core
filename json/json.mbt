@@ -87,8 +87,8 @@ fn indent_str(level : Int, indent : Int) -> String {
 ///|
 pub fn stringify(
   self : Json,
-  escape_slash~ : Bool = false,
-  indent~ : Int = 0,
+  escape_slash? : Bool = false,
+  indent? : Int = 0,
 ) -> String {
   let buf = StringBuilder::new(size_hint=0)
   fn stringify_inner(value : Json, level : Int) -> Unit {

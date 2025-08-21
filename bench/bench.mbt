@@ -55,7 +55,7 @@ pub fn bench(
   self : T,
   name? : String,
   f : () -> Unit,
-  count~ : UInt = 10,
+  count? : UInt = 10,
 ) -> Unit {
   let summary = iter_count(name?, f, count)
   if !self.buffer.is_empty() {
@@ -70,7 +70,7 @@ pub fn bench(
 pub fn single_bench(
   name? : String,
   f : () -> Unit,
-  count~ : UInt = 10,
+  count? : UInt = 10,
 ) -> Summary {
   iter_count(name?, f, count)
 }

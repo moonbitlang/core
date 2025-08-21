@@ -37,7 +37,7 @@ impl Source for @random_source.ChaCha8 with next(self : @random_source.ChaCha8) 
 /// Create a new random number generator with [seed].
 /// @alert unsafe "Panic if seed is not 32 bytes long"
 pub fn Rand::chacha8(
-  seed~ : Bytes = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456",
+  seed? : Bytes = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456",
 ) -> Rand {
   if seed.length() != 32 {
     abort("seed must be 32 bytes long")
@@ -48,7 +48,7 @@ pub fn Rand::chacha8(
 ///|
 /// Create a new random number generator with [seed].
 #deprecated("You may use `Rand::chacha8(seed~)` instead of `Rand::new(chacha8(seed~))")
-pub fn chacha8(seed~ : Bytes = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456") -> &Source {
+pub fn chacha8(seed? : Bytes = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456") -> &Source {
   @random_source.ChaCha8::new(seed)
 }
 
@@ -82,7 +82,7 @@ test "next" {
 ///
 /// * `limit` - The upper bound (exclusive) of the random number to be generated (Optional).
 ///             When limit is 0, the range is [0, 2^31).
-pub fn int(self : Rand, limit~ : Int = 0) -> Int {
+pub fn int(self : Rand, limit? : Int = 0) -> Int {
   if limit == 0 {
     // Range [0, 2^31)
     (self.next() >> 33).to_int()
@@ -98,7 +98,7 @@ pub fn int(self : Rand, limit~ : Int = 0) -> Int {
 ///
 /// * `limit` - The upper bound (exclusive) of the random number to be generated (Optional).
 ///            When limit is 0, the range is [0, 2^63).
-pub fn int64(self : Rand, limit~ : Int64 = 0) -> Int64 {
+pub fn int64(self : Rand, limit? : Int64 = 0) -> Int64 {
   if limit == 0 {
     // range [0, 2^63)
     // Create a mask that keeps the lower 63 bits
@@ -116,7 +116,7 @@ pub fn int64(self : Rand, limit~ : Int64 = 0) -> Int64 {
 ///
 /// * `limit` - The upper bound (exclusive) of the random number to be generated (Optional).
 ///            When limit is 0, the range is [0, 2^32).
-pub fn uint(self : Rand, limit~ : UInt = 0) -> UInt {
+pub fn uint(self : Rand, limit? : UInt = 0) -> UInt {
   if limit == 0 {
     // Range: [0, 2^32)
     return self.next().to_uint()
@@ -142,7 +142,7 @@ test "uint" {
 ///
 /// * `limit` - The upper bound (exclusive) of the random number to be generated (Optional).
 ///           When limit is 0, the range is [0, 2^64).
-pub fn uint64(self : Rand, limit~ : UInt64 = 0) -> UInt64 {
+pub fn uint64(self : Rand, limit? : UInt64 = 0) -> UInt64 {
   if limit == 0 {
     // Range: [0, 2^64)
     return self.next()
