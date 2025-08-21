@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-///|
 // Types
+///|
 priv struct Entry[K] {
   mut prev : Int
   mut next : Entry[K]?
@@ -51,7 +51,7 @@ struct Set[K] {
 /// Create a hash set.
 /// The capacity of the set will be the smallest power of 2 that is
 /// greater than or equal to the provided [capacity].
-pub fn[K] Set::new(capacity~ : Int = 8) -> Set[K] {
+pub fn[K] Set::new(capacity? : Int = 8) -> Set[K] {
   let capacity = capacity.next_power_of_two()
   {
     size: 0,

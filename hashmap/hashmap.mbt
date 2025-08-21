@@ -32,7 +32,7 @@
 ///   inspect(map.capacity(), content="16")
 ///   inspect(map.is_empty(), content="true")
 /// ```
-pub fn[K, V] new(capacity~ : Int = 8) -> T[K, V] {
+pub fn[K, V] new(capacity? : Int = 8) -> T[K, V] {
   let capacity = capacity.next_power_of_two()
   {
     size: 0,

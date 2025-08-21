@@ -137,8 +137,8 @@ pub fn[A] Array::blit_to(
   self : Array[A],
   dst : Array[A],
   len~ : Int,
-  src_offset~ : Int = 0,
-  dst_offset~ : Int = 0,
+  src_offset? : Int = 0,
+  dst_offset? : Int = 0,
 ) -> Unit {
   guard len >= 0 &&
     dst_offset >= 0 &&
@@ -250,7 +250,8 @@ test "panic Array::blit_to/boundary_cases" {
   ignore(Array::blit_to(src, dst, len=5, dst_offset=6))
 }
 
-///| TODO
+///|
+/// TODO
 /// 1. allow skip
 /// 2. verify test
 /// 3. concurrency test

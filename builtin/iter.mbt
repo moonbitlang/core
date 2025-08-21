@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-///|
 // Types
+///|
 struct Iter[T](((T) -> IterResult) -> IterResult)
 
-///|
 //TODO: Add intrinsic for Iter::run
+///|
 pub fn[T] Iter::run(self : Iter[T], f : (T) -> IterResult) -> IterResult {
   self(f)
 }
@@ -219,8 +219,8 @@ pub fn[T] Iter::repeat(a : T) -> Iter[T] {
 pub fn Int::until(
   self : Int,
   end : Int,
-  step~ : Int = 1,
-  inclusive~ : Bool = false,
+  step? : Int = 1,
+  inclusive? : Bool = false,
 ) -> Iter[Int] {
   if step == 0 {
     return Iter::empty()
@@ -262,8 +262,8 @@ pub fn Int::until(
 pub fn Int64::until(
   self : Int64,
   end : Int64,
-  step~ : Int64 = 1L,
-  inclusive~ : Bool = false,
+  step? : Int64 = 1L,
+  inclusive? : Bool = false,
 ) -> Iter[Int64] {
   if step == 0 {
     return Iter::empty()
@@ -305,8 +305,8 @@ pub fn Int64::until(
 pub fn Float::until(
   self : Float,
   end : Float,
-  step~ : Float = 1.0,
-  inclusive~ : Bool = false,
+  step? : Float = 1.0,
+  inclusive? : Bool = false,
 ) -> Iter[Float] {
   if step == 0.0 {
     return Iter::empty()
@@ -348,8 +348,8 @@ pub fn Float::until(
 pub fn Double::until(
   self : Double,
   end : Double,
-  step~ : Double = 1.0,
-  inclusive~ : Bool = false,
+  step? : Double = 1.0,
+  inclusive? : Bool = false,
 ) -> Iter[Double] {
   if step == 0.0 {
     return Iter::empty()
@@ -483,7 +483,7 @@ pub fn[T, R] Iter::flat_map(self : Iter[T], f : (T) -> Iter[R]) -> Iter[R] {
   yield_ => self.run(x => f(x).run(yield_))
 }
 
-///| 
+///|
 /// iter.map(f).flatten() == iter..flat_map(f)
 /// ```moonbit 
 /// // ignore this test case for now since it will cause ice in release build
@@ -888,7 +888,7 @@ pub fn[A] Iter::intersperse(self : Iter[A], sep : A) -> Iter[A] {
 ///|
 pub fn[A] Iter::op_as_view(
   self : Iter[A],
-  start~ : Int = 0,
+  start? : Int = 0,
   end? : Int,
 ) -> Iter[A] {
   // Note here we mark `end` as an optional parameter

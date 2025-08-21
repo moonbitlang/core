@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-///|
 // Similar to Iter but used for two values
 // It is useful for iterating over map entries
 // without boxing
@@ -20,10 +19,11 @@
 // ```
 //    for k, v in map { ... }
 // ```
+///|
 struct Iter2[A, B](((A, B) -> IterResult) -> IterResult)
 
-///|
 //TODO: Add intrinsic for Iter::run
+///|
 pub fn[A, B] Iter2::run(
   self : Iter2[A, B],
   f : (A, B) -> IterResult,

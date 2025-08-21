@@ -26,7 +26,7 @@
 /// Returns an iterator that iterates over the range of Int from `start` to `end - 1`.
 #deprecated("Use `..<` in for loop or `until` method instead")
 #coverage.skip
-pub fn Int::upto(self : Int, end : Int, inclusive~ : Bool = false) -> Iter[Int] {
+pub fn Int::upto(self : Int, end : Int, inclusive? : Bool = false) -> Iter[Int] {
   yield_ => {
     let mut i = self
     while i < end || (inclusive && i == end) {
@@ -60,7 +60,7 @@ pub fn Int::upto(self : Int, end : Int, inclusive~ : Bool = false) -> Iter[Int] 
 pub fn UInt::upto(
   self : UInt,
   end : UInt,
-  inclusive~ : Bool = false,
+  inclusive? : Bool = false,
 ) -> Iter[UInt] {
   yield_ => {
     let mut i = self
@@ -95,7 +95,7 @@ pub fn UInt::upto(
 pub fn UInt64::upto(
   self : UInt64,
   end : UInt64,
-  inclusive~ : Bool = false,
+  inclusive? : Bool = false,
 ) -> Iter[UInt64] {
   yield_ => {
     let mut i = self
@@ -130,7 +130,7 @@ pub fn UInt64::upto(
 pub fn Int64::upto(
   self : Int64,
   end : Int64,
-  inclusive~ : Bool = false,
+  inclusive? : Bool = false,
 ) -> Iter[Int64] {
   yield_ => {
     let mut i = self
@@ -165,7 +165,7 @@ pub fn Int64::upto(
 pub fn Float::upto(
   self : Float,
   end : Float,
-  inclusive~ : Bool = false,
+  inclusive? : Bool = false,
 ) -> Iter[Float] {
   yield_ => {
     let mut i = self
@@ -200,7 +200,7 @@ pub fn Float::upto(
 pub fn Double::upto(
   self : Double,
   end : Double,
-  inclusive~ : Bool = false,
+  inclusive? : Bool = false,
 ) -> Iter[Double] {
   yield_ => {
     let mut i = self
@@ -465,7 +465,7 @@ pub fn String::codepoint_at(self : String, index : Int) -> Char {
 #deprecated("Use `char_length` instead.")
 pub fn String::codepoint_length(
   self : String,
-  start_offset~ : Int = 0,
+  start_offset? : Int = 0,
   end_offset? : Int,
 ) -> Int {
   self.char_length(start_offset~, end_offset?)

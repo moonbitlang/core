@@ -288,8 +288,8 @@ fn decimal_length17(v : UInt64) -> Int {
   return 1
 }
 
-///|
 // A floating decimal representing m * 10^e.
+///|
 priv struct FloatingDecimal64 {
   mantissa : UInt64
   // Decimal exponent's range is -324 to 308

@@ -33,13 +33,13 @@ test {
   assert_eq(v0, v)
 }
 
-///|
 // struct Hello2 [A, B] {
 //   fieldA : A
 //   fieldB : B
 //   data : Map[B, A]
 // }derive(ToJson)
 // Should the deriver generate constraints that [B: Show]
+///|
 struct Hello3[A, B] {
   fieldAX : A
   fieldB : B

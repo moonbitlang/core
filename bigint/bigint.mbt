@@ -63,7 +63,7 @@ pub impl @quickcheck.Arbitrary for BigInt with arbitrary(size, rs) {
   }
 }
 
-///| 
+///|
 /// Returns the default value `0` for `BigInt`
 pub impl Default for BigInt with default() {
   zero

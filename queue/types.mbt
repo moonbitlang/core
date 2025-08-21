@@ -18,9 +18,9 @@ priv struct Cons[A] {
   mut next : Cons[A]?
 } derive(Eq)
 
-///|
 // Invariant:
 // - length == 0 <=> first is None && last is None
+///|
 struct T[A] {
   mut length : Int
   mut first : Cons[A]?

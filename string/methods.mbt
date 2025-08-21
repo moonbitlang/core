@@ -259,7 +259,7 @@ test "rev_find" {
   )
 }
 
-///| 
+///|
 /// Returns true if the given substring is suffix of this string.
 pub fn View::has_suffix(self : View, str : View) -> Bool {
   self.rev_find(str) is Some(i) && i == self.length() - str.length()
@@ -711,7 +711,7 @@ test "trim" {
   inspect("abcabc".trim("abc"), content="")
 }
 
-///| 
+///|
 /// Returns the view of the string without the leading and trailing spaces.
 pub fn View::trim_space(self : View) -> View {
   self.trim(" \n\r\t")
@@ -1381,7 +1381,8 @@ pub fn[A] View::fold(self : View, init~ : A, f : (A, Char) -> A) -> A {
   rv
 }
 
-///| Folds the characters of the string into a single value.
+///|
+/// Folds the characters of the string into a single value.
 pub fn[A] fold(self : String, init~ : A, f : (A, Char) -> A) -> A {
   self[:].fold(init~, f)
 }

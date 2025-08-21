@@ -112,7 +112,8 @@ pub impl ToJson for Int16 with to_json(self : Int16) -> Json {
   Json::number(self.to_int().to_double())
 }
 
-///| reinterpret as an unsigned integer with binary complement
+///|
+/// reinterpret as an unsigned integer with binary complement
 pub fn Int16::reinterpret_as_uint16(self : Int16) -> UInt16 {
   self.to_int().to_uint16()
 }

@@ -155,7 +155,7 @@ pub impl[X] Default for FixedArray[X] with default() {
 pub fn[T] FixedArray::fill(
   self : FixedArray[T],
   value : T,
-  start~ : Int = 0,
+  start? : Int = 0,
   end? : Int,
 ) -> Unit {
   let array_length = self.length()

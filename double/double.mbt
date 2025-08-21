@@ -91,7 +91,8 @@ pub fn signum(self : Double) -> Double {
   }
 }
 
-///| Checks whether a double-precision floating-point number represents a "Not a
+///|
+/// Checks whether a double-precision floating-point number represents a "Not a
 /// Number" (NaN) value.
 ///
 /// Parameters:
@@ -306,8 +307,8 @@ pub impl Show for Double with output(self, logger) {
 pub fn Double::is_close(
   self : Self,
   other : Self,
-  relative_tolerance~ : Self = 1.0e-09,
-  absolute_tolerance~ : Self = 0.0,
+  relative_tolerance? : Self = 1.0e-09,
+  absolute_tolerance? : Self = 0.0,
 ) -> Bool {
   if relative_tolerance < 0.0 || absolute_tolerance < 0.0 {
     abort("Tolerances must be non-negative")

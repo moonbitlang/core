@@ -185,7 +185,7 @@ pub fn[A] last(self : Array[A]) -> A? {
   }
 }
 
-///| 
+///|
 /// Zips two arrays into a single array of tuples.
 ///
 /// Parameters:
@@ -238,7 +238,7 @@ pub fn[T1, T2] unzip(self : Array[(T1, T2)]) -> (Array[T1], Array[T2]) {
   (arr1, arr2)
 }
 
-///| 
+///|
 /// Zips two arrays into a single array by applying a function to each pair of elements.
 ///
 /// Parameters:
@@ -271,7 +271,7 @@ pub fn[A, B, C] zip_with(
   }
 }
 
-///| 
+///|
 /// Zips two arrays into an iterator that yields corresponding elements.
 ///
 /// Parameters:

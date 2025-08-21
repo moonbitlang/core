@@ -46,7 +46,7 @@ pub extern "js" fn BigInt::from_hex(str : String) -> BigInt =
 ///|
 pub extern "js" fn BigInt::to_hex(
   self : BigInt,
-  uppercase~ : Bool = true,
+  uppercase? : Bool = true,
 ) -> String =
   #|(x, uppercase) => {
   #|  const r = x.toString(16);
@@ -58,7 +58,7 @@ extern "js" fn hex2(b : Byte) -> String =
   #|(x) => x.toString(16).padStart(2, '0')
 
 ///|
-pub fn BigInt::from_octets(octets : Bytes, signum~ : Int = 1) -> BigInt {
+pub fn BigInt::from_octets(octets : Bytes, signum? : Int = 1) -> BigInt {
   if signum < 0 {
     return -1N * BigInt::from_octets(octets, signum=1)
   }
@@ -474,7 +474,8 @@ pub extern "js" fn BigInt::bit_length(self : BigInt) -> Int =
   #|  }
   #|}
 
-///| Returns the number of trailing zero bits in the binary representation of 
+///|
+/// Returns the number of trailing zero bits in the binary representation of 
 /// the absolute value of this BigInt.
 ///
 /// For zero, it returns -1.

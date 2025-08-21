@@ -241,8 +241,8 @@ pub fn[X] SparseArray::filter(
   }
 }
 
-///|
 // replace an existing element in the sparse array.
+///|
 pub fn[X] replace(
   self : SparseArray[X],
   idx : Int,

@@ -431,8 +431,8 @@ test "eachi" {
   inspect(exb, content="13579")
 }
 
-///|
 // For testing purposes
+///|
 fn[T] test_from_array(arr : Array[T]) -> Iter[T] {
   Iter::new(yield_ => for i in 0..<arr.length() {
     if yield_(arr[i]) == IterEnd {

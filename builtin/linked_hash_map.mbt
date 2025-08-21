@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-///|
 // Types
+///|
 priv struct Entry[K, V] {
   mut prev : Int
   mut next : Entry[K, V]?
@@ -51,7 +51,7 @@ struct Map[K, V] {
 /// Create a hash map.
 /// The capacity of the map will be the smallest power of 2 that is
 /// greater than or equal to the provided [capacity].
-pub fn[K, V] Map::new(capacity~ : Int = 8) -> Map[K, V] {
+pub fn[K, V] Map::new(capacity? : Int = 8) -> Map[K, V] {
   let capacity = capacity.next_power_of_two()
   {
     size: 0,
