@@ -41,7 +41,6 @@ pub impl Eq for Json with op_equal(a, b) {
 /// Creates a JSON null value.
 ///
 /// Returns a JSON value representing `null`.
-#deprecated("Use `null` instead")
 pub fn Json::null() -> Json {
   return Null
 }
