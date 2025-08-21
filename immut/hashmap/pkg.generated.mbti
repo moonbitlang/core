@@ -25,10 +25,11 @@ fn[K : Eq + Hash, V] T::contains(Self[K, V], K) -> Bool
 fn[K : Eq, V] T::difference(Self[K, V], Self[K, V]) -> Self[K, V]
 fn[K, V] T::each(Self[K, V], (K, V) -> Unit raise?) -> Unit raise?
 #deprecated
-fn[K, V] T::elems(Self[K, V]) -> Iter[V]
 fn[K, V] T::filter(Self[K, V], (V) -> Bool raise?) -> Self[K, V] raise?
+fn[K, V] T::filter_with_key(Self[K, V], (K, V) -> Bool raise?) -> Self[K, V] raise?
 #deprecated
 fn[K : Eq + Hash, V] T::find(Self[K, V], K) -> V?
+#deprecated
 fn[K, V, A] T::fold(Self[K, V], init~ : A, (A, V) -> A raise?) -> A raise?
 fn[K, V, A] T::fold_with_key(Self[K, V], init~ : A, (A, K, V) -> A raise?) -> A raise?
 fn[K : Eq + Hash, V] T::get(Self[K, V], K) -> V?
@@ -37,6 +38,7 @@ fn[K : Eq, V] T::intersection_with(Self[K, V], Self[K, V], (K, V, V) -> V raise?
 fn[K, V] T::iter(Self[K, V]) -> Iter[(K, V)]
 fn[K, V] T::iter2(Self[K, V]) -> Iter2[K, V]
 fn[K, V] T::keys(Self[K, V]) -> Iter[K]
+#deprecated
 fn[K, V, A] T::map(Self[K, V], (V) -> A raise?) -> Self[K, A] raise?
 fn[K, V, A] T::map_with_key(Self[K, V], (K, V) -> A raise?) -> Self[K, A] raise?
 #deprecated
@@ -46,6 +48,7 @@ fn[K, V] T::size(Self[K, V]) -> Int
 fn[K, V] T::to_array(Self[K, V]) -> Array[(K, V)]
 fn[K : Eq, V] T::union(Self[K, V], Self[K, V]) -> Self[K, V]
 fn[K : Eq, V] T::union_with(Self[K, V], Self[K, V], (K, V, V) -> V raise?) -> Self[K, V] raise?
+#alias(elems, deprecated)
 fn[K, V] T::values(Self[K, V]) -> Iter[V]
 impl[K : Eq, V : Eq] Eq for T[K, V]
 impl[K : Hash, V : Hash] Hash for T[K, V]
