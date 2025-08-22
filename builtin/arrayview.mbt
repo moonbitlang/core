@@ -297,7 +297,7 @@ pub fn[T] ArrayView::op_as_view(
 pub fn[T] ArrayView::blit_to(
   self : ArrayView[T],
   dst : ArrayView[T],
-  len : Int
+  len : Int,
 ) -> Unit {
   let src_len = self.length()
   let dst_len = dst.length()
@@ -318,10 +318,10 @@ pub fn[T] ArrayView::blit_to(
   // Perform direct memory copy using unsafe_blit for maximum efficiency
   if copy_len > 0 {
     UninitializedArray::unsafe_blit(
-      dst.buf,
-      dst.start,
-      self.buf,
-      self.start,
+      dst.buf(),
+      dst.start(),
+      self.buf(),
+      self.start(),
       copy_len,
     )
   }
