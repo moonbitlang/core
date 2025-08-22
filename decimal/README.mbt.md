@@ -1,4 +1,4 @@
-# `decimal`
+# `Decimal`
 
 This package provides the use of high-precision decimal numbers.
 
