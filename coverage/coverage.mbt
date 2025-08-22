@@ -34,8 +34,18 @@ pub fn CoverageCounter::incr(self : CoverageCounter, idx : Int) -> Unit {
 }
 
 ///|
+/// Serializes the coverage data into a JSON array format.
+/// 
+/// Example:
+///
+/// ```moonbit
+/// let x = CoverageCounter::new(2)
+/// inspect(x.to_string(), content="[0, 0]")
+/// ```
 pub impl Show for CoverageCounter with output(self, logger) {
-  self.0.output(logger)
+  // NOTE: This implementation depends on the `Show::output` of 
+  // `FixedArray[Int]` maintaining JSON array format compatibility.
+  FixedArray::output(self.0, logger)
 }
 
 ///|
@@ -110,12 +120,6 @@ fn coverage_log(counters : CounterList, writeln~ : (String) -> Unit) -> Unit {
   }
   line_buf.write_string("}")
   writeln(line_buf.to_string())
-}
-
-///|
-test "new_counter" {
-  let counter = CoverageCounter::new(2)
-  inspect(counter.to_string(), content="[0, 0]")
 }
 
 ///|
