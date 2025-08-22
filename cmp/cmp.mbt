@@ -60,7 +60,11 @@ pub fn[T, K : Compare] minimum_by_key(x : T, y : T, f : (T) -> K) -> T {
 /// ```mbt
 ///   inspect(@cmp.maximum(1, 2), content="2")
 ///   inspect(@cmp.maximum(2, 1), content="2")
-///   inspect(@cmp.maximum(2, 2), content="2")
+/// 
+///   let fst = []
+///   let snd = []
+///   @cmp.maximum(fst, snd).push(0)
+///   inspect(snd, content="[0]")
 /// ```
 pub fn[T : Compare] maximum(x : T, y : T) -> T {
   if x > y {
@@ -80,7 +84,11 @@ pub fn[T : Compare] maximum(x : T, y : T) -> T {
 /// ```mbt
 ///   inspect(@cmp.minimum(1, 2), content="1")
 ///   inspect(@cmp.minimum(2, 1), content="1")
-///   inspect(@cmp.minimum(2, 2), content="2")
+/// 
+///   let fst = []
+///   let snd = []
+///   @cmp.minimum(fst, snd).push(0)
+///   inspect(fst, content="[0]")
 /// ```
 pub fn[T : Compare] minimum(x : T, y : T) -> T {
   if x > y {
