@@ -102,7 +102,7 @@ test "parses nested arrays" {
 ///|
 test "parses nulls" {
   let json = test_parse("null")
-  assert_eq(json, Json::null())
+  assert_eq(json, null)
 }
 //endregion
 

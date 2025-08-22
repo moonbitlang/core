@@ -93,7 +93,7 @@ fn Json::prune_loc_test(self : Json) -> Json {
 ///|
 test "prune_loc - primitive values" {
   // Null, True, False, Number, String should be preserved as-is
-  inspect(Json::null().prune_loc(), content="Some(Null)")
+  inspect(null.prune_loc(), content="Some(Null)")
   inspect(Json::boolean(true).prune_loc(), content="Some(True)")
   inspect(Json::boolean(false).prune_loc(), content="Some(False)")
   inspect(Json::number(42.0).prune_loc(), content="Some(Number(42))")
@@ -107,7 +107,7 @@ test "prune_loc - arrays" {
 
   // Array with primitives
   let arr1 = Json::array([
-    Json::null(),
+    null,
     Json::boolean(true),
     Json::number(123.0),
     Json::string("test"),
@@ -141,7 +141,7 @@ test "prune_loc - objects with loc key" {
       "column": Json::number(5.0),
     }),
   }
-  @json.inspect(obj_only_loc.prune_loc(), content=Json::null()) // FIXME: None -> Null
+  @json.inspect(obj_only_loc.prune_loc(), content=null) // FIXME: None -> Null
 
   // Object with "loc" and other keys - "loc" should be removed
   let obj_with_loc : Json = {
@@ -172,7 +172,7 @@ test "prune_loc - nested objects" {
   }
   @json.inspect(
     nested2.prune_loc(),
-    content=Json::null(), // FIXME: None -> Null
+    content=null, // FIXME: None -> Null
   )
 }
 

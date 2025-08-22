@@ -2,7 +2,9 @@
   "import": ["moonbitlang/core/builtin"],
   "test-import": [
     "moonbitlang/core/array",
-    "moonbitlang/core/double",
+    "moonbitlang/core/double", 
+    "moonbitlang/core/uint",
+    "moonbitlang/core/uint64",
     "moonbitlang/core/test",
     "moonbitlang/core/quickcheck"
   ]
