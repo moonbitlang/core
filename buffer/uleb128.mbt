@@ -18,37 +18,7 @@ trait Unsigned {
 }
 
 ///|
-pub impl Unsigned for Int with output_uleb128(self, buffer) {
-  for value = self {
-    if value < 128 {
-      // Single byte: no continuation bit (0xxxxxxx)
-      buffer.write_byte(value.to_byte())
-      break
-    } else {
-      // Multiple bytes: set continuation bit (1xxxxxxx) and continue
-      buffer.write_byte(((value % 128) | 128).to_byte())
-      continue value / 128
-    }
-  }
-}
-
-///|
 pub impl Unsigned for UInt with output_uleb128(self, buffer) {
-  for value = self {
-    if value < 128 {
-      // Single byte: no continuation bit (0xxxxxxx)
-      buffer.write_byte(value.to_byte())
-      break
-    } else {
-      // Multiple bytes: set continuation bit (1xxxxxxx) and continue
-      buffer.write_byte(((value % 128) | 128).to_byte())
-      continue value / 128
-    }
-  }
-}
-
-///|
-pub impl Unsigned for Int64 with output_uleb128(self, buffer) {
   for value = self {
     if value < 128 {
       // Single byte: no continuation bit (0xxxxxxx)
@@ -91,7 +61,13 @@ pub impl Unsigned for UInt64 with output_uleb128(self, buffer) {
 /// # Example
 /// ```moonbit
 /// let buf = @buffer.new()
-/// buf.write_uleb128(300)  // Writes: 0xAC 0x02
+/// buf.write_uleb128(300UL) // Writes: 0xAC 0x02
+/// inspect(
+///   buf.to_bytes(),
+///   content=(
+///     #|b"\xac\x02"
+///   ),
+/// )
 /// ```
 pub fn[A : Unsigned] Buffer::write_uleb128(buffer : Buffer, value : A) -> Unit {
   value.output_uleb128(buffer)

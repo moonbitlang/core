@@ -56,8 +56,6 @@ impl Signed for Int
 impl Signed for Int64
 
 trait Unsigned
-impl Unsigned for Int
-impl Unsigned for Int64
 impl Unsigned for UInt
 impl Unsigned for UInt64
 
