@@ -12,7 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-///| test Int::land
+///|
+/// test Int::land
 test "Int::land should perform bitwise AND operation" {
   let a = 0b101
   let b = 0b011
@@ -22,7 +23,8 @@ test "Int::land should perform bitwise AND operation" {
   inspect((0xffff_ffff & 0xffff_ffff) == 0xffff_ffff, content="true")
 }
 
-///| test Int::lor
+///|
+/// test Int::lor
 test "Int::lor should perform bitwise OR operation" {
   inspect((0b101 | 0b011) == 0b111, content="true")
   inspect((0xffff_ffff | 0xa000_0000) == 0xffff_ffff, content="true")
@@ -30,7 +32,8 @@ test "Int::lor should perform bitwise OR operation" {
   inspect((0xffff_ffff | 0xffff_ffff) == 0xffff_ffff, content="true")
 }
 
-///| test Int::lxor
+///|
+/// test Int::lxor
 test "Int::lxor should perform bitwise XOR operation" {
   inspect((0b101 ^ 0b011) == 0b110, content="true")
   inspect((0xffff_ffff ^ 0xa000_0000) == 0x5fff_ffff, content="true")
@@ -38,7 +41,8 @@ test "Int::lxor should perform bitwise XOR operation" {
   inspect((0xffff_ffff ^ 0xffff_ffff) == 0, content="true")
 }
 
-///| test Int::op_shl
+///|
+/// test Int::op_shl
 test "Int::op_shl should perform left shift operation" {
   inspect(7 << 1, content="14")
   inspect(0b101 << 1 == 0b1010, content="true")

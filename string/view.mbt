@@ -16,7 +16,8 @@
 /// A `@string.View` represents a view of a String that maintains proper Unicode
 /// character boundaries. It allows safe access to a substring while handling 
 /// multi-byte characters correctly.
-pub typealias StringView as View
+#builtin.valtype
+type View
 
 ///|
 /// Returns the source string being viewed.
@@ -33,7 +34,7 @@ fn View::end(self : View) -> Int = "%stringview.end"
 ///|
 fn View::make_view(str : String, start : Int, end : Int) -> View = "%stringview.make"
 
-///| 
+///|
 /// Returns the charcode(UTF-16 code unit) at the given index.
 /// 
 /// This method has O(1) complexity.
@@ -94,7 +95,7 @@ pub fn length(self : View) -> Int {
 /// ```
 pub fn String::view(
   self : String,
-  start_offset~ : Int = 0,
+  start_offset? : Int = 0,
   end_offset? : Int,
 ) -> View {
   let end_offset = if end_offset is Some(o) { o } else { self.length() }
@@ -110,7 +111,7 @@ pub fn String::view(
 /// Returns a new view of the view with the given start and end offsets.
 pub fn View::view(
   self : View,
-  start_offset~ : Int = 0,
+  start_offset? : Int = 0,
   end_offset? : Int,
 ) -> View {
   let end_offset = if end_offset is Some(o) { o } else { self.length() }
@@ -143,7 +144,7 @@ pub fn View::view(
 /// 
 /// This method has O(1) complexity.
 #deprecated("use view instead")
-pub fn String::charcodes(self : String, start~ : Int = 0, end? : Int) -> View {
+pub fn String::charcodes(self : String, start? : Int = 0, end? : Int) -> View {
   self.view(start_offset=start, end_offset?=end)
 }
 
@@ -166,7 +167,7 @@ pub fn String::charcodes(self : String, start~ : Int = 0, end? : Int) -> View {
 /// 
 /// This method has O(1) complexity.
 #deprecated("use view instead")
-pub fn View::charcodes(self : View, start~ : Int = 0, end? : Int) -> View {
+pub fn View::charcodes(self : View, start? : Int = 0, end? : Int) -> View {
   self.view(start_offset=start, end_offset?=end)
 }
 
@@ -207,7 +208,7 @@ pub fn View::unsafe_charcode_at(self : View, index : Int) -> Int {
   self.str().unsafe_charcode_at(self.start() + index)
 }
 
-///| 
+///|
 /// Returns the number of Unicode characters in this view.
 /// 
 /// Note this has O(n) complexity where n is the length of the code points in 
@@ -252,7 +253,7 @@ pub impl Show for View with output(self, logger) {
 ///   let view = str.view(start_offset = str.offset_of_nth_char(0).unwrap(),end_offset = str.offset_of_nth_char(5).unwrap()) // "Hello"
 ///   inspect(view.to_string(), content="Hello")
 /// ```
-pub impl Show for StringView with to_string(self) {
+pub impl Show for View with to_string(self) {
   self.str().substring(start=self.start(), end=self.end())
 }
 
@@ -458,7 +459,7 @@ pub suberror CreatingViewError {
 /// ```
 pub fn String::op_as_view(
   self : String,
-  start~ : Int = 0,
+  start? : Int = 0,
   end? : Int,
 ) -> View raise CreatingViewError {
   let len = self.length()
@@ -524,7 +525,7 @@ pub fn String::op_as_view(
 /// ```
 pub fn View::op_as_view(
   self : View,
-  start~ : Int = 0,
+  start? : Int = 0,
   end? : Int,
 ) -> View raise CreatingViewError {
   let str_len = self.str().length()

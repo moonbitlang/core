@@ -55,7 +55,7 @@ fn code_point_of_surrogate_pair(leading : Int, trailing : Int) -> Char {
 /// ```
 pub fn String::char_length(
   self : String,
-  start_offset~ : Int = 0,
+  start_offset? : Int = 0,
   end_offset? : Int,
 ) -> Int {
   let end_offset = if end_offset is Some(o) { o } else { self.length() }
@@ -115,7 +115,7 @@ fn unsafe_substring(str : String, start : Int, end : Int) -> String {
 ///   inspect(s.substring(start=2, end=2), content="")
 ///   inspect("".substring(), content="")
 /// ```
-pub fn String::substring(self : String, start~ : Int = 0, end? : Int) -> String {
+pub fn String::substring(self : String, start? : Int = 0, end? : Int) -> String {
   let len = self.length()
   let end = match end {
     Some(end) => end

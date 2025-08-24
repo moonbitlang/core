@@ -75,8 +75,8 @@ test "minimum.ref" {
   @test.same_object(@cmp.minimum(x2t, x2), x2t)
 }
 
-///|
 // For testing purposes
+///|
 priv struct T {
   x : Int
 } derive(Show, Eq, Compare)

@@ -101,8 +101,8 @@ pub fn[A] FixedArray::blit_to(
   self : FixedArray[A],
   dst : FixedArray[A],
   len~ : Int,
-  src_offset~ : Int = 0,
-  dst_offset~ : Int = 0,
+  src_offset? : Int = 0,
+  dst_offset? : Int = 0,
 ) -> Unit {
   guard dst_offset >= 0 &&
     src_offset >= 0 &&

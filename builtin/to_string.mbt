@@ -16,7 +16,7 @@
 const ALPHABET : String = "0123456789abcdefghijklmnopqrstuvwxyz"
 
 ///|
-pub fn Int64::to_string(self : Int64, radix~ : Int = 10) -> String {
+pub fn Int64::to_string(self : Int64, radix? : Int = 10) -> String {
   let buf = StringBuilder::new(size_hint=Int64::output_size_hint(radix~))
   self.output(buf, radix~)
   buf.to_string()
@@ -28,7 +28,7 @@ pub impl Show for Int64 with to_string(self) {
 }
 
 ///|
-pub fn Int::to_string(self : Int, radix~ : Int = 10) -> String {
+pub fn Int::to_string(self : Int, radix? : Int = 10) -> String {
   let buf = StringBuilder::new(size_hint=Int::output_size_hint(radix~))
   self.output(buf, radix~)
   buf.to_string()
@@ -40,7 +40,7 @@ pub impl Show for Int with to_string(self) {
 }
 
 ///|
-pub fn UInt::to_string(self : UInt, radix~ : Int = 10) -> String {
+pub fn UInt::to_string(self : UInt, radix? : Int = 10) -> String {
   let buf = StringBuilder::new(size_hint=UInt::output_size_hint(radix~))
   self.output(buf, radix~)
   buf.to_string()
@@ -59,7 +59,7 @@ test "UInt::to_string" {
 }
 
 ///|
-pub fn UInt64::to_string(self : UInt64, radix~ : Int = 10) -> String {
+pub fn UInt64::to_string(self : UInt64, radix? : Int = 10) -> String {
   let buf = StringBuilder::new(size_hint=UInt64::output_size_hint(radix~))
   self.output(buf, radix~)
   buf.to_string()
@@ -71,7 +71,7 @@ pub impl Show for UInt64 with to_string(self) {
 }
 
 ///|
-pub fn Int16::to_string(self : Int16, radix~ : Int = 10) -> String {
+pub fn Int16::to_string(self : Int16, radix? : Int = 10) -> String {
   self.to_int().to_string(radix~)
 }
 
@@ -81,7 +81,7 @@ pub impl Show for Int16 with to_string(self) {
 }
 
 ///|
-pub fn UInt16::to_string(self : UInt16, radix~ : Int = 10) -> String {
+pub fn UInt16::to_string(self : UInt16, radix? : Int = 10) -> String {
   self.to_int().to_string(radix~)
 }
 

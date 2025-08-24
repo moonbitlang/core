@@ -49,7 +49,7 @@ fn[T] Array::make_uninit(len : Int) -> Array[T] {
 ///   let arr : Array[Int] = Array::new()
 ///   inspect(arr.length(), content="0")
 /// ```
-pub fn[T] Array::new(capacity~ : Int = 0) -> Array[T] {
+pub fn[T] Array::new(capacity? : Int = 0) -> Array[T] {
   if capacity == 0 {
     []
   } else {
@@ -406,7 +406,8 @@ fn[T] Array::unsafe_grow_to_length(self : Array[T], new_len : Int) -> Unit {
   self.buf = new_buf
 }
 
-///| Fills an Array with a specified value.
+///|
+/// Fills an Array with a specified value.
 /// 
 /// This method fills all or part of an Array with the given value.
 /// 
@@ -445,7 +446,7 @@ fn[T] Array::unsafe_grow_to_length(self : Array[T], new_len : Int) -> Unit {
 pub fn[A] Array::fill(
   self : Array[A],
   value : A,
-  start~ : Int = 0,
+  start? : Int = 0,
   end? : Int,
 ) -> Unit {
   let array_length = self.length()

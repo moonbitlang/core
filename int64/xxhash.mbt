@@ -27,9 +27,9 @@ let gPRIME4 = 0x27D4EB2FU
 ///|
 let gPRIME5 = 0x165667B1U
 
-///|
 // https://github.com/Cyan4973/xxHash/blob/dev/doc/xxhash_spec.md#xxh32-algorithm-description
 // For a more readable version, see bytes/xxhash.mbt
+///|
 pub impl Hash for Int64 with hash(self) -> Int {
   let mut input = self.reinterpret_as_uint64()
   let seed = 0U

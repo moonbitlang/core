@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-///|
 // when we write the string into the buffer
 // we assume the string is utf16 and blit
 // we assume the bytes (in valid region [0, len)) is utf16
 // so that
+///|
 fn id(s : String) -> String {
   StringBuilder::new()..write_string(s).to_string()
 }

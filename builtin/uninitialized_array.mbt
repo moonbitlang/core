@@ -70,7 +70,7 @@ pub fn[T] UninitializedArray::op_set(
 /// than `end`.
 pub fn[T] UninitializedArray::op_as_view(
   self : UninitializedArray[T],
-  start~ : Int = 0,
+  start? : Int = 0,
   end? : Int,
 ) -> ArrayView[T] {
   let len = self.length()

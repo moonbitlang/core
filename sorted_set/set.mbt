@@ -64,9 +64,9 @@ fn[V] copy_tree(node : Node[V]?) -> Node[V]? {
 ///|
 fn[V] new_node(
   value : V,
-  left~ : Node[V]? = None,
-  right~ : Node[V]? = None,
-  height~ : Int = 1,
+  left? : Node[V]? = None,
+  right? : Node[V]? = None,
+  height? : Int = 1,
 ) -> Node[V] {
   { value, left, right, height }
 }

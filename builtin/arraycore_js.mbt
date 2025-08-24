@@ -87,7 +87,7 @@ fn[T] Array::make_uninit(len : Int) -> Array[T] = "%fixedarray.make_uninit"
 
 ///|
 /// Creates a new array.
-pub fn[T] Array::new(capacity~ : Int = 0) -> Array[T] {
+pub fn[T] Array::new(capacity? : Int = 0) -> Array[T] {
   ignore(capacity)
   []
 }
@@ -212,7 +212,8 @@ pub fn[T] Array::pop(self : Array[T]) -> T? {
   }
 }
 
-///| Removes the last element from a array and returns it.
+///|
+/// Removes the last element from a array and returns it.
 ///
 /// **NOTE** This method will not cause a panic, but it may result in undefined
 /// behavior on the JavaScript platform. Use with caution.
@@ -301,7 +302,8 @@ fn[T] Array::unsafe_grow_to_length(self : Array[T], new_len : Int) -> Unit {
   JSArray::ofAnyArray(self).set_length(new_len)
 }
 
-///| Fills an Array with a specified value.
+///|
+/// Fills an Array with a specified value.
 /// 
 /// This method fills all or part of an Array with the given value.
 /// 
@@ -340,7 +342,7 @@ fn[T] Array::unsafe_grow_to_length(self : Array[T], new_len : Int) -> Unit {
 pub fn[A] Array::fill(
   self : Array[A],
   value : A,
-  start~ : Int = 0,
+  start? : Int = 0,
   end? : Int,
 ) -> Unit {
   let array_length = self.length()

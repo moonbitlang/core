@@ -12,14 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-///| Create an empty map.
+///|
+/// Create an empty map.
 #deprecated("Use `new()` instead")
 #coverage.skip
 pub fn[K, V] T::empty() -> T[K, V] {
   Empty
 }
 
-///| Create an empty map.
+///|
+/// Create an empty map.
 pub fn[K, V] new() -> T[K, V] {
   Empty
 }

@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-///|
 //region MyInt64
+///|
 priv struct MyInt64 {
   hi : Int
   lo : Int
