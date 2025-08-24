@@ -90,100 +90,48 @@ test "write_sleb128 Int64" {
 test "write_uleb128 Int" {
   let buffer = @buffer.new()
   // Test zero
-  buffer.write_uleb128(0)
+  buffer.write_uleb128(0U)
   assert_eq(buffer.to_bytes(), b"\x00")
   buffer.reset()
 
   // Test single byte values (0-127)
-  buffer.write_uleb128(1)
+  buffer.write_uleb128(1U)
   assert_eq(buffer.to_bytes(), b"\x01")
   buffer.reset()
-  buffer.write_uleb128(127)
+  buffer.write_uleb128(127U)
   assert_eq(buffer.to_bytes(), b"\x7f")
   buffer.reset()
 
   // Test two byte values (128-16383)
-  buffer.write_uleb128(128)
+  buffer.write_uleb128(128U)
   assert_eq(buffer.to_bytes(), b"\x80\x01")
   buffer.reset()
-  buffer.write_uleb128(129)
+  buffer.write_uleb128(129U)
   assert_eq(buffer.to_bytes(), b"\x81\x01")
   buffer.reset()
-  buffer.write_uleb128(16383)
+  buffer.write_uleb128(16383U)
   assert_eq(buffer.to_bytes(), b"\xff\x7f")
   buffer.reset()
 
   // Test three byte values (16384-2097151)
-  buffer.write_uleb128(16384)
+  buffer.write_uleb128(16384U)
   assert_eq(buffer.to_bytes(), b"\x80\x80\x01")
   buffer.reset()
-  buffer.write_uleb128(2097151)
+  buffer.write_uleb128(2097151U)
   assert_eq(buffer.to_bytes(), b"\xff\xff\x7f")
   buffer.reset()
 
   // Test four byte values (2097152-268435455)
-  buffer.write_uleb128(2097152)
+  buffer.write_uleb128(2097152U)
   assert_eq(buffer.to_bytes(), b"\x80\x80\x80\x01")
   buffer.reset()
-  buffer.write_uleb128(268435455)
+  buffer.write_uleb128(268435455U)
   assert_eq(buffer.to_bytes(), b"\xff\xff\xff\x7f")
   buffer.reset()
 
   // Test five byte values (268435456+)
-  buffer.write_uleb128(268435456)
+  buffer.write_uleb128(268435456U)
   assert_eq(buffer.to_bytes(), b"\x80\x80\x80\x80\x01")
-  buffer.reset()
-}
-
-///|
-test "write_uleb128 Int64" {
-  let buffer = @buffer.new()
-  // Test zero
-  buffer.write_uleb128(0L)
-  assert_eq(buffer.to_bytes(), b"\x00")
-  buffer.reset()
-
-  // Test single byte values (0-127)
-  buffer.write_uleb128(1L)
-  assert_eq(buffer.to_bytes(), b"\x01")
-  buffer.reset()
-  buffer.write_uleb128(127L)
-  assert_eq(buffer.to_bytes(), b"\x7f")
-  buffer.reset()
-
-  // Test two byte values (128-16383)
-  buffer.write_uleb128(128L)
-  assert_eq(buffer.to_bytes(), b"\x80\x01")
-  buffer.reset()
-  buffer.write_uleb128(129L)
-  assert_eq(buffer.to_bytes(), b"\x81\x01")
-  buffer.reset()
-  buffer.write_uleb128(16383L)
-  assert_eq(buffer.to_bytes(), b"\xff\x7f")
-  buffer.reset()
-
-  // Test three byte values (16384-2097151)
-  buffer.write_uleb128(16384L)
-  assert_eq(buffer.to_bytes(), b"\x80\x80\x01")
-  buffer.reset()
-  buffer.write_uleb128(2097151L)
-  assert_eq(buffer.to_bytes(), b"\xff\xff\x7f")
-  buffer.reset()
-
-  // Test larger values that fit in Int64
-  buffer.write_uleb128(4294967295L) // 2^32 - 1
-  assert_eq(buffer.to_bytes(), b"\xff\xff\xff\xff\x0f")
-  buffer.reset()
-  buffer.write_uleb128(549755813887L) // 2^39 - 1  
-  assert_eq(buffer.to_bytes(), b"\xff\xff\xff\xff\xff\x0f")
-  buffer.reset()
-  buffer.write_uleb128(70368744177663L) // 2^46 - 1
-  assert_eq(buffer.to_bytes(), b"\xff\xff\xff\xff\xff\xff\x0f")
-  buffer.reset()
-
-  // Test maximum positive Int64 value
-  buffer.write_uleb128(9223372036854775807L) // 2^63 - 1
-  assert_eq(buffer.to_bytes(), b"\xff\xff\xff\xff\xff\xff\xff\xff\x7f")
   buffer.reset()
 }
 
@@ -192,31 +140,31 @@ test "write_uleb128_edge_cases" {
   let buffer = @buffer.new()
 
   // Test boundary values for each byte length
-  buffer.write_uleb128(0)
+  buffer.write_uleb128(0U)
   assert_eq(buffer.to_bytes(), b"\x00")
   buffer.reset()
-  buffer.write_uleb128(0x7f) // 127 (max 1 byte)
+  buffer.write_uleb128(0x7fU) // 127 (max 1 byte)
   assert_eq(buffer.to_bytes(), b"\x7f")
   buffer.reset()
-  buffer.write_uleb128(0x80) // 128 (min 2 byte)
+  buffer.write_uleb128(0x80U) // 128 (min 2 byte)
   assert_eq(buffer.to_bytes(), b"\x80\x01")
   buffer.reset()
-  buffer.write_uleb128(0x3fff) // 16383 (max 2 byte)
+  buffer.write_uleb128(0x3fffU) // 16383 (max 2 byte)
   assert_eq(buffer.to_bytes(), b"\xff\x7f")
   buffer.reset()
-  buffer.write_uleb128(0x4000) // 16384 (min 3 byte)
+  buffer.write_uleb128(0x4000U) // 16384 (min 3 byte)
   assert_eq(buffer.to_bytes(), b"\x80\x80\x01")
   buffer.reset()
-  buffer.write_uleb128(0x1fffff) // 2097151 (max 3 byte)
+  buffer.write_uleb128(0x1fffffU) // 2097151 (max 3 byte)
   assert_eq(buffer.to_bytes(), b"\xff\xff\x7f")
   buffer.reset()
-  buffer.write_uleb128(0x200000) // 2097152 (min 4 byte)
+  buffer.write_uleb128(0x200000U) // 2097152 (min 4 byte)
   assert_eq(buffer.to_bytes(), b"\x80\x80\x80\x01")
   buffer.reset()
-  buffer.write_uleb128(0xfffffff) // 268435455 (max 4 byte)
+  buffer.write_uleb128(0xfffffffU) // 268435455 (max 4 byte)
   assert_eq(buffer.to_bytes(), b"\xff\xff\xff\x7f")
   buffer.reset()
-  buffer.write_uleb128(0x10000000) // 268435456 (min 5 byte)
+  buffer.write_uleb128(0x10000000U) // 268435456 (min 5 byte)
   assert_eq(buffer.to_bytes(), b"\x80\x80\x80\x80\x01")
   buffer.reset()
 }
@@ -226,10 +174,10 @@ test "write_uleb128_consecutive_writes" {
   let buffer = @buffer.new()
 
   // Test writing multiple values consecutively
-  buffer.write_uleb128(1)
-  buffer.write_uleb128(127)
-  buffer.write_uleb128(128)
-  buffer.write_uleb128(16384)
+  buffer.write_uleb128(1U)
+  buffer.write_uleb128(127U)
+  buffer.write_uleb128(128U)
+  buffer.write_uleb128(16384U)
   let expected = b"\x01\x7f\x80\x01\x80\x80\x01"
   assert_eq(buffer.to_bytes(), expected)
 }
