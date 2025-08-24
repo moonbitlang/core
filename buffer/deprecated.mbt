@@ -13,5 +13,5 @@
 // limitations under the License.
 
 ///| Extensible buffer.
-#deprecated("Use type `T` instead")
-pub typealias T as Buffer
+#deprecated("Use type `Buffer` instead")
+pub typealias Buffer as T

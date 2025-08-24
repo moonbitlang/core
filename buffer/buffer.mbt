@@ -33,7 +33,7 @@
 ///     ),
 ///   )
 /// ```
-struct T {
+struct Buffer {
   mut data : FixedArray[Byte]
   mut len : Int
   initial_data : FixedArray[Byte]
