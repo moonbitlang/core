@@ -21,8 +21,8 @@ fn[T] when(Bool, () -> T) -> T?
 // Errors
 
 // Types and methods
-fn[T, U] Option::bind(T?, (T) -> U?) -> U?
-fn[T] Option::filter(T?, (T) -> Bool) -> T?
+fn[T, U] Option::bind(T?, (T) -> U? raise?) -> U? raise?
+fn[T] Option::filter(T?, (T) -> Bool raise?) -> T? raise?
 fn[T] Option::flatten(T??) -> T?
 fn[T] Option::is_empty(T?) -> Bool
 #deprecated
@@ -30,9 +30,9 @@ fn[T] Option::is_none(T?) -> Bool
 #deprecated
 fn[T] Option::is_some(T?) -> Bool
 fn[T] Option::iter(T?) -> Iter[T]
-fn[T, U] Option::map(T?, (T) -> U) -> U?
-fn[T, U] Option::map_or(T?, U, (T) -> U) -> U
-fn[T, U] Option::map_or_else(T?, () -> U, (T) -> U) -> U
+fn[T, U] Option::map(T?, (T) -> U raise?) -> U? raise?
+fn[T, U] Option::map_or(T?, U, (T) -> U raise?) -> U raise?
+fn[T, U] Option::map_or_else(T?, () -> U raise?, (T) -> U raise?) -> U raise?
 #deprecated
 fn[T] Option::or(T?, T) -> T
 #deprecated
@@ -42,7 +42,7 @@ fn[T] Option::or_else(T?, () -> T) -> T
 fn[T, Err : Error] Option::or_error(T?, Err) -> T raise Err
 fn[T] Option::unwrap_or(T?, T) -> T
 fn[T : Default] Option::unwrap_or_default(T?) -> T
-fn[T] Option::unwrap_or_else(T?, () -> T) -> T
+fn[T] Option::unwrap_or_else(T?, () -> T raise?) -> T raise?
 impl[X : Compare] Compare for X?
 impl[X] Default for X?
 impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for X?

@@ -7,46 +7,46 @@ import(
 )
 
 // Values
-fn from_array(Array[Byte]) -> T
+fn from_array(Array[Byte]) -> Buffer
 
-fn from_bytes(Bytes) -> T
+fn from_bytes(Bytes) -> Buffer
 
-fn from_iter(Iter[Byte]) -> T
+fn from_iter(Iter[Byte]) -> Buffer
 
-fn new(size_hint? : Int) -> T
+fn new(size_hint? : Int) -> Buffer
 
 // Errors
 
 // Types and methods
-type T
-fn T::contents(Self) -> Bytes
-fn T::is_empty(Self) -> Bool
-fn T::length(Self) -> Int
-fn T::reset(Self) -> Unit
-fn T::to_bytes(Self) -> Bytes
-fn T::write_byte(Self, Byte) -> Unit
-fn T::write_bytes(Self, Bytes) -> Unit
-fn T::write_bytesview(Self, @bytes.View) -> Unit
-fn T::write_double_be(Self, Double) -> Unit
-fn T::write_double_le(Self, Double) -> Unit
-fn T::write_float_be(Self, Float) -> Unit
-fn T::write_float_le(Self, Float) -> Unit
-fn T::write_int64_be(Self, Int64) -> Unit
-fn T::write_int64_le(Self, Int64) -> Unit
-fn T::write_int_be(Self, Int) -> Unit
-fn T::write_int_le(Self, Int) -> Unit
-fn T::write_iter(Self, Iter[Byte]) -> Unit
-fn T::write_object(Self, &Show) -> Unit
-fn T::write_stringview(Self, @string.StringView) -> Unit
-fn T::write_uint64_be(Self, UInt64) -> Unit
-fn T::write_uint64_le(Self, UInt64) -> Unit
-fn T::write_uint_be(Self, UInt) -> Unit
-fn T::write_uint_le(Self, UInt) -> Unit
-impl Logger for T
-impl Show for T
+type Buffer
+fn Buffer::contents(Self) -> Bytes
+fn Buffer::is_empty(Self) -> Bool
+fn Buffer::length(Self) -> Int
+fn Buffer::reset(Self) -> Unit
+fn Buffer::to_bytes(Self) -> Bytes
+fn Buffer::write_byte(Self, Byte) -> Unit
+fn Buffer::write_bytes(Self, Bytes) -> Unit
+fn Buffer::write_bytesview(Self, @bytes.View) -> Unit
+fn Buffer::write_double_be(Self, Double) -> Unit
+fn Buffer::write_double_le(Self, Double) -> Unit
+fn Buffer::write_float_be(Self, Float) -> Unit
+fn Buffer::write_float_le(Self, Float) -> Unit
+fn Buffer::write_int64_be(Self, Int64) -> Unit
+fn Buffer::write_int64_le(Self, Int64) -> Unit
+fn Buffer::write_int_be(Self, Int) -> Unit
+fn Buffer::write_int_le(Self, Int) -> Unit
+fn Buffer::write_iter(Self, Iter[Byte]) -> Unit
+fn Buffer::write_object(Self, &Show) -> Unit
+fn Buffer::write_stringview(Self, @string.StringView) -> Unit
+fn Buffer::write_uint64_be(Self, UInt64) -> Unit
+fn Buffer::write_uint64_le(Self, UInt64) -> Unit
+fn Buffer::write_uint_be(Self, UInt) -> Unit
+fn Buffer::write_uint_le(Self, UInt) -> Unit
+impl Logger for Buffer
+impl Show for Buffer
 
 // Type aliases
-pub typealias T as Buffer
+pub typealias Buffer as T
 
 // Traits
 
