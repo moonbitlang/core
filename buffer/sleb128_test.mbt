@@ -230,3 +230,31 @@ test "write_sleb128_negative_Int64" {
   assert_eq(buffer.to_bytes(), b"\x80\x80\x80\x80\x80\x80\x80\x80\x80\x7f")
   buffer.reset()
 }
+
+// Concrete counterexample: -65
+// 	•	First step:
+// 	•	b = (-65 & 0x7F) = 0x3F → signBit = 0
+// 	•	v >>= 7 → -1
+// 	•	If you stopped here using only v == -1, you’d emit just [0x3F].
+// 	•	Decoder sees final byte with signBit = 0 → zero-extends → decodes to +63, not -65 ❌
+// 	•	Correct behavior: because signBit == 0, you must continue:
+// 	•	Emit 0x3F | 0x80 = 0xBF, then next step yields final byte 0x7F
+// 	•	Correct encoding: [0xBF, 0x7F] ✅
+
+// When v == -1 is enough
+
+// For values whose current 7-bit chunk already has signBit == 1, e.g. -1 .. -64, stopping is correct:
+// 	•	-1 → b=0x7F (signBit=1), v>>=7 → -1 → stop → [0x7F]
+// 	•	-2 → b=0x7E (signBit=1) … → stop → [0x7E]
+// 	•	-64 → b=0x40 (signBit=1) … → stop → [0x40]
+
+// TL;DR
+// 	•	Need both: stop when (v == -1 && signBit == 1) for negatives.
+// 	•	This ensures the final byte encodes the sign, so the decoder sign-extends and you get the correct (and minimal) result.
+
+///|
+test {
+  let buffer = @buffer.new()
+  buffer.write_sleb128(-65)
+  assert_eq(buffer.to_bytes(), b"\xbf\x7f")
+}
