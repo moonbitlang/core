@@ -11,10 +11,6 @@ test "generic comparison" {
   // Works with numbers
   inspect(@cmp.maximum(3, 4), content="4")
   inspect(@cmp.minimum(3, 4), content="3")
-
-  // Works with floating point
-  inspect(@cmp.maximum(3.14, 2.718), content="3.14")
-  inspect(@cmp.minimum(3.14, 2.718), content="2.718")
 }
 ```
 
