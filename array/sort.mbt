@@ -15,7 +15,9 @@
 ///|
 /// Sorts the array in place.
 ///
-/// It's an in-place, unstable sort(it will reorder equal elements). The time complexity is O(n log n) in the worst case.
+/// It's an in-place, stable sort using TimSort algorithm. The time complexity is O(n log n) in the worst case.
+/// TimSort performs very well on many kinds of partially ordered arrays (better than O(n log n)), 
+/// and performs O(n log n) on random arrays.
 ///
 /// # Example
 ///
@@ -26,7 +28,7 @@
 /// ```
 pub fn[T : Compare] sort(self : Array[T]) -> Unit {
   let len = self.length()
-  quick_sort(self[:len], None, get_limit(len))
+  array_timsort(self[:len])
 }
 
 ///|
@@ -370,4 +372,188 @@ test "quick_sort with pred greater than all elements" {
   let arr = [5, 4, 3, 2, 1]
   quick_sort(arr[:], Some(6), 0)
   assert_eq(arr, [1, 2, 3, 4, 5])
+}
+
+///|
+/// TimSort implementation - a stable, adaptive merge sort
+///
+
+///| Minimum merge length for TimSort
+let timsort_min_merge : Int = 32
+
+///| Compute minimum run length for TimSort
+fn compute_min_run_length(n : Int) -> Int {
+  let mut n = n
+  let mut r = 0
+  while n >= timsort_min_merge {
+    r = r | (n & 1)
+    n = n >> 1
+  }
+  n + r
+}
+
+///| Binary insertion sort for small arrays or to extend runs
+fn[T : Compare] binary_insertion_sort(
+  arr : ArrayView[T],
+  start : Int,
+  end : Int,
+) -> Unit {
+  for i = start + 1; i < end; i = i + 1 {
+    let key = arr[i]
+    // Binary search for insertion point
+    let mut left = start
+    let mut right = i
+    while left < right {
+      let mid = (left + right) / 2
+      if key.compare(arr[mid]) < 0 {
+        right = mid
+      } else {
+        left = mid + 1
+      }
+    }
+    // Shift elements and insert
+    for j = i; j > left; j = j - 1 {
+      arr[j] = arr[j - 1]
+    }
+    arr[left] = key
+  }
+}
+
+///| Find a run starting at index start and make it ascending
+/// Returns run length
+fn[T : Compare] count_run_and_make_ascending(
+  arr : ArrayView[T],
+  start : Int,
+  end : Int,
+) -> Int {
+  if start >= end - 1 {
+    return 1
+  }
+  let mut run_hi = start + 1
+
+  // Check if the run is descending
+  if arr[start].compare(arr[run_hi]) > 0 {
+    // Descending run
+    while run_hi < end && arr[run_hi - 1].compare(arr[run_hi]) > 0 {
+      run_hi = run_hi + 1
+    }
+    // Reverse the descending run
+    reverse_range(arr, start, run_hi - 1)
+  } else {
+    // Ascending run
+    while run_hi < end && arr[run_hi - 1].compare(arr[run_hi]) <= 0 {
+      run_hi = run_hi + 1
+    }
+  }
+  run_hi - start
+}
+
+///| Reverse elements in array from start to end (inclusive)
+fn[T] reverse_range(arr : ArrayView[T], start : Int, end : Int) -> Unit {
+  let mut i = start
+  let mut j = end
+  while i < j {
+    arr.swap(i, j)
+    i = i + 1
+    j = j - 1
+  }
+}
+
+///| Main TimSort implementation for Array
+fn[T : Compare] array_timsort(arr : ArrayView[T]) -> Unit {
+  let len = arr.length()
+  if len < 2 {
+    return
+  }
+
+  // Use insertion sort for small arrays
+  if len < timsort_min_merge {
+    binary_insertion_sort(arr, 0, len)
+    return
+  }
+
+  // For simplicity, we'll use a hybrid approach:
+  // Find natural runs and extend them, then merge adjacent runs
+  let min_run = compute_min_run_length(len)
+  let runs : Array[(Int, Int)] = Array::new() // (start, length) pairs
+  let mut start = 0
+
+  // Find and collect all runs
+  while start < len {
+    let run_len = count_run_and_make_ascending(arr, start, len)
+    let mut actual_run_len = run_len
+
+    // Extend short runs using binary insertion sort
+    if actual_run_len < min_run {
+      let force = minimum(min_run, len - start)
+      binary_insertion_sort(arr, start, start + force)
+      actual_run_len = force
+    }
+    runs.push((start, actual_run_len))
+    start = start + actual_run_len
+  }
+
+  // Now merge adjacent runs until we have only one
+  while runs.length() > 1 {
+    let new_runs : Array[(Int, Int)] = Array::new()
+    let mut i = 0
+    while i < runs.length() {
+      if i + 1 < runs.length() {
+        // Merge runs[i] and runs[i+1]
+        let (start1, len1) = runs[i]
+        let (start2, len2) = runs[i + 1]
+        merge_runs(arr, start1, start1 + len1, start2 + len2)
+        new_runs.push((start1, len1 + len2))
+        i = i + 2
+      } else {
+        // Odd run at the end
+        new_runs.push(runs[i])
+        i = i + 1
+      }
+    }
+    runs.clear()
+    for run in new_runs {
+      runs.push(run)
+    }
+  }
+}
+
+///| Merge two adjacent sorted runs
+fn[T : Compare] merge_runs(
+  arr : ArrayView[T],
+  start : Int,
+  mid : Int,
+  end : Int,
+) -> Unit {
+  let left_len = mid - start
+
+  // Copy left run to temporary array
+  let temp : Array[T] = Array::new(capacity=left_len)
+  for i = 0; i < left_len; i = i + 1 {
+    temp.push(arr[start + i])
+  }
+  let mut left_idx = 0
+  let mut right_idx = mid
+  let mut merge_idx = start
+
+  // Merge the two runs
+  while left_idx < left_len && right_idx < end {
+    if temp[left_idx].compare(arr[right_idx]) <= 0 {
+      arr[merge_idx] = temp[left_idx]
+      left_idx = left_idx + 1
+    } else {
+      arr[merge_idx] = arr[right_idx]
+      right_idx = right_idx + 1
+    }
+    merge_idx = merge_idx + 1
+  }
+
+  // Copy remaining left elements
+  while left_idx < left_len {
+    arr[merge_idx] = temp[left_idx]
+    left_idx = left_idx + 1
+    merge_idx = merge_idx + 1
+  }
+
+  // Right elements are already in place
 }
