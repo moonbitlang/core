@@ -100,6 +100,8 @@ fn[T, U] Array::fold_righti(Self[T], (Int, U, T) -> U raise?, init~ : U) -> U ra
 fn[A, B] Array::foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
 fn[T] Array::from_fixed_array(FixedArray[T]) -> Self[T]
 fn[T] Array::get(Self[T], Int) -> T?
+#alias(op_get)
+fn[T] Array::index(Self[T], Int) -> T
 fn[T] Array::insert(Self[T], Int, T) -> Unit
 fn[T] Array::is_empty(Self[T]) -> Bool
 fn[T : Compare] Array::is_sorted(Self[T]) -> Bool
@@ -112,9 +114,6 @@ fn[T] Array::map_inplace(Self[T], (T) -> T raise?) -> Unit raise?
 fn[T, U] Array::mapi(Self[T], (Int, T) -> U raise?) -> Self[U] raise?
 fn[T] Array::mapi_inplace(Self[T], (Int, T) -> T raise?) -> Unit raise?
 fn[T] Array::new(capacity? : Int) -> Self[T]
-fn[T] Array::op_as_view(Self[T], start? : Int, end? : Int) -> ArrayView[T]
-fn[T] Array::op_get(Self[T], Int) -> T
-fn[T] Array::op_set(Self[T], Int, T) -> Unit
 fn[T] Array::pop(Self[T]) -> T?
 #deprecated
 fn[T] Array::pop_exn(Self[T]) -> T
@@ -134,12 +133,16 @@ fn[T] Array::rev_inplace(Self[T]) -> Unit
 fn[T] Array::rev_iter(Self[T]) -> Iter[T]
 fn[T : Eq] Array::search(Self[T], T) -> Int?
 fn[T] Array::search_by(Self[T], (T) -> Bool) -> Int?
+#alias(op_set)
+fn[T] Array::set(Self[T], Int, T) -> Unit
 fn[T] Array::shrink_to_fit(Self[T]) -> Unit
 fn[T] Array::split(Self[T], (T) -> Bool raise?) -> Self[Self[T]] raise?
 fn[T] Array::split_at(Self[T], Int) -> (Self[T], Self[T])
 fn[T : Eq] Array::starts_with(Self[T], Self[T]) -> Bool
 fn[T : Eq] Array::strip_prefix(Self[T], Self[T]) -> Self[T]?
 fn[T : Eq] Array::strip_suffix(Self[T], Self[T]) -> Self[T]?
+#alias(op_as_view)
+fn[T] Array::sub(Self[T], start? : Int, end? : Int) -> ArrayView[T]
 fn[T] Array::swap(Self[T], Int, Int) -> Unit
 fn[A] Array::truncate(Self[A], Int) -> Unit
 fn[A] Array::unsafe_blit(Self[A], Int, Self[A], Int, Int) -> Unit
