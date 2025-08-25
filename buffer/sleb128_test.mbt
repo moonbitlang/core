@@ -13,220 +13,220 @@
 // limitations under the License.
 
 ///|
-fn[A : Signed] @buffer.Buffer::test_signed(self : Self, x : A) -> Unit {
+fn[A : Leb128] @buffer.Buffer::test_leb128(self : Self, x : A) -> Unit {
   self.reset()
-  self.write_sleb128(x)
+  self.write_leb128(x)
 }
 
 ///|
-test "write_sleb128 Int" {
+test "write_leb128 Int" {
   let buffer = @buffer.new()
-  buffer.test_signed(0)
+  buffer.test_leb128(0)
   inspect(
     buffer.to_bytes(),
     content=(
       #|b"\x00"
     ),
   )
-  buffer.test_signed(-1)
+  buffer.test_leb128(-1)
   inspect(
     buffer.to_bytes(),
     content=(
       #|b"\x7f"
     ),
   )
-  buffer.test_signed(-64)
+  buffer.test_leb128(-64)
   inspect(
     buffer.to_bytes(),
     content=(
       #|b"\x40"
     ),
   )
-  buffer.test_signed(@int.min_value)
+  buffer.test_leb128(@int.min_value)
   inspect(
     buffer.to_bytes(),
     content=(
       #|b"\x80\x80\x80\x80\x78"
     ),
   )
-  buffer.test_signed(128)
+  buffer.test_leb128(128)
   assert_eq(buffer.to_bytes(), b"\x80\x01")
-  buffer.test_signed(129)
+  buffer.test_leb128(129)
   assert_eq(buffer.to_bytes(), b"\x81\x01")
-  buffer.test_signed(16383)
+  buffer.test_leb128(16383)
   assert_eq(buffer.to_bytes(), b"\xff\x7f")
-  buffer.test_signed(16384)
+  buffer.test_leb128(16384)
   assert_eq(buffer.to_bytes(), b"\x80\x80\x01")
-  buffer.test_signed(2097151)
+  buffer.test_leb128(2097151)
   assert_eq(buffer.to_bytes(), b"\xff\xff\x7f")
 }
 
 ///|
-test "write_sleb128 Int64" {
+test "write_leb128 Int64" {
   let buffer = @buffer.new()
-  buffer.write_sleb128(0L)
+  buffer.write_leb128(0L)
   assert_eq(buffer.to_bytes(), b"\x00")
   buffer.reset()
-  buffer.write_sleb128(127L)
+  buffer.write_leb128(127L)
   assert_eq(buffer.to_bytes(), b"\x7f")
   buffer.reset()
-  buffer.write_sleb128(128L)
+  buffer.write_leb128(128L)
   assert_eq(buffer.to_bytes(), b"\x80\x01")
   buffer.reset()
-  buffer.write_sleb128(129L)
+  buffer.write_leb128(129L)
   assert_eq(buffer.to_bytes(), b"\x81\x01")
   buffer.reset()
-  buffer.write_sleb128(16383L)
+  buffer.write_leb128(16383L)
   assert_eq(buffer.to_bytes(), b"\xff\x7f")
   buffer.reset()
-  buffer.write_sleb128(16384L)
+  buffer.write_leb128(16384L)
   assert_eq(buffer.to_bytes(), b"\x80\x80\x01")
   buffer.reset()
-  buffer.write_sleb128(2097151L)
+  buffer.write_leb128(2097151L)
   assert_eq(buffer.to_bytes(), b"\xff\xff\x7f")
 }
 
 ///|
-test "write_uleb128 Int" {
+test "write_leb128 UInt" {
   let buffer = @buffer.new()
   // Test zero
-  buffer.write_uleb128(0U)
+  buffer.write_leb128(0U)
   assert_eq(buffer.to_bytes(), b"\x00")
   buffer.reset()
 
   // Test single byte values (0-127)
-  buffer.write_uleb128(1U)
+  buffer.write_leb128(1U)
   assert_eq(buffer.to_bytes(), b"\x01")
   buffer.reset()
-  buffer.write_uleb128(127U)
+  buffer.write_leb128(127U)
   assert_eq(buffer.to_bytes(), b"\x7f")
   buffer.reset()
 
   // Test two byte values (128-16383)
-  buffer.write_uleb128(128U)
+  buffer.write_leb128(128U)
   assert_eq(buffer.to_bytes(), b"\x80\x01")
   buffer.reset()
-  buffer.write_uleb128(129U)
+  buffer.write_leb128(129U)
   assert_eq(buffer.to_bytes(), b"\x81\x01")
   buffer.reset()
-  buffer.write_uleb128(16383U)
+  buffer.write_leb128(16383U)
   assert_eq(buffer.to_bytes(), b"\xff\x7f")
   buffer.reset()
 
   // Test three byte values (16384-2097151)
-  buffer.write_uleb128(16384U)
+  buffer.write_leb128(16384U)
   assert_eq(buffer.to_bytes(), b"\x80\x80\x01")
   buffer.reset()
-  buffer.write_uleb128(2097151U)
+  buffer.write_leb128(2097151U)
   assert_eq(buffer.to_bytes(), b"\xff\xff\x7f")
   buffer.reset()
 
   // Test four byte values (2097152-268435455)
-  buffer.write_uleb128(2097152U)
+  buffer.write_leb128(2097152U)
   assert_eq(buffer.to_bytes(), b"\x80\x80\x80\x01")
   buffer.reset()
-  buffer.write_uleb128(268435455U)
+  buffer.write_leb128(268435455U)
   assert_eq(buffer.to_bytes(), b"\xff\xff\xff\x7f")
   buffer.reset()
 
   // Test five byte values (268435456+)
-  buffer.write_uleb128(268435456U)
+  buffer.write_leb128(268435456U)
   assert_eq(buffer.to_bytes(), b"\x80\x80\x80\x80\x01")
   buffer.reset()
 }
 
 ///|
-test "write_uleb128_edge_cases" {
+test "write_leb128_edge_cases" {
   let buffer = @buffer.new()
 
   // Test boundary values for each byte length
-  buffer.write_uleb128(0U)
+  buffer.write_leb128(0U)
   assert_eq(buffer.to_bytes(), b"\x00")
   buffer.reset()
-  buffer.write_uleb128(0x7fU) // 127 (max 1 byte)
+  buffer.write_leb128(0x7fU) // 127 (max 1 byte)
   assert_eq(buffer.to_bytes(), b"\x7f")
   buffer.reset()
-  buffer.write_uleb128(0x80U) // 128 (min 2 byte)
+  buffer.write_leb128(0x80U) // 128 (min 2 byte)
   assert_eq(buffer.to_bytes(), b"\x80\x01")
   buffer.reset()
-  buffer.write_uleb128(0x3fffU) // 16383 (max 2 byte)
+  buffer.write_leb128(0x3fffU) // 16383 (max 2 byte)
   assert_eq(buffer.to_bytes(), b"\xff\x7f")
   buffer.reset()
-  buffer.write_uleb128(0x4000U) // 16384 (min 3 byte)
+  buffer.write_leb128(0x4000U) // 16384 (min 3 byte)
   assert_eq(buffer.to_bytes(), b"\x80\x80\x01")
   buffer.reset()
-  buffer.write_uleb128(0x1fffffU) // 2097151 (max 3 byte)
+  buffer.write_leb128(0x1fffffU) // 2097151 (max 3 byte)
   assert_eq(buffer.to_bytes(), b"\xff\xff\x7f")
   buffer.reset()
-  buffer.write_uleb128(0x200000U) // 2097152 (min 4 byte)
+  buffer.write_leb128(0x200000U) // 2097152 (min 4 byte)
   assert_eq(buffer.to_bytes(), b"\x80\x80\x80\x01")
   buffer.reset()
-  buffer.write_uleb128(0xfffffffU) // 268435455 (max 4 byte)
+  buffer.write_leb128(0xfffffffU) // 268435455 (max 4 byte)
   assert_eq(buffer.to_bytes(), b"\xff\xff\xff\x7f")
   buffer.reset()
-  buffer.write_uleb128(0x10000000U) // 268435456 (min 5 byte)
+  buffer.write_leb128(0x10000000U) // 268435456 (min 5 byte)
   assert_eq(buffer.to_bytes(), b"\x80\x80\x80\x80\x01")
   buffer.reset()
 }
 
 ///|
-test "write_uleb128_consecutive_writes" {
+test "write_leb128_consecutive_writes" {
   let buffer = @buffer.new()
 
   // Test writing multiple values consecutively
-  buffer.write_uleb128(1U)
-  buffer.write_uleb128(127U)
-  buffer.write_uleb128(128U)
-  buffer.write_uleb128(16384U)
+  buffer.write_leb128(1U)
+  buffer.write_leb128(127U)
+  buffer.write_leb128(128U)
+  buffer.write_leb128(16384U)
   let expected = b"\x01\x7f\x80\x01\x80\x80\x01"
   assert_eq(buffer.to_bytes(), expected)
 }
 
 ///|
-test "write_sleb128_negative_values" {
+test "write_leb128_negative_values" {
   let buffer = @buffer.new()
 
   // Test negative values for SLEB128
-  buffer.write_sleb128(-1)
+  buffer.write_leb128(-1)
   assert_eq(buffer.to_bytes(), b"\x7f")
   buffer.reset()
-  buffer.write_sleb128(-64)
+  buffer.write_leb128(-64)
   assert_eq(buffer.to_bytes(), b"\x40")
   buffer.reset()
-  buffer.write_sleb128(-65)
+  buffer.write_leb128(-65)
   assert_eq(buffer.to_bytes(), b"\xbf\x7f")
   buffer.reset()
-  buffer.write_sleb128(-128)
+  buffer.write_leb128(-128)
   assert_eq(buffer.to_bytes(), b"\x80\x7f")
   buffer.reset()
-  buffer.write_sleb128(-129)
+  buffer.write_leb128(-129)
   assert_eq(buffer.to_bytes(), b"\xff\x7e")
   buffer.reset()
 }
 
 ///|
-test "write_sleb128_negative_Int64" {
+test "write_leb128_negative_Int64" {
   let buffer = @buffer.new()
 
   // Test negative Int64 values for SLEB128
-  buffer.write_sleb128(-1L)
+  buffer.write_leb128(-1L)
   assert_eq(buffer.to_bytes(), b"\x7f")
   buffer.reset()
-  buffer.write_sleb128(-64L)
+  buffer.write_leb128(-64L)
   assert_eq(buffer.to_bytes(), b"\x40")
   buffer.reset()
-  buffer.write_sleb128(-65L)
+  buffer.write_leb128(-65L)
   assert_eq(buffer.to_bytes(), b"\xbf\x7f")
   buffer.reset()
-  buffer.write_sleb128(-128L)
+  buffer.write_leb128(-128L)
   assert_eq(buffer.to_bytes(), b"\x80\x7f")
   buffer.reset()
-  buffer.write_sleb128(-129L)
+  buffer.write_leb128(-129L)
   assert_eq(buffer.to_bytes(), b"\xff\x7e")
   buffer.reset()
 
   // Test large negative values
-  buffer.write_sleb128(-9223372036854775808L) // Int64 minimum
+  buffer.write_leb128(-9223372036854775808L) // Int64 minimum
   assert_eq(buffer.to_bytes(), b"\x80\x80\x80\x80\x80\x80\x80\x80\x80\x7f")
   buffer.reset()
 }
@@ -255,6 +255,6 @@ test "write_sleb128_negative_Int64" {
 ///|
 test {
   let buffer = @buffer.new()
-  buffer.write_sleb128(-65)
+  buffer.write_leb128(-65)
   assert_eq(buffer.to_bytes(), b"\xbf\x7f")
 }
