@@ -135,7 +135,8 @@ pub fn[T] Array::unsafe_get(self : Array[T], idx : Int) -> T {
 /// ```
 ///
 #intrinsic("%array.get")
-pub fn[T] Array::op_get(self : Array[T], index : Int) -> T {
+#alias(op_get)
+pub fn[T] Array::index(self : Array[T], index : Int) -> T {
   let len = self.length()
   guard index >= 0 && index < len
   self.buffer()[index]
@@ -194,7 +195,8 @@ fn[T] Array::unsafe_set(self : Array[T], idx : Int, val : T) -> Unit {
 /// ```
 ///
 #intrinsic("%array.set")
-pub fn[T] Array::op_set(self : Array[T], index : Int, value : T) -> Unit {
+#alias(op_set)
+pub fn[T] Array::set(self : Array[T], index : Int, value : T) -> Unit {
   let len = self.length()
   guard index >= 0 && index < len
   self.buffer()[index] = value
