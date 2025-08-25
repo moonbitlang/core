@@ -13,12 +13,7 @@
 // limitations under the License.
 
 ///|
-trait Unsigned {
-  output_uleb128(Self, Buffer) -> Unit
-}
-
-///|
-pub impl Unsigned for UInt with output_uleb128(self, buffer) {
+pub impl Leb128 for UInt with output(self, buffer) {
   for value = self {
     if value < 128 {
       // Single byte: no continuation bit (0xxxxxxx)
@@ -33,7 +28,7 @@ pub impl Unsigned for UInt with output_uleb128(self, buffer) {
 }
 
 ///|
-pub impl Unsigned for UInt64 with output_uleb128(self, buffer) {
+pub impl Leb128 for UInt64 with output(self, buffer) {
   for value = self {
     if value < 128 {
       // Single byte: no continuation bit (0xxxxxxx)
@@ -45,30 +40,4 @@ pub impl Unsigned for UInt64 with output_uleb128(self, buffer) {
       continue value / 128
     }
   }
-}
-
-///|
-/// Writes an unsigned integer to the buffer using ULEB128 (Unsigned Little Endian Base 128) encoding.
-/// 
-/// ULEB128 is a variable-length encoding that uses the most significant bit of each byte 
-/// as a continuation flag. Each byte encodes 7 bits of the value, with the MSB indicating
-/// whether more bytes follow (1) or if this is the final byte (0).
-///
-/// # Parameters
-/// - `buffer`: The buffer to write to
-/// - `value`: The unsigned integer value to encode
-///
-/// # Example
-/// ```moonbit
-/// let buf = @buffer.new()
-/// buf.write_uleb128(300UL) // Writes: 0xAC 0x02
-/// inspect(
-///   buf.to_bytes(),
-///   content=(
-///     #|b"\xac\x02"
-///   ),
-/// )
-/// ```
-pub fn[A : Unsigned] Buffer::write_uleb128(buffer : Buffer, value : A) -> Unit {
-  value.output_uleb128(buffer)
 }
