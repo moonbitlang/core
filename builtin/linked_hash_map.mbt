@@ -408,7 +408,15 @@ pub fn[K : Hash + Eq, V : Eq] Map::contains_kv(
 ///   inspect(map.size(), content="1")
 /// ```
 pub fn[K : Hash + Eq, V] Map::remove(self : Map[K, V], key : K) -> Unit {
-  let hash = key.hash()
+  self.remove_with_hash(key, key.hash())
+}
+
+///|
+fn[K : Eq, V] Map::remove_with_hash(
+  self : Map[K, V],
+  key : K,
+  hash : Int,
+) -> Unit {
   for i = 0, idx = hash & self.capacity_mask {
     guard self.entries[idx] is Some(entry) else { break }
     if entry.hash == hash && entry.key == key {
@@ -726,6 +734,51 @@ pub fn[K, V] Map::copy(self : Map[K, V]) -> Map[K, V] {
     }
   }
   other
+}
+
+///|
+/// Retains only the key-value pairs that satisfy the given predicate function.
+/// This method modifies the map in-place, removing all entries for which
+/// the predicate returns `false`. The order of remaining elements is preserved.
+///
+/// Parameters:
+///
+/// * `self` : The map to be filtered.
+/// * `predicate` : A function that takes a key and value as arguments and returns
+/// `true` if the key-value pair should be kept, `false` if it should be removed.
+///
+/// Example:
+///
+/// ```moonbit
+///   let map = { "a": 1, "b": 2, "c": 3, "d": 4 }
+///   map.retain((_k, v) => v % 2 == 0)  // Keep only even values
+///   inspect(map.size(), content="2")
+///   inspect(map.get("a"), content="None")
+///   inspect(map.get("b"), content="Some(2)")
+///   inspect(map.get("c"), content="None")
+///   inspect(map.get("d"), content="Some(4)")
+/// ```
+#locals(f)
+pub fn[K : Eq, V] Map::retain(
+  self : Map[K, V],
+  f : (K, V) -> Bool raise?,
+) -> Unit raise? {
+  // Collect keys to remove first to avoid concurrent modification issues
+  let to_remove = []
+  loop self.head {
+    Some({ key, value, next, hash, .. }) => {
+      if not(f(key, value)) {
+        to_remove.push((key, hash))
+      }
+      continue next
+    }
+    None => break
+  }
+
+  // Remove the collected keys
+  for key in to_remove {
+    self.remove_with_hash(key.0, key.1)
+  }
 }
 
 ///|
