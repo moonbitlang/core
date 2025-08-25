@@ -422,7 +422,11 @@ pub fn[K : Hash + Eq, V : Eq] contains_kv(
 ///   inspect(map.size(), content="1")
 /// ```
 pub fn[K : Hash + Eq, V] remove(self : T[K, V], key : K) -> Unit {
-  let hash = key.hash()
+  self.remove_with_hash(key, key.hash())
+}
+
+///|
+fn[K : Eq, V] remove_with_hash(self : T[K, V], key : K, hash : Int) -> Unit {
   for i = 0, idx = hash & self.capacity_mask {
     match self.entries[idx] {
       Some(entry) => {

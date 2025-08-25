@@ -192,3 +192,202 @@ test "Map::update" {
   empty_map.update("b", _ => Some(2))
   empty_map.update("c", _ => Some(3))
 }
+
+///|
+test "Map::retain - keep even values" {
+  let map = { "a": 1, "b": 2, "c": 3, "d": 4, "e": 5 }
+  map.retain((_k, v) => v % 2 == 0)
+  inspect(map.size(), content="2")
+  inspect(map.get("a"), content="None")
+  inspect(map.get("b"), content="Some(2)")
+  inspect(map.get("c"), content="None")
+  inspect(map.get("d"), content="Some(4)")
+  inspect(map.get("e"), content="None")
+}
+
+///|
+test "Map::retain - keep all" {
+  let map = { "a": 1, "b": 2, "c": 3 }
+  map.retain((_k, _v) => true)
+  inspect(map.size(), content="3")
+  inspect(map.get("a"), content="Some(1)")
+  inspect(map.get("b"), content="Some(2)")
+  inspect(map.get("c"), content="Some(3)")
+}
+
+///|
+test "Map::retain - remove all" {
+  let map = { "a": 1, "b": 2, "c": 3 }
+  map.retain((_k, _v) => false)
+  inspect(map.size(), content="0")
+  inspect(map.is_empty(), content="true")
+  inspect(map.get("a"), content="None")
+  inspect(map.get("b"), content="None")
+  inspect(map.get("c"), content="None")
+}
+
+///|
+test "Map::retain - empty map" {
+  let map : Map[String, Int] = {}
+  map.retain((_k, _v) => true)
+  inspect(map.size(), content="0")
+  inspect(map.is_empty(), content="true")
+}
+
+///|
+test "Map::retain - key-based filtering" {
+  let map = { "apple": 5, "banana": 6, "cherry": 5, "date": 4 }
+  map.retain((k, _v) => k.length() >= 6) // Keep keys with 6+ characters
+  inspect(map.size(), content="2")
+  inspect(map.get("apple"), content="None") // 5 chars
+  inspect(map.get("banana"), content="Some(6)") // 6 chars
+  inspect(map.get("cherry"), content="Some(5)") // 6 chars
+  inspect(map.get("date"), content="None") // 4 chars
+}
+
+///|
+test "Map::retain - preserves order" {
+  let map = { "first": 1, "second": 2, "third": 3, "fourth": 4 }
+  map.retain((_k, v) => v % 2 == 0)
+
+  // Check that the order is preserved
+  let result = []
+  map.each((k, v) => result.push((k, v)))
+  inspect(result, content="[(\"second\", 2), (\"fourth\", 4)]")
+}
+
+///|
+test "Map::retain - single element map" {
+  let map = { "only": 42 }
+
+  // Test keeping the element
+  map.retain((_k, v) => v > 30)
+  inspect(map.size(), content="1")
+  inspect(map.get("only"), content="Some(42)")
+
+  // Test removing the element
+  map.retain((_k, v) => v < 30)
+  inspect(map.size(), content="0")
+  inspect(map.is_empty(), content="true")
+}
+
+///|
+test "Map::retain - filter by both key and value" {
+  let map = { "a1": 1, "b2": 2, "c3": 3, "d4": 4, "e5": 5 }
+  map.retain((k, v) => k.contains("2") || v > 3) // Keep keys containing "2" or values > 3
+  inspect(map.size(), content="3")
+  inspect(map.get("a1"), content="None")
+  inspect(map.get("b2"), content="Some(2)") // key contains "2"
+  inspect(map.get("c3"), content="None")
+  inspect(map.get("d4"), content="Some(4)") // value > 3
+  inspect(map.get("e5"), content="Some(5)") // value > 3
+}
+
+///|
+test "Map::retain - large map performance" {
+  let map : Map[String, Int] = Map::new()
+  for i = 0; i < 1000; i = i + 1 {
+    map.set("key" + i.to_string(), i)
+  }
+
+  // Keep only even values
+  map.retain((_k, v) => v % 2 == 0)
+  inspect(map.size(), content="500")
+
+  // Verify some specific entries
+  inspect(map.get("key0"), content="Some(0)")
+  inspect(map.get("key2"), content="Some(2)")
+  inspect(map.get("key1"), content="None")
+  inspect(map.get("key3"), content="None")
+}
+
+///|
+test "Map::retain - preserve map integrity after retain" {
+  let map = { "x": 1, "y": 2, "z": 3 }
+  map.retain((_k, v) => v != 2) // Remove middle element
+
+  // Test that map operations still work correctly
+  map.set("w", 4)
+  inspect(map.get("w"), content="Some(4)")
+  inspect(map.size(), content="3")
+  map.remove("x")
+  inspect(map.get("x"), content="None")
+  inspect(map.size(), content="2")
+  map.clear()
+  inspect(map.size(), content="0")
+  inspect(map.is_empty(), content="true")
+}
+
+///|
+test "Map::retain - complex predicate with string operations" {
+  let map = {
+    "apple": 5,
+    "banana": 6,
+    "cherry": 6,
+    "date": 4,
+    "elderberry": 10,
+  }
+  map.retain((k, v) => k.strip_prefix("a") is Some(_) ||
+    k.strip_suffix("y") is Some(_) ||
+    v >= 10)
+  inspect(map.size(), content="3")
+  inspect(map.get("apple"), content="Some(5)") // starts with "a"
+  inspect(map.get("banana"), content="None") // no match
+  inspect(map.get("cherry"), content="Some(6)") // ends with "y"
+  inspect(map.get("date"), content="None") // no match
+  inspect(map.get("elderberry"), content="Some(10)") // value >= 10
+}
+
+///|
+test "Map::retain - iteration order after retain" {
+  let map = { "first": 1, "second": 2, "third": 3, "fourth": 4, "fifth": 5 }
+  map.retain((_k, v) => v != 3) // Remove third element
+
+  // Check that insertion order is maintained for remaining elements
+  let keys = []
+  map.each((k, _v) => keys.push(k))
+  inspect(keys, content="[\"first\", \"second\", \"fourth\", \"fifth\"]")
+  let values = []
+  map.each((_k, v) => values.push(v))
+  inspect(values, content="[1, 2, 4, 5]")
+}
+
+///|
+test "Map::retain - edge case with all elements removed then re-added" {
+  let map = { "a": 1, "b": 2, "c": 3 }
+  map.retain((_k, _v) => false) // Remove all
+  inspect(map.size(), content="0")
+  inspect(map.is_empty(), content="true")
+
+  // Re-add elements
+  map.set("x", 10)
+  map.set("y", 20)
+  inspect(map.size(), content="2")
+  inspect(map.get("x"), content="Some(10)")
+  inspect(map.get("y"), content="Some(20)")
+
+  // Original keys should still be gone
+  inspect(map.get("a"), content="None")
+  inspect(map.get("b"), content="None")
+  inspect(map.get("c"), content="None")
+}
+
+///|
+test "Map::retain - with hash collisions simulation" {
+  let map : Map[String, Int] = Map::new()
+  // Create keys that might have similar hash values
+  let keys = ["a", "aa", "aaa", "aaaa", "aaaaa", "aaaaaa"]
+  for i = 0; i < keys.length(); i = i + 1 {
+    map.set(keys[i], i + 1)
+  }
+
+  // Keep only keys with odd length
+  map.retain((k, _v) => k.length() % 2 == 1)
+  inspect(map.size(), content="3")
+  inspect(map.get("a"), content="Some(1)") // length 1 (odd)
+  inspect(map.get("aa"), content="None") // length 2 (even)
+  inspect(map.get("aaa"), content="Some(3)") // length 3 (odd)
+  inspect(map.get("aaaa"), content="None") // length 4 (even)
+  inspect(map.get("aaaaa"), content="Some(5)") // length 5 (odd)
+  inspect(map.get("aaaaaa"), content="None") // length 6 (even)
+}

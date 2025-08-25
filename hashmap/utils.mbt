@@ -410,3 +410,46 @@ pub fn[K, V] T::values(self : T[K, V]) -> Iter[V] {
     IterContinue
   })
 }
+
+///|
+/// Retains only the key-value pairs that satisfy the given predicate function.
+/// This method modifies the hash map in-place, removing all entries for which
+/// the predicate returns `false`.
+///
+/// Parameters:
+///
+/// * `self` : The hash map to be filtered.
+/// * `predicate` : A function that takes a key and value as arguments and returns
+/// `true` if the key-value pair should be kept, `false` if it should be removed.
+///
+/// Example:
+///
+/// ```moonbit
+///   let map = @hashmap.of([("a", 1), ("b", 2), ("c", 3), ("d", 4)])
+///   map.retain((_k, v) => v % 2 == 0)  // Keep only even values
+///   inspect(map.size(), content="2")
+///   inspect(map.get("a"), content="None")
+///   inspect(map.get("b"), content="Some(2)")
+///   inspect(map.get("c"), content="None")
+///   inspect(map.get("d"), content="Some(4)")
+/// ```
+#locals(f)
+pub fn[K : Eq, V] retain(
+  self : T[K, V],
+  f : (K, V) -> Bool raise?,
+) -> Unit raise? {
+  // Collect keys to remove first to avoid concurrent modification issues
+  let to_remove = []
+  for i in 0..<self.capacity {
+    if self.entries[i] is Some({ key, value, hash, .. }) {
+      if not(f(key, value)) {
+        to_remove.push((key, hash))
+      }
+    }
+  }
+
+  // Remove the collected keys
+  for key in to_remove {
+    self.remove_with_hash(key.0, key.1)
+  }
+}
