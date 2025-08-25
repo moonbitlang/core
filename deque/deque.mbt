@@ -1540,7 +1540,32 @@ pub fn[A] get(self : T[A], index : Int) -> A? {
 /// * For multiple matches, returns the leftmost matching position
 /// * Returns an insertion point that maintains the sort order when no match is found
 pub fn[A : Compare] binary_search(self : T[A], value : A) -> Result[Int, Int] {
-  self.binary_search_by(x => x.compare(value))
+  let len = self.len
+
+  // Functional loop with two evolving bounds `i` (inclusive) and `j` (exclusive).
+  // `continue new_i, new_j` updates the pair for the next iteration, eliminating
+  // the need for mutable variables.
+  for i = 0, j = len; i < j; {
+    let h = i + (j - i) / 2
+    let ord = self[h].compare(value)
+    if ord < 0 {
+      // Search the right half
+      continue h + 1, j
+    } else {
+      // ord == 0 (match) or ord > 0 (too large): keep searching left half to
+      // guarantee we land on the left-most occurrence.
+      continue i, h
+    }
+  } else {
+    // When the loop finishes, `i == j`.  If the deque is non-empty and the
+    // element at `i` matches, we found the left-most index; otherwise `i` is
+    // the correct insertion point.
+    if i < len && self[i].compare(value) == 0 {
+      Ok(i)
+    } else {
+      Err(i)
+    }
+  }
 }
 
 ///|
