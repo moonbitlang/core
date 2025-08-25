@@ -13,19 +13,15 @@
 // limitations under the License.
 
 ///|
-trait Signed {
-  output_sleb128(Self, Buffer) -> Unit
+trait Leb128 {
+  output(Self, Buffer) -> Unit
 }
 
 ///|
-pub impl Signed for Int with output_sleb128(self, buffer) {
+pub impl Leb128 for Int with output(self, buffer) {
   for value = self {
     let byte = value & 0x7f // Get the low 7 bits
     let next_value = value >> 7 // Arithmetic right shift
-
-    // Check if more bytes are needed
-    // For positive numbers: continue if next_value != 0
-    // For negative numbers: continue if next_value != -1 or if sign bit of current byte doesn't match
     let sign_bit_set = (byte & 0x40) != 0
     let need_more = if value >= 0 {
       next_value != 0
@@ -33,11 +29,9 @@ pub impl Signed for Int with output_sleb128(self, buffer) {
       next_value != -1 || !sign_bit_set
     }
     if need_more {
-      // More bytes needed: set continuation bit (bit 7)
       buffer.write_byte((byte | 0x80).to_byte())
       continue next_value
     } else {
-      // Last byte: no continuation bit
       buffer.write_byte(byte.to_byte())
       break
     }
@@ -45,14 +39,10 @@ pub impl Signed for Int with output_sleb128(self, buffer) {
 }
 
 ///|
-pub impl Signed for Int64 with output_sleb128(self, buffer) {
+pub impl Leb128 for Int64 with output(self, buffer) {
   for value = self {
     let byte = value & 0x7f // Get the low 7 bits
     let next_value = value >> 7 // Arithmetic right shift
-
-    // Check if more bytes are needed
-    // For positive numbers: continue if next_value != 0
-    // For negative numbers: continue if next_value != -1 or if sign bit of current byte doesn't match
     let sign_bit_set = (byte & 0x40) != 0
     let need_more = if value >= 0 {
       next_value != 0
@@ -60,11 +50,9 @@ pub impl Signed for Int64 with output_sleb128(self, buffer) {
       next_value != -1 || !sign_bit_set
     }
     if need_more {
-      // More bytes needed: set continuation bit (bit 7)
       buffer.write_byte((byte | 0x80).to_byte())
       continue next_value
     } else {
-      // Last byte: no continuation bit
       buffer.write_byte(byte.to_byte())
       break
     }
@@ -72,6 +60,6 @@ pub impl Signed for Int64 with output_sleb128(self, buffer) {
 }
 
 ///|
-pub fn[A : Signed] Buffer::write_sleb128(buffer : Buffer, value : A) -> Unit {
-  value.output_sleb128(buffer)
+pub fn[A : Leb128] Buffer::write_leb128(buffer : Buffer, value : A) -> Unit {
+  value.output(buffer)
 }
