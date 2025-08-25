@@ -1,4 +1,3 @@
-
 # Immutable Map
 
 An immutable tree map based on size balanced tree.
@@ -7,7 +6,8 @@ An immutable tree map based on size balanced tree.
 
 ## Create
 
-You can create an empty map using `new()` or construct it with a single key-value pair using `singleton()`.
+You can create an empty map using `new()` or construct it with a single
+key-value pair using `singleton()`.
 
 ```moonbit
 test {
@@ -30,7 +30,8 @@ test {
 
 ## Insert & Lookup
 
-You can use `add()` to add a key-value pair to the map and create a new map. Or use `lookup()` to get the value associated with a key.
+You can use `add()` to add a key-value pair to the map and create a new map. Or
+use `lookup()` to get the value associated with a key.
 
 ```moonbit
 test {
@@ -100,36 +101,42 @@ test {
 }
 ```
 
-Use `map()` or `map_with_key()` to map a function over all values.
+Use `map_with_key()` to map a function over all values.
 
 ```moonbit
 test {
   let map = @sorted_map.of([("a", 1), ("b", 2), ("c", 3)])
-  let map = map.map((v) => { v + 1 })
+  let map = map.map_with_key((_, v) => { v + 1 })
   assert_eq(map.values().collect(), [2, 3, 4])
   let map = map.map_with_key((_k, v) => { v + 1 })
   assert_eq(map.values().collect(), [3, 4, 5])
 }
 ```
 
-Use `fold()` or `foldl_with_key()` to fold the values in the map. The default order of fold is Pre-order.
-Similarly, you can use `foldr_with_key()` to do a Post-order fold.
+Use `foldl_with_key()` to fold the values in the map. The default order of fold
+is Pre-order. Similarly, you can use `rev_fold()` to do a Post-order fold.
 
 ```moonbit
 test {
   let map = @sorted_map.of([("a", 1), ("b", 2), ("c", 3)])
-  assert_eq(map.fold((acc, v) => { acc + v }, init=0), 6) // 6
-  assert_eq(map.foldl_with_key((acc, k, v) => { acc + k + v.to_string() }, init=""), "a1b2c3") // "a1b2c3"
-  assert_eq(map.foldr_with_key((acc, k, v) => { acc + k + v.to_string() }, init=""), "c3b2a1") // "c3b2a1"
+  assert_eq(map.foldl_with_key((acc, _, v) => acc + v, init=0), 6) // 6
+  assert_eq(
+    map.foldl_with_key((acc, k, v) => acc + k + v.to_string(), init=""),
+    "a1b2c3",
+  ) // "a1b2c3"
+  assert_eq(
+    map.rev_fold((acc, k, v) => acc + k + v.to_string(), init=""),
+    "c3b2a1",
+  ) // "c3b2a1"
 }
 ```
 
-Use `filter()` or `filter_with_key()` to filter all keys/values that satisfy the predicate.
+Use `filter_with_key()` to filter all keys/values that satisfy the predicate.
 
 ```moonbit
 test {
   let map = @sorted_map.of([("a", 1), ("b", 2), ("c", 3)])
-  let map = map.filter((v) => { v > 1 })
+  let map = map.filter_with_key((_, v) => { v > 1 })
   assert_eq(map.values().collect(), [2, 3])
   assert_eq(map.keys_as_iter().collect(), ["b", "c"])
   let map = map.filter_with_key((k, v) => { k > "a" && v > 1 })
@@ -159,4 +166,3 @@ test {
   assert_eq(keys.collect(), ["a", "b", "c"])
 }
 ```
-

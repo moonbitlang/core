@@ -167,6 +167,8 @@ fn[K : Eq, V] add_with_path(
 
 ///|
 /// Filter values that satisfy the predicate
+#deprecated("Use `filter_with_key` instead. `filter` will accept `(K, V) -> Bool` in the future.")
+#coverage.skip
 pub fn[K, V] filter(
   self : T[K, V],
   pred : (V) -> Bool raise?,
@@ -200,7 +202,47 @@ pub fn[K, V] filter(
 }
 
 ///|
+/// Filter entries that satisfy the predicate
+pub fn[K, V] filter_with_key(
+  self : T[K, V],
+  pred : (K, V) -> Bool raise?,
+) -> T[K, V] raise? {
+  fn go(node) raise? {
+    match node {
+      Leaf(key1, value1, bucket) => {
+        let new_bucket = bucket.filter(kv => pred(kv.0, kv.1))
+        if pred(key1, value1) {
+          Some(Leaf(key1, value1, new_bucket))
+        } else {
+          match new_bucket {
+            Empty => None
+            More((k1, v1), tail~) => Some(Leaf(k1, v1, tail))
+          }
+        }
+      }
+      Flat(key1, value1, _) =>
+        if pred(key1, value1) {
+          Some(node)
+        } else {
+          None
+        }
+      Branch(children) =>
+        match children.filter(go) {
+          None => None
+          Some(new_children) => Some(Branch(new_children))
+        }
+    }
+  }
+
+  match self.0 {
+    None => None
+    Some(node) => go(node)
+  }
+}
+
+///|
 /// Fold the values in the map
+#deprecated("Use `fold_with_key` instead. `fold` will accept `(A, K, V) -> A` in the future.")
 pub fn[K, V, A] fold(
   self : T[K, V],
   init~ : A,
@@ -236,6 +278,8 @@ pub fn[K, V, A] fold_with_key(
 
 ///|
 /// Maps over the values in the map
+#deprecated("Use `map_with_key` instead. `map` will accept `(K, V) -> A` in the future.")
+#coverage.skip
 pub fn[K, V, A] map(self : T[K, V], f : (V) -> A raise?) -> T[K, A] raise? {
   self.map_with_key((_k, v) => f(v))
 }
@@ -616,15 +660,9 @@ pub fn[K, V] keys(self : T[K, V]) -> Iter[K] {
 
 ///|
 /// Returns all values of the map
+#alias(elems, deprecated="Use `values` instead")
 pub fn[K, V] values(self : T[K, V]) -> Iter[V] {
   self.iter().map(p => p.1)
-}
-
-///|
-#deprecated("Use `values` instead")
-#coverage.skip
-pub fn[K, V] elems(self : T[K, V]) -> Iter[V] {
-  self.values()
 }
 
 ///|
