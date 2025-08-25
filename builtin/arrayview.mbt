@@ -272,3 +272,57 @@ pub fn[T] ArrayView::op_as_view(
   }
   ArrayView::make(self.buf(), self.start() + start, end - start)
 }
+
+///|
+/// Copies elements from this ArrayView to a destination ArrayView efficiently.
+/// 
+/// This method performs a direct memory copy from the source ArrayView to the 
+/// destination ArrayView, making it much more efficient than element-by-element copying.
+/// 
+/// Parameters:
+/// * `self` : The source ArrayView to copy from.
+/// * `dst` : The destination ArrayView to copy to.
+/// * `len` : The maximum number of elements to copy.
+/// 
+/// The actual number of elements copied is determined by:
+/// min(src.length(), dst.length(), len)
+/// 
+/// # Example
+/// ```moonbit
+///   let src = [1, 2, 3, 4, 5][:]
+///   let dst = [0, 0, 0, 0, 0][:]
+///   src[:].blit_to(dst[:], 3)
+///   // dst is now [1, 2, 3, 0, 0]
+/// ```
+pub fn[T] ArrayView::blit_to(
+  self : ArrayView[T],
+  dst : ArrayView[T],
+  len : Int,
+) -> Unit {
+  let src_len = self.length()
+  let dst_len = dst.length()
+
+  // Calculate the actual number of elements to copy
+  let copy_len = if src_len < dst_len {
+    if src_len < len {
+      src_len
+    } else {
+      len
+    }
+  } else if dst_len < len {
+    dst_len
+  } else {
+    len
+  }
+
+  // Perform direct memory copy using unsafe_blit for maximum efficiency
+  if copy_len > 0 {
+    UninitializedArray::unsafe_blit(
+      dst.buf(),
+      dst.start(),
+      self.buf(),
+      self.start(),
+      copy_len,
+    )
+  }
+}
