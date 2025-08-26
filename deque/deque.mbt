@@ -148,7 +148,11 @@ pub fn[A] copy(self : T[A]) -> T[A] {
 /// ```
 pub fn[A] append(self : T[A], other : T[A]) -> Unit {
   if self.buf.length() - self.len < other.len {
-    let new_cap = self.len + other.len
+    let new_cap = if self.len + other.len > self.buf.length() * 2 {
+      self.len + other.len
+    } else {
+      self.buf.length() * 2
+    }
     let new_buf = UninitializedArray::make(new_cap)
     for i, x in self {
       new_buf[i] = x
