@@ -126,6 +126,56 @@ pub fn[A] copy(self : T[A]) -> T[A] {
 }
 
 ///|
+/// Appends all elements from one deque to the end of another deque. The elements
+/// are added in-place, modifying the original deque.
+///
+/// Parameters:
+///
+/// * `self` : The deque to append to.
+/// * `other` : The deque whose elements will be appended.
+///
+/// Example:
+///
+/// ```moonbit
+///   let v1 = @deque.of([1, 2, 3])
+///   let v2 = @deque.of([4, 5, 6])
+///   v1.append(v2)
+///   inspect(v1, content="@deque.of([1, 2, 3, 4, 5, 6])")
+///
+///   let v1 = @deque.of([1, 2, 3])
+///   let v2 = @deque.of([])
+///   v1.append(v2)
+///   inspect(v1, content="@deque.of([1, 2, 3])")
+/// ```
+pub fn[A] append(self : T[A], other : T[A]) -> Unit {
+  if self.buf.length() - self.len < other.len {
+    let new_cap = self.len + other.len
+    let new_buf = UninitializedArray::make(new_cap)
+    for i, x in self {
+      new_buf[i] = x
+    }
+    self.buf = new_buf
+    self.head = 0
+    self.tail = self.len - 1
+  }
+
+  if other.head < other.tail {
+    self.buf.unsafe_blit(self.tail + 1, other.buf, other.head, other.len)
+    self.len += other.len
+    self.tail += other.len
+  } else {
+    let head_len = other.buf.length() - other.head
+    let tail_len = other.len - head_len
+    self.buf.unsafe_blit(self.tail + 1, other.buf, other.head, head_len)
+    self.len += head_len
+    self.tail += head_len
+    self.buf.unsafe_blit(self.tail + 1, other.buf, 0, tail_len)
+    self.len += tail_len
+    self.tail += tail_len
+  }
+}
+
+///|
 /// Creates a new deque from a fixed array, preserving the order of elements.
 ///
 /// Parameters:
