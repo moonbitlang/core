@@ -1374,3 +1374,54 @@ test "append_self" {
   assert_eq(d1.to_array(), [1, 2, 3, 1, 2, 3])
   assert_eq(d1.length(), old_len * 2)
 }
+
+///|
+test "append_tail_position" {
+  /// Test that tail is correctly updated after append
+  let d1 = @deque.of([1, 2, 3])
+  let d2 = @deque.of([4])
+  d1.append(d2)
+  d1.push_back(5)
+  assert_eq(d1.to_array(), [1, 2, 3, 4, 5])
+}
+
+///|
+test "append_exponential_growth" {
+  /// Test that exponential growth prevents O(n^2) behavior
+  let d1 = @deque.of([])
+  let mut total = 0
+  for i = 0; i < 100; i = i + 1 {
+    let d2 = @deque.of([i])
+    d1.append(d2)
+    total += 1
+  }
+  assert_eq(d1.length(), total)
+  assert_eq(d1.to_array()[95:100], [95, 96, 97, 98, 99])
+}
+
+///|
+/// Test large append to trigger buffer reallocation
+test "append_large_realloc" {
+  let d1 = @deque.of([1])
+  let d2 : @deque.T[Int] = @deque.of([])
+  for i = 0; i < 1000; i = i + 1 {
+    d2.push_back(i)
+  }
+  d1.append(d2)
+  assert_eq(d1.length(), 1001)
+  assert_eq(d1.to_array()[0], 1)
+  assert_eq(d1.to_array()[1000], 999)
+}
+
+///|
+/// Test append empty after multiple pushes
+test "append_empty_after_pushes" {
+  let d1 = @deque.of([])
+  for i = 0; i < 10; i = i + 1 {
+    d1.push_back(i)
+  }
+  let d2 = @deque.of([])
+  d1.append(d2)
+  assert_eq(d1.length(), 10)
+  assert_eq(d1.to_array(), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+}
