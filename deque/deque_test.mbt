@@ -1303,3 +1303,80 @@ test "shuffle maintains elements with deterministic rand" {
   assert_eq(shuffled.to_array().sort(), original.to_array().sort())
   assert_true(shuffled != original)
 }
+
+///|
+test "append_simple" {
+  // Test basic append functionality
+  let d1 = @deque.of([1, 2, 3])
+  let d2 = @deque.of([4, 5, 6])
+  d1.append(d2)
+
+  assert_eq(d1.to_array(), [1, 2, 3, 4, 5, 6])
+  assert_eq(d1.length(), 6)
+  assert_eq(d2.to_array(), [4, 5, 6])
+  assert_eq(d2.length(), 3)
+}
+
+///|
+test "append_wrap_around" {
+  // Test append when the deque is wrapped around
+  let d1 = @deque.of([])
+  d1.push_back(3)
+  d1.push_back(4)
+  d1.push_back(5)
+  d1.push_front(2)
+  d1.push_front(1)
+
+  let d2 = @deque.of([6, 7, 8])
+  d1.append(d2)
+
+  assert_eq(d1.to_array(), [1, 2, 3, 4, 5, 6, 7, 8])
+  assert_eq(d1.length(), 8)
+}
+
+///|
+test "append_empty" {
+  // Test appending an empty deque
+  let d1 = @deque.of([1, 2, 3])
+  let d2 = @deque.of([])
+  d1.append(d2)
+  assert_eq(d1.to_array(), [1, 2, 3])
+  assert_eq(d1.length(), 3)
+}
+
+///|
+test "append_into_empty" {
+  // Test appending into an empty deque
+  let d1 = @deque.of([])
+  let d2 = @deque.of([1, 2, 3])
+  d1.append(d2)
+  assert_eq(d1.to_array(), [1, 2, 3])
+  assert_eq(d1.length(), 3)
+}
+
+///|
+test "append_multiple_times" {
+  // Test multiple append operations
+  let d1 = @deque.of([1])
+  let d2 = @deque.of([2])
+  let d3 = @deque.of([3, 4])
+  let d4 = @deque.of([5, 6, 7])
+  
+  d1.append(d2)
+  d1.append(d3)
+  d1.append(d4)
+  
+  assert_eq(d1.to_array(), [1, 2, 3, 4, 5, 6, 7])
+  assert_eq(d1.length(), 7)
+}
+
+///|
+test "append_self" {
+  // Test appending a deque to itself (should create a copy)
+  let d1 = @deque.of([1, 2, 3])
+  let old_len = d1.length()
+  d1.append(d1.copy())
+  
+  assert_eq(d1.to_array(), [1, 2, 3, 1, 2, 3])
+  assert_eq(d1.length(), old_len * 2)
+}
