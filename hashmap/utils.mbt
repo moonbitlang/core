@@ -434,22 +434,18 @@ pub fn[K, V] T::values(self : T[K, V]) -> Iter[V] {
 ///   inspect(map.get("d"), content="Some(4)")
 /// ```
 #locals(f)
-pub fn[K : Eq, V] retain(
-  self : T[K, V],
-  f : (K, V) -> Bool raise?,
-) -> Unit raise? {
-  // Collect keys to remove first to avoid concurrent modification issues
-  let to_remove = []
-  for i in 0..<self.capacity {
-    if self.entries[i] is Some({ key, value, hash, .. }) {
-      if not(f(key, value)) {
-        to_remove.push((key, hash))
+pub fn[K, V] retain(self : T[K, V], f : (K, V) -> Bool) -> Unit {
+  let last = self.capacity - 1
+  while self.entries[last] is Some(entry) && !f(entry.key, entry.value) {
+    self.shift_back(last)
+    self.size -= 1
+  }
+  for i = last - 1; i >= 0; i = i - 1 {
+    if self.entries[i] is Some(entry) {
+      if !f(entry.key, entry.value) {
+        self.shift_back(i)
+        self.size -= 1
       }
     }
-  }
-
-  // Remove the collected keys
-  for key in to_remove {
-    self.remove_with_hash(key.0, key.1)
   }
 }
