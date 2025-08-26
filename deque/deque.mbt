@@ -137,15 +137,14 @@ pub fn[A] copy(self : T[A]) -> T[A] {
 /// Example:
 ///
 /// ```moonbit
-///   let v1 = @deque.of([1, 2, 3])
-///   let v2 = @deque.of([4, 5, 6])
-///   v1.append(v2)
-///   inspect(v1, content="@deque.of([1, 2, 3, 4, 5, 6])")
-///
-///   let v1 = @deque.of([1, 2, 3])
-///   let v2 = @deque.of([])
-///   v1.append(v2)
-///   inspect(v1, content="@deque.of([1, 2, 3])")
+/// let v1 = @deque.of([1, 2, 3])
+/// let v2 = @deque.of([4, 5, 6])
+/// v1.append(v2)
+/// inspect(v1, content="@deque.of([1, 2, 3, 4, 5, 6])")
+/// let v1 = @deque.of([1, 2, 3])
+/// let v2 = @deque.of([])
+/// v1.append(v2)
+/// inspect(v1, content="@deque.of([1, 2, 3])")
 /// ```
 pub fn[A] append(self : T[A], other : T[A]) -> Unit {
   if self.buf.length() - self.len < other.len {
@@ -158,7 +157,6 @@ pub fn[A] append(self : T[A], other : T[A]) -> Unit {
     self.head = 0
     self.tail = self.len - 1
   }
-
   if other.head < other.tail {
     self.buf.unsafe_blit(self.tail + 1, other.buf, other.head, other.len)
     self.len += other.len

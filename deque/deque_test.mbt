@@ -1310,7 +1310,6 @@ test "append_simple" {
   let d1 = @deque.of([1, 2, 3])
   let d2 = @deque.of([4, 5, 6])
   d1.append(d2)
-
   assert_eq(d1.to_array(), [1, 2, 3, 4, 5, 6])
   assert_eq(d1.length(), 6)
   assert_eq(d2.to_array(), [4, 5, 6])
@@ -1326,10 +1325,8 @@ test "append_wrap_around" {
   d1.push_back(5)
   d1.push_front(2)
   d1.push_front(1)
-
   let d2 = @deque.of([6, 7, 8])
   d1.append(d2)
-
   assert_eq(d1.to_array(), [1, 2, 3, 4, 5, 6, 7, 8])
   assert_eq(d1.length(), 8)
 }
@@ -1361,11 +1358,9 @@ test "append_multiple_times" {
   let d2 = @deque.of([2])
   let d3 = @deque.of([3, 4])
   let d4 = @deque.of([5, 6, 7])
-  
   d1.append(d2)
   d1.append(d3)
   d1.append(d4)
-  
   assert_eq(d1.to_array(), [1, 2, 3, 4, 5, 6, 7])
   assert_eq(d1.length(), 7)
 }
@@ -1376,7 +1371,6 @@ test "append_self" {
   let d1 = @deque.of([1, 2, 3])
   let old_len = d1.length()
   d1.append(d1.copy())
-  
   assert_eq(d1.to_array(), [1, 2, 3, 1, 2, 3])
   assert_eq(d1.length(), old_len * 2)
 }
