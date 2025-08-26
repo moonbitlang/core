@@ -759,25 +759,25 @@ pub fn[K, V] Map::copy(self : Map[K, V]) -> Map[K, V] {
 ///   inspect(map.get("d"), content="Some(4)")
 /// ```
 #locals(f)
-pub fn[K : Eq, V] Map::retain(
-  self : Map[K, V],
-  f : (K, V) -> Bool raise?,
-) -> Unit raise? {
-  // Collect keys to remove first to avoid concurrent modification issues
-  let to_remove = []
-  loop self.head {
-    Some({ key, value, next, hash, .. }) => {
-      if not(f(key, value)) {
-        to_remove.push((key, hash))
+pub fn[K, V] Map::retain(self : Map[K, V], f : (K, V) -> Bool) -> Unit {
+  loop (self.head, false) {
+    (Some({ key, value, next, prev: idx, .. }), remove_prev) => {
+      if remove_prev {
+        guard self.entries[idx] is Some(entry)
+        self.remove_entry(entry)
+        self.shift_back(idx)
+        self.size -= 1
       }
-      continue next
+      continue (next, !f(key, value))
     }
-    None => break
-  }
-
-  // Remove the collected keys
-  for key in to_remove {
-    self.remove_with_hash(key.0, key.1)
+    (None, remove_prev) =>
+      if remove_prev {
+        let idx = self.tail
+        guard self.entries[idx] is Some(entry)
+        self.remove_entry(entry)
+        self.shift_back(idx)
+        self.size -= 1
+      }
   }
 }
 
