@@ -368,7 +368,7 @@ pub fn[A : Eq + Hash] of(arr : FixedArray[A]) -> T[A] {
 
 ///|
 pub impl[A : Hash] Hash for T[A] with hash_combine(self, hasher) {
-  hasher.combine(self.iter().fold(init=0, (x, y) => x ^ y.hash()))
+  self.each(hasher.combine(_))
 }
 
 ///|
