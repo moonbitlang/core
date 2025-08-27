@@ -210,7 +210,8 @@ pub fn[T] ArrayView::swap(self : ArrayView[T], i : Int, j : Int) -> Unit {
 ///   inspect(view[0], content="2") // First element of view is arr[1]
 ///   inspect(view.length(), content="3") // View contains 3 elements
 /// ```
-pub fn[T] Array::op_as_view(
+#alias(op_as_view)
+pub fn[T] Array::sub(
   self : Array[T],
   start~ : Int = 0,
   end? : Int,
