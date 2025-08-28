@@ -14,8 +14,8 @@
 
 ///|
 test "is_disjoint with different sizes" {
-  let set1 = new()
-  let set2 = new()
+  let set1 = @hashset.new()
+  let set2 = @hashset.new()
 
   // Add fewer elements to set1
   set1.add(1)
@@ -33,8 +33,8 @@ test "is_disjoint with different sizes" {
 
 ///|
 test "is_disjoint with overlap" {
-  let set1 = new()
-  let set2 = new()
+  let set1 = @hashset.new()
+  let set2 = @hashset.new()
   set1.add(1)
   set1.add(2)
   set2.add(2)
@@ -46,8 +46,8 @@ test "is_disjoint with overlap" {
 
 ///|
 test "is_subset with different sizes" {
-  let subset = new()
-  let superset = new()
+  let subset = @hashset.new()
+  let superset = @hashset.new()
   subset.add(1)
   subset.add(2)
   superset.add(1)
@@ -61,7 +61,7 @@ test "is_subset with different sizes" {
 
 ///|
 test "contains with probe sequence length comparison" {
-  let set = new()
+  let set = @hashset.new()
 
   // Create a scenario that might trigger PSL comparison
   // Add multiple elements to create collisions and probe sequences
@@ -77,7 +77,7 @@ test "contains with probe sequence length comparison" {
 ///|
 test "large set operations" {
   // Create a large enough set to test growth scenarios
-  let set = new()
+  let set = @hashset.new()
 
   // Add many elements to trigger multiple grows
   for i in 0..<1000 {

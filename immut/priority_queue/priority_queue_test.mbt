@@ -173,7 +173,7 @@ test "complex" {
 
   let arr = (0).until(1000, inclusive=true).collect()
   arr.shuffle_in_place(rand~)
-  let mut pq = new()
+  let mut pq = @priority_queue.new()
   for i in 0..=1000 {
     pq = pq.push(arr[i])
   }

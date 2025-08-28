@@ -920,7 +920,7 @@ test "deque retain_map" {
 
 ///|
 test "@deque.to_array/empty" {
-  let dq : T[Int] = @deque.new()
+  let dq : @deque.T[Int] = @deque.new()
   let arr = dq.to_array()
   @json.inspect(arr, content=[])
 }
@@ -947,7 +947,7 @@ test "@deque.to_array/wrapped_around" {
 
 ///|
 test "pop_front when wrapped around" {
-  let dq = of([1, 2, 3, 4, 5])
+  let dq = @deque.of([1, 2, 3, 4, 5])
   dq.push_front(6)
   inspect(dq.as_views(), content="([6], [1, 2, 3, 4, 5])")
   for _ in 0..<dq.length() {
@@ -958,7 +958,7 @@ test "pop_front when wrapped around" {
 
 ///|
 test "unsafe_pop_back when wrapped around" {
-  let dq = of([1, 2, 3, 4, 5])
+  let dq = @deque.of([1, 2, 3, 4, 5])
   dq.push_front(6)
   inspect(dq.as_views(), content="([6], [1, 2, 3, 4, 5])")
   for _ in 0..<dq.length() {
@@ -969,7 +969,7 @@ test "unsafe_pop_back when wrapped around" {
 
 ///|
 test "pop_back when wrapped around" {
-  let dq = of([1, 2, 3, 4, 5])
+  let dq = @deque.of([1, 2, 3, 4, 5])
   dq.push_front(6)
   inspect(dq.as_views(), content="([6], [1, 2, 3, 4, 5])")
   for _ in 0..<dq.length() {
@@ -980,14 +980,14 @@ test "pop_back when wrapped around" {
 
 ///|
 test "rev_iter when wrapped around" {
-  let dq = of([1, 2, 3, 4, 5])
+  let dq = @deque.of([1, 2, 3, 4, 5])
   dq.push_front(6)
   inspect(dq.rev_iter(), content="[5, 4, 3, 2, 1, 6]")
 }
 
 ///|
 test "rev_iter2 when wrapped around" {
-  let dq = of([1, 2, 3, 4, 5])
+  let dq = @deque.of([1, 2, 3, 4, 5])
   dq.push_front(6)
   inspect(
     dq.rev_iter2(),
@@ -1011,10 +1011,10 @@ test "flatten with empty deque" {
 
 ///|
 test "flatten when wrapped around" {
-  let dq = of([1, 2, 3, 4, 5])
+  let dq = @deque.of([1, 2, 3, 4, 5])
   dq.push_front(6)
   inspect(dq.as_views(), content="([6], [1, 2, 3, 4, 5])")
-  let dqdq = of([dq, dq])
+  let dqdq = @deque.of([dq, dq])
   inspect(
     dqdq.flatten(),
     content="@deque.of([6, 1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5])",
@@ -1024,7 +1024,7 @@ test "flatten when wrapped around" {
 ///|
 test "drain when wrapped around" {
   // when the area to be drained is wrapped around
-  let dq = of([4, 5, 6])
+  let dq = @deque.of([4, 5, 6])
   dq..push_front(3)..push_front(2)..push_front(1)
   inspect(dq.as_views(), content="([1, 2, 3], [4, 5, 6])")
   let dq2 = dq.drain(start=2, len=2)
@@ -1032,7 +1032,7 @@ test "drain when wrapped around" {
   inspect(dq2, content="@deque.of([3, 4])")
 
   // when the area to be drained is not wrapped around
-  let dq = of([4, 5, 6])
+  let dq = @deque.of([4, 5, 6])
   dq..push_front(3)..push_front(2)..push_front(1)
   inspect(dq.as_views(), content="([1, 2, 3], [4, 5, 6])")
   let dq2 = dq.drain(start=1, len=2)
@@ -1040,7 +1040,7 @@ test "drain when wrapped around" {
   inspect(dq2, content="@deque.of([2, 3])")
 
   // when the start is larger than len
-  let dq = of([5, 6])
+  let dq = @deque.of([5, 6])
   dq..push_front(4)..push_front(3)..push_front(2)..push_front(1)
   inspect(dq.as_views(), content="([1, 2], [3, 4, 5, 6])")
   let dq2 = dq.drain(start=3, len=2)
@@ -1290,7 +1290,7 @@ test "shuffle maintains elements with deterministic rand" {
   }
 
   // Shuffle in place
-  T::shuffle_in_place(dq, rand~)
+  @deque.T::shuffle_in_place(dq, rand~)
 
   // Verify properties of shuffle:
   assert_eq(dq.length(), original.length())
@@ -1298,7 +1298,7 @@ test "shuffle maintains elements with deterministic rand" {
   assert_true(dq != original)
 
   // Test non-in-place version
-  let shuffled = T::shuffle(original, rand~)
+  let shuffled = @deque.T::shuffle(original, rand~)
   assert_eq(shuffled.length(), original.length())
   assert_eq(shuffled.to_array().sort(), original.to_array().sort())
   assert_true(shuffled != original)

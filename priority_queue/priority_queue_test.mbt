@@ -173,7 +173,7 @@ test "complex" {
   }
   let arr = (0).until(1000, inclusive=true).collect()
   arr.shuffle_in_place(rand~)
-  let pq = new()
+  let pq = @priority_queue.new()
   for i in 0..=1000 {
     pq.push(arr[i])
   }
@@ -187,7 +187,7 @@ test "complex" {
 
 ///|
 test "priority queue large data" {
-  let pq = new()
+  let pq = @priority_queue.new()
   for i in 0..=10000000 {
     pq.push(-i)
   }

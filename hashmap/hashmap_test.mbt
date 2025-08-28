@@ -415,7 +415,7 @@ test "@hashmap.map" {
       #|HashMap::of([("e", "e20"), ("a", "a1"), ("b", "b2"), ("d", "d10")])
     ),
   )
-  let v : T[String, String] = @hashmap.new().map((k, v) => k + v)
+  let v : @hashmap.T[String, String] = @hashmap.new().map((k, v) => k + v)
   inspect(v, content="HashMap::of([])")
 }
 
@@ -439,6 +439,6 @@ test "@hashmap.copy" {
       #|HashMap::of([("e", 20), ("a", 1), ("b", 2), ("d", 10)])
     ),
   )
-  let copy : T[String, String] = @hashmap.new().copy()
+  let copy : @hashmap.T[String, String] = @hashmap.new().copy()
   inspect(copy, content="HashMap::of([])")
 }

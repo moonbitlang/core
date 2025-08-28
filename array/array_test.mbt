@@ -146,22 +146,22 @@ test "unzip" {
 }
 
 ///|
-test "zip_with" {
+test "@array.zip_with" {
   // Test with two non-empty arrays and a function
   let arr1 = [1, 2, 3]
   let arr2 = [4, 5, 6]
   let add = (a, b) => a + b
-  inspect(zip_with(arr1, arr2, add), content="[5, 7, 9]")
+  inspect(@array.zip_with(arr1, arr2, add), content="[5, 7, 9]")
 
   // Test with arrays of different lengths and a function
   let arr3 = [1, 2]
   let arr4 = [4, 5, 6]
-  inspect(zip_with(arr3, arr4, add), content="[5, 7]")
+  inspect(@array.zip_with(arr3, arr4, add), content="[5, 7]")
 
   // Test with an empty array and a function
   let arr5 : Array[Int] = []
   let arr6 = [4, 5, 6]
-  inspect(zip_with(arr5, arr6, add), content="[]")
+  inspect(@array.zip_with(arr5, arr6, add), content="[]")
 }
 
 ///|
