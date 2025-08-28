@@ -15,6 +15,7 @@
     "moonbitlang/core/json",
     "moonbitlang/core/bigint"
   ],
+  "alert-list": "-test_import_all",
   "targets": {
     "int64_js.mbt": ["js"],
     "int64_nonjs.mbt": ["not", "js"],
