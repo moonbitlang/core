@@ -1303,3 +1303,148 @@ test "shuffle maintains elements with deterministic rand" {
   assert_eq(shuffled.to_array().sort(), original.to_array().sort())
   assert_true(shuffled != original)
 }
+
+///|
+test "append_simple" {
+  // Test basic append functionality
+  let d1 = @deque.of([1, 2, 3])
+  let d2 = @deque.of([4, 5, 6])
+  d1.append(d2)
+  assert_eq(d1.to_array(), [1, 2, 3, 4, 5, 6])
+  inspect(d1.as_views(), content="([1, 2, 3, 4, 5, 6], [])")
+  assert_eq(d1.length(), 6)
+  assert_eq(d2.to_array(), [4, 5, 6])
+  inspect(d2.as_views(), content="([4, 5, 6], [])")
+  assert_eq(d2.length(), 3)
+}
+
+///|
+test "append_wrap_around" {
+  // Test append when the deque is wrapped around
+  let d1 = @deque.of([])
+  d1.push_back(3)
+  d1.push_back(4)
+  d1.push_back(5)
+  d1.push_front(2)
+  d1.push_front(1)
+  let d2 = @deque.of([6, 7, 8])
+  d1.append(d2)
+  assert_eq(d1.to_array(), [1, 2, 3, 4, 5, 6, 7, 8])
+  inspect(d1.as_views(), content="([1, 2], [3, 4, 5, 6, 7, 8])")
+  assert_eq(d1.length(), 8)
+}
+
+///|
+test "append_empty" {
+  // Test appending an empty deque
+  let d1 = @deque.of([1, 2, 3])
+  let d2 = @deque.of([])
+  d1.append(d2)
+  assert_eq(d1.to_array(), [1, 2, 3])
+  inspect(d1.as_views(), content="([1, 2, 3], [])")
+  assert_eq(d1.length(), 3)
+}
+
+///|
+test "append_into_empty" {
+  // Test appending into an empty deque
+  let d1 = @deque.of([])
+  let d2 = @deque.of([1, 2, 3])
+  d1.append(d2)
+  assert_eq(d1.to_array(), [1, 2, 3])
+  inspect(d1.as_views(), content="([1, 2, 3], [])")
+  assert_eq(d1.length(), 3)
+}
+
+///|
+test "append_multiple_times" {
+  // Test multiple append operations
+  let d1 = @deque.of([1])
+  let d2 = @deque.of([2])
+  let d3 = @deque.of([3, 4])
+  let d4 = @deque.of([5, 6, 7])
+  d1.append(d2)
+  d1.append(d3)
+  d1.append(d4)
+  assert_eq(d1.to_array(), [1, 2, 3, 4, 5, 6, 7])
+  inspect(d1.as_views(), content="([1, 2, 3, 4, 5, 6, 7], [])")
+  assert_eq(d1.length(), 7)
+}
+
+///|
+test "append_self" {
+  // Test appending a deque to itself (should create a copy)
+  let d1 = @deque.of([1, 2, 3])
+  let old_len = d1.length()
+  d1.append(d1.copy())
+  assert_eq(d1.to_array(), [1, 2, 3, 1, 2, 3])
+  inspect(d1.as_views(), content="([1, 2, 3, 1, 2, 3], [])")
+  assert_eq(d1.length(), old_len * 2)
+}
+
+///|
+test "append_tail_position" {
+  /// Test that tail is correctly updated after append
+  let d1 = @deque.of([1, 2, 3])
+  let d2 = @deque.of([4])
+  d1.append(d2)
+  d1.push_back(5)
+  assert_eq(d1.to_array(), [1, 2, 3, 4, 5])
+  inspect(d1.as_views(), content="([1, 2, 3, 4, 5], [])")
+}
+
+///|
+test "append_growth_strategy" {
+  /// Test the behavior of capacity growth after flattening
+  let d1 = @deque.of([])
+  let d2 = @deque.of([])
+  for i = 0; i < 100; i = i + 1 {
+    d2.push_back(i)
+  }
+  let old_cap = d1.capacity()
+  d1.append(d2)
+  assert_eq(d1.length(), 100)
+  assert_true(d1.capacity() >= old_cap * 2 || d1.capacity() >= 100)
+}
+
+///|
+/// Test large append to trigger buffer reallocation
+test "append_large_realloc" {
+  let d1 = @deque.of([1])
+  let d2 : @deque.T[Int] = @deque.of([])
+  for i = 0; i < 1000; i = i + 1 {
+    d2.push_back(i)
+  }
+  d1.append(d2)
+  assert_eq(d1.length(), 1001)
+  assert_eq(d1.to_array()[0], 1)
+  assert_eq(d1.to_array()[1000], 999)
+}
+
+///|
+/// Test append empty after multiple pushes
+test "append_empty_after_pushes" {
+  let d1 = @deque.of([])
+  for i = 0; i < 10; i = i + 1 {
+    d1.push_back(i)
+  }
+  let d2 = @deque.of([])
+  d1.append(d2)
+  assert_eq(d1.length(), 10)
+  assert_eq(d1.to_array(), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+  inspect(d1.as_views(), content="([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], [])")
+}
+
+///| 
+test "append_folded_but_has_space" {
+  let d1 = @deque.of([1, 2, 3, 4, 5, 6, 7, 8])
+  inspect(d1.as_views(), content="([1, 2, 3, 4, 5, 6, 7, 8], [])")
+  d1
+  ..unsafe_pop_front()
+  ..unsafe_pop_front()
+  ..unsafe_pop_front()
+  ..unsafe_pop_back()
+  inspect(d1.as_views(), content="([4, 5, 6, 7], [])")
+  d1.append(@deque.of([9, 10, 11]))
+  inspect(d1.as_views(), content="([4, 5, 6, 7, 9], [10, 11])")
+}
