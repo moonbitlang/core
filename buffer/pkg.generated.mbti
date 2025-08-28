@@ -38,7 +38,7 @@ fn Buffer::write_int_le(Self, Int) -> Unit
 fn Buffer::write_iter(Self, Iter[Byte]) -> Unit
 fn[A : Leb128] Buffer::write_leb128(Self, A) -> Unit
 fn Buffer::write_object(Self, &Show) -> Unit
-fn Buffer::write_stringview(Self, @string.StringView) -> Unit
+fn Buffer::write_stringview(Self, @string.View) -> Unit
 fn Buffer::write_uint64_be(Self, UInt64) -> Unit
 fn Buffer::write_uint64_le(Self, UInt64) -> Unit
 fn Buffer::write_uint_be(Self, UInt) -> Unit
