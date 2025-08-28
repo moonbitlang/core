@@ -104,20 +104,21 @@ test "iter early termination in left subtree" {
   let set = @sorted_set.from_array([5, 3, 7, 1, 4, 6, 8])
   let mut count = 0
   let mut found_target = false
-  
+
   // Create an iterator that terminates when it finds value 3
   // Since the tree is sorted and 3 is in the left subtree of 5,
   // this should cause go(left) to return IterEnd, triggering line 381
-  let _ = set.iter().run(x => {
-    count += 1
-    if x == 3 {
-      found_target = true
-      IterEnd  // This should propagate up and trigger the uncovered line
-    } else {
-      IterContinue
-    }
-  })
-  
+  let _ = set
+    .iter()
+    .run(x => {
+      count += 1
+      if x == 3 {
+        found_target = true
+        IterEnd // This should propagate up and trigger the uncovered line
+      } else {
+        IterContinue
+      }
+    })
   inspect(found_target, content="true")
   inspect(count, content="2") // Should visit 1, then 3 and terminate
 }

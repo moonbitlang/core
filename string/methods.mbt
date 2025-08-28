@@ -1235,17 +1235,17 @@ test "replace_all" {
 test "String::replace_all boundary cases" {
   // These tests should trigger the uncovered line 1187: guard end + old_len <= len else { break }
   // This happens when the pattern is found at the very end of the string
-  
+
   // Pattern at the end of string - should trigger the guard condition
   assert_eq("helloworld".replace_all(old="world", new="X"), "helloX")
   assert_eq("abcdef".replace_all(old="def", new="XYZ"), "abcXYZ")
-  
+
   // Multiple patterns where the last one is at the end
   assert_eq("abcabc".replace_all(old="abc", new="X"), "XX")
-  
+
   // Pattern that exactly matches the string length
   assert_eq("test".replace_all(old="test", new="done"), "done")
-  
+
   // Empty replacement at the end
   assert_eq("remove_me".replace_all(old="_me", new=""), "remove")
 }
@@ -1288,20 +1288,20 @@ test "View::replace_all" {
 test "View::replace_all boundary cases" {
   // These tests should trigger the uncovered line 1141: guard end + old_len <= len else { break }
   // This condition triggers when end + old_len > len, meaning we're at the boundary
-  
+
   // Let me trace through the algorithm more carefully...
   // Actually, let me try a different approach - create a scenario where the view length changes
-  
+
   // Try with overlapping patterns or edge cases
   assert_eq("abcabc"[:].replace_all(old="abc", new="X"), "XX")
   assert_eq("aaaa"[:].replace_all(old="aa", new="b"), "bb")
-  
+
   // Pattern at exact end
   assert_eq("hello"[:].replace_all(old="lo", new="X"), "helX")
-  
+
   // Test with empty string edge case
   assert_eq("a"[:].replace_all(old="a", new=""), "")
-  
+
   // Let me try to understand when end + old_len > len could happen...
   // Maybe when we have a complex replacement scenario
   inspect("Testing boundary condition", content="Testing boundary condition")
