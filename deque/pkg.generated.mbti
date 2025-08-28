@@ -19,6 +19,7 @@ fn[A] of(FixedArray[A]) -> T[A]
 
 // Types and methods
 type T[A]
+fn[A] T::append(Self[A], Self[A]) -> Unit
 fn[A] T::as_views(Self[A]) -> (ArrayView[A], ArrayView[A])
 fn[A] T::back(Self[A]) -> A?
 fn[A : Compare] T::binary_search(Self[A], A) -> Result[Int, Int]
