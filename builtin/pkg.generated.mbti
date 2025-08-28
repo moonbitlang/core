@@ -792,7 +792,8 @@ impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show
 impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show, T12 : Show, T13 : Show, T14 : Show, T15 : Show] Show for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15)
 
 pub(open) trait Shr {
-  op_shr(Self, Int) -> Self
+  shr(Self, Int) -> Self = _
+  op_shr(Self, Int) -> Self = _
 }
 impl Shr for Byte
 impl Shr for Int
