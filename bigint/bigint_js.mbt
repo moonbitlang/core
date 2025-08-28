@@ -306,11 +306,11 @@ extern "js" fn BigInt::js_lor(self : BigInt, other : BigInt) -> BigInt =
 /// Example:
 ///
 /// ```moonbit
-///   let a = BigInt::from_string("42")
-///   let b = BigInt::from_string("-12")
+///   let a = @bigint.BigInt::from_string("42")
+///   let b = @bigint.BigInt::from_string("-12")
 ///   inspect(a | b, content="-2")
-///   let c = BigInt::from_string("-8")
-///   let d = BigInt::from_string("-4")
+///   let c = @bigint.BigInt::from_string("-8")
+///   let d = @bigint.BigInt::from_string("-4")
 ///   inspect(c | d, content="-4")
 /// ```
 ///
@@ -342,15 +342,15 @@ extern "js" fn BigInt::js_lxor(self : BigInt, other : BigInt) -> BigInt =
 /// Example:
 ///
 /// ```moonbit
-///   let a = BigInt::from_string("42")  // 0b101010
-///   let b = BigInt::from_string("25")  // 0b011001
+///   let a = @bigint.BigInt::from_string("42")  // 0b101010
+///   let b = @bigint.BigInt::from_string("25")  // 0b011001
 ///   inspect(a.lxor(b), content="51")   // 0b110011
 ///
-///   let a = BigInt::from_string("42")
-///   let b = BigInt::from_string("-7")
+///   let a = @bigint.BigInt::from_string("42")
+///   let b = @bigint.BigInt::from_string("-7")
 ///   inspect(a.lxor(b), content="-45")
 ///
-///   let a = BigInt::from_string("42")
+///   let a = @bigint.BigInt::from_string("42")
 ///   inspect(a.lxor(a), content="0")    // XOR with self gives 0
 /// ```
 ///
