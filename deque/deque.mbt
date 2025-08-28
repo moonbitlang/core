@@ -148,8 +148,11 @@ pub fn[A] copy(self : T[A]) -> T[A] {
 /// ```
 pub fn[A] append(self : T[A], other : T[A]) -> Unit {
   guard other.len != 0 else {  }
-  let space = (self.head - self.tail - 1 + self.buf.length()) %
-    self.buf.length()
+  let space = if self.buf.length() != 0 {
+    (self.head - self.tail - 1 + self.buf.length()) % self.buf.length()
+  } else {
+    0
+  }
   if space < other.len {
     let new_cap = if self.len + other.len > self.buf.length() * 2 {
       self.len + other.len
