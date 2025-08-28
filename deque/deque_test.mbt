@@ -1435,7 +1435,7 @@ test "append_empty_after_pushes" {
   inspect(d1.as_views(), content="([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], [])")
 }
 
-///| 
+///|
 test "append_folded_but_has_space" {
   let d1 = @deque.of([1, 2, 3, 4, 5, 6, 7, 8])
   inspect(d1.as_views(), content="([1, 2, 3, 4, 5, 6, 7, 8], [])")
