@@ -191,6 +191,30 @@ test "zip_to_iter2" {
 }
 
 ///|
+test "zip_to_iter2 early termination" {
+  // This test should trigger the uncovered line 301: break IterEnd
+  // We create an iterator that terminates early when it encounters a specific value
+  let arr1 = [1, 2, 3, 4, 5]
+  let arr2 = ['a', 'b', 'c', 'd', 'e']
+  let mut count = 0
+  let mut found_target = false
+  
+  // Use run to iterate with early termination
+  let _ = arr1.zip_to_iter2(arr2).run((x, _y) => {
+    count += 1
+    if x == 3 {
+      found_target = true
+      IterEnd  // This should trigger the uncovered line 301
+    } else {
+      IterContinue
+    }
+  })
+  
+  inspect(found_target, content="true")
+  inspect(count, content="3") // Should visit (1,'a'), (2,'b'), (3,'c') and terminate
+}
+
+///|
 test "zip_to_iter2 current behavior" {
   // Only for recording what can be done, but not what should be done
   let arr = [1, 2, 3]
