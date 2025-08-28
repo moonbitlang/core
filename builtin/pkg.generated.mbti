@@ -107,6 +107,7 @@ fn[T] Array::iter(Self[T]) -> Iter[T]
 fn[A] Array::iter2(Self[A]) -> Iter2[Int, A]
 fn[T] Array::length(Self[T]) -> Int
 fn[T] Array::make(Int, T) -> Self[T]
+fn[T] Array::makei(Int, (Int) -> T raise?) -> Self[T] raise?
 fn[T, U] Array::map(Self[T], (T) -> U raise?) -> Self[U] raise?
 fn[T] Array::map_inplace(Self[T], (T) -> T raise?) -> Unit raise?
 fn[T, U] Array::mapi(Self[T], (Int, T) -> U raise?) -> Self[U] raise?
