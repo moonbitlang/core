@@ -4,5 +4,6 @@
     "moonbitlang/core/bigint",
     "moonbitlang/core/set",
     "moonbitlang/core/array"
-  ]
+  ],
+  "alert-list": "-test_import_all"
 }
