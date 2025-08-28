@@ -13,6 +13,7 @@
 // limitations under the License.
 
 // Default initial capacity
+
 ///|
 let default_init_capacity = 8
 

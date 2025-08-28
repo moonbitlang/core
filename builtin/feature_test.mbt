@@ -21,6 +21,7 @@ struct RangeImpl[T] {
 // pub
 // priv
 // default to abstract
+
 ///|
 trait Range {
   range(Self, Self) -> RangeImpl[Self]

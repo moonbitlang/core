@@ -145,6 +145,7 @@ pub fn parse_int(str : @string.View, base? : Int = 0) -> Int raise StrConvError 
 
 // Check whether the underscores are correct.
 // Underscores must appear only between digits or between a base prefix and a digit.
+
 ///|
 fn check_underscore(str : @string.View) -> Bool {
   // skip the sign
@@ -195,6 +196,7 @@ fn check_underscore(str : @string.View) -> Bool {
 }
 
 // Determine the base of the value.
+
 ///|
 fn determine_base(s : String) -> Int {
   match s {

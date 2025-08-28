@@ -39,6 +39,7 @@ test {
 //   data : Map[B, A]
 // }derive(ToJson)
 // Should the deriver generate constraints that [B: Show]
+
 ///|
 struct Hello3[A, B] {
   fieldAX : A

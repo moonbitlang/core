@@ -86,6 +86,7 @@ pub(open) trait Show {
 }
 
 // Default implementation for `Show::to_string`, uses a `Buffer`
+
 ///|
 impl Show with to_string(self) {
   let logger = StringBuilder::new()

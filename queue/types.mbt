@@ -20,6 +20,7 @@ priv struct Cons[A] {
 
 // Invariant:
 // - length == 0 <=> first is None && last is None
+
 ///|
 struct T[A] {
   mut length : Int
