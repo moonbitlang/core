@@ -1305,6 +1305,31 @@ test "shuffle maintains elements with deterministic rand" {
 }
 
 ///|
+test "deque map/mapi/search with wrapped head should keep logical order" {
+  let dq = @deque.new(capacity=4)
+  dq.push_back(1)
+  dq.push_back(2)
+  dq.push_back(3)
+  dq.push_back(4)
+  let _ = dq.pop_front()
+  let _ = dq.pop_front()
+  dq.push_back(5)
+  dq.push_back(6)
+  assert_eq(dq[0], 3)
+  assert_eq(dq[1], 4)
+  assert_eq(dq[2], 5)
+  assert_eq(dq[3], 6)
+  let mapped = dq.map(x => x + 10)
+  assert_eq(mapped, @deque.of([13, 14, 15, 16]))
+  let mapped = dq.mapi((x, i) => x + i)
+  assert_eq(mapped, @deque.of([3, 5, 7, 9]))
+  assert_eq(dq.search(3), Some(0))
+  assert_eq(dq.search(4), Some(1))
+  assert_eq(dq.search(5), Some(2))
+  assert_eq(dq.search(6), Some(3))
+}
+
+///|
 test "append_simple" {
   // Test basic append functionality
   let d1 = @deque.of([1, 2, 3])

@@ -739,7 +739,8 @@ pub fn[A, U] map(self : T[A], f : (A) -> U) -> T[U] {
   } else {
     let buf : UninitializedArray[U] = UninitializedArray::make(self.len)
     for i in 0..<self.len {
-      buf[i] = f(self.buf[i])
+      let idx = (self.head + i) % self.len
+      buf[i] = f(self.buf[idx])
     }
     T::{ buf, len: self.len, head: 0, tail: self.len - 1 }
   }
@@ -760,7 +761,8 @@ pub fn[A, U] mapi(self : T[A], f : (Int, A) -> U) -> T[U] {
   } else {
     let buf : UninitializedArray[U] = UninitializedArray::make(self.len)
     for i in 0..<self.len {
-      buf[i] = f(i, self.buf[i])
+      let idx = (self.head + i) % self.len
+      buf[i] = f(i, self.buf[idx])
     }
     T::{ buf, len: self.len, head: 0, tail: self.len - 1 }
   }
@@ -800,7 +802,8 @@ pub fn[A] is_empty(self : T[A]) -> Bool {
 /// ```
 pub fn[A : Eq] search(self : T[A], value : A) -> Int? {
   for i in 0..<self.len {
-    if self.buf[i] == value {
+    let idx = (self.head + i) % self.len
+    if self.buf[idx] == value {
       return Some(i)
     }
   }
