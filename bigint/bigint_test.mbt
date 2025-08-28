@@ -136,7 +136,9 @@ test "add" {
   let c = a + b
   inspect(c.to_string(), content="1111111110111111110")
   let a = @bigint.BigInt::from_string("123456789012345678123456789012345678")
-  let b = @bigint.BigInt::from_string("9876543210987654329876543210987654321241243")
+  let b = @bigint.BigInt::from_string(
+    "9876543210987654329876543210987654321241243",
+  )
   let c = a + b
   inspect(c.to_string(), content="9876543334444443342222221334444443333586921")
   let a = @bigint.BigInt::from_string(
@@ -170,7 +172,9 @@ test "add" {
     c.to_string(),
     content="123456783544454690466667690246666768246667690245246910232469131121357989",
   )
-  let a = @bigint.BigInt::from_string("123456789012345678123456789012345678123456789")
+  let a = @bigint.BigInt::from_string(
+    "123456789012345678123456789012345678123456789",
+  )
   let b = @bigint.BigInt::from_string(
     "98765432109876543298765432109876543298765432112341241213125125",
   )
@@ -214,7 +218,9 @@ test "sub" {
   let b = @bigint.BigInt::from_string("-987654321098765432987654321098765432")
   let c = a - b
   inspect(c.to_string(), content="124444443333444443556444443333444443665")
-  let a = @bigint.BigInt::from_string("-123456789012345678123456789012345678233")
+  let a = @bigint.BigInt::from_string(
+    "-123456789012345678123456789012345678233",
+  )
   let b = @bigint.BigInt::from_string("987654321098765432987654321098765432")
   let c = a - b
   inspect(c.to_string(), content="-124444443333444443556444443333444443665")
@@ -398,9 +404,18 @@ test "op_shr" {
   inspect(b.to_string(), content="-617283945061728395")
   let c = a >> 64
   inspect(c.to_string(), content="-1")
-  assert_eq(@bigint.BigInt::from_int64(0b1111_1111L) >> 4, @bigint.BigInt::from_int64(0b1111L))
-  assert_eq(@bigint.BigInt::from_int64(0b1111_1111L) >> 24, @bigint.BigInt::from_int64(0))
-  assert_eq(@bigint.BigInt::from_int64(0b1111_1111L) >> 44, @bigint.BigInt::from_int64(0))
+  assert_eq(
+    @bigint.BigInt::from_int64(0b1111_1111L) >> 4,
+    @bigint.BigInt::from_int64(0b1111L),
+  )
+  assert_eq(
+    @bigint.BigInt::from_int64(0b1111_1111L) >> 24,
+    @bigint.BigInt::from_int64(0),
+  )
+  assert_eq(
+    @bigint.BigInt::from_int64(0b1111_1111L) >> 44,
+    @bigint.BigInt::from_int64(0),
+  )
 }
 
 ///|
@@ -772,16 +787,32 @@ test "equal_int64" {
   assert_false(@bigint.BigInt::equal_int64(1N, 0L))
 
   // Test with max/min int64 values
-  assert_true(@bigint.BigInt::equal_int64(9223372036854775807N, 9223372036854775807L))
-  assert_true(@bigint.BigInt::equal_int64(-9223372036854775808N, -9223372036854775808L))
-  assert_false(@bigint.BigInt::equal_int64(9223372036854775807N, -9223372036854775808L))
-  assert_false(@bigint.BigInt::equal_int64(-9223372036854775808N, 9223372036854775807L))
+  assert_true(
+    @bigint.BigInt::equal_int64(9223372036854775807N, 9223372036854775807L),
+  )
+  assert_true(
+    @bigint.BigInt::equal_int64(-9223372036854775808N, -9223372036854775808L),
+  )
+  assert_false(
+    @bigint.BigInt::equal_int64(9223372036854775807N, -9223372036854775808L),
+  )
+  assert_false(
+    @bigint.BigInt::equal_int64(-9223372036854775808N, 9223372036854775807L),
+  )
 
   // Test with large values that fit in int64
-  assert_true(@bigint.BigInt::equal_int64(1234567890123456789N, 1234567890123456789L))
-  assert_true(@bigint.BigInt::equal_int64(-1234567890123456789N, -1234567890123456789L))
-  assert_false(@bigint.BigInt::equal_int64(1234567890123456789N, -1234567890123456789L))
-  assert_false(@bigint.BigInt::equal_int64(-1234567890123456789N, 1234567890123456789L))
+  assert_true(
+    @bigint.BigInt::equal_int64(1234567890123456789N, 1234567890123456789L),
+  )
+  assert_true(
+    @bigint.BigInt::equal_int64(-1234567890123456789N, -1234567890123456789L),
+  )
+  assert_false(
+    @bigint.BigInt::equal_int64(1234567890123456789N, -1234567890123456789L),
+  )
+  assert_false(
+    @bigint.BigInt::equal_int64(-1234567890123456789N, 1234567890123456789L),
+  )
 
   // Test with BigInt that doesn't fit in int64
   let large = 2N.pow(64)
@@ -803,7 +834,9 @@ test "equal_int64" {
   let max_plus_one = 9223372036854775808N // 2^63
   let min_minus_one = -9223372036854775809N // -2^63 - 1
   assert_false(@bigint.BigInt::equal_int64(max_plus_one, 9223372036854775807L))
-  assert_false(@bigint.BigInt::equal_int64(min_minus_one, -9223372036854775808L))
+  assert_false(
+    @bigint.BigInt::equal_int64(min_minus_one, -9223372036854775808L),
+  )
 
   // Test with powers of 2
   assert_true(@bigint.BigInt::equal_int64(2N.pow(32), 4294967296L))
@@ -863,7 +896,9 @@ test "compare_int" {
   assert_eq(@bigint.BigInt::compare_int(very_large, 2147483647), 1)
   assert_eq(@bigint.BigInt::compare_int(very_large, -2147483648), 1)
   assert_eq(@bigint.BigInt::compare_int(very_large, 0), 1)
-  let very_neg_large = @bigint.BigInt::from_string("-123456789012345678901234567890")
+  let very_neg_large = @bigint.BigInt::from_string(
+    "-123456789012345678901234567890",
+  )
   assert_eq(@bigint.BigInt::compare_int(very_neg_large, 2147483647), -1)
   assert_eq(@bigint.BigInt::compare_int(very_neg_large, -2147483648), -1)
   assert_eq(@bigint.BigInt::compare_int(very_neg_large, 0), -1)
@@ -943,9 +978,17 @@ test "compare_int64" {
   assert_eq(@bigint.BigInt::compare_int64(very_large, 9223372036854775807L), 1)
   assert_eq(@bigint.BigInt::compare_int64(very_large, -9223372036854775808L), 1)
   assert_eq(@bigint.BigInt::compare_int64(very_large, 0L), 1)
-  let very_neg_large = @bigint.BigInt::from_string("-123456789012345678901234567890")
-  assert_eq(@bigint.BigInt::compare_int64(very_neg_large, 9223372036854775807L), -1)
-  assert_eq(@bigint.BigInt::compare_int64(very_neg_large, -9223372036854775808L), -1)
+  let very_neg_large = @bigint.BigInt::from_string(
+    "-123456789012345678901234567890",
+  )
+  assert_eq(
+    @bigint.BigInt::compare_int64(very_neg_large, 9223372036854775807L),
+    -1,
+  )
+  assert_eq(
+    @bigint.BigInt::compare_int64(very_neg_large, -9223372036854775808L),
+    -1,
+  )
   assert_eq(@bigint.BigInt::compare_int64(very_neg_large, 0L), -1)
 
   // Test with powers of 2
