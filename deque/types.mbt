@@ -13,6 +13,7 @@
 // limitations under the License.
 
 // head and tail point to non-empty slots. When the buffer is empty, head and tail points to the same slot.
+
 ///|
 struct T[A] {
   mut buf : UninitializedArray[A]

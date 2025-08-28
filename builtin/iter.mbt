@@ -13,10 +13,12 @@
 // limitations under the License.
 
 // Types
+
 ///|
 struct Iter[T](((T) -> IterResult) -> IterResult)
 
 //TODO: Add intrinsic for Iter::run
+
 ///|
 pub fn[T] Iter::run(self : Iter[T], f : (T) -> IterResult) -> IterResult {
   self(f)

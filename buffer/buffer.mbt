@@ -41,7 +41,7 @@ struct Buffer {
 
 ///|
 /// Expand the buffer size if capacity smaller than required space.
-fn grow_if_necessary(self : T, required : Int) -> Unit {
+fn grow_if_necessary(self : Buffer, required : Int) -> Unit {
   let start = if self.data.length() <= 0 { 1 } else { self.data.length() }
   let enough_space = for space = start {
     if space >= required {
@@ -72,7 +72,7 @@ fn grow_if_necessary(self : T, required : Int) -> Unit {
 ///   buf.write_string("Test")
 ///   inspect(buf.length(), content="8") // each char takes 2 bytes in UTF-16
 /// ```
-pub fn length(self : T) -> Int {
+pub fn length(self : Buffer) -> Int {
   self.len
 }
 
@@ -94,7 +94,7 @@ pub fn length(self : T) -> Int {
 ///   buf.write_string("test")
 ///   inspect(buf.is_empty(), content="false")
 /// ```
-pub fn is_empty(self : T) -> Bool {
+pub fn is_empty(self : Buffer) -> Bool {
   self.len == 0
 }
 
@@ -119,7 +119,7 @@ pub fn is_empty(self : T) -> Bool {
 ///     ),
 ///   )
 /// ```
-pub fn contents(self : T) -> Bytes {
+pub fn contents(self : Buffer) -> Bytes {
   @bytes.from_fixedarray(self.data, len=self.len)
 }
 
@@ -132,7 +132,7 @@ pub fn contents(self : T) -> Bytes {
 ///
 /// * `size_hint` : Initial capacity of the buffer in bytes. Defaults to 0.
 ///
-/// Returns a new buffer of type `T`.
+/// Returns a new buffer of type `Buffer`.
 ///
 /// Example:
 ///
@@ -142,7 +142,7 @@ pub fn contents(self : T) -> Bytes {
 ///   buf.write_string("test")
 ///   inspect(buf.length(), content="8")
 /// ```
-pub fn new(size_hint? : Int = 0) -> T {
+pub fn new(size_hint? : Int = 0) -> Buffer {
   let initial = if size_hint < 1 { 1 } else { size_hint }
   let data = FixedArray::make(initial, Byte::default())
   { data, len: 0, initial_data: data }
@@ -150,7 +150,7 @@ pub fn new(size_hint? : Int = 0) -> T {
 
 ///|
 /// Create a buffer from a bytes.
-pub fn from_bytes(bytes : Bytes) -> T {
+pub fn from_bytes(bytes : Bytes) -> Buffer {
   let val_len = bytes.length()
   let buf = new(size_hint=val_len)
   // inline write_bytes, skip grow_if_necessary check
@@ -162,7 +162,7 @@ pub fn from_bytes(bytes : Bytes) -> T {
 
 ///|
 /// Create a buffer from an array.
-pub fn from_array(arr : Array[Byte]) -> T {
+pub fn from_array(arr : Array[Byte]) -> Buffer {
   let buf = new(size_hint=arr.length())
   for byte in arr {
     // inline write_byte, skip grow_if_necessary check
@@ -175,7 +175,7 @@ pub fn from_array(arr : Array[Byte]) -> T {
 
 ///|
 /// Create a buffer from an iterator.
-pub fn from_iter(iter : Iter[Byte]) -> T {
+pub fn from_iter(iter : Iter[Byte]) -> Buffer {
   let buf = new()
   let mut capacity = buf.data.length()
   for byte in iter {
@@ -217,7 +217,7 @@ pub fn from_iter(iter : Iter[Byte]) -> T {
 ///     ),
 ///   )
 /// ```
-pub impl Logger for T with write_string(self, value) {
+pub impl Logger for Buffer with write_string(self, value) {
   self.grow_if_necessary(self.len + value.length() * 2)
   self.data.blit_from_string(self.len, value, 0, value.length())
   self.len += value.length() * 2
@@ -245,7 +245,7 @@ pub impl Logger for T with write_string(self, value) {
 ///     ),
 ///   )
 /// ```
-pub fn write_uint64_be(self : T, value : UInt64) -> Unit {
+pub fn write_uint64_be(self : Buffer, value : UInt64) -> Unit {
   self.write_byte((value >> 56).to_byte())
   self.write_byte((value >> 48).to_byte())
   self.write_byte((value >> 40).to_byte())
@@ -277,7 +277,7 @@ pub fn write_uint64_be(self : T, value : UInt64) -> Unit {
 ///     ),
 ///   )
 /// ```
-pub fn write_uint64_le(self : T, value : UInt64) -> Unit {
+pub fn write_uint64_le(self : Buffer, value : UInt64) -> Unit {
   self.write_byte(value.to_byte())
   self.write_byte((value >> 8).to_byte())
   self.write_byte((value >> 16).to_byte())
@@ -309,7 +309,7 @@ pub fn write_uint64_le(self : T, value : UInt64) -> Unit {
 ///     ),
 ///   )
 /// ```
-pub fn write_int64_be(self : T, value : Int64) -> Unit {
+pub fn write_int64_be(self : Buffer, value : Int64) -> Unit {
   self.write_uint64_be(value.reinterpret_as_uint64())
 }
 
@@ -333,7 +333,7 @@ pub fn write_int64_be(self : T, value : Int64) -> Unit {
 ///     ),
 ///   )
 /// ```
-pub fn write_int64_le(self : T, value : Int64) -> Unit {
+pub fn write_int64_le(self : Buffer, value : Int64) -> Unit {
   self.write_uint64_le(value.reinterpret_as_uint64())
 }
 
@@ -353,7 +353,7 @@ pub fn write_int64_le(self : T, value : Int64) -> Unit {
 ///   buf.write_uint_be(0x12345678)
 ///   inspect(buf.contents(), content="b\"\\x12\\x34\\x56\\x78\"")
 /// ```
-pub fn write_uint_be(self : T, value : UInt) -> Unit {
+pub fn write_uint_be(self : Buffer, value : UInt) -> Unit {
   self.write_byte((value >> 24).to_byte())
   self.write_byte((value >> 16).to_byte())
   self.write_byte((value >> 8).to_byte())
@@ -377,7 +377,7 @@ pub fn write_uint_be(self : T, value : UInt) -> Unit {
 ///   buf.write_uint_le(0x12345678)
 ///   inspect(buf.contents(), content="b\"\\x78\\x56\\x34\\x12\"")
 /// ```
-pub fn write_uint_le(self : T, value : UInt) -> Unit {
+pub fn write_uint_le(self : Buffer, value : UInt) -> Unit {
   self.write_byte(value.to_byte())
   self.write_byte((value >> 8).to_byte())
   self.write_byte((value >> 16).to_byte())
@@ -400,7 +400,7 @@ pub fn write_uint_le(self : T, value : UInt) -> Unit {
 ///   buf.write_int_be(0x12345678)
 ///   inspect(buf.contents(), content="b\"\\x12\\x34\\x56\\x78\"")
 /// ```
-pub fn write_int_be(self : T, value : Int) -> Unit {
+pub fn write_int_be(self : Buffer, value : Int) -> Unit {
   self.write_uint_be(value.reinterpret_as_uint())
 }
 
@@ -421,7 +421,7 @@ pub fn write_int_be(self : T, value : Int) -> Unit {
 ///   buf.write_int_le(-1)
 ///   inspect(buf.contents(), content="b\"\\xff\\xff\\xff\\xff\"")
 /// ```
-pub fn write_int_le(self : T, value : Int) -> Unit {
+pub fn write_int_le(self : Buffer, value : Int) -> Unit {
   self.write_uint_le(value.reinterpret_as_uint())
 }
 
@@ -441,7 +441,7 @@ pub fn write_int_le(self : T, value : Int) -> Unit {
 ///   buf.write_double_be(1.0)
 ///   inspect(buf.contents(), content="b\"\\x3f\\xf0\\x00\\x00\\x00\\x00\\x00\\x00\"")
 /// ```
-pub fn write_double_be(self : T, value : Double) -> Unit {
+pub fn write_double_be(self : Buffer, value : Double) -> Unit {
   self.write_uint64_be(value.reinterpret_as_uint64())
 }
 
@@ -464,7 +464,7 @@ pub fn write_double_be(self : T, value : Double) -> Unit {
 ///     content="b\"\\x1f\\x85\\xeb\\x51\\xb8\\x1e\\x09\\x40\"",
 ///   )
 /// ```
-pub fn write_double_le(self : T, value : Double) -> Unit {
+pub fn write_double_le(self : Buffer, value : Double) -> Unit {
   self.write_uint64_le(value.reinterpret_as_uint64())
 }
 
@@ -486,7 +486,7 @@ pub fn write_double_le(self : T, value : Double) -> Unit {
 ///   // In big-endian format, 3.14 is represented as [0x40, 0x48, 0xF5, 0xC3]
 ///   inspect(buf.contents(), content="b\"\\x40\\x48\\xf5\\xc3\"")
 /// ```
-pub fn write_float_be(self : T, value : Float) -> Unit {
+pub fn write_float_be(self : Buffer, value : Float) -> Unit {
   self.write_uint_be(value.reinterpret_as_uint())
 }
 
@@ -507,7 +507,7 @@ pub fn write_float_be(self : T, value : Float) -> Unit {
 ///   // The bytes are written in little-endian format
 ///   inspect(buf.contents(), content="b\"\\xc3\\xf5\\x48\\x40\"")
 /// ```
-pub fn write_float_le(self : T, value : Float) -> Unit {
+pub fn write_float_le(self : Buffer, value : Float) -> Unit {
   self.write_uint_le(value.reinterpret_as_uint())
 }
 
@@ -529,7 +529,7 @@ pub fn write_float_le(self : T, value : Float) -> Unit {
 ///   buf.write_object(42)
 ///   inspect(buf.contents().to_unchecked_string(), content="42")
 /// ```
-pub fn write_object(self : T, value : &Show) -> Unit {
+pub fn write_object(self : Buffer, value : &Show) -> Unit {
   self.write_string(value.to_string())
 }
 
@@ -553,7 +553,7 @@ pub fn write_object(self : T, value : &Show) -> Unit {
 ///     ),
 ///   )
 /// ```
-pub fn write_bytes(self : T, value : Bytes) -> Unit {
+pub fn write_bytes(self : Buffer, value : Bytes) -> Unit {
   let val_len = value.length()
   self.grow_if_necessary(self.len + val_len)
   self.data.blit_from_bytes(self.len, value, 0, val_len)
@@ -581,7 +581,7 @@ pub fn write_bytes(self : T, value : Bytes) -> Unit {
 ///     ),
 ///   )
 /// ```
-pub fn write_bytesview(self : T, value : @bytes.View) -> Unit {
+pub fn write_bytesview(self : Buffer, value : @bytes.View) -> Unit {
   let val_len = value.length()
   self.grow_if_necessary(self.len + val_len)
   self.data.blit_from_bytes(
@@ -617,8 +617,8 @@ pub fn write_bytesview(self : T, value : @bytes.View) -> Unit {
 ///     ),
 ///   )
 /// ```
-pub impl Logger for T with write_substring(
-  self : T,
+pub impl Logger for Buffer with write_substring(
+  self : Buffer,
   value : String,
   start : Int,
   len : Int,
@@ -630,7 +630,7 @@ pub impl Logger for T with write_substring(
 }
 
 ///|
-pub fn write_stringview(self : T, value : @string.View) -> Unit {
+pub fn write_stringview(self : Buffer, value : @string.View) -> Unit {
   let len = value.length()
   self.grow_if_necessary(self.len + len * 2)
   for i = 0, j = self.len; i < len; i = i + 1, j = j + 2 {
@@ -662,7 +662,7 @@ pub fn write_stringview(self : T, value : @string.View) -> Unit {
 ///     ),
 ///   )
 /// ```
-pub impl Logger for T with write_char(self : T, value : Char) -> Unit {
+pub impl Logger for Buffer with write_char(self : Buffer, value : Char) -> Unit {
   self.grow_if_necessary(self.len + 4)
   let inc = self.data.set_utf16le_char(self.len, value)
   self.len += inc
@@ -684,7 +684,7 @@ pub impl Logger for T with write_char(self : T, value : Char) -> Unit {
 ///   buf.write_byte(b'\x41')
 ///   inspect(buf.contents(), content="b\"\\x41\"")
 /// ```
-pub fn write_byte(self : T, value : Byte) -> Unit {
+pub fn write_byte(self : Buffer, value : Byte) -> Unit {
   self.grow_if_necessary(self.len + 1)
   self.data[self.len] = value
   self.len += 1
@@ -711,7 +711,7 @@ pub fn write_byte(self : T, value : Byte) -> Unit {
 ///     ),
 ///   )
 /// ```
-pub fn write_iter(self : T, iter : Iter[Byte]) -> Unit {
+pub fn write_iter(self : Buffer, iter : Iter[Byte]) -> Unit {
   for byte in iter {
     self.write_byte(byte)
   }
@@ -734,7 +734,7 @@ pub fn write_iter(self : T, iter : Iter[Byte]) -> Unit {
 ///   inspect(buf.length(), content="0")
 ///   inspect(buf.is_empty(), content="true")
 /// ```
-pub fn reset(self : T) -> Unit {
+pub fn reset(self : Buffer) -> Unit {
   self.data = self.initial_data
   self.len = 0
 }
@@ -757,11 +757,11 @@ pub fn reset(self : T) -> Unit {
 ///   let bytes = buf.to_bytes()
 ///   inspect(bytes.length(), content="8")
 /// ```
-pub fn to_bytes(self : T) -> Bytes {
+pub fn to_bytes(self : Buffer) -> Bytes {
   @bytes.from_fixedarray(self.data, len=self.len)
 }
 
 ///|
-pub impl Show for T with output(self, logger) {
+pub impl Show for Buffer with output(self, logger) {
   logger.write_string(self.contents().to_unchecked_string())
 }

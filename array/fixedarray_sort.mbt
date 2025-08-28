@@ -177,6 +177,7 @@ fn[T : Compare] provide_sorted_batch(
 // This function correctly checks invariants for the top four runs. Additionally, if the top
 // run starts at index 0, it will always demand a merge operation until the stack is fully
 // collapsed, in order to complete the sort.
+
 ///|
 fn collapse(runs : Array[TimSortRun], stop : Int) -> Int? {
   let n : Int = runs.length()

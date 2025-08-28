@@ -289,6 +289,7 @@ fn decimal_length17(v : UInt64) -> Int {
 }
 
 // A floating decimal representing m * 10^e.
+
 ///|
 priv struct FloatingDecimal64 {
   mantissa : UInt64

@@ -13,6 +13,7 @@
 // limitations under the License.
 
 // Types
+
 ///|
 priv struct Entry[K] {
   mut prev : Int

@@ -19,10 +19,12 @@
 // ```
 //    for k, v in map { ... }
 // ```
+
 ///|
 struct Iter2[A, B](((A, B) -> IterResult) -> IterResult)
 
 //TODO: Add intrinsic for Iter::run
+
 ///|
 pub fn[A, B] Iter2::run(
   self : Iter2[A, B],

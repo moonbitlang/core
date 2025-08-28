@@ -21,6 +21,7 @@ trait FromString {
 struct MyInt(Int) derive(Show)
 
 // _ allow in names
+
 ///|
 impl FromString for MyInt with from_string(_s) {
   0

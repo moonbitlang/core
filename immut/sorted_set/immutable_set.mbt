@@ -17,6 +17,7 @@
 // All operations over sets are purely applicative (no side-effects).
 
 // Construct a empty ImmutableSet.
+
 ///|
 pub fn[A] new() -> T[A] {
   Empty

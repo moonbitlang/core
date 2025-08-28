@@ -1627,6 +1627,7 @@ pub impl Eq for String with op_equal(self : String, other : String) -> Bool = "%
 pub fn String::to_string(self : String) -> String = "%string_to_string"
 
 // For internal use only
+
 ///|
 priv type UnsafeMaybeUninit[_]
 

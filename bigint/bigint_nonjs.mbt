@@ -350,6 +350,7 @@ pub impl Mul for BigInt with op_mul(self : BigInt, other : BigInt) -> BigInt {
 }
 
 // Simplest way to multiply two BigInts.
+
 ///|
 fn BigInt::grade_school_mul(self : BigInt, other : BigInt) -> BigInt {
   let self_len = self.len
@@ -374,6 +375,7 @@ fn BigInt::grade_school_mul(self : BigInt, other : BigInt) -> BigInt {
 }
 
 // Karatsuba multiplication
+
 ///|
 fn BigInt::karatsuba_mul(self : BigInt, other : BigInt) -> BigInt {
   let half = (max(self.len, other.len) + 1) / 2
@@ -388,6 +390,7 @@ fn BigInt::karatsuba_mul(self : BigInt, other : BigInt) -> BigInt {
 }
 
 // Get the lower half of the number.
+
 ///|
 fn BigInt::split(self : BigInt, half : Int) -> (BigInt, BigInt) {
   if self.len <= half {
@@ -494,6 +497,7 @@ pub impl Mod for BigInt with op_mod(self : BigInt, other : BigInt) -> BigInt {
 
 // Simplest way to divide two BigInts.
 // Assumption: other != zero.
+
 ///|
 fn BigInt::grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
   // Handle edge cases
