@@ -714,7 +714,7 @@ pub impl Shl for BigInt with op_shl(self : BigInt, n : Int) -> BigInt {
 ///   let neg = @bigint.BigInt::from_string("-1024")
 ///   inspect(neg >> 3, content="-128")
 /// ```
-pub impl Shr for BigInt with op_shr(self : BigInt, n : Int) -> BigInt {
+pub impl Shr for BigInt with shr(self : BigInt, n : Int) -> BigInt {
   if n < 0 {
     abort("negative shift count")
   }

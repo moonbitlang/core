@@ -441,7 +441,7 @@ pub impl Shl for Int with op_shl(self, other) = "%i32_shl"
 ///   let p = 16
 ///   inspect(p >> 2, content="4") // Regular right shift for positive numbers
 /// ```
-pub impl Shr for Int with op_shr(self, other) = "%i32_shr"
+pub impl Shr for Int with shr(self, other) = "%i32_shr"
 
 ///|
 /// Performs a left shift operation on a 32-bit integer. Shifts each bit in the
@@ -2136,7 +2136,7 @@ pub impl Shl for UInt with op_shl(self, shift) = "%u32.shl"
 ///   let x = 0xFF000000U
 ///   inspect(x >> 32, content="4278190080") // Same as x >> 0 due to masking
 /// ```
-pub impl Shr for UInt with op_shr(self, shift) = "%u32.shr"
+pub impl Shr for UInt with shr(self, shift) = "%u32.shr"
 
 ///|
 /// Counts the number of leading zero bits in an unsigned 32-bit integer,

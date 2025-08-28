@@ -80,7 +80,7 @@ pub(open) trait Shr {
 }
 
 ///|
-#deprecated
+#deprecated("replace `impl op_shr` with `impl shr`")
 impl Shr with shr(self, i) {
   Shr::op_shr(self, i)
 }
