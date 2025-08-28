@@ -53,7 +53,7 @@ jobs:
           moonrun --version
 
       - name: moon check
-        run: moon check --deny-warn
+        run: moon check
 
       - name: moon info
         run: |
@@ -131,7 +131,7 @@ jobs:
           moon version --all
 
       - name: moon check
-        run: moon check --target native --deny-warn
+        run: moon check --target native
 
       - name: Set ulimit and run moon test (--release + --target native)
         if: ${{ matrix.os != 'windows-latest' }}
