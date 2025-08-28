@@ -1,0 +1,23 @@
+fn[K, V] T::capacity(Self[K, V]) -> Int        // ./hashmap/hashmap.mbti:21:21
+fn[K, V] T::clear(Self[K, V]) -> Unit        // ./hashmap/hashmap.mbti:22:22
+fn[K : Hash + Eq, V] T::contains(Self[K, V], K) -> Bool        // ./hashmap/hashmap.mbti:23:23
+fn[K : Hash + Eq, V : Eq] T::contains_kv(Self[K, V], K, V) -> Bool        // ./hashmap/hashmap.mbti:24:24
+fn[K, V] T::each(Self[K, V], (K, V) -> Unit) -> Unit        // ./hashmap/hashmap.mbti:25:25
+fn[K, V] T::eachi(Self[K, V], (Int, K, V) -> Unit) -> Unit        // ./hashmap/hashmap.mbti:26:26
+fn[K : Hash + Eq, V] T::get(Self[K, V], K) -> V?        // ./hashmap/hashmap.mbti:27:27
+fn[K : Hash + Eq, V] T::get_or_default(Self[K, V], K, V) -> V        // ./hashmap/hashmap.mbti:28:28
+fn[K : Hash + Eq, V] T::get_or_init(Self[K, V], K, () -> V) -> V        // ./hashmap/hashmap.mbti:29:29
+fn[K, V] T::is_empty(Self[K, V]) -> Bool        // ./hashmap/hashmap.mbti:30:30
+fn[K, V] T::iter(Self[K, V]) -> Iter[(K, V)]        // ./hashmap/hashmap.mbti:31:31
+fn[K, V] T::iter2(Self[K, V]) -> Iter2[K, V]        // ./hashmap/hashmap.mbti:32:32
+#deprecated
+fn[K : Hash + Eq, V] T::op_get(Self[K, V], K) -> V?         // ./hashmap/hashmap.mbti:34:34
+fn[K : Hash + Eq, V] T::op_set(Self[K, V], K, V) -> Unit        // ./hashmap/hashmap.mbti:35:35
+fn[K : Hash + Eq, V] T::remove(Self[K, V], K) -> Unit        // ./hashmap/hashmap.mbti:36:36
+fn[K : Hash + Eq, V] T::set(Self[K, V], K, V) -> Unit        // ./hashmap/hashmap.mbti:37:37
+fn[K, V] T::size(Self[K, V]) -> Int        // ./hashmap/hashmap.mbti:38:38
+fn[K, V] T::to_array(Self[K, V]) -> Array[(K, V)]        // ./hashmap/hashmap.mbti:39:39
+impl[K : Hash + Eq, V : Eq] Eq for T[K, V]        // ./hashmap/hashmap.mbti:40:40
+impl[K : Show, V : Show] Show for T[K, V]        // ./hashmap/hashmap.mbti:41:41
+impl[K : Show, V : ToJson] ToJson for T[K, V]        // ./hashmap/hashmap.mbti:42:42
+impl[K : @quickcheck.Arbitrary + Hash + Eq, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[K, V]        // ./hashmap/hashmap.mbti:43:43
