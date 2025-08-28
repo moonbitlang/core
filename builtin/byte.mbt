@@ -303,6 +303,6 @@ pub impl Shl for Byte with op_shl(self : Byte, count : Int) -> Byte {
 ///   right.
 ///
 /// Returns the resulting `Byte` value after the bitwise right shift operation.
-pub impl Shr for Byte with op_shr(self : Byte, count : Int) -> Byte {
+pub impl Shr for Byte with shr(self : Byte, count : Int) -> Byte {
   (self.to_uint() >> count).reinterpret_as_int().to_byte()
 }
