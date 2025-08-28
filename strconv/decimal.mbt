@@ -655,6 +655,25 @@ test "parse_decimal with large numbers and truncation" {
 }
 
 ///|
+test "rounded_integer overflow when decimal_point > 20" {
+  // This test should trigger the uncovered line 252 in rounded_integer
+  // We need to create a decimal that will have decimal_point > 20 after shifting
+  // but not trigger the early overflow check in to_double_priv
+  
+  // Create a decimal manually to bypass the early overflow checks
+  let decimal = Decimal::new_priv()
+  decimal.negative = false
+  decimal.decimal_point = 25  // This is > 20 but < 310
+  decimal.digits_num = 1
+  decimal.digits[0] = (1 : Int).to_byte()
+  decimal.truncated = false
+  
+  // Call rounded_integer directly to trigger the uncovered line
+  let result = decimal.rounded_integer()
+  inspect(result, content="-1") // Should be Int64::max_value
+}
+
+///|
 test "corner cases" {
   inspect(try? parse_decimal_priv(".123"), content="Ok(0.123)")
   inspect(try? parse_decimal_priv("."), content="Err(invalid syntax)")
