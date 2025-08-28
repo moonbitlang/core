@@ -147,7 +147,7 @@ pub fn[A] copy(self : T[A]) -> T[A] {
 /// inspect(v1, content="@deque.of([1, 2, 3])")
 /// ```
 pub fn[A] append(self : T[A], other : T[A]) -> Unit {
-  guard other.len != 0 else {  }
+  guard other.len != 0 else { return }
   let space = if self.buf.length() != 0 {
     (self.head - self.tail - 1 + self.buf.length()) % self.buf.length()
   } else {
