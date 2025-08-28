@@ -622,19 +622,19 @@ test "iter2" {
 
 ///|
 test "from_array" {
-  let v = View::from_array(['a', '😭', 'b', '😂', 'c'])
+  let v = @string.View::from_array(['a', '😭', 'b', '😂', 'c'])
   inspect(v, content="a😭b😂c")
 }
 
 ///|
 test "from_iter" {
-  let v = View::from_iter(['a', '😭', 'b', '😂', 'c'].iter())
+  let v = @string.View::from_iter(['a', '😭', 'b', '😂', 'c'].iter())
   inspect(v, content="a😭b😂c")
 }
 
 ///|
 test "make" {
-  let v = View::make(5, 'a')
+  let v = @string.View::make(5, 'a')
   inspect(v, content="aaaaa")
 }
 
@@ -672,23 +672,23 @@ test "string view hash invariant" {
 }
 
 ///|
-test "View::replace" {
+test "@string.View::replace" {
   inspect("hello"[:].replace(old="o", new="a"), content="hella")
   inspect("hello"[:].replace(old="world", new="x"), content="hello")
   inspect("abc"[:].replace(old="", new="x"), content="xabc")
 }
 
 ///|
-test "View::repeat" {
+test "@string.View::repeat" {
   inspect("ab"[:].repeat(1), content="ab")
   inspect("ab"[:].repeat(0), content="")
   inspect("ab"[:].repeat(-2), content="")
 }
 
 ///|
-test "View::split take" {
+test "@string.View::split take" {
   inspect(
-    "a,b,c,d"[:].split(",").take(2).map(View::to_string).collect(),
+    "a,b,c,d"[:].split(",").take(2).map(@string.View::to_string).collect(),
     content=(
       #|["a", "b"]
     ),
@@ -771,7 +771,7 @@ test "String::op_as_view with surrogate pairs" {
 }
 
 ///|
-test "View::op_as_view basic usage" {
+test "@string.View::op_as_view basic usage" {
   let str = "Hello🤣World"[1:-1] // "ello🤣Worl"
 
   // Basic subview creation
@@ -796,7 +796,7 @@ test "View::op_as_view basic usage" {
 }
 
 ///|
-test "View::op_as_view error cases" {
+test "@string.View::op_as_view error cases" {
   let str = "Hello🤣World"[1:-1] // "ello🤣Worl"
 
   // IndexOutOfBounds - beyond view range
@@ -821,7 +821,7 @@ test "View::op_as_view error cases" {
 }
 
 ///|
-test "View::op_as_view with surrogate pairs" {
+test "@string.View::op_as_view with surrogate pairs" {
   let str = "Hello🤣😭😂World"[1:-1] // "ello🤣😭😂Worl"
 
   // View containing complete emoji
@@ -846,7 +846,7 @@ test "View::op_as_view with surrogate pairs" {
 }
 
 ///|
-test "nested View::op_as_view operations" {
+test "nested @string.View::op_as_view operations" {
   let str = "Hello🤣World"
 
   // Create first view
@@ -867,7 +867,7 @@ test "nested View::op_as_view operations" {
 }
 
 ///|
-test "View::op_as_view edge cases" {
+test "@string.View::op_as_view edge cases" {
   let str = "Hello🤣World"
 
   // Empty view at start
@@ -892,7 +892,7 @@ test "View::op_as_view edge cases" {
 }
 
 ///|
-test "View::op_as_view with complex Unicode" {
+test "@string.View::op_as_view with complex Unicode" {
   let str = "Hello🤣😭😂🌍World"
 
   // View with multiple emojis
@@ -917,7 +917,7 @@ test "View::op_as_view with complex Unicode" {
 }
 
 ///|
-test "View::op_as_view performance characteristics" {
+test "@string.View::op_as_view performance characteristics" {
   let str = "Hello🤣World"
 
   // Test that operations are O(1) - multiple operations
@@ -935,7 +935,7 @@ test "View::op_as_view performance characteristics" {
 }
 
 ///|
-test "View::op_as_view with empty and single character strings" {
+test "@string.View::op_as_view with empty and single character strings" {
   let empty_str = ""
 
   // Empty string operations
@@ -955,7 +955,7 @@ test "View::op_as_view with empty and single character strings" {
 }
 
 ///|
-test "View::op_as_view boundary validation" {
+test "@string.View::op_as_view boundary validation" {
   let str = "Hello🤣World"
 
   // Test boundary conditions
@@ -996,9 +996,9 @@ test "StringView add" {
   inspect(view7 + view8, content="Hello🤣World")
 }
 
-// Added test to ensure View::op_get abort is covered
+// Added test to ensure @string.View::op_get abort is covered
 // Accessing an index beyond the view length should panic
-// and cover the "Index out of bounds" branch in View::op_get.
+// and cover the "Index out of bounds" branch in @string.View::op_get.
 
 ///|
 test "panic view op_get out of bounds" {
@@ -1008,12 +1008,12 @@ test "panic view op_get out of bounds" {
 }
 
 // Added test to cover start index pointing to trailing surrogate
-// in View::op_as_view. Using a view that begins partway through a string
+// in @string.View::op_as_view. Using a view that begins partway through a string
 // and attempting to create a subview starting on the trailing surrogate
 // of an emoji should raise `InvalidIndex`.
 
 ///|
-test "View::op_as_view start on trailing surrogate" {
+test "@string.View::op_as_view start on trailing surrogate" {
   let base = "Hello🤣😭😂World"
   let view = base[1:-1] // "ello🤣😭😂Worl"
   let result = try? view[5:]

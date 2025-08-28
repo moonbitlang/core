@@ -55,7 +55,7 @@ pub fn[K : Hash + Eq] T::of(arr : FixedArray[K]) -> T[K] {
 /// Example:
 ///
 /// ```moonbit
-///   let set : T[String] = new()
+///   let set : @hashset.T[String] = @hashset.new()
 ///   set.add("key")
 ///   inspect(set.contains("key"), content="true")
 ///   set.add("key") // no effect since it already exists
@@ -150,7 +150,7 @@ pub fn[K : Hash + Eq] contains(self : T[K], key : K) -> Bool {
 /// Example:
 ///
 /// ```moonbit
-///   let set = of(["a", "b"])
+///   let set = @hashset.of(["a", "b"])
 ///   set.remove("a")
 ///   inspect(set.contains("a"), content="false")
 ///   inspect(set.size(), content="1")
@@ -544,7 +544,7 @@ test "clear" {
 /// Example:
 ///
 /// ```moonbit
-///   let set : T[String] = new()
+///   let set : @hashset.T[String] = @hashset.new()
 ///   inspect(set.add_and_check("key"), content="true")  // First insertion
 ///   inspect(set.add_and_check("key"), content="false") // Already exists
 ///   inspect(set.size(), content="1")
@@ -569,7 +569,7 @@ pub fn[K : Hash + Eq] add_and_check(self : T[K], key : K) -> Bool {
 /// Example:
 ///
 /// ```moonbit
-///   let set = of(["a", "b"])
+///   let set = @hashset.of(["a", "b"])
 ///   inspect(set.remove_and_check("a"), content="true")  // Successfully removed
 ///   inspect(set.remove_and_check("a"), content="false") // Already removed
 ///   inspect(set.size(), content="1")

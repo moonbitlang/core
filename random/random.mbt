@@ -206,7 +206,7 @@ pub fn float(self : Rand) -> Float {
 /// Example:
 ///
 /// ```moonbit
-///   let rand = Rand::new()
+///   let rand = @random.Rand::new()
 ///   let n = rand.bigint(8) // Generate random 8-bit number
 ///   inspect(n.bit_length() <= 8, content="true")
 /// ```
@@ -294,7 +294,7 @@ test "umul128: handles zero correctly" {
 ///
 /// # Example
 /// ```mbt
-///   let r = Rand::new()
+///   let r = @random.Rand::new()
 ///   let a = [1, 2, 3, 4, 5]
 ///   r.shuffle(
 ///     a.length(),

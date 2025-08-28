@@ -255,7 +255,7 @@ pub fn[T1, T2] unzip(self : Array[(T1, T2)]) -> (Array[T1], Array[T2]) {
 ///   let arr1 = [1, 2, 3]
 ///   let arr2 = [4, 5, 6]
 ///   let add = (a, b) => a + b
-///   inspect(zip_with(arr1, arr2, add), content="[5, 7, 9]")
+///   inspect(@array.zip_with(arr1, arr2, add), content="[5, 7, 9]")
 /// ```
 pub fn[A, B, C] zip_with(
   l : Array[A],

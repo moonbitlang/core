@@ -104,7 +104,7 @@ pub fn signum(self : Double) -> Double {
 /// Example:
 ///
 /// ```moonbit
-///   inspect(not_a_number.is_nan(), content="true")
+///   inspect(@double.not_a_number.is_nan(), content="true")
 ///   inspect(42.0.is_nan(), content="false")
 ///   inspect((0.0 / 0.0).is_nan(), content="true")
 /// ```
@@ -127,8 +127,8 @@ pub fn is_nan(self : Double) -> Bool {
 /// Example:
 ///
 /// ```moonbit
-///   inspect(infinity.is_inf(), content="true")
-///   inspect(neg_infinity.is_inf(), content="true")
+///   inspect(@double.infinity.is_inf(), content="true")
+///   inspect(@double.neg_infinity.is_inf(), content="true")
 ///   inspect(42.0.is_inf(), content="false")
 /// ```
 pub fn is_inf(self : Double) -> Bool {
@@ -147,8 +147,8 @@ pub fn is_inf(self : Double) -> Bool {
 /// Example:
 ///
 /// ```moonbit
-///   inspect(infinity.is_pos_inf(), content="true")
-///   inspect(neg_infinity.is_pos_inf(), content="false")
+///   inspect(@double.infinity.is_pos_inf(), content="true")
+///   inspect(@double.neg_infinity.is_pos_inf(), content="false")
 ///   inspect(42.0.is_pos_inf(), content="false")
 /// ```
 pub fn is_pos_inf(self : Double) -> Bool {
@@ -263,7 +263,7 @@ pub impl Hash for Double with hash_combine(self, hasher) {
 ///   inspect(42.0.to_string(), content="42")
 ///   inspect(3.14159.to_string(), content="3.14159")
 ///   inspect((-0.0).to_string(), content="0")
-///   inspect(not_a_number.to_string(), content="NaN")
+///   inspect(@double.not_a_number.to_string(), content="NaN")
 /// ```
 ///
 #intrinsic("%f64.to_string")
@@ -302,7 +302,7 @@ pub impl Show for Double with output(self, logger) {
 ///   let y = 1.000000001
 ///   inspect(x.is_close(y), content="false")
 ///   inspect(x.is_close(y, relative_tolerance=1.0e-10), content="false")
-///   inspect(infinity.is_close(infinity), content="true")
+///   inspect(@double.infinity.is_close(@double.infinity), content="true")
 /// ```
 pub fn Double::is_close(
   self : Self,

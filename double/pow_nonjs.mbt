@@ -128,7 +128,7 @@ const POW_ivln2_l = 1.92596299112661746887e-08
 ///   inspect(x.pow(0.0), content="1")
 ///   inspect((-1.0).pow(2.0), content="1")
 ///   inspect(0.0.pow(0.0), content="1")
-///   inspect(infinity.pow(-1.0), content="0")
+///   inspect(@double.infinity.pow(-1.0), content="0")
 /// ```
 pub fn Double::pow(self : Double, other : Double) -> Double {
   fn set_low_word(d : Double, v : UInt) -> Double {

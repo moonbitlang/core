@@ -207,7 +207,7 @@ test "to_string" {
 
 ///|
 test "queue arbitrary" {
-  let samples : Array[T[Int]] = @quickcheck.samples(20)
+  let samples : Array[@queue.T[Int]] = @quickcheck.samples(20)
   inspect(
     samples[1:5],
     content="[@queue.of([]), @queue.of([]), @queue.of([0]), @queue.of([0])]",

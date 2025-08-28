@@ -358,7 +358,7 @@ pub fn is_nan(self : Float) -> Bool {
 ///   let y = 1.000000001
 ///   inspect(x.is_close(y), content="false")
 ///   inspect(x.is_close(y, relative_tolerance=1.0e-10), content="false")
-///   inspect(infinity.is_close(infinity), content="true")
+///   inspect(@float.infinity.is_close(@float.infinity), content="true")
 /// ```
 pub fn Float::is_close(
   self : Self,

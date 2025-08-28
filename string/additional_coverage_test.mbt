@@ -67,7 +67,7 @@ test "View::compare identical" {
 
 ///|
 test "View::default and hash" {
-  let v : View = View::default()
+  let v : @string.View = @string.View::default()
   inspect(v, content="")
   let v1 = "abc".view()
   let v2 = "abc".view()

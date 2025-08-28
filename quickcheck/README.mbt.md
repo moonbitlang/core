@@ -73,8 +73,8 @@ struct Point {
 
 impl Arbitrary for Point with arbitrary(size, r0) {
   let r1 = r0.split()
-  let y = Arbitrary::arbitrary(size, r1)
-  { x: Arbitrary::arbitrary(size, r0), y }
+  let y = @quickcheck.Arbitrary::arbitrary(size, r1)
+  { x: @quickcheck.Arbitrary::arbitrary(size, r0), y }
 }
 
 test "custom type generation" {
