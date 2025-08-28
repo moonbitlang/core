@@ -126,6 +126,52 @@ pub fn[A] copy(self : T[A]) -> T[A] {
 }
 
 ///|
+/// Appends all elements from one deque to the end of another deque. The elements
+/// are added in-place, modifying the original deque.
+///
+/// Parameters:
+///
+/// * `self` : The deque to append to.
+/// * `other` : The deque whose elements will be appended.
+///
+/// Example:
+///
+/// ```moonbit
+/// let v1 = @deque.of([1, 2, 3])
+/// let v2 = @deque.of([4, 5, 6])
+/// v1.append(v2)
+/// inspect(v1, content="@deque.of([1, 2, 3, 4, 5, 6])")
+/// let v1 = @deque.of([1, 2, 3])
+/// let v2 = @deque.of([])
+/// v1.append(v2)
+/// inspect(v1, content="@deque.of([1, 2, 3])")
+/// ```
+pub fn[A] append(self : T[A], other : T[A]) -> Unit {
+  guard other.len != 0 else {  }
+  let space = (self.head - self.tail - 1 + self.buf.length()) %
+    self.buf.length()
+  if space < other.len {
+    let new_cap = if self.len + other.len > self.buf.length() * 2 {
+      self.len + other.len
+    } else {
+      self.buf.length() * 2
+    }
+    let new_buf = UninitializedArray::make(new_cap)
+    for i, x in self {
+      new_buf[i] = x
+    }
+    self.buf = new_buf
+    self.head = 0
+    self.tail = self.len - 1
+  }
+  for _, y in other {
+    self.tail = (self.tail + 1) % self.buf.length()
+    self.buf[self.tail] = y
+    self.len += 1
+  }
+}
+
+///|
 /// Creates a new deque from a fixed array, preserving the order of elements.
 ///
 /// Parameters:
