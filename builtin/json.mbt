@@ -178,6 +178,20 @@ pub impl ToJson for Byte with to_json(self : Byte) -> Json {
 }
 
 ///|
+/// Converts a `Bytes` value to a JSON representation.
+/// The representation is picked for easier debugging
+pub impl ToJson for Bytes with to_json(self : Bytes) -> Json {
+  let sb = StringBuilder::new()
+  for b in self {
+    sb
+    ..write_string("\\x")
+    ..write_char(to_hex_digit(b.to_int() / 16))
+    ..write_char(to_hex_digit(b.to_int() % 16))
+  }
+  Json::string(sb.to_string())
+}
+
+///|
 pub impl ToJson for Int with to_json(self : Int) -> Json {
   Json::number(self.to_double())
 }
