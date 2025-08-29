@@ -282,47 +282,27 @@ pub fn[T] ArrayView::op_as_view(
 /// Parameters:
 /// * `self` : The source ArrayView to copy from.
 /// * `dst` : The destination ArrayView to copy to.
-/// * `len` : The maximum number of elements to copy.
 /// 
-/// The actual number of elements copied is determined by:
-/// min(src.length(), dst.length(), len)
+/// The actual number of elements copied is determined by the length of self
 /// 
 /// # Example
 /// ```moonbit
 ///   let src = [1, 2, 3, 4, 5][:]
 ///   let dst = [0, 0, 0, 0, 0][:]
-///   src[:].blit_to(dst[:], 3)
-///   // dst is now [1, 2, 3, 0, 0]
+///   src[:3].blit_to(dst[:])
+///   inspect(dst, content="[1, 2, 3, 0, 0]")
 /// ```
-pub fn[T] ArrayView::blit_to(
-  self : ArrayView[T],
-  dst : ArrayView[T],
-  len : Int,
-) -> Unit {
+/// 
+/// Panics if `dst` is not large enough to hold the copied elements.
+pub fn[T] ArrayView::blit_to(self : ArrayView[T], dst : ArrayView[T]) -> Unit {
   let src_len = self.length()
   let dst_len = dst.length()
-
-  // Calculate the actual number of elements to copy
-  let copy_len = if src_len < dst_len {
-    if src_len < len {
-      src_len
-    } else {
-      len
-    }
-  } else if dst_len < len {
-    dst_len
-  } else {
-    len
-  }
-
-  // Perform direct memory copy using unsafe_blit for maximum efficiency
-  if copy_len > 0 {
-    UninitializedArray::unsafe_blit(
-      dst.buf(),
-      dst.start(),
-      self.buf(),
-      self.start(),
-      copy_len,
-    )
-  }
+  guard dst_len >= src_len
+  UninitializedArray::unsafe_blit(
+    dst.buf(),
+    dst.start(),
+    self.buf(),
+    self.start(),
+    src_len,
+  )
 }

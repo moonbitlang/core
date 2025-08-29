@@ -157,7 +157,7 @@ impl[X : Show] Show for Array[X]
 impl[X : ToJson] ToJson for Array[X]
 
 type ArrayView[T]
-fn[T] ArrayView::blit_to(Self[T], Self[T], Int) -> Unit
+fn[T] ArrayView::blit_to(Self[T], Self[T]) -> Unit
 fn[T] ArrayView::length(Self[T]) -> Int
 fn[T] ArrayView::op_as_view(Self[T], start? : Int, end? : Int) -> Self[T]
 fn[T] ArrayView::op_get(Self[T], Int) -> T
