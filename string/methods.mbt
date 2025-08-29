@@ -20,10 +20,8 @@
 pub fn View::find(self : View, str : View) -> Int? {
   let haystack_len = self.length()
   let needle_len = str.length()
-  
   guard needle_len > 0 else { return Some(0) }
   guard haystack_len >= needle_len else { return None }
-  
   if needle_len == 1 {
     // Optimized single character search
     let needle_char = str.unsafe_charcode_at(0)
@@ -34,7 +32,7 @@ pub fn View::find(self : View, str : View) -> Int? {
     }
     return None
   }
-  
+
   // Use different algorithms based on pattern length for optimal performance
   if needle_len <= 4 {
     fjs_brute_force_find(self, str)
@@ -50,7 +48,6 @@ fn fjs_brute_force_find(haystack : View, needle : View) -> Int? {
   let needle_len = needle.length()
   let needle_first = needle.unsafe_charcode_at(0)
   let forward_len = haystack_len - needle_len
-  
   let mut i = 0
   while i <= forward_len {
     // Skip positions where first charcode doesn't match
@@ -77,48 +74,42 @@ fn fjs_brute_force_find(haystack : View, needle : View) -> Int? {
 fn fjs_hybrid_find(haystack : View, needle : View) -> Int? {
   let haystack_len = haystack.length()
   let needle_len = needle.length()
-  
+
   // Build KMP border array
   let border = build_string_border_array(needle)
-  
+
   // Build Boyer-Moore bad character skip table
   let skip_table = build_string_skip_table(needle)
-  
   let last_needle_char = needle.unsafe_charcode_at(needle_len - 1)
   let mut i = 0
-  
   while i <= haystack_len - needle_len {
     // Boyer-Moore style: check last character first
     let haystack_char = haystack.unsafe_charcode_at(i + needle_len - 1)
-    
     if haystack_char != last_needle_char {
       // Bad character skip
       let skip = skip_table[haystack_char & 0xFF]
       i += skip
       continue
     }
-    
+
     // Last character matches, now use KMP-style matching from left
     let mut j = 0
     let mut k = i
-    
-    while j < needle_len && k < haystack_len && 
+    while j < needle_len &&
+          k < haystack_len &&
           haystack.unsafe_charcode_at(k) == needle.unsafe_charcode_at(j) {
       j += 1
       k += 1
     }
-    
     if j == needle_len {
-      return Some(i)  // Found match
+      return Some(i) // Found match
     }
-    
+
     // Use KMP shift or minimum shift, whichever is larger
     let kmp_shift = if j == 0 { 1 } else { j - border[j - 1] }
     let min_shift = 1
-    
     i += if kmp_shift > min_shift { kmp_shift } else { min_shift }
   }
-  
   None
 }
 
@@ -127,10 +118,10 @@ fn fjs_hybrid_find(haystack : View, needle : View) -> Int? {
 fn build_string_border_array(pattern : View) -> Array[Int] {
   let pattern_len = pattern.length()
   let border = Array::make(pattern_len, 0)
-  
   let mut j = 0
   for i in 1..<pattern_len {
-    while j > 0 && pattern.unsafe_charcode_at(i) != pattern.unsafe_charcode_at(j) {
+    while j > 0 &&
+          pattern.unsafe_charcode_at(i) != pattern.unsafe_charcode_at(j) {
       j = border[j - 1]
     }
     if pattern.unsafe_charcode_at(i) == pattern.unsafe_charcode_at(j) {
@@ -138,7 +129,6 @@ fn build_string_border_array(pattern : View) -> Array[Int] {
     }
     border[i] = j
   }
-  
   border
 }
 
@@ -148,13 +138,12 @@ fn build_string_border_array(pattern : View) -> Array[Int] {
 fn build_string_skip_table(pattern : View) -> FixedArray[Int] {
   let pattern_len = pattern.length()
   let skip_table = FixedArray::make(256, pattern_len)
-  
+
   // Fill skip table with distances from rightmost occurrence
   for i in 0..<(pattern_len - 1) {
     let char_code = pattern.unsafe_charcode_at(i) & 0xFF
     skip_table[char_code] = pattern_len - 1 - i
   }
-  
   skip_table
 }
 
@@ -240,10 +229,8 @@ test "find_by" {
 pub fn View::rev_find(self : View, str : View) -> Int? {
   let haystack_len = self.length()
   let needle_len = str.length()
-  
   guard needle_len > 0 else { return Some(haystack_len) }
   guard haystack_len >= needle_len else { return None }
-  
   if needle_len == 1 {
     // Optimized single character reverse search
     let needle_char = str.unsafe_charcode_at(0)
@@ -254,7 +241,7 @@ pub fn View::rev_find(self : View, str : View) -> Int? {
     }
     return None
   }
-  
+
   // Use different algorithms based on pattern length
   if needle_len <= 4 {
     fjs_brute_force_rev_find(self, str)
@@ -269,7 +256,6 @@ fn fjs_brute_force_rev_find(haystack : View, needle : View) -> Int? {
   let haystack_len = haystack.length()
   let needle_len = needle.length()
   let needle_first = needle.unsafe_charcode_at(0)
-  
   let mut i = haystack_len - needle_len
   while i >= 0 {
     // Skip positions where first charcode doesn't match
@@ -296,42 +282,37 @@ fn fjs_brute_force_rev_find(haystack : View, needle : View) -> Int? {
 fn fjs_hybrid_rev_find(haystack : View, needle : View) -> Int? {
   let haystack_len = haystack.length()
   let needle_len = needle.length()
-  
+
   // Build reverse skip table
   let rev_skip_table = build_string_reverse_skip_table(needle)
-  
   let first_needle_char = needle.unsafe_charcode_at(0)
   let mut i = haystack_len - needle_len
-  
   while i >= 0 {
     // Boyer-Moore style: check first character first (for reverse)
     let haystack_char = haystack.unsafe_charcode_at(i)
-    
     if haystack_char != first_needle_char {
       // Bad character skip (reverse)
       let skip = rev_skip_table[haystack_char & 0xFF]
       i -= skip
       continue
     }
-    
+
     // First character matches, check full pattern
     let mut j = 0
     let mut k = i
-    
-    while j < needle_len && k < haystack_len && 
+    while j < needle_len &&
+          k < haystack_len &&
           haystack.unsafe_charcode_at(k) == needle.unsafe_charcode_at(j) {
       j += 1
       k += 1
     }
-    
     if j == needle_len {
-      return Some(i)  // Found match
+      return Some(i) // Found match
     }
-    
+
     // Use minimum shift for reverse search
     i -= 1
   }
-  
   None
 }
 
@@ -340,13 +321,12 @@ fn fjs_hybrid_rev_find(haystack : View, needle : View) -> Int? {
 fn build_string_reverse_skip_table(pattern : View) -> FixedArray[Int] {
   let pattern_len = pattern.length()
   let skip_table = FixedArray::make(256, pattern_len)
-  
+
   // Fill skip table with distances from leftmost occurrence (for reverse)
   for i = pattern_len - 1; i > 0; i = i - 1 {
     let char_code = pattern.unsafe_charcode_at(i) & 0xFF
     skip_table[char_code] = i
   }
-  
   skip_table
 }
 
