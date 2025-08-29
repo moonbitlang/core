@@ -150,6 +150,8 @@ pub fn[K, V] eachi(self : T[K, V], f : (Int, K, V) -> Unit) -> Unit {
 
 ///|
 /// Ts over the values in the map.
+#deprecated("Use `map_with_key` instead. `map` will accept `(K, X) -> Y` in the future.")
+#coverage.skip
 pub fn[K, X, Y] map(self : T[K, X], f : (X) -> Y) -> T[K, Y] {
   match self {
     Empty => Empty
@@ -171,6 +173,7 @@ pub fn[K, X, Y] map_with_key(self : T[K, X], f : (K, X) -> Y) -> T[K, Y] {
 ///|
 /// Fold the values in the map.
 /// O(n).
+#deprecated("Use `foldl_with_key` instead. `fold` will accept `(A, K, V) -> A` in the future.")
 pub fn[K, V, A] fold(self : T[K, V], init~ : A, f : (A, V) -> A) -> A {
   self.foldl_with_key((acc, _k, v) => f(acc, v), init~)
 }
@@ -178,11 +181,8 @@ pub fn[K, V, A] fold(self : T[K, V], init~ : A, f : (A, V) -> A) -> A {
 ///|
 /// Post-order fold.
 /// O(n).
-pub fn[K, V, A] foldr_with_key(
-  self : T[K, V],
-  f : (A, K, V) -> A,
-  init~ : A,
-) -> A {
+#alias(foldr_with_key)
+pub fn[K, V, A] rev_fold(self : T[K, V], f : (A, K, V) -> A, init~ : A) -> A {
   fn go(m : T[K, V], acc) {
     match m {
       Empty => acc

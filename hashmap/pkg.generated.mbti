@@ -36,6 +36,7 @@ fn[K, V, V2] T::map(Self[K, V], (K, V) -> V2) -> Self[K, V2]
 fn[K : Hash + Eq, V] T::op_get(Self[K, V], K) -> V
 fn[K : Hash + Eq, V] T::op_set(Self[K, V], K, V) -> Unit
 fn[K : Hash + Eq, V] T::remove(Self[K, V], K) -> Unit
+fn[K, V] T::retain(Self[K, V], (K, V) -> Bool) -> Unit
 fn[K : Hash + Eq, V] T::set(Self[K, V], K, V) -> Unit
 fn[K, V] T::size(Self[K, V]) -> Int
 fn[K, V] T::to_array(Self[K, V]) -> Array[(K, V)]

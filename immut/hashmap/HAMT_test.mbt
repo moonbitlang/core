@@ -290,7 +290,7 @@ test "HAMT::contains" {
 ///|
 test "filter with simple predicate" {
   let map = @hashmap.of([(1, 1), (2, 2), (3, 3), (4, 4)])
-  let only_even = map.filter(v => v % 2 == 0)
+  let only_even = map.filter_with_key((_, v) => v % 2 == 0)
   inspect(only_even.contains(1), content="false")
   inspect(only_even.contains(2), content="true")
   inspect(only_even.contains(3), content="false")
@@ -300,7 +300,7 @@ test "filter with simple predicate" {
 ///|
 test "filter with all elements matching" {
   let map = @hashmap.of([(1, 1), (2, 2)])
-  let filtered = map.filter(v => v > 0)
+  let filtered = map.filter_with_key((_, v) => v > 0)
   inspect(filtered.contains(1), content="true")
   inspect(filtered.contains(2), content="true")
 }
@@ -308,7 +308,7 @@ test "filter with all elements matching" {
 ///|
 test "filter with no elements matching" {
   let map = @hashmap.of([(1, 1), (2, 2), (3, 3)])
-  let filtered = map.filter(v => v > 10)
+  let filtered = map.filter_with_key((_, v) => v > 10)
   assert_eq(filtered.get(1), None)
   assert_eq(filtered.get(2), None)
   assert_eq(filtered.get(3), None)
@@ -318,7 +318,7 @@ test "filter with no elements matching" {
 ///|
 test "filter with collision" {
   let map = @hashmap.of([(1, 10), (2, 20)]).add(1, 30)
-  let filtered = map.filter(v => v == 30)
+  let filtered = map.filter_with_key((_, v) => v == 30)
   assert_eq(filtered.get(1), Some(30))
   assert_eq(filtered.get(2), None)
 }
@@ -329,7 +329,7 @@ test "filter with branch nodes" {
     (10, map) => map
     (i, map) => continue (i + 1, map.add(i, i * 10))
   }
-  let filtered = map.filter(v => v % 20 == 0)
+  let filtered = map.filter_with_key((_, v) => v % 20 == 0)
   for i in 0..<10 {
     if i * 10 % 20 == 0 {
       assert_eq(filtered.get(i), Some(i * 10))
@@ -351,14 +351,14 @@ test "HAMT::fold_with_key" {
 ///|
 test "HAMT::fold" {
   let map = @hashmap.of([(1, 10), (2, 20), (3, 30)])
-  let result = map.fold(init=0, (acc, v) => acc + v)
+  let result = map.fold_with_key(init=0, (acc, _, v) => acc + v)
   inspect(result, content="60")
 }
 
 ///|
 test "HAMT::map" {
   let map = @hashmap.of([(1, 10), (2, 20)])
-  let mapped = map.map(v => v * 2)
+  let mapped = map.map_with_key((_, v) => v * 2)
   assert_eq(mapped.get(1), Some(20))
   assert_eq(mapped.get(2), Some(40))
   assert_eq(mapped.get(3), None)
@@ -368,7 +368,7 @@ test "HAMT::map" {
 test "HAMT::map with overflow" {
   let max = 2147483647 // Int.max_value
   let map = @hashmap.of([(1, max)])
-  let mapped = map.map(v => v + 1)
+  let mapped = map.map_with_key((_, v) => v + 1)
   assert_eq(mapped.get(1), Some(-2147483648))
 }
 
@@ -458,21 +458,21 @@ test "add_with_hash collision" {
 ///|
 test "empty filtering" {
   let map : @hashmap.T[Int, Int] = @hashmap.of([])
-  let _filtered = map.filter(v => v > 2)
+  let _filtered = map.filter_with_key((_, v) => v > 2)
   inspect(map.size(), content="0")
 }
 
 ///|
 test "filter with collision - all removed" {
   let map = @hashmap.of([(MyString("a"), 1), (MyString("b"), 2)])
-  let filtered = map.filter(v => v > 2)
+  let filtered = map.filter_with_key((_, v) => v > 2)
   inspect(filtered.size(), content="0")
 }
 
 ///|
 test "filter with collision - one left" {
   let map = @hashmap.of([(MyString("a"), 1), (MyString("b"), 2)])
-  let filtered = map.filter(v => v == 1)
+  let filtered = map.filter_with_key((_, v) => v == 1)
   inspect(filtered.size(), content="1")
 }
 
@@ -483,7 +483,7 @@ test "filter with collision - more than one left" {
     (MyString("b"), 2),
     (MyString("c"), 3),
   ])
-  let filtered = map.filter(v => v > 1)
+  let filtered = map.filter_with_key((_, v) => v > 1)
   inspect(filtered.size(), content="2")
 }
 
