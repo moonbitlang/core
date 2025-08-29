@@ -93,6 +93,8 @@ pub fn[K : Compare, V] remove(self : T[K, V], key : K) -> T[K, V] {
 
 ///|
 /// Filter values that satisfy the predicate
+#deprecated("Use `filter_with_key` instead. `filter` will accept `(K, V) -> Bool` in the future.")
+#coverage.skip
 pub fn[K : Compare, V] filter(
   self : T[K, V],
   pred : (V) -> Bool raise?,
