@@ -294,7 +294,7 @@ test "write_bytesview" {
 ///|
 test "write_stringview" {
   let buf = @buffer.new()
-  buf.write_stringview("hello"[1:3])
+  buf.write_string_utf16le("hello"[1:3])
   inspect(
     buf.contents(),
     content=(
