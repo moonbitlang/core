@@ -38,6 +38,6 @@ extern "js" fn mod_ffi(self : Double, other : Double) -> Double =
   #| (a, b) => (a % b)
 
 ///|
-pub impl Mod for Double with op_mod(self, other) {
+pub impl Mod for Double with mod(self, other) {
   self.mod_ffi(other)
 }

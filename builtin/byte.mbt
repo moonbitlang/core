@@ -33,7 +33,7 @@
 ///   let c = b'\xFF'
 ///   inspect(c * c, content="b'\\x01'") // 255 * 255 = 65025, truncated to 1
 /// ```
-pub impl Mul for Byte with op_mul(self : Byte, that : Byte) -> Byte {
+pub impl Mul for Byte with mul(self : Byte, that : Byte) -> Byte {
   (self.to_int() * that.to_int()).to_byte()
 }
 
@@ -55,12 +55,12 @@ pub impl Mul for Byte with op_mul(self : Byte, that : Byte) -> Byte {
 ///   let b = b'\x03' // 3
 ///   inspect(a / b, content="b'\\x55'") // 255 / 3 = 85 (0x55)
 /// ```
-pub impl Div for Byte with op_div(self : Byte, that : Byte) -> Byte {
+pub impl Div for Byte with div(self : Byte, that : Byte) -> Byte {
   (self.to_int() / that.to_int()).to_byte()
 }
 
 ///|
-pub impl Mod for Byte with op_mod(self : Byte, that : Byte) -> Byte {
+pub impl Mod for Byte with mod(self : Byte, that : Byte) -> Byte {
   (self.to_int() % that.to_int()).to_byte()
 }
 
@@ -86,7 +86,7 @@ pub impl Eq for Byte with op_equal(self : Byte, that : Byte) -> Bool {
 /// - `byte2` : The second `Byte` value to be added.
 ///
 /// Returns the sum of `byte1` and `byte2` as a `Byte`.
-pub impl Add for Byte with op_add(self : Byte, that : Byte) -> Byte {
+pub impl Add for Byte with add(self : Byte, that : Byte) -> Byte {
   (self.to_int() + that.to_int()).to_byte()
 }
 
@@ -100,7 +100,7 @@ pub impl Add for Byte with op_add(self : Byte, that : Byte) -> Byte {
 /// - `that` : The byte to subtract from the first byte.
 ///
 /// Returns the result of the subtraction as a byte.
-pub impl Sub for Byte with op_sub(self : Byte, that : Byte) -> Byte {
+pub impl Sub for Byte with sub(self : Byte, that : Byte) -> Byte {
   (self.to_int() - that.to_int()).to_byte()
 }
 
@@ -288,7 +288,7 @@ pub fn Byte::to_uint(self : Byte) -> UInt {
 ///   the left.
 ///
 /// Returns the resulting `Byte` value after the shift operation.
-pub impl Shl for Byte with op_shl(self : Byte, count : Int) -> Byte {
+pub impl Shl for Byte with shl(self : Byte, count : Int) -> Byte {
   (self.to_int() << count).to_byte()
 }
 

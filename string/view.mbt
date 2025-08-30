@@ -561,6 +561,6 @@ pub fn View::op_as_view(
 }
 
 ///|
-pub impl Add for View with op_add(self, other) {
+pub impl Add for View with add(self, other) {
   [..self, ..other]
 }
