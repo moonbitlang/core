@@ -294,7 +294,7 @@ pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for Priority
 }
 
 ///|
-pub impl[A : Compare] Eq for PriorityQueue[A] with op_equal(self, other) {
+pub impl[A : Compare] Eq for PriorityQueue[A] with equal(self, other) {
   self.length() == other.length() && self.to_array() == other.to_array()
 }
 

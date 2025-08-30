@@ -318,7 +318,7 @@ pub fn[V : Compare] disjoint(self : SortedSet[V], src : SortedSet[V]) -> Bool {
 // General collection operations
 
 ///|
-pub impl[V : Eq] Eq for SortedSet[V] with op_equal(self, other) {
+pub impl[V : Eq] Eq for SortedSet[V] with equal(self, other) {
   self.to_array() == other.to_array()
 }
 

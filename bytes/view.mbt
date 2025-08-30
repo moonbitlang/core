@@ -564,7 +564,7 @@ pub impl Show for View with output(self, logger) {
 ///   inspect(bytes[0:3] == bytes[2:5], content="false")
 ///   inspect(bytes[0:4] == bytes[3:6], content="false")
 /// ```
-pub impl Eq for View with op_equal(self, other) -> Bool {
+pub impl Eq for View with equal(self, other) -> Bool {
   guard self.length() == other.length() else { return false }
   for i in 0..<self.length() {
     guard self.unsafe_get(i) == other.unsafe_get(i) else { return false }

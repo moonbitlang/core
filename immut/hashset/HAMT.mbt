@@ -381,7 +381,7 @@ pub impl[A : Hash] Hash for HashSet[A] with hash_combine(self, hasher) {
 }
 
 ///|
-impl[A : Eq] Eq for Node[A] with op_equal(self, other) {
+impl[A : Eq] Eq for Node[A] with equal(self, other) {
   match (self, other) {
     (Leaf(x, xs), Leaf(y, ys)) =>
       xs.length() == ys.length() &&

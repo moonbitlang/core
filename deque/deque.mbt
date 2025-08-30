@@ -616,7 +616,7 @@ pub fn[A] Deque::as_views(self : Deque[A]) -> (@array.View[A], @array.View[A]) {
 ///   inspect(dq1 == dq2, content="true")
 ///   inspect(dq1 == dq3, content="false")
 /// ```
-pub impl[A : Eq] Eq for Deque[A] with op_equal(self, other) {
+pub impl[A : Eq] Eq for Deque[A] with equal(self, other) {
   if self.len != other.len {
     return false
   }
