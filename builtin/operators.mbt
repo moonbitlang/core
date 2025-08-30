@@ -15,37 +15,43 @@
 ///|
 /// types implementing this trait can use the `+` operator
 pub(open) trait Add {
-  op_add(Self, Self) -> Self
+  add(Self, Self) -> Self = _
+  op_add(Self, Self) -> Self = _
 }
 
 ///|
 /// types implementing this trait can use the `-` operator
 pub(open) trait Sub {
-  op_sub(Self, Self) -> Self
+  sub(Self, Self) -> Self = _
+  op_sub(Self, Self) -> Self = _
 }
 
 ///|
 /// types implementing this trait can use the `*` operator
 pub(open) trait Mul {
-  op_mul(Self, Self) -> Self
+  mul(Self, Self) -> Self = _
+  op_mul(Self, Self) -> Self = _
 }
 
 ///|
 /// types implementing this trait can use the `/` operator
 pub(open) trait Div {
-  op_div(Self, Self) -> Self
+  div(Self, Self) -> Self = _
+  op_div(Self, Self) -> Self = _
 }
 
 ///|
 /// types implementing this trait can use the unary `-` operator
 pub(open) trait Neg {
-  op_neg(Self) -> Self
+  neg(Self) -> Self = _
+  op_neg(Self) -> Self = _
 }
 
 ///|
 /// types implementing this trait can use the `%` operator
 pub(open) trait Mod {
-  op_mod(Self, Self) -> Self
+  mod(Self, Self) -> Self = _
+  op_mod(Self, Self) -> Self = _
 }
 
 ///|
@@ -69,7 +75,8 @@ pub(open) trait BitXOr {
 ///|
 /// types implementing this trait can use the `<<` operator
 pub(open) trait Shl {
-  op_shl(Self, Int) -> Self
+  shl(Self, Int) -> Self = _
+  op_shl(Self, Int) -> Self = _
 }
 
 ///|
@@ -77,6 +84,83 @@ pub(open) trait Shl {
 pub(open) trait Shr {
   shr(Self, Int) -> Self = _
   op_shr(Self, Int) -> Self = _
+}
+
+///|
+#deprecated("replace `impl op_add` with `impl add`")
+impl Add with add(self, other) {
+  Add::op_add(self, other)
+}
+
+///|
+impl Add with op_add(self, other) {
+  Add::add(self, other)
+}
+
+///|
+#deprecated("replace `impl op_sub` with `impl sub`")
+impl Sub with sub(self, other) {
+  Sub::op_sub(self, other)
+}
+
+///|
+impl Sub with op_sub(self, other) {
+  Sub::sub(self, other)
+}
+
+///|
+#deprecated("replace `impl op_mul` with `impl mul`")
+impl Mul with mul(self, other) {
+  Mul::op_mul(self, other)
+}
+
+///|
+impl Mul with op_mul(self, other) {
+  Mul::mul(self, other)
+}
+
+///|
+#deprecated("replace `impl op_div` with `impl div`")
+impl Div with div(self, other) {
+  Div::op_div(self, other)
+}
+
+///|
+impl Div with op_div(self, other) {
+  Div::div(self, other)
+}
+
+///|
+#deprecated("replace `impl op_neg` with `impl neg`")
+impl Neg with neg(self) {
+  Neg::op_neg(self)
+}
+
+///|
+impl Neg with op_neg(self) {
+  Neg::neg(self)
+}
+
+///|
+#deprecated("replace `impl op_mod` with `impl mod`")
+impl Mod with mod(self, other) {
+  Mod::op_mod(self, other)
+}
+
+///|
+impl Mod with op_mod(self, other) {
+  Mod::mod(self, other)
+}
+
+///|
+#deprecated("replace `impl op_shl` with `impl shl`")
+impl Shl with shl(self, i) {
+  Shl::op_shl(self, i)
+}
+
+///|
+impl Shl with op_shl(self, i) {
+  Shl::shl(self, i)
 }
 
 ///|
