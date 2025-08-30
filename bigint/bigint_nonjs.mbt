@@ -198,7 +198,7 @@ pub fn BigInt::from_uint64(n : UInt64) -> BigInt {
 ///   inspect(-(-42N), content="42")
 ///   inspect(-0N, content="0")
 /// ```
-pub impl Neg for BigInt with op_neg(self : BigInt) -> BigInt {
+pub impl Neg for BigInt with neg(self : BigInt) -> BigInt {
   if self.is_zero() {
     return zero
   }
@@ -225,7 +225,7 @@ pub impl Neg for BigInt with op_neg(self : BigInt) -> BigInt {
 ///   inspect(a + b, content="9223372036854775808") // Beyond Int64 range
 ///   inspect(-a + -b, content="-9223372036854775808")
 /// ```
-pub impl Add for BigInt with op_add(self : BigInt, other : BigInt) -> BigInt {
+pub impl Add for BigInt with add(self : BigInt, other : BigInt) -> BigInt {
   if self.sign == Negative {
     if other.sign == Negative {
       return -(-other + -self)
@@ -271,7 +271,7 @@ pub impl Add for BigInt with op_add(self : BigInt, other : BigInt) -> BigInt {
 ///   inspect(a - b, content="2469135690246913569")
 ///   inspect(-a - b, content="-22222222112222222211")
 /// ```
-pub impl Sub for BigInt with op_sub(self : BigInt, other : BigInt) -> BigInt {
+pub impl Sub for BigInt with sub(self : BigInt, other : BigInt) -> BigInt {
   // first make sure self and other > 0
   if self.sign == Negative {
     if other.sign == Negative {
@@ -337,7 +337,7 @@ pub impl Sub for BigInt with op_sub(self : BigInt, other : BigInt) -> BigInt {
 ///   inspect(a * b, content="-1219326311370217952237463801111263526900")
 ///   inspect(a * 0N, content="0")
 /// ```
-pub impl Mul for BigInt with op_mul(self : BigInt, other : BigInt) -> BigInt {
+pub impl Mul for BigInt with mul(self : BigInt, other : BigInt) -> BigInt {
   if self.is_zero() || other.is_zero() {
     return zero
   }
@@ -436,7 +436,7 @@ fn BigInt::split(self : BigInt, half : Int) -> (BigInt, BigInt) {
 ///   inspect(a / -b, content="-5")
 ///   inspect(-a / -b, content="5")
 /// ```
-pub impl Div for BigInt with op_div(self : BigInt, other : BigInt) -> BigInt {
+pub impl Div for BigInt with div(self : BigInt, other : BigInt) -> BigInt {
   if other is 0 {
     abort("division by zero")
   }
@@ -477,7 +477,7 @@ pub impl Div for BigInt with op_div(self : BigInt, other : BigInt) -> BigInt {
 ///   let d = -5N
 ///   inspect(c % d, content="-2")
 /// ```
-pub impl Mod for BigInt with op_mod(self : BigInt, other : BigInt) -> BigInt {
+pub impl Mod for BigInt with mod(self : BigInt, other : BigInt) -> BigInt {
   if other == zero {
     abort("division by zero")
   }
@@ -657,7 +657,7 @@ fn BigInt::grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
 ///   let y = -5N
 ///   inspect(y << 2, content="-20")
 /// ```
-pub impl Shl for BigInt with op_shl(self : BigInt, n : Int) -> BigInt {
+pub impl Shl for BigInt with shl(self : BigInt, n : Int) -> BigInt {
   if n < 0 {
     abort("negative shift count")
   }
