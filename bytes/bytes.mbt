@@ -74,7 +74,9 @@ pub fn Bytes::from_fixedarray(arr : FixedArray[Byte], len? : Int) -> Bytes {
     None => arr.length()
     Some(x) => x
   }
-  Bytes::makei(len, i => arr[i])
+  let result = FixedArray::make(len, Byte::default())
+  arr.blit_to(result, len~)
+  result.unsafe_reinterpret_as_bytes()
 }
 
 ///|
@@ -171,15 +173,17 @@ pub fn from_iter(iter : Iter[Byte]) -> Bytes {
 ///     ),
 ///   )
 /// ```
-/// TODO: marked as intrinsic, inline if it is constant
 pub fn Bytes::of(arr : FixedArray[Byte]) -> Bytes {
-  Bytes::makei(arr.length(), i => arr[i])
+  let len = arr.length()
+  let result = FixedArray::make(len, Byte::default())
+  arr.blit_to(result, len~)
+  result.unsafe_reinterpret_as_bytes()
 }
 
 ///|
 /// same as `Bytes::of`
 pub fn of(arr : FixedArray[Byte]) -> Bytes {
-  Bytes::makei(arr.length(), i => arr[i])
+  Bytes::of(arr)
 }
 
 ///|
