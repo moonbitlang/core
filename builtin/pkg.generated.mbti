@@ -581,7 +581,8 @@ fn[Obj : Show] Logger::write_object(&Self, Obj) -> Unit
 
 // Traits
 pub(open) trait Add {
-  op_add(Self, Self) -> Self
+  add(Self, Self) -> Self = _
+  op_add(Self, Self) -> Self = _
 }
 impl Add for Byte
 impl Add for Int
@@ -655,7 +656,8 @@ impl Default for Double
 impl[X] Default for FixedArray[X]
 
 pub(open) trait Div {
-  op_div(Self, Self) -> Self
+  div(Self, Self) -> Self = _
+  op_div(Self, Self) -> Self = _
 }
 impl Div for Byte
 impl Div for Int
@@ -723,7 +725,8 @@ pub(open) trait Logger {
 }
 
 pub(open) trait Mod {
-  op_mod(Self, Self) -> Self
+  mod(Self, Self) -> Self = _
+  op_mod(Self, Self) -> Self = _
 }
 impl Mod for Byte
 impl Mod for Int
@@ -732,7 +735,8 @@ impl Mod for UInt
 impl Mod for UInt64
 
 pub(open) trait Mul {
-  op_mul(Self, Self) -> Self
+  mul(Self, Self) -> Self = _
+  op_mul(Self, Self) -> Self = _
 }
 impl Mul for Byte
 impl Mul for Int
@@ -743,7 +747,8 @@ impl Mul for Float
 impl Mul for Double
 
 pub(open) trait Neg {
-  op_neg(Self) -> Self
+  neg(Self) -> Self = _
+  op_neg(Self) -> Self = _
 }
 impl Neg for Int
 impl Neg for Int64
@@ -751,7 +756,8 @@ impl Neg for Float
 impl Neg for Double
 
 pub(open) trait Shl {
-  op_shl(Self, Int) -> Self
+  shl(Self, Int) -> Self = _
+  op_shl(Self, Int) -> Self = _
 }
 impl Shl for Byte
 impl Shl for Int
@@ -805,7 +811,8 @@ impl Shr for UInt
 impl Shr for UInt64
 
 pub(open) trait Sub {
-  op_sub(Self, Self) -> Self
+  sub(Self, Self) -> Self = _
+  op_sub(Self, Self) -> Self = _
 }
 impl Sub for Byte
 impl Sub for Int
