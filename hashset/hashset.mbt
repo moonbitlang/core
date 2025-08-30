@@ -393,7 +393,7 @@ pub impl[K : Hash + Eq] BitXOr for HashSet[K] with lxor(self, other) {
 
 ///|
 /// Difference of two hash sets.
-pub impl[K : Hash + Eq] Sub for HashSet[K] with op_sub(self, other) {
+pub impl[K : Hash + Eq] Sub for HashSet[K] with sub(self, other) {
   self.difference(other)
 }
 

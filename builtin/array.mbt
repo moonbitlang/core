@@ -336,7 +336,7 @@ pub impl[T : Compare] Compare for Array[T] with compare(self, other) {
 ///   let b = [4, 5]
 ///   inspect(a + b, content="[1, 2, 3, 4, 5]")
 /// ```
-pub impl[T] Add for Array[T] with op_add(self, other) {
+pub impl[T] Add for Array[T] with add(self, other) {
   let result = Array::make_uninit(self.length() + other.length())
   UninitializedArray::unsafe_blit(
     result.buffer(),
