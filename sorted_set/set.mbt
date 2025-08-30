@@ -306,7 +306,7 @@ pub fn[V : Compare] disjoint(self : T[V], src : T[V]) -> Bool {
 // General collection operations
 
 ///|
-pub impl[V : Eq] Eq for T[V] with op_equal(self, other) {
+pub impl[V : Eq] Eq for T[V] with equal(self, other) {
   self.to_array() == other.to_array()
 }
 

@@ -635,7 +635,7 @@ pub fn[K, V] Map::to_array(self : Map[K, V]) -> Array[(K, V)] {
 }
 
 ///|
-pub impl[K : Hash + Eq, V : Eq] Eq for Map[K, V] with op_equal(
+pub impl[K : Hash + Eq, V : Eq] Eq for Map[K, V] with equal(
   self : Map[K, V],
   that : Map[K, V],
 ) -> Bool {

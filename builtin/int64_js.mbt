@@ -479,7 +479,7 @@ pub fn Int64::popcnt(self : Int64) -> Int {
 }
 
 ///|
-pub impl Eq for Int64 with op_equal(self : Int64, other : Int64) -> Bool {
+pub impl Eq for Int64 with equal(self : Int64, other : Int64) -> Bool {
   MyInt64::from_int64(self) == MyInt64::from_int64(other)
 }
 
@@ -650,7 +650,7 @@ pub impl Compare for UInt64 with compare(self : UInt64, other : UInt64) -> Int {
 }
 
 ///|
-pub impl Eq for UInt64 with op_equal(self : UInt64, other : UInt64) -> Bool {
+pub impl Eq for UInt64 with equal(self : UInt64, other : UInt64) -> Bool {
   MyInt64::from_uint64(self).op_equal(MyInt64::from_uint64(other))
 }
 

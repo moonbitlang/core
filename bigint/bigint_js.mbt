@@ -129,7 +129,7 @@ extern "js" fn BigInt::equal(self : BigInt, other : BigInt) -> Bool =
   #|(x, y) => x === y
 
 ///|
-pub impl Eq for BigInt with op_equal(self, other) {
+pub impl Eq for BigInt with equal(self, other) {
   self.equal(other)
 }
 
@@ -158,7 +158,7 @@ extern "js" fn BigInt::op_neg_ffi(self : BigInt) -> BigInt =
   #|(x) => -x
 
 ///|
-pub impl Neg for BigInt with op_neg(self) {
+pub impl Neg for BigInt with neg(self) {
   self.op_neg_ffi()
 }
 
@@ -167,7 +167,7 @@ extern "js" fn BigInt::op_add_ffi(self : BigInt, other : BigInt) -> BigInt =
   #|(x, y) => x + y
 
 ///|
-pub impl Add for BigInt with op_add(self, other) {
+pub impl Add for BigInt with add(self, other) {
   self.op_add_ffi(other)
 }
 
@@ -176,7 +176,7 @@ extern "js" fn BigInt::op_sub_ffi(self : BigInt, other : BigInt) -> BigInt =
   #|(x, y) => x - y
 
 ///|
-pub impl Sub for BigInt with op_sub(self, other) {
+pub impl Sub for BigInt with sub(self, other) {
   self.op_sub_ffi(other)
 }
 
@@ -185,7 +185,7 @@ extern "js" fn BigInt::op_mul_ffi(self : BigInt, other : BigInt) -> BigInt =
   #|(x, y) => x * y
 
 ///|
-pub impl Mul for BigInt with op_mul(self, other) {
+pub impl Mul for BigInt with mul(self, other) {
   self.op_mul_ffi(other)
 }
 
@@ -194,7 +194,7 @@ extern "js" fn BigInt::op_div_ffi(self : BigInt, other : BigInt) -> BigInt =
   #|(x, y) => x / y
 
 ///|
-pub impl Div for BigInt with op_div(self, other) {
+pub impl Div for BigInt with div(self, other) {
   self.op_div_ffi(other)
 }
 
@@ -203,7 +203,7 @@ extern "js" fn BigInt::op_mod_ffi(self : BigInt, other : BigInt) -> BigInt =
   #|(x, y) => x % y
 
 ///|
-pub impl Mod for BigInt with op_mod(self, other) {
+pub impl Mod for BigInt with mod(self, other) {
   self.op_mod_ffi(other)
 }
 
@@ -256,7 +256,7 @@ extern "js" fn BigInt::to_byte(self : BigInt) -> Byte =
   #|(x) => Number(BigInt.asUintN(8, x)) | 0
 
 ///|
-pub impl Shl for BigInt with op_shl(self : BigInt, n : Int) -> BigInt {
+pub impl Shl for BigInt with shl(self : BigInt, n : Int) -> BigInt {
   if n < 0 {
     abort("negative shift count")
   }

@@ -304,7 +304,7 @@ pub fn FixedArray::set_utf16be_char(
 ///   inspect(bytes1 == bytes2, content="true")
 ///   inspect(bytes1 == bytes3, content="false")
 /// ```
-pub impl Eq for Bytes with op_equal(self : Bytes, other : Bytes) -> Bool {
+pub impl Eq for Bytes with equal(self : Bytes, other : Bytes) -> Bool {
   if self.length() != other.length() {
     false
   } else {

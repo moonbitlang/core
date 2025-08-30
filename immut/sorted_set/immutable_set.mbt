@@ -304,7 +304,7 @@ pub fn[A : Compare] union(self : T[A], other : T[A]) -> T[A] {
 /// ```mbt
 ///   assert_eq(@sorted_set.of([3, 4, 5]) + (@sorted_set.of([4, 5, 6])), @sorted_set.of([3, 4, 5, 6]))
 /// ```
-pub impl[A : Compare] Add for T[A] with op_add(self, other) {
+pub impl[A : Compare] Add for T[A] with add(self, other) {
   return self.union(other)
 }
 

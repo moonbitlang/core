@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-impl[V : Eq] Eq for Node[V] with op_equal(self, other) {
+impl[V : Eq] Eq for Node[V] with equal(self, other) {
   self.value == other.value
 }
 

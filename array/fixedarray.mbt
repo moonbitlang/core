@@ -944,7 +944,7 @@ test "ends_with" {
 ///   inspect(arr1 == arr2, content="true")
 ///   inspect(arr1 == arr3, content="false")
 /// ```
-pub impl[T : Eq] Eq for FixedArray[T] with op_equal(
+pub impl[T : Eq] Eq for FixedArray[T] with equal(
   self : FixedArray[T],
   that : FixedArray[T],
 ) -> Bool {
@@ -1047,7 +1047,7 @@ pub impl[T : Compare] Compare for FixedArray[T] with compare(self, other) {
 ///   let arr2 : FixedArray[Int] = [4, 5, 6]
 ///   inspect(arr1 + arr2, content="[1, 2, 3, 4, 5, 6]")
 /// ```
-pub impl[T] Add for FixedArray[T] with op_add(self, other) {
+pub impl[T] Add for FixedArray[T] with add(self, other) {
   let slen = self.length()
   let nlen = other.length()
   FixedArray::makei(slen + nlen, i => if i < slen {

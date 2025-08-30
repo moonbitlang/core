@@ -271,7 +271,7 @@ pub fn[A] concat(self : T[A], other : T[A]) -> T[A] {
 
 ///|
 /// Concat two arrays.
-pub impl[A] Add for T[A] with op_add(self, other) {
+pub impl[A] Add for T[A] with add(self, other) {
   self.concat(other)
 }
 
@@ -405,7 +405,7 @@ pub impl[A : Hash] Hash for T[A] with hash_combine(self, hasher) {
 }
 
 ///|
-pub impl[A : Eq] Eq for T[A] with op_equal(self, other) {
+pub impl[A : Eq] Eq for T[A] with equal(self, other) {
   self.size == other.size && self.tree == other.tree
 }
 

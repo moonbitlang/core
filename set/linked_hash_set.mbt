@@ -438,7 +438,7 @@ pub fn[K] to_array(self : Set[K]) -> Array[K] {
 }
 
 ///|
-pub impl[K : Hash + Eq] Eq for Set[K] with op_equal(self, other) {
+pub impl[K : Hash + Eq] Eq for Set[K] with equal(self, other) {
   guard self.size == other.size else { return false }
   for k in self {
     guard other.contains(k) else { return false }
@@ -605,7 +605,7 @@ pub impl[K : Hash + Eq] BitXOr for Set[K] with lxor(self, other) {
 
 ///|
 /// Difference of two hash sets.
-pub impl[K : Hash + Eq] Sub for Set[K] with op_sub(self, other) {
+pub impl[K : Hash + Eq] Sub for Set[K] with sub(self, other) {
   self.difference(other)
 }
 
