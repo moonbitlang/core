@@ -49,7 +49,7 @@ struct T[K, V] {
 }
 
 ///|
-pub impl[K : Hash + Eq, V : Eq] Eq for T[K, V] with op_equal(
+pub impl[K : Hash + Eq, V : Eq] Eq for T[K, V] with equal(
   self : T[K, V],
   that : T[K, V],
 ) -> Bool {

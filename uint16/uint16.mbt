@@ -44,7 +44,7 @@ pub impl Mod for UInt16 with mod(self : UInt16, that : UInt16) -> UInt16 {
 }
 
 ///|
-pub impl Eq for UInt16 with op_equal(self, that) {
+pub impl Eq for UInt16 with equal(self, that) {
   self.to_int() == that.to_int()
 }
 

@@ -915,6 +915,6 @@ fn[K : Show, V : Show] Map::debug_entries(self : Map[K, V]) -> String {
 }
 
 ///|
-impl[K : Eq, V] Eq for Entry[K, V] with op_equal(self, other) {
+impl[K : Eq, V] Eq for Entry[K, V] with equal(self, other) {
   self.hash == other.hash && self.key == other.key
 }

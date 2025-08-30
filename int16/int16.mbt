@@ -44,7 +44,7 @@ pub impl Mod for Int16 with mod(self : Int16, that : Int16) -> Int16 {
 }
 
 ///|
-pub impl Eq for Int16 with op_equal(self, that) {
+pub impl Eq for Int16 with equal(self, that) {
   self.to_int() == that.to_int()
 }
 

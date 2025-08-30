@@ -209,7 +209,7 @@ pub fn T::abs(self : T) -> T {
 /// Returns `true` if the two rational numbers are equal, `false` otherwise.
 ///
 #coverage.skip
-pub impl Eq for T with op_equal(self : T, other : T) -> Bool {
+pub impl Eq for T with equal(self : T, other : T) -> Bool {
   self.numerator * other.denominator == other.numerator * self.denominator
 }
 
@@ -283,7 +283,7 @@ pub(all) suberror RationalError String derive(Show, ToJson(style="flat"))
 /// `false` otherwise.
 ///
 #coverage.skip
-pub impl Eq for RationalError with op_equal(
+pub impl Eq for RationalError with equal(
   self : RationalError,
   other : RationalError,
 ) -> Bool {

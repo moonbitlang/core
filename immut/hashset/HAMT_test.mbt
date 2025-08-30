@@ -255,7 +255,7 @@ impl Hash for MyString with hash_combine(_self, hasher) {
 }
 
 ///|
-impl Eq for MyString with op_equal(self, other) {
+impl Eq for MyString with equal(self, other) {
   self.0 == other.0
 }
 

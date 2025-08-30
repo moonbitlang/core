@@ -102,7 +102,7 @@ pub fn not(x : Bool) -> Bool = "%bool_not"
 ///   inspect(true == false, content="false")
 ///   inspect(false == false, content="true")
 /// ```
-pub impl Eq for Bool with op_equal(self : Bool, other : Bool) -> Bool = "%bool_eq"
+pub impl Eq for Bool with equal(self : Bool, other : Bool) -> Bool = "%bool_eq"
 
 ///|
 /// Compares two boolean values and returns their relative order. This is a
@@ -635,7 +635,7 @@ pub fn Int::popcnt(self : Int) -> Int = "%i32_popcnt"
 ///   inspect(42 == 42, content="true")
 ///   inspect(42 == -42, content="false")
 /// ```
-pub impl Eq for Int with op_equal(self : Int, other : Int) -> Bool = "%i32_eq"
+pub impl Eq for Int with equal(self : Int, other : Int) -> Bool = "%i32_eq"
 
 ///|
 /// Compares two integers and returns their relative order.
@@ -971,7 +971,7 @@ pub fn Double::sqrt(self : Double) -> Double = "%f64_sqrt"
 ///   let nan = 0.0 / 0.0 // NaN
 ///   inspect(nan == nan, content="false") // Note: NaN equals itself in MoonBit
 /// ```
-pub impl Eq for Double with op_equal(self : Double, other : Double) -> Bool = "%f64_eq"
+pub impl Eq for Double with equal(self : Double, other : Double) -> Bool = "%f64_eq"
 
 ///|
 /// Tests for inequality between two double-precision floating-point numbers.
@@ -1128,7 +1128,7 @@ pub fn Char::from_int(val : Int) -> Char = "%char_from_int"
 ///   inspect(a == b, content="true")
 ///   inspect(a == c, content="false")
 /// ```
-pub impl Eq for Char with op_equal(self : Char, other : Char) -> Bool = "%char_eq"
+pub impl Eq for Char with equal(self : Char, other : Char) -> Bool = "%char_eq"
 
 ///|
 /// Compares two characters based on their Unicode code points. Returns a
@@ -1606,7 +1606,7 @@ pub impl Add for String with add(self, other) = "%string_add"
 ///   inspect(str1 == str2, content="true")
 ///   inspect(str1 == str3, content="false")
 /// ```
-pub impl Eq for String with op_equal(self : String, other : String) -> Bool = "%string_eq"
+pub impl Eq for String with equal(self : String, other : String) -> Bool = "%string_eq"
 
 ///|
 /// Returns the string itself without any modifications. This method is primarily
@@ -1856,7 +1856,7 @@ pub impl Mod for UInt with mod(self, other) = "%u32.mod"
 ///   inspect(a == b, content="true")
 ///   inspect(a == c, content="false")
 /// ```
-pub impl Eq for UInt with op_equal(self : UInt, other : UInt) -> Bool = "%u32.eq"
+pub impl Eq for UInt with equal(self : UInt, other : UInt) -> Bool = "%u32.eq"
 
 ///|
 /// Checks if two unsigned 32-bit integers are not equal.
@@ -2440,7 +2440,7 @@ pub fn Float::sqrt(self : Float) -> Float = "%f32.sqrt"
 ///   inspect(x == y, content="true")
 ///   inspect(z == z, content="false") // NaN is not equal to itself
 /// ```
-pub impl Eq for Float with op_equal(self : Float, other : Float) -> Bool = "%f32.eq"
+pub impl Eq for Float with equal(self : Float, other : Float) -> Bool = "%f32.eq"
 
 ///|
 /// Tests if two single-precision floating-point numbers are not equal. This

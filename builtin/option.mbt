@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-pub impl[X : Eq] Eq for X? with op_equal(self, other) {
+pub impl[X : Eq] Eq for X? with equal(self, other) {
   match (self, other) {
     (None, None) => true
     (Some(x), Some(y)) => x == y

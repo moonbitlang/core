@@ -129,7 +129,7 @@ extern "js" fn BigInt::equal(self : BigInt, other : BigInt) -> Bool =
   #|(x, y) => x === y
 
 ///|
-pub impl Eq for BigInt with op_equal(self, other) {
+pub impl Eq for BigInt with equal(self, other) {
   self.equal(other)
 }
 

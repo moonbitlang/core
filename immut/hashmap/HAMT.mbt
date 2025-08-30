@@ -715,7 +715,7 @@ pub fn[K : Eq + Hash, V] of(arr : FixedArray[(K, V)]) -> T[K, V] {
 }
 
 ///|
-impl[K : Eq, V : Eq] Eq for Node[K, V] with op_equal(self, other) {
+impl[K : Eq, V : Eq] Eq for Node[K, V] with equal(self, other) {
   match (self, other) {
     (Flat(key1, value1, path1), Flat(key2, value2, path2)) =>
       path1 == path2 && key1 == key2 && value1 == value2
