@@ -52,7 +52,7 @@ pub impl[A : Show] Show for Queue[A] with output(self, logger) {
 
 ///|
 /// Tests if two queues are equal.
-impl[A : Eq] Eq for Queue[A] with op_equal(self, other) {
+impl[A : Eq] Eq for Queue[A] with equal(self, other) {
   self.length == other.length && self.first == other.first
 }
 

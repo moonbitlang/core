@@ -486,7 +486,7 @@ pub fn Int64::popcnt(self : Int64) -> Int = "%i64_popcnt"
 ///   inspect(a == b, content="true")
 ///   inspect(a == c, content="false")
 /// ```
-pub impl Eq for Int64 with op_equal(self : Int64, other : Int64) -> Bool = "%i64_eq"
+pub impl Eq for Int64 with equal(self : Int64, other : Int64) -> Bool = "%i64_eq"
 
 ///|
 /// Compares two 64-bit integers and returns their relative order.
@@ -1220,7 +1220,7 @@ pub impl Compare for UInt64 with compare(self, other) = "%u64.compare"
 ///   inspect(a == b, content="true")
 ///   inspect(a == c, content="false")
 /// ```
-pub impl Eq for UInt64 with op_equal(self : UInt64, other : UInt64) -> Bool = "%u64.eq"
+pub impl Eq for UInt64 with equal(self : UInt64, other : UInt64) -> Bool = "%u64.eq"
 
 ///|
 /// Performs a bitwise AND operation between two unsigned 64-bit integers.

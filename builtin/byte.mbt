@@ -73,7 +73,7 @@ pub impl Mod for Byte with mod(self : Byte, that : Byte) -> Byte {
 /// - `that` : The second `Byte` value to compare.
 ///
 /// Returns `true` if the two `Byte` values are equal, otherwise `false`.
-pub impl Eq for Byte with op_equal(self : Byte, that : Byte) -> Bool {
+pub impl Eq for Byte with equal(self : Byte, that : Byte) -> Bool {
   self.to_int() == that.to_int()
 }
 

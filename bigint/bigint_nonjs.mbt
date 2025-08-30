@@ -844,7 +844,7 @@ pub impl Compare for BigInt with compare(self, other) {
 ///   inspect(a == b, content="true")
 ///   inspect(a == c, content="false")
 /// ```
-pub impl Eq for BigInt with op_equal(self, other) {
+pub impl Eq for BigInt with equal(self, other) {
   if self.sign != other.sign || self.len != other.len {
     return false
   }

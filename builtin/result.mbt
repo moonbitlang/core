@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-pub impl[T : Eq, E : Eq] Eq for Result[T, E] with op_equal(self, other) {
+pub impl[T : Eq, E : Eq] Eq for Result[T, E] with equal(self, other) {
   match (self, other) {
     (Ok(x), Ok(y)) => x == y
     (Err(x), Err(y)) => x == y

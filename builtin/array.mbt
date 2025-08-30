@@ -257,7 +257,7 @@ pub fn[T] Array::op_set(self : Array[T], index : Int, value : T) -> Unit {
 ///   inspect(arr1 == arr2, content="true")
 ///   inspect(arr1 == arr3, content="false")
 /// ```
-pub impl[T : Eq] Eq for Array[T] with op_equal(self, other) {
+pub impl[T : Eq] Eq for Array[T] with equal(self, other) {
   let self_len = self.length()
   let other_len = other.length()
   guard self_len == other_len else { return false }

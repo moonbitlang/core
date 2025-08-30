@@ -49,7 +49,7 @@ struct HashMap[K, V] {
 }
 
 ///|
-pub impl[K : Hash + Eq, V : Eq] Eq for HashMap[K, V] with op_equal(
+pub impl[K : Hash + Eq, V : Eq] Eq for HashMap[K, V] with equal(
   self : HashMap[K, V],
   that : HashMap[K, V],
 ) -> Bool {
