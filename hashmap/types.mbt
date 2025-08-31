@@ -38,7 +38,7 @@ priv struct Entry[K, V] {
 ///   map.set(3, "updated")
 ///   assert_eq(map.get(3), Some("updated"))
 /// ```
-struct T[K, V] {
+struct HashMap[K, V] {
   mut entries : FixedArray[Entry[K, V]?]
   mut capacity : Int
   mut capacity_mask : Int // capacity_mask = capacity - 1, used to find idx
@@ -49,9 +49,9 @@ struct T[K, V] {
 }
 
 ///|
-pub impl[K : Hash + Eq, V : Eq] Eq for T[K, V] with op_equal(
-  self : T[K, V],
-  that : T[K, V],
+pub impl[K : Hash + Eq, V : Eq] Eq for HashMap[K, V] with op_equal(
+  self : HashMap[K, V],
+  that : HashMap[K, V],
 ) -> Bool {
   guard self.size == that.size else { return false }
   for k, v in self {
@@ -60,3 +60,7 @@ pub impl[K : Hash + Eq, V : Eq] Eq for T[K, V] with op_equal(
     true
   }
 }
+
+///|
+#deprecated("Use `HashMap` instead of `T`")
+pub typealias HashMap as T

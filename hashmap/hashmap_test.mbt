@@ -14,7 +14,7 @@
 
 ///|
 test "new" {
-  let m : @hashmap.T[Int, Int] = @hashmap.new()
+  let m : @hashmap.HashMap[Int, Int] = @hashmap.new()
   inspect(m.capacity(), content="8")
   inspect(m.size(), content="0")
 }
@@ -48,7 +48,7 @@ test "get_or_default" {
 
 ///|
 test "get_or_init" {
-  let m : @hashmap.T[String, Array[Int]] = @hashmap.new()
+  let m : @hashmap.HashMap[String, Array[Int]] = @hashmap.new()
   m.get_or_init("a", () => Array::new()).push(1)
   m.get_or_init("b", () => Array::new()).push(2)
   m.get_or_init("a", () => Array::new()).push(3)
@@ -340,13 +340,13 @@ test "from_iter single element iter" {
 
 ///|
 test "from_iter empty iter" {
-  let map : @hashmap.T[Int, Int] = @hashmap.from_iter(Iter::empty())
+  let map : @hashmap.HashMap[Int, Int] = @hashmap.from_iter(Iter::empty())
   inspect(map, content="HashMap::of([])")
 }
 
 ///|
 test "@hashmap.contains/empty" {
-  let map : @hashmap.T[Int, String] = @hashmap.new()
+  let map : @hashmap.HashMap[Int, String] = @hashmap.new()
   inspect(map.contains(42), content="false")
 }
 
@@ -415,7 +415,7 @@ test "@hashmap.map" {
       #|HashMap::of([("e", "e20"), ("a", "a1"), ("b", "b2"), ("d", "d10")])
     ),
   )
-  let v : @hashmap.T[String, String] = @hashmap.new().map((k, v) => k + v)
+  let v : @hashmap.HashMap[String, String] = @hashmap.new().map((k, v) => k + v)
   inspect(v, content="HashMap::of([])")
 }
 
@@ -439,6 +439,6 @@ test "@hashmap.copy" {
       #|HashMap::of([("e", 20), ("a", 1), ("b", 2), ("d", 10)])
     ),
   )
-  let copy : @hashmap.T[String, String] = @hashmap.new().copy()
+  let copy : @hashmap.HashMap[String, String] = @hashmap.new().copy()
   inspect(copy, content="HashMap::of([])")
 }

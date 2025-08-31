@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-pub impl[K : Show, V : ToJson] ToJson for T[K, V] with to_json(self) {
+pub impl[K : Show, V : ToJson] ToJson for HashMap[K, V] with to_json(self) {
   let object = Map::new(capacity=self.capacity)
   for k, v in self {
     object[k.to_string()] = v.to_json()
