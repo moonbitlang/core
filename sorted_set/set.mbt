@@ -16,19 +16,19 @@
 
 ///|
 /// Construct a empty set.
-pub fn[V] new() -> Set[V] {
+pub fn[V] new() -> SortedSet[V] {
   { root: None, size: 0 }
 }
 
 ///|
 /// Returns the one-value set containing only `value`.
-pub fn[V] singleton(value : V) -> Set[V] {
+pub fn[V] singleton(value : V) -> SortedSet[V] {
   { root: Some({ value, left: None, right: None, height: 1 }), size: 1 }
 }
 
 ///|
 /// Initialize an set from an array.
-pub fn[V : Compare] from_array(array : Array[V]) -> Set[V] {
+pub fn[V : Compare] from_array(array : Array[V]) -> SortedSet[V] {
   let set = new()
   for i in 0..<array.length() {
     set.add(array[i])
@@ -41,7 +41,7 @@ pub fn[V : Compare] from_array(array : Array[V]) -> Set[V] {
 /// 
 /// It is just copying the tree structure, not the values.
 /// 
-pub fn[V] copy(self : Set[V]) -> Set[V] {
+pub fn[V] copy(self : SortedSet[V]) -> SortedSet[V] {
   match self.root {
     None => new()
     Some(_) => { root: copy_tree(self.root), size: self.size }
@@ -83,7 +83,7 @@ fn[V] new_node_update_height(
 // Manipulations
 
 ///|
-pub fn[V : Compare] add(self : Set[V], value : V) -> Unit {
+pub fn[V : Compare] add(self : SortedSet[V], value : V) -> Unit {
   let (new_root, inserted) = add_node(self.root, value)
   if self.root != new_root {
     self.root = new_root
@@ -94,7 +94,7 @@ pub fn[V : Compare] add(self : Set[V], value : V) -> Unit {
 }
 
 ///|
-pub fn[V : Compare] remove(self : Set[V], value : V) -> Unit {
+pub fn[V : Compare] remove(self : SortedSet[V], value : V) -> Unit {
   if self.root is Some(old_root) {
     let (new_root, deleted) = delete_node(old_root, value)
     if self.root != new_root {
@@ -113,7 +113,7 @@ pub fn[V : Compare] remove(self : Set[V], value : V) -> Unit {
 
 ///|
 /// Return if a value is contained in the set.
-pub fn[V : Compare] contains(self : Set[V], value : V) -> Bool {
+pub fn[V : Compare] contains(self : SortedSet[V], value : V) -> Bool {
   loop (self.root, value) {
     (None, _) => false
     (Some(node), value) => {
@@ -131,7 +131,7 @@ pub fn[V : Compare] contains(self : Set[V], value : V) -> Bool {
 
 ///|
 /// Returns the union of two sets.
-pub fn[V : Compare] union(self : Set[V], src : Set[V]) -> Set[V] {
+pub fn[V : Compare] union(self : SortedSet[V], src : SortedSet[V]) -> SortedSet[V] {
   fn aux(a : Node[V]?, b : Node[V]?) -> Node[V]? {
     match (a, b) {
       (Some(_), None) => a
@@ -245,7 +245,7 @@ fn[V : Compare] join_right(l : Node[V]?, v : V, r : Node[V]?) -> Node[V] {
 
 ///|
 /// Returns the difference of two sets.
-pub fn[V : Compare] difference(self : Set[V], src : Set[V]) -> Set[V] {
+pub fn[V : Compare] difference(self : SortedSet[V], src : SortedSet[V]) -> SortedSet[V] {
   let ret = new()
   self.each(x => if !src.contains(x) { ret.add(x) })
   ret
@@ -273,9 +273,9 @@ pub fn[V : Compare] difference(self : Set[V], src : Set[V]) -> Set[V] {
 ///   inspect(diff, content="@sorted_set.from_array([1, 2, 5, 6])")
 /// ```
 pub fn[V : Compare] symmetric_difference(
-  self : Set[V],
-  other : Set[V],
-) -> Set[V] {
+  self : SortedSet[V],
+  other : SortedSet[V],
+) -> SortedSet[V] {
   // TODO: Optimize this function to avoid creating two intermediate sets.
   let set1 = self.difference(other)
   let set2 = other.difference(self)
@@ -284,7 +284,7 @@ pub fn[V : Compare] symmetric_difference(
 
 ///|
 /// Returns the intersection of two sets.
-pub fn[V : Compare] intersection(self : Set[V], src : Set[V]) -> Set[V] {
+pub fn[V : Compare] intersection(self : SortedSet[V], src : SortedSet[V]) -> SortedSet[V] {
   let ret = new()
   self.each(x => if src.contains(x) { ret.add(x) })
   ret
@@ -292,7 +292,7 @@ pub fn[V : Compare] intersection(self : Set[V], src : Set[V]) -> Set[V] {
 
 ///|
 /// Returns if a set is a subset of another set.
-pub fn[V : Compare] subset(self : Set[V], src : Set[V]) -> Bool {
+pub fn[V : Compare] subset(self : SortedSet[V], src : SortedSet[V]) -> Bool {
   let mut ret = true
   self.each(x => if !src.contains(x) { ret = false })
   ret
@@ -300,7 +300,7 @@ pub fn[V : Compare] subset(self : Set[V], src : Set[V]) -> Bool {
 
 ///|
 /// Returns if two sets are disjoint.
-pub fn[V : Compare] disjoint(self : Set[V], src : Set[V]) -> Bool {
+pub fn[V : Compare] disjoint(self : SortedSet[V], src : SortedSet[V]) -> Bool {
   let mut ret = true
   self.each(x => if src.contains(x) { ret = false })
   ret
@@ -309,25 +309,25 @@ pub fn[V : Compare] disjoint(self : Set[V], src : Set[V]) -> Bool {
 // General collection operations
 
 ///|
-pub impl[V : Eq] Eq for Set[V] with op_equal(self, other) {
+pub impl[V : Eq] Eq for SortedSet[V] with op_equal(self, other) {
   self.to_array() == other.to_array()
 }
 
 ///|
 /// Returns if the set is empty.
-pub fn[V] is_empty(self : Set[V]) -> Bool {
+pub fn[V] is_empty(self : SortedSet[V]) -> Bool {
   self.root is None
 }
 
 ///|
 /// Returns the number of elements in the set.
-pub fn[V] size(self : Set[V]) -> Int {
+pub fn[V] size(self : SortedSet[V]) -> Int {
   self.size
 }
 
 ///|
 /// Iterates the set.
-pub fn[V] each(self : Set[V], f : (V) -> Unit raise?) -> Unit raise? {
+pub fn[V] each(self : SortedSet[V], f : (V) -> Unit raise?) -> Unit raise? {
   fn dfs(root : Node[V]?) -> Unit raise? {
     if root is Some(root) {
       dfs(root.left)
@@ -341,7 +341,7 @@ pub fn[V] each(self : Set[V], f : (V) -> Unit raise?) -> Unit raise? {
 
 ///|
 /// Iterates the set with index.
-pub fn[V] eachi(self : Set[V], f : (Int, V) -> Unit raise?) -> Unit raise? {
+pub fn[V] eachi(self : SortedSet[V], f : (Int, V) -> Unit raise?) -> Unit raise? {
   let mut i = 0
   self.each(v => {
     f(i, v)
@@ -351,7 +351,7 @@ pub fn[V] eachi(self : Set[V], f : (Int, V) -> Unit raise?) -> Unit raise? {
 
 ///|
 /// Converts the set to an array.
-pub fn[V] to_array(self : Set[V]) -> Array[V] {
+pub fn[V] to_array(self : SortedSet[V]) -> Array[V] {
   if self.size == 0 {
     []
   } else {
@@ -374,7 +374,7 @@ pub fn[V] to_array(self : Set[V]) -> Array[V] {
 
 ///|
 /// Returns a iterator.
-pub fn[V] iter(self : Set[V]) -> Iter[V] {
+pub fn[V] iter(self : SortedSet[V]) -> Iter[V] {
   Iter::new(yield_ => {
     fn go(x : Node[V]?) {
       match x {
@@ -395,7 +395,7 @@ pub fn[V] iter(self : Set[V]) -> Iter[V] {
 }
 
 ///|
-pub fn[V : Compare] from_iter(iter : Iter[V]) -> Set[V] {
+pub fn[V : Compare] from_iter(iter : Iter[V]) -> SortedSet[V] {
   let s = new()
   iter.each(e => s.add(e))
   s
@@ -403,12 +403,12 @@ pub fn[V : Compare] from_iter(iter : Iter[V]) -> Set[V] {
 
 ///|
 /// Converts the set to string.
-pub impl[V : Show] Show for Set[V] with output(self, logger) {
+pub impl[V : Show] Show for SortedSet[V] with output(self, logger) {
   logger.write_iter(self.iter(), prefix="@sorted_set.from_array([", suffix="])")
 }
 
 ///|
-pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for Set[X] with arbitrary(
+pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for SortedSet[X] with arbitrary(
   size,
   rs,
 ) {
@@ -422,7 +422,7 @@ impl[T : Show] Show for Node[T] with output(self, logger) {
 }
 
 ///|
-pub fn[V : Compare] range(self : Set[V], low : V, high : V) -> Iter[V] {
+pub fn[V : Compare] range(self : SortedSet[V], low : V, high : V) -> Iter[V] {
   Iter::new(yield_ => {
     fn go(x : Node[V]?) {
       match x {
@@ -613,7 +613,7 @@ test "copy" {
   let copied_set = set.copy()
   inspect(copied_set, content="@sorted_set.from_array([1, 2, 3, 4, 5])")
   inspect(set.debug_tree() == copied_set.debug_tree(), content="true")
-  let set : Set[Int] = from_array([])
+  let set : SortedSet[Int] = from_array([])
   let copied_set = set.copy()
   inspect(copied_set, content="@sorted_set.from_array([])")
   inspect(set.debug_tree() == copied_set.debug_tree(), content="true")
@@ -646,7 +646,7 @@ test "union" {
   inspect(set3.debug_tree(), content="([2]2,([1]1,_,_),([1]3,_,_))")
 
   // Test 4: Union of two empty sets
-  let set1 : Set[Int] = new()
+  let set1 : SortedSet[Int] = new()
   let set2 = new()
   let set3 = set1.union(set2)
   inspect(set3, content="@sorted_set.from_array([])")
@@ -988,6 +988,6 @@ test "add_and_remove" {
 }
 
 ///|
-pub impl[K] Default for Set[K] with default() {
+pub impl[K] Default for SortedSet[K] with default() {
   new()
 }
