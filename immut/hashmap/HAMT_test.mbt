@@ -713,5 +713,5 @@ test "equal imply hash equal when collision" {
   let ma = @hashmap.new().add(s1, 1).add(s2, 2)
   let mb = @hashmap.new().add(s2, 2).add(s1, 1)
   inspect(ma == mb, content="true")
-  inspect(ma.hash() == mb.hash(), content="false")
+  inspect(ma.hash() == mb.hash(), content="true")
 }
