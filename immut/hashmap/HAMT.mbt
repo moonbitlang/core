@@ -754,5 +754,5 @@ pub impl[K : Hash, V : Hash] Hash for HashMap[K, V] with hash_combine(
   self,
   hasher,
 ) {
-  self.each((k, v) => hasher..combine(k)..combine(v))
+  hasher.combine(self.fold_with_key(init=0, (acc, k, v) => acc ^ (k, v).hash()))
 }
