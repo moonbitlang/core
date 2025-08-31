@@ -14,10 +14,10 @@
 
 ///|
 test "panic split_max with empty tree" {
-  (Empty : T[Int, Int]).split_max() |> ignore
+  (Empty : SortedMap[Int, Int]).split_max() |> ignore
 }
 
 ///|
 test "panic split_min with empty tree" {
-  (Empty : T[Int, Int]).split_min() |> ignore
+  (Empty : SortedMap[Int, Int]).split_min() |> ignore
 }
