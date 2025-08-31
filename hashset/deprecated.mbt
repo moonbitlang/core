@@ -15,6 +15,6 @@
 ///|
 #deprecated("Use `add` instead.")
 #coverage.skip
-pub fn[K : Hash + Eq] insert(self : T[K], key : K) -> Unit {
+pub fn[K : Hash + Eq] insert(self : HashSet[K], key : K) -> Unit {
   self.add(key)
 }

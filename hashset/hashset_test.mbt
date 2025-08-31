@@ -17,7 +17,7 @@ let default_init_capacity = 8
 
 ///|
 test "new_with_capacity_then_add " {
-  let set : @hashset.T[(String, String)] = @hashset.new(capacity=20)
+  let set : @hashset.HashSet[(String, String)] = @hashset.new(capacity=20)
   set.add(("None", "Hash"))
   inspect(
     set,
@@ -37,7 +37,7 @@ test "to_array" {
 
 ///|
 test "add_and_check" {
-  let set : @hashset.T[String] = @hashset.new()
+  let set : @hashset.HashSet[String] = @hashset.new()
   inspect(set.add_and_check("key"), content="true") // First insertion
   inspect(set.add_and_check("key"), content="false") // Already exists
   inspect(set.size(), content="1")
@@ -73,7 +73,7 @@ test "to_json" {
 
 ///|
 test "new" {
-  let m : @hashset.T[Int] = @hashset.new()
+  let m : @hashset.HashSet[Int] = @hashset.new()
   assert_eq(m.capacity(), default_init_capacity)
   inspect(m.size(), content="0")
 }
@@ -390,13 +390,13 @@ test "from_iter single element iter" {
 
 ///|
 test "from_iter empty iter" {
-  let map : @hashset.T[Int] = @hashset.from_iter(Iter::empty())
+  let map : @hashset.HashSet[Int] = @hashset.from_iter(Iter::empty())
   inspect(map, content="@hashset.of([])")
 }
 
 ///|
 test "hashset arbitrary" {
-  let samples : Array[@hashset.T[Int]] = @quickcheck.samples(20)
+  let samples : Array[@hashset.HashSet[Int]] = @quickcheck.samples(20)
   inspect(
     samples[5:10],
     content="[@hashset.of([]), @hashset.of([]), @hashset.of([0]), @hashset.of([0]), @hashset.of([0, 3, 1, 2])]",
@@ -409,7 +409,7 @@ test "hashset arbitrary" {
 
 ///|
 test "@hashset.to_array/empty" {
-  let set : @hashset.T[Int] = @hashset.new()
+  let set : @hashset.HashSet[Int] = @hashset.new()
   inspect(set.to_array(), content="[]")
 }
 
