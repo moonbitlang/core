@@ -69,11 +69,11 @@ pub impl[K : Show, V : Show] Show for T[K, V] with output(self, logger) {
 
 ///|
 pub impl[K : Show, V : ToJson] ToJson for T[K, V] with to_json(self) {
-  let capacity = self.size()
-  guard capacity != 0 else { return Json::object(Map::new()) }
-  let jsons = Map::new(capacity~)
-  self.each((k, v) => jsons[k.to_string()] = v.to_json())
-  Json::object(jsons)
+  let result = {}  
+  for k, v in self {
+    result[k.to_string()] = v.to_json()
+  }
+  Json::object(result)
 }
 
 ///|
