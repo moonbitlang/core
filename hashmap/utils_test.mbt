@@ -62,7 +62,7 @@ test "T::retain - remove all" {
 
 ///|
 test "T::retain - empty map" {
-  let map : @hashmap.T[String, Int] = @hashmap.new()
+  let map : @hashmap.HashMap[String, Int] = @hashmap.new()
   map.retain((_k, _v) => true)
   inspect(map.size(), content="0")
   inspect(map.is_empty(), content="true")
