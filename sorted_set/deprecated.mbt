@@ -15,13 +15,13 @@
 ///|
 #deprecated("use `@sorted_set.from_iter` instead")
 #coverage.skip
-pub fn[V : Compare] T::from_iter(iter : Iter[V]) -> T[V] {
+pub fn[V : Compare] Set::from_iter(iter : Iter[V]) -> Set[V] {
   from_iter(iter)
 }
 
 ///|
 #deprecated("Use @sorted_set.from_array instead")
-pub fn[V : Compare] of(array : Array[V]) -> T[V] {
+pub fn[V : Compare] of(array : Array[V]) -> Set[V] {
   let set = new()
   for i in 0..<array.length() {
     set.add(array[i])
@@ -35,7 +35,7 @@ pub fn[V : Compare] of(array : Array[V]) -> T[V] {
 ///
 #deprecated("Use `copy` instead")
 #coverage.skip
-pub fn[V] deep_clone(self : T[V]) -> T[V] {
+pub fn[V] deep_clone(self : Set[V]) -> Set[V] {
   self.copy()
 }
 
@@ -44,7 +44,7 @@ pub fn[V] deep_clone(self : T[V]) -> T[V] {
 ///
 #deprecated("Use `difference` instead")
 #coverage.skip
-pub fn[V : Compare] diff(self : T[V], src : T[V]) -> T[V] {
+pub fn[V : Compare] diff(self : Set[V], src : Set[V]) -> Set[V] {
   let ret = new()
   self.each(x => if !src.contains(x) { ret.add(x) })
   ret
@@ -54,6 +54,6 @@ pub fn[V : Compare] diff(self : T[V], src : T[V]) -> T[V] {
 /// Returns the intersection of two sets.
 #deprecated("Use `intersection` instead")
 #coverage.skip
-pub fn[V : Compare] intersect(self : T[V], src : T[V]) -> T[V] {
+pub fn[V : Compare] intersect(self : Set[V], src : Set[V]) -> Set[V] {
   self.intersection(src)
 }
