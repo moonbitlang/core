@@ -14,18 +14,18 @@
 
 ///|
 test "panic remove_min on empty set" {
-  let empty : @sorted_set.T[Int] = @sorted_set.new()
+  let empty : @sorted_set.SortedSet[Int] = @sorted_set.new()
   empty.remove_min() |> ignore
 }
 
 ///|
 test "panic min on empty set" {
-  let empty : @sorted_set.T[Int] = @sorted_set.new()
+  let empty : @sorted_set.SortedSet[Int] = @sorted_set.new()
   empty.min() |> ignore
 }
 
 ///|
 test "panic max on empty set" {
-  let empty : @sorted_set.T[Int] = @sorted_set.new()
+  let empty : @sorted_set.SortedSet[Int] = @sorted_set.new()
   empty.max() |> ignore
 }

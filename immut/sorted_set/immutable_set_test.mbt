@@ -18,7 +18,7 @@
 
 ///|
 test "new" {
-  let empty : @sorted_set.T[Int] = @sorted_set.new()
+  let empty : @sorted_set.SortedSet[Int] = @sorted_set.new()
   inspect(empty, content="@immut/sorted_set.of([])")
 }
 
@@ -272,7 +272,7 @@ test "min" {
 
 ///|
 test "min_option" {
-  let empty : @sorted_set.T[Int] = @sorted_set.new()
+  let empty : @sorted_set.SortedSet[Int] = @sorted_set.new()
   inspect(empty.min_option(), content="None")
   inspect(
     @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).min_option(),
@@ -287,7 +287,7 @@ test "max" {
 
 ///|
 test "max_option" {
-  let empty : @sorted_set.T[Int] = @sorted_set.new()
+  let empty : @sorted_set.SortedSet[Int] = @sorted_set.new()
   inspect(empty.max_option(), content="None")
   inspect(
     @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).max_option(),
@@ -297,7 +297,10 @@ test "max_option" {
 
 ///|
 test "is_empty" {
-  inspect((@sorted_set.of([]) : @sorted_set.T[Int]).is_empty(), content="true")
+  inspect(
+    (@sorted_set.of([]) : @sorted_set.SortedSet[Int]).is_empty(),
+    content="true",
+  )
   inspect(@sorted_set.of([1]).is_empty(), content="false")
 }
 
@@ -308,14 +311,14 @@ test "to_string" {
     content="@immut/sorted_set.of([1, 2, 3, 4, 5])",
   )
   inspect(
-    (@sorted_set.of([]) : @sorted_set.T[Int]),
+    (@sorted_set.of([]) : @sorted_set.SortedSet[Int]),
     content="@immut/sorted_set.of([])",
   )
 }
 
 ///|
 test "op_equal" {
-  let xss : Array[@sorted_set.T[Int]] = @quickcheck.samples(5)
+  let xss : Array[@sorted_set.SortedSet[Int]] = @quickcheck.samples(5)
   for xs in xss {
     for ys in xss {
       if xs.to_array() == ys.to_array() {
@@ -329,7 +332,7 @@ test "op_equal" {
 
 ///|
 test "compare" {
-  let xss : Array[@sorted_set.T[Int]] = @quickcheck.samples(5)
+  let xss : Array[@sorted_set.SortedSet[Int]] = @quickcheck.samples(5)
   for xs in xss {
     for ys in xss {
       assert_eq(xs.compare(ys), xs.to_array().compare(ys.to_array()))
@@ -340,12 +343,12 @@ test "compare" {
 ///|
 test "to_json" {
   @json.inspect(@sorted_set.of([5, 2, 4, 3, 1]), content=[1, 2, 3, 4, 5])
-  @json.inspect((@sorted_set.of([]) : @sorted_set.T[Int]), content=[])
+  @json.inspect((@sorted_set.of([]) : @sorted_set.SortedSet[Int]), content=[])
 }
 
 ///|
 test "from_json" {
-  for xs in (@quickcheck.samples(20) : Array[@sorted_set.T[Int]]) {
+  for xs in (@quickcheck.samples(20) : Array[@sorted_set.SortedSet[Int]]) {
     assert_eq(xs, @json.from_json(xs.to_json()))
   }
 }
@@ -355,7 +358,7 @@ test "iter" {
   let mut s = ""
   @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).each(x => s += x.to_string())
   inspect(s, content="123456789")
-  let empty : @sorted_set.T[Int] = @sorted_set.of([])
+  let empty : @sorted_set.SortedSet[Int] = @sorted_set.of([])
   s = ""
   empty.each(x => s += x.to_string())
   inspect(s, content="")
@@ -512,7 +515,7 @@ test "from_iter single element iter" {
 
 ///|
 test "from_iter empty iter" {
-  let pq : @sorted_set.T[Int] = @sorted_set.from_iter(Iter::empty())
+  let pq : @sorted_set.SortedSet[Int] = @sorted_set.from_iter(Iter::empty())
   inspect(pq, content="@immut/sorted_set.of([])")
 }
 
@@ -529,7 +532,7 @@ test "iter" {
 ///|
 test "size" {
   // Empty set should have size 0
-  let empty_set : @sorted_set.T[Int] = @sorted_set.new()
+  let empty_set : @sorted_set.SortedSet[Int] = @sorted_set.new()
   inspect(empty_set.size(), content="0")
 
   // Single element set should have size 1

@@ -12,7 +12,7 @@ You can create an empty ImmutableSet with a value separately through the followi
 
 ```moonbit
 test {
-    let _set1 : @sorted_set.T[Int] = @sorted_set.new()
+    let _set1 : @sorted_set.SortedSet[Int] = @sorted_set.new()
     let _set2 = @sorted_set.singleton(1)
     let _set4 = @sorted_set.from_array([1])
     let _set5= @sorted_set.of([1])
@@ -161,7 +161,7 @@ test {
 
 ```moonbit
 test {
-    let set1 : @sorted_set.T[Int] = @sorted_set.of([])
+    let set1 : @sorted_set.SortedSet[Int] = @sorted_set.of([])
     assert_eq(set1.is_empty(), true)
     let set2 = @sorted_set.of([1])
     assert_eq(set2.is_empty(), false)
