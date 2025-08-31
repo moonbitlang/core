@@ -53,7 +53,7 @@ fn[K : Show, V : Show] debug_node(self : Node[K, V]) -> String {
 }
 
 ///|
-fn[K : Show, V : Show] debug_tree(self : T[K, V]) -> String {
+fn[K : Show, V : Show] debug_tree(self : SortedMap[K, V]) -> String {
   match self.root {
     Some(root) => root.debug_node()
     None => "_"
@@ -61,6 +61,6 @@ fn[K : Show, V : Show] debug_tree(self : T[K, V]) -> String {
 }
 
 ///|
-pub impl[K : Show, V : Show] Show for T[K, V] with output(self, logger) {
+pub impl[K : Show, V : Show] Show for SortedMap[K, V] with output(self, logger) {
   logger.write_iter(self.iter(), prefix="@sorted_map.of([", suffix="])")
 }
