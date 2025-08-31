@@ -32,7 +32,11 @@
 ///   assert_eq(map3.get(3), None)
 ///   assert_eq(map3.get(2), Some("updated"))
 /// ```
-enum T[K, V] {
+enum SortedMap[K, V] {
   Empty
-  Tree(K, value~ : V, size~ : Int, T[K, V], T[K, V])
+  Tree(K, value~ : V, size~ : Int, SortedMap[K, V], SortedMap[K, V])
 }
+
+///|
+#deprecated("Use `SortedMap` instead of `T`")
+pub typealias SortedMap as T
