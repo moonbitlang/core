@@ -131,7 +131,10 @@ pub fn[V : Compare] contains(self : SortedSet[V], value : V) -> Bool {
 
 ///|
 /// Returns the union of two sets.
-pub fn[V : Compare] union(self : SortedSet[V], src : SortedSet[V]) -> SortedSet[V] {
+pub fn[V : Compare] union(
+  self : SortedSet[V],
+  src : SortedSet[V],
+) -> SortedSet[V] {
   fn aux(a : Node[V]?, b : Node[V]?) -> Node[V]? {
     match (a, b) {
       (Some(_), None) => a
@@ -245,7 +248,10 @@ fn[V : Compare] join_right(l : Node[V]?, v : V, r : Node[V]?) -> Node[V] {
 
 ///|
 /// Returns the difference of two sets.
-pub fn[V : Compare] difference(self : SortedSet[V], src : SortedSet[V]) -> SortedSet[V] {
+pub fn[V : Compare] difference(
+  self : SortedSet[V],
+  src : SortedSet[V],
+) -> SortedSet[V] {
   let ret = new()
   self.each(x => if !src.contains(x) { ret.add(x) })
   ret
@@ -284,7 +290,10 @@ pub fn[V : Compare] symmetric_difference(
 
 ///|
 /// Returns the intersection of two sets.
-pub fn[V : Compare] intersection(self : SortedSet[V], src : SortedSet[V]) -> SortedSet[V] {
+pub fn[V : Compare] intersection(
+  self : SortedSet[V],
+  src : SortedSet[V],
+) -> SortedSet[V] {
   let ret = new()
   self.each(x => if src.contains(x) { ret.add(x) })
   ret
@@ -341,7 +350,10 @@ pub fn[V] each(self : SortedSet[V], f : (V) -> Unit raise?) -> Unit raise? {
 
 ///|
 /// Iterates the set with index.
-pub fn[V] eachi(self : SortedSet[V], f : (Int, V) -> Unit raise?) -> Unit raise? {
+pub fn[V] eachi(
+  self : SortedSet[V],
+  f : (Int, V) -> Unit raise?,
+) -> Unit raise? {
   let mut i = 0
   self.each(v => {
     f(i, v)
@@ -408,10 +420,9 @@ pub impl[V : Show] Show for SortedSet[V] with output(self, logger) {
 }
 
 ///|
-pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for SortedSet[X] with arbitrary(
-  size,
-  rs,
-) {
+pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for SortedSet[
+  X,
+] with arbitrary(size, rs) {
   @quickcheck.Arbitrary::arbitrary(size, rs) |> from_iter
 }
 
