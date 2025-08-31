@@ -6,53 +6,53 @@ import(
 )
 
 // Values
-fn[V : Compare] from_array(Array[V]) -> Set[V]
+fn[V : Compare] from_array(Array[V]) -> SortedSet[V]
 
-fn[V : Compare] from_iter(Iter[V]) -> Set[V]
+fn[V : Compare] from_iter(Iter[V]) -> SortedSet[V]
 
-fn[V] new() -> Set[V]
+fn[V] new() -> SortedSet[V]
 
 #deprecated
-fn[V : Compare] of(Array[V]) -> Set[V]
+fn[V : Compare] of(Array[V]) -> SortedSet[V]
 
-fn[V] singleton(V) -> Set[V]
+fn[V] singleton(V) -> SortedSet[V]
 
 // Errors
 
 // Types and methods
-type Set[V]
-fn[V : Compare] Set::add(Self[V], V) -> Unit
-fn[V : Compare] Set::contains(Self[V], V) -> Bool
-fn[V] Set::copy(Self[V]) -> Self[V]
+type SortedSet[V]
+fn[V : Compare] SortedSet::add(Self[V], V) -> Unit
+fn[V : Compare] SortedSet::contains(Self[V], V) -> Bool
+fn[V] SortedSet::copy(Self[V]) -> Self[V]
 #deprecated
-fn[V] Set::deep_clone(Self[V]) -> Self[V]
+fn[V] SortedSet::deep_clone(Self[V]) -> Self[V]
 #deprecated
-fn[V : Compare] Set::diff(Self[V], Self[V]) -> Self[V]
-fn[V : Compare] Set::difference(Self[V], Self[V]) -> Self[V]
-fn[V : Compare] Set::disjoint(Self[V], Self[V]) -> Bool
-fn[V] Set::each(Self[V], (V) -> Unit raise?) -> Unit raise?
-fn[V] Set::eachi(Self[V], (Int, V) -> Unit raise?) -> Unit raise?
+fn[V : Compare] SortedSet::diff(Self[V], Self[V]) -> Self[V]
+fn[V : Compare] SortedSet::difference(Self[V], Self[V]) -> Self[V]
+fn[V : Compare] SortedSet::disjoint(Self[V], Self[V]) -> Bool
+fn[V] SortedSet::each(Self[V], (V) -> Unit raise?) -> Unit raise?
+fn[V] SortedSet::eachi(Self[V], (Int, V) -> Unit raise?) -> Unit raise?
 #deprecated
-fn[V : Compare] Set::from_iter(Iter[V]) -> Self[V]
+fn[V : Compare] SortedSet::from_iter(Iter[V]) -> Self[V]
 #deprecated
-fn[V : Compare] Set::intersect(Self[V], Self[V]) -> Self[V]
-fn[V : Compare] Set::intersection(Self[V], Self[V]) -> Self[V]
-fn[V] Set::is_empty(Self[V]) -> Bool
-fn[V] Set::iter(Self[V]) -> Iter[V]
-fn[V : Compare] Set::range(Self[V], V, V) -> Iter[V]
-fn[V : Compare] Set::remove(Self[V], V) -> Unit
-fn[V] Set::size(Self[V]) -> Int
-fn[V : Compare] Set::subset(Self[V], Self[V]) -> Bool
-fn[V : Compare] Set::symmetric_difference(Self[V], Self[V]) -> Self[V]
-fn[V] Set::to_array(Self[V]) -> Array[V]
-fn[V : Compare] Set::union(Self[V], Self[V]) -> Self[V]
-impl[K] Default for Set[K]
-impl[V : Eq] Eq for Set[V]
-impl[V : Show] Show for Set[V]
-impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for Set[X]
+fn[V : Compare] SortedSet::intersect(Self[V], Self[V]) -> Self[V]
+fn[V : Compare] SortedSet::intersection(Self[V], Self[V]) -> Self[V]
+fn[V] SortedSet::is_empty(Self[V]) -> Bool
+fn[V] SortedSet::iter(Self[V]) -> Iter[V]
+fn[V : Compare] SortedSet::range(Self[V], V, V) -> Iter[V]
+fn[V : Compare] SortedSet::remove(Self[V], V) -> Unit
+fn[V] SortedSet::size(Self[V]) -> Int
+fn[V : Compare] SortedSet::subset(Self[V], Self[V]) -> Bool
+fn[V : Compare] SortedSet::symmetric_difference(Self[V], Self[V]) -> Self[V]
+fn[V] SortedSet::to_array(Self[V]) -> Array[V]
+fn[V : Compare] SortedSet::union(Self[V], Self[V]) -> Self[V]
+impl[K] Default for SortedSet[K]
+impl[V : Eq] Eq for SortedSet[V]
+impl[V : Show] Show for SortedSet[V]
+impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for SortedSet[X]
 
 // Type aliases
-pub typealias Set as T
+pub typealias SortedSet as T
 
 // Traits
 

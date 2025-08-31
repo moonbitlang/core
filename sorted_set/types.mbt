@@ -17,7 +17,7 @@
 // All operations over sets are purely applicative (no side-effects).
 
 ///|
-struct Set[V] {
+struct SortedSet[V] {
   mut root : Node[V]?
   mut size : Int
 }
@@ -32,4 +32,4 @@ priv struct Node[V] {
 
 ///|
 #deprecated("Use `Set` instead of `T`")
-pub typealias Set as T
+pub typealias SortedSet as T

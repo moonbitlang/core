@@ -50,7 +50,7 @@ fn[V : Show] debug_node(self : Node[V]) -> String {
 }
 
 ///|
-fn[V : Show] debug_tree(self : Set[V]) -> String {
+fn[V : Show] debug_tree(self : SortedSet[V]) -> String {
   match self.root {
     Some(root) => root.debug_node()
     None => "_"
