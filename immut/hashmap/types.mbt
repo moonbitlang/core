@@ -25,4 +25,8 @@ priv enum Node[K, V] {
 }
 
 ///|
-struct T[K, V](Node[K, V]?) derive(Eq)
+struct HashMap[K, V](Node[K, V]?) derive(Eq)
+
+///|
+#deprecated("Use `HashMap` instead of `T`")
+pub typealias HashMap as T
