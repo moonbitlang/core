@@ -221,7 +221,7 @@ test "from_array" {
 
 ///|
 test "copy" {
-  inspect((@deque.new() : @deque.T[Int]).copy(), content="@deque.of([])")
+  inspect((@deque.new() : @deque.Deque[Int]).copy(), content="@deque.of([])")
   let deq = @deque.of([1, 2, 3])
   let deq1 = deq.copy()
   deq1[0] = 111
@@ -316,20 +316,20 @@ test "front_and_back" {
   let dv = @deque.of([1, 2, 3, 4, 5])
   assert_eq(dv.back(), Some(5))
   assert_eq(dv.front(), Some(1))
-  let dv : @deque.T[Int] = @deque.new()
+  let dv : @deque.Deque[Int] = @deque.new()
   assert_eq(dv.back(), None)
   assert_eq(dv.front(), None)
 }
 
 ///|
 test "new_with_capacity" {
-  let d : @deque.T[Int] = @deque.new(capacity=0)
+  let d : @deque.Deque[Int] = @deque.new(capacity=0)
   inspect(d.capacity(), content="0")
 }
 
 ///|
 test "new_with_capacity_non_zero" {
-  let d : @deque.T[Int] = @deque.new(capacity=10)
+  let d : @deque.Deque[Int] = @deque.new(capacity=10)
   inspect(d.capacity(), content="10")
 }
 
@@ -401,7 +401,7 @@ test "from_iter single element iter" {
 
 ///|
 test "from_iter empty iter" {
-  let dq : @deque.T[Int] = @deque.from_iter(Iter::empty())
+  let dq : @deque.Deque[Int] = @deque.from_iter(Iter::empty())
   inspect(dq, content="@deque.of([])")
 }
 
@@ -550,7 +550,7 @@ test "deque push_back when empty" {
 ///|
 test "deque as_views" {
   // Test empty deque
-  let dq1 : @deque.T[Int] = @deque.new()
+  let dq1 : @deque.Deque[Int] = @deque.new()
   @json.inspect(dq1.as_views(), content=[[], []])
 
   // Test contiguous case (head_len >= len)
@@ -586,7 +586,7 @@ test "test_get" {
 
 ///|
 test "test_reserve_capacity" {
-  let tester : @deque.T[Int] = @deque.new(capacity=1)
+  let tester : @deque.Deque[Int] = @deque.new(capacity=1)
   inspect(tester.capacity(), content="1")
   tester.reserve_capacity(2)
   inspect(tester.capacity(), content="2")
@@ -792,7 +792,7 @@ test "deque guard iter2 coverage improvement" {
 ///|
 test "deque truncate" {
   // Empty deque
-  let dq : @deque.T[Int] = @deque.new()
+  let dq : @deque.Deque[Int] = @deque.new()
   dq.truncate(3)
   @json.inspect(dq, content=[])
 
@@ -838,7 +838,7 @@ test "deque retain" {
   let is_even = x => x % 2 == 0
 
   // Empty deque
-  let dq : @deque.T[Int] = @deque.new()
+  let dq : @deque.Deque[Int] = @deque.new()
   dq.retain(is_even)
   @json.inspect(dq, content=[])
 
@@ -876,7 +876,7 @@ test "deque retain_map" {
   let inc_if_even = inc_if(is_even)
 
   // Empty deque
-  let dq : @deque.T[Int] = @deque.new()
+  let dq : @deque.Deque[Int] = @deque.new()
   dq.retain_map(inc_if_even)
   @json.inspect(dq, content=[])
 
@@ -920,7 +920,7 @@ test "deque retain_map" {
 
 ///|
 test "@deque.to_array/empty" {
-  let dq : @deque.T[Int] = @deque.new()
+  let dq : @deque.Deque[Int] = @deque.new()
   let arr = dq.to_array()
   @json.inspect(arr, content=[])
 }
@@ -997,11 +997,14 @@ test "rev_iter2 when wrapped around" {
 
 ///|
 test "flatten with empty deque" {
-  let dq : @deque.T[@deque.T[Int]] = @deque.of([])
+  let dq : @deque.Deque[@deque.Deque[Int]] = @deque.of([])
   inspect(dq.flatten(), content="@deque.of([])")
-  let dq : @deque.T[@deque.T[Int]] = @deque.of([@deque.of([]), @deque.of([])])
+  let dq : @deque.Deque[@deque.Deque[Int]] = @deque.of([
+    @deque.of([]),
+    @deque.of([]),
+  ])
   inspect(dq.flatten(), content="@deque.of([])")
-  let dq : @deque.T[@deque.T[Int]] = @deque.of([
+  let dq : @deque.Deque[@deque.Deque[Int]] = @deque.of([
     @deque.of([1, 2, 3]),
     @deque.of([]),
     @deque.of([4, 5, 6]),
@@ -1201,7 +1204,7 @@ test "rev_inplace" {
   assert_eq(dq, @deque.of([3, 4]))
 
   // Test with empty deque
-  let empty : @deque.T[Int] = @deque.new()
+  let empty : @deque.Deque[Int] = @deque.new()
   empty.rev_inplace()
   assert_eq(empty, @deque.of([]))
 
@@ -1238,7 +1241,7 @@ test "rev" {
   assert_eq(reversed_back, @deque.of([3, 4, 5]))
 
   // Test with empty deque
-  let empty : @deque.T[Int] = @deque.new()
+  let empty : @deque.Deque[Int] = @deque.new()
   let empty_reversed = empty.rev()
   assert_eq(empty, @deque.of([]))
   assert_eq(empty_reversed, @deque.of([]))
@@ -1290,7 +1293,7 @@ test "shuffle maintains elements with deterministic rand" {
   }
 
   // Shuffle in place
-  @deque.T::shuffle_in_place(dq, rand~)
+  @deque.Deque::shuffle_in_place(dq, rand~)
 
   // Verify properties of shuffle:
   assert_eq(dq.length(), original.length())
@@ -1298,7 +1301,7 @@ test "shuffle maintains elements with deterministic rand" {
   assert_true(dq != original)
 
   // Test non-in-place version
-  let shuffled = @deque.T::shuffle(original, rand~)
+  let shuffled = @deque.Deque::shuffle(original, rand~)
   assert_eq(shuffled.length(), original.length())
   assert_eq(shuffled.to_array().sort(), original.to_array().sort())
   assert_true(shuffled != original)
@@ -1436,7 +1439,7 @@ test "append_growth_strategy" {
 /// Test large append to trigger buffer reallocation
 test "append_large_realloc" {
   let d1 = @deque.of([1])
-  let d2 : @deque.T[Int] = @deque.of([])
+  let d2 : @deque.Deque[Int] = @deque.of([])
   for i = 0; i < 1000; i = i + 1 {
     d2.push_back(i)
   }
