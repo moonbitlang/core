@@ -668,7 +668,8 @@ impl Div for Float
 impl Div for Double
 
 pub(open) trait Eq {
-  op_equal(Self, Self) -> Bool
+  equal(Self, Self) -> Bool = _
+  op_equal(Self, Self) -> Bool = _
 }
 impl Eq for Unit
 impl Eq for Bool
