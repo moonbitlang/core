@@ -17,7 +17,7 @@
 // All operations over sets are purely applicative (no side-effects).
 
 ///|
-pub fn[A] iter(self : T[A]) -> Iter[A] {
+pub fn[A] iter(self : SortedSet[A]) -> Iter[A] {
   Iter::new(yield_ => {
     fn go(t) {
       match t {
@@ -38,13 +38,13 @@ pub fn[A] iter(self : T[A]) -> Iter[A] {
 }
 
 ///|
-pub fn[A : Compare] from_iter(iter : Iter[A]) -> T[A] {
+pub fn[A : Compare] from_iter(iter : Iter[A]) -> SortedSet[A] {
   iter.fold(init=new(), (s, e) => s.add(e))
 }
 
 ///|
 #deprecated("use `@immut/sorted_set.from_iter` instead")
-pub fn[A : Compare] T::from_iter(iter : Iter[A]) -> T[A] {
+pub fn[A : Compare] SortedSet::from_iter(iter : Iter[A]) -> SortedSet[A] {
   from_iter(iter)
 }
 
@@ -54,7 +54,7 @@ test {
 }
 
 ///|
-pub impl[A : Eq] Eq for T[A] with op_equal(self, other) -> Bool {
+pub impl[A : Eq] Eq for SortedSet[A] with op_equal(self, other) -> Bool {
   // There's no `Iter::zip` (https://github.com/moonbitlang/core/issues/994#issuecomment-2350935193),
   // so we have to use the manual implementation below:
   let iter = InorderIterator::new(self)
@@ -70,7 +70,7 @@ pub impl[A : Eq] Eq for T[A] with op_equal(self, other) -> Bool {
 }
 
 ///|
-pub impl[A : Compare] Compare for T[A] with compare(self, other) -> Int {
+pub impl[A : Compare] Compare for SortedSet[A] with compare(self, other) -> Int {
   let iter = InorderIterator::new(self)
   let iter1 = InorderIterator::new(other)
   loop (iter.next(), iter1.next()) {
@@ -86,10 +86,10 @@ pub impl[A : Compare] Compare for T[A] with compare(self, other) -> Int {
 }
 
 ///|
-priv struct InorderIterator[A](Array[T[A]])
+priv struct InorderIterator[A](Array[SortedSet[A]])
 
 ///|
-fn[A] InorderIterator::new(root : T[A]) -> InorderIterator[A] {
+fn[A] InorderIterator::new(root : SortedSet[A]) -> InorderIterator[A] {
   let it = InorderIterator([])
   it.move_left(root)
   it
@@ -98,7 +98,7 @@ fn[A] InorderIterator::new(root : T[A]) -> InorderIterator[A] {
 ///|
 fn[A] InorderIterator::move_left(
   self : InorderIterator[A],
-  node : T[A],
+  node : SortedSet[A],
 ) -> Unit {
   loop node {
     Empty => ()
