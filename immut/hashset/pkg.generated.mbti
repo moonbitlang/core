@@ -6,34 +6,35 @@ import(
 )
 
 // Values
-fn[A : Eq + Hash] from_array(Array[A]) -> T[A]
+fn[A : Eq + Hash] from_array(Array[A]) -> Set[A]
 
-fn[A : Eq + Hash] from_iter(Iter[A]) -> T[A]
+fn[A : Eq + Hash] from_iter(Iter[A]) -> Set[A]
 
-fn[A] new() -> T[A]
+fn[A] new() -> Set[A]
 
-fn[A : Eq + Hash] of(FixedArray[A]) -> T[A]
+fn[A : Eq + Hash] of(FixedArray[A]) -> Set[A]
 
 // Errors
 
 // Types and methods
-type T[A]
-fn[A : Eq + Hash] T::add(Self[A], A) -> Self[A]
-fn[A : Eq + Hash] T::contains(Self[A], A) -> Bool
-fn[K : Eq] T::difference(Self[K], Self[K]) -> Self[K]
-fn[A] T::each(Self[A], (A) -> Unit raise?) -> Unit raise?
-fn[K : Eq] T::intersection(Self[K], Self[K]) -> Self[K]
-fn[A] T::is_empty(Self[A]) -> Bool
-fn[A] T::iter(Self[A]) -> Iter[A]
-fn[A : Eq + Hash] T::remove(Self[A], A) -> Self[A]
-fn[A] T::size(Self[A]) -> Int
-fn[K : Eq] T::union(Self[K], Self[K]) -> Self[K]
-impl[A : Eq] Eq for T[A]
-impl[A : Hash] Hash for T[A]
-impl[A : Show] Show for T[A]
-impl[K : Eq + Hash + @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[K]
+type Set[A]
+fn[A : Eq + Hash] Set::add(Self[A], A) -> Self[A]
+fn[A : Eq + Hash] Set::contains(Self[A], A) -> Bool
+fn[K : Eq] Set::difference(Self[K], Self[K]) -> Self[K]
+fn[A] Set::each(Self[A], (A) -> Unit raise?) -> Unit raise?
+fn[K : Eq] Set::intersection(Self[K], Self[K]) -> Self[K]
+fn[A] Set::is_empty(Self[A]) -> Bool
+fn[A] Set::iter(Self[A]) -> Iter[A]
+fn[A : Eq + Hash] Set::remove(Self[A], A) -> Self[A]
+fn[A] Set::size(Self[A]) -> Int
+fn[K : Eq] Set::union(Self[K], Self[K]) -> Self[K]
+impl[A : Eq] Eq for Set[A]
+impl[A : Hash] Hash for Set[A]
+impl[A : Show] Show for Set[A]
+impl[K : Eq + Hash + @quickcheck.Arbitrary] @quickcheck.Arbitrary for Set[K]
 
 // Type aliases
+pub typealias Set as T
 
 // Traits
 
