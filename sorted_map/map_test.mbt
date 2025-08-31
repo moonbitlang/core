@@ -31,7 +31,7 @@ test "remove3" {
 
 ///|
 test "remove on empty map" {
-  let map : @sorted_map.T[Int, String] = @sorted_map.new()
+  let map : @sorted_map.SortedMap[Int, String] = @sorted_map.new()
   map.remove(1)
   inspect(map.size(), content="0")
 }
@@ -98,7 +98,7 @@ test "op_equal" {
 
 ///|
 test "is_empty" {
-  let map : @sorted_map.T[Int, String] = @sorted_map.new()
+  let map : @sorted_map.SortedMap[Int, String] = @sorted_map.new()
   inspect(map.is_empty(), content="true")
   map[1] = "a"
   inspect(map.is_empty(), content="false")
@@ -189,13 +189,15 @@ test "from_iter single element iter" {
 
 ///|
 test "from_iter empty iter" {
-  let pq : @sorted_map.T[Int, Int] = @sorted_map.from_iter(Iter::empty())
+  let pq : @sorted_map.SortedMap[Int, Int] = @sorted_map.from_iter(
+    Iter::empty(),
+  )
   inspect(pq, content="@sorted_map.of([])")
 }
 
 ///|
 test "arbitrary" {
-  let map : Array[@sorted_map.T[Int, UInt]] = @quickcheck.samples(20)
+  let map : Array[@sorted_map.SortedMap[Int, UInt]] = @quickcheck.samples(20)
   inspect(
     map[5:10],
     content="[@sorted_map.of([]), @sorted_map.of([]), @sorted_map.of([(0, 0)]), @sorted_map.of([(0, 0)]), @sorted_map.of([(0, 0)])]",
