@@ -14,7 +14,7 @@
 
 ///|
 test "remove on empty set" {
-  let set : @sorted_set.T[Int] = @sorted_set.new()
+  let set : @sorted_set.Set[Int] = @sorted_set.new()
   set.remove(0)
   inspect(set.size(), content="0")
 }
@@ -75,7 +75,7 @@ test "each" {
   let result = StringBuilder::new(size_hint=10)
   set.each(x => result.write_string(x.to_string()))
   inspect(result.to_string(), content="123456789")
-  let set : @sorted_set.T[Int] = @sorted_set.new()
+  let set : @sorted_set.Set[Int] = @sorted_set.new()
   set.each(_x => abort("Impossible to reach"))
 }
 
@@ -143,7 +143,7 @@ test "to_array" {
     content="[1, 2, 3, 4, 5, 6, 7, 8, 9]",
   )
   inspect(
-    (@sorted_set.from_array([]) : @sorted_set.T[Int]).to_array(),
+    (@sorted_set.from_array([]) : @sorted_set.Set[Int]).to_array(),
     content="[]",
   )
 }
@@ -155,7 +155,7 @@ test "to_string" {
     content="@sorted_set.from_array([1, 2, 3, 4, 5])",
   )
   inspect(
-    (@sorted_set.from_array([]) : @sorted_set.T[Int]),
+    (@sorted_set.from_array([]) : @sorted_set.Set[Int]),
     content="@sorted_set.from_array([])",
   )
 }
@@ -171,7 +171,7 @@ test "from_array" {
 ///|
 test "is_empty" {
   inspect(
-    (@sorted_set.from_array([]) : @sorted_set.T[Int]).is_empty(),
+    (@sorted_set.from_array([]) : @sorted_set.Set[Int]).is_empty(),
     content="true",
   )
   inspect(@sorted_set.from_array([1]).is_empty(), content="false")
@@ -181,7 +181,10 @@ test "is_empty" {
 test "size" {
   inspect(@sorted_set.from_array([1, 2, 3, 4, 5]).size(), content="5")
   inspect(@sorted_set.from_array([1]).size(), content="1")
-  inspect((@sorted_set.from_array([]) : @sorted_set.T[Int]).size(), content="0")
+  inspect(
+    (@sorted_set.from_array([]) : @sorted_set.Set[Int]).size(),
+    content="0",
+  )
 }
 
 ///|
@@ -195,7 +198,7 @@ test "singleton" {
 test "show" {
   let set = @sorted_set.from_array([1, 2, 3, 4, 5])
   inspect(set, content="@sorted_set.from_array([1, 2, 3, 4, 5])")
-  let set : @sorted_set.T[Int] = @sorted_set.from_array([])
+  let set : @sorted_set.Set[Int] = @sorted_set.from_array([])
   inspect(set, content="@sorted_set.from_array([])")
 }
 
@@ -283,7 +286,7 @@ test "from_iter single element iter" {
 
 ///|
 test "from_iter empty iter" {
-  let pq : @sorted_set.T[Int] = @sorted_set.from_iter(Iter::empty())
+  let pq : @sorted_set.Set[Int] = @sorted_set.from_iter(Iter::empty())
   inspect(pq, content="@sorted_set.from_array([])")
 }
 
