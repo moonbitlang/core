@@ -140,7 +140,7 @@ test "from_iter single element iter" {
 
 ///|
 test "from_iter empty iter" {
-  let pq : @hashset.T[Int] = @hashset.from_iter(Iter::empty())
+  let pq : @hashset.Set[Int] = @hashset.from_iter(Iter::empty())
   inspect(pq, content="@immut/hashset.of([])")
 }
 
@@ -187,15 +187,15 @@ test "hashset equality" {
   let set1 = @hashset.of([1, 2])
   let set2 = @hashset.of([2, 1])
   inspect(set1 == set2, content="true")
-  let empty1 : @hashset.T[Unit] = @hashset.new()
-  let empty2 : @hashset.T[Unit] = @hashset.new()
+  let empty1 : @hashset.Set[Unit] = @hashset.new()
+  let empty2 : @hashset.Set[Unit] = @hashset.new()
   inspect(empty1 == empty2, content="true")
 }
 
 ///|
 test "arbitrary implementation for hashset" {
   // Use @quickcheck.gen to generate an arbitrary hashset of Int
-  let set : @hashset.T[Int] = @quickcheck.gen()
+  let set : @hashset.Set[Int] = @quickcheck.gen()
   // Make sure the generated set is valid by converting it to array and back
   let arr = set.iter().to_array()
   let set2 = @hashset.from_array(arr)
