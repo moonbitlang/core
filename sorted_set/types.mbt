@@ -31,5 +31,5 @@ priv struct Node[V] {
 }
 
 ///|
-#deprecated("Use `Set` instead of `T`")
+#deprecated("Use `SortedSet` instead of `T`")
 pub typealias SortedSet as T
