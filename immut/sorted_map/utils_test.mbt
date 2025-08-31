@@ -160,13 +160,13 @@ test "iter" {
 
 ///|
 test "get with empty map" {
-  let map : @sorted_map.T[Int, String] = @sorted_map.new()
+  let map : @sorted_map.Map[Int, String] = @sorted_map.new()
   assert_eq(map.get(3), None)
 }
 
 ///|
 test "panic op_get with empty map" {
-  let map : @sorted_map.T[Int, String] = @sorted_map.new()
+  let map : @sorted_map.Map[Int, String] = @sorted_map.new()
   map[3] |> ignore
 }
 
@@ -185,13 +185,13 @@ test "to_json with non-empty map" {
 
 ///|
 test "to_json with empty map" {
-  let map : @sorted_map.T[Int, String] = @sorted_map.new()
+  let map : @sorted_map.Map[Int, String] = @sorted_map.new()
   @json.inspect(map.to_json(), content={})
 }
 
 ///|
 test "from_json" {
-  for xs in (@quickcheck.samples(20) : Array[@sorted_map.T[String, Int]]) {
+  for xs in (@quickcheck.samples(20) : Array[@sorted_map.Map[String, Int]]) {
     assert_eq(xs, @json.from_json(xs.to_json()))
   }
 }

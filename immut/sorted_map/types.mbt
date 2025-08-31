@@ -32,7 +32,7 @@
 ///   assert_eq(map3.get(3), None)
 ///   assert_eq(map3.get(2), Some("updated"))
 /// ```
-enum T[K, V] {
+enum Map[K, V] {
   Empty
-  Tree(K, value~ : V, size~ : Int, T[K, V], T[K, V])
+  Tree(K, value~ : V, size~ : Int, Map[K, V], Map[K, V])
 }

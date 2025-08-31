@@ -13,10 +13,10 @@
 // limitations under the License.
 
 ///|
-priv struct InorderIterator[K, V](Array[T[K, V]])
+priv struct InorderIterator[K, V](Array[Map[K, V]])
 
 ///|
-fn[K, V] InorderIterator::new(root : T[K, V]) -> InorderIterator[K, V] {
+fn[K, V] InorderIterator::new(root : Map[K, V]) -> InorderIterator[K, V] {
   let it = InorderIterator([])
   it.move_left(root)
   it
@@ -25,7 +25,7 @@ fn[K, V] InorderIterator::new(root : T[K, V]) -> InorderIterator[K, V] {
 ///|
 fn[K, V] InorderIterator::move_left(
   self : InorderIterator[K, V],
-  node : T[K, V],
+  node : Map[K, V],
 ) -> Unit {
   loop node {
     Empty => ()

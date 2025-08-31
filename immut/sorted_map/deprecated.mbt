@@ -18,50 +18,58 @@
 ///
 #deprecated("Use `add` instead")
 #coverage.skip
-pub fn[K : Compare, V] insert(self : T[K, V], key : K, value : V) -> T[K, V] {
+pub fn[K : Compare, V] insert(
+  self : Map[K, V],
+  key : K,
+  value : V,
+) -> Map[K, V] {
   self.add(key, value)
 }
 
 ///|
 #deprecated("use `@immut/sorted_map.new` instead")
 #coverage.skip
-pub fn[K, V] T::new() -> T[K, V] {
+pub fn[K, V] Map::new() -> Map[K, V] {
   Empty
 }
 
 ///|
 #deprecated("use `@immut/sorted_map.singleton` instead")
 #coverage.skip
-pub fn[K, V] T::singleton(key : K, value : V) -> T[K, V] {
+pub fn[K, V] Map::singleton(key : K, value : V) -> Map[K, V] {
   singleton(key, value)
 }
 
 ///|
 #deprecated("use `@immut/sorted_map.from_array` instead")
 #coverage.skip
-pub fn[K : Compare, V] T::from_array(array : Array[(K, V)]) -> T[K, V] {
+pub fn[K : Compare, V] Map::from_array(array : Array[(K, V)]) -> Map[K, V] {
   from_array(array)
 }
 
 ///|
 #deprecated("use `@immut/sorted_map.from_iter` instead")
 #coverage.skip
-pub fn[K : Compare, V] T::from_iter(iter : Iter[(K, V)]) -> T[K, V] {
+pub fn[K : Compare, V] Map::from_iter(iter : Iter[(K, V)]) -> Map[K, V] {
   from_iter(iter)
 }
 
 ///|
 #deprecated("use `@immut/sorted_map.of` instead")
 #coverage.skip
-pub fn[K : Compare, V] T::of(array : FixedArray[(K, V)]) -> T[K, V] {
+pub fn[K : Compare, V] Map::of(array : FixedArray[(K, V)]) -> Map[K, V] {
   of(array)
 }
 
 ///|
 #deprecated("use `@immut/sorted_map.from_json` instead")
 #coverage.skip
-pub fn[V : @json.FromJson] T::from_json(
+pub fn[V : @json.FromJson] Map::from_json(
   json : Json,
-) -> T[String, V] raise @json.JsonDecodeError {
+) -> Map[String, V] raise @json.JsonDecodeError {
   @json.from_json(json)
 }
+
+///|
+#deprecated("use `Map` instead of `T`")
+pub typealias Map as T
