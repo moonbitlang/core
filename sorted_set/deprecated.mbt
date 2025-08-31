@@ -44,7 +44,10 @@ pub fn[V] deep_clone(self : SortedSet[V]) -> SortedSet[V] {
 ///
 #deprecated("Use `difference` instead")
 #coverage.skip
-pub fn[V : Compare] diff(self : SortedSet[V], src : SortedSet[V]) -> SortedSet[V] {
+pub fn[V : Compare] diff(
+  self : SortedSet[V],
+  src : SortedSet[V],
+) -> SortedSet[V] {
   let ret = new()
   self.each(x => if !src.contains(x) { ret.add(x) })
   ret
@@ -54,6 +57,9 @@ pub fn[V : Compare] diff(self : SortedSet[V], src : SortedSet[V]) -> SortedSet[V
 /// Returns the intersection of two sets.
 #deprecated("Use `intersection` instead")
 #coverage.skip
-pub fn[V : Compare] intersect(self : SortedSet[V], src : SortedSet[V]) -> SortedSet[V] {
+pub fn[V : Compare] intersect(
+  self : SortedSet[V],
+  src : SortedSet[V],
+) -> SortedSet[V] {
   self.intersection(src)
 }
