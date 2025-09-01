@@ -160,7 +160,7 @@ fn build_reverse_border_array(pattern : View) -> Array[Int] {
   for i = pattern_len - 2; i >= 0; i = i - 1 {
     while j > 0 &&
           pattern.unsafe_get(i) != pattern.unsafe_get(pattern_len - 1 - j) {
-      j = border[pattern_len - j]
+      j = border[pattern_len - 1 - j]
     }
     if pattern.unsafe_get(i) == pattern.unsafe_get(pattern_len - 1 - j) {
       j += 1
@@ -202,7 +202,8 @@ fn fjs_reverse_search(
     if target_byte != first_pattern_byte {
       // Bad character skip (reverse)
       let skip = skip_table[target_byte.to_int()]
-      i -= skip
+      let skip_val = if skip > 1 { skip } else { 1 }
+      i -= skip_val
       continue
     }
 
@@ -219,8 +220,12 @@ fn fjs_reverse_search(
       return Some(i) // Found match
     }
 
-    // Use minimum shift for reverse search
-    i -= 1
+    // Use skip table value for mismatches after partial matches, similar to forward search
+    let skip = if j > 0 { 
+      let skip_val = skip_table[target.unsafe_get(i).to_int()]
+      if skip_val > 1 { skip_val } else { 1 }
+    } else { 1 }
+    i -= skip
   }
   None
 }
