@@ -14,21 +14,24 @@
 
 ///|
 pub impl[A : ToJson, B : ToJson] ToJson for (A, B) with to_json(self) {
-  [self.0.to_json(), self.1.to_json()]
+  let (a0, a1) = self
+  [a0, a1]
 }
 
 ///|
 pub impl[A : ToJson, B : ToJson, C : ToJson] ToJson for (A, B, C) with to_json(
   self,
 ) {
-  [self.0.to_json(), self.1.to_json(), self.2.to_json()]
+  let (a0, a1, a2) = self
+  [a0, a1, a2]
 }
 
 ///|
 pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson] ToJson for (A, B, C, D) with to_json(
   self,
 ) {
-  [self.0.to_json(), self.1.to_json(), self.2.to_json(), self.3.to_json()]
+  let (a0, a1, a2, a3) = self
+  [a0, a1, a2, a3]
 }
 
 ///|
@@ -39,13 +42,8 @@ pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson] ToJson for 
   D,
   E,
 ) with to_json(self) {
-  [
-    self.0.to_json(),
-    self.1.to_json(),
-    self.2.to_json(),
-    self.3.to_json(),
-    self.4.to_json(),
-  ]
+  let (a0, a1, a2, a3, a4) = self
+  [a0, a1, a2, a3, a4]
 }
 
 ///|
@@ -57,14 +55,8 @@ pub impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson]
   E,
   F,
 ) with to_json(self) {
-  [
-    self.0.to_json(),
-    self.1.to_json(),
-    self.2.to_json(),
-    self.3.to_json(),
-    self.4.to_json(),
-    self.5.to_json(),
-  ]
+  let (a0, a1, a2, a3, a4, a5) = self
+  [a0, a1, a2, a3, a4, a5]
 }
 
 ///|
@@ -77,15 +69,8 @@ pub impl[
   F : ToJson,
   G : ToJson,
 ] ToJson for (A, B, C, D, E, F, G) with to_json(self) {
-  [
-    self.0.to_json(),
-    self.1.to_json(),
-    self.2.to_json(),
-    self.3.to_json(),
-    self.4.to_json(),
-    self.5.to_json(),
-    self.6.to_json(),
-  ]
+  let (a0, a1, a2, a3, a4, a5, a6) = self
+  [a0, a1, a2, a3, a4, a5, a6]
 }
 
 ///|
@@ -99,16 +84,8 @@ pub impl[
   G : ToJson,
   H : ToJson,
 ] ToJson for (A, B, C, D, E, F, G, H) with to_json(self) {
-  [
-    self.0.to_json(),
-    self.1.to_json(),
-    self.2.to_json(),
-    self.3.to_json(),
-    self.4.to_json(),
-    self.5.to_json(),
-    self.6.to_json(),
-    self.7.to_json(),
-  ]
+  let (a0, a1, a2, a3, a4, a5, a6, a7) = self
+  [a0, a1, a2, a3, a4, a5, a6, a7]
 }
 
 ///|
@@ -123,17 +100,8 @@ pub impl[
   H : ToJson,
   I : ToJson,
 ] ToJson for (A, B, C, D, E, F, G, H, I) with to_json(self) {
-  [
-    self.0.to_json(),
-    self.1.to_json(),
-    self.2.to_json(),
-    self.3.to_json(),
-    self.4.to_json(),
-    self.5.to_json(),
-    self.6.to_json(),
-    self.7.to_json(),
-    self.8.to_json(),
-  ]
+  let (a0, a1, a2, a3, a4, a5, a6, a7, a8) = self
+  [a0, a1, a2, a3, a4, a5, a6, a7, a8]
 }
 
 ///|
@@ -149,18 +117,8 @@ pub impl[
   I : ToJson,
   J : ToJson,
 ] ToJson for (A, B, C, D, E, F, G, H, I, J) with to_json(self) {
-  [
-    self.0.to_json(),
-    self.1.to_json(),
-    self.2.to_json(),
-    self.3.to_json(),
-    self.4.to_json(),
-    self.5.to_json(),
-    self.6.to_json(),
-    self.7.to_json(),
-    self.8.to_json(),
-    self.9.to_json(),
-  ]
+  let (a0, a1, a2, a3, a4, a5, a6, a7, a8, a9) = self
+  [a0, a1, a2, a3, a4, a5, a6, a7, a8, a9]
 }
 
 ///|
@@ -177,19 +135,8 @@ pub impl[
   J : ToJson,
   K : ToJson,
 ] ToJson for (A, B, C, D, E, F, G, H, I, J, K) with to_json(self) {
-  [
-    self.0.to_json(),
-    self.1.to_json(),
-    self.2.to_json(),
-    self.3.to_json(),
-    self.4.to_json(),
-    self.5.to_json(),
-    self.6.to_json(),
-    self.7.to_json(),
-    self.8.to_json(),
-    self.9.to_json(),
-    self.10.to_json(),
-  ]
+  let (a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10) = self
+  [a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10]
 }
 
 ///|
@@ -207,20 +154,8 @@ pub impl[
   K : ToJson,
   L : ToJson,
 ] ToJson for (A, B, C, D, E, F, G, H, I, J, K, L) with to_json(self) {
-  [
-    self.0.to_json(),
-    self.1.to_json(),
-    self.2.to_json(),
-    self.3.to_json(),
-    self.4.to_json(),
-    self.5.to_json(),
-    self.6.to_json(),
-    self.7.to_json(),
-    self.8.to_json(),
-    self.9.to_json(),
-    self.10.to_json(),
-    self.11.to_json(),
-  ]
+  let (a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11) = self
+  [a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11]
 }
 
 ///|
@@ -239,21 +174,8 @@ pub impl[
   L : ToJson,
   M : ToJson,
 ] ToJson for (A, B, C, D, E, F, G, H, I, J, K, L, M) with to_json(self) {
-  [
-    self.0.to_json(),
-    self.1.to_json(),
-    self.2.to_json(),
-    self.3.to_json(),
-    self.4.to_json(),
-    self.5.to_json(),
-    self.6.to_json(),
-    self.7.to_json(),
-    self.8.to_json(),
-    self.9.to_json(),
-    self.10.to_json(),
-    self.11.to_json(),
-    self.12.to_json(),
-  ]
+  let (a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12) = self
+  [a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12]
 }
 
 ///|
@@ -273,22 +195,8 @@ pub impl[
   M : ToJson,
   N : ToJson,
 ] ToJson for (A, B, C, D, E, F, G, H, I, J, K, L, M, N) with to_json(self) {
-  [
-    self.0.to_json(),
-    self.1.to_json(),
-    self.2.to_json(),
-    self.3.to_json(),
-    self.4.to_json(),
-    self.5.to_json(),
-    self.6.to_json(),
-    self.7.to_json(),
-    self.8.to_json(),
-    self.9.to_json(),
-    self.10.to_json(),
-    self.11.to_json(),
-    self.12.to_json(),
-    self.13.to_json(),
-  ]
+  let (a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13) = self
+  [a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13]
 }
 
 ///|
@@ -309,23 +217,8 @@ pub impl[
   N : ToJson,
   O : ToJson,
 ] ToJson for (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O) with to_json(self) {
-  [
-    self.0.to_json(),
-    self.1.to_json(),
-    self.2.to_json(),
-    self.3.to_json(),
-    self.4.to_json(),
-    self.5.to_json(),
-    self.6.to_json(),
-    self.7.to_json(),
-    self.8.to_json(),
-    self.9.to_json(),
-    self.10.to_json(),
-    self.11.to_json(),
-    self.12.to_json(),
-    self.13.to_json(),
-    self.14.to_json(),
-  ]
+  let (a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14) = self
+  [a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14]
 }
 
 ///|
@@ -347,22 +240,6 @@ pub impl[
   O : ToJson,
   P : ToJson,
 ] ToJson for (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P) with to_json(self) {
-  [
-    self.0.to_json(),
-    self.1.to_json(),
-    self.2.to_json(),
-    self.3.to_json(),
-    self.4.to_json(),
-    self.5.to_json(),
-    self.6.to_json(),
-    self.7.to_json(),
-    self.8.to_json(),
-    self.9.to_json(),
-    self.10.to_json(),
-    self.11.to_json(),
-    self.12.to_json(),
-    self.13.to_json(),
-    self.14.to_json(),
-    self.15.to_json(),
-  ]
+  let (a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15) = self
+  [a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15]
 }

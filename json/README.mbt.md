@@ -16,7 +16,7 @@ test "parse and validate jsons" {
 
   // Parse JSON string into Json value
   let json = @json.parse("{\"key\": 42}") catch {
-    (_ : ParseError) => panic()
+    (_ : @json.ParseError) => panic()
     // _ => panic() // redundant, the type checker won't refine further
   }
 

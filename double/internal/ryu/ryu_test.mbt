@@ -315,8 +315,9 @@ test "boundary conditions" {
   )
 }
 
-///|
 // For testing purposes
+
+///|
 fn ieee_parts_to_double(
   sign : Bool,
   ieeeExponent : Int,

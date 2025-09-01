@@ -65,7 +65,7 @@ fn get_branch_index(sizes : FixedArray[Int], index : Int) -> Int {
   lo
 }
 
-///| 
+///|
 /// Copy the sizes array.
 fn copy_sizes(sizes : FixedArray[Int]?) -> FixedArray[Int]? {
   match sizes {

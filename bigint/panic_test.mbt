@@ -14,31 +14,31 @@
 
 ///|
 test "panic division by zero" {
-  let a = BigInt::from_int(10)
-  let b = BigInt::from_int(0)
+  let a = @bigint.BigInt::from_int(10)
+  let b = @bigint.BigInt::from_int(0)
   (a / b) |> ignore
 }
 
 ///|
 test "panic modulo by zero" {
-  let a = BigInt::from_int(10)
-  let b = BigInt::from_int(0)
+  let a = @bigint.BigInt::from_int(10)
+  let b = @bigint.BigInt::from_int(0)
   (a % b) |> ignore
 }
 
 ///|
 test "panic negative shift left" {
-  let a = BigInt::from_int(10)
+  let a = @bigint.BigInt::from_int(10)
   (a << -1) |> ignore
 }
 
 ///|
 test "panic negative shift right" {
-  let a = BigInt::from_int(10)
+  let a = @bigint.BigInt::from_int(10)
   (a >> -1) |> ignore
 }
 
 ///|
 test "panic from_string empty" {
-  BigInt::from_string("") |> ignore
+  @bigint.BigInt::from_string("") |> ignore
 }

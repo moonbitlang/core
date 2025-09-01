@@ -58,7 +58,7 @@ pub fn scalbn(x : Double, exp : Int) -> Double {
   return y * ui.reinterpret_as_double()
 }
 
-///| 
+///|
 /// Calculcates x * 2 **n where x is a single-precision floating number and n is an integer.
 ///
 /// Parameters:
@@ -71,15 +71,15 @@ pub fn scalbn(x : Double, exp : Int) -> Double {
 /// Example:
 ///
 /// ```moonbit
-/// inspect(scalbnf(1.5, 2), content="6")
-/// inspect(scalbnf(2, -1), content="1")
-/// inspect(scalbnf(3, 0), content="3")
-/// inspect(scalbnf(1, 128), content="Infinity")
-/// inspect(scalbnf(1, -150), content="0")
-/// inspect(scalbnf(1, 254), content="Infinity")
-/// inspect(scalbnf(@float.not_a_number, 1), content="NaN")
-/// inspect(scalbnf(-2, 1), content="-4")
-/// inspect(scalbnf(-2, 128), content="-Infinity")
+/// inspect(@math.scalbnf(1.5, 2), content="6")
+/// inspect(@math.scalbnf(2, -1), content="1")
+/// inspect(@math.scalbnf(3, 0), content="3")
+/// inspect(@math.scalbnf(1, 128), content="Infinity")
+/// inspect(@math.scalbnf(1, -150), content="0")
+/// inspect(@math.scalbnf(1, 254), content="Infinity")
+/// inspect(@math.scalbnf(@float.not_a_number, 1), content="NaN")
+/// inspect(@math.scalbnf(-2, 1), content="-4")
+/// inspect(@math.scalbnf(-2, 128), content="-Infinity")
 /// ```
 pub fn scalbnf(y : Float, exp : Int) -> Float {
   let mut y = y

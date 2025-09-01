@@ -1,0 +1,41 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/immut/priority_queue"
+
+import(
+  "moonbitlang/core/quickcheck"
+)
+
+// Values
+fn[A : Compare] from_array(Array[A]) -> PriorityQueue[A]
+
+fn[A] new() -> PriorityQueue[A]
+
+fn[A : Compare] of(FixedArray[A]) -> PriorityQueue[A]
+
+// Errors
+
+// Types and methods
+type PriorityQueue[A]
+fn[A : Compare] PriorityQueue::from_iter(Iter[A]) -> Self[A]
+fn[A] PriorityQueue::is_empty(Self[A]) -> Bool
+fn[A : Compare] PriorityQueue::iter(Self[A]) -> Iter[A]
+fn[A] PriorityQueue::length(Self[A]) -> Int
+fn[A] PriorityQueue::peek(Self[A]) -> A?
+fn[A : Compare] PriorityQueue::pop(Self[A]) -> Self[A]?
+#deprecated
+fn[A : Compare] PriorityQueue::pop_exn(Self[A]) -> Self[A]
+fn[A : Compare] PriorityQueue::push(Self[A], A) -> Self[A]
+fn[A : Compare] PriorityQueue::to_array(Self[A]) -> Array[A]
+fn[A : Compare] PriorityQueue::unsafe_pop(Self[A]) -> Self[A]
+impl[A : Compare] Compare for PriorityQueue[A]
+impl[A : Compare] Eq for PriorityQueue[A]
+impl[A : Hash + Compare] Hash for PriorityQueue[A]
+impl[A : Show + Compare] Show for PriorityQueue[A]
+impl[A : ToJson + Compare] ToJson for PriorityQueue[A]
+impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for PriorityQueue[X]
+
+// Type aliases
+pub typealias PriorityQueue as T
+
+// Traits
+

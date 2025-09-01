@@ -18,11 +18,16 @@ priv struct Cons[A] {
   mut next : Cons[A]?
 } derive(Eq)
 
-///|
 // Invariant:
 // - length == 0 <=> first is None && last is None
-struct T[A] {
+
+///|
+struct Queue[A] {
   mut length : Int
   mut first : Cons[A]?
   mut last : Cons[A]?
 }
+
+///|
+#deprecated("use `Queue` instead of `T`")
+pub typealias Queue as T

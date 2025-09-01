@@ -4,5 +4,6 @@
     "moonbitlang/core/bytes",
     "moonbitlang/core/array",
     "moonbitlang/core/string"
-  ]
+  ],
+  "test-import": ["moonbitlang/core/int"]
 }

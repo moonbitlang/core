@@ -69,7 +69,7 @@ pub impl Shl for UInt16 with op_shl(self : UInt16, that : Int) -> UInt16 {
 }
 
 ///|
-pub impl Shr for UInt16 with op_shr(self : UInt16, that : Int) -> UInt16 {
+pub impl Shr for UInt16 with shr(self : UInt16, that : Int) -> UInt16 {
   (self.to_int() >> that).to_uint16()
 }
 

@@ -441,7 +441,7 @@ pub impl Shl for Int with op_shl(self, other) = "%i32_shl"
 ///   let p = 16
 ///   inspect(p >> 2, content="4") // Regular right shift for positive numbers
 /// ```
-pub impl Shr for Int with op_shr(self, other) = "%i32_shr"
+pub impl Shr for Int with shr(self, other) = "%i32_shr"
 
 ///|
 /// Performs a left shift operation on a 32-bit integer. Shifts each bit in the
@@ -1626,8 +1626,9 @@ pub impl Eq for String with op_equal(self : String, other : String) -> Bool = "%
 /// ```
 pub fn String::to_string(self : String) -> String = "%string_to_string"
 
-///|
 // For internal use only
+
+///|
 priv type UnsafeMaybeUninit[_]
 
 ///|
@@ -2135,7 +2136,7 @@ pub impl Shl for UInt with op_shl(self, shift) = "%u32.shl"
 ///   let x = 0xFF000000U
 ///   inspect(x >> 32, content="4278190080") // Same as x >> 0 due to masking
 /// ```
-pub impl Shr for UInt with op_shr(self, shift) = "%u32.shr"
+pub impl Shr for UInt with shr(self, shift) = "%u32.shr"
 
 ///|
 /// Counts the number of leading zero bits in an unsigned 32-bit integer,
@@ -2640,7 +2641,8 @@ pub fn UInt::reinterpret_as_float(self : UInt) -> Float = "%i32.to_f32_reinterpr
 /// ```
 pub fn Byte::to_float(self : Byte) -> Float = "%byte.to_f32"
 
-///| TODO: use intrinsics implement this
+///|
+/// TODO: use intrinsics implement this
 pub fn Byte::to_double(self : Byte) -> Double {
   self.to_int().to_double()
 }

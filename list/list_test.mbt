@@ -268,7 +268,7 @@ test "repeat" {
 ///|
 test "intersperse" {
   let ls = @list.of(["1", "2", "3", "4", "5"])
-  let el : @list.List[String] = empty()
+  let el : @list.List[String] = @list.empty()
   inspect(
     ls.intersperse("|"),
     content=(
@@ -587,7 +587,7 @@ test "List::to_json with non-empty list" {
 
 ///|
 test "List::to_json with empty list" {
-  let list : @list.List[Int] = empty()
+  let list : @list.List[Int] = @list.empty()
   @json.inspect(ToJson::to_json(list), content=[])
 }
 

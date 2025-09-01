@@ -46,7 +46,7 @@ pub extern "js" fn BigInt::from_hex(str : String) -> BigInt =
 ///|
 pub extern "js" fn BigInt::to_hex(
   self : BigInt,
-  uppercase~ : Bool = true,
+  uppercase? : Bool = true,
 ) -> String =
   #|(x, uppercase) => {
   #|  const r = x.toString(16);
@@ -58,7 +58,7 @@ extern "js" fn hex2(b : Byte) -> String =
   #|(x) => x.toString(16).padStart(2, '0')
 
 ///|
-pub fn BigInt::from_octets(octets : Bytes, signum~ : Int = 1) -> BigInt {
+pub fn BigInt::from_octets(octets : Bytes, signum? : Int = 1) -> BigInt {
   if signum < 0 {
     return -1N * BigInt::from_octets(octets, signum=1)
   }
@@ -306,11 +306,11 @@ extern "js" fn BigInt::js_lor(self : BigInt, other : BigInt) -> BigInt =
 /// Example:
 ///
 /// ```moonbit
-///   let a = BigInt::from_string("42")
-///   let b = BigInt::from_string("-12")
+///   let a = @bigint.BigInt::from_string("42")
+///   let b = @bigint.BigInt::from_string("-12")
 ///   inspect(a | b, content="-2")
-///   let c = BigInt::from_string("-8")
-///   let d = BigInt::from_string("-4")
+///   let c = @bigint.BigInt::from_string("-8")
+///   let d = @bigint.BigInt::from_string("-4")
 ///   inspect(c | d, content="-4")
 /// ```
 ///
@@ -342,15 +342,15 @@ extern "js" fn BigInt::js_lxor(self : BigInt, other : BigInt) -> BigInt =
 /// Example:
 ///
 /// ```moonbit
-///   let a = BigInt::from_string("42")  // 0b101010
-///   let b = BigInt::from_string("25")  // 0b011001
+///   let a = @bigint.BigInt::from_string("42")  // 0b101010
+///   let b = @bigint.BigInt::from_string("25")  // 0b011001
 ///   inspect(a.lxor(b), content="51")   // 0b110011
 ///
-///   let a = BigInt::from_string("42")
-///   let b = BigInt::from_string("-7")
+///   let a = @bigint.BigInt::from_string("42")
+///   let b = @bigint.BigInt::from_string("-7")
 ///   inspect(a.lxor(b), content="-45")
 ///
-///   let a = BigInt::from_string("42")
+///   let a = @bigint.BigInt::from_string("42")
 ///   inspect(a.lxor(a), content="0")    // XOR with self gives 0
 /// ```
 ///
@@ -474,7 +474,8 @@ pub extern "js" fn BigInt::bit_length(self : BigInt) -> Int =
   #|  }
   #|}
 
-///| Returns the number of trailing zero bits in the binary representation of 
+///|
+/// Returns the number of trailing zero bits in the binary representation of 
 /// the absolute value of this BigInt.
 ///
 /// For zero, it returns -1.

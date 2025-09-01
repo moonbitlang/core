@@ -1,0 +1,46 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/queue"
+
+import(
+  "moonbitlang/core/quickcheck"
+)
+
+// Values
+fn[A] from_array(Array[A]) -> Queue[A]
+
+fn[A] from_iter(Iter[A]) -> Queue[A]
+
+fn[A] new() -> Queue[A]
+
+fn[A] of(FixedArray[A]) -> Queue[A]
+
+// Errors
+
+// Types and methods
+type Queue[A]
+fn[A] Queue::clear(Self[A]) -> Unit
+fn[A] Queue::copy(Self[A]) -> Self[A]
+fn[A] Queue::each(Self[A], (A) -> Unit) -> Unit
+fn[A] Queue::eachi(Self[A], (Int, A) -> Unit) -> Unit
+fn[A, B] Queue::fold(Self[A], init~ : B, (B, A) -> B) -> B
+fn[A] Queue::is_empty(Self[A]) -> Bool
+fn[A] Queue::iter(Self[A]) -> Iter[A]
+fn[A] Queue::length(Self[A]) -> Int
+fn[A] Queue::peek(Self[A]) -> A?
+#deprecated
+fn[A] Queue::peek_exn(Self[A]) -> A
+fn[A] Queue::pop(Self[A]) -> A?
+#deprecated
+fn[A] Queue::pop_exn(Self[A]) -> A
+fn[A] Queue::push(Self[A], A) -> Unit
+fn[A] Queue::transfer(Self[A], Self[A]) -> Unit
+fn[A] Queue::unsafe_peek(Self[A]) -> A
+fn[A] Queue::unsafe_pop(Self[A]) -> A
+impl[A : Show] Show for Queue[A]
+impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Queue[X]
+
+// Type aliases
+pub typealias Queue as T
+
+// Traits
+

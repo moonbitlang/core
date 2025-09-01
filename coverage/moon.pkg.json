@@ -1,5 +1,4 @@
 {
-  "import": [
-      "moonbitlang/core/builtin"
-  ]
+  "import": ["moonbitlang/core/builtin"],
+  "alert-list": "-test_import_all"
 }

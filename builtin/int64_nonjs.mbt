@@ -402,7 +402,7 @@ pub impl Shl for Int64 with op_shl(self, other) = "%i64_shl"
 ///   let p = 1024L
 ///   inspect(p >> 3, content="128") // Regular right shift for positive numbers
 /// ```
-pub impl Shr for Int64 with op_shr(self, other) = "%i64_shr"
+pub impl Shr for Int64 with shr(self, other) = "%i64_shr"
 
 ///|
 /// Returns the number of trailing zero bits in a 64-bit integer. For zero input,
@@ -1443,7 +1443,7 @@ pub impl Shl for UInt64 with op_shl(self, shift) = "%u64.shl"
 ///   inspect(x >> 8, content="71777214294589695") // Shifted right by 8 bits
 ///   inspect(x >> 64, content="18374966859414961920") // Equivalent to x >> 0 due to masking
 /// ```
-pub impl Shr for UInt64 with op_shr(self, shift) = "%u64.shr"
+pub impl Shr for UInt64 with shr(self, shift) = "%u64.shr"
 
 ///|
 /// Counts the number of leading zero bits in a 64-bit unsigned integer, starting

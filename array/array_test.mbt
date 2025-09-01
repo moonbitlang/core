@@ -146,22 +146,22 @@ test "unzip" {
 }
 
 ///|
-test "zip_with" {
+test "@array.zip_with" {
   // Test with two non-empty arrays and a function
   let arr1 = [1, 2, 3]
   let arr2 = [4, 5, 6]
   let add = (a, b) => a + b
-  inspect(zip_with(arr1, arr2, add), content="[5, 7, 9]")
+  inspect(@array.zip_with(arr1, arr2, add), content="[5, 7, 9]")
 
   // Test with arrays of different lengths and a function
   let arr3 = [1, 2]
   let arr4 = [4, 5, 6]
-  inspect(zip_with(arr3, arr4, add), content="[5, 7]")
+  inspect(@array.zip_with(arr3, arr4, add), content="[5, 7]")
 
   // Test with an empty array and a function
   let arr5 : Array[Int] = []
   let arr6 = [4, 5, 6]
-  inspect(zip_with(arr5, arr6, add), content="[]")
+  inspect(@array.zip_with(arr5, arr6, add), content="[]")
 }
 
 ///|
@@ -188,6 +188,31 @@ test "zip_to_iter2" {
   let arr5 : Array[Int] = []
   let arr6 = ["a", "b", "c"]
   inspect(arr5.zip_to_iter2(arr6), content="[]")
+}
+
+///|
+test "zip_to_iter2 early termination" {
+  // This test should trigger the uncovered line 301: break IterEnd
+  // We create an iterator that terminates early when it encounters a specific value
+  let arr1 = [1, 2, 3, 4, 5]
+  let arr2 = ['a', 'b', 'c', 'd', 'e']
+  let mut count = 0
+  let mut found_target = false
+
+  // Use run to iterate with early termination
+  let _ = arr1
+    .zip_to_iter2(arr2)
+    .run((x, _y) => {
+      count += 1
+      if x == 3 {
+        found_target = true
+        IterEnd // This should trigger the uncovered line 301
+      } else {
+        IterContinue
+      }
+    })
+  inspect(found_target, content="true")
+  inspect(count, content="3") // Should visit (1,'a'), (2,'b'), (3,'c') and terminate
 }
 
 ///|

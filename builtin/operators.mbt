@@ -75,5 +75,17 @@ pub(open) trait Shl {
 ///|
 /// types implementing this trait can use the `>>` operator
 pub(open) trait Shr {
-  op_shr(Self, Int) -> Self
+  shr(Self, Int) -> Self = _
+  op_shr(Self, Int) -> Self = _
+}
+
+///|
+#deprecated("replace `impl op_shr` with `impl shr`")
+impl Shr with shr(self, i) {
+  Shr::op_shr(self, i)
+}
+
+///|
+impl Shr with op_shr(self, i) {
+  Shr::shr(self, i)
 }

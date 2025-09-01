@@ -641,22 +641,22 @@ test "op_add" {
 }
 
 ///|
-test "from_iter multiple elements iter" {
+test "@list.from_iter multiple elements iter" {
   inspect(@list.from_iter([1, 2, 3].iter()), content="@list.of([1, 2, 3])")
 }
 
 ///|
-test "from_iter_rev multiple elements iter" {
+test "@list.from_iter_rev multiple elements iter" {
   inspect(@list.from_iter_rev([1, 2, 3].iter()), content="@list.of([3, 2, 1])")
 }
 
 ///|
-test "from_iter single element iter" {
+test "@list.from_iter single element iter" {
   inspect(@list.from_iter([1].iter()), content="@list.of([1])")
 }
 
 ///|
-test "from_iter empty iter" {
+test "@list.from_iter empty iter" {
   let pq : @list.T[Int] = @list.from_iter(Iter::empty())
   inspect(pq, content="@list.of([])")
 }
@@ -676,7 +676,7 @@ test "hash" {
 ///|
 test "stackover flow" {
   let iter = Int::until(0, 1 << 20)
-  let lst = from_iter(iter)
+  let lst = @list.from_iter(iter)
   inspect(
     lst.fold(init=0.0, (acc, x) => acc + x.to_double()),
     content="549755289600",

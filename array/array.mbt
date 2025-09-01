@@ -53,42 +53,6 @@ pub fn[T] Array::push_iter(self : Self[T], iter : Iter[T]) -> Unit {
 }
 
 ///|
-/// Creates a new array of the specified length, where each element is
-/// initialized using an index-based initialization function.
-///
-/// Parameters:
-///
-/// * `length` : The length of the new array. If `length` is less than or equal
-/// to 0, returns an empty array.
-/// * `initializer` : A function that takes an index (starting from 0) and
-/// returns a value of type `T`. This function is called for each index to
-/// initialize the corresponding element.
-///
-/// Returns a new array of type `Array[T]` with the specified length, where each
-/// element is initialized using the provided function.
-///
-/// Example:
-///
-/// ```moonbit
-///   let arr = Array::makei(3, i => i * 2)
-///   inspect(arr, content="[0, 2, 4]")
-/// ```
-pub fn[T] Array::makei(
-  length : Int,
-  value : (Int) -> T raise?,
-) -> Array[T] raise? {
-  if length <= 0 {
-    []
-  } else {
-    let array = Array::make(length, value(0))
-    for i in 1..<length {
-      array[i] = value(i)
-    }
-    array
-  }
-}
-
-///|
 /// Shuffle the array using Knuth shuffle
 /// 
 /// To use this function, you need to provide a rand function, which takes an integer as it upper bound
@@ -185,7 +149,7 @@ pub fn[A] last(self : Array[A]) -> A? {
   }
 }
 
-///| 
+///|
 /// Zips two arrays into a single array of tuples.
 ///
 /// Parameters:
@@ -238,7 +202,7 @@ pub fn[T1, T2] unzip(self : Array[(T1, T2)]) -> (Array[T1], Array[T2]) {
   (arr1, arr2)
 }
 
-///| 
+///|
 /// Zips two arrays into a single array by applying a function to each pair of elements.
 ///
 /// Parameters:
@@ -255,7 +219,7 @@ pub fn[T1, T2] unzip(self : Array[(T1, T2)]) -> (Array[T1], Array[T2]) {
 ///   let arr1 = [1, 2, 3]
 ///   let arr2 = [4, 5, 6]
 ///   let add = (a, b) => a + b
-///   inspect(zip_with(arr1, arr2, add), content="[5, 7, 9]")
+///   inspect(@array.zip_with(arr1, arr2, add), content="[5, 7, 9]")
 /// ```
 pub fn[A, B, C] zip_with(
   l : Array[A],
@@ -271,7 +235,7 @@ pub fn[A, B, C] zip_with(
   }
 }
 
-///| 
+///|
 /// Zips two arrays into an iterator that yields corresponding elements.
 ///
 /// Parameters:

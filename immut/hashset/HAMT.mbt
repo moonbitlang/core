@@ -28,13 +28,13 @@
 // - <https://lampwww.epfl.ch/papers/idealhashtrees.pdf>
 
 ///|
-pub fn[A] new() -> T[A] {
+pub fn[A] new() -> HashSet[A] {
   None
 }
 
 ///|
 /// Lookup a value from the hash set
-pub fn[A : Eq + Hash] contains(self : T[A], key : A) -> Bool {
+pub fn[A : Eq + Hash] contains(self : HashSet[A], key : A) -> Bool {
   self.0 is Some(node) && node.contains(key, @path.of(key))
 }
 
@@ -108,7 +108,7 @@ fn[A : Eq] add_with_path(self : Node[A], key : A, path : Path) -> Node[A] {
 
 ///|
 /// Add a key to the hashset.
-pub fn[A : Eq + Hash] add(self : T[A], key : A) -> T[A] {
+pub fn[A : Eq + Hash] add(self : HashSet[A], key : A) -> HashSet[A] {
   match self.0 {
     None => Some(Flat(key, @path.of(key)))
     Some(node) => Some(node.add_with_path(key, @path.of(key)))
@@ -117,7 +117,7 @@ pub fn[A : Eq + Hash] add(self : T[A], key : A) -> T[A] {
 
 ///|
 /// Remove an element from a set
-pub fn[A : Eq + Hash] remove(self : T[A], key : A) -> T[A] {
+pub fn[A : Eq + Hash] remove(self : HashSet[A], key : A) -> HashSet[A] {
   match self.0 {
     None => None
     Some(node) => node.remove_with_path(key, @path.of(key))
@@ -170,7 +170,7 @@ fn[A : Eq] remove_with_path(self : Node[A], key : A, path : Path) -> Node[A]? {
 /// Calculate the size of a set.
 ///
 /// WARNING: this operation is `O(N)` in set size
-pub fn[A] size(self : T[A]) -> Int {
+pub fn[A] size(self : HashSet[A]) -> Int {
   fn node_size(node) {
     match node {
       Leaf(_, bucket) => 1 + bucket.length()
@@ -192,7 +192,10 @@ pub fn[A] size(self : T[A]) -> Int {
 
 ///|
 /// Union two hashsets
-pub fn[K : Eq] T::union(self : T[K], other : T[K]) -> T[K] {
+pub fn[K : Eq] HashSet::union(
+  self : HashSet[K],
+  other : HashSet[K],
+) -> HashSet[K] {
   fn go(node1, node2) {
     match (node1, node2) {
       (node, Flat(key, path)) | (Flat(key, path), node) =>
@@ -219,7 +222,10 @@ pub fn[K : Eq] T::union(self : T[K], other : T[K]) -> T[K] {
 
 ///|
 /// Intersect two hashsets
-pub fn[K : Eq] T::intersection(self : T[K], other : T[K]) -> T[K] {
+pub fn[K : Eq] HashSet::intersection(
+  self : HashSet[K],
+  other : HashSet[K],
+) -> HashSet[K] {
   fn go(node1, node2) {
     match (node1, node2) {
       (node, Flat(key, path) as flat) | (Flat(key, path) as flat, node) =>
@@ -255,7 +261,10 @@ pub fn[K : Eq] T::intersection(self : T[K], other : T[K]) -> T[K] {
 
 ///|
 /// Difference of two hashsets: elements in `self` but not in `other`
-pub fn[K : Eq] T::difference(self : T[K], other : T[K]) -> T[K] {
+pub fn[K : Eq] HashSet::difference(
+  self : HashSet[K],
+  other : HashSet[K],
+) -> HashSet[K] {
   fn go(node1 : Node[_], node2) {
     match (node1, node2) {
       (node, Flat(k, path)) => node.remove_with_path(k, path)
@@ -293,13 +302,13 @@ pub fn[K : Eq] T::difference(self : T[K], other : T[K]) -> T[K] {
 
 ///|
 /// Returns true if the hash set is empty.
-pub fn[A] is_empty(self : T[A]) -> Bool {
+pub fn[A] is_empty(self : HashSet[A]) -> Bool {
   self.0 is None
 }
 
 ///|
 /// Iterate through the elements in a hash set
-pub fn[A] each(self : T[A], f : (A) -> Unit raise?) -> Unit raise? {
+pub fn[A] each(self : HashSet[A], f : (A) -> Unit raise?) -> Unit raise? {
   fn go(node) raise? {
     match node {
       Leaf(k, bucket) => {
@@ -319,7 +328,7 @@ pub fn[A] each(self : T[A], f : (A) -> Unit raise?) -> Unit raise? {
 
 ///|
 /// Converted to Iter
-pub fn[A] iter(self : T[A]) -> Iter[A] {
+pub fn[A] iter(self : HashSet[A]) -> Iter[A] {
   fn go(node) -> Iter[A] {
     match node {
       Leaf(k, bucket) => Iter::singleton(k) + bucket.iter()
@@ -335,17 +344,17 @@ pub fn[A] iter(self : T[A]) -> Iter[A] {
 }
 
 ///|
-pub fn[A : Eq + Hash] from_iter(iter : Iter[A]) -> T[A] {
+pub fn[A : Eq + Hash] from_iter(iter : Iter[A]) -> HashSet[A] {
   iter.fold(init=new(), (s, e) => s.add(e))
 }
 
 ///|
-pub impl[A : Show] Show for T[A] with output(self, logger) {
+pub impl[A : Show] Show for HashSet[A] with output(self, logger) {
   logger.write_iter(self.iter(), prefix="@immut/hashset.of([", suffix="])")
 }
 
 ///|
-pub fn[A : Eq + Hash] from_array(arr : Array[A]) -> T[A] {
+pub fn[A : Eq + Hash] from_array(arr : Array[A]) -> HashSet[A] {
   loop (arr.length(), new()) {
     (0, set) => set
     (n, set) => {
@@ -356,7 +365,7 @@ pub fn[A : Eq + Hash] from_array(arr : Array[A]) -> T[A] {
 }
 
 ///|
-pub fn[A : Eq + Hash] of(arr : FixedArray[A]) -> T[A] {
+pub fn[A : Eq + Hash] of(arr : FixedArray[A]) -> HashSet[A] {
   loop (arr.length(), new()) {
     (0, set) => set
     (n, set) => {
@@ -367,7 +376,7 @@ pub fn[A : Eq + Hash] of(arr : FixedArray[A]) -> T[A] {
 }
 
 ///|
-pub impl[A : Hash] Hash for T[A] with hash_combine(self, hasher) {
+pub impl[A : Hash] Hash for HashSet[A] with hash_combine(self, hasher) {
   hasher.combine(self.iter().fold(init=0, (x, y) => x ^ y.hash()))
 }
 
@@ -388,10 +397,9 @@ impl[A : Eq] Eq for Node[A] with op_equal(self, other) {
 }
 
 ///|
-pub impl[K : Eq + Hash + @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[K] with arbitrary(
-  size,
-  rs,
-) {
+pub impl[K : Eq + Hash + @quickcheck.Arbitrary] @quickcheck.Arbitrary for HashSet[
+  K,
+] with arbitrary(size, rs) {
   @quickcheck.Arbitrary::arbitrary(size, rs) |> from_array
 }
 

@@ -39,15 +39,15 @@ fn k_expo2f(x : Float) -> Float {
 /// Example:
 ///
 /// ```moonbit
-///   inspect(sinhf(0), content="0")
-///   inspect(sinhf(-0), content="0")
-///   inspect(sinhf(1), content="1.175201177597046")
-///   inspect(sinhf(2), content="3.6268603801727295")
-///   inspect(sinhf(1000), content="Infinity")
-///   inspect(sinhf(-1000), content="-Infinity")
-///   inspect(sinhf(@float.not_a_number), content="NaN")
-///   inspect(sinhf(@float.infinity), content="Infinity")
-///   inspect(sinhf(@float.neg_infinity), content="-Infinity")
+///   inspect(@math.sinhf(0), content="0")
+///   inspect(@math.sinhf(-0), content="0")
+///   inspect(@math.sinhf(1), content="1.175201177597046")
+///   inspect(@math.sinhf(2), content="3.6268603801727295")
+///   inspect(@math.sinhf(1000), content="Infinity")
+///   inspect(@math.sinhf(-1000), content="-Infinity")
+///   inspect(@math.sinhf(@float.not_a_number), content="NaN")
+///   inspect(@math.sinhf(@float.infinity), content="Infinity")
+///   inspect(@math.sinhf(@float.neg_infinity), content="-Infinity")
 /// ```
 pub fn sinhf(x : Float) -> Float {
   let mut h : Float = 0.5
@@ -93,15 +93,15 @@ pub fn sinhf(x : Float) -> Float {
 /// Example
 ///
 /// ```moonbit
-///   inspect(coshf(0), content="1")
-///   inspect(coshf(-0), content="1")
-///   inspect(coshf(1), content="1.5430805683135986")
-///   inspect(coshf(2), content="3.7621958255767822")
-///   inspect(coshf(1000), content="Infinity")
-///   inspect(coshf(-1000), content="Infinity")
-///   inspect(coshf(@float.not_a_number), content="NaN")
-///   inspect(coshf(@float.infinity), content="Infinity")
-///   inspect(coshf(@float.neg_infinity), content="Infinity")
+///   inspect(@math.coshf(0), content="1")
+///   inspect(@math.coshf(-0), content="1")
+///   inspect(@math.coshf(1), content="1.5430805683135986")
+///   inspect(@math.coshf(2), content="3.7621958255767822")
+///   inspect(@math.coshf(1000), content="Infinity")
+///   inspect(@math.coshf(-1000), content="Infinity")
+///   inspect(@math.coshf(@float.not_a_number), content="NaN")
+///   inspect(@math.coshf(@float.infinity), content="Infinity")
+///   inspect(@math.coshf(@float.neg_infinity), content="Infinity")
 /// ```
 pub fn coshf(x : Float) -> Float {
   let mut x = x
@@ -208,14 +208,14 @@ pub fn tanhf(x : Float) -> Float {
 /// Example
 ///
 /// ```moonbit
-///   inspect(asinhf(0), content="0")
-///   inspect(asinhf(-0), content="0")
-///   inspect(asinhf(1), content="0.8813735842704773")
-///   inspect(asinhf(2), content="1.4436354637145996")
-///   inspect(asinhf(1000), content="7.600902557373047")
-///   inspect(asinhf(@float.not_a_number), content="NaN")
-///   inspect(asinhf(@float.infinity), content="Infinity")
-///   inspect(asinhf(@float.neg_infinity), content="-Infinity")
+///   inspect(@math.asinhf(0), content="0")
+///   inspect(@math.asinhf(-0), content="0")
+///   inspect(@math.asinhf(1), content="0.8813735842704773")
+///   inspect(@math.asinhf(2), content="1.4436354637145996")
+///   inspect(@math.asinhf(1000), content="7.600902557373047")
+///   inspect(@math.asinhf(@float.not_a_number), content="NaN")
+///   inspect(@math.asinhf(@float.infinity), content="Infinity")
+///   inspect(@math.asinhf(@float.neg_infinity), content="-Infinity")
 /// ```
 pub fn asinhf(x : Float) -> Float {
   let u = x.reinterpret_as_uint()
@@ -263,14 +263,14 @@ pub fn asinhf(x : Float) -> Float {
 /// Example
 ///
 /// ```moonbit
-///   inspect(acoshf(1), content="0")
-///   inspect(acoshf(2), content="1.316957950592041")
-///   inspect(acoshf(1000), content="7.600902080535889")
-///   inspect(acoshf(-1), content="NaN")
-///   inspect(acoshf(-2), content="NaN")
-///   inspect(acoshf(@float.not_a_number), content="NaN")
-///   inspect(acoshf(@float.infinity), content="Infinity")
-///   inspect(acoshf(@float.neg_infinity), content="NaN")
+///   inspect(@math.acoshf(1), content="0")
+///   inspect(@math.acoshf(2), content="1.316957950592041")
+///   inspect(@math.acoshf(1000), content="7.600902080535889")
+///   inspect(@math.acoshf(-1), content="NaN")
+///   inspect(@math.acoshf(-2), content="NaN")
+///   inspect(@math.acoshf(@float.not_a_number), content="NaN")
+///   inspect(@math.acoshf(@float.infinity), content="Infinity")
+///   inspect(@math.acoshf(@float.neg_infinity), content="NaN")
 /// ```
 pub fn acoshf(x : Float) -> Float {
   let ln2 : Float = 693147180559945309417232121458176568
@@ -309,16 +309,16 @@ pub fn acoshf(x : Float) -> Float {
 /// Example
 ///
 /// ```moonbit
-///   inspect(atanhf(0), content="0")
-///   inspect(atanhf(-0), content="0")
-///   inspect(atanhf(0.5), content="0.5493061542510986")
-///   inspect(atanhf(-0.5), content="-0.5493061542510986")
-///   inspect(atanhf(1), content="Infinity")
-///   inspect(atanhf(-1), content="-Infinity")
-///   inspect(atanhf(1.5), content="NaN")
-///   inspect(atanhf(@float.not_a_number), content="NaN")
-///   inspect(atanhf(@float.infinity), content="NaN")
-///   inspect(atanhf(@float.neg_infinity), content="NaN")
+///   inspect(@math.atanhf(0), content="0")
+///   inspect(@math.atanhf(-0), content="0")
+///   inspect(@math.atanhf(0.5), content="0.5493061542510986")
+///   inspect(@math.atanhf(-0.5), content="-0.5493061542510986")
+///   inspect(@math.atanhf(1), content="Infinity")
+///   inspect(@math.atanhf(-1), content="-Infinity")
+///   inspect(@math.atanhf(1.5), content="NaN")
+///   inspect(@math.atanhf(@float.not_a_number), content="NaN")
+///   inspect(@math.atanhf(@float.infinity), content="NaN")
+///   inspect(@math.atanhf(@float.neg_infinity), content="NaN")
 /// ```
 pub fn atanhf(x : Float) -> Float {
   let u = x.reinterpret_as_uint()

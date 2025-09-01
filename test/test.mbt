@@ -69,7 +69,7 @@ pub fn[T : Show] is_not(a : T, b : T, loc~ : SourceLoc) -> Unit raise {
   }
 }
 
-///| 
+///|
 /// Expected to be used in test blocks, don't catch this error.
 ///  
 /// Produces an error message similar to @builtin.fail.
@@ -86,7 +86,7 @@ pub fn write(self : T, obj : &Show) -> Unit {
   self.buffer.write_string(obj.to_string())
 }
 
-///| 
+///|
 /// Write data to snapshot buffer and newline, use `snapshot` to output.
 /// 
 /// See also `@test.T::write`
@@ -99,7 +99,7 @@ pub fn writeln(self : T, obj : &Show) -> Unit {
 /// Take a snapshot of the current buffer and write to a file.
 /// 
 /// ```mbt
-///   let t = new("test.txt")
+///   let t = @test.new("test.txt")
 ///   t.writeln("hello")
 ///   t.snapshot(filename="test.txt") // actual test block end
 /// ```

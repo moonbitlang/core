@@ -22,7 +22,7 @@ test "unit construction" {
   
   // Via default constructor
   let u2 = @unit.default()
-  
+  fn println(_ : String) {}
   // All unit values are identical
   inspect(u1 == u2, content="true")
   
@@ -45,7 +45,7 @@ Functions that return `Unit` are typically called for their side effects:
 ```moonbit
 test "side effect patterns" {
   let numbers = [1, 2, 3, 4, 5]
-  
+  fn println(_ : Int) {}
   // Processing for side effects (printing, logging, etc.)
   let processing_result = numbers.fold(init=(), fn(_acc, n) {
     // Simulated side effect

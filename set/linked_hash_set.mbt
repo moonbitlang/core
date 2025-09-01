@@ -12,8 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-///|
 // Types
+
+///|
 priv struct Entry[K] {
   mut prev : Int
   mut next : Entry[K]?
@@ -28,7 +29,7 @@ priv struct Entry[K] {
 /// # Example
 ///
 /// ```mbt
-///   let set = Set::of(["three", "eight", "one"])
+///   let set = @set.Set::of(["three", "eight", "one"])
 ///   assert_eq(set.contains("two"), false)
 ///   assert_eq(set.contains("three"), true)
 ///   set.add("three") // no effect since it already exists
@@ -51,7 +52,7 @@ struct Set[K] {
 /// Create a hash set.
 /// The capacity of the set will be the smallest power of 2 that is
 /// greater than or equal to the provided [capacity].
-pub fn[K] Set::new(capacity~ : Int = 8) -> Set[K] {
+pub fn[K] Set::new(capacity? : Int = 8) -> Set[K] {
   let capacity = capacity.next_power_of_two()
   {
     size: 0,
@@ -83,7 +84,7 @@ pub fn[K : Hash + Eq] Set::from_array(arr : Array[K]) -> Set[K] {
 /// Example:
 ///
 /// ```moonbit
-///   let set : Set[String] = Set::new()
+///   let set : @set.Set[String] = @set.Set::new()
 ///   set.add("key")
 ///   inspect(set.contains("key"), content="true")
 ///   set.add("key") // no effect since it already exists
@@ -163,7 +164,7 @@ fn[K] set_entry(self : Set[K], entry : Entry[K], new_idx : Int) -> Unit {
 /// Example:
 ///
 /// ```moonbit
-///   let set : Set[String] = Set::new()
+///   let set : @set.Set[String] = @set.Set::new()
 ///   inspect(set.add_and_check("key"), content="true")  // First insertion
 ///   inspect(set.add_and_check("key"), content="false") // Already exists
 ///   inspect(set.size(), content="1")
@@ -226,7 +227,7 @@ pub fn[K : Hash + Eq] Set::contains(self : Set[K], key : K) -> Bool {
 /// Example:
 ///
 /// ```moonbit
-///   let set = Set::of(["a", "b"])
+///   let set = @set.Set::of(["a", "b"])
 ///   set.remove("a")
 ///   inspect(set.contains("a"), content="false")
 ///   inspect(set.size(), content="1")
@@ -262,7 +263,7 @@ pub fn[K : Hash + Eq] remove(self : Set[K], key : K) -> Unit {
 /// Example:
 ///
 /// ```moonbit
-///   let set = Set::of(["a", "b"])
+///   let set = @set.Set::of(["a", "b"])
 ///   inspect(set.remove_and_check("a"), content="true")  // Successfully removed
 ///   inspect(set.remove_and_check("a"), content="false") // Already removed
 ///   inspect(set.size(), content="1")

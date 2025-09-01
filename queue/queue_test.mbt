@@ -14,7 +14,7 @@
 
 ///|
 test "new" {
-  let queue : @queue.T[Int] = @queue.new()
+  let queue : @queue.Queue[Int] = @queue.new()
   assert_eq(queue.length(), 0)
 }
 
@@ -33,7 +33,7 @@ test "from_fixed_array_1" {
 
 ///|
 test "from_fixed_array_2" {
-  let q : @queue.T[Int] = @queue.of([])
+  let q : @queue.Queue[Int] = @queue.of([])
   inspect(q, content="@queue.of([])")
 }
 
@@ -52,18 +52,18 @@ test "from_array_1" {
 
 ///|
 test "from_array_2" {
-  let q : @queue.T[Int] = @queue.from_array([])
+  let q : @queue.Queue[Int] = @queue.from_array([])
   inspect(q, content="@queue.of([])")
   let array = Array::makei(3, idx => idx + 1)
-  let q : @queue.T[Int] = @queue.from_array(array)
+  let q : @queue.Queue[Int] = @queue.from_array(array)
   inspect(q, content="@queue.of([1, 2, 3])")
-  let q : @queue.T[Int] = @queue.from_array(Array::new(capacity=10))
+  let q : @queue.Queue[Int] = @queue.from_array(Array::new(capacity=10))
   inspect(q, content="@queue.of([])")
 }
 
 ///|
 test "to_string" {
-  let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
+  let queue : @queue.Queue[Int] = @queue.of([1, 2, 3, 4])
   inspect(queue, content="@queue.of([1, 2, 3, 4])")
   queue.push(11)
   inspect(queue, content="@queue.of([1, 2, 3, 4, 11])")
@@ -73,7 +73,7 @@ test "to_string" {
 
 ///|
 test "clear" {
-  let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
+  let queue : @queue.Queue[Int] = @queue.of([1, 2, 3, 4])
   assert_eq(queue.length(), 4)
   queue.clear()
   assert_eq(queue.length(), 0)
@@ -81,7 +81,7 @@ test "clear" {
 
 ///|
 test "is_empty" {
-  let queue : @queue.T[Int] = @queue.new()
+  let queue : @queue.Queue[Int] = @queue.new()
   assert_true(queue.is_empty())
   queue.push(1)
   queue.push(2)
@@ -92,7 +92,7 @@ test "is_empty" {
 
 ///|
 test "unsafe_peek" {
-  let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
+  let queue : @queue.Queue[Int] = @queue.of([1, 2, 3, 4])
   assert_eq(queue.unsafe_peek(), 1)
   assert_eq(queue.length(), 4)
   assert_eq(queue.unsafe_pop(), 1)
@@ -102,7 +102,7 @@ test "unsafe_peek" {
 
 ///|
 test "peek" {
-  let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
+  let queue : @queue.Queue[Int] = @queue.of([1, 2, 3, 4])
   assert_eq(queue.peek(), Some(1))
   queue.clear()
   assert_eq(queue.peek(), None)
@@ -110,7 +110,7 @@ test "peek" {
 
 ///|
 test "unsafe_pop" {
-  let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
+  let queue : @queue.Queue[Int] = @queue.of([1, 2, 3, 4])
   assert_eq(queue.unsafe_pop(), 1)
   assert_eq(queue.unsafe_pop(), 2)
   assert_eq(queue.unsafe_pop(), 3)
@@ -120,7 +120,7 @@ test "unsafe_pop" {
 
 ///|
 test "pop" {
-  let queue : @queue.T[Int] = @queue.of([1, 2, 3, 4])
+  let queue : @queue.Queue[Int] = @queue.of([1, 2, 3, 4])
   assert_eq(queue.pop(), Some(1))
   assert_eq(queue.pop(), Some(2))
   assert_eq(queue.pop(), Some(3))
@@ -130,7 +130,7 @@ test "pop" {
 
 ///|
 test "iter" {
-  let queue : @queue.T[Int] = @queue.new()
+  let queue : @queue.Queue[Int] = @queue.new()
   let mut sum = 0
   queue.each(x => sum = sum + x)
   assert_eq(sum, 0)
@@ -142,7 +142,7 @@ test "iter" {
 
 ///|
 test "iteri" {
-  let queue : @queue.T[Int] = @queue.new()
+  let queue : @queue.Queue[Int] = @queue.new()
   let mut sum = 0
   queue.eachi((x, i) => sum = sum + x * i)
   assert_eq(sum, 0)
@@ -154,7 +154,7 @@ test "iteri" {
 
 ///|
 test "fold" {
-  let queue : @queue.T[Int] = @queue.new()
+  let queue : @queue.Queue[Int] = @queue.new()
   let sum = queue.fold(init=0, (acc, x) => acc + x)
   assert_eq(sum, 0)
   @queue.of([1, 2, 3, 4]).transfer(queue)
@@ -170,7 +170,7 @@ test "fold" {
 
 ///|
 test "length" {
-  let empty : @queue.T[Unit] = @queue.of([])
+  let empty : @queue.Queue[Unit] = @queue.of([])
   inspect(empty.length(), content="0")
   inspect(@queue.of([1, 2, 3]).length(), content="3")
 }
@@ -193,21 +193,21 @@ test "from_iter single element iter" {
 
 ///|
 test "from_iter empty iter" {
-  let pq : @queue.T[Int] = @queue.from_iter(Iter::empty())
+  let pq : @queue.Queue[Int] = @queue.from_iter(Iter::empty())
   inspect(pq, content="@queue.of([])")
 }
 
 ///|
 test "to_string" {
-  let queue : @queue.T[Int] = @queue.from_array([])
+  let queue : @queue.Queue[Int] = @queue.from_array([])
   assert_eq(queue.to_string(), "@queue.of([])")
-  let queue : @queue.T[Int] = @queue.from_array([9, 8, 7, 5])
+  let queue : @queue.Queue[Int] = @queue.from_array([9, 8, 7, 5])
   assert_eq(queue.to_string(), "@queue.of([9, 8, 7, 5])")
 }
 
 ///|
 test "queue arbitrary" {
-  let samples : Array[T[Int]] = @quickcheck.samples(20)
+  let samples : Array[@queue.Queue[Int]] = @quickcheck.samples(20)
   inspect(
     samples[1:5],
     content="[@queue.of([]), @queue.of([]), @queue.of([0]), @queue.of([0])]",

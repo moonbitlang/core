@@ -37,3 +37,20 @@ test "corner cases" {
   inspect(try? @strconv.parse_double("."), content="Err(invalid syntax)")
   inspect(try? @strconv.parse_double("-"), content="Err(invalid syntax)")
 }
+
+///|
+test "parse_double infinity and NaN with trailing characters should error" {
+  // These should trigger the uncovered line 84 in parse_double
+  // parse_inf_nan succeeds but doesn't consume the entire string
+  inspect(try? @strconv.parse_double("infabc"), content="Err(invalid syntax)")
+  inspect(try? @strconv.parse_double("nanxyz"), content="Err(invalid syntax)")
+  inspect(
+    try? @strconv.parse_double("+infinity123"),
+    content="Err(invalid syntax)",
+  )
+  inspect(
+    try? @strconv.parse_double("-inf_extra"),
+    content="Err(invalid syntax)",
+  )
+  inspect(try? @strconv.parse_double("NaN!"), content="Err(invalid syntax)")
+}

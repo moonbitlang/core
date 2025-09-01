@@ -42,7 +42,7 @@ test "size" {
 
 ///|
 test "is_empty" {
-  let m : @sorted_map.T[Int, Int] = @sorted_map.new()
+  let m : @sorted_map.SortedMap[Int, Int] = @sorted_map.new()
   inspect(m.is_empty(), content="true")
   let m = m.add(1, 1)
   inspect(m.is_empty(), content="false")
@@ -79,7 +79,7 @@ test "iteri" {
 ///|
 test "fold" {
   let m = @sorted_map.of([("a", 1), ("b", 2), ("c", 3), ("d", 4), ("e", 5)])
-  assert_eq(m.fold((acc, v) => acc + v, init=0), 15)
+  assert_eq(m.foldl_with_key((acc, _, v) => acc + v, init=0), 15)
 }
 
 ///|
@@ -141,7 +141,7 @@ test "op_equal" {
 
 ///|
 test "compare" {
-  let xss : Array[@sorted_map.T[Int, Int]] = @quickcheck.samples(5)
+  let xss : Array[@sorted_map.SortedMap[Int, Int]] = @quickcheck.samples(5)
   for xs in xss {
     for ys in xss {
       assert_eq(xs.compare(ys), xs.to_array().compare(ys.to_array()))
@@ -225,7 +225,9 @@ test "from_iter single element iter" {
 
 ///|
 test "from_iter empty iter" {
-  let pq : @sorted_map.T[Int, Int] = @sorted_map.from_iter(Iter::empty())
+  let pq : @sorted_map.SortedMap[Int, Int] = @sorted_map.from_iter(
+    Iter::empty(),
+  )
   inspect(pq, content="@immut/sorted_map.of([])")
 }
 

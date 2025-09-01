@@ -177,7 +177,7 @@ test {
 #callsite(autofill(args_loc, loc))
 pub fn inspect(
   obj : &Show,
-  content~ : String = "",
+  content? : String = "",
   loc~ : SourceLoc,
   args_loc~ : ArgsLoc,
 ) -> Unit raise InspectError {

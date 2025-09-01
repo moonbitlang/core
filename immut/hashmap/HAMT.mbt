@@ -28,19 +28,19 @@
 // - <https://lampwww.epfl.ch/papers/idealhashtrees.pdf>
 
 ///|
-pub fn[K, V] new() -> T[K, V] {
+pub fn[K, V] new() -> HashMap[K, V] {
   None
 }
 
 ///|
 /// Create a map with a single key-value pair.
-pub fn[K : Hash, V] singleton(key : K, value : V) -> T[K, V] {
+pub fn[K : Hash, V] singleton(key : K, value : V) -> HashMap[K, V] {
   Some(Flat(key, value, @path.of(key)))
 }
 
 ///|
 /// Check if the map contains a key.
-pub fn[K : Eq + Hash, V] contains(self : T[K, V], key : K) -> Bool {
+pub fn[K : Eq + Hash, V] contains(self : HashMap[K, V], key : K) -> Bool {
   self.get(key) is Some(_)
 }
 
@@ -48,13 +48,13 @@ pub fn[K : Eq + Hash, V] contains(self : T[K, V], key : K) -> Bool {
 /// Lookup a key from a hash map
 #deprecated("Use `get()` instead")
 #coverage.skip
-pub fn[K : Eq + Hash, V] find(self : T[K, V], key : K) -> V? {
+pub fn[K : Eq + Hash, V] find(self : HashMap[K, V], key : K) -> V? {
   self.get(key)
 }
 
 ///|
 /// Lookup a key from a hash map
-pub fn[K : Eq + Hash, V] get(self : T[K, V], key : K) -> V? {
+pub fn[K : Eq + Hash, V] get(self : HashMap[K, V], key : K) -> V? {
   match self.0 {
     None => None
     Some(node) => node.get_with_path(key, @path.of(key))
@@ -92,7 +92,7 @@ fn[K : Eq, V] Node::get_with_path(
 
 ///|
 #deprecated("Use `get` instead. `op_get` will return `V` instead of `Option[V]` in the future.")
-pub fn[K : Eq + Hash, V] op_get(self : T[K, V], key : K) -> V? {
+pub fn[K : Eq + Hash, V] op_get(self : HashMap[K, V], key : K) -> V? {
   self.get(key)
 }
 
@@ -167,15 +167,26 @@ fn[K : Eq, V] add_with_path(
 
 ///|
 /// Filter values that satisfy the predicate
+#deprecated("Use `filter_with_key` instead. `filter` will accept `(K, V) -> Bool` in the future.")
+#coverage.skip
 pub fn[K, V] filter(
-  self : T[K, V],
+  self : HashMap[K, V],
   pred : (V) -> Bool raise?,
-) -> T[K, V] raise? {
+) -> HashMap[K, V] raise? {
+  self.filter_with_key((_, v) => pred(v))
+}
+
+///|
+/// Filter entries that satisfy the predicate
+pub fn[K, V] filter_with_key(
+  self : HashMap[K, V],
+  pred : (K, V) -> Bool raise?,
+) -> HashMap[K, V] raise? {
   fn go(node) raise? {
     match node {
       Leaf(key1, value1, bucket) => {
-        let new_bucket = bucket.filter(kv => pred(kv.1))
-        if pred(value1) {
+        let new_bucket = bucket.filter(kv => pred(kv.0, kv.1))
+        if pred(key1, value1) {
           Some(Leaf(key1, value1, new_bucket))
         } else {
           match new_bucket {
@@ -184,7 +195,12 @@ pub fn[K, V] filter(
           }
         }
       }
-      Flat(_, value1, _) => if pred(value1) { Some(node) } else { None }
+      Flat(key1, value1, _) =>
+        if pred(key1, value1) {
+          Some(node)
+        } else {
+          None
+        }
       Branch(children) =>
         match children.filter(go) {
           None => None
@@ -201,8 +217,9 @@ pub fn[K, V] filter(
 
 ///|
 /// Fold the values in the map
+#deprecated("Use `fold_with_key` instead. `fold` will accept `(A, K, V) -> A` in the future.")
 pub fn[K, V, A] fold(
-  self : T[K, V],
+  self : HashMap[K, V],
   init~ : A,
   f : (A, V) -> A raise?,
 ) -> A raise? {
@@ -215,7 +232,7 @@ pub fn[K, V, A] fold(
 /// it will be shadowed by the `f` in the `@list.T::fold` function
 /// TO make it more useful in the future, we may need propagate
 pub fn[K, V, A] fold_with_key(
-  self : T[K, V],
+  self : HashMap[K, V],
   init~ : A,
   f : (A, K, V) -> A raise?,
 ) -> A raise? {
@@ -236,16 +253,21 @@ pub fn[K, V, A] fold_with_key(
 
 ///|
 /// Maps over the values in the map
-pub fn[K, V, A] map(self : T[K, V], f : (V) -> A raise?) -> T[K, A] raise? {
+#deprecated("Use `map_with_key` instead. `map` will accept `(K, V) -> A` in the future.")
+#coverage.skip
+pub fn[K, V, A] map(
+  self : HashMap[K, V],
+  f : (V) -> A raise?,
+) -> HashMap[K, A] raise? {
   self.map_with_key((_k, v) => f(v))
 }
 
 ///|
 /// Maps over the key-value pairs in the map
 pub fn[K, V, A] map_with_key(
-  self : T[K, V],
+  self : HashMap[K, V],
   f : (K, V) -> A raise?,
-) -> T[K, A] raise? {
+) -> HashMap[K, A] raise? {
   fn go(m : Node[K, V]) -> Node[K, A] raise? {
     match m {
       Leaf(k, v, bucket) =>
@@ -265,7 +287,11 @@ pub fn[K, V, A] map_with_key(
 /// Add a key-value pair to the hashmap.
 ///
 /// If a pair with the same key already exists, the old one is replaced
-pub fn[K : Eq + Hash, V] add(self : T[K, V], key : K, value : V) -> T[K, V] {
+pub fn[K : Eq + Hash, V] add(
+  self : HashMap[K, V],
+  key : K,
+  value : V,
+) -> HashMap[K, V] {
   match self.0 {
     None => Some(Flat(key, value, @path.of(key)))
     Some(node) => Some(node.add_with_path(key, value, @path.of(key)))
@@ -274,7 +300,7 @@ pub fn[K : Eq + Hash, V] add(self : T[K, V], key : K, value : V) -> T[K, V] {
 
 ///|
 /// Remove an element from a map
-pub fn[K : Eq + Hash, V] remove(self : T[K, V], key : K) -> T[K, V] {
+pub fn[K : Eq + Hash, V] remove(self : HashMap[K, V], key : K) -> HashMap[K, V] {
   match self.0 {
     None => None
     Some(node) => node.remove_with_path(key, @path.of(key))
@@ -337,7 +363,7 @@ fn[K : Eq, V] remove_with_path(
 /// Calculate the size of a map.
 ///
 /// WARNING: this operation is `O(N)` in map size
-pub fn[K, V] size(self : T[K, V]) -> Int {
+pub fn[K, V] size(self : HashMap[K, V]) -> Int {
   fn node_size(node) {
     match node {
       Leaf(_, _, bucket) => 1 + bucket.length()
@@ -359,7 +385,10 @@ pub fn[K, V] size(self : T[K, V]) -> Int {
 
 ///|
 /// Union two hashmaps, right-hand side element is prioritized
-pub fn[K : Eq, V] T::union(self : T[K, V], other : T[K, V]) -> T[K, V] {
+pub fn[K : Eq, V] HashMap::union(
+  self : HashMap[K, V],
+  other : HashMap[K, V],
+) -> HashMap[K, V] {
   fn go(node1 : Node[_], node2) {
     match (node1, node2) {
       (_, Flat(key2, value2, path2)) => node1.add_with_path(key2, value2, path2)
@@ -390,11 +419,11 @@ pub fn[K : Eq, V] T::union(self : T[K, V], other : T[K, V]) -> T[K, V] {
 
 ///|
 /// Union two hashmaps with a function
-pub fn[K : Eq, V] T::union_with(
-  self : T[K, V],
-  other : T[K, V],
+pub fn[K : Eq, V] HashMap::union_with(
+  self : HashMap[K, V],
+  other : HashMap[K, V],
   f : (K, V, V) -> V raise?,
-) -> T[K, V] raise? {
+) -> HashMap[K, V] raise? {
   fn go(node1 : Node[_], node2) raise? {
     match (node1, node2) {
       (_, Flat(key2, value2, path2)) => {
@@ -451,7 +480,10 @@ fn[K : Eq, V] @list.List::union_with(
 
 ///|
 /// Intersect two hashmaps, right-hand side element is prioritized
-pub fn[K : Eq, V] T::intersection(self : T[K, V], other : T[K, V]) -> T[K, V] {
+pub fn[K : Eq, V] HashMap::intersection(
+  self : HashMap[K, V],
+  other : HashMap[K, V],
+) -> HashMap[K, V] {
   fn go(node1 : Node[_], node2) {
     match (node1, node2) {
       (_, Flat(key2, _, path2)) =>
@@ -491,11 +523,11 @@ pub fn[K : Eq, V] T::intersection(self : T[K, V], other : T[K, V]) -> T[K, V] {
 
 ///|
 /// Intersection two hashmaps with a function
-pub fn[K : Eq, V] T::intersection_with(
-  self : T[K, V],
-  other : T[K, V],
+pub fn[K : Eq, V] HashMap::intersection_with(
+  self : HashMap[K, V],
+  other : HashMap[K, V],
   f : (K, V, V) -> V raise?,
-) -> T[K, V] raise? {
+) -> HashMap[K, V] raise? {
   fn go(node1 : Node[_], node2) raise? {
     match (node1, node2) {
       (_, Flat(key2, value2, path2)) =>
@@ -553,7 +585,10 @@ fn[K : Eq, V] @list.List::intersection_with(
 
 ///|
 /// Difference of two hashmaps: elements in `self` but not in `other`
-pub fn[K : Eq, V] T::difference(self : T[K, V], other : T[K, V]) -> T[K, V] {
+pub fn[K : Eq, V] HashMap::difference(
+  self : HashMap[K, V],
+  other : HashMap[K, V],
+) -> HashMap[K, V] {
   fn go(node1 : Node[_], node2) {
     match (node1, node2) {
       (node, Flat(k, _, path)) => node.remove_with_path(k, path)
@@ -590,7 +625,10 @@ pub fn[K : Eq, V] T::difference(self : T[K, V], other : T[K, V]) -> T[K, V] {
 
 ///|
 /// Iterate through the elements in a hash map
-pub fn[K, V] each(self : T[K, V], f : (K, V) -> Unit raise?) -> Unit raise? {
+pub fn[K, V] each(
+  self : HashMap[K, V],
+  f : (K, V) -> Unit raise?,
+) -> Unit raise? {
   fn go(node) raise? {
     match node {
       Leaf(k, v, bucket) => {
@@ -610,26 +648,20 @@ pub fn[K, V] each(self : T[K, V], f : (K, V) -> Unit raise?) -> Unit raise? {
 
 ///|
 /// Returns all keys of the map
-pub fn[K, V] keys(self : T[K, V]) -> Iter[K] {
+pub fn[K, V] keys(self : HashMap[K, V]) -> Iter[K] {
   self.iter().map(p => p.0)
 }
 
 ///|
 /// Returns all values of the map
-pub fn[K, V] values(self : T[K, V]) -> Iter[V] {
+#alias(elems, deprecated="Use `values` instead")
+pub fn[K, V] values(self : HashMap[K, V]) -> Iter[V] {
   self.iter().map(p => p.1)
 }
 
 ///|
-#deprecated("Use `values` instead")
-#coverage.skip
-pub fn[K, V] elems(self : T[K, V]) -> Iter[V] {
-  self.values()
-}
-
-///|
 /// Converted to Iter
-pub fn[K, V] iter(self : T[K, V]) -> Iter[(K, V)] {
+pub fn[K, V] iter(self : HashMap[K, V]) -> Iter[(K, V)] {
   fn go(node) -> Iter[(K, V)] {
     match node {
       Leaf(k, v, bucket) => Iter::singleton((k, v)) + bucket.iter()
@@ -645,7 +677,7 @@ pub fn[K, V] iter(self : T[K, V]) -> Iter[(K, V)] {
 }
 
 ///|
-pub fn[K, V] iter2(self : T[K, V]) -> Iter2[K, V] {
+pub fn[K, V] iter2(self : HashMap[K, V]) -> Iter2[K, V] {
   Iter2::new(yield_ => for kv in self {
     guard yield_(kv.0, kv.1) is IterContinue else { break IterEnd }
   } else {
@@ -654,17 +686,17 @@ pub fn[K, V] iter2(self : T[K, V]) -> Iter2[K, V] {
 }
 
 ///|
-pub fn[K : Eq + Hash, V] from_iter(iter : Iter[(K, V)]) -> T[K, V] {
+pub fn[K : Eq + Hash, V] from_iter(iter : Iter[(K, V)]) -> HashMap[K, V] {
   iter.fold(init=new(), (m, e) => m.add(e.0, e.1))
 }
 
 ///|
-pub impl[K : Show, V : Show] Show for T[K, V] with output(self, logger) {
+pub impl[K : Show, V : Show] Show for HashMap[K, V] with output(self, logger) {
   logger.write_iter(self.iter(), prefix="@immut/hashmap.of([", suffix="])")
 }
 
 ///|
-pub fn[K : Eq + Hash, V] from_array(arr : Array[(K, V)]) -> T[K, V] {
+pub fn[K : Eq + Hash, V] from_array(arr : Array[(K, V)]) -> HashMap[K, V] {
   loop (arr.length(), new()) {
     (0, map) => map
     (n, map) => {
@@ -676,14 +708,14 @@ pub fn[K : Eq + Hash, V] from_array(arr : Array[(K, V)]) -> T[K, V] {
 
 ///|
 /// Convert to an array of key-value pairs.
-pub fn[K, V] to_array(self : T[K, V]) -> Array[(K, V)] {
+pub fn[K, V] to_array(self : HashMap[K, V]) -> Array[(K, V)] {
   let arr = Array::new(capacity=self.size())
   self.each((k, v) => arr.push((k, v)))
   arr
 }
 
 ///|
-pub impl[K : Eq + Hash + @quickcheck.Arbitrary, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[
+pub impl[K : Eq + Hash + @quickcheck.Arbitrary, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for HashMap[
   K,
   V,
 ] with arbitrary(size, rs) {
@@ -691,7 +723,7 @@ pub impl[K : Eq + Hash + @quickcheck.Arbitrary, V : @quickcheck.Arbitrary] @quic
 }
 
 ///|
-pub fn[K : Eq + Hash, V] of(arr : FixedArray[(K, V)]) -> T[K, V] {
+pub fn[K : Eq + Hash, V] of(arr : FixedArray[(K, V)]) -> HashMap[K, V] {
   loop (arr.length(), new()) {
     (0, map) => map
     (n, map) => {
@@ -718,6 +750,9 @@ impl[K : Eq, V : Eq] Eq for Node[K, V] with op_equal(self, other) {
 }
 
 ///|
-pub impl[K : Hash, V : Hash] Hash for T[K, V] with hash_combine(self, hasher) {
-  self.each((k, v) => hasher..combine(k)..combine(v))
+pub impl[K : Hash, V : Hash] Hash for HashMap[K, V] with hash_combine(
+  self,
+  hasher,
+) {
+  hasher.combine(self.fold_with_key(init=0, (acc, k, v) => acc ^ (k, v).hash()))
 }

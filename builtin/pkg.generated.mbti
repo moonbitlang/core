@@ -107,6 +107,7 @@ fn[T] Array::iter(Self[T]) -> Iter[T]
 fn[A] Array::iter2(Self[A]) -> Iter2[Int, A]
 fn[T] Array::length(Self[T]) -> Int
 fn[T] Array::make(Int, T) -> Self[T]
+fn[T] Array::makei(Int, (Int) -> T raise?) -> Self[T] raise?
 fn[T, U] Array::map(Self[T], (T) -> U raise?) -> Self[U] raise?
 fn[T] Array::map_inplace(Self[T], (T) -> T raise?) -> Unit raise?
 fn[T, U] Array::mapi(Self[T], (Int, T) -> U raise?) -> Self[U] raise?
@@ -157,6 +158,7 @@ impl[X : Show] Show for Array[X]
 impl[X : ToJson] ToJson for Array[X]
 
 type ArrayView[T]
+fn[T] ArrayView::blit_to(Self[T], Self[T]) -> Unit
 fn[T] ArrayView::length(Self[T]) -> Int
 fn[T] ArrayView::op_as_view(Self[T], start? : Int, end? : Int) -> Self[T]
 fn[T] ArrayView::op_get(Self[T], Int) -> T
@@ -291,6 +293,7 @@ fn[K : Hash + Eq, V] Map::of(FixedArray[(K, V)]) -> Self[K, V]
 fn[K : Hash + Eq, V] Map::op_get(Self[K, V], K) -> V
 fn[K : Hash + Eq, V] Map::op_set(Self[K, V], K, V) -> Unit
 fn[K : Hash + Eq, V] Map::remove(Self[K, V], K) -> Unit
+fn[K, V] Map::retain(Self[K, V], (K, V) -> Bool) -> Unit
 fn[K : Hash + Eq, V] Map::set(Self[K, V], K, V) -> Unit
 fn[K, V] Map::size(Self[K, V]) -> Int
 fn[K, V] Map::to_array(Self[K, V]) -> Array[(K, V)]
@@ -792,7 +795,8 @@ impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show
 impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show, T12 : Show, T13 : Show, T14 : Show, T15 : Show] Show for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15)
 
 pub(open) trait Shr {
-  op_shr(Self, Int) -> Self
+  shr(Self, Int) -> Self = _
+  op_shr(Self, Int) -> Self = _
 }
 impl Shr for Byte
 impl Shr for Int

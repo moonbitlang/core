@@ -28,11 +28,11 @@
 /// Example:
 ///
 /// ```moonbit
-///   let map : @hashmap.T[String, Int] = @hashmap.new(capacity=16)
+///   let map : @hashmap.HashMap[String, Int] = @hashmap.new(capacity=16)
 ///   inspect(map.capacity(), content="16")
 ///   inspect(map.is_empty(), content="true")
 /// ```
-pub fn[K, V] new(capacity~ : Int = 8) -> T[K, V] {
+pub fn[K, V] new(capacity? : Int = 8) -> HashMap[K, V] {
   let capacity = capacity.next_power_of_two()
   {
     size: 0,
@@ -62,7 +62,7 @@ pub fn[K, V] new(capacity~ : Int = 8) -> T[K, V] {
 ///   inspect(map.get(1), content="Some(\"ONE\")")
 ///   inspect(map.get(2), content="Some(\"two\")")
 /// ```
-pub fn[K : Hash + Eq, V] from_array(arr : Array[(K, V)]) -> T[K, V] {
+pub fn[K : Hash + Eq, V] from_array(arr : Array[(K, V)]) -> HashMap[K, V] {
   let m = new(capacity=arr.length())
   arr.each(e => m.set(e.0, e.1))
   m
@@ -82,19 +82,19 @@ pub fn[K : Hash + Eq, V] from_array(arr : Array[(K, V)]) -> T[K, V] {
 /// Example:
 ///
 /// ```moonbit
-///   let map : @hashmap.T[String, Int] = @hashmap.new()
+///   let map : @hashmap.HashMap[String, Int] = @hashmap.new()
 ///   map.set("key", 42)
 ///   inspect(map.get("key"), content="Some(42)")
 ///   map.set("key", 24) // update existing key
 ///   inspect(map.get("key"), content="Some(24)")
 /// ```
-pub fn[K : Hash + Eq, V] set(self : T[K, V], key : K, value : V) -> Unit {
+pub fn[K : Hash + Eq, V] set(self : HashMap[K, V], key : K, value : V) -> Unit {
   self.set_with_hash(key, value, key.hash())
 }
 
 ///|
 fn[K : Eq, V] set_with_hash(
-  self : T[K, V],
+  self : HashMap[K, V],
   key : K,
   value : V,
   hash : Int,
@@ -124,7 +124,11 @@ fn[K : Eq, V] set_with_hash(
 }
 
 ///|
-fn[K, V] T::push_away(self : T[K, V], idx : Int, entry : Entry[K, V]) -> Unit {
+fn[K, V] HashMap::push_away(
+  self : HashMap[K, V],
+  idx : Int,
+  entry : Entry[K, V],
+) -> Unit {
   for psl = entry.psl + 1, idx = (idx + 1) & self.capacity_mask, entry = entry {
     match self.entries[idx] {
       None => {
@@ -162,11 +166,15 @@ fn[K, V] T::push_away(self : T[K, V], idx : Int, entry : Entry[K, V]) -> Unit {
 /// Example:
 ///
 /// ```moonbit
-///   let map : @hashmap.T[String, Int] = @hashmap.new()
+///   let map : @hashmap.HashMap[String, Int] = @hashmap.new()
 ///   map["key"] = 42
 ///   inspect(map.get("key"), content="Some(42)")
 /// ```
-pub fn[K : Hash + Eq, V] op_set(self : T[K, V], key : K, value : V) -> Unit {
+pub fn[K : Hash + Eq, V] op_set(
+  self : HashMap[K, V],
+  key : K,
+  value : V,
+) -> Unit {
   self.set(key, value)
 }
 
@@ -187,7 +195,7 @@ pub fn[K : Hash + Eq, V] op_set(self : T[K, V], key : K, value : V) -> Unit {
 ///   inspect(map.get("key"), content="Some(42)")
 ///   inspect(map.get("nonexistent"), content="None")
 /// ```
-pub fn[K : Hash + Eq, V] get(self : T[K, V], key : K) -> V? {
+pub fn[K : Hash + Eq, V] get(self : HashMap[K, V], key : K) -> V? {
   // self.get_with_hash(key, key.hash())
   let hash = key.hash()
   for i = 0, idx = hash & self.capacity_mask {
@@ -218,7 +226,7 @@ pub fn[K : Hash + Eq, V] get(self : T[K, V], key : K) -> V? {
 ///   let map = @hashmap.of([("key", 42)])
 ///   inspect(map["key"], content="42")
 /// ```
-pub fn[K : Hash + Eq, V] op_get(self : T[K, V], key : K) -> V {
+pub fn[K : Hash + Eq, V] op_get(self : HashMap[K, V], key : K) -> V {
   let hash = key.hash()
   for i = 0, idx = hash & self.capacity_mask {
     guard self.entries[idx] is Some(entry)
@@ -248,13 +256,13 @@ pub fn[K : Hash + Eq, V] op_get(self : T[K, V], key : K) -> V {
 /// Example:
 ///
 /// ```moonbit
-///   let map : @hashmap.T[String, Int] = @hashmap.new()
+///   let map : @hashmap.HashMap[String, Int] = @hashmap.new()
 ///   let value = map.get_or_init("key", () => { 42 })
 ///   inspect(value, content="42")
 ///   inspect(map.get("key"), content="Some(42)")
 /// ```
 pub fn[K : Hash + Eq, V] get_or_init(
-  self : T[K, V],
+  self : HashMap[K, V],
   key : K,
   init : () -> V,
 ) -> V {
@@ -314,7 +322,7 @@ pub fn[K : Hash + Eq, V] get_or_init(
 ///   inspect(map.get_or_default("c", 0), content="0")
 /// ```
 pub fn[K : Hash + Eq, V] get_or_default(
-  self : T[K, V],
+  self : HashMap[K, V],
   key : K,
   default : V,
 ) -> V {
@@ -348,7 +356,7 @@ pub fn[K : Hash + Eq, V] get_or_default(
 ///   inspect(map.contains("a"), content="true")
 ///   inspect(map.contains("c"), content="false")
 /// ```
-pub fn[K : Hash + Eq, V] contains(self : T[K, V], key : K) -> Bool {
+pub fn[K : Hash + Eq, V] contains(self : HashMap[K, V], key : K) -> Bool {
   let hash = key.hash()
   for i = 0, idx = hash & self.capacity_mask {
     guard self.entries[idx] is Some(entry) else { return false }
@@ -367,7 +375,7 @@ pub fn[K : Hash + Eq, V] contains(self : T[K, V], key : K) -> Bool {
 ///
 /// Parameters:
 ///
-/// * `map` : A map of type `@hashmap.T[K, V]` to search in.
+/// * `map` : A map of type `@hashmap.HashMap[K, V]` to search in.
 /// * `key` : The key to look up in the map.
 /// * `value` : The value to be compared with the value associated with the key.
 ///
@@ -385,7 +393,7 @@ pub fn[K : Hash + Eq, V] contains(self : T[K, V], key : K) -> Bool {
 ///   inspect(map.contains_kv("c", 3), content="false")
 /// ```
 pub fn[K : Hash + Eq, V : Eq] contains_kv(
-  self : T[K, V],
+  self : HashMap[K, V],
   key : K,
   value : V,
 ) -> Bool {
@@ -421,8 +429,16 @@ pub fn[K : Hash + Eq, V : Eq] contains_kv(
 ///   inspect(map.get("a"), content="None")
 ///   inspect(map.size(), content="1")
 /// ```
-pub fn[K : Hash + Eq, V] remove(self : T[K, V], key : K) -> Unit {
-  let hash = key.hash()
+pub fn[K : Hash + Eq, V] remove(self : HashMap[K, V], key : K) -> Unit {
+  self.remove_with_hash(key, key.hash())
+}
+
+///|
+fn[K : Eq, V] remove_with_hash(
+  self : HashMap[K, V],
+  key : K,
+  hash : Int,
+) -> Unit {
   for i = 0, idx = hash & self.capacity_mask {
     match self.entries[idx] {
       Some(entry) => {
@@ -442,7 +458,7 @@ pub fn[K : Hash + Eq, V] remove(self : T[K, V], key : K) -> Unit {
 }
 
 ///|
-fn[K, V] shift_back(self : T[K, V], idx : Int) -> Unit {
+fn[K, V] shift_back(self : HashMap[K, V], idx : Int) -> Unit {
   let next = (idx + 1) & self.capacity_mask
   match self.entries[next] {
     None | Some({ psl: 0, .. }) => self.entries[idx] = None
@@ -455,7 +471,7 @@ fn[K, V] shift_back(self : T[K, V], idx : Int) -> Unit {
 }
 
 ///|
-fn[K : Eq, V] grow(self : T[K, V]) -> Unit {
+fn[K : Eq, V] grow(self : HashMap[K, V]) -> Unit {
   let old_entries = self.entries
   let new_capacity = self.capacity << 1
   self.entries = FixedArray::make(new_capacity, None)
@@ -488,7 +504,7 @@ fn[K : Eq, V] grow(self : T[K, V]) -> Unit {
 ///   inspect(map.get(1), content="Some(\"one\")")
 ///   inspect(map.get(2), content="Some(\"two\")")
 /// ```
-pub fn[K : Eq + Hash, V] of(arr : FixedArray[(K, V)]) -> T[K, V] {
+pub fn[K : Eq + Hash, V] of(arr : FixedArray[(K, V)]) -> HashMap[K, V] {
   let m = new(capacity=arr.length())
   arr.each(e => m.set(e.0, e.1))
   m
@@ -516,10 +532,10 @@ test "of" {
 /// Example:
 ///
 /// ```moonbit
-///   let samples : Array[@hashmap.T[Int, String]] = @quickcheck.samples(5)
+///   let samples : Array[@hashmap.HashMap[Int, String]] = @quickcheck.samples(5)
 ///   inspect(samples.length(), content="5")
 /// ```
-pub impl[K : @quickcheck.Arbitrary + Hash + Eq, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[
+pub impl[K : @quickcheck.Arbitrary + Hash + Eq, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for HashMap[
   K,
   V,
 ] with arbitrary(size, rs) {
@@ -532,14 +548,17 @@ pub impl[K : @quickcheck.Arbitrary + Hash + Eq, V : @quickcheck.Arbitrary] @quic
 }
 
 ///|
-pub impl[K, V] Default for T[K, V] with default() {
+pub impl[K, V] Default for HashMap[K, V] with default() {
   new()
 }
 
 ///|
 /// Applies a function to each key-value pair in the map and 
 /// returns a new map with the results, using the original keys.
-pub fn[K, V, V2] T::map(self : T[K, V], f : (K, V) -> V2) -> T[K, V2] {
+pub fn[K, V, V2] HashMap::map(
+  self : HashMap[K, V],
+  f : (K, V) -> V2,
+) -> HashMap[K, V2] {
   let other = {
     capacity: self.capacity,
     entries: FixedArray::make(self.capacity, None),
@@ -559,7 +578,7 @@ pub fn[K, V, V2] T::map(self : T[K, V], f : (K, V) -> V2) -> T[K, V2] {
 
 ///|
 /// Copy the map, creating a new map with the same key-value pairs.
-pub fn[K, V] T::copy(self : T[K, V]) -> T[K, V] {
+pub fn[K, V] HashMap::copy(self : HashMap[K, V]) -> HashMap[K, V] {
   let other = {
     capacity: self.capacity,
     entries: FixedArray::make(self.capacity, None),
@@ -601,7 +620,7 @@ impl Show for MyString with output(self, logger) {
 
 ///|
 test "arbitrary" {
-  let samples : Array[T[String, Int]] = @quickcheck.samples(20)
+  let samples : Array[HashMap[String, Int]] = @quickcheck.samples(20)
   inspect(
     samples[5:10],
     content=(
@@ -618,7 +637,7 @@ test "arbitrary" {
 
 ///|
 test "set" {
-  let m : T[MyString, Int] = new()
+  let m : HashMap[MyString, Int] = new()
   m.set("a", 1)
   m.set("b", 1)
   m.set("bc", 2)
@@ -635,7 +654,7 @@ test "set" {
 
 ///|
 test "remove" {
-  let m : T[MyString, Int] = new()
+  let m : HashMap[MyString, Int] = new()
   m.set("a", 1)
   m.set("ab", 2)
   m.set("bc", 2)
@@ -652,7 +671,7 @@ test "remove" {
 
 ///|
 test "remove_unexist_key" {
-  let m : T[MyString, Int] = new()
+  let m : HashMap[MyString, Int] = new()
   m.set("a", 1)
   m.set("ab", 2)
   m.set("abc", 3)
@@ -663,7 +682,7 @@ test "remove_unexist_key" {
 
 ///|
 test "clear" {
-  let m : T[MyString, Int] = of([("a", 1), ("b", 2), ("c", 3)])
+  let m : HashMap[MyString, Int] = of([("a", 1), ("b", 2), ("c", 3)])
   m.clear()
   inspect(m.size(), content="0")
   inspect(m.capacity(), content="8")
@@ -674,7 +693,7 @@ test "clear" {
 
 ///|
 test "grow" {
-  let m : T[MyString, Int] = new()
+  let m : HashMap[MyString, Int] = new()
   m.set("C", 1)
   m.set("Go", 2)
   m.set("C++", 3)
@@ -699,7 +718,7 @@ test "grow" {
 
 ///|
 test "get_or_init" {
-  let m : T[MyString, Int] = new()
+  let m : HashMap[MyString, Int] = new()
   inspect(m.get_or_init("a", () => 1), content="1")
   inspect(m.get("a"), content="Some(1)")
   inspect(m.get_or_init("a", () => 2), content="1")

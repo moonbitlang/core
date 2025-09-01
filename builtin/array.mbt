@@ -76,6 +76,43 @@ pub fn[T] Array::make(len : Int, elem : T) -> Array[T] {
 }
 
 ///|
+/// Creates a new array of the specified length, where each element is
+/// initialized using an index-based initialization function.
+///
+/// Parameters:
+///
+/// * `length` : The length of the new array. If `length` is less than or equal
+/// to 0, returns an empty array.
+/// * `initializer` : A function that takes an index (starting from 0) and
+/// returns a value of type `T`. This function is called for each index to
+/// initialize the corresponding element.
+///
+/// Returns a new array of type `Array[T]` with the specified length, where each
+/// element is initialized using the provided function.
+///
+/// Example:
+///
+/// ```moonbit
+///   let arr = Array::makei(3, i => i * 2)
+///   inspect(arr, content="[0, 2, 4]")
+/// ```
+#locals(value)
+pub fn[T] Array::makei(
+  length : Int,
+  value : (Int) -> T raise?,
+) -> Array[T] raise? {
+  if length <= 0 {
+    []
+  } else {
+    let array = Array::make_uninit(length)
+    for i in 0..<length {
+      array.unsafe_set(i, value(i))
+    }
+    array
+  }
+}
+
+///|
 /// Returns the total capacity of the array, which is the number of elements that
 /// the array can hold without requiring reallocation of its internal buffer.
 ///
@@ -916,7 +953,8 @@ pub fn[T : Eq] Array::search(self : Array[T], value : T) -> Int? {
   }
 }
 
-///| Search the index of the first element that satisfies the predicate.
+///|
+/// Search the index of the first element that satisfies the predicate.
 ///
 /// # Example
 ///

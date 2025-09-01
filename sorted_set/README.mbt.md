@@ -10,7 +10,7 @@ You can create an empty SortedSet or a SortedSet from other containers.
 
 ```moonbit
 test {
-    let _set1 : @sorted_set.T[Int] = @sorted_set.new()
+    let _set1 : @sorted_set.SortedSet[Int] = @sorted_set.new()
     let _set2 = @sorted_set.singleton(1)
     let _set3 = @sorted_set.from_array([1])
 }
@@ -72,7 +72,7 @@ Whether the set is empty.
 
 ```moonbit
 test {
-    let set : @sorted_set.T[Int] = @sorted_set.new()
+    let set : @sorted_set.SortedSet[Int] = @sorted_set.new()
     assert_eq(set.is_empty(), true)
 }
 ```

@@ -12,11 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-///|
 // head and tail point to non-empty slots. When the buffer is empty, head and tail points to the same slot.
-struct T[A] {
+
+///|
+struct Deque[A] {
   mut buf : UninitializedArray[A]
   mut len : Int
   mut head : Int
   mut tail : Int
 }
+
+///|
+#deprecated("Use `Deque` instead of `T`")
+pub typealias Deque as T

@@ -18,7 +18,7 @@
 /// # Example
 ///
 /// ```moonbit
-/// let ls : List[Int] = @list.new()
+/// let ls : @list.List[Int] = @list.new()
 /// assert_eq(ls, @list.empty())
 /// ```
 pub fn[A] new() -> List[A] {
@@ -31,7 +31,7 @@ pub fn[A] new() -> List[A] {
 /// # Example
 ///
 /// ```moonbit
-/// let ls : List[Int] = @list.empty()
+/// let ls : @list.List[Int] = @list.empty()
 /// assert_eq(ls.length(), 0)
 /// ```
 pub fn[A] empty() -> List[A] {
@@ -810,7 +810,7 @@ pub fn[A] intersperse(self : List[A], separator : A) -> List[A] {
 /// # Example
 ///
 /// ```moonbit
-/// let empty_list : List[Int] = @list.empty()
+/// let empty_list : @list.List[Int] = @list.empty()
 /// assert_eq(empty_list.is_empty(), true)
 /// 
 /// let non_empty = @list.of([1, 2, 3])
@@ -938,7 +938,7 @@ pub fn[A : Compare] unsafe_maximum(self : List[A]) -> A {
 ///   let ls = @list.of([1, 3, 2, 5, 4])
 ///   assert_eq(ls.maximum(), Some(5))
 ///   
-///   let empty : List[Int] = @list.empty()
+///   let empty : @list.List[Int] = @list.empty()
 ///   assert_eq(empty.maximum(), None)
 /// ```
 pub fn[A : Compare] maximum(self : List[A]) -> A? {
@@ -994,7 +994,7 @@ pub fn[A : Compare] unsafe_minimum(self : List[A]) -> A {
 /// let ls = @list.of([1, 3, 2, 5, 4])
 /// assert_eq(ls.minimum(), Some(1))
 /// 
-/// let empty : List[Int] = @list.empty()
+/// let empty : @list.List[Int] = @list.empty()
 /// assert_eq(empty.minimum(), None)
 /// ```
 pub fn[A : Compare] minimum(self : List[A]) -> A? {
@@ -1314,7 +1314,7 @@ pub fn[A] find(self : List[A], f : (A) -> Bool raise?) -> A? raise? {
 /// Example:
 ///
 /// ```moonbit
-///   let ls = of([1, 2, 3, 4, 5])
+///   let ls = @list.of([1, 2, 3, 4, 5])
 ///   inspect(ls.find_index(x => x % 2 == 0), content="Some(1)")
 ///   inspect(ls.find_index(x => x > 10), content="None")
 /// ```
@@ -1485,7 +1485,7 @@ pub impl[X] Default for List[X] with default() {
 /// # Example
 ///
 /// ```moonbit
-///   let ls : List[Int] = @list.default()
+///   let ls : @list.List[Int] = @list.default()
 ///   assert_eq(ls.is_empty(), true)
 /// ```
 pub fn[X] default() -> List[X] {

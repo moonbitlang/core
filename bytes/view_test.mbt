@@ -403,7 +403,7 @@ test "panic to_float_be/short_input" {
   // Test that trying to read from a view that's too short causes a panic
   let bytes = b"\x40\x49"
   let view = bytes[:]
-  ignore(View::to_float_be(view)) // Should panic due to insufficient bytes
+  ignore(@bytes.View::to_float_be(view)) // Should panic due to insufficient bytes
 }
 
 ///|
@@ -525,7 +525,8 @@ test "impl Hash for View" {
   assert_not_eq(b0[4:8].hash(), b1[4:8].hash())
 }
 
-///| This test checks the invariance that the hash of a bytes and its view are the same.
+///|
+/// This test checks the invariance that the hash of a bytes and its view are the same.
 /// 
 /// This is necessary because we may want to use a bytes view as a key in a hash map,
 /// and we need to ensure that the hash remains consistent with the original bytes.

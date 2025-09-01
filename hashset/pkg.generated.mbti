@@ -1,0 +1,58 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/hashset"
+
+import(
+  "moonbitlang/core/quickcheck"
+)
+
+// Values
+
+// Errors
+
+// Types and methods
+type HashSet[K]
+fn[K : Hash + Eq] HashSet::add(Self[K], K) -> Unit
+fn[K : Hash + Eq] HashSet::add_and_check(Self[K], K) -> Bool
+fn[K] HashSet::capacity(Self[K]) -> Int
+fn[K] HashSet::clear(Self[K]) -> Unit
+fn[K : Hash + Eq] HashSet::contains(Self[K], K) -> Bool
+fn[K] HashSet::copy(Self[K]) -> Self[K]
+fn[K : Hash + Eq] HashSet::difference(Self[K], Self[K]) -> Self[K]
+fn[K] HashSet::each(Self[K], (K) -> Unit raise?) -> Unit raise?
+fn[K] HashSet::eachi(Self[K], (Int, K) -> Unit raise?) -> Unit raise?
+fn[K : Hash + Eq] HashSet::from_array(Array[K]) -> Self[K]
+fnalias HashSet::from_array
+fn[K : Hash + Eq] HashSet::from_iter(Iter[K]) -> Self[K]
+fnalias HashSet::from_iter
+#deprecated
+fn[K : Hash + Eq] HashSet::insert(Self[K], K) -> Unit
+fn[K : Hash + Eq] HashSet::intersection(Self[K], Self[K]) -> Self[K]
+fn[K : Hash + Eq] HashSet::is_disjoint(Self[K], Self[K]) -> Bool
+fn[K] HashSet::is_empty(Self[K]) -> Bool
+fn[K : Hash + Eq] HashSet::is_subset(Self[K], Self[K]) -> Bool
+fn[K : Hash + Eq] HashSet::is_superset(Self[K], Self[K]) -> Bool
+fn[K] HashSet::iter(Self[K]) -> Iter[K]
+fn[K] HashSet::new(capacity? : Int) -> Self[K]
+fnalias HashSet::new
+fn[K : Hash + Eq] HashSet::of(FixedArray[K]) -> Self[K]
+fnalias HashSet::of
+fn[K : Hash + Eq] HashSet::remove(Self[K], K) -> Unit
+fn[K : Hash + Eq] HashSet::remove_and_check(Self[K], K) -> Bool
+fn[K] HashSet::size(Self[K]) -> Int
+fn[K : Hash + Eq] HashSet::symmetric_difference(Self[K], Self[K]) -> Self[K]
+fn[K] HashSet::to_array(Self[K]) -> Array[K]
+fn[K : Hash + Eq] HashSet::union(Self[K], Self[K]) -> Self[K]
+impl[K : Hash + Eq] BitAnd for HashSet[K]
+impl[K : Hash + Eq] BitOr for HashSet[K]
+impl[K : Hash + Eq] BitXOr for HashSet[K]
+impl[K] Default for HashSet[K]
+impl[K : Show] Show for HashSet[K]
+impl[K : Hash + Eq] Sub for HashSet[K]
+impl[X : ToJson] ToJson for HashSet[X]
+impl[X : @quickcheck.Arbitrary + Eq + Hash] @quickcheck.Arbitrary for HashSet[X]
+
+// Type aliases
+pub typealias HashSet as T
+
+// Traits
+
