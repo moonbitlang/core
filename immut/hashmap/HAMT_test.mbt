@@ -704,3 +704,14 @@ test "arbitary" {
   let m : Array[@hashmap.HashMap[Int, Int]] = @quickcheck.samples(10)
   inspect(m.length(), content="10")
 }
+
+///|
+test "equal imply hash equal when collision" {
+  let s1 = MyString("1")
+  let s2 = MyString("2")
+  inspect(s1.hash() == s2.hash(), content="true") // collisions
+  let ma = @hashmap.new().add(s1, 1).add(s2, 2)
+  let mb = @hashmap.new().add(s2, 2).add(s1, 1)
+  inspect(ma == mb, content="true")
+  inspect(ma.hash() == mb.hash(), content="false")
+}
