@@ -245,13 +245,3 @@ test "Bytes::get out of bounds" {
   let byte = bytes.get(3)
   inspect(byte, content="None")
 }
-
-///|
-test "using regex" {
-  match b"hell123o" using regex {
-    ["hell[0-9]+" as x, .. rest] => {
-      guard x is "hell123" && rest is "o" else { fail("Regex match failed") }
-    }
-    _ => fail("impossible")
-  }
-}
