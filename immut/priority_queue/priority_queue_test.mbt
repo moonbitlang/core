@@ -30,7 +30,7 @@ test "to_array" {
   inspect(v.to_array(), content="[4, 3, 2, 1]")
   inspect(v.push(0).to_array(), content="[4, 3, 2, 1, 0]")
   inspect(
-    (@priority_queue.new() : @priority_queue.T[Int]).to_array(),
+    (@priority_queue.new() : @priority_queue.PriorityQueue[Int]).to_array(),
     content="[]",
   )
 }
@@ -57,7 +57,7 @@ test "pop" {
     },
     content="Some(3)",
   )
-  let empty : @priority_queue.T[Int] = @priority_queue.of([])
+  let empty : @priority_queue.PriorityQueue[Int] = @priority_queue.of([])
   inspect(
     match empty.pop() {
       Some(q) => q.peek()
@@ -117,7 +117,7 @@ test "length" {
 ///|
 test "from_iter multiple elements iter" {
   inspect(
-    @priority_queue.T::from_iter([1, 2, 3].iter()),
+    @priority_queue.PriorityQueue::from_iter([1, 2, 3].iter()),
     content="@immut/priority_queue.of([3, 2, 1])",
   )
 }
@@ -125,14 +125,16 @@ test "from_iter multiple elements iter" {
 ///|
 test "from_iter single element iter" {
   inspect(
-    @priority_queue.T::from_iter([1].iter()),
+    @priority_queue.PriorityQueue::from_iter([1].iter()),
     content="@immut/priority_queue.of([1])",
   )
 }
 
 ///|
 test "from_iter empty iter" {
-  let pq : @priority_queue.T[Int] = @priority_queue.T::from_iter(Iter::empty())
+  let pq : @priority_queue.PriorityQueue[Int] = @priority_queue.PriorityQueue::from_iter(
+    Iter::empty(),
+  )
   inspect(pq, content="@immut/priority_queue.of([])")
 }
 
@@ -143,7 +145,7 @@ test "hash" {
   inspect(pq1.hash() == pq2.hash(), content="true")
   let pq3 = @priority_queue.of([5, 4, 3, 2, 1])
   inspect(pq1.hash() == pq3.hash(), content="true")
-  let pq4 : @priority_queue.T[Int] = @priority_queue.new()
+  let pq4 : @priority_queue.PriorityQueue[Int] = @priority_queue.new()
   inspect(pq1.hash() == pq4.hash(), content="false")
   inspect(pq4.hash() == pq4.hash(), content="true")
   let pq5 = @priority_queue.of([1, 2, 3, 4, 6])
@@ -158,7 +160,7 @@ test "equal" {
   inspect(pq1 == pq2, content="true")
   let pq3 = @priority_queue.of([5, 4, 3, 2, 1])
   inspect(pq1 == pq3, content="true")
-  let pq4 : @priority_queue.T[Int] = @priority_queue.new()
+  let pq4 : @priority_queue.PriorityQueue[Int] = @priority_queue.new()
   inspect(pq1 == pq4, content="false")
   let pq5 = @priority_queue.of([1, 2, 3])
   inspect(pq1 == pq5, content="false")
@@ -191,7 +193,7 @@ test "compare" {
   let pq1 = @priority_queue.of([1, 2, 3])
   let pq2 = @priority_queue.of([1, 2, 4])
   let pq3 = @priority_queue.of([1, 2])
-  let empty : @priority_queue.T[Int] = @priority_queue.new()
+  let empty : @priority_queue.PriorityQueue[Int] = @priority_queue.new()
   inspect(pq1.compare(pq2), content="-1")
   inspect(pq1.compare(pq3), content="1")
   inspect(pq3.compare(pq1), content="-1")

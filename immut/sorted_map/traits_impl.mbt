@@ -13,12 +13,12 @@
 // limitations under the License.
 
 ///|
-pub impl[K, V] Default for T[K, V] with default() {
+pub impl[K, V] Default for SortedMap[K, V] with default() {
   new()
 }
 
 ///|
-pub impl[K : Eq, V : Eq] Eq for T[K, V] with op_equal(self, other) -> Bool {
+pub impl[K : Eq, V : Eq] Eq for SortedMap[K, V] with op_equal(self, other) -> Bool {
   let iter = InorderIterator::new(self)
   let iter1 = InorderIterator::new(other)
   loop (iter.next(), iter1.next()) {
@@ -32,7 +32,10 @@ pub impl[K : Eq, V : Eq] Eq for T[K, V] with op_equal(self, other) -> Bool {
 }
 
 ///|
-pub impl[K : Compare, V : Compare] Compare for T[K, V] with compare(self, other) -> Int {
+pub impl[K : Compare, V : Compare] Compare for SortedMap[K, V] with compare(
+  self,
+  other,
+) -> Int {
   let iter = InorderIterator::new(self)
   let iter1 = InorderIterator::new(other)
   loop (iter.next(), iter1.next()) {
@@ -48,7 +51,7 @@ pub impl[K : Compare, V : Compare] Compare for T[K, V] with compare(self, other)
 }
 
 ///|
-pub impl[K : @quickcheck.Arbitrary + Compare, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[
+pub impl[K : @quickcheck.Arbitrary + Compare, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for SortedMap[
   K,
   V,
 ] with arbitrary(size, rs) {
@@ -56,19 +59,22 @@ pub impl[K : @quickcheck.Arbitrary + Compare, V : @quickcheck.Arbitrary] @quickc
 }
 
 ///|
-pub impl[K : Hash, V : Hash] Hash for T[K, V] with hash_combine(self, hasher) {
+pub impl[K : Hash, V : Hash] Hash for SortedMap[K, V] with hash_combine(
+  self,
+  hasher,
+) {
   for e in self {
     hasher..combine(e.0)..combine(e.1)
   }
 }
 
 ///|
-pub impl[K : Show, V : Show] Show for T[K, V] with output(self, logger) {
+pub impl[K : Show, V : Show] Show for SortedMap[K, V] with output(self, logger) {
   logger.write_iter(self.iter(), prefix="@immut/sorted_map.of([", suffix="])")
 }
 
 ///|
-pub impl[K : Show, V : ToJson] ToJson for T[K, V] with to_json(self) {
+pub impl[K : Show, V : ToJson] ToJson for SortedMap[K, V] with to_json(self) {
   let capacity = self.size()
   guard capacity != 0 else { return Json::object(Map::new()) }
   let jsons = Map::new(capacity~)
@@ -77,7 +83,7 @@ pub impl[K : Show, V : ToJson] ToJson for T[K, V] with to_json(self) {
 }
 
 ///|
-pub impl[V : @json.FromJson] @json.FromJson for T[String, V] with from_json(
+pub impl[V : @json.FromJson] @json.FromJson for SortedMap[String, V] with from_json(
   json,
   path,
 ) {

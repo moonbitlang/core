@@ -25,4 +25,8 @@ priv enum Node[A] {
 }
 
 ///|
-struct T[A](Node[A]?) derive(Eq)
+struct HashSet[A](Node[A]?) derive(Eq)
+
+///|
+#deprecated("Use `Set` instead of `T`")
+pub typealias HashSet as T

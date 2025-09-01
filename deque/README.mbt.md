@@ -10,7 +10,7 @@ You can create a deque manually via the `new()` or construct it using the `of()`
 
 ```moonbit
 test {
-    let _dv : @deque.T[Int] = @deque.new()
+    let _dv : @deque.Deque[Int] = @deque.new()
     let _dv = @deque.of([1, 2, 3, 4, 5])
 }
 ```
@@ -19,7 +19,7 @@ If you want to set the length at creation time to minimize expansion consumption
 
 ```moonbit
 test {
-    let _dv: @deque.T[Int] = @deque.new(capacity=10)
+    let _dv: @deque.Deque[Int] = @deque.new(capacity=10)
 }
 ```
 
@@ -38,7 +38,7 @@ Similarly, you can use the `is_empty` to determine whether the queue is empty.
 
 ```moonbit
 test {
-   let dv : @deque.T[Int] = @deque.new()
+   let dv : @deque.Deque[Int] = @deque.new()
    assert_eq(dv.is_empty(), true)
 }
 ```

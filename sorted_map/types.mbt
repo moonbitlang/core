@@ -22,7 +22,11 @@ priv struct Node[K, V] {
 }
 
 ///|
-struct T[K, V] {
+struct SortedMap[K, V] {
   mut root : Node[K, V]?
   mut size : Int
 }
+
+///|
+#deprecated("Use `SortedMap` instead of `T`")
+pub typealias SortedMap as T

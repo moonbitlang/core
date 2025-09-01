@@ -55,9 +55,7 @@ fn[A, B] Array::filter_map(Self[A], (A) -> B? raise?) -> Self[B] raise?
 fn[T] Array::from_iter(Iter[T]) -> Self[T]
 fn[A : @string.ToStringView] Array::join(Self[A], @string.View) -> String
 fn[A] Array::last(Self[A]) -> A?
-fn[T] Array::makei(Int, (Int) -> T raise?) -> Self[T] raise?
 fn[T] Array::push_iter(Self[T], Iter[T]) -> Unit
-fnalias Array::push_iter
 fn[T] Array::shuffle(Self[T], rand~ : (Int) -> Int) -> Self[T]
 fn[T] Array::shuffle_in_place(Self[T], rand~ : (Int) -> Int) -> Unit
 fn[T : Compare] Array::sort(Self[T]) -> Unit

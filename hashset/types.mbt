@@ -35,10 +35,14 @@ priv struct Entry[K] {
 ///   set.add((4, "four"))
 ///   assert_eq(set.contains((4, "four")), true)
 /// ```
-struct T[K] {
+struct HashSet[K] {
   mut entries : FixedArray[Entry[K]?]
   mut size : Int // active key count
   mut capacity : Int // current capacity
   mut capacity_mask : Int // capacity_mask = capacity - 1, used to find idx
   mut grow_at : Int // threshold that triggers grow
 }
+
+///|
+#deprecated("Use `HashSet` instead of `T`")
+pub typealias HashSet as T

@@ -8,7 +8,7 @@ Queue is a first in first out (FIFO) data structure, allowing to process their e
 You can create a queue manually by using the `new` or construct it using the `from_array`.
 ```moonbit
 test {
-    let _queue : @queue.T[Int] = @queue.new()
+    let _queue : @queue.Queue[Int] = @queue.new()
     let _queue1 = @queue.of([1,2,3])
 }
 ```
@@ -86,8 +86,8 @@ test {
 Transfer the elements from one queue to another using the `transfer` method.
 ```moonbit
 test {
-    let dst : @queue.T[Int] = @queue.new()
-    let src : @queue.T[Int] = @queue.of([5, 6, 7, 8])
+    let dst : @queue.Queue[Int] = @queue.new()
+    let src : @queue.Queue[Int] = @queue.of([5, 6, 7, 8])
     src.transfer(dst)
 }
 ```
