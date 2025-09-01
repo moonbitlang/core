@@ -23,7 +23,7 @@ You can create an empty SortedMap or a SortedMap from other containers.
 
 ```moonbit
 test {
-  let _map1 : @sorted_map.T[Int, String] = @sorted_map.new()
+  let _map1 : @sorted_map.SortedMap[Int, String] = @sorted_map.new()
   let _map2 = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
 
 }
@@ -133,7 +133,7 @@ Check if the map is empty.
 
 ```moonbit
 test {
-  let map : @sorted_map.T[Int, String] = @sorted_map.new()
+  let map : @sorted_map.SortedMap[Int, String] = @sorted_map.new()
   assert_eq(map.is_empty(), true)
 }
 ```
@@ -258,7 +258,7 @@ test {
 When working with keys that might not exist, prefer using pattern matching for safety:
 
 ```moonbit
-fn get_score(scores : @sorted_map.T[Int, Int], student_id : Int) -> Int {
+fn get_score(scores : @sorted_map.SortedMap[Int, Int], student_id : Int) -> Int {
   match scores.get(student_id) {
     Some(score) => score
     None =>
@@ -296,7 +296,7 @@ Key properties of the AVL tree implementation:
 
 - **@hashmap.T**: Provides O(1) average case lookups but doesn't maintain order; use when order doesn't matter
 - **@indexmap.T**: Maintains insertion order but not sorted order; use when insertion order matters
-- **@sorted_map.T**: Maintains keys in sorted order; use when you need keys to be sorted
+- **@sorted_map.SortedMap**: Maintains keys in sorted order; use when you need keys to be sorted
 
 Choose SortedMap when you need:
 - Key-value pairs sorted by key

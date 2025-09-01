@@ -162,65 +162,77 @@ test "from_iter single element iter" {
 
 ///|
 test "from_iter empty iter" {
-  let pq : @hashmap.T[Int, Int] = @hashmap.from_iter(Iter::empty())
+  let pq : @hashmap.HashMap[Int, Int] = @hashmap.from_iter(Iter::empty())
   inspect(pq, content="@immut/hashmap.of([])")
 }
 
 ///|
 test "eq for boundary cases" {
   // Test with empty maps
-  let empty_map1 : @hashmap.T[Int, Int] = @hashmap.new()
-  let empty_map2 : @hashmap.T[Int, Int] = @hashmap.new()
+  let empty_map1 : @hashmap.HashMap[Int, Int] = @hashmap.new()
+  let empty_map2 : @hashmap.HashMap[Int, Int] = @hashmap.new()
   inspect(empty_map1 == empty_map2, content="true")
 
   // Test with one empty map and one non-empty map
-  let non_empty_map : @hashmap.T[Int, Int] = @hashmap.of([(1, 1)])
+  let non_empty_map : @hashmap.HashMap[Int, Int] = @hashmap.of([(1, 1)])
   inspect(empty_map1 == non_empty_map, content="false")
   inspect(non_empty_map == empty_map1, content="false")
 
   // Test with maps of different sizes
-  let larger_map : @hashmap.T[Int, Int] = @hashmap.of([(1, 1), (2, 2)])
+  let larger_map : @hashmap.HashMap[Int, Int] = @hashmap.of([(1, 1), (2, 2)])
   inspect(non_empty_map == larger_map, content="false")
 }
 
 ///|
 test "eq for random cases" {
   // Test with maps containing different keys
-  let map1 : @hashmap.T[Int, Int] = @hashmap.of([(1, 1), (2, 2)])
-  let map2 : @hashmap.T[Int, Int] = @hashmap.of([(1, 1), (3, 3)])
+  let map1 : @hashmap.HashMap[Int, Int] = @hashmap.of([(1, 1), (2, 2)])
+  let map2 : @hashmap.HashMap[Int, Int] = @hashmap.of([(1, 1), (3, 3)])
   inspect(map1 == map2, content="false")
 
   // Test with maps containing same keys but different values
-  let map3 : @hashmap.T[Int, Int] = @hashmap.of([(1, 1), (2, 3)])
+  let map3 : @hashmap.HashMap[Int, Int] = @hashmap.of([(1, 1), (2, 3)])
   inspect(map1 == map3, content="false")
 
   // Test with maps containing same keys and values but in different order
-  let map4 : @hashmap.T[Int, Int] = @hashmap.of([(2, 2), (1, 1)])
+  let map4 : @hashmap.HashMap[Int, Int] = @hashmap.of([(2, 2), (1, 1)])
   inspect(map1 == map4, content="true")
 
   // Test with maps containing same keys and values but with different hash collisions
-  let map5 : @hashmap.T[Int, Int] = @hashmap.of([(1, 1), (11, 11)])
-  let map6 : @hashmap.T[Int, Int] = @hashmap.of([(1, 1), (11, 11)])
+  let map5 : @hashmap.HashMap[Int, Int] = @hashmap.of([(1, 1), (11, 11)])
+  let map6 : @hashmap.HashMap[Int, Int] = @hashmap.of([(1, 1), (11, 11)])
   inspect(map5 == map6, content="true")
 
   // Test with maps containing same keys and values but with different hash collisions and different order
-  let map7 : @hashmap.T[Int, Int] = @hashmap.of([(11, 11), (1, 1)])
+  let map7 : @hashmap.HashMap[Int, Int] = @hashmap.of([(11, 11), (1, 1)])
   inspect(map5 == map7, content="true")
 }
 
 ///|
 test "eq for random cases with different types" {
   // Test with maps containing different types
-  let map8 : @hashmap.T[String, Int] = @hashmap.of([("one", 1), ("two", 2)])
-  let map9 : @hashmap.T[String, Int] = @hashmap.of([("one", 1), ("two", 2)])
+  let map8 : @hashmap.HashMap[String, Int] = @hashmap.of([
+    ("one", 1),
+    ("two", 2),
+  ])
+  let map9 : @hashmap.HashMap[String, Int] = @hashmap.of([
+    ("one", 1),
+    ("two", 2),
+  ])
   inspect(map8 == map9, content="true")
 
   // Test with maps containing same keys but different values of different types
-  let map10 : @hashmap.T[String, Int] = @hashmap.of([("one", 1), ("two", 3)])
+  let map10 : @hashmap.HashMap[String, Int] = @hashmap.of([
+    ("one", 1),
+    ("two", 3),
+  ])
   inspect(map8 == map10, content="false")
 
   // Test with maps containing different keys of different types
-  let map11 : @hashmap.T[String, Int] = @hashmap.of([("one", 1), ("three", 3)])
+  let map11 : @hashmap.HashMap[String, Int] = @hashmap.of([
+    ("one", 1),
+    ("three", 3),
+  ])
   inspect(map8 == map11, content="false")
 }
 
@@ -374,7 +386,7 @@ test "HAMT::map with overflow" {
 
 ///|
 test "HAMT::map_with_key empty" {
-  let map : @hashmap.T[Int, Int] = @hashmap.new()
+  let map : @hashmap.HashMap[Int, Int] = @hashmap.new()
   let mapped = map.map_with_key((_k, v) => v)
   inspect(mapped.size(), content="0")
 }
@@ -457,7 +469,7 @@ test "add_with_hash collision" {
 
 ///|
 test "empty filtering" {
-  let map : @hashmap.T[Int, Int] = @hashmap.of([])
+  let map : @hashmap.HashMap[Int, Int] = @hashmap.of([])
   let _filtered = map.filter_with_key((_, v) => v > 2)
   inspect(map.size(), content="0")
 }
@@ -489,7 +501,7 @@ test "filter with collision - more than one left" {
 
 ///|
 test "HAMT::fold_with_key on empty" {
-  let map : @hashmap.T[Int, Int] = @hashmap.new()
+  let map : @hashmap.HashMap[Int, Int] = @hashmap.new()
   let result = map.fold_with_key(init=0, (acc, _k, _v) => acc + 1)
   inspect(result, content="0")
 }
@@ -689,6 +701,17 @@ test "HAMT::each" {
 
 ///|
 test "arbitary" {
-  let m : Array[@hashmap.T[Int, Int]] = @quickcheck.samples(10)
+  let m : Array[@hashmap.HashMap[Int, Int]] = @quickcheck.samples(10)
   inspect(m.length(), content="10")
+}
+
+///|
+test "equal imply hash equal when collision" {
+  let s1 = MyString("1")
+  let s2 = MyString("2")
+  inspect(s1.hash() == s2.hash(), content="true") // collisions
+  let ma = @hashmap.new().add(s1, 1).add(s2, 2)
+  let mb = @hashmap.new().add(s2, 2).add(s1, 1)
+  inspect(ma == mb, content="true")
+  inspect(ma.hash() == mb.hash(), content="true")
 }

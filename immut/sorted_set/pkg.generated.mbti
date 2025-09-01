@@ -7,75 +7,76 @@ import(
 )
 
 // Values
-fn[A : Compare] from_array(Array[A]) -> T[A]
+fn[A : Compare] from_array(Array[A]) -> SortedSet[A]
 
-fn[A : Compare] from_iter(Iter[A]) -> T[A]
+fn[A : Compare] from_iter(Iter[A]) -> SortedSet[A]
 
-fn[A : @json.FromJson + Compare] from_json(Json) -> T[A] raise @json.JsonDecodeError
+fn[A : @json.FromJson + Compare] from_json(Json) -> SortedSet[A] raise @json.JsonDecodeError
 
-fn[A] new() -> T[A]
+fn[A] new() -> SortedSet[A]
 
-fn[A : Compare] of(FixedArray[A]) -> T[A]
+fn[A : Compare] of(FixedArray[A]) -> SortedSet[A]
 
-fn[A] singleton(A) -> T[A]
+fn[A] singleton(A) -> SortedSet[A]
 
 // Errors
 
 // Types and methods
-type T[A]
-fn[A : Compare] T::add(Self[A], A) -> Self[A]
-fn[A : Compare] T::all(Self[A], (A) -> Bool raise?) -> Bool raise?
-fn[A : Compare] T::any(Self[A], (A) -> Bool raise?) -> Bool raise?
-fn[A : Compare] T::contains(Self[A], A) -> Bool
+type SortedSet[A]
+fn[A : Compare] SortedSet::add(Self[A], A) -> Self[A]
+fn[A : Compare] SortedSet::all(Self[A], (A) -> Bool raise?) -> Bool raise?
+fn[A : Compare] SortedSet::any(Self[A], (A) -> Bool raise?) -> Bool raise?
+fn[A : Compare] SortedSet::contains(Self[A], A) -> Bool
 #deprecated
-fn[A : Compare] T::diff(Self[A], Self[A]) -> Self[A]
-fn[A : Compare] T::difference(Self[A], Self[A]) -> Self[A]
-fn[A : Compare] T::disjoint(Self[A], Self[A]) -> Bool
-fn[A] T::each(Self[A], (A) -> Unit raise?) -> Unit raise?
-fn[A : Compare] T::filter(Self[A], (A) -> Bool raise?) -> Self[A] raise?
-fn[A : Compare, B] T::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
+fn[A : Compare] SortedSet::diff(Self[A], Self[A]) -> Self[A]
+fn[A : Compare] SortedSet::difference(Self[A], Self[A]) -> Self[A]
+fn[A : Compare] SortedSet::disjoint(Self[A], Self[A]) -> Bool
+fn[A] SortedSet::each(Self[A], (A) -> Unit raise?) -> Unit raise?
+fn[A : Compare] SortedSet::filter(Self[A], (A) -> Bool raise?) -> Self[A] raise?
+fn[A : Compare, B] SortedSet::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 #deprecated
-fn[A : Compare] T::from_array(Array[A]) -> Self[A]
+fn[A : Compare] SortedSet::from_array(Array[A]) -> Self[A]
 #deprecated
-fn[A : Compare] T::from_iter(Iter[A]) -> Self[A]
+fn[A : Compare] SortedSet::from_iter(Iter[A]) -> Self[A]
 #deprecated
-fn[A : @json.FromJson + Compare] T::from_json(Json) -> Self[A] raise @json.JsonDecodeError
+fn[A : @json.FromJson + Compare] SortedSet::from_json(Json) -> Self[A] raise @json.JsonDecodeError
 #deprecated
-fn[A : Compare] T::inter(Self[A], Self[A]) -> Self[A]
-fn[A : Compare] T::intersection(Self[A], Self[A]) -> Self[A]
-fn[A] T::is_empty(Self[A]) -> Bool
-fn[A] T::iter(Self[A]) -> Iter[A]
-fn[A : Compare, B : Compare] T::map(Self[A], (A) -> B raise?) -> Self[B] raise?
-fn[A : Compare] T::max(Self[A]) -> A
-fn[A : Compare] T::max_option(Self[A]) -> A?
-fn[A : Compare] T::min(Self[A]) -> A
-fn[A : Compare] T::min_option(Self[A]) -> A?
+fn[A : Compare] SortedSet::inter(Self[A], Self[A]) -> Self[A]
+fn[A : Compare] SortedSet::intersection(Self[A], Self[A]) -> Self[A]
+fn[A] SortedSet::is_empty(Self[A]) -> Bool
+fn[A] SortedSet::iter(Self[A]) -> Iter[A]
+fn[A : Compare, B : Compare] SortedSet::map(Self[A], (A) -> B raise?) -> Self[B] raise?
+fn[A : Compare] SortedSet::max(Self[A]) -> A
+fn[A : Compare] SortedSet::max_option(Self[A]) -> A?
+fn[A : Compare] SortedSet::min(Self[A]) -> A
+fn[A : Compare] SortedSet::min_option(Self[A]) -> A?
 #deprecated
-fn[A] T::new() -> Self[A]
+fn[A] SortedSet::new() -> Self[A]
 #deprecated
-fn[A : Compare] T::of(FixedArray[A]) -> Self[A]
-fn[A : Compare] T::remove(Self[A], A) -> Self[A]
-fn[A : Compare] T::remove_min(Self[A]) -> Self[A]
+fn[A : Compare] SortedSet::of(FixedArray[A]) -> Self[A]
+fn[A : Compare] SortedSet::remove(Self[A], A) -> Self[A]
+fn[A : Compare] SortedSet::remove_min(Self[A]) -> Self[A]
 #deprecated
-fn[A] T::singleton(A) -> Self[A]
-fn[A] T::size(Self[A]) -> Int
-fn[A : Compare] T::split(Self[A], A) -> (Self[A], Bool, Self[A])
-fn[A : Compare] T::subset(Self[A], Self[A]) -> Bool
-fn[A : Compare] T::symmetric_difference(Self[A], Self[A]) -> Self[A]
-fn[A] T::to_array(Self[A]) -> Array[A]
-fn[A : ToJson] T::to_json(Self[A]) -> Json
-fn[A : Compare] T::union(Self[A], Self[A]) -> Self[A]
-impl[A : Compare] Add for T[A]
-impl[A : Compare] Compare for T[A]
-impl[A] Default for T[A]
-impl[A : Eq] Eq for T[A]
-impl[A : Hash] Hash for T[A]
-impl[A : Show] Show for T[A]
-impl[A : ToJson] ToJson for T[A]
-impl[A : @json.FromJson + Compare] @json.FromJson for T[A]
-impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for T[X]
+fn[A] SortedSet::singleton(A) -> Self[A]
+fn[A] SortedSet::size(Self[A]) -> Int
+fn[A : Compare] SortedSet::split(Self[A], A) -> (Self[A], Bool, Self[A])
+fn[A : Compare] SortedSet::subset(Self[A], Self[A]) -> Bool
+fn[A : Compare] SortedSet::symmetric_difference(Self[A], Self[A]) -> Self[A]
+fn[A] SortedSet::to_array(Self[A]) -> Array[A]
+fn[A : ToJson] SortedSet::to_json(Self[A]) -> Json
+fn[A : Compare] SortedSet::union(Self[A], Self[A]) -> Self[A]
+impl[A : Compare] Add for SortedSet[A]
+impl[A : Compare] Compare for SortedSet[A]
+impl[A] Default for SortedSet[A]
+impl[A : Eq] Eq for SortedSet[A]
+impl[A : Hash] Hash for SortedSet[A]
+impl[A : Show] Show for SortedSet[A]
+impl[A : ToJson] ToJson for SortedSet[A]
+impl[A : @json.FromJson + Compare] @json.FromJson for SortedSet[A]
+impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for SortedSet[X]
 
 // Type aliases
+pub typealias SortedSet as T
 
 // Traits
 

@@ -15,36 +15,36 @@
 ///|
 #deprecated("use `@immut/sorted_set.new` instead")
 #coverage.skip
-pub fn[A] T::new() -> T[A] {
+pub fn[A] SortedSet::new() -> SortedSet[A] {
   Empty
 }
 
 ///|
 #deprecated("use `immut/sorted_set.singleton` instead")
 #coverage.skip
-pub fn[A] T::singleton(value : A) -> T[A] {
+pub fn[A] SortedSet::singleton(value : A) -> SortedSet[A] {
   singleton(value)
 }
 
 ///|
 #deprecated("use `@immut/sorted_set.from_array` instead")
 #coverage.skip
-pub fn[A : Compare] T::from_array(array : Array[A]) -> T[A] {
+pub fn[A : Compare] SortedSet::from_array(array : Array[A]) -> SortedSet[A] {
   from_array(array)
 }
 
 ///|
 #deprecated("use `@immut/sorted_set.from_json` instead")
 #coverage.skip
-pub fn[A : @json.FromJson + Compare] T::from_json(
+pub fn[A : @json.FromJson + Compare] SortedSet::from_json(
   json : Json,
-) -> T[A] raise @json.JsonDecodeError {
+) -> SortedSet[A] raise @json.JsonDecodeError {
   @json.from_json(json)
 }
 
 ///|
 #deprecated("use `@immut/sorted_set.of` instead")
 #coverage.skip
-pub fn[A : Compare] T::of(array : FixedArray[A]) -> T[A] {
+pub fn[A : Compare] SortedSet::of(array : FixedArray[A]) -> SortedSet[A] {
   of(array)
 }

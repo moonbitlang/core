@@ -11,7 +11,7 @@ key-value pair using `singleton()`.
 
 ```moonbit
 test {
-  let map1 : @sorted_map.T[String, Int] = @sorted_map.new()
+  let map1 : @sorted_map.SortedMap[String, Int] = @sorted_map.new()
   let map2 = @sorted_map.singleton("a", 1)
   assert_eq(map1.size(), 0)
   assert_eq(map2.size(), 1)
@@ -35,7 +35,7 @@ use `lookup()` to get the value associated with a key.
 
 ```moonbit
 test {
-  let map : @sorted_map.T[String,Int] = @sorted_map.new()
+  let map : @sorted_map.SortedMap[String,Int] = @sorted_map.new()
   let map = map.add("a", 1)
   assert_eq(map.get("a"), Some(1))
 }
@@ -80,7 +80,7 @@ Similarly, you can use `is_empty()` to check whether the map is empty.
 
 ```moonbit
 test {
-  let map : @sorted_map.T[String, Int] = @sorted_map.new()
+  let map : @sorted_map.SortedMap[String, Int] = @sorted_map.new()
   assert_eq(map.is_empty(), true)
 }
 ```

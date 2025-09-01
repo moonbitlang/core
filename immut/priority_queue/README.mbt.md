@@ -10,7 +10,7 @@ You can use `new()` or `of()` to create an immutable priority queue.
 
 ```moonbit
 test {
-  let _queue1 : @priority_queue.T[Int] = @priority_queue.new()
+  let _queue1 : @priority_queue.PriorityQueue[Int] = @priority_queue.new()
   let _queue2 = @priority_queue.of([1, 2, 3])
 
 }
@@ -34,7 +34,7 @@ You can use the `is_empty` to determine whether the immutable priority queue is 
 
 ```moonbit
 test {
-  let pq : @priority_queue.T[Int] = @priority_queue.new()
+  let pq : @priority_queue.PriorityQueue[Int] = @priority_queue.new()
   assert_eq(pq.is_empty(), true)
 }
 ```
@@ -57,7 +57,7 @@ You can use `push()` to add elements to the immutable priority queue and get a n
 
 ```moonbit
 test {
-  let pq : @priority_queue.T[Int] = @priority_queue.new()
+  let pq : @priority_queue.PriorityQueue[Int] = @priority_queue.new()
   assert_eq(pq.push(1).peek(), Some(1))
 }
 ```

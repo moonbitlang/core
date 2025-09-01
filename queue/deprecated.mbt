@@ -15,13 +15,13 @@
 ///|
 #deprecated("Use `unsafe_peek` instead")
 #coverage.skip
-pub fn[A] peek_exn(self : T[A]) -> A {
+pub fn[A] peek_exn(self : Queue[A]) -> A {
   self.unsafe_peek()
 }
 
 ///|
 #deprecated("Use `unsafe_pop` instead")
 #coverage.skip
-pub fn[A] pop_exn(self : T[A]) -> A {
+pub fn[A] pop_exn(self : Queue[A]) -> A {
   self.unsafe_pop()
 }

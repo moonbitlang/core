@@ -10,7 +10,7 @@ You can create an empty map using `new()` or construct it using `from_array()`.
 
 ```moonbit
 test {
-  let _map2 : @hashmap.T[String, Int] = @hashmap.new()
+  let _map2 : @hashmap.HashMap[String, Int] = @hashmap.new()
 }
 ```
 
@@ -20,7 +20,7 @@ You can use `set()` to add a key-value pair to the map, and use `get()` to get a
 
 ```moonbit
 test {
-  let map : @hashmap.T[String, Int] = @hashmap.new()
+  let map : @hashmap.HashMap[String, Int] = @hashmap.new()
   map.set("a", 1)
   assert_eq(map.get("a"), Some(1))
   assert_eq(map.get_or_default("a", 0), 1)
@@ -70,7 +70,7 @@ Similarly, you can use `is_empty()` to check whether the map is empty.
 
 ```moonbit
 test {
-    let map: @hashmap.T[String, Int] = @hashmap.new()
+    let map: @hashmap.HashMap[String, Int] = @hashmap.new()
     assert_eq(map.is_empty(), true)
 }
 ```

@@ -11,7 +11,7 @@ You can create an empty set using `new()` or construct it using `from_array()`.
 ```moonbit
 test {
   let _set1 = @hashset.of([1, 2, 3, 4, 5])
-  let _set2 : @hashset.T[String] = @hashset.new()
+  let _set2 : @hashset.HashSet[String] = @hashset.new()
 }
 ```
 
@@ -21,7 +21,7 @@ You can use `insert()` to add a key to the set, and `contains()` to check whethe
 
 ```moonbit
 test {
-  let set : @hashset.T[String] = @hashset.new()
+  let set : @hashset.HashSet[String] = @hashset.new()
   set.add("a")
   assert_eq(set.contains("a"), true)
 }
@@ -55,7 +55,7 @@ Similarly, you can use `is_empty()` to check whether the set is empty.
 
 ```moonbit
 test {
-  let set : @hashset.T[Int] = @hashset.new()
+  let set : @hashset.HashSet[Int] = @hashset.new()
   assert_eq(set.is_empty(), true)
 }
 ```
@@ -94,7 +94,7 @@ You can use `union()`, `intersection()`, `difference()` and `symmetric_differenc
 test {
   let m1 = @hashset.of(["a", "b", "c"])
   let m2 = @hashset.of(["b", "c", "d"])
-  fn to_sorted_array(set : @hashset.T[String]) {
+  fn to_sorted_array(set : @hashset.HashSet[String]) {
     let arr = set.to_array()
     arr.sort()
     arr
