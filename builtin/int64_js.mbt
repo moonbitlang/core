@@ -454,7 +454,7 @@ pub fn Int64::asr(self : Int64, other : Int) -> Int64 {
 }
 
 ///|
-pub impl Shr for Int64 with op_shr(self : Int64, other : Int) -> Int64 {
+pub impl Shr for Int64 with shr(self : Int64, other : Int) -> Int64 {
   MyInt64::from_int64(self).asr(other).to_int64()
 }
 
@@ -713,7 +713,7 @@ pub impl Shl for UInt64 with op_shl(self : UInt64, shift : Int) -> UInt64 {
 }
 
 ///|
-pub impl Shr for UInt64 with op_shr(self : UInt64, shift : Int) -> UInt64 {
+pub impl Shr for UInt64 with shr(self : UInt64, shift : Int) -> UInt64 {
   MyInt64::lsr(MyInt64::from_uint64(self), shift).to_uint64()
 }
 
