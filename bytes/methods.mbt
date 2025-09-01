@@ -221,10 +221,16 @@ fn fjs_reverse_search(
     }
 
     // Use skip table value for mismatches after partial matches, similar to forward search
-    let skip = if j > 0 { 
+    let skip = if j > 0 {
       let skip_val = skip_table[target.unsafe_get(i).to_int()]
-      if skip_val > 1 { skip_val } else { 1 }
-    } else { 1 }
+      if skip_val > 1 {
+        skip_val
+      } else {
+        1
+      }
+    } else {
+      1
+    }
     i -= skip
   }
   None
