@@ -599,32 +599,30 @@ pub fn Buffer::write_char_utf8(buf : Self, value : Char) -> Unit {
   let code = value.to_uint()
   match code {
     _..<0x80 => {
-      let b0 = ((code & 0x7F) | 0x00).to_byte()
-      buf.write_byte(b0)
+      buf.grow_if_necessary(buf.len + 1)
+      buf.data[buf.len] = ((code & 0x7F) | 0x00).to_byte()
+      buf.len += 1
     }
     _..<0x0800 => {
-      let b0 = (((code >> 6) & 0x1F) | 0xC0).to_byte()
-      let b1 = ((code & 0x3F) | 0x80).to_byte()
-      buf.write_byte(b0)
-      buf.write_byte(b1)
+      buf.grow_if_necessary(buf.len + 2)
+      buf.data[buf.len] = (((code >> 6) & 0x1F) | 0xC0).to_byte()
+      buf.data[buf.len + 1] = ((code & 0x3F) | 0x80).to_byte()
+      buf.len += 2
     }
     _..<0x010000 => {
-      let b0 = (((code >> 12) & 0x0F) | 0xE0).to_byte()
-      let b1 = (((code >> 6) & 0x3F) | 0x80).to_byte()
-      let b2 = ((code & 0x3F) | 0x80).to_byte()
-      buf.write_byte(b0)
-      buf.write_byte(b1)
-      buf.write_byte(b2)
+      buf.grow_if_necessary(buf.len + 3)
+      buf.data[buf.len] = (((code >> 12) & 0x0F) | 0xE0).to_byte()
+      buf.data[buf.len + 1] = (((code >> 6) & 0x3F) | 0x80).to_byte()
+      buf.data[buf.len + 2] = ((code & 0x3F) | 0x80).to_byte()
+      buf.len += 3
     }
     _..<0x110000 => {
-      let b0 = (((code >> 18) & 0x07) | 0xF0).to_byte()
-      let b1 = (((code >> 12) & 0x3F) | 0x80).to_byte()
-      let b2 = (((code >> 6) & 0x3F) | 0x80).to_byte()
-      let b3 = ((code & 0x3F) | 0x80).to_byte()
-      buf.write_byte(b0)
-      buf.write_byte(b1)
-      buf.write_byte(b2)
-      buf.write_byte(b3)
+      buf.grow_if_necessary(buf.len + 4)
+      buf.data[buf.len] = (((code >> 18) & 0x07) | 0xF0).to_byte()
+      buf.data[buf.len + 1] = (((code >> 12) & 0x3F) | 0x80).to_byte()
+      buf.data[buf.len + 2] = (((code >> 6) & 0x3F) | 0x80).to_byte()
+      buf.data[buf.len + 3] = ((code & 0x3F) | 0x80).to_byte()
+      buf.len += 4
     }
     _ => abort("Char out of range")
   }
@@ -635,22 +633,20 @@ pub fn Buffer::write_char_utf8(buf : Self, value : Char) -> Unit {
 pub fn Buffer::write_char_utf16le(buf : Self, value : Char) -> Unit {
   let code = value.to_uint()
   if code < 0x10000 {
-    let b0 = (code & 0xFF).to_byte()
-    let b1 = (code >> 8).to_byte()
-    buf.write_byte(b0)
-    buf.write_byte(b1)
+    buf.grow_if_necessary(buf.len + 2)
+    buf.data[buf.len + 0] = (code & 0xFF).to_byte()
+    buf.data[buf.len + 1] = (code >> 8).to_byte()
+    buf.len += 2
   } else if code < 0x110000 {
     let hi = code - 0x10000
     let lo = (hi >> 10) | 0xD800
     let hi = (hi & 0x3FF) | 0xDC00
-    let b0 = (lo & 0xFF).to_byte()
-    let b1 = (lo >> 8).to_byte()
-    let b2 = (hi & 0xFF).to_byte()
-    let b3 = (hi >> 8).to_byte()
-    buf.write_byte(b0)
-    buf.write_byte(b1)
-    buf.write_byte(b2)
-    buf.write_byte(b3)
+    buf.grow_if_necessary(buf.len + 4)
+    buf.data[buf.len + 0] = (lo & 0xFF).to_byte()
+    buf.data[buf.len + 1] = (lo >> 8).to_byte()
+    buf.data[buf.len + 2] = (hi & 0xFF).to_byte()
+    buf.data[buf.len + 3] = (hi >> 8).to_byte()
+    buf.len += 4
   } else {
     abort("Char out of range")
   }
@@ -661,22 +657,20 @@ pub fn Buffer::write_char_utf16le(buf : Self, value : Char) -> Unit {
 pub fn Buffer::write_char_utf16be(buf : Self, value : Char) -> Unit {
   let code = value.to_uint()
   if code < 0x10000 {
-    let b0 = (code >> 8).to_byte()
-    let b1 = (code & 0xFF).to_byte()
-    buf.write_byte(b0)
-    buf.write_byte(b1)
+    buf.grow_if_necessary(buf.len + 2)
+    buf.data[buf.len + 0] = (code >> 8).to_byte()
+    buf.data[buf.len + 1] = (code & 0xFF).to_byte()
+    buf.len += 2
   } else if code < 0x110000 {
+    buf.grow_if_necessary(buf.len + 4)
     let hi = code - 0x10000
     let lo = (hi >> 10) | 0xD800
     let hi = (hi & 0x3FF) | 0xDC00
-    let b0 = (lo >> 8).to_byte()
-    let b1 = (lo & 0xFF).to_byte()
-    let b2 = (hi >> 8).to_byte()
-    let b3 = (hi & 0xFF).to_byte()
-    buf.write_byte(b0)
-    buf.write_byte(b1)
-    buf.write_byte(b2)
-    buf.write_byte(b3)
+    buf.data[buf.len + 0] = (lo >> 8).to_byte()
+    buf.data[buf.len + 1] = (lo & 0xFF).to_byte()
+    buf.data[buf.len + 2] = (hi >> 8).to_byte()
+    buf.data[buf.len + 3] = (hi & 0xFF).to_byte()
+    buf.len += 4
   } else {
     abort("Char out of range")
   }
@@ -692,35 +686,54 @@ pub fn Buffer::write_string_utf8(buf : Self, string : @string.View) -> Unit {
 ///|
 #alias(write_stringview, deprecated="use write_string_utf16le instead")
 pub fn Buffer::write_string_utf16le(buf : Self, string : @string.View) -> Unit {
-  for ch in string {
-    buf.write_char_utf16le(ch)
+  let len = string.length()
+  buf.grow_if_necessary(buf.len + len * 2)
+  for i = 0, j = buf.len; i < len; i = i + 1, j = j + 2 {
+    let c = string.unsafe_charcode_at(i).reinterpret_as_uint()
+    buf.data[j] = (c & 0xff).to_byte()
+    buf.data[j + 1] = (c >> 8).to_byte()
   }
+  buf.len += len * 2
 }
 
 ///|
 pub fn Buffer::write_string_utf16be(buf : Self, string : @string.View) -> Unit {
-  for ch in string {
-    buf.write_char_utf16be(ch)
+  let len = string.length()
+  buf.grow_if_necessary(buf.len + len * 2)
+  for i = 0, j = buf.len; i < len; i = i + 1, j = j + 2 {
+    let c = string.unsafe_charcode_at(i).reinterpret_as_uint()
+    buf.data[j + 1] = (c & 0xff).to_byte()
+    buf.data[j] = (c >> 8).to_byte()
   }
+  buf.len += len * 2
 }
 
 ///|
 pub fn Buffer::write_bom_utf8(buf : Self) -> Unit {
-  buf.write_byte(0xEF)
-  buf.write_byte(0xBB)
-  buf.write_byte(0xBF)
+  let len = buf.len
+  buf.grow_if_necessary(len + 3)
+  buf.data[len] = 0xEF
+  buf.data[len + 1] = 0xBB
+  buf.data[len + 2] = 0xBF
+  buf.len += 3
 }
 
 ///|
 pub fn Buffer::write_bom_utf16le(buf : Self) -> Unit {
-  buf.write_byte(0xFF)
-  buf.write_byte(0xFE)
+  let len = buf.len
+  buf.grow_if_necessary(len + 2)
+  buf.data[len] = 0xFF
+  buf.data[len + 1] = 0xFE
+  buf.len += 2
 }
 
 ///|
 pub fn Buffer::write_bom_utf16be(buf : Self) -> Unit {
-  buf.write_byte(0xFE)
-  buf.write_byte(0xFF)
+  let len = buf.len
+  buf.grow_if_necessary(len + 2)
+  buf.data[len] = 0xFE
+  buf.data[len + 1] = 0xFF
+  buf.len += 2
 }
 
 ///|
