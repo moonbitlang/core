@@ -72,8 +72,8 @@ jobs:
         env:
           MOONC_INTERNAL_PARAMS: allocator = tlsf-mbt |
 
-      - name: moon check
-        run: moon check
+      - name: check
+        run: moon check --deny-warn
 
       - name: moon bundle
         run: moon bundle --all
