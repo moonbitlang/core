@@ -16,29 +16,29 @@ impl ToJson for RationalError
 
 // Types and methods
 type T
+#as_free_fn
 #deprecated
 fn T::abs(Self) -> Self
-fnalias T::abs
+#as_free_fn
 #deprecated
 fn T::ceil(Self) -> Int64
-fnalias T::ceil
+#as_free_fn
 #deprecated
 fn T::floor(Self) -> Int64
-fnalias T::floor
 #deprecated
 fn T::fract(Self) -> Self
 #deprecated
 fn T::is_integer(Self) -> Bool
+#as_free_fn
 #deprecated
 fn T::neg(Self) -> Self
-fnalias T::neg
 #deprecated
 fn T::reciprocal(Self) -> Self
 #deprecated
 fn T::to_double(Self) -> Double
+#as_free_fn
 #deprecated
 fn T::trunc(Self) -> Int64
-fnalias T::trunc
 impl Add for T
 impl Compare for T
 impl Div for T

@@ -9,8 +9,8 @@ let min_value : Int
 // Errors
 
 // Types and methods
+#as_free_fn
 fn Int::abs(Int) -> Int
-fnalias Int::abs
 fn Int::to_be_bytes(Int) -> Bytes
 fn Int::to_le_bytes(Int) -> Bytes
 

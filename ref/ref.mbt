@@ -90,14 +90,12 @@ pub fn[T, R] protect(self : Ref[T], a : T, f : () -> R raise?) -> R raise? {
 ///   assert_eq(x.val, 2)
 ///   assert_eq(y.val, 1)
 /// ```
+#as_free_fn
 pub fn[T] Ref::swap(self : Ref[T], that : Ref[T]) -> Unit {
   let tmp = self.val
   self.val = that.val
   that.val = tmp
 }
-
-///|
-pub fnalias Ref::swap
 
 ///|
 test "swap" {

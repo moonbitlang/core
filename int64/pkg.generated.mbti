@@ -11,8 +11,8 @@ let min_value : Int64
 // Errors
 
 // Types and methods
+#as_free_fn
 fn Int64::abs(Int64) -> Int64
-fnalias Int64::abs
 fn Int64::from_int(Int) -> Int64
 fn Int64::to_be_bytes(Int64) -> Bytes
 fn Int64::to_le_bytes(Int64) -> Bytes
