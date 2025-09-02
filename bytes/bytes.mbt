@@ -68,13 +68,18 @@ pub fn Bytes::from_array(arr : Array[Byte]) -> Bytes {
 ///     ),
 ///   )
 /// ```
+/// 
+/// Panics if the length is invalid
 #as_free_fn
 pub fn Bytes::from_fixedarray(arr : FixedArray[Byte], len? : Int) -> Bytes {
   let len = match len {
     None => arr.length()
-    Some(x) => x
+    Some(x) => {
+      guard 0 <= x && x <= arr.length()
+      x
+    }
   }
-  let result = FixedArray::make(len, Byte::default())
+  let result = unsafe_to_fixedarray(UninitializedArray::make(len))
   arr.blit_to(result, len~)
   result.unsafe_reinterpret_as_bytes()
 }
@@ -102,15 +107,18 @@ pub fn Bytes::from_fixedarray(arr : FixedArray[Byte], len? : Int) -> Bytes {
 ///   let arr2 = bytes.to_fixedarray(len=3)
 ///   inspect(arr2, content="[b'\\x68', b'\\x65', b'\\x6C']")
 /// ```
+/// 
+/// Panics if the length is invalid
 pub fn to_fixedarray(self : Bytes, len? : Int) -> FixedArray[Byte] {
   let len = match len {
     None => self.length()
-    Some(x) => x
+    Some(x) => {
+      guard 0 <= x && x <= self.length()
+      x
+    }
   }
-  let arr = FixedArray::make(len, Byte::default())
-  for i in 0..<len {
-    arr[i] = self[i]
-  }
+  let arr = unsafe_to_fixedarray(UninitializedArray::make(len))
+  arr.blit_from_bytes(0, self, 0, len)
   arr
 }
 
@@ -170,7 +178,7 @@ pub fn Bytes::from_iter(iter : Iter[Byte]) -> Bytes {
 #as_free_fn
 pub fn Bytes::of(arr : FixedArray[Byte]) -> Bytes {
   let len = arr.length()
-  let result = FixedArray::make(len, Byte::default())
+  let result = unsafe_to_fixedarray(UninitializedArray::make(len))
   arr.blit_to(result, len~)
   result.unsafe_reinterpret_as_bytes()
 }
@@ -300,6 +308,9 @@ pub fn get(self : Bytes, index : Int) -> Byte? {
 ///|
 /// Reinterpret the byte sequence as Bytes.
 fn unsafe_to_bytes(array : FixedArray[Byte]) -> Bytes = "%identity"
+
+///|
+fn unsafe_to_fixedarray(array : UninitializedArray[Byte]) -> FixedArray[Byte] = "%identity"
 
 ///|
 /// Concatenates two bytes sequences.
