@@ -27,7 +27,7 @@ fn MyInt64::to_int64(self : MyInt64) -> Int64 = "%identity"
 fn MyInt64::from_int64(value : Int64) -> MyInt64 = "%identity"
 
 ///|
-impl Neg for MyInt64 with op_neg(self : MyInt64) -> MyInt64 {
+impl Neg for MyInt64 with neg(self : MyInt64) -> MyInt64 {
   if self.lo == 0 {
     { hi: self.hi.lnot() + 1, lo: 0 }
   } else {
@@ -48,12 +48,12 @@ fn MyInt64::add_hi_lo(self : MyInt64, bhi : Int, blo : Int) -> MyInt64 {
 }
 
 ///|
-impl Add for MyInt64 with op_add(self : MyInt64, other : MyInt64) -> MyInt64 {
+impl Add for MyInt64 with add(self : MyInt64, other : MyInt64) -> MyInt64 {
   self.add_hi_lo(other.hi, other.lo)
 }
 
 ///|
-impl Sub for MyInt64 with op_sub(self : MyInt64, other : MyInt64) -> MyInt64 {
+impl Sub for MyInt64 with sub(self : MyInt64, other : MyInt64) -> MyInt64 {
   if other.lo == 0 {
     { hi: self.hi - other.hi, lo: self.lo }
   } else {
@@ -62,7 +62,7 @@ impl Sub for MyInt64 with op_sub(self : MyInt64, other : MyInt64) -> MyInt64 {
 }
 
 ///|
-impl Mul for MyInt64 with op_mul(self : MyInt64, other : MyInt64) -> MyInt64 {
+impl Mul for MyInt64 with mul(self : MyInt64, other : MyInt64) -> MyInt64 {
   let { hi: ahi, lo: alo } = self
   let { hi: bhi, lo: blo } = other
   let ahi = ahi.reinterpret_as_uint()
@@ -120,7 +120,7 @@ extern "js" fn get_int64_wasm_helper() -> Int64WasmHelper =
   #|}
 
 ///|
-impl Div for MyInt64 with op_div(self : MyInt64, other : MyInt64) -> MyInt64 {
+impl Div for MyInt64 with div(self : MyInt64, other : MyInt64) -> MyInt64 {
   let exports = get_int64_wasm_helper()
   let { hi: ahi, lo: alo } = self
   let { hi: bhi, lo: blo } = other
@@ -140,7 +140,7 @@ fn MyInt64::div_u(self : MyInt64, other : MyInt64) -> MyInt64 {
 }
 
 ///|
-impl Mod for MyInt64 with op_mod(self : MyInt64, other : MyInt64) -> MyInt64 {
+impl Mod for MyInt64 with mod(self : MyInt64, other : MyInt64) -> MyInt64 {
   let exports = get_int64_wasm_helper()
   let { hi: ahi, lo: alo } = self
   let { hi: bhi, lo: blo } = other
@@ -255,7 +255,7 @@ fn MyInt64::popcnt(self : MyInt64) -> Int {
 }
 
 ///|
-impl Eq for MyInt64 with op_equal(self : MyInt64, other : MyInt64) -> Bool {
+impl Eq for MyInt64 with equal(self : MyInt64, other : MyInt64) -> Bool {
   self.hi == other.hi && self.lo == other.lo
 }
 
@@ -369,33 +369,33 @@ extern "js" fn MyInt64::convert_to_double(self : MyInt64) -> Double =
 //endregion
 
 ///|
-pub impl Neg for Int64 with op_neg(self : Int64) -> Int64 {
+pub impl Neg for Int64 with neg(self : Int64) -> Int64 {
   (-MyInt64::from_int64(self)).to_int64()
 }
 
 ///|
-pub impl Add for Int64 with op_add(self : Int64, other : Int64) -> Int64 {
-  MyInt64::from_int64(self).op_add(MyInt64::from_int64(other)).to_int64()
+pub impl Add for Int64 with add(self : Int64, other : Int64) -> Int64 {
+  MyInt64::from_int64(self).add(MyInt64::from_int64(other)).to_int64()
 }
 
 ///|
-pub impl Sub for Int64 with op_sub(self : Int64, other : Int64) -> Int64 {
-  MyInt64::from_int64(self).op_sub(MyInt64::from_int64(other)).to_int64()
+pub impl Sub for Int64 with sub(self : Int64, other : Int64) -> Int64 {
+  MyInt64::from_int64(self).sub(MyInt64::from_int64(other)).to_int64()
 }
 
 ///|
-pub impl Mul for Int64 with op_mul(self : Int64, other : Int64) -> Int64 {
-  MyInt64::from_int64(self).op_mul(MyInt64::from_int64(other)).to_int64()
+pub impl Mul for Int64 with mul(self : Int64, other : Int64) -> Int64 {
+  MyInt64::from_int64(self).mul(MyInt64::from_int64(other)).to_int64()
 }
 
 ///|
-pub impl Div for Int64 with op_div(self : Int64, other : Int64) -> Int64 {
-  MyInt64::from_int64(self).op_div(MyInt64::from_int64(other)).to_int64()
+pub impl Div for Int64 with div(self : Int64, other : Int64) -> Int64 {
+  MyInt64::from_int64(self).div(MyInt64::from_int64(other)).to_int64()
 }
 
 ///|
-pub impl Mod for Int64 with op_mod(self : Int64, other : Int64) -> Int64 {
-  MyInt64::from_int64(self).op_mod(MyInt64::from_int64(other)).to_int64()
+pub impl Mod for Int64 with mod(self : Int64, other : Int64) -> Int64 {
+  MyInt64::from_int64(self).mod(MyInt64::from_int64(other)).to_int64()
 }
 
 ///|
@@ -459,7 +459,7 @@ pub impl Shr for Int64 with shr(self : Int64, other : Int) -> Int64 {
 }
 
 ///|
-pub impl Shl for Int64 with op_shl(self : Int64, other : Int) -> Int64 {
+pub impl Shl for Int64 with shl(self : Int64, other : Int) -> Int64 {
   MyInt64::from_int64(self).lsl(other).to_int64()
 }
 
@@ -597,27 +597,27 @@ pub fn Int64::to_uint64(self : Int64) -> UInt64 = "%identity"
 pub fn Int64::reinterpret_as_uint64(self : Int64) -> UInt64 = "%identity"
 
 ///|
-pub impl Add for UInt64 with op_add(self : UInt64, other : UInt64) -> UInt64 {
-  MyInt64::from_uint64(self).op_add(MyInt64::from_uint64(other)).to_uint64()
+pub impl Add for UInt64 with add(self : UInt64, other : UInt64) -> UInt64 {
+  MyInt64::from_uint64(self).add(MyInt64::from_uint64(other)).to_uint64()
 }
 
 ///|
-pub impl Sub for UInt64 with op_sub(self : UInt64, other : UInt64) -> UInt64 {
-  MyInt64::from_uint64(self).op_sub(MyInt64::from_uint64(other)).to_uint64()
+pub impl Sub for UInt64 with sub(self : UInt64, other : UInt64) -> UInt64 {
+  MyInt64::from_uint64(self).sub(MyInt64::from_uint64(other)).to_uint64()
 }
 
 ///|
-pub impl Mul for UInt64 with op_mul(self : UInt64, other : UInt64) -> UInt64 {
-  MyInt64::from_uint64(self).op_mul(MyInt64::from_uint64(other)).to_uint64()
+pub impl Mul for UInt64 with mul(self : UInt64, other : UInt64) -> UInt64 {
+  MyInt64::from_uint64(self).mul(MyInt64::from_uint64(other)).to_uint64()
 }
 
 ///|
-pub impl Div for UInt64 with op_div(self : UInt64, other : UInt64) -> UInt64 {
+pub impl Div for UInt64 with div(self : UInt64, other : UInt64) -> UInt64 {
   MyInt64::from_uint64(self).div_u(MyInt64::from_uint64(other)).to_uint64()
 }
 
 ///|
-pub impl Mod for UInt64 with op_mod(self : UInt64, other : UInt64) -> UInt64 {
+pub impl Mod for UInt64 with mod(self : UInt64, other : UInt64) -> UInt64 {
   MyInt64::from_uint64(self).mod_u(MyInt64::from_uint64(other)).to_uint64()
 }
 
@@ -651,7 +651,7 @@ pub impl Compare for UInt64 with compare(self : UInt64, other : UInt64) -> Int {
 
 ///|
 pub impl Eq for UInt64 with equal(self : UInt64, other : UInt64) -> Bool {
-  MyInt64::from_uint64(self).op_equal(MyInt64::from_uint64(other))
+  MyInt64::from_uint64(self).equal(MyInt64::from_uint64(other))
 }
 
 ///|
@@ -708,7 +708,7 @@ pub fn UInt64::shr(self : UInt64, shift : Int) -> UInt64 {
 }
 
 ///|
-pub impl Shl for UInt64 with op_shl(self : UInt64, shift : Int) -> UInt64 {
+pub impl Shl for UInt64 with shl(self : UInt64, shift : Int) -> UInt64 {
   MyInt64::lsl(MyInt64::from_uint64(self), shift).to_uint64()
 }
 
