@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 ///|
 #deprecated("use `@immut/sorted_map.new` instead")
 #coverage.skip
