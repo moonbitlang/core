@@ -100,8 +100,8 @@ fn[A : Compare] List::unsafe_minimum(Self[A]) -> A
 fn[A] List::unsafe_nth(Self[A], Int) -> A
 fn[A] List::unsafe_tail(Self[A]) -> Self[A]
 fn[A, B] List::unzip(Self[(A, B)]) -> (Self[A], Self[B])
+#as_free_fn
 fn[A, B] List::zip(Self[A], Self[B]) -> Self[(A, B)]
-fnalias List::zip
 impl[A] Add for List[A]
 impl[X] Default for List[X]
 impl[A : Eq] Eq for List[A]

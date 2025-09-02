@@ -19,6 +19,7 @@ let default_init_capacity = 8
 
 ///|
 /// Create new hash set.
+#as_free_fn
 pub fn[K] HashSet::new(capacity? : Int = default_init_capacity) -> HashSet[K] {
   {
     size: 0,
@@ -31,6 +32,7 @@ pub fn[K] HashSet::new(capacity? : Int = default_init_capacity) -> HashSet[K] {
 
 ///|
 /// Create new hash set from array.
+#as_free_fn
 pub fn[K : Hash + Eq] HashSet::from_array(arr : Array[K]) -> HashSet[K] {
   let m = new()
   arr.each(e => m.add(e))
@@ -38,6 +40,7 @@ pub fn[K : Hash + Eq] HashSet::from_array(arr : Array[K]) -> HashSet[K] {
 }
 
 ///|
+#as_free_fn
 pub fn[K : Hash + Eq] HashSet::of(arr : FixedArray[K]) -> HashSet[K] {
   let m = new()
   arr.each(e => m.add(e))
@@ -289,6 +292,7 @@ pub fn[K] to_array(self : HashSet[K]) -> Array[K] {
 }
 
 ///|
+#as_free_fn
 pub fn[K : Hash + Eq] HashSet::from_iter(iter : Iter[K]) -> HashSet[K] {
   let s = new()
   iter.each(e => s.add(e))
@@ -632,4 +636,3 @@ pub impl[K] Default for HashSet[K] with default() {
 }
 
 ///|
-pub fnalias HashSet::(new, from_array, from_iter, of)

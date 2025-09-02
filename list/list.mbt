@@ -613,6 +613,7 @@ pub fn[A, B] foldi(
 /// let r2 = @list.zip(@list.of([1, 2]), @list.of([6, 7, 8, 9, 10]))
 /// assert_eq(r2, @list.from_array([(1, 6), (2, 7)]))
 /// ```
+#as_free_fn
 pub fn[A, B] List::zip(self : List[A], other : List[B]) -> List[(A, B)] {
   let res = loop (self, other, Empty) {
     (Empty, _, acc) => break acc
@@ -1669,9 +1670,3 @@ fn[A] reverse_inplace(self : List[A]) -> List[A] {
       }
   }
 }
-
-///|
-/// Function alias for zip operation.
-/// 
-/// Provides an alternative way to access the zip functionality.
-pub fnalias List::zip

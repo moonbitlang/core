@@ -20,10 +20,10 @@ fn[K] HashSet::copy(Self[K]) -> Self[K]
 fn[K : Hash + Eq] HashSet::difference(Self[K], Self[K]) -> Self[K]
 fn[K] HashSet::each(Self[K], (K) -> Unit raise?) -> Unit raise?
 fn[K] HashSet::eachi(Self[K], (Int, K) -> Unit raise?) -> Unit raise?
+#as_free_fn
 fn[K : Hash + Eq] HashSet::from_array(Array[K]) -> Self[K]
-fnalias HashSet::from_array
+#as_free_fn
 fn[K : Hash + Eq] HashSet::from_iter(Iter[K]) -> Self[K]
-fnalias HashSet::from_iter
 #deprecated
 fn[K : Hash + Eq] HashSet::insert(Self[K], K) -> Unit
 fn[K : Hash + Eq] HashSet::intersection(Self[K], Self[K]) -> Self[K]
@@ -32,10 +32,10 @@ fn[K] HashSet::is_empty(Self[K]) -> Bool
 fn[K : Hash + Eq] HashSet::is_subset(Self[K], Self[K]) -> Bool
 fn[K : Hash + Eq] HashSet::is_superset(Self[K], Self[K]) -> Bool
 fn[K] HashSet::iter(Self[K]) -> Iter[K]
+#as_free_fn
 fn[K] HashSet::new(capacity? : Int) -> Self[K]
-fnalias HashSet::new
+#as_free_fn
 fn[K : Hash + Eq] HashSet::of(FixedArray[K]) -> Self[K]
-fnalias HashSet::of
 fn[K : Hash + Eq] HashSet::remove(Self[K], K) -> Unit
 fn[K : Hash + Eq] HashSet::remove_and_check(Self[K], K) -> Bool
 fn[K] HashSet::size(Self[K]) -> Int

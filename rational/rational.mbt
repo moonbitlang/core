@@ -177,6 +177,7 @@ pub fn reciprocal(self : T) -> T {
 ///
 /// Returns a new rational number with the opposite sign.
 ///
+#as_free_fn
 #deprecated("Use @rational in module moonbitlang/x instead. Note that you need to rename Rational to Rational64.")
 #coverage.skip
 pub fn T::neg(self : T) -> T {
@@ -192,6 +193,7 @@ pub fn T::neg(self : T) -> T {
 ///
 /// Returns a new rational number representing the absolute value of the input.
 ///
+#as_free_fn
 #deprecated("Use @rational in module moonbitlang/x instead. Note that you need to rename Rational to Rational64.")
 #coverage.skip
 pub fn T::abs(self : T) -> T {
@@ -392,6 +394,7 @@ pub fn from_double(value : Double) -> T raise RationalError {
 ///
 /// Returns the ceiling of the rational number as an `Int64`.
 ///
+#as_free_fn
 #deprecated("Use @rational in module moonbitlang/x instead. Note that you need to rename Rational to Rational64.")
 #coverage.skip
 pub fn T::ceil(self : T) -> Int64 {
@@ -414,6 +417,7 @@ pub fn T::ceil(self : T) -> Int64 {
 ///
 /// Returns the largest `Int64` value that is less than or equal to `self`.
 ///
+#as_free_fn
 #deprecated("Use @rational in module moonbitlang/x instead. Note that you need to rename Rational to Rational64.")
 #coverage.skip
 pub fn T::floor(self : T) -> Int64 {
@@ -435,6 +439,7 @@ pub fn T::floor(self : T) -> Int64 {
 ///
 /// Returns the integer part of the rational number as an `Int64`.
 ///
+#as_free_fn
 #deprecated("Use @rational in module moonbitlang/x instead. Note that you need to rename Rational to Rational64.")
 #coverage.skip
 pub fn T::trunc(self : T) -> Int64 {
@@ -522,6 +527,3 @@ pub fn is_integer(self : T) -> Bool {
 }
 
 ///|
-#deprecated("Use @rational in module moonbitlang/x instead. Note that you need to rename Rational to Rational64.")
-#coverage.skip
-pub fnalias T::(neg, abs, ceil, floor, trunc)
