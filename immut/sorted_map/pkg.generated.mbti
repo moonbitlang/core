@@ -23,6 +23,7 @@ fn[K, V] singleton(K, V) -> SortedMap[K, V]
 
 // Types and methods
 type SortedMap[K, V]
+#alias(insert, deprecated)
 fn[K : Compare, V] SortedMap::add(Self[K, V], K, V) -> Self[K, V]
 fn[K : Compare, V] SortedMap::contains(Self[K, V], K) -> Bool
 fn[K, V] SortedMap::each(Self[K, V], (K, V) -> Unit) -> Unit
@@ -44,8 +45,6 @@ fn[K : Compare, V] SortedMap::from_iter(Iter[(K, V)]) -> Self[K, V]
 #deprecated
 fn[V : @json.FromJson] SortedMap::from_json(Json) -> Self[String, V] raise @json.JsonDecodeError
 fn[K : Compare, V] SortedMap::get(Self[K, V], K) -> V?
-#deprecated
-fn[K : Compare, V] SortedMap::insert(Self[K, V], K, V) -> Self[K, V]
 fn[K, V] SortedMap::is_empty(Self[K, V]) -> Bool
 fn[K, V] SortedMap::iter(Self[K, V]) -> Iter[(K, V)]
 fn[K, V] SortedMap::iter2(Self[K, V]) -> Iter2[K, V]
