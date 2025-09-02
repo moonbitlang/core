@@ -53,7 +53,7 @@ jobs:
           moonrun --version
 
       - name: check
-        run: moon check --deny-warn
+        run: moon check --deny-warn --target all
 
       - name: moon info
         run: |
