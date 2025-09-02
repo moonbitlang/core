@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# Pre-commit hook to ensure code quality with MoonBit
+# This hook runs `moon check` to validate the code before allowing commits
+
+set -e
+
+echo "🌙 Running MoonBit pre-commit checks..."
+
+# Check if moon is available
+if ! command -v moon &> /dev/null; then
+    echo "❌ Error: 'moon' command not found. Please install MoonBit toolchain."
+    echo "   Visit: https://www.moonbitlang.com/download/"
+    exit 1
+fi
+
+# Run moon check
+echo "📋 Running 'moon check'..."
+if ! moon check; then
+    echo ""
+    echo "❌ Pre-commit hook failed!"
+    echo "   'moon check' found issues in your code."
+    echo "   Please fix the issues and try committing again."
+    echo ""
+    echo "💡 Common fixes:"
+    echo "   - Run 'moon fmt' to auto-format your code"
+    echo "   - Check for type errors and fix them"
+    echo "   - Ensure all imports are valid"
+    exit 1
+fi
+
+echo "✅ All checks passed! Proceeding with commit..."
+echo ""
