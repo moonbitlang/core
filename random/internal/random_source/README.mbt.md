@@ -30,7 +30,7 @@ test "secure random generation" {
   let chacha = ChaCha8::new(seed)
   
   // Generate multiple random values
-  let mut values = []
+  let values = Array::new()
   for i in 0..<5 {
     match chacha.next() {
       Some(val) => values.push(val)
@@ -86,24 +86,16 @@ Initialize ChaCha8 with different seed sources:
 ```moonbit
 test "seed initialization" {
   // Create seed from pattern
-  let pattern_seed = Bytes::new()
-  for i in 0..<32 {
-    pattern_seed.push(i.to_byte())
-  }
-  
+  let pattern_seed = Bytes::make(32, 0x01)
   let chacha1 = ChaCha8::new(pattern_seed)
   
   // Create seed from different pattern
-  let different_seed = Bytes::new()
-  for i in 0..<32 {
-    different_seed.push((i * 2).to_byte())
-  }
-  
+  let different_seed = Bytes::make(32, 0x02)
   let chacha2 = ChaCha8::new(different_seed)
   
   // Different seeds should produce different sequences
-  let val1 = chacha1.next().unwrap_or(0UL)
-  let val2 = chacha2.next().unwrap_or(0UL)
+  let val1 = match chacha1.next() { Some(v) => v | None => 0UL }
+  let val2 = match chacha2.next() { Some(v) => v | None => 0UL }
   
   // Should be different (with very high probability)
   inspect(val1 != val2, content="true")
@@ -142,8 +134,8 @@ test "security properties" {
   let rng2 = ChaCha8::new(seed2)
   
   // Generate values from both
-  let val1 = rng1.next().unwrap_or(0UL)
-  let val2 = rng2.next().unwrap_or(0UL)
+  let val1 = match rng1.next() { Some(v) => v | None => 0UL }
+  let val2 = match rng2.next() { Some(v) => v | None => 0UL }
   
   // Should be uncorrelated
   inspect(val1 != val2, content="true")
