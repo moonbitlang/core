@@ -17,19 +17,19 @@ This document tracks which packages in the MoonBit core library are missing READ
 - [x] `string` - String manipulation utilities package ✅
 - [x] `test` - Testing framework utilities package ✅
 
-### Internal Packages
-- [ ] `double/internal/ryu` - Internal Ryu algorithm implementation for double formatting
-- [ ] `immut/hashset` - Immutable hashset implementation (note: immut/hashmap has README)
-- [ ] `immut/internal/path` - Internal path utilities for immutable data structures
-- [ ] `immut/internal/sparse_array` - Internal sparse array implementation for immutable data structures
-- [ ] `quickcheck/splitmix` - SplitMix random number generator for QuickCheck
-- [ ] `random/internal/random_source` - Internal random source implementation
+### Internal Packages - COMPLETED ✅
+- [x] `double/internal/ryu` - Internal Ryu algorithm implementation for double formatting ✅
+- [x] `immut/hashset` - Immutable hashset implementation (note: immut/hashmap has README) ✅
+- [x] `immut/internal/path` - Internal path utilities for immutable data structures ✅
+- [x] `immut/internal/sparse_array` - Internal sparse array implementation for immutable data structures ✅
+- [x] `quickcheck/splitmix` - SplitMix random number generator for QuickCheck ✅
+- [x] `random/internal/random_source` - Internal random source implementation ✅
 
 ## Summary
 
 **Total packages with moon.pkg.json**: 57
-**Packages with README.mbt.md**: 45 (40 + 5 newly created)
-**Packages missing README.mbt.md**: 12 (17 - 5 completed)
+**Packages with README.mbt.md**: 57 (40 original + 17 newly created)
+**Packages missing README.mbt.md**: 0 - ALL COMPLETED! ✅
 
 ## Priority Recommendations
 
@@ -41,20 +41,20 @@ This document tracks which packages in the MoonBit core library are missing READ
 5. ~~`set` - Common data structure~~ ✅
 6. ~~`test` - Testing framework~~ ✅
 
-### Medium Priority (Supporting packages)
-1. `abort` - Panic/abort functionality
-2. `bench` - Benchmarking tools
-3. `env` - Environment interaction
-4. `prelude` - Standard imports
-5. `coverage` - Code coverage
+### Medium Priority (Supporting packages) - COMPLETED ✅
+1. ~~`abort` - Panic/abort functionality~~ ✅
+2. ~~`bench` - Benchmarking tools~~ ✅
+3. ~~`env` - Environment interaction~~ ✅
+4. ~~`prelude` - Standard imports~~ ✅
+5. ~~`coverage` - Code coverage~~ ✅
 
-### Low Priority (Internal packages)
-1. `double/internal/ryu` - Internal implementation
-2. `immut/internal/path` - Internal utility
-3. `immut/internal/sparse_array` - Internal data structure
-4. `quickcheck/splitmix` - Specialized RNG
-5. `random/internal/random_source` - Internal implementation
-6. `immut/hashset` - May be redundant with immut/hashmap
+### Low Priority (Internal packages) - COMPLETED ✅
+1. ~~`double/internal/ryu` - Internal implementation~~ ✅
+2. ~~`immut/internal/path` - Internal utility~~ ✅
+3. ~~`immut/internal/sparse_array` - Internal data structure~~ ✅
+4. ~~`quickcheck/splitmix` - Specialized RNG~~ ✅
+5. ~~`random/internal/random_source` - Internal implementation~~ ✅
+6. ~~`immut/hashset` - May be redundant with immut/hashmap~~ ✅
 
 ## Notes
 
