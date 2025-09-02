@@ -616,6 +616,17 @@ test "test_reserve_capacity" {
   inspect(tester.capacity(), content="2")
   tester.reserve_capacity(35)
   inspect(tester.capacity(), content="35")
+  let dq = @deque.of([1, 2, 3])
+  dq.reserve_capacity(8)
+  // reproduce the bug in reserve_capacity with wrong tail calculation
+  assert_eq(dq.back(), Some(3))
+  dq.push_back(4)
+  assert_eq(dq.length(), 4)
+  assert_eq(dq[0], 1)
+  assert_eq(dq[1], 2)
+  assert_eq(dq[2], 3)
+  assert_eq(dq[3], 4)
+  @json.inspect(dq.to_array(), content=[1, 2, 3, 4])
 }
 
 ///|
