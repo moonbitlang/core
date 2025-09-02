@@ -851,11 +851,10 @@ pub fn[A] reserve_capacity(self : Deque[A], capacity : Int) -> Unit {
   let { buf, len, head, .. } = self
   self.buf = new_buf
   self.head = 0
-  self.tail = 0
+  self.tail = if len == 0 { 0 } else { len - 1 }
   for i in 0..<len {
     let idx = (head + i) % buf.length()
     self.buf[i] = buf[idx]
-    self.tail += 1
   }
 }
 
@@ -880,7 +879,7 @@ pub fn[A] shrink_to_fit(self : Deque[A]) -> Unit {
   let { buf, len, head, .. } = self
   self.buf = UninitializedArray::make(len)
   self.head = 0
-  self.tail = 0
+  self.tail = if len == 0 { 0 } else { len - 1 }
   for i in 0..<len {
     let idx = (head + i) % buf.length()
     self.buf[i] = buf[idx]
