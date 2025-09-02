@@ -36,7 +36,6 @@
 struct Buffer {
   mut data : FixedArray[Byte]
   mut len : Int
-  initial_data : FixedArray[Byte]
 }
 
 ///|
@@ -145,7 +144,7 @@ pub fn contents(self : Buffer) -> Bytes {
 pub fn new(size_hint? : Int = 0) -> Buffer {
   let initial = if size_hint < 1 { 1 } else { size_hint }
   let data = FixedArray::make(initial, Byte::default())
-  { data, len: 0, initial_data: data }
+  { data, len: 0 }
 }
 
 ///|
@@ -836,7 +835,6 @@ pub fn write_iter(self : Buffer, iter : Iter[Byte]) -> Unit {
 ///   inspect(buf.is_empty(), content="true")
 /// ```
 pub fn reset(self : Buffer) -> Unit {
-  self.data = self.initial_data
   self.len = 0
 }
 
