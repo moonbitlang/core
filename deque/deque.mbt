@@ -1760,3 +1760,51 @@ pub fn[A] shuffle(self : Deque[A], rand~ : (Int) -> Int) -> Deque[A] {
   // Return the shuffled copy
   new_deque
 }
+
+///|
+/// Copies `len` elements from `self` starting at `src_offset` into `dst` starting at `dst_offset`.
+/// Grows `dst` if needed.
+/// 
+/// Parameters:
+///
+/// * `self` : The source deque from which elements are copied.
+/// * `dst` : The destination deque to which elements are copied.
+/// * `len~` : The number of elements to copy. Must be non-negative and must not exceed the available elements in `self` starting from `src_offset`.
+/// * `src_offset~` : The starting offset in the source deque (`self`). Defaults to 0.
+/// * `dst_offset~` : The starting offset in the destination deque (`dst`). Defaults to 0.
+/// 
+/// Example:
+/// ```moonbit
+/// let src = @deque.of([1, 2, 3, 4, 5])
+/// let dst = @deque.of([10, 20])
+/// blit_to(src, dst, len=3, src_offset=1, dst_offset=2)
+/// inspect(dst, content="@deque.of([10, 20, 2, 3, 4])")
+///
+/// let src = @deque.of([1, 2])
+/// let dst = @deque.of([])
+/// blit_to(src, dst, len=2)
+/// inspect(dst, content="@deque.of([1, 2])")
+/// ```
+pub fn[A] blit_to(
+  self : T[A],
+  dst : T[A],
+  len~ : Int,
+  src_offset~ : Int = 0,
+  dst_offset~ : Int = 0
+) -> Unit {
+  guard len >= 0 &&
+    dst_offset >= 0 &&
+    src_offset >= 0 &&
+    dst_offset <= dst.length() &&
+    src_offset + len <= self.length()
+  if dst_offset + len > dst.length() {
+    let new_dst = UninitializedArray::make(dst_offset + len)
+    UninitializedArray::unsafe_blit(new_dst, 0, dst.buf, 0, dst.length())
+    UninitializedArray::unsafe_blit(new_dst, dst_offset, self.buf, src_offset, len)
+    dst.buf = new_dst
+    dst.len = dst_offset + len
+    dst.tail = dst.len - 1
+  } else {
+    UninitializedArray::unsafe_blit(dst.buf, dst_offset, self.buf, src_offset, len)
+  }
+}
