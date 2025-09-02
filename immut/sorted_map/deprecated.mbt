@@ -12,19 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-///|
-/// Create a new map with a key-value pair inserted.
-/// O(log n).
-///
-#deprecated("Use `add` instead")
-#coverage.skip
-pub fn[K : Compare, V] insert(
-  self : SortedMap[K, V],
-  key : K,
-  value : V,
-) -> SortedMap[K, V] {
-  self.add(key, value)
-}
 
 ///|
 #deprecated("use `@immut/sorted_map.new` instead")
