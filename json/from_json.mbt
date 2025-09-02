@@ -54,6 +54,12 @@ pub impl FromJson for Int with from_json(json, path) {
     n != @double.neg_infinity else {
     decode_error(path, "Int::from_json: expected number")
   }
+  // Range check before conversion to avoid silent wrap/truncation
+  let max_ok = 2147483647.0
+  let min_ok = -2147483648.0
+  if n > max_ok || n < min_ok {
+    decode_error(path, "Int::from_json: overflow")
+  }
   n.to_int()
 }
 
@@ -75,6 +81,11 @@ pub impl FromJson for UInt with from_json(json, path) {
     n != @double.infinity &&
     n != @double.neg_infinity else {
     decode_error(path, "UInt::from_json: expected number")
+  }
+  // Range check before conversion to avoid silent wrap/truncation
+  let max_ok = 4294967295.0
+  if n < 0.0 || n > max_ok {
+    decode_error(path, "UInt::from_json: overflow")
   }
   n.to_uint()
 }
