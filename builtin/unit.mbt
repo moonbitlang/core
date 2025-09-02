@@ -17,3 +17,10 @@ pub impl Eq for Unit with equal(self : Unit, _other : Unit) -> Bool {
   let _ = self
   true
 }
+
+///|
+// TODO: remove this after we migrate compiler to new names
+pub impl Eq for Unit with op_equal(self : Unit, _other : Unit) -> Bool {
+  let _ = self
+  true
+}
