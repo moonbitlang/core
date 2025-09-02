@@ -44,16 +44,11 @@ pub fn[K : Eq + Hash, V] contains(self : HashMap[K, V], key : K) -> Bool {
   self.get(key) is Some(_)
 }
 
-///|
-/// Lookup a key from a hash map
-#deprecated("Use `get()` instead")
-#coverage.skip
-pub fn[K : Eq + Hash, V] find(self : HashMap[K, V], key : K) -> V? {
-  self.get(key)
-}
+
 
 ///|
 /// Lookup a key from a hash map
+#alias()
 pub fn[K : Eq + Hash, V] get(self : HashMap[K, V], key : K) -> V? {
   match self.0 {
     None => None
