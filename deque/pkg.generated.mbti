@@ -22,9 +22,9 @@ type Deque[A]
 fn[A] Deque::append(Self[A], Self[A]) -> Unit
 fn[A] Deque::as_views(Self[A]) -> (ArrayView[A], ArrayView[A])
 fn[A] Deque::back(Self[A]) -> A?
-fn[A] Deque::blit_to(Self[A], Deque[A], len~ : Int, src_offset~ : Int, dst_offset~ : Int)
 fn[A : Compare] Deque::binary_search(Self[A], A) -> Result[Int, Int]
 fn[A] Deque::binary_search_by(Self[A], (A) -> Int) -> Result[Int, Int]
+fn[A] Deque::blit_to(Self[A], Self[A], len~ : Int, src_offset? : Int, dst_offset? : Int) -> Unit
 fn[A] Deque::capacity(Self[A]) -> Int
 fn[A] Deque::clear(Self[A]) -> Unit
 fn[A : Eq] Deque::contains(Self[A], A) -> Bool
