@@ -10,15 +10,6 @@ fn[T, E] err(E) -> Result[T, E]
 
 fn[T, E] ok(T) -> Result[T, E]
 
-#deprecated
-fn[T, E : Error] wrap0(f~ : () -> T raise E) -> Result[T, E]
-
-#deprecated
-fn[T, A, E : Error] wrap1(f~ : (A) -> T raise E, A) -> Result[T, E]
-
-#deprecated
-fn[T, A, B, E : Error] wrap2(f~ : (A, B) -> T raise E, A, B) -> Result[T, E]
-
 // Errors
 
 // Types and methods
