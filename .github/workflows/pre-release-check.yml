@@ -86,8 +86,8 @@ jobs:
           moon version --all
           moonrun --version
 
-      - name: moon check
-        run: moon check
+      - name: check
+        run: moon check --deny-warn
 
       - name: Set ulimit and run moon test
         if: ${{ matrix.os != 'windows-latest' }}
