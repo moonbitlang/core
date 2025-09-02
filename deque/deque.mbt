@@ -1786,8 +1786,8 @@ pub fn[A] shuffle(self : Deque[A], rand~ : (Int) -> Int) -> Deque[A] {
 /// inspect(dst, content="@deque.of([1, 2])")
 /// ```
 pub fn[A] blit_to(
-  self : T[A],
-  dst : T[A],
+  self : Deque[A],
+  dst : Deque[A],
   len~ : Int,
   src_offset~ : Int = 0,
   dst_offset~ : Int = 0
