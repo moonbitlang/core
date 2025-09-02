@@ -1343,9 +1343,9 @@ pub impl[A : ToJson] ToJson for Deque[A] with to_json(self : Deque[A]) -> Json {
 /// Example:
 ///
 /// ```moonbit
-///   let json = @json.parse("[1, 2, 3]")
-///   let dq : @deque.Deque[Int] = @json.from_json(json)
-///   inspect(dq, content="@deque.of([1, 2, 3])")
+/// let json = @json.parse("[1, 2, 3]")
+/// let dq : @deque.Deque[Int] = @json.from_json(json)
+/// inspect(dq, content="@deque.of([1, 2, 3])")
 /// ```
 ///
 pub impl[A : @json.FromJson] @json.FromJson for Deque[A] with from_json(
@@ -1358,7 +1358,7 @@ pub impl[A : @json.FromJson] @json.FromJson for Deque[A] with from_json(
   let len = arr.length()
   let buf = UninitializedArray::make(len)
   let head = 0
-  let tail = len
+  let tail = if len == 0 { 0 } else { len - 1 }
   for i, x in arr {
     buf[i] = @json.FromJson::from_json(x, path.add_index(i))
   }
