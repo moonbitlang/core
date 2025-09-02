@@ -3,10 +3,81 @@ name: pre-release-check
 on:
   push:
     branches:
+      - main
       - "pre-release*"
+  pull_request:
 
 jobs:
+  version-check:
+    runs-on: ubuntu-latest
+    outputs:
+      should-skip: ${{ steps.check.outputs.should-skip }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: install pre-release
+        run: |
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash -s pre-release
+          echo "$HOME/.moon/bin" >> $GITHUB_PATH
+
+      - name: get latest version info
+        id: latest
+        run: |
+          curl -s https://cli.moonbitlang.com/version.json > version.json
+          echo "Latest version info:"
+          cat version.json
+
+          # Extract moonc version from latest release using jq
+          LATEST_MOONC_VERSION=$(cat version.json | jq -r '.items[] | select(.name == "moonc") | .version')
+          echo "Latest moonc version: $LATEST_MOONC_VERSION"
+
+          # Extract date from moonc version (format: v0.6.25+d6913262c (2025-08-27))
+          LATEST_DATE=$(echo "$LATEST_MOONC_VERSION" | grep -o '([0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\})' | tr -d '()')
+          echo "Latest date: $LATEST_DATE"
+          echo "latest-date=$LATEST_DATE" >> $GITHUB_OUTPUT
+
+      - name: get pre-release version info
+        id: prerelease
+        run: |
+          # Get pre-release moonc version
+          PRERELEASE_MOONC_VERSION=$(moonc -v 2>&1 | head -1)
+          echo "Pre-release moonc version: $PRERELEASE_MOONC_VERSION"
+
+          # Extract date from pre-release version (format: v0.6.25+d6913262c (2025-08-27))
+          PRERELEASE_DATE=$(echo "$PRERELEASE_MOONC_VERSION" | grep -o '([0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\})' | tr -d '()')
+          echo "Pre-release date: $PRERELEASE_DATE"
+          echo "prerelease-date=$PRERELEASE_DATE" >> $GITHUB_OUTPUT
+
+      - name: check if should skip
+        id: check
+        run: |
+          LATEST_DATE="${{ steps.latest.outputs.latest-date }}"
+          PRERELEASE_DATE="${{ steps.prerelease.outputs.prerelease-date }}"
+          BRANCH_NAME="${{ github.ref_name }}"
+
+          echo "Latest date: $LATEST_DATE"
+          echo "Pre-release date: $PRERELEASE_DATE"
+          echo "Branch name: $BRANCH_NAME"
+
+          # Always run for pre-release branches
+          if [[ "$BRANCH_NAME" == pre-release* ]]; then
+            echo "Pre-release branch detected, running all jobs"
+            echo "should-skip=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          # Compare dates (YYYY-MM-DD format)
+          if [[ "$LATEST_DATE" < "$PRERELEASE_DATE" ]] ; then
+            echo "Pre-release is newer than latest release, running jobs"
+            echo "should-skip=false" >> $GITHUB_OUTPUT
+          else
+            echo "Latest release is newer than or equal to pre-release, skipping jobs"
+            echo "should-skip=true" >> $GITHUB_OUTPUT
+          fi
+
   moon-info-check:
+    needs: version-check
+    if: ${{ needs.version-check.outputs.should-skip == 'false' }}
     continue-on-error: true
     strategy:
       matrix:
@@ -32,6 +103,8 @@ jobs:
           git diff --exit-code
 
   moon-fmt-check:
+    needs: version-check
+    if: ${{ needs.version-check.outputs.should-skip == 'false' }}
     continue-on-error: true
     strategy:
       matrix:
@@ -58,6 +131,8 @@ jobs:
           git diff --exit-code
 
   pre-release-check:
+    needs: version-check
+    if: ${{ needs.version-check.outputs.should-skip == 'false' }}
     continue-on-error: true
     strategy:
       matrix:
