@@ -1777,12 +1777,12 @@ pub fn[A] shuffle(self : Deque[A], rand~ : (Int) -> Int) -> Deque[A] {
 /// ```moonbit
 /// let src = @deque.of([1, 2, 3, 4, 5])
 /// let dst = @deque.of([10, 20])
-/// blit_to(src, dst, len=3, src_offset=1, dst_offset=2)
+/// src.blit_to(src, dst, len=3, src_offset=1, dst_offset=2)
 /// inspect(dst, content="@deque.of([10, 20, 2, 3, 4])")
 ///
 /// let src = @deque.of([1, 2])
 /// let dst = @deque.of([])
-/// blit_to(src, dst, len=2)
+/// src.blit_to(src, dst, len=2)
 /// inspect(dst, content="@deque.of([1, 2])")
 /// ```
 pub fn[A] blit_to(
