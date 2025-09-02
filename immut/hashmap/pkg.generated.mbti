@@ -28,10 +28,9 @@ fn[K, V] HashMap::each(Self[K, V], (K, V) -> Unit raise?) -> Unit raise?
 fn[K, V] HashMap::filter(Self[K, V], (V) -> Bool raise?) -> Self[K, V] raise?
 fn[K, V] HashMap::filter_with_key(Self[K, V], (K, V) -> Bool raise?) -> Self[K, V] raise?
 #deprecated
-fn[K : Eq + Hash, V] HashMap::find(Self[K, V], K) -> V?
-#deprecated
 fn[K, V, A] HashMap::fold(Self[K, V], init~ : A, (A, V) -> A raise?) -> A raise?
 fn[K, V, A] HashMap::fold_with_key(Self[K, V], init~ : A, (A, K, V) -> A raise?) -> A raise?
+#alias(find, deprecated)
 fn[K : Eq + Hash, V] HashMap::get(Self[K, V], K) -> V?
 fn[K : Eq, V] HashMap::intersection(Self[K, V], Self[K, V]) -> Self[K, V]
 fn[K : Eq, V] HashMap::intersection_with(Self[K, V], Self[K, V], (K, V, V) -> V raise?) -> Self[K, V] raise?
