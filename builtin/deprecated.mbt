@@ -250,25 +250,6 @@ pub fn[T] Array::find_index(self : Array[T], f : (T) -> Bool) -> Int? {
 ///
 
 ///|
-/// Fold out values from an array according to certain rules.
-///
-/// Example:
-///
-/// ```moonbit
-///   let sum = [1, 2, 3, 4, 5].fold(init=0, (sum, elem) => sum + elem)
-///   assert_eq(sum, 15)
-/// ```
-#deprecated("Use `fold` instead.")
-#coverage.skip
-pub fn[T, U] Array::fold_left(
-  self : Array[T],
-  f : (U, T) -> U raise?,
-  init~ : U,
-) -> U raise? {
-  self.fold(init~, f)
-}
-
-///|
 /// Fold out values from an array according to certain rules in reversed turn.
 ///
 /// Example:

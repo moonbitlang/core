@@ -18,6 +18,7 @@ fi
 # Check for staged files
 STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(mbt|mbti)$' || true)
 
+# If no mbt/mbti files are staged, exit
 if [ -z "$STAGED_FILES" ]; then
     echo "ℹ️  No MoonBit files staged for commit."
     exit 0
