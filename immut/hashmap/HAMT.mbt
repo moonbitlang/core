@@ -44,8 +44,6 @@ pub fn[K : Eq + Hash, V] contains(self : HashMap[K, V], key : K) -> Bool {
   self.get(key) is Some(_)
 }
 
-
-
 ///|
 /// Lookup a key from a hash map
 #alias(find, deprecated)
