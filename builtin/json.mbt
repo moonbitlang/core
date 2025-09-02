@@ -24,7 +24,7 @@ pub enum Json {
 }
 
 ///|
-pub impl Eq for Json with op_equal(a, b) {
+pub impl Eq for Json with equal(a, b) {
   match (a, b) {
     (Null, Null) => true
     (True, True) => true

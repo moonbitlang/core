@@ -616,7 +616,7 @@ pub fn[A] Deque::as_views(self : Deque[A]) -> (@array.View[A], @array.View[A]) {
 ///   inspect(dq1 == dq2, content="true")
 ///   inspect(dq1 == dq3, content="false")
 /// ```
-pub impl[A : Eq] Eq for Deque[A] with op_equal(self, other) {
+pub impl[A : Eq] Eq for Deque[A] with equal(self, other) {
   if self.len != other.len {
     return false
   }
@@ -851,11 +851,10 @@ pub fn[A] reserve_capacity(self : Deque[A], capacity : Int) -> Unit {
   let { buf, len, head, .. } = self
   self.buf = new_buf
   self.head = 0
-  self.tail = 0
+  self.tail = if len == 0 { 0 } else { len - 1 }
   for i in 0..<len {
     let idx = (head + i) % buf.length()
     self.buf[i] = buf[idx]
-    self.tail += 1
   }
 }
 
@@ -880,7 +879,7 @@ pub fn[A] shrink_to_fit(self : Deque[A]) -> Unit {
   let { buf, len, head, .. } = self
   self.buf = UninitializedArray::make(len)
   self.head = 0
-  self.tail = 0
+  self.tail = if len == 0 { 0 } else { len - 1 }
   for i in 0..<len {
     let idx = (head + i) % buf.length()
     self.buf[i] = buf[idx]
@@ -1343,9 +1342,9 @@ pub impl[A : ToJson] ToJson for Deque[A] with to_json(self : Deque[A]) -> Json {
 /// Example:
 ///
 /// ```moonbit
-///   let json = @json.parse("[1, 2, 3]")
-///   let dq : @deque.Deque[Int] = @json.from_json(json)
-///   inspect(dq, content="@deque.of([1, 2, 3])")
+/// let json = @json.parse("[1, 2, 3]")
+/// let dq : @deque.Deque[Int] = @json.from_json(json)
+/// inspect(dq, content="@deque.of([1, 2, 3])")
 /// ```
 ///
 pub impl[A : @json.FromJson] @json.FromJson for Deque[A] with from_json(
@@ -1358,7 +1357,7 @@ pub impl[A : @json.FromJson] @json.FromJson for Deque[A] with from_json(
   let len = arr.length()
   let buf = UninitializedArray::make(len)
   let head = 0
-  let tail = len
+  let tail = if len == 0 { 0 } else { len - 1 }
   for i, x in arr {
     buf[i] = @json.FromJson::from_json(x, path.add_index(i))
   }

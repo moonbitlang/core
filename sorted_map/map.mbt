@@ -22,7 +22,7 @@ pub fn[K : Compare, V] op_set(
 }
 
 ///|
-pub impl[K : Eq, V : Eq] Eq for SortedMap[K, V] with op_equal(self, other) {
+pub impl[K : Eq, V : Eq] Eq for SortedMap[K, V] with equal(self, other) {
   self.to_array() == other.to_array()
 }
 

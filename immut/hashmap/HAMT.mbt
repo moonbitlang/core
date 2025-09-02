@@ -46,14 +46,7 @@ pub fn[K : Eq + Hash, V] contains(self : HashMap[K, V], key : K) -> Bool {
 
 ///|
 /// Lookup a key from a hash map
-#deprecated("Use `get()` instead")
-#coverage.skip
-pub fn[K : Eq + Hash, V] find(self : HashMap[K, V], key : K) -> V? {
-  self.get(key)
-}
-
-///|
-/// Lookup a key from a hash map
+#alias(find, deprecated)
 pub fn[K : Eq + Hash, V] get(self : HashMap[K, V], key : K) -> V? {
   match self.0 {
     None => None
@@ -734,7 +727,7 @@ pub fn[K : Eq + Hash, V] of(arr : FixedArray[(K, V)]) -> HashMap[K, V] {
 }
 
 ///|
-impl[K : Eq, V : Eq] Eq for Node[K, V] with op_equal(self, other) {
+impl[K : Eq, V : Eq] Eq for Node[K, V] with equal(self, other) {
   match (self, other) {
     (Flat(key1, value1, path1), Flat(key2, value2, path2)) =>
       path1 == path2 && key1 == key2 && value1 == value2

@@ -54,7 +54,7 @@ test {
 }
 
 ///|
-pub impl[A : Eq] Eq for SortedSet[A] with op_equal(self, other) -> Bool {
+pub impl[A : Eq] Eq for SortedSet[A] with equal(self, other) -> Bool {
   // There's no `Iter::zip` (https://github.com/moonbitlang/core/issues/994#issuecomment-2350935193),
   // so we have to use the manual implementation below:
   let iter = InorderIterator::new(self)

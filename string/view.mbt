@@ -323,7 +323,7 @@ pub fn View::rev_iter(self : View) -> Iter[Char] {
 ///|
 /// Compares two views for equality. Returns true only if both views
 /// have the same length and contain identical characters in the same order.
-pub impl Eq for View with op_equal(self, other) {
+pub impl Eq for View with equal(self, other) {
   let len = self.length()
   guard len == other.length() else { return false }
   if physical_equal(self.str(), other.str()) && self.start() == other.start() {
@@ -561,6 +561,6 @@ pub fn View::op_as_view(
 }
 
 ///|
-pub impl Add for View with op_add(self, other) {
+pub impl Add for View with add(self, other) {
   [..self, ..other]
 }

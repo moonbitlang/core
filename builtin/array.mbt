@@ -257,7 +257,7 @@ pub fn[T] Array::op_set(self : Array[T], index : Int, value : T) -> Unit {
 ///   inspect(arr1 == arr2, content="true")
 ///   inspect(arr1 == arr3, content="false")
 /// ```
-pub impl[T : Eq] Eq for Array[T] with op_equal(self, other) {
+pub impl[T : Eq] Eq for Array[T] with equal(self, other) {
   let self_len = self.length()
   let other_len = other.length()
   guard self_len == other_len else { return false }
@@ -336,7 +336,7 @@ pub impl[T : Compare] Compare for Array[T] with compare(self, other) {
 ///   let b = [4, 5]
 ///   inspect(a + b, content="[1, 2, 3, 4, 5]")
 /// ```
-pub impl[T] Add for Array[T] with op_add(self, other) {
+pub impl[T] Add for Array[T] with add(self, other) {
   let result = Array::make_uninit(self.length() + other.length())
   UninitializedArray::unsafe_blit(
     result.buffer(),
