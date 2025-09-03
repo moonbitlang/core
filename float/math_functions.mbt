@@ -13,30 +13,4 @@
 // limitations under the License.
 
 ///|
-pub fnalias Float::(
-  sin,
-  cos,
-  tan,
-  asin,
-  acos,
-  atan,
-  atan2,
-  exp,
-  expm1,
-  pow,
-  ln,
-  ln_1p,
-  sinh,
-  cosh,
-  tanh,
-  asinh,
-  acosh,
-  atanh,
-  hypot,
-  cbrt,
-  trunc,
-  ceil,
-  floor,
-  round,
-  abs
-)
+pub fnalias Float::(pow, trunc, ceil, floor, round, abs)
