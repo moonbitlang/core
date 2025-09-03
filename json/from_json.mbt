@@ -245,3 +245,29 @@ pub impl FromJson for Unit with from_json(json, path) {
 pub impl FromJson for Json with from_json(json, _path) {
   json
 }
+
+///|
+pub impl FromJson for Bytes with from_json(json, path) {
+  guard json is String(a) else {
+    decode_error(path, "Bytes::from_json: expected string")
+  }
+  let buffer = @buffer.new(size_hint=a.length())
+  loop a[:] {
+    [] => ()
+    [.. "\\x", '0'..='9' | 'a'..='f' as x, '0'..='9' | 'a'..='f' as y, .. rest] => {
+      let upper = (x.to_int() & 0xF) + (x.to_int() >> 6) * 9
+      let lower = (y.to_int() & 0xF) + (y.to_int() >> 6) * 9
+      buffer.write_byte(((upper << 4) | lower).to_byte())
+      continue rest
+    }
+    [' '..='~' as ch, .. rest] => {
+      guard ch != '\\' && ch != '"' else {
+        decode_error(path, "Bytes::from_json: invalid escape sequence")
+      }
+      buffer.write_byte(ch.to_uint().to_byte())
+      continue rest
+    }
+    _ => decode_error(path, "Bytes::from_json: invalid byte sequence")
+  }
+  buffer.to_bytes()
+}
