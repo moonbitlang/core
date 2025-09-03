@@ -565,7 +565,7 @@ fn[T] FixedArray::unsafe_set(Self[T], Int, T) -> Unit
 fn Bytes::copy(Bytes) -> Bytes
 fn Bytes::length(Bytes) -> Int
 fn Bytes::make(Int, Byte) -> Bytes
-fn[] Bytes::makei(Int, (Int) -> Byte raise?) -> Bytes raise?
+fn Bytes::makei(Int, (Int) -> Byte raise?) -> Bytes raise?
 fn Bytes::new(Int) -> Bytes
 #deprecated
 fn Bytes::of_string(String) -> Bytes
