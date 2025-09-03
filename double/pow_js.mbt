@@ -35,4 +35,5 @@
 ///   inspect(0.0.pow(0.0), content="1")
 ///   inspect(@double.infinity.pow(-1.0), content="0")
 /// ```
+#as_free_fn
 pub fn Double::pow(self : Double, other : Double) -> Double = "Math" "pow"

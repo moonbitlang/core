@@ -74,6 +74,7 @@ pub fn from_int(i : Int) -> Double {
 ///   inspect(3.14.abs(), content="3.14")
 ///   inspect(0.0.abs(), content="0")
 /// ```
+#as_free_fn
 pub fn Double::abs(self : Double) -> Double = "%f64.abs"
 
 ///|
@@ -304,6 +305,7 @@ pub impl Show for Double with output(self, logger) {
 ///   inspect(x.is_close(y, relative_tolerance=1.0e-10), content="false")
 ///   inspect(@double.infinity.is_close(@double.infinity), content="true")
 /// ```
+#as_free_fn
 pub fn Double::is_close(
   self : Self,
   other : Self,

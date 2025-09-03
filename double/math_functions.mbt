@@ -13,4 +13,4 @@
 // limitations under the License.
 
 ///|
-pub fnalias Double::(pow, ln, log2, log10, ln_1p, hypot, is_close, abs)
+pub fnalias Double::(ln, log2, log10, ln_1p, hypot)
