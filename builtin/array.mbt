@@ -1251,6 +1251,7 @@ pub fn[T] Array::repeat(self : Array[T], times : Int) -> Array[T] {
 ///   assert_eq(sum, 15)
 /// ```
 #locals(f)
+#alias(fold_left, deprecated)
 pub fn[A, B] Array::fold(
   self : Array[A],
   init~ : B,
