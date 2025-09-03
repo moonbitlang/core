@@ -19,83 +19,26 @@ let not_a_number : Float
 // Errors
 
 // Types and methods
+#as_free_fn
 fn Float::abs(Float) -> Float
-fnalias Float::abs
-#deprecated
-fn Float::acos(Float) -> Float
-fnalias Float::acos
-#deprecated
-fn Float::acosh(Float) -> Float
-fnalias Float::acosh
-#deprecated
-fn Float::asin(Float) -> Float
-fnalias Float::asin
-#deprecated
-fn Float::asinh(Float) -> Float
-fnalias Float::asinh
-#deprecated
-fn Float::atan(Float) -> Float
-fnalias Float::atan
-#deprecated
-fn Float::atan2(Float, Float) -> Float
-fnalias Float::atan2
-#deprecated
-fn Float::atanh(Float) -> Float
-fnalias Float::atanh
-#deprecated
-fn Float::cbrt(Float) -> Float
-fnalias Float::cbrt
+#as_free_fn
 fn Float::ceil(Float) -> Float
-fnalias Float::ceil
-#deprecated
-fn Float::cos(Float) -> Float
-fnalias Float::cos
-#deprecated
-fn Float::cosh(Float) -> Float
-fnalias Float::cosh
-#deprecated
-fn Float::exp(Float) -> Float
-fnalias Float::exp
-#deprecated
-fn Float::expm1(Float) -> Float
-fnalias Float::expm1
+#as_free_fn
 fn Float::floor(Float) -> Float
-fnalias Float::floor
-#deprecated
-fn Float::hypot(Float, Float) -> Float
-fnalias Float::hypot
 fn Float::is_close(Float, Float, relative_tolerance? : Float, absolute_tolerance? : Float) -> Bool
 fn Float::is_inf(Float) -> Bool
 fn Float::is_nan(Float) -> Bool
 fn Float::is_neg_inf(Float) -> Bool
 fn Float::is_pos_inf(Float) -> Bool
-#deprecated
-fn Float::ln(Float) -> Float
-fnalias Float::ln
-#deprecated
-fn Float::ln_1p(Float) -> Float
-fnalias Float::ln_1p
+#as_free_fn
 fn Float::pow(Float, Float) -> Float
-fnalias Float::pow
+#as_free_fn
 fn Float::round(Float) -> Float
-fnalias Float::round
-#deprecated
-fn Float::sin(Float) -> Float
-fnalias Float::sin
-#deprecated
-fn Float::sinh(Float) -> Float
-fnalias Float::sinh
-#deprecated
-fn Float::tan(Float) -> Float
-fnalias Float::tan
-#deprecated
-fn Float::tanh(Float) -> Float
-fnalias Float::tanh
 fn Float::to_be_bytes(Float) -> Bytes
 fn Float::to_int(Float) -> Int
 fn Float::to_le_bytes(Float) -> Bytes
+#as_free_fn
 fn Float::trunc(Float) -> Float
-fnalias Float::trunc
 impl Default for Float
 impl Hash for Float
 impl Mod for Float
