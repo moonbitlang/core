@@ -148,11 +148,7 @@ pub fn[A] copy(self : Deque[A]) -> Deque[A] {
 /// ```
 pub fn[A] append(self : Deque[A], other : Deque[A]) -> Unit {
   guard other.len != 0 else { return }
-  let space = if self.buf.length() != 0 {
-    (self.head - self.tail - 1 + self.buf.length()) % self.buf.length()
-  } else {
-    0
-  }
+  let space = self.space()
   if space < other.len {
     let new_cap = if self.len + other.len > self.buf.length() * 2 {
       self.len + other.len
@@ -1758,4 +1754,8 @@ pub fn[A] shuffle(self : Deque[A], rand~ : (Int) -> Int) -> Deque[A] {
   new_deque.shuffle_in_place(rand~)
   // Return the shuffled copy
   new_deque
+}
+
+fn[A] space(self : Deque[A]) -> Int{
+  self.buf.length() - self.len
 }
