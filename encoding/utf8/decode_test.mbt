@@ -52,3 +52,10 @@ test "decoding UTF8 invalid data to String" {
       )
   }
 }
+
+///|
+test "decoding UTF8 with bom" {
+  let text = b"\xef\xbb\xbf\x61\x62\x63\xe4\xbd\xa0\xe5\xa5\xbd\xf0\x9f\x91\x80"
+  inspect(try! @utf8.decode(text), content="﻿abc你好👀")
+  inspect(try! @utf8.decode(text, ignore_bom=true), content="abc你好👀")
+}

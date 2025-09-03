@@ -13,11 +13,17 @@
 // limitations under the License.
 
 ///|
+const U_BOM : Char = '\u{FEFF}'
+
+///|
 /// Encodes a string into a UTF-8 byte array.
 /// 
 /// Panics if the string contains any invalid char (out of 0..=10FFFF)
-pub fn encode(str : @string.View) -> Bytes {
+pub fn encode(str : @string.View, bom? : Bool = false) -> Bytes {
   let buffer = @buffer.new(size_hint=str.length() * 4)
+  if bom is true {
+    buffer.write_char_utf8(U_BOM)
+  }
   buffer.write_string_utf8(str)
   buffer.to_bytes()
 }

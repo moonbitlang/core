@@ -7,11 +7,11 @@ import(
 )
 
 // Values
-fn decode(@bytes.View) -> String raise Malformed
+fn decode(@bytes.View, ignore_bom? : Bool) -> String raise Malformed
 
-fn decode_lossy(@bytes.View) -> String
+fn decode_lossy(@bytes.View, ignore_bom? : Bool) -> String
 
-fn encode(@string.View) -> Bytes
+fn encode(@string.View, bom? : Bool) -> Bytes
 
 // Errors
 pub suberror Malformed @bytes.View
