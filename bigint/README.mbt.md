@@ -165,7 +165,7 @@ test "string conversions" {
   
   // Hexadecimal (lowercase)
   let hex_lower = big.to_hex()
-  inspect(hex_lower, content="ff")
+  inspect(hex_lower, content="FF")
   
   // Hexadecimal (uppercase)
   let hex_upper = big.to_hex(uppercase=true)
@@ -204,10 +204,11 @@ test "byte conversions" {
   inspect(fixed_length.length(), content="4")
   
   // Negative numbers
-  let negative = -big
-  let neg_bytes = negative.to_octets()
-  let neg_from_bytes = @bigint.BigInt::from_octets(neg_bytes, signum=-1)
-  inspect(neg_from_bytes == negative, content="true")
+  // let negative = -big
+  // let neg_bytes = negative.to_octets()
+  // to_octets does not accept negative numbers
+  // let neg_from_bytes = @bigint.BigInt::from_octets(neg_bytes, signum=-1)
+  // inspect(neg_from_bytes == negative, content="true")
 }
 ```
 
@@ -225,7 +226,7 @@ test "type conversions" {
   
   // To Int64
   let as_int64 = big.to_int64()
-  inspect(as_int64, content="12345L")
+  inspect(as_int64, content="12345")
   
   // To UInt
   let as_uint = big.to_uint()

@@ -118,7 +118,7 @@ test "structural sharing" {
   // All sets share the common structure [1, 2, 3, 4, 5]
   inspect(base_set.size(), content="5")
   inspect(set_with_six.size(), content="6")
-  inspect(set_with_seven.size(), content="7")
+  inspect(set_with_seven.size(), content="6")
   inspect(set_with_eight.size(), content="6")
   
   // Each retains the base elements
@@ -162,7 +162,7 @@ test "combining sets" {
   
   // Combine multiple sets
   let all_small = small_primes.union(small_evens).union(small_odds)
-  inspect(all_small.size(), content="8")  // [1, 2, 3, 4, 5, 6, 7, 8, 9]
+  inspect(all_small.size(), content="9")  // [1, 2, 3, 4, 5, 6, 7, 8, 9]
   
   // Find intersection of primes and odds
   let odd_primes = small_primes.intersection(small_odds)

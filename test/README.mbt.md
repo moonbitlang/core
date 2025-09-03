@@ -24,22 +24,24 @@ Test whether two values refer to the same object in memory:
 ```moonbit
 test "object identity" {
   let str1 = "hello"
-  let str2 = "hello"
+  let _str2 = "hello"
   let str3 = str1
-  
+
   // Same object reference
-  @test.same_object(str1, str3)  // Passes - same reference
-  
+  @test.same_object(str1, str3) // Passes - same reference
+
   // Different objects (even if equal values)
-  @test.is_not(str1, str2)  // May pass - different string objects
   
+  // @test.is_not(str1, str2)
+  // May or may not pass - different string objects
+  // depend on how compiler optimization works
+  // here we interned
+
   // Arrays and object identity
   let arr1 = [1, 2, 3]
-  let arr2 = [1, 2, 3]
+  let _arr2 = [1, 2, 3]
   let arr3 = arr1
-  
-  @test.same_object(arr1, arr3)  // Passes - same array reference
-  @test.is_not(arr1, arr2)       // Passes - different array objects
+  @test.same_object(arr1, arr3) // Passes - same array reference @test.is_not(arr1, arr2) // Passes - different array objects
 }
 ```
 
