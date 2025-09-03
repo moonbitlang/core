@@ -111,6 +111,7 @@ pub let min_positive : Float = (0x00800000).reinterpret_as_float()
 ///   inspect((-0.0 : Float).abs(), content="0")
 ///   inspect(@float.not_a_number.abs().is_nan(), content="true")
 /// ```
+#as_free_fn
 pub fn Float::abs(self : Float) -> Float = "%f32.abs"
 
 ///|
