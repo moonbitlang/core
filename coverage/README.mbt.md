@@ -242,7 +242,7 @@ test "coverage reporting" {
   inspect(report, content="[2, 0, 1]")
   
   // In real usage, you might analyze this data:
-  fn analyze_coverage(coverage_str : String) -> (Int, Int) {
+  fn analyze_coverage(_coverage_str : String) -> (Int, Int) {
     // This would parse the coverage data and return (covered, total)
     // For demonstration, we'll return mock values
     (2, 3)  // 2 out of 3 lines covered
