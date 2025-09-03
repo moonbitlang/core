@@ -29,6 +29,7 @@
 ///   inspect((-3.7).trunc(), content="-3")
 ///   inspect(0.0.trunc(), content="0")
 /// ```
+#as_free_fn
 pub fn Double::trunc(self : Double) -> Double = "(func (param $d f64) (result f64) (f64.trunc (local.get $d)))"
 
 ///|
@@ -67,6 +68,7 @@ pub fn Double::ceil(self : Double) -> Double = "(func (param $d f64) (result f64
 ///   inspect((-3.7).floor(), content="-4")
 ///   inspect(0.0.floor(), content="0")
 /// ```
+#as_free_fn
 pub fn Double::floor(self : Double) -> Double = "(func (param $d f64) (result f64) (f64.floor (local.get $d)))"
 
 ///|

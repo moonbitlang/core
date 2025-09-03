@@ -60,6 +60,7 @@ fn expm1(Double) -> Double
 
 fn expm1f(Float) -> Float
 
+#as_free_fn
 fn floor(Double) -> Double
 
 fn hypot(Double, Double) -> Double
@@ -118,6 +119,7 @@ fn tanh(Double) -> Double
 
 fn tanhf(Float) -> Float
 
+#as_free_fn
 fn trunc(Double) -> Double
 
 // Errors
