@@ -47,6 +47,7 @@ pub fn Double::trunc(self : Double) -> Double = "Math" "trunc"
 ///   inspect((-3.7).ceil(), content="-3")
 ///   inspect(42.0.ceil(), content="42")
 /// ```
+#as_free_fn
 pub fn Double::ceil(self : Double) -> Double = "Math" "ceil"
 
 ///|

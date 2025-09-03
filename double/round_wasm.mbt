@@ -47,6 +47,7 @@ pub fn Double::trunc(self : Double) -> Double = "(func (param $d f64) (result f6
 ///   inspect((-3.7).ceil(), content="-3")
 ///   inspect(42.0.ceil(), content="42")
 /// ```
+#as_free_fn
 pub fn Double::ceil(self : Double) -> Double = "(func (param $d f64) (result f64) (f64.ceil (local.get $d)))"
 
 ///|

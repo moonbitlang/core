@@ -39,6 +39,5 @@ pub fnalias Double::(
   is_close,
   trunc,
   floor,
-  ceil,
   abs
 )
