@@ -1077,9 +1077,9 @@ test "drain when wrapped around" {
   // when the start is larger than len
   let dq = @deque.of([5, 6])
   dq..push_front(4)..push_front(3)..push_front(2)..push_front(1)
-  inspect(dq.as_views(), content="([1, 2], [3, 4, 5, 6])")
+  inspect(dq.as_views(), content="([1, 2, 3, 4], [5, 6])")
   let dq2 = dq.drain(start=3, len=2)
-  inspect(dq.as_views(), content="([1, 2, 3, 6], [])")
+  inspect(dq.as_views(), content="([1, 2], [3, 6])")
   inspect(dq2, content="@deque.of([4, 5])")
 }
 
