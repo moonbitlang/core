@@ -45,8 +45,8 @@ fnalias Double::atanh
 #deprecated
 fn Double::cbrt(Double) -> Double
 fnalias Double::cbrt
+#as_free_fn
 fn Double::ceil(Double) -> Double
-fnalias Double::ceil
 #deprecated
 fn Double::cos(Double) -> Double
 fnalias Double::cos

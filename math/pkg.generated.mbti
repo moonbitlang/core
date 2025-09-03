@@ -41,6 +41,7 @@ fn cbrt(Double) -> Double
 
 fn cbrtf(Float) -> Float
 
+#as_free_fn
 fn ceil(Double) -> Double
 
 fn cos(Double) -> Double

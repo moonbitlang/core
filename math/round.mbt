@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-pub fnalias Double::(ceil, floor, trunc)
+pub fnalias Double::(floor, trunc)
 
 ///|
-pub fnalias @double.round
+pub fnalias @double.(round, ceil)
