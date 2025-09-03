@@ -12,19 +12,19 @@ The main function provided by this package:
 
 ```moonbit
 test "ryu conversion" {
-  // The ryu_to_string function converts doubles to strings
-  let result = ryu_to_string(123.456)
+  // The @ryu.ryu_to_string function converts doubles to strings
+  let result = @ryu.ryu_to_string(123.456)
   inspect(result.length() > 0, content="true")
   
   // Test with various double values
-  let zero_result = ryu_to_string(0.0)
+  let zero_result = @ryu.ryu_to_string(0.0)
   inspect(zero_result, content="0")
   
-  let negative_result = ryu_to_string(-42.5)
+  let negative_result = @ryu.ryu_to_string(-42.5)
   inspect(negative_result.length() > 0, content="true")
   
   // Test with large values
-  let large_result = ryu_to_string(12300000000.0)  // 1.23e10
+  let large_result = @ryu.ryu_to_string(12300000000.0)  // 1.23e10
   inspect(large_result.length() > 0, content="true")
 }
 ```
@@ -38,17 +38,17 @@ The Ryu algorithm provides several important properties:
 test "accuracy properties" {
   // Ryu produces the shortest decimal representation
   let precise_value = 0.1
-  let result = ryu_to_string(precise_value)
+  let result = @ryu.ryu_to_string(precise_value)
   inspect(result.length() > 0, content="true")
   
   // Test with values that have exact representations
   let exact_value = 0.5
-  let exact_result = ryu_to_string(exact_value)
+  let exact_result = @ryu.ryu_to_string(exact_value)
   inspect(exact_result, content="0.5")
   
   // Test with powers of 2 (should be exact)
   let power_of_two = 8.0
-  let power_result = ryu_to_string(power_of_two)
+  let power_result = @ryu.ryu_to_string(power_of_two)
   inspect(power_result, content="8")
 }
 ```
@@ -57,18 +57,18 @@ test "accuracy properties" {
 ```moonbit
 test "edge cases" {
   // Test special values
-  let inf_result = ryu_to_string(1.0 / 0.0)  // Infinity
+  let inf_result = @ryu.ryu_to_string(1.0 / 0.0)  // Infinity
   inspect(inf_result.length() > 0, content="true")
   
-  let neg_inf_result = ryu_to_string(-1.0 / 0.0)  // Negative infinity
+  let neg_inf_result = @ryu.ryu_to_string(-1.0 / 0.0)  // Negative infinity
   inspect(neg_inf_result.length() > 0, content="true")
   
   // Test very small values
-  let tiny_result = ryu_to_string(0.0000000001)  // Very small
+  let tiny_result = @ryu.ryu_to_string(0.0000000001)  // Very small
   inspect(tiny_result.length() > 0, content="true")
   
   // Test very large values  
-  let huge_result = ryu_to_string(1000000000000.0)  // Large number
+  let huge_result = @ryu.ryu_to_string(1000000000000.0)  // Large number
   inspect(huge_result.length() > 0, content="true")
 }
 ```
@@ -88,7 +88,7 @@ test "performance demonstration" {
   let common_values = [0.0, 1.0, -1.0, 0.5, 0.25, 0.125]
   
   for value in common_values {
-    let result = ryu_to_string(value)
+    let result = @ryu.ryu_to_string(value)
     inspect(result.length() > 0, content="true")
   }
   
@@ -96,7 +96,7 @@ test "performance demonstration" {
   let complex_values = [3.141592653589793, 2.718281828459045, 1.4142135623730951]
   
   for value in complex_values {
-    let result = ryu_to_string(value)
+    let result = @ryu.ryu_to_string(value)
     inspect(result.length() > 0, content="true")
   }
 }

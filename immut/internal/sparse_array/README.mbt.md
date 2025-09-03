@@ -9,11 +9,11 @@ Create and manipulate sparse arrays:
 ```moonbit
 test "sparse array basics" {
   // Empty sparse array
-  let empty_array = empty()
+  let empty_array : @sparse_array.SparseArray[String] = @sparse_array.empty()
   inspect(empty_array.size(), content="0")
   
   // Singleton sparse array
-  let single = singleton(5, "value")
+  let single = @sparse_array.singleton(5, "value")
   inspect(single.size(), content="1")
   
   // Check if element exists
@@ -23,7 +23,7 @@ test "sparse array basics" {
   }
   
   // Doubleton (two elements)
-  let double = doubleton(2, "first", 7, "second")
+  let double = @sparse_array.doubleton(2, "first", 7, "second")
   inspect(double.size(), content="2")
 }
 ```
@@ -34,7 +34,7 @@ Add, remove, and modify elements:
 
 ```moonbit
 test "sparse array operations" {
-  let arr = singleton(3, 100)
+  let arr = @sparse_array.singleton(3, 100)
   
   // Add new element
   let with_new = arr.add(8, 200)
@@ -65,7 +65,7 @@ test "bitset operations" {
   // Note: Bitset constructor is internal, so we demonstrate concepts
   // In real usage, bitsets are created by sparse array operations
   
-  let sparse = singleton(3, "test")
+  let sparse = @sparse_array.singleton(3, "test")
   inspect(sparse.size(), content="1")
   
   // Add more elements to create internal bitsets
@@ -90,8 +90,8 @@ Perform set-like operations on sparse arrays:
 
 ```moonbit
 test "sparse array set operations" {
-  let arr1 = doubleton(1, "a", 3, "c")
-  let arr2 = doubleton(3, "C", 5, "e")
+  let arr1 = @sparse_array.doubleton(1, "a", 3, "c")
+  let arr2 = @sparse_array.doubleton(3, "C", 5, "e")
   
   // Intersection - keep common indices
   let intersection = arr1.intersection(arr2, fn(val1, val2) { Some(val1 + val2) })
@@ -115,7 +115,7 @@ Transform sparse arrays while maintaining efficiency:
 
 ```moonbit
 test "sparse array transformations" {
-  let numbers = doubleton(1, 10, 5, 50)
+  let numbers = @sparse_array.doubleton(1, 10, 5, 50)
   
   // Map values to new type
   let doubled = numbers.map(fn(x) { x * 2 })
@@ -140,8 +140,8 @@ Combine multiple sparse arrays:
 
 ```moonbit
 test "sparse array combinations" {
-  let arr1 = doubleton(1, "a", 3, "c")
-  let arr2 = doubleton(2, "b", 3, "C")  // Overlaps at index 3
+  let arr1 = @sparse_array.doubleton(1, "a", 3, "c")
+  let arr2 = @sparse_array.doubleton(2, "b", 3, "C")  // Overlaps at index 3
   
   // Union with conflict resolution
   let combined = arr1.union(arr2, fn(old_val, new_val) { old_val + new_val })
@@ -161,7 +161,7 @@ Work with sparse arrays efficiently:
 
 ```moonbit
 test "advanced sparse operations" {
-  let numbers = doubleton(2, 20, 5, 50)
+  let numbers = @sparse_array.doubleton(2, 20, 5, 50)
   
   // Add more elements
   let extended = numbers.add(10, 100).add(15, 150)

@@ -9,11 +9,11 @@ Create and initialize random number generators:
 ```moonbit
 test "random state creation" {
   // Create with default seed
-  let rng1 = new()
+  let rng1 = @splitmix.new()
   inspect(rng1.to_string().length() > 0, content="true")
   
   // Create with specific seed
-  let rng2 = new(seed=12345UL)
+  let rng2 = @splitmix.new(seed=12345UL)
   inspect(rng2.to_string().length() > 0, content="true")
   
   // Clone existing state
@@ -28,7 +28,7 @@ Generate various types of random numbers:
 
 ```moonbit
 test "random number generation" {
-  let rng = new(seed=42UL)
+  let rng = @splitmix.new(seed=42UL)
   
   // Generate random integers
   let int_val = rng.next_int()
@@ -58,7 +58,7 @@ Generate random floating-point values:
 
 ```moonbit
 test "floating point generation" {
-  let rng = new(seed=123UL)
+  let rng = @splitmix.new(seed=123UL)
   
   // Generate random doubles [0.0, 1.0)
   let double_val = rng.next_double()
@@ -85,7 +85,7 @@ Use advanced RNG operations:
 
 ```moonbit
 test "advanced operations" {
-  let rng = new(seed=999UL)
+  let rng = @splitmix.new(seed=999UL)
   
   // Generate two UInt values at once
   let (uint1, uint2) = rng.next_two_uint()
@@ -110,7 +110,7 @@ Manage random number generator state:
 
 ```moonbit
 test "state management" {
-  let rng = new(seed=555UL)
+  let rng = @splitmix.new(seed=555UL)
   
   // Advance the state manually
   rng.next()
@@ -137,8 +137,8 @@ Use seeded generators for reproducible tests:
 ```moonbit
 test "deterministic testing" {
   // Same seed should produce same sequence
-  let rng1 = new(seed=777UL)
-  let rng2 = new(seed=777UL)
+  let rng1 = @splitmix.new(seed=777UL)
+  let rng2 = @splitmix.new(seed=777UL)
   
   // Generate same sequence
   let seq1 = [rng1.next_int(), rng1.next_int(), rng1.next_int()]
@@ -158,7 +158,7 @@ This generator is used by QuickCheck for property testing:
 test "quickcheck integration concept" {
   // Conceptual usage in property-based testing
   fn test_property_with_random_data() -> Bool {
-    let rng = new()
+    let rng = @splitmix.new()
     
     // Generate test data
     let test_int = rng.next_positive_int()

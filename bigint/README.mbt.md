@@ -13,19 +13,19 @@ test "creating bigint values" {
   inspect(big1, content="12345678901234567890")
   
   // From regular integers
-  let big2 = BigInt::from_int(42)
+  let big2 = @bigint.BigInt::from_int(42)
   inspect(big2, content="42")
   
   // From Int64 values
-  let big3 = BigInt::from_int64(9223372036854775807L)
+  let big3 = @bigint.BigInt::from_int64(9223372036854775807L)
   inspect(big3, content="9223372036854775807")
   
   // From strings
-  let big4 = BigInt::from_string("999999999999999999999999999999")
+  let big4 = @bigint.BigInt::from_string("999999999999999999999999999999")
   inspect(big4, content="999999999999999999999999999999")
   
   // From hexadecimal strings
-  let big5 = BigInt::from_hex("1a2b3c4d5e6f")
+  let big5 = @bigint.BigInt::from_hex("1a2b3c4d5e6f")
   inspect(big5, content="28772997619311")
 }
 ```
@@ -48,15 +48,15 @@ test "arithmetic operations" {
   inspect(diff, content="864197532086419753208641975320")
   
   // Multiplication
-  let product = BigInt::from_int(123) * BigInt::from_int(456)
+  let product = @bigint.BigInt::from_int(123) * @bigint.BigInt::from_int(456)
   inspect(product, content="56088")
   
   // Division
-  let quotient = BigInt::from_int(1000) / BigInt::from_int(7)
+  let quotient = @bigint.BigInt::from_int(1000) / @bigint.BigInt::from_int(7)
   inspect(quotient, content="142")
   
   // Modulo
-  let remainder = BigInt::from_int(1000) % BigInt::from_int(7)
+  let remainder = @bigint.BigInt::from_int(1000) % @bigint.BigInt::from_int(7)
   inspect(remainder, content="6")
   
   // Negation
@@ -86,7 +86,7 @@ test "comparisons" {
   inspect(small.compare_int(200), content="-1")  // less than
   
   // BigInt to Int64 comparison
-  let big64 = BigInt::from_int64(9223372036854775807L)
+  let big64 = @bigint.BigInt::from_int64(9223372036854775807L)
   inspect(big64.equal_int64(9223372036854775807L), content="true")
 }
 ```
@@ -172,13 +172,13 @@ test "string conversions" {
   inspect(hex_upper, content="FF")
   
   // Parse from hex
-  let from_hex = BigInt::from_hex("deadbeef")
+  let from_hex = @bigint.BigInt::from_hex("deadbeef")
   inspect(from_hex, content="3735928559")
   
   // Round-trip conversion
   let original = 98765432109876543210N
   let as_string = original.to_string()
-  let parsed_back = BigInt::from_string(as_string)
+  let parsed_back = @bigint.BigInt::from_string(as_string)
   inspect(original == parsed_back, content="true")
 }
 ```
@@ -196,17 +196,17 @@ test "byte conversions" {
   inspect(bytes.length() > 0, content="true")
   
   // Convert from bytes (positive number)
-  let from_bytes = BigInt::from_octets(bytes)
+  let from_bytes = @bigint.BigInt::from_octets(bytes)
   inspect(from_bytes == big, content="true")
   
   // Convert with specific length
-  let fixed_length = BigInt::from_int(255).to_octets(length=4)
+  let fixed_length = @bigint.BigInt::from_int(255).to_octets(length=4)
   inspect(fixed_length.length(), content="4")
   
   // Negative numbers
   let negative = -big
   let neg_bytes = negative.to_octets()
-  let neg_from_bytes = BigInt::from_octets(neg_bytes, signum=-1)
+  let neg_from_bytes = @bigint.BigInt::from_octets(neg_bytes, signum=-1)
   inspect(neg_from_bytes == negative, content="true")
 }
 ```
@@ -254,7 +254,7 @@ test "json serialization" {
   inspect(json, content="String(\"12345678901234567890\")")
   
   // Large numbers that exceed JavaScript's safe integer range
-  let very_big = BigInt::from_string("999999999999999999999999999999")
+  let very_big = @bigint.BigInt::from_string("999999999999999999999999999999")
   let big_json = very_big.to_json()
   inspect(big_json, content="String(\"999999999999999999999999999999\")")
 }

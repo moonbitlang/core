@@ -28,18 +28,18 @@ test "object identity" {
   let str3 = str1
   
   // Same object reference
-  same_object(str1, str3)  // Passes - same reference
+  @test.same_object(str1, str3)  // Passes - same reference
   
   // Different objects (even if equal values)
-  is_not(str1, str2)  // May pass - different string objects
+  @test.is_not(str1, str2)  // May pass - different string objects
   
   // Arrays and object identity
   let arr1 = [1, 2, 3]
   let arr2 = [1, 2, 3]
   let arr3 = arr1
   
-  same_object(arr1, arr3)  // Passes - same array reference
-  is_not(arr1, arr2)       // Passes - different array objects
+  @test.same_object(arr1, arr3)  // Passes - same array reference
+  @test.is_not(arr1, arr2)       // Passes - different array objects
 }
 ```
 
@@ -52,7 +52,7 @@ test "conditional failure" {
   let value = 10
   
   if value < 0 {
-    fail("Value should not be negative: \{value}")
+    @test.fail("Value should not be negative: \{value}")
   }
   
   // Test continues if condition is not met
@@ -66,7 +66,7 @@ Create structured test outputs using the Test type:
 
 ```moonbit
 test "test output" {
-  let t = new("Example Test")
+  let t = @test.new("Example Test")
   
   // Write output to test buffer
   t.write("Testing basic functionality: ")
@@ -87,7 +87,7 @@ Compare test outputs against saved snapshots:
 
 ```moonbit
 test "snapshot testing" {
-  let t = new("Snapshot Test")
+  let t = @test.new("Snapshot Test")
   
   // Generate some output
   t.writeln("Current timestamp: 2024-01-01")
@@ -158,7 +158,7 @@ test "property testing" {
   let test_values = [0, 2, 4, 6, 8, 10]
   for value in test_values {
     if not(is_even(value)) {
-      fail("Expected \{value} to be even")
+      @test.fail("Expected \{value} to be even")
     }
   }
   
@@ -166,7 +166,7 @@ test "property testing" {
   let odd_values = [1, 3, 5, 7, 9]
   for value in odd_values {
     if is_even(value) {
-      fail("Expected \{value} to be odd")
+      @test.fail("Expected \{value} to be odd")
     }
   }
 }
@@ -275,7 +275,6 @@ Choose test data that makes the test's intent clear:
 test "tax_calculation_for_standard_rate" {
   let price = 100
   let tax_rate = 8  // 8% tax as integer percentage
-  let expected_tax = 8
   
   let calculated_tax = price * tax_rate / 100
   inspect(calculated_tax, content="8")

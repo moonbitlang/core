@@ -8,7 +8,7 @@ Access command line arguments passed to your program:
 
 ```moonbit
 test "command line arguments" {
-  let arguments = args()
+  let arguments = @env.args()
   
   // The arguments array contains program arguments
   // In a test environment, this will typically be empty or contain test runner args
@@ -34,7 +34,7 @@ Get the current time in milliseconds since Unix epoch:
 
 ```moonbit
 test "current time" {
-  let timestamp = now()
+  let timestamp = @env.now()
   
   // Timestamp should be a reasonable value (after year 2020)
   let year_2020_ms = 1577836800000UL  // Jan 1, 2020 in milliseconds
@@ -56,7 +56,7 @@ Get the current working directory:
 
 ```moonbit
 test "working directory" {
-  let cwd = current_dir()
+  let cwd = @env.current_dir()
   
   match cwd {
     Some(path) => {
@@ -109,7 +109,7 @@ test "command line tool pattern" {
 ```moonbit
 test "configuration loading" {
   fn load_config_path() -> String {
-    match current_dir() {
+    match @env.current_dir() {
       Some(cwd) => cwd + "/config.json"
       None => "./config.json"  // Fallback
     }
@@ -125,7 +125,7 @@ test "configuration loading" {
 ```moonbit
 test "logging with timestamps" {
   fn log_message(level : String, message : String) -> String {
-    let timestamp = now()
+    let timestamp = @env.now()
     "[" + timestamp.to_string() + "] " + level + ": " + message
   }
   
@@ -140,7 +140,7 @@ test "logging with timestamps" {
 ```moonbit
 test "file path operations" {
   fn resolve_relative_path(relative : String) -> String {
-    match current_dir() {
+    match @env.current_dir() {
       Some(base) => base + "/" + relative
       None => relative
     }
@@ -157,18 +157,18 @@ The env package behaves differently across platforms:
 
 ### JavaScript Environment
 - `args()` returns arguments from the JavaScript environment
-- `now()` uses `Date.now()` 
-- `current_dir()` may return `None` in browser environments
+- `@env.now()` uses `Date.@env.now()` 
+- `@env.current_dir()` may return `None` in browser environments
 
 ### WebAssembly Environment  
 - `args()` behavior depends on the WASM host
-- `now()` provides millisecond precision timing
-- `current_dir()` availability depends on host capabilities
+- `@env.now()` provides millisecond precision timing
+- `@env.current_dir()` availability depends on host capabilities
 
 ### Native Environment
 - `args()` returns actual command line arguments
-- `now()` provides system time
-- `current_dir()` uses system calls to get working directory
+- `@env.now()` provides system time
+- `@env.current_dir()` uses system calls to get working directory
 
 ## Error Handling
 
@@ -177,7 +177,7 @@ Handle cases where environment information is unavailable:
 ```moonbit
 test "error handling" {
   fn safe_get_cwd() -> String {
-    match current_dir() {
+    match @env.current_dir() {
       Some(path) => path
       None => {
         // Fallback when current directory is unavailable
@@ -212,7 +212,7 @@ test "error handling" {
 ```moonbit
 test "graceful handling" {
   fn get_work_dir() -> String {
-    match current_dir() {
+    match @env.current_dir() {
       Some(dir) => dir
       None => "~"  // Fallback to home directory symbol
     }
@@ -258,7 +258,7 @@ test "argument validation" {
 ```moonbit
 test "unique identifiers" {
   fn generate_unique_id(prefix : String) -> String {
-    prefix + "_" + now().to_string()
+    prefix + "_" + @env.now().to_string()
   }
   
   let id1 = generate_unique_id("task")
@@ -282,8 +282,8 @@ test "unique identifiers" {
 ## Performance Considerations
 
 - `args()` is typically called once at program startup
-- `now()` is lightweight but avoid calling in tight loops if high precision isn't needed
-- `current_dir()` may involve system calls, so cache the result if used frequently
+- `@env.now()` is lightweight but avoid calling in tight loops if high precision isn't needed
+- `@env.current_dir()` may involve system calls, so cache the result if used frequently
 - Environment functions are generally fast but platform-dependent
 
 The env package provides essential runtime environment access for building robust MoonBit applications that interact with their execution environment.

@@ -9,24 +9,24 @@ There are several ways to create sets:
 ```moonbit
 test "creating sets" {
   // Empty set
-  let empty_set : Set[Int] = Set::new()
+  let empty_set : @set.Set[Int] = @set.Set::new()
   inspect(empty_set.size(), content="0")
   inspect(empty_set.is_empty(), content="true")
   
   // Set with initial capacity
-  let set_with_capacity = Set::new(capacity=16)
+  let set_with_capacity : @set.Set[Int] = @set.Set::new(capacity=16)
   inspect(set_with_capacity.capacity(), content="16")
   
   // From array
-  let from_array = Set::from_array([1, 2, 3, 2, 1])  // Duplicates are removed
+  let from_array = @set.Set::from_array([1, 2, 3, 2, 1])  // Duplicates are removed
   inspect(from_array.size(), content="3")
   
   // From fixed array
-  let from_fixed = Set::of([10, 20, 30])
+  let from_fixed = @set.Set::of([10, 20, 30])
   inspect(from_fixed.size(), content="3")
   
   // From iterator
-  let from_iter = Set::from_iter([1, 2, 3, 4, 5].iter())
+  let from_iter = @set.Set::from_iter([1, 2, 3, 4, 5].iter())
   inspect(from_iter.size(), content="5")
 }
 ```
@@ -37,7 +37,7 @@ Add, remove, and check membership:
 
 ```moonbit
 test "basic operations" {
-  let set = Set::new()
+  let set = @set.Set::new()
   
   // Adding elements
   set.add("apple")
@@ -79,8 +79,8 @@ Perform mathematical set operations:
 
 ```moonbit
 test "set operations" {
-  let set1 = Set::from_array([1, 2, 3, 4])
-  let set2 = Set::from_array([3, 4, 5, 6])
+  let set1 = @set.Set::from_array([1, 2, 3, 4])
+  let set2 = @set.Set::from_array([3, 4, 5, 6])
   
   // Union (all elements from both sets)
   let union_set = set1.union(set2)
@@ -126,9 +126,9 @@ Test relationships between sets:
 
 ```moonbit
 test "set relationships" {
-  let small_set = Set::from_array([1, 2])
-  let large_set = Set::from_array([1, 2, 3, 4])
-  let disjoint_set = Set::from_array([5, 6, 7])
+  let small_set = @set.Set::from_array([1, 2])
+  let large_set = @set.Set::from_array([1, 2, 3, 4])
+  let disjoint_set = @set.Set::from_array([5, 6, 7])
   
   // Subset testing
   inspect(small_set.is_subset(large_set), content="true")
@@ -143,8 +143,8 @@ test "set relationships" {
   inspect(small_set.is_disjoint(large_set), content="false")
   
   // Equal sets
-  let set1 = Set::from_array([1, 2, 3])
-  let set2 = Set::from_array([3, 2, 1])  // Order doesn't matter
+  let set1 = @set.Set::from_array([1, 2, 3])
+  let set2 = @set.Set::from_array([3, 2, 1])  // Order doesn't matter
   inspect(set1 == set2, content="true")
 }
 ```
@@ -155,7 +155,7 @@ Iterate over sets and convert to other types:
 
 ```moonbit
 test "iteration and conversion" {
-  let set = Set::from_array(["first", "second", "third"])
+  let set = @set.Set::from_array(["first", "second", "third"])
   
   // Convert to array (maintains insertion order)
   let array = set.to_array()
@@ -188,7 +188,7 @@ Clear and modify existing sets:
 
 ```moonbit
 test "modifying sets" {
-  let set = Set::from_array([10, 20, 30, 40, 50])
+  let set = @set.Set::from_array([10, 20, 30, 40, 50])
   inspect(set.size(), content="5")
   
   // Clear all elements
@@ -210,14 +210,14 @@ Sets can be serialized to JSON as arrays:
 
 ```moonbit
 test "json serialization" {
-  let set = Set::from_array([1, 2, 3])
+  let set = @set.Set::from_array([1, 2, 3])
   let json = set.to_json()
   
   // JSON representation is an array
   inspect(json, content="Array([Number(1), Number(2), Number(3)])")
   
   // String set
-  let string_set = Set::from_array(["a", "b", "c"])
+  let string_set = @set.Set::from_array(["a", "b", "c"])
   let string_json = string_set.to_json()
   inspect(string_json, content="Array([String(\"a\"), String(\"b\"), String(\"c\")])")
 }
@@ -230,20 +230,20 @@ Sets work with any type that implements `Hash` and `Eq`:
 ```moonbit
 test "different types" {
   // Integer set
-  let int_set = Set::from_array([1, 2, 3, 4, 5])
+  let int_set = @set.Set::from_array([1, 2, 3, 4, 5])
   inspect(int_set.contains(3), content="true")
   
   // String set
-  let string_set = Set::from_array(["hello", "world", "moonbit"])
+  let string_set = @set.Set::from_array(["hello", "world", "moonbit"])
   inspect(string_set.contains("world"), content="true")
   
   // Note: Char and Bool types don't implement Hash in this version
   // So we use Int codes for demonstration
-  let char_codes = Set::from_array([97, 98, 99])  // ASCII codes for 'a', 'b', 'c'
+  let char_codes = @set.Set::from_array([97, 98, 99])  // ASCII codes for 'a', 'b', 'c'
   inspect(char_codes.contains(98), content="true")  // 'b' = 98
   
   // Integer set representing boolean values
-  let bool_codes = Set::from_array([1, 0, 1])  // 1=true, 0=false
+  let bool_codes = @set.Set::from_array([1, 0, 1])  // 1=true, 0=false
   inspect(bool_codes.size(), content="2")  // Only 1 and 0
 }
 ```
@@ -255,7 +255,7 @@ Demonstrate efficient operations:
 ```moonbit
 test "performance examples" {
   // Large set operations
-  let large_set = Set::new(capacity=1000)
+  let large_set = @set.Set::new(capacity=1000)
   
   // Add many elements
   for i in 0..<100 {
@@ -268,7 +268,7 @@ test "performance examples" {
   inspect(large_set.contains(150), content="false")
   
   // Efficient set operations on large sets
-  let another_set = Set::new()
+  let another_set = @set.Set::new()
   for i in 50..<150 {
     another_set.add(i)
   }
@@ -298,7 +298,7 @@ Sets are particularly useful for:
 
 ## Best Practices
 
-1. **Pre-size when possible**: Use `Set::new(capacity=n)` if you know the approximate size
+1. **Pre-size when possible**: Use `@set.Set::new(capacity=n)` if you know the approximate size
 2. **Use appropriate types**: Ensure your key type has good `Hash` and `Eq` implementations
 3. **Prefer set operations**: Use built-in union, intersection, etc. instead of manual loops
 4. **Check return values**: Use `add_and_check` and `remove_and_check` when you need to know if the operation succeeded

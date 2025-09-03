@@ -9,7 +9,7 @@ The `Path` type represents a position in a HAMT structure:
 ```moonbit
 test "path basics" {
   // Create a path from a hashable value
-  let path = of(42)
+  let path = @path.of(42)
   
   // Check if this is the last level
   let is_last = path.is_last()
@@ -27,7 +27,7 @@ Navigate through HAMT tree levels:
 
 ```moonbit
 test "path navigation" {
-  let initial_path = of("test_key")
+  let initial_path = @path.of("test_key")
   
   // Move to next level in the tree
   let next_path = initial_path.next()
@@ -50,7 +50,7 @@ Build paths for tree navigation:
 
 ```moonbit
 test "path construction" {
-  let base_path = of(12345)
+  let base_path = @path.of(12345)
   
   // Push additional level information
   let extended_path = base_path.push(7)
