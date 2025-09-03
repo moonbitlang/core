@@ -34,7 +34,7 @@
 ///   inspect(5.0.op_mod(@double.not_a_number), content="NaN")
 ///   inspect(@double.infinity.op_mod(3.0), content="NaN")
 /// ```
-pub impl Mod for Double with op_mod(self : Double, other : Double) -> Double {
+pub impl Mod for Double with mod(self : Double, other : Double) -> Double {
   let x = self
   let y = other
   let mut uint64_x = x.reinterpret_as_uint64()

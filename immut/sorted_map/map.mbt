@@ -16,6 +16,7 @@
 /// Create a new map with a key-value pair inserted.
 /// O(log n).
 ///
+#alias(insert, deprecated)
 pub fn[K : Compare, V] add(
   self : SortedMap[K, V],
   key : K,

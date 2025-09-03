@@ -1,0 +1,88 @@
+#!/bin/bash
+
+# Enhanced pre-commit hook for MoonBit
+# This version also runs formatting and provides more detailed feedback
+# To use this instead of the basic version, rename it to 'pre-commit'
+
+set -e
+
+echo "🌙 Running MoonBit pre-commit checks (enhanced)..."
+
+# Check if moon is available
+if ! command -v moon &> /dev/null; then
+    echo "❌ Error: 'moon' command not found. Please install MoonBit toolchain."
+    echo "   Visit: https://www.moonbitlang.com/download/"
+    exit 1
+fi
+
+# Check for staged files
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(mbt|mbti)$' || true)
+
+# If no mbt/mbti files are staged, exit
+if [ -z "$STAGED_FILES" ]; then
+    echo "ℹ️  No MoonBit files staged for commit."
+    exit 0
+fi
+
+echo "📁 Found staged MoonBit files:"
+echo "$STAGED_FILES" | sed 's/^/   - /'
+echo ""
+
+# Run formatting first
+echo "🎨 Running 'moon fmt'..."
+if ! moon fmt; then
+    echo "❌ Formatting failed! Please check the output above."
+    exit 1
+fi
+
+# Check if formatting changed any files
+CHANGED_FILES=$(git diff --name-only | grep -E '\.(mbt|mbti)$' || true)
+if [ -n "$CHANGED_FILES" ]; then
+    echo "⚠️  Formatting changes detected. Please stage the formatted files:"
+    echo "$CHANGED_FILES" | sed 's/^/   - /'
+    echo ""
+    echo "💡 Run: git add . && git commit"
+    exit 1
+fi
+
+# Run moon check and capture output
+echo "📋 Running 'moon check'..."
+CHECK_OUTPUT=$(moon check 2>&1)
+CHECK_EXIT_CODE=$?
+
+if [ $CHECK_EXIT_CODE -ne 0 ]; then
+    echo ""
+    echo "❌ Pre-commit hook failed!"
+    echo "   'moon check' found issues in your code:"
+    echo ""
+    echo "📝 Error details:"
+    echo "$CHECK_OUTPUT" | sed 's/^/   /'
+    echo ""
+    echo "💡 Common fixes:"
+    echo "   - Check for type errors and fix them"
+    echo "   - Ensure all imports are valid"
+    echo "   - Run 'moon fmt' if formatting issues persist"
+    echo "   - Review the error messages above for specific issues"
+    exit 1
+else
+    echo "   $CHECK_OUTPUT"
+fi
+
+# Optional: Run tests on changed modules (uncomment if desired)
+# echo "🧪 Running tests for changed modules..."
+# for file in $STAGED_FILES; do
+#     MODULE_DIR=$(dirname "$file")
+#     if [ -f "$MODULE_DIR/moon.pkg.json" ]; then
+#         echo "   Testing $MODULE_DIR..."
+#         if ! (cd "$MODULE_DIR" && moon test); then
+#             echo "❌ Tests failed in $MODULE_DIR"
+#             exit 1
+#         fi
+#     fi
+# done
+
+echo "✅ All checks passed! Proceeding with commit..."
+echo "   📁 Files: $(echo "$STAGED_FILES" | wc -l | xargs) MoonBit files"
+echo "   🎨 Formatted: ✓"
+echo "   📋 Checked: ✓"
+echo ""

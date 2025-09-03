@@ -81,7 +81,7 @@ fn new_unchecked(numerator : Int64, denominator : Int64) -> T {
 /// NOTE: we don't check overflow here, to align with the `op_add` of `Int64`.
 /// TODO: add a `checked_add` method.
 #coverage.skip
-pub impl Add for T with op_add(self : T, other : T) -> T {
+pub impl Add for T with add(self : T, other : T) -> T {
   new_unchecked(
     self.numerator * other.denominator + other.numerator * self.denominator,
     self.denominator * other.denominator,
@@ -99,7 +99,7 @@ pub impl Add for T with op_add(self : T, other : T) -> T {
 /// Returns the difference of the two rational numbers.
 ///
 #coverage.skip
-pub impl Sub for T with op_sub(self : T, other : T) -> T {
+pub impl Sub for T with sub(self : T, other : T) -> T {
   new_unchecked(
     self.numerator * other.denominator - other.numerator * self.denominator,
     self.denominator * other.denominator,
@@ -117,7 +117,7 @@ pub impl Sub for T with op_sub(self : T, other : T) -> T {
 /// Returns the product of the two rational numbers.
 ///
 #coverage.skip
-pub impl Mul for T with op_mul(self : T, other : T) -> T {
+pub impl Mul for T with mul(self : T, other : T) -> T {
   new_unchecked(
     self.numerator * other.numerator,
     self.denominator * other.denominator,
@@ -135,7 +135,7 @@ pub impl Mul for T with op_mul(self : T, other : T) -> T {
 /// Returns the quotient of the division as a rational number.
 ///
 #coverage.skip
-pub impl Div for T with op_div(self : T, other : T) -> T {
+pub impl Div for T with div(self : T, other : T) -> T {
   if other.numerator < 0L {
     new_unchecked(
       self.numerator * -other.denominator,
@@ -209,7 +209,7 @@ pub fn T::abs(self : T) -> T {
 /// Returns `true` if the two rational numbers are equal, `false` otherwise.
 ///
 #coverage.skip
-pub impl Eq for T with op_equal(self : T, other : T) -> Bool {
+pub impl Eq for T with equal(self : T, other : T) -> Bool {
   self.numerator * other.denominator == other.numerator * self.denominator
 }
 
@@ -283,7 +283,7 @@ pub(all) suberror RationalError String derive(Show, ToJson(style="flat"))
 /// `false` otherwise.
 ///
 #coverage.skip
-pub impl Eq for RationalError with op_equal(
+pub impl Eq for RationalError with equal(
   self : RationalError,
   other : RationalError,
 ) -> Bool {

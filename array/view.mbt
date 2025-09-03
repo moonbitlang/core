@@ -458,7 +458,7 @@ pub impl[X : Show] Show for View[X] with output(self, logger) {
 }
 
 ///|
-pub impl[T : Eq] Eq for View[T] with op_equal(self, other) -> Bool {
+pub impl[T : Eq] Eq for View[T] with equal(self, other) -> Bool {
   if self.length() != other.length() {
     return false
   }

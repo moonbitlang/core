@@ -419,12 +419,51 @@ test "uint roundtrip" {
 
 ///|
 test "uint" {
+  // valid max
   let v : UInt = @json.from_json(Json::number(4294967295))
   inspect(v, content="4294967295")
-  let v : UInt = @json.from_json(Json::number(-1))
-  inspect(v, content="0")
-  let v : UInt = @json.from_json(Json::number(4294967296))
-  inspect(v, content="4294967295")
+  // negative should error
+  let neg_res : Result[UInt, _] = try? @json.from_json(Json::number(-1))
+  inspect(
+    neg_res,
+    content="Err(JsonDecodeError(($, \"UInt::from_json: overflow\")))",
+  )
+  // overflow should error
+  let ovf_res : Result[UInt, _] = try? @json.from_json(Json::number(4294967296))
+  inspect(
+    ovf_res,
+    content="Err(JsonDecodeError(($, \"UInt::from_json: overflow\")))",
+  )
+}
+
+///|
+test "Int from_json overflow should error" {
+  let json = @json.parse("2147483648") // INT_MAX + 1 for 32-bit
+  let res : Result[Int, _] = try? @json.from_json(json)
+  match res {
+    Ok(v) => fail("BUG: Int overflow not detected, decoded as \{v}")
+    Err(_) => ()
+  }
+}
+
+///|
+test "Int from_json negative overflow should error" {
+  let json = @json.parse("-2147483649") // INT_MIN - 1 for 32-bit
+  let res : Result[Int, _] = try? @json.from_json(json)
+  match res {
+    Ok(v) => fail("BUG: Int negative overflow not detected, decoded as \{v}")
+    Err(_) => ()
+  }
+}
+
+///|
+test "UInt from_json overflow should error" {
+  let json = @json.parse("4294967296") // UINT_MAX + 1 for 32-bit
+  let res : Result[UInt, _] = try? @json.from_json(json)
+  match res {
+    Ok(v) => fail("BUG: UInt overflow not detected, decoded as \{v}")
+    Err(_) => ()
+  }
 }
 
 ///|

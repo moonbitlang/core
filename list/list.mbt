@@ -1038,7 +1038,7 @@ pub fn[A : Compare] sort(self : List[A]) -> List[A] {
 /// let result = a + b
 /// assert_eq(result, @list.of([1, 2, 3, 4, 5, 6]))
 /// ```
-pub impl[A] Add for List[A] with op_add(self, other) {
+pub impl[A] Add for List[A] with add(self, other) {
   self.concat(other)
 }
 

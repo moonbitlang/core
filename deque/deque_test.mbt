@@ -220,6 +220,27 @@ test "from_array" {
 }
 
 ///|
+test "from_json_tail_bug" {
+  let json = @json.parse("[1, 2, 3]")
+  let dq : @deque.Deque[Int] = @json.from_json(json)
+  assert_eq(dq.length(), 3)
+  assert_eq(dq.front(), Some(1))
+  assert_eq(dq[0], 1)
+  assert_eq(dq[1], 2)
+  assert_eq(dq[2], 3)
+
+  // Will panic under the bug (tail == len). Should be Some(3) when fixed.
+  assert_eq(dq.back(), Some(3))
+  dq.push_back(4)
+  assert_eq(dq.back(), Some(4))
+  let json = @json.parse("[]")
+  let dq : @deque.Deque[Int] = @json.from_json(json)
+  assert_eq(dq.back(), None)
+  dq.push_back(1)
+  assert_eq(dq.back(), Some(1))
+}
+
+///|
 test "copy" {
   inspect((@deque.new() : @deque.Deque[Int]).copy(), content="@deque.of([])")
   let deq = @deque.of([1, 2, 3])
@@ -595,6 +616,17 @@ test "test_reserve_capacity" {
   inspect(tester.capacity(), content="2")
   tester.reserve_capacity(35)
   inspect(tester.capacity(), content="35")
+  let dq = @deque.of([1, 2, 3])
+  dq.reserve_capacity(8)
+  // reproduce the bug in reserve_capacity with wrong tail calculation
+  assert_eq(dq.back(), Some(3))
+  dq.push_back(4)
+  assert_eq(dq.length(), 4)
+  assert_eq(dq[0], 1)
+  assert_eq(dq[1], 2)
+  assert_eq(dq[2], 3)
+  assert_eq(dq[3], 4)
+  @json.inspect(dq.to_array(), content=[1, 2, 3, 4])
 }
 
 ///|

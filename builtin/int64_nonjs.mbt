@@ -32,7 +32,7 @@
 ///   inspect(--42L, content="42")
 ///   inspect(-9223372036854775808L, content="-9223372036854775808") // negating min value
 /// ```
-pub impl Neg for Int64 with op_neg(self : Int64) -> Int64 = "%i64_neg"
+pub impl Neg for Int64 with neg(self : Int64) -> Int64 = "%i64_neg"
 
 ///|
 /// Adds two 64-bit integers together. Performs overflow checking and wrapping
@@ -53,7 +53,7 @@ pub impl Neg for Int64 with op_neg(self : Int64) -> Int64 = "%i64_neg"
 ///   inspect(a + b, content="-9223372036854775808") // Wraps around to minimum value
 ///   inspect(42L + -42L, content="0")
 /// ```
-pub impl Add for Int64 with op_add(self, other) = "%i64_add"
+pub impl Add for Int64 with add(self, other) = "%i64_add"
 
 ///|
 /// Performs subtraction between two 64-bit integers.
@@ -75,7 +75,7 @@ pub impl Add for Int64 with op_add(self, other) = "%i64_add"
 ///   let d = 1L
 ///   inspect(c - d, content="9223372036854775807")
 /// ```
-pub impl Sub for Int64 with op_sub(self, other) = "%i64_sub"
+pub impl Sub for Int64 with sub(self, other) = "%i64_sub"
 
 ///|
 /// Multiplies two 64-bit integers.
@@ -98,7 +98,7 @@ pub impl Sub for Int64 with op_sub(self, other) = "%i64_sub"
 ///   let c = -42L
 ///   inspect(c * b, content="-4200")
 /// ```
-pub impl Mul for Int64 with op_mul(self, other) = "%i64_mul"
+pub impl Mul for Int64 with mul(self, other) = "%i64_mul"
 
 ///|
 /// Performs integer division between two 64-bit integers. Truncates the result
@@ -123,7 +123,7 @@ pub impl Mul for Int64 with op_mul(self, other) = "%i64_mul"
 ///   let d = 5L
 ///   inspect(c / d, content="-8")
 /// ```
-pub impl Div for Int64 with op_div(self, other) = "%i64_div"
+pub impl Div for Int64 with div(self, other) = "%i64_div"
 
 ///|
 /// Calculates the remainder of the division between two 64-bit integers. The
@@ -146,7 +146,7 @@ pub impl Div for Int64 with op_div(self, other) = "%i64_div"
 ///   inspect(-7L % 3L, content="-1")
 ///   inspect(7L % -3L, content="1")
 /// ```
-pub impl Mod for Int64 with op_mod(self, other) = "%i64_mod"
+pub impl Mod for Int64 with mod(self, other) = "%i64_mod"
 
 ///|
 /// Performs a bitwise NOT operation on a 64-bit integer. Each bit in the input
@@ -377,7 +377,7 @@ pub fn Int64::shr(self : Int64, other : Int) -> Int64 = "%i64_shr"
 ///   let m = -4L
 ///   inspect(m << 2, content="-16") // -4 shifted left by 2 positions becomes -16
 /// ```
-pub impl Shl for Int64 with op_shl(self, other) = "%i64_shl"
+pub impl Shl for Int64 with shl(self, other) = "%i64_shl"
 
 ///|
 /// Performs arithmetic right shift operation on a 64-bit integer value by a
@@ -486,7 +486,7 @@ pub fn Int64::popcnt(self : Int64) -> Int = "%i64_popcnt"
 ///   inspect(a == b, content="true")
 ///   inspect(a == c, content="false")
 /// ```
-pub impl Eq for Int64 with op_equal(self : Int64, other : Int64) -> Bool = "%i64_eq"
+pub impl Eq for Int64 with equal(self : Int64, other : Int64) -> Bool = "%i64_eq"
 
 ///|
 /// Compares two 64-bit integers and returns their relative order.
@@ -1083,7 +1083,7 @@ pub fn UInt64::to_double(self : UInt64) -> Double = "%u64.to_f64"
 ///   let max = 18446744073709551615UL
 ///   inspect(max + 1UL, content="0")
 /// ```
-pub impl Add for UInt64 with op_add(self, other) = "%u64.add"
+pub impl Add for UInt64 with add(self, other) = "%u64.add"
 
 ///|
 /// Performs subtraction between two unsigned 64-bit integers. When the result
@@ -1107,7 +1107,7 @@ pub impl Add for UInt64 with op_add(self, other) = "%u64.add"
 ///   let d = 5UL
 ///   inspect(c - d, content="18446744073709551614") // wraps around to 2^64 - 2
 /// ```
-pub impl Sub for UInt64 with op_sub(self, other) = "%u64.sub"
+pub impl Sub for UInt64 with sub(self, other) = "%u64.sub"
 
 ///|
 /// Performs multiplication between two unsigned 64-bit integers.
@@ -1131,7 +1131,7 @@ pub impl Sub for UInt64 with op_sub(self, other) = "%u64.sub"
 ///   let max = 18446744073709551615UL
 ///   inspect(max * 2UL, content="18446744073709551614") // Wraps around to max - 1
 /// ```
-pub impl Mul for UInt64 with op_mul(self, other) = "%u64.mul"
+pub impl Mul for UInt64 with mul(self, other) = "%u64.mul"
 
 ///|
 /// Performs division operation between two unsigned 64-bit integers.
@@ -1152,7 +1152,7 @@ pub impl Mul for UInt64 with op_mul(self, other) = "%u64.mul"
 ///   let b = 20UL
 ///   inspect(a / b, content="5") // Using infix operator
 /// ```
-pub impl Div for UInt64 with op_div(self, other) = "%u64.div"
+pub impl Div for UInt64 with div(self, other) = "%u64.div"
 
 ///|
 /// Calculates the remainder of dividing one unsigned 64-bit integer by another.
@@ -1174,7 +1174,7 @@ pub impl Div for UInt64 with op_div(self, other) = "%u64.div"
 ///   inspect(a % b, content="2") // 17 divided by 5 gives quotient 3 and remainder 2
 ///   inspect(7UL % 4UL, content="3")
 /// ```
-pub impl Mod for UInt64 with op_mod(self, other) = "%u64.mod"
+pub impl Mod for UInt64 with mod(self, other) = "%u64.mod"
 
 ///|
 /// Compares two unsigned 64-bit integers and determines their relative order.
@@ -1220,7 +1220,7 @@ pub impl Compare for UInt64 with compare(self, other) = "%u64.compare"
 ///   inspect(a == b, content="true")
 ///   inspect(a == c, content="false")
 /// ```
-pub impl Eq for UInt64 with op_equal(self : UInt64, other : UInt64) -> Bool = "%u64.eq"
+pub impl Eq for UInt64 with equal(self : UInt64, other : UInt64) -> Bool = "%u64.eq"
 
 ///|
 /// Performs a bitwise AND operation between two unsigned 64-bit integers.
@@ -1419,7 +1419,7 @@ pub fn UInt64::lsr(self : UInt64, shift : Int) -> UInt64 = "%u64.shr"
 ///   inspect(x << 3, content="8") // 1 shifted left by 3 positions becomes 8
 ///   inspect(x << 63, content="9223372036854775808") // 1 shifted left by 63 positions
 /// ```
-pub impl Shl for UInt64 with op_shl(self, shift) = "%u64.shl"
+pub impl Shl for UInt64 with shl(self, shift) = "%u64.shl"
 
 ///|
 /// Performs a logical right shift operation on a 64-bit unsigned integer by a

@@ -18,7 +18,7 @@ pub impl[K, V] Default for SortedMap[K, V] with default() {
 }
 
 ///|
-pub impl[K : Eq, V : Eq] Eq for SortedMap[K, V] with op_equal(self, other) -> Bool {
+pub impl[K : Eq, V : Eq] Eq for SortedMap[K, V] with equal(self, other) -> Bool {
   let iter = InorderIterator::new(self)
   let iter1 = InorderIterator::new(other)
   loop (iter.next(), iter1.next()) {
