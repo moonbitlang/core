@@ -124,6 +124,7 @@ pub fn Double::floor(self : Double) -> Double {
 ///   inspect(3.5.round(), content="4")
 ///   inspect((-3.5).round(), content="-3")
 /// ```
+#as_free_fn
 pub fn Double::round(self : Double) -> Double {
   floor(self + 0.5)
 }

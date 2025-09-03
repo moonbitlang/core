@@ -94,6 +94,7 @@ fn powf(Float, Float) -> Float
 
 fn probable_prime(Int, @random.Rand) -> @bigint.BigInt
 
+#as_free_fn
 fn round(Double) -> Double
 
 fn scalbn(Double, Int) -> Double
