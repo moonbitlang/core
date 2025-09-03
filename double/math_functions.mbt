@@ -14,13 +14,6 @@
 
 ///|
 pub fnalias Double::(
-  sin,
-  cos,
-  tan,
-  asin,
-  acos,
-  atan,
-  atan2,
   exp,
   expm1,
   pow,

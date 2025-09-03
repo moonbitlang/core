@@ -22,23 +22,11 @@ let not_a_number : Double
 fn Double::abs(Double) -> Double
 fnalias Double::abs
 #deprecated
-fn Double::acos(Double) -> Double
-fnalias Double::acos
-#deprecated
 fn Double::acosh(Double) -> Double
 fnalias Double::acosh
 #deprecated
-fn Double::asin(Double) -> Double
-fnalias Double::asin
-#deprecated
 fn Double::asinh(Double) -> Double
 fnalias Double::asinh
-#deprecated
-fn Double::atan(Double) -> Double
-fnalias Double::atan
-#deprecated
-fn Double::atan2(Double, Double) -> Double
-fnalias Double::atan2
 #deprecated
 fn Double::atanh(Double) -> Double
 fnalias Double::atanh
@@ -47,9 +35,6 @@ fn Double::cbrt(Double) -> Double
 fnalias Double::cbrt
 #as_free_fn
 fn Double::ceil(Double) -> Double
-#deprecated
-fn Double::cos(Double) -> Double
-fnalias Double::cos
 #deprecated
 fn Double::cosh(Double) -> Double
 fnalias Double::cosh
@@ -95,14 +80,8 @@ fnalias Double::pow
 fn Double::round(Double) -> Double
 fn Double::signum(Double) -> Double
 #deprecated
-fn Double::sin(Double) -> Double
-fnalias Double::sin
-#deprecated
 fn Double::sinh(Double) -> Double
 fnalias Double::sinh
-#deprecated
-fn Double::tan(Double) -> Double
-fnalias Double::tan
 #deprecated
 fn Double::tanh(Double) -> Double
 fnalias Double::tanh
