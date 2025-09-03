@@ -364,9 +364,12 @@ test "write_char_utf16be" {
 }
 
 ///|
+const BOM : Char = '\u{FEFF}'
+
+///|
 test "write_bom_utf8" {
   let buf = @buffer.new()
-  buf.write_bom_utf8()
+  buf.write_char_utf8(BOM)
   inspect(
     buf.to_bytes(),
     content=(
@@ -378,7 +381,7 @@ test "write_bom_utf8" {
 ///|
 test "write_bom_utf16le" {
   let buf = @buffer.new()
-  buf.write_bom_utf16le()
+  buf.write_char_utf16le(BOM)
   inspect(
     buf.to_bytes(),
     content=(
@@ -390,7 +393,7 @@ test "write_bom_utf16le" {
 ///|
 test "write_bom_utf16be" {
   let buf = @buffer.new()
-  buf.write_bom_utf16be()
+  buf.write_char_utf16be(BOM)
   inspect(
     buf.to_bytes(),
     content=(

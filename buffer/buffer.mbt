@@ -709,34 +709,6 @@ pub fn Buffer::write_string_utf16be(buf : Self, string : @string.View) -> Unit {
 }
 
 ///|
-pub fn Buffer::write_bom_utf8(buf : Self) -> Unit {
-  let len = buf.len
-  buf.grow_if_necessary(len + 3)
-  buf.data[len] = 0xEF
-  buf.data[len + 1] = 0xBB
-  buf.data[len + 2] = 0xBF
-  buf.len += 3
-}
-
-///|
-pub fn Buffer::write_bom_utf16le(buf : Self) -> Unit {
-  let len = buf.len
-  buf.grow_if_necessary(len + 2)
-  buf.data[len] = 0xFF
-  buf.data[len + 1] = 0xFE
-  buf.len += 2
-}
-
-///|
-pub fn Buffer::write_bom_utf16be(buf : Self) -> Unit {
-  let len = buf.len
-  buf.grow_if_necessary(len + 2)
-  buf.data[len] = 0xFE
-  buf.data[len + 1] = 0xFF
-  buf.len += 2
-}
-
-///|
 /// Parameters:
 ///
 /// * `self` : The buffer to write to.
