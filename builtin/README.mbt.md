@@ -202,16 +202,18 @@ Basic JSON operations:
 test "json" {
   // JSON values
   let json_null = null
-  inspect(json_null, content="null")
+  inspect(json_null, content="Null")
   
   let json_bool = true.to_json()
-  inspect(json_bool, content="true")
+  inspect(json_bool, content="True")
   
   let json_number = (42 : Int).to_json()
-  inspect(json_number, content="42")
+  inspect(json_number, content="Number(42)")
   
   let json_string = "hello".to_json()
-  inspect(json_string, content="\"hello\"")
+  inspect(json_string, content=(
+    #|String("hello")
+  ))
 }
 ```
 

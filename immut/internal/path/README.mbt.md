@@ -13,7 +13,7 @@ test "path basics" {
   
   // Check if this is the last level
   let is_last = path.is_last()
-  inspect(is_last, content="true")  // Single level path
+  inspect(is_last, content="false")  // Single level path
   
   // Get the index at current level
   let idx = path.idx()

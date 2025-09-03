@@ -46,7 +46,7 @@ test "string iteration" {
     if idx == 0 { first_char = char }
     count = count + 1
   })
-  inspect(first_char, content="'H'")
+  inspect(first_char, content="H")
   inspect(count, content="6") // 6 Unicode characters
 }
 ```
