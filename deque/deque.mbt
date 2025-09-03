@@ -1789,7 +1789,7 @@ pub fn[A] blit_to(
   dst : Deque[A],
   len~ : Int,
   src_offset? : Int = 0,
-  dst_offset? : Int = 0
+  dst_offset? : Int = 0,
 ) -> Unit {
   guard len >= 0 &&
     dst_offset >= 0 &&
@@ -1812,11 +1812,10 @@ pub fn[A] blit_to(
   } else {
     UninitializedArray::unsafe_blit(
       dst.buf,
-      dst_offset, 
+      dst_offset,
       self.buf,
       src_offset,
       len,
-      )
+    )
   }
-  
 }

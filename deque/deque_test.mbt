@@ -1511,10 +1511,10 @@ test "append_folded_but_has_space" {
 
 ///|
 test "blit_to" {
-  let deque = @deque.of([1,2,3,4,5,6,7,8,9])
-  let deq = @deque.of([1,2,3])
+  let deque = @deque.of([1, 2, 3, 4, 5, 6, 7, 8, 9])
+  let deq = @deque.of([1, 2, 3])
   deque.blit_to(deq, len=2, dst_offset=1, src_offset=3)
-  inspect(deq, content="([1, 4, 5])")
+  inspect(deq, content="@deque.of([1, 4, 5])")
 }
 
 ///|
@@ -1522,7 +1522,7 @@ test "blit_to Zero-length copy" {
   let deque = @deque.of([1, 2, 3])
   let deq = @deque.of([0, 0, 0])
   deque.blit_to(deq, len=0, dst_offset=1, src_offset=2)
-  inspect(deq, content="([0, 0, 0])")
+  inspect(deq, content="@deque.of([0, 0, 0])")
 }
 
 ///|
@@ -1530,7 +1530,7 @@ test "blit_to dst_offset at the end" {
   let deque = @deque.of([10, 20])
   let deq = @deque.of([1])
   deque.blit_to(deq, len=2, dst_offset=1, src_offset=0)
-  inspect(deq, content="([1, 10, 20])")
+  inspect(deq, content="@deque.of([1, 10, 20])")
 }
 
 ///|
@@ -1538,14 +1538,14 @@ test "blit_to Target is empty" {
   let deque = @deque.of([1, 2])
   let deq = @deque.of([])
   deque.blit_to(deq, len=2, dst_offset=0, src_offset=0)
-  inspect(deq, content="([1, 2])")
+  inspect(deq, content="@deque.of([1, 2])")
 }
 
 ///|
 test "blit_to Copy within the same deque" {
   let deq = @deque.of([1, 2, 3, 4, 5])
   deq.blit_to(deq, len=2, dst_offset=2, src_offset=0)
-  inspect(deq, content="([1, 2, 1, 2, 5])")
+  inspect(deq, content="@deque.of([1, 2, 1, 2, 5])")
 }
 
 ///|
@@ -1553,7 +1553,7 @@ test "blit_to dst_offset at the end" {
   let deque3 = @deque.of([10, 20])
   let deq3 = @deque.of([1])
   deque3.blit_to(deq3, len=2, dst_offset=1, src_offset=0)
-  inspect(deq3, content="([1, 10, 20])")
+  inspect(deq3, content="@deque.of([1, 10, 20])")
 }
 
 ///|
@@ -1561,7 +1561,7 @@ test "blit_to Exact fit" {
   let deque = @deque.of([8, 7, 6])
   let deq = @deque.of([0, 0, 0])
   deque.blit_to(deq, len=3, dst_offset=0, src_offset=0)
-  inspect(deq, content="([8, 7, 6])")
+  inspect(deq, content="@deque.of([8, 7, 6])")
 }
 
 ///|
@@ -1569,5 +1569,5 @@ test "blit_to Partial overflow" {
   let deque = @deque.of([1, 2, 3, 4])
   let deq = @deque.of([0, 0])
   deque.blit_to(deq, len=3, dst_offset=1, src_offset=0)
-  inspect(deq, content="([0, 1, 2, 3])")
+  inspect(deq, content="@deque.of([0, 1, 2, 3])")
 }
