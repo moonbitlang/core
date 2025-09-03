@@ -37,7 +37,5 @@ pub fnalias Double::(
   hypot,
   cbrt,
   is_close,
-  trunc,
-  floor,
   abs
 )

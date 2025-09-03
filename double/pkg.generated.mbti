@@ -59,8 +59,8 @@ fnalias Double::exp
 #deprecated
 fn Double::expm1(Double) -> Double
 fnalias Double::expm1
+#as_free_fn
 fn Double::floor(Double) -> Double
-fnalias Double::floor
 fn Double::from_int(Int) -> Double
 #deprecated
 fn Double::hypot(Double, Double) -> Double
@@ -110,8 +110,8 @@ fn Double::to_be_bytes(Double) -> Bytes
 fn Double::to_le_bytes(Double) -> Bytes
 fn Double::to_string(Double) -> String
 fn Double::to_uint(Double) -> UInt
+#as_free_fn
 fn Double::trunc(Double) -> Double
-fnalias Double::trunc
 impl Hash for Double
 impl Mod for Double
 impl Show for Double
