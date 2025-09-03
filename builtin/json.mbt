@@ -183,10 +183,13 @@ pub impl ToJson for Byte with to_json(self : Byte) -> Json {
 pub impl ToJson for Bytes with to_json(self : Bytes) -> Json {
   let sb = StringBuilder::new()
   for b in self {
-    sb
-    ..write_string("\\x")
-    ..write_char(to_hex_digit(b.to_int() / 16))
-    ..write_char(to_hex_digit(b.to_int() % 16))
+    if b is (b' '..=b'~') && b != b'"' && b != b'\\' {
+      sb.write_char(b.to_char())
+    } else {
+      sb.write_string("\\x")
+      sb.write_char(to_hex_digit(b.to_int() / 16))
+      sb.write_char(to_hex_digit(b.to_int() % 16))
+    }
   }
   Json::string(sb.to_string())
 }
