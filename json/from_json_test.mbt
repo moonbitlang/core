@@ -752,3 +752,16 @@ test "Unit from_json error handling" {
     content="Err(JsonDecodeError(($, \"Unit::from_json: expected null\")))",
   )
 }
+
+///|
+test "Bytes from_json" {
+  let bytes = b"\x00\x01abcd\"\\"
+  let json = bytes.to_json()
+  let result : Result[Bytes, _] = try? @json.from_json(json)
+  inspect(
+    result,
+    content=(
+      #|Ok(b"\x00\x01\x61\x62\x63\x64\x22\x5c")
+    ),
+  )
+}

@@ -5,7 +5,8 @@
     "moonbitlang/core/double",
     "moonbitlang/core/string",
     "moonbitlang/core/strconv",
-    "moonbitlang/core/option"
+    "moonbitlang/core/option",
+    "moonbitlang/core/buffer"
   ],
   "test-import": [
     "moonbitlang/core/result",
