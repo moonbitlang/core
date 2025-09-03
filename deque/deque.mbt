@@ -150,16 +150,7 @@ pub fn[A] append(self : Deque[A], other : Deque[A]) -> Unit {
   guard other.len != 0 else { return }
   let space = self.space()
   if space < other.len {
-    let new_cap = if self.len + other.len > self.buf.length() * 2 {
-      self.len + other.len
-    } else {
-      self.buf.length() * 2
-    }
-    let new_buf = UninitializedArray::make(new_cap)
-    for i, x in self {
-      new_buf[i] = x
-    }
-    self.buf = new_buf
+    self.realloc(new_cap_least = self.len + other.len)
     self.head = 0
     self.tail = self.len - 1
   }
@@ -243,9 +234,9 @@ pub fn[A] capacity(self : Deque[A]) -> Int {
 
 ///|
 /// Reallocate the deque with a new capacity.
-fn[A] realloc(self : Deque[A]) -> Unit {
+fn[A] realloc(self : Deque[A], new_cap_least~ : Int = 0) -> Unit {
   let old_cap = self.len
-  let new_cap = if old_cap == 0 { 8 } else { old_cap * 2 }
+  let new_cap = @cmp.maximum(@cmp.maximum(new_cap_least, 8), old_cap * 2)
   let new_buf = UninitializedArray::make(new_cap)
   if old_cap > 0 {
     if self.tail >= self.head {
