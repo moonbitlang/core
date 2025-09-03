@@ -21,29 +21,8 @@ let not_a_number : Double
 // Types and methods
 fn Double::abs(Double) -> Double
 fnalias Double::abs
-#deprecated
-fn Double::acosh(Double) -> Double
-fnalias Double::acosh
-#deprecated
-fn Double::asinh(Double) -> Double
-fnalias Double::asinh
-#deprecated
-fn Double::atanh(Double) -> Double
-fnalias Double::atanh
-#deprecated
-fn Double::cbrt(Double) -> Double
-fnalias Double::cbrt
 #as_free_fn
 fn Double::ceil(Double) -> Double
-#deprecated
-fn Double::cosh(Double) -> Double
-fnalias Double::cosh
-#deprecated
-fn Double::exp(Double) -> Double
-fnalias Double::exp
-#deprecated
-fn Double::expm1(Double) -> Double
-fnalias Double::expm1
 #as_free_fn
 fn Double::floor(Double) -> Double
 fn Double::from_int(Int) -> Double
@@ -79,12 +58,6 @@ fnalias Double::pow
 #as_free_fn
 fn Double::round(Double) -> Double
 fn Double::signum(Double) -> Double
-#deprecated
-fn Double::sinh(Double) -> Double
-fnalias Double::sinh
-#deprecated
-fn Double::tanh(Double) -> Double
-fnalias Double::tanh
 fn Double::to_be_bytes(Double) -> Bytes
 fn Double::to_le_bytes(Double) -> Bytes
 fn Double::to_string(Double) -> String
