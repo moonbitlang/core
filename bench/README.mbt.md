@@ -10,10 +10,9 @@ Use the `single_bench` function to benchmark individual operations:
 test "basic benchmarking" {
   fn fibonacci(n : Int) -> Int {
     if n <= 1 { n } else { fibonacci(n - 1) + fibonacci(n - 2) }
-  }
-  
+  }  
   // Benchmark a simple computation
-  let summary = single_bench(name="fibonacci_10", fn() { 
+  let summary = @bench.single_bench(name="fibonacci_10", fn() { 
     ignore(fibonacci(10))
   })
   
@@ -28,7 +27,7 @@ Use the `T` type to collect multiple benchmarks:
 
 ```moonbit
 test "benchmark collection" {
-  let bencher = new()
+  let bencher = @bench.new()
   
   // Add multiple benchmarks to the collection
   bencher.bench(name="array_creation", fn() {
@@ -58,7 +57,7 @@ Compare the performance of different implementations:
 
 ```moonbit
 test "algorithm comparison" {
-  let bencher = new()
+  let bencher = @bench.new()
   
   // Benchmark linear search
   bencher.bench(name="linear_search", fn() {
@@ -91,7 +90,7 @@ Benchmark different data structure operations:
 
 ```moonbit
 test "data structure benchmarks" {
-  let bencher = new()
+  let bencher = @bench.new()
   
   // Benchmark Array operations
   bencher.bench(name="array_append", fn() {
@@ -122,7 +121,7 @@ Measure string manipulation performance:
 
 ```moonbit
 test "string benchmarks" {
-  let bencher = new()
+  let bencher = @bench.new()
   
   // Benchmark string concatenation
   bencher.bench(name="string_concat", fn() {
@@ -152,7 +151,7 @@ Use `keep` to prevent compiler optimizations from eliminating benchmarked code:
 
 ```moonbit
 test "preventing optimization" {
-  let bencher = new()
+  let bencher = @bench.new()
   
   bencher.bench(name="with_keep", fn() {
     let result = Array::makei(100, fn(i) { i * i })
@@ -171,7 +170,7 @@ Control the number of benchmark iterations:
 
 ```moonbit
 test "iteration control" {
-  let bencher = new()
+  let bencher = @bench.new()
   
   // Run with more iterations for more stable results
   bencher.bench(name="stable_benchmark", fn() {
@@ -200,7 +199,7 @@ test "iteration control" {
 
 ```moonbit
 test "isolation example" {
-  let bencher = new()
+  let bencher = @bench.new()
   
   // Good: Measure only the operation of interest
   let data = Array::makei(1000, fn(i) { i })  // Setup outside benchmark
@@ -222,7 +221,7 @@ test "isolation example" {
 
 ```moonbit
 test "warmup example" {
-  let bencher = new()
+  let bencher = @bench.new()
   
   fn expensive_operation() -> Int {
     let mut result = 0
@@ -252,7 +251,7 @@ test "warmup example" {
 
 ```moonbit
 test "meaningful names" {
-  let bencher = new()
+  let bencher = @bench.new()
   
   // Good: Descriptive names that explain what's being measured
   bencher.bench(name="hashmap_insert_1000_items", fn() {
@@ -289,7 +288,7 @@ Benchmarks can be integrated into your testing workflow:
 
 ```moonbit
 test "performance regression test" {
-  let bencher = new()
+  let bencher = @bench.new()
   
   // Benchmark a critical path
   bencher.bench(name="critical_algorithm", fn() {
