@@ -91,8 +91,8 @@ fn Double::min_normal() -> Double
 fn Double::nan() -> Double
 fn Double::pow(Double, Double) -> Double
 fnalias Double::pow
+#as_free_fn
 fn Double::round(Double) -> Double
-fnalias Double::round
 fn Double::signum(Double) -> Double
 #deprecated
 fn Double::sin(Double) -> Double

@@ -40,6 +40,5 @@ pub fnalias Double::(
   trunc,
   floor,
   ceil,
-  round,
   abs
 )
