@@ -19,24 +19,3 @@
 // Boost Software License, Version 1.0. (See accompanying file
 // LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 // The algorithm has been adapted and implemented independently in this code.
-
-///|
-#deprecated("use `@math.hypot` instead")
-#coverage.skip
-pub fn Double::hypot(self : Double, y : Double) -> Double {
-  if self.is_nan() || y.is_nan() {
-    return not_a_number
-  }
-  if self.is_inf() || y.is_inf() {
-    return infinity
-  }
-  let x = self.abs()
-  let y = y.abs()
-  let double_epsilon : Double = 0x0.0000000000001P-1022
-  let (x, y) = if y > x { (y, x) } else { (x, y) }
-  if x * double_epsilon >= y {
-    return x
-  }
-  let r = y / x
-  x * (1.0 + r * r).sqrt()
-}
