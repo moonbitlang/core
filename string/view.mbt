@@ -239,7 +239,7 @@ pub fn View::char_length_ge(self : View, len : Int) -> Bool {
 
 ///|
 pub impl Show for View with output(self, logger) {
-  let substr = self.str().substring(start=self.start(), end=self.end())
+  let substr = self.str().unsafe_substring(start=self.start(), end=self.end())
   String::output(substr, logger)
 }
 
@@ -254,7 +254,7 @@ pub impl Show for View with output(self, logger) {
 ///   inspect(view.to_string(), content="Hello")
 /// ```
 pub impl Show for View with to_string(self) {
-  self.str().substring(start=self.start(), end=self.end())
+  self.str().unsafe_substring(start=self.start(), end=self.end())
 }
 
 ///|
@@ -457,7 +457,8 @@ pub suberror CreatingViewError {
 /// let view3 = try? str[:6]
 /// inspect(view3, content="Err(InvalidIndex)")
 /// ```
-pub fn String::op_as_view(
+#alias(op_as_view)
+pub fn String::sub(
   self : String,
   start? : Int = 0,
   end? : Int,

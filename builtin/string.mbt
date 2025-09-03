@@ -83,7 +83,11 @@ pub fn String::char_length(
 
 ///|
 #intrinsic("%string.substring")
-fn unsafe_substring(str : String, start : Int, end : Int) -> String {
+pub fn String::unsafe_substring(
+  str : String,
+  start~ : Int,
+  end~ : Int,
+) -> String {
   let len = end - start
   let bytes = FixedArray::make(len * 2, Byte::default())
   bytes.blit_from_string(0, str, start, len)
@@ -122,7 +126,7 @@ pub fn String::substring(self : String, start? : Int = 0, end? : Int) -> String 
     None => len
   }
   guard start >= 0 && start <= end && end <= len
-  unsafe_substring(self, start, end)
+  self.unsafe_substring(start~, end~)
 }
 
 ///|

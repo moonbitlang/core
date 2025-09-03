@@ -110,7 +110,6 @@ fn String::iter2(String) -> Iter2[Int, Char]
 #deprecated
 fn String::last_index_of(String, String, from? : Int) -> Int
 fn String::offset_of_nth_char(String, Int, start_offset? : Int, end_offset? : Int) -> Int?
-fn String::op_as_view(String, start? : Int, end? : Int) -> View raise CreatingViewError
 fn String::pad_end(String, Int, Char) -> String
 fn String::pad_start(String, Int, Char) -> String
 fn String::repeat(String, Int) -> String
@@ -125,6 +124,8 @@ fn String::split(String, View) -> Iter[View]
 fn String::strip_prefix(String, View) -> View?
 #alias(ends_with, deprecated)
 fn String::strip_suffix(String, View) -> View?
+#alias(op_as_view)
+fn String::sub(String, start? : Int, end? : Int) -> View raise CreatingViewError
 fn String::to_array(String) -> Array[Char]
 fn String::to_bytes(String) -> Bytes
 fn String::to_lower(String) -> String

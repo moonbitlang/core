@@ -534,6 +534,7 @@ fn String::to_string(String) -> String
 #deprecated
 fn String::unsafe_char_at(String, Int) -> Char
 fn String::unsafe_charcode_at(String, Int) -> Int
+fn String::unsafe_substring(String, start~ : Int, end~ : Int) -> String
 
 fn[X : Show] Option::to_string(X?) -> String
 fn[X] Option::unwrap(X?) -> X
