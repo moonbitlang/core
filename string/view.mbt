@@ -440,11 +440,11 @@ pub suberror CreatingViewError {
 /// 
 /// ```mbt
 /// let str = "Hello🤣World"
-/// let view1 = try? str[0:5]
+/// let view1 =  str[0:5]
 /// inspect(
 ///   view1,
 ///   content=(
-///     #|Ok("Hello")
+///     "Hello"
 ///   ),
 /// )
 /// let view2 = try? str[-5:]
@@ -512,17 +512,13 @@ pub fn String::sub(
 /// # Examples
 /// 
 /// ```mbt
-///   let str = "Hello🤣World"[1:-1] // "ello🤣Worl"
-///   let view1 = try? str[0:6]
-///   inspect(view1, content=(
-///   #|Ok("ello🤣")
-/// ))
-///   let view2 = try? str[-2:]
-///   inspect(view2, content=(
-///   #|Ok("rl")
-/// ))
-///   let view3 = try? str[:5]
-///   inspect(view3, content=("Err(InvalidIndex)"))
+/// let str = "Hello🤣World"[1:-1] // "ello🤣Worl"
+/// let view1 = str[0:6]
+/// inspect(view1, content="ello🤣")
+/// let view2 = str[-2:]
+/// inspect(view2, content="rl")
+/// let view3 = try? str[:5]
+/// inspect(view3, content="Err(InvalidIndex)")
 /// ```
 pub fn View::op_as_view(
   self : View,
