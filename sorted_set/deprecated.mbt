@@ -13,23 +13,6 @@
 // limitations under the License.
 
 ///|
-#deprecated("use `@sorted_set.from_iter` instead")
-#coverage.skip
-pub fn[V : Compare] SortedSet::from_iter(iter : Iter[V]) -> SortedSet[V] {
-  from_iter(iter)
-}
-
-///|
-#deprecated("Use @sorted_set.from_array instead")
-pub fn[V : Compare] of(array : Array[V]) -> SortedSet[V] {
-  let set = new()
-  for i in 0..<array.length() {
-    set.add(array[i])
-  }
-  set
-}
-
-///|
 /// It is just copying the tree structure, not the values.
 /// It requires a Clone trait on T, which we don't have yet.
 ///

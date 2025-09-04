@@ -18,13 +18,15 @@
 
 ///|
 /// Return a new empty array
-pub fn[A] new() -> T[A] {
+#as_free_fn
+pub fn[A] T::new() -> T[A] {
   { tree: Tree::empty(), size: 0, shift: 0 }
 }
 
 ///|
 /// Create a persistent array with a given length and value.
-pub fn[A] make(len : Int, value : A) -> T[A] {
+#as_free_fn
+pub fn[A] T::make(len : Int, value : A) -> T[A] {
   let quot = len / branching_factor
   let rem = len % branching_factor
   let leaves = if rem == 0 {
@@ -45,7 +47,8 @@ pub fn[A] make(len : Int, value : A) -> T[A] {
 
 ///|
 /// Create a persistent array with a given length and a function to generate values.
-pub fn[A] makei(len : Int, f : (Int) -> A raise?) -> T[A] raise? {
+#as_free_fn
+pub fn[A] T::makei(len : Int, f : (Int) -> A raise?) -> T[A] raise? {
   let quot = len / branching_factor
   let rem = len % branching_factor
   let leaves = if rem == 0 {
@@ -70,7 +73,8 @@ pub fn[A] makei(len : Int, f : (Int) -> A raise?) -> T[A] raise? {
 
 ///|
 /// Convert a FixedArray to an @immut/array.
-pub fn[A] of(arr : FixedArray[A]) -> T[A] {
+#as_free_fn
+pub fn[A] T::of(arr : FixedArray[A]) -> T[A] {
   makei(arr.length(), i => arr[i])
 }
 
@@ -108,12 +112,14 @@ pub fn[A] copy(self : T[A]) -> T[A] {
 ///   let v = @array.of([1, 2, 3])
 ///   assert_eq(v, @array.from_array([1, 2, 3]))
 /// ```
-pub fn[A] from_array(arr : Array[A]) -> T[A] {
+#as_free_fn
+pub fn[A] T::from_array(arr : Array[A]) -> T[A] {
   makei(arr.length(), i => arr[i])
 }
 
 ///|
-pub fn[A] from_iter(iter : Iter[A]) -> T[A] {
+#as_free_fn
+pub fn[A] T::from_iter(iter : Iter[A]) -> T[A] {
   let mut buf : FixedArray[A] = []
   let mut index = 0
   let leaves = []

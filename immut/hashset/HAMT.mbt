@@ -28,7 +28,8 @@
 // - <https://lampwww.epfl.ch/papers/idealhashtrees.pdf>
 
 ///|
-pub fn[A] new() -> HashSet[A] {
+#as_free_fn
+pub fn[A] HashSet::new() -> HashSet[A] {
   None
 }
 
@@ -344,7 +345,8 @@ pub fn[A] iter(self : HashSet[A]) -> Iter[A] {
 }
 
 ///|
-pub fn[A : Eq + Hash] from_iter(iter : Iter[A]) -> HashSet[A] {
+#as_free_fn
+pub fn[A : Eq + Hash] HashSet::from_iter(iter : Iter[A]) -> HashSet[A] {
   iter.fold(init=new(), (s, e) => s.add(e))
 }
 
@@ -354,7 +356,8 @@ pub impl[A : Show] Show for HashSet[A] with output(self, logger) {
 }
 
 ///|
-pub fn[A : Eq + Hash] from_array(arr : Array[A]) -> HashSet[A] {
+#as_free_fn
+pub fn[A : Eq + Hash] HashSet::from_array(arr : Array[A]) -> HashSet[A] {
   loop (arr.length(), new()) {
     (0, set) => set
     (n, set) => {
@@ -365,7 +368,8 @@ pub fn[A : Eq + Hash] from_array(arr : Array[A]) -> HashSet[A] {
 }
 
 ///|
-pub fn[A : Eq + Hash] of(arr : FixedArray[A]) -> HashSet[A] {
+#as_free_fn
+pub fn[A : Eq + Hash] HashSet::of(arr : FixedArray[A]) -> HashSet[A] {
   loop (arr.length(), new()) {
     (0, set) => set
     (n, set) => {

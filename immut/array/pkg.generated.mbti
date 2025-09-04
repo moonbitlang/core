@@ -6,17 +6,6 @@ import(
 )
 
 // Values
-fn[A] from_array(Array[A]) -> T[A]
-
-fn[A] from_iter(Iter[A]) -> T[A]
-
-fn[A] make(Int, A) -> T[A]
-
-fn[A] makei(Int, (Int) -> A raise?) -> T[A] raise?
-
-fn[A] new() -> T[A]
-
-fn[A] of(FixedArray[A]) -> T[A]
 
 // Errors
 
@@ -32,22 +21,22 @@ fn[A, B] T::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 fn[A] T::fold_left(Self[A], (A, A) -> A raise?, init~ : A) -> A raise?
 #deprecated
 fn[A] T::fold_right(Self[A], (A, A) -> A raise?, init~ : A) -> A raise?
-#deprecated
+#as_free_fn
 fn[A] T::from_array(Array[A]) -> Self[A]
-#deprecated
+#as_free_fn
 fn[A] T::from_iter(Iter[A]) -> Self[A]
 fn[A] T::get(Self[A], Int) -> A?
 fn[A] T::is_empty(Self[A]) -> Bool
 fn[A] T::iter(Self[A]) -> Iter[A]
 fn[A] T::length(Self[A]) -> Int
-#deprecated
+#as_free_fn
 fn[A] T::make(Int, A) -> Self[A]
-#deprecated
-fn[A] T::makei(Int, (Int) -> A) -> Self[A]
+#as_free_fn
+fn[A] T::makei(Int, (Int) -> A raise?) -> Self[A] raise?
 fn[A, B] T::map(Self[A], (A) -> B raise?) -> Self[B] raise?
-#deprecated
+#as_free_fn
 fn[A] T::new() -> Self[A]
-#deprecated
+#as_free_fn
 fn[A] T::of(FixedArray[A]) -> Self[A]
 fn[A] T::op_get(Self[A], Int) -> A
 fn[A] T::push(Self[A], A) -> Self[A]

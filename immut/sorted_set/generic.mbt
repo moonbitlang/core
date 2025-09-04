@@ -38,14 +38,9 @@ pub fn[A] iter(self : SortedSet[A]) -> Iter[A] {
 }
 
 ///|
-pub fn[A : Compare] from_iter(iter : Iter[A]) -> SortedSet[A] {
-  iter.fold(init=new(), (s, e) => s.add(e))
-}
-
-///|
-#deprecated("use `@immut/sorted_set.from_iter` instead")
+#as_free_fn
 pub fn[A : Compare] SortedSet::from_iter(iter : Iter[A]) -> SortedSet[A] {
-  from_iter(iter)
+  iter.fold(init=new(), (s, e) => s.add(e))
 }
 
 ///|

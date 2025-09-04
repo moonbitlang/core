@@ -23,6 +23,7 @@
 /// Do not convert large datas to `Array[Char]` and build a string with `String::from_array`.
 ///
 /// For efficiency considerations, it's recommended to use `Buffer` instead.
+#as_free_fn
 pub fn String::from_array(chars : Array[Char]) -> String {
   let buf = StringBuilder::new(size_hint=chars.length() * 4)
   for c in chars {
@@ -32,22 +33,10 @@ pub fn String::from_array(chars : Array[Char]) -> String {
 }
 
 ///|
-/// same as `String::from_array`
-pub fn from_array(chars : Array[Char]) -> String {
-  String::from_array(chars)
-}
-
-///|
 /// Convert char iterator to string,
 /// a simple wrapper for `from_array`.
+#as_free_fn
 pub fn String::from_iter(iter : Iter[Char]) -> String {
-  let chars = iter.collect()
-  String::from_array(chars)
-}
-
-///|
-/// same as `String::from_iter`
-pub fn from_iter(iter : Iter[Char]) -> String {
   let chars = iter.collect()
   String::from_array(chars)
 }

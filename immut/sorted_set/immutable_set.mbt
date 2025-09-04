@@ -19,7 +19,8 @@
 // Construct a empty ImmutableSet.
 
 ///|
-pub fn[A] new() -> SortedSet[A] {
+#as_free_fn
+pub fn[A] SortedSet::new() -> SortedSet[A] {
   Empty
 }
 
@@ -30,13 +31,15 @@ pub impl[A] Default for SortedSet[A] with default() {
 
 ///|
 /// Returns the one-value ImmutableSet containing only `value`.
-pub fn[A] singleton(value : A) -> SortedSet[A] {
+#as_free_fn
+pub fn[A] SortedSet::singleton(value : A) -> SortedSet[A] {
   Node(left=Empty, value~, right=Empty, size=1)
 }
 
 ///|
 /// Initialize an ImmutableSet[T] from a Array[T]
-pub fn[A : Compare] from_array(array : Array[A]) -> SortedSet[A] {
+#as_free_fn
+pub fn[A : Compare] SortedSet::from_array(array : Array[A]) -> SortedSet[A] {
   for i = array.length() - 1, set = Empty; i >= 0; {
     continue i - 1, set.add(array[i])
   } else {
@@ -642,7 +645,8 @@ pub impl[A : @json.FromJson + Compare] @json.FromJson for SortedSet[A] with from
 }
 
 ///|
-pub fn[A : @json.FromJson + Compare] from_json(
+#as_free_fn
+pub fn[A : @json.FromJson + Compare] SortedSet::from_json(
   json : Json,
 ) -> SortedSet[A] raise @json.JsonDecodeError {
   @json.from_json(json)
@@ -847,7 +851,8 @@ fn[A : Compare] concat(
 }
 
 ///|
-pub fn[A : Compare] of(array : FixedArray[A]) -> SortedSet[A] {
+#as_free_fn
+pub fn[A : Compare] SortedSet::of(array : FixedArray[A]) -> SortedSet[A] {
   for i = array.length() - 1, set = Empty; i >= 0; {
     continue i - 1, set.add(array[i])
   } else {
