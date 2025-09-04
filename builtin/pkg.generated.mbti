@@ -530,6 +530,7 @@ fn String::escape(String) -> String
 fn String::length(String) -> Int
 fn String::make(Int, Char) -> String
 fn String::op_get(String, Int) -> Int
+#deprecated
 fn String::substring(String, start? : Int, end? : Int) -> String
 fn String::to_string(String) -> String
 #deprecated
