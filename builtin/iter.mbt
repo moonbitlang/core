@@ -543,6 +543,7 @@ pub fn[T] Iter::take(self : Iter[T], n : Int) -> Iter[T] {
     // even if seq has less than 10 elements
     // but `for x in [..take(10,seq), next ] { break }` would stop
     //
+    guard n > 0 else { return IterContinue }
     let mut i = 0
     let mut r = IterContinue
     self.just_run(a => {
