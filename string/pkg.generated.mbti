@@ -33,7 +33,9 @@ fn View::from_array(Array[Char]) -> Self
 fn View::from_iter(Iter[Char]) -> Self
 fn View::get(Self, Int) -> Int?
 fn View::get_char(Self, Int) -> Char?
+#alias(starts_with, deprecated)
 fn View::has_prefix(Self, Self) -> Bool
+#alias(ends_with, deprecated)
 fn View::has_suffix(Self, Self) -> Bool
 fn View::is_blank(Self) -> Bool
 fn View::is_empty(Self) -> Bool
@@ -88,16 +90,14 @@ fn String::from_array(Array[Char]) -> String
 fn String::from_iter(Iter[Char]) -> String
 fn String::get(String, Int) -> Int?
 fn String::get_char(String, Int) -> Char?
+#alias(starts_with, deprecated)
 fn String::has_prefix(String, View) -> Bool
+#alias(ends_with, deprecated)
 fn String::has_suffix(String, View) -> Bool
-#deprecated
-fn String::index_of(String, String, from? : Int) -> Int
 fn String::is_blank(String) -> Bool
 fn String::is_empty(String) -> Bool
 fn String::iter(String) -> Iter[Char]
 fn String::iter2(String) -> Iter2[Int, Char]
-#deprecated
-fn String::last_index_of(String, String, from? : Int) -> Int
 fn String::offset_of_nth_char(String, Int, start_offset? : Int, end_offset? : Int) -> Int?
 fn String::pad_end(String, Int, Char) -> String
 fn String::pad_start(String, Int, Char) -> String
@@ -109,9 +109,7 @@ fn String::rev_find(String, View) -> Int?
 fn[A] String::rev_fold(String, init~ : A, (A, Char) -> A) -> A
 fn String::rev_iter(String) -> Iter[Char]
 fn String::split(String, View) -> Iter[View]
-#alias(starts_with, deprecated)
 fn String::strip_prefix(String, View) -> View?
-#alias(ends_with, deprecated)
 fn String::strip_suffix(String, View) -> View?
 #alias(op_as_view)
 fn String::sub(String, start? : Int, end? : Int) -> View raise CreatingViewError
