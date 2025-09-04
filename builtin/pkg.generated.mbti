@@ -161,6 +161,7 @@ fn[T] ArrayView::blit_to(Self[T], Self[T]) -> Unit
 fn[T] ArrayView::length(Self[T]) -> Int
 fn[T] ArrayView::op_as_view(Self[T], start? : Int, end? : Int) -> Self[T]
 fn[T] ArrayView::op_get(Self[T], Int) -> T
+#deprecated
 fn[T] ArrayView::op_set(Self[T], Int, T) -> Unit
 fn[T] ArrayView::swap(Self[T], Int, Int) -> Unit
 fn[T] ArrayView::unsafe_get(Self[T], Int) -> T

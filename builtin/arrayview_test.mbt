@@ -29,14 +29,6 @@ test "op_get" {
 }
 
 ///|
-test "op_set" {
-  let v = [1, 2, 3][:]
-  inspect(v[1], content="2")
-  v[1] = 4
-  inspect(v[1], content="4")
-}
-
-///|
 test "swap" {
   let v = [1, 2, 3][:]
   inspect(v[1], content="2")
