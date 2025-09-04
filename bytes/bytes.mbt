@@ -256,7 +256,7 @@ pub impl Default for Bytes with default() {
 ///|
 /// same as `Bytes::default`
 pub fn default() -> Bytes {
-  Bytes::default()
+  b""
 }
 
 ///|

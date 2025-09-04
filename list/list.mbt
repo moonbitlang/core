@@ -1478,7 +1478,7 @@ pub impl[X] Default for List[X] with default() {
 ///   assert_eq(ls.is_empty(), true)
 /// ```
 pub fn[X] default() -> List[X] {
-  List::default()
+  Empty
 }
 
 ///|
