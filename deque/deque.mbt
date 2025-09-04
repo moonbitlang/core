@@ -161,6 +161,61 @@ pub fn[A] append(self : Deque[A], other : Deque[A]) -> Unit {
   }
 }
 
+/// Inserts an element at the specified position in the deque. The elements are
+/// shifted in-place to make room for the new element, modifying the original deque.
+///
+/// Parameters:
+///
+/// * `self` : The deque in which the element will be inserted.
+/// * `index` : The position at which to insert the element. Must satisfy `0 <= index <= self.length()`.
+/// * `value` : The element to insert.
+///
+/// Panics:
+///
+/// * If `index` is out of bounds, the function will abort with an error message.
+///
+/// Example:
+///
+/// ```moonbit
+/// let v1 = @deque.of([1, 2, 3])
+/// v1.insert(0, 0) // insert at the front
+/// inspect(v1, content="@deque.of([0, 1, 2, 3])")
+/// let v2 = @deque.of([1, 2, 4])
+/// v2.insert(2, 3) // insert in the middle
+/// inspect(v2, content="@deque.of([1, 2, 3, 4])")
+/// let v3 = @deque.of([2, 3, 4])
+/// v3.insert(3, 5) // insert at the end
+/// inspect(v3, content="@deque.of([2, 3, 4, 5])")
+/// ```
+pub fn[A] insert(self : Deque[A], index : Int, value : A) -> Unit {
+  guard index >= 0 && index <= self.length() else {
+    abort(
+      "index out of bounds: the len is from 0 to \{self.length()} but the index is \{index}",
+    )
+  }
+  if self.space() == 0 {
+    self.realloc()
+  }
+  let cap = self.buf.length()
+  if index < self.len / 2 {
+    let new_head = (self.head - 1 + cap) % cap
+    for i = 0; i < index; i = i + 1 {
+      self.buf[(new_head + i) % cap] = self.buf[(self.head + i) % cap]
+    }
+    self.head = new_head
+  } else {
+    let new_tail = (self.tail + 1) % cap
+    for i = self.len; i > index; i = i - 1 {
+      let from = (self.head + i - 1) % cap
+      let to = (self.head + i) % cap
+      self.buf[to] = self.buf[from]
+    }
+    self.tail = new_tail
+  }
+  self.buf[(self.head + index) % cap] = value
+  self.len += 1
+}
+
 ///|
 /// Creates a new deque from a fixed array, preserving the order of elements.
 ///
