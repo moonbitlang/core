@@ -1508,3 +1508,62 @@ test "append_folded_but_has_space" {
   d1.append(@deque.of([9, 10, 11]))
   inspect(d1.as_views(), content="([4, 5, 6, 7, 9], [10, 11])")
 }
+
+///|
+/// Test insert at the front
+test "insert_front" {
+  let d = @deque.of([1, 2, 3])
+  d.insert(0, 99)
+  assert_eq(d.to_array(), [99, 1, 2, 3])
+  inspect(d.as_views(), content="([99], [1, 2, 3])")
+}
+
+///|
+/// Test insert in the middle
+test "insert_middle" {
+  let d = @deque.of([1, 2, 3, 4])
+  d.insert(2, 99)
+  assert_eq(d.to_array(), [1, 2, 99, 3, 4])
+  inspect(d.as_views(), content="([1, 2, 99, 3, 4], [])")
+}
+
+///|
+/// Test insert at the back (same as push_back)
+test "insert_back" {
+  let d = @deque.of([1, 2, 3])
+  d.insert(d.length(), 99)
+  assert_eq(d.to_array(), [1, 2, 3, 99])
+  inspect(d.as_views(), content="([1, 2, 3, 99], [])")
+}
+
+///|
+/// Test insert triggers reallocation
+test "insert_realloc" {
+  let d = @deque.of([])
+  for i = 0; i < 8; i = i + 1 {
+    d.push_back(i)
+  }
+  inspect(d.as_views(), content="([0, 1, 2, 3, 4, 5, 6, 7], [])")
+  d.insert(4, 99)
+  assert_eq(d.to_array()[4], 99)
+  assert_eq(d.length(), 9)
+  inspect(d.as_views(), content="([0, 1, 2, 3, 99, 4, 5, 6, 7], [])")
+}
+
+///|
+/// Test insert into folded buffer
+test "insert_folded" {
+  let d = @deque.of([1, 2, 3, 4, 5, 6, 7, 8])
+  d.unsafe_pop_front()
+  d.unsafe_pop_front()
+  d.unsafe_pop_front()
+  d.unsafe_pop_front()
+  for i = 9; i < 13; i = i + 1 {
+    d.push_back(i)
+  }
+  inspect(d.as_views(), content="([5, 6, 7, 8], [9, 10, 11, 12])")
+  d.insert(2, 99)
+  assert_eq(d.to_array()[2], 99)
+  inspect(d.to_array(), content="[5, 6, 99, 7, 8, 9, 10, 11, 12]")
+  inspect(d.as_views(), content="([5], [6, 99, 7, 8, 9, 10, 11, 12])")
+}
