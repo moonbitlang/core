@@ -261,12 +261,14 @@ test "rev_find" {
 
 ///|
 /// Returns true if the given substring is suffix of this string.
+#alias(ends_with, deprecated)
 pub fn View::has_suffix(self : View, str : View) -> Bool {
   self.rev_find(str) is Some(i) && i == self.length() - str.length()
 }
 
 ///|
 /// Returns true if the given substring is suffix of this string.
+#alias(ends_with, deprecated)
 pub fn String::has_suffix(self : String, str : View) -> Bool {
   self[:].has_suffix(str)
 }
@@ -287,12 +289,14 @@ test "has_suffix" {
 
 ///|
 /// Returns true if this string starts with the given substring.
+#alias(starts_with, deprecated)
 pub fn View::has_prefix(self : View, str : View) -> Bool {
   self.find(str) is Some(i) && i == 0
 }
 
 ///|
 /// Returns true if this string starts with the given substring.
+#alias(starts_with, deprecated)
 pub fn String::has_prefix(self : String, str : View) -> Bool {
   self[:].has_prefix(str)
 }
@@ -326,7 +330,6 @@ test "has_prefix" {
 ///   inspect("hello world".strip_suffix(" moon"), content="None")
 ///   inspect("hello".strip_suffix("hello"), content="Some(\"\")")
 /// ```
-#alias(ends_with, deprecated)
 pub fn strip_suffix(self : String, suffix : View) -> View? {
   if self.has_suffix(suffix) {
     Some(self.view(end_offset=self.length() - suffix.length()))
@@ -373,7 +376,6 @@ test "strip_suffix" {
 ///   inspect("hello world".strip_prefix("hi "), content="None")
 ///   inspect("hello".strip_prefix("hello"), content="Some(\"\")")
 /// ```
-#alias(starts_with, deprecated)
 pub fn strip_prefix(self : String, prefix : View) -> View? {
   if self.has_prefix(prefix) {
     Some(self.view(start_offset=prefix.length()))
@@ -397,6 +399,7 @@ pub fn strip_prefix(self : String, prefix : View) -> View? {
 ///   inspect(view.strip_prefix("hi "), content="None")
 ///   inspect(view.strip_prefix("hello world"), content="Some(\"\")")
 /// ```
+/// 
 pub fn View::strip_prefix(self : View, prefix : View) -> View? {
   if self.has_prefix(prefix) {
     Some(self.view(start_offset=prefix.length()))
