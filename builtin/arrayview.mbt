@@ -131,15 +131,8 @@ pub fn[T] ArrayView::unsafe_get(self : ArrayView[T], index : Int) -> T {
 /// Throws a panic if `index` is negative or greater than or equal to the length
 /// of the array view.
 ///
-/// Example:
 ///
-/// ```moonbit
-///   let arr = [1, 2, 3, 4, 5]
-///   let view = arr[1:4] // view contains [2, 3, 4]
-///   view.op_set(1, 42)
-///   inspect(arr, content="[1, 2, 42, 4, 5]")
-/// ```
-///
+#deprecated("ArrayView will be immutable, use array if you need mutation")
 pub fn[T] ArrayView::op_set(
   self : ArrayView[T],
   index : Int,

@@ -108,11 +108,6 @@ test "panic array_as_view_get_index_error" {
 }
 
 ///|
-test "panic array_as_view_set_index_error" {
-  [1, 2, 3][:][5] = 0
-}
-
-///|
 test "panic array_as_view_swap_index_error" {
   [1, 2, 3][:].swap(1, 9)
 }

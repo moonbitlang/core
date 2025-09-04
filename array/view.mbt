@@ -310,12 +310,7 @@ pub fn[T, U] View::map(self : View[T], f : (T) -> U raise?) -> Array[U] raise? {
 ///|
 /// Maps a function over the elements of the array view in place.
 ///
-/// # Example
-/// ```mbt
-///   let v = [3, 4, 5]
-///   v[1:].map_inplace((x) => {x + 1})
-///   assert_eq(v, [3, 5, 6])
-/// ```
+#deprecated("ArrayView will be immutable, use Array if you need mutation")
 pub fn[T] View::map_inplace(self : View[T], f : (T) -> T raise?) -> Unit raise? {
   for i, v in self {
     self[i] = f(v)

@@ -85,6 +85,7 @@ fn[A] ArrayView::iter(Self[A]) -> Iter[A]
 fn[A] ArrayView::iter2(Self[A]) -> Iter2[Int, A]
 fn[A : @string.ToStringView] ArrayView::join(Self[A], @string.View) -> String
 fn[T, U] ArrayView::map(Self[T], (T) -> U raise?) -> Array[U] raise?
+#deprecated
 fn[T] ArrayView::map_inplace(Self[T], (T) -> T raise?) -> Unit raise?
 fn[T, U] ArrayView::mapi(Self[T], (Int, T) -> U raise?) -> Array[U] raise?
 fn[T] ArrayView::mapi_inplace(Self[T], (Int, T) -> T raise?) -> Unit raise?
