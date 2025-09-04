@@ -6,14 +6,6 @@ import(
 )
 
 // Values
-fn[K : Compare, V] from_array(Array[(K, V)]) -> SortedMap[K, V]
-
-fn[K : Compare, V] from_iter(Iter[(K, V)]) -> SortedMap[K, V]
-
-fn[K, V] new() -> SortedMap[K, V]
-
-#deprecated
-fn[K : Compare, V] of(Array[(K, V)]) -> SortedMap[K, V]
 
 // Errors
 
@@ -24,6 +16,10 @@ fn[K, V] SortedMap::clear(Self[K, V]) -> Unit
 fn[K : Compare, V] SortedMap::contains(Self[K, V], K) -> Bool
 fn[K, V] SortedMap::each(Self[K, V], (K, V) -> Unit raise?) -> Unit raise?
 fn[K, V] SortedMap::eachi(Self[K, V], (Int, K, V) -> Unit raise?) -> Unit raise?
+#as_free_fn
+fn[K : Compare, V] SortedMap::from_array(Array[(K, V)]) -> Self[K, V]
+#as_free_fn
+fn[K : Compare, V] SortedMap::from_iter(Iter[(K, V)]) -> Self[K, V]
 fn[K : Compare, V] SortedMap::get(Self[K, V], K) -> V?
 fn[K, V] SortedMap::is_empty(Self[K, V]) -> Bool
 fn[K, V] SortedMap::iter(Self[K, V]) -> Iter[(K, V)]
@@ -31,6 +27,10 @@ fn[K, V] SortedMap::iter2(Self[K, V]) -> Iter2[K, V]
 #deprecated
 fn[K, V] SortedMap::keys(Self[K, V]) -> Array[K]
 fn[K, V] SortedMap::keys_as_iter(Self[K, V]) -> Iter[K]
+#as_free_fn
+fn[K, V] SortedMap::new() -> Self[K, V]
+#as_free_fn
+fn[K : Compare, V] SortedMap::of(FixedArray[(K, V)]) -> Self[K, V]
 fn[K : Compare, V] SortedMap::op_get(Self[K, V], K) -> V
 fn[K : Compare, V] SortedMap::op_set(Self[K, V], K, V) -> Unit
 fn[K : Compare, V] SortedMap::range(Self[K, V], K, K) -> Iter2[K, V]

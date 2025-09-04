@@ -7,31 +7,7 @@ import(
 )
 
 // Values
-fn[A] construct(A, List[A]) -> List[A]
-
 fn[X] default() -> List[X]
-
-fn[A] empty() -> List[A]
-
-fn[A] from_array(Array[A]) -> List[A]
-
-fn[A] from_iter(Iter[A]) -> List[A]
-
-fn[A] from_iter_rev(Iter[A]) -> List[A]
-
-fn[A : @json.FromJson] from_json(Json) -> List[A] raise @json.JsonDecodeError
-
-fn[A] new() -> List[A]
-
-fn[A] of(FixedArray[A]) -> List[A]
-
-fn[A] repeat(Int, A) -> List[A]
-
-fn[A, S] rev_unfold((S) -> (A, S)? raise?, init~ : S) -> List[A] raise?
-
-fn[A] singleton(A) -> List[A]
-
-fn[A, S] unfold((S) -> (A, S)? raise?, init~ : S) -> List[A] raise?
 
 // Errors
 
@@ -40,10 +16,12 @@ pub enum List[A] {
   Empty
   More(A, mut tail~ : List[A])
 }
-fn[A] List::add(Self[A], A) -> Self[A]
 fn[A] List::all(Self[A], (A) -> Bool raise?) -> Bool raise?
 fn[A] List::any(Self[A], (A) -> Bool raise?) -> Bool raise?
 fn[A] List::concat(Self[A], Self[A]) -> Self[A]
+#as_free_fn(construct, deprecated)
+#as_free_fn
+fn[A] List::cons(A, Self[A]) -> Self[A]
 fn[A : Eq] List::contains(Self[A], A) -> Bool
 fn[A] List::drop(Self[A], Int) -> Self[A]
 fn[A] List::drop_while(Self[A], (A) -> Bool raise?) -> Self[A] raise?
@@ -58,6 +36,14 @@ fn[A, B] List::flat_map(Self[A], (A) -> Self[B] raise?) -> Self[B] raise?
 fn[A] List::flatten(Self[Self[A]]) -> Self[A]
 fn[A, B] List::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 fn[A, B] List::foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
+#as_free_fn
+fn[A] List::from_array(Array[A]) -> Self[A]
+#as_free_fn
+fn[A] List::from_iter(Iter[A]) -> Self[A]
+#as_free_fn
+fn[A] List::from_iter_rev(Iter[A]) -> Self[A]
+#as_free_fn
+fn[A : @json.FromJson] List::from_json(Json) -> Self[A] raise @json.JsonDecodeError
 fn[A] List::head(Self[A]) -> A?
 fn[A] List::intercalate(Self[Self[A]], Self[A]) -> Self[A]
 fn[A] List::intersperse(Self[A], A) -> Self[A]
@@ -73,10 +59,19 @@ fn[A, B] List::map(Self[A], (A) -> B raise?) -> Self[B] raise?
 fn[A, B] List::mapi(Self[A], (Int, A) -> B raise?) -> Self[B] raise?
 fn[A : Compare] List::maximum(Self[A]) -> A?
 fn[A : Compare] List::minimum(Self[A]) -> A?
+#alias(empty)
+#as_free_fn(empty)
+#as_free_fn
+fn[A] List::new() -> Self[A]
 fn[A] List::nth(Self[A], Int) -> A?
+#as_free_fn
+fn[A] List::of(FixedArray[A]) -> Self[A]
+#alias(add)
 fn[A] List::prepend(Self[A], A) -> Self[A]
 fn[A : Eq] List::remove(Self[A], A) -> Self[A]
 fn[A] List::remove_at(Self[A], Int) -> Self[A]
+#as_free_fn
+fn[A] List::repeat(Int, A) -> Self[A]
 fn[A] List::rev(Self[A]) -> Self[A]
 fn[A] List::rev_concat(Self[A], Self[A]) -> Self[A]
 #deprecated
@@ -84,8 +79,12 @@ fn[A, B] List::rev_fold(Self[A], init~ : B, (B, A) -> B) -> B
 #deprecated
 fn[A, B] List::rev_foldi(Self[A], init~ : B, (Int, B, A) -> B) -> B
 fn[A, B] List::rev_map(Self[A], (A) -> B raise?) -> Self[B] raise?
+#as_free_fn
+fn[A, S] List::rev_unfold((S) -> (A, S)? raise?, init~ : S) -> Self[A] raise?
 fn[A, E] List::scan_left(Self[A], (E, A) -> E raise?, init~ : E) -> Self[E] raise?
 fn[A, B] List::scan_right(Self[A], (B, A) -> B raise?, init~ : B) -> Self[B] raise?
+#as_free_fn
+fn[A] List::singleton(A) -> Self[A]
 fn[A : Compare] List::sort(Self[A]) -> Self[A]
 #deprecated
 fn[A] List::tail(Self[A]) -> Self[A]
@@ -93,6 +92,8 @@ fn[A] List::take(Self[A], Int) -> Self[A]
 fn[A] List::take_while(Self[A], (A) -> Bool raise?) -> Self[A] raise?
 fn[A] List::to_array(Self[A]) -> Array[A]
 fn[A : ToJson] List::to_json(Self[A]) -> Json
+#as_free_fn
+fn[A, S] List::unfold((S) -> (A, S)? raise?, init~ : S) -> Self[A] raise?
 fn[A] List::unsafe_head(Self[A]) -> A
 fn[A] List::unsafe_last(Self[A]) -> A
 fn[A : Compare] List::unsafe_maximum(Self[A]) -> A

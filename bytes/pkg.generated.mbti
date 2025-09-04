@@ -4,14 +4,6 @@ package "moonbitlang/core/bytes"
 // Values
 fn default() -> Bytes
 
-fn from_array(Array[Byte]) -> Bytes
-
-fn from_fixedarray(FixedArray[Byte], len? : Int) -> Bytes
-
-fn from_iter(Iter[Byte]) -> Bytes
-
-fn of(FixedArray[Byte]) -> Bytes
-
 // Errors
 
 // Types and methods
@@ -52,12 +44,16 @@ impl Hash for View
 impl Show for View
 
 fn Bytes::find(Bytes, View) -> Int?
+#as_free_fn
 fn Bytes::from_array(Array[Byte]) -> Bytes
+#as_free_fn
 fn Bytes::from_fixedarray(FixedArray[Byte], len? : Int) -> Bytes
+#as_free_fn
 fn Bytes::from_iter(Iter[Byte]) -> Bytes
 fn Bytes::get(Bytes, Int) -> Byte?
 fn Bytes::iter(Bytes) -> Iter[Byte]
 fn Bytes::iter2(Bytes) -> Iter2[Int, Byte]
+#as_free_fn
 fn Bytes::of(FixedArray[Byte]) -> Bytes
 fn Bytes::op_as_view(Bytes, start? : Int, end? : Int) -> View
 fn Bytes::rev_find(Bytes, View) -> Int?

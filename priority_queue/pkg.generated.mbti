@@ -6,13 +6,6 @@ import(
 )
 
 // Values
-fn[A : Compare] from_array(Array[A]) -> T[A]
-
-fn[K : Compare] from_iter(Iter[K]) -> T[K]
-
-fn[A] new() -> T[A]
-
-fn[A : Compare] of(FixedArray[A]) -> T[A]
 
 // Errors
 
@@ -20,9 +13,17 @@ fn[A : Compare] of(FixedArray[A]) -> T[A]
 type T[A]
 fn[A] T::clear(Self[A]) -> Unit
 fn[A] T::copy(Self[A]) -> Self[A]
+#as_free_fn
+fn[A : Compare] T::from_array(Array[A]) -> Self[A]
+#as_free_fn
+fn[K : Compare] T::from_iter(Iter[K]) -> Self[K]
 fn[A] T::is_empty(Self[A]) -> Bool
 fn[A : Compare] T::iter(Self[A]) -> Iter[A]
 fn[A] T::length(Self[A]) -> Int
+#as_free_fn
+fn[A] T::new() -> Self[A]
+#as_free_fn
+fn[A : Compare] T::of(FixedArray[A]) -> Self[A]
 fn[A] T::peek(Self[A]) -> A?
 fn[A : Compare] T::pop(Self[A]) -> A?
 fn[A : Compare] T::push(Self[A], A) -> Unit

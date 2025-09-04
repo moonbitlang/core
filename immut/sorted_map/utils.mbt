@@ -22,13 +22,15 @@ pub fn[K, V] SortedMap::empty() -> SortedMap[K, V] {
 
 ///|
 /// Create an empty map.
-pub fn[K, V] new() -> SortedMap[K, V] {
+#as_free_fn
+pub fn[K, V] SortedMap::new() -> SortedMap[K, V] {
   Empty
 }
 
 ///|
 /// Create a map with a single key-value pair.
-pub fn[K, V] singleton(key : K, value : V) -> SortedMap[K, V] {
+#as_free_fn
+pub fn[K, V] SortedMap::singleton(key : K, value : V) -> SortedMap[K, V] {
   Tree(key, value~, size=1, Empty, Empty)
 }
 
@@ -238,7 +240,10 @@ fn[K : Show, V : Show] debug_tree(self : SortedMap[K, V]) -> String {
 ///|
 /// Build a map from an array of key-value pairs.
 /// O(n*log n).
-pub fn[K : Compare, V] from_array(array : Array[(K, V)]) -> SortedMap[K, V] {
+#as_free_fn
+pub fn[K : Compare, V] SortedMap::from_array(
+  array : Array[(K, V)],
+) -> SortedMap[K, V] {
   for i = 0, mp = Empty; i < array.length(); {
     let (k, v) = array[i]
     continue i + 1, mp.add(k, v)
@@ -290,7 +295,10 @@ pub fn[K, V] iter2(self : SortedMap[K, V]) -> Iter2[K, V] {
 }
 
 ///|
-pub fn[K : Compare, V] from_iter(iter : Iter[(K, V)]) -> SortedMap[K, V] {
+#as_free_fn
+pub fn[K : Compare, V] SortedMap::from_iter(
+  iter : Iter[(K, V)],
+) -> SortedMap[K, V] {
   iter.fold(init=new(), (m, e) => m.add(e.0, e.1))
 }
 
@@ -322,7 +330,10 @@ pub fn[K, V] elems(self : SortedMap[K, V]) -> Array[V] {
 }
 
 ///|
-pub fn[K : Compare, V] of(array : FixedArray[(K, V)]) -> SortedMap[K, V] {
+#as_free_fn
+pub fn[K : Compare, V] SortedMap::of(
+  array : FixedArray[(K, V)],
+) -> SortedMap[K, V] {
   for i = 0, mp = Empty; i < array.length(); {
     let (k, v) = array[i]
     continue i + 1, mp.add(k, v)
@@ -334,11 +345,4 @@ pub fn[K : Compare, V] of(array : FixedArray[(K, V)]) -> SortedMap[K, V] {
 ///|
 pub fn[K : Show, V : ToJson] to_json(self : SortedMap[K, V]) -> Json {
   ToJson::to_json(self)
-}
-
-///|
-pub fn[V : @json.FromJson] from_json(
-  json : Json,
-) -> SortedMap[String, V] raise @json.JsonDecodeError {
-  @json.from_json(json)
 }

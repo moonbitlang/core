@@ -33,13 +33,8 @@
 ///     ),
 ///   )
 /// ```
+#as_free_fn
 pub fn Bytes::from_array(arr : Array[Byte]) -> Bytes {
-  Bytes::makei(arr.length(), i => arr[i])
-}
-
-///|
-/// same as `Bytes::from_array`
-pub fn from_array(arr : Array[Byte]) -> Bytes {
   Bytes::makei(arr.length(), i => arr[i])
 }
 
@@ -69,18 +64,13 @@ pub fn from_array(arr : Array[Byte]) -> Bytes {
 ///     ),
 ///   )
 /// ```
+#as_free_fn
 pub fn Bytes::from_fixedarray(arr : FixedArray[Byte], len? : Int) -> Bytes {
   let len = match len {
     None => arr.length()
     Some(x) => x
   }
   Bytes::makei(len, i => arr[i])
-}
-
-///|
-/// same as `Bytes::from_fixedarray`
-pub fn from_fixedarray(arr : FixedArray[Byte], len? : Int) -> Bytes {
-  Bytes::from_fixedarray(arr, len?)
 }
 
 ///|
@@ -139,14 +129,9 @@ pub fn to_fixedarray(self : Bytes, len? : Int) -> FixedArray[Byte] {
 ///     ),
 ///   )
 /// ```
+#as_free_fn
 pub fn Bytes::from_iter(iter : Iter[Byte]) -> Bytes {
-  from_array(iter.collect())
-}
-
-///|
-/// same as `Bytes::from_iter`
-pub fn from_iter(iter : Iter[Byte]) -> Bytes {
-  from_array(iter.collect())
+  Bytes::from_array(iter.collect())
 }
 
 ///|
@@ -172,13 +157,8 @@ pub fn from_iter(iter : Iter[Byte]) -> Bytes {
 ///   )
 /// ```
 /// TODO: marked as intrinsic, inline if it is constant
+#as_free_fn
 pub fn Bytes::of(arr : FixedArray[Byte]) -> Bytes {
-  Bytes::makei(arr.length(), i => arr[i])
-}
-
-///|
-/// same as `Bytes::of`
-pub fn of(arr : FixedArray[Byte]) -> Bytes {
   Bytes::makei(arr.length(), i => arr[i])
 }
 
@@ -274,6 +254,12 @@ pub impl Default for Bytes with default() {
 }
 
 ///|
+/// same as `Bytes::default`
+pub fn default() -> Bytes {
+  b""
+}
+
+///|
 /// Retrieves a byte from the view at the specified index.
 ///
 /// Parameters:
@@ -296,12 +282,6 @@ pub impl Default for Bytes with default() {
 pub fn get(self : Bytes, index : Int) -> Byte? {
   guard index >= 0 && index < self.length() else { None }
   Some(self[index])
-}
-
-///|
-/// same as `Bytes::default`
-pub fn default() -> Bytes {
-  b""
 }
 
 ///|

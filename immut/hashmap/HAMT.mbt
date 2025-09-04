@@ -28,13 +28,15 @@
 // - <https://lampwww.epfl.ch/papers/idealhashtrees.pdf>
 
 ///|
-pub fn[K, V] new() -> HashMap[K, V] {
+#as_free_fn
+pub fn[K, V] HashMap::new() -> HashMap[K, V] {
   None
 }
 
 ///|
 /// Create a map with a single key-value pair.
-pub fn[K : Hash, V] singleton(key : K, value : V) -> HashMap[K, V] {
+#as_free_fn
+pub fn[K : Hash, V] HashMap::singleton(key : K, value : V) -> HashMap[K, V] {
   Some(Flat(key, value, @path.of(key)))
 }
 
@@ -679,7 +681,10 @@ pub fn[K, V] iter2(self : HashMap[K, V]) -> Iter2[K, V] {
 }
 
 ///|
-pub fn[K : Eq + Hash, V] from_iter(iter : Iter[(K, V)]) -> HashMap[K, V] {
+#as_free_fn
+pub fn[K : Eq + Hash, V] HashMap::from_iter(
+  iter : Iter[(K, V)],
+) -> HashMap[K, V] {
   iter.fold(init=new(), (m, e) => m.add(e.0, e.1))
 }
 
@@ -689,7 +694,10 @@ pub impl[K : Show, V : Show] Show for HashMap[K, V] with output(self, logger) {
 }
 
 ///|
-pub fn[K : Eq + Hash, V] from_array(arr : Array[(K, V)]) -> HashMap[K, V] {
+#as_free_fn
+pub fn[K : Eq + Hash, V] HashMap::from_array(
+  arr : Array[(K, V)],
+) -> HashMap[K, V] {
   loop (arr.length(), new()) {
     (0, map) => map
     (n, map) => {
@@ -716,7 +724,8 @@ pub impl[K : Eq + Hash + @quickcheck.Arbitrary, V : @quickcheck.Arbitrary] @quic
 }
 
 ///|
-pub fn[K : Eq + Hash, V] of(arr : FixedArray[(K, V)]) -> HashMap[K, V] {
+#as_free_fn
+pub fn[K : Eq + Hash, V] HashMap::of(arr : FixedArray[(K, V)]) -> HashMap[K, V] {
   loop (arr.length(), new()) {
     (0, map) => map
     (n, map) => {

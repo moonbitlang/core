@@ -294,11 +294,110 @@ test "write_bytesview" {
 ///|
 test "write_stringview" {
   let buf = @buffer.new()
-  buf.write_stringview("hello"[1:3])
+  buf.write_string_utf16le("hello"[1:3])
   inspect(
     buf.contents(),
     content=(
       #|b"\x65\x00\x6c\x00"
+    ),
+  )
+}
+
+///|
+test "write_char_utf8" {
+  let buf = @buffer.new(size_hint=10)
+  buf.write_char_utf8('A')
+  buf.write_char_utf8('α')
+  buf.write_char_utf8('啊')
+  buf.write_char_utf8('😦')
+  inspect(
+    buf.to_bytes(),
+    content=(
+      #|b"\x41\xce\xb1\xe5\x95\x8a\xf0\x9f\x98\xa6"
+    ),
+  )
+}
+
+///|
+test "write_char" {
+  let buf = @buffer.new(size_hint=10)
+  buf.write_char('A')
+  buf.write_char('α')
+  buf.write_char('啊')
+  buf.write_char('😦')
+  inspect(
+    buf.to_bytes(),
+    content=(
+      #|b"\x41\x00\xb1\x03\x4a\x55\x3d\xd8\x26\xde"
+    ),
+  )
+}
+
+///|
+test "write_char_utf16le" {
+  let buf = @buffer.new(size_hint=10)
+  buf.write_char_utf16le('A')
+  buf.write_char_utf16le('α')
+  buf.write_char_utf16le('啊')
+  buf.write_char_utf16le('😦')
+  inspect(
+    buf.to_bytes(),
+    content=(
+      #|b"\x41\x00\xb1\x03\x4a\x55\x3d\xd8\x26\xde"
+    ),
+  )
+}
+
+///|
+test "write_char_utf16be" {
+  let buf = @buffer.new(size_hint=10)
+  buf.write_char_utf16be('A')
+  buf.write_char_utf16be('α')
+  buf.write_char_utf16be('啊')
+  buf.write_char_utf16be('😦')
+  inspect(
+    buf.to_bytes(),
+    content=(
+      #|b"\x00\x41\x03\xb1\x55\x4a\xd8\x3d\xde\x26"
+    ),
+  )
+}
+
+///|
+const BOM : Char = '\u{FEFF}'
+
+///|
+test "write_bom_utf8" {
+  let buf = @buffer.new()
+  buf.write_char_utf8(BOM)
+  inspect(
+    buf.to_bytes(),
+    content=(
+      #|b"\xef\xbb\xbf"
+    ),
+  )
+}
+
+///|
+test "write_bom_utf16le" {
+  let buf = @buffer.new()
+  buf.write_char_utf16le(BOM)
+  inspect(
+    buf.to_bytes(),
+    content=(
+      #|b"\xff\xfe"
+    ),
+  )
+}
+
+///|
+test "write_bom_utf16be" {
+  let buf = @buffer.new()
+  buf.write_char_utf16be(BOM)
+  inspect(
+    buf.to_bytes(),
+    content=(
+      #|b"\xfe\xff"
     ),
   )
 }
