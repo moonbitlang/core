@@ -329,7 +329,7 @@ test "has_prefix" {
 #alias(ends_with, deprecated)
 pub fn strip_suffix(self : String, suffix : View) -> View? {
   if self.has_suffix(suffix) {
-    Some(self.charcodes(end=self.length() - suffix.length()))
+    Some(self.view(end_offset=self.length() - suffix.length()))
   } else {
     None
   }
@@ -376,7 +376,7 @@ test "strip_suffix" {
 #alias(starts_with, deprecated)
 pub fn strip_prefix(self : String, prefix : View) -> View? {
   if self.has_prefix(prefix) {
-    Some(self.charcodes(start=prefix.length()))
+    Some(self.view(start_offset=prefix.length()))
   } else {
     None
   }

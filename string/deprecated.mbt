@@ -13,12 +13,6 @@
 // limitations under the License.
 
 ///|
-#deprecated("Use `@string.concat` instead")
-pub fn String::concat(self : Array[String], separator? : String = "") -> String {
-  concat(self, separator~)
-}
-
-///|
 #deprecated("Use `Array::join` instead.")
 pub fn concat(strings : Array[String], separator? : String = "") -> String {
   match strings {
@@ -89,32 +83,5 @@ pub fn last_index_of(self : String, str : String, from? : Int) -> Int {
     idx
   } else {
     -1
-  }
-}
-
-///|
-/// Returns the charcode(code unit) at the given index.
-/// 
-/// This method has O(1) complexity.
-#deprecated("Use `s[i]` instead")
-pub fn View::charcode_at(self : View, index : Int) -> Int {
-  guard index >= 0 && index < self.length() else {
-    abort("Index out of bounds")
-  }
-  self.str().unsafe_charcode_at(self.start() + index)
-}
-
-///|
-#deprecated("Use `s.get_char(i).unwrap()` instead")
-pub fn View::char_at(self : View, index : Int) -> Char {
-  self.get_char(index).unwrap()
-}
-
-///|
-#deprecated("Use `s.get_char(i).unwrap()` instead")
-pub fn String::char_at(self : String, offset : Int) -> Char {
-  match self.get_char(offset) {
-    Some(c) => c
-    None => '�'
   }
 }

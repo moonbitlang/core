@@ -20,15 +20,9 @@ impl Show for CreatingViewError
 
 // Types and methods
 type View
-#deprecated
-fn View::char_at(Self, Int) -> Char
 fn View::char_length(Self) -> Int
 fn View::char_length_eq(Self, Int) -> Bool
 fn View::char_length_ge(Self, Int) -> Bool
-#deprecated
-fn View::charcode_at(Self, Int) -> Int
-#deprecated
-fn View::charcodes(Self, start? : Int, end? : Int) -> Self
 fn View::contains(Self, Self) -> Bool
 fn View::contains_char(Self, Char) -> Bool
 fn View::data(Self) -> String
@@ -48,7 +42,6 @@ fn View::iter2(Self) -> Iter2[Int, Char]
 fn View::length(Self) -> Int
 fn View::make(Int, Char) -> Self
 fn View::offset_of_nth_char(Self, Int) -> Int?
-fn View::op_as_view(Self, start? : Int, end? : Int) -> Self raise CreatingViewError
 fn View::op_get(Self, Int) -> Int
 fn View::pad_end(Self, Int, Char) -> String
 fn View::pad_start(Self, Int, Char) -> String
@@ -63,6 +56,8 @@ fn View::split(Self, Self) -> Iter[Self]
 fn View::start_offset(Self) -> Int
 fn View::strip_prefix(Self, Self) -> Self?
 fn View::strip_suffix(Self, Self) -> Self?
+#alias(op_as_view)
+fn View::sub(Self, start? : Int, end? : Int) -> Self raise CreatingViewError
 fn View::to_array(Self) -> Array[Char]
 fn View::to_bytes(Self) -> Bytes
 fn View::to_lower(Self) -> Self
@@ -82,14 +77,8 @@ impl Show for View
 impl ToJson for View
 impl ToStringView for View
 
-#deprecated
-fn String::char_at(String, Int) -> Char
 fn String::char_length_eq(String, Int, start_offset? : Int, end_offset? : Int) -> Bool
 fn String::char_length_ge(String, Int, start_offset? : Int, end_offset? : Int) -> Bool
-#deprecated
-fn String::charcodes(String, start? : Int, end? : Int) -> View
-#deprecated
-fn String::concat(Array[String], separator? : String) -> String
 fn String::contains(String, View) -> Bool
 fn String::contains_char(String, Char) -> Bool
 fn String::find(String, View) -> Int?
