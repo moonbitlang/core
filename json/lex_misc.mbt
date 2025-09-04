@@ -22,7 +22,7 @@ fn ParseContext::read_char(ctx : ParseContext) -> Char? {
         let c2 = ctx.input.unsafe_charcode_at(ctx.offset)
         if c2 >= 0xDC00 && c2 <= 0xDFFF {
           ctx.offset += 1
-          let c3 = (c1 << 10) + c2 - 0x35fdc00
+          let c3 = (c1.to_int() << 10) + c2.to_int() - 0x35fdc00
           return Some(c3.unsafe_to_char())
         }
       }
@@ -35,11 +35,11 @@ fn ParseContext::read_char(ctx : ParseContext) -> Char? {
 
 ///|
 /// low surrogate
-const SURROGATE_LOW_CHAR = 0xD800
+const SURROGATE_LOW_CHAR : UInt16 = 0xD800
 
 ///|
 /// high surrogate
-const SURROGATE_HIGH_CHAR = 0xDFFF
+const SURROGATE_HIGH_CHAR : UInt16 = 0xDFFF
 
 ///|
 /// `ctx.expect_char(c)` check the current context is c,
@@ -56,7 +56,7 @@ fn ParseContext::expect_char(
   if c0 < 0xFFFF {
     // c0 < SURROGATE_LOW_CHAR || c0 is (0xE000..=0XFFFF)  
     // c0 is a valid char so only need check if c0<0xFFFF is BMP code point
-    if c0 != c1 {
+    if c0 != c1.to_int() {
       ctx.invalid_char(shift=-1)
     }
   } else {
@@ -67,7 +67,7 @@ fn ParseContext::expect_char(
       ctx.invalid_char(shift=-1)
     }
     let c2 = ctx.input.unsafe_charcode_at(ctx.offset)
-    let c3 = (c1 << 10) + c2 - 0x35fdc00
+    let c3 = (c1.to_int() << 10) + c2.to_int() - 0x35fdc00
     if c3 != c0 {
       ctx.invalid_char(shift=-1)
     } else {
@@ -86,7 +86,7 @@ fn ParseContext::expect_ascii_char(
   guard ctx.offset < ctx.end_offset else { raise InvalidEof }
   let c1 = ctx.input.unsafe_charcode_at(ctx.offset)
   ctx.offset += 1
-  if c.to_int() != c1 {
+  if c.to_uint16() != c1 {
     ctx.invalid_char(shift=-1)
   }
 }

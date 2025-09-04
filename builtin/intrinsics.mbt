@@ -1321,6 +1321,9 @@ pub fn Int::to_byte(self : Int) -> Byte = "%i32_to_byte"
 pub fn Int::unsafe_to_char(self : Int) -> Char = "%char_from_int"
 
 ///|
+pub fn UInt16::unsafe_to_char(self : UInt16) -> Char = "%char_from_int"
+
+///|
 pub fn Int::to_char(self : Int) -> Char? {
   if self is (0..=0xD7FF) || self is (0xE000..=0x10FFFF) {
     Some(self.unsafe_to_char())
@@ -1536,7 +1539,7 @@ pub fn String::charcode_length(self : String) -> Int = "%string_length"
 /// * `index` : The position in the string from which to retrieve the code unit.
 ///
 /// This method has O(1) complexity.
-pub fn String::op_get(self : String, idx : Int) -> Int = "%string_get"
+pub fn String::op_get(self : String, idx : Int) -> UInt16 = "%string_get"
 
 ///|
 /// Returns the UTF-16 code unit at a given position in the string without
@@ -1563,7 +1566,7 @@ pub fn String::op_get(self : String, idx : Int) -> Int = "%string_get"
 /// ```
 /// TODO: rename to `unsafe_get`
 #internal(unsafe, "Panic if index is out of bounds.")
-pub fn String::unsafe_charcode_at(self : String, idx : Int) -> Int = "%string.unsafe_get"
+pub fn String::unsafe_charcode_at(self : String, idx : Int) -> UInt16 = "%string.unsafe_get"
 
 ///|
 /// Concatenates two strings, creating a new string that contains all characters

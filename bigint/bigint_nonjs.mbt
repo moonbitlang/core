@@ -1002,7 +1002,7 @@ pub fn BigInt::from_string(input : String) -> BigInt {
     if x < 0 || x > 9 {
       abort("invalid character")
     }
-    let mut carry = x.reinterpret_as_uint().to_uint64()
+    let mut carry = x.to_uint64()
     for j in 0..<b_len {
       carry += b[j].to_uint64() * 10
       b[j] = (carry % radix).to_uint()
@@ -1043,13 +1043,13 @@ pub fn BigInt::from_string(input : String) -> BigInt {
 /// ```
 pub fn BigInt::from_hex(input : String) -> BigInt {
   // WARN: this implementation assumes that `radix_bit_len` is a multiple of 4.
-  fn char_from_hex(x : Int) -> UInt {
+  fn char_from_hex(x : UInt16) -> UInt {
     (match x {
       '0'..='9' => x - '0'
       'A'..='F' => x + (10 - 'A')
       'a'..='f' => x + (10 - 'a')
       _ => abort("invalid character")
-    }).reinterpret_as_uint()
+    }).to_uint()
   }
 
   let len = input.length()

@@ -455,7 +455,7 @@ pub fn String::codepoint_length(
 ///|
 #deprecated("Use `s[i]` instead")
 pub fn String::charcode_at(self : String, index : Int) -> Int {
-  self[index]
+  self[index].to_int()
 }
 
 ///|

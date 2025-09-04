@@ -35,7 +35,9 @@ pub fn String::make(length : Int, value : Char) -> String {
 }
 
 ///|
-fn code_point_of_surrogate_pair(leading : Int, trailing : Int) -> Char {
+fn code_point_of_surrogate_pair(leading : UInt16, trailing : UInt16) -> Char {
+  let leading = leading.to_int()
+  let trailing = trailing.to_int()
   ((leading - 0xD800) * 0x400 + trailing - 0xDC00 + 0x10000).unsafe_to_char()
 }
 

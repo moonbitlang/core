@@ -44,10 +44,10 @@ fn View::make_view(str : String, start : Int, end : Int) -> View = "%stringview.
 /// ```mbt
 ///   let str = "Hello🤣🤣🤣"
 ///   let view = str.view(start_offset = str.offset_of_nth_char(1).unwrap(), end_offset = str.offset_of_nth_char(6).unwrap())
-///   inspect(view[0].to_char(), content="Some('e')")
+///   inspect(view[0].to_int().to_char(), content="Some('e')")
 ///   inspect(view[4], content="55358")
 /// ```
-pub fn View::op_get(self : View, index : Int) -> Int {
+pub fn View::op_get(self : View, index : Int) -> UInt16 {
   guard index >= 0 && index < self.length() else {
     abort("Index out of bounds")
   }
@@ -160,7 +160,7 @@ pub fn View::offset_of_nth_char(self : View, i : Int) -> Int? {
 ///   inspect(view.unsafe_charcode_at(5), content="67")
 /// ```
 /// TODO: rename to `unsafe_get`
-pub fn View::unsafe_charcode_at(self : View, index : Int) -> Int {
+pub fn View::unsafe_charcode_at(self : View, index : Int) -> UInt16 {
   self.str().unsafe_charcode_at(self.start() + index)
 }
 
@@ -352,7 +352,7 @@ pub impl ToJson for View with to_json(self) {
 ///|
 pub impl Hash for View with hash_combine(self : View, hasher : Hasher) -> Unit {
   for i in 0..<self.length() {
-    hasher.combine_uint(self.unsafe_charcode_at(i).reinterpret_as_uint())
+    hasher.combine_uint(self.unsafe_charcode_at(i).to_uint())
   }
 }
 

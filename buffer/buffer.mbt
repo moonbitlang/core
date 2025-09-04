@@ -689,7 +689,7 @@ pub fn Buffer::write_string_utf16le(buf : Self, string : @string.View) -> Unit {
   let len = string.length()
   buf.grow_if_necessary(buf.len + len * 2)
   for i = 0, j = buf.len; i < len; i = i + 1, j = j + 2 {
-    let c = string.unsafe_charcode_at(i).reinterpret_as_uint()
+    let c = string.unsafe_charcode_at(i).to_uint()
     buf.data[j] = (c & 0xff).to_byte()
     buf.data[j + 1] = (c >> 8).to_byte()
   }
@@ -701,7 +701,7 @@ pub fn Buffer::write_string_utf16be(buf : Self, string : @string.View) -> Unit {
   let len = string.length()
   buf.grow_if_necessary(buf.len + len * 2)
   for i = 0, j = buf.len; i < len; i = i + 1, j = j + 2 {
-    let c = string.unsafe_charcode_at(i).reinterpret_as_uint()
+    let c = string.unsafe_charcode_at(i).to_uint()
     buf.data[j + 1] = (c & 0xff).to_byte()
     buf.data[j] = (c >> 8).to_byte()
   }
