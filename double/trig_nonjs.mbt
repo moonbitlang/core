@@ -65,14 +65,6 @@ fn set_low_word(d : Double, v : UInt) -> Double {
 }
 
 ///|
-fn set_high_word(d : Double, v : UInt) -> Double {
-  let bits : UInt64 = d.reinterpret_as_uint64()
-  let bits = bits & 0x0000_0000_FFFF_FFFF
-  let bits = bits | (v.to_uint64() << 32)
-  bits.reinterpret_as_double()
-}
-
-///|
 fn get_high_word(x : Double) -> UInt {
   (x.reinterpret_as_uint64() >> 32).to_uint()
 }

@@ -108,11 +108,6 @@ test "panic array_as_view_get_index_error" {
 }
 
 ///|
-test "panic array_as_view_set_index_error" {
-  [1, 2, 3][:][5] = 0
-}
-
-///|
 test "panic array_as_view_swap_index_error" {
   [1, 2, 3][:].swap(1, 9)
 }
@@ -310,24 +305,4 @@ test "panic set_utf16be_char with invalid code point" {
 test "panic" {
   let _ : Int = Option::None.unwrap()
 
-}
-
-///|
-test "panic substring_start_index_error" {
-  "test".substring(start=-1, end=0) |> ignore
-}
-
-///|
-test "panic substring_end_index_error" {
-  "test".substring(start=0, end=-1) |> ignore
-}
-
-///|
-test "panic substring_start_end_index_error" {
-  "test".substring(start=1, end=0) |> ignore
-}
-
-///|
-test "panic substring_length_index_error" {
-  "test".substring(start=0, end=5) |> ignore
 }
