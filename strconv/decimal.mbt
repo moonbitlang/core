@@ -190,7 +190,7 @@ fn to_double_priv(self : Decimal) -> Double raise StrConvError {
 
   // rounding might have added a bit, shift down.
   if mantissa == 2L << double_info.mantissa_bits {
-    mantissa = mantissa << 1
+    mantissa = mantissa >> 1
     exponent += 1
     if exponent - double_info.bias >= (1 << double_info.exponent_bits) - 1 {
       // overflow
@@ -678,4 +678,10 @@ test "corner cases" {
   inspect(try? parse_decimal_priv(".123"), content="Ok(0.123)")
   inspect(try? parse_decimal_priv("."), content="Err(invalid syntax)")
   inspect(try? parse_decimal_priv("-"), content="Err(invalid syntax)")
+}
+
+///|
+test "parse_double mantissa normalization boundary" {
+  inspect(parse_double("1.9999999999999999"), content="2")
+  inspect(parse_double("9007199254740991.5"), content="9007199254740992")
 }
