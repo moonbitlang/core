@@ -6,16 +6,6 @@ import(
 )
 
 // Values
-fn[V : Compare] from_array(Array[V]) -> SortedSet[V]
-
-fn[V : Compare] from_iter(Iter[V]) -> SortedSet[V]
-
-fn[V] new() -> SortedSet[V]
-
-#deprecated
-fn[V : Compare] of(Array[V]) -> SortedSet[V]
-
-fn[V] singleton(V) -> SortedSet[V]
 
 // Errors
 
@@ -32,15 +22,23 @@ fn[V : Compare] SortedSet::difference(Self[V], Self[V]) -> Self[V]
 fn[V : Compare] SortedSet::disjoint(Self[V], Self[V]) -> Bool
 fn[V] SortedSet::each(Self[V], (V) -> Unit raise?) -> Unit raise?
 fn[V] SortedSet::eachi(Self[V], (Int, V) -> Unit raise?) -> Unit raise?
-#deprecated
+#as_free_fn
+fn[V : Compare] SortedSet::from_array(Array[V]) -> Self[V]
+#as_free_fn
 fn[V : Compare] SortedSet::from_iter(Iter[V]) -> Self[V]
 #deprecated
 fn[V : Compare] SortedSet::intersect(Self[V], Self[V]) -> Self[V]
 fn[V : Compare] SortedSet::intersection(Self[V], Self[V]) -> Self[V]
 fn[V] SortedSet::is_empty(Self[V]) -> Bool
 fn[V] SortedSet::iter(Self[V]) -> Iter[V]
+#as_free_fn
+fn[V] SortedSet::new() -> Self[V]
+#as_free_fn
+fn[V : Compare] SortedSet::of(FixedArray[V]) -> Self[V]
 fn[V : Compare] SortedSet::range(Self[V], V, V) -> Iter[V]
 fn[V : Compare] SortedSet::remove(Self[V], V) -> Unit
+#as_free_fn
+fn[V] SortedSet::singleton(V) -> Self[V]
 fn[V] SortedSet::size(Self[V]) -> Int
 fn[V : Compare] SortedSet::subset(Self[V], Self[V]) -> Bool
 fn[V : Compare] SortedSet::symmetric_difference(Self[V], Self[V]) -> Self[V]

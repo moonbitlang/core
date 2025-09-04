@@ -7,13 +7,6 @@ import(
 )
 
 // Values
-fn[A] from_array(Array[A]) -> Deque[A]
-
-fn[A] from_iter(Iter[A]) -> Deque[A]
-
-fn[A] new(capacity? : Int) -> Deque[A]
-
-fn[A] of(FixedArray[A]) -> Deque[A]
 
 // Errors
 
@@ -34,6 +27,10 @@ fn[A] Deque::eachi(Self[A], (Int, A) -> Unit) -> Unit
 #deprecated
 fn[A] Deque::filter_map_inplace(Self[A], (A) -> A?) -> Unit
 fn[A] Deque::flatten(Self[Self[A]]) -> Self[A]
+#as_free_fn
+fn[A] Deque::from_array(Array[A]) -> Self[A]
+#as_free_fn
+fn[A] Deque::from_iter(Iter[A]) -> Self[A]
 fn[A] Deque::front(Self[A]) -> A?
 fn[A] Deque::get(Self[A], Int) -> A?
 fn[A] Deque::is_empty(Self[A]) -> Bool
@@ -43,6 +40,10 @@ fn Deque::join(Self[String], @string.View) -> String
 fn[A] Deque::length(Self[A]) -> Int
 fn[A, U] Deque::map(Self[A], (A) -> U) -> Self[U]
 fn[A, U] Deque::mapi(Self[A], (Int, A) -> U) -> Self[U]
+#as_free_fn
+fn[A] Deque::new(capacity? : Int) -> Self[A]
+#as_free_fn
+fn[A] Deque::of(FixedArray[A]) -> Self[A]
 fn[A] Deque::op_get(Self[A], Int) -> A
 fn[A] Deque::op_set(Self[A], Int, A) -> Unit
 fn[A] Deque::pop_back(Self[A]) -> A?

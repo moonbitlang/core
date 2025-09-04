@@ -4,10 +4,6 @@ package "moonbitlang/core/string"
 // Values
 fn default() -> String
 
-fn from_array(Array[Char]) -> String
-
-fn from_iter(Iter[Char]) -> String
-
 // Errors
 pub suberror CreatingViewError {
   IndexOutOfBounds
@@ -83,7 +79,9 @@ fn String::contains_char(String, Char) -> Bool
 fn String::find(String, View) -> Int?
 fn String::find_by(String, (Char) -> Bool) -> Int?
 fn[A] String::fold(String, init~ : A, (A, Char) -> A) -> A
+#as_free_fn
 fn String::from_array(Array[Char]) -> String
+#as_free_fn
 fn String::from_iter(Iter[Char]) -> String
 fn String::get(String, Int) -> Int?
 fn String::get_char(String, Int) -> Char?

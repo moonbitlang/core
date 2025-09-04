@@ -6,15 +6,6 @@ import(
 )
 
 // Values
-fn[K : Eq + Hash, V] from_array(Array[(K, V)]) -> HashMap[K, V]
-
-fn[K : Eq + Hash, V] from_iter(Iter[(K, V)]) -> HashMap[K, V]
-
-fn[K, V] new() -> HashMap[K, V]
-
-fn[K : Eq + Hash, V] of(FixedArray[(K, V)]) -> HashMap[K, V]
-
-fn[K : Hash, V] singleton(K, V) -> HashMap[K, V]
 
 // Errors
 
@@ -30,6 +21,10 @@ fn[K, V] HashMap::filter_with_key(Self[K, V], (K, V) -> Bool raise?) -> Self[K, 
 #deprecated
 fn[K, V, A] HashMap::fold(Self[K, V], init~ : A, (A, V) -> A raise?) -> A raise?
 fn[K, V, A] HashMap::fold_with_key(Self[K, V], init~ : A, (A, K, V) -> A raise?) -> A raise?
+#as_free_fn
+fn[K : Eq + Hash, V] HashMap::from_array(Array[(K, V)]) -> Self[K, V]
+#as_free_fn
+fn[K : Eq + Hash, V] HashMap::from_iter(Iter[(K, V)]) -> Self[K, V]
 #alias(find, deprecated)
 fn[K : Eq + Hash, V] HashMap::get(Self[K, V], K) -> V?
 fn[K : Eq, V] HashMap::intersection(Self[K, V], Self[K, V]) -> Self[K, V]
@@ -40,9 +35,15 @@ fn[K, V] HashMap::keys(Self[K, V]) -> Iter[K]
 #deprecated
 fn[K, V, A] HashMap::map(Self[K, V], (V) -> A raise?) -> Self[K, A] raise?
 fn[K, V, A] HashMap::map_with_key(Self[K, V], (K, V) -> A raise?) -> Self[K, A] raise?
+#as_free_fn
+fn[K, V] HashMap::new() -> Self[K, V]
+#as_free_fn
+fn[K : Eq + Hash, V] HashMap::of(FixedArray[(K, V)]) -> Self[K, V]
 #deprecated
 fn[K : Eq + Hash, V] HashMap::op_get(Self[K, V], K) -> V?
 fn[K : Eq + Hash, V] HashMap::remove(Self[K, V], K) -> Self[K, V]
+#as_free_fn
+fn[K : Hash, V] HashMap::singleton(K, V) -> Self[K, V]
 fn[K, V] HashMap::size(Self[K, V]) -> Int
 fn[K, V] HashMap::to_array(Self[K, V]) -> Array[(K, V)]
 fn[K : Eq, V] HashMap::union(Self[K, V], Self[K, V]) -> Self[K, V]

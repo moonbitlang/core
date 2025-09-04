@@ -6,13 +6,6 @@ import(
 )
 
 // Values
-fn[A : Eq + Hash] from_array(Array[A]) -> HashSet[A]
-
-fn[A : Eq + Hash] from_iter(Iter[A]) -> HashSet[A]
-
-fn[A] new() -> HashSet[A]
-
-fn[A : Eq + Hash] of(FixedArray[A]) -> HashSet[A]
 
 // Errors
 
@@ -22,9 +15,17 @@ fn[A : Eq + Hash] HashSet::add(Self[A], A) -> Self[A]
 fn[A : Eq + Hash] HashSet::contains(Self[A], A) -> Bool
 fn[K : Eq] HashSet::difference(Self[K], Self[K]) -> Self[K]
 fn[A] HashSet::each(Self[A], (A) -> Unit raise?) -> Unit raise?
+#as_free_fn
+fn[A : Eq + Hash] HashSet::from_array(Array[A]) -> Self[A]
+#as_free_fn
+fn[A : Eq + Hash] HashSet::from_iter(Iter[A]) -> Self[A]
 fn[K : Eq] HashSet::intersection(Self[K], Self[K]) -> Self[K]
 fn[A] HashSet::is_empty(Self[A]) -> Bool
 fn[A] HashSet::iter(Self[A]) -> Iter[A]
+#as_free_fn
+fn[A] HashSet::new() -> Self[A]
+#as_free_fn
+fn[A : Eq + Hash] HashSet::of(FixedArray[A]) -> Self[A]
 fn[A : Eq + Hash] HashSet::remove(Self[A], A) -> Self[A]
 fn[A] HashSet::size(Self[A]) -> Int
 fn[K : Eq] HashSet::union(Self[K], Self[K]) -> Self[K]

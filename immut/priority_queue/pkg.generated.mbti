@@ -6,20 +6,22 @@ import(
 )
 
 // Values
-fn[A : Compare] from_array(Array[A]) -> PriorityQueue[A]
-
-fn[A] new() -> PriorityQueue[A]
-
-fn[A : Compare] of(FixedArray[A]) -> PriorityQueue[A]
 
 // Errors
 
 // Types and methods
 type PriorityQueue[A]
+#as_free_fn
+fn[A : Compare] PriorityQueue::from_array(Array[A]) -> Self[A]
+#as_free_fn
 fn[A : Compare] PriorityQueue::from_iter(Iter[A]) -> Self[A]
 fn[A] PriorityQueue::is_empty(Self[A]) -> Bool
 fn[A : Compare] PriorityQueue::iter(Self[A]) -> Iter[A]
 fn[A] PriorityQueue::length(Self[A]) -> Int
+#as_free_fn
+fn[A] PriorityQueue::new() -> Self[A]
+#as_free_fn
+fn[A : Compare] PriorityQueue::of(FixedArray[A]) -> Self[A]
 fn[A] PriorityQueue::peek(Self[A]) -> A?
 fn[A : Compare] PriorityQueue::pop(Self[A]) -> Self[A]?
 #deprecated

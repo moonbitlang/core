@@ -6,13 +6,6 @@ import(
 )
 
 // Values
-fn[K : Hash + Eq, V] from_array(Array[(K, V)]) -> HashMap[K, V]
-
-fn[K : Hash + Eq, V] from_iter(Iter[(K, V)]) -> HashMap[K, V]
-
-fn[K, V] new(capacity? : Int) -> HashMap[K, V]
-
-fn[K : Eq + Hash, V] of(FixedArray[(K, V)]) -> HashMap[K, V]
 
 // Errors
 
@@ -25,6 +18,10 @@ fn[K : Hash + Eq, V : Eq] HashMap::contains_kv(Self[K, V], K, V) -> Bool
 fn[K, V] HashMap::copy(Self[K, V]) -> Self[K, V]
 fn[K, V] HashMap::each(Self[K, V], (K, V) -> Unit raise?) -> Unit raise?
 fn[K, V] HashMap::eachi(Self[K, V], (Int, K, V) -> Unit raise?) -> Unit raise?
+#as_free_fn
+fn[K : Hash + Eq, V] HashMap::from_array(Array[(K, V)]) -> Self[K, V]
+#as_free_fn
+fn[K : Hash + Eq, V] HashMap::from_iter(Iter[(K, V)]) -> Self[K, V]
 fn[K : Hash + Eq, V] HashMap::get(Self[K, V], K) -> V?
 fn[K : Hash + Eq, V] HashMap::get_or_default(Self[K, V], K, V) -> V
 fn[K : Hash + Eq, V] HashMap::get_or_init(Self[K, V], K, () -> V) -> V
@@ -33,6 +30,10 @@ fn[K, V] HashMap::iter(Self[K, V]) -> Iter[(K, V)]
 fn[K, V] HashMap::iter2(Self[K, V]) -> Iter2[K, V]
 fn[K, V] HashMap::keys(Self[K, V]) -> Iter[K]
 fn[K, V, V2] HashMap::map(Self[K, V], (K, V) -> V2) -> Self[K, V2]
+#as_free_fn
+fn[K, V] HashMap::new(capacity? : Int) -> Self[K, V]
+#as_free_fn
+fn[K : Eq + Hash, V] HashMap::of(FixedArray[(K, V)]) -> Self[K, V]
 fn[K : Hash + Eq, V] HashMap::op_get(Self[K, V], K) -> V
 fn[K : Hash + Eq, V] HashMap::op_set(Self[K, V], K, V) -> Unit
 fn[K : Hash + Eq, V] HashMap::remove(Self[K, V], K) -> Unit

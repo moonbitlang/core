@@ -13,14 +13,6 @@
 // limitations under the License.
 
 ///|
-#deprecated("Use @sorted_map.from_array instead")
-pub fn[K : Compare, V] of(entries : Array[(K, V)]) -> SortedMap[K, V] {
-  let map = { root: None, size: 0 }
-  entries.each(e => map.add(e.0, e.1))
-  map
-}
-
-///|
 #deprecated("Use `keys_as_iter` instead. `keys` will return `Iter[K]` instead of `Array[K]` in the future.")
 #coverage.skip
 pub fn[K, V] keys(self : SortedMap[K, V]) -> Array[K] {

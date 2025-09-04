@@ -16,19 +16,32 @@
 
 ///|
 /// Construct a empty set.
-pub fn[V] new() -> SortedSet[V] {
+#as_free_fn
+pub fn[V] SortedSet::new() -> SortedSet[V] {
   { root: None, size: 0 }
 }
 
 ///|
 /// Returns the one-value set containing only `value`.
-pub fn[V] singleton(value : V) -> SortedSet[V] {
+#as_free_fn
+pub fn[V] SortedSet::singleton(value : V) -> SortedSet[V] {
   { root: Some({ value, left: None, right: None, height: 1 }), size: 1 }
 }
 
 ///|
 /// Initialize an set from an array.
-pub fn[V : Compare] from_array(array : Array[V]) -> SortedSet[V] {
+#as_free_fn
+pub fn[V : Compare] SortedSet::from_array(array : Array[V]) -> SortedSet[V] {
+  let set = new()
+  for i in 0..<array.length() {
+    set.add(array[i])
+  }
+  set
+}
+
+///|
+#as_free_fn
+pub fn[V : Compare] SortedSet::of(array : FixedArray[V]) -> SortedSet[V] {
   let set = new()
   for i in 0..<array.length() {
     set.add(array[i])
@@ -407,7 +420,8 @@ pub fn[V] iter(self : SortedSet[V]) -> Iter[V] {
 }
 
 ///|
-pub fn[V : Compare] from_iter(iter : Iter[V]) -> SortedSet[V] {
+#as_free_fn
+pub fn[V : Compare] SortedSet::from_iter(iter : Iter[V]) -> SortedSet[V] {
   let s = new()
   iter.each(e => s.add(e))
   s

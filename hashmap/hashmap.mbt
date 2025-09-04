@@ -32,7 +32,8 @@
 ///   inspect(map.capacity(), content="16")
 ///   inspect(map.is_empty(), content="true")
 /// ```
-pub fn[K, V] new(capacity? : Int = 8) -> HashMap[K, V] {
+#as_free_fn
+pub fn[K, V] HashMap::new(capacity? : Int = 8) -> HashMap[K, V] {
   let capacity = capacity.next_power_of_two()
   {
     size: 0,
@@ -62,7 +63,10 @@ pub fn[K, V] new(capacity? : Int = 8) -> HashMap[K, V] {
 ///   inspect(map.get(1), content="Some(\"ONE\")")
 ///   inspect(map.get(2), content="Some(\"two\")")
 /// ```
-pub fn[K : Hash + Eq, V] from_array(arr : Array[(K, V)]) -> HashMap[K, V] {
+#as_free_fn
+pub fn[K : Hash + Eq, V] HashMap::from_array(
+  arr : Array[(K, V)],
+) -> HashMap[K, V] {
   let m = new(capacity=arr.length())
   arr.each(e => m.set(e.0, e.1))
   m
@@ -504,7 +508,8 @@ fn[K : Eq, V] grow(self : HashMap[K, V]) -> Unit {
 ///   inspect(map.get(1), content="Some(\"one\")")
 ///   inspect(map.get(2), content="Some(\"two\")")
 /// ```
-pub fn[K : Eq + Hash, V] of(arr : FixedArray[(K, V)]) -> HashMap[K, V] {
+#as_free_fn
+pub fn[K : Eq + Hash, V] HashMap::of(arr : FixedArray[(K, V)]) -> HashMap[K, V] {
   let m = new(capacity=arr.length())
   arr.each(e => m.set(e.0, e.1))
   m
