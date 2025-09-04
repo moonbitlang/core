@@ -1747,6 +1747,21 @@ pub fn[A] shuffle(self : Deque[A], rand~ : (Int) -> Int) -> Deque[A] {
   new_deque
 }
 
-fn[A] space(self : Deque[A]) -> Int{
+///|
+/// A internal helper to calculates the remaining available capacity in the deque's buffer.
+/// 
+/// This is computed as `capacity - length`, where:
+/// * `capacity` is the total size of the internal buffer (`self.buf.length()`),
+/// * `length` is the current number of elements (`self.len`).
+///
+/// Parameters:
+///
+/// * `self` : The deque whose remaining capacity is to be calculated.
+///
+/// Returns:
+///
+/// * An integer representing the number of free slots in the buffer.
+///   Always satisfies `0 <= space <= self.buf.length()`.
+fn[A] space(self : Deque[A]) -> Int {
   self.buf.length() - self.len
 }
