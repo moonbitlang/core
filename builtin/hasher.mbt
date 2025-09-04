@@ -335,7 +335,7 @@ pub fn Hasher::combine_bytes(self : Hasher, value : Bytes) -> Unit {
 /// ```
 pub fn Hasher::combine_string(self : Hasher, value : String) -> Unit {
   for i in 0..<value.length() {
-    self.combine_uint(value.unsafe_charcode_at(i).reinterpret_as_uint())
+    self.combine_uint(value.unsafe_charcode_at(i).to_uint())
   }
 }
 

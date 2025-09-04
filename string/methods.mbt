@@ -67,11 +67,14 @@ fn boyer_moore_horspool_find(haystack : View, needle : View) -> Int? {
   // Build skip table
   let skip_table = FixedArray::make(1 << 8, needle_len)
   for i in 0..<(needle_len - 1) {
-    skip_table[needle.unsafe_charcode_at(i) & 0xFF] = needle_len - 1 - i
+    skip_table[(needle.unsafe_charcode_at(i) & 0xFF).to_int()] = needle_len -
+      1 -
+      i
   }
   for i = 0
       i <= haystack_len - needle_len
-      i = i + skip_table[haystack.unsafe_charcode_at(i + needle_len - 1) & 0xFF] {
+      i = i +
+        skip_table[(haystack.unsafe_charcode_at(i + needle_len - 1) & 0xFF).to_int()] {
     // Check all charcodes for match at current position
     for j in 0..=(needle_len - 1) {
       if haystack.unsafe_charcode_at(i + j) != needle.unsafe_charcode_at(j) {
@@ -212,11 +215,11 @@ fn boyer_moore_horspool_rev_find(haystack : View, needle : View) -> Int? {
   guard haystack_len >= needle_len else { return None }
   let skip_table = FixedArray::make(1 << 8, needle_len)
   for i = needle_len - 1; i > 0; i = i - 1 {
-    skip_table[needle.unsafe_charcode_at(i) & 0xFF] = i
+    skip_table[(needle.unsafe_charcode_at(i) & 0xFF).to_int()] = i
   }
   for i = haystack_len - needle_len
       i >= 0
-      i = i - skip_table[haystack.unsafe_charcode_at(i) & 0xFF] {
+      i = i - skip_table[(haystack.unsafe_charcode_at(i) & 0xFF).to_int()] {
     // Check all charcodes for match at current position
     for j in 0..<needle_len {
       if haystack.unsafe_charcode_at(i + j) != needle.unsafe_charcode_at(j) {
@@ -558,6 +561,7 @@ pub fn View::contains_char(self : View, c : Char) -> Bool {
   let c = c.to_int()
   if c <= 0xFFFF {
     // Search BMP
+    let c = c.to_uint16()
     for i in 0..<len {
       if self.unsafe_charcode_at(i) == c {
         return true
@@ -568,8 +572,8 @@ pub fn View::contains_char(self : View, c : Char) -> Bool {
     guard len >= 2 else { return false }
     // Calc surrogate pair
     let adj = c - 0x10000
-    let high = 0xD800 + (adj >> 10)
-    let low = 0xDC00 + (adj & 0x3FF)
+    let high = (0xD800 + (adj >> 10)).to_uint16()
+    let low = (0xDC00 + (adj & 0x3FF)).to_uint16()
     // Search surrogate pair
     let mut i = 0
     while i < len - 1 {
@@ -1479,7 +1483,7 @@ test "rev_fold" {
 ///|
 /// Returns the UTF-16 code unit at the given index. Returns `None` if the index
 /// is out of bounds.
-pub fn String::get(self : String, idx : Int) -> Int? {
+pub fn String::get(self : String, idx : Int) -> UInt16? {
   guard idx >= 0 && idx < self.length() else { return None }
   Some(self.unsafe_charcode_at(idx))
 }
@@ -1487,7 +1491,7 @@ pub fn String::get(self : String, idx : Int) -> Int? {
 ///|
 /// Returns the UTF-16 code unit at the given index. Returns `None` if the index
 /// is out of bounds.
-pub fn View::get(self : View, idx : Int) -> Int? {
+pub fn View::get(self : View, idx : Int) -> UInt16? {
   guard idx >= 0 && idx < self.length() else { return None }
   Some(self.unsafe_charcode_at(idx))
 }

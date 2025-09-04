@@ -62,7 +62,7 @@ pub impl Show for UInt16 with output(self, logger) {
 }
 
 ///|
-fn to_hex_digit(i : Int) -> Char {
+fn to_hex_digit(i : UInt16) -> Char {
   if i < 10 {
     (i + '0').unsafe_to_char()
   } else {
@@ -73,12 +73,14 @@ fn to_hex_digit(i : Int) -> Char {
 ///|
 test "to_hex_digit" {
   for i in 0..<10 {
-    guard to_hex_digit(i) == ('0'.to_int() + i).unsafe_to_char() else {
+    let i = i.to_uint16()
+    guard to_hex_digit(i) == (i + '0').unsafe_to_char() else {
       fail("to_hex_digit(\{i}) does not match")
     }
   }
   for i in 10..<16 {
-    guard to_hex_digit(i) == ('a'.to_int() + (i - 10)).unsafe_to_char() else {
+    let i = i.to_uint16()
+    guard to_hex_digit(i) == (i + 'a' - 10).unsafe_to_char() else {
       fail("to_hex_digit(\{i}) does not match")
     }
   }
@@ -88,7 +90,7 @@ test "to_hex_digit" {
 pub impl Show for Bytes with output(self, logger) {
   logger.write_string("b\"")
   for b in self {
-    let byte = b.to_int()
+    let byte = b.to_uint16()
     logger
     ..write_string("\\x")
     ..write_char(to_hex_digit(byte / 16))

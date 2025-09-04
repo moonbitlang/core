@@ -460,10 +460,16 @@ fn UInt::trunc_double(Double) -> UInt
 #deprecated
 fn UInt::upto(UInt, UInt, inclusive? : Bool) -> Iter[UInt]
 
+fn UInt16::is_leading_surrogate(UInt16) -> Bool
+fn UInt16::is_surrogate(UInt16) -> Bool
+fn UInt16::is_trailing_surrogate(UInt16) -> Bool
 fn UInt16::to_byte(UInt16) -> Byte
 fn UInt16::to_int(UInt16) -> Int
 fn UInt16::to_int64(UInt16) -> Int64
 fn UInt16::to_string(UInt16, radix? : Int) -> String
+fn UInt16::to_uint(UInt16) -> UInt
+fn UInt16::to_uint64(UInt16) -> UInt64
+fn UInt16::unsafe_to_char(UInt16) -> Char
 
 fn UInt64::clz(UInt64) -> Int
 fn UInt64::ctz(UInt64) -> Int
@@ -531,13 +537,13 @@ fn String::codepoint_length(String, start_offset? : Int, end_offset? : Int) -> I
 fn String::escape(String) -> String
 fn String::length(String) -> Int
 fn String::make(Int, Char) -> String
-fn String::op_get(String, Int) -> Int
+fn String::op_get(String, Int) -> UInt16
 #deprecated
 fn String::substring(String, start? : Int, end? : Int) -> String
 fn String::to_string(String) -> String
 #deprecated
 fn String::unsafe_char_at(String, Int) -> Char
-fn String::unsafe_charcode_at(String, Int) -> Int
+fn String::unsafe_charcode_at(String, Int) -> UInt16
 fn String::unsafe_substring(String, start~ : Int, end~ : Int) -> String
 
 fn[X : Show] Option::to_string(X?) -> String
@@ -592,6 +598,7 @@ impl Add for Byte
 impl Add for Int
 impl Add for Int64
 impl Add for UInt
+impl Add for UInt16
 impl Add for UInt64
 impl Add for Float
 impl Add for Double
@@ -602,6 +609,7 @@ pub(open) trait BitAnd {
 }
 impl BitAnd for Byte
 impl BitAnd for Int64
+impl BitAnd for UInt16
 impl BitAnd for UInt64
 
 pub(open) trait BitOr {
@@ -609,6 +617,7 @@ pub(open) trait BitOr {
 }
 impl BitOr for Byte
 impl BitOr for Int64
+impl BitOr for UInt16
 impl BitOr for UInt64
 
 pub(open) trait BitXOr {
@@ -616,6 +625,7 @@ pub(open) trait BitXOr {
 }
 impl BitXOr for Byte
 impl BitXOr for Int64
+impl BitXOr for UInt16
 impl BitXOr for UInt64
 
 pub(open) trait Compare : Eq {
@@ -627,6 +637,7 @@ impl Compare for Char
 impl Compare for Int
 impl Compare for Int64
 impl Compare for UInt
+impl Compare for UInt16
 impl Compare for UInt64
 impl Compare for Float
 impl Compare for Double
@@ -667,6 +678,7 @@ impl Div for Byte
 impl Div for Int
 impl Div for Int64
 impl Div for UInt
+impl Div for UInt16
 impl Div for UInt64
 impl Div for Float
 impl Div for Double
@@ -682,6 +694,7 @@ impl Eq for Char
 impl Eq for Int
 impl Eq for Int64
 impl Eq for UInt
+impl Eq for UInt16
 impl Eq for UInt64
 impl Eq for Float
 impl Eq for Double
@@ -737,6 +750,7 @@ impl Mod for Byte
 impl Mod for Int
 impl Mod for Int64
 impl Mod for UInt
+impl Mod for UInt16
 impl Mod for UInt64
 
 pub(open) trait Mul {
@@ -747,6 +761,7 @@ impl Mul for Byte
 impl Mul for Int
 impl Mul for Int64
 impl Mul for UInt
+impl Mul for UInt16
 impl Mul for UInt64
 impl Mul for Float
 impl Mul for Double
@@ -768,6 +783,7 @@ impl Shl for Byte
 impl Shl for Int
 impl Shl for Int64
 impl Shl for UInt
+impl Shl for UInt16
 impl Shl for UInt64
 
 pub(open) trait Show {
@@ -813,6 +829,7 @@ impl Shr for Byte
 impl Shr for Int
 impl Shr for Int64
 impl Shr for UInt
+impl Shr for UInt16
 impl Shr for UInt64
 
 pub(open) trait Sub {
@@ -823,6 +840,7 @@ impl Sub for Byte
 impl Sub for Int
 impl Sub for Int64
 impl Sub for UInt
+impl Sub for UInt16
 impl Sub for UInt64
 impl Sub for Float
 impl Sub for Double

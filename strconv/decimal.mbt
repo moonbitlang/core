@@ -449,8 +449,8 @@ fn new_digits(self : Decimal, s : Int) -> Int {
       break
     }
     let d = cheat_num.unsafe_charcode_at(i) - '0'
-    if self.digits[i].to_int() != d {
-      less = self.digits[i].to_int() < d
+    if self.digits[i].to_uint16() != d {
+      less = self.digits[i].to_uint16() < d
       break
     }
   }

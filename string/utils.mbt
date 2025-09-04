@@ -13,15 +13,17 @@
 // limitations under the License.
 
 ///|
-fn code_point_of_surrogate_pair(leading : Int, trailing : Int) -> Char {
+fn code_point_of_surrogate_pair(leading : UInt16, trailing : UInt16) -> Char {
+  let leading = leading.to_int()
+  let trailing = trailing.to_int()
   ((leading - 0xD800) * 0x400 + trailing - 0xDC00 + 0x10000).unsafe_to_char()
 }
 
 ///|
 test "code_point_of_surrogate_pair" {
   let s = "😀"
-  let leading = s.charcode_at(0)
-  let trailing = s.charcode_at(1)
+  let leading = s.unsafe_charcode_at(0)
+  let trailing = s.unsafe_charcode_at(1)
   inspect(code_point_of_surrogate_pair(leading, trailing), content="😀")
 }
 
