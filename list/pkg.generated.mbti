@@ -19,8 +19,9 @@ pub enum List[A] {
 fn[A] List::all(Self[A], (A) -> Bool raise?) -> Bool raise?
 fn[A] List::any(Self[A], (A) -> Bool raise?) -> Bool raise?
 fn[A] List::concat(Self[A], Self[A]) -> Self[A]
+#as_free_fn(construct, deprecated)
 #as_free_fn
-fn[A] List::construct(A, Self[A]) -> Self[A]
+fn[A] List::cons(A, Self[A]) -> Self[A]
 fn[A : Eq] List::contains(Self[A], A) -> Bool
 fn[A] List::drop(Self[A], Int) -> Self[A]
 fn[A] List::drop_while(Self[A], (A) -> Bool raise?) -> Self[A] raise?

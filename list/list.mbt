@@ -40,11 +40,12 @@ pub fn[A] List::new() -> List[A] {
 ///
 /// ```moonbit
 /// let tail = @list.of([2, 3, 4])
-/// let ls = @list.construct(1, tail)
+/// let ls = @list.cons(1, tail)
 /// assert_eq(ls, @list.of([1, 2, 3, 4]))
 /// ```
 #as_free_fn
-pub fn[A] List::construct(head : A, tail : List[A]) -> List[A] {
+#as_free_fn(construct, deprecated="Use cons instead")
+pub fn[A] List::cons(head : A, tail : List[A]) -> List[A] {
   More(head, tail~)
 }
 
