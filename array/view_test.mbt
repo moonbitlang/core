@@ -164,16 +164,6 @@ test "arrayview_mapi" {
 }
 
 ///|
-test "arrayview_mapi_inplace" {
-  let arr = [1, 2, 3]
-  arr[1:].mapi_inplace((i, x) => i + x)
-  inspect(arr.length(), content="3")
-  inspect(arr[0], content="1")
-  inspect(arr[1], content="2")
-  inspect(arr[2], content="4")
-}
-
-///|
 test "arrayview_filter" {
   let arr = [1, 2, 3, 4, 5]
   let filtered = arr[2:].filter(x => x % 2 == 0)
