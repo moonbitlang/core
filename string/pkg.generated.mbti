@@ -2,9 +2,6 @@
 package "moonbitlang/core/string"
 
 // Values
-#deprecated
-fn concat(Array[String], separator? : String) -> String
-
 fn default() -> String
 
 fn from_array(Array[Char]) -> String
