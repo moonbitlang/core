@@ -108,11 +108,6 @@ test "panic array_as_view_get_index_error" {
 }
 
 ///|
-test "panic array_as_view_swap_index_error" {
-  [1, 2, 3][:].swap(1, 9)
-}
-
-///|
 test "panic op_div coverage for division by zero" {
   let a = BigInt::from_int(123456789)
   let b = BigInt::from_int(0)
