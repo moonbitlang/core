@@ -818,8 +818,7 @@ pub fn write_iter(self : Buffer, iter : Iter[Byte]) -> Unit {
 }
 
 ///|
-/// Resets the buffer to its initial state by restoring its initial capacity and
-/// clearing its contents.
+/// Resets the buffer to an empty state by clearing all its contents.
 ///
 /// Parameters:
 ///
@@ -828,12 +827,14 @@ pub fn write_iter(self : Buffer, iter : Iter[Byte]) -> Unit {
 /// Example:
 ///
 /// ```moonbit
-///   let buf = @buffer.new(size_hint=4)
-///   buf.write_string("Test")
-///   buf.reset()
-///   inspect(buf.length(), content="0")
-///   inspect(buf.is_empty(), content="true")
+/// let buf = @buffer.new()
+/// buf.write_string("Hello")
+/// inspect(buf.length(), content="10")
+/// buf.reset()
+/// inspect(buf.length(), content="0")
+/// inspect(buf.is_empty(), content="true")
 /// ```
+///
 pub fn reset(self : Buffer) -> Unit {
   self.len = 0
 }
