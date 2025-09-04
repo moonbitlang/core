@@ -545,16 +545,14 @@ pub fn[T] Iter::take(self : Iter[T], n : Int) -> Iter[T] {
     //
     let mut i = 0
     let mut r = IterContinue
-    self.just_run(a => if i < n {
-      if yield_(a) == IterContinue {
-        i = i + 1
-        IterContinue
-      } else {
+    self.just_run(a => {
+      i = i + 1
+      guard yield_(a) == IterContinue else {
         r = IterEnd
-        IterEnd
+        return IterEnd
       }
-    } else {
-      IterEnd
+      guard i < n else { return IterEnd }
+      IterContinue
     })
     r
   }
