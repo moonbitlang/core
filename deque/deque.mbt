@@ -233,7 +233,33 @@ pub fn[A] capacity(self : Deque[A]) -> Int {
 }
 
 ///|
-/// Reallocate the deque with a new capacity.
+/// A internal helper to reallocate the deque with a new capacity, ensuring sufficient space for future insertions.
+/// 
+/// The new capacity is chosen as the maximum of:
+/// * `new_cap_least` : A caller-provided lower bound for the new capacity,
+/// * `8`             : The minimum default capacity,
+/// * `old_cap * 2`   : Twice the current length (typical growth factor).
+///
+/// Parameters:
+///
+/// * `self` : The deque to be reallocated.
+/// * `new_cap_least~` : (optional, default = 0)  
+///   A minimum capacity requirement. If provided, the new buffer will have at least this size.
+///   This allows callers to reserve space ahead of time.
+///
+/// Behavior:
+///
+/// * Elements are copied from the old buffer to the new buffer in logical order,
+///   starting at index `0` of the new buffer.
+/// * `head` is reset to `0`, and `tail` is updated to `len - 1` if non-empty,
+///   otherwise to `0`.
+/// * The circular layout of the old buffer is flattened into a contiguous sequence.
+///
+/// Notes:
+///
+/// * This is an internal helper function, typically triggered when the deque runs out of space.
+/// * After reallocation, all elements are packed starting from index `0` in the new buffer.
+/// * The growth factor is geometric (×2), but can be overridden by `new_cap_least`.
 fn[A] realloc(self : Deque[A], new_cap_least~ : Int = 0) -> Unit {
   let old_cap = self.len
   let new_cap = @cmp.maximum(@cmp.maximum(new_cap_least, 8), old_cap * 2)
