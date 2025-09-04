@@ -11,31 +11,3 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
-///|
-#deprecated("Use `Array::join` instead.")
-pub fn concat(strings : Array[String], separator? : String = "") -> String {
-  match strings {
-    [] => ""
-    [hd, .. tl] => {
-      let mut size_hint = hd.length()
-      for s in tl {
-        size_hint += s.length() + separator.length()
-      }
-      size_hint = size_hint << 1
-      let buf = StringBuilder::new(size_hint~)
-      buf.write_string(hd)
-      if separator == "" {
-        for s in tl {
-          buf.write_string(s)
-        }
-      } else {
-        for s in tl {
-          buf.write_string(separator)
-          buf.write_string(s)
-        }
-      }
-      buf.to_string()
-    }
-  }
-}
