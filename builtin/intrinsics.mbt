@@ -1521,11 +1521,8 @@ pub fn[T] FixedArray::make(len : Int, init : T) -> FixedArray[T] = "%fixedarray.
 ///   inspect("🤣".length(), content="2") // Emoji uses two UTF-16 code units
 ///   inspect("".length(), content="0") // Empty string
 /// ```
+#alias(charcode_length, deprecated)
 pub fn String::length(self : String) -> Int = "%string_length"
-
-///|
-#deprecated("use `length` instead")
-pub fn String::charcode_length(self : String) -> Int = "%string_length"
 
 ///|
 /// Returns the UTF-16 code unit at the given index.
@@ -1536,6 +1533,7 @@ pub fn String::charcode_length(self : String) -> Int = "%string_length"
 /// * `index` : The position in the string from which to retrieve the code unit.
 ///
 /// This method has O(1) complexity.
+#alias(charcode_at, deprecated)
 pub fn String::op_get(self : String, idx : Int) -> Int = "%string_get"
 
 ///|

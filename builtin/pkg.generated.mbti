@@ -514,18 +514,15 @@ fn Double::until(Double, Double, step? : Double, inclusive? : Bool) -> Iter[Doub
 #deprecated
 fn Double::upto(Double, Double, inclusive? : Bool) -> Iter[Double]
 
+#alias(codepoint_length, deprecated)
 fn String::char_length(String, start_offset? : Int, end_offset? : Int) -> Int
 #deprecated
-fn String::charcode_at(String, Int) -> Int
-#deprecated
-fn String::charcode_length(String) -> Int
-#deprecated
 fn String::codepoint_at(String, Int) -> Char
-#deprecated
-fn String::codepoint_length(String, start_offset? : Int, end_offset? : Int) -> Int
 fn String::escape(String) -> String
+#alias(charcode_length, deprecated)
 fn String::length(String) -> Int
 fn String::make(Int, Char) -> String
+#alias(charcode_at, deprecated)
 fn String::op_get(String, Int) -> Int
 #deprecated
 fn String::substring(String, start? : Int, end? : Int) -> String

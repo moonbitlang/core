@@ -53,6 +53,7 @@ fn code_point_of_surrogate_pair(leading : Int, trailing : Int) -> Char {
 ///   inspect(s.char_length(), content = "6"); // 6 actual characters
 ///   inspect(s.length(), content = "7");  // 5 ASCII chars + 2 surrogate pairs
 /// ```
+#alias(codepoint_length, deprecated)
 pub fn String::char_length(
   self : String,
   start_offset? : Int = 0,
