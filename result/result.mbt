@@ -178,31 +178,12 @@ test "bind" {
 }
 
 ///|
-/// Folds a `Result` into a single value.
-///
-/// If the `Result` is an `Ok`, the `ok` function is applied to the value. If the `Result` is an `Err`, the `err` function is applied to the value.
-/// # Example
-///
-/// ```mbt
-///   let x = Ok(6)
-///   let y = x.fold((v : Int) => { v * 7 }, (_e : String) => { 0 })
-///   assert_eq(y, 42)
-/// ```
+#deprecated("use `match result { Ok(value) => ok(value); Err(error) => err(error) }` instead")
 pub fn[T, E, V] fold(self : Result[T, E], ok : (T) -> V, err : (E) -> V) -> V {
   match self {
     Ok(value) => ok(value)
     Err(error) => err(error)
   }
-}
-
-///|
-test "fold" {
-  let x : Result[Int, String] = Ok(6)
-  let y = x.fold((v : Int) => v * 7, (_e : String) => 0)
-  let z : Result[Int, String] = Err("error")
-  let w = z.fold((v : Int) => v * 7, (_e : String) => 0)
-  assert_eq(y, 42)
-  assert_eq(w, 0)
 }
 
 ///|

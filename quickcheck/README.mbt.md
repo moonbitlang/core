@@ -48,7 +48,7 @@ test "builtin types" {
   inspect(v, content="(true, '#', b'\\x12')")
   // Numeric types
   let v : (Int, Int64, UInt, UInt64, Float, Double, BigInt) = @quickcheck.gen()
-  inspect(v, content="(0, 0, 0, 0, 76806128, 0.33098446695254635, 0)")
+  inspect(v, content="(0, 0, 0, 0, 0.1430625319480896, 0.33098446695254635, 0)")
   // Collections
 
   let v : (String, Bytes, Iter[Int]) = @quickcheck.gen()
