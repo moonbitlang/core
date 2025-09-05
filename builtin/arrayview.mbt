@@ -85,7 +85,8 @@ pub fn[T] ArrayView::length(self : ArrayView[T]) -> Int {
 ///   inspect(view[0], content="3")
 ///   inspect(view[1], content="4")
 /// ```
-pub fn[T] ArrayView::op_get(self : ArrayView[T], index : Int) -> T {
+#alias(op_get)
+pub fn[T] ArrayView::at(self : ArrayView[T], index : Int) -> T {
   guard index >= 0 && index < self.len() else {
     abort(
       "index out of bounds: the len is from 0 to \{self.len()} but the index is \{index}",

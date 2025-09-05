@@ -14,6 +14,8 @@ import(
 type Deque[A]
 fn[A] Deque::append(Self[A], Self[A]) -> Unit
 fn[A] Deque::as_views(Self[A]) -> (ArrayView[A], ArrayView[A])
+#alias(op_get)
+fn[A] Deque::at(Self[A], Int) -> A
 fn[A] Deque::back(Self[A]) -> A?
 fn[A : Compare] Deque::binary_search(Self[A], A) -> Result[Int, Int]
 fn[A] Deque::binary_search_by(Self[A], (A) -> Int) -> Result[Int, Int]
@@ -44,7 +46,6 @@ fn[A, U] Deque::mapi(Self[A], (Int, A) -> U) -> Self[U]
 fn[A] Deque::new(capacity? : Int) -> Self[A]
 #as_free_fn
 fn[A] Deque::of(FixedArray[A]) -> Self[A]
-fn[A] Deque::op_get(Self[A], Int) -> A
 fn[A] Deque::op_set(Self[A], Int, A) -> Unit
 fn[A] Deque::pop_back(Self[A]) -> A?
 #deprecated

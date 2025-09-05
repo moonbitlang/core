@@ -1191,7 +1191,8 @@ pub impl Default for Char with default() = "%char_default"
 ///   let bytes = b"\x01\x02\x03"
 ///   inspect(bytes[1], content="b'\\x02'")
 /// ```
-pub fn Bytes::op_get(self : Bytes, idx : Int) -> Byte = "%bytes_get"
+#alias(op_get)
+pub fn Bytes::at(self : Bytes, idx : Int) -> Byte = "%bytes_get"
 
 ///|
 /// Retrieves a byte at the specified index from a byte sequence without
@@ -1371,7 +1372,8 @@ pub fn UInt64::to_byte(self : UInt64) -> Byte {
 ///   let arr = FixedArray::make(3, 42)
 ///   inspect(arr[1], content="42")
 /// ```
-pub fn[T] FixedArray::op_get(self : FixedArray[T], idx : Int) -> T = "%fixedarray.get"
+#alias(op_get)
+pub fn[T] FixedArray::at(self : FixedArray[T], idx : Int) -> T = "%fixedarray.get"
 
 ///|
 /// Retrieves an element from a fixed-size array at the specified index without
@@ -1534,7 +1536,8 @@ pub fn String::length(self : String) -> Int = "%string_length"
 ///
 /// This method has O(1) complexity.
 #alias(charcode_at, deprecated)
-pub fn String::op_get(self : String, idx : Int) -> Int = "%string_get"
+#alias(op_get)
+pub fn String::at(self : String, idx : Int) -> Int = "%string_get"
 
 ///|
 /// Returns the UTF-16 code unit at a given position in the string without

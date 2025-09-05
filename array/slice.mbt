@@ -25,7 +25,8 @@ fn[T] FixedArraySlice::length(self : FixedArraySlice[T]) -> Int {
 }
 
 ///|
-fn[T] FixedArraySlice::op_get(self : FixedArraySlice[T], index : Int) -> T {
+#alias(op_get)
+fn[T] FixedArraySlice::at(self : FixedArraySlice[T], index : Int) -> T {
   self.array[self.start + index]
 }
 

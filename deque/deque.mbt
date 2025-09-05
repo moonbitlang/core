@@ -524,7 +524,8 @@ pub fn[A] pop_back(self : Deque[A]) -> A? {
 ///   let dv = @deque.of([1, 2, 3, 4, 5])
 ///   inspect(dv[2], content="3")
 /// ```
-pub fn[A] op_get(self : Deque[A], index : Int) -> A {
+#alias(op_get)
+pub fn[A] at(self : Deque[A], index : Int) -> A {
   if index < 0 || index >= self.len {
     let len = self.len
     abort(

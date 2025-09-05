@@ -87,7 +87,8 @@ fn[K : Eq, V] Node::get_with_path(
 
 ///|
 #deprecated("Use `get` instead. `op_get` will return `V` instead of `Option[V]` in the future.")
-pub fn[K : Eq + Hash, V] op_get(self : HashMap[K, V], key : K) -> V? {
+#alias(op_get)
+pub fn[K : Eq + Hash, V] at(self : HashMap[K, V], key : K) -> V? {
   self.get(key)
 }
 
