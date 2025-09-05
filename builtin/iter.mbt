@@ -536,7 +536,7 @@ pub fn[T] Iter::tap(self : Iter[T], f : (T) -> Unit) -> Iter[T] {
 /// # Returns
 ///
 /// A new iterator that contains the first `n` elements.
-#intrinsic("%iter.take")
+// #intrinsic("%iter.take")
 pub fn[T] Iter::take(self : Iter[T], n : Int) -> Iter[T] {
   yield_ => {
     // [..take(10,seq), next] would continue
