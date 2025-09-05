@@ -109,7 +109,8 @@ pub fn[K : Compare, V] get(self : SortedMap[K, V], key : K) -> V? {
 ///|
 /// Get the value associated with a key.
 /// O(log n).
-pub fn[K : Compare, V] op_get(self : SortedMap[K, V], key : K) -> V {
+#alias(op_get)
+pub fn[K : Compare, V] at(self : SortedMap[K, V], key : K) -> V {
   loop self {
     Empty => panic()
     Tree(k, value~, l, r, ..) => {

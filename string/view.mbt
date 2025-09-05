@@ -47,7 +47,8 @@ fn View::make_view(str : String, start : Int, end : Int) -> View = "%stringview.
 ///   inspect(view[0].to_char(), content="Some('e')")
 ///   inspect(view[4], content="55358")
 /// ```
-pub fn View::op_get(self : View, index : Int) -> Int {
+#alias(op_get)
+pub fn View::at(self : View, index : Int) -> Int {
   guard index >= 0 && index < self.length() else {
     abort("Index out of bounds")
   }

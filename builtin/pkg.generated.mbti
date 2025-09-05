@@ -69,6 +69,8 @@ impl Show for ArgsLoc
 
 type Array[T]
 fn[T] Array::append(Self[T], Self[T]) -> Unit
+#alias(op_get)
+fn[T] Array::at(Self[T], Int) -> T
 fn[T : Compare] Array::binary_search(Self[T], T) -> Result[Int, Int]
 fn[T] Array::binary_search_by(Self[T], (T) -> Int) -> Result[Int, Int]
 fn[A] Array::blit_to(Self[A], Self[A], len~ : Int, src_offset? : Int, dst_offset? : Int) -> Unit
@@ -106,7 +108,6 @@ fn[T, U] Array::mapi(Self[T], (Int, T) -> U raise?) -> Self[U] raise?
 fn[T] Array::mapi_inplace(Self[T], (Int, T) -> T raise?) -> Unit raise?
 fn[T] Array::new(capacity? : Int) -> Self[T]
 fn[T] Array::op_as_view(Self[T], start? : Int, end? : Int) -> ArrayView[T]
-fn[T] Array::op_get(Self[T], Int) -> T
 fn[T] Array::op_set(Self[T], Int, T) -> Unit
 fn[T] Array::pop(Self[T]) -> T?
 fn[T] Array::push(Self[T], T) -> Unit
@@ -152,11 +153,12 @@ impl[X : Show] Show for Array[X]
 impl[X : ToJson] ToJson for Array[X]
 
 type ArrayView[T]
+#alias(op_get)
+fn[T] ArrayView::at(Self[T], Int) -> T
 #deprecated
 fn[T] ArrayView::blit_to(Self[T], Self[T]) -> Unit
 fn[T] ArrayView::length(Self[T]) -> Int
 fn[T] ArrayView::op_as_view(Self[T], start? : Int, end? : Int) -> Self[T]
-fn[T] ArrayView::op_get(Self[T], Int) -> T
 #deprecated
 fn[T] ArrayView::op_set(Self[T], Int, T) -> Unit
 #deprecated
@@ -268,6 +270,8 @@ impl Default for Json
 impl Eq for Json
 
 type Map[K, V]
+#alias(op_get)
+fn[K : Hash + Eq, V] Map::at(Self[K, V], K) -> V
 fn[K, V] Map::capacity(Self[K, V]) -> Int
 fn[K, V] Map::clear(Self[K, V]) -> Unit
 fn[K : Hash + Eq, V] Map::contains(Self[K, V], K) -> Bool
@@ -287,7 +291,6 @@ fn[K, V] Map::keys(Self[K, V]) -> Iter[K]
 fn[K, V, V2] Map::map(Self[K, V], (K, V) -> V2) -> Self[K, V2]
 fn[K, V] Map::new(capacity? : Int) -> Self[K, V]
 fn[K : Hash + Eq, V] Map::of(FixedArray[(K, V)]) -> Self[K, V]
-fn[K : Hash + Eq, V] Map::op_get(Self[K, V], K) -> V
 fn[K : Hash + Eq, V] Map::op_set(Self[K, V], K, V) -> Unit
 fn[K : Hash + Eq, V] Map::remove(Self[K, V], K) -> Unit
 fn[K, V] Map::retain(Self[K, V], (K, V) -> Bool) -> Unit
@@ -316,10 +319,11 @@ impl Logger for StringBuilder
 impl Show for StringBuilder
 
 type UninitializedArray[T]
+#alias(op_get)
+fn[T] UninitializedArray::at(Self[T], Int) -> T
 fn[A] UninitializedArray::length(Self[A]) -> Int
 fn[T] UninitializedArray::make(Int) -> Self[T]
 fn[T] UninitializedArray::op_as_view(Self[T], start? : Int, end? : Int) -> ArrayView[T]
-fn[T] UninitializedArray::op_get(Self[T], Int) -> T
 fn[T] UninitializedArray::op_set(Self[T], Int, T) -> Unit
 fn[T] UninitializedArray::unsafe_blit(Self[T], Int, Self[T], Int, Int) -> Unit
 
@@ -514,6 +518,9 @@ fn Double::until(Double, Double, step? : Double, inclusive? : Bool) -> Iter[Doub
 #deprecated
 fn Double::upto(Double, Double, inclusive? : Bool) -> Iter[Double]
 
+#alias(charcode_at, deprecated)
+#alias(op_get)
+fn String::at(String, Int) -> Int
 #alias(codepoint_length, deprecated)
 fn String::char_length(String, start_offset? : Int, end_offset? : Int) -> Int
 #deprecated
@@ -522,8 +529,6 @@ fn String::escape(String) -> String
 #alias(charcode_length, deprecated)
 fn String::length(String) -> Int
 fn String::make(Int, Char) -> String
-#alias(charcode_at, deprecated)
-fn String::op_get(String, Int) -> Int
 #deprecated
 fn String::substring(String, start? : Int, end? : Int) -> String
 fn String::to_string(String) -> String
@@ -535,6 +540,8 @@ fn String::unsafe_substring(String, start~ : Int, end~ : Int) -> String
 fn[X : Show] Option::to_string(X?) -> String
 fn[X] Option::unwrap(X?) -> X
 
+#alias(op_get)
+fn[T] FixedArray::at(Self[T], Int) -> T
 fn[T : Compare] FixedArray::binary_search(Self[T], T) -> Result[Int, Int]
 fn[T] FixedArray::binary_search_by(Self[T], (T) -> Int raise?) -> Result[Int, Int] raise?
 fn FixedArray::blit_from_bytes(Self[Byte], Int, Bytes, Int, Int) -> Unit
@@ -547,7 +554,6 @@ fn[T] FixedArray::iter(Self[T]) -> Iter[T]
 fn[T] FixedArray::iter2(Self[T]) -> Iter2[Int, T]
 fn[T] FixedArray::length(Self[T]) -> Int
 fn[T] FixedArray::make(Int, T) -> Self[T]
-fn[T] FixedArray::op_get(Self[T], Int) -> T
 fn[T] FixedArray::op_set(Self[T], Int, T) -> Unit
 fn[T] FixedArray::set(Self[T], Int, T) -> Unit
 fn FixedArray::set_utf16be_char(Self[Byte], Int, Char) -> Int
@@ -558,6 +564,8 @@ fn[T] FixedArray::unsafe_get(Self[T], Int) -> T
 fn FixedArray::unsafe_reinterpret_as_bytes(Self[Byte]) -> Bytes
 fn[T] FixedArray::unsafe_set(Self[T], Int, T) -> Unit
 
+#alias(op_get)
+fn Bytes::at(Bytes, Int) -> Byte
 #deprecated
 fn Bytes::copy(Bytes) -> Bytes
 fn Bytes::length(Bytes) -> Int
@@ -566,7 +574,6 @@ fn Bytes::makei(Int, (Int) -> Byte raise?) -> Bytes raise?
 fn Bytes::new(Int) -> Bytes
 #deprecated
 fn Bytes::of_string(String) -> Bytes
-fn Bytes::op_get(Bytes, Int) -> Byte
 fn Bytes::to_unchecked_string(Bytes, offset? : Int, length? : Int) -> String
 fn Bytes::unsafe_get(Bytes, Int) -> Byte
 
