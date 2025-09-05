@@ -1705,3 +1705,37 @@ test "chunks_size_one" {
   assert_eq(chunks.to_array()[2].to_array(), [30])
 }
 
+/// Grouping elements with non-decreasing order
+test "chunk_by_non_decreasing" {
+  let d = @deque.of([1, 1, 2, 3, 2, 3, 2, 3, 4])
+  let chunks = d.chunk_by((x, y) => x <= y)
+  inspect(chunks.to_array().map(fn(c) { c.to_array() }), content="[[1, 1, 2, 3], [2, 3], [2, 3, 4]]")
+}
+
+/// Empty deque produces empty result
+test "chunk_by_empty" {
+  let d : @deque.Deque[Int] = @deque.of([])
+  let chunks = d.chunk_by((x, y) => x <= y)
+  inspect(chunks.to_array(), content="[]")
+}
+
+/// Single element stays as one chunk
+test "chunk_by_single_element" {
+  let d = @deque.of([42])
+  let chunks = d.chunk_by((x, y) => x == y)
+  inspect(chunks.to_array().map(fn(c) { c.to_array() }), content="[[42]]")
+}
+
+/// All elements grouped into one chunk
+test "chunk_by_all_true" {
+  let d = @deque.of([1, 2, 3, 4])
+  let chunks = d.chunk_by((_, _) => true)
+  inspect(chunks.to_array().map(fn(c) { c.to_array() }), content="[[1, 2, 3, 4]]")
+}
+
+/// Each element becomes its own chunk
+test "chunk_by_all_false" {
+  let d = @deque.of([1, 2, 3, 4])
+  let chunks = d.chunk_by((_, _) => false)
+  inspect(chunks.to_array().map(fn(c) { c.to_array() }), content="[[1], [2], [3], [4]]")
+}
