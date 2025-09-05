@@ -261,7 +261,7 @@ pub fn[A, B] zip_to_iter2(self : Array[A], other : Array[B]) -> Iter2[A, B] {
       other.length()
     }
     for i in 0..<length {
-      if yield_(self[i], other[i]) == IterEnd {
+      if yield_(self[i], other[i]) is IterEnd {
         break IterEnd
       }
     } else {

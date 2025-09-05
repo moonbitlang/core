@@ -97,7 +97,7 @@ pub fn[A : Compare] iter(self : T[A]) -> Iter[A] {
   Iter::new(yield_ => {
     let arr = self.to_array()
     for i in 0..<arr.length() {
-      if yield_(arr[i]) == IterEnd {
+      if yield_(arr[i]) is IterEnd {
         break IterEnd
       }
     } else {
