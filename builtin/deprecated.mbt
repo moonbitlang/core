@@ -30,7 +30,7 @@ pub fn Int::upto(self : Int, end : Int, inclusive? : Bool = false) -> Iter[Int] 
   yield_ => {
     let mut i = self
     while i < end || (inclusive && i == end) {
-      if yield_(i) == IterEnd {
+      if yield_(i) is IterEnd {
         break IterEnd
       }
       if i == end {
@@ -65,7 +65,7 @@ pub fn UInt::upto(
   yield_ => {
     let mut i = self
     while i < end || (inclusive && i == end) {
-      if yield_(i) == IterEnd {
+      if yield_(i) is IterEnd {
         break IterEnd
       }
       if i == end {
@@ -100,7 +100,7 @@ pub fn UInt64::upto(
   yield_ => {
     let mut i = self
     while i < end || (inclusive && i == end) {
-      if yield_(i) == IterEnd {
+      if yield_(i) is IterEnd {
         break IterEnd
       }
       if i == end {
@@ -135,7 +135,7 @@ pub fn Int64::upto(
   yield_ => {
     let mut i = self
     while i < end || (inclusive && i == end) {
-      if yield_(i) == IterEnd {
+      if yield_(i) is IterEnd {
         break IterEnd
       }
       if i == end {
@@ -170,7 +170,7 @@ pub fn Float::upto(
   yield_ => {
     let mut i = self
     while i < end || (inclusive && i == end) {
-      if yield_(i) == IterEnd {
+      if yield_(i) is IterEnd {
         break IterEnd
       }
       if i == end {
@@ -205,7 +205,7 @@ pub fn Double::upto(
   yield_ => {
     let mut i = self
     while i < end || (inclusive && i == end) {
-      if yield_(i) == IterEnd {
+      if yield_(i) is IterEnd {
         break IterEnd
       }
       if i == end {

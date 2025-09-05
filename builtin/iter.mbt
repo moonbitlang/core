@@ -67,7 +67,7 @@ pub fn[T] Iter::any(self : Iter[T], f : (T) -> Bool) -> Bool {
 
 ///|
 pub fn[T] Iter::all(self : Iter[T], f : (T) -> Bool) -> Bool {
-  self.run(k => if !f(k) { IterEnd } else { IterContinue }) == IterContinue
+  self.run(k => if !f(k) { IterEnd } else { IterContinue }) is IterContinue
 }
 
 ///|
@@ -232,7 +232,7 @@ pub fn Int::until(
     while (step > 0 && i < end) ||
           (step < 0 && i > end) ||
           (inclusive && i == end) {
-      if yield_(i) == IterEnd {
+      if yield_(i) is IterEnd {
         break IterEnd
       }
       let next = i + step
@@ -275,7 +275,7 @@ pub fn Int64::until(
     while (step > 0 && i < end) ||
           (step < 0 && i > end) ||
           (inclusive && i == end) {
-      if yield_(i) == IterEnd {
+      if yield_(i) is IterEnd {
         break IterEnd
       }
       let next = i + step
@@ -318,7 +318,7 @@ pub fn Float::until(
     while (step > 0.0 && i < end) ||
           (step < 0.0 && i > end) ||
           (inclusive && i == end) {
-      if yield_(i) == IterEnd {
+      if yield_(i) is IterEnd {
         break IterEnd
       }
       let next = i + step
@@ -361,7 +361,7 @@ pub fn Double::until(
     while (step > 0.0 && i < end) ||
           (step < 0.0 && i > end) ||
           (inclusive && i == end) {
-      if yield_(i) == IterEnd {
+      if yield_(i) is IterEnd {
         break IterEnd
       }
       let next = i + step
@@ -536,25 +536,24 @@ pub fn[T] Iter::tap(self : Iter[T], f : (T) -> Unit) -> Iter[T] {
 /// # Returns
 ///
 /// A new iterator that contains the first `n` elements.
-#intrinsic("%iter.take")
+// #intrinsic("%iter.take")
 pub fn[T] Iter::take(self : Iter[T], n : Int) -> Iter[T] {
   yield_ => {
     // [..take(10,seq), next] would continue
     // even if seq has less than 10 elements
     // but `for x in [..take(10,seq), next ] { break }` would stop
     //
+    guard n > 0 else { return IterContinue }
     let mut i = 0
     let mut r = IterContinue
-    self.just_run(a => if i < n {
-      if yield_(a) == IterContinue {
-        i = i + 1
-        IterContinue
-      } else {
+    self.just_run(a => {
+      i = i + 1
+      guard yield_(a) is IterContinue else {
         r = IterEnd
-        IterEnd
+        return IterEnd
       }
-    } else {
-      IterEnd
+      guard i < n else { return IterEnd }
+      IterContinue
     })
     r
   }
@@ -585,7 +584,7 @@ pub fn[T] Iter::take_while(self : Iter[T], f : (T) -> Bool) -> Iter[T] {
     // See test "take_while2"
     let mut r : IterResult = IterContinue
     self.just_run(a => if f(a) {
-      if yield_(a) == IterContinue {
+      if yield_(a) is IterContinue {
         IterContinue
       } else {
         r = IterEnd
@@ -605,7 +604,7 @@ pub fn[A, B] Iter::map_while(self : Iter[A], f : (A) -> B?) -> Iter[B] {
     let mut r : IterResult = IterContinue
     self.just_run(a => match f(a) {
       Some(b) =>
-        if yield_(b) == IterContinue {
+        if yield_(b) is IterContinue {
           IterContinue
         } else {
           r = IterEnd
@@ -723,7 +722,7 @@ pub fn[T] Iter::peek(self : Iter[T]) -> T? {
 /// Returns a new iterator with the element `a` prepended to the original iterator.
 #deprecated("Use `Iter::singleton(a) + self` instead")
 pub fn[T] Iter::prepend(self : Iter[T], a : T) -> Iter[T] {
-  yield_ => if yield_(a) == IterContinue { self.run(yield_) } else { IterEnd }
+  yield_ => if yield_(a) is IterContinue { self.run(yield_) } else { IterEnd }
 }
 
 ///|
@@ -743,7 +742,7 @@ pub fn[T] Iter::prepend(self : Iter[T], a : T) -> Iter[T] {
 /// Returns a new iterator with the element `a` appended to the original iterator.
 #deprecated("Use `self + Iter::singleton(a)` instead")
 pub fn[T] Iter::append(self : Iter[T], a : T) -> Iter[T] {
-  yield_ => if self.run(yield_) == IterContinue { yield_(a) } else { IterEnd }
+  yield_ => if self.run(yield_) is IterContinue { yield_(a) } else { IterEnd }
 }
 
 ///|
@@ -763,7 +762,7 @@ pub fn[T] Iter::append(self : Iter[T], a : T) -> Iter[T] {
 /// Returns a new iterator that contains the elements of `self` followed by the elements of `other`.
 #intrinsic("%iter.concat")
 pub fn[T] Iter::concat(self : Iter[T], other : Iter[T]) -> Iter[T] {
-  yield_ => if self.run(yield_) == IterContinue {
+  yield_ => if self.run(yield_) is IterContinue {
     other.run(yield_)
   } else {
     IterEnd
@@ -879,7 +878,7 @@ pub fn[A] Iter::intersperse(self : Iter[A], sep : A) -> Iter[A] {
     self.run(x => if first {
       first = false
       yield_(x)
-    } else if yield_(sep) == IterEnd {
+    } else if yield_(sep) is IterEnd {
       IterEnd
     } else {
       yield_(x)
