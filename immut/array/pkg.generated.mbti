@@ -11,6 +11,8 @@ import(
 
 // Types and methods
 type T[A]
+#alias(op_get)
+fn[A] T::at(Self[A], Int) -> A
 fn[A] T::concat(Self[A], Self[A]) -> Self[A]
 #deprecated
 fn[A] T::copy(Self[A]) -> Self[A]
@@ -38,7 +40,6 @@ fn[A, B] T::map(Self[A], (A) -> B raise?) -> Self[B] raise?
 fn[A] T::new() -> Self[A]
 #as_free_fn
 fn[A] T::of(FixedArray[A]) -> Self[A]
-fn[A] T::op_get(Self[A], Int) -> A
 fn[A] T::push(Self[A], A) -> Self[A]
 fn[A, B] T::rev_fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 fn[A] T::set(Self[A], Int, A) -> Self[A]

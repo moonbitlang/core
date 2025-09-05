@@ -8,13 +8,14 @@ fn default() -> Bytes
 
 // Types and methods
 type View
+#alias(op_get)
+fn View::at(Self, Int) -> Byte
 fn View::data(Self) -> Bytes
 fn View::find(Self, Self) -> Int?
 fn View::get(Self, Int) -> Byte?
 fn View::iter(Self) -> Iter[Byte]
 fn View::length(Self) -> Int
 fn View::op_as_view(Self, start? : Int, end? : Int) -> Self
-fn View::op_get(Self, Int) -> Byte
 fn View::rev_find(Self, Self) -> Int?
 fn View::start_offset(Self) -> Int
 fn View::to_bytes(Self) -> Bytes

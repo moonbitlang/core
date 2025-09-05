@@ -34,7 +34,8 @@ pub fn[T] UninitializedArray::make(size : Int) -> UninitializedArray[T] = "%fixe
 /// - `index` : The index of the element to retrieve.
 ///
 /// Returns the element at the specified index.
-pub fn[T] UninitializedArray::op_get(
+#alias(op_get)
+pub fn[T] UninitializedArray::at(
   self : UninitializedArray[T],
   index : Int,
 ) -> T = "%fixedarray.get"

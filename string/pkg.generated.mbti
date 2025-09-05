@@ -13,6 +13,8 @@ impl Show for CreatingViewError
 
 // Types and methods
 type View
+#alias(op_get)
+fn View::at(Self, Int) -> Int
 fn View::char_length(Self) -> Int
 fn View::char_length_eq(Self, Int) -> Bool
 fn View::char_length_ge(Self, Int) -> Bool
@@ -37,7 +39,6 @@ fn View::iter2(Self) -> Iter2[Int, Char]
 fn View::length(Self) -> Int
 fn View::make(Int, Char) -> Self
 fn View::offset_of_nth_char(Self, Int) -> Int?
-fn View::op_get(Self, Int) -> Int
 fn View::pad_end(Self, Int, Char) -> String
 fn View::pad_start(Self, Int, Char) -> String
 fn View::repeat(Self, Int) -> Self
