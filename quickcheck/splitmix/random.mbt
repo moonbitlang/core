@@ -94,7 +94,7 @@ pub fn next_positive_int(self : RandomState) -> Int {
 /// Get the next random number as a float in [0, 1]
 pub fn next_float(self : RandomState) -> Float {
   let u = self.next_uint64()
-  (u >> 11).to_float() * float_ulp
+  (u >> 40).to_float() * float_ulp
 }
 
 ///|

@@ -44,5 +44,5 @@ test "next_float" {
   let result = state.next_float()
   // Since the result is random, we only check if it falls within the expected range [0, 1]
   inspect(result >= 0.0, content="true")
-  inspect(result <= 1.0, content="false")
+  inspect(result <= 1.0, content="true")
 }
