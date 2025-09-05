@@ -28,9 +28,9 @@ You can check the variant of a `Result` using the `is_ok` and `is_err` methods.
 ```moonbit
 test {
     let result: Result[Int, String] = Ok(42)
-    let is_ok = result.is_ok()
+    let is_ok = result is Ok(_)
     assert_eq(is_ok, true)
-    let is_err = result.is_err()
+    let is_err = result is Err(_)
     assert_eq(is_err, false)
 }
 ```
