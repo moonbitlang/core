@@ -548,7 +548,7 @@ pub fn[T] Iter::take(self : Iter[T], n : Int) -> Iter[T] {
     let mut r = IterContinue
     self.just_run(a => {
       i = i + 1
-      guard yield_(a) == IterContinue else {
+      guard yield_(a) is IterContinue else {
         r = IterEnd
         return IterEnd
       }
