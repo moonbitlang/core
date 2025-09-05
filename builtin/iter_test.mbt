@@ -73,9 +73,12 @@ test "take" {
   let collected3b = (1).until(20).tap(i => evaluated3.push("b\{i}")).take(5)
   let collected3 = collected3a.concat(collected3b).collect()
   inspect(collected3, content="[1, 2, 3, 4, 5]")
-  inspect(evaluated3, content=(
-    #|["b1", "b2", "b3", "b4", "b5"]
-  ))
+  inspect(
+    evaluated3,
+    content=(
+      #|["b1", "b2", "b3", "b4", "b5"]
+    ),
+  )
 }
 
 ///|
