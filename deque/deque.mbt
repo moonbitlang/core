@@ -96,6 +96,33 @@ pub impl[A : Hash] Hash for Deque[A] with hash_combine(self, hasher) {
 }
 
 ///|
+/// Concatenates two deques into a new deque. The resulting deque contains all
+/// elements from the first deque followed by all elements from the second deque.
+///
+/// Parameters:
+///
+/// * `self` : The first deque to concatenate.
+/// * `other` : The second deque to concatenate.
+///
+/// Returns a new deque containing all elements from both deques in order.
+///
+/// Example:
+///
+/// ```moonbit
+///   let dq1 = @deque.of([1, 2, 3])
+///   let dq2 = @deque.of([4, 5, 6])
+///   inspect((dq1 + dq2).to_array(), content="[1, 2, 3, 4, 5, 6]")
+///   let mut dq3 = dq2.copy()
+///   dq3 += @deque.of([7])
+///   inspect(dq3.to_array(), content="[4, 5, 6, 7]")
+/// ```
+pub impl[A] Add for Deque[A] with add(self, other){
+  let res = self.copy()
+  res.append(other)
+  res
+}
+
+///|
 /// Creates a new deque with elements copied from an array.
 ///
 /// Parameters:
