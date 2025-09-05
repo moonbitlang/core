@@ -352,22 +352,6 @@ pub fn String::codepoint_at(self : String, index : Int) -> Char {
 }
 
 ///|
-#deprecated("Use `char_length` instead.")
-pub fn String::codepoint_length(
-  self : String,
-  start_offset? : Int = 0,
-  end_offset? : Int,
-) -> Int {
-  self.char_length(start_offset~, end_offset?)
-}
-
-///|
-#deprecated("Use `s[i]` instead")
-pub fn String::charcode_at(self : String, index : Int) -> Int {
-  self[index]
-}
-
-///|
 /// Returns the Unicode code point at the given index without bounds checking.
 #deprecated("Use `s.get_char(i).unwrap()` instead")
 pub fn String::unsafe_char_at(self : String, index : Int) -> Char {
