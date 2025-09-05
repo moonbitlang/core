@@ -1627,11 +1627,11 @@ test "blit_to_wrap_around" {
 /// Test blit_to with automatic growth
 test "blit_to_grow" {
   let src = @deque.of([1, 2, 3, 4, 5])
-  let dst = @deque.of([0])
-  @deque.Deque::blit_to(src, dst, len=5, src_offset=0, dst_offset=0)
-  assert_eq(dst.to_array(), [1, 2, 3, 4, 5])
-  inspect(dst.as_views(), content="([1, 2, 3, 4, 5], [])")
-  assert_eq(dst.length(), 5)
+  let dst = @deque.of([1, 2, 4])
+  @deque.Deque::blit_to(src, dst, len=5, src_offset=0, dst_offset=1)
+  assert_eq(dst.to_array(), [1, 1, 2, 3, 4, 5])
+  inspect(dst.as_views(), content="([1, 1, 2, 3, 4, 5], [])")
+  assert_eq(dst.length(), 6)
 }
 
 ///|
