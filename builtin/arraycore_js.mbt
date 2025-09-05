@@ -219,6 +219,7 @@ pub fn[T] Array::pop(self : Array[T]) -> T? {
 /// behavior on the JavaScript platform. Use with caution.
 ///
 #internal(unsafe, "Panic if the array is empty.")
+#alias(pop_exn, deprecated)
 pub fn[T] Array::unsafe_pop(self : Array[T]) -> T {
   JSArray::ofAnyArray(self).pop().toAny()
 }

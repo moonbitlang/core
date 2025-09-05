@@ -38,12 +38,6 @@ pub impl Mul for Byte with mul(self : Byte, that : Byte) -> Byte {
 }
 
 ///|
-// TODO: remove this after we migrate compiler to new names
-pub impl Mul for Byte with op_mul(self : Byte, that : Byte) -> Byte {
-  (self.to_int() * that.to_int()).to_byte()
-}
-
-///|
 /// Performs division operation between two bytes by converting them to integers,
 /// performing the division, and converting the result back to a byte.
 ///
@@ -66,19 +60,7 @@ pub impl Div for Byte with div(self : Byte, that : Byte) -> Byte {
 }
 
 ///|
-// TODO: remove this after we migrate compiler to new names
-pub impl Div for Byte with op_div(self : Byte, that : Byte) -> Byte {
-  (self.to_int() / that.to_int()).to_byte()
-}
-
-///|
 pub impl Mod for Byte with mod(self : Byte, that : Byte) -> Byte {
-  (self.to_int() % that.to_int()).to_byte()
-}
-
-///|
-// TODO: remove this after we migrate compiler to new names
-pub impl Mod for Byte with op_mod(self : Byte, that : Byte) -> Byte {
   (self.to_int() % that.to_int()).to_byte()
 }
 
@@ -96,12 +78,6 @@ pub impl Eq for Byte with equal(self : Byte, that : Byte) -> Bool {
 }
 
 ///|
-// TODO: remove this after we migrate compiler to new names
-pub impl Eq for Byte with op_equal(self : Byte, that : Byte) -> Bool {
-  self.to_int() == that.to_int()
-}
-
-///|
 /// Adds two `Byte` values together and returns the result as a `Byte`.
 ///
 /// Parameters:
@@ -111,12 +87,6 @@ pub impl Eq for Byte with op_equal(self : Byte, that : Byte) -> Bool {
 ///
 /// Returns the sum of `byte1` and `byte2` as a `Byte`.
 pub impl Add for Byte with add(self : Byte, that : Byte) -> Byte {
-  (self.to_int() + that.to_int()).to_byte()
-}
-
-///|
-// TODO: remove this after we migrate compiler to new names
-pub impl Add for Byte with op_add(self : Byte, that : Byte) -> Byte {
   (self.to_int() + that.to_int()).to_byte()
 }
 
@@ -131,12 +101,6 @@ pub impl Add for Byte with op_add(self : Byte, that : Byte) -> Byte {
 ///
 /// Returns the result of the subtraction as a byte.
 pub impl Sub for Byte with sub(self : Byte, that : Byte) -> Byte {
-  (self.to_int() - that.to_int()).to_byte()
-}
-
-///|
-// TODO: remove this after we migrate compiler to new names
-pub impl Sub for Byte with op_sub(self : Byte, that : Byte) -> Byte {
   (self.to_int() - that.to_int()).to_byte()
 }
 

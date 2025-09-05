@@ -24,19 +24,7 @@ pub impl Add for Int16 with add(self : Int16, that : Int16) -> Int16 {
 }
 
 ///|
-// TODO: remove this after we migrate compiler to new names
-pub impl Add for Int16 with op_add(self : Int16, that : Int16) -> Int16 {
-  (self.to_int() + that.to_int()).to_int16()
-}
-
-///|
 pub impl Sub for Int16 with sub(self : Int16, that : Int16) -> Int16 {
-  (self.to_int() - that.to_int()).to_int16()
-}
-
-///|
-// TODO: remove this after we migrate compiler to new names
-pub impl Sub for Int16 with op_sub(self : Int16, that : Int16) -> Int16 {
   (self.to_int() - that.to_int()).to_int16()
 }
 
@@ -46,19 +34,7 @@ pub impl Mul for Int16 with mul(self : Int16, that : Int16) -> Int16 {
 }
 
 ///|
-// TODO: remove this after we migrate compiler to new names
-pub impl Mul for Int16 with op_mul(self : Int16, that : Int16) -> Int16 {
-  (self.to_int() * that.to_int()).to_int16()
-}
-
-///|
 pub impl Div for Int16 with div(self : Int16, that : Int16) -> Int16 {
-  (self.to_int() / that.to_int()).to_int16()
-}
-
-///|
-// TODO: remove this after we migrate compiler to new names
-pub impl Div for Int16 with op_div(self : Int16, that : Int16) -> Int16 {
   (self.to_int() / that.to_int()).to_int16()
 }
 
@@ -68,19 +44,7 @@ pub impl Mod for Int16 with mod(self : Int16, that : Int16) -> Int16 {
 }
 
 ///|
-// TODO: remove this after we migrate compiler to new names
-pub impl Mod for Int16 with op_mod(self : Int16, that : Int16) -> Int16 {
-  (self.to_int() % that.to_int()).to_int16()
-}
-
-///|
 pub impl Eq for Int16 with equal(self, that) {
-  self.to_int() == that.to_int()
-}
-
-///|
-// TODO: remove this after we migrate compiler to new names
-pub impl Eq for Int16 with op_equal(self, that) {
   self.to_int() == that.to_int()
 }
 
