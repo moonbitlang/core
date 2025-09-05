@@ -1705,13 +1705,18 @@ test "chunks_size_one" {
   assert_eq(chunks.to_array()[2].to_array(), [30])
 }
 
+///|
 /// Grouping elements with non-decreasing order
 test "chunk_by_non_decreasing" {
   let d = @deque.of([1, 1, 2, 3, 2, 3, 2, 3, 4])
   let chunks = d.chunk_by((x, y) => x <= y)
-  inspect(chunks.to_array().map(fn(c) { c.to_array() }), content="[[1, 1, 2, 3], [2, 3], [2, 3, 4]]")
+  inspect(
+    chunks.to_array().map(fn(c) { c.to_array() }),
+    content="[[1, 1, 2, 3], [2, 3], [2, 3, 4]]",
+  )
 }
 
+///|
 /// Empty deque produces empty result
 test "chunk_by_empty" {
   let d : @deque.Deque[Int] = @deque.of([])
@@ -1719,6 +1724,7 @@ test "chunk_by_empty" {
   inspect(chunks.to_array(), content="[]")
 }
 
+///|
 /// Single element stays as one chunk
 test "chunk_by_single_element" {
   let d = @deque.of([42])
@@ -1726,25 +1732,33 @@ test "chunk_by_single_element" {
   inspect(chunks.to_array().map(fn(c) { c.to_array() }), content="[[42]]")
 }
 
+///|
 /// All elements grouped into one chunk
 test "chunk_by_all_true" {
   let d = @deque.of([1, 2, 3, 4])
   let chunks = d.chunk_by((_, _) => true)
-  inspect(chunks.to_array().map(fn(c) { c.to_array() }), content="[[1, 2, 3, 4]]")
+  inspect(
+    chunks.to_array().map(fn(c) { c.to_array() }),
+    content="[[1, 2, 3, 4]]",
+  )
 }
 
+///|
 /// Each element becomes its own chunk
 test "chunk_by_all_false" {
   let d = @deque.of([1, 2, 3, 4])
   let chunks = d.chunk_by((_, _) => false)
-  inspect(chunks.to_array().map(fn(c) { c.to_array() }), content="[[1], [2], [3], [4]]")
+  inspect(
+    chunks.to_array().map(fn(c) { c.to_array() }),
+    content="[[1], [2], [3], [4]]",
+  )
 }
 
 ///|
 /// Test filter keeps even numbers
 test "filter_evens" {
   let d = @deque.of([1, 2, 3, 4, 5, 6])
-  let evens = d.filter((x) => { x % 2 == 0 })
+  let evens = d.filter(x => x % 2 == 0)
   assert_eq(evens.to_array(), [2, 4, 6])
   inspect(evens.as_views(), content="([2, 4, 6], [])")
 }
@@ -1753,7 +1767,7 @@ test "filter_evens" {
 /// Test filter removes all elements (predicate always false)
 test "filter_all_false" {
   let d = @deque.of([1, 2, 3])
-  let none = d.filter((_) => false)
+  let none = d.filter(_ => false)
   assert_eq(none.to_array(), [])
   inspect(none.as_views(), content="([], [])")
 }
@@ -1762,7 +1776,7 @@ test "filter_all_false" {
 /// Test filter keeps all elements (predicate always true)
 test "filter_all_true" {
   let d = @deque.of([1, 2, 3])
-  let all = d.filter((_) => true)
+  let all = d.filter(_ => true)
   assert_eq(all.to_array(), [1, 2, 3])
   inspect(all.as_views(), content="([1, 2, 3], [])")
 }
@@ -1771,7 +1785,7 @@ test "filter_all_true" {
 /// Test filter on empty deque
 test "filter_empty" {
   let d : @deque.Deque[Int] = @deque.of([])
-  let res = d.filter((x) => { x > 0 })
+  let res = d.filter(x => x > 0)
   assert_eq(res.to_array(), [])
   inspect(res.as_views(), content="([], [])")
 }
@@ -1781,8 +1795,8 @@ test "filter_empty" {
 test "filter_wrap_around" {
   let d = @deque.of([1, 2, 3, 4, 5, 6])
   ignore(d.pop_front()) // d = [2, 3, 4, 5, 6]
-  d.push_back(7)        // d = [2, 3, 4, 5, 6, 7], head != 0
-  let odds = d.filter((x) => { x % 2 == 1 })
+  d.push_back(7) // d = [2, 3, 4, 5, 6, 7], head != 0
+  let odds = d.filter(x => x % 2 == 1)
   assert_eq(odds.to_array(), [3, 5, 7])
   inspect(odds.as_views(), content="([3, 5, 7], [])")
 }
