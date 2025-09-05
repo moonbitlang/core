@@ -1642,3 +1642,66 @@ test "blit_to_self" {
   assert_eq(d.to_array(), [1, 2, 1, 2, 3])
   inspect(d.as_views(), content="([1, 2, 1, 2, 3], [])")
 }
+
+///|
+/// Test basic chunks functionality
+test "chunks_simple" {
+  let d = @deque.of([1, 2, 3, 4, 5])
+  let chunks = d.chunks(2)
+  assert_eq(chunks.length(), 3)
+  assert_eq(chunks.to_array()[0].to_array(), [1, 2])
+  assert_eq(chunks.to_array()[1].to_array(), [3, 4])
+  assert_eq(chunks.to_array()[2].to_array(), [5])
+}
+
+///|
+/// Test chunks with exact division
+test "chunks_exact" {
+  let d = @deque.of([1, 2, 3, 4])
+  let chunks = d.chunks(2)
+  assert_eq(chunks.length(), 2)
+  assert_eq(chunks.to_array()[0].to_array(), [1, 2])
+  assert_eq(chunks.to_array()[1].to_array(), [3, 4])
+}
+
+///|
+/// Test chunks with size larger than length
+test "chunks_size_larger_than_length" {
+  let d = @deque.of([1, 2, 3])
+  let chunks = d.chunks(10)
+  assert_eq(chunks.length(), 1)
+  assert_eq(chunks.to_array()[0].to_array(), [1, 2, 3])
+}
+
+///|
+/// Test chunks on empty deque
+test "chunks_empty" {
+  let d : @deque.Deque[Int] = @deque.of([])
+  let chunks = d.chunks(3)
+  assert_eq(chunks.length(), 0)
+}
+
+///|
+/// Test chunks with wrapped-around buffer
+test "chunks_wrap_around" {
+  let d = @deque.of([1, 2, 3, 4, 5, 6])
+  ignore(d.pop_front()) // d = [2, 3, 4, 5, 6]
+  d.push_back(7) // head != 0 now, d = [2, 3, 4, 5, 6, 7]
+  let chunks = d.chunks(2)
+  assert_eq(chunks.length(), 3)
+  assert_eq(chunks.to_array()[0].to_array(), [2, 3])
+  assert_eq(chunks.to_array()[1].to_array(), [4, 5])
+  assert_eq(chunks.to_array()[2].to_array(), [6, 7])
+}
+
+///|
+/// Test chunks with size = 1 (each element its own chunk)
+test "chunks_size_one" {
+  let d = @deque.of([10, 20, 30])
+  let chunks = d.chunks(1)
+  assert_eq(chunks.length(), 3)
+  assert_eq(chunks.to_array()[0].to_array(), [10])
+  assert_eq(chunks.to_array()[1].to_array(), [20])
+  assert_eq(chunks.to_array()[2].to_array(), [30])
+}
+
