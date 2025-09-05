@@ -1497,6 +1497,50 @@ pub impl[A : @json.FromJson] @json.FromJson for Deque[A] with from_json(
 }
 
 ///|
+/// Divides a deque into smaller deques (chunks) of the specified size.
+/// 
+/// Parameters:
+/// 
+/// * `self` : The deque to be divided into chunks.
+/// * `size` : The size of each chunk. Must be a positive integer,
+///   otherwise it will panic.
+/// 
+/// Returns a deque of deques, where each inner deque is a chunk containing
+/// elements from the original deque. If the length of the original deque is not
+/// divisible by the chunk size, the last chunk will contain fewer elements.
+/// 
+/// Example:
+/// 
+/// ```moonbit
+/// let d = @deque.of([1, 2, 3, 4, 5])
+/// let chunks = d.chunks(2)
+/// inspect(
+///   chunks.to_array().map(fn(c) { c.to_array() }),
+///   content="[[1, 2], [3, 4], [5]]",
+/// )
+/// let d : @deque.Deque[Int] = @deque.of([])
+/// inspect(d.chunks(3).length(), content="0")
+/// ```
+/// 
+/// Panics if:
+/// 
+/// * `size` is not positive
+pub fn[A] chunks(self : Deque[A], size : Int) -> Deque[Deque[A]] {
+  guard size > 0
+  let chunks : Deque[Deque[A]] = of([])
+  let mut i = 0
+  while i < self.length() {
+    let chunk = Deque::new(capacity=size)
+    for j = 0; j < size && i < self.length(); j = j + 1 {
+      chunk.push_back(self[i])
+      i = i + 1
+    }
+    chunks.push_back(chunk)
+  }
+  chunks
+}
+
+///|
 /// Flattens a high-dimensional deque into a lower-dimensional deque
 /// by concatenating all inner deques in order.
 ///
