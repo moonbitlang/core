@@ -77,7 +77,8 @@ fn View::len(self : View) -> Int = "%bytesview.len"
 ///   let view = bytes[1:4] // view contains [0x02, 0x03, 0x04]
 ///   inspect(view[1], content="b'\\x03'")
 /// ```
-pub fn View::op_get(self : View, index : Int) -> Byte {
+#alias(op_get)
+pub fn View::at(self : View, index : Int) -> Byte {
   guard index >= 0 && index < self.length() else {
     abort(
       "index out of bounds: the len is from 0 to \{self.length()} but the index is \{index}",

@@ -172,7 +172,8 @@ pub fn[T] Array::unsafe_get(self : Array[T], idx : Int) -> T {
 /// ```
 ///
 #intrinsic("%array.get")
-pub fn[T] Array::op_get(self : Array[T], index : Int) -> T {
+#alias(op_get)
+pub fn[T] Array::at(self : Array[T], index : Int) -> T {
   let len = self.length()
   guard index >= 0 && index < len
   self.buffer()[index]

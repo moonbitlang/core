@@ -14,6 +14,8 @@ import(
 type SortedMap[K, V]
 #alias(insert, deprecated)
 fn[K : Compare, V] SortedMap::add(Self[K, V], K, V) -> Self[K, V]
+#alias(op_get)
+fn[K : Compare, V] SortedMap::at(Self[K, V], K) -> V
 fn[K : Compare, V] SortedMap::contains(Self[K, V], K) -> Bool
 fn[K, V] SortedMap::each(Self[K, V], (K, V) -> Unit) -> Unit
 fn[K, V] SortedMap::eachi(Self[K, V], (Int, K, V) -> Unit) -> Unit
@@ -49,7 +51,6 @@ fn[K, X, Y] SortedMap::map_with_key(Self[K, X], (K, X) -> Y) -> Self[K, Y]
 fn[K, V] SortedMap::new() -> Self[K, V]
 #as_free_fn
 fn[K : Compare, V] SortedMap::of(FixedArray[(K, V)]) -> Self[K, V]
-fn[K : Compare, V] SortedMap::op_get(Self[K, V], K) -> V
 fn[K : Compare, V] SortedMap::remove(Self[K, V], K) -> Self[K, V]
 #alias(foldr_with_key)
 fn[K, V, A] SortedMap::rev_fold(Self[K, V], (A, K, V) -> A, init~ : A) -> A
