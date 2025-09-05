@@ -92,7 +92,8 @@ pub impl[A : Show] Show for Deque[A] with output(self, logger) {
 ///
 pub impl[A : Hash] Hash for Deque[A] with hash_combine(self, hasher) {
   for v in self {
-    v.hash_combine(hasher) }
+    v.hash_combine(hasher)
+  }
 }
 
 ///|
@@ -116,7 +117,7 @@ pub impl[A : Hash] Hash for Deque[A] with hash_combine(self, hasher) {
 ///   dq3 += @deque.of([7])
 ///   inspect(dq3.to_array(), content="[4, 5, 6, 7]")
 /// ```
-pub impl[A] Add for Deque[A] with add(self, other){
+pub impl[A] Add for Deque[A] with add(self, other) {
   let res = self.copy()
   res.append(other)
   res
@@ -186,6 +187,7 @@ pub fn[A] copy(self : Deque[A]) -> Deque[A] {
   deq
 }
 
+///|
 /// Copies elements from one deque to another deque, with support for growing the
 /// destination deque if needed. The copy respects the circular buffer layout
 /// and correctly handles wrap-around in both source and destination.
@@ -230,7 +232,7 @@ pub fn[A] blit_to(
     dst_offset <= dst.length() &&
     src_offset + len <= self.length()
   if dst_offset + len > dst.buf.length() {
-    dst.realloc(new_cap_least = dst_offset + len)
+    dst.realloc(new_cap_least=dst_offset + len)
     dst.head = 0
     dst.tail = dst.len - 1
   }
@@ -271,7 +273,7 @@ pub fn[A] append(self : Deque[A], other : Deque[A]) -> Unit {
   guard other.len != 0 else { return }
   let space = self.space()
   if space < other.len {
-    self.realloc(new_cap_least = self.len + other.len)
+    self.realloc(new_cap_least=self.len + other.len)
     self.head = 0
     self.tail = self.len - 1
   }
@@ -282,6 +284,7 @@ pub fn[A] append(self : Deque[A], other : Deque[A]) -> Unit {
   }
 }
 
+///|
 /// Inserts an element at the specified position in the deque. The elements are
 /// shifted in-place to make room for the new element, modifying the original deque.
 ///
@@ -437,7 +440,7 @@ pub fn[A] capacity(self : Deque[A]) -> Int {
 /// * This is an internal helper function, typically triggered when the deque runs out of space.
 /// * After reallocation, all elements are packed starting from index `0` in the new buffer.
 /// * The growth factor is geometric (×2), but can be overridden by `new_cap_least`.
-fn[A] realloc(self : Deque[A], new_cap_least~ : Int = 0) -> Unit {
+fn[A] realloc(self : Deque[A], new_cap_least? : Int = 0) -> Unit {
   let old_cap = self.len
   let new_cap = @cmp.maximum(@cmp.maximum(new_cap_least, 8), old_cap * 2)
   let new_buf = UninitializedArray::make(new_cap)
