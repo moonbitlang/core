@@ -17,13 +17,17 @@ fn[A] Deque::as_views(Self[A]) -> (ArrayView[A], ArrayView[A])
 fn[A] Deque::back(Self[A]) -> A?
 fn[A : Compare] Deque::binary_search(Self[A], A) -> Result[Int, Int]
 fn[A] Deque::binary_search_by(Self[A], (A) -> Int) -> Result[Int, Int]
+fn[A] Deque::blit_to(Self[A], Self[A], len~ : Int, src_offset? : Int, dst_offset? : Int) -> Unit
 fn[A] Deque::capacity(Self[A]) -> Int
+fn[A] Deque::chunk_by(Self[A], (A, A) -> Bool raise?) -> Self[Self[A]] raise?
+fn[A] Deque::chunks(Self[A], Int) -> Self[Self[A]]
 fn[A] Deque::clear(Self[A]) -> Unit
 fn[A : Eq] Deque::contains(Self[A], A) -> Bool
 fn[A] Deque::copy(Self[A]) -> Self[A]
 fn[A] Deque::drain(Self[A], start~ : Int, len? : Int) -> Self[A]
 fn[A] Deque::each(Self[A], (A) -> Unit) -> Unit
 fn[A] Deque::eachi(Self[A], (Int, A) -> Unit) -> Unit
+fn[A] Deque::filter(Self[A], (A) -> Bool raise?) -> Self[A] raise?
 #deprecated
 fn[A] Deque::filter_map_inplace(Self[A], (A) -> A?) -> Unit
 fn[A] Deque::flatten(Self[Self[A]]) -> Self[A]
@@ -33,6 +37,7 @@ fn[A] Deque::from_array(Array[A]) -> Self[A]
 fn[A] Deque::from_iter(Iter[A]) -> Self[A]
 fn[A] Deque::front(Self[A]) -> A?
 fn[A] Deque::get(Self[A], Int) -> A?
+fn[A] Deque::insert(Self[A], Int, A) -> Unit
 fn[A] Deque::is_empty(Self[A]) -> Bool
 fn[A] Deque::iter(Self[A]) -> Iter[A]
 fn[A] Deque::iter2(Self[A]) -> Iter2[Int, A]
@@ -71,8 +76,10 @@ fn[A] Deque::to_array(Self[A]) -> Array[A]
 fn[A] Deque::truncate(Self[A], Int) -> Unit
 fn[A] Deque::unsafe_pop_back(Self[A]) -> Unit
 fn[A] Deque::unsafe_pop_front(Self[A]) -> Unit
+impl[A] Add for Deque[A]
 impl[A : Compare] Compare for Deque[A]
 impl[A : Eq] Eq for Deque[A]
+impl[A : Hash] Hash for Deque[A]
 impl[A : Show] Show for Deque[A]
 impl[A : ToJson] ToJson for Deque[A]
 impl[A : @json.FromJson] @json.FromJson for Deque[A]
