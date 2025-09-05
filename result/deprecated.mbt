@@ -13,13 +13,13 @@
 // limitations under the License.
 
 ///|
-#deprecated("inline instead for such tiny function")
+#deprecated("Use `Ok(value)` instead")
 pub fn[T, E] ok(value : T) -> Result[T, E] {
   Ok(value)
 }
 
 ///|
-#deprecated("inline instead for such tiny function")
+#deprecated("Use `Err(value)` instead")
 pub fn[T, E] err(value : E) -> Result[T, E] {
   Err(value)
 }
