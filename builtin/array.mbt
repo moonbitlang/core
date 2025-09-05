@@ -966,6 +966,7 @@ pub fn[T : Eq] Array::search(self : Array[T], value : T) -> Int? {
 ///   }
 /// ```
 #locals(f)
+#alias(find_index, deprecated)
 pub fn[T] Array::search_by(self : Array[T], f : (T) -> Bool) -> Int? {
   for i, v in self {
     if f(v) {
@@ -1274,6 +1275,7 @@ pub fn[A, B] Array::fold(
 ///   assert_eq(sum, 15)
 /// ```
 #locals(f)
+#alias(fold_right, deprecated)
 pub fn[A, B] Array::rev_fold(
   self : Array[A],
   init~ : B,
@@ -1296,6 +1298,7 @@ pub fn[A, B] Array::rev_fold(
 ///   assert_eq(sum, 10)
 /// ```
 #locals(f)
+#alias(fold_lefti, deprecated)
 pub fn[A, B] Array::foldi(
   self : Array[A],
   init~ : B,
@@ -1318,6 +1321,7 @@ pub fn[A, B] Array::foldi(
 ///   assert_eq(sum, 10)
 /// ```
 #locals(f)
+#alias(fold_righti, deprecated)
 pub fn[A, B] Array::rev_foldi(
   self : Array[A],
   init~ : B,
