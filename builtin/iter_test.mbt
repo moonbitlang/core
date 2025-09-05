@@ -50,6 +50,35 @@ test "take" {
   let exb = StringBuilder::new(size_hint=0)
   iter.take(3).each(x => exb.write_char(x))
   inspect(exb, content="123")
+  // normal take
+  let evaluated = []
+  let collected = (1).until(20).tap(evaluated.push(_)).take(10).collect()
+  inspect(collected, content="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]")
+  inspect(evaluated, content="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]")
+  // take with concat
+  let evaluated2 = []
+  let collected2a = (1).until(20).tap(i => evaluated2.push("a\{i}")).take(5)
+  let collected2b = (1).until(20).tap(i => evaluated2.push("b\{i}")).take(5)
+  let collected2 = collected2a.concat(collected2b).collect()
+  inspect(collected2, content="[1, 2, 3, 4, 5, 1, 2, 3, 4, 5]")
+  inspect(
+    evaluated2,
+    content=(
+      #|["a1", "a2", "a3", "a4", "a5", "a6", "b1", "b2", "b3", "b4", "b5", "b6"]
+    ),
+  )
+  // take 0 with concat
+  let evaluated3 = []
+  let collected3a = (1).until(20).tap(i => evaluated3.push("a\{i}")).take(0)
+  let collected3b = (1).until(20).tap(i => evaluated3.push("b\{i}")).take(5)
+  let collected3 = collected3a.concat(collected3b).collect()
+  inspect(collected3, content="[1, 2, 3, 4, 5]")
+  inspect(
+    evaluated3,
+    content=(
+      #|["a1", "b1", "b2", "b3", "b4", "b5", "b6"]
+    ),
+  )
 }
 
 ///|
