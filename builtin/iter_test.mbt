@@ -465,7 +465,7 @@ test "eachi" {
 ///|
 fn[T] test_from_array(arr : Array[T]) -> Iter[T] {
   Iter::new(yield_ => for i in 0..<arr.length() {
-    if yield_(arr[i]) == IterEnd {
+    if yield_(arr[i]) is IterEnd {
       break IterEnd
     }
   } else {
@@ -505,9 +505,9 @@ fn Tree::iter(self : Tree) -> Iter[Int] {
     Leaf(x) => yield_(x)
     Node(l, v, r) =>
       // ([ .. l, v , .. r]).apply(f)
-      if l.iter().run(yield_) == IterEnd {
+      if l.iter().run(yield_) is IterEnd {
         IterEnd
-      } else if yield_(v) == IterEnd {
+      } else if yield_(v) is IterEnd {
         IterEnd
       } else {
         r.iter().run(yield_)

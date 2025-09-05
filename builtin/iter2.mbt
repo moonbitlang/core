@@ -117,7 +117,7 @@ pub fn[A, B] Iter2::concat(
   other : Iter2[A, B],
 ) -> Iter2[A, B] {
   yield_ => {
-    guard self.run(yield_) == IterContinue else { IterEnd }
+    guard self.run(yield_) is IterContinue else { IterEnd }
     other.run(yield_)
   }
 }

@@ -125,7 +125,7 @@ pub fn[K, V] iter2(self : HashMap[K, V]) -> Iter2[K, V] {
 ///   let arr = [(1, "one"), (2, "two")]
 ///   let iter = Iter::new((yield_) => {
 ///     for pair in arr {
-///       if yield_(pair) == IterEnd {
+///       if yield_(pair) is IterEnd {
 ///         break IterEnd
 ///       }
 ///     } else {

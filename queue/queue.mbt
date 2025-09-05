@@ -317,7 +317,7 @@ pub fn[A] transfer(self : Queue[A], dst : Queue[A]) -> Unit {
 pub fn[A] iter(self : Queue[A]) -> Iter[A] {
   Iter::new(yield_ => loop self.first {
     Some({ content, next }) => {
-      if yield_(content) == IterEnd {
+      if yield_(content) is IterEnd {
         break IterEnd
       }
       continue next

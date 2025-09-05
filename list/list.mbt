@@ -1498,7 +1498,7 @@ pub fn[A] iter(self : List[A]) -> Iter[A] {
   Iter::new(yield_ => loop self {
     Empty => IterContinue
     More(head, tail~) => {
-      if yield_(head) == IterEnd {
+      if yield_(head) is IterEnd {
         break IterEnd
       }
       continue tail
@@ -1523,7 +1523,7 @@ pub fn[A] iter2(self : List[A]) -> Iter2[Int, A] {
   Iter2::new(yield_ => loop (self, 0) {
     (Empty, _) => IterEnd
     (More(head, tail~), i) => {
-      if yield_(i, head) == IterEnd {
+      if yield_(i, head) is IterEnd {
         break IterEnd
       }
       continue (tail, i + 1)
