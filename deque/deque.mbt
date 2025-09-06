@@ -324,7 +324,9 @@ pub fn[A] insert(self : Deque[A], index : Int, value : A) -> Unit {
   if index < self.len / 2 {
     let new_head = (self.head - 1 + cap) % cap
     for i = 0; i < index; i = i + 1 {
-      self.buf[(new_head + i) % cap] = self.buf[(self.head + i) % cap]
+      let to = (new_head + i) % cap
+      let from = (self.head + i) % cap
+      self.buf[to] = self.buf[from]
     }
     self.head = new_head
   } else {
@@ -338,6 +340,65 @@ pub fn[A] insert(self : Deque[A], index : Int, value : A) -> Unit {
   }
   self.buf[(self.head + index) % cap] = value
   self.len += 1
+}
+
+///|
+/// Removes and returns the element at the specified position in the deque. The
+/// remaining elements are shifted in-place to fill the gap, modifying the original deque.
+/// 
+/// Parameters:
+/// 
+/// * `self` : The deque from which the element will be removed.
+/// * `index` : The position of the element to remove. Must satisfy `0 <= index < self.length()`.
+///
+/// Returns:
+///
+/// * The element that was removed from the deque.
+/// 
+/// Panics:
+/// 
+/// * If `index` is out of bounds, the function will abort with an error message.
+/// 
+/// Example:
+/// 
+/// ```moonbit
+/// let v1 = @deque.of([0, 1, 2, 3])
+/// let x = v1.remove(0) // remove from the front
+/// inspect((x, v1), content="(0, @deque.of([1, 2, 3]))")
+/// let v2 = @deque.of([1, 2, 3, 4])
+/// let y = v2.remove(2) // remove from the middle
+/// inspect((y, v2), content="(3, @deque.of([1, 2, 4]))")
+/// let v3 = @deque.of([2, 3, 4, 5])
+/// let z = v3.remove(3) // remove from the end
+/// inspect((z, v3), content="(5, @deque.of([2, 3, 4]))")
+/// ```
+pub fn[A] remove(self : Deque[A], index : Int) -> A {
+  guard index >= 0 && index < self.length() else {
+    abort(
+      "index out of bounds: the len is from 0 to \{self.length()} but the index is \{index}",
+    )
+  }
+  let res = self[index]
+  let cap = self.buf.length()
+  if index < self.len / 2 {
+    let new_head = (self.head + 1) % cap
+    for i = index - 1; i >= 0; i = i - 1 {
+      let to = (self.head + i + 1) % cap
+      let from = (self.head + i) % cap
+      self.buf[to] = self.buf[from]
+    }
+    self.head = new_head
+  } else {
+    let new_tail = (self.tail - 1 + cap) % cap
+    for i = index + 1; i < self.len; i = i + 1 {
+      let to = (self.head + i - 1) % cap
+      let from = (self.head + i) % cap
+      self.buf[to] = self.buf[from]
+    }
+    self.tail = new_tail
+  }
+  self.len -= 1
+  res
 }
 
 ///|
@@ -1054,6 +1115,44 @@ pub fn[A] filter(self : Deque[A], f : (A) -> Bool raise?) -> Deque[A] raise? {
     }
   }
   dq
+}
+
+///|
+/// Extracts elements from a deque that satisfy a given predicate function. The
+/// extracted elements are removed from the original deque and returned as a new
+/// deque. The relative order of the extracted elements is preserved.
+/// 
+/// Parameters:
+/// 
+/// * `self` : The deque to extract elements from.
+/// * `f` : A function that takes an element and returns `true` if the
+/// element should be extracted, `false` otherwise.
+/// 
+/// Returns a new deque containing all elements that satisfy the predicate
+/// function, in the order they appeared in the original deque.
+/// 
+/// Example:
+/// 
+/// ```moonbit
+/// let d = @deque.of([1, 2, 3, 4, 5])
+/// let extracted = d.extract_if(x => x % 2 == 0)
+/// inspect(extracted.to_array(), content="[2, 4]")
+/// inspect(d.to_array(), content="[1, 3, 5]")
+/// ```
+#locals(f)
+pub fn[A] extract_if(self : Deque[A], f : (A) -> Bool) -> Deque[A] {
+  let v = of([])
+  let indices = []
+  for i in 0..<self.length() {
+    if f(self[i]) {
+      v.push_back(self[i])
+      indices.push(i)
+    }
+  }
+  for i in 0..<indices.length() {
+    self.remove(indices[i] - i) |> ignore
+  }
+  v
 }
 
 ///|
