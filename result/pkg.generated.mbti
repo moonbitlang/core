@@ -30,6 +30,9 @@ fn[T, E] Result::or_else(Self[T, E], () -> T) -> T
 fn[T, E] Result::to_option(Self[T, E]) -> T?
 fn[T, E] Result::unwrap(Self[T, E]) -> T
 fn[T, E] Result::unwrap_err(Self[T, E]) -> E
+fn[T, E] Result::unwrap_or(Self[T, E], T) -> T
+fn[T : Default, E] Result::unwrap_or_default(Self[T, E]) -> T
+fn[T, E] Result::unwrap_or_else(Self[T, E], () -> T raise?) -> T raise?
 fn[T, E : Error] Result::unwrap_or_error(Self[T, E]) -> T raise E
 impl[T : Compare, E : Compare] Compare for Result[T, E]
 impl[T : @quickcheck.Arbitrary, E : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Result[T, E]
