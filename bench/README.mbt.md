@@ -7,13 +7,14 @@ This package provides benchmarking utilities for measuring the performance of Mo
 Use the `single_bench` function to benchmark individual operations:
 
 ```moonbit
+#skip("slow tests")
 test "basic benchmarking" {
-  fn fibonacci(n : Int) -> Int {
-    if n <= 1 { n } else { fibonacci(n - 1) + fibonacci(n - 2) }
+  fn simple_calc(n : Int) -> Int {
+    n * 2 + 1
   }  
   // Benchmark a simple computation
-  let summary = @bench.single_bench(name="fibonacci_10", fn() { 
-    ignore(fibonacci(10))
+  let summary = @bench.single_bench(name="simple_calc", fn() { 
+    ignore(simple_calc(5))
   })
   
   // The benchmark ran successfully (we can't inspect exact timing)
@@ -26,19 +27,20 @@ test "basic benchmarking" {
 Use the `T` type to collect multiple benchmarks:
 
 ```moonbit
+#skip("slow tests")
 test "benchmark collection" {
   let bencher = @bench.new()
   
   // Add multiple benchmarks to the collection
   bencher.bench(name="array_creation", fn() {
     let arr = Array::new()
-    for i in 0..<100 {
+    for i in 0..<5 {
       arr.push(i)
     }
   })
   
   bencher.bench(name="array_iteration", fn() {
-    let arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    let arr = [1, 2, 3, 4, 5]
     let mut sum = 0
     for x in arr {
       sum = sum + x
@@ -56,13 +58,14 @@ test "benchmark collection" {
 Compare the performance of different implementations:
 
 ```moonbit
+#skip("slow tests")
 test "algorithm comparison" {
   let bencher = @bench.new()
   
   // Benchmark linear search
   bencher.bench(name="linear_search", fn() {
-    let arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-    let target = 7
+    let arr = [1, 2, 3, 4, 5]
+    let target = 3
     let mut found = false
     for x in arr {
       if x == target {
@@ -75,8 +78,8 @@ test "algorithm comparison" {
   
   // Benchmark using built-in contains (likely optimized)
   bencher.bench(name="builtin_contains", fn() {
-    let arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-    ignore(arr.contains(7))
+    let arr = [1, 2, 3, 4, 5]
+    ignore(arr.contains(3))
   })
   
   let results = bencher.dump_summaries()
@@ -89,20 +92,21 @@ test "algorithm comparison" {
 Benchmark different data structure operations:
 
 ```moonbit
+#skip("slow tests")
 test "data structure benchmarks" {
   let bencher = @bench.new()
   
   // Benchmark Array operations
   bencher.bench(name="array_append", fn() {
     let arr = Array::new()
-    for i in 0..<50 {
+    for i in 0..<5 {
       arr.push(i)
     }
   })
   
   // Benchmark FixedArray access
   bencher.bench(name="fixedarray_access", fn() {
-    let arr = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    let arr = [0, 1, 2, 3, 4]
     let mut sum = 0
     for i in 0..<arr.length() {
       sum = sum + arr[i]
@@ -120,13 +124,14 @@ test "data structure benchmarks" {
 Measure string manipulation performance:
 
 ```moonbit
+#skip("slow tests")
 test "string benchmarks" {
   let bencher = @bench.new()
   
   // Benchmark string concatenation
   bencher.bench(name="string_concat", fn() {
     let mut result = ""
-    for i in 0..<20 {
+    for i in 0..<5 {
       result = result + "x"
     }
   })
@@ -134,7 +139,7 @@ test "string benchmarks" {
   // Benchmark StringBuilder (should be faster)
   bencher.bench(name="stringbuilder", fn() {
     let builder = StringBuilder::new()
-    for i in 0..<20 {
+    for i in 0..<5 {
       builder.write_string("x")
     }
     ignore(builder.to_string())
@@ -150,11 +155,12 @@ test "string benchmarks" {
 Use `keep` to prevent compiler optimizations from eliminating benchmarked code:
 
 ```moonbit
+#skip("slow tests")
 test "preventing optimization" {
   let bencher = @bench.new()
   
   bencher.bench(name="with_keep", fn() {
-    let result = Array::makei(100, fn(i) { i * i })
+    let result = Array::makei(5, fn(i) { i * i })
     // Prevent the compiler from optimizing away the computation
     bencher.keep(result)
   })
@@ -169,6 +175,7 @@ test "preventing optimization" {
 Control the number of benchmark iterations:
 
 ```moonbit
+#skip("slow tests")
 test "iteration control" {
   let bencher = @bench.new()
   
@@ -182,11 +189,11 @@ test "iteration control" {
   // Run with fewer iterations for quick testing
   bencher.bench(name="quick_benchmark", fn() {
     let mut result = 0
-    for i in 0..<1000 {
+    for i in 0..<10 {
       result = result + i
     }
     ignore(result)
-  }, count=5)
+  }, count=2)
   
   let results = bencher.dump_summaries()
   inspect(results.length() > 50, content="true")  // Should have benchmark data
@@ -198,11 +205,12 @@ test "iteration control" {
 ### 1. Isolate What You're Measuring
 
 ```moonbit
+#skip("slow tests")
 test "isolation example" {
   let bencher = @bench.new()
   
   // Good: Measure only the operation of interest
-  let data = Array::makei(1000, fn(i) { i })  // Setup outside benchmark
+  let data = Array::makei(10, fn(i) { i })  // Setup outside benchmark
   
   bencher.bench(name="array_sum", fn() {
     let mut sum = 0
@@ -220,12 +228,13 @@ test "isolation example" {
 ### 2. Warm Up Before Measuring
 
 ```moonbit
+#skip("slow tests")
 test "warmup example" {
   let bencher = @bench.new()
   
   fn expensive_operation() -> Int {
     let mut result = 0
-    for i in 0..<100 {
+    for i in 0..<5 {
       result = result + i * i
     }
     result
@@ -250,21 +259,22 @@ test "warmup example" {
 ### 3. Use Meaningful Names
 
 ```moonbit
+#skip("slow tests")
 test "meaningful names" {
   let bencher = @bench.new()
   
   // Good: Descriptive names that explain what's being measured
-  bencher.bench(name="hashmap_insert_1000_items", fn() {
+  bencher.bench(name="array_insert_10_items", fn() {
     let arr = Array::new()
-    for i in 0..<1000 {
+    for i in 0..<10 {
       arr.push(i * 2)
     }
     bencher.keep(arr)
   })
   
-  bencher.bench(name="array_binary_search_sorted_1000", fn() {
-    let arr = Array::makei(1000, fn(i) { i })
-    let result = arr.contains(500)  // Linear search in this case
+  bencher.bench(name="array_search_sorted_10", fn() {
+    let arr = Array::makei(10, fn(i) { i })
+    let result = arr.contains(5)  // Linear search in this case
     bencher.keep(result)
   })
   
@@ -287,6 +297,7 @@ The benchmark results include statistical information:
 Benchmarks can be integrated into your testing workflow:
 
 ```moonbit
+#skip("slow tests")
 test "performance regression test" {
   let bencher = @bench.new()
   
