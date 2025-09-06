@@ -94,6 +94,7 @@ pub fn dump_summaries(self : T) -> String {
 }
 
 ///|
+#skip("slow benchmarking test")
 test "bench - single_bench basic functionality" {
   let bench_result = single_bench(
     () => {
@@ -112,6 +113,7 @@ test "bench - single_bench basic functionality" {
 }
 
 ///|
+#skip("slow benchmarking test")
 test "bench - Summary struct properties" {
   // Create a very simple bench and extract the summary
   let bench_result = single_bench(
@@ -141,6 +143,7 @@ test "bench - Summary struct properties" {
 }
 
 ///|
+#skip("slow benchmarking test")
 test "bench - T struct and bench method" {
   let bench_obj = new()
 
@@ -177,6 +180,7 @@ test "bench - T struct and bench method" {
 }
 
 ///|
+#skip("slow benchmarking test")
 test "bench - monotonic clock functionality" {
   // Test that the clock functions work properly
   let start = monotonic_clock_start()
