@@ -324,7 +324,9 @@ pub fn[A] insert(self : Deque[A], index : Int, value : A) -> Unit {
   if index < self.len / 2 {
     let new_head = (self.head - 1 + cap) % cap
     for i = 0; i < index; i = i + 1 {
-      self.buf[(new_head + i) % cap] = self.buf[(self.head + i) % cap]
+      let to = (new_head + i) % cap
+      let from = (self.head + i) % cap
+      self.buf[to] = self.buf[from]
     }
     self.head = new_head
   } else {
