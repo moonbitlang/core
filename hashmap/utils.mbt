@@ -125,7 +125,7 @@ pub fn[K, V] iter2(self : HashMap[K, V]) -> Iter2[K, V] {
 ///   let arr = [(1, "one"), (2, "two")]
 ///   let iter = Iter::new((yield_) => {
 ///     for pair in arr {
-///       if yield_(pair) == IterEnd {
+///       if yield_(pair) is IterEnd {
 ///         break IterEnd
 ///       }
 ///     } else {
@@ -136,7 +136,10 @@ pub fn[K, V] iter2(self : HashMap[K, V]) -> Iter2[K, V] {
 ///   inspect(map.get(1), content="Some(\"one\")")
 ///   inspect(map.get(2), content="Some(\"two\")")
 /// ```
-pub fn[K : Hash + Eq, V] from_iter(iter : Iter[(K, V)]) -> HashMap[K, V] {
+#as_free_fn
+pub fn[K : Hash + Eq, V] HashMap::from_iter(
+  iter : Iter[(K, V)],
+) -> HashMap[K, V] {
   let m = new()
   iter.each(e => m[e.0] = e.1)
   m

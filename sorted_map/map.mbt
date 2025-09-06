@@ -28,15 +28,31 @@ pub impl[K : Eq, V : Eq] Eq for SortedMap[K, V] with equal(self, other) {
 
 ///|
 /// Returns a new sorted map.
-pub fn[K, V] new() -> SortedMap[K, V] {
+#as_free_fn
+pub fn[K, V] SortedMap::new() -> SortedMap[K, V] {
   { root: None, size: 0 }
 }
 
 ///|
 /// Creates a sorted map from a array of key-value pairs.
-pub fn[K : Compare, V] from_array(entries : Array[(K, V)]) -> SortedMap[K, V] {
+#as_free_fn
+pub fn[K : Compare, V] SortedMap::from_array(
+  entries : Array[(K, V)],
+) -> SortedMap[K, V] {
   let map = { root: None, size: 0 }
   entries.each(e => map.add(e.0, e.1))
+  map
+}
+
+///|
+#as_free_fn
+pub fn[K : Compare, V] SortedMap::of(
+  entries : FixedArray[(K, V)],
+) -> SortedMap[K, V] {
+  let map = { root: None, size: 0 }
+  for i in 0..<entries.length() {
+    map.add(entries[i].0, entries[i].1)
+  }
   map
 }
 
@@ -255,7 +271,10 @@ pub fn[K, V] iter2(self : SortedMap[K, V]) -> Iter2[K, V] {
 }
 
 ///|
-pub fn[K : Compare, V] from_iter(iter : Iter[(K, V)]) -> SortedMap[K, V] {
+#as_free_fn
+pub fn[K : Compare, V] SortedMap::from_iter(
+  iter : Iter[(K, V)],
+) -> SortedMap[K, V] {
   let m = new()
   iter.each(e => m[e.0] = e.1)
   m

@@ -47,7 +47,7 @@ fi
 
 # Run moon check and capture output
 echo "📋 Running 'moon check'..."
-CHECK_OUTPUT=$(moon check 2>&1)
+CHECK_OUTPUT=$(moon check --target all 2>&1)
 CHECK_EXIT_CODE=$?
 
 if [ $CHECK_EXIT_CODE -ne 0 ]; then

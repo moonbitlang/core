@@ -7,17 +7,6 @@ import(
 )
 
 // Values
-fn[A : Compare] from_array(Array[A]) -> SortedSet[A]
-
-fn[A : Compare] from_iter(Iter[A]) -> SortedSet[A]
-
-fn[A : @json.FromJson + Compare] from_json(Json) -> SortedSet[A] raise @json.JsonDecodeError
-
-fn[A] new() -> SortedSet[A]
-
-fn[A : Compare] of(FixedArray[A]) -> SortedSet[A]
-
-fn[A] singleton(A) -> SortedSet[A]
 
 // Errors
 
@@ -34,11 +23,11 @@ fn[A : Compare] SortedSet::disjoint(Self[A], Self[A]) -> Bool
 fn[A] SortedSet::each(Self[A], (A) -> Unit raise?) -> Unit raise?
 fn[A : Compare] SortedSet::filter(Self[A], (A) -> Bool raise?) -> Self[A] raise?
 fn[A : Compare, B] SortedSet::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
-#deprecated
+#as_free_fn
 fn[A : Compare] SortedSet::from_array(Array[A]) -> Self[A]
-#deprecated
+#as_free_fn
 fn[A : Compare] SortedSet::from_iter(Iter[A]) -> Self[A]
-#deprecated
+#as_free_fn
 fn[A : @json.FromJson + Compare] SortedSet::from_json(Json) -> Self[A] raise @json.JsonDecodeError
 #deprecated
 fn[A : Compare] SortedSet::inter(Self[A], Self[A]) -> Self[A]
@@ -50,13 +39,13 @@ fn[A : Compare] SortedSet::max(Self[A]) -> A
 fn[A : Compare] SortedSet::max_option(Self[A]) -> A?
 fn[A : Compare] SortedSet::min(Self[A]) -> A
 fn[A : Compare] SortedSet::min_option(Self[A]) -> A?
-#deprecated
+#as_free_fn
 fn[A] SortedSet::new() -> Self[A]
-#deprecated
+#as_free_fn
 fn[A : Compare] SortedSet::of(FixedArray[A]) -> Self[A]
 fn[A : Compare] SortedSet::remove(Self[A], A) -> Self[A]
 fn[A : Compare] SortedSet::remove_min(Self[A]) -> Self[A]
-#deprecated
+#as_free_fn
 fn[A] SortedSet::singleton(A) -> Self[A]
 fn[A] SortedSet::size(Self[A]) -> Int
 fn[A : Compare] SortedSet::split(Self[A], A) -> (Self[A], Bool, Self[A])

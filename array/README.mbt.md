@@ -94,10 +94,6 @@ test "array views" {
   // Map view to new array
   let doubled = view.map(x => x * 2)
   inspect(doubled, content="[4, 6, 8]")
-
-  // Modify view in-place
-  view.map_inplace(x => x + 1)
-  inspect(arr, content="[1, 3, 4, 5, 5]")
 }
 ```
 

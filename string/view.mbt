@@ -128,50 +128,6 @@ pub fn View::view(
 }
 
 ///|
-/// Creates a `View` into a `String`.
-/// 
-/// # Example
-/// 
-/// ```mbt
-///   let str = "Hello🤣🤣🤣"
-///   let view1 = str.view()
-///   inspect(view1, content="Hello🤣🤣🤣")
-///   let start = str.offset_of_nth_char(1).unwrap()
-///   let end = str.offset_of_nth_char(6).unwrap() // the second emoji
-///   let view2 = str.view(start_offset=start, end_offset=end)
-///   inspect(view2, content="ello🤣")
-/// ```
-/// 
-/// This method has O(1) complexity.
-#deprecated("use view instead")
-pub fn String::charcodes(self : String, start? : Int = 0, end? : Int) -> View {
-  self.view(start_offset=start, end_offset?=end)
-}
-
-///|
-/// Creates a `View` into a `View`.
-/// 
-/// # Example
-/// 
-/// ```mbt
-///   let str = "Hello🤣🤣🤣"
-///   let view1 = str.view()
-///   let view2 = view1.view(start_offset=1, end_offset=7) // From 2nd to 6th character
-///   inspect(view2, content=
-///    "ello🤣"
-///   )
-/// ```
-/// 
-/// This method is similar to `String::charcodes` but operates on an existing view.
-/// It allows you to create a sub-view of an existing view with the specified character range.
-/// 
-/// This method has O(1) complexity.
-#deprecated("use view instead")
-pub fn View::charcodes(self : View, start? : Int = 0, end? : Int) -> View {
-  self.view(start_offset=start, end_offset?=end)
-}
-
-///|
 /// Returns the UTF-16 index of the i-th (zero-indexed) Unicode character of
 /// the view. If i is negative, it returns the index of the (n + i)-th character
 /// where n is the total number of Unicode characters in the view.
@@ -239,7 +195,7 @@ pub fn View::char_length_ge(self : View, len : Int) -> Bool {
 
 ///|
 pub impl Show for View with output(self, logger) {
-  let substr = self.str().substring(start=self.start(), end=self.end())
+  let substr = self.str().unsafe_substring(start=self.start(), end=self.end())
   String::output(substr, logger)
 }
 
@@ -254,7 +210,7 @@ pub impl Show for View with output(self, logger) {
 ///   inspect(view.to_string(), content="Hello")
 /// ```
 pub impl Show for View with to_string(self) {
-  self.str().substring(start=self.start(), end=self.end())
+  self.str().unsafe_substring(start=self.start(), end=self.end())
 }
 
 ///|
@@ -440,11 +396,11 @@ pub suberror CreatingViewError {
 /// 
 /// ```mbt
 /// let str = "Hello🤣World"
-/// let view1 = try? str[0:5]
+/// let view1 =  str[0:5]
 /// inspect(
 ///   view1,
 ///   content=(
-///     #|Ok("Hello")
+///     "Hello"
 ///   ),
 /// )
 /// let view2 = try? str[-5:]
@@ -457,7 +413,8 @@ pub suberror CreatingViewError {
 /// let view3 = try? str[:6]
 /// inspect(view3, content="Err(InvalidIndex)")
 /// ```
-pub fn String::op_as_view(
+#alias(op_as_view)
+pub fn String::sub(
   self : String,
   start? : Int = 0,
   end? : Int,
@@ -511,19 +468,16 @@ pub fn String::op_as_view(
 /// # Examples
 /// 
 /// ```mbt
-///   let str = "Hello🤣World"[1:-1] // "ello🤣Worl"
-///   let view1 = try? str[0:6]
-///   inspect(view1, content=(
-///   #|Ok("ello🤣")
-/// ))
-///   let view2 = try? str[-2:]
-///   inspect(view2, content=(
-///   #|Ok("rl")
-/// ))
-///   let view3 = try? str[:5]
-///   inspect(view3, content=("Err(InvalidIndex)"))
+/// let str = "Hello🤣World"[1:-1] // "ello🤣Worl"
+/// let view1 = str[0:6]
+/// inspect(view1, content="ello🤣")
+/// let view2 = str[-2:]
+/// inspect(view2, content="rl")
+/// let view3 = try? str[:5]
+/// inspect(view3, content="Err(InvalidIndex)")
 /// ```
-pub fn View::op_as_view(
+#alias(op_as_view)
+pub fn View::sub(
   self : View,
   start? : Int = 0,
   end? : Int,

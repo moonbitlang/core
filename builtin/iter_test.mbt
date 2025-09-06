@@ -50,6 +50,35 @@ test "take" {
   let exb = StringBuilder::new(size_hint=0)
   iter.take(3).each(x => exb.write_char(x))
   inspect(exb, content="123")
+  // normal take
+  let evaluated = []
+  let collected = (1).until(20).tap(evaluated.push(_)).take(10).collect()
+  inspect(collected, content="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]")
+  inspect(evaluated, content="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]")
+  // take with concat
+  let evaluated2 = []
+  let collected2a = (1).until(20).tap(i => evaluated2.push("a\{i}")).take(5)
+  let collected2b = (1).until(20).tap(i => evaluated2.push("b\{i}")).take(5)
+  let collected2 = collected2a.concat(collected2b).collect()
+  inspect(collected2, content="[1, 2, 3, 4, 5, 1, 2, 3, 4, 5]")
+  inspect(
+    evaluated2,
+    content=(
+      #|["a1", "a2", "a3", "a4", "a5", "b1", "b2", "b3", "b4", "b5"]
+    ),
+  )
+  // take 0 with concat
+  let evaluated3 = []
+  let collected3a = (1).until(20).tap(i => evaluated3.push("a\{i}")).take(0)
+  let collected3b = (1).until(20).tap(i => evaluated3.push("b\{i}")).take(5)
+  let collected3 = collected3a.concat(collected3b).collect()
+  inspect(collected3, content="[1, 2, 3, 4, 5]")
+  inspect(
+    evaluated3,
+    content=(
+      #|["b1", "b2", "b3", "b4", "b5"]
+    ),
+  )
 }
 
 ///|
@@ -436,7 +465,7 @@ test "eachi" {
 ///|
 fn[T] test_from_array(arr : Array[T]) -> Iter[T] {
   Iter::new(yield_ => for i in 0..<arr.length() {
-    if yield_(arr[i]) == IterEnd {
+    if yield_(arr[i]) is IterEnd {
       break IterEnd
     }
   } else {
@@ -476,9 +505,9 @@ fn Tree::iter(self : Tree) -> Iter[Int] {
     Leaf(x) => yield_(x)
     Node(l, v, r) =>
       // ([ .. l, v , .. r]).apply(f)
-      if l.iter().run(yield_) == IterEnd {
+      if l.iter().run(yield_) is IterEnd {
         IterEnd
-      } else if yield_(v) == IterEnd {
+      } else if yield_(v) is IterEnd {
         IterEnd
       } else {
         r.iter().run(yield_)

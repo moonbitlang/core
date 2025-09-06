@@ -20,7 +20,8 @@
 ///   let queue : @queue.Queue[Int] = @queue.new()
 ///   assert_eq(queue.length(), 0)
 /// ```
-pub fn[A] new() -> Queue[A] {
+#as_free_fn
+pub fn[A] Queue::new() -> Queue[A] {
   { length: 0, first: None, last: None }
 }
 
@@ -33,7 +34,8 @@ pub fn[A] new() -> Queue[A] {
 ///   let queue : @queue.Queue[Int] = @queue.from_array(array)
 ///   assert_eq(queue.length(), 3)
 /// ```
-pub fn[A] from_array(arr : Array[A]) -> Queue[A] {
+#as_free_fn
+pub fn[A] Queue::from_array(arr : Array[A]) -> Queue[A] {
   guard arr.length() > 0 else { return new() }
   let length = arr.length()
   let last = { content: arr[length - 1], next: None }
@@ -315,7 +317,7 @@ pub fn[A] transfer(self : Queue[A], dst : Queue[A]) -> Unit {
 pub fn[A] iter(self : Queue[A]) -> Iter[A] {
   Iter::new(yield_ => loop self.first {
     Some({ content, next }) => {
-      if yield_(content) == IterEnd {
+      if yield_(content) is IterEnd {
         break IterEnd
       }
       continue next
@@ -332,7 +334,8 @@ pub fn[A] iter(self : Queue[A]) -> Iter[A] {
 ///   let queue : @queue.Queue[Int] = @queue.from_iter(Iter::empty())
 ///   assert_eq(queue.length(), 0)
 /// ```
-pub fn[A] from_iter(iter : Iter[A]) -> Queue[A] {
+#as_free_fn
+pub fn[A] Queue::from_iter(iter : Iter[A]) -> Queue[A] {
   let q = new()
   iter.each(e => q.push(e))
   q
@@ -346,7 +349,8 @@ pub fn[A] from_iter(iter : Iter[A]) -> Queue[A] {
 ///   let queue : @queue.Queue[Int] = @queue.of([1, 2, 3, 4])
 ///   assert_eq(queue.length(), 4)
 /// ```
-pub fn[A] of(arr : FixedArray[A]) -> Queue[A] {
+#as_free_fn
+pub fn[A] Queue::of(arr : FixedArray[A]) -> Queue[A] {
   guard arr.length() > 0 else { return new() }
   let length = arr.length()
   let last = { content: arr[length - 1], next: None }

@@ -85,11 +85,14 @@ fn[A] ArrayView::iter(Self[A]) -> Iter[A]
 fn[A] ArrayView::iter2(Self[A]) -> Iter2[Int, A]
 fn[A : @string.ToStringView] ArrayView::join(Self[A], @string.View) -> String
 fn[T, U] ArrayView::map(Self[T], (T) -> U raise?) -> Array[U] raise?
+#deprecated
 fn[T] ArrayView::map_inplace(Self[T], (T) -> T raise?) -> Unit raise?
 fn[T, U] ArrayView::mapi(Self[T], (Int, T) -> U raise?) -> Array[U] raise?
+#deprecated
 fn[T] ArrayView::mapi_inplace(Self[T], (Int, T) -> T raise?) -> Unit raise?
 fn[A, B] ArrayView::rev_fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 fn[A, B] ArrayView::rev_foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
+#deprecated
 fn[T] ArrayView::rev_inplace(Self[T]) -> Unit
 fn[T] ArrayView::to_array(Self[T]) -> Array[T]
 fn ArrayView::unsafe_extract_bit(Self[Byte], Int, Int) -> UInt

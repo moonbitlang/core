@@ -6,8 +6,10 @@ import(
 )
 
 // Values
+#deprecated
 fn[T, E] err(E) -> Result[T, E]
 
+#deprecated
 fn[T, E] ok(T) -> Result[T, E]
 
 // Errors
@@ -15,8 +17,11 @@ fn[T, E] ok(T) -> Result[T, E]
 // Types and methods
 fn[T, E, U] Result::bind(Self[T, E], (T) -> Self[U, E]) -> Self[U, E]
 fn[T, E] Result::flatten(Self[Self[T, E], E]) -> Self[T, E]
+#deprecated
 fn[T, E, V] Result::fold(Self[T, E], (T) -> V, (E) -> V) -> V
+#deprecated
 fn[T, E] Result::is_err(Self[T, E]) -> Bool
+#deprecated
 fn[T, E] Result::is_ok(Self[T, E]) -> Bool
 fn[T, E, U] Result::map(Self[T, E], (T) -> U) -> Self[U, E]
 fn[T, E, F] Result::map_err(Self[T, E], (E) -> F) -> Self[T, F]

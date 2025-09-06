@@ -30,7 +30,7 @@ pub fn Int::upto(self : Int, end : Int, inclusive? : Bool = false) -> Iter[Int] 
   yield_ => {
     let mut i = self
     while i < end || (inclusive && i == end) {
-      if yield_(i) == IterEnd {
+      if yield_(i) is IterEnd {
         break IterEnd
       }
       if i == end {
@@ -65,7 +65,7 @@ pub fn UInt::upto(
   yield_ => {
     let mut i = self
     while i < end || (inclusive && i == end) {
-      if yield_(i) == IterEnd {
+      if yield_(i) is IterEnd {
         break IterEnd
       }
       if i == end {
@@ -100,7 +100,7 @@ pub fn UInt64::upto(
   yield_ => {
     let mut i = self
     while i < end || (inclusive && i == end) {
-      if yield_(i) == IterEnd {
+      if yield_(i) is IterEnd {
         break IterEnd
       }
       if i == end {
@@ -135,7 +135,7 @@ pub fn Int64::upto(
   yield_ => {
     let mut i = self
     while i < end || (inclusive && i == end) {
-      if yield_(i) == IterEnd {
+      if yield_(i) is IterEnd {
         break IterEnd
       }
       if i == end {
@@ -170,7 +170,7 @@ pub fn Float::upto(
   yield_ => {
     let mut i = self
     while i < end || (inclusive && i == end) {
-      if yield_(i) == IterEnd {
+      if yield_(i) is IterEnd {
         break IterEnd
       }
       if i == end {
@@ -205,7 +205,7 @@ pub fn Double::upto(
   yield_ => {
     let mut i = self
     while i < end || (inclusive && i == end) {
-      if yield_(i) == IterEnd {
+      if yield_(i) is IterEnd {
         break IterEnd
       }
       if i == end {
@@ -219,99 +219,8 @@ pub fn Double::upto(
 }
 
 ///|
-/// Searches the array for the first element that satisfies the predicate
-/// function.
-///
-/// Parameters:
-///
-/// * `array` : The array to search in.
-/// * `predicate` : A function that takes an element and returns a boolean
-/// indicating whether the element satisfies the search condition.
-///
-/// Returns the index of the first element that satisfies the predicate, or
-/// `None` if no such element is found.
-///
-/// Example:
-///
-/// ```moonbit
-///   let arr = [1, 2, 3, 4, 5]
-///   inspect(arr.search_by((x) => { x > 3 }), content="Some(3)")
-///   inspect(arr.search_by((x) => { x > 10 }), content="None")
-/// ```
-///
-#deprecated("Use `search_by` instead.")
-#coverage.skip
-pub fn[T] Array::find_index(self : Array[T], f : (T) -> Bool) -> Int? {
-  self.search_by(f)
-}
-
-///|
 /// Search the index of the first element that satisfies the predicate.
 ///
-
-///|
-/// Fold out values from an array according to certain rules in reversed turn.
-///
-/// Example:
-///
-/// ```moonbit
-///   let sum = [1, 2, 3, 4, 5].rev_fold(init=0, (sum, elem) => sum + elem)
-///   assert_eq(sum, 15)
-/// ```
-#deprecated("Use `rev_fold` instead.")
-#coverage.skip
-pub fn[T, U] Array::fold_right(
-  self : Array[T],
-  f : (U, T) -> U raise?,
-  init~ : U,
-) -> U raise? {
-  self.rev_fold(init~, f)
-}
-
-///|
-/// Fold out values from an array according to certain rules with index.
-///
-/// Example:
-///
-/// ```moonbit
-///   let sum = [1, 2, 3, 4, 5].foldi(init=0, (index, sum, _elem) => sum + index)
-///   assert_eq(sum, 10)
-/// ```
-#deprecated("Use `foldi` instead.")
-#coverage.skip
-pub fn[T, U] Array::fold_lefti(
-  self : Array[T],
-  f : (Int, U, T) -> U raise?,
-  init~ : U,
-) -> U raise? {
-  self.foldi(init~, f)
-}
-
-///|
-/// Fold out values from an array according to certain rules in reversed turn with index.
-///
-/// Example:
-///
-/// ```moonbit
-///   let sum = [1, 2, 3, 4, 5].rev_foldi(init=0, (index, sum, _elem) => sum + index)
-///   assert_eq(sum, 10)
-/// ```
-#deprecated("Use `rev_foldi` instead.")
-#coverage.skip
-pub fn[T, U] Array::fold_righti(
-  self : Array[T],
-  f : (Int, U, T) -> U raise?,
-  init~ : U,
-) -> U raise? {
-  self.rev_foldi(init~, f)
-}
-
-///|
-#deprecated("Use `unsafe_pop` instead")
-#coverage.skip
-pub fn[T] Array::pop_exn(self : Array[T]) -> T {
-  self.unsafe_pop()
-}
 
 ///|
 /// Creates a byte sequence from a UTF-16 encoded string. Each character in the
@@ -440,22 +349,6 @@ pub fn String::codepoint_at(self : String, index : Int) -> Char {
       c1.unsafe_to_char()
     }
   }
-}
-
-///|
-#deprecated("Use `char_length` instead.")
-pub fn String::codepoint_length(
-  self : String,
-  start_offset? : Int = 0,
-  end_offset? : Int,
-) -> Int {
-  self.char_length(start_offset~, end_offset?)
-}
-
-///|
-#deprecated("Use `s[i]` instead")
-pub fn String::charcode_at(self : String, index : Int) -> Int {
-  self[index]
 }
 
 ///|

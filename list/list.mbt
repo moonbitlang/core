@@ -21,20 +21,10 @@
 /// let ls : @list.List[Int] = @list.new()
 /// assert_eq(ls, @list.empty())
 /// ```
-pub fn[A] new() -> List[A] {
-  Empty
-}
-
-///|
-/// Creates an empty list.
-///
-/// # Example
-///
-/// ```moonbit
-/// let ls : @list.List[Int] = @list.empty()
-/// assert_eq(ls.length(), 0)
-/// ```
-pub fn[A] empty() -> List[A] {
+#alias(empty)
+#as_free_fn
+#as_free_fn(empty)
+pub fn[A] List::new() -> List[A] {
   Empty
 }
 
@@ -50,10 +40,12 @@ pub fn[A] empty() -> List[A] {
 ///
 /// ```moonbit
 /// let tail = @list.of([2, 3, 4])
-/// let ls = @list.construct(1, tail)
+/// let ls = @list.cons(1, tail)
 /// assert_eq(ls, @list.of([1, 2, 3, 4]))
 /// ```
-pub fn[A] construct(head : A, tail : List[A]) -> List[A] {
+#as_free_fn
+#as_free_fn(construct, deprecated="Use cons instead")
+pub fn[A] List::cons(head : A, tail : List[A]) -> List[A] {
   More(head, tail~)
 }
 
@@ -68,23 +60,8 @@ pub fn[A] construct(head : A, tail : List[A]) -> List[A] {
 /// let ls = @list.of([2, 3, 4]).prepend(1)
 /// assert_eq(ls, @list.of([1, 2, 3, 4]))
 /// ```
+#alias(add)
 pub fn[A] prepend(self : List[A], head : A) -> List[A] {
-  More(head, tail=self)
-}
-
-///|
-/// Add an element to the front of the list.
-/// 
-/// This is an alias for `prepend` - it creates a new list with the given 
-/// element added to the beginning.
-///
-/// # Example
-///
-/// ```moonbit
-/// let ls = @list.of([2, 3, 4]).add(1)
-/// assert_eq(ls, @list.of([1, 2, 3, 4]))
-/// ```
-pub fn[A] add(self : List[A], head : A) -> List[A] {
   More(head, tail=self)
 }
 
@@ -143,7 +120,8 @@ pub impl[A : @json.FromJson] @json.FromJson for List[A] with from_json(
 /// Parse JSON into a list.
 /// 
 /// Converts a JSON array into a list of the specified type.
-pub fn[A : @json.FromJson] from_json(
+#as_free_fn
+pub fn[A : @json.FromJson] List::from_json(
   json : Json,
 ) -> List[A] raise @json.JsonDecodeError {
   @json.from_json(json)
@@ -158,7 +136,8 @@ pub fn[A : @json.FromJson] from_json(
 /// let ls = @list.of([1, 2, 3, 4, 5])
 /// assert_eq(ls, @list.from_array([1, 2, 3, 4, 5]))
 /// ```
-pub fn[A] from_array(arr : Array[A]) -> List[A] {
+#as_free_fn
+pub fn[A] List::from_array(arr : Array[A]) -> List[A] {
   for i = arr.length() - 1, list = Empty; i >= 0; {
     continue i - 1, More(arr[i], tail=list)
   } else {
@@ -613,6 +592,7 @@ pub fn[A, B] foldi(
 /// let r2 = @list.zip(@list.of([1, 2]), @list.of([6, 7, 8, 9, 10]))
 /// assert_eq(r2, @list.from_array([(1, 6), (2, 7)]))
 /// ```
+#as_free_fn
 pub fn[A, B] List::zip(self : List[A], other : List[B]) -> List[(A, B)] {
   let res = loop (self, other, Empty) {
     (Empty, _, acc) => break acc
@@ -766,7 +746,8 @@ pub fn[A] nth(self : List[A], n : Int) -> A? {
 /// ```mbt
 ///   assert_eq(@list.repeat(5, 1), @list.from_array([1, 1, 1, 1, 1]))
 /// ```
-pub fn[A] repeat(n : Int, x : A) -> List[A] {
+#as_free_fn
+pub fn[A] List::repeat(n : Int, x : A) -> List[A] {
   loop (Empty, n) {
     (acc, n) => if n <= 0 { acc } else { continue (More(x, tail=acc), n - 1) }
   }
@@ -1071,7 +1052,11 @@ pub fn[A : Eq] contains(self : List[A], value : A) -> Bool {
 ///   let r = @list.unfold(init=0, i => if i == 3 { None } else { Some((i, i + 1)) })
 ///   assert_eq(r, @list.from_array([0, 1, 2]))
 /// ```
-pub fn[A, S] unfold(f : (S) -> (A, S)? raise?, init~ : S) -> List[A] raise? {
+#as_free_fn
+pub fn[A, S] List::unfold(
+  f : (S) -> (A, S)? raise?,
+  init~ : S,
+) -> List[A] raise? {
   match f(init) {
     None => Empty
     Some((element, new_state)) => {
@@ -1102,7 +1087,11 @@ pub fn[A, S] unfold(f : (S) -> (A, S)? raise?, init~ : S) -> List[A] raise? {
 /// let r = @list.rev_unfold(i => if i == 3 { None } else { Some((i, i + 1)) }, init=0)
 /// assert_eq(r, @list.from_array([2, 1, 0]))
 /// ```
-pub fn[A, S] rev_unfold(f : (S) -> (A, S)? raise?, init~ : S) -> List[A] raise? {
+#as_free_fn
+pub fn[A, S] List::rev_unfold(
+  f : (S) -> (A, S)? raise?,
+  init~ : S,
+) -> List[A] raise? {
   loop (f(init), Empty) {
     (None, acc) => acc
     (Some((x, s)), acc) => continue (f(s), More(x, tail=acc))
@@ -1509,7 +1498,7 @@ pub fn[A] iter(self : List[A]) -> Iter[A] {
   Iter::new(yield_ => loop self {
     Empty => IterContinue
     More(head, tail~) => {
-      if yield_(head) == IterEnd {
+      if yield_(head) is IterEnd {
         break IterEnd
       }
       continue tail
@@ -1534,7 +1523,7 @@ pub fn[A] iter2(self : List[A]) -> Iter2[Int, A] {
   Iter2::new(yield_ => loop (self, 0) {
     (Empty, _) => IterEnd
     (More(head, tail~), i) => {
-      if yield_(i, head) == IterEnd {
+      if yield_(i, head) is IterEnd {
         break IterEnd
       }
       continue (tail, i + 1)
@@ -1556,7 +1545,8 @@ pub fn[A] iter2(self : List[A]) -> Iter2[Int, A] {
 /// let ls = @list.from_iter(iter)
 /// assert_eq(ls, @list.of([1, 2, 3, 4, 5]))
 /// ```
-pub fn[A] from_iter(iter : Iter[A]) -> List[A] {
+#as_free_fn
+pub fn[A] List::from_iter(iter : Iter[A]) -> List[A] {
   let mut res = Empty
   let mut ptr = Empty
   for x in iter {
@@ -1590,7 +1580,8 @@ pub fn[A] from_iter(iter : Iter[A]) -> List[A] {
 ///   let ls = @list.from_iter_rev(iter)
 ///   assert_eq(ls, @list.of([5, 4, 3, 2, 1]))
 /// ```
-pub fn[A] from_iter_rev(iter : Iter[A]) -> List[A] {
+#as_free_fn
+pub fn[A] List::from_iter_rev(iter : Iter[A]) -> List[A] {
   iter.fold(init=Empty, (acc, e) => More(e, tail=acc))
 }
 
@@ -1605,7 +1596,8 @@ pub fn[A] from_iter_rev(iter : Iter[A]) -> List[A] {
 /// let ls = @list.of([1, 2, 3, 4, 5])
 /// assert_eq(ls.to_array(), [1, 2, 3, 4, 5])
 /// ```
-pub fn[A] of(arr : FixedArray[A]) -> List[A] {
+#as_free_fn
+pub fn[A] List::of(arr : FixedArray[A]) -> List[A] {
   for i = arr.length() - 1, list = Empty; i >= 0; {
     continue i - 1, More(arr[i], tail=list)
   } else {
@@ -1636,7 +1628,8 @@ pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for List[X] with arbit
 ///   assert_eq(ls, @list.of([42]))
 ///   assert_eq(ls.length(), 1)
 /// ```
-pub fn[A] singleton(x : A) -> List[A] {
+#as_free_fn
+pub fn[A] List::singleton(x : A) -> List[A] {
   More(x, tail=Empty)
 }
 
@@ -1669,9 +1662,3 @@ fn[A] reverse_inplace(self : List[A]) -> List[A] {
       }
   }
 }
-
-///|
-/// Function alias for zip operation.
-/// 
-/// Provides an alternative way to access the zip functionality.
-pub fnalias List::zip

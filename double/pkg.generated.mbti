@@ -19,99 +19,36 @@ let not_a_number : Double
 // Errors
 
 // Types and methods
+#as_free_fn
 fn Double::abs(Double) -> Double
-fnalias Double::abs
-#deprecated
-fn Double::acos(Double) -> Double
-fnalias Double::acos
-#deprecated
-fn Double::acosh(Double) -> Double
-fnalias Double::acosh
-#deprecated
-fn Double::asin(Double) -> Double
-fnalias Double::asin
-#deprecated
-fn Double::asinh(Double) -> Double
-fnalias Double::asinh
-#deprecated
-fn Double::atan(Double) -> Double
-fnalias Double::atan
-#deprecated
-fn Double::atan2(Double, Double) -> Double
-fnalias Double::atan2
-#deprecated
-fn Double::atanh(Double) -> Double
-fnalias Double::atanh
-#deprecated
-fn Double::cbrt(Double) -> Double
-fnalias Double::cbrt
+#as_free_fn
 fn Double::ceil(Double) -> Double
-fnalias Double::ceil
-#deprecated
-fn Double::cos(Double) -> Double
-fnalias Double::cos
-#deprecated
-fn Double::cosh(Double) -> Double
-fnalias Double::cosh
-#deprecated
-fn Double::exp(Double) -> Double
-fnalias Double::exp
-#deprecated
-fn Double::expm1(Double) -> Double
-fnalias Double::expm1
+#as_free_fn
 fn Double::floor(Double) -> Double
-fnalias Double::floor
 fn Double::from_int(Int) -> Double
 #deprecated
-fn Double::hypot(Double, Double) -> Double
-fnalias Double::hypot
-#deprecated
 fn Double::inf(Int) -> Double
+#as_free_fn
 fn Double::is_close(Double, Double, relative_tolerance? : Double, absolute_tolerance? : Double) -> Bool
-fnalias Double::is_close
 fn Double::is_inf(Double) -> Bool
 fn Double::is_nan(Double) -> Bool
 fn Double::is_neg_inf(Double) -> Bool
 fn Double::is_pos_inf(Double) -> Bool
 #deprecated
-fn Double::ln(Double) -> Double
-fnalias Double::ln
-#deprecated
-fn Double::ln_1p(Double) -> Double
-fnalias Double::ln_1p
-#deprecated
-fn Double::log10(Double) -> Double
-fnalias Double::log10
-#deprecated
-fn Double::log2(Double) -> Double
-fnalias Double::log2
-#deprecated
 fn Double::min_normal() -> Double
 #deprecated
 fn Double::nan() -> Double
+#as_free_fn
 fn Double::pow(Double, Double) -> Double
-fnalias Double::pow
+#as_free_fn
 fn Double::round(Double) -> Double
-fnalias Double::round
 fn Double::signum(Double) -> Double
-#deprecated
-fn Double::sin(Double) -> Double
-fnalias Double::sin
-#deprecated
-fn Double::sinh(Double) -> Double
-fnalias Double::sinh
-#deprecated
-fn Double::tan(Double) -> Double
-fnalias Double::tan
-#deprecated
-fn Double::tanh(Double) -> Double
-fnalias Double::tanh
 fn Double::to_be_bytes(Double) -> Bytes
 fn Double::to_le_bytes(Double) -> Bytes
 fn Double::to_string(Double) -> String
 fn Double::to_uint(Double) -> UInt
+#as_free_fn
 fn Double::trunc(Double) -> Double
-fnalias Double::trunc
 impl Hash for Double
 impl Mod for Double
 impl Show for Double

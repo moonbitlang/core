@@ -29,22 +29,6 @@ test "op_get" {
 }
 
 ///|
-test "op_set" {
-  let v = [1, 2, 3][:]
-  inspect(v[1], content="2")
-  v[1] = 4
-  inspect(v[1], content="4")
-}
-
-///|
-test "swap" {
-  let v = [1, 2, 3][:]
-  inspect(v[1], content="2")
-  v.swap(1, 2)
-  inspect(v[1], content="3")
-}
-
-///|
 test "negative index1" {
   let arr = [1, 2, 3]
   let view = arr[-1:]
@@ -160,79 +144,4 @@ test "panic negative index8" {
   let arr = [1, 2, 3][:]
   let _ = arr[-1:-3]
 
-}
-
-///|
-test "arrayview_blit_to basic" {
-  let src = [1, 2, 3, 4, 5][:]
-  let dst = [0, 0, 0, 0, 0][:]
-  src[:3].blit_to(dst[:])
-  inspect(dst, content="[1, 2, 3, 0, 0]")
-}
-
-///|
-test "arrayview_blit_to with offsets" {
-  let src = [10, 20, 30, 40, 50][:]
-  let dst = [0, 0, 0, 0, 0][:]
-  src[2:4].blit_to(dst[1:])
-  inspect(dst, content="[0, 30, 40, 0, 0]")
-}
-
-///|
-test "arrayview_blit_to full copy" {
-  let src = [7, 8, 9][:]
-  let dst = [0, 0, 0][:]
-  src[:].blit_to(dst[:])
-  inspect(dst, content="[7, 8, 9]")
-}
-
-///|
-test "arrayview_blit_to partial" {
-  let arr = [1, 2, 3, 4, 5][:]
-  let dst = [9, 9, 9, 9, 9][:]
-  arr[1:4][:2].blit_to(dst[2:])
-  inspect(dst, content="[9, 9, 2, 3, 9]")
-}
-
-///|
-test "arrayview_blit_to zero length" {
-  let src : ArrayView[Int] = [1, 2, 3][:]
-  let dst : ArrayView[Int] = [4, 5, 6][:]
-  src[:0].blit_to(dst[:])
-  inspect(dst, content="[4, 5, 6]")
-}
-
-///|
-test "panic arrayview_blit_to - length too long" {
-  let src = [1, 2, 3][:]
-  let dst = [0, 0][:]
-  // This should panic because we're trying to copy 3 elements to a destination with only 2 elements
-  src[:].blit_to(dst[:])
-}
-
-///|
-test "arrayview_blit_to self overlapping" {
-  let arr = [1, 2, 3, 4, 5][:]
-  // Copy from position 2 onwards to the beginning, with length 3
-  // This should copy [3, 4, 5] to positions [0, 1, 2]
-  arr[2:].blit_to(arr[:])
-  inspect(arr, content="[3, 4, 5, 4, 5]")
-}
-
-///|
-test "arrayview_blit_to self overlapping reverse" {
-  let arr = [1, 2, 3, 4, 5][:]
-  // Copy from the beginning to position 2 onwards, with length 3
-  // This should copy [1, 2, 3] to positions [2, 3, 4]
-  arr[:3].blit_to(arr[2:])
-  inspect(arr, content="[1, 2, 1, 2, 3]")
-}
-
-///|
-test "arrayview_blit_to self partial overlap" {
-  let arr = [1, 2, 3, 4, 5, 6][:]
-  // Copy from position 1 to position 3, with overlap in the middle
-  // arr[1:4] = [2, 3, 4] should be copied to arr[3:6] = [4, 5, 6]
-  arr[1:4].blit_to(arr[3:])
-  inspect(arr, content="[1, 2, 3, 2, 3, 4]")
 }

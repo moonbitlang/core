@@ -37,7 +37,8 @@ fn[T] set_null(buffer : UninitializedArray[T], index : Int) = "%fixedarray.set_n
 ///   inspect(dq.length(), content="0")
 ///   inspect(dq.capacity(), content="10")
 /// ```
-pub fn[A] new(capacity? : Int = 0) -> Deque[A] {
+#as_free_fn
+pub fn[A] Deque::new(capacity? : Int = 0) -> Deque[A] {
   Deque::{ buf: UninitializedArray::make(capacity), len: 0, head: 0, tail: 0 }
 }
 
@@ -79,7 +80,8 @@ pub impl[A : Show] Show for Deque[A] with output(self, logger) {
 ///   let dq = @deque.from_array(arr)
 ///   inspect(dq, content="@deque.of([1, 2, 3, 4, 5])")
 /// ```
-pub fn[A] from_array(arr : Array[A]) -> Deque[A] {
+#as_free_fn
+pub fn[A] Deque::from_array(arr : Array[A]) -> Deque[A] {
   let deq = Deque::{
     buf: UninitializedArray::make(arr.length()),
     len: arr.length(),
@@ -189,7 +191,8 @@ pub fn[A] append(self : Deque[A], other : Deque[A]) -> Unit {
 ///   let dq = @deque.of([1, 2, 3])
 ///   inspect(dq, content="@deque.of([1, 2, 3])")
 /// ```
-pub fn[A] of(arr : FixedArray[A]) -> Deque[A] {
+#as_free_fn
+pub fn[A] Deque::of(arr : FixedArray[A]) -> Deque[A] {
   let deq = Deque::{
     buf: UninitializedArray::make(arr.length()),
     len: arr.length(),
@@ -1235,7 +1238,8 @@ pub fn[A] rev_iter2(self : Deque[A]) -> Iter2[Int, A] {
 ///   let dq = @deque.from_iter(arr.iter())
 ///   inspect(dq, content="@deque.of([1, 2, 3, 4, 5])")
 /// ```
-pub fn[A] from_iter(iter : Iter[A]) -> Deque[A] {
+#as_free_fn
+pub fn[A] Deque::from_iter(iter : Iter[A]) -> Deque[A] {
   let dq = new()
   iter.each(e => dq.push_back(e))
   dq

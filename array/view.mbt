@@ -27,19 +27,7 @@
 pub typealias ArrayView as View
 
 ///|
-/// Reverses the elements in the array view in place.
-///
-/// Parameters:
-///
-/// * `self` : The array view whose elements are to be reversed.
-///
-/// Example:
-///
-/// ```moonbit
-///   let arr = [1, 2, 3, 4, 5]
-///   arr[:].rev_inplace()
-///   inspect(arr, content="[5, 4, 3, 2, 1]")
-/// ```
+#deprecated("ArrayView will be immutable, use array if you need mutation")
 pub fn[T] View::rev_inplace(self : View[T]) -> Unit {
   let mid_len = self.length() / 2
   for i in 0..<mid_len {
@@ -310,12 +298,7 @@ pub fn[T, U] View::map(self : View[T], f : (T) -> U raise?) -> Array[U] raise? {
 ///|
 /// Maps a function over the elements of the array view in place.
 ///
-/// # Example
-/// ```mbt
-///   let v = [3, 4, 5]
-///   v[1:].map_inplace((x) => {x + 1})
-///   assert_eq(v, [3, 5, 6])
-/// ```
+#deprecated("ArrayView will be immutable, use Array if you need mutation")
 pub fn[T] View::map_inplace(self : View[T], f : (T) -> T raise?) -> Unit raise? {
   for i, v in self {
     self[i] = f(v)
@@ -342,14 +325,7 @@ pub fn[T, U] View::mapi(
 }
 
 ///|
-/// Maps a function over the elements of the array view with index in place.
-///
-/// # Example
-/// ```mbt
-///   let v = [3, 4, 5]
-///   v[1:].mapi_inplace((i, x) => {x + i})
-///   assert_eq(v, [3, 4, 6])
-/// ```
+#deprecated("ArrayView will be immutable, use array if you need mutation")
 pub fn[T] View::mapi_inplace(
   self : View[T],
   f : (Int, T) -> T raise?,

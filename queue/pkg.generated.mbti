@@ -6,13 +6,6 @@ import(
 )
 
 // Values
-fn[A] from_array(Array[A]) -> Queue[A]
-
-fn[A] from_iter(Iter[A]) -> Queue[A]
-
-fn[A] new() -> Queue[A]
-
-fn[A] of(FixedArray[A]) -> Queue[A]
 
 // Errors
 
@@ -23,9 +16,17 @@ fn[A] Queue::copy(Self[A]) -> Self[A]
 fn[A] Queue::each(Self[A], (A) -> Unit) -> Unit
 fn[A] Queue::eachi(Self[A], (Int, A) -> Unit) -> Unit
 fn[A, B] Queue::fold(Self[A], init~ : B, (B, A) -> B) -> B
+#as_free_fn
+fn[A] Queue::from_array(Array[A]) -> Self[A]
+#as_free_fn
+fn[A] Queue::from_iter(Iter[A]) -> Self[A]
 fn[A] Queue::is_empty(Self[A]) -> Bool
 fn[A] Queue::iter(Self[A]) -> Iter[A]
 fn[A] Queue::length(Self[A]) -> Int
+#as_free_fn
+fn[A] Queue::new() -> Self[A]
+#as_free_fn
+fn[A] Queue::of(FixedArray[A]) -> Self[A]
 fn[A] Queue::peek(Self[A]) -> A?
 #deprecated
 fn[A] Queue::peek_exn(Self[A]) -> A

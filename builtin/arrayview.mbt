@@ -131,15 +131,8 @@ pub fn[T] ArrayView::unsafe_get(self : ArrayView[T], index : Int) -> T {
 /// Throws a panic if `index` is negative or greater than or equal to the length
 /// of the array view.
 ///
-/// Example:
 ///
-/// ```moonbit
-///   let arr = [1, 2, 3, 4, 5]
-///   let view = arr[1:4] // view contains [2, 3, 4]
-///   view.op_set(1, 42)
-///   inspect(arr, content="[1, 2, 42, 4, 5]")
-/// ```
-///
+#deprecated("ArrayView will be immutable, use array if you need mutation")
 pub fn[T] ArrayView::op_set(
   self : ArrayView[T],
   index : Int,
@@ -154,26 +147,7 @@ pub fn[T] ArrayView::op_set(
 }
 
 ///|
-/// Swaps two elements in the array view at the specified indices.
-///
-/// Parameters:
-///
-/// * `self` : The array view in which to swap elements.
-/// * `i` : The index of the first element to be swapped.
-/// * `j` : The index of the second element to be swapped.
-///
-/// Throws a panic if either index is negative or greater than or equal to the
-/// length of the array view.
-///
-/// Example:
-///
-/// ```moonbit
-///   let arr = [1, 2, 3, 4, 5]
-///   let view = arr[1:4] // view = [2, 3, 4]
-///   view.swap(0, 2) // view = [4, 3, 2]
-///   inspect(view, content="[4, 3, 2]")
-/// ```
-///
+#deprecated("ArrayView will be immutable, use array if you need mutation")
 pub fn[T] ArrayView::swap(self : ArrayView[T], i : Int, j : Int) -> Unit {
   guard i >= 0 && i < self.len() && j >= 0 && j < self.len() else {
     abort(
@@ -274,26 +248,7 @@ pub fn[T] ArrayView::op_as_view(
 }
 
 ///|
-/// Copies elements from this ArrayView to a destination ArrayView efficiently.
-/// 
-/// This method performs a direct memory copy from the source ArrayView to the 
-/// destination ArrayView, making it much more efficient than element-by-element copying.
-/// 
-/// Parameters:
-/// * `self` : The source ArrayView to copy from.
-/// * `dst` : The destination ArrayView to copy to.
-/// 
-/// The actual number of elements copied is determined by the length of self
-/// 
-/// # Example
-/// ```moonbit
-///   let src = [1, 2, 3, 4, 5][:]
-///   let dst = [0, 0, 0, 0, 0][:]
-///   src[:3].blit_to(dst[:])
-///   inspect(dst, content="[1, 2, 3, 0, 0]")
-/// ```
-/// 
-/// Panics if `dst` is not large enough to hold the copied elements.
+#deprecated("ArrayView will be immutable, use array if you need mutation")
 pub fn[T] ArrayView::blit_to(self : ArrayView[T], dst : ArrayView[T]) -> Unit {
   let src_len = self.length()
   let dst_len = dst.length()

@@ -20,7 +20,8 @@
 ///   let queue = @priority_queue.new()
 ///   assert_eq(queue.push(1).length(), 1)
 /// ```
-pub fn[A] new() -> PriorityQueue[A] {
+#as_free_fn
+pub fn[A] PriorityQueue::new() -> PriorityQueue[A] {
   { node: Empty, size: 0 }
 }
 
@@ -32,7 +33,10 @@ pub fn[A] new() -> PriorityQueue[A] {
 ///   let queue = @priority_queue.of([1, 2, 3, 4, 5])
 ///   inspect(queue.length(), content="5")
 /// ```
-pub fn[A : Compare] from_array(array : Array[A]) -> PriorityQueue[A] {
+#as_free_fn
+pub fn[A : Compare] PriorityQueue::from_array(
+  array : Array[A],
+) -> PriorityQueue[A] {
   let mut pq = new()
   for i in 0..<array.length() {
     pq = pq.push(array[i])
@@ -73,6 +77,7 @@ pub fn[A : Compare] iter(self : PriorityQueue[A]) -> Iter[A] {
 }
 
 ///|
+#as_free_fn
 pub fn[A : Compare] PriorityQueue::from_iter(
   iter : Iter[A],
 ) -> PriorityQueue[A] {
@@ -269,7 +274,8 @@ pub fn[A] length(self : PriorityQueue[A]) -> Int {
 }
 
 ///|
-pub fn[A : Compare] of(arr : FixedArray[A]) -> PriorityQueue[A] {
+#as_free_fn
+pub fn[A : Compare] PriorityQueue::of(arr : FixedArray[A]) -> PriorityQueue[A] {
   let mut pq = new()
   for i in 0..<arr.length() {
     pq = pq.push(arr[i])

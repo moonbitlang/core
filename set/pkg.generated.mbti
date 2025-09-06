@@ -16,10 +16,10 @@ fn[K] Set::copy(Self[K]) -> Self[K]
 fn[K : Hash + Eq] Set::difference(Self[K], Self[K]) -> Self[K]
 fn[K] Set::each(Self[K], (K) -> Unit raise?) -> Unit raise?
 fn[K] Set::eachi(Self[K], (Int, K) -> Unit raise?) -> Unit raise?
+#as_free_fn
 fn[K : Hash + Eq] Set::from_array(Array[K]) -> Self[K]
-fnalias Set::from_array
+#as_free_fn
 fn[K : Hash + Eq] Set::from_iter(Iter[K]) -> Self[K]
-fnalias Set::from_iter
 #deprecated
 fn[K : Hash + Eq] Set::insert(Self[K], K) -> Unit
 fn[K : Hash + Eq] Set::intersection(Self[K], Self[K]) -> Self[K]
@@ -28,10 +28,10 @@ fn[K] Set::is_empty(Self[K]) -> Bool
 fn[K : Hash + Eq] Set::is_subset(Self[K], Self[K]) -> Bool
 fn[K : Hash + Eq] Set::is_superset(Self[K], Self[K]) -> Bool
 fn[K] Set::iter(Self[K]) -> Iter[K]
+#as_free_fn
 fn[K] Set::new(capacity? : Int) -> Self[K]
-fnalias Set::new
+#as_free_fn
 fn[K : Hash + Eq] Set::of(FixedArray[K]) -> Self[K]
-fnalias Set::of
 fn[K : Hash + Eq] Set::remove(Self[K], K) -> Unit
 fn[K : Hash + Eq] Set::remove_and_check(Self[K], K) -> Bool
 fn[K] Set::size(Self[K]) -> Int

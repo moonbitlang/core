@@ -594,8 +594,121 @@ pub fn write_bytesview(self : Buffer, value : @bytes.View) -> Unit {
 }
 
 ///|
-/// Writes a portion of a string into the buffer in UTF-16LE encoding.
-///
+/// Write a char into buffer as UTF8.
+pub fn Buffer::write_char_utf8(buf : Self, value : Char) -> Unit {
+  let code = value.to_uint()
+  match code {
+    _..<0x80 => {
+      buf.grow_if_necessary(buf.len + 1)
+      buf.data[buf.len] = ((code & 0x7F) | 0x00).to_byte()
+      buf.len += 1
+    }
+    _..<0x0800 => {
+      buf.grow_if_necessary(buf.len + 2)
+      buf.data[buf.len] = (((code >> 6) & 0x1F) | 0xC0).to_byte()
+      buf.data[buf.len + 1] = ((code & 0x3F) | 0x80).to_byte()
+      buf.len += 2
+    }
+    _..<0x010000 => {
+      buf.grow_if_necessary(buf.len + 3)
+      buf.data[buf.len] = (((code >> 12) & 0x0F) | 0xE0).to_byte()
+      buf.data[buf.len + 1] = (((code >> 6) & 0x3F) | 0x80).to_byte()
+      buf.data[buf.len + 2] = ((code & 0x3F) | 0x80).to_byte()
+      buf.len += 3
+    }
+    _..<0x110000 => {
+      buf.grow_if_necessary(buf.len + 4)
+      buf.data[buf.len] = (((code >> 18) & 0x07) | 0xF0).to_byte()
+      buf.data[buf.len + 1] = (((code >> 12) & 0x3F) | 0x80).to_byte()
+      buf.data[buf.len + 2] = (((code >> 6) & 0x3F) | 0x80).to_byte()
+      buf.data[buf.len + 3] = ((code & 0x3F) | 0x80).to_byte()
+      buf.len += 4
+    }
+    _ => abort("Char out of range")
+  }
+}
+
+///|
+/// Write a char into buffer as UTF16LE.
+pub fn Buffer::write_char_utf16le(buf : Self, value : Char) -> Unit {
+  let code = value.to_uint()
+  if code < 0x10000 {
+    buf.grow_if_necessary(buf.len + 2)
+    buf.data[buf.len + 0] = (code & 0xFF).to_byte()
+    buf.data[buf.len + 1] = (code >> 8).to_byte()
+    buf.len += 2
+  } else if code < 0x110000 {
+    let hi = code - 0x10000
+    let lo = (hi >> 10) | 0xD800
+    let hi = (hi & 0x3FF) | 0xDC00
+    buf.grow_if_necessary(buf.len + 4)
+    buf.data[buf.len + 0] = (lo & 0xFF).to_byte()
+    buf.data[buf.len + 1] = (lo >> 8).to_byte()
+    buf.data[buf.len + 2] = (hi & 0xFF).to_byte()
+    buf.data[buf.len + 3] = (hi >> 8).to_byte()
+    buf.len += 4
+  } else {
+    abort("Char out of range")
+  }
+}
+
+///|
+/// Write a char into buffer as UTF16BE.
+pub fn Buffer::write_char_utf16be(buf : Self, value : Char) -> Unit {
+  let code = value.to_uint()
+  if code < 0x10000 {
+    buf.grow_if_necessary(buf.len + 2)
+    buf.data[buf.len + 0] = (code >> 8).to_byte()
+    buf.data[buf.len + 1] = (code & 0xFF).to_byte()
+    buf.len += 2
+  } else if code < 0x110000 {
+    buf.grow_if_necessary(buf.len + 4)
+    let hi = code - 0x10000
+    let lo = (hi >> 10) | 0xD800
+    let hi = (hi & 0x3FF) | 0xDC00
+    buf.data[buf.len + 0] = (lo >> 8).to_byte()
+    buf.data[buf.len + 1] = (lo & 0xFF).to_byte()
+    buf.data[buf.len + 2] = (hi >> 8).to_byte()
+    buf.data[buf.len + 3] = (hi & 0xFF).to_byte()
+    buf.len += 4
+  } else {
+    abort("Char out of range")
+  }
+}
+
+///|
+pub fn Buffer::write_string_utf8(buf : Self, string : @string.View) -> Unit {
+  for ch in string {
+    buf.write_char_utf8(ch)
+  }
+}
+
+///|
+#alias(write_stringview, deprecated="use write_string_utf16le instead")
+pub fn Buffer::write_string_utf16le(buf : Self, string : @string.View) -> Unit {
+  let len = string.length()
+  buf.grow_if_necessary(buf.len + len * 2)
+  for i = 0, j = buf.len; i < len; i = i + 1, j = j + 2 {
+    let c = string.unsafe_charcode_at(i).reinterpret_as_uint()
+    buf.data[j] = (c & 0xff).to_byte()
+    buf.data[j + 1] = (c >> 8).to_byte()
+  }
+  buf.len += len * 2
+}
+
+///|
+pub fn Buffer::write_string_utf16be(buf : Self, string : @string.View) -> Unit {
+  let len = string.length()
+  buf.grow_if_necessary(buf.len + len * 2)
+  for i = 0, j = buf.len; i < len; i = i + 1, j = j + 2 {
+    let c = string.unsafe_charcode_at(i).reinterpret_as_uint()
+    buf.data[j + 1] = (c & 0xff).to_byte()
+    buf.data[j] = (c >> 8).to_byte()
+  }
+  buf.len += len * 2
+}
+
+///|
 /// Parameters:
 ///
 /// * `self` : The buffer to write to.
@@ -626,18 +739,6 @@ pub impl Logger for Buffer with write_substring(
   guard start >= 0 && len >= 0 && start + len <= value.length()
   self.grow_if_necessary(self.len + len * 2)
   self.data.blit_from_string(self.len, value, start, len)
-  self.len += len * 2
-}
-
-///|
-pub fn write_stringview(self : Buffer, value : @string.View) -> Unit {
-  let len = value.length()
-  self.grow_if_necessary(self.len + len * 2)
-  for i = 0, j = self.len; i < len; i = i + 1, j = j + 2 {
-    let c = value.unsafe_charcode_at(i).reinterpret_as_uint()
-    self.data[j] = (c & 0xff).to_byte()
-    self.data[j + 1] = (c >> 8).to_byte()
-  }
   self.len += len * 2
 }
 

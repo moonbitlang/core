@@ -67,72 +67,6 @@ test "map_err" {
 }
 
 ///|
-/// Create an `Err` of type `E`.
-///
-/// # Example
-///
-/// ```mbt
-///   let x: Result[Int, String] = Err("error")
-///   assert_eq(x, Err("error"))
-/// ```
-pub fn[T, E] err(value : E) -> Result[T, E] {
-  Err(value)
-}
-
-///|
-test "err" {
-  let x : Result[Int, String] = err("error")
-  assert_eq(x, Err("error"))
-}
-
-///|
-/// Create an `Ok` of type `T`.
-///
-/// # Example
-///
-/// ```mbt
-///   let x: Result[String, Unit] = Ok("yes")
-///   assert_true(x.is_ok())
-/// ```
-pub fn[T, E] ok(value : T) -> Result[T, E] {
-  Ok(value)
-}
-
-///|
-test "ok" {
-  let x : Result[String, Unit] = ok("yes")
-  assert_eq(x, Ok("yes"))
-}
-
-///|
-/// Check if a `Result` is an `Ok`.
-pub fn[T, E] is_ok(self : Result[T, E]) -> Bool {
-  self is Ok(_)
-}
-
-///|
-test "is_ok" {
-  let x : Result[Int, String] = Ok(6)
-  let y : Result[Int, String] = Err("error")
-  assert_eq(x.is_ok(), true)
-  assert_eq(y.is_ok(), false)
-}
-
-///|
-/// Check if a `Result` is an `Err`.
-pub fn[T, E] is_err(self : Result[T, E]) -> Bool {
-  self is Err(_)
-}
-
-///|
-test "is_err" {
-  let x : Result[Int, String] = Ok(6)
-  let y : Result[Int, String] = Err("error")
-  assert_eq(x.is_err(), false)
-  assert_eq(y.is_err(), true)
-}
-
-///|
 /// Return the inner `Ok` value, if it exists, otherwise return the provided default.
 ///
 /// # Example
@@ -244,31 +178,12 @@ test "bind" {
 }
 
 ///|
-/// Folds a `Result` into a single value.
-///
-/// If the `Result` is an `Ok`, the `ok` function is applied to the value. If the `Result` is an `Err`, the `err` function is applied to the value.
-/// # Example
-///
-/// ```mbt
-///   let x = Ok(6)
-///   let y = x.fold((v : Int) => { v * 7 }, (_e : String) => { 0 })
-///   assert_eq(y, 42)
-/// ```
+#deprecated("use `match result { Ok(value) => ok(value); Err(error) => err(error) }` instead")
 pub fn[T, E, V] fold(self : Result[T, E], ok : (T) -> V, err : (E) -> V) -> V {
   match self {
     Ok(value) => ok(value)
     Err(error) => err(error)
   }
-}
-
-///|
-test "fold" {
-  let x : Result[Int, String] = Ok(6)
-  let y = x.fold((v : Int) => v * 7, (_e : String) => 0)
-  let z : Result[Int, String] = Err("error")
-  let w = z.fold((v : Int) => v * 7, (_e : String) => 0)
-  assert_eq(y, 42)
-  assert_eq(w, 0)
 }
 
 ///|

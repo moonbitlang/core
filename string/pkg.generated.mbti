@@ -2,14 +2,7 @@
 package "moonbitlang/core/string"
 
 // Values
-#deprecated
-fn concat(Array[String], separator? : String) -> String
-
 fn default() -> String
-
-fn from_array(Array[Char]) -> String
-
-fn from_iter(Iter[Char]) -> String
 
 // Errors
 pub suberror CreatingViewError {
@@ -20,15 +13,9 @@ impl Show for CreatingViewError
 
 // Types and methods
 type View
-#deprecated
-fn View::char_at(Self, Int) -> Char
 fn View::char_length(Self) -> Int
 fn View::char_length_eq(Self, Int) -> Bool
 fn View::char_length_ge(Self, Int) -> Bool
-#deprecated
-fn View::charcode_at(Self, Int) -> Int
-#deprecated
-fn View::charcodes(Self, start? : Int, end? : Int) -> Self
 fn View::contains(Self, Self) -> Bool
 fn View::contains_char(Self, Char) -> Bool
 fn View::data(Self) -> String
@@ -39,7 +26,9 @@ fn View::from_array(Array[Char]) -> Self
 fn View::from_iter(Iter[Char]) -> Self
 fn View::get(Self, Int) -> Int?
 fn View::get_char(Self, Int) -> Char?
+#alias(starts_with, deprecated)
 fn View::has_prefix(Self, Self) -> Bool
+#alias(ends_with, deprecated)
 fn View::has_suffix(Self, Self) -> Bool
 fn View::is_blank(Self) -> Bool
 fn View::is_empty(Self) -> Bool
@@ -48,7 +37,6 @@ fn View::iter2(Self) -> Iter2[Int, Char]
 fn View::length(Self) -> Int
 fn View::make(Int, Char) -> Self
 fn View::offset_of_nth_char(Self, Int) -> Int?
-fn View::op_as_view(Self, start? : Int, end? : Int) -> Self raise CreatingViewError
 fn View::op_get(Self, Int) -> Int
 fn View::pad_end(Self, Int, Char) -> String
 fn View::pad_start(Self, Int, Char) -> String
@@ -63,6 +51,8 @@ fn View::split(Self, Self) -> Iter[Self]
 fn View::start_offset(Self) -> Int
 fn View::strip_prefix(Self, Self) -> Self?
 fn View::strip_suffix(Self, Self) -> Self?
+#alias(op_as_view)
+fn View::sub(Self, start? : Int, end? : Int) -> Self raise CreatingViewError
 fn View::to_array(Self) -> Array[Char]
 fn View::to_bytes(Self) -> Bytes
 fn View::to_lower(Self) -> Self
@@ -82,35 +72,28 @@ impl Show for View
 impl ToJson for View
 impl ToStringView for View
 
-#deprecated
-fn String::char_at(String, Int) -> Char
 fn String::char_length_eq(String, Int, start_offset? : Int, end_offset? : Int) -> Bool
 fn String::char_length_ge(String, Int, start_offset? : Int, end_offset? : Int) -> Bool
-#deprecated
-fn String::charcodes(String, start? : Int, end? : Int) -> View
-#deprecated
-fn String::concat(Array[String], separator? : String) -> String
 fn String::contains(String, View) -> Bool
 fn String::contains_char(String, Char) -> Bool
 fn String::find(String, View) -> Int?
 fn String::find_by(String, (Char) -> Bool) -> Int?
 fn[A] String::fold(String, init~ : A, (A, Char) -> A) -> A
+#as_free_fn
 fn String::from_array(Array[Char]) -> String
+#as_free_fn
 fn String::from_iter(Iter[Char]) -> String
 fn String::get(String, Int) -> Int?
 fn String::get_char(String, Int) -> Char?
+#alias(starts_with, deprecated)
 fn String::has_prefix(String, View) -> Bool
+#alias(ends_with, deprecated)
 fn String::has_suffix(String, View) -> Bool
-#deprecated
-fn String::index_of(String, String, from? : Int) -> Int
 fn String::is_blank(String) -> Bool
 fn String::is_empty(String) -> Bool
 fn String::iter(String) -> Iter[Char]
 fn String::iter2(String) -> Iter2[Int, Char]
-#deprecated
-fn String::last_index_of(String, String, from? : Int) -> Int
 fn String::offset_of_nth_char(String, Int, start_offset? : Int, end_offset? : Int) -> Int?
-fn String::op_as_view(String, start? : Int, end? : Int) -> View raise CreatingViewError
 fn String::pad_end(String, Int, Char) -> String
 fn String::pad_start(String, Int, Char) -> String
 fn String::repeat(String, Int) -> String
@@ -121,10 +104,10 @@ fn String::rev_find(String, View) -> Int?
 fn[A] String::rev_fold(String, init~ : A, (A, Char) -> A) -> A
 fn String::rev_iter(String) -> Iter[Char]
 fn String::split(String, View) -> Iter[View]
-#alias(starts_with, deprecated)
 fn String::strip_prefix(String, View) -> View?
-#alias(ends_with, deprecated)
 fn String::strip_suffix(String, View) -> View?
+#alias(op_as_view)
+fn String::sub(String, start? : Int, end? : Int) -> View raise CreatingViewError
 fn String::to_array(String) -> Array[Char]
 fn String::to_bytes(String) -> Bytes
 fn String::to_lower(String) -> String

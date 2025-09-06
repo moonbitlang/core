@@ -14,8 +14,8 @@ fn[T] new(T) -> Ref[T]
 fn[T, R] Ref::map(Self[T], (T) -> R raise?) -> Self[R] raise?
 fn[T] Ref::new(T) -> Self[T]
 fn[T, R] Ref::protect(Self[T], T, () -> R raise?) -> R raise?
+#as_free_fn
 fn[T] Ref::swap(Self[T], Self[T]) -> Unit
-fnalias Ref::swap
 fn[T] Ref::update(Self[T], (T) -> T raise?) -> Unit raise?
 impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Ref[X]
 

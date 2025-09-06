@@ -52,6 +52,7 @@ struct Set[K] {
 /// Create a hash set.
 /// The capacity of the set will be the smallest power of 2 that is
 /// greater than or equal to the provided [capacity].
+#as_free_fn
 pub fn[K] Set::new(capacity? : Int = 8) -> Set[K] {
   let capacity = capacity.next_power_of_two()
   {
@@ -67,6 +68,7 @@ pub fn[K] Set::new(capacity? : Int = 8) -> Set[K] {
 
 ///|
 /// Create a hash set from array.
+#as_free_fn
 pub fn[K : Hash + Eq] Set::from_array(arr : Array[K]) -> Set[K] {
   let m = Set::new(capacity=arr.length())
   arr.each(e => m.add(e))
@@ -448,6 +450,7 @@ pub impl[K : Hash + Eq] Eq for Set[K] with equal(self, other) {
 }
 
 ///|
+#as_free_fn
 pub fn[K : Hash + Eq] Set::of(arr : FixedArray[K]) -> Set[K] {
   let length = arr.length()
   let m = Set::new(capacity=length)
@@ -459,6 +462,7 @@ pub fn[K : Hash + Eq] Set::of(arr : FixedArray[K]) -> Set[K] {
 }
 
 ///|
+#as_free_fn
 pub fn[K : Hash + Eq] Set::from_iter(iter : Iter[K]) -> Set[K] {
   let m = Set::new()
   for e in iter {
@@ -610,4 +614,3 @@ pub impl[K : Hash + Eq] Sub for Set[K] with sub(self, other) {
 }
 
 ///|
-pub fnalias Set::(new, from_array, from_iter, of)

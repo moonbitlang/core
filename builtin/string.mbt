@@ -53,6 +53,7 @@ fn code_point_of_surrogate_pair(leading : Int, trailing : Int) -> Char {
 ///   inspect(s.char_length(), content = "6"); // 6 actual characters
 ///   inspect(s.length(), content = "7");  // 5 ASCII chars + 2 surrogate pairs
 /// ```
+#alias(codepoint_length, deprecated)
 pub fn String::char_length(
   self : String,
   start_offset? : Int = 0,
@@ -83,7 +84,11 @@ pub fn String::char_length(
 
 ///|
 #intrinsic("%string.substring")
-fn unsafe_substring(str : String, start : Int, end : Int) -> String {
+pub fn String::unsafe_substring(
+  str : String,
+  start~ : Int,
+  end~ : Int,
+) -> String {
   let len = end - start
   let bytes = FixedArray::make(len * 2, Byte::default())
   bytes.blit_from_string(0, str, start, len)
@@ -103,18 +108,7 @@ fn unsafe_substring(str : String, start : Int, end : Int) -> String {
 ///
 /// Returns a new string containing the specified substring.
 ///
-/// Example:
-///
-/// ```moonbit
-///   let s = "Hello world"
-///   inspect(s.substring(start=0, end=5), content="Hello")
-///   inspect(s.substring(start=6, end=11), content="world")
-///   inspect(s.substring(), content="Hello world")
-///
-///   let s = "test"
-///   inspect(s.substring(start=2, end=2), content="")
-///   inspect("".substring(), content="")
-/// ```
+#deprecated("Use `str[:]` or `str[:].to_string()` instead")
 pub fn String::substring(self : String, start? : Int = 0, end? : Int) -> String {
   let len = self.length()
   let end = match end {
@@ -122,7 +116,7 @@ pub fn String::substring(self : String, start? : Int = 0, end? : Int) -> String 
     None => len
   }
   guard start >= 0 && start <= end && end <= len
-  unsafe_substring(self, start, end)
+  self.unsafe_substring(start~, end~)
 }
 
 ///|

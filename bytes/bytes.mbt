@@ -33,13 +33,8 @@
 ///     ),
 ///   )
 /// ```
+#as_free_fn
 pub fn Bytes::from_array(arr : Array[Byte]) -> Bytes {
-  Bytes::makei(arr.length(), i => arr[i])
-}
-
-///|
-/// same as `Bytes::from_array`
-pub fn from_array(arr : Array[Byte]) -> Bytes {
   Bytes::makei(arr.length(), i => arr[i])
 }
 
@@ -69,18 +64,13 @@ pub fn from_array(arr : Array[Byte]) -> Bytes {
 ///     ),
 ///   )
 /// ```
+#as_free_fn
 pub fn Bytes::from_fixedarray(arr : FixedArray[Byte], len? : Int) -> Bytes {
   let len = match len {
     None => arr.length()
     Some(x) => x
   }
   Bytes::makei(len, i => arr[i])
-}
-
-///|
-/// same as `Bytes::from_fixedarray`
-pub fn from_fixedarray(arr : FixedArray[Byte], len? : Int) -> Bytes {
-  Bytes::from_fixedarray(arr, len?)
 }
 
 ///|
@@ -139,14 +129,9 @@ pub fn to_fixedarray(self : Bytes, len? : Int) -> FixedArray[Byte] {
 ///     ),
 ///   )
 /// ```
+#as_free_fn
 pub fn Bytes::from_iter(iter : Iter[Byte]) -> Bytes {
-  from_array(iter.collect())
-}
-
-///|
-/// same as `Bytes::from_iter`
-pub fn from_iter(iter : Iter[Byte]) -> Bytes {
-  from_array(iter.collect())
+  Bytes::from_array(iter.collect())
 }
 
 ///|
@@ -172,13 +157,8 @@ pub fn from_iter(iter : Iter[Byte]) -> Bytes {
 ///   )
 /// ```
 /// TODO: marked as intrinsic, inline if it is constant
+#as_free_fn
 pub fn Bytes::of(arr : FixedArray[Byte]) -> Bytes {
-  Bytes::makei(arr.length(), i => arr[i])
-}
-
-///|
-/// same as `Bytes::of`
-pub fn of(arr : FixedArray[Byte]) -> Bytes {
   Bytes::makei(arr.length(), i => arr[i])
 }
 
@@ -226,7 +206,7 @@ pub fn to_array(self : Bytes) -> Array[Byte] {
 /// ```
 pub fn iter(self : Bytes) -> Iter[Byte] {
   Iter::new(yield_ => for i in 0..<self.length() {
-    if yield_(self[i]) == IterEnd {
+    if yield_(self[i]) is IterEnd {
       break IterEnd
     }
   } else {
@@ -249,7 +229,7 @@ pub fn iter(self : Bytes) -> Iter[Byte] {
 ///   inspect(keys, content="[0, 1, 2, 3, 4]")
 pub fn iter2(self : Bytes) -> Iter2[Int, Byte] {
   Iter2::new(yield_ => for i in 0..<self.length() {
-    if yield_(i, self[i]) == IterEnd {
+    if yield_(i, self[i]) is IterEnd {
       break IterEnd
     }
   } else {
@@ -270,6 +250,12 @@ pub fn iter2(self : Bytes) -> Iter2[Int, Byte] {
 ///   inspect(bytes.length(), content="0")
 /// ```
 pub impl Default for Bytes with default() {
+  b""
+}
+
+///|
+/// same as `Bytes::default`
+pub fn default() -> Bytes {
   b""
 }
 
@@ -296,12 +282,6 @@ pub impl Default for Bytes with default() {
 pub fn get(self : Bytes, index : Int) -> Byte? {
   guard index >= 0 && index < self.length() else { None }
   Some(self[index])
-}
-
-///|
-/// same as `Bytes::default`
-pub fn default() -> Bytes {
-  b""
 }
 
 ///|

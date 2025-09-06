@@ -154,16 +154,6 @@ test "arrayview_map" {
 }
 
 ///|
-test "arrayview_map_inplace" {
-  let arr = [1, 2, 3]
-  arr[1:].map_inplace(x => x * 2)
-  inspect(arr.length(), content="3")
-  inspect(arr[0], content="1")
-  inspect(arr[1], content="4")
-  inspect(arr[2], content="6")
-}
-
-///|
 test "arrayview_mapi" {
   let arr = [1, 2, 3]
   let mapped = arr[1:].mapi((i, x) => i + x)
@@ -171,16 +161,6 @@ test "arrayview_mapi" {
   inspect(mapped[0], content="2")
   inspect(mapped[1], content="4")
   inspect(([1] : Array[Int])[1:].mapi((_idx, x) => x), content="[]")
-}
-
-///|
-test "arrayview_mapi_inplace" {
-  let arr = [1, 2, 3]
-  arr[1:].mapi_inplace((i, x) => i + x)
-  inspect(arr.length(), content="3")
-  inspect(arr[0], content="1")
-  inspect(arr[1], content="2")
-  inspect(arr[2], content="4")
 }
 
 ///|

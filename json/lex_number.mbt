@@ -149,7 +149,7 @@ fn ParseContext::lex_number_end(
   start : Int,
   end : Int,
 ) -> (Double, String?) {
-  let s = ctx.input.substring(start~, end~)
+  let s = ctx.input.unsafe_substring(start~, end~)
   if !s.contains(".") && !s.contains("e") && !s.contains("E") {
     // If the string does not contain a decimal point or exponent, it is likely an integer
     // We can try to parse it as an integer first
