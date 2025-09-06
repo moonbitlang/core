@@ -64,6 +64,66 @@ pub impl[A : Show] Show for Deque[A] with output(self, logger) {
 }
 
 ///|
+/// Implements the `Hash` trait for `Deque`, allowing deques to be used in
+/// hash-based data structures such as hash tables and sets.
+///
+/// The hash value of a deque is computed by sequentially combining the hashes
+/// of all its elements, in order. This ensures that two deques with the same
+/// elements in the same order will always produce the same hash value.
+///
+/// Parameters:
+///
+/// * `self` : The deque to be hashed.
+/// * `hasher` : The hasher used to accumulate the hash value.
+///
+/// Example:
+///
+/// ```moonbit
+/// let dq1 = @deque.of([1, 2, 3])
+/// let dq2 = @deque.of([1, 2, 3])
+/// let dq3 = @deque.of([1, 2, 3, 4])
+/// assert_eq(dq1.hash(), dq2.hash()) // same elements → same hash
+/// assert_not_eq(dq1.hash(), dq3.hash()) // different elements → different hash
+/// ```
+///
+/// Note:
+/// - The order of elements matters. Deques with the same elements but in
+///   different orders will produce different hash values.
+///
+pub impl[A : Hash] Hash for Deque[A] with hash_combine(self, hasher) {
+  for v in self {
+    v.hash_combine(hasher)
+  }
+}
+
+///|
+/// Concatenates two deques into a new deque. The resulting deque contains all
+/// elements from the first deque followed by all elements from the second deque.
+///
+/// Parameters:
+///
+/// * `self` : The first deque to concatenate.
+/// * `other` : The second deque to concatenate.
+///
+/// Returns a new deque containing all elements from both deques in order.
+///
+/// Example:
+///
+/// ```moonbit
+///   let dq1 = @deque.of([1, 2, 3])
+///   let dq2 = @deque.of([4, 5, 6])
+///   inspect((dq1 + dq2).to_array(), content="[1, 2, 3, 4, 5, 6]")
+///   let mut dq3 = dq2.copy()
+///   dq3 += @deque.of([7])
+///   inspect(dq3.to_array(), content="[4, 5, 6, 7]")
+/// ```
+pub impl[A] Add for Deque[A] with add(self, other) {
+  let res = self.copy()
+  res.append(other)
+  res
+}
+
+///|
 /// Creates a new deque with elements copied from an array.
 ///
 /// Parameters:
@@ -128,6 +188,67 @@ pub fn[A] copy(self : Deque[A]) -> Deque[A] {
 }
 
 ///|
+/// Copies elements from one deque to another deque, with support for growing the
+/// destination deque if needed. The copy respects the circular buffer layout
+/// and correctly handles wrap-around in both source and destination.
+/// 
+/// Parameters:
+/// 
+/// * `self` : The deque to copy elements from.
+/// * `dst` : The deque to copy elements to. Will be automatically grown
+///   if needed to accommodate the copied elements.
+/// * `len` : The number of elements to copy.
+/// * `src_offset` : Starting index in the source deque (relative to its front).
+///   Defaults to 0.
+/// * `dst_offset` : Starting index in the destination deque (relative to its front).
+///   Defaults to 0.
+/// 
+/// Example:
+/// 
+/// ```moonbit
+///   let d1 = @deque.of([1, 2, 3, 4, 5])
+///   let d2 = @deque.of([0, 0])
+///   d1.blit_to(d2, len=3, dst_offset=1)
+///   inspect(d2.to_array(), content="[0, 1, 2, 3]")
+/// ```
+/// 
+/// Panics if:
+/// 
+/// * `len` is negative
+/// * `src_offset` is negative
+/// * `dst_offset` is negative
+/// * `dst_offset` exceeds the length of the destination deque
+/// * `src_offset + len` exceeds the length of the source deque
+pub fn[A] blit_to(
+  self : Deque[A],
+  dst : Deque[A],
+  len~ : Int,
+  src_offset? : Int = 0,
+  dst_offset? : Int = 0,
+) -> Unit {
+  guard len >= 0 &&
+    dst_offset >= 0 &&
+    src_offset >= 0 &&
+    dst_offset <= dst.length() &&
+    src_offset + len <= self.length()
+  if dst_offset + len > dst.buf.length() {
+    dst.realloc(new_cap_least=dst_offset + len)
+    dst.head = 0
+    dst.tail = dst.len - 1
+  }
+  let dst_len = dst.len
+  for i = 0; i < len; i = i + 1 {
+    let dst_idx = (dst.head + dst_offset + i) % dst.buf.length()
+    let src_idx = (self.head + src_offset + i) % self.buf.length()
+    dst.buf[dst_idx] = self.buf[src_idx]
+    if dst_offset + i >= dst_len {
+      dst.tail = (dst.tail + 1) % dst.buf.length()
+      dst.len += 1
+    }
+  }
+}
+
+///|
 /// Appends all elements from one deque to the end of another deque. The elements
 /// are added in-place, modifying the original deque.
 ///
@@ -150,22 +271,9 @@ pub fn[A] copy(self : Deque[A]) -> Deque[A] {
 /// ```
 pub fn[A] append(self : Deque[A], other : Deque[A]) -> Unit {
   guard other.len != 0 else { return }
-  let space = if self.buf.length() != 0 {
-    (self.head - self.tail - 1 + self.buf.length()) % self.buf.length()
-  } else {
-    0
-  }
+  let space = self.space()
   if space < other.len {
-    let new_cap = if self.len + other.len > self.buf.length() * 2 {
-      self.len + other.len
-    } else {
-      self.buf.length() * 2
-    }
-    let new_buf = UninitializedArray::make(new_cap)
-    for i, x in self {
-      new_buf[i] = x
-    }
-    self.buf = new_buf
+    self.realloc(new_cap_least=self.len + other.len)
     self.head = 0
     self.tail = self.len - 1
   }
@@ -174,6 +282,123 @@ pub fn[A] append(self : Deque[A], other : Deque[A]) -> Unit {
     self.buf[self.tail] = y
     self.len += 1
   }
+}
+
+///|
+/// Inserts an element at the specified position in the deque. The elements are
+/// shifted in-place to make room for the new element, modifying the original deque.
+///
+/// Parameters:
+///
+/// * `self` : The deque in which the element will be inserted.
+/// * `index` : The position at which to insert the element. Must satisfy `0 <= index <= self.length()`.
+/// * `value` : The element to insert.
+///
+/// Panics:
+///
+/// * If `index` is out of bounds, the function will abort with an error message.
+///
+/// Example:
+///
+/// ```moonbit
+/// let v1 = @deque.of([1, 2, 3])
+/// v1.insert(0, 0) // insert at the front
+/// inspect(v1, content="@deque.of([0, 1, 2, 3])")
+/// let v2 = @deque.of([1, 2, 4])
+/// v2.insert(2, 3) // insert in the middle
+/// inspect(v2, content="@deque.of([1, 2, 3, 4])")
+/// let v3 = @deque.of([2, 3, 4])
+/// v3.insert(3, 5) // insert at the end
+/// inspect(v3, content="@deque.of([2, 3, 4, 5])")
+/// ```
+pub fn[A] insert(self : Deque[A], index : Int, value : A) -> Unit {
+  guard index >= 0 && index <= self.length() else {
+    abort(
+      "index out of bounds: the len is from 0 to \{self.length()} but the index is \{index}",
+    )
+  }
+  if self.space() == 0 {
+    self.realloc()
+  }
+  let cap = self.buf.length()
+  if index < self.len / 2 {
+    let new_head = (self.head - 1 + cap) % cap
+    for i = 0; i < index; i = i + 1 {
+      let to = (new_head + i) % cap
+      let from = (self.head + i) % cap
+      self.buf[to] = self.buf[from]
+    }
+    self.head = new_head
+  } else {
+    let new_tail = (self.tail + 1) % cap
+    for i = self.len; i > index; i = i - 1 {
+      let from = (self.head + i - 1) % cap
+      let to = (self.head + i) % cap
+      self.buf[to] = self.buf[from]
+    }
+    self.tail = new_tail
+  }
+  self.buf[(self.head + index) % cap] = value
+  self.len += 1
+}
+
+///|
+/// Removes and returns the element at the specified position in the deque. The
+/// remaining elements are shifted in-place to fill the gap, modifying the original deque.
+/// 
+/// Parameters:
+/// 
+/// * `self` : The deque from which the element will be removed.
+/// * `index` : The position of the element to remove. Must satisfy `0 <= index < self.length()`.
+///
+/// Returns:
+///
+/// * The element that was removed from the deque.
+/// 
+/// Panics:
+/// 
+/// * If `index` is out of bounds, the function will abort with an error message.
+/// 
+/// Example:
+/// 
+/// ```moonbit
+/// let v1 = @deque.of([0, 1, 2, 3])
+/// let x = v1.remove(0) // remove from the front
+/// inspect((x, v1), content="(0, @deque.of([1, 2, 3]))")
+/// let v2 = @deque.of([1, 2, 3, 4])
+/// let y = v2.remove(2) // remove from the middle
+/// inspect((y, v2), content="(3, @deque.of([1, 2, 4]))")
+/// let v3 = @deque.of([2, 3, 4, 5])
+/// let z = v3.remove(3) // remove from the end
+/// inspect((z, v3), content="(5, @deque.of([2, 3, 4]))")
+/// ```
+pub fn[A] remove(self : Deque[A], index : Int) -> A {
+  guard index >= 0 && index < self.length() else {
+    abort(
+      "index out of bounds: the len is from 0 to \{self.length()} but the index is \{index}",
+    )
+  }
+  let res = self[index]
+  let cap = self.buf.length()
+  if index < self.len / 2 {
+    let new_head = (self.head + 1) % cap
+    for i = index - 1; i >= 0; i = i - 1 {
+      let to = (self.head + i + 1) % cap
+      let from = (self.head + i) % cap
+      self.buf[to] = self.buf[from]
+    }
+    self.head = new_head
+  } else {
+    let new_tail = (self.tail - 1 + cap) % cap
+    for i = index + 1; i < self.len; i = i + 1 {
+      let to = (self.head + i - 1) % cap
+      let from = (self.head + i) % cap
+      self.buf[to] = self.buf[from]
+    }
+    self.tail = new_tail
+  }
+  self.len -= 1
+  res
 }
 
 ///|
@@ -249,10 +474,36 @@ pub fn[A] capacity(self : Deque[A]) -> Int {
 }
 
 ///|
-/// Reallocate the deque with a new capacity.
-fn[A] realloc(self : Deque[A]) -> Unit {
+/// A internal helper to reallocate the deque with a new capacity, ensuring sufficient space for future insertions.
+/// 
+/// The new capacity is chosen as the maximum of:
+/// * `new_cap_least` : A caller-provided lower bound for the new capacity,
+/// * `8`             : The minimum default capacity,
+/// * `old_cap * 2`   : Twice the current length (typical growth factor).
+///
+/// Parameters:
+///
+/// * `self` : The deque to be reallocated.
+/// * `new_cap_least~` : (optional, default = 0)  
+///   A minimum capacity requirement. If provided, the new buffer will have at least this size.
+///   This allows callers to reserve space ahead of time.
+///
+/// Behavior:
+///
+/// * Elements are copied from the old buffer to the new buffer in logical order,
+///   starting at index `0` of the new buffer.
+/// * `head` is reset to `0`, and `tail` is updated to `len - 1` if non-empty,
+///   otherwise to `0`.
+/// * The circular layout of the old buffer is flattened into a contiguous sequence.
+///
+/// Notes:
+///
+/// * This is an internal helper function, typically triggered when the deque runs out of space.
+/// * After reallocation, all elements are packed starting from index `0` in the new buffer.
+/// * The growth factor is geometric (×2), but can be overridden by `new_cap_least`.
+fn[A] realloc(self : Deque[A], new_cap_least? : Int = 0) -> Unit {
   let old_cap = self.len
-  let new_cap = if old_cap == 0 { 8 } else { old_cap * 2 }
+  let new_cap = @cmp.maximum(@cmp.maximum(new_cap_least, 8), old_cap * 2)
   let new_buf = UninitializedArray::make(new_cap)
   if old_cap > 0 {
     if self.tail >= self.head {
@@ -836,6 +1087,75 @@ pub fn[A : Eq] contains(self : Deque[A], value : A) -> Bool {
 }
 
 ///|
+/// Creates a new deque containing all elements from the input deque that satisfy
+/// the given predicate function.
+///
+/// Parameters:
+///
+/// * `self` : The deque to filter.
+/// * `f` : A function that takes an element and returns a boolean indicating
+///   whether the element should be included in the result.
+///
+/// Returns a new deque containing only the elements for which the predicate
+/// function returns `true`. The relative order of the elements is preserved.
+///
+/// Example:
+///
+/// ```moonbit
+///   let dq = @deque.of([1, 2, 3, 4, 5])
+///   let evens = dq.filter((x) => { x % 2 == 0 })
+///   inspect(evens, content="@deque.of([2, 4])")
+/// ```
+#locals(f)
+pub fn[A] filter(self : Deque[A], f : (A) -> Bool raise?) -> Deque[A] raise? {
+  let dq = of([])
+  for v in self {
+    if f(v) {
+      dq.push_back(v)
+    }
+  }
+  dq
+}
+
+///|
+/// Extracts elements from a deque that satisfy a given predicate function. The
+/// extracted elements are removed from the original deque and returned as a new
+/// deque. The relative order of the extracted elements is preserved.
+/// 
+/// Parameters:
+/// 
+/// * `self` : The deque to extract elements from.
+/// * `f` : A function that takes an element and returns `true` if the
+/// element should be extracted, `false` otherwise.
+/// 
+/// Returns a new deque containing all elements that satisfy the predicate
+/// function, in the order they appeared in the original deque.
+/// 
+/// Example:
+/// 
+/// ```moonbit
+/// let d = @deque.of([1, 2, 3, 4, 5])
+/// let extracted = d.extract_if(x => x % 2 == 0)
+/// inspect(extracted.to_array(), content="[2, 4]")
+/// inspect(d.to_array(), content="[1, 3, 5]")
+/// ```
+#locals(f)
+pub fn[A] extract_if(self : Deque[A], f : (A) -> Bool) -> Deque[A] {
+  let v = of([])
+  let indices = []
+  for i in 0..<self.length() {
+    if f(self[i]) {
+      v.push_back(self[i])
+      indices.push(i)
+    }
+  }
+  for i in 0..<indices.length() {
+    self.remove(indices[i] - i) |> ignore
+  }
+  v
+}
+
+///|
 /// Reserves capacity to ensure that it can hold at least the number of elements
 /// specified by the `capacity` argument.
 ///
@@ -1369,6 +1689,101 @@ pub impl[A : @json.FromJson] @json.FromJson for Deque[A] with from_json(
 }
 
 ///|
+/// Divides a deque into smaller deques (chunks) of the specified size.
+/// 
+/// Parameters:
+/// 
+/// * `self` : The deque to be divided into chunks.
+/// * `size` : The size of each chunk. Must be a positive integer,
+///   otherwise it will panic.
+/// 
+/// Returns a deque of deques, where each inner deque is a chunk containing
+/// elements from the original deque. If the length of the original deque is not
+/// divisible by the chunk size, the last chunk will contain fewer elements.
+/// 
+/// Example:
+/// 
+/// ```moonbit
+/// let d = @deque.of([1, 2, 3, 4, 5])
+/// let chunks = d.chunks(2)
+/// inspect(
+///   chunks.to_array().map(fn(c) { c.to_array() }),
+///   content="[[1, 2], [3, 4], [5]]",
+/// )
+/// let d : @deque.Deque[Int] = @deque.of([])
+/// inspect(d.chunks(3).length(), content="0")
+/// ```
+/// 
+/// Panics if:
+/// 
+/// * `size` is not positive
+pub fn[A] chunks(self : Deque[A], size : Int) -> Deque[Deque[A]] {
+  guard size > 0
+  let chunks : Deque[Deque[A]] = of([])
+  let mut i = 0
+  while i < self.length() {
+    let chunk = Deque::new(capacity=size)
+    for j = 0; j < size && i < self.length(); j = j + 1 {
+      chunk.push_back(self[i])
+      i = i + 1
+    }
+    chunks.push_back(chunk)
+  }
+  chunks
+}
+
+///|
+/// Groups consecutive elements of the deque into chunks where adjacent elements
+/// satisfy the given predicate function.
+/// 
+/// Parameters:
+/// 
+/// * `self` : The source deque to be chunked.
+/// * `pred` : A function that takes two adjacent elements and returns
+///   `true` if they should be in the same chunk, `false` otherwise.
+/// 
+/// Returns a `Deque` of `Deque`s, where each inner `Deque` is a chunk of
+/// consecutive elements that satisfy the predicate with their adjacent elements.
+/// 
+/// Notes:
+/// 
+/// * The relative order of elements is preserved.
+/// * The number of chunks is at least 1 if the deque is non-empty.
+/// * Returns an empty deque if the input is empty.
+/// 
+/// Example:
+/// 
+/// ```moonbit
+/// let d = @deque.of([1, 1, 2, 3, 2, 3, 2, 3, 4])
+/// let chunks = d.chunk_by((x, y) => x <= y)
+/// inspect(
+///   chunks.to_array().map(fn(c) { c.to_array() }),
+///   content="[[1, 1, 2, 3], [2, 3], [2, 3, 4]]",
+/// )
+/// let empty : @deque.Deque[Int] = @deque.of([])
+/// inspect(empty.chunk_by((x, y) => x <= y).to_array(), content="[]")
+/// ```
+#locals(pred)
+pub fn[A] chunk_by(
+  self : Deque[A],
+  pred : (A, A) -> Bool raise?,
+) -> Deque[Deque[A]] raise? {
+  let chunks : Deque[Deque[A]] = of([])
+  let mut i = 0
+  while i < self.length() {
+    let chunk = of([])
+    chunk.push_back(self[i])
+    i = i + 1
+    while i < self.length() && pred(self[i - 1], self[i]) {
+      chunk.push_back(self[i])
+      i = i + 1
+    }
+    chunks.push_back(chunk)
+  }
+  chunks
+}
+
+///|
 /// Flattens a high-dimensional deque into a lower-dimensional deque
 /// by concatenating all inner deques in order.
 ///
@@ -1762,4 +2177,23 @@ pub fn[A] shuffle(self : Deque[A], rand~ : (Int) -> Int) -> Deque[A] {
   new_deque.shuffle_in_place(rand~)
   // Return the shuffled copy
   new_deque
+}
+
+///|
+/// A internal helper to calculates the remaining available capacity in the deque's buffer.
+/// 
+/// This is computed as `capacity - length`, where:
+/// * `capacity` is the total size of the internal buffer (`self.buf.length()`),
+/// * `length` is the current number of elements (`self.len`).
+///
+/// Parameters:
+///
+/// * `self` : The deque whose remaining capacity is to be calculated.
+///
+/// Returns:
+///
+/// * An integer representing the number of free slots in the buffer.
+///   Always satisfies `0 <= space <= self.buf.length()`.
+fn[A] space(self : Deque[A]) -> Int {
+  self.buf.length() - self.len
 }

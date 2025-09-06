@@ -1077,9 +1077,9 @@ test "drain when wrapped around" {
   // when the start is larger than len
   let dq = @deque.of([5, 6])
   dq..push_front(4)..push_front(3)..push_front(2)..push_front(1)
-  inspect(dq.as_views(), content="([1, 2], [3, 4, 5, 6])")
+  inspect(dq.as_views(), content="([1, 2, 3, 4], [5, 6])")
   let dq2 = dq.drain(start=3, len=2)
-  inspect(dq.as_views(), content="([1, 2, 3, 6], [])")
+  inspect(dq.as_views(), content="([1, 2], [3, 6])")
   inspect(dq2, content="@deque.of([4, 5])")
 }
 
@@ -1507,4 +1507,407 @@ test "append_folded_but_has_space" {
   inspect(d1.as_views(), content="([4, 5, 6, 7], [])")
   d1.append(@deque.of([9, 10, 11]))
   inspect(d1.as_views(), content="([4, 5, 6, 7, 9], [10, 11])")
+}
+
+///|
+/// Test insert at the front
+test "insert_front" {
+  let d = @deque.of([1, 2, 3])
+  d.insert(0, 99)
+  assert_eq(d.to_array(), [99, 1, 2, 3])
+  inspect(d.as_views(), content="([99], [1, 2, 3])")
+}
+
+///|
+/// Test insert in the middle
+test "insert_middle" {
+  let d = @deque.of([1, 2, 3, 4])
+  d.insert(2, 99)
+  assert_eq(d.to_array(), [1, 2, 99, 3, 4])
+  inspect(d.as_views(), content="([1, 2, 99, 3, 4], [])")
+}
+
+///|
+/// Test insert at the back (same as push_back)
+test "insert_back" {
+  let d = @deque.of([1, 2, 3])
+  d.insert(d.length(), 99)
+  assert_eq(d.to_array(), [1, 2, 3, 99])
+  inspect(d.as_views(), content="([1, 2, 3, 99], [])")
+}
+
+///|
+/// Test insert triggers reallocation
+test "insert_realloc" {
+  let d = @deque.of([])
+  for i = 0; i < 8; i = i + 1 {
+    d.push_back(i)
+  }
+  inspect(d.as_views(), content="([0, 1, 2, 3, 4, 5, 6, 7], [])")
+  d.insert(4, 99)
+  assert_eq(d.to_array()[4], 99)
+  assert_eq(d.length(), 9)
+  inspect(d.as_views(), content="([0, 1, 2, 3, 99, 4, 5, 6, 7], [])")
+}
+
+///|
+/// Test insert into folded buffer
+test "insert_folded" {
+  let d = @deque.of([1, 2, 3, 4, 5, 6, 7, 8])
+  d.unsafe_pop_front()
+  d.unsafe_pop_front()
+  d.unsafe_pop_front()
+  d.unsafe_pop_front()
+  for i = 9; i < 13; i = i + 1 {
+    d.push_back(i)
+  }
+  inspect(d.as_views(), content="([5, 6, 7, 8], [9, 10, 11, 12])")
+  d.insert(2, 99)
+  assert_eq(d.to_array()[2], 99)
+  inspect(d.to_array(), content="[5, 6, 99, 7, 8, 9, 10, 11, 12]")
+  inspect(d.as_views(), content="([5], [6, 99, 7, 8, 9, 10, 11, 12])")
+}
+
+///|
+/// Test basic blit_to functionality
+test "blit_to_simple" {
+  let src = @deque.of([1, 2, 3])
+  let dst = @deque.of([0, 0, 0])
+  @deque.Deque::blit_to(src, dst, len=3, src_offset=0, dst_offset=0)
+  assert_eq(dst.to_array(), [1, 2, 3])
+  inspect(dst.as_views(), content="([1, 2, 3], [])")
+}
+
+///|
+/// Test blit_to with offsets
+test "blit_to_with_offsets" {
+  let src = @deque.of([1, 2, 3, 4, 5])
+  let dst = @deque.of([0, 0, 0, 0, 0])
+
+  // Copy last element of src to front of dst
+  @deque.Deque::blit_to(src, dst, len=1, src_offset=4, dst_offset=0)
+  assert_eq(dst.to_array(), [5, 0, 0, 0, 0])
+  inspect(dst.as_views(), content="([5, 0, 0, 0, 0], [])")
+
+  // Copy first element of src to last of dst
+  @deque.Deque::blit_to(src, dst, len=1, src_offset=0, dst_offset=4)
+  assert_eq(dst.to_array(), [5, 0, 0, 0, 1])
+  inspect(dst.as_views(), content="([5, 0, 0, 0, 1], [])")
+
+  // Copy multiple elements into tail of dst
+  @deque.Deque::blit_to(src, dst, len=2, src_offset=3, dst_offset=3)
+  assert_eq(dst.to_array(), [5, 0, 0, 4, 5])
+  inspect(dst.as_views(), content="([5, 0, 0, 4, 5], [])")
+}
+
+///|
+/// Test blit_to into an empty deque (should grow automatically)
+test "blit_to_into_empty" {
+  let src = @deque.of([1, 2, 3])
+  let dst : @deque.Deque[Int] = @deque.of([])
+  @deque.Deque::blit_to(src, dst, len=3, src_offset=0, dst_offset=0)
+  assert_eq(dst.to_array(), [1, 2, 3])
+  inspect(dst.as_views(), content="([1, 2, 3], [])")
+  assert_eq(dst.length(), 3)
+}
+
+///|
+/// Test blit_to when source is wrapped around
+test "blit_to_wrap_around" {
+  let src = @deque.of([1, 2, 3, 4, 5])
+  ignore(src.pop_front()) // src = [2, 3, 4, 5]
+  src.push_back(6) // src = [2, 3, 4, 5, 6] but head != 0
+  let dst = @deque.of([0, 0, 0, 0, 0])
+  @deque.Deque::blit_to(src, dst, len=5, src_offset=0, dst_offset=0)
+  assert_eq(dst.to_array(), [2, 3, 4, 5, 6])
+  inspect(dst.as_views(), content="([2, 3, 4, 5, 6], [])")
+}
+
+///|
+/// Test blit_to with automatic growth
+test "blit_to_grow" {
+  let src = @deque.of([1, 2, 3, 4, 5])
+  let dst = @deque.of([1, 2, 4])
+  @deque.Deque::blit_to(src, dst, len=5, src_offset=0, dst_offset=1)
+  assert_eq(dst.to_array(), [1, 1, 2, 3, 4, 5])
+  inspect(dst.as_views(), content="([1, 1, 2, 3, 4, 5], [])")
+  assert_eq(dst.length(), 6)
+}
+
+///|
+/// Test blit_to self copy (copy from deque to itself)
+test "blit_to_self" {
+  let d = @deque.of([1, 2, 3, 4, 5])
+  @deque.Deque::blit_to(d.copy(), d, len=3, src_offset=0, dst_offset=2)
+  assert_eq(d.to_array(), [1, 2, 1, 2, 3])
+  inspect(d.as_views(), content="([1, 2, 1, 2, 3], [])")
+}
+
+///|
+/// Test basic chunks functionality
+test "chunks_simple" {
+  let d = @deque.of([1, 2, 3, 4, 5])
+  let chunks = d.chunks(2)
+  assert_eq(chunks.length(), 3)
+  assert_eq(chunks.to_array()[0].to_array(), [1, 2])
+  assert_eq(chunks.to_array()[1].to_array(), [3, 4])
+  assert_eq(chunks.to_array()[2].to_array(), [5])
+}
+
+///|
+/// Test chunks with exact division
+test "chunks_exact" {
+  let d = @deque.of([1, 2, 3, 4])
+  let chunks = d.chunks(2)
+  assert_eq(chunks.length(), 2)
+  assert_eq(chunks.to_array()[0].to_array(), [1, 2])
+  assert_eq(chunks.to_array()[1].to_array(), [3, 4])
+}
+
+///|
+/// Test chunks with size larger than length
+test "chunks_size_larger_than_length" {
+  let d = @deque.of([1, 2, 3])
+  let chunks = d.chunks(10)
+  assert_eq(chunks.length(), 1)
+  assert_eq(chunks.to_array()[0].to_array(), [1, 2, 3])
+}
+
+///|
+/// Test chunks on empty deque
+test "chunks_empty" {
+  let d : @deque.Deque[Int] = @deque.of([])
+  let chunks = d.chunks(3)
+  assert_eq(chunks.length(), 0)
+}
+
+///|
+/// Test chunks with wrapped-around buffer
+test "chunks_wrap_around" {
+  let d = @deque.of([1, 2, 3, 4, 5, 6])
+  ignore(d.pop_front()) // d = [2, 3, 4, 5, 6]
+  d.push_back(7) // head != 0 now, d = [2, 3, 4, 5, 6, 7]
+  let chunks = d.chunks(2)
+  assert_eq(chunks.length(), 3)
+  assert_eq(chunks.to_array()[0].to_array(), [2, 3])
+  assert_eq(chunks.to_array()[1].to_array(), [4, 5])
+  assert_eq(chunks.to_array()[2].to_array(), [6, 7])
+}
+
+///|
+/// Test chunks with size = 1 (each element its own chunk)
+test "chunks_size_one" {
+  let d = @deque.of([10, 20, 30])
+  let chunks = d.chunks(1)
+  assert_eq(chunks.length(), 3)
+  assert_eq(chunks.to_array()[0].to_array(), [10])
+  assert_eq(chunks.to_array()[1].to_array(), [20])
+  assert_eq(chunks.to_array()[2].to_array(), [30])
+}
+
+///|
+/// Grouping elements with non-decreasing order
+test "chunk_by_non_decreasing" {
+  let d = @deque.of([1, 1, 2, 3, 2, 3, 2, 3, 4])
+  let chunks = d.chunk_by((x, y) => x <= y)
+  inspect(
+    chunks.to_array().map(fn(c) { c.to_array() }),
+    content="[[1, 1, 2, 3], [2, 3], [2, 3, 4]]",
+  )
+}
+
+///|
+/// Empty deque produces empty result
+test "chunk_by_empty" {
+  let d : @deque.Deque[Int] = @deque.of([])
+  let chunks = d.chunk_by((x, y) => x <= y)
+  inspect(chunks.to_array(), content="[]")
+}
+
+///|
+/// Single element stays as one chunk
+test "chunk_by_single_element" {
+  let d = @deque.of([42])
+  let chunks = d.chunk_by((x, y) => x == y)
+  inspect(chunks.to_array().map(fn(c) { c.to_array() }), content="[[42]]")
+}
+
+///|
+/// All elements grouped into one chunk
+test "chunk_by_all_true" {
+  let d = @deque.of([1, 2, 3, 4])
+  let chunks = d.chunk_by((_, _) => true)
+  inspect(
+    chunks.to_array().map(fn(c) { c.to_array() }),
+    content="[[1, 2, 3, 4]]",
+  )
+}
+
+///|
+/// Each element becomes its own chunk
+test "chunk_by_all_false" {
+  let d = @deque.of([1, 2, 3, 4])
+  let chunks = d.chunk_by((_, _) => false)
+  inspect(
+    chunks.to_array().map(fn(c) { c.to_array() }),
+    content="[[1], [2], [3], [4]]",
+  )
+}
+
+///|
+/// Test filter keeps even numbers
+test "filter_evens" {
+  let d = @deque.of([1, 2, 3, 4, 5, 6])
+  let evens = d.filter(x => x % 2 == 0)
+  assert_eq(evens.to_array(), [2, 4, 6])
+  inspect(evens.as_views(), content="([2, 4, 6], [])")
+}
+
+///|
+/// Test filter removes all elements (predicate always false)
+test "filter_all_false" {
+  let d = @deque.of([1, 2, 3])
+  let none = d.filter(_ => false)
+  assert_eq(none.to_array(), [])
+  inspect(none.as_views(), content="([], [])")
+}
+
+///|
+/// Test filter keeps all elements (predicate always true)
+test "filter_all_true" {
+  let d = @deque.of([1, 2, 3])
+  let all = d.filter(_ => true)
+  assert_eq(all.to_array(), [1, 2, 3])
+  inspect(all.as_views(), content="([1, 2, 3], [])")
+}
+
+///|
+/// Test filter on empty deque
+test "filter_empty" {
+  let d : @deque.Deque[Int] = @deque.of([])
+  let res = d.filter(x => x > 0)
+  assert_eq(res.to_array(), [])
+  inspect(res.as_views(), content="([], [])")
+}
+
+///|
+/// Test filter with wrapped-around buffer
+test "filter_wrap_around" {
+  let d = @deque.of([1, 2, 3, 4, 5, 6])
+  ignore(d.pop_front()) // d = [2, 3, 4, 5, 6]
+  d.push_back(7) // d = [2, 3, 4, 5, 6, 7], head != 0
+  let odds = d.filter(x => x % 2 == 1)
+  assert_eq(odds.to_array(), [3, 5, 7])
+  inspect(odds.as_views(), content="([3, 5, 7], [])")
+}
+
+///|
+/// Test remove from the front
+test "remove_front" {
+  let d = @deque.of([99, 1, 2, 3])
+  let x = d.remove(0)
+  assert_eq(x, 99)
+  assert_eq(d.to_array(), [1, 2, 3])
+  inspect(d.as_views(), content="([1, 2, 3], [])")
+}
+
+///|
+/// Test remove from the middle
+test "remove_middle" {
+  let d = @deque.of([1, 2, 99, 3, 4])
+  let x = d.remove(2)
+  assert_eq(x, 99)
+  assert_eq(d.to_array(), [1, 2, 3, 4])
+  inspect(d.as_views(), content="([1, 2, 3, 4], [])")
+}
+
+///|
+/// Test remove from the back (same as pop_back)
+test "remove_back" {
+  let d = @deque.of([1, 2, 3, 99])
+  let x = d.remove(d.length() - 1)
+  assert_eq(x, 99)
+  assert_eq(d.to_array(), [1, 2, 3])
+  inspect(d.as_views(), content="([1, 2, 3], [])")
+}
+
+///|
+/// Test remove triggers shifting
+test "remove_shift" {
+  let d = @deque.of([0, 1, 2, 3, 99, 4, 5, 6, 7])
+  let x = d.remove(4)
+  assert_eq(x, 99)
+  assert_eq(d.length(), 8)
+  assert_eq(d.to_array(), [0, 1, 2, 3, 4, 5, 6, 7])
+  inspect(d.as_views(), content="([0, 1, 2, 3, 4, 5, 6, 7], [])")
+}
+
+///|
+/// Test remove from folded buffer
+test "remove_folded" {
+  let d = @deque.of([1, 2, 3, 4, 5, 6, 7, 8])
+  d.unsafe_pop_front()
+  d.unsafe_pop_front()
+  d.unsafe_pop_front()
+  d.unsafe_pop_front()
+  for i = 9; i < 13; i = i + 1 {
+    d.push_back(i)
+  }
+  inspect(d.as_views(), content="([5, 6, 7, 8], [9, 10, 11, 12])")
+  let x = d.remove(2)
+  assert_eq(x, 7)
+  assert_eq(d.to_array(), [5, 6, 8, 9, 10, 11, 12])
+  inspect(d.as_views(), content="([5, 6, 8], [9, 10, 11, 12])")
+}
+
+///|
+/// Test extract_if with no matches
+test "extract_if_none" {
+  let d = @deque.of([1, 3, 5, 7])
+  let extracted = d.extract_if(x => x % 2 == 0)
+  assert_eq(extracted.to_array(), [])
+  assert_eq(d.to_array(), [1, 3, 5, 7])
+  inspect(extracted.as_views(), content="([], [])")
+  inspect(d.as_views(), content="([1, 3, 5, 7], [])")
+}
+
+///|
+/// Test extract_if extracts all elements
+test "extract_if_all" {
+  let d = @deque.of([2, 4, 6, 8])
+  let extracted = d.extract_if(x => x % 2 == 0)
+  assert_eq(extracted.to_array(), [2, 4, 6, 8])
+  assert_eq(d.to_array(), [])
+  inspect(extracted.as_views(), content="([2, 4, 6, 8], [])")
+  inspect(d.as_views(), content="([], [])")
+}
+
+///|
+/// Test extract_if extracts some elements
+test "extract_if_some" {
+  let d = @deque.of([1, 2, 3, 4, 5])
+  let extracted = d.extract_if(x => x % 2 == 0)
+  assert_eq(extracted.to_array(), [2, 4])
+  assert_eq(d.to_array(), [1, 3, 5])
+  inspect(extracted.as_views(), content="([2, 4], [])")
+  inspect(d.as_views(), content="([1, 3, 5], [])")
+}
+
+///|
+/// Test extract_if on folded buffer
+test "extract_if_folded" {
+  let d = @deque.of([1, 2, 3, 4, 5, 6, 7, 8])
+  d.unsafe_pop_front()
+  d.unsafe_pop_front()
+  d.unsafe_pop_front()
+  d.unsafe_pop_front()
+  for i = 9; i < 13; i = i + 1 {
+    d.push_back(i)
+  }
+  inspect(d.as_views(), content="([5, 6, 7, 8], [9, 10, 11, 12])")
+  let extracted = d.extract_if(x => x > 9)
+  assert_eq(extracted.to_array(), [10, 11, 12])
+  assert_eq(d.to_array(), [5, 6, 7, 8, 9])
+  inspect(extracted.as_views(), content="([10, 11, 12], [])")
+  inspect(d.as_views(), content="([5, 6, 7, 8], [9])")
 }
