@@ -22,7 +22,9 @@ test "special values" {
 
 ## Basic Operations
 
-Basic mathematical operations and rounding functions:
+Basic mathematical operations and rounding functions. `round` uses a
+tie-breaking rule that rounds halves toward positive infinity, so
+`-3.5` becomes `-3`:
 
 ```moonbit
 test "basic operations" {
@@ -33,6 +35,7 @@ test "basic operations" {
   inspect(@double.floor(3.7), content="3")
   inspect(@double.ceil(3.2), content="4")
   inspect(@double.round(3.5), content="4")
+  inspect(@double.round(-3.5), content="-3")
   inspect(@double.trunc(3.7), content="3")
 
   // Pow function
