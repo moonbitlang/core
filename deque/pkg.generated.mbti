@@ -27,6 +27,7 @@ fn[A] Deque::copy(Self[A]) -> Self[A]
 fn[A] Deque::drain(Self[A], start~ : Int, len? : Int) -> Self[A]
 fn[A] Deque::each(Self[A], (A) -> Unit) -> Unit
 fn[A] Deque::eachi(Self[A], (Int, A) -> Unit) -> Unit
+fn[A] Deque::extract_if(Self[A], (A) -> Bool) -> Self[A]
 fn[A] Deque::filter(Self[A], (A) -> Bool raise?) -> Self[A] raise?
 #deprecated
 fn[A] Deque::filter_map_inplace(Self[A], (A) -> A?) -> Unit
@@ -59,6 +60,7 @@ fn[A] Deque::pop_front(Self[A]) -> A?
 fn[A] Deque::pop_front_exn(Self[A]) -> Unit
 fn[A] Deque::push_back(Self[A], A) -> Unit
 fn[A] Deque::push_front(Self[A], A) -> Unit
+fn[A] Deque::remove(Self[A], Int) -> A
 fn[A] Deque::reserve_capacity(Self[A], Int) -> Unit
 fn[A] Deque::retain(Self[A], (A) -> Bool) -> Unit
 fn[A] Deque::retain_map(Self[A], (A) -> A?) -> Unit
