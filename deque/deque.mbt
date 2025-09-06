@@ -343,6 +343,65 @@ pub fn[A] insert(self : Deque[A], index : Int, value : A) -> Unit {
 }
 
 ///|
+/// Removes and returns the element at the specified position in the deque. The
+/// remaining elements are shifted in-place to fill the gap, modifying the original deque.
+/// 
+/// Parameters:
+/// 
+/// * `self` : The deque from which the element will be removed.
+/// * `index` : The position of the element to remove. Must satisfy `0 <= index < self.length()`.
+///
+/// Returns:
+///
+/// * The element that was removed from the deque.
+/// 
+/// Panics:
+/// 
+/// * If `index` is out of bounds, the function will abort with an error message.
+/// 
+/// Example:
+/// 
+/// ```moonbit
+/// let v1 = @deque.of([0, 1, 2, 3])
+/// let x = v1.remove(0) // remove from the front
+/// inspect((x, v1), content="(0, @deque.of([1, 2, 3]))")
+/// let v2 = @deque.of([1, 2, 3, 4])
+/// let y = v2.remove(2) // remove from the middle
+/// inspect((y, v2), content="(3, @deque.of([1, 2, 4]))")
+/// let v3 = @deque.of([2, 3, 4, 5])
+/// let z = v3.remove(3) // remove from the end
+/// inspect((z, v3), content="(5, @deque.of([2, 3, 4]))")
+/// ```
+pub fn[A] remove(self : Deque[A], index : Int) -> A {
+  guard index >= 0 && index < self.length() else {
+    abort(
+      "index out of bounds: the len is from 0 to \{self.length()} but the index is \{index}",
+    )
+  }
+  let res = self[index]
+  let cap = self.buf.length()
+  if index < self.len / 2 {
+    let new_head = (self.head + 1) % cap
+    for i = index - 1; i >= 0; i = i - 1 {
+      let to = (self.head + i + 1) % cap
+      let from = (self.head + i) % cap
+      self.buf[to] = self.buf[from]
+    }
+    self.head = new_head
+  } else {
+    let new_tail = (self.tail - 1 + cap) % cap
+    for i = index + 1; i < self.len; i = i + 1 {
+      let to = (self.head + i - 1) % cap
+      let from = (self.head + i) % cap
+      self.buf[to] = self.buf[from]
+    }
+    self.tail = new_tail
+  }
+  self.len -= 1
+  res
+}
+
+///|
 /// Creates a new deque from a fixed array, preserving the order of elements.
 ///
 /// Parameters:
