@@ -1118,6 +1118,44 @@ pub fn[A] filter(self : Deque[A], f : (A) -> Bool raise?) -> Deque[A] raise? {
 }
 
 ///|
+/// Extracts elements from a deque that satisfy a given predicate function. The
+/// extracted elements are removed from the original deque and returned as a new
+/// deque. The relative order of the extracted elements is preserved.
+/// 
+/// Parameters:
+/// 
+/// * `self` : The deque to extract elements from.
+/// * `f` : A function that takes an element and returns `true` if the
+/// element should be extracted, `false` otherwise.
+/// 
+/// Returns a new deque containing all elements that satisfy the predicate
+/// function, in the order they appeared in the original deque.
+/// 
+/// Example:
+/// 
+/// ```moonbit
+/// let d = @deque.of([1, 2, 3, 4, 5])
+/// let extracted = d.extract_if(x => x % 2 == 0)
+/// inspect(extracted.to_array(), content="[2, 4]")
+/// inspect(d.to_array(), content="[1, 3, 5]")
+/// ```
+#locals(f)
+pub fn[A] extract_if(self : Deque[A], f : (A) -> Bool) -> Deque[A] {
+  let v = of([])
+  let indices = []
+  for i in 0..<self.length() {
+    if f(self[i]) {
+      v.push_back(self[i])
+      indices.push(i)
+    }
+  }
+  for i in 0..<indices.length() {
+    self.remove(indices[i] - i) |> ignore
+  }
+  v
+}
+
+///|
 /// Reserves capacity to ensure that it can hold at least the number of elements
 /// specified by the `capacity` argument.
 ///
