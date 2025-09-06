@@ -21,8 +21,8 @@ test "creating bigint values" {
   inspect(big3, content="9223372036854775807")
   
   // From strings
-  let big4 = @bigint.BigInt::from_string("999999999999999999999999999999")
-  inspect(big4, content="999999999999999999999999999999")
+  let big4 = @bigint.BigInt::from_string("123456789012345678901234567890")
+  inspect(big4, content="123456789012345678901234567890")
   
   // From hexadecimal strings
   let big5 = @bigint.BigInt::from_hex("1a2b3c4d5e6f")
@@ -142,12 +142,12 @@ test "power operations" {
   let mod_power = base2.pow(exp2, modulus=modulus)
   inspect(mod_power, content="5")  // (3^5) % 7 = 243 % 7 = 5
   
-  // Large modular exponentiation
-  let large_base = 12345N
-  let large_exp = 100N
-  let large_mod = 1000000007N
+  // Large modular exponentiation (optimized for speed)
+  let large_base = 123N
+  let large_exp = 20N
+  let large_mod = 1000007N
   let result = large_base.pow(large_exp, modulus=large_mod)
-  inspect(result.to_string().length() > 0, content="true")
+  inspect(result, content="378446")  // (123^20) % 1000007
 }
 ```
 
@@ -255,9 +255,9 @@ test "json serialization" {
   inspect(json, content="String(\"12345678901234567890\")")
   
   // Large numbers that exceed JavaScript's safe integer range
-  let very_big = @bigint.BigInt::from_string("999999999999999999999999999999")
+  let very_big = @bigint.BigInt::from_string("123456789012345678901234567890")
   let big_json = very_big.to_json()
-  inspect(big_json, content="String(\"999999999999999999999999999999\")")
+  inspect(big_json, content="String(\"123456789012345678901234567890\")")
 }
 ```
 
