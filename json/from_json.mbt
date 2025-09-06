@@ -247,6 +247,14 @@ pub impl FromJson for Json with from_json(json, _path) {
 }
 
 ///|
+/// Converts a JSON string to `Bytes`.
+/// 
+/// The expected string format consists of:
+/// - Hexadecimal byte sequences represented as `\xNN`, where `NN` are two hex digits.
+/// - Printable ASCII characters (except `\` and `"`), which are directly converted to their byte values.
+/// - Any invalid escape sequence or character will result in a `JsonDecodeError`.
+/// 
+/// Example valid input: `"hello\\x20world"` (where `\\x20` is a space character).
 pub impl FromJson for Bytes with from_json(json, path) {
   guard json is String(a) else {
     decode_error(path, "Bytes::from_json: expected string")
