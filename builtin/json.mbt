@@ -179,7 +179,9 @@ pub impl ToJson for Byte with to_json(self : Byte) -> Json {
 
 ///|
 /// Converts a `Bytes` value to a JSON representation.
-/// The representation is picked for easier debugging
+/// The representation is picked for easier debugging.
+/// Printable ASCII characters (from space to tilde, excluding '"' and '\') are output as-is.
+/// All other bytes are represented as \xHH, where HH is the two-digit hexadecimal value of the byte.
 pub impl ToJson for Bytes with to_json(self : Bytes) -> Json {
   let sb = StringBuilder::new()
   for b in self {
