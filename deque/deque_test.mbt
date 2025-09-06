@@ -1864,7 +1864,7 @@ test "remove_folded" {
 /// Test extract_if with no matches
 test "extract_if_none" {
   let d = @deque.of([1, 3, 5, 7])
-  let extracted = d.extract_if((x) => { x % 2 == 0 })
+  let extracted = d.extract_if(x => x % 2 == 0)
   assert_eq(extracted.to_array(), [])
   assert_eq(d.to_array(), [1, 3, 5, 7])
   inspect(extracted.as_views(), content="([], [])")
@@ -1875,7 +1875,7 @@ test "extract_if_none" {
 /// Test extract_if extracts all elements
 test "extract_if_all" {
   let d = @deque.of([2, 4, 6, 8])
-  let extracted = d.extract_if((x) => { x % 2 == 0 })
+  let extracted = d.extract_if(x => x % 2 == 0)
   assert_eq(extracted.to_array(), [2, 4, 6, 8])
   assert_eq(d.to_array(), [])
   inspect(extracted.as_views(), content="([2, 4, 6, 8], [])")
@@ -1886,7 +1886,7 @@ test "extract_if_all" {
 /// Test extract_if extracts some elements
 test "extract_if_some" {
   let d = @deque.of([1, 2, 3, 4, 5])
-  let extracted = d.extract_if((x) => { x % 2 == 0 })
+  let extracted = d.extract_if(x => x % 2 == 0)
   assert_eq(extracted.to_array(), [2, 4])
   assert_eq(d.to_array(), [1, 3, 5])
   inspect(extracted.as_views(), content="([2, 4], [])")
@@ -1905,7 +1905,7 @@ test "extract_if_folded" {
     d.push_back(i)
   }
   inspect(d.as_views(), content="([5, 6, 7, 8], [9, 10, 11, 12])")
-  let extracted = d.extract_if((x) => { x > 9 })
+  let extracted = d.extract_if(x => x > 9)
   assert_eq(extracted.to_array(), [10, 11, 12])
   assert_eq(d.to_array(), [5, 6, 7, 8, 9])
   inspect(extracted.as_views(), content="([10, 11, 12], [])")
