@@ -39,8 +39,6 @@ fn[K, V, A] HashMap::map_with_key(Self[K, V], (K, V) -> A raise?) -> Self[K, A] 
 fn[K, V] HashMap::new() -> Self[K, V]
 #as_free_fn
 fn[K : Eq + Hash, V] HashMap::of(FixedArray[(K, V)]) -> Self[K, V]
-#deprecated
-fn[K : Eq + Hash, V] HashMap::op_get(Self[K, V], K) -> V?
 fn[K : Eq + Hash, V] HashMap::remove(Self[K, V], K) -> Self[K, V]
 #as_free_fn
 fn[K : Hash, V] HashMap::singleton(K, V) -> Self[K, V]
