@@ -27,16 +27,6 @@
 pub typealias ArrayView as View
 
 ///|
-#deprecated("ArrayView will be immutable, use array if you need mutation")
-pub fn[T] View::rev_inplace(self : View[T]) -> Unit {
-  let mid_len = self.length() / 2
-  for i in 0..<mid_len {
-    let j = self.length() - i - 1
-    self.swap(i, j)
-  }
-}
-
-///|
 /// Iterates over each element in the array view and applies a function to it.
 ///
 /// Parameters:
@@ -296,16 +286,6 @@ pub fn[T, U] View::map(self : View[T], f : (T) -> U raise?) -> Array[U] raise? {
 }
 
 ///|
-/// Maps a function over the elements of the array view in place.
-///
-#deprecated("ArrayView will be immutable, use Array if you need mutation")
-pub fn[T] View::map_inplace(self : View[T], f : (T) -> T raise?) -> Unit raise? {
-  for i, v in self {
-    self[i] = f(v)
-  }
-}
-
-///|
 /// Maps a function over the elements of the array view with index.
 ///
 /// # Example
@@ -322,17 +302,6 @@ pub fn[T, U] View::mapi(
     return []
   }
   Array::makei(self.length(), i => f(i, self[i]))
-}
-
-///|
-#deprecated("ArrayView will be immutable, use array if you need mutation")
-pub fn[T] View::mapi_inplace(
-  self : View[T],
-  f : (Int, T) -> T raise?,
-) -> Unit raise? {
-  for i, v in self {
-    self[i] = f(i, v)
-  }
 }
 
 ///|
