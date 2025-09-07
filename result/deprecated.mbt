@@ -35,3 +35,12 @@ pub fn[T, E] is_ok(self : Result[T, E]) -> Bool {
 pub fn[T, E] is_err(self : Result[T, E]) -> Bool {
   self is Err(_)
 }
+
+///|
+#deprecated("use `match result { Ok(value) => ok(value); Err(error) => err(error) }` instead")
+pub fn[T, E, V] fold(self : Result[T, E], ok : (T) -> V, err : (E) -> V) -> V {
+  match self {
+    Ok(value) => ok(value)
+    Err(error) => err(error)
+  }
+}
