@@ -15,3 +15,23 @@
 ///|
 #deprecated("Use `PI` instead")
 pub let pi = 0x3.243F6A8885A308CA8A54
+
+///|
+#deprecated("Use @cmp.maximum instead")
+pub fn[T : Compare] maximum(x : T, y : T) -> T {
+  if x > y {
+    x
+  } else {
+    y
+  }
+}
+
+///|
+#deprecated("Use @cmp.minimum instead")
+pub fn[T : Compare] minimum(x : T, y : T) -> T {
+  if x > y {
+    y
+  } else {
+    x
+  }
+}
