@@ -15,13 +15,25 @@
 ///|
 test "SparseArray" {
   let arr0 = @sparse_array.singleton(1, 1)
-  inspect([arr0[0], arr0[1], arr0[2]], content="[None, Some(1), None]")
+  inspect(
+    [arr0.get(0), arr0.get(1), arr0.get(2)],
+    content="[None, Some(1), None]",
+  )
   let arr1 = arr0.add(2, 2)
-  inspect([arr1[0], arr1[1], arr1[2]], content="[None, Some(1), Some(2)]")
+  inspect(
+    [arr1.get(0), arr1.get(1), arr1.get(2)],
+    content="[None, Some(1), Some(2)]",
+  )
   let arr2 = arr1.add(0, 0)
-  inspect([arr2[0], arr2[1], arr2[2]], content="[Some(0), Some(1), Some(2)]")
+  inspect(
+    [arr2.get(0), arr2.get(1), arr2.get(2)],
+    content="[Some(0), Some(1), Some(2)]",
+  )
   let arr3 = arr2.replace(1, 42)
-  inspect([arr3[0], arr3[1], arr3[2]], content="[Some(0), Some(42), Some(2)]")
+  inspect(
+    [arr3.get(0), arr3.get(1), arr3.get(2)],
+    content="[Some(0), Some(42), Some(2)]",
+  )
 }
 
 ///|
@@ -34,7 +46,15 @@ test "SparseArray::union" {
   let arr2 = @sparse_array.singleton(1, 10).add(2, 2).add(4, 40).add(31, 31)
   let arr3 = arr1.union(arr2, (_x, y) => y)
   inspect(
-    [arr3[0], arr3[1], arr3[2], arr3[3], arr3[4], arr3[5], arr3[31]],
+    [
+      arr3.get(0),
+      arr3.get(1),
+      arr3.get(2),
+      arr3.get(3),
+      arr3.get(4),
+      arr3.get(5),
+      arr3.get(31),
+    ],
     content="[Some(0), Some(10), Some(2), Some(3), Some(40), Some(5), Some(31)]",
   )
 }
