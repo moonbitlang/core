@@ -29,7 +29,3 @@ priv struct Node[V] {
   mut right : Node[V]?
   mut height : Int
 }
-
-///|
-#deprecated("Use `SortedSet` instead of `T`")
-pub typealias SortedSet as T
