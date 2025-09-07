@@ -77,7 +77,7 @@ fn[K : Eq, V] Node::get_with_path(
       }
     (Branch(children), path) => {
       let idx = path.idx()
-      if children[idx] is Some(child) {
+      if children.get(idx) is Some(child) {
         continue (child, path.next())
       }
       None
@@ -140,7 +140,7 @@ fn[K : Eq, V] add_with_path(
       }
     Branch(children) => {
       let idx = path.idx()
-      match children[idx] {
+      match children.get(idx) {
         Some(child) => {
           let child = child.add_with_path(key, value, path.next())
           Branch(children.replace(idx, child))
@@ -322,7 +322,7 @@ fn[K : Eq, V] remove_with_path(
       }
     Branch(children) => {
       let idx = path.idx()
-      match children[idx] {
+      match children.get(idx) {
         None => Some(self)
         Some(child) => {
           let new_child = child.remove_with_path(key, path.next())

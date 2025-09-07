@@ -46,7 +46,7 @@ fn[A : Eq] Node::contains(self : Node[A], key : A, path : Path) -> Bool {
     (Flat(key1, path1), path) => path == path1 && key == key1
     (Branch(children), path) => {
       let idx = path.idx()
-      if children[idx] is Some(child) {
+      if children.get(idx) is Some(child) {
         continue (child, path.next())
       }
       false
@@ -93,7 +93,7 @@ fn[A : Eq] add_with_path(self : Node[A], key : A, path : Path) -> Node[A] {
       }
     Branch(children) => {
       let idx = path.idx()
-      match children[idx] {
+      match children.get(idx) {
         Some(child) => {
           let child = child.add_with_path(key, path.next())
           Branch(children.replace(idx, child))
@@ -147,7 +147,7 @@ fn[A : Eq] remove_with_path(self : Node[A], key : A, path : Path) -> Node[A]? {
       }
     Branch(children) => {
       let idx = path.idx()
-      match children[idx] {
+      match children.get(idx) {
         None => Some(self)
         Some(child) => {
           let new_child = child.remove_with_path(key, path.next())
