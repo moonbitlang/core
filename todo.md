@@ -56,19 +56,19 @@ This document tracks the refactoring of deprecated items across all packages in 
 - [x] Move deprecated items from `types.mbt` to `deprecated.mbt` ✅ COMPLETED
 
 ### math
-- [ ] Move deprecated items from `algebraic.mbt` to `deprecated.mbt`
+- [x] Move deprecated items from `algebraic.mbt` to `deprecated.mbt` ✅ COMPLETED
 
 ### queue
 - [x] Move deprecated items from `types.mbt` to `deprecated.mbt` ✅ COMPLETED
 
 ### random
-- [ ] Move deprecated items from `random.mbt` to `deprecated.mbt`
+- [x] Move deprecated items from `random.mbt` to `deprecated.mbt` ✅ COMPLETED
 
 ### rational
-- [ ] Move deprecated items from `rational.mbt` to `deprecated.mbt`
+- [ ] SKIP - Entire module is deprecated, items stay in rational.mbt
 
 ### result
-- [ ] Move deprecated items from `result.mbt` to `deprecated.mbt`
+- [x] Move deprecated items from `result.mbt` to `deprecated.mbt` ✅ COMPLETED
 
 ### sorted_map
 - [x] Move deprecated items from `types.mbt` to `deprecated.mbt` ✅ COMPLETED
