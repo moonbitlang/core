@@ -21,7 +21,3 @@ struct Deque[A] {
   mut head : Int
   mut tail : Int
 }
-
-///|
-#deprecated("Use `Deque` instead of `T`")
-pub typealias Deque as T

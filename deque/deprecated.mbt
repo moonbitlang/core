@@ -33,3 +33,7 @@ pub fn[A] filter_map_inplace(self : Deque[A], f : (A) -> A?) -> Unit {
 }
 
 ///|
+#deprecated("Use `Deque` instead of `T`")
+pub typealias Deque as T
+
+///|
