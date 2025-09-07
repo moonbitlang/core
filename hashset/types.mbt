@@ -42,7 +42,3 @@ struct HashSet[K] {
   mut capacity_mask : Int // capacity_mask = capacity - 1, used to find idx
   mut grow_at : Int // threshold that triggers grow
 }
-
-///|
-#deprecated("Use `HashSet` instead of `T`")
-pub typealias HashSet as T
