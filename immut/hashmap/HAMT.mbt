@@ -86,12 +86,6 @@ fn[K : Eq, V] Node::get_with_path(
 }
 
 ///|
-#deprecated("Use `get` instead. `op_get` will return `V` instead of `Option[V]` in the future.")
-pub fn[K : Eq + Hash, V] op_get(self : HashMap[K, V], key : K) -> V? {
-  self.get(key)
-}
-
-///|
 /// require: key1 != key2, path1 and path2 has the same length
 fn[K, V] join_2(
   key1 : K,
