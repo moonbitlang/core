@@ -37,3 +37,7 @@ pub fn[A] tail(self : List[A]) -> List[A] {
     More(_, tail~) => tail
   }
 }
+
+///|
+#deprecated("Use List instead of T")
+pub typealias List as T
