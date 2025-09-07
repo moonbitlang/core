@@ -155,17 +155,6 @@ fn[K : Eq, V] add_with_path(
 }
 
 ///|
-/// Filter values that satisfy the predicate
-#deprecated("Use `filter_with_key` instead. `filter` will accept `(K, V) -> Bool` in the future.")
-#coverage.skip
-pub fn[K, V] filter(
-  self : HashMap[K, V],
-  pred : (V) -> Bool raise?,
-) -> HashMap[K, V] raise? {
-  self.filter_with_key((_, v) => pred(v))
-}
-
-///|
 /// Filter entries that satisfy the predicate
 pub fn[K, V] filter_with_key(
   self : HashMap[K, V],
@@ -205,17 +194,6 @@ pub fn[K, V] filter_with_key(
 }
 
 ///|
-/// Fold the values in the map
-#deprecated("Use `fold_with_key` instead. `fold` will accept `(A, K, V) -> A` in the future.")
-pub fn[K, V, A] fold(
-  self : HashMap[K, V],
-  init~ : A,
-  f : (A, V) -> A raise?,
-) -> A raise? {
-  self.fold_with_key((acc, _k, v) => f(acc, v), init~)
-}
-
-///|
 /// Fold the values in the map with key
 /// TODO: can not mark `f` as `#locals(f)` because 
 /// it will be shadowed by the `f` in the `@list.T::fold` function
@@ -238,17 +216,6 @@ pub fn[K, V, A] fold_with_key(
     None => init
     Some(node) => go(init, node)
   }
-}
-
-///|
-/// Maps over the values in the map
-#deprecated("Use `map_with_key` instead. `map` will accept `(K, V) -> A` in the future.")
-#coverage.skip
-pub fn[K, V, A] map(
-  self : HashMap[K, V],
-  f : (V) -> A raise?,
-) -> HashMap[K, A] raise? {
-  self.map_with_key((_k, v) => f(v))
 }
 
 ///|
