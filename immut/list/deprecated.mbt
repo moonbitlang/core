@@ -13,6 +13,13 @@
 // limitations under the License.
 
 ///|
+#deprecated("use `@list` instead")
+pub(all) enum T[A] {
+  Nil
+  Cons(A, T[A])
+} derive(Eq)
+
+///|
 #deprecated("use `@immut/list.from_json` instead")
 #coverage.skip
 pub fn[A : @json.FromJson] T::from_json(
