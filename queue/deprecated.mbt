@@ -25,3 +25,7 @@ pub fn[A] peek_exn(self : Queue[A]) -> A {
 pub fn[A] pop_exn(self : Queue[A]) -> A {
   self.unsafe_pop()
 }
+
+///|
+#deprecated("use `Queue` instead of `T`")
+pub typealias Queue as T
