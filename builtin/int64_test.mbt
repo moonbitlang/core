@@ -7474,25 +7474,37 @@ test "grouped test for specific patterns" {
 }
 
 ///|
+#inline(never)
+fn int64_zero() -> Int64 {
+  0L
+}
+
+///|
+#inline(never)
+fn uint64_zero() -> UInt64 {
+  0UL
+}
+
+///|
 test "panic 1L / 0L" {
-  let _ = 1L / 0L
+  let _ = 1L / int64_zero()
 
 }
 
 ///|
 test "panic 1L % 0L" {
-  let _ = 1L % 0L
+  let _ = 1L % int64_zero()
 
 }
 
 ///|
 test "panic 1UL / 0UL" {
-  let _ = 1UL / 0UL
+  let _ = 1UL / uint64_zero()
 
 }
 
 ///|
 test "panic 1UL % 0UL" {
-  let _ = 1UL % 0UL
+  let _ = 1UL % uint64_zero()
 
 }
