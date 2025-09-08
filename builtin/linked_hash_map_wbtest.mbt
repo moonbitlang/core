@@ -96,6 +96,17 @@ test "get_or_init" {
 }
 
 ///|
+test "get_or_init on push_back" {
+  let m : Map[MyString, Array[Int]] = Map::new(capacity=4)
+  inspect(m.grow_at, content="3")
+  m.set("x", Array::new())
+  m.set("xx", Array::new())
+  inspect(m.debug_entries(), content="_,(0,x,[]),(0,xx,[]),_")
+  m.get_or_init("a", () => Array::new()).push(1)
+  inspect(m.debug_entries(), content="(3,xx,[]),(0,x,[]),(1,a,[1]),(3,xx,[])")
+}
+
+///|
 test "get_or_init full" {
   let m = Map::new(capacity=2)
   m.get_or_init("a", () => 0) |> ignore
