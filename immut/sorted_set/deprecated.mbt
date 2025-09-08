@@ -12,13 +12,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// This package implements the set data structure.
-// The types stored in set need to implement the Compare trait.
-// All operations over sets are purely applicative (no side-effects).
+///|
+#deprecated("Use `intersection` instead")
+#coverage.skip
+pub fn[A : Compare] inter(
+  self : SortedSet[A],
+  other : SortedSet[A],
+) -> SortedSet[A] {
+  self.intersection(other)
+}
 
 ///|
-/// ImmutableSets are represented by balanced binary trees (the heights of the children differ by at most 2).
-enum SortedSet[A] {
-  Empty
-  Node(left~ : SortedSet[A], right~ : SortedSet[A], size~ : Int, value~ : A)
+/// Returns the difference of two sets.
+///
+/// # Example
+/// ```mbt
+///   assert_eq(@sorted_set.of([1, 2, 3]).difference(@sorted_set.of([4, 5, 1])), @sorted_set.of([2, 3]))
+/// ```
+#deprecated("Use `difference` instead")
+#coverage.skip
+pub fn[A : Compare] diff(
+  self : SortedSet[A],
+  other : SortedSet[A],
+) -> SortedSet[A] {
+  self.difference(other)
 }
+
+///|
+#deprecated("Use `SortedSet` instead of `T`")
+pub typealias SortedSet as T
