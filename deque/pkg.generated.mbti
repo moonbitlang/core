@@ -19,6 +19,7 @@ fn[A] Deque::at(Self[A], Int) -> A
 fn[A] Deque::back(Self[A]) -> A?
 fn[A : Compare] Deque::binary_search(Self[A], A) -> Result[Int, Int]
 fn[A] Deque::binary_search_by(Self[A], (A) -> Int) -> Result[Int, Int]
+fn[A] Deque::blit_to(Self[A], Self[A], len~ : Int, src_offset? : Int, dst_offset? : Int) -> Unit
 fn[A] Deque::capacity(Self[A]) -> Int
 fn[A] Deque::clear(Self[A]) -> Unit
 fn[A : Eq] Deque::contains(Self[A], A) -> Bool
