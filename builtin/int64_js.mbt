@@ -121,6 +121,7 @@ extern "js" fn get_int64_wasm_helper() -> Int64WasmHelper =
 
 ///|
 impl Div for MyInt64 with div(self : MyInt64, other : MyInt64) -> MyInt64 {
+  guard not(other.hi == 0 && other.lo == 0) else { panic() }
   let exports = get_int64_wasm_helper()
   let { hi: ahi, lo: alo } = self
   let { hi: bhi, lo: blo } = other
@@ -131,6 +132,7 @@ impl Div for MyInt64 with div(self : MyInt64, other : MyInt64) -> MyInt64 {
 
 ///|
 fn MyInt64::div_u(self : MyInt64, other : MyInt64) -> MyInt64 {
+  guard not(other.hi == 0 && other.lo == 0) else { panic() }
   let exports = get_int64_wasm_helper()
   let { hi: ahi, lo: alo } = self
   let { hi: bhi, lo: blo } = other
@@ -141,6 +143,7 @@ fn MyInt64::div_u(self : MyInt64, other : MyInt64) -> MyInt64 {
 
 ///|
 impl Mod for MyInt64 with mod(self : MyInt64, other : MyInt64) -> MyInt64 {
+  guard not(other.hi == 0 && other.lo == 0) else { panic() }
   let exports = get_int64_wasm_helper()
   let { hi: ahi, lo: alo } = self
   let { hi: bhi, lo: blo } = other
@@ -151,6 +154,7 @@ impl Mod for MyInt64 with mod(self : MyInt64, other : MyInt64) -> MyInt64 {
 
 ///|
 fn MyInt64::mod_u(self : MyInt64, other : MyInt64) -> MyInt64 {
+  guard not(other.hi == 0 && other.lo == 0) else { panic() }
   let exports = get_int64_wasm_helper()
   let { hi: ahi, lo: alo } = self
   let { hi: bhi, lo: blo } = other
