@@ -47,6 +47,8 @@ pub fn[T] Array::from_iter(iter : Iter[T]) -> Array[T] {
 ///   assert_eq(u, [1, 2, 3, 4, 5, 6])
 /// ```
 pub fn[T] Array::push_iter(self : Self[T], iter : Iter[T]) -> Unit {
+  // This function used by [Array spread operator](https://docs.moonbitlang.com/en/latest/language/fundamentals.html#spread-operator)
+  // it can't be removed and deprecated
   for x in iter {
     self.push(x)
   }
