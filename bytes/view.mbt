@@ -155,7 +155,8 @@ pub fn View::unsafe_get(self : View, index : Int) -> Byte {
 ///   assert_eq(bv[1], b'\x02')
 ///   assert_eq(bv[2], b'\x03')
 /// ```
-pub fn Bytes::op_as_view(self : Bytes, start? : Int = 0, end? : Int) -> View {
+#alias(op_as_view)
+pub fn Bytes::sub(self : Bytes, start? : Int = 0, end? : Int) -> View {
   let len = self.length()
   let end = match end {
     None => len
@@ -179,7 +180,8 @@ pub fn Bytes::op_as_view(self : Bytes, start? : Int = 0, end? : Int) -> View {
 ///   inspect(bv2.length(), content="3")
 ///   assert_eq(bv2[1], b'\x02')
 /// ```
-pub fn View::op_as_view(self : View, start? : Int = 0, end? : Int) -> View {
+#alias(op_as_view)
+pub fn View::sub(self : View, start? : Int = 0, end? : Int) -> View {
   let len = self.length()
   let end = match end {
     None => len

@@ -70,7 +70,8 @@ pub fn[T] UninitializedArray::set(
 ///
 /// Throws an error if the indices are out of bounds or if `start` is greater
 /// than `end`.
-pub fn[T] UninitializedArray::op_as_view(
+#alias(op_as_view)
+pub fn[T] UninitializedArray::sub(
   self : UninitializedArray[T],
   start? : Int = 0,
   end? : Int,
