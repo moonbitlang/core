@@ -368,7 +368,7 @@ test "fixedarray_new_with_index" {
 ///   inspect(fixed_array, content="[1, 2, 3, 4, 5]")
 /// ```
 pub fn[T] FixedArray::from_array(array : Array[T]) -> FixedArray[T] {
-  FixedArray::makei(array.length(), i => array[i])
+  FixedArray::makei(array.length(), i => array.unsafe_get(i))
 }
 
 ///|
