@@ -1409,30 +1409,6 @@ pub fn[T] FixedArray::unsafe_set(
 ) -> Unit = "%fixedarray.unsafe_set"
 
 ///|
-/// Sets a value at the specified index in a fixed-size array. The original value
-/// at that index is overwritten.
-///
-/// Parameters:
-///
-/// * `array` : The fixed-size array to modify.
-/// * `index` : The position in the array where the value will be set.
-/// * `value` : The new value to assign at the specified index.
-///
-/// Throws a runtime error if the index is out of bounds (less than 0 or greater
-/// than or equal to the length of the array).
-///
-/// Example:
-///
-/// ```moonbit
-///   let arr = [1, 2, 3]
-///   arr[1] = 42
-///   inspect(arr, content="[1, 42, 3]")
-/// ```
-///
-#intrinsic("%fixedarray.set")
-pub fn[T] FixedArray::op_set(self : FixedArray[T], idx : Int, val : T) -> Unit = "%fixedarray.set"
-
-///|
 /// Sets the value at the specified index in a fixed-size array.
 ///
 /// Parameters:
@@ -1452,6 +1428,7 @@ pub fn[T] FixedArray::op_set(self : FixedArray[T], idx : Int, val : T) -> Unit =
 ///   arr.set(1, 42)
 ///   inspect(arr[1], content="42")
 /// ```
+#alias(op_set)
 pub fn[T] FixedArray::set(self : FixedArray[T], idx : Int, val : T) -> Unit = "%fixedarray.set"
 
 ///|

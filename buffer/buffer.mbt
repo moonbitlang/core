@@ -36,7 +36,6 @@
 struct Buffer {
   mut data : FixedArray[Byte]
   mut len : Int
-  initial_data : FixedArray[Byte]
 }
 
 ///|
@@ -145,7 +144,7 @@ pub fn contents(self : Buffer) -> Bytes {
 pub fn new(size_hint? : Int = 0) -> Buffer {
   let initial = if size_hint < 1 { 1 } else { size_hint }
   let data = FixedArray::make(initial, Byte::default())
-  { data, len: 0, initial_data: data }
+  { data, len: 0 }
 }
 
 ///|
@@ -819,8 +818,8 @@ pub fn write_iter(self : Buffer, iter : Iter[Byte]) -> Unit {
 }
 
 ///|
-/// Resets the buffer to its initial state by restoring its initial capacity and
-/// clearing its contents.
+/// Resets the buffer to an empty state by setting the internal offset to 0.
+/// This makes the buffer appear empty without actually clearing the underlying data.
 ///
 /// Parameters:
 ///
@@ -829,14 +828,15 @@ pub fn write_iter(self : Buffer, iter : Iter[Byte]) -> Unit {
 /// Example:
 ///
 /// ```moonbit
-///   let buf = @buffer.new(size_hint=4)
-///   buf.write_string("Test")
-///   buf.reset()
-///   inspect(buf.length(), content="0")
-///   inspect(buf.is_empty(), content="true")
+/// let buf = @buffer.new()
+/// buf.write_string("Hello")
+/// inspect(buf.length(), content="10")
+/// buf.reset()
+/// inspect(buf.length(), content="0")
+/// inspect(buf.is_empty(), content="true")
 /// ```
+///
 pub fn reset(self : Buffer) -> Unit {
-  self.data = self.initial_data
   self.len = 0
 }
 

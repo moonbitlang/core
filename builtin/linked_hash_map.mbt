@@ -93,6 +93,7 @@ pub fn[K : Hash + Eq, V] Map::from_array(arr : Array[(K, V)]) -> Map[K, V] {
 ///   map.set("key", 24) // update existing key
 ///   inspect(map.get("key"), content="Some(24)")
 /// ```
+#alias(op_set)
 pub fn[K : Hash + Eq, V] Map::set(self : Map[K, V], key : K, value : V) -> Unit {
   self.set_with_hash(key, value, key.hash())
 }
@@ -165,34 +166,6 @@ fn[K, V] Map::set_entry(
     None => self.tail = new_idx
     Some(next) => next.prev = new_idx
   }
-}
-
-///|
-/// Sets the value associated with a key in the hash map. If the key already
-/// exists, updates its value; otherwise, adds a new key-value pair. This
-/// function is automatically called when using the index assignment syntax
-/// `map[key] = value`.
-///
-/// Parameters:
-///
-/// * `map` : The hash map to modify.
-/// * `key` : The key to associate with the value. Must implement `Hash` and `Eq`
-/// traits.
-/// * `value` : The value to associate with the key.
-///
-/// Example:
-///
-/// ```moonbit
-///   let map : Map[String, Int] = Map::new()
-///   map["key"] = 42
-///   inspect(map.get("key"), content="Some(42)")
-/// ```
-pub fn[K : Hash + Eq, V] Map::op_set(
-  self : Map[K, V],
-  key : K,
-  value : V,
-) -> Unit {
-  self.set(key, value)
 }
 
 ///|
@@ -300,7 +273,6 @@ pub fn[K : Hash + Eq, V] Map::get_or_init(
         }
         if psl > entry.psl {
           let new_value = default()
-          self.push_away(idx, entry)
           break (idx, psl, new_value, Some(entry))
         }
         continue psl + 1, (idx + 1) & self.capacity_mask

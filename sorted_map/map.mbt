@@ -13,15 +13,6 @@
 // limitations under the License.
 
 ///|
-pub fn[K : Compare, V] op_set(
-  self : SortedMap[K, V],
-  key : K,
-  value : V,
-) -> Unit {
-  self.add(key, value)
-}
-
-///|
 pub impl[K : Eq, V : Eq] Eq for SortedMap[K, V] with equal(self, other) {
   self.to_array() == other.to_array()
 }
@@ -58,7 +49,9 @@ pub fn[K : Compare, V] SortedMap::of(
 
 ///|
 /// Inserts a key-value pair.
-pub fn[K : Compare, V] add(self : SortedMap[K, V], key : K, value : V) -> Unit {
+#alias(op_set)
+#alias(add, deprecated="Use set instead")
+pub fn[K : Compare, V] set(self : SortedMap[K, V], key : K, value : V) -> Unit {
   let (new_root, inserted) = add_node(self.root, key, value)
   if self.root != new_root {
     self.root = new_root
