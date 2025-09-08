@@ -300,7 +300,6 @@ pub fn[K : Hash + Eq, V] Map::get_or_init(
         }
         if psl > entry.psl {
           let new_value = default()
-          self.push_away(idx, entry)
           break (idx, psl, new_value, Some(entry))
         }
         continue psl + 1, (idx + 1) & self.capacity_mask
