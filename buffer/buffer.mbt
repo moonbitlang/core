@@ -818,7 +818,8 @@ pub fn write_iter(self : Buffer, iter : Iter[Byte]) -> Unit {
 }
 
 ///|
-/// Resets the buffer to an empty state by clearing all its contents.
+/// Resets the buffer to an empty state by setting the internal offset to 0.
+/// This makes the buffer appear empty without actually clearing the underlying data.
 ///
 /// Parameters:
 ///
