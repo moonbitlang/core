@@ -320,6 +320,7 @@ test "mapi" {
 ///   let arr = FixedArray::makei(3, i => i * 2)
 ///   inspect(arr, content="[0, 2, 4]")
 /// ```
+#locals(value)
 pub fn[T] FixedArray::makei(
   length : Int,
   value : (Int) -> T raise?,
