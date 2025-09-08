@@ -92,6 +92,7 @@ pub fn[K : Hash + Eq, V] HashMap::from_array(
 ///   map.set("key", 24) // update existing key
 ///   inspect(map.get("key"), content="Some(24)")
 /// ```
+#alias(op_set)
 pub fn[K : Hash + Eq, V] set(self : HashMap[K, V], key : K, value : V) -> Unit {
   self.set_with_hash(key, value, key.hash())
 }
@@ -152,34 +153,6 @@ fn[K, V] HashMap::push_away(
         }
     }
   }
-}
-
-///|
-/// Sets the value associated with a key in the hash map. If the key already
-/// exists, updates its value; otherwise, adds a new key-value pair. This
-/// function is automatically called when using the index assignment syntax
-/// `map[key] = value`.
-///
-/// Parameters:
-///
-/// * `map` : The hash map to modify.
-/// * `key` : The key to associate with the value. Must implement `Hash` and `Eq`
-/// traits.
-/// * `value` : The value to associate with the key.
-///
-/// Example:
-///
-/// ```moonbit
-///   let map : @hashmap.HashMap[String, Int] = @hashmap.new()
-///   map["key"] = 42
-///   inspect(map.get("key"), content="Some(42)")
-/// ```
-pub fn[K : Hash + Eq, V] op_set(
-  self : HashMap[K, V],
-  key : K,
-  value : V,
-) -> Unit {
-  self.set(key, value)
 }
 
 ///|
