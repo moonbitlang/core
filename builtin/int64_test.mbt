@@ -7472,3 +7472,27 @@ test "grouped test for specific patterns" {
   // Test for all bits set except the most significant bit
   inspect(UInt64::reinterpret_as_double(0x7FFFFFFFFFFFFFFFUL), content="NaN")
 }
+
+///|
+test "panic 1L / 0L" {
+  let _ = 1L / 0L
+
+}
+
+///|
+test "panic 1L % 0L" {
+  let _ = 1L % 0L
+
+}
+
+///|
+test "panic 1UL / 0UL" {
+  let _ = 1UL / 0UL
+
+}
+
+///|
+test "panic 1UL % 0UL" {
+  let _ = 1UL % 0UL
+
+}
