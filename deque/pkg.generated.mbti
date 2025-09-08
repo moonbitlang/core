@@ -46,7 +46,6 @@ fn[A, U] Deque::mapi(Self[A], (Int, A) -> U) -> Self[U]
 fn[A] Deque::new(capacity? : Int) -> Self[A]
 #as_free_fn
 fn[A] Deque::of(FixedArray[A]) -> Self[A]
-fn[A] Deque::op_set(Self[A], Int, A) -> Unit
 fn[A] Deque::pop_back(Self[A]) -> A?
 #deprecated
 fn[A] Deque::pop_back_exn(Self[A]) -> Unit
@@ -65,6 +64,8 @@ fn[A] Deque::rev_inplace(Self[A]) -> Unit
 fn[A] Deque::rev_iter(Self[A]) -> Iter[A]
 fn[A] Deque::rev_iter2(Self[A]) -> Iter2[Int, A]
 fn[A : Eq] Deque::search(Self[A], A) -> Int?
+#alias(op_set)
+fn[A] Deque::set(Self[A], Int, A) -> Unit
 fn[A] Deque::shrink_to_fit(Self[A]) -> Unit
 fn[A] Deque::shuffle(Self[A], rand~ : (Int) -> Int) -> Self[A]
 fn[A] Deque::shuffle_in_place(Self[A], rand~ : (Int) -> Int) -> Unit

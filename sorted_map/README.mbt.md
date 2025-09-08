@@ -36,7 +36,7 @@ Add a key-value pair to the SortedMap in place.
 ```moonbit
 test {
   let map = @sorted_map.from_array([(1, "one"), (2, "two")])
-  map.add(3, "three")
+  map.set(3, "three")
   assert_eq(map.size(), 3)
 }
 ```

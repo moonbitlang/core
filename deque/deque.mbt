@@ -550,7 +550,8 @@ pub fn[A] at(self : Deque[A], index : Int) -> A {
 ///   dv[2] = 1
 ///   inspect(dv[2], content="1")
 /// ```
-pub fn[A] op_set(self : Deque[A], index : Int, value : A) -> Unit {
+#alias(op_set)
+pub fn[A] set(self : Deque[A], index : Int, value : A) -> Unit {
   if index < 0 || index >= self.len {
     let len = self.len
     abort(
