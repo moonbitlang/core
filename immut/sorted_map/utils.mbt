@@ -14,14 +14,6 @@
 
 ///|
 /// Create an empty map.
-#deprecated("Use `new()` instead")
-#coverage.skip
-pub fn[K, V] SortedMap::empty() -> SortedMap[K, V] {
-  Empty
-}
-
-///|
-/// Create an empty map.
 #as_free_fn
 pub fn[K, V] SortedMap::new() -> SortedMap[K, V] {
   Empty
@@ -76,15 +68,6 @@ fn[K, V] make_tree(
 ) -> SortedMap[K, V] {
   let size = l.size() + r.size() + 1
   Tree(key, value~, size~, l, r)
-}
-
-///|
-/// Get the value associated with a key.
-/// O(log n).
-#deprecated("Use `get` instead")
-#coverage.skip
-pub fn[K : Compare, V] lookup(self : SortedMap[K, V], key : K) -> V? {
-  self.get(key)
 }
 
 ///|
@@ -157,18 +140,6 @@ pub fn[K, V] eachi(self : SortedMap[K, V], f : (Int, K, V) -> Unit) -> Unit {
 }
 
 ///|
-/// Ts over the values in the map.
-#deprecated("Use `map_with_key` instead. `map` will accept `(K, X) -> Y` in the future.")
-#coverage.skip
-pub fn[K, X, Y] map(self : SortedMap[K, X], f : (X) -> Y) -> SortedMap[K, Y] {
-  match self {
-    Empty => Empty
-    Tree(k, value~, size~, l, r) =>
-      Tree(k, value=f(value), size~, l.map(f), r.map(f))
-  }
-}
-
-///|
 /// Maps over the key-value pairs in the map.
 pub fn[K, X, Y] map_with_key(
   self : SortedMap[K, X],
@@ -179,14 +150,6 @@ pub fn[K, X, Y] map_with_key(
     Tree(k, value~, l, r, size~) =>
       Tree(k, value=f(k, value), size~, l.map_with_key(f), r.map_with_key(f))
   }
-}
-
-///|
-/// Fold the values in the map.
-/// O(n).
-#deprecated("Use `foldl_with_key` instead. `fold` will accept `(A, K, V) -> A` in the future.")
-pub fn[K, V, A] fold(self : SortedMap[K, V], init~ : A, f : (A, V) -> A) -> A {
-  self.foldl_with_key((acc, _k, v) => f(acc, v), init~)
 }
 
 ///|
@@ -305,14 +268,6 @@ pub fn[K : Compare, V] SortedMap::from_iter(
 
 ///|
 /// Return all keys of the map in ascending order.
-#deprecated("Use `keys_as_iter` instead. `keys` will return `Iter[K]` instead of `Array[K]` in the future.")
-#coverage.skip
-pub fn[K, V] keys(self : SortedMap[K, V]) -> Array[K] {
-  self.iter().map(p => p.0).collect()
-}
-
-///|
-/// Return all keys of the map in ascending order.
 pub fn[K, V] keys_as_iter(self : SortedMap[K, V]) -> Iter[K] {
   self.iter().map(p => p.0)
 }
@@ -321,13 +276,6 @@ pub fn[K, V] keys_as_iter(self : SortedMap[K, V]) -> Iter[K] {
 /// Return all elements of the map in the ascending order of their keys.
 pub fn[K, V] values(self : SortedMap[K, V]) -> Iter[V] {
   self.iter().map(p => p.1)
-}
-
-///|
-#deprecated("Use `values` instead")
-#coverage.skip
-pub fn[K, V] elems(self : SortedMap[K, V]) -> Array[V] {
-  self.values().collect()
 }
 
 ///|
