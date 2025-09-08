@@ -1615,8 +1615,10 @@ test "blit_to_into_empty" {
 /// Test blit_to when source is wrapped around
 test "blit_to_wrap_around" {
   let src = @deque.of([1, 2, 3, 4, 5])
-  ignore(src.pop_front()) // src = [2, 3, 4, 5]
-  src.push_back(6) // src = [2, 3, 4, 5, 6] but head != 0
+  ignore(src.pop_front())
+  src.push_back(6)
+  assert_eq(src.to_array(), [2, 3, 4, 5, 6])
+  inspect(src.as_views(), content="([2, 3, 4, 5], [6])")
   let dst = @deque.of([0, 0, 0, 0, 0])
   @deque.Deque::blit_to(src, dst, len=5, src_offset=0, dst_offset=0)
   assert_eq(dst.to_array(), [2, 3, 4, 5, 6])
