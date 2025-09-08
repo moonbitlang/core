@@ -103,17 +103,6 @@ pub fn[K : Compare, V] remove(
 }
 
 ///|
-/// Filter values that satisfy the predicate
-#deprecated("Use `filter_with_key` instead. `filter` will accept `(K, V) -> Bool` in the future.")
-#coverage.skip
-pub fn[K : Compare, V] filter(
-  self : SortedMap[K, V],
-  pred : (V) -> Bool raise?,
-) -> SortedMap[K, V] raise? {
-  self.filter_with_key((_k, v) => pred(v))
-}
-
-///|
 /// Filter key-value pairs that satisfy the predicate
 pub fn[K : Compare, V] filter_with_key(
   self : SortedMap[K, V],

@@ -22,7 +22,3 @@ enum SortedSet[A] {
   Empty
   Node(left~ : SortedSet[A], right~ : SortedSet[A], size~ : Int, value~ : A)
 }
-
-///|
-#deprecated("Use `SortedSet` instead of `T`")
-pub typealias SortedSet as T

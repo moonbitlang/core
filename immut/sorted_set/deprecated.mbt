@@ -12,20 +12,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// This package implements the set data structure.
-// The types stored in set need to implement the Compare trait.
-// All operations over sets are purely applicative (no side-effects).
-
 ///|
-struct SortedSet[V] {
-  mut root : Node[V]?
-  mut size : Int
+#deprecated("Use `intersection` instead")
+#coverage.skip
+pub fn[A : Compare] inter(
+  self : SortedSet[A],
+  other : SortedSet[A],
+) -> SortedSet[A] {
+  self.intersection(other)
 }
 
 ///|
-priv struct Node[V] {
-  mut value : V
-  mut left : Node[V]?
-  mut right : Node[V]?
-  mut height : Int
+/// Returns the difference of two sets.
+///
+/// # Example
+/// ```mbt
+///   assert_eq(@sorted_set.of([1, 2, 3]).difference(@sorted_set.of([4, 5, 1])), @sorted_set.of([2, 3]))
+/// ```
+#deprecated("Use `difference` instead")
+#coverage.skip
+pub fn[A : Compare] diff(
+  self : SortedSet[A],
+  other : SortedSet[A],
+) -> SortedSet[A] {
+  self.difference(other)
 }
+
+///|
+#deprecated("Use `SortedSet` instead of `T`")
+pub typealias SortedSet as T

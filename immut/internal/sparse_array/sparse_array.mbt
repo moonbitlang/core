@@ -32,7 +32,7 @@ pub fn[X] singleton(idx : Int, value : X) -> SparseArray[X] {
 }
 
 ///|
-pub fn[X] op_get(self : SparseArray[X], idx : Int) -> X? {
+pub fn[X] get(self : SparseArray[X], idx : Int) -> X? {
   if self.elem_info.has(idx) {
     Some(self.data[self.elem_info.index_of(idx)])
   } else {
@@ -115,10 +115,10 @@ pub fn[X] SparseArray::union(
   let data = FixedArray::make(union_elem_info.size(), self.data[0])
   for rest = union_elem_info, index = 0; rest != empty_bitset; {
     let idx = rest.first_idx()
-    data[index] = match self[idx] {
+    data[index] = match self.get(idx) {
       None => other.unsafe_get(idx)
       Some(value1) =>
-        match other[idx] {
+        match other.get(idx) {
           None => value1
           Some(value2) => f(value1, value2)
         }
@@ -180,7 +180,7 @@ pub fn[X] SparseArray::difference(
   for rest = self_elem_info, index = 0, elem_info = self_elem_info; rest !=
      empty_bitset; {
     let idx = rest.first_idx()
-    match other[idx] {
+    match other.get(idx) {
       None => {
         data[index] = self.unsafe_get(idx)
         continue rest.remove(idx), index + 1, elem_info

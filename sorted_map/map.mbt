@@ -102,7 +102,8 @@ pub fn[K : Compare, V] get(self : SortedMap[K, V], key : K) -> V? {
 
 ///|
 /// Gets a value by a key.
-pub fn[K : Compare, V] op_get(self : SortedMap[K, V], key : K) -> V {
+#alias(op_get)
+pub fn[K : Compare, V] at(self : SortedMap[K, V], key : K) -> V {
   loop self.root {
     Some(node) => {
       let cmp = key.compare(node.key)

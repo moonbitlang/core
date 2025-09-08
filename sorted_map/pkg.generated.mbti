@@ -12,6 +12,8 @@ import(
 // Types and methods
 type SortedMap[K, V]
 fn[K : Compare, V] SortedMap::add(Self[K, V], K, V) -> Unit
+#alias(op_get)
+fn[K : Compare, V] SortedMap::at(Self[K, V], K) -> V
 fn[K, V] SortedMap::clear(Self[K, V]) -> Unit
 fn[K : Compare, V] SortedMap::contains(Self[K, V], K) -> Bool
 fn[K, V] SortedMap::each(Self[K, V], (K, V) -> Unit raise?) -> Unit raise?
@@ -31,7 +33,6 @@ fn[K, V] SortedMap::keys_as_iter(Self[K, V]) -> Iter[K]
 fn[K, V] SortedMap::new() -> Self[K, V]
 #as_free_fn
 fn[K : Compare, V] SortedMap::of(FixedArray[(K, V)]) -> Self[K, V]
-fn[K : Compare, V] SortedMap::op_get(Self[K, V], K) -> V
 fn[K : Compare, V] SortedMap::op_set(Self[K, V], K, V) -> Unit
 fn[K : Compare, V] SortedMap::range(Self[K, V], K, K) -> Iter2[K, V]
 fn[K : Compare, V] SortedMap::remove(Self[K, V], K) -> Unit

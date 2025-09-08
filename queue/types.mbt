@@ -27,7 +27,3 @@ struct Queue[A] {
   mut first : Cons[A]?
   mut last : Cons[A]?
 }
-
-///|
-#deprecated("use `Queue` instead of `T`")
-pub typealias Queue as T

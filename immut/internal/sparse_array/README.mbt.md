@@ -17,7 +17,7 @@ test "sparse array basics" {
   inspect(single.size(), content="1")
   
   // Check if element exists
-  match single[5] {
+  match single.get(5) {
     Some(val) => inspect(val, content="value")
     None => inspect(false, content="true")
   }
@@ -49,7 +49,7 @@ test "sparse array operations" {
   inspect(removed.size(), content="1")
   
   // Check final value
-  match removed[3] {
+  match removed.get(3) {
     Some(val) => inspect(val, content="150")
     None => inspect(false, content="true")
   }
@@ -73,7 +73,7 @@ test "bitset operations" {
   inspect(with_more.size(), content="3")
   
   // Access elements by index
-  match with_more[3] {
+  match with_more.get(3) {
     Some(val) => inspect(val, content="test")
     None => inspect(false, content="true")
   }
@@ -120,7 +120,7 @@ test "sparse array transformations" {
   // Map values to new type
   let doubled = numbers.map(fn(x) { x * 2 })
   inspect(doubled.size(), content="2")
-  match doubled[1] {
+  match doubled.get(1) {
     Some(val) => inspect(val, content="20")
     None => inspect(false, content="true")
   }
@@ -148,7 +148,7 @@ test "sparse array combinations" {
   inspect(combined.size(), content="3")
   
   // Check combined values
-  match combined[3] {
+  match combined.get(3) {
     Some(val) => inspect(val, content="cC")  // Combined "c" + "C"
     None => inspect(false, content="true")
   }
@@ -168,13 +168,13 @@ test "advanced sparse operations" {
   inspect(extended.size(), content="4")
   
   // Access specific elements
-  match extended[10] {
+  match extended.get(10) {
     Some(val) => inspect(val, content="100")
     None => inspect(false, content="true")
   }
   
   // Check non-existent element
-  match extended[7] {
+  match extended.get(7) {
     Some(_) => inspect(false, content="true")
     None => inspect(true, content="true")  // Should be None
   }

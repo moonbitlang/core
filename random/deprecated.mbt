@@ -20,3 +20,10 @@ pub fn new(seed? : Bytes = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456") -> Rand {
   }
   @random_source.ChaCha8::new(seed) as &Source
 }
+
+///|
+/// Create a new random number generator with [seed].
+#deprecated("You may use `Rand::chacha8(seed~)` instead of `Rand::new(chacha8(seed~))")
+pub fn chacha8(seed? : Bytes = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456") -> &Source {
+  @random_source.ChaCha8::new(seed)
+}

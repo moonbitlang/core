@@ -12,20 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// This package implements the set data structure.
-// The types stored in set need to implement the Compare trait.
-// All operations over sets are purely applicative (no side-effects).
-
 ///|
-struct SortedSet[V] {
-  mut root : Node[V]?
-  mut size : Int
-}
-
-///|
-priv struct Node[V] {
-  mut value : V
-  mut left : Node[V]?
-  mut right : Node[V]?
-  mut height : Int
-}
+#deprecated("Use `Set` instead of `T`")
+pub typealias HashSet as T

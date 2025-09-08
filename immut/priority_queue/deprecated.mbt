@@ -18,3 +18,7 @@
 pub fn[A : Compare] pop_exn(self : PriorityQueue[A]) -> PriorityQueue[A] {
   self.unsafe_pop()
 }
+
+///|
+#deprecated("Use `PriorityQueue` instead of `T`")
+pub typealias PriorityQueue as T

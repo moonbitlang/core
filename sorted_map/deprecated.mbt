@@ -29,3 +29,7 @@ pub fn[K, V] values(self : SortedMap[K, V]) -> Array[V] {
   self.each(fn(_k, v) { values.push(v) })
   values
 }
+
+///|
+#deprecated("Use `SortedMap` instead of `T`")
+pub typealias SortedMap as T

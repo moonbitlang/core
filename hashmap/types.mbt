@@ -60,7 +60,3 @@ pub impl[K : Hash + Eq, V : Eq] Eq for HashMap[K, V] with equal(
     true
   }
 }
-
-///|
-#deprecated("Use `HashMap` instead of `T`")
-pub typealias HashMap as T

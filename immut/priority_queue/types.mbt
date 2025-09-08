@@ -38,7 +38,3 @@ pub impl[A : ToJson + Compare] ToJson for PriorityQueue[A] with to_json(
   }
   Json::array(output)
 }
-
-///|
-#deprecated("Use `PriorityQueue` instead of `T`")
-pub typealias PriorityQueue as T

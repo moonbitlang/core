@@ -178,15 +178,6 @@ test "bind" {
 }
 
 ///|
-#deprecated("use `match result { Ok(value) => ok(value); Err(error) => err(error) }` instead")
-pub fn[T, E, V] fold(self : Result[T, E], ok : (T) -> V, err : (E) -> V) -> V {
-  match self {
-    Ok(value) => ok(value)
-    Err(error) => err(error)
-  }
-}
-
-///|
 /// Converts a `Result` to an `Option`.
 ///
 /// Converts `Ok` to `Some` and `Err` to `None`.
@@ -291,6 +282,62 @@ test "show" {
       #|Err("world")
     ),
   )
+}
+
+///|
+/// Return the contained `Ok` value or the provided default.
+pub fn[T, E] Result::unwrap_or(self : Result[T, E], default : T) -> T {
+  match self {
+    Ok(value) => value
+    Err(_) => default
+  }
+}
+
+///|
+test "unwrap_or" {
+  let x : Result[Int, String] = Ok(3)
+  let y : Result[Int, String] = Err("error")
+  assert_eq(x.unwrap_or(5), 3)
+  assert_eq(y.unwrap_or(5), 5)
+}
+
+///|
+/// Return the contained `Ok` value or the provided default.
+///
+/// Default is lazily evaluated
+pub fn[T, E] Result::unwrap_or_else(
+  self : Result[T, E],
+  default : () -> T raise?,
+) -> T raise? {
+  match self {
+    Ok(value) => value
+    Err(_) => default()
+  }
+}
+
+///|
+test "unwrap_or_else" {
+  let x : Result[Int, String] = Ok(3)
+  let y : Result[Int, String] = Err("error")
+  assert_eq(x.unwrap_or_else(() => 5), 3)
+  assert_eq(y.unwrap_or_else(() => 5), 5)
+}
+
+///|
+/// Return the contained `Ok` value or the result of the `T::default()`.
+pub fn[T : Default, E] Result::unwrap_or_default(self : Result[T, E]) -> T {
+  match self {
+    Ok(value) => value
+    Err(_) => T::default()
+  }
+}
+
+///|
+test "unwrap_or_default" {
+  let x : Result[Int, String] = Ok(3)
+  let y : Result[Int, String] = Err("error")
+  assert_eq(x.unwrap_or_default(), 3)
+  assert_eq(y.unwrap_or_default(), 0)
 }
 
 ///|

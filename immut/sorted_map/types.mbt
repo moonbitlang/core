@@ -36,7 +36,3 @@ enum SortedMap[K, V] {
   Empty
   Tree(K, value~ : V, size~ : Int, SortedMap[K, V], SortedMap[K, V])
 }
-
-///|
-#deprecated("Use `SortedMap` instead of `T`")
-pub typealias SortedMap as T

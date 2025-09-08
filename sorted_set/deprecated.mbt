@@ -46,3 +46,7 @@ pub fn[V : Compare] intersect(
 ) -> SortedSet[V] {
   self.intersection(src)
 }
+
+///|
+#deprecated("Use `SortedSet` instead of `T`")
+pub typealias SortedSet as T
