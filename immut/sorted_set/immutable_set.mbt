@@ -318,16 +318,6 @@ pub impl[A : Compare] Add for SortedSet[A] with add(self, other) {
 }
 
 ///|
-#deprecated("Use `intersection` instead")
-#coverage.skip
-pub fn[A : Compare] inter(
-  self : SortedSet[A],
-  other : SortedSet[A],
-) -> SortedSet[A] {
-  self.intersection(other)
-}
-
-///|
 /// Returns the intersection of self with other.
 ///
 /// # Example
@@ -347,23 +337,6 @@ pub fn[A : Compare] intersection(
         (l2, true, r2) => join(l1.intersection(l2), v1, r1.intersection(r2))
       }
   }
-}
-
-///|
-/// Returns the difference between self and other.
-///
-/// # Example
-///
-/// ```mbt
-///   assert_eq(@sorted_set.of([1, 2, 3]).difference(@sorted_set.of([4, 5, 1])), @sorted_set.of([2, 3]))
-/// ```
-#deprecated("Use `difference` instead")
-#coverage.skip
-pub fn[A : Compare] diff(
-  self : SortedSet[A],
-  other : SortedSet[A],
-) -> SortedSet[A] {
-  self.difference(other)
 }
 
 ///|
