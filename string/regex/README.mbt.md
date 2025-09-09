@@ -20,7 +20,7 @@ moonbit:
 ```moonbit
 test {
   // Compile once, use everywhere
-  let regexp = @regexp.compile("a(bc|de)f")
+  let regexp = @regex.compile("a(bc|de)f")
   guard regexp.match_("xxabcf") is Some(result)
   inspect(
     result.results(),
@@ -31,7 +31,7 @@ test {
 
   // Write a simple split with regexp
   fn split(
-    regexp : @regexp.Regexp,
+    regexp : @regex.Regexp,
     target : @string.View
   ) -> Array[@string.View] {
     let result = []
@@ -46,7 +46,7 @@ test {
     result
   }
 
-  let re = @regexp.compile("_+")
+  let re = @regex.compile("_+")
   inspect(
     split(re, "1_2__3__4__5_____6"),
     content=(
@@ -99,7 +99,7 @@ Match characters by their Unicode general categories:
 ```moonbit
 test "unicode properties" {
   // Matching gc=L
-  let regex = @regexp.compile("\\p{Letter}+")
+  let regex = @regex.compile("\\p{Letter}+")
   inspect(
     regex.execute("Hello 世界").results(),
     content=(
@@ -108,7 +108,7 @@ test "unicode properties" {
   )
 
   // Matching gc=N
-  let regex = @regexp.compile("\\p{Number}+")
+  let regex = @regex.compile("\\p{Number}+")
   inspect(
     regex.execute("123 and 456").results(),
     content=(
@@ -130,7 +130,7 @@ test "unicode properties" {
 ```moonbit
 test "backreferences" {
   // Palindrome detection (simple)
-  let palindrome = @regexp.compile("^(.)(.)\\2\\1")
+  let palindrome = @regex.compile("^(.)(.)\\2\\1")
   inspect(
     palindrome.execute("abba").results(),
     content=(
@@ -139,7 +139,7 @@ test "backreferences" {
   )
 
   // HTML tag matching
-  let html_regex = @regexp.compile("<([a-zA-Z]+)[^>]*>(.*?)</\\1>")
+  let html_regex = @regex.compile("<([a-zA-Z]+)[^>]*>(.*?)</\\1>")
   let result = html_regex.execute("<div class='test'>content</div>")
   inspect(
     result.results(),
@@ -155,7 +155,7 @@ test "backreferences" {
 ```moonbit
 test "character classes" {
   // Email validation (simplified)
-  let email = @regexp.compile(
+  let email = @regex.compile(
     (
       #|[\w-]+@[\w-]+\.\w+
     ),
@@ -168,7 +168,7 @@ test "character classes" {
     ),
   )
   // Extract numbers
-  let numbers = @regexp.compile(
+  let numbers = @regex.compile(
     (
       #|\d+\.\d{2}
     ),
@@ -182,7 +182,7 @@ test "character classes" {
   )
 
   // Named captures for parsing
-  let parser = @regexp.compile(
+  let parser = @regex.compile(
     (
       #|(?<year>\d{4})-(?<month>\d{2})-(?<day>\d{2})
     ),
@@ -203,7 +203,7 @@ test "character classes" {
 ```moonbit
 test {
   try {
-    let _ = @regexp.compile("a(b")  // Oops! Missing )
+    let _ = @regex.compile("a(b")  // Oops! Missing )
   } catch {
     RegexpError(err=MissingParenthesis, source_fragment=_) => println("Fix your regex! 🔧")
     _ => ()
