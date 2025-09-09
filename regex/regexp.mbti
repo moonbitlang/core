@@ -40,8 +40,6 @@ fn MatchResult::results(Self) -> Array[@string.StringView?]
 
 type Regexp
 fn Regexp::execute(Self, @string.StringView) -> MatchResult
-#deprecated
-fn Regexp::execute_with_remainder(Self, @string.StringView) -> (MatchResult, @string.StringView)
 fn Regexp::group_by_name(Self, String) -> Int?
 fn Regexp::group_count(Self) -> Int
 fn Regexp::group_names(Self) -> Array[String]
