@@ -561,6 +561,8 @@ fn[T] FixedArray::set(Self[T], Int, T) -> Unit
 fn FixedArray::set_utf16be_char(Self[Byte], Int, Char) -> Int
 fn FixedArray::set_utf16le_char(Self[Byte], Int, Char) -> Int
 fn FixedArray::set_utf8_char(Self[Byte], Int, Char) -> Int
+#alias(op_as_view)
+fn[T] FixedArray::sub(Self[T], start? : Int, end? : Int) -> ArrayView[T]
 fn[A] FixedArray::unsafe_blit(Self[A], Int, Self[A], Int, Int) -> Unit
 fn[T] FixedArray::unsafe_get(Self[T], Int) -> T
 fn FixedArray::unsafe_reinterpret_as_bytes(Self[Byte]) -> Bytes
