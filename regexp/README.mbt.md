@@ -1,7 +1,7 @@
 ---
 moonbit:
   deps:
-    moonbitlang/regexp:
+    moonbitlang/core/regexp:
       path: .
 ---
 
