@@ -1371,6 +1371,101 @@ pub impl[A : @json.FromJson] @json.FromJson for Deque[A] with from_json(
 }
 
 ///|
+/// Divides a deque into smaller deques (chunks) of the specified size.
+/// 
+/// Parameters:
+/// 
+/// * `self` : The deque to be divided into chunks.
+/// * `size` : The size of each chunk. Must be a positive integer,
+///   otherwise it will panic.
+/// 
+/// Returns a deque of deques, where each inner deque is a chunk containing
+/// elements from the original deque. If the length of the original deque is not
+/// divisible by the chunk size, the last chunk will contain fewer elements.
+/// 
+/// Example:
+/// 
+/// ```moonbit
+/// let d = @deque.of([1, 2, 3, 4, 5])
+/// let chunks = d.chunks(2)
+/// inspect(
+///   chunks.to_array().map(fn(c) { c.to_array() }),
+///   content="[[1, 2], [3, 4], [5]]",
+/// )
+/// let d : @deque.Deque[Int] = @deque.of([])
+/// inspect(d.chunks(3).length(), content="0")
+/// ```
+/// 
+/// Panics if:
+/// 
+/// * `size` is not positive
+pub fn[A] chunks(self : Deque[A], size : Int) -> Deque[Deque[A]] {
+  guard size > 0
+  let chunks : Deque[Deque[A]] = of([])
+  let mut i = 0
+  while i < self.length() {
+    let chunk = Deque::new(capacity=size)
+    for j = 0; j < size && i < self.length(); j = j + 1 {
+      chunk.push_back(self[i])
+      i = i + 1
+    }
+    chunks.push_back(chunk)
+  }
+  chunks
+}
+
+///|
+/// Groups consecutive elements of the deque into chunks where adjacent elements
+/// satisfy the given predicate function.
+/// 
+/// Parameters:
+/// 
+/// * `self` : The source deque to be chunked.
+/// * `pred` : A function that takes two adjacent elements and returns
+///   `true` if they should be in the same chunk, `false` otherwise.
+/// 
+/// Returns a `Deque` of `Deque`s, where each inner `Deque` is a chunk of
+/// consecutive elements that satisfy the predicate with their adjacent elements.
+/// 
+/// Notes:
+/// 
+/// * The relative order of elements is preserved.
+/// * The number of chunks is at least 1 if the deque is non-empty.
+/// * Returns an empty deque if the input is empty.
+/// 
+/// Example:
+/// 
+/// ```moonbit
+/// let d = @deque.of([1, 1, 2, 3, 2, 3, 2, 3, 4])
+/// let chunks = d.chunk_by((x, y) => x <= y)
+/// inspect(
+///   chunks.to_array().map(fn(c) { c.to_array() }),
+///   content="[[1, 1, 2, 3], [2, 3], [2, 3, 4]]",
+/// )
+/// let empty : @deque.Deque[Int] = @deque.of([])
+/// inspect(empty.chunk_by((x, y) => x <= y).to_array(), content="[]")
+/// ```
+#locals(pred)
+pub fn[A] chunk_by(
+  self : Deque[A],
+  pred : (A, A) -> Bool raise?,
+) -> Deque[Deque[A]] raise? {
+  let chunks : Deque[Deque[A]] = of([])
+  let mut i = 0
+  while i < self.length() {
+    let chunk = of([])
+    chunk.push_back(self[i])
+    i = i + 1
+    while i < self.length() && pred(self[i - 1], self[i]) {
+      chunk.push_back(self[i])
+      i = i + 1
+    }
+    chunks.push_back(chunk)
+  }
+  chunks
+}
+
+///|
 /// Flattens a high-dimensional deque into a lower-dimensional deque
 /// by concatenating all inner deques in order.
 ///
