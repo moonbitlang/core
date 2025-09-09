@@ -1508,3 +1508,80 @@ test "append_folded_but_has_space" {
   d1.append(@deque.of([9, 10, 11]))
   inspect(d1.as_views(), content="([4, 5, 6, 7, 9], [10, 11])")
 }
+
+///|
+/// Test basic blit_to functionality
+test "blit_to_simple" {
+  let src = @deque.of([1, 2, 3])
+  let dst = @deque.of([0, 0, 0])
+  @deque.Deque::blit_to(src, dst, len=3, src_offset=0, dst_offset=0)
+  assert_eq(dst.to_array(), [1, 2, 3])
+  inspect(dst.as_views(), content="([1, 2, 3], [])")
+}
+
+///|
+/// Test blit_to with offsets
+test "blit_to_with_offsets" {
+  let src = @deque.of([1, 2, 3, 4, 5])
+  let dst = @deque.of([0, 0, 0, 0, 0])
+
+  // Copy last element of src to front of dst
+  @deque.Deque::blit_to(src, dst, len=1, src_offset=4, dst_offset=0)
+  assert_eq(dst.to_array(), [5, 0, 0, 0, 0])
+  inspect(dst.as_views(), content="([5, 0, 0, 0, 0], [])")
+
+  // Copy first element of src to last of dst
+  @deque.Deque::blit_to(src, dst, len=1, src_offset=0, dst_offset=4)
+  assert_eq(dst.to_array(), [5, 0, 0, 0, 1])
+  inspect(dst.as_views(), content="([5, 0, 0, 0, 1], [])")
+
+  // Copy multiple elements into tail of dst
+  @deque.Deque::blit_to(src, dst, len=2, src_offset=3, dst_offset=3)
+  assert_eq(dst.to_array(), [5, 0, 0, 4, 5])
+  inspect(dst.as_views(), content="([5, 0, 0, 4, 5], [])")
+}
+
+///|
+/// Test blit_to into an empty deque (should grow automatically)
+test "blit_to_into_empty" {
+  let src = @deque.of([1, 2, 3])
+  let dst : @deque.Deque[Int] = @deque.of([])
+  @deque.Deque::blit_to(src, dst, len=3, src_offset=0, dst_offset=0)
+  assert_eq(dst.to_array(), [1, 2, 3])
+  inspect(dst.as_views(), content="([1, 2, 3], [])")
+  assert_eq(dst.length(), 3)
+}
+
+///|
+/// Test blit_to when source is wrapped around
+test "blit_to_wrap_around" {
+  let src = @deque.of([1, 2, 3, 4, 5])
+  ignore(src.pop_front())
+  src.push_back(6)
+  assert_eq(src.to_array(), [2, 3, 4, 5, 6])
+  inspect(src.as_views(), content="([2, 3, 4, 5], [6])")
+  let dst = @deque.of([0, 0, 0, 0, 0])
+  @deque.Deque::blit_to(src, dst, len=5, src_offset=0, dst_offset=0)
+  assert_eq(dst.to_array(), [2, 3, 4, 5, 6])
+  inspect(dst.as_views(), content="([2, 3, 4, 5, 6], [])")
+}
+
+///|
+/// Test blit_to with automatic growth
+test "blit_to_grow" {
+  let src = @deque.of([1, 2, 3, 4, 5])
+  let dst = @deque.of([1, 2, 4])
+  @deque.Deque::blit_to(src, dst, len=5, src_offset=0, dst_offset=1)
+  assert_eq(dst.to_array(), [1, 1, 2, 3, 4, 5])
+  inspect(dst.as_views(), content="([1, 1, 2, 3, 4, 5], [])")
+  assert_eq(dst.length(), 6)
+}
+
+///|
+/// Test blit_to self copy (copy from deque to itself)
+test "blit_to_self" {
+  let d = @deque.of([1, 2, 3, 4, 5])
+  @deque.Deque::blit_to(d.copy(), d, len=3, src_offset=0, dst_offset=2)
+  assert_eq(d.to_array(), [1, 2, 1, 2, 3])
+  inspect(d.as_views(), content="([1, 2, 1, 2, 3], [])")
+}
