@@ -1,5 +1,5 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "moonbitlang/regexp/internal/unicode"
+package "moonbitlang/core/regex/internal/unicode"
 
 // Values
 const MAX_FOLD : Char = '𞥃'
