@@ -1655,3 +1655,55 @@ test "remove_folded" {
   assert_eq(d.to_array(), [5, 6, 8, 9, 10, 11, 12])
   inspect(d.as_views(), content="([5, 6, 8], [9, 10, 11, 12])")
 }
+
+///|
+/// Test extract_if with no matches
+test "extract_if_none" {
+  let d = @deque.of([1, 3, 5, 7])
+  let extracted = d.extract_if(x => x % 2 == 0)
+  assert_eq(extracted.to_array(), [])
+  assert_eq(d.to_array(), [1, 3, 5, 7])
+  inspect(extracted.as_views(), content="([], [])")
+  inspect(d.as_views(), content="([1, 3, 5, 7], [])")
+}
+
+///|
+/// Test extract_if extracts all elements
+test "extract_if_all" {
+  let d = @deque.of([2, 4, 6, 8])
+  let extracted = d.extract_if(x => x % 2 == 0)
+  assert_eq(extracted.to_array(), [2, 4, 6, 8])
+  assert_eq(d.to_array(), [])
+  inspect(extracted.as_views(), content="([2, 4, 6, 8], [])")
+  inspect(d.as_views(), content="([], [])")
+}
+
+///|
+/// Test extract_if extracts some elements
+test "extract_if_some" {
+  let d = @deque.of([1, 2, 3, 4, 5])
+  let extracted = d.extract_if(x => x % 2 == 0)
+  assert_eq(extracted.to_array(), [2, 4])
+  assert_eq(d.to_array(), [1, 3, 5])
+  inspect(extracted.as_views(), content="([2, 4], [])")
+  inspect(d.as_views(), content="([1, 3, 5], [])")
+}
+
+///|
+/// Test extract_if on folded buffer
+test "extract_if_folded" {
+  let d = @deque.of([1, 2, 3, 4, 5, 6, 7, 8])
+  d.unsafe_pop_front()
+  d.unsafe_pop_front()
+  d.unsafe_pop_front()
+  d.unsafe_pop_front()
+  for i = 9; i < 13; i = i + 1 {
+    d.push_back(i)
+  }
+  inspect(d.as_views(), content="([5, 6, 7, 8], [9, 10, 11, 12])")
+  let extracted = d.extract_if(x => x > 9)
+  assert_eq(extracted.to_array(), [10, 11, 12])
+  assert_eq(d.to_array(), [5, 6, 7, 8, 9])
+  inspect(extracted.as_views(), content="([10, 11, 12], [])")
+  inspect(d.as_views(), content="([5, 6, 7, 8], [9])")
+}
