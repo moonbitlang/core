@@ -1508,3 +1508,115 @@ test "append_folded_but_has_space" {
   d1.append(@deque.of([9, 10, 11]))
   inspect(d1.as_views(), content="([4, 5, 6, 7, 9], [10, 11])")
 }
+
+///|
+/// Test basic chunks functionality
+test "chunks_simple" {
+  let d = @deque.of([1, 2, 3, 4, 5])
+  let chunks = d.chunks(2)
+  assert_eq(chunks.length(), 3)
+  assert_eq(chunks.to_array()[0].to_array(), [1, 2])
+  assert_eq(chunks.to_array()[1].to_array(), [3, 4])
+  assert_eq(chunks.to_array()[2].to_array(), [5])
+}
+
+///|
+/// Test chunks with exact division
+test "chunks_exact" {
+  let d = @deque.of([1, 2, 3, 4])
+  let chunks = d.chunks(2)
+  assert_eq(chunks.length(), 2)
+  assert_eq(chunks.to_array()[0].to_array(), [1, 2])
+  assert_eq(chunks.to_array()[1].to_array(), [3, 4])
+}
+
+///|
+/// Test chunks with size larger than length
+test "chunks_size_larger_than_length" {
+  let d = @deque.of([1, 2, 3])
+  let chunks = d.chunks(10)
+  assert_eq(chunks.length(), 1)
+  assert_eq(chunks.to_array()[0].to_array(), [1, 2, 3])
+}
+
+///|
+/// Test chunks on empty deque
+test "chunks_empty" {
+  let d : @deque.Deque[Int] = @deque.of([])
+  let chunks = d.chunks(3)
+  assert_eq(chunks.length(), 0)
+}
+
+///|
+/// Test chunks with wrapped-around buffer
+test "chunks_wrap_around" {
+  let d = @deque.of([1, 2, 3, 4, 5, 6])
+  ignore(d.pop_front())
+  d.push_back(7)
+  inspect(d.as_views(), content="([2, 3, 4, 5, 6], [7])")
+  let chunks = d.chunks(2)
+  assert_eq(chunks.length(), 3)
+  assert_eq(chunks.to_array()[0].to_array(), [2, 3])
+  assert_eq(chunks.to_array()[1].to_array(), [4, 5])
+  assert_eq(chunks.to_array()[2].to_array(), [6, 7])
+}
+
+///|
+/// Test chunks with size = 1 (each element its own chunk)
+test "chunks_size_one" {
+  let d = @deque.of([10, 20, 30])
+  let chunks = d.chunks(1)
+  assert_eq(chunks.length(), 3)
+  assert_eq(chunks.to_array()[0].to_array(), [10])
+  assert_eq(chunks.to_array()[1].to_array(), [20])
+  assert_eq(chunks.to_array()[2].to_array(), [30])
+}
+
+///|
+/// Grouping elements with non-decreasing order
+test "chunk_by_non_decreasing" {
+  let d = @deque.of([1, 1, 2, 3, 2, 3, 2, 3, 4])
+  let chunks = d.chunk_by((x, y) => x <= y)
+  inspect(
+    chunks.to_array().map(fn(c) { c.to_array() }),
+    content="[[1, 1, 2, 3], [2, 3], [2, 3, 4]]",
+  )
+}
+
+///|
+/// Empty deque produces empty result
+test "chunk_by_empty" {
+  let d : @deque.Deque[Int] = @deque.of([])
+  let chunks = d.chunk_by((x, y) => x <= y)
+  inspect(chunks.to_array(), content="[]")
+}
+
+///|
+/// Single element stays as one chunk
+test "chunk_by_single_element" {
+  let d = @deque.of([42])
+  let chunks = d.chunk_by((x, y) => x == y)
+  inspect(chunks.to_array().map(fn(c) { c.to_array() }), content="[[42]]")
+}
+
+///|
+/// All elements grouped into one chunk
+test "chunk_by_all_true" {
+  let d = @deque.of([1, 2, 3, 4])
+  let chunks = d.chunk_by((_, _) => true)
+  inspect(
+    chunks.to_array().map(fn(c) { c.to_array() }),
+    content="[[1, 2, 3, 4]]",
+  )
+}
+
+///|
+/// Each element becomes its own chunk
+test "chunk_by_all_false" {
+  let d = @deque.of([1, 2, 3, 4])
+  let chunks = d.chunk_by((_, _) => false)
+  inspect(
+    chunks.to_array().map(fn(c) { c.to_array() }),
+    content="[[1], [2], [3], [4]]",
+  )
+}
