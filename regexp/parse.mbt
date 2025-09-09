@@ -72,7 +72,7 @@ priv struct Parser {
   mut input : @string.View
   mut flags : Flags
   mut captures : Int
-  current_capture_scope : Set[Int]
+  current_capture_scope : @set.Set[Int]
   capture_map : Map[String, Int]
   mut has_backreference : Bool
 }
