@@ -858,12 +858,13 @@ pub fn[A] clear(self : Deque[A]) -> Unit {
 ///   assert_eq(dv2, @deque.of([4, 5, 6]))
 /// ```
 pub fn[A, U] map(self : Deque[A], f : (A) -> U) -> Deque[U] {
+  let cap = self.buf.length()
   if self.len == 0 {
     new()
   } else {
     let buf : UninitializedArray[U] = UninitializedArray::make(self.len)
     for i in 0..<self.len {
-      let idx = (self.head + i) % self.len
+      let idx = (self.head + i) % cap
       buf[i] = f(self.buf[idx])
     }
     Deque::{ buf, len: self.len, head: 0, tail: self.len - 1 }
@@ -880,12 +881,13 @@ pub fn[A, U] map(self : Deque[A], f : (A) -> U) -> Deque[U] {
 ///   assert_eq(dv2, @deque.of([3, 5, 7]))
 /// ```
 pub fn[A, U] mapi(self : Deque[A], f : (Int, A) -> U) -> Deque[U] {
+  let cap = self.buf.length()
   if self.len == 0 {
     new()
   } else {
     let buf : UninitializedArray[U] = UninitializedArray::make(self.len)
     for i in 0..<self.len {
-      let idx = (self.head + i) % self.len
+      let idx = (self.head + i) % cap
       buf[i] = f(i, self.buf[idx])
     }
     Deque::{ buf, len: self.len, head: 0, tail: self.len - 1 }
@@ -925,8 +927,9 @@ pub fn[A] is_empty(self : Deque[A]) -> Bool {
 ///   inspect(dq.search(4), content="None")
 /// ```
 pub fn[A : Eq] search(self : Deque[A], value : A) -> Int? {
+  let cap = self.buf.length()
   for i in 0..<self.len {
-    let idx = (self.head + i) % self.len
+    let idx = (self.head + i) % cap
     if self.buf[idx] == value {
       return Some(i)
     }

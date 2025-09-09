@@ -1373,7 +1373,7 @@ test "deque map/mapi/search wrapped unfull buffer" {
   dq.push_front(-1)
   inspect(dq.as_views(), content="([-1], [0, 1])")
   let mapped = dq.map(x => x * 10)
-  inspect(mapped, content="@deque.of([0, 10, 0])")
+  inspect(mapped, content="@deque.of([-10, 0, 10])")
 
   // mapi
   let dq = @deque.new(capacity=4)
@@ -1382,7 +1382,7 @@ test "deque map/mapi/search wrapped unfull buffer" {
   dq.push_front(-1)
   inspect(dq.as_views(), content="([-1], [0, 1])")
   let mapped = dq.mapi((x, i) => x * 10 + i)
-  inspect(mapped, content="@deque.of([0, 11, 20])")
+  inspect(mapped, content="@deque.of([-1, 10, 21])")
 
   // search
   let dq = @deque.new(capacity=4)
@@ -1390,7 +1390,7 @@ test "deque map/mapi/search wrapped unfull buffer" {
   dq.push_back(1)
   dq.push_front(-1)
   inspect(dq.as_views(), content="([-1], [0, 1])")
-  inspect(dq.search(-1), content="None")
+  inspect(dq.search(-1), content="Some(0)")
 }
 
 ///|
