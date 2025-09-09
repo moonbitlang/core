@@ -64,6 +64,66 @@ pub impl[A : Show] Show for Deque[A] with output(self, logger) {
 }
 
 ///|
+/// Implements the `Hash` trait for `Deque`, allowing deques to be used in
+/// hash-based data structures such as hash tables and sets.
+///
+/// The hash value of a deque is computed by sequentially combining the hashes
+/// of all its elements, in order. This ensures that two deques with the same
+/// elements in the same order will always produce the same hash value.
+///
+/// Parameters:
+///
+/// * `self` : The deque to be hashed.
+/// * `hasher` : The hasher used to accumulate the hash value.
+///
+/// Example:
+///
+/// ```moonbit
+/// let dq1 = @deque.of([1, 2, 3])
+/// let dq2 = @deque.of([1, 2, 3])
+/// let dq3 = @deque.of([1, 2, 3, 4])
+/// assert_eq(dq1.hash(), dq2.hash()) // same elements → same hash
+/// assert_not_eq(dq1.hash(), dq3.hash()) // different elements → different hash
+/// ```
+///
+/// Note:
+/// - The order of elements matters. Deques with the same elements but in
+///   different orders will produce different hash values.
+///
+pub impl[A : Hash] Hash for Deque[A] with hash_combine(self, hasher) {
+  for v in self {
+    v.hash_combine(hasher)
+  }
+}
+
+///|
+/// Concatenates two deques into a new deque. The resulting deque contains all
+/// elements from the first deque followed by all elements from the second deque.
+///
+/// Parameters:
+///
+/// * `self` : The first deque to concatenate.
+/// * `other` : The second deque to concatenate.
+///
+/// Returns a new deque containing all elements from both deques in order.
+///
+/// Example:
+///
+/// ```moonbit
+///   let dq1 = @deque.of([1, 2, 3])
+///   let dq2 = @deque.of([4, 5, 6])
+///   inspect((dq1 + dq2).to_array(), content="[1, 2, 3, 4, 5, 6]")
+///   let mut dq3 = dq2.copy()
+///   dq3 += @deque.of([7])
+///   inspect(dq3.to_array(), content="[4, 5, 6, 7]")
+/// ```
+pub impl[A] Add for Deque[A] with add(self, other) {
+  let res = self.copy()
+  res.append(other)
+  res
+}
+
+///|
 /// Creates a new deque with elements copied from an array.
 ///
 /// Parameters:
