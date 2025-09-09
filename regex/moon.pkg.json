@@ -6,7 +6,7 @@
     "moonbitlang/core/array",
     "moonbitlang/core/result",
     "moonbitlang/core/set",
-    "moonbitlang/core/regexp/internal/unicode",
+    "moonbitlang/core/regex/internal/unicode",
     "moonbitlang/core/json",
     "moonbitlang/core/test"
   ]
