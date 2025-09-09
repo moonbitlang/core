@@ -279,6 +279,7 @@ pub fn[A] remove(self : Deque[A], index : Int) -> A {
       let from = (self.head + i) % cap
       self.buf[to] = self.buf[from]
     }
+    set_null(self.buf, self.head)
     self.head = new_head
   } else {
     let new_tail = (self.tail - 1 + cap) % cap
