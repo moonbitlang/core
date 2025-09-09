@@ -205,7 +205,7 @@ test {
   try {
     let _ = @regex.compile("a(b")  // Oops! Missing )
   } catch {
-    RegexpError(err=MissingParenthesis, source_fragment=_) => println("Fix your regex! 🔧")
+    RegexpError(err=MissingParenthesis, source_fragment=_) => ignore("Fix your regex! 🔧")
     _ => ()
   }
 }
