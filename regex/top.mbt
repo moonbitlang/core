@@ -35,7 +35,7 @@
 pub fn compile(
   regexp : @string.View,
   flags? : @string.View = "",
-) -> Regexp raise RegexpError {
+) -> Regex raise RegexpError {
   regexp
   |> parse(flags={
     multiline: flags.contains("m"),
@@ -62,7 +62,7 @@ pub fn compile(
 /// let engine = @regex.compile("(?<word>\\w+)")
 /// inspect(engine.group_by_name("word"), content="Some(1)")
 /// ```
-pub fn Regexp::group_by_name(self : Regexp, name : String) -> Int? {
+pub fn Regex::group_by_name(self : Regex, name : String) -> Int? {
   self.map.get(name)
 }
 
@@ -82,7 +82,7 @@ pub fn Regexp::group_by_name(self : Regexp, name : String) -> Int? {
 /// let engine = @regex.compile("(a)(b|c)")
 /// inspect(engine.group_count(), content="3")
 /// ```
-pub fn Regexp::group_count(self : Regexp) -> Int {
+pub fn Regex::group_count(self : Regex) -> Int {
   self.capture
 }
 
@@ -104,7 +104,7 @@ pub fn Regexp::group_count(self : Regexp) -> Int {
 ///   #|["first", "second"]
 /// ))
 /// ```
-pub fn Regexp::group_names(self : Regexp) -> Array[String] {
+pub fn Regex::group_names(self : Regex) -> Array[String] {
   self.map.keys().collect()
 }
 
@@ -131,7 +131,7 @@ pub fn Regexp::group_names(self : Regexp) -> Array[String] {
 ///   ))
 /// }
 /// ```
-pub fn Regexp::execute(self : Regexp, input : @string.View) -> MatchResult {
+pub fn Regex::execute(self : Regex, input : @string.View) -> MatchResult {
   let captures = vm(
     self.instructions,
     input,
@@ -167,7 +167,7 @@ pub fn Regexp::execute(self : Regexp, input : @string.View) -> MatchResult {
 /// inspect(result.after(), content=("xx"))
 /// assert_true(engine.match_("axxf") is None)
 /// ```
-pub fn Regexp::match_(self : Regexp, input : @string.View) -> MatchResult? {
+pub fn Regex::match_(self : Regex, input : @string.View) -> MatchResult? {
   let captures = vm(
     self.instructions,
     input,

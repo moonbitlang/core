@@ -31,7 +31,7 @@ test {
 
   // Write a simple split with regexp
   fn split(
-    regexp : @regex.Regexp,
+    regexp : @regex.Regex,
     target : @string.View
   ) -> Array[@string.View] {
     let result = []

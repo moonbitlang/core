@@ -30,7 +30,7 @@ priv enum Ast {
 } derive(Show)
 
 ///|
-struct Regexp {
+struct Regex {
   instructions : Array[Instruction]
   map : Map[String, Int]
   capture : Int
@@ -182,7 +182,7 @@ fn Ast::compile(self : Ast) -> Array[Instruction] {
 
 ///|
 /// Compiles a regex into a matcher.
-fn ParseResult::compile(self : Self) -> Regexp {
+fn ParseResult::compile(self : Self) -> Regex {
   {
     instructions: self.ast.compile(),
     map: self.capture_map,
