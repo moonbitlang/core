@@ -20,6 +20,8 @@ fn[A] Deque::back(Self[A]) -> A?
 fn[A : Compare] Deque::binary_search(Self[A], A) -> Result[Int, Int]
 fn[A] Deque::binary_search_by(Self[A], (A) -> Int) -> Result[Int, Int]
 fn[A] Deque::capacity(Self[A]) -> Int
+fn[A] Deque::chunk_by(Self[A], (A, A) -> Bool raise?) -> Self[Self[A]] raise?
+fn[A] Deque::chunks(Self[A], Int) -> Self[Self[A]]
 fn[A] Deque::clear(Self[A]) -> Unit
 fn[A : Eq] Deque::contains(Self[A], A) -> Bool
 fn[A] Deque::copy(Self[A]) -> Self[A]
