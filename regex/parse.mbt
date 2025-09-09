@@ -92,7 +92,8 @@ priv struct Flags {
   ignore_case : Bool
 } derive(Default)
 
-///| Regular expression parsing error types
+///|
+/// Regular expression parsing error types
 ///
 /// Defines various error conditions that may be encountered during parsing
 pub enum Err {
@@ -109,14 +110,16 @@ pub enum Err {
   UnexpectedParenthesis // Unexpected parenthesis
 } derive(Show)
 
-///| Parsing error exception type
+///|
+/// Parsing error exception type
 ///
 /// Contains error information and related string view context
 pub suberror RegexpError {
   RegexpError(err~ : Err, source_fragment~ : @string.View)
 } derive(Show)
 
-///| Create a regular expression parser
+///|
+/// Create a regular expression parser
 ///
 /// Parameters:
 /// - `input`: String view of the regular expression to parse
@@ -133,7 +136,8 @@ fn Parser::new(input : @string.View, flags : Flags) -> Parser {
   }
 }
 
-///| Entry function for parsing regular expressions
+///|
+/// Entry function for parsing regular expressions
 ///
 /// According to ABNF rule: `regex = expression`
 ///
@@ -145,7 +149,7 @@ fn Parser::new(input : @string.View, flags : Flags) -> Parser {
 /// Throws: Error_ when parsing fails
 fn parse(
   regex : @string.View,
-  flags~ : Flags = Flags::default(),
+  flags? : Flags = Flags::default(),
 ) -> ParseResult raise RegexpError {
   let parser = Parser::new(regex, flags)
   let result = parser.parse_expression()
@@ -162,7 +166,8 @@ fn parse(
   }
 }
 
-///| Parse Expression
+///|
+/// Parse Expression
 ///
 /// According to ABNF rule: `expression = sequence *( "|" sequence )`
 ///
@@ -186,7 +191,8 @@ fn Parser::parse_expression(self : Parser) -> Ast raise RegexpError {
   left
 }
 
-///| Parse Sequence
+///|
+/// Parse Sequence
 ///
 /// According to ABNF rule: `sequence = *term`
 ///
@@ -219,7 +225,8 @@ fn Parser::parse_sequence(self : Parser) -> Ast raise RegexpError {
   }
 }
 
-///| Parse Term
+///|
+/// Parse Term
 ///
 /// According to ABNF rule: `term = factor [quantifier]`
 ///
@@ -298,7 +305,8 @@ fn Parser::parse_term(self : Parser) -> Ast raise RegexpError {
   base
 }
 
-///| Parse Factor
+///|
+/// Parse Factor
 ///
 /// According to ABNF rule: `factor = char / group / char-class / escape / dot / assertion`
 ///
@@ -541,7 +549,8 @@ fn Parser::parse_factor(self : Parser) -> Ast raise RegexpError {
   }
 }
 
-///| Parse Character Class
+///|
+/// Parse Character Class
 ///
 /// According to ABNF rule: `char-class = "[" *char-class-item "]"`
 ///
@@ -718,7 +727,8 @@ fn Parser::parse_char_class(self : Parser) -> Ast raise RegexpError {
   }
 }
 
-///| Check if a character is a regular expression special character
+///|
+/// Check if a character is a regular expression special character
 ///
 /// Special characters need to be escaped to be used as literal characters.
 ///
@@ -730,7 +740,8 @@ fn Parser::is_special_char(c : Char) -> Bool {
   c is ('*' | '+' | '?' | '|' | '(' | ')' | '[' | ']' | '{' | '.' | '^' | '$')
 }
 
-///| Parse Repeat Quantifier
+///|
+/// Parse Repeat Quantifier
 ///
 /// According to ABNF rule: `repeat = "{" number "}" / "{" number "," "}" / "{" number "," number "}"`
 ///
@@ -789,7 +800,8 @@ fn Parser::parse_repeat(self : Parser) -> (UInt, UInt?) raise RegexpError {
   }
 }
 
-///| Parse Number
+///|
+/// Parse Number
 ///
 /// Parses a sequence of decimal digits from the current input position.
 /// The number must contain at least one digit character.
@@ -816,7 +828,8 @@ fn Parser::parse_number(self : Parser) -> UInt raise RegexpError {
   result
 }
 
-///| Parse Group Name of a Named Capture Group
+///|
+/// Parse Group Name of a Named Capture Group
 ///
 /// The group name must be a valid identifier, containing only letters, numbers, and underscores,
 /// and must start with a letter or an underscore.
@@ -859,7 +872,8 @@ fn Parser::parse_group_name(self : Parser) -> String raise RegexpError {
   name
 }
 
-///| Parse flag string, e.g., "msi" for multiline, singleline and ignore case modes
+///|
+/// Parse flag string, e.g., "msi" for multiline, singleline and ignore case modes
 ///
 /// Supported flags:
 /// - `m`: Multiline mode
@@ -901,7 +915,8 @@ fn Parser::parse_flags(self : Parser) -> Flags raise RegexpError {
 
 ///| Parse Unicode Property name from \p{property_name}
 
-///| Parse Unicode escape sequence \u{aaaa} or \uaaaa
+///|
+/// Parse Unicode escape sequence \u{aaaa} or \uaaaa
 ///
 /// Supports two formats:
 /// - `\u{aaaa}`  : Unicode codepoint in hex inside braces (1-6 hex digits)
