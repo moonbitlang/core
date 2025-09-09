@@ -145,3 +145,51 @@ test "panic negative index8" {
   let _ = arr[-1:-3]
 
 }
+
+///|
+test "fixedarray_sub" {
+  // scalar case
+  let arr = FixedArray::makei(10, i => i)
+  inspect(arr[:], content="[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]")
+  inspect(arr[1:], content="[1, 2, 3, 4, 5, 6, 7, 8, 9]")
+  inspect(arr[:-2], content="[0, 1, 2, 3, 4, 5, 6, 7]")
+  inspect(arr[3:-4], content="[3, 4, 5]")
+  inspect(arr[-5:], content="[5, 6, 7, 8, 9]")
+  arr[5] = 100
+  inspect(arr[:], content="[0, 1, 2, 3, 4, 100, 6, 7, 8, 9]")
+  inspect(arr[1:], content="[1, 2, 3, 4, 100, 6, 7, 8, 9]")
+  inspect(arr[:-2], content="[0, 1, 2, 3, 4, 100, 6, 7]")
+  inspect(arr[3:-4], content="[3, 4, 100]")
+  inspect(arr[-5:], content="[100, 6, 7, 8, 9]")
+  // reference case
+  let arr = FixedArray::makei(10, i => (i, i))
+  inspect(
+    arr[:],
+    content="[(0, 0), (1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6), (7, 7), (8, 8), (9, 9)]",
+  )
+  inspect(
+    arr[1:],
+    content="[(1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6), (7, 7), (8, 8), (9, 9)]",
+  )
+  inspect(
+    arr[:-2],
+    content="[(0, 0), (1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6), (7, 7)]",
+  )
+  inspect(arr[3:-4], content="[(3, 3), (4, 4), (5, 5)]")
+  inspect(arr[-5:], content="[(5, 5), (6, 6), (7, 7), (8, 8), (9, 9)]")
+  arr[5] = (100, 100)
+  inspect(
+    arr[:],
+    content="[(0, 0), (1, 1), (2, 2), (3, 3), (4, 4), (100, 100), (6, 6), (7, 7), (8, 8), (9, 9)]",
+  )
+  inspect(
+    arr[1:],
+    content="[(1, 1), (2, 2), (3, 3), (4, 4), (100, 100), (6, 6), (7, 7), (8, 8), (9, 9)]",
+  )
+  inspect(
+    arr[:-2],
+    content="[(0, 0), (1, 1), (2, 2), (3, 3), (4, 4), (100, 100), (6, 6), (7, 7)]",
+  )
+  inspect(arr[3:-4], content="[(3, 3), (4, 4), (100, 100)]")
+  inspect(arr[-5:], content="[(100, 100), (6, 6), (7, 7), (8, 8), (9, 9)]")
+}
