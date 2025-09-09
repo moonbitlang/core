@@ -251,6 +251,34 @@ pub fn[T] ArrayView::sub(
 }
 
 ///|
+fn[T] unsafe_cast_fixedarray_to_uninitializedarray(
+  arr : FixedArray[T],
+) -> UninitializedArray[T] = "%identity"
+
+///|
+#alias(op_as_view)
+pub fn[T] FixedArray::sub(
+  self : FixedArray[T],
+  start? : Int = 0,
+  end? : Int,
+) -> ArrayView[T] {
+  let len = self.length()
+  let end = match end {
+    None => len
+    Some(end) => if end < 0 { len + end } else { end }
+  }
+  let start = if start < 0 { len + start } else { start }
+  guard start >= 0 && start <= end && end <= len else {
+    abort("View index out of bounds")
+  }
+  ArrayView::make(
+    unsafe_cast_fixedarray_to_uninitializedarray(self),
+    start,
+    end - start,
+  )
+}
+
+///|
 #deprecated("ArrayView will be immutable, use array if you need mutation")
 pub fn[T] ArrayView::blit_to(self : ArrayView[T], dst : ArrayView[T]) -> Unit {
   let src_len = self.length()
