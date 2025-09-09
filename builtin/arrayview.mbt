@@ -251,6 +251,59 @@ pub fn[T] ArrayView::sub(
 }
 
 ///|
+fn[T] unsafe_cast_fixedarray_to_uninitializedarray(
+  arr : FixedArray[T],
+) -> UninitializedArray[T] = "%identity"
+
+///|
+/// Creates a new `ArrayView` from a `FixedArray`.
+///
+/// Parameters:
+///
+/// * `self` : The fixed array to create a new view from.
+/// * `start` : The starting index in the array (inclusive). Defaults to 0.
+/// * `end` : The ending index in the array (exclusive). Defaults to the
+/// length of the array.
+///
+/// Returns a new `ArrayView` that provides a window into the specified portion
+/// of the original fixed array.
+///
+/// Throws a panic if:
+///
+/// * `start` is negative
+/// * `end` is greater than the length of the array
+/// * `start` is greater than `end`
+///
+/// Example:
+///
+/// ```moonbit
+///   let arr: FixedArray[Int] = [1, 2, 3, 4, 5]
+///   let view = arr[1:4] // view = [2, 3, 4]
+///   inspect(view[0], content="2")
+/// ```
+#alias(op_as_view)
+pub fn[T] FixedArray::sub(
+  self : FixedArray[T],
+  start? : Int = 0,
+  end? : Int,
+) -> ArrayView[T] {
+  let len = self.length()
+  let end = match end {
+    None => len
+    Some(end) => if end < 0 { len + end } else { end }
+  }
+  let start = if start < 0 { len + start } else { start }
+  guard start >= 0 && start <= end && end <= len else {
+    abort("View index out of bounds")
+  }
+  ArrayView::make(
+    unsafe_cast_fixedarray_to_uninitializedarray(self),
+    start,
+    end - start,
+  )
+}
+
+///|
 #deprecated("ArrayView will be immutable, use array if you need mutation")
 pub fn[T] ArrayView::blit_to(self : ArrayView[T], dst : ArrayView[T]) -> Unit {
   let src_len = self.length()
