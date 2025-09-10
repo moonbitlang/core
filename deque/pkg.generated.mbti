@@ -37,6 +37,7 @@ fn[A] Deque::from_array(Array[A]) -> Self[A]
 fn[A] Deque::from_iter(Iter[A]) -> Self[A]
 fn[A] Deque::front(Self[A]) -> A?
 fn[A] Deque::get(Self[A], Int) -> A?
+fn[A] Deque::insert(Self[A], Int, A) -> Unit
 fn[A] Deque::is_empty(Self[A]) -> Bool
 fn[A] Deque::iter(Self[A]) -> Iter[A]
 fn[A] Deque::iter2(Self[A]) -> Iter2[Int, A]
@@ -56,6 +57,7 @@ fn[A] Deque::pop_front(Self[A]) -> A?
 fn[A] Deque::pop_front_exn(Self[A]) -> Unit
 fn[A] Deque::push_back(Self[A], A) -> Unit
 fn[A] Deque::push_front(Self[A], A) -> Unit
+fn[A] Deque::remove(Self[A], Int) -> A
 fn[A] Deque::reserve_capacity(Self[A], Int) -> Unit
 fn[A] Deque::retain(Self[A], (A) -> Bool) -> Unit
 fn[A] Deque::retain_map(Self[A], (A) -> A?) -> Unit
