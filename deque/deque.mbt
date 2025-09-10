@@ -1450,7 +1450,7 @@ pub fn[A] chunk_by(
   self : Deque[A],
   pred : (A, A) -> Bool raise?,
 ) -> Deque[Deque[A]] raise? {
-  let chunks  = of([])
+  let chunks = of([])
   let mut i = 0
   while i < self.length() {
     let chunk = of([])
