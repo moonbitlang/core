@@ -1585,6 +1585,7 @@ test "filter_wrap_around" {
   inspect(odds.as_views(), content="([3, 5, 7], [])")
 }
 
+///|
 /// Test insert at the front
 test "insert_front" {
   let d = @deque.of([1, 2, 3])
