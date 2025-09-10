@@ -238,6 +238,125 @@ pub fn[A] append(self : Deque[A], other : Deque[A]) -> Unit {
 }
 
 ///|
+/// Inserts an element at the specified position in the deque. The elements are
+/// shifted in-place to make room for the new element, modifying the original deque.
+///
+/// Parameters:
+///
+/// * `self` : The deque in which the element will be inserted.
+/// * `index` : The position at which to insert the element. Must satisfy `0 <= index <= self.length()`.
+/// * `value` : The element to insert.
+///
+/// Panics:
+///
+/// * If `index` is out of bounds, the function will abort with an error message.
+///
+/// Example:
+///
+/// ```moonbit
+/// let v1 = @deque.of([1, 2, 3])
+/// v1.insert(0, 0) // insert at the front
+/// inspect(v1, content="@deque.of([0, 1, 2, 3])")
+/// let v2 = @deque.of([1, 2, 4])
+/// v2.insert(2, 3) // insert in the middle
+/// inspect(v2, content="@deque.of([1, 2, 3, 4])")
+/// let v3 = @deque.of([2, 3, 4])
+/// v3.insert(3, 5) // insert at the end
+/// inspect(v3, content="@deque.of([2, 3, 4, 5])")
+/// ```
+pub fn[A] insert(self : Deque[A], index : Int, value : A) -> Unit {
+  guard index >= 0 && index <= self.length() else {
+    abort(
+      "index out of bounds: the len is from 0 to \{self.length()} but the index is \{index}",
+    )
+  }
+  if self.buf.length() - self.len == 0 {
+    self.realloc()
+  }
+  let cap = self.buf.length()
+  if index < self.len / 2 {
+    let new_head = (self.head - 1 + cap) % cap
+    for i = 0; i < index; i = i + 1 {
+      let to = (new_head + i) % cap
+      let from = (self.head + i) % cap
+      self.buf[to] = self.buf[from]
+    }
+    self.head = new_head
+  } else {
+    let new_tail = (self.tail + 1) % cap
+    for i = self.len; i > index; i = i - 1 {
+      let from = (self.head + i - 1) % cap
+      let to = (self.head + i) % cap
+      self.buf[to] = self.buf[from]
+    }
+    self.tail = new_tail
+  }
+  self.buf[(self.head + index) % cap] = value
+  self.len += 1
+}
+
+///|
+/// Removes and returns the element at the specified position in the deque. The
+/// remaining elements are shifted in-place to fill the gap, modifying the original deque.
+/// 
+/// Parameters:
+/// 
+/// * `self` : The deque from which the element will be removed.
+/// * `index` : The position of the element to remove. Must satisfy `0 <= index < self.length()`.
+///
+/// Returns:
+///
+/// * The element that was removed from the deque.
+/// 
+/// Panics:
+/// 
+/// * If `index` is out of bounds, the function will abort with an error message.
+/// 
+/// Example:
+/// 
+/// ```moonbit
+/// let v1 = @deque.of([0, 1, 2, 3])
+/// let x = v1.remove(0) // remove from the front
+/// inspect((x, v1), content="(0, @deque.of([1, 2, 3]))")
+/// let v2 = @deque.of([1, 2, 3, 4])
+/// let y = v2.remove(2) // remove from the middle
+/// inspect((y, v2), content="(3, @deque.of([1, 2, 4]))")
+/// let v3 = @deque.of([2, 3, 4, 5])
+/// let z = v3.remove(3) // remove from the end
+/// inspect((z, v3), content="(5, @deque.of([2, 3, 4]))")
+/// ```
+pub fn[A] remove(self : Deque[A], index : Int) -> A {
+  guard index >= 0 && index < self.length() else {
+    abort(
+      "index out of bounds: the len is from 0 to \{self.length()} but the index is \{index}",
+    )
+  }
+  let res = self[index]
+  let cap = self.buf.length()
+  if index < self.len / 2 {
+    let new_head = (self.head + 1) % cap
+    for i = index - 1; i >= 0; i = i - 1 {
+      let to = (self.head + i + 1) % cap
+      let from = (self.head + i) % cap
+      self.buf[to] = self.buf[from]
+    }
+    set_null(self.buf, self.head)
+    self.head = new_head
+  } else {
+    let new_tail = (self.tail - 1 + cap) % cap
+    for i = index + 1; i < self.len; i = i + 1 {
+      let to = (self.head + i - 1) % cap
+      let from = (self.head + i) % cap
+      self.buf[to] = self.buf[from]
+    }
+    set_null(self.buf, self.tail)
+    self.tail = new_tail
+  }
+  self.len -= 1
+  res
+}
+
+///|
 /// Creates a new deque from a fixed array, preserving the order of elements.
 ///
 /// Parameters:
@@ -800,12 +919,13 @@ pub fn[A] clear(self : Deque[A]) -> Unit {
 ///   assert_eq(dv2, @deque.of([4, 5, 6]))
 /// ```
 pub fn[A, U] map(self : Deque[A], f : (A) -> U) -> Deque[U] {
+  let cap = self.buf.length()
   if self.len == 0 {
     new()
   } else {
     let buf : UninitializedArray[U] = UninitializedArray::make(self.len)
     for i in 0..<self.len {
-      let idx = (self.head + i) % self.len
+      let idx = (self.head + i) % cap
       buf[i] = f(self.buf[idx])
     }
     Deque::{ buf, len: self.len, head: 0, tail: self.len - 1 }
@@ -822,12 +942,13 @@ pub fn[A, U] map(self : Deque[A], f : (A) -> U) -> Deque[U] {
 ///   assert_eq(dv2, @deque.of([3, 5, 7]))
 /// ```
 pub fn[A, U] mapi(self : Deque[A], f : (Int, A) -> U) -> Deque[U] {
+  let cap = self.buf.length()
   if self.len == 0 {
     new()
   } else {
     let buf : UninitializedArray[U] = UninitializedArray::make(self.len)
     for i in 0..<self.len {
-      let idx = (self.head + i) % self.len
+      let idx = (self.head + i) % cap
       buf[i] = f(i, self.buf[idx])
     }
     Deque::{ buf, len: self.len, head: 0, tail: self.len - 1 }
@@ -867,8 +988,9 @@ pub fn[A] is_empty(self : Deque[A]) -> Bool {
 ///   inspect(dq.search(4), content="None")
 /// ```
 pub fn[A : Eq] search(self : Deque[A], value : A) -> Int? {
+  let cap = self.buf.length()
   for i in 0..<self.len {
-    let idx = (self.head + i) % self.len
+    let idx = (self.head + i) % cap
     if self.buf[idx] == value {
       return Some(i)
     }
