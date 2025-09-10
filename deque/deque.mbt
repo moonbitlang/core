@@ -983,18 +983,26 @@ pub fn[A : Eq] contains(self : Deque[A], value : A) -> Bool {
 /// ```
 #locals(f)
 pub fn[A] extract_if(self : Deque[A], f : (A) -> Bool) -> Deque[A] {
-  let v = of([])
-  let indices = []
-  for i in 0..<self.length() {
-    if f(self[i]) {
-      v.push_back(self[i])
-      indices.push(i)
+  guard self.length() != 0 else { of([]) }
+  let removed = of([])
+  let mut write = 0
+  for read in 0..<self.length() {
+    let elem = self[read]
+    if f(elem) {
+      removed.push_back(elem)
+    } else {
+      if read != write {
+        self[write] = elem
+      }
+      write += 1
     }
   }
-  for i in 0..<indices.length() {
-    self.remove(indices[i] - i) |> ignore
-  }
-  v
+  let removed_len = removed.length()
+  let cap = self.buf.length()
+  self.len -= removed_len
+  self.tail = (self.tail - removed_len + cap) % cap
+  self.reserve_capacity(write)
+  removed
 }
 
 ///|
