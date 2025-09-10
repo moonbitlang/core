@@ -1401,7 +1401,7 @@ pub impl[A : @json.FromJson] @json.FromJson for Deque[A] with from_json(
 /// * `size` is not positive
 pub fn[A] chunks(self : Deque[A], size : Int) -> Deque[Deque[A]] {
   guard size > 0
-  let chunks : Deque[Deque[A]] = of([])
+  let chunks = of([])
   let mut i = 0
   while i < self.length() {
     let chunk = Deque::new(capacity=size)
@@ -1450,7 +1450,7 @@ pub fn[A] chunk_by(
   self : Deque[A],
   pred : (A, A) -> Bool raise?,
 ) -> Deque[Deque[A]] raise? {
-  let chunks : Deque[Deque[A]] = of([])
+  let chunks  = of([])
   let mut i = 0
   while i < self.length() {
     let chunk = of([])
