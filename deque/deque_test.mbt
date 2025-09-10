@@ -1365,6 +1365,35 @@ test "deque map/mapi/search with wrapped head should keep logical order" {
 }
 
 ///|
+test "deque map/mapi/search wrapped unfull buffer" {
+  // map
+  let dq = @deque.new(capacity=4)
+  dq.push_back(0)
+  dq.push_back(1)
+  dq.push_front(-1)
+  inspect(dq.as_views(), content="([-1], [0, 1])")
+  let mapped = dq.map(x => x * 10)
+  inspect(mapped, content="@deque.of([-10, 0, 10])")
+
+  // mapi
+  let dq = @deque.new(capacity=4)
+  dq.push_back(0)
+  dq.push_back(1)
+  dq.push_front(-1)
+  inspect(dq.as_views(), content="([-1], [0, 1])")
+  let mapped = dq.mapi((x, i) => x * 10 + i)
+  inspect(mapped, content="@deque.of([-1, 10, 21])")
+
+  // search
+  let dq = @deque.new(capacity=4)
+  dq.push_back(0)
+  dq.push_back(1)
+  dq.push_front(-1)
+  inspect(dq.as_views(), content="([-1], [0, 1])")
+  inspect(dq.search(-1), content="Some(0)")
+}
+
+///|
 test "append_simple" {
   // Test basic append functionality
   let d1 = @deque.of([1, 2, 3])
@@ -1554,4 +1583,121 @@ test "filter_wrap_around" {
   let odds = d.filter(x => x % 2 == 1)
   assert_eq(odds.to_array(), [3, 5, 7])
   inspect(odds.as_views(), content="([3, 5, 7], [])")
+}
+
+/// Test insert at the front
+test "insert_front" {
+  let d = @deque.of([1, 2, 3])
+  d.insert(0, 99)
+  assert_eq(d.to_array(), [99, 1, 2, 3])
+  inspect(d.as_views(), content="([99], [1, 2, 3])")
+}
+
+///|
+/// Test insert in the middle
+test "insert_middle" {
+  let d = @deque.of([1, 2, 3, 4])
+  d.insert(2, 99)
+  assert_eq(d.to_array(), [1, 2, 99, 3, 4])
+  inspect(d.as_views(), content="([1, 2, 99, 3, 4], [])")
+}
+
+///|
+/// Test insert at the back (same as push_back)
+test "insert_back" {
+  let d = @deque.of([1, 2, 3])
+  d.insert(d.length(), 99)
+  assert_eq(d.to_array(), [1, 2, 3, 99])
+  inspect(d.as_views(), content="([1, 2, 3, 99], [])")
+}
+
+///|
+/// Test insert triggers reallocation
+test "insert_realloc" {
+  let d = @deque.of([])
+  for i = 0; i < 8; i = i + 1 {
+    d.push_back(i)
+  }
+  inspect(d.as_views(), content="([0, 1, 2, 3, 4, 5, 6, 7], [])")
+  d.insert(4, 99)
+  assert_eq(d.to_array()[4], 99)
+  assert_eq(d.length(), 9)
+  inspect(d.as_views(), content="([0, 1, 2, 3, 99, 4, 5, 6, 7], [])")
+}
+
+///|
+/// Test insert into folded buffer
+test "insert_folded" {
+  let d = @deque.of([1, 2, 3, 4, 5, 6, 7, 8])
+  d.unsafe_pop_front()
+  d.unsafe_pop_front()
+  d.unsafe_pop_front()
+  d.unsafe_pop_front()
+  for i = 9; i < 13; i = i + 1 {
+    d.push_back(i)
+  }
+  inspect(d.as_views(), content="([5, 6, 7, 8], [9, 10, 11, 12])")
+  d.insert(2, 99)
+  assert_eq(d.to_array()[2], 99)
+  inspect(d.to_array(), content="[5, 6, 99, 7, 8, 9, 10, 11, 12]")
+  inspect(d.as_views(), content="([5], [6, 99, 7, 8, 9, 10, 11, 12])")
+}
+
+///|
+/// Test remove from the front
+test "remove_front" {
+  let d = @deque.of([99, 1, 2, 3])
+  let x = d.remove(0)
+  assert_eq(x, 99)
+  assert_eq(d.to_array(), [1, 2, 3])
+  inspect(d.as_views(), content="([1, 2, 3], [])")
+}
+
+///|
+/// Test remove from the middle
+test "remove_middle" {
+  let d = @deque.of([1, 2, 99, 3, 4])
+  let x = d.remove(2)
+  assert_eq(x, 99)
+  assert_eq(d.to_array(), [1, 2, 3, 4])
+  inspect(d.as_views(), content="([1, 2, 3, 4], [])")
+}
+
+///|
+/// Test remove from the back (same as pop_back)
+test "remove_back" {
+  let d = @deque.of([1, 2, 3, 99])
+  let x = d.remove(d.length() - 1)
+  assert_eq(x, 99)
+  assert_eq(d.to_array(), [1, 2, 3])
+  inspect(d.as_views(), content="([1, 2, 3], [])")
+}
+
+///|
+/// Test remove triggers shifting
+test "remove_shift" {
+  let d = @deque.of([0, 1, 2, 3, 99, 4, 5, 6, 7])
+  let x = d.remove(4)
+  assert_eq(x, 99)
+  assert_eq(d.length(), 8)
+  assert_eq(d.to_array(), [0, 1, 2, 3, 4, 5, 6, 7])
+  inspect(d.as_views(), content="([0, 1, 2, 3, 4, 5, 6, 7], [])")
+}
+
+///|
+/// Test remove from folded buffer
+test "remove_folded" {
+  let d = @deque.of([1, 2, 3, 4, 5, 6, 7, 8])
+  d.unsafe_pop_front()
+  d.unsafe_pop_front()
+  d.unsafe_pop_front()
+  d.unsafe_pop_front()
+  for i = 9; i < 13; i = i + 1 {
+    d.push_back(i)
+  }
+  inspect(d.as_views(), content="([5, 6, 7, 8], [9, 10, 11, 12])")
+  let x = d.remove(2)
+  assert_eq(x, 7)
+  assert_eq(d.to_array(), [5, 6, 8, 9, 10, 11, 12])
+  inspect(d.as_views(), content="([5, 6, 8], [9, 10, 11, 12])")
 }
