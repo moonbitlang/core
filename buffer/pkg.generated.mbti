@@ -1,11 +1,6 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "moonbitlang/core/buffer"
 
-import(
-  "moonbitlang/core/bytes"
-  "moonbitlang/core/string"
-)
-
 // Values
 fn from_array(Array[Byte]) -> Buffer
 
@@ -26,7 +21,7 @@ fn Buffer::reset(Self) -> Unit
 fn Buffer::to_bytes(Self) -> Bytes
 fn Buffer::write_byte(Self, Byte) -> Unit
 fn Buffer::write_bytes(Self, Bytes) -> Unit
-fn Buffer::write_bytesview(Self, @bytes.View) -> Unit
+fn Buffer::write_bytesview(Self, BytesView) -> Unit
 fn Buffer::write_char_utf16be(Self, Char) -> Unit
 fn Buffer::write_char_utf16le(Self, Char) -> Unit
 fn Buffer::write_char_utf8(Self, Char) -> Unit
@@ -41,10 +36,10 @@ fn Buffer::write_int_le(Self, Int) -> Unit
 fn Buffer::write_iter(Self, Iter[Byte]) -> Unit
 fn[A : Leb128] Buffer::write_leb128(Self, A) -> Unit
 fn Buffer::write_object(Self, &Show) -> Unit
-fn Buffer::write_string_utf16be(Self, @string.View) -> Unit
+fn Buffer::write_string_utf16be(Self, StringView) -> Unit
 #alias(write_stringview, deprecated)
-fn Buffer::write_string_utf16le(Self, @string.View) -> Unit
-fn Buffer::write_string_utf8(Self, @string.View) -> Unit
+fn Buffer::write_string_utf16le(Self, StringView) -> Unit
+fn Buffer::write_string_utf8(Self, StringView) -> Unit
 fn Buffer::write_uint64_be(Self, UInt64) -> Unit
 fn Buffer::write_uint64_le(Self, UInt64) -> Unit
 fn Buffer::write_uint_be(Self, UInt) -> Unit
