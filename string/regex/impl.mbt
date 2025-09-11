@@ -149,7 +149,7 @@ fn vm(
   instructions : Array[Instruction],
   input : @string.View,
   captures : Int,
-  allow_exponentiaion~ : Bool = false,
+  allow_exponentiaion? : Bool = false,
 ) -> Array[Int] {
   guard instructions is [.., Save(1), Matched]
   let inst_gen = Array::make(instructions.length(), -1)

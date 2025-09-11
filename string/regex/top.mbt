@@ -12,7 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-///| Compiles a regular expression into an execution engine.
+///|
+/// Compiles a regular expression into an execution engine.
 /// 
 /// Parses and compiles a regular expression string into a reusable execution engine.
 /// The compiled engine can be executed multiple times, avoiding the overhead of repeated parsing and compilation.
@@ -33,7 +34,7 @@
 /// ```
 pub fn compile(
   regexp : @string.View,
-  flags~ : @string.View = "",
+  flags? : @string.View = "",
 ) -> Regexp raise RegexpError {
   regexp
   |> parse(flags={
@@ -44,7 +45,8 @@ pub fn compile(
   |> ParseResult::compile()
 }
 
-///| Gets the index of a capture group by its name.
+///|
+/// Gets the index of a capture group by its name.
 /// 
 /// Finds the index of a capture group with the specified name in the results.
 /// Used to access named capture groups, such as those defined in the form `(?<name>pattern)`.
@@ -64,7 +66,8 @@ pub fn Regexp::group_by_name(self : Regexp, name : String) -> Int? {
   self.map.get(name)
 }
 
-///| Gets the total number of capture groups in the regular expression.
+///|
+/// Gets the total number of capture groups in the regular expression.
 /// 
 /// Returns the number of capture groups defined in the regular expression pattern, including both named and anonymous groups.
 /// Group with index 0 always represents the entire match, and actual capture groups start from index 1.
@@ -83,7 +86,8 @@ pub fn Regexp::group_count(self : Regexp) -> Int {
   self.capture
 }
 
-///| Gets the names of all named capture groups in the regular expression.
+///|
+/// Gets the names of all named capture groups in the regular expression.
 /// 
 /// Returns an iterator that contains the names of all named capture groups in the regular expression.
 /// Only explicitly named capture groups, such as those defined in the form `(?<name>pattern)`, are returned.
@@ -104,7 +108,8 @@ pub fn Regexp::group_names(self : Regexp) -> Array[String] {
   self.map.keys().collect()
 }
 
-///| Executes a regular expression match on the input text.
+///|
+/// Executes a regular expression match on the input text.
 /// 
 /// Uses the compiled regular expression engine to perform a match on the specified input text,
 /// returning a `MatchResult` object containing the match results and capture group information.
@@ -141,7 +146,8 @@ pub fn Regexp::execute(self : Regexp, input : @string.View) -> MatchResult {
   { input, captures, names: self.map, before, after }
 }
 
-///| Executes a regular expression match on the input text.
+///|
+/// Executes a regular expression match on the input text.
 /// 
 /// Uses the compiled regular expression engine to perform a match on the specified input text,
 /// returning a `MatchResult` object containing the match results and capture group information.
@@ -203,7 +209,8 @@ pub fn Regexp::execute_with_remainder(
   }
 }
 
-///| Executes a regular expression match on the input text.
+///|
+/// Executes a regular expression match on the input text.
 /// 
 /// Uses the compiled regular expression engine to perform a match on the specified input text,
 /// returning a `MatchResult` object containing the match results and capture group information.
@@ -236,7 +243,8 @@ pub fn Regexp::match_(self : Regexp, input : @string.View) -> MatchResult? {
   Some({ input, captures, names: self.map, before, after })
 }
 
-///| Regular expression match result.
+///|
+/// Regular expression match result.
 /// 
 /// Contains the complete result information of a regular expression match, including:
 /// - The original input text.
@@ -256,7 +264,8 @@ struct MatchResult {
   after : @string.View
 }
 
-///| Checks if the match was successful.
+///|
+/// Checks if the match was successful.
 /// 
 /// Determines whether the regular expression found a match in the input text.
 /// An empty capture group array indicates that no match was found.
@@ -275,7 +284,8 @@ pub fn MatchResult::matched(self : Self) -> Bool {
   not(self.captures is [])
 }
 
-///| Gets the content of a capture group by its index.
+///|
+/// Gets the content of a capture group by its index.
 /// 
 /// Returns the corresponding matched text based on the capture group's index.
 /// Index 0 represents the full match, while indices 1 and above represent individual capture groups.
@@ -347,7 +357,8 @@ pub fn MatchResult::groups(self : Self) -> Map[String, @string.View] {
   |> Map::from_iter
 }
 
-///| Gets an iterator over the content of all valid capture groups.
+///|
+/// Gets an iterator over the content of all valid capture groups.
 /// 
 /// Returns an iterator that contains the content of all successfully matched capture groups,
 /// including the full match (index 0) and all other capture groups. Only valid matched content is returned,
