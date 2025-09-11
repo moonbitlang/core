@@ -6,46 +6,20 @@ import(
 )
 
 // Values
-fn compile(@string.View, flags? : @string.View) -> Regexp raise RegexpError
+fn compile(@string.View) -> Regex raise
 
 // Errors
-pub suberror RegexpError {
-  RegexpError(err~ : Err, source_fragment~ : @string.View)
-}
-impl Show for RegexpError
 
 // Types and methods
-pub enum Err {
-  InternalError
-  InvalidCharClass
-  InvalidEscape
-  InvalidNamedCapture
-  InvalidRepeatOp
-  InvalidRepeatSize
-  MissingBracket
-  MissingParenthesis
-  MissingRepeatArgument
-  TrailingBackslash
-  UnexpectedParenthesis
-}
-impl Show for Err
-
 type MatchResult
 fn MatchResult::after(Self) -> @string.View
 fn MatchResult::before(Self) -> @string.View
-fn MatchResult::get(Self, Int) -> @string.View?
-fn MatchResult::groups(Self) -> Map[String, @string.View]
-fn MatchResult::matched(Self) -> Bool
-fn MatchResult::results(Self) -> Array[@string.View?]
+fn MatchResult::content(Self) -> @string.View
+fn MatchResult::group(Self, Int) -> @string.View?
+fn MatchResult::named_group(Self, String) -> @string.View?
 
-type Regexp
-fn Regexp::execute(Self, @string.View) -> MatchResult
-#deprecated
-fn Regexp::execute_with_remainder(Self, @string.View) -> (MatchResult, @string.View)
-fn Regexp::group_by_name(Self, String) -> Int?
-fn Regexp::group_count(Self) -> Int
-fn Regexp::group_names(Self) -> Array[String]
-fn Regexp::match_(Self, @string.View) -> MatchResult?
+type Regex
+fn Regex::execute(Self, @string.View) -> MatchResult?
 
 // Type aliases
 

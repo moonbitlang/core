@@ -256,7 +256,7 @@ pub fn Regexp::match_(self : Regexp, input : @string.View) -> MatchResult? {
 /// - Index 2, 3: Start and end positions of the first capture group.
 /// - Index 4, 5: Start and end positions of the second capture group.
 /// - And so on...
-struct MatchResult {
+pub struct MatchResult {
   input : @string.View
   captures : Array[Int]
   names : Map[String, Int]
