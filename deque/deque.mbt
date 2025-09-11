@@ -1057,6 +1057,10 @@ pub fn[A] extract_if(self : Deque[A], f : (A) -> Bool) -> Deque[A] {
       write += 1
     }
   }
+  let total_len = self.length()
+  for i in write..<total_len {
+    set_null(self.buf, (self.head + i) % self.buf.length())
+  }
   let removed_len = removed.length()
   let cap = self.buf.length()
   self.len -= removed_len
