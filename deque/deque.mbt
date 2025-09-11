@@ -1001,7 +1001,6 @@ pub fn[A] extract_if(self : Deque[A], f : (A) -> Bool) -> Deque[A] {
   let cap = self.buf.length()
   self.len -= removed_len
   self.tail = (self.tail - removed_len + cap) % cap
-  self.reserve_capacity(write)
   removed
 }
 
