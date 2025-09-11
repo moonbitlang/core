@@ -348,7 +348,7 @@ pub fn Int::lnot(self : Int) -> Int = "%i32_lnot"
 ///   let y = 0xAA // 10101010
 ///   inspect(x & y, content="160") // 10100000 = 160
 /// ```
-pub fn Int::land(self : Int, other : Int) -> Int = "%i32_land"
+pub impl BitAnd for Int with land(self : Int, other : Int) -> Int = "%i32_land"
 
 ///|
 /// Performs a bitwise OR operation between two 32-bit integers. For each bit
@@ -370,7 +370,7 @@ pub fn Int::land(self : Int, other : Int) -> Int = "%i32_land"
 ///   let y = 0x0F0F // 0000_1111_0000_1111
 ///   inspect(x | y, content="65535") // 1111_1111_1111_1111 = 65535
 /// ```
-pub fn Int::lor(self : Int, other : Int) -> Int = "%i32_lor"
+pub impl BitOr for Int with lor(self : Int, other : Int) -> Int = "%i32_lor"
 
 ///|
 /// Performs a bitwise XOR operation between two integers.
@@ -391,7 +391,7 @@ pub fn Int::lor(self : Int, other : Int) -> Int = "%i32_lor"
 ///   inspect(x ^ y, content="65535") // 1111_1111_1111_1111
 ///   inspect(x ^ x, content="0") // XOR with self gives 0
 /// ```
-pub fn Int::lxor(self : Int, other : Int) -> Int = "%i32_lxor"
+pub impl BitXOr for Int with lxor(self : Int, other : Int) -> Int = "%i32_lxor"
 
 ///|
 /// Performs a left shift operation on a 32-bit integer. Shifts each bit in the
@@ -1901,7 +1901,7 @@ pub impl Compare for UInt with compare(self, other) = "%u32.compare"
 ///   let b = 0xFF00U // 1111_1111_0000_0000
 ///   inspect(a & b, content="61440") // 1111_0000_0000_0000 = 61440
 /// ```
-pub fn UInt::land(self : UInt, other : UInt) -> UInt = "%u32.bitand"
+pub impl BitAnd for UInt with land(self : UInt, other : UInt) -> UInt = "%u32.bitand"
 
 ///|
 /// Performs a bitwise OR operation between two unsigned 32-bit integers. For
@@ -1922,7 +1922,7 @@ pub fn UInt::land(self : UInt, other : UInt) -> UInt = "%u32.bitand"
 ///   let b = 0x0F0FU // Binary: 0000_1111_0000_1111
 ///   inspect(a | b, content="65535") // Binary: 1111_1111_1111_1111
 /// ```
-pub fn UInt::lor(self : UInt, other : UInt) -> UInt = "%u32.bitor"
+pub impl BitOr for UInt with lor(self : UInt, other : UInt) -> UInt = "%u32.bitor"
 
 ///|
 /// Performs a bitwise XOR (exclusive OR) operation between two unsigned 32-bit
@@ -1943,7 +1943,7 @@ pub fn UInt::lor(self : UInt, other : UInt) -> UInt = "%u32.bitor"
 ///   let b = 0x0F0FU // Binary: 0000_1111_0000_1111
 ///   inspect(a ^ b, content="61455") // Binary: 1111_0000_0000_1111
 /// ```
-pub fn UInt::lxor(self : UInt, other : UInt) -> UInt = "%u32.bitxor"
+pub impl BitXOr for UInt with lxor(self : UInt, other : UInt) -> UInt = "%u32.bitxor"
 
 ///|
 /// Performs a bitwise NOT operation on an unsigned 32-bit integer. Flips all
