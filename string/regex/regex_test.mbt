@@ -1162,9 +1162,7 @@ test "complex real-world patterns" {
   )
 
   // Credit card number (simple pattern)
-  let cc_regex = @regex.compile(
-    "\\d{4}[-\\s]?\\d{4}[-\\s]?\\d{4}[-\\s]?\\d{4}",
-  )
+  let cc_regex = @regex.compile("\\d{4}[-\\s]?\\d{4}[-\\s]?\\d{4}[-\\s]?\\d{4}")
   inspect(
     cc_regex.execute("1234 5678 9012 3456").results(),
     content=(

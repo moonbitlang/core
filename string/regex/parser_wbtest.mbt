@@ -628,7 +628,8 @@ test "parse word boundary with quantifiers" {
   inspect(result, content="[]")
 }
 
-///| Test case: Word boundary combined with capture groups
+///|
+/// Test case: Word boundary combined with capture groups
 ///
 /// Test regex "\\b(\\w+)\\b":
 /// - Word boundary assertion: \b
