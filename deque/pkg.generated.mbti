@@ -76,8 +76,10 @@ fn[A] Deque::to_array(Self[A]) -> Array[A]
 fn[A] Deque::truncate(Self[A], Int) -> Unit
 fn[A] Deque::unsafe_pop_back(Self[A]) -> Unit
 fn[A] Deque::unsafe_pop_front(Self[A]) -> Unit
+impl[A] Add for Deque[A]
 impl[A : Compare] Compare for Deque[A]
 impl[A : Eq] Eq for Deque[A]
+impl[A : Hash] Hash for Deque[A]
 impl[A : Show] Show for Deque[A]
 impl[A : ToJson] ToJson for Deque[A]
 impl[A : @json.FromJson] @json.FromJson for Deque[A]
