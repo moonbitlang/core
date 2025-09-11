@@ -27,7 +27,7 @@
 /// 
 /// Example:
 /// ```moonbit
-/// let engine = compile("a(bc|de)f")
+/// let engine = @regex_impl.compile("a(bc|de)f")
 /// inspect(engine.execute("xxabcf").results(), content=(
 ///   #|[Some("abcf"), Some("bc")]
 /// ))
@@ -59,7 +59,7 @@ pub fn compile(
 /// 
 /// Example:
 /// ```moonbit
-/// let engine = compile("(?<word>\\w+)")
+/// let engine = @regex_impl.compile("(?<word>\\w+)")
 /// inspect(engine.group_by_name("word"), content="Some(1)")
 /// ```
 pub fn Regexp::group_by_name(self : Regexp, name : String) -> Int? {
@@ -79,7 +79,7 @@ pub fn Regexp::group_by_name(self : Regexp, name : String) -> Int? {
 /// 
 /// Example:
 /// ```moonbit
-/// let engine = compile("(a)(b|c)")
+/// let engine = @regex_impl.compile("(a)(b|c)")
 /// inspect(engine.group_count(), content="3")
 /// ```
 pub fn Regexp::group_count(self : Regexp) -> Int {
@@ -99,7 +99,7 @@ pub fn Regexp::group_count(self : Regexp) -> Int {
 /// 
 /// Example:
 /// ```moonbit
-/// let engine = compile("(?<first>a)(?<second>b)")
+/// let engine = @regex_impl.compile("(?<first>a)(?<second>b)")
 /// inspect(engine.group_names(), content=(
 ///   #|["first", "second"]
 /// ))
@@ -123,7 +123,7 @@ pub fn Regexp::group_names(self : Regexp) -> Array[String] {
 /// 
 /// Example:
 /// ```moonbit
-/// let engine = compile("a(bc|de)f")
+/// let engine = @regex_impl.compile("a(bc|de)f")
 /// let result = engine.execute("xxabcf")
 /// if result.matched() { 
 ///   inspect(result.get(0), content=(
@@ -163,7 +163,7 @@ pub fn Regexp::execute(self : Regexp, input : @string.View) -> MatchResult {
 /// 
 /// Example:
 /// ```moonbit
-/// let engine = compile("a(bc|de)f")
+/// let engine = @regex_impl.compile("a(bc|de)f")
 /// let result = engine.execute("abcfxx")
 /// guard result.matched()
 /// inspect(result.before(), content=(""))
@@ -225,7 +225,7 @@ pub fn Regexp::execute_with_remainder(
 /// 
 /// Example:
 /// ```moonbit
-/// let engine = compile("a(bc|de)f")
+/// let engine = @regex_impl.compile("a(bc|de)f")
 /// guard engine.match_("abcfxx") is Some(result)
 /// inspect(result.after(), content=("xx"))
 /// assert_true(engine.match_("axxf") is None)
@@ -277,7 +277,7 @@ pub struct MatchResult {
 /// 
 /// Example:
 /// ```moonbit
-/// let result = compile("text").execute("text")
+/// let result = @regex_impl.compile("text").execute("text")
 /// inspect(result.matched(), content="true")
 /// ```
 pub fn MatchResult::matched(self : Self) -> Bool {
@@ -300,7 +300,7 @@ pub fn MatchResult::matched(self : Self) -> Bool {
 /// 
 /// Example:
 /// ```moonbit
-/// let result = compile(".(bc)").execute("abc")
+/// let result = @regex_impl.compile(".(bc)").execute("abc")
 /// inspect(result.get(0), content=(
 ///   #|Some("abc")
 /// ))
@@ -339,7 +339,7 @@ pub fn MatchResult::get(self : Self, index : Int) -> @string.View? {
 /// Example:
 ///
 /// ```moonbit
-/// let engine = compile("(?<word>\\w+)\\s+(?<num>\\d+)")
+/// let engine = @regex_impl.compile("(?<word>\\w+)\\s+(?<num>\\d+)")
 /// let result = engine.execute("hello 123")
 /// inspect(result.groups(), content=(
 ///   #|{"word": "hello", "num": "123"}
@@ -371,7 +371,7 @@ pub fn MatchResult::groups(self : Self) -> Map[String, @string.View] {
 /// 
 /// Example:
 /// ```moonbit
-/// let result = compile("(\\w)+").execute("abc")
+/// let result = @regex_impl.compile("(\\w)+").execute("abc")
 /// inspect(result.results(), content=(
 ///   #|[Some("abc"), Some("c")]
 /// ))
@@ -396,7 +396,7 @@ pub fn MatchResult::results(self : Self) -> Array[@string.View?] {
 /// If the match was not successful, this will return the entire input text.
 /// 
 /// ```moonbit
-/// let engine = compile("world")
+/// let engine = @regex_impl.compile("world")
 /// let result = engine.execute("hello world")
 /// inspect(result.before(), content="hello ")
 /// let result = engine.execute("say hello")
@@ -412,7 +412,7 @@ pub fn MatchResult::before(self : Self) -> @string.View {
 /// If the match was not successful, this will return the empty string.
 /// 
 /// ```moonbit
-/// let engine = compile("hello")
+/// let engine = @regex_impl.compile("hello")
 /// let result = engine.execute("hello world")
 /// inspect(result.after(), content=" world")
 /// let result = engine.execute("say yes")
