@@ -1,13 +1,7 @@
 {
   "import": [
     "moonbitlang/core/builtin",
-    "moonbitlang/core/char",
     "moonbitlang/core/string",
-    "moonbitlang/core/array",
-    "moonbitlang/core/result",
-    "moonbitlang/core/set",
-    "moonbitlang/core/json",
-    "moonbitlang/core/test",
     "moonbitlang/core/string/regex/internal/regex_impl"
   ],
   "test-import": [

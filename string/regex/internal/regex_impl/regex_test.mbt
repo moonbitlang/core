@@ -220,34 +220,34 @@ test "character classes" {
 ///|
 test "regexp with flags" {
   // singleline flag
-  let regexp = compile(".")
+  let regexp = @regex_impl.compile(".")
   inspect(regexp.execute("\n").matched(), content="false")
-  let regexp = compile(".", flags="s")
+  let regexp = @regex_impl.compile(".", flags="s")
   inspect(regexp.execute("\n").matched(), content="true")
-  let regexp = compile("(?s:.)")
+  let regexp = @regex_impl.compile("(?s:.)")
   inspect(regexp.execute("\n").matched(), content="true")
 
   // multiline flag
-  let regexp = compile("$")
+  let regexp = @regex_impl.compile("$")
   inspect(regexp.execute("\n").matched(), content="true")
   inspect(regexp.execute("\n").results().length(), content="1")
   inspect(
     regexp.execute("\n").results().map(r => r.unwrap().start_offset()),
     content="[1]",
   )
-  let regexp = compile("$", flags="m")
+  let regexp = @regex_impl.compile("$", flags="m")
   inspect(regexp.execute("\n").matched(), content="true")
   inspect(
     regexp.execute("\n").results().map(r => r.unwrap().start_offset()),
     content="[0]",
   )
-  let regexp = compile("(?m:$)")
+  let regexp = @regex_impl.compile("(?m:$)")
   inspect(regexp.execute("\n").matched(), content="true")
   inspect(
     regexp.execute("\n").results().map(r => r.unwrap().start_offset()),
     content="[0]",
   )
-  let regexp = compile("(?m-m:$)")
+  let regexp = @regex_impl.compile("(?m-m:$)")
   inspect(regexp.execute("\n").matched(), content="true")
   inspect(
     regexp.execute("\n").results().map(r => r.unwrap().start_offset()),
@@ -1162,7 +1162,9 @@ test "complex real-world patterns" {
   )
 
   // Credit card number (simple pattern)
-  let cc_regex = @regex_impl.compile("\\d{4}[-\\s]?\\d{4}[-\\s]?\\d{4}[-\\s]?\\d{4}")
+  let cc_regex = @regex_impl.compile(
+    "\\d{4}[-\\s]?\\d{4}[-\\s]?\\d{4}[-\\s]?\\d{4}",
+  )
   inspect(
     cc_regex.execute("1234 5678 9012 3456").results(),
     content=(

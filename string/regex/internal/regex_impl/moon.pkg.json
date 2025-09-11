@@ -9,5 +9,6 @@
     "moonbitlang/core/string/regex/internal/unicode",
     "moonbitlang/core/json",
     "moonbitlang/core/test"
-  ]
+  ],
+  "warn-list": "-1-29"
 }
