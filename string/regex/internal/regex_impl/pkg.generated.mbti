@@ -1,0 +1,59 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/string/regex/internal/regex_impl"
+
+import(
+  "moonbitlang/core/string"
+)
+
+// Values
+fn compile(@string.View, flags? : @string.View) -> Regexp raise RegexpError
+
+// Errors
+pub suberror RegexpError {
+  RegexpError(err~ : Err, source_fragment~ : @string.View)
+}
+impl Show for RegexpError
+
+// Types and methods
+pub enum Err {
+  InternalError
+  InvalidCharClass
+  InvalidEscape
+  InvalidNamedCapture
+  InvalidRepeatOp
+  InvalidRepeatSize
+  MissingBracket
+  MissingParenthesis
+  MissingRepeatArgument
+  TrailingBackslash
+  UnexpectedParenthesis
+}
+impl Show for Err
+
+pub struct MatchResult {
+  input : @string.View
+  captures : Array[Int]
+  names : Map[String, Int]
+  before : @string.View
+  after : @string.View
+}
+fn MatchResult::after(Self) -> @string.View
+fn MatchResult::before(Self) -> @string.View
+fn MatchResult::get(Self, Int) -> @string.View?
+fn MatchResult::groups(Self) -> Map[String, @string.View]
+fn MatchResult::matched(Self) -> Bool
+fn MatchResult::results(Self) -> Array[@string.View?]
+
+type Regexp
+fn Regexp::execute(Self, @string.View) -> MatchResult
+#deprecated
+fn Regexp::execute_with_remainder(Self, @string.View) -> (MatchResult, @string.View)
+fn Regexp::group_by_name(Self, String) -> Int?
+fn Regexp::group_count(Self) -> Int
+fn Regexp::group_names(Self) -> Array[String]
+fn Regexp::match_(Self, @string.View) -> MatchResult?
+
+// Type aliases
+
+// Traits
+

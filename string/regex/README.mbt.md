@@ -21,26 +21,31 @@ moonbit:
 test {
   // Compile once, use everywhere
   let regexp = @regex.compile("a(bc|de)f")
-  guard regexp.match_("xxabcf") is Some(result)
+  guard regexp.execute("xxabcf") is Some(result)
+  inspect(result.content(), content="abcf")
   inspect(
-    result.results(),
+    result.group(1),
     content=(
-      #|[Some("abcf"), Some("bc")]
+      #|Some("bc")
     ),
   )
 
   // Write a simple split with regexp
   fn split(
-    regexp : @regex.Regexp,
-    target : @string.View
+    regexp : @regex.Regex,
+    target : @string.View,
   ) -> Array[@string.View] {
     let result = []
-    loop target {
-      "" => ()
-      str => {
-        let res = regexp.execute(str)
-        result.push(res.before())
-        continue res.after()
+    for str = target {
+      match regexp.execute(str) {
+        None => {
+          result.push(str)
+          break
+        }
+        Some(res) => {
+          result.push(res.before())
+          continue res.after()
+        }
       }
     }
     result
@@ -61,19 +66,15 @@ test {
 ### Build & Execute
 
 - `compile(pattern)` → Creates an `Engine`
-- `engine.execute(text)` → Returns `MatchResult`
+- `engine.execute(text)` → Returns `MatchResult?`
 
 ### Inspect Results
 
-- `result.matched()` → `Bool`
-- `result.get(index)` → Capture group content
-- `result.results()` → Iterator over all matches
-
-### Named Groups & Advanced
-
-- `engine.group_by_name(name)` → Find group index by name
-- `engine.group_count()` → Total capture groups
-- `result.groups()` → Get named group content
+- `result.content()` → `@string.View`
+- `result.before()` → `@string.View`
+- `result.after()` → `@string.View`
+- `result.group(index)` → Capture group content
+- `result.named_group(name)` → Named capture group content
 
 ## 🎪 Syntax Playground
 
@@ -101,18 +102,18 @@ test "unicode properties" {
   // Matching gc=L
   let regex = @regex.compile("\\p{Letter}+")
   inspect(
-    regex.execute("Hello 世界").results(),
+    regex.execute("Hello 世界").map(it => it.content()),
     content=(
-      #|[Some("Hello")]
+      #|Some("Hello")
     ),
   )
 
   // Matching gc=N
   let regex = @regex.compile("\\p{Number}+")
   inspect(
-    regex.execute("123 and 456").results(),
+    regex.execute("123 and 456").map(it => it.content()),
     content=(
-      #|[Some("123")]
+      #|Some("123")
     ),
   )
 }
@@ -131,20 +132,37 @@ test "unicode properties" {
 test "backreferences" {
   // Palindrome detection (simple)
   let palindrome = @regex.compile("^(.)(.)\\2\\1")
+  let result = palindrome.execute("abba")
+  guard result is Some(result)
+  inspect(result.content(), content="abba")
   inspect(
-    palindrome.execute("abba").results(),
+    result.group(1),
     content=(
-      #|[Some("abba"), Some("a"), Some("b")]
+      #|Some("a")
+    ),
+  )
+  inspect(
+    result.group(2),
+    content=(
+      #|Some("b")
     ),
   )
 
   // HTML tag matching
   let html_regex = @regex.compile("<([a-zA-Z]+)[^>]*>(.*?)</\\1>")
   let result = html_regex.execute("<div class='test'>content</div>")
+  guard result is Some(result)
+  inspect(result.content(), content="<div class='test'>content</div>")
   inspect(
-    result.results(),
+    result.group(1),
     content=(
-      #|[Some("<div class='test'>content</div>"), Some("div"), Some("content")]
+      #|Some("div")
+    ),
+  )
+  inspect(
+    result.group(2),
+    content=(
+      #|Some("content")
     ),
   )
 }
@@ -160,26 +178,18 @@ test "character classes" {
       #|[\w-]+@[\w-]+\.\w+
     ),
   )
-  let email_result = email.execute("user@example.com").results()
-  inspect(
-    email_result,
-    content=(
-      #|[Some("user@example.com")]
-    ),
-  )
+  let email_result = email.execute("user@example.com")
+  guard email_result is Some(email_result)
+  inspect(email_result.content(), content="user@example.com")
   // Extract numbers
   let numbers = @regex.compile(
     (
       #|\d+\.\d{2}
     ),
   )
-  let result = numbers.execute("Price: $42.99").results()
-  inspect(
-    result,
-    content=(
-      #|[Some("42.99")]
-    ),
-  )
+  let result = numbers.execute("Price: $42.99")
+  guard result is Some(result)
+  inspect(result.content(), content="42.99")
 
   // Named captures for parsing
   let parser = @regex.compile(
@@ -188,11 +198,23 @@ test "character classes" {
     ),
   )
   let date_result = parser.execute("2024-03-15")
+  guard date_result is Some(date_result)
   inspect(
-    date_result.groups(),
+    date_result.named_group("year"),
     content=(
-      #|{"year": "2024", "month": "03", "day": "15"}
-
+      #|Some("2024")
+    ),
+  )
+  inspect(
+    date_result.named_group("month"),
+    content=(
+      #|Some("03")
+    ),
+  )
+  inspect(
+    date_result.named_group("day"),
+    content=(
+      #|Some("15")
     ),
   )
 }
@@ -203,10 +225,13 @@ test "character classes" {
 ```moonbit
 test {
   try {
-    let _ = @regex.compile("a(b")  // Oops! Missing )
+    let _ = @regex.compile("a(b")
+    // Oops! Missing )
   } catch {
-    RegexpError(err=MissingParenthesis, source_fragment=_) => println("Fix your regex! 🔧")
-    _ => ()
+    err => {
+      let _msg = Error::to_string(err)
+      ignore("Fix your regex! 🔧")
+    }
   }
 }
 ```
@@ -228,11 +253,13 @@ This implementation has some behavior differences compared to other popular
 regex engines:
 
 1. **Empty Character Class Handling**:
+
    - In JavaScript: `[][]` is parsed as two character classes with no characters
    - In Golang: `[][]` is parsed as one character class containing `]` and `[`
    - In MoonBit: we follow the JavaScript interpretation
 
 2. **Empty Alternatives Behavior**:
+
    - Expressions like `(|a)*` and `(|a)+` have specific behavior that may differ
      from other implementations
    - See [Golang issue #46123](https://github.com/golang/go/issues/46123) for

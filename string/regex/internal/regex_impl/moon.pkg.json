@@ -6,12 +6,8 @@
     "moonbitlang/core/array",
     "moonbitlang/core/result",
     "moonbitlang/core/set",
+    "moonbitlang/core/string/regex/internal/unicode",
     "moonbitlang/core/json",
-    "moonbitlang/core/test",
-    "moonbitlang/core/string/regex/internal/regex_impl"
-  ],
-  "test-import": [
-    "moonbitlang/core/option",
-    "moonbitlang/core/error"
+    "moonbitlang/core/test"
   ]
 }
