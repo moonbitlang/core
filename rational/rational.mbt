@@ -271,7 +271,7 @@ fn[T] overflow_error() -> T raise RationalError {
 ///
 #deprecated("Use @rational in module moonbitlang/x instead. Note that you need to rename Rational to Rational64.")
 #coverage.skip
-pub(all) suberror RationalError String derive(Show, ToJson(style="flat"))
+pub(all) suberror RationalError String derive(Show, ToJson)
 
 ///|
 /// Compares two `RationalError` values for equality.

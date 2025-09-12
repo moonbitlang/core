@@ -34,7 +34,7 @@ enum Color {
   Red
   Green
   Blue
-} derive(ToJson(style="flat"))
+} derive(ToJson)
 
 ///|
 struct Line {
