@@ -2770,6 +2770,32 @@ pub fn UInt16::to_int(self : UInt16) -> Int = "%u16_to_i32"
 pub fn UInt16::to_byte(self : UInt16) -> Byte = "%u16_to_byte"
 
 ///|
+/// Converts a 32-bit unsigned integer to a 16-bit unsigned integer by truncating
+/// its value to fit within the range of 0 to 65535.
+///
+/// Parameters:
+///
+/// * `integer` : The 32-bit unsigned integer to be converted. Values outside the
+/// range of UInt16 will be truncated to fit.
+///
+/// Returns a 16-bit unsigned integer containing the lower 16 bits of the input
+/// value.
+///
+/// Example:
+///
+/// ```moonbit
+///   let n = 42U
+///   inspect(n.to_uint16(), content="42")
+///   let max = 4294967295U
+///   inspect(max.to_uint16(), content="65535") // -1 becomes max value of UInt16
+///   let large = 65536U
+///   inspect(large.to_uint16(), content="0") // Values wrap around
+/// ```
+pub fn UInt::to_uint16(self : UInt) -> UInt16 {
+  self.reinterpret_as_int().to_uint16()
+}
+
+///|
 /// Converts a 32-bit signed integer to a 16-bit unsigned integer by truncating
 /// its value to fit within the range of 0 to 65535.
 ///
