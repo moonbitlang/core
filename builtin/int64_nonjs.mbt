@@ -993,6 +993,28 @@ pub fn UInt64::to_int64(self : UInt64) -> Int64 = "%u64.to_i64_reinterpret"
 pub fn UInt64::reinterpret_as_int64(self : UInt64) -> Int64 = "%u64.to_i64_reinterpret"
 
 ///|
+/// Converts a 64-bit unsigned integer to a 16-bit unsigned integer by truncating
+/// the value to fit within the range of UInt16 (0 to 65535).
+///
+/// Parameters:
+///
+/// * `value` : The 64-bit unsigned integer to be converted to UInt16.
+///
+/// Returns a 16-bit unsigned integer representing the lower 16 bits of the input
+/// value.
+///
+/// Example:
+///
+/// ```moonbit
+///   inspect(42UL.to_uint16(), content="42")
+///   inspect(18446744073709551615UL.to_uint16(), content="65535") // Wraps around to maximum UInt16 value
+///   inspect(70000UL.to_uint16(), content="4464") // Value is truncated
+/// ```
+pub fn UInt64::to_uint16(self : UInt64) -> UInt16 {
+  self.reinterpret_as_int64().to_uint16()
+}
+
+///|
 /// Converts a 64-bit unsigned integer to a 32-bit unsigned integer by truncating
 /// the higher 32 bits.
 ///
