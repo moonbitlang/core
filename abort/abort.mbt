@@ -23,8 +23,32 @@
 ///
 /// Returns a value of type `T`. However, this function never actually returns a
 /// value as it always causes a panic.
+#cfg(any(target="wasm", target="wasm-gc"))
 pub fn[T] abort(msg : String) -> T {
   let _ = msg
+  panic_impl()
+}
+
+///|
+#cfg(target="js")
+pub fn[T] abort(msg : String) -> T {
+  console_error(msg)
+  panic_impl()
+}
+
+///|
+#cfg(target="js")
+extern "js" fn console_error(msg : String) =
+  #|console.error
+
+///|
+#cfg(target="native")
+fn println(s : String) -> Unit = "%println"
+
+///|
+#cfg(target="native")
+pub fn[T] abort(msg : String) -> T {
+  println(msg)
   panic_impl()
 }
 
