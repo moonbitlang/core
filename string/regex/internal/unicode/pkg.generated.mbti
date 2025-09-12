@@ -1,0 +1,22 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/string/regex/internal/unicode"
+
+// Values
+const MAX_FOLD : Char = '𞥃'
+
+const MIN_FOLD : Char = 'A'
+
+let case_folding : Map[Char, Char]
+
+let general_category_property_value_alises : Map[String, String]
+
+let general_category_ranges : Map[String, Array[Char]]
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+
+// Traits
+
