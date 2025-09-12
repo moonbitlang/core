@@ -432,10 +432,18 @@ test "array_dedup - edge cases" {
 
 ///|
 test "array_extract_if" {
-  let arr = [1, 2, 3, 4, 5]
-  let extracted = arr.extract_if(x => x % 2 == 0)
-  inspect(extracted, content="[2, 4]")
-  inspect(arr, content="[1, 3, 5]")
+  let arr1 = [1, 2, 3, 4, 5]
+  let extracted1 = arr1.extract_if(x => x % 2 == 0)
+  inspect(extracted1, content="[2, 4]")
+  inspect(arr1, content="[1, 3, 5]")
+  let arr2 = [2, 4, 6, 8]
+  let extracted2 = arr2.extract_if(x => x % 2 == 0)
+  inspect(extracted2, content="[2, 4, 6, 8]")
+  inspect(arr2, content="[]")
+  let arr3 = [1, 3, 5, 7]
+  let extracted3 = arr3.extract_if(x => x % 2 == 0)
+  inspect(extracted3, content="[]")
+  inspect(arr3, content="[1, 3, 5, 7]")
 }
 
 ///|
