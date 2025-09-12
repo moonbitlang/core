@@ -1,27 +1,23 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "moonbitlang/core/strconv"
 
-import(
-  "moonbitlang/core/string"
-)
-
 // Values
 fn[A : FromStr] parse(String) -> A raise StrConvError
 
-fn parse_bool(@string.View) -> Bool raise StrConvError
+fn parse_bool(StringView) -> Bool raise StrConvError
 
 #deprecated
-fn parse_decimal(@string.View) -> Decimal raise StrConvError
+fn parse_decimal(StringView) -> Decimal raise StrConvError
 
-fn parse_double(@string.View) -> Double raise StrConvError
+fn parse_double(StringView) -> Double raise StrConvError
 
-fn parse_int(@string.View, base? : Int) -> Int raise StrConvError
+fn parse_int(StringView, base? : Int) -> Int raise StrConvError
 
-fn parse_int64(@string.View, base? : Int) -> Int64 raise StrConvError
+fn parse_int64(StringView, base? : Int) -> Int64 raise StrConvError
 
-fn parse_uint(@string.View, base? : Int) -> UInt raise StrConvError
+fn parse_uint(StringView, base? : Int) -> UInt raise StrConvError
 
-fn parse_uint64(@string.View, base? : Int) -> UInt64 raise StrConvError
+fn parse_uint64(StringView, base? : Int) -> UInt64 raise StrConvError
 
 // Errors
 pub(all) suberror StrConvError String
@@ -34,7 +30,7 @@ fn Decimal::from_int64(Int64) -> Self
 #deprecated
 fn Decimal::new() -> Self
 #deprecated
-fn Decimal::parse_decimal(@string.View) -> Self raise StrConvError
+fn Decimal::parse_decimal(StringView) -> Self raise StrConvError
 #deprecated
 fn Decimal::shift(Self, Int) -> Unit
 #deprecated

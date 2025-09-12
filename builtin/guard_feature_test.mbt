@@ -20,7 +20,7 @@ enum Expr {
   Div(Expr, Expr)
   Lit(Int)
   Var(String)
-} derive(Show, ToJson(style="flat"), Eq)
+} derive(Show, ToJson, Eq)
 
 ///|
 fn simplify(e : Expr) -> Expr {
