@@ -1020,6 +1020,37 @@ pub fn[A : Eq] contains(self : Deque[A], value : A) -> Bool {
 }
 
 ///|
+/// Creates a new deque containing all elements from the input deque that satisfy
+/// the given predicate function.
+///
+/// Parameters:
+///
+/// * `self` : The deque to filter.
+/// * `f` : A function that takes an element and returns a boolean indicating
+///   whether the element should be included in the result.
+///
+/// Returns a new deque containing only the elements for which the predicate
+/// function returns `true`. The relative order of the elements is preserved.
+///
+/// Example:
+///
+/// ```moonbit
+///   let dq = @deque.of([1, 2, 3, 4, 5])
+///   let evens = dq.filter((x) => { x % 2 == 0 })
+///   inspect(evens, content="@deque.of([2, 4])")
+/// ```
+#locals(f)
+pub fn[A] filter(self : Deque[A], f : (A) -> Bool raise?) -> Deque[A] raise? {
+  let dq = of([])
+  for v in self {
+    if f(v) {
+      dq.push_back(v)
+    }
+  }
+  dq
+}
+
+///|
 /// Reserves capacity to ensure that it can hold at least the number of elements
 /// specified by the `capacity` argument.
 ///
