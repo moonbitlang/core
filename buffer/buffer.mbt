@@ -245,14 +245,17 @@ pub impl Logger for Buffer with write_string(self, value) {
 ///   )
 /// ```
 pub fn write_uint64_be(self : Buffer, value : UInt64) -> Unit {
-  self.write_byte((value >> 56).to_byte())
-  self.write_byte((value >> 48).to_byte())
-  self.write_byte((value >> 40).to_byte())
-  self.write_byte((value >> 32).to_byte())
-  self.write_byte((value >> 24).to_byte())
-  self.write_byte((value >> 16).to_byte())
-  self.write_byte((value >> 8).to_byte())
-  self.write_byte(value.to_byte())
+  self.grow_if_necessary(self.len + 8)
+  let offset = self.len
+  self.data[offset] = (value >> 56).to_byte()
+  self.data[offset + 1] = (value >> 48).to_byte()
+  self.data[offset + 2] = (value >> 40).to_byte()
+  self.data[offset + 3] = (value >> 32).to_byte()
+  self.data[offset + 4] = (value >> 24).to_byte()
+  self.data[offset + 5] = (value >> 16).to_byte()
+  self.data[offset + 6] = (value >> 8).to_byte()
+  self.data[offset + 7] = value.to_byte()
+  self.len += 8
 }
 
 ///|
