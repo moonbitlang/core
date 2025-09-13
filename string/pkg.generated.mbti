@@ -12,72 +12,11 @@ pub suberror CreatingViewError {
 impl Show for CreatingViewError
 
 // Types and methods
-type View
-#alias(op_get)
-fn View::at(Self, Int) -> Int
-fn View::char_length(Self) -> Int
-fn View::char_length_eq(Self, Int) -> Bool
-fn View::char_length_ge(Self, Int) -> Bool
-fn View::contains(Self, Self) -> Bool
-fn View::contains_char(Self, Char) -> Bool
-fn View::data(Self) -> String
-fn View::find(Self, Self) -> Int?
-fn View::find_by(Self, (Char) -> Bool) -> Int?
-fn[A] View::fold(Self, init~ : A, (A, Char) -> A) -> A
-fn View::from_array(Array[Char]) -> Self
-fn View::from_iter(Iter[Char]) -> Self
-fn View::get(Self, Int) -> Int?
-fn View::get_char(Self, Int) -> Char?
-#alias(starts_with, deprecated)
-fn View::has_prefix(Self, Self) -> Bool
-#alias(ends_with, deprecated)
-fn View::has_suffix(Self, Self) -> Bool
-fn View::is_blank(Self) -> Bool
-fn View::is_empty(Self) -> Bool
-fn View::iter(Self) -> Iter[Char]
-fn View::iter2(Self) -> Iter2[Int, Char]
-fn View::length(Self) -> Int
-fn View::make(Int, Char) -> Self
-fn View::offset_of_nth_char(Self, Int) -> Int?
-fn View::pad_end(Self, Int, Char) -> String
-fn View::pad_start(Self, Int, Char) -> String
-fn View::repeat(Self, Int) -> Self
-fn View::replace(Self, old~ : Self, new~ : Self) -> Self
-fn View::replace_all(Self, old~ : Self, new~ : Self) -> Self
-fn View::rev(Self) -> String
-fn View::rev_find(Self, Self) -> Int?
-fn[A] View::rev_fold(Self, init~ : A, (A, Char) -> A) -> A
-fn View::rev_iter(Self) -> Iter[Char]
-fn View::split(Self, Self) -> Iter[Self]
-fn View::start_offset(Self) -> Int
-fn View::strip_prefix(Self, Self) -> Self?
-fn View::strip_suffix(Self, Self) -> Self?
-#alias(op_as_view)
-fn View::sub(Self, start? : Int, end? : Int) -> Self raise CreatingViewError
-fn View::to_array(Self) -> Array[Char]
-fn View::to_bytes(Self) -> Bytes
-fn View::to_lower(Self) -> Self
-fn View::to_upper(Self) -> Self
-fn View::trim(Self, Self) -> Self
-fn View::trim_end(Self, Self) -> Self
-fn View::trim_space(Self) -> Self
-fn View::trim_start(Self, Self) -> Self
-fn View::unsafe_charcode_at(Self, Int) -> Int
-fn View::view(Self, start_offset? : Int, end_offset? : Int) -> Self
-impl Add for View
-impl Compare for View
-impl Default for View
-impl Eq for View
-impl Hash for View
-impl Show for View
-impl ToJson for View
-impl ToStringView for View
-
 fn String::char_length_eq(String, Int, start_offset? : Int, end_offset? : Int) -> Bool
 fn String::char_length_ge(String, Int, start_offset? : Int, end_offset? : Int) -> Bool
-fn String::contains(String, View) -> Bool
+fn String::contains(String, StringView) -> Bool
 fn String::contains_char(String, Char) -> Bool
-fn String::find(String, View) -> Int?
+fn String::find(String, StringView) -> Int?
 fn String::find_by(String, (Char) -> Bool) -> Int?
 fn[A] String::fold(String, init~ : A, (A, Char) -> A) -> A
 #as_free_fn
@@ -87,9 +26,9 @@ fn String::from_iter(Iter[Char]) -> String
 fn String::get(String, Int) -> Int?
 fn String::get_char(String, Int) -> Char?
 #alias(starts_with, deprecated)
-fn String::has_prefix(String, View) -> Bool
+fn String::has_prefix(String, StringView) -> Bool
 #alias(ends_with, deprecated)
-fn String::has_suffix(String, View) -> Bool
+fn String::has_suffix(String, StringView) -> Bool
 fn String::is_blank(String) -> Bool
 fn String::is_empty(String) -> Bool
 fn String::iter(String) -> Iter[Char]
@@ -98,34 +37,95 @@ fn String::offset_of_nth_char(String, Int, start_offset? : Int, end_offset? : In
 fn String::pad_end(String, Int, Char) -> String
 fn String::pad_start(String, Int, Char) -> String
 fn String::repeat(String, Int) -> String
-fn String::replace(String, old~ : View, new~ : View) -> String
-fn String::replace_all(String, old~ : View, new~ : View) -> String
+fn String::replace(String, old~ : StringView, new~ : StringView) -> String
+fn String::replace_all(String, old~ : StringView, new~ : StringView) -> String
 fn String::rev(String) -> String
-fn String::rev_find(String, View) -> Int?
+fn String::rev_find(String, StringView) -> Int?
 fn[A] String::rev_fold(String, init~ : A, (A, Char) -> A) -> A
 fn String::rev_iter(String) -> Iter[Char]
-fn String::split(String, View) -> Iter[View]
-fn String::strip_prefix(String, View) -> View?
-fn String::strip_suffix(String, View) -> View?
+fn String::split(String, StringView) -> Iter[StringView]
+fn String::strip_prefix(String, StringView) -> StringView?
+fn String::strip_suffix(String, StringView) -> StringView?
 #alias(op_as_view)
-fn String::sub(String, start? : Int, end? : Int) -> View raise CreatingViewError
+fn String::sub(String, start? : Int, end? : Int) -> StringView raise CreatingViewError
 fn String::to_array(String) -> Array[Char]
 fn String::to_bytes(String) -> Bytes
 fn String::to_lower(String) -> String
 fn String::to_upper(String) -> String
-fn String::trim(String, View) -> View
-fn String::trim_end(String, View) -> View
-fn String::trim_space(String) -> View
-fn String::trim_start(String, View) -> View
-fn String::view(String, start_offset? : Int, end_offset? : Int) -> View
+fn String::trim(String, StringView) -> StringView
+fn String::trim_end(String, StringView) -> StringView
+fn String::trim_space(String) -> StringView
+fn String::trim_start(String, StringView) -> StringView
+fn String::view(String, start_offset? : Int, end_offset? : Int) -> StringView
 impl Compare for String
 impl Default for String
 
+#alias(op_get)
+fn StringView::at(Self, Int) -> Int
+fn StringView::char_length(Self) -> Int
+fn StringView::char_length_eq(Self, Int) -> Bool
+fn StringView::char_length_ge(Self, Int) -> Bool
+fn StringView::contains(Self, Self) -> Bool
+fn StringView::contains_char(Self, Char) -> Bool
+fn StringView::data(Self) -> String
+fn StringView::find(Self, Self) -> Int?
+fn StringView::find_by(Self, (Char) -> Bool) -> Int?
+fn[A] StringView::fold(Self, init~ : A, (A, Char) -> A) -> A
+fn StringView::from_array(Array[Char]) -> Self
+fn StringView::from_iter(Iter[Char]) -> Self
+fn StringView::get(Self, Int) -> Int?
+fn StringView::get_char(Self, Int) -> Char?
+#alias(starts_with, deprecated)
+fn StringView::has_prefix(Self, Self) -> Bool
+#alias(ends_with, deprecated)
+fn StringView::has_suffix(Self, Self) -> Bool
+fn StringView::is_blank(Self) -> Bool
+fn StringView::is_empty(Self) -> Bool
+fn StringView::iter(Self) -> Iter[Char]
+fn StringView::iter2(Self) -> Iter2[Int, Char]
+fn StringView::length(Self) -> Int
+fn StringView::make(Int, Char) -> Self
+fn StringView::offset_of_nth_char(Self, Int) -> Int?
+fn StringView::pad_end(Self, Int, Char) -> String
+fn StringView::pad_start(Self, Int, Char) -> String
+fn StringView::repeat(Self, Int) -> Self
+fn StringView::replace(Self, old~ : Self, new~ : Self) -> Self
+fn StringView::replace_all(Self, old~ : Self, new~ : Self) -> Self
+fn StringView::rev(Self) -> String
+fn StringView::rev_find(Self, Self) -> Int?
+fn[A] StringView::rev_fold(Self, init~ : A, (A, Char) -> A) -> A
+fn StringView::rev_iter(Self) -> Iter[Char]
+fn StringView::split(Self, Self) -> Iter[Self]
+fn StringView::start_offset(Self) -> Int
+fn StringView::strip_prefix(Self, Self) -> Self?
+fn StringView::strip_suffix(Self, Self) -> Self?
+#alias(op_as_view)
+fn StringView::sub(Self, start? : Int, end? : Int) -> Self raise CreatingViewError
+fn StringView::to_array(Self) -> Array[Char]
+fn StringView::to_bytes(Self) -> Bytes
+fn StringView::to_lower(Self) -> Self
+fn StringView::to_upper(Self) -> Self
+fn StringView::trim(Self, Self) -> Self
+fn StringView::trim_end(Self, Self) -> Self
+fn StringView::trim_space(Self) -> Self
+fn StringView::trim_start(Self, Self) -> Self
+fn StringView::unsafe_charcode_at(Self, Int) -> Int
+fn StringView::view(Self, start_offset? : Int, end_offset? : Int) -> Self
+impl Add for StringView
+impl Compare for StringView
+impl Default for StringView
+impl Eq for StringView
+impl Hash for StringView
+impl Show for StringView
+impl ToJson for StringView
+
 // Type aliases
+pub typealias StringView as View
 
 // Traits
 pub trait ToStringView {
-  to_string_view(Self) -> View
+  to_string_view(Self) -> StringView
 }
 impl ToStringView for String
+impl ToStringView for StringView
 
