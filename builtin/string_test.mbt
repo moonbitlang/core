@@ -87,6 +87,11 @@ test "String::make with zero length" {
 }
 
 ///|
+test "String::make with huge length" {
+  assert_eq(String::make(536870899, 'a').length(), 536870899)
+}
+
+///|
 test "panic codepoint_length with invalid surrogate pair" {
   // Create a string with a leading surrogate (0xD800) followed by an invalid trailing surrogate
   let s = String::from_array([
