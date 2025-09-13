@@ -188,6 +188,67 @@ pub fn[A] copy(self : Deque[A]) -> Deque[A] {
 }
 
 ///|
+/// Copies elements from one deque to another deque, with support for growing the
+/// destination deque if needed. The copy respects the circular buffer layout
+/// and correctly handles wrap-around in both source and destination.
+/// 
+/// Parameters:
+/// 
+/// * `self` : The deque to copy elements from.
+/// * `dst` : The deque to copy elements to. Will be automatically grown
+///   if needed to accommodate the copied elements.
+/// * `len` : The number of elements to copy.
+/// * `src_offset` : Starting index in the source deque (relative to its front).
+///   Defaults to 0.
+/// * `dst_offset` : Starting index in the destination deque (relative to its front).
+///   Defaults to 0.
+/// 
+/// Example:
+/// 
+/// ```moonbit
+///   let d1 = @deque.of([1, 2, 3, 4, 5])
+///   let d2 = @deque.of([0, 0])
+///   d1.blit_to(d2, len=3, dst_offset=1)
+///   inspect(d2.to_array(), content="[0, 1, 2, 3]")
+/// ```
+/// 
+/// Panics if:
+/// 
+/// * `len` is negative
+/// * `src_offset` is negative
+/// * `dst_offset` is negative
+/// * `dst_offset` exceeds the length of the destination deque
+/// * `src_offset + len` exceeds the length of the source deque
+pub fn[A] blit_to(
+  self : Deque[A],
+  dst : Deque[A],
+  len~ : Int,
+  src_offset? : Int = 0,
+  dst_offset? : Int = 0,
+) -> Unit {
+  guard len >= 0 &&
+    dst_offset >= 0 &&
+    src_offset >= 0 &&
+    dst_offset <= dst.length() &&
+    src_offset + len <= self.length()
+  if dst_offset + len > dst.buf.length() {
+    dst.reserve_capacity(dst_offset + len)
+    dst.head = 0
+    dst.tail = dst.len - 1
+  }
+  let dst_len = dst.len
+  for i = 0; i < len; i = i + 1 {
+    let dst_idx = (dst.head + dst_offset + i) % dst.buf.length()
+    let src_idx = (self.head + src_offset + i) % self.buf.length()
+    dst.buf[dst_idx] = self.buf[src_idx]
+    if dst_offset + i >= dst_len {
+      dst.tail = (dst.tail + 1) % dst.buf.length()
+      dst.len += 1
+    }
+  }
+}
+
+///|
 /// Appends all elements from one deque to the end of another deque. The elements
 /// are added in-place, modifying the original deque.
 ///
