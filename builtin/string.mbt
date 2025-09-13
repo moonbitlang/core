@@ -22,7 +22,7 @@ fn unsafe_make_string(length : Int, value : Char) -> String = "$moonbit.unsafe_m
 ///   assert_eq(String::make(5,'S'), "SSSSS")
 /// ```
 pub fn String::make(length : Int, value : Char) -> String {
-  guard length >= 0 else { abort("invalid length") }
+  guard length >= 0 && length < 536870900 else { abort("invalid length") }
   if value.to_int() <= 0xFFFF {
     unsafe_make_string(length, value)
   } else {
