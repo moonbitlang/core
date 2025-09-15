@@ -21,7 +21,6 @@ priv enum Instruction {
   Split(Int, Int)
   /// Zero-width assertions
   Assertion(Predicate)
-  Backreference(Int)
 }
 
 ///|
@@ -123,16 +122,6 @@ fn add_thread(
         )
       }
     }
-    Backreference(i) if i * 2 >= thread.captures.length() ||
-      thread.captures[i * 2] == -1 ||
-      thread.captures[i * 2 + 1] == thread.captures[i * 2] =>
-      add_thread(
-        content,
-        instructions,
-        inst_gen,
-        { ..thread, pc: thread.pc + 1, captures: thread.captures },
-        clist,
-      )
     _ => clist.push(thread)
   }
 }
@@ -187,40 +176,19 @@ fn vm(
         break
       }
       // should have been handled in the add_thread
-      match instructions[pc] {
-        Char(chars) =>
-          if char_in_ranges(actual_char, chars) {
-            add_thread(
-              input,
-              instructions,
-              if allow_exponentiaion {
-                Array::make(instructions.length(), -1)
-              } else {
-                inst_gen
-              },
-              { pc: pc + 1, captures, sp: next_sp },
-              nlist,
-            )
-          }
-        Backreference(i) => {
-          let start = captures[i * 2]
-          let end = captures[i * 2 + 1]
-          let len = end - start
-          guard len != 0
-          let next_sp = sp + len
-          if next_sp <= input.length() &&
-            input.view(start_offset=start, end_offset=end) ==
-            input.view(start_offset=sp, end_offset=next_sp) {
-            add_thread(
-              input,
-              instructions,
-              Array::make(instructions.length(), -1),
-              { pc: pc + 1, captures, sp: next_sp },
-              nlist,
-            )
-          }
-        }
-        _ => panic()
+      guard instructions[pc] is Char(chars)
+      if char_in_ranges(actual_char, chars) {
+        add_thread(
+          input,
+          instructions,
+          if allow_exponentiaion {
+            Array::make(instructions.length(), -1)
+          } else {
+            inst_gen
+          },
+          { pc: pc + 1, captures, sp: next_sp },
+          nlist,
+        )
       }
     }
     let tmp = clist

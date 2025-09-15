@@ -74,7 +74,6 @@ priv struct Parser {
   mut captures : Int
   current_capture_scope : @set.Set[Int]
   capture_map : Map[String, Int]
-  mut has_backreference : Bool
 }
 
 ///|
@@ -82,7 +81,6 @@ priv struct ParseResult {
   ast : Ast
   captures : Int
   capture_map : Map[String, Int]
-  has_backreference : Bool
 }
 
 ///|
@@ -132,7 +130,6 @@ fn Parser::new(input : @string.View, flags : Flags) -> Parser {
     captures: 1,
     capture_map: {},
     current_capture_scope: @set.Set::new(),
-    has_backreference: false,
   }
 }
 
@@ -158,12 +155,7 @@ fn parse(
   if parser.input is [')', ..] {
     raise RegexpError(err=UnexpectedParenthesis, source_fragment=parser.input)
   }
-  {
-    ast: result,
-    capture_map: parser.capture_map,
-    captures: parser.captures,
-    has_backreference: parser.has_backreference,
-  }
+  { ast: result, capture_map: parser.capture_map, captures: parser.captures }
 }
 
 ///|
@@ -479,54 +471,9 @@ fn Parser::parse_factor(self : Parser) -> Ast raise RegexpError {
             self.input = rest
             CharClass(['\u{0}', '\u{0}'], neg=false) // Null character
           }
-        '1'..='9' as ch => {
-          let mut input = self.input
-          let mut capture = ch.to_int() - '0'.to_int()
-          while input is ['0'..='9' as next_ch, .. next_rest] {
-            capture = capture * 10 + (next_ch.to_int() - '0'.to_int())
-            input = next_rest // consume the digit
-          }
-          self.input = input
-          self.has_backreference = true
-
-          // Ban recursive backreferences and backreferences to the non existent capture group
-          if self.current_capture_scope.contains(capture) {
-            raise RegexpError(err=InvalidEscape, source_fragment=escape)
-          } else if capture >= self.captures {
-            raise RegexpError(err=InvalidEscape, source_fragment=escape)
-          }
-          Backreference(capture)
-        }
-        'k' => {
-          // Named backreference \k<name>
-          guard self.input is ['<', .. rest] else {
-            raise RegexpError(err=InvalidEscape, source_fragment=self.input)
-          }
-          self.input = rest // consume '<'
-          let name = self.parse_group_name()
-          guard self.input is ['>', .. rest] else {
-            raise RegexpError(err=InvalidEscape, source_fragment=self.input)
-          }
-          self.input = rest // consume '>'
-
-          // Get the capture index for the named group
-          guard self.capture_map.get(name) is Some(capture) else {
-            raise RegexpError(err=InvalidEscape, source_fragment=escape)
-          }
-
-          // Set backreference flag
-          self.has_backreference = true
-
-          // Ban recursive backreferences
-          if self.current_capture_scope.contains(capture) {
-            raise RegexpError(err=InvalidEscape, source_fragment=escape)
-          } else if capture >= self.captures {
-            raise RegexpError(err=InvalidEscape, source_fragment=escape)
-          }
-          Backreference(capture)
-        }
-        // reserve c
-        'c' => raise RegexpError(err=InvalidEscape, source_fragment=self.input)
+        // reserve c, k, number
+        'c' | 'k' | '1'..='9' =>
+          raise RegexpError(err=InvalidEscape, source_fragment=self.input)
         _ =>
           if self.flags.ignore_case {
             CharClass(case_insensitive_char_class([c, c]), neg=false)
