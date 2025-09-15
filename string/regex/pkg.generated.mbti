@@ -1,25 +1,21 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "moonbitlang/core/string/regex"
 
-import(
-  "moonbitlang/core/string"
-)
-
 // Values
-fn compile(@string.View) -> Regex raise
+fn compile(StringView) -> Regex raise
 
 // Errors
 
 // Types and methods
 type MatchResult
-fn MatchResult::after(Self) -> @string.View
-fn MatchResult::before(Self) -> @string.View
-fn MatchResult::content(Self) -> @string.View
-fn MatchResult::group(Self, Int) -> @string.View?
-fn MatchResult::named_group(Self, String) -> @string.View?
+fn MatchResult::after(Self) -> StringView
+fn MatchResult::before(Self) -> StringView
+fn MatchResult::content(Self) -> StringView
+fn MatchResult::group(Self, Int) -> StringView?
+fn MatchResult::named_group(Self, String) -> StringView?
 
 type Regex
-fn Regex::execute(Self, @string.View) -> MatchResult?
+fn Regex::execute(Self, StringView) -> MatchResult?
 
 // Type aliases
 

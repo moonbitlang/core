@@ -32,7 +32,7 @@ priv enum Predicate {
   EndLine
   WordBoundary
   NoWordBoundary
-} derive(Show, ToJson(style="flat"))
+} derive(Show, ToJson)
 
 ///|
 /// A thread represents a point in the execution of the VM.

@@ -1,16 +1,12 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "moonbitlang/core/string/regex/internal/regex_impl"
 
-import(
-  "moonbitlang/core/string"
-)
-
 // Values
-fn compile(@string.View, flags? : @string.View) -> Regexp raise RegexpError
+fn compile(StringView, flags? : StringView) -> Regexp raise RegexpError
 
 // Errors
 pub suberror RegexpError {
-  RegexpError(err~ : Err, source_fragment~ : @string.View)
+  RegexpError(err~ : Err, source_fragment~ : StringView)
 }
 impl Show for RegexpError
 
@@ -31,27 +27,27 @@ pub enum Err {
 impl Show for Err
 
 pub struct MatchResult {
-  input : @string.View
+  input : StringView
   captures : Array[Int]
   names : Map[String, Int]
-  before : @string.View
-  after : @string.View
+  before : StringView
+  after : StringView
 }
-fn MatchResult::after(Self) -> @string.View
-fn MatchResult::before(Self) -> @string.View
-fn MatchResult::get(Self, Int) -> @string.View?
-fn MatchResult::groups(Self) -> Map[String, @string.View]
+fn MatchResult::after(Self) -> StringView
+fn MatchResult::before(Self) -> StringView
+fn MatchResult::get(Self, Int) -> StringView?
+fn MatchResult::groups(Self) -> Map[String, StringView]
 fn MatchResult::matched(Self) -> Bool
-fn MatchResult::results(Self) -> Array[@string.View?]
+fn MatchResult::results(Self) -> Array[StringView?]
 
 type Regexp
-fn Regexp::execute(Self, @string.View) -> MatchResult
+fn Regexp::execute(Self, StringView) -> MatchResult
 #deprecated
-fn Regexp::execute_with_remainder(Self, @string.View) -> (MatchResult, @string.View)
+fn Regexp::execute_with_remainder(Self, StringView) -> (MatchResult, StringView)
 fn Regexp::group_by_name(Self, String) -> Int?
 fn Regexp::group_count(Self) -> Int
 fn Regexp::group_names(Self) -> Array[String]
-fn Regexp::match_(Self, @string.View) -> MatchResult?
+fn Regexp::match_(Self, StringView) -> MatchResult?
 
 // Type aliases
 
