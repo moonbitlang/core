@@ -3,7 +3,9 @@
     "moonbitlang/core/builtin",
     "moonbitlang/core/bytes",
     "moonbitlang/core/array",
-    "moonbitlang/core/string"
+    "moonbitlang/core/string",
+    "moonbitlang/core/uint",
+    "moonbitlang/core/uint64"
   ],
   "test-import": ["moonbitlang/core/int"]
 }
