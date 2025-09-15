@@ -1,10 +1,3 @@
----
-moonbit:
-  deps:
-    moonbitlang/core/regexp:
-      path: .
----
-
 # 🔍 regexp.mbt
 
 > ⚠️ **API STABILITY NOTICE**\
@@ -91,7 +84,6 @@ test {
 | **Anchors**       | `^start`, `end$`     | Line boundaries                     |
 | **Escapes**       | `\\u{41}`, `\\u0041` | Unicode escapes, standard escapes   |
 | **Unicode Props** | `\\p{L}`, `\\p{Nd}`  | Unicode general categories          |
-| **Backrefs** ⚠️   | `(.)\\1`             | Reference previous captures         |
 
 ## 🌍 Unicode Property Support
 
@@ -122,51 +114,6 @@ test "unicode properties" {
 **Supported Propertes:**
 
 - [General Category](https://www.unicode.org/reports/tr44/#General_Category_Values)
-
-## 🔄 Backreferences
-
-> ⚠️ **Performance Warning**: Backreferences can cause exponential time
-> complexity in worst cases!
-
-```moonbit
-test "backreferences" {
-  // Palindrome detection (simple)
-  let palindrome = @regex.compile("^(.)(.)\\2\\1")
-  let result = palindrome.execute("abba")
-  guard result is Some(result)
-  inspect(result.content(), content="abba")
-  inspect(
-    result.group(1),
-    content=(
-      #|Some("a")
-    ),
-  )
-  inspect(
-    result.group(2),
-    content=(
-      #|Some("b")
-    ),
-  )
-
-  // HTML tag matching
-  let html_regex = @regex.compile("<([a-zA-Z]+)[^>]*>(.*?)</\\1>")
-  let result = html_regex.execute("<div class='test'>content</div>")
-  guard result is Some(result)
-  inspect(result.content(), content="<div class='test'>content</div>")
-  inspect(
-    result.group(1),
-    content=(
-      #|Some("div")
-    ),
-  )
-  inspect(
-    result.group(2),
-    content=(
-      #|Some("content")
-    ),
-  )
-}
-```
 
 ## 💡 Real Examples
 
@@ -264,7 +211,3 @@ regex engines:
      from other implementations
    - See [Golang issue #46123](https://github.com/golang/go/issues/46123) for
      related discussion
-
-3. **Backreferences**:
-   - Backreferences are supported but may impact the complexity guarantees of
-     the engine
