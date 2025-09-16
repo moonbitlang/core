@@ -38,6 +38,7 @@ pub(all) struct T {
 }
 #deprecated
 fn T::bench(Self, () -> Unit, count? : UInt) -> Unit raise BenchError
+fn T::name(Self) -> String
 #callsite(autofill(args_loc, loc))
 fn T::snapshot(Self, filename~ : String, loc~ : SourceLoc, args_loc~ : ArgsLoc) -> Unit raise SnapshotError
 fn T::write(Self, &Show) -> Unit
