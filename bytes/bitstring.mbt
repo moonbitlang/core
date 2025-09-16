@@ -17,7 +17,11 @@
 ///|
 /// Extract a single bit.
 #internal(experimental, "subject to breaking change without notice")
-pub fn View::unsafe_extract_bit(bs : View, offset : Int, _len : Int) -> UInt {
+pub fn BytesView::unsafe_extract_bit(
+  bs : BytesView,
+  offset : Int,
+  _len : Int,
+) -> UInt {
   let byte_index = offset >> 3
   let bit_mask = (1 << (7 - (offset & 7))).to_byte()
   // TODO: branchless for performance
@@ -31,7 +35,11 @@ pub fn View::unsafe_extract_bit(bs : View, offset : Int, _len : Int) -> UInt {
 ///|
 /// Extract [2..8] bits.
 #internal(experimental, "subject to breaking change without notice")
-pub fn View::unsafe_extract_byte(bs : View, offset : Int, len : Int) -> UInt {
+pub fn BytesView::unsafe_extract_byte(
+  bs : BytesView,
+  offset : Int,
+  len : Int,
+) -> UInt {
   let byte_index = offset >> 3
   if (offset & 7) == 0 {
     // byte-aligned case
@@ -64,7 +72,11 @@ pub fn View::unsafe_extract_byte(bs : View, offset : Int, len : Int) -> UInt {
 /// - Only reads the necessary number of bytes based on the bit length
 ///
 #internal(experimental, "subject to breaking change without notice")
-pub fn View::unsafe_extract_uint_le(bs : View, offset : Int, len : Int) -> UInt {
+pub fn BytesView::unsafe_extract_uint_le(
+  bs : BytesView,
+  offset : Int,
+  len : Int,
+) -> UInt {
   let bytes_needed = (len + 7) / 8
   // TODO: add fast path for aligned case
   // non-aligned case: extract bytes using unsafe_extract_byte
@@ -97,7 +109,11 @@ pub fn View::unsafe_extract_uint_le(bs : View, offset : Int, len : Int) -> UInt 
 /// - Only reads the necessary number of bytes based on the bit length
 ///
 #internal(experimental, "subject to breaking change without notice")
-pub fn View::unsafe_extract_uint_be(bs : View, offset : Int, len : Int) -> UInt {
+pub fn BytesView::unsafe_extract_uint_be(
+  bs : BytesView,
+  offset : Int,
+  len : Int,
+) -> UInt {
   let bytes_needed = (len + 7) / 8
   // TODO: add fast path for aligned case
   // non-aligned case: extract bytes using unsafe_extract_byte
@@ -137,8 +153,8 @@ pub fn View::unsafe_extract_uint_be(bs : View, offset : Int, len : Int) -> UInt 
 /// - For bit lengths < 33, use unsafe_extract_int_le instead
 ///
 #internal(experimental, "subject to breaking change without notice")
-pub fn View::unsafe_extract_uint64_le(
-  bs : View,
+pub fn BytesView::unsafe_extract_uint64_le(
+  bs : BytesView,
   offset : Int,
   len : Int,
 ) -> UInt64 {
@@ -198,8 +214,8 @@ pub fn View::unsafe_extract_uint64_le(
 /// - For bit lengths < 33, use unsafe_extract_int_be instead
 ///
 #internal(experimental, "subject to breaking change without notice")
-pub fn View::unsafe_extract_uint64_be(
-  bs : View,
+pub fn BytesView::unsafe_extract_uint64_be(
+  bs : BytesView,
   offset : Int,
   len : Int,
 ) -> UInt64 {
@@ -271,12 +287,12 @@ pub fn View::unsafe_extract_uint64_be(
 /// Extract a subview from a view. `offset` and `len` are in bits and must be
 /// aligned to bytes.
 #internal(experimental, "subject to breaking change without notice")
-pub fn View::unsafe_extract_bytesview(
-  bs : View,
+pub fn BytesView::unsafe_extract_bytesview(
+  bs : BytesView,
   offset : Int,
   len : Int,
-) -> View {
-  View::make(bs.bytes(), bs.start() + (offset >> 3), len >> 3)
+) -> BytesView {
+  BytesView::make(bs.bytes(), bs.start() + (offset >> 3), len >> 3)
 }
 
 ///|
@@ -337,6 +353,6 @@ pub fn Bytes::unsafe_extract_bytesview(
   bs : Bytes,
   offset : Int,
   len : Int,
-) -> View {
+) -> BytesView {
   bs[:].unsafe_extract_bytesview(offset, len)
 }
