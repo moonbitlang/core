@@ -1081,6 +1081,86 @@ pub fn[A : Eq] contains(self : Deque[A], value : A) -> Bool {
 }
 
 ///|
+/// Extracts elements from a deque that satisfy a given predicate function. The
+/// extracted elements are removed from the original deque and returned as a new
+/// deque. The relative order of the extracted elements is preserved.
+/// 
+/// Parameters:
+/// 
+/// * `self` : The deque to extract elements from.
+/// * `f` : A function that takes an element and returns `true` if the
+/// element should be extracted, `false` otherwise.
+/// 
+/// Returns a new deque containing all elements that satisfy the predicate
+/// function, in the order they appeared in the original deque.
+/// 
+/// Example:
+/// 
+/// ```moonbit
+/// let d = @deque.of([1, 2, 3, 4, 5])
+/// let extracted = d.extract_if(x => x % 2 == 0)
+/// inspect(extracted.to_array(), content="[2, 4]")
+/// inspect(d.to_array(), content="[1, 3, 5]")
+/// ```
+#locals(f)
+pub fn[A] extract_if(self : Deque[A], f : (A) -> Bool) -> Deque[A] {
+  guard self.length() != 0 else { of([]) }
+  let removed = of([])
+  let mut write = 0
+  for read in 0..<self.length() {
+    let elem = self[read]
+    if f(elem) {
+      removed.push_back(elem)
+    } else {
+      if read != write {
+        self[write] = elem
+      }
+      write += 1
+    }
+  }
+  let total_len = self.length()
+  for i in write..<total_len {
+    set_null(self.buf, (self.head + i) % self.buf.length())
+  }
+  let removed_len = removed.length()
+  let cap = self.buf.length()
+  self.len -= removed_len
+  self.tail = (self.tail - removed_len + cap) % cap
+  removed
+}
+
+///|
+/// Creates a new deque containing all elements from the input deque that satisfy
+/// the given predicate function.
+///
+/// Parameters:
+///
+/// * `self` : The deque to filter.
+/// * `f` : A function that takes an element and returns a boolean indicating
+///   whether the element should be included in the result.
+///
+/// Returns a new deque containing only the elements for which the predicate
+/// function returns `true`. The relative order of the elements is preserved.
+///
+/// Example:
+///
+/// ```moonbit
+///   let dq = @deque.of([1, 2, 3, 4, 5])
+///   let evens = dq.filter((x) => { x % 2 == 0 })
+///   inspect(evens, content="@deque.of([2, 4])")
+/// ```
+#locals(f)
+pub fn[A] filter(self : Deque[A], f : (A) -> Bool raise?) -> Deque[A] raise? {
+  let dq = of([])
+  for v in self {
+    if f(v) {
+      dq.push_back(v)
+    }
+  }
+  dq
+}
+
+///|
 /// Reserves capacity to ensure that it can hold at least the number of elements
 /// specified by the `capacity` argument.
 ///
@@ -1611,6 +1691,101 @@ pub impl[A : @json.FromJson] @json.FromJson for Deque[A] with from_json(
     buf[i] = @json.FromJson::from_json(x, path.add_index(i))
   }
   { len, buf, head, tail }
+}
+
+///|
+/// Divides a deque into smaller deques (chunks) of the specified size.
+/// 
+/// Parameters:
+/// 
+/// * `self` : The deque to be divided into chunks.
+/// * `size` : The size of each chunk. Must be a positive integer,
+///   otherwise it will panic.
+/// 
+/// Returns a deque of deques, where each inner deque is a chunk containing
+/// elements from the original deque. If the length of the original deque is not
+/// divisible by the chunk size, the last chunk will contain fewer elements.
+/// 
+/// Example:
+/// 
+/// ```moonbit
+/// let d = @deque.of([1, 2, 3, 4, 5])
+/// let chunks = d.chunks(2)
+/// inspect(
+///   chunks.to_array().map(fn(c) { c.to_array() }),
+///   content="[[1, 2], [3, 4], [5]]",
+/// )
+/// let d : @deque.Deque[Int] = @deque.of([])
+/// inspect(d.chunks(3).length(), content="0")
+/// ```
+/// 
+/// Panics if:
+/// 
+/// * `size` is not positive
+pub fn[A] chunks(self : Deque[A], size : Int) -> Deque[Deque[A]] {
+  guard size > 0
+  let chunks = of([])
+  let mut i = 0
+  while i < self.length() {
+    let chunk = Deque::new(capacity=size)
+    for j = 0; j < size && i < self.length(); j = j + 1 {
+      chunk.push_back(self[i])
+      i = i + 1
+    }
+    chunks.push_back(chunk)
+  }
+  chunks
+}
+
+///|
+/// Groups consecutive elements of the deque into chunks where adjacent elements
+/// satisfy the given predicate function.
+/// 
+/// Parameters:
+/// 
+/// * `self` : The source deque to be chunked.
+/// * `pred` : A function that takes two adjacent elements and returns
+///   `true` if they should be in the same chunk, `false` otherwise.
+/// 
+/// Returns a `Deque` of `Deque`s, where each inner `Deque` is a chunk of
+/// consecutive elements that satisfy the predicate with their adjacent elements.
+/// 
+/// Notes:
+/// 
+/// * The relative order of elements is preserved.
+/// * The number of chunks is at least 1 if the deque is non-empty.
+/// * Returns an empty deque if the input is empty.
+/// 
+/// Example:
+/// 
+/// ```moonbit
+/// let d = @deque.of([1, 1, 2, 3, 2, 3, 2, 3, 4])
+/// let chunks = d.chunk_by((x, y) => x <= y)
+/// inspect(
+///   chunks.to_array().map(fn(c) { c.to_array() }),
+///   content="[[1, 1, 2, 3], [2, 3], [2, 3, 4]]",
+/// )
+/// let empty : @deque.Deque[Int] = @deque.of([])
+/// inspect(empty.chunk_by((x, y) => x <= y).to_array(), content="[]")
+/// ```
+#locals(pred)
+pub fn[A] chunk_by(
+  self : Deque[A],
+  pred : (A, A) -> Bool raise?,
+) -> Deque[Deque[A]] raise? {
+  let chunks = of([])
+  let mut i = 0
+  while i < self.length() {
+    let chunk = of([])
+    chunk.push_back(self[i])
+    i = i + 1
+    while i < self.length() && pred(self[i - 1], self[i]) {
+      chunk.push_back(self[i])
+      i = i + 1
+    }
+    chunks.push_back(chunk)
+  }
+  chunks
 }
 
 ///|
