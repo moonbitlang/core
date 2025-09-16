@@ -403,7 +403,7 @@ test "panic to_float_be/short_input" {
   // Test that trying to read from a view that's too short causes a panic
   let bytes = b"\x40\x49"
   let view = bytes[:]
-  ignore(@bytes.View::to_float_be(view)) // Should panic due to insufficient bytes
+  ignore(BytesView::to_float_be(view)) // Should panic due to insufficient bytes
 }
 
 ///|

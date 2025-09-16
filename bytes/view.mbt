@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-/// A `@bytes.View` represents a view into a section of a `Bytes` without copying the data.
+/// A `BytesView` represents a view into a section of a `Bytes` without copying the data.
 ///
 /// # Example
 /// 
