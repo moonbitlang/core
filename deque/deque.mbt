@@ -1020,6 +1020,55 @@ pub fn[A : Eq] contains(self : Deque[A], value : A) -> Bool {
 }
 
 ///|
+/// Extracts elements from a deque that satisfy a given predicate function. The
+/// extracted elements are removed from the original deque and returned as a new
+/// deque. The relative order of the extracted elements is preserved.
+/// 
+/// Parameters:
+/// 
+/// * `self` : The deque to extract elements from.
+/// * `f` : A function that takes an element and returns `true` if the
+/// element should be extracted, `false` otherwise.
+/// 
+/// Returns a new deque containing all elements that satisfy the predicate
+/// function, in the order they appeared in the original deque.
+/// 
+/// Example:
+/// 
+/// ```moonbit
+/// let d = @deque.of([1, 2, 3, 4, 5])
+/// let extracted = d.extract_if(x => x % 2 == 0)
+/// inspect(extracted.to_array(), content="[2, 4]")
+/// inspect(d.to_array(), content="[1, 3, 5]")
+/// ```
+#locals(f)
+pub fn[A] extract_if(self : Deque[A], f : (A) -> Bool) -> Deque[A] {
+  guard self.length() != 0 else { of([]) }
+  let removed = of([])
+  let mut write = 0
+  for read in 0..<self.length() {
+    let elem = self[read]
+    if f(elem) {
+      removed.push_back(elem)
+    } else {
+      if read != write {
+        self[write] = elem
+      }
+      write += 1
+    }
+  }
+  let total_len = self.length()
+  for i in write..<total_len {
+    set_null(self.buf, (self.head + i) % self.buf.length())
+  }
+  let removed_len = removed.length()
+  let cap = self.buf.length()
+  self.len -= removed_len
+  self.tail = (self.tail - removed_len + cap) % cap
+  removed
+}
+
+///|
 /// Creates a new deque containing all elements from the input deque that satisfy
 /// the given predicate function.
 ///
