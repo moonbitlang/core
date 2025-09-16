@@ -123,3 +123,7 @@ pub fn snapshot(
 }
 
 ///|
+/// Return the name of the test.
+pub fn T::name(self : Self) -> String {
+  self.name
+}
