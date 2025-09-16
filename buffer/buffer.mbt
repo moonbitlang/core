@@ -679,7 +679,7 @@ pub fn Buffer::write_char_utf16be(buf : Self, value : Char) -> Unit {
 }
 
 ///|
-pub fn Buffer::write_string_utf8(buf : Self, string : @string.View) -> Unit {
+pub fn Buffer::write_string_utf8(buf : Self, string : StringView) -> Unit {
   for ch in string {
     buf.write_char_utf8(ch)
   }
@@ -687,7 +687,7 @@ pub fn Buffer::write_string_utf8(buf : Self, string : @string.View) -> Unit {
 
 ///|
 #alias(write_stringview, deprecated="use write_string_utf16le instead")
-pub fn Buffer::write_string_utf16le(buf : Self, string : @string.View) -> Unit {
+pub fn Buffer::write_string_utf16le(buf : Self, string : StringView) -> Unit {
   let len = string.length()
   buf.grow_if_necessary(buf.len + len * 2)
   for i = 0, j = buf.len; i < len; i = i + 1, j = j + 2 {
@@ -699,7 +699,7 @@ pub fn Buffer::write_string_utf16le(buf : Self, string : @string.View) -> Unit {
 }
 
 ///|
-pub fn Buffer::write_string_utf16be(buf : Self, string : @string.View) -> Unit {
+pub fn Buffer::write_string_utf16be(buf : Self, string : StringView) -> Unit {
   let len = string.length()
   buf.grow_if_necessary(buf.len + len * 2)
   for i = 0, j = buf.len; i < len; i = i + 1, j = j + 2 {

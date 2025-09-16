@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-/// A `@string.View` represents a view of a String that maintains proper Unicode
+/// `StringView` represents a view of a String that maintains proper Unicode
 /// character boundaries. It allows safe access to a substring while handling 
 /// multi-byte characters correctly.
 #builtin.valtype

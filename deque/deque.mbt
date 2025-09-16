@@ -1625,7 +1625,7 @@ pub fn[A] to_array(self : Deque[A]) -> Array[A] {
 ///   let s2 = deque.join(",")
 ///   inspect(s2, content="a,b,c")
 /// ```
-pub fn Deque::join(self : Deque[String], separator : @string.View) -> String {
+pub fn Deque::join(self : Deque[String], separator : StringView) -> String {
   let str = separator.to_string()
   self.iter().join(str)
 }

@@ -360,7 +360,7 @@ pub fn[T] View::to_array(self : View[T]) -> Array[T] {
 /// ```
 pub fn[A : @string.ToStringView] View::join(
   self : ArrayView[A],
-  separator : @string.View,
+  separator : StringView,
 ) -> String {
   match self {
     [] => ""
