@@ -27,7 +27,7 @@ test "copy" {
 }
 
 ///|
-/// Copy bytes from a @bytes.View into a fixed array of bytes.
+/// Copy bytes from a BytesView into a fixed array of bytes.
 ///
 /// Parameters:
 ///
@@ -50,7 +50,7 @@ test "copy" {
 pub fn FixedArray::blit_from_bytesview(
   self : FixedArray[Byte],
   bytes_offset : Int,
-  src : @bytes.View,
+  src : BytesView,
 ) -> Unit {
   FixedArray::blit_from_bytes(
     self,
