@@ -1651,6 +1651,53 @@ test "chunk_by_all_false" {
 }
 
 ///|
+/// Test filter keeps even numbers
+test "filter_evens" {
+  let d = @deque.of([1, 2, 3, 4, 5, 6])
+  let evens = d.filter(x => x % 2 == 0)
+  assert_eq(evens.to_array(), [2, 4, 6])
+  inspect(evens.as_views(), content="([2, 4, 6], [])")
+}
+
+///|
+/// Test filter removes all elements (predicate always false)
+test "filter_all_false" {
+  let d = @deque.of([1, 2, 3])
+  let none = d.filter(_ => false)
+  assert_eq(none.to_array(), [])
+  inspect(none.as_views(), content="([], [])")
+}
+
+///|
+/// Test filter keeps all elements (predicate always true)
+test "filter_all_true" {
+  let d = @deque.of([1, 2, 3])
+  let all = d.filter(_ => true)
+  assert_eq(all.to_array(), [1, 2, 3])
+  inspect(all.as_views(), content="([1, 2, 3], [])")
+}
+
+///|
+/// Test filter on empty deque
+test "filter_empty" {
+  let d : @deque.Deque[Int] = @deque.of([])
+  let res = d.filter(x => x > 0)
+  assert_eq(res.to_array(), [])
+  inspect(res.as_views(), content="([], [])")
+}
+
+///|
+/// Test filter with wrapped-around buffer
+test "filter_wrap_around" {
+  let d = @deque.of([1, 2, 3, 4, 5, 6])
+  ignore(d.pop_front()) // d = [2, 3, 4, 5, 6]
+  d.push_back(7) // d = [2, 3, 4, 5, 6, 7], head != 0
+  let odds = d.filter(x => x % 2 == 1)
+  assert_eq(odds.to_array(), [3, 5, 7])
+  inspect(odds.as_views(), content="([3, 5, 7], [])")
+}
+
+///|
 /// Test insert at the front
 test "insert_front" {
   let d = @deque.of([1, 2, 3])

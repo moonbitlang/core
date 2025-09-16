@@ -13,30 +13,30 @@
 // limitations under the License.
 
 ///|
-enum Expr {
-  Add(Expr, Expr)
-  Sub(Expr, Expr)
-  Mul(Expr, Expr)
-  Div(Expr, Expr)
-  Val(String)
-} derive(ToJson, FromJson, Show, Eq)
+test "to be discussed" {
+  // In JS, this is parsed as two character classes with no characters
+  // In Golang, this is parsed as one character class with `]` and `[`
+  parse("[][]").ast
+  |> inspect(
+    content="Concat([CharClass([], neg=false), CharClass([], neg=false)])",
+  )
+}
 
 ///|
-test {
-  let e = Expr::Add(Val("x"), Val("y"))
-  let ej = e.to_json()
+/// Reference: https://github.com/golang/go/issues/46123
+test "to be fixed" {
+  let result = parse("(|a)*").compile().execute("aaa")
   inspect(
-    ej.stringify(),
+    result.get(0),
     content=(
-      #|["Add",["Val","x"],["Val","y"]]
+      #|Some("")
     ),
   )
-  let e0 : Expr = @json.from_json(ej)
+  let result = parse("(|a)+").compile().execute("aaa")
   inspect(
-    e0,
+    result.get(0),
     content=(
-      #|Add(Val("x"), Val("y"))
+      #|Some("")
     ),
   )
-  assert_eq(e0, e)
 }

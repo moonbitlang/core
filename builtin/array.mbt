@@ -1404,18 +1404,21 @@ pub fn[T : Eq] Array::dedup(self : Array[T]) -> Unit {
 /// ```
 #locals(f)
 pub fn[T] Array::extract_if(self : Array[T], f : (T) -> Bool) -> Array[T] {
-  let v = []
-  let indices = []
-  for i in 0..<self.length() {
-    if f(self[i]) {
-      v.push(self[i])
-      indices.push(i)
+  let removed = []
+  let mut write = 0
+  for read in 0..<self.length() {
+    let elem = self[read]
+    if f(elem) {
+      removed.push(elem)
+    } else {
+      if read != write {
+        self[write] = elem
+      }
+      write += 1
     }
   }
-  for i in 0..<indices.length() {
-    self.remove(indices[i] - i) |> ignore
-  }
-  v
+  self.truncate(write)
+  removed
 }
 
 ///|

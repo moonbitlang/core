@@ -3,7 +3,6 @@ package "moonbitlang/core/deque"
 
 import(
   "moonbitlang/core/json"
-  "moonbitlang/core/string"
 )
 
 // Values
@@ -28,6 +27,7 @@ fn[A] Deque::copy(Self[A]) -> Self[A]
 fn[A] Deque::drain(Self[A], start~ : Int, len? : Int) -> Self[A]
 fn[A] Deque::each(Self[A], (A) -> Unit) -> Unit
 fn[A] Deque::eachi(Self[A], (Int, A) -> Unit) -> Unit
+fn[A] Deque::filter(Self[A], (A) -> Bool raise?) -> Self[A] raise?
 #deprecated
 fn[A] Deque::filter_map_inplace(Self[A], (A) -> A?) -> Unit
 fn[A] Deque::flatten(Self[Self[A]]) -> Self[A]
@@ -41,7 +41,7 @@ fn[A] Deque::insert(Self[A], Int, A) -> Unit
 fn[A] Deque::is_empty(Self[A]) -> Bool
 fn[A] Deque::iter(Self[A]) -> Iter[A]
 fn[A] Deque::iter2(Self[A]) -> Iter2[Int, A]
-fn Deque::join(Self[String], @string.View) -> String
+fn Deque::join(Self[String], StringView) -> String
 fn[A] Deque::length(Self[A]) -> Int
 fn[A, U] Deque::map(Self[A], (A) -> U) -> Self[U]
 fn[A, U] Deque::mapi(Self[A], (Int, A) -> U) -> Self[U]
@@ -77,8 +77,10 @@ fn[A] Deque::to_array(Self[A]) -> Array[A]
 fn[A] Deque::truncate(Self[A], Int) -> Unit
 fn[A] Deque::unsafe_pop_back(Self[A]) -> Unit
 fn[A] Deque::unsafe_pop_front(Self[A]) -> Unit
+impl[A] Add for Deque[A]
 impl[A : Compare] Compare for Deque[A]
 impl[A : Eq] Eq for Deque[A]
+impl[A : Hash] Hash for Deque[A]
 impl[A : Show] Show for Deque[A]
 impl[A : ToJson] ToJson for Deque[A]
 impl[A : @json.FromJson] @json.FromJson for Deque[A]

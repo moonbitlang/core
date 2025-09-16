@@ -13,30 +13,8 @@
 // limitations under the License.
 
 ///|
-enum Expr {
-  Add(Expr, Expr)
-  Sub(Expr, Expr)
-  Mul(Expr, Expr)
-  Div(Expr, Expr)
-  Val(String)
-} derive(ToJson, FromJson, Show, Eq)
-
-///|
-test {
-  let e = Expr::Add(Val("x"), Val("y"))
-  let ej = e.to_json()
-  inspect(
-    ej.stringify(),
-    content=(
-      #|["Add",["Val","x"],["Val","y"]]
-    ),
-  )
-  let e0 : Expr = @json.from_json(ej)
-  inspect(
-    e0,
-    content=(
-      #|Add(Val("x"), Val("y"))
-    ),
-  )
-  assert_eq(e0, e)
+test "category names" {
+  for key in @unicode.general_category_ranges.keys() {
+    assert_true(@unicode.general_category_property_value_alises.contains(key))
+  }
 }

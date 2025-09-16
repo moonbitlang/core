@@ -26,7 +26,7 @@
 ///   assert_eq(bv[2], b'\x03')
 /// ```
 #builtin.valtype
-type View
+pub typealias BytesView as View
 
 ///|
 fn View::bytes(self : View) -> Bytes = "%bytesview.bytes"
