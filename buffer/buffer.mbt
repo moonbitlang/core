@@ -280,14 +280,17 @@ pub fn write_uint64_be(self : Buffer, value : UInt64) -> Unit {
 ///   )
 /// ```
 pub fn write_uint64_le(self : Buffer, value : UInt64) -> Unit {
-  self.write_byte(value.to_byte())
-  self.write_byte((value >> 8).to_byte())
-  self.write_byte((value >> 16).to_byte())
-  self.write_byte((value >> 24).to_byte())
-  self.write_byte((value >> 32).to_byte())
-  self.write_byte((value >> 40).to_byte())
-  self.write_byte((value >> 48).to_byte())
-  self.write_byte((value >> 56).to_byte())
+  self.grow_if_necessary(self.len + 8)
+  let offset = self.len
+  self.data[offset] = value.to_byte()
+  self.data[offset + 1] = (value >> 8).to_byte()
+  self.data[offset + 2] = (value >> 16).to_byte()
+  self.data[offset + 3] = (value >> 24).to_byte()
+  self.data[offset + 4] = (value >> 32).to_byte()
+  self.data[offset + 5] = (value >> 40).to_byte()
+  self.data[offset + 6] = (value >> 48).to_byte()
+  self.data[offset + 7] = (value >> 56).to_byte()
+  self.len += 8
 }
 
 ///|
@@ -356,10 +359,13 @@ pub fn write_int64_le(self : Buffer, value : Int64) -> Unit {
 ///   inspect(buf.contents(), content="b\"\\x12\\x34\\x56\\x78\"")
 /// ```
 pub fn write_uint_be(self : Buffer, value : UInt) -> Unit {
-  self.write_byte((value >> 24).to_byte())
-  self.write_byte((value >> 16).to_byte())
-  self.write_byte((value >> 8).to_byte())
-  self.write_byte(value.to_byte())
+  self.grow_if_necessary(self.len + 4)
+  let offset = self.len
+  self.data[offset] = (value >> 24).to_byte()
+  self.data[offset + 1] = (value >> 16).to_byte()
+  self.data[offset + 2] = (value >> 8).to_byte()
+  self.data[offset + 3] = value.to_byte()
+  self.len += 4
 }
 
 ///|
@@ -380,10 +386,13 @@ pub fn write_uint_be(self : Buffer, value : UInt) -> Unit {
 ///   inspect(buf.contents(), content="b\"\\x78\\x56\\x34\\x12\"")
 /// ```
 pub fn write_uint_le(self : Buffer, value : UInt) -> Unit {
-  self.write_byte(value.to_byte())
-  self.write_byte((value >> 8).to_byte())
-  self.write_byte((value >> 16).to_byte())
-  self.write_byte((value >> 24).to_byte())
+  self.grow_if_necessary(self.len + 4)
+  let offset = self.len
+  self.data[offset] = value.to_byte()
+  self.data[offset + 1] = (value >> 8).to_byte()
+  self.data[offset + 2] = (value >> 16).to_byte()
+  self.data[offset + 3] = (value >> 24).to_byte()
+  self.len += 4
 }
 
 ///|
