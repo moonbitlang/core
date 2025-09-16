@@ -24,7 +24,7 @@ pub(all) suberror ParseError {
   InvalidEof
   InvalidNumber(Position, String)
   InvalidIdentEscape(Position)
-} derive(Eq, ToJson(style="flat"))
+} derive(Eq, ToJson)
 
 ///|
 pub impl Show for ParseError with output(self, logger) {

@@ -17,7 +17,7 @@
 /// character boundaries. It allows safe access to a substring while handling 
 /// multi-byte characters correctly.
 #builtin.valtype
-type View
+pub typealias StringView as View
 
 ///|
 /// Returns the source string being viewed.

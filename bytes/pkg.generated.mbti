@@ -7,45 +7,7 @@ fn default() -> Bytes
 // Errors
 
 // Types and methods
-type View
-#alias(op_get)
-fn View::at(Self, Int) -> Byte
-fn View::data(Self) -> Bytes
-fn View::find(Self, Self) -> Int?
-fn View::get(Self, Int) -> Byte?
-fn View::iter(Self) -> Iter[Byte]
-fn View::length(Self) -> Int
-fn View::rev_find(Self, Self) -> Int?
-fn View::start_offset(Self) -> Int
-#alias(op_as_view)
-fn View::sub(Self, start? : Int, end? : Int) -> Self
-fn View::to_bytes(Self) -> Bytes
-fn View::to_double_be(Self) -> Double
-fn View::to_double_le(Self) -> Double
-fn View::to_float_be(Self) -> Float
-fn View::to_float_le(Self) -> Float
-fn View::to_int64_be(Self) -> Int64
-fn View::to_int64_le(Self) -> Int64
-fn View::to_int_be(Self) -> Int
-fn View::to_int_le(Self) -> Int
-fn View::to_uint64_be(Self) -> UInt64
-fn View::to_uint64_le(Self) -> UInt64
-fn View::to_uint_be(Self) -> UInt
-fn View::to_uint_le(Self) -> UInt
-fn View::unsafe_extract_bit(Self, Int, Int) -> UInt
-fn View::unsafe_extract_byte(Self, Int, Int) -> UInt
-fn View::unsafe_extract_bytesview(Self, Int, Int) -> Self
-fn View::unsafe_extract_uint64_be(Self, Int, Int) -> UInt64
-fn View::unsafe_extract_uint64_le(Self, Int, Int) -> UInt64
-fn View::unsafe_extract_uint_be(Self, Int, Int) -> UInt
-fn View::unsafe_extract_uint_le(Self, Int, Int) -> UInt
-fn View::unsafe_get(Self, Int) -> Byte
-impl Compare for View
-impl Eq for View
-impl Hash for View
-impl Show for View
-
-fn Bytes::find(Bytes, View) -> Int?
+fn Bytes::find(Bytes, BytesView) -> Int?
 #as_free_fn
 fn Bytes::from_array(Array[Byte]) -> Bytes
 #as_free_fn
@@ -57,14 +19,14 @@ fn Bytes::iter(Bytes) -> Iter[Byte]
 fn Bytes::iter2(Bytes) -> Iter2[Int, Byte]
 #as_free_fn
 fn Bytes::of(FixedArray[Byte]) -> Bytes
-fn Bytes::rev_find(Bytes, View) -> Int?
+fn Bytes::rev_find(Bytes, BytesView) -> Int?
 #alias(op_as_view)
-fn Bytes::sub(Bytes, start? : Int, end? : Int) -> View
+fn Bytes::sub(Bytes, start? : Int, end? : Int) -> BytesView
 fn Bytes::to_array(Bytes) -> Array[Byte]
 fn Bytes::to_fixedarray(Bytes, len? : Int) -> FixedArray[Byte]
 fn Bytes::unsafe_extract_bit(Bytes, Int, Int) -> UInt
 fn Bytes::unsafe_extract_byte(Bytes, Int, Int) -> UInt
-fn Bytes::unsafe_extract_bytesview(Bytes, Int, Int) -> View
+fn Bytes::unsafe_extract_bytesview(Bytes, Int, Int) -> BytesView
 fn Bytes::unsafe_extract_uint64_be(Bytes, Int, Int) -> UInt64
 fn Bytes::unsafe_extract_uint64_le(Bytes, Int, Int) -> UInt64
 fn Bytes::unsafe_extract_uint_be(Bytes, Int, Int) -> UInt
@@ -73,7 +35,45 @@ impl Add for Bytes
 impl Default for Bytes
 impl Hash for Bytes
 
+#alias(op_get)
+fn BytesView::at(Self, Int) -> Byte
+fn BytesView::data(Self) -> Bytes
+fn BytesView::find(Self, Self) -> Int?
+fn BytesView::get(Self, Int) -> Byte?
+fn BytesView::iter(Self) -> Iter[Byte]
+fn BytesView::length(Self) -> Int
+fn BytesView::rev_find(Self, Self) -> Int?
+fn BytesView::start_offset(Self) -> Int
+#alias(op_as_view)
+fn BytesView::sub(Self, start? : Int, end? : Int) -> Self
+fn BytesView::to_bytes(Self) -> Bytes
+fn BytesView::to_double_be(Self) -> Double
+fn BytesView::to_double_le(Self) -> Double
+fn BytesView::to_float_be(Self) -> Float
+fn BytesView::to_float_le(Self) -> Float
+fn BytesView::to_int64_be(Self) -> Int64
+fn BytesView::to_int64_le(Self) -> Int64
+fn BytesView::to_int_be(Self) -> Int
+fn BytesView::to_int_le(Self) -> Int
+fn BytesView::to_uint64_be(Self) -> UInt64
+fn BytesView::to_uint64_le(Self) -> UInt64
+fn BytesView::to_uint_be(Self) -> UInt
+fn BytesView::to_uint_le(Self) -> UInt
+fn BytesView::unsafe_extract_bit(Self, Int, Int) -> UInt
+fn BytesView::unsafe_extract_byte(Self, Int, Int) -> UInt
+fn BytesView::unsafe_extract_bytesview(Self, Int, Int) -> Self
+fn BytesView::unsafe_extract_uint64_be(Self, Int, Int) -> UInt64
+fn BytesView::unsafe_extract_uint64_le(Self, Int, Int) -> UInt64
+fn BytesView::unsafe_extract_uint_be(Self, Int, Int) -> UInt
+fn BytesView::unsafe_extract_uint_le(Self, Int, Int) -> UInt
+fn BytesView::unsafe_get(Self, Int) -> Byte
+impl Compare for BytesView
+impl Eq for BytesView
+impl Hash for BytesView
+impl Show for BytesView
+
 // Type aliases
+pub typealias BytesView as View
 
 // Traits
 

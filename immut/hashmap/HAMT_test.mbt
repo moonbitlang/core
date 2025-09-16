@@ -45,6 +45,23 @@ test "HAMT" {
 }
 
 ///|
+test "HAMT::op_get" {
+  let map = loop (0, @hashmap.new()) {
+    (100, map) => map
+    (i, map) => continue (i + 1, map.add(i, i))
+  }
+  for i in 0..<100 {
+    assert_eq((i, map[i]), (i, i))
+  }
+}
+
+///|
+test "panic HAMT::op_get" {
+  let map = @hashmap.new()
+  map[0]
+}
+
+///|
 test "HAMT::remove" {
   let map = loop (0, @hashmap.new()) {
     (100, map) => map

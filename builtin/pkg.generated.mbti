@@ -368,14 +368,11 @@ fn Int::is_non_pos(Int) -> Bool
 fn Int::is_pos(Int) -> Bool
 fn Int::is_surrogate(Int) -> Bool
 fn Int::is_trailing_surrogate(Int) -> Bool
-fn Int::land(Int, Int) -> Int
 fn Int::lnot(Int) -> Int
-fn Int::lor(Int, Int) -> Int
 #deprecated
 fn Int::lsl(Int, Int) -> Int
 #deprecated
 fn Int::lsr(Int, Int) -> Int
-fn Int::lxor(Int, Int) -> Int
 fn Int::max(Int, Int) -> Int
 fn Int::min(Int, Int) -> Int
 fn Int::next_power_of_two(Int) -> Int
@@ -438,14 +435,11 @@ fn Int64::upto(Int64, Int64, inclusive? : Bool) -> Iter[Int64]
 
 fn UInt::clz(UInt) -> Int
 fn UInt::ctz(UInt) -> Int
-fn UInt::land(UInt, UInt) -> UInt
 fn UInt::lnot(UInt) -> UInt
-fn UInt::lor(UInt, UInt) -> UInt
 #deprecated
 fn UInt::lsl(UInt, Int) -> UInt
 #deprecated
 fn UInt::lsr(UInt, Int) -> UInt
-fn UInt::lxor(UInt, UInt) -> UInt
 fn UInt::op_neq(UInt, UInt) -> Bool
 fn UInt::popcnt(UInt) -> Int
 fn UInt::reinterpret_as_float(UInt) -> Float
@@ -460,6 +454,7 @@ fn UInt::to_float(UInt) -> Float
 #deprecated
 fn UInt::to_int(UInt) -> Int
 fn UInt::to_string(UInt, radix? : Int) -> String
+fn UInt::to_uint16(UInt) -> UInt16
 fn UInt::to_uint64(UInt) -> UInt64
 fn UInt::trunc_double(Double) -> UInt
 #deprecated
@@ -493,6 +488,7 @@ fn UInt64::to_int(UInt64) -> Int
 fn UInt64::to_int64(UInt64) -> Int64
 fn UInt64::to_string(UInt64, radix? : Int) -> String
 fn UInt64::to_uint(UInt64) -> UInt
+fn UInt64::to_uint16(UInt64) -> UInt16
 fn UInt64::trunc_double(Double) -> UInt64
 #deprecated
 fn UInt64::upto(UInt64, UInt64, inclusive? : Bool) -> Iter[UInt64]
@@ -606,21 +602,27 @@ pub(open) trait BitAnd {
   land(Self, Self) -> Self
 }
 impl BitAnd for Byte
+impl BitAnd for Int
 impl BitAnd for Int64
+impl BitAnd for UInt
 impl BitAnd for UInt64
 
 pub(open) trait BitOr {
   lor(Self, Self) -> Self
 }
 impl BitOr for Byte
+impl BitOr for Int
 impl BitOr for Int64
+impl BitOr for UInt
 impl BitOr for UInt64
 
 pub(open) trait BitXOr {
   lxor(Self, Self) -> Self
 }
 impl BitXOr for Byte
+impl BitXOr for Int
 impl BitXOr for Int64
+impl BitXOr for UInt
 impl BitXOr for UInt64
 
 pub(open) trait Compare : Eq {

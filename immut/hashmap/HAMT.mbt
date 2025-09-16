@@ -57,6 +57,13 @@ pub fn[K : Eq + Hash, V] get(self : HashMap[K, V], key : K) -> V? {
 }
 
 ///|
+#alias(op_get)
+pub fn[K : Eq + Hash, V] at(self : HashMap[K, V], key : K) -> V {
+  guard self.0 is Some(node)
+  node.get_with_path(key, @path.of(key)).unwrap()
+}
+
+///|
 fn[K : Eq, V] Node::get_with_path(
   self : Node[K, V],
   key : K,

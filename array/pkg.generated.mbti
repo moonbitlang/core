@@ -2,7 +2,6 @@
 package "moonbitlang/core/array"
 
 import(
-  "moonbitlang/core/bytes"
   "moonbitlang/core/quickcheck"
   "moonbitlang/core/string"
 )
@@ -15,7 +14,7 @@ fn[A, B, C] zip_with(Array[A], Array[B], (A, B) -> C raise?) -> Array[C] raise?
 // Types and methods
 fn[T] FixedArray::all(Self[T], (T) -> Bool raise?) -> Bool raise?
 fn[T] FixedArray::any(Self[T], (T) -> Bool raise?) -> Bool raise?
-fn FixedArray::blit_from_bytesview(Self[Byte], Int, @bytes.View) -> Unit
+fn FixedArray::blit_from_bytesview(Self[Byte], Int, BytesView) -> Unit
 fn[T : Eq] FixedArray::contains(Self[T], T) -> Bool
 fn[T] FixedArray::copy(Self[T]) -> Self[T]
 fn[T] FixedArray::each(Self[T], (T) -> Unit raise?) -> Unit raise?
@@ -26,7 +25,7 @@ fn[A, B] FixedArray::foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B rai
 fn[T] FixedArray::from_array(Array[T]) -> Self[T]
 fn[T] FixedArray::from_iter(Iter[T]) -> Self[T]
 fn[T : Compare] FixedArray::is_sorted(Self[T]) -> Bool
-fn FixedArray::join(Self[String], @string.View) -> String
+fn FixedArray::join(Self[String], StringView) -> String
 fn[A] FixedArray::last(Self[A]) -> A?
 fn[T] FixedArray::makei(Int, (Int) -> T raise?) -> Self[T] raise?
 fn[T, U] FixedArray::map(Self[T], (T) -> U raise?) -> Self[U] raise?
@@ -53,7 +52,7 @@ impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for FixedArray[X]
 fn[T] Array::copy(Self[T]) -> Self[T]
 fn[A, B] Array::filter_map(Self[A], (A) -> B? raise?) -> Self[B] raise?
 fn[T] Array::from_iter(Iter[T]) -> Self[T]
-fn[A : @string.ToStringView] Array::join(Self[A], @string.View) -> String
+fn[A : @string.ToStringView] Array::join(Self[A], StringView) -> String
 fn[A] Array::last(Self[A]) -> A?
 fn[T] Array::push_iter(Self[T], Iter[T]) -> Unit
 fn[T] Array::shuffle(Self[T], rand~ : (Int) -> Int) -> Self[T]
@@ -83,7 +82,7 @@ fn[A, B] ArrayView::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 fn[A, B] ArrayView::foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
 fn[A] ArrayView::iter(Self[A]) -> Iter[A]
 fn[A] ArrayView::iter2(Self[A]) -> Iter2[Int, A]
-fn[A : @string.ToStringView] ArrayView::join(Self[A], @string.View) -> String
+fn[A : @string.ToStringView] ArrayView::join(Self[A], StringView) -> String
 fn[T, U] ArrayView::map(Self[T], (T) -> U raise?) -> Array[U] raise?
 #deprecated
 fn[T] ArrayView::map_inplace(Self[T], (T) -> T raise?) -> Unit raise?
