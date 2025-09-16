@@ -82,7 +82,7 @@ test "unsafe vs safe" {
 
 ```moonbit
 test "view conversion" {
-  fn process_text(text : @string.View) -> Int {
+  fn process_text(text : StringView) -> Int {
     text.length()
   }
 

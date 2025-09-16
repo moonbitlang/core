@@ -40,7 +40,7 @@ const UINT64_MAX : UInt64 = 0xffffffffffffffffUL
 /// ```
 /// 
 pub fn parse_uint64(
-  str : @string.View,
+  str : StringView,
   base? : Int = 0,
 ) -> UInt64 raise StrConvError {
   guard str != "" else { syntax_err() }
@@ -88,10 +88,7 @@ pub fn parse_uint64(
 ///|
 /// Parse a string in the given base (0, 2 to 36), return an UInt number or an error.
 /// If the `~base` argument is 0, the base will be inferred by the prefix.
-pub fn parse_uint(
-  str : @string.View,
-  base? : Int = 0,
-) -> UInt raise StrConvError {
+pub fn parse_uint(str : StringView, base? : Int = 0) -> UInt raise StrConvError {
   let n = parse_uint64(str, base~)
   if n > UINT_MAX.to_uint64() {
     range_err()

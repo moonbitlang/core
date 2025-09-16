@@ -43,12 +43,12 @@ fn Decimal::from_int64_priv(v : Int64) -> Decimal {
 }
 
 ///|
-fn parse_decimal_priv(str : @string.View) -> Decimal raise StrConvError {
+fn parse_decimal_priv(str : StringView) -> Decimal raise StrConvError {
   parse_decimal_from_view(str)
 }
 
 ///|
-fn parse_decimal_from_view(str : @string.View) -> Decimal raise StrConvError {
+fn parse_decimal_from_view(str : StringView) -> Decimal raise StrConvError {
   let d = Decimal::new_priv()
   let mut has_dp = false
   let mut has_digits = false
