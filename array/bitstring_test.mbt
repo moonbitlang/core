@@ -150,7 +150,7 @@ test "extract int64" {
 test "extract view" {
   let bs1 = b"\x89\xab\xcd\xef"
   let bs2 : Array[Byte] = bs1.to_array()
-  fn equal(a : @bytes.View, b : ArrayView[Byte]) raise {
+  fn equal(a : BytesView, b : ArrayView[Byte]) raise {
     assert_eq(a.length(), b.length())
     for i in 0..<a.length() {
       assert_eq(a[i], b[i])

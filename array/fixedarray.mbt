@@ -1164,7 +1164,7 @@ pub fn[A] FixedArray::last(self : FixedArray[A]) -> A? {
 /// ```
 pub fn FixedArray::join(
   self : FixedArray[String],
-  separator : @string.View,
+  separator : StringView,
 ) -> String {
   let len = self.length()
   if len == 0 {

@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-pub suberror Malformed @bytes.View
+pub suberror Malformed BytesView
 
 ///|
 /// The Unicode Replacement Character, which is used to replace invalid or unrecognized sequences during lossy decoding.
@@ -22,7 +22,7 @@ const U_REP = '\u{FFFD}'
 
 ///|
 pub fn decode(
-  bytes : @bytes.View,
+  bytes : BytesView,
   ignore_bom? : Bool = false,
 ) -> String raise Malformed {
   let bytes = if ignore_bom && bytes is [.. "\xef\xbb\xbf", .. rest] {
@@ -90,7 +90,7 @@ pub fn decode(
 /// References : 
 /// - https://www.unicode.org/versions/Unicode16.0.0/core-spec/chapter-3/#G66453
 /// - https://www.unicode.org/versions/Unicode16.0.0/core-spec/chapter-5/#G40630
-pub fn decode_lossy(bytes : @bytes.View, ignore_bom? : Bool = false) -> String {
+pub fn decode_lossy(bytes : BytesView, ignore_bom? : Bool = false) -> String {
   let bytes = if ignore_bom && bytes is [.. "\xef\xbb\xbf", .. rest] {
     rest
   } else {

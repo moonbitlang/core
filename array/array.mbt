@@ -295,7 +295,7 @@ pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Array[X] with arbi
 /// ```
 pub fn[A : @string.ToStringView] Array::join(
   self : Array[A],
-  separator : @string.View,
+  separator : StringView,
 ) -> String {
   self[:].join(separator)
 }

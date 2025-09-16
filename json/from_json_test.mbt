@@ -553,7 +553,7 @@ test "char to/from json roundtrip" {
 ///|
 test "string view from json" {
   let u = "hello".to_json()
-  let v : @string.View = @json.from_json(u)
+  let v : StringView = @json.from_json(u)
   inspect(v, content="hello")
 }
 
@@ -634,7 +634,7 @@ test "String from_json error handling" {
 ///|
 test "String View from_json error handling" {
   let json_number = Json::number(123)
-  let result : Result[@string.View, _] = try? @json.from_json(json_number)
+  let result : Result[StringView, _] = try? @json.from_json(json_number)
   inspect(
     result,
     content="Err(JsonDecodeError(($, \"View::from_json: expected string\")))",

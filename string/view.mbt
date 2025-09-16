@@ -13,26 +13,27 @@
 // limitations under the License.
 
 ///|
-/// A `@string.View` represents a view of a String that maintains proper Unicode
+/// `StringView` represents a view of a String that maintains proper Unicode
 /// character boundaries. It allows safe access to a substring while handling 
 /// multi-byte characters correctly.
 #builtin.valtype
+#deprecated("Use `StringView` instead")
 pub typealias StringView as View
 
 ///|
 /// Returns the source string being viewed.
-fn View::str(self : View) -> String = "%stringview.str"
+fn StringView::str(self : StringView) -> String = "%stringview.str"
 
 ///|
 /// Returns the starting UTF-16 code unit index into the string.
-fn View::start(self : View) -> Int = "%stringview.start"
+fn StringView::start(self : StringView) -> Int = "%stringview.start"
 
 ///|
 /// Returns the ending UTF-16 code unit index into the string (not included).
-fn View::end(self : View) -> Int = "%stringview.end"
+fn StringView::end(self : StringView) -> Int = "%stringview.end"
 
 ///|
-fn View::make_view(str : String, start : Int, end : Int) -> View = "%stringview.make"
+fn StringView::make_view(str : String, start : Int, end : Int) -> StringView = "%stringview.make"
 
 ///|
 /// Returns the charcode(UTF-16 code unit) at the given index.
@@ -48,7 +49,7 @@ fn View::make_view(str : String, start : Int, end : Int) -> View = "%stringview.
 ///   inspect(view[4], content="55358")
 /// ```
 #alias(op_get)
-pub fn View::at(self : View, index : Int) -> Int {
+pub fn StringView::at(self : StringView, index : Int) -> Int {
   guard index >= 0 && index < self.length() else {
     abort("Index out of bounds")
   }
@@ -57,14 +58,14 @@ pub fn View::at(self : View, index : Int) -> Int {
 
 ///|
 /// Returns the original string that is being viewed.
-pub fn data(self : View) -> String {
+pub fn data(self : StringView) -> String {
   self.str()
 }
 
 ///|
 /// Returns the starting offset (in UTF-16 code units) of this view into its
 /// underlying string.
-pub fn start_offset(self : View) -> Int {
+pub fn start_offset(self : StringView) -> Int {
   self.start()
 }
 
@@ -72,7 +73,7 @@ pub fn start_offset(self : View) -> Int {
 /// Returns the length of the view.
 /// 
 /// This method counts the charcodes(code unit) in the view and has O(1) complexity.
-pub fn length(self : View) -> Int {
+pub fn length(self : StringView) -> Int {
   self.end() - self.start()
 }
 
@@ -98,30 +99,30 @@ pub fn String::view(
   self : String,
   start_offset? : Int = 0,
   end_offset? : Int,
-) -> View {
+) -> StringView {
   let end_offset = if end_offset is Some(o) { o } else { self.length() }
   guard start_offset >= 0 &&
     start_offset <= end_offset &&
     end_offset <= self.length() else {
     abort("Invalid index for View")
   }
-  View::make_view(self, start_offset, end_offset)
+  StringView::make_view(self, start_offset, end_offset)
 }
 
 ///|
 /// Returns a new view of the view with the given start and end offsets.
-pub fn View::view(
-  self : View,
+pub fn StringView::view(
+  self : StringView,
   start_offset? : Int = 0,
   end_offset? : Int,
-) -> View {
+) -> StringView {
   let end_offset = if end_offset is Some(o) { o } else { self.length() }
   guard start_offset >= 0 &&
     start_offset <= end_offset &&
     end_offset <= self.length() else {
     abort("Invalid index for View")
   }
-  View::make_view(
+  StringView::make_view(
     self.str(),
     self.start() + start_offset,
     self.start() + end_offset,
@@ -132,7 +133,7 @@ pub fn View::view(
 /// Returns the UTF-16 index of the i-th (zero-indexed) Unicode character of
 /// the view. If i is negative, it returns the index of the (n + i)-th character
 /// where n is the total number of Unicode characters in the view.
-pub fn View::offset_of_nth_char(self : View, i : Int) -> Int? {
+pub fn StringView::offset_of_nth_char(self : StringView, i : Int) -> Int? {
   if self
     .str()
     .offset_of_nth_char(i, start_offset=self.start(), end_offset=self.end())
@@ -161,7 +162,7 @@ pub fn View::offset_of_nth_char(self : View, i : Int) -> Int? {
 ///   inspect(view.unsafe_charcode_at(5), content="67")
 /// ```
 /// TODO: rename to `unsafe_get`
-pub fn View::unsafe_charcode_at(self : View, index : Int) -> Int {
+pub fn StringView::unsafe_charcode_at(self : StringView, index : Int) -> Int {
   self.str().unsafe_charcode_at(self.start() + index)
 }
 
@@ -170,7 +171,7 @@ pub fn View::unsafe_charcode_at(self : View, index : Int) -> Int {
 /// 
 /// Note this has O(n) complexity where n is the length of the code points in 
 /// the view.
-pub fn View::char_length(self : View) -> Int {
+pub fn StringView::char_length(self : StringView) -> Int {
   self.str().char_length(start_offset=self.start(), end_offset=self.end())
 }
 
@@ -178,7 +179,7 @@ pub fn View::char_length(self : View) -> Int {
 /// Test if the length of the view is equal to the given length.
 /// 
 /// This has O(n) complexity where n is the length in the parameter.
-pub fn View::char_length_eq(self : View, len : Int) -> Bool {
+pub fn StringView::char_length_eq(self : StringView, len : Int) -> Bool {
   self
   .str()
   .char_length_eq(len, start_offset=self.start(), end_offset=self.end())
@@ -188,14 +189,14 @@ pub fn View::char_length_eq(self : View, len : Int) -> Bool {
 /// Test if the length of the view is greater than or equal to the given length.
 /// 
 /// This has O(n) complexity where n is the length in the parameter.
-pub fn View::char_length_ge(self : View, len : Int) -> Bool {
+pub fn StringView::char_length_ge(self : StringView, len : Int) -> Bool {
   self
   .str()
   .char_length_ge(len, start_offset=self.start(), end_offset=self.end())
 }
 
 ///|
-pub impl Show for View with output(self, logger) {
+pub impl Show for StringView with output(self, logger) {
   let substr = self.str().unsafe_substring(start=self.start(), end=self.end())
   String::output(substr, logger)
 }
@@ -210,13 +211,13 @@ pub impl Show for View with output(self, logger) {
 ///   let view = str.view(start_offset = str.offset_of_nth_char(0).unwrap(),end_offset = str.offset_of_nth_char(5).unwrap()) // "Hello"
 ///   inspect(view.to_string(), content="Hello")
 /// ```
-pub impl Show for View with to_string(self) {
+pub impl Show for StringView with to_string(self) {
   self.str().unsafe_substring(start=self.start(), end=self.end())
 }
 
 ///|
 /// Returns an iterator over the Unicode characters in the string view.
-pub fn View::iter(self : View) -> Iter[Char] {
+pub fn StringView::iter(self : StringView) -> Iter[Char] {
   Iter::new(yield_ => for index in self.start()..<self.end() {
     let c1 = self.str().unsafe_charcode_at(index)
     if c1.is_leading_surrogate() && index + 1 < self.end() {
@@ -234,7 +235,7 @@ pub fn View::iter(self : View) -> Iter[Char] {
 }
 
 ///|
-pub fn View::iter2(self : View) -> Iter2[Int, Char] {
+pub fn StringView::iter2(self : StringView) -> Iter2[Int, Char] {
   Iter2::new(yield_ => {
     let len = self.length()
     for index = 0, n = 0; index < len; index = index + 1, n = n + 1 {
@@ -258,7 +259,7 @@ pub fn View::iter2(self : View) -> Iter2[Int, Char] {
 
 ///|
 /// Returns an iterator over the Unicode characters in the string view in reverse order.
-pub fn View::rev_iter(self : View) -> Iter[Char] {
+pub fn StringView::rev_iter(self : StringView) -> Iter[Char] {
   Iter::new(yield_ => for index = self.end() - 1
                           index >= self.start()
                           index = index - 1 {
@@ -280,7 +281,7 @@ pub fn View::rev_iter(self : View) -> Iter[Char] {
 ///|
 /// Compares two views for equality. Returns true only if both views
 /// have the same length and contain identical characters in the same order.
-pub impl Eq for View with equal(self, other) {
+pub impl Eq for StringView with equal(self, other) {
   let len = self.length()
   guard len == other.length() else { return false }
   if physical_equal(self.str(), other.str()) && self.start() == other.start() {
@@ -300,7 +301,7 @@ pub impl Eq for View with equal(self, other) {
 /// orders Unicode characters based on their positions in the code charts. This is
 /// not necessarily the same as "alphabetical" order, which varies by language
 /// and locale.
-pub impl Compare for View with compare(self, other) {
+pub impl Compare for StringView with compare(self, other) {
   let self_len = self.length()
   let other_len = other.length()
   let cmp = self_len.compare(other_len)
@@ -320,38 +321,41 @@ pub impl Compare for View with compare(self, other) {
 
 ///|
 /// The empty view of a string
-pub impl Default for View with default() {
-  View::make_view("", 0, 0)
+pub impl Default for StringView with default() {
+  StringView::make_view("", 0, 0)
 }
 
 ///|
 /// Convert char array to string view.
-pub fn View::from_array(chars : Array[Char]) -> View {
+pub fn StringView::from_array(chars : Array[Char]) -> StringView {
   let s = String::from_array(chars)
-  View::make_view(s, 0, s.length())
+  StringView::make_view(s, 0, s.length())
 }
 
 ///|
 /// Convert char iterator to string view.
-pub fn View::from_iter(iter : Iter[Char]) -> View {
+pub fn StringView::from_iter(iter : Iter[Char]) -> StringView {
   let s = String::from_iter(iter)
-  View::make_view(s, 0, s.length())
+  StringView::make_view(s, 0, s.length())
 }
 
 ///|
 /// Create a new string by repeating the given character `value` `length` times.
-pub fn View::make(length : Int, value : Char) -> View {
+pub fn StringView::make(length : Int, value : Char) -> StringView {
   // todo: remove .view() in new version
   String::make(length, value).view()
 }
 
 ///|
-pub impl ToJson for View with to_json(self) {
+pub impl ToJson for StringView with to_json(self) {
   String::to_json(self.to_string())
 }
 
 ///|
-pub impl Hash for View with hash_combine(self : View, hasher : Hasher) -> Unit {
+pub impl Hash for StringView with hash_combine(
+  self : StringView,
+  hasher : Hasher,
+) -> Unit {
   for i in 0..<self.length() {
     hasher.combine_uint(self.unsafe_charcode_at(i).reinterpret_as_uint())
   }
@@ -419,7 +423,7 @@ pub fn String::sub(
   self : String,
   start? : Int = 0,
   end? : Int,
-) -> View raise CreatingViewError {
+) -> StringView raise CreatingViewError {
   let len = self.length()
   let end = match end {
     None => len
@@ -433,7 +437,7 @@ pub fn String::sub(
   if end < len && self.unsafe_charcode_at(end).is_trailing_surrogate() {
     raise InvalidIndex
   }
-  View::make_view(self, start, end)
+  StringView::make_view(self, start, end)
 }
 
 ///|
@@ -478,11 +482,11 @@ pub fn String::sub(
 /// inspect(view3, content="Err(InvalidIndex)")
 /// ```
 #alias(op_as_view)
-pub fn View::sub(
-  self : View,
+pub fn StringView::sub(
+  self : StringView,
   start? : Int = 0,
   end? : Int,
-) -> View raise CreatingViewError {
+) -> StringView raise CreatingViewError {
   let str_len = self.str().length()
 
   // Calculate absolute positions in the original string
@@ -512,10 +516,10 @@ pub fn View::sub(
     self.str().unsafe_charcode_at(abs_end).is_trailing_surrogate() {
     raise InvalidIndex
   }
-  View::make_view(self.str(), abs_start, abs_end)
+  StringView::make_view(self.str(), abs_start, abs_end)
 }
 
 ///|
-pub impl Add for View with add(self, other) {
+pub impl Add for StringView with add(self, other) {
   [..self, ..other]
 }

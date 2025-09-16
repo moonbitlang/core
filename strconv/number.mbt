@@ -25,16 +25,13 @@ priv struct Number {
 
 ///|
 /// Returns the remaining slice, the parsed number, and the number of digits parsed.
-fn parse_digits(s : @string.View, x : UInt64) -> (@string.View, UInt64, Int) {
+fn parse_digits(s : StringView, x : UInt64) -> (StringView, UInt64, Int) {
   s.fold_digits(x, (digit, acc : UInt64) => acc * 10UL +
     UInt64::extend_uint(digit.reinterpret_as_uint()))
 }
 
 ///|
-fn try_parse_19digits(
-  s : @string.View,
-  x : UInt64,
-) -> (@string.View, UInt64, Int) {
+fn try_parse_19digits(s : StringView, x : UInt64) -> (StringView, UInt64, Int) {
   let mut x = x
   let mut len = 0
   loop s {
@@ -50,7 +47,7 @@ fn try_parse_19digits(
 }
 
 ///|
-fn parse_scientific(s : @string.View) -> (@string.View, Int64)? {
+fn parse_scientific(s : StringView) -> (StringView, Int64)? {
   // the first character is 'e'/'E' and scientific mode is enabled
   let mut s = match s.step(1) {
     Some(s) => s
@@ -81,7 +78,7 @@ fn parse_scientific(s : @string.View) -> (@string.View, Int64)? {
 
 ///|
 /// Parse the number from the string, returning the number and the length of the parsed string.
-fn parse_number(s : @string.View) -> (Number, Int)? {
+fn parse_number(s : StringView) -> (Number, Int)? {
   let mut s = s
   let start = s
 
@@ -171,7 +168,7 @@ fn parse_number(s : @string.View) -> (Number, Int)? {
 
 ///|
 /// Parse the number from the string, returning the number and the length of the parsed string.
-fn parse_inf_nan(s : @string.View) -> (Double, Int)? {
+fn parse_inf_nan(s : StringView) -> (Double, Int)? {
   let mut s = s
   let mut pos = true
   let mut len = 0

@@ -15,7 +15,7 @@
 ///|
 /// Step over `step` non-underscore characters.
 /// Return None if there are not enough characters.
-fn @string.View::step(self : Self, step : Int) -> Self? {
+fn StringView::step(self : Self, step : Int) -> Self? {
   let mut step = step
   let mut str = self
   while str is [ch, .. rest] && step > 0 {
@@ -34,7 +34,7 @@ fn @string.View::step(self : Self, step : Int) -> Self? {
 ///|
 /// Returns the accumulated value, the slice left, and the number of digits consumed.
 /// It ignores underscore and stops when a non-digit character is found.
-fn[T] @string.View::fold_digits(
+fn[T] StringView::fold_digits(
   self : Self,
   init : T,
   f : (Int, T) -> T,

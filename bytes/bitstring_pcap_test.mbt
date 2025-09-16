@@ -16,7 +16,7 @@
 let data : Bytes = b"\xD4\xC3\xB2\xA1\x02\x00\x04\x00\x00\x00\x00\x00\x00\x00\x00\x00\xFF\xFF\x00\x00\x01\x00\x00\x00\xBB\x0A\x64\x42\x6B\x54\x0D\x00\x4A\x00\x00\x00\x4A\x00\x00\x00\x00\xA0\xC5\x8F\xE3\xC7\x00\x0C\x76\x1C\x1B\x97\x08\x00\x45\x00\x00\x3C\x92\xA6\x40\x00\x40\x06\xFA\x91\xC0\xA8\x01\x21\xCC\xB2\x1F\x08\xDB\x2D\x02\x34\x67\xA5\x08\x98\x00\x00\x00\x00\x00\xA0\xC2\x16\xD0\x94\xBF\x00\x00\x02\x04\x05\xB4\x04\x02\x08\x0A\x06\x54\x9A\x3E\x00\x00\x00\x00\x01\x03\x03\x02"
 
 ///|
-fn pcap_test(data : @bytes.View) -> Unit raise {
+fn pcap_test(data : BytesView) -> Unit raise {
   match data {
     [
       u32(0xa1b2c3d4 | 0xa1b23c4d | 0xd4c3b2a1 | 0x4d3cb2a1 as magic),
@@ -42,7 +42,7 @@ fn pcap_test(data : @bytes.View) -> Unit raise {
 }
 
 ///|
-fn pcap_packet_test(packet : @bytes.View) -> Unit raise {
+fn pcap_packet_test(packet : BytesView) -> Unit raise {
   match packet {
     [u32(_), u32(_), u32le(incl_len), u32le(_orig_len), .. eth] => {
       let incl_len = incl_len.reinterpret_as_int()
@@ -53,7 +53,7 @@ fn pcap_packet_test(packet : @bytes.View) -> Unit raise {
 }
 
 ///|
-fn pcap_eth_test(eth : @bytes.View) -> Unit raise {
+fn pcap_eth_test(eth : BytesView) -> Unit raise {
   match eth {
     [
       u8(0x00),
@@ -79,7 +79,7 @@ fn pcap_eth_test(eth : @bytes.View) -> Unit raise {
 }
 
 ///|
-fn pcap_ipv4_test(ipv4 : @bytes.View) -> Unit raise {
+fn pcap_ipv4_test(ipv4 : BytesView) -> Unit raise {
   match ipv4 {
     [
       u4(4),

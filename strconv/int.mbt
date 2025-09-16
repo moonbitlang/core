@@ -29,9 +29,9 @@ const INT64_MAX = 0x7fffffffffffffffL
 /// and consume the prefix.
 /// The boolean flag `allow_underscore` is used to check validity of underscores.
 fn check_and_consume_base(
-  view : @string.View,
+  view : StringView,
   base : Int,
-) -> (Int, @string.View, Bool) raise StrConvError {
+) -> (Int, StringView, Bool) raise StrConvError {
   // if the base is not given, we need to determine it from the prefix
   if base == 0 {
     match view {
@@ -81,7 +81,7 @@ test {
 /// ```
 /// 
 pub fn parse_int64(
-  str : @string.View,
+  str : StringView,
   base? : Int = 0,
 ) -> Int64 raise StrConvError {
   guard str != "" else { syntax_err() }
@@ -135,7 +135,7 @@ pub fn parse_int64(
 ///|
 /// Parse a string in the given base (0, 2 to 36), return a Int number or an error.
 /// If the `~base` argument is 0, the base will be inferred by the prefix.
-pub fn parse_int(str : @string.View, base? : Int = 0) -> Int raise StrConvError {
+pub fn parse_int(str : StringView, base? : Int = 0) -> Int raise StrConvError {
   let n = parse_int64(str, base~)
   if n < INT_MIN.to_int64() || n > INT_MAX.to_int64() {
     range_err()
@@ -147,7 +147,7 @@ pub fn parse_int(str : @string.View, base? : Int = 0) -> Int raise StrConvError 
 // Underscores must appear only between digits or between a base prefix and a digit.
 
 ///|
-fn check_underscore(str : @string.View) -> Bool {
+fn check_underscore(str : StringView) -> Bool {
   // skip the sign
   let rest = match str {
     ['+' | '-', .. rest] => rest

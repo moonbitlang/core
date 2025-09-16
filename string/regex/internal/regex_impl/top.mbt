@@ -33,8 +33,8 @@
 /// ))
 /// ```
 pub fn compile(
-  regexp : @string.View,
-  flags? : @string.View = "",
+  regexp : StringView,
+  flags? : StringView = "",
 ) -> Regexp raise RegexpError {
   regexp
   |> parse(flags={
@@ -131,7 +131,7 @@ pub fn Regexp::group_names(self : Regexp) -> Array[String] {
 ///   ))
 /// }
 /// ```
-pub fn Regexp::execute(self : Regexp, input : @string.View) -> MatchResult {
+pub fn Regexp::execute(self : Regexp, input : StringView) -> MatchResult {
   let captures = vm(self.instructions, input, self.capture)
   let (before, after) = if captures is [0..<_ as start, 0..<_ as end, ..] {
     (input.view(end_offset=start), input.view(start_offset=end))
@@ -154,7 +154,7 @@ pub fn Regexp::execute(self : Regexp, input : @string.View) -> MatchResult {
 /// 
 /// Returns: A tuple of 
 /// - `MatchResult` object containing the match status and capture group information.
-/// - `@string.View` representing the remaining text after the match.
+/// - `StringView` representing the remaining text after the match.
 /// 
 /// Example:
 /// ```moonbit
@@ -171,8 +171,8 @@ pub fn Regexp::execute(self : Regexp, input : @string.View) -> MatchResult {
 #deprecated("Use `Regexp::execute` and `MatchResult::before`/`after` instead.")
 pub fn Regexp::execute_with_remainder(
   self : Regexp,
-  input : @string.View,
-) -> (MatchResult, @string.View) {
+  input : StringView,
+) -> (MatchResult, StringView) {
   let captures = vm(self.instructions, input, self.capture)
   if captures is [0..<_ as start, 0..<_ as end, ..] {
     (
@@ -220,7 +220,7 @@ pub fn Regexp::execute_with_remainder(
 /// inspect(result.after(), content=("xx"))
 /// assert_true(engine.match_("axxf") is None)
 /// ```
-pub fn Regexp::match_(self : Regexp, input : @string.View) -> MatchResult? {
+pub fn Regexp::match_(self : Regexp, input : StringView) -> MatchResult? {
   let captures = vm(self.instructions, input, self.capture)
   guard captures is [0..<_ as start, 0..<_ as end, ..] else { return None }
   let before = input.view(end_offset=start)
@@ -242,11 +242,11 @@ pub fn Regexp::match_(self : Regexp, input : @string.View) -> MatchResult? {
 /// - Index 4, 5: Start and end positions of the second capture group.
 /// - And so on...
 pub struct MatchResult {
-  input : @string.View
+  input : StringView
   captures : Array[Int]
   names : Map[String, Int]
-  before : @string.View
-  after : @string.View
+  before : StringView
+  after : StringView
 }
 
 ///|
@@ -294,7 +294,7 @@ pub fn MatchResult::matched(self : Self) -> Bool {
 ///   #|Some("bc")
 /// ))
 /// ```
-pub fn MatchResult::get(self : Self, index : Int) -> @string.View? {
+pub fn MatchResult::get(self : Self, index : Int) -> StringView? {
   if self.captures.is_empty() ||
     index < 0 ||
     index >= self.captures.length() / 2 {
@@ -331,7 +331,7 @@ pub fn MatchResult::get(self : Self, index : Int) -> @string.View? {
 /// ))
 /// ```
 ///
-pub fn MatchResult::groups(self : Self) -> Map[String, @string.View] {
+pub fn MatchResult::groups(self : Self) -> Map[String, StringView] {
   self.names
   .iter()
   .filter_map(p => if self.get(p.1) is Some(content) {
@@ -361,7 +361,7 @@ pub fn MatchResult::groups(self : Self) -> Map[String, @string.View] {
 ///   #|[Some("abc"), Some("c")]
 /// ))
 /// ```
-pub fn MatchResult::results(self : Self) -> Array[@string.View?] {
+pub fn MatchResult::results(self : Self) -> Array[StringView?] {
   let results = []
   for i = 0; i < self.captures.length() / 2; i = i + 1 {
     let start = self.captures[i * 2]
@@ -387,7 +387,7 @@ pub fn MatchResult::results(self : Self) -> Array[@string.View?] {
 /// let result = engine.execute("say hello")
 /// inspect(result.before(), content="say hello")
 /// ```
-pub fn MatchResult::before(self : Self) -> @string.View {
+pub fn MatchResult::before(self : Self) -> StringView {
   self.before
 }
 
@@ -403,7 +403,7 @@ pub fn MatchResult::before(self : Self) -> @string.View {
 /// let result = engine.execute("say yes")
 /// inspect(result.after(), content="")
 /// ```
-pub fn MatchResult::after(self : Self) -> @string.View {
+pub fn MatchResult::after(self : Self) -> StringView {
   self.after
 }
 
@@ -455,7 +455,7 @@ test "rest method with capture groups" {
 ///|
 test "rest method usage example" {
   let engine = compile("\\b\\w+\\b")
-  let mut input : @string.View = "word1 word2 word3"
+  let mut input : StringView = "word1 word2 word3"
   let (result1, rest1) = engine.execute_with_remainder(input)
   inspect(
     result1.get(0),

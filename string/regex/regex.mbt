@@ -18,31 +18,31 @@ struct MatchResult(@regex_impl.MatchResult)
 
 ///|
 #internal(experimental, "subject to breaking change without notice")
-pub fn MatchResult::before(self : Self) -> @string.View {
+pub fn MatchResult::before(self : Self) -> StringView {
   self.0.before()
 }
 
 ///|
 #internal(experimental, "subject to breaking change without notice")
-pub fn MatchResult::after(self : Self) -> @string.View {
+pub fn MatchResult::after(self : Self) -> StringView {
   self.0.after()
 }
 
 ///|
 #internal(experimental, "subject to breaking change without notice")
-pub fn MatchResult::content(self : Self) -> @string.View {
+pub fn MatchResult::content(self : Self) -> StringView {
   self.0.get(0).unwrap()
 }
 
 ///|
 #internal(experimental, "subject to breaking change without notice")
-pub fn MatchResult::group(self : Self, index : Int) -> @string.View? {
+pub fn MatchResult::group(self : Self, index : Int) -> StringView? {
   self.0.get(index)
 }
 
 ///|
 #internal(experimental, "subject to breaking change without notice")
-pub fn MatchResult::named_group(self : Self, name : String) -> @string.View? {
+pub fn MatchResult::named_group(self : Self, name : String) -> StringView? {
   guard self.0.names.get(name) is Some(index) else { None }
   self.0.get(index)
 }
@@ -53,13 +53,13 @@ struct Regex(@regex_impl.Regexp)
 
 ///|
 #internal(experimental, "subject to breaking change without notice")
-pub fn compile(pattern : @string.View) -> Regex raise {
+pub fn compile(pattern : StringView) -> Regex raise {
   @regex_impl.compile(pattern)
 }
 
 ///|
 #internal(experimental, "subject to breaking change without notice")
-pub fn Regex::execute(self : Self, input : @string.View) -> MatchResult? {
+pub fn Regex::execute(self : Self, input : StringView) -> MatchResult? {
   match self.0.match_(input) {
     None => None
     Some(result) => Some(MatchResult(result))
