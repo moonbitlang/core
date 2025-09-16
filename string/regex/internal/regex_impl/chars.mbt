@@ -84,7 +84,7 @@ test "ordered range" {
 
 ///|
 /// TODO: consider unicode mode
-fn is_word_char_at(input : @string.View, sp : Int) -> Bool {
+fn is_word_char_at(input : StringView, sp : Int) -> Bool {
   if sp == -1 || sp == input.length() {
     return false
   }

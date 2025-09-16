@@ -26,8 +26,8 @@ test {
   // Write a simple split with regexp
   fn split(
     regexp : @regex.Regex,
-    target : @string.View,
-  ) -> Array[@string.View] {
+    target : StringView,
+  ) -> Array[StringView] {
     let result = []
     for str = target {
       match regexp.execute(str) {
@@ -63,9 +63,9 @@ test {
 
 ### Inspect Results
 
-- `result.content()` → `@string.View`
-- `result.before()` → `@string.View`
-- `result.after()` → `@string.View`
+- `result.content()` → `StringView`
+- `result.before()` → `StringView`
+- `result.after()` → `StringView`
 - `result.group(index)` → Capture group content
 - `result.named_group(name)` → Named capture group content
 
