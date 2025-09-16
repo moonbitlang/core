@@ -14,15 +14,15 @@
 
 ///|
 pub trait ToStringView {
-  to_string_view(Self) -> View
+  to_string_view(Self) -> StringView
 }
 
 ///|
-pub impl ToStringView for String with to_string_view(self) -> View {
+pub impl ToStringView for String with to_string_view(self) -> StringView {
   self[:]
 }
 
 ///|
-pub impl ToStringView for View with to_string_view(self) -> View {
+pub impl ToStringView for StringView with to_string_view(self) -> StringView {
   self
 }

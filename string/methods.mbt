@@ -15,7 +15,7 @@
 ///|
 /// Returns the offset (charcode index) of the first occurrence of the given
 /// substring. If the substring is not found, it returns None.
-pub fn View::find(self : View, str : View) -> Int? {
+pub fn StringView::find(self : StringView, str : StringView) -> Int? {
   if str.length() <= 4 {
     brute_force_find(self, str)
   } else {
@@ -28,7 +28,7 @@ pub fn View::find(self : View, str : View) -> Int? {
 ///|
 /// Simple brute force string search algorithm
 /// Scans the haystack left to right, matching the needle at each position
-fn brute_force_find(haystack : View, needle : View) -> Int? {
+fn brute_force_find(haystack : StringView, needle : StringView) -> Int? {
   let haystack_len = haystack.length()
   let needle_len = needle.length()
   guard needle_len > 0 else { return Some(0) }
@@ -59,7 +59,10 @@ fn brute_force_find(haystack : View, needle : View) -> Int? {
 ///|
 /// Boyer-Moore-Horspool algorithm for string search (left to right)
 /// More efficient than brute force for longer patterns by using bad char heuristic
-fn boyer_moore_horspool_find(haystack : View, needle : View) -> Int? {
+fn boyer_moore_horspool_find(
+  haystack : StringView,
+  needle : StringView,
+) -> Int? {
   let haystack_len = haystack.length()
   let needle_len = needle.length()
   guard needle_len > 0 else { return Some(0) }
@@ -99,7 +102,7 @@ test "boyer_moore_horspool_rev_find edge cases" {
 ///|
 /// Returns the offset of the first occurrence of the given substring. If the
 /// substring is not found, it returns None.
-pub fn String::find(self : String, str : View) -> Int? {
+pub fn String::find(self : String, str : StringView) -> Int? {
   self[:].find(str)
 }
 
@@ -129,7 +132,7 @@ test "find" {
 ///|
 /// Returns the offset of the first character that satisfies the given predicate.
 /// If no such character is found, it returns None.
-pub fn View::find_by(self : View, pred : (Char) -> Bool) -> Int? {
+pub fn StringView::find_by(self : StringView, pred : (Char) -> Bool) -> Int? {
   for i, c in self {
     if pred(c) {
       return Some(i)
@@ -162,7 +165,7 @@ test "find_by" {
 ///|
 /// Returns the offset of the last occurrence of the given substring. If the
 /// substring is not found, it returns None.
-pub fn View::rev_find(self : View, str : View) -> Int? {
+pub fn StringView::rev_find(self : StringView, str : StringView) -> Int? {
   if str.length() <= 4 {
     brute_force_rev_find(self, str)
   } else {
@@ -175,7 +178,7 @@ pub fn View::rev_find(self : View, str : View) -> Int? {
 ///|
 /// Simple brute force string search algorithm
 /// Scans the haystack right to left, matching the needle at each position
-fn brute_force_rev_find(haystack : View, needle : View) -> Int? {
+fn brute_force_rev_find(haystack : StringView, needle : StringView) -> Int? {
   let haystack_len = haystack.length()
   let needle_len = needle.length()
   guard needle_len > 0 else { return Some(haystack_len) }
@@ -205,7 +208,10 @@ fn brute_force_rev_find(haystack : View, needle : View) -> Int? {
 ///|
 /// Boyer-Moore-Horspool algorithm for reverse string search (right to left)
 /// More efficient than brute force for longer patterns by using bad char heuristic
-fn boyer_moore_horspool_rev_find(haystack : View, needle : View) -> Int? {
+fn boyer_moore_horspool_rev_find(
+  haystack : StringView,
+  needle : StringView,
+) -> Int? {
   let haystack_len = haystack.length()
   let needle_len = needle.length()
   guard needle_len > 0 else { return Some(haystack_len) }
@@ -232,7 +238,7 @@ fn boyer_moore_horspool_rev_find(haystack : View, needle : View) -> Int? {
 ///|
 /// Returns the offset (charcode index) of the last occurrence of the given
 /// substring. If the substring is not found, it returns None.
-pub fn String::rev_find(self : String, str : View) -> Int? {
+pub fn String::rev_find(self : String, str : StringView) -> Int? {
   self[:].rev_find(str)
 }
 
@@ -262,14 +268,14 @@ test "rev_find" {
 ///|
 /// Returns true if the given substring is suffix of this string.
 #alias(ends_with, deprecated)
-pub fn View::has_suffix(self : View, str : View) -> Bool {
+pub fn StringView::has_suffix(self : StringView, str : StringView) -> Bool {
   self.rev_find(str) is Some(i) && i == self.length() - str.length()
 }
 
 ///|
 /// Returns true if the given substring is suffix of this string.
 #alias(ends_with, deprecated)
-pub fn String::has_suffix(self : String, str : View) -> Bool {
+pub fn String::has_suffix(self : String, str : StringView) -> Bool {
   self[:].has_suffix(str)
 }
 
@@ -290,14 +296,14 @@ test "has_suffix" {
 ///|
 /// Returns true if this string starts with the given substring.
 #alias(starts_with, deprecated)
-pub fn View::has_prefix(self : View, str : View) -> Bool {
+pub fn StringView::has_prefix(self : StringView, str : StringView) -> Bool {
   self.find(str) is Some(i) && i == 0
 }
 
 ///|
 /// Returns true if this string starts with the given substring.
 #alias(starts_with, deprecated)
-pub fn String::has_prefix(self : String, str : View) -> Bool {
+pub fn String::has_prefix(self : String, str : StringView) -> Bool {
   self[:].has_prefix(str)
 }
 
@@ -330,7 +336,7 @@ test "has_prefix" {
 ///   inspect("hello world".strip_suffix(" moon"), content="None")
 ///   inspect("hello".strip_suffix("hello"), content="Some(\"\")")
 /// ```
-pub fn strip_suffix(self : String, suffix : View) -> View? {
+pub fn strip_suffix(self : String, suffix : StringView) -> StringView? {
   if self.has_suffix(suffix) {
     Some(self.view(end_offset=self.length() - suffix.length()))
   } else {
@@ -376,7 +382,7 @@ test "strip_suffix" {
 ///   inspect("hello world".strip_prefix("hi "), content="None")
 ///   inspect("hello".strip_prefix("hello"), content="Some(\"\")")
 /// ```
-pub fn strip_prefix(self : String, prefix : View) -> View? {
+pub fn strip_prefix(self : String, prefix : StringView) -> StringView? {
   if self.has_prefix(prefix) {
     Some(self.view(start_offset=prefix.length()))
   } else {
@@ -400,7 +406,10 @@ pub fn strip_prefix(self : String, prefix : View) -> View? {
 ///   inspect(view.strip_prefix("hello world"), content="Some(\"\")")
 /// ```
 /// 
-pub fn View::strip_prefix(self : View, prefix : View) -> View? {
+pub fn StringView::strip_prefix(
+  self : StringView,
+  prefix : StringView,
+) -> StringView? {
   if self.has_prefix(prefix) {
     Some(self.view(start_offset=prefix.length()))
   } else {
@@ -423,7 +432,10 @@ pub fn View::strip_prefix(self : View, prefix : View) -> View? {
 ///   inspect(view.strip_suffix(" moon"), content="None")
 ///   inspect(view.strip_suffix("hello world"), content="Some(\"\")")
 /// ```
-pub fn View::strip_suffix(self : View, suffix : View) -> View? {
+pub fn StringView::strip_suffix(
+  self : StringView,
+  suffix : StringView,
+) -> StringView? {
   if self.has_suffix(suffix) {
     Some(self.view(end_offset=self.length() - suffix.length()))
   } else {
@@ -441,7 +453,7 @@ pub fn View::strip_suffix(self : View, suffix : View) -> View? {
 ///   let chars = view.to_array()
 ///   inspect(chars, content="['e', 'l', 'l', 'o', '🤣', 'x']")
 /// ```
-pub fn View::to_array(self : View) -> Array[Char] {
+pub fn StringView::to_array(self : StringView) -> Array[Char] {
   self
   .iter()
   .fold(init=Array::new(capacity=self.length()), (rv, c) => {
@@ -460,7 +472,7 @@ pub fn View::to_array(self : View) -> Array[Char] {
 ///   let bytes = view.to_bytes()
 ///   inspect(bytes.to_unchecked_string(), content="ello")
 /// ```
-pub fn View::to_bytes(self : View) -> Bytes {
+pub fn StringView::to_bytes(self : StringView) -> Bytes {
   let array = FixedArray::make(self.length() * 2, Byte::default())
   array.blit_from_string(0, self.data(), self.start_offset(), self.length())
   array |> unsafe_to_bytes
@@ -524,13 +536,13 @@ test "View::to_bytes" {
 
 ///|
 /// Returns true if this string contains the given substring.
-pub fn View::contains(self : View, str : View) -> Bool {
+pub fn StringView::contains(self : StringView, str : StringView) -> Bool {
   self.find(str) is Some(_)
 }
 
 ///|
 /// Returns true if this string contains the given substring.
-pub fn contains(self : String, str : View) -> Bool {
+pub fn contains(self : String, str : StringView) -> Bool {
   self[:].contains(str)
 }
 
@@ -551,7 +563,7 @@ test "contains" {
 
 ///|
 /// Returns true if this string contains the given character.
-pub fn View::contains_char(self : View, c : Char) -> Bool {
+pub fn StringView::contains_char(self : StringView, c : Char) -> Bool {
   let len = self.length()
   // Check empty
   guard len > 0 else { return false }
@@ -609,7 +621,10 @@ test "contains_char" {
 ///|
 /// Returns the view of the string without the leading characters that are in
 /// the given string.
-pub fn View::trim_start(self : View, char_set : View) -> View {
+pub fn StringView::trim_start(
+  self : StringView,
+  char_set : StringView,
+) -> StringView {
   loop self {
     [] as v => v
     [c, .. rest] as v =>
@@ -624,7 +639,7 @@ pub fn View::trim_start(self : View, char_set : View) -> View {
 ///|
 /// Returns the view of the string without the leading characters that are in
 /// the given string.
-pub fn trim_start(self : String, char_set : View) -> View {
+pub fn trim_start(self : String, char_set : StringView) -> StringView {
   self[:].trim_start(char_set)
 }
 
@@ -647,7 +662,10 @@ test "trim_start" {
 ///|
 /// Returns the view of the string without the trailing characters that are in
 /// the given string.
-pub fn View::trim_end(self : View, char_set : View) -> View {
+pub fn StringView::trim_end(
+  self : StringView,
+  char_set : StringView,
+) -> StringView {
   loop self {
     [] as v => v
     [.. rest, c] as v =>
@@ -662,7 +680,7 @@ pub fn View::trim_end(self : View, char_set : View) -> View {
 ///|
 /// Returns the view of the string without the trailing characters that are in
 /// the given string.
-pub fn trim_end(self : String, char_set : View) -> View {
+pub fn trim_end(self : String, char_set : StringView) -> StringView {
   self[:].trim_end(char_set)
 }
 
@@ -684,14 +702,14 @@ test "trim_end" {
 ///|
 /// Returns the view of the string without the leading and trailing characters
 /// that are in the given string.
-pub fn View::trim(self : View, char_set : View) -> View {
+pub fn StringView::trim(self : StringView, char_set : StringView) -> StringView {
   self.trim_start(char_set).trim_end(char_set)
 }
 
 ///|
 /// Returns the view of the string without the leading and trailing characters
 /// that are in the given string.
-pub fn trim(self : String, char_set : View) -> View {
+pub fn trim(self : String, char_set : StringView) -> StringView {
   self[:].trim(char_set)
 }
 
@@ -716,13 +734,13 @@ test "trim" {
 
 ///|
 /// Returns the view of the string without the leading and trailing spaces.
-pub fn View::trim_space(self : View) -> View {
+pub fn StringView::trim_space(self : StringView) -> StringView {
   self.trim(" \n\r\t")
 }
 
 ///|
 /// Returns the view of the string without the leading and trailing spaces.
-pub fn trim_space(self : String) -> View {
+pub fn trim_space(self : String) -> StringView {
   self[:].trim_space()
 }
 
@@ -742,7 +760,7 @@ test "trim_space" {
 
 ///|
 /// Returns true if this string is empty.
-pub fn View::is_empty(self : View) -> Bool {
+pub fn StringView::is_empty(self : StringView) -> Bool {
   self.length() == 0
 }
 
@@ -771,7 +789,7 @@ test "is_empty" {
 
 ///|
 /// Returns true if this string is blank.
-pub fn View::is_blank(self : View) -> Bool {
+pub fn StringView::is_blank(self : StringView) -> Bool {
   self.trim_space().is_empty()
 }
 
@@ -805,8 +823,8 @@ test "is_blank" {
 /// Returns a new string with `padding_char`s prefixed to `self` if
 /// `self.char_length() < total_width`. The number of unicode characters in
 /// the returned string is `total_width` if padding is added.
-pub fn View::pad_start(
-  self : View,
+pub fn StringView::pad_start(
+  self : StringView,
   total_width : Int,
   padding_char : Char,
 ) -> String {
@@ -860,8 +878,8 @@ test "pad_start" {
 /// Returns a new string with `padding_char`s appended to `self` if
 /// `self.length() < total_width`. The number of unicode characters in
 /// the returned string is `total_width` if padding is added.
-pub fn View::pad_end(
-  self : View,
+pub fn StringView::pad_end(
+  self : StringView,
   total_width : Int,
   padding_char : Char,
 ) -> String {
@@ -913,7 +931,7 @@ test "pad_end" {
 
 ///|
 /// Returns a new string with `self` repeated `n` times.
-pub fn View::repeat(self : View, n : Int) -> View {
+pub fn StringView::repeat(self : StringView, n : Int) -> StringView {
   match n {
     _..=0 => ""
     1 => self
@@ -975,7 +993,7 @@ test "repeat" {
 ///|
 /// Returns a new string with the characters in reverse order. It respects
 /// Unicode characters and surrogate pairs but not grapheme clusters.
-pub fn View::rev(self : View) -> String {
+pub fn StringView::rev(self : StringView) -> String {
   let buf = StringBuilder::new(size_hint=self.length())
   for c in self.rev_iter() {
     buf.write_char(c)
@@ -1007,7 +1025,10 @@ test "rev" {
 /// 
 /// If the separator is empty, the returned iterator will contain all the
 /// characters in the string as single elements.
-pub fn View::split(self : View, sep : View) -> Iter[View] {
+pub fn StringView::split(
+  self : StringView,
+  sep : StringView,
+) -> Iter[StringView] {
   let sep_len = sep.length()
   if sep_len == 0 {
     return self.iter().map(c => c.to_string().view())
@@ -1034,37 +1055,41 @@ pub fn View::split(self : View, sep : View) -> Iter[View] {
 /// 
 /// If the separator is empty, the returned iterator will contain all the
 /// characters in the string as single elements.
-pub fn split(self : String, sep : View) -> Iter[View] {
+pub fn split(self : String, sep : StringView) -> Iter[StringView] {
   self[:].split(sep)
 }
 
 ///|
 test "split" {
-  assert_eq("a,b,c".split(",").map(View::to_string).collect(), ["a", "b", "c"])
-  assert_eq("a,b,c".split("").map(View::to_string).collect(), [
+  assert_eq("a,b,c".split(",").map(StringView::to_string).collect(), [
+    "a", "b", "c",
+  ])
+  assert_eq("a,b,c".split("").map(StringView::to_string).collect(), [
     "a", ",", "b", ",", "c",
   ])
   assert_eq(
-    "apple::orange::banana".split("::").map(View::to_string).collect(),
+    "apple::orange::banana".split("::").map(StringView::to_string).collect(),
     ["apple", "orange", "banana"],
   )
-  assert_eq("abc".split("").map(View::to_string).collect(), ["a", "b", "c"])
-  assert_eq("hello".split(",").map(View::to_string).collect(), ["hello"])
-  assert_eq(",a,b,c".split(",").map(View::to_string).collect(), [
+  assert_eq("abc".split("").map(StringView::to_string).collect(), [
+    "a", "b", "c",
+  ])
+  assert_eq("hello".split(",").map(StringView::to_string).collect(), ["hello"])
+  assert_eq(",a,b,c".split(",").map(StringView::to_string).collect(), [
     "", "a", "b", "c",
   ])
-  assert_eq("a,b,c,".split(",").map(View::to_string).collect(), [
+  assert_eq("a,b,c,".split(",").map(StringView::to_string).collect(), [
     "a", "b", "c", "",
   ])
-  assert_eq("a,b,c".split("").map(View::to_string).collect(), [
+  assert_eq("a,b,c".split("").map(StringView::to_string).collect(), [
     "a", ",", "b", ",", "c",
   ])
-  assert_eq("".split("").map(View::to_string).collect(), [])
-  assert_eq("".split(",").map(View::to_string).collect(), [""])
-  assert_eq("😀,😃,😄".split(",").map(View::to_string).collect(), [
+  assert_eq("".split("").map(StringView::to_string).collect(), [])
+  assert_eq("".split(",").map(StringView::to_string).collect(), [""])
+  assert_eq("😀,😃,😄".split(",").map(StringView::to_string).collect(), [
     "😀", "😃", "😄",
   ])
-  assert_eq("a😀b😀c".split("😀").map(View::to_string).collect(), [
+  assert_eq("a😀b😀c".split("😀").map(StringView::to_string).collect(), [
     "a", "b", "c",
   ])
 }
@@ -1074,7 +1099,11 @@ test "split" {
 /// 
 /// If `old` is empty, it matches the beginning of the string, and `new` is
 /// prepended to the string.
-pub fn View::replace(self : View, old~ : View, new~ : View) -> View {
+pub fn StringView::replace(
+  self : StringView,
+  old~ : StringView,
+  new~ : StringView,
+) -> StringView {
   match self.find(old) {
     Some(end) =>
       [
@@ -1091,7 +1120,7 @@ pub fn View::replace(self : View, old~ : View, new~ : View) -> View {
 /// 
 /// If `old` is empty, it matches the beginning of the string, and `new` is
 /// prepended to the string.
-pub fn replace(self : String, old~ : View, new~ : View) -> String {
+pub fn replace(self : String, old~ : StringView, new~ : StringView) -> String {
   match self.find(old) {
     Some(end) =>
       [
@@ -1120,7 +1149,11 @@ test "replace" {
 /// If `old` is empty, it matches at the beginning of the string and after each
 /// character in the string, so `new` is inserted at the beginning of the string
 /// and after each character.
-pub fn View::replace_all(self : View, old~ : View, new~ : View) -> View {
+pub fn StringView::replace_all(
+  self : StringView,
+  old~ : StringView,
+  new~ : StringView,
+) -> StringView {
   let len = self.length()
   let buf = StringBuilder::new(size_hint=len)
   let old_len = old.length()
@@ -1166,7 +1199,11 @@ pub fn View::replace_all(self : View, old~ : View, new~ : View) -> View {
 /// If `old` is empty, it matches at the beginning of the string and after each
 /// character in the string, so `new` is inserted at the beginning of the string
 /// and after each character.
-pub fn replace_all(self : String, old~ : View, new~ : View) -> String {
+pub fn replace_all(
+  self : String,
+  old~ : StringView,
+  new~ : StringView,
+) -> String {
   let len = self.length()
   let buf = StringBuilder::new(size_hint=len)
   let old_len = old.length()
@@ -1312,7 +1349,7 @@ test "View::replace_all boundary cases" {
 
 ///|
 /// Converts this string to lowercase.
-pub fn View::to_lower(self : View) -> View {
+pub fn StringView::to_lower(self : StringView) -> StringView {
   // TODO: deal with non-ascii characters
   guard self.find_by(x => x.is_ascii_uppercase()) is Some(idx) else {
     return self
@@ -1368,7 +1405,7 @@ test "View::to_lower" {
 
 ///|
 /// Converts this string to uppercase.
-pub fn View::to_upper(self : View) -> View {
+pub fn StringView::to_upper(self : StringView) -> StringView {
   // TODO: deal with non-ascii characters
   guard self.find_by(_.is_ascii_lowercase()) is Some(idx) else { return self }
   let buf = StringBuilder::new(size_hint=self.length())
@@ -1418,7 +1455,11 @@ test "View::to_upper" {
 
 ///|
 /// Folds the characters of the string into a single value.
-pub fn[A] View::fold(self : View, init~ : A, f : (A, Char) -> A) -> A {
+pub fn[A] StringView::fold(
+  self : StringView,
+  init~ : A,
+  f : (A, Char) -> A,
+) -> A {
   let mut rv = init
   for c in self {
     rv = f(rv, c)
@@ -1448,7 +1489,11 @@ test "fold" {
 }
 
 ///|
-pub fn[A] View::rev_fold(self : View, init~ : A, f : (A, Char) -> A) -> A {
+pub fn[A] StringView::rev_fold(
+  self : StringView,
+  init~ : A,
+  f : (A, Char) -> A,
+) -> A {
   let mut rv = init
   for c in self.rev_iter() {
     rv = f(rv, c)
@@ -1487,7 +1532,7 @@ pub fn String::get(self : String, idx : Int) -> Int? {
 ///|
 /// Returns the UTF-16 code unit at the given index. Returns `None` if the index
 /// is out of bounds.
-pub fn View::get(self : View, idx : Int) -> Int? {
+pub fn StringView::get(self : StringView, idx : Int) -> Int? {
   guard idx >= 0 && idx < self.length() else { return None }
   Some(self.unsafe_charcode_at(idx))
 }
@@ -1544,7 +1589,7 @@ pub fn String::get_char(self : String, idx : Int) -> Char? {
 ///|
 /// Returns the character at the given index. Returns `None` if the index is out
 /// of bounds or the index splits a surrogate pair.
-pub fn View::get_char(self : View, idx : Int) -> Char? {
+pub fn StringView::get_char(self : StringView, idx : Int) -> Char? {
   guard idx >= 0 && idx < self.length() else { return None }
   let c = self.unsafe_charcode_at(idx)
   if c.is_leading_surrogate() {
