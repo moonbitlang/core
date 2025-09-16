@@ -15,7 +15,7 @@
 ///|
 /// Returns the offset of the first occurrence of the given
 /// bytes substring. If the substring is not found, `None` is returned.
-pub fn View::find(target : View, pattern : View) -> Int? {
+pub fn BytesView::find(target : BytesView, pattern : BytesView) -> Int? {
   // TODO: more efficient algorithm
   let target_len = target.length()
   let pattern_len = pattern.length()
@@ -33,14 +33,14 @@ pub fn View::find(target : View, pattern : View) -> Int? {
 ///|
 /// Returns the offset of the first occurrence of the given
 /// bytes substring. If the substring is not found, `None` is returned.
-pub fn Bytes::find(target : Bytes, pattern : View) -> Int? {
+pub fn Bytes::find(target : Bytes, pattern : BytesView) -> Int? {
   target[:].find(pattern)
 }
 
 ///|
 /// Returns the offset of the last occurrence of the given
 /// bytes substring. If the substring is not found, `None` is returned.
-pub fn View::rev_find(target : View, pattern : View) -> Int? {
+pub fn BytesView::rev_find(target : BytesView, pattern : BytesView) -> Int? {
   // TODO: more efficient algorithm
   let target_len = target.length()
   let pattern_len = pattern.length()
@@ -58,6 +58,6 @@ pub fn View::rev_find(target : View, pattern : View) -> Int? {
 ///|
 /// Returns the offset of the last occurrence of the given
 /// bytes substring. If the substring is not found, `None` is returned.
-pub fn Bytes::rev_find(target : Bytes, pattern : View) -> Int? {
+pub fn Bytes::rev_find(target : Bytes, pattern : BytesView) -> Int? {
   target[:].rev_find(pattern)
 }
