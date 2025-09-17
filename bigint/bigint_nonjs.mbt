@@ -368,7 +368,7 @@ fn BigInt::grade_school_mul(self : BigInt, other : BigInt) -> BigInt {
       carry = product / radix
     }
   }
-  if limbs[self_len + other_len - 1] == 0 {
+  while len > 1 && limbs[len - 1] == 0 {
     len -= 1
   }
   { limbs, sign: Positive, len }
@@ -1844,4 +1844,14 @@ test "limb length" {
 ///|
 fn BigInt::limbs(self : Self) -> Iter[UInt] {
   self.limbs.iter().take(self.len)
+}
+
+///|
+test "algorithm_edge_cases" {
+  // Test with zero
+  let zero = 0N
+  let large = BigInt::from_string("123456789012345678901234567890")
+  assert_true(zero.grade_school_mul(large) == zero)
+  assert_true(zero.karatsuba_mul(large) == zero)
+  assert_true(zero * large == zero)
 }
