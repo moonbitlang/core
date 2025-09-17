@@ -155,8 +155,8 @@ test "result accumulation" {
   let operations = [
     fn() { () }, // Operation 1
     fn() { () }, // Operation 2
-    fn() { () }, // Operation 3
-  ]
+    fn() { () },
+  ] // Operation 3
   let final_result = operations.fold(init=(), fn(acc, operation) {
     operation() // Execute the operation
     acc // Accumulate unit values
@@ -186,4 +186,6 @@ test "builder pattern" {
 ```
 
 The `Unit` type provides essential functionality for representing "no meaningful return value" in a type-safe way, enabling clean functional programming patterns and consistent interfaces across MoonBit code.
+
+
 

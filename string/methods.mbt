@@ -705,11 +705,13 @@ test "trim_end" {
 pub fn StringView::trim(self : StringView, char_set : StringView) -> StringView {
   self.trim_start(char_set).trim_end(char_set)
 }
+// #callsite(migration(a, allow_positional=true), migration(d, allow_positional=true))
 
 ///|
 /// Returns the view of the string without the leading and trailing characters
 /// that are in the given string.
-pub fn trim(self : String, char_set : StringView) -> StringView {
+#callsite(migration(char_set, allow_positional=true))
+pub fn trim(self : String, char_set? : StringView = " \n\r\t") -> StringView {
   self[:].trim(char_set)
 }
 

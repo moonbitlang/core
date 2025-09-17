@@ -257,6 +257,7 @@ In real applications, coverage tracking is typically generated automatically:
 
 ```moonbit
 // This is conceptual - actual coverage is compiler-generated
+
 ///|
 fn example_function(x : Int) -> String {
   // Compiler automatically inserts: coverage.incr(0)
@@ -329,4 +330,6 @@ Coverage tracking integrates with MoonBit's build tools:
 5. **Code Review**: Understand which parts of code are well-tested
 
 The coverage package provides essential tools for maintaining high-quality, well-tested MoonBit code through comprehensive coverage analysis.
+
+
 

@@ -178,3 +178,5 @@ test "practical examples" {
 - Unicode iteration handles surrogate pairs correctly but is slower than UTF-16 code unit iteration
 - Character length operations (`char_length_eq`, `char_length_ge`) have O(n) complexity where n is the character count
 
+
+

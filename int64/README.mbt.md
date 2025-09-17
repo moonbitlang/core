@@ -77,3 +77,5 @@ test "method style" {
 
 Note that `Int64` implements the `Hash` trait, allowing it to be used as keys in hash maps and members of hash sets.
 
+
+

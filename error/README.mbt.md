@@ -225,3 +225,5 @@ test "error composition" {
 - Error propagation is efficient and doesn't require heap allocation for the error path
 - Custom error types with `derive(ToJson)` automatically generate efficient JSON serialization
 
+
+
