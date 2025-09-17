@@ -11,6 +11,7 @@
 ## ⚡ Quick Start
 
 ```moonbit
+///|
 test {
   // Compile once, use everywhere
   let regexp = @regex.compile("a(bc|de)f")
@@ -24,10 +25,7 @@ test {
   )
 
   // Write a simple split with regexp
-  fn split(
-    regexp : @regex.Regex,
-    target : StringView,
-  ) -> Array[StringView] {
+  fn split(regexp : @regex.Regex, target : StringView) -> Array[StringView] {
     let result = []
     for str = target {
       match regexp.execute(str) {
@@ -90,6 +88,7 @@ test {
 Match characters by their Unicode general categories:
 
 ```moonbit
+///|
 test "unicode properties" {
   // Matching gc=L
   let regex = @regex.compile("\\p{Letter}+")
@@ -118,6 +117,7 @@ test "unicode properties" {
 ## 💡 Real Examples
 
 ```moonbit
+///|
 test "character classes" {
   // Email validation (simplified)
   let email = @regex.compile(
@@ -170,6 +170,7 @@ test "character classes" {
 ## 🚨 Error Handling
 
 ```moonbit
+///|
 test {
   try {
     let _ = @regex.compile("a(b")
@@ -211,3 +212,4 @@ regex engines:
      from other implementations
    - See [Golang issue #46123](https://github.com/golang/go/issues/46123) for
      related discussion
+

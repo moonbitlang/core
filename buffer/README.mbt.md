@@ -7,6 +7,7 @@ The buffer package provides a flexible byte buffer implementation for efficient 
 Create a new buffer and write basic data:
 
 ```moonbit
+///|
 test "basic buffer operations" {
   let buf = @buffer.new()
 
@@ -37,6 +38,7 @@ test "basic buffer operations" {
 Write numbers in different encodings:
 
 ```moonbit
+///|
 test "number serialization" {
   inspect(
     @buffer.new()
@@ -86,6 +88,7 @@ test "number serialization" {
 Write sequences of bytes:
 
 ```moonbit
+///|
 test "byte sequence writing" {
   let buf = @buffer.new()
 
@@ -110,6 +113,7 @@ test "byte sequence writing" {
 Write structured data that implements Show:
 
 ```moonbit
+///|
 test "object writing" {
   let buf = @buffer.new()
 
@@ -132,6 +136,7 @@ test "object writing" {
 Provide size hints for better performance:
 
 ```moonbit
+///|
 test "buffer with size hint" {
   // Create buffer with initial capacity hint
   let buf = @buffer.new(size_hint=1024)
@@ -151,6 +156,7 @@ test "buffer with size hint" {
 The buffer implements the Logger trait for Show:
 
 ```moonbit
+///|
 test "buffer as logger" {
   let buf = @buffer.new()
   let array = [1, 2, 3]
@@ -172,6 +178,7 @@ test "buffer as logger" {
 Methods for converting buffer contents:
 
 ```moonbit
+///|
 test "buffer conversion" {
   let buf = @buffer.new()
   buf.write_byte(b'a')
@@ -192,6 +199,7 @@ test "buffer conversion" {
 Support for viewing subsets of bytes:
 
 ```moonbit
+///|
 test "byte view writing" {
   let buf = @buffer.new()
   let bytes = b"Hello World"
@@ -207,3 +215,4 @@ test "byte view writing" {
   )
 }
 ```
+

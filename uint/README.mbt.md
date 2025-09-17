@@ -7,6 +7,7 @@ This package provides functionalities for handling 32-bit unsigned integers in M
 `uint` provides constants for `UInt`'s value range and default value:
 
 ```moonbit
+///|
 test "uint basics" {
   // Default value is 0
   inspect(@uint.default(), content="0")
@@ -22,6 +23,7 @@ test "uint basics" {
 `UInt` can be converted to bytes in both big-endian and little-endian formats:
 
 ```moonbit
+///|
 test "uint byte conversion" {
   let num = 258U // 0x00000102 in hex
 
@@ -50,6 +52,7 @@ test "uint byte conversion" {
 `UInt` can be converted to `Int64` when you need to work with signed 64-bit integers:
 
 ```moonbit
+///|
 test "uint type conversion" {
   let num = 42U
   inspect(num.to_int64(), content="42")
@@ -61,6 +64,7 @@ test "uint type conversion" {
 These conversion functions are also available as methods:
 
 ```moonbit
+///|
 test "uint methods" {
   let num = 1000U
 
@@ -80,3 +84,4 @@ test "uint methods" {
   )
 }
 ```
+
