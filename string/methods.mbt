@@ -463,9 +463,8 @@ pub fn StringView::to_array(self : StringView) -> Array[Char] {
 }
 
 ///|
-/// Converts the View into bytes using UTF-16 little endian format.
-/// 
-#deprecated("check @encoding/utf8.encode")
+#deprecated("Use `@encoding/utf16le.encode` instead")
+#coverage.skip
 pub fn StringView::to_bytes(self : StringView) -> Bytes {
   let array = FixedArray::make(self.length() * 2, Byte::default())
   array.blit_from_string(0, self.data(), self.start_offset(), self.length())

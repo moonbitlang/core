@@ -19,14 +19,16 @@ test "encode" {
   inspect(
     encoded,
     content=(
-      #|b"\x61\x00\x62\x00\x63\x00\x60\x4f\x7d\x59\x3d\xd8\x40\xdc"
+      #|b"a\x00b\x00c\x00`O}Y=\xd8@\xdc"
+
     ),
   )
   let encoded_with_bom = @utf16le.encode(s, bom=true)
   inspect(
     encoded_with_bom,
     content=(
-      #|b"\xff\xfe\x61\x00\x62\x00\x63\x00\x60\x4f\x7d\x59\x3d\xd8\x40\xdc"
+      #|b"\xff\xfea\x00b\x00c\x00`O}Y=\xd8@\xdc"
+
     ),
   )
 }

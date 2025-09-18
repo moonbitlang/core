@@ -1,6 +1,7 @@
 # String Package Documentation
 
-This package provides comprehensive string manipulation utilities for MoonBit, including string creation, conversion, searching, and Unicode handling.
+This package provides comprehensive string manipulation utilities for MoonBit,
+including string creation, conversion, searching, and Unicode handling.
 
 ## String Creation and Conversion
 
@@ -73,6 +74,11 @@ test "string conversion" {
   // Convert to bytes (UTF-8 encoding)
   let bytes = @utf8.encode(text) // Use UTF-8 encoding
   inspect(bytes.length(), content="12")
+  inspect(chars, content="['H', 'e', 'l', 'l', 'o', ' ', '你', '好']")
+  
+  // Convert to bytes (UTF-16 LE encoding)
+  let bytes = @encoding/utf16le.encode(text)
+  inspect(bytes.length(), content="16") // 5 chars * 2 bytes each
 }
 ```
 
@@ -173,7 +179,10 @@ test "practical examples" {
 
 ## Performance Notes
 
-- Use `StringBuilder` or `Buffer` for building strings incrementally rather than repeated concatenation
+- Use `StringBuilder` or `Buffer` for building strings incrementally rather than
+  repeated concatenation
 - String views are lightweight and don't copy the underlying data
-- Unicode iteration handles surrogate pairs correctly but is slower than UTF-16 code unit iteration
-- Character length operations (`char_length_eq`, `char_length_ge`) have O(n) complexity where n is the character count
+- Unicode iteration handles surrogate pairs correctly but is slower than UTF-16
+  code unit iteration
+- Character length operations (`char_length_eq`, `char_length_ge`) have O(n)
+  complexity where n is the character count

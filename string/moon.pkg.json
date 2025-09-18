@@ -4,7 +4,11 @@
     "moonbitlang/core/list",
     "moonbitlang/core/json",
     "moonbitlang/core/quickcheck",
-    "moonbitlang/core/encoding/utf8"
+    "moonbitlang/core/encoding/utf8",
+    {
+      "path": "moonbitlang/core/encoding/utf16le",
+      "alias": "encoding/utf16le"
+    }
   ],
   "targets": {
     "panic_test.mbt": ["not", "native", "llvm"]
