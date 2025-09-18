@@ -13,25 +13,6 @@
 // limitations under the License.
 
 ///|
-/// Step over `step` non-underscore characters.
-/// Return None if there are not enough characters.
-fn StringView::step(self : Self, step : Int) -> Self? {
-  let mut step = step
-  let mut str = self
-  while str is [ch, .. rest] && step > 0 {
-    if ch != '_' {
-      step -= 1
-    }
-    str = rest
-  }
-  if step == 0 {
-    Some(str)
-  } else {
-    None
-  }
-}
-
-///|
 /// Returns the accumulated value, the slice left, and the number of digits consumed.
 /// It ignores underscore and stops when a non-digit character is found.
 fn[T] StringView::fold_digits(
