@@ -18,7 +18,11 @@ fn ParseContext::lex_string(ctx : ParseContext) -> String raise ParseError {
   let mut start = ctx.offset
   fn flush(end : Int) {
     if start > 0 && end > start {
-      buf.write_substring(ctx.input, start, end - start)
+      buf.write_substring(
+        ctx.input.data(),
+        ctx.input.start_offset() + start,
+        end - start,
+      )
     }
   }
 

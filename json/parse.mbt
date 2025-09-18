@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-pub fn valid(input : String) -> Bool {
+pub fn valid(input : StringView) -> Bool {
   try {
     parse(input) |> ignore
     true
@@ -23,7 +23,7 @@ pub fn valid(input : String) -> Bool {
 }
 
 ///|
-pub fn parse(input : String) -> Json raise ParseError {
+pub fn parse(input : StringView) -> Json raise ParseError {
   let ctx = ParseContext::make(input)
   let val = ctx.parse_value()
   ctx.lex_skip_whitespace()
