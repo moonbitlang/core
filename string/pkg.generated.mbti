@@ -110,7 +110,8 @@ fn StringView::to_lower(Self) -> Self
 fn StringView::to_upper(Self) -> Self
 #callsite(migration(char_set, allow_positional=true))
 fn StringView::trim(Self, char_set~ : Self) -> Self
-fn StringView::trim_end(Self, Self) -> Self
+#callsite(migration(char_set, allow_positional=true))
+fn StringView::trim_end(Self, char_set~ : Self) -> Self
 fn StringView::trim_space(Self) -> Self
 #callsite(migration(char_set, allow_positional=true))
 fn StringView::trim_start(Self, char_set~ : Self) -> Self
