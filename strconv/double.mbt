@@ -77,16 +77,7 @@ pub fn parse_double(str : StringView) -> Double raise StrConvError {
   // validate its a number
   let (num, consumed) = match parse_number(str) {
     Some(r) => r
-    None =>
-      match parse_inf_nan(str) {
-        Some((num, consumed)) =>
-          if str.length() != consumed {
-            syntax_err()
-          } else {
-            return num
-          }
-        None => syntax_err()
-      }
+    None => return parse_inf_nan(str)
   }
   if str.length() != consumed {
     syntax_err()
