@@ -219,27 +219,8 @@ pub fn Double::upto(
 }
 
 ///|
-/// Search the index of the first element that satisfies the predicate.
-///
-
-///|
-/// Creates a byte sequence from a UTF-16 encoded string. Each character in the
-/// string is encoded as a pair of bytes in little-endian order.
-///
-/// Parameters:
-///
-/// * `string` : The input string to be converted to a byte sequence.
-///
-/// Returns a new byte sequence containing the UTF-16LE encoded representation of
-/// the input string.
-///
-/// Example:
-///
-/// ```moonbit
-///   let bytes = "ABC".to_bytes()
-///   inspect(bytes, content="b\"\\x41\\x00\\x42\\x00\\x43\\x00\"")
-/// ```
-#deprecated("Use `str.to_bytes()` instead")
+#deprecated("Use `@encoding/utf16.encode` instead")
+#coverage.skip
 pub fn Bytes::of_string(str : String) -> Bytes {
   FixedArray::make(str.length() * 2, Byte::default())
   ..blit_from_string(0, str, 0, str.length())
