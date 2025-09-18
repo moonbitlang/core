@@ -28,6 +28,12 @@ pub impl Show for Int64 with to_string(self) {
 }
 
 ///|
+/// Converts an integer to its string representation in the specified radix (base).
+/// Example:
+/// ```
+/// inspect((255).to_string(radix=16), content="ff")
+/// inspect((-255).to_string(radix=16), content="-ff")
+/// ```
 pub fn Int::to_string(self : Int, radix? : Int = 10) -> String {
   let buf = StringBuilder::new(size_hint=Int::output_size_hint(radix~))
   self.output(buf, radix~)
