@@ -14,127 +14,33 @@
 
 ///|
 test "parse_inf_nan basic cases" {
-  // Test basic NaN parsing
-  let result_nan = parse_inf_nan("nan")
-  match result_nan {
-    Some((value, length)) => {
-      inspect(value.is_nan(), content="true")
-      inspect(length, content="3")
-    }
-    None => fail("Expected to parse 'nan'")
-  }
-
-  // Test basic infinity parsing
-  let result_inf = parse_inf_nan("inf")
-  match result_inf {
-    Some((value, length)) => {
-      inspect(value.is_inf() && value > 0.0, content="true")
-      inspect(length, content="3")
-    }
-    None => fail("Expected to parse 'inf'")
-  }
+  inspect(parse_inf_nan("nan"), content="Some((NaN, 3))")
+  inspect(parse_inf_nan("inf"), content="Some((Infinity, 3))")
 }
 
 ///|
 test "parse_inf_nan with signs" {
-  // Test positive signed NaN
-  let result_pos_nan = parse_inf_nan("+nan")
-  match result_pos_nan {
-    Some((value, length)) => {
-      inspect(value.is_nan(), content="true")
-      inspect(length, content="4")
-    }
-    None => fail("Expected to parse '+nan'")
-  }
-
-  // Test negative signed infinity
-  let result_neg_inf = parse_inf_nan("-inf")
-  match result_neg_inf {
-    Some((value, length)) => {
-      inspect(value.is_inf() && value < 0.0, content="true")
-      inspect(length, content="4")
-    }
-    None => fail("Expected to parse '-inf'")
-  }
+  inspect(parse_inf_nan("+nan"), content="Some((NaN, 4))")
+  inspect(parse_inf_nan("-inf"), content="Some((-Infinity, 4))")
 }
 
 ///|
 test "parse_inf_nan case insensitive" {
-  // Test uppercase
-  let result_uppercase = parse_inf_nan("NAN")
-  match result_uppercase {
-    Some((value, length)) => {
-      inspect(value.is_nan(), content="true")
-      inspect(length, content="3")
-    }
-    None => fail("Expected to parse 'NAN'")
-  }
-
-  // Test mixed case
-  let result_mixed = parse_inf_nan("InF")
-  match result_mixed {
-    Some((value, length)) => {
-      inspect(value.is_inf() && value > 0.0, content="true")
-      inspect(length, content="3")
-    }
-    None => fail("Expected to parse 'InF'")
-  }
+  inspect(parse_inf_nan("NAN"), content="Some((NaN, 3))")
+  inspect(parse_inf_nan("InF"), content="Some((Infinity, 3))")
 }
 
 ///|
 test "parse_inf_nan with infinity suffix" {
-  // Test full infinity word
-  let result_infinity = parse_inf_nan("infinity")
-  match result_infinity {
-    Some((value, length)) => {
-      inspect(value.is_inf() && value > 0.0, content="true")
-      inspect(length, content="8")
-    }
-    None => fail("Expected to parse 'infinity'")
-  }
-
-  // Test signed full infinity
-  let result_neg_infinity = parse_inf_nan("-INFINITY")
-  match result_neg_infinity {
-    Some((value, length)) => {
-      inspect(value.is_inf() && value < 0.0, content="true")
-      inspect(length, content="9")
-    }
-    None => fail("Expected to parse '-INFINITY'")
-  }
+  inspect(parse_inf_nan("infinity"), content="Some((Infinity, 8))")
+  inspect(parse_inf_nan("-INFINITY"), content="Some((-Infinity, 9))")
 }
 
 ///|
 test "parse_inf_nan with trailing strings" {
-  // Test trailing characters after 'inf'
-  let result_trailing = parse_inf_nan("infabc")
-  match result_trailing {
-    Some((value, length)) => {
-      inspect(value.is_inf() && value > 0.0, content="true")
-      inspect(length, content="3") // should only parse 'inf'
-    }
-    None => fail("Expected to parse 'inf' but got None")
-  }
-
-  // Test trailing characters after 'nan'
-  let result_nan_trailing = parse_inf_nan("nanxyz")
-  match result_nan_trailing {
-    Some((value, length)) => {
-      inspect(value.is_nan(), content="true")
-      inspect(length, content="3") // should only parse 'nan'
-    }
-    None => fail("Expected to parse 'nan' but got None")
-  }
-
-  // Test trailing characters after signed infinity
-  let result_signed_trailing = parse_inf_nan("+infinity123")
-  match result_signed_trailing {
-    Some((value, length)) => {
-      inspect(value.is_inf() && value > 0.0, content="true")
-      inspect(length, content="9") // should only parse '+infinity'
-    }
-    None => fail("Expected to parse '+infinity' but got None")
-  }
+  inspect(parse_inf_nan("infabc"), content="Some((Infinity, 3))")
+  inspect(parse_inf_nan("nanxyz"), content="Some((NaN, 3))")
+  inspect(parse_inf_nan("+infinity123"), content="Some((Infinity, 9))")
 }
 
 ///|
