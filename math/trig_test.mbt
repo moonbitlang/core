@@ -168,48 +168,43 @@ test "atanf function comprehensive" {
 
 ///|
 test "atan2f function comprehensive" {
+  let pi = @math.PI.to_float()
   // Testing quadrant I (x > 0, y > 0)
-  assert_true(@math.atan2f(1.0, 1.0).is_close(0.7853981852531433))
-  assert_true(@math.atan2f(2.0, 1.0).is_close(1.1071487665176392))
+  assert_true(@math.atan2f(1.0, 1.0).is_close(pi / 4.0))
+  assert_true(@math.atan2f(2.0, 1.0).is_close(@math.atanf(2.0)))
 
   // Testing quadrant II (x < 0, y > 0)
-  assert_true(@math.atan2f(1.0, -1.0).is_close(3.9269909858703613))
-  assert_true(@math.atan2f(2.0, -1.0).is_close(4.248741149902344))
+  assert_true(@math.atan2f(1.0, -1.0).is_close(pi * 3.0 / 4.0))
+  assert_true(@math.atan2f(2.0, -1.0).is_close(pi - @math.atanf(2.0)))
 
   // Testing quadrant III (x < 0, y < 0)
-  assert_true(@math.atan2f(-1.0, -1.0).is_close(-2.356194496154785))
-  assert_true(@math.atan2f(-2.0, -1.0).is_close(-2.0344438552856445))
+  assert_true(@math.atan2f(-1.0, -1.0).is_close(-pi * 3.0 / 4.0))
+  assert_true(@math.atan2f(-2.0, -1.0).is_close(@math.atanf(2.0) - pi))
 
   // Testing quadrant IV (x > 0, y < 0)
-  assert_true(@math.atan2f(-1.0, 1.0).is_close(-0.7853981852531433))
-  assert_true(@math.atan2f(-2.0, 1.0).is_close(-1.1071487665176392))
+  assert_true(@math.atan2f(-1.0, 1.0).is_close(-pi / 4.0))
+  assert_true(@math.atan2f(-2.0, 1.0).is_close(-@math.atanf(2.0)))
 
   // Testing along axes
-  assert_true(@math.atan2f(0.0, 1.0).is_close(0))
-  assert_true(@math.atan2f(0.0, -1.0).is_close(3.1415927410125732))
-  assert_true(@math.atan2f(1.0, 0.0).is_close(1.5707963705062866))
-  assert_true(@math.atan2f(-1.0, 0.0).is_close(-1.5707963705062866))
+  assert_true(@math.atan2f(0.0, 1.0).is_close(0.0))
+  assert_true(@math.atan2f(0.0, -1.0).is_close(pi))
+  assert_true(@math.atan2f(1.0, 0.0).is_close(pi / 2.0))
+  assert_true(@math.atan2f(-1.0, 0.0).is_close(-pi / 2.0))
 
   // Testing special cases with zeros
-  assert_true(@math.atan2f(0.0, 0.0).is_close(0))
+  assert_true(@math.atan2f(0.0, 0.0).is_close(0.0))
 
   // Testing with infinity
+  assert_true(@math.atan2f(@float.infinity, @float.infinity).is_close(pi / 4.0))
   assert_true(
-    @math.atan2f(@float.infinity, @float.infinity).is_close(0.7853981852531433),
+    @math.atan2f(@float.infinity, @float.neg_infinity).is_close(pi * 3.0 / 4.0),
   )
   assert_true(
-    @math.atan2f(@float.infinity, @float.neg_infinity).is_close(
-      2.356194496154785,
-    ),
-  )
-  assert_true(
-    @math.atan2f(@float.neg_infinity, @float.infinity).is_close(
-      -0.7853981852531433,
-    ),
+    @math.atan2f(@float.neg_infinity, @float.infinity).is_close(-pi / 4.0),
   )
   assert_true(
     @math.atan2f(@float.neg_infinity, @float.neg_infinity).is_close(
-      -2.356194496154785,
+      -pi * 3.0 / 4.0,
     ),
   )
 
