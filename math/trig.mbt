@@ -477,9 +477,9 @@ pub fn atanf(x : Float) -> Float {
 /// * `y` : The numerator of the quotient.
 /// * `x` : The denominator of the quotient.
 ///
-/// Returns the arctangent of the quotient `x / x`.
+/// Returns the arctangent of the quotient `y / x`.
 ///
-/// * Returns NaN if x or x is NaN.
+/// * Returns NaN if x or y is NaN.
 ///
 /// Example:
 ///
@@ -503,7 +503,6 @@ pub fn atan2f(y : Float, x : Float) -> Float {
     return @float.not_a_number
   }
   let pi : Float = 3.1415927410e+00
-  let pi_lo : Float = -8.7422776573e-08
   let zero : Float = 0.0
   let ix = x.reinterpret_as_uint()
   let iy = y.reinterpret_as_uint()
@@ -548,12 +547,12 @@ pub fn atan2f(y : Float, x : Float) -> Float {
   let z = if (m & 2) != 0 && iy + (26U << 23) < ix {
     zero
   } else {
-    atanf(y / x)
+    atanf(y.abs() / x.abs())
   }
   match m {
     0 => z
     1 => -z
-    2 => pi - (z - pi_lo)
-    _ => z - pi_lo - pi
+    2 => pi - z
+    _ => z - pi
   }
 }
