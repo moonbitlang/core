@@ -7,6 +7,7 @@ This package provides comprehensive support for double-precision floating-point 
 The package provides several important constants and special floating-point values:
 
 ```moonbit
+///|
 test "special values" {
   // Special values
   inspect(@double.infinity, content="Infinity")
@@ -25,6 +26,7 @@ test "special values" {
 Basic mathematical operations and rounding functions:
 
 ```moonbit
+///|
 test "basic operations" {
   // Absolute value
   inspect(@double.abs(-3.14), content="3.14")
@@ -40,7 +42,7 @@ test "basic operations" {
 
   // Sign
   inspect((-3.14).signum(), content="-1")
-  inspect((2.0).signum(), content="1")
+  inspect(2.0.signum(), content="1")
 
   // Type conversion
   inspect(@double.from_int(42), content="42")
@@ -52,6 +54,7 @@ test "basic operations" {
 Functions for testing special floating-point values and comparing numbers:
 
 ```moonbit
+///|
 test "special value testing" {
   // Testing for special values
   inspect(@double.not_a_number.is_nan(), content="true")
@@ -61,10 +64,7 @@ test "special value testing" {
 
   // Approximate equality
   let relative_tolerance = 1.e-9
-  inspect(
-    @double.is_close(0.1 + 0.2, 0.3, relative_tolerance~),
-    content="true",
-  )
+  inspect(@double.is_close(0.1 + 0.2, 0.3, relative_tolerance~), content="true")
 }
 ```
 
@@ -73,6 +73,7 @@ test "special value testing" {
 Functions for converting doubles to their binary representation:
 
 ```moonbit
+///|
 test "binary representation" {
   let num = 1.0
 
@@ -94,3 +95,4 @@ test "binary representation" {
 ```
 
 Note: Most methods can be called either as a method (`d.to_be_bytes()`) or as a package function (`@double.to_be_bytes(d)`).
+

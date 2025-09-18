@@ -7,6 +7,7 @@ The `json` package provides comprehensive JSON handling capabilities, including 
 ### Parsing and Validating JSON
 
 ```moonbit
+///|
 test "parse and validate jsons" {
   // Check if a string is valid JSON
   assert_true(@json.valid("{\"key\": 42}"))
@@ -37,6 +38,7 @@ test "parse and validate jsons" {
 ### Object Navigation
 
 ```moonbit
+///|
 test "json object navigation" {
   let json = @json.parse(
     "{\"string\":\"hello\",\"number\":42,\"array\":[1,2,3]}",
@@ -67,6 +69,7 @@ test "json object navigation" {
 ### Array Navigation
 
 ```moonbit
+///|
 test "json array navigation" {
   let array = @json.parse("[1,2,3,4,5]")
 
@@ -92,6 +95,7 @@ test "json array navigation" {
 ### From JSON to Native Types
 
 ```moonbit
+///|
 test "json decode" {
   // Decode basic types
   let json_number = (42 : Json)
@@ -118,6 +122,7 @@ test "json decode" {
 ### Error Handling with JSON Path
 
 ```moonbit
+///|
 test "json path" {
   // Handle decode errors
   try {
@@ -138,8 +143,9 @@ test "json path" {
 This is particularly true for deeply-nested data structures.
 
 ```moonbit
+///|
 test "json inspection" {
-  let null = null 
+  let null = null
 
   // Simple json values
   let json_value : Json = { "key": "value", "numbers": [1, 2, 3] }
@@ -150,3 +156,4 @@ test "json inspection" {
   @json.inspect(json_special, content={ "null": null, "bool": true })
 }
 ```
+

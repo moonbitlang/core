@@ -9,6 +9,7 @@ A priority queue is a data structure capable of maintaining maximum/minimum valu
 You can use `new()` or `of()` to create an immutable priority queue.
 
 ```moonbit
+///|
 test {
   let _queue1 : @priority_queue.PriorityQueue[Int] = @priority_queue.new()
   let _queue2 = @priority_queue.of([1, 2, 3])
@@ -23,6 +24,7 @@ Note, however, that the default immutable priority queue created is greater-firs
 You can use the `length` to get the length of the immutable priority queue.
 
 ```moonbit
+///|
 test {
   let pq = @priority_queue.new()
   assert_eq(pq.length(), 0)
@@ -33,6 +35,7 @@ test {
 You can use the `is_empty` to determine whether the immutable priority queue is empty.
 
 ```moonbit
+///|
 test {
   let pq : @priority_queue.PriorityQueue[Int] = @priority_queue.new()
   assert_eq(pq.is_empty(), true)
@@ -44,6 +47,7 @@ test {
 You can use `peek()` to look at the head element of a queue, which must be either the maximum or minimum value of an element in the queue, depending on the nature of the specification. The return value of `peek()` is an Option, which means that the result will be `None` when the queue is empty.
 
 ```moonbit
+///|
 test {
   let pq = @priority_queue.of([1, 2, 3, 4, 5])
   assert_eq(pq.peek(), Some(5))
@@ -56,6 +60,7 @@ test {
 You can use `push()` to add elements to the immutable priority queue and get a new queue.
 
 ```moonbit
+///|
 test {
   let pq : @priority_queue.PriorityQueue[Int] = @priority_queue.new()
   assert_eq(pq.push(1).peek(), Some(1))
@@ -65,6 +70,7 @@ test {
 You can use `pop()` to remove the element at the front of the priority queue and get a new immutable priority queue wrapped with Option. If the immutable priority queue is empty, then it will return None.
 
 ```moonbit
+///|
 test {
   let pq = @priority_queue.of([5, 4, 3, 2, 1])
   let val = match pq.pop() {
@@ -74,3 +80,4 @@ test {
   assert_eq(val, Some(4))
 }
 ```
+

@@ -9,8 +9,10 @@ A mutable hash map based on a Robin Hood hash table.
 You can create an empty map using `new()` or construct it using `from_array()`.
 
 ```moonbit
+///|
 test {
   let _map2 : @hashmap.HashMap[String, Int] = @hashmap.new()
+
 }
 ```
 
@@ -19,6 +21,7 @@ test {
 You can use `set()` to add a key-value pair to the map, and use `get()` to get a value.
 
 ```moonbit
+///|
 test {
   let map : @hashmap.HashMap[String, Int] = @hashmap.new()
   map.set("a", 1)
@@ -35,10 +38,11 @@ test {
 You can use `remove()` to remove a key-value pair.
 
 ```moonbit
+///|
 test {
-    let map = @hashmap.of([("a", 1), ("b", 2), ("c", 3)])
-    map.remove("a") |> ignore
-    assert_eq(map.to_array(), [("c", 3), ("b", 2)])
+  let map = @hashmap.of([("a", 1), ("b", 2), ("c", 3)])
+  map.remove("a") |> ignore
+  assert_eq(map.to_array(), [("c", 3), ("b", 2)])
 }
 ```
 
@@ -47,11 +51,12 @@ test {
 You can use `contains()` to check whether a key exists.
 
 ```moonbit
+///|
 test {
-    let map = @hashmap.of([("a", 1), ("b", 2), ("c", 3)])
-    assert_eq(map.contains("a"), true)
-    assert_eq(map.contains("d"), false)
-}    
+  let map = @hashmap.of([("a", 1), ("b", 2), ("c", 3)])
+  assert_eq(map.contains("a"), true)
+  assert_eq(map.contains("d"), false)
+}
 ```
 
 ## Size & Capacity
@@ -59,19 +64,21 @@ test {
 You can use `size()` to get the number of key-value pairs in the map, or `capacity()` to get the current capacity.
 
 ```moonbit
+///|
 test {
-    let map = @hashmap.of([("a", 1), ("b", 2), ("c", 3)])
-    assert_eq(map.size(), 3)
-    assert_eq(map.capacity(), 8)
-}    
+  let map = @hashmap.of([("a", 1), ("b", 2), ("c", 3)])
+  assert_eq(map.size(), 3)
+  assert_eq(map.capacity(), 8)
+}
 ```
 
 Similarly, you can use `is_empty()` to check whether the map is empty.
 
 ```moonbit
+///|
 test {
-    let map: @hashmap.HashMap[String, Int] = @hashmap.new()
-    assert_eq(map.is_empty(), true)
+  let map : @hashmap.HashMap[String, Int] = @hashmap.new()
+  assert_eq(map.is_empty(), true)
 }
 ```
 
@@ -80,10 +87,11 @@ test {
 You can use `clear` to remove all key-value pairs from the map, but the allocated memory will not change.
 
 ```moonbit
+///|
 test {
-   let map = @hashmap.of([("a", 1), ("b", 2), ("c", 3)])
-    map.clear()
-    assert_eq(map.is_empty(), true)
+  let map = @hashmap.of([("a", 1), ("b", 2), ("c", 3)])
+  map.clear()
+  assert_eq(map.is_empty(), true)
 }
 ```
 
@@ -92,20 +100,24 @@ test {
 You can use `each()` or `eachi()` to iterate through all key-value pairs.
 
 ```moonbit
+///|
 test {
-   let map = @hashmap.of([("a", 1), ("b", 2), ("c", 3)])
-   let arr = []
-    map.each((k, v) => { arr.push((k, v)) })
-    let arr2 = []
-    map.eachi((i, k, v) => { arr2.push((i, k, v)) })
+  let map = @hashmap.of([("a", 1), ("b", 2), ("c", 3)])
+  let arr = []
+  map.each((k, v) => arr.push((k, v)))
+  let arr2 = []
+  map.eachi((i, k, v) => arr2.push((i, k, v)))
 }
 ```
 
 Or use `iter()` to get an iterator of hashmap.
 
 ```moonbit
+///|
 test {
   let map = @hashmap.of([("a", 1), ("b", 2), ("c", 3)])
   let _iter = map.iter()
+
 }
 ```
+

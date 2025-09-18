@@ -7,6 +7,7 @@ The `moonbitlang/core/int` package provides essential operations on 32-bit integ
 This section shows the basic operations available for integers:
 
 ```moonbit
+///|
 test "basic int operations" {
   // Get absolute value
   inspect(@int.abs(-42), content="42")
@@ -23,6 +24,7 @@ test "basic int operations" {
 The package provides methods to convert integers to their byte representation in both big-endian and little-endian formats:
 
 ```moonbit
+///|
 test "byte conversions" {
   let num = 258 // 0x0102 in hex
 
@@ -51,6 +53,7 @@ test "byte conversions" {
 All operations are also available using method syntax for better readability:
 
 ```moonbit
+///|
 test "method syntax" {
   let n = -42
 
@@ -76,3 +79,4 @@ test "method syntax" {
 ```
 
 The package provides the foundations for 32-bit integer operations in MoonBit, essential for any numeric computation.
+
