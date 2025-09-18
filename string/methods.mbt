@@ -621,9 +621,10 @@ test "contains_char" {
 ///|
 /// Returns the view of the string without the leading characters that are in
 /// the given string.
+#callsite(migration(char_set, allow_positional=true))
 pub fn StringView::trim_start(
   self : StringView,
-  char_set : StringView,
+  char_set~ : StringView,
 ) -> StringView {
   loop self {
     [] as v => v
@@ -639,32 +640,34 @@ pub fn StringView::trim_start(
 ///|
 /// Returns the view of the string without the leading characters that are in
 /// the given string.
-pub fn trim_start(self : String, char_set : StringView) -> StringView {
-  self[:].trim_start(char_set)
+#callsite(migration(char_set, allow_positional=true))
+pub fn trim_start(self : String, char_set~ : StringView) -> StringView {
+  self[:].trim_start(char_set~)
 }
 
 ///|
 test "trim_start" {
-  inspect("hello".trim_start("h"), content="ello")
-  inspect("hello".trim_start("he"), content="llo")
-  inspect("hello".trim_start("eh"), content="llo")
-  inspect("hello".trim_start("x"), content="hello")
-  inspect("hello".trim_start(""), content="hello")
-  inspect("".trim_start("a"), content="")
-  inspect("   hello".trim_start(" "), content="hello")
-  inspect("hello world".trim_start("helo"), content=" world")
-  inspect("😀😀hello".trim_start("😀"), content="hello")
-  inspect("😀😃hello".trim_start("😀😃"), content="hello")
-  inspect("aaaabc".trim_start("a"), content="bc")
-  inspect("aaaa".trim_start("a"), content="")
+  inspect("hello".trim_start(char_set="h"), content="ello")
+  inspect("hello".trim_start(char_set="he"), content="llo")
+  inspect("hello".trim_start(char_set="eh"), content="llo")
+  inspect("hello".trim_start(char_set="x"), content="hello")
+  inspect("hello".trim_start(char_set=""), content="hello")
+  inspect("".trim_start(char_set="a"), content="")
+  inspect("   hello".trim_start(char_set=" "), content="hello")
+  inspect("hello world".trim_start(char_set="helo"), content=" world")
+  inspect("😀😀hello".trim_start(char_set="😀"), content="hello")
+  inspect("😀😃hello".trim_start(char_set="😀😃"), content="hello")
+  inspect("aaaabc".trim_start(char_set="a"), content="bc")
+  inspect("aaaa".trim_start(char_set="a"), content="")
 }
 
 ///|
 /// Returns the view of the string without the trailing characters that are in
 /// the given string.
+#callsite(migration(char_set, allow_positional=true))
 pub fn StringView::trim_end(
   self : StringView,
-  char_set : StringView,
+  char_set~ : StringView,
 ) -> StringView {
   loop self {
     [] as v => v
@@ -680,23 +683,24 @@ pub fn StringView::trim_end(
 ///|
 /// Returns the view of the string without the trailing characters that are in
 /// the given string.
-pub fn trim_end(self : String, char_set : StringView) -> StringView {
-  self[:].trim_end(char_set)
+#callsite(migration(char_set, allow_positional=true))
+pub fn trim_end(self : String, char_set~ : StringView) -> StringView {
+  self[:].trim_end(char_set~)
 }
 
 ///|
 test "trim_end" {
-  inspect("hello".trim_end("o"), content="hell")
-  inspect("hello".trim_end("lo"), content="he")
-  inspect("hello".trim_end("x"), content="hello")
-  inspect("hello".trim_end(""), content="hello")
-  inspect("".trim_end("a"), content="")
-  inspect("hello   ".trim_end(" "), content="hello")
-  inspect("hello world".trim_end("dlrow "), content="he")
-  inspect("hello😀😀".trim_end("😀"), content="hello")
-  inspect("hello😀😃".trim_end("😀😃"), content="hello")
-  inspect("abcccc".trim_end("c"), content="ab")
-  inspect("cccc".trim_end("c"), content="")
+  inspect("hello".trim_end(char_set="o"), content="hell")
+  inspect("hello".trim_end(char_set="lo"), content="he")
+  inspect("hello".trim_end(char_set="x"), content="hello")
+  inspect("hello".trim_end(char_set=""), content="hello")
+  inspect("".trim_end(char_set="a"), content="")
+  inspect("hello   ".trim_end(char_set=" "), content="hello")
+  inspect("hello world".trim_end(char_set="dlrow "), content="he")
+  inspect("hello😀😀".trim_end(char_set="😀"), content="hello")
+  inspect("hello😀😃".trim_end(char_set="😀😃"), content="hello")
+  inspect("abcccc".trim_end(char_set="c"), content="ab")
+  inspect("cccc".trim_end(char_set="c"), content="")
 }
 
 ///|
@@ -707,7 +711,7 @@ pub fn StringView::trim(
   self : StringView,
   char_set~ : StringView,
 ) -> StringView {
-  self.trim_start(char_set).trim_end(char_set)
+  self.trim_start(char_set~).trim_end(char_set~)
 }
 
 ///|

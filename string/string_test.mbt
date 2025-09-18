@@ -171,15 +171,18 @@ test "Buffer::to_bytes" {
 
 ///|
 test "trim_start" {
-  inspect("aaabcd".trim_start("a"), content="bcd")
-  inspect("aaabcd".trim_start(" "), content="aaabcd")
-  inspect("aaabcd".trim_start(""), content="aaabcd")
-  inspect("  abc".trim_start(" "), content="abc")
+  inspect("aaabcd".trim_start(char_set="a"), content="bcd")
+  inspect("aaabcd".trim_start(char_set=" "), content="aaabcd")
+  inspect("aaabcd".trim_start(char_set=""), content="aaabcd")
+  inspect("  abc".trim_start(char_set=" "), content="abc")
   inspect(
-    "哇你好月兔你好哇".trim_start("你好哇"),
+    "哇你好月兔你好哇".trim_start(char_set="你好哇"),
     content="月兔你好哇",
   )
-  inspect("😍😍😭😡😡".trim_start("😍"), content="😭😡😡")
+  inspect(
+    "😍😍😭😡😡".trim_start(char_set="😍"),
+    content="😭😡😡",
+  )
 }
 
 ///|
@@ -192,15 +195,18 @@ test "contains" {
 
 ///|
 test "trim_end" {
-  inspect("abcddd".trim_end("d"), content="abc")
-  inspect("abcddd".trim_end(" "), content="abcddd")
-  inspect("abcddd".trim_end(""), content="abcddd")
-  inspect("abc  ".trim_end(" "), content="abc")
+  inspect("abcddd".trim_end(char_set="d"), content="abc")
+  inspect("abcddd".trim_end(char_set=" "), content="abcddd")
+  inspect("abcddd".trim_end(char_set=""), content="abcddd")
+  inspect("abc  ".trim_end(char_set=" "), content="abc")
   inspect(
-    "哇你好月兔你好哇".trim_end("你好哇"),
+    "哇你好月兔你好哇".trim_end(char_set="你好哇"),
     content="哇你好月兔",
   )
-  inspect("😍😍😭😡😡".trim_end("😡"), content="😍😍😭")
+  inspect(
+    "😍😍😭😡😡".trim_end(char_set="😡"),
+    content="😍😍😭",
+  )
 }
 
 ///|
