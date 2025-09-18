@@ -14,42 +14,42 @@
 
 ///|
 test "parse_inf_nan basic cases" {
-  inspect(parse_inf_nan("nan"), content="Some((NaN, 3))")
-  inspect(parse_inf_nan("inf"), content="Some((Infinity, 3))")
+  inspect(parse_inf_nan("nan"), content="NaN")
+  inspect(parse_inf_nan("inf"), content="Infinity")
 }
 
 ///|
 test "parse_inf_nan with signs" {
-  inspect(parse_inf_nan("+nan"), content="Some((NaN, 4))")
-  inspect(parse_inf_nan("-inf"), content="Some((-Infinity, 4))")
+  inspect(parse_inf_nan("+nan"), content="NaN")
+  inspect(parse_inf_nan("-inf"), content="-Infinity")
 }
 
 ///|
 test "parse_inf_nan case insensitive" {
-  inspect(parse_inf_nan("NAN"), content="Some((NaN, 3))")
-  inspect(parse_inf_nan("InF"), content="Some((Infinity, 3))")
+  inspect(parse_inf_nan("NAN"), content="NaN")
+  inspect(parse_inf_nan("InF"), content="Infinity")
 }
 
 ///|
 test "parse_inf_nan with infinity suffix" {
-  inspect(parse_inf_nan("infinity"), content="Some((Infinity, 8))")
-  inspect(parse_inf_nan("-INFINITY"), content="Some((-Infinity, 9))")
+  inspect(parse_inf_nan("infinity"), content="Infinity")
+  inspect(parse_inf_nan("-INFINITY"), content="-Infinity")
 }
 
 ///|
 test "parse_inf_nan with trailing strings" {
-  inspect(parse_inf_nan("infabc"), content="Some((Infinity, 3))")
-  inspect(parse_inf_nan("nanxyz"), content="Some((NaN, 3))")
-  inspect(parse_inf_nan("+infinity123"), content="Some((Infinity, 9))")
+  inspect(try? parse_inf_nan("infabc"), content="Err(invalid syntax)")
+  inspect(try? parse_inf_nan("nanxyz"), content="Err(invalid syntax)")
+  inspect(try? parse_inf_nan("+infinity123"), content="Err(invalid syntax)")
 }
 
 ///|
 test "parse_inf_nan failures" {
   // Test invalid input
-  inspect(parse_inf_nan("hello"), content="None")
-  inspect(parse_inf_nan(""), content="None")
-  inspect(parse_inf_nan("in"), content="None")
-  inspect(parse_inf_nan("na"), content="None")
+  inspect(try? parse_inf_nan("hello"), content="Err(invalid syntax)")
+  inspect(try? parse_inf_nan(""), content="Err(invalid syntax)")
+  inspect(try? parse_inf_nan("in"), content="Err(invalid syntax)")
+  inspect(try? parse_inf_nan("na"), content="Err(invalid syntax)")
 }
 
 ///|

@@ -168,29 +168,25 @@ fn parse_number(s : StringView) -> (Number, Int)? {
 
 ///|
 /// Parse the number from the string, returning the number and the length of the parsed string.
-fn parse_inf_nan(s : StringView) -> (Double, Int)? {
-  let mut s = s
-  let mut pos = true
-  let mut len = 0
-  if s is ['-' | '+' as ch, .. rest] {
-    pos = ch == '+'
-    s = rest
-    len += 1
+fn parse_inf_nan(rest : StringView) -> Double raise StrConvError {
+  let (pos, rest) = match rest {
+    ['-', .. rest] => (false, rest)
+    ['+', .. rest] | rest => (true, rest)
   }
-  if s is ['n' | 'N', 'a' | 'A', 'n' | 'N', ..] {
-    Some((@double.not_a_number, len + 3))
-  } else if s is ['i' | 'I', 'n' | 'N', 'f' | 'F', .. rest] {
-    len += 3
-    if rest is ['i' | 'I', 'n' | 'N', 'i' | 'I', 't' | 'T', 'y' | 'Y', ..] {
-      len += 5
+  match rest {
+    ['n' | 'N', 'a' | 'A', 'n' | 'N'] => @double.not_a_number
+    ['i' | 'I', 'n' | 'N', 'f' | 'F', .. rest] => {
+      guard rest
+        is ([] | ['i' | 'I', 'n' | 'N', 'i' | 'I', 't' | 'T', 'y' | 'Y']) else {
+        syntax_err()
+      }
+      if pos {
+        @double.infinity
+      } else {
+        @double.neg_infinity
+      }
     }
-    if pos {
-      Some((@double.infinity, len))
-    } else {
-      Some((@double.neg_infinity, len))
-    }
-  } else {
-    None
+    _ => syntax_err()
   }
 }
 
