@@ -17,11 +17,12 @@ priv struct ParseContext {
   mut offset : Int
   input : String
   end_offset : Int
+  mut depth : Int
 }
 
 ///|
 fn ParseContext::make(input : String) -> ParseContext {
-  { offset: 0, input, end_offset: input.length() }
+  { offset: 0, input, end_offset: input.length(), depth: 0 }
 }
 
 ///|
