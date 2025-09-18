@@ -24,6 +24,7 @@ pub(all) suberror ParseError {
   InvalidEof
   InvalidNumber(Position, String)
   InvalidIdentEscape(Position)
+  DepthLimitExceeded
 } derive(Eq, ToJson)
 
 ///|
@@ -52,6 +53,7 @@ pub impl Show for ParseError with output(self, logger) {
       ..write_object(line)
       ..write_string(", column ")
       ..write_object(column)
+    DepthLimitExceeded => logger.write_string("Depth limit exceeded")
   }
 }
 
