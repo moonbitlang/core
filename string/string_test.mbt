@@ -205,12 +205,15 @@ test "trim_end" {
 
 ///|
 test "trim" {
-  inspect("xxxabcxxx".trim("x"), content="abc")
-  inspect("xxxabcxxx".trim(""), content="xxxabcxxx")
-  inspect("哇你好月兔你好哇".trim("你好哇"), content="月兔")
-  inspect("\n\r\t abc \n\r\t".trim(" \n\r\t"), content="abc")
-  inspect("=-wow-=".trim("-="), content="wow")
-  inspect("😍😍😭😡😡".trim("😍😡"), content="😭")
+  inspect("xxxabcxxx".trim(char_set="x"), content="abc")
+  inspect("xxxabcxxx".trim(char_set=""), content="xxxabcxxx")
+  inspect(
+    "哇你好月兔你好哇".trim(char_set="你好哇"),
+    content="月兔",
+  )
+  inspect("\n\r\t abc \n\r\t".trim(char_set=" \n\r\t"), content="abc")
+  inspect("=-wow-=".trim(char_set="-="), content="wow")
+  inspect("😍😍😭😡😡".trim(char_set="😍😡"), content="😭")
 }
 
 ///|
