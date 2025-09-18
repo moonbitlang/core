@@ -526,3 +526,23 @@ test "nested json" {
     },
   })
 }
+
+test "call stack overflow" {
+  let depth = 50000
+  let json_string = StringBuilder::new()
+  for _ in (0..=depth) {
+    json_string.write_char('[')
+  }
+  for _ in (0..=depth) {
+    json_string.write_char(']')
+  }
+
+  println("If the parser is vulnerable, this program will crash with a stack overflow.")
+
+  match @json.parse(json_string.to_string()) {
+    Json::Array(arr) => {
+      println(arr)
+    }
+    _ => fail("Parsing failed unexpectedly")
+  }
+}
