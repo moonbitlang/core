@@ -73,7 +73,7 @@ fn parse_scientific(s : StringView) -> (StringView, Int64)? {
 }
 
 ///|
-/// Parse the number from the string, returning the number and the length of the parsed string.
+/// Parse the number from the string, raising StrConvError if invalid.
 fn parse_number(s : StringView) -> Number? raise StrConvError {
   let start = s
 
@@ -159,7 +159,7 @@ fn parse_number(s : StringView) -> Number? raise StrConvError {
 }
 
 ///|
-/// Parse the number from the string, returning the number and the length of the parsed string.
+/// Parse the number from the string, raising `StrConvError` if invalid.
 fn parse_inf_nan(rest : StringView) -> Double raise StrConvError {
   let (pos, rest) = match rest {
     ['-', .. rest] => (false, rest)
