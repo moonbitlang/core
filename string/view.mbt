@@ -48,7 +48,7 @@ fn StringView::make_view(str : String, start : Int, end : Int) -> StringView = "
 ///   inspect(view[0].to_char(), content="Some('e')")
 ///   inspect(view[4], content="55358")
 /// ```
-#alias(op_get)
+#alias("_[_]")
 pub fn StringView::at(self : StringView, index : Int) -> Int {
   guard index >= 0 && index < self.length() else {
     abort("Index out of bounds")
