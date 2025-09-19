@@ -31,7 +31,8 @@ fn[T] FixedArraySlice::at(self : FixedArraySlice[T], index : Int) -> T {
 }
 
 ///|
-fn[T] FixedArraySlice::op_set(
+#alias("_[_]=_")
+fn[T] FixedArraySlice::set(
   self : FixedArraySlice[T],
   index : Int,
   value : T,

@@ -115,7 +115,7 @@ test {
 }
 ```
 
-You can also use `op_set` to set elements of the queue directly, but be careful not to cross the boundaries!
+You can also use `Deque::set` or operator `_[_]=_`to set elements of the queue directly, but be careful not to cross the boundaries!
 
 ```moonbit
 ///|

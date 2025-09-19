@@ -28,6 +28,6 @@ test "panic op_get" {
 }
 
 ///|
-test "panic op_set" {
+test "panic Deque::set" {
   @deque.of([1, 2, 3])[-1] = 1
 }

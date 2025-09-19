@@ -618,7 +618,7 @@ test "remove" {
 }
 
 ///|
-test "op_set" {
+test "_[_]=_" {
   let map = new()
   map[1] = "a"
   map[2] = "b"

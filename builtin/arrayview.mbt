@@ -134,7 +134,8 @@ pub fn[T] ArrayView::unsafe_get(self : ArrayView[T], index : Int) -> T {
 ///
 ///
 #deprecated("ArrayView will be immutable, use array if you need mutation")
-pub fn[T] ArrayView::op_set(
+#alias("_[_]=_")
+pub fn[T] ArrayView::set(
   self : ArrayView[T],
   index : Int,
   value : T,

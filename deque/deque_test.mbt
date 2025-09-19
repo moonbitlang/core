@@ -251,7 +251,7 @@ test "copy" {
 }
 
 ///|
-test "op_set" {
+test "Deque::set" {
   let dv = @deque.of([1, 2, 3, 4, 5])
   dv[1] = 3
   inspect(dv[1], content="3")
@@ -465,7 +465,7 @@ test "unsafe_pop_back when tail needs to wrap around" {
 }
 
 ///|
-test "deque op_set wrapping case" {
+test "deque Deque::set wrapping case" {
   let dq = @deque.new(capacity=4)
   // Add elements until the deque wraps around
   dq.push_back(1) // head=0, tail=0

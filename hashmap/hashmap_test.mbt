@@ -67,7 +67,7 @@ test "get_or_init full" {
 }
 
 ///|
-test "op_set" {
+test "_[_]=_" {
   let m = @hashmap.new()
   m["a"] = 1
   m["b"] = 2
