@@ -63,6 +63,7 @@ pub(all) suberror SnapshotError String
 
 // Types and methods
 pub(all) struct ArgsLoc(Array[SourceLoc?])
+#deprecated
 fn ArgsLoc::inner(Self) -> Array[SourceLoc?]
 fn ArgsLoc::to_json(Self) -> String
 impl Show for ArgsLoc
