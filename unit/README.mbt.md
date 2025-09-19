@@ -155,8 +155,8 @@ test "result accumulation" {
   let operations = [
     fn() { () }, // Operation 1
     fn() { () }, // Operation 2
-    fn() { () }, // Operation 3
-  ]
+    fn() { () },
+  ] // Operation 3
   let final_result = operations.fold(init=(), fn(acc, operation) {
     operation() // Execute the operation
     acc // Accumulate unit values

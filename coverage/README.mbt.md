@@ -257,6 +257,7 @@ In real applications, coverage tracking is typically generated automatically:
 
 ```moonbit
 // This is conceptual - actual coverage is compiler-generated
+
 ///|
 fn example_function(x : Int) -> String {
   // Compiler automatically inserts: coverage.incr(0)

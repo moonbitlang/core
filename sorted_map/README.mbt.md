@@ -210,6 +210,7 @@ Edge cases for range operations:
 
 ```moonbit
 // Example with out-of-bounds range
+
 ///|
 test {
   let map = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
