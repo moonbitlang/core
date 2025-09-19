@@ -136,7 +136,7 @@ fn[T] Array::split_at(Self[T], Int) -> (Self[T], Self[T])
 fn[T : Eq] Array::starts_with(Self[T], Self[T]) -> Bool
 fn[T : Eq] Array::strip_prefix(Self[T], Self[T]) -> Self[T]?
 fn[T : Eq] Array::strip_suffix(Self[T], Self[T]) -> Self[T]?
-#alias(op_as_view)
+#alias("_[_:_]")
 fn[T] Array::sub(Self[T], start? : Int, end? : Int) -> ArrayView[T]
 fn[T] Array::swap(Self[T], Int, Int) -> Unit
 fn[A] Array::truncate(Self[A], Int) -> Unit
@@ -164,7 +164,7 @@ fn[T] ArrayView::length(Self[T]) -> Int
 #alias("_[_]=_")
 #deprecated
 fn[T] ArrayView::set(Self[T], Int, T) -> Unit
-#alias(op_as_view)
+#alias("_[_:_]")
 fn[T] ArrayView::sub(Self[T], start? : Int, end? : Int) -> Self[T]
 #deprecated
 fn[T] ArrayView::swap(Self[T], Int, Int) -> Unit
@@ -232,7 +232,7 @@ fn[T] Iter::prepend(Self[T], T) -> Self[T]
 fn[T] Iter::repeat(T) -> Self[T]
 fn[T] Iter::run(Self[T], (T) -> IterResult) -> IterResult
 fn[T] Iter::singleton(T) -> Self[T]
-#alias(op_as_view)
+#alias("_[_:_]")
 fn[A] Iter::sub(Self[A], start? : Int, end? : Int) -> Self[A]
 fn[T] Iter::take(Self[T], Int) -> Self[T]
 fn[T] Iter::take_while(Self[T], (T) -> Bool) -> Self[T]
@@ -331,7 +331,7 @@ fn[A] UninitializedArray::length(Self[A]) -> Int
 fn[T] UninitializedArray::make(Int) -> Self[T]
 #alias("_[_]=_")
 fn[T] UninitializedArray::set(Self[T], Int, T) -> Unit
-#alias(op_as_view)
+#alias("_[_:_]")
 fn[T] UninitializedArray::sub(Self[T], start? : Int, end? : Int) -> ArrayView[T]
 fn[T] UninitializedArray::unsafe_blit(Self[T], Int, Self[T], Int, Int) -> Unit
 
@@ -563,7 +563,7 @@ fn[T] FixedArray::set(Self[T], Int, T) -> Unit
 fn FixedArray::set_utf16be_char(Self[Byte], Int, Char) -> Int
 fn FixedArray::set_utf16le_char(Self[Byte], Int, Char) -> Int
 fn FixedArray::set_utf8_char(Self[Byte], Int, Char) -> Int
-#alias(op_as_view)
+#alias("_[_:_]")
 fn[T] FixedArray::sub(Self[T], start? : Int, end? : Int) -> ArrayView[T]
 fn[A] FixedArray::unsafe_blit(Self[A], Int, Self[A], Int, Int) -> Unit
 fn[T] FixedArray::unsafe_get(Self[T], Int) -> T

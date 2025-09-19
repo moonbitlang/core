@@ -46,7 +46,7 @@ fn String::rev_iter(String) -> Iter[Char]
 fn String::split(String, StringView) -> Iter[StringView]
 fn String::strip_prefix(String, StringView) -> StringView?
 fn String::strip_suffix(String, StringView) -> StringView?
-#alias(op_as_view)
+#alias("_[_:_]")
 fn String::sub(String, start? : Int, end? : Int) -> StringView raise CreatingViewError
 fn String::to_array(String) -> Array[Char]
 fn String::to_bytes(String) -> Bytes
@@ -99,7 +99,7 @@ fn StringView::split(Self, Self) -> Iter[Self]
 fn StringView::start_offset(Self) -> Int
 fn StringView::strip_prefix(Self, Self) -> Self?
 fn StringView::strip_suffix(Self, Self) -> Self?
-#alias(op_as_view)
+#alias("_[_:_]")
 fn StringView::sub(Self, start? : Int, end? : Int) -> Self raise CreatingViewError
 fn StringView::to_array(Self) -> Array[Char]
 fn StringView::to_bytes(Self) -> Bytes
