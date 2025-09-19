@@ -7,7 +7,7 @@ fn[T : FromJson] from_json(Json, path? : JsonPath) -> T raise JsonDecodeError
 #callsite(autofill(args_loc, loc))
 fn inspect(&ToJson, content? : Json, loc~ : SourceLoc, args_loc~ : ArgsLoc) -> Unit raise InspectError
 
-fn parse(String) -> Json raise ParseError
+fn parse(String, max_nesting_depth? : Int) -> Json raise ParseError
 
 fn valid(String) -> Bool
 
@@ -22,6 +22,7 @@ pub(all) suberror ParseError {
   InvalidEof
   InvalidNumber(Position, String)
   InvalidIdentEscape(Position)
+  DepthLimitExceeded
 }
 impl Eq for ParseError
 impl Show for ParseError
