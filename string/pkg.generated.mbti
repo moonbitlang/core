@@ -60,7 +60,7 @@ fn String::view(String, start_offset? : Int, end_offset? : Int) -> StringView
 impl Compare for String
 impl Default for String
 
-#alias(op_get)
+#alias("_[_]")
 fn StringView::at(Self, Int) -> Int
 fn StringView::char_length(Self) -> Int
 fn StringView::char_length_eq(Self, Int) -> Bool

@@ -11,7 +11,7 @@ import(
 
 // Types and methods
 type HashMap[K, V]
-#alias(op_get)
+#alias("_[_]")
 fn[K : Hash + Eq, V] HashMap::at(Self[K, V], K) -> V
 fn[K, V] HashMap::capacity(Self[K, V]) -> Int
 fn[K, V] HashMap::clear(Self[K, V]) -> Unit

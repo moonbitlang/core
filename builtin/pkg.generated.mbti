@@ -70,7 +70,7 @@ impl Show for ArgsLoc
 
 type Array[T]
 fn[T] Array::append(Self[T], Self[T]) -> Unit
-#alias(op_get)
+#alias("_[_]")
 fn[T] Array::at(Self[T], Int) -> T
 fn[T : Compare] Array::binary_search(Self[T], T) -> Result[Int, Int]
 fn[T] Array::binary_search_by(Self[T], (T) -> Int) -> Result[Int, Int]
@@ -156,7 +156,7 @@ impl[X : Show] Show for Array[X]
 impl[X : ToJson] ToJson for Array[X]
 
 type ArrayView[T]
-#alias(op_get)
+#alias("_[_]")
 fn[T] ArrayView::at(Self[T], Int) -> T
 #deprecated
 fn[T] ArrayView::blit_to(Self[T], Self[T]) -> Unit
@@ -275,7 +275,7 @@ impl Default for Json
 impl Eq for Json
 
 type Map[K, V]
-#alias(op_get)
+#alias("_[_]")
 fn[K : Hash + Eq, V] Map::at(Self[K, V], K) -> V
 fn[K, V] Map::capacity(Self[K, V]) -> Int
 fn[K, V] Map::clear(Self[K, V]) -> Unit
@@ -324,7 +324,7 @@ impl Logger for StringBuilder
 impl Show for StringBuilder
 
 type UninitializedArray[T]
-#alias(op_get)
+#alias("_[_]")
 fn[T] UninitializedArray::at(Self[T], Int) -> T
 fn[A] UninitializedArray::length(Self[A]) -> Int
 fn[T] UninitializedArray::make(Int) -> Self[T]
@@ -521,8 +521,8 @@ fn Double::until(Double, Double, step? : Double, inclusive? : Bool) -> Iter[Doub
 #deprecated
 fn Double::upto(Double, Double, inclusive? : Bool) -> Iter[Double]
 
+#alias("_[_]")
 #alias(charcode_at, deprecated)
-#alias(op_get)
 fn String::at(String, Int) -> Int
 #alias(codepoint_length, deprecated)
 fn String::char_length(String, start_offset? : Int, end_offset? : Int) -> Int
@@ -543,7 +543,7 @@ fn String::unsafe_substring(String, start~ : Int, end~ : Int) -> String
 fn[X : Show] Option::to_string(X?) -> String
 fn[X] Option::unwrap(X?) -> X
 
-#alias(op_get)
+#alias("_[_]")
 fn[T] FixedArray::at(Self[T], Int) -> T
 fn[T : Compare] FixedArray::binary_search(Self[T], T) -> Result[Int, Int]
 fn[T] FixedArray::binary_search_by(Self[T], (T) -> Int raise?) -> Result[Int, Int] raise?
@@ -569,7 +569,7 @@ fn[T] FixedArray::unsafe_get(Self[T], Int) -> T
 fn FixedArray::unsafe_reinterpret_as_bytes(Self[Byte]) -> Bytes
 fn[T] FixedArray::unsafe_set(Self[T], Int, T) -> Unit
 
-#alias(op_get)
+#alias("_[_]")
 fn Bytes::at(Bytes, Int) -> Byte
 #deprecated
 fn Bytes::copy(Bytes) -> Bytes
