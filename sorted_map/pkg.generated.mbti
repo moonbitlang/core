@@ -11,7 +11,7 @@ import(
 
 // Types and methods
 type SortedMap[K, V]
-#alias(op_get)
+#alias("_[_]")
 fn[K : Compare, V] SortedMap::at(Self[K, V], K) -> V
 fn[K, V] SortedMap::clear(Self[K, V]) -> Unit
 fn[K : Compare, V] SortedMap::contains(Self[K, V], K) -> Bool

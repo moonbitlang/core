@@ -35,7 +35,7 @@ impl Add for Bytes
 impl Default for Bytes
 impl Hash for Bytes
 
-#alias(op_get)
+#alias("_[_]")
 fn BytesView::at(Self, Int) -> Byte
 fn BytesView::data(Self) -> Bytes
 fn BytesView::find(Self, Self) -> Int?

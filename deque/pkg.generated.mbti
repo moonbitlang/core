@@ -13,7 +13,7 @@ import(
 type Deque[A]
 fn[A] Deque::append(Self[A], Self[A]) -> Unit
 fn[A] Deque::as_views(Self[A]) -> (ArrayView[A], ArrayView[A])
-#alias(op_get)
+#alias("_[_]")
 fn[A] Deque::at(Self[A], Int) -> A
 fn[A] Deque::back(Self[A]) -> A?
 fn[A : Compare] Deque::binary_search(Self[A], A) -> Result[Int, Int]
