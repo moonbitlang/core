@@ -7,6 +7,7 @@ The `moonbitlang/core/uint16` package provides functionality for working with 16
 The package defines the minimum and maximum values for UInt16:
 
 ```moonbit
+///|
 test "UInt16 constants" {
   // Minimum value of UInt16
   inspect(@uint16.min_value, content="0")
@@ -21,6 +22,7 @@ test "UInt16 constants" {
 UInt16 supports standard arithmetic operations:
 
 ```moonbit
+///|
 test "UInt16 arithmetic" {
   let a : UInt16 = 100
   let b : UInt16 = 50
@@ -48,6 +50,7 @@ test "UInt16 arithmetic" {
 UInt16 supports various bitwise operations:
 
 ```moonbit
+///|
 test "UInt16 bitwise operations" {
   let a : UInt16 = 0b1010
   let b : UInt16 = 0b1100
@@ -76,6 +79,7 @@ test "UInt16 bitwise operations" {
 UInt16 supports comparison and equality operations:
 
 ```moonbit
+///|
 test "UInt16 comparison and equality" {
   let a : UInt16 = 100
   let b : UInt16 = 50
@@ -98,6 +102,7 @@ test "UInt16 comparison and equality" {
 UInt16 implements the Default trait:
 
 ```moonbit
+///|
 test "UInt16 default value" {
   // Default value is 0
   let a : UInt16 = 0
@@ -114,6 +119,7 @@ test "UInt16 default value" {
 UInt16 works with various conversions to and from other types:
 
 ```moonbit
+///|
 test "UInt16 conversions" {
   // From Int to UInt16
   inspect((42).to_uint16(), content="42")

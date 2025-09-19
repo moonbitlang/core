@@ -7,6 +7,7 @@ This package provides a set of utilities for working with characters, focusing o
 Functions for determining if a character belongs to various ASCII categories.
 
 ```moonbit
+///|
 test "ascii classification" {
   // Basic ASCII checks
   inspect('A'.is_ascii(), content="true")
@@ -29,6 +30,7 @@ test "ascii classification" {
 Functions for identifying digits in different number bases.
 
 ```moonbit
+///|
 test "number classification" {
   // Decimal digits
   inspect('5'.is_ascii_digit(), content="true")
@@ -57,6 +59,7 @@ test "number classification" {
 Functions for identifying whitespace, control characters and other special characters.
 
 ```moonbit
+///|
 test "special characters" {
   // Whitespace characters
   inspect(' '.is_ascii_whitespace(), content="true")
@@ -78,6 +81,7 @@ test "special characters" {
 All character classification functions can also be called as methods directly on characters.
 
 ```moonbit
+///|
 test "method style" {
   // Letter methods
   let c = 'A'

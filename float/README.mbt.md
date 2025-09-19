@@ -7,6 +7,7 @@ This package provides operations on 32-bit floating-point numbers (`Float`). It 
 The package defines several special floating-point values:
 
 ```moonbit
+///|
 test "special float values" {
   // Infinity values
   inspect(@float.infinity, content="Infinity")
@@ -21,6 +22,7 @@ test "special float values" {
   inspect(@float.min_positive, content="1.1754943508222875e-38")
 }
 
+///|
 test "checking special values" {
   // Testing for special values
   inspect(@float.infinity.is_inf(), content="true")
@@ -35,6 +37,7 @@ test "checking special values" {
 The package provides various ways to round floating-point numbers:
 
 ```moonbit
+///|
 test "rounding functions" {
   // Ceiling - rounds up
   inspect(@float.ceil(3.2), content="4")
@@ -59,12 +62,13 @@ test "rounding functions" {
 Other useful operations on floats:
 
 ```moonbit
+///|
 test "utility functions" {
   // Absolute value
   inspect(@float.abs(-3.14), content="3.140000104904175")
 
   // Conversion to integer
-  inspect((3.14).to_int(), content="3")
+  inspect(3.14.to_int(), content="3")
 
   // Default value
   inspect(@float.default(), content="0")
@@ -76,6 +80,7 @@ test "utility functions" {
 Functions to convert floats to their byte representation:
 
 ```moonbit
+///|
 test "byte representation" {
   let x : Float = 3.14
   // Big-endian bytes
@@ -92,6 +97,7 @@ test "byte representation" {
 All functions can also be called in method style:
 
 ```moonbit
+///|
 test "method style calls" {
   let x : Float = 3.14
   inspect(x.floor(), content="3")

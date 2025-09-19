@@ -7,13 +7,14 @@ This package provides utilities for interacting with the runtime environment, in
 Access command line arguments passed to your program:
 
 ```moonbit
+///|
 test "command line arguments" {
   let arguments = @env.args()
-  
+
   // The arguments array contains program arguments
   // In a test environment, this will typically be empty or contain test runner args
   inspect(arguments.length() >= 0, content="true")
-  
+
   // Example of how you might process arguments in a real program:
   fn process_args(args : Array[String]) -> String {
     if args.length() == 0 {
@@ -22,7 +23,7 @@ test "command line arguments" {
       "First argument: " + args[0]
     }
   }
-  
+
   let result = process_args(arguments)
   inspect(result.length() > 0, content="true")
 }
@@ -33,20 +34,21 @@ test "command line arguments" {
 Get the current time in milliseconds since Unix epoch:
 
 ```moonbit
+///|
 test "current time" {
   let timestamp = @env.now()
-  
+
   // Timestamp should be a reasonable value (after year 2020)
-  let year_2020_ms = 1577836800000UL  // Jan 1, 2020 in milliseconds
+  let year_2020_ms = 1577836800000UL // Jan 1, 2020 in milliseconds
   inspect(timestamp > year_2020_ms, content="true")
-  
+
   // Demonstrate time-based operations
   fn format_timestamp(ts : UInt64) -> String {
     "Timestamp: " + ts.to_string()
   }
-  
+
   let formatted = format_timestamp(timestamp)
-  inspect(formatted.length() > 10, content="true")  // Should contain timestamp data
+  inspect(formatted.length() > 10, content="true") // Should contain timestamp data
 }
 ```
 
@@ -55,19 +57,18 @@ test "current time" {
 Get the current working directory:
 
 ```moonbit
+///|
 test "working directory" {
   let cwd = @env.current_dir()
-  
   match cwd {
     Some(path) => {
       // We have a current directory
       inspect(path.length() > 0, content="true")
-      inspect(path.length() > 1, content="true")  // Should be a meaningful path
+      inspect(path.length() > 1, content="true") // Should be a meaningful path
     }
-    None => {
+    None =>
       // Current directory unavailable (some platforms/environments)
-      inspect(true, content="true")  // This is also valid
-    }
+      inspect(true, content="true") // This is also valid
   }
 }
 ```
@@ -77,6 +78,7 @@ test "working directory" {
 ### Command Line Tool Pattern
 
 ```moonbit
+///|
 test "command line tool pattern" {
   fn parse_command(args : Array[String]) -> Result[String, String] {
     if args.length() < 2 {
@@ -90,16 +92,15 @@ test "command line tool pattern" {
       }
     }
   }
-  
+
   // Test with mock arguments
   let test_args = ["program", "help"]
   let result = parse_command(test_args)
   inspect(result, content="Ok(\"Showing help information\")")
-  
   let invalid_result = parse_command(["program", "invalid"])
   match invalid_result {
     Ok(_) => inspect(false, content="true")
-    Err(msg) => inspect(msg.length() > 10, content="true")  // Should have error message
+    Err(msg) => inspect(msg.length() > 10, content="true") // Should have error message
   }
 }
 ```
@@ -107,37 +108,40 @@ test "command line tool pattern" {
 ### Configuration Loading
 
 ```moonbit
+///|
 test "configuration loading" {
   fn load_config_path() -> String {
     match @env.current_dir() {
       Some(cwd) => cwd + "/config.json"
-      None => "./config.json"  // Fallback
+      None => "./config.json" // Fallback
     }
   }
-  
+
   let config_path = load_config_path()
-  inspect(config_path.length() > 10, content="true")  // Should have path with config.json
+  inspect(config_path.length() > 10, content="true") // Should have path with config.json
 }
 ```
 
 ### Logging with Timestamps
 
 ```moonbit
+///|
 test "logging with timestamps" {
   fn log_message(level : String, message : String) -> String {
     let timestamp = @env.now()
     "[" + timestamp.to_string() + "] " + level + ": " + message
   }
-  
+
   let log_entry = log_message("INFO", "Application started")
-  inspect(log_entry.length() > 20, content="true")  // Should have timestamp and message
-  inspect(log_entry.length() > 10, content="true")  // Should have substantial content
+  inspect(log_entry.length() > 20, content="true") // Should have timestamp and message
+  inspect(log_entry.length() > 10, content="true") // Should have substantial content
 }
 ```
 
 ### File Path Operations
 
 ```moonbit
+///|
 test "file path operations" {
   fn resolve_relative_path(relative : String) -> String {
     match @env.current_dir() {
@@ -145,9 +149,9 @@ test "file path operations" {
       None => relative
     }
   }
-  
+
   let resolved = resolve_relative_path("data/input.txt")
-  inspect(resolved.length() > 10, content="true")  // Should have resolved path
+  inspect(resolved.length() > 10, content="true") // Should have resolved path
 }
 ```
 
@@ -175,32 +179,34 @@ The env package behaves differently across platforms:
 Handle cases where environment information is unavailable:
 
 ```moonbit
+///|
 test "error handling" {
   fn safe_get_cwd() -> String {
     match @env.current_dir() {
       Some(path) => path
-      None => {
+      None =>
         // Fallback when current directory is unavailable
         "."
-      }
     }
   }
-  
+
   let safe_cwd = safe_get_cwd()
   inspect(safe_cwd.length() > 0, content="true")
-  
-  fn validate_args(args : Array[String], min_count : Int) -> Result[Unit, String] {
+  fn validate_args(
+    args : Array[String],
+    min_count : Int,
+  ) -> Result[Unit, String] {
     if args.length() < min_count {
       Err("Insufficient arguments: expected at least " + min_count.to_string())
     } else {
       Ok(())
     }
   }
-  
+
   let validation = validate_args(["prog"], 2)
   match validation {
     Ok(_) => inspect(false, content="true")
-    Err(msg) => inspect(msg.length() > 10, content="true")  // Should have error message
+    Err(msg) => inspect(msg.length() > 10, content="true") // Should have error message
   }
 }
 ```
@@ -210,14 +216,15 @@ test "error handling" {
 ### 1. Handle Missing Environment Data Gracefully
 
 ```moonbit
+///|
 test "graceful handling" {
   fn get_work_dir() -> String {
     match @env.current_dir() {
       Some(dir) => dir
-      None => "~"  // Fallback to home directory symbol
+      None => "~" // Fallback to home directory symbol
     }
   }
-  
+
   let work_dir = get_work_dir()
   inspect(work_dir.length() > 0, content="true")
 }
@@ -226,12 +233,15 @@ test "graceful handling" {
 ### 2. Validate Command Line Arguments
 
 ```moonbit
+///|
 test "argument validation" {
-  fn validate_and_parse_args(args : Array[String]) -> Result[(String, Array[String]), String] {
+  fn validate_and_parse_args(
+    args : Array[String],
+  ) -> Result[(String, Array[String]), String] {
     if args.length() == 0 {
       Err("No program name available")
     } else if args.length() == 1 {
-      Ok((args[0], []))  // Program name only, no arguments
+      Ok((args[0], [])) // Program name only, no arguments
     } else {
       let program = args[0]
       let arguments = Array::new()
@@ -241,7 +251,7 @@ test "argument validation" {
       Ok((program, arguments))
     }
   }
-  
+
   let test_result = validate_and_parse_args(["myprogram", "arg1", "arg2"])
   match test_result {
     Ok((prog, args)) => {
@@ -256,16 +266,16 @@ test "argument validation" {
 ### 3. Use Timestamps for Unique Identifiers
 
 ```moonbit
+///|
 test "unique identifiers" {
   fn generate_unique_id(prefix : String) -> String {
     prefix + "_" + @env.now().to_string()
   }
-  
+
   let id1 = generate_unique_id("task")
   let id2 = generate_unique_id("task")
-  
-  inspect(id1.length() > 10, content="true")  // Should have task prefix and timestamp
-  inspect(id2.length() > 10, content="true")  // Should have task prefix and timestamp
+  inspect(id1.length() > 10, content="true") // Should have task prefix and timestamp
+  inspect(id2.length() > 10, content="true") // Should have task prefix and timestamp
   // IDs should be different (though they might be the same in fast tests)
 }
 ```

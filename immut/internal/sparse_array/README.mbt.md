@@ -7,21 +7,22 @@ This package provides sparse array and bitset utilities used internally by immut
 Create and manipulate sparse arrays:
 
 ```moonbit
+///|
 test "sparse array basics" {
   // Empty sparse array
   let empty_array : @sparse_array.SparseArray[String] = @sparse_array.empty()
   inspect(empty_array.size(), content="0")
-  
+
   // Singleton sparse array
   let single = @sparse_array.singleton(5, "value")
   inspect(single.size(), content="1")
-  
+
   // Check if element exists
   match single.get(5) {
     Some(val) => inspect(val, content="value")
     None => inspect(false, content="true")
   }
-  
+
   // Doubleton (two elements)
   let double = @sparse_array.doubleton(2, "first", 7, "second")
   inspect(double.size(), content="2")
@@ -33,21 +34,22 @@ test "sparse array basics" {
 Add, remove, and modify elements:
 
 ```moonbit
+///|
 test "sparse array operations" {
   let arr = @sparse_array.singleton(3, 100)
-  
+
   // Add new element
   let with_new = arr.add(8, 200)
   inspect(with_new.size(), content="2")
-  
+
   // Replace existing element
   let replaced = with_new.replace(3, 150)
   inspect(replaced.size(), content="2")
-  
+
   // Remove element
   let removed = replaced.remove(8)
   inspect(removed.size(), content="1")
-  
+
   // Check final value
   match removed.get(3) {
     Some(val) => inspect(val, content="150")
@@ -61,23 +63,24 @@ test "sparse array operations" {
 Work with compact bitsets for tracking presence:
 
 ```moonbit
+///|
 test "bitset operations" {
   // Note: Bitset constructor is internal, so we demonstrate concepts
   // In real usage, bitsets are created by sparse array operations
-  
+
   let sparse = @sparse_array.singleton(3, "test")
   inspect(sparse.size(), content="1")
-  
+
   // Add more elements to create internal bitsets
   let with_more = sparse.add(7, "another").add(15, "third")
   inspect(with_more.size(), content="3")
-  
+
   // Access elements by index
   match with_more.get(3) {
     Some(val) => inspect(val, content="test")
     None => inspect(false, content="true")
   }
-  
+
   // Remove element
   let removed = with_more.remove(7)
   inspect(removed.size(), content="2")
@@ -89,21 +92,24 @@ test "bitset operations" {
 Perform set-like operations on sparse arrays:
 
 ```moonbit
+///|
 test "sparse array set operations" {
   let arr1 = @sparse_array.doubleton(1, "a", 3, "c")
   let arr2 = @sparse_array.doubleton(3, "C", 5, "e")
-  
+
   // Intersection - keep common indices
-  let intersection = arr1.intersection(arr2, fn(val1, val2) { Some(val1 + val2) })
+  let intersection = arr1.intersection(arr2, fn(val1, val2) {
+    Some(val1 + val2)
+  })
   match intersection {
-    Some(result) => inspect(result.size(), content="1")  // Only index 3 is common
+    Some(result) => inspect(result.size(), content="1") // Only index 3 is common
     None => inspect(false, content="true")
   }
-  
+
   // Difference - remove common elements
   let difference = arr1.difference(arr2, fn(_val1, _val2) { None })
   match difference {
-    Some(result) => inspect(result.size(), content="1")  // Only index 1 remains
+    Some(result) => inspect(result.size(), content="1") // Only index 1 remains
     None => inspect(false, content="true")
   }
 }
@@ -114,9 +120,10 @@ test "sparse array set operations" {
 Transform sparse arrays while maintaining efficiency:
 
 ```moonbit
+///|
 test "sparse array transformations" {
   let numbers = @sparse_array.doubleton(1, 10, 5, 50)
-  
+
   // Map values to new type
   let doubled = numbers.map(fn(x) { x * 2 })
   inspect(doubled.size(), content="2")
@@ -124,11 +131,11 @@ test "sparse array transformations" {
     Some(val) => inspect(val, content="20")
     None => inspect(false, content="true")
   }
-  
+
   // Filter elements (keeping only those > 30)
   let filtered = numbers.filter(fn(x) { if x > 30 { Some(x) } else { None } })
   match filtered {
-    Some(f) => inspect(f.size(), content="1")  // Only 50 remains
+    Some(f) => inspect(f.size(), content="1") // Only 50 remains
     None => inspect(false, content="true")
   }
 }
@@ -139,17 +146,18 @@ test "sparse array transformations" {
 Combine multiple sparse arrays:
 
 ```moonbit
+///|
 test "sparse array combinations" {
   let arr1 = @sparse_array.doubleton(1, "a", 3, "c")
-  let arr2 = @sparse_array.doubleton(2, "b", 3, "C")  // Overlaps at index 3
-  
+  let arr2 = @sparse_array.doubleton(2, "b", 3, "C") // Overlaps at index 3
+
   // Union with conflict resolution
   let combined = arr1.union(arr2, fn(old_val, new_val) { old_val + new_val })
   inspect(combined.size(), content="3")
-  
+
   // Check combined values
   match combined.get(3) {
-    Some(val) => inspect(val, content="cC")  // Combined "c" + "C"
+    Some(val) => inspect(val, content="cC") // Combined "c" + "C"
     None => inspect(false, content="true")
   }
 }
@@ -160,23 +168,24 @@ test "sparse array combinations" {
 Work with sparse arrays efficiently:
 
 ```moonbit
+///|
 test "advanced sparse operations" {
   let numbers = @sparse_array.doubleton(2, 20, 5, 50)
-  
+
   // Add more elements
   let extended = numbers.add(10, 100).add(15, 150)
   inspect(extended.size(), content="4")
-  
+
   // Access specific elements
   match extended.get(10) {
     Some(val) => inspect(val, content="100")
     None => inspect(false, content="true")
   }
-  
+
   // Check non-existent element
   match extended.get(7) {
     Some(_) => inspect(false, content="true")
-    None => inspect(true, content="true")  // Should be None
+    None => inspect(true, content="true") // Should be None
   }
 }
 ```

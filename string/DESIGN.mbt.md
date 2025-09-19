@@ -41,6 +41,7 @@
     - Pattern matching: Handles surrogate pairs correctly
   - Example of safe vs unsafe operations:
 ```moonbit
+///|
 test "unsafe vs safe" {
   // Unsafe: May split surrogate pairs
   let emoji = "🎉"
@@ -81,6 +82,7 @@ test "unsafe vs safe" {
     functions expecting View parameters, leveraging implicit conversion.
 
 ```moonbit
+///|
 test "view conversion" {
   fn process_text(text : StringView) -> Int {
     text.length()
@@ -92,7 +94,7 @@ test "view conversion" {
   // Both work due to implicit conversion
   let _ = process_text(str) // String implicitly converts to View
   let _ = process_text(view)
-   // Direct View usage
+  // Direct View usage
 }
 ```
 
