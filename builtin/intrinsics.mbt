@@ -1191,7 +1191,7 @@ pub impl Default for Char with default() = "%char_default"
 ///   let bytes = b"\x01\x02\x03"
 ///   inspect(bytes[1], content="b'\\x02'")
 /// ```
-#alias(op_get)
+#alias("_[_]")
 pub fn Bytes::at(self : Bytes, idx : Int) -> Byte = "%bytes_get"
 
 ///|
@@ -1372,7 +1372,7 @@ pub fn UInt64::to_byte(self : UInt64) -> Byte {
 ///   let arr = FixedArray::make(3, 42)
 ///   inspect(arr[1], content="42")
 /// ```
-#alias(op_get)
+#alias("_[_]")
 pub fn[T] FixedArray::at(self : FixedArray[T], idx : Int) -> T = "%fixedarray.get"
 
 ///|
@@ -1513,7 +1513,7 @@ pub fn String::length(self : String) -> Int = "%string_length"
 ///
 /// This method has O(1) complexity.
 #alias(charcode_at, deprecated)
-#alias(op_get)
+#alias("_[_]")
 pub fn String::at(self : String, idx : Int) -> Int = "%string_get"
 
 ///|

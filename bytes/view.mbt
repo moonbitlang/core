@@ -78,7 +78,7 @@ fn BytesView::len(self : BytesView) -> Int = "%bytesview.len"
 ///   let view = bytes[1:4] // view contains [0x02, 0x03, 0x04]
 ///   inspect(view[1], content="b'\\x03'")
 /// ```
-#alias(op_get)
+#alias("_[_]")
 pub fn BytesView::at(self : BytesView, index : Int) -> Byte {
   guard index >= 0 && index < self.length() else {
     abort(
