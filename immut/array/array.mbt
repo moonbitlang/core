@@ -162,8 +162,8 @@ pub fn[A] length(self : T[A]) -> Int {
 ///   let v = @array.of([1, 2, 3, 4, 5])
 ///   inspect(v[0], content="1")
 /// ```
-#alias(op_get)
-pub fn[A] at(self : T[A], index : Int) -> A {
+#alias("_[_]")
+pub fn[A] T::at(self : T[A], index : Int) -> A {
   if index == 0 {
     self.tree.get_first()
   } else if index == self.size - 1 {
