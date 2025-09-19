@@ -23,8 +23,11 @@ pub fn valid(input : String) -> Bool {
 }
 
 ///|
-pub fn parse(input : String) -> Json raise ParseError {
-  let ctx = ParseContext::make(input)
+pub fn parse(
+  input : String,
+  max_nesting_depth? : Int = 1024,
+) -> Json raise ParseError {
+  let ctx = ParseContext::make(input, max_nesting_depth)
   let val = ctx.parse_value()
   ctx.lex_skip_whitespace()
   if ctx.offset >= ctx.end_offset {
@@ -59,7 +62,7 @@ fn ParseContext::parse_value2(
 
 ///|
 fn ParseContext::parse_object(ctx : ParseContext) -> Json raise ParseError {
-  if ctx.depth >= 500 {
+  if ctx.depth >= ctx.max_nesting_depth {
     raise DepthLimitExceeded
   }
   ctx.depth += 1
@@ -87,7 +90,7 @@ fn ParseContext::parse_object(ctx : ParseContext) -> Json raise ParseError {
 
 ///|
 fn ParseContext::parse_array(ctx : ParseContext) -> Json raise ParseError {
-  if ctx.depth >= 500 {
+  if ctx.depth >= ctx.max_nesting_depth {
     raise DepthLimitExceeded
   }
   ctx.depth += 1
