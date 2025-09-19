@@ -9,21 +9,24 @@ Immutable array is a persistent data structure that provides random access and u
 You can create an empty array using `new()` or construct it using `of()`, or use `from_iter()` to construct it from an iterator.
 
 ```moonbit
+///|
 test {
-  let _arr1 = @array.of([1, 2, 3, 4, 5])    
+  let _arr1 = @array.of([1, 2, 3, 4, 5])
   let _arr2 : @array.T[Int] = @array.new()
   let _arr3 = @array.from_iter((1).until(5))
   let _arr4 = @array.from_array([1, 2, 3])
+
 }
 ```
 
 Or use `make()`, `makei()` to create an array with some elements.
 
 ```moonbit
+///|
 test {
   let arr1 = @array.make(5, 1)
   assert_eq(arr1.to_array(), [1, 1, 1, 1, 1])
-  let arr2 = @array.makei(5, (i) => {i + 1})
+  let arr2 = @array.makei(5, i => i + 1)
   assert_eq(arr2.to_array(), [1, 2, 3, 4, 5])
 }
 ```
@@ -33,6 +36,7 @@ test {
 Since the array is immutable, the `set()`, `push()` operation is not in-place. It returns a new array with the updated value.
 
 ```moonbit
+///|
 test {
   let arr1 = @array.of([1, 2, 3, 4, 5])
   let arr2 = arr1.set(2, 10).push(6)
@@ -46,6 +50,7 @@ test {
 You can use `concat()` to concatenate two arrays.
 
 ```moonbit
+///|
 test {
   let arr1 = @array.of([1, 2, 3])
   let arr2 = @array.of([4, 5, 6])
@@ -59,6 +64,7 @@ test {
 You can use `op_get()` to get the value at the index, or `length()` to get the length of the array, or `is_empty()` to check whether the array is empty.
 
 ```moonbit
+///|
 test {
   let arr = @array.of([1, 2, 3, 4, 5])
   assert_eq(arr[2], 3)
@@ -72,14 +78,15 @@ test {
 You can use `iter()` to get an iterator of the array, or use `each()` to iterate over the array.
 
 ```moonbit
+///|
 test {
   let arr = @array.of([1, 2, 3, 4, 5])
   inspect(arr.iter(), content="[1, 2, 3, 4, 5]")
   let val = []
-  arr.each((v) => { val.push(v) })
+  arr.each(v => val.push(v))
   assert_eq(val, [1, 2, 3, 4, 5])
   let vali = []
-  arr.eachi((i, v) => { vali.push((i, v)) })
+  arr.eachi((i, v) => vali.push((i, v)))
   assert_eq(vali, [(0, 1), (1, 2), (2, 3), (3, 4), (4, 5)])
 }
 ```

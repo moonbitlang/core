@@ -9,17 +9,21 @@ Deque is a double-ended queue implemented as a round-robin queue, supporting O(1
 You can create a deque manually via the `new()` or construct it using the `of()`.
 
 ```moonbit
+///|
 test {
-    let _dv : @deque.Deque[Int] = @deque.new()
-    let _dv = @deque.of([1, 2, 3, 4, 5])
+  let _dv : @deque.Deque[Int] = @deque.new()
+  let _dv = @deque.of([1, 2, 3, 4, 5])
+
 }
 ```
 
 If you want to set the length at creation time to minimize expansion consumption, you can add parameter `capacity` to the `new()` function.
 
 ```moonbit
+///|
 test {
-    let _dv: @deque.Deque[Int] = @deque.new(capacity=10)
+  let _dv : @deque.Deque[Int] = @deque.new(capacity=10)
+
 }
 ```
 
@@ -28,24 +32,27 @@ test {
 A deque is an indefinite-length, auto-expandable datatype. You can use `length()` to get the number of elements in the current queue, or `capacity()` to get the current capacity.
 
 ```moonbit
+///|
 test {
-   let dv = @deque.of([1, 2, 3, 4, 5])
-   assert_eq(dv.length(), 5)
-   assert_eq(dv.capacity(), 5)
+  let dv = @deque.of([1, 2, 3, 4, 5])
+  assert_eq(dv.length(), 5)
+  assert_eq(dv.capacity(), 5)
 }
 ```
 Similarly, you can use the `is_empty` to determine whether the queue is empty.
 
 ```moonbit
+///|
 test {
-   let dv : @deque.Deque[Int] = @deque.new()
-   assert_eq(dv.is_empty(), true)
+  let dv : @deque.Deque[Int] = @deque.new()
+  assert_eq(dv.is_empty(), true)
 }
 ```
 You can use `reserve_capacity` to reserve capacity, ensures that it can hold at least the number of elements
 specified by the `capacity` argument.
 
 ```moonbit
+///|
 test {
   let dv = @deque.of([1])
   dv.reserve_capacity(10)
@@ -56,6 +63,7 @@ test {
 Also, you can use `shrink_to_fit` to shrink the capacity of the deque.
 
 ```moonbit
+///|
 test {
   let dv = @deque.new(capacity=10)
   dv.push_back(1)
@@ -72,6 +80,7 @@ test {
 You can use `front()` and `back()` to get the head and tail elements of the queue, respectively. Since the queue may be empty, their return values are both `Option`, or `None` if the queue is empty.
 
 ```moonbit
+///|
 test {
   let dv = @deque.of([1, 2, 3, 4, 5])
   assert_eq(dv.front(), Some(1))
@@ -82,6 +91,7 @@ test {
 You can also use `op_get` to access elements of the queue directly, but be careful not to cross the boundaries!
 
 ```moonbit
+///|
 test {
   let dv = @deque.of([1, 2, 3, 4, 5])
   assert_eq(dv[0], 1)
@@ -94,6 +104,7 @@ test {
 Since the queue is bi-directional, you can use `push_front()` and `push_back()` to add values to the head or tail of the queue, respectively.
 
 ```moonbit
+///|
 test {
   let dv = @deque.of([1, 2, 3, 4, 5])
   dv.push_front(6)
@@ -107,6 +118,7 @@ test {
 You can also use `op_set` to set elements of the queue directly, but be careful not to cross the boundaries!
 
 ```moonbit
+///|
 test {
   let dv = @deque.of([1, 2, 3, 4, 5])
   dv[0] = 5
@@ -119,6 +131,7 @@ test {
 You can use `pop_front()` and `pop_back()` to pop the element at the head or tail of the queue, respectively, and like [Front & Back](#Front & Back & Get), their return values are `Option`, loaded with the value of the element being popped.
 
 ```moonbit
+///|
 test {
   let dv = @deque.of([1, 2, 3, 4, 5])
   let _back = dv.pop_back() // Some(5)
@@ -131,6 +144,7 @@ test {
 If you only want to pop an element without getting the return value, you can use `unsafe_pop_front()` with `unsafe_pop_back()`. These two functions will panic if the queue is empty.
 
 ```moonbit
+///|
 test {
   let dv = @deque.of([1, 2, 3, 4, 5])
   dv.unsafe_pop_front()
@@ -145,6 +159,7 @@ test {
 You can use `clear` to clear a deque. But note that the memory it already occupies does not change.
 
 ```moonbit
+///|
 test {
   let dv = @deque.of([1, 2, 3, 4, 5])
   dv.clear()
@@ -157,6 +172,7 @@ test {
 deque supports comparing them directly using `op_equal`.
 
 ```moonbit
+///|
 test {
   let dqa = @deque.of([1, 2, 3, 4, 5])
   let dqb = @deque.of([1, 2, 3, 4, 5])
@@ -169,19 +185,20 @@ test {
 deque supports vector-like `iter/iteri/map/mapi` functions and their inverse forms.
 
 ```moonbit
+///|
 test {
   let dv = @deque.of([1, 2, 3, 4, 5])
   let arr = []
-  dv.each((elem) => { arr.push(elem) })
+  dv.each(elem => arr.push(elem))
   assert_eq(arr, [1, 2, 3, 4, 5])
   let arr2 = []
-  dv.eachi((i, _elem) => { arr2.push(i) })
+  dv.eachi((i, _elem) => arr2.push(i))
   assert_eq(arr2, [0, 1, 2, 3, 4])
   let arr3 = []
-  let _ = dv.map((elem) => { arr3.push(elem + 1) })
+  let _ = dv.map(elem => arr3.push(elem + 1))
   assert_eq(arr3, [2, 3, 4, 5, 6])
   let arr4 = []
-  let _ = dv.mapi((i, elem) => { arr4.push(elem + i) })
+  let _ = dv.mapi((i, elem) => arr4.push(elem + i))
   assert_eq(arr4, [1, 3, 5, 7, 9])
 }
 ```
@@ -191,6 +208,7 @@ test {
 You can use `contains()` to find out if a value is in the deque, or `search()` to find its index in the deque.
 
 ```moonbit
+///|
 test {
   let dv = @deque.of([1, 2, 3, 4, 5])
   assert_eq(dv.contains(1), true)
