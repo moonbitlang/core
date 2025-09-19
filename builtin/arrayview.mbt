@@ -135,11 +135,7 @@ pub fn[T] ArrayView::unsafe_get(self : ArrayView[T], index : Int) -> T {
 ///
 #deprecated("ArrayView will be immutable, use array if you need mutation")
 #alias("_[_]=_")
-pub fn[T] ArrayView::set(
-  self : ArrayView[T],
-  index : Int,
-  value : T,
-) -> Unit {
+pub fn[T] ArrayView::set(self : ArrayView[T], index : Int, value : T) -> Unit {
   guard index >= 0 && index < self.len() else {
     abort(
       "index out of bounds: the len is from 0 to \{self.len()} but the index is \{index}",

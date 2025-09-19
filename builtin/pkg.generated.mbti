@@ -161,8 +161,9 @@ fn[T] ArrayView::at(Self[T], Int) -> T
 #deprecated
 fn[T] ArrayView::blit_to(Self[T], Self[T]) -> Unit
 fn[T] ArrayView::length(Self[T]) -> Int
+#alias("_[_]=_")
 #deprecated
-fn[T] ArrayView::op_set(Self[T], Int, T) -> Unit
+fn[T] ArrayView::set(Self[T], Int, T) -> Unit
 #alias(op_as_view)
 fn[T] ArrayView::sub(Self[T], start? : Int, end? : Int) -> Self[T]
 #deprecated
