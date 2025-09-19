@@ -261,9 +261,8 @@ test "shopping_cart_calculates_total_correctly" {
 Keep tests focused on a single concept:
 
 ```moonbit
-// Good - tests one specific behavior
-
 ///|
+///  Good - tests one specific behavior
 test "array_push_increases_length" {
   let arr = Array::new()
   let initial_length = arr.length()
@@ -272,9 +271,8 @@ test "array_push_increases_length" {
   inspect(new_length, content="\{initial_length + 1}")
 }
 
-// Good - tests another specific behavior
-
 ///|
+///  Good - tests another specific behavior
 test "array_push_adds_element_at_end" {
   let arr = Array::new()
   arr.push(10)
