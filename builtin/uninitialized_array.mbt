@@ -48,7 +48,7 @@ pub fn[T] UninitializedArray::at(
 /// - `array` : The uninitialized array where the value will be set.
 /// - `index` : The position in the array where the value will be set.
 /// - `value` : The value to be set at the specified index.
-#alias(op_set)
+#alias("_[_]=_")
 pub fn[T] UninitializedArray::set(
   self : UninitializedArray[T],
   index : Int,

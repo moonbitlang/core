@@ -38,7 +38,7 @@ fn[K, V] HashMap::new(capacity? : Int) -> Self[K, V]
 fn[K : Eq + Hash, V] HashMap::of(FixedArray[(K, V)]) -> Self[K, V]
 fn[K : Hash + Eq, V] HashMap::remove(Self[K, V], K) -> Unit
 fn[K, V] HashMap::retain(Self[K, V], (K, V) -> Bool) -> Unit
-#alias(op_set)
+#alias("_[_]=_")
 fn[K : Hash + Eq, V] HashMap::set(Self[K, V], K, V) -> Unit
 fn[K, V] HashMap::size(Self[K, V]) -> Int
 fn[K, V] HashMap::to_array(Self[K, V]) -> Array[(K, V)]

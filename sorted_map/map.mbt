@@ -49,9 +49,13 @@ pub fn[K : Compare, V] SortedMap::of(
 
 ///|
 /// Inserts a key-value pair.
-#alias(op_set)
+#alias("_[_]=_")
 #alias(add, deprecated="Use set instead")
-pub fn[K : Compare, V] set(self : SortedMap[K, V], key : K, value : V) -> Unit {
+pub fn[K : Compare, V] SortedMap::set(
+  self : SortedMap[K, V],
+  key : K,
+  value : V,
+) -> Unit {
   let (new_root, inserted) = add_node(self.root, key, value)
   if self.root != new_root {
     self.root = new_root
