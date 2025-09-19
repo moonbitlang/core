@@ -182,7 +182,7 @@ pub fn[T] ArrayView::swap(self : ArrayView[T], i : Int, j : Int) -> Unit {
 ///   inspect(view[0], content="2") // First element of view is arr[1]
 ///   inspect(view.length(), content="3") // View contains 3 elements
 /// ```
-#alias(op_as_view)
+#alias("_[_:_]")
 pub fn[T] Array::sub(
   self : Array[T],
   start? : Int = 0,
@@ -229,7 +229,7 @@ pub fn[T] Array::sub(
 ///   let subview = view[1:2] // subview = [3]
 ///   inspect(subview[0], content="3")
 /// ```
-#alias(op_as_view)
+#alias("_[_:_]")
 pub fn[T] ArrayView::sub(
   self : ArrayView[T],
   start? : Int = 0,
@@ -278,7 +278,7 @@ fn[T] unsafe_cast_fixedarray_to_uninitializedarray(
 ///   let view = arr[1:4] // view = [2, 3, 4]
 ///   inspect(view[0], content="2")
 /// ```
-#alias(op_as_view)
+#alias("_[_:_]")
 pub fn[T] FixedArray::sub(
   self : FixedArray[T],
   start? : Int = 0,

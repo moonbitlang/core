@@ -887,7 +887,7 @@ pub fn[A] Iter::intersperse(self : Iter[A], sep : A) -> Iter[A] {
 }
 
 ///|
-#alias(op_as_view)
+#alias("_[_:_]")
 pub fn[A] Iter::sub(self : Iter[A], start? : Int = 0, end? : Int) -> Iter[A] {
   // Note here we mark `end` as an optional parameter
   // since the meaningful default value of `end` is the length of the iterator

@@ -418,7 +418,7 @@ pub suberror CreatingViewError {
 /// let view3 = try? str[:6]
 /// inspect(view3, content="Err(InvalidIndex)")
 /// ```
-#alias(op_as_view)
+#alias("_[_:_]")
 pub fn String::sub(
   self : String,
   start? : Int = 0,
@@ -481,7 +481,7 @@ pub fn String::sub(
 /// let view3 = try? str[:5]
 /// inspect(view3, content="Err(InvalidIndex)")
 /// ```
-#alias(op_as_view)
+#alias("_[_:_]")
 pub fn StringView::sub(
   self : StringView,
   start? : Int = 0,
