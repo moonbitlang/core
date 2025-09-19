@@ -92,8 +92,12 @@ pub fn[K : Hash + Eq, V] HashMap::from_array(
 ///   map.set("key", 24) // update existing key
 ///   inspect(map.get("key"), content="Some(24)")
 /// ```
-#alias(op_set)
-pub fn[K : Hash + Eq, V] set(self : HashMap[K, V], key : K, value : V) -> Unit {
+#alias("_[_]=_")
+pub fn[K : Hash + Eq, V] HashMap::set(
+  self : HashMap[K, V],
+  key : K,
+  value : V,
+) -> Unit {
   self.set_with_hash(key, value, key.hash())
 }
 

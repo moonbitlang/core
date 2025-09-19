@@ -1428,7 +1428,7 @@ pub fn[T] FixedArray::unsafe_set(
 ///   arr.set(1, 42)
 ///   inspect(arr[1], content="42")
 /// ```
-#alias(op_set)
+#alias("_[_]=_")
 pub fn[T] FixedArray::set(self : FixedArray[T], idx : Int, val : T) -> Unit = "%fixedarray.set"
 
 ///|

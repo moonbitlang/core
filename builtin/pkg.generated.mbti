@@ -128,7 +128,7 @@ fn[T] Array::rev_iter(Self[T]) -> Iter[T]
 fn[T : Eq] Array::search(Self[T], T) -> Int?
 #alias(find_index, deprecated)
 fn[T] Array::search_by(Self[T], (T) -> Bool) -> Int?
-#alias(op_set)
+#alias("_[_]=_")
 fn[T] Array::set(Self[T], Int, T) -> Unit
 fn[T] Array::shrink_to_fit(Self[T]) -> Unit
 fn[T] Array::split(Self[T], (T) -> Bool raise?) -> Self[Self[T]] raise?
@@ -298,7 +298,7 @@ fn[K, V] Map::new(capacity? : Int) -> Self[K, V]
 fn[K : Hash + Eq, V] Map::of(FixedArray[(K, V)]) -> Self[K, V]
 fn[K : Hash + Eq, V] Map::remove(Self[K, V], K) -> Unit
 fn[K, V] Map::retain(Self[K, V], (K, V) -> Bool) -> Unit
-#alias(op_set)
+#alias("_[_]=_")
 fn[K : Hash + Eq, V] Map::set(Self[K, V], K, V) -> Unit
 fn[K, V] Map::size(Self[K, V]) -> Int
 fn[K, V] Map::to_array(Self[K, V]) -> Array[(K, V)]
@@ -328,7 +328,7 @@ type UninitializedArray[T]
 fn[T] UninitializedArray::at(Self[T], Int) -> T
 fn[A] UninitializedArray::length(Self[A]) -> Int
 fn[T] UninitializedArray::make(Int) -> Self[T]
-#alias(op_set)
+#alias("_[_]=_")
 fn[T] UninitializedArray::set(Self[T], Int, T) -> Unit
 #alias(op_as_view)
 fn[T] UninitializedArray::sub(Self[T], start? : Int, end? : Int) -> ArrayView[T]
@@ -557,7 +557,7 @@ fn[T] FixedArray::iter(Self[T]) -> Iter[T]
 fn[T] FixedArray::iter2(Self[T]) -> Iter2[Int, T]
 fn[T] FixedArray::length(Self[T]) -> Int
 fn[T] FixedArray::make(Int, T) -> Self[T]
-#alias(op_set)
+#alias("_[_]=_")
 fn[T] FixedArray::set(Self[T], Int, T) -> Unit
 fn FixedArray::set_utf16be_char(Self[Byte], Int, Char) -> Int
 fn FixedArray::set_utf16le_char(Self[Byte], Int, Char) -> Int
