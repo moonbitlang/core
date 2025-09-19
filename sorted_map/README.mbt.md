@@ -209,9 +209,8 @@ Edge cases for range operations:
 - The returned iterator preserves the sorted order of keys
 
 ```moonbit
-// Example with out-of-bounds range
-
 ///|
+///  Example with out-of-bounds range
 test {
   let map = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
   let range_items = []
