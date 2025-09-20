@@ -78,6 +78,8 @@ pub fn default() -> String {
 
 ///|
 /// `String` holds a sequence of UTF-16 code units encoded in little endian format
+#deprecated("Use @encoding/utf16.encode instead")
+#coverage.skip
 pub fn to_bytes(self : String) -> Bytes {
   let array = FixedArray::make(self.length() * 2, Byte::default())
   array.blit_from_string(0, self, 0, self.length())
