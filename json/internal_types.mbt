@@ -15,12 +15,12 @@
 ///|
 priv struct ParseContext {
   mut offset : Int
-  input : String
+  input : StringView
   end_offset : Int
 }
 
 ///|
-fn ParseContext::make(input : String) -> ParseContext {
+fn ParseContext::make(input : StringView) -> ParseContext {
   { offset: 0, input, end_offset: input.length() }
 }
 

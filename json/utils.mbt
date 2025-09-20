@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-fn offset_to_position(input : String, offset : Int) -> Position {
+fn offset_to_position(input : StringView, offset : Int) -> Position {
   let mut line = 1
   let mut column = 0
   for i in 0..<offset {
