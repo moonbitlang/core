@@ -71,6 +71,7 @@ impl Compare for BytesView
 impl Eq for BytesView
 impl Hash for BytesView
 impl Show for BytesView
+impl ToJson for BytesView
 
 // Type aliases
 pub typealias BytesView as View

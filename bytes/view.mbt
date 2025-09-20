@@ -653,3 +653,17 @@ pub impl Hash for BytesView with hash_combine(self : BytesView, hasher : Hasher)
 pub impl Hash for BytesView with hash(self : BytesView) -> Int {
   xxhash32(self.data(), 0, offset=self.start_offset(), len=self.length())
 }
+
+///|
+pub impl ToJson for BytesView with to_json(self) -> Json {
+  let sb = StringBuilder::new()
+  for b in self {
+    if b is (b' '..=b'~') && b != b'"' && b != b'\\' {
+      sb.write_char(b.to_char())
+    } else {
+      sb.write_string("\\x")
+      sb.write_string(b.to_int().to_string(radix=16))
+    }
+  }
+  Json::string(sb.to_string())
+}

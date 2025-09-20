@@ -189,8 +189,7 @@ pub impl ToJson for Bytes with to_json(self : Bytes) -> Json {
       sb.write_char(b.to_char())
     } else {
       sb.write_string("\\x")
-      sb.write_char(to_hex_digit(b.to_int() / 16))
-      sb.write_char(to_hex_digit(b.to_int() % 16))
+      sb.write_string(b.to_int().to_string(radix=16))
     }
   }
   Json::string(sb.to_string())
