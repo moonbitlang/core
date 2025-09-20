@@ -68,37 +68,17 @@ let max_mantissa_fast_path : UInt64 = 2UL << mantissa_explicit_bits
 /// An exponent value exp scales the mantissa (significand) by 10^exp.
 /// For example, "1.23e2" represents 1.23 × 10² = 123.
 pub fn parse_double(str : StringView) -> Double raise StrConvError {
-  if str.length() == 0 {
-    syntax_err()
-  }
-  if !check_underscore(str) {
-    syntax_err()
-  }
+  guard str.length() > 0 else { syntax_err() }
+  guard check_underscore(str) else { syntax_err() }
   // validate its a number
-  let (num, consumed) = match parse_number(str) {
-    Some(r) => r
-    None =>
-      match parse_inf_nan(str) {
-        Some((num, consumed)) =>
-          if str.length() != consumed {
-            syntax_err()
-          } else {
-            return num
-          }
-        None => syntax_err()
+  match parse_number(str) {
+    None => parse_inf_nan(str)
+    Some(num) =>
+      // Clinger's fast path (How to read floating point numbers accurately)[https://doi.org/10.1145/989393.989430]
+      match num.try_fast_path() {
+        Some(value) => value
+        None => parse_decimal_priv(str).to_double_priv() // fallback to slow path
       }
-  }
-  if str.length() != consumed {
-    syntax_err()
-  }
-  // Clinger's fast path (How to read floating point numbers accurately)[https://doi.org/10.1145/989393.989430]
-  match num.try_fast_path() {
-    Some(value) => value
-    None => {
-      // fallback to slow path
-      let ret = parse_decimal_priv(str)
-      ret.to_double_priv()
-    }
   }
 }
 

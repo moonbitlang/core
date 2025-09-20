@@ -48,11 +48,7 @@ fn try_parse_19digits(s : StringView, x : UInt64) -> (StringView, UInt64, Int) {
 
 ///|
 fn parse_scientific(s : StringView) -> (StringView, Int64)? {
-  // the first character is 'e'/'E' and scientific mode is enabled
-  let mut s = match s.step(1) {
-    Some(s) => s
-    None => return None
-  }
+  let mut s = s
   let exp_num = 0L
   let mut neg_exp = false
   if s is ['+' | '-' as ch, .. rest] {
@@ -77,18 +73,14 @@ fn parse_scientific(s : StringView) -> (StringView, Int64)? {
 }
 
 ///|
-/// Parse the number from the string, returning the number and the length of the parsed string.
-fn parse_number(s : StringView) -> (Number, Int)? {
-  let mut s = s
+/// Parse the number from the string, raising StrConvError if invalid.
+fn parse_number(s : StringView) -> Number? raise StrConvError {
   let start = s
 
   // handle optional +/- sign
-  let mut negative = false
-  if s is ['-', .. rest] {
-    negative = true
-    s = rest
-  } else if s is ['+', .. rest] {
-    s = rest
+  let (s, negative) = match s {
+    ['-', .. rest] => (rest, true)
+    ['+', .. rest] | rest => (rest, false)
   }
   if s.is_empty() {
     return None
@@ -121,26 +113,28 @@ fn parse_number(s : StringView) -> (Number, Int)? {
 
   // handle scientific format
   let exp_number = 0L
-  if s is ['e' | 'E', ..] {
-    let (new_s, exp_number) = match parse_scientific(s) {
+  if s is ['e' | 'E', .. rest] {
+    let (new_s, exp_number) = match parse_scientific(rest) {
       Some(res) => res
       None => return None
     }
     s = new_s
     exponent += exp_number
   }
-  let len = start.length() - s.length()
+  guard s is "" else { syntax_err() }
 
   // handle uncommon case with many digits
   if n_digits <= 19 {
-    return Some(({ exponent, mantissa, negative, many_digits: false }, len))
+    return Some({ exponent, mantissa, negative, many_digits: false })
   }
   n_digits -= 19
   let mut many_digits = false
-  let mut p = start
-  while p is ['0' | '.' as ch, .. rest] {
-    n_digits -= (ch.to_int() - 46) / 2 // '0' = b'.' + 2
-    p = rest
+  loop start {
+    ['0' | '.' as ch, .. rest] => {
+      n_digits -= (ch.to_int() - 46) / 2 // '0' = b'.' + 2
+      continue rest
+    }
+    _ => ()
   }
   let mut mantissa = mantissa
   if n_digits > 0 {
@@ -153,44 +147,38 @@ fn parse_number(s : StringView) -> (Number, Int)? {
     exponent = (if mantissa >= min_19digit_int {
       consumed_digit // big int
     } else {
-      let s = match s.step(1) {
-        Some(s) => s
-        None => return None
-      } // fractional component, skip the '.'
+      // fractional component, skip the '.'
+      guard s is [_, .. s] else { return None }
       let (_, new_mantissa, consumed_digit) = try_parse_19digits(s, mantissa)
       mantissa = new_mantissa
       consumed_digit
     }).to_int64()
     exponent += exp_number
   } // add back the explicit part
-  Some(({ exponent, mantissa, negative, many_digits }, len))
+  Some({ exponent, mantissa, negative, many_digits })
 }
 
 ///|
-/// Parse the number from the string, returning the number and the length of the parsed string.
-fn parse_inf_nan(s : StringView) -> (Double, Int)? {
-  let mut s = s
-  let mut pos = true
-  let mut len = 0
-  if s is ['-' | '+' as ch, .. rest] {
-    pos = ch == '+'
-    s = rest
-    len += 1
+/// Parse the number from the string, raising `StrConvError` if invalid.
+fn parse_inf_nan(rest : StringView) -> Double raise StrConvError {
+  let (pos, rest) = match rest {
+    ['-', .. rest] => (false, rest)
+    ['+', .. rest] | rest => (true, rest)
   }
-  if s is ['n' | 'N', 'a' | 'A', 'n' | 'N', ..] {
-    Some((@double.not_a_number, len + 3))
-  } else if s is ['i' | 'I', 'n' | 'N', 'f' | 'F', .. rest] {
-    len += 3
-    if rest is ['i' | 'I', 'n' | 'N', 'i' | 'I', 't' | 'T', 'y' | 'Y', ..] {
-      len += 5
+  match rest {
+    ['n' | 'N', 'a' | 'A', 'n' | 'N'] => @double.not_a_number
+    ['i' | 'I', 'n' | 'N', 'f' | 'F', .. rest] => {
+      guard rest
+        is ([] | ['i' | 'I', 'n' | 'N', 'i' | 'I', 't' | 'T', 'y' | 'Y']) else {
+        syntax_err()
+      }
+      if pos {
+        @double.infinity
+      } else {
+        @double.neg_infinity
+      }
     }
-    if pos {
-      Some((@double.infinity, len))
-    } else {
-      Some((@double.neg_infinity, len))
-    }
-  } else {
-    None
+    _ => syntax_err()
   }
 }
 
