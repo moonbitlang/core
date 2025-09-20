@@ -24,7 +24,7 @@ pub impl Leb128 for Int with output(self, buffer) {
     let next_value = value >> 7 // Arithmetic right shift
     let sign_bit_set = (byte & 0x40) != 0
     let need_more = if value >= 0 {
-      next_value != 0
+      next_value != 0 || sign_bit_set
     } else {
       next_value != -1 || !sign_bit_set
     }
@@ -45,7 +45,7 @@ pub impl Leb128 for Int64 with output(self, buffer) {
     let next_value = value >> 7 // Arithmetic right shift
     let sign_bit_set = (byte & 0x40) != 0
     let need_more = if value >= 0 {
-      next_value != 0
+      next_value != 0 || sign_bit_set
     } else {
       next_value != -1 || !sign_bit_set
     }
