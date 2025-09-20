@@ -163,7 +163,7 @@ test "set_utf16be_char" {
 }
 
 ///|
-test "op_equal" {
+test "equal" {
   let copy_bytes = FixedArray::make(HELLO_WORLD.length(), Byte::default())
   copy_bytes.blit_from_bytes(0, HELLO_WORLD, 0, HELLO_WORLD.length())
   let copy_bytes = Bytes::from_fixedarray(copy_bytes)
@@ -191,7 +191,7 @@ test "fixedarray_byte_blit_from_bytes" {
 }
 
 ///|
-test "Bytes::op_equal with differing bytes" {
+test "Bytes::equal with differing bytes" {
   let bytes1 = b"\x01\x02\x03"
   let bytes2 = b"\x01\x02\xFF" // Same length as bytes1 but last byte differs
   inspect(bytes1 == bytes2, content="false")

@@ -76,7 +76,7 @@ test "_[_]=_" {
 }
 
 ///|
-test "op_get" {
+test "get" {
   let m = @hashmap.new()
   m.set("a", 1)
   m.set("b", 2)
@@ -85,7 +85,7 @@ test "op_get" {
 }
 
 ///|
-test "panic op_get" {
+test "panic get" {
   let m = @hashmap.new()
   m.set("a", 1)
   m.set("b", 2)

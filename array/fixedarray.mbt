@@ -968,7 +968,7 @@ pub impl[T : Hash] Hash for FixedArray[T] with hash_combine(self, hasher) {
 }
 
 ///|
-test "op_equal" {
+test "equal" {
   {
     inspect(([] : FixedArray[Int]) == [], content="true")
     inspect(([] : FixedArray[_]) == [1], content="false")
@@ -1059,7 +1059,7 @@ pub impl[T] Add for FixedArray[T] with add(self, other) {
 }
 
 ///|
-test "op_add" {
+test "add" {
   {
     inspect(([] : FixedArray[Int]) + [], content="[]")
     inspect(([] : FixedArray[_]) + [1, 2, 3, 4, 5], content="[1, 2, 3, 4, 5]")

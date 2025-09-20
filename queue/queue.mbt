@@ -381,7 +381,7 @@ test "from_array_2" {
 }
 
 ///|
-test "op_equal" {
+test "equal" {
   let queue = of([1, 2, 3, 4])
   let queue2 = of([1, 2, 3, 4])
   let queue3 = of([1, 2, 3, 5])

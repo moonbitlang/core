@@ -134,7 +134,7 @@ fn[A : Eq] remove_with_path(self : Node[A], key : A, path : Path) -> Node[A]? {
           @list.Empty => None
           More(key2, tail=xs) => Some(Leaf(key2, xs))
         }
-      } else if bucket.find_index(key.op_equal(_)) is Some(index) {
+      } else if bucket.find_index(x => key.equal(x)) is Some(index) {
         Some(Leaf(key1, bucket.remove_at(index)))
       } else {
         Some(self)

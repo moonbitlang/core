@@ -88,7 +88,7 @@ test {
 }
 ```
 
-You can also use `op_get` to access elements of the queue directly, but be careful not to cross the boundaries!
+You can also use `get` to access elements of the queue directly, but be careful not to cross the boundaries!
 
 ```moonbit
 ///|
@@ -169,7 +169,7 @@ test {
 
 ## Equal
 
-deque supports comparing them directly using `op_equal`.
+deque supports comparing them directly using `equal`.
 
 ```moonbit
 ///|

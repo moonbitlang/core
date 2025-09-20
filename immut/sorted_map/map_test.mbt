@@ -119,7 +119,7 @@ test "values" {
 }
 
 ///|
-test "op_equal" {
+test "equal" {
   let m1 = @sorted_map.of([
     (3, "three"),
     (8, "eight"),
@@ -178,7 +178,7 @@ test "to_array" {
 }
 
 ///|
-test "op_equal" {
+test "equal" {
   let m1 = @sorted_map.of([
     (3, "three"),
     (8, "eight"),

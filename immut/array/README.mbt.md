@@ -61,7 +61,7 @@ test {
 
 ## Query
 
-You can use `op_get()` to get the value at the index, or `length()` to get the length of the array, or `is_empty()` to check whether the array is empty.
+You can use `get()` to get the value at the index, or `length()` to get the length of the array, or `is_empty()` to check whether the array is empty.
 
 ```moonbit
 ///|

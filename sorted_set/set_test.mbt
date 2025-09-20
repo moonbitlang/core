@@ -255,7 +255,7 @@ test "mix_everything" {
 }
 
 ///|
-test "op_equal" {
+test "equal" {
   let a = @sorted_set.from_array([1, 2, 3])
   let b = @sorted_set.from_array([4, 5, 6])
   inspect(a == a, content="true")

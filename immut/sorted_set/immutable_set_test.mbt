@@ -317,7 +317,7 @@ test "to_string" {
 }
 
 ///|
-test "op_equal" {
+test "equal" {
   let xss : Array[@sorted_set.SortedSet[Int]] = @quickcheck.samples(5)
   for xs in xss {
     for ys in xss {

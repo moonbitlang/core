@@ -307,7 +307,7 @@ test "to_array_non_empty" {
 }
 
 ///|
-test "op_equal: different size" {
+test "equal: different size" {
   let set1 = @set.Set::new()
   set1.add(1)
   let set2 = @set.Set::new()
@@ -315,7 +315,7 @@ test "op_equal: different size" {
 }
 
 ///|
-test "op_equal: different keys" {
+test "equal: different keys" {
   let set1 = @set.Set::new()
   set1.add(1)
   let set2 = @set.Set::new()
@@ -324,7 +324,7 @@ test "op_equal: different keys" {
 }
 
 ///|
-test "op_equal: same sets" {
+test "equal: same sets" {
   let set1 = @set.Set::new()
   set1.add(1)
   let set2 = @set.Set::new()
@@ -333,14 +333,14 @@ test "op_equal: same sets" {
 }
 
 ///|
-test "op_equal: empty sets" {
+test "equal: empty sets" {
   let set1 : @set.Set[Int] = @set.Set::new()
   let set2 : @set.Set[Int] = @set.Set::new()
   inspect(set1 == set2, content="true")
 }
 
 ///|
-test "op_equal: same elements different order" {
+test "equal: same elements different order" {
   let set1 = @set.Set::new()
   set1..add(1)..add(2)..add(3)
   let set2 = @set.Set::new()
@@ -349,7 +349,7 @@ test "op_equal: same elements different order" {
 }
 
 ///|
-test "op_equal: subset" {
+test "equal: subset" {
   let set1 = @set.Set::new()
   set1..add(1)..add(2)..add(3)
   let set2 = @set.Set::new()
@@ -359,7 +359,7 @@ test "op_equal: subset" {
 }
 
 ///|
-test "op_equal: large sets" {
+test "equal: large sets" {
   let set1 = @set.Set::new()
   let set2 = @set.Set::new()
   for i in 0..<100 {
@@ -370,7 +370,7 @@ test "op_equal: large sets" {
 }
 
 ///|
-test "op_equal: large sets with one difference" {
+test "equal: large sets with one difference" {
   let set1 = @set.Set::new()
   let set2 = @set.Set::new()
   for i in 0..<100 {
@@ -385,7 +385,7 @@ test "op_equal: large sets with one difference" {
 }
 
 ///|
-test "op_equal: after removal" {
+test "equal: after removal" {
   let set1 = @set.Set::new()
   set1..add(1)..add(2)..add(3)
   let set2 = @set.Set::new()
@@ -397,7 +397,7 @@ test "op_equal: after removal" {
 }
 
 ///|
-test "op_equal: after clear" {
+test "equal: after clear" {
   let set1 = @set.Set::new()
   set1..add(1)..add(2)..add(3)
   let set2 = @set.Set::new()
@@ -407,7 +407,7 @@ test "op_equal: after clear" {
 }
 
 ///|
-test "op_equal: with string elements" {
+test "equal: with string elements" {
   let set1 = @set.Set::new()
   set1..add("apple")..add("banana")..add("cherry")
   let set2 = @set.Set::new()
@@ -418,7 +418,7 @@ test "op_equal: with string elements" {
 }
 
 ///|
-test "op_equal: reflexivity" {
+test "equal: reflexivity" {
   let set = @set.Set::new()
   set..add(1)..add(2)..add(3)
   inspect(set == set, content="true")

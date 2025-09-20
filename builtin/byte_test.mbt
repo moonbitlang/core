@@ -36,7 +36,7 @@ test "byte_compare" {
 }
 
 ///|
-test "byte_op_equal" {
+test "byte_equal" {
   let b1 = b'\x00'
   let b2 = b'\x0F'
   let b3 = b'\xFF'
@@ -143,7 +143,7 @@ test "byte_shl" {
 }
 
 ///|
-test "byte_op_add" {
+test "byte_add" {
   inspect(b'\x01' + b'\x02', content="b'\\x03'")
   inspect(b'\x05' + b'\x05', content="b'\\x0A'")
   inspect(b'\x0A' + b'\x0A', content="b'\\x14'")
@@ -159,7 +159,7 @@ test "byte_op_add" {
 }
 
 ///|
-test "byte_op_sub" {
+test "byte_sub" {
   // Test for the smallest possible byte values
   inspect(b'\x00' - b'\x00', content="b'\\x00'")
   inspect(b'\x00' - b'\x01', content="b'\\xFF'") // Underflow case
@@ -185,19 +185,19 @@ test "byte_op_sub" {
 }
 
 ///|
-test "byte_op_mul" {
+test "byte_mul" {
   inspect((8 : Byte) * 16, content="b'\\x80'")
   inspect((3 : Byte) * 200, content="b'\\x58'")
 }
 
 ///|
-test "byte_op_div" {
+test "byte_div" {
   inspect((80 : Byte) / 8, content="b'\\x0A'")
   inspect((10 : Byte) / 3, content="b'\\x03'")
 }
 
 ///|
-test "byte_op_mod" {
+test "byte_mod" {
   inspect((80 : Byte) % 8, content="b'\\x00'")
   inspect((42 : Byte) % 17, content="b'\\x08'")
 }

@@ -203,7 +203,7 @@ test "iter2" {
 }
 
 ///|
-test "op_get" {
+test "get" {
   let dv = @deque.of([1, 2, 3, 4, 5])
   inspect(dv, content="@deque.of([1, 2, 3, 4, 5])")
   dv.pop_front() |> ignore
@@ -258,7 +258,7 @@ test "Deque::set" {
 }
 
 ///|
-test "op_equal" {
+test "equal" {
   let dv1 = @deque.of([1, 2, 3])
   let dv2 = @deque.of([1, 2, 3])
   assert_true(dv1 == dv2)

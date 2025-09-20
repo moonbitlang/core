@@ -687,7 +687,7 @@ test "@list.minimum with empty list" {
 }
 
 ///|
-test "op_add" {
+test "add" {
   inspect(@list.of([1]) + @list.of([]), content="@list.of([1])")
   inspect(@list.of([]) + @list.of([1]), content="@list.of([1])")
   inspect(@list.of([1]) + @list.of([1]), content="@list.of([1, 1])")
