@@ -25,8 +25,8 @@
 /// Example:
 ///
 /// ```moonbit
-///   inspect((5.7 : Float).op_mod(2.0), content="1.6999998092651367")
-///   inspect((-5.7 : Float).op_mod(2.0), content="-1.6999998092651367")
+///   inspect((5.7 : Float).mod(2.0), content="1.6999998092651367")
+///   inspect((-5.7 : Float).mod(2.0), content="-1.6999998092651367")
 /// ```
 pub impl Mod for Float with mod(self : Float, other : Float) -> Float {
   (self.to_double() % other.to_double()).to_float()

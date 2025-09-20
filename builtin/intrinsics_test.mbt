@@ -42,8 +42,8 @@ test "Int::lxor should perform bitwise XOR operation" {
 }
 
 ///|
-/// test Int::op_shl
-test "Int::op_shl should perform left shift operation" {
+/// test Int::shl
+test "Int::shl should perform left shift operation" {
   inspect(7 << 1, content="14")
   inspect(0b101 << 1 == 0b1010, content="true")
   inspect(0xffff_ffff << 1 == 0xffff_fffe, content="true")

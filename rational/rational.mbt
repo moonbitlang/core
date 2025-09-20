@@ -78,7 +78,7 @@ fn new_unchecked(numerator : Int64, denominator : Int64) -> T {
 }
 
 ///|
-/// NOTE: we don't check overflow here, to align with the `op_add` of `Int64`.
+/// NOTE: we don't check overflow here, to align with the `add` of `Int64`.
 /// TODO: add a `checked_add` method.
 #coverage.skip
 pub impl Add for T with add(self : T, other : T) -> T {

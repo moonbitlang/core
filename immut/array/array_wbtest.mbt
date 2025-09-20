@@ -56,7 +56,7 @@ test "mix" {
 }
 
 ///|
-test "op_get" {
+test "get" {
   let bf = branching_factor_power(4)
   let v_content = random_array(bf)
   let v = from_iter(v_content.iter())

@@ -45,7 +45,7 @@ test "HAMT" {
 }
 
 ///|
-test "HAMT::op_get" {
+test "HAMT::get" {
   let map = loop (0, @hashmap.new()) {
     (100, map) => map
     (i, map) => continue (i + 1, map.add(i, i))
@@ -56,7 +56,7 @@ test "HAMT::op_get" {
 }
 
 ///|
-test "panic HAMT::op_get" {
+test "panic HAMT::get" {
   let map = @hashmap.new()
   map[0]
 }

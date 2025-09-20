@@ -76,7 +76,7 @@ test "get after removal" {
 }
 
 ///|
-test "op_get with existing key" {
+test "get with existing key" {
   let map = @sorted_map.of([
     (3, "three"),
     (8, "eight"),
@@ -88,7 +88,7 @@ test "op_get with existing key" {
 }
 
 ///|
-test "panic op_get with non-existing key" {
+test "panic get with non-existing key" {
   let map = @sorted_map.of([
     (3, "three"),
     (8, "eight"),
@@ -100,7 +100,7 @@ test "panic op_get with non-existing key" {
 }
 
 ///|
-test "op_get after insertion" {
+test "get after insertion" {
   let map = @sorted_map.of([
     (3, "three"),
     (8, "eight"),
@@ -113,7 +113,7 @@ test "op_get after insertion" {
 }
 
 ///|
-test "panic op_get after removal" {
+test "panic get after removal" {
   let map = @sorted_map.of([
     (3, "three"),
     (8, "eight"),
@@ -165,7 +165,7 @@ test "get with empty map" {
 }
 
 ///|
-test "panic op_get with empty map" {
+test "panic get with empty map" {
   let map : @sorted_map.SortedMap[Int, String] = @sorted_map.new()
   map[3] |> ignore
 }

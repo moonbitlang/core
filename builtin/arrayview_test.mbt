@@ -23,7 +23,7 @@ test "view_as_view" {
 }
 
 ///|
-test "op_get" {
+test "get" {
   inspect([1, 2, 3][:][1], content="2")
   inspect([1, 2, 3][:][2], content="3")
 }

@@ -364,7 +364,7 @@ test "@hashset collision" {
 }
 
 ///|
-test "collision op_equal coverage" {
+test "collision equal coverage" {
   let a = MyString("a")
   let b = MyString("b")
   let set1 = @hashset.new().add(a).add(b)

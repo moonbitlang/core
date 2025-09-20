@@ -87,7 +87,7 @@ fn check_invariant(a : BigInt) -> Unit raise {
 }
 
 ///|
-test "op_shr" {
+test "shr" {
   let a = BigInt::from_int64(1234567890123456789L)
   let b = a >> 1
   check_invariant(b)
@@ -102,7 +102,7 @@ test "op_shr" {
 }
 
 ///|
-test "op_add coverage for max(self_len, other_len)" {
+test "add coverage for max(self_len, other_len)" {
   let a = BigInt::from_int(123456789)
   let b = BigInt::from_int(987654321)
   let result = a + b
@@ -112,7 +112,7 @@ test "op_add coverage for max(self_len, other_len)" {
 }
 
 ///|
-test "op_sub coverage for max(self_len, other_len)" {
+test "sub coverage for max(self_len, other_len)" {
   let a = BigInt::from_int(987654321)
   let b = BigInt::from_int(123456789)
   let result = a - b

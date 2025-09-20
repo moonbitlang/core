@@ -113,7 +113,7 @@ pub fn[T] UninitializedArray::unsafe_blit(
 }
 
 ///|
-test "op_as_view with valid_range" {
+test "as_view with valid_range" {
   let arr : UninitializedArray[Int] = UninitializedArray::make(5)
   let view = arr[1:4]
   inspect(view.start(), content="1")
@@ -121,13 +121,13 @@ test "op_as_view with valid_range" {
 }
 
 ///|
-test "panic op_as_view with invalid_start" {
+test "panic as_view with invalid_start" {
   let arr : UninitializedArray[Int] = UninitializedArray::make(5)
   ignore(arr[-1:])
 }
 
 ///|
-test "panic op_as_view with invalid_end" {
+test "panic as_view with invalid_end" {
   let arr : UninitializedArray[Int] = UninitializedArray::make(5)
   ignore(arr[2:10])
 }

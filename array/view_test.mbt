@@ -63,7 +63,7 @@ test "contains" {
 }
 
 ///|
-test "op_equal" {
+test "equal" {
   let v1 = [1, 2, 3][:]
   let v2 = [1, 2, 3][:]
   assert_true(v1 == v2)

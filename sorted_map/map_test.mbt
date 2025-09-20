@@ -73,7 +73,7 @@ test "contains" {
 }
 
 ///|
-test "op_get" {
+test "get" {
   let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
   inspect(map[1], content="a")
   inspect(map[2], content="b")
@@ -81,13 +81,13 @@ test "op_get" {
 }
 
 ///|
-test "panic op_get" {
+test "panic get" {
   let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
   map[4] |> ignore
 }
 
 ///|
-test "op_equal" {
+test "equal" {
   let a = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
   let b = @sorted_map.from_array([(4, "d"), (5, "e"), (6, "f")])
   inspect(a == a, content="true")
