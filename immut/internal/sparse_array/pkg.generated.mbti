@@ -16,6 +16,7 @@ fn Bitset::add(Self, Int) -> Self
 fn Bitset::first_idx(Self) -> Int
 fn Bitset::has(Self, Int) -> Bool
 fn Bitset::index_of(Self, Int) -> Int
+#deprecated
 fn Bitset::inner(Self) -> UInt
 fn Bitset::intersection(Self, Self) -> Self
 fn Bitset::remove(Self, Int) -> Self

@@ -48,7 +48,7 @@ fn StringView::make_view(str : String, start : Int, end : Int) -> StringView = "
 ///   inspect(view[0].to_char(), content="Some('e')")
 ///   inspect(view[4], content="55358")
 /// ```
-#alias(op_get)
+#alias("_[_]")
 pub fn StringView::at(self : StringView, index : Int) -> Int {
   guard index >= 0 && index < self.length() else {
     abort("Index out of bounds")
@@ -418,7 +418,7 @@ pub suberror CreatingViewError {
 /// let view3 = try? str[:6]
 /// inspect(view3, content="Err(InvalidIndex)")
 /// ```
-#alias(op_as_view)
+#alias("_[_:_]")
 pub fn String::sub(
   self : String,
   start? : Int = 0,
@@ -481,7 +481,7 @@ pub fn String::sub(
 /// let view3 = try? str[:5]
 /// inspect(view3, content="Err(InvalidIndex)")
 /// ```
-#alias(op_as_view)
+#alias("_[_:_]")
 pub fn StringView::sub(
   self : StringView,
   start? : Int = 0,

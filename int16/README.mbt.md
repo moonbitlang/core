@@ -7,6 +7,7 @@ This package provides a fixed-width 16-bit signed integer type.
 The `Int16` type represents values from -32768 to 32767 (inclusive). The package provides these boundary values as constants:
 
 ```moonbit
+///|
 test "int16 range" {
   inspect(@int16.min_value, content="-32768")
   inspect(@int16.max_value, content="32767")
@@ -18,6 +19,7 @@ test "int16 range" {
 The `Int16` type supports standard arithmetic operations:
 
 ```moonbit
+///|
 test "int16 arithmetic" {
   let a : Int16 = 100
   let b : Int16 = 50
@@ -41,6 +43,7 @@ test "int16 arithmetic" {
 `Int16` supports standard bitwise operations:
 
 ```moonbit
+///|
 test "int16 bitwise" {
   let a : Int16 = 0b1100
   let b : Int16 = 0b1010
@@ -62,6 +65,7 @@ test "int16 bitwise" {
 `Int16` implements the `Compare` trait for total ordering:
 
 ```moonbit
+///|
 test "int16 comparison" {
   let a : Int16 = 100
   let b : Int16 = 50
@@ -87,6 +91,7 @@ test "int16 comparison" {
 `Int16` implements the `Default` trait, with 0 as its default value:
 
 ```moonbit
+///|
 test "int16 default" {
   let x = Int16::default()
   inspect(x, content="0")
@@ -98,6 +103,7 @@ test "int16 default" {
 Integer literals can be coerced to `Int16` when the type is explicitly specified:
 
 ```moonbit
+///|
 test "int16 coercion" {
   let a : Int16 = 42 // Coercion from integer literal
   let b : Int16 = 0xFF // Hexadecimal literal

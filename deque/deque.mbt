@@ -764,8 +764,8 @@ pub fn[A] pop_back(self : Deque[A]) -> A? {
 ///   let dv = @deque.of([1, 2, 3, 4, 5])
 ///   inspect(dv[2], content="3")
 /// ```
-#alias(op_get)
-pub fn[A] at(self : Deque[A], index : Int) -> A {
+#alias("_[_]")
+pub fn[A] Deque::at(self : Deque[A], index : Int) -> A {
   if index < 0 || index >= self.len {
     let len = self.len
     abort(
@@ -790,8 +790,8 @@ pub fn[A] at(self : Deque[A], index : Int) -> A {
 ///   dv[2] = 1
 ///   inspect(dv[2], content="1")
 /// ```
-#alias(op_set)
-pub fn[A] set(self : Deque[A], index : Int, value : A) -> Unit {
+#alias("_[_]=_")
+pub fn[A] Deque::set(self : Deque[A], index : Int, value : A) -> Unit {
   if index < 0 || index >= self.len {
     let len = self.len
     abort(

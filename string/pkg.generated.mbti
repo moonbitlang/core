@@ -46,21 +46,24 @@ fn String::rev_iter(String) -> Iter[Char]
 fn String::split(String, StringView) -> Iter[StringView]
 fn String::strip_prefix(String, StringView) -> StringView?
 fn String::strip_suffix(String, StringView) -> StringView?
-#alias(op_as_view)
+#alias("_[_:_]")
 fn String::sub(String, start? : Int, end? : Int) -> StringView raise CreatingViewError
 fn String::to_array(String) -> Array[Char]
 fn String::to_bytes(String) -> Bytes
 fn String::to_lower(String) -> String
 fn String::to_upper(String) -> String
-fn String::trim(String, StringView) -> StringView
-fn String::trim_end(String, StringView) -> StringView
+#callsite(migration(char_set, allow_positional=true))
+fn String::trim(String, char_set~ : StringView) -> StringView
+#callsite(migration(char_set, allow_positional=true))
+fn String::trim_end(String, char_set~ : StringView) -> StringView
 fn String::trim_space(String) -> StringView
-fn String::trim_start(String, StringView) -> StringView
+#callsite(migration(char_set, allow_positional=true))
+fn String::trim_start(String, char_set~ : StringView) -> StringView
 fn String::view(String, start_offset? : Int, end_offset? : Int) -> StringView
 impl Compare for String
 impl Default for String
 
-#alias(op_get)
+#alias("_[_]")
 fn StringView::at(Self, Int) -> Int
 fn StringView::char_length(Self) -> Int
 fn StringView::char_length_eq(Self, Int) -> Bool
@@ -99,16 +102,19 @@ fn StringView::split(Self, Self) -> Iter[Self]
 fn StringView::start_offset(Self) -> Int
 fn StringView::strip_prefix(Self, Self) -> Self?
 fn StringView::strip_suffix(Self, Self) -> Self?
-#alias(op_as_view)
+#alias("_[_:_]")
 fn StringView::sub(Self, start? : Int, end? : Int) -> Self raise CreatingViewError
 fn StringView::to_array(Self) -> Array[Char]
 fn StringView::to_bytes(Self) -> Bytes
 fn StringView::to_lower(Self) -> Self
 fn StringView::to_upper(Self) -> Self
-fn StringView::trim(Self, Self) -> Self
-fn StringView::trim_end(Self, Self) -> Self
+#callsite(migration(char_set, allow_positional=true))
+fn StringView::trim(Self, char_set~ : Self) -> Self
+#callsite(migration(char_set, allow_positional=true))
+fn StringView::trim_end(Self, char_set~ : Self) -> Self
 fn StringView::trim_space(Self) -> Self
-fn StringView::trim_start(Self, Self) -> Self
+#callsite(migration(char_set, allow_positional=true))
+fn StringView::trim_start(Self, char_set~ : Self) -> Self
 fn StringView::unsafe_charcode_at(Self, Int) -> Int
 fn StringView::view(Self, start_offset? : Int, end_offset? : Int) -> Self
 impl Add for StringView

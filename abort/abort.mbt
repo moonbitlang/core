@@ -23,8 +23,30 @@
 ///
 /// Returns a value of type `T`. However, this function never actually returns a
 /// value as it always causes a panic.
+#cfg(not(target="native"))
 pub fn[T] abort(msg : String) -> T {
   let _ = msg
+  panic_impl()
+}
+
+///|
+#cfg(target="native")
+fn println(s : String) -> Unit = "%println"
+
+///|
+/// Aborts the program with an error message. Always causes a panic, regardless
+/// of the message provided.
+///
+/// Parameters:
+///
+/// * `message` : A string containing the error message to be displayed when
+/// aborting.
+///
+/// Returns a value of type `T`. However, this function never actually returns a
+/// value as it always causes a panic.
+#cfg(target="native")
+pub fn[T] abort(msg : String) -> T {
+  println(msg)
   panic_impl()
 }
 

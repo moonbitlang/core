@@ -116,7 +116,7 @@ test "get_or_init full" {
 }
 
 ///|
-test "op_set" {
+test "Map::set" {
   let m : Map[String, Int] = Map::new()
   m["a"] = 1
   m["b"] = 2
@@ -125,7 +125,7 @@ test "op_set" {
 }
 
 ///|
-test "op_get" {
+test "get" {
   let m : Map[String, Int] = Map::new()
   m.set("a", 1)
   m.set("b", 2)
@@ -134,7 +134,7 @@ test "op_get" {
 }
 
 ///|
-test "panic op_get" {
+test "panic get" {
   let m : Map[String, Int] = Map::new()
   m.set("a", 1)
   m.set("b", 2)
@@ -707,7 +707,7 @@ test "to_array" {
 }
 
 ///|
-test "op_equal_1" {
+test "equal_1" {
   let m1 : Map[String, Int] = Map::new()
   m1.set("a", 1)
   m1.set("b", 2)
@@ -719,7 +719,7 @@ test "op_equal_1" {
 }
 
 ///|
-test "op_equal_2" {
+test "equal_2" {
   let map1 = { "a": 1, "b": 2 }
   let map2 = { "b": 2, "a": 1 }
   let map3 = { "a": 1, "b": 2 }
@@ -841,7 +841,7 @@ test "remove_entry_tail" {
 }
 
 ///|
-test "op_equal_size_mismatch" {
+test "equal_size_mismatch" {
   let map1 = Map::new(capacity=1)
   let map2 = Map::new(capacity=2)
   map1.set(1, 1)
@@ -852,7 +852,7 @@ test "op_equal_size_mismatch" {
 }
 
 ///|
-test "op_equal_key_value_mismatch" {
+test "equal_key_value_mismatch" {
   let map1 = Map::new(capacity=2)
   let map2 = Map::new(capacity=2)
   map1.set(1, 1)
@@ -864,7 +864,7 @@ test "op_equal_key_value_mismatch" {
 }
 
 ///|
-test "op_equal_size_mismatch" {
+test "equal_size_mismatch" {
   let map1 = Map::new(capacity=1)
   let map2 = Map::new(capacity=2)
   map1.set(1, 1)
@@ -875,7 +875,7 @@ test "op_equal_size_mismatch" {
 }
 
 ///|
-test "op_equal_key_value_mismatch" {
+test "equal_key_value_mismatch" {
   let map1 = Map::new(capacity=2)
   let map2 = Map::new(capacity=2)
   map1.set(1, 1)
@@ -887,7 +887,7 @@ test "op_equal_key_value_mismatch" {
 }
 
 ///|
-test "op_equal_size_mismatch" {
+test "equal_size_mismatch" {
   let map1 = Map::new(capacity=1)
   let map2 = Map::new(capacity=2)
   map1.set(1, 1)
@@ -898,7 +898,7 @@ test "op_equal_size_mismatch" {
 }
 
 ///|
-test "op_equal_key_value_mismatch" {
+test "equal_key_value_mismatch" {
   let map1 = Map::new(capacity=2)
   let map2 = Map::new(capacity=2)
   map1.set(1, 1)

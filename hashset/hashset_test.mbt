@@ -253,7 +253,7 @@ test "lxor" {
 }
 
 ///|
-test "op_sub" {
+test "sub" {
   let m1 = @hashset.of(["a", "b", "c"])
   let m2 = @hashset.of(["b", "c", "d"])
   let m = m1 - m2

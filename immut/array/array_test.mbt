@@ -69,7 +69,7 @@ test "length" {
 }
 
 ///|
-test "op_get" {
+test "get" {
   let v = @array.of([1, 2, 3, 4, 5])
   inspect(v[0], content="1")
   inspect(v[1], content="2")
@@ -131,7 +131,7 @@ test "iteri" {
 }
 
 ///|
-test "op_equal" {
+test "equal" {
   let v0 : @array.T[Int] = @array.of([])
   let v1 = @array.of([1, 2, 3, 4, 5])
   let v2 = @array.of([1, 2, 3, 4, 5])

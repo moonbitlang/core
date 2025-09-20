@@ -172,7 +172,7 @@ pub fn[T] Array::unsafe_get(self : Array[T], idx : Int) -> T {
 /// ```
 ///
 #intrinsic("%array.get")
-#alias(op_get)
+#alias("_[_]")
 pub fn[T] Array::at(self : Array[T], index : Int) -> T {
   let len = self.length()
   guard index >= 0 && index < len
@@ -232,7 +232,7 @@ fn[T] Array::unsafe_set(self : Array[T], idx : Int, val : T) -> Unit {
 /// ```
 ///
 #intrinsic("%array.set")
-#alias(op_set)
+#alias("_[_]=_")
 pub fn[T] Array::set(self : Array[T], index : Int, value : T) -> Unit {
   let len = self.length()
   guard index >= 0 && index < len

@@ -381,7 +381,7 @@ test "div" {
 }
 
 ///|
-test "op_shl" {
+test "shl" {
   let a = @bigint.BigInt::from_int64(1234567890123456789)
   let b = a << 1
   inspect(b.to_string(), content="2469135780246913578")
@@ -393,7 +393,7 @@ test "op_shl" {
 }
 
 ///|
-test "op_shr" {
+test "shr" {
   let a = @bigint.BigInt::from_int64(1234567890123456789L)
   let b = a >> 1
   inspect(b.to_string(), content="617283945061728394")

@@ -49,9 +49,13 @@ pub fn[K : Compare, V] SortedMap::of(
 
 ///|
 /// Inserts a key-value pair.
-#alias(op_set)
+#alias("_[_]=_")
 #alias(add, deprecated="Use set instead")
-pub fn[K : Compare, V] set(self : SortedMap[K, V], key : K, value : V) -> Unit {
+pub fn[K : Compare, V] SortedMap::set(
+  self : SortedMap[K, V],
+  key : K,
+  value : V,
+) -> Unit {
   let (new_root, inserted) = add_node(self.root, key, value)
   if self.root != new_root {
     self.root = new_root
@@ -95,8 +99,8 @@ pub fn[K : Compare, V] get(self : SortedMap[K, V], key : K) -> V? {
 
 ///|
 /// Gets a value by a key.
-#alias(op_get)
-pub fn[K : Compare, V] at(self : SortedMap[K, V], key : K) -> V {
+#alias("_[_]")
+pub fn[K : Compare, V] SortedMap::at(self : SortedMap[K, V], key : K) -> V {
   loop self.root {
     Some(node) => {
       let cmp = key.compare(node.key)
@@ -614,7 +618,7 @@ test "remove" {
 }
 
 ///|
-test "op_set" {
+test "_[_]=_" {
   let map = new()
   map[1] = "a"
   map[2] = "b"

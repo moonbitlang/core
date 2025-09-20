@@ -12,7 +12,7 @@ import(
 // Types and methods
 type HashMap[K, V]
 fn[K : Eq + Hash, V] HashMap::add(Self[K, V], K, V) -> Self[K, V]
-#alias(op_get)
+#alias("_[_]")
 fn[K : Eq + Hash, V] HashMap::at(Self[K, V], K) -> V
 fn[K : Eq + Hash, V] HashMap::contains(Self[K, V], K) -> Bool
 fn[K : Eq, V] HashMap::difference(Self[K, V], Self[K, V]) -> Self[K, V]

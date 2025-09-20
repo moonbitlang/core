@@ -20,7 +20,7 @@ fn Bytes::iter2(Bytes) -> Iter2[Int, Byte]
 #as_free_fn
 fn Bytes::of(FixedArray[Byte]) -> Bytes
 fn Bytes::rev_find(Bytes, BytesView) -> Int?
-#alias(op_as_view)
+#alias("_[_:_]")
 fn Bytes::sub(Bytes, start? : Int, end? : Int) -> BytesView
 fn Bytes::to_array(Bytes) -> Array[Byte]
 fn Bytes::to_fixedarray(Bytes, len? : Int) -> FixedArray[Byte]
@@ -35,7 +35,7 @@ impl Add for Bytes
 impl Default for Bytes
 impl Hash for Bytes
 
-#alias(op_get)
+#alias("_[_]")
 fn BytesView::at(Self, Int) -> Byte
 fn BytesView::data(Self) -> Bytes
 fn BytesView::find(Self, Self) -> Int?
@@ -44,7 +44,7 @@ fn BytesView::iter(Self) -> Iter[Byte]
 fn BytesView::length(Self) -> Int
 fn BytesView::rev_find(Self, Self) -> Int?
 fn BytesView::start_offset(Self) -> Int
-#alias(op_as_view)
+#alias("_[_:_]")
 fn BytesView::sub(Self, start? : Int, end? : Int) -> Self
 fn BytesView::to_bytes(Self) -> Bytes
 fn BytesView::to_double_be(Self) -> Double

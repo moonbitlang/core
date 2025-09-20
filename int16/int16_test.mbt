@@ -77,7 +77,7 @@ test "Int16::from_int64" {
 }
 
 ///|
-test "Int16::op_add" {
+test "Int16::add" {
   let add = (a : Int16, b : Int16) => a + b
   inspect(add(1, 2), content="3")
   inspect(add(0, 0), content="0")
@@ -94,7 +94,7 @@ test "Int16::op_add" {
 }
 
 ///|
-test "Int16::op_sub" {
+test "Int16::sub" {
   let sub = (a : Int16, b : Int16) => a - b
   inspect(sub(3, 2), content="1")
   inspect(sub(0, 0), content="0")
@@ -111,7 +111,7 @@ test "Int16::op_sub" {
 }
 
 ///|
-test "Int16::op_mul" {
+test "Int16::mul" {
   let mul = (a : Int16, b : Int16) => a * b
   inspect(mul(0, 0), content="0")
   inspect(mul(1, 1), content="1")
@@ -130,7 +130,7 @@ test "Int16::op_mul" {
 }
 
 ///|
-test "Int16::op_div" {
+test "Int16::div" {
   let div = (a : Int16, b : Int16) => a / b
   inspect(div(6, 2), content="3")
   inspect(div(0, 1), content="0")
@@ -184,17 +184,17 @@ test "Int16::hash" {
 }
 
 ///|
-test "Int16::op_equal" {
-  inspect(Int16::op_equal(1, 2), content="false")
-  inspect(Int16::op_equal(2, 1), content="false")
-  inspect(Int16::op_equal(1, 1), content="true")
-  inspect(Int16::op_equal(-1, 1), content="false")
-  inspect(Int16::op_equal(1, -1), content="false")
-  inspect(Int16::op_equal(-1, -1), content="true")
+test "Int16::equal" {
+  inspect(Int16::equal(1, 2), content="false")
+  inspect(Int16::equal(2, 1), content="false")
+  inspect(Int16::equal(1, 1), content="true")
+  inspect(Int16::equal(-1, 1), content="false")
+  inspect(Int16::equal(1, -1), content="false")
+  inspect(Int16::equal(-1, -1), content="true")
 }
 
 ///|
-test "Int16::op_shl" {
+test "Int16::shl" {
   let shl = (a : Int16, b : Int) => a << b
   inspect(shl(0, 0), content="0")
   inspect(shl(1, 0), content="1")
@@ -253,7 +253,7 @@ test "Int16::op_shl" {
 }
 
 ///|
-test "Int16::op_shr" {
+test "Int16::shr" {
   let shr = (a : Int16, b : Int) => a >> b
   inspect(shr(0, 0), content="0")
   inspect(shr(1, 0), content="1")
@@ -380,7 +380,7 @@ test "Int16::lxor" {
 }
 
 ///|
-test "Int16::op_mod" {
+test "Int16::mod" {
   let mod = (a : Int16, b : Int16) => a % b
   inspect(mod(10, 3), content="1")
   inspect(mod(10, 2), content="0")
@@ -398,7 +398,7 @@ test "Int16::op_mod" {
 }
 
 ///|
-test "Int16::op_neg" {
+test "Int16::neg" {
   let neg = (a : Int16) => -a
   inspect(neg(10), content="-10")
   inspect(neg(-10), content="10")

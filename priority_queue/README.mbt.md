@@ -9,11 +9,12 @@ A priority queue is a data structure capable of maintaining maximum/minimum valu
 You can use `new()` or `of()` to create a priority queue.
 
 ```moonbit
+///|
 test {
   let queue1 : @priority_queue.T[Int] = @priority_queue.new()
   let queue2 = @priority_queue.of([1, 2, 3])
   @json.inspect(queue1, content=[])
-  @json.inspect(queue2, content=[3,2,1])
+  @json.inspect(queue2, content=[3, 2, 1])
 }
 ```
 
@@ -24,6 +25,7 @@ Note, however, that the default priority queue created is greater-first; if you 
 You can use `length()` to get the number of elements in the current priority queue.
 
 ```moonbit
+///|
 test {
   let pq = @priority_queue.of([1, 2, 3, 4, 5])
   assert_eq(pq.length(), 5)
@@ -33,10 +35,11 @@ test {
 Similarly, you can use the `is_empty` to determine whether the priority queue is empty.
 
 ```moonbit
+///|
 test {
   let pq : @priority_queue.T[Int] = @priority_queue.new()
   assert_eq(pq.is_empty(), true)
- }
+}
 ```
 
 ## Peek
@@ -44,6 +47,7 @@ test {
 You can use `peek()` to look at the head element of a queue, which must be either the maximum or minimum value of an element in the queue, depending on the nature of the specification. The return value of `peek()` is an Option, which means that the result will be `None` when the queue is empty.
 
 ```moonbit
+///|
 test {
   let pq = @priority_queue.of([1, 2, 3, 4, 5])
   assert_eq(pq.peek(), Some(5))
@@ -55,6 +59,7 @@ test {
 You can use `push()` to add elements to the priority queue.
 
 ```moonbit
+///|
 test {
   let pq : @priority_queue.T[Int] = @priority_queue.new()
   pq.push(1)
@@ -68,6 +73,7 @@ test {
 You can use `pop()` to pop the element at the front of the priority queue, respectively, and like [Peek](#Peek), its return values are `Option`, loaded with the value of the element being popped.
 
 ```moonbit
+///|
 test {
   let pq = @priority_queue.of([5, 4, 3, 2, 1])
   assert_eq(pq.pop(), Some(5))
@@ -75,6 +81,7 @@ test {
 ```
 
 ```moonbit
+///|
 test {
   let pq = @priority_queue.of([5, 4, 3, 2, 1])
   assert_eq(pq.length(), 5)
@@ -86,6 +93,7 @@ test {
 You can use `clear` to clear a priority queue.
 
 ```moonbit
+///|
 test {
   let pq = @priority_queue.of([1, 2, 3, 4, 5])
   pq.clear()
@@ -98,8 +106,10 @@ test {
 You can copy a priority queue using the `copy` method.
 
 ```moonbit
+///|
 test {
   let pq = @priority_queue.of([1, 2, 3])
   let _pq2 = pq.copy()
+
 }
 ```

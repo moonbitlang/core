@@ -348,7 +348,7 @@ test "div" {
 }
 
 ///|
-test "op_shl" {
+test "shl" {
   let a = BigInt::from_int64(1234567890123456789)
   let b = a << 1
   check_invariant(b)

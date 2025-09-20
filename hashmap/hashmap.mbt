@@ -92,8 +92,12 @@ pub fn[K : Hash + Eq, V] HashMap::from_array(
 ///   map.set("key", 24) // update existing key
 ///   inspect(map.get("key"), content="Some(24)")
 /// ```
-#alias(op_set)
-pub fn[K : Hash + Eq, V] set(self : HashMap[K, V], key : K, value : V) -> Unit {
+#alias("_[_]=_")
+pub fn[K : Hash + Eq, V] HashMap::set(
+  self : HashMap[K, V],
+  key : K,
+  value : V,
+) -> Unit {
   self.set_with_hash(key, value, key.hash())
 }
 
@@ -203,8 +207,8 @@ pub fn[K : Hash + Eq, V] get(self : HashMap[K, V], key : K) -> V? {
 ///   let map = @hashmap.of([("key", 42)])
 ///   inspect(map["key"], content="42")
 /// ```
-#alias(op_get)
-pub fn[K : Hash + Eq, V] at(self : HashMap[K, V], key : K) -> V {
+#alias("_[_]")
+pub fn[K : Hash + Eq, V] HashMap::at(self : HashMap[K, V], key : K) -> V {
   let hash = key.hash()
   for i = 0, idx = hash & self.capacity_mask {
     guard self.entries[idx] is Some(entry)

@@ -25,13 +25,14 @@ fn[T] FixedArraySlice::length(self : FixedArraySlice[T]) -> Int {
 }
 
 ///|
-#alias(op_get)
+#alias("_[_]")
 fn[T] FixedArraySlice::at(self : FixedArraySlice[T], index : Int) -> T {
   self.array[self.start + index]
 }
 
 ///|
-fn[T] FixedArraySlice::op_set(
+#alias("_[_]=_")
+fn[T] FixedArraySlice::set(
   self : FixedArraySlice[T],
   index : Int,
   value : T,

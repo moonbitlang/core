@@ -14,7 +14,7 @@ import(
 type SortedMap[K, V]
 #alias(insert, deprecated)
 fn[K : Compare, V] SortedMap::add(Self[K, V], K, V) -> Self[K, V]
-#alias(op_get)
+#alias("_[_]")
 fn[K : Compare, V] SortedMap::at(Self[K, V], K) -> V
 fn[K : Compare, V] SortedMap::contains(Self[K, V], K) -> Bool
 fn[K, V] SortedMap::each(Self[K, V], (K, V) -> Unit) -> Unit

@@ -9,6 +9,7 @@ fn[A : Hash] of(A) -> Path
 // Types and methods
 pub(all) struct Path(UInt)
 fn Path::idx(Self) -> Int
+#deprecated
 fn Path::inner(Self) -> UInt
 fn Path::is_last(Self) -> Bool
 fn Path::next(Self) -> Self

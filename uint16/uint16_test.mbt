@@ -75,7 +75,7 @@ test "UInt16::from_int64" {
 }
 
 ///|
-test "UInt16::op_add" {
+test "UInt16::add" {
   fn add(a : UInt16, b : UInt16) -> UInt16 {
     a + b
   }
@@ -93,7 +93,7 @@ test "UInt16::op_add" {
 }
 
 ///|
-test "UInt16::op_sub" {
+test "UInt16::sub" {
   fn sub(a : UInt16, b : UInt16) -> UInt16 {
     a - b
   }
@@ -112,7 +112,7 @@ test "UInt16::op_sub" {
 }
 
 ///|
-test "UInt16::op_mul" {
+test "UInt16::mul" {
   fn mul(a : UInt16, b : UInt16) -> UInt16 {
     a * b
   }
@@ -131,7 +131,7 @@ test "UInt16::op_mul" {
 }
 
 ///|
-test "UInt16::op_div" {
+test "UInt16::div" {
   fn div(a : UInt16, b : UInt16) -> UInt16 {
     a / b
   }
@@ -180,17 +180,17 @@ test "UInt16::hash" {
 }
 
 ///|
-test "UInt16::op_equal" {
-  inspect(UInt16::op_equal(1, 2), content="false")
-  inspect(UInt16::op_equal(2, 1), content="false")
-  inspect(UInt16::op_equal(1, 1), content="true")
-  inspect(UInt16::op_equal(0, 1), content="false")
-  inspect(UInt16::op_equal(1, 0), content="false")
-  inspect(UInt16::op_equal(0, 0), content="true")
+test "UInt16::equal" {
+  inspect(UInt16::equal(1, 2), content="false")
+  inspect(UInt16::equal(2, 1), content="false")
+  inspect(UInt16::equal(1, 1), content="true")
+  inspect(UInt16::equal(0, 1), content="false")
+  inspect(UInt16::equal(1, 0), content="false")
+  inspect(UInt16::equal(0, 0), content="true")
 }
 
 ///|
-test "UInt16::op_shl" {
+test "UInt16::shl" {
   fn shl(a : UInt16, b : Int) -> UInt16 {
     a << b
   }
@@ -216,7 +216,7 @@ test "UInt16::op_shl" {
 }
 
 ///|
-test "UInt16::op_shr" {
+test "UInt16::shr" {
   fn shr(a : UInt16, b : Int) -> UInt16 {
     a >> b
   }
@@ -312,7 +312,7 @@ test "UInt16::lxor" {
 }
 
 ///|
-test "UInt16::op_mod" {
+test "UInt16::mod" {
   fn mod(a : UInt16, b : UInt16) -> UInt16 {
     a % b
   }

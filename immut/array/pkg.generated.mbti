@@ -11,7 +11,7 @@ import(
 
 // Types and methods
 type T[A]
-#alias(op_get)
+#alias("_[_]")
 fn[A] T::at(Self[A], Int) -> A
 fn[A] T::concat(Self[A], Self[A]) -> Self[A]
 #deprecated

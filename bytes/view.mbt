@@ -78,7 +78,7 @@ fn BytesView::len(self : BytesView) -> Int = "%bytesview.len"
 ///   let view = bytes[1:4] // view contains [0x02, 0x03, 0x04]
 ///   inspect(view[1], content="b'\\x03'")
 /// ```
-#alias(op_get)
+#alias("_[_]")
 pub fn BytesView::at(self : BytesView, index : Int) -> Byte {
   guard index >= 0 && index < self.length() else {
     abort(
@@ -156,7 +156,7 @@ pub fn BytesView::unsafe_get(self : BytesView, index : Int) -> Byte {
 ///   assert_eq(bv[1], b'\x02')
 ///   assert_eq(bv[2], b'\x03')
 /// ```
-#alias(op_as_view)
+#alias("_[_:_]")
 pub fn Bytes::sub(self : Bytes, start? : Int = 0, end? : Int) -> BytesView {
   let len = self.length()
   let end = match end {
@@ -181,7 +181,7 @@ pub fn Bytes::sub(self : Bytes, start? : Int = 0, end? : Int) -> BytesView {
 ///   inspect(bv2.length(), content="3")
 ///   assert_eq(bv2[1], b'\x02')
 /// ```
-#alias(op_as_view)
+#alias("_[_:_]")
 pub fn BytesView::sub(
   self : BytesView,
   start? : Int = 0,
