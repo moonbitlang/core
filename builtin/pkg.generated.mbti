@@ -80,6 +80,7 @@ fn[T] Array::chunk_by(Self[T], (T, T) -> Bool raise?) -> Self[Self[T]] raise?
 fn[T] Array::chunks(Self[T], Int) -> Self[Self[T]]
 fn[T] Array::clear(Self[T]) -> Unit
 fn[T : Eq] Array::contains(Self[T], T) -> Bool
+fn[T] Array::copy(Self[T]) -> Self[T]
 fn[T : Eq] Array::dedup(Self[T]) -> Unit
 fn[T] Array::drain(Self[T], Int, Int) -> Self[T]
 fn[T] Array::each(Self[T], (T) -> Unit raise?) -> Unit raise?
