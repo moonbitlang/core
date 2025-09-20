@@ -54,11 +54,11 @@ test "write_leb128 Int" {
   buffer.test_leb128(129)
   assert_eq(buffer.to_bytes(), b"\x81\x01")
   buffer.test_leb128(16383)
-  assert_eq(buffer.to_bytes(), b"\xff\x7f")
+  assert_eq(buffer.to_bytes(), b"\xff\xff\x00")
   buffer.test_leb128(16384)
   assert_eq(buffer.to_bytes(), b"\x80\x80\x01")
   buffer.test_leb128(2097151)
-  assert_eq(buffer.to_bytes(), b"\xff\xff\x7f")
+  assert_eq(buffer.to_bytes(), b"\xff\xff\xff\x00")
 }
 
 ///|
@@ -68,7 +68,7 @@ test "write_leb128 Int64" {
   assert_eq(buffer.to_bytes(), b"\x00")
   buffer.reset()
   buffer.write_leb128(127L)
-  assert_eq(buffer.to_bytes(), b"\x7f")
+  assert_eq(buffer.to_bytes(), b"\xff\x00")
   buffer.reset()
   buffer.write_leb128(128L)
   assert_eq(buffer.to_bytes(), b"\x80\x01")
@@ -77,13 +77,13 @@ test "write_leb128 Int64" {
   assert_eq(buffer.to_bytes(), b"\x81\x01")
   buffer.reset()
   buffer.write_leb128(16383L)
-  assert_eq(buffer.to_bytes(), b"\xff\x7f")
+  assert_eq(buffer.to_bytes(), b"\xff\xff\x00")
   buffer.reset()
   buffer.write_leb128(16384L)
   assert_eq(buffer.to_bytes(), b"\x80\x80\x01")
   buffer.reset()
   buffer.write_leb128(2097151L)
-  assert_eq(buffer.to_bytes(), b"\xff\xff\x7f")
+  assert_eq(buffer.to_bytes(), b"\xff\xff\xff\x00")
 }
 
 ///|
