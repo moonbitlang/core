@@ -121,43 +121,6 @@ pub fn[T] ArrayView::unsafe_get(self : ArrayView[T], index : Int) -> T {
 }
 
 ///|
-/// Sets the value at the specified index in the array view.
-///
-/// Parameters:
-///
-/// * `array_view` : The array view to modify.
-/// * `index` : The position in the array view where the value will be set.
-/// * `value` : The value to be assigned at the specified index.
-///
-/// Throws a panic if `index` is negative or greater than or equal to the length
-/// of the array view.
-///
-///
-#deprecated("ArrayView will be immutable, use array if you need mutation")
-#alias("_[_]=_")
-pub fn[T] ArrayView::set(self : ArrayView[T], index : Int, value : T) -> Unit {
-  guard index >= 0 && index < self.len() else {
-    abort(
-      "index out of bounds: the len is from 0 to \{self.len()} but the index is \{index}",
-    )
-  }
-  self.buf()[self.start() + index] = value
-}
-
-///|
-#deprecated("ArrayView will be immutable, use array if you need mutation")
-pub fn[T] ArrayView::swap(self : ArrayView[T], i : Int, j : Int) -> Unit {
-  guard i >= 0 && i < self.len() && j >= 0 && j < self.len() else {
-    abort(
-      "index out of bounds: the len is from 0 to \{self.len()} but the index is (\{i}, \{j})",
-    )
-  }
-  let temp = self.buf()[self.start() + i]
-  self.buf()[self.start() + i] = self.buf()[self.start() + j]
-  self.buf()[self.start() + j] = temp
-}
-
-///|
 /// Creates a view of a portion of the array. The view provides read-write access
 /// to the underlying array without copying the elements.
 ///
@@ -297,20 +260,5 @@ pub fn[T] FixedArray::sub(
     unsafe_cast_fixedarray_to_uninitializedarray(self),
     start,
     end - start,
-  )
-}
-
-///|
-#deprecated("ArrayView will be immutable, use array if you need mutation")
-pub fn[T] ArrayView::blit_to(self : ArrayView[T], dst : ArrayView[T]) -> Unit {
-  let src_len = self.length()
-  let dst_len = dst.length()
-  guard dst_len >= src_len
-  UninitializedArray::unsafe_blit(
-    dst.buf(),
-    dst.start(),
-    self.buf(),
-    self.start(),
-    src_len,
   )
 }
