@@ -576,3 +576,142 @@ test "partition_by with edge cases - verify relative position fix" {
   arr3.quick_sort_by(start=3, end=5, (a, b) => a - b, None, 10)
   assert_eq(arr3, [5, 4, 3, 1, 2]) // Last two elements sorted
 }
+
+///|
+test "Array::partition - basic partitioning" {
+  // Test 1: Basic partition with middle pivot
+  let arr1 = [3, 7, 1, 4, 6, 2, 5]
+  let (pos, partitioned) = arr1.partition(start=0, end=7, 3)
+  // Pivot was 4, should end up at position 3
+  assert_eq(pos, 3)
+  assert_eq(partitioned, false) // Elements were rearranged
+  // All elements < 4 should be before position 3, all >= 4 after
+  for i in 0..<pos {
+    assert_true(arr1[i] < 4)
+  }
+  for i in (pos + 1)..<7 {
+    assert_true(arr1[i] >= 4)
+  }
+  assert_eq(arr1[pos], 4) // Pivot should be at position 3
+
+  // Test 2: Already partitioned array
+  let arr2 = [1, 2, 3, 4, 5, 6, 7]
+  let (pos2, partitioned2) = arr2.partition(start=0, end=7, 3)
+  assert_eq(pos2, 3)
+  assert_eq(partitioned2, true) // Array was already partitioned
+  assert_eq(arr2, [1, 2, 3, 4, 5, 6, 7]) // No change needed
+}
+
+///|
+test "Array::partition - edge cases" {
+  // Test 1: Empty range
+  let arr1 = [5, 4, 3, 2, 1]
+  let (pos1, partitioned1) = arr1.partition(start=2, end=2, 0)
+  assert_eq(pos1, 0) // Should return relative position 0
+  assert_eq(partitioned1, true)
+  assert_eq(arr1, [5, 4, 3, 2, 1]) // No change
+
+  // Test 2: Single element
+  let arr2 = [5, 4, 3, 2, 1]
+  let (pos2, partitioned2) = arr2.partition(start=2, end=3, 0)
+  assert_eq(pos2, 0) // Single element stays at position 0 (relative)
+  assert_eq(partitioned2, true)
+  assert_eq(arr2, [5, 4, 3, 2, 1]) // Single element is already partitioned
+
+  // Test 3: Two elements - pivot at first position
+  let arr3 = [5, 3]
+  let (pos3, partitioned3) = arr3.partition(start=0, end=2, 0)
+  assert_eq(pos3, 1) // Pivot 5 should end at position 1
+  assert_eq(partitioned3, true) // No element rearrangement needed during partitioning
+  assert_eq(arr3, [3, 5]) // Should be swapped
+
+  // Test 4: Two elements - no swap needed
+  let arr4 = [3, 5]
+  let (pos4, partitioned4) = arr4.partition(start=0, end=2, 1)
+  assert_eq(pos4, 1) // Pivot 5 stays at position 1
+  assert_eq(partitioned4, true)
+  assert_eq(arr4, [3, 5]) // Already in correct order
+
+  // Test 5: Two elements - actual rearrangement during partition
+  let arr5 = [3, 5]
+  let (pos5, partitioned5) = arr5.partition(start=0, end=2, 0)
+  assert_eq(pos5, 0) // Pivot 3 should end at position 0
+  assert_eq(partitioned5, true) // No rearrangement needed
+  assert_eq(arr5, [3, 5]) // No change needed
+}
+
+///|
+test "Array::partition - with duplicates" {
+  // Test with duplicate values
+  let arr = [3, 5, 2, 5, 1, 5, 4, 5]
+  let (pos, _partitioned) = arr.partition(start=0, end=8, 1)
+  // Pivot is 5 (from index 1)
+  assert_eq(arr[pos], 5) // Pivot should be at returned position
+
+  // All elements < 5 should be before pivot position
+  for i in 0..<pos {
+    assert_true(arr[i] < 5)
+  }
+
+  // All elements >= 5 should be at or after pivot position
+  for i in pos..<8 {
+    assert_true(arr[i] >= 5)
+  }
+
+  // Count elements less than 5: [3, 2, 1, 4] = 4 elements
+  assert_eq(pos, 4)
+}
+
+///|
+test "Array::partition - different pivot positions" {
+  // Test 1: First element as pivot
+  let arr1 = [5, 2, 8, 1, 9, 3]
+  let (pos1, _) = arr1.partition(start=0, end=6, 0)
+  assert_eq(arr1[pos1], 5)
+  // Elements < 5: [2, 1, 3] = 3 elements
+  assert_eq(pos1, 3)
+
+  // Test 2: Last element as pivot
+  let arr2 = [5, 2, 8, 1, 9, 3]
+  let (pos2, _) = arr2.partition(start=0, end=6, 5)
+  assert_eq(arr2[pos2], 3)
+  // Elements < 3: [2, 1] = 2 elements
+  assert_eq(pos2, 2)
+
+  // Test 3: Pivot in a sub-range
+  let arr3 = [9, 8, 5, 2, 6, 1, 4, 7, 3]
+  let (pos3, _) = arr3.partition(start=2, end=7, 2)
+  // Working on sub-array [5, 2, 6, 1, 4], pivot is 6
+  assert_eq(arr3[2 + pos3], 6)
+  // In sub-array, elements < 6: [5, 2, 1, 4] = 4 elements
+  assert_eq(pos3, 4)
+}
+
+///|
+test "Array::partition - all elements same" {
+  let arr = [5, 5, 5, 5, 5]
+  let (pos, partitioned) = arr.partition(start=0, end=5, 2)
+  // When all elements are equal, pivot stays at the beginning
+  assert_eq(pos, 0)
+  assert_eq(partitioned, true) // No swaps needed
+  assert_eq(arr, [5, 5, 5, 5, 5])
+}
+
+///|
+test "Array::partition - reverse sorted array" {
+  let arr = [9, 8, 7, 6, 5, 4, 3, 2, 1]
+  let (pos, partitioned) = arr.partition(start=0, end=9, 4)
+  // Pivot is 5
+  assert_eq(arr[pos], 5)
+  assert_eq(partitioned, false) // Elements were rearranged
+  // Elements < 5: [4, 3, 2, 1] = 4 elements
+  assert_eq(pos, 4)
+
+  // Verify partitioning
+  for i in 0..<pos {
+    assert_true(arr[i] < 5)
+  }
+  for i in (pos + 1)..<9 {
+    assert_true(arr[i] >= 5)
+  }
+}
