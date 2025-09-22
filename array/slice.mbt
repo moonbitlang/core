@@ -67,3 +67,58 @@ fn[T] FixedArraySlice::slice(
 ) -> FixedArraySlice[T] {
   { array: self.array, start: self.start + start, end: self.start + end }
 }
+
+///|
+/// TODO: use specific type for non-js backend
+/// Notice: may need to move to builtin
+priv struct ArraySlice[T] {
+  array : Array[T]
+  start : Int
+  end : Int
+}
+
+///|
+fn[T] ArraySlice::length(self : ArraySlice[T]) -> Int {
+  self.end - self.start
+}
+
+///|
+#alias("_[_]")
+fn[T] ArraySlice::at(self : ArraySlice[T], index : Int) -> T {
+  self.array[self.start + index]
+}
+
+///|
+fn[T] ArraySlice::swap(self : ArraySlice[T], a : Int, b : Int) -> Unit {
+  let i = a + self.start
+  let j = b + self.start
+  if i >= self.end || j >= self.end || i < self.start || j < self.start {
+    let len = self.length()
+    abort(
+      "index out of bounds: the len is from 0 to \{len} but the index is (\{a}, \{b})",
+    )
+  }
+  let temp = self.array.unsafe_get(i)
+  self.array.unsafe_set(i, self.array.unsafe_get(j))
+  self.array.unsafe_set(j, temp)
+}
+
+///|
+fn[T] ArraySlice::rev_inplace(self : ArraySlice[T]) -> Unit {
+  let len = self.length()
+  let mid_len = len / 2
+  for i in 0..<mid_len {
+    let j = len - i - 1
+    self.swap(i, j)
+  }
+}
+
+///|
+#alias("_[_:_]")
+fn[T] ArraySlice::sub(
+  self : ArraySlice[T],
+  start? : Int = 0,
+  end? : Int = self.length(),
+) -> ArraySlice[T] {
+  { array: self.array, start: self.start + start, end: self.start + end }
+}
