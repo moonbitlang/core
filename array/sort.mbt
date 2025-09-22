@@ -48,7 +48,7 @@ fn[T : Compare] quick_sort(arr : ArraySlice[T], pred : T?, limit : Int) -> Unit 
     // Too many imbalanced partitions may lead to O(n^2) performance in quick sort.
     // If the limit is reached, use heap sort to ensure O(n log n) performance.
     if limit == 0 {
-      heap_sort(arr)
+      arr.array.heap_sort(start=arr.start, end=arr.end)
       return
     }
     let (pivot_index, likely_sorted) = arr.array.choose_pivot(
@@ -286,32 +286,73 @@ fn[T : Compare] Array::choose_pivot(
 }
 
 ///|
-fn[T : Compare] heap_sort(arr : ArraySlice[T]) -> Unit {
-  let len = arr.length()
-  for i = len / 2 - 1; i >= 0; i = i - 1 {
-    sift_down(arr, i)
+/// Performs heap sort on the array within the given range.
+fn[T : Compare] Array::heap_sort(
+  arr : Array[T],
+  start~ : Int,
+  end~ : Int,
+) -> Unit {
+  // Validate and adjust boundaries
+  let actual_start = if start < 0 { 0 } else { start }
+  let actual_end = if end > arr.length() { arr.length() } else { end }
+  if actual_start >= actual_end {
+    return // Empty or invalid range, nothing to sort
   }
+  let len = actual_end - actual_start
+
+  // Build heap - heapify all non-leaf nodes
+  for i = len / 2 - 1; i >= 0; i = i - 1 {
+    arr.sift_down(start=actual_start, end=actual_end, i)
+  }
+
+  // Extract elements from heap one by one
   for i = len - 1; i > 0; i = i - 1 {
-    arr.swap(0, i)
-    sift_down(arr[0:i], 0)
+    // Move current root to end
+    let root = actual_start
+    let last = actual_start + i
+    let temp = arr[root]
+    arr[root] = arr[last]
+    arr[last] = temp
+
+    // Call sift_down on the reduced heap
+    arr.sift_down(start=actual_start, end=actual_start + i, 0)
   }
 }
 
 ///|
-fn[T : Compare] sift_down(arr : ArraySlice[T], index : Int) -> Unit {
-  let mut index = index
-  let len = arr.length()
-  let mut child = index * 2 + 1
+/// Maintains the heap property by moving an element down the heap.
+fn[T : Compare] Array::sift_down(
+  arr : Array[T],
+  start~ : Int,
+  end~ : Int,
+  index : Int,
+) -> Unit {
+  let mut current = index
+  let len = end - start
+  let mut child = current * 2 + 1
   while child < len {
-    if child + 1 < len && arr[child] < arr[child + 1] {
+    let child_pos = start + child
+    let current_pos = start + current
+
+    // Find the larger child
+    if child + 1 < len && arr[child_pos] < arr[child_pos + 1] {
       child = child + 1
     }
-    if arr[index] >= arr[child] {
+    let new_child_pos = start + child
+
+    // If current is greater than or equal to the larger child, heap property is satisfied
+    if arr[current_pos] >= arr[new_child_pos] {
       return
     }
-    arr.swap(index, child)
-    index = child
-    child = index * 2 + 1
+
+    // Swap with the larger child
+    let temp = arr[current_pos]
+    arr[current_pos] = arr[new_child_pos]
+    arr[new_child_pos] = temp
+
+    // Move down the heap
+    current = child
+    child = current * 2 + 1
   }
 }
 
@@ -351,7 +392,7 @@ test "try_bubble_sort" {
 
 ///|
 test "heap_sort" {
-  test_sort(arr => heap_sort({ array: arr, start: 0, end: arr.length() }))
+  test_sort(arr => arr.heap_sort(start=0, end=arr.length()))
 }
 
 ///|
@@ -378,16 +419,16 @@ test "sort with same pivot optimization" {
 ///|
 test "heap_sort coverage" {
   let arr = [5, 4, 3, 2, 1]
-  heap_sort({ array: arr, start: 0, end: arr.length() })
+  arr.heap_sort(start=0, end=arr.length())
   assert_eq(arr, [1, 2, 3, 4, 5])
   let arr2 = [1, 2, 3, 4, 5]
-  heap_sort({ array: arr2, start: 0, end: arr2.length() })
+  arr2.heap_sort(start=0, end=arr2.length())
   assert_eq(arr2, [1, 2, 3, 4, 5])
   let arr2 = [1, 2, 3, 4, 5]
-  heap_sort({ array: arr2, start: 0, end: arr2.length() })
+  arr2.heap_sort(start=0, end=arr2.length())
   assert_eq(arr2, [1, 2, 3, 4, 5])
   let arr3 = [5, 5, 5, 5, 1]
-  heap_sort({ array: arr3, start: 0, end: arr3.length() })
+  arr3.heap_sort(start=0, end=arr3.length())
   assert_eq(arr3, [1, 5, 5, 5, 5])
 }
 
