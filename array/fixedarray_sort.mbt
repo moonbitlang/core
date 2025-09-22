@@ -98,7 +98,7 @@ fn[T : Compare] merge(arr : FixedArraySlice[T], mid : Int) -> Unit {
   for i in 0..<buf.length() {
     buf[i] = arr[mid + i]
   }
-  let buf = { array: buf, start: 0, end: buf_len }
+  let buf : FixedArraySlice[T] = { array: buf, start: 0, end: buf_len }
   let buf_remaining = for p1 = mid - 1, p2 = buf_len - 1, p = mid + buf_len - 1; p1 >=
                          0 &&
                          p2 >= 0; {

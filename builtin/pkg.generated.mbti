@@ -146,6 +146,7 @@ fn[T] Array::unsafe_get(Self[T], Int) -> T
 #alias(pop_exn, deprecated)
 fn[T] Array::unsafe_pop(Self[T]) -> T
 fn[A] Array::unsafe_pop_back(Self[A]) -> Unit
+fn[T] Array::unsafe_set(Self[T], Int, T) -> Unit
 fn[T] Array::windows(Self[T], Int) -> Self[ArrayView[T]]
 impl[T] Add for Array[T]
 impl[T : Compare] Compare for Array[T]
@@ -158,16 +159,9 @@ impl[X : ToJson] ToJson for Array[X]
 type ArrayView[T]
 #alias("_[_]")
 fn[T] ArrayView::at(Self[T], Int) -> T
-#deprecated
-fn[T] ArrayView::blit_to(Self[T], Self[T]) -> Unit
 fn[T] ArrayView::length(Self[T]) -> Int
-#alias("_[_]=_")
-#deprecated
-fn[T] ArrayView::set(Self[T], Int, T) -> Unit
 #alias("_[_:_]")
 fn[T] ArrayView::sub(Self[T], start? : Int, end? : Int) -> Self[T]
-#deprecated
-fn[T] ArrayView::swap(Self[T], Int, Int) -> Unit
 fn[T] ArrayView::unsafe_get(Self[T], Int) -> T
 impl[X : ToJson] ToJson for ArrayView[X]
 

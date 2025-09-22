@@ -26,7 +26,7 @@
 /// ```
 pub fn[T, K : Compare] sort_by_key(self : Array[T], map : (T) -> K) -> Unit {
   quick_sort_by(
-    self[:],
+    { array: self, start: 0, end: self.length() },
     (a, b) => map(a).compare(map(b)),
     None,
     get_limit(self.length()),
@@ -46,12 +46,17 @@ pub fn[T, K : Compare] sort_by_key(self : Array[T], map : (T) -> K) -> Unit {
 ///   assert_eq(arr, [1, 2, 3, 4, 5])
 /// ```
 pub fn[T] sort_by(self : Array[T], cmp : (T, T) -> Int) -> Unit {
-  quick_sort_by(self[:], cmp, None, get_limit(self.length()))
+  quick_sort_by(
+    { array: self, start: 0, end: self.length() },
+    cmp,
+    None,
+    get_limit(self.length()),
+  )
 }
 
 ///|
 fn[T] quick_sort_by(
-  arr : ArrayView[T],
+  arr : ArraySlice[T],
   cmp : (T, T) -> Int,
   pred : T?,
   limit : Int,
@@ -85,7 +90,10 @@ fn[T] quick_sort_by(
     }
     let (pivot, partitioned) = partition_by(arr, cmp, pivot_index)
     was_partitioned = partitioned
-    balanced = minimum(pivot, len - pivot) >= len / 8
+    balanced = {
+      let diff = len - pivot
+      (if pivot < diff { pivot } else { diff }) >= len / 8
+    }
     if !balanced {
       limit -= 1
     }
@@ -121,7 +129,7 @@ fn[T] quick_sort_by(
 /// It will only tolerate at most 8 unsorted elements. The time complexity is O(n).
 ///
 /// Returns whether the array is sorted.
-fn[T] try_bubble_sort_by(arr : ArrayView[T], cmp : (T, T) -> Int) -> Bool {
+fn[T] try_bubble_sort_by(arr : ArraySlice[T], cmp : (T, T) -> Int) -> Bool {
   let max_tries = 8
   let mut tries = 0
   for i in 1..<arr.length() {
@@ -146,7 +154,7 @@ fn[T] try_bubble_sort_by(arr : ArrayView[T], cmp : (T, T) -> Int) -> Bool {
 /// It will only tolerate at most 8 unsorted elements. The time complexity is O(n).
 ///
 /// Returns whether the array is sorted.
-fn[T] bubble_sort_by(arr : ArrayView[T], cmp : (T, T) -> Int) -> Unit {
+fn[T] bubble_sort_by(arr : ArraySlice[T], cmp : (T, T) -> Int) -> Unit {
   for i in 1..<arr.length() {
     for j = i; j > 0 && cmp(arr[j - 1], arr[j]) > 0; j = j - 1 {
       arr.swap(j, j - 1)
@@ -156,7 +164,7 @@ fn[T] bubble_sort_by(arr : ArrayView[T], cmp : (T, T) -> Int) -> Unit {
 
 ///|
 fn[T] partition_by(
-  arr : ArrayView[T],
+  arr : ArraySlice[T],
   cmp : (T, T) -> Int,
   pivot_index : Int,
 ) -> (Int, Bool) {
@@ -183,7 +191,7 @@ fn[T] partition_by(
 /// It avoids worst case performance by choosing a pivot that is likely to be close to the median.
 ///
 /// Returns the pivot index and whether the array is likely sorted.
-fn[T] choose_pivot_by(arr : ArrayView[T], cmp : (T, T) -> Int) -> (Int, Bool) {
+fn[T] choose_pivot_by(arr : ArraySlice[T], cmp : (T, T) -> Int) -> (Int, Bool) {
   let len = arr.length()
   let use_median_of_medians = 50
   let max_swaps = 4 * 3
@@ -217,7 +225,7 @@ fn[T] choose_pivot_by(arr : ArrayView[T], cmp : (T, T) -> Int) -> (Int, Bool) {
 }
 
 ///|
-fn[T] heap_sort_by(arr : ArrayView[T], cmp : (T, T) -> Int) -> Unit {
+fn[T] heap_sort_by(arr : ArraySlice[T], cmp : (T, T) -> Int) -> Unit {
   let len = arr.length()
   for i = len / 2 - 1; i >= 0; i = i - 1 {
     sift_down_by(arr, i, cmp)
@@ -230,7 +238,7 @@ fn[T] heap_sort_by(arr : ArrayView[T], cmp : (T, T) -> Int) -> Unit {
 
 ///|
 fn[T] sift_down_by(
-  arr : ArrayView[T],
+  arr : ArraySlice[T],
   index : Int,
   cmp : (T, T) -> Int,
 ) -> Unit {
@@ -253,19 +261,26 @@ fn[T] sift_down_by(
 ///|
 test "try_bubble_sort" {
   let arr = [8, 7, 6, 5, 4, 3, 2, 1]
-  let sorted = try_bubble_sort_by(arr[0:8], (a, b) => a - b)
+  let sorted = try_bubble_sort_by({ array: arr, start: 0, end: 8 }, (a, b) => a -
+    b)
   inspect(sorted, content="true")
   assert_eq(arr, [1, 2, 3, 4, 5, 6, 7, 8])
 }
 
 ///|
 test "heap_sort" {
-  test_sort(arr => heap_sort_by(arr[:], (a, b) => a - b))
+  test_sort(arr => heap_sort_by({ array: arr, start: 0, end: arr.length() }, (
+    a,
+    b,
+  ) => a - b))
 }
 
 ///|
 test "bubble_sort" {
-  test_sort(arr => bubble_sort_by(arr[:], (a, b) => a - b))
+  test_sort(arr => bubble_sort_by({ array: arr, start: 0, end: arr.length() }, (
+    a,
+    b,
+  ) => a - b))
 }
 
 ///|
