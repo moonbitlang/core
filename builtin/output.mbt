@@ -57,7 +57,7 @@ fn Int::output(self : Int, logger : &Logger, radix? : Int = 10) -> Unit {
     if num2 != 0 {
       write_digits(num2)
     }
-    logger.write_char(ALPHABET.charcode_at(abs(num % radix)).unsafe_to_char())
+    logger.write_char(ALPHABET[abs(num % radix)].unsafe_to_char())
   }
 
   write_digits(abs(self))

@@ -322,28 +322,25 @@ pub impl Compare for StringView with compare(self, other) {
 ///|
 /// The empty view of a string
 pub impl Default for StringView with default() {
-  StringView::make_view("", 0, 0)
+  ""
 }
 
 ///|
 /// Convert char array to string view.
 pub fn StringView::from_array(chars : Array[Char]) -> StringView {
-  let s = String::from_array(chars)
-  StringView::make_view(s, 0, s.length())
+  String::from_array(chars)
 }
 
 ///|
 /// Convert char iterator to string view.
 pub fn StringView::from_iter(iter : Iter[Char]) -> StringView {
-  let s = String::from_iter(iter)
-  StringView::make_view(s, 0, s.length())
+  String::from_iter(iter)
 }
 
 ///|
 /// Create a new string by repeating the given character `value` `length` times.
 pub fn StringView::make(length : Int, value : Char) -> StringView {
-  // todo: remove .view() in new version
-  String::make(length, value).view()
+  String::make(length, value)
 }
 
 ///|
