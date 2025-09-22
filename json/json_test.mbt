@@ -538,5 +538,16 @@ test "call stack overflow" {
     json_string.write_char(']')
   }
   let _ = @json.parse(json_string.to_string()) catch { _ => null }
+  let depth = 1500
+  let json_string = StringBuilder::new()
+  for _ in 0..=depth {
+    json_string.write_char('[')
+  }
+  for _ in 0..=depth {
+    json_string.write_char(']')
+  }
+  let _ = @json.parse(json_string.to_string(), max_nesting_depth=2000) catch {
+    _ => null
+  }
 
 }

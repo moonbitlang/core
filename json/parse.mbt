@@ -23,6 +23,7 @@ pub fn valid(input : String) -> Bool {
 }
 
 ///|
+/// Parse a JSON input string into a Json value, with an optional maximum nesting depth (default is 1024)
 pub fn parse(
   input : String,
   max_nesting_depth? : Int = 1024,
@@ -62,14 +63,14 @@ fn ParseContext::parse_value2(
 
 ///|
 fn ParseContext::parse_object(ctx : ParseContext) -> Json raise ParseError {
-  if ctx.depth >= ctx.max_nesting_depth {
+  if ctx.remaining_available_depth <= 0 {
     raise DepthLimitExceeded
   }
-  ctx.depth += 1
+  ctx.remaining_available_depth -= 1
   let map = Map::new()
   loop ctx.lex_property_name() {
     RBrace => {
-      ctx.depth -= 1
+      ctx.remaining_available_depth += 1
       Json::object(map)
     }
     String(name) => {
@@ -78,7 +79,7 @@ fn ParseContext::parse_object(ctx : ParseContext) -> Json raise ParseError {
       match ctx.lex_after_object_value() {
         Comma => continue ctx.lex_property_name2()
         RBrace => {
-          ctx.depth -= 1
+          ctx.remaining_available_depth += 1
           Json::object(map)
         }
         _ => abort("unreachable")
@@ -90,14 +91,14 @@ fn ParseContext::parse_object(ctx : ParseContext) -> Json raise ParseError {
 
 ///|
 fn ParseContext::parse_array(ctx : ParseContext) -> Json raise ParseError {
-  if ctx.depth >= ctx.max_nesting_depth {
+  if ctx.remaining_available_depth <= 0 {
     raise DepthLimitExceeded
   }
-  ctx.depth += 1
+  ctx.remaining_available_depth -= 1
   let vec = []
   loop ctx.lex_value(allow_rbracket=true) {
     RBracket => {
-      ctx.depth -= 1
+      ctx.remaining_available_depth += 1
       Json::array(vec)
     }
     tok => {
@@ -106,7 +107,7 @@ fn ParseContext::parse_array(ctx : ParseContext) -> Json raise ParseError {
       match tok2 {
         Comma => continue ctx.lex_value(allow_rbracket=false)
         RBracket => {
-          ctx.depth -= 1
+          ctx.remaining_available_depth += 1
           Json::array(vec)
         }
         _ => abort("unreachable")
