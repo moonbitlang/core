@@ -198,3 +198,25 @@ test "priority queue large data" {
   inspect(pq.iter(), content="[]")
   assert_eq(pq.length(), 0)
 }
+
+///|
+test "order by" {
+  let pq = @priority_queue.new(order_by=@priority_queue.asc)
+  pq.push(3)
+  pq.push(1)
+  pq.push(2)
+  assert_eq(pq.pop(), Some(1))
+  assert_eq(pq.pop(), Some(2))
+  assert_eq(pq.pop(), Some(3))
+  assert_eq(pq.pop(), None)
+  let pq2 = @priority_queue.of([3, 1, 2], order_by=@priority_queue.asc)
+  assert_eq(pq2.pop(), Some(1))
+  assert_eq(pq2.pop(), Some(2))
+  assert_eq(pq2.pop(), Some(3))
+  assert_eq(pq2.pop(), None)
+  let pq3 = @priority_queue.from_array([3, 1, 2], order_by=@priority_queue.asc)
+  assert_eq(pq3.pop(), Some(1))
+  assert_eq(pq3.pop(), Some(2))
+  assert_eq(pq3.pop(), Some(3))
+  assert_eq(pq3.pop(), None)
+}

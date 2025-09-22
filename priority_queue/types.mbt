@@ -19,7 +19,20 @@ priv enum Node[A] {
 }
 
 ///|
+enum OrderBy {
+  ASC
+  DESC
+}
+
+///|
 struct T[A] {
   mut len : Int
   mut top : Node[A]
+  order_by : OrderBy
 }
+
+///|
+pub let asc : OrderBy = OrderBy::ASC
+
+///|
+pub let desc : OrderBy = OrderBy::DESC

@@ -21,8 +21,8 @@
 ///   assert_eq(queue.length(), 0)
 /// ```
 #as_free_fn
-pub fn[A] T::new() -> T[A] {
-  { len: 0, top: Nil }
+pub fn[A] T::new(order_by? : OrderBy = OrderBy::DESC) -> T[A] {
+  { len: 0, top: Nil, order_by }
 }
 
 ///|
@@ -34,14 +34,18 @@ pub fn[A] T::new() -> T[A] {
 ///   assert_eq(queue.length(), 5)
 /// ```
 #as_free_fn
-pub fn[A : Compare] T::from_array(arr : Array[A]) -> T[A] {
+pub fn[A : Compare] T::from_array(
+  arr : Array[A],
+  order_by? : OrderBy = OrderBy::DESC,
+) -> T[A] {
   // CR: bad formatting
   let len = arr.length()
   for i = 0, acc = Node::Nil {
     if i < len {
-      continue i + 1, meld(acc, Cons(content=arr[i], sibling=Nil, child=Nil))
+      continue i + 1,
+        meld(acc, Cons(content=arr[i], sibling=Nil, child=Nil), order_by)
     } else {
-      break { len, top: acc }
+      break { len, top: acc, order_by }
     }
   }
 }
@@ -69,7 +73,11 @@ fn[A] copy_node(x : Node[A]) -> Node[A] {
 /// inspect(queue2.length(), content="4")
 /// ```
 pub fn[A] copy(self : T[A]) -> T[A] {
-  let new_que : T[A] = { len: self.len, top: copy_node(self.top) }
+  let new_que : T[A] = {
+    len: self.len,
+    top: copy_node(self.top),
+    order_by: self.order_by,
+  }
   new_que
 }
 
@@ -124,12 +132,16 @@ pub fn[K : Compare] T::from_iter(iter : Iter[K]) -> T[K] {
 }
 
 ///|
-fn[A : Compare] meld(x : Node[A], y : Node[A]) -> Node[A] {
+fn[A : Compare] meld(x : Node[A], y : Node[A], order_by : OrderBy) -> Node[A] {
   match (x, y) {
     (Nil, _) => y
     (_, Nil) => x
-    (Cons(_) as x_top, Cons(_) as y_top) =>
-      if x_top.content > y_top.content {
+    (Cons(_) as x_top, Cons(_) as y_top) => {
+      let x_is_parent = match order_by {
+        OrderBy::DESC => x_top.content >= y_top.content
+        OrderBy::ASC => x_top.content <= y_top.content
+      }
+      if x_is_parent {
         y_top.sibling = x_top.child
         x_top.child = y
         x
@@ -138,18 +150,19 @@ fn[A : Compare] meld(x : Node[A], y : Node[A]) -> Node[A] {
         y_top.child = x
         y
       }
+    }
   }
 }
 
 ///|
-fn[A : Compare] merges(x : Node[A]) -> Node[A] {
+fn[A : Compare] merges(x : Node[A], order_by : OrderBy) -> Node[A] {
   loop (x, Nil) {
     (Nil, acc) => acc
-    (Cons(sibling=Nil, ..) as x, acc) => meld(acc, x)
+    (Cons(sibling=Nil, ..) as x, acc) => meld(acc, x, order_by)
     (Cons(sibling=Cons(sibling=s2, ..) as s1, ..) as x, acc) => {
       x.sibling = Nil
       s1.sibling = Nil
-      continue (s2, meld(acc, meld(x, s1)))
+      continue (s2, meld(acc, meld(x, s1, order_by), order_by))
     }
   }
 }
@@ -172,7 +185,7 @@ pub fn[A] length(self : T[A]) -> Int {
 pub fn[A : Compare] unsafe_pop(self : T[A]) -> Unit {
   self.top = match self.top {
     Nil => abort("The PriorityQueue is empty!")
-    Cons(child~, ..) => merges(child)
+    Cons(child~, ..) => merges(child, self.order_by)
   }
   self.len -= 1
 }
@@ -193,7 +206,7 @@ pub fn[A : Compare] pop(self : T[A]) -> A? {
     Nil => Nil
     Cons(child~, ..) => {
       self.len -= 1
-      merges(child)
+      merges(child, self.order_by)
     }
   }
   result
@@ -209,7 +222,11 @@ pub fn[A : Compare] pop(self : T[A]) -> A? {
 /// assert_eq(queue.length(), 1)
 /// ```
 pub fn[A : Compare] push(self : T[A], value : A) -> Unit {
-  self.top = meld(self.top, Cons(content=value, sibling=Nil, child=Nil))
+  self.top = meld(
+    self.top,
+    Cons(content=value, sibling=Nil, child=Nil),
+    self.order_by,
+  )
   self.len += 1
 }
 
@@ -257,14 +274,18 @@ pub fn[A] is_empty(self : T[A]) -> Bool {
 
 ///|
 #as_free_fn
-pub fn[A : Compare] T::of(arr : FixedArray[A]) -> T[A] {
+pub fn[A : Compare] T::of(
+  arr : FixedArray[A],
+  order_by? : OrderBy = OrderBy::DESC,
+) -> T[A] {
   // CR: bad formatting
   let len = arr.length()
   for i = 0, acc = Node::Nil {
     if i < len {
-      continue i + 1, meld(acc, Cons(content=arr[i], sibling=Nil, child=Nil))
+      continue i + 1,
+        meld(acc, Cons(content=arr[i], sibling=Nil, child=Nil), order_by)
     } else {
-      break { len, top: acc }
+      break { len, top: acc, order_by }
     }
   }
 }
@@ -272,7 +293,7 @@ pub fn[A : Compare] T::of(arr : FixedArray[A]) -> T[A] {
 ///|
 test "meld_and_merges" {
   inspect(
-    match meld(Cons(content=1, sibling=Nil, child=Nil), Nil) {
+    match meld(Cons(content=1, sibling=Nil, child=Nil), Nil, OrderBy::DESC) {
       Nil => false
       Cons(..) => true
     },
@@ -294,9 +315,13 @@ pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for T[X] wit
   for i = 0, acc = Node::Nil {
     if i < len {
       continue i + 1,
-        meld(acc, Cons(content=X::arbitrary(i, rs), sibling=Nil, child=Nil))
+        meld(
+          acc,
+          Cons(content=X::arbitrary(i, rs), sibling=Nil, child=Nil),
+          OrderBy::DESC,
+        )
     } else {
-      break { len, top: acc }
+      break { len, top: acc, order_by: OrderBy::DESC }
     }
   }
 }
