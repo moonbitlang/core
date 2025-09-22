@@ -25,8 +25,9 @@
 ///   assert_eq(arr, [5, 4, 3, 2, 1])
 /// ```
 pub fn[T, K : Compare] sort_by_key(self : Array[T], map : (T) -> K) -> Unit {
-  quick_sort_by(
-    { array: self, start: 0, end: self.length() },
+  self.quick_sort_by(
+    start=0,
+    end=self.length(),
     (a, b) => map(a).compare(map(b)),
     None,
     get_limit(self.length()),
@@ -46,8 +47,9 @@ pub fn[T, K : Compare] sort_by_key(self : Array[T], map : (T) -> K) -> Unit {
 ///   assert_eq(arr, [1, 2, 3, 4, 5])
 /// ```
 pub fn[T] sort_by(self : Array[T], cmp : (T, T) -> Int) -> Unit {
-  quick_sort_by(
-    { array: self, start: 0, end: self.length() },
+  self.quick_sort_by(
+    start=0,
+    end=self.length(),
     cmp,
     None,
     get_limit(self.length()),
@@ -55,53 +57,58 @@ pub fn[T] sort_by(self : Array[T], cmp : (T, T) -> Int) -> Unit {
 }
 
 ///|
-fn[T] quick_sort_by(
-  arr : ArraySlice[T],
+/// Performs quicksort on the array within the given range using direct array access.
+fn[T] Array::quick_sort_by(
+  arr : Array[T],
+  start~ : Int,
+  end~ : Int,
   cmp : (T, T) -> Int,
   pred : T?,
   limit : Int,
 ) -> Unit {
   let mut limit = limit
-  let mut arr = arr
+  let mut current_start = start
+  let mut current_end = end
   let mut pred = pred
   let mut was_partitioned = true
   let mut balanced = true
   let bubble_sort_len = 16
   while true {
-    let len = arr.length()
+    let len = current_end - current_start
     if len <= bubble_sort_len {
       if len >= 2 {
-        arr.array.bubble_sort_by(start=arr.start, end=arr.end, cmp)
+        arr.bubble_sort_by(start=current_start, end=current_end, cmp)
       }
       return
     }
     // Too many imbalanced partitions may lead to O(n^2) performance in quick sort.
     // If the limit is reached, use heap sort to ensure O(n log n) performance.
     if limit == 0 {
-      arr.array.heap_sort_by(start=arr.start, end=arr.end, cmp)
+      arr.heap_sort_by(start=current_start, end=current_end, cmp)
       return
     }
-    let (pivot_index, likely_sorted) = arr.array.choose_pivot_by(
-      start=arr.start,
-      end=arr.end,
+    let (pivot_index, likely_sorted) = arr.choose_pivot_by(
+      start=current_start,
+      end=current_end,
       cmp,
     )
     // Try bubble sort if the array is likely already sorted.
     if was_partitioned && balanced && likely_sorted {
-      if arr.array.try_bubble_sort_by(start=arr.start, end=arr.end, cmp) {
+      if arr.try_bubble_sort_by(start=current_start, end=current_end, cmp) {
         return
       }
     }
-    let (pivot, partitioned) = arr.array.partition_by(
-      start=arr.start,
-      end=arr.end,
+    let (pivot_pos, partitioned) = arr.partition_by(
+      start=current_start,
+      end=current_end,
       cmp,
       pivot_index,
     )
+    let actual_pivot_pos = current_start + pivot_pos
     was_partitioned = partitioned
     balanced = {
-      let diff = len - pivot
-      (if pivot < diff { pivot } else { diff }) >= len / 8
+      let diff = len - pivot_pos
+      (if pivot_pos < diff { pivot_pos } else { diff }) >= len / 8
     }
     if !balanced {
       limit -= 1
@@ -109,25 +116,36 @@ fn[T] quick_sort_by(
     if pred is Some(pred) {
       // pred is less than all elements in arr
       // If pivot equals to pred, then we can skip all elements that are equal to pred.
-      if cmp(pred, arr[pivot]) == 0 {
-        let mut i = pivot
-        while i < len && cmp(pred, arr[i]) == 0 {
+      if cmp(pred, arr[actual_pivot_pos]) == 0 {
+        let mut i = actual_pivot_pos
+        while i < current_end && cmp(pred, arr[i]) == 0 {
           i = i + 1
         }
-        arr = arr[i:len]
+        current_start = i
         continue
       }
     }
-    let left = arr[0:pivot]
-    let right = arr[pivot + 1:len]
-    // Reduce the stack depth by only call quick_sort on the smaller partition.
-    if left.length() < right.length() {
-      quick_sort_by(left, cmp, pred, limit)
-      pred = Some(arr[pivot])
-      arr = right
+    let left_start = current_start
+    let left_end = actual_pivot_pos
+    let right_start = actual_pivot_pos + 1
+    let right_end = current_end
+
+    // Reduce the stack depth by only calling quick_sort on the smaller partition.
+    if left_end - left_start < right_end - right_start {
+      arr.quick_sort_by(start=left_start, end=left_end, cmp, pred, limit)
+      pred = Some(arr[actual_pivot_pos])
+      current_start = right_start
+      current_end = right_end
     } else {
-      quick_sort_by(right, cmp, Some(arr[pivot]), limit)
-      arr = left
+      arr.quick_sort_by(
+        start=right_start,
+        end=right_end,
+        cmp,
+        Some(arr[actual_pivot_pos]),
+        limit,
+      )
+      current_start = left_start
+      current_end = left_end
     }
   }
 }
