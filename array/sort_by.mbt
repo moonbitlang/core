@@ -71,7 +71,7 @@ fn[T] quick_sort_by(
     let len = arr.length()
     if len <= bubble_sort_len {
       if len >= 2 {
-        bubble_sort_by(arr, cmp)
+        arr.array.bubble_sort_by(start=arr.start, end=arr.end, cmp)
       }
       return
     }
@@ -164,15 +164,27 @@ fn[T] Array::try_bubble_sort_by(
 }
 
 ///|
-/// Try to sort the array with bubble sort.
+/// Sorts the array with bubble sort using direct array access.
 ///
-/// It will only tolerate at most 8 unsorted elements. The time complexity is O(n).
-///
-/// Returns whether the array is sorted.
-fn[T] bubble_sort_by(arr : ArraySlice[T], cmp : (T, T) -> Int) -> Unit {
-  for i in 1..<arr.length() {
-    for j = i; j > 0 && cmp(arr[j - 1], arr[j]) > 0; j = j - 1 {
-      arr.swap(j, j - 1)
+/// The time complexity is O(n^2).
+fn[T] Array::bubble_sort_by(
+  arr : Array[T],
+  start~ : Int,
+  end~ : Int,
+  cmp : (T, T) -> Int,
+) -> Unit {
+  // Validate and adjust boundaries
+  let actual_start = if start < 0 { 0 } else { start }
+  let actual_end = if end > arr.length() { arr.length() } else { end }
+  if actual_start >= actual_end {
+    return // Empty or invalid range, nothing to sort
+  }
+  for i in (actual_start + 1)..<actual_end {
+    for j = i; j > actual_start && cmp(arr[j - 1], arr[j]) > 0; j = j - 1 {
+      // Swap elements
+      let temp = arr[j]
+      arr[j] = arr[j - 1]
+      arr[j - 1] = temp
     }
   }
 }
@@ -291,10 +303,7 @@ test "heap_sort" {
 
 ///|
 test "bubble_sort" {
-  test_sort(arr => bubble_sort_by({ array: arr, start: 0, end: arr.length() }, (
-    a,
-    b,
-  ) => a - b))
+  test_sort(arr => arr.bubble_sort_by(start=0, end=arr.length(), (a, b) => a - b))
 }
 
 ///|
