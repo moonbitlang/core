@@ -26,50 +26,59 @@
 /// ```
 pub fn[T : Compare] sort(self : Array[T]) -> Unit {
   let len = self.length()
-  quick_sort({ array: self, start: 0, end: len }, None, get_limit(len))
+  self.quick_sort(start=0, end=len, None, get_limit(len))
 }
 
 ///|
-fn[T : Compare] quick_sort(arr : ArraySlice[T], pred : T?, limit : Int) -> Unit {
+/// Performs quicksort on the array within the given range.
+fn[T : Compare] Array::quick_sort(
+  arr : Array[T],
+  start~ : Int,
+  end~ : Int,
+  pred : T?,
+  limit : Int,
+) -> Unit {
   let mut limit = limit
-  let mut arr = arr
+  let mut current_start = start
+  let mut current_end = end
   let mut pred = pred
   let mut was_partitioned = true
   let mut balanced = true
   let insertion_sort_len = 16
   while true {
-    let len = arr.length()
+    let len = current_end - current_start
     if len <= insertion_sort_len {
       if len >= 2 {
-        arr.array.insertion_sort(start=arr.start, end=arr.end)
+        arr.insertion_sort(start=current_start, end=current_end)
       }
       return
     }
     // Too many imbalanced partitions may lead to O(n^2) performance in quick sort.
     // If the limit is reached, use heap sort to ensure O(n log n) performance.
     if limit == 0 {
-      arr.array.heap_sort(start=arr.start, end=arr.end)
+      arr.heap_sort(start=current_start, end=current_end)
       return
     }
-    let (pivot_index, likely_sorted) = arr.array.choose_pivot(
-      start=arr.start,
-      end=arr.end,
+    let (pivot_index, likely_sorted) = arr.choose_pivot(
+      start=current_start,
+      end=current_end,
     )
     // Try bubble sort if the array is likely already sorted.
     if was_partitioned && balanced && likely_sorted {
-      if arr.array.try_bubble_sort(start=arr.start, end=arr.end) {
+      if arr.try_bubble_sort(start=current_start, end=current_end) {
         return
       }
     }
-    let (pivot, partitioned) = arr.array.partition(
-      start=arr.start,
-      end=arr.end,
+    let (pivot_pos, partitioned) = arr.partition(
+      start=current_start,
+      end=current_end,
       pivot_index,
     )
+    let actual_pivot_pos = current_start + pivot_pos
     was_partitioned = partitioned
     balanced = {
-      let diff = len - pivot
-      (if pivot < diff { pivot } else { diff }) >= len / 8
+      let diff = len - pivot_pos
+      (if pivot_pos < diff { pivot_pos } else { diff }) >= len / 8
     }
     if !balanced {
       limit -= 1
@@ -77,25 +86,35 @@ fn[T : Compare] quick_sort(arr : ArraySlice[T], pred : T?, limit : Int) -> Unit 
     if pred is Some(pred) {
       // pred is less than all elements in arr
       // If pivot equals to pred, then we can skip all elements that are equal to pred.
-      if pred == arr[pivot] {
-        let mut i = pivot
-        while i < len && pred == arr[i] {
+      if pred == arr[actual_pivot_pos] {
+        let mut i = actual_pivot_pos
+        while i < current_end && pred == arr[i] {
           i = i + 1
         }
-        arr = arr[i:len]
+        current_start = i
         continue
       }
     }
-    let left = arr[0:pivot]
-    let right = arr[pivot + 1:len]
-    // Reduce the stack depth by only call quick_sort on the smaller partition.
-    if left.length() < right.length() {
-      quick_sort(left, pred, limit)
-      pred = Some(arr[pivot])
-      arr = right
+    let left_start = current_start
+    let left_end = actual_pivot_pos
+    let right_start = actual_pivot_pos + 1
+    let right_end = current_end
+
+    // Reduce the stack depth by only calling quick_sort on the smaller partition.
+    if left_end - left_start < right_end - right_start {
+      arr.quick_sort(start=left_start, end=left_end, pred, limit)
+      pred = Some(arr[actual_pivot_pos])
+      current_start = right_start
+      current_end = right_end
     } else {
-      quick_sort(right, Some(arr[pivot]), limit)
-      arr = left
+      arr.quick_sort(
+        start=right_start,
+        end=right_end,
+        Some(arr[actual_pivot_pos]),
+        limit,
+      )
+      current_start = left_start
+      current_end = left_end
     }
   }
 }
@@ -435,13 +454,13 @@ test "heap_sort coverage" {
 ///|
 test "quick_sort limit check" {
   let arr = [5, 4, 3, 2, 1]
-  quick_sort({ array: arr, start: 0, end: arr.length() }, None, 0)
+  arr.quick_sort(start=0, end=arr.length(), None, 0)
   assert_eq(arr, [1, 2, 3, 4, 5])
   let arr2 = [1, 2, 3, 4, 5]
-  quick_sort({ array: arr2, start: 0, end: arr2.length() }, None, 0)
+  arr2.quick_sort(start=0, end=arr2.length(), None, 0)
   assert_eq(arr2, [1, 2, 3, 4, 5])
   let arr3 = [5, 5, 5, 5, 1]
-  quick_sort({ array: arr3, start: 0, end: arr3.length() }, None, 0)
+  arr3.quick_sort(start=0, end=arr3.length(), None, 0)
   assert_eq(arr3, [1, 5, 5, 5, 5])
 }
 
@@ -451,16 +470,16 @@ test "quick_sort with pred check" {
   for i = 16; i >= 0; i = i - 1 {
     arr.push(i)
   }
-  quick_sort({ array: arr, start: 0, end: arr.length() }, Some(8), 0)
+  arr.quick_sort(start=0, end=arr.length(), Some(8), 0)
   assert_eq(arr, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16])
   let arr = [5, 4, 3, 2, 1]
-  quick_sort({ array: arr, start: 0, end: arr.length() }, Some(3), 0)
+  arr.quick_sort(start=0, end=arr.length(), Some(3), 0)
   assert_eq(arr, [1, 2, 3, 4, 5])
   let arr2 = [1, 2, 3, 4, 5]
-  quick_sort({ array: arr2, start: 0, end: arr2.length() }, Some(3), 0)
+  arr2.quick_sort(start=0, end=arr2.length(), Some(3), 0)
   assert_eq(arr2, [1, 2, 3, 4, 5])
   let arr3 = [5, 5, 5, 5, 1]
-  quick_sort({ array: arr3, start: 0, end: arr3.length() }, Some(3), 0)
+  arr3.quick_sort(start=0, end=arr3.length(), Some(3), 0)
   assert_eq(arr3, [1, 5, 5, 5, 5])
 }
 
@@ -470,36 +489,36 @@ test "quick_sort with unbalanced partitions" {
   for i = 16; i >= 0; i = i - 1 {
     arr.push(if i >= 8 { i } else { 8 })
   }
-  quick_sort({ array: arr, start: 0, end: arr.length() }, Some(8), 42)
+  arr.quick_sort(start=0, end=arr.length(), Some(8), 42)
   assert_eq(arr, [8, 8, 8, 8, 8, 8, 8, 8, 8, 9, 10, 11, 12, 13, 14, 15, 16])
   let arr = [5, 4, 3, 2, 1]
-  quick_sort({ array: arr, start: 0, end: arr.length() }, None, 1)
+  arr.quick_sort(start=0, end=arr.length(), None, 1)
   assert_eq(arr, [1, 2, 3, 4, 5])
   let arr2 = [1, 2, 3, 4, 5]
-  quick_sort({ array: arr2, start: 0, end: arr2.length() }, None, 1)
+  arr2.quick_sort(start=0, end=arr2.length(), None, 1)
   assert_eq(arr2, [1, 2, 3, 4, 5])
   let arr3 = [5, 5, 5, 5, 1]
-  quick_sort({ array: arr3, start: 0, end: arr3.length() }, None, 1)
+  arr3.quick_sort(start=0, end=arr3.length(), None, 1)
   assert_eq(arr3, [1, 5, 5, 5, 5])
 }
 
 ///|
 test "quick_sort with pivot equal to pred" {
   let arr = [5, 4, 3, 2, 1]
-  quick_sort({ array: arr, start: 0, end: arr.length() }, Some(3), 0)
+  arr.quick_sort(start=0, end=arr.length(), Some(3), 0)
   assert_eq(arr, [1, 2, 3, 4, 5])
 }
 
 ///|
 test "quick_sort with pred less than all elements" {
   let arr = [5, 4, 3, 2, 1]
-  quick_sort({ array: arr, start: 0, end: arr.length() }, Some(0), 0)
+  arr.quick_sort(start=0, end=arr.length(), Some(0), 0)
   assert_eq(arr, [1, 2, 3, 4, 5])
 }
 
 ///|
 test "quick_sort with pred greater than all elements" {
   let arr = [5, 4, 3, 2, 1]
-  quick_sort({ array: arr, start: 0, end: arr.length() }, Some(6), 0)
+  arr.quick_sort(start=0, end=arr.length(), Some(6), 0)
   assert_eq(arr, [1, 2, 3, 4, 5])
 }
