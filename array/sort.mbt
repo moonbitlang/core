@@ -54,7 +54,7 @@ fn[T : Compare] quick_sort(arr : ArraySlice[T], pred : T?, limit : Int) -> Unit 
     let (pivot_index, likely_sorted) = choose_pivot(arr)
     // Try bubble sort if the array is likely already sorted.
     if was_partitioned && balanced && likely_sorted {
-      if try_bubble_sort(arr) {
+      if arr.array.try_bubble_sort(start=arr.start, end=arr.end) {
         return
       }
     }
@@ -110,14 +110,28 @@ fn get_limit(len : Int) -> Int {
 /// It will only tolerate at most 8 unsorted elements. The time complexity is O(n).
 ///
 /// Returns whether the array is sorted.
-fn[T : Compare] try_bubble_sort(arr : ArraySlice[T]) -> Bool {
+fn[T : Compare] Array::try_bubble_sort(
+  arr : Array[T],
+  start~ : Int,
+  end~ : Int,
+) -> Bool {
   let max_tries = 8
   let mut tries = 0
-  for i in 1..<arr.length() {
+
+  // Validate and adjust boundaries
+  let actual_start = if start < 0 { 0 } else { start }
+  let actual_end = if end > arr.length() { arr.length() } else { end }
+  if actual_start >= actual_end {
+    return true // Empty or invalid range is considered sorted
+  }
+  for i in (actual_start + 1)..<actual_end {
     let mut sorted = true
-    for j = i; j > 0 && arr[j - 1] > arr[j]; j = j - 1 {
+    for j = i; j > actual_start && arr[j - 1] > arr[j]; j = j - 1 {
       sorted = false
-      arr.swap(j, j - 1)
+      // Swap elements
+      let temp = arr[j]
+      arr[j] = arr[j - 1]
+      arr[j - 1] = temp
     }
     if !sorted {
       tries += 1
@@ -259,7 +273,7 @@ fn test_sort(f : (Array[Int]) -> Unit) -> Unit raise {
 ///|
 test "try_bubble_sort" {
   let arr = [8, 7, 6, 5, 4, 3, 2, 1]
-  let sorted = try_bubble_sort({ array: arr, start: 0, end: 8 })
+  let sorted = arr.try_bubble_sort(start=0, end=8)
   inspect(sorted, content="true")
   assert_eq(arr, [1, 2, 3, 4, 5, 6, 7, 8])
 }
