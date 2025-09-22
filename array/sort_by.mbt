@@ -81,7 +81,11 @@ fn[T] quick_sort_by(
       heap_sort_by(arr, cmp)
       return
     }
-    let (pivot_index, likely_sorted) = choose_pivot_by(arr, cmp)
+    let (pivot_index, likely_sorted) = arr.array.choose_pivot_by(
+      start=arr.start,
+      end=arr.end,
+      cmp,
+    )
     // Try bubble sort if the array is likely already sorted.
     if was_partitioned && balanced && likely_sorted {
       if arr.array.try_bubble_sort_by(start=arr.start, end=arr.end, cmp) {
@@ -213,13 +217,24 @@ fn[T] partition_by(
 }
 
 ///|
-/// Choose a pivot index for quick sort.
+/// Choose a pivot index for quick sort using direct array access.
 ///
 /// It avoids worst case performance by choosing a pivot that is likely to be close to the median.
 ///
 /// Returns the pivot index and whether the array is likely sorted.
-fn[T] choose_pivot_by(arr : ArraySlice[T], cmp : (T, T) -> Int) -> (Int, Bool) {
-  let len = arr.length()
+fn[T] Array::choose_pivot_by(
+  arr : Array[T],
+  start~ : Int,
+  end~ : Int,
+  cmp : (T, T) -> Int,
+) -> (Int, Bool) {
+  // Validate and adjust boundaries
+  let actual_start = if start < 0 { 0 } else { start }
+  let actual_end = if end > arr.length() { arr.length() } else { end }
+  if actual_start >= actual_end {
+    return (0, true) // Empty or invalid range
+  }
+  let len = actual_end - actual_start
   let use_median_of_medians = 50
   let max_swaps = 4 * 3
   let mut swaps = 0
@@ -227,14 +242,21 @@ fn[T] choose_pivot_by(arr : ArraySlice[T], cmp : (T, T) -> Int) -> (Int, Bool) {
   if len >= 8 {
     let a = len / 4 * 1
     let c = len / 4 * 3
-    let sort_2 = (a : Int, b : Int) => if cmp(arr[a], arr[b]) > 0 {
-      arr.swap(a, b)
-      swaps += 1
+    let sort_2 = (a_idx : Int, b_idx : Int) => {
+      let a_pos = actual_start + a_idx
+      let b_pos = actual_start + b_idx
+      if cmp(arr[a_pos], arr[b_pos]) > 0 {
+        // Swap elements
+        let temp = arr[a_pos]
+        arr[a_pos] = arr[b_pos]
+        arr[b_pos] = temp
+        swaps += 1
+      }
     }
-    let sort_3 = (a : Int, b : Int, c : Int) => {
-      sort_2(a, b)
-      sort_2(b, c)
-      sort_2(a, b)
+    let sort_3 = (a_idx : Int, b_idx : Int, c_idx : Int) => {
+      sort_2(a_idx, b_idx)
+      sort_2(b_idx, c_idx)
+      sort_2(a_idx, b_idx)
     }
     if len > use_median_of_medians {
       sort_3(a - 1, a, a + 1)
@@ -244,7 +266,17 @@ fn[T] choose_pivot_by(arr : ArraySlice[T], cmp : (T, T) -> Int) -> (Int, Bool) {
     sort_3(a, b, c)
   }
   if swaps == max_swaps {
-    arr.rev_inplace()
+    // Reverse the array in place
+    let mid_len = len / 2
+    for i in 0..<mid_len {
+      let j = len - i - 1
+      let i_pos = actual_start + i
+      let j_pos = actual_start + j
+      // Swap elements
+      let temp = arr[i_pos]
+      arr[i_pos] = arr[j_pos]
+      arr[j_pos] = temp
+    }
     (len - b - 1, true)
   } else {
     (b, swaps == 0)
