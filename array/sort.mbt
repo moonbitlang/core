@@ -58,7 +58,11 @@ fn[T : Compare] quick_sort(arr : ArraySlice[T], pred : T?, limit : Int) -> Unit 
         return
       }
     }
-    let (pivot, partitioned) = partition(arr, pivot_index)
+    let (pivot, partitioned) = arr.array.partition(
+      start=arr.start,
+      end=arr.end,
+      pivot_index,
+    )
     was_partitioned = partitioned
     balanced = {
       let diff = len - pivot
@@ -168,25 +172,48 @@ fn[T : Compare] Array::insertion_sort(
 }
 
 ///|
-fn[T : Compare] partition(
-  arr : ArraySlice[T],
+/// Partitions the array around a pivot element.
+/// Returns the final pivot position and whether the array was already partitioned.
+fn[T : Compare] Array::partition(
+  arr : Array[T],
+  start~ : Int,
+  end~ : Int,
   pivot_index : Int,
 ) -> (Int, Bool) {
-  arr.swap(pivot_index, arr.length() - 1)
-  let pivot = arr[arr.length() - 1]
-  let mut i = 0
+  // Validate and adjust boundaries
+  let actual_start = if start < 0 { 0 } else { start }
+  let actual_end = if end > arr.length() { arr.length() } else { end }
+  if actual_start >= actual_end {
+    return (actual_start, true) // Empty or invalid range
+  }
+  let actual_pivot_index = actual_start + pivot_index
+  let last_index = actual_end - 1
+
+  // Swap pivot to the end
+  let temp = arr[actual_pivot_index]
+  arr[actual_pivot_index] = arr[last_index]
+  arr[last_index] = temp
+  let pivot = arr[last_index]
+  let mut i = actual_start
   let mut partitioned = true
-  for j in 0..<(arr.length() - 1) {
+  for j in actual_start..<last_index {
     if arr[j] < pivot {
       if i != j {
-        arr.swap(i, j)
+        // Swap elements
+        let temp = arr[i]
+        arr[i] = arr[j]
+        arr[j] = temp
         partitioned = false
       }
       i = i + 1
     }
   }
-  arr.swap(i, arr.length() - 1)
-  (i, partitioned)
+
+  // Swap pivot back to its final position
+  let temp = arr[i]
+  arr[i] = arr[last_index]
+  arr[last_index] = temp
+  (i - actual_start, partitioned) // Return relative position
 }
 
 ///|
