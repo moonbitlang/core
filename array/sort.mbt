@@ -206,7 +206,7 @@ fn[T : Compare] Array::partition(
   let actual_start = if start < 0 { 0 } else { start }
   let actual_end = if end > arr.length() { arr.length() } else { end }
   if actual_start >= actual_end {
-    return (actual_start, true) // Empty or invalid range
+    return (0, true) // Empty or invalid range - return relative position
   }
   let actual_pivot_index = actual_start + pivot_index
   let last_index = actual_end - 1
@@ -521,4 +521,58 @@ test "quick_sort with pred greater than all elements" {
   let arr = [5, 4, 3, 2, 1]
   arr.quick_sort(start=0, end=arr.length(), Some(6), 0)
   assert_eq(arr, [1, 2, 3, 4, 5])
+}
+
+///|
+test "partition with edge cases - verify relative position fix" {
+  // Test case that would expose the bug if partition returned absolute position for empty ranges
+  // This test verifies that partition returns relative positions consistently
+
+  // Test 1: Empty array segment
+  let arr1 = [3, 1, 4, 1, 5, 9, 2, 6]
+  // Call quick_sort on an empty segment (should handle gracefully)
+  arr1.quick_sort(start=4, end=4, None, 10)
+  assert_eq(arr1, [3, 1, 4, 1, 5, 9, 2, 6]) // Should remain unchanged
+
+  // Test 2: Single element segment
+  let arr2 = [3, 1, 4, 1, 5, 9, 2, 6]
+  arr2.quick_sort(start=3, end=4, None, 10)
+  assert_eq(arr2, [3, 1, 4, 1, 5, 9, 2, 6]) // Single element is already sorted
+
+  // Test 3: Small segment in middle of array
+  let arr3 = [5, 4, 3, 2, 1]
+  arr3.quick_sort(start=2, end=3, None, 10)
+  assert_eq(arr3, [5, 4, 3, 2, 1]) // Only one element, no change
+
+  // Test 4: Sorting a segment that starts at non-zero position
+  // This would fail with the old bug because partition would return absolute position
+  let arr4 = [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+  arr4.quick_sort(start=5, end=10, None, 10)
+  assert_eq(arr4, [10, 9, 8, 7, 6, 1, 2, 3, 4, 5]) // Only last 5 elements sorted
+
+  // Test 5: Multiple segments to ensure consistency
+  let arr5 = [9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+  arr5.quick_sort(start=0, end=3, None, 10) // Sort first 3
+  arr5.quick_sort(start=7, end=10, None, 10) // Sort last 3
+  assert_eq(arr5, [7, 8, 9, 6, 5, 4, 3, 0, 1, 2])
+}
+
+///|
+test "partition_by with edge cases - verify relative position fix" {
+  // Similar test for sort_by to ensure partition_by also returns relative positions
+
+  // Test with custom comparator on segment starting at non-zero position
+  let arr1 = [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+  arr1.quick_sort_by(start=3, end=7, (a, b) => a - b, None, 10)
+  assert_eq(arr1, [10, 9, 8, 4, 5, 6, 7, 3, 2, 1]) // Middle segment sorted
+
+  // Test empty segment
+  let arr2 = [5, 4, 3, 2, 1]
+  arr2.quick_sort_by(start=2, end=2, (a, b) => a - b, None, 10)
+  assert_eq(arr2, [5, 4, 3, 2, 1]) // No change for empty segment
+
+  // Test segment at the end
+  let arr3 = [5, 4, 3, 2, 1]
+  arr3.quick_sort_by(start=3, end=5, (a, b) => a - b, None, 10)
+  assert_eq(arr3, [5, 4, 3, 1, 2]) // Last two elements sorted
 }
