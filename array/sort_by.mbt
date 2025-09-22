@@ -230,7 +230,7 @@ fn[T] Array::partition_by(
   let actual_start = if start < 0 { 0 } else { start }
   let actual_end = if end > arr.length() { arr.length() } else { end }
   if actual_start >= actual_end {
-    return (actual_start, true) // Empty or invalid range
+    return (0, true) // Empty or invalid range - return relative position
   }
   let actual_pivot_index = actual_start + pivot_index
   let last_index = actual_end - 1
