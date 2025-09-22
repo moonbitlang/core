@@ -41,7 +41,7 @@ fn[T : Compare] quick_sort(arr : ArraySlice[T], pred : T?, limit : Int) -> Unit 
     let len = arr.length()
     if len <= insertion_sort_len {
       if len >= 2 {
-        insertion_sort(arr)
+        arr.array.insertion_sort(start=arr.start, end=arr.end)
       }
       return
     }
@@ -144,11 +144,25 @@ fn[T : Compare] Array::try_bubble_sort(
 }
 
 ///|
+/// Performs insertion sort on the array within the given range.
 /// Used when the array is small enough (<=16) to avoid recursion overhead.
-fn[T : Compare] insertion_sort(arr : ArraySlice[T]) -> Unit {
-  for i in 1..<arr.length() {
-    for j = i; j > 0 && arr[j - 1] > arr[j]; j = j - 1 {
-      arr.swap(j, j - 1)
+fn[T : Compare] Array::insertion_sort(
+  arr : Array[T],
+  start~ : Int,
+  end~ : Int,
+) -> Unit {
+  // Validate and adjust boundaries
+  let actual_start = if start < 0 { 0 } else { start }
+  let actual_end = if end > arr.length() { arr.length() } else { end }
+  if actual_start >= actual_end {
+    return // Empty or invalid range, nothing to sort
+  }
+  for i in (actual_start + 1)..<actual_end {
+    for j = i; j > actual_start && arr[j - 1] > arr[j]; j = j - 1 {
+      // Swap elements
+      let temp = arr[j]
+      arr[j] = arr[j - 1]
+      arr[j - 1] = temp
     }
   }
 }
@@ -285,7 +299,7 @@ test "heap_sort" {
 
 ///|
 test "insertion_sort" {
-  test_sort(arr => insertion_sort({ array: arr, start: 0, end: arr.length() }))
+  test_sort(arr => arr.insertion_sort(start=0, end=arr.length()))
 }
 
 ///|
