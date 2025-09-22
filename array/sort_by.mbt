@@ -84,7 +84,7 @@ fn[T] quick_sort_by(
     let (pivot_index, likely_sorted) = choose_pivot_by(arr, cmp)
     // Try bubble sort if the array is likely already sorted.
     if was_partitioned && balanced && likely_sorted {
-      if try_bubble_sort_by(arr, cmp) {
+      if arr.array.try_bubble_sort_by(start=arr.start, end=arr.end, cmp) {
         return
       }
     }
@@ -124,19 +124,34 @@ fn[T] quick_sort_by(
 }
 
 ///|
-/// Try to sort the array with bubble sort.
+/// Try to sort the array with bubble sort using direct array access.
 ///
 /// It will only tolerate at most 8 unsorted elements. The time complexity is O(n).
 ///
 /// Returns whether the array is sorted.
-fn[T] try_bubble_sort_by(arr : ArraySlice[T], cmp : (T, T) -> Int) -> Bool {
+fn[T] Array::try_bubble_sort_by(
+  arr : Array[T],
+  start~ : Int,
+  end~ : Int,
+  cmp : (T, T) -> Int,
+) -> Bool {
   let max_tries = 8
   let mut tries = 0
-  for i in 1..<arr.length() {
+
+  // Validate and adjust boundaries
+  let actual_start = if start < 0 { 0 } else { start }
+  let actual_end = if end > arr.length() { arr.length() } else { end }
+  if actual_start >= actual_end {
+    return true // Empty or invalid range is considered sorted
+  }
+  for i in (actual_start + 1)..<actual_end {
     let mut sorted = true
-    for j = i; j > 0 && cmp(arr[j - 1], arr[j]) > 0; j = j - 1 {
+    for j = i; j > actual_start && cmp(arr[j - 1], arr[j]) > 0; j = j - 1 {
       sorted = false
-      arr.swap(j, j - 1)
+      // Swap elements
+      let temp = arr[j]
+      arr[j] = arr[j - 1]
+      arr[j - 1] = temp
     }
     if !sorted {
       tries += 1
@@ -261,8 +276,7 @@ fn[T] sift_down_by(
 ///|
 test "try_bubble_sort" {
   let arr = [8, 7, 6, 5, 4, 3, 2, 1]
-  let sorted = try_bubble_sort_by({ array: arr, start: 0, end: 8 }, (a, b) => a -
-    b)
+  let sorted = arr.try_bubble_sort_by(start=0, end=8, (a, b) => a - b)
   inspect(sorted, content="true")
   assert_eq(arr, [1, 2, 3, 4, 5, 6, 7, 8])
 }
