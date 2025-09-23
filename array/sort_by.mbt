@@ -98,15 +98,15 @@ fn[T] Array::quick_sort_by(
         return
       }
     }
-    let (pivot_pos, partitioned) = arr.partition_by(
+    let (actual_pivot_pos, partitioned) = arr.partition_by(
       start=current_start,
       end=current_end,
       cmp,
       pivot_index,
     )
-    let actual_pivot_pos = current_start + pivot_pos
     was_partitioned = partitioned
     balanced = {
+      let pivot_pos = actual_pivot_pos - current_start
       let diff = len - pivot_pos
       (if pivot_pos < diff { pivot_pos } else { diff }) >= len / 8
     }
@@ -218,7 +218,7 @@ fn[T] Array::bubble_sort_by(
 
 ///|
 /// Partitions the array around a pivot element using direct array access.
-/// Returns the final pivot position and whether the array was already partitioned.
+/// Returns the final absolute pivot position and whether the array was already partitioned.
 fn[T] Array::partition_by(
   arr : Array[T],
   start~ : Int,
@@ -230,7 +230,7 @@ fn[T] Array::partition_by(
   let actual_start = if start < 0 { 0 } else { start }
   let actual_end = if end > arr.length() { arr.length() } else { end }
   if actual_start >= actual_end {
-    return (0, true) // Empty or invalid range - return relative position
+    return (actual_start, true) // Empty or invalid range - return absolute position
   }
   let actual_pivot_index = actual_start + pivot_index
   let last_index = actual_end - 1
@@ -259,7 +259,7 @@ fn[T] Array::partition_by(
   let temp = arr[i]
   arr[i] = arr[last_index]
   arr[last_index] = temp
-  (i - actual_start, partitioned) // Return relative position
+  (i, partitioned) // Return absolute position
 }
 
 ///|
