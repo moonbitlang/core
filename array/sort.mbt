@@ -72,7 +72,7 @@ fn[T : Compare] Array::quick_sort(
     let (actual_pivot_pos, partitioned) = arr.partition(
       start=current_start,
       end=current_end,
-      pivot_index,
+      pivot_index, // Now passing absolute index directly
     )
     was_partitioned = partitioned
     balanced = {
@@ -200,7 +200,7 @@ fn[T : Compare] Array::partition(
   arr : Array[T],
   start~ : Int,
   end~ : Int,
-  pivot_index : Int,
+  pivot_index : Int, // Now expects absolute index
 ) -> (Int, Bool) {
   // Validate and adjust boundaries
   let actual_start = if start < 0 { 0 } else { start }
@@ -208,12 +208,11 @@ fn[T : Compare] Array::partition(
   if actual_start >= actual_end {
     return (actual_start, true) // Empty or invalid range - return absolute position
   }
-  let actual_pivot_index = actual_start + pivot_index
   let last_index = actual_end - 1
 
   // Swap pivot to the end
-  let temp = arr[actual_pivot_index]
-  arr[actual_pivot_index] = arr[last_index]
+  let temp = arr[pivot_index]
+  arr[pivot_index] = arr[last_index]
   arr[last_index] = temp
   let pivot = arr[last_index]
   let mut i = actual_start
@@ -243,7 +242,7 @@ fn[T : Compare] Array::partition(
 ///
 /// It avoids worst case performance by choosing a pivot that is likely to be close to the median.
 ///
-/// Returns the pivot index and whether the array is likely sorted.
+/// Returns the absolute pivot index and whether the array is likely sorted.
 fn[T : Compare] Array::choose_pivot(
   arr : Array[T],
   start~ : Int,
@@ -253,7 +252,7 @@ fn[T : Compare] Array::choose_pivot(
   let actual_start = if start < 0 { 0 } else { start }
   let actual_end = if end > arr.length() { arr.length() } else { end }
   if actual_start >= actual_end {
-    return (0, true) // Empty or invalid range
+    return (actual_start, true) // Empty or invalid range - return absolute position
   }
   let len = actual_end - actual_start
   let use_median_of_medians = 50
@@ -298,9 +297,9 @@ fn[T : Compare] Array::choose_pivot(
       arr[i_pos] = arr[j_pos]
       arr[j_pos] = temp
     }
-    (len - b - 1, true)
+    (actual_start + len - b - 1, true)
   } else {
-    (b, swaps == 0)
+    (actual_start + b, swaps == 0)
   }
 }
 
@@ -606,14 +605,14 @@ test "Array::partition - basic partitioning" {
 test "Array::partition - edge cases" {
   // Test 1: Empty range
   let arr1 = [5, 4, 3, 2, 1]
-  let (pos1, partitioned1) = arr1.partition(start=2, end=2, 0)
+  let (pos1, partitioned1) = arr1.partition(start=2, end=2, 2) // Absolute pivot index
   assert_eq(pos1, 2) // Should return absolute position (start)
   assert_eq(partitioned1, true)
   assert_eq(arr1, [5, 4, 3, 2, 1]) // No change
 
   // Test 2: Single element
   let arr2 = [5, 4, 3, 2, 1]
-  let (pos2, partitioned2) = arr2.partition(start=2, end=3, 0)
+  let (pos2, partitioned2) = arr2.partition(start=2, end=3, 2) // Absolute pivot index
   assert_eq(pos2, 2) // Single element stays at absolute position 2
   assert_eq(partitioned2, true)
   assert_eq(arr2, [5, 4, 3, 2, 1]) // Single element is already partitioned
@@ -680,7 +679,7 @@ test "Array::partition - different pivot positions" {
 
   // Test 3: Pivot in a sub-range
   let arr3 = [9, 8, 5, 2, 6, 1, 4, 7, 3]
-  let (pos3, _) = arr3.partition(start=2, end=7, 2)
+  let (pos3, _) = arr3.partition(start=2, end=7, 4) // Absolute pivot index (was 2+2=4)
   // Working on sub-array [5, 2, 6, 1, 4], pivot is 6
   assert_eq(arr3[pos3], 6)
   // In sub-array, elements < 6: [5, 2, 1, 4] = 4 elements, absolute position = 2 + 4 = 6

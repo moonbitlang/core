@@ -9,7 +9,7 @@ test "Array::partition - absolute position with various ranges" {
 
   // Test 2: Partition middle section of array
   let arr2 = [10, 20, 5, 3, 8, 1, 7, 30, 40]
-  let (pos2, partitioned2) = arr2.partition(start=2, end=7, 2) // pivot is 8
+  let (pos2, partitioned2) = arr2.partition(start=2, end=7, 4) // pivot is 8 at absolute index 4
   inspect(pos2, content="6")
   inspect(partitioned2, content="true")
   // Elements in range [2, 7): [5, 3, 8, 1, 7]
@@ -18,7 +18,7 @@ test "Array::partition - absolute position with various ranges" {
 
   // Test 3: Partition at the end of array
   let arr3 = [1, 2, 3, 9, 4, 6, 5]
-  let (pos3, partitioned3) = arr3.partition(start=3, end=7, 2) // pivot is 6
+  let (pos3, partitioned3) = arr3.partition(start=3, end=7, 5) // pivot is 6 at absolute index 5
   inspect(pos3, content="5")
   inspect(partitioned3, content="false")
   inspect(arr3, content="[1, 2, 3, 4, 5, 6, 9]")
@@ -28,20 +28,20 @@ test "Array::partition - absolute position with various ranges" {
 test "Array::partition - edge cases with absolute positions" {
   // Test 1: Empty range returns start position
   let arr1 = [5, 4, 3, 2, 1]
-  let (pos1, partitioned1) = arr1.partition(start=3, end=3, 0)
+  let (pos1, partitioned1) = arr1.partition(start=3, end=3, 3) // Empty range, any valid index
   inspect(pos1, content="3")
   inspect(partitioned1, content="true")
 
   // Test 2: Single element range
   let arr2 = [9, 8, 7, 6, 5]
-  let (pos2, partitioned2) = arr2.partition(start=2, end=3, 0)
+  let (pos2, partitioned2) = arr2.partition(start=2, end=3, 2) // Single element at index 2
   inspect(pos2, content="2")
   inspect(partitioned2, content="true")
   inspect(arr2[2], content="7")
 
   // Test 3: Two element range
   let arr3 = [1, 2, 8, 3, 5]
-  let (pos3, _partitioned3) = arr3.partition(start=2, end=4, 1) // pivot is 3
+  let (pos3, _partitioned3) = arr3.partition(start=2, end=4, 3) // pivot is 3 at absolute index 3
   inspect(pos3, content="2")
   inspect(arr3, content="[1, 2, 3, 8, 5]")
 }
@@ -111,7 +111,7 @@ test "Array::partition - boundary validation" {
 
   // Test 3: Invalid range (start >= end after adjustment)
   let arr3 = [1, 2, 3, 4, 5]
-  let (pos3, partitioned3) = arr3.partition(start=5, end=5, 0)
+  let (pos3, partitioned3) = arr3.partition(start=5, end=5, 5) // Empty range
   inspect(pos3, content="5")
   inspect(partitioned3, content="true")
 }
