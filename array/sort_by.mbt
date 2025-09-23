@@ -102,7 +102,7 @@ fn[T] Array::quick_sort_by(
       start=current_start,
       end=current_end,
       cmp,
-      pivot_index,
+      pivot_index, // Now passing absolute index directly
     )
     was_partitioned = partitioned
     balanced = {
@@ -224,7 +224,7 @@ fn[T] Array::partition_by(
   start~ : Int,
   end~ : Int,
   cmp : (T, T) -> Int,
-  pivot_index : Int,
+  pivot_index : Int, // Now expects absolute index
 ) -> (Int, Bool) {
   // Validate and adjust boundaries
   let actual_start = if start < 0 { 0 } else { start }
@@ -232,12 +232,11 @@ fn[T] Array::partition_by(
   if actual_start >= actual_end {
     return (actual_start, true) // Empty or invalid range - return absolute position
   }
-  let actual_pivot_index = actual_start + pivot_index
   let last_index = actual_end - 1
 
   // Swap pivot to the end
-  let temp = arr[actual_pivot_index]
-  arr[actual_pivot_index] = arr[last_index]
+  let temp = arr[pivot_index]
+  arr[pivot_index] = arr[last_index]
   arr[last_index] = temp
   let pivot = arr[last_index]
   let mut i = actual_start
@@ -267,7 +266,7 @@ fn[T] Array::partition_by(
 ///
 /// It avoids worst case performance by choosing a pivot that is likely to be close to the median.
 ///
-/// Returns the pivot index and whether the array is likely sorted.
+/// Returns the absolute pivot index and whether the array is likely sorted.
 fn[T] Array::choose_pivot_by(
   arr : Array[T],
   start~ : Int,
@@ -278,7 +277,7 @@ fn[T] Array::choose_pivot_by(
   let actual_start = if start < 0 { 0 } else { start }
   let actual_end = if end > arr.length() { arr.length() } else { end }
   if actual_start >= actual_end {
-    return (0, true) // Empty or invalid range
+    return (actual_start, true) // Empty or invalid range - return absolute position
   }
   let len = actual_end - actual_start
   let use_median_of_medians = 50
@@ -323,9 +322,9 @@ fn[T] Array::choose_pivot_by(
       arr[i_pos] = arr[j_pos]
       arr[j_pos] = temp
     }
-    (len - b - 1, true)
+    (actual_start + len - b - 1, true)
   } else {
-    (b, swaps == 0)
+    (actual_start + b, swaps == 0)
   }
 }
 
