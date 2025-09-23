@@ -147,15 +147,15 @@ pub fn coshf(x : Float) -> Float {
 /// Example
 ///
 /// ```moonbit
-///   inspect(tanhf(0), content="0")
-///   inspect(tanhf(-0), content="0")
-///   inspect(tanhf(1), content="0.7615941559557649")
-///   inspect(tanhf(2), content="0.9640275800758169")
-///   inspect(tanhf(1000), content="1")
-///   inspect(tanhf(-1000), content="-1")
-///   inspect(tanhf(@float.not_a_number), content="NaN")
-///   inspect(tanhf(@float.infinity), content="1")
-///   inspect(tanhf(@float.neg_infinity), content="-1")
+///   inspect(@math.tanhf(0), content="0")
+///   inspect(@math.tanhf(-0), content="0")
+///   inspect(@math.tanhf(1), content="0.7615941559557649")
+///   inspect(@math.tanhf(2), content="0.9640275800758169")
+///   inspect(@math.tanhf(1000), content="1")
+///   inspect(@math.tanhf(-1000), content="-1")
+///   inspect(@math.tanhf(@float.not_a_number), content="NaN")
+///   inspect(@math.tanhf(@float.infinity), content="1")
+///   inspect(@math.tanhf(@float.neg_infinity), content="-1")
 /// ```
 pub fn tanhf(x : Float) -> Float {
   let mut ix = x.reinterpret_as_uint()
