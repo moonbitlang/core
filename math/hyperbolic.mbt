@@ -146,7 +146,7 @@ pub fn coshf(x : Float) -> Float {
 ///
 /// Example
 ///
-/// ```moobit
+/// ```moonbit
 ///   inspect(tanhf(0), content="0")
 ///   inspect(tanhf(-0), content="0")
 ///   inspect(tanhf(1), content="0.7615941559557649")
