@@ -23,6 +23,8 @@ test "basic1" {
   inspect(bv2, content="b\"\\x00\\x01\\x02\\x03\\x04\\x05\"")
   inspect(bv3, content="b\"\\x01\\x02\\x03\\x04\\x05\"")
   inspect(bv4, content="b\"\\x00\\x01\\x02\\x03\"")
+  @json.inspect(bv1, content="\\x01\\x02\\x03")
+  @json.inspect(b"abc"[:], content="abc")
 }
 
 ///|

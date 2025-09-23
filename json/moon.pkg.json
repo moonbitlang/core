@@ -12,6 +12,7 @@
     "moonbitlang/core/result",
     "moonbitlang/core/unit",
     "moonbitlang/core/array",
-    "moonbitlang/core/bigint"
+    "moonbitlang/core/bigint",
+    "moonbitlang/core/bytes"
   ]
 }
