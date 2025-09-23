@@ -24,8 +24,8 @@ fn[K, V] SortedMap::elems(Self[K, V]) -> Array[V]
 #deprecated
 fn[K, V] SortedMap::empty() -> Self[K, V]
 #deprecated
-fn[K : Compare, V] SortedMap::filter(Self[K, V], (V) -> Bool raise?) -> Self[K, V] raise?
-fn[K : Compare, V] SortedMap::filter_with_key(Self[K, V], (K, V) -> Bool raise?) -> Self[K, V] raise?
+fn[K, V] SortedMap::filter(Self[K, V], (V) -> Bool raise?) -> Self[K, V] raise?
+fn[K, V] SortedMap::filter_with_key(Self[K, V], (K, V) -> Bool raise?) -> Self[K, V] raise?
 #deprecated
 fn[K, V, A] SortedMap::fold(Self[K, V], init~ : A, (A, V) -> A) -> A
 fn[K, V, A] SortedMap::foldl_with_key(Self[K, V], (A, K, V) -> A, init~ : A) -> A

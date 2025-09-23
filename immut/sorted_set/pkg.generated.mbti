@@ -13,16 +13,16 @@ import(
 // Types and methods
 type SortedSet[A]
 fn[A : Compare] SortedSet::add(Self[A], A) -> Self[A]
-fn[A : Compare] SortedSet::all(Self[A], (A) -> Bool raise?) -> Bool raise?
-fn[A : Compare] SortedSet::any(Self[A], (A) -> Bool raise?) -> Bool raise?
+fn[A] SortedSet::all(Self[A], (A) -> Bool raise?) -> Bool raise?
+fn[A] SortedSet::any(Self[A], (A) -> Bool raise?) -> Bool raise?
 fn[A : Compare] SortedSet::contains(Self[A], A) -> Bool
 #deprecated
 fn[A : Compare] SortedSet::diff(Self[A], Self[A]) -> Self[A]
 fn[A : Compare] SortedSet::difference(Self[A], Self[A]) -> Self[A]
 fn[A : Compare] SortedSet::disjoint(Self[A], Self[A]) -> Bool
 fn[A] SortedSet::each(Self[A], (A) -> Unit raise?) -> Unit raise?
-fn[A : Compare] SortedSet::filter(Self[A], (A) -> Bool raise?) -> Self[A] raise?
-fn[A : Compare, B] SortedSet::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
+fn[A] SortedSet::filter(Self[A], (A) -> Bool raise?) -> Self[A] raise?
+fn[A, B] SortedSet::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 #as_free_fn
 fn[A : Compare] SortedSet::from_array(Array[A]) -> Self[A]
 #as_free_fn
@@ -34,17 +34,17 @@ fn[A : Compare] SortedSet::inter(Self[A], Self[A]) -> Self[A]
 fn[A : Compare] SortedSet::intersection(Self[A], Self[A]) -> Self[A]
 fn[A] SortedSet::is_empty(Self[A]) -> Bool
 fn[A] SortedSet::iter(Self[A]) -> Iter[A]
-fn[A : Compare, B : Compare] SortedSet::map(Self[A], (A) -> B raise?) -> Self[B] raise?
-fn[A : Compare] SortedSet::max(Self[A]) -> A
-fn[A : Compare] SortedSet::max_option(Self[A]) -> A?
-fn[A : Compare] SortedSet::min(Self[A]) -> A
-fn[A : Compare] SortedSet::min_option(Self[A]) -> A?
+fn[A, B : Compare] SortedSet::map(Self[A], (A) -> B raise?) -> Self[B] raise?
+fn[A] SortedSet::max(Self[A]) -> A
+fn[A] SortedSet::max_option(Self[A]) -> A?
+fn[A] SortedSet::min(Self[A]) -> A
+fn[A] SortedSet::min_option(Self[A]) -> A?
 #as_free_fn
 fn[A] SortedSet::new() -> Self[A]
 #as_free_fn
 fn[A : Compare] SortedSet::of(FixedArray[A]) -> Self[A]
 fn[A : Compare] SortedSet::remove(Self[A], A) -> Self[A]
-fn[A : Compare] SortedSet::remove_min(Self[A]) -> Self[A]
+fn[A] SortedSet::remove_min(Self[A]) -> Self[A]
 #as_free_fn
 fn[A] SortedSet::singleton(A) -> Self[A]
 fn[A] SortedSet::size(Self[A]) -> Int

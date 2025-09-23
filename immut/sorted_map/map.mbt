@@ -38,7 +38,7 @@ pub fn[K : Compare, V] add(
 }
 
 ///|
-fn[K : Compare, V] split_max(self : SortedMap[K, V]) -> (K, V, SortedMap[K, V]) {
+fn[K, V] split_max(self : SortedMap[K, V]) -> (K, V, SortedMap[K, V]) {
   match self {
     Tree(k, value=v, l, Empty, ..) => (k, v, l)
     Tree(k, value=v, l, r, ..) => {
@@ -50,7 +50,7 @@ fn[K : Compare, V] split_max(self : SortedMap[K, V]) -> (K, V, SortedMap[K, V]) 
 }
 
 ///|
-fn[K : Compare, V] split_min(self : SortedMap[K, V]) -> (K, V, SortedMap[K, V]) {
+fn[K, V] split_min(self : SortedMap[K, V]) -> (K, V, SortedMap[K, V]) {
   match self {
     Tree(k, value=v, Empty, r, ..) => (k, v, r)
     Tree(k, value=v, l, r, ..) => {
@@ -62,10 +62,7 @@ fn[K : Compare, V] split_min(self : SortedMap[K, V]) -> (K, V, SortedMap[K, V]) 
 }
 
 ///|
-fn[K : Compare, V] glue(
-  l : SortedMap[K, V],
-  r : SortedMap[K, V],
-) -> SortedMap[K, V] {
+fn[K, V] glue(l : SortedMap[K, V], r : SortedMap[K, V]) -> SortedMap[K, V] {
   match (l, r) {
     (Empty, r) => r
     (l, Empty) => l
@@ -104,7 +101,7 @@ pub fn[K : Compare, V] remove(
 
 ///|
 /// Filter key-value pairs that satisfy the predicate
-pub fn[K : Compare, V] filter_with_key(
+pub fn[K, V] filter_with_key(
   self : SortedMap[K, V],
   pred : (K, V) -> Bool raise?,
 ) -> SortedMap[K, V] raise? {
