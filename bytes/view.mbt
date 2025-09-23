@@ -653,3 +653,36 @@ pub impl Hash for BytesView with hash_combine(self : BytesView, hasher : Hasher)
 pub impl Hash for BytesView with hash(self : BytesView) -> Int {
   xxhash32(self.data(), 0, offset=self.start_offset(), len=self.length())
 }
+
+///|
+fn to_hex_digit(i : Int) -> Char {
+  if i < 10 {
+    (i + '0').unsafe_to_char()
+  } else {
+    (i + 'a' - 10).unsafe_to_char()
+  }
+}
+
+///|
+pub impl ToJson for BytesView with to_json(self) -> Json {
+  let sb = StringBuilder::new()
+  for b in self {
+    if b is (b' '..=b'~') && b != b'"' && b != b'\\' {
+      sb.write_char(b.to_char())
+    } else {
+      sb.write_string("\\x")
+      sb.write_char(to_hex_digit(b.to_int() / 16))
+      sb.write_char(to_hex_digit(b.to_int() % 16))
+    }
+  }
+  Json::string(sb.to_string())
+}
+
+///|
+/// Converts a `Bytes` value to a JSON representation.
+/// The representation is picked for easier debugging.
+/// Printable ASCII characters (from space to tilde, excluding '"' and '\') are output as-is.
+/// All other bytes are represented as \xHH, where HH is the two-digit hexadecimal value of the byte.
+pub impl ToJson for Bytes with to_json(self : Bytes) -> Json {
+  BytesView::to_json(self[:])
+}
