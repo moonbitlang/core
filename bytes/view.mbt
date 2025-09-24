@@ -537,7 +537,11 @@ pub fn BytesView::to_double_le(self : BytesView) -> Double {
 pub impl Show for BytesView with output(self, logger) {
   logger.write_string("b\"")
   for byte in self {
-    logger..write_string("\\x")..write_string(byte.to_hex())
+    if byte is (' '..='~') && byte != '"' && byte != '\\' {
+      logger.write_char(byte.to_char())
+    } else {
+      logger..write_string("\\x")..write_string(byte.to_hex())
+    }
   }
   logger.write_string("\"")
 }
