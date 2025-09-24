@@ -17,6 +17,11 @@ impl Eq for JsonDecodeError
 impl Show for JsonDecodeError
 impl ToJson for JsonDecodeError
 
+type JsonPointerParsingError
+impl Eq for JsonPointerParsingError
+impl Show for JsonPointerParsingError
+impl ToJson for JsonPointerParsingError
+
 pub(all) suberror ParseError {
   InvalidChar(Position, Char)
   InvalidEof
@@ -35,6 +40,24 @@ fn JsonPath::add_key(Self, String) -> Self
 impl Eq for JsonPath
 impl Show for JsonPath
 impl ToJson for JsonPath
+
+pub enum JsonPointer {
+  RootPointer
+  Pointer(JsonPointer, token~ : String)
+}
+fn JsonPointer::apply(Self, Json) -> Json?
+fn JsonPointer::from_iter(Iter[String]) -> Self raise JsonPointerParsingError
+fn JsonPointer::iter(Self) -> Iter[String]
+impl Div for JsonPointer
+impl Show for JsonPointer
+impl ToJson for JsonPointer
+impl FromJson for JsonPointer
+
+pub(all) enum PointerComponentInterpretion {
+  ArrayIndex(Int)
+  ObjectIndex(String)
+}
+impl Show for PointerComponentInterpretion
 
 pub(all) struct Position {
   line : Int
