@@ -5,6 +5,7 @@
     "moonbitlang/core/uint64",
     "moonbitlang/core/double/internal/ryu"
   ],
+  "test-import": ["moonbitlang/core/bytes"],
   "targets": {
     "exp_js.mbt": ["js"],
     "exp_nonjs.mbt": ["not", "js"],

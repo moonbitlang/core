@@ -81,15 +81,6 @@ test "to_hex_digit" {
 }
 
 ///|
-pub impl Show for Bytes with output(self, logger) {
-  logger.write_string("b\"")
-  for b in self {
-    logger..write_string("\\x")..write_string(b.to_hex())
-  }
-  logger.write_string("\"")
-}
-
-///|
 pub impl Show for String with output(self, logger) {
   logger.write_char('"')
   fn flush_segment(seg : Int, i : Int) {

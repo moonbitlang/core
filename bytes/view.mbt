@@ -543,6 +543,15 @@ pub impl Show for BytesView with output(self, logger) {
 }
 
 ///|
+pub impl Show for Bytes with output(self, logger) {
+  logger.write_string("b\"")
+  for b in self {
+    logger..write_string("\\x")..write_string(b.to_hex())
+  }
+  logger.write_string("\"")
+}
+
+///|
 /// Compares two views for equality. Returns true only if both views
 /// have the same length and contain identical bytes in the same order.
 ///
