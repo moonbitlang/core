@@ -47,7 +47,7 @@ test "decoding UTF8 invalid data to String" {
       inspect(
         e,
         content=(
-          #|b"\xc0\xaf\xe0\x80\xbf\xf0\x81\x82\x41"
+          #|b"\xc0\xaf\xe0\x80\xbf\xf0\x81\x82A"
         ),
       )
   }

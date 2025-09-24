@@ -39,14 +39,14 @@ test "write_leb128 Int" {
   inspect(
     buffer.to_bytes(),
     content=(
-      #|b"\x40"
+      #|b"@"
     ),
   )
   buffer.test_leb128(@int.min_value)
   inspect(
     buffer.to_bytes(),
     content=(
-      #|b"\x80\x80\x80\x80\x78"
+      #|b"\x80\x80\x80\x80x"
     ),
   )
   buffer.test_leb128(128)

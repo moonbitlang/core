@@ -75,13 +75,13 @@ test "Show for Bytes" {
   inspect(
     Show::to_string(b"abcdefg"),
     content=(
-      #|b"\x61\x62\x63\x64\x65\x66\x67"
+      #|b"abcdefg"
     ),
   )
   inspect(
     Show::to_string(b"\x00\xff\x63"),
     content=(
-      #|b"\x00\xff\x63"
+      #|b"\x00\xffc"
     ),
   )
 }
@@ -91,13 +91,13 @@ test "Show for BytesView" {
   inspect(
     b"abcdefg"[1:5].to_string(),
     content=(
-      #|b"\x62\x63\x64\x65"
+      #|b"bcde"
     ),
   )
   inspect(
     b"\x00\xff\x63"[:].to_string(),
     content=(
-      #|b"\x00\xff\x63"
+      #|b"\x00\xffc"
     ),
   )
 }

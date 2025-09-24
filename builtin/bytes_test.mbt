@@ -54,7 +54,7 @@ test "set_utf8_char (ASCII)" {
   inspect(
     bytes,
     content=(
-      #|b"\x41\x00\x00\x00"
+      #|b"A\x00\x00\x00"
     ),
   )
 }
@@ -116,7 +116,7 @@ test "set_utf16le_char" {
   inspect(
     bytes,
     content=(
-      #|b"\x41\x00\x00\x00"
+      #|b"A\x00\x00\x00"
     ),
   )
 }
@@ -132,7 +132,7 @@ test "set_utf16le_char (surrogate pair)" {
   inspect(
     bytes,
     content=(
-      #|b"\x3c\xd8\x51\xde"
+      #|b"<\xd8Q\xde"
     ),
   )
 }
@@ -147,7 +147,7 @@ test "set_utf16be_char" {
   inspect(
     bytes,
     content=(
-      #|b"\x00\x41\x00\x00"
+      #|b"\x00A\x00\x00"
     ),
   )
   let arr = FixedArray::make(2, b'\x00')

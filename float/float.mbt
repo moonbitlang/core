@@ -222,7 +222,9 @@ pub impl Hash for Float with hash_combine(self, hasher) {
 ///   inspect(
 ///     x.to_be_bytes(), 
 ///     content=(
-///       #|b"\x3f\x80\x00\x00"
+///       
+///   #|b"?\x80\x00\x00"
+/// 
 ///     ),
 ///   )
 /// ```

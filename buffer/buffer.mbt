@@ -29,7 +29,9 @@
 ///   inspect(
 ///     buf.contents(), 
 ///     content=(
-///       #|b"\x54\x00\x65\x00\x73\x00\x74\x00"
+///       
+///   #|b"T\x00e\x00s\x00t\x00"
+/// 
 ///     ),
 ///   )
 /// ```
@@ -114,7 +116,9 @@ pub fn is_empty(self : Buffer) -> Bool {
 ///   inspect(
 ///     buf.contents(),
 ///     content=(
-///       #|b"\x54\x00\x65\x00\x73\x00\x74\x00"
+///       
+///   #|b"T\x00e\x00s\x00t\x00"
+/// 
 ///     ),
 ///   )
 /// ```
@@ -212,7 +216,9 @@ pub fn from_iter(iter : Iter[Byte]) -> Buffer {
 ///   inspect(
 ///     buf.contents(),
 ///     content=(
-///       #|b"\x54\x00\x65\x00\x73\x00\x74\x00"
+///       
+///   #|b"T\x00e\x00s\x00t\x00"
+/// 
 ///     ),
 ///   )
 /// ```
@@ -240,7 +246,9 @@ pub impl Logger for Buffer with write_string(self, value) {
 ///   inspect(
 ///     buf.contents(),
 ///     content=(
-///       #|b"\xaa\xbb\xcc\xdd\x11\x22\x33\x44"
+///       
+///   #|b"\xaa\xbb\xcc\xdd\x11\x223D"
+/// 
 ///     ),
 ///   )
 /// ```
@@ -275,7 +283,9 @@ pub fn write_uint64_be(self : Buffer, value : UInt64) -> Unit {
 ///   inspect(
 ///     buf.contents(),
 ///     content=(
-///       #|b"\xef\xcd\xab\x89\x67\x45\x23\x01"
+///       
+///   #|b"\xef\xcd\xab\x89gE#\x01"
+/// 
 ///     ),
 ///   )
 /// ```
@@ -356,7 +366,9 @@ pub fn write_int64_le(self : Buffer, value : Int64) -> Unit {
 /// ```moonbit
 ///   let buf = @buffer.new()
 ///   buf.write_uint_be(0x12345678)
-///   inspect(buf.contents(), content="b\"\\x12\\x34\\x56\\x78\"")
+///   inspect(buf.contents(), content=(
+///   #|b"\x124Vx"
+/// ))
 /// ```
 pub fn write_uint_be(self : Buffer, value : UInt) -> Unit {
   self.grow_if_necessary(self.len + 4)
@@ -383,7 +395,9 @@ pub fn write_uint_be(self : Buffer, value : UInt) -> Unit {
 /// ```moonbit
 ///   let buf = @buffer.new()
 ///   buf.write_uint_le(0x12345678)
-///   inspect(buf.contents(), content="b\"\\x78\\x56\\x34\\x12\"")
+///   inspect(buf.contents(), content=(
+///   #|b"xV4\x12"
+/// ))
 /// ```
 pub fn write_uint_le(self : Buffer, value : UInt) -> Unit {
   self.grow_if_necessary(self.len + 4)
@@ -409,7 +423,9 @@ pub fn write_uint_le(self : Buffer, value : UInt) -> Unit {
 /// ```moonbit
 ///   let buf = @buffer.new()
 ///   buf.write_int_be(0x12345678)
-///   inspect(buf.contents(), content="b\"\\x12\\x34\\x56\\x78\"")
+///   inspect(buf.contents(), content=(
+///   #|b"\x124Vx"
+/// ))
 /// ```
 pub fn write_int_be(self : Buffer, value : Int) -> Unit {
   self.write_uint_be(value.reinterpret_as_uint())
@@ -450,7 +466,9 @@ pub fn write_int_le(self : Buffer, value : Int) -> Unit {
 /// ```moonbit
 ///   let buf = @buffer.new()
 ///   buf.write_double_be(1.0)
-///   inspect(buf.contents(), content="b\"\\x3f\\xf0\\x00\\x00\\x00\\x00\\x00\\x00\"")
+///   inspect(buf.contents(), content=(
+///   #|b"?\xf0\x00\x00\x00\x00\x00\x00"
+/// ))
 /// ```
 pub fn write_double_be(self : Buffer, value : Double) -> Unit {
   self.write_uint64_be(value.reinterpret_as_uint64())
@@ -472,7 +490,9 @@ pub fn write_double_be(self : Buffer, value : Double) -> Unit {
 ///   buf.write_double_le(3.14)
 ///   inspect(
 ///     buf.contents(),
-///     content="b\"\\x1f\\x85\\xeb\\x51\\xb8\\x1e\\x09\\x40\"",
+///     content=(
+///   #|b"\x1f\x85\xebQ\xb8\x1e\x09@"
+/// ),
 ///   )
 /// ```
 pub fn write_double_le(self : Buffer, value : Double) -> Unit {
@@ -495,7 +515,9 @@ pub fn write_double_le(self : Buffer, value : Double) -> Unit {
 ///   let buf = @buffer.new()
 ///   buf.write_float_be(3.14)
 ///   // In big-endian format, 3.14 is represented as [0x40, 0x48, 0xF5, 0xC3]
-///   inspect(buf.contents(), content="b\"\\x40\\x48\\xf5\\xc3\"")
+///   inspect(buf.contents(), content=(
+///   #|b"@H\xf5\xc3"
+/// ))
 /// ```
 pub fn write_float_be(self : Buffer, value : Float) -> Unit {
   self.write_uint_be(value.reinterpret_as_uint())
@@ -516,7 +538,9 @@ pub fn write_float_be(self : Buffer, value : Float) -> Unit {
 ///   let buf = @buffer.new()
 ///   buf.write_float_le(3.14)
 ///   // The bytes are written in little-endian format
-///   inspect(buf.contents(), content="b\"\\xc3\\xf5\\x48\\x40\"")
+///   inspect(buf.contents(), content=(
+///   #|b"\xc3\xf5H@"
+/// ))
 /// ```
 pub fn write_float_le(self : Buffer, value : Float) -> Unit {
   self.write_uint_le(value.reinterpret_as_uint())
@@ -560,7 +584,9 @@ pub fn write_object(self : Buffer, value : &Show) -> Unit {
 ///   inspect(
 ///     buf.contents(),
 ///     content=(
-///       #|b"\x54\x65\x73\x74"
+///       
+///   #|b"Test"
+/// 
 ///     ),
 ///   )
 /// ```
@@ -588,7 +614,9 @@ pub fn write_bytes(self : Buffer, value : Bytes) -> Unit {
 ///   inspect(
 ///     buf.contents(),
 ///     content=(
-///       #|b"\x65\x73"
+///       
+///   #|b"es"
+/// 
 ///     ),
 ///   )
 /// ```
@@ -737,7 +765,9 @@ pub fn Buffer::write_string_utf16be(buf : Self, string : StringView) -> Unit {
 ///   inspect(
 ///     buf.contents(),
 ///     content=(
-///       #|b"\x48\x00\x65\x00\x6c\x00\x6c\x00\x6f\x00"
+///       
+///   #|b"H\x00e\x00l\x00l\x00o\x00"
+/// 
 ///     ),
 ///   )
 /// ```
@@ -770,7 +800,9 @@ pub impl Logger for Buffer with write_substring(
 ///   inspect(
 ///     buf.contents(), 
 ///     content=(
-///       #|b"\x41\x00"
+///       
+///   #|b"A\x00"
+/// 
 ///     ),
 ///   )
 /// ```
@@ -794,7 +826,9 @@ pub impl Logger for Buffer with write_char(self : Buffer, value : Char) -> Unit 
 /// ```moonbit
 ///   let buf = @buffer.new()
 ///   buf.write_byte(b'\x41')
-///   inspect(buf.contents(), content="b\"\\x41\"")
+///   inspect(buf.contents(), content=(
+///   #|b"A"
+/// ))
 /// ```
 pub fn write_byte(self : Buffer, value : Byte) -> Unit {
   self.grow_if_necessary(self.len + 1)
@@ -819,7 +853,9 @@ pub fn write_byte(self : Buffer, value : Byte) -> Unit {
 ///   inspect(
 ///     buf.contents(), 
 ///     content=(
-///       #|b"\x48\x65\x6c\x6c\x6f"
+///       
+///   #|b"Hello"
+/// 
 ///     ),
 ///   )
 /// ```

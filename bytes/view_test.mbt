@@ -496,7 +496,7 @@ test "View::to_bytes" {
   inspect(
     view.to_bytes(),
     content=(
-      #|b"\x62\x63\x61"
+      #|b"bca"
     ),
   )
   let bytes = b"abcabc"
@@ -504,7 +504,7 @@ test "View::to_bytes" {
   inspect(
     view.to_bytes(),
     content=(
-      #|b"\x61\x62\x63\x61\x62\x63"
+      #|b"abcabc"
     ),
   )
   let bytes = b"abcabc"

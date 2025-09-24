@@ -347,7 +347,9 @@ pub fn Double::is_close(
 ///   inspect(
 ///     d.to_be_bytes(), 
 ///     content=(
-///       #|b"\x3f\xf0\x00\x00\x00\x00\x00\x00"
+///       
+///   #|b"?\xf0\x00\x00\x00\x00\x00\x00"
+/// 
 ///     ),
 ///   )
 /// ```
@@ -373,7 +375,9 @@ pub fn to_be_bytes(self : Double) -> Bytes {
 ///   inspect(
 ///     d.to_le_bytes(), 
 ///     content=(
-///       #|b"\x00\x00\x00\x00\x00\x00\xf0\x3f"
+///       
+///   #|b"\x00\x00\x00\x00\x00\x00\xf0?"
+/// 
 ///     ),
 ///   )
 /// ```
