@@ -854,24 +854,32 @@ test "Float from_json error handling" {
   let result : Result[Float, _] = try? @json.from_json(json_string)
   inspect(
     result,
-    content="Err(JsonDecodeError(($, \"Float::from_json: expected number\")))",
+    content=(
+      #|Err(JsonDecodeError((, "Float::from_json: expected number")))
+    ),
   )
   let json_array = Json::array([])
   let result : Result[Float, _] = try? @json.from_json(json_array)
   inspect(
     result,
-    content="Err(JsonDecodeError(($, \"Float::from_json: expected number\")))",
+    content=(
+      #|Err(JsonDecodeError((, "Float::from_json: expected number")))
+    ),
   )
   let json_object = Json::object({})
   let result : Result[Float, _] = try? @json.from_json(json_object)
   inspect(
     result,
-    content="Err(JsonDecodeError(($, \"Float::from_json: expected number\")))",
+    content=(
+      #|Err(JsonDecodeError((, "Float::from_json: expected number")))
+    ),
   )
   let json_null = null
   let result : Result[Float, _] = try? @json.from_json(json_null)
   inspect(
     result,
-    content="Err(JsonDecodeError(($, \"Float::from_json: expected number\")))",
+    content=(
+      #|Err(JsonDecodeError((, "Float::from_json: expected number")))
+    ),
   )
 }

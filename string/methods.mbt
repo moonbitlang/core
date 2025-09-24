@@ -541,6 +541,29 @@ pub fn String::contains(self : String, str : StringView) -> Bool {
 }
 
 ///|
+/// Returns true if this string contains any character from the given set.
+pub fn StringView::contains_any(self : StringView, chars~ : StringView) -> Bool {
+  match chars {
+    [] => false
+    [c] => self.contains_char(c)
+    _ =>
+      for c in self {
+        if chars.contains_char(c) {
+          break true
+        }
+      } else {
+        false
+      }
+  }
+}
+
+///|
+/// Returns true if this string contains any character from the given set.
+pub fn String::contains_any(self : String, chars~ : StringView) -> Bool {
+  self[:].contains_any(chars~)
+}
+
+///|
 test "contains" {
   inspect("hello".contains("o"), content="true")
   inspect("hello".contains("l"), content="true")
@@ -553,6 +576,16 @@ test "contains" {
   inspect("hello hello".contains("hello"), content="true")
   inspect("aaa".contains("aa"), content="true")
   inspect("😀😀".contains("😀"), content="true")
+}
+
+///|
+test "contains_any" {
+  inspect("hello".contains_any(chars="h"), content="true")
+  inspect("hello".contains_any(chars="xyz"), content="false")
+  inspect("hello".contains_any(chars=""), content="false")
+  inspect("".contains_any(chars="abc"), content="false")
+  inspect("😀😃".contains_any(chars="😄😀"), content="true")
+  inspect("hello"[:].contains_any(chars="eo"), content="true")
 }
 
 ///|
