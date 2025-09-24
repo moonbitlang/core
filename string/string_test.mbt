@@ -728,3 +728,10 @@ test "string chars array" {
   let v : String = ['a', 'b']
   assert_true(v is "ab")
 }
+
+///|
+test "eq_ignore_case" {
+  assert_eq("你好".eq_ignore_case("你好"), true)
+  assert_eq("Hello".eq_ignore_case("HELLO"), true)
+  assert_eq("Hello".eq_ignore_case("HELLe"), false)
+}
