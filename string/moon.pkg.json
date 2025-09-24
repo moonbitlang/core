@@ -3,7 +3,11 @@
   "test-import": [
     "moonbitlang/core/list",
     "moonbitlang/core/json",
-    "moonbitlang/core/quickcheck"
+    "moonbitlang/core/quickcheck",
+    {
+      "path": "moonbitlang/core/encoding/utf16le",
+      "alias": "encoding/utf16le"
+    }
   ],
   "targets": {
     "panic_test.mbt": ["not", "native", "llvm"]
