@@ -544,11 +544,7 @@ pub impl Show for BytesView with output(self, logger) {
 
 ///|
 pub impl Show for Bytes with output(self, logger) {
-  logger.write_string("b\"")
-  for b in self {
-    logger..write_string("\\x")..write_string(b.to_hex())
-  }
-  logger.write_string("\"")
+  BytesView::output(self[:], logger)
 }
 
 ///|
@@ -654,11 +650,11 @@ pub impl Hash for BytesView with hash(self : BytesView) -> Int {
 ///|
 pub impl ToJson for BytesView with to_json(self) -> Json {
   let sb = StringBuilder::new()
-  for b in self {
-    if b is (b' '..=b'~') && b != b'"' && b != b'\\' {
-      sb.write_char(b.to_char())
+  for byte in self {
+    if byte is (' '..='~') && byte != '"' && byte != '\\' {
+      sb.write_char(byte.to_char())
     } else {
-      sb..write_string("\\x")..write_string(b.to_hex())
+      sb..write_string("\\x")..write_string(byte.to_hex())
     }
   }
   Json::string(sb.to_string())
