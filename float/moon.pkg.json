@@ -6,5 +6,6 @@
     "round.mbt": ["not", "js", "wasm", "wasm-gc"],
     "to_int.mbt": ["not", "wasm", "wasm-gc"],
     "to_int_wasm.mbt": ["wasm", "wasm-gc"]
-  }
+  },
+  "test-import": ["moonbitlang/core/bytes"]
 }

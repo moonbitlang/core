@@ -794,7 +794,6 @@ impl Show for String
 impl[X : Show] Show for X?
 impl[T : Show, E : Show] Show for Result[T, E]
 impl[X : Show] Show for FixedArray[X]
-impl Show for Bytes
 impl[X : Show] Show for Ref[X]
 impl[A : Show, B : Show] Show for (A, B)
 impl[A : Show, B : Show, C : Show] Show for (A, B, C)
