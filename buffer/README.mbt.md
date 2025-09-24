@@ -23,7 +23,7 @@ test "basic buffer operations" {
   inspect(
     bytes,
     content=(
-      #|b"\x48\x69"
+      #|b"Hi"
     ),
   )
 
@@ -47,7 +47,7 @@ test "number serialization" {
     ..write_int_le(42)
     .to_bytes(),
     content=(
-      #|b"\x00\x00\x00\x2a\x2a\x00\x00\x00"
+      #|b"\x00\x00\x00**\x00\x00\x00"
     ),
   )
   inspect(
@@ -57,7 +57,7 @@ test "number serialization" {
     ..write_float_le(3.14)
     .to_bytes(),
     content=(
-      #|b"\x40\x48\xf5\xc3\xc3\xf5\x48\x40"
+      #|b"@H\xf5\xc3\xc3\xf5H@"
     ),
   )
   inspect(
@@ -77,7 +77,7 @@ test "number serialization" {
     ..write_uint_le(0x2077U)
     .to_bytes(),
     content=(
-      #|b"\x00\x00\x20\x77\x77\x20\x00\x00"
+      #|b"\x00\x00 ww \x00\x00"
     ),
   )
 }
@@ -102,7 +102,7 @@ test "byte sequence writing" {
   inspect(
     contents,
     content=(
-      #|b"\x48\x65\x6c\x6c\x6f\x48\x65\x6c\x6c\x6f"
+      #|b"HelloHello"
     ),
   ) // "Hello" written twice
 }
@@ -125,7 +125,7 @@ test "object writing" {
   inspect(
     contents,
     content=(
-      #|b"\x34\x00\x32\x00"
+      #|b"4\x002\x00"
     ),
   )
 }
@@ -167,7 +167,7 @@ test "buffer as logger" {
   inspect(
     contents,
     content=(
-      #|b"\x5b\x00\x31\x00\x2c\x00\x20\x00\x32\x00\x2c\x00\x20\x00\x33\x00\x5d\x00"
+      #|b"[\x001\x00,\x00 \x002\x00,\x00 \x003\x00]\x00"
     ),
   )
 }
@@ -188,7 +188,7 @@ test "buffer conversion" {
   inspect(
     bytes,
     content=(
-      #|b"\x61\x62\x63"
+      #|b"abc"
     ),
   )
 }
@@ -210,7 +210,7 @@ test "byte view writing" {
   inspect(
     contents,
     content=(
-      #|b"\x48\x65\x6c\x6c\x6f"
+      #|b"Hello"
     ),
   )
 }

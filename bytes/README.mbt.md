@@ -15,7 +15,7 @@ test "bytes creation" {
   inspect(
     bytes1,
     content=(
-      #|b"\x68\x65\x6c\x6c\x6f"
+      #|b"hello"
     ),
   )
 
@@ -25,7 +25,7 @@ test "bytes creation" {
   inspect(
     bytes2,
     content=(
-      #|b"\x61\x61\x61"
+      #|b"aaa"
     ),
   )
 
@@ -43,7 +43,7 @@ test "bytes creation" {
   inspect(
     iter_bytes,
     content=(
-      #|b"\x68\x65\x6c\x6c\x6f"
+      #|b"hello"
     ),
   )
 }
@@ -133,7 +133,7 @@ test "bytes operations" {
   inspect(
     combined,
     content=(
-      #|b"\x61\x62\x63\x64"
+      #|b"abcd"
     ),
   )
 

@@ -237,7 +237,9 @@ pub fn Double::upto(
 ///
 /// ```moonbit
 ///   let bytes = "ABC".to_bytes()
-///   inspect(bytes, content="b\"\\x41\\x00\\x42\\x00\\x43\\x00\"")
+///   inspect(bytes, content=(
+///   #|b"A\x00B\x00C\x00"
+/// ))
 /// ```
 #deprecated("Use `str.to_bytes()` instead")
 pub fn Bytes::of_string(str : String) -> Bytes {

@@ -75,7 +75,9 @@ test "to_be_bytes with negative number" {
   let d = -123.456
   inspect(
     d.to_be_bytes(),
-    content="b\"\\xc0\\x5e\\xdd\\x2f\\x1a\\x9f\\xbe\\x77\"",
+    content=(
+      #|b"\xc0^\xdd/\x1a\x9f\xbew"
+    ),
   )
 }
 
