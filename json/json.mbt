@@ -161,14 +161,6 @@ pub fn stringify(
 
 ///|
 fn escape(str : String, escape_slash~ : Bool) -> String {
-  fn to_hex_digit(i : Int) -> Char {
-    if i < 10 {
-      ('0'.to_int() + i).unsafe_to_char()
-    } else {
-      ('a'.to_int() + (i - 10)).unsafe_to_char()
-    }
-  }
-
   let buf = StringBuilder::new(size_hint=str.length())
   for c in str {
     match c {
@@ -188,10 +180,9 @@ fn escape(str : String, escape_slash~ : Bool) -> String {
         let code = c.to_int()
         if code == 0x0C {
           buf.write_string("\\f")
-        } else if code < 0x20 {
+        } else if code < ' ' {
           buf.write_string("\\u00")
-          buf.write_char(to_hex_digit(code / 16))
-          buf.write_char(to_hex_digit(code % 16))
+          buf.write_string(code.to_byte().to_hex())
         } else {
           buf.write_char(c)
         }

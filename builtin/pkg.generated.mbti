@@ -340,6 +340,7 @@ fn Byte::lsr(Byte, Int) -> Byte
 fn Byte::to_char(Byte) -> Char
 fn Byte::to_double(Byte) -> Double
 fn Byte::to_float(Byte) -> Float
+fn Byte::to_hex(Byte) -> String
 fn Byte::to_int(Byte) -> Int
 fn Byte::to_int16(Byte) -> Int16
 fn Byte::to_int64(Byte) -> Int64

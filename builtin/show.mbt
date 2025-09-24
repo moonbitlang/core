@@ -62,7 +62,7 @@ pub impl Show for UInt16 with output(self, logger) {
 }
 
 ///|
-fn Byte::to_hex(b : Byte) -> String {
+pub fn Byte::to_hex(b : Byte) -> String {
   fn to_hex_digit(i : Byte) -> Char {
     if i < 10 {
       (i + '0').to_char()
