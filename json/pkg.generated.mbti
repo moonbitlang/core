@@ -17,7 +17,7 @@ impl Eq for JsonDecodeError
 impl Show for JsonDecodeError
 impl ToJson for JsonDecodeError
 
-type JsonPointerParsingError
+pub(all) suberror JsonPointerParsingError (String, String)
 impl Eq for JsonPointerParsingError
 impl Show for JsonPointerParsingError
 impl ToJson for JsonPointerParsingError
@@ -46,7 +46,6 @@ pub enum JsonPointer {
   Pointer(JsonPointer, token~ : String)
 }
 fn JsonPointer::apply(Self, Json) -> Json?
-fn JsonPointer::from_iter(Iter[String]) -> Self raise JsonPointerParsingError
 fn JsonPointer::iter(Self) -> Iter[String]
 impl Div for JsonPointer
 impl Show for JsonPointer
