@@ -130,7 +130,7 @@ test "json path" {
     panic()
   } catch {
     @json.JsonDecodeError((path, msg)) => {
-      inspect(path, content="$[1]")
+      inspect(path, content="/1")
       inspect(msg, content="Int::from_json: expected number")
     }
   }

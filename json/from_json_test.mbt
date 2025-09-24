@@ -35,7 +35,7 @@ test {
   inspect(
     v,
     content=(
-      #|Err(JsonDecodeError(($[1], "Int::from_json: expected number")))
+      #|Err(JsonDecodeError((/1, "Int::from_json: expected number")))
     ),
   )
 }
@@ -50,7 +50,7 @@ test {
   inspect(
     v,
     content=(
-      #|Err(JsonDecodeError(($.y.yy, "Double::from_json: expected number")))
+      #|Err(JsonDecodeError((/y/yy, "Double::from_json: expected number")))
     ),
   )
 }
@@ -276,7 +276,7 @@ test "tuple failure" {
   inspect(
     v.unwrap_err(),
     content=(
-      #|JsonDecodeError(($, "expected tuple of size 3"))
+      #|JsonDecodeError((, "expected tuple of size 3"))
     ),
   )
   let u = ((1, 2), (3, 4))
@@ -286,7 +286,7 @@ test "tuple failure" {
   inspect(
     v.unwrap_err(),
     content=(
-      #|JsonDecodeError(($[1], "Int::from_json: expected number"))
+      #|JsonDecodeError((/1, "Int::from_json: expected number"))
     ),
   )
 }
@@ -426,13 +426,17 @@ test "uint" {
   let neg_res : Result[UInt, _] = try? @json.from_json(Json::number(-1))
   inspect(
     neg_res,
-    content="Err(JsonDecodeError(($, \"UInt::from_json: overflow\")))",
+    content=(
+      #|Err(JsonDecodeError((, "UInt::from_json: overflow")))
+    ),
   )
   // overflow should error
   let ovf_res : Result[UInt, _] = try? @json.from_json(Json::number(4294967296))
   inspect(
     ovf_res,
-    content="Err(JsonDecodeError(($, \"UInt::from_json: overflow\")))",
+    content=(
+      #|Err(JsonDecodeError((, "UInt::from_json: overflow")))
+    ),
   )
 }
 
@@ -510,7 +514,7 @@ test "unicode" {
   inspect(
     v,
     content=(
-      #|Err(JsonDecodeError(($, "Char::from_json: invalid surrogate pair")))
+      #|Err(JsonDecodeError((, "Char::from_json: invalid surrogate pair")))
     ),
   )
 }
@@ -563,19 +567,25 @@ test "Bool from_json error handling" {
   let result : Result[Bool, _] = try? @json.from_json(json_null)
   inspect(
     result,
-    content="Err(JsonDecodeError(($, \"Bool::from_json: expected boolean\")))",
+    content=(
+      #|Err(JsonDecodeError((, "Bool::from_json: expected boolean")))
+    ),
   )
   let json_number = Json::number(42)
   let result : Result[Bool, _] = try? @json.from_json(json_number)
   inspect(
     result,
-    content="Err(JsonDecodeError(($, \"Bool::from_json: expected boolean\")))",
+    content=(
+      #|Err(JsonDecodeError((, "Bool::from_json: expected boolean")))
+    ),
   )
   let json_string = Json::string("true")
   let result : Result[Bool, _] = try? @json.from_json(json_string)
   inspect(
     result,
-    content="Err(JsonDecodeError(($, \"Bool::from_json: expected boolean\")))",
+    content=(
+      #|Err(JsonDecodeError((, "Bool::from_json: expected boolean")))
+    ),
   )
 }
 
@@ -585,13 +595,17 @@ test "Int64 from_json error handling" {
   let result : Result[Int64, _] = try? @json.from_json(json_number)
   inspect(
     result,
-    content="Err(JsonDecodeError(($, \"Int64::from_json: expected number in string representation\")))",
+    content=(
+      #|Err(JsonDecodeError((, "Int64::from_json: expected number in string representation")))
+    ),
   )
   let json_invalid_string = Json::string("not a number")
   let result : Result[Int64, _] = try? @json.from_json(json_invalid_string)
   inspect(
     result,
-    content="Err(JsonDecodeError(($, \"Int64::from_json: parsing failure invalid syntax\")))",
+    content=(
+      #|Err(JsonDecodeError((, "Int64::from_json: parsing failure invalid syntax")))
+    ),
   )
 }
 
@@ -601,7 +615,9 @@ test "UInt from_json error handling" {
   let result : Result[UInt, _] = try? @json.from_json(json_string)
   inspect(
     result,
-    content="Err(JsonDecodeError(($, \"UInt::from_json: expected number\")))",
+    content=(
+      #|Err(JsonDecodeError((, "UInt::from_json: expected number")))
+    ),
   )
 }
 
@@ -611,13 +627,17 @@ test "UInt64 from_json error handling" {
   let result : Result[UInt64, _] = try? @json.from_json(json_number)
   inspect(
     result,
-    content="Err(JsonDecodeError(($, \"UInt64::from_json: expected number in string representation\")))",
+    content=(
+      #|Err(JsonDecodeError((, "UInt64::from_json: expected number in string representation")))
+    ),
   )
   let json_invalid_string = Json::string("not a number")
   let result : Result[UInt64, _] = try? @json.from_json(json_invalid_string)
   inspect(
     result,
-    content="Err(JsonDecodeError(($, \"UInt64::from_json: parsing failure invalid syntax\")))",
+    content=(
+      #|Err(JsonDecodeError((, "UInt64::from_json: parsing failure invalid syntax")))
+    ),
   )
 }
 
@@ -627,7 +647,9 @@ test "String from_json error handling" {
   let result : Result[String, _] = try? @json.from_json(json_number)
   inspect(
     result,
-    content="Err(JsonDecodeError(($, \"String::from_json: expected string\")))",
+    content=(
+      #|Err(JsonDecodeError((, "String::from_json: expected string")))
+    ),
   )
 }
 
@@ -637,7 +659,9 @@ test "String View from_json error handling" {
   let result : Result[StringView, _] = try? @json.from_json(json_number)
   inspect(
     result,
-    content="Err(JsonDecodeError(($, \"View::from_json: expected string\")))",
+    content=(
+      #|Err(JsonDecodeError((, "View::from_json: expected string")))
+    ),
   )
 }
 
@@ -647,19 +671,25 @@ test "Char from_json error handling" {
   let result : Result[Char, _] = try? @json.from_json(json_number)
   inspect(
     result,
-    content="Err(JsonDecodeError(($, \"Char::from_json: expected string\")))",
+    content=(
+      #|Err(JsonDecodeError((, "Char::from_json: expected string")))
+    ),
   )
   let json_empty_string = Json::string("")
   let result : Result[Char, _] = try? @json.from_json(json_empty_string)
   inspect(
     result,
-    content="Err(JsonDecodeError(($, \"Char::from_json: expected single character\")))",
+    content=(
+      #|Err(JsonDecodeError((, "Char::from_json: expected single character")))
+    ),
   )
   let json_long_string = Json::string("abc")
   let result : Result[Char, _] = try? @json.from_json(json_long_string)
   inspect(
     result,
-    content="Err(JsonDecodeError(($, \"Char::from_json: expected single character\")))",
+    content=(
+      #|Err(JsonDecodeError((, "Char::from_json: expected single character")))
+    ),
   )
 }
 
@@ -670,7 +700,7 @@ test "BigInt from_json error handling" {
   inspect(
     result,
     content=(
-      #|Err(JsonDecodeError(($, "BigInt::from_json: expected number in string representation")))
+      #|Err(JsonDecodeError((, "BigInt::from_json: expected number in string representation")))
     ),
   )
 }
@@ -681,7 +711,9 @@ test "Array from_json error handling" {
   let result : Result[Array[Int], _] = try? @json.from_json(json_string)
   inspect(
     result,
-    content="Err(JsonDecodeError(($, \"Array::from_json: expected array\")))",
+    content=(
+      #|Err(JsonDecodeError((, "Array::from_json: expected array")))
+    ),
   )
 }
 
@@ -691,7 +723,9 @@ test "FixedArray from_json error handling" {
   let result : Result[FixedArray[Int], _] = try? @json.from_json(json_string)
   inspect(
     result,
-    content="Err(JsonDecodeError(($, \"FixedArray::from_json: expected array\")))",
+    content=(
+      #|Err(JsonDecodeError((, "FixedArray::from_json: expected array")))
+    ),
   )
 }
 
@@ -701,7 +735,9 @@ test "Map from_json error handling" {
   let result : Result[Map[String, Int], _] = try? @json.from_json(json_array)
   inspect(
     result,
-    content="Err(JsonDecodeError(($, \"Map::from_json: expected object\")))",
+    content=(
+      #|Err(JsonDecodeError((, "Map::from_json: expected object")))
+    ),
   )
 }
 
@@ -711,7 +747,9 @@ test "Option from_json error handling" {
   let result : Result[Int?, _] = try? @json.from_json(json_string)
   inspect(
     result,
-    content="Err(JsonDecodeError(($, \"Option::from_json: expected array or null\")))",
+    content=(
+      #|Err(JsonDecodeError((, "Option::from_json: expected array or null")))
+    ),
   )
 }
 
@@ -723,7 +761,9 @@ test "Result from_json error handling" {
     )
   inspect(
     result,
-    content="Err(JsonDecodeError(($, \"Result::from_json: expected object\")))",
+    content=(
+      #|Err(JsonDecodeError((, "Result::from_json: expected object")))
+    ),
   )
   let json_empty_obj = Json::object({})
   let result : Result[Result[Int, String], _] = try? @json.from_json(
@@ -731,7 +771,9 @@ test "Result from_json error handling" {
     )
   inspect(
     result,
-    content="Err(JsonDecodeError(($, \"Result::from_json: expected object with one field\")))",
+    content=(
+      #|Err(JsonDecodeError((, "Result::from_json: expected object with one field")))
+    ),
   )
   let json_invalid_obj = Json::object({ "Invalid": Json::number(1) })
   let result : Result[Result[Int, String], _] = try? @json.from_json(
@@ -739,7 +781,9 @@ test "Result from_json error handling" {
     )
   inspect(
     result,
-    content="Err(JsonDecodeError(($, \"Result::from_json: expected object with Ok or Err field\")))",
+    content=(
+      #|Err(JsonDecodeError((, "Result::from_json: expected object with Ok or Err field")))
+    ),
   )
 }
 
@@ -749,7 +793,9 @@ test "Unit from_json error handling" {
   let result : Result[Unit, _] = try? @json.from_json(json_string)
   inspect(
     result,
-    content="Err(JsonDecodeError(($, \"Unit::from_json: expected null\")))",
+    content=(
+      #|Err(JsonDecodeError((, "Unit::from_json: expected null")))
+    ),
   )
 }
 
