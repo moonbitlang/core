@@ -31,24 +31,39 @@ pub fn JsonPath::add_key(self : JsonPath, key : String) -> JsonPath {
 
 ///|
 pub impl Show for JsonPath with output(self, logger) {
-  // Helper function to escape JSON Pointer tokens
-  fn escape_token(token : String) -> String {
-    // Replace ~ with ~0, then / with ~1
-    // Order matters: ~ must be escaped first
-    token.replace(old="~", new="~0").replace(old="/", new="~1")
-  }
-
-  // Recursively build the JSON Pointer string
-  fn build_path(path : JsonPath) -> String {
-    match path {
-      Root => ""
-      Key(parent, key~) => build_path(parent) + "/" + escape_token(key)
-      Index(parent, index~) =>
-        build_path(parent) + "/" + escape_token(index.to_string())
+  // Helper to write a JSON Pointer token without intermediate allocations
+  fn write_token(logger : &Logger, token : String) -> Unit {
+    if !token.contains_any(chars="~/") {
+      logger.write_string(token)
+      return
+    }
+    for ch in token.iter() {
+      match ch {
+        '~' => logger.write_string("~0")
+        '/' => logger.write_string("~1")
+        _ => logger.write_char(ch)
+      }
     }
   }
 
-  logger.write_string(build_path(self))
+  // Recursively build the JSON Pointer string
+  fn build_path(path : JsonPath, logger : &Logger) -> Unit {
+    match path {
+      Root => ()
+      Key(parent, key~) => {
+        build_path(parent, logger)
+        logger.write_char('/')
+        write_token(logger, key)
+      }
+      Index(parent, index~) => {
+        build_path(parent, logger)
+        logger.write_char('/')
+        logger.write_object(index)
+      }
+    }
+  }
+
+  build_path(self, logger)
 }
 
 ///|
@@ -107,13 +122,15 @@ test "show JsonPath - JSON Pointer format" {
 test "show JsonPath - special characters escaping" {
   // Test tilde escaping (~ becomes ~0)
   @builtin.inspect(Root.add_key("foo~bar"), content="/foo~0bar")
+  @builtin.inspect(Root.add_key("foo~~bar~~"), content="/foo~0~0bar~0~0")
 
   // Test slash escaping (/ becomes ~1)
   @builtin.inspect(Root.add_key("foo/bar"), content="/foo~1bar")
+  @builtin.inspect(Root.add_key("foo//bar//"), content="/foo~1~1bar~1~1")
 
   // Test both special characters
   @builtin.inspect(Root.add_key("foo~/bar"), content="/foo~0~1bar")
-  @builtin.inspect(Root.add_key("~foo/bar~"), content="/~0foo~1bar~")
+  @builtin.inspect(Root.add_key("~foo/bar~"), content="/~0foo~1bar~0")
 
   // Test complex path with special characters
   @builtin.inspect(
