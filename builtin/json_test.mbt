@@ -118,7 +118,7 @@ test "escape control characters" {
   inspect(
     json,
     content=(
-      #|String("abc\u{0001}def")
+      #|String("abc\u{01}def")
     ),
   )
 }
@@ -142,7 +142,7 @@ test "test form feed" {
   inspect(
     json,
     content=(
-      #|String("Form\u{000c}Feed")
+      #|String("Form\u{0c}Feed")
     ),
   )
 }
