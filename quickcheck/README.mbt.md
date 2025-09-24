@@ -33,7 +33,7 @@ test "multiple samples" {
   inspect(
     strings[5:10],
     content=(
-      #|["E\b\u{0f} ", "", "K\u{1f}[", "!@", "xvLxb"]
+      #|["E\b\u{000f} ", "", "K\u{001f}[", "!@", "xvLxb"]
     ),
   )
 }
