@@ -535,21 +535,9 @@ pub fn BytesView::to_double_le(self : BytesView) -> Double {
 
 ///|
 pub impl Show for BytesView with output(self, logger) {
-  fn to_hex_digit(i : Int) -> Char {
-    if i < 10 {
-      ('0'.to_int() + i).unsafe_to_char()
-    } else {
-      ('a'.to_int() + (i - 10)).unsafe_to_char()
-    }
-  }
-
   logger.write_string("b\"")
-  for i in 0..<self.length() {
-    let byte = self[i].to_int()
-    logger
-    ..write_string("\\x")
-    ..write_char(to_hex_digit(byte / 16))
-    ..write_char(to_hex_digit(byte % 16))
+  for byte in self {
+    logger..write_string("\\x")..write_string(byte.to_hex())
   }
   logger.write_string("\"")
 }
@@ -655,24 +643,13 @@ pub impl Hash for BytesView with hash(self : BytesView) -> Int {
 }
 
 ///|
-fn to_hex_digit(i : Int) -> Char {
-  if i < 10 {
-    (i + '0').unsafe_to_char()
-  } else {
-    (i + 'a' - 10).unsafe_to_char()
-  }
-}
-
-///|
 pub impl ToJson for BytesView with to_json(self) -> Json {
   let sb = StringBuilder::new()
   for b in self {
     if b is (b' '..=b'~') && b != b'"' && b != b'\\' {
       sb.write_char(b.to_char())
     } else {
-      sb.write_string("\\x")
-      sb.write_char(to_hex_digit(b.to_int() / 16))
-      sb.write_char(to_hex_digit(b.to_int() % 16))
+      sb..write_string("\\x")..write_string(b.to_hex())
     }
   }
   Json::string(sb.to_string())
