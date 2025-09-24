@@ -87,7 +87,11 @@ fn escape_component(token : String) -> String {
 }
 
 ///|
-suberror JsonPointerParsingError (String, String) derive(Eq, Show, ToJson)
+pub(all) suberror JsonPointerParsingError (String, String) derive (
+  Eq,
+  Show,
+  ToJson,
+)
 
 ///|
 fn get_unescaped(p : Int, full : String) -> Char raise JsonPointerParsingError {
@@ -106,11 +110,6 @@ fn get_unescaped(p : Int, full : String) -> Char raise JsonPointerParsingError {
         ),
       )
   }
-}
-
-///|
-test {
-  println(get_unescaped(1, "~2"))
 }
 
 ///|
