@@ -143,7 +143,7 @@ pub impl Show for String with output(self, logger) {
           // has to be ascii  
           flush_segment(seg, i)
           logger
-          ..write_string("\\u{00")
+          ..write_string("\\u{")
           ..write_string(code.to_byte().to_hex())
           ..write_char('}')
           continue i + 1, i + 1

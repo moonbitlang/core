@@ -65,13 +65,13 @@ test "Show::output" {
   inspect(
     repr("\u{00}"),
     content=(
-      #|"\u{0000}"
+      #|"\u{00}"
     ),
   )
   inspect(
     repr("\u0000"),
     content=(
-      #|"\u{0000}"
+      #|"\u{00}"
     ),
   )
   assert_eq(repr("abc'\"def\\"), "\"abc'\\\"def\\\\\"")

@@ -35,7 +35,7 @@ test "String::escape" {
   inspect(
     "\u{00}\u{01}\u{20}\u{21}".escape(),
     content=(
-      #|"\u{0000}\u{0001} !"
+      #|"\u{00}\u{01} !"
     ),
   )
 }
