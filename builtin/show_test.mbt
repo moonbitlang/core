@@ -249,10 +249,10 @@ test "char show hex digits" {
 
 ///|
 test "char show hex digits extended" {
-  inspect((0x605).unsafe_to_char() |> repr, content="'\\u{605}'")
-  inspect((0xFDD0).unsafe_to_char() |> repr, content="'\\u{fdd0}'")
-  inspect((0x1FFFE).unsafe_to_char() |> repr, content="'\\u{1fffe}'")
-  inspect((0x10FFFE).unsafe_to_char() |> repr, content="'\\u{10fffe}'")
+  inspect('\u{0605}' |> repr, content="'\\u{0605}'")
+  inspect('\u{FDD0}' |> repr, content="'\\u{fdd0}'")
+  inspect('\u{1FFFE}' |> repr, content="'\\u{01fffe}'")
+  inspect('\u{10FFFE}' |> repr, content="'\\u{10fffe}'")
 }
 
 ///|
