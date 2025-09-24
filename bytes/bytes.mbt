@@ -29,7 +29,9 @@
 ///   inspect(
 ///     bytes, 
 ///     content=(
-///       #|b"\x68\x69"
+///       
+///   #|b"hi"
+/// 
 ///     ),
 ///   )
 /// ```
@@ -60,7 +62,9 @@ pub fn Bytes::from_array(arr : Array[Byte]) -> Bytes {
 ///   inspect(
 ///     bytes, 
 ///     content=(
-///       #|b"\x68\x65\x6c"
+///       
+///   #|b"hel"
+/// 
 ///     ),
 ///   )
 /// ```
@@ -125,7 +129,9 @@ pub fn to_fixedarray(self : Bytes, len? : Int) -> FixedArray[Byte] {
 ///   inspect(
 ///     bytes, 
 ///     content=(
-///       #|b"\x68"
+///       
+///   #|b"h"
+/// 
 ///     ),
 ///   )
 /// ```
@@ -152,7 +158,9 @@ pub fn Bytes::from_iter(iter : Iter[Byte]) -> Bytes {
 ///   inspect(
 ///     bytes, 
 ///     content=(
-///       #|b"\x68\x65\x6c\x6c\x6f"
+///       
+///   #|b"hello"
+/// 
 ///     ),
 ///   )
 /// ```

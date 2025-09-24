@@ -761,7 +761,7 @@ test "Bytes from_json" {
   inspect(
     result,
     content=(
-      #|Ok(b"\x00\x01\x61\x62\x63\x64\x22\x5c")
+      #|Ok(b"\x00\x01abcd\x22\x5c")
     ),
   )
 }
