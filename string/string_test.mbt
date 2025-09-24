@@ -62,7 +62,18 @@ test "Show::output" {
   assert_eq(repr("\r"), "\"\\r\"")
   assert_eq(repr("\b"), "\"\\b\"")
   assert_eq(repr("\t"), "\"\\t\"")
-  assert_eq(repr("\u{00}"), "\"\\u{00}\"")
+  inspect(
+    repr("\u{00}"),
+    content=(
+      #|"\u{0000}"
+    ),
+  )
+  inspect(
+    repr("\u0000"),
+    content=(
+      #|"\u{0000}"
+    ),
+  )
   assert_eq(repr("abc'\"def\\"), "\"abc'\\\"def\\\\\"")
 }
 
