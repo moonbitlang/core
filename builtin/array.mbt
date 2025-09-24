@@ -206,7 +206,7 @@ pub fn[T] Array::get(self : Array[T], index : Int) -> T? {
 
 ///|
 #intrinsic("%array.unsafe_set")
-fn[T] Array::unsafe_set(self : Array[T], idx : Int, val : T) -> Unit {
+pub fn[T] Array::unsafe_set(self : Array[T], idx : Int, val : T) -> Unit {
   self.buffer()[idx] = val
 }
 

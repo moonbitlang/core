@@ -146,6 +146,7 @@ fn[T] Array::unsafe_get(Self[T], Int) -> T
 #alias(pop_exn, deprecated)
 fn[T] Array::unsafe_pop(Self[T]) -> T
 fn[A] Array::unsafe_pop_back(Self[A]) -> Unit
+fn[T] Array::unsafe_set(Self[T], Int, T) -> Unit
 fn[T] Array::windows(Self[T], Int) -> Self[ArrayView[T]]
 impl[T] Add for Array[T]
 impl[T : Compare] Compare for Array[T]
@@ -158,16 +159,9 @@ impl[X : ToJson] ToJson for Array[X]
 type ArrayView[T]
 #alias("_[_]")
 fn[T] ArrayView::at(Self[T], Int) -> T
-#deprecated
-fn[T] ArrayView::blit_to(Self[T], Self[T]) -> Unit
 fn[T] ArrayView::length(Self[T]) -> Int
-#alias("_[_]=_")
-#deprecated
-fn[T] ArrayView::set(Self[T], Int, T) -> Unit
 #alias("_[_:_]")
 fn[T] ArrayView::sub(Self[T], start? : Int, end? : Int) -> Self[T]
-#deprecated
-fn[T] ArrayView::swap(Self[T], Int, Int) -> Unit
 fn[T] ArrayView::unsafe_get(Self[T], Int) -> T
 impl[X : ToJson] ToJson for ArrayView[X]
 
@@ -346,6 +340,7 @@ fn Byte::lsr(Byte, Int) -> Byte
 fn Byte::to_char(Byte) -> Char
 fn Byte::to_double(Byte) -> Double
 fn Byte::to_float(Byte) -> Float
+fn Byte::to_hex(Byte) -> String
 fn Byte::to_int(Byte) -> Int
 fn Byte::to_int16(Byte) -> Int16
 fn Byte::to_int64(Byte) -> Int64
@@ -854,7 +849,6 @@ impl ToJson for String
 impl[T : ToJson] ToJson for T?
 impl[Ok : ToJson, Err : ToJson] ToJson for Result[Ok, Err]
 impl[X : ToJson] ToJson for FixedArray[X]
-impl ToJson for Bytes
 impl[A : ToJson, B : ToJson] ToJson for (A, B)
 impl[A : ToJson, B : ToJson, C : ToJson] ToJson for (A, B, C)
 impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson] ToJson for (A, B, C, D)

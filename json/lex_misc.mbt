@@ -93,7 +93,7 @@ fn ParseContext::expect_ascii_char(
 
 ///|
 test "expect_char" {
-  let ctx = ParseContext::make("abc")
+  let ctx = ParseContext::make("abc", 1)
   ctx.expect_char('a')
   ctx.expect_char('b')
   ctx.expect_char('c')
@@ -103,7 +103,7 @@ test "expect_char" {
 ///|
 test "expect_char with surrogate pair" {
   // "\uD83D\uDE00" // todo: shall we allow this?
-  let ctx = ParseContext::make("a\u{1F600}bc\u{1F600}c")
+  let ctx = ParseContext::make("a\u{1F600}bc\u{1F600}c", 1)
   ctx.expect_char('a')
   ctx.expect_char((0x1F600).unsafe_to_char())
   ctx.expect_char('b')
