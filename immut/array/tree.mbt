@@ -504,7 +504,7 @@ fn[A] rebalance(
 /// - `center` is `Node`.
 /// 
 /// Postconditions:
-/// - The resulting array is of length `left.size() + center.size() + right.size()`.
+/// - The resulting array is of length `left.length() + center.length() + right.length()`.
 /// - The height of a `Tree` in the resulting array is one less than the height of the input `Tree`s.
 fn[A] tri_merge(
   left : Tree[A],

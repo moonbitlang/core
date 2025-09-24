@@ -19,7 +19,7 @@ let default_init_capacity = 8
 test "new" {
   let m : @set.Set[Int] = @set.Set::new()
   assert_eq(m.capacity(), default_init_capacity)
-  assert_eq(m.size(), 0)
+  assert_eq(m.length(), 0)
 }
 
 ///|
@@ -63,9 +63,9 @@ test "from_array" {
 ///|
 test "size" {
   let m = @set.Set::new()
-  assert_eq(m.size(), 0)
+  assert_eq(m.length(), 0)
   m.add("a")
-  assert_eq(m.size(), 1)
+  assert_eq(m.length(), 1)
 }
 
 ///|
@@ -104,7 +104,7 @@ test "union" {
   let m1 = @set.Set::of(["a", "b", "c"])
   let m2 = @set.Set::of(["b", "c", "d"])
   let m = m1.union(m2)
-  assert_eq(m.size(), 4)
+  assert_eq(m.length(), 4)
   assert_true(m.contains("a"))
   assert_true(m.contains("b"))
   assert_true(m.contains("c"))
@@ -116,7 +116,7 @@ test "intersection" {
   let m1 = @set.Set::of(["a", "b", "c"])
   let m2 = @set.Set::of(["b", "c", "d"])
   let m = m1.intersection(m2)
-  assert_eq(m.size(), 2)
+  assert_eq(m.length(), 2)
   assert_false(m.contains("a"))
   assert_true(m.contains("b"))
   assert_true(m.contains("c"))
@@ -128,7 +128,7 @@ test "difference" {
   let m1 = @set.Set::of(["a", "b", "c"])
   let m2 = @set.Set::of(["b", "c", "d"])
   let m = m1.difference(m2)
-  assert_eq(m.size(), 1)
+  assert_eq(m.length(), 1)
   assert_true(m.contains("a"))
   assert_false(m.contains("b"))
   assert_false(m.contains("c"))
@@ -140,7 +140,7 @@ test "symmetric_difference" {
   let m1 = @set.Set::of(["a", "b", "c"])
   let m2 = @set.Set::of(["b", "c", "d"])
   let m = m1.symmetric_difference(m2)
-  assert_eq(m.size(), 2)
+  assert_eq(m.length(), 2)
   assert_true(m.contains("a"))
   assert_false(m.contains("b"))
   assert_false(m.contains("c"))
@@ -174,7 +174,7 @@ test "insert_and_grow" {
   for i in 0..<10 {
     m.add(i.to_string())
   }
-  assert_eq(m.size(), 10)
+  assert_eq(m.length(), 10)
   assert_eq(m.capacity(), 16)
   @json.inspect(m, content=["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"])
 }
@@ -206,9 +206,9 @@ test "remove_and_shift_back" {
 test "capacity_and_size" {
   let m = @set.Set::new()
   assert_eq(m.capacity(), default_init_capacity)
-  assert_eq(m.size(), 0)
+  assert_eq(m.length(), 0)
   m.add("a")
-  assert_eq(m.size(), 1)
+  assert_eq(m.length(), 1)
 }
 
 ///|
@@ -217,9 +217,9 @@ test "clear_and_reinsert" {
   m.add("a")
   m.add("b")
   m.clear()
-  assert_eq(m.size(), 0)
+  assert_eq(m.length(), 0)
   m.add("c")
-  assert_eq(m.size(), 1)
+  assert_eq(m.length(), 1)
   assert_true(m.contains("c"))
 }
 
@@ -229,7 +229,7 @@ test "insert_and_grow" {
   for i in 0..<10 {
     m.add(i.to_string())
   }
-  assert_eq(m.size(), 10)
+  assert_eq(m.length(), 10)
   assert_eq(m.capacity(), 16)
 }
 
@@ -251,9 +251,9 @@ test "remove_and_shift_back" {
 test "capacity_and_size" {
   let m = @set.Set::new()
   assert_eq(m.capacity(), default_init_capacity)
-  assert_eq(m.size(), 0)
+  assert_eq(m.length(), 0)
   m.add("a")
-  assert_eq(m.size(), 1)
+  assert_eq(m.length(), 1)
 }
 
 ///|
@@ -262,9 +262,9 @@ test "clear_and_reinsert" {
   m.add("a")
   m.add("b")
   m.clear()
-  assert_eq(m.size(), 0)
+  assert_eq(m.length(), 0)
   m.add("c")
-  assert_eq(m.size(), 1)
+  assert_eq(m.length(), 1)
   assert_true(m.contains("c"))
 }
 
@@ -291,7 +291,7 @@ test "remove item causes break when psl < i" {
   ..add(1)
   ..add(11) // This goes to a different bucket due to hash collision
   ..remove(21) // Key doesn't exist, will cause psl < i and break
-  assert_eq(set.size(), 2)
+  assert_eq(set.length(), 2)
 }
 
 ///|
@@ -475,24 +475,24 @@ test "bitwise_operations" {
 
   // Intersection (&)
   let intersection = set1 & set2
-  inspect(intersection.size(), content="2")
+  inspect(intersection.length(), content="2")
   inspect(intersection.contains("b"), content="true")
   inspect(intersection.contains("c"), content="true")
 
   // Union (|)
   let union = set1 | set2
-  inspect(union.size(), content="4")
+  inspect(union.length(), content="4")
   inspect(union.contains("a"), content="true")
   inspect(union.contains("d"), content="true")
 
   // Difference (-)
   let diff = set1 - set2
-  inspect(diff.size(), content="1")
+  inspect(diff.length(), content="1")
   inspect(diff.contains("a"), content="true")
 
   // Symmetric difference (^)
   let sym_diff = set1 ^ set2
-  inspect(sym_diff.size(), content="2")
+  inspect(sym_diff.length(), content="2")
   inspect(sym_diff.contains("a"), content="true")
   inspect(sym_diff.contains("d"), content="true")
 }

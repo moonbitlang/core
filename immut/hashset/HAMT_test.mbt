@@ -29,9 +29,9 @@ test "Set" {
 ///|
 test "@hashset.size" {
   for i = 0, set = @hashset.new(); i < 20; i = i + 1, set = set.add(i) {
-    assert_eq(set.size(), i)
+    assert_eq(set.length(), i)
   } else {
-    assert_eq(set.add(0).size(), 20)
+    assert_eq(set.add(0).length(), 20)
   }
 }
 
@@ -88,13 +88,13 @@ test "@hashset.is_empty" {
 ///|
 test "@hashset.size" {
   let set = @hashset.new()
-  inspect(set.size(), content="0")
+  inspect(set.length(), content="0")
   let set = set.add(1)
-  inspect(set.size(), content="1")
+  inspect(set.length(), content="1")
   let set = set.add(2)
-  inspect(set.size(), content="2")
+  inspect(set.length(), content="2")
   let set = set.remove(1)
-  inspect(set.size(), content="1")
+  inspect(set.length(), content="1")
 }
 
 ///|
@@ -166,7 +166,7 @@ test "from_array with non-empty array" {
   inspect(set.contains(1), content="true")
   inspect(set.contains(2), content="true")
   inspect(set.contains(3), content="true")
-  inspect(set.size(), content="3")
+  inspect(set.length(), content="3")
 }
 
 ///|
@@ -273,13 +273,13 @@ impl Show for MyString with output(self, logger) {
 test "HAMT::remove_with_hash collision" {
   let set = @hashset.of([MyString("a"), MyString("b")])
   let set1 = set.remove(MyString("c"))
-  inspect(set1.size(), content="2")
+  inspect(set1.length(), content="2")
   let set2 = set.remove(MyString("a"))
   assert_eq(set2.contains(MyString("a")), false)
   assert_eq(set2.contains(MyString("b")), true)
-  inspect(set2.size(), content="1")
+  inspect(set2.length(), content="1")
   let set3 = set2.remove(MyString("b"))
-  inspect(set3.size(), content="0")
+  inspect(set3.length(), content="0")
 }
 
 ///|
@@ -360,7 +360,7 @@ test "@hashset collision" {
   let set = @hashset.new().add(a).add(b).add(c)
   inspect(set.iter().to_array(), content="[c, b, a]")
   set.each((x : MyString) => x |> ignore)
-  inspect(set.size(), content="3")
+  inspect(set.length(), content="3")
 }
 
 ///|

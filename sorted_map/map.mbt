@@ -133,7 +133,8 @@ pub fn[K, V] is_empty(self : SortedMap[K, V]) -> Bool {
 
 ///|
 /// Returns the count of key-value pairs in the map.
-pub fn[K, V] size(self : SortedMap[K, V]) -> Int {
+#alias(size, deprecated)
+pub fn[K, V] length(self : SortedMap[K, V]) -> Int {
   self.size
 }
 
@@ -486,14 +487,14 @@ fn[K : Compare, V] delete_node(
 test "new" {
   let map : SortedMap[Int, String] = new()
   inspect(map.debug_tree(), content="_")
-  inspect(map.size(), content="0")
+  inspect(map.length(), content="0")
 }
 
 ///|
 test "of" {
   let map = from_array([(3, "c"), (2, "b"), (1, "a")])
   inspect(map.debug_tree(), content="([2]2,b,([1]1,a,_,_),([1]3,c,_,_))")
-  inspect(map.size(), content="3")
+  inspect(map.length(), content="3")
 }
 
 ///|
@@ -509,7 +510,7 @@ test "add1" {
     map.debug_tree(),
     content="([3]3,d,([2]2,e,([1]1,f,_,_),_),([2]5,b,([1]4,c,_,_),([1]6,a,_,_)))",
   )
-  inspect(map.size(), content="6")
+  inspect(map.length(), content="6")
 }
 
 ///|
@@ -525,7 +526,7 @@ test "add2" {
     map.debug_tree(),
     content="([3]4,d,([2]2,b,([1]1,a,_,_),([1]3,c,_,_)),([2]5,e,_,([1]6,f,_,_)))",
   )
-  inspect(map.size(), content="6")
+  inspect(map.length(), content="6")
 }
 
 ///|
@@ -578,40 +579,40 @@ test "remove" {
     map.debug_tree(),
     content="([4]4,d,([2]2,b,([1]1,a,_,_),([1]3,c,_,_)),([3]6,f,([1]5,e,_,_),([2]7,g,_,([1]8,h,_,_))))",
   )
-  inspect(map.size(), content="8")
+  inspect(map.length(), content="8")
   map.remove(6)
   inspect(
     map.debug_tree(),
     content="([3]4,d,([2]2,b,([1]1,a,_,_),([1]3,c,_,_)),([2]7,g,([1]5,e,_,_),([1]8,h,_,_)))",
   )
-  inspect(map.size(), content="7")
+  inspect(map.length(), content="7")
   map.remove(4)
   inspect(
     map.debug_tree(),
     content="([3]5,e,([2]2,b,([1]1,a,_,_),([1]3,c,_,_)),([2]7,g,_,([1]8,h,_,_)))",
   )
-  inspect(map.size(), content="6")
+  inspect(map.length(), content="6")
   map.remove(2)
   inspect(
     map.debug_tree(),
     content="([3]5,e,([2]3,c,([1]1,a,_,_),_),([2]7,g,_,([1]8,h,_,_)))",
   )
-  inspect(map.size(), content="5")
+  inspect(map.length(), content="5")
   map.remove(3)
   inspect(
     map.debug_tree(),
     content="([3]5,e,([1]1,a,_,_),([2]7,g,_,([1]8,h,_,_)))",
   )
-  inspect(map.size(), content="4")
+  inspect(map.length(), content="4")
   map.remove(5)
   inspect(map.debug_tree(), content="([2]7,g,([1]1,a,_,_),([1]8,h,_,_))")
-  inspect(map.size(), content="3")
+  inspect(map.length(), content="3")
   map.remove(7)
   inspect(map.debug_tree(), content="([2]8,h,([1]1,a,_,_),_)")
-  inspect(map.size(), content="2")
+  inspect(map.length(), content="2")
   map.remove(8)
   inspect(map.debug_tree(), content="([1]1,a,_,_)")
-  inspect(map.size(), content="1")
+  inspect(map.length(), content="1")
   map.remove(1)
   inspect(map.debug_tree(), content="_")
   inspect(map.size, content="0")
@@ -631,7 +632,7 @@ test "clear" {
   let map = from_array([(3, "c"), (2, "b"), (1, "a")])
   map.clear()
   inspect(map.debug_tree(), content="_")
-  inspect(map.size(), content="0")
+  inspect(map.length(), content="0")
 }
 
 ///|

@@ -27,7 +27,7 @@ test "is_disjoint with different sizes" {
   set2.add(5)
   set2.add(6)
   inspect(set1.is_disjoint(set2), content="true")
-  // This should trigger the else branch where other.size() < self.size()
+  // This should trigger the else branch where other.length() < self.length()
   inspect(set2.is_disjoint(set1), content="true")
 }
 
@@ -55,7 +55,7 @@ test "is_subset with different sizes" {
   superset.add(3)
   superset.add(4)
   inspect(subset.is_subset(superset), content="true")
-  // This should trigger the else branch where self.size() > other.size()
+  // This should trigger the else branch where self.length() > other.length()
   inspect(superset.is_subset(subset), content="false")
 }
 
@@ -83,7 +83,7 @@ test "large set operations" {
   for i in 0..<1000 {
     set.add(i)
   }
-  inspect(set.size(), content="1000")
+  inspect(set.length(), content="1000")
   inspect(set.contains(500), content="true")
   inspect(set.contains(1500), content="false")
 }

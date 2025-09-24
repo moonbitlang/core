@@ -679,7 +679,8 @@ fn[A : Compare] split_bis(self : SortedSet[A], value : A) -> SplitBis[A] {
 
 ///|
 /// Get the height of set.
-pub fn[A] size(self : SortedSet[A]) -> Int {
+#alias(size, deprecated)
+pub fn[A] length(self : SortedSet[A]) -> Int {
   match self {
     Empty => 0
     Node(size~, ..) => size
@@ -693,7 +694,7 @@ fn[A] create(
   value : A,
   right : SortedSet[A],
 ) -> SortedSet[A] {
-  Node(left~, right~, value~, size=left.size() + right.size() + 1)
+  Node(left~, right~, value~, size=left.length() + right.length() + 1)
 }
 
 ///|
@@ -703,15 +704,15 @@ fn[A] balance(
   value : A,
   right : SortedSet[A],
 ) -> SortedSet[A] {
-  let left_size = left.size()
-  let right_size = right.size()
+  let left_size = left.length()
+  let right_size = right.length()
   if left_size + right_size < 2 {
     create(left, value, right)
   } else if left_size > right_size * BALANCE_RATIO {
     match left {
       Empty => abort("balance: left is empty.")
       Node(left=ll, value=lv, right=lr, ..) =>
-        if ll.size() >= lr.size() {
+        if ll.length() >= lr.length() {
           create(ll, lv, create(lr, value, right))
         } else {
           match lr {
@@ -725,7 +726,7 @@ fn[A] balance(
     match right {
       Empty => abort("balance: right is empty")
       Node(left=rl, value=rv, right=rr, ..) =>
-        if rr.size() >= rl.size() {
+        if rr.length() >= rl.length() {
           create(create(left, value, rl), rv, rr)
         } else {
           match rl {

@@ -34,6 +34,8 @@ fn[A : Compare] SortedSet::inter(Self[A], Self[A]) -> Self[A]
 fn[A : Compare] SortedSet::intersection(Self[A], Self[A]) -> Self[A]
 fn[A] SortedSet::is_empty(Self[A]) -> Bool
 fn[A] SortedSet::iter(Self[A]) -> Iter[A]
+#alias(size, deprecated)
+fn[A] SortedSet::length(Self[A]) -> Int
 fn[A : Compare, B : Compare] SortedSet::map(Self[A], (A) -> B raise?) -> Self[B] raise?
 fn[A : Compare] SortedSet::max(Self[A]) -> A
 fn[A : Compare] SortedSet::max_option(Self[A]) -> A?
@@ -47,7 +49,6 @@ fn[A : Compare] SortedSet::remove(Self[A], A) -> Self[A]
 fn[A : Compare] SortedSet::remove_min(Self[A]) -> Self[A]
 #as_free_fn
 fn[A] SortedSet::singleton(A) -> Self[A]
-fn[A] SortedSet::size(Self[A]) -> Int
 fn[A : Compare] SortedSet::split(Self[A], A) -> (Self[A], Bool, Self[A])
 fn[A : Compare] SortedSet::subset(Self[A], Self[A]) -> Bool
 fn[A : Compare] SortedSet::symmetric_difference(Self[A], Self[A]) -> Self[A]

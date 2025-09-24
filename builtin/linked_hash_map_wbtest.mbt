@@ -92,7 +92,7 @@ test "get_or_init" {
   m.get_or_init("a", () => Array::new()).push(3)
   assert_eq(m.get("a"), Some([1, 3]))
   assert_eq(m.get("b"), Some([2]))
-  assert_eq(m.size(), 2)
+  assert_eq(m.length(), 2)
 }
 
 ///|
@@ -112,7 +112,7 @@ test "get_or_init full" {
   m.get_or_init("a", () => 0) |> ignore
   m.get_or_init("b", () => 0) |> ignore
   m.get_or_init("c", () => 0) |> ignore
-  assert_eq(m.size(), 3)
+  assert_eq(m.length(), 3)
 }
 
 ///|
@@ -170,9 +170,9 @@ test "from_array" {
 ///|
 test "size" {
   let m : Map[String, Int] = Map::new()
-  assert_eq(m.size(), 0)
+  assert_eq(m.length(), 0)
   m.set("a", 1)
-  assert_eq(m.size(), 1)
+  assert_eq(m.length(), 1)
 }
 
 ///|
@@ -230,15 +230,15 @@ test "grow" {
   m.set("Java", 4)
   m.set("Scala", 5)
   m.set("Julia", 5)
-  assert_eq(m.size(), 6)
+  assert_eq(m.length(), 6)
   assert_eq(m.capacity(), 8)
   m.set("Cobol", 5)
-  assert_eq(m.size(), 7)
+  assert_eq(m.length(), 7)
   assert_eq(m.capacity(), 16)
   m.set("Python", 6)
   m.set("Haskell", 7)
   m.set("Rescript", 8)
-  assert_eq(m.size(), 10)
+  assert_eq(m.length(), 10)
   assert_eq(m.capacity(), 16)
   assert_eq(
     m.debug_entries(),
@@ -388,7 +388,7 @@ test "remove_existing_key" {
   m.set("b", 2)
   m.set("c", 3)
   m.remove("b")
-  assert_eq(m.size(), 2)
+  assert_eq(m.length(), 2)
   assert_eq(m.get("b"), None)
 }
 
@@ -399,7 +399,7 @@ test "remove_nonexistent_key" {
   m.set("b", 2)
   m.set("c", 3)
   m.remove("d")
-  assert_eq(m.size(), 3)
+  assert_eq(m.length(), 3)
 }
 
 ///|
@@ -622,7 +622,7 @@ test "remove_existing_key" {
   m.set("b", 2)
   m.set("c", 3)
   m.remove("b")
-  assert_eq(m.size(), 2)
+  assert_eq(m.length(), 2)
   assert_eq(m.get("b"), None)
 }
 
@@ -633,7 +633,7 @@ test "remove_nonexistent_key" {
   m.set("b", 2)
   m.set("c", 3)
   m.remove("d")
-  assert_eq(m.size(), 3)
+  assert_eq(m.length(), 3)
 }
 
 ///|
@@ -768,7 +768,7 @@ test "remove" {
   m.set("abc", 3)
   m.set("abcdef", 6)
   m.remove("ab")
-  assert_eq(m.size(), 5)
+  assert_eq(m.length(), 5)
   assert_eq(
     m.debug_entries(),
     "_,(0,a,1),(0,bc,2),(1,cd,2),(1,abc,3),_,(0,abcdef,6),_",
@@ -784,7 +784,7 @@ test "remove_unexist_key" {
   m.set("ab", 2)
   m.set("abc", 3)
   m.remove("d")
-  assert_eq(m.size(), 3)
+  assert_eq(m.length(), 3)
   assert_eq(m.debug_entries(), "_,(0,a,1),(0,ab,2),(0,abc,3),_,_,_,_")
 }
 

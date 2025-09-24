@@ -60,7 +60,8 @@ pub fn Bitset::remove(self : Bitset, idx : Int) -> Bitset {
 
 ///|
 /// Calculate the size of a bitset
-pub fn Bitset::size(self : Bitset) -> Int {
+#alias(size, deprecated)
+pub fn Bitset::length(self : Bitset) -> Int {
   let Bitset(self) = self
   self.popcnt()
 }
@@ -143,13 +144,13 @@ test "Bitset::remove" {
 ///|
 test "Bitset::size" {
   let b = empty_bitset
-  inspect(b.size(), content="0")
+  inspect(b.length(), content="0")
   let b = b.add(0)
-  inspect(b.size(), content="1")
+  inspect(b.length(), content="1")
   let b = b.add(1)
-  inspect(b.size(), content="2")
+  inspect(b.length(), content="2")
   let b = b.add(1)
-  inspect(b.size(), content="2")
+  inspect(b.length(), content="2")
 }
 
 ///|

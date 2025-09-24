@@ -288,6 +288,8 @@ fn[K, V] Map::is_empty(Self[K, V]) -> Bool
 fn[K, V] Map::iter(Self[K, V]) -> Iter[(K, V)]
 fn[K, V] Map::iter2(Self[K, V]) -> Iter2[K, V]
 fn[K, V] Map::keys(Self[K, V]) -> Iter[K]
+#alias(size, deprecated)
+fn[K, V] Map::length(Self[K, V]) -> Int
 fn[K, V, V2] Map::map(Self[K, V], (K, V) -> V2) -> Self[K, V2]
 fn[K, V] Map::new(capacity? : Int) -> Self[K, V]
 fn[K : Hash + Eq, V] Map::of(FixedArray[(K, V)]) -> Self[K, V]
@@ -295,8 +297,6 @@ fn[K : Hash + Eq, V] Map::remove(Self[K, V], K) -> Unit
 fn[K, V] Map::retain(Self[K, V], (K, V) -> Bool) -> Unit
 #alias("_[_]=_")
 fn[K : Hash + Eq, V] Map::set(Self[K, V], K, V) -> Unit
-#alias(length)
-fn[K, V] Map::size(Self[K, V]) -> Int
 fn[K, V] Map::to_array(Self[K, V]) -> Array[(K, V)]
 fn[K : Hash + Eq, V] Map::update(Self[K, V], K, (V?) -> V?) -> Unit
 fn[K, V] Map::values(Self[K, V]) -> Iter[V]

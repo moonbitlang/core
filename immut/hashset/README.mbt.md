@@ -11,20 +11,20 @@ Create immutable sets using various methods:
 test "creating immutable sets" {
   // Empty set
   let empty : @hashset.HashSet[Int] = @hashset.new()
-  inspect(empty.size(), content="0")
+  inspect(empty.length(), content="0")
   inspect(empty.is_empty(), content="true")
 
   // From array
   let from_array_result = @hashset.from_array([1, 2, 3, 2, 1]) // Duplicates removed
-  inspect(from_array_result.size(), content="3")
+  inspect(from_array_result.length(), content="3")
 
   // From fixed array
   let from_fixed = @hashset.of([10, 20, 30])
-  inspect(from_fixed.size(), content="3")
+  inspect(from_fixed.length(), content="3")
 
   // From iterator
   let from_iter = @hashset.from_iter([40, 50, 60].iter())
-  inspect(from_iter.size(), content="3")
+  inspect(from_iter.length(), content="3")
 }
 ```
 
@@ -39,14 +39,14 @@ test "immutable operations" {
 
   // Add element - returns new set
   let with_four = original.add(4)
-  inspect(original.size(), content="3") // Original unchanged
-  inspect(with_four.size(), content="4") // New set has additional element
+  inspect(original.length(), content="3") // Original unchanged
+  inspect(with_four.length(), content="4") // New set has additional element
   inspect(with_four.contains(4), content="true")
 
   // Remove element - returns new set
   let without_two = original.remove(2)
-  inspect(original.size(), content="3") // Original unchanged
-  inspect(without_two.size(), content="2") // New set missing element
+  inspect(original.length(), content="3") // Original unchanged
+  inspect(without_two.length(), content="2") // New set missing element
   inspect(without_two.contains(2), content="false")
 
   // Original set remains unmodified
@@ -66,19 +66,19 @@ test "set operations" {
 
   // Union - all elements from both sets
   let union_set = set1.union(set2)
-  inspect(union_set.size(), content="6") // [1, 2, 3, 4, 5, 6]
+  inspect(union_set.length(), content="6") // [1, 2, 3, 4, 5, 6]
 
   // Intersection - common elements only
   let intersection_set = set1.intersection(set2)
-  inspect(intersection_set.size(), content="2") // [3, 4]
+  inspect(intersection_set.length(), content="2") // [3, 4]
 
   // Difference - elements in first but not second
   let difference_set = set1.difference(set2)
-  inspect(difference_set.size(), content="2") // [1, 2]
+  inspect(difference_set.length(), content="2") // [1, 2]
 
   // All original sets remain unchanged
-  inspect(set1.size(), content="4")
-  inspect(set2.size(), content="4")
+  inspect(set1.length(), content="4")
+  inspect(set2.length(), content="4")
 }
 ```
 
@@ -96,7 +96,7 @@ test "membership and queries" {
   inspect(numbers.contains(35), content="false")
 
   // Size and emptiness
-  inspect(numbers.size(), content="5")
+  inspect(numbers.length(), content="5")
   inspect(numbers.is_empty(), content="false")
 
   // Iterate over elements
@@ -121,10 +121,10 @@ test "structural sharing" {
   let set_with_eight = base_set.add(8)
 
   // All sets share the common structure [1, 2, 3, 4, 5]
-  inspect(base_set.size(), content="5")
-  inspect(set_with_six.size(), content="6")
-  inspect(set_with_seven.size(), content="6")
-  inspect(set_with_eight.size(), content="6")
+  inspect(base_set.length(), content="5")
+  inspect(set_with_six.length(), content="6")
+  inspect(set_with_seven.length(), content="6")
+  inspect(set_with_eight.length(), content="6")
 
   // Each retains the base elements
   inspect(set_with_six.contains(3), content="true")
@@ -144,13 +144,13 @@ test "filtering and transformation" {
 
   // Create filtered sets manually (no built-in filter/map)
   let evens = @hashset.from_array([2, 4, 6, 8, 10])
-  inspect(evens.size(), content="5")
+  inspect(evens.length(), content="5")
   let doubled = @hashset.from_array([2, 4, 6, 8, 10, 12, 14, 16, 18, 20])
-  inspect(doubled.size(), content="10")
+  inspect(doubled.length(), content="10")
   inspect(doubled.contains(6), content="true") // 3 * 2 = 6
 
   // Original set unchanged
-  inspect(numbers.size(), content="10")
+  inspect(numbers.length(), content="10")
   inspect(numbers.contains(3), content="true")
 }
 ```
@@ -168,16 +168,16 @@ test "combining sets" {
 
   // Combine multiple sets
   let all_small = small_primes.union(small_evens).union(small_odds)
-  inspect(all_small.size(), content="9") // [1, 2, 3, 4, 5, 6, 7, 8, 9]
+  inspect(all_small.length(), content="9") // [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
   // Find intersection of primes and odds
   let odd_primes = small_primes.intersection(small_odds)
-  inspect(odd_primes.size(), content="3") // [3, 5, 7]
+  inspect(odd_primes.length(), content="3") // [3, 5, 7]
 
   // All original sets remain unchanged
-  inspect(small_primes.size(), content="4")
-  inspect(small_evens.size(), content="4")
-  inspect(small_odds.size(), content="5")
+  inspect(small_primes.length(), content="4")
+  inspect(small_evens.length(), content="4")
+  inspect(small_odds.length(), content="5")
 }
 ```
 
@@ -197,8 +197,8 @@ test "immutable vs mutable comparison" {
   inspect(immut_with_four.contains(4), content="true") // New one has 4
 
   // This demonstrates the immutable nature - both sets exist
-  inspect(immut_set.size(), content="3")
-  inspect(immut_with_four.size(), content="4")
+  inspect(immut_set.length(), content="3")
+  inspect(immut_with_four.length(), content="4")
 }
 ```
 
@@ -214,15 +214,15 @@ test "advanced operations" {
 
   // Symmetric difference (elements in either but not both)
   let sym_diff = set1.difference(set2).union(set2.difference(set1))
-  inspect(sym_diff.size(), content="6") // [1, 2, 3, 6, 7, 8]
+  inspect(sym_diff.length(), content="6") // [1, 2, 3, 6, 7, 8]
 
   // Test intersection
   let intersection = set1.intersection(set2)
-  inspect(intersection.size(), content="2") // [4, 5]
+  inspect(intersection.length(), content="2") // [4, 5]
 
   // Test difference
   let diff = set1.difference(set2)
-  inspect(diff.size(), content="3") // [1, 2, 3]
+  inspect(diff.length(), content="3") // [1, 2, 3]
 }
 ```
 
@@ -241,13 +241,13 @@ test "performance benefits" {
   let derived3 = base.remove(1)
 
   // Efficient operations due to structural sharing
-  inspect(derived1.size(), content="6")
-  inspect(derived2.size(), content="6")
-  inspect(derived3.size(), content="4")
+  inspect(derived1.length(), content="6")
+  inspect(derived2.length(), content="6")
+  inspect(derived3.length(), content="4")
 
   // Union of derived sets is efficient
   let combined = derived1.union(derived2)
-  inspect(combined.size(), content="7") // [1, 2, 3, 4, 5, 6, 7]
+  inspect(combined.length(), content="7") // [1, 2, 3, 4, 5, 6, 7]
 }
 ```
 
@@ -280,7 +280,7 @@ test "functional programming style" {
   let result = process_numbers(input)
 
   // Input unchanged, result is new set
-  inspect(input.size(), content="6")
+  inspect(input.length(), content="6")
   inspect(result.contains(1), content="true") // Has 1
   inspect(result.contains(4), content="true") // Has 4
   inspect(result.contains(9), content="true") // Has 9
@@ -310,9 +310,9 @@ test "configuration usage" {
   // Create different configurations
   let dev_config = enable_feature(base_config, "debug_mode")
   let prod_config = disable_feature(base_config, "feature3")
-  inspect(base_config.size(), content="3") // Base unchanged
-  inspect(dev_config.size(), content="4") // Has debug_mode
-  inspect(prod_config.size(), content="2") // Missing feature3
+  inspect(base_config.length(), content="3") // Base unchanged
+  inspect(dev_config.length(), content="4") // Has debug_mode
+  inspect(prod_config.length(), content="2") // Missing feature3
 }
 ```
 

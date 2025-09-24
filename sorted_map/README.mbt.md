@@ -39,7 +39,7 @@ Add a key-value pair to the SortedMap in place.
 test {
   let map = @sorted_map.from_array([(1, "one"), (2, "two")])
   map.set(3, "three")
-  assert_eq(map.size(), 3)
+  assert_eq(map.length(), 3)
 }
 ```
 
@@ -51,7 +51,7 @@ test {
   let map = @sorted_map.new()
   map[1] = "one"
   map[2] = "two"
-  assert_eq(map.size(), 2)
+  assert_eq(map.length(), 2)
 }
 ```
 
@@ -62,7 +62,7 @@ Remove a key-value pair from the SortedMap in place.
 test {
   let map = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
   map.remove(2)
-  assert_eq(map.size(), 2)
+  assert_eq(map.length(), 2)
   assert_eq(map.contains(2), false)
 }
 ```
@@ -135,7 +135,7 @@ Get the size of the map.
 ///|
 test {
   let map = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
-  assert_eq(map.size(), 3)
+  assert_eq(map.length(), 3)
 }
 ```
 
@@ -233,7 +233,7 @@ The SortedMap supports several iterator patterns. Create a map from an iterator:
 test {
   let pairs = [(1, "one"), (2, "two"), (3, "three")].iter()
   let map = @sorted_map.from_iter(pairs)
-  assert_eq(map.size(), 3)
+  assert_eq(map.length(), 3)
 }
 ```
 

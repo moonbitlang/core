@@ -16,7 +16,7 @@
 test "remove on empty set" {
   let set : @sorted_set.SortedSet[Int] = @sorted_set.new()
   set.remove(0)
-  inspect(set.size(), content="0")
+  inspect(set.length(), content="0")
 }
 
 ///|
@@ -179,17 +179,17 @@ test "is_empty" {
 
 ///|
 test "size" {
-  inspect(@sorted_set.from_array([1, 2, 3, 4, 5]).size(), content="5")
-  inspect(@sorted_set.from_array([1]).size(), content="1")
+  inspect(@sorted_set.from_array([1, 2, 3, 4, 5]).length(), content="5")
+  inspect(@sorted_set.from_array([1]).length(), content="1")
   inspect(
-    (@sorted_set.from_array([]) : @sorted_set.SortedSet[Int]).size(),
+    (@sorted_set.from_array([]) : @sorted_set.SortedSet[Int]).length(),
     content="0",
   )
 }
 
 ///|
 test "singleton" {
-  inspect(@sorted_set.singleton(1).size(), content="1")
+  inspect(@sorted_set.singleton(1).length(), content="1")
   inspect(@sorted_set.singleton(1).contains(1), content="true")
   inspect(@sorted_set.singleton(1).contains(2), content="false")
 }
@@ -220,7 +220,7 @@ test "mix_everything" {
   inspect(set1.subset(set3), content="true")
   set3.remove(3)
   inspect(set3, content="@sorted_set.from_array([1, 2, 4, 5, 6, 7, 8])")
-  inspect(set3.size(), content="7")
+  inspect(set3.length(), content="7")
   inspect(set3.is_empty(), content="false")
   inspect(set3.contains(1), content="true")
   inspect(set3.contains(3), content="false")
