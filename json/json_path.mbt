@@ -31,17 +31,24 @@ pub fn JsonPath::add_key(self : JsonPath, key : String) -> JsonPath {
 
 ///|
 pub impl Show for JsonPath with output(self, logger) {
-  match self {
-    Root => logger.write_string("$")
-    Key(p, key~) =>
-      logger..write_object(p)..write_string(".")..write_string(key)
-    Index(p, index~) =>
-      logger
-      ..write_object(p)
-      ..write_string("[")
-      ..write_object(index)
-      ..write_string("]")
+  // Helper function to escape JSON Pointer tokens
+  fn escape_token(token : String) -> String {
+    // Replace ~ with ~0, then / with ~1
+    // Order matters: ~ must be escaped first
+    token.replace(old="~", new="~0").replace(old="/", new="~1")
   }
+
+  // Recursively build the JSON Pointer string
+  fn build_path(path : JsonPath) -> String {
+    match path {
+      Root => ""
+      Key(parent, key~) => build_path(parent) + "/" + escape_token(key)
+      Index(parent, index~) =>
+        build_path(parent) + "/" + escape_token(index.to_string())
+    }
+  }
+
+  logger.write_string(build_path(self))
 }
 
 ///|
@@ -50,23 +57,35 @@ pub impl ToJson for JsonPath with to_json(self) {
 }
 
 ///|
-test "show JsonPath" {
+test "show JsonPath - JSON Pointer format" {
+  // Test root path
+  @builtin.inspect(Root, content="")
+
+  // Test simple key access
+  @builtin.inspect(Root.add_key("foo"), content="/foo")
+
+  // Test simple array index
+  @builtin.inspect(Root.add_index(0), content="/0")
+
+  // Test mixed path
   let path = Key(Index(Root, index=0), key="foo")
-  @builtin.inspect(path, content="$[0].foo")
-  @builtin.inspect(path.add_index(1), content="$[0].foo[1]")
-  @builtin.inspect(path.add_key("bar"), content="$[0].foo.bar")
+  @builtin.inspect(path, content="/0/foo")
+  @builtin.inspect(path.add_index(1), content="/0/foo/1")
+  @builtin.inspect(path.add_key("bar"), content="/0/foo/bar")
+
+  // Test complex paths
   @builtin.inspect(
     Root.add_key("foo").add_key("foo1").add_index(2),
-    content="$.foo.foo1[2]",
+    content="/foo/foo1/2",
   )
-  @builtin.inspect(Root.add_key("foo").add_key("foo1"), content="$.foo.foo1")
+  @builtin.inspect(Root.add_key("foo").add_key("foo1"), content="/foo/foo1")
   @builtin.inspect(
     Root.add_key("foo").add_key("foo1").add_index(2).add_key("bar"),
-    content="$.foo.foo1[2].bar",
+    content="/foo/foo1/2/bar",
   )
   @builtin.inspect(
     Root.add_key("foo").add_key("foo1").add_index(2).add_key("bar").add_index(3),
-    content="$.foo.foo1[2].bar[3]",
+    content="/foo/foo1/2/bar/3",
   )
   @builtin.inspect(
     Root
@@ -76,10 +95,75 @@ test "show JsonPath" {
     .add_key("bar")
     .add_index(3)
     .add_key("baz"),
-    content="$.foo.foo1[2].bar[3].baz",
+    content="/foo/foo1/2/bar/3/baz",
   )
   @builtin.inspect(
     Root.add_key("foo").add_key("foo1").add_index(2).add_index(3).add_index(4),
-    content="$.foo.foo1[2][3][4]",
+    content="/foo/foo1/2/3/4",
   )
+}
+
+///|
+test "show JsonPath - special characters escaping" {
+  // Test tilde escaping (~ becomes ~0)
+  @builtin.inspect(Root.add_key("foo~bar"), content="/foo~0bar")
+
+  // Test slash escaping (/ becomes ~1)
+  @builtin.inspect(Root.add_key("foo/bar"), content="/foo~1bar")
+
+  // Test both special characters
+  @builtin.inspect(Root.add_key("foo~/bar"), content="/foo~0~1bar")
+  @builtin.inspect(Root.add_key("~foo/bar~"), content="/~0foo~1bar~")
+
+  // Test complex path with special characters
+  @builtin.inspect(
+    Root.add_key("a/b").add_key("c~d").add_index(0).add_key("e~/f"),
+    content="/a~1b/c~0d/0/e~0~1f",
+  )
+
+  // Test empty string key
+  @builtin.inspect(Root.add_key(""), content="/")
+
+  // Test key with only special characters
+  @builtin.inspect(Root.add_key("~/"), content="/~0~1")
+}
+
+///|
+test "show JsonPath - RFC 6901 compliance examples" {
+  // Examples from RFC 6901
+  // ""           // the whole document
+  @builtin.inspect(Root, content="")
+
+  // "/foo"       ["bar", "baz"]
+  @builtin.inspect(Root.add_key("foo"), content="/foo")
+
+  // "/foo/0"     "bar"
+  @builtin.inspect(Root.add_key("foo").add_index(0), content="/foo/0")
+
+  // "/"          "value"  (empty string key)
+  @builtin.inspect(Root.add_key(""), content="/")
+
+  // "/a~1b"      1  (key is "a/b")
+  @builtin.inspect(Root.add_key("a/b"), content="/a~1b")
+
+  // "/c%d"       2  (key is "c%d", % doesn't need escaping)
+  @builtin.inspect(Root.add_key("c%d"), content="/c%d")
+
+  // "/e^f"       3  (key is "e^f", ^ doesn't need escaping)
+  @builtin.inspect(Root.add_key("e^f"), content="/e^f")
+
+  // "/g|h"       4  (key is "g|h", | doesn't need escaping)
+  @builtin.inspect(Root.add_key("g|h"), content="/g|h")
+
+  // "/i\\j"      5  (key is "i\j", \ doesn't need escaping)
+  @builtin.inspect(Root.add_key("i\\j"), content="/i\\j")
+
+  // "/k\"l"      6  (key is "k"l", " doesn't need escaping)
+  @builtin.inspect(Root.add_key("k\"l"), content="/k\"l")
+
+  // "/ "         7  (key is " ", space doesn't need escaping)
+  @builtin.inspect(Root.add_key(" "), content="/ ")
+
+  // "/m~0n"      8  (key is "m~n")
+  @builtin.inspect(Root.add_key("m~n"), content="/m~0n")
 }
