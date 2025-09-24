@@ -40,7 +40,7 @@ fn[K : Show, V : Show] debug_entries(self : HashMap[K, V]) -> String {
 /// ```moonbit
 ///   let map = @hashmap.of([("a", 1), ("b", 2)])
 ///   map.clear()
-///   inspect(map.size(), content="0")
+///   inspect(map.length(), content="0")
 ///   inspect(map.get("a"), content="None")
 /// ```
 pub fn[K, V] clear(self : HashMap[K, V]) -> Unit {
@@ -204,9 +204,10 @@ pub fn[K, V] to_array(self : HashMap[K, V]) -> Array[(K, V)] {
 ///
 /// ```moonbit
 ///   let map = @hashmap.of([("a", 1), ("b", 2), ("c", 3)])
-///   inspect(map.size(), content="3")
+///   inspect(map.length(), content="3")
 /// ```
-pub fn[K, V] size(self : HashMap[K, V]) -> Int {
+#alias(size, deprecated)
+pub fn[K, V] length(self : HashMap[K, V]) -> Int {
   self.size
 }
 
@@ -433,7 +434,7 @@ pub fn[K, V] HashMap::values(self : HashMap[K, V]) -> Iter[V] {
 /// ```moonbit
 ///   let map = @hashmap.of([("a", 1), ("b", 2), ("c", 3), ("d", 4)])
 ///   map.retain((_k, v) => v % 2 == 0)  // Keep only even values
-///   inspect(map.size(), content="2")
+///   inspect(map.length(), content="2")
 ///   inspect(map.get("a"), content="None")
 ///   inspect(map.get("b"), content="Some(2)")
 ///   inspect(map.get("c"), content="None")

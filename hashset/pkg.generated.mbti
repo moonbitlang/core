@@ -32,13 +32,14 @@ fn[K] HashSet::is_empty(Self[K]) -> Bool
 fn[K : Hash + Eq] HashSet::is_subset(Self[K], Self[K]) -> Bool
 fn[K : Hash + Eq] HashSet::is_superset(Self[K], Self[K]) -> Bool
 fn[K] HashSet::iter(Self[K]) -> Iter[K]
+#alias(size, deprecated)
+fn[K] HashSet::length(Self[K]) -> Int
 #as_free_fn
 fn[K] HashSet::new(capacity? : Int) -> Self[K]
 #as_free_fn
 fn[K : Hash + Eq] HashSet::of(FixedArray[K]) -> Self[K]
 fn[K : Hash + Eq] HashSet::remove(Self[K], K) -> Unit
 fn[K : Hash + Eq] HashSet::remove_and_check(Self[K], K) -> Bool
-fn[K] HashSet::size(Self[K]) -> Int
 fn[K : Hash + Eq] HashSet::symmetric_difference(Self[K], Self[K]) -> Self[K]
 fn[K] HashSet::to_array(Self[K]) -> Array[K]
 fn[K : Hash + Eq] HashSet::union(Self[K], Self[K]) -> Self[K]

@@ -95,7 +95,7 @@ pub fn[K : Hash + Eq] Set::from_array(arr : Array[K]) -> Set[K] {
 ///   set.add("key")
 ///   inspect(set.contains("key"), content="true")
 ///   set.add("key") // no effect since it already exists
-///   inspect(set.size(), content="1")
+///   inspect(set.length(), content="1")
 /// ```
 pub fn[K : Hash + Eq] add(self : Set[K], key : K) -> Unit {
   self.add_with_hash(key, key.hash())
@@ -174,7 +174,7 @@ fn[K] set_entry(self : Set[K], entry : Entry[K], new_idx : Int) -> Unit {
 ///   let set : @set.Set[String] = @set.Set::new()
 ///   inspect(set.add_and_check("key"), content="true")  // First insertion
 ///   inspect(set.add_and_check("key"), content="false") // Already exists
-///   inspect(set.size(), content="1")
+///   inspect(set.length(), content="1")
 /// ```
 pub fn[K : Hash + Eq] add_and_check(self : Set[K], key : K) -> Bool {
   if self.size >= self.grow_at {
@@ -237,7 +237,7 @@ pub fn[K : Hash + Eq] Set::contains(self : Set[K], key : K) -> Bool {
 ///   let set = @set.Set::of(["a", "b"])
 ///   set.remove("a")
 ///   inspect(set.contains("a"), content="false")
-///   inspect(set.size(), content="1")
+///   inspect(set.length(), content="1")
 /// ```
 pub fn[K : Hash + Eq] remove(self : Set[K], key : K) -> Unit {
   let hash = key.hash()
@@ -273,7 +273,7 @@ pub fn[K : Hash + Eq] remove(self : Set[K], key : K) -> Unit {
 ///   let set = @set.Set::of(["a", "b"])
 ///   inspect(set.remove_and_check("a"), content="true")  // Successfully removed
 ///   inspect(set.remove_and_check("a"), content="false") // Already removed
-///   inspect(set.size(), content="1")
+///   inspect(set.length(), content="1")
 /// ```
 pub fn[K : Hash + Eq] remove_and_check(self : Set[K], key : K) -> Bool {
   let hash = key.hash()
@@ -367,7 +367,8 @@ pub impl[K : Show] Show for Set[K] with output(self, logger) {
 
 ///|
 /// Get the number of keys in the set.
-pub fn[K] size(self : Set[K]) -> Int {
+#alias(size, deprecated)
+pub fn[K] length(self : Set[K]) -> Int {
   self.size
 }
 
@@ -561,7 +562,7 @@ pub impl[X : ToJson] ToJson for Set[X] with to_json(self) {
 ///|
 /// Check if two sets have no common elements.
 pub fn[K : Hash + Eq] is_disjoint(self : Set[K], other : Set[K]) -> Bool {
-  if self.size() <= other.size() {
+  if self.length() <= other.length() {
     for k in self {
       if other.contains(k) {
         return false
@@ -580,7 +581,7 @@ pub fn[K : Hash + Eq] is_disjoint(self : Set[K], other : Set[K]) -> Bool {
 ///|
 /// Check if the current set is a subset of another set.
 pub fn[K : Hash + Eq] is_subset(self : Set[K], other : Set[K]) -> Bool {
-  if self.size() <= other.size() {
+  if self.length() <= other.length() {
     for k in self {
       if !other.contains(k) {
         return false

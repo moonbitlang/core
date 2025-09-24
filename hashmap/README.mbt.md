@@ -67,7 +67,7 @@ You can use `size()` to get the number of key-value pairs in the map, or `capaci
 ///|
 test {
   let map = @hashmap.of([("a", 1), ("b", 2), ("c", 3)])
-  assert_eq(map.size(), 3)
+  assert_eq(map.length(), 3)
   assert_eq(map.capacity(), 8)
 }
 ```

@@ -15,9 +15,9 @@
 ///|
 test "HAMT::size" {
   for i = 0, map = @hashmap.new(); i < 20; i = i + 1, map = map.add(i, i) {
-    assert_eq(map.size(), i)
+    assert_eq(map.length(), i)
   } else {
-    assert_eq(map.add(0, 0).size(), 20)
+    assert_eq(map.add(0, 0).length(), 20)
   }
 }
 
@@ -276,7 +276,7 @@ test "each on empty map" {
 test "remove non-existent key with hash collision" {
   let map = @hashmap.of([("a", 1)])
   let new_map = map.remove("b")
-  inspect(new_map.size(), content="1")
+  inspect(new_map.length(), content="1")
 }
 
 ///|
@@ -284,7 +284,7 @@ test "remove all keys from collision bucket" {
   let map = @hashmap.from_array([("a", 1), ("b", 2)])
   let map1 = map.remove("a")
   let map2 = map1.remove("b")
-  inspect(map2.size(), content="0")
+  inspect(map2.length(), content="0")
 }
 
 ///|
@@ -341,7 +341,7 @@ test "filter with no elements matching" {
   assert_eq(filtered.get(1), None)
   assert_eq(filtered.get(2), None)
   assert_eq(filtered.get(3), None)
-  inspect(filtered.size(), content="0")
+  inspect(filtered.length(), content="0")
 }
 
 ///|
@@ -405,7 +405,7 @@ test "HAMT::map with overflow" {
 test "HAMT::map_with_key empty" {
   let map : @hashmap.HashMap[Int, Int] = @hashmap.new()
   let mapped = map.map_with_key((_k, v) => v)
-  inspect(mapped.size(), content="0")
+  inspect(mapped.length(), content="0")
 }
 
 ///|
@@ -413,7 +413,7 @@ test "HAMT::map_with_key leaf" {
   let map = @hashmap.singleton(42, 100) // Leaf
   let mapped = map.map_with_key((k, v) => k + v)
   assert_eq(mapped.get(42), Some(142))
-  inspect(mapped.size(), content="1")
+  inspect(mapped.length(), content="1")
 }
 
 ///|
@@ -441,7 +441,7 @@ test "HAMT::map_with_key branch" {
 ///|
 test "HAMT::singleton" {
   let map = @hashmap.singleton(1, "one")
-  inspect(map.size(), content="1")
+  inspect(map.length(), content="1")
   assert_eq(map.get(1), Some("one"))
   assert_eq(map.get(2), None)
 }
@@ -488,21 +488,21 @@ test "add_with_hash collision" {
 test "empty filtering" {
   let map : @hashmap.HashMap[Int, Int] = @hashmap.of([])
   let _filtered = map.filter_with_key((_, v) => v > 2)
-  inspect(map.size(), content="0")
+  inspect(map.length(), content="0")
 }
 
 ///|
 test "filter with collision - all removed" {
   let map = @hashmap.of([(MyString("a"), 1), (MyString("b"), 2)])
   let filtered = map.filter_with_key((_, v) => v > 2)
-  inspect(filtered.size(), content="0")
+  inspect(filtered.length(), content="0")
 }
 
 ///|
 test "filter with collision - one left" {
   let map = @hashmap.of([(MyString("a"), 1), (MyString("b"), 2)])
   let filtered = map.filter_with_key((_, v) => v == 1)
-  inspect(filtered.size(), content="1")
+  inspect(filtered.length(), content="1")
 }
 
 ///|
@@ -513,7 +513,7 @@ test "filter with collision - more than one left" {
     (MyString("c"), 3),
   ])
   let filtered = map.filter_with_key((_, v) => v > 1)
-  inspect(filtered.size(), content="2")
+  inspect(filtered.length(), content="2")
 }
 
 ///|
@@ -534,13 +534,13 @@ test "HAMT::fold_with_key on collision" {
 test "HAMT::remove_with_hash collision" {
   let map = @hashmap.of([(MyString("a"), 1), (MyString("b"), 2)])
   let map1 = map.remove(MyString("c"))
-  inspect(map1.size(), content="2")
+  inspect(map1.length(), content="2")
   let map2 = map.remove(MyString("a"))
   assert_eq(map2.get(MyString("a")), None)
   assert_eq(map2.get(MyString("b")), Some(2))
-  inspect(map2.size(), content="1")
+  inspect(map2.length(), content="1")
   let map3 = map2.remove(MyString("b"))
-  inspect(map3.size(), content="0")
+  inspect(map3.length(), content="0")
 }
 
 ///|
@@ -613,8 +613,8 @@ test "HAMT::union leaf to non-overlapping map" {
 test "HAMT::intersection with empty" {
   let m1 = @hashmap.of([(1, 1)])
   let m2 = @hashmap.new()
-  assert_eq(m1.intersection(m2).size(), 0)
-  assert_eq(m2.intersection(m1).size(), 0)
+  assert_eq(m1.intersection(m2).length(), 0)
+  assert_eq(m2.intersection(m1).length(), 0)
 }
 
 ///|
@@ -642,8 +642,8 @@ test "HAMT::intersection with branch" {
 test "HAMT::intersection_with with empty" {
   let m1 = @hashmap.of([(1, 1)])
   let m2 = @hashmap.new()
-  assert_eq(m1.intersection_with(m2, (_k, v1, v2) => v1 + v2).size(), 0)
-  assert_eq(m2.intersection_with(m1, (_k, v1, v2) => v1 + v2).size(), 0)
+  assert_eq(m1.intersection_with(m2, (_k, v1, v2) => v1 + v2).length(), 0)
+  assert_eq(m2.intersection_with(m1, (_k, v1, v2) => v1 + v2).length(), 0)
 }
 
 ///|
@@ -672,7 +672,7 @@ test "HAMT::difference with empty" {
   let m1 = @hashmap.of([(1, 1)])
   let m2 = @hashmap.new()
   assert_eq(m1.difference(m2), m1)
-  assert_eq(m2.difference(m1).size(), 0)
+  assert_eq(m2.difference(m1).length(), 0)
 }
 
 ///|
@@ -682,7 +682,7 @@ test "HAMT::difference with leaf" {
   let m3 = @hashmap.singleton(3, 3)
   assert_eq(m1.difference(m2).get(2), None)
   assert_eq(m1.difference(m3).get(1), Some(1))
-  assert_eq(m2.difference(m1).size(), 0)
+  assert_eq(m2.difference(m1).length(), 0)
 }
 
 ///|

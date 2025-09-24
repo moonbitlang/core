@@ -35,9 +35,9 @@ test "size" {
     (2, "two"),
     (0, "zero"),
   ])
-  inspect(m.size(), content="5")
+  inspect(m.length(), content="5")
   let m = m.remove(1).remove(3)
-  inspect(m.size(), content="3")
+  inspect(m.length(), content="3")
 }
 
 ///|

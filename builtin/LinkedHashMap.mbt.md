@@ -76,7 +76,7 @@ You can use `size()` to get the number of key-value pairs in the map, or `capaci
 ///|
 test {
   let map = { "a": 1, "b": 2, "c": 3 }
-  inspect(map.size(), content="3")
+  inspect(map.length(), content="3")
   inspect(map.capacity(), content="4")
 }
 ```

@@ -217,7 +217,7 @@ pub impl[Ok : FromJson, Err : FromJson] FromJson for Result[Ok, Err] with from_j
   guard json is Object(obj) else {
     decode_error(path, "Result::from_json: expected object")
   }
-  if obj.size() != 1 {
+  if obj.length() != 1 {
     decode_error(path, "Result::from_json: expected object with one field")
   }
   match obj {

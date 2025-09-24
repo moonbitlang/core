@@ -15,25 +15,25 @@
 ///|
 test "remove2" {
   let map = @sorted_map.from_array([(1, "a"), (2, "b")])
-  inspect(map.size(), content="2")
+  inspect(map.length(), content="2")
   map.remove(1)
-  inspect(map.size(), content="1")
+  inspect(map.length(), content="1")
 }
 
 ///|
 test "remove3" {
   let map = @sorted_map.from_array([(1, "a"), (2, "b"), (3, "c")])
   map.remove(0)
-  inspect(map.size(), content="3")
+  inspect(map.length(), content="3")
   map.remove(4)
-  inspect(map.size(), content="3")
+  inspect(map.length(), content="3")
 }
 
 ///|
 test "remove on empty map" {
   let map : @sorted_map.SortedMap[Int, String] = @sorted_map.new()
   map.remove(1)
-  inspect(map.size(), content="0")
+  inspect(map.length(), content="0")
 }
 
 ///|
@@ -107,7 +107,7 @@ test "is_empty" {
 ///|
 test "size" {
   let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
-  inspect(map.size() == map.size(), content="true")
+  inspect(map.length() == map.length(), content="true")
 }
 
 ///|

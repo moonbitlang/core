@@ -28,6 +28,8 @@ fn[K, V] SortedMap::iter2(Self[K, V]) -> Iter2[K, V]
 #deprecated
 fn[K, V] SortedMap::keys(Self[K, V]) -> Array[K]
 fn[K, V] SortedMap::keys_as_iter(Self[K, V]) -> Iter[K]
+#alias(size, deprecated)
+fn[K, V] SortedMap::length(Self[K, V]) -> Int
 #as_free_fn
 fn[K, V] SortedMap::new() -> Self[K, V]
 #as_free_fn
@@ -37,7 +39,6 @@ fn[K : Compare, V] SortedMap::remove(Self[K, V], K) -> Unit
 #alias("_[_]=_")
 #alias(add, deprecated)
 fn[K : Compare, V] SortedMap::set(Self[K, V], K, V) -> Unit
-fn[K, V] SortedMap::size(Self[K, V]) -> Int
 fn[K, V] SortedMap::to_array(Self[K, V]) -> Array[(K, V)]
 #deprecated
 fn[K, V] SortedMap::values(Self[K, V]) -> Array[V]

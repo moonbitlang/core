@@ -409,7 +409,7 @@ pub fn[K : Hash + Eq, V : Eq] contains_kv(
 ///   let map = @hashmap.of([("a", 1), ("b", 2)])
 ///   map.remove("a")
 ///   inspect(map.get("a"), content="None")
-///   inspect(map.size(), content="1")
+///   inspect(map.length(), content="1")
 /// ```
 pub fn[K : Hash + Eq, V] remove(self : HashMap[K, V], key : K) -> Unit {
   self.remove_with_hash(key, key.hash())
@@ -628,7 +628,7 @@ test "set" {
   m.set("cd", 2)
   m.set("c", 1)
   m.set("d", 1)
-  inspect(m.size(), content="7")
+  inspect(m.length(), content="7")
   inspect(
     m.debug_entries(),
     content="_,(0,a,1),(1,b,1),(2,c,1),(3,d,1),(3,bc,2),(4,cd,2),(4,abc,3),_,_,_,_,_,_,_,_",
@@ -645,7 +645,7 @@ test "remove" {
   m.set("abc", 3)
   m.set("abcdef", 6)
   m.remove("ab")
-  inspect(m.size(), content="5")
+  inspect(m.length(), content="5")
   inspect(
     m.debug_entries(),
     content="_,(0,a,1),(0,bc,2),(1,cd,2),(1,abc,3),_,(0,abcdef,6),_,_,_,_,_,_,_,_,_",
@@ -659,7 +659,7 @@ test "remove_unexist_key" {
   m.set("ab", 2)
   m.set("abc", 3)
   m.remove("d")
-  inspect(m.size(), content="3")
+  inspect(m.length(), content="3")
   inspect(m.debug_entries(), content="_,(0,a,1),(0,ab,2),(0,abc,3),_,_,_,_")
 }
 
@@ -667,7 +667,7 @@ test "remove_unexist_key" {
 test "clear" {
   let m : HashMap[MyString, Int] = of([("a", 1), ("b", 2), ("c", 3)])
   m.clear()
-  inspect(m.size(), content="0")
+  inspect(m.length(), content="0")
   inspect(m.capacity(), content="8")
   for i in 0..<m.capacity() {
     @test.same_object(m.entries[i], None)
@@ -683,15 +683,15 @@ test "grow" {
   m.set("Java", 4)
   m.set("Scala", 5)
   m.set("Julia", 5)
-  inspect(m.size(), content="6")
+  inspect(m.length(), content="6")
   inspect(m.capacity(), content="16")
   m.set("Cobol", 5)
-  inspect(m.size(), content="7")
+  inspect(m.length(), content="7")
   inspect(m.capacity(), content="16")
   m.set("Python", 6)
   m.set("Haskell", 7)
   m.set("Rescript", 8)
-  inspect(m.size(), content="10")
+  inspect(m.length(), content="10")
   inspect(m.capacity(), content="32")
   inspect(
     m.debug_entries(),

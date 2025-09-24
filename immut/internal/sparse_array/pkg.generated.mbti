@@ -19,8 +19,9 @@ fn Bitset::index_of(Self, Int) -> Int
 #deprecated
 fn Bitset::inner(Self) -> UInt
 fn Bitset::intersection(Self, Self) -> Self
+#alias(size, deprecated)
+fn Bitset::length(Self) -> Int
 fn Bitset::remove(Self, Int) -> Self
-fn Bitset::size(Self) -> Int
 fn Bitset::union(Self, Self) -> Self
 impl Eq for Bitset
 
@@ -34,10 +35,11 @@ fn[X] SparseArray::each(Self[X], (X) -> Unit raise?) -> Unit raise?
 fn[X] SparseArray::filter(Self[X], (X) -> X? raise?) -> Self[X]? raise?
 fn[X] SparseArray::get(Self[X], Int) -> X?
 fn[X] SparseArray::intersection(Self[X], Self[X], (X, X) -> X? raise?) -> Self[X]? raise?
+#alias(size, deprecated)
+fn[X] SparseArray::length(Self[X]) -> Int
 fn[X, Y] SparseArray::map(Self[X], (X) -> Y raise?) -> Self[Y] raise?
 fn[X] SparseArray::remove(Self[X], Int) -> Self[X]
 fn[X] SparseArray::replace(Self[X], Int, X) -> Self[X]
-fn[X] SparseArray::size(Self[X]) -> Int
 fn[X] SparseArray::union(Self[X], Self[X], (X, X) -> X raise?) -> Self[X] raise?
 impl[X : Eq] Eq for SparseArray[X]
 

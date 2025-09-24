@@ -16,7 +16,7 @@
 test "new" {
   let m : @hashmap.HashMap[Int, Int] = @hashmap.new()
   inspect(m.capacity(), content="8")
-  inspect(m.size(), content="0")
+  inspect(m.length(), content="0")
 }
 
 ///|
@@ -54,7 +54,7 @@ test "get_or_init" {
   m.get_or_init("a", () => Array::new()).push(3)
   assert_eq(m.get("a"), Some([1, 3]))
   assert_eq(m.get("b"), Some([2]))
-  assert_eq(m.size(), 2)
+  assert_eq(m.length(), 2)
 }
 
 ///|
@@ -63,7 +63,7 @@ test "get_or_init full" {
   m.get_or_init("a", () => 0) |> ignore
   m.get_or_init("b", () => 0) |> ignore
   m.get_or_init("c", () => 0) |> ignore
-  assert_eq(m.size(), 3)
+  assert_eq(m.length(), 3)
 }
 
 ///|
@@ -121,9 +121,9 @@ test "from_array" {
 ///|
 test "size" {
   let m = @hashmap.new()
-  inspect(m.size(), content="0")
+  inspect(m.length(), content="0")
   m.set("a", 1)
-  inspect(m.size(), content="1")
+  inspect(m.length(), content="1")
 }
 
 ///|
@@ -214,7 +214,7 @@ test "remove_nonexistent_key" {
   m.set("a", 1)
   m.set("b", 2)
   m.remove("c")
-  inspect(m.size(), content="2")
+  inspect(m.length(), content="2")
 }
 
 ///|
@@ -231,7 +231,7 @@ test "remove_nonexistent_key" {
   m.set("a", 1)
   m.set("b", 2)
   m.remove("c")
-  inspect(m.size(), content="2")
+  inspect(m.length(), content="2")
 }
 
 ///|
@@ -248,7 +248,7 @@ test "remove_nonexistent_key" {
   m.set("a", 1)
   m.set("b", 2)
   m.remove("c")
-  inspect(m.size(), content="2")
+  inspect(m.length(), content="2")
 }
 
 ///|
@@ -265,7 +265,7 @@ test "remove_nonexistent_key" {
   m.set("a", 1)
   m.set("b", 2)
   m.remove("c")
-  inspect(m.size(), content="2")
+  inspect(m.length(), content="2")
 }
 
 ///|

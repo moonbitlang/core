@@ -51,7 +51,7 @@ You can use `size()` to get the number of keys in the set, or `capacity()` to ge
 ///|
 test {
   let set = @hashset.of(["a", "b", "c"])
-  assert_eq(set.size(), 3)
+  assert_eq(set.length(), 3)
   assert_eq(set.capacity(), 8)
 }
 ```
