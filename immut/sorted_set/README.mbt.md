@@ -33,6 +33,24 @@ test {
 }
 ```
 
+## Reverse Ordering
+
+Use `@cmp.Reverse` to create a SortedSet with elements in descending order.
+
+```moonbit
+///|
+test {
+  // Create a set with descending order using Reverse wrapper
+  let set = @sorted_set.of([@cmp.Reverse(3), @cmp.Reverse(1), @cmp.Reverse(2)])
+
+  // Elements will be stored in descending order: 3, 2, 1
+  let result = set.to_array()
+  inspect(result[0], content="Reverse(3)")
+  inspect(result[1], content="Reverse(2)")
+  inspect(result[2], content="Reverse(1)")
+}
+```
+
 ## Add & Remove
 
 You can use `add` to add an element to the ImmutableSet.
