@@ -172,7 +172,6 @@ test "FixedArray extract bit" {
   let bs1 = b"\x89\xab\xcd\xef"
   let bs2 : Array[Byte] = bs1.to_array()
   let bs3 : FixedArray[Byte] = FixedArray::from_array(bs2)
-  
   for i in 0..=(bs1.length() * 8 - 1) {
     assert_eq(bs3.unsafe_extract_bit(i, 1), bs2.unsafe_extract_bit(i, 1))
     assert_eq(bs3.unsafe_extract_bit(i, 1), bs1.unsafe_extract_bit(i, 1))
@@ -184,14 +183,12 @@ test "FixedArray extract byte" {
   let bs1 = b"\x89\xab\xcd\xef"
   let bs2 : Array[Byte] = bs1.to_array()
   let bs3 : FixedArray[Byte] = FixedArray::from_array(bs2)
-  
   for i in 0..=(bs1.length() * 8 - 8) {
     assert_eq(bs3.unsafe_extract_byte(i, 2), bs2.unsafe_extract_byte(i, 2))
     assert_eq(bs3.unsafe_extract_byte(i, 3), bs2.unsafe_extract_byte(i, 3))
     assert_eq(bs3.unsafe_extract_byte(i, 4), bs2.unsafe_extract_byte(i, 4))
     assert_eq(bs3.unsafe_extract_byte(i, 5), bs2.unsafe_extract_byte(i, 5))
     assert_eq(bs3.unsafe_extract_byte(i, 8), bs2.unsafe_extract_byte(i, 8))
-    
     assert_eq(bs3.unsafe_extract_byte(i, 2), bs1.unsafe_extract_byte(i, 2))
     assert_eq(bs3.unsafe_extract_byte(i, 3), bs1.unsafe_extract_byte(i, 3))
     assert_eq(bs3.unsafe_extract_byte(i, 4), bs1.unsafe_extract_byte(i, 4))
@@ -205,7 +202,6 @@ test "FixedArray extract int32" {
   let bs1 = b"\x89\xab\xcd\xef\x01\x23\x45\x67"
   let bs2 : Array[Byte] = bs1.to_array()
   let bs3 : FixedArray[Byte] = FixedArray::from_array(bs2)
-  
   for i in 0..=(bs1.length() * 8 - 32) {
     // Test big-endian extraction
     assert_eq(
@@ -232,7 +228,7 @@ test "FixedArray extract int32" {
       bs3.unsafe_extract_uint_be(i, 32),
       bs2.unsafe_extract_uint_be(i, 32),
     )
-    
+
     // Test little-endian extraction
     assert_eq(
       bs3.unsafe_extract_uint_le(i, 9),
@@ -258,7 +254,7 @@ test "FixedArray extract int32" {
       bs3.unsafe_extract_uint_le(i, 32),
       bs2.unsafe_extract_uint_le(i, 32),
     )
-    
+
     // Also test against BytesView
     assert_eq(
       bs3.unsafe_extract_uint_be(i, 9),
@@ -284,7 +280,6 @@ test "FixedArray extract int32" {
       bs3.unsafe_extract_uint_be(i, 32),
       bs1.unsafe_extract_uint_be(i, 32),
     )
-    
     assert_eq(
       bs3.unsafe_extract_uint_le(i, 9),
       bs1.unsafe_extract_uint_le(i, 9),
@@ -317,7 +312,6 @@ test "FixedArray extract int64" {
   let bs1 = b"\x89\xab\xcd\xef\x01\x23\x45\x67\x01\x23\x45\x67\x89\xab\xcd\xef"
   let bs2 : Array[Byte] = bs1.to_array()
   let bs3 : FixedArray[Byte] = FixedArray::from_array(bs2)
-  
   for i in 0..=(bs1.length() * 8 - 64) {
     // Test big-endian extraction
     assert_eq(
@@ -344,7 +338,7 @@ test "FixedArray extract int64" {
       bs3.unsafe_extract_uint64_be(i, 64),
       bs2.unsafe_extract_uint64_be(i, 64),
     )
-    
+
     // Test little-endian extraction
     assert_eq(
       bs3.unsafe_extract_uint64_le(i, 33),
@@ -370,7 +364,7 @@ test "FixedArray extract int64" {
       bs3.unsafe_extract_uint64_le(i, 64),
       bs2.unsafe_extract_uint64_le(i, 64),
     )
-    
+
     // Also test against BytesView
     assert_eq(
       bs3.unsafe_extract_uint64_be(i, 33),
@@ -396,7 +390,6 @@ test "FixedArray extract int64" {
       bs3.unsafe_extract_uint64_be(i, 64),
       bs1.unsafe_extract_uint64_be(i, 64),
     )
-    
     assert_eq(
       bs3.unsafe_extract_uint64_le(i, 33),
       bs1.unsafe_extract_uint64_le(i, 33),
@@ -429,14 +422,13 @@ test "FixedArray extract view" {
   let bs1 = b"\x89\xab\xcd\xef"
   let bs2 : Array[Byte] = bs1.to_array()
   let bs3 : FixedArray[Byte] = FixedArray::from_array(bs2)
-  
   fn equal(a : ArrayView[Byte], b : ArrayView[Byte]) raise {
     assert_eq(a.length(), b.length())
     for i in 0..<a.length() {
       assert_eq(a[i], b[i])
     }
   }
-  
+
   fn equal_with_bytes(a : ArrayView[Byte], b : BytesView) raise {
     assert_eq(a.length(), b.length())
     for i in 0..<a.length() {
@@ -451,7 +443,7 @@ test "FixedArray extract view" {
         bs3.unsafe_extract_bytesview(i * 8, j * 8),
         bs2.unsafe_extract_bytesview(i * 8, j * 8),
       )
-      
+
       // Test FixedArray vs BytesView
       equal_with_bytes(
         bs3.unsafe_extract_bytesview(i * 8, j * 8),
