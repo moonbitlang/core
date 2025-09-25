@@ -247,7 +247,13 @@ test "range" {
 
 ///|
 test "to_json with non-empty map" {
-  let map = @sorted_map.from_array([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
+  let map = @sorted_map.from_array([
+    (3, "three"),
+    (8, "eight"),
+    (1, "one"),
+    (2, "two"),
+    (0, "zero"),
+  ])
   @json.inspect(map.to_json(), content={
     "0": "zero",
     "1": "one",
