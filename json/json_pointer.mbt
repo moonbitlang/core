@@ -72,9 +72,7 @@ pub fn JsonPointer::apply(self : JsonPointer, value : Json) -> Json? {
 /// use the referenced object of the first as the root object
 ///   to execute the second's indexing
 pub impl Div for JsonPointer with div(parent, child) {
-  JsonPointer::from_escaped_iter(
-    parent.iter() + child.iter()
-  )
+  JsonPointer::from_escaped_iter(parent.iter() + child.iter())
 }
 
 ///|
@@ -177,9 +175,7 @@ pub fn JsonPointer::iter(self : Self) -> Iter[String] {
 /// These 2 functions constructs JsonPointer from iterators.
 /// This one is only used inside this package,
 /// to combine pointers.
-fn JsonPointer::from_escaped_iter(
-  iter : Iter[String]
-) -> JsonPointer {
+fn JsonPointer::from_escaped_iter(iter : Iter[String]) -> JsonPointer {
   let mut res = RootPointer
   for token in iter {
     res = Pointer(res, token~)
