@@ -1,27 +1,39 @@
 ///|
+/// according to RFC6901,
+/// a JsonPointer is represented in `/`-joined components,
+/// each of whom is a valid Ecmascript property name,
+/// encoded with `~` and `/` escaped.
 pub enum JsonPointer {
   RootPointer
   Pointer(JsonPointer, token~ : String)
 } derive(Show)
 
 ///|
+/// Note that each part component can represent either:
+/// 1. an Array Index
+/// 2. an Object Property
+/// 
+/// We have to distinguish them while indexing with JsonPointer.
 pub(all) enum PointerComponentInterpretion {
   ArrayIndex(Int)
   ObjectIndex(String)
 } derive(Show)
 
 ///|
+/// To determine whether a component can represent an Array Index
 fn interprete(component : String) -> PointerComponentInterpretion {
   if component.length() == 0 {
     return ObjectIndex(component)
   }
   match component[0].to_char() {
     Some('1'..<'9') =>
+      // number in base 10 without leading `0` can be interpreted as Array Index
       match (try? @strconv.parse_int(component, base=10)) {
         Err(_) => ObjectIndex(component)
         Ok(i) => ArrayIndex(i)
       }
     Some('0') =>
+      // single `0` as number can be interpreted as Array Index
       if component.length() == 1 {
         ArrayIndex(0)
       } else {
@@ -32,32 +44,42 @@ fn interprete(component : String) -> PointerComponentInterpretion {
 }
 
 ///|
+/// Use a JsonPointer to index a value from a Json
+/// When indexing Null, returns None
+/// 
+/// TODO:
+/// implement another version of this indexing process,
+/// making it raise an index error rather than return None.
 pub fn JsonPointer::apply(self : JsonPointer, value : Json) -> Json? {
-  match (self, value) {
-    (RootPointer, _) => Some(value)
-    (Pointer(p, token~), v) =>
-      match p.apply(v) {
-        Some(Object(parent)) => Some(parent[token])
-        Some(Array(parent)) =>
-          if interprete(token) is ArrayIndex(i) {
-            Some(parent[i])
-          } else {
-            None
-          }
-        _ => None
-      }
+  let mut result = value
+  for component in self {
+    match result {
+      Array(parent) =>
+        if interprete(component) is ArrayIndex(i) {
+          result = parent[i]
+        } else {
+          return None
+        }
+      Object(parent) => result = parent[component]
+      _ => return None
+    }
   }
+  Some(result)
 }
 
 ///|
+/// join 2 JsonPointers:
+/// use the referenced object of the first as the root object
+///   to execute the second's indexing
 pub impl Div for JsonPointer with div(parent, child) {
-  match child {
-    RootPointer => parent
-    Pointer(p, token~) => Pointer(parent / p, token~)
-  }
+  JsonPointer::from_escaped_iter(
+    parent.iter() + child.iter()
+  )
 }
 
 ///|
+/// used when a Pointer needs to be represented in other way:
+/// eacape `/` and `~` with `~1` and  `~0`
 fn escape_component(token : String) -> String {
   String::from_iter(
     Iter::new(yield_ => for c in token {
@@ -87,6 +109,9 @@ fn escape_component(token : String) -> String {
 }
 
 ///|
+/// Indicates a parsing error
+/// while trying to parse a JsonPointer
+/// from a representation.
 pub(all) suberror JsonPointerParsingError (String, String) derive (
   Eq,
   Show,
@@ -94,6 +119,8 @@ pub(all) suberror JsonPointerParsingError (String, String) derive (
 )
 
 ///|
+/// When an character lies after a `~`,
+/// use this function to find it's unescape result.
 fn get_unescaped(p : Int, full : String) -> Char raise JsonPointerParsingError {
   match full[p] {
     '0' => '~'
@@ -113,6 +140,7 @@ fn get_unescaped(p : Int, full : String) -> Char raise JsonPointerParsingError {
 }
 
 ///|
+/// Parse a component's original property name from its representation.
 fn unescape_component(token : String) -> String raise JsonPointerParsingError {
   let mut escaping : Bool = false
   let res : Array[Char] = []
@@ -132,6 +160,7 @@ fn unescape_component(token : String) -> String raise JsonPointerParsingError {
 }
 
 ///|
+/// A iterator that yields a pointer's components.
 pub fn JsonPointer::iter(self : Self) -> Iter[String] {
   Iter::new(yield_ => match self {
     RootPointer => IterEnd
@@ -139,26 +168,31 @@ pub fn JsonPointer::iter(self : Self) -> Iter[String] {
       for component in p {
         guard yield_(component) is IterContinue else { break IterEnd }
       } else {
-        if yield_(token) is IterContinue {
-          IterEnd
-        } else {
-          IterEnd
-        }
+        yield_(token)
       }
   })
 }
 
 ///|
-// pub impl Show for JsonPointer with output(self, logger) {
-//   match self {
-//     RootPointer => logger.write_char('/')
-//     Pointer(p, token~) =>
-//       logger..write_object(p)..write_string(escape_component(token))
-//   }
-// }
+/// These 2 functions constructs JsonPointer from iterators.
+/// This one is only used inside this package,
+/// to combine pointers.
+fn JsonPointer::from_escaped_iter(
+  iter : Iter[String]
+) -> JsonPointer {
+  let mut res = RootPointer
+  for token in iter {
+    res = Pointer(res, token~)
+  }
+  res
+}
 
 ///|
-fn JsonPointer::from_iter(
+/// This is the often-used constructor of JsonPointer.
+/// Components are passed escaped.
+/// 
+/// Users should consider use from_json more than this from_iter
+pub fn JsonPointer::from_iter(
   iter : Iter[String],
 ) -> JsonPointer raise JsonPointerParsingError {
   let mut res = RootPointer
@@ -170,6 +204,7 @@ fn JsonPointer::from_iter(
 }
 
 ///|
+/// The primary construction of JsonPointer.
 pub impl FromJson for JsonPointer with from_json(json, _) {
   match json {
     String(str) => {
@@ -197,6 +232,7 @@ pub impl FromJson for JsonPointer with from_json(json, _) {
 }
 
 ///|
+/// represent a JsonPointer in Json format.
 pub impl ToJson for JsonPointer with to_json(self) {
   match self {
     RootPointer => Json::String("")
@@ -271,7 +307,7 @@ test "json-pointer basic test" {
 ///|
 test "json-pointer div-operator" {
   inspect(
-    Pointer(RootPointer, token="def") / Pointer(RootPointer, token="abc"),
-    content=Pointer(Pointer(RootPointer, token="def"), token="abc").to_json(),
+    Pointer(RootPointer, token="a/b") / Pointer(RootPointer, token="abc"),
+    content=Pointer(Pointer(RootPointer, token="a/b"), token="abc").to_json(),
   )
 }

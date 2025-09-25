@@ -46,6 +46,7 @@ pub enum JsonPointer {
   Pointer(JsonPointer, token~ : String)
 }
 fn JsonPointer::apply(Self, Json) -> Json?
+fn JsonPointer::from_iter(Iter[String]) -> Self raise JsonPointerParsingError
 fn JsonPointer::iter(Self) -> Iter[String]
 impl Div for JsonPointer
 impl Show for JsonPointer
