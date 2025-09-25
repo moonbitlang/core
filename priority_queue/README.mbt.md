@@ -20,6 +20,26 @@ test {
 
 Note, however, that the default priority queue created is greater-first; if you need to create a less-first queue, you can write a struct belongs to Compare trait to implement it.
 
+## Creating a Min-Heap with @cmp.Reverse
+
+You can easily create a min-heap (smallest element first) using `@cmp.Reverse` to reverse the comparison order:
+
+```moonbit
+///|
+test {
+  // Create a min-heap by wrapping elements with @cmp.Reverse
+  let min_heap = @priority_queue.of([
+    @cmp.Reverse(5),
+    @cmp.Reverse(2),
+    @cmp.Reverse(8),
+    @cmp.Reverse(1),
+  ])
+
+  // The smallest wrapped value (1) should be at the top
+  inspect(min_heap.peek(), content="Some(Reverse(1))")
+}
+```
+
 ## Length
 
 You can use `length()` to get the number of elements in the current priority queue.
