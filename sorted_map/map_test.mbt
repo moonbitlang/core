@@ -276,3 +276,18 @@ test "from_json" {
     assert_eq(xs, @json.from_json(xs.to_json()))
   }
 }
+
+///|
+test "json roundtrip verification" {
+  let original = @sorted_map.from_array([("key1", 42), ("key2", 100), ("key3", -5)])
+  let json = original.to_json()
+  let restored = @sorted_map.from_json(json)
+  
+  // Verify they have same length and contents
+  assert_eq(original.length(), restored.length())
+  assert_eq(original.get("key1"), restored.get("key1"))
+  assert_eq(original.get("key2"), restored.get("key2"))
+  assert_eq(original.get("key3"), restored.get("key3"))
+  
+  inspect(json.stringify(), content="{\"key1\":42,\"key2\":100,\"key3\":-5}")
+}
