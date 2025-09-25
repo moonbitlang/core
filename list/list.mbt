@@ -1662,3 +1662,48 @@ fn[A] reverse_inplace(self : List[A]) -> List[A] {
       }
   }
 }
+
+///|
+/// Compares two lists based on lexicographic order.
+///
+/// First compares elements pairwise until a difference is found.
+/// If lists have different lengths and all shared elements are equal,
+/// the shorter list is considered less than the longer one.
+///
+/// Parameters:
+///
+/// * `self` : The first list to compare.
+/// * `other` : The second list to compare.
+///
+/// Returns an integer that indicates the relative order:
+///
+/// * A negative value if `self` is less than `other`
+/// * Zero if `self` equals `other`
+/// * A positive value if `self` is greater than `other`
+///
+/// Example:
+///
+/// ```moonbit
+///   let list1 = @list.of([1, 2, 3])
+///   let list2 = @list.of([1, 2, 4])
+///   let list3 = @list.of([1, 2])
+///   inspect(list1.compare(list2), content="-1") // list1 < list2
+///   inspect(list1.compare(list3), content="1") // list1 > list3
+///   inspect(list3.compare(list1), content="-1") // list3 < list1 (shorter)
+///   inspect(list1.compare(list1), content="0") // list1 = list1
+/// ```
+pub impl[A : Compare] Compare for List[A] with compare(self, other) {
+  loop (self, other) {
+    (Empty, Empty) => 0
+    (Empty, More(_, tail=_)) => -1
+    (More(_, tail=_), Empty) => 1
+    (More(x, tail=xs), More(y, tail=ys)) => {
+      let cmp = x.compare(y)
+      if cmp != 0 {
+        break cmp
+      } else {
+        continue (xs, ys)
+      }
+    }
+  }
+}
