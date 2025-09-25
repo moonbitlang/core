@@ -265,8 +265,8 @@ fn sum(xs : ArrayView[Int]) -> Int {
 
 ///|
 // TODO: fix(upstream) later
-// #cfg(false)
-// test "FixedArray::sub - sum" {
-//   let arr = FixedArray::makei(10, i => i * i)
-//   inspect(sum(arr), content="385")
-// }
+#cfg(false)
+test "FixedArray::sub - sum" {
+  let arr = FixedArray::makei(10, i => i * i)
+  inspect(sum(arr), content="385")
+}
