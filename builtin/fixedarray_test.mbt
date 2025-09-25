@@ -207,10 +207,10 @@ test "fixedarray_fill - empty array" {
 test "fixedarray_fill - with different types" {
   let str_fa : FixedArray[String] = ["a", "b", "c", "d"]
   str_fa.fill("x", start=1, end=3)
-  inspect(str_fa, content="[\"a\", \"x\", \"x\", \"d\"]")
+  @json.inspect(str_fa, content=["a", "x", "x", "d"])
   let bool_fa : FixedArray[Bool] = [true, false, true, false]
   bool_fa.fill(true, start=0, end=2)
-  inspect(bool_fa, content="[true, true, true, false]")
+  @json.inspect(bool_fa, content=[true, true, true, false])
 }
 
 ///|
@@ -247,9 +247,26 @@ test "fixedarray_fill - test with FixedArray::make" {
 test "fixedarray_fill - existing documentation example" {
   let fa : FixedArray[Int] = [0, 0, 0, 0, 0]
   fa.fill(3)
-  assert_eq(fa[0], 3)
-  assert_eq(fa[1], 3)
-  assert_eq(fa[2], 3)
-  assert_eq(fa[3], 3)
-  assert_eq(fa[4], 3)
+  inspect(fa[:], content="[3, 3, 3, 3, 3]")
 }
+
+///|
+test "FixedArray::sub" {
+  let arr = FixedArray::makei(10, i => i * i)
+  let sub = arr[:]
+  inspect(sub, content="[0, 1, 4, 9, 16, 25, 36, 49, 64, 81]")
+  inspect(sum(sub), content="285")
+}
+
+///|
+fn sum(xs : ArrayView[Int]) -> Int {
+  xs.fold(init=0, (acc, x) => acc + x)
+}
+
+///|
+// TODO: fix(upstream) later
+// #cfg(false)
+// test "FixedArray::sub - sum" {
+//   let arr = FixedArray::makei(10, i => i * i)
+//   inspect(sum(arr), content="385")
+// }
