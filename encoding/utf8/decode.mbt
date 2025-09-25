@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-pub suberror Malformed BytesView
+pub suberror Malformed @bytes.View
 
 ///|
 /// The Unicode Replacement Character, which is used to replace invalid or unrecognized sequences during lossy decoding.
@@ -21,69 +21,113 @@ pub suberror Malformed BytesView
 const U_REP = '\u{FFFD}'
 
 ///|
-pub fn decode(
-  bytes : BytesView,
-  ignore_bom? : Bool = false,
-) -> String raise Malformed {
+pub fn decode(bytes : @bytes.View, ignore_bom? : Bool = false) -> String raise Malformed {
   let bytes = if ignore_bom && bytes is [.. "\xef\xbb\xbf", .. rest] {
     rest
   } else {
     bytes
   }
-  let builder = StringBuilder::new(size_hint=bytes.length())
-  loop bytes {
-    [] => ()
-    [0..=0x7F as b, .. rest] => {
-      builder.write_char(b.to_int().unsafe_to_char())
-      continue rest
+  let t : FixedArray[Byte] = FixedArray::make(bytes.length() * 2, 0)
+  let tlen = loop (0, bytes) {
+    (tlen, []) => tlen
+    (
+      tlen,
+      [
+        _..=0x7F as b0,
+        _..=0x7F as b1,
+        _..=0x7F as b2,
+        _..=0x7F as b3,
+        _..=0x7F as b4,
+        _..=0x7F as b5,
+        _..=0x7F as b6,
+        _..=0x7F as b7,
+        .. rest,
+      ],
+    ) => {
+      t.unsafe_set(tlen, b0)
+      t.unsafe_set(tlen + 1, 0)
+      t.unsafe_set(tlen + 2, b1)
+      t.unsafe_set(tlen + 3, 0)
+      t.unsafe_set(tlen + 4, b2)
+      t.unsafe_set(tlen + 5, 0)
+      t.unsafe_set(tlen + 6, b3)
+      t.unsafe_set(tlen + 7, 0)
+      t.unsafe_set(tlen + 8, b4)
+      t.unsafe_set(tlen + 9, 0)
+      t.unsafe_set(tlen + 10, b5)
+      t.unsafe_set(tlen + 11, 0)
+      t.unsafe_set(tlen + 12, b6)
+      t.unsafe_set(tlen + 13, 0)
+      t.unsafe_set(tlen + 14, b7)
+      t.unsafe_set(tlen + 15, 0)
+      continue (tlen + 16, rest)
     }
-    [0xC2..=0xDF as b0, 0x80..=0xBF as b1, .. rest] => {
+    (tlen, [0..=0x7F as b, .. rest]) => {
+      t.unsafe_set(tlen, b)
+      t.unsafe_set(tlen + 1, 0)
+      continue (tlen + 2, rest)
+    }
+    (tlen, [0xC2..=0xDF as b0, 0x80..=0xBF as b1, .. rest]) => {
       let ch = ((b0.to_int() & 0x1F) << 6) | (b1.to_int() & 0x3F)
-      builder.write_char(ch.unsafe_to_char())
-      continue rest
+      t.unsafe_set(tlen, ch.to_byte())
+      t.unsafe_set(tlen + 1, (ch >> 8).to_byte())
+      continue (tlen + 2, rest)
     }
-    [0xE0 as b0, 0xA0..=0xBF as b1, 0x80..=0xBF as b2, .. rest]
-    | [0xE1..=0xEC as b0, 0x80..=0xBF as b1, 0x80..=0xBF as b2, .. rest]
-    | [0xED as b0, 0x80..=0x9F as b1, 0x80..=0xBF as b2, .. rest]
-    | [0xEE..=0xEF as b0, 0x80..=0xBF as b1, 0x80..=0xBF as b2, .. rest] => {
+    (
+      tlen,
+      [0xE0 as b0, 0xA0..=0xBF as b1, 0x80..=0xBF as b2, .. rest]
+      | [0xE1..=0xEC as b0, 0x80..=0xBF as b1, 0x80..=0xBF as b2, .. rest]
+      | [0xED as b0, 0x80..=0x9F as b1, 0x80..=0xBF as b2, .. rest]
+      | [0xEE..=0xEF as b0, 0x80..=0xBF as b1, 0x80..=0xBF as b2, .. rest],
+    ) => {
       let ch = ((b0.to_int() & 0x0F) << 12) |
         ((b1.to_int() & 0x3F) << 6) |
         (b2.to_int() & 0x3F)
-      builder.write_char(ch.unsafe_to_char())
-      continue rest
+      t.unsafe_set(tlen, ch.to_byte())
+      t.unsafe_set(tlen + 1, (ch >> 8).to_byte())
+      continue (tlen + 2, rest)
     }
-    [
-      0xF0 as b0,
-      0x90..=0xBF as b1,
-      0x80..=0xBF as b2,
-      0x80..=0xBF as b3,
-      .. rest,
-    ]
-    | [
-      0xF1..=0xF3 as b0,
-      0x80..=0xBF as b1,
-      0x80..=0xBF as b2,
-      0x80..=0xBF as b3,
-      .. rest,
-    ]
-    | [
-      0xF4 as b0,
-      0x80..=0x8F as b1,
-      0x80..=0xBF as b2,
-      0x80..=0xBF as b3,
-      .. rest,
-    ] => {
+    (
+      tlen,
+      [
+        0xF0 as b0,
+        0x90..=0xBF as b1,
+        0x80..=0xBF as b2,
+        0x80..=0xBF as b3,
+        .. rest,
+      ]
+      | [
+        0xF1..=0xF3 as b0,
+        0x80..=0xBF as b1,
+        0x80..=0xBF as b2,
+        0x80..=0xBF as b3,
+        .. rest,
+      ]
+      | [
+        0xF4 as b0,
+        0x80..=0x8F as b1,
+        0x80..=0xBF as b2,
+        0x80..=0xBF as b3,
+        .. rest,
+      ],
+    ) => {
       let ch = ((b0.to_int() & 0x07) << 18) |
         ((b1.to_int() & 0x3F) << 12) |
         ((b2.to_int() & 0x3F) << 6) |
         (b3.to_int() & 0x3F)
-      builder.write_char(ch.unsafe_to_char())
-      continue rest
+      let ch1 = ((ch - 0x10000) >> 10) + 0xD800
+      let ch2 = ((ch - 0x10000) & 0x3FF) + 0xDC00
+      t.unsafe_set(tlen, ch1.to_byte())
+      t.unsafe_set(tlen + 1, (ch1 >> 8).to_byte())
+      t.unsafe_set(tlen + 2, ch2.to_byte())
+      t.unsafe_set(tlen + 3, (ch2 >> 8).to_byte())
+      continue (tlen + 4, rest)
     }
-    _ as bytes => raise Malformed(bytes)
+    (_, _ as bytes) => raise Malformed(bytes)
   }
-  builder.to_string()
+  t.unsafe_reinterpret_as_bytes().to_unchecked_string(offset=0, length=tlen)
 }
+
 
 ///|
 /// 
