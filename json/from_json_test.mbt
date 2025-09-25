@@ -770,13 +770,13 @@ test "Bytes from_json" {
 test "float roundtrip" {
   let u = (3.14 : Float).to_json()
   let v : Float = @json.from_json(u)
-  inspect(v.to_double(), content="3.140000104904175")
+  inspect(v, content="3.140000104904175")
   let u = (0.0 : Float).to_json()
   let v : Float = @json.from_json(u)
-  inspect(v.to_double(), content="0")
+  inspect(v, content="0")
   let u = (-1.5 : Float).to_json()
   let v : Float = @json.from_json(u)
-  inspect(v.to_double(), content="-1.5")
+  inspect(v, content="-1.5")
 }
 
 ///|
@@ -784,22 +784,22 @@ test "float special values" {
   // Test NaN
   let u = Json::string("NaN")
   let v : Float = @json.from_json(u)
-  inspect(v.is_nan(), content="true")
+  inspect(v, content="NaN")
 
   // Test Infinity
   let u = Json::string("Infinity")
   let v : Float = @json.from_json(u)
-  inspect(v.is_pos_inf(), content="true")
+  inspect(v, content="Infinity")
 
   // Test -Infinity
   let u = Json::string("-Infinity")
   let v : Float = @json.from_json(u)
-  inspect(v.is_neg_inf(), content="true")
+  inspect(v, content="-Infinity")
 
   // Test regular number
   let u = Json::number(42.5)
   let v : Float = @json.from_json(u)
-  inspect(v.to_double(), content="42.5")
+  inspect(v, content="42.5")
 }
 
 ///|
