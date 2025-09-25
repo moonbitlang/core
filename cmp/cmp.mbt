@@ -13,6 +13,30 @@
 // limitations under the License.
 
 ///|
+/// A newtype wrapper that reverses the comparison order of the wrapped value.
+///
+/// `Reverse[T]` is useful when you need to reverse the natural ordering of a type.
+/// For example, to create a min-heap from a max-heap data structure, or to sort
+/// in descending order instead of ascending order.
+///
+/// # Examples
+///
+/// ```mbt
+///   let a = @cmp.Reverse(1)
+///   let b = @cmp.Reverse(2)
+///   inspect(a.compare(b), content="1")  // 1 > 2 in reversed order
+///   inspect(b.compare(a), content="-1") // 2 < 1 in reversed order
+///   inspect(a == a, content="true")     // Equality works correctly
+///   inspect(a.to_string(), content="Reverse(1)") // Shows wrapped value
+/// ```
+pub(all) struct Reverse[T](T) derive(Eq, Show, Hash)
+
+///|
+pub impl[T : Compare] Compare for Reverse[T] with compare(a, b) {
+  -a.0.compare(b.0)
+}
+
+///|
 /// Returns the element that gives the maximum value from the specified function.
 ///
 /// Returns the second argument if the comparison determines them to be equal.
