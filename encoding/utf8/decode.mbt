@@ -226,8 +226,9 @@ pub fn decode_lossy(bytes : BytesView, ignore_bom? : Bool = false) -> String {
         ((b1.to_int() & 0x3F) << 12) |
         ((b2.to_int() & 0x3F) << 6) |
         (b3.to_int() & 0x3F)
-      let ch1 = ((ch - 0x10000) >> 10) + 0xD800
-      let ch2 = ((ch - 0x10000) & 0x3FF) + 0xDC00
+      let chm = ch - 0x10000
+      let ch1 = (chm >> 10) + 0xD800
+      let ch2 = (chm & 0x3FF) + 0xDC00
       t.unsafe_set(tlen, ch1.to_byte())
       t.unsafe_set(tlen + 1, (ch1 >> 8).to_byte())
       t.unsafe_set(tlen + 2, ch2.to_byte())
