@@ -43,26 +43,17 @@ pub fn decode(
       ],
     ) => {
       t.unsafe_set(tlen, b0)
-      t.unsafe_set(tlen + 1, 0)
       t.unsafe_set(tlen + 2, b1)
-      t.unsafe_set(tlen + 3, 0)
       t.unsafe_set(tlen + 4, b2)
-      t.unsafe_set(tlen + 5, 0)
       t.unsafe_set(tlen + 6, b3)
-      t.unsafe_set(tlen + 7, 0)
       t.unsafe_set(tlen + 8, b4)
-      t.unsafe_set(tlen + 9, 0)
       t.unsafe_set(tlen + 10, b5)
-      t.unsafe_set(tlen + 11, 0)
       t.unsafe_set(tlen + 12, b6)
-      t.unsafe_set(tlen + 13, 0)
       t.unsafe_set(tlen + 14, b7)
-      t.unsafe_set(tlen + 15, 0)
       continue (tlen + 16, rest)
     }
     (tlen, [0..=0x7F as b, .. rest]) => {
       t.unsafe_set(tlen, b)
-      t.unsafe_set(tlen + 1, 0)
       continue (tlen + 2, rest)
     }
     (tlen, [0xC2..=0xDF as b0, 0x80..=0xBF as b1, .. rest]) => {
@@ -156,26 +147,17 @@ pub fn decode_lossy(bytes : BytesView, ignore_bom? : Bool = false) -> String {
       ],
     ) => {
       t.unsafe_set(tlen, b0)
-      t.unsafe_set(tlen + 1, 0)
       t.unsafe_set(tlen + 2, b1)
-      t.unsafe_set(tlen + 3, 0)
       t.unsafe_set(tlen + 4, b2)
-      t.unsafe_set(tlen + 5, 0)
       t.unsafe_set(tlen + 6, b3)
-      t.unsafe_set(tlen + 7, 0)
       t.unsafe_set(tlen + 8, b4)
-      t.unsafe_set(tlen + 9, 0)
       t.unsafe_set(tlen + 10, b5)
-      t.unsafe_set(tlen + 11, 0)
       t.unsafe_set(tlen + 12, b6)
-      t.unsafe_set(tlen + 13, 0)
       t.unsafe_set(tlen + 14, b7)
-      t.unsafe_set(tlen + 15, 0)
       continue (tlen + 16, rest)
     }
     (tlen, [0..=0x7F as b, .. rest]) => {
       t.unsafe_set(tlen, b)
-      t.unsafe_set(tlen + 1, 0)
       continue (tlen + 2, rest)
     }
     (tlen, [0xC2..=0xDF as b0, 0x80..=0xBF as b1, .. rest]) => {
