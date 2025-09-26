@@ -397,14 +397,31 @@ test "from_iter empty iter" {
 ///|
 test "hashset arbitrary" {
   let samples : Array[@hashset.HashSet[Int]] = @quickcheck.samples(20)
-  inspect(
-    samples[5:10],
-    content="[@hashset.of([]), @hashset.of([]), @hashset.of([0]), @hashset.of([0]), @hashset.of([0, 2, 1, 3])]",
-  )
-  inspect(
-    samples[11:15],
-    content="[@hashset.of([0, -2, -1]), @hashset.of([0, -5, -2, 4, 8]), @hashset.of([0, 2, -1]), @hashset.of([0])]",
-  )
+  let cases = [
+    @hashset.of([]),
+    @hashset.of([]),
+    @hashset.of([]),
+    @hashset.of([0]),
+    @hashset.of([0]),
+    @hashset.of([]),
+    @hashset.of([]),
+    @hashset.of([0]),
+    @hashset.of([0]),
+    @hashset.of([0, 3, 1, 2]),
+    @hashset.of([0, 1, -2]),
+    @hashset.of([-2, 0, -1]),
+    @hashset.of([-5, 0, 8, 4, -2]),
+    @hashset.of([0, 2, -1]),
+    @hashset.of([0]),
+    @hashset.of([]),
+    @hashset.of([-2, 0, -3, -1]),
+    @hashset.of([-1, 0, 3, 1, -6, 2]),
+    @hashset.of([0]),
+    @hashset.of([-5, -1, 6, 0, 2, -2]),
+  ]
+  for i = 0; i < 20; i = i + 1 {
+    assert_true(samples[i].symmetric_difference(cases[i]).is_empty())
+  }
 }
 
 ///|
@@ -427,5 +444,5 @@ test "@hashset.to_array/multiple" {
   set.add(2)
   set.add(3)
   set.add(4)
-  inspect(set.to_array(), content="[2, 4, 1, 3]")
+  inspect(set.to_array()..sort().to_string(), content="[1, 2, 3, 4]")
 }
