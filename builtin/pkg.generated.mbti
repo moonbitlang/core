@@ -82,8 +82,8 @@ fn[T : Compare] Array::binary_search(Self[T], T) -> Result[Int, Int]
 fn[T] Array::binary_search_by(Self[T], (T) -> Int) -> Result[Int, Int]
 fn[A] Array::blit_to(Self[A], Self[A], len~ : Int, src_offset? : Int, dst_offset? : Int) -> Unit
 fn[T] Array::capacity(Self[T]) -> Int
-fn[T] Array::chunk_by(Self[T], (T, T) -> Bool raise?) -> Self[Self[T]] raise?
-fn[T] Array::chunks(Self[T], Int) -> Self[Self[T]]
+fn[T] Array::chunk_by(Self[T], (T, T) -> Bool raise?) -> Self[ArrayView[T]] raise?
+fn[T] Array::chunks(Self[T], Int) -> Self[ArrayView[T]]
 fn[T] Array::clear(Self[T]) -> Unit
 fn[T : Compare] Array::compare(Self[T], Self[T]) -> Int // from trait `Compare`
 fn[T : Eq] Array::contains(Self[T], T) -> Bool
