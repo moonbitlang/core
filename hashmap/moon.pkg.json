@@ -7,5 +7,5 @@
     "moonbitlang/core/quickcheck",
     "moonbitlang/core/int"
   ],
-  "test-import": ["moonbitlang/core/string", "moonbitlang/core/json"]
+  "test-import": ["moonbitlang/core/string"]
 }

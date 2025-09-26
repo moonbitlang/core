@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-fn[K : Show, V : Show] debug_entries(self : HashMap[K, V]) -> String {
+fn[K : Show, V : Show] _debug_entries(self : HashMap[K, V]) -> String {
   for s = "", i = 0; i < self.entries.length(); {
     let s = if i > 0 { s + "," } else { s }
     match self.entries[i] {
