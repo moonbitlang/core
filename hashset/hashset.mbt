@@ -21,6 +21,7 @@ let default_init_capacity = 8
 /// Create new hash set.
 #as_free_fn
 pub fn[K] HashSet::new(capacity? : Int = default_init_capacity) -> HashSet[K] {
+  let capacity = capacity.next_power_of_two()
   {
     size: 0,
     capacity,
@@ -73,7 +74,7 @@ fn[K : Eq] add_with_hash(self : HashSet[K], key : K, hash : Int) -> Unit {
   if self.size >= self.grow_at {
     self.grow()
   }
-  let (idx, psl) = for psl = 0, idx = abs(hash) & self.capacity_mask {
+  let (idx, psl) = for psl = 0, idx = hash & self.capacity_mask {
     match self.entries[idx] {
       None => break (idx, psl)
       Some(curr_entry) => {
@@ -127,7 +128,7 @@ fn[K] set_entry(self : HashSet[K], entry : Entry[K], new_idx : Int) -> Unit {
 pub fn[K : Hash + Eq] contains(self : HashSet[K], key : K) -> Bool {
   // inline lookup to avoid unnecessary allocations
   let hash = key.hash()
-  for i = 0, idx = abs(hash) & self.capacity_mask {
+  for i = 0, idx = hash & self.capacity_mask {
     guard self.entries[idx] is Some(entry) else { break false }
     if entry.hash == hash && entry.key == key {
       break true
@@ -160,7 +161,7 @@ pub fn[K : Hash + Eq] contains(self : HashSet[K], key : K) -> Bool {
 /// ```
 pub fn[K : Hash + Eq] remove(self : HashSet[K], key : K) -> Unit {
   let hash = key.hash()
-  for i = 0, idx = abs(hash) & self.capacity_mask {
+  for i = 0, idx = hash & self.capacity_mask {
     guard self.entries[idx] is Some(entry) else { break }
     if entry.hash == hash && entry.key == key {
       self.shift_back(idx)
@@ -407,15 +408,6 @@ pub impl[X : @quickcheck.Arbitrary + Eq + Hash] @quickcheck.Arbitrary for HashSe
   X,
 ] with arbitrary(size, rs) {
   @quickcheck.Arbitrary::arbitrary(size, rs) |> from_iter
-}
-
-///|
-fn abs(n : Int) -> Int {
-  if n < 0 {
-    -n
-  } else {
-    n
-  }
 }
 
 ///|
