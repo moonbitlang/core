@@ -31,6 +31,9 @@ pub typealias @builtin.(
 )
 
 ///|
+pub typealias @array.ReadOnlyArray
+
+///|
 pub typealias @set.Set
 
 ///|
