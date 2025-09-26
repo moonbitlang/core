@@ -41,7 +41,7 @@ const HEAD_TAG : UInt = 0xffffffffU << (SEGMENT_LENGTH * SEGMENT_NUM)
 /// Creates a Path using the lowest (SEGMENT_LENGTH * SEGMENT_NUM)
 /// bits of the key's hash.
 pub fn[A : Hash] of(key : A) -> Path {
-  key.hash().reinterpret_as_uint() | HEAD_TAG
+  Hasher::new()..combine(key).finalize().reinterpret_as_uint() | HEAD_TAG
 }
 
 ///|
