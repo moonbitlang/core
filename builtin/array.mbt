@@ -1531,11 +1531,7 @@ pub fn[T] Array::windows(self : Array[T], size : Int) -> Array[ArrayView[T]] {
   if len < 1 {
     return []
   }
-  let windows = Array::new(capacity=len)
-  for i in 0..<len {
-    windows.push(self[i:i + size])
-  }
-  windows
+  Array::makei(len, i => self[i:i + size])
 }
 
 ///|
