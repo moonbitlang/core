@@ -49,7 +49,6 @@ impl[T : Eq] Eq for FixedArray[T]
 impl[T : Hash] Hash for FixedArray[T]
 impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for FixedArray[X]
 
-fn[T] Array::copy(Self[T]) -> Self[T]
 fn[A, B] Array::filter_map(Self[A], (A) -> B? raise?) -> Self[B] raise?
 fn[T] Array::from_iter(Iter[T]) -> Self[T]
 fn[A : @string.ToStringView] Array::join(Self[A], StringView) -> String
