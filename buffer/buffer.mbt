@@ -475,9 +475,8 @@ pub fn write_int_le(self : Buffer, value : Int) -> Unit {
 pub fn write_uint16_be(self : Buffer, value : UInt16) -> Unit {
   self.grow_if_necessary(self.len + 2)
   let offset = self.len
-  let uint_val = value.to_int()
-  self.data[offset] = (uint_val >> 8).to_byte()
-  self.data[offset + 1] = uint_val.to_byte()
+  self.data[offset] = (value.to_int() >> 8).to_byte()
+  self.data[offset + 1] = value.to_byte()
   self.len += 2
 }
 
@@ -505,9 +504,8 @@ pub fn write_uint16_be(self : Buffer, value : UInt16) -> Unit {
 pub fn write_uint16_le(self : Buffer, value : UInt16) -> Unit {
   self.grow_if_necessary(self.len + 2)
   let offset = self.len
-  let uint_val = value.to_int()
-  self.data[offset] = uint_val.to_byte()
-  self.data[offset + 1] = (uint_val >> 8).to_byte()
+  self.data[offset] = value.to_byte()
+  self.data[offset + 1] = (value.to_int() >> 8).to_byte()
   self.len += 2
 }
 
@@ -534,9 +532,8 @@ pub fn write_uint16_le(self : Buffer, value : UInt16) -> Unit {
 pub fn write_int16_be(self : Buffer, value : Int16) -> Unit {
   self.grow_if_necessary(self.len + 2)
   let offset = self.len
-  let uint_val = value.to_int()
-  self.data[offset] = (uint_val >> 8).to_byte()
-  self.data[offset + 1] = uint_val.to_byte()
+  self.data[offset] = (value.to_int() >> 8).to_byte()
+  self.data[offset + 1] = value.to_byte()
   self.len += 2
 }
 
@@ -561,9 +558,8 @@ pub fn write_int16_be(self : Buffer, value : Int16) -> Unit {
 pub fn write_int16_le(self : Buffer, value : Int16) -> Unit {
   self.grow_if_necessary(self.len + 2)
   let offset = self.len
-  let uint_val = value.to_int()
-  self.data[offset] = uint_val.to_byte()
-  self.data[offset + 1] = (uint_val >> 8).to_byte()
+  self.data[offset] = value.to_byte()
+  self.data[offset + 1] = (value.to_int() >> 8).to_byte()
   self.len += 2
 }
 
