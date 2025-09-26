@@ -1651,3 +1651,17 @@ test "View::get_char basic cases" {
   inspect(v2.get_char(1), content="None")
   inspect(v2.get_char(2), content="None")
 }
+
+///|
+/// 忽略大小写判断字符串是否相等。
+///
+/// ```mbt
+///   assert_eq("你好".eq_ignore_case("你好"), true);
+///   assert_eq("Hello".eq_ignore_case("HELLO"), true);
+/// ```
+pub fn String::eq_ignore_case(self : String, other : String) -> Bool {
+  if self.length() != other.length() {
+    return false
+  }
+  self.to_lower() == other.to_lower()
+}
