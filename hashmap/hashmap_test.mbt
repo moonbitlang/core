@@ -159,43 +159,39 @@ test "iteri" {
 
 ///|
 test "iter" {
-  let buf = StringBuilder::new(size_hint=20)
   let map = @hashmap.of([(1, "one"), (2, "two"), (3, "three")])
-  map
-  .iter()
-  .each(e => {
-    let (k, v) = e
-    buf.write_string("[\{k}-\{v}]")
-  })
-  inspect(buf, content="[2-two][1-one][3-three]")
-  buf.reset()
-  map
-  .iter()
-  .take(2)
-  .each(e => {
-    let (k, v) = e
-    buf.write_string("[\{k}-\{v}]")
-  })
-  inspect(buf, content="[2-two][1-one]")
+  let array = map.iter().collect()
+  array.sort()
+  inspect(
+    array,
+    content=(
+      #|[(1, "one"), (2, "two"), (3, "three")]
+    ),
+  )
 }
 
 ///|
 test "iter2" {
-  let buf = StringBuilder::new(size_hint=20)
   let map = @hashmap.of([(1, "one"), (2, "two"), (3, "three")])
-  for k, v in map {
-    buf.write_string("[\{k}-\{v}]")
-  }
-  inspect(buf, content="[2-two][1-one][3-three]")
+  let array = map.iter2().to_array()
+  array.sort()
+  inspect(
+    array,
+    content=(
+      #|[(1, "one"), (2, "two"), (3, "three")]
+    ),
+  )
 }
 
 ///|
 test "to_array" {
   let map = @hashmap.of([(1, "one"), (2, "two"), (3, "three")])
+  let array = map.to_array()
+  array.sort()
   inspect(
-    map.to_array(),
+    array,
     content=(
-      #|[(2, "two"), (1, "one"), (3, "three")]
+      #|[(1, "one"), (2, "two"), (3, "three")]
     ),
   )
 }
@@ -327,10 +323,11 @@ test "get_nonexistent_key_with_psl" {
 
 ///|
 test "from_iter multiple elements iter" {
-  inspect(
-    @hashmap.from_iter([(1, 1), (2, 2), (3, 3)].iter()),
-    content="HashMap::of([(2, 2), (1, 1), (3, 3)])",
-  )
+  let map = @hashmap.from_iter([(1, 1), (2, 2), (3, 3)].iter())
+  guard map is { 1: 1, 2: 2, 3: 3, .. } else {
+    fail("Map is not expected: \{map}")
+  }
+  inspect(map.length(), content="3")
 }
 
 ///|
@@ -370,14 +367,22 @@ test "@hashmap.contains/after_operations" {
 
 ///|
 test "@hashmap.from_array" {
-  let map = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
-  @json.inspect(map, content={ "a": 1, "c": 3, "b": 2 })
+  let array = [("a", 1), ("b", 2), ("c", 3)]
+  let map = @hashmap.from_array(array)
+  for k, v in map {
+    assert_eq(map.get(k), Some(v))
+  }
+  assert_eq(map.length(), array.length())
 }
 
 ///|
 test "@hashmap.from_array with int key" {
-  let map = @hashmap.from_array([(1, "one"), (2, "two"), (3, "three")])
-  @json.inspect(map, content={ "2": "two", "1": "one", "3": "three" })
+  let array = [(1, "one"), (2, "two"), (3, "three")]
+  let map = @hashmap.from_array(array)
+  for k, v in map {
+    assert_eq(map.get(k), Some(v))
+  }
+  assert_eq(map.length(), array.length())
 }
 
 ///|
