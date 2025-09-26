@@ -65,6 +65,8 @@ pub typealias @builtin.Failure as Failure
 
 pub typealias @builtin.Hasher as Hasher
 
+pub typealias @moonbitlang/core/array.ImmutArray as ImmutArray
+
 pub typealias @builtin.InspectError as InspectError
 
 pub typealias @builtin.Iter as Iter

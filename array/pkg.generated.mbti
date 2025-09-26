@@ -12,6 +12,44 @@ fn[A, B, C] zip_with(Array[A], Array[B], (A, B) -> C raise?) -> Array[C] raise?
 // Errors
 
 // Types and methods
+type ImmutArray[T]
+fn[T] ImmutArray::all(Self[T], (T) -> Bool raise?) -> Bool raise?
+fn[T] ImmutArray::any(Self[T], (T) -> Bool raise?) -> Bool raise?
+#alias("_[_]")
+fn[T] ImmutArray::at(Self[T], Int) -> T
+fn[T : Compare] ImmutArray::binary_search(Self[T], T) -> Result[Int, Int]
+fn[T] ImmutArray::binary_search_by(Self[T], (T) -> Int raise?) -> Result[Int, Int] raise?
+fn[T : Eq] ImmutArray::contains(Self[T], T) -> Bool
+fn[T] ImmutArray::each(Self[T], (T) -> Unit raise?) -> Unit raise?
+fn[T] ImmutArray::eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?
+fn[T : Eq] ImmutArray::ends_with(Self[T], Self[T]) -> Bool
+fn[A, B] ImmutArray::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
+fn[A, B] ImmutArray::foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
+fn[T] ImmutArray::from_array(Array[T]) -> Self[T]
+fn[T] ImmutArray::from_iter(Iter[T]) -> Self[T]
+fn[T] ImmutArray::get(Self[T], Int) -> T?
+fn[T] ImmutArray::is_empty(Self[T]) -> Bool
+fn[T] ImmutArray::iter(Self[T]) -> Iter[T]
+fn[T] ImmutArray::iter2(Self[T]) -> Iter2[Int, T]
+fn ImmutArray::join(Self[String], StringView) -> String
+fn[T] ImmutArray::last(Self[T]) -> T?
+fn[T] ImmutArray::length(Self[T]) -> Int
+fn[T] ImmutArray::makei(Int, (Int) -> T raise?) -> Self[T] raise?
+fn[T, U] ImmutArray::map(Self[T], (T) -> U raise?) -> Self[U] raise?
+fn[T, U] ImmutArray::mapi(Self[T], (Int, T) -> U raise?) -> Self[U] raise?
+fn[T] ImmutArray::rev(Self[T]) -> Self[T]
+fn[T] ImmutArray::rev_each(Self[T], (T) -> Unit raise?) -> Unit raise?
+fn[T] ImmutArray::rev_eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?
+fn[A, B] ImmutArray::rev_fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
+fn[A, B] ImmutArray::rev_foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
+fn[T : Eq] ImmutArray::search(Self[T], T) -> Int?
+fn[T : Eq] ImmutArray::starts_with(Self[T], Self[T]) -> Bool
+#alias("_[_:_]")
+fn[T] ImmutArray::sub(Self[T], start? : Int, end? : Int) -> ArrayView[T]
+impl[T] Default for ImmutArray[T]
+impl[T : Show] Show for ImmutArray[T]
+impl[T : ToJson] ToJson for ImmutArray[T]
+
 fn[T] FixedArray::all(Self[T], (T) -> Bool raise?) -> Bool raise?
 fn[T] FixedArray::any(Self[T], (T) -> Bool raise?) -> Bool raise?
 fn FixedArray::blit_from_bytesview(Self[Byte], Int, BytesView) -> Unit
