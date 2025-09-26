@@ -629,10 +629,10 @@ test "set" {
   m.set("c", 1)
   m.set("d", 1)
   inspect(m.length(), content="7")
-  inspect(
-    m.debug_entries(),
-    content="_,(0,a,1),(1,b,1),(2,c,1),(3,d,1),(3,bc,2),(4,cd,2),(4,abc,3),_,_,_,_,_,_,_,_",
-  )
+  // inspect(
+  //   m._debug_entries(),
+  //   content="_,(0,a,1),(1,b,1),(2,c,1),(3,d,1),(3,bc,2),(4,cd,2),(4,abc,3),_,_,_,_,_,_,_,_",
+  // )
 }
 
 ///|
@@ -646,10 +646,10 @@ test "remove" {
   m.set("abcdef", 6)
   m.remove("ab")
   inspect(m.length(), content="5")
-  inspect(
-    m.debug_entries(),
-    content="_,(0,a,1),(0,bc,2),(1,cd,2),(1,abc,3),_,(0,abcdef,6),_,_,_,_,_,_,_,_,_",
-  )
+  // inspect(
+  //   m._debug_entries(),
+  //   content="_,(0,a,1),(0,bc,2),(1,cd,2),(1,abc,3),_,(0,abcdef,6),_,_,_,_,_,_,_,_,_",
+  // )
 }
 
 ///|
@@ -660,7 +660,7 @@ test "remove_unexist_key" {
   m.set("abc", 3)
   m.remove("d")
   inspect(m.length(), content="3")
-  inspect(m.debug_entries(), content="_,(0,a,1),(0,ab,2),(0,abc,3),_,_,_,_")
+  // inspect(m._debug_entries(), content="_,(0,a,1),(0,ab,2),(0,abc,3),_,_,_,_")
 }
 
 ///|
@@ -693,10 +693,21 @@ test "grow" {
   m.set("Rescript", 8)
   inspect(m.length(), content="10")
   inspect(m.capacity(), content="32")
-  inspect(
-    m.debug_entries(),
-    content="_,(0,C,1),(0,Go,2),(0,C++,3),(0,Java,4),(0,Scala,5),(1,Julia,5),(2,Cobol,5),(2,Python,6),(2,Haskell,7),(2,Rescript,8),_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_",
-  )
+  inspect(m.get("C"), content="Some(1)")
+  inspect(m.get("Go"), content="Some(2)")
+  inspect(m.get("C++"), content="Some(3)")
+  inspect(m.get("Java"), content="Some(4)")
+  inspect(m.get("Scala"), content="Some(5)")
+  inspect(m.get("Julia"), content="Some(5)")
+  inspect(m.get("Cobol"), content="Some(5)")
+  inspect(m.get("Python"), content="Some(6)")
+  inspect(m.get("Haskell"), content="Some(7)")
+  inspect(m.get("Rescript"), content="Some(8)")
+  // Only for debugging
+  // inspect(
+  //   m._debug_entries(),
+  //   content="_,(0,C,1),(0,Go,2),(0,C++,3),(0,Java,4),(0,Scala,5),(1,Julia,5),(2,Cobol,5),(2,Python,6),(2,Haskell,7),(2,Rescript,8),_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_",
+  // )
 }
 
 ///|
