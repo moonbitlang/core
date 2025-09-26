@@ -193,7 +193,7 @@ pub impl Hash for Byte with hash(self) {
 /// Example:
 ///
 /// ```moonbit
-///   let hasher = Hasher::new()
+///   let hasher = Hasher::new(seed=0)
 ///   hasher.combine_byte(b'\xFF')
 ///   inspect(hasher.finalize(), content="1955036104")
 /// ```

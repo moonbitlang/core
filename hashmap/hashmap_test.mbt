@@ -404,22 +404,12 @@ test "@hashmap.eq" {
 test "@hashmap.map" {
   let map = @hashmap.of([("a", 1), ("b", 2), ("c", 3)])
   let v = map.map((k, v) => k + v.to_string())
-  inspect(
-    v,
-    content=(
-      #|HashMap::of([("a", "a1"), ("c", "c3"), ("b", "b2")])
-    ),
-  )
+  verify_content(v, [("a", "a1"), ("b", "b2"), ("c", "c3")])
   map["d"] = 10
   map["e"] = 20
   map.remove("c")
   let v = map.map((k, v) => k + v.to_string())
-  inspect(
-    v,
-    content=(
-      #|HashMap::of([("e", "e20"), ("a", "a1"), ("b", "b2"), ("d", "d10")])
-    ),
-  )
+  verify_content(v, [("a", "a1"), ("b", "b2"), ("d", "d10"), ("e", "e20")])
   let v : @hashmap.HashMap[String, String] = @hashmap.new().map((k, v) => k + v)
   inspect(v, content="HashMap::of([])")
 }
@@ -428,22 +418,27 @@ test "@hashmap.map" {
 test "@hashmap.copy" {
   let map = @hashmap.of([("a", 1), ("b", 2), ("c", 3)])
   let copy = map.copy()
-  inspect(
-    copy,
-    content=(
-      #|HashMap::of([("a", 1), ("c", 3), ("b", 2)])
-    ),
-  )
+  verify_content(copy, [("a", 1), ("b", 2), ("c", 3)])
   map["d"] = 10
   map["e"] = 20
   map.remove("c")
   let copy = map.copy()
-  inspect(
-    copy,
-    content=(
-      #|HashMap::of([("e", 20), ("a", 1), ("b", 2), ("d", 10)])
-    ),
-  )
+  verify_content(copy, [("e", 20), ("a", 1), ("b", 2), ("d", 10)])
   let copy : @hashmap.HashMap[String, String] = @hashmap.new().copy()
   inspect(copy, content="HashMap::of([])")
+}
+
+///|
+fn[K : Hash + Eq + Show, V : Eq + Show] verify_content(
+  map : @hashmap.HashMap[K, V],
+  expected : Array[(K, V)],
+) -> Unit raise {
+  for entry in expected {
+    let (k, v) = entry
+    assert_true(
+      map.contains_kv(k, v),
+      msg="Key \{k} with value \{v} not found in map \{map}",
+    )
+  }
+  assert_eq(map.length(), expected.length())
 }
