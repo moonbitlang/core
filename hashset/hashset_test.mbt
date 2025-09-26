@@ -284,9 +284,12 @@ test "sub" {
 test "iter" {
   let array = @hashset.of(["a", "b", "c"]).iter().collect()
   array.sort()
-  inspect(array, content=(
-    #|["a", "b", "c"]
-  ))
+  inspect(
+    array,
+    content=(
+      #|["a", "b", "c"]
+    ),
+  )
 }
 
 ///|
