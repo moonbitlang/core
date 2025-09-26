@@ -42,7 +42,7 @@ You can use `remove()` to remove a key-value pair.
 test {
   let map = @hashmap.of([("a", 1), ("b", 2), ("c", 3)])
   map.remove("a") |> ignore
-  assert_eq(map.to_array(), [("c", 3), ("b", 2)])
+  assert_false(map.contains("a"))
 }
 ```
 

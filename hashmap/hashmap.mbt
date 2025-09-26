@@ -602,20 +602,72 @@ impl Show for MyString with output(self, logger) {
 }
 
 ///|
+fn[K : Hash + Eq, V : Eq] verify_content(
+  map : HashMap[K, V],
+  expected : Array[(K, V)],
+) -> Unit raise {
+  for entry in expected {
+    let (k, v) = entry
+    assert_true(map.contains_kv(k, v))
+  }
+  assert_eq(map.length(), expected.length())
+}
+
+///|
 test "arbitrary" {
   let samples : Array[HashMap[String, Int]] = @quickcheck.samples(20)
-  inspect(
-    samples[5:10],
-    content=(
-      #|[HashMap::of([]), HashMap::of([]), HashMap::of([("", 0)]), HashMap::of([("", 0)]), HashMap::of([("", 0)])]
-    ),
-  )
-  inspect(
-    samples[11:15],
-    content=(
-      #|[HashMap::of([("Q", 1), ("", 0), ("\u{1e}", 0)]), HashMap::of([("", 0)]), HashMap::of([("F:", 0), ("A&", 2), ("v\b", 0), ("", 0), ("#", 0)]), HashMap::of([("p(", -2), ("^\u{1e}", 3), ("2x", 1), ("", 3)])]
-    ),
-  )
+  let data = [
+    [],
+    [],
+    [],
+    [("", 0)],
+    [("", 0)],
+    [],
+    [],
+    [("", 0)],
+    [("", 0)],
+    [("", 0)],
+    [("}\u{11}e", -1), ("", 0), ("0f", -1), ("k", -2)],
+    [("Q", 1), ("", 0), ("\u{1e}", 0)],
+    [("", 0)],
+    [("F:", 0), ("A&", 2), ("v\b", 0), ("", 0), ("#", 0)],
+    [("p(", -2), ("^\u{1e}", 3), ("2x", 1), ("", 3)],
+    [("A", -3), ("", 0), ("/w", 0), ("lD", 0), ("jlF0", 3)],
+    [
+      ("zd", 2),
+      ("[z\r]j", 4),
+      ("\u{1d}r", -3),
+      ("", 0),
+      ("p=61s\u{14}", -7),
+      ("t|,7X4\"\u{14}", -10),
+      ("HeH\b\u{15}d", 1),
+      ("LC\u{19}", 1),
+      ("\u{0b}", 0),
+      ("\n", 0),
+      ("3", -9),
+      ("v", -1),
+    ],
+    [
+      ("", -1),
+      ("&\b", -4),
+      ("ob%>j\bD?xboR5", 0),
+      (";:B", -3),
+      ("`", 1),
+      ("OwQCP+@", -1),
+      ("O]k", -3),
+      ("\n^", -3),
+      ("U_-*\u{1c}x\u{18}", -11),
+      ("shU^\u{1d}hd8\u{1d}", 0),
+      ("!\u{1b}63p", 3),
+      ("q", 1),
+      ("R@", 4),
+    ],
+    [("", -4), ("v", -2), (")xh", 1), ("C\u{10}\u{0e}", -3), ("|", 0)],
+    [("", 1), ("b", -1)],
+  ]
+  for i in 0..<samples.length() {
+    verify_content(samples[i], data[i])
+  }
 }
 
 ///|

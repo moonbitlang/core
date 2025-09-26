@@ -361,7 +361,7 @@ test "UInt16::to_uint64" {
 
 ///|
 test "UInt16::hash_combine" {
-  let hasher = @builtin.Hasher::new()
+  let hasher = @builtin.Hasher::new(seed=0)
   let value : UInt16 = 42
   value.hash_combine(hasher)
   inspect(hasher.finalize(), content="1161967057")

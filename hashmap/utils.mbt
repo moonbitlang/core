@@ -160,10 +160,11 @@ pub fn[K : Hash + Eq, V] HashMap::from_iter(
 /// ```moonbit
 ///   let map = @hashmap.of([(1, "one"), (2, "two")])
 ///   let arr = map.to_array()
+///   arr.sort()
 ///   inspect(
 ///     arr, 
 ///     content=(
-///       #|[(2, "two"), (1, "one")]
+///       #|[(1, "one"), (2, "two")]
 ///     ),
 ///   )
 /// ```
@@ -269,9 +270,12 @@ pub fn[K, V] is_empty(self : HashMap[K, V]) -> Bool {
 ///
 /// ```moonbit
 ///   let map = @hashmap.of([(1, "one"), (2, "two")])
-///   let mut result = ""
-///   map.each((k, v) => { result = result + "\{k}:\{v}," })
-///   inspect(result, content="2:two,1:one,")
+///   let array = []
+///   map.each((k, v) => { array.push((k, v)) })
+///   array.sort()
+///   inspect(array, content=(
+///   #|[(1, "one"), (2, "two")]
+/// ))
 /// ```
 #locals(f)
 pub fn[K, V] each(
@@ -289,6 +293,8 @@ pub fn[K, V] each(
 /// Iterates over all key-value pairs in the map with their index, applying the
 /// given function to each element. The index starts from 0 and only counts
 /// non-empty entries.
+/// 
+/// Notice that the order of iteration is not guaranteed.
 ///
 /// Parameters:
 ///
@@ -298,14 +304,6 @@ pub fn[K, V] each(
 ///  * The key of the current entry
 ///  * The value of the current entry
 ///
-/// Example:
-///
-/// ```moonbit
-///   let map = @hashmap.of([("a", 1), ("b", 2), ("c", 3)])
-///   let mut result = 0
-///   map.eachi((i, k, _) => { if k == "b" { result = i } })
-///   // "b" is at index 1
-///   inspect(result, content="2")
 /// ```
 #locals(f)
 pub fn[K, V] eachi(
@@ -325,6 +323,8 @@ pub fn[K, V] eachi(
 
 ///|
 /// Provides string representation for hash maps.
+/// 
+/// Notice that the order of key-value pairs in the output string is not guaranteed
 ///
 /// Parameters:
 ///
@@ -335,12 +335,8 @@ pub fn[K, V] eachi(
 ///
 /// ```moonbit
 ///   let map = @hashmap.of([(1, "one"), (2, "two")])
-///   inspect(
-///     map, 
-///     content=(
-///       #|HashMap::of([(2, "two"), (1, "one")])
-///     ),
-/// )
+///   let array = map.to_array()
+///   assert_eq(map.to_string(), "HashMap::of(\{array})")
 /// ```
 pub impl[K : Show, V : Show] Show for HashMap[K, V] with output(self, logger) {
   logger.write_string("HashMap::of([")
