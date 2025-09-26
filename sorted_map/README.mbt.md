@@ -30,27 +30,6 @@ test {
 }
 ```
 
-### Reverse Key Ordering
-
-Use `@cmp.Reverse` to create a SortedMap with keys in descending order.
-
-```moonbit
-///|
-test {
-  // Map with descending order keys using Reverse wrapper
-  let map = @sorted_map.from_array([
-    (@cmp.Reverse(3), "three"),
-    (@cmp.Reverse(1), "one"),
-    (@cmp.Reverse(2), "two"),
-  ])
-
-  // Keys will be stored in descending order: 3, 2, 1
-  let keys = []
-  map.each(fn(k, _v) { keys.push(k) })
-  inspect(keys[0], content="Reverse(3)")
-}
-```
-
 ### Container Operations
 
 Add a key-value pair to the SortedMap in place.

@@ -7,5 +7,5 @@
     "moonbitlang/core/json",
     "moonbitlang/core/string"
   ],
-  "test-import": ["moonbitlang/core/array", "moonbitlang/core/cmp"]
+  "test-import": ["moonbitlang/core/array"]
 }
