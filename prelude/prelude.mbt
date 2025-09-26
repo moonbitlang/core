@@ -31,6 +31,9 @@ pub typealias @builtin.(
 )
 
 ///|
+pub typealias @array.ImmutArray
+
+///|
 pub typealias @set.Set
 
 ///|
