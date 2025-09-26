@@ -21,7 +21,10 @@ priv struct ParseContext {
 }
 
 ///|
-fn ParseContext::make(input : StringView, max_nesting_depth : Int) -> ParseContext {
+fn ParseContext::make(
+  input : StringView,
+  max_nesting_depth : Int,
+) -> ParseContext {
   {
     offset: 0,
     input,
