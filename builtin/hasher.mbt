@@ -68,9 +68,30 @@ struct Hasher {
 ///   h2.combine(x)
 ///   inspect(h1.finalize() != h2.finalize(), content="true") // Different seeds produce different hashes
 /// ```
-pub fn Hasher::new(seed? : Int = 0) -> Hasher {
+pub fn Hasher::new(seed? : Int = seed) -> Hasher {
   { acc: seed.reinterpret_as_uint() + GPRIME5 }
 }
+
+///|
+#cfg(not(target="js"))
+let seed : Int = 0
+
+///|
+#cfg(target="js")
+let seed : Int = random_seed()
+
+///|
+#cfg(target="js")
+extern "js" fn random_seed() -> Int =
+  #|() => {
+  #|  if (crypto?.getRandomValues) {
+  #|    const array = new Uint32Array(1);
+  #|    crypto.getRandomValues(array);
+  #|    return array[0] | 0; // Convert to signed 32
+  #|  } else {
+  #|    return Math.floor(Math.random() * 0x100000000) | 0; // Fallback to Math.random
+  #|  }
+  #|}
 
 ///|
 /// Combines a hashable value with the current state of the hasher. This is
