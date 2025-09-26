@@ -70,9 +70,12 @@ test "@hashset.iter" {
   let data = @hashset.of(["a", "b", "d", "e", "f"])
   let array = data.iter().collect()
   array.sort()
-  inspect(array, content=(
-    #|["a", "b", "d", "e", "f"]
-  ))
+  inspect(
+    array,
+    content=(
+      #|["a", "b", "d", "e", "f"]
+    ),
+  )
 }
 
 ///|

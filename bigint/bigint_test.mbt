@@ -1030,10 +1030,7 @@ test "@bigint.BigInt::hash" {
   // Test larger numbers
   let large = 123456789N
   inspect(Hasher::new(seed=0)..combine(large).finalize(), content="275171670")
-  inspect(
-    Hasher::new(seed=0)..combine(-large).finalize(),
-    content="-200902609",
-  )
+  inspect(Hasher::new(seed=0)..combine(-large).finalize(), content="-200902609")
 
   // Test very large numbers (multi-limb)
   let very_large = 12345678901234567890123456789N
