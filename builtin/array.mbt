@@ -1444,19 +1444,18 @@ pub fn[T] Array::extract_if(self : Array[T], f : (T) -> Bool) -> Array[T] {
 ///   let arr : Array[Int] = []
 ///   inspect(arr.chunks(3), content="[]")
 /// ```
-pub fn[T] Array::chunks(self : Array[T], size : Int) -> Array[Array[T]] {
+pub fn[T] Array::chunks(self : Array[T], size : Int) -> Array[ArrayView[T]] {
   guard size > 0
-  let chunks = []
-  let mut i = 0
-  while i < self.length() {
-    let chunk = Array::new(capacity=size)
-    for j = 0; j < size && i < self.length(); j = j + 1 {
-      chunk.push(self[i])
-      i = i + 1
-    }
-    chunks.push(chunk)
+  let len = self.length()
+  if len == 0 {
+    return []
   }
-  chunks
+  let num_chunks = (len + size - 1) / size
+  Array::makei(num_chunks, i => {
+    let start = i * size
+    let end = Int::min(start + size, len)
+    self[start:end]
+  })
 }
 
 ///|
@@ -1486,19 +1485,19 @@ pub fn[T] Array::chunks(self : Array[T], size : Int) -> Array[Array[T]] {
 pub fn[T] Array::chunk_by(
   self : Array[T],
   pred : (T, T) -> Bool raise?,
-) -> Array[Array[T]] raise? {
+) -> Array[ArrayView[T]] raise? {
   let chunks = []
-  let mut i = 0
-  while i < self.length() {
-    let chunk = []
-    chunk.push(self[i])
-    i = i + 1
-    while i < self.length() && pred(self[i - 1], self[i]) {
-      chunk.push(self[i])
-      i = i + 1
-    }
-    chunks.push(chunk)
+  if self.is_empty() {
+    return chunks
   }
+  let mut start = 0
+  for i in 1..<self.length() {
+    if !pred(self[i - 1], self[i]) {
+      chunks.push(self[start:i])
+      start = i
+    }
+  }
+  chunks.push(self[start:self.length()])
   chunks
 }
 
