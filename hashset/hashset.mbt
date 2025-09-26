@@ -65,7 +65,7 @@ pub fn[K : Hash + Eq] HashSet::of(arr : FixedArray[K]) -> HashSet[K] {
 ///   inspect(set.length(), content="1")
 /// ```
 pub fn[K : Hash + Eq] add(self : HashSet[K], key : K) -> Unit {
-  self.add_with_hash(key, key.hash())
+  self.add_with_hash(key, Hasher::new()..combine(key).finalize())
 }
 
 ///|
@@ -126,7 +126,7 @@ fn[K] set_entry(self : HashSet[K], entry : Entry[K], new_idx : Int) -> Unit {
 /// Check if the hash set contains a key.
 pub fn[K : Hash + Eq] contains(self : HashSet[K], key : K) -> Bool {
   // inline lookup to avoid unnecessary allocations
-  let hash = key.hash()
+  let hash = Hasher::new()..combine(key).finalize()
   for i = 0, idx = abs(hash) & self.capacity_mask {
     guard self.entries[idx] is Some(entry) else { break false }
     if entry.hash == hash && entry.key == key {
@@ -159,7 +159,7 @@ pub fn[K : Hash + Eq] contains(self : HashSet[K], key : K) -> Bool {
 ///   inspect(set.length(), content="1")
 /// ```
 pub fn[K : Hash + Eq] remove(self : HashSet[K], key : K) -> Unit {
-  let hash = key.hash()
+  let hash = Hasher::new()..combine(key).finalize()
   for i = 0, idx = abs(hash) & self.capacity_mask {
     guard self.entries[idx] is Some(entry) else { break }
     if entry.hash == hash && entry.key == key {

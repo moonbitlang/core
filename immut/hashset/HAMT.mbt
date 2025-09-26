@@ -382,7 +382,9 @@ pub fn[A : Eq + Hash] HashSet::of(arr : FixedArray[A]) -> HashSet[A] {
 
 ///|
 pub impl[A : Hash] Hash for HashSet[A] with hash_combine(self, hasher) {
-  hasher.combine(self.iter().fold(init=0, (x, y) => x ^ y.hash()))
+  hasher.combine(
+    self.iter().fold(init=0, (x, y) => x ^ Hasher::new()..combine(y).finalize()),
+  )
 }
 
 ///|
