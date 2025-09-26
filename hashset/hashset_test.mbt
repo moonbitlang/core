@@ -68,7 +68,7 @@ test "copy" {
 ///|
 test "to_json" {
   let set = @hashset.of([1, 2, 3])
-  @json.inspect(set, content=[3, 1, 2])
+  @json.inspect(set, content=[2, 1, 3])
 }
 
 ///|
@@ -122,7 +122,7 @@ test "iter" {
   let m = @hashset.of(["a", "b", "c"])
   let mut sum = ""
   m.each(k => sum += k)
-  inspect(sum, content="cab")
+  inspect(sum, content="acb")
 }
 
 ///|
@@ -134,7 +134,7 @@ test "iteri" {
     s += k
     sum += i
   })
-  inspect(s, content="231")
+  inspect(s, content="132")
   inspect(sum, content="3")
 }
 
@@ -269,10 +269,10 @@ test "iter" {
   let buf = StringBuilder::new(size_hint=20)
   let map = @hashset.of(["a", "b", "c"])
   map.iter().each(e => buf.write_string("[\{e}]"))
-  inspect(buf, content="[c][a][b]")
+  inspect(buf, content="[a][c][b]")
   buf.reset()
   map.iter().take(2).each(e => buf.write_string("[\{e}]"))
-  inspect(buf, content="[c][a]")
+  inspect(buf, content="[a][c]")
 }
 
 ///|
@@ -379,7 +379,7 @@ test "clear_and_reinsert" {
 test "from_iter multiple elements iter" {
   inspect(
     @hashset.from_iter([1, 2, 3].iter()),
-    content="@hashset.of([3, 1, 2])",
+    content="@hashset.of([2, 1, 3])",
   )
 }
 
@@ -399,11 +399,11 @@ test "hashset arbitrary" {
   let samples : Array[@hashset.HashSet[Int]] = @quickcheck.samples(20)
   inspect(
     samples[5:10],
-    content="[@hashset.of([]), @hashset.of([]), @hashset.of([0]), @hashset.of([0]), @hashset.of([0, 3, 1, 2])]",
+    content="[@hashset.of([]), @hashset.of([]), @hashset.of([0]), @hashset.of([0]), @hashset.of([0, 2, 1, 3])]",
   )
   inspect(
     samples[11:15],
-    content="[@hashset.of([0, -2, -1]), @hashset.of([0, 4, -5, -2, 8]), @hashset.of([2, 0, -1]), @hashset.of([0])]",
+    content="[@hashset.of([0, -2, -1]), @hashset.of([0, -5, -2, 4, 8]), @hashset.of([0, 2, -1]), @hashset.of([0])]",
   )
 }
 
@@ -427,5 +427,5 @@ test "@hashset.to_array/multiple" {
   set.add(2)
   set.add(3)
   set.add(4)
-  inspect(set.to_array(), content="[3, 4, 1, 2]")
+  inspect(set.to_array(), content="[2, 4, 1, 3]")
 }
