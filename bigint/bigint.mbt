@@ -221,7 +221,7 @@ test "can_convert_to_int64" {
 /// Example:
 ///
 /// ```moonbit
-///   let hasher = Hasher::new()
+///   let hasher = Hasher::new(seed=0)
 ///   let big = 12345N
 ///   hasher.combine(big)
 ///   inspect(hasher.finalize(), content="890579181")

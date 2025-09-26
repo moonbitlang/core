@@ -98,7 +98,7 @@ pub fn[K : Hash + Eq, V] HashMap::set(
   key : K,
   value : V,
 ) -> Unit {
-  self.set_with_hash(key, value, key.hash())
+  self.set_with_hash(key, value, Hasher::new()..combine(key).finalize())
 }
 
 ///|
@@ -178,7 +178,7 @@ fn[K, V] HashMap::push_away(
 /// ```
 pub fn[K : Hash + Eq, V] get(self : HashMap[K, V], key : K) -> V? {
   // self.get_with_hash(key, key.hash())
-  let hash = key.hash()
+  let hash = Hasher::new()..combine(key).finalize()
   for i = 0, idx = hash & self.capacity_mask {
     guard self.entries[idx] is Some(entry) else { break None }
     if entry.hash == hash && entry.key == key {
@@ -209,7 +209,7 @@ pub fn[K : Hash + Eq, V] get(self : HashMap[K, V], key : K) -> V? {
 /// ```
 #alias("_[_]")
 pub fn[K : Hash + Eq, V] HashMap::at(self : HashMap[K, V], key : K) -> V {
-  let hash = key.hash()
+  let hash = Hasher::new()..combine(key).finalize()
   for i = 0, idx = hash & self.capacity_mask {
     guard self.entries[idx] is Some(entry)
     if entry.hash == hash && entry.key == key {
@@ -248,7 +248,7 @@ pub fn[K : Hash + Eq, V] get_or_init(
   key : K,
   init : () -> V,
 ) -> V {
-  let hash = key.hash()
+  let hash = Hasher::new()..combine(key).finalize()
   let (idx, psl, new_value, push_away) = for psl = 0, idx = hash &
                                                self.capacity_mask {
     match self.entries[idx] {
@@ -308,7 +308,7 @@ pub fn[K : Hash + Eq, V] get_or_default(
   key : K,
   default : V,
 ) -> V {
-  let hash = key.hash()
+  let hash = Hasher::new()..combine(key).finalize()
   for i = 0, idx = hash & self.capacity_mask {
     guard self.entries[idx] is Some(entry) else { break default }
     if entry.hash == hash && entry.key == key {
@@ -339,7 +339,7 @@ pub fn[K : Hash + Eq, V] get_or_default(
 ///   inspect(map.contains("c"), content="false")
 /// ```
 pub fn[K : Hash + Eq, V] contains(self : HashMap[K, V], key : K) -> Bool {
-  let hash = key.hash()
+  let hash = Hasher::new()..combine(key).finalize()
   for i = 0, idx = hash & self.capacity_mask {
     guard self.entries[idx] is Some(entry) else { return false }
     if entry.hash == hash && entry.key == key {
@@ -379,7 +379,7 @@ pub fn[K : Hash + Eq, V : Eq] contains_kv(
   key : K,
   value : V,
 ) -> Bool {
-  let hash = key.hash()
+  let hash = Hasher::new()..combine(key).finalize()
   for i = 0, idx = hash & self.capacity_mask {
     guard self.entries[idx] is Some(entry) else { return false }
     if entry.hash == hash && entry.key == key && entry.value == value {
@@ -412,7 +412,7 @@ pub fn[K : Hash + Eq, V : Eq] contains_kv(
 ///   inspect(map.length(), content="1")
 /// ```
 pub fn[K : Hash + Eq, V] remove(self : HashMap[K, V], key : K) -> Unit {
-  self.remove_with_hash(key, key.hash())
+  self.remove_with_hash(key, Hasher::new()..combine(key).finalize())
 }
 
 ///|
@@ -602,20 +602,72 @@ impl Show for MyString with output(self, logger) {
 }
 
 ///|
+fn[K : Hash + Eq, V : Eq] verify_content(
+  map : HashMap[K, V],
+  expected : Array[(K, V)],
+) -> Unit raise {
+  for entry in expected {
+    let (k, v) = entry
+    assert_true(map.contains_kv(k, v))
+  }
+  assert_eq(map.length(), expected.length())
+}
+
+///|
 test "arbitrary" {
   let samples : Array[HashMap[String, Int]] = @quickcheck.samples(20)
-  inspect(
-    samples[5:10],
-    content=(
-      #|[HashMap::of([]), HashMap::of([]), HashMap::of([("", 0)]), HashMap::of([("", 0)]), HashMap::of([("", 0)])]
-    ),
-  )
-  inspect(
-    samples[11:15],
-    content=(
-      #|[HashMap::of([("Q", 1), ("", 0), ("\u{1e}", 0)]), HashMap::of([("", 0)]), HashMap::of([("F:", 0), ("A&", 2), ("v\b", 0), ("", 0), ("#", 0)]), HashMap::of([("p(", -2), ("^\u{1e}", 3), ("2x", 1), ("", 3)])]
-    ),
-  )
+  let data = [
+    [],
+    [],
+    [],
+    [("", 0)],
+    [("", 0)],
+    [],
+    [],
+    [("", 0)],
+    [("", 0)],
+    [("", 0)],
+    [("}\u{11}e", -1), ("", 0), ("0f", -1), ("k", -2)],
+    [("Q", 1), ("", 0), ("\u{1e}", 0)],
+    [("", 0)],
+    [("F:", 0), ("A&", 2), ("v\b", 0), ("", 0), ("#", 0)],
+    [("p(", -2), ("^\u{1e}", 3), ("2x", 1), ("", 3)],
+    [("A", -3), ("", 0), ("/w", 0), ("lD", 0), ("jlF0", 3)],
+    [
+      ("zd", 2),
+      ("[z\r]j", 4),
+      ("\u{1d}r", -3),
+      ("", 0),
+      ("p=61s\u{14}", -7),
+      ("t|,7X4\"\u{14}", -10),
+      ("HeH\b\u{15}d", 1),
+      ("LC\u{19}", 1),
+      ("\u{0b}", 0),
+      ("\n", 0),
+      ("3", -9),
+      ("v", -1),
+    ],
+    [
+      ("", -1),
+      ("&\b", -4),
+      ("ob%>j\bD?xboR5", 0),
+      (";:B", -3),
+      ("`", 1),
+      ("OwQCP+@", -1),
+      ("O]k", -3),
+      ("\n^", -3),
+      ("U_-*\u{1c}x\u{18}", -11),
+      ("shU^\u{1d}hd8\u{1d}", 0),
+      ("!\u{1b}63p", 3),
+      ("q", 1),
+      ("R@", 4),
+    ],
+    [("", -4), ("v", -2), (")xh", 1), ("C\u{10}\u{0e}", -3), ("|", 0)],
+    [("", 1), ("b", -1)],
+  ]
+  for i in 0..<samples.length() {
+    verify_content(samples[i], data[i])
+  }
 }
 
 ///|
@@ -629,10 +681,10 @@ test "set" {
   m.set("c", 1)
   m.set("d", 1)
   inspect(m.length(), content="7")
-  inspect(
-    m.debug_entries(),
-    content="_,(0,a,1),(1,b,1),(2,c,1),(3,d,1),(3,bc,2),(4,cd,2),(4,abc,3),_,_,_,_,_,_,_,_",
-  )
+  // inspect(
+  //   m._debug_entries(),
+  //   content="_,(0,a,1),(1,b,1),(2,c,1),(3,d,1),(3,bc,2),(4,cd,2),(4,abc,3),_,_,_,_,_,_,_,_",
+  // )
 }
 
 ///|
@@ -646,10 +698,10 @@ test "remove" {
   m.set("abcdef", 6)
   m.remove("ab")
   inspect(m.length(), content="5")
-  inspect(
-    m.debug_entries(),
-    content="_,(0,a,1),(0,bc,2),(1,cd,2),(1,abc,3),_,(0,abcdef,6),_,_,_,_,_,_,_,_,_",
-  )
+  // inspect(
+  //   m._debug_entries(),
+  //   content="_,(0,a,1),(0,bc,2),(1,cd,2),(1,abc,3),_,(0,abcdef,6),_,_,_,_,_,_,_,_,_",
+  // )
 }
 
 ///|
@@ -660,7 +712,7 @@ test "remove_unexist_key" {
   m.set("abc", 3)
   m.remove("d")
   inspect(m.length(), content="3")
-  inspect(m.debug_entries(), content="_,(0,a,1),(0,ab,2),(0,abc,3),_,_,_,_")
+  // inspect(m._debug_entries(), content="_,(0,a,1),(0,ab,2),(0,abc,3),_,_,_,_")
 }
 
 ///|
@@ -693,10 +745,21 @@ test "grow" {
   m.set("Rescript", 8)
   inspect(m.length(), content="10")
   inspect(m.capacity(), content="32")
-  inspect(
-    m.debug_entries(),
-    content="_,(0,C,1),(0,Go,2),(0,C++,3),(0,Java,4),(0,Scala,5),(1,Julia,5),(2,Cobol,5),(2,Python,6),(2,Haskell,7),(2,Rescript,8),_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_",
-  )
+  inspect(m.get("C"), content="Some(1)")
+  inspect(m.get("Go"), content="Some(2)")
+  inspect(m.get("C++"), content="Some(3)")
+  inspect(m.get("Java"), content="Some(4)")
+  inspect(m.get("Scala"), content="Some(5)")
+  inspect(m.get("Julia"), content="Some(5)")
+  inspect(m.get("Cobol"), content="Some(5)")
+  inspect(m.get("Python"), content="Some(6)")
+  inspect(m.get("Haskell"), content="Some(7)")
+  inspect(m.get("Rescript"), content="Some(8)")
+  // Only for debugging
+  // inspect(
+  //   m._debug_entries(),
+  //   content="_,(0,C,1),(0,Go,2),(0,C++,3),(0,Java,4),(0,Scala,5),(1,Julia,5),(2,Cobol,5),(2,Python,6),(2,Haskell,7),(2,Rescript,8),_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_",
+  // )
 }
 
 ///|

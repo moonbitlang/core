@@ -67,8 +67,14 @@ test "copy" {
 
 ///|
 test "to_json" {
+  let data = [1, 2, 3]
   let set = @hashset.of([1, 2, 3])
-  @json.inspect(set, content=[3, 1, 2])
+  let json = set.to_json()
+  guard json is Array(array) else { fail("Expected JSON array") }
+  for item in data {
+    assert_true(array.contains(item.to_json()))
+  }
+  assert_eq(array.length(), 3)
 }
 
 ///|
@@ -119,22 +125,32 @@ test "is_empty" {
 
 ///|
 test "iter" {
-  let m = @hashset.of(["a", "b", "c"])
-  let mut sum = ""
-  m.each(k => sum += k)
-  inspect(sum, content="cab")
+  let m = @hashset.of(["a", "b", "c"]).iter().collect()
+  m.sort()
+  inspect(
+    m,
+    content=(
+      #|["a", "b", "c"]
+    ),
+  )
 }
 
 ///|
 test "iteri" {
   let m = @hashset.of(["1", "2", "3"])
-  let mut s = ""
+  let s = []
   let mut sum = 0
   m.eachi((i, k) => {
-    s += k
     sum += i
+    s.push(k)
   })
-  inspect(s, content="231")
+  s.sort()
+  inspect(
+    s,
+    content=(
+      #|["1", "2", "3"]
+    ),
+  )
   inspect(sum, content="3")
 }
 
@@ -266,13 +282,14 @@ test "sub" {
 
 ///|
 test "iter" {
-  let buf = StringBuilder::new(size_hint=20)
-  let map = @hashset.of(["a", "b", "c"])
-  map.iter().each(e => buf.write_string("[\{e}]"))
-  inspect(buf, content="[c][a][b]")
-  buf.reset()
-  map.iter().take(2).each(e => buf.write_string("[\{e}]"))
-  inspect(buf, content="[c][a]")
+  let array = @hashset.of(["a", "b", "c"]).iter().collect()
+  array.sort()
+  inspect(
+    array,
+    content=(
+      #|["a", "b", "c"]
+    ),
+  )
 }
 
 ///|
@@ -377,10 +394,9 @@ test "clear_and_reinsert" {
 
 ///|
 test "from_iter multiple elements iter" {
-  inspect(
-    @hashset.from_iter([1, 2, 3].iter()),
-    content="@hashset.of([3, 1, 2])",
-  )
+  let array = @hashset.from_iter([1, 2, 3].iter()).to_array()
+  array.sort()
+  inspect(array, content="[1, 2, 3]")
 }
 
 ///|
@@ -397,14 +413,31 @@ test "from_iter empty iter" {
 ///|
 test "hashset arbitrary" {
   let samples : Array[@hashset.HashSet[Int]] = @quickcheck.samples(20)
-  inspect(
-    samples[5:10],
-    content="[@hashset.of([]), @hashset.of([]), @hashset.of([0]), @hashset.of([0]), @hashset.of([0, 3, 1, 2])]",
-  )
-  inspect(
-    samples[11:15],
-    content="[@hashset.of([0, -2, -1]), @hashset.of([0, 4, -5, -2, 8]), @hashset.of([2, 0, -1]), @hashset.of([0])]",
-  )
+  let cases = [
+    @hashset.of([]),
+    @hashset.of([]),
+    @hashset.of([]),
+    @hashset.of([0]),
+    @hashset.of([0]),
+    @hashset.of([]),
+    @hashset.of([]),
+    @hashset.of([0]),
+    @hashset.of([0]),
+    @hashset.of([0, 3, 1, 2]),
+    @hashset.of([0, 1, -2]),
+    @hashset.of([-2, 0, -1]),
+    @hashset.of([-5, 0, 8, 4, -2]),
+    @hashset.of([0, 2, -1]),
+    @hashset.of([0]),
+    @hashset.of([]),
+    @hashset.of([-2, 0, -3, -1]),
+    @hashset.of([-1, 0, 3, 1, -6, 2]),
+    @hashset.of([0]),
+    @hashset.of([-5, -1, 6, 0, 2, -2]),
+  ]
+  for i = 0; i < 20; i = i + 1 {
+    assert_true(samples[i].symmetric_difference(cases[i]).is_empty())
+  }
 }
 
 ///|
@@ -427,5 +460,5 @@ test "@hashset.to_array/multiple" {
   set.add(2)
   set.add(3)
   set.add(4)
-  inspect(set.to_array(), content="[3, 4, 1, 2]")
+  inspect(set.to_array()..sort().to_string(), content="[1, 2, 3, 4]")
 }
