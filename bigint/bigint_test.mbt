@@ -1015,38 +1015,46 @@ test "compare_int64" {
 ///|
 test "@bigint.BigInt::hash" {
   // Test zero
-  inspect(0N.hash(), content="-813420232")
+  inspect(Hasher::new(seed=0)..combine(0N).finalize(), content="-813420232")
   assert_eq(0N.hash(), (-0N).hash())
 
   // Positive and negative of same magnitude should have different hashes
   assert_not_eq(1N.hash(), (-1N).hash())
 
   // Test small positive numbers
-  inspect(42N.hash(), content="2103260413")
+  inspect(Hasher::new(seed=0)..combine(42N).finalize(), content="2103260413")
 
   // Test small negative numbers
-  inspect((-42N).hash(), content="-504604139")
+  inspect(Hasher::new(seed=0)..combine(-42N).finalize(), content="-504604139")
 
   // Test larger numbers
   let large = 123456789N
-  assert_not_eq(large.hash(), (-large).hash())
+  inspect(Hasher::new(seed=0)..combine(large).finalize(), content="275171670")
+  inspect(
+    Hasher::new(seed=0)..combine(-large).finalize(),
+    content="-200902609",
+  )
 
   // Test very large numbers (multi-limb)
   let very_large = 12345678901234567890123456789N
-  inspect(very_large.hash(), content="2115080653")
-  inspect((-very_large).hash(), content="-1781872667")
-  assert_not_eq(very_large.hash(), (-very_large).hash())
+  inspect(
+    Hasher::new(seed=0)..combine(very_large).finalize(),
+    content="2115080653",
+  )
+  inspect(
+    Hasher::new(seed=0)..combine(-very_large).finalize(),
+    content="-1781872667",
+  )
 
   // Test that equal BigInts have equal hashes
   let a = 987654321098765432N
   let b = @bigint.BigInt::from_string("00987654321098765432")
-  inspect(a.hash(), content="-1950963429")
-  assert_eq(a.hash(), b.hash())
+  inspect(Hasher::new(seed=0)..combine(a).finalize(), content="-1950963429")
+  inspect(Hasher::new(seed=0)..combine(b).finalize(), content="-1950963429")
 
   // Test that different BigInts have different hashes (usually)
   let c = a + 1N
-  inspect(c.hash(), content="-959383658")
-  assert_not_eq(a.hash(), c.hash())
+  inspect(Hasher::new(seed=0)..combine(c).finalize(), content="-959383658")
 }
 
 ///|

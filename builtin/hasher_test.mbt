@@ -15,7 +15,7 @@
 ///|
 test "combine int" {
   let hash = v => {
-    let hasher = Hasher::new()
+    let hasher = Hasher::new(seed=0)
     hasher.combine_int(v)
     hasher.finalize()
   }
@@ -32,7 +32,7 @@ test "combine int" {
 ///|
 test "combine char" {
   let hash = v => {
-    let hasher = Hasher::new()
+    let hasher = Hasher::new(seed=0)
     hasher.combine_char(v)
     hasher.finalize()
   }
@@ -42,7 +42,7 @@ test "combine char" {
 ///|
 test "combine int64" {
   let hash = v => {
-    let hasher = Hasher::new()
+    let hasher = Hasher::new(seed=0)
     hasher.combine_int64(v)
     hasher.finalize()
   }
@@ -59,7 +59,7 @@ test "combine int64" {
 ///|
 test "combine uint" {
   let hash = v => {
-    let hasher = Hasher::new()
+    let hasher = Hasher::new(seed=0)
     hasher.combine_uint(v)
     hasher.finalize()
   }
@@ -75,7 +75,7 @@ test "combine uint" {
 ///|
 test "combine uint64" {
   let hash = v => {
-    let hasher = Hasher::new()
+    let hasher = Hasher::new(seed=0)
     hasher.combine_uint64(v)
     hasher.finalize()
   }
@@ -91,7 +91,7 @@ test "combine uint64" {
 ///|
 test "combine double" {
   let hash = v => {
-    let hasher = Hasher::new()
+    let hasher = Hasher::new(seed=0)
     hasher.combine_double(v)
     hasher.finalize()
   }
@@ -106,7 +106,7 @@ test "combine double" {
 ///|
 test "combine float" {
   let hash = (v : Float) => {
-    let hasher = Hasher::new()
+    let hasher = Hasher::new(seed=0)
     hasher.combine_float(v)
     hasher.finalize()
   }
@@ -121,7 +121,7 @@ test "combine float" {
 ///|
 test "combine string" {
   let hash = v => {
-    let hasher = Hasher::new()
+    let hasher = Hasher::new(seed=0)
     hasher.combine_string(v)
     hasher.finalize()
   }
@@ -141,7 +141,7 @@ test "combine string" {
 ///|
 test "combine bytes" {
   let hash = v => {
-    let hasher = Hasher::new()
+    let hasher = Hasher::new(seed=0)
     hasher.combine_bytes(v)
     hasher.finalize()
   }
@@ -165,7 +165,7 @@ test "combine bytes" {
 ///|
 test "combine byte" {
   let hash = v => {
-    let hasher = Hasher::new()
+    let hasher = Hasher::new(seed=0)
     hasher.combine_byte(v)
     hasher.finalize()
   }
@@ -179,7 +179,7 @@ test "combine byte" {
 
 ///|
 test "combine all" {
-  let hasher = Hasher::new()
+  let hasher = Hasher::new(seed=0)
   hasher
   ..combine_int(1)
   ..combine_int64(2147483648)
@@ -194,10 +194,10 @@ test "combine all" {
 
 ///|
 test "combine_unit" {
-  let hasher = @builtin.Hasher::new()
+  let hasher = @builtin.Hasher::new(seed=0)
   hasher.combine_unit()
   let hash = hasher.finalize()
-  let hasher2 = @builtin.Hasher::new()
+  let hasher2 = @builtin.Hasher::new(seed=0)
   hasher2.combine_int(0)
   let hash2 = hasher2.finalize()
   inspect(hash == hash2, content="true")
@@ -205,17 +205,17 @@ test "combine_unit" {
 
 ///|
 test "combine_bool" {
-  let hasher = @builtin.Hasher::new()
+  let hasher = @builtin.Hasher::new(seed=0)
   hasher.combine_bool(true)
   let hash1 = hasher.finalize()
-  let hasher2 = @builtin.Hasher::new()
+  let hasher2 = @builtin.Hasher::new(seed=0)
   hasher2.combine_int(1)
   let hash2 = hasher2.finalize()
   assert_eq(hash1, hash2)
-  let hasher3 = @builtin.Hasher::new()
+  let hasher3 = @builtin.Hasher::new(seed=0)
   hasher3.combine_bool(false)
   let hash3 = hasher3.finalize()
-  let hasher4 = @builtin.Hasher::new()
+  let hasher4 = @builtin.Hasher::new(seed=0)
   hasher4.combine_int(0)
   let hash4 = hasher4.finalize()
   assert_eq(hash3, hash4)
@@ -224,7 +224,7 @@ test "combine_bool" {
 ///|
 test "Result::hash_combine Ok case" {
   // Test the Ok case
-  let hasher = Hasher::new()
+  let hasher = Hasher::new(seed=0)
   let ok_result : Result[Int, String] = Ok(42)
   hasher.combine(ok_result)
   inspect(hasher.finalize(), content="-1948635851")
@@ -232,7 +232,7 @@ test "Result::hash_combine Ok case" {
 
 ///|
 test "Result::hash_combine Err case" {
-  let hasher = Hasher::new()
+  let hasher = Hasher::new(seed=0)
   let err_result : Result[Int, String] = Err("error")
   hasher.combine(err_result)
   inspect(hasher.finalize(), content="1953766574")
@@ -240,11 +240,11 @@ test "Result::hash_combine Err case" {
 
 ///|
 test "option hash" {
-  let hasher = @builtin.Hasher::new()
+  let hasher = @builtin.Hasher::new(seed=0)
   let some_val : Int? = Some(42)
   hasher.combine(some_val)
   inspect(hasher.finalize(), content="2103260413")
-  let hasher2 = @builtin.Hasher::new()
+  let hasher2 = @builtin.Hasher::new(seed=0)
   let none_val : Int? = None
   hasher2.combine(none_val)
   inspect(hasher2.finalize(), content="148298089")
@@ -252,7 +252,7 @@ test "option hash" {
 
 ///|
 test "UInt64::hash_combine test" {
-  let hasher = @builtin.Hasher::new()
+  let hasher = @builtin.Hasher::new(seed=0)
   let value = 42UL
   @builtin.Hash::hash_combine(value, hasher)
   inspect(hasher.finalize(), content="-1962516083")
@@ -260,7 +260,7 @@ test "UInt64::hash_combine test" {
 
 ///|
 test "hash_combine for UInt" {
-  let hasher = Hasher::new()
+  let hasher = Hasher::new(seed=0)
   let value : UInt = 42U
   Hash::hash_combine(value, hasher)
   inspect(hasher.finalize(), content="1161967057")
