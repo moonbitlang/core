@@ -33,7 +33,7 @@ test "show error" {
 }
 
 ///|
-/// This could be mimiced using defer in swift
+/// This could be mimicked using defer in swift
 /// ```swift
 /// func protect<A, E: Error>(finally: () -> Void, work: () throws -> A) rethrows -> A {
 ///   do {

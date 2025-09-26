@@ -717,7 +717,7 @@ test "HAMT::each" {
 }
 
 ///|
-test "arbitary" {
+test "arbitrary" {
   let m : Array[@hashmap.HashMap[Int, Int]] = @quickcheck.samples(10)
   inspect(m.length(), content="10")
 }

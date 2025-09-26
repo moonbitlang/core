@@ -323,7 +323,7 @@ pub fn[K : Compare, V] range(
 // AVL tree operations
 
 ///|
-fn[K : Compare, V] replace_root_with_min(
+fn[K, V] replace_root_with_min(
   root : Node[K, V],
   node : Node[K, V],
 ) -> Node[K, V]? {

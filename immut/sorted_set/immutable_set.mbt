@@ -76,7 +76,7 @@ pub fn[A] to_array(self : SortedSet[A]) -> Array[A] {
 /// ```mbt
 ///   assert_eq(@sorted_set.of([3, 4, 5]).remove_min(), @sorted_set.of([4, 5]))
 /// ```
-pub fn[A : Compare] remove_min(self : SortedSet[A]) -> SortedSet[A] {
+pub fn[A] remove_min(self : SortedSet[A]) -> SortedSet[A] {
   match self {
     Empty => abort("remove_min: empty ImmutableSet")
     Node(left~, right~, value~, ..) =>
@@ -165,7 +165,7 @@ pub fn[A : Compare] remove(self : SortedSet[A], value : A) -> SortedSet[A] {
 /// ```mbt
 ///   assert_eq(@sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).min(), 1)
 /// ```
-pub fn[A : Compare] min(self : SortedSet[A]) -> A {
+pub fn[A] min(self : SortedSet[A]) -> A {
   match self {
     Empty => abort("min: there are no values in sorted_set.")
     Node(left~, value~, ..) => if left is Empty { value } else { left.min() }
@@ -175,7 +175,7 @@ pub fn[A : Compare] min(self : SortedSet[A]) -> A {
 ///|
 /// Returns the smallest value in the sorted_set.
 /// But returns None when the value does not exist.
-pub fn[A : Compare] min_option(self : SortedSet[A]) -> A? {
+pub fn[A] min_option(self : SortedSet[A]) -> A? {
   match self {
     Empty => None
     Node(left~, value~, ..) =>
@@ -196,7 +196,7 @@ pub fn[A : Compare] min_option(self : SortedSet[A]) -> A? {
 /// ```mbt
 ///   assert_eq(@sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).max(), 9)
 /// ```
-pub fn[A : Compare] max(self : SortedSet[A]) -> A {
+pub fn[A] max(self : SortedSet[A]) -> A {
   match self {
     Empty => abort("max: there are no values in ImmutableSet.")
     Node(right~, value~, ..) => if right is Empty { value } else { right.max() }
@@ -206,7 +206,7 @@ pub fn[A : Compare] max(self : SortedSet[A]) -> A {
 ///|
 /// Returns the largest value in the ImmutableSet.
 /// But returns None when the value does not exist.
-pub fn[A : Compare] max_option(self : SortedSet[A]) -> A? {
+pub fn[A] max_option(self : SortedSet[A]) -> A? {
   match self {
     Empty => None
     Node(right~, value~, ..) =>
@@ -483,7 +483,7 @@ pub fn[A] each(self : SortedSet[A], f : (A) -> Unit raise?) -> Unit raise? {
 /// ```mbt
 ///   assert_eq(@sorted_set.of([1, 2, 3, 4, 5]).fold(init=0, (acc, x) => { acc + x }), 15)
 /// ```
-pub fn[A : Compare, B] fold(
+pub fn[A, B] fold(
   self : SortedSet[A],
   init~ : B,
   f : (B, A) -> B raise?,
@@ -503,7 +503,7 @@ pub fn[A : Compare, B] fold(
 /// ```mbt
 ///   assert_eq(@sorted_set.of([1, 2, 3]).map((x) => { x * 2}), @sorted_set.of([2, 4, 6]))
 /// ```
-pub fn[A : Compare, B : Compare] map(
+pub fn[A, B : Compare] map(
   self : SortedSet[A],
   f : (A) -> B raise?,
 ) -> SortedSet[B] raise? {
@@ -522,10 +522,7 @@ pub fn[A : Compare, B : Compare] map(
 /// ```mbt
 ///   assert_eq(@sorted_set.of([2, 4, 6]).all((v) => { v % 2 == 0}), true)
 /// ```
-pub fn[A : Compare] all(
-  self : SortedSet[A],
-  f : (A) -> Bool raise?,
-) -> Bool raise? {
+pub fn[A] all(self : SortedSet[A], f : (A) -> Bool raise?) -> Bool raise? {
   match self {
     Empty => true
     Node(left~, value~, right~, ..) => f(value) && left.all(f) && right.all(f)
@@ -540,10 +537,7 @@ pub fn[A : Compare] all(
 /// ```mbt
 ///   assert_eq(@sorted_set.of([1, 4, 3]).any((v) => { v % 2 == 0}), true)
 /// ```
-pub fn[A : Compare] any(
-  self : SortedSet[A],
-  f : (A) -> Bool raise?,
-) -> Bool raise? {
+pub fn[A] any(self : SortedSet[A], f : (A) -> Bool raise?) -> Bool raise? {
   match self {
     Empty => false
     Node(left~, value~, right~, ..) => f(value) || left.any(f) || right.any(f)
@@ -558,7 +552,7 @@ pub fn[A : Compare] any(
 /// ```mbt
 ///   assert_eq(@sorted_set.of([1, 2, 3, 4, 5, 6]).filter((v) => { v % 2 == 0}), @sorted_set.of([2, 4, 6]))
 /// ```
-pub fn[A : Compare] filter(
+pub fn[A] filter(
   self : SortedSet[A],
   f : (A) -> Bool raise?,
 ) -> SortedSet[A] raise? {
@@ -742,7 +736,7 @@ fn[A] balance(
 }
 
 ///|
-fn[A : Compare] add_min_value(self : SortedSet[A], value : A) -> SortedSet[A] {
+fn[A] add_min_value(self : SortedSet[A], value : A) -> SortedSet[A] {
   match self {
     Empty => singleton(value)
     Node(left~, value=node_value, right~, ..) =>
@@ -751,7 +745,7 @@ fn[A : Compare] add_min_value(self : SortedSet[A], value : A) -> SortedSet[A] {
 }
 
 ///|
-fn[A : Compare] add_max_value(self : SortedSet[A], value : A) -> SortedSet[A] {
+fn[A] add_max_value(self : SortedSet[A], value : A) -> SortedSet[A] {
   match self {
     Empty => singleton(value)
     Node(left~, value=node_value, right~, ..) =>
@@ -761,7 +755,7 @@ fn[A : Compare] add_max_value(self : SortedSet[A], value : A) -> SortedSet[A] {
 
 ///|
 /// Same as create and balance, but no assumptions are made on the relative heights of left and right.
-fn[A : Compare] join(
+fn[A] join(
   left : SortedSet[A],
   value : A,
   right : SortedSet[A],
@@ -800,10 +794,7 @@ fn[A : Compare] try_join(
 ///|
 /// Merge two ImmutableSet[T] into one.
 /// All values of left must precede the values of r.
-fn[A : Compare] merge(
-  self : SortedSet[A],
-  other : SortedSet[A],
-) -> SortedSet[A] {
+fn[A] merge(self : SortedSet[A], other : SortedSet[A]) -> SortedSet[A] {
   match (self, other) {
     (Empty, _) => other
     (_, Empty) => self
@@ -813,10 +804,7 @@ fn[A : Compare] merge(
 
 ///|
 /// Same as merge, but no assumption on the heights of self and other.
-fn[A : Compare] concat(
-  self : SortedSet[A],
-  other : SortedSet[A],
-) -> SortedSet[A] {
+fn[A] concat(self : SortedSet[A], other : SortedSet[A]) -> SortedSet[A] {
   match (self, other) {
     (Empty, _) => other
     (_, Empty) => self

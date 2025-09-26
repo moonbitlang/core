@@ -89,7 +89,7 @@ After submitting your pull request, request a review from the project maintainer
 - Testing guidelines
 
   We encourage you to use `inspect` over `assert` in tests, as `inspect` provides more information about the values being tested and can
-  be updated easilly. For testing in the loop, you may use `assert_` since snapshot testing does not work well in the loop.
+  be updated easily. For testing in the loop, you may use `assert_` since snapshot testing does not work well in the loop.
 
 - New APIs with real meat
 
