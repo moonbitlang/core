@@ -759,7 +759,7 @@ test "Float::until negative step" {
 // test "group_by with empty input" {
 //   let iter : Iter[Int] = Iter::empty()
 //   let grouped = iter.group_by((x) => { x })
-//   assert_eq(grouped.size(), 0)
+//   assert_eq(grouped.length(), 0)
 // }
 
 ///|

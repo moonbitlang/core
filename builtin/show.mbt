@@ -62,39 +62,22 @@ pub impl Show for UInt16 with output(self, logger) {
 }
 
 ///|
-fn to_hex_digit(i : Int) -> Char {
-  if i < 10 {
-    (i + '0').unsafe_to_char()
-  } else {
-    (i + 'a' - 10).unsafe_to_char()
+pub fn Byte::to_hex(b : Byte) -> String {
+  fn to_hex_digit(i : Byte) -> Char {
+    if i < 10 {
+      (i + '0').to_char()
+    } else {
+      (i + 'a' - 10).to_char()
+    }
   }
+
+  [to_hex_digit(b / 16), to_hex_digit(b % 16)]
 }
 
 ///|
 test "to_hex_digit" {
-  for i in 0..<10 {
-    guard to_hex_digit(i) == ('0'.to_int() + i).unsafe_to_char() else {
-      fail("to_hex_digit(\{i}) does not match")
-    }
-  }
-  for i in 10..<16 {
-    guard to_hex_digit(i) == ('a'.to_int() + (i - 10)).unsafe_to_char() else {
-      fail("to_hex_digit(\{i}) does not match")
-    }
-  }
-}
-
-///|
-pub impl Show for Bytes with output(self, logger) {
-  logger.write_string("b\"")
-  for b in self {
-    let byte = b.to_int()
-    logger
-    ..write_string("\\x")
-    ..write_char(to_hex_digit(byte / 16))
-    ..write_char(to_hex_digit(byte % 16))
-  }
-  logger.write_string("\"")
+  inspect(Byte::to_hex(b'\xee'), content="ee")
+  inspect(Byte::to_hex(b'\xf3'), content="f3")
 }
 
 ///|
@@ -148,11 +131,11 @@ pub impl Show for String with output(self, logger) {
       }
       code =>
         if code < ' ' {
+          // has to be ascii  
           flush_segment(seg, i)
           logger
           ..write_string("\\u{")
-          ..write_char(to_hex_digit(code / 16))
-          ..write_char(to_hex_digit(code % 16))
+          ..write_string(code.to_byte().to_hex())
           ..write_char('}')
           continue i + 1, i + 1
         } else {

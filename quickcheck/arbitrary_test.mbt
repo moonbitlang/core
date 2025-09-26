@@ -98,7 +98,7 @@ test "arbitrary gen bytes" {
   inspect(
     bytes,
     content=(
-      #|b"\xec\xa9\x61\xbc\x51\x2e\x20\x8b"
+      #|b"\xec\xa9a\xbcQ. \x8b"
     ),
   )
 }

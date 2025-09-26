@@ -47,7 +47,8 @@ pub fn[K : Compare, V] contains(self : SortedMap[K, V], key : K) -> Bool {
 
 ///|
 /// Get the number of key-value pairs in the map.
-pub fn[K, V] size(self : SortedMap[K, V]) -> Int {
+#alias(size, deprecated)
+pub fn[K, V] length(self : SortedMap[K, V]) -> Int {
   match self {
     Empty => 0
     Tree(_) as t => t.size
@@ -56,7 +57,7 @@ pub fn[K, V] size(self : SortedMap[K, V]) -> Int {
 
 ///|
 pub fn[K, V] is_empty(self : SortedMap[K, V]) -> Bool {
-  self.size() == 0
+  self.length() == 0
 }
 
 ///|
@@ -66,7 +67,7 @@ fn[K, V] make_tree(
   l : SortedMap[K, V],
   r : SortedMap[K, V],
 ) -> SortedMap[K, V] {
-  let size = l.size() + r.size() + 1
+  let size = l.length() + r.length() + 1
   Tree(key, value~, size~, l, r)
 }
 
@@ -130,8 +131,8 @@ pub fn[K, V] eachi(self : SortedMap[K, V], f : (Int, K, V) -> Unit) -> Unit {
       Empty => ()
       Tree(k, value~, l, r, ..) => {
         do_eachi(l, f, i)
-        f(l.size() + i, k, value)
-        do_eachi(r, f, l.size() + i + 1)
+        f(l.length() + i, k, value)
+        do_eachi(r, f, l.length() + i + 1)
       }
     }
   }

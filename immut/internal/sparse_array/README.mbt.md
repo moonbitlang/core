@@ -11,11 +11,11 @@ Create and manipulate sparse arrays:
 test "sparse array basics" {
   // Empty sparse array
   let empty_array : @sparse_array.SparseArray[String] = @sparse_array.empty()
-  inspect(empty_array.size(), content="0")
+  inspect(empty_array.length(), content="0")
 
   // Singleton sparse array
   let single = @sparse_array.singleton(5, "value")
-  inspect(single.size(), content="1")
+  inspect(single.length(), content="1")
 
   // Check if element exists
   match single.get(5) {
@@ -25,7 +25,7 @@ test "sparse array basics" {
 
   // Doubleton (two elements)
   let double = @sparse_array.doubleton(2, "first", 7, "second")
-  inspect(double.size(), content="2")
+  inspect(double.length(), content="2")
 }
 ```
 
@@ -40,15 +40,15 @@ test "sparse array operations" {
 
   // Add new element
   let with_new = arr.add(8, 200)
-  inspect(with_new.size(), content="2")
+  inspect(with_new.length(), content="2")
 
   // Replace existing element
   let replaced = with_new.replace(3, 150)
-  inspect(replaced.size(), content="2")
+  inspect(replaced.length(), content="2")
 
   // Remove element
   let removed = replaced.remove(8)
-  inspect(removed.size(), content="1")
+  inspect(removed.length(), content="1")
 
   // Check final value
   match removed.get(3) {
@@ -69,11 +69,11 @@ test "bitset operations" {
   // In real usage, bitsets are created by sparse array operations
 
   let sparse = @sparse_array.singleton(3, "test")
-  inspect(sparse.size(), content="1")
+  inspect(sparse.length(), content="1")
 
   // Add more elements to create internal bitsets
   let with_more = sparse.add(7, "another").add(15, "third")
-  inspect(with_more.size(), content="3")
+  inspect(with_more.length(), content="3")
 
   // Access elements by index
   match with_more.get(3) {
@@ -83,7 +83,7 @@ test "bitset operations" {
 
   // Remove element
   let removed = with_more.remove(7)
-  inspect(removed.size(), content="2")
+  inspect(removed.length(), content="2")
 }
 ```
 
@@ -102,14 +102,14 @@ test "sparse array set operations" {
     Some(val1 + val2)
   })
   match intersection {
-    Some(result) => inspect(result.size(), content="1") // Only index 3 is common
+    Some(result) => inspect(result.length(), content="1") // Only index 3 is common
     None => inspect(false, content="true")
   }
 
   // Difference - remove common elements
   let difference = arr1.difference(arr2, fn(_val1, _val2) { None })
   match difference {
-    Some(result) => inspect(result.size(), content="1") // Only index 1 remains
+    Some(result) => inspect(result.length(), content="1") // Only index 1 remains
     None => inspect(false, content="true")
   }
 }
@@ -126,7 +126,7 @@ test "sparse array transformations" {
 
   // Map values to new type
   let doubled = numbers.map(fn(x) { x * 2 })
-  inspect(doubled.size(), content="2")
+  inspect(doubled.length(), content="2")
   match doubled.get(1) {
     Some(val) => inspect(val, content="20")
     None => inspect(false, content="true")
@@ -135,7 +135,7 @@ test "sparse array transformations" {
   // Filter elements (keeping only those > 30)
   let filtered = numbers.filter(fn(x) { if x > 30 { Some(x) } else { None } })
   match filtered {
-    Some(f) => inspect(f.size(), content="1") // Only 50 remains
+    Some(f) => inspect(f.length(), content="1") // Only 50 remains
     None => inspect(false, content="true")
   }
 }
@@ -153,7 +153,7 @@ test "sparse array combinations" {
 
   // Union with conflict resolution
   let combined = arr1.union(arr2, fn(old_val, new_val) { old_val + new_val })
-  inspect(combined.size(), content="3")
+  inspect(combined.length(), content="3")
 
   // Check combined values
   match combined.get(3) {
@@ -174,7 +174,7 @@ test "advanced sparse operations" {
 
   // Add more elements
   let extended = numbers.add(10, 100).add(15, 150)
-  inspect(extended.size(), content="4")
+  inspect(extended.length(), content="4")
 
   // Access specific elements
   match extended.get(10) {

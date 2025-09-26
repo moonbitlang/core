@@ -214,7 +214,7 @@ test "write_double_le method" {
   inspect(
     buf.to_bytes(),
     content=(
-      #|b"\x00\x00\x00\x00\x00\x00\x00\xc0\x1f\x85\xeb\x51\xb8\x1e\x09\x40"
+      #|b"\x00\x00\x00\x00\x00\x00\x00\xc0\x1f\x85\xebQ\xb8\x1e\x09@"
     ),
   )
 }
@@ -227,7 +227,7 @@ test "write_double_be method" {
   inspect(
     buf.to_bytes(),
     content=(
-      #|b"\xc0\x00\x00\x00\x00\x00\x00\x00\x40\x09\x1e\xb8\x51\xeb\x85\x1f"
+      #|b"\xc0\x00\x00\x00\x00\x00\x00\x00@\x09\x1e\xb8Q\xeb\x85\x1f"
     ),
   )
 }
@@ -240,7 +240,7 @@ test "write_float_le method" {
   inspect(
     buf.to_bytes(),
     content=(
-      #|b"\x00\x00\x00\xc0\xc3\xf5\x48\x40"
+      #|b"\x00\x00\x00\xc0\xc3\xf5H@"
     ),
   )
 }
@@ -253,7 +253,7 @@ test "write_float_be method" {
   inspect(
     buf.to_bytes(),
     content=(
-      #|b"\xc0\x00\x00\x00\x40\x48\xf5\xc3"
+      #|b"\xc0\x00\x00\x00@H\xf5\xc3"
     ),
   )
 }
@@ -266,7 +266,7 @@ test "write_iter" {
   inspect(
     buf.contents(),
     content=(
-      #|b"\x68\x65\x6c\x6c\x6f"
+      #|b"hello"
     ),
   )
   let bytes_view = bytes[1:3]
@@ -274,7 +274,7 @@ test "write_iter" {
   inspect(
     buf.contents(),
     content=(
-      #|b"\x68\x65\x6c\x6c\x6f\x65\x6c"
+      #|b"helloel"
     ),
   )
 }
@@ -286,7 +286,7 @@ test "write_bytesview" {
   inspect(
     buf.contents(),
     content=(
-      #|b"\x65\x73"
+      #|b"es"
     ),
   )
 }
@@ -298,7 +298,7 @@ test "write_stringview" {
   inspect(
     buf.contents(),
     content=(
-      #|b"\x65\x00\x6c\x00"
+      #|b"e\x00l\x00"
     ),
   )
 }
@@ -313,7 +313,7 @@ test "write_char_utf8" {
   inspect(
     buf.to_bytes(),
     content=(
-      #|b"\x41\xce\xb1\xe5\x95\x8a\xf0\x9f\x98\xa6"
+      #|b"A\xce\xb1\xe5\x95\x8a\xf0\x9f\x98\xa6"
     ),
   )
 }
@@ -328,7 +328,7 @@ test "write_char" {
   inspect(
     buf.to_bytes(),
     content=(
-      #|b"\x41\x00\xb1\x03\x4a\x55\x3d\xd8\x26\xde"
+      #|b"A\x00\xb1\x03JU=\xd8&\xde"
     ),
   )
 }
@@ -343,7 +343,7 @@ test "write_char_utf16le" {
   inspect(
     buf.to_bytes(),
     content=(
-      #|b"\x41\x00\xb1\x03\x4a\x55\x3d\xd8\x26\xde"
+      #|b"A\x00\xb1\x03JU=\xd8&\xde"
     ),
   )
 }
@@ -358,7 +358,7 @@ test "write_char_utf16be" {
   inspect(
     buf.to_bytes(),
     content=(
-      #|b"\x00\x41\x03\xb1\x55\x4a\xd8\x3d\xde\x26"
+      #|b"\x00A\x03\xb1UJ\xd8=\xde&"
     ),
   )
 }
@@ -398,6 +398,58 @@ test "write_bom_utf16be" {
     buf.to_bytes(),
     content=(
       #|b"\xfe\xff"
+    ),
+  )
+}
+
+///|
+test "write_uint16_le method" {
+  let buf = @buffer.new(size_hint=4)
+  buf.write_uint16_le(Int::to_uint16(0x1234))
+  buf.write_uint16_le(Int::to_uint16(0xabcd))
+  inspect(
+    buf.to_bytes(),
+    content=(
+      #|b"4\x12\xcd\xab"
+    ),
+  )
+}
+
+///|
+test "write_uint16_be method" {
+  let buf = @buffer.new(size_hint=4)
+  buf.write_uint16_be(Int::to_uint16(0x1234))
+  buf.write_uint16_be(Int::to_uint16(0xabcd))
+  inspect(
+    buf.to_bytes(),
+    content=(
+      #|b"\x124\xab\xcd"
+    ),
+  )
+}
+
+///|
+test "write_int16_le method" {
+  let buf = @buffer.new(size_hint=4)
+  buf.write_int16_le(Int::to_int16(-2))
+  buf.write_int16_le(Int::to_int16(0x1234))
+  inspect(
+    buf.to_bytes(),
+    content=(
+      #|b"\xfe\xff4\x12"
+    ),
+  )
+}
+
+///|
+test "write_int16_be method" {
+  let buf = @buffer.new(size_hint=4)
+  buf.write_int16_be(Int::to_int16(-2))
+  buf.write_int16_be(Int::to_int16(0x1234))
+  inspect(
+    buf.to_bytes(),
+    content=(
+      #|b"\xff\xfe\x124"
     ),
   )
 }

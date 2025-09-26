@@ -14,8 +14,8 @@ key-value pair using `singleton()`.
 test {
   let map1 : @sorted_map.SortedMap[String, Int] = @sorted_map.new()
   let map2 = @sorted_map.singleton("a", 1)
-  assert_eq(map1.size(), 0)
-  assert_eq(map2.size(), 1)
+  assert_eq(map1.length(), 0)
+  assert_eq(map2.length(), 1)
 }
 ```
 
@@ -78,7 +78,7 @@ You can use `size()` to get the number of key-value pairs in the map.
 ///|
 test {
   let map = @sorted_map.of([("a", 1), ("b", 2), ("c", 3)])
-  assert_eq(map.size(), 3)
+  assert_eq(map.length(), 3)
 }
 ```
 

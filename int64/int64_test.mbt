@@ -182,7 +182,7 @@ test "to_be_bytes" {
   inspect(
     num.to_be_bytes(),
     content=(
-      #|b"\x12\x34\x56\x78\x90\xab\xcd\xef"
+      #|b"\x124Vx\x90\xab\xcd\xef"
     ),
   )
 }
@@ -193,7 +193,7 @@ test "to_le_bytes of negative Int64" {
   inspect(
     num.to_le_bytes(),
     content=(
-      #|b"\x11\x32\x54\x6f\x87\xa9\xcb\xed"
+      #|b"\x112To\x87\xa9\xcb\xed"
     ),
   )
 }

@@ -13,20 +13,45 @@
 // limitations under the License.
 
 ///|
-test "encode" {
-  let s = "abc你好👀"
-  let encoded = @utf8.encode(s)
+test "to_be_bytes" {
   inspect(
-    encoded,
+    @uint64.max_value.to_be_bytes(),
     content=(
-      #|b"abc\xe4\xbd\xa0\xe5\xa5\xbd\xf0\x9f\x91\x80"
+      #|b"\xff\xff\xff\xff\xff\xff\xff\xff"
     ),
   )
-  let encoded_with_bom = @utf8.encode(s, bom=true)
   inspect(
-    encoded_with_bom,
+    @uint64.min_value.to_be_bytes(),
     content=(
-      #|b"\xef\xbb\xbfabc\xe4\xbd\xa0\xe5\xa5\xbd\xf0\x9f\x91\x80"
+      #|b"\x00\x00\x00\x00\x00\x00\x00\x00"
+    ),
+  )
+  inspect(
+    0x123456789ABCDEF0UL.to_be_bytes(),
+    content=(
+      #|b"\x124Vx\x9a\xbc\xde\xf0"
+    ),
+  )
+}
+
+///|
+test "to_le_bytes" {
+  inspect(
+    @uint64.max_value.to_le_bytes(),
+    content=(
+      #|b"\xff\xff\xff\xff\xff\xff\xff\xff"
+    ),
+  )
+  inspect(
+    @uint64.min_value.to_le_bytes(),
+    content=(
+      #|b"\x00\x00\x00\x00\x00\x00\x00\x00"
+    ),
+  )
+  inspect(
+    0x123456789ABCDEF0UL.to_le_bytes(),
+    content=(
+      #|b"\xf0\xde\xbc\x9axV4\x12"
     ),
   )
 }

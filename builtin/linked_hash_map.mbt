@@ -383,7 +383,7 @@ pub fn[K : Hash + Eq, V : Eq] Map::contains_kv(
 ///   let map = { "a": 1, "b": 2 }
 ///   map.remove("a")
 ///   inspect(map.get("a"), content="None")
-///   inspect(map.size(), content="1")
+///   inspect(map.length(), content="1")
 /// ```
 pub fn[K : Hash + Eq, V] Map::remove(self : Map[K, V], key : K) -> Unit {
   self.remove_with_hash(key, key.hash())
@@ -494,7 +494,8 @@ pub impl[K : Show, V : Show] Show for Map[K, V] with output(self, logger) {
 
 ///|
 /// Get the number of key-value pairs in the map.
-pub fn[K, V] Map::size(self : Map[K, V]) -> Int {
+#alias(size, deprecated)
+pub fn[K, V] Map::length(self : Map[K, V]) -> Int {
   self.size
 }
 
@@ -734,7 +735,7 @@ pub fn[K, V] Map::copy(self : Map[K, V]) -> Map[K, V] {
 /// ```moonbit
 ///   let map = { "a": 1, "b": 2, "c": 3, "d": 4 }
 ///   map.retain((_k, v) => v % 2 == 0)  // Keep only even values
-///   inspect(map.size(), content="2")
+///   inspect(map.length(), content="2")
 ///   inspect(map.get("a"), content="None")
 ///   inspect(map.get("b"), content="Some(2)")
 ///   inspect(map.get("c"), content="None")

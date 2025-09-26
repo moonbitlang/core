@@ -22,7 +22,7 @@ test "bytes literal" {
   inspect(
     b + "utf8" + HELLO,
     content=(
-      #|b"\xe4\xbd\xa0\xe5\xa5\xbd\x75\x74\x66\x38\xe4\xbd\xa0\xe5\xa5\xbd"
+      #|b"\xe4\xbd\xa0\xe5\xa5\xbdutf8\xe4\xbd\xa0\xe5\xa5\xbd"
     ),
   )
   // match ("你好,utf8" : Bytes) {
@@ -33,7 +33,7 @@ test "bytes literal" {
   inspect(
     b"\x41\x42\x43",
     content=(
-      #|b"\x41\x42\x43"
+      #|b"ABC"
     ),
   )
 }
@@ -44,7 +44,7 @@ test "from_array" {
   inspect(
     b,
     content=(
-      #|b"\x41\x00\x42\x00\x43\x00"
+      #|b"A\x00B\x00C\x00"
     ),
   )
 }
@@ -55,7 +55,7 @@ test "from_array literal" {
   inspect(
     b,
     content=(
-      #|b"\x41\x00\x42\x00\x43\x00"
+      #|b"A\x00B\x00C\x00"
     ),
   )
 }
@@ -181,7 +181,7 @@ test "Bytes::of with different byte values" {
   inspect(
     bytes,
     content=(
-      #|b"\x61\x62\x63"
+      #|b"abc"
     ),
   )
 }
@@ -193,7 +193,7 @@ test "Bytes::from_iter with multiple elements" {
   inspect(
     bytes,
     content=(
-      #|b"\x61\x62\x63"
+      #|b"abc"
     ),
   )
 }

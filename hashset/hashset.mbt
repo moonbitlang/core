@@ -21,6 +21,7 @@ let default_init_capacity = 8
 /// Create new hash set.
 #as_free_fn
 pub fn[K] HashSet::new(capacity? : Int = default_init_capacity) -> HashSet[K] {
+  let capacity = capacity.next_power_of_two()
   {
     size: 0,
     capacity,
@@ -62,7 +63,7 @@ pub fn[K : Hash + Eq] HashSet::of(arr : FixedArray[K]) -> HashSet[K] {
 ///   set.add("key")
 ///   inspect(set.contains("key"), content="true")
 ///   set.add("key") // no effect since it already exists
-///   inspect(set.size(), content="1")
+///   inspect(set.length(), content="1")
 /// ```
 pub fn[K : Hash + Eq] add(self : HashSet[K], key : K) -> Unit {
   self.add_with_hash(key, key.hash())
@@ -73,7 +74,7 @@ fn[K : Eq] add_with_hash(self : HashSet[K], key : K, hash : Int) -> Unit {
   if self.size >= self.grow_at {
     self.grow()
   }
-  let (idx, psl) = for psl = 0, idx = abs(hash) & self.capacity_mask {
+  let (idx, psl) = for psl = 0, idx = hash & self.capacity_mask {
     match self.entries[idx] {
       None => break (idx, psl)
       Some(curr_entry) => {
@@ -127,7 +128,7 @@ fn[K] set_entry(self : HashSet[K], entry : Entry[K], new_idx : Int) -> Unit {
 pub fn[K : Hash + Eq] contains(self : HashSet[K], key : K) -> Bool {
   // inline lookup to avoid unnecessary allocations
   let hash = key.hash()
-  for i = 0, idx = abs(hash) & self.capacity_mask {
+  for i = 0, idx = hash & self.capacity_mask {
     guard self.entries[idx] is Some(entry) else { break false }
     if entry.hash == hash && entry.key == key {
       break true
@@ -156,11 +157,11 @@ pub fn[K : Hash + Eq] contains(self : HashSet[K], key : K) -> Bool {
 ///   let set = @hashset.of(["a", "b"])
 ///   set.remove("a")
 ///   inspect(set.contains("a"), content="false")
-///   inspect(set.size(), content="1")
+///   inspect(set.length(), content="1")
 /// ```
 pub fn[K : Hash + Eq] remove(self : HashSet[K], key : K) -> Unit {
   let hash = key.hash()
-  for i = 0, idx = abs(hash) & self.capacity_mask {
+  for i = 0, idx = hash & self.capacity_mask {
     guard self.entries[idx] is Some(entry) else { break }
     if entry.hash == hash && entry.key == key {
       self.shift_back(idx)
@@ -220,7 +221,8 @@ pub impl[K : Show] Show for HashSet[K] with output(self, logger) {
 
 ///|
 /// Get the number of keys in the set.
-pub fn[K] size(self : HashSet[K]) -> Int {
+#alias(size, deprecated)
+pub fn[K] length(self : HashSet[K]) -> Int {
   self.size
 }
 
@@ -351,7 +353,7 @@ pub fn[K : Hash + Eq] is_disjoint(
   self : HashSet[K],
   other : HashSet[K],
 ) -> Bool {
-  if self.size() <= other.size() {
+  if self.length() <= other.length() {
     self.iter().all(k => !other.contains(k))
   } else {
     other.iter().all(k => !self.contains(k))
@@ -361,7 +363,7 @@ pub fn[K : Hash + Eq] is_disjoint(
 ///|
 /// Check if the current set is a subset of another set.
 pub fn[K : Hash + Eq] is_subset(self : HashSet[K], other : HashSet[K]) -> Bool {
-  if self.size() <= other.size() {
+  if self.length() <= other.length() {
     self.iter().all(k => other.contains(k))
   } else {
     false
@@ -406,15 +408,6 @@ pub impl[X : @quickcheck.Arbitrary + Eq + Hash] @quickcheck.Arbitrary for HashSe
   X,
 ] with arbitrary(size, rs) {
   @quickcheck.Arbitrary::arbitrary(size, rs) |> from_iter
-}
-
-///|
-fn abs(n : Int) -> Int {
-  if n < 0 {
-    -n
-  } else {
-    n
-  }
 }
 
 ///|
@@ -489,7 +482,7 @@ test "remove" {
   m.add("abc" |> i)
   m.add("abcdef" |> i)
   m.remove("ab" |> i)
-  inspect(m.size(), content="5")
+  inspect(m.length(), content="5")
   inspect(
     m.debug_entries(),
     content="_,(0,a),(0,bc),(1,cd),(1,abc),_,(0,abcdef),_",
@@ -507,7 +500,7 @@ test "remove_unexist_key" {
   m.add("ab" |> i)
   m.add("abc" |> i)
   m.remove("d" |> i)
-  inspect(m.size(), content="3")
+  inspect(m.length(), content="3")
   inspect(m.debug_entries(), content="_,(0,a),(0,ab),(0,abc),_,_,_,_")
 }
 
@@ -544,7 +537,7 @@ test "grow" {
 test "clear" {
   let m : HashSet[MyString] = new()
   m.clear()
-  inspect(m.size(), content="0")
+  inspect(m.length(), content="0")
   inspect(m.capacity(), content="8")
   for i in 0..<m.capacity() {
     @test.same_object(m.entries[i], None)
@@ -568,12 +561,12 @@ test "clear" {
 ///   let set : @hashset.HashSet[String] = @hashset.new()
 ///   inspect(set.add_and_check("key"), content="true")  // First insertion
 ///   inspect(set.add_and_check("key"), content="false") // Already exists
-///   inspect(set.size(), content="1")
+///   inspect(set.length(), content="1")
 /// ```
 pub fn[K : Hash + Eq] add_and_check(self : HashSet[K], key : K) -> Bool {
-  let old_size = self.size
+  let old_size = self.length()
   self.add(key)
-  self.size > old_size
+  self.length() > old_size
 }
 
 ///|
@@ -593,7 +586,7 @@ pub fn[K : Hash + Eq] add_and_check(self : HashSet[K], key : K) -> Bool {
 ///   let set = @hashset.of(["a", "b"])
 ///   inspect(set.remove_and_check("a"), content="true")  // Successfully removed
 ///   inspect(set.remove_and_check("a"), content="false") // Already removed
-///   inspect(set.size(), content="1")
+///   inspect(set.length(), content="1")
 /// ```
 pub fn[K : Hash + Eq] remove_and_check(self : HashSet[K], key : K) -> Bool {
   let old_size = self.size

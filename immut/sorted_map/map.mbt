@@ -67,7 +67,7 @@ fn[K, V] glue(l : SortedMap[K, V], r : SortedMap[K, V]) -> SortedMap[K, V] {
     (Empty, r) => r
     (l, Empty) => l
     (l, r) =>
-      if l.size() > r.size() {
+      if l.length() > r.length() {
         let (k, v, l) = l.split_max()
         balance(k, v, l, r)
       } else {
@@ -174,15 +174,15 @@ fn[K, V] balance(
     make_tree(k2, v2, make_tree(k1, v1, x, y1), make_tree(k3, v3, y2, z))
   }
 
-  let ln = l.size()
-  let rn = r.size()
+  let ln = l.length()
+  let rn = r.length()
   if ln + rn < 2 {
     make_tree(key, value, l, r)
   } else if rn > ratio * ln {
     // right is too big
     guard r is Tree(_, rl, rr, ..)
-    let rln = rl.size()
-    let rrn = rr.size()
+    let rln = rl.length()
+    let rrn = rr.length()
     if rln < rrn {
       single_l(key, value, l, r)
     } else {
@@ -191,8 +191,8 @@ fn[K, V] balance(
   } else if ln > ratio * rn {
     // left is too big
     guard l is Tree(_, ll, lr, ..)
-    let lln = ll.size()
-    let lrn = lr.size()
+    let lln = ll.length()
+    let lrn = lr.length()
     if lrn < lln {
       single_r(key, value, l, r)
     } else {

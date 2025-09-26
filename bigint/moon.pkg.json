@@ -6,8 +6,10 @@
     "moonbitlang/core/json",
     "moonbitlang/core/quickcheck",
     "moonbitlang/core/quickcheck/splitmix",
-    "moonbitlang/core/string"
+    "moonbitlang/core/string",
+    "moonbitlang/core/bytes"
   ],
+  
   "targets": {
     "bigint_js.mbt": ["js"],
     "bigint_nonjs.mbt": ["not", "js"],

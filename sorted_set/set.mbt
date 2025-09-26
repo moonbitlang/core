@@ -343,7 +343,8 @@ pub fn[V] is_empty(self : SortedSet[V]) -> Bool {
 
 ///|
 /// Returns the number of elements in the set.
-pub fn[V] size(self : SortedSet[V]) -> Int {
+#alias(size, deprecated)
+pub fn[V] length(self : SortedSet[V]) -> Int {
   self.size
 }
 
@@ -810,7 +811,7 @@ test "add duplicate value" {
   set.add(1)
   set.add(1)
   assert_eq(set.contains(1), true)
-  assert_eq(set.size(), 1)
+  assert_eq(set.length(), 1)
   inspect(set.debug_tree(), content="([1]1,_,_)")
 }
 
@@ -823,7 +824,7 @@ test "add multiple values" {
   assert_eq(set.contains(1), true)
   assert_eq(set.contains(2), true)
   assert_eq(set.contains(3), true)
-  assert_eq(set.size(), 3)
+  assert_eq(set.length(), 3)
   inspect(set.debug_tree(), content="([2]2,([1]1,_,_),([1]3,_,_))")
 }
 

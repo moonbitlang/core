@@ -11,7 +11,7 @@ There are several ways to create sets:
 test "creating sets" {
   // Empty set
   let empty_set : @set.Set[Int] = @set.Set::new()
-  inspect(empty_set.size(), content="0")
+  inspect(empty_set.length(), content="0")
   inspect(empty_set.is_empty(), content="true")
 
   // Set with initial capacity
@@ -20,15 +20,15 @@ test "creating sets" {
 
   // From array
   let from_array = @set.Set::from_array([1, 2, 3, 2, 1]) // Duplicates are removed
-  inspect(from_array.size(), content="3")
+  inspect(from_array.length(), content="3")
 
   // From fixed array
   let from_fixed = @set.Set::of([10, 20, 30])
-  inspect(from_fixed.size(), content="3")
+  inspect(from_fixed.length(), content="3")
 
   // From iterator
   let from_iter = @set.Set::from_iter([1, 2, 3, 4, 5].iter())
-  inspect(from_iter.size(), content="5")
+  inspect(from_iter.length(), content="5")
 }
 ```
 
@@ -45,11 +45,11 @@ test "basic operations" {
   set.add("apple")
   set.add("banana")
   set.add("cherry")
-  inspect(set.size(), content="3")
+  inspect(set.length(), content="3")
 
   // Adding duplicate (no effect)
   set.add("apple")
-  inspect(set.size(), content="3") // Still 3
+  inspect(set.length(), content="3") // Still 3
 
   // Check membership
   inspect(set.contains("apple"), content="true")
@@ -58,7 +58,7 @@ test "basic operations" {
   // Remove elements
   set.remove("banana")
   inspect(set.contains("banana"), content="false")
-  inspect(set.size(), content="2")
+  inspect(set.length(), content="2")
 
   // Check if addition/removal was successful
   let was_added = set.add_and_check("date")
@@ -89,7 +89,7 @@ test "set operations" {
 
   // Alternative union syntax
   let union_alt = set1 | set2
-  inspect(union_alt.size(), content="6")
+  inspect(union_alt.length(), content="6")
 
   // Intersection (common elements)
   let intersection_set = set1.intersection(set2)
@@ -98,7 +98,7 @@ test "set operations" {
 
   // Alternative intersection syntax
   let intersection_alt = set1 & set2
-  inspect(intersection_alt.size(), content="2")
+  inspect(intersection_alt.length(), content="2")
 
   // Difference (elements in first but not second)
   let difference_set = set1.difference(set2)
@@ -107,7 +107,7 @@ test "set operations" {
 
   // Alternative difference syntax
   let difference_alt = set1 - set2
-  inspect(difference_alt.size(), content="2")
+  inspect(difference_alt.length(), content="2")
 
   // Symmetric difference (elements in either but not both)
   let sym_diff_set = set1.symmetric_difference(set2)
@@ -116,7 +116,7 @@ test "set operations" {
 
   // Alternative symmetric difference syntax
   let sym_diff_alt = set1 ^ set2
-  inspect(sym_diff_alt.size(), content="4")
+  inspect(sym_diff_alt.length(), content="4")
 }
 ```
 
@@ -179,7 +179,7 @@ test "iteration and conversion" {
 
   // Copy a set
   let copied_set = set.copy()
-  inspect(copied_set.size(), content="3")
+  inspect(copied_set.length(), content="3")
   inspect(copied_set == set, content="true")
 }
 ```
@@ -192,17 +192,17 @@ Clear and modify existing sets:
 ///|
 test "modifying sets" {
   let set = @set.Set::from_array([10, 20, 30, 40, 50])
-  inspect(set.size(), content="5")
+  inspect(set.length(), content="5")
 
   // Clear all elements
   set.clear()
-  inspect(set.size(), content="0")
+  inspect(set.length(), content="0")
   inspect(set.is_empty(), content="true")
 
   // Add elements back
   set.add(100)
   set.add(200)
-  inspect(set.size(), content="2")
+  inspect(set.length(), content="2")
   inspect(set.contains(100), content="true")
 }
 ```
@@ -252,7 +252,7 @@ test "different types" {
 
   // Integer set representing boolean values
   let bool_codes = @set.Set::from_array([1, 0, 1]) // 1=true, 0=false
-  inspect(bool_codes.size(), content="2") // Only 1 and 0
+  inspect(bool_codes.length(), content="2") // Only 1 and 0
 }
 ```
 
@@ -270,7 +270,7 @@ test "performance examples" {
   for i in 0..<100 {
     large_set.add(i)
   }
-  inspect(large_set.size(), content="100")
+  inspect(large_set.length(), content="100")
 
   // Fast membership testing
   inspect(large_set.contains(50), content="true")
@@ -282,7 +282,7 @@ test "performance examples" {
     another_set.add(i)
   }
   let intersection = large_set.intersection(another_set)
-  inspect(intersection.size(), content="50") // Elements 50-99
+  inspect(intersection.length(), content="50") // Elements 50-99
 }
 ```
 

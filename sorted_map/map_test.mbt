@@ -15,25 +15,25 @@
 ///|
 test "remove2" {
   let map = @sorted_map.from_array([(1, "a"), (2, "b")])
-  inspect(map.size(), content="2")
+  inspect(map.length(), content="2")
   map.remove(1)
-  inspect(map.size(), content="1")
+  inspect(map.length(), content="1")
 }
 
 ///|
 test "remove3" {
   let map = @sorted_map.from_array([(1, "a"), (2, "b"), (3, "c")])
   map.remove(0)
-  inspect(map.size(), content="3")
+  inspect(map.length(), content="3")
   map.remove(4)
-  inspect(map.size(), content="3")
+  inspect(map.length(), content="3")
 }
 
 ///|
 test "remove on empty map" {
   let map : @sorted_map.SortedMap[Int, String] = @sorted_map.new()
   map.remove(1)
-  inspect(map.size(), content="0")
+  inspect(map.length(), content="0")
 }
 
 ///|
@@ -107,7 +107,7 @@ test "is_empty" {
 ///|
 test "size" {
   let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
-  inspect(map.size() == map.size(), content="true")
+  inspect(map.length() == map.length(), content="true")
 }
 
 ///|
@@ -243,4 +243,43 @@ test "range" {
     buf.write_string("[\{k}\{v}]")
   }
   inspect(buf, content="[2b][3c][4d]")
+}
+
+///|
+test "to_json with non-empty map" {
+  let map = @sorted_map.from_array([
+    (3, "three"),
+    (8, "eight"),
+    (1, "one"),
+    (2, "two"),
+    (0, "zero"),
+  ])
+  @json.inspect(map.to_json(), content={
+    "0": "zero",
+    "1": "one",
+    "2": "two",
+    "3": "three",
+    "8": "eight",
+  })
+}
+
+///|
+test "to_json with empty map" {
+  let map : @sorted_map.SortedMap[Int, String] = @sorted_map.new()
+  @json.inspect(map.to_json(), content={})
+}
+
+///|
+test "from_json" {
+  for
+    xs in (@quickcheck.samples(20) : Array[@sorted_map.SortedMap[String, Int]]) {
+    assert_eq(xs, @json.from_json(xs.to_json()))
+  }
+}
+
+///|
+test "json roundtrip verification" {
+  let original : Json = { "key1": 42, "key2": 100, "key3": -5 }
+  let restored : @sorted_map.SortedMap[String, Int] = @json.from_json(original)
+  @json.inspect(restored, content={ "key1": 42, "key2": 100, "key3": -5 })
 }

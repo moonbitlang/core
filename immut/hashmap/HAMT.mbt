@@ -300,7 +300,7 @@ fn[K : Eq, V] remove_with_path(
         None => Some(self)
         Some(child) => {
           let new_child = child.remove_with_path(key, path.next())
-          let new_children = match (children.size(), new_child) {
+          let new_children = match (children.length(), new_child) {
             (1, None) => return None
             (_, None) => children.remove(idx)
             (_, Some(new_child)) => children.replace(idx, new_child)
@@ -326,7 +326,8 @@ fn[K : Eq, V] remove_with_path(
 /// Calculate the size of a map.
 ///
 /// WARNING: this operation is `O(N)` in map size
-pub fn[K, V] size(self : HashMap[K, V]) -> Int {
+#alias(size, deprecated)
+pub fn[K, V] length(self : HashMap[K, V]) -> Int {
   fn node_size(node) {
     match node {
       Leaf(_, _, bucket) => 1 + bucket.length()
@@ -678,7 +679,7 @@ pub fn[K : Eq + Hash, V] HashMap::from_array(
 ///|
 /// Convert to an array of key-value pairs.
 pub fn[K, V] to_array(self : HashMap[K, V]) -> Array[(K, V)] {
-  let arr = Array::new(capacity=self.size())
+  let arr = Array::new(capacity=self.length())
   self.each((k, v) => arr.push((k, v)))
   arr
 }

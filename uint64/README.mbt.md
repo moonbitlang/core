@@ -109,7 +109,7 @@ test "UInt64 byte conversion" {
   inspect(
     be_bytes,
     content=(
-      #|b"\x12\x34\x56\x78\x9a\xbc\xde\xf0"
+      #|b"\x124Vx\x9a\xbc\xde\xf0"
     ),
   )
 
@@ -118,7 +118,7 @@ test "UInt64 byte conversion" {
   inspect(
     le_bytes,
     content=(
-      #|b"\xf0\xde\xbc\x9a\x78\x56\x34\x12"
+      #|b"\xf0\xde\xbc\x9axV4\x12"
     ),
   )
 }

@@ -34,6 +34,7 @@ fn Bytes::unsafe_extract_uint_le(Bytes, Int, Int) -> UInt
 impl Add for Bytes
 impl Default for Bytes
 impl Hash for Bytes
+impl Show for Bytes
 impl ToJson for Bytes
 
 #alias("_[_]")

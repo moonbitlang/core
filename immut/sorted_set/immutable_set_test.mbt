@@ -533,14 +533,17 @@ test "iter" {
 test "size" {
   // Empty set should have size 0
   let empty_set : @sorted_set.SortedSet[Int] = @sorted_set.new()
-  inspect(empty_set.size(), content="0")
+  inspect(empty_set.length(), content="0")
 
   // Single element set should have size 1
-  inspect(@sorted_set.of([1]).size(), content="1")
+  inspect(@sorted_set.of([1]).length(), content="1")
 
   // Multiple elements set should have correct size
   // The order of insertion should not affect the size
-  inspect(@sorted_set.of([3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5]).size(), content="7")
+  inspect(
+    @sorted_set.of([3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5]).length(),
+    content="7",
+  )
 }
 
 ///|

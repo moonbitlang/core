@@ -151,7 +151,7 @@ fn[A : Eq] remove_with_path(self : Node[A], key : A, path : Path) -> Node[A]? {
         None => Some(self)
         Some(child) => {
           let new_child = child.remove_with_path(key, path.next())
-          let new_children = match (children.size(), new_child) {
+          let new_children = match (children.length(), new_child) {
             (1, None) => return None
             (_, None) => children.remove(idx)
             (_, Some(new_child)) => children.replace(idx, new_child)
@@ -171,7 +171,8 @@ fn[A : Eq] remove_with_path(self : Node[A], key : A, path : Path) -> Node[A]? {
 /// Calculate the size of a set.
 ///
 /// WARNING: this operation is `O(N)` in set size
-pub fn[A] size(self : HashSet[A]) -> Int {
+#alias(size, deprecated)
+pub fn[A] length(self : HashSet[A]) -> Int {
   fn node_size(node) {
     match node {
       Leaf(_, bucket) => 1 + bucket.length()

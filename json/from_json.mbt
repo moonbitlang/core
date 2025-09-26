@@ -110,6 +110,18 @@ pub impl FromJson for Double with from_json(json, path) {
 }
 
 ///|
+pub impl FromJson for Float with from_json(json, path) {
+  match json {
+    String("NaN") => @float.not_a_number
+    String("Infinity") => @float.infinity
+    String("-Infinity") => @float.neg_infinity
+    Number(n, ..) if n != @double.infinity && n != @double.neg_infinity =>
+      n.to_float()
+    _ => decode_error(path, "Float::from_json: expected number")
+  }
+}
+
+///|
 pub impl FromJson for String with from_json(json, path) {
   guard json is String(a) else {
     decode_error(path, "String::from_json: expected string")
@@ -217,7 +229,7 @@ pub impl[Ok : FromJson, Err : FromJson] FromJson for Result[Ok, Err] with from_j
   guard json is Object(obj) else {
     decode_error(path, "Result::from_json: expected object")
   }
-  if obj.size() != 1 {
+  if obj.length() != 1 {
     decode_error(path, "Result::from_json: expected object with one field")
   }
   match obj {

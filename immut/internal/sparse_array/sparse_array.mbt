@@ -112,7 +112,7 @@ pub fn[X] SparseArray::union(
   f : (X, X) -> X raise?,
 ) -> SparseArray[X] raise? {
   let union_elem_info = self.elem_info.union(other.elem_info)
-  let data = FixedArray::make(union_elem_info.size(), self.data[0])
+  let data = FixedArray::make(union_elem_info.length(), self.data[0])
   for rest = union_elem_info, index = 0; rest != empty_bitset; {
     let idx = rest.first_idx()
     data[index] = match self.get(idx) {
@@ -147,7 +147,7 @@ pub fn[X] SparseArray::intersection(
 ) -> SparseArray[X]? raise? {
   let inter_elem_info = self.elem_info.intersection(other.elem_info)
   guard inter_elem_info != 0 else { return None }
-  let data = FixedArray::make(inter_elem_info.size(), self.data[0])
+  let data = FixedArray::make(inter_elem_info.length(), self.data[0])
   for rest = inter_elem_info, index = 0, elem_info = inter_elem_info; rest != 0; {
     let idx = rest.first_idx()
     match f(self.unsafe_get(idx), other.unsafe_get(idx)) {
@@ -176,7 +176,7 @@ pub fn[X] SparseArray::difference(
   f : (X, X) -> X?,
 ) -> SparseArray[X]? {
   let self_elem_info = self.elem_info
-  let data = FixedArray::make(self_elem_info.size(), self.data[0])
+  let data = FixedArray::make(self_elem_info.length(), self.data[0])
   for rest = self_elem_info, index = 0, elem_info = self_elem_info; rest !=
      empty_bitset; {
     let idx = rest.first_idx()
@@ -219,7 +219,7 @@ pub fn[X] SparseArray::filter(
   pred : (X) -> X? raise?,
 ) -> SparseArray[X]? raise? {
   let self_elem_info = self.elem_info
-  let data = FixedArray::make(self_elem_info.size(), self.data[0])
+  let data = FixedArray::make(self_elem_info.length(), self.data[0])
   for rest = self_elem_info, index = 0, elem_info = self_elem_info; rest !=
      empty_bitset; {
     let idx = rest.first_idx()
@@ -256,14 +256,15 @@ pub fn[X] replace(
 
 ///|
 /// Return the size of a sparse array
-pub fn[X] size(self : SparseArray[X]) -> Int {
+#alias(size, deprecated)
+pub fn[X] length(self : SparseArray[X]) -> Int {
   self.data.length()
 }
 
 ///|
 /// Iterate through elements in a sparse array
 pub fn[X] each(self : SparseArray[X], f : (X) -> Unit raise?) -> Unit raise? {
-  for i in 0..<self.elem_info.size() {
+  for i in 0..<self.elem_info.length() {
     f(self.data[i])
   }
 }

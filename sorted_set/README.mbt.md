@@ -71,7 +71,7 @@ Get the size of the set.
 ///|
 test {
   let set = @sorted_set.from_array([1, 2, 3, 4])
-  assert_eq(set.size(), 4)
+  assert_eq(set.length(), 4)
 }
 ```
 
