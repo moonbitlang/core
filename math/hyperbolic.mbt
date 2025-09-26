@@ -149,8 +149,8 @@ pub fn coshf(x : Float) -> Float {
 /// ```moonbit
 ///   inspect(@math.tanhf(0), content="0")
 ///   inspect(@math.tanhf(-0), content="0")
-///   inspect(@math.tanhf(1), content="0.7615941559557649")
-///   inspect(@math.tanhf(2), content="0.9640275800758169")
+///   inspect(@math.tanhf(1), content="0.7615941762924194")
+///   inspect(@math.tanhf(2), content="0.9640275835990906")
 ///   inspect(@math.tanhf(1000), content="1")
 ///   inspect(@math.tanhf(-1000), content="-1")
 ///   inspect(@math.tanhf(@float.not_a_number), content="NaN")
