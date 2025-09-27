@@ -411,10 +411,7 @@ pub impl[A : Compare] Compare for T[A] with compare(self, other) {
 //-----------------------------------------------------------------------------
 
 ///|
-fn[A] from_leaves(
-  leaves : @core/array.View[FixedArray[A]],
-  cap : Int,
-) -> Tree[A] {
+fn[A] from_leaves(leaves : ArrayView[FixedArray[A]], cap : Int) -> Tree[A] {
   if cap == branching_factor {
     Leaf(leaves[0])
   } else if leaves.length() <= branching_factor {

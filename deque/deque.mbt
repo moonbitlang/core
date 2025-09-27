@@ -829,7 +829,7 @@ pub fn[A] Deque::set(self : Deque[A], index : Int, value : A) -> Unit {
 ///   inspect(v1.length(), content="5")
 ///   inspect(v2.length(), content="0")
 /// ```
-pub fn[A] Deque::as_views(self : Deque[A]) -> (@array.View[A], @array.View[A]) {
+pub fn[A] Deque::as_views(self : Deque[A]) -> (ArrayView[A], ArrayView[A]) {
   guard self.len != 0 else { ([][:], [][:]) }
   let { buf, head, len, .. } = self
   let cap = buf.length()

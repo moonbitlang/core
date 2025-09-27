@@ -184,7 +184,7 @@ test "arrayview_to_array" {
 
 ///|
 test "arrayview_arbitrary" {
-  let arr : Array[@array.View[Int]] = @quickcheck.samples(20)
+  let arr : Array[ArrayView[Int]] = @quickcheck.samples(20)
   inspect(arr[5:9], content="[[], [], [0], [0, 0]]")
   inspect(
     arr[10:15],
@@ -194,7 +194,7 @@ test "arrayview_arbitrary" {
 
 ///|
 test "arrayview_hash" {
-  let arr : Array[@array.View[Int]] = @quickcheck.samples(20)
+  let arr : Array[ArrayView[Int]] = @quickcheck.samples(20)
   inspect(arr[5:9].hash(), content="-966877954")
   inspect(arr[10:15].hash(), content="-951019668")
 }
