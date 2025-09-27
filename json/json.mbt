@@ -85,77 +85,125 @@ fn indent_str(level : Int, indent : Int) -> String {
 }
 
 ///|
+/// Internal stack frame used by iterative stringify to avoid recursion
+priv enum WriteFrame {
+  Array(Array[Json], Int, Int) // (arr, index, depth)
+  Object(Array[(String, Json)], Int, Int) // (kvs, index, depth)
+}
+
+///|
+/// Convert this Json value to a String
+/// - `escape_slash`: Whether to escape '/' as '\/' (default: false)
+/// - `indent`: Number of spaces to indent nested structures (default: 0 = non-indented)
 pub fn Json::stringify(
   self : Json,
   escape_slash? : Bool = false,
   indent? : Int = 0,
 ) -> String {
   let buf = StringBuilder::new(size_hint=0)
-  fn stringify_inner(value : Json, level : Int) -> Unit {
-    match value {
-      Object(members) => {
-        if members.is_empty() {
-          buf.write_string("{}")
-          return
-        }
-        buf.write_char('{')
-        buf.write_string(indent_str(level + 1, indent))
-        let mut first = true
-        for k, v in members {
-          if first {
-            first = false
+
+  // Explicit stack to replace recursive calls
+  let stack : Array[WriteFrame] = []
+  loop (Some(self), 0) {
+    (Some(value), depth) =>
+      match value {
+        Object(members) =>
+          if members.is_empty() {
+            buf.write_string("{}")
+            continue (None, depth)
           } else {
-            buf.write_char(',')
-            buf.write_string(indent_str(level + 1, indent))
+            buf.write_char('{')
+            buf.write_string(indent_str(depth + 1, indent))
+            // After child value printed, we resume from this frame
+            stack.push(WriteFrame::Object(members.to_array(), 0, depth))
+            continue (None, depth)
           }
+        Array(arr) =>
+          if arr.is_empty() {
+            buf.write_string("[]")
+            continue (None, depth)
+          } else {
+            buf.write_char('[')
+            buf.write_string(indent_str(depth + 1, indent))
+            stack.push(WriteFrame::Array(arr, 0, depth))
+            continue (None, depth)
+          }
+        String(s) => {
           buf
           ..write_char('\"')
-          ..write_string(escape(k, escape_slash~))
+          ..write_string(escape(s, escape_slash~))
           ..write_char('\"')
-          if indent == 0 {
-            buf.write_char(':')
-          } else {
-            buf.write_string(": ")
+          continue (None, depth)
+        }
+        Number(n, repr~) => {
+          match repr {
+            None => buf.write_object(n)
+            Some(r) => buf.write_string(r)
           }
-          stringify_inner(v, level + 1)
+          continue (None, depth)
         }
-        buf.write_string(indent_str(level, indent))
-        buf.write_char('}')
+        True => {
+          buf.write_string("true")
+          continue (None, depth)
+        }
+        False => {
+          buf.write_string("false")
+          continue (None, depth)
+        }
+        Null => {
+          buf.write_string("null")
+          continue (None, depth)
+        }
       }
-      Array(arr) => {
-        if arr.is_empty() {
-          buf.write_string("[]")
-          return
-        }
-        buf.write_char('[')
-        buf.write_string(indent_str(level + 1, indent))
-        for i, v in arr {
-          if i > 0 {
-            buf.write_char(',')
-            buf.write_string(indent_str(level + 1, indent))
+    (None, _) =>
+      // No current node to write; try to resume a pending container
+      match stack.pop() {
+        Some(frame) =>
+          match frame {
+            WriteFrame::Array(arr, i, depth) =>
+              if i < arr.length() {
+                if i > 0 {
+                  buf.write_char(',')
+                  buf.write_string(indent_str(depth + 1, indent))
+                }
+                // Resume this array after the child is printed
+                stack.push(WriteFrame::Array(arr, i + 1, depth))
+                continue (Some(arr[i]), depth + 1)
+              } else {
+                buf.write_string(indent_str(depth, indent))
+                buf.write_char(']')
+                continue (None, depth)
+              }
+            WriteFrame::Object(kvs, i, depth) =>
+              if i < kvs.length() {
+                if i > 0 {
+                  buf.write_char(',')
+                  buf.write_string(indent_str(depth + 1, indent))
+                }
+                let pair = kvs[i]
+                let k = pair.0
+                let v = pair.1
+                buf
+                ..write_char('\"')
+                ..write_string(escape(k, escape_slash~))
+                ..write_char('\"')
+                if indent == 0 {
+                  buf.write_char(':')
+                } else {
+                  buf.write_string(": ")
+                }
+                // Resume this object after the child is printed
+                stack.push(WriteFrame::Object(kvs, i + 1, depth))
+                continue (Some(v), depth + 1)
+              } else {
+                buf.write_string(indent_str(depth, indent))
+                buf.write_char('}')
+                continue (None, depth)
+              }
           }
-          stringify_inner(v, level + 1)
-        }
-        buf.write_string(indent_str(level, indent))
-        buf.write_char(']')
+        None => break
       }
-      String(s) =>
-        buf
-        ..write_char('\"')
-        ..write_string(escape(s, escape_slash~))
-        ..write_char('\"')
-      Number(n, repr~) =>
-        match repr {
-          None => buf.write_object(n)
-          Some(r) => buf.write_string(r)
-        }
-      True => buf.write_string("true")
-      False => buf.write_string("false")
-      Null => buf.write_string("null")
-    }
   }
-
-  stringify_inner(self, 0)
   buf.to_string()
 }
 
