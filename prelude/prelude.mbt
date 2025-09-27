@@ -16,6 +16,7 @@
 pub typealias @builtin.(
   ArgsLoc,
   Array,
+  ArrayView,
   UninitializedArray,
   Failure,
   Hasher,

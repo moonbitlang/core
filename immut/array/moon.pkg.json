@@ -2,9 +2,12 @@
   "import": [
     "moonbitlang/core/builtin",
     "moonbitlang/core/quickcheck",
+    "moonbitlang/core/array"
+  ],
+  "test-import": [
     {
-      "path": "moonbitlang/core/array",
-      "alias": "core/array"
+      "path": "moonbitlang/core/immut/array",
+      "alias": "array"
     }
   ],
   "targets": {
