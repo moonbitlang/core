@@ -1019,3 +1019,50 @@ test "StringView::op_as_view start on trailing surrogate" {
   let result = try? view[5:]
   inspect(result, content="Err(InvalidIndex)")
 }
+
+///|
+test "StringView::output_without_quote" {
+  // Test basic functionality
+  let view = "abcde"[:3]
+  let builder = StringBuilder::new()
+  view.output_without_quote(builder)
+  inspect(
+    builder.to_string(),
+    content=(
+      #|abc
+    ),
+  )
+
+  // Test with empty view
+  let empty_view = ""[:]
+  let empty_builder = StringBuilder::new()
+  empty_view.output_without_quote(empty_builder)
+  inspect(
+    empty_builder.to_string(),
+    content=(
+      #|
+    ),
+  )
+
+  // Test with unicode characters
+  let unicode_view = "Hello🤣😭😂World"[5:11]
+  let unicode_builder = StringBuilder::new()
+  unicode_view.output_without_quote(unicode_builder)
+  inspect(
+    unicode_builder.to_string(),
+    content=(
+      #|🤣😭😂
+    ),
+  )
+
+  // Test with special characters that would be escaped in Show::output
+  let special_view = "Hello\n\t\"World"[:]
+  let special_builder = StringBuilder::new()
+  special_view.output_without_quote(special_builder)
+  inspect(special_builder.to_string(), content="Hello\n\t\"World")
+
+  // Compare with current Show::output behavior to ensure difference
+  let quote_builder = StringBuilder::new()
+  special_view.output(quote_builder)
+  inspect(quote_builder.to_string(), content="\"Hello\\n\\t\\\"World\"")
+}

@@ -89,6 +89,7 @@ fn StringView::iter2(Self) -> Iter2[Int, Char]
 fn StringView::length(Self) -> Int
 fn StringView::make(Int, Char) -> Self
 fn StringView::offset_of_nth_char(Self, Int) -> Int?
+fn StringView::output_without_quote(Self, &Logger) -> Unit
 fn StringView::pad_end(Self, Int, Char) -> String
 fn StringView::pad_start(Self, Int, Char) -> String
 fn StringView::repeat(Self, Int) -> Self

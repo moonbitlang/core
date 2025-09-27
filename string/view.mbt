@@ -202,6 +202,26 @@ pub impl Show for StringView with output(self, logger) {
 }
 
 ///|
+/// Outputs the StringView content to a logger without quotes.
+/// This is useful when you want to write the raw string content to a StringBuilder
+/// without the quotes that would be added by the Show::output implementation.
+/// 
+/// # Example
+/// 
+/// ```mbt
+/// let view = "Hello World"[:5]
+/// let builder = StringBuilder::new()
+/// view.output_without_quote(builder)
+/// inspect(builder.to_string(), content="Hello")
+/// ```
+pub fn StringView::output_without_quote(
+  self : StringView,
+  logger : &Logger,
+) -> Unit {
+  logger.write_substring(self.str(), self.start(), self.length())
+}
+
+///|
 /// Returns a new String containing a copy of the characters in this view.
 /// 
 /// # Examples
