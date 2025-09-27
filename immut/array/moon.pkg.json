@@ -2,13 +2,7 @@
   "import": [
     "moonbitlang/core/builtin",
     "moonbitlang/core/quickcheck",
-    "moonbitlang/core/array"
-  ],
-  "test-import": [
-    {
-      "path": "moonbitlang/core/immut/array",
-      "alias": "array"
-    }
+    { "path": "moonbitlang/core/array", "alias": "_" }
   ],
   "targets": {
     "panic_test.mbt": [
