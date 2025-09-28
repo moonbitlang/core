@@ -118,9 +118,15 @@ pub impl[A : Hash] Hash for Deque[A] with hash_combine(self, hasher) {
 ///   inspect(dq3.to_array(), content="[4, 5, 6, 7]")
 /// ```
 pub impl[A] Add for Deque[A] with add(self, other) {
-  let res = self.copy()
-  res.append(other)
-  res
+  let len = self.len + other.len
+  let buf = UninitializedArray::make(len)
+  for i, x in self {
+    buf[i] = x
+  }
+  for i, x in other {
+    buf[i + self.len] = x
+  }
+  Deque::{ buf, len, head: 0, tail: len - 1 }
 }
 
 ///|
@@ -142,16 +148,12 @@ pub impl[A] Add for Deque[A] with add(self, other) {
 /// ```
 #as_free_fn
 pub fn[A] Deque::from_array(arr : Array[A]) -> Deque[A] {
-  let deq = Deque::{
-    buf: UninitializedArray::make(arr.length()),
-    len: arr.length(),
-    head: 0,
-    tail: arr.length() - 1,
+  let len = arr.length()
+  let buf = UninitializedArray::make(len)
+  for i, x in arr {
+    buf[i] = x
   }
-  for i in 0..<arr.length() {
-    deq.buf[i] = arr[i]
-  }
-  deq
+  Deque::{ buf, len, head: 0, tail: len - 1 }
 }
 
 ///|
@@ -175,16 +177,11 @@ pub fn[A] Deque::from_array(arr : Array[A]) -> Deque[A] {
 /// ```
 pub fn[A] copy(self : Deque[A]) -> Deque[A] {
   let len = self.len
-  let deq = Deque::{
-    buf: UninitializedArray::make(len),
-    len,
-    head: 0,
-    tail: len - 1,
-  }
+  let buf = UninitializedArray::make(len)
   for i, x in self {
-    deq.buf[i] = x
+    buf[i] = x
   }
-  deq
+  Deque::{ buf, len, head: 0, tail: len - 1 }
 }
 
 ///|
@@ -433,16 +430,12 @@ pub fn[A] remove(self : Deque[A], index : Int) -> A {
 /// ```
 #as_free_fn
 pub fn[A] Deque::of(arr : FixedArray[A]) -> Deque[A] {
-  let deq = Deque::{
-    buf: UninitializedArray::make(arr.length()),
-    len: arr.length(),
-    head: 0,
-    tail: arr.length() - 1,
+  let len = arr.length()
+  let buf = UninitializedArray::make(len)
+  for i, x in arr {
+    buf[i] = x
   }
-  for i in 0..<arr.length() {
-    deq.buf[i] = arr[i]
-  }
-  deq
+  Deque::{ buf, len, head: 0, tail: len - 1 }
 }
 
 ///|
