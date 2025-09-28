@@ -180,17 +180,14 @@ pub fn Json::stringify(
                   buf.write_char(',')
                   buf.write_string(indent_str(depth + 1, indent))
                 }
-                let pair = kvs[i]
-                let k = pair.0
-                let v = pair.1
+                let (k, v) = kvs[i]
                 buf
                 ..write_char('\"')
                 ..write_string(escape(k, escape_slash~))
                 ..write_char('\"')
-                if indent == 0 {
-                  buf.write_char(':')
-                } else {
-                  buf.write_string(": ")
+                ..write_char(':')
+                if indent > 0 {
+                  buf.write_char(' ')
                 }
                 // Resume this object after the child is printed
                 stack.push(WriteFrame::Object(kvs, i + 1, depth))
