@@ -127,7 +127,7 @@ pub fn[A : Compare] pop(self : PriorityQueue[A]) -> PriorityQueue[A]? {
 }
 
 ///|
-fn[A : Compare] remove_last_leaf(self : Node[A], path : Path) -> (A, Node[A]) {
+fn[A] remove_last_leaf(self : Node[A], path : Path) -> (A, Node[A]) {
   match self {
     Empty => abort("Priority queue is empty!")
     Leaf(a) => (a, Empty)
