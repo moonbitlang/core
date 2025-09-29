@@ -98,7 +98,7 @@ pub fn[K : Hash + Eq] Set::from_array(arr : Array[K]) -> Set[K] {
 ///   inspect(set.length(), content="1")
 /// ```
 pub fn[K : Hash + Eq] add(self : Set[K], key : K) -> Unit {
-  self.add_with_hash(key, Hasher::new()..combine(key).finalize())
+  self.add_with_hash(key, key.hash())
 }
 
 ///|
@@ -180,7 +180,7 @@ pub fn[K : Hash + Eq] add_and_check(self : Set[K], key : K) -> Bool {
   if self.size >= self.grow_at {
     self.grow()
   }
-  let hash = Hasher::new()..combine(key).finalize()
+  let hash = key.hash()
   let (idx, psl, added) = for psl = 0, idx = hash & self.capacity_mask {
     match self.entries[idx] {
       None => break (idx, psl, true)
@@ -207,7 +207,7 @@ pub fn[K : Hash + Eq] add_and_check(self : Set[K], key : K) -> Bool {
 /// Check if the hash set contains a key.
 pub fn[K : Hash + Eq] Set::contains(self : Set[K], key : K) -> Bool {
   // inline lookup to avoid unnecessary allocations
-  let hash = Hasher::new()..combine(key).finalize()
+  let hash = key.hash()
   for i = 0, idx = hash & self.capacity_mask {
     guard self.entries[idx] is Some(entry) else { break false }
     if entry.hash == hash && entry.key == key {
@@ -240,7 +240,7 @@ pub fn[K : Hash + Eq] Set::contains(self : Set[K], key : K) -> Bool {
 ///   inspect(set.length(), content="1")
 /// ```
 pub fn[K : Hash + Eq] remove(self : Set[K], key : K) -> Unit {
-  let hash = Hasher::new()..combine(key).finalize()
+  let hash = key.hash()
   for i = 0, idx = hash & self.capacity_mask {
     guard self.entries[idx] is Some(entry) else { break }
     if entry.hash == hash && entry.key == key {
@@ -276,7 +276,7 @@ pub fn[K : Hash + Eq] remove(self : Set[K], key : K) -> Unit {
 ///   inspect(set.length(), content="1")
 /// ```
 pub fn[K : Hash + Eq] remove_and_check(self : Set[K], key : K) -> Bool {
-  let hash = Hasher::new()..combine(key).finalize()
+  let hash = key.hash()
   for i = 0, idx = hash & self.capacity_mask {
     guard self.entries[idx] is Some(entry) else { break false }
     if entry.hash == hash && entry.key == key {

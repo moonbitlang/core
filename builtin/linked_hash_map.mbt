@@ -100,7 +100,7 @@ pub fn[K : Hash + Eq, V] Map::from_array(arr : Array[(K, V)]) -> Map[K, V] {
 /// ```
 #alias("_[_]=_")
 pub fn[K : Hash + Eq, V] Map::set(self : Map[K, V], key : K, value : V) -> Unit {
-  self.set_with_hash(key, value, Hasher::new()..combine(key).finalize())
+  self.set_with_hash(key, value, key.hash())
 }
 
 ///|
@@ -191,7 +191,7 @@ fn[K, V] Map::set_entry(
 ///   inspect(map.get("nonexistent"), content="None")
 /// ```
 pub fn[K : Hash + Eq, V] Map::get(self : Map[K, V], key : K) -> V? {
-  let hash = Hasher::new()..combine(key).finalize()
+  let hash = key.hash()
   for i = 0, idx = hash & self.capacity_mask {
     guard self.entries[idx] is Some(entry) else { break None }
     if entry.hash == hash && entry.key == key {
@@ -207,7 +207,7 @@ pub fn[K : Hash + Eq, V] Map::get(self : Map[K, V], key : K) -> V? {
 ///|
 #alias("_[_]")
 pub fn[K : Hash + Eq, V] Map::at(self : Map[K, V], key : K) -> V {
-  let hash = Hasher::new()..combine(key).finalize()
+  let hash = key.hash()
   for i = 0, idx = hash & self.capacity_mask {
     guard self.entries[idx] is Some(entry)
     if entry.hash == hash && entry.key == key {
@@ -244,7 +244,7 @@ pub fn[K : Hash + Eq, V] Map::get_or_default(
   key : K,
   default : V,
 ) -> V {
-  let hash = Hasher::new()..combine(key).finalize()
+  let hash = key.hash()
   for i = 0, idx = hash & self.capacity_mask {
     match self.entries[idx] {
       Some(entry) => {
@@ -268,7 +268,7 @@ pub fn[K : Hash + Eq, V] Map::get_or_init(
   key : K,
   default : () -> V,
 ) -> V {
-  let hash = Hasher::new()..combine(key).finalize()
+  let hash = key.hash()
   let (idx, psl, new_value, push_away) = for psl = 0, idx = hash &
                                                self.capacity_mask {
     match self.entries[idx] {
@@ -313,7 +313,7 @@ pub fn[K : Hash + Eq, V] Map::get_or_init(
 /// Check if the hash map contains a key.
 pub fn[K : Hash + Eq, V] Map::contains(self : Map[K, V], key : K) -> Bool {
   // inline Map::get to avoid boxing
-  let hash = Hasher::new()..combine(key).finalize()
+  let hash = key.hash()
   for i = 0, idx = hash & self.capacity_mask {
     guard self.entries[idx] is Some(entry) else { break false }
     if entry.hash == hash && entry.key == key {
@@ -353,7 +353,7 @@ pub fn[K : Hash + Eq, V : Eq] Map::contains_kv(
   value : V,
 ) -> Bool {
   // inline Map::get to avoid boxing
-  let hash = Hasher::new()..combine(key).finalize()
+  let hash = key.hash()
   for i = 0, idx = hash & self.capacity_mask {
     guard self.entries[idx] is Some(entry) else { break false }
     if entry.hash == hash && entry.key == key && entry.value == value {
@@ -386,7 +386,7 @@ pub fn[K : Hash + Eq, V : Eq] Map::contains_kv(
 ///   inspect(map.length(), content="1")
 /// ```
 pub fn[K : Hash + Eq, V] Map::remove(self : Map[K, V], key : K) -> Unit {
-  self.remove_with_hash(key, Hasher::new()..combine(key).finalize())
+  self.remove_with_hash(key, key.hash())
 }
 
 ///|
@@ -824,7 +824,7 @@ pub fn[K : Hash + Eq, V] Map::update(
   key : K,
   f : (V?) -> V?,
 ) -> Unit {
-  let hash = Hasher::new()..combine(key).finalize()
+  let hash = key.hash()
   let (idx, psl, new_value, push_away) = for psl = 0, idx = hash &
                                                self.capacity_mask {
     match self.entries[idx] {
