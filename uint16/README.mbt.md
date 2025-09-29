@@ -1,6 +1,8 @@
 # `uint16`
 
-The `moonbitlang/core/uint16` package provides functionality for working with 16-bit unsigned integers. This package includes constants, operators, and conversions for UInt16 values.
+The `moonbitlang/core/uint16` package provides functionality for working with
+16-bit unsigned integers. This package includes constants, operators, and
+conversions for UInt16 values.
 
 ## Constants
 
@@ -110,7 +112,9 @@ test "UInt16 default value" {
 
   // Hash support is available via .hash()
   let value : UInt16 = 42
-  inspect(value.hash(), content="42")
+  // This may be random per process
+  let _ = value.hash()
+
 }
 ```
 

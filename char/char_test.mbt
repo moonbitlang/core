@@ -412,24 +412,6 @@ test "to ascii lowercase" {
 }
 
 ///|
-test "Hash implementation edge cases" {
-  // Test that hash function works for various characters
-  let hash_a = 'a'.hash()
-  let hash_b = 'b'.hash()
-  assert_true(hash_a >= 0)
-  assert_true(hash_b >= 0)
-  assert_false(hash_a == hash_b) // Different characters should have different hashes
-
-  // Test with null character
-  let null_hash = '\u{0000}'.hash()
-  assert_true(null_hash >= 0)
-
-  // Test with high Unicode characters
-  let unicode_hash = '🚀'.hash()
-  assert_true(unicode_hash >= 0)
-}
-
-///|
 test "ToJson implementation" {
   // Test that to_json works without crashing for various characters
   let json_a = 'a'.to_json()

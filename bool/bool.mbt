@@ -108,11 +108,6 @@ pub fn to_uint64(self : Bool) -> UInt64 {
 }
 
 ///|
-pub impl Hash for Bool with hash(self) {
-  self.to_int()
-}
-
-///|
 pub impl Hash for Bool with hash_combine(self, hasher) {
   hasher.combine_bool(self)
 }

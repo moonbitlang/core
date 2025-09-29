@@ -462,40 +462,6 @@ pub impl Hash for String with hash_combine(self, hasher) {
 }
 
 ///|
-/// Implements the `Hash` trait for integer values using a combination of shifts
-/// and multiplications to produce a well-distributed hash value. Based on the
-/// hash algorithm from hash-prospector
-/// (https://github.com/skeeto/hash-prospector).
-///
-/// Parameters:
-///
-/// * `integer` : The integer value to be hashed. The value will be reinterpreted
-/// as an unsigned integer before hashing to ensure consistent behavior across
-/// positive and negative values.
-///
-/// Returns a 32-bit hash value derived from the input integer.
-///
-/// Example:
-///
-/// ```moonbit
-///   let x = 42
-///   inspect(Hash::hash(x), content="-1704501356")
-///   let y = -42
-///   inspect(Hash::hash(y), content="1617647962")
-/// ```
-pub impl Hash for Int with hash(self) {
-  let self = self.reinterpret_as_uint()
-  let mut x = self ^ (self >> 17)
-  x = x * 0xed5ad4bb
-  x = x ^ (x >> 11)
-  x = x * 0xac4c1b51
-  x = x ^ (x >> 15)
-  x = x * 0x31848bab
-  x = x ^ (x >> 14)
-  x.reinterpret_as_int()
-}
-
-///|
 /// Implements hash combination for integers by combining the integer value with
 /// a hasher. This implementation ensures that integers can be used as keys in
 /// hash-based collections like hash maps and hash sets.

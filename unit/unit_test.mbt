@@ -43,7 +43,7 @@ test {
 ///|
 test {
   let unit = ()
-  inspect(unit.hash(), content="0")
+  inspect(Hasher::new(seed=0)..combine(unit).finalize(), content="148298089")
 }
 
 ///|
