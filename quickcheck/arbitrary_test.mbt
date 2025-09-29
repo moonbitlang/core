@@ -23,13 +23,13 @@ test {
   let state = @splitmix.RandomState::default()
   let size = 10
   let v : H = @quickcheck.gen(state~, size~)
-  inspect(v, content="{x: 0, y: 0}")
+  inspect(v, content="{x: 6, y: 4}")
   let state = state.split()
   let v : H = @quickcheck.gen(state~, size~)
-  inspect(v, content="{x: -1, y: -2}")
+  inspect(v, content="{x: 1, y: -6}")
   let state = state.split()
   let v : H = @quickcheck.gen(state~, size~)
-  inspect(v, content="{x: 7, y: 2}")
+  inspect(v, content="{x: -9, y: 1}")
 }
 
 ///|
@@ -78,7 +78,8 @@ test "arbitrary float" {
 ///|
 test "arbitrary_iter_break" {
   let rs = @splitmix.RandomState::default()
-  let iter : Iter[Int] = @quickcheck.gen(size=3, state=rs)
+  let iter : Iter[Int] = @quickcheck.gen(size=4, state=rs)
+  // An Iter with a length greater than 0 is required here
   let mut i = 0
   match
     iter.run(_ => {
@@ -98,7 +99,7 @@ test "arbitrary gen bytes" {
   inspect(
     bytes,
     content=(
-      #|b"\xec\xa9a\xbcQ. \x8b"
+      #|b"\xcb"
     ),
   )
 }
