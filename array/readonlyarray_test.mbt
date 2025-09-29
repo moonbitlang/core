@@ -14,7 +14,7 @@
 
 ///|
 test "ReadOnlyArray constructors" {
-  // Test from_array
+  // Test from_array - keep this test as it specifically tests from_array
   let arr1 = ReadOnlyArray::from_array([1, 2, 3])
   inspect(arr1[0], content="1")
   inspect(arr1[2], content="3")
@@ -31,7 +31,7 @@ test "ReadOnlyArray constructors" {
 
 ///|
 test "ReadOnlyArray access methods" {
-  let arr = ReadOnlyArray::from_array([10, 20, 30])
+  let arr : ReadOnlyArray[Int] = [10, 20, 30]
 
   // Test get
   inspect(arr.get(1), content="Some(20)")
@@ -42,7 +42,7 @@ test "ReadOnlyArray access methods" {
 
   // Test is_empty
   inspect(arr.is_empty(), content="false")
-  let empty : ReadOnlyArray[Int] = ReadOnlyArray::from_array([])
+  let empty : ReadOnlyArray[Int] = []
   inspect(empty.is_empty(), content="true")
 
   // Test last
@@ -52,7 +52,7 @@ test "ReadOnlyArray access methods" {
 
 ///|
 test "ReadOnlyArray functional methods" {
-  let arr = ReadOnlyArray::from_array([1, 2, 3])
+  let arr : ReadOnlyArray[Int] = [1, 2, 3]
 
   // Test map
   let doubled = arr.map(fn(x) { x * 2 })
@@ -71,7 +71,7 @@ test "ReadOnlyArray functional methods" {
 
 ///|
 test "ReadOnlyArray search methods" {
-  let arr = ReadOnlyArray::from_array([1, 2, 3, 2, 4])
+  let arr : ReadOnlyArray[Int] = [1, 2, 3, 2, 4]
 
   // Test search
   inspect(arr.search(2), content="Some(1)")
@@ -82,7 +82,7 @@ test "ReadOnlyArray search methods" {
   inspect(arr.contains(5), content="false")
 
   // Test all/any
-  let even_arr = ReadOnlyArray::from_array([2, 4, 6])
+  let even_arr : ReadOnlyArray[Int] = [2, 4, 6]
   inspect(even_arr.all(fn(x) { x % 2 == 0 }), content="true")
   inspect(arr.any(fn(x) { x % 2 == 0 }), content="true")
 }
@@ -94,10 +94,10 @@ test "ReadOnlyArray trait implementations" {
   inspect(empty.length(), content="0")
 
   // Test Show
-  let arr = ReadOnlyArray::from_array([1, 2, 3])
+  let arr : ReadOnlyArray[Int] = [1, 2, 3]
   inspect(arr.to_string(), content="[1, 2, 3]")
 
   // Test join for strings
-  let str_arr = ReadOnlyArray::from_array(["a", "b", "c"])
+  let str_arr : ReadOnlyArray[String] = ["a", "b", "c"]
   inspect(str_arr.join(","), content="a,b,c")
 }
