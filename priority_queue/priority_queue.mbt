@@ -192,15 +192,14 @@ pub fn[A : Compare] unsafe_pop(self : T[A]) -> Unit {
 /// inspect(queue.length(), content="3")
 /// ```
 pub fn[A : Compare] pop(self : T[A]) -> A? {
-  let result = self.peek()
-  self.top = match self.top {
+  match self.top {
     None => None
-    Some({ child, .. }) => {
+    Some({ content, child, .. }) => {
       self.len -= 1
-      merges(child)
+      self.top = merges(child)
+      Some(content)
     }
   }
-  result
 }
 
 ///|
