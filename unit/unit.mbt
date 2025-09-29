@@ -18,11 +18,6 @@ pub fn Unit::to_string(_ : Self) -> String {
 }
 
 ///|
-pub impl Hash for Unit with hash(_) -> Int {
-  0
-}
-
-///|
 pub impl Hash for Unit with hash_combine(_, hasher) -> Unit {
   hasher.combine_unit()
 }

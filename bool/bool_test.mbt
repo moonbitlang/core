@@ -14,8 +14,8 @@
 
 ///|
 test "Bool hash function" {
-  inspect(true.hash(), content="1")
-  inspect(false.hash(), content="0")
+  inspect(Hasher::new(seed=0)..combine(true).finalize(), content="-205818221")
+  inspect(Hasher::new(seed=0)..combine(false).finalize(), content="148298089")
 }
 
 ///|

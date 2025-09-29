@@ -162,28 +162,6 @@ pub fn default() -> Float {
 }
 
 ///|
-/// Computes a hash value for a floating-point number by first converting it to
-/// its integer representation and then applying the standard integer hashing
-/// function.
-///
-/// Parameters:
-///
-/// * `value` : The floating-point number to be hashed.
-///
-/// Returns an integer hash value for the given floating-point number.
-///
-/// Example:
-///
-/// ```moonbit
-///   let f : Float = 3.14
-///   let h = Hash::hash(f)
-///   inspect(h != 0, content="true")
-/// ```
-pub impl Hash for Float with hash(self) {
-  self.reinterpret_as_int() |> Hash::hash()
-}
-
-///|
 /// Combines the hash value of a floating-point number with an existing hasher.
 ///
 /// Parameters:
