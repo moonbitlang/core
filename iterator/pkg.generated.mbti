@@ -1,0 +1,34 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/iterator"
+
+// Values
+
+// Errors
+
+// Types and methods
+pub(all) struct AsyncIterator[A](async () -> A?)
+#deprecated
+fn[A] AsyncIterator::inner(Self[A]) -> async () -> A?
+async fn[A, B] AsyncIterator::map(Self[A], (A) -> B) -> Self[B]
+async fn[A] AsyncIterator::next(Self[A]) -> A?
+
+pub(all) struct Iterator[A](() -> A?)
+fn[A] Iterator::all(Self[A], (A) -> Bool) -> Bool
+fn[A] Iterator::any(Self[A], (A) -> Bool) -> Bool
+fn[A] Iterator::count(Self[A]) -> Int
+fn[A] Iterator::each(Self[A], (A) -> Unit) -> Unit
+fn[A] Iterator::empty() -> Self[A]
+fn[A] Iterator::filter(Self[A], (A) -> Bool) -> Self[A]
+fn[A] Iterator::find(Self[A], (A) -> Bool) -> A?
+fn[A, B] Iterator::fold(Self[A], B, (B, A) -> B) -> B
+#deprecated
+fn[A] Iterator::inner(Self[A]) -> () -> A?
+fn[A, B] Iterator::map(Self[A], (A) -> B) -> Self[B]
+fn[A] Iterator::next(Self[A]) -> A?
+fn[A] Iterator::singleton(A) -> Self[A]
+fn[A, S] Iterator::unfold(S, (S) -> (A, S)?) -> Self[A]
+
+// Type aliases
+
+// Traits
+
