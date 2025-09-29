@@ -641,14 +641,15 @@ pub fn BytesView::to_bytes(self : BytesView) -> Bytes {
 
 ///|
 pub impl Hash for BytesView with hash_combine(self : BytesView, hasher : Hasher) {
-  for i in 0..<self.length() {
-    hasher.combine_byte(self.unsafe_get(i))
+  let mut data = self
+  while data.length() >= 4 {
+    hasher.combine_uint(data.to_uint_le())
+    data = data[4:]
   }
-}
-
-///|
-pub impl Hash for BytesView with hash(self : BytesView) -> Int {
-  xxhash32(self.data(), 0, offset=self.start_offset(), len=self.length())
+  while data.length() >= 1 {
+    hasher.combine_byte(data[0])
+    data = data[1:]
+  }
 }
 
 ///|

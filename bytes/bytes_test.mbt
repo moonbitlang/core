@@ -88,10 +88,10 @@ test "hash" {
   let b4 = @bytes.of([
     b'\x7f', b'\xff', b'\xff', b'\xff', b'\xff', b'\xff', b'\xff', b'\xff',
   ])
-  inspect(b1.hash(), content="273427599")
-  inspect(b2.hash(), content="2013728637")
-  inspect(b3.hash(), content="-983520567")
-  inspect(b4.hash(), content="-1652773543")
+  inspect(Hasher::new(seed=0)..combine(b1).finalize(), content="-892426428")
+  inspect(Hasher::new(seed=0)..combine(b2).finalize(), content="404189")
+  inspect(Hasher::new(seed=0)..combine(b3).finalize(), content="-1666368731")
+  inspect(Hasher::new(seed=0)..combine(b4).finalize(), content="1297183151")
   inspect(b1.hash() == b1.hash(), content="true")
   inspect(b2.hash() == b2.hash(), content="true")
   inspect(b1.hash() == b2.hash(), content="false")

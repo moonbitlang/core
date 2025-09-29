@@ -194,7 +194,7 @@ test "arrayview_arbitrary" {
 
 ///|
 test "arrayview_hash" {
-  let arr : Array[@array.View[Int]] = @quickcheck.samples(20)
+  let arr : Array[ArrayView[Int]] = @quickcheck.samples(20)
   inspect(
     Hasher::new(seed=0)..combine(arr[5:9]).finalize(),
     content="-966877954",
