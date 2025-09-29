@@ -77,8 +77,6 @@ pub typealias @builtin.Json as Json
 
 pub typealias @builtin.Map as Map
 
-pub typealias @moonbitlang/core/array.ReadOnlyArray as ReadOnlyArray
-
 pub typealias @moonbitlang/core/set.Set as Set
 
 pub typealias @builtin.SnapshotError as SnapshotError
