@@ -13,13 +13,14 @@
 // limitations under the License.
 
 ///|
-priv enum Node[A] {
-  Nil
-  Cons(content~ : A, mut sibling~ : Node[A], mut child~ : Node[A])
+priv struct Node[A] {
+  content : A
+  mut sibling : Node[A]?
+  mut child : Node[A]?
 }
 
 ///|
 struct T[A] {
   mut len : Int
-  mut top : Node[A]
+  mut top : Node[A]?
 }
