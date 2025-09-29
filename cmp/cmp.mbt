@@ -123,3 +123,58 @@ pub fn[T : Compare] minimum(x : T, y : T) -> T {
     x
   }
 }
+
+///|
+/// Returns both the minimum and maximum of two values as a tuple.
+///
+/// Parameters:
+///
+/// * `x` : The first value to compare.
+/// * `y` : The second value to compare.
+///
+/// Returns a tuple `(min, max)` where the first element is the smaller value
+/// and the second element is the larger value. If the values are equal, returns
+/// `(x, y)`.
+///
+/// Examples:
+///
+/// ```moonbit
+/// inspect(@cmp.minmax(1, 2), content="(1, 2)")
+/// inspect(@cmp.minmax(2, 1), content="(1, 2)")
+/// ```
+pub fn[T : Compare] minmax(x : T, y : T) -> (T, T) {
+  if x > y {
+    (y, x)
+  } else {
+    (x, y)
+  }
+}
+
+///|
+/// Returns the minimum and maximum of two values based on a comparison
+/// function.
+///
+/// Parameters:
+///
+/// * `x` : The first value to compare.
+/// * `y` : The second value to compare.
+/// * `f` : A function that extracts a comparable key from each value.
+///
+/// Returns a tuple `(min, max)` where the first element is the value that
+/// produces the smaller key and the second element is the value that produces
+/// the larger key. If the keys are equal, returns `(x, y)`.
+///
+/// Examples:
+///
+/// ```moonbit
+/// inspect(@cmp.minmax_by_key(1, -2, @int.abs), content="(1, -2)")
+/// inspect(@cmp.minmax_by_key(-2, 1, @int.abs), content="(1, -2)")
+/// inspect(@cmp.minmax_by_key(-2, 2, @int.abs), content="(-2, 2)")
+/// ```
+pub fn[T, K : Compare] minmax_by_key(x : T, y : T, f : (T) -> K) -> (T, T) {
+  if f(x) > f(y) {
+    (y, x)
+  } else {
+    (x, y)
+  }
+}
