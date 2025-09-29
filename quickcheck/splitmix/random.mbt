@@ -16,7 +16,7 @@
 struct RandomState {
   mut seed : UInt64
   gamma : UInt64
-} derive(Show, Default)
+} derive(Show)
 
 ///|
 let golden_gamma : UInt64 = 0x9e3779b97f4a7c15
@@ -145,4 +145,16 @@ fn mix_gamma(z0 : UInt64) -> UInt64 {
   } else {
     z1 ^ 0xaaaaaaaaaaaaaaaa
   }
+}
+
+///|
+pub impl Default for RandomState with default() {
+  new()
+}
+
+///|
+test "non-zero default" {
+  let rs = RandomState::default()
+  assert_not_eq(rs.seed, 0)
+  assert_not_eq(rs.gamma, 0)
 }
