@@ -35,14 +35,13 @@ pub fn[A] T::new() -> T[A] {
 /// ```
 #as_free_fn
 pub fn[A : Compare] T::from_array(arr : Array[A]) -> T[A] {
-  // CR: bad formatting
+  guard arr is [a0, ..] else { return new() }
   let len = arr.length()
-  for i = 0, acc = None {
+  for i = 1, acc = { content: a0, sibling: None, child: None } {
     if i < len {
-      continue i + 1,
-        meld_opt(acc, Some({ content: arr[i], sibling: None, child: None }))
+      continue i + 1, meld(acc, { content: arr[i], sibling: None, child: None })
     } else {
-      break { len, top: acc }
+      break { len, top: Some(acc) }
     }
   }
 }
@@ -125,15 +124,6 @@ pub fn[K : Compare] T::from_iter(iter : Iter[K]) -> T[K] {
 }
 
 ///|
-fn[A : Compare] meld_opt(x : Node[A]?, y : Node[A]?) -> Node[A]? {
-  match (x, y) {
-    (None, _) => y
-    (_, None) => x
-    (Some(x_top), Some(y_top)) => Some(meld(x_top, y_top))
-  }
-}
-
-///|
 fn[A : Compare] meld(x : Node[A], y : Node[A]) -> Node[A] {
   if x.content > y.content {
     y.sibling = x.child
@@ -148,13 +138,22 @@ fn[A : Compare] meld(x : Node[A], y : Node[A]) -> Node[A] {
 
 ///|
 fn[A : Compare] merges(x : Node[A]?) -> Node[A]? {
-  loop (x, None) {
-    (None, acc) => acc
-    (Some({ sibling: None, .. }) as x, acc) => meld_opt(acc, x)
+  let (x, acc) = match x {
+    None => return None
+    Some({ sibling: None, .. }) as x => return x
+    Some({ sibling: Some({ sibling: s2, .. } as s1), .. } as x) => {
+      x.sibling = None
+      s1.sibling = None
+      (s2, meld(x, s1))
+    }
+  }
+  loop (x, acc) {
+    (None, acc) => Some(acc)
+    (Some({ sibling: None, .. } as x), acc) => Some(meld(acc, x))
     (Some({ sibling: Some({ sibling: s2, .. } as s1), .. } as x), acc) => {
       x.sibling = None
       s1.sibling = None
-      continue (s2, meld_opt(acc, meld_opt(Some(x), Some(s1))))
+      continue (s2, meld(acc, meld(x, s1)))
     }
   }
 }
@@ -214,10 +213,11 @@ pub fn[A : Compare] pop(self : T[A]) -> A? {
 /// assert_eq(queue.length(), 1)
 /// ```
 pub fn[A : Compare] push(self : T[A], value : A) -> Unit {
-  self.top = meld_opt(
-    self.top,
-    Some({ content: value, sibling: None, child: None }),
-  )
+  let x = { content: value, sibling: None, child: None }
+  self.top = match self.top {
+    None => Some(x)
+    Some(top) => Some(meld(top, x))
+  }
   self.len += 1
 }
 
@@ -266,14 +266,13 @@ pub fn[A] is_empty(self : T[A]) -> Bool {
 ///|
 #as_free_fn
 pub fn[A : Compare] T::of(arr : FixedArray[A]) -> T[A] {
-  // CR: bad formatting
+  guard arr is [a0, ..] else { return new() }
   let len = arr.length()
-  for i = 0, acc = None {
+  for i = 1, acc = { content: a0, sibling: None, child: None } {
     if i < len {
-      continue i + 1,
-        meld_opt(acc, Some({ content: arr[i], sibling: None, child: None }))
+      continue i + 1, meld(acc, { content: arr[i], sibling: None, child: None })
     } else {
-      break { len, top: acc }
+      break { len, top: Some(acc) }
     }
   }
 }
@@ -288,16 +287,14 @@ pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for T[X] wit
   size,
   rs,
 ) {
-  let len : Int = if size == 0 { 0 } else { rs.next_positive_int() % size }
-  for i = 0, acc = None {
+  let len = if size == 0 { 0 } else { rs.next_positive_int() % size }
+  guard len > 0 else { return new() }
+  for i = 1, acc = { content: X::arbitrary(0, rs), sibling: None, child: None } {
     if i < len {
       continue i + 1,
-        meld_opt(
-          acc,
-          Some({ content: X::arbitrary(i, rs), sibling: None, child: None }),
-        )
+        meld(acc, { content: X::arbitrary(i, rs), sibling: None, child: None })
     } else {
-      break { len, top: acc }
+      break { len, top: Some(acc) }
     }
   }
 }
