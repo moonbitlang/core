@@ -22,7 +22,7 @@
 /// ```
 #as_free_fn
 pub fn[A] T::new() -> T[A] {
-  { len: 0, top: Nil }
+  { len: 0, top: None }
 }
 
 ///|
@@ -37,9 +37,10 @@ pub fn[A] T::new() -> T[A] {
 pub fn[A : Compare] T::from_array(arr : Array[A]) -> T[A] {
   // CR: bad formatting
   let len = arr.length()
-  for i = 0, acc = Node::Nil {
+  for i = 0, acc = None {
     if i < len {
-      continue i + 1, meld(acc, Cons(content=arr[i], sibling=Nil, child=Nil))
+      continue i + 1,
+        meld_opt(acc, Some({ content: arr[i], sibling: None, child: None }))
     } else {
       break { len, top: acc }
     }
@@ -47,15 +48,15 @@ pub fn[A : Compare] T::from_array(arr : Array[A]) -> T[A] {
 }
 
 ///|
-fn[A] copy_node(x : Node[A]) -> Node[A] {
+fn[A] copy_node(x : Node[A]?) -> Node[A]? {
   match x {
-    Nil => Nil
-    Cons(_) as node =>
-      Cons(
-        content=node.content,
-        sibling=copy_node(node.sibling),
-        child=copy_node(node.child),
-      )
+    None => None
+    Some(node) =>
+      Some({
+        content: node.content,
+        sibling: copy_node(node.sibling),
+        child: copy_node(node.child),
+      })
   }
 }
 
@@ -76,11 +77,11 @@ pub fn[A] copy(self : T[A]) -> T[A] {
 ///|
 pub fn[A : Compare] to_array(self : T[A]) -> Array[A] {
   let arr = Array::new(capacity=self.len)
-  let stack : Array[Node[A]] = [self.top]
+  let stack : Array[Node[A]?] = [self.top]
   while stack.pop() is Some(node) {
     match node {
-      Nil => ()
-      Cons(content~, sibling~, child~) => {
+      None => ()
+      Some({ content, sibling, child }) => {
         arr.push(content)
         stack.push(sibling)
         stack.push(child)
@@ -124,32 +125,36 @@ pub fn[K : Compare] T::from_iter(iter : Iter[K]) -> T[K] {
 }
 
 ///|
-fn[A : Compare] meld(x : Node[A], y : Node[A]) -> Node[A] {
+fn[A : Compare] meld_opt(x : Node[A]?, y : Node[A]?) -> Node[A]? {
   match (x, y) {
-    (Nil, _) => y
-    (_, Nil) => x
-    (Cons(_) as x_top, Cons(_) as y_top) =>
-      if x_top.content > y_top.content {
-        y_top.sibling = x_top.child
-        x_top.child = y
-        x
-      } else {
-        x_top.sibling = y_top.child
-        y_top.child = x
-        y
-      }
+    (None, _) => y
+    (_, None) => x
+    (Some(x_top), Some(y_top)) => Some(meld(x_top, y_top))
   }
 }
 
 ///|
-fn[A : Compare] merges(x : Node[A]) -> Node[A] {
-  loop (x, Nil) {
-    (Nil, acc) => acc
-    (Cons(sibling=Nil, ..) as x, acc) => meld(acc, x)
-    (Cons(sibling=Cons(sibling=s2, ..) as s1, ..) as x, acc) => {
-      x.sibling = Nil
-      s1.sibling = Nil
-      continue (s2, meld(acc, meld(x, s1)))
+fn[A : Compare] meld(x : Node[A], y : Node[A]) -> Node[A] {
+  if x.content > y.content {
+    y.sibling = x.child
+    x.child = Some(y)
+    x
+  } else {
+    x.sibling = y.child
+    y.child = Some(x)
+    y
+  }
+}
+
+///|
+fn[A : Compare] merges(x : Node[A]?) -> Node[A]? {
+  loop (x, None) {
+    (None, acc) => acc
+    (Some({ sibling: None, .. }) as x, acc) => meld_opt(acc, x)
+    (Some({ sibling: Some({ sibling: s2, .. } as s1), .. } as x), acc) => {
+      x.sibling = None
+      s1.sibling = None
+      continue (s2, meld_opt(acc, meld_opt(Some(x), Some(s1))))
     }
   }
 }
@@ -171,8 +176,8 @@ pub fn[A] length(self : T[A]) -> Int {
 #internal(unsafe, "Panic if the queue is empty.")
 pub fn[A : Compare] unsafe_pop(self : T[A]) -> Unit {
   self.top = match self.top {
-    Nil => abort("The PriorityQueue is empty!")
-    Cons(child~, ..) => merges(child)
+    None => abort("The PriorityQueue is empty!")
+    Some({ child, .. }) => merges(child)
   }
   self.len -= 1
 }
@@ -190,8 +195,8 @@ pub fn[A : Compare] unsafe_pop(self : T[A]) -> Unit {
 pub fn[A : Compare] pop(self : T[A]) -> A? {
   let result = self.peek()
   self.top = match self.top {
-    Nil => Nil
-    Cons(child~, ..) => {
+    None => None
+    Some({ child, .. }) => {
       self.len -= 1
       merges(child)
     }
@@ -209,7 +214,10 @@ pub fn[A : Compare] pop(self : T[A]) -> A? {
 /// assert_eq(queue.length(), 1)
 /// ```
 pub fn[A : Compare] push(self : T[A], value : A) -> Unit {
-  self.top = meld(self.top, Cons(content=value, sibling=Nil, child=Nil))
+  self.top = meld_opt(
+    self.top,
+    Some({ content: value, sibling: None, child: None }),
+  )
   self.len += 1
 }
 
@@ -224,8 +232,8 @@ pub fn[A : Compare] push(self : T[A], value : A) -> Unit {
 /// ```
 pub fn[A] peek(self : T[A]) -> A? {
   match self.top {
-    Nil => None
-    Cons(content~, ..) => Some(content)
+    None => None
+    Some({ content, .. }) => Some(content)
   }
 }
 
@@ -239,7 +247,7 @@ pub fn[A] peek(self : T[A]) -> A? {
 /// assert_eq(queue.length(), 0)
 /// ```
 pub fn[A] clear(self : T[A]) -> Unit {
-  self.top = Nil
+  self.top = None
   self.len = 0
 }
 
@@ -260,9 +268,10 @@ pub fn[A] is_empty(self : T[A]) -> Bool {
 pub fn[A : Compare] T::of(arr : FixedArray[A]) -> T[A] {
   // CR: bad formatting
   let len = arr.length()
-  for i = 0, acc = Node::Nil {
+  for i = 0, acc = None {
     if i < len {
-      continue i + 1, meld(acc, Cons(content=arr[i], sibling=Nil, child=Nil))
+      continue i + 1,
+        meld_opt(acc, Some({ content: arr[i], sibling: None, child: None }))
     } else {
       break { len, top: acc }
     }
@@ -280,10 +289,13 @@ pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for T[X] wit
   rs,
 ) {
   let len : Int = if size == 0 { 0 } else { rs.next_positive_int() % size }
-  for i = 0, acc = Node::Nil {
+  for i = 0, acc = None {
     if i < len {
       continue i + 1,
-        meld(acc, Cons(content=X::arbitrary(i, rs), sibling=Nil, child=Nil))
+        meld_opt(
+          acc,
+          Some({ content: X::arbitrary(i, rs), sibling: None, child: None }),
+        )
     } else {
       break { len, top: acc }
     }
