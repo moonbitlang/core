@@ -12,6 +12,7 @@ test "generic comparison" {
   // Works with numbers
   inspect(@cmp.maximum(3, 4), content="4")
   inspect(@cmp.minimum(3, 4), content="3")
+  inspect(@cmp.min_max(3, 4), content="(3, 4)")
 }
 ```
 
