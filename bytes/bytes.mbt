@@ -316,3 +316,8 @@ pub impl Add for Bytes with add(self : Bytes, other : Bytes) -> Bytes {
   }
   unsafe_to_bytes(rv)
 }
+
+///|
+pub impl Hash for Bytes with hash_combine(self, hasher) {
+  hasher.combine(self[:])
+}
