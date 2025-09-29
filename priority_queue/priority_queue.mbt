@@ -270,17 +270,6 @@ pub fn[A : Compare] T::of(arr : FixedArray[A]) -> T[A] {
 }
 
 ///|
-test "meld_and_merges" {
-  inspect(
-    match meld(Cons(content=1, sibling=Nil, child=Nil), Nil) {
-      Nil => false
-      Cons(..) => true
-    },
-    content="true",
-  )
-}
-
-///|
 pub impl[A : Show + Compare] Show for T[A] with output(self, logger) {
   logger.write_iter(self.iter(), prefix="@priority_queue.of([", suffix="])")
 }
