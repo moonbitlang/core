@@ -13,48 +13,6 @@ fn[A, B, C] zip_with(Array[A], Array[B], (A, B) -> C raise?) -> Array[C] raise?
 // Errors
 
 // Types and methods
-type ReadOnlyArray[T]
-fn[T] ReadOnlyArray::all(Self[T], (T) -> Bool raise?) -> Bool raise?
-fn[T] ReadOnlyArray::any(Self[T], (T) -> Bool raise?) -> Bool raise?
-#alias("_[_]")
-fn[T] ReadOnlyArray::at(Self[T], Int) -> T
-fn[T : Compare] ReadOnlyArray::binary_search(Self[T], T) -> Result[Int, Int]
-fn[T] ReadOnlyArray::binary_search_by(Self[T], (T) -> Int raise?) -> Result[Int, Int] raise?
-fn[T : Eq] ReadOnlyArray::contains(Self[T], T) -> Bool
-fn[T] ReadOnlyArray::default() -> Self[T] // from trait `Default`
-fn[T] ReadOnlyArray::each(Self[T], (T) -> Unit raise?) -> Unit raise?
-fn[T] ReadOnlyArray::eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?
-fn[T : Eq] ReadOnlyArray::ends_with(Self[T], Self[T]) -> Bool
-fn[A, B] ReadOnlyArray::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
-fn[A, B] ReadOnlyArray::foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
-fn[T] ReadOnlyArray::from_array(Array[T]) -> Self[T]
-fn[T] ReadOnlyArray::from_iter(Iter[T]) -> Self[T]
-fn[T] ReadOnlyArray::get(Self[T], Int) -> T?
-fn[T] ReadOnlyArray::is_empty(Self[T]) -> Bool
-fn[T] ReadOnlyArray::iter(Self[T]) -> Iter[T]
-fn[T] ReadOnlyArray::iter2(Self[T]) -> Iter2[Int, T]
-fn ReadOnlyArray::join(Self[String], StringView) -> String
-fn[T] ReadOnlyArray::last(Self[T]) -> T?
-fn[T] ReadOnlyArray::length(Self[T]) -> Int
-fn[T] ReadOnlyArray::makei(Int, (Int) -> T raise?) -> Self[T] raise?
-fn[T, U] ReadOnlyArray::map(Self[T], (T) -> U raise?) -> Self[U] raise?
-fn[T, U] ReadOnlyArray::mapi(Self[T], (Int, T) -> U raise?) -> Self[U] raise?
-fn[T : Show] ReadOnlyArray::output(Self[T], &Logger) -> Unit // from trait `Show`
-fn[T] ReadOnlyArray::rev(Self[T]) -> Self[T]
-fn[T] ReadOnlyArray::rev_each(Self[T], (T) -> Unit raise?) -> Unit raise?
-fn[T] ReadOnlyArray::rev_eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?
-fn[A, B] ReadOnlyArray::rev_fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
-fn[A, B] ReadOnlyArray::rev_foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
-fn[T : Eq] ReadOnlyArray::search(Self[T], T) -> Int?
-fn[T : Eq] ReadOnlyArray::starts_with(Self[T], Self[T]) -> Bool
-#alias("_[_:_]")
-fn[T] ReadOnlyArray::sub(Self[T], start? : Int, end? : Int) -> ArrayView[T]
-fn[T : ToJson] ReadOnlyArray::to_json(Self[T]) -> Json // from trait `ToJson`
-fn[T : Show] ReadOnlyArray::to_string(Self[T]) -> String // from trait `Show`
-impl[T] Default for ReadOnlyArray[T]
-impl[T : Show] Show for ReadOnlyArray[T]
-impl[T : ToJson] ToJson for ReadOnlyArray[T]
-
 fn[T] FixedArray::add(Self[T], Self[T]) -> Self[T] // from trait `Add`
 fn[T] FixedArray::all(Self[T], (T) -> Bool raise?) -> Bool raise?
 fn[T] FixedArray::any(Self[T], (T) -> Bool raise?) -> Bool raise?
@@ -108,6 +66,47 @@ impl[T : Compare] Compare for FixedArray[T]
 impl[T : Eq] Eq for FixedArray[T]
 impl[T : Hash] Hash for FixedArray[T]
 impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for FixedArray[X]
+
+fn[T] ReadOnlyArray::all(Self[T], (T) -> Bool raise?) -> Bool raise?
+fn[T] ReadOnlyArray::any(Self[T], (T) -> Bool raise?) -> Bool raise?
+#alias("_[_]")
+fn[T] ReadOnlyArray::at(Self[T], Int) -> T
+fn[T : Compare] ReadOnlyArray::binary_search(Self[T], T) -> Result[Int, Int]
+fn[T] ReadOnlyArray::binary_search_by(Self[T], (T) -> Int raise?) -> Result[Int, Int] raise?
+fn[T : Eq] ReadOnlyArray::contains(Self[T], T) -> Bool
+fn[T] ReadOnlyArray::default() -> Self[T] // from trait `Default`
+fn[T] ReadOnlyArray::each(Self[T], (T) -> Unit raise?) -> Unit raise?
+fn[T] ReadOnlyArray::eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?
+fn[T : Eq] ReadOnlyArray::ends_with(Self[T], Self[T]) -> Bool
+fn[A, B] ReadOnlyArray::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
+fn[A, B] ReadOnlyArray::foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
+fn[T] ReadOnlyArray::from_array(Array[T]) -> Self[T]
+fn[T] ReadOnlyArray::from_iter(Iter[T]) -> Self[T]
+fn[T] ReadOnlyArray::get(Self[T], Int) -> T?
+fn[T] ReadOnlyArray::is_empty(Self[T]) -> Bool
+fn[T] ReadOnlyArray::iter(Self[T]) -> Iter[T]
+fn[T] ReadOnlyArray::iter2(Self[T]) -> Iter2[Int, T]
+fn ReadOnlyArray::join(Self[String], StringView) -> String
+fn[T] ReadOnlyArray::last(Self[T]) -> T?
+fn[T] ReadOnlyArray::length(Self[T]) -> Int
+fn[T] ReadOnlyArray::makei(Int, (Int) -> T raise?) -> Self[T] raise?
+fn[T, U] ReadOnlyArray::map(Self[T], (T) -> U raise?) -> Self[U] raise?
+fn[T, U] ReadOnlyArray::mapi(Self[T], (Int, T) -> U raise?) -> Self[U] raise?
+fn[T : Show] ReadOnlyArray::output(Self[T], &Logger) -> Unit // from trait `Show`
+fn[T] ReadOnlyArray::rev(Self[T]) -> Self[T]
+fn[T] ReadOnlyArray::rev_each(Self[T], (T) -> Unit raise?) -> Unit raise?
+fn[T] ReadOnlyArray::rev_eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?
+fn[A, B] ReadOnlyArray::rev_fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
+fn[A, B] ReadOnlyArray::rev_foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
+fn[T : Eq] ReadOnlyArray::search(Self[T], T) -> Int?
+fn[T : Eq] ReadOnlyArray::starts_with(Self[T], Self[T]) -> Bool
+#alias("_[_:_]")
+fn[T] ReadOnlyArray::sub(Self[T], start? : Int, end? : Int) -> ArrayView[T]
+fn[T : ToJson] ReadOnlyArray::to_json(Self[T]) -> Json // from trait `ToJson`
+fn[T : Show] ReadOnlyArray::to_string(Self[T]) -> String // from trait `Show`
+impl[T] Default for ReadOnlyArray[T]
+impl[T : Show] Show for ReadOnlyArray[T]
+impl[T : ToJson] ToJson for ReadOnlyArray[T]
 
 fn[X : @quickcheck.Arbitrary] Array::arbitrary(Int, @splitmix.RandomState) -> Self[X] // from trait `@quickcheck.Arbitrary`
 fn[T] Array::copy(Self[T]) -> Self[T]
