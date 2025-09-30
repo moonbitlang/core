@@ -438,14 +438,14 @@ pub fn[K, V] HashMap::values(self : HashMap[K, V]) -> Iter[V] {
 /// ```
 #locals(f)
 pub fn[K, V] retain(self : HashMap[K, V], f : (K, V) -> Bool) -> Unit {
-  let last = self.capacity - 1
-  while self.entries[last] is Some(entry) && !f(entry.key, entry.value) {
-    self.shift_back(last)
-    self.size -= 1
-  }
-  for i = last - 1; i >= 0; i = i - 1 {
-    if self.entries[i] is Some(entry) {
-      if !f(entry.key, entry.value) {
+  let size = self.size
+  let mut j = 0
+  for i = 0; j < size; i = i + 1 {
+    while self.entries[i] is Some(entry) {
+      j = j + 1
+      if f(entry.key, entry.value) {
+        break
+      } else {
         self.shift_back(i)
         self.size -= 1
       }
@@ -475,7 +475,7 @@ test "retain" {
   inspect(
     hashmap.entries,
     content=(
-      #|[Some({psl: 1, hash: -136509641, key: "d", value: 4}), None, None, None, None, None, Some({psl: 0, hash: -765931946, key: "b", value: 2}), Some({psl: 1, hash: 448974246, key: "c", value: 3})]
+      #|[None, None, None, None, None, None, Some({psl: 0, hash: -765931946, key: "b", value: 2}), Some({psl: 0, hash: -136509641, key: "d", value: 4})]
     ),
   )
 }
