@@ -94,6 +94,7 @@ fn[T, U] ArrayView::map(Self[T], (T) -> U raise?) -> Array[U] raise?
 fn[T, U] ArrayView::mapi(Self[T], (Int, T) -> U raise?) -> Array[U] raise?
 fn[A, B] ArrayView::rev_fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 fn[A, B] ArrayView::rev_foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
+fn[T] ArrayView::start_offset(Self[T]) -> Int
 fn[T] ArrayView::to_array(Self[T]) -> Array[T]
 fn ArrayView::unsafe_extract_bit(Self[Byte], Int, Int) -> UInt
 fn ArrayView::unsafe_extract_byte(Self[Byte], Int, Int) -> UInt
