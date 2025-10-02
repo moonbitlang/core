@@ -64,15 +64,15 @@ Convert strings to other formats:
 ```moonbit
 ///|
 test "string conversion" {
-  let text = "Hello"
+  let text = "Hello 你好"
 
   // Convert to character array
   let chars = text.to_array()
-  inspect(chars, content="['H', 'e', 'l', 'l', 'o']")
+  inspect(chars, content="['H', 'e', 'l', 'l', 'o', ' ', '你', '好']")
 
-  // Convert to bytes (UTF-16 LE encoding)
-  let bytes = text.to_bytes()
-  inspect(bytes.length(), content="10") // 5 chars * 2 bytes each
+  // Convert to bytes (UTF-8 encoding)
+  let bytes = @utf8.encode(text) // Use UTF-8 encoding
+  inspect(bytes.length(), content="12")
 }
 ```
 
