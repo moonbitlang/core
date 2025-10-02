@@ -457,3 +457,11 @@ pub impl[A : @quickcheck.Arbitrary] @quickcheck.Arbitrary for ArrayView[A] with 
 ) {
   Array::arbitrary(size, rs)[:]
 }
+
+///|
+fn[T] ArrayView::start(self : ArrayView[T]) -> Int = "%arrayview.start"
+
+///|
+pub fn[T] ArrayView::start_offset(self : Self[T]) -> Int {
+  self.start()
+}
