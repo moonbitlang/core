@@ -104,7 +104,6 @@ pub fn UInt16::to_uint64(self : UInt16) -> UInt64 {
 }
 
 ///|
-/// reinterpret as an unsigned integer with binary complement
 pub fn UInt16::reinterpret_as_int16(self : UInt16) -> Int16 {
   self.to_int().to_int16()
 }
