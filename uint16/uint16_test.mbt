@@ -371,3 +371,14 @@ test "UInt16::hash_combine" {
 test "UInt16::default" {
   inspect(UInt16::default(), content="0")
 }
+
+///|
+test "UInt16::reinterpret_as_int16" {
+  inspect(UInt16::reinterpret_as_int16(0), content="0")
+  inspect(UInt16::reinterpret_as_int16(1), content="1")
+  inspect(UInt16::reinterpret_as_int16(32768), content="-32768")
+  inspect(UInt16::reinterpret_as_int16(65535), content="-1")
+  inspect(UInt16::reinterpret_as_int16(65534), content="-2")
+  inspect(UInt16::reinterpret_as_int16(12345), content="12345")
+  inspect(UInt16::reinterpret_as_int16(54321), content="-11215")
+}
