@@ -6,6 +6,10 @@ fn[T : Compare] maximum(T, T) -> T
 
 fn[T, K : Compare] maximum_by_key(T, T, (T) -> K) -> T
 
+fn[T : Compare] min_max(T, T) -> (T, T)
+
+fn[T, K : Compare] min_max_by_key(T, T, (T) -> K) -> (T, T)
+
 fn[T : Compare] minimum(T, T) -> T
 
 fn[T, K : Compare] minimum_by_key(T, T, (T) -> K) -> T
