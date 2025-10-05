@@ -198,7 +198,7 @@ fn[V : Compare] split(root : Node[V]?, value : V) -> (Node[V]?, Node[V]?) {
 }
 
 ///|
-fn[V : Compare] join(left : Node[V]?, value : V, right : Node[V]?) -> Node[V] {
+fn[V] join(left : Node[V]?, value : V, right : Node[V]?) -> Node[V] {
   let (hl, hr) = (height(left), height(right))
   if hl > hr + 1 {
     join_right(left, value, right)
@@ -210,7 +210,7 @@ fn[V : Compare] join(left : Node[V]?, value : V, right : Node[V]?) -> Node[V] {
 }
 
 ///|
-fn[V : Compare] join_left(l : Node[V]?, v : V, r : Node[V]?) -> Node[V] {
+fn[V] join_left(l : Node[V]?, v : V, r : Node[V]?) -> Node[V] {
   let { value: rv, left: rl, right: rr, .. } = r.unwrap()
   let node = if height(rl) <= height(l) + 1 {
     let new_l = new_node_update_height(left=l, v, right=rl)
@@ -235,7 +235,7 @@ fn[V : Compare] join_left(l : Node[V]?, v : V, r : Node[V]?) -> Node[V] {
 }
 
 ///|
-fn[V : Compare] join_right(l : Node[V]?, v : V, r : Node[V]?) -> Node[V] {
+fn[V] join_right(l : Node[V]?, v : V, r : Node[V]?) -> Node[V] {
   let { value: lv, left: ll, right: lr, .. } = l.unwrap()
   let node = if height(lr) <= height(r) + 1 {
     let new_r = new_node_update_height(left=lr, v, right=r)
@@ -332,7 +332,14 @@ pub fn[V : Compare] disjoint(self : SortedSet[V], src : SortedSet[V]) -> Bool {
 
 ///|
 pub impl[V : Eq] Eq for SortedSet[V] with equal(self, other) {
-  self.to_array() == other.to_array()
+  guard self.size == other.size else { return false }
+  let iter = self.into_iterator()
+  let iter1 = other.into_iterator()
+  while iter.next() is Some(a) && iter1.next() is Some(b) {
+    guard a == b else { break false }
+  } else {
+    true
+  }
 }
 
 ///|
@@ -478,10 +485,7 @@ pub fn[V : Compare] range(self : SortedSet[V], low : V, high : V) -> Iter[V] {
 // AVL tree operations
 
 ///|
-fn[V : Compare] replace_root_with_min(
-  root : Node[V],
-  node : Node[V],
-) -> Node[V]? {
+fn[V] replace_root_with_min(root : Node[V], node : Node[V]) -> Node[V]? {
   let (l, r) = (node.left, node.right)
   match l {
     None => {

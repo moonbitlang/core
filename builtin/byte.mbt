@@ -161,26 +161,6 @@ pub fn Byte::to_string(self : Byte) -> String {
 }
 
 ///|
-/// Implements the `Hash` trait for `Byte` type by converting the byte to an
-/// integer and using it as the hash value.
-///
-/// Parameters:
-///
-/// * `self` : The byte value to be hashed.
-///
-/// Returns an integer representing the hash value of the byte.
-///
-/// Example:
-///
-/// ```moonbit
-///   let b = b'\x42'
-///   inspect(Hash::hash(b), content="66") // ASCII value of 'B'
-/// ```
-pub impl Hash for Byte with hash(self) {
-  self.to_int()
-}
-
-///|
 /// Implements the `Hash` trait for `Byte` type by providing a `hash_combine`
 /// method that combines a byte value with a hasher.
 ///
@@ -193,7 +173,7 @@ pub impl Hash for Byte with hash(self) {
 /// Example:
 ///
 /// ```moonbit
-///   let hasher = Hasher::new()
+///   let hasher = Hasher::new(seed=0)
 ///   hasher.combine_byte(b'\xFF')
 ///   inspect(hasher.finalize(), content="1955036104")
 /// ```

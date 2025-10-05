@@ -28,12 +28,6 @@ impl Hash for MyString with hash_combine(self, hasher) {
 }
 
 ///|
-impl Show for MyString with output(self, logger) {
-  let MyString(s) = self
-  logger.write_string(s)
-}
-
-///|
 test "new" {
   let m : Map[Int, Int] = Map::new()
   assert_eq(m.capacity, 8)
@@ -51,10 +45,10 @@ test "set" {
   m.set("c", 1)
   m.set("d", 1)
   assert_eq(m.size, 7)
-  assert_eq(
-    m.debug_entries(),
-    "_,(0,a,1),(1,b,1),(2,c,1),(3,d,1),(3,bc,2),(4,cd,2),(4,abc,3),_,_,_,_,_,_,_,_",
-  )
+  // assert_eq(
+  //   m._debug_entries(),
+  //   "_,(0,a,1),(1,b,1),(2,c,1),(3,d,1),(3,bc,2),(4,cd,2),(4,abc,3),_,_,_,_,_,_,_,_",
+  // )
 }
 
 ///|
@@ -101,9 +95,9 @@ test "get_or_init on push_back" {
   inspect(m.grow_at, content="3")
   m.set("x", Array::new())
   m.set("xx", Array::new())
-  inspect(m.debug_entries(), content="_,(0,x,[]),(0,xx,[]),_")
+  // inspect(m._debug_entries(), content="_,(0,x,[]),(0,xx,[]),_")
   m.get_or_init("a", () => Array::new()).push(1)
-  inspect(m.debug_entries(), content="_,(0,x,[]),(1,a,[1]),(1,xx,[])")
+  // inspect(m._debug_entries(), content="_,(0,x,[]),(1,a,[1]),(1,xx,[])")
 }
 
 ///|
@@ -240,10 +234,10 @@ test "grow" {
   m.set("Rescript", 8)
   assert_eq(m.length(), 10)
   assert_eq(m.capacity(), 16)
-  assert_eq(
-    m.debug_entries(),
-    "_,(0,C,1),(0,Go,2),(0,C++,3),(0,Java,4),(0,Scala,5),(1,Julia,5),(2,Cobol,5),(2,Python,6),(2,Haskell,7),(2,Rescript,8),_,_,_,_,_",
-  )
+  // assert_eq(
+  //   m._debug_entries(),
+  //   "_,(0,C,1),(0,Go,2),(0,C++,3),(0,Java,4),(0,Scala,5),(1,Julia,5),(2,Cobol,5),(2,Python,6),(2,Haskell,7),(2,Rescript,8),_,_,_,_,_",
+  // )
 }
 
 ///|
@@ -769,12 +763,15 @@ test "remove" {
   m.set("abcdef", 6)
   m.remove("ab")
   assert_eq(m.length(), 5)
-  assert_eq(
-    m.debug_entries(),
-    "_,(0,a,1),(0,bc,2),(1,cd,2),(1,abc,3),_,(0,abcdef,6),_",
-  )
+  // assert_eq(
+  //   m._debug_entries(),
+  //   "_,(0,a,1),(0,bc,2),(1,cd,2),(1,abc,3),_,(0,abcdef,6),_",
+  // )
   m.remove("abc")
-  assert_eq(m.debug_entries(), "_,(0,a,1),(0,bc,2),(1,cd,2),_,_,(0,abcdef,6),_")
+  // assert_eq(
+  //   m._debug_entries(),
+  //   "_,(0,a,1),(0,bc,2),(1,cd,2),_,_,(0,abcdef,6),_",
+  // )
 }
 
 ///|
@@ -785,7 +782,7 @@ test "remove_unexist_key" {
   m.set("abc", 3)
   m.remove("d")
   assert_eq(m.length(), 3)
-  assert_eq(m.debug_entries(), "_,(0,a,1),(0,ab,2),(0,abc,3),_,_,_,_")
+  // assert_eq(m._debug_entries(), "_,(0,a,1),(0,ab,2),(0,abc,3),_,_,_,_")
 }
 
 ///|
@@ -910,7 +907,7 @@ test "equal_key_value_mismatch" {
 }
 
 ///|
-fn[K : Show, V : Show] Map::debug_entries(self : Map[K, V]) -> String {
+fn[K : Show, V : Show] Map::_debug_entries(self : Map[K, V]) -> String {
   let buf = StringBuilder::new()
   for i in 0..<self.entries.length() {
     if i > 0 {

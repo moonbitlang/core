@@ -401,3 +401,55 @@ test "write_bom_utf16be" {
     ),
   )
 }
+
+///|
+test "write_uint16_le method" {
+  let buf = @buffer.new(size_hint=4)
+  buf.write_uint16_le(Int::to_uint16(0x1234))
+  buf.write_uint16_le(Int::to_uint16(0xabcd))
+  inspect(
+    buf.to_bytes(),
+    content=(
+      #|b"4\x12\xcd\xab"
+    ),
+  )
+}
+
+///|
+test "write_uint16_be method" {
+  let buf = @buffer.new(size_hint=4)
+  buf.write_uint16_be(Int::to_uint16(0x1234))
+  buf.write_uint16_be(Int::to_uint16(0xabcd))
+  inspect(
+    buf.to_bytes(),
+    content=(
+      #|b"\x124\xab\xcd"
+    ),
+  )
+}
+
+///|
+test "write_int16_le method" {
+  let buf = @buffer.new(size_hint=4)
+  buf.write_int16_le(Int::to_int16(-2))
+  buf.write_int16_le(Int::to_int16(0x1234))
+  inspect(
+    buf.to_bytes(),
+    content=(
+      #|b"\xfe\xff4\x12"
+    ),
+  )
+}
+
+///|
+test "write_int16_be method" {
+  let buf = @buffer.new(size_hint=4)
+  buf.write_int16_be(Int::to_int16(-2))
+  buf.write_int16_be(Int::to_int16(0x1234))
+  inspect(
+    buf.to_bytes(),
+    content=(
+      #|b"\xff\xfe\x124"
+    ),
+  )
+}

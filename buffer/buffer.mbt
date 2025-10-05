@@ -453,6 +453,117 @@ pub fn write_int_le(self : Buffer, value : Int) -> Unit {
 }
 
 ///|
+/// Writes a 16-bit unsigned integer into the buffer in big-endian format (most
+/// significant byte first).
+///
+/// Parameters:
+///
+/// * `buffer` : The buffer to write to.
+/// * `value` : The unsigned 16-bit integer value to write.
+///
+/// Example:
+///
+/// ```moonbit
+///   let buf = @buffer.new()
+///   buf.write_uint16_be(0x1234)
+///   inspect(buf.contents(), content=(
+///   
+///   #|b"\x124"
+/// 
+/// ))
+/// ```
+pub fn write_uint16_be(self : Buffer, value : UInt16) -> Unit {
+  self.grow_if_necessary(self.len + 2)
+  let offset = self.len
+  self.data[offset] = (value.to_int() >> 8).to_byte()
+  self.data[offset + 1] = value.to_byte()
+  self.len += 2
+}
+
+///|
+/// Writes a 16-bit unsigned integer into the buffer in little-endian format. The
+/// integer is split into 2 bytes and written in order from least significant to
+/// most significant byte.
+///
+/// Parameters:
+///
+/// * `buffer` : The buffer to write to.
+/// * `value` : A 16-bit unsigned integer to be written.
+///
+/// Example:
+///
+/// ```moonbit
+///   let buf = @buffer.new()
+///   buf.write_uint16_le(0x1234)
+///   inspect(buf.contents(), content=(
+///   
+///   #|b"4\x12"
+/// 
+/// ))
+/// ```
+pub fn write_uint16_le(self : Buffer, value : UInt16) -> Unit {
+  self.grow_if_necessary(self.len + 2)
+  let offset = self.len
+  self.data[offset] = value.to_byte()
+  self.data[offset + 1] = (value.to_int() >> 8).to_byte()
+  self.len += 2
+}
+
+///|
+/// Writes a 16-bit integer to the buffer in big-endian format. Big-endian means
+/// the most significant byte is written first.
+///
+/// Parameters:
+///
+/// * `buffer` : The buffer to write to.
+/// * `value` : The 16-bit integer to be written.
+///
+/// Example:
+///
+/// ```moonbit
+///   let buf = @buffer.new()
+///   buf.write_int16_be(0x1234)
+///   inspect(buf.contents(), content=(
+///   
+///   #|b"\x124"
+/// 
+/// ))
+/// ```
+pub fn write_int16_be(self : Buffer, value : Int16) -> Unit {
+  self.grow_if_necessary(self.len + 2)
+  let offset = self.len
+  self.data[offset] = (value.to_int() >> 8).to_byte()
+  self.data[offset + 1] = value.to_byte()
+  self.len += 2
+}
+
+///|
+/// Writes a 16-bit integer into the buffer in little-endian format. The integer
+/// is written as 2 bytes where the least significant byte is written first.
+///
+/// Parameters:
+///
+/// * `buffer` : The buffer to write into.
+/// * `value` : The 16-bit integer value to be written.
+///
+/// Example:
+///
+/// ```moonbit
+///   let buf = @buffer.new()
+///   buf.write_int16_le(-1)
+///   inspect(buf.contents(), content=(
+///   #|b"\xff\xff"
+/// ))
+/// ```
+pub fn write_int16_le(self : Buffer, value : Int16) -> Unit {
+  self.grow_if_necessary(self.len + 2)
+  let offset = self.len
+  self.data[offset] = value.to_byte()
+  self.data[offset + 1] = (value.to_int() >> 8).to_byte()
+  self.len += 2
+}
+
+///|
 /// Writes an IEEE 754 double-precision floating-point number into the buffer in
 /// big-endian format (most significant byte first).
 ///

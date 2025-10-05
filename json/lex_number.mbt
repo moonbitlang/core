@@ -16,7 +16,7 @@
 fn ParseContext::lex_decimal_integer(
   ctx : ParseContext,
   start~ : Int,
-) -> (Double, String?) raise ParseError {
+) -> (Double, StringView?) raise ParseError {
   for {
     match ctx.read_char() {
       Some('.') => return ctx.lex_decimal_point(start~)
@@ -37,7 +37,7 @@ fn ParseContext::lex_decimal_integer(
 fn ParseContext::lex_decimal_point(
   ctx : ParseContext,
   start~ : Int,
-) -> (Double, String?) raise ParseError {
+) -> (Double, StringView?) raise ParseError {
   match ctx.read_char() {
     Some(c) =>
       if c >= '0' && c <= '9' {
@@ -53,7 +53,7 @@ fn ParseContext::lex_decimal_point(
 fn ParseContext::lex_decimal_fraction(
   ctx : ParseContext,
   start~ : Int,
-) -> (Double, String?) raise ParseError {
+) -> (Double, StringView?) raise ParseError {
   for {
     match ctx.read_char() {
       Some('e' | 'E') => return ctx.lex_decimal_exponent(start~)
@@ -73,7 +73,7 @@ fn ParseContext::lex_decimal_fraction(
 fn ParseContext::lex_decimal_exponent(
   ctx : ParseContext,
   start~ : Int,
-) -> (Double, String?) raise ParseError {
+) -> (Double, StringView?) raise ParseError {
   match ctx.read_char() {
     Some('+') | Some('-') => return ctx.lex_decimal_exponent_sign(start~)
     Some(c) => {
@@ -91,7 +91,7 @@ fn ParseContext::lex_decimal_exponent(
 fn ParseContext::lex_decimal_exponent_sign(
   ctx : ParseContext,
   start~ : Int,
-) -> (Double, String?) raise ParseError {
+) -> (Double, StringView?) raise ParseError {
   match ctx.read_char() {
     Some(c) => {
       if c >= '0' && c <= '9' {
@@ -108,7 +108,7 @@ fn ParseContext::lex_decimal_exponent_sign(
 fn ParseContext::lex_decimal_exponent_integer(
   ctx : ParseContext,
   start~ : Int,
-) -> (Double, String?) {
+) -> (Double, StringView?) {
   for {
     match ctx.read_char() {
       Some(c) => {
@@ -127,7 +127,7 @@ fn ParseContext::lex_decimal_exponent_integer(
 fn ParseContext::lex_zero(
   ctx : ParseContext,
   start~ : Int,
-) -> (Double, String?) raise ParseError {
+) -> (Double, StringView?) raise ParseError {
   match ctx.read_char() {
     Some('.') => ctx.lex_decimal_point(start~)
     Some('e' | 'E') => ctx.lex_decimal_exponent(start~)
@@ -148,8 +148,8 @@ fn ParseContext::lex_number_end(
   ctx : ParseContext,
   start : Int,
   end : Int,
-) -> (Double, String?) {
-  let s = ctx.input.unsafe_substring(start~, end~)
+) -> (Double, StringView?) {
+  let s = ctx.input.view(start_offset=start, end_offset=end)
   if !s.contains(".") && !s.contains("e") && !s.contains("E") {
     // If the string does not contain a decimal point or exponent, it is likely an integer
     // We can try to parse it as an integer first

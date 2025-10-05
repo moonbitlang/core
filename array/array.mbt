@@ -56,12 +56,12 @@ pub fn[T] Array::push_iter(self : Self[T], iter : Iter[T]) -> Unit {
 
 ///|
 /// Shuffle the array using Knuth shuffle
-/// 
+///
 /// To use this function, you need to provide a rand function, which takes an integer as it upper bound
 /// and returns an integer.
 /// *rand n* is expected to returns a uniformly distribution integer between 0 and n - 1
 /// # Example
-/// 
+///
 /// ```moonbit
 ///   let arr = [1, 2, 3, 4, 5]
 ///   fn rand(upper : Int) -> Int {
@@ -82,12 +82,12 @@ pub fn[T] shuffle_in_place(self : Array[T], rand~ : (Int) -> Int) -> Unit {
 
 ///|
 /// Shuffle the array using Knuth shuffle
-/// 
+///
 /// To use this function, you need to provide a rand function, which takes an integer as it upper bound
 /// and returns an integer.
 /// *rand n* is expected to returns a uniformly distribution integer between 0 and n - 1
 /// # Example
-/// 
+///
 /// ```mbt
 ///   let arr = [1, 2, 3, 4, 5]
 ///   fn rand(upper : Int) -> Int {
@@ -104,14 +104,14 @@ pub fn[T] shuffle(self : Array[T], rand~ : (Int) -> Int) -> Array[T] {
 
 ///|
 /// Returns a new array containing the elements of the original array that satisfy the given predicate.
-/// 
+///
 /// # Arguments
-/// 
+///
 /// * `self` - The array to filter.
 /// * `f` - The predicate function.
-/// 
+///
 /// # Returns
-/// 
+///
 pub fn[A, B] filter_map(
   self : Array[A],
   f : (A) -> B? raise?,
@@ -175,12 +175,7 @@ pub fn[A, B] zip(self : Array[A], other : Array[B]) -> Array[(A, B)] {
   } else {
     other.length()
   }
-  let arr = Array::new(capacity=length)
-  for i in 0..<length {
-    arr.push((self[i], other[i]))
-  } else {
-    return arr
-  }
+  Array::makei(length, i => (self[i], other[i]))
 }
 
 ///|
@@ -229,12 +224,7 @@ pub fn[A, B, C] zip_with(
   merge : (A, B) -> C raise?,
 ) -> Array[C] raise? {
   let length = if l.length() < r.length() { l.length() } else { r.length() }
-  let arr = Array::new(capacity=length)
-  for i in 0..<length {
-    arr.push(merge(l[i], r[i]))
-  } else {
-    return arr
-  }
+  Array::makei(length, i => merge(l[i], r[i]))
 }
 
 ///|

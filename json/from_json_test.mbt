@@ -765,3 +765,67 @@ test "Bytes from_json" {
     ),
   )
 }
+
+///|
+test "float roundtrip" {
+  let u = (3.14 : Float).to_json()
+  let v : Float = @json.from_json(u)
+  inspect(v, content="3.140000104904175")
+  let u = (0.0 : Float).to_json()
+  let v : Float = @json.from_json(u)
+  inspect(v, content="0")
+  let u = (-1.5 : Float).to_json()
+  let v : Float = @json.from_json(u)
+  inspect(v, content="-1.5")
+}
+
+///|
+test "float special values" {
+  // Test NaN
+  let u = Json::string("NaN")
+  let v : Float = @json.from_json(u)
+  inspect(v, content="NaN")
+
+  // Test Infinity
+  let u = Json::string("Infinity")
+  let v : Float = @json.from_json(u)
+  inspect(v, content="Infinity")
+
+  // Test -Infinity
+  let u = Json::string("-Infinity")
+  let v : Float = @json.from_json(u)
+  inspect(v, content="-Infinity")
+
+  // Test regular number
+  let u = Json::number(42.5)
+  let v : Float = @json.from_json(u)
+  inspect(v, content="42.5")
+}
+
+///|
+test "Float from_json error handling" {
+  let json_string = Json::string("not a number")
+  let result : Result[Float, _] = try? @json.from_json(json_string)
+  inspect(
+    result,
+    content="Err(JsonDecodeError(($, \"Float::from_json: expected number\")))",
+  )
+  let json_array = Json::array([])
+  let result : Result[Float, _] = try? @json.from_json(json_array)
+  inspect(
+    result,
+    content="Err(JsonDecodeError(($, \"Float::from_json: expected number\")))",
+  )
+  let json_object = Json::object({})
+  let result : Result[Float, _] = try? @json.from_json(json_object)
+  inspect(
+    result,
+    content="Err(JsonDecodeError(($, \"Float::from_json: expected number\")))",
+  )
+  let json_null = null
+  let result : Result[Float, _] = try? @json.from_json(json_null)
+  inspect(
+    result,
+    content="Err(JsonDecodeError(($, \"Float::from_json: expected number\")))",
+  )
+}

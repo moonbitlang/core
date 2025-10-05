@@ -71,9 +71,12 @@ test "Hash" {
     a : Float
   } derive(Hash)
   let a = A::{ a: 1.0 }
-  inspect(a.hash(), content="1986884538")
-  inspect(a.a.hash(), content="749479517")
-  inspect((2.0 : Float).hash(), content="-1861484393")
+  inspect(Hasher::new(seed=0)..combine(a).finalize(), content="1986884538")
+  inspect(Hasher::new(seed=0)..combine(a.a).finalize(), content="1986884538")
+  inspect(
+    Hasher::new(seed=0)..combine((2.0 : Float)).finalize(),
+    content="250978825",
+  )
 }
 
 ///|

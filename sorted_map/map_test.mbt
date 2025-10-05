@@ -244,3 +244,42 @@ test "range" {
   }
   inspect(buf, content="[2b][3c][4d]")
 }
+
+///|
+test "to_json with non-empty map" {
+  let map = @sorted_map.from_array([
+    (3, "three"),
+    (8, "eight"),
+    (1, "one"),
+    (2, "two"),
+    (0, "zero"),
+  ])
+  @json.inspect(map.to_json(), content={
+    "0": "zero",
+    "1": "one",
+    "2": "two",
+    "3": "three",
+    "8": "eight",
+  })
+}
+
+///|
+test "to_json with empty map" {
+  let map : @sorted_map.SortedMap[Int, String] = @sorted_map.new()
+  @json.inspect(map.to_json(), content={})
+}
+
+///|
+test "from_json" {
+  for
+    xs in (@quickcheck.samples(20) : Array[@sorted_map.SortedMap[String, Int]]) {
+    assert_eq(xs, @json.from_json(xs.to_json()))
+  }
+}
+
+///|
+test "json roundtrip verification" {
+  let original : Json = { "key1": 42, "key2": 100, "key3": -5 }
+  let restored : @sorted_map.SortedMap[String, Int] = @json.from_json(original)
+  @json.inspect(restored, content={ "key1": 42, "key2": 100, "key3": -5 })
+}

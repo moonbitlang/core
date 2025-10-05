@@ -26,18 +26,24 @@ test "overflow" {
 
 ///|
 test "hash" {
-  inspect((0).hash(), content="0")
-  inspect((1).hash(), content="69681622")
-  inspect((2).hash(), content="-236984087")
-  inspect((3).hash(), content="-1057966777")
-  inspect((4).hash(), content="-744398955")
-  inspect((5).hash(), content="-482482911")
-  inspect((6).hash(), content="-1506254959")
-  inspect((7).hash(), content="1327878809")
-  inspect((8).hash(), content="1120898975")
-  inspect((9).hash(), content="1567958539")
-  inspect((0x7fffffff).hash(), content="943411498")
-  inspect(Hash::hash(0x7fffffff + 1), content="963800214")
+  inspect(Hasher::new(seed=0)..combine(0).finalize(), content="148298089")
+  inspect(Hasher::new(seed=0)..combine(1).finalize(), content="-205818221")
+  inspect(Hasher::new(seed=0)..combine(2).finalize(), content="527729046")
+  inspect(Hasher::new(seed=0)..combine(3).finalize(), content="-2136036233")
+  inspect(Hasher::new(seed=0)..combine(4).finalize(), content="-43556126")
+  inspect(Hasher::new(seed=0)..combine(5).finalize(), content="-2146748363")
+  inspect(Hasher::new(seed=0)..combine(6).finalize(), content="-1455877728")
+  inspect(Hasher::new(seed=0)..combine(7).finalize(), content="-427046664")
+  inspect(Hasher::new(seed=0)..combine(8).finalize(), content="-1629857596")
+  inspect(Hasher::new(seed=0)..combine(9).finalize(), content="970764038")
+  inspect(
+    Hasher::new(seed=0)..combine(0x7fffffff).finalize(),
+    content="1225377669",
+  )
+  inspect(
+    Hasher::new(seed=0)..combine(0x7fffffff + 1).finalize(),
+    content="1509677505",
+  )
 }
 
 ///|

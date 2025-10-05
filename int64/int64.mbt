@@ -78,3 +78,8 @@ pub fn to_be_bytes(self : Int64) -> Bytes {
 pub fn to_le_bytes(self : Int64) -> Bytes {
   self.reinterpret_as_uint64().to_le_bytes()
 }
+
+///|
+pub impl Hash for Int64 with hash_combine(self, hasher) {
+  hasher.combine_int64(self)
+}

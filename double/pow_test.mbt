@@ -949,17 +949,17 @@ test "pow" {
     (@double.neg_infinity, @double.not_a_number, @double.not_a_number),
     (@double.neg_infinity, @double.neg_infinity, 0),
   ]
-  fn is_accept(actucal : Double, expect : Double) -> Bool {
+  fn is_accept(actual : Double, expect : Double) -> Bool {
     if expect.is_nan() {
-      return actucal.is_nan()
+      return actual.is_nan()
     }
     if expect.is_pos_inf() {
-      return actucal.is_pos_inf()
+      return actual.is_pos_inf()
     }
     if expect.is_neg_inf() {
-      return actucal.is_neg_inf()
+      return actual.is_neg_inf()
     }
-    let actual = actucal.reinterpret_as_int64()
+    let actual = actual.reinterpret_as_int64()
     let expected = expect.reinterpret_as_int64()
     (actual - expected).abs() <= 2
   }

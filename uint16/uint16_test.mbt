@@ -174,9 +174,9 @@ test "UInt16::compare" {
 
 ///|
 test "UInt16::hash" {
-  inspect(UInt16::hash(0), content="0")
-  inspect(UInt16::hash(123), content="123")
-  inspect(UInt16::hash(65535), content="65535")
+  inspect(Hasher::new(seed=0)..combine(0).finalize(), content="148298089")
+  inspect(Hasher::new(seed=0)..combine(123).finalize(), content="-868461090")
+  inspect(Hasher::new(seed=0)..combine(65535).finalize(), content="-888052495")
 }
 
 ///|
@@ -361,7 +361,7 @@ test "UInt16::to_uint64" {
 
 ///|
 test "UInt16::hash_combine" {
-  let hasher = @builtin.Hasher::new()
+  let hasher = @builtin.Hasher::new(seed=0)
   let value : UInt16 = 42
   value.hash_combine(hasher)
   inspect(hasher.finalize(), content="1161967057")
@@ -370,4 +370,15 @@ test "UInt16::hash_combine" {
 ///|
 test "UInt16::default" {
   inspect(UInt16::default(), content="0")
+}
+
+///|
+test "UInt16::reinterpret_as_int16" {
+  inspect(UInt16::reinterpret_as_int16(0), content="0")
+  inspect(UInt16::reinterpret_as_int16(1), content="1")
+  inspect(UInt16::reinterpret_as_int16(32768), content="-32768")
+  inspect(UInt16::reinterpret_as_int16(65535), content="-1")
+  inspect(UInt16::reinterpret_as_int16(65534), content="-2")
+  inspect(UInt16::reinterpret_as_int16(12345), content="12345")
+  inspect(UInt16::reinterpret_as_int16(54321), content="-11215")
 }

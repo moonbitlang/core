@@ -163,7 +163,7 @@ pub fn cosh(x : Double) -> Double {
 ///
 /// Example
 ///
-/// ```moobit
+/// ```moonbit
 ///  inspect(@math.tanh(0.0), content="0")
 ///  inspect(@math.tanh(-0.0), content="0")
 ///  inspect(@math.tanh(1.0), content="0.7615941559557649")

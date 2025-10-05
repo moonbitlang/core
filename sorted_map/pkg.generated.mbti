@@ -2,6 +2,7 @@
 package "moonbitlang/core/sorted_map"
 
 import(
+  "moonbitlang/core/json"
   "moonbitlang/core/quickcheck"
 )
 
@@ -46,6 +47,8 @@ fn[K, V] SortedMap::values_as_iter(Self[K, V]) -> Iter[V]
 impl[K, V] Default for SortedMap[K, V]
 impl[K : Eq, V : Eq] Eq for SortedMap[K, V]
 impl[K : Show, V : Show] Show for SortedMap[K, V]
+impl[K : Show, V : ToJson] ToJson for SortedMap[K, V]
+impl[V : @json.FromJson] @json.FromJson for SortedMap[String, V]
 impl[K : @quickcheck.Arbitrary + Compare, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for SortedMap[K, V]
 
 // Type aliases

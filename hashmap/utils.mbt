@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-fn[K : Show, V : Show] debug_entries(self : HashMap[K, V]) -> String {
+fn[K : Show, V : Show] _debug_entries(self : HashMap[K, V]) -> String {
   for s = "", i = 0; i < self.entries.length(); {
     let s = if i > 0 { s + "," } else { s }
     match self.entries[i] {
@@ -160,10 +160,11 @@ pub fn[K : Hash + Eq, V] HashMap::from_iter(
 /// ```moonbit
 ///   let map = @hashmap.of([(1, "one"), (2, "two")])
 ///   let arr = map.to_array()
+///   arr.sort()
 ///   inspect(
 ///     arr, 
 ///     content=(
-///       #|[(2, "two"), (1, "one")]
+///       #|[(1, "one"), (2, "two")]
 ///     ),
 ///   )
 /// ```
@@ -269,9 +270,12 @@ pub fn[K, V] is_empty(self : HashMap[K, V]) -> Bool {
 ///
 /// ```moonbit
 ///   let map = @hashmap.of([(1, "one"), (2, "two")])
-///   let mut result = ""
-///   map.each((k, v) => { result = result + "\{k}:\{v}," })
-///   inspect(result, content="2:two,1:one,")
+///   let array = []
+///   map.each((k, v) => { array.push((k, v)) })
+///   array.sort()
+///   inspect(array, content=(
+///   #|[(1, "one"), (2, "two")]
+/// ))
 /// ```
 #locals(f)
 pub fn[K, V] each(
@@ -289,6 +293,8 @@ pub fn[K, V] each(
 /// Iterates over all key-value pairs in the map with their index, applying the
 /// given function to each element. The index starts from 0 and only counts
 /// non-empty entries.
+/// 
+/// Notice that the order of iteration is not guaranteed.
 ///
 /// Parameters:
 ///
@@ -298,14 +304,6 @@ pub fn[K, V] each(
 ///  * The key of the current entry
 ///  * The value of the current entry
 ///
-/// Example:
-///
-/// ```moonbit
-///   let map = @hashmap.of([("a", 1), ("b", 2), ("c", 3)])
-///   let mut result = 0
-///   map.eachi((i, k, _) => { if k == "b" { result = i } })
-///   // "b" is at index 1
-///   inspect(result, content="2")
 /// ```
 #locals(f)
 pub fn[K, V] eachi(
@@ -325,6 +323,8 @@ pub fn[K, V] eachi(
 
 ///|
 /// Provides string representation for hash maps.
+/// 
+/// Notice that the order of key-value pairs in the output string is not guaranteed
 ///
 /// Parameters:
 ///
@@ -335,12 +335,8 @@ pub fn[K, V] eachi(
 ///
 /// ```moonbit
 ///   let map = @hashmap.of([(1, "one"), (2, "two")])
-///   inspect(
-///     map, 
-///     content=(
-///       #|HashMap::of([(2, "two"), (1, "one")])
-///     ),
-/// )
+///   let array = map.to_array()
+///   assert_eq(map.to_string(), "HashMap::of(\{array})")
 /// ```
 pub impl[K : Show, V : Show] Show for HashMap[K, V] with output(self, logger) {
   logger.write_string("HashMap::of([")
@@ -442,17 +438,44 @@ pub fn[K, V] HashMap::values(self : HashMap[K, V]) -> Iter[V] {
 /// ```
 #locals(f)
 pub fn[K, V] retain(self : HashMap[K, V], f : (K, V) -> Bool) -> Unit {
-  let last = self.capacity - 1
-  while self.entries[last] is Some(entry) && !f(entry.key, entry.value) {
-    self.shift_back(last)
-    self.size -= 1
-  }
-  for i = last - 1; i >= 0; i = i - 1 {
-    if self.entries[i] is Some(entry) {
-      if !f(entry.key, entry.value) {
+  let size = self.size
+  let mut j = 0
+  for i = 0; j < size; i = i + 1 {
+    while self.entries[i] is Some(entry) {
+      j = j + 1
+      if f(entry.key, entry.value) {
+        break
+      } else {
         self.shift_back(i)
         self.size -= 1
       }
     }
   }
+}
+
+///|
+test "retain" {
+  // seed = 1827982181
+  let hashmap : HashMap[String, Int] = {
+    capacity: 8,
+    capacity_mask: 7,
+    size: 4,
+    entries: [
+      Some({ psl: 2, hash: 448974246, key: "c", value: 3 }),
+      Some({ psl: 2, hash: -136509641, key: "d", value: 4 }),
+      None,
+      None,
+      None,
+      None,
+      Some({ psl: 0, hash: 1614946358, key: "a", value: 1 }),
+      Some({ psl: 1, hash: -765931946, key: "b", value: 2 }),
+    ],
+  }
+  hashmap.retain((_k, v) => v % 2 == 0)
+  inspect(
+    hashmap.entries,
+    content=(
+      #|[None, None, None, None, None, None, Some({psl: 0, hash: -765931946, key: "b", value: 2}), Some({psl: 0, hash: -136509641, key: "d", value: 4})]
+    ),
+  )
 }

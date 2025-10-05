@@ -13,6 +13,13 @@ fn[T, K : Compare] minimum_by_key(T, T, (T) -> K) -> T
 // Errors
 
 // Types and methods
+pub(all) struct Reverse[T](T)
+#deprecated
+fn[T] Reverse::inner(Self[T]) -> T
+impl[T : Compare] Compare for Reverse[T]
+impl[T : Eq] Eq for Reverse[T]
+impl[T : Hash] Hash for Reverse[T]
+impl[T : Show] Show for Reverse[T]
 
 // Type aliases
 

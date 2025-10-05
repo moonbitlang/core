@@ -366,3 +366,73 @@ pub fn Array::unsafe_extract_bytesview(
 ) -> ArrayView[Byte] {
   bs[:].unsafe_extract_bytesview(offset, len)
 }
+
+///|
+#internal(experimental, "subject to breaking change without notice")
+pub fn FixedArray::unsafe_extract_bit(
+  bs : FixedArray[Byte],
+  offset : Int,
+  len : Int,
+) -> UInt {
+  bs[:].unsafe_extract_bit(offset, len)
+}
+
+///|
+#internal(experimental, "subject to breaking change without notice")
+pub fn FixedArray::unsafe_extract_byte(
+  bs : FixedArray[Byte],
+  offset : Int,
+  len : Int,
+) -> UInt {
+  bs[:].unsafe_extract_byte(offset, len)
+}
+
+///|
+#internal(experimental, "subject to breaking change without notice")
+pub fn FixedArray::unsafe_extract_uint_le(
+  bs : FixedArray[Byte],
+  offset : Int,
+  len : Int,
+) -> UInt {
+  bs[:].unsafe_extract_uint_le(offset, len)
+}
+
+///|
+#internal(experimental, "subject to breaking change without notice")
+pub fn FixedArray::unsafe_extract_uint_be(
+  bs : FixedArray[Byte],
+  offset : Int,
+  len : Int,
+) -> UInt {
+  bs[:].unsafe_extract_uint_be(offset, len)
+}
+
+///|
+#internal(experimental, "subject to breaking change without notice")
+pub fn FixedArray::unsafe_extract_uint64_le(
+  bs : FixedArray[Byte],
+  offset : Int,
+  len : Int,
+) -> UInt64 {
+  bs[:].unsafe_extract_uint64_le(offset, len)
+}
+
+///|
+#internal(experimental, "subject to breaking change without notice")
+pub fn FixedArray::unsafe_extract_uint64_be(
+  bs : FixedArray[Byte],
+  offset : Int,
+  len : Int,
+) -> UInt64 {
+  bs[:].unsafe_extract_uint64_be(offset, len)
+}
+
+///|
+#internal(experimental, "subject to breaking change without notice")
+pub fn FixedArray::unsafe_extract_bytesview(
+  bs : FixedArray[Byte],
+  offset : Int,
+  len : Int,
+) -> ArrayView[Byte] {
+  bs[:].unsafe_extract_bytesview(offset, len)
+}

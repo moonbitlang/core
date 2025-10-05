@@ -48,12 +48,11 @@ QuickCheck provides `Arbitrary` implementations for all basic MoonBit types:
 test "builtin types" {
   // Basic types
   let v : (Bool, Char, Byte) = @quickcheck.gen()
-  inspect(v, content="(true, '#', b'\\x12')")
+  inspect(v, content="(false, '\\u{02}', b'\\x4D')")
   // Numeric types
   let v : (Int, Int64, UInt, UInt64, Float, Double, BigInt) = @quickcheck.gen()
-  inspect(v, content="(0, 0, 0, 0, 0.1430625319480896, 0.33098446695254635, 0)")
+  inspect(v, content="(0, 0, 0, 0, 0.23986786603927612, 0.7917029935679342, 0)")
   // Collections
-
   let v : (String, Bytes, Iter[Int]) = @quickcheck.gen()
   inspect(
     v,

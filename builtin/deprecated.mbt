@@ -233,15 +233,7 @@ pub fn Double::upto(
 /// Returns a new byte sequence containing the UTF-16LE encoded representation of
 /// the input string.
 ///
-/// Example:
-///
-/// ```moonbit
-///   let bytes = "ABC".to_bytes()
-///   inspect(bytes, content=(
-///   #|b"A\x00B\x00C\x00"
-/// ))
-/// ```
-#deprecated("Use `str.to_bytes()` instead")
+#deprecated("check @encoding/utf8.encode")
 pub fn Bytes::of_string(str : String) -> Bytes {
   FixedArray::make(str.length() * 2, Byte::default())
   ..blit_from_string(0, str, 0, str.length())

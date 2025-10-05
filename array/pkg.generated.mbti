@@ -43,6 +43,13 @@ fn[T, K : Compare] FixedArray::sort_by_key(Self[T], (T) -> K) -> Unit
 fn[T : Compare] FixedArray::stable_sort(Self[T]) -> Unit
 fn[T : Eq] FixedArray::starts_with(Self[T], Self[T]) -> Bool
 fn[T] FixedArray::swap(Self[T], Int, Int) -> Unit
+fn FixedArray::unsafe_extract_bit(Self[Byte], Int, Int) -> UInt
+fn FixedArray::unsafe_extract_byte(Self[Byte], Int, Int) -> UInt
+fn FixedArray::unsafe_extract_bytesview(Self[Byte], Int, Int) -> ArrayView[Byte]
+fn FixedArray::unsafe_extract_uint64_be(Self[Byte], Int, Int) -> UInt64
+fn FixedArray::unsafe_extract_uint64_le(Self[Byte], Int, Int) -> UInt64
+fn FixedArray::unsafe_extract_uint_be(Self[Byte], Int, Int) -> UInt
+fn FixedArray::unsafe_extract_uint_le(Self[Byte], Int, Int) -> UInt
 impl[T] Add for FixedArray[T]
 impl[T : Compare] Compare for FixedArray[T]
 impl[T : Eq] Eq for FixedArray[T]
@@ -87,6 +94,7 @@ fn[T, U] ArrayView::map(Self[T], (T) -> U raise?) -> Array[U] raise?
 fn[T, U] ArrayView::mapi(Self[T], (Int, T) -> U raise?) -> Array[U] raise?
 fn[A, B] ArrayView::rev_fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 fn[A, B] ArrayView::rev_foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
+fn[T] ArrayView::start_offset(Self[T]) -> Int
 fn[T] ArrayView::to_array(Self[T]) -> Array[T]
 fn ArrayView::unsafe_extract_bit(Self[Byte], Int, Int) -> UInt
 fn ArrayView::unsafe_extract_byte(Self[Byte], Int, Int) -> UInt

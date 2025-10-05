@@ -101,17 +101,27 @@ test "HAMT::values" {
 ///|
 test "HAMT::iter" {
   let data = @hashmap.of([(0, "a"), (2, "b"), (3, "d"), (5, "e"), (11111, "f")])
-  let mut s = ""
-  data.iter().each(p => s += " \{p.0},\{p.1}")
-  inspect(s, content=" 0,a 5,e 3,d 11111,f 2,b")
+  let array = data.iter().collect()
+  array.sort()
+  inspect(
+    array,
+    content=(
+      #|[(0, "a"), (2, "b"), (3, "d"), (5, "e"), (11111, "f")]
+    ),
+  )
 }
 
 ///|
 test "HAMT::iter2" {
   let data = @hashmap.of([(0, "a"), (2, "b"), (3, "d"), (5, "e"), (11111, "f")])
-  let mut s = ""
-  data.iter2().each((k, v) => s += " \{k},\{v}")
-  inspect(s, content=" 0,a 5,e 3,d 11111,f 2,b")
+  let array = data.iter2().to_array()
+  array.sort()
+  inspect(
+    array,
+    content=(
+      #|[(0, "a"), (2, "b"), (3, "d"), (5, "e"), (11111, "f")]
+    ),
+  )
 }
 
 ///|
@@ -121,10 +131,8 @@ test "HAMT::to_string" {
     .add(3, 3)
     .add(0x0f_ff_ff_ff, 0x0f_ff_ff_ff)
     .add(42, 42)
-  inspect(
-    map,
-    content="@immut/hashmap.of([(3, 3), (42, 42), (1, 1), (268435455, 268435455)])",
-  )
+  let array = map.to_array()
+  assert_eq(map.to_string(), "@immut/hashmap.of(\{array})")
 }
 
 ///|
@@ -163,10 +171,11 @@ test "to_array" {
 
 ///|
 test "from_iter multiple elements iter" {
-  inspect(
-    @hashmap.from_iter([(1, 1), (2, 2), (3, 3)].iter()),
-    content="@immut/hashmap.of([(3, 3), (2, 2), (1, 1)])",
-  )
+  let map = @hashmap.from_iter([(1, 1), (2, 2), (3, 3)].iter())
+  guard map is { 1: 1, 2: 2, 3: 3, .. } else {
+    fail("Map is not as expected: \{map}")
+  }
+  inspect(map.length(), content="3")
 }
 
 ///|
@@ -717,7 +726,7 @@ test "HAMT::each" {
 }
 
 ///|
-test "arbitary" {
+test "arbitrary" {
   let m : Array[@hashmap.HashMap[Int, Int]] = @quickcheck.samples(10)
   inspect(m.length(), content="10")
 }

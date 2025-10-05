@@ -49,6 +49,7 @@ fn String::strip_suffix(String, StringView) -> StringView?
 #alias("_[_:_]")
 fn String::sub(String, start? : Int, end? : Int) -> StringView raise CreatingViewError
 fn String::to_array(String) -> Array[Char]
+#deprecated
 fn String::to_bytes(String) -> Bytes
 fn String::to_lower(String) -> String
 fn String::to_upper(String) -> String
@@ -105,6 +106,7 @@ fn StringView::strip_suffix(Self, Self) -> Self?
 #alias("_[_:_]")
 fn StringView::sub(Self, start? : Int, end? : Int) -> Self raise CreatingViewError
 fn StringView::to_array(Self) -> Array[Char]
+#deprecated
 fn StringView::to_bytes(Self) -> Bytes
 fn StringView::to_lower(Self) -> Self
 fn StringView::to_upper(Self) -> Self

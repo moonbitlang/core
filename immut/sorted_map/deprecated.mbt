@@ -68,7 +68,7 @@ pub fn[K, V] elems(self : SortedMap[K, V]) -> Array[V] {
 /// Filter values that satisfy the predicate
 #deprecated("Use `filter_with_key` instead. `filter` will accept `(K, V) -> Bool` in the future.")
 #coverage.skip
-pub fn[K : Compare, V] filter(
+pub fn[K, V] filter(
   self : SortedMap[K, V],
   pred : (V) -> Bool raise?,
 ) -> SortedMap[K, V] raise? {

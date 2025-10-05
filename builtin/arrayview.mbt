@@ -23,7 +23,6 @@
 ///   assert_eq(view[0], 2)
 ///   assert_eq(view.length(), 3)
 /// ```
-#deprecated("use @array.View instead")
 #builtin.valtype
 type ArrayView[T]
 

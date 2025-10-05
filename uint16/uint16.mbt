@@ -54,11 +54,6 @@ pub impl Compare for UInt16 with compare(self, that) {
 }
 
 ///|
-pub impl Hash for UInt16 with hash(self) {
-  self.to_int()
-}
-
-///|
 pub impl Hash for UInt16 with hash_combine(self, hasher) {
   hasher.combine_int(self.to_int())
 }
@@ -106,4 +101,9 @@ pub fn UInt16::to_uint(self : UInt16) -> UInt {
 ///|
 pub fn UInt16::to_uint64(self : UInt16) -> UInt64 {
   self.to_int().to_uint64()
+}
+
+///|
+pub fn UInt16::reinterpret_as_int16(self : UInt16) -> Int16 {
+  self.to_int().to_int16()
 }

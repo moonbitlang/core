@@ -1024,3 +1024,27 @@ test "find_index" {
   let ls = @list.of([2, 4, 6, 8, 10])
   inspect(ls.find_index(x => x % 2 == 0), content="Some(0)")
 }
+
+///|
+test "compare" {
+  let list1 = @list.of([1, 2, 3])
+  let list2 = @list.of([1, 2, 4])
+  let list3 = @list.of([1, 2])
+  let empty : @list.List[Int] = @list.empty()
+
+  // Test lexicographic comparison
+  inspect(list1.compare(list2), content="-1") // list1 < list2
+  inspect(list2.compare(list1), content="1") // list2 > list1
+
+  // Test length comparison when prefixes are equal
+  inspect(list1.compare(list3), content="1") // list1 > list3 (longer)
+  inspect(list3.compare(list1), content="-1") // list3 < list1 (shorter)
+
+  // Test equal lists
+  inspect(list1.compare(list1), content="0") // list1 = list1
+
+  // Test empty lists
+  inspect(empty.compare(empty), content="0") // empty = empty
+  inspect(empty.compare(list1), content="-1") // empty < non-empty
+  inspect(list1.compare(empty), content="1") // non-empty > empty
+}
