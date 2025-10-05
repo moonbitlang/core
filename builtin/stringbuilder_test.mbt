@@ -58,3 +58,33 @@ test "write_iter" {
   sb.write_iter(str_view.iter())
   inspect(sb.to_string(), content="Hello🤣🤣🤣ello🤣")
 }
+
+///|
+test "StringBuilder::write_stringview" {
+  let str = "Hello🤣🤣🤣"
+  let sb = StringBuilder::new()
+
+  // Test basic substring
+  let str_view = str[1:7]
+  sb.write_stringview(str_view)
+  inspect(sb.to_string(), content="ello🤣")
+
+  // Test multiple writes
+  sb.write_stringview(str[0:5])
+  inspect(sb.to_string(), content="ello🤣Hello")
+
+  // Test empty view
+  sb.reset()
+  sb.write_stringview(str[5:5])
+  inspect(sb.to_string(), content="")
+
+  // Test full string view
+  sb.write_stringview(str[0:str.length()])
+  inspect(sb.to_string(), content="Hello🤣🤣🤣")
+
+  // Test with ASCII only
+  let ascii = "world"
+  sb.reset()
+  sb.write_stringview(ascii[1:4])
+  inspect(sb.to_string(), content="orl")
+}
