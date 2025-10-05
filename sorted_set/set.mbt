@@ -332,7 +332,14 @@ pub fn[V : Compare] disjoint(self : SortedSet[V], src : SortedSet[V]) -> Bool {
 
 ///|
 pub impl[V : Eq] Eq for SortedSet[V] with equal(self, other) {
-  self.to_array() == other.to_array()
+  guard self.size == other.size else { return false }
+  let iter = self.into_iterator()
+  let iter1 = other.into_iterator()
+  while iter.next() is Some(a) && iter1.next() is Some(b) {
+    guard a == b else { break false }
+  } else {
+    true
+  }
 }
 
 ///|
