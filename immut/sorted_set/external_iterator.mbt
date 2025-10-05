@@ -13,52 +13,62 @@
 // limitations under the License.
 
 ///|
-priv struct InorderIterator[A](Array[SortedSet[A]])
+/// External iterator for in-order traversal of SortedSet.
+/// Uses a closure-based design with a continuation tree for memory efficiency.
+priv struct Iterator[A](() -> A?)
 
 ///|
-fn[A] SortedSet::into_iterator(self : Self[A]) -> InorderIterator[A] {
-  InorderIterator::new(self)
+/// Continuation tree for iterating through a SortedSet.
+/// Encodes the remaining traversal state without needing a mutable stack.
+/// - Leaf: No more elements to process
+/// - More(left, right, value): Process left subtree, yield value, then right subtree
+priv enum Tree[A] {
+  Leaf
+  More(Tree[A], SortedSet[A], A)
 }
 
 ///|
-fn[A] InorderIterator::new(root : SortedSet[A]) -> InorderIterator[A] {
-  let it = InorderIterator([])
-  it.move_left(root)
-  it
-}
-
-///|
-fn[A] InorderIterator::move_left(
-  self : InorderIterator[A],
-  node : SortedSet[A],
-) -> Unit {
-  loop node {
-    Empty => ()
-    Node(left~, ..) as curr => {
-      self.0.push(curr)
-      continue left
+fn[A] SortedSet::into_iterator(self : Self[A]) -> Iterator[A] {
+  let mut next = self
+  let mut cont : Tree[_] = Leaf
+  Iterator(() => for t = next, k = cont {
+    match t {
+      Empty =>
+        match k {
+          Leaf => return None
+          More(left, right, value) => {
+            cont = left
+            next = right
+            return Some(value)
+          }
+        }
+      Node(left~, right~, value~, ..) => continue left, More(k, right, value)
     }
-  }
+  })
 }
 
 ///|
-fn[A] InorderIterator::next(self : Self[A]) -> A? {
-  let InorderIterator(s) = self
-  guard s.pop() is Some(curr) else { return None }
-  guard curr is Node(right~, value~, ..)
-  self.move_left(right)
-  Some(value)
+fn[A] Iterator::next(self : Self[A]) -> A? {
+  self()
 }
 
 ///|
-test "InorderIterator" {
+test "Iterator" {
   let arr : FixedArray[_] = [1, 2, 3, 4, 5, 6, 7]
   let set = of(arr)
-  let iter = InorderIterator::new(set)
-  for i = 0; ; i = i + 1 {
+  let iter = set.into_iterator()
+  for i = 0; i < arr.length(); i = i + 1 {
     match iter.next() {
-      None => break
-      Some(value) => assert_eq(value, arr[i])
+      Some(value) => {
+        guard value == arr[i] else {
+          fail("Mismatch at index \{i}: expected \{arr[i]}, got \{value}")
+        }
+      }
+      None => fail("Expected value at index \{i}, got None")
     }
+  }
+  // Verify iterator is exhausted
+  guard iter.next() is None else {
+    fail("Expected None after exhausting iterator")
   }
 }
