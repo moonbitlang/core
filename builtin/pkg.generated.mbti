@@ -316,6 +316,7 @@ fn StringBuilder::reset(Self) -> Unit
 fn StringBuilder::to_string(Self) -> String
 fn StringBuilder::write_iter(Self, Iter[Char]) -> Unit
 fn[T : Show] StringBuilder::write_object(Self, T) -> Unit
+fn StringBuilder::write_stringview(Self, StringView) -> Unit
 impl Logger for StringBuilder
 impl Show for StringBuilder
 
