@@ -20,15 +20,12 @@ pub impl[K, V] Default for SortedMap[K, V] with default() {
 ///|
 pub impl[K : Eq, V : Eq] Eq for SortedMap[K, V] with equal(self, other) -> Bool {
   guard self.size() == other.size() else { return false }
-  let iter = InorderIterator::new(self)
-  let iter1 = InorderIterator::new(other)
-  loop (iter.next(), iter1.next()) {
-    (None, None) => true
-    (Some(a), Some(b)) => {
-      guard a == b else { break false }
-      continue (iter.next(), iter1.next())
-    }
-    (_, _) => false
+  let iter = self.into_iterator()
+  let iter1 = other.into_iterator()
+  while iter.next() is Some(a) && iter1.next() is Some(b) {
+    guard a == b else { break false }
+  } else {
+    true
   }
 }
 
@@ -38,17 +35,13 @@ pub impl[K : Compare, V : Compare] Compare for SortedMap[K, V] with compare(
   other,
 ) -> Int {
   guard self.size() == other.size() else { return self.size() - other.size() }
-  let iter = InorderIterator::new(self)
-  let iter1 = InorderIterator::new(other)
-  loop (iter.next(), iter1.next()) {
-    (None, None) => 0
-    (Some(a), Some(b)) => {
-      let cmp = a.compare(b)
-      guard cmp == 0 else { break cmp }
-      continue (iter.next(), iter1.next())
-    }
-    (Some(_), None) => 1
-    (None, Some(_)) => -1
+  let iter = self.into_iterator()
+  let iter1 = other.into_iterator()
+  while iter.next() is Some(a) && iter1.next() is Some(b) {
+    let cmp = a.compare(b)
+    guard cmp is 0 else { break cmp }
+  } else {
+    0
   }
 }
 
