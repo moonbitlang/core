@@ -19,6 +19,7 @@ pub impl[K, V] Default for SortedMap[K, V] with default() {
 
 ///|
 pub impl[K : Eq, V : Eq] Eq for SortedMap[K, V] with equal(self, other) -> Bool {
+  guard self.size() == other.size() else { return false }
   let iter = InorderIterator::new(self)
   let iter1 = InorderIterator::new(other)
   loop (iter.next(), iter1.next()) {
@@ -36,6 +37,7 @@ pub impl[K : Compare, V : Compare] Compare for SortedMap[K, V] with compare(
   self,
   other,
 ) -> Int {
+  guard self.size() == other.size() else { return self.size() - other.size() }
   let iter = InorderIterator::new(self)
   let iter1 = InorderIterator::new(other)
   loop (iter.next(), iter1.next()) {
