@@ -85,7 +85,7 @@ extern "js" fn MyInt64::from_double_unsigned(value : Double) -> MyInt64 =
   #|    return { hi: 0, lo: 0 };
   #|  }
   #|  let hi = (a * (1 / 0x100000000)) | 0;
-  #|  let lo = a >>> 0;
+  #|  let lo = a | 0;
   #|  return { hi, lo };
   #|}
 
