@@ -359,7 +359,7 @@ extern "js" fn MyInt64::reinterpret_double(value : Double) -> MyInt64 =
 extern "js" fn MyInt64::trunc_double_u(value : Double) -> MyInt64 =
   #|(a) => {
   #|  let hi = (a * (1 / 0x100000000)) | 0;
-  #|  let lo = a >>> 0;
+  #|  let lo = a | 0;
   #|  return { hi, lo };
   #|}
 

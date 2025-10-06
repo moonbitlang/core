@@ -7508,3 +7508,11 @@ test "panic 1UL % 0UL" {
   let _ = 1UL % uint64_zero()
 
 }
+
+///|
+test "test to_uint64 with large double" {
+  let a : UInt64 = 1759760032022
+  let b : Double = 1759760032022.0
+  let c = b.to_uint64()
+  assert_eq(a, c)
+}
