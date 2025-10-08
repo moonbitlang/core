@@ -2,7 +2,7 @@
 package "moonbitlang/core/buffer"
 
 // Values
-fn from_array(Array[Byte]) -> Buffer
+fn from_array(ArrayView[Byte]) -> Buffer
 
 fn from_bytes(Bytes) -> Buffer
 
