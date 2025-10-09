@@ -304,7 +304,6 @@ pub fn[K, V] each(
 ///  * The key of the current entry
 ///  * The value of the current entry
 ///
-/// ```
 #locals(f)
 pub fn[K, V] eachi(
   self : HashMap[K, V],
