@@ -19,6 +19,7 @@ fn Bytes::iter(Bytes) -> Iter[Byte]
 fn Bytes::iter2(Bytes) -> Iter2[Int, Byte]
 #as_free_fn
 fn Bytes::of(FixedArray[Byte]) -> Bytes
+fn Bytes::repeat(Bytes, Int) -> Bytes
 fn Bytes::rev_find(Bytes, BytesView) -> Int?
 #alias("_[_:_]")
 fn Bytes::sub(Bytes, start? : Int, end? : Int) -> BytesView
