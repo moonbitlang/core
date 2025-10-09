@@ -1,6 +1,10 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "moonbitlang/core/rational"
 
+import(
+  "moonbitlang/core/quickcheck"
+)
+
 // Values
 #deprecated
 fn from_double(Double) -> T raise RationalError
@@ -46,7 +50,7 @@ impl Eq for T
 impl Mul for T
 impl Show for T
 impl Sub for T
-impl @moonbitlang/core/quickcheck.Arbitrary for T
+impl @quickcheck.Arbitrary for T
 
 // Type aliases
 

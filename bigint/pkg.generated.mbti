@@ -3,6 +3,7 @@ package "moonbitlang/core/bigint"
 
 import(
   "moonbitlang/core/json"
+  "moonbitlang/core/quickcheck"
 )
 
 // Values
@@ -61,7 +62,7 @@ impl Shr for BigInt
 impl Sub for BigInt
 impl ToJson for BigInt
 impl @json.FromJson for BigInt
-impl @moonbitlang/core/quickcheck.Arbitrary for BigInt
+impl @quickcheck.Arbitrary for BigInt
 
 // Type aliases
 
