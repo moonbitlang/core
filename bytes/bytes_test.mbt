@@ -248,21 +248,36 @@ test "Bytes::get out of bounds" {
 
 ///|
 test "Bytes::repeat basic" {
-  inspect(b"a".repeat(5), content=(
-    #|b"aaaaa"
-  ))
-  inspect(b"ab".repeat(3), content=(
-    #|b"ababab"
-  ))
-  inspect(b"".repeat(10), content=(
-    #|b""
-  ))
-  inspect(b"xyz".repeat(0), content=(
-    #|b""
-  ))
-  inspect(b"xyz".repeat(-2), content=(
-    #|b""
-  ))
+  inspect(
+    b"a".repeat(5),
+    content=(
+      #|b"aaaaa"
+    ),
+  )
+  inspect(
+    b"ab".repeat(3),
+    content=(
+      #|b"ababab"
+    ),
+  )
+  inspect(
+    b"".repeat(10),
+    content=(
+      #|b""
+    ),
+  )
+  inspect(
+    b"xyz".repeat(0),
+    content=(
+      #|b""
+    ),
+  )
+  inspect(
+    b"xyz".repeat(-2),
+    content=(
+      #|b""
+    ),
+  )
 }
 
 ///|
@@ -270,8 +285,11 @@ test "Bytes::repeat large doubling" {
   // Ensure exponential copy fills correctly
   let base = b"abc"
   let r = base.repeat(8) // 24 bytes
-  inspect(r, content=(
-    #|b"abcabcabcabcabcabcabcabc"
-  ))
+  inspect(
+    r,
+    content=(
+      #|b"abcabcabcabcabcabcabcabc"
+    ),
+  )
   inspect(r.length(), content="24")
 }
