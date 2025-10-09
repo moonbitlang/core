@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@openai/codex-sdk": "^0.46.0"
+  }
+}
