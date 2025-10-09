@@ -337,3 +337,47 @@ pub impl Add for Bytes with add(self : Bytes, other : Bytes) -> Bytes {
 pub impl Hash for Bytes with hash_combine(self, hasher) {
   hasher.combine(self[:])
 }
+
+///|
+/// Returns a new `Bytes` consisting of `self` repeated `count` times.
+///
+/// If `count <= 0` or `self` is empty, an empty `Bytes` is returned. When
+/// `count == 1`, `self` is returned directly without allocation.
+///
+/// This implementation performs a single allocation sized exactly to the
+/// result and fills it using an exponential copy (doubling) strategy so the
+/// number of blit operations is O(log count).
+///
+/// Example:
+///
+/// ```moonbit
+///   inspect(b"ab".repeat(3), content=(
+///     #|b"ababab"
+///   ))
+///   inspect(b"xyz".repeat(0), content=(
+///     #|b""
+///   ))
+/// ```
+pub fn Bytes::repeat(self : Self, count : Int) -> Bytes {
+  if count <= 0 || self.length() == 0 {
+    return []
+  }
+  if count == 1 {
+    return self
+  }
+  let len = self.length()
+  let total = len * count
+  // (Optional) detect overflow: if multiplication wrapped (best-effort)
+  guard total / count == len
+  let arr = FixedArray::make(total, (0 : Byte))
+  arr.blit_from_bytes(0, self, 0, len)
+  let mut filled = len
+  while filled < total {
+    let remaining = total - filled
+    let copy_len = if filled < remaining { filled } else { remaining }
+    let src = unsafe_to_bytes(arr)
+    arr.blit_from_bytes(filled, src, 0, copy_len)
+    filled = filled + copy_len
+  }
+  unsafe_to_bytes(arr)
+}
