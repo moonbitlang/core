@@ -11,3 +11,4 @@ bisect.coverage
 .ai/
 .auto-coder/
 .moonagent/
+node_modules/
