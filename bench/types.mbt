@@ -16,14 +16,18 @@
 priv trait OpaqueValue {}
 
 ///|
-struct T {
+struct Bench {
   buffer : StringBuilder
   summaries : Array[Summary]
   mut _storage : &OpaqueValue
 }
 
 ///|
-pub fn new() -> T {
+pub typealias Bench as T
+
+///|
+#as_free_fn
+pub fn Bench::new() -> Bench {
   let buffer = StringBuilder::new()
   let summaries = Array::new()
   { buffer, summaries, _storage: () }

@@ -52,7 +52,7 @@ fn iter_count(name? : String, inner : () -> Unit, count : UInt) -> Summary {
 ///|
 /// Run a benchmark in batch mode
 pub fn bench(
-  self : T,
+  self : Bench,
   name? : String,
   f : () -> Unit,
   count? : UInt = 10,
@@ -80,7 +80,7 @@ pub fn single_bench(
 ///|
 /// Keep a value to prevent the optimizer from removing 
 /// the calculation that produces it.
-pub fn[Any] keep(self : T, value : Any) -> Unit {
+pub fn[Any] keep(self : Bench, value : Any) -> Unit {
   let trait_object : &OpaqueValue = value
   self._storage = trait_object
 }
@@ -89,7 +89,7 @@ pub fn[Any] keep(self : T, value : Any) -> Unit {
 /// Returns a JSON array string containing all collected benchmark summaries.
 /// This helper is mainly used internally for tests and diagnostics.
 #coverage.skip
-pub fn dump_summaries(self : T) -> String {
+pub fn dump_summaries(self : Bench) -> String {
   "[\{self.buffer.to_string()}]"
 }
 
