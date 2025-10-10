@@ -29,11 +29,11 @@ test "panic same_object call with different objects" {
 test "is_not called with the different objects" {
   let a = "1"
   let b = "2"
-  @test.is_not(a, b)
+  @test.not_same_object(a, b)
 }
 
 ///|
 test "panic is_not called with the same object" {
   let s = "Hello"
-  @test.is_not(s, s)
+  @test.not_same_object(s, s)
 }

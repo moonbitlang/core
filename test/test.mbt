@@ -61,7 +61,8 @@ pub fn[T : Show] same_object(a : T, b : T, loc~ : SourceLoc) -> Unit raise {
 /// @test.same_object(a, a)
 /// ```
 #callsite(autofill(loc))
-pub fn[T : Show] is_not(a : T, b : T, loc~ : SourceLoc) -> Unit raise {
+#alias(is_not, deprecated)
+pub fn[T : Show] not_same_object(a : T, b : T, loc~ : SourceLoc) -> Unit raise {
   if physical_equal(a, b) {
     let a = debug_string(a)
     let b = debug_string(b)
@@ -82,7 +83,7 @@ pub fn[T] fail(msg : String, loc~ : SourceLoc) -> T raise {
 /// Write data to snapshot buffer, use `snapshot` to output.
 /// 
 /// See also `@test.T::writeln`
-pub fn write(self : T, obj : &Show) -> Unit {
+pub fn write(self : Test, obj : &Show) -> Unit {
   self.buffer.write_string(obj.to_string())
 }
 
@@ -90,7 +91,7 @@ pub fn write(self : T, obj : &Show) -> Unit {
 /// Write data to snapshot buffer and newline, use `snapshot` to output.
 /// 
 /// See also `@test.T::write`
-pub fn writeln(self : T, obj : &Show) -> Unit {
+pub fn writeln(self : Test, obj : &Show) -> Unit {
   self.write(obj)
   self.buffer.write_char('\n')
 }
@@ -107,7 +108,7 @@ pub fn writeln(self : T, obj : &Show) -> Unit {
 /// Currently it can only be used once and should be used as the last step.
 #callsite(autofill(args_loc, loc))
 pub fn snapshot(
-  self : T,
+  self : Test,
   filename~ : String,
   loc~ : SourceLoc,
   args_loc~ : ArgsLoc,
@@ -124,6 +125,6 @@ pub fn snapshot(
 
 ///|
 /// Return the name of the test.
-pub fn T::name(self : Self) -> String {
+pub fn Test::name(self : Self) -> String {
   self.name
 }

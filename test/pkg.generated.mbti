@@ -2,29 +2,12 @@
 package "moonbitlang/core/test"
 
 // Values
-#deprecated
-#callsite(autofill(loc))
-fn[T : Show + Eq] eq(T, T, loc~ : SourceLoc) -> Unit raise
-
 #callsite(autofill(loc))
 fn[T] fail(String, loc~ : SourceLoc) -> T raise
 
-#deprecated
+#alias(is_not, deprecated)
 #callsite(autofill(loc))
-fn is_false(Bool, loc~ : SourceLoc) -> Unit raise
-
-#callsite(autofill(loc))
-fn[T : Show] is_not(T, T, loc~ : SourceLoc) -> Unit raise
-
-#deprecated
-#callsite(autofill(loc))
-fn is_true(Bool, loc~ : SourceLoc) -> Unit raise
-
-#deprecated
-#callsite(autofill(loc))
-fn[T : Show + Eq] ne(T, T, loc~ : SourceLoc) -> Unit raise
-
-fn new(String) -> T
+fn[T : Show] not_same_object(T, T, loc~ : SourceLoc) -> Unit raise
 
 #callsite(autofill(loc))
 fn[T : Show] same_object(T, T, loc~ : SourceLoc) -> Unit raise
@@ -32,19 +15,17 @@ fn[T : Show] same_object(T, T, loc~ : SourceLoc) -> Unit raise
 // Errors
 
 // Types and methods
-pub(all) struct T {
-  name : String
-  buffer : StringBuilder
-}
-#deprecated
-fn T::bench(Self, () -> Unit, count? : UInt) -> Unit raise BenchError
-fn T::name(Self) -> String
+type Test
+fn Test::name(Self) -> String
+#as_free_fn
+fn Test::new(String) -> Self
 #callsite(autofill(args_loc, loc))
-fn T::snapshot(Self, filename~ : String, loc~ : SourceLoc, args_loc~ : ArgsLoc) -> Unit raise SnapshotError
-fn T::write(Self, &Show) -> Unit
-fn T::writeln(Self, &Show) -> Unit
+fn Test::snapshot(Self, filename~ : String, loc~ : SourceLoc, args_loc~ : ArgsLoc) -> Unit raise SnapshotError
+fn Test::write(Self, &Show) -> Unit
+fn Test::writeln(Self, &Show) -> Unit
 
 // Type aliases
+pub typealias Test as T
 
 // Traits
 

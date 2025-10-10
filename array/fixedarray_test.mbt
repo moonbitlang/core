@@ -100,7 +100,7 @@ test "FixedArray::makei" {
   inspect(simple_arr[0].val, content="2")
   let arr = FixedArray::makei(2, _i => Ref::{ val: 1 })
   inspect(arr.length(), content="2")
-  @test.is_not(arr[0], arr[1])
+  @test.not_same_object(arr[0], arr[1])
   inspect(arr[0].val, content="1")
   inspect(arr[1].val, content="1")
 }
