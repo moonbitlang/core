@@ -2,11 +2,14 @@
 package "moonbitlang/core/list"
 
 import(
+  "moonbitlang/core/iterator"
   "moonbitlang/core/json"
   "moonbitlang/core/quickcheck"
 )
 
 // Values
+fn[A] collect_from_iterator(@iterator.Iterator[A]) -> List[A]
+
 fn[X] default() -> List[X]
 
 // Errors
@@ -47,6 +50,8 @@ fn[A : @json.FromJson] List::from_json(Json) -> Self[A] raise @json.JsonDecodeEr
 fn[A] List::head(Self[A]) -> A?
 fn[A] List::intercalate(Self[Self[A]], Self[A]) -> Self[A]
 fn[A] List::intersperse(Self[A], A) -> Self[A]
+fn[A] List::into_async_iterator(Self[A]) -> @iterator.AsyncIterator[A]
+fn[A] List::into_iterator(Self[A]) -> @iterator.Iterator[A]
 fn[A] List::is_empty(Self[A]) -> Bool
 fn[A : Eq] List::is_prefix(Self[A], Self[A]) -> Bool
 fn[A : Eq] List::is_suffix(Self[A], Self[A]) -> Bool
