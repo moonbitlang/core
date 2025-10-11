@@ -20,7 +20,7 @@ pub enum L {
 
 ///|
 /// tail recursive map using dps
-pub fn map(self : L, f : (Int) -> Int) -> L {
+pub fn L::map(self : L, f : (Int) -> Int) -> L {
   match self {
     Nil => Nil
     Cons(head, tail~) => {

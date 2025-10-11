@@ -82,7 +82,7 @@ pub fn Double::abs(self : Double) -> Double = "%f64.abs"
 /// - If the double is positive, returns 1.0.
 /// - If the double is negative, returns -1.0.
 /// - Otherwise, returns the double itself (0.0, -0.0 and NaN).
-pub fn signum(self : Double) -> Double {
+pub fn Double::signum(self : Double) -> Double {
   if self < 0.0 {
     -1.0
   } else if self > 0.0 {
@@ -109,7 +109,7 @@ pub fn signum(self : Double) -> Double {
 ///   inspect(42.0.is_nan(), content="false")
 ///   inspect((0.0 / 0.0).is_nan(), content="true")
 /// ```
-pub fn is_nan(self : Double) -> Bool {
+pub fn Double::is_nan(self : Double) -> Bool {
   // only NaNs satisfy f != f.
   self != self
 }
@@ -132,7 +132,7 @@ pub fn is_nan(self : Double) -> Bool {
 ///   inspect(@double.neg_infinity.is_inf(), content="true")
 ///   inspect(42.0.is_inf(), content="false")
 /// ```
-pub fn is_inf(self : Double) -> Bool {
+pub fn Double::is_inf(self : Double) -> Bool {
   self > max_value || self < min_value
 }
 
@@ -152,7 +152,7 @@ pub fn is_inf(self : Double) -> Bool {
 ///   inspect(@double.neg_infinity.is_pos_inf(), content="false")
 ///   inspect(42.0.is_pos_inf(), content="false")
 /// ```
-pub fn is_pos_inf(self : Double) -> Bool {
+pub fn Double::is_pos_inf(self : Double) -> Bool {
   self > max_value
 }
 
@@ -172,7 +172,7 @@ pub fn is_pos_inf(self : Double) -> Bool {
 ///   inspect(42.0.is_neg_inf(), content="false")
 ///   inspect((1.0 / 0.0).is_neg_inf(), content="false") // positive infinity
 /// ```
-pub fn is_neg_inf(self : Double) -> Bool {
+pub fn Double::is_neg_inf(self : Double) -> Bool {
   self < min_value
 }
 
@@ -263,7 +263,7 @@ pub impl Hash for Double with hash_combine(self, hasher) {
 /// ```
 ///
 #intrinsic("%f64.to_string")
-pub fn to_string(self : Double) -> String {
+pub fn Double::to_string(self : Double) -> String {
   @ryu.ryu_to_string(self)
 }
 
@@ -348,7 +348,7 @@ pub fn Double::is_close(
 ///     ),
 ///   )
 /// ```
-pub fn to_be_bytes(self : Double) -> Bytes {
+pub fn Double::to_be_bytes(self : Double) -> Bytes {
   self.reinterpret_as_uint64().to_be_bytes()
 }
 
@@ -376,6 +376,6 @@ pub fn to_be_bytes(self : Double) -> Bytes {
 ///     ),
 ///   )
 /// ```
-pub fn to_le_bytes(self : Double) -> Bytes {
+pub fn Double::to_le_bytes(self : Double) -> Bytes {
   self.reinterpret_as_uint64().to_le_bytes()
 }

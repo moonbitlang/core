@@ -125,7 +125,7 @@ fn parse_decimal_from_view(str : StringView) -> Decimal raise StrConvError {
 }
 
 ///|
-fn to_double_priv(self : Decimal) -> Double raise StrConvError {
+fn Decimal::to_double_priv(self : Decimal) -> Double raise StrConvError {
   let mut exponent = 0
   let mut mantissa = 0L
   // check the underflow and overflow
@@ -209,7 +209,7 @@ fn to_double_priv(self : Decimal) -> Double raise StrConvError {
 }
 
 ///|
-fn shift_priv(self : Decimal, s : Int) -> Unit {
+fn Decimal::shift_priv(self : Decimal, s : Int) -> Unit {
   if self.digits_num == 0 {
     return
   }
@@ -247,7 +247,7 @@ fn assemble_bits(mantissa : Int64, exponent : Int, negative : Bool) -> Int64 {
 
 ///|
 /// Extract a rounded 64bit integer
-fn rounded_integer(self : Decimal) -> Int64 {
+fn Decimal::rounded_integer(self : Decimal) -> Int64 {
   if self.decimal_point > 20 {
     return 0xFFFFFFFFFFFFFFFFL
   }
@@ -271,7 +271,7 @@ fn rounded_integer(self : Decimal) -> Int64 {
 /// Check if truncate at d digits should round up.
 /// Typically, when rounding a decimal fraction to an integer, 7.3 rounds down to 7 and 7.6 rounds up to 8. 
 /// Rounding numbers like 7.5, half-way between two integers, will round to even.
-fn should_round_up(self : Decimal, d : Int) -> Bool {
+fn Decimal::should_round_up(self : Decimal, d : Int) -> Bool {
   if d < 0 || d >= self.digits_num {
     return false
   }
@@ -290,7 +290,7 @@ fn should_round_up(self : Decimal, d : Int) -> Bool {
 
 ///|
 /// Assign a Int64 value to decimal.
-fn assign(self : Decimal, v : Int64) -> Unit {
+fn Decimal::assign(self : Decimal, v : Int64) -> Unit {
   let buf = FixedArray::make(24, Byte::default())
 
   // write value to buf
@@ -315,7 +315,7 @@ fn assign(self : Decimal, v : Int64) -> Unit {
 
 ///|
 /// Binary shift right by s bits.
-fn right_shift(self : Decimal, s : Int) -> Unit {
+fn Decimal::right_shift(self : Decimal, s : Int) -> Unit {
   let mut read_index = 0
   let mut write_index = 0
 
@@ -438,7 +438,7 @@ let left_shift_cheats = [
 
 ///|
 /// Lookup the cheat sheet to find the new digits num.
-fn new_digits(self : Decimal, s : Int) -> Int {
+fn Decimal::new_digits(self : Decimal, s : Int) -> Int {
   let new_digits = left_shift_cheats[s].0
   let cheat_num = left_shift_cheats[s].1
   // check if the leading digits lexicographically less than cheats num.
@@ -463,7 +463,7 @@ fn new_digits(self : Decimal, s : Int) -> Int {
 
 ///|
 /// Binary shift left by s bits.
-fn left_shift(self : Decimal, s : Int) -> Unit {
+fn Decimal::left_shift(self : Decimal, s : Int) -> Unit {
   let new_digits = self.new_digits(s)
   // from right to left
   let mut read_index = self.digits_num
@@ -511,7 +511,7 @@ fn left_shift(self : Decimal, s : Int) -> Unit {
 
 ///|
 /// Trim trailing zeros.
-fn trim(self : Decimal) -> Unit {
+fn Decimal::trim(self : Decimal) -> Unit {
   while self.digits_num > 0 && self.digits[self.digits_num - 1] == 0 {
     self.digits_num -= 1
   }

@@ -15,7 +15,7 @@
 ///|
 #deprecated("Use `intersection` instead")
 #coverage.skip
-pub fn[A : Compare] inter(
+pub fn[A : Compare] SortedSet::inter(
   self : SortedSet[A],
   other : SortedSet[A],
 ) -> SortedSet[A] {
@@ -31,7 +31,7 @@ pub fn[A : Compare] inter(
 /// ```
 #deprecated("Use `difference` instead")
 #coverage.skip
-pub fn[A : Compare] diff(
+pub fn[A : Compare] SortedSet::diff(
   self : SortedSet[A],
   other : SortedSet[A],
 ) -> SortedSet[A] {

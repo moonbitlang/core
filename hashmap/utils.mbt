@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-fn[K : Show, V : Show] _debug_entries(self : HashMap[K, V]) -> String {
+fn[K : Show, V : Show] HashMap::_debug_entries(self : HashMap[K, V]) -> String {
   for s = "", i = 0; i < self.entries.length(); {
     let s = if i > 0 { s + "," } else { s }
     match self.entries[i] {
@@ -43,7 +43,7 @@ fn[K : Show, V : Show] _debug_entries(self : HashMap[K, V]) -> String {
 ///   inspect(map.length(), content="0")
 ///   inspect(map.get("a"), content="None")
 /// ```
-pub fn[K, V] clear(self : HashMap[K, V]) -> Unit {
+pub fn[K, V] HashMap::clear(self : HashMap[K, V]) -> Unit {
   self.entries.fill(None)
   self.size = 0
 }
@@ -67,7 +67,7 @@ pub fn[K, V] clear(self : HashMap[K, V]) -> Unit {
 ///   inspect(pairs.contains((1, "one")), content="true")
 ///   inspect(pairs.contains((2, "two")), content="true")
 /// ```
-pub fn[K, V] iter(self : HashMap[K, V]) -> Iter[(K, V)] {
+pub fn[K, V] HashMap::iter(self : HashMap[K, V]) -> Iter[(K, V)] {
   Iter::new(yield_ => for entry in self.entries {
     if entry is Some({ key, value, .. }) {
       guard yield_((key, value)) is IterContinue else { break IterEnd }
@@ -97,7 +97,7 @@ pub fn[K, V] iter(self : HashMap[K, V]) -> Iter[(K, V)] {
 ///   map.iter2().each((k, _) => { sum = sum + k })
 ///   inspect(sum, content="3")
 /// ```
-pub fn[K, V] iter2(self : HashMap[K, V]) -> Iter2[K, V] {
+pub fn[K, V] HashMap::iter2(self : HashMap[K, V]) -> Iter2[K, V] {
   Iter2::new(yield_ => for entry in self.entries {
     if entry is Some({ key, value, .. }) {
       guard yield_(key, value) is IterContinue else { break IterEnd }
@@ -168,7 +168,7 @@ pub fn[K : Hash + Eq, V] HashMap::from_iter(
 ///     ),
 ///   )
 /// ```
-pub fn[K, V] to_array(self : HashMap[K, V]) -> Array[(K, V)] {
+pub fn[K, V] HashMap::to_array(self : HashMap[K, V]) -> Array[(K, V)] {
   let mut i = 0
   let res = while i < self.capacity {
     if self.entries[i] is Some({ key, value, .. }) {
@@ -208,7 +208,7 @@ pub fn[K, V] to_array(self : HashMap[K, V]) -> Array[(K, V)] {
 ///   inspect(map.length(), content="3")
 /// ```
 #alias(size, deprecated)
-pub fn[K, V] length(self : HashMap[K, V]) -> Int {
+pub fn[K, V] HashMap::length(self : HashMap[K, V]) -> Int {
   self.size
 }
 
@@ -230,7 +230,7 @@ pub fn[K, V] length(self : HashMap[K, V]) -> Int {
 ///   let map : @hashmap.HashMap[Int, String] = @hashmap.new(capacity=16)
 ///   inspect(map.capacity(), content="16")
 /// ```
-pub fn[K, V] capacity(self : HashMap[K, V]) -> Int {
+pub fn[K, V] HashMap::capacity(self : HashMap[K, V]) -> Int {
   self.capacity
 }
 
@@ -252,7 +252,7 @@ pub fn[K, V] capacity(self : HashMap[K, V]) -> Int {
 ///   map.set("key", 42)
 ///   inspect(map.is_empty(), content="false")
 /// ```
-pub fn[K, V] is_empty(self : HashMap[K, V]) -> Bool {
+pub fn[K, V] HashMap::is_empty(self : HashMap[K, V]) -> Bool {
   self.size == 0
 }
 
@@ -278,7 +278,7 @@ pub fn[K, V] is_empty(self : HashMap[K, V]) -> Bool {
 /// ))
 /// ```
 #locals(f)
-pub fn[K, V] each(
+pub fn[K, V] HashMap::each(
   self : HashMap[K, V],
   f : (K, V) -> Unit raise?,
 ) -> Unit raise? {
@@ -305,7 +305,7 @@ pub fn[K, V] each(
 ///  * The value of the current entry
 ///
 #locals(f)
-pub fn[K, V] eachi(
+pub fn[K, V] HashMap::eachi(
   self : HashMap[K, V],
   f : (Int, K, V) -> Unit raise?,
 ) -> Unit raise? {
@@ -436,7 +436,7 @@ pub fn[K, V] HashMap::values(self : HashMap[K, V]) -> Iter[V] {
 ///   inspect(map.get("d"), content="Some(4)")
 /// ```
 #locals(f)
-pub fn[K, V] retain(self : HashMap[K, V], f : (K, V) -> Bool) -> Unit {
+pub fn[K, V] HashMap::retain(self : HashMap[K, V], f : (K, V) -> Bool) -> Unit {
   let size = self.size
   let mut j = 0
   for i = 0; j < size; i = i + 1 {

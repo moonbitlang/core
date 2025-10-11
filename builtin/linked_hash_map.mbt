@@ -104,7 +104,7 @@ pub fn[K : Hash + Eq, V] Map::set(self : Map[K, V], key : K, value : V) -> Unit 
 }
 
 ///|
-fn[K : Eq, V] set_with_hash(
+fn[K : Eq, V] Map::set_with_hash(
   self : Map[K, V],
   key : K,
   value : V,

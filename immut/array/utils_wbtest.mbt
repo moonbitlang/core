@@ -139,7 +139,7 @@ fn random_array(n : Int) -> Array[Int] {
 struct Random(Ref[UInt64])
 
 ///|
-fn int(self : Random, limit~ : Int) -> Int {
+fn Random::int(self : Random, limit~ : Int) -> Int {
   let limit = if limit == 0 { 1L << 32 } else { limit.to_int64() }
   let a = 1UL << 48
   let c = 11UL

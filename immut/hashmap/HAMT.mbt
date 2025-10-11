@@ -42,14 +42,17 @@ pub fn[K : Hash, V] HashMap::singleton(key : K, value : V) -> HashMap[K, V] {
 
 ///|
 /// Check if the map contains a key.
-pub fn[K : Eq + Hash, V] contains(self : HashMap[K, V], key : K) -> Bool {
+pub fn[K : Eq + Hash, V] HashMap::contains(
+  self : HashMap[K, V],
+  key : K,
+) -> Bool {
   self.get(key) is Some(_)
 }
 
 ///|
 /// Lookup a key from a hash map
 #alias(find, deprecated)
-pub fn[K : Eq + Hash, V] get(self : HashMap[K, V], key : K) -> V? {
+pub fn[K : Eq + Hash, V] HashMap::get(self : HashMap[K, V], key : K) -> V? {
   match self.0 {
     None => None
     Some(node) => node.get_with_path(key, @path.of(key))
@@ -122,7 +125,7 @@ fn[K, V] join_2(
 }
 
 ///|
-fn[K : Eq, V] add_with_path(
+fn[K : Eq, V] Node::add_with_path(
   self : Node[K, V],
   key : K,
   value : V,
@@ -163,7 +166,7 @@ fn[K : Eq, V] add_with_path(
 
 ///|
 /// Filter entries that satisfy the predicate
-pub fn[K, V] filter_with_key(
+pub fn[K, V] HashMap::filter_with_key(
   self : HashMap[K, V],
   pred : (K, V) -> Bool raise?,
 ) -> HashMap[K, V] raise? {
@@ -205,7 +208,7 @@ pub fn[K, V] filter_with_key(
 /// TODO: can not mark `f` as `#locals(f)` because 
 /// it will be shadowed by the `f` in the `@list.T::fold` function
 /// TO make it more useful in the future, we may need propagate
-pub fn[K, V, A] fold_with_key(
+pub fn[K, V, A] HashMap::fold_with_key(
   self : HashMap[K, V],
   init~ : A,
   f : (A, K, V) -> A raise?,
@@ -227,7 +230,7 @@ pub fn[K, V, A] fold_with_key(
 
 ///|
 /// Maps over the key-value pairs in the map
-pub fn[K, V, A] map_with_key(
+pub fn[K, V, A] HashMap::map_with_key(
   self : HashMap[K, V],
   f : (K, V) -> A raise?,
 ) -> HashMap[K, A] raise? {
@@ -250,7 +253,7 @@ pub fn[K, V, A] map_with_key(
 /// Add a key-value pair to the hashmap.
 ///
 /// If a pair with the same key already exists, the old one is replaced
-pub fn[K : Eq + Hash, V] add(
+pub fn[K : Eq + Hash, V] HashMap::add(
   self : HashMap[K, V],
   key : K,
   value : V,
@@ -263,7 +266,10 @@ pub fn[K : Eq + Hash, V] add(
 
 ///|
 /// Remove an element from a map
-pub fn[K : Eq + Hash, V] remove(self : HashMap[K, V], key : K) -> HashMap[K, V] {
+pub fn[K : Eq + Hash, V] HashMap::remove(
+  self : HashMap[K, V],
+  key : K,
+) -> HashMap[K, V] {
   match self.0 {
     None => None
     Some(node) => node.remove_with_path(key, @path.of(key))
@@ -271,7 +277,7 @@ pub fn[K : Eq + Hash, V] remove(self : HashMap[K, V], key : K) -> HashMap[K, V] 
 }
 
 ///|
-fn[K : Eq, V] remove_with_path(
+fn[K : Eq, V] Node::remove_with_path(
   self : Node[K, V],
   key : K,
   path : Path,
@@ -327,7 +333,7 @@ fn[K : Eq, V] remove_with_path(
 ///
 /// WARNING: this operation is `O(N)` in map size
 #alias(size, deprecated)
-pub fn[K, V] length(self : HashMap[K, V]) -> Int {
+pub fn[K, V] HashMap::length(self : HashMap[K, V]) -> Int {
   fn node_size(node) {
     match node {
       Leaf(_, _, bucket) => 1 + bucket.length()
@@ -589,7 +595,7 @@ pub fn[K : Eq, V] HashMap::difference(
 
 ///|
 /// Iterate through the elements in a hash map
-pub fn[K, V] each(
+pub fn[K, V] HashMap::each(
   self : HashMap[K, V],
   f : (K, V) -> Unit raise?,
 ) -> Unit raise? {
@@ -612,20 +618,20 @@ pub fn[K, V] each(
 
 ///|
 /// Returns all keys of the map
-pub fn[K, V] keys(self : HashMap[K, V]) -> Iter[K] {
+pub fn[K, V] HashMap::keys(self : HashMap[K, V]) -> Iter[K] {
   self.iter().map(p => p.0)
 }
 
 ///|
 /// Returns all values of the map
 #alias(elems, deprecated="Use `values` instead")
-pub fn[K, V] values(self : HashMap[K, V]) -> Iter[V] {
+pub fn[K, V] HashMap::values(self : HashMap[K, V]) -> Iter[V] {
   self.iter().map(p => p.1)
 }
 
 ///|
 /// Converted to Iter
-pub fn[K, V] iter(self : HashMap[K, V]) -> Iter[(K, V)] {
+pub fn[K, V] HashMap::iter(self : HashMap[K, V]) -> Iter[(K, V)] {
   fn go(node) -> Iter[(K, V)] {
     match node {
       Leaf(k, v, bucket) => Iter::singleton((k, v)) + bucket.iter()
@@ -641,7 +647,7 @@ pub fn[K, V] iter(self : HashMap[K, V]) -> Iter[(K, V)] {
 }
 
 ///|
-pub fn[K, V] iter2(self : HashMap[K, V]) -> Iter2[K, V] {
+pub fn[K, V] HashMap::iter2(self : HashMap[K, V]) -> Iter2[K, V] {
   Iter2::new(yield_ => for kv in self {
     guard yield_(kv.0, kv.1) is IterContinue else { break IterEnd }
   } else {
@@ -678,7 +684,7 @@ pub fn[K : Eq + Hash, V] HashMap::from_array(
 
 ///|
 /// Convert to an array of key-value pairs.
-pub fn[K, V] to_array(self : HashMap[K, V]) -> Array[(K, V)] {
+pub fn[K, V] HashMap::to_array(self : HashMap[K, V]) -> Array[(K, V)] {
   let arr = Array::new(capacity=self.length())
   self.each((k, v) => arr.push((k, v)))
   arr

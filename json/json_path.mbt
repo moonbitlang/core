@@ -20,12 +20,12 @@ enum JsonPath {
 } derive(Eq)
 
 ///|
-pub fn add_index(self : JsonPath, index : Int) -> JsonPath {
+pub fn JsonPath::add_index(self : JsonPath, index : Int) -> JsonPath {
   Index(self, index~)
 }
 
 ///|
-pub fn add_key(self : JsonPath, key : String) -> JsonPath {
+pub fn JsonPath::add_key(self : JsonPath, key : String) -> JsonPath {
   Key(self, key~)
 }
 

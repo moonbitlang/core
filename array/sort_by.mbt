@@ -24,7 +24,10 @@
 ///   arr.sort_by_key((x) => {-x})
 ///   assert_eq(arr, [5, 4, 3, 2, 1])
 /// ```
-pub fn[T, K : Compare] sort_by_key(self : Array[T], map : (T) -> K) -> Unit {
+pub fn[T, K : Compare] Array::sort_by_key(
+  self : Array[T],
+  map : (T) -> K,
+) -> Unit {
   self.quick_sort_by(
     start=0,
     end=self.length(),
@@ -46,7 +49,7 @@ pub fn[T, K : Compare] sort_by_key(self : Array[T], map : (T) -> K) -> Unit {
 ///   arr.sort_by((a, b) => { a - b })
 ///   assert_eq(arr, [1, 2, 3, 4, 5])
 /// ```
-pub fn[T] sort_by(self : Array[T], cmp : (T, T) -> Int) -> Unit {
+pub fn[T] Array::sort_by(self : Array[T], cmp : (T, T) -> Int) -> Unit {
   self.quick_sort_by(
     start=0,
     end=self.length(),

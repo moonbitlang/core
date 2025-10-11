@@ -19,7 +19,7 @@ pub let min_value : UInt = 0U
 pub let max_value : UInt = 4294967295U
 
 ///|
-pub fn to_int64(self : UInt) -> Int64 {
+pub fn UInt::to_int64(self : UInt) -> Int64 {
   self.to_uint64().reinterpret_as_int64()
 }
 
@@ -36,7 +36,7 @@ pub fn default() -> UInt {
 
 ///|
 /// Converts the UInt to a Bytes in big-endian byte order.
-pub fn to_be_bytes(self : UInt) -> Bytes {
+pub fn UInt::to_be_bytes(self : UInt) -> Bytes {
   [
     (self >> 24).to_byte(),
     (self >> 16).to_byte(),
@@ -47,7 +47,7 @@ pub fn to_be_bytes(self : UInt) -> Bytes {
 
 ///|
 /// Converts the UInt to a Bytes in little-endian byte order.
-pub fn to_le_bytes(self : UInt) -> Bytes {
+pub fn UInt::to_le_bytes(self : UInt) -> Bytes {
   [
     self.to_byte(),
     (self >> 8).to_byte(),

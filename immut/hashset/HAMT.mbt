@@ -35,7 +35,7 @@ pub fn[A] HashSet::new() -> HashSet[A] {
 
 ///|
 /// Lookup a value from the hash set
-pub fn[A : Eq + Hash] contains(self : HashSet[A], key : A) -> Bool {
+pub fn[A : Eq + Hash] HashSet::contains(self : HashSet[A], key : A) -> Bool {
   self.0 is Some(node) && node.contains(key, @path.of(key))
 }
 
@@ -77,7 +77,7 @@ fn[A] join_2(key1 : A, path1 : Path, key2 : A, path2 : Path) -> Node[A] {
 }
 
 ///|
-fn[A : Eq] add_with_path(self : Node[A], key : A, path : Path) -> Node[A] {
+fn[A : Eq] Node::add_with_path(self : Node[A], key : A, path : Path) -> Node[A] {
   match self {
     Leaf(key1, bucket) =>
       if key == key1 || bucket.contains(key) {
@@ -109,7 +109,7 @@ fn[A : Eq] add_with_path(self : Node[A], key : A, path : Path) -> Node[A] {
 
 ///|
 /// Add a key to the hashset.
-pub fn[A : Eq + Hash] add(self : HashSet[A], key : A) -> HashSet[A] {
+pub fn[A : Eq + Hash] HashSet::add(self : HashSet[A], key : A) -> HashSet[A] {
   match self.0 {
     None => Some(Flat(key, @path.of(key)))
     Some(node) => Some(node.add_with_path(key, @path.of(key)))
@@ -118,7 +118,7 @@ pub fn[A : Eq + Hash] add(self : HashSet[A], key : A) -> HashSet[A] {
 
 ///|
 /// Remove an element from a set
-pub fn[A : Eq + Hash] remove(self : HashSet[A], key : A) -> HashSet[A] {
+pub fn[A : Eq + Hash] HashSet::remove(self : HashSet[A], key : A) -> HashSet[A] {
   match self.0 {
     None => None
     Some(node) => node.remove_with_path(key, @path.of(key))
@@ -126,7 +126,11 @@ pub fn[A : Eq + Hash] remove(self : HashSet[A], key : A) -> HashSet[A] {
 }
 
 ///|
-fn[A : Eq] remove_with_path(self : Node[A], key : A, path : Path) -> Node[A]? {
+fn[A : Eq] Node::remove_with_path(
+  self : Node[A],
+  key : A,
+  path : Path,
+) -> Node[A]? {
   match self {
     Leaf(key1, bucket) =>
       if key1 == key {
@@ -172,7 +176,7 @@ fn[A : Eq] remove_with_path(self : Node[A], key : A, path : Path) -> Node[A]? {
 ///
 /// WARNING: this operation is `O(N)` in set size
 #alias(size, deprecated)
-pub fn[A] length(self : HashSet[A]) -> Int {
+pub fn[A] HashSet::length(self : HashSet[A]) -> Int {
   fn node_size(node) {
     match node {
       Leaf(_, bucket) => 1 + bucket.length()
@@ -304,13 +308,16 @@ pub fn[K : Eq] HashSet::difference(
 
 ///|
 /// Returns true if the hash set is empty.
-pub fn[A] is_empty(self : HashSet[A]) -> Bool {
+pub fn[A] HashSet::is_empty(self : HashSet[A]) -> Bool {
   self.0 is None
 }
 
 ///|
 /// Iterate through the elements in a hash set
-pub fn[A] each(self : HashSet[A], f : (A) -> Unit raise?) -> Unit raise? {
+pub fn[A] HashSet::each(
+  self : HashSet[A],
+  f : (A) -> Unit raise?,
+) -> Unit raise? {
   fn go(node) raise? {
     match node {
       Leaf(k, bucket) => {
@@ -330,7 +337,7 @@ pub fn[A] each(self : HashSet[A], f : (A) -> Unit raise?) -> Unit raise? {
 
 ///|
 /// Converted to Iter
-pub fn[A] iter(self : HashSet[A]) -> Iter[A] {
+pub fn[A] HashSet::iter(self : HashSet[A]) -> Iter[A] {
   fn go(node) -> Iter[A] {
     match node {
       Leaf(k, bucket) => Iter::singleton(k) + bucket.iter()

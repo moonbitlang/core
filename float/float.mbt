@@ -206,7 +206,7 @@ pub impl Hash for Float with hash_combine(self, hasher) {
 ///     ),
 ///   )
 /// ```
-pub fn to_be_bytes(self : Float) -> Bytes {
+pub fn Float::to_be_bytes(self : Float) -> Bytes {
   self.reinterpret_as_uint().to_be_bytes()
 }
 
@@ -228,7 +228,7 @@ pub fn to_be_bytes(self : Float) -> Bytes {
 ///   let bytes = f.to_le_bytes()
 ///   inspect(bytes.length(), content="4")
 /// ```
-pub fn to_le_bytes(self : Float) -> Bytes {
+pub fn Float::to_le_bytes(self : Float) -> Bytes {
   self.reinterpret_as_uint().to_le_bytes()
 }
 
@@ -249,7 +249,7 @@ pub fn to_le_bytes(self : Float) -> Bytes {
 ///   inspect(@float.neg_infinity.is_inf(), content="true")
 ///   inspect((1.0 : Float).is_inf(), content="false")
 /// ```
-pub fn is_inf(self : Float) -> Bool {
+pub fn Float::is_inf(self : Float) -> Bool {
   self.is_pos_inf() || self.is_neg_inf()
 }
 
@@ -269,7 +269,7 @@ pub fn is_inf(self : Float) -> Bool {
 ///   inspect((1.0 : Float).is_pos_inf(), content="false")
 ///   inspect(@float.neg_infinity.is_pos_inf(), content="false")
 /// ```
-pub fn is_pos_inf(self : Float) -> Bool {
+pub fn Float::is_pos_inf(self : Float) -> Bool {
   self > max_value
 }
 
@@ -289,7 +289,7 @@ pub fn is_pos_inf(self : Float) -> Bool {
 ///   inspect((1.0 : Float).is_neg_inf(), content="false")
 ///   inspect(@float.infinity.is_neg_inf(), content="false")
 /// ```
-pub fn is_neg_inf(self : Float) -> Bool {
+pub fn Float::is_neg_inf(self : Float) -> Bool {
   self < min_value
 }
 
@@ -309,7 +309,7 @@ pub fn is_neg_inf(self : Float) -> Bool {
 ///   inspect((1.0 : Float).is_nan(), content="false")
 ///   inspect(@float.infinity.is_nan(), content="false")
 /// ```
-pub fn is_nan(self : Float) -> Bool {
+pub fn Float::is_nan(self : Float) -> Bool {
   self != self
 }
 

@@ -55,7 +55,7 @@ pub fn Rand::new(generator? : &Source) -> Rand {
 }
 
 ///|
-fn next(self : Rand) -> UInt64 {
+fn Rand::next(self : Rand) -> UInt64 {
   let Rand(s) = self
   s.next()
 }
@@ -75,7 +75,7 @@ test "next" {
 ///
 /// * `limit` - The upper bound (exclusive) of the random number to be generated (Optional).
 ///             When limit is 0, the range is [0, 2^31).
-pub fn int(self : Rand, limit? : Int = 0) -> Int {
+pub fn Rand::int(self : Rand, limit? : Int = 0) -> Int {
   if limit == 0 {
     // Range [0, 2^31)
     (self.next() >> 33).to_int()
@@ -91,7 +91,7 @@ pub fn int(self : Rand, limit? : Int = 0) -> Int {
 ///
 /// * `limit` - The upper bound (exclusive) of the random number to be generated (Optional).
 ///            When limit is 0, the range is [0, 2^63).
-pub fn int64(self : Rand, limit? : Int64 = 0) -> Int64 {
+pub fn Rand::int64(self : Rand, limit? : Int64 = 0) -> Int64 {
   if limit == 0 {
     // range [0, 2^63)
     // Create a mask that keeps the lower 63 bits
@@ -109,7 +109,7 @@ pub fn int64(self : Rand, limit? : Int64 = 0) -> Int64 {
 ///
 /// * `limit` - The upper bound (exclusive) of the random number to be generated (Optional).
 ///            When limit is 0, the range is [0, 2^32).
-pub fn uint(self : Rand, limit? : UInt = 0) -> UInt {
+pub fn Rand::uint(self : Rand, limit? : UInt = 0) -> UInt {
   if limit == 0 {
     // Range: [0, 2^32)
     return self.next().to_uint()
@@ -135,7 +135,7 @@ test "uint" {
 ///
 /// * `limit` - The upper bound (exclusive) of the random number to be generated (Optional).
 ///           When limit is 0, the range is [0, 2^64).
-pub fn uint64(self : Rand, limit? : UInt64 = 0) -> UInt64 {
+pub fn Rand::uint64(self : Rand, limit? : UInt64 = 0) -> UInt64 {
   if limit == 0 {
     // Range: [0, 2^64)
     return self.next()
@@ -170,7 +170,7 @@ test "UInt64" {
 
 ///|
 /// [double] returns a pseudo-random 64-bit Double in the range [0.0, 1.0)
-pub fn double(self : Rand) -> Double {
+pub fn Rand::double(self : Rand) -> Double {
   Double::convert_uint64(self.next() << 11 >> 11) /
   Double::convert_uint64(1UL << 53)
 }
@@ -184,7 +184,7 @@ test "double" {
 
 ///|
 /// [float] returns a pseudo-random 32-bit Float in the range [0.0, 1.0)
-pub fn float(self : Rand) -> Float {
+pub fn Rand::float(self : Rand) -> Float {
   (self.uint() << 8 >> 8).to_float() / (1U << 24).to_float()
 }
 
@@ -203,7 +203,7 @@ pub fn float(self : Rand) -> Float {
 ///   let n = rand.bigint(8) // Generate random 8-bit number
 ///   inspect(n.bit_length() <= 8, content="true")
 /// ```
-pub fn bigint(self : Rand, bits : Int) -> @bigint.BigInt {
+pub fn Rand::bigint(self : Rand, bits : Int) -> @bigint.BigInt {
   let mod = bits % 8
   let len = if mod == 0 { bits / 8 } else { bits / 8 + 1 }
   let bytes = Bytes::makei(len, i => if i == 0 && mod != 0 {
@@ -298,7 +298,11 @@ test "umul128: handles zero correctly" {
 ///     },
 ///   )
 /// ```
-pub fn shuffle(self : Rand, limit : Int, swap : (Int, Int) -> Unit) -> Unit {
+pub fn Rand::shuffle(
+  self : Rand,
+  limit : Int,
+  swap : (Int, Int) -> Unit,
+) -> Unit {
   if limit < 0 {
     abort("Rand::shuffle: invalid argument limit")
   }

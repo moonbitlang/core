@@ -83,7 +83,7 @@ pub fn parse_double(str : StringView) -> Double raise StrConvError {
 }
 
 ///|
-fn is_fast_path(self : Number) -> Bool {
+fn Number::is_fast_path(self : Number) -> Bool {
   min_exponent_fast_path <= self.exponent &&
   self.exponent <= max_exponent_disguised_fast_path &&
   self.mantissa <= max_mantissa_fast_path &&
@@ -112,7 +112,7 @@ let int_pow10 : FixedArray[UInt64] = [
 ]
 
 ///|
-fn try_fast_path(self : Number) -> Double? {
+fn Number::try_fast_path(self : Number) -> Double? {
   if self.is_fast_path() {
     let mut value = if self.exponent <= max_exponent_fast_path {
       // normal fast path

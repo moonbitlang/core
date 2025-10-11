@@ -57,7 +57,7 @@ pub fn Decimal::parse_decimal(str : StringView) -> Decimal raise StrConvError {
 ///|
 /// Convert the decimal to Double.
 #deprecated("use `@strconv.parse_double` instead to avoid using this method.")
-pub fn to_double(self : Decimal) -> Double raise StrConvError {
+pub fn Decimal::to_double(self : Decimal) -> Double raise StrConvError {
   self.to_double_priv()
 }
 
@@ -65,6 +65,6 @@ pub fn to_double(self : Decimal) -> Double raise StrConvError {
 /// Binary shift left (s > 0) or right (s < 0).
 /// The shift count must not larger than the max_shift to avoid overflow.
 #deprecated("use `@strconv.parse_double` instead to avoid using this method.")
-pub fn shift(self : Decimal, s : Int) -> Unit {
+pub fn Decimal::shift(self : Decimal, s : Int) -> Unit {
   self.shift_priv(s)
 }

@@ -19,7 +19,7 @@
 /// 
 #deprecated("We don't copy immutable array")
 #coverage.skip
-pub fn[A] copy(self : T[A]) -> T[A] {
+pub fn[A] T::copy(self : T[A]) -> T[A] {
   fn copy(t : Tree[A]) -> Tree[A] {
     match t {
       Leaf(l) => Leaf(l.copy())
@@ -48,7 +48,11 @@ pub fn[A] copy(self : T[A]) -> T[A] {
 /// ```
 #deprecated("Use `fold` instead")
 #coverage.skip
-pub fn[A] fold_left(self : T[A], f : (A, A) -> A raise?, init~ : A) -> A raise? {
+pub fn[A] T::fold_left(
+  self : T[A],
+  f : (A, A) -> A raise?,
+  init~ : A,
+) -> A raise? {
   self.fold(init~, f)
 }
 
@@ -62,7 +66,7 @@ pub fn[A] fold_left(self : T[A], f : (A, A) -> A raise?, init~ : A) -> A raise? 
 /// ```
 #deprecated("Use `rev_fold` instead")
 #coverage.skip
-pub fn[A] fold_right(
+pub fn[A] T::fold_right(
   self : T[A],
   f : (A, A) -> A raise?,
   init~ : A,

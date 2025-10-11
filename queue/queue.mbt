@@ -66,7 +66,7 @@ impl[A : Eq] Eq for Queue[A] with equal(self, other) {
 ///   let queue : @queue.Queue[Int] = @queue.of([1, 2, 3, 4])
 ///   queue.clear()
 /// ```
-pub fn[A] clear(self : Queue[A]) -> Unit {
+pub fn[A] Queue::clear(self : Queue[A]) -> Unit {
   self.length = 0
   self.first = None
   self.last = None
@@ -80,7 +80,7 @@ pub fn[A] clear(self : Queue[A]) -> Unit {
 ///   let queue : @queue.Queue[Int] = @queue.new()
 ///   assert_eq(queue.length(), 0)
 /// ```
-pub fn[A] length(self : Queue[A]) -> Int {
+pub fn[A] Queue::length(self : Queue[A]) -> Int {
   self.length
 }
 
@@ -92,7 +92,7 @@ pub fn[A] length(self : Queue[A]) -> Int {
 ///   let queue : @queue.Queue[Int] = @queue.new()
 ///   assert_true(queue.is_empty())
 /// ```
-pub fn[A] is_empty(self : Queue[A]) -> Bool {
+pub fn[A] Queue::is_empty(self : Queue[A]) -> Bool {
   self.length == 0
 }
 
@@ -104,7 +104,7 @@ pub fn[A] is_empty(self : Queue[A]) -> Bool {
 ///   let queue : @queue.Queue[Int] = @queue.new()
 ///   queue.push(1)
 /// ```
-pub fn[A] push(self : Queue[A], x : A) -> Unit {
+pub fn[A] Queue::push(self : Queue[A], x : A) -> Unit {
   let cell = Some({ content: x, next: None })
   match self.last {
     None => {
@@ -129,7 +129,7 @@ pub fn[A] push(self : Queue[A], x : A) -> Unit {
 ///   assert_eq(queue.unsafe_peek(), 1)
 /// ```
 #internal(unsafe, "Panics if the queue is empty.")
-pub fn[A] unsafe_peek(self : Queue[A]) -> A {
+pub fn[A] Queue::unsafe_peek(self : Queue[A]) -> A {
   match self.first {
     None => abort("Queue is empty")
     Some(first) => first.content
@@ -144,7 +144,7 @@ pub fn[A] unsafe_peek(self : Queue[A]) -> A {
 ///   let queue : @queue.Queue[Int] = @queue.of([1, 2, 3, 4])
 ///   assert_eq(queue.peek(), Some(1))
 /// ```
-pub fn[A] peek(self : Queue[A]) -> A? {
+pub fn[A] Queue::peek(self : Queue[A]) -> A? {
   match self.first {
     None => None
     Some(first) => Some(first.content)
@@ -160,7 +160,7 @@ pub fn[A] peek(self : Queue[A]) -> A? {
 ///   assert_eq(queue.unsafe_pop(), 1)
 /// ```
 #internal(unsafe, "Panics if the queue is empty.")
-pub fn[A] unsafe_pop(self : Queue[A]) -> A {
+pub fn[A] Queue::unsafe_pop(self : Queue[A]) -> A {
   match self.first {
     None => abort("Queue is empty")
     Some({ content, next: None }) => {
@@ -183,7 +183,7 @@ pub fn[A] unsafe_pop(self : Queue[A]) -> A {
 ///   let queue : @queue.Queue[Int] = @queue.of([1, 2, 3, 4])
 ///   assert_eq(queue.pop(), Some(1))
 /// ```
-pub fn[A] pop(self : Queue[A]) -> A? {
+pub fn[A] Queue::pop(self : Queue[A]) -> A? {
   match self.first {
     None => None
     Some({ content, next: None }) => {
@@ -207,7 +207,7 @@ pub fn[A] pop(self : Queue[A]) -> A? {
 ///   let mut sum = 0
 ///   queue.each((x) => { sum = sum + x })
 /// ```
-pub fn[A] each(self : Queue[A], f : (A) -> Unit) -> Unit {
+pub fn[A] Queue::each(self : Queue[A], f : (A) -> Unit) -> Unit {
   loop self.first {
     Some({ content, next }) => {
       f(content)
@@ -226,7 +226,7 @@ pub fn[A] each(self : Queue[A], f : (A) -> Unit) -> Unit {
 ///   let mut sum = 0
 ///   queue.eachi((x, i) => { sum = sum + x * i })
 /// ```
-pub fn[A] eachi(self : Queue[A], f : (Int, A) -> Unit) -> Unit {
+pub fn[A] Queue::eachi(self : Queue[A], f : (Int, A) -> Unit) -> Unit {
   loop (self.first, 0) {
     (Some({ content, next }), index) => {
       f(index, content)
@@ -245,7 +245,7 @@ pub fn[A] eachi(self : Queue[A], f : (Int, A) -> Unit) -> Unit {
 ///   let sum = queue.fold(init=0, (acc, x) => { acc + x })
 ///   assert_eq(sum, 0)
 /// ```
-pub fn[A, B] fold(self : Queue[A], init~ : B, f : (B, A) -> B) -> B {
+pub fn[A, B] Queue::fold(self : Queue[A], init~ : B, f : (B, A) -> B) -> B {
   loop (self.first, init) {
     (None, acc) => acc
     (Some({ content, next }), acc) => continue (next, f(acc, content))
@@ -261,7 +261,7 @@ pub fn[A, B] fold(self : Queue[A], init~ : B, f : (B, A) -> B) -> B {
 ///   let queue2 : @queue.Queue[Int] = queue.copy()
 ///   assert_eq(queue2.length(), 4)
 /// ```
-pub fn[A] copy(self : Queue[A]) -> Queue[A] {
+pub fn[A] Queue::copy(self : Queue[A]) -> Queue[A] {
   guard self.first is Some({ content, next }) else { return new() }
   let first = { content, next: None }
   let last = loop (first, next) {
@@ -286,7 +286,7 @@ pub fn[A] copy(self : Queue[A]) -> Queue[A] {
 ///   let src : @queue.Queue[Int] = @queue.of([5, 6, 7, 8])
 ///   src.transfer(dst)
 /// ```
-pub fn[A] transfer(self : Queue[A], dst : Queue[A]) -> Unit {
+pub fn[A] Queue::transfer(self : Queue[A], dst : Queue[A]) -> Unit {
   if self.length > 0 {
     match dst.last {
       None => {
@@ -314,7 +314,7 @@ pub fn[A] transfer(self : Queue[A], dst : Queue[A]) -> Unit {
 ///   let sum = queue.iter().fold((x, y) => { x + y }, init=0)
 ///   assert_eq(sum, 26)
 /// ```
-pub fn[A] iter(self : Queue[A]) -> Iter[A] {
+pub fn[A] Queue::iter(self : Queue[A]) -> Iter[A] {
   Iter::new(yield_ => loop self.first {
     Some({ content, next }) => {
       if yield_(content) is IterEnd {

@@ -109,7 +109,7 @@ pub fn Bytes::from_fixedarray(arr : FixedArray[Byte], len? : Int) -> Bytes {
 /// ```
 /// 
 /// Panics if the length is invalid
-pub fn to_fixedarray(self : Bytes, len? : Int) -> FixedArray[Byte] {
+pub fn Bytes::to_fixedarray(self : Bytes, len? : Int) -> FixedArray[Byte] {
   let len = match len {
     None => self.length()
     Some(x) => {
@@ -199,7 +199,7 @@ pub fn Bytes::of(arr : FixedArray[Byte]) -> Bytes {
 ///   let arr = bytes.to_array()
 ///   inspect(arr, content="[b'\\x68', b'\\x65', b'\\x6C', b'\\x6C', b'\\x6F']")
 /// ```
-pub fn to_array(self : Bytes) -> Array[Byte] {
+pub fn Bytes::to_array(self : Bytes) -> Array[Byte] {
   let len = self.length()
   let rv = Array::make(len, b'0')
   for i in 0..<len {
@@ -225,7 +225,7 @@ pub fn to_array(self : Bytes) -> Array[Byte] {
 ///   bytes.iter().each((b) => { sum = sum + b.to_int() })
 ///   inspect(sum, content="209") // ASCII values: 'h'(104) + 'i'(105) = 209
 /// ```
-pub fn iter(self : Bytes) -> Iter[Byte] {
+pub fn Bytes::iter(self : Bytes) -> Iter[Byte] {
   Iter::new(yield_ => for i in 0..<self.length() {
     if yield_(self[i]) is IterEnd {
       break IterEnd
@@ -248,7 +248,7 @@ pub fn iter(self : Bytes) -> Iter[Byte] {
 ///   })
 ///   inspect(buf, content="b'\\x61'b'\\x62'b'\\x63'b'\\x64'b'\\x65'")
 ///   inspect(keys, content="[0, 1, 2, 3, 4]")
-pub fn iter2(self : Bytes) -> Iter2[Int, Byte] {
+pub fn Bytes::iter2(self : Bytes) -> Iter2[Int, Byte] {
   Iter2::new(yield_ => for i in 0..<self.length() {
     if yield_(i, self[i]) is IterEnd {
       break IterEnd
@@ -300,7 +300,7 @@ pub fn default() -> Bytes {
 ///   let byte = bytes.get(3)
 ///   inspect(byte, content="None")
 /// ```
-pub fn get(self : Bytes, index : Int) -> Byte? {
+pub fn Bytes::get(self : Bytes, index : Int) -> Byte? {
   guard index >= 0 && index < self.length() else { None }
   Some(self[index])
 }

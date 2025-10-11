@@ -22,7 +22,7 @@
 ///   let y = x.map((v : Int) => { v * 7 })
 ///   assert_eq(y, Ok(42))
 /// ```
-pub fn[T, E, U] map(self : Result[T, E], f : (T) -> U) -> Result[U, E] {
+pub fn[T, E, U] Result::map(self : Result[T, E], f : (T) -> U) -> Result[U, E] {
   match self {
     Ok(value) => Ok(f(value))
     Err(err) => Err(err)
@@ -49,7 +49,10 @@ test "map" {
 ///   let y = x.map_err((v : String) => { v + "!" })
 ///   assert_eq(y, Err("error!"))
 /// ```
-pub fn[T, E, F] map_err(self : Result[T, E], f : (E) -> F) -> Result[T, F] {
+pub fn[T, E, F] Result::map_err(
+  self : Result[T, E],
+  f : (E) -> F,
+) -> Result[T, F] {
   match self {
     Ok(value) => Ok(value)
     Err(err) => Err(f(err))
@@ -76,7 +79,7 @@ test "map_err" {
 ///   let y = x.or(0)
 ///   assert_eq(y, 6)
 /// ```
-pub fn[T, E] or(self : Result[T, E], default : T) -> T {
+pub fn[T, E] Result::or(self : Result[T, E], default : T) -> T {
   match self {
     Ok(value) => value
     Err(_) => default
@@ -104,7 +107,7 @@ test "or" {
 ///   let y = x.or_else(() => { 0 })
 ///   assert_eq(y, 6)
 /// ```
-pub fn[T, E] or_else(self : Result[T, E], default : () -> T) -> T {
+pub fn[T, E] Result::or_else(self : Result[T, E], default : () -> T) -> T {
   match self {
     Ok(value) => value
     Err(_) => default()
@@ -133,7 +136,7 @@ test "or_else" {
 ///   let y = x.flatten()
 ///   assert_eq(y, Ok(6))
 /// ```
-pub fn[T, E] flatten(self : Result[Result[T, E], E]) -> Result[T, E] {
+pub fn[T, E] Result::flatten(self : Result[Result[T, E], E]) -> Result[T, E] {
   match self {
     Ok(value) => value
     Err(err) => Err(err)
@@ -160,7 +163,7 @@ test "flatten" {
 ///   let y = x.bind((v : Int) => { Ok(v * 7) })
 ///   assert_eq(y, Ok(42))
 /// ```
-pub fn[T, E, U] bind(
+pub fn[T, E, U] Result::bind(
   self : Result[T, E],
   g : (T) -> Result[U, E],
 ) -> Result[U, E] {
@@ -189,7 +192,7 @@ test "bind" {
 ///   let y = x.to_option()
 ///   assert_eq(y, Some(6))
 /// ```
-pub fn[T, E] to_option(self : Result[T, E]) -> T? {
+pub fn[T, E] Result::to_option(self : Result[T, E]) -> T? {
   match self {
     Ok(value) => Some(value)
     Err(_) => None
@@ -236,7 +239,7 @@ test "compare" {
 }
 
 ///|
-pub fn[T, E] unwrap(self : Result[T, E]) -> T {
+pub fn[T, E] Result::unwrap(self : Result[T, E]) -> T {
   match self {
     Ok(x) => x
     Err(_) => abort("called `Result::unwrap()` on an `Err` value")
@@ -259,7 +262,7 @@ pub fn[T, E] unwrap(self : Result[T, E]) -> T {
 ///   let err : Result[Int, String] = Err("error message")
 ///   inspect(err.unwrap_err(), content="error message")
 /// ```
-pub fn[T, E] unwrap_err(self : Result[T, E]) -> E {
+pub fn[T, E] Result::unwrap_err(self : Result[T, E]) -> E {
   match self {
     Ok(_) => abort("called `Result::unwrap_err()` on an `Ok` value")
     Err(e) => e
@@ -341,7 +344,7 @@ test "unwrap_or_default" {
 }
 
 ///|
-pub fn[T, E : Error] unwrap_or_error(self : Result[T, E]) -> T raise E {
+pub fn[T, E : Error] Result::unwrap_or_error(self : Result[T, E]) -> T raise E {
   match self {
     Ok(x) => x
     Err(e) => raise e

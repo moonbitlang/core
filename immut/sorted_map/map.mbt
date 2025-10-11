@@ -17,7 +17,7 @@
 /// O(log n).
 ///
 #alias(insert, deprecated)
-pub fn[K : Compare, V] add(
+pub fn[K : Compare, V] SortedMap::add(
   self : SortedMap[K, V],
   key : K,
   value : V,
@@ -38,7 +38,9 @@ pub fn[K : Compare, V] add(
 }
 
 ///|
-fn[K, V] split_max(self : SortedMap[K, V]) -> (K, V, SortedMap[K, V]) {
+fn[K, V] SortedMap::split_max(
+  self : SortedMap[K, V],
+) -> (K, V, SortedMap[K, V]) {
   match self {
     Tree(k, value=v, l, Empty, ..) => (k, v, l)
     Tree(k, value=v, l, r, ..) => {
@@ -50,7 +52,9 @@ fn[K, V] split_max(self : SortedMap[K, V]) -> (K, V, SortedMap[K, V]) {
 }
 
 ///|
-fn[K, V] split_min(self : SortedMap[K, V]) -> (K, V, SortedMap[K, V]) {
+fn[K, V] SortedMap::split_min(
+  self : SortedMap[K, V],
+) -> (K, V, SortedMap[K, V]) {
   match self {
     Tree(k, value=v, Empty, r, ..) => (k, v, r)
     Tree(k, value=v, l, r, ..) => {
@@ -80,7 +84,7 @@ fn[K, V] glue(l : SortedMap[K, V], r : SortedMap[K, V]) -> SortedMap[K, V] {
 ///|
 /// Create a new map with a key-value pair removed. O(log n).
 /// If the key is not a member or map, the original map is returned.
-pub fn[K : Compare, V] remove(
+pub fn[K : Compare, V] SortedMap::remove(
   self : SortedMap[K, V],
   key : K,
 ) -> SortedMap[K, V] {
@@ -101,7 +105,7 @@ pub fn[K : Compare, V] remove(
 
 ///|
 /// Filter key-value pairs that satisfy the predicate
-pub fn[K, V] filter_with_key(
+pub fn[K, V] SortedMap::filter_with_key(
   self : SortedMap[K, V],
   pred : (K, V) -> Bool raise?,
 ) -> SortedMap[K, V] raise? {
@@ -118,7 +122,7 @@ pub fn[K, V] filter_with_key(
 
 ///|
 /// Convert to an array of key-value pairs.
-pub fn[K, V] to_array(self : SortedMap[K, V]) -> Array[(K, V)] {
+pub fn[K, V] SortedMap::to_array(self : SortedMap[K, V]) -> Array[(K, V)] {
   let arr = []
   self.each((k, v) => arr.push((k, v)))
   arr
