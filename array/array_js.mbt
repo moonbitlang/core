@@ -49,6 +49,6 @@ extern "js" fn JSArray::copy(self : JSArray) -> JSArray =
 ///   inspect(copied, content="[1, 2, 3]")
 ///   inspect(physical_equal(original, copied), content="false")
 /// ```
-pub fn[T] copy(self : Array[T]) -> Array[T] {
+pub fn[T] Array::copy(self : Array[T]) -> Array[T] {
   JSArray::ofAnyArray(self).copy().toAnyArray()
 }

@@ -102,7 +102,7 @@ pub fn[K : Hash + Eq, V] HashMap::set(
 }
 
 ///|
-fn[K : Eq, V] set_with_hash(
+fn[K : Eq, V] HashMap::set_with_hash(
   self : HashMap[K, V],
   key : K,
   value : V,
@@ -176,7 +176,7 @@ fn[K, V] HashMap::push_away(
 ///   inspect(map.get("key"), content="Some(42)")
 ///   inspect(map.get("nonexistent"), content="None")
 /// ```
-pub fn[K : Hash + Eq, V] get(self : HashMap[K, V], key : K) -> V? {
+pub fn[K : Hash + Eq, V] HashMap::get(self : HashMap[K, V], key : K) -> V? {
   // self.get_with_hash(key, key.hash())
   let hash = key.hash()
   for i = 0, idx = hash & self.capacity_mask {
@@ -243,7 +243,7 @@ pub fn[K : Hash + Eq, V] HashMap::at(self : HashMap[K, V], key : K) -> V {
 ///   inspect(value, content="42")
 ///   inspect(map.get("key"), content="Some(42)")
 /// ```
-pub fn[K : Hash + Eq, V] get_or_init(
+pub fn[K : Hash + Eq, V] HashMap::get_or_init(
   self : HashMap[K, V],
   key : K,
   init : () -> V,
@@ -303,7 +303,7 @@ pub fn[K : Hash + Eq, V] get_or_init(
 ///   inspect(map.get_or_default("a", 0), content="1")
 ///   inspect(map.get_or_default("c", 0), content="0")
 /// ```
-pub fn[K : Hash + Eq, V] get_or_default(
+pub fn[K : Hash + Eq, V] HashMap::get_or_default(
   self : HashMap[K, V],
   key : K,
   default : V,
@@ -338,7 +338,10 @@ pub fn[K : Hash + Eq, V] get_or_default(
 ///   inspect(map.contains("a"), content="true")
 ///   inspect(map.contains("c"), content="false")
 /// ```
-pub fn[K : Hash + Eq, V] contains(self : HashMap[K, V], key : K) -> Bool {
+pub fn[K : Hash + Eq, V] HashMap::contains(
+  self : HashMap[K, V],
+  key : K,
+) -> Bool {
   let hash = key.hash()
   for i = 0, idx = hash & self.capacity_mask {
     guard self.entries[idx] is Some(entry) else { return false }
@@ -374,7 +377,7 @@ pub fn[K : Hash + Eq, V] contains(self : HashMap[K, V], key : K) -> Bool {
 ///   inspect(map.contains_kv("a", 2), content="false")
 ///   inspect(map.contains_kv("c", 3), content="false")
 /// ```
-pub fn[K : Hash + Eq, V : Eq] contains_kv(
+pub fn[K : Hash + Eq, V : Eq] HashMap::contains_kv(
   self : HashMap[K, V],
   key : K,
   value : V,
@@ -411,12 +414,12 @@ pub fn[K : Hash + Eq, V : Eq] contains_kv(
 ///   inspect(map.get("a"), content="None")
 ///   inspect(map.length(), content="1")
 /// ```
-pub fn[K : Hash + Eq, V] remove(self : HashMap[K, V], key : K) -> Unit {
+pub fn[K : Hash + Eq, V] HashMap::remove(self : HashMap[K, V], key : K) -> Unit {
   self.remove_with_hash(key, key.hash())
 }
 
 ///|
-fn[K : Eq, V] remove_with_hash(
+fn[K : Eq, V] HashMap::remove_with_hash(
   self : HashMap[K, V],
   key : K,
   hash : Int,
@@ -440,7 +443,7 @@ fn[K : Eq, V] remove_with_hash(
 }
 
 ///|
-fn[K, V] shift_back(self : HashMap[K, V], idx : Int) -> Unit {
+fn[K, V] HashMap::shift_back(self : HashMap[K, V], idx : Int) -> Unit {
   let next = (idx + 1) & self.capacity_mask
   match self.entries[next] {
     None | Some({ psl: 0, .. }) => self.entries[idx] = None
@@ -453,7 +456,7 @@ fn[K, V] shift_back(self : HashMap[K, V], idx : Int) -> Unit {
 }
 
 ///|
-fn[K : Eq, V] grow(self : HashMap[K, V]) -> Unit {
+fn[K : Eq, V] HashMap::grow(self : HashMap[K, V]) -> Unit {
   let old_entries = self.entries
   let new_capacity = self.capacity << 1
   self.entries = FixedArray::make(new_capacity, None)

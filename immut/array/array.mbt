@@ -126,7 +126,7 @@ pub fn[A] T::from_iter(iter : Iter[A]) -> T[A] {
 //-----------------------------------------------------------------------------
 
 ///|
-pub fn[A] to_array(self : T[A]) -> Array[A] {
+pub fn[A] T::to_array(self : T[A]) -> Array[A] {
   if self.is_empty() {
     []
   } else {
@@ -141,12 +141,12 @@ pub fn[A] to_array(self : T[A]) -> Array[A] {
 //-----------------------------------------------------------------------------
 
 ///|
-pub fn[A] is_empty(self : T[A]) -> Bool {
+pub fn[A] T::is_empty(self : T[A]) -> Bool {
   self.size == 0
 }
 
 ///|
-pub fn[A] length(self : T[A]) -> Int {
+pub fn[A] T::length(self : T[A]) -> Int {
   self.size
 }
 
@@ -193,7 +193,7 @@ pub fn[A] T::at(self : T[A], index : Int) -> A {
 ///   inspect(v.get(-1), content="None")
 ///   inspect(v.get(3), content="None")
 /// ```
-pub fn[A] get(self : T[A], index : Int) -> A? {
+pub fn[A] T::get(self : T[A], index : Int) -> A? {
   guard 0 <= index && index < self.size else { None }
   Some(self[index])
 }
@@ -210,7 +210,7 @@ pub fn[A] get(self : T[A], index : Int) -> A? {
 ///   let v = @array.of([1, 2, 3, 4, 5])
 ///   assert_eq(v.set(1, 10), @array.of([1, 10, 3, 4, 5]))
 /// ```
-pub fn[A] set(self : T[A], index : Int, value : A) -> T[A] {
+pub fn[A] T::set(self : T[A], index : Int, value : A) -> T[A] {
   {
     tree: self.tree.set(index, self.shift, value),
     size: self.size,
@@ -226,14 +226,14 @@ pub fn[A] set(self : T[A], index : Int, value : A) -> T[A] {
 ///   let v = @array.of([1, 2, 3])
 ///   assert_eq(v.push(4), @array.of([1, 2, 3, 4]))
 /// ```
-pub fn[A] push(self : T[A], value : A) -> T[A] {
+pub fn[A] T::push(self : T[A], value : A) -> T[A] {
   let (tree, shift) = self.tree.push_end(self.shift, value)
   { tree, size: self.size + 1, shift }
 }
 
 ///|
 /// Given two trees, concatenate them into a new tree.
-pub fn[A] concat(self : T[A], other : T[A]) -> T[A] {
+pub fn[A] T::concat(self : T[A], other : T[A]) -> T[A] {
   if self.is_empty() {
     return other
   }
@@ -262,7 +262,7 @@ pub impl[A] Add for T[A] with add(self, other) {
 
 ///|
 /// Return an iterator over the array.
-pub fn[A] iter(self : T[A]) -> Iter[A] {
+pub fn[A] T::iter(self : T[A]) -> Iter[A] {
   self.tree.iter()
 }
 
@@ -276,7 +276,7 @@ pub fn[A] iter(self : T[A]) -> Iter[A] {
 ///   v.each((e) => { arr.push(e) })
 ///   assert_eq(arr, [1, 2, 3, 4, 5])
 /// ```
-pub fn[A] each(self : T[A], f : (A) -> Unit raise?) -> Unit raise? {
+pub fn[A] T::each(self : T[A], f : (A) -> Unit raise?) -> Unit raise? {
   self.tree.each(f)
 }
 
@@ -290,7 +290,7 @@ pub fn[A] each(self : T[A], f : (A) -> Unit raise?) -> Unit raise? {
 ///   v.eachi((i, e) => { arr.push(i * e) })
 ///   assert_eq(arr, [0, 2, 6, 12, 20])
 /// ```
-pub fn[A] eachi(self : T[A], f : (Int, A) -> Unit raise?) -> Unit raise? {
+pub fn[A] T::eachi(self : T[A], f : (Int, A) -> Unit raise?) -> Unit raise? {
   self.tree.eachi(f, self.shift, 0)
 }
 
@@ -302,7 +302,11 @@ pub fn[A] eachi(self : T[A], f : (Int, A) -> Unit raise?) -> Unit raise? {
 ///   let v = @array.of([1, 2, 3, 4, 5])
 ///   assert_eq(v.fold((a, b) => { a + b }, init=0), 15)
 /// ```
-pub fn[A, B] fold(self : T[A], init~ : B, f : (B, A) -> B raise?) -> B raise? {
+pub fn[A, B] T::fold(
+  self : T[A],
+  init~ : B,
+  f : (B, A) -> B raise?,
+) -> B raise? {
   self.tree.fold(init, f)
 }
 
@@ -314,7 +318,7 @@ pub fn[A, B] fold(self : T[A], init~ : B, f : (B, A) -> B raise?) -> B raise? {
 ///   let v = @array.of([1, 2, 3, 4, 5])
 ///   assert_eq(v.rev_fold((a, b) => { a + b }, init=0), 15)
 /// ```
-pub fn[A, B] rev_fold(
+pub fn[A, B] T::rev_fold(
   self : T[A],
   init~ : B,
   f : (B, A) -> B raise?,
@@ -330,7 +334,7 @@ pub fn[A, B] rev_fold(
 ///   let v = @array.of([1, 2, 3, 4, 5])
 ///   assert_eq(v.map((e) => { e * 2 }), @array.of([2, 4, 6, 8, 10]))
 /// ```
-pub fn[A, B] map(self : T[A], f : (A) -> B raise?) -> T[B] raise? {
+pub fn[A, B] T::map(self : T[A], f : (A) -> B raise?) -> T[B] raise? {
   { tree: self.tree.map(f), size: self.size, shift: self.shift }
 }
 

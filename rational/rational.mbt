@@ -160,7 +160,7 @@ pub impl Div for T with div(self : T, other : T) -> T {
 ///
 #deprecated("Use @rational in module moonbitlang/x instead. Note that you need to rename Rational to Rational64.")
 #coverage.skip
-pub fn reciprocal(self : T) -> T {
+pub fn T::reciprocal(self : T) -> T {
   if self.numerator < 0L {
     new_unchecked(-self.denominator, -self.numerator)
   } else {
@@ -247,7 +247,7 @@ pub impl Compare for T with compare(self : T, other : T) -> Int {
 ///
 #deprecated("Use @rational in module moonbitlang/x instead. Note that you need to rename Rational to Rational64.")
 #coverage.skip
-pub fn to_double(self : T) -> Double {
+pub fn T::to_double(self : T) -> Double {
   // TODO: complete algorithm
   self.numerator.to_double() / self.denominator.to_double()
 }
@@ -463,7 +463,7 @@ pub fn T::trunc(self : T) -> Int64 {
 ///
 #deprecated("Use @rational in module moonbitlang/x instead. Note that you need to rename Rational to Rational64.")
 #coverage.skip
-pub fn fract(self : T) -> T {
+pub fn T::fract(self : T) -> T {
   new_unchecked(self.numerator % self.denominator, self.denominator)
 }
 
@@ -522,7 +522,7 @@ pub impl @quickcheck.Arbitrary for T with arbitrary(size, rs) {
 ///
 #deprecated("Use @rational in module moonbitlang/x instead. Note that you need to rename Rational to Rational64.")
 #coverage.skip
-pub fn is_integer(self : T) -> Bool {
+pub fn T::is_integer(self : T) -> Bool {
   self.denominator == 1L
 }
 

@@ -65,12 +65,16 @@ pub fn[K : Hash + Eq] HashSet::of(arr : FixedArray[K]) -> HashSet[K] {
 ///   set.add("key") // no effect since it already exists
 ///   inspect(set.length(), content="1")
 /// ```
-pub fn[K : Hash + Eq] add(self : HashSet[K], key : K) -> Unit {
+pub fn[K : Hash + Eq] HashSet::add(self : HashSet[K], key : K) -> Unit {
   self.add_with_hash(key, key.hash())
 }
 
 ///|
-fn[K : Eq] add_with_hash(self : HashSet[K], key : K, hash : Int) -> Unit {
+fn[K : Eq] HashSet::add_with_hash(
+  self : HashSet[K],
+  key : K,
+  hash : Int,
+) -> Unit {
   if self.size >= self.grow_at {
     self.grow()
   }
@@ -95,7 +99,11 @@ fn[K : Eq] add_with_hash(self : HashSet[K], key : K, hash : Int) -> Unit {
 }
 
 ///|
-fn[K] push_away(self : HashSet[K], idx : Int, entry : Entry[K]) -> Unit {
+fn[K] HashSet::push_away(
+  self : HashSet[K],
+  idx : Int,
+  entry : Entry[K],
+) -> Unit {
   for psl = entry.psl + 1, idx = (idx + 1) & self.capacity_mask, entry = entry {
     match self.entries[idx] {
       None => {
@@ -119,13 +127,17 @@ fn[K] push_away(self : HashSet[K], idx : Int, entry : Entry[K]) -> Unit {
 
 ///|
 #inline
-fn[K] set_entry(self : HashSet[K], entry : Entry[K], new_idx : Int) -> Unit {
+fn[K] HashSet::set_entry(
+  self : HashSet[K],
+  entry : Entry[K],
+  new_idx : Int,
+) -> Unit {
   self.entries[new_idx] = Some(entry)
 }
 
 ///|
 /// Check if the hash set contains a key.
-pub fn[K : Hash + Eq] contains(self : HashSet[K], key : K) -> Bool {
+pub fn[K : Hash + Eq] HashSet::contains(self : HashSet[K], key : K) -> Bool {
   // inline lookup to avoid unnecessary allocations
   let hash = key.hash()
   for i = 0, idx = hash & self.capacity_mask {
@@ -159,7 +171,7 @@ pub fn[K : Hash + Eq] contains(self : HashSet[K], key : K) -> Bool {
 ///   inspect(set.contains("a"), content="false")
 ///   inspect(set.length(), content="1")
 /// ```
-pub fn[K : Hash + Eq] remove(self : HashSet[K], key : K) -> Unit {
+pub fn[K : Hash + Eq] HashSet::remove(self : HashSet[K], key : K) -> Unit {
   let hash = key.hash()
   for i = 0, idx = hash & self.capacity_mask {
     guard self.entries[idx] is Some(entry) else { break }
@@ -176,7 +188,7 @@ pub fn[K : Hash + Eq] remove(self : HashSet[K], key : K) -> Unit {
 }
 
 ///|
-fn[K] shift_back(self : HashSet[K], idx : Int) -> Unit {
+fn[K] HashSet::shift_back(self : HashSet[K], idx : Int) -> Unit {
   let next = (idx + 1) & self.capacity_mask
   match self.entries[next] {
     None | Some({ psl: 0, .. }) => self.entries[idx] = None
@@ -189,7 +201,7 @@ fn[K] shift_back(self : HashSet[K], idx : Int) -> Unit {
 }
 
 ///|
-fn[K : Eq] grow(self : HashSet[K]) -> Unit {
+fn[K : Eq] HashSet::grow(self : HashSet[K]) -> Unit {
   // handle zero capacity
   if self.capacity == 0 {
     self.capacity = default_init_capacity
@@ -222,26 +234,29 @@ pub impl[K : Show] Show for HashSet[K] with output(self, logger) {
 ///|
 /// Get the number of keys in the set.
 #alias(size, deprecated)
-pub fn[K] length(self : HashSet[K]) -> Int {
+pub fn[K] HashSet::length(self : HashSet[K]) -> Int {
   self.size
 }
 
 ///|
 /// Get the capacity of the set.
-pub fn[K] capacity(self : HashSet[K]) -> Int {
+pub fn[K] HashSet::capacity(self : HashSet[K]) -> Int {
   self.capacity
 }
 
 ///|
 /// Check if the hash set is empty.
-pub fn[K] is_empty(self : HashSet[K]) -> Bool {
+pub fn[K] HashSet::is_empty(self : HashSet[K]) -> Bool {
   self.size == 0
 }
 
 ///|
 /// Iterate over all keys of the set.
 #locals(f)
-pub fn[K] each(self : HashSet[K], f : (K) -> Unit raise?) -> Unit raise? {
+pub fn[K] HashSet::each(
+  self : HashSet[K],
+  f : (K) -> Unit raise?,
+) -> Unit raise? {
   for entry in self.entries {
     if entry is Some({ key, .. }) {
       f(key)
@@ -252,7 +267,10 @@ pub fn[K] each(self : HashSet[K], f : (K) -> Unit raise?) -> Unit raise? {
 ///|
 /// Iterate over all keys of the set, with index.
 #locals(f)
-pub fn[K] eachi(self : HashSet[K], f : (Int, K) -> Unit raise?) -> Unit raise? {
+pub fn[K] HashSet::eachi(
+  self : HashSet[K],
+  f : (Int, K) -> Unit raise?,
+) -> Unit raise? {
   let mut idx = 0
   for i in 0..<self.capacity {
     if self.entries[i] is Some({ key, .. }) {
@@ -264,14 +282,14 @@ pub fn[K] eachi(self : HashSet[K], f : (Int, K) -> Unit raise?) -> Unit raise? {
 
 ///|
 /// Clears the set, removing all keys. Keeps the allocated space.
-pub fn[K] clear(self : HashSet[K]) -> Unit {
+pub fn[K] HashSet::clear(self : HashSet[K]) -> Unit {
   self.entries.fill(None)
   self.size = 0
 }
 
 ///|
 /// Returns the iterator of the hash set.
-pub fn[K] iter(self : HashSet[K]) -> Iter[K] {
+pub fn[K] HashSet::iter(self : HashSet[K]) -> Iter[K] {
   Iter::new(yield_ => for entry in self.entries {
     if entry is Some({ key, .. }) {
       guard yield_(key) is IterContinue else { break IterEnd }
@@ -283,7 +301,7 @@ pub fn[K] iter(self : HashSet[K]) -> Iter[K] {
 
 ///|
 /// Converts the hash set to an array.
-pub fn[K] to_array(self : HashSet[K]) -> Array[K] {
+pub fn[K] HashSet::to_array(self : HashSet[K]) -> Array[K] {
   let arr = Array::new(capacity=self.size)
   for entry in self.entries {
     if entry is Some({ key, .. }) {
@@ -303,7 +321,7 @@ pub fn[K : Hash + Eq] HashSet::from_iter(iter : Iter[K]) -> HashSet[K] {
 
 ///|
 /// Union of two hash sets.
-pub fn[K : Hash + Eq] union(
+pub fn[K : Hash + Eq] HashSet::union(
   self : HashSet[K],
   other : HashSet[K],
 ) -> HashSet[K] {
@@ -315,7 +333,7 @@ pub fn[K : Hash + Eq] union(
 
 ///|
 /// Intersection of two hash sets.
-pub fn[K : Hash + Eq] intersection(
+pub fn[K : Hash + Eq] HashSet::intersection(
   self : HashSet[K],
   other : HashSet[K],
 ) -> HashSet[K] {
@@ -326,7 +344,7 @@ pub fn[K : Hash + Eq] intersection(
 
 ///|
 /// Difference of two hash sets.
-pub fn[K : Hash + Eq] difference(
+pub fn[K : Hash + Eq] HashSet::difference(
   self : HashSet[K],
   other : HashSet[K],
 ) -> HashSet[K] {
@@ -337,7 +355,7 @@ pub fn[K : Hash + Eq] difference(
 
 ///|
 /// Symmetric difference of two hash sets.
-pub fn[K : Hash + Eq] symmetric_difference(
+pub fn[K : Hash + Eq] HashSet::symmetric_difference(
   self : HashSet[K],
   other : HashSet[K],
 ) -> HashSet[K] {
@@ -349,7 +367,7 @@ pub fn[K : Hash + Eq] symmetric_difference(
 
 ///|
 /// Check if two sets have no common elements.
-pub fn[K : Hash + Eq] is_disjoint(
+pub fn[K : Hash + Eq] HashSet::is_disjoint(
   self : HashSet[K],
   other : HashSet[K],
 ) -> Bool {
@@ -362,7 +380,10 @@ pub fn[K : Hash + Eq] is_disjoint(
 
 ///|
 /// Check if the current set is a subset of another set.
-pub fn[K : Hash + Eq] is_subset(self : HashSet[K], other : HashSet[K]) -> Bool {
+pub fn[K : Hash + Eq] HashSet::is_subset(
+  self : HashSet[K],
+  other : HashSet[K],
+) -> Bool {
   if self.length() <= other.length() {
     self.iter().all(k => other.contains(k))
   } else {
@@ -372,7 +393,7 @@ pub fn[K : Hash + Eq] is_subset(self : HashSet[K], other : HashSet[K]) -> Bool {
 
 ///|
 /// Check if the current set is a superset of another set.
-pub fn[K : Hash + Eq] is_superset(
+pub fn[K : Hash + Eq] HashSet::is_superset(
   self : HashSet[K],
   other : HashSet[K],
 ) -> Bool {
@@ -416,7 +437,7 @@ fn calc_grow_threshold(capacity : Int) -> Int {
 }
 
 ///|
-fn[K : Show] _debug_entries(self : HashSet[K]) -> String {
+fn[K : Show] HashSet::_debug_entries(self : HashSet[K]) -> String {
   let mut s = ""
   for i in 0..<self.entries.length() {
     if i > 0 {
@@ -563,7 +584,10 @@ test "clear" {
 ///   inspect(set.add_and_check("key"), content="false") // Already exists
 ///   inspect(set.length(), content="1")
 /// ```
-pub fn[K : Hash + Eq] add_and_check(self : HashSet[K], key : K) -> Bool {
+pub fn[K : Hash + Eq] HashSet::add_and_check(
+  self : HashSet[K],
+  key : K,
+) -> Bool {
   let old_size = self.length()
   self.add(key)
   self.length() > old_size
@@ -588,7 +612,10 @@ pub fn[K : Hash + Eq] add_and_check(self : HashSet[K], key : K) -> Bool {
 ///   inspect(set.remove_and_check("a"), content="false") // Already removed
 ///   inspect(set.length(), content="1")
 /// ```
-pub fn[K : Hash + Eq] remove_and_check(self : HashSet[K], key : K) -> Bool {
+pub fn[K : Hash + Eq] HashSet::remove_and_check(
+  self : HashSet[K],
+  key : K,
+) -> Bool {
   let old_size = self.size
   self.remove(key)
   self.size < old_size
@@ -596,7 +623,7 @@ pub fn[K : Hash + Eq] remove_and_check(self : HashSet[K], key : K) -> Bool {
 
 ///|
 /// Copy the set, creating a new set with the same keys.
-pub fn[K] copy(self : HashSet[K]) -> HashSet[K] {
+pub fn[K] HashSet::copy(self : HashSet[K]) -> HashSet[K] {
   let other = {
     capacity: self.capacity,
     entries: FixedArray::make(self.capacity, None),

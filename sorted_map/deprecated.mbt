@@ -15,7 +15,7 @@
 ///|
 #deprecated("Use `keys_as_iter` instead. `keys` will return `Iter[K]` instead of `Array[K]` in the future.")
 #coverage.skip
-pub fn[K, V] keys(self : SortedMap[K, V]) -> Array[K] {
+pub fn[K, V] SortedMap::keys(self : SortedMap[K, V]) -> Array[K] {
   let keys = Array::new(capacity=self.size)
   self.each(fn(k, _v) { keys.push(k) })
   keys
@@ -24,7 +24,7 @@ pub fn[K, V] keys(self : SortedMap[K, V]) -> Array[K] {
 ///|
 #deprecated("Use `values_as_iter` instead. `values` will return `Iter[V]` instead of `Array[V]` in the future.")
 #coverage.skip
-pub fn[K, V] values(self : SortedMap[K, V]) -> Array[V] {
+pub fn[K, V] SortedMap::values(self : SortedMap[K, V]) -> Array[V] {
   let values = Array::new(capacity=self.size)
   self.each(fn(_k, v) { values.push(v) })
   values

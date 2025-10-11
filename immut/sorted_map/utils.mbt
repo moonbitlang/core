@@ -29,7 +29,10 @@ pub fn[K, V] SortedMap::singleton(key : K, value : V) -> SortedMap[K, V] {
 ///|
 /// Check if the map contains a key.
 /// O(log n).
-pub fn[K : Compare, V] contains(self : SortedMap[K, V], key : K) -> Bool {
+pub fn[K : Compare, V] SortedMap::contains(
+  self : SortedMap[K, V],
+  key : K,
+) -> Bool {
   loop self {
     Empty => false
     Tree(k, l, r, ..) => {
@@ -48,7 +51,7 @@ pub fn[K : Compare, V] contains(self : SortedMap[K, V], key : K) -> Bool {
 ///|
 /// Get the number of key-value pairs in the map.
 #alias(size, deprecated)
-pub fn[K, V] length(self : SortedMap[K, V]) -> Int {
+pub fn[K, V] SortedMap::length(self : SortedMap[K, V]) -> Int {
   match self {
     Empty => 0
     Tree(_) as t => t.size
@@ -56,7 +59,7 @@ pub fn[K, V] length(self : SortedMap[K, V]) -> Int {
 }
 
 ///|
-pub fn[K, V] is_empty(self : SortedMap[K, V]) -> Bool {
+pub fn[K, V] SortedMap::is_empty(self : SortedMap[K, V]) -> Bool {
   self.length() == 0
 }
 
@@ -74,7 +77,7 @@ fn[K, V] make_tree(
 ///|
 /// Get the value associated with a key.
 /// O(log n).
-pub fn[K : Compare, V] get(self : SortedMap[K, V], key : K) -> V? {
+pub fn[K : Compare, V] SortedMap::get(self : SortedMap[K, V], key : K) -> V? {
   loop self {
     Empty => None
     Tree(k, value~, l, r, ..) => {
@@ -112,7 +115,10 @@ pub fn[K : Compare, V] SortedMap::at(self : SortedMap[K, V], key : K) -> V {
 
 ///|
 /// Iterate over the key-value pairs in the map.
-pub fn[K, V] each(self : SortedMap[K, V], f : (K, V) -> Unit) -> Unit {
+pub fn[K, V] SortedMap::each(
+  self : SortedMap[K, V],
+  f : (K, V) -> Unit,
+) -> Unit {
   match self {
     Empty => ()
     Tree(k, value~, l, r, ..) => {
@@ -125,7 +131,10 @@ pub fn[K, V] each(self : SortedMap[K, V], f : (K, V) -> Unit) -> Unit {
 
 ///|
 /// Iterate over the key-value pairs with index.
-pub fn[K, V] eachi(self : SortedMap[K, V], f : (Int, K, V) -> Unit) -> Unit {
+pub fn[K, V] SortedMap::eachi(
+  self : SortedMap[K, V],
+  f : (Int, K, V) -> Unit,
+) -> Unit {
   fn do_eachi(m : SortedMap[K, V], f, i) {
     match m {
       Empty => ()
@@ -142,7 +151,7 @@ pub fn[K, V] eachi(self : SortedMap[K, V], f : (Int, K, V) -> Unit) -> Unit {
 
 ///|
 /// Maps over the key-value pairs in the map.
-pub fn[K, X, Y] map_with_key(
+pub fn[K, X, Y] SortedMap::map_with_key(
   self : SortedMap[K, X],
   f : (K, X) -> Y,
 ) -> SortedMap[K, Y] {
@@ -157,7 +166,7 @@ pub fn[K, X, Y] map_with_key(
 /// Post-order fold.
 /// O(n).
 #alias(foldr_with_key)
-pub fn[K, V, A] rev_fold(
+pub fn[K, V, A] SortedMap::rev_fold(
   self : SortedMap[K, V],
   f : (A, K, V) -> A,
   init~ : A,
@@ -175,7 +184,7 @@ pub fn[K, V, A] rev_fold(
 ///|
 /// Pre-order fold.
 /// O(n).
-pub fn[K, V, A] foldl_with_key(
+pub fn[K, V, A] SortedMap::foldl_with_key(
   self : SortedMap[K, V],
   f : (A, K, V) -> A,
   init~ : A,
@@ -191,7 +200,7 @@ pub fn[K, V, A] foldl_with_key(
 }
 
 ///|
-fn[K : Show, V : Show] debug_tree(self : SortedMap[K, V]) -> String {
+fn[K : Show, V : Show] SortedMap::debug_tree(self : SortedMap[K, V]) -> String {
   match self {
     Empty => "_"
     Tree(k, value~, l, r, ..) => {
@@ -218,7 +227,7 @@ pub fn[K : Compare, V] SortedMap::from_array(
 }
 
 ///|
-pub fn[K, V] iter(self : SortedMap[K, V]) -> Iter[(K, V)] {
+pub fn[K, V] SortedMap::iter(self : SortedMap[K, V]) -> Iter[(K, V)] {
   Iter::new(yield_ => {
     fn go(t) {
       match t {
@@ -239,7 +248,7 @@ pub fn[K, V] iter(self : SortedMap[K, V]) -> Iter[(K, V)] {
 }
 
 ///|
-pub fn[K, V] iter2(self : SortedMap[K, V]) -> Iter2[K, V] {
+pub fn[K, V] SortedMap::iter2(self : SortedMap[K, V]) -> Iter2[K, V] {
   Iter2::new(yield_ => {
     fn go(t) {
       match t {
@@ -269,13 +278,13 @@ pub fn[K : Compare, V] SortedMap::from_iter(
 
 ///|
 /// Return all keys of the map in ascending order.
-pub fn[K, V] keys_as_iter(self : SortedMap[K, V]) -> Iter[K] {
+pub fn[K, V] SortedMap::keys_as_iter(self : SortedMap[K, V]) -> Iter[K] {
   self.iter().map(p => p.0)
 }
 
 ///|
 /// Return all elements of the map in the ascending order of their keys.
-pub fn[K, V] values(self : SortedMap[K, V]) -> Iter[V] {
+pub fn[K, V] SortedMap::values(self : SortedMap[K, V]) -> Iter[V] {
   self.iter().map(p => p.1)
 }
 
@@ -293,6 +302,6 @@ pub fn[K : Compare, V] SortedMap::of(
 }
 
 ///|
-pub fn[K : Show, V : ToJson] to_json(self : SortedMap[K, V]) -> Json {
+pub fn[K : Show, V : ToJson] SortedMap::to_json(self : SortedMap[K, V]) -> Json {
   ToJson::to_json(self)
 }

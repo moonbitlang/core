@@ -68,13 +68,13 @@ fn[A] copy_node(x : Node[A]?) -> Node[A]? {
 /// let queue2 = queue.copy()
 /// inspect(queue2.length(), content="4")
 /// ```
-pub fn[A] copy(self : T[A]) -> T[A] {
+pub fn[A] T::copy(self : T[A]) -> T[A] {
   let new_que : T[A] = { len: self.len, top: copy_node(self.top) }
   new_que
 }
 
 ///|
-pub fn[A : Compare] to_array(self : T[A]) -> Array[A] {
+pub fn[A : Compare] T::to_array(self : T[A]) -> Array[A] {
   let arr = Array::new(capacity=self.len)
   let stack : Array[Node[A]?] = [self.top]
   while stack.pop() is Some(node) {
@@ -93,7 +93,7 @@ pub fn[A : Compare] to_array(self : T[A]) -> Array[A] {
 }
 
 ///|
-pub fn[A : Compare] iter(self : T[A]) -> Iter[A] {
+pub fn[A : Compare] T::iter(self : T[A]) -> Iter[A] {
   Iter::new(yield_ => {
     let arr = self.to_array()
     for i in 0..<arr.length() {
@@ -159,7 +159,7 @@ fn[A : Compare] merges(x : Node[A]?) -> Node[A]? {
 }
 
 ///|
-pub fn[A] length(self : T[A]) -> Int {
+pub fn[A] T::length(self : T[A]) -> Int {
   self.len
 }
 
@@ -173,7 +173,7 @@ pub fn[A] length(self : T[A]) -> Int {
 /// inspect(queue.length(), content="3")
 /// ```
 #internal(unsafe, "Panic if the queue is empty.")
-pub fn[A : Compare] unsafe_pop(self : T[A]) -> Unit {
+pub fn[A : Compare] T::unsafe_pop(self : T[A]) -> Unit {
   self.top = match self.top {
     None => abort("The PriorityQueue is empty!")
     Some({ child, .. }) => merges(child)
@@ -191,7 +191,7 @@ pub fn[A : Compare] unsafe_pop(self : T[A]) -> Unit {
 /// inspect(first, content="Some(4)")
 /// inspect(queue.length(), content="3")
 /// ```
-pub fn[A : Compare] pop(self : T[A]) -> A? {
+pub fn[A : Compare] T::pop(self : T[A]) -> A? {
   match self.top {
     None => None
     Some({ content, child, .. }) => {
@@ -211,7 +211,7 @@ pub fn[A : Compare] pop(self : T[A]) -> A? {
 /// queue.push(1)
 /// assert_eq(queue.length(), 1)
 /// ```
-pub fn[A : Compare] push(self : T[A], value : A) -> Unit {
+pub fn[A : Compare] T::push(self : T[A], value : A) -> Unit {
   let x = { content: value, sibling: None, child: None }
   self.top = match self.top {
     None => Some(x)
@@ -229,7 +229,7 @@ pub fn[A : Compare] push(self : T[A], value : A) -> Unit {
 ///   let first = queue.peek() // Some(4)
 ///   assert_eq(first, Some(4))
 /// ```
-pub fn[A] peek(self : T[A]) -> A? {
+pub fn[A] T::peek(self : T[A]) -> A? {
   match self.top {
     None => None
     Some({ content, .. }) => Some(content)
@@ -245,7 +245,7 @@ pub fn[A] peek(self : T[A]) -> A? {
 /// queue.clear()
 /// assert_eq(queue.length(), 0)
 /// ```
-pub fn[A] clear(self : T[A]) -> Unit {
+pub fn[A] T::clear(self : T[A]) -> Unit {
   self.top = None
   self.len = 0
 }
@@ -258,7 +258,7 @@ pub fn[A] clear(self : T[A]) -> Unit {
 ///   let queue : @priority_queue.T[Int] = @priority_queue.new()
 ///   assert_eq(queue.is_empty(), true)
 /// ```
-pub fn[A] is_empty(self : T[A]) -> Bool {
+pub fn[A] T::is_empty(self : T[A]) -> Bool {
   self.len == 0
 }
 

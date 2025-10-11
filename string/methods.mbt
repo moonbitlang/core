@@ -336,7 +336,7 @@ test "has_prefix" {
 ///   inspect("hello world".strip_suffix(" moon"), content="None")
 ///   inspect("hello".strip_suffix("hello"), content="Some(\"\")")
 /// ```
-pub fn strip_suffix(self : String, suffix : StringView) -> StringView? {
+pub fn String::strip_suffix(self : String, suffix : StringView) -> StringView? {
   if self.has_suffix(suffix) {
     Some(self.view(end_offset=self.length() - suffix.length()))
   } else {
@@ -382,7 +382,7 @@ test "strip_suffix" {
 ///   inspect("hello world".strip_prefix("hi "), content="None")
 ///   inspect("hello".strip_prefix("hello"), content="Some(\"\")")
 /// ```
-pub fn strip_prefix(self : String, prefix : StringView) -> StringView? {
+pub fn String::strip_prefix(self : String, prefix : StringView) -> StringView? {
   if self.has_prefix(prefix) {
     Some(self.view(start_offset=prefix.length()))
   } else {
@@ -536,7 +536,7 @@ pub fn StringView::contains(self : StringView, str : StringView) -> Bool {
 
 ///|
 /// Returns true if this string contains the given substring.
-pub fn contains(self : String, str : StringView) -> Bool {
+pub fn String::contains(self : String, str : StringView) -> Bool {
   self[:].contains(str)
 }
 
@@ -593,7 +593,7 @@ pub fn StringView::contains_char(self : StringView, c : Char) -> Bool {
 
 ///|
 /// Returns true if this string contains the given character.
-pub fn contains_char(self : String, c : Char) -> Bool {
+pub fn String::contains_char(self : String, c : Char) -> Bool {
   self[:].contains_char(c)
 }
 
@@ -635,7 +635,7 @@ pub fn StringView::trim_start(
 /// Returns the view of the string without the leading characters that are in
 /// the given string.
 #callsite(migration(char_set, allow_positional=true))
-pub fn trim_start(self : String, char_set~ : StringView) -> StringView {
+pub fn String::trim_start(self : String, char_set~ : StringView) -> StringView {
   self[:].trim_start(char_set~)
 }
 
@@ -678,7 +678,7 @@ pub fn StringView::trim_end(
 /// Returns the view of the string without the trailing characters that are in
 /// the given string.
 #callsite(migration(char_set, allow_positional=true))
-pub fn trim_end(self : String, char_set~ : StringView) -> StringView {
+pub fn String::trim_end(self : String, char_set~ : StringView) -> StringView {
   self[:].trim_end(char_set~)
 }
 
@@ -712,7 +712,7 @@ pub fn StringView::trim(
 /// Returns the view of the string without the leading and trailing characters
 /// that are in the given string.
 #callsite(migration(char_set, allow_positional=true))
-pub fn trim(self : String, char_set~ : StringView) -> StringView {
+pub fn String::trim(self : String, char_set~ : StringView) -> StringView {
   self[:].trim(char_set~)
 }
 
@@ -743,7 +743,7 @@ pub fn StringView::trim_space(self : StringView) -> StringView {
 
 ///|
 /// Returns the view of the string without the leading and trailing spaces.
-pub fn trim_space(self : String) -> StringView {
+pub fn String::trim_space(self : String) -> StringView {
   self[:].trim_space()
 }
 
@@ -769,7 +769,7 @@ pub fn StringView::is_empty(self : StringView) -> Bool {
 
 ///|
 /// Returns true if this string is empty.
-pub fn is_empty(self : String) -> Bool {
+pub fn String::is_empty(self : String) -> Bool {
   self == ""
 }
 
@@ -798,7 +798,7 @@ pub fn StringView::is_blank(self : StringView) -> Bool {
 
 ///|
 /// Returns true if this string is blank.
-pub fn is_blank(self : String) -> Bool {
+pub fn String::is_blank(self : String) -> Bool {
   self[:].is_blank()
 }
 
@@ -841,7 +841,7 @@ pub fn StringView::pad_start(
 /// Returns a new string with `padding_char`s prefixed to `self` if
 /// `self.char_length() < total_width`. The number of unicode characters in
 /// the returned string is `total_width` if padding is added.
-pub fn pad_start(
+pub fn String::pad_start(
   self : String,
   total_width : Int,
   padding_char : Char,
@@ -952,7 +952,7 @@ pub fn StringView::repeat(self : StringView, n : Int) -> StringView {
 
 ///|
 /// Returns a new string with `self` repeated `n` times.
-pub fn repeat(self : String, n : Int) -> String {
+pub fn String::repeat(self : String, n : Int) -> String {
   match n {
     _..=0 => ""
     1 => self
@@ -1007,7 +1007,7 @@ pub fn StringView::rev(self : StringView) -> String {
 ///|
 /// Returns a new string with the characters in reverse order. It respects
 /// Unicode characters and surrogate pairs but not grapheme clusters.
-pub fn rev(self : String) -> String {
+pub fn String::rev(self : String) -> String {
   self[:].rev()
 }
 
@@ -1058,7 +1058,7 @@ pub fn StringView::split(
 /// 
 /// If the separator is empty, the returned iterator will contain all the
 /// characters in the string as single elements.
-pub fn split(self : String, sep : StringView) -> Iter[StringView] {
+pub fn String::split(self : String, sep : StringView) -> Iter[StringView] {
   self[:].split(sep)
 }
 
@@ -1123,7 +1123,11 @@ pub fn StringView::replace(
 /// 
 /// If `old` is empty, it matches the beginning of the string, and `new` is
 /// prepended to the string.
-pub fn replace(self : String, old~ : StringView, new~ : StringView) -> String {
+pub fn String::replace(
+  self : String,
+  old~ : StringView,
+  new~ : StringView,
+) -> String {
   match self.find(old) {
     Some(end) =>
       [
@@ -1202,7 +1206,7 @@ pub fn StringView::replace_all(
 /// If `old` is empty, it matches at the beginning of the string and after each
 /// character in the string, so `new` is inserted at the beginning of the string
 /// and after each character.
-pub fn replace_all(
+pub fn String::replace_all(
   self : String,
   old~ : StringView,
   new~ : StringView,
@@ -1373,7 +1377,7 @@ pub fn StringView::to_lower(self : StringView) -> StringView {
 
 ///|
 /// Converts this string to lowercase.
-pub fn to_lower(self : String) -> String {
+pub fn String::to_lower(self : String) -> String {
   // TODO: deal with non-ascii characters
   guard self.find_by(x => x.is_ascii_uppercase()) is Some(idx) else {
     return self
@@ -1426,7 +1430,7 @@ pub fn StringView::to_upper(self : StringView) -> StringView {
 
 ///|
 /// Converts this string to uppercase.
-pub fn to_upper(self : String) -> String {
+pub fn String::to_upper(self : String) -> String {
   // TODO: deal with non-ascii characters
   guard self.find_by(_.is_ascii_lowercase()) is Some(idx) else { return self }
   let buf = StringBuilder::new(size_hint=self.length())
@@ -1472,7 +1476,7 @@ pub fn[A] StringView::fold(
 
 ///|
 /// Folds the characters of the string into a single value.
-pub fn[A] fold(self : String, init~ : A, f : (A, Char) -> A) -> A {
+pub fn[A] String::fold(self : String, init~ : A, f : (A, Char) -> A) -> A {
   self[:].fold(init~, f)
 }
 
@@ -1505,7 +1509,7 @@ pub fn[A] StringView::rev_fold(
 }
 
 ///|
-pub fn[A] rev_fold(self : String, init~ : A, f : (A, Char) -> A) -> A {
+pub fn[A] String::rev_fold(self : String, init~ : A, f : (A, Char) -> A) -> A {
   self[:].rev_fold(init~, f)
 }
 

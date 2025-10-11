@@ -20,7 +20,7 @@ pub let max_value : UInt64 = 18446744073709551615UL
 
 ///|
 /// Converts the UInt64 to a Bytes in big-endian byte order.
-pub fn to_be_bytes(self : UInt64) -> Bytes {
+pub fn UInt64::to_be_bytes(self : UInt64) -> Bytes {
   [
     (self >> 56).to_byte(),
     (self >> 48).to_byte(),
@@ -35,7 +35,7 @@ pub fn to_be_bytes(self : UInt64) -> Bytes {
 
 ///|
 /// Converts the UInt64 to a Bytes in little-endian byte order.
-pub fn to_le_bytes(self : UInt64) -> Bytes {
+pub fn UInt64::to_le_bytes(self : UInt64) -> Bytes {
   [
     self.to_byte(),
     (self >> 8).to_byte(),

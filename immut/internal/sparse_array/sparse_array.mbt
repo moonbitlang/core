@@ -32,7 +32,7 @@ pub fn[X] singleton(idx : Int, value : X) -> SparseArray[X] {
 }
 
 ///|
-pub fn[X] get(self : SparseArray[X], idx : Int) -> X? {
+pub fn[X] SparseArray::get(self : SparseArray[X], idx : Int) -> X? {
   if self.elem_info.has(idx) {
     Some(self.data[self.elem_info.index_of(idx)])
   } else {
@@ -41,7 +41,7 @@ pub fn[X] get(self : SparseArray[X], idx : Int) -> X? {
 }
 
 ///|
-fn[X] unsafe_get(self : SparseArray[X], idx : Int) -> X {
+fn[X] SparseArray::unsafe_get(self : SparseArray[X], idx : Int) -> X {
   self.data[self.elem_info.index_of(idx)]
 }
 
@@ -65,7 +65,11 @@ pub fn[X] doubleton(
 ///|
 /// Add a new element into the sparse array.
 /// `idx` must be absent from `self`
-pub fn[X] add(self : SparseArray[X], idx : Int, value : X) -> SparseArray[X] {
+pub fn[X] SparseArray::add(
+  self : SparseArray[X],
+  idx : Int,
+  value : X,
+) -> SparseArray[X] {
   let old_data = self.data
   let old_len = old_data.length()
   let new_len = old_len + 1
@@ -84,7 +88,10 @@ pub fn[X] add(self : SparseArray[X], idx : Int, value : X) -> SparseArray[X] {
 ///|
 /// Removes an element at the specified index from the sparse array.
 /// `idx` must be in `self`
-pub fn[X] remove(self : SparseArray[X], idx : Int) -> SparseArray[X] {
+pub fn[X] SparseArray::remove(
+  self : SparseArray[X],
+  idx : Int,
+) -> SparseArray[X] {
   let old_data = self.data
   let old_len = old_data.length()
   let pos_of_removed_item = self.elem_info.index_of(idx)
@@ -244,7 +251,7 @@ pub fn[X] SparseArray::filter(
 // replace an existing element in the sparse array.
 
 ///|
-pub fn[X] replace(
+pub fn[X] SparseArray::replace(
   self : SparseArray[X],
   idx : Int,
   value : X,
@@ -257,13 +264,16 @@ pub fn[X] replace(
 ///|
 /// Return the size of a sparse array
 #alias(size, deprecated)
-pub fn[X] length(self : SparseArray[X]) -> Int {
+pub fn[X] SparseArray::length(self : SparseArray[X]) -> Int {
   self.data.length()
 }
 
 ///|
 /// Iterate through elements in a sparse array
-pub fn[X] each(self : SparseArray[X], f : (X) -> Unit raise?) -> Unit raise? {
+pub fn[X] SparseArray::each(
+  self : SparseArray[X],
+  f : (X) -> Unit raise?,
+) -> Unit raise? {
   for i in 0..<self.elem_info.length() {
     f(self.data[i])
   }

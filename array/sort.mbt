@@ -24,7 +24,7 @@
 ///   arr.sort()
 ///   assert_eq(arr, [1, 2, 3, 4, 5])
 /// ```
-pub fn[T : Compare] sort(self : Array[T]) -> Unit {
+pub fn[T : Compare] Array::sort(self : Array[T]) -> Unit {
   let len = self.length()
   self.quick_sort(start=0, end=len, None, get_limit(len))
 }

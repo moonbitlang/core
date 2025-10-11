@@ -83,7 +83,7 @@ pub fn[T] fail(msg : String, loc~ : SourceLoc) -> T raise {
 /// Write data to snapshot buffer, use `snapshot` to output.
 /// 
 /// See also `@test.T::writeln`
-pub fn write(self : Test, obj : &Show) -> Unit {
+pub fn Test::write(self : Test, obj : &Show) -> Unit {
   self.buffer.write_string(obj.to_string())
 }
 
@@ -91,7 +91,7 @@ pub fn write(self : Test, obj : &Show) -> Unit {
 /// Write data to snapshot buffer and newline, use `snapshot` to output.
 /// 
 /// See also `@test.T::write`
-pub fn writeln(self : Test, obj : &Show) -> Unit {
+pub fn Test::writeln(self : Test, obj : &Show) -> Unit {
   self.write(obj)
   self.buffer.write_char('\n')
 }
@@ -107,7 +107,7 @@ pub fn writeln(self : Test, obj : &Show) -> Unit {
 ///
 /// Currently it can only be used once and should be used as the last step.
 #callsite(autofill(args_loc, loc))
-pub fn snapshot(
+pub fn Test::snapshot(
   self : Test,
   filename~ : String,
   loc~ : SourceLoc,

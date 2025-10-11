@@ -16,7 +16,7 @@
 /// Filter values that satisfy the predicate
 #deprecated("Use `filter_with_key` instead. `filter` will accept `(K, V) -> Bool` in the future.")
 #coverage.skip
-pub fn[K, V] filter(
+pub fn[K, V] HashMap::filter(
   self : HashMap[K, V],
   pred : (V) -> Bool raise?,
 ) -> HashMap[K, V] raise? {
@@ -26,7 +26,7 @@ pub fn[K, V] filter(
 ///|
 /// Fold the values in the map
 #deprecated("Use `fold_with_key` instead. `fold` will accept `(A, K, V) -> A` in the future.")
-pub fn[K, V, A] fold(
+pub fn[K, V, A] HashMap::fold(
   self : HashMap[K, V],
   init~ : A,
   f : (A, V) -> A raise?,
@@ -38,7 +38,7 @@ pub fn[K, V, A] fold(
 /// Maps over the values in the map
 #deprecated("Use `map_with_key` instead. `map` will accept `(K, V) -> A` in the future.")
 #coverage.skip
-pub fn[K, V, A] map(
+pub fn[K, V, A] HashMap::map(
   self : HashMap[K, V],
   f : (V) -> A raise?,
 ) -> HashMap[K, A] raise? {

@@ -40,7 +40,7 @@ fn[K, V] height(node : Node[K, V]?) -> Int {
 }
 
 ///|
-fn[K : Show, V : Show] debug_node(self : Node[K, V]) -> String {
+fn[K : Show, V : Show] Node::debug_node(self : Node[K, V]) -> String {
   let l = match self.left {
     Some(left) => left.debug_node()
     None => "_"
@@ -53,7 +53,7 @@ fn[K : Show, V : Show] debug_node(self : Node[K, V]) -> String {
 }
 
 ///|
-fn[K : Show, V : Show] debug_tree(self : SortedMap[K, V]) -> String {
+fn[K : Show, V : Show] SortedMap::debug_tree(self : SortedMap[K, V]) -> String {
   match self.root {
     Some(root) => root.debug_node()
     None => "_"

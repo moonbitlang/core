@@ -35,19 +35,19 @@ pub fn new(seed? : UInt64 = 37) -> RandomState {
 
 ///|
 /// Clone a RandomState.
-pub fn clone(self : RandomState) -> RandomState {
+pub fn RandomState::clone(self : RandomState) -> RandomState {
   { ..self }
 }
 
 ///|
 /// Skip the next random number.
-pub fn next(self : RandomState) -> Unit {
+pub fn RandomState::next(self : RandomState) -> Unit {
   self.next_uint64() |> ignore
 }
 
 ///|
 /// Get the next random number as a 64-bit unsigned integer.
-pub fn next_uint64(self : RandomState) -> UInt64 {
+pub fn RandomState::next_uint64(self : RandomState) -> UInt64 {
   let { seed, gamma } = self
   self.seed = seed + gamma
   mix64(self.seed)
@@ -55,32 +55,32 @@ pub fn next_uint64(self : RandomState) -> UInt64 {
 
 ///|
 /// Get the next random number as a 32-bit unsigned integer.
-pub fn next_uint(self : RandomState) -> UInt {
+pub fn RandomState::next_uint(self : RandomState) -> UInt {
   self.next_uint64().to_uint()
 }
 
 ///|
 /// Get the next random number as a 64-bit signed integer.
-pub fn next_int64(self : RandomState) -> Int64 {
+pub fn RandomState::next_int64(self : RandomState) -> Int64 {
   self.next_uint64().reinterpret_as_int64()
 }
 
 ///|
 /// Get the next two random number as 32-bit signed integers.
-pub fn next_two_uint(self : RandomState) -> (UInt, UInt) {
+pub fn RandomState::next_two_uint(self : RandomState) -> (UInt, UInt) {
   let g = self.next_uint64()
   ((g >> 32).to_uint(), g.to_uint())
 }
 
 ///|
 /// Get the next random number as a 32-bit signed integer.
-pub fn next_int(self : RandomState) -> Int {
+pub fn RandomState::next_int(self : RandomState) -> Int {
   self.next_uint().reinterpret_as_int()
 }
 
 ///|
 /// Get the next random number as a positive 32-bit signed integer.
-pub fn next_positive_int(self : RandomState) -> Int {
+pub fn RandomState::next_positive_int(self : RandomState) -> Int {
   let r = self.next_int()
   match r {
     -2147483648 => 2147483647
@@ -92,21 +92,21 @@ pub fn next_positive_int(self : RandomState) -> Int {
 
 ///|
 /// Get the next random number as a float in [0, 1]
-pub fn next_float(self : RandomState) -> Float {
+pub fn RandomState::next_float(self : RandomState) -> Float {
   let u = self.next_uint64()
   (u >> 40).to_float() * float_ulp
 }
 
 ///|
 /// Get the next random number as a double in [0, 1]
-pub fn next_double(self : RandomState) -> Double {
+pub fn RandomState::next_double(self : RandomState) -> Double {
   let u = self.next_uint64()
   (u >> 11).to_double() * double_ulp
 }
 
 ///|
 /// Generates an independent random number generator.
-pub fn split(self : RandomState) -> RandomState {
+pub fn RandomState::split(self : RandomState) -> RandomState {
   let seed1 = self.seed + self.gamma
   self.seed = seed1 + self.gamma
   { seed: mix64(seed1), gamma: mix_gamma(self.seed) }
