@@ -45,7 +45,9 @@ pub fn[A : Compare] PriorityQueue::from_array(
 }
 
 ///|
-pub fn[A : Compare] to_array(self : PriorityQueue[A]) -> Array[A] {
+pub fn[A : Compare] PriorityQueue::to_array(
+  self : PriorityQueue[A],
+) -> Array[A] {
   let arr : Array[A] = []
   let stack : Array[Node[A]] = [self.node]
   while stack.pop() is Some(node) {
@@ -65,7 +67,7 @@ pub fn[A : Compare] to_array(self : PriorityQueue[A]) -> Array[A] {
 }
 
 ///|
-pub fn[A : Compare] iter(self : PriorityQueue[A]) -> Iter[A] {
+pub fn[A : Compare] PriorityQueue::iter(self : PriorityQueue[A]) -> Iter[A] {
   Iter::new(yield_ => {
     let arr = self.to_array()
     for i in 0..<arr.length() {
@@ -97,12 +99,12 @@ fn path(size : Int) -> Path {
 }
 
 ///|
-fn is_left(self : Path) -> Bool {
+fn Path::is_left(self : Path) -> Bool {
   (self.0 & 1) == 0
 }
 
 ///|
-fn next(self : Path) -> Path {
+fn Path::next(self : Path) -> Path {
   Path(self.0 >> 1)
 }
 
@@ -115,7 +117,9 @@ fn next(self : Path) -> Path {
 ///   let first = queue.pop()
 ///   assert_eq(first, Some(@priority_queue.of([1, 2, 3])))
 /// ```
-pub fn[A : Compare] pop(self : PriorityQueue[A]) -> PriorityQueue[A]? {
+pub fn[A : Compare] PriorityQueue::pop(
+  self : PriorityQueue[A],
+) -> PriorityQueue[A]? {
   match self.node {
     Empty => None
     Leaf(_) => Some({ node: Empty, size: 0 })
@@ -127,7 +131,7 @@ pub fn[A : Compare] pop(self : PriorityQueue[A]) -> PriorityQueue[A]? {
 }
 
 ///|
-fn[A] remove_last_leaf(self : Node[A], path : Path) -> (A, Node[A]) {
+fn[A] Node::remove_last_leaf(self : Node[A], path : Path) -> (A, Node[A]) {
   match self {
     Empty => abort("Priority queue is empty!")
     Leaf(a) => (a, Empty)
@@ -145,7 +149,7 @@ fn[A] remove_last_leaf(self : Node[A], path : Path) -> (A, Node[A]) {
 
 ///|
 /// require: self is not empty
-fn[A : Compare] change_and_down(self : Node[A], value : A) -> Node[A] {
+fn[A : Compare] Node::change_and_down(self : Node[A], value : A) -> Node[A] {
   match self {
     Empty => abort("unreachable")
     Leaf(_) => Leaf(value)
@@ -180,7 +184,9 @@ fn[A : Compare] change_and_down(self : Node[A], value : A) -> Node[A] {
 ///   assert_eq(first, @priority_queue.of([1, 2, 3]))
 /// ```
 #internal(unsafe, "Panics if the queue is empty.")
-pub fn[A : Compare] unsafe_pop(self : PriorityQueue[A]) -> PriorityQueue[A] {
+pub fn[A : Compare] PriorityQueue::unsafe_pop(
+  self : PriorityQueue[A],
+) -> PriorityQueue[A] {
   match self.node {
     Empty => abort("Priority queue is empty!")
     Leaf(_) => { node: Empty, size: 0 }
@@ -199,7 +205,7 @@ pub fn[A : Compare] unsafe_pop(self : PriorityQueue[A]) -> PriorityQueue[A] {
 ///   let queue = @priority_queue.new()
 ///   assert_eq(queue.push(1).length(), 1)
 /// ```
-pub fn[A : Compare] push(
+pub fn[A : Compare] PriorityQueue::push(
   self : PriorityQueue[A],
   value : A,
 ) -> PriorityQueue[A] {
@@ -239,7 +245,7 @@ fn[A : Compare] Node::push(self : Node[A], value : A, path : Path) -> Node[A] {
 ///   let queue = @priority_queue.of([1, 2, 3, 4])
 ///   assert_eq(queue.peek(), Some(4))
 /// ```
-pub fn[A] peek(self : PriorityQueue[A]) -> A? {
+pub fn[A] PriorityQueue::peek(self : PriorityQueue[A]) -> A? {
   match self.node {
     Empty => None
     Leaf(a) => Some(a)
@@ -256,7 +262,7 @@ pub fn[A] peek(self : PriorityQueue[A]) -> A? {
 ///   inspect(queue.is_empty(), content="true")
 ///   assert_eq(queue.push(1).is_empty(), false)
 /// ```
-pub fn[A] is_empty(self : PriorityQueue[A]) -> Bool {
+pub fn[A] PriorityQueue::is_empty(self : PriorityQueue[A]) -> Bool {
   self.node is Empty
 }
 
@@ -269,7 +275,7 @@ pub fn[A] is_empty(self : PriorityQueue[A]) -> Bool {
 ///   inspect(queue.length(), content="0")
 ///   assert_eq(queue.push(1).length(), 1)
 /// ```
-pub fn[A] length(self : PriorityQueue[A]) -> Int {
+pub fn[A] PriorityQueue::length(self : PriorityQueue[A]) -> Int {
   self.size
 }
 

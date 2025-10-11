@@ -61,7 +61,7 @@ pub fn[A] List::cons(head : A, tail : List[A]) -> List[A] {
 /// assert_eq(ls, @list.of([1, 2, 3, 4]))
 /// ```
 #alias(add)
-pub fn[A] prepend(self : List[A], head : A) -> List[A] {
+pub fn[A] List::prepend(self : List[A], head : A) -> List[A] {
   More(head, tail=self)
 }
 
@@ -95,7 +95,7 @@ pub impl[A : ToJson] ToJson for List[A] with to_json(self) {
 /// let json = ls.to_json()
 /// inspect(json, content="Array([Number(1), Number(2), Number(3)])")
 /// ```
-pub fn[A : ToJson] to_json(self : List[A]) -> Json {
+pub fn[A : ToJson] List::to_json(self : List[A]) -> Json {
   ToJson::to_json(self)
 }
 
@@ -147,7 +147,7 @@ pub fn[A] List::from_array(arr : Array[A]) -> List[A] {
 
 ///|
 /// Get the length of the list.
-pub fn[A] length(self : List[A]) -> Int {
+pub fn[A] List::length(self : List[A]) -> Int {
   loop (self, 0) {
     (Empty, len) => len
     (More(_, tail=rest), acc) => continue (rest, acc + 1)
@@ -165,7 +165,7 @@ pub fn[A] length(self : List[A]) -> Int {
 /// assert_eq(arr, [1, 2, 3, 4, 5])
 /// ```
 #locals(f)
-pub fn[A] each(self : List[A], f : (A) -> Unit raise?) -> Unit raise? {
+pub fn[A] List::each(self : List[A], f : (A) -> Unit raise?) -> Unit raise? {
   loop self {
     Empty => ()
     More(head, tail~) => {
@@ -185,7 +185,10 @@ pub fn[A] each(self : List[A], f : (A) -> Unit raise?) -> Unit raise? {
 ///   @list.of([1, 2, 3, 4, 5]).eachi((i, x) => arr.push("(\{i},\{x})"))
 ///   assert_eq(arr, ["(0,1)", "(1,2)", "(2,3)", "(3,4)", "(4,5)"])
 /// ```
-pub fn[A] eachi(self : List[A], f : (Int, A) -> Unit raise?) -> Unit raise? {
+pub fn[A] List::eachi(
+  self : List[A],
+  f : (Int, A) -> Unit raise?,
+) -> Unit raise? {
   loop (self, 0) {
     (Empty, _) => ()
     (More(x, tail=xs), i) => {
@@ -203,7 +206,7 @@ pub fn[A] eachi(self : List[A], f : (Int, A) -> Unit raise?) -> Unit raise? {
 /// ```mbt
 /// assert_eq(@list.of([1, 2, 3, 4, 5]).map(x => x * 2), @list.of([2, 4, 6, 8, 10]))
 /// ```
-pub fn[A, B] map(self : List[A], f : (A) -> B raise?) -> List[B] raise? {
+pub fn[A, B] List::map(self : List[A], f : (A) -> B raise?) -> List[B] raise? {
   match self {
     Empty => Empty
     More(hd, tail~) => {
@@ -235,7 +238,10 @@ pub fn[A, B] map(self : List[A], f : (A) -> B raise?) -> List[B] raise? {
 /// let result = ls.mapi((i, x) => x + i)
 /// assert_eq(result, @list.of([10, 21, 32]))
 /// ```
-pub fn[A, B] mapi(self : List[A], f : (Int, A) -> B raise?) -> List[B] raise? {
+pub fn[A, B] List::mapi(
+  self : List[A],
+  f : (Int, A) -> B raise?,
+) -> List[B] raise? {
   match self {
     Empty => Empty
     More(hd, tail~) => {
@@ -263,7 +269,10 @@ pub fn[A, B] mapi(self : List[A], f : (Int, A) -> B raise?) -> List[B] raise? {
 /// ```mbt
 /// assert_eq(@list.of([1, 2, 3, 4, 5]).rev_map(x => x * 2), @list.of([10, 8, 6, 4, 2]))
 /// ```
-pub fn[A, B] rev_map(self : List[A], f : (A) -> B raise?) -> List[B] raise? {
+pub fn[A, B] List::rev_map(
+  self : List[A],
+  f : (A) -> B raise?,
+) -> List[B] raise? {
   loop (Empty, self) {
     (acc, Empty) => acc
     (acc, More(x, tail=xs)) => continue (More(f(x), tail=acc), xs)
@@ -282,7 +291,7 @@ pub fn[A, B] rev_map(self : List[A], f : (A) -> B raise?) -> List[B] raise? {
 /// let arr = ls.to_array()
 /// assert_eq(arr, [1, 2, 3, 4, 5])
 /// ```
-pub fn[A] to_array(self : List[A]) -> Array[A] {
+pub fn[A] List::to_array(self : List[A]) -> Array[A] {
   match self {
     Empty => []
     More(x, tail=xs) => {
@@ -307,7 +316,10 @@ pub fn[A] to_array(self : List[A]) -> Array[A] {
 /// ```mbt
 /// assert_eq(@list.of([1, 2, 3, 4, 5]).filter(x => x % 2 == 0), @list.of([2, 4]))
 /// ```
-pub fn[A] filter(self : List[A], f : (A) -> Bool raise?) -> List[A] raise? {
+pub fn[A] List::filter(
+  self : List[A],
+  f : (A) -> Bool raise?,
+) -> List[A] raise? {
   loop self {
     Empty => Empty
     More(head, tail~) =>
@@ -348,7 +360,7 @@ pub fn[A] filter(self : List[A], f : (A) -> Bool raise?) -> List[A] raise? {
 /// let ls2 = @list.of([2, 3, 6, 8])
 /// assert_eq(ls2.all(x => x % 2 == 0), false)
 /// ```
-pub fn[A] all(self : List[A], f : (A) -> Bool raise?) -> Bool raise? {
+pub fn[A] List::all(self : List[A], f : (A) -> Bool raise?) -> Bool raise? {
   loop self {
     Empty => true
     More(head, tail~) => if f(head) { continue tail } else { false }
@@ -370,7 +382,7 @@ pub fn[A] all(self : List[A], f : (A) -> Bool raise?) -> Bool raise? {
 /// let ls2 = @list.of([1, 3, 5, 7])
 /// assert_eq(ls2.any(x => x % 2 == 0), false)
 /// ```
-pub fn[A] any(self : List[A], f : (A) -> Bool raise?) -> Bool raise? {
+pub fn[A] List::any(self : List[A], f : (A) -> Bool raise?) -> Bool raise? {
   loop self {
     Empty => false
     More(head, tail~) => if f(head) { true } else { continue tail }
@@ -380,7 +392,7 @@ pub fn[A] any(self : List[A], f : (A) -> Bool raise?) -> Bool raise? {
 ///|
 /// Get first element of the list.
 #internal(unsafe, "Panic if the list is empty")
-pub fn[A] unsafe_head(self : List[A]) -> A {
+pub fn[A] List::unsafe_head(self : List[A]) -> A {
   match self {
     Empty => abort("head of empty list")
     More(head, tail=_) => head
@@ -404,7 +416,7 @@ pub fn[A] unsafe_head(self : List[A]) -> A {
 /// # Panics
 /// 
 /// Panics if the list is empty.
-pub fn[A] unsafe_tail(self : List[A]) -> List[A] {
+pub fn[A] List::unsafe_tail(self : List[A]) -> List[A] {
   match self {
     Empty => abort("tail of empty list")
     More(_, tail~) => tail
@@ -419,7 +431,7 @@ pub fn[A] unsafe_tail(self : List[A]) -> List[A] {
 /// ```mbt
 /// assert_eq(@list.of([1, 2, 3, 4, 5]).head(), Some(1))
 /// ```
-pub fn[A] head(self : List[A]) -> A? {
+pub fn[A] List::head(self : List[A]) -> A? {
   match self {
     Empty => None
     More(head, tail=_) => Some(head)
@@ -443,7 +455,7 @@ pub fn[A] head(self : List[A]) -> A? {
 /// 
 /// Panics if the list is empty.
 #internal(unsafe, "Panic if the list is empty")
-pub fn[A] unsafe_last(self : List[A]) -> A {
+pub fn[A] List::unsafe_last(self : List[A]) -> A {
   loop self {
     Empty => abort("last of empty list")
     More(head, tail=Empty) => head
@@ -459,7 +471,7 @@ pub fn[A] unsafe_last(self : List[A]) -> A {
 /// ```mbt
 /// assert_eq(@list.of([1, 2, 3, 4, 5]).last(), Some(5))
 /// ```
-pub fn[A] last(self : List[A]) -> A? {
+pub fn[A] List::last(self : List[A]) -> A? {
   loop self {
     Empty => None
     More(head, tail=Empty) => Some(head)
@@ -476,7 +488,7 @@ pub fn[A] last(self : List[A]) -> A? {
 /// let ls = @list.of([1, 2, 3, 4, 5]).concat(@list.of([6, 7, 8, 9, 10]))
 /// assert_eq(ls, @list.of([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]))
 /// ```
-pub fn[A] concat(self : List[A], other : List[A]) -> List[A] {
+pub fn[A] List::concat(self : List[A], other : List[A]) -> List[A] {
   match self {
     Empty => other
     More(hd, tail=Empty) => More(hd, tail=other)
@@ -505,7 +517,7 @@ pub fn[A] concat(self : List[A], other : List[A]) -> List[A] {
 /// let ls = @list.of([1, 2, 3, 4, 5]).rev_concat(@list.of([6, 7, 8, 9, 10]))
 /// assert_eq(ls, @list.of([5, 4, 3, 2, 1, 6, 7, 8, 9, 10]))
 /// ```
-pub fn[A] rev_concat(self : List[A], other : List[A]) -> List[A] {
+pub fn[A] List::rev_concat(self : List[A], other : List[A]) -> List[A] {
   loop (self, other) {
     (Empty, other) => other
     (More(head, tail~), other) => continue (tail, More(head, tail=other))
@@ -520,7 +532,7 @@ pub fn[A] rev_concat(self : List[A], other : List[A]) -> List[A] {
 /// ```mbt
 /// assert_eq(@list.of([1, 2, 3, 4, 5]).rev(), @list.of([5, 4, 3, 2, 1]))
 /// ```
-pub fn[A] rev(self : List[A]) -> List[A] {
+pub fn[A] List::rev(self : List[A]) -> List[A] {
   self.rev_concat(Empty)
 }
 
@@ -533,7 +545,7 @@ pub fn[A] rev(self : List[A]) -> List[A] {
 /// let r = @list.of([1, 2, 3, 4, 5]).fold(init=0, (acc, x) => acc + x)
 /// inspect(r, content="15")
 /// ```
-pub fn[A, B] fold(
+pub fn[A, B] List::fold(
   self : List[A],
   init~ : B,
   f : (B, A) -> B raise?,
@@ -557,7 +569,7 @@ pub fn[A, B] fold(
 /// let result = ls.foldi(init=0, (i, acc, x) => acc + x * i)
 /// inspect(result, content="80") // 0*10 + 1*20 + 2*30 = 80
 /// ```
-pub fn[A, B] foldi(
+pub fn[A, B] List::foldi(
   self : List[A],
   init~ : B,
   f : (Int, B, A) -> B raise?,
@@ -615,7 +627,7 @@ pub fn[A, B] List::zip(self : List[A], other : List[B]) -> List[(A, B)] {
 /// let r = ls.flat_map(x => @list.from_array([x, x * 2]))
 /// assert_eq(r, @list.from_array([1, 2, 2, 4, 3, 6]))
 /// ```
-pub fn[A, B] flat_map(
+pub fn[A, B] List::flat_map(
   self : List[A],
   f : (A) -> List[B] raise?,
 ) -> List[B] raise? {
@@ -666,7 +678,10 @@ pub fn[A, B] flat_map(
 /// let r = ls.filter_map(x => if (x >= 3) { Some(x) } else { None })
 /// assert_eq(r, @list.of([4, 6, 3]))
 /// ```
-pub fn[A, B] filter_map(self : List[A], f : (A) -> B? raise?) -> List[B] raise? {
+pub fn[A, B] List::filter_map(
+  self : List[A],
+  f : (A) -> B? raise?,
+) -> List[B] raise? {
   loop self {
     Empty => Empty
     More(hd, tail~) =>
@@ -709,7 +724,7 @@ pub fn[A, B] filter_map(self : List[A], f : (A) -> B? raise?) -> List[B] raise? 
 /// 
 /// Panics if the index is out of bounds.
 #internal(unsafe, "Panic if the index is out of bounds")
-pub fn[A] unsafe_nth(self : List[A], n : Int) -> A {
+pub fn[A] List::unsafe_nth(self : List[A], n : Int) -> A {
   loop (self, n) {
     (Empty, _) => abort("nth: index out of bounds")
     (More(head, tail=_), 0) => head
@@ -730,7 +745,7 @@ pub fn[A] unsafe_nth(self : List[A], n : Int) -> A {
 /// assert_eq(ls.nth(2), Some(3))
 /// assert_eq(ls.nth(10), None)
 /// ```
-pub fn[A] nth(self : List[A], n : Int) -> A? {
+pub fn[A] List::nth(self : List[A], n : Int) -> A? {
   loop (self, n) {
     (Empty, _) => None
     (More(head, tail=_), 0) => Some(head)
@@ -762,7 +777,7 @@ pub fn[A] List::repeat(n : Int, x : A) -> List[A] {
 ///   let ls = @list.from_array(["1", "2", "3", "4", "5"]).intersperse("|")
 ///   assert_eq(ls, @list.from_array(["1", "|", "2", "|", "3", "|", "4", "|", "5"]))
 /// ```
-pub fn[A] intersperse(self : List[A], separator : A) -> List[A] {
+pub fn[A] List::intersperse(self : List[A], separator : A) -> List[A] {
   match self {
     Empty => Empty
     More(head, tail=Empty) => More(head, tail=Empty)
@@ -797,7 +812,7 @@ pub fn[A] intersperse(self : List[A], separator : A) -> List[A] {
 /// let non_empty = @list.of([1, 2, 3])
 /// assert_eq(non_empty.is_empty(), false)
 /// ```
-pub fn[A] is_empty(self : List[A]) -> Bool {
+pub fn[A] List::is_empty(self : List[A]) -> Bool {
   self is Empty
 }
 
@@ -811,7 +826,7 @@ pub fn[A] is_empty(self : List[A]) -> Bool {
 /// assert_eq(a, @list.from_array([1, 3, 5]))
 /// assert_eq(b, @list.from_array([2, 4, 6]))
 /// ```
-pub fn[A, B] unzip(self : List[(A, B)]) -> (List[A], List[B]) {
+pub fn[A, B] List::unzip(self : List[(A, B)]) -> (List[A], List[B]) {
   match self {
     Empty => (Empty, Empty)
     More((x, y), tail~) => {
@@ -840,7 +855,7 @@ pub fn[A, B] unzip(self : List[(A, B)]) -> (List[A], List[B]) {
 /// let ls = @list.from_array([@list.from_array([1,2,3]), @list.from_array([4,5,6]), @list.from_array([7,8,9])]).flatten()
 /// assert_eq(ls, @list.from_array([1, 2, 3, 4, 5, 6, 7, 8, 9]))
 /// ```
-pub fn[A] flatten(self : List[List[A]]) -> List[A] {
+pub fn[A] List::flatten(self : List[List[A]]) -> List[A] {
   loop self {
     Empty => Empty
     More(head, tail~) =>
@@ -895,7 +910,7 @@ pub fn[A] flatten(self : List[List[A]]) -> List[A] {
 /// 
 /// Panics if the list is empty.
 #internal(unsafe, "Panic if the list is empty")
-pub fn[A : Compare] unsafe_maximum(self : List[A]) -> A {
+pub fn[A : Compare] List::unsafe_maximum(self : List[A]) -> A {
   match self {
     Empty => abort("maximum: empty list")
     More(head, tail~) =>
@@ -922,7 +937,7 @@ pub fn[A : Compare] unsafe_maximum(self : List[A]) -> A {
 ///   let empty : @list.List[Int] = @list.empty()
 ///   assert_eq(empty.maximum(), None)
 /// ```
-pub fn[A : Compare] maximum(self : List[A]) -> A? {
+pub fn[A : Compare] List::maximum(self : List[A]) -> A? {
   match self {
     Empty => None
     More(head, tail~) =>
@@ -951,7 +966,7 @@ pub fn[A : Compare] maximum(self : List[A]) -> A? {
 /// 
 /// Panics if the list is empty.
 #internal(unsafe, "Panic if the list is empty")
-pub fn[A : Compare] unsafe_minimum(self : List[A]) -> A {
+pub fn[A : Compare] List::unsafe_minimum(self : List[A]) -> A {
   match self {
     Empty => abort("minimum: empty list")
     More(head, tail~) =>
@@ -978,7 +993,7 @@ pub fn[A : Compare] unsafe_minimum(self : List[A]) -> A {
 /// let empty : @list.List[Int] = @list.empty()
 /// assert_eq(empty.minimum(), None)
 /// ```
-pub fn[A : Compare] minimum(self : List[A]) -> A? {
+pub fn[A : Compare] List::minimum(self : List[A]) -> A? {
   match self {
     Empty => None
     More(head, tail~) =>
@@ -999,7 +1014,7 @@ pub fn[A : Compare] minimum(self : List[A]) -> A? {
 ///   let ls = @list.from_array([1,123,52,3,6,0,-6,-76]).sort()
 ///   assert_eq(ls, @list.from_array([-76, -6, 0, 1, 3, 6, 52, 123]))
 /// ```
-pub fn[A : Compare] sort(self : List[A]) -> List[A] {
+pub fn[A : Compare] List::sort(self : List[A]) -> List[A] {
   let arr = self.to_array()
   arr.sort()
   from_array(arr)
@@ -1036,7 +1051,7 @@ pub impl[A] Add for List[A] with add(self, other) {
 /// assert_eq(ls.contains(3), true)
 /// assert_eq(ls.contains(6), false)
 /// ```
-pub fn[A : Eq] contains(self : List[A], value : A) -> Bool {
+pub fn[A : Eq] List::contains(self : List[A], value : A) -> Bool {
   loop self {
     Empty => false
     More(x, tail=xs) => if x == value { true } else { continue xs }
@@ -1109,7 +1124,7 @@ pub fn[A, S] List::rev_unfold(
 ///   let r = ls.take(3)
 ///   assert_eq(r, @list.of([1, 2, 3]))
 /// ```
-pub fn[A] take(self : List[A], n : Int) -> List[A] {
+pub fn[A] List::take(self : List[A], n : Int) -> List[A] {
   if n <= 0 {
     Empty
   } else {
@@ -1143,7 +1158,7 @@ pub fn[A] take(self : List[A], n : Int) -> List[A] {
 ///   let r = ls.drop(3)
 ///   assert_eq(r, @list.of([4, 5]))
 /// ```
-pub fn[A] drop(self : List[A], n : Int) -> List[A] {
+pub fn[A] List::drop(self : List[A], n : Int) -> List[A] {
   if n <= 0 {
     self
   } else {
@@ -1165,7 +1180,10 @@ pub fn[A] drop(self : List[A], n : Int) -> List[A] {
 ///   let r = ls.take_while(x => x < 3)
 ///   assert_eq(r, @list.of([1, 2]))
 /// ```
-pub fn[A] take_while(self : List[A], p : (A) -> Bool raise?) -> List[A] raise? {
+pub fn[A] List::take_while(
+  self : List[A],
+  p : (A) -> Bool raise?,
+) -> List[A] raise? {
   match self {
     Empty => Empty
     More(head, tail~) =>
@@ -1197,7 +1215,10 @@ pub fn[A] take_while(self : List[A], p : (A) -> Bool raise?) -> List[A] raise? {
 ///   let r = ls.drop_while(x => x < 3)
 ///   assert_eq(r, @list.of([3, 4]))
 /// ```
-pub fn[A] drop_while(self : List[A], p : (A) -> Bool raise?) -> List[A] raise? {
+pub fn[A] List::drop_while(
+  self : List[A],
+  p : (A) -> Bool raise?,
+) -> List[A] raise? {
   loop self {
     Empty => Empty
     More(x, tail=xs) => if p(x) { continue xs } else { More(x, tail=xs) }
@@ -1214,7 +1235,7 @@ pub fn[A] drop_while(self : List[A], p : (A) -> Bool raise?) -> List[A] raise? {
 ///   let r = ls.scan_left((acc, x) => acc + x, init=0)
 ///   assert_eq(r, @list.of([0, 1, 3, 6, 10, 15]))
 /// ```
-pub fn[A, E] scan_left(
+pub fn[A, E] List::scan_left(
   self : List[A],
   f : (E, A) -> E raise?,
   init~ : E,
@@ -1242,7 +1263,7 @@ pub fn[A, E] scan_left(
 ///   let r = ls.scan_right((acc, x) => acc + x, init=0)
 ///   assert_eq(r, @list.of([15, 14, 12, 9, 5, 0]))
 /// ```
-pub fn[A, B] scan_right(
+pub fn[A, B] List::scan_right(
   self : List[A],
   f : (B, A) -> B raise?,
   init~ : B,
@@ -1259,7 +1280,7 @@ pub fn[A, B] scan_right(
 ///   let ls = @list.from_array([(1, "a"), (2, "b"), (3, "c")])
 ///   assert_eq(ls.lookup(3), Some("c"))
 /// ```
-pub fn[A : Eq, B] lookup(self : List[(A, B)], v : A) -> B? {
+pub fn[A : Eq, B] List::lookup(self : List[(A, B)], v : A) -> B? {
   loop self {
     Empty => None
     More((x, y), tail=xs) => if x == v { Some(y) } else { continue xs }
@@ -1275,7 +1296,7 @@ pub fn[A : Eq, B] lookup(self : List[(A, B)], v : A) -> B? {
 ///   assert_eq(@list.of([1, 3, 5, 8]).find(element => element % 2 == 0), Some(8))
 ///   assert_eq(@list.of([1, 3, 5]).find(element => element % 2 == 0), None)
 /// ```
-pub fn[A] find(self : List[A], f : (A) -> Bool raise?) -> A? raise? {
+pub fn[A] List::find(self : List[A], f : (A) -> Bool raise?) -> A? raise? {
   loop self {
     Empty => None
     More(element, tail=list) =>
@@ -1332,7 +1353,7 @@ pub fn[A] List::find_index(
 ///   assert_eq(@list.of([1, 3, 5, 8]).findi((element, index) => (element % 2 == 0) && (index == 3)), Some(8))
 ///   assert_eq(@list.of([1, 3, 8, 5]).findi((element, index) => (element % 2 == 0) && (index == 3)), None)
 /// ```
-pub fn[A] findi(self : List[A], f : (A, Int) -> Bool raise?) -> A? raise? {
+pub fn[A] List::findi(self : List[A], f : (A, Int) -> Bool raise?) -> A? raise? {
   loop (self, 0) {
     (list, index) =>
       match list {
@@ -1355,7 +1376,7 @@ pub fn[A] findi(self : List[A], f : (A, Int) -> Bool raise?) -> A? raise? {
 /// ```mbt
 ///   assert_eq(@list.of([1, 2, 3, 4, 5]).remove_at(2), @list.of([1, 2, 4, 5]))
 /// ```
-pub fn[A] remove_at(self : List[A], index : Int) -> List[A] {
+pub fn[A] List::remove_at(self : List[A], index : Int) -> List[A] {
   match (index, self) {
     (_, Empty) => Empty
     (_..<0, _) => self
@@ -1384,7 +1405,7 @@ pub fn[A] remove_at(self : List[A], index : Int) -> List[A] {
 /// ```mbt
 ///   assert_eq(@list.of([1, 2, 3, 4, 5]).remove(3), @list.of([1, 2, 4, 5]))
 /// ```
-pub fn[A : Eq] remove(self : List[A], elem : A) -> List[A] {
+pub fn[A : Eq] List::remove(self : List[A], elem : A) -> List[A] {
   match self {
     Empty => Empty
     More(head, tail~) if head == elem => tail
@@ -1414,7 +1435,7 @@ pub fn[A : Eq] remove(self : List[A], elem : A) -> List[A] {
 /// ```mbt
 ///   assert_eq(@list.of([1, 2, 3, 4, 5]).is_prefix(@list.of([1, 2, 3])), true)
 /// ```
-pub fn[A : Eq] is_prefix(self : List[A], prefix : List[A]) -> Bool {
+pub fn[A : Eq] List::is_prefix(self : List[A], prefix : List[A]) -> Bool {
   loop (self, prefix) {
     (_, Empty) => true
     (Empty, More(_)) => false
@@ -1435,7 +1456,7 @@ pub fn[A : Eq] is_prefix(self : List[A], prefix : List[A]) -> Bool {
 /// ```mbt
 ///   assert_eq(@list.of([1, 2, 3, 4, 5]).is_suffix(@list.of([3, 4, 5])), true)
 /// ```
-pub fn[A : Eq] is_suffix(self : List[A], suffix : List[A]) -> Bool {
+pub fn[A : Eq] List::is_suffix(self : List[A], suffix : List[A]) -> Bool {
   self.rev().is_prefix(suffix.rev())
 }
 
@@ -1456,7 +1477,7 @@ pub fn[A : Eq] is_suffix(self : List[A], suffix : List[A]) -> Bool {
 ///   let r = ls.intercalate(@list.of([0]))
 ///   assert_eq(r, @list.of([1, 2, 3, 0, 4, 5, 6, 0, 7, 8, 9]))
 /// ```
-pub fn[A] intercalate(self : List[List[A]], sep : List[A]) -> List[A] {
+pub fn[A] List::intercalate(self : List[List[A]], sep : List[A]) -> List[A] {
   self.intersperse(sep).flatten()
 }
 
@@ -1494,7 +1515,7 @@ pub fn[X] default() -> List[X] {
 /// let sum = iter.fold(init=0, (acc, x) => acc + x)
 /// inspect(sum, content="15")
 /// ```
-pub fn[A] iter(self : List[A]) -> Iter[A] {
+pub fn[A] List::iter(self : List[A]) -> Iter[A] {
   Iter::new(yield_ => loop self {
     Empty => IterContinue
     More(head, tail~) => {
@@ -1519,7 +1540,7 @@ pub fn[A] iter(self : List[A]) -> Iter[A] {
 /// let iter = ls.iter2()
 /// inspect(iter, content="[(0, 10), (1, 20), (2, 30)]")
 /// ```
-pub fn[A] iter2(self : List[A]) -> Iter2[Int, A] {
+pub fn[A] List::iter2(self : List[A]) -> Iter2[Int, A] {
   Iter2::new(yield_ => loop (self, 0) {
     (Empty, _) => IterEnd
     (More(head, tail~), i) => {
@@ -1649,7 +1670,7 @@ pub impl[A : Hash] Hash for List[A] with hash_combine(self, hasher) {
 /// 
 /// This is an internal helper function that efficiently reverses a list
 /// by modifying the existing structure rather than creating a completely new one.
-fn[A] reverse_inplace(self : List[A]) -> List[A] {
+fn[A] List::reverse_inplace(self : List[A]) -> List[A] {
   match self {
     Empty | More(_, tail=Empty) => self
     More(head, tail~) =>

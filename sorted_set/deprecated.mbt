@@ -18,7 +18,7 @@
 ///
 #deprecated("Use `copy` instead")
 #coverage.skip
-pub fn[V] deep_clone(self : SortedSet[V]) -> SortedSet[V] {
+pub fn[V] SortedSet::deep_clone(self : SortedSet[V]) -> SortedSet[V] {
   self.copy()
 }
 
@@ -27,7 +27,7 @@ pub fn[V] deep_clone(self : SortedSet[V]) -> SortedSet[V] {
 ///
 #deprecated("Use `difference` instead")
 #coverage.skip
-pub fn[V : Compare] diff(
+pub fn[V : Compare] SortedSet::diff(
   self : SortedSet[V],
   src : SortedSet[V],
 ) -> SortedSet[V] {
@@ -40,7 +40,7 @@ pub fn[V : Compare] diff(
 /// Returns the intersection of two sets.
 #deprecated("Use `intersection` instead")
 #coverage.skip
-pub fn[V : Compare] intersect(
+pub fn[V : Compare] SortedSet::intersect(
   self : SortedSet[V],
   src : SortedSet[V],
 ) -> SortedSet[V] {

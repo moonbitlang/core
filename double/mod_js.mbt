@@ -34,7 +34,7 @@
 ///   inspect(5.0.mod(@double.not_a_number), content="NaN")
 ///   inspect(@double.infinity.mod(3.0), content="NaN")
 /// ```
-extern "js" fn mod_ffi(self : Double, other : Double) -> Double =
+extern "js" fn Double::mod_ffi(self : Double, other : Double) -> Double =
   #| (a, b) => (a % b)
 
 ///|

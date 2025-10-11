@@ -31,7 +31,7 @@ pub fn[A : @json.FromJson] T::from_json(
 ///|
 #deprecated
 #coverage.skip
-pub fn[A] init_(self : T[A]) -> T[A] {
+pub fn[A] T::init_(self : T[A]) -> T[A] {
   fn aux(self) {
     match self {
       Nil => Nil
@@ -52,7 +52,7 @@ pub fn[A] init_(self : T[A]) -> T[A] {
 ///   assert_eq(@list.of([1, 2, 3]) == @list.of([1, 2, 3]), true)
 /// ```
 #deprecated("use `==` instead")
-pub fn[A : Eq] equal(self : T[A], other : T[A]) -> Bool {
+pub fn[A : Eq] T::equal(self : T[A], other : T[A]) -> Bool {
   loop (self, other) {
     (Nil, Nil) => true
     (Cons(h, t), Cons(h1, t1)) => if h == h1 { continue (t, t1) } else { false }

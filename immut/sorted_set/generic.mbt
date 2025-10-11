@@ -17,7 +17,7 @@
 // All operations over sets are purely applicative (no side-effects).
 
 ///|
-pub fn[A] iter(self : SortedSet[A]) -> Iter[A] {
+pub fn[A] SortedSet::iter(self : SortedSet[A]) -> Iter[A] {
   Iter::new(yield_ => {
     fn go(t) {
       match t {

@@ -58,14 +58,14 @@ pub fn StringView::at(self : StringView, index : Int) -> Int {
 
 ///|
 /// Returns the original string that is being viewed.
-pub fn data(self : StringView) -> String {
+pub fn StringView::data(self : StringView) -> String {
   self.str()
 }
 
 ///|
 /// Returns the starting offset (in UTF-16 code units) of this view into its
 /// underlying string.
-pub fn start_offset(self : StringView) -> Int {
+pub fn StringView::start_offset(self : StringView) -> Int {
   self.start()
 }
 
@@ -73,7 +73,7 @@ pub fn start_offset(self : StringView) -> Int {
 /// Returns the length of the view.
 /// 
 /// This method counts the charcodes(code unit) in the view and has O(1) complexity.
-pub fn length(self : StringView) -> Int {
+pub fn StringView::length(self : StringView) -> Int {
   self.end() - self.start()
 }
 

@@ -31,7 +31,7 @@ test "some equals to Some" {
 ///   let b = None
 ///   assert_eq(b.map(x => x * 2), None)
 /// ```
-pub fn[T, U] map(self : T?, f : (T) -> U raise?) -> U? raise? {
+pub fn[T, U] Option::map(self : T?, f : (T) -> U raise?) -> U? raise? {
   match self {
     Some(t) => Some(f(t))
     None => None
@@ -56,7 +56,11 @@ test "map" {
 ///   let a = Some(5)
 ///   assert_eq(a.map_or(3, x => x * 2), 10)
 /// ```
-pub fn[T, U] map_or(self : T?, default : U, f : (T) -> U raise?) -> U raise? {
+pub fn[T, U] Option::map_or(
+  self : T?,
+  default : U,
+  f : (T) -> U raise?,
+) -> U raise? {
   match self {
     None => default
     Some(x) => f(x)
@@ -80,7 +84,7 @@ test "map_or" {
 ///   let a = Some(5)
 ///   assert_eq(a.map_or_else(() => 3, x => x * 2), 10)
 /// ```
-pub fn[T, U] map_or_else(
+pub fn[T, U] Option::map_or_else(
   self : T?,
   default : () -> U raise?,
   f : (T) -> U raise?,
@@ -113,7 +117,7 @@ test "map_or_else" {
 ///   let r2 = b.bind(x => Some(x * 2))
 ///   assert_eq(r2, None)
 /// ```
-pub fn[T, U] bind(self : T?, f : (T) -> U? raise?) -> U? raise? {
+pub fn[T, U] Option::bind(self : T?, f : (T) -> U? raise?) -> U? raise? {
   match self {
     Some(t) => f(t)
     None => None
@@ -141,7 +145,7 @@ test "bind" {
 ///   let b : Int?? = Some(None)
 ///   assert_eq(b.flatten(), None)
 /// ```
-pub fn[T] flatten(self : T??) -> T? {
+pub fn[T] Option::flatten(self : T??) -> T? {
   match self {
     Some(inner) => inner
     None => None
@@ -158,7 +162,7 @@ test "flatten" {
 
 ///|
 /// Checks if the option is empty.
-pub fn[T] is_empty(self : T?) -> Bool {
+pub fn[T] Option::is_empty(self : T?) -> Bool {
   self is None
 }
 
@@ -182,7 +186,7 @@ test "is_empty" {
 ///   assert_eq(x.filter(x => x > 5), None)
 ///   assert_eq(x.filter(x => x < 5), Some(3))
 /// ```
-pub fn[T] filter(self : T?, f : (T) -> Bool raise?) -> T? raise? {
+pub fn[T] Option::filter(self : T?, f : (T) -> Bool raise?) -> T? raise? {
   match self {
     Some(t) => if f(t) { self } else { None }
     None => None
@@ -279,7 +283,7 @@ pub impl[X] Default for X? with default() {
 }
 
 ///|
-pub fn[T] iter(self : T?) -> Iter[T] {
+pub fn[T] Option::iter(self : T?) -> Iter[T] {
   match self {
     Some(v) => Iter::singleton(v)
     None => Iter::empty()
@@ -315,7 +319,7 @@ test "iter" {
 }
 
 ///|
-pub fn[T, Err : Error] or_error(self : T?, err : Err) -> T raise Err {
+pub fn[T, Err : Error] Option::or_error(self : T?, err : Err) -> T raise Err {
   match self {
     Some(v) => v
     None => raise err

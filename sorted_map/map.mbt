@@ -74,7 +74,10 @@ pub fn[K : Compare, V] SortedMap::set(
 
 ///|
 /// Removes a key-value pair.
-pub fn[K : Compare, V] remove(self : SortedMap[K, V], key : K) -> Unit {
+pub fn[K : Compare, V] SortedMap::remove(
+  self : SortedMap[K, V],
+  key : K,
+) -> Unit {
   if self.root is Some(old_root) {
     let (new_root, deleted) = delete_node(old_root, key)
     if self.root != new_root {
@@ -88,7 +91,7 @@ pub fn[K : Compare, V] remove(self : SortedMap[K, V], key : K) -> Unit {
 
 ///|
 /// Gets a value by a key.
-pub fn[K : Compare, V] get(self : SortedMap[K, V], key : K) -> V? {
+pub fn[K : Compare, V] SortedMap::get(self : SortedMap[K, V], key : K) -> V? {
   loop self.root {
     Some(node) => {
       let cmp = key.compare(node.key)
@@ -125,7 +128,10 @@ pub fn[K : Compare, V] SortedMap::at(self : SortedMap[K, V], key : K) -> V {
 
 ///|
 /// Checks if map contains a key-value pair.
-pub fn[K : Compare, V] contains(self : SortedMap[K, V], key : K) -> Bool {
+pub fn[K : Compare, V] SortedMap::contains(
+  self : SortedMap[K, V],
+  key : K,
+) -> Bool {
   match self.get(key) {
     Some(_) => true
     None => false
@@ -134,27 +140,27 @@ pub fn[K : Compare, V] contains(self : SortedMap[K, V], key : K) -> Bool {
 
 ///|
 /// Returns true if map is empty.
-pub fn[K, V] is_empty(self : SortedMap[K, V]) -> Bool {
+pub fn[K, V] SortedMap::is_empty(self : SortedMap[K, V]) -> Bool {
   self.size == 0
 }
 
 ///|
 /// Returns the count of key-value pairs in the map.
 #alias(size, deprecated)
-pub fn[K, V] length(self : SortedMap[K, V]) -> Int {
+pub fn[K, V] SortedMap::length(self : SortedMap[K, V]) -> Int {
   self.size
 }
 
 ///|
 /// Clears the map.
-pub fn[K, V] clear(self : SortedMap[K, V]) -> Unit {
+pub fn[K, V] SortedMap::clear(self : SortedMap[K, V]) -> Unit {
   self.root = None
   self.size = 0
 }
 
 ///|
 /// Iterates the map.
-pub fn[K, V] each(
+pub fn[K, V] SortedMap::each(
   self : SortedMap[K, V],
   f : (K, V) -> Unit raise?,
 ) -> Unit raise? {
@@ -171,7 +177,7 @@ pub fn[K, V] each(
 
 ///|
 /// Iterates the map with index.
-pub fn[K, V] eachi(
+pub fn[K, V] SortedMap::eachi(
   self : SortedMap[K, V],
   f : (Int, K, V) -> Unit raise?,
 ) -> Unit raise? {
@@ -184,7 +190,7 @@ pub fn[K, V] eachi(
 
 ///|
 /// Returns all keys in the map.
-pub fn[K, V] keys_as_iter(self : SortedMap[K, V]) -> Iter[K] {
+pub fn[K, V] SortedMap::keys_as_iter(self : SortedMap[K, V]) -> Iter[K] {
   Iter::new(fn(yield_) {
     fn go(x : Node[K, V]?) {
       match x {
@@ -206,7 +212,7 @@ pub fn[K, V] keys_as_iter(self : SortedMap[K, V]) -> Iter[K] {
 
 ///|
 /// Returns all values in the map.
-pub fn[K, V] values_as_iter(self : SortedMap[K, V]) -> Iter[V] {
+pub fn[K, V] SortedMap::values_as_iter(self : SortedMap[K, V]) -> Iter[V] {
   Iter::new(fn(yield_) {
     fn go(x : Node[K, V]?) {
       match x {
@@ -228,14 +234,14 @@ pub fn[K, V] values_as_iter(self : SortedMap[K, V]) -> Iter[V] {
 
 ///|
 /// Converts the map to an array.
-pub fn[K, V] to_array(self : SortedMap[K, V]) -> Array[(K, V)] {
+pub fn[K, V] SortedMap::to_array(self : SortedMap[K, V]) -> Array[(K, V)] {
   let arr = Array::new(capacity=self.size)
   self.each((k, v) => arr.push((k, v)))
   arr
 }
 
 ///|
-pub fn[K, V] iter(self : SortedMap[K, V]) -> Iter[(K, V)] {
+pub fn[K, V] SortedMap::iter(self : SortedMap[K, V]) -> Iter[(K, V)] {
   Iter::new(yield_ => {
     fn go(x : Node[K, V]?) {
       match x {
@@ -256,7 +262,7 @@ pub fn[K, V] iter(self : SortedMap[K, V]) -> Iter[(K, V)] {
 }
 
 ///|
-pub fn[K, V] iter2(self : SortedMap[K, V]) -> Iter2[K, V] {
+pub fn[K, V] SortedMap::iter2(self : SortedMap[K, V]) -> Iter2[K, V] {
   Iter2::new(yield_ => {
     fn go(x : Node[K, V]?) {
       match x {
@@ -296,7 +302,7 @@ pub impl[K : @quickcheck.Arbitrary + Compare, V : @quickcheck.Arbitrary] @quickc
 
 ///|
 ///Returns a new array of key-value pairs that are within the specified range [low, high].
-pub fn[K : Compare, V] range(
+pub fn[K : Compare, V] SortedMap::range(
   self : SortedMap[K, V],
   low : K,
   high : K,
@@ -349,7 +355,7 @@ fn[K, V] replace_root_with_min(
 }
 
 ///|
-fn[K, V] update_height(self : Node[K, V]) -> Unit {
+fn[K, V] Node::update_height(self : Node[K, V]) -> Unit {
   self.height = 1 + max(height(self.left), height(self.right))
 }
 

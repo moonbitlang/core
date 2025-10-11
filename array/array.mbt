@@ -70,7 +70,10 @@ pub fn[T] Array::push_iter(self : Self[T], iter : Iter[T]) -> Unit {
 ///   }
 ///   Array::shuffle_in_place(arr, rand=rand)
 /// ```
-pub fn[T] shuffle_in_place(self : Array[T], rand~ : (Int) -> Int) -> Unit {
+pub fn[T] Array::shuffle_in_place(
+  self : Array[T],
+  rand~ : (Int) -> Int,
+) -> Unit {
   let n = self.length()
   for i = n - 1; i > 0; i = i - 1 {
     let j = rand(i + 1) % (i + 1)
@@ -96,7 +99,7 @@ pub fn[T] shuffle_in_place(self : Array[T], rand~ : (Int) -> Int) -> Unit {
 ///   }
 ///   let _shuffled = Array::shuffle(arr, rand=rand)
 /// ```
-pub fn[T] shuffle(self : Array[T], rand~ : (Int) -> Int) -> Array[T] {
+pub fn[T] Array::shuffle(self : Array[T], rand~ : (Int) -> Int) -> Array[T] {
   let new_arr = self.copy()
   Array::shuffle_in_place(new_arr, rand~)
   new_arr
@@ -112,7 +115,7 @@ pub fn[T] shuffle(self : Array[T], rand~ : (Int) -> Int) -> Array[T] {
 ///
 /// # Returns
 ///
-pub fn[A, B] filter_map(
+pub fn[A, B] Array::filter_map(
   self : Array[A],
   f : (A) -> B? raise?,
 ) -> Array[B] raise? {
@@ -144,7 +147,7 @@ pub fn[A, B] filter_map(
 ///   let empty : Array[Int] = []
 ///   inspect(empty.last(), content="None")
 /// ```
-pub fn[A] last(self : Array[A]) -> A? {
+pub fn[A] Array::last(self : Array[A]) -> A? {
   match self {
     [] => None
     [.., last] => Some(last)
@@ -169,7 +172,7 @@ pub fn[A] last(self : Array[A]) -> A? {
 ///   let arr2 = ['a', 'b', 'c']
 ///   inspect(arr1.zip(arr2), content="[(1, 'a'), (2, 'b'), (3, 'c')]")
 /// ```
-pub fn[A, B] zip(self : Array[A], other : Array[B]) -> Array[(A, B)] {
+pub fn[A, B] Array::zip(self : Array[A], other : Array[B]) -> Array[(A, B)] {
   let length = if self.length() < other.length() {
     self.length()
   } else {
@@ -188,7 +191,7 @@ pub fn[A, B] zip(self : Array[A], other : Array[B]) -> Array[(A, B)] {
 ///   inspect(nums, content="[1, 2, 3]")
 ///   inspect(strs, content="[\"a\", \"b\", \"c\"]")
 /// ```
-pub fn[T1, T2] unzip(self : Array[(T1, T2)]) -> (Array[T1], Array[T2]) {
+pub fn[T1, T2] Array::unzip(self : Array[(T1, T2)]) -> (Array[T1], Array[T2]) {
   let arr1 : Array[T1] = Array::new(capacity=self.length())
   let arr2 : Array[T2] = Array::new(capacity=self.length())
   for pair in self {
@@ -245,7 +248,10 @@ pub fn[A, B, C] zip_with(
 ///   let arr2 = ['a', 'b', 'c']
 ///   inspect(arr1.zip_to_iter2(arr2).to_array(), content="[(1, 'a'), (2, 'b'), (3, 'c')]")
 /// ```
-pub fn[A, B] zip_to_iter2(self : Array[A], other : Array[B]) -> Iter2[A, B] {
+pub fn[A, B] Array::zip_to_iter2(
+  self : Array[A],
+  other : Array[B],
+) -> Iter2[A, B] {
   Iter2::new(yield_ => {
     let length = if self.length() < other.length() {
       self.length()

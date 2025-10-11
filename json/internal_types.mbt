@@ -42,7 +42,7 @@ fn CharClass::of(array : Array[(Char, Char)]) -> CharClass {
 }
 
 ///|
-fn contains(self : CharClass, c : Char) -> Bool {
+fn CharClass::contains(self : CharClass, c : Char) -> Bool {
   let CharClass(self) = self
   for left = 0, right = self.length(); left < right; {
     let middle = (left + right) / 2

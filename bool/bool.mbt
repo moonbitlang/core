@@ -27,7 +27,7 @@
 ///   inspect(true.to_int(), content="1")
 ///   inspect(false.to_int(), content="0")
 /// ```
-pub fn to_int(self : Bool) -> Int {
+pub fn Bool::to_int(self : Bool) -> Int {
   if self {
     1
   } else {
@@ -51,7 +51,7 @@ pub fn to_int(self : Bool) -> Int {
 ///   inspect(true.to_int64(), content="1")
 ///   inspect(false.to_int64(), content="0")
 /// ```
-pub fn to_int64(self : Bool) -> Int64 {
+pub fn Bool::to_int64(self : Bool) -> Int64 {
   if self {
     1
   } else {
@@ -75,7 +75,7 @@ pub fn to_int64(self : Bool) -> Int64 {
 ///   inspect(true.to_uint(), content="1")
 ///   inspect(false.to_uint(), content="0")
 /// ```
-pub fn to_uint(self : Bool) -> UInt {
+pub fn Bool::to_uint(self : Bool) -> UInt {
   if self {
     1
   } else {
@@ -99,7 +99,7 @@ pub fn to_uint(self : Bool) -> UInt {
 ///   inspect(true.to_uint64(), content="1")
 ///   inspect(false.to_uint64(), content="0")
 /// ```
-pub fn to_uint64(self : Bool) -> UInt64 {
+pub fn Bool::to_uint64(self : Bool) -> UInt64 {
   if self {
     1
   } else {
@@ -129,7 +129,7 @@ pub impl Hash for Bool with hash_combine(self, hasher) {
 /// inspect(false.to_uint16(), content="0")
 /// ```
 ///
-pub fn to_uint16(self : Bool) -> UInt16 {
+pub fn Bool::to_uint16(self : Bool) -> UInt16 {
   if self {
     1
   } else {
@@ -154,7 +154,7 @@ pub fn to_uint16(self : Bool) -> UInt16 {
 /// inspect(false.to_int16(), content="0")
 /// ```
 ///
-pub fn to_int16(self : Bool) -> Int16 {
+pub fn Bool::to_int16(self : Bool) -> Int16 {
   if self {
     1
   } else {

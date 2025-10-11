@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-fn[T] set_null(self : UninitializedArray[T], index : Int) = "%fixedarray.set_null"
+fn[T] UninitializedArray::set_null(self : UninitializedArray[T], index : Int) = "%fixedarray.set_null"
 
 ///|
 /// An `Array` is a collection of values that supports random access and can

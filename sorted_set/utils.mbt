@@ -35,7 +35,7 @@ fn[V] height(node : Node[V]?) -> Int {
 }
 
 ///|
-fn[V : Show] debug_node(self : Node[V]) -> String {
+fn[V : Show] Node::debug_node(self : Node[V]) -> String {
   let l = match self.left {
     Some(left) => left.debug_node()
     None => "_"
@@ -50,7 +50,7 @@ fn[V : Show] debug_node(self : Node[V]) -> String {
 }
 
 ///|
-fn[V : Show] debug_tree(self : SortedSet[V]) -> String {
+fn[V : Show] SortedSet::debug_tree(self : SortedSet[V]) -> String {
   match self.root {
     Some(root) => root.debug_node()
     None => "_"

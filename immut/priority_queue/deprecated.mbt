@@ -15,7 +15,9 @@
 ///|
 #deprecated("Use `unsafe_pop` instead")
 #coverage.skip
-pub fn[A : Compare] pop_exn(self : PriorityQueue[A]) -> PriorityQueue[A] {
+pub fn[A : Compare] PriorityQueue::pop_exn(
+  self : PriorityQueue[A],
+) -> PriorityQueue[A] {
   self.unsafe_pop()
 }
 

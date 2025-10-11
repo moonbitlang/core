@@ -79,7 +79,7 @@ pub fn default() -> String {
 ///|
 /// `String` holds a sequence of UTF-16 code units encoded in little endian format
 #deprecated("check @encoding/utf8.encode")
-pub fn to_bytes(self : String) -> Bytes {
+pub fn String::to_bytes(self : String) -> Bytes {
   let array = FixedArray::make(self.length() * 2, Byte::default())
   array.blit_from_string(0, self, 0, self.length())
   array |> unsafe_to_bytes
@@ -90,7 +90,7 @@ fn unsafe_to_bytes(array : FixedArray[Byte]) -> Bytes = "%identity"
 
 ///|
 /// Converts the String into an array of Chars.
-pub fn to_array(self : String) -> Array[Char] {
+pub fn String::to_array(self : String) -> Array[Char] {
   self
   .iter()
   .fold(init=Array::new(capacity=self.length()), (rv, c) => {
@@ -110,7 +110,7 @@ pub fn to_array(self : String) -> Array[Char] {
 ///   assert_eq(s.iter().count(), 14); // Unicode characters
 ///   assert_eq(s.length(), 15); // Utf16 code units
 /// ```
-pub fn iter(self : String) -> Iter[Char] {
+pub fn String::iter(self : String) -> Iter[Char] {
   Iter::new(yield_ => {
     let len = self.length()
     for index in 0..<len {
@@ -132,7 +132,7 @@ pub fn iter(self : String) -> Iter[Char] {
 }
 
 ///|
-pub fn iter2(self : String) -> Iter2[Int, Char] {
+pub fn String::iter2(self : String) -> Iter2[Int, Char] {
   Iter2::new(yield_ => {
     let len = self.length()
     for index = 0, n = 0; index < len; index = index + 1, n = n + 1 {
@@ -181,7 +181,7 @@ pub fn iter2(self : String) -> Iter2[Int, Char] {
 ///   let reversed = input.rev_iter().collect()
 ///   assert_eq(reversed, ['!', 'd', 'l', 'r', 'o', 'W', ' ', ',', 'o', 'l', 'l', 'e', 'H'])
 /// ```
-pub fn rev_iter(self : String) -> Iter[Char] {
+pub fn String::rev_iter(self : String) -> Iter[Char] {
   Iter::new(yield_ => {
     let len = self.length()
     for index = len - 1; index >= 0; index = index - 1 {
