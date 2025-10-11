@@ -588,6 +588,7 @@ fn[Obj : Show] Logger::write_object(&Self, Obj) -> Unit
 // Traits
 pub(open) trait Add {
   add(Self, Self) -> Self = _
+  #deprecated
   op_add(Self, Self) -> Self = _
 }
 impl Add for Byte
@@ -669,6 +670,7 @@ impl[X] Default for FixedArray[X]
 
 pub(open) trait Div {
   div(Self, Self) -> Self = _
+  #deprecated
   op_div(Self, Self) -> Self = _
 }
 impl Div for Byte
@@ -681,6 +683,7 @@ impl Div for Double
 
 pub(open) trait Eq {
   equal(Self, Self) -> Bool = _
+  #deprecated
   op_equal(Self, Self) -> Bool = _
 }
 impl Eq for Unit
@@ -739,6 +742,7 @@ pub(open) trait Logger {
 
 pub(open) trait Mod {
   mod(Self, Self) -> Self = _
+  #deprecated
   op_mod(Self, Self) -> Self = _
 }
 impl Mod for Byte
@@ -749,6 +753,7 @@ impl Mod for UInt64
 
 pub(open) trait Mul {
   mul(Self, Self) -> Self = _
+  #deprecated
   op_mul(Self, Self) -> Self = _
 }
 impl Mul for Byte
@@ -761,6 +766,7 @@ impl Mul for Double
 
 pub(open) trait Neg {
   neg(Self) -> Self = _
+  #deprecated
   op_neg(Self) -> Self = _
 }
 impl Neg for Int
@@ -770,6 +776,7 @@ impl Neg for Double
 
 pub(open) trait Shl {
   shl(Self, Int) -> Self = _
+  #deprecated
   op_shl(Self, Int) -> Self = _
 }
 impl Shl for Byte
@@ -814,6 +821,7 @@ impl[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show
 
 pub(open) trait Shr {
   shr(Self, Int) -> Self = _
+  #deprecated
   op_shr(Self, Int) -> Self = _
 }
 impl Shr for Byte
@@ -824,6 +832,7 @@ impl Shr for UInt64
 
 pub(open) trait Sub {
   sub(Self, Self) -> Self = _
+  #deprecated
   op_sub(Self, Self) -> Self = _
 }
 impl Sub for Byte
