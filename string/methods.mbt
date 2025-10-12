@@ -545,7 +545,7 @@ pub fn String::contains(self : String, str : StringView) -> Bool {
 pub fn StringView::contains_any(self : StringView, chars~ : StringView) -> Bool {
   match chars {
     [] => false
-    [c] => self.contains_char(c)
+    [c] => self.contains_char(c) // specialize for single character
     _ =>
       for c in self {
         if chars.contains_char(c) {

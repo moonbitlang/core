@@ -39,8 +39,12 @@ pub impl Show for JsonPath with output(self, logger) {
     }
     for ch in token.iter() {
       match ch {
-        '~' => logger.write_string("~0")
-        '/' => logger.write_string("~1")
+        '~' => {
+          logger.write_string("~0")
+        }
+        '/' => {
+          logger.write_string("~1")
+        }
         _ => logger.write_char(ch)
       }
     }
