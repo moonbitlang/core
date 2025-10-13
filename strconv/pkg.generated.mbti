@@ -2,7 +2,7 @@
 package "moonbitlang/core/strconv"
 
 // Values
-fn[A : FromStr] parse(String) -> A raise StrConvError
+fn[A : FromStr] parse(StringView) -> A raise StrConvError
 
 fn parse_bool(StringView) -> Bool raise StrConvError
 
@@ -41,7 +41,9 @@ impl Show for Decimal
 
 // Traits
 pub(open) trait FromStr {
-  from_string(String) -> Self raise StrConvError
+  from_str(StringView) -> Self raise StrConvError = _
+  #deprecated
+  from_string(String) -> Self raise StrConvError = _
 }
 impl FromStr for Bool
 impl FromStr for Int
