@@ -26,7 +26,6 @@ pub(all) enum Ast {
   Repeat(Ast, greedy~ : Bool, min~ : UInt, max~ : UInt?)
   Concat(Array[Ast])
   Alternate(Ast, Ast)
-  Backreference(Int)
 } derive(Show)
 
 ///|
@@ -156,7 +155,6 @@ fn Ast::compile_aux(regex : Ast, instructions : Array[Instruction]) -> Unit {
       instructions[split_pos] = Split(split_pos + 1, jmp_pos + 1)
       instructions[jmp_pos] = Jump(instructions.length())
     }
-    Backreference(i) => instructions.push(Backreference(i))
   }
 }
 
@@ -194,6 +192,5 @@ pub impl ToJson for Ast with to_json(self) {
       }
     Concat(regexs) => [..regexs.map(_.to_json())]
     Alternate(left, right) => ["Alternate", left, right]
-    Backreference(i) => ["Backreference", i]
   }
 }
