@@ -12,42 +12,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-////////////////////
-/// UNICODE DATA ///
-////////////////////
-
-///|
-const MIN_FOLD : Char = @unicode.MIN_FOLD
-
-///|
-const MAX_FOLD : Char = @unicode.MAX_FOLD
-
-///|
-let case_folding = @unicode.case_folding
-
 //////////////
 /// RANGES ///
 //////////////
 
 ///|
-let ranges_is_digit : Array[Char] = ['0', '9']
+pub let ranges_is_digit : Array[Char] = ['0', '9']
 
 ///|
-let ranges_is_not_digit : Array[Char] = ['\u{0}', '/', ':', '\u{10FFFF}']
+pub let ranges_is_not_digit : Array[Char] = ['\u{0}', '/', ':', '\u{10FFFF}']
 
 ///|
-let ranges_is_word : Array[Char] = ['0', '9', 'A', 'Z', '_', '_', 'a', 'z']
+pub let ranges_is_word : Array[Char] = ['0', '9', 'A', 'Z', '_', '_', 'a', 'z']
 
 ///|
-let ranges_is_not_word : Array[Char] = [
+pub let ranges_is_not_word : Array[Char] = [
   '\u{0}', '/', ':', '@', '[', '^', '`', '`', '{', '\u{10FFFF}',
 ]
 
 ///|
-let ranges_any : Array[Char] = ['\u{0}', '\u{10FFFF}']
+pub let ranges_any : Array[Char] = ['\u{0}', '\u{10FFFF}']
 
 ///|
-let ranges_any_not_new_line : Array[Char] = [
+pub let ranges_any_not_new_line : Array[Char] = [
   '\u{0}', '\u{9}', '\u{11}', '\u{10FFFF}',
 ]
 
@@ -58,14 +45,14 @@ let ranges_any_not_new_line : Array[Char] = [
 /// - https://tc39.es/ecma262/multipage/ecmascript-language-lexical-grammar.html#sec-white-space
 /// - https://tc39.es/ecma262/multipage/ecmascript-language-lexical-grammar.html#sec-line-terminators
 /// - https://www.unicode.org/Public/UCD/latest/ucd/PropList.txt
-let ranges_is_white_space_or_line_terminator : Array[Char] = [
+pub let ranges_is_white_space_or_line_terminator : Array[Char] = [
   '\u{9}', '\u{D}', '\u{20}', '\u{20}', '\u{A0}', '\u{A0}', '\u{1680}', '\u{1680}',
   '\u{2000}', '\u{200A}', '\u{2028}', '\u{2029}', '\u{202F}', '\u{202F}', '\u{205F}',
   '\u{205F}', '\u{3000}', '\u{3000}', '\u{FEFF}', '\u{FEFF}',
 ]
 
 ///|
-let ranges_is_not_white_space_or_line_terminator : Array[Char] = [
+pub let ranges_is_not_white_space_or_line_terminator : Array[Char] = [
   '\u{00}', '\u{8}', '\u{E}', '\u{1F}', '\u{21}', '\u{9f}', '\u{A1}', '\u{167F}',
   '\u{1681}', '\u{1FFF}', '\u{200B}', '\u{2027}', '\u{202a}', '\u{202E}', '\u{2030}',
   '\u{205E}', '\u{2060}', '\u{2FFF}', '\u{3001}', '\u{FEFE}', '\u{FF00}', '\u{10ffff}',
@@ -84,7 +71,7 @@ test "ordered range" {
 
 ///|
 /// TODO: consider unicode mode
-fn is_word_char_at(input : StringView, sp : Int) -> Bool {
+pub fn is_word_char_at(input : StringView, sp : Int) -> Bool {
   if sp == -1 || sp == input.length() {
     return false
   }
@@ -111,7 +98,7 @@ test "is word char" {
 /// The chars array contains pairs of characters [start1, end1, start2, end2, ...] 
 /// representing ranges [start1-end1], [start2-end2], etc.
 /// Assumes the ranges are sorted and non-overlapping.
-fn char_in_ranges(ch : Char, chars : Array[Char]) -> Bool {
+pub fn char_in_ranges(ch : Char, chars : Array[Char]) -> Bool {
   let mut left = 0
   let mut right = chars.length() / 2 - 1
   while left <= right {
@@ -136,7 +123,7 @@ fn char_in_ranges(ch : Char, chars : Array[Char]) -> Bool {
 /// Output: Simplified array with non-overlapping ranges in sorted order
 /// 
 /// Invariant: The input array must contain an even number of elements, representing pairs of start and end characters.
-fn simplify_char_ranges(chars : Array[Char]) -> Array[Char] {
+pub fn simplify_char_ranges(chars : Array[Char]) -> Array[Char] {
   if chars.length() == 0 {
     return []
   }
@@ -197,7 +184,7 @@ test "simplify char ranges" {
 /// Output: Array representing the complement ranges
 /// 
 /// Invariant: The input array must contain an even number of elements, representing pairs of start and end characters.
-fn compute_char_class_complement(chars : Array[Char]) -> Array[Char] {
+pub fn compute_char_class_complement(chars : Array[Char]) -> Array[Char] {
   // First simplify the input ranges
   let simplified = simplify_char_ranges(chars)
   if simplified.length() == 0 {
@@ -252,7 +239,7 @@ test "compute complement of charclass" {
 }
 
 ///|
-fn case_insensitive_char_class(chars : Array[Char]) -> Array[Char] {
+pub fn case_insensitive_char_class(chars : Array[Char]) -> Array[Char] {
   // This function should compute the case-insensitive character class
   // based on the provided character ranges.
   // For simplicity, we will just return the input for now.

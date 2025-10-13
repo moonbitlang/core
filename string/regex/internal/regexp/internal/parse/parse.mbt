@@ -74,17 +74,19 @@ priv struct Parser {
   mut captures : Int
   current_capture_scope : @set.Set[Int]
   capture_map : Map[String, Int]
+  mut has_backreference : Bool
 }
 
 ///|
-priv struct ParseResult {
+pub(all) struct ParseResult {
   ast : Ast
   captures : Int
   capture_map : Map[String, Int]
-}
+  has_backreference : Bool
+} derive(ToJson)
 
 ///|
-priv struct Flags {
+pub(all) struct Flags {
   multiline : Bool
   singleline : Bool
   ignore_case : Bool
@@ -130,6 +132,7 @@ fn Parser::new(input : StringView, flags : Flags) -> Parser {
     captures: 1,
     capture_map: {},
     current_capture_scope: @set.Set::new(),
+    has_backreference: false,
   }
 }
 
@@ -144,7 +147,7 @@ fn Parser::new(input : StringView, flags : Flags) -> Parser {
 /// Returns: Parsed Regex AST
 ///
 /// Throws: Error_ when parsing fails
-fn parse(
+pub fn parse(
   regex : StringView,
   flags? : Flags = Flags::default(),
 ) -> ParseResult raise RegexpError {
@@ -155,7 +158,12 @@ fn parse(
   if parser.input is [')', ..] {
     raise RegexpError(err=UnexpectedParenthesis, source_fragment=parser.input)
   }
-  { ast: result, capture_map: parser.capture_map, captures: parser.captures }
+  {
+    ast: result,
+    capture_map: parser.capture_map,
+    captures: parser.captures,
+    has_backreference: parser.has_backreference,
+  }
 }
 
 ///|
@@ -471,9 +479,54 @@ fn Parser::parse_factor(self : Parser) -> Ast raise RegexpError {
             self.input = rest
             CharClass(['\u{0}', '\u{0}'], neg=false) // Null character
           }
-        // reserve c, k, number
-        'c' | 'k' | '1'..='9' =>
-          raise RegexpError(err=InvalidEscape, source_fragment=self.input)
+        '1'..='9' as ch => {
+          let mut input = self.input
+          let mut capture = ch.to_int() - '0'.to_int()
+          while input is ['0'..='9' as next_ch, .. next_rest] {
+            capture = capture * 10 + (next_ch.to_int() - '0'.to_int())
+            input = next_rest // consume the digit
+          }
+          self.input = input
+          self.has_backreference = true
+
+          // Ban recursive backreferences and backreferences to the non existent capture group
+          if self.current_capture_scope.contains(capture) {
+            raise RegexpError(err=InvalidEscape, source_fragment=escape)
+          } else if capture >= self.captures {
+            raise RegexpError(err=InvalidEscape, source_fragment=escape)
+          }
+          Backreference(capture)
+        }
+        'k' => {
+          // Named backreference \k<name>
+          guard self.input is ['<', .. rest] else {
+            raise RegexpError(err=InvalidEscape, source_fragment=self.input)
+          }
+          self.input = rest // consume '<'
+          let name = self.parse_group_name()
+          guard self.input is ['>', .. rest] else {
+            raise RegexpError(err=InvalidEscape, source_fragment=self.input)
+          }
+          self.input = rest // consume '>'
+
+          // Get the capture index for the named group
+          guard self.capture_map.get(name) is Some(capture) else {
+            raise RegexpError(err=InvalidEscape, source_fragment=escape)
+          }
+
+          // Set backreference flag
+          self.has_backreference = true
+
+          // Ban recursive backreferences
+          if self.current_capture_scope.contains(capture) {
+            raise RegexpError(err=InvalidEscape, source_fragment=escape)
+          } else if capture >= self.captures {
+            raise RegexpError(err=InvalidEscape, source_fragment=escape)
+          }
+          Backreference(capture)
+        }
+        // reserve c
+        'c' => raise RegexpError(err=InvalidEscape, source_fragment=self.input)
         _ =>
           if self.flags.ignore_case {
             CharClass(case_insensitive_char_class([c, c]), neg=false)
@@ -539,6 +592,7 @@ fn Parser::parse_char_class(self : Parser) -> Ast raise RegexpError {
         }
         self.input = rest
         match ch {
+          // If they are themselves character classes, expand them
           'd' => {
             ranges_is_digit.each(chars.push(_)) // digit character class
             continue
@@ -563,38 +617,6 @@ fn Parser::parse_char_class(self : Parser) -> Ast raise RegexpError {
             ranges_is_not_white_space_or_line_terminator.each(chars.push(_)) // non-whitespace character class
             continue
           }
-          // ControlEscape
-          't' => {
-            ['\t', '\t'].each(chars.push(_))
-            continue
-          }
-          'n' => {
-            ['\n', '\n'].each(chars.push(_))
-            continue
-          }
-          'v' => {
-            ['\u{b}', '\u{b}'].each(chars.push(_))
-            continue
-          }
-          'f' => {
-            ['\u{c}', '\u{c}'].each(chars.push(_))
-            continue
-          }
-          'r' => {
-            ['\r', '\r'].each(chars.push(_))
-            continue
-          }
-          // backspace
-          'b' => {
-            ['\u{8}', '\u{8}'].each(chars.push(_))
-            continue
-          }
-          'u' => {
-            // Unicode escape \u{aaaa} or \uaaaa  
-            let unicode_char = self.parse_unicode_escape()
-            [unicode_char, unicode_char].each(chars.push(_))
-            continue
-          }
           'p' | 'P' as flag => {
             // Unicode property \p{property_name}
             let property_name = self.parse_unicode_property()
@@ -607,6 +629,18 @@ fn Parser::parse_char_class(self : Parser) -> Ast raise RegexpError {
             }
             continue
           }
+          // ControlEscape
+          't' => '\t'
+          'n' => '\n'
+          'v' => '\u{b}'
+          'f' => '\u{c}'
+          'r' => '\r'
+          // backspace
+          'b' => '\u{8}'
+          'u' =>
+            // Unicode escape \u{aaaa} or \uaaaa  
+            self.parse_unicode_escape()
+
           // reserve c and k
           'c' | 'k' =>
             raise RegexpError(err=InvalidEscape, source_fragment=escape)
@@ -620,7 +654,7 @@ fn Parser::parse_char_class(self : Parser) -> Ast raise RegexpError {
     }
 
     // Check for character range (e.g., a-z)
-    if self.input is ['-', .. rest] {
+    if self.input is (['-', .. rest] as range_rest) {
       // Look ahead after '-', ensure it's not ']' and there are more characters
       let input_copy = self.input
       self.input = rest // consume '-'
@@ -635,7 +669,29 @@ fn Parser::parse_char_class(self : Parser) -> Ast raise RegexpError {
               )
             }
             self.input = rest
-            ch
+            // Handle escaped characters properly - the same logic as in the main parsing
+            match ch {
+              // ControlEscape
+              't' => '\t'
+              'n' => '\n'
+              'v' => '\u{b}'
+              'f' => '\u{c}'
+              'r' => '\r'
+              'b' => '\u{8}' // backspace
+              'u' =>
+                // Unicode escape \u{aaaa} or \uaaaa
+                self.parse_unicode_escape()
+              // For character classes like \d, \w, \s - these cannot be used in ranges
+              'd' | 'D' | 'w' | 'W' | 's' | 'S' | 'p' | 'P' =>
+                raise RegexpError(
+                  err=InvalidCharClass,
+                  source_fragment=range_rest,
+                )
+              // reserve c and k
+              'c' | 'k' =>
+                raise RegexpError(err=InvalidEscape, source_fragment=self.input)
+              _ => ch
+            }
           }
           _ => {
             self.input = rest

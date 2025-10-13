@@ -1,0 +1,33 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/regexp/internal/ast"
+
+import(
+  "moonbitlang/regexp/internal/vm"
+)
+
+// Values
+
+// Errors
+
+// Types and methods
+pub(all) enum Ast {
+  Empty
+  CharClass(Array[Char], neg~ : Bool)
+  Assertion(@vm.Predicate)
+  Capture(Ast, index~ : Int)
+  ZeroOrMore(Ast, greedy~ : Bool)
+  OneOrMore(Ast, greedy~ : Bool)
+  ZeroOrOne(Ast, greedy~ : Bool)
+  Repeat(Ast, greedy~ : Bool, min~ : UInt, max~ : UInt?)
+  Concat(Array[Ast])
+  Alternate(Ast, Ast)
+  Backreference(Int)
+}
+fn Ast::compile(Self) -> Array[@vm.Instruction]
+impl Show for Ast
+impl ToJson for Ast
+
+// Type aliases
+
+// Traits
+

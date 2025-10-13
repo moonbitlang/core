@@ -13,6 +13,25 @@
 // limitations under the License.
 
 ///|
+struct Regexp {
+  instructions : Array[Instruction]
+  map : Map[String, Int]
+  capture : Int
+  allow_exponentiaion : Bool
+}
+
+///|
+/// Compiles a regex into a matcher.
+fn ParseResult::compile(self : Self) -> Regexp {
+  {
+    instructions: self.ast.compile(),
+    map: self.capture_map,
+    capture: self.captures,
+    allow_exponentiaion: self.has_backreference,
+  }
+}
+
+///|
 /// Compiles a regular expression into an execution engine.
 /// 
 /// Parses and compiles a regular expression string into a reusable execution engine.
@@ -27,7 +46,7 @@
 /// 
 /// Example:
 /// ```moonbit
-/// let engine = @regex_impl.compile("a(bc|de)f")
+/// let engine = @regexp.compile("a(bc|de)f")
 /// inspect(engine.execute("xxabcf").results(), content=(
 ///   #|[Some("abcf"), Some("bc")]
 /// ))
@@ -59,7 +78,7 @@ pub fn compile(
 /// 
 /// Example:
 /// ```moonbit
-/// let engine = @regex_impl.compile("(?<word>\\w+)")
+/// let engine = @regexp.compile("(?<word>\\w+)")
 /// inspect(engine.group_by_name("word"), content="Some(1)")
 /// ```
 pub fn Regexp::group_by_name(self : Regexp, name : String) -> Int? {
@@ -79,7 +98,7 @@ pub fn Regexp::group_by_name(self : Regexp, name : String) -> Int? {
 /// 
 /// Example:
 /// ```moonbit
-/// let engine = @regex_impl.compile("(a)(b|c)")
+/// let engine = @regexp.compile("(a)(b|c)")
 /// inspect(engine.group_count(), content="3")
 /// ```
 pub fn Regexp::group_count(self : Regexp) -> Int {
@@ -99,7 +118,7 @@ pub fn Regexp::group_count(self : Regexp) -> Int {
 /// 
 /// Example:
 /// ```moonbit
-/// let engine = @regex_impl.compile("(?<first>a)(?<second>b)")
+/// let engine = @regexp.compile("(?<first>a)(?<second>b)")
 /// inspect(engine.group_names(), content=(
 ///   #|["first", "second"]
 /// ))
@@ -123,7 +142,7 @@ pub fn Regexp::group_names(self : Regexp) -> Array[String] {
 /// 
 /// Example:
 /// ```moonbit
-/// let engine = @regex_impl.compile("a(bc|de)f")
+/// let engine = @regexp.compile("a(bc|de)f")
 /// let result = engine.execute("xxabcf")
 /// if result.matched() { 
 ///   inspect(result.get(0), content=(
@@ -132,7 +151,12 @@ pub fn Regexp::group_names(self : Regexp) -> Array[String] {
 /// }
 /// ```
 pub fn Regexp::execute(self : Regexp, input : StringView) -> MatchResult {
-  let captures = vm(self.instructions, input, self.capture)
+  let captures = vm(
+    self.instructions,
+    input,
+    self.capture,
+    allow_exponentiaion=self.allow_exponentiaion,
+  )
   let (before, after) = if captures is [0..<_ as start, 0..<_ as end, ..] {
     (input.view(end_offset=start), input.view(start_offset=end))
   } else {
@@ -158,7 +182,7 @@ pub fn Regexp::execute(self : Regexp, input : StringView) -> MatchResult {
 /// 
 /// Example:
 /// ```moonbit
-/// let engine = @regex_impl.compile("a(bc|de)f")
+/// let engine = @regexp.compile("a(bc|de)f")
 /// let result = engine.execute("abcfxx")
 /// guard result.matched()
 /// inspect(result.before(), content=(""))
@@ -173,7 +197,12 @@ pub fn Regexp::execute_with_remainder(
   self : Regexp,
   input : StringView,
 ) -> (MatchResult, StringView) {
-  let captures = vm(self.instructions, input, self.capture)
+  let captures = vm(
+    self.instructions,
+    input,
+    self.capture,
+    allow_exponentiaion=self.allow_exponentiaion,
+  )
   if captures is [0..<_ as start, 0..<_ as end, ..] {
     (
       {
@@ -215,13 +244,18 @@ pub fn Regexp::execute_with_remainder(
 /// 
 /// Example:
 /// ```moonbit
-/// let engine = @regex_impl.compile("a(bc|de)f")
+/// let engine = @regexp.compile("a(bc|de)f")
 /// guard engine.match_("abcfxx") is Some(result)
 /// inspect(result.after(), content=("xx"))
 /// assert_true(engine.match_("axxf") is None)
 /// ```
 pub fn Regexp::match_(self : Regexp, input : StringView) -> MatchResult? {
-  let captures = vm(self.instructions, input, self.capture)
+  let captures = vm(
+    self.instructions,
+    input,
+    self.capture,
+    allow_exponentiaion=self.allow_exponentiaion,
+  )
   guard captures is [0..<_ as start, 0..<_ as end, ..] else { return None }
   let before = input.view(end_offset=start)
   let after = input.view(start_offset=end)
@@ -241,7 +275,7 @@ pub fn Regexp::match_(self : Regexp, input : StringView) -> MatchResult? {
 /// - Index 2, 3: Start and end positions of the first capture group.
 /// - Index 4, 5: Start and end positions of the second capture group.
 /// - And so on...
-pub struct MatchResult {
+struct MatchResult {
   input : StringView
   captures : Array[Int]
   names : Map[String, Int]
@@ -262,7 +296,7 @@ pub struct MatchResult {
 /// 
 /// Example:
 /// ```moonbit
-/// let result = @regex_impl.compile("text").execute("text")
+/// let result = @regexp.compile("text").execute("text")
 /// inspect(result.matched(), content="true")
 /// ```
 pub fn MatchResult::matched(self : Self) -> Bool {
@@ -285,7 +319,7 @@ pub fn MatchResult::matched(self : Self) -> Bool {
 /// 
 /// Example:
 /// ```moonbit
-/// let result = @regex_impl.compile(".(bc)").execute("abc")
+/// let result = @regexp.compile(".(bc)").execute("abc")
 /// inspect(result.get(0), content=(
 ///   #|Some("abc")
 /// ))
@@ -324,7 +358,7 @@ pub fn MatchResult::get(self : Self, index : Int) -> StringView? {
 /// Example:
 ///
 /// ```moonbit
-/// let engine = @regex_impl.compile("(?<word>\\w+)\\s+(?<num>\\d+)")
+/// let engine = @regexp.compile("(?<word>\\w+)\\s+(?<num>\\d+)")
 /// let result = engine.execute("hello 123")
 /// inspect(result.groups(), content=(
 ///   #|{"word": "hello", "num": "123"}
@@ -356,7 +390,7 @@ pub fn MatchResult::groups(self : Self) -> Map[String, StringView] {
 /// 
 /// Example:
 /// ```moonbit
-/// let result = @regex_impl.compile("(\\w)+").execute("abc")
+/// let result = @regexp.compile("(\\w)+").execute("abc")
 /// inspect(result.results(), content=(
 ///   #|[Some("abc"), Some("c")]
 /// ))
@@ -381,7 +415,7 @@ pub fn MatchResult::results(self : Self) -> Array[StringView?] {
 /// If the match was not successful, this will return the entire input text.
 /// 
 /// ```moonbit
-/// let engine = @regex_impl.compile("world")
+/// let engine = @regexp.compile("world")
 /// let result = engine.execute("hello world")
 /// inspect(result.before(), content="hello ")
 /// let result = engine.execute("say hello")
@@ -397,7 +431,7 @@ pub fn MatchResult::before(self : Self) -> StringView {
 /// If the match was not successful, this will return the empty string.
 /// 
 /// ```moonbit
-/// let engine = @regex_impl.compile("hello")
+/// let engine = @regexp.compile("hello")
 /// let result = engine.execute("hello world")
 /// inspect(result.after(), content=" world")
 /// let result = engine.execute("say yes")

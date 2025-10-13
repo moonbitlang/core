@@ -1,0 +1,13 @@
+{
+  "import": [
+    { "path": "moonbitlang/core/string/regex/internal/regexp/internal/unicode", "alias": "unicode" },
+    "moonbitlang/core/builtin",
+    "moonbitlang/core/array",
+    "moonbitlang/core/string",
+    "moonbitlang/core/int",
+    "moonbitlang/core/char"
+  ],
+  "wbtest-import": [
+    "moonbitlang/core/test"
+  ]
+}

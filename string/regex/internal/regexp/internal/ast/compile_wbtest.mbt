@@ -13,27 +13,6 @@
 // limitations under the License.
 
 ///|
-impl ToJson for Ast with to_json(self) {
-  match self {
-    Empty => "Empty"
-    CharClass(chars, neg~) => ["CharClass neg=\{neg}", chars.map(c => repr(c))]
-    Assertion(pred) => "Assertion \{pred}"
-    Capture(inner, index~) => ["Capture \{index}", inner]
-    ZeroOrMore(inner, greedy~) => ["ZeroOrMore greedy=\{greedy}", inner]
-    OneOrMore(inner, greedy~) => ["OneOrMore greedy=\{greedy}", inner]
-    ZeroOrOne(inner, greedy~) => ["ZeroOrOne greedy=\{greedy}", inner]
-    Repeat(greedy~, min~, max~, inner) =>
-      if max is Some(max) {
-        ["Repeat {\{min}, \{max}} greedy=\{greedy}", inner]
-      } else {
-        ["Repeat {\{min},} greedy=\{greedy}", inner]
-      }
-    Concat(regexs) => [..regexs.map(_.to_json())]
-    Alternate(left, right) => ["Alternate", left, right]
-  }
-}
-
-///|
 fn literal(str : String) -> Ast {
   let regex = []
   for ch in str {
@@ -218,6 +197,36 @@ test "alternate capture" {
     ["Chars", ["'b'", "'b'"]],
     ["Save", 5],
     ["Split", 4, 13],
+    ["Save", 1],
+    "Matched",
+  ])
+}
+
+///|
+test "backreference" {
+  let regex = Concat([
+    Capture(
+      ZeroOrMore(Alternate(literal("a"), literal("b")), greedy=true),
+      index=1,
+    ),
+    Backreference(1),
+    Backreference(1),
+  ])
+  @json.inspect(regex.compile(), content=[
+    ["Split", 3, 1],
+    ["Chars", ["'\\u{00}'", "'\\u{10ffff}'"]],
+    ["Jump", 0],
+    ["Save", 0],
+    ["Save", 2],
+    ["Split", 6, 11],
+    ["Split", 7, 9],
+    ["Chars", ["'a'", "'a'"]],
+    ["Jump", 10],
+    ["Chars", ["'b'", "'b'"]],
+    ["Split", 6, 11],
+    ["Save", 3],
+    ["Backreference", 1],
+    ["Backreference", 1],
     ["Save", 1],
     "Matched",
   ])

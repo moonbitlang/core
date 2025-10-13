@@ -15,7 +15,7 @@
 ///|
 test "to be discussed" {
   // This should be allowed in some flavors where the `{` is considered a literal character
-  guard (try? @regex_impl.compile("a{2")) is Err(error)
+  guard (try? @regexp.compile("a{2")) is Err(error)
   error
   |> inspect(
     content=(
@@ -23,7 +23,7 @@ test "to be discussed" {
     ),
   )
   // This should raise InvalidRepeatOp to align with golang
-  guard (try? @regex_impl.compile("a++")) is Err(error)
+  guard (try? @regexp.compile("a++")) is Err(error)
   error
   |> inspect(
     content=(
@@ -33,7 +33,7 @@ test "to be discussed" {
   // Behavior difference between Golang and JS
   // The current behavior aligns with Golang, where the last match is returned for each submatch
   // In JS, the submatch is matched only if the parent is matched
-  let regex = @regex_impl.compile("((?<a>a)|(?<b>b))+")
+  let regex = @regexp.compile("((?<a>a)|(?<b>b))+")
   let result = regex.execute("ab")
   inspect(
     result.groups(),
@@ -45,7 +45,7 @@ test "to be discussed" {
   // Behavior difference between Golang and JS
   // The current behavior aligns with Golang
   // reference https://github.com/golang/go/issues/46123
-  let regex = @regex_impl.compile("(|a)+")
+  let regex = @regexp.compile("(|a)+")
   let result = regex.execute("aaa")
   inspect(
     result.get(0),
@@ -53,7 +53,7 @@ test "to be discussed" {
       #|Some("")
     ),
   )
-  let regex = @regex_impl.compile("(|a)*")
+  let regex = @regexp.compile("(|a)*")
   let result = regex.execute("aaa")
   inspect(
     result.get(0),
