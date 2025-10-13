@@ -33,7 +33,7 @@ impl FromStr with from_str(str) {
 
 ///|
 impl FromStr with from_string(str) {
-  FromStr::from_str(str.to_string_view())
+  FromStr::from_str(str)
 }
 
 ///|
