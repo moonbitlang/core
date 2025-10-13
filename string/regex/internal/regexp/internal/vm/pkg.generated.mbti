@@ -1,8 +1,8 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "moonbitlang/regexp/internal/vm"
+package "moonbitlang/core/string/regex/internal/regexp/internal/vm"
 
 // Values
-fn vm(Array[Instruction], StringView, Int, allow_exponentiaion? : Bool) -> Array[Int]
+fn vm(Array[Instruction], StringView, Int) -> Array[Int]
 
 // Errors
 
@@ -14,7 +14,6 @@ pub(all) enum Instruction {
   Jump(Int)
   Split(Int, Int)
   Assertion(Predicate)
-  Backreference(Int)
 }
 impl ToJson for Instruction
 

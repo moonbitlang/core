@@ -189,7 +189,7 @@ test {
 - **Predictable complexity** — Designed to avoid catastrophic backtracking
   (except with backreferences)
 - **VM-based** — Structured interpreter design
-- **Unicode support** — Character set and property support
+- **Unicode support** — Character set and property support (Currently based on Unicode 16.0 )
 
 Built with reliability and correctness as primary goals.
 

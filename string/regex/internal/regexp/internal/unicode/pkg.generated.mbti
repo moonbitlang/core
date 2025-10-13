@@ -1,5 +1,5 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "moonbitlang/regexp/internal/unicode"
+package "moonbitlang/core/string/regex/internal/regexp/internal/unicode"
 
 // Values
 fn case_insensitive_char_class(Array[Char]) -> Array[Char]

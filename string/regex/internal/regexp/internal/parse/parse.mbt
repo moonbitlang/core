@@ -155,11 +155,7 @@ pub fn parse(
   if parser.input is [')', ..] {
     raise RegexpError(err=UnexpectedParenthesis, source_fragment=parser.input)
   }
-  {
-    ast: result,
-    capture_map: parser.capture_map,
-    captures: parser.captures,
-  }
+  { ast: result, capture_map: parser.capture_map, captures: parser.captures }
 }
 
 ///|

@@ -149,11 +149,7 @@ pub fn Regexp::group_names(self : Regexp) -> Array[String] {
 /// }
 /// ```
 pub fn Regexp::execute(self : Regexp, input : StringView) -> MatchResult {
-  let captures = vm(
-    self.instructions,
-    input,
-    self.capture,
-  )
+  let captures = vm(self.instructions, input, self.capture)
   let (before, after) = if captures is [0..<_ as start, 0..<_ as end, ..] {
     (input.view(end_offset=start), input.view(start_offset=end))
   } else {
@@ -194,11 +190,7 @@ pub fn Regexp::execute_with_remainder(
   self : Regexp,
   input : StringView,
 ) -> (MatchResult, StringView) {
-  let captures = vm(
-    self.instructions,
-    input,
-    self.capture,
-  )
+  let captures = vm(self.instructions, input, self.capture)
   if captures is [0..<_ as start, 0..<_ as end, ..] {
     (
       {
@@ -246,11 +238,7 @@ pub fn Regexp::execute_with_remainder(
 /// assert_true(engine.match_("axxf") is None)
 /// ```
 pub fn Regexp::match_(self : Regexp, input : StringView) -> MatchResult? {
-  let captures = vm(
-    self.instructions,
-    input,
-    self.capture,
-  )
+  let captures = vm(self.instructions, input, self.capture)
   guard captures is [0..<_ as start, 0..<_ as end, ..] else { return None }
   let before = input.view(end_offset=start)
   let after = input.view(start_offset=end)
