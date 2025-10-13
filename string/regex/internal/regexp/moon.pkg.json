@@ -8,12 +8,9 @@
     "moonbitlang/core/string"
   ],
   "test-import": [
-    "moonbitlang/core/option",
-    "moonbitlang/core/result"
+    "moonbitlang/core/option"
   ],
   "wbtest-import": [
-    "moonbitlang/core/string/regex/internal/regexp/internal/parse",
-    "moonbitlang/core/string/regex/internal/regexp/internal/ast",
     "moonbitlang/core/json",
     "moonbitlang/core/result"
   ]

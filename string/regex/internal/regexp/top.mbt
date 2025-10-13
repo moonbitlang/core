@@ -17,7 +17,6 @@ struct Regexp {
   instructions : Array[Instruction]
   map : Map[String, Int]
   capture : Int
-  allow_exponentiaion : Bool
 }
 
 ///|
@@ -27,7 +26,6 @@ fn ParseResult::compile(self : Self) -> Regexp {
     instructions: self.ast.compile(),
     map: self.capture_map,
     capture: self.captures,
-    allow_exponentiaion: self.has_backreference,
   }
 }
 
@@ -155,7 +153,6 @@ pub fn Regexp::execute(self : Regexp, input : StringView) -> MatchResult {
     self.instructions,
     input,
     self.capture,
-    allow_exponentiaion=self.allow_exponentiaion,
   )
   let (before, after) = if captures is [0..<_ as start, 0..<_ as end, ..] {
     (input.view(end_offset=start), input.view(start_offset=end))
@@ -201,7 +198,6 @@ pub fn Regexp::execute_with_remainder(
     self.instructions,
     input,
     self.capture,
-    allow_exponentiaion=self.allow_exponentiaion,
   )
   if captures is [0..<_ as start, 0..<_ as end, ..] {
     (
@@ -254,7 +250,6 @@ pub fn Regexp::match_(self : Regexp, input : StringView) -> MatchResult? {
     self.instructions,
     input,
     self.capture,
-    allow_exponentiaion=self.allow_exponentiaion,
   )
   guard captures is [0..<_ as start, 0..<_ as end, ..] else { return None }
   let before = input.view(end_offset=start)
