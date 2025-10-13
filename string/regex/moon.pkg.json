@@ -1,11 +1,11 @@
 {
   "import": [
     "moonbitlang/core/builtin",
-    "moonbitlang/core/string",
-    "moonbitlang/core/string/regex/internal/regex_impl"
+    { "path": "moonbitlang/core/string/regex/internal/regexp", "alias": "regex_impl" }
   ],
   "test-import": [
     "moonbitlang/core/option",
-    "moonbitlang/core/error"
+    "moonbitlang/core/error",
+    "moonbitlang/core/string"
   ]
 }

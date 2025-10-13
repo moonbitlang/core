@@ -1,0 +1,17 @@
+{
+  "import": [
+    "moonbitlang/core/string/regex/internal/regexp/internal/vm",
+    "moonbitlang/core/string/regex/internal/regexp/internal/ast",
+    "moonbitlang/core/string/regex/internal/regexp/internal/unicode",
+    "moonbitlang/core/builtin",
+    "moonbitlang/core/array",
+    "moonbitlang/core/string",
+    "moonbitlang/core/int",
+    "moonbitlang/core/char",
+    "moonbitlang/core/set"
+  ],
+  "wbtest-import": [
+    "moonbitlang/core/json",
+    "moonbitlang/core/result"
+  ]
+}

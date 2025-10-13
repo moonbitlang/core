@@ -233,7 +233,7 @@ test "parse non-capturing group" {
 ///|
 test "parse named capture group" {
   let regex = parse("(?<name>abc)")
-  let { instructions, capture: capture_count, map } = regex.compile()
+  let { instructions, capture: capture_count, map, .. } = regex.compile()
   let result = vm(instructions, "abc", capture_count)
   inspect(result, content="[0, 3, 0, 3]")
 
@@ -244,7 +244,7 @@ test "parse named capture group" {
 ///|
 test "parse complex named capture group expression" {
   let regex = parse("(?<first>a+)(?<second>b+)")
-  let { instructions, capture: capture_count, map } = regex.compile()
+  let { instructions, capture: capture_count, map, .. } = regex.compile()
   let result = vm(instructions, "aaabbb", capture_count)
   inspect(result, content="[0, 6, 0, 3, 3, 6]")
 
@@ -256,7 +256,7 @@ test "parse complex named capture group expression" {
 ///|
 test "parse nested named capture groups" {
   let regex = parse("(?<outer>a(?<inner>bc)d)")
-  let { instructions, capture: capture_count, map } = regex.compile()
+  let { instructions, capture: capture_count, map, .. } = regex.compile()
   let result = vm(instructions, "abcd", capture_count)
   inspect(result, content="[0, 4, 0, 4, 1, 3]")
 
@@ -268,7 +268,7 @@ test "parse nested named capture groups" {
 ///|
 test "parse mixed named and regular capture groups" {
   let regex = parse("(a)(?<named>b)(c)")
-  let { instructions, capture: capture_count, map } = regex.compile()
+  let { instructions, capture: capture_count, map, .. } = regex.compile()
   let result = vm(instructions, "abc", capture_count)
   inspect(result, content="[0, 3, 0, 1, 1, 2, 2, 3]")
 
@@ -712,6 +712,89 @@ test "parse unmatched curly brace" {
     [
       ["CharClass neg=false", ["'b'", "'b'"]],
       ["CharClass neg=false", ["'}'", "'}'"]],
+    ],
+  ])
+}
+
+///|
+test "parse backreference" {
+  // Test with a valid backreference
+  let regex = parse("(a)(b)\\1").ast
+  @json.inspect(regex, content=[
+    ["Capture 1", ["CharClass neg=false", ["'a'", "'a'"]]],
+    ["Capture 2", ["CharClass neg=false", ["'b'", "'b'"]]],
+    ["Backreference", 1],
+  ])
+
+  // Test with an invalid backreference (no such group)
+  let regex = try? parse("\\2")
+  inspect(
+    regex.map(ignore),
+    content=(
+      #|Err(RegexpError(err=InvalidEscape, source_fragment="\\2"))
+    ),
+  )
+  let regex = try? parse("\\1(a)\\1")
+  inspect(
+    regex.map(ignore),
+    content=(
+      #|Err(RegexpError(err=InvalidEscape, source_fragment="\\1(a)\\1"))
+    ),
+  )
+
+  // Test with a backreference to a recursive backreference
+  let regex = try? parse("(\\1)")
+  inspect(
+    regex.map(ignore),
+    content=(
+      #|Err(RegexpError(err=InvalidEscape, source_fragment="\\1)"))
+    ),
+  )
+}
+
+///|
+test "parse character class range with escaped end character" {
+  // Test unicode escapes in ranges
+  let regex = parse("[a-\\u007A]").ast // Should parse as range from 'a' to 'z' (U+007A)
+  @json.inspect(regex, content=["CharClass neg=false", ["'a'", "'z'"]])
+  let regex = parse("[a-\\u{7A}]").ast // Should parse as range from 'a' to 'z' (U+007A)
+  @json.inspect(regex, content=["CharClass neg=false", ["'a'", "'z'"]])
+
+  // Test with literal backslash in range - backslash (0x5C) < 'z' (0x7A)
+  let regex = parse("[\\\\-z]").ast // Should parse as range from '\' to 'z'
+  @json.inspect(regex, content=["CharClass neg=false", ["'\\\\'", "'z'"]])
+
+  // Test invalid range (end char < start char) - tab comes before 'z', so this should error
+  let result = try? parse("[z-\\t]")
+  inspect(
+    result.map(ignore),
+    content="Err(RegexpError(err=InvalidCharClass, source_fragment=\"]\"))",
+  )
+
+  // Test invalid: character classes like \d cannot be used in ranges on right side
+  let result = try? parse("[a-\\d]")
+  inspect(
+    result.map(ignore),
+    content=(
+      #|Err(RegexpError(err=InvalidCharClass, source_fragment="-\\d]"))
+    ),
+  )
+
+  // Test escaped characters on both sides of range - newline (0x0A) to carriage return (0x0D)
+  let regex = parse("[\\n-\\r]").ast
+  @json.inspect(regex, content=["CharClass neg=false", ["'\\n'", "'\\r'"]])
+
+  // Test range with special escape : \s-\s should be treated as literal characters '-'
+  let regex = parse("[\\s-\\s]").ast
+  @json.inspect(regex, content=[
+    "CharClass neg=false",
+    [
+      "'\\t'", "'\\r'", "' '", "' '", "' '", "' '", "' '", "' '", "' '",
+      "' '", "'\\u{2028}'", "'\\u{2029}'", "' '", "' '", "' '", "' '",
+      "'　'", "'　'", "'\\u{feff}'", "'\\u{feff}'", "'-'", "'-'", "'\\t'", "'\\r'",
+      "' '", "' '", "' '", "' '", "' '", "' '", "' '", "' '", "'\\u{2028}'",
+      "'\\u{2029}'", "' '", "' '", "' '", "' '", "'　'", "'　'", "'\\u{feff}'",
+      "'\\u{feff}'",
     ],
   ])
 }

@@ -1,0 +1,25 @@
+{
+  "import": [
+    { "path": "moonbitlang/core/string/regex/internal/regexp/internal/parse", "alias": "parse" },
+    { "path": "moonbitlang/core/string/regex/internal/regexp/internal/vm", "alias": "vm" },
+    { "path": "moonbitlang/core/string/regex/internal/regexp/internal/ast", "alias": "ast" },
+    "moonbitlang/core/builtin",
+    "moonbitlang/core/array",
+    "moonbitlang/core/string",
+    "moonbitlang/core/int",
+    "moonbitlang/core/char",
+    "moonbitlang/core/hashmap",
+    "moonbitlang/core/test"
+  ],
+  "test-import": [
+    "moonbitlang/core/option",
+    "moonbitlang/core/result"
+  ],
+  "wbtest-import": [
+    { "path": "moonbitlang/core/string/regex/internal/regexp/internal/parse", "alias": "parse" },
+    { "path": "moonbitlang/core/string/regex/internal/regexp/internal/vm", "alias": "vm" },
+    { "path": "moonbitlang/core/string/regex/internal/regexp/internal/ast", "alias": "ast" },
+    "moonbitlang/core/json",
+    "moonbitlang/core/result"
+  ]
+}

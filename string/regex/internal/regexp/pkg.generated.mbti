@@ -1,38 +1,17 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "moonbitlang/core/string/regex/internal/regex_impl"
+package "moonbitlang/regexp"
+
+import(
+  "moonbitlang/regexp/internal/parse"
+)
 
 // Values
-fn compile(StringView, flags? : StringView) -> Regexp raise RegexpError
+fn compile(StringView, flags? : StringView) -> Regexp raise @parse.RegexpError
 
 // Errors
-pub suberror RegexpError {
-  RegexpError(err~ : Err, source_fragment~ : StringView)
-}
-impl Show for RegexpError
 
 // Types and methods
-pub enum Err {
-  InternalError
-  InvalidCharClass
-  InvalidEscape
-  InvalidNamedCapture
-  InvalidRepeatOp
-  InvalidRepeatSize
-  MissingBracket
-  MissingParenthesis
-  MissingRepeatArgument
-  TrailingBackslash
-  UnexpectedParenthesis
-}
-impl Show for Err
-
-pub struct MatchResult {
-  input : StringView
-  captures : Array[Int]
-  names : Map[String, Int]
-  before : StringView
-  after : StringView
-}
+type MatchResult
 fn MatchResult::after(Self) -> StringView
 fn MatchResult::before(Self) -> StringView
 fn MatchResult::get(Self, Int) -> StringView?
@@ -50,6 +29,7 @@ fn Regexp::group_names(Self) -> Array[String]
 fn Regexp::match_(Self, StringView) -> MatchResult?
 
 // Type aliases
+pub typealias @parse.RegexpError as RegexpError
 
 // Traits
 

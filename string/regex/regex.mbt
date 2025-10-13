@@ -14,7 +14,7 @@
 
 ///|
 #internal(experimental, "subject to breaking change without notice")
-struct MatchResult(@regex_impl.MatchResult)
+struct MatchResult(@regex_impl.MatchResult, @regex_impl.Regexp)
 
 ///|
 #internal(experimental, "subject to breaking change without notice")
@@ -43,8 +43,11 @@ pub fn MatchResult::group(self : Self, index : Int) -> StringView? {
 ///|
 #internal(experimental, "subject to breaking change without notice")
 pub fn MatchResult::named_group(self : Self, name : String) -> StringView? {
-  guard self.0.names.get(name) is Some(index) else { None }
-  self.0.get(index)
+  if self.1.group_by_name(name) is Some(index) {
+    self.0.get(index)
+  } else {
+    None
+  }
 }
 
 ///|
@@ -62,6 +65,6 @@ pub fn compile(pattern : StringView) -> Regex raise {
 pub fn Regex::execute(self : Self, input : StringView) -> MatchResult? {
   match self.0.match_(input) {
     None => None
-    Some(result) => Some(MatchResult(result))
+    Some(result) => Some(MatchResult(result, self.0))
   }
 }
