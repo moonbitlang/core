@@ -1,8 +1,8 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "moonbitlang/regexp"
+package "moonbitlang/core/string/regex/internal/regexp"
 
 import(
-  "moonbitlang/regexp/internal/parse"
+  "moonbitlang/core/string/regex/internal/regexp/internal/parse"
 )
 
 // Values

@@ -1,8 +1,8 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "moonbitlang/regexp/internal/parse"
+package "moonbitlang/core/string/regex/internal/regexp/internal/parse"
 
 import(
-  "moonbitlang/regexp/internal/ast"
+  "moonbitlang/core/string/regex/internal/regexp/internal/ast"
 )
 
 // Values
@@ -41,7 +41,6 @@ pub(all) struct ParseResult {
   ast : @ast.Ast
   captures : Int
   capture_map : Map[String, Int]
-  has_backreference : Bool
 }
 impl ToJson for ParseResult
 
