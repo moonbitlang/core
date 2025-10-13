@@ -20,42 +20,55 @@
 
 ///|
 pub(open) trait FromStr {
-  from_string(String) -> Self raise StrConvError
+  from_str(StringView) -> Self raise StrConvError = _
+  #deprecated("use `from_str` instead")
+  from_string(String) -> Self raise StrConvError = _
 }
 
 ///|
-pub impl FromStr for Bool with from_string(str) {
+#deprecated("replace `impl from_string` with `impl from_str`")
+impl FromStr with from_str(str) {
+  FromStr::from_string(str.to_string())
+}
+
+///|
+impl FromStr with from_string(str) {
+  FromStr::from_str(str.to_string_view())
+}
+
+///|
+pub impl FromStr for Bool with from_str(str) {
   parse_bool(str)
 }
 
 ///|
-pub impl FromStr for Int with from_string(str) {
+pub impl FromStr for Int with from_str(str) {
   parse_int(str)
 }
 
 ///|
-pub impl FromStr for Int64 with from_string(str) {
+pub impl FromStr for Int64 with from_str(str) {
   parse_int64(str)
 }
 
 ///|
-pub impl FromStr for UInt with from_string(str) {
+pub impl FromStr for UInt with from_str(str) {
   parse_uint(str)
 }
 
 ///|
-pub impl FromStr for UInt64 with from_string(str) {
+pub impl FromStr for UInt64 with from_str(str) {
   parse_uint64(str)
 }
 
 ///|
-pub impl FromStr for Double with from_string(str) {
+pub impl FromStr for Double with from_str(str) {
   parse_double(str)
 }
 
 ///|
-pub fn[A : FromStr] parse(str : String) -> A raise StrConvError {
-  A::from_string(str)
+pub fn[A : FromStr] parse(str : StringView) -> A raise StrConvError {
+  A::from_str(str)
 }
 
 ///|
