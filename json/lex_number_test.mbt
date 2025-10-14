@@ -16,6 +16,7 @@
 
 ///|
 fnalias @builtin.inspect
+// using @builtin {inspect}
 
 ///| shadow
 

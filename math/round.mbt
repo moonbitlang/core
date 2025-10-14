@@ -13,4 +13,4 @@
 // limitations under the License.
 
 ///|
-pub fnalias @double.(round, ceil, floor, trunc)
+pub using @double {round, ceil, floor, trunc}
