@@ -3,6 +3,7 @@ package "moonbitlang/core/hashset"
 
 import(
   "moonbitlang/core/quickcheck"
+  "moonbitlang/core/quickcheck/splitmix"
 )
 
 // Values
@@ -13,10 +14,12 @@ import(
 type HashSet[K]
 fn[K : Hash + Eq] HashSet::add(Self[K], K) -> Unit
 fn[K : Hash + Eq] HashSet::add_and_check(Self[K], K) -> Bool
+fn[X : @quickcheck.Arbitrary + Eq + Hash] HashSet::arbitrary(Int, @splitmix.RandomState) -> Self[X] // from trait `@quickcheck.Arbitrary`
 fn[K] HashSet::capacity(Self[K]) -> Int
 fn[K] HashSet::clear(Self[K]) -> Unit
 fn[K : Hash + Eq] HashSet::contains(Self[K], K) -> Bool
 fn[K] HashSet::copy(Self[K]) -> Self[K]
+fn[K] HashSet::default() -> Self[K] // from trait `Default`
 fn[K : Hash + Eq] HashSet::difference(Self[K], Self[K]) -> Self[K]
 fn[K] HashSet::each(Self[K], (K) -> Unit raise?) -> Unit raise?
 fn[K] HashSet::eachi(Self[K], (Int, K) -> Unit raise?) -> Unit raise?
@@ -32,16 +35,25 @@ fn[K] HashSet::is_empty(Self[K]) -> Bool
 fn[K : Hash + Eq] HashSet::is_subset(Self[K], Self[K]) -> Bool
 fn[K : Hash + Eq] HashSet::is_superset(Self[K], Self[K]) -> Bool
 fn[K] HashSet::iter(Self[K]) -> Iter[K]
+fn[K : Hash + Eq] HashSet::land(Self[K], Self[K]) -> Self[K] // from trait `BitAnd`
 #alias(size, deprecated)
 fn[K] HashSet::length(Self[K]) -> Int
+fn[K : Hash + Eq] HashSet::lor(Self[K], Self[K]) -> Self[K] // from trait `BitOr`
+fn[K : Hash + Eq] HashSet::lxor(Self[K], Self[K]) -> Self[K] // from trait `BitXOr`
 #as_free_fn
 fn[K] HashSet::new(capacity? : Int) -> Self[K]
 #as_free_fn
 fn[K : Hash + Eq] HashSet::of(FixedArray[K]) -> Self[K]
+#deprecated
+fn[K : Hash + Eq] HashSet::op_sub(Self[K], Self[K]) -> Self[K] // from trait `Sub`
+fn[K : Show] HashSet::output(Self[K], &Logger) -> Unit // from trait `Show`
 fn[K : Hash + Eq] HashSet::remove(Self[K], K) -> Unit
 fn[K : Hash + Eq] HashSet::remove_and_check(Self[K], K) -> Bool
+fn[K : Hash + Eq] HashSet::sub(Self[K], Self[K]) -> Self[K] // from trait `Sub`
 fn[K : Hash + Eq] HashSet::symmetric_difference(Self[K], Self[K]) -> Self[K]
 fn[K] HashSet::to_array(Self[K]) -> Array[K]
+fn[X : ToJson] HashSet::to_json(Self[X]) -> Json // from trait `ToJson`
+fn[K : Show] HashSet::to_string(Self[K]) -> String // from trait `Show`
 fn[K : Hash + Eq] HashSet::union(Self[K], Self[K]) -> Self[K]
 impl[K : Hash + Eq] BitAnd for HashSet[K]
 impl[K : Hash + Eq] BitOr for HashSet[K]

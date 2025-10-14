@@ -3,6 +3,7 @@ package "moonbitlang/core/sorted_set"
 
 import(
   "moonbitlang/core/quickcheck"
+  "moonbitlang/core/quickcheck/splitmix"
 )
 
 // Values
@@ -12,16 +13,19 @@ import(
 // Types and methods
 type SortedSet[V]
 fn[V : Compare] SortedSet::add(Self[V], V) -> Unit
+fn[X : @quickcheck.Arbitrary + Compare] SortedSet::arbitrary(Int, @splitmix.RandomState) -> Self[X] // from trait `@quickcheck.Arbitrary`
 fn[V : Compare] SortedSet::contains(Self[V], V) -> Bool
 fn[V] SortedSet::copy(Self[V]) -> Self[V]
 #deprecated
 fn[V] SortedSet::deep_clone(Self[V]) -> Self[V]
+fn[K] SortedSet::default() -> Self[K] // from trait `Default`
 #deprecated
 fn[V : Compare] SortedSet::diff(Self[V], Self[V]) -> Self[V]
 fn[V : Compare] SortedSet::difference(Self[V], Self[V]) -> Self[V]
 fn[V : Compare] SortedSet::disjoint(Self[V], Self[V]) -> Bool
 fn[V] SortedSet::each(Self[V], (V) -> Unit raise?) -> Unit raise?
 fn[V] SortedSet::eachi(Self[V], (Int, V) -> Unit raise?) -> Unit raise?
+fn[V : Eq] SortedSet::equal(Self[V], Self[V]) -> Bool // from trait `Eq`
 #as_free_fn
 fn[V : Compare] SortedSet::from_array(Array[V]) -> Self[V]
 #as_free_fn
@@ -37,6 +41,9 @@ fn[V] SortedSet::length(Self[V]) -> Int
 fn[V] SortedSet::new() -> Self[V]
 #as_free_fn
 fn[V : Compare] SortedSet::of(FixedArray[V]) -> Self[V]
+#deprecated
+fn[V : Eq] SortedSet::op_equal(Self[V], Self[V]) -> Bool // from trait `Eq`
+fn[V : Show] SortedSet::output(Self[V], &Logger) -> Unit // from trait `Show`
 fn[V : Compare] SortedSet::range(Self[V], V, V) -> Iter[V]
 fn[V : Compare] SortedSet::remove(Self[V], V) -> Unit
 #as_free_fn
@@ -44,6 +51,7 @@ fn[V] SortedSet::singleton(V) -> Self[V]
 fn[V : Compare] SortedSet::subset(Self[V], Self[V]) -> Bool
 fn[V : Compare] SortedSet::symmetric_difference(Self[V], Self[V]) -> Self[V]
 fn[V] SortedSet::to_array(Self[V]) -> Array[V]
+fn[V : Show] SortedSet::to_string(Self[V]) -> String // from trait `Show`
 fn[V : Compare] SortedSet::union(Self[V], Self[V]) -> Self[V]
 impl[K] Default for SortedSet[K]
 impl[V : Eq] Eq for SortedSet[V]

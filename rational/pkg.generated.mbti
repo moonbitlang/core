@@ -1,6 +1,11 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "moonbitlang/core/rational"
 
+import(
+  "moonbitlang/core/quickcheck"
+  "moonbitlang/core/quickcheck/splitmix"
+)
+
 // Values
 #deprecated
 fn from_double(Double) -> T raise RationalError
@@ -10,6 +15,12 @@ fn new(Int64, Int64) -> T?
 
 // Errors
 pub(all) suberror RationalError String
+fn RationalError::equal(Self, Self) -> Bool // from trait `Eq`
+#deprecated
+fn RationalError::op_equal(Self, Self) -> Bool // from trait `Eq`
+fn RationalError::output(Self, &Logger) -> Unit // from trait `Show`
+fn RationalError::to_json(Self) -> Json // from trait `ToJson`
+fn RationalError::to_string(Self) -> String // from trait `Show`
 impl Eq for RationalError
 impl Show for RationalError
 impl ToJson for RationalError
@@ -19,9 +30,14 @@ type T
 #as_free_fn
 #deprecated
 fn T::abs(Self) -> Self
+fn T::add(Self, Self) -> Self // from trait `Add`
+fn T::arbitrary(Int, @splitmix.RandomState) -> Self // from trait `@quickcheck.Arbitrary`
 #as_free_fn
 #deprecated
 fn T::ceil(Self) -> Int64
+fn T::compare(Self, Self) -> Int // from trait `Compare`
+fn T::div(Self, Self) -> Self // from trait `Div`
+fn T::equal(Self, Self) -> Bool // from trait `Eq`
 #as_free_fn
 #deprecated
 fn T::floor(Self) -> Int64
@@ -29,13 +45,27 @@ fn T::floor(Self) -> Int64
 fn T::fract(Self) -> Self
 #deprecated
 fn T::is_integer(Self) -> Bool
+fn T::mul(Self, Self) -> Self // from trait `Mul`
 #as_free_fn
 #deprecated
 fn T::neg(Self) -> Self
 #deprecated
+fn T::op_add(Self, Self) -> Self // from trait `Add`
+#deprecated
+fn T::op_div(Self, Self) -> Self // from trait `Div`
+#deprecated
+fn T::op_equal(Self, Self) -> Bool // from trait `Eq`
+#deprecated
+fn T::op_mul(Self, Self) -> Self // from trait `Mul`
+#deprecated
+fn T::op_sub(Self, Self) -> Self // from trait `Sub`
+fn T::output(Self, &Logger) -> Unit // from trait `Show`
+#deprecated
 fn T::reciprocal(Self) -> Self
+fn T::sub(Self, Self) -> Self // from trait `Sub`
 #deprecated
 fn T::to_double(Self) -> Double
+fn T::to_string(Self) -> String // from trait `Show`
 #as_free_fn
 #deprecated
 fn T::trunc(Self) -> Int64
@@ -46,7 +76,7 @@ impl Eq for T
 impl Mul for T
 impl Show for T
 impl Sub for T
-impl @moonbitlang/core/quickcheck.Arbitrary for T
+impl @quickcheck.Arbitrary for T
 
 // Type aliases
 

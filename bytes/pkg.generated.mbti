@@ -7,6 +7,8 @@ fn default() -> Bytes
 // Errors
 
 // Types and methods
+fn Bytes::add(Bytes, Bytes) -> Bytes // from trait `Add`
+fn Bytes::default() -> Bytes // from trait `Default`
 fn Bytes::find(Bytes, BytesView) -> Int?
 #as_free_fn
 fn Bytes::from_array(Array[Byte]) -> Bytes
@@ -15,16 +17,23 @@ fn Bytes::from_fixedarray(FixedArray[Byte], len? : Int) -> Bytes
 #as_free_fn
 fn Bytes::from_iter(Iter[Byte]) -> Bytes
 fn Bytes::get(Bytes, Int) -> Byte?
+fn Bytes::hash(Bytes) -> Int // from trait `Hash`
+fn Bytes::hash_combine(Bytes, Hasher) -> Unit // from trait `Hash`
 fn Bytes::iter(Bytes) -> Iter[Byte]
 fn Bytes::iter2(Bytes) -> Iter2[Int, Byte]
 #as_free_fn
 fn Bytes::of(FixedArray[Byte]) -> Bytes
+#deprecated
+fn Bytes::op_add(Bytes, Bytes) -> Bytes // from trait `Add`
+fn Bytes::output(Bytes, &Logger) -> Unit // from trait `Show`
 fn Bytes::repeat(Bytes, Int) -> Bytes
 fn Bytes::rev_find(Bytes, BytesView) -> Int?
 #alias("_[_:_]")
 fn Bytes::sub(Bytes, start? : Int, end? : Int) -> BytesView
 fn Bytes::to_array(Bytes) -> Array[Byte]
 fn Bytes::to_fixedarray(Bytes, len? : Int) -> FixedArray[Byte]
+fn Bytes::to_json(Bytes) -> Json // from trait `ToJson`
+fn Bytes::to_string(Bytes) -> String // from trait `Show`
 fn Bytes::unsafe_extract_bit(Bytes, Int, Int) -> UInt
 fn Bytes::unsafe_extract_byte(Bytes, Int, Int) -> UInt
 fn Bytes::unsafe_extract_bytesview(Bytes, Int, Int) -> BytesView
@@ -40,11 +49,18 @@ impl ToJson for Bytes
 
 #alias("_[_]")
 fn BytesView::at(Self, Int) -> Byte
+fn BytesView::compare(Self, Self) -> Int // from trait `Compare`
 fn BytesView::data(Self) -> Bytes
+fn BytesView::equal(Self, Self) -> Bool // from trait `Eq`
 fn BytesView::find(Self, Self) -> Int?
 fn BytesView::get(Self, Int) -> Byte?
+fn BytesView::hash(Self) -> Int // from trait `Hash`
+fn BytesView::hash_combine(Self, Hasher) -> Unit // from trait `Hash`
 fn BytesView::iter(Self) -> Iter[Byte]
 fn BytesView::length(Self) -> Int
+#deprecated
+fn BytesView::op_equal(Self, Self) -> Bool // from trait `Eq`
+fn BytesView::output(Self, &Logger) -> Unit // from trait `Show`
 fn BytesView::rev_find(Self, Self) -> Int?
 fn BytesView::start_offset(Self) -> Int
 #alias("_[_:_]")
@@ -58,6 +74,8 @@ fn BytesView::to_int64_be(Self) -> Int64
 fn BytesView::to_int64_le(Self) -> Int64
 fn BytesView::to_int_be(Self) -> Int
 fn BytesView::to_int_le(Self) -> Int
+fn BytesView::to_json(Self) -> Json // from trait `ToJson`
+fn BytesView::to_string(Self) -> String // from trait `Show`
 fn BytesView::to_uint64_be(Self) -> UInt64
 fn BytesView::to_uint64_le(Self) -> UInt64
 fn BytesView::to_uint_be(Self) -> UInt

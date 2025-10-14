@@ -19,6 +19,7 @@ fn[Any] Bench::keep(Self, Any) -> Unit
 fn Bench::new() -> Self
 
 type Summary
+fn Summary::to_json(Self) -> Json // from trait `ToJson`
 impl ToJson for Summary
 
 type Timestamp
