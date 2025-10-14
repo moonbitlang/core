@@ -12,6 +12,8 @@ fn parse(StringView, flags? : Flags) -> ParseResult raise RegexpError
 pub suberror RegexpError {
   RegexpError(err~ : Err, source_fragment~ : StringView)
 }
+fn RegexpError::output(Self, &Logger) -> Unit // from trait `Show`
+fn RegexpError::to_string(Self) -> String // from trait `Show`
 impl Show for RegexpError
 
 // Types and methods
@@ -28,6 +30,8 @@ pub enum Err {
   TrailingBackslash
   UnexpectedParenthesis
 }
+fn Err::output(Self, &Logger) -> Unit // from trait `Show`
+fn Err::to_string(Self) -> String // from trait `Show`
 impl Show for Err
 
 pub(all) struct Flags {
@@ -35,6 +39,7 @@ pub(all) struct Flags {
   singleline : Bool
   ignore_case : Bool
 }
+fn Flags::default() -> Self // from trait `Default`
 impl Default for Flags
 
 pub(all) struct ParseResult {
@@ -42,6 +47,7 @@ pub(all) struct ParseResult {
   captures : Int
   capture_map : Map[String, Int]
 }
+fn ParseResult::to_json(Self) -> Json // from trait `ToJson`
 impl ToJson for ParseResult
 
 // Type aliases
