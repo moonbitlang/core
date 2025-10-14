@@ -58,7 +58,7 @@ pub fn[T] ignore(t : T) -> Unit = "%ignore"
 pub fn[T] physical_equal(a : T, b : T) -> Bool = "%refeq"
 
 ///|
-pub fnalias @abort.abort
+pub using @abort {abort}
 
 ///|
 pub fn[T] panic() -> T = "%panic"
