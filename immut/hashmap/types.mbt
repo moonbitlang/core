@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-typealias @path.Path
+using @path {type Path}
 
 ///|
 /// An non-empty immutable hash set data structure

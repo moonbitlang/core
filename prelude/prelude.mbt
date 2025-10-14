@@ -12,14 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+///|
+pub using @set {type Set}
 
 ///|
-pub typealias @set.Set
-
-///|
-pub typealias @bigint.BigInt
-
-
+pub using @bigint {type BigInt}
 
 ///|
 pub using @builtin {
