@@ -116,3 +116,15 @@ fn pcap_ipv4_test(ipv4 : BytesView) -> Unit raise {
 test "pcap_test" {
   inspect(try? pcap_test(data[:]), content="Ok(())")
 }
+
+///|
+test "u32le u32be last" {
+  match b"\x01\x02\x03\x04" {
+    [.., u32le(x)] => assert_eq(x, 0x04030201)
+    _ => fail("Not matched")
+  }
+  match b"\x01\x02\x03\x04" {
+    [.., u32be(x)] => assert_eq(x, 0x01020304)
+    _ => fail("Not matched")
+  }
+}
