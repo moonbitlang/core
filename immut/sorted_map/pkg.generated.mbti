@@ -4,6 +4,7 @@ package "moonbitlang/core/immut/sorted_map"
 import(
   "moonbitlang/core/json"
   "moonbitlang/core/quickcheck"
+  "moonbitlang/core/quickcheck/splitmix"
 )
 
 // Values
@@ -14,15 +15,19 @@ import(
 type SortedMap[K, V]
 #alias(insert, deprecated)
 fn[K : Compare, V] SortedMap::add(Self[K, V], K, V) -> Self[K, V]
+fn[K : @quickcheck.Arbitrary + Compare, V : @quickcheck.Arbitrary] SortedMap::arbitrary(Int, @splitmix.RandomState) -> Self[K, V] // from trait `@quickcheck.Arbitrary`
 #alias("_[_]")
 fn[K : Compare, V] SortedMap::at(Self[K, V], K) -> V
+fn[K : Compare, V : Compare] SortedMap::compare(Self[K, V], Self[K, V]) -> Int // from trait `Compare`
 fn[K : Compare, V] SortedMap::contains(Self[K, V], K) -> Bool
+fn[K, V] SortedMap::default() -> Self[K, V] // from trait `Default`
 fn[K, V] SortedMap::each(Self[K, V], (K, V) -> Unit) -> Unit
 fn[K, V] SortedMap::eachi(Self[K, V], (Int, K, V) -> Unit) -> Unit
 #deprecated
 fn[K, V] SortedMap::elems(Self[K, V]) -> Array[V]
 #deprecated
 fn[K, V] SortedMap::empty() -> Self[K, V]
+fn[K : Eq, V : Eq] SortedMap::equal(Self[K, V], Self[K, V]) -> Bool // from trait `Eq`
 #deprecated
 fn[K, V] SortedMap::filter(Self[K, V], (V) -> Bool raise?) -> Self[K, V] raise?
 fn[K, V] SortedMap::filter_with_key(Self[K, V], (K, V) -> Bool raise?) -> Self[K, V] raise?
@@ -36,6 +41,8 @@ fn[K : Compare, V] SortedMap::from_iter(Iter[(K, V)]) -> Self[K, V]
 #as_free_fn
 fn[V : @json.FromJson] SortedMap::from_json(Json) -> Self[String, V] raise @json.JsonDecodeError
 fn[K : Compare, V] SortedMap::get(Self[K, V], K) -> V?
+fn[K : Hash, V : Hash] SortedMap::hash(Self[K, V]) -> Int // from trait `Hash`
+fn[K : Hash, V : Hash] SortedMap::hash_combine(Self[K, V], Hasher) -> Unit // from trait `Hash`
 fn[K, V] SortedMap::is_empty(Self[K, V]) -> Bool
 fn[K, V] SortedMap::iter(Self[K, V]) -> Iter[(K, V)]
 fn[K, V] SortedMap::iter2(Self[K, V]) -> Iter2[K, V]
@@ -53,6 +60,9 @@ fn[K, X, Y] SortedMap::map_with_key(Self[K, X], (K, X) -> Y) -> Self[K, Y]
 fn[K, V] SortedMap::new() -> Self[K, V]
 #as_free_fn
 fn[K : Compare, V] SortedMap::of(FixedArray[(K, V)]) -> Self[K, V]
+#deprecated
+fn[K : Eq, V : Eq] SortedMap::op_equal(Self[K, V], Self[K, V]) -> Bool // from trait `Eq`
+fn[K : Show, V : Show] SortedMap::output(Self[K, V], &Logger) -> Unit // from trait `Show`
 fn[K : Compare, V] SortedMap::remove(Self[K, V], K) -> Self[K, V]
 #alias(foldr_with_key)
 fn[K, V, A] SortedMap::rev_fold(Self[K, V], (A, K, V) -> A, init~ : A) -> A
@@ -60,6 +70,7 @@ fn[K, V, A] SortedMap::rev_fold(Self[K, V], (A, K, V) -> A, init~ : A) -> A
 fn[K, V] SortedMap::singleton(K, V) -> Self[K, V]
 fn[K, V] SortedMap::to_array(Self[K, V]) -> Array[(K, V)]
 fn[K : Show, V : ToJson] SortedMap::to_json(Self[K, V]) -> Json
+fn[K : Show, V : Show] SortedMap::to_string(Self[K, V]) -> String // from trait `Show`
 fn[K, V] SortedMap::values(Self[K, V]) -> Iter[V]
 impl[K : Compare, V : Compare] Compare for SortedMap[K, V]
 impl[K, V] Default for SortedMap[K, V]

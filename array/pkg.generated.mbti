@@ -3,6 +3,7 @@ package "moonbitlang/core/array"
 
 import(
   "moonbitlang/core/quickcheck"
+  "moonbitlang/core/quickcheck/splitmix"
   "moonbitlang/core/string"
 )
 
@@ -12,24 +13,34 @@ fn[A, B, C] zip_with(Array[A], Array[B], (A, B) -> C raise?) -> Array[C] raise?
 // Errors
 
 // Types and methods
+fn[T] FixedArray::add(Self[T], Self[T]) -> Self[T] // from trait `Add`
 fn[T] FixedArray::all(Self[T], (T) -> Bool raise?) -> Bool raise?
 fn[T] FixedArray::any(Self[T], (T) -> Bool raise?) -> Bool raise?
+fn[X : @quickcheck.Arbitrary] FixedArray::arbitrary(Int, @splitmix.RandomState) -> Self[X] // from trait `@quickcheck.Arbitrary`
 fn FixedArray::blit_from_bytesview(Self[Byte], Int, BytesView) -> Unit
+fn[T : Compare] FixedArray::compare(Self[T], Self[T]) -> Int // from trait `Compare`
 fn[T : Eq] FixedArray::contains(Self[T], T) -> Bool
 fn[T] FixedArray::copy(Self[T]) -> Self[T]
 fn[T] FixedArray::each(Self[T], (T) -> Unit raise?) -> Unit raise?
 fn[T] FixedArray::eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?
 fn[T : Eq] FixedArray::ends_with(Self[T], Self[T]) -> Bool
+fn[T : Eq] FixedArray::equal(Self[T], Self[T]) -> Bool // from trait `Eq`
 fn[A, B] FixedArray::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 fn[A, B] FixedArray::foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
 fn[T] FixedArray::from_array(Array[T]) -> Self[T]
 fn[T] FixedArray::from_iter(Iter[T]) -> Self[T]
+fn[T : Hash] FixedArray::hash(Self[T]) -> Int // from trait `Hash`
+fn[T : Hash] FixedArray::hash_combine(Self[T], Hasher) -> Unit // from trait `Hash`
 fn[T : Compare] FixedArray::is_sorted(Self[T]) -> Bool
 fn FixedArray::join(Self[String], StringView) -> String
 fn[A] FixedArray::last(Self[A]) -> A?
 fn[T] FixedArray::makei(Int, (Int) -> T raise?) -> Self[T] raise?
 fn[T, U] FixedArray::map(Self[T], (T) -> U raise?) -> Self[U] raise?
 fn[T, U] FixedArray::mapi(Self[T], (Int, T) -> U raise?) -> Self[U] raise?
+#deprecated
+fn[T] FixedArray::op_add(Self[T], Self[T]) -> Self[T] // from trait `Add`
+#deprecated
+fn[T : Eq] FixedArray::op_equal(Self[T], Self[T]) -> Bool // from trait `Eq`
 fn[T] FixedArray::rev(Self[T]) -> Self[T]
 fn[T] FixedArray::rev_each(Self[T], (T) -> Unit raise?) -> Unit raise?
 fn[T] FixedArray::rev_eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?
@@ -56,6 +67,7 @@ impl[T : Eq] Eq for FixedArray[T]
 impl[T : Hash] Hash for FixedArray[T]
 impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for FixedArray[X]
 
+fn[X : @quickcheck.Arbitrary] Array::arbitrary(Int, @splitmix.RandomState) -> Self[X] // from trait `@quickcheck.Arbitrary`
 fn[T] Array::copy(Self[T]) -> Self[T]
 fn[A, B] Array::filter_map(Self[A], (A) -> B? raise?) -> Self[B] raise?
 fn[T] Array::from_iter(Iter[T]) -> Self[T]
@@ -81,21 +93,30 @@ impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Array[X]
 
 fn[T] ArrayView::all(Self[T], (T) -> Bool raise?) -> Bool raise?
 fn[T] ArrayView::any(Self[T], (T) -> Bool raise?) -> Bool raise?
+fn[A : @quickcheck.Arbitrary] ArrayView::arbitrary(Int, @splitmix.RandomState) -> Self[A] // from trait `@quickcheck.Arbitrary`
+fn[T : Compare] ArrayView::compare(Self[T], Self[T]) -> Int // from trait `Compare`
 fn[T : Eq] ArrayView::contains(Self[T], T) -> Bool
 fn[T] ArrayView::each(Self[T], (T) -> Unit raise?) -> Unit raise?
 fn[T] ArrayView::eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?
+fn[T : Eq] ArrayView::equal(Self[T], Self[T]) -> Bool // from trait `Eq`
 fn[T] ArrayView::filter(Self[T], (T) -> Bool raise?) -> Array[T] raise?
 fn[A, B] ArrayView::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 fn[A, B] ArrayView::foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
+fn[A : Hash] ArrayView::hash(Self[A]) -> Int // from trait `Hash`
+fn[A : Hash] ArrayView::hash_combine(Self[A], Hasher) -> Unit // from trait `Hash`
 fn[A] ArrayView::iter(Self[A]) -> Iter[A]
 fn[A] ArrayView::iter2(Self[A]) -> Iter2[Int, A]
 fn[A : @string.ToStringView] ArrayView::join(Self[A], StringView) -> String
 fn[T, U] ArrayView::map(Self[T], (T) -> U raise?) -> Array[U] raise?
 fn[T, U] ArrayView::mapi(Self[T], (Int, T) -> U raise?) -> Array[U] raise?
+#deprecated
+fn[T : Eq] ArrayView::op_equal(Self[T], Self[T]) -> Bool // from trait `Eq`
+fn[X : Show] ArrayView::output(Self[X], &Logger) -> Unit // from trait `Show`
 fn[A, B] ArrayView::rev_fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 fn[A, B] ArrayView::rev_foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
 fn[T] ArrayView::start_offset(Self[T]) -> Int
 fn[T] ArrayView::to_array(Self[T]) -> Array[T]
+fn[X : Show] ArrayView::to_string(Self[X]) -> String // from trait `Show`
 fn ArrayView::unsafe_extract_bit(Self[Byte], Int, Int) -> UInt
 fn ArrayView::unsafe_extract_byte(Self[Byte], Int, Int) -> UInt
 fn ArrayView::unsafe_extract_bytesview(Self[Byte], Int, Int) -> Self[Byte]

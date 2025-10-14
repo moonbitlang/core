@@ -11,6 +11,7 @@ let min_value : UInt
 // Errors
 
 // Types and methods
+fn UInt::default() -> UInt // from trait `Default`
 fn UInt::to_be_bytes(UInt) -> Bytes
 fn UInt::to_int64(UInt) -> Int64
 fn UInt::to_le_bytes(UInt) -> Bytes

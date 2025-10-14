@@ -9,14 +9,18 @@ pub suberror CreatingViewError {
   IndexOutOfBounds
   InvalidIndex
 }
+fn CreatingViewError::output(Self, &Logger) -> Unit // from trait `Show`
+fn CreatingViewError::to_string(Self) -> String // from trait `Show`
 impl Show for CreatingViewError
 
 // Types and methods
 fn String::char_length_eq(String, Int, start_offset? : Int, end_offset? : Int) -> Bool
 fn String::char_length_ge(String, Int, start_offset? : Int, end_offset? : Int) -> Bool
+fn String::compare(String, String) -> Int // from trait `Compare`
 fn String::contains(String, StringView) -> Bool
 fn String::contains_any(String, chars~ : StringView) -> Bool
 fn String::contains_char(String, Char) -> Bool
+fn String::default() -> String // from trait `Default`
 fn String::find(String, StringView) -> Int?
 fn String::find_by(String, (Char) -> Bool) -> Int?
 fn[A] String::fold(String, init~ : A, (A, Char) -> A) -> A
@@ -53,6 +57,7 @@ fn String::to_array(String) -> Array[Char]
 #deprecated
 fn String::to_bytes(String) -> Bytes
 fn String::to_lower(String) -> String
+fn String::to_string_view(String) -> StringView // from trait `ToStringView`
 fn String::to_upper(String) -> String
 #callsite(migration(char_set, allow_positional=true))
 fn String::trim(String, char_set~ : StringView) -> StringView
@@ -65,15 +70,19 @@ fn String::view(String, start_offset? : Int, end_offset? : Int) -> StringView
 impl Compare for String
 impl Default for String
 
+fn StringView::add(Self, Self) -> Self // from trait `Add`
 #alias("_[_]")
 fn StringView::at(Self, Int) -> Int
 fn StringView::char_length(Self) -> Int
 fn StringView::char_length_eq(Self, Int) -> Bool
 fn StringView::char_length_ge(Self, Int) -> Bool
+fn StringView::compare(Self, Self) -> Int // from trait `Compare`
 fn StringView::contains(Self, Self) -> Bool
 fn StringView::contains_any(Self, chars~ : Self) -> Bool
 fn StringView::contains_char(Self, Char) -> Bool
 fn StringView::data(Self) -> String
+fn StringView::default() -> Self // from trait `Default`
+fn StringView::equal(Self, Self) -> Bool // from trait `Eq`
 fn StringView::find(Self, Self) -> Int?
 fn StringView::find_by(Self, (Char) -> Bool) -> Int?
 fn[A] StringView::fold(Self, init~ : A, (A, Char) -> A) -> A
@@ -85,6 +94,8 @@ fn StringView::get_char(Self, Int) -> Char?
 fn StringView::has_prefix(Self, Self) -> Bool
 #alias(ends_with, deprecated)
 fn StringView::has_suffix(Self, Self) -> Bool
+fn StringView::hash(Self) -> Int // from trait `Hash`
+fn StringView::hash_combine(Self, Hasher) -> Unit // from trait `Hash`
 fn StringView::is_blank(Self) -> Bool
 fn StringView::is_empty(Self) -> Bool
 fn StringView::iter(Self) -> Iter[Char]
@@ -92,6 +103,11 @@ fn StringView::iter2(Self) -> Iter2[Int, Char]
 fn StringView::length(Self) -> Int
 fn StringView::make(Int, Char) -> Self
 fn StringView::offset_of_nth_char(Self, Int) -> Int?
+#deprecated
+fn StringView::op_add(Self, Self) -> Self // from trait `Add`
+#deprecated
+fn StringView::op_equal(Self, Self) -> Bool // from trait `Eq`
+fn StringView::output(Self, &Logger) -> Unit // from trait `Show`
 fn StringView::pad_end(Self, Int, Char) -> String
 fn StringView::pad_start(Self, Int, Char) -> String
 fn StringView::repeat(Self, Int) -> Self
@@ -110,7 +126,10 @@ fn StringView::sub(Self, start? : Int, end? : Int) -> Self raise CreatingViewErr
 fn StringView::to_array(Self) -> Array[Char]
 #deprecated
 fn StringView::to_bytes(Self) -> Bytes
+fn StringView::to_json(Self) -> Json // from trait `ToJson`
 fn StringView::to_lower(Self) -> Self
+fn StringView::to_string(Self) -> String // from trait `Show`
+fn StringView::to_string_view(Self) -> Self // from trait `ToStringView`
 fn StringView::to_upper(Self) -> Self
 #callsite(migration(char_set, allow_positional=true))
 fn StringView::trim(Self, char_set~ : Self) -> Self

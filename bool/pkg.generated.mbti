@@ -6,6 +6,8 @@ package "moonbitlang/core/bool"
 // Errors
 
 // Types and methods
+fn Bool::hash(Bool) -> Int // from trait `Hash`
+fn Bool::hash_combine(Bool, Hasher) -> Unit // from trait `Hash`
 fn Bool::to_int(Bool) -> Int
 fn Bool::to_int16(Bool) -> Int16
 fn Bool::to_int64(Bool) -> Int64

@@ -41,9 +41,6 @@ fn cbrt(Double) -> Double
 
 fn cbrtf(Float) -> Float
 
-#as_free_fn
-fn ceil(Double) -> Double
-
 fn cos(Double) -> Double
 
 fn cosf(Float) -> Float
@@ -59,9 +56,6 @@ fn expf(Float) -> Float
 fn expm1(Double) -> Double
 
 fn expm1f(Float) -> Float
-
-#as_free_fn
-fn floor(Double) -> Double
 
 fn hypot(Double, Double) -> Double
 
@@ -96,9 +90,6 @@ fn powf(Float, Float) -> Float
 
 fn probable_prime(Int, @random.Rand) -> @bigint.BigInt
 
-#as_free_fn
-fn round(Double) -> Double
-
 fn scalbn(Double, Int) -> Double
 
 fn scalbnf(Float, Int) -> Float
@@ -118,9 +109,6 @@ fn tanf(Float) -> Float
 fn tanh(Double) -> Double
 
 fn tanhf(Float) -> Float
-
-#as_free_fn
-fn trunc(Double) -> Double
 
 // Errors
 

@@ -6,6 +6,9 @@ package "moonbitlang/core/error"
 // Errors
 
 // Types and methods
+fn Error::output(Self, &Logger) -> Unit // from trait `Show`
+fn Error::to_json(Self) -> Json // from trait `ToJson`
+fn Error::to_string(Self) -> String // from trait `Show`
 impl Show for Error
 impl ToJson for Error
 

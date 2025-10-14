@@ -3,6 +3,7 @@ package "moonbitlang/core/ref"
 
 import(
   "moonbitlang/core/quickcheck"
+  "moonbitlang/core/quickcheck/splitmix"
 )
 
 // Values
@@ -11,6 +12,7 @@ fn[T] new(T) -> Ref[T]
 // Errors
 
 // Types and methods
+fn[X : @quickcheck.Arbitrary] Ref::arbitrary(Int, @splitmix.RandomState) -> Self[X] // from trait `@quickcheck.Arbitrary`
 fn[T, R] Ref::map(Self[T], (T) -> R raise?) -> Self[R] raise?
 fn[T] Ref::new(T) -> Self[T]
 fn[T, R] Ref::protect(Self[T], T, () -> R raise?) -> R raise?

@@ -13,6 +13,7 @@ fn[X] singleton(Int, X) -> SparseArray[X]
 // Types and methods
 pub(all) struct Bitset(UInt)
 fn Bitset::add(Self, Int) -> Self
+fn Bitset::equal(Self, Self) -> Bool // from trait `Eq`
 fn Bitset::first_idx(Self) -> Int
 fn Bitset::has(Self, Int) -> Bool
 fn Bitset::index_of(Self, Int) -> Int
@@ -21,6 +22,8 @@ fn Bitset::inner(Self) -> UInt
 fn Bitset::intersection(Self, Self) -> Self
 #alias(size, deprecated)
 fn Bitset::length(Self) -> Int
+#deprecated
+fn Bitset::op_equal(Self, Self) -> Bool // from trait `Eq`
 fn Bitset::remove(Self, Int) -> Self
 fn Bitset::union(Self, Self) -> Self
 impl Eq for Bitset
@@ -32,12 +35,15 @@ pub(all) struct SparseArray[X] {
 fn[X] SparseArray::add(Self[X], Int, X) -> Self[X]
 fn[X] SparseArray::difference(Self[X], Self[X], (X, X) -> X?) -> Self[X]?
 fn[X] SparseArray::each(Self[X], (X) -> Unit raise?) -> Unit raise?
+fn[X : Eq] SparseArray::equal(Self[X], Self[X]) -> Bool // from trait `Eq`
 fn[X] SparseArray::filter(Self[X], (X) -> X? raise?) -> Self[X]? raise?
 fn[X] SparseArray::get(Self[X], Int) -> X?
 fn[X] SparseArray::intersection(Self[X], Self[X], (X, X) -> X? raise?) -> Self[X]? raise?
 #alias(size, deprecated)
 fn[X] SparseArray::length(Self[X]) -> Int
 fn[X, Y] SparseArray::map(Self[X], (X) -> Y raise?) -> Self[Y] raise?
+#deprecated
+fn[X : Eq] SparseArray::op_equal(Self[X], Self[X]) -> Bool // from trait `Eq`
 fn[X] SparseArray::remove(Self[X], Int) -> Self[X]
 fn[X] SparseArray::replace(Self[X], Int, X) -> Self[X]
 fn[X] SparseArray::union(Self[X], Self[X], (X, X) -> X raise?) -> Self[X] raise?

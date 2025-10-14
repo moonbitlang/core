@@ -18,8 +18,16 @@ fn[T, K : Compare] minmax_by_key(T, T, (T) -> K) -> (T, T)
 
 // Types and methods
 pub(all) struct Reverse[T](T)
+fn[T : Compare] Reverse::compare(Self[T], Self[T]) -> Int // from trait `Compare`
+fn[T : Eq] Reverse::equal(Self[T], Self[T]) -> Bool // from trait `Eq`
+fn[T : Hash] Reverse::hash(Self[T]) -> Int // from trait `Hash`
+fn[T : Hash] Reverse::hash_combine(Self[T], Hasher) -> Unit // from trait `Hash`
 #deprecated
 fn[T] Reverse::inner(Self[T]) -> T
+#deprecated
+fn[T : Eq] Reverse::op_equal(Self[T], Self[T]) -> Bool // from trait `Eq`
+fn[T : Show] Reverse::output(Self[T], &Logger) -> Unit // from trait `Show`
+fn[T : Show] Reverse::to_string(Self[T]) -> String // from trait `Show`
 impl[T : Compare] Compare for Reverse[T]
 impl[T : Eq] Eq for Reverse[T]
 impl[T : Hash] Hash for Reverse[T]
