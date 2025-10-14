@@ -72,7 +72,7 @@ pub fn[K] Set::new(capacity? : Int = 8) -> Set[K] {
 pub fn[K : Hash + Eq] Set::from_array(arr : Array[K]) -> Set[K] {
   let length = arr.length()
   let mut capacity = length.next_power_of_two()
-  if length >= calc_grow_threshold(capacity) {
+  if length > calc_grow_threshold(capacity) {
     capacity *= 2
   }
   let m = Set::new(capacity~)
@@ -464,7 +464,7 @@ pub impl[K : Hash + Eq] Eq for Set[K] with equal(self, other) {
 pub fn[K : Hash + Eq] Set::of(arr : FixedArray[K]) -> Set[K] {
   let length = arr.length()
   let mut capacity = length.next_power_of_two()
-  if length >= calc_grow_threshold(capacity) {
+  if length > calc_grow_threshold(capacity) {
     capacity *= 2
   }
   let m = Set::new(capacity~)
