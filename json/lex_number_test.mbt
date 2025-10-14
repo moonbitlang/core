@@ -15,8 +15,7 @@
 // shadow @json.inspect
 
 ///|
-fnalias @builtin.inspect
-// using @builtin {inspect}
+using @builtin {inspect}
 
 ///| shadow
 
