@@ -12,24 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-///|
-pub typealias @builtin.(
-  ArgsLoc,
-  Array,
-  ArrayView,
-  UninitializedArray,
-  Failure,
-  Hasher,
-  Iter,
-  Iter2,
-  IterResult,
-  Json,
-  Map,
-  InspectError,
-  SnapshotError,
-  SourceLoc,
-  StringBuilder
-)
 
 ///|
 pub typealias @set.Set
@@ -37,30 +19,10 @@ pub typealias @set.Set
 ///|
 pub typealias @bigint.BigInt
 
-///|
-pub traitalias @builtin.(
-  Eq,
-  Compare,
-  Hash,
-  Logger,
-  Show,
-  ToJson,
-  Default,
-  Add,
-  Sub,
-  Mul,
-  Div,
-  Mod,
-  Neg,
-  Shl,
-  Shr,
-  BitAnd,
-  BitOr,
-  BitXOr
-)
+
 
 ///|
-pub fnalias @builtin.(
+pub using @builtin {
   abort,
   assert_eq,
   assert_not_eq,
@@ -74,8 +36,41 @@ pub fnalias @builtin.(
   println,
   not,
   repr,
-  dump
-)
+  dump,
+  trait Eq,
+  trait Compare,
+  trait Hash,
+  trait Logger,
+  trait Show,
+  trait ToJson,
+  trait Default,
+  trait Add,
+  trait Sub,
+  trait Mul,
+  trait Div,
+  trait Mod,
+  trait Neg,
+  trait Shl,
+  trait Shr,
+  trait BitAnd,
+  trait BitOr,
+  trait BitXOr,
+  type ArgsLoc,
+  type Array,
+  type ArrayView,
+  type UninitializedArray,
+  type Failure,
+  type Hasher,
+  type Iter,
+  type Iter2,
+  type IterResult,
+  type Json,
+  type Map,
+  type InspectError,
+  type SnapshotError,
+  type SourceLoc,
+  type StringBuilder
+}
 
 ///|
 /// Applies a function to a value and returns the original value.
