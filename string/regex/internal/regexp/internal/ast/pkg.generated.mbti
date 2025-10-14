@@ -23,6 +23,9 @@ pub(all) enum Ast {
   Alternate(Ast, Ast)
 }
 fn Ast::compile(Self) -> Array[@vm.Instruction]
+fn Ast::output(Self, &Logger) -> Unit // from trait `Show`
+fn Ast::to_json(Self) -> Json // from trait `ToJson`
+fn Ast::to_string(Self) -> String // from trait `Show`
 impl Show for Ast
 impl ToJson for Ast
 
