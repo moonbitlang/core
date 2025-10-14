@@ -731,3 +731,16 @@ test "string chars array" {
   let v : String = ['a', 'b']
   assert_true(v is "ab")
 }
+
+///|
+test "gard tail position" {
+  let s = "abc"
+  guard s is [.., ch]
+  assert_eq(ch, 'c') // failed
+}
+
+///|
+test "guard const" {
+  let s = "hello.txt"
+  assert_true(s is [.., .. ".txt"])
+}
