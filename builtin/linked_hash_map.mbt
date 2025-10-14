@@ -70,10 +70,10 @@ pub fn[K, V] Map::new(capacity? : Int = 8) -> Map[K, V] {
 pub fn[K : Hash + Eq, V] Map::from_array(arr : Array[(K, V)]) -> Map[K, V] {
   let length = arr.length()
   let mut capacity = length.next_power_of_two()
-  if length >= calc_grow_threshold(capacity) {
+  if length > calc_grow_threshold(capacity) {
     capacity *= 2
   }
-  let m = Map::new(capacity=arr.length())
+  let m = Map::new(capacity~)
   arr.each(e => m.set(e.0, e.1))
   m
 }
@@ -630,10 +630,10 @@ pub impl[K : Hash + Eq, V : Eq] Eq for Map[K, V] with equal(
 pub fn[K : Hash + Eq, V] Map::of(arr : FixedArray[(K, V)]) -> Map[K, V] {
   let length = arr.length()
   let mut capacity = length.next_power_of_two()
-  if length >= calc_grow_threshold(capacity) {
+  if length > calc_grow_threshold(capacity) {
     capacity *= 2
   }
-  let m = Map::new(capacity=length)
+  let m = Map::new(capacity~)
   // arr.iter((e) => { m.set(e.0, e.1) })
   for i in 0..<length {
     let e = arr[i]
