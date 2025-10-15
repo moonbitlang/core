@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-typealias @ast.Ast
+using @ast {type Ast}
 
 ///|
-typealias @parse.Flags
+using @parse {type Flags}
