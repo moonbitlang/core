@@ -13,10 +13,10 @@
 // limitations under the License.
 
 ///|
-typealias @ast.Ast
+using @ast {type Ast}
 
 ///|
-fnalias @unicode.(case_insensitive_char_class, compute_char_class_complement)
+using @unicode {case_insensitive_char_class, compute_char_class_complement}
 
 ///|
 let ranges_is_digit = @unicode.ranges_is_digit

@@ -13,4 +13,4 @@
 // limitations under the License.
 
 ///|
-fnalias @vm.vm
+using @vm {vm}

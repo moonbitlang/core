@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-typealias @vm.(Instruction, Predicate)
+using @vm {type Instruction, type Predicate}
 
 ///|
-fnalias @unicode.(simplify_char_ranges, compute_char_class_complement)
+using @unicode {simplify_char_ranges, compute_char_class_complement}
