@@ -84,7 +84,7 @@ test "lexical_compare" {
 
   // Test comparison with special characters
   inspect("hello!".lexical_compare("hello?"), content="-1") // '!' < '?'
-  inspect("hello world".lexical_compare("hello-world"), content="-1") // ' ' > '-'
+  inspect("hello world".lexical_compare("hello-world"), content="-1") // ' ' < '-'
 
   // Test with whitespace
   inspect(" abc".lexical_compare("abc"), content="-1") // space < 'a'
