@@ -14,85 +14,112 @@
 
 ///|
 fn Int64::output(self : Int64, logger : &Logger, radix? : Int = 10) -> Unit {
-  fn abs(n : Int64) -> Int64 {
-    if n < 0L {
-      0L - n
-    } else {
-      n
+  // Use a fixed-size buffer to collect digits, then write them in reverse order
+  let buffer : FixedArray[Byte] = FixedArray::make(70, b'0') // 70 is max size for any radix
+  let mut num = if self < 0L { 0L - self } else { self }
+  let radix_i64 : Int64 = radix.to_int64()
+  let mut idx = 0
+
+  // Collect digits in reverse order
+  while true {
+    let digit = num % radix_i64
+    let digit_abs = if digit < 0L { 0L - digit } else { digit }
+    buffer[idx] = ALPHABET.charcode_at(digit_abs.to_int()).to_byte()
+    idx += 1
+    num = num / radix_i64
+    if num == 0L {
+      break
     }
   }
 
+  // Write the sign if negative
   if self < 0L {
     logger.write_char('-')
   }
-  let radix : Int64 = radix.to_int64()
-  fn write_digits(num : Int64) {
-    let num2 = num / radix
-    if num2 != 0L {
-      write_digits(num2)
-    }
-    logger.write_char(
-      ALPHABET.charcode_at(abs(num % radix).to_int()).unsafe_to_char(),
-    )
-  }
 
-  write_digits(abs(self))
+  // Write digits in correct order (reverse of how we collected them)
+  for i = idx - 1; i >= 0; i = i - 1 {
+    logger.write_char(buffer[i].to_char())
+  }
 }
 
 ///|
 fn Int::output(self : Int, logger : &Logger, radix? : Int = 10) -> Unit {
-  fn abs(n : Int) -> Int {
-    if n < 0 {
-      0 - n
-    } else {
-      n
+  // Use a fixed-size buffer to collect digits, then write them in reverse order
+  let buffer : FixedArray[Byte] = FixedArray::make(36, b'0') // 36 is max size for any radix
+  let mut num = if self < 0 { 0 - self } else { self }
+  let mut idx = 0
+
+  // Collect digits in reverse order
+  while true {
+    let digit = num % radix
+    buffer[idx] = ALPHABET[if digit < 0 { 0 - digit } else { digit }].to_byte()
+    idx += 1
+    num = num / radix
+    if num == 0 {
+      break
     }
   }
 
+  // Write the sign if negative
   if self < 0 {
     logger.write_char('-')
   }
-  fn write_digits(num : Int) {
-    let num2 = num / radix
-    if num2 != 0 {
-      write_digits(num2)
-    }
-    logger.write_char(ALPHABET[abs(num % radix)].unsafe_to_char())
-  }
 
-  write_digits(abs(self))
+  // Write digits in correct order (reverse of how we collected them)
+  for i = idx - 1; i >= 0; i = i - 1 {
+    logger.write_char(buffer[i].to_char())
+  }
 }
 
 ///|
 fn UInt::output(self : UInt, logger : &Logger, radix? : Int = 10) -> Unit {
-  let radix : UInt = radix.reinterpret_as_uint()
-  fn write_digits(num : UInt) {
-    let num2 = num / radix
-    if num2 != 0U {
-      write_digits(num2)
+  // Use a fixed-size buffer to collect digits, then write them in reverse order
+  let buffer : FixedArray[Byte] = FixedArray::make(36, b'0') // 36 is max size for any radix
+  let radix_u : UInt = radix.reinterpret_as_uint()
+  let mut num = self
+  let mut idx = 0
+
+  // Collect digits in reverse order
+  while true {
+    let digit = (num % radix_u).reinterpret_as_int()
+    buffer[idx] = ALPHABET.charcode_at(digit).to_byte()
+    idx += 1
+    num = num / radix_u
+    if num == 0U {
+      break
     }
-    logger.write_char(
-      ALPHABET.charcode_at((num % radix).reinterpret_as_int()).unsafe_to_char(),
-    )
   }
 
-  write_digits(self)
+  // Write digits in correct order (reverse of how we collected them)
+  for i = idx - 1; i >= 0; i = i - 1 {
+    logger.write_char(buffer[i].to_char())
+  }
 }
 
 ///|
 fn UInt64::output(self : UInt64, logger : &Logger, radix? : Int = 10) -> Unit {
-  let radix : UInt64 = radix.to_uint64()
-  fn write_digits(num : UInt64) {
-    let num2 = num / radix
-    if num2 != 0UL {
-      write_digits(num2)
+  // Use a fixed-size buffer to collect digits, then write them in reverse order
+  let buffer : FixedArray[Byte] = FixedArray::make(70, b'0') // 70 is max size for any radix
+  let radix_u64 : UInt64 = radix.to_uint64()
+  let mut num = self
+  let mut idx = 0
+
+  // Collect digits in reverse order
+  while true {
+    let digit = (num % radix_u64).to_int()
+    buffer[idx] = ALPHABET.charcode_at(digit).to_byte()
+    idx += 1
+    num = num / radix_u64
+    if num == 0UL {
+      break
     }
-    logger.write_char(
-      ALPHABET.charcode_at((num % radix).to_int()).unsafe_to_char(),
-    )
   }
 
-  write_digits(self)
+  // Write digits in correct order (reverse of how we collected them)
+  for i = idx - 1; i >= 0; i = i - 1 {
+    logger.write_char(buffer[i].to_char())
+  }
 }
 
 ///|
