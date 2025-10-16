@@ -21,3 +21,21 @@ pub fn[X : Arbitrary] samples(x : Int) -> Array[X] {
   }
   array
 }
+
+
+///|
+priv trait Test0 {
+  sum(Self, x? : Int, y? : Int) -> Int
+}
+
+///|
+impl Test0 for Int with sum(self, x? : Int = 3, y? = 2) {
+  self + x + y
+}
+
+///|
+test "default argument in trait method" {
+  inspect((10).sum(), content="15")
+  inspect((10).sum(x=1), content="13")
+  inspect((10).sum(x=1, y=1), content="12")
+}

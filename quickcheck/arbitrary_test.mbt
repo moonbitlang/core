@@ -103,3 +103,26 @@ test "arbitrary gen bytes" {
     ),
   )
 }
+
+
+///|
+priv trait Test0 {
+  sum(Self, x? : Int, y? : Int, z? : Int) -> Int
+}
+
+///|
+impl Test0 for Int with sum(self, x~ : Int = 3, y? = 2, z?) {
+  // weird both x~ and y? work here??
+  // y? should warn
+  self + x + y + (if z is Some(x) { x } else { 0 })
+}
+
+///|
+test "default argument in trait method" {
+  inspect((10).sum(), content="15") 
+  // weird warnings appear here
+  // Calling local `impl` with `.` or `Type::meth(..)` is deprecated, use `Trait::meth(..)` instead.
+  // this seems to be inconsistent with the fact that `Type::meth` will call `Trait::meth`
+  inspect((10).sum(x=1), content="13")
+  inspect((10).sum(x=1, y=1), content="12")
+}
