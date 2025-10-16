@@ -23,3 +23,11 @@ test "parse_inf_nan negative NaN" {
   let result = @strconv.parse_double("-nan")
   inspect(result.is_nan(), content="true")
 }
+
+///|
+test "from_str generic" {
+  let i : Int = @strconv.from_str("123")
+  inspect(i, content="123")
+  let j : Int64 = @strconv.from_str("1234567890123")
+  inspect(j, content="1234567890123")
+}

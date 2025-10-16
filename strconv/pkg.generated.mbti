@@ -45,6 +45,7 @@ impl Show for Decimal
 
 // Traits
 pub(open) trait FromStr {
+  #as_free_fn
   from_str(StringView) -> Self raise StrConvError = _
   #deprecated
   from_string(String) -> Self raise StrConvError = _
