@@ -1019,3 +1019,92 @@ test "StringView::op_as_view start on trailing surrogate" {
   let result = try? view[5:]
   inspect(result, content="Err(InvalidIndex)")
 }
+
+///|
+test "stringview lexical_compare" {
+  // Test equal views
+  let str = "abc"
+  inspect(
+    str
+    .view(start_offset=0, end_offset=3)
+    .lexical_compare(str.view(start_offset=0, end_offset=3)),
+    content="0",
+  )
+
+  // Test identical views from different strings
+  let str1 = "abc"
+  let str2 = "abc"
+  inspect(str1.view().lexical_compare(str2.view()), content="0")
+
+  // Test lexicographically less than
+  inspect(
+    str.view(start_offset=0, end_offset=3).lexical_compare("abd".view()),
+    content="-1",
+  )
+  inspect("ab".view().lexical_compare("abc".view()), content="-1")
+  inspect("".view().lexical_compare("a".view()), content="-1")
+
+  // Test lexicographically greater than
+  inspect("abd".view().lexical_compare(str.view()), content="1")
+  inspect("abc".view().lexical_compare("ab".view()), content="1")
+  inspect("a".view().lexical_compare("".view()), content="1")
+
+  // Test different lengths with same prefix - Java behavior
+  // In lexicographical comparison, "ab" < "abc" (shorter string is less when it's a prefix)
+  inspect("ab".view().lexical_compare("abc".view()), content="-1")
+  inspect("abc".view().lexical_compare("ab".view()), content="1")
+
+  // Test case sensitivity
+  inspect("ABC".view().lexical_compare("abc".view()), content="-1") // uppercase letters have lower code points
+
+  // Test with numbers
+  inspect("123".view().lexical_compare("124".view()), content="-1")
+  inspect("124".view().lexical_compare("123".view()), content="1")
+
+  // Test with surrogate pairs (emoji)
+  let emoji1 = "🤣"
+  let emoji2 = "😭"
+  // Different emojis have different UTF-16 code units
+  inspect(emoji1.view().lexical_compare(emoji2.view()), content="1")
+  inspect(emoji2.view().lexical_compare(emoji1.view()), content="-1")
+  inspect(emoji1.view().lexical_compare(emoji1.view()), content="0")
+
+  // Test mixed ASCII and emoji
+  inspect("a🤣".view().lexical_compare("a😭".view()), content="1")
+  inspect("abc🤣".view().lexical_compare("abc".view()), content="1")
+  inspect("abc".view().lexical_compare("abc🤣".view()), content="-1")
+
+  // Test with views that have offsets
+  let long_str = "xyzabcdefghijkl"
+  inspect(
+    long_str
+    .view(start_offset=3, end_offset=6)
+    .lexical_compare(long_str.view(start_offset=3, end_offset=9)),
+    content="-1",
+  )
+  inspect(
+    long_str
+    .view(start_offset=3, end_offset=9)
+    .lexical_compare(long_str.view(start_offset=3, end_offset=6)),
+    content="1",
+  )
+
+  // Test views from different positions but same content
+  inspect(
+    long_str
+    .view(start_offset=3, end_offset=6)
+    .lexical_compare(long_str.view(start_offset=10, end_offset=13)),
+    content="-1",
+  ) // "abc" vs "jkl"
+
+  // Test empty views
+  inspect("".view().lexical_compare("".view()), content="0")
+
+  // Test comparing common prefixes with different suffixes
+  let str_a = "testing"
+  let str_b = "tested"
+  inspect(str_b.view().lexical_compare(str_a.view()), content="-1") // "tested" < "testing"
+
+  // Test comparison with special characters
+  inspect("hello!".view().lexical_compare("hello?".view()), content="-1") // '!' < '?'
+}

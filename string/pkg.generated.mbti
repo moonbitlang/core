@@ -38,6 +38,7 @@ fn String::is_blank(String) -> Bool
 fn String::is_empty(String) -> Bool
 fn String::iter(String) -> Iter[Char]
 fn String::iter2(String) -> Iter2[Int, Char]
+fn String::lexical_compare(String, String) -> Int
 fn String::offset_of_nth_char(String, Int, start_offset? : Int, end_offset? : Int) -> Int?
 fn String::pad_end(String, Int, Char) -> String
 fn String::pad_start(String, Int, Char) -> String
@@ -101,6 +102,7 @@ fn StringView::is_empty(Self) -> Bool
 fn StringView::iter(Self) -> Iter[Char]
 fn StringView::iter2(Self) -> Iter2[Int, Char]
 fn StringView::length(Self) -> Int
+fn StringView::lexical_compare(Self, Self) -> Int
 fn StringView::make(Int, Char) -> Self
 fn StringView::offset_of_nth_char(Self, Int) -> Int?
 #deprecated

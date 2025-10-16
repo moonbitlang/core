@@ -39,6 +39,67 @@ test "compare" {
 }
 
 ///|
+test "lexical_compare" {
+  // Test equal strings
+  inspect("abc".lexical_compare("abc"), content="0")
+  inspect("".lexical_compare(""), content="0")
+
+  // Test lexicographically less than
+  inspect("abc".lexical_compare("abd"), content="-1")
+  inspect("ab".lexical_compare("abc"), content="-1")
+  inspect("".lexical_compare("a"), content="-1")
+
+  // Test lexicographically greater than
+  inspect("abd".lexical_compare("abc"), content="1")
+  inspect("abc".lexical_compare("ab"), content="1")
+  inspect("a".lexical_compare(""), content="1")
+
+  // Test different lengths with same prefix - Java behavior
+  // In lexicographical comparison, "ab" < "abc" (shorter string is less when it's a prefix)
+  inspect("ab".lexical_compare("abc"), content="-1")
+  inspect("abc".lexical_compare("ab"), content="1")
+
+  // Test case sensitivity
+  inspect("ABC".lexical_compare("abc"), content="-1") // uppercase letters have lower code points
+  inspect("abc".lexical_compare("ABC"), content="1")
+
+  // Test with numbers
+  inspect("123".lexical_compare("124"), content="-1")
+  inspect("124".lexical_compare("123"), content="1")
+  inspect("9".lexical_compare("10"), content="1") // '9' > '1' in lexicographical order
+
+  // Test with surrogate pairs (emoji)
+  inspect("🤣".lexical_compare("😭"), content="1")
+  inspect("😭".lexical_compare("🤣"), content="-1")
+  inspect("🤣".lexical_compare("🤣"), content="0")
+
+  // Test mixed ASCII and emoji
+  inspect("a🤣".lexical_compare("a😭"), content="1")
+  inspect("abc🤣".lexical_compare("abc"), content="1")
+  inspect("abc".lexical_compare("abc🤣"), content="-1")
+
+  // Test comparing common prefixes with different suffixes
+  inspect("testing".lexical_compare("tested"), content="1")
+  inspect("tested".lexical_compare("testing"), content="-1")
+
+  // Test comparison with special characters
+  inspect("hello!".lexical_compare("hello?"), content="-1") // '!' < '?'
+  inspect("hello world".lexical_compare("hello-world"), content="-1") // ' ' > '-'
+
+  // Test with whitespace
+  inspect(" abc".lexical_compare("abc"), content="-1") // space < 'a'
+  inspect("abc ".lexical_compare("abc"), content="1")
+
+  // Test longer strings
+  inspect("abcdefghijklm".lexical_compare("abcdefghijkln"), content="-1")
+  inspect("abcdefghijkln".lexical_compare("abcdefghijklm"), content="1")
+
+  // Test strings that differ only at the end
+  inspect("prefix_a".lexical_compare("prefix_b"), content="-1")
+  inspect("prefix_b".lexical_compare("prefix_a"), content="1")
+}
+
+///|
 test "Show::output" {
   fn repr(s : String) {
     let buf = StringBuilder::new(size_hint=0)

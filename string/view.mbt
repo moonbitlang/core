@@ -320,6 +320,56 @@ pub impl Compare for StringView with compare(self, other) {
 }
 
 ///|
+/// Performs a lexicographical comparison of two string views.
+///
+/// This method compares the views character by character (UTF-16 code unit by code unit),
+/// similar to Java's `String.compareTo()`. Unlike the `Compare` trait implementation which
+/// uses shortlex order (shorter strings come first), this method compares based purely on
+/// character values until a difference is found or one view is exhausted.
+///
+/// # Returns
+///
+/// - A negative integer if `self` is lexicographically less than `other`
+/// - Zero if `self` is lexicographically equal to `other`
+/// - A positive integer if `self` is lexicographically greater than `other`
+///
+/// # Example
+///
+/// ```mbt
+/// let str = "abc"
+/// inspect(str.view(start_offset=0, end_offset=2).lexical_compare(str.view(start_offset=0, end_offset=3)), content="-1")
+/// inspect(str.view(start_offset=0, end_offset=3).lexical_compare(str.view(start_offset=0, end_offset=2)), content="1")
+/// inspect(str.view(start_offset=0, end_offset=2).lexical_compare(str.view(start_offset=1, end_offset=3)), content="-1")
+/// ```
+///
+/// # Note
+///
+/// Since MoonBit strings are UTF-16 encoded (like Java), this comparison operates on
+/// UTF-16 code units, not Unicode code points. Surrogate pairs (used for characters
+/// outside the Basic Multilingual Plane) are compared as individual code units.
+pub fn StringView::lexical_compare(
+  self : StringView,
+  other : StringView,
+) -> Int {
+  let self_len = self.length()
+  let other_len = other.length()
+  let min_len = if self_len < other_len { self_len } else { other_len }
+
+  // Compare character by character up to the minimum length
+  for i in 0..<min_len {
+    let self_char = self.str().unsafe_charcode_at(self.start() + i)
+    let other_char = other.str().unsafe_charcode_at(other.start() + i)
+    let cmp = self_char.compare(other_char)
+    if cmp != 0 {
+      return cmp
+    }
+  }
+
+  // If all characters match up to min_len, the shorter one is lexicographically smaller
+  self_len.compare(other_len)
+}
+
+///|
 /// The empty view of a string
 pub impl Default for StringView with default() {
   ""

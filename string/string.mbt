@@ -343,3 +343,35 @@ pub fn String::char_length_ge(
     count >= len
   }
 }
+
+///|
+/// Performs a lexicographical comparison of two strings.
+///
+/// This method compares the strings character by character (UTF-16 code unit by code unit),
+/// similar to Java's `String.compareTo()`. Unlike the `Compare` trait implementation which
+/// uses shortlex order (shorter strings come first), this method compares based purely on
+/// character values until a difference is found or one string is exhausted.
+///
+/// # Returns
+///
+/// - A negative integer if `self` is lexicographically less than `other`
+/// - Zero if `self` is lexicographically equal to `other`
+/// - A positive integer if `self` is lexicographically greater than `other`
+///
+/// # Example
+///
+/// ```mbt
+/// inspect("ab".lexical_compare("abc"), content="-1")
+/// inspect("abc".lexical_compare("ab"), content="1")
+/// inspect("abc".lexical_compare("abc"), content="0")
+/// inspect("abc".lexical_compare("abd"), content="-1")
+/// ```
+///
+/// # Note
+///
+/// Since MoonBit strings are UTF-16 encoded (like Java), this comparison operates on
+/// UTF-16 code units, not Unicode code points. Surrogate pairs (used for characters
+/// outside the Basic Multilingual Plane) are compared as individual code units.
+pub fn String::lexical_compare(self : String, other : String) -> Int {
+  self.to_string_view().lexical_compare(other.to_string_view())
+}
