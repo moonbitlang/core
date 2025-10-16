@@ -68,22 +68,17 @@ pub impl FromStr for Double with from_str(str) {
 }
 
 ///|
-pub fn[A : FromStr] parse(str : StringView) -> A raise StrConvError {
-  A::from_str(str)
-}
-
-///|
 test "parse" {
-  let b : Bool = parse("true")
+  let b : Bool = from_str("true")
   inspect(b, content="true")
-  let i : Int = parse("12345")
+  let i : Int = from_str("12345")
   inspect(i, content="12345")
-  let i64 : Int64 = parse("9223372036854775807")
+  let i64 : Int64 = from_str("9223372036854775807")
   assert_eq(i64, 9223372036854775807L)
-  let ui : UInt = parse("4294967295")
+  let ui : UInt = from_str("4294967295")
   inspect(ui, content="4294967295")
-  let ui64 : UInt64 = parse("18446744073709551615")
+  let ui64 : UInt64 = from_str("18446744073709551615")
   assert_eq(ui64, 18446744073709551615UL)
-  let d : Double = parse("1234.56789")
+  let d : Double = from_str("1234.56789")
   assert_eq(d, 1234.56789)
 }

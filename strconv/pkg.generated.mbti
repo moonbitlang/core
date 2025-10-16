@@ -2,6 +2,7 @@
 package "moonbitlang/core/strconv"
 
 // Values
+#deprecated
 fn[A : FromStr] parse(StringView) -> A raise StrConvError
 
 fn parse_bool(StringView) -> Bool raise StrConvError
