@@ -84,9 +84,9 @@ let seed : Int = random_seed()
 #cfg(target="js")
 extern "js" fn random_seed() -> Int =
   #|() => {
-  #|  if (crypto?.getRandomValues) {
+  #|  if (globalThis.crypto?.getRandomValues) {
   #|    const array = new Uint32Array(1);
-  #|    crypto.getRandomValues(array);
+  #|    globalThis.crypto.getRandomValues(array);
   #|    return array[0] | 0; // Convert to signed 32
   #|  } else {
   #|    return Math.floor(Math.random() * 0x100000000) | 0; // Fallback to Math.random
