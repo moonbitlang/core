@@ -68,3 +68,9 @@ pub fn Decimal::to_double(self : Decimal) -> Double raise StrConvError {
 pub fn Decimal::shift(self : Decimal, s : Int) -> Unit {
   self.shift_priv(s)
 }
+
+///|
+#deprecated("use `@strconv.from_str` instead")
+pub fn[A : FromStr] parse(str : StringView) -> A raise StrConvError {
+  A::from_str(str)
+}
