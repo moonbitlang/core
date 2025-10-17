@@ -148,7 +148,7 @@ fn sin_cos_core(x : Float, q : Int) -> Float {
 ///|
 fn tanf_poly(x : Float, odd : Bool) -> Float {
   let x = x.to_double()
-  let coef : FixedArray[Double] = [
+  let coef : ReadOnlyArray[Double] = [
     0.333331395030791399758, // 0x15554d3418c99f.0p-54 */
      0.133392002712976742718, // 0x1112fd38999f72.0p-55 */
      0.0533812378445670393523, // 0x1b54c91d865afe.0p-57 */
