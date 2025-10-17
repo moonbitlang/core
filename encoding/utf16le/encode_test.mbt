@@ -20,7 +20,6 @@ test "encode" {
     encoded,
     content=(
       #|b"a\x00b\x00c\x00`O}Y=\xd8@\xdc"
-
     ),
   )
   let encoded_with_bom = @utf16le.encode(s, bom=true)
@@ -28,7 +27,6 @@ test "encode" {
     encoded_with_bom,
     content=(
       #|b"\xff\xfea\x00b\x00c\x00`O}Y=\xd8@\xdc"
-
     ),
   )
 }
