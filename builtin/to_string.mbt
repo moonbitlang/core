@@ -17,9 +17,48 @@ const ALPHABET : String = "0123456789abcdefghijklmnopqrstuvwxyz"
 
 ///|
 pub fn Int64::to_string(self : Int64, radix? : Int = 10) -> String {
-  let buf = StringBuilder::new(size_hint=Int64::output_size_hint(radix~))
-  self.output(buf, radix~)
-  buf.to_string()
+  // Use a fixed-size buffer to collect digits efficiently
+  let buffer : FixedArray[Byte] = FixedArray::make(70, b'0') // 70 is max size for any radix
+  let mut num = if self < 0L { 0L - self } else { self }
+  let radix_i64 : Int64 = radix.to_int64()
+  let mut idx = 0
+
+  // Collect digits in reverse order
+  while true {
+    let digit = num % radix_i64
+    let digit_abs = if digit < 0L { 0L - digit } else { digit }
+    buffer[idx] = ALPHABET.charcode_at(digit_abs.to_int()).to_byte()
+    idx += 1
+    num = num / radix_i64
+    if num == 0L {
+      break
+    }
+  }
+
+  // Build the final string
+  if self < 0L {
+    // Need to add sign and reverse digits
+    let result_buffer : FixedArray[Byte] = FixedArray::make((idx + 1) * 2, b'0')
+    result_buffer[0] = b'-'
+    result_buffer[1] = b'\x00'
+    for i = 0; i < idx; i = i + 1 {
+      result_buffer[(i + 1) * 2] = buffer[idx - 1 - i]
+      result_buffer[(i + 1) * 2 + 1] = b'\x00'
+    }
+    result_buffer
+    .unsafe_reinterpret_as_bytes()
+    .to_unchecked_string(offset=0, length=(idx + 1) * 2)
+  } else {
+    // Just reverse digits
+    let result_buffer : FixedArray[Byte] = FixedArray::make(idx * 2, b'0')
+    for i = 0; i < idx; i = i + 1 {
+      result_buffer[i * 2] = buffer[idx - 1 - i]
+      result_buffer[i * 2 + 1] = b'\x00'
+    }
+    result_buffer
+    .unsafe_reinterpret_as_bytes()
+    .to_unchecked_string(offset=0, length=idx * 2)
+  }
 }
 
 ///|
@@ -35,9 +74,46 @@ pub impl Show for Int64 with to_string(self) {
 /// inspect((-255).to_string(radix=16), content="-ff")
 /// ```
 pub fn Int::to_string(self : Int, radix? : Int = 10) -> String {
-  let buf = StringBuilder::new(size_hint=Int::output_size_hint(radix~))
-  self.output(buf, radix~)
-  buf.to_string()
+  // Use a fixed-size buffer to collect digits efficiently
+  let buffer : FixedArray[Byte] = FixedArray::make(36, b'0') // 36 is max size for any radix
+  let mut num = if self < 0 { 0 - self } else { self }
+  let mut idx = 0
+
+  // Collect digits in reverse order
+  while true {
+    let digit = num % radix
+    buffer[idx] = ALPHABET[if digit < 0 { 0 - digit } else { digit }].to_byte()
+    idx += 1
+    num = num / radix
+    if num == 0 {
+      break
+    }
+  }
+
+  // Build the final string
+  if self < 0 {
+    // Need to add sign and reverse digits
+    let result_buffer : FixedArray[Byte] = FixedArray::make((idx + 1) * 2, b'0')
+    result_buffer[0] = b'-'
+    result_buffer[1] = b'\x00'
+    for i = 0; i < idx; i = i + 1 {
+      result_buffer[(i + 1) * 2] = buffer[idx - 1 - i]
+      result_buffer[(i + 1) * 2 + 1] = b'\x00'
+    }
+    result_buffer
+    .unsafe_reinterpret_as_bytes()
+    .to_unchecked_string(offset=0, length=(idx + 1) * 2)
+  } else {
+    // Just reverse digits
+    let result_buffer : FixedArray[Byte] = FixedArray::make(idx * 2, b'0')
+    for i = 0; i < idx; i = i + 1 {
+      result_buffer[i * 2] = buffer[idx - 1 - i]
+      result_buffer[i * 2 + 1] = b'\x00'
+    }
+    result_buffer
+    .unsafe_reinterpret_as_bytes()
+    .to_unchecked_string(offset=0, length=idx * 2)
+  }
 }
 
 ///|
@@ -47,9 +123,32 @@ pub impl Show for Int with to_string(self) {
 
 ///|
 pub fn UInt::to_string(self : UInt, radix? : Int = 10) -> String {
-  let buf = StringBuilder::new(size_hint=UInt::output_size_hint(radix~))
-  self.output(buf, radix~)
-  buf.to_string()
+  // Use a fixed-size buffer to collect digits efficiently
+  let buffer : FixedArray[Byte] = FixedArray::make(36, b'0') // 36 is max size for any radix
+  let radix_u : UInt = radix.reinterpret_as_uint()
+  let mut num = self
+  let mut idx = 0
+
+  // Collect digits in reverse order
+  while true {
+    let digit = (num % radix_u).reinterpret_as_int()
+    buffer[idx] = ALPHABET.charcode_at(digit).to_byte()
+    idx += 1
+    num = num / radix_u
+    if num == 0U {
+      break
+    }
+  }
+
+  // Reverse digits and build string
+  let result_buffer : FixedArray[Byte] = FixedArray::make(idx * 2, b'0')
+  for i = 0; i < idx; i = i + 1 {
+    result_buffer[i * 2] = buffer[idx - 1 - i]
+    result_buffer[i * 2 + 1] = b'\x00'
+  }
+  result_buffer
+  .unsafe_reinterpret_as_bytes()
+  .to_unchecked_string(offset=0, length=idx * 2)
 }
 
 ///|
@@ -66,9 +165,32 @@ test "UInt::to_string" {
 
 ///|
 pub fn UInt64::to_string(self : UInt64, radix? : Int = 10) -> String {
-  let buf = StringBuilder::new(size_hint=UInt64::output_size_hint(radix~))
-  self.output(buf, radix~)
-  buf.to_string()
+  // Use a fixed-size buffer to collect digits efficiently
+  let buffer : FixedArray[Byte] = FixedArray::make(70, b'0') // 70 is max size for any radix
+  let radix_u64 : UInt64 = radix.to_uint64()
+  let mut num = self
+  let mut idx = 0
+
+  // Collect digits in reverse order
+  while true {
+    let digit = (num % radix_u64).to_int()
+    buffer[idx] = ALPHABET.charcode_at(digit).to_byte()
+    idx += 1
+    num = num / radix_u64
+    if num == 0UL {
+      break
+    }
+  }
+
+  // Reverse digits and build string
+  let result_buffer : FixedArray[Byte] = FixedArray::make(idx * 2, b'0')
+  for i = 0; i < idx; i = i + 1 {
+    result_buffer[i * 2] = buffer[idx - 1 - i]
+    result_buffer[i * 2 + 1] = b'\x00'
+  }
+  result_buffer
+  .unsafe_reinterpret_as_bytes()
+  .to_unchecked_string(offset=0, length=idx * 2)
 }
 
 ///|
