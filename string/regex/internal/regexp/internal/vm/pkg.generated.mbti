@@ -2,10 +2,6 @@
 package "moonbitlang/core/string/regex/internal/regexp/internal/vm"
 
 // Values
-fn char_in_ranges(Char, Array[Char]) -> Bool
-
-fn is_word_char_at(StringView, Int) -> Bool
-
 fn vm(Array[Instruction], StringView, Int) -> Array[Int]
 
 // Errors

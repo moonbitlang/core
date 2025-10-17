@@ -6,10 +6,6 @@ import(
 )
 
 // Values
-fn case_insensitive_char_class(Array[Char]) -> Array[Char]
-
-fn compute_char_class_complement(Array[Char]) -> Array[Char]
-
 fn parse(StringView, flags? : Flags) -> ParseResult raise RegexpError
 
 // Errors

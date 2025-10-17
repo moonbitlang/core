@@ -6,9 +6,6 @@ import(
 )
 
 // Values
-fn compute_char_class_complement(Array[Char]) -> Array[Char]
-
-fn simplify_char_ranges(Array[Char]) -> Array[Char]
 
 // Errors
 
