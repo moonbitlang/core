@@ -3,15 +3,10 @@ package "moonbitlang/core/string/regex/internal/regexp"
 
 import(
   "moonbitlang/core/string/regex/internal/regexp/internal/parse"
-  "moonbitlang/core/string/regex/internal/regexp/internal/vm"
 )
 
 // Values
 fn compile(StringView, flags? : StringView) -> Regexp raise @parse.RegexpError
-
-fn parse(StringView, flags? : @parse.Flags) -> @parse.ParseResult raise @parse.RegexpError
-
-fn vm(Array[@vm.Instruction], StringView, Int) -> Array[Int]
 
 // Errors
 
