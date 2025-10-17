@@ -17,6 +17,9 @@ const ALPHABET : String = "0123456789abcdefghijklmnopqrstuvwxyz"
 
 ///|
 pub fn Int64::to_string(self : Int64, radix? : Int = 10) -> String {
+  if radix < 2 || radix > 36 {
+    abort("radix must be between 2 and 36")
+  }
   // Use a fixed-size buffer to collect digits efficiently
   let buffer : FixedArray[Byte] = FixedArray::make(70, b'0') // 70 is max size for any radix
   let mut num = if self < 0L { 0L - self } else { self }
@@ -74,6 +77,9 @@ pub impl Show for Int64 with to_string(self) {
 /// inspect((-255).to_string(radix=16), content="-ff")
 /// ```
 pub fn Int::to_string(self : Int, radix? : Int = 10) -> String {
+  if radix < 2 || radix > 36 {
+    abort("radix must be between 2 and 36")
+  }
   // Use a fixed-size buffer to collect digits efficiently
   let buffer : FixedArray[Byte] = FixedArray::make(36, b'0') // 36 is max size for any radix
   let mut num = if self < 0 { 0 - self } else { self }
@@ -123,6 +129,9 @@ pub impl Show for Int with to_string(self) {
 
 ///|
 pub fn UInt::to_string(self : UInt, radix? : Int = 10) -> String {
+  if radix < 2 || radix > 36 {
+    abort("radix must be between 2 and 36")
+  }
   // Use a fixed-size buffer to collect digits efficiently
   let buffer : FixedArray[Byte] = FixedArray::make(36, b'0') // 36 is max size for any radix
   let radix_u : UInt = radix.reinterpret_as_uint()
@@ -165,6 +174,9 @@ test "UInt::to_string" {
 
 ///|
 pub fn UInt64::to_string(self : UInt64, radix? : Int = 10) -> String {
+  if radix < 2 || radix > 36 {
+    abort("radix must be between 2 and 36")
+  }
   // Use a fixed-size buffer to collect digits efficiently
   let buffer : FixedArray[Byte] = FixedArray::make(70, b'0') // 70 is max size for any radix
   let radix_u64 : UInt64 = radix.to_uint64()
