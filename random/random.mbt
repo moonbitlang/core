@@ -189,6 +189,12 @@ pub fn Rand::float(self : Rand) -> Float {
 }
 
 ///|
+/// [boolean] returns a random boolean value (true or false).
+pub fn Rand::boolean(self : Rand) -> Bool {
+  self.int(limit=2) == 0
+}
+
+///|
 /// Generates a random positive `BigInt` with a specified number of bits.
 ///
 /// Parameters:
