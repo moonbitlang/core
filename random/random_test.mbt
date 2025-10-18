@@ -82,3 +82,9 @@ test "bench random" (b : @bench.T) {
 
   })
 }
+
+///|
+test "boolean" {
+  let result = @random.Rand::new() // 创建一个新的随机数生成器
+  inspect(result.boolean(), content="false")
+}
