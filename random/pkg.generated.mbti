@@ -20,6 +20,7 @@ fn Rand::bigint(Self, Int) -> @bigint.BigInt
 fn Rand::chacha8(seed? : Bytes) -> Self
 fn Rand::double(Self) -> Double
 fn Rand::float(Self) -> Float
+fn Rand::boolean(Self) -> Bool
 fn Rand::int(Self, limit? : Int) -> Int
 fn Rand::int64(Self, limit? : Int64) -> Int64
 fn Rand::new(generator? : &Source) -> Self
