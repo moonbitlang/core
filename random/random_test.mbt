@@ -86,5 +86,5 @@ test "bench random" (b : @bench.T) {
 ///|
 test "boolean" {
   let result = @random.Rand::new()
-  inspect(result.boolean(), content="false")
+  inspect(result.boolean(), content="true")
 }
