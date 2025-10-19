@@ -289,3 +289,12 @@ pub impl ToJson for Unit with to_json(_self) {
 pub impl Default for Json with default() {
   false
 }
+
+///|
+pub impl[X : ToJson] ToJson for Iter[X] with to_json(self) {
+  let arr = []
+  for x in self {
+    arr.push(ToJson::to_json(x))
+  }
+  Array(arr)
+}

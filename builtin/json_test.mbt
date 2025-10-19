@@ -185,3 +185,9 @@ test "Byte::to_json" {
   inspect(b'\xff'.to_json(), content="Number(255)")
   inspect(b'\x42'.to_json(), content="Number(66)")
 }
+
+///|
+test "Iter[X] to_json" {
+  let v = "a b c d".split(" ")
+  @json.inspect(v, content=["a", "b", "c", "d"])
+}
