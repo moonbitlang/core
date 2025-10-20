@@ -1,17 +1,21 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "moonbitlang/core/encoding/utf16le"
+package "moonbitlang/core/encoding/utf16"
 
 // Values
-fn decode(BytesView, ignore_bom? : Bool) -> String raise Malformed
+fn decode(BytesView, ignore_bom? : Bool, endianness? : Endian) -> String raise Malformed
 
-fn decode_lossy(BytesView, ignore_bom? : Bool) -> String
+fn decode_lossy(BytesView, ignore_bom? : Bool, endianness? : Endian) -> String
 
-fn encode(StringView, bom? : Bool) -> Bytes
+fn encode(StringView, bom? : Bool, endianness? : Endian) -> Bytes
 
 // Errors
 pub suberror Malformed BytesView
 
 // Types and methods
+pub(all) enum Endian {
+  Little
+  Big
+}
 
 // Type aliases
 
