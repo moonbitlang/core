@@ -15,14 +15,14 @@
 ///|
 test "encode" {
   let s = "abc你好👀"
-  let encoded = @utf16le.encode(s)
+  let encoded = @utf16.encode(s)
   inspect(
     encoded,
     content=(
       #|b"a\x00b\x00c\x00`O}Y=\xd8@\xdc"
     ),
   )
-  let encoded_with_bom = @utf16le.encode(s, bom=true)
+  let encoded_with_bom = @utf16.encode(s, bom=true)
   inspect(
     encoded_with_bom,
     content=(
