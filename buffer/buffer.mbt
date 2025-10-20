@@ -788,14 +788,14 @@ pub fn Buffer::write_char_utf16le(buf : Self, value : Char) -> Unit {
     buf.data[buf.len + 1] = (code >> 8).to_byte()
     buf.len += 2
   } else if code < 0x110000 {
-    let hi = code - 0x10000
-    let lo = (hi >> 10) | 0xD800
-    let hi = (hi & 0x3FF) | 0xDC00
+    let cp = code - 0x10000
+    let high = (cp >> 10) | 0xD800
+    let low = (cp & 0x3FF) | 0xDC00
     buf.grow_if_necessary(buf.len + 4)
-    buf.data[buf.len + 0] = (lo & 0xFF).to_byte()
-    buf.data[buf.len + 1] = (lo >> 8).to_byte()
-    buf.data[buf.len + 2] = (hi & 0xFF).to_byte()
-    buf.data[buf.len + 3] = (hi >> 8).to_byte()
+    buf.data[buf.len + 0] = (high & 0xFF).to_byte()
+    buf.data[buf.len + 1] = (high >> 8).to_byte()
+    buf.data[buf.len + 2] = (low & 0xFF).to_byte()
+    buf.data[buf.len + 3] = (low >> 8).to_byte()
     buf.len += 4
   } else {
     abort("Char out of range")
@@ -813,13 +813,13 @@ pub fn Buffer::write_char_utf16be(buf : Self, value : Char) -> Unit {
     buf.len += 2
   } else if code < 0x110000 {
     buf.grow_if_necessary(buf.len + 4)
-    let hi = code - 0x10000
-    let lo = (hi >> 10) | 0xD800
-    let hi = (hi & 0x3FF) | 0xDC00
-    buf.data[buf.len + 0] = (lo >> 8).to_byte()
-    buf.data[buf.len + 1] = (lo & 0xFF).to_byte()
-    buf.data[buf.len + 2] = (hi >> 8).to_byte()
-    buf.data[buf.len + 3] = (hi & 0xFF).to_byte()
+    let cp = code - 0x10000
+    let high = (cp >> 10) | 0xD800
+    let low = (cp & 0x3FF) | 0xDC00
+    buf.data[buf.len + 0] = (high >> 8).to_byte()
+    buf.data[buf.len + 1] = (high & 0xFF).to_byte()
+    buf.data[buf.len + 2] = (low >> 8).to_byte()
+    buf.data[buf.len + 3] = (low & 0xFF).to_byte()
     buf.len += 4
   } else {
     abort("Char out of range")
