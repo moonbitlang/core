@@ -5,10 +5,13 @@
     "moonbitlang/core/json",
     "moonbitlang/core/array",
     "moonbitlang/core/quickcheck",
-    "moonbitlang/core/encoding/utf8",
     {
-      "path": "moonbitlang/core/encoding/utf16le",
-      "alias": "encoding/utf16le"
+      "path": "moonbitlang/core/encoding/utf8",
+      "alias": "encoding/utf8"
+    },
+    {
+      "path": "moonbitlang/core/encoding/utf16",
+      "alias": "encoding/utf16"
     }
   ],
   "targets": {
