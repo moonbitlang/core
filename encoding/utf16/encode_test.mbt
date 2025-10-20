@@ -22,11 +22,25 @@ test "encode" {
       #|b"a\x00b\x00c\x00`O}Y=\xd8@\xdc"
     ),
   )
+  let encoded_be = @utf16.encode(s, endianness=Big)
+  inspect(
+    encoded_be,
+    content=(
+      #|b"\x00a\x00b\x00cO`Y}\xd8=\xdc@"
+    ),
+  )
   let encoded_with_bom = @utf16.encode(s, bom=true)
   inspect(
     encoded_with_bom,
     content=(
       #|b"\xff\xfea\x00b\x00c\x00`O}Y=\xd8@\xdc"
+    ),
+  )
+  let encoded_be_with_bom = @utf16.encode(s, bom=true, endianness=Big)
+  inspect(
+    encoded_be_with_bom,
+    content=(
+      #|b"\xfe\xff\x00a\x00b\x00cO`Y}\xd8=\xdc@"
     ),
   )
 }

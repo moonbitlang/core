@@ -18,6 +18,11 @@ test "decoding UTF16 encoded data to String" {
     b"\x61\x00\x62\x00\x63\x00\x60\x4f\x7d\x59\x3d\xd8\x40\xdc",
   )
   inspect(chars, content="abc你好👀")
+  let chars_be = @utf16.decode(
+    b"\x00\x61\x00\x62\x00\x63\x4f\x60\x59\x7d\xd8\x3d\xdc\x40",
+    endianness=Big,
+  )
+  inspect(chars_be, content="abc你好👀")
 }
 
 ///|
@@ -25,6 +30,15 @@ test "decoding UTF16 with bom" {
   let text = b"\xff\xfe\x61\x00\x62\x00\x63\x00\x60\x4f\x7d\x59\x3d\xd8\x40\xdc"
   inspect(try! @utf16.decode(text), content="﻿abc你好👀")
   inspect(try! @utf16.decode(text, ignore_bom=true), content="abc你好👀")
+  let text_be = b"\xfe\xff\x00\x61\x00\x62\x00\x63\x4f\x60\x59\x7d\xd8\x3d\xdc\x40"
+  inspect(
+    try! @utf16.decode(text_be, endianness=Big),
+    content="﻿abc你好👀",
+  )
+  inspect(
+    try! @utf16.decode(text_be, ignore_bom=true, endianness=Big),
+    content="abc你好👀",
+  )
 }
 
 ///|
@@ -35,6 +49,12 @@ test "decoding UTF16 invalid data with replacement" {
   inspect(@utf16.decode_lossy(high_surrogate), content="�")
   let low_surrogate = b"\x00\xdc"
   inspect(@utf16.decode_lossy(low_surrogate), content="�")
+  let unpaired_be = b"\x00\x61\x00"
+  inspect(@utf16.decode_lossy(unpaired_be, endianness=Big), content="a�")
+  let high_surrogate_be = b"\xd8\x00"
+  inspect(@utf16.decode_lossy(high_surrogate_be, endianness=Big), content="�")
+  let low_surrogate_be = b"\xdc\x00"
+  inspect(@utf16.decode_lossy(low_surrogate_be, endianness=Big), content="�")
 }
 
 ///|
@@ -42,6 +62,19 @@ test "decoding UTF16 invalid data to String" {
   let unpaired = b"\x61\x00\x00"
   try {
     let _ = @utf16.decode(unpaired)
+    panic()
+  } catch {
+    Malformed(e) =>
+      inspect(
+        e,
+        content=(
+          #|b"\x00"
+        ),
+      )
+  }
+  let unpaired_be = b"\x00\x61\x00"
+  try {
+    let _ = @utf16.decode(unpaired_be, endianness=Big)
     panic()
   } catch {
     Malformed(e) =>
@@ -65,6 +98,19 @@ test "decoding UTF16 invalid data to String" {
         ),
       )
   }
+  let high_surrogate_be = b"\xd8\x00"
+  try {
+    let _ = @utf16.decode(high_surrogate_be, endianness=Big)
+    panic()
+  } catch {
+    Malformed(e) =>
+      inspect(
+        e,
+        content=(
+          #|b"\xd8\x00"
+        ),
+      )
+  }
   let low_surrogate = b"\x00\xdc"
   try {
     let _ = @utf16.decode(low_surrogate)
@@ -75,6 +121,19 @@ test "decoding UTF16 invalid data to String" {
         e,
         content=(
           #|b"\x00\xdc"
+        ),
+      )
+  }
+  let low_surrogate_be = b"\xdc\x00"
+  try {
+    let _ = @utf16.decode(low_surrogate_be, endianness=Big)
+    panic()
+  } catch {
+    Malformed(e) =>
+      inspect(
+        e,
+        content=(
+          #|b"\xdc\x00"
         ),
       )
   }
