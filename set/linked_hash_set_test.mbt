@@ -234,41 +234,6 @@ test "insert_and_grow" {
 }
 
 ///|
-test "remove_and_shift_back" {
-  let m = @set.Set::new()
-  m.add("a")
-  m.add("b")
-  m.add("c")
-  m.add("d")
-  m.remove("b")
-  assert_false(m.contains("b"))
-  assert_true(m.contains("a"))
-  assert_true(m.contains("c"))
-  assert_true(m.contains("d"))
-}
-
-///|
-test "capacity_and_size" {
-  let m = @set.Set::new()
-  assert_eq(m.capacity(), default_init_capacity)
-  assert_eq(m.length(), 0)
-  m.add("a")
-  assert_eq(m.length(), 1)
-}
-
-///|
-test "clear_and_reinsert" {
-  let m = @set.Set::new()
-  m.add("a")
-  m.add("b")
-  m.clear()
-  assert_eq(m.length(), 0)
-  m.add("c")
-  assert_eq(m.length(), 1)
-  assert_true(m.contains("c"))
-}
-
-///|
 test "from_iter multiple elements iter" {
   inspect(@set.Set::from_iter([1, 2, 3].iter()), content="{1, 2, 3}")
 }

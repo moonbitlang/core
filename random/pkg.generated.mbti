@@ -17,6 +17,7 @@ fn new(seed? : Bytes) -> Rand
 // Types and methods
 type Rand
 fn Rand::bigint(Self, Int) -> @bigint.BigInt
+fn Rand::boolean(Self) -> Bool
 fn Rand::chacha8(seed? : Bytes) -> Self
 fn Rand::double(Self) -> Double
 fn Rand::float(Self) -> Float

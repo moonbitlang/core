@@ -5,7 +5,8 @@
     "moonbitlang/core/float",
     "moonbitlang/core/int",
     "moonbitlang/core/bigint",
-    "moonbitlang/core/random"
+    "moonbitlang/core/random",
+    "moonbitlang/core/array"
   ],
   "targets" : {
     "algebraic_double_js.mbt": ["js"],

@@ -350,28 +350,3 @@ test "double/ryu.mbt:403" {
   inspect(vmIsTrailingZeros, content="true")
   assert_eq(vp, 10L)
 }
-
-///|
-test "double/ryu.mbt:90" {
-  let value = 100L
-  assert_eq(value % 25L, 0L)
-  assert_not_eq(value % 125L, 0L)
-}
-
-///|
-test "double/ryu.mbt:403" {
-  let acceptBounds = true
-  let mmShift = 1L
-  let mut vrIsTrailingZeros = false
-  let mut vmIsTrailingZeros = false
-  let mut vp = 10L
-  vrIsTrailingZeros = true
-  if acceptBounds {
-    vmIsTrailingZeros = mmShift.to_int() == 1
-  } else {
-    vp = vp - 1L
-  }
-  inspect(vrIsTrailingZeros, content="true")
-  inspect(vmIsTrailingZeros, content="true")
-  assert_eq(vp, 10L)
-}

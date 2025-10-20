@@ -255,9 +255,11 @@ fn[T] Iter::take(Self[T], Int) -> Self[T]
 fn[T] Iter::take_while(Self[T], (T) -> Bool) -> Self[T]
 fn[T] Iter::tap(Self[T], (T) -> Unit) -> Self[T]
 fn[T] Iter::to_array(Self[T]) -> Array[T]
+fn[X : ToJson] Iter::to_json(Self[X]) -> Json // from trait `ToJson`
 fn[T : Show] Iter::to_string(Self[T]) -> String // from trait `Show`
 impl[T] Add for Iter[T]
 impl[T : Show] Show for Iter[T]
+impl[X : ToJson] ToJson for Iter[X]
 
 type Iter2[A, B]
 fn[A, B] Iter2::concat(Self[A, B], Self[A, B]) -> Self[A, B]

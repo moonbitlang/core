@@ -178,27 +178,6 @@ test "to_array" {
 }
 
 ///|
-test "equal" {
-  let m1 = @sorted_map.of([
-    (3, "three"),
-    (8, "eight"),
-    (1, "one"),
-    (2, "two"),
-    (0, "zero"),
-  ])
-  let m2 = @sorted_map.of([
-    (3, "three"),
-    (8, "eight"),
-    (1, "one"),
-    (2, "two"),
-    (0, "zero"),
-  ])
-  let m3 = @sorted_map.of([(3, "three"), (8, "eight"), (1, "one"), (2, "two")])
-  inspect(m1 == m2, content="true")
-  inspect(m1 == m3, content="false")
-}
-
-///|
 test "show" {
   let m = @sorted_map.of([(1, "one"), (2, "two"), (3, "three")])
   inspect(
