@@ -282,6 +282,63 @@ fn IterResult::equal(Self, Self) -> Bool // from trait `Eq`
 fn IterResult::op_equal(Self, Self) -> Bool // from trait `Eq`
 impl Eq for IterResult
 
+type Iterator[X]
+fn[T] Iterator::add(Self[T], Self[T]) -> Self[T] // from trait `Add`
+fn[X] Iterator::all(Self[X], (X) -> Bool) -> Bool
+fn[X] Iterator::any(Self[X], (X) -> Bool) -> Bool
+fn[X] Iterator::concat(Self[X], Self[X]) -> Self[X]
+fn[X : Eq] Iterator::contains(Self[X], X) -> Bool
+fn[X] Iterator::count(Self[X]) -> Int
+fn[X] Iterator::drop(Self[X], Int) -> Self[X]
+fn[X] Iterator::drop_while(Self[X], (X) -> Bool) -> Self[X]
+fn[X] Iterator::each(Self[X], (X) -> Unit raise?) -> Unit raise?
+fn[X] Iterator::eachi(Self[X], (Int, X) -> Unit raise?) -> Unit raise?
+fn[X] Iterator::empty() -> Self[X]
+fn[X] Iterator::filter(Self[X], (X) -> Bool) -> Self[X]
+fn[X, Y] Iterator::filter_map(Self[X], (X) -> Y?) -> Self[Y]
+fn[X] Iterator::find_first(Self[X], (X) -> Bool) -> X?
+fn[X, Y] Iterator::flat_map(Self[X], (X) -> Self[Y]) -> Self[Y]
+fn[X] Iterator::flatten(Self[Self[X]]) -> Self[X]
+fn[X, R] Iterator::fold(Self[X], init~ : R, (R, X) -> R raise?) -> R raise?
+fn[X] Iterator::intersperse(Self[X], X) -> Self[X]
+fn[X] Iterator::iter(Self[X]) -> Iter[X]
+fn[X] Iterator::iter2(Self[X]) -> Iter2[Int, X]
+fn[X] Iterator::iterator(Self[X]) -> Self[X]
+fn[X] Iterator::iterator2(Self[X]) -> Self[(Int, X)]
+fn Iterator::join(Self[String], String) -> String
+#deprecated
+fn[X] Iterator::just_run(Self[X], (X) -> IterResult) -> Unit
+fn[X] Iterator::last(Self[X]) -> X?
+fn[X, Y] Iterator::map(Self[X], (X) -> Y) -> Self[Y]
+fn[X, Y] Iterator::map_while(Self[X], (X) -> Y?) -> Self[Y]
+fn[X, Y] Iterator::mapi(Self[X], (Int, X) -> Y) -> Self[Y]
+fn[X : Compare] Iterator::maximum(Self[X]) -> X?
+fn[X : Compare] Iterator::minimum(Self[X]) -> X?
+fn[X] Iterator::new(() -> X?) -> Self[X]
+#alias(head)
+#alias(peek, deprecated)
+fn[X] Iterator::next(Self[X]) -> X?
+fn[X] Iterator::nth(Self[X], Int) -> X?
+#deprecated
+fn[T] Iterator::op_add(Self[T], Self[T]) -> Self[T] // from trait `Add`
+fn[X : Show] Iterator::output(Self[X], &Logger) -> Unit // from trait `Show`
+fn[X] Iterator::repeat(X) -> Self[X]
+#deprecated
+fn[X] Iterator::run(Self[X], (X) -> IterResult) -> IterResult
+fn[X] Iterator::singleton(X) -> Self[X]
+#alias("_[_:_]")
+fn[X] Iterator::sub(Self[X], start? : Int, end? : Int) -> Self[X]
+fn[X] Iterator::take(Self[X], Int) -> Self[X]
+fn[X] Iterator::take_while(Self[X], (X) -> Bool) -> Self[X]
+fn[X] Iterator::tap(Self[X], (X) -> Unit) -> Self[X]
+#alias(collect)
+fn[X] Iterator::to_array(Self[X]) -> Array[X]
+fn[X : ToJson] Iterator::to_json(Self[X]) -> Json // from trait `ToJson`
+fn[X : Show] Iterator::to_string(Self[X]) -> String // from trait `Show`
+impl[T] Add for Iterator[T]
+impl[X : Show] Show for Iterator[X]
+impl[X : ToJson] ToJson for Iterator[X]
+
 pub enum Json {
   Null
   True
