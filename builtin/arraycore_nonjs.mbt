@@ -159,19 +159,6 @@ test "UninitializedArray::unsafe_blit_fixed" {
 }
 
 ///|
-test "UninitializedArray::unsafe_blit_fixed" {
-  let src = FixedArray::make(5, 0)
-  let dst = UninitializedArray::make(5)
-  for i in 0..<5 {
-    src[i] = i + 1
-  }
-  UninitializedArray::unsafe_blit_fixed(dst, 0, src, 0, 5)
-  for i in 0..<5 {
-    assert_eq(dst[i], src[i])
-  }
-}
-
-///|
 test "Array::resize_buffer" {
   let arr = Array::new(capacity=2)
   arr.push(1)
