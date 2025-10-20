@@ -466,38 +466,6 @@ test "disjoint with different sets" {
 }
 
 ///|
-test "union with different heights" {
-  let set1 = @sorted_set.of([3, 4, 5])
-  let set2 = @sorted_set.of([4, 5, 6])
-  let union_set = set1.union(set2)
-  inspect(union_set, content="@immut/sorted_set.of([3, 4, 5, 6])")
-}
-
-///|
-test "disjoint with different sets" {
-  let set1 = @sorted_set.of([1, 2, 3])
-  let set2 = @sorted_set.of([4, 5, 6])
-  let disjoint = set1.disjoint(set2)
-  inspect(disjoint, content="true")
-}
-
-///|
-test "union with different heights" {
-  let set1 = @sorted_set.of([3, 4, 5])
-  let set2 = @sorted_set.of([4, 5, 6])
-  let union_set = set1.union(set2)
-  inspect(union_set, content="@immut/sorted_set.of([3, 4, 5, 6])")
-}
-
-///|
-test "disjoint with different sets" {
-  let set1 = @sorted_set.of([1, 2, 3])
-  let set2 = @sorted_set.of([4, 5, 6])
-  let disjoint = set1.disjoint(set2)
-  inspect(disjoint, content="true")
-}
-
-///|
 test "from_iter multiple elements iter" {
   inspect(
     @sorted_set.from_iter([1, 2, 3].iter()),

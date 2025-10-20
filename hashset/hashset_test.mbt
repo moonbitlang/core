@@ -348,51 +348,6 @@ test "clear_and_reinsert" {
 }
 
 ///|
-test "insert_and_grow" {
-  let m = @hashset.new()
-  for i in 0..<10 {
-    m.add(i.to_string())
-  }
-  inspect(m.length(), content="10")
-  inspect(m.capacity(), content="16")
-}
-
-///|
-test "remove_and_shift_back" {
-  let m = @hashset.new()
-  m.add("a")
-  m.add("b")
-  m.add("c")
-  m.add("d")
-  m.remove("b")
-  assert_false(m.contains("b"))
-  assert_true(m.contains("a"))
-  assert_true(m.contains("c"))
-  assert_true(m.contains("d"))
-}
-
-///|
-test "capacity_and_size" {
-  let m = @hashset.new()
-  assert_eq(m.capacity(), default_init_capacity)
-  inspect(m.length(), content="0")
-  m.add("a")
-  inspect(m.length(), content="1")
-}
-
-///|
-test "clear_and_reinsert" {
-  let m = @hashset.new()
-  m.add("a")
-  m.add("b")
-  m.clear()
-  inspect(m.length(), content="0")
-  m.add("c")
-  inspect(m.length(), content="1")
-  assert_true(m.contains("c"))
-}
-
-///|
 test "from_iter multiple elements iter" {
   let array = @hashset.from_iter([1, 2, 3].iter()).to_array()
   array.sort()

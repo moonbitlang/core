@@ -214,57 +214,6 @@ test "remove_nonexistent_key" {
 }
 
 ///|
-test "get_nonexistent_key" {
-  let m = @hashmap.new()
-  m.set("a", 1)
-  m.set("b", 2)
-  inspect(m.get("c"), content="None")
-}
-
-///|
-test "remove_nonexistent_key" {
-  let m = @hashmap.new()
-  m.set("a", 1)
-  m.set("b", 2)
-  m.remove("c")
-  inspect(m.length(), content="2")
-}
-
-///|
-test "get_nonexistent_key" {
-  let m = @hashmap.new()
-  m.set("a", 1)
-  m.set("b", 2)
-  inspect(m.get("c"), content="None")
-}
-
-///|
-test "remove_nonexistent_key" {
-  let m = @hashmap.new()
-  m.set("a", 1)
-  m.set("b", 2)
-  m.remove("c")
-  inspect(m.length(), content="2")
-}
-
-///|
-test "get_nonexistent_key" {
-  let m = @hashmap.new()
-  m.set("a", 1)
-  m.set("b", 2)
-  inspect(m.get("c"), content="None")
-}
-
-///|
-test "remove_nonexistent_key" {
-  let m = @hashmap.new()
-  m.set("a", 1)
-  m.set("b", 2)
-  m.remove("c")
-  inspect(m.length(), content="2")
-}
-
-///|
 test "get_nonexistent_key_with_psl" {
   let m = @hashmap.new()
   m.set("a", 1)

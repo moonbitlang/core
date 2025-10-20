@@ -448,14 +448,6 @@ test "from_int" {
 }
 
 ///|
-test "from_int" {
-  let a = @bigint.BigInt::from_int(1234567899)
-  inspect(a.to_string(), content="1234567899")
-  let b = @bigint.BigInt::from_int(-1234567890)
-  inspect(b.to_string(), content="-1234567890")
-}
-
-///|
 test "compare" {
   let a = @bigint.BigInt::from_int64(1234567890123456789L)
   let b = @bigint.BigInt::from_int64(-1234567890123456789L)
