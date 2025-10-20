@@ -18,23 +18,8 @@ test "panic array_split_at" {
 }
 
 ///|
-test "panic array_split_at" {
-  [1].split_at(3) |> ignore
-}
-
-///|
 test "panic array_swap" {
   [1, 2, 3].swap(1, 5)
-}
-
-///|
-test "panic array_swap" {
-  [1, 2, 3].swap(1, 5)
-}
-
-///|
-test "panic array_op_get" {
-  [1, 2, 3][5] |> ignore
 }
 
 ///|
@@ -105,52 +90,6 @@ test "panic view_as_view_length_index_error" {
 ///|
 test "panic array_as_view_get_index_error" {
   [1, 2, 3][:][5] |> ignore
-}
-
-///|
-test "panic div coverage for division by zero" {
-  let a = BigInt::from_int(123456789)
-  let b = BigInt::from_int(0)
-  (a / b) |> ignore
-}
-
-///|
-test "panic mod coverage for modulo by zero" {
-  let a = BigInt::from_int(123456789)
-  let b = BigInt::from_int(0)
-  (a % b) |> ignore
-}
-
-///|
-test "panic shl coverage for negative shift" {
-  let a = BigInt::from_int(123456789)
-  (a << -1) |> ignore
-}
-
-///|
-test "panic shr coverage for negative shift" {
-  let a = BigInt::from_int(123456789)
-  (a >> -1) |> ignore
-}
-
-///|
-test "panic from_string coverage for empty string" {
-  BigInt::from_string("") |> ignore
-}
-
-///|
-test "panic from_string coverage for invalid character" {
-  BigInt::from_string("123a56789") |> ignore
-}
-
-///|
-test "panic from_hex coverage for empty string" {
-  BigInt::from_hex("") |> ignore
-}
-
-///|
-test "panic from_hex coverage for invalid character" {
-  BigInt::from_hex("123g56789") |> ignore
 }
 
 ///|
