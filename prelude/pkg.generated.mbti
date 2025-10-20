@@ -73,6 +73,8 @@ pub typealias @builtin.Iter2 as Iter2
 
 pub typealias @builtin.IterResult as IterResult
 
+pub typealias @builtin.Iterator as Iterator
+
 pub typealias @builtin.Json as Json
 
 pub typealias @builtin.Map as Map

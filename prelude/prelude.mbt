@@ -59,6 +59,7 @@ pub using @builtin {
   type Failure,
   type Hasher,
   type Iter,
+  type Iterator,
   type Iter2,
   type IterResult,
   type Json,
