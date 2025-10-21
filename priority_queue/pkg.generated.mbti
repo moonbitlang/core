@@ -17,7 +17,7 @@ fn[A] T::clear(Self[A]) -> Unit
 fn[A] T::copy(Self[A]) -> Self[A]
 fn[K] T::default() -> Self[K] // from trait `Default`
 #as_free_fn
-fn[A : Compare] T::from_array(Array[A]) -> Self[A]
+fn[A : Compare] T::from_array(ArrayView[A]) -> Self[A]
 #as_free_fn
 fn[K : Compare] T::from_iter(Iter[K]) -> Self[K]
 fn[A] T::is_empty(Self[A]) -> Bool

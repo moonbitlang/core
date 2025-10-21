@@ -37,7 +37,7 @@ pub fn[T] ReadOnlyArray::at(self : ReadOnlyArray[T], index : Int) -> T {
 /// let immut_array = ReadOnlyArray::from_array(dynamic_array)
 /// inspect(immut_array[0], content="1")
 /// ```
-pub fn[T] ReadOnlyArray::from_array(array : Array[T]) -> ReadOnlyArray[T] {
+pub fn[T] ReadOnlyArray::from_array(array : ArrayView[T]) -> ReadOnlyArray[T] {
   unsafe_reinterpret_from_fixed_array(FixedArray::from_array(array))
 }
 

@@ -27,7 +27,7 @@ fn[V] SortedSet::each(Self[V], (V) -> Unit raise?) -> Unit raise?
 fn[V] SortedSet::eachi(Self[V], (Int, V) -> Unit raise?) -> Unit raise?
 fn[V : Eq] SortedSet::equal(Self[V], Self[V]) -> Bool // from trait `Eq`
 #as_free_fn
-fn[V : Compare] SortedSet::from_array(Array[V]) -> Self[V]
+fn[V : Compare] SortedSet::from_array(ArrayView[V]) -> Self[V]
 #as_free_fn
 fn[V : Compare] SortedSet::from_iter(Iter[V]) -> Self[V]
 #deprecated

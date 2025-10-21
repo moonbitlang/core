@@ -36,7 +36,7 @@
 ///   )
 /// ```
 #as_free_fn
-pub fn Bytes::from_array(arr : Array[Byte]) -> Bytes {
+pub fn Bytes::from_array(arr : ArrayView[Byte]) -> Bytes {
   Bytes::makei(arr.length(), i => arr[i])
 }
 

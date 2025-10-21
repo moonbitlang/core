@@ -12,7 +12,7 @@ import(
 fn[X] default() -> T[X]
 
 #deprecated
-fn[A] from_array(Array[A]) -> T[A]
+fn[A] from_array(ArrayView[A]) -> T[A]
 
 #deprecated
 fn[A] from_iter(Iter[A]) -> T[A]
@@ -93,7 +93,7 @@ fn[A, B] T::fold_righti(Self[A], (Int, A, B) -> B raise?, init~ : B) -> B raise?
 #deprecated
 fn[A, B] T::foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
 #deprecated
-fn[A] T::from_array(Array[A]) -> Self[A]
+fn[A] T::from_array(ArrayView[A]) -> Self[A]
 #deprecated
 fn[A] T::from_iter(Iter[A]) -> Self[A]
 #deprecated

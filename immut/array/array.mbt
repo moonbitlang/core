@@ -87,7 +87,7 @@ pub fn[A] T::of(arr : FixedArray[A]) -> T[A] {
 ///   assert_eq(v, @array.from_array([1, 2, 3]))
 /// ```
 #as_free_fn
-pub fn[A] T::from_array(arr : Array[A]) -> T[A] {
+pub fn[A] T::from_array(arr : ArrayView[A]) -> T[A] {
   makei(arr.length(), i => arr[i])
 }
 

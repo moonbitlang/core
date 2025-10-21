@@ -70,7 +70,7 @@ pub fn[A : @json.FromJson] from_json(
 ///   assert_eq(ls, @list.from_array([1, 2, 3, 4, 5]))
 /// ```
 #deprecated("use `@list` instead")
-pub fn[A] from_array(arr : Array[A]) -> T[A] {
+pub fn[A] from_array(arr : ArrayView[A]) -> T[A] {
   for i = arr.length() - 1, list = Nil; i >= 0; {
     continue i - 1, Cons(arr[i], list)
   } else {

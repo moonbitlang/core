@@ -42,7 +42,7 @@ fn[A] List::flatten(Self[Self[A]]) -> Self[A]
 fn[A, B] List::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 fn[A, B] List::foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
 #as_free_fn
-fn[A] List::from_array(Array[A]) -> Self[A]
+fn[A] List::from_array(ArrayView[A]) -> Self[A]
 #as_free_fn
 fn[A] List::from_iter(Iter[A]) -> Self[A]
 #as_free_fn

@@ -35,7 +35,7 @@ pub fn[A] Queue::new() -> Queue[A] {
 ///   assert_eq(queue.length(), 3)
 /// ```
 #as_free_fn
-pub fn[A] Queue::from_array(arr : Array[A]) -> Queue[A] {
+pub fn[A] Queue::from_array(arr : ArrayView[A]) -> Queue[A] {
   guard arr.length() > 0 else { return new() }
   let length = arr.length()
   let last = { content: arr[length - 1], next: None }

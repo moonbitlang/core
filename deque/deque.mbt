@@ -147,7 +147,7 @@ pub impl[A] Add for Deque[A] with add(self, other) {
 ///   inspect(dq, content="@deque.of([1, 2, 3, 4, 5])")
 /// ```
 #as_free_fn
-pub fn[A] Deque::from_array(arr : Array[A]) -> Deque[A] {
+pub fn[A] Deque::from_array(arr : ArrayView[A]) -> Deque[A] {
   let len = arr.length()
   let buf = UninitializedArray::make(len)
   for i, x in arr {
