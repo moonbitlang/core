@@ -730,7 +730,7 @@ pub impl[K : Show, V : Show] Show for HashMap[K, V] with output(self, logger) {
 ///|
 #as_free_fn
 pub fn[K : Eq + Hash, V] HashMap::from_array(
-  arr : Array[(K, V)],
+  arr : ArrayView[(K, V)],
 ) -> HashMap[K, V] {
   loop (arr.length(), new()) {
     (0, map) => map
