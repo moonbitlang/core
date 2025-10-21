@@ -432,53 +432,6 @@ test "has_suffix" {
 }
 
 ///|
-test "split" {
-  inspect(
-    "a,b,c,d,e".split(","),
-    content=(
-      #|["a", "b", "c", "d", "e"]
-    ),
-  )
-  inspect(
-    "abcde".split(""),
-    content=(
-      #|["a", "b", "c", "d", "e"]
-    ),
-  )
-  inspect(
-    "a b c d e".split(" "),
-    content=(
-      #|["a", "b", "c", "d", "e"]
-    ),
-  )
-  inspect(
-    "abcde".split("x"),
-    content=(
-      #|["abcde"]
-    ),
-  )
-  inspect("".split(""), content="[]")
-  inspect(
-    "".split("x"),
-    content=(
-      #|[""]
-    ),
-  )
-  inspect(
-    "你 wow 好 wow 月 wow 兔".split(" wow "),
-    content=(
-      #|["你", "好", "月", "兔"]
-    ),
-  )
-  inspect(
-    "👍😍😭👍😍😭👍😍😭👍".split("😍😭"),
-    content=(
-      #|["👍", "👍", "👍", "👍"]
-    ),
-  )
-}
-
-///|
 test "replace" {
   inspect("abcabc".replace(old="b", new="x"), content="axcabc")
   inspect("abcabc".replace(old="", new=","), content=",abcabc")
@@ -595,9 +548,34 @@ test "split" {
     ),
   )
   inspect(
+    "a,b,c,d,e".split(","),
+    content=(
+      #|["a", "b", "c", "d", "e"]
+    ),
+  )
+  inspect(
+    "abcde".split(""),
+    content=(
+      #|["a", "b", "c", "d", "e"]
+    ),
+  )
+  inspect(
     "a b c d e".split(" "),
     content=(
       #|["a", "b", "c", "d", "e"]
+    ),
+  )
+  inspect(
+    "abcde".split("x"),
+    content=(
+      #|["abcde"]
+    ),
+  )
+  inspect("".split(""), content="[]")
+  inspect(
+    "".split("x"),
+    content=(
+      #|[""]
     ),
   )
 }

@@ -364,6 +364,16 @@ test "iter" {
   inspect(s, content="")
 }
 
+///|
+test "iter_loop" {
+  let buf = StringBuilder::new(size_hint=20)
+  let set = [2, 7, 1, 2, 3, 4, 5] |> @sorted_set.of
+  for x in set {
+    buf.write_object(x)
+  }
+  inspect(buf, content="123457")
+}
+
 // test "of_sorted_array" {
 //   inspect(
 //     of_sorted_array([1, 2, 3, 4, 5, 6, 7, 8, 9]),
@@ -485,16 +495,6 @@ test "from_iter single element iter" {
 test "from_iter empty iter" {
   let pq : @sorted_set.SortedSet[Int] = @sorted_set.from_iter(Iter::empty())
   inspect(pq, content="@immut/sorted_set.of([])")
-}
-
-///|
-test "iter" {
-  let buf = StringBuilder::new(size_hint=20)
-  let set = [2, 7, 1, 2, 3, 4, 5] |> @sorted_set.of
-  for x in set {
-    buf.write_object(x)
-  }
-  inspect(buf, content="123457")
 }
 
 ///|

@@ -99,6 +99,12 @@ test "pop" {
   let pq_ = @priority_queue.of([1])
   pq_.pop() |> ignore
   inspect(pq_.length(), content="0")
+  let p = @priority_queue.from_iter([0, 1, 4, 5, 6, 2, 3].iter())
+  p.pop() |> ignore
+  p.pop() |> ignore
+  p.pop() |> ignore
+  inspect(p.iter(), content="[3, 2, 1, 0]")
+  inspect(p.length(), content="4")
 }
 
 ///|
@@ -153,16 +159,6 @@ test "from_iter single element iter" {
 test "from_iter empty iter" {
   let pq : @priority_queue.T[Int] = @priority_queue.from_iter(Iter::empty())
   inspect(pq, content="@priority_queue.of([])")
-}
-
-///|
-test "pop" {
-  let p = @priority_queue.from_iter([0, 1, 4, 5, 6, 2, 3].iter())
-  p.pop() |> ignore
-  p.pop() |> ignore
-  p.pop() |> ignore
-  inspect(p.iter(), content="[3, 2, 1, 0]")
-  inspect(p.length(), content="4")
 }
 
 ///|

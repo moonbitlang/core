@@ -49,7 +49,14 @@ test "@math.ln_1p" {
   inspect(@math.ln_1pf(@float.not_a_number), content="NaN")
   inspect(@math.ln_1pf(@float.infinity), content="Infinity")
   inspect(@math.ln_1pf(@float.neg_infinity), content="NaN")
+  assert_true(@math.ln_1p(@double.not_a_number).is_nan())
+  assert_true(@math.ln_1p(@double.infinity).is_pos_inf())
+  assert_true(@math.ln_1p(@double.neg_infinity).is_nan())
+  assert_true(@math.ln_1p(-1.0).is_neg_inf())
+  assert_eq(@math.ln_1p(0.0), 0.0)
 }
+
+//|
 
 ///|
 test "@math.log2 @math.log10" {
@@ -85,13 +92,4 @@ test "ln" {
   assert_eq(@math.ln(2.0), 0.6931471805599453)
   assert_eq(@math.ln(1.1125369292536007e-308), -709.0895657128241)
   assert_eq(@math.ln(5.562684646268003e-309), -709.782712893384)
-}
-
-///|
-test "@math.ln_1p" {
-  assert_true(@math.ln_1p(@double.not_a_number).is_nan())
-  assert_true(@math.ln_1p(@double.infinity).is_pos_inf())
-  assert_true(@math.ln_1p(@double.neg_infinity).is_nan())
-  assert_true(@math.ln_1p(-1.0).is_neg_inf())
-  assert_eq(@math.ln_1p(0.0), 0.0)
 }

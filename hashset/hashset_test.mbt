@@ -97,8 +97,18 @@ test "insert" {
 }
 
 ///|
-test "from_array" {
+test "of" {
   let m = @hashset.of(["a", "b", "c"])
+  assert_true(m.contains("a"))
+  assert_true(m.contains("b"))
+  assert_true(m.contains("c"))
+  assert_false(m.contains("d"))
+}
+
+///|
+test "from_array" {
+  let arr = ["a", "b", "c"]
+  let m = @hashset.from_array(arr)
   assert_true(m.contains("a"))
   assert_true(m.contains("b"))
   assert_true(m.contains("c"))
@@ -277,28 +287,6 @@ test "sub" {
   assert_true(m.contains("a"))
   assert_false(m.contains("b"))
   assert_false(m.contains("c"))
-  assert_false(m.contains("d"))
-}
-
-///|
-test "iter" {
-  let array = @hashset.of(["a", "b", "c"]).iter().collect()
-  array.sort()
-  inspect(
-    array,
-    content=(
-      #|["a", "b", "c"]
-    ),
-  )
-}
-
-///|
-test "from_array" {
-  let arr = ["a", "b", "c"]
-  let m = @hashset.from_array(arr)
-  assert_true(m.contains("a"))
-  assert_true(m.contains("b"))
-  assert_true(m.contains("c"))
   assert_false(m.contains("d"))
 }
 

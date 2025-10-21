@@ -481,13 +481,6 @@ test "add_with_hash collision" {
   let map = @hashmap.of([(MyString("a"), 1), (MyString("b"), 2)])
   assert_eq(map.get(MyString("a")), Some(1))
   assert_eq(map.get(MyString("b")), Some(2))
-}
-
-///|
-test "add_with_hash collision" {
-  let map = @hashmap.of([(MyString("a"), 1), (MyString("b"), 2)])
-  assert_eq(map.get(MyString("a")), Some(1))
-  assert_eq(map.get(MyString("b")), Some(2))
   assert_eq(map.get(MyString("c")), None)
   let map = map.add(MyString("c"), 3)
   assert_eq(map.get(MyString("c")), Some(3))

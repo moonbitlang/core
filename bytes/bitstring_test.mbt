@@ -158,7 +158,7 @@ test "extract_byte - bit patterns and edge cases" {
 // ============================================================================
 
 ///|
-test "extract_int_le" {
+test "extract_uint_le" {
   let s = b"\xA5\xB6\xC7\xD8"[:]
   inspect(
     s.unsafe_extract_uint_le(0, 9).to_be_bytes(),
@@ -304,10 +304,55 @@ test "extract_int_le" {
       #|b"\xd8\xc7\xb6\xa5"
     ),
   )
-}
-
-///|
-test "extract_int_le" {
+  let s = b"\xA5\xB6\xC7\xD8\xA5\xB6\xC7\xD8"[:]
+  inspect(
+    s.unsafe_extract_uint_le(1, 32).to_be_bytes(),
+    content=(
+      #|b"\xb1\x8fmK"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_uint_le(2, 32).to_be_bytes(),
+    content=(
+      #|b"b\x1f\xdb\x96"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_uint_le(3, 32).to_be_bytes(),
+    content=(
+      #|b"\xc5>\xb6-"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_uint_le(4, 32).to_be_bytes(),
+    content=(
+      #|b"\x8a}l["
+    ),
+  )
+  inspect(
+    s.unsafe_extract_uint_le(5, 32).to_be_bytes(),
+    content=(
+      #|b"\x14\xfb\xd8\xb6"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_uint_le(6, 32).to_be_bytes(),
+    content=(
+      #|b")\xf6\xb1m"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_uint_le(7, 32).to_be_bytes(),
+    content=(
+      #|b"R\xecc\xdb"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_uint_le(8, 32).to_be_bytes(),
+    content=(
+      #|b"\xa5\xd8\xc7\xb6"
+    ),
+  )
   let s = b"\xA5\xB6\xC7\xD8"[:]
   inspect(
     s.unsafe_extract_uint_le(0, 32).to_be_bytes(),
@@ -451,59 +496,6 @@ test "extract_int_le" {
     s.unsafe_extract_uint_le(23, 9).to_be_bytes(),
     content=(
       #|b"\x00\x00\x00\xec"
-    ),
-  )
-}
-
-///|
-test "extract_int_le" {
-  let s = b"\xA5\xB6\xC7\xD8\xA5\xB6\xC7\xD8"[:]
-  inspect(
-    s.unsafe_extract_uint_le(1, 32).to_be_bytes(),
-    content=(
-      #|b"\xb1\x8fmK"
-    ),
-  )
-  inspect(
-    s.unsafe_extract_uint_le(2, 32).to_be_bytes(),
-    content=(
-      #|b"b\x1f\xdb\x96"
-    ),
-  )
-  inspect(
-    s.unsafe_extract_uint_le(3, 32).to_be_bytes(),
-    content=(
-      #|b"\xc5>\xb6-"
-    ),
-  )
-  inspect(
-    s.unsafe_extract_uint_le(4, 32).to_be_bytes(),
-    content=(
-      #|b"\x8a}l["
-    ),
-  )
-  inspect(
-    s.unsafe_extract_uint_le(5, 32).to_be_bytes(),
-    content=(
-      #|b"\x14\xfb\xd8\xb6"
-    ),
-  )
-  inspect(
-    s.unsafe_extract_uint_le(6, 32).to_be_bytes(),
-    content=(
-      #|b")\xf6\xb1m"
-    ),
-  )
-  inspect(
-    s.unsafe_extract_uint_le(7, 32).to_be_bytes(),
-    content=(
-      #|b"R\xecc\xdb"
-    ),
-  )
-  inspect(
-    s.unsafe_extract_uint_le(8, 32).to_be_bytes(),
-    content=(
-      #|b"\xa5\xd8\xc7\xb6"
     ),
   )
 }
@@ -669,10 +661,55 @@ test "extract_int_be" {
       #|b"\xa5\xb6\xc7\xd8"
     ),
   )
-}
-
-///|
-test "extract_int_be" {
+  let s = b"\xA5\xB6\xC7\xD8\xA5\xB6\xC7\xD8"[:]
+  inspect(
+    s.unsafe_extract_uint_be(1, 32).to_be_bytes(),
+    content=(
+      #|b"Km\x8f\xb1"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_uint_be(2, 32).to_be_bytes(),
+    content=(
+      #|b"\x96\xdb\x1fb"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_uint_be(3, 32).to_be_bytes(),
+    content=(
+      #|b"-\xb6>\xc5"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_uint_be(4, 32).to_be_bytes(),
+    content=(
+      #|b"[l}\x8a"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_uint_be(5, 32).to_be_bytes(),
+    content=(
+      #|b"\xb6\xd8\xfb\x14"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_uint_be(6, 32).to_be_bytes(),
+    content=(
+      #|b"m\xb1\xf6)"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_uint_be(7, 32).to_be_bytes(),
+    content=(
+      #|b"\xdbc\xecR"
+    ),
+  )
+  inspect(
+    s.unsafe_extract_uint_be(8, 32).to_be_bytes(),
+    content=(
+      #|b"\xb6\xc7\xd8\xa5"
+    ),
+  )
   let s = b"\xA5\xB6\xC7\xD8"[:]
   inspect(
     s.unsafe_extract_uint_be(0, 32).to_be_bytes(),
@@ -816,59 +853,6 @@ test "extract_int_be" {
     s.unsafe_extract_uint_be(23, 9).to_be_bytes(),
     content=(
       #|b"\x00\x00\x01\xd8"
-    ),
-  )
-}
-
-///|
-test "extract_int_be" {
-  let s = b"\xA5\xB6\xC7\xD8\xA5\xB6\xC7\xD8"[:]
-  inspect(
-    s.unsafe_extract_uint_be(1, 32).to_be_bytes(),
-    content=(
-      #|b"Km\x8f\xb1"
-    ),
-  )
-  inspect(
-    s.unsafe_extract_uint_be(2, 32).to_be_bytes(),
-    content=(
-      #|b"\x96\xdb\x1fb"
-    ),
-  )
-  inspect(
-    s.unsafe_extract_uint_be(3, 32).to_be_bytes(),
-    content=(
-      #|b"-\xb6>\xc5"
-    ),
-  )
-  inspect(
-    s.unsafe_extract_uint_be(4, 32).to_be_bytes(),
-    content=(
-      #|b"[l}\x8a"
-    ),
-  )
-  inspect(
-    s.unsafe_extract_uint_be(5, 32).to_be_bytes(),
-    content=(
-      #|b"\xb6\xd8\xfb\x14"
-    ),
-  )
-  inspect(
-    s.unsafe_extract_uint_be(6, 32).to_be_bytes(),
-    content=(
-      #|b"m\xb1\xf6)"
-    ),
-  )
-  inspect(
-    s.unsafe_extract_uint_be(7, 32).to_be_bytes(),
-    content=(
-      #|b"\xdbc\xecR"
-    ),
-  )
-  inspect(
-    s.unsafe_extract_uint_be(8, 32).to_be_bytes(),
-    content=(
-      #|b"\xb6\xc7\xd8\xa5"
     ),
   )
 }
@@ -1082,10 +1066,6 @@ test "extract_int64_le" {
       #|b"\xd8\xc7\xb6Z\xd8\xc7\xb6\xa5"
     ),
   )
-}
-
-///|
-test "extract_int64_le" {
   let s = b"\xA5\xB6\xC7\xD8\x5A\xB6\xC7\xD8"[:]
   inspect(
     s.unsafe_extract_uint64_le(0, 64).to_be_bytes(),
@@ -1490,10 +1470,6 @@ test "extract_int64_be" {
       #|b"\xa5\xb6\xc7\xd8Z\xb6\xc7\xd8"
     ),
   )
-}
-
-///|
-test "extract_int64_be" {
   let s = b"\xA5\xB6\xC7\xD8\x5A\xB6\xC7\xD8"[:]
   inspect(
     s.unsafe_extract_uint64_be(0, 64).to_be_bytes(),

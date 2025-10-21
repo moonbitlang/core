@@ -250,12 +250,6 @@ test "nth" {
   let ls = @list.of([1, 2, 3, 4, 5])
   inspect(ls.nth(0), content="Some(1)")
   inspect(ls.nth(1), content="Some(2)")
-}
-
-///|
-test "nth" {
-  let ls = @list.of([1, 2, 3, 4, 5])
-  inspect(ls.nth(0), content="Some(1)")
   inspect(ls.nth(20), content="None")
 }
 
@@ -558,7 +552,7 @@ test "default" {
 }
 
 ///|
-test "iter" {
+test "iter_map_fold" {
   let ls = @list.of([1, 2, 3, 4, 5])
   inspect(ls.iter().map(x => x + 1).fold((a, b) => a + b, init=0), content="20")
 }
