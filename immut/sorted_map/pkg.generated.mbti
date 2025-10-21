@@ -34,8 +34,10 @@ fn[K, V] SortedMap::filter_with_key(Self[K, V], (K, V) -> Bool raise?) -> Self[K
 #deprecated
 fn[K, V, A] SortedMap::fold(Self[K, V], init~ : A, (A, V) -> A) -> A
 fn[K, V, A] SortedMap::foldl_with_key(Self[K, V], (A, K, V) -> A, init~ : A) -> A
+#alias(of, deprecated)
+#as_free_fn(of, deprecated)
 #as_free_fn
-fn[K : Compare, V] SortedMap::from_array(Array[(K, V)]) -> Self[K, V]
+fn[K : Compare, V] SortedMap::from_array(ArrayView[(K, V)]) -> Self[K, V]
 #as_free_fn
 fn[K : Compare, V] SortedMap::from_iter(Iter[(K, V)]) -> Self[K, V]
 #as_free_fn
@@ -62,8 +64,6 @@ fn[K, X, Y] SortedMap::map(Self[K, X], (X) -> Y) -> Self[K, Y]
 fn[K, X, Y] SortedMap::map_with_key(Self[K, X], (K, X) -> Y) -> Self[K, Y]
 #as_free_fn
 fn[K, V] SortedMap::new() -> Self[K, V]
-#as_free_fn
-fn[K : Compare, V] SortedMap::of(FixedArray[(K, V)]) -> Self[K, V]
 #deprecated
 fn[K : Eq, V : Eq] SortedMap::op_equal(Self[K, V], Self[K, V]) -> Bool // from trait `Eq`
 fn[K : Compare, V : Compare] SortedMap::op_ge(Self[K, V], Self[K, V]) -> Bool // from trait `Compare`

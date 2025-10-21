@@ -69,6 +69,8 @@ pub fn[K] Set::new(capacity? : Int = 8) -> Set[K] {
 ///|
 /// Create a hash set from array.
 #as_free_fn
+#alias(of, deprecated="Use from_array instead")
+#as_free_fn(of, deprecated="Use from_array instead")
 pub fn[K : Hash + Eq] Set::from_array(arr : ArrayView[K]) -> Set[K] {
   let length = arr.length()
   let mut capacity = length.next_power_of_two()
@@ -479,22 +481,6 @@ pub impl[K : Hash + Eq] Eq for Set[K] with equal(self, other) {
   } else {
     true
   }
-}
-
-///|
-#as_free_fn
-pub fn[K : Hash + Eq] Set::of(arr : FixedArray[K]) -> Set[K] {
-  let length = arr.length()
-  let mut capacity = length.next_power_of_two()
-  if length > calc_grow_threshold(capacity) {
-    capacity *= 2
-  }
-  let m = Set::new(capacity~)
-  for i in 0..<length {
-    let e = arr[i]
-    m.add(e)
-  }
-  m
 }
 
 ///|

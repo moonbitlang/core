@@ -18,6 +18,8 @@ fn[A : Eq + Hash] HashSet::contains(Self[A], A) -> Bool
 fn[K : Eq] HashSet::difference(Self[K], Self[K]) -> Self[K]
 fn[A] HashSet::each(Self[A], (A) -> Unit raise?) -> Unit raise?
 fn[A : Eq] HashSet::equal(Self[A], Self[A]) -> Bool // from trait `Eq`
+#alias(of, deprecated)
+#as_free_fn(of, deprecated)
 #as_free_fn
 fn[A : Eq + Hash] HashSet::from_array(ArrayView[A]) -> Self[A]
 #as_free_fn
@@ -34,8 +36,6 @@ fn[A] HashSet::iterator(Self[A]) -> Iterator[A]
 fn[A] HashSet::length(Self[A]) -> Int
 #as_free_fn
 fn[A] HashSet::new() -> Self[A]
-#as_free_fn
-fn[A : Eq + Hash] HashSet::of(FixedArray[A]) -> Self[A]
 #deprecated
 fn[A : Eq] HashSet::op_equal(Self[A], Self[A]) -> Bool // from trait `Eq`
 fn[A : Show] HashSet::output(Self[A], &Logger) -> Unit // from trait `Show`

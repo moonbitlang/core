@@ -34,6 +34,8 @@ pub fn[A] T::new() -> T[A] {
 ///   assert_eq(queue.length(), 5)
 /// ```
 #as_free_fn
+#alias(of, deprecated="Use from_array instead")
+#as_free_fn(of, deprecated="Use from_array instead")
 pub fn[A : Compare] T::from_array(arr : ArrayView[A]) -> T[A] {
   guard arr is [a0, ..] else { return new() }
   let len = arr.length()
@@ -275,20 +277,6 @@ pub fn[A] T::clear(self : T[A]) -> Unit {
 /// ```
 pub fn[A] T::is_empty(self : T[A]) -> Bool {
   self.len == 0
-}
-
-///|
-#as_free_fn
-pub fn[A : Compare] T::of(arr : FixedArray[A]) -> T[A] {
-  guard arr is [a0, ..] else { return new() }
-  let len = arr.length()
-  for i = 1, acc = { content: a0, sibling: None, child: None } {
-    if i < len {
-      continue i + 1, meld(acc, { content: arr[i], sibling: None, child: None })
-    } else {
-      break { len, top: Some(acc) }
-    }
-  }
 }
 
 ///|

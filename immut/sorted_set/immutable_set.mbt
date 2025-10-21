@@ -39,6 +39,8 @@ pub fn[A] SortedSet::singleton(value : A) -> SortedSet[A] {
 ///|
 /// Initialize an ImmutableSet[T] from a Array[T]
 #as_free_fn
+#alias(of, deprecated="Use from_array instead")
+#as_free_fn(of, deprecated="Use from_array instead")
 pub fn[A : Compare] SortedSet::from_array(array : ArrayView[A]) -> SortedSet[A] {
   for i = array.length() - 1, set = Empty; i >= 0; {
     continue i - 1, set.add(array[i])
@@ -839,16 +841,6 @@ fn[A] SortedSet::concat(
     (Empty, _) => other
     (_, Empty) => self
     _ => join(self, other.min(), other.remove_min())
-  }
-}
-
-///|
-#as_free_fn
-pub fn[A : Compare] SortedSet::of(array : FixedArray[A]) -> SortedSet[A] {
-  for i = array.length() - 1, set = Empty; i >= 0; {
-    continue i - 1, set.add(array[i])
-  } else {
-    set
   }
 }
 

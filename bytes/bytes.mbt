@@ -36,6 +36,8 @@
 ///   )
 /// ```
 #as_free_fn
+#alias(of, deprecated="Use from_array instead")
+#as_free_fn(of, deprecated="Use from_array instead")
 pub fn Bytes::from_array(arr : ArrayView[Byte]) -> Bytes {
   Bytes::makei(arr.length(), i => arr[i])
 }
@@ -201,13 +203,6 @@ pub fn Bytes::from_iterator(iter : Iterator[Byte]) -> Bytes {
 ///   )
 /// ```
 /// TODO: marked as intrinsic, inline if it is constant
-#as_free_fn
-pub fn Bytes::of(arr : FixedArray[Byte]) -> Bytes {
-  let len = arr.length()
-  let result = unsafe_to_fixedarray(UninitializedArray::make(len))
-  arr.blit_to(result, len~)
-  result.unsafe_reinterpret_as_bytes()
-}
 
 ///|
 /// Converts a bytes sequence into an array of bytes.

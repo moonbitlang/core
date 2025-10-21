@@ -215,6 +215,8 @@ fn[K : Show, V : Show] SortedMap::debug_tree(self : SortedMap[K, V]) -> String {
 /// Build a map from an array of key-value pairs.
 /// O(n*log n).
 #as_free_fn
+#alias(of, deprecated="Use from_array instead")
+#as_free_fn(of, deprecated="Use from_array instead")
 pub fn[K : Compare, V] SortedMap::from_array(
   array : ArrayView[(K, V)],
 ) -> SortedMap[K, V] {
@@ -322,19 +324,6 @@ pub fn[K, V] SortedMap::keys_as_iter(self : SortedMap[K, V]) -> Iter[K] {
 /// Return all elements of the map in the ascending order of their keys.
 pub fn[K, V] SortedMap::values(self : SortedMap[K, V]) -> Iter[V] {
   self.iter().map(p => p.1)
-}
-
-///|
-#as_free_fn
-pub fn[K : Compare, V] SortedMap::of(
-  array : FixedArray[(K, V)],
-) -> SortedMap[K, V] {
-  for i = 0, mp = Empty; i < array.length(); {
-    let (k, v) = array[i]
-    continue i + 1, mp.add(k, v)
-  } else {
-    mp
-  }
 }
 
 ///|

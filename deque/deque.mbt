@@ -147,6 +147,8 @@ pub impl[A] Add for Deque[A] with add(self, other) {
 ///   inspect(dq, content="@deque.of([1, 2, 3, 4, 5])")
 /// ```
 #as_free_fn
+#alias(of, deprecated="Use from_array instead")
+#as_free_fn(of, deprecated="Use from_array instead")
 pub fn[A] Deque::from_array(arr : ArrayView[A]) -> Deque[A] {
   let len = arr.length()
   let buf = UninitializedArray::make(len)
@@ -417,26 +419,6 @@ pub fn[A] Deque::remove(self : Deque[A], index : Int) -> A {
 /// Creates a new deque from a fixed array, preserving the order of elements.
 ///
 /// Parameters:
-///
-/// * `array` : A fixed-size array containing the initial elements of the deque.
-///
-/// Returns a new deque containing all elements from the input array.
-///
-/// Example:
-///
-/// ```moonbit
-///   let dq = @deque.of([1, 2, 3])
-///   inspect(dq, content="@deque.of([1, 2, 3])")
-/// ```
-#as_free_fn
-pub fn[A] Deque::of(arr : FixedArray[A]) -> Deque[A] {
-  let len = arr.length()
-  let buf = UninitializedArray::make(len)
-  for i, x in arr {
-    buf[i] = x
-  }
-  Deque::{ buf, len, head: 0, tail: len - 1 }
-}
 
 ///|
 /// Returns the number of elements in the deque.

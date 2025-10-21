@@ -26,8 +26,10 @@ fn[K, V] HashMap::filter_with_key(Self[K, V], (K, V) -> Bool raise?) -> Self[K, 
 #deprecated
 fn[K, V, A] HashMap::fold(Self[K, V], init~ : A, (A, V) -> A raise?) -> A raise?
 fn[K, V, A] HashMap::fold_with_key(Self[K, V], init~ : A, (A, K, V) -> A raise?) -> A raise?
+#alias(of, deprecated)
+#as_free_fn(of, deprecated)
 #as_free_fn
-fn[K : Eq + Hash, V] HashMap::from_array(Array[(K, V)]) -> Self[K, V]
+fn[K : Eq + Hash, V] HashMap::from_array(ArrayView[(K, V)]) -> Self[K, V]
 #as_free_fn
 fn[K : Eq + Hash, V] HashMap::from_iter(Iter[(K, V)]) -> Self[K, V]
 #as_free_fn
@@ -50,8 +52,6 @@ fn[K, V, A] HashMap::map(Self[K, V], (V) -> A raise?) -> Self[K, A] raise?
 fn[K, V, A] HashMap::map_with_key(Self[K, V], (K, V) -> A raise?) -> Self[K, A] raise?
 #as_free_fn
 fn[K, V] HashMap::new() -> Self[K, V]
-#as_free_fn
-fn[K : Eq + Hash, V] HashMap::of(FixedArray[(K, V)]) -> Self[K, V]
 #deprecated
 fn[K : Eq, V : Eq] HashMap::op_equal(Self[K, V], Self[K, V]) -> Bool // from trait `Eq`
 fn[K : Show, V : Show] HashMap::output(Self[K, V], &Logger) -> Unit // from trait `Show`

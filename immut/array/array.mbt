@@ -72,13 +72,6 @@ pub fn[A] T::makei(len : Int, f : (Int) -> A raise?) -> T[A] raise? {
 }
 
 ///|
-/// Convert a FixedArray to an @immut/array.
-#as_free_fn
-pub fn[A] T::of(arr : FixedArray[A]) -> T[A] {
-  makei(arr.length(), i => arr[i])
-}
-
-///|
 /// Create a persistent array from an array.
 /// 
 /// # Example
@@ -87,6 +80,8 @@ pub fn[A] T::of(arr : FixedArray[A]) -> T[A] {
 ///   assert_eq(v, @array.from_array([1, 2, 3]))
 /// ```
 #as_free_fn
+#alias(of, deprecated="Use from_array instead")
+#as_free_fn(of, deprecated="Use from_array instead")
 pub fn[A] T::from_array(arr : ArrayView[A]) -> T[A] {
   makei(arr.length(), i => arr[i])
 }

@@ -28,6 +28,8 @@ fn[A, B] T::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 fn[A] T::fold_left(Self[A], (A, A) -> A raise?, init~ : A) -> A raise?
 #deprecated
 fn[A] T::fold_right(Self[A], (A, A) -> A raise?, init~ : A) -> A raise?
+#alias(of, deprecated)
+#as_free_fn(of, deprecated)
 #as_free_fn
 fn[A] T::from_array(ArrayView[A]) -> Self[A]
 #as_free_fn
@@ -48,8 +50,6 @@ fn[A] T::makei(Int, (Int) -> A raise?) -> Self[A] raise?
 fn[A, B] T::map(Self[A], (A) -> B raise?) -> Self[B] raise?
 #as_free_fn
 fn[A] T::new() -> Self[A]
-#as_free_fn
-fn[A] T::of(FixedArray[A]) -> Self[A]
 #deprecated
 fn[A] T::op_add(Self[A], Self[A]) -> Self[A] // from trait `Add`
 #deprecated

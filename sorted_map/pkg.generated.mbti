@@ -22,8 +22,10 @@ fn[K, V] SortedMap::default() -> Self[K, V] // from trait `Default`
 fn[K, V] SortedMap::each(Self[K, V], (K, V) -> Unit raise?) -> Unit raise?
 fn[K, V] SortedMap::eachi(Self[K, V], (Int, K, V) -> Unit raise?) -> Unit raise?
 fn[K : Eq, V : Eq] SortedMap::equal(Self[K, V], Self[K, V]) -> Bool // from trait `Eq`
+#alias(of, deprecated)
+#as_free_fn(of, deprecated)
 #as_free_fn
-fn[K : Compare, V] SortedMap::from_array(Array[(K, V)]) -> Self[K, V]
+fn[K : Compare, V] SortedMap::from_array(ArrayView[(K, V)]) -> Self[K, V]
 #as_free_fn
 fn[K : Compare, V] SortedMap::from_iter(Iter[(K, V)]) -> Self[K, V]
 #as_free_fn
@@ -42,8 +44,6 @@ fn[K, V] SortedMap::keys_as_iter(Self[K, V]) -> Iter[K]
 fn[K, V] SortedMap::length(Self[K, V]) -> Int
 #as_free_fn
 fn[K, V] SortedMap::new() -> Self[K, V]
-#as_free_fn
-fn[K : Compare, V] SortedMap::of(FixedArray[(K, V)]) -> Self[K, V]
 #deprecated
 fn[K : Eq, V : Eq] SortedMap::op_equal(Self[K, V], Self[K, V]) -> Bool // from trait `Eq`
 fn[K : Show, V : Show] SortedMap::output(Self[K, V], &Logger) -> Unit // from trait `Show`

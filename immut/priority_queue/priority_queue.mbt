@@ -34,6 +34,8 @@ pub fn[A] PriorityQueue::new() -> PriorityQueue[A] {
 ///   inspect(queue.length(), content="5")
 /// ```
 #as_free_fn
+#alias(of, deprecated="Use from_array instead")
+#as_free_fn(of, deprecated="Use from_array instead")
 pub fn[A : Compare] PriorityQueue::from_array(
   array : ArrayView[A],
 ) -> PriorityQueue[A] {
@@ -292,16 +294,6 @@ pub fn[A] PriorityQueue::is_empty(self : PriorityQueue[A]) -> Bool {
 /// ```
 pub fn[A] PriorityQueue::length(self : PriorityQueue[A]) -> Int {
   self.size
-}
-
-///|
-#as_free_fn
-pub fn[A : Compare] PriorityQueue::of(arr : FixedArray[A]) -> PriorityQueue[A] {
-  let mut pq = new()
-  for i in 0..<arr.length() {
-    pq = pq.push(arr[i])
-  }
-  pq
 }
 
 ///|
