@@ -44,6 +44,14 @@ test "@hashset.size" {
   } else {
     assert_eq(set.add(0).length(), 20)
   }
+  let set = @hashset.new()
+  inspect(set.length(), content="0")
+  let set = set.add(1)
+  inspect(set.length(), content="1")
+  let set = set.add(2)
+  inspect(set.length(), content="2")
+  let set = set.remove(1)
+  inspect(set.length(), content="1")
 }
 
 ///|
@@ -79,6 +87,15 @@ test "@hashset.iter" {
 }
 
 ///|
+test "@hashset.each" {
+  let set = @hashset.new().add(1).add(2).add(3)
+  let result = []
+  set.each(x => result.push(x))
+  result.sort()
+  assert_eq(result, [1, 2, 3])
+}
+
+///|
 test "@hashset.to_string" {
   let set = @hashset.new().add(1).add(3).add(0x0f_ff_ff_ff).add(42)
   let content = set.iter().collect()
@@ -100,46 +117,8 @@ test "@hashset.is_empty" {
   inspect(set.is_empty(), content="true")
   let set = set.add(1)
   inspect(set.is_empty(), content="false")
-}
-
-///|
-test "@hashset.size" {
-  let set = @hashset.new()
-  inspect(set.length(), content="0")
-  let set = set.add(1)
-  inspect(set.length(), content="1")
-  let set = set.add(2)
-  inspect(set.length(), content="2")
-  let set = set.remove(1)
-  inspect(set.length(), content="1")
-}
-
-///|
-test "@hashset.is_empty" {
-  let set = @hashset.new()
-  inspect(set.is_empty(), content="true")
-  let set = set.add(1)
-  inspect(set.is_empty(), content="false")
   let set = set.remove(1)
   inspect(set.is_empty(), content="true")
-}
-
-///|
-test "@hashset.iter" {
-  let set = @hashset.new().add(1).add(2).add(3)
-  let result = []
-  set.each(x => result.push(x))
-  result.sort()
-  assert_eq(result, [1, 2, 3])
-}
-
-///|
-test "@hashset.iter" {
-  let set = @hashset.new().add(1).add(2).add(3)
-  let result = []
-  set.iter().each(x => result.push(x))
-  result.sort()
-  assert_eq(result, [1, 2, 3])
 }
 
 ///|

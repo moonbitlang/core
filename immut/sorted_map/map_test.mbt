@@ -77,6 +77,28 @@ test "iteri" {
 }
 
 ///|
+test "iter_take_each" {
+  let buf = StringBuilder::new(size_hint=20)
+  let map = @sorted_map.of([(1, "one"), (2, "two"), (3, "three")])
+  map
+  .iter()
+  .each(e => {
+    let (k, v) = e
+    buf.write_string("[\{k}-\{v}]")
+  })
+  inspect(buf, content="[1-one][2-two][3-three]")
+  buf.reset()
+  map
+  .iter()
+  .take(2)
+  .each(e => {
+    let (k, v) = e
+    buf.write_string("[\{k}-\{v}]")
+  })
+  inspect(buf, content="[1-one][2-two]")
+}
+
+///|
 test "fold" {
   let m = @sorted_map.of([("a", 1), ("b", 2), ("c", 3), ("d", 4), ("e", 5)])
   assert_eq(m.foldl_with_key((acc, _, v) => acc + v, init=0), 15)
@@ -101,9 +123,15 @@ test "foldr_with_key" {
 }
 
 ///|
-test "to_array" {
+test "collect" {
   let m = @sorted_map.of([(1, "one"), (2, "two"), (3, "three")])
   assert_eq(m.iter().collect(), [(1, "one"), (2, "two"), (3, "three")])
+}
+
+///|
+test "to_array" {
+  let m = @sorted_map.of([(1, "one"), (2, "two"), (3, "three")])
+  assert_eq(m.to_array(), [(1, "one"), (2, "two"), (3, "three")])
 }
 
 ///|
@@ -147,34 +175,6 @@ test "compare" {
       assert_eq(xs.compare(ys), xs.to_array().compare(ys.to_array()))
     }
   }
-}
-
-///|
-test "iter" {
-  let buf = StringBuilder::new(size_hint=20)
-  let map = @sorted_map.of([(1, "one"), (2, "two"), (3, "three")])
-  map
-  .iter()
-  .each(e => {
-    let (k, v) = e
-    buf.write_string("[\{k}-\{v}]")
-  })
-  inspect(buf, content="[1-one][2-two][3-three]")
-  buf.reset()
-  map
-  .iter()
-  .take(2)
-  .each(e => {
-    let (k, v) = e
-    buf.write_string("[\{k}-\{v}]")
-  })
-  inspect(buf, content="[1-one][2-two]")
-}
-
-///|
-test "to_array" {
-  let m = @sorted_map.of([(1, "one"), (2, "two"), (3, "three")])
-  assert_eq(m.to_array(), [(1, "one"), (2, "two"), (3, "three")])
 }
 
 ///|

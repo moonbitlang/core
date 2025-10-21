@@ -73,7 +73,7 @@ test "contains" {
 }
 
 ///|
-test "get" {
+test "at" {
   let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
   inspect(map[1], content="a")
   inspect(map[2], content="b")
@@ -81,7 +81,7 @@ test "get" {
 }
 
 ///|
-test "panic get" {
+test "panic at" {
   let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
   map[4] |> ignore
 }
@@ -155,7 +155,7 @@ test "to_array" {
 }
 
 ///|
-test "iter" {
+test "iter_collect" {
   let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
   inspect(
     map.iter().collect(),
@@ -169,6 +169,16 @@ test "iter" {
       #|[(1, "a"), (2, "b")]
     ),
   )
+}
+
+///|
+test "iter" {
+  let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
+  let buf = StringBuilder::new()
+  for kv in map {
+    buf.write_string("[\{kv.0}\{kv.1}]")
+  }
+  inspect(buf, content="[1a][2b][3c]")
 }
 
 ///|
@@ -214,16 +224,6 @@ test "iter2" {
   let buf = StringBuilder::new()
   for k, v in map {
     buf.write_string("[\{k}\{v}]")
-  }
-  inspect(buf, content="[1a][2b][3c]")
-}
-
-///|
-test "iter" {
-  let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
-  let buf = StringBuilder::new()
-  for kv in map {
-    buf.write_string("[\{kv.0}\{kv.1}]")
   }
   inspect(buf, content="[1a][2b][3c]")
 }

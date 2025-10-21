@@ -40,6 +40,12 @@ test "iter" {
 }
 
 ///|
+test "iter_map_fold" {
+  let ls = @list.of([1, 2, 3, 4, 5])
+  inspect(ls.iter().map(x => x + 1).fold((a, b) => a + b, init=0), content="20")
+}
+
+///|
 test "iteri" {
   let mut v = 0
   let mut failed = false
@@ -241,12 +247,6 @@ test "nth" {
   let ls = @list.of([1, 2, 3, 4, 5])
   inspect(ls.nth(0), content="Some(1)")
   inspect(ls.nth(1), content="Some(2)")
-}
-
-///|
-test "nth" {
-  let ls = @list.of([1, 2, 3, 4, 5])
-  inspect(ls.nth(0), content="Some(1)")
   inspect(ls.nth(20), content="None")
 }
 
@@ -527,12 +527,6 @@ test "intercalate" {
 test "default" {
   let ls : @list.T[Int] = @list.default()
   inspect(ls, content="@list.of([])")
-}
-
-///|
-test "iter" {
-  let ls = @list.of([1, 2, 3, 4, 5])
-  inspect(ls.iter().map(x => x + 1).fold((a, b) => a + b, init=0), content="20")
 }
 
 ///|

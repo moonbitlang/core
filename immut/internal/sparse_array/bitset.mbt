@@ -129,19 +129,6 @@ test "Bitset::remove" {
 }
 
 ///|
-test "Bitset::remove" {
-  let b = empty_bitset.add(2).add(3)
-  inspect(b.has(2), content="true")
-  inspect(b.has(3), content="true")
-  inspect(b.index_of(2), content="0")
-  inspect(b.index_of(3), content="1")
-  let b = b.remove(2)
-  inspect(b.has(2), content="false")
-  inspect(b.has(3), content="true")
-  inspect(b.index_of(3), content="0")
-}
-
-///|
 test "Bitset::size" {
   let b = empty_bitset
   inspect(b.length(), content="0")

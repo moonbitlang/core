@@ -25,6 +25,18 @@ test "get with existing key" {
 }
 
 ///|
+test "_[_] with existing key" {
+  let map = @sorted_map.of([
+    (3, "three"),
+    (8, "eight"),
+    (1, "one"),
+    (2, "two"),
+    (0, "zero"),
+  ])
+  assert_eq(map[3], "three")
+}
+
+///|
 test "get with non-existing key" {
   let map = @sorted_map.of([
     (3, "three"),
@@ -63,6 +75,19 @@ test "get after insertion" {
 }
 
 ///|
+test "_[_] after insertion" {
+  let map = @sorted_map.of([
+    (3, "three"),
+    (8, "eight"),
+    (1, "one"),
+    (2, "two"),
+    (0, "zero"),
+  ])
+  let map = map.add(4, "four")
+  assert_eq(map[4], "four")
+}
+
+///|
 test "get after removal" {
   let map = @sorted_map.of([
     (3, "three"),
@@ -76,18 +101,6 @@ test "get after removal" {
 }
 
 ///|
-test "get with existing key" {
-  let map = @sorted_map.of([
-    (3, "three"),
-    (8, "eight"),
-    (1, "one"),
-    (2, "two"),
-    (0, "zero"),
-  ])
-  assert_eq(map[3], "three")
-}
-
-///|
 test "panic get with non-existing key" {
   let map = @sorted_map.of([
     (3, "three"),
@@ -97,19 +110,6 @@ test "panic get with non-existing key" {
     (0, "zero"),
   ])
   map[4] |> ignore
-}
-
-///|
-test "get after insertion" {
-  let map = @sorted_map.of([
-    (3, "three"),
-    (8, "eight"),
-    (1, "one"),
-    (2, "two"),
-    (0, "zero"),
-  ])
-  let map = map.add(4, "four")
-  assert_eq(map[4], "four")
 }
 
 ///|

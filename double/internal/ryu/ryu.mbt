@@ -679,38 +679,3 @@ test "double/ryu.mbt:230" {
 test "double/ryu.mbt:252" {
   inspect(gDOUBLE_POW5_BITCOUNT, content="125")
 }
-
-///|
-test "double/ryu.mbt:205" {
-  let m = 123456789UL
-  let mul0 = 987654321UL
-  let (_, high0) = umul128(m, mul0)
-  let low1 = 111111111UL
-  let high1 = 222222222UL
-  let sum = high0 + low1
-  let mut high1 = high1
-  if sum < high0 {
-    high1 = high1 + 1UL
-  }
-  assert_eq(high1, 222222222UL)
-}
-
-///|
-test "double/ryu.mbt:230" {
-  let m = 123456789UL
-  let mul0 = 987654321UL
-  let (_, high0) = umul128(m, mul0)
-  let low1 = 111111111UL
-  let high1 = 222222222UL
-  let sum = high0 + low1
-  let mut high1 = high1
-  if sum < high0 {
-    high1 = high1 + 1UL
-  }
-  assert_eq(high1, 222222222UL)
-}
-
-///|
-test "double/ryu.mbt:252" {
-  inspect(gDOUBLE_POW5_BITCOUNT, content="125")
-}

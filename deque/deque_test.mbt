@@ -180,7 +180,7 @@ test "iteri" {
 }
 
 ///|
-test "iter" {
+test "each" {
   let mut i = 0
   let mut failed = false
   @deque.of([1, 2, 3, 4, 5]).each(elem => {

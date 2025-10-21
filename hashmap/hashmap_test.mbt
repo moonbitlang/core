@@ -35,6 +35,15 @@ test "get" {
 }
 
 ///|
+test "_[_]" {
+  let m = @hashmap.new()
+  m.set("a", 1)
+  m.set("b", 2)
+  assert_eq(m["a"], 1)
+  assert_eq(m["b"], 2)
+}
+
+///|
 test "get_or_default" {
   let m = @hashmap.new()
   m.set("a", 1)
@@ -73,15 +82,6 @@ test "_[_]=_" {
   m["b"] = 2
   assert_eq(m.get("a"), Some(1))
   assert_eq(m.get("b"), Some(2))
-}
-
-///|
-test "get" {
-  let m = @hashmap.new()
-  m.set("a", 1)
-  m.set("b", 2)
-  assert_eq(m["a"], 1)
-  assert_eq(m["b"], 2)
 }
 
 ///|
@@ -137,11 +137,24 @@ test "is_empty" {
 }
 
 ///|
-test "iter" {
+test "each" {
   let m = @hashmap.of([("a", 1), ("b", 2), ("c", 3)])
   let mut sum = 0
   m.each((_k, v) => sum += v)
   inspect(sum, content="6")
+}
+
+///|
+test "iter_collect" {
+  let map = @hashmap.of([(1, "one"), (2, "two"), (3, "three")])
+  let array = map.iter().collect()
+  array.sort()
+  inspect(
+    array,
+    content=(
+      #|[(1, "one"), (2, "two"), (3, "three")]
+    ),
+  )
 }
 
 ///|
@@ -155,19 +168,6 @@ test "iteri" {
   })
   inspect(s, content="012")
   inspect(sum, content="6")
-}
-
-///|
-test "iter" {
-  let map = @hashmap.of([(1, "one"), (2, "two"), (3, "three")])
-  let array = map.iter().collect()
-  array.sort()
-  inspect(
-    array,
-    content=(
-      #|[(1, "one"), (2, "two"), (3, "three")]
-    ),
-  )
 }
 
 ///|

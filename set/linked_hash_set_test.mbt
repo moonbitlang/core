@@ -52,8 +52,18 @@ test "add remove" {
 }
 
 ///|
-test "from_array" {
+test "of" {
   let m = @set.Set::of(["a", "b", "c"])
+  assert_true(m.contains("a"))
+  assert_true(m.contains("b"))
+  assert_true(m.contains("c"))
+  assert_false(m.contains("d"))
+}
+
+///|
+test "from_array" {
+  let arr = ["a", "b", "c"]
+  let m = @set.Set::from_array(arr)
   assert_true(m.contains("a"))
   assert_true(m.contains("b"))
   assert_true(m.contains("c"))
@@ -79,11 +89,22 @@ test "is_empty" {
 }
 
 ///|
-test "iter" {
+test "each" {
   let m = @set.Set::of(["a", "b", "c"])
   let mut sum = ""
   m.each(k => sum += k)
   inspect(sum, content="abc")
+}
+
+///|
+test "iter" {
+  let buf = StringBuilder::new(size_hint=20)
+  let map = @set.Set::of(["a", "b", "c"])
+  map.iter().each(e => buf.write_string("[\{e}]"))
+  inspect(buf, content="[a][b][c]")
+  buf.reset()
+  map.iter().take(2).each(e => buf.write_string("[\{e}]"))
+  inspect(buf, content="[a][b]")
 }
 
 ///|
@@ -148,27 +169,6 @@ test "symmetric_difference" {
 }
 
 ///|
-test "iter" {
-  let buf = StringBuilder::new(size_hint=20)
-  let map = @set.Set::of(["a", "b", "c"])
-  map.iter().each(e => buf.write_string("[\{e}]"))
-  inspect(buf, content="[a][b][c]")
-  buf.reset()
-  map.iter().take(2).each(e => buf.write_string("[\{e}]"))
-  inspect(buf, content="[a][b]")
-}
-
-///|
-test "from_array" {
-  let arr = ["a", "b", "c"]
-  let m = @set.Set::from_array(arr)
-  assert_true(m.contains("a"))
-  assert_true(m.contains("b"))
-  assert_true(m.contains("c"))
-  assert_false(m.contains("d"))
-}
-
-///|
 test "insert_and_grow" {
   let m = @set.Set::new()
   for i in 0..<10 {
@@ -221,16 +221,6 @@ test "clear_and_reinsert" {
   m.add("c")
   assert_eq(m.length(), 1)
   assert_true(m.contains("c"))
-}
-
-///|
-test "insert_and_grow" {
-  let m = @set.Set::new()
-  for i in 0..<10 {
-    m.add(i.to_string())
-  }
-  assert_eq(m.length(), 10)
-  assert_eq(m.capacity(), 16)
 }
 
 ///|

@@ -298,42 +298,6 @@ test "singleton" {
 }
 
 ///|
-test "insert" {
-  let m = of([(3, "three"), (8, "eight"), (1, "one")])
-  inspect(m.debug_tree(), content="(3,three,(1,one,_,_),(8,eight,_,_))")
-  let m = m.add(5, "five").add(2, "two").add(0, "zero").add(1, "one_updated")
-  inspect(
-    m.debug_tree(),
-    content="(3,three,(1,one_updated,(0,zero,_,_),(2,two,_,_)),(8,eight,(5,five,_,_),_))",
-  )
-}
-
-///|
-test "remove" {
-  let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
-  inspect(
-    m.debug_tree(),
-    content="(3,three,(1,one,(0,zero,_,_),(2,two,_,_)),(8,eight,_,_))",
-  )
-  let m = m.remove(1).remove(3)
-  inspect(m.debug_tree(), content="(2,two,(0,zero,_,_),(8,eight,_,_))")
-}
-
-///|
-test "filter" {
-  let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
-  let fm = m.filter(v => v.length() > 3)
-  inspect(fm.debug_tree(), content="(3,three,(0,zero,_,_),(8,eight,_,_))")
-}
-
-///|
-test "filter_with_key" {
-  let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
-  let fm = m.filter_with_key((k, v) => k > 3 && v.length() > 3)
-  inspect(fm.debug_tree(), content="(8,eight,_,_)")
-}
-
-///|
 test "empty" {
   let m : SortedMap[Int, Int] = new()
   inspect(m.debug_tree(), content="_")

@@ -124,7 +124,7 @@ test "grouped test for random cases" {
 }
 
 ///|
-test "grouped test for boundary cases" {
+test "grouped test for boundary cases: clz" {
   inspect(UInt64::clz(0UL), content="64")
   inspect(UInt64::clz(1UL), content="63")
   inspect(UInt64::clz(0x8000000000000000UL), content="0")
@@ -132,7 +132,7 @@ test "grouped test for boundary cases" {
 }
 
 ///|
-test "grouped test for random cases" {
+test "grouped test for random cases: clz" {
   inspect(UInt64::clz(0x123456789ABCDEF0UL), content="3")
   inspect(UInt64::clz(0xABCDEF0123456789UL), content="0")
   inspect(UInt64::clz(0x00000000FFFFFFFFUL), content="32")
@@ -165,7 +165,7 @@ test "grouped test for edge cases" {
 }
 
 ///|
-test "grouped test for random cases" {
+test "grouped test for random cases: popcnt" {
   inspect(UInt64::popcnt(0x123456789ABCDEF0UL), content="32")
   inspect(UInt64::popcnt(0xABCDEF0123456789UL), content="32")
   inspect(UInt64::popcnt(0x5555555555555555UL), content="32")

@@ -260,7 +260,7 @@ test "Int::clz" {
 }
 
 ///|
-test "grouped test for boundary cases" {
+test "grouped test for boundary cases: clz" {
   inspect(UInt::clz(0x00000000U), content="32")
   inspect(UInt::clz(0x80000000U), content="0")
   inspect(UInt::clz(0x40000000U), content="1")
@@ -276,6 +276,15 @@ test "grouped test for random cases" {
   inspect(UInt::clz(0x0FEDCBA9U), content="4")
   inspect(UInt::clz(0x0000FFFFU), content="16")
   inspect(UInt::clz(0xFFFF0000U), content="0")
+  // Random float values
+  inspect(Float::reinterpret_as_uint(123.456), content="1123477881")
+  inspect(Float::reinterpret_as_uint(-123.456), content="3270961529")
+  inspect(Float::reinterpret_as_uint(0.000123), content="956365200")
+  inspect(Float::reinterpret_as_uint(-0.000123), content="3103848848")
+  inspect(Float::reinterpret_as_uint(987654321.0), content="1315666339")
+  inspect(Float::reinterpret_as_uint(-987654321.0), content="3463149987")
+  inspect(Float::reinterpret_as_uint(1.0e+30), content="1900671690")
+  inspect(Float::reinterpret_as_uint(-1.0e+30), content="4048155338")
 }
 
 ///|
@@ -351,19 +360,6 @@ test "grouped test for boundary cases" {
     Float::reinterpret_as_uint((0x7FC00000).reinterpret_as_float()),
     content="2143289344",
   )
-}
-
-///|
-test "grouped test for random cases" {
-  // Random float values
-  inspect(Float::reinterpret_as_uint(123.456), content="1123477881")
-  inspect(Float::reinterpret_as_uint(-123.456), content="3270961529")
-  inspect(Float::reinterpret_as_uint(0.000123), content="956365200")
-  inspect(Float::reinterpret_as_uint(-0.000123), content="3103848848")
-  inspect(Float::reinterpret_as_uint(987654321.0), content="1315666339")
-  inspect(Float::reinterpret_as_uint(-987654321.0), content="3463149987")
-  inspect(Float::reinterpret_as_uint(1.0e+30), content="1900671690")
-  inspect(Float::reinterpret_as_uint(-1.0e+30), content="4048155338")
 }
 
 ///|
@@ -483,6 +479,12 @@ test "Int::to_char - Invalid values" {
   inspect(Int::to_char(-1), content="None")
   inspect(Int::to_char(1114112), content="None")
   inspect(Int::to_char(1114113), content="None")
+  inspect(Int::to_char(-1), content="None")
+  inspect(Int::to_char(0x10FFFF + 1), content="None")
+  inspect(Int::to_char(0xD800), content="None")
+  inspect(Int::to_char(0xDFFF), content="None")
+  inspect(Int::to_char(0xD900), content="None")
+  inspect(Int::to_char(0xDF00), content="None")
 }
 
 ///|
@@ -497,16 +499,6 @@ test "Int::to_char - Valid values" {
   inspect(Int::to_char(0xFFFF), content="Some('\\u{ffff}')")
   inspect(Int::to_char(0x10000), content="Some('𐀀')")
   inspect(Int::to_char(0x10FFFF), content="Some('\\u{10ffff}')")
-}
-
-///|
-test "Int::to_char - Invalid values" {
-  inspect(Int::to_char(-1), content="None")
-  inspect(Int::to_char(0x10FFFF + 1), content="None")
-  inspect(Int::to_char(0xD800), content="None")
-  inspect(Int::to_char(0xDFFF), content="None")
-  inspect(Int::to_char(0xD900), content="None")
-  inspect(Int::to_char(0xDF00), content="None")
 }
 
 ///|

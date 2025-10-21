@@ -61,6 +61,16 @@ test "iter" {
 }
 
 ///|
+test "each" {
+  let v = @array.of([1, 2, 3, 4, 5])
+  let mut s = 0
+  v.each(e => s = s + e)
+  inspect(s, content="15")
+  let v : @array.T[Int] = @array.new()
+  v.each(_e => abort("never reach"))
+}
+
+///|
 test "length" {
   let v = @array.of([1, 2, 3, 4, 5])
   let ve : @array.T[Int] = @array.new()
@@ -105,16 +115,6 @@ test "from_array" {
     vv,
     content="@immut/array.of([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])",
   )
-}
-
-///|
-test "iter" {
-  let v = @array.of([1, 2, 3, 4, 5])
-  let mut s = 0
-  v.each(e => s = s + e)
-  inspect(s, content="15")
-  let v : @array.T[Int] = @array.new()
-  v.each(_e => abort("never reach"))
 }
 
 ///|
