@@ -29,7 +29,7 @@ fn[A] T::fold_left(Self[A], (A, A) -> A raise?, init~ : A) -> A raise?
 #deprecated
 fn[A] T::fold_right(Self[A], (A, A) -> A raise?, init~ : A) -> A raise?
 #as_free_fn
-fn[A] T::from_array(Array[A]) -> Self[A]
+fn[A] T::from_array(ArrayView[A]) -> Self[A]
 #as_free_fn
 fn[A] T::from_iter(Iter[A]) -> Self[A]
 fn[A] T::get(Self[A], Int) -> A?

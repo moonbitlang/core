@@ -34,7 +34,7 @@ pub fn[A] T::new() -> T[A] {
 ///   assert_eq(queue.length(), 5)
 /// ```
 #as_free_fn
-pub fn[A : Compare] T::from_array(arr : Array[A]) -> T[A] {
+pub fn[A : Compare] T::from_array(arr : ArrayView[A]) -> T[A] {
   guard arr is [a0, ..] else { return new() }
   let len = arr.length()
   for i = 1, acc = { content: a0, sibling: None, child: None } {

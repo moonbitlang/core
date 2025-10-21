@@ -365,7 +365,7 @@ pub impl[A : Show] Show for HashSet[A] with output(self, logger) {
 
 ///|
 #as_free_fn
-pub fn[A : Eq + Hash] HashSet::from_array(arr : Array[A]) -> HashSet[A] {
+pub fn[A : Eq + Hash] HashSet::from_array(arr : ArrayView[A]) -> HashSet[A] {
   loop (arr.length(), new()) {
     (0, set) => set
     (n, set) => {

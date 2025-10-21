@@ -25,7 +25,7 @@ fn String::find(String, StringView) -> Int?
 fn String::find_by(String, (Char) -> Bool) -> Int?
 fn[A] String::fold(String, init~ : A, (A, Char) -> A) -> A
 #as_free_fn
-fn String::from_array(Array[Char]) -> String
+fn String::from_array(ArrayView[Char]) -> String
 #as_free_fn
 fn String::from_iter(Iter[Char]) -> String
 fn String::get(String, Int) -> Int?
@@ -60,12 +60,12 @@ fn String::to_bytes(String) -> Bytes
 fn String::to_lower(String) -> String
 fn String::to_string_view(String) -> StringView // from trait `ToStringView`
 fn String::to_upper(String) -> String
-#callsite(migration(char_set, allow_positional=true))
+#label_migration(char_set, allow_positional=true)
 fn String::trim(String, char_set~ : StringView) -> StringView
-#callsite(migration(char_set, allow_positional=true))
+#label_migration(char_set, allow_positional=true)
 fn String::trim_end(String, char_set~ : StringView) -> StringView
 fn String::trim_space(String) -> StringView
-#callsite(migration(char_set, allow_positional=true))
+#label_migration(char_set, allow_positional=true)
 fn String::trim_start(String, char_set~ : StringView) -> StringView
 fn String::view(String, start_offset? : Int, end_offset? : Int) -> StringView
 impl Compare for String
@@ -87,7 +87,7 @@ fn StringView::equal(Self, Self) -> Bool // from trait `Eq`
 fn StringView::find(Self, Self) -> Int?
 fn StringView::find_by(Self, (Char) -> Bool) -> Int?
 fn[A] StringView::fold(Self, init~ : A, (A, Char) -> A) -> A
-fn StringView::from_array(Array[Char]) -> Self
+fn StringView::from_array(ArrayView[Char]) -> Self
 fn StringView::from_iter(Iter[Char]) -> Self
 fn StringView::get(Self, Int) -> Int?
 fn StringView::get_char(Self, Int) -> Char?
@@ -133,12 +133,12 @@ fn StringView::to_lower(Self) -> Self
 fn StringView::to_string(Self) -> String // from trait `Show`
 fn StringView::to_string_view(Self) -> Self // from trait `ToStringView`
 fn StringView::to_upper(Self) -> Self
-#callsite(migration(char_set, allow_positional=true))
+#label_migration(char_set, allow_positional=true)
 fn StringView::trim(Self, char_set~ : Self) -> Self
-#callsite(migration(char_set, allow_positional=true))
+#label_migration(char_set, allow_positional=true)
 fn StringView::trim_end(Self, char_set~ : Self) -> Self
 fn StringView::trim_space(Self) -> Self
-#callsite(migration(char_set, allow_positional=true))
+#label_migration(char_set, allow_positional=true)
 fn StringView::trim_start(Self, char_set~ : Self) -> Self
 fn StringView::unsafe_charcode_at(Self, Int) -> Int
 fn StringView::view(Self, start_offset? : Int, end_offset? : Int) -> Self

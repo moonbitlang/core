@@ -63,7 +63,7 @@ pub fn[A : Eq] T::equal(self : T[A], other : T[A]) -> Bool {
 ///|
 #deprecated("use `@immut/list.from_array` instead")
 #coverage.skip
-pub fn[A] T::from_array(arr : Array[A]) -> T[A] {
+pub fn[A] T::from_array(arr : ArrayView[A]) -> T[A] {
   from_array(arr)
 }
 

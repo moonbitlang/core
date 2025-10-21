@@ -37,7 +37,7 @@ fn[A] Deque::filter(Self[A], (A) -> Bool raise?) -> Self[A] raise?
 fn[A] Deque::filter_map_inplace(Self[A], (A) -> A?) -> Unit
 fn[A] Deque::flatten(Self[Self[A]]) -> Self[A]
 #as_free_fn
-fn[A] Deque::from_array(Array[A]) -> Self[A]
+fn[A] Deque::from_array(ArrayView[A]) -> Self[A]
 #as_free_fn
 fn[A] Deque::from_iter(Iter[A]) -> Self[A]
 fn[A : @json.FromJson] Deque::from_json(Json, @json.JsonPath) -> Self[A] raise @json.JsonDecodeError // from trait `@json.FromJson`

@@ -19,7 +19,7 @@ fn[A] Queue::each(Self[A], (A) -> Unit) -> Unit
 fn[A] Queue::eachi(Self[A], (Int, A) -> Unit) -> Unit
 fn[A, B] Queue::fold(Self[A], init~ : B, (B, A) -> B) -> B
 #as_free_fn
-fn[A] Queue::from_array(Array[A]) -> Self[A]
+fn[A] Queue::from_array(ArrayView[A]) -> Self[A]
 #as_free_fn
 fn[A] Queue::from_iter(Iter[A]) -> Self[A]
 fn[A] Queue::is_empty(Self[A]) -> Bool

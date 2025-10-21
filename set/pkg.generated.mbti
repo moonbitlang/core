@@ -19,7 +19,7 @@ fn[K] Set::each(Self[K], (K) -> Unit raise?) -> Unit raise?
 fn[K] Set::eachi(Self[K], (Int, K) -> Unit raise?) -> Unit raise?
 fn[K : Hash + Eq] Set::equal(Self[K], Self[K]) -> Bool // from trait `Eq`
 #as_free_fn
-fn[K : Hash + Eq] Set::from_array(Array[K]) -> Self[K]
+fn[K : Hash + Eq] Set::from_array(ArrayView[K]) -> Self[K]
 #as_free_fn
 fn[K : Hash + Eq] Set::from_iter(Iter[K]) -> Self[K]
 #deprecated

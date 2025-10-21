@@ -377,7 +377,7 @@ pub impl Default for StringView with default() {
 
 ///|
 /// Convert char array to string view.
-pub fn StringView::from_array(chars : Array[Char]) -> StringView {
+pub fn StringView::from_array(chars : ArrayView[Char]) -> StringView {
   String::from_array(chars)
 }
 

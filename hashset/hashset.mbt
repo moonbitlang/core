@@ -34,7 +34,7 @@ pub fn[K] HashSet::new(capacity? : Int = default_init_capacity) -> HashSet[K] {
 ///|
 /// Create new hash set from array.
 #as_free_fn
-pub fn[K : Hash + Eq] HashSet::from_array(arr : Array[K]) -> HashSet[K] {
+pub fn[K : Hash + Eq] HashSet::from_array(arr : ArrayView[K]) -> HashSet[K] {
   let m = new()
   arr.each(e => m.add(e))
   m

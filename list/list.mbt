@@ -137,7 +137,7 @@ pub fn[A : @json.FromJson] List::from_json(
 /// assert_eq(ls, @list.from_array([1, 2, 3, 4, 5]))
 /// ```
 #as_free_fn
-pub fn[A] List::from_array(arr : Array[A]) -> List[A] {
+pub fn[A] List::from_array(arr : ArrayView[A]) -> List[A] {
   for i = arr.length() - 1, list = Empty; i >= 0; {
     continue i - 1, More(arr[i], tail=list)
   } else {

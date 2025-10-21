@@ -19,7 +19,7 @@ fn[K : Eq] HashSet::difference(Self[K], Self[K]) -> Self[K]
 fn[A] HashSet::each(Self[A], (A) -> Unit raise?) -> Unit raise?
 fn[A : Eq] HashSet::equal(Self[A], Self[A]) -> Bool // from trait `Eq`
 #as_free_fn
-fn[A : Eq + Hash] HashSet::from_array(Array[A]) -> Self[A]
+fn[A : Eq + Hash] HashSet::from_array(ArrayView[A]) -> Self[A]
 #as_free_fn
 fn[A : Eq + Hash] HashSet::from_iter(Iter[A]) -> Self[A]
 fn[A : Hash] HashSet::hash(Self[A]) -> Int // from trait `Hash`

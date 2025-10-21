@@ -69,14 +69,21 @@ pub fn[K] Set::new(capacity? : Int = 8) -> Set[K] {
 ///|
 /// Create a hash set from array.
 #as_free_fn
-pub fn[K : Hash + Eq] Set::from_array(arr : Array[K]) -> Set[K] {
+pub fn[K : Hash + Eq] Set::from_array(arr : ArrayView[K]) -> Set[K] {
   let length = arr.length()
   let mut capacity = length.next_power_of_two()
   if length > calc_grow_threshold(capacity) {
     capacity *= 2
   }
   let m = Set::new(capacity~)
-  arr.each(e => m.add(e))
+  // arr.each(e => m.add(e))
+  // FIXME:(upstream)
+  // ArrayView::each depends on array package
+  // adding array package caused `unused package` array
+  // the root cause is that unused warning is not precise
+  for e in arr {
+    m.add(e)
+  }
   m
 }
 
