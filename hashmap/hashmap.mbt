@@ -174,7 +174,7 @@ fn[K, V] HashMap::push_away(
 /// Example:
 ///
 /// ```moonbit
-///   let map = @hashmap.of([("key", 42)])
+///   let map = @hashmap.from_array([("key", 42)])
 ///   inspect(map.get("key"), content="Some(42)")
 ///   inspect(map.get("nonexistent"), content="None")
 /// ```
@@ -206,7 +206,7 @@ pub fn[K : Hash + Eq, V] HashMap::get(self : HashMap[K, V], key : K) -> V? {
 /// Example:
 ///
 /// ```moonbit
-///   let map = @hashmap.of([("key", 42)])
+///   let map = @hashmap.from_array([("key", 42)])
 ///   inspect(map["key"], content="42")
 /// ```
 #alias("_[_]")
@@ -301,7 +301,7 @@ pub fn[K : Hash + Eq, V] HashMap::get_or_init(
 /// Example:
 ///
 /// ```moonbit
-///   let map = @hashmap.of([("a", 1), ("b", 2)])
+///   let map = @hashmap.from_array([("a", 1), ("b", 2)])
 ///   inspect(map.get_or_default("a", 0), content="1")
 ///   inspect(map.get_or_default("c", 0), content="0")
 /// ```
@@ -336,7 +336,7 @@ pub fn[K : Hash + Eq, V] HashMap::get_or_default(
 /// Example:
 ///
 /// ```moonbit
-///   let map = @hashmap.of([("a", 1), ("b", 2)])
+///   let map = @hashmap.from_array([("a", 1), ("b", 2)])
 ///   inspect(map.contains("a"), content="true")
 ///   inspect(map.contains("c"), content="false")
 /// ```
@@ -411,7 +411,7 @@ pub fn[K : Hash + Eq, V : Eq] HashMap::contains_kv(
 /// Example:
 ///
 /// ```moonbit
-///   let map = @hashmap.of([("a", 1), ("b", 2)])
+///   let map = @hashmap.from_array([("a", 1), ("b", 2)])
 ///   map.remove("a")
 ///   inspect(map.get("a"), content="None")
 ///   inspect(map.length(), content="1")
@@ -487,7 +487,7 @@ fn[K : Eq, V] HashMap::grow(self : HashMap[K, V]) -> Unit {
 
 ///|
 test "of" {
-  let m = of([(1, 2), (3, 4)])
+  let m = from_array([(1, 2), (3, 4)])
   inspect(m.get(1), content="Some(2)")
   inspect(m.get(3), content="Some(4)")
 }
@@ -709,7 +709,7 @@ test "remove_unexist_key" {
 
 ///|
 test "clear" {
-  let m : HashMap[MyString, Int] = of([("a", 1), ("b", 2), ("c", 3)])
+  let m : HashMap[MyString, Int] = from_array([("a", 1), ("b", 2), ("c", 3)])
   m.clear()
   inspect(m.length(), content="0")
   inspect(m.capacity(), content="8")

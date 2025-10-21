@@ -32,7 +32,7 @@ priv struct Entry[K, V] {
 /// # Example
 ///
 /// ```mbt
-///   let map = @hashmap.of([(3, "three"), (8, "eight"), (1, "one")])
+///   let map = @hashmap.from_array([(3, "three"), (8, "eight"), (1, "one")])
 ///   assert_eq(map.get(2), None)
 ///   assert_eq(map.get(3), Some("three"))
 ///   map.set(3, "updated")

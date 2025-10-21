@@ -29,7 +29,7 @@ priv struct Entry[K] {
 /// # Example
 ///
 /// ```mbt
-///   let set = @set.Set::of(["three", "eight", "one"])
+///   let set = @set.Set::from_array(["three", "eight", "one"])
 ///   assert_eq(set.contains("two"), false)
 ///   assert_eq(set.contains("three"), true)
 ///   set.add("three") // no effect since it already exists
@@ -243,7 +243,7 @@ pub fn[K : Hash + Eq] Set::contains(self : Set[K], key : K) -> Bool {
 /// Example:
 ///
 /// ```moonbit
-///   let set = @set.Set::of(["a", "b"])
+///   let set = @set.Set::from_array(["a", "b"])
 ///   set.remove("a")
 ///   inspect(set.contains("a"), content="false")
 ///   inspect(set.length(), content="1")
@@ -279,7 +279,7 @@ pub fn[K : Hash + Eq] Set::remove(self : Set[K], key : K) -> Unit {
 /// Example:
 ///
 /// ```moonbit
-///   let set = @set.Set::of(["a", "b"])
+///   let set = @set.Set::from_array(["a", "b"])
 ///   inspect(set.remove_and_check("a"), content="true")  // Successfully removed
 ///   inspect(set.remove_and_check("a"), content="false") // Already removed
 ///   inspect(set.length(), content="1")

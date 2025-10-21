@@ -21,7 +21,7 @@ test "bytes creation" {
 
   // Create from fixed array
   let fixed = FixedArray::make(3, b'a')
-  let bytes2 = @bytes.of(fixed)
+  let bytes2 = @bytes.from_array(fixed)
   inspect(
     bytes2,
     content=(

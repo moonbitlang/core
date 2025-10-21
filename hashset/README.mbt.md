@@ -11,7 +11,7 @@ You can create an empty set using `new()` or construct it using `from_array()`.
 ```moonbit
 ///|
 test {
-  let _set1 = @hashset.of([1, 2, 3, 4, 5])
+  let _set1 = @hashset.from_array([1, 2, 3, 4, 5])
   let _set2 : @hashset.HashSet[String] = @hashset.new()
 
 }
@@ -37,7 +37,7 @@ You can use `remove()` to remove a key.
 ```moonbit
 ///|
 test {
-  let set = @hashset.of(["a", "b", "c"])
+  let set = @hashset.from_array(["a", "b", "c"])
   set.remove("a")
   assert_eq(set.contains("a"), false)
 }
@@ -50,7 +50,7 @@ You can use `size()` to get the number of keys in the set, or `capacity()` to ge
 ```moonbit
 ///|
 test {
-  let set = @hashset.of(["a", "b", "c"])
+  let set = @hashset.from_array(["a", "b", "c"])
   assert_eq(set.length(), 3)
   assert_eq(set.capacity(), 8)
 }
@@ -73,7 +73,7 @@ You can use `clear` to remove all keys from the set, but the allocated memory wi
 ```moonbit
 ///|
 test {
-  let set = @hashset.of(["a", "b", "c"])
+  let set = @hashset.from_array(["a", "b", "c"])
   set.clear()
   assert_eq(set.is_empty(), true)
 }
@@ -86,7 +86,7 @@ You can use `each()` or `eachi()` to iterate through all keys.
 ```moonbit
 ///|
 test {
-  let set = @hashset.of(["a", "b", "c"])
+  let set = @hashset.from_array(["a", "b", "c"])
   let arr = []
   set.each(k => arr.push(k))
   let arr2 = []
@@ -101,8 +101,8 @@ You can use `union()`, `intersection()`, `difference()` and `symmetric_differenc
 ```moonbit
 ///|
 test {
-  let m1 = @hashset.of(["a", "b", "c"])
-  let m2 = @hashset.of(["b", "c", "d"])
+  let m1 = @hashset.from_array(["a", "b", "c"])
+  let m2 = @hashset.from_array(["b", "c", "d"])
   fn to_sorted_array(set : @hashset.HashSet[String]) {
     let arr = set.to_array()
     arr.sort()

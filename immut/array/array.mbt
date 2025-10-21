@@ -76,7 +76,7 @@ pub fn[A] T::makei(len : Int, f : (Int) -> A raise?) -> T[A] raise? {
 /// 
 /// # Example
 /// ```mbt
-///   let v = @array.of([1, 2, 3])
+///   let v = @array.from_array([1, 2, 3])
 ///   assert_eq(v, @array.from_array([1, 2, 3]))
 /// ```
 #as_free_fn
@@ -186,7 +186,7 @@ pub fn[A] T::length(self : T[A]) -> Int {
 ///
 /// # Examples
 /// ```mbt
-///   let v = @array.of([1, 2, 3, 4, 5])
+///   let v = @array.from_array([1, 2, 3, 4, 5])
 ///   inspect(v[0], content="1")
 /// ```
 #alias("_[_]")
@@ -215,7 +215,7 @@ pub fn[A] T::at(self : T[A], index : Int) -> A {
 /// Example:
 ///
 /// ```moonbit
-///   let v = @array.of([1, 2, 3])
+///   let v = @array.from_array([1, 2, 3])
 ///   inspect(v.get(1), content="Some(2)")
 ///   inspect(v.get(-1), content="None")
 ///   inspect(v.get(3), content="None")
@@ -234,8 +234,8 @@ pub fn[A] T::get(self : T[A], index : Int) -> A? {
 ///
 /// # Example
 /// ```mbt
-///   let v = @array.of([1, 2, 3, 4, 5])
-///   assert_eq(v.set(1, 10), @array.of([1, 10, 3, 4, 5]))
+///   let v = @array.from_array([1, 2, 3, 4, 5])
+///   assert_eq(v.set(1, 10), @array.from_array([1, 10, 3, 4, 5]))
 /// ```
 pub fn[A] T::set(self : T[A], index : Int, value : A) -> T[A] {
   {
@@ -250,8 +250,8 @@ pub fn[A] T::set(self : T[A], index : Int, value : A) -> T[A] {
 ///
 /// # Example
 /// ```mbt
-///   let v = @array.of([1, 2, 3])
-///   assert_eq(v.push(4), @array.of([1, 2, 3, 4]))
+///   let v = @array.from_array([1, 2, 3])
+///   assert_eq(v.push(4), @array.from_array([1, 2, 3, 4]))
 /// ```
 pub fn[A] T::push(self : T[A], value : A) -> T[A] {
   let (tree, shift) = self.tree.push_end(self.shift, value)
@@ -305,7 +305,7 @@ pub fn[A] T::iterator(self : T[A]) -> Iterator[A] {
 /// # Example
 /// ```mbt
 ///   let arr = []
-///   let v = @array.of([1, 2, 3, 4, 5])
+///   let v = @array.from_array([1, 2, 3, 4, 5])
 ///   v.each((e) => { arr.push(e) })
 ///   assert_eq(arr, [1, 2, 3, 4, 5])
 /// ```
@@ -319,7 +319,7 @@ pub fn[A] T::each(self : T[A], f : (A) -> Unit raise?) -> Unit raise? {
 /// # Example
 /// ```mbt
 ///   let arr = []
-///   let v = @array.of([1, 2, 3, 4, 5])
+///   let v = @array.from_array([1, 2, 3, 4, 5])
 ///   v.eachi((i, e) => { arr.push(i * e) })
 ///   assert_eq(arr, [0, 2, 6, 12, 20])
 /// ```
@@ -332,7 +332,7 @@ pub fn[A] T::eachi(self : T[A], f : (Int, A) -> Unit raise?) -> Unit raise? {
 ///
 /// # Example
 /// ```mbt
-///   let v = @array.of([1, 2, 3, 4, 5])
+///   let v = @array.from_array([1, 2, 3, 4, 5])
 ///   assert_eq(v.fold((a, b) => { a + b }, init=0), 15)
 /// ```
 pub fn[A, B] T::fold(
@@ -348,7 +348,7 @@ pub fn[A, B] T::fold(
 ///
 /// # Example
 /// ```mbt
-///   let v = @array.of([1, 2, 3, 4, 5])
+///   let v = @array.from_array([1, 2, 3, 4, 5])
 ///   assert_eq(v.rev_fold((a, b) => { a + b }, init=0), 15)
 /// ```
 pub fn[A, B] T::rev_fold(
@@ -364,8 +364,8 @@ pub fn[A, B] T::rev_fold(
 ///
 /// # Example
 /// ```mbt
-///   let v = @array.of([1, 2, 3, 4, 5])
-///   assert_eq(v.map((e) => { e * 2 }), @array.of([2, 4, 6, 8, 10]))
+///   let v = @array.from_array([1, 2, 3, 4, 5])
+///   assert_eq(v.map((e) => { e * 2 }), @array.from_array([2, 4, 6, 8, 10]))
 /// ```
 pub fn[A, B] T::map(self : T[A], f : (A) -> B raise?) -> T[B] raise? {
   { tree: self.tree.map(f), size: self.size, shift: self.shift }
@@ -397,7 +397,11 @@ pub impl[A : Eq] Eq for T[A] with equal(self, other) {
 
 ///|
 pub impl[A : Show] Show for T[A] with output(self, logger) {
-  logger.write_iter(self.iter(), prefix="@immut/array.of([", suffix="])")
+  logger.write_iter(
+    self.iter(),
+    prefix="@immut/array.from_array([",
+    suffix="])",
+  )
 }
 
 ///|
@@ -422,9 +426,9 @@ pub impl[A : Show] Show for T[A] with output(self, logger) {
 /// Example:
 ///
 /// ```moonbit
-///   let arr1 = @array.of([1, 2, 3])
-///   let arr2 = @array.of([1, 2, 4])
-///   let arr3 = @array.of([1, 2])
+///   let arr1 = @array.from_array([1, 2, 3])
+///   let arr2 = @array.from_array([1, 2, 4])
+///   let arr3 = @array.from_array([1, 2])
 ///   inspect(arr1.compare(arr2), content="-1") // arr1 < arr2
 ///   inspect(arr1.compare(arr3), content="1") // arr2 > arr1
 ///   inspect(arr3.compare(arr1), content="-1") // arr1 > arr3 (longer)

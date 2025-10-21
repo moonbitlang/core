@@ -388,6 +388,8 @@ fn[K, V] Map::default() -> Self[K, V] // from trait `Default`
 fn[K, V] Map::each(Self[K, V], (K, V) -> Unit raise?) -> Unit raise?
 fn[K, V] Map::eachi(Self[K, V], (Int, K, V) -> Unit raise?) -> Unit raise?
 fn[K : Hash + Eq, V : Eq] Map::equal(Self[K, V], Self[K, V]) -> Bool // from trait `Eq`
+#alias(of, deprecated)
+#as_free_fn(of, deprecated)
 fn[K : Hash + Eq, V] Map::from_array(Array[(K, V)]) -> Self[K, V]
 fn[K : Hash + Eq, V] Map::from_iter(Iter[(K, V)]) -> Self[K, V]
 fn[K : Hash + Eq, V] Map::from_iterator(Iterator[(K, V)]) -> Self[K, V]

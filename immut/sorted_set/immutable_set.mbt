@@ -76,7 +76,7 @@ pub fn[A] SortedSet::to_array(self : SortedSet[A]) -> Array[A] {
 /// # Example
 ///
 /// ```mbt
-///   assert_eq(@sorted_set.of([3, 4, 5]).remove_min(), @sorted_set.of([4, 5]))
+///   assert_eq(@sorted_set.from_array([3, 4, 5]).remove_min(), @sorted_set.from_array([4, 5]))
 /// ```
 pub fn[A] SortedSet::remove_min(self : SortedSet[A]) -> SortedSet[A] {
   match self {
@@ -96,7 +96,7 @@ pub fn[A] SortedSet::remove_min(self : SortedSet[A]) -> SortedSet[A] {
 /// # Example
 ///
 /// ```mbt
-///   assert_eq(@sorted_set.of([6, 3, 8, 1]).add(5), @sorted_set.of([1, 3, 5, 6, 8]))
+///   assert_eq(@sorted_set.from_array([6, 3, 8, 1]).add(5), @sorted_set.from_array([1, 3, 5, 6, 8]))
 /// ```
 pub fn[A : Compare] SortedSet::add(
   self : SortedSet[A],
@@ -133,7 +133,7 @@ pub fn[A : Compare] SortedSet::add(
 /// # Example
 ///
 /// ```mbt
-///   assert_eq(@sorted_set.of([3, 8, 1]).remove(8), @sorted_set.of([1, 3]))
+///   assert_eq(@sorted_set.from_array([3, 8, 1]).remove(8), @sorted_set.from_array([1, 3]))
 /// ```
 pub fn[A : Compare] SortedSet::remove(
   self : SortedSet[A],
@@ -171,7 +171,7 @@ pub fn[A : Compare] SortedSet::remove(
 /// # Example
 ///
 /// ```mbt
-///   assert_eq(@sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).min(), 1)
+///   assert_eq(@sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).min(), 1)
 /// ```
 pub fn[A] SortedSet::min(self : SortedSet[A]) -> A {
   match self {
@@ -202,7 +202,7 @@ pub fn[A] SortedSet::min_option(self : SortedSet[A]) -> A? {
 /// # Example
 ///
 /// ```mbt
-///   assert_eq(@sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).max(), 9)
+///   assert_eq(@sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).max(), 9)
 /// ```
 pub fn[A] SortedSet::max(self : SortedSet[A]) -> A {
   match self {
@@ -234,10 +234,10 @@ pub fn[A] SortedSet::max_option(self : SortedSet[A]) -> A? {
 /// # Example
 ///
 /// ```mbt
-///   let (left, present, right) = @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).split(5)
+///   let (left, present, right) = @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).split(5)
 ///   inspect(present, content="true")
-///   assert_eq(left, @sorted_set.of([1, 2, 3, 4]))
-///   assert_eq(right, @sorted_set.of([6, 7, 8, 9]))
+///   assert_eq(left, @sorted_set.from_array([1, 2, 3, 4]))
+///   assert_eq(right, @sorted_set.from_array([6, 7, 8, 9]))
 /// ```
 pub fn[A : Compare] SortedSet::split(
   self : SortedSet[A],
@@ -285,7 +285,7 @@ pub fn[A : Compare] SortedSet::contains(self : SortedSet[A], value : A) -> Bool 
 /// # Example
 ///
 /// ```mbt
-///   assert_eq(@sorted_set.of([3, 4, 5]).union(@sorted_set.of([4, 5, 6])), @sorted_set.of([3, 4, 5, 6]))
+///   assert_eq(@sorted_set.from_array([3, 4, 5]).union(@sorted_set.from_array([4, 5, 6])), @sorted_set.from_array([3, 4, 5, 6]))
 /// ```
 pub fn[A : Compare] SortedSet::union(
   self : SortedSet[A],
@@ -319,7 +319,7 @@ pub fn[A : Compare] SortedSet::union(
 /// # Example
 /// 
 /// ```mbt
-///   assert_eq(@sorted_set.of([3, 4, 5]) + (@sorted_set.of([4, 5, 6])), @sorted_set.of([3, 4, 5, 6]))
+///   assert_eq(@sorted_set.from_array([3, 4, 5]) + (@sorted_set.from_array([4, 5, 6])), @sorted_set.from_array([3, 4, 5, 6]))
 /// ```
 pub impl[A : Compare] Add for SortedSet[A] with add(self, other) {
   return self.union(other)
@@ -331,7 +331,7 @@ pub impl[A : Compare] Add for SortedSet[A] with add(self, other) {
 /// # Example
 ///
 /// ```mbt
-///   assert_eq(@sorted_set.of([3, 4, 5]).intersection(@sorted_set.of([4, 5, 6])), @sorted_set.of([4, 5]))
+///   assert_eq(@sorted_set.from_array([3, 4, 5]).intersection(@sorted_set.from_array([4, 5, 6])), @sorted_set.from_array([4, 5]))
 /// ```
 pub fn[A : Compare] SortedSet::intersection(
   self : SortedSet[A],
@@ -353,7 +353,7 @@ pub fn[A : Compare] SortedSet::intersection(
 /// # Example
 ///
 /// ```mbt
-///   assert_eq(@sorted_set.of([1, 2, 3]).difference(@sorted_set.of([4, 5, 1])), @sorted_set.of([2, 3]))
+///   assert_eq(@sorted_set.from_array([1, 2, 3]).difference(@sorted_set.from_array([4, 5, 1])), @sorted_set.from_array([2, 3]))
 /// ```
 pub fn[A : Compare] SortedSet::difference(
   self : SortedSet[A],
@@ -385,11 +385,11 @@ pub fn[A : Compare] SortedSet::difference(
 /// Example:
 ///
 /// ```moonbit
-///   let set1 = @sorted_set.of([1, 2, 3, 4])
-///   let set2 = @sorted_set.of([3, 4, 5, 6])
+///   let set1 = @sorted_set.from_array([1, 2, 3, 4])
+///   let set2 = @sorted_set.from_array([3, 4, 5, 6])
 ///   inspect(
 ///     set1.symmetric_difference(set2),
-///     content="@immut/sorted_set.of([1, 2, 5, 6])",
+///     content="@immut/sorted_set.from_array([1, 2, 5, 6])",
 ///   )
 /// ```
 pub fn[A : Compare] SortedSet::symmetric_difference(
@@ -415,7 +415,7 @@ pub fn[A : Compare] SortedSet::symmetric_difference(
 /// # Example
 ///
 /// ```mbt
-///   assert_eq(@sorted_set.of([1, 2, 3]).subset(@sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1])), true)
+///   assert_eq(@sorted_set.from_array([1, 2, 3]).subset(@sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1])), true)
 /// ```
 pub fn[A : Compare] SortedSet::subset(
   self : SortedSet[A],
@@ -448,7 +448,7 @@ pub fn[A : Compare] SortedSet::subset(
 /// # Example
 ///
 /// ```mbt
-///   assert_eq(@sorted_set.of([1, 2, 3]).disjoint(@sorted_set.of([4, 5, 6])), true)
+///   assert_eq(@sorted_set.from_array([1, 2, 3]).disjoint(@sorted_set.from_array([4, 5, 6])), true)
 /// ```
 pub fn[A : Compare] SortedSet::disjoint(
   self : SortedSet[A],
@@ -475,7 +475,7 @@ pub fn[A : Compare] SortedSet::disjoint(
 ///
 /// ```mbt
 ///   let arr = []
-///   @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).each((x) => { arr.push(x) })
+///   @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).each((x) => { arr.push(x) })
 ///   assert_eq(arr, [1, 2, 3, 4, 5, 6, 7, 8, 9])
 /// ```
 pub fn[A] SortedSet::each(
@@ -498,7 +498,7 @@ pub fn[A] SortedSet::each(
 /// # Example
 ///
 /// ```mbt
-///   assert_eq(@sorted_set.of([1, 2, 3, 4, 5]).fold(init=0, (acc, x) => { acc + x }), 15)
+///   assert_eq(@sorted_set.from_array([1, 2, 3, 4, 5]).fold(init=0, (acc, x) => { acc + x }), 15)
 /// ```
 pub fn[A, B] SortedSet::fold(
   self : SortedSet[A],
@@ -518,7 +518,7 @@ pub fn[A, B] SortedSet::fold(
 /// # Example
 ///
 /// ```mbt
-///   assert_eq(@sorted_set.of([1, 2, 3]).map((x) => { x * 2}), @sorted_set.of([2, 4, 6]))
+///   assert_eq(@sorted_set.from_array([1, 2, 3]).map((x) => { x * 2}), @sorted_set.from_array([2, 4, 6]))
 /// ```
 pub fn[A, B : Compare] SortedSet::map(
   self : SortedSet[A],
@@ -537,7 +537,7 @@ pub fn[A, B : Compare] SortedSet::map(
 /// # Example
 ///
 /// ```mbt
-///   assert_eq(@sorted_set.of([2, 4, 6]).all((v) => { v % 2 == 0}), true)
+///   assert_eq(@sorted_set.from_array([2, 4, 6]).all((v) => { v % 2 == 0}), true)
 /// ```
 pub fn[A] SortedSet::all(
   self : SortedSet[A],
@@ -555,7 +555,7 @@ pub fn[A] SortedSet::all(
 /// # Example
 ///
 /// ```mbt
-///   assert_eq(@sorted_set.of([1, 4, 3]).any((v) => { v % 2 == 0}), true)
+///   assert_eq(@sorted_set.from_array([1, 4, 3]).any((v) => { v % 2 == 0}), true)
 /// ```
 pub fn[A] SortedSet::any(
   self : SortedSet[A],
@@ -573,7 +573,7 @@ pub fn[A] SortedSet::any(
 /// # Example
 ///
 /// ```mbt
-///   assert_eq(@sorted_set.of([1, 2, 3, 4, 5, 6]).filter((v) => { v % 2 == 0}), @sorted_set.of([2, 4, 6]))
+///   assert_eq(@sorted_set.from_array([1, 2, 3, 4, 5, 6]).filter((v) => { v % 2 == 0}), @sorted_set.from_array([2, 4, 6]))
 /// ```
 pub fn[A] SortedSet::filter(
   self : SortedSet[A],
@@ -600,7 +600,11 @@ pub fn[A] SortedSet::filter(
 
 ///|
 pub impl[A : Show] Show for SortedSet[A] with output(self, logger) {
-  logger.write_iter(self.iter(), prefix="@immut/sorted_set.of([", suffix="])")
+  logger.write_iter(
+    self.iter(),
+    prefix="@immut/sorted_set.from_array([",
+    suffix="])",
+  )
 }
 
 ///|
@@ -853,41 +857,50 @@ pub impl[A : Hash] Hash for SortedSet[A] with hash_combine(self, hasher) {
 
 ///|
 test "split_bis" {
-  inspect(of([1, 2, 3]).split_bis(1), content="Found")
-  inspect(of([1, 2, 3]).split_bis(3), content="Found")
-  inspect(of([1, 2, 3]).split_bis(0), content="NotFound")
-  inspect(of([1, 2, 3]).split_bis(4), content="NotFound")
+  inspect(from_array([1, 2, 3]).split_bis(1), content="Found")
+  inspect(from_array([1, 2, 3]).split_bis(3), content="Found")
+  inspect(from_array([1, 2, 3]).split_bis(0), content="NotFound")
+  inspect(from_array([1, 2, 3]).split_bis(4), content="NotFound")
 }
 
 ///|
 test "balance with left height greater" {
-  let left = of([1, 2, 3])
+  let left = from_array([1, 2, 3])
   let value = 4
-  let right = of([5])
+  let right = from_array([5])
   let balanced_set = balance(left, value, right)
-  inspect(balanced_set, content="@immut/sorted_set.of([1, 2, 3, 4, 5])")
+  inspect(balanced_set, content="@immut/sorted_set.from_array([1, 2, 3, 4, 5])")
 }
 
 ///|
 test "balance with right height greater" {
-  let left = of([1])
+  let left = from_array([1])
   let value = 2
-  let right = of([3, 4, 5])
+  let right = from_array([3, 4, 5])
   let balanced_set = balance(left, value, right)
-  inspect(balanced_set, content="@immut/sorted_set.of([1, 2, 3, 4, 5])")
+  inspect(balanced_set, content="@immut/sorted_set.from_array([1, 2, 3, 4, 5])")
 }
 
 ///|
 test "join with different heights" {
-  let left = of([1, 2, 3])
+  let left = from_array([1, 2, 3])
   let value = 4
-  let right = of([5, 6, 7])
+  let right = from_array([5, 6, 7])
   let joined_set = join(left, value, right)
-  inspect(joined_set, content="@immut/sorted_set.of([1, 2, 3, 4, 5, 6, 7])")
+  inspect(
+    joined_set,
+    content="@immut/sorted_set.from_array([1, 2, 3, 4, 5, 6, 7])",
+  )
 }
 
 ///|
 test "hash" {
-  assert_eq(Hash::hash(of([1, 2, 3, 4])), Hash::hash(of([3, 2]).add(1).add(4)))
-  assert_not_eq(Hash::hash(of([1, 2, 3])), Hash::hash(of([1, 2, 4])))
+  assert_eq(
+    Hash::hash(from_array([1, 2, 3, 4])),
+    Hash::hash(from_array([3, 2]).add(1).add(4)),
+  )
+  assert_not_eq(
+    Hash::hash(from_array([1, 2, 3])),
+    Hash::hash(from_array([1, 2, 4])),
+  )
 }

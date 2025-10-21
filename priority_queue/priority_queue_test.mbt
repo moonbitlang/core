@@ -20,21 +20,21 @@ test "new" {
 
 ///|
 test "from_array" {
-  let pq = @priority_queue.of([1, 3, 6, 4, 5])
+  let pq = @priority_queue.from_array([1, 3, 6, 4, 5])
   inspect(pq.peek(), content="Some(6)")
-  let pq_ : @priority_queue.T[Int] = @priority_queue.of([])
+  let pq_ : @priority_queue.T[Int] = @priority_queue.from_array([])
   inspect(pq_.peek(), content="None")
 }
 
 ///|
 test "from_fixed_array" {
-  let pq = @priority_queue.of([1, 2, 3, 4, 5])
+  let pq = @priority_queue.from_array([1, 2, 3, 4, 5])
   assert_eq(pq.peek(), Some(5))
 }
 
 ///|
 test "copy" {
-  let v = @priority_queue.of([1, 2, 3, 4])
+  let v = @priority_queue.from_array([1, 2, 3, 4])
   let ve = v.copy()
   inspect(v.peek(), content="Some(4)")
   inspect(ve.peek(), content="Some(4)")
@@ -45,14 +45,14 @@ test "copy" {
 
 ///|
 test "to_array" {
-  let v = @priority_queue.of([1, 6, 3, 4, 9, 2, 1])
+  let v = @priority_queue.from_array([1, 6, 3, 4, 9, 2, 1])
   inspect(v.to_array(), content="[9, 6, 4, 3, 2, 1, 1]")
 }
 
 ///|
 test "iter" {
   let buf = StringBuilder::new(size_hint=20)
-  let v = @priority_queue.of([1, 2, 3])
+  let v = @priority_queue.from_array([1, 2, 3])
   for e in v {
     buf.write_string("[\{e}]")
   }
@@ -95,25 +95,25 @@ test "length" {
 
 ///|
 test "unsafe_pop" {
-  let pq = @priority_queue.of([5, 5, 4, 3, 2, 1])
+  let pq = @priority_queue.from_array([5, 5, 4, 3, 2, 1])
   inspect(pq.length(), content="6")
   assert_eq(pq.peek(), Some(5))
   pq.unsafe_pop()
   assert_eq(pq.peek(), Some(5))
   pq.unsafe_pop()
   assert_eq(pq.peek(), Some(4))
-  let pq_ = @priority_queue.of([1])
+  let pq_ = @priority_queue.from_array([1])
   pq_.unsafe_pop()
   inspect(pq_.length(), content="0")
 }
 
 ///|
 test "pop" {
-  let pq = @priority_queue.of([1, 2, 3, 4, 5, 5])
+  let pq = @priority_queue.from_array([1, 2, 3, 4, 5, 5])
   assert_eq(pq.pop(), Some(5))
   assert_eq(pq.pop(), Some(5))
   assert_eq(pq.pop(), Some(4))
-  let pq_ = @priority_queue.of([1])
+  let pq_ = @priority_queue.from_array([1])
   pq_.pop() |> ignore
   inspect(pq_.length(), content="0")
   let p = @priority_queue.from_iter([0, 1, 4, 5, 6, 2, 3].iter())
@@ -126,7 +126,7 @@ test "pop" {
 
 ///|
 test "push" {
-  let pq = @priority_queue.of([5, 4, 3, 2, 1])
+  let pq = @priority_queue.from_array([5, 4, 3, 2, 1])
   pq.push(-1)
   pq.push(6)
   assert_eq(pq.length(), 7)
@@ -135,7 +135,7 @@ test "push" {
 
 ///|
 test "peek" {
-  let pq = @priority_queue.of([1, 2, 3, 4, 5])
+  let pq = @priority_queue.from_array([1, 2, 3, 4, 5])
   assert_eq(pq.peek(), Some(5))
   pq.clear()
   assert_eq(pq.peek(), None)
@@ -143,14 +143,14 @@ test "peek" {
 
 ///|
 test "clear" {
-  let pq = @priority_queue.of([5, 4, 3, 2, 1])
+  let pq = @priority_queue.from_array([5, 4, 3, 2, 1])
   pq.clear()
   assert_eq(pq.length(), 0)
 }
 
 ///|
 test "is_empty" {
-  let pq = @priority_queue.of([5, 4, 3, 2, 1])
+  let pq = @priority_queue.from_array([5, 4, 3, 2, 1])
   assert_eq(pq.is_empty(), false)
   pq.clear()
   assert_eq(pq.is_empty(), true)
@@ -160,7 +160,7 @@ test "is_empty" {
 test "from_iter multiple elements iter" {
   inspect(
     @priority_queue.from_iter([1, 2, 3].iter()),
-    content="@priority_queue.of([3, 2, 1])",
+    content="@priority_queue.from_array([3, 2, 1])",
   )
 }
 
@@ -168,14 +168,14 @@ test "from_iter multiple elements iter" {
 test "from_iter single element iter" {
   inspect(
     @priority_queue.from_iter([1].iter()),
-    content="@priority_queue.of([1])",
+    content="@priority_queue.from_array([1])",
   )
 }
 
 ///|
 test "from_iter empty iter" {
   let pq : @priority_queue.T[Int] = @priority_queue.from_iter(Iter::empty())
-  inspect(pq, content="@priority_queue.of([])")
+  inspect(pq, content="@priority_queue.from_array([])")
 }
 
 ///|

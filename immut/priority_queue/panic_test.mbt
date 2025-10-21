@@ -14,6 +14,6 @@
 
 ///|
 test "panic unsafe_pop" {
-  let pq = @priority_queue.of([1])
+  let pq = @priority_queue.from_array([1])
   pq.unsafe_pop().unsafe_pop() |> ignore
 }

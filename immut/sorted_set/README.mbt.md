@@ -16,7 +16,7 @@ test {
   let _set1 : @sorted_set.SortedSet[Int] = @sorted_set.new()
   let _set2 = @sorted_set.singleton(1)
   let _set4 = @sorted_set.from_array([1])
-  let _set5 = @sorted_set.of([1])
+  let _set5 = @sorted_set.from_array([1])
 
 }
 ```
@@ -28,7 +28,7 @@ You can convert an immutable set to an array, which will be sorted.
 ```moonbit
 ///|
 test {
-  let set = @sorted_set.of([3, 2, 1])
+  let set = @sorted_set.from_array([3, 2, 1])
   assert_eq(set.to_array(), [1, 2, 3])
 }
 ```
@@ -40,7 +40,7 @@ You can use `add` to add an element to the ImmutableSet.
 ```moonbit
 ///|
 test {
-  let set = @sorted_set.of([1, 2, 3, 4])
+  let set = @sorted_set.from_array([1, 2, 3, 4])
   assert_eq(set.add(5).to_array(), [1, 2, 3, 4, 5])
 }
 ```
@@ -50,7 +50,7 @@ You can use `remove` to remove a specific value.
 ```moonbit
 ///|
 test {
-  let set = @sorted_set.of([3, 8, 1])
+  let set = @sorted_set.from_array([3, 8, 1])
   assert_eq(set.remove(8).to_array(), [1, 3])
 }
 ```
@@ -62,7 +62,7 @@ You can use `contains` to query whether an element is in the set.
 ```moonbit
 ///|
 test {
-  let set = @sorted_set.of([1, 2, 3, 4])
+  let set = @sorted_set.from_array([1, 2, 3, 4])
   assert_eq(set.contains(1), true)
   assert_eq(set.contains(5), false)
 }
@@ -73,7 +73,7 @@ You can also use `min` and `max` to obtain the minimum or maximum value in the s
 ```moonbit
 ///|
 test {
-  let set = @sorted_set.of([1, 2, 3, 4])
+  let set = @sorted_set.from_array([1, 2, 3, 4])
   assert_eq(set.min(), 1)
   assert_eq(set.max(), 4)
   assert_eq(set.min_option(), Some(1))
@@ -88,9 +88,9 @@ You can provide an intermediate value to divide a set into two sets by `split`, 
 ```moonbit
 ///|
 test {
-  let (left, present, right) = @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).split(
-    5,
-  )
+  let (left, present, right) = @sorted_set.from_array([
+    7, 2, 9, 4, 5, 6, 3, 8, 1,
+  ]).split(5)
   assert_eq(present, true)
   assert_eq(left.to_array(), [1, 2, 3, 4])
   assert_eq(right.to_array(), [6, 7, 8, 9])
@@ -102,8 +102,8 @@ At the same time, you can use union and inter to take the union or intersection 
 ```moonbit
 ///|
 test {
-  let set1 = @sorted_set.of([3, 4, 5])
-  let set2 = @sorted_set.of([4, 5, 6])
+  let set1 = @sorted_set.from_array([3, 4, 5])
+  let set2 = @sorted_set.from_array([4, 5, 6])
   assert_eq(set1.union(set2).to_array(), [3, 4, 5, 6])
   assert_eq(set1.intersection(set2).to_array(), [4, 5])
 }
@@ -114,8 +114,8 @@ You can also use the `diff` function to obtain the difference between two sets.
 ```moonbit
 ///|
 test {
-  let set1 = @sorted_set.of([1, 2, 3])
-  let set2 = @sorted_set.of([4, 5, 1])
+  let set1 = @sorted_set.from_array([1, 2, 3])
+  let set2 = @sorted_set.from_array([4, 5, 1])
   assert_eq(set1.difference(set2).to_array(), [2, 3])
 }
 ```
@@ -125,7 +125,7 @@ You can use `filter` to filter the elements in the set.
 ```moonbit
 ///|
 test {
-  let set = @sorted_set.of([1, 2, 3, 4, 5, 6])
+  let set = @sorted_set.from_array([1, 2, 3, 4, 5, 6])
   assert_eq(set.filter(v => v % 2 == 0).to_array(), [2, 4, 6])
 }
 ```
@@ -138,12 +138,17 @@ You can use `subsets` and `disjoint` to determine the inclusion and separation r
 ///|
 test {
   assert_eq(
-    @sorted_set.of([1, 2, 3]).subset(
-      @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]),
+    @sorted_set.from_array([1, 2, 3]).subset(
+      @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]),
     ),
     true,
   )
-  assert_eq(@sorted_set.of([1, 2, 3]).disjoint(@sorted_set.of([4, 5, 6])), true)
+  assert_eq(
+    @sorted_set.from_array([1, 2, 3]).disjoint(
+      @sorted_set.from_array([4, 5, 6]),
+    ),
+    true,
+  )
 }
 ```
 
@@ -155,11 +160,12 @@ Like other sequential containers, set also has iterative methods such as `iter`,
 ///|
 test {
   let arr = []
-  @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).each(v => arr.push(v))
+  @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).each(v => arr.push(v))
   assert_eq(arr, [1, 2, 3, 4, 5, 6, 7, 8, 9])
-  let val = @sorted_set.of([1, 2, 3, 4, 5]).fold(init=0, (acc, x) => acc + x)
+  let val = @sorted_set.from_array([1, 2, 3, 4, 5]).fold(init=0, (acc, x) => acc +
+    x)
   assert_eq(val, 15)
-  let set = @sorted_set.of([1, 2, 3])
+  let set = @sorted_set.from_array([1, 2, 3])
   assert_eq(set.map(x => x * 2).to_array(), [2, 4, 6])
 }
 ```
@@ -171,8 +177,8 @@ test {
 ```moonbit
 ///|
 test {
-  assert_eq(@sorted_set.of([2, 4, 6]).all(v => v % 2 == 0), true)
-  assert_eq(@sorted_set.of([1, 4, 3]).any(v => v % 2 == 0), true)
+  assert_eq(@sorted_set.from_array([2, 4, 6]).all(v => v % 2 == 0), true)
+  assert_eq(@sorted_set.from_array([1, 4, 3]).any(v => v % 2 == 0), true)
 }
 ```
 
@@ -183,9 +189,9 @@ test {
 ```moonbit
 ///|
 test {
-  let set1 : @sorted_set.SortedSet[Int] = @sorted_set.of([])
+  let set1 : @sorted_set.SortedSet[Int] = @sorted_set.from_array([])
   assert_eq(set1.is_empty(), true)
-  let set2 = @sorted_set.of([1])
+  let set2 = @sorted_set.from_array([1])
   assert_eq(set2.is_empty(), false)
 }
 ```

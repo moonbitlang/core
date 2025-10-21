@@ -76,7 +76,7 @@ pub fn[A : Compare] SortedSet::from_iterator(
 
 ///|
 test {
-  @json.inspect(of([2, 7, 1, 2, 3, 4, 5]), content=[1, 2, 3, 4, 5, 7])
+  @json.inspect(from_array([2, 7, 1, 2, 3, 4, 5]), content=[1, 2, 3, 4, 5, 7])
 }
 
 ///|
@@ -110,22 +110,22 @@ pub impl[A : Compare] Compare for SortedSet[A] with compare(self, other) -> Int 
 
 ///|
 test "Eq - equal sets" {
-  let s1 = of([1, 2, 3, 4, 5])
-  let s2 = of([5, 4, 3, 2, 1])
+  let s1 = from_array([1, 2, 3, 4, 5])
+  let s2 = from_array([5, 4, 3, 2, 1])
   inspect(s1 == s2, content="true")
 }
 
 ///|
 test "Eq - different elements same size" {
-  let s1 = of([1, 2, 3, 4, 5])
-  let s2 = of([1, 2, 3, 4, 6])
+  let s1 = from_array([1, 2, 3, 4, 5])
+  let s2 = from_array([1, 2, 3, 4, 6])
   inspect(s1 == s2, content="false")
 }
 
 ///|
 test "Eq - different sizes" {
-  let s1 = of([1, 2, 3])
-  let s2 = of([1, 2, 3, 4, 5])
+  let s1 = from_array([1, 2, 3])
+  let s2 = from_array([1, 2, 3, 4, 5])
   inspect(s1 == s2, content="false")
 }
 
@@ -139,42 +139,42 @@ test "Eq - empty sets" {
 ///|
 test "Eq - one empty one not" {
   let s1 : SortedSet[Int] = new()
-  let s2 = of([1])
+  let s2 = from_array([1])
   inspect(s1 == s2, content="false")
 }
 
 ///|
 test "Compare - equal sets" {
-  let s1 = of([1, 2, 3])
-  let s2 = of([3, 2, 1])
+  let s1 = from_array([1, 2, 3])
+  let s2 = from_array([3, 2, 1])
   inspect(s1.compare(s2), content="0")
 }
 
 ///|
 test "Compare - first smaller by size" {
-  let s1 = of([1, 2])
-  let s2 = of([1, 2, 3])
+  let s1 = from_array([1, 2])
+  let s2 = from_array([1, 2, 3])
   inspect(s1.compare(s2) < 0, content="true")
 }
 
 ///|
 test "Compare - first larger by size" {
-  let s1 = of([1, 2, 3, 4])
-  let s2 = of([1, 2])
+  let s1 = from_array([1, 2, 3, 4])
+  let s2 = from_array([1, 2])
   inspect(s1.compare(s2) > 0, content="true")
 }
 
 ///|
 test "Compare - same size first smaller by elements" {
-  let s1 = of([1, 2, 3])
-  let s2 = of([1, 2, 4])
+  let s1 = from_array([1, 2, 3])
+  let s2 = from_array([1, 2, 4])
   inspect(s1.compare(s2) < 0, content="true")
 }
 
 ///|
 test "Compare - same size first larger by elements" {
-  let s1 = of([1, 2, 5])
-  let s2 = of([1, 2, 4])
+  let s1 = from_array([1, 2, 5])
+  let s2 = from_array([1, 2, 4])
   inspect(s1.compare(s2) > 0, content="true")
 }
 

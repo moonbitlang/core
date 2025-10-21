@@ -23,7 +23,7 @@ test "creating sets" {
   inspect(from_array.length(), content="3")
 
   // From fixed array
-  let from_fixed = @set.Set::of([10, 20, 30])
+  let from_fixed = @set.Set::from_array([10, 20, 30])
   inspect(from_fixed.length(), content="3")
 
   // From iterator

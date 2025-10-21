@@ -20,8 +20,8 @@ test "new" {
 
 ///|
 test "from_fixed_array_1" {
-  let queue = @queue.of([1, 2, 3, 4])
-  let queue2 = @queue.of([1])
+  let queue = @queue.from_array([1, 2, 3, 4])
+  let queue2 = @queue.from_array([1])
   assert_eq(queue.length(), 4)
   assert_eq(queue.unsafe_pop(), 1)
   assert_eq(queue.unsafe_pop(), 2)
@@ -33,8 +33,8 @@ test "from_fixed_array_1" {
 
 ///|
 test "from_fixed_array_2" {
-  let q : @queue.Queue[Int] = @queue.of([])
-  inspect(q, content="@queue.of([])")
+  let q : @queue.Queue[Int] = @queue.from_array([])
+  inspect(q, content="@queue.from_array([])")
 }
 
 ///|
@@ -53,31 +53,31 @@ test "from_array_1" {
 ///|
 test "from_array_2" {
   let q : @queue.Queue[Int] = @queue.from_array([])
-  inspect(q, content="@queue.of([])")
+  inspect(q, content="@queue.from_array([])")
   let array = Array::makei(3, idx => idx + 1)
   let q : @queue.Queue[Int] = @queue.from_array(array)
-  inspect(q, content="@queue.of([1, 2, 3])")
+  inspect(q, content="@queue.from_array([1, 2, 3])")
   let q : @queue.Queue[Int] = @queue.from_array(Array::new(capacity=10))
-  inspect(q, content="@queue.of([])")
+  inspect(q, content="@queue.from_array([])")
 }
 
 ///|
 test "to_string" {
-  let queue : @queue.Queue[Int] = @queue.of([1, 2, 3, 4])
-  inspect(queue, content="@queue.of([1, 2, 3, 4])")
+  let queue : @queue.Queue[Int] = @queue.from_array([1, 2, 3, 4])
+  inspect(queue, content="@queue.from_array([1, 2, 3, 4])")
   queue.push(11)
-  inspect(queue, content="@queue.of([1, 2, 3, 4, 11])")
+  inspect(queue, content="@queue.from_array([1, 2, 3, 4, 11])")
   queue.unsafe_pop() |> ignore
-  inspect(queue, content="@queue.of([2, 3, 4, 11])")
+  inspect(queue, content="@queue.from_array([2, 3, 4, 11])")
   let queue : @queue.Queue[Int] = @queue.from_array([])
-  inspect(queue, content="@queue.of([])")
+  inspect(queue, content="@queue.from_array([])")
   let queue : @queue.Queue[Int] = @queue.from_array([9, 8, 7, 5])
-  inspect(queue, content="@queue.of([9, 8, 7, 5])")
+  inspect(queue, content="@queue.from_array([9, 8, 7, 5])")
 }
 
 ///|
 test "clear" {
-  let queue : @queue.Queue[Int] = @queue.of([1, 2, 3, 4])
+  let queue : @queue.Queue[Int] = @queue.from_array([1, 2, 3, 4])
   assert_eq(queue.length(), 4)
   queue.clear()
   assert_eq(queue.length(), 0)
@@ -96,7 +96,7 @@ test "is_empty" {
 
 ///|
 test "unsafe_peek" {
-  let queue : @queue.Queue[Int] = @queue.of([1, 2, 3, 4])
+  let queue : @queue.Queue[Int] = @queue.from_array([1, 2, 3, 4])
   assert_eq(queue.unsafe_peek(), 1)
   assert_eq(queue.length(), 4)
   assert_eq(queue.unsafe_pop(), 1)
@@ -106,7 +106,7 @@ test "unsafe_peek" {
 
 ///|
 test "peek" {
-  let queue : @queue.Queue[Int] = @queue.of([1, 2, 3, 4])
+  let queue : @queue.Queue[Int] = @queue.from_array([1, 2, 3, 4])
   assert_eq(queue.peek(), Some(1))
   queue.clear()
   assert_eq(queue.peek(), None)
@@ -114,7 +114,7 @@ test "peek" {
 
 ///|
 test "unsafe_pop" {
-  let queue : @queue.Queue[Int] = @queue.of([1, 2, 3, 4])
+  let queue : @queue.Queue[Int] = @queue.from_array([1, 2, 3, 4])
   assert_eq(queue.unsafe_pop(), 1)
   assert_eq(queue.unsafe_pop(), 2)
   assert_eq(queue.unsafe_pop(), 3)
@@ -124,7 +124,7 @@ test "unsafe_pop" {
 
 ///|
 test "pop" {
-  let queue : @queue.Queue[Int] = @queue.of([1, 2, 3, 4])
+  let queue : @queue.Queue[Int] = @queue.from_array([1, 2, 3, 4])
   assert_eq(queue.pop(), Some(1))
   assert_eq(queue.pop(), Some(2))
   assert_eq(queue.pop(), Some(3))
@@ -138,7 +138,7 @@ test "each" {
   let mut sum = 0
   queue.each(x => sum = sum + x)
   assert_eq(sum, 0)
-  @queue.of([1, 2, 3, 4]).transfer(queue)
+  @queue.from_array([1, 2, 3, 4]).transfer(queue)
   sum = 0
   queue.each(x => sum = sum + x)
   assert_eq(sum, 10)
@@ -146,7 +146,7 @@ test "each" {
 
 ///|
 test "iter_fold" {
-  let q = @queue.of([1, 2, 3, 4, 5])
+  let q = @queue.from_array([1, 2, 3, 4, 5])
   inspect(q.iter().fold((x, y) => x + y, init=0), content="15")
 }
 
@@ -156,7 +156,7 @@ test "iteri" {
   let mut sum = 0
   queue.eachi((x, i) => sum = sum + x * i)
   assert_eq(sum, 0)
-  @queue.of([1, 2, 3, 4]).transfer(queue)
+  @queue.from_array([1, 2, 3, 4]).transfer(queue)
   sum = 0
   queue.eachi((x, i) => sum = sum + x * i)
   assert_eq(sum, 20)
@@ -167,22 +167,22 @@ test "fold" {
   let queue : @queue.Queue[Int] = @queue.new()
   let sum = queue.fold(init=0, (acc, x) => acc + x)
   assert_eq(sum, 0)
-  @queue.of([1, 2, 3, 4]).transfer(queue)
+  @queue.from_array([1, 2, 3, 4]).transfer(queue)
   let sum = queue.fold(init=0, (acc, x) => acc + x)
   assert_eq(sum, 10)
-  let sum2 = @queue.of([1, 2, 3, 4]).fold(init=0, (acc, x) => acc + x)
+  let sum2 = @queue.from_array([1, 2, 3, 4]).fold(init=0, (acc, x) => acc + x)
   assert_eq(sum2, 10)
   inspect(
-    @queue.of([1, 2, 3, 4]).fold(init=0L, (acc, x) => acc + x.to_int64()),
+    @queue.from_array([1, 2, 3, 4]).fold(init=0L, (acc, x) => acc + x.to_int64()),
     content="10",
   )
 }
 
 ///|
 test "length" {
-  let empty : @queue.Queue[Unit] = @queue.of([])
+  let empty : @queue.Queue[Unit] = @queue.from_array([])
   inspect(empty.length(), content="0")
-  inspect(@queue.of([1, 2, 3]).length(), content="3")
+  inspect(@queue.from_array([1, 2, 3]).length(), content="3")
 }
 
 ///|
@@ -193,18 +193,21 @@ test "iterator" {
 
 ///|
 test "from_iter multiple elements iter" {
-  inspect(@queue.from_iter([1, 2, 3].iter()), content="@queue.of([1, 2, 3])")
+  inspect(
+    @queue.from_iter([1, 2, 3].iter()),
+    content="@queue.from_array([1, 2, 3])",
+  )
 }
 
 ///|
 test "from_iter single element iter" {
-  inspect(@queue.from_iter([1].iter()), content="@queue.of([1])")
+  inspect(@queue.from_iter([1].iter()), content="@queue.from_array([1])")
 }
 
 ///|
 test "from_iter empty iter" {
   let pq : @queue.Queue[Int] = @queue.from_iter(Iter::empty())
-  inspect(pq, content="@queue.of([])")
+  inspect(pq, content="@queue.from_array([])")
 }
 
 ///|
@@ -231,7 +234,7 @@ test "queue arbitrary" {
   let samples : Array[@queue.Queue[Int]] = @quickcheck.samples(20)
   inspect(
     samples[1:5],
-    content="[@queue.of([]), @queue.of([]), @queue.of([0]), @queue.of([0])]",
+    content="[@queue.from_array([]), @queue.from_array([]), @queue.from_array([0]), @queue.from_array([0])]",
   )
-  inspect(samples[15], content="@queue.of([])")
+  inspect(samples[15], content="@queue.from_array([])")
 }

@@ -19,25 +19,29 @@
 ///|
 test "new" {
   let empty : @sorted_set.SortedSet[Int] = @sorted_set.new()
-  inspect(empty, content="@immut/sorted_set.of([])")
+  inspect(empty, content="@immut/sorted_set.from_array([])")
 }
 
 ///|
 test "disjoint" {
   inspect(
-    @sorted_set.of([1]).disjoint(@sorted_set.of([1, 2, 3])),
+    @sorted_set.from_array([1]).disjoint(@sorted_set.from_array([1, 2, 3])),
     content="false",
   )
   inspect(
-    @sorted_set.of([1, 2, 3]).disjoint(@sorted_set.of([1, 2, 3])),
+    @sorted_set.from_array([1, 2, 3]).disjoint(
+      @sorted_set.from_array([1, 2, 3]),
+    ),
     content="false",
   )
   inspect(
-    @sorted_set.of([1, 2, 3]).disjoint(@sorted_set.of([4, 5, 6])),
+    @sorted_set.from_array([1, 2, 3]).disjoint(
+      @sorted_set.from_array([4, 5, 6]),
+    ),
     content="true",
   )
   inspect(
-    @sorted_set.of([1, 2, 3]).subset(@sorted_set.of([3, 4, 5])),
+    @sorted_set.from_array([1, 2, 3]).subset(@sorted_set.from_array([3, 4, 5])),
     content="false",
   )
 }
@@ -45,13 +49,15 @@ test "disjoint" {
 ///|
 test "subset" {
   inspect(
-    @sorted_set.of([1, 2, 3]).subset(
-      @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]),
+    @sorted_set.from_array([1, 2, 3]).subset(
+      @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]),
     ),
     content="true",
   )
   inspect(
-    @sorted_set.of([1, 2, 3]).subset(@sorted_set.of([10, 11, 12, 13, 14])),
+    @sorted_set.from_array([1, 2, 3]).subset(
+      @sorted_set.from_array([10, 11, 12, 13, 14]),
+    ),
     content="false",
   )
 }
@@ -60,32 +66,38 @@ test "subset" {
 test "diff" {
   let empty = @sorted_set.new()
   inspect(
-    empty.difference(@sorted_set.of([1, 2, 3])),
-    content="@immut/sorted_set.of([])",
+    empty.difference(@sorted_set.from_array([1, 2, 3])),
+    content="@immut/sorted_set.from_array([])",
   )
   inspect(
-    @sorted_set.of([1, 2, 3]).difference(empty),
-    content="@immut/sorted_set.of([1, 2, 3])",
+    @sorted_set.from_array([1, 2, 3]).difference(empty),
+    content="@immut/sorted_set.from_array([1, 2, 3])",
   )
   inspect(
-    @sorted_set.of([1, 2, 3]).difference(@sorted_set.of([4, 5, 1])),
-    content="@immut/sorted_set.of([2, 3])",
+    @sorted_set.from_array([1, 2, 3]).difference(
+      @sorted_set.from_array([4, 5, 1]),
+    ),
+    content="@immut/sorted_set.from_array([2, 3])",
   )
   inspect(
-    @sorted_set.of([1, 2, 3]).difference(@sorted_set.of([1, 2, 3])),
-    content="@immut/sorted_set.of([])",
+    @sorted_set.from_array([1, 2, 3]).difference(
+      @sorted_set.from_array([1, 2, 3]),
+    ),
+    content="@immut/sorted_set.from_array([])",
   )
 }
 
 ///|
 test "inter" {
   inspect(
-    @sorted_set.of([3, 4, 5]).intersection(@sorted_set.of([4, 5, 6])),
-    content="@immut/sorted_set.of([4, 5])",
+    @sorted_set.from_array([3, 4, 5]).intersection(
+      @sorted_set.from_array([4, 5, 6]),
+    ),
+    content="@immut/sorted_set.from_array([4, 5])",
   )
   inspect(
-    @sorted_set.of([3, 4]).intersection(@sorted_set.of([5, 6])),
-    content="@immut/sorted_set.of([])",
+    @sorted_set.from_array([3, 4]).intersection(@sorted_set.from_array([5, 6])),
+    content="@immut/sorted_set.from_array([])",
   )
 }
 
@@ -93,55 +105,67 @@ test "inter" {
 test "union" {
   let empty = @sorted_set.new()
   inspect(
-    empty.union(@sorted_set.of([4, 5, 6])),
-    content="@immut/sorted_set.of([4, 5, 6])",
+    empty.union(@sorted_set.from_array([4, 5, 6])),
+    content="@immut/sorted_set.from_array([4, 5, 6])",
   )
   inspect(
-    @sorted_set.of([4, 5, 6]).union(empty),
-    content="@immut/sorted_set.of([4, 5, 6])",
+    @sorted_set.from_array([4, 5, 6]).union(empty),
+    content="@immut/sorted_set.from_array([4, 5, 6])",
   )
   inspect(
-    @sorted_set.of([3]).union(@sorted_set.of([4, 5, 6])),
-    content="@immut/sorted_set.of([3, 4, 5, 6])",
+    @sorted_set.from_array([3]).union(@sorted_set.from_array([4, 5, 6])),
+    content="@immut/sorted_set.from_array([3, 4, 5, 6])",
   )
   inspect(
-    @sorted_set.of([3, 4, 5]).union(@sorted_set.of([6])),
-    content="@immut/sorted_set.of([3, 4, 5, 6])",
+    @sorted_set.from_array([3, 4, 5]).union(@sorted_set.from_array([6])),
+    content="@immut/sorted_set.from_array([3, 4, 5, 6])",
   )
   inspect(
-    @sorted_set.of([3, 4, 5]).union(@sorted_set.of([4, 5, 6])),
-    content="@immut/sorted_set.of([3, 4, 5, 6])",
+    @sorted_set.from_array([3, 4, 5]).union(@sorted_set.from_array([4, 5, 6])),
+    content="@immut/sorted_set.from_array([3, 4, 5, 6])",
   )
   inspect(
-    @sorted_set.of([3, 4, 5]) + @sorted_set.of([4, 5, 6]),
-    content="@immut/sorted_set.of([3, 4, 5, 6])",
+    @sorted_set.from_array([3, 4, 5]) + @sorted_set.from_array([4, 5, 6]),
+    content="@immut/sorted_set.from_array([3, 4, 5, 6])",
   )
 }
 
 ///|
 test "map" {
   inspect(
-    @sorted_set.of([1, 2, 3, 4, 5]).map(x => x * 2),
-    content="@immut/sorted_set.of([2, 4, 6, 8, 10])",
+    @sorted_set.from_array([1, 2, 3, 4, 5]).map(x => x * 2),
+    content="@immut/sorted_set.from_array([2, 4, 6, 8, 10])",
   )
 }
 
 ///|
 test "all" {
-  inspect(@sorted_set.of([2, 4, 6]).all(v => v % 2 == 0), content="true")
-  inspect(@sorted_set.of([1, 3, 5]).all(v => v % 2 == 0), content="false")
+  inspect(
+    @sorted_set.from_array([2, 4, 6]).all(v => v % 2 == 0),
+    content="true",
+  )
+  inspect(
+    @sorted_set.from_array([1, 3, 5]).all(v => v % 2 == 0),
+    content="false",
+  )
 }
 
 ///|
 test "any" {
-  inspect(@sorted_set.of([1, 4, 3]).any(v => v % 2 == 0), content="true")
-  inspect(@sorted_set.of([1, 5, 3]).any(v => v % 2 == 0), content="false")
+  inspect(
+    @sorted_set.from_array([1, 4, 3]).any(v => v % 2 == 0),
+    content="true",
+  )
+  inspect(
+    @sorted_set.from_array([1, 5, 3]).any(v => v % 2 == 0),
+    content="false",
+  )
 }
 
 ///|
 test "fold" {
   inspect(
-    @sorted_set.of([1, 2, 3, 4, 5]).fold(init=0, (acc, x) => acc + x),
+    @sorted_set.from_array([1, 2, 3, 4, 5]).fold(init=0, (acc, x) => acc + x),
     content="15",
   )
 }
@@ -149,40 +173,46 @@ test "fold" {
 ///|
 test "filter" {
   inspect(
-    @sorted_set.of([1, 2, 3, 4, 5, 6]).filter(v => v % 2 == 0),
-    content="@immut/sorted_set.of([2, 4, 6])",
+    @sorted_set.from_array([1, 2, 3, 4, 5, 6]).filter(v => v % 2 == 0),
+    content="@immut/sorted_set.from_array([2, 4, 6])",
   )
 }
 
 ///|
 test "split" {
-  let (left, present, right) = @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).split(
-    5,
-  )
+  let (left, present, right) = @sorted_set.from_array([
+    7, 2, 9, 4, 5, 6, 3, 8, 1,
+  ]).split(5)
   inspect(present, content="true")
-  inspect(left, content="@immut/sorted_set.of([1, 2, 3, 4])")
-  inspect(right, content="@immut/sorted_set.of([6, 7, 8, 9])")
-  let (left, present, right) = @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).split(
-    0,
-  )
+  inspect(left, content="@immut/sorted_set.from_array([1, 2, 3, 4])")
+  inspect(right, content="@immut/sorted_set.from_array([6, 7, 8, 9])")
+  let (left, present, right) = @sorted_set.from_array([
+    7, 2, 9, 4, 5, 6, 3, 8, 1,
+  ]).split(0)
   inspect(present, content="false")
-  inspect(left, content="@immut/sorted_set.of([])")
-  inspect(right, content="@immut/sorted_set.of([1, 2, 3, 4, 5, 6, 7, 8, 9])")
+  inspect(left, content="@immut/sorted_set.from_array([])")
+  inspect(
+    right,
+    content="@immut/sorted_set.from_array([1, 2, 3, 4, 5, 6, 7, 8, 9])",
+  )
 }
 
 ///|
 test "contain" {
   inspect(
-    @sorted_set.of([7, 2, 9, 4, 6, 3, 8, 1]).add(5).contains(5),
+    @sorted_set.from_array([7, 2, 9, 4, 6, 3, 8, 1]).add(5).contains(5),
     content="true",
   )
-  inspect(@sorted_set.of([7, 2, 9, 4, 6, 3, 8, 1]).contains(5), content="false")
+  inspect(
+    @sorted_set.from_array([7, 2, 9, 4, 6, 3, 8, 1]).contains(5),
+    content="false",
+  )
 }
 
 ///|
 test "to_array" {
   inspect(
-    @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).to_array(),
+    @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).to_array(),
     content="[1, 2, 3, 4, 5, 6, 7, 8, 9]",
   )
 }
@@ -190,84 +220,99 @@ test "to_array" {
 ///|
 test "from_fixed_array" {
   inspect(
-    @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]),
-    content="@immut/sorted_set.of([1, 2, 3, 4, 5, 6, 7, 8, 9])",
+    @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]),
+    content="@immut/sorted_set.from_array([1, 2, 3, 4, 5, 6, 7, 8, 9])",
   )
 }
 
 ///|
 test "from_array" {
   inspect(
-    @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]),
-    content="@immut/sorted_set.of([1, 2, 3, 4, 5, 6, 7, 8, 9])",
+    @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]),
+    content="@immut/sorted_set.from_array([1, 2, 3, 4, 5, 6, 7, 8, 9])",
   )
 }
 
 ///|
 test "remove_min" {
   inspect(
-    @sorted_set.of([3, 4, 5]).remove_min(),
-    content="@immut/sorted_set.of([4, 5])",
+    @sorted_set.from_array([3, 4, 5]).remove_min(),
+    content="@immut/sorted_set.from_array([4, 5])",
   )
 }
 
 ///|
 test "add" {
   inspect(
-    @sorted_set.of([7, 2, 9, 4, 6, 3, 8, 1]).add(5),
-    content="@immut/sorted_set.of([1, 2, 3, 4, 5, 6, 7, 8, 9])",
-  )
-  inspect(@sorted_set.of([2]).add(1), content="@immut/sorted_set.of([1, 2])")
-  inspect(@sorted_set.of([2]).add(3), content="@immut/sorted_set.of([2, 3])")
-  inspect(
-    @sorted_set.of([2]).add(1).add(3),
-    content="@immut/sorted_set.of([1, 2, 3])",
-  )
-  inspect(@sorted_set.of([1, 2]).add(1), content="@immut/sorted_set.of([1, 2])")
-  inspect(@sorted_set.of([2, 3]).add(3), content="@immut/sorted_set.of([2, 3])")
-  inspect(
-    @sorted_set.of([1, 2, 3]).add(1),
-    content="@immut/sorted_set.of([1, 2, 3])",
+    @sorted_set.from_array([7, 2, 9, 4, 6, 3, 8, 1]).add(5),
+    content="@immut/sorted_set.from_array([1, 2, 3, 4, 5, 6, 7, 8, 9])",
   )
   inspect(
-    @sorted_set.of([1, 2, 3]).add(3),
-    content="@immut/sorted_set.of([1, 2, 3])",
+    @sorted_set.from_array([2]).add(1),
+    content="@immut/sorted_set.from_array([1, 2])",
   )
   inspect(
-    @sorted_set.of([1]).add(2).add(2),
-    content="@immut/sorted_set.of([1, 2])",
+    @sorted_set.from_array([2]).add(3),
+    content="@immut/sorted_set.from_array([2, 3])",
+  )
+  inspect(
+    @sorted_set.from_array([2]).add(1).add(3),
+    content="@immut/sorted_set.from_array([1, 2, 3])",
+  )
+  inspect(
+    @sorted_set.from_array([1, 2]).add(1),
+    content="@immut/sorted_set.from_array([1, 2])",
+  )
+  inspect(
+    @sorted_set.from_array([2, 3]).add(3),
+    content="@immut/sorted_set.from_array([2, 3])",
+  )
+  inspect(
+    @sorted_set.from_array([1, 2, 3]).add(1),
+    content="@immut/sorted_set.from_array([1, 2, 3])",
+  )
+  inspect(
+    @sorted_set.from_array([1, 2, 3]).add(3),
+    content="@immut/sorted_set.from_array([1, 2, 3])",
+  )
+  inspect(
+    @sorted_set.from_array([1]).add(2).add(2),
+    content="@immut/sorted_set.from_array([1, 2])",
   )
 }
 
 ///|
 test "remove" {
   let empty = @sorted_set.new()
-  inspect(empty.remove(1), content="@immut/sorted_set.of([])")
+  inspect(empty.remove(1), content="@immut/sorted_set.from_array([])")
   inspect(
-    @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).remove(1),
-    content="@immut/sorted_set.of([2, 3, 4, 5, 6, 7, 8, 9])",
+    @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).remove(1),
+    content="@immut/sorted_set.from_array([2, 3, 4, 5, 6, 7, 8, 9])",
   )
   inspect(
-    @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).remove(9),
-    content="@immut/sorted_set.of([1, 2, 3, 4, 5, 6, 7, 8])",
+    @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).remove(9),
+    content="@immut/sorted_set.from_array([1, 2, 3, 4, 5, 6, 7, 8])",
   )
   inspect(
-    @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).remove(8),
-    content="@immut/sorted_set.of([1, 2, 3, 4, 5, 6, 7, 9])",
+    @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).remove(8),
+    content="@immut/sorted_set.from_array([1, 2, 3, 4, 5, 6, 7, 9])",
   )
   inspect(
-    @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).remove(0),
-    content="@immut/sorted_set.of([1, 2, 3, 4, 5, 6, 7, 8, 9])",
+    @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).remove(0),
+    content="@immut/sorted_set.from_array([1, 2, 3, 4, 5, 6, 7, 8, 9])",
   )
   inspect(
-    @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).remove(10),
-    content="@immut/sorted_set.of([1, 2, 3, 4, 5, 6, 7, 8, 9])",
+    @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).remove(10),
+    content="@immut/sorted_set.from_array([1, 2, 3, 4, 5, 6, 7, 8, 9])",
   )
 }
 
 ///|
 test "min" {
-  inspect(@sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).min(), content="1")
+  inspect(
+    @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).min(),
+    content="1",
+  )
 }
 
 ///|
@@ -275,14 +320,17 @@ test "min_option" {
   let empty : @sorted_set.SortedSet[Int] = @sorted_set.new()
   inspect(empty.min_option(), content="None")
   inspect(
-    @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).min_option(),
+    @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).min_option(),
     content="Some(1)",
   )
 }
 
 ///|
 test "max" {
-  inspect(@sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).max(), content="9")
+  inspect(
+    @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).max(),
+    content="9",
+  )
 }
 
 ///|
@@ -290,7 +338,7 @@ test "max_option" {
   let empty : @sorted_set.SortedSet[Int] = @sorted_set.new()
   inspect(empty.max_option(), content="None")
   inspect(
-    @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).max_option(),
+    @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).max_option(),
     content="Some(9)",
   )
 }
@@ -298,21 +346,21 @@ test "max_option" {
 ///|
 test "is_empty" {
   inspect(
-    (@sorted_set.of([]) : @sorted_set.SortedSet[Int]).is_empty(),
+    (@sorted_set.from_array([]) : @sorted_set.SortedSet[Int]).is_empty(),
     content="true",
   )
-  inspect(@sorted_set.of([1]).is_empty(), content="false")
+  inspect(@sorted_set.from_array([1]).is_empty(), content="false")
 }
 
 ///|
 test "to_string" {
   inspect(
-    @sorted_set.of([1, 2, 3, 4, 5]),
-    content="@immut/sorted_set.of([1, 2, 3, 4, 5])",
+    @sorted_set.from_array([1, 2, 3, 4, 5]),
+    content="@immut/sorted_set.from_array([1, 2, 3, 4, 5])",
   )
   inspect(
-    (@sorted_set.of([]) : @sorted_set.SortedSet[Int]),
-    content="@immut/sorted_set.of([])",
+    (@sorted_set.from_array([]) : @sorted_set.SortedSet[Int]),
+    content="@immut/sorted_set.from_array([])",
   )
 }
 
@@ -342,8 +390,8 @@ test "compare" {
 
 ///|
 test "to_json" {
-  @json.inspect(@sorted_set.of([5, 2, 4, 3, 1]), content=[1, 2, 3, 4, 5])
-  @json.inspect((@sorted_set.of([]) : @sorted_set.SortedSet[Int]), content=[])
+  @json.inspect(@sorted_set.from_array([5, 2, 4, 3, 1]), content=[1, 2, 3, 4, 5])
+  @json.inspect((@sorted_set.from_array([]) : @sorted_set.SortedSet[Int]), content=[])
 }
 
 ///|
@@ -356,9 +404,9 @@ test "from_json" {
 ///|
 test "iter" {
   let mut s = ""
-  @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1]).each(x => s += x.to_string())
+  @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).each(x => s += x.to_string())
   inspect(s, content="123456789")
-  let empty : @sorted_set.SortedSet[Int] = @sorted_set.of([])
+  let empty : @sorted_set.SortedSet[Int] = @sorted_set.from_array([])
   s = ""
   empty.each(x => s += x.to_string())
   inspect(s, content="")
@@ -367,7 +415,7 @@ test "iter" {
 ///|
 test "iter_loop" {
   let buf = StringBuilder::new(size_hint=20)
-  let set = [2, 7, 1, 2, 3, 4, 5] |> @sorted_set.of
+  let set = [2, 7, 1, 2, 3, 4, 5] |> @sorted_set.from_array
   for x in set {
     buf.write_object(x)
   }
@@ -431,46 +479,46 @@ test "iter_loop" {
 
 ///|
 test "split with value not in set" {
-  let set = @sorted_set.of([1, 2, 3, 4, 5])
+  let set = @sorted_set.from_array([1, 2, 3, 4, 5])
   let (left, present, right) = set.split(6)
   inspect(present, content="false")
-  inspect(left, content="@immut/sorted_set.of([1, 2, 3, 4, 5])")
-  inspect(right, content="@immut/sorted_set.of([])")
+  inspect(left, content="@immut/sorted_set.from_array([1, 2, 3, 4, 5])")
+  inspect(right, content="@immut/sorted_set.from_array([])")
 }
 
 ///|
 test "remove_min on non-empty set" {
-  let set = @sorted_set.of([3, 4, 5])
+  let set = @sorted_set.from_array([3, 4, 5])
   let new_set = set.remove_min()
-  inspect(new_set, content="@immut/sorted_set.of([4, 5])")
+  inspect(new_set, content="@immut/sorted_set.from_array([4, 5])")
 }
 
 ///|
 test "min on non-empty set" {
-  let set = @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1])
+  let set = @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1])
   let min_value = set.min()
   inspect(min_value, content="1")
 }
 
 ///|
 test "max on non-empty set" {
-  let set = @sorted_set.of([7, 2, 9, 4, 5, 6, 3, 8, 1])
+  let set = @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1])
   let max_value = set.max()
   inspect(max_value, content="9")
 }
 
 ///|
 test "union with different heights" {
-  let set1 = @sorted_set.of([3, 4, 5])
-  let set2 = @sorted_set.of([4, 5, 6])
+  let set1 = @sorted_set.from_array([3, 4, 5])
+  let set2 = @sorted_set.from_array([4, 5, 6])
   let union_set = set1.union(set2)
-  inspect(union_set, content="@immut/sorted_set.of([3, 4, 5, 6])")
+  inspect(union_set, content="@immut/sorted_set.from_array([3, 4, 5, 6])")
 }
 
 ///|
 test "disjoint with different sets" {
-  let set1 = @sorted_set.of([1, 2, 3])
-  let set2 = @sorted_set.of([4, 5, 6])
+  let set1 = @sorted_set.from_array([1, 2, 3])
+  let set2 = @sorted_set.from_array([4, 5, 6])
   let disjoint = set1.disjoint(set2)
   inspect(disjoint, content="true")
 }
@@ -479,7 +527,7 @@ test "disjoint with different sets" {
 test "from_iter multiple elements iter" {
   inspect(
     @sorted_set.from_iter([1, 2, 3].iter()),
-    content="@immut/sorted_set.of([1, 2, 3])",
+    content="@immut/sorted_set.from_array([1, 2, 3])",
   )
 }
 
@@ -487,14 +535,14 @@ test "from_iter multiple elements iter" {
 test "from_iter single element iter" {
   inspect(
     @sorted_set.from_iter([1].iter()),
-    content="@immut/sorted_set.of([1])",
+    content="@immut/sorted_set.from_array([1])",
   )
 }
 
 ///|
 test "from_iter empty iter" {
   let pq : @sorted_set.SortedSet[Int] = @sorted_set.from_iter(Iter::empty())
-  inspect(pq, content="@immut/sorted_set.of([])")
+  inspect(pq, content="@immut/sorted_set.from_array([])")
 }
 
 ///|
@@ -528,12 +576,12 @@ test "size" {
   inspect(empty_set.length(), content="0")
 
   // Single element set should have size 1
-  inspect(@sorted_set.of([1]).length(), content="1")
+  inspect(@sorted_set.from_array([1]).length(), content="1")
 
   // Multiple elements set should have correct size
   // The order of insertion should not affect the size
   inspect(
-    @sorted_set.of([3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5]).length(),
+    @sorted_set.from_array([3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5]).length(),
     content="7",
   )
 }
@@ -542,36 +590,39 @@ test "size" {
 test "@sorted_set.symmetric_difference" {
   // Empty sets
   let empty = @sorted_set.new()
-  let set1 = @sorted_set.of([1, 2, 3])
-  inspect(empty.symmetric_difference(empty), content="@immut/sorted_set.of([])")
+  let set1 = @sorted_set.from_array([1, 2, 3])
+  inspect(
+    empty.symmetric_difference(empty),
+    content="@immut/sorted_set.from_array([])",
+  )
   inspect(
     set1.symmetric_difference(empty),
-    content="@immut/sorted_set.of([1, 2, 3])",
+    content="@immut/sorted_set.from_array([1, 2, 3])",
   )
   inspect(
     empty.symmetric_difference(set1),
-    content="@immut/sorted_set.of([1, 2, 3])",
+    content="@immut/sorted_set.from_array([1, 2, 3])",
   )
 }
 
 ///|
 test "@sorted_set.symmetric_difference/disjoint" {
   // Disjoint sets should union all elements
-  let set1 = @sorted_set.of([1, 3, 5])
-  let set2 = @sorted_set.of([2, 4, 6])
+  let set1 = @sorted_set.from_array([1, 3, 5])
+  let set2 = @sorted_set.from_array([2, 4, 6])
   inspect(
     set1.symmetric_difference(set2),
-    content="@immut/sorted_set.of([1, 2, 3, 4, 5, 6])",
+    content="@immut/sorted_set.from_array([1, 2, 3, 4, 5, 6])",
   )
 }
 
 ///|
 test "@sorted_set.symmetric_difference/overlapping" {
   // Sets with overlapping elements should only include non-common elements
-  let set1 = @sorted_set.of([1, 2, 3, 4])
-  let set2 = @sorted_set.of([3, 4, 5, 6])
+  let set1 = @sorted_set.from_array([1, 2, 3, 4])
+  let set2 = @sorted_set.from_array([3, 4, 5, 6])
   inspect(
     set1.symmetric_difference(set2),
-    content="@immut/sorted_set.of([1, 2, 5, 6])",
+    content="@immut/sorted_set.from_array([1, 2, 5, 6])",
   )
 }

@@ -16,8 +16,8 @@
 test "from_array" {
   let ls = @list.of([1, 2, 3, 4, 5])
   let el : @list.T[Int] = @list.Nil
-  inspect(ls, content="@list.of([1, 2, 3, 4, 5])")
-  inspect(el, content="@list.of([])")
+  inspect(ls, content="@list.from_array([1, 2, 3, 4, 5])")
+  inspect(el, content="@list.from_array([])")
 }
 
 ///|
@@ -63,24 +63,27 @@ test "iteri" {
 test "map" {
   let ls = @list.of([1, 2, 3, 4, 5])
   let rs : @list.T[Int] = @list.Nil
-  inspect(ls.map(x => x * 2), content="@list.of([2, 4, 6, 8, 10])")
-  inspect(rs.map(x => x * 2), content="@list.of([])")
+  inspect(ls.map(x => x * 2), content="@list.from_array([2, 4, 6, 8, 10])")
+  inspect(rs.map(x => x * 2), content="@list.from_array([])")
 }
 
 ///|
 test "mapi" {
   let ls = @list.of([1, 2, 3, 4, 5])
   let el : @list.T[Int] = @list.Nil
-  inspect(ls.mapi((i, x) => i * x), content="@list.of([0, 2, 6, 12, 20])")
-  inspect(el.mapi((i, x) => i * x), content="@list.of([])")
+  inspect(
+    ls.mapi((i, x) => i * x),
+    content="@list.from_array([0, 2, 6, 12, 20])",
+  )
+  inspect(el.mapi((i, x) => i * x), content="@list.from_array([])")
 }
 
 ///|
 test "rev_map" {
   let ls = @list.of([1, 2, 3, 4, 5])
   let rs : @list.T[Int] = @list.Nil
-  inspect(ls.rev_map(x => x * 2), content="@list.of([10, 8, 6, 4, 2])")
-  inspect(rs.rev_map(x => x * 2), content="@list.of([])")
+  inspect(ls.rev_map(x => x * 2), content="@list.from_array([10, 8, 6, 4, 2])")
+  inspect(rs.rev_map(x => x * 2), content="@list.from_array([])")
 }
 
 ///|
@@ -97,8 +100,8 @@ test "to_array" {
 test "filter" {
   let ls = @list.of([1, 2, 3, 4, 5])
   let rs : @list.T[Int] = @list.Nil
-  inspect(ls.filter(x => x % 2 == 0), content="@list.of([2, 4])")
-  inspect(rs.filter(x => x % 2 == 0), content="@list.of([])")
+  inspect(ls.filter(x => x % 2 == 0), content="@list.from_array([2, 4])")
+  inspect(rs.filter(x => x % 2 == 0), content="@list.from_array([])")
 }
 
 ///|
@@ -119,8 +122,8 @@ test "any" {
 test "tail" {
   let ls = @list.of([1, 2, 3, 4, 5])
   let el : @list.T[Int] = @list.Nil
-  inspect(ls.tail(), content="@list.of([2, 3, 4, 5])")
-  inspect(el.tail(), content="@list.of([])")
+  inspect(ls.tail(), content="@list.from_array([2, 3, 4, 5])")
+  inspect(el.tail(), content="@list.from_array([])")
 }
 
 ///|
@@ -147,23 +150,29 @@ test "last" {
 test "concat" {
   let ls = @list.of([1, 2, 3, 4, 5])
   let rs = @list.of([6, 7, 8, 9, 10])
-  inspect(ls.concat(@list.Nil), content="@list.of([1, 2, 3, 4, 5])")
+  inspect(ls.concat(@list.Nil), content="@list.from_array([1, 2, 3, 4, 5])")
   inspect(
     (@list.Nil : @list.T[Int]).concat(rs),
-    content="@list.of([6, 7, 8, 9, 10])",
+    content="@list.from_array([6, 7, 8, 9, 10])",
   )
-  inspect(ls.concat(rs), content="@list.of([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])")
+  inspect(
+    ls.concat(rs),
+    content="@list.from_array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])",
+  )
 }
 
 ///|
 test "rev_concat" {
   let ls = @list.of([1, 2, 3, 4, 5])
   let rs = @list.of([6, 7, 8, 9, 10])
-  inspect(@list.Nil.rev_concat(ls), content="@list.of([1, 2, 3, 4, 5])")
-  inspect(rs.rev_concat(@list.Nil), content="@list.of([10, 9, 8, 7, 6])")
+  inspect(@list.Nil.rev_concat(ls), content="@list.from_array([1, 2, 3, 4, 5])")
+  inspect(
+    rs.rev_concat(@list.Nil),
+    content="@list.from_array([10, 9, 8, 7, 6])",
+  )
   inspect(
     ls.rev_concat(rs),
-    content="@list.of([5, 4, 3, 2, 1, 6, 7, 8, 9, 10])",
+    content="@list.from_array([5, 4, 3, 2, 1, 6, 7, 8, 9, 10])",
   )
 }
 
@@ -171,8 +180,8 @@ test "rev_concat" {
 test "rev" {
   let ls = @list.of([1, 2, 3, 4, 5])
   let rs = @list.of([5, 4, 3, 2, 1])
-  inspect(rs.rev(), content="@list.of([1, 2, 3, 4, 5])")
-  inspect(ls.rev().rev(), content="@list.of([1, 2, 3, 4, 5])")
+  inspect(rs.rev(), content="@list.from_array([1, 2, 3, 4, 5])")
+  inspect(ls.rev().rev(), content="@list.from_array([1, 2, 3, 4, 5])")
 }
 
 ///|
@@ -213,7 +222,7 @@ test "zip" {
   let rs = @list.of([6, 7, 8, 9, 10])
   inspect(
     ls.zip(rs),
-    content="Some(@list.of([(1, 6), (2, 7), (3, 8), (4, 9), (5, 10)]))",
+    content="Some(@list.from_array([(1, 6), (2, 7), (3, 8), (4, 9), (5, 10)]))",
   )
 }
 
@@ -221,10 +230,13 @@ test "zip" {
 test "flat_map" {
   let ls = @list.of([1, 2, 3])
   let rs : @list.T[Int] = @list.Nil
-  inspect(rs.flat_map(x => @list.of([x, x * 2])), content="@list.of([])")
+  inspect(
+    rs.flat_map(x => @list.of([x, x * 2])),
+    content="@list.from_array([])",
+  )
   inspect(
     ls.flat_map(x => @list.of([x, x * 2])),
-    content="@list.of([1, 2, 2, 4, 3, 6])",
+    content="@list.from_array([1, 2, 2, 4, 3, 6])",
   )
 }
 
@@ -234,11 +246,11 @@ test "filter_map" {
   let rs : @list.T[Int] = @list.Nil
   inspect(
     ls.filter_map(x => if x >= 3 { Some(x) } else { None }),
-    content="@list.of([4, 6, 3])",
+    content="@list.from_array([4, 6, 3])",
   )
   inspect(
     rs.filter_map(x => if x >= 3 { Some(x) } else { None }),
-    content="@list.of([])",
+    content="@list.from_array([])",
   )
 }
 
@@ -252,8 +264,8 @@ test "nth" {
 
 ///|
 test "repeat" {
-  inspect(@list.repeat(5, 1), content="@list.of([1, 1, 1, 1, 1])")
-  inspect(@list.repeat(0, 10), content="@list.of([])")
+  inspect(@list.repeat(5, 1), content="@list.from_array([1, 1, 1, 1, 1])")
+  inspect(@list.repeat(0, 10), content="@list.from_array([])")
 }
 
 ///|
@@ -263,10 +275,10 @@ test "intersperse" {
   inspect(
     ls.intersperse("|"),
     content=(
-      #|@list.of(["1", "|", "2", "|", "3", "|", "4", "|", "5"])
+      #|@list.from_array(["1", "|", "2", "|", "3", "|", "4", "|", "5"])
     ),
   )
-  inspect(el.intersperse("|"), content="@list.of([])")
+  inspect(el.intersperse("|"), content="@list.from_array([])")
 }
 
 ///|
@@ -280,8 +292,8 @@ test "is_empty" {
 test "unzip" {
   let ls = @list.of([(1, 2), (3, 4), (5, 6)])
   let (a, b) = ls.unzip()
-  inspect(a, content="@list.of([1, 3, 5])")
-  inspect(b, content="@list.of([2, 4, 6])")
+  inspect(a, content="@list.from_array([1, 3, 5])")
+  inspect(b, content="@list.from_array([2, 4, 6])")
 }
 
 ///|
@@ -292,8 +304,8 @@ test "flatten" {
     @list.of([7, 8, 9]),
   ])
   let el : @list.T[@list.T[Int]] = @list.Nil
-  inspect(ls.flatten(), content="@list.of([1, 2, 3, 4, 5, 6, 7, 8, 9])")
-  inspect(el.flatten(), content="@list.of([])")
+  inspect(ls.flatten(), content="@list.from_array([1, 2, 3, 4, 5, 6, 7, 8, 9])")
+  inspect(el.flatten(), content="@list.from_array([])")
 }
 
 ///|
@@ -312,8 +324,8 @@ test "minimum" {
 test "sort" {
   let ls = @list.of([1, 123, 52, 3, 6, 0, -6, -76])
   let el : @list.T[Int] = @list.Nil
-  inspect(el.sort(), content="@list.of([])")
-  inspect(ls.sort(), content="@list.of([-76, -6, 0, 1, 3, 6, 52, 123])")
+  inspect(el.sort(), content="@list.from_array([])")
+  inspect(ls.sort(), content="@list.from_array([-76, -6, 0, 1, 3, 6, 52, 123])")
 }
 
 ///|
@@ -333,45 +345,45 @@ test "unfold" {
   } else {
     Some((i, i + 1))
   })
-  inspect(ls, content="@list.of([0, 1, 2])")
+  inspect(ls, content="@list.from_array([0, 1, 2])")
 }
 
 ///|
 test "take" {
   let ls = @list.of([1, 2, 3, 4, 5])
-  inspect(ls.take(3), content="@list.of([1, 2, 3])")
-  inspect(ls.take(-1), content="@list.of([])")
-  inspect(ls.take(7), content="@list.of([1, 2, 3, 4, 5])")
-  inspect(ls.take(0), content="@list.of([])")
-  inspect(ls.take(5), content="@list.of([1, 2, 3, 4, 5])")
+  inspect(ls.take(3), content="@list.from_array([1, 2, 3])")
+  inspect(ls.take(-1), content="@list.from_array([])")
+  inspect(ls.take(7), content="@list.from_array([1, 2, 3, 4, 5])")
+  inspect(ls.take(0), content="@list.from_array([])")
+  inspect(ls.take(5), content="@list.from_array([1, 2, 3, 4, 5])")
 }
 
 ///|
 test "drop" {
   let ls = @list.of([1, 2, 3, 4, 5]).drop(3)
   let el : @list.T[Int] = @list.Nil
-  inspect(ls, content="@list.of([4, 5])")
-  inspect(ls.drop(-10), content="@list.of([4, 5])")
-  inspect(ls.drop(10), content="@list.of([])")
-  inspect(ls.drop(2), content="@list.of([])")
-  inspect(ls.drop(0), content="@list.of([4, 5])")
-  inspect(el.drop(0), content="@list.of([])")
+  inspect(ls, content="@list.from_array([4, 5])")
+  inspect(ls.drop(-10), content="@list.from_array([4, 5])")
+  inspect(ls.drop(10), content="@list.from_array([])")
+  inspect(ls.drop(2), content="@list.from_array([])")
+  inspect(ls.drop(0), content="@list.from_array([4, 5])")
+  inspect(el.drop(0), content="@list.from_array([])")
 }
 
 ///|
 test "take_while" {
   let ls = @list.of([0, 1, 2, 3, 4]).take_while(x => x < 3)
   let el : @list.T[Int] = @list.Nil.take_while(_e => true)
-  inspect(ls, content="@list.of([0, 1, 2])")
-  inspect(el, content="@list.of([])")
+  inspect(ls, content="@list.from_array([0, 1, 2])")
+  inspect(el, content="@list.from_array([])")
 }
 
 ///|
 test "drop_while" {
   let ls = @list.of([0, 1, 2, 3, 4]).drop_while(x => x < 3)
   let el : @list.T[Int] = @list.Nil.drop_while(_e => true)
-  inspect(ls, content="@list.of([3, 4])")
-  inspect(el, content="@list.of([])")
+  inspect(ls, content="@list.from_array([3, 4])")
+  inspect(el, content="@list.from_array([])")
 }
 
 ///|
@@ -379,9 +391,9 @@ test "scan_left" {
   let el = @list.Nil.scan_left((acc, x) => acc + x, init=0)
   let ls = @list.of([1, 2, 3, 4, 5]).scan_left((acc, x) => acc + x, init=0)
   let ls2 = @list.of([1, 2, 3, 4]).scan_left((acc, x) => acc - x, init=100)
-  inspect(el, content="@list.of([0])")
-  inspect(ls, content="@list.of([0, 1, 3, 6, 10, 15])")
-  inspect(ls2, content="@list.of([100, 99, 97, 94, 90])")
+  inspect(el, content="@list.from_array([0])")
+  inspect(ls, content="@list.from_array([0, 1, 3, 6, 10, 15])")
+  inspect(ls2, content="@list.from_array([100, 99, 97, 94, 90])")
 }
 
 ///|
@@ -389,9 +401,9 @@ test "scan_right" {
   let el = @list.Nil.scan_right((x, acc) => x + acc, init=0)
   let ls = @list.of([1, 2, 3, 4]).scan_right((x, acc) => x + acc, init=0)
   let ls2 = @list.of([1, 2, 3, 4]).scan_right((x, acc) => x - acc, init=100)
-  inspect(el, content="@list.of([0])")
-  inspect(ls, content="@list.of([10, 9, 7, 4, 0])")
-  inspect(ls2, content="@list.of([98, -97, 99, -96, 100])")
+  inspect(el, content="@list.from_array([0])")
+  inspect(ls, content="@list.from_array([10, 9, 7, 4, 0])")
+  inspect(ls2, content="@list.from_array([98, -97, 99, -96, 100])")
 }
 
 ///|
@@ -443,35 +455,38 @@ test "findi" {
 ///|
 test "remove_at" {
   let ls = @list.of([1, 2, 3, 4, 5])
-  inspect(ls.remove_at(2), content="@list.of([1, 2, 4, 5])")
-  inspect(ls.remove_at(0), content="@list.of([2, 3, 4, 5])")
+  inspect(ls.remove_at(2), content="@list.from_array([1, 2, 4, 5])")
+  inspect(ls.remove_at(0), content="@list.from_array([2, 3, 4, 5])")
   inspect(
     @list.of(["a", "b", "c", "d", "e"]).remove_at(2),
     content=(
-      #|@list.of(["a", "b", "d", "e"])
+      #|@list.from_array(["a", "b", "d", "e"])
     ),
   )
   inspect(
     @list.of(["a", "b", "c", "d", "e"]).remove_at(5),
     content=(
-      #|@list.of(["a", "b", "c", "d", "e"])
+      #|@list.from_array(["a", "b", "c", "d", "e"])
     ),
   )
 }
 
 ///|
 test "remove" {
-  inspect(@list.of([1, 2, 3, 4, 5]).remove(3), content="@list.of([1, 2, 4, 5])")
+  inspect(
+    @list.of([1, 2, 3, 4, 5]).remove(3),
+    content="@list.from_array([1, 2, 4, 5])",
+  )
   inspect(
     @list.of(["a", "b", "c", "d", "e"]).remove("c"),
     content=(
-      #|@list.of(["a", "b", "d", "e"])
+      #|@list.from_array(["a", "b", "d", "e"])
     ),
   )
   inspect(
     @list.of(["a", "b", "c", "d", "e"]).remove("f"),
     content=(
-      #|@list.of(["a", "b", "c", "d", "e"])
+      #|@list.from_array(["a", "b", "c", "d", "e"])
     ),
   )
 }
@@ -518,15 +533,15 @@ test "intercalate" {
   let el : @list.T[@list.T[Int]] = @list.Nil
   inspect(
     ls.intercalate(@list.of([0])),
-    content="@list.of([1, 2, 3, 0, 4, 5, 6, 0, 7, 8, 9])",
+    content="@list.from_array([1, 2, 3, 0, 4, 5, 6, 0, 7, 8, 9])",
   )
-  inspect(el.intersperse(@list.of([1])), content="@list.of([])")
+  inspect(el.intersperse(@list.of([1])), content="@list.from_array([])")
 }
 
 ///|
 test "default" {
   let ls : @list.T[Int] = @list.default()
-  inspect(ls, content="@list.of([])")
+  inspect(ls, content="@list.from_array([])")
 }
 
 ///|
@@ -534,7 +549,7 @@ test "List::output with non-empty list" {
   let buf = StringBuilder::new(size_hint=100)
   let list = @list.of([1, 2, 3, 4, 5])
   Show::output(list, buf)
-  inspect(buf, content="@list.of([1, 2, 3, 4, 5])")
+  inspect(buf, content="@list.from_array([1, 2, 3, 4, 5])")
 }
 
 ///|
@@ -542,7 +557,7 @@ test "List::output with empty list" {
   let buf = StringBuilder::new(size_hint=100)
   let list : @list.T[Int] = @list.Nil
   Show::output(list, buf)
-  inspect(buf, content="@list.of([])")
+  inspect(buf, content="@list.from_array([])")
 }
 
 ///|
@@ -625,34 +640,40 @@ test "@list.minimum with empty list" {
 
 ///|
 test "add" {
-  inspect(@list.of([1]) + @list.of([]), content="@list.of([1])")
-  inspect(@list.of([]) + @list.of([1]), content="@list.of([1])")
-  inspect(@list.of([1]) + @list.of([1]), content="@list.of([1, 1])")
+  inspect(@list.of([1]) + @list.of([]), content="@list.from_array([1])")
+  inspect(@list.of([]) + @list.of([1]), content="@list.from_array([1])")
+  inspect(@list.of([1]) + @list.of([1]), content="@list.from_array([1, 1])")
   inspect(
     (@list.Nil : @list.T[Int]) + (@list.Nil : @list.T[Int]),
-    content="@list.of([])",
+    content="@list.from_array([])",
   )
 }
 
 ///|
 test "@list.from_iter multiple elements iter" {
-  inspect(@list.from_iter([1, 2, 3].iter()), content="@list.of([1, 2, 3])")
+  inspect(
+    @list.from_iter([1, 2, 3].iter()),
+    content="@list.from_array([1, 2, 3])",
+  )
 }
 
 ///|
 test "@list.from_iter_rev multiple elements iter" {
-  inspect(@list.from_iter_rev([1, 2, 3].iter()), content="@list.of([3, 2, 1])")
+  inspect(
+    @list.from_iter_rev([1, 2, 3].iter()),
+    content="@list.from_array([3, 2, 1])",
+  )
 }
 
 ///|
 test "@list.from_iter single element iter" {
-  inspect(@list.from_iter([1].iter()), content="@list.of([1])")
+  inspect(@list.from_iter([1].iter()), content="@list.from_array([1])")
 }
 
 ///|
 test "@list.from_iter empty iter" {
   let pq : @list.T[Int] = @list.from_iter(Iter::empty())
-  inspect(pq, content="@list.of([])")
+  inspect(pq, content="@list.from_array([])")
 }
 
 ///|

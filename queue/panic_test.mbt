@@ -14,10 +14,10 @@
 
 ///|
 test "panic unsafe_peek" {
-  @queue.of([]).unsafe_peek()
+  @queue.from_array([]).unsafe_peek()
 }
 
 ///|
 test "panic unsafe_pop" {
-  @queue.of([]).unsafe_pop()
+  @queue.from_array([]).unsafe_pop()
 }

@@ -24,10 +24,10 @@ test "panic unsafe_pop_back" {
 
 ///|
 test "panic get" {
-  @deque.of([1, 2, 3])[-1] |> ignore
+  @deque.from_array([1, 2, 3])[-1] |> ignore
 }
 
 ///|
 test "panic Deque::set" {
-  @deque.of([1, 2, 3])[-1] = 1
+  @deque.from_array([1, 2, 3])[-1] = 1
 }

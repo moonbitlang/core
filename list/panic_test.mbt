@@ -40,7 +40,7 @@ test "panic @list.unsafe_minimum with empty list" {
 ///|
 test "unsafe_head with non-empty list" {
   // Test the non-panic path of unsafe_head to cover line 407
-  let list = @list.of([1, 2, 3])
+  let list = @list.from_array([1, 2, 3])
   inspect(list.unsafe_head(), content="1")
 }
 

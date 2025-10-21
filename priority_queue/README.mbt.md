@@ -12,7 +12,7 @@ You can use `new()` or `of()` to create a priority queue.
 ///|
 test {
   let queue1 : @priority_queue.T[Int] = @priority_queue.new()
-  let queue2 = @priority_queue.of([1, 2, 3])
+  let queue2 = @priority_queue.from_array([1, 2, 3])
   @json.inspect(queue1, content=[])
   @json.inspect(queue2, content=[3, 2, 1])
 }
@@ -28,7 +28,7 @@ You can easily create a min-heap (smallest element first) using `@cmp.Reverse` t
 ///|
 test {
   // Create a min-heap by wrapping elements with @cmp.Reverse
-  let min_heap = @priority_queue.of([
+  let min_heap = @priority_queue.from_array([
     @cmp.Reverse(5),
     @cmp.Reverse(2),
     @cmp.Reverse(8),
@@ -47,7 +47,7 @@ You can use `length()` to get the number of elements in the current priority que
 ```moonbit
 ///|
 test {
-  let pq = @priority_queue.of([1, 2, 3, 4, 5])
+  let pq = @priority_queue.from_array([1, 2, 3, 4, 5])
   assert_eq(pq.length(), 5)
 }
 ```
@@ -69,7 +69,7 @@ You can use `peek()` to look at the head element of a queue, which must be eithe
 ```moonbit
 ///|
 test {
-  let pq = @priority_queue.of([1, 2, 3, 4, 5])
+  let pq = @priority_queue.from_array([1, 2, 3, 4, 5])
   assert_eq(pq.peek(), Some(5))
 }
 ```
@@ -95,7 +95,7 @@ You can use `pop()` to pop the element at the front of the priority queue, respe
 ```moonbit
 ///|
 test {
-  let pq = @priority_queue.of([5, 4, 3, 2, 1])
+  let pq = @priority_queue.from_array([5, 4, 3, 2, 1])
   assert_eq(pq.pop(), Some(5))
 }
 ```
@@ -103,7 +103,7 @@ test {
 ```moonbit
 ///|
 test {
-  let pq = @priority_queue.of([5, 4, 3, 2, 1])
+  let pq = @priority_queue.from_array([5, 4, 3, 2, 1])
   assert_eq(pq.length(), 5)
 }
 ```
@@ -115,7 +115,7 @@ You can use `clear` to clear a priority queue.
 ```moonbit
 ///|
 test {
-  let pq = @priority_queue.of([1, 2, 3, 4, 5])
+  let pq = @priority_queue.from_array([1, 2, 3, 4, 5])
   pq.clear()
   assert_eq(pq.is_empty(), true)
 }
@@ -128,7 +128,7 @@ You can copy a priority queue using the `copy` method.
 ```moonbit
 ///|
 test {
-  let pq = @priority_queue.of([1, 2, 3])
+  let pq = @priority_queue.from_array([1, 2, 3])
   let _pq2 = pq.copy()
 
 }

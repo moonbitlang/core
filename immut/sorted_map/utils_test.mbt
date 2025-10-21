@@ -14,7 +14,7 @@
 
 ///|
 test "get with existing key" {
-  let map = @sorted_map.of([
+  let map = @sorted_map.from_array([
     (3, "three"),
     (8, "eight"),
     (1, "one"),
@@ -26,7 +26,7 @@ test "get with existing key" {
 
 ///|
 test "_[_] with existing key" {
-  let map = @sorted_map.of([
+  let map = @sorted_map.from_array([
     (3, "three"),
     (8, "eight"),
     (1, "one"),
@@ -38,7 +38,7 @@ test "_[_] with existing key" {
 
 ///|
 test "get with non-existing key" {
-  let map = @sorted_map.of([
+  let map = @sorted_map.from_array([
     (3, "three"),
     (8, "eight"),
     (1, "one"),
@@ -50,7 +50,7 @@ test "get with non-existing key" {
 
 ///|
 test "get with pattern" {
-  let map = @sorted_map.of([
+  let map = @sorted_map.from_array([
     (3, "three"),
     (8, "eight"),
     (1, "one"),
@@ -63,7 +63,7 @@ test "get with pattern" {
 
 ///|
 test "get after insertion" {
-  let map = @sorted_map.of([
+  let map = @sorted_map.from_array([
     (3, "three"),
     (8, "eight"),
     (1, "one"),
@@ -76,7 +76,7 @@ test "get after insertion" {
 
 ///|
 test "_[_] after insertion" {
-  let map = @sorted_map.of([
+  let map = @sorted_map.from_array([
     (3, "three"),
     (8, "eight"),
     (1, "one"),
@@ -89,7 +89,7 @@ test "_[_] after insertion" {
 
 ///|
 test "get after removal" {
-  let map = @sorted_map.of([
+  let map = @sorted_map.from_array([
     (3, "three"),
     (8, "eight"),
     (1, "one"),
@@ -102,7 +102,7 @@ test "get after removal" {
 
 ///|
 test "panic get with non-existing key" {
-  let map = @sorted_map.of([
+  let map = @sorted_map.from_array([
     (3, "three"),
     (8, "eight"),
     (1, "one"),
@@ -114,7 +114,7 @@ test "panic get with non-existing key" {
 
 ///|
 test "panic get after removal" {
-  let map = @sorted_map.of([
+  let map = @sorted_map.from_array([
     (3, "three"),
     (8, "eight"),
     (1, "one"),
@@ -128,7 +128,7 @@ test "panic get after removal" {
 ///|
 test "iter" {
   let map = [(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")]
-    |> @sorted_map.of
+    |> @sorted_map.from_array
   let buf = StringBuilder::new()
   for k, v in map {
     buf.write_object(k)
@@ -173,7 +173,7 @@ test "panic get with empty map" {
 ///|
 test "to_json with non-empty map" {
   let map = [(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")]
-    |> @sorted_map.of
+    |> @sorted_map.from_array
   @json.inspect(map.to_json(), content={
     "0": "zero",
     "1": "one",
