@@ -60,12 +60,12 @@ fn String::to_bytes(String) -> Bytes
 fn String::to_lower(String) -> String
 fn String::to_string_view(String) -> StringView // from trait `ToStringView`
 fn String::to_upper(String) -> String
-#label_migration(char_set, allow_positional=true)
+#callsite(migration(char_set, allow_positional=true))
 fn String::trim(String, char_set~ : StringView) -> StringView
-#label_migration(char_set, allow_positional=true)
+#callsite(migration(char_set, allow_positional=true))
 fn String::trim_end(String, char_set~ : StringView) -> StringView
 fn String::trim_space(String) -> StringView
-#label_migration(char_set, allow_positional=true)
+#callsite(migration(char_set, allow_positional=true))
 fn String::trim_start(String, char_set~ : StringView) -> StringView
 fn String::view(String, start_offset? : Int, end_offset? : Int) -> StringView
 impl Compare for String
@@ -133,12 +133,12 @@ fn StringView::to_lower(Self) -> Self
 fn StringView::to_string(Self) -> String // from trait `Show`
 fn StringView::to_string_view(Self) -> Self // from trait `ToStringView`
 fn StringView::to_upper(Self) -> Self
-#label_migration(char_set, allow_positional=true)
+#callsite(migration(char_set, allow_positional=true))
 fn StringView::trim(Self, char_set~ : Self) -> Self
-#label_migration(char_set, allow_positional=true)
+#callsite(migration(char_set, allow_positional=true))
 fn StringView::trim_end(Self, char_set~ : Self) -> Self
 fn StringView::trim_space(Self) -> Self
-#label_migration(char_set, allow_positional=true)
+#callsite(migration(char_set, allow_positional=true))
 fn StringView::trim_start(Self, char_set~ : Self) -> Self
 fn StringView::unsafe_charcode_at(Self, Int) -> Int
 fn StringView::view(Self, start_offset? : Int, end_offset? : Int) -> Self
