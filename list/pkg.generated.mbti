@@ -41,6 +41,8 @@ fn[A, B] List::flat_map(Self[A], (A) -> Self[B] raise?) -> Self[B] raise?
 fn[A] List::flatten(Self[Self[A]]) -> Self[A]
 fn[A, B] List::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 fn[A, B] List::foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
+#alias(of, deprecated)
+#as_free_fn(of, deprecated)
 #as_free_fn
 fn[A] List::from_array(ArrayView[A]) -> Self[A]
 #as_free_fn
@@ -77,8 +79,6 @@ fn[A : Compare] List::minimum(Self[A]) -> A?
 #as_free_fn
 fn[A] List::new() -> Self[A]
 fn[A] List::nth(Self[A], Int) -> A?
-#as_free_fn
-fn[A] List::of(FixedArray[A]) -> Self[A]
 #deprecated
 fn[A] List::op_add(Self[A], Self[A]) -> Self[A] // from trait `Add`
 #deprecated

@@ -28,6 +28,8 @@ fn[A] SortedSet::each(Self[A], (A) -> Unit raise?) -> Unit raise?
 fn[A : Eq] SortedSet::equal(Self[A], Self[A]) -> Bool // from trait `Eq`
 fn[A] SortedSet::filter(Self[A], (A) -> Bool raise?) -> Self[A] raise?
 fn[A, B] SortedSet::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
+#alias(of, deprecated)
+#as_free_fn(of, deprecated)
 #as_free_fn
 fn[A : Compare] SortedSet::from_array(ArrayView[A]) -> Self[A]
 #as_free_fn
@@ -53,8 +55,6 @@ fn[A] SortedSet::min(Self[A]) -> A
 fn[A] SortedSet::min_option(Self[A]) -> A?
 #as_free_fn
 fn[A] SortedSet::new() -> Self[A]
-#as_free_fn
-fn[A : Compare] SortedSet::of(FixedArray[A]) -> Self[A]
 #deprecated
 fn[A : Compare] SortedSet::op_add(Self[A], Self[A]) -> Self[A] // from trait `Add`
 #deprecated

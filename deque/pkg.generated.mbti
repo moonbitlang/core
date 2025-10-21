@@ -36,6 +36,8 @@ fn[A] Deque::filter(Self[A], (A) -> Bool raise?) -> Self[A] raise?
 #deprecated
 fn[A] Deque::filter_map_inplace(Self[A], (A) -> A?) -> Unit
 fn[A] Deque::flatten(Self[Self[A]]) -> Self[A]
+#alias(of, deprecated)
+#as_free_fn(of, deprecated)
 #as_free_fn
 fn[A] Deque::from_array(ArrayView[A]) -> Self[A]
 #as_free_fn
@@ -59,8 +61,6 @@ fn[A, U] Deque::map(Self[A], (A) -> U) -> Self[U]
 fn[A, U] Deque::mapi(Self[A], (Int, A) -> U) -> Self[U]
 #as_free_fn
 fn[A] Deque::new(capacity? : Int) -> Self[A]
-#as_free_fn
-fn[A] Deque::of(FixedArray[A]) -> Self[A]
 #deprecated
 fn[A] Deque::op_add(Self[A], Self[A]) -> Self[A] // from trait `Add`
 #deprecated

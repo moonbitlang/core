@@ -15,8 +15,10 @@ type PriorityQueue[A]
 fn[X : @quickcheck.Arbitrary + Compare] PriorityQueue::arbitrary(Int, @splitmix.RandomState) -> Self[X] // from trait `@quickcheck.Arbitrary`
 fn[A : Compare] PriorityQueue::compare(Self[A], Self[A]) -> Int // from trait `Compare`
 fn[A : Compare] PriorityQueue::equal(Self[A], Self[A]) -> Bool // from trait `Eq`
+#alias(of, deprecated)
+#as_free_fn(of, deprecated)
 #as_free_fn
-fn[A : Compare] PriorityQueue::from_array(Array[A]) -> Self[A]
+fn[A : Compare] PriorityQueue::from_array(ArrayView[A]) -> Self[A]
 #as_free_fn
 fn[A : Compare] PriorityQueue::from_iter(Iter[A]) -> Self[A]
 #as_free_fn
@@ -29,8 +31,6 @@ fn[A : Compare] PriorityQueue::iterator(Self[A]) -> Iterator[A]
 fn[A] PriorityQueue::length(Self[A]) -> Int
 #as_free_fn
 fn[A] PriorityQueue::new() -> Self[A]
-#as_free_fn
-fn[A : Compare] PriorityQueue::of(FixedArray[A]) -> Self[A]
 #deprecated
 fn[A : Compare] PriorityQueue::op_equal(Self[A], Self[A]) -> Bool // from trait `Eq`
 fn[A : Compare] PriorityQueue::op_ge(Self[A], Self[A]) -> Bool // from trait `Compare`

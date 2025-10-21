@@ -16,6 +16,8 @@ fn[X : @quickcheck.Arbitrary + Compare] T::arbitrary(Int, @splitmix.RandomState)
 fn[A] T::clear(Self[A]) -> Unit
 fn[A] T::copy(Self[A]) -> Self[A]
 fn[K] T::default() -> Self[K] // from trait `Default`
+#alias(of, deprecated)
+#as_free_fn(of, deprecated)
 #as_free_fn
 fn[A : Compare] T::from_array(ArrayView[A]) -> Self[A]
 #as_free_fn
@@ -28,8 +30,6 @@ fn[A : Compare] T::iterator(Self[A]) -> Iterator[A]
 fn[A] T::length(Self[A]) -> Int
 #as_free_fn
 fn[A] T::new() -> Self[A]
-#as_free_fn
-fn[A : Compare] T::of(FixedArray[A]) -> Self[A]
 fn[A : Show + Compare] T::output(Self[A], &Logger) -> Unit // from trait `Show`
 fn[A] T::peek(Self[A]) -> A?
 fn[A : Compare] T::pop(Self[A]) -> A?

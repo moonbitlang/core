@@ -35,6 +35,8 @@ pub fn[A] Queue::new() -> Queue[A] {
 ///   assert_eq(queue.length(), 3)
 /// ```
 #as_free_fn
+#alias(of, deprecated="Use from_array instead")
+#as_free_fn(of, deprecated="Use from_array instead")
 pub fn[A] Queue::from_array(arr : ArrayView[A]) -> Queue[A] {
   guard arr.length() > 0 else { return new() }
   let length = arr.length()
@@ -378,27 +380,6 @@ pub fn[A] Queue::from_iterator(iter : Iterator[A]) -> Queue[A] {
     q.push(e)
   }
   q
-}
-
-///|
-/// Creates a new queue from a FixedArray.
-///
-/// # Example
-/// ```mbt
-///   let queue : @queue.Queue[Int] = @queue.of([1, 2, 3, 4])
-///   assert_eq(queue.length(), 4)
-/// ```
-#as_free_fn
-pub fn[A] Queue::of(arr : FixedArray[A]) -> Queue[A] {
-  guard arr.length() > 0 else { return new() }
-  let length = arr.length()
-  let last = { content: arr[length - 1], next: None }
-  let first = for i = length - 2, x = last; i >= 0; {
-    continue i - 1, { content: arr[i], next: Some(x) }
-  } else {
-    Some(x)
-  }
-  { length, first, last: Some(last) }
 }
 
 ///|

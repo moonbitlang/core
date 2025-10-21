@@ -60,7 +60,7 @@ test "get as number" {
   )
   inspect(
     Json::object(
-      Map::of([("key", Json::string("key")), ("value", Json::number(100.0))]),
+      Map::from_array([("key", Json::string("key")), ("value", Json::number(100.0))]),
     ).as_number(),
     content="None",
   )
@@ -84,7 +84,7 @@ test "get as string" {
   )
   inspect(
     Json::object(
-      Map::of([("key", Json::string("key")), ("value", Json::number(100.0))]),
+      Map::from_array([("key", Json::string("key")), ("value", Json::number(100.0))]),
     ).as_string(),
     content="None",
   )
@@ -119,7 +119,7 @@ test "get as array" {
   )
   inspect(
     Json::object(
-      Map::of([("key", Json::string("key")), ("value", Json::number(100.0))]),
+      Map::from_array([("key", Json::string("key")), ("value", Json::number(100.0))]),
     ).as_array(),
     content="None",
   )
@@ -141,7 +141,7 @@ test "get as object" {
   )
   inspect(
     Json::object(
-      Map::of([("key", Json::string("key")), ("value", Json::number(100.0))]),
+      Map::from_array([("key", Json::string("key")), ("value", Json::number(100.0))]),
     )
     .as_object()
     .map(_.to_array()),
@@ -151,7 +151,7 @@ test "get as object" {
   )
   inspect(
     Json::object(
-      Map::of([("key", Json::string("key")), ("value", Json::number(100.0))]),
+      Map::from_array([("key", Json::string("key")), ("value", Json::number(100.0))]),
     )
     .value("key")
     .bind(_.as_string()),
@@ -161,7 +161,7 @@ test "get as object" {
   )
   inspect(
     Json::object(
-      Map::of([("key", Json::string("key")), ("value", Json::number(100.0))]),
+      Map::from_array([("key", Json::string("key")), ("value", Json::number(100.0))]),
     )
     .value("value")
     .bind(_.as_number()),
@@ -169,7 +169,7 @@ test "get as object" {
   )
   inspect(
     Json::object(
-      Map::of([("key", Json::string("key")), ("value", Json::number(100.0))]),
+      Map::from_array([("key", Json::string("key")), ("value", Json::number(100.0))]),
     )
     .value("key")
     .bind(_.as_number()),
@@ -177,7 +177,7 @@ test "get as object" {
   )
   inspect(
     Json::object(
-      Map::of([("key", Json::string("key")), ("value", Json::number(100.0))]),
+      Map::from_array([("key", Json::string("key")), ("value", Json::number(100.0))]),
     )
     .value("asdf")
     .bind(_.as_number()),

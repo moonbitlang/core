@@ -64,6 +64,8 @@ pub fn[K, V] HashMap::new(capacity? : Int = 8) -> HashMap[K, V] {
 ///   inspect(map.get(2), content="Some(\"two\")")
 /// ```
 #as_free_fn
+#alias(of, deprecated="Use from_array instead")
+#as_free_fn(of, deprecated="Use from_array instead")
 pub fn[K : Hash + Eq, V] HashMap::from_array(
   arr : ArrayView[(K, V)],
 ) -> HashMap[K, V] {
@@ -482,19 +484,6 @@ fn[K : Eq, V] HashMap::grow(self : HashMap[K, V]) -> Unit {
 /// Returns a new hash map containing all the key-value pairs from the input
 /// array.
 ///
-/// Example:
-///
-/// ```moonbit
-///   let map = @hashmap.of([(1, "one"), (2, "two")])
-///   inspect(map.get(1), content="Some(\"one\")")
-///   inspect(map.get(2), content="Some(\"two\")")
-/// ```
-#as_free_fn
-pub fn[K : Eq + Hash, V] HashMap::of(arr : FixedArray[(K, V)]) -> HashMap[K, V] {
-  let m = new(capacity=arr.length())
-  arr.each(e => m.set(e.0, e.1))
-  m
-}
 
 ///|
 test "of" {

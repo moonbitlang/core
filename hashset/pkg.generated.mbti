@@ -23,6 +23,8 @@ fn[K] HashSet::default() -> Self[K] // from trait `Default`
 fn[K : Hash + Eq] HashSet::difference(Self[K], Self[K]) -> Self[K]
 fn[K] HashSet::each(Self[K], (K) -> Unit raise?) -> Unit raise?
 fn[K] HashSet::eachi(Self[K], (Int, K) -> Unit raise?) -> Unit raise?
+#alias(of, deprecated)
+#as_free_fn(of, deprecated)
 #as_free_fn
 fn[K : Hash + Eq] HashSet::from_array(ArrayView[K]) -> Self[K]
 #as_free_fn
@@ -45,8 +47,6 @@ fn[K : Hash + Eq] HashSet::lor(Self[K], Self[K]) -> Self[K] // from trait `BitOr
 fn[K : Hash + Eq] HashSet::lxor(Self[K], Self[K]) -> Self[K] // from trait `BitXOr`
 #as_free_fn
 fn[K] HashSet::new(capacity? : Int) -> Self[K]
-#as_free_fn
-fn[K : Hash + Eq] HashSet::of(FixedArray[K]) -> Self[K]
 #deprecated
 fn[K : Hash + Eq] HashSet::op_sub(Self[K], Self[K]) -> Self[K] // from trait `Sub`
 fn[K : Show] HashSet::output(Self[K], &Logger) -> Unit // from trait `Show`

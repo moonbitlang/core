@@ -404,7 +404,6 @@ fn[K, V] Map::keys(Self[K, V]) -> Iter[K]
 fn[K, V] Map::length(Self[K, V]) -> Int
 fn[K, V, V2] Map::map(Self[K, V], (K, V) -> V2) -> Self[K, V2]
 fn[K, V] Map::new(capacity? : Int) -> Self[K, V]
-fn[K : Hash + Eq, V] Map::of(FixedArray[(K, V)]) -> Self[K, V]
 #deprecated
 fn[K : Hash + Eq, V : Eq] Map::op_equal(Self[K, V], Self[K, V]) -> Bool // from trait `Eq`
 fn[K : Show, V : Show] Map::output(Self[K, V], &Logger) -> Unit // from trait `Show`

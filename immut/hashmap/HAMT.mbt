@@ -729,6 +729,8 @@ pub impl[K : Show, V : Show] Show for HashMap[K, V] with output(self, logger) {
 
 ///|
 #as_free_fn
+#alias(of, deprecated="Use from_array instead")
+#as_free_fn(of, deprecated="Use from_array instead")
 pub fn[K : Eq + Hash, V] HashMap::from_array(
   arr : ArrayView[(K, V)],
 ) -> HashMap[K, V] {
@@ -755,18 +757,6 @@ pub impl[K : Eq + Hash + @quickcheck.Arbitrary, V : @quickcheck.Arbitrary] @quic
   V,
 ] with arbitrary(size, rs) {
   @quickcheck.Arbitrary::arbitrary(size, rs) |> from_array
-}
-
-///|
-#as_free_fn
-pub fn[K : Eq + Hash, V] HashMap::of(arr : FixedArray[(K, V)]) -> HashMap[K, V] {
-  loop (arr.length(), new()) {
-    (0, map) => map
-    (n, map) => {
-      let (k, v) = arr[n - 1]
-      continue (n - 1, map.add(k, v))
-    }
-  }
 }
 
 ///|

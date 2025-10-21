@@ -10,6 +10,8 @@ fn default() -> Bytes
 fn Bytes::add(Bytes, Bytes) -> Bytes // from trait `Add`
 fn Bytes::default() -> Bytes // from trait `Default`
 fn Bytes::find(Bytes, BytesView) -> Int?
+#alias(of, deprecated)
+#as_free_fn(of, deprecated)
 #as_free_fn
 fn Bytes::from_array(ArrayView[Byte]) -> Bytes
 #as_free_fn

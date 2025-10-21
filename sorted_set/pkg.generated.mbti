@@ -26,6 +26,8 @@ fn[V : Compare] SortedSet::disjoint(Self[V], Self[V]) -> Bool
 fn[V] SortedSet::each(Self[V], (V) -> Unit raise?) -> Unit raise?
 fn[V] SortedSet::eachi(Self[V], (Int, V) -> Unit raise?) -> Unit raise?
 fn[V : Eq] SortedSet::equal(Self[V], Self[V]) -> Bool // from trait `Eq`
+#alias(of, deprecated)
+#as_free_fn(of, deprecated)
 #as_free_fn
 fn[V : Compare] SortedSet::from_array(ArrayView[V]) -> Self[V]
 #as_free_fn
@@ -42,8 +44,6 @@ fn[V] SortedSet::iterator(Self[V]) -> Iterator[V]
 fn[V] SortedSet::length(Self[V]) -> Int
 #as_free_fn
 fn[V] SortedSet::new() -> Self[V]
-#as_free_fn
-fn[V : Compare] SortedSet::of(FixedArray[V]) -> Self[V]
 #deprecated
 fn[V : Eq] SortedSet::op_equal(Self[V], Self[V]) -> Bool // from trait `Eq`
 fn[V : Show] SortedSet::output(Self[V], &Logger) -> Unit // from trait `Show`

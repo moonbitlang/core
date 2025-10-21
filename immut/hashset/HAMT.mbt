@@ -416,19 +416,9 @@ pub impl[A : Show] Show for HashSet[A] with output(self, logger) {
 
 ///|
 #as_free_fn
+#alias(of, deprecated="Use from_array instead")
+#as_free_fn(of, deprecated="Use from_array instead")
 pub fn[A : Eq + Hash] HashSet::from_array(arr : ArrayView[A]) -> HashSet[A] {
-  loop (arr.length(), new()) {
-    (0, set) => set
-    (n, set) => {
-      let k = arr[n - 1]
-      continue (n - 1, set.add(k))
-    }
-  }
-}
-
-///|
-#as_free_fn
-pub fn[A : Eq + Hash] HashSet::of(arr : FixedArray[A]) -> HashSet[A] {
   loop (arr.length(), new()) {
     (0, set) => set
     (n, set) => {

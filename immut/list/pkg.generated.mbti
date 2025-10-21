@@ -139,8 +139,6 @@ fn[A] T::nth(Self[A], Int) -> A?
 #deprecated
 fn[A] T::nth_exn(Self[A], Int) -> A
 #deprecated
-fn[A] T::of(FixedArray[A]) -> Self[A]
-#deprecated
 fn[A] T::op_add(Self[A], Self[A]) -> Self[A] // from trait `Add`
 #deprecated
 fn[A : Eq] T::op_equal(Self[A], Self[A]) -> Bool // from trait `Eq`

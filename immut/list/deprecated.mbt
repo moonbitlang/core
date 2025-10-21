@@ -80,10 +80,3 @@ pub fn[X] T::default() -> T[X] {
 pub fn[A] T::from_iter(iter : Iter[A]) -> T[A] {
   from_iter(iter)
 }
-
-///|
-#deprecated("use `@immut/list.of` instead")
-#coverage.skip
-pub fn[A] T::of(arr : FixedArray[A]) -> T[A] {
-  of(arr)
-}

@@ -18,6 +18,8 @@ fn[A] Queue::copy(Self[A]) -> Self[A]
 fn[A] Queue::each(Self[A], (A) -> Unit) -> Unit
 fn[A] Queue::eachi(Self[A], (Int, A) -> Unit) -> Unit
 fn[A, B] Queue::fold(Self[A], init~ : B, (B, A) -> B) -> B
+#alias(of, deprecated)
+#as_free_fn(of, deprecated)
 #as_free_fn
 fn[A] Queue::from_array(ArrayView[A]) -> Self[A]
 #as_free_fn
@@ -30,8 +32,6 @@ fn[A] Queue::iterator(Self[A]) -> Iterator[A]
 fn[A] Queue::length(Self[A]) -> Int
 #as_free_fn
 fn[A] Queue::new() -> Self[A]
-#as_free_fn
-fn[A] Queue::of(FixedArray[A]) -> Self[A]
 fn[A : Show] Queue::output(Self[A], &Logger) -> Unit // from trait `Show`
 fn[A] Queue::peek(Self[A]) -> A?
 #deprecated
