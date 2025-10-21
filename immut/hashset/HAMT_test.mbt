@@ -75,7 +75,7 @@ test "@hashset.remove" {
 
 ///|
 test "@hashset.iter" {
-  let data = @hashset.of(["a", "b", "d", "e", "f"])
+  let data = @hashset.from_array(["a", "b", "d", "e", "f"])
   let array = data.iter().collect()
   array.sort()
   inspect(
@@ -103,12 +103,12 @@ test "@hashset.iterator" {
 test "@hashset.to_string" {
   let set = @hashset.new().add(1).add(3).add(0x0f_ff_ff_ff).add(42)
   let content = set.iter().collect()
-  assert_eq(set.to_string(), "@immut/hashset.of(\{content})")
+  assert_eq(set.to_string(), "@immut/hashset.from_array(\{content})")
 }
 
 ///|
 test "@hashset.from_array" {
-  let set = @hashset.of(["1", "2", "42"])
+  let set = @hashset.from_array(["1", "2", "42"])
   inspect(set.contains("1"), content="true")
   inspect(set.contains("2"), content="true")
   inspect(set.contains("42"), content="true")
@@ -134,13 +134,16 @@ test "from_iter multiple elements iter" {
 
 ///|
 test "from_iter single element iter" {
-  inspect(@hashset.from_iter([1].iter()), content="@immut/hashset.of([1])")
+  inspect(
+    @hashset.from_iter([1].iter()),
+    content="@immut/hashset.from_array([1])",
+  )
 }
 
 ///|
 test "from_iter empty iter" {
   let pq : @hashset.HashSet[Int] = @hashset.from_iter(Iter::empty())
-  inspect(pq, content="@immut/hashset.of([])")
+  inspect(pq, content="@immut/hashset.from_array([])")
 }
 
 ///|
@@ -191,9 +194,9 @@ test "from_array with non-empty array" {
 
 ///|
 test "remove non-existent key from leaf" {
-  let set = @hashset.of([1])
+  let set = @hashset.from_array([1])
   let result = set.remove(2)
-  inspect(result, content="@immut/hashset.of([1])")
+  inspect(result, content="@immut/hashset.from_array([1])")
 }
 
 ///|
@@ -205,8 +208,8 @@ test "from_array - non-empty array" {
 
 ///|
 test "hashset equality" {
-  let set1 = @hashset.of([1, 2])
-  let set2 = @hashset.of([2, 1])
+  let set1 = @hashset.from_array([1, 2])
+  let set2 = @hashset.from_array([2, 1])
   inspect(set1 == set2, content="true")
   let empty1 : @hashset.HashSet[Unit] = @hashset.new()
   let empty2 : @hashset.HashSet[Unit] = @hashset.new()
@@ -225,23 +228,23 @@ test "arbitrary implementation for hashset" {
 
 ///|
 test "equal between different constructors" {
-  let set1 = @hashset.of([])
-  let set2 = @hashset.of(["a"])
+  let set1 = @hashset.from_array([])
+  let set2 = @hashset.from_array(["a"])
   assert_not_eq(set1, set2)
 }
 
 ///|
 test "union 2 hashsets" {
-  let set1 = @hashset.of([1, 2, 3])
-  let set2 = @hashset.of([3, 4, 5])
+  let set1 = @hashset.from_array([1, 2, 3])
+  let set2 = @hashset.from_array([3, 4, 5])
   let set3 = set1.union(set2)
-  let set4 = @hashset.of([1, 2, 3, 4, 5])
+  let set4 = @hashset.from_array([1, 2, 3, 4, 5])
   inspect(set3 == set4, content="true")
 }
 
 ///|
 test "HAMT::union with empty" {
-  let m1 = @hashset.of([1])
+  let m1 = @hashset.from_array([1])
   let m2 = @hashset.new()
   assert_eq(m1.union(m2), m1)
   assert_eq(m2.union(m1), m1)
@@ -249,18 +252,18 @@ test "HAMT::union with empty" {
 
 ///|
 test "HAMT::union with leaf" {
-  let m1 = @hashset.of([1, 2])
-  let m2 = @hashset.of([3])
-  let m3 = @hashset.of([2])
-  assert_eq(m1.union(m2), @hashset.of([1, 2, 3]))
-  assert_eq(m1.union(m3), @hashset.of([1, 2]))
-  assert_eq(m3.union(m1), @hashset.of([1, 2]))
+  let m1 = @hashset.from_array([1, 2])
+  let m2 = @hashset.from_array([3])
+  let m3 = @hashset.from_array([2])
+  assert_eq(m1.union(m2), @hashset.from_array([1, 2, 3]))
+  assert_eq(m1.union(m3), @hashset.from_array([1, 2]))
+  assert_eq(m3.union(m1), @hashset.from_array([1, 2]))
 }
 
 ///|
 test "HAMT::union with branch" {
-  let m1 = @hashset.of([1, 2, 3])
-  let m2 = @hashset.of([4, 5, 6])
+  let m1 = @hashset.from_array([1, 2, 3])
+  let m2 = @hashset.from_array([4, 5, 6])
   let u = m1.union(m2)
   for i in 1..=6 {
     assert_eq(u.contains(i), true)
@@ -292,7 +295,7 @@ impl Show for MyString with output(self, logger) {
 
 ///|
 test "HAMT::remove_with_hash collision" {
-  let set = @hashset.of([MyString("a"), MyString("b")])
+  let set = @hashset.from_array([MyString("a"), MyString("b")])
   let set1 = set.remove(MyString("c"))
   inspect(set1.length(), content="2")
   let set2 = set.remove(MyString("a"))
@@ -305,8 +308,8 @@ test "HAMT::remove_with_hash collision" {
 
 ///|
 test "HAMT::union with collision" {
-  let m1 = @hashset.of([MyString("a"), MyString("b")])
-  let m2 = @hashset.of([MyString("b"), MyString("c")])
+  let m1 = @hashset.from_array([MyString("a"), MyString("b")])
+  let m2 = @hashset.from_array([MyString("b"), MyString("c")])
   let u = m1.union(m2)
   assert_eq(u.contains(MyString("a")), true)
   assert_eq(u.contains(MyString("b")), true)
@@ -316,15 +319,15 @@ test "HAMT::union with collision" {
 ///|
 test "HAMT::union all cases" {
   let empty = @hashset.new()
-  let leaf = @hashset.of([1])
-  let branch = @hashset.of([1, 2])
-  let collision = @hashset.of([MyString("a"), MyString("b")])
+  let leaf = @hashset.from_array([1])
+  let branch = @hashset.from_array([1, 2])
+  let collision = @hashset.from_array([MyString("a"), MyString("b")])
   assert_eq(empty.union(leaf).contains(1), true)
   assert_eq(leaf.union(branch).contains(2), true)
   let u1 = branch.union(branch)
   inspect(u1.contains(1), content="true")
   inspect(u1.contains(2), content="true")
-  let collision2 = @hashset.of([MyString("b"), MyString("c")])
+  let collision2 = @hashset.from_array([MyString("b"), MyString("c")])
   let u2 = collision.union(collision2)
   assert_eq(u2.contains(MyString("a")), true)
   assert_eq(u2.contains(MyString("b")), true)
@@ -333,8 +336,8 @@ test "HAMT::union all cases" {
 
 ///|
 test "HAMT::union leaf to non-overlapping map" {
-  let leaf = @hashset.of([42])
-  let other = @hashset.of([1, 2])
+  let leaf = @hashset.from_array([42])
+  let other = @hashset.from_array([1, 2])
   let u = leaf.union(other)
   inspect(u.contains(42), content="true")
   inspect(u.contains(1), content="true")
@@ -343,11 +346,11 @@ test "HAMT::union leaf to non-overlapping map" {
 
 ///|
 test "@hashset.difference patch" {
-  let set1 = @hashset.of([1, 2, 3, 4])
-  let set2 = @hashset.of([3, 4, 5, 6])
-  let set3 = @hashset.of([])
-  let set4 = @hashset.of([1, 2, 3, 4, 5, 6])
-  let leaf = @hashset.of([1])
+  let set1 = @hashset.from_array([1, 2, 3, 4])
+  let set2 = @hashset.from_array([3, 4, 5, 6])
+  let set3 = @hashset.from_array([])
+  let set4 = @hashset.from_array([1, 2, 3, 4, 5, 6])
+  let leaf = @hashset.from_array([1])
   verify_content(set1.difference(set2), [1, 2])
   verify_content(set1.difference(set3), [1, 2, 3, 4])
   verify_content(set3.difference(set1), [])
@@ -358,12 +361,12 @@ test "@hashset.difference patch" {
 
 ///|
 test "@hashset.intersection patch" {
-  let set1 = @hashset.of([1, 2, 3, 4])
-  let set2 = @hashset.of([3, 4, 5, 6])
-  let set3 = @hashset.of([])
-  let set4 = @hashset.of([1, 2, 3, 4, 5, 6])
-  let set5 = @hashset.of([7, 8, 9, 10])
-  let leaf = @hashset.of([1])
+  let set1 = @hashset.from_array([1, 2, 3, 4])
+  let set2 = @hashset.from_array([3, 4, 5, 6])
+  let set3 = @hashset.from_array([])
+  let set4 = @hashset.from_array([1, 2, 3, 4, 5, 6])
+  let set5 = @hashset.from_array([7, 8, 9, 10])
+  let leaf = @hashset.from_array([1])
   verify_content(set1.intersection(set2), [3, 4])
   verify_content(set1.intersection(set3), [])
   verify_content(set3.intersection(set1), [])

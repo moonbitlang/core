@@ -30,7 +30,7 @@ pub fn[A] T::new() -> T[A] {
 ///
 /// # Example
 /// ```mbt
-///   let queue = @priority_queue.of([1, 2, 3, 4, 5])
+///   let queue = @priority_queue.from_array([1, 2, 3, 4, 5])
 ///   assert_eq(queue.length(), 5)
 /// ```
 #as_free_fn
@@ -66,7 +66,7 @@ fn[A] copy_node(x : Node[A]?) -> Node[A]? {
 ///
 /// # Example
 /// ```mbt
-/// let queue = @priority_queue.of([1, 2, 3, 4])
+/// let queue = @priority_queue.from_array([1, 2, 3, 4])
 /// let queue2 = queue.copy()
 /// inspect(queue2.length(), content="4")
 /// ```
@@ -185,7 +185,7 @@ pub fn[A] T::length(self : T[A]) -> Int {
 ///
 /// # Example
 /// ```mbt
-/// let queue = @priority_queue.of([1, 2, 3, 4])
+/// let queue = @priority_queue.from_array([1, 2, 3, 4])
 /// queue.unsafe_pop()
 /// inspect(queue.length(), content="3")
 /// ```
@@ -203,7 +203,7 @@ pub fn[A : Compare] T::unsafe_pop(self : T[A]) -> Unit {
 ///
 /// # Example
 /// ```mbt
-/// let queue = @priority_queue.of([1, 2, 3, 4])
+/// let queue = @priority_queue.from_array([1, 2, 3, 4])
 /// let first = queue.pop() // Some(4)
 /// inspect(first, content="Some(4)")
 /// inspect(queue.length(), content="3")
@@ -242,7 +242,7 @@ pub fn[A : Compare] T::push(self : T[A], value : A) -> Unit {
 ///
 /// # Example
 /// ```mbt
-///   let queue = @priority_queue.of([1, 2, 3, 4])
+///   let queue = @priority_queue.from_array([1, 2, 3, 4])
 ///   let first = queue.peek() // Some(4)
 ///   assert_eq(first, Some(4))
 /// ```
@@ -258,7 +258,7 @@ pub fn[A] T::peek(self : T[A]) -> A? {
 ///
 /// # Example
 /// ```mbt
-/// let queue = @priority_queue.of([1, 2, 3, 4])
+/// let queue = @priority_queue.from_array([1, 2, 3, 4])
 /// queue.clear()
 /// assert_eq(queue.length(), 0)
 /// ```
@@ -281,7 +281,11 @@ pub fn[A] T::is_empty(self : T[A]) -> Bool {
 
 ///|
 pub impl[A : Show + Compare] Show for T[A] with output(self, logger) {
-  logger.write_iter(self.iter(), prefix="@priority_queue.of([", suffix="])")
+  logger.write_iter(
+    self.iter(),
+    prefix="@priority_queue.from_array([",
+    suffix="])",
+  )
 }
 
 ///|
@@ -306,11 +310,11 @@ test "priority queue arbitrary" {
   let samples : Array[T[Int]] = @quickcheck.samples(20)
   inspect(
     samples[5:10],
-    content="[@priority_queue.of([]), @priority_queue.of([]), @priority_queue.of([0]), @priority_queue.of([0, 0]), @priority_queue.of([3, 2, 1, 0, 0, 0, 0])]",
+    content="[@priority_queue.from_array([]), @priority_queue.from_array([]), @priority_queue.from_array([0]), @priority_queue.from_array([0, 0]), @priority_queue.from_array([3, 2, 1, 0, 0, 0, 0])]",
   )
   inspect(
     samples[11:15],
-    content="[@priority_queue.of([0, 0, 0, -1, -2]), @priority_queue.of([8, 4, 0, 0, 0, 0, 0, 0, -2, -5]), @priority_queue.of([2, 0, 0, -1]), @priority_queue.of([0, 0])]",
+    content="[@priority_queue.from_array([0, 0, 0, -1, -2]), @priority_queue.from_array([8, 4, 0, 0, 0, 0, 0, 0, -2, -5]), @priority_queue.from_array([2, 0, 0, -1]), @priority_queue.from_array([0, 0])]",
   )
 }
 

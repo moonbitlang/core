@@ -724,7 +724,11 @@ pub fn[K : Eq + Hash, V] HashMap::from_iterator(
 
 ///|
 pub impl[K : Show, V : Show] Show for HashMap[K, V] with output(self, logger) {
-  logger.write_iter(self.iter(), prefix="@immut/hashmap.of([", suffix="])")
+  logger.write_iter(
+    self.iter(),
+    prefix="@immut/hashmap.from_array([",
+    suffix="])",
+  )
 }
 
 ///|

@@ -31,7 +31,7 @@ priv struct Entry[K] {
 /// # Example
 ///
 /// ```mbt
-///   let set = @hashset.of([(3, "three"), (8, "eight"), (1, "one")])
+///   let set = @hashset.from_array([(3, "three"), (8, "eight"), (1, "one")])
 ///   set.add((4, "four"))
 ///   assert_eq(set.contains((4, "four")), true)
 /// ```

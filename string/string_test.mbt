@@ -677,11 +677,11 @@ test "String::fold" {
   inspect(s.fold(init=0, (acc, c) => acc + c.to_int()), content="1980")
   inspect(
     s.fold(init=@list.empty(), _.prepend(_)).rev(),
-    content="@list.of(['t', 'h', 'i', 's', ' ', 'i', 's', ' ', 'a', ' ', 'l', 'o', 'n', 'g', ' ', 's', 't', 'r', 'i', 'n', 'g'])",
+    content="@list.from_array(['t', 'h', 'i', 's', ' ', 'i', 's', ' ', 'a', ' ', 'l', 'o', 'n', 'g', ' ', 's', 't', 'r', 'i', 'n', 'g'])",
   )
   inspect(
     s.rev_fold(init=@list.empty(), _.prepend(_)),
-    content="@list.of(['t', 'h', 'i', 's', ' ', 'i', 's', ' ', 'a', ' ', 'l', 'o', 'n', 'g', ' ', 's', 't', 'r', 'i', 'n', 'g'])",
+    content="@list.from_array(['t', 'h', 'i', 's', ' ', 'i', 's', ' ', 'a', ' ', 'l', 'o', 'n', 'g', ' ', 's', 't', 'r', 'i', 'n', 'g'])",
   )
 }
 

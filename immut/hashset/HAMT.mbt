@@ -411,7 +411,11 @@ pub fn[A : Eq + Hash] HashSet::from_iterator(iter : Iterator[A]) -> HashSet[A] {
 
 ///|
 pub impl[A : Show] Show for HashSet[A] with output(self, logger) {
-  logger.write_iter(self.iter(), prefix="@immut/hashset.of([", suffix="])")
+  logger.write_iter(
+    self.iter(),
+    prefix="@immut/hashset.from_array([",
+    suffix="])",
+  )
 }
 
 ///|
@@ -458,12 +462,18 @@ pub impl[K : Eq + Hash + @quickcheck.Arbitrary] @quickcheck.Arbitrary for HashSe
 
 ///|
 test "hash" {
-  assert_eq(Hash::hash(of([1, 2, 3, 4])), Hash::hash(of([3, 2]).add(1).add(4)))
-  assert_not_eq(Hash::hash(of([1, 2, 3])), Hash::hash(of([1, 2, 4])))
+  assert_eq(
+    Hash::hash(from_array([1, 2, 3, 4])),
+    Hash::hash(from_array([3, 2]).add(1).add(4)),
+  )
+  assert_not_eq(
+    Hash::hash(from_array([1, 2, 3])),
+    Hash::hash(from_array([1, 2, 4])),
+  )
 }
 
 ///|
 test "eq" {
-  assert_eq(of([1, 2, 3, 4]), of([3, 2]).add(1).add(4))
-  assert_not_eq(of([1, 2, 3]), of([1, 2, 4]))
+  assert_eq(from_array([1, 2, 3, 4]), from_array([3, 2]).add(1).add(4))
+  assert_not_eq(from_array([1, 2, 3]), from_array([1, 2, 4]))
 }

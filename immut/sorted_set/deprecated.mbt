@@ -27,7 +27,7 @@ pub fn[A : Compare] SortedSet::inter(
 ///
 /// # Example
 /// ```mbt
-///   assert_eq(@sorted_set.of([1, 2, 3]).difference(@sorted_set.of([4, 5, 1])), @sorted_set.of([2, 3]))
+///   assert_eq(@sorted_set.from_array([1, 2, 3]).difference(@sorted_set.from_array([4, 5, 1])), @sorted_set.from_array([2, 3]))
 /// ```
 #deprecated("Use `difference` instead")
 #coverage.skip

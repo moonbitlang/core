@@ -20,7 +20,7 @@ pub fn[A] T::add(self : T[A], head : A) -> T[A] {
 
 ///|
 pub impl[A : Show] Show for T[A] with output(xs, logger) {
-  logger.write_iter(xs.iter(), prefix="@list.of([", suffix="])")
+  logger.write_iter(xs.iter(), prefix="@list.from_array([", suffix="])")
 }
 
 ///|

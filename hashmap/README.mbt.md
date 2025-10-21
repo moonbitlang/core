@@ -40,7 +40,7 @@ You can use `remove()` to remove a key-value pair.
 ```moonbit
 ///|
 test {
-  let map = @hashmap.of([("a", 1), ("b", 2), ("c", 3)])
+  let map = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
   map.remove("a") |> ignore
   assert_false(map.contains("a"))
 }
@@ -53,7 +53,7 @@ You can use `contains()` to check whether a key exists.
 ```moonbit
 ///|
 test {
-  let map = @hashmap.of([("a", 1), ("b", 2), ("c", 3)])
+  let map = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
   assert_eq(map.contains("a"), true)
   assert_eq(map.contains("d"), false)
 }
@@ -66,7 +66,7 @@ You can use `size()` to get the number of key-value pairs in the map, or `capaci
 ```moonbit
 ///|
 test {
-  let map = @hashmap.of([("a", 1), ("b", 2), ("c", 3)])
+  let map = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
   assert_eq(map.length(), 3)
   assert_eq(map.capacity(), 8)
 }
@@ -89,7 +89,7 @@ You can use `clear` to remove all key-value pairs from the map, but the allocate
 ```moonbit
 ///|
 test {
-  let map = @hashmap.of([("a", 1), ("b", 2), ("c", 3)])
+  let map = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
   map.clear()
   assert_eq(map.is_empty(), true)
 }
@@ -102,7 +102,7 @@ You can use `each()` or `eachi()` to iterate through all key-value pairs.
 ```moonbit
 ///|
 test {
-  let map = @hashmap.of([("a", 1), ("b", 2), ("c", 3)])
+  let map = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
   let arr = []
   map.each((k, v) => arr.push((k, v)))
   let arr2 = []
@@ -115,7 +115,7 @@ Or use `iter()` to get an iterator of hashmap.
 ```moonbit
 ///|
 test {
-  let map = @hashmap.of([("a", 1), ("b", 2), ("c", 3)])
+  let map = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
   let _iter = map.iter()
 
 }

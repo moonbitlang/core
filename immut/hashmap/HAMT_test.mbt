@@ -82,7 +82,7 @@ test "HAMT::remove" {
 
 ///|
 test "keys" {
-  let m = @hashmap.of([(1, "one"), (2, "two")])
+  let m = @hashmap.from_array([(1, "one"), (2, "two")])
   let keys = m.keys()
   inspect(keys.contains(1), content="true")
   inspect(keys.contains(2), content="true")
@@ -91,7 +91,7 @@ test "keys" {
 
 ///|
 test "HAMT::values" {
-  let m = @hashmap.of([(1, "one"), (2, "two")])
+  let m = @hashmap.from_array([(1, "one"), (2, "two")])
   let values = m.values()
   inspect(values.contains("one"), content="true")
   inspect(values.contains("two"), content="true")
@@ -100,7 +100,13 @@ test "HAMT::values" {
 
 ///|
 test "HAMT::iter" {
-  let data = @hashmap.of([(0, "a"), (2, "b"), (3, "d"), (5, "e"), (11111, "f")])
+  let data = @hashmap.from_array([
+    (0, "a"),
+    (2, "b"),
+    (3, "d"),
+    (5, "e"),
+    (11111, "f"),
+  ])
   let array = data.iter().collect()
   array.sort()
   inspect(
@@ -113,7 +119,13 @@ test "HAMT::iter" {
 
 ///|
 test "HAMT::iter2" {
-  let data = @hashmap.of([(0, "a"), (2, "b"), (3, "d"), (5, "e"), (11111, "f")])
+  let data = @hashmap.from_array([
+    (0, "a"),
+    (2, "b"),
+    (3, "d"),
+    (5, "e"),
+    (11111, "f"),
+  ])
   let array = data.iter2().to_array()
   array.sort()
   inspect(
@@ -132,12 +144,12 @@ test "HAMT::to_string" {
     .add(0x0f_ff_ff_ff, 0x0f_ff_ff_ff)
     .add(42, 42)
   let array = map.to_array()
-  assert_eq(map.to_string(), "@immut/hashmap.of(\{array})")
+  assert_eq(map.to_string(), "@immut/hashmap.from_array(\{array})")
 }
 
 ///|
 test "HAMT::from_array" {
-  let map = @hashmap.of([(1, "1"), (2, "2"), (42, "42")])
+  let map = @hashmap.from_array([(1, "1"), (2, "2"), (42, "42")])
   inspect(
     (1, map.get(1)),
     content=(
@@ -161,7 +173,7 @@ test "HAMT::from_array" {
 
 ///|
 test "to_array" {
-  let m = @hashmap.of([(1, "one"), (2, "two")])
+  let m = @hashmap.from_array([(1, "one"), (2, "two")])
   let arr = m.to_array()
   inspect(arr.length(), content="2")
   assert_eq(arr.contains((1, "one")), true)
@@ -202,62 +214,65 @@ test "eq for boundary cases" {
   inspect(empty_map1 == empty_map2, content="true")
 
   // Test with one empty map and one non-empty map
-  let non_empty_map : @hashmap.HashMap[Int, Int] = @hashmap.of([(1, 1)])
+  let non_empty_map : @hashmap.HashMap[Int, Int] = @hashmap.from_array([(1, 1)])
   inspect(empty_map1 == non_empty_map, content="false")
   inspect(non_empty_map == empty_map1, content="false")
 
   // Test with maps of different sizes
-  let larger_map : @hashmap.HashMap[Int, Int] = @hashmap.of([(1, 1), (2, 2)])
+  let larger_map : @hashmap.HashMap[Int, Int] = @hashmap.from_array([
+    (1, 1),
+    (2, 2),
+  ])
   inspect(non_empty_map == larger_map, content="false")
 }
 
 ///|
 test "eq for random cases" {
   // Test with maps containing different keys
-  let map1 : @hashmap.HashMap[Int, Int] = @hashmap.of([(1, 1), (2, 2)])
-  let map2 : @hashmap.HashMap[Int, Int] = @hashmap.of([(1, 1), (3, 3)])
+  let map1 : @hashmap.HashMap[Int, Int] = @hashmap.from_array([(1, 1), (2, 2)])
+  let map2 : @hashmap.HashMap[Int, Int] = @hashmap.from_array([(1, 1), (3, 3)])
   inspect(map1 == map2, content="false")
 
   // Test with maps containing same keys but different values
-  let map3 : @hashmap.HashMap[Int, Int] = @hashmap.of([(1, 1), (2, 3)])
+  let map3 : @hashmap.HashMap[Int, Int] = @hashmap.from_array([(1, 1), (2, 3)])
   inspect(map1 == map3, content="false")
 
   // Test with maps containing same keys and values but in different order
-  let map4 : @hashmap.HashMap[Int, Int] = @hashmap.of([(2, 2), (1, 1)])
+  let map4 : @hashmap.HashMap[Int, Int] = @hashmap.from_array([(2, 2), (1, 1)])
   inspect(map1 == map4, content="true")
 
   // Test with maps containing same keys and values but with different hash collisions
-  let map5 : @hashmap.HashMap[Int, Int] = @hashmap.of([(1, 1), (11, 11)])
-  let map6 : @hashmap.HashMap[Int, Int] = @hashmap.of([(1, 1), (11, 11)])
+  let map5 : @hashmap.HashMap[Int, Int] = @hashmap.from_array([(1, 1), (11, 11)])
+  let map6 : @hashmap.HashMap[Int, Int] = @hashmap.from_array([(1, 1), (11, 11)])
   inspect(map5 == map6, content="true")
 
   // Test with maps containing same keys and values but with different hash collisions and different order
-  let map7 : @hashmap.HashMap[Int, Int] = @hashmap.of([(11, 11), (1, 1)])
+  let map7 : @hashmap.HashMap[Int, Int] = @hashmap.from_array([(11, 11), (1, 1)])
   inspect(map5 == map7, content="true")
 }
 
 ///|
 test "eq for random cases with different types" {
   // Test with maps containing different types
-  let map8 : @hashmap.HashMap[String, Int] = @hashmap.of([
+  let map8 : @hashmap.HashMap[String, Int] = @hashmap.from_array([
     ("one", 1),
     ("two", 2),
   ])
-  let map9 : @hashmap.HashMap[String, Int] = @hashmap.of([
+  let map9 : @hashmap.HashMap[String, Int] = @hashmap.from_array([
     ("one", 1),
     ("two", 2),
   ])
   inspect(map8 == map9, content="true")
 
   // Test with maps containing same keys but different values of different types
-  let map10 : @hashmap.HashMap[String, Int] = @hashmap.of([
+  let map10 : @hashmap.HashMap[String, Int] = @hashmap.from_array([
     ("one", 1),
     ("two", 3),
   ])
   inspect(map8 == map10, content="false")
 
   // Test with maps containing different keys of different types
-  let map11 : @hashmap.HashMap[String, Int] = @hashmap.of([
+  let map11 : @hashmap.HashMap[String, Int] = @hashmap.from_array([
     ("one", 1),
     ("three", 3),
   ])
@@ -266,12 +281,12 @@ test "eq for random cases with different types" {
 
 ///|
 test "hash" {
-  let map1 = @hashmap.of([("one", 1), ("two", 2)])
-  let map2 = @hashmap.of([("one", 1), ("two", 2)])
+  let map1 = @hashmap.from_array([("one", 1), ("two", 2)])
+  let map2 = @hashmap.from_array([("one", 1), ("two", 2)])
   inspect(map1.hash() == map2.hash(), content="true")
-  let map3 = @hashmap.of([("two", 2), ("one", 1)])
+  let map3 = @hashmap.from_array([("two", 2), ("one", 1)])
   inspect(map1.hash() == map3.hash(), content="true")
-  let map4 = @hashmap.of([("one", 1), ("two", 2), ("three", 3)])
+  let map4 = @hashmap.from_array([("one", 1), ("two", 2), ("three", 3)])
   inspect(map1.hash() == map4.hash(), content="false")
 }
 
@@ -285,7 +300,7 @@ test "each on empty map" {
 
 ///|
 test "remove non-existent key with hash collision" {
-  let map = @hashmap.of([("a", 1)])
+  let map = @hashmap.from_array([("a", 1)])
   let new_map = map.remove("b")
   inspect(new_map.length(), content="1")
 }
@@ -300,25 +315,32 @@ test "remove all keys from collision bucket" {
 
 ///|
 test "union 2 hashmaps, choose the right hand side" {
-  let map1 = @hashmap.of([(1, 1), (2, 2), (3, 3)])
-  let map2 = @hashmap.of([(1, 10), (2, 20), (4, 40)])
+  let map1 = @hashmap.from_array([(1, 1), (2, 2), (3, 3)])
+  let map2 = @hashmap.from_array([(1, 10), (2, 20), (4, 40)])
   let map3 = map1.union(map2)
-  let map4 = @hashmap.of([(1, 10), (2, 20), (3, 3), (4, 40)])
+  let map4 = @hashmap.from_array([(1, 10), (2, 20), (3, 3), (4, 40)])
   inspect(map3 == map4, content="true")
 }
 
 ///|
 test "union 2 hashmaps, without conflict" {
-  let map1 = @hashmap.of([(1, 1), (2, 2), (3, 3)])
-  let map2 = @hashmap.of([(4, 4), (5, 5), (6, 6)])
+  let map1 = @hashmap.from_array([(1, 1), (2, 2), (3, 3)])
+  let map2 = @hashmap.from_array([(4, 4), (5, 5), (6, 6)])
   let map3 = map1.union(map2)
-  let map4 = @hashmap.of([(1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6)])
+  let map4 = @hashmap.from_array([
+    (1, 1),
+    (2, 2),
+    (3, 3),
+    (4, 4),
+    (5, 5),
+    (6, 6),
+  ])
   inspect(map3 == map4, content="true")
 }
 
 ///|
 test "HAMT::contains" {
-  let map = @hashmap.of([(1, "one")])
+  let map = @hashmap.from_array([(1, "one")])
   inspect(map.contains(1), content="true")
   inspect(map.contains(2), content="false")
   let map2 = map.add(2, "two")
@@ -329,7 +351,7 @@ test "HAMT::contains" {
 
 ///|
 test "filter with simple predicate" {
-  let map = @hashmap.of([(1, 1), (2, 2), (3, 3), (4, 4)])
+  let map = @hashmap.from_array([(1, 1), (2, 2), (3, 3), (4, 4)])
   let only_even = map.filter_with_key((_, v) => v % 2 == 0)
   inspect(only_even.contains(1), content="false")
   inspect(only_even.contains(2), content="true")
@@ -339,7 +361,7 @@ test "filter with simple predicate" {
 
 ///|
 test "filter with all elements matching" {
-  let map = @hashmap.of([(1, 1), (2, 2)])
+  let map = @hashmap.from_array([(1, 1), (2, 2)])
   let filtered = map.filter_with_key((_, v) => v > 0)
   inspect(filtered.contains(1), content="true")
   inspect(filtered.contains(2), content="true")
@@ -347,7 +369,7 @@ test "filter with all elements matching" {
 
 ///|
 test "filter with no elements matching" {
-  let map = @hashmap.of([(1, 1), (2, 2), (3, 3)])
+  let map = @hashmap.from_array([(1, 1), (2, 2), (3, 3)])
   let filtered = map.filter_with_key((_, v) => v > 10)
   assert_eq(filtered.get(1), None)
   assert_eq(filtered.get(2), None)
@@ -357,7 +379,7 @@ test "filter with no elements matching" {
 
 ///|
 test "filter with collision" {
-  let map = @hashmap.of([(1, 10), (2, 20)]).add(1, 30)
+  let map = @hashmap.from_array([(1, 10), (2, 20)]).add(1, 30)
   let filtered = map.filter_with_key((_, v) => v == 30)
   assert_eq(filtered.get(1), Some(30))
   assert_eq(filtered.get(2), None)
@@ -381,7 +403,7 @@ test "filter with branch nodes" {
 
 ///|
 test "HAMT::fold_with_key" {
-  let map = @hashmap.of([(1, "a"), (2, "b")])
+  let map = @hashmap.from_array([(1, "a"), (2, "b")])
   let result = map.fold_with_key(init="", (acc, k, v) => acc + "\{k}:\{v}, ")
   // order of elements is not guaranteed, so we check for substrings
   inspect(result.contains("1:a"), content="true")
@@ -390,14 +412,14 @@ test "HAMT::fold_with_key" {
 
 ///|
 test "HAMT::fold" {
-  let map = @hashmap.of([(1, 10), (2, 20), (3, 30)])
+  let map = @hashmap.from_array([(1, 10), (2, 20), (3, 30)])
   let result = map.fold_with_key(init=0, (acc, _, v) => acc + v)
   inspect(result, content="60")
 }
 
 ///|
 test "HAMT::map" {
-  let map = @hashmap.of([(1, 10), (2, 20)])
+  let map = @hashmap.from_array([(1, 10), (2, 20)])
   let mapped = map.map_with_key((_, v) => v * 2)
   assert_eq(mapped.get(1), Some(20))
   assert_eq(mapped.get(2), Some(40))
@@ -407,7 +429,7 @@ test "HAMT::map" {
 ///|
 test "HAMT::map with overflow" {
   let max = 2147483647 // Int.max_value
-  let map = @hashmap.of([(1, max)])
+  let map = @hashmap.from_array([(1, max)])
   let mapped = map.map_with_key((_, v) => v + 1)
   assert_eq(mapped.get(1), Some(-2147483648))
 }
@@ -429,7 +451,7 @@ test "HAMT::map_with_key leaf" {
 
 ///|
 test "HAMT::map_with_key collision" {
-  let map = @hashmap.of([(MyString("a"), 1), (MyString("b"), 2)]) // Collision
+  let map = @hashmap.from_array([(MyString("a"), 1), (MyString("b"), 2)]) // Collision
   let mapped = map.map_with_key((k, v) => k.0 + ":" + v.to_string())
   assert_eq(mapped.get(MyString("a")), Some("a:1"))
   assert_eq(mapped.get(MyString("b")), Some("b:2"))
@@ -472,7 +494,7 @@ impl Eq for MyString with equal(self, other) {
 
 ///|
 test "get collision" {
-  let map = @hashmap.of([(MyString("a"), 1), (MyString("b"), 2)])
+  let map = @hashmap.from_array([(MyString("a"), 1), (MyString("b"), 2)])
   assert_eq(map.get(MyString("a")), Some(1))
   assert_eq(map.get(MyString("b")), Some(2))
   assert_eq(map.get(MyString("c")), None)
@@ -480,7 +502,7 @@ test "get collision" {
 
 ///|
 test "add_with_hash collision" {
-  let map = @hashmap.of([(MyString("a"), 1), (MyString("b"), 2)])
+  let map = @hashmap.from_array([(MyString("a"), 1), (MyString("b"), 2)])
   assert_eq(map.get(MyString("a")), Some(1))
   assert_eq(map.get(MyString("b")), Some(2))
   assert_eq(map.get(MyString("c")), None)
@@ -490,28 +512,28 @@ test "add_with_hash collision" {
 
 ///|
 test "empty filtering" {
-  let map : @hashmap.HashMap[Int, Int] = @hashmap.of([])
+  let map : @hashmap.HashMap[Int, Int] = @hashmap.from_array([])
   let _filtered = map.filter_with_key((_, v) => v > 2)
   inspect(map.length(), content="0")
 }
 
 ///|
 test "filter with collision - all removed" {
-  let map = @hashmap.of([(MyString("a"), 1), (MyString("b"), 2)])
+  let map = @hashmap.from_array([(MyString("a"), 1), (MyString("b"), 2)])
   let filtered = map.filter_with_key((_, v) => v > 2)
   inspect(filtered.length(), content="0")
 }
 
 ///|
 test "filter with collision - one left" {
-  let map = @hashmap.of([(MyString("a"), 1), (MyString("b"), 2)])
+  let map = @hashmap.from_array([(MyString("a"), 1), (MyString("b"), 2)])
   let filtered = map.filter_with_key((_, v) => v == 1)
   inspect(filtered.length(), content="1")
 }
 
 ///|
 test "filter with collision - more than one left" {
-  let map = @hashmap.of([
+  let map = @hashmap.from_array([
     (MyString("a"), 1),
     (MyString("b"), 2),
     (MyString("c"), 3),
@@ -529,14 +551,14 @@ test "HAMT::fold_with_key on empty" {
 
 ///|
 test "HAMT::fold_with_key on collision" {
-  let map = @hashmap.of([(MyString("a"), 1), (MyString("b"), 2)])
+  let map = @hashmap.from_array([(MyString("a"), 1), (MyString("b"), 2)])
   let result = map.fold_with_key(init=0, (acc, _k, v) => acc + v)
   inspect(result, content="3")
 }
 
 ///|
 test "HAMT::remove_with_hash collision" {
-  let map = @hashmap.of([(MyString("a"), 1), (MyString("b"), 2)])
+  let map = @hashmap.from_array([(MyString("a"), 1), (MyString("b"), 2)])
   let map1 = map.remove(MyString("c"))
   inspect(map1.length(), content="2")
   let map2 = map.remove(MyString("a"))
@@ -549,7 +571,7 @@ test "HAMT::remove_with_hash collision" {
 
 ///|
 test "HAMT::union with empty" {
-  let m1 = @hashmap.of([(1, 1)])
+  let m1 = @hashmap.from_array([(1, 1)])
   let m2 = @hashmap.new()
   assert_eq(m1.union(m2), m1)
   assert_eq(m2.union(m1), m1)
@@ -557,7 +579,7 @@ test "HAMT::union with empty" {
 
 ///|
 test "HAMT::union with leaf" {
-  let m1 = @hashmap.of([(1, 1), (2, 2)])
+  let m1 = @hashmap.from_array([(1, 1), (2, 2)])
   let m2 = @hashmap.singleton(3, 3)
   let m3 = @hashmap.singleton(2, 20)
   assert_eq(m1.union(m2).get(3), Some(3))
@@ -567,8 +589,8 @@ test "HAMT::union with leaf" {
 
 ///|
 test "HAMT::union with branch" {
-  let m1 = @hashmap.of([(1, 1), (2, 2), (3, 3)])
-  let m2 = @hashmap.of([(4, 4), (5, 5), (6, 6)])
+  let m1 = @hashmap.from_array([(1, 1), (2, 2), (3, 3)])
+  let m2 = @hashmap.from_array([(4, 4), (5, 5), (6, 6)])
   let u = m1.union(m2)
   for i in 1..=6 {
     inspect(u.contains(i), content="true")
@@ -577,8 +599,8 @@ test "HAMT::union with branch" {
 
 ///|
 test "HAMT::union with collision" {
-  let m1 = @hashmap.of([(MyString("a"), 1), (MyString("b"), 2)])
-  let m2 = @hashmap.of([(MyString("b"), 20), (MyString("c"), 3)])
+  let m1 = @hashmap.from_array([(MyString("a"), 1), (MyString("b"), 2)])
+  let m2 = @hashmap.from_array([(MyString("b"), 20), (MyString("c"), 3)])
   let u = m1.union(m2)
   assert_eq(u.get(MyString("a")), Some(1))
   assert_eq(u.get(MyString("b")), Some(20))
@@ -589,14 +611,14 @@ test "HAMT::union with collision" {
 test "HAMT::union all cases" {
   let empty = @hashmap.new()
   let leaf = @hashmap.singleton(1, 1)
-  let branch = @hashmap.of([(1, 1), (2, 2)])
-  let collision = @hashmap.of([(MyString("a"), 1), (MyString("b"), 2)])
+  let branch = @hashmap.from_array([(1, 1), (2, 2)])
+  let collision = @hashmap.from_array([(MyString("a"), 1), (MyString("b"), 2)])
   assert_eq(empty.union(leaf).get(1), Some(1))
   assert_eq(leaf.union(branch).get(2), Some(2))
   let u1 = branch.union(branch)
   assert_eq(u1.get(1), Some(1))
   assert_eq(u1.get(2), Some(2))
-  let collision2 = @hashmap.of([(MyString("b"), 20), (MyString("c"), 3)])
+  let collision2 = @hashmap.from_array([(MyString("b"), 20), (MyString("c"), 3)])
   let u2 = collision.union(collision2)
   assert_eq(u2.get(MyString("a")), Some(1))
   assert_eq(u2.get(MyString("b")), Some(20))
@@ -606,7 +628,7 @@ test "HAMT::union all cases" {
 ///|
 test "HAMT::union leaf to non-overlapping map" {
   let leaf = @hashmap.singleton(42, 100)
-  let other = @hashmap.of([(1, 1), (2, 2)])
+  let other = @hashmap.from_array([(1, 1), (2, 2)])
   let u = leaf.union(other)
   assert_eq(u.get(42), Some(100))
   assert_eq(u.get(1), Some(1))
@@ -615,7 +637,7 @@ test "HAMT::union leaf to non-overlapping map" {
 
 ///|
 test "HAMT::intersection with empty" {
-  let m1 = @hashmap.of([(1, 1)])
+  let m1 = @hashmap.from_array([(1, 1)])
   let m2 = @hashmap.new()
   assert_eq(m1.intersection(m2).length(), 0)
   assert_eq(m2.intersection(m1).length(), 0)
@@ -623,7 +645,7 @@ test "HAMT::intersection with empty" {
 
 ///|
 test "HAMT::intersection with leaf" {
-  let m1 = @hashmap.of([(1, 1), (2, 2)])
+  let m1 = @hashmap.from_array([(1, 1), (2, 2)])
   let m2 = @hashmap.singleton(2, 2)
   let m3 = @hashmap.singleton(3, 3)
   assert_eq(m1.intersection(m2).get(2), Some(2))
@@ -633,8 +655,8 @@ test "HAMT::intersection with leaf" {
 
 ///|
 test "HAMT::intersection with branch" {
-  let m1 = @hashmap.of([(1, 1), (2, 2), (3, 3)])
-  let m2 = @hashmap.of([(2, 2), (3, 30), (4, 4)])
+  let m1 = @hashmap.from_array([(1, 1), (2, 2), (3, 3)])
+  let m2 = @hashmap.from_array([(2, 2), (3, 30), (4, 4)])
   let inter = m1.intersection(m2)
   assert_eq(inter.get(1), None)
   assert_eq(inter.get(2), Some(2))
@@ -644,7 +666,7 @@ test "HAMT::intersection with branch" {
 
 ///|
 test "HAMT::intersection_with with empty" {
-  let m1 = @hashmap.of([(1, 1)])
+  let m1 = @hashmap.from_array([(1, 1)])
   let m2 = @hashmap.new()
   assert_eq(m1.intersection_with(m2, (_k, v1, v2) => v1 + v2).length(), 0)
   assert_eq(m2.intersection_with(m1, (_k, v1, v2) => v1 + v2).length(), 0)
@@ -652,7 +674,7 @@ test "HAMT::intersection_with with empty" {
 
 ///|
 test "HAMT::intersection_with with leaf" {
-  let m1 = @hashmap.of([(1, 1), (2, 2)])
+  let m1 = @hashmap.from_array([(1, 1), (2, 2)])
   let m2 = @hashmap.singleton(2, 20)
   let m3 = @hashmap.singleton(3, 30)
   assert_eq(m1.intersection_with(m2, (_k, v1, v2) => v1 + v2).get(2), Some(22))
@@ -662,8 +684,8 @@ test "HAMT::intersection_with with leaf" {
 
 ///|
 test "HAMT::intersection_with with branch" {
-  let m1 = @hashmap.of([(1, 1), (2, 2), (3, 3)])
-  let m2 = @hashmap.of([(2, 20), (3, 30), (4, 4)])
+  let m1 = @hashmap.from_array([(1, 1), (2, 2), (3, 3)])
+  let m2 = @hashmap.from_array([(2, 20), (3, 30), (4, 4)])
   let inter = m1.intersection_with(m2, (_k, v1, v2) => v1 * v2)
   assert_eq(inter.get(1), None)
   assert_eq(inter.get(2), Some(40))
@@ -673,7 +695,7 @@ test "HAMT::intersection_with with branch" {
 
 ///|
 test "HAMT::difference with empty" {
-  let m1 = @hashmap.of([(1, 1)])
+  let m1 = @hashmap.from_array([(1, 1)])
   let m2 = @hashmap.new()
   assert_eq(m1.difference(m2), m1)
   assert_eq(m2.difference(m1).length(), 0)
@@ -681,7 +703,7 @@ test "HAMT::difference with empty" {
 
 ///|
 test "HAMT::difference with leaf" {
-  let m1 = @hashmap.of([(1, 1), (2, 2)])
+  let m1 = @hashmap.from_array([(1, 1), (2, 2)])
   let m2 = @hashmap.singleton(2, 2)
   let m3 = @hashmap.singleton(3, 3)
   assert_eq(m1.difference(m2).get(2), None)
@@ -691,8 +713,8 @@ test "HAMT::difference with leaf" {
 
 ///|
 test "HAMT::difference with branch" {
-  let m1 = @hashmap.of([(1, 1), (2, 2), (3, 3)])
-  let m2 = @hashmap.of([(2, 2), (3, 30), (4, 4)])
+  let m1 = @hashmap.from_array([(1, 1), (2, 2), (3, 3)])
+  let m2 = @hashmap.from_array([(2, 2), (3, 30), (4, 4)])
   let diff = m1.difference(m2)
   assert_eq(diff.get(1), Some(1))
   assert_eq(diff.get(2), None)
@@ -710,11 +732,11 @@ test "HAMT::each" {
   let mut sum_leaf = 0
   leaf.each((k, v) => sum_leaf = sum_leaf + k + v)
   inspect(sum_leaf, content="11")
-  let collision = @hashmap.of([(MyString("a"), 1), (MyString("b"), 2)])
+  let collision = @hashmap.from_array([(MyString("a"), 1), (MyString("b"), 2)])
   let mut sum_collision = 0
   collision.each((_k : MyString, v : Int) => sum_collision = sum_collision + v)
   inspect(sum_collision, content="3")
-  let branch = @hashmap.of([(1, 1), (2, 2), (3, 3), (4, 4)])
+  let branch = @hashmap.from_array([(1, 1), (2, 2), (3, 3), (4, 4)])
   let mut sum_branch = 0
   branch.each((_k, v) => sum_branch = sum_branch + v)
   inspect(sum_branch, content="10")

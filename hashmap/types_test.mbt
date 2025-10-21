@@ -14,16 +14,16 @@
 
 ///|
 test "HashMap equality - identical maps" {
-  let map1 = @hashmap.of([(1, "one"), (2, "two"), (3, "three")])
-  let map2 = @hashmap.of([(1, "one"), (2, "two"), (3, "three")])
+  let map1 = @hashmap.from_array([(1, "one"), (2, "two"), (3, "three")])
+  let map2 = @hashmap.from_array([(1, "one"), (2, "two"), (3, "three")])
   assert_eq(map1, map2)
   assert_true(map1 == map2)
 }
 
 ///|
 test "HashMap equality - same content different order" {
-  let map1 = @hashmap.of([(1, "one"), (2, "two"), (3, "three")])
-  let map2 = @hashmap.of([(3, "three"), (1, "one"), (2, "two")])
+  let map1 = @hashmap.from_array([(1, "one"), (2, "two"), (3, "three")])
+  let map2 = @hashmap.from_array([(3, "three"), (1, "one"), (2, "two")])
   assert_eq(map1, map2)
   assert_true(map1 == map2)
 }
@@ -38,24 +38,24 @@ test "HashMap equality - empty maps" {
 
 ///|
 test "HashMap equality - different sizes" {
-  let map1 = @hashmap.of([(1, "one"), (2, "two")])
-  let map2 = @hashmap.of([(1, "one"), (2, "two"), (3, "three")])
+  let map1 = @hashmap.from_array([(1, "one"), (2, "two")])
+  let map2 = @hashmap.from_array([(1, "one"), (2, "two"), (3, "three")])
   assert_false(map1 == map2)
   assert_false(map2 == map1)
 }
 
 ///|
 test "HashMap equality - same size different keys" {
-  let map1 = @hashmap.of([(1, "one"), (2, "two")])
-  let map2 = @hashmap.of([(1, "one"), (3, "three")])
+  let map1 = @hashmap.from_array([(1, "one"), (2, "two")])
+  let map2 = @hashmap.from_array([(1, "one"), (3, "three")])
   assert_false(map1 == map2)
   assert_false(map2 == map1)
 }
 
 ///|
 test "HashMap equality - same size different values" {
-  let map1 = @hashmap.of([(1, "one"), (2, "two")])
-  let map2 = @hashmap.of([(1, "one"), (2, "different")])
+  let map1 = @hashmap.from_array([(1, "one"), (2, "two")])
+  let map2 = @hashmap.from_array([(1, "one"), (2, "different")])
   assert_false(map1 == map2)
   assert_false(map2 == map1)
 }
@@ -63,32 +63,32 @@ test "HashMap equality - same size different values" {
 ///|
 test "HashMap equality - one empty one non-empty" {
   let empty_map : @hashmap.HashMap[Int, String] = @hashmap.new()
-  let non_empty_map = @hashmap.of([(1, "one")])
+  let non_empty_map = @hashmap.from_array([(1, "one")])
   assert_false(empty_map == non_empty_map)
   assert_false(non_empty_map == empty_map)
 }
 
 ///|
 test "HashMap equality - self equality" {
-  let map = @hashmap.of([(1, "one"), (2, "two"), (3, "three")])
+  let map = @hashmap.from_array([(1, "one"), (2, "two"), (3, "three")])
   assert_eq(map, map)
   assert_true(map == map)
 }
 
 ///|
 test "HashMap equality - mixed types" {
-  let map1 = @hashmap.of([("a", 1), ("b", 2), ("c", 3)])
-  let map2 = @hashmap.of([("c", 3), ("a", 1), ("b", 2)])
+  let map1 = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
+  let map2 = @hashmap.from_array([("c", 3), ("a", 1), ("b", 2)])
   assert_eq(map1, map2)
   assert_true(map1 == map2)
-  let map3 = @hashmap.of([("a", 1), ("b", 2), ("d", 4)])
+  let map3 = @hashmap.from_array([("a", 1), ("b", 2), ("d", 4)])
   assert_false(map1 == map3)
 }
 
 ///|
 test "HashMap equality - after modifications" {
-  let map1 = @hashmap.of([(1, "one"), (2, "two")])
-  let map2 = @hashmap.of([(1, "one")])
+  let map1 = @hashmap.from_array([(1, "one"), (2, "two")])
+  let map2 = @hashmap.from_array([(1, "one")])
 
   // Initially not equal
   assert_false(map1 == map2)

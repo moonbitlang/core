@@ -209,7 +209,13 @@ fn[K, V] balance(
 
 ///|
 test "from_array" {
-  let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
+  let m = from_array([
+    (3, "three"),
+    (8, "eight"),
+    (1, "one"),
+    (2, "two"),
+    (0, "zero"),
+  ])
   inspect(
     m.debug_tree(),
     content="(3,three,(1,one,(0,zero,_,_),(2,two,_,_)),(8,eight,_,_))",
@@ -218,7 +224,7 @@ test "from_array" {
 
 ///|
 test "insert" {
-  let m = of([(3, "three"), (8, "eight"), (1, "one")])
+  let m = from_array([(3, "three"), (8, "eight"), (1, "one")])
   inspect(m.debug_tree(), content="(3,three,(1,one,_,_),(8,eight,_,_))")
   let m = m.add(5, "five").add(2, "two").add(0, "zero").add(1, "one_updated")
   inspect(
@@ -229,7 +235,13 @@ test "insert" {
 
 ///|
 test "remove" {
-  let m1 = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
+  let m1 = from_array([
+    (3, "three"),
+    (8, "eight"),
+    (1, "one"),
+    (2, "two"),
+    (0, "zero"),
+  ])
   inspect(
     m1.debug_tree(),
     content="(3,three,(1,one,(0,zero,_,_),(2,two,_,_)),(8,eight,_,_))",
@@ -247,7 +259,13 @@ test "remove" {
 
 ///|
 test "contains" {
-  let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
+  let m = from_array([
+    (3, "three"),
+    (8, "eight"),
+    (1, "one"),
+    (2, "two"),
+    (0, "zero"),
+  ])
   inspect(
     m.debug_tree(),
     content="(3,three,(1,one,(0,zero,_,_),(2,two,_,_)),(8,eight,_,_))",
@@ -259,7 +277,13 @@ test "contains" {
 
 ///|
 test "map" {
-  let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
+  let m = from_array([
+    (3, "three"),
+    (8, "eight"),
+    (1, "one"),
+    (2, "two"),
+    (0, "zero"),
+  ])
   let n = m.map(v => v + "X")
   assert_eq(
     n.debug_tree(),
@@ -269,7 +293,13 @@ test "map" {
 
 ///|
 test "map_with_key" {
-  let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
+  let m = from_array([
+    (3, "three"),
+    (8, "eight"),
+    (1, "one"),
+    (2, "two"),
+    (0, "zero"),
+  ])
   let n = m.map_with_key((k, v) => "\{k}-\{v}")
   assert_eq(
     n.debug_tree(),
@@ -279,14 +309,26 @@ test "map_with_key" {
 
 ///|
 test "filter" {
-  let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
+  let m = from_array([
+    (3, "three"),
+    (8, "eight"),
+    (1, "one"),
+    (2, "two"),
+    (0, "zero"),
+  ])
   let fm = m.filter(v => v.length() > 3)
   inspect(fm.debug_tree(), content="(3,three,(0,zero,_,_),(8,eight,_,_))")
 }
 
 ///|
 test "filter_with_key" {
-  let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
+  let m = from_array([
+    (3, "three"),
+    (8, "eight"),
+    (1, "one"),
+    (2, "two"),
+    (0, "zero"),
+  ])
   let fm = m.filter_with_key((k, v) => k > 3 && v.length() > 3)
   inspect(fm.debug_tree(), content="(8,eight,_,_)")
 }
@@ -305,7 +347,13 @@ test "empty" {
 
 ///|
 test "split_max" {
-  let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
+  let m = from_array([
+    (3, "three"),
+    (8, "eight"),
+    (1, "one"),
+    (2, "two"),
+    (0, "zero"),
+  ])
   assert_eq(
     m.debug_tree(),
     "(3,three,(1,one,(0,zero,_,_),(2,two,_,_)),(8,eight,_,_))",
@@ -321,7 +369,13 @@ test "split_max" {
 
 ///|
 test "split_min" {
-  let m = of([(3, "three"), (8, "eight"), (2, "two"), (1, "one"), (0, "zero")])
+  let m = from_array([
+    (3, "three"),
+    (8, "eight"),
+    (2, "two"),
+    (1, "one"),
+    (0, "zero"),
+  ])
   assert_eq(
     m.debug_tree(),
     "(3,three,(1,one,(0,zero,_,_),(2,two,_,_)),(8,eight,_,_))",
@@ -337,7 +391,13 @@ test "split_min" {
 
 ///|
 test "glue" {
-  let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
+  let m = from_array([
+    (3, "three"),
+    (8, "eight"),
+    (1, "one"),
+    (2, "two"),
+    (0, "zero"),
+  ])
   assert_eq(
     m.debug_tree(),
     "(3,three,(1,one,(0,zero,_,_),(2,two,_,_)),(8,eight,_,_))",
@@ -355,7 +415,13 @@ test "glue" {
 
 ///|
 test "split_max with non-empty tree" {
-  let m = of([(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")])
+  let m = from_array([
+    (3, "three"),
+    (8, "eight"),
+    (1, "one"),
+    (2, "two"),
+    (0, "zero"),
+  ])
   let (k, v, r) = m.split_max()
   inspect(k, content="8")
   inspect(v, content="eight")

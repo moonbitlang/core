@@ -14,7 +14,7 @@
 
 ///|
 test "lookup" {
-  let m = @sorted_map.of([
+  let m = @sorted_map.from_array([
     (3, "three"),
     (8, "eight"),
     (1, "one"),
@@ -28,7 +28,7 @@ test "lookup" {
 
 ///|
 test "size" {
-  let m = @sorted_map.of([
+  let m = @sorted_map.from_array([
     (3, "three"),
     (8, "eight"),
     (1, "one"),
@@ -50,7 +50,7 @@ test "is_empty" {
 
 ///|
 test "iter" {
-  let m = @sorted_map.of([
+  let m = @sorted_map.from_array([
     (3, "three"),
     (8, "eight"),
     (1, "one"),
@@ -64,7 +64,7 @@ test "iter" {
 
 ///|
 test "iteri" {
-  let m = @sorted_map.of([
+  let m = @sorted_map.from_array([
     (3, "three"),
     (8, "eight"),
     (1, "one"),
@@ -79,7 +79,7 @@ test "iteri" {
 ///|
 test "iter_take_each" {
   let buf = StringBuilder::new(size_hint=20)
-  let map = @sorted_map.of([(1, "one"), (2, "two"), (3, "three")])
+  let map = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
   map
   .iter()
   .each(e => {
@@ -100,13 +100,25 @@ test "iter_take_each" {
 
 ///|
 test "fold" {
-  let m = @sorted_map.of([("a", 1), ("b", 2), ("c", 3), ("d", 4), ("e", 5)])
+  let m = @sorted_map.from_array([
+    ("a", 1),
+    ("b", 2),
+    ("c", 3),
+    ("d", 4),
+    ("e", 5),
+  ])
   assert_eq(m.foldl_with_key((acc, _, v) => acc + v, init=0), 15)
 }
 
 ///|
 test "foldl_with_key" {
-  let m = @sorted_map.of([("a", 1), ("b", 2), ("c", 3), ("d", 4), ("e", 5)])
+  let m = @sorted_map.from_array([
+    ("a", 1),
+    ("b", 2),
+    ("c", 3),
+    ("d", 4),
+    ("e", 5),
+  ])
   assert_eq(
     m.foldl_with_key((acc, k, v) => acc + k + v.to_string(), init=""),
     "a1b2c3d4e5",
@@ -115,7 +127,13 @@ test "foldl_with_key" {
 
 ///|
 test "foldr_with_key" {
-  let m = @sorted_map.of([("a", 1), ("b", 2), ("c", 3), ("d", 4), ("e", 5)])
+  let m = @sorted_map.from_array([
+    ("a", 1),
+    ("b", 2),
+    ("c", 3),
+    ("d", 4),
+    ("e", 5),
+  ])
   assert_eq(
     m.foldr_with_key((acc, k, v) => acc + k + v.to_string(), init=""),
     "e5d4c3b2a1",
@@ -124,45 +142,50 @@ test "foldr_with_key" {
 
 ///|
 test "collect" {
-  let m = @sorted_map.of([(1, "one"), (2, "two"), (3, "three")])
+  let m = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
   assert_eq(m.iter().collect(), [(1, "one"), (2, "two"), (3, "three")])
 }
 
 ///|
 test "to_array" {
-  let m = @sorted_map.of([(1, "one"), (2, "two"), (3, "three")])
+  let m = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
   assert_eq(m.to_array(), [(1, "one"), (2, "two"), (3, "three")])
 }
 
 ///|
 test "keys" {
-  let m = @sorted_map.of([(1, "one"), (2, "two"), (3, "three")])
+  let m = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
   assert_eq(m.keys_as_iter().collect(), [1, 2, 3])
 }
 
 ///|
 test "values" {
-  let m = @sorted_map.of([(1, "one"), (2, "two"), (3, "three")])
+  let m = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
   assert_eq(m.values().collect(), ["one", "two", "three"])
 }
 
 ///|
 test "equal" {
-  let m1 = @sorted_map.of([
+  let m1 = @sorted_map.from_array([
     (3, "three"),
     (8, "eight"),
     (1, "one"),
     (2, "two"),
     (0, "zero"),
   ])
-  let m2 = @sorted_map.of([
+  let m2 = @sorted_map.from_array([
     (3, "three"),
     (8, "eight"),
     (1, "one"),
     (2, "two"),
     (0, "zero"),
   ])
-  let m3 = @sorted_map.of([(3, "three"), (8, "eight"), (1, "one"), (2, "two")])
+  let m3 = @sorted_map.from_array([
+    (3, "three"),
+    (8, "eight"),
+    (1, "one"),
+    (2, "two"),
+  ])
   inspect(m1 == m2, content="true")
   inspect(m1 == m3, content="false")
 }
@@ -201,10 +224,10 @@ test "iterator" {
 
 ///|
 test "show" {
-  let m = @sorted_map.of([(1, "one"), (2, "two"), (3, "three")])
+  let m = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
   inspect(
     m,
-    content="@immut/sorted_map.of([(1, \"one\"), (2, \"two\"), (3, \"three\")])",
+    content="@immut/sorted_map.from_array([(1, \"one\"), (2, \"two\"), (3, \"three\")])",
   )
 }
 
@@ -212,7 +235,7 @@ test "show" {
 test "from_iter multiple elements iter" {
   inspect(
     @sorted_map.from_iter([(1, 1), (2, 2), (3, 3)].iter()),
-    content="@immut/sorted_map.of([(1, 1), (2, 2), (3, 3)])",
+    content="@immut/sorted_map.from_array([(1, 1), (2, 2), (3, 3)])",
   )
 }
 
@@ -220,7 +243,7 @@ test "from_iter multiple elements iter" {
 test "from_iter single element iter" {
   inspect(
     @sorted_map.from_iter([(1, 1)].iter()),
-    content="@immut/sorted_map.of([(1, 1)])",
+    content="@immut/sorted_map.from_array([(1, 1)])",
   )
 }
 
@@ -229,7 +252,7 @@ test "from_iter empty iter" {
   let pq : @sorted_map.SortedMap[Int, Int] = @sorted_map.from_iter(
     Iter::empty(),
   )
-  inspect(pq, content="@immut/sorted_map.of([])")
+  inspect(pq, content="@immut/sorted_map.from_array([])")
 }
 
 ///|
@@ -258,11 +281,11 @@ test "from_iterator empty iter" {
 
 ///|
 test "hash" {
-  let map1 = @sorted_map.of([("one", 1), ("two", 2)])
-  let map2 = @sorted_map.of([("one", 1), ("two", 2)])
+  let map1 = @sorted_map.from_array([("one", 1), ("two", 2)])
+  let map2 = @sorted_map.from_array([("one", 1), ("two", 2)])
   inspect(map1.hash() == map2.hash(), content="true")
-  let map3 = @sorted_map.of([("two", 2), ("one", 1)])
+  let map3 = @sorted_map.from_array([("two", 2), ("one", 1)])
   inspect(map1.hash() == map3.hash(), content="true")
-  let map4 = @sorted_map.of([("one", 1), ("two", 2), ("three", 3)])
+  let map4 = @sorted_map.from_array([("one", 1), ("two", 2), ("three", 3)])
   inspect(map1.hash() == map4.hash(), content="false")
 }

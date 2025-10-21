@@ -160,7 +160,7 @@ pub fn[K : Hash + Eq] HashSet::contains(self : HashSet[K], key : K) -> Bool {
 /// Example:
 ///
 /// ```moonbit
-///   let set = @hashset.of(["a", "b"])
+///   let set = @hashset.from_array(["a", "b"])
 ///   set.remove("a")
 ///   inspect(set.contains("a"), content="false")
 ///   inspect(set.length(), content="1")
@@ -222,7 +222,7 @@ fn[K : Eq] HashSet::grow(self : HashSet[K]) -> Unit {
 
 ///|
 pub impl[K : Show] Show for HashSet[K] with output(self, logger) {
-  logger.write_iter(self.iter(), prefix="@hashset.of([", suffix="])")
+  logger.write_iter(self.iter(), prefix="@hashset.from_array([", suffix="])")
 }
 
 ///|
@@ -629,7 +629,7 @@ pub fn[K : Hash + Eq] HashSet::add_and_check(
 /// Example:
 ///
 /// ```moonbit
-///   let set = @hashset.of(["a", "b"])
+///   let set = @hashset.from_array(["a", "b"])
 ///   inspect(set.remove_and_check("a"), content="true")  // Successfully removed
 ///   inspect(set.remove_and_check("a"), content="false") // Already removed
 ///   inspect(set.length(), content="1")

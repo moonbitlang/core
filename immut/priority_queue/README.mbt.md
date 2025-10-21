@@ -12,7 +12,7 @@ You can use `new()` or `of()` to create an immutable priority queue.
 ///|
 test {
   let _queue1 : @priority_queue.PriorityQueue[Int] = @priority_queue.new()
-  let _queue2 = @priority_queue.of([1, 2, 3])
+  let _queue2 = @priority_queue.from_array([1, 2, 3])
 
 }
 ```
@@ -49,7 +49,7 @@ You can use `peek()` to look at the head element of a queue, which must be eithe
 ```moonbit
 ///|
 test {
-  let pq = @priority_queue.of([1, 2, 3, 4, 5])
+  let pq = @priority_queue.from_array([1, 2, 3, 4, 5])
   assert_eq(pq.peek(), Some(5))
   // @json.inspect(pq)
   // we have to add `@json` package in test-import
@@ -72,7 +72,7 @@ You can use `pop()` to remove the element at the front of the priority queue and
 ```moonbit
 ///|
 test {
-  let pq = @priority_queue.of([5, 4, 3, 2, 1])
+  let pq = @priority_queue.from_array([5, 4, 3, 2, 1])
   let val = match pq.pop() {
     Some(q) => q.peek()
     None => None

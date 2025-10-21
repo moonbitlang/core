@@ -112,7 +112,7 @@ test "contains" {
 
 ///|
 test "from_array" {
-  let m = @hashmap.of([("a", 1), ("b", 2), ("c", 3)])
+  let m = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
   assert_eq(m.get("a"), Some(1))
   assert_eq(m.get("b"), Some(2))
   assert_eq(m.get("c"), Some(3))
@@ -138,7 +138,7 @@ test "is_empty" {
 
 ///|
 test "each" {
-  let m = @hashmap.of([("a", 1), ("b", 2), ("c", 3)])
+  let m = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
   let mut sum = 0
   m.each((_k, v) => sum += v)
   inspect(sum, content="6")
@@ -146,7 +146,7 @@ test "each" {
 
 ///|
 test "iter_collect" {
-  let map = @hashmap.of([(1, "one"), (2, "two"), (3, "three")])
+  let map = @hashmap.from_array([(1, "one"), (2, "two"), (3, "three")])
   let array = map.iter().collect()
   array.sort()
   inspect(
@@ -159,7 +159,7 @@ test "iter_collect" {
 
 ///|
 test "iteri" {
-  let m = @hashmap.of([("a", 1), ("b", 2), ("c", 3)])
+  let m = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
   let mut sum = 0
   let mut s = ""
   m.eachi((i, _k, v) => {
@@ -172,7 +172,7 @@ test "iteri" {
 
 ///|
 test "iter2" {
-  let map = @hashmap.of([(1, "one"), (2, "two"), (3, "three")])
+  let map = @hashmap.from_array([(1, "one"), (2, "two"), (3, "three")])
   let array = map.iter2().to_array()
   array.sort()
   inspect(
@@ -198,7 +198,7 @@ test "iterator" {
 
 ///|
 test "to_array" {
-  let map = @hashmap.of([(1, "one"), (2, "two"), (3, "three")])
+  let map = @hashmap.from_array([(1, "one"), (2, "two"), (3, "three")])
   let array = map.to_array()
   array.sort()
   inspect(
@@ -294,13 +294,16 @@ test "from_iter multiple elements iter" {
 
 ///|
 test "from_iter single element iter" {
-  inspect(@hashmap.from_iter([(1, 1)].iter()), content="HashMap::of([(1, 1)])")
+  inspect(
+    @hashmap.from_iter([(1, 1)].iter()),
+    content="HashMap::from_array([(1, 1)])",
+  )
 }
 
 ///|
 test "from_iter empty iter" {
   let map : @hashmap.HashMap[Int, Int] = @hashmap.from_iter(Iter::empty())
-  inspect(map, content="HashMap::of([])")
+  inspect(map, content="HashMap::from_array([])")
 }
 
 ///|
@@ -336,14 +339,14 @@ test "@hashmap.contains/empty" {
 
 ///|
 test "@hashmap.contains/basic" {
-  let map = @hashmap.of([(1, "one"), (2, "two"), (3, "three")])
+  let map = @hashmap.from_array([(1, "one"), (2, "two"), (3, "three")])
   inspect(map.contains(2), content="true")
   inspect(map.contains(4), content="false")
 }
 
 ///|
 test "@hashmap.contains/after_operations" {
-  let map = @hashmap.of([(1, "one"), (2, "two")])
+  let map = @hashmap.from_array([(1, "one"), (2, "two")])
   map.remove(1)
   inspect(map.contains(1), content="false")
   map.set(1, "ONE")
@@ -374,7 +377,7 @@ test "@hashmap.from_array with int key" {
 
 ///|
 test "@hashmap.contains_kv" {
-  let map = @hashmap.of([(1, "one"), (2, "two"), (3, "three")])
+  let map = @hashmap.from_array([(1, "one"), (2, "two"), (3, "three")])
   inspect(map.contains_kv(1, "one"), content="true")
   inspect(map.contains_kv(1, "two"), content="false")
   inspect(map.contains_kv(4, "four"), content="false")
@@ -382,14 +385,14 @@ test "@hashmap.contains_kv" {
 
 ///|
 test "@hashmap.eq" {
-  let map1 = @hashmap.of([(1, "one"), (2, "two"), (3, "three")])
-  let map2 = @hashmap.of([(1, "one"), (2, "two"), (3, "three")])
+  let map1 = @hashmap.from_array([(1, "one"), (2, "two"), (3, "three")])
+  let map2 = @hashmap.from_array([(1, "one"), (2, "two"), (3, "three")])
   inspect(map1 == map2, content="true")
 }
 
 ///|
 test "@hashmap.map" {
-  let map = @hashmap.of([("a", 1), ("b", 2), ("c", 3)])
+  let map = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
   let v = map.map((k, v) => k + v.to_string())
   verify_content(v, [("a", "a1"), ("b", "b2"), ("c", "c3")])
   map["d"] = 10
@@ -398,12 +401,12 @@ test "@hashmap.map" {
   let v = map.map((k, v) => k + v.to_string())
   verify_content(v, [("a", "a1"), ("b", "b2"), ("d", "d10"), ("e", "e20")])
   let v : @hashmap.HashMap[String, String] = @hashmap.new().map((k, v) => k + v)
-  inspect(v, content="HashMap::of([])")
+  inspect(v, content="HashMap::from_array([])")
 }
 
 ///|
 test "@hashmap.copy" {
-  let map = @hashmap.of([("a", 1), ("b", 2), ("c", 3)])
+  let map = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
   let copy = map.copy()
   verify_content(copy, [("a", 1), ("b", 2), ("c", 3)])
   map["d"] = 10
@@ -412,7 +415,7 @@ test "@hashmap.copy" {
   let copy = map.copy()
   verify_content(copy, [("e", 20), ("a", 1), ("b", 2), ("d", 10)])
   let copy : @hashmap.HashMap[String, String] = @hashmap.new().copy()
-  inspect(copy, content="HashMap::of([])")
+  inspect(copy, content="HashMap::from_array([])")
 }
 
 ///|

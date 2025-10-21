@@ -43,7 +43,7 @@ pub fn[A] T::copy(self : T[A]) -> T[A] {
 ///
 /// # Example
 /// ```mbt
-///   let v = @array.of([1, 2, 3, 4, 5])
+///   let v = @array.from_array([1, 2, 3, 4, 5])
 ///   assert_eq(v.fold((a, b) => { a + b }, init=0), 15)
 /// ```
 #deprecated("Use `fold` instead")
@@ -61,7 +61,7 @@ pub fn[A] T::fold_left(
 ///
 /// # Example
 /// ```mbt
-///   let v = @array.of([1, 2, 3, 4, 5])
+///   let v = @array.from_array([1, 2, 3, 4, 5])
 ///   assert_eq(v.rev_fold((a, b) => { a + b }, init=0), 15)
 /// ```
 #deprecated("Use `rev_fold` instead")

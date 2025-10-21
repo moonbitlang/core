@@ -12,7 +12,7 @@ You can create a deque manually via the `new()` or construct it using the `of()`
 ///|
 test {
   let _dv : @deque.Deque[Int] = @deque.new()
-  let _dv = @deque.of([1, 2, 3, 4, 5])
+  let _dv = @deque.from_array([1, 2, 3, 4, 5])
 
 }
 ```
@@ -34,7 +34,7 @@ A deque is an indefinite-length, auto-expandable datatype. You can use `length()
 ```moonbit
 ///|
 test {
-  let dv = @deque.of([1, 2, 3, 4, 5])
+  let dv = @deque.from_array([1, 2, 3, 4, 5])
   assert_eq(dv.length(), 5)
   assert_eq(dv.capacity(), 5)
 }
@@ -54,7 +54,7 @@ specified by the `capacity` argument.
 ```moonbit
 ///|
 test {
-  let dv = @deque.of([1])
+  let dv = @deque.from_array([1])
   dv.reserve_capacity(10)
   assert_eq(dv.capacity(), 10)
 }
@@ -82,7 +82,7 @@ You can use `front()` and `back()` to get the head and tail elements of the queu
 ```moonbit
 ///|
 test {
-  let dv = @deque.of([1, 2, 3, 4, 5])
+  let dv = @deque.from_array([1, 2, 3, 4, 5])
   assert_eq(dv.front(), Some(1))
   assert_eq(dv.back(), Some(5))
 }
@@ -93,7 +93,7 @@ You can also use `get` to access elements of the queue directly, but be careful 
 ```moonbit
 ///|
 test {
-  let dv = @deque.of([1, 2, 3, 4, 5])
+  let dv = @deque.from_array([1, 2, 3, 4, 5])
   assert_eq(dv[0], 1)
   assert_eq(dv[4], 5)
 }
@@ -106,7 +106,7 @@ Since the queue is bi-directional, you can use `push_front()` and `push_back()` 
 ```moonbit
 ///|
 test {
-  let dv = @deque.of([1, 2, 3, 4, 5])
+  let dv = @deque.from_array([1, 2, 3, 4, 5])
   dv.push_front(6)
   dv.push_front(7)
   dv.push_back(8)
@@ -120,7 +120,7 @@ You can also use `Deque::set` or operator `_[_]=_`to set elements of the queue d
 ```moonbit
 ///|
 test {
-  let dv = @deque.of([1, 2, 3, 4, 5])
+  let dv = @deque.from_array([1, 2, 3, 4, 5])
   dv[0] = 5
   assert_eq(dv[0], 5)
 }
@@ -133,7 +133,7 @@ You can use `pop_front()` and `pop_back()` to pop the element at the head or tai
 ```moonbit
 ///|
 test {
-  let dv = @deque.of([1, 2, 3, 4, 5])
+  let dv = @deque.from_array([1, 2, 3, 4, 5])
   let _back = dv.pop_back() // Some(5)
   assert_eq(dv.back(), Some(4))
   let _front = dv.pop_front() //Some(1)
@@ -146,7 +146,7 @@ If you only want to pop an element without getting the return value, you can use
 ```moonbit
 ///|
 test {
-  let dv = @deque.of([1, 2, 3, 4, 5])
+  let dv = @deque.from_array([1, 2, 3, 4, 5])
   dv.unsafe_pop_front()
   assert_eq(dv.front(), Some(2))
   dv.unsafe_pop_back()
@@ -161,7 +161,7 @@ You can use `clear` to clear a deque. But note that the memory it already occupi
 ```moonbit
 ///|
 test {
-  let dv = @deque.of([1, 2, 3, 4, 5])
+  let dv = @deque.from_array([1, 2, 3, 4, 5])
   dv.clear()
   assert_eq(dv.is_empty(), true)
 }
@@ -174,8 +174,8 @@ deque supports comparing them directly using `equal`.
 ```moonbit
 ///|
 test {
-  let dqa = @deque.of([1, 2, 3, 4, 5])
-  let dqb = @deque.of([1, 2, 3, 4, 5])
+  let dqa = @deque.from_array([1, 2, 3, 4, 5])
+  let dqb = @deque.from_array([1, 2, 3, 4, 5])
   assert_eq(dqa, dqb)
 }
 ```
@@ -187,7 +187,7 @@ deque supports vector-like `iter/iteri/map/mapi` functions and their inverse for
 ```moonbit
 ///|
 test {
-  let dv = @deque.of([1, 2, 3, 4, 5])
+  let dv = @deque.from_array([1, 2, 3, 4, 5])
   let arr = []
   dv.each(elem => arr.push(elem))
   assert_eq(arr, [1, 2, 3, 4, 5])
@@ -210,7 +210,7 @@ You can use `contains()` to find out if a value is in the deque, or `search()` t
 ```moonbit
 ///|
 test {
-  let dv = @deque.of([1, 2, 3, 4, 5])
+  let dv = @deque.from_array([1, 2, 3, 4, 5])
   assert_eq(dv.contains(1), true)
   assert_eq(dv.contains(6), false)
   assert_eq(dv.search(1), Some(0))

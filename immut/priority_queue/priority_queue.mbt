@@ -30,7 +30,7 @@ pub fn[A] PriorityQueue::new() -> PriorityQueue[A] {
 ///
 /// # Example
 /// ```mbt
-///   let queue = @priority_queue.of([1, 2, 3, 4, 5])
+///   let queue = @priority_queue.from_array([1, 2, 3, 4, 5])
 ///   inspect(queue.length(), content="5")
 /// ```
 #as_free_fn
@@ -130,9 +130,9 @@ fn Path::next(self : Path) -> Path {
 ///
 /// # Example
 /// ```mbt
-///   let queue = @priority_queue.of([1, 2, 3, 4])
+///   let queue = @priority_queue.from_array([1, 2, 3, 4])
 ///   let first = queue.pop()
-///   assert_eq(first, Some(@priority_queue.of([1, 2, 3])))
+///   assert_eq(first, Some(@priority_queue.from_array([1, 2, 3])))
 /// ```
 pub fn[A : Compare] PriorityQueue::pop(
   self : PriorityQueue[A],
@@ -196,9 +196,9 @@ fn[A : Compare] Node::change_and_down(self : Node[A], value : A) -> Node[A] {
 ///
 /// # Example
 /// ```mbt
-///   let queue = @priority_queue.of([1, 2, 3, 4])
+///   let queue = @priority_queue.from_array([1, 2, 3, 4])
 ///   let first = queue.unsafe_pop()
-///   assert_eq(first, @priority_queue.of([1, 2, 3]))
+///   assert_eq(first, @priority_queue.from_array([1, 2, 3]))
 /// ```
 #internal(unsafe, "Panics if the queue is empty.")
 pub fn[A : Compare] PriorityQueue::unsafe_pop(
@@ -259,7 +259,7 @@ fn[A : Compare] Node::push(self : Node[A], value : A, path : Path) -> Node[A] {
 ///
 /// # Example
 /// ```mbt
-///   let queue = @priority_queue.of([1, 2, 3, 4])
+///   let queue = @priority_queue.from_array([1, 2, 3, 4])
 ///   assert_eq(queue.peek(), Some(4))
 /// ```
 pub fn[A] PriorityQueue::peek(self : PriorityQueue[A]) -> A? {
@@ -300,7 +300,7 @@ pub fn[A] PriorityQueue::length(self : PriorityQueue[A]) -> Int {
 pub impl[A : Show + Compare] Show for PriorityQueue[A] with output(self, logger) {
   logger.write_iter(
     self.iter(),
-    prefix="@immut/priority_queue.of([",
+    prefix="@immut/priority_queue.from_array([",
     suffix="])",
   )
 }
@@ -344,9 +344,9 @@ pub impl[A : Hash + Compare] Hash for PriorityQueue[A] with hash_combine(
 /// Example:
 ///
 /// ```moonbit
-///   let pq1 = @priority_queue.of([1, 2, 3])
-///   let pq2 = @priority_queue.of([1, 2, 4])
-///   let pq3 = @priority_queue.of([1, 2])
+///   let pq1 = @priority_queue.from_array([1, 2, 3])
+///   let pq2 = @priority_queue.from_array([1, 2, 4])
+///   let pq3 = @priority_queue.from_array([1, 2])
 ///   inspect(pq1.compare(pq2), content="-1") // pq1 < pq2
 ///   inspect(pq1.compare(pq3), content="1")  // pq2 > pq1
 ///   inspect(pq3.compare(pq1), content="-1") // pq1 > pq3 (longer)

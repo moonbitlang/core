@@ -19,7 +19,7 @@ test "creating immutable sets" {
   inspect(from_array_result.length(), content="3")
 
   // From fixed array
-  let from_fixed = @hashset.of([10, 20, 30])
+  let from_fixed = @hashset.from_array([10, 20, 30])
   inspect(from_fixed.length(), content="3")
 
   // From iterator

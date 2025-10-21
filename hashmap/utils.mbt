@@ -38,7 +38,7 @@ fn[K : Show, V : Show] HashMap::_debug_entries(self : HashMap[K, V]) -> String {
 /// Example:
 ///
 /// ```moonbit
-///   let map = @hashmap.of([("a", 1), ("b", 2)])
+///   let map = @hashmap.from_array([("a", 1), ("b", 2)])
 ///   map.clear()
 ///   inspect(map.length(), content="0")
 ///   inspect(map.get("a"), content="None")
@@ -61,7 +61,7 @@ pub fn[K, V] HashMap::clear(self : HashMap[K, V]) -> Unit {
 /// Example:
 ///
 /// ```moonbit
-///   let map = @hashmap.of([(1, "one"), (2, "two")])
+///   let map = @hashmap.from_array([(1, "one"), (2, "two")])
 ///   let pairs = map.iter().to_array()
 ///   inspect(pairs.length(), content="2")
 ///   inspect(pairs.contains((1, "one")), content="true")
@@ -141,7 +141,7 @@ pub fn[K, V] HashMap::iterator2(self : HashMap[K, V]) -> Iterator2[K, V] {
 /// Example:
 ///
 /// ```moonbit
-///   let map = @hashmap.of([(1, "one"), (2, "two")])
+///   let map = @hashmap.from_array([(1, "one"), (2, "two")])
 ///   let mut sum = 0
 ///   map.iter2().each((k, _) => { sum = sum + k })
 ///   inspect(sum, content="3")
@@ -238,7 +238,7 @@ pub fn[K : Hash + Eq, V] HashMap::from_iterator(
 /// Example:
 ///
 /// ```moonbit
-///   let map = @hashmap.of([(1, "one"), (2, "two")])
+///   let map = @hashmap.from_array([(1, "one"), (2, "two")])
 ///   let arr = map.to_array()
 ///   arr.sort()
 ///   inspect(
@@ -284,7 +284,7 @@ pub fn[K, V] HashMap::to_array(self : HashMap[K, V]) -> Array[(K, V)] {
 /// Example:
 ///
 /// ```moonbit
-///   let map = @hashmap.of([("a", 1), ("b", 2), ("c", 3)])
+///   let map = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
 ///   inspect(map.length(), content="3")
 /// ```
 #alias(size, deprecated)
@@ -349,7 +349,7 @@ pub fn[K, V] HashMap::is_empty(self : HashMap[K, V]) -> Bool {
 /// Example:
 ///
 /// ```moonbit
-///   let map = @hashmap.of([(1, "one"), (2, "two")])
+///   let map = @hashmap.from_array([(1, "one"), (2, "two")])
 ///   let array = []
 ///   map.each((k, v) => { array.push((k, v)) })
 ///   array.sort()
@@ -413,12 +413,12 @@ pub fn[K, V] HashMap::eachi(
 /// Example:
 ///
 /// ```moonbit
-///   let map = @hashmap.of([(1, "one"), (2, "two")])
+///   let map = @hashmap.from_array([(1, "one"), (2, "two")])
 ///   let array = map.to_array()
-///   assert_eq(map.to_string(), "HashMap::of(\{array})")
+///   assert_eq(map.to_string(), "HashMap::from_array(\{array})")
 /// ```
 pub impl[K : Show, V : Show] Show for HashMap[K, V] with output(self, logger) {
-  logger.write_string("HashMap::of([")
+  logger.write_string("HashMap::from_array([")
   self.eachi((i, k, v) => {
     if i > 0 {
       logger.write_string(", ")
@@ -446,7 +446,7 @@ pub impl[K : Show, V : Show] Show for HashMap[K, V] with output(self, logger) {
 /// Example:
 ///
 /// ```moonbit
-///   let map = @hashmap.of([(1, "one"), (2, "two"), (3, "three")])
+///   let map = @hashmap.from_array([(1, "one"), (2, "two"), (3, "three")])
 ///   let keys = map.keys().to_array()
 ///   inspect(keys.length(), content="3")
 ///   inspect(keys.contains(1), content="true")
@@ -476,7 +476,7 @@ pub fn[K, V] HashMap::keys(self : HashMap[K, V]) -> Iter[K] {
 /// Example:
 ///
 /// ```moonbit
-///   let map = @hashmap.of([("a", 1), ("b", 2), ("c", 3)])
+///   let map = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
 ///   let values = map.values().to_array()
 ///   inspect(values.length(), content="3")
 ///   inspect(values.contains(1), content="true")
@@ -507,7 +507,7 @@ pub fn[K, V] HashMap::values(self : HashMap[K, V]) -> Iter[V] {
 /// Example:
 ///
 /// ```moonbit
-///   let map = @hashmap.of([("a", 1), ("b", 2), ("c", 3), ("d", 4)])
+///   let map = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3), ("d", 4)])
 ///   map.retain((_k, v) => v % 2 == 0)  // Keep only even values
 ///   inspect(map.length(), content="2")
 ///   inspect(map.get("a"), content="None")

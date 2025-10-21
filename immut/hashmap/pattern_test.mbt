@@ -14,7 +14,7 @@
 
 ///|
 test "pattern" {
-  let m = @hashmap.of([
+  let m = @hashmap.from_array([
     ("name", "John Doe"),
     ("age", "43"),
     ("is_human", "true"),
