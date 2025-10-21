@@ -74,9 +74,12 @@ pub fn[K : Hash + Eq, V] Map::from_array(arr : Array[(K, V)]) -> Map[K, V] {
     capacity *= 2
   }
   let m = Map::new(capacity~)
-  arr.each(e => m.set(e.0, e.1))
+  for e in arr {
+    m.set(e.0, e.1)
+  }
   m
 }
+
 
 ///|
 /// Sets a key-value pair into the hash map. If the key already exists, updates

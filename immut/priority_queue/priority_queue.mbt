@@ -35,7 +35,7 @@ pub fn[A] PriorityQueue::new() -> PriorityQueue[A] {
 /// ```
 #as_free_fn
 pub fn[A : Compare] PriorityQueue::from_array(
-  array : Array[A],
+  array : ArrayView[A],
 ) -> PriorityQueue[A] {
   let mut pq = new()
   for i in 0..<array.length() {

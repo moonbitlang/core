@@ -216,7 +216,7 @@ fn[K : Show, V : Show] SortedMap::debug_tree(self : SortedMap[K, V]) -> String {
 /// O(n*log n).
 #as_free_fn
 pub fn[K : Compare, V] SortedMap::from_array(
-  array : Array[(K, V)],
+  array : ArrayView[(K, V)],
 ) -> SortedMap[K, V] {
   for i = 0, mp = Empty; i < array.length(); {
     let (k, v) = array[i]

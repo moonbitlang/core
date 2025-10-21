@@ -35,10 +35,12 @@ pub fn[K, V] SortedMap::new() -> SortedMap[K, V] {
 /// Creates a sorted map from a array of key-value pairs.
 #as_free_fn
 pub fn[K : Compare, V] SortedMap::from_array(
-  entries : Array[(K, V)],
+  entries : ArrayView[(K, V)],
 ) -> SortedMap[K, V] {
   let map = { root: None, size: 0 }
-  entries.each(e => map.add(e.0, e.1))
+  for e in entries {
+    map.add(e.0, e.1)
+  }
   map
 }
 
