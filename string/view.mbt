@@ -235,6 +235,27 @@ pub fn StringView::iter(self : StringView) -> Iter[Char] {
 }
 
 ///|
+/// Returns an iterator over the Unicode characters in the string view.
+pub fn StringView::iterator(self : StringView) -> Iterator[Char] {
+  let start = self.start()
+  let end = self.end()
+  let mut index = start
+  Iterator::new(fn() {
+    guard index < end else { None }
+    let c1 = self.str().unsafe_charcode_at(index)
+    if c1.is_leading_surrogate() && index + 1 < self.end() {
+      let c2 = self.str().unsafe_charcode_at(index + 1)
+      if c2.is_trailing_surrogate() {
+        index += 2
+        return Some(code_point_of_surrogate_pair(c1, c2))
+      }
+    }
+    index += 1
+    Some(c1.unsafe_to_char())
+  })
+}
+
+///|
 pub fn StringView::iter2(self : StringView) -> Iter2[Int, Char] {
   Iter2::new(yield_ => {
     let len = self.length()
@@ -258,6 +279,31 @@ pub fn StringView::iter2(self : StringView) -> Iter2[Int, Char] {
 }
 
 ///|
+pub fn StringView::iterator2(self : StringView) -> Iterator[(Int, Char)] {
+  let start = self.start()
+  let end = self.end()
+  let mut index = start
+  let mut char_index = 0
+  Iterator::new(fn() {
+    guard index < end else { None }
+    let c1 = self.str().unsafe_charcode_at(index)
+    if c1.is_leading_surrogate() && index + 1 < self.end() {
+      let c2 = self.str().unsafe_charcode_at(index + 1)
+      if c2.is_trailing_surrogate() {
+        let result = (char_index, code_point_of_surrogate_pair(c1, c2))
+        index += 2
+        char_index += 1
+        return Some(result)
+      }
+    }
+    let result = (char_index, c1.unsafe_to_char())
+    index += 1
+    char_index += 1
+    Some(result)
+  })
+}
+
+///|
 /// Returns an iterator over the Unicode characters in the string view in reverse order.
 pub fn StringView::rev_iter(self : StringView) -> Iter[Char] {
   Iter::new(yield_ => for index = self.end() - 1
@@ -275,6 +321,27 @@ pub fn StringView::rev_iter(self : StringView) -> Iter[Char] {
     guard yield_(c1.unsafe_to_char()) is IterContinue else { break IterEnd }
   } else {
     IterContinue
+  })
+}
+
+///|
+/// Returns an iterator over the Unicode characters in the string view in reverse order.
+pub fn StringView::rev_iterator(self : StringView) -> Iterator[Char] {
+  let start = self.start()
+  let end = self.end()
+  let mut index = end
+  Iterator::new(fn() {
+    guard index > start else { None }
+    index -= 1
+    let c1 = self.str().unsafe_charcode_at(index)
+    if c1.is_trailing_surrogate() && index - 1 >= 0 {
+      let c2 = self.str().unsafe_charcode_at(index - 1)
+      if c2.is_leading_surrogate() {
+        index -= 1
+        return Some(code_point_of_surrogate_pair(c2, c1))
+      }
+    }
+    Some(c1.unsafe_to_char())
   })
 }
 
@@ -385,6 +452,12 @@ pub fn StringView::from_array(chars : ArrayView[Char]) -> StringView {
 /// Convert char iterator to string view.
 pub fn StringView::from_iter(iter : Iter[Char]) -> StringView {
   String::from_iter(iter)
+}
+
+///|
+/// Convert char iterator to string view.
+pub fn StringView::from_iterator(iter : Iterator[Char]) -> StringView {
+  String::from_iterator(iter)
 }
 
 ///|

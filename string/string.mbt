@@ -42,6 +42,15 @@ pub fn String::from_iter(iter : Iter[Char]) -> String {
 }
 
 ///|
+/// Convert char iterator to string,
+/// a simple wrapper for `from_array`.
+#as_free_fn
+pub fn String::from_iterator(iter : Iterator[Char]) -> String {
+  let chars = iter.collect()
+  String::from_array(chars)
+}
+
+///|
 /// Strings are ordered based on shortlex order by their charcodes (code units). This 
 /// orders Unicode characters based on their positions in the code charts. This is
 /// not necessarily the same as "alphabetical" order, which varies by language
@@ -132,6 +141,37 @@ pub fn String::iter(self : String) -> Iter[Char] {
 }
 
 ///|
+/// Returns an iterator over the Unicode characters in the string.
+///
+/// Note: This iterator yields Unicode characters, not Utf16 code units.
+/// As a result, the count of characters returned by `iterator().count()` may not be equal to the length of the string returned by `length()`.
+///
+/// ```mbt
+///   let s = "Hello, World!🤣";
+///   assert_eq(s.iterator().count(), 14); // Unicode characters
+///   assert_eq(s.length(), 15); // Utf16 code units
+/// ```
+pub fn String::iterator(self : String) -> Iterator[Char] {
+  let len = self.length()
+  let mut index = 0
+  Iterator::new(fn() {
+    guard index < len else { None }
+    let c1 = self.unsafe_charcode_at(index)
+    if c1.is_leading_surrogate() && index + 1 < len {
+      let c2 = self.unsafe_charcode_at(index + 1)
+      if c2.is_trailing_surrogate() {
+        let c = code_point_of_surrogate_pair(c1, c2)
+        index += 2
+        return Some(c)
+      }
+    }
+    index += 1
+    //TODO: handle garbage input
+    Some(c1.unsafe_to_char())
+  })
+}
+
+///|
 pub fn String::iter2(self : String) -> Iter2[Int, Char] {
   Iter2::new(yield_ => {
     let len = self.length()
@@ -153,6 +193,11 @@ pub fn String::iter2(self : String) -> Iter2[Int, Char] {
       IterContinue
     }
   })
+}
+
+///|
+pub fn String::iterator2(self : String) -> Iterator[(Int, Char)] {
+  self.iterator().iterator2()
 }
 
 ///|
@@ -199,6 +244,50 @@ pub fn String::rev_iter(self : String) -> Iter[Char] {
     } else {
       IterContinue
     }
+  })
+}
+
+///|
+/// Returns an iterator that yields characters from the end to the start of the string. This function handles
+/// Unicode surrogate pairs correctly, ensuring that characters are not split across surrogate pairs.
+///
+/// # Parameters
+///
+/// - `self` : The input `String` to be iterated in reverse.
+///
+/// # Returns
+///
+/// - An `Iter[Char]` that yields characters from the end to the start of the string.
+///
+/// # Behavior
+///
+/// - The function iterates over the string in reverse order.
+/// - If a trailing surrogate is encountered, it checks for a preceding leading surrogate to form a complete Unicode code point.
+/// - Yields each character or combined code point to the iterator.
+/// - Stops iteration if the `yield_` function returns `IterEnd`.
+///
+/// # Examples
+///
+/// ```mbt
+///   let input = "Hello, World!"
+///   let reversed = input.rev_iterator().collect()
+///   assert_eq(reversed, ['!', 'd', 'l', 'r', 'o', 'W', ' ', ',', 'o', 'l', 'l', 'e', 'H'])
+/// ```
+pub fn String::rev_iterator(self : String) -> Iterator[Char] {
+  let len = self.length()
+  let mut index = len
+  Iterator::new(fn() {
+    guard index > 0 else { None }
+    index -= 1
+    let c1 = self.unsafe_charcode_at(index)
+    if c1.is_trailing_surrogate() && index - 1 >= 0 {
+      let c2 = self.unsafe_charcode_at(index - 1)
+      if c2.is_leading_surrogate() {
+        index -= 1
+        return Some(code_point_of_surrogate_pair(c2, c1))
+      }
+    }
+    Some(c1.unsafe_to_char())
   })
 }
 

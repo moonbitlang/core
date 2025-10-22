@@ -23,6 +23,10 @@ test "ReadOnlyArray constructors" {
   let arr2 = ReadOnlyArray::from_iter([4, 5, 6].iter())
   inspect(arr2[1], content="5")
 
+  // Test from_iterator
+  let arr2 = ReadOnlyArray::from_iterator([4, 5, 6].iterator())
+  inspect(arr2[1], content="5")
+
   // Test makei
   let arr3 = ReadOnlyArray::makei(3, fn(i) { i * 10 })
   inspect(arr3[0], content="0")

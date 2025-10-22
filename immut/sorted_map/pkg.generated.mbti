@@ -39,6 +39,8 @@ fn[K : Compare, V] SortedMap::from_array(Array[(K, V)]) -> Self[K, V]
 #as_free_fn
 fn[K : Compare, V] SortedMap::from_iter(Iter[(K, V)]) -> Self[K, V]
 #as_free_fn
+fn[K : Compare, V] SortedMap::from_iterator(Iterator[(K, V)]) -> Self[K, V]
+#as_free_fn
 fn[V : @json.FromJson] SortedMap::from_json(Json) -> Self[String, V] raise @json.JsonDecodeError
 fn[K : Compare, V] SortedMap::get(Self[K, V], K) -> V?
 fn[K : Hash, V : Hash] SortedMap::hash(Self[K, V]) -> Int // from trait `Hash`
@@ -46,6 +48,8 @@ fn[K : Hash, V : Hash] SortedMap::hash_combine(Self[K, V], Hasher) -> Unit // fr
 fn[K, V] SortedMap::is_empty(Self[K, V]) -> Bool
 fn[K, V] SortedMap::iter(Self[K, V]) -> Iter[(K, V)]
 fn[K, V] SortedMap::iter2(Self[K, V]) -> Iter2[K, V]
+#alias(iterator2)
+fn[K, V] SortedMap::iterator(Self[K, V]) -> Iterator[(K, V)]
 #deprecated
 fn[K, V] SortedMap::keys(Self[K, V]) -> Array[K]
 fn[K, V] SortedMap::keys_as_iter(Self[K, V]) -> Iter[K]

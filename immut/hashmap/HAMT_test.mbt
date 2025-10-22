@@ -112,6 +112,19 @@ test "HAMT::iter" {
 }
 
 ///|
+test "HAMT::iter" {
+  let data = @hashmap.of([(0, "a"), (2, "b"), (3, "d"), (5, "e"), (11111, "f")])
+  let array = data.iterator().collect()
+  array.sort()
+  inspect(
+    array,
+    content=(
+      #|[(0, "a"), (2, "b"), (3, "d"), (5, "e"), (11111, "f")]
+    ),
+  )
+}
+
+///|
 test "HAMT::iter2" {
   let data = @hashmap.of([(0, "a"), (2, "b"), (3, "d"), (5, "e"), (11111, "f")])
   let array = data.iter2().to_array()
@@ -170,8 +183,8 @@ test "to_array" {
 }
 
 ///|
-test "from_iter multiple elements iter" {
-  let map = @hashmap.from_iter([(1, 1), (2, 2), (3, 3)].iter())
+test "from_iterator multiple elements iter" {
+  let map = @hashmap.from_iterator([(1, 1), (2, 2), (3, 3)].iterator())
   guard map is { 1: 1, 2: 2, 3: 3, .. } else {
     fail("Map is not as expected: \{map}")
   }
@@ -179,16 +192,18 @@ test "from_iter multiple elements iter" {
 }
 
 ///|
-test "from_iter single element iter" {
+test "from_iterator single element iter" {
   inspect(
-    @hashmap.from_iter([(1, 1)].iter()),
+    @hashmap.from_iterator([(1, 1)].iterator()),
     content="@immut/hashmap.of([(1, 1)])",
   )
 }
 
 ///|
-test "from_iter empty iter" {
-  let pq : @hashmap.HashMap[Int, Int] = @hashmap.from_iter(Iter::empty())
+test "from_iterator empty iter" {
+  let pq : @hashmap.HashMap[Int, Int] = @hashmap.from_iterator(
+    Iterator::empty(),
+  )
   inspect(pq, content="@immut/hashmap.of([])")
 }
 

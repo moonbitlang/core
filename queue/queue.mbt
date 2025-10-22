@@ -327,6 +327,28 @@ pub fn[A] Queue::iter(self : Queue[A]) -> Iter[A] {
 }
 
 ///|
+/// Creates an iter from the queue.
+///
+/// # Example
+/// ```mbt
+///   let queue : @queue.Queue[Int] = @queue.of([5, 6, 7, 8])
+///   let sum = queue.iterator().fold((x, y) => { x + y }, init=0)
+///   assert_eq(sum, 26)
+/// ```
+pub fn[A] Queue::iterator(self : Queue[A]) -> Iterator[A] {
+  let mut next_node = self.first
+  Iterator::new(fn() {
+    match next_node {
+      None => None
+      Some({ content, next }) => {
+        next_node = next
+        Some(content)
+      }
+    }
+  })
+}
+
+///|
 /// Creates a new queue from an iter.
 ///
 /// # Example
@@ -338,6 +360,23 @@ pub fn[A] Queue::iter(self : Queue[A]) -> Iter[A] {
 pub fn[A] Queue::from_iter(iter : Iter[A]) -> Queue[A] {
   let q = new()
   iter.each(e => q.push(e))
+  q
+}
+
+///|
+/// Creates a new queue from an iter.
+///
+/// # Example
+/// ```mbt
+///   let queue : @queue.Queue[Int] = @queue.from_iterator(Iterator::empty())
+///   assert_eq(queue.length(), 0)
+/// ```
+#as_free_fn
+pub fn[A] Queue::from_iterator(iter : Iterator[A]) -> Queue[A] {
+  let q = new()
+  while iter.next() is Some(e) {
+    q.push(e)
+  }
   q
 }
 

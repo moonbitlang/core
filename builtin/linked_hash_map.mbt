@@ -565,6 +565,22 @@ pub fn[K, V] Map::iter(self : Map[K, V]) -> Iter[(K, V)] {
 }
 
 ///|
+/// Returns the iterator of the hash map, provide elements in the order of insertion.
+#alias(iterator2)
+pub fn[K, V] Map::iterator(self : Map[K, V]) -> Iterator[(K, V)] {
+  let mut curr_entry = self.head
+  Iterator::new(fn() {
+    match curr_entry {
+      Some({ key, value, next, .. }) => {
+        curr_entry = next
+        Some((key, value))
+      }
+      None => None
+    }
+  })
+}
+
+///|
 pub fn[K, V] Map::iter2(self : Map[K, V]) -> Iter2[K, V] {
   Iter2::new(yield_ => loop self.head {
     Some({ key, value, next, .. }) => {
@@ -647,6 +663,17 @@ pub fn[K : Hash + Eq, V] Map::from_iter(iter : Iter[(K, V)]) -> Map[K, V] {
   let m = {}
   for e in iter {
     m.set(e.0, e.1)
+  }
+  m
+}
+
+///|
+pub fn[K : Hash + Eq, V] Map::from_iterator(
+  iter : Iterator[(K, V)],
+) -> Map[K, V] {
+  let m = {}
+  while iter.next() is Some((k, v)) {
+    m.set(k, v)
   }
   m
 }

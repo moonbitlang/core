@@ -291,6 +291,14 @@ pub fn[T] Option::iter(self : T?) -> Iter[T] {
 }
 
 ///|
+pub fn[T] Option::iterator(self : T?) -> Iterator[T] {
+  match self {
+    Some(v) => Iterator::singleton(v)
+    None => Iterator::empty()
+  }
+}
+
+///|
 test "iter" {
   let x = Option::Some(42)
   let exb = StringBuilder::new(size_hint=0)

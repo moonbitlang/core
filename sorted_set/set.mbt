@@ -339,8 +339,8 @@ pub fn[V : Compare] SortedSet::disjoint(
 ///|
 pub impl[V : Eq] Eq for SortedSet[V] with equal(self, other) {
   guard self.size == other.size else { return false }
-  let iter = self.into_iterator()
-  let iter1 = other.into_iterator()
+  let iter = self.iterator()
+  let iter1 = other.iterator()
   while iter.next() is Some(a) && iter1.next() is Some(b) {
     guard a == b else { break false }
   } else {
@@ -437,10 +437,46 @@ pub fn[V] SortedSet::iter(self : SortedSet[V]) -> Iter[V] {
 }
 
 ///|
+/// Returns a iterator.
+pub fn[V] SortedSet::iterator(self : SortedSet[V]) -> Iterator[V] {
+  let mut curr_node = self.root
+  let parents = []
+  Iterator::new(fn() {
+    loop curr_node {
+      Some({ left: None, value, right, height: _ }) => {
+        curr_node = right
+        Some(value)
+      }
+      Some({ left, value, right, height: _ }) => {
+        parents.push((value, right))
+        continue left
+      }
+      None if parents.pop() is Some((value, right)) => {
+        curr_node = right
+        Some(value)
+      }
+      None => None
+    }
+  })
+}
+
+///|
 #as_free_fn
 pub fn[V : Compare] SortedSet::from_iter(iter : Iter[V]) -> SortedSet[V] {
   let s = new()
   iter.each(e => s.add(e))
+  s
+}
+
+///|
+#as_free_fn
+pub fn[V : Compare] SortedSet::from_iterator(
+  iter : Iterator[V],
+) -> SortedSet[V] {
+  let s = new()
+  while iter.next() is Some(e) {
+    s.add(e)
+  }
   s
 }
 

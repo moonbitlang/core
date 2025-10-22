@@ -33,6 +33,8 @@ fn[A : Compare] SortedSet::from_array(ArrayView[A]) -> Self[A]
 #as_free_fn
 fn[A : Compare] SortedSet::from_iter(Iter[A]) -> Self[A]
 #as_free_fn
+fn[A : Compare] SortedSet::from_iterator(Iterator[A]) -> Self[A]
+#as_free_fn
 fn[A : @json.FromJson + Compare] SortedSet::from_json(Json) -> Self[A] raise @json.JsonDecodeError
 fn[A : Hash] SortedSet::hash(Self[A]) -> Int // from trait `Hash`
 fn[A : Hash] SortedSet::hash_combine(Self[A], Hasher) -> Unit // from trait `Hash`
@@ -41,6 +43,7 @@ fn[A : Compare] SortedSet::inter(Self[A], Self[A]) -> Self[A]
 fn[A : Compare] SortedSet::intersection(Self[A], Self[A]) -> Self[A]
 fn[A] SortedSet::is_empty(Self[A]) -> Bool
 fn[A] SortedSet::iter(Self[A]) -> Iter[A]
+fn[A] SortedSet::iterator(Self[A]) -> Iterator[A]
 #alias(size, deprecated)
 fn[A] SortedSet::length(Self[A]) -> Int
 fn[A, B : Compare] SortedSet::map(Self[A], (A) -> B raise?) -> Self[B] raise?

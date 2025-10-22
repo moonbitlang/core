@@ -3,6 +3,7 @@
   "test-import": [
     "moonbitlang/core/list",
     "moonbitlang/core/json",
+    "moonbitlang/core/array",
     "moonbitlang/core/quickcheck",
     "moonbitlang/core/encoding/utf8"
   ],

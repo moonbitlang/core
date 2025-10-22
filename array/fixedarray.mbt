@@ -1129,6 +1129,27 @@ pub fn[T] FixedArray::from_iter(iter : Iter[T]) -> FixedArray[T] {
 }
 
 ///|
+/// Creates a new fixed array from an iterator.
+///
+/// Parameters:
+///
+/// * `iterator` : An iterator of type `Iter[T]` from which elements will be
+/// collected into a fixed array.
+///
+/// Returns a new fixed array containing all elements from the iterator.
+///
+/// Example:
+///
+/// ```moonbit
+///   let arr = [1, 2, 3]
+///   let fixed_arr = FixedArray::from_iterator(arr.iterator())
+///   inspect(fixed_arr, content="[1, 2, 3]")
+/// ```
+pub fn[T] FixedArray::from_iterator(iter : Iterator[T]) -> FixedArray[T] {
+  FixedArray::from_array(iter.collect())
+}
+
+///|
 /// Returns the last element of a fixed array if it exists.
 ///
 /// Parameters:
@@ -1243,4 +1264,9 @@ pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for FixedArray[X] with
 ) {
   let len = if size == 0 { 0 } else { rs.next_positive_int() % size }
   FixedArray::makei(len, i => X::arbitrary(i, rs))
+}
+
+///|
+pub fn[X] FixedArray::iterator(self : FixedArray[X]) -> Iterator[X] {
+  self[:].iterator()
 }

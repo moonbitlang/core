@@ -38,8 +38,39 @@ pub fn[A] SortedSet::iter(self : SortedSet[A]) -> Iter[A] {
 }
 
 ///|
+pub fn[A] SortedSet::iterator(self : SortedSet[A]) -> Iterator[A] {
+  let mut curr_node = self
+  let parents = []
+  Iterator::new(fn() {
+    loop curr_node {
+      Node(left=Empty, right~, value~, size=_) => {
+        curr_node = right
+        Some(value)
+      }
+      Node(left~, right~, value~, size=_) => {
+        parents.push((value, right))
+        continue left
+      }
+      Empty if parents.pop() is Some((value, right)) => {
+        curr_node = right
+        Some(value)
+      }
+      Empty => None
+    }
+  })
+}
+
+///|
 #as_free_fn
 pub fn[A : Compare] SortedSet::from_iter(iter : Iter[A]) -> SortedSet[A] {
+  iter.fold(init=new(), (s, e) => s.add(e))
+}
+
+///|
+#as_free_fn
+pub fn[A : Compare] SortedSet::from_iterator(
+  iter : Iterator[A],
+) -> SortedSet[A] {
   iter.fold(init=new(), (s, e) => s.add(e))
 }
 
@@ -53,8 +84,8 @@ pub impl[A : Eq] Eq for SortedSet[A] with equal(self, other) -> Bool {
   // There's no `Iter::zip` (https://github.com/moonbitlang/core/issues/994#issuecomment-2350935193),
   // so we have to use the manual implementation below:
   guard self.size() == other.size() else { return false }
-  let iter = self.into_iterator()
-  let iter1 = other.into_iterator()
+  let iter = self.iterator()
+  let iter1 = other.iterator()
   while iter.next() is Some(a) && iter1.next() is Some(b) {
     guard a == b else { break false }
   } else {
@@ -67,8 +98,8 @@ pub impl[A : Compare] Compare for SortedSet[A] with compare(self, other) -> Int 
   let my_size = self.size()
   let other_size = other.size()
   guard my_size == other_size else { return my_size - other_size }
-  let iter = self.into_iterator()
-  let iter1 = other.into_iterator()
+  let iter = self.iterator()
+  let iter1 = other.iterator()
   while iter.next() is Some(a) && iter1.next() is Some(b) {
     let cmp = a.compare(b)
     guard cmp is 0 else { break cmp }

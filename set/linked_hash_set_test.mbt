@@ -169,6 +169,17 @@ test "symmetric_difference" {
 }
 
 ///|
+test "iterator" {
+  let buf = StringBuilder::new(size_hint=20)
+  let map = @set.Set::of(["a", "b", "c"])
+  map.iterator().each(e => buf.write_string("[\{e}]"))
+  inspect(buf, content="[a][b][c]")
+  buf.reset()
+  map.iterator().take(2).each(e => buf.write_string("[\{e}]"))
+  inspect(buf, content="[a][b]")
+}
+
+///|
 test "insert_and_grow" {
   let m = @set.Set::new()
   for i in 0..<10 {
@@ -236,6 +247,22 @@ test "from_iter single element iter" {
 ///|
 test "from_iter empty iter" {
   let map : @set.Set[Int] = @set.Set::from_iter(Iter::empty())
+  inspect(map, content="{}")
+}
+
+///|
+test "from_iterator multiple elements iter" {
+  inspect(@set.Set::from_iterator([1, 2, 3].iterator()), content="{1, 2, 3}")
+}
+
+///|
+test "from_iterator single element iter" {
+  inspect(@set.Set::from_iterator([1].iterator()), content="{1}")
+}
+
+///|
+test "from_iterator empty iter" {
+  let map : @set.Set[Int] = @set.Set::from_iterator(Iterator::empty())
   inspect(map, content="{}")
 }
 

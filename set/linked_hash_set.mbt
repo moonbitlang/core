@@ -443,6 +443,21 @@ pub fn[K] Set::iter(self : Set[K]) -> Iter[K] {
 }
 
 ///|
+/// Returns the iterator of the hash set, provide elements in the order of insertion.
+pub fn[K] Set::iterator(self : Set[K]) -> Iterator[K] {
+  let mut curr_entry = self.head
+  Iterator::new(fn() {
+    match curr_entry {
+      Some({ key, next, .. }) => {
+        curr_entry = next
+        Some(key)
+      }
+      None => None
+    }
+  })
+}
+
+///|
 /// Converts the hash set to an array.
 pub fn[K] Set::to_array(self : Set[K]) -> Array[K] {
   let arr = Array::new(capacity=self.size)
@@ -487,6 +502,16 @@ pub fn[K : Hash + Eq] Set::of(arr : FixedArray[K]) -> Set[K] {
 pub fn[K : Hash + Eq] Set::from_iter(iter : Iter[K]) -> Set[K] {
   let m = Set::new()
   for e in iter {
+    m.add(e)
+  }
+  m
+}
+
+///|
+#as_free_fn
+pub fn[K : Hash + Eq] Set::from_iterator(iter : Iterator[K]) -> Set[K] {
+  let m = Set::new()
+  while iter.next() is Some(e) {
     m.add(e)
   }
   m

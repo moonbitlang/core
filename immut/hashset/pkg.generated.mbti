@@ -22,11 +22,14 @@ fn[A : Eq] HashSet::equal(Self[A], Self[A]) -> Bool // from trait `Eq`
 fn[A : Eq + Hash] HashSet::from_array(ArrayView[A]) -> Self[A]
 #as_free_fn
 fn[A : Eq + Hash] HashSet::from_iter(Iter[A]) -> Self[A]
+#as_free_fn
+fn[A : Eq + Hash] HashSet::from_iterator(Iterator[A]) -> Self[A]
 fn[A : Hash] HashSet::hash(Self[A]) -> Int // from trait `Hash`
 fn[A : Hash] HashSet::hash_combine(Self[A], Hasher) -> Unit // from trait `Hash`
 fn[K : Eq] HashSet::intersection(Self[K], Self[K]) -> Self[K]
 fn[A] HashSet::is_empty(Self[A]) -> Bool
 fn[A] HashSet::iter(Self[A]) -> Iter[A]
+fn[A] HashSet::iterator(Self[A]) -> Iterator[A]
 #alias(size, deprecated)
 fn[A] HashSet::length(Self[A]) -> Int
 #as_free_fn

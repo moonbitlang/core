@@ -34,6 +34,27 @@ pub fn[T] Array::from_iter(iter : Iter[T]) -> Array[T] {
 }
 
 ///|
+/// Creates a new array containing all elements from an iterator.
+///
+/// Parameters:
+///
+/// * `iter` : An iterator containing elements of type `T`.
+///
+/// Returns a new array containing all elements from the iterator in the same
+/// order.
+///
+/// Example:
+///
+/// ```moonbit
+///   let iter = Iterator::singleton(42)
+///   let arr = Array::from_iterator(iter)
+///   inspect(arr, content="[42]")
+/// ```
+pub fn[T] Array::from_iterator(iter : Iterator[T]) -> Array[T] {
+  iter.collect()
+}
+
+///|
 /// Adds all elements from an iterator to the end of the array.
 ///
 /// This function iterates over each element in the provided iterator
@@ -294,4 +315,19 @@ pub fn[A : @string.ToStringView] Array::join(
   separator : StringView,
 ) -> String {
   self[:].join(separator)
+}
+
+///|
+pub fn[X] Array::iterator(self : Array[X]) -> Iterator[X] {
+  self[:].iterator()
+}
+
+///|
+pub fn[X] Array::rev_iterator(self : Array[X]) -> Iterator[X] {
+  self[:].rev_iterator()
+}
+
+///|
+pub fn[X] Array::iterator2(self : Array[X]) -> Iterator[(Int, X)] {
+  self[:].iterator2()
 }

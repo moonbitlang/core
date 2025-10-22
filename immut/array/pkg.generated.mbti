@@ -32,11 +32,14 @@ fn[A] T::fold_right(Self[A], (A, A) -> A raise?, init~ : A) -> A raise?
 fn[A] T::from_array(ArrayView[A]) -> Self[A]
 #as_free_fn
 fn[A] T::from_iter(Iter[A]) -> Self[A]
+#as_free_fn
+fn[A] T::from_iterator(Iterator[A]) -> Self[A]
 fn[A] T::get(Self[A], Int) -> A?
 fn[A : Hash] T::hash(Self[A]) -> Int // from trait `Hash`
 fn[A : Hash] T::hash_combine(Self[A], Hasher) -> Unit // from trait `Hash`
 fn[A] T::is_empty(Self[A]) -> Bool
 fn[A] T::iter(Self[A]) -> Iter[A]
+fn[A] T::iterator(Self[A]) -> Iterator[A]
 fn[A] T::length(Self[A]) -> Int
 #as_free_fn
 fn[A] T::make(Int, A) -> Self[A]

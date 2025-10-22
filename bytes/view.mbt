@@ -219,6 +219,55 @@ pub fn BytesView::iter(self : BytesView) -> Iter[Byte] {
 }
 
 ///|
+/// Returns an iterator over the `View`.
+/// 
+/// # Example
+/// 
+/// ```mbt
+///   let bv = b"\x00\x01\x02\x03\x04\x05"[:]
+///   let mut sum = 0
+///   bv.iterator().each((x) => { sum = sum + x.to_int() })
+///   inspect(sum, content="15")
+/// ```
+pub fn BytesView::iterator(self : BytesView) -> Iterator[Byte] {
+  let mut i = 0
+  let len = self.length()
+  Iterator::new(fn() {
+    guard i < len else { None }
+    let result = self.unsafe_get(i)
+    i += 1
+    Some(result)
+  })
+}
+
+///|
+/// Returns an iterator over the `View` with index.
+/// 
+/// Example:
+///
+/// ```moonbit
+///   let buf = StringBuilder::new(size_hint=5)
+///   let keys = []
+///   let it = b"abcde"[:].iterator2()
+///   while it.next() is Some((i, x)) {
+///     buf.write_string(x.to_string())
+///     keys.push( i )
+///   }
+///   inspect(buf, content="b'\\x61'b'\\x62'b'\\x63'b'\\x64'b'\\x65'")
+///   inspect(keys, content="[0, 1, 2, 3, 4]")
+/// ```
+pub fn BytesView::iterator2(self : BytesView) -> Iterator[(Int, Byte)] {
+  let mut i = 0
+  let len = self.length()
+  Iterator::new(fn() {
+    guard i < len else { None }
+    let result = (i, self.unsafe_get(i))
+    i += 1
+    Some(result)
+  })
+}
+
+///|
 /// Converts a 4-byte sequence to an unsigned 32-bit integer using big-endian
 /// byte order. The first byte is treated as the most significant byte, and the
 /// last byte as the least significant byte.

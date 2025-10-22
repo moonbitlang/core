@@ -78,6 +78,42 @@ pub fn[K, V] HashMap::iter(self : HashMap[K, V]) -> Iter[(K, V)] {
 }
 
 ///|
+/// Returns an iterator over the key-value pairs in the map.
+///
+/// Parameters:
+///
+/// * `map` : The hash map to iterate over.
+///
+/// Returns an iterator that yields tuples of `(key, value)` for each entry in
+/// the map, in unspecified order.
+///
+/// Example:
+///
+/// ```moonbit
+///   let map = @hashmap.of([(1, "one"), (2, "two")])
+///   let pairs = map.iterator().to_array()
+///   inspect(pairs.length(), content="2")
+///   inspect(pairs.contains((1, "one")), content="true")
+///   inspect(pairs.contains((2, "two")), content="true")
+/// ```
+#alias(iterator2)
+pub fn[K, V] HashMap::iterator(self : HashMap[K, V]) -> Iterator[(K, V)] {
+  let mut i = 0
+  let len = self.entries.length()
+  Iterator::new(fn() {
+    while i < len {
+      let entry = self.entries.unsafe_get(i)
+      i += 1
+      if entry is Some({ key, value, .. }) {
+        return Some((key, value))
+      }
+    } else {
+      None
+    }
+  })
+}
+
+///|
 /// Creates an iterator over the key-value pairs in the map, where the key and
 /// value are passed as separate arguments to the yielding function.
 ///
@@ -142,6 +178,37 @@ pub fn[K : Hash + Eq, V] HashMap::from_iter(
 ) -> HashMap[K, V] {
   let m = new()
   iter.each(e => m[e.0] = e.1)
+  m
+}
+
+///|
+/// Creates a new hash map from an iterator of key-value pairs.
+///
+/// Parameters:
+///
+/// * `iter` : An iterator that yields key-value pairs. The key type must
+/// implement both `Hash` and `Eq` traits.
+///
+/// Returns a new hash map containing all key-value pairs from the iterator. If
+/// the iterator yields multiple pairs with the same key, the later value will
+/// overwrite the earlier one.
+///
+/// Example:
+///
+/// ```moonbit
+///   let iter = Iterator::singleton((1, "one")) + Iterator::singleton((2, "two"))
+///   let map = @hashmap.from_iterator(iter)
+///   inspect(map.get(1), content="Some(\"one\")")
+///   inspect(map.get(2), content="Some(\"two\")")
+/// ```
+#as_free_fn
+pub fn[K : Hash + Eq, V] HashMap::from_iterator(
+  iter : Iterator[(K, V)],
+) -> HashMap[K, V] {
+  let m = new()
+  while iter.next() is Some((k, v)) {
+    m[k] = v
+  }
   m
 }
 

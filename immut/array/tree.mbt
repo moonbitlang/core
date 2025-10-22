@@ -295,6 +295,34 @@ fn[A] Tree::iter(self : Tree[A]) -> Iter[A] {
 }
 
 ///|
+fn[A] Tree::iterator(self : Tree[A]) -> Iterator[A] {
+  let mut curr_tree = self
+  let mut curr_index = 0
+  let parents = []
+  Iterator::new(fn() {
+    loop curr_tree {
+      Node(children, _) as t if curr_index < children.length() => {
+        let child = children.unsafe_get(curr_index)
+        parents.push((t, curr_index + 1))
+        curr_index = 0
+        continue child
+      }
+      Leaf(elems) if curr_index < elems.length() => {
+        let elem = elems.unsafe_get(curr_index)
+        curr_index += 1
+        Some(elem)
+      }
+      _ if parents.pop() is Some((parent_tree, parent_index)) => {
+        curr_tree = parent_tree
+        curr_index = parent_index
+        continue parent_tree
+      }
+      _ => None
+    }
+  })
+}
+
+///|
 /// For each element in the tree, apply the function `f` with the index of the element.
 fn[A] Tree::eachi(
   self : Tree[A],

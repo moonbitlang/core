@@ -89,6 +89,14 @@ test "from_iter" {
 }
 
 ///|
+test "from_iterator" {
+  let arr : Array[Int] = []
+  inspect(Array::from_iterator(arr.iterator()), content="[]")
+  let arr = [1, 2, 3, 4, 5]
+  inspect(Array::from_iterator(arr.iterator()), content="[1, 2, 3, 4, 5]")
+}
+
+///|
 test "Array::last" {
   // Test with a random array of integers
   inspect([1, 2, 3, 4, 5].last(), content="Some(5)")

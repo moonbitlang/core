@@ -19,10 +19,13 @@ fn[A : Compare] PriorityQueue::equal(Self[A], Self[A]) -> Bool // from trait `Eq
 fn[A : Compare] PriorityQueue::from_array(Array[A]) -> Self[A]
 #as_free_fn
 fn[A : Compare] PriorityQueue::from_iter(Iter[A]) -> Self[A]
+#as_free_fn
+fn[A : Compare] PriorityQueue::from_iterator(Iterator[A]) -> Self[A]
 fn[A : Hash + Compare] PriorityQueue::hash(Self[A]) -> Int // from trait `Hash`
 fn[A : Hash + Compare] PriorityQueue::hash_combine(Self[A], Hasher) -> Unit // from trait `Hash`
 fn[A] PriorityQueue::is_empty(Self[A]) -> Bool
 fn[A : Compare] PriorityQueue::iter(Self[A]) -> Iter[A]
+fn[A : Compare] PriorityQueue::iterator(Self[A]) -> Iterator[A]
 fn[A] PriorityQueue::length(Self[A]) -> Int
 #as_free_fn
 fn[A] PriorityQueue::new() -> Self[A]

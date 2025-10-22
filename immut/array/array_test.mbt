@@ -61,13 +61,14 @@ test "iter" {
 }
 
 ///|
-test "each" {
-  let v = @array.of([1, 2, 3, 4, 5])
-  let mut s = 0
-  v.each(e => s = s + e)
-  inspect(s, content="15")
-  let v : @array.T[Int] = @array.new()
-  v.each(_e => abort("never reach"))
+test "iterator" {
+  let buf = StringBuilder::new(size_hint=20)
+  let v = @array.of([1, 2, 3])
+  v.iterator().each(e => buf.write_string("[\{e}]"))
+  inspect(buf, content="[1][2][3]")
+  buf.reset()
+  v.iterator().take(2).each(e => buf.write_string("[\{e}]"))
+  inspect(buf, content="[1][2]")
 }
 
 ///|
@@ -226,6 +227,33 @@ test "from_iter single element iter" {
 ///|
 test "from_iter empty iter" {
   let pq : @array.T[Int] = @array.from_iter(Iter::empty())
+  inspect(pq, content="@immut/array.of([])")
+}
+
+///|
+test "from_iterator multiple elements iter" {
+  inspect(
+    @array.from_iterator([1, 2, 3].iterator()),
+    content="@immut/array.of([1, 2, 3])",
+  )
+  inspect(
+    Array::makei(32, i => i).iterator() |> @array.from_iterator(),
+    content="@immut/array.of([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31])",
+  )
+  inspect(
+    Array::makei(33, i => i).iterator() |> @array.from_iterator(),
+    content="@immut/array.of([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32])",
+  )
+}
+
+///|
+test "from_iterator single element iter" {
+  inspect(@array.from_iterator([1].iterator()), content="@immut/array.of([1])")
+}
+
+///|
+test "from_iterator empty iter" {
+  let pq : @array.T[Int] = @array.from_iterator(Iterator::empty())
   inspect(pq, content="@immut/array.of([])")
 }
 
