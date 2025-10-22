@@ -647,6 +647,52 @@ pub fn[K, V] HashMap::iter(self : HashMap[K, V]) -> Iter[(K, V)] {
 }
 
 ///|
+/// Converted to Iterator
+#alias(iterator2)
+pub fn[K, V] HashMap::iterator(self : HashMap[K, V]) -> Iterator[(K, V)] {
+  enum CurrNode {
+    Tree(Node[K, V])
+    Bucket(@list.List[(K, V)])
+  }
+  let empty = Bucket(@list.new())
+  let mut curr_node = match self.0 {
+    Some(tree) => Tree(tree)
+    None => empty
+  }
+  let mut curr_index = 0
+  let parents = []
+  Iterator::new(fn() {
+    loop curr_node {
+      Tree(Flat(k, v, _)) => {
+        curr_node = empty
+        Some((k, v))
+      }
+      Tree(Leaf(k, v, bucket)) => {
+        curr_node = Bucket(bucket)
+        Some((k, v))
+      }
+      Bucket(More(pair, tail~)) => {
+        curr_node = Bucket(tail)
+        Some(pair)
+      }
+      Tree(Branch(children)) as n if curr_index < children.length() => {
+        let child = children.data[curr_index]
+        parents.push((n, curr_index + 1))
+        curr_index = 0
+        continue Tree(child)
+      }
+      Bucket(Empty) | Tree(Branch(_)) if parents.pop()
+        is Some((parent, parent_index)) => {
+        curr_node = parent
+        curr_index = parent_index
+        continue parent
+      }
+      Bucket(Empty) | Tree(Branch(_)) => None
+    }
+  })
+}
+
+///|
 pub fn[K, V] HashMap::iter2(self : HashMap[K, V]) -> Iter2[K, V] {
   Iter2::new(yield_ => for kv in self {
     guard yield_(kv.0, kv.1) is IterContinue else { break IterEnd }
@@ -659,6 +705,14 @@ pub fn[K, V] HashMap::iter2(self : HashMap[K, V]) -> Iter2[K, V] {
 #as_free_fn
 pub fn[K : Eq + Hash, V] HashMap::from_iter(
   iter : Iter[(K, V)],
+) -> HashMap[K, V] {
+  iter.fold(init=new(), (m, e) => m.add(e.0, e.1))
+}
+
+///|
+#as_free_fn
+pub fn[K : Eq + Hash, V] HashMap::from_iterator(
+  iter : Iterator[(K, V)],
 ) -> HashMap[K, V] {
   iter.fold(init=new(), (m, e) => m.add(e.0, e.1))
 }

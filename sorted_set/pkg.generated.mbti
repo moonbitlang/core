@@ -30,11 +30,14 @@ fn[V : Eq] SortedSet::equal(Self[V], Self[V]) -> Bool // from trait `Eq`
 fn[V : Compare] SortedSet::from_array(ArrayView[V]) -> Self[V]
 #as_free_fn
 fn[V : Compare] SortedSet::from_iter(Iter[V]) -> Self[V]
+#as_free_fn
+fn[V : Compare] SortedSet::from_iterator(Iterator[V]) -> Self[V]
 #deprecated
 fn[V : Compare] SortedSet::intersect(Self[V], Self[V]) -> Self[V]
 fn[V : Compare] SortedSet::intersection(Self[V], Self[V]) -> Self[V]
 fn[V] SortedSet::is_empty(Self[V]) -> Bool
 fn[V] SortedSet::iter(Self[V]) -> Iter[V]
+fn[V] SortedSet::iterator(Self[V]) -> Iterator[V]
 #alias(size, deprecated)
 fn[V] SortedSet::length(Self[V]) -> Int
 #as_free_fn

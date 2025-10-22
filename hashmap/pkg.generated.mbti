@@ -28,12 +28,16 @@ fn[K : Hash + Eq, V : Eq] HashMap::equal(Self[K, V], Self[K, V]) -> Bool // from
 fn[K : Hash + Eq, V] HashMap::from_array(Array[(K, V)]) -> Self[K, V]
 #as_free_fn
 fn[K : Hash + Eq, V] HashMap::from_iter(Iter[(K, V)]) -> Self[K, V]
+#as_free_fn
+fn[K : Hash + Eq, V] HashMap::from_iterator(Iterator[(K, V)]) -> Self[K, V]
 fn[K : Hash + Eq, V] HashMap::get(Self[K, V], K) -> V?
 fn[K : Hash + Eq, V] HashMap::get_or_default(Self[K, V], K, V) -> V
 fn[K : Hash + Eq, V] HashMap::get_or_init(Self[K, V], K, () -> V) -> V
 fn[K, V] HashMap::is_empty(Self[K, V]) -> Bool
 fn[K, V] HashMap::iter(Self[K, V]) -> Iter[(K, V)]
 fn[K, V] HashMap::iter2(Self[K, V]) -> Iter2[K, V]
+#alias(iterator2)
+fn[K, V] HashMap::iterator(Self[K, V]) -> Iterator[(K, V)]
 fn[K, V] HashMap::keys(Self[K, V]) -> Iter[K]
 #alias(size, deprecated)
 fn[K, V] HashMap::length(Self[K, V]) -> Int

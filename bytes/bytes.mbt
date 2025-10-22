@@ -151,6 +151,32 @@ pub fn Bytes::from_iter(iter : Iter[Byte]) -> Bytes {
 }
 
 ///|
+/// Creates a new bytes sequence from an iterator of bytes.
+///
+/// Parameters:
+///
+/// * `iterator` : An iterator that yields bytes.
+///
+/// Returns a new bytes sequence containing all the bytes from the iterator.
+///
+/// Example:
+///
+/// ```moonbit
+///   let iter = Iterator::singleton(b'h')
+///   let bytes = @bytes.from_iterator(iter)
+///   inspect(
+///     bytes, 
+///     content=(
+///       #|b"h"
+///     ),
+///   )
+/// ```
+#as_free_fn
+pub fn Bytes::from_iterator(iter : Iterator[Byte]) -> Bytes {
+  Bytes::from_array(iter.collect())
+}
+
+///|
 /// Creates a new bytes sequence from a fixed-size byte array.
 ///
 /// Parameters:
@@ -236,6 +262,34 @@ pub fn Bytes::iter(self : Bytes) -> Iter[Byte] {
 }
 
 ///|
+/// Creates an iterator over the bytes in the sequence.
+///
+/// Parameters:
+///
+/// * `bytes` : A byte sequence to iterate over.
+///
+/// Returns an iterator that yields each byte in the sequence in order.
+///
+/// Example:
+///
+/// ```moonbit
+///   let bytes = Bytes::from_array([b'h', b'i'])
+///   let mut sum = 0
+///   bytes.iterator().each((b) => { sum = sum + b.to_int() })
+///   inspect(sum, content="209") // ASCII values: 'h'(104) + 'i'(105) = 209
+/// ```
+pub fn Bytes::iterator(self : Bytes) -> Iterator[Byte] {
+  let mut i = 0
+  let len = self.length()
+  Iterator::new(fn() {
+    guard i < len else { None }
+    let c = self.unsafe_get(i)
+    i += 1
+    Some(c)
+  })
+}
+
+///|
 /// Creates an iterator that yields tuples of index and byte,
 /// indices start from 0.
 /// 
@@ -255,6 +309,34 @@ pub fn Bytes::iter2(self : Bytes) -> Iter2[Int, Byte] {
     }
   } else {
     IterContinue
+  })
+}
+
+///|
+/// Creates an iterator that yields tuples of index and byte,
+/// indices start from 0.
+/// 
+/// Example:
+///
+/// ```moonbit
+///   let buf = StringBuilder::new(size_hint=5)
+///   let keys = []
+///   let it = b"abcde".iterator2()
+///   while it.next() is Some((i, x)) {
+///     buf.write_string(x.to_string())
+///     keys.push( i )
+///   }
+///   inspect(buf, content="b'\\x61'b'\\x62'b'\\x63'b'\\x64'b'\\x65'")
+///   inspect(keys, content="[0, 1, 2, 3, 4]")
+/// ```
+pub fn Bytes::iterator2(self : Bytes) -> Iterator[(Int, Byte)] {
+  let mut i = 0
+  let len = self.length()
+  Iterator::new(fn() {
+    guard i < len else { None }
+    let result = (i, self.unsafe_get(i))
+    i += 1
+    Some(result)
   })
 }
 

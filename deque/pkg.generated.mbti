@@ -40,6 +40,8 @@ fn[A] Deque::flatten(Self[Self[A]]) -> Self[A]
 fn[A] Deque::from_array(ArrayView[A]) -> Self[A]
 #as_free_fn
 fn[A] Deque::from_iter(Iter[A]) -> Self[A]
+#as_free_fn
+fn[A] Deque::from_iterator(Iterator[A]) -> Self[A]
 fn[A : @json.FromJson] Deque::from_json(Json, @json.JsonPath) -> Self[A] raise @json.JsonDecodeError // from trait `@json.FromJson`
 fn[A] Deque::front(Self[A]) -> A?
 fn[A] Deque::get(Self[A], Int) -> A?
@@ -49,6 +51,8 @@ fn[A] Deque::insert(Self[A], Int, A) -> Unit
 fn[A] Deque::is_empty(Self[A]) -> Bool
 fn[A] Deque::iter(Self[A]) -> Iter[A]
 fn[A] Deque::iter2(Self[A]) -> Iter2[Int, A]
+fn[A] Deque::iterator(Self[A]) -> Iterator[A]
+fn[A] Deque::iterator2(Self[A]) -> Iterator[(Int, A)]
 fn Deque::join(Self[String], StringView) -> String
 fn[A] Deque::length(Self[A]) -> Int
 fn[A, U] Deque::map(Self[A], (A) -> U) -> Self[U]
@@ -80,6 +84,8 @@ fn[A] Deque::rev_eachi(Self[A], (Int, A) -> Unit) -> Unit
 fn[A] Deque::rev_inplace(Self[A]) -> Unit
 fn[A] Deque::rev_iter(Self[A]) -> Iter[A]
 fn[A] Deque::rev_iter2(Self[A]) -> Iter2[Int, A]
+fn[A] Deque::rev_iterator(Self[A]) -> Iterator[A]
+fn[A] Deque::rev_iterator2(Self[A]) -> Iterator[(Int, A)]
 fn[A : Eq] Deque::search(Self[A], A) -> Int?
 #alias("_[_]=_")
 fn[A] Deque::set(Self[A], Int, A) -> Unit

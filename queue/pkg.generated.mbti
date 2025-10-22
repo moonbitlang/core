@@ -22,8 +22,11 @@ fn[A, B] Queue::fold(Self[A], init~ : B, (B, A) -> B) -> B
 fn[A] Queue::from_array(ArrayView[A]) -> Self[A]
 #as_free_fn
 fn[A] Queue::from_iter(Iter[A]) -> Self[A]
+#as_free_fn
+fn[A] Queue::from_iterator(Iterator[A]) -> Self[A]
 fn[A] Queue::is_empty(Self[A]) -> Bool
 fn[A] Queue::iter(Self[A]) -> Iter[A]
+fn[A] Queue::iterator(Self[A]) -> Iterator[A]
 fn[A] Queue::length(Self[A]) -> Int
 #as_free_fn
 fn[A] Queue::new() -> Self[A]

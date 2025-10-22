@@ -28,6 +28,8 @@ fn[A] String::fold(String, init~ : A, (A, Char) -> A) -> A
 fn String::from_array(ArrayView[Char]) -> String
 #as_free_fn
 fn String::from_iter(Iter[Char]) -> String
+#as_free_fn
+fn String::from_iterator(Iterator[Char]) -> String
 fn String::get(String, Int) -> Int?
 fn String::get_char(String, Int) -> Char?
 #alias(starts_with, deprecated)
@@ -38,6 +40,8 @@ fn String::is_blank(String) -> Bool
 fn String::is_empty(String) -> Bool
 fn String::iter(String) -> Iter[Char]
 fn String::iter2(String) -> Iter2[Int, Char]
+fn String::iterator(String) -> Iterator[Char]
+fn String::iterator2(String) -> Iterator[(Int, Char)]
 fn String::lexical_compare(String, String) -> Int
 fn String::offset_of_nth_char(String, Int, start_offset? : Int, end_offset? : Int) -> Int?
 fn String::pad_end(String, Int, Char) -> String
@@ -49,6 +53,7 @@ fn String::rev(String) -> String
 fn String::rev_find(String, StringView) -> Int?
 fn[A] String::rev_fold(String, init~ : A, (A, Char) -> A) -> A
 fn String::rev_iter(String) -> Iter[Char]
+fn String::rev_iterator(String) -> Iterator[Char]
 fn String::split(String, StringView) -> Iter[StringView]
 fn String::strip_prefix(String, StringView) -> StringView?
 fn String::strip_suffix(String, StringView) -> StringView?
@@ -89,6 +94,7 @@ fn StringView::find_by(Self, (Char) -> Bool) -> Int?
 fn[A] StringView::fold(Self, init~ : A, (A, Char) -> A) -> A
 fn StringView::from_array(ArrayView[Char]) -> Self
 fn StringView::from_iter(Iter[Char]) -> Self
+fn StringView::from_iterator(Iterator[Char]) -> Self
 fn StringView::get(Self, Int) -> Int?
 fn StringView::get_char(Self, Int) -> Char?
 #alias(starts_with, deprecated)
@@ -101,6 +107,8 @@ fn StringView::is_blank(Self) -> Bool
 fn StringView::is_empty(Self) -> Bool
 fn StringView::iter(Self) -> Iter[Char]
 fn StringView::iter2(Self) -> Iter2[Int, Char]
+fn StringView::iterator(Self) -> Iterator[Char]
+fn StringView::iterator2(Self) -> Iterator[(Int, Char)]
 fn StringView::length(Self) -> Int
 fn StringView::lexical_compare(Self, Self) -> Int
 fn StringView::make(Int, Char) -> Self
@@ -119,6 +127,7 @@ fn StringView::rev(Self) -> String
 fn StringView::rev_find(Self, Self) -> Int?
 fn[A] StringView::rev_fold(Self, init~ : A, (A, Char) -> A) -> A
 fn StringView::rev_iter(Self) -> Iter[Char]
+fn StringView::rev_iterator(Self) -> Iterator[Char]
 fn StringView::split(Self, Self) -> Iter[Self]
 fn StringView::start_offset(Self) -> Int
 fn StringView::strip_prefix(Self, Self) -> Self?

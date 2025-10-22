@@ -98,6 +98,13 @@ test "iter" {
 }
 
 ///|
+test "iterator" {
+  let set = @sorted_set.from_array([3, 2, 1])
+  inspect(set.iterator().collect(), content="[1, 2, 3]")
+  inspect(set.iterator().take(2).collect(), content="[1, 2]")
+}
+
+///|
 test "iter early termination in left subtree" {
   // This test should trigger the uncovered line 381 in sorted_set/set.mbt
   // We need a tree structure where the iterator terminates while traversing the left subtree
@@ -287,6 +294,34 @@ test "from_iter single element iter" {
 ///|
 test "from_iter empty iter" {
   let pq : @sorted_set.SortedSet[Int] = @sorted_set.from_iter(Iter::empty())
+  inspect(pq, content="@sorted_set.from_array([])")
+}
+
+///|
+test "from_iterator multiple elements iter" {
+  inspect(
+    @sorted_set.from_iterator([1, 2, 3].iterator()),
+    content="@sorted_set.from_array([1, 2, 3])",
+  )
+  inspect(
+    @sorted_set.from_iterator([1, 1, 1].iterator()),
+    content="@sorted_set.from_array([1])",
+  )
+}
+
+///|
+test "from_iterator single element iter" {
+  inspect(
+    @sorted_set.from_iterator([1].iterator()),
+    content="@sorted_set.from_array([1])",
+  )
+}
+
+///|
+test "from_iterator empty iter" {
+  let pq : @sorted_set.SortedSet[Int] = @sorted_set.from_iterator(
+    Iterator::empty(),
+  )
   inspect(pq, content="@sorted_set.from_array([])")
 }
 

@@ -15,8 +15,8 @@
 ///|
 pub impl[K : Eq, V : Eq] Eq for SortedMap[K, V] with equal(self, other) {
   guard self.size == other.size else { return false }
-  let iter = self.into_iterator()
-  let iter1 = other.into_iterator()
+  let iter = self.iterator()
+  let iter1 = other.iterator()
   while iter.next() is Some(a) && iter1.next() is Some(b) {
     guard a == b else { break false }
   } else {
@@ -283,12 +283,44 @@ pub fn[K, V] SortedMap::iter2(self : SortedMap[K, V]) -> Iter2[K, V] {
 }
 
 ///|
+#alias(iterator2)
+pub fn[K, V] SortedMap::iterator(self : SortedMap[K, V]) -> Iterator[(K, V)] {
+  let todo_list = []
+  let mut next_node = self.root
+  Iterator::new(fn() {
+    loop next_node {
+      Some({ left, key, value, right, height: _ }) => {
+        todo_list.push((key, value, right))
+        continue left
+      }
+      None if todo_list.pop() is Some((key, value, right)) => {
+        next_node = right
+        Some((key, value))
+      }
+      None => None
+    }
+  })
+}
+
+///|
 #as_free_fn
 pub fn[K : Compare, V] SortedMap::from_iter(
   iter : Iter[(K, V)],
 ) -> SortedMap[K, V] {
   let m = new()
   iter.each(e => m[e.0] = e.1)
+  m
+}
+
+///|
+#as_free_fn
+pub fn[K : Compare, V] SortedMap::from_iterator(
+  iter : Iterator[(K, V)],
+) -> SortedMap[K, V] {
+  let m = new()
+  while iter.next() is Some((k, v)) {
+    m[k] = v
+  }
   m
 }
 

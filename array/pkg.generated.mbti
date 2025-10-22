@@ -29,9 +29,11 @@ fn[A, B] FixedArray::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 fn[A, B] FixedArray::foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
 fn[T] FixedArray::from_array(ArrayView[T]) -> Self[T]
 fn[T] FixedArray::from_iter(Iter[T]) -> Self[T]
+fn[T] FixedArray::from_iterator(Iterator[T]) -> Self[T]
 fn[T : Hash] FixedArray::hash(Self[T]) -> Int // from trait `Hash`
 fn[T : Hash] FixedArray::hash_combine(Self[T], Hasher) -> Unit // from trait `Hash`
 fn[T : Compare] FixedArray::is_sorted(Self[T]) -> Bool
+fn[X] FixedArray::iterator(Self[X]) -> Iterator[X]
 fn FixedArray::join(Self[String], StringView) -> String
 fn[A] FixedArray::last(Self[A]) -> A?
 fn[T] FixedArray::makei(Int, (Int) -> T raise?) -> Self[T] raise?
@@ -82,10 +84,12 @@ fn[A, B] ReadOnlyArray::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 fn[A, B] ReadOnlyArray::foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
 fn[T] ReadOnlyArray::from_array(ArrayView[T]) -> Self[T]
 fn[T] ReadOnlyArray::from_iter(Iter[T]) -> Self[T]
+fn[T] ReadOnlyArray::from_iterator(Iterator[T]) -> Self[T]
 fn[T] ReadOnlyArray::get(Self[T], Int) -> T?
 fn[T] ReadOnlyArray::is_empty(Self[T]) -> Bool
 fn[T] ReadOnlyArray::iter(Self[T]) -> Iter[T]
 fn[T] ReadOnlyArray::iter2(Self[T]) -> Iter2[Int, T]
+fn[T] ReadOnlyArray::iterator(Self[T]) -> Iterator[T]
 fn ReadOnlyArray::join(Self[String], StringView) -> String
 fn[T] ReadOnlyArray::last(Self[T]) -> T?
 fn[T] ReadOnlyArray::length(Self[T]) -> Int
@@ -112,9 +116,13 @@ fn[X : @quickcheck.Arbitrary] Array::arbitrary(Int, @splitmix.RandomState) -> Se
 fn[T] Array::copy(Self[T]) -> Self[T]
 fn[A, B] Array::filter_map(Self[A], (A) -> B? raise?) -> Self[B] raise?
 fn[T] Array::from_iter(Iter[T]) -> Self[T]
+fn[T] Array::from_iterator(Iterator[T]) -> Self[T]
+fn[X] Array::iterator(Self[X]) -> Iterator[X]
+fn[X] Array::iterator2(Self[X]) -> Iterator[(Int, X)]
 fn[A : @string.ToStringView] Array::join(Self[A], StringView) -> String
 fn[A] Array::last(Self[A]) -> A?
 fn[T] Array::push_iter(Self[T], Iter[T]) -> Unit
+fn[X] Array::rev_iterator(Self[X]) -> Iterator[X]
 fn[T] Array::shuffle(Self[T], rand~ : (Int) -> Int) -> Self[T]
 fn[T] Array::shuffle_in_place(Self[T], rand~ : (Int) -> Int) -> Unit
 fn[T : Compare] Array::sort(Self[T]) -> Unit
@@ -147,6 +155,8 @@ fn[A : Hash] ArrayView::hash(Self[A]) -> Int // from trait `Hash`
 fn[A : Hash] ArrayView::hash_combine(Self[A], Hasher) -> Unit // from trait `Hash`
 fn[A] ArrayView::iter(Self[A]) -> Iter[A]
 fn[A] ArrayView::iter2(Self[A]) -> Iter2[Int, A]
+fn[X] ArrayView::iterator(Self[X]) -> Iterator[X]
+fn[X] ArrayView::iterator2(Self[X]) -> Iterator[(Int, X)]
 fn[A : @string.ToStringView] ArrayView::join(Self[A], StringView) -> String
 fn[T, U] ArrayView::map(Self[T], (T) -> U raise?) -> Array[U] raise?
 fn[T, U] ArrayView::mapi(Self[T], (Int, T) -> U raise?) -> Array[U] raise?
@@ -155,6 +165,7 @@ fn[T : Eq] ArrayView::op_equal(Self[T], Self[T]) -> Bool // from trait `Eq`
 fn[X : Show] ArrayView::output(Self[X], &Logger) -> Unit // from trait `Show`
 fn[A, B] ArrayView::rev_fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 fn[A, B] ArrayView::rev_foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
+fn[X] ArrayView::rev_iterator(Self[X]) -> Iterator[X]
 fn[T] ArrayView::start_offset(Self[T]) -> Int
 fn[T] ArrayView::to_array(Self[T]) -> Array[T]
 fn[X : Show] ArrayView::to_string(Self[X]) -> String // from trait `Show`

@@ -174,6 +174,38 @@ pub fn[A] ArrayView::iter(self : ArrayView[A]) -> Iter[A] {
 }
 
 ///|
+pub fn[X] ArrayView::iterator(self : ArrayView[X]) -> Iterator[X] {
+  let mut i = 0
+  Iterator::new(fn() {
+    guard i < self.length() else { None }
+    let elem = self.unsafe_get(i)
+    i += 1
+    Some(elem)
+  })
+}
+
+///|
+pub fn[X] ArrayView::rev_iterator(self : ArrayView[X]) -> Iterator[X] {
+  let mut i = self.length()
+  Iterator::new(fn() {
+    guard i > 0 else { None }
+    i -= 1
+    Some(self.unsafe_get(i))
+  })
+}
+
+///|
+pub fn[X] ArrayView::iterator2(self : ArrayView[X]) -> Iterator[(Int, X)] {
+  let mut i = 0
+  Iterator::new(fn() {
+    guard i < self.length() else { None }
+    let result = Some((i, self.unsafe_get(i)))
+    i += 1
+    result
+  })
+}
+
+///|
 /// Returns an iterator that yields tuples of index and value
 /// indices start from 0.
 /// 

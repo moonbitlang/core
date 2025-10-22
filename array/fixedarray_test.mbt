@@ -61,6 +61,27 @@ test "FixedArray::from_iter with empty iterator" {
 }
 
 ///|
+test "FixedArray::from_iterator with multiple elements iterator" {
+  let iter = [1, 2, 3, 4, 5].iterator()
+  let result = FixedArray::from_iterator(iter)
+  assert_eq(result, [1, 2, 3, 4, 5])
+}
+
+///|
+test "FixedArray::from_iterator with single element iterator" {
+  let iter = [1].iterator()
+  let result = FixedArray::from_iterator(iter)
+  assert_eq(result, [1])
+}
+
+///|
+test "FixedArray::from_iterator with empty iterator" {
+  let iter : Iterator[Int] = Iterator::empty()
+  let result = FixedArray::from_iterator(iter)
+  assert_eq(result, [])
+}
+
+///|
 test "FixedArray::last" {
   inspect(FixedArray::last([1, 2, 3]), content="Some(3)")
   inspect(

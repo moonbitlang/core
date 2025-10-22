@@ -87,12 +87,16 @@ test "@hashset.iter" {
 }
 
 ///|
-test "@hashset.each" {
-  let set = @hashset.new().add(1).add(2).add(3)
-  let result = []
-  set.each(x => result.push(x))
-  result.sort()
-  assert_eq(result, [1, 2, 3])
+test "@hashset.iterator" {
+  let data = @hashset.of(["a", "b", "d", "e", "f"])
+  let array = data.iterator().collect()
+  array.sort()
+  inspect(
+    array,
+    content=(
+      #|["a", "b", "d", "e", "f"]
+    ),
+  )
 }
 
 ///|
@@ -136,6 +140,27 @@ test "from_iter single element iter" {
 ///|
 test "from_iter empty iter" {
   let pq : @hashset.HashSet[Int] = @hashset.from_iter(Iter::empty())
+  inspect(pq, content="@immut/hashset.of([])")
+}
+
+///|
+test "from_iterator multiple elements iter" {
+  let data = [1, 2, 3]
+  let set = @hashset.from_iterator(data.iterator())
+  verify_content(set, data)
+}
+
+///|
+test "from_iterator single element iter" {
+  inspect(
+    @hashset.from_iterator([1].iterator()),
+    content="@immut/hashset.of([1])",
+  )
+}
+
+///|
+test "from_iterator empty iter" {
+  let pq : @hashset.HashSet[Int] = @hashset.from_iterator(Iterator::empty())
   inspect(pq, content="@immut/hashset.of([])")
 }
 

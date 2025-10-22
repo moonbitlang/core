@@ -107,6 +107,11 @@ pub fn[A : Compare] T::iter(self : T[A]) -> Iter[A] {
 }
 
 ///|
+pub fn[A : Compare] T::iterator(self : T[A]) -> Iterator[A] {
+  self.to_array().iterator()
+}
+
+///|
 pub impl[A : ToJson + Compare] ToJson for T[A] with to_json(self) {
   let arr = []
   for x in self {
@@ -120,6 +125,16 @@ pub impl[A : ToJson + Compare] ToJson for T[A] with to_json(self) {
 pub fn[K : Compare] T::from_iter(iter : Iter[K]) -> T[K] {
   let s = new()
   iter.each(e => s.push(e))
+  s
+}
+
+///|
+#as_free_fn
+pub fn[K : Compare] T::from_iterator(iter : Iterator[K]) -> T[K] {
+  let s = new()
+  while iter.next() is Some(e) {
+    s.push(e)
+  }
   s
 }
 

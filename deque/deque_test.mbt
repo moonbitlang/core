@@ -104,6 +104,35 @@ test "iter" {
 }
 
 ///|
+test "iterator" {
+  let dv = @deque.of([1, 2, 3, 4, 5])
+  let iter = dv.iterator()
+  let buf = StringBuilder::new(size_hint=0)
+  let mut i = 0
+  iter.each(x => {
+    buf.write_string(x.to_string())
+    buf.write_char('\n')
+    i = i + 1
+  })
+  assert_eq(i, dv.length())
+  inspect(
+    buf,
+    content=(
+      #|1
+      #|2
+      #|3
+      #|4
+      #|5
+      #|
+    ),
+  )
+  inspect(
+    dv.iterator().take(4).filter(x => x % 2 == 0).fold((a, x) => a + x, init=0),
+    content="6",
+  )
+}
+
+///|
 test "reserve and push" {
   // capacity > 0, len = 0
   let a = @deque.new(capacity=2)
@@ -427,6 +456,25 @@ test "from_iter empty iter" {
 }
 
 ///|
+test "from_iterator multiple elements iter" {
+  inspect(
+    @deque.from_iterator([1, 2, 3].iterator()),
+    content="@deque.of([1, 2, 3])",
+  )
+}
+
+///|
+test "from_iterator single element iter" {
+  inspect(@deque.from_iterator([1].iterator()), content="@deque.of([1])")
+}
+
+///|
+test "from_iterator empty iter" {
+  let dq : @deque.Deque[Int] = @deque.from_iterator(Iterator::empty())
+  inspect(dq, content="@deque.of([])")
+}
+
+///|
 test "from_array with single element" {
   let arr = [42]
   let deque = @deque.from_array(arr)
@@ -495,13 +543,25 @@ test "iter when tail needs to wrap around" {
 }
 
 ///|
-test "iter2 when tail needs to wrap around" {
+test "iterator when tail needs to wrap around" {
   let dq = @deque.new(capacity=2)
   dq.push_back(1) // tail = 0
   dq.push_back(2) // tail = 1
   dq.unsafe_pop_front() // head = 1
   dq.push_back(3) // tail = 0 (wraps around)
-  inspect(dq.iter2().to_array(), content="[(0, 2), (1, 3)]")
+  inspect(dq.iterator().to_array(), content="[2, 3]")
+  inspect(dq.iterator().filter(x => x % 2 == 0).to_array(), content="[2]")
+  inspect(dq.iterator().filter(x => x % 2 != 0).to_array(), content="[3]")
+}
+
+///|
+test "iterator2 when tail needs to wrap around" {
+  let dq = @deque.new(capacity=2)
+  dq.push_back(1) // tail = 0
+  dq.push_back(2) // tail = 1
+  dq.unsafe_pop_front() // head = 1
+  dq.push_back(3) // tail = 0 (wraps around)
+  inspect(dq.iterator2().to_array(), content="[(0, 2), (1, 3)]")
 }
 
 ///|
@@ -528,6 +588,90 @@ test "rev_iter2 when head needs to wrap around" {
     dq.push_back(i)
   }
   inspect(dq.rev_iter2().to_array(), content="[(0, 6), (1, 5), (2, 4), (3, 3)]")
+}
+
+///|
+test "rev_iter when head needs to wrap around" {
+  let dq = @deque.new(capacity=4)
+  dq.push_back(1)
+  dq.unsafe_pop_front()
+  dq.push_back(2)
+  dq.unsafe_pop_front()
+  for i in 3..=6 {
+    dq.push_back(i)
+  }
+  inspect(dq.rev_iter().to_array(), content="[6, 5, 4, 3]")
+}
+
+///|
+test "rev_iter2 when head needs to wrap around" {
+  let dq = @deque.new(capacity=4)
+  dq.push_back(1)
+  dq.unsafe_pop_front()
+  dq.push_back(2)
+  dq.unsafe_pop_front()
+  for i in 3..=6 {
+    dq.push_back(i)
+  }
+  inspect(dq.rev_iter2().to_array(), content="[(0, 6), (1, 5), (2, 4), (3, 3)]")
+}
+
+///|
+test "rev_iterator when head needs to wrap around" {
+  let dq = @deque.new(capacity=4)
+  dq.push_back(1)
+  dq.unsafe_pop_front()
+  dq.push_back(2)
+  dq.unsafe_pop_front()
+  for i in 3..=6 {
+    dq.push_back(i)
+  }
+  inspect(dq.rev_iterator().to_array(), content="[6, 5, 4, 3]")
+}
+
+///|
+test "rev_iterator2 when head needs to wrap around" {
+  let dq = @deque.new(capacity=4)
+  dq.push_back(1)
+  dq.unsafe_pop_front()
+  dq.push_back(2)
+  dq.unsafe_pop_front()
+  for i in 3..=6 {
+    dq.push_back(i)
+  }
+  inspect(
+    dq.rev_iterator2().to_array(),
+    content="[(0, 6), (1, 5), (2, 4), (3, 3)]",
+  )
+}
+
+///|
+test "rev_iterator when head needs to wrap around" {
+  let dq = @deque.new(capacity=4)
+  dq.push_back(1)
+  dq.unsafe_pop_front()
+  dq.push_back(2)
+  dq.unsafe_pop_front()
+  for i in 3..=6 {
+    dq.push_back(i)
+  }
+  inspect(dq.rev_iterator().to_array(), content="[6, 5, 4, 3]")
+}
+
+///|
+test "rev_iterator2 when head needs to wrap around" {
+  let dq = @deque.new(capacity=4)
+  dq.push_back(1)
+  dq.unsafe_pop_front()
+  dq.push_back(2)
+  dq.unsafe_pop_front()
+  for i in 3..=6 {
+    dq.push_back(i)
+  }
+  inspect(
+    dq.rev_iterator2().to_array(),
+    content="[(0, 6), (1, 5), (2, 4), (3, 3)]",
+  )
 }
 
 ///|

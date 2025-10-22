@@ -20,8 +20,11 @@ fn[K] T::default() -> Self[K] // from trait `Default`
 fn[A : Compare] T::from_array(ArrayView[A]) -> Self[A]
 #as_free_fn
 fn[K : Compare] T::from_iter(Iter[K]) -> Self[K]
+#as_free_fn
+fn[K : Compare] T::from_iterator(Iterator[K]) -> Self[K]
 fn[A] T::is_empty(Self[A]) -> Bool
 fn[A : Compare] T::iter(Self[A]) -> Iter[A]
+fn[A : Compare] T::iterator(Self[A]) -> Iterator[A]
 fn[A] T::length(Self[A]) -> Int
 #as_free_fn
 fn[A] T::new() -> Self[A]

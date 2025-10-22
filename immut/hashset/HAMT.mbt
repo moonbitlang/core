@@ -353,8 +353,59 @@ pub fn[A] HashSet::iter(self : HashSet[A]) -> Iter[A] {
 }
 
 ///|
+/// Converted to Iterator
+pub fn[A] HashSet::iterator(self : HashSet[A]) -> Iterator[A] {
+  enum CurrNode {
+    Tree(Node[A])
+    Bucket(@list.List[A])
+  }
+  let empty = Bucket(@list.new())
+  let mut curr_node = match self.0 {
+    Some(tree) => Tree(tree)
+    None => empty
+  }
+  let mut curr_index = 0
+  let parents = []
+  Iterator::new(fn() {
+    loop curr_node {
+      Tree(Flat(x, _)) => {
+        curr_node = empty
+        Some(x)
+      }
+      Tree(Leaf(x, bucket)) => {
+        curr_node = Bucket(bucket)
+        Some(x)
+      }
+      Bucket(More(x, tail~)) => {
+        curr_node = Bucket(tail)
+        Some(x)
+      }
+      Tree(Branch(children)) as n if curr_index < children.length() => {
+        let child = children.data[curr_index]
+        parents.push((n, curr_index + 1))
+        curr_index = 0
+        continue Tree(child)
+      }
+      Bucket(Empty) | Tree(Branch(_)) if parents.pop()
+        is Some((parent, parent_index)) => {
+        curr_node = parent
+        curr_index = parent_index
+        continue parent
+      }
+      Bucket(Empty) | Tree(Branch(_)) => None
+    }
+  })
+}
+
+///|
 #as_free_fn
 pub fn[A : Eq + Hash] HashSet::from_iter(iter : Iter[A]) -> HashSet[A] {
+  iter.fold(init=new(), (s, e) => s.add(e))
+}
+
+///|
+#as_free_fn
+pub fn[A : Eq + Hash] HashSet::from_iterator(iter : Iterator[A]) -> HashSet[A] {
   iter.fold(init=new(), (s, e) => s.add(e))
 }
 

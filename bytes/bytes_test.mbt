@@ -122,6 +122,27 @@ test "from_iter empty iterator" {
 }
 
 ///|
+test "from_iterator multiple elements" {
+  inspect(
+    @bytes.from_iterator([b'\x00', b'\x01', b'\x02'].iterator()).to_array(),
+    content="[b'\\x00', b'\\x01', b'\\x02']",
+  )
+}
+
+///|
+test "from_iterator single element" {
+  inspect(
+    @bytes.from_iterator([b'\x00'].iterator()).to_array(),
+    content="[b'\\x00']",
+  )
+}
+
+///|
+test "from_iterator empty iterator" {
+  inspect(@bytes.from_iterator(Iterator::empty()).to_array(), content="[]")
+}
+
+///|
 test "iter" {
   let buf = StringBuilder::new(size_hint=5)
   b"abcde".iter().each(x => buf.write_string(x.to_string()))
@@ -141,6 +162,29 @@ test "iter2" {
     buf.write_string(x.to_string())
     keys.push(i)
   })
+  inspect(buf, content="b'\\x61'b'\\x62'b'\\x63'b'\\x64'b'\\x65'")
+  inspect(keys, content="[0, 1, 2, 3, 4]")
+}
+
+///|
+test "iterator" {
+  let buf = StringBuilder::new(size_hint=5)
+  b"abcde".iterator().each(x => buf.write_string(x.to_string()))
+  inspect(buf, content="b'\\x61'b'\\x62'b'\\x63'b'\\x64'b'\\x65'")
+  buf.reset()
+  b"abcde".iterator().take(2).each(x => buf.write_string(x.to_string()))
+  inspect(buf, content="b'\\x61'b'\\x62'")
+}
+
+///|
+test "iterator2" {
+  let buf = StringBuilder::new(size_hint=5)
+  let keys = []
+  let it = b"abcde".iterator2()
+  while it.next() is Some((i, x)) {
+    buf.write_string(x.to_string())
+    keys.push(i)
+  }
   inspect(buf, content="b'\\x61'b'\\x62'b'\\x63'b'\\x64'b'\\x65'")
   inspect(keys, content="[0, 1, 2, 3, 4]")
 }

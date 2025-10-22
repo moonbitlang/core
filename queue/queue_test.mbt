@@ -186,6 +186,12 @@ test "length" {
 }
 
 ///|
+test "iterator" {
+  let q = @queue.of([1, 2, 3, 4, 5])
+  inspect(q.iterator().fold((x, y) => x + y, init=0), content="15")
+}
+
+///|
 test "from_iter multiple elements iter" {
   inspect(@queue.from_iter([1, 2, 3].iter()), content="@queue.of([1, 2, 3])")
 }
@@ -198,6 +204,25 @@ test "from_iter single element iter" {
 ///|
 test "from_iter empty iter" {
   let pq : @queue.Queue[Int] = @queue.from_iter(Iter::empty())
+  inspect(pq, content="@queue.of([])")
+}
+
+///|
+test "from_iterator multiple elements iter" {
+  inspect(
+    @queue.from_iterator([1, 2, 3].iterator()),
+    content="@queue.of([1, 2, 3])",
+  )
+}
+
+///|
+test "from_iterator single element iter" {
+  inspect(@queue.from_iterator([1].iterator()), content="@queue.of([1])")
+}
+
+///|
+test "from_iterator empty iter" {
+  let pq : @queue.Queue[Int] = @queue.from_iterator(Iterator::empty())
   inspect(pq, content="@queue.of([])")
 }
 

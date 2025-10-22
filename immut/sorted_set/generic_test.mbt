@@ -49,6 +49,13 @@ test "iter terminates on right" {
 }
 
 ///|
+test "iter terminates on right" {
+  let set = @sorted_set.of([1, 2, 3])
+  let result = set.iter().take(2).to_array()
+  inspect(result, content="[1, 2]")
+}
+
+///|
 test "iter with early termination on left subtree" {
   // Create a binary search tree with both left and right subtrees
   let set = @sorted_set.new()
@@ -70,4 +77,11 @@ test "iter with early termination on left subtree" {
 
   // Verify that we stopped after processing the first element
   inspect(count, content="1")
+}
+
+///|
+test "iterator" {
+  let set = @sorted_set.of([2, 1, 3])
+  let result = set.iterator().collect()
+  inspect(result, content="[1, 2, 3]")
 }

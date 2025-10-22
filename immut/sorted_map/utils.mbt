@@ -248,6 +248,30 @@ pub fn[K, V] SortedMap::iter(self : SortedMap[K, V]) -> Iter[(K, V)] {
 }
 
 ///|
+#alias(iterator2)
+pub fn[K, V] SortedMap::iterator(self : SortedMap[K, V]) -> Iterator[(K, V)] {
+  let mut curr_node = self
+  let parents = []
+  Iterator::new(fn() {
+    loop curr_node {
+      Tree(k, value~, Empty, r, ..) => {
+        curr_node = r
+        Some((k, value))
+      }
+      Tree(k, value~, l, r, ..) => {
+        parents.push((k, value, r))
+        continue l
+      }
+      Empty if parents.pop() is Some((k, v, r)) => {
+        curr_node = r
+        Some((k, v))
+      }
+      Empty => None
+    }
+  })
+}
+
+///|
 pub fn[K, V] SortedMap::iter2(self : SortedMap[K, V]) -> Iter2[K, V] {
   Iter2::new(yield_ => {
     fn go(t) {
@@ -272,6 +296,14 @@ pub fn[K, V] SortedMap::iter2(self : SortedMap[K, V]) -> Iter2[K, V] {
 #as_free_fn
 pub fn[K : Compare, V] SortedMap::from_iter(
   iter : Iter[(K, V)],
+) -> SortedMap[K, V] {
+  iter.fold(init=new(), (m, e) => m.add(e.0, e.1))
+}
+
+///|
+#as_free_fn
+pub fn[K : Compare, V] SortedMap::from_iterator(
+  iter : Iterator[(K, V)],
 ) -> SortedMap[K, V] {
   iter.fold(init=new(), (m, e) => m.add(e.0, e.1))
 }
