@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-fn[T] unsafe_reinterpret_to_fixed_array(
+fn[T] ReadOnlyArray::unsafe_reinterpret_to_fixed_array(
   self : ReadOnlyArray[T],
 ) -> FixedArray[T] = "%identity"
 

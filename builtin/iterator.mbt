@@ -26,7 +26,7 @@ struct Iterator[X](() -> X?)
 /// Calling `next` repeatedly will iterate through all elements in the iterator.
 #alias(peek, deprecated)
 #alias(head)
-pub fn[X] next(self : Iterator[X]) -> X? {
+pub fn[X] Iterator::next(self : Iterator[X]) -> X? {
   (self.0)()
 }
 
