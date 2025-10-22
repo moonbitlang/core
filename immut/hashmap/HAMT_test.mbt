@@ -112,19 +112,6 @@ test "HAMT::iter" {
 }
 
 ///|
-test "HAMT::iter" {
-  let data = @hashmap.of([(0, "a"), (2, "b"), (3, "d"), (5, "e"), (11111, "f")])
-  let array = data.iterator().collect()
-  array.sort()
-  inspect(
-    array,
-    content=(
-      #|[(0, "a"), (2, "b"), (3, "d"), (5, "e"), (11111, "f")]
-    ),
-  )
-}
-
-///|
 test "HAMT::iter2" {
   let data = @hashmap.of([(0, "a"), (2, "b"), (3, "d"), (5, "e"), (11111, "f")])
   let array = data.iter2().to_array()
