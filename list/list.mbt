@@ -1537,7 +1537,7 @@ pub fn[A] List::iter(self : List[A]) -> Iter[A] {
 /// # Example
 ///
 /// ```moonbit
-/// let ls = @list.of([1, 2, 3, 4, 5])
+/// let ls = @list.from_array([1, 2, 3, 4, 5])
 /// let iter = ls.iterator()
 /// let sum = iter.fold(init=0, (acc, x) => acc + x)
 /// inspect(sum, content="15")
@@ -1589,7 +1589,7 @@ pub fn[A] List::iter2(self : List[A]) -> Iter2[Int, A] {
 /// # Example
 ///
 /// ```moonbit
-/// let ls = @list.of([10, 20, 30])
+/// let ls = @list.from_array([10, 20, 30])
 /// let iter = ls.iterator2()
 /// inspect(iter, content="[(0, 10), (1, 20), (2, 30)]")
 /// ```
@@ -1655,7 +1655,7 @@ pub fn[A] List::from_iter(iter : Iter[A]) -> List[A] {
 /// let arr = [1, 2, 3, 4, 5]
 /// let iter = arr.iterator()
 /// let ls = @list.from_iterator(iter)
-/// assert_eq(ls, @list.of([1, 2, 3, 4, 5]))
+/// assert_eq(ls, @list.from_array([1, 2, 3, 4, 5]))
 /// ```
 #as_free_fn
 pub fn[A] List::from_iterator(iter : Iterator[A]) -> List[A] {
@@ -1709,7 +1709,7 @@ pub fn[A] List::from_iter_rev(iter : Iter[A]) -> List[A] {
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let iter = arr.iterator()
 ///   let ls = @list.from_iterator_rev(iter)
-///   assert_eq(ls, @list.of([5, 4, 3, 2, 1]))
+///   assert_eq(ls, @list.from_array([5, 4, 3, 2, 1]))
 /// ```
 #as_free_fn
 pub fn[A] List::from_iterator_rev(iter : Iterator[A]) -> List[A] {

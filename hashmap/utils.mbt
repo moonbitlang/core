@@ -90,7 +90,7 @@ pub fn[K, V] HashMap::iter(self : HashMap[K, V]) -> Iter[(K, V)] {
 /// Example:
 ///
 /// ```moonbit
-///   let map = @hashmap.of([(1, "one"), (2, "two")])
+///   let map = @hashmap.from_array([(1, "one"), (2, "two")])
 ///   let pairs = map.iterator().to_array()
 ///   inspect(pairs.length(), content="2")
 ///   inspect(pairs.contains((1, "one")), content="true")

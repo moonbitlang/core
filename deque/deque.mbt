@@ -1405,7 +1405,7 @@ pub fn[A] Deque::iter(self : Deque[A]) -> Iter[A] {
 /// Example:
 ///
 /// ```moonbit
-///   let dq = @deque.of([1, 2, 3, 4, 5])
+///   let dq = @deque.from_array([1, 2, 3, 4, 5])
 ///   let mut sum = 0
 ///   dq.iterator().each((x) => { sum = sum + x })
 ///   inspect(sum, content="15")
@@ -1481,7 +1481,7 @@ pub fn[A] Deque::iter2(self : Deque[A]) -> Iter2[Int, A] {
 /// Example:
 ///
 /// ```moonbit
-///   let dq = @deque.of([10, 20, 30])
+///   let dq = @deque.from_array([10, 20, 30])
 ///   let mut sum = 0
 ///   let it = dq.iterator2()
 ///   while it.next() is Some((i, x)) {
@@ -1552,7 +1552,7 @@ pub fn[A] Deque::rev_iter(self : Deque[A]) -> Iter[A] {
 /// Example:
 ///
 /// ```moonbit
-///   let dq = @deque.of([1, 2, 3])
+///   let dq = @deque.from_array([1, 2, 3])
 ///   let mut sum = 0
 ///   dq.rev_iterator().each((x) => { sum = sum * 10 + x })
 ///   inspect(sum, content="321")
@@ -1627,7 +1627,7 @@ pub fn[A] Deque::rev_iter2(self : Deque[A]) -> Iter2[Int, A] {
 /// Example:
 ///
 /// ```moonbit
-///   let dq = @deque.of([1, 2, 3])
+///   let dq = @deque.from_array([1, 2, 3])
 ///   let mut s = ""
 ///   let it = dq.rev_iterator2()
 ///   while it.next() is Some((i, x)) {

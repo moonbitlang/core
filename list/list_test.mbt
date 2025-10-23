@@ -63,7 +63,7 @@ test "iteri" {
 
 ///|
 test "iterator2" {
-  let ls = @list.of([1, 2, 3, 4, 5])
+  let ls = @list.from_array([1, 2, 3, 4, 5])
   let mut failed = false
   let it = ls.iterator2()
   while it.next() is Some((i, x)) {
@@ -613,7 +613,7 @@ test "iter_map_fold" {
 
 ///|
 test "iterator" {
-  let ls = @list.of([1, 2, 3, 4, 5])
+  let ls = @list.from_array([1, 2, 3, 4, 5])
   inspect(
     ls.iterator().map(x => x + 1).fold((a, b) => a + b, init=0),
     content="20",

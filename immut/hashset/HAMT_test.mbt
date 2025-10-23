@@ -88,7 +88,7 @@ test "@hashset.iter" {
 
 ///|
 test "@hashset.iterator" {
-  let data = @hashset.of(["a", "b", "d", "e", "f"])
+  let data = @hashset.from_array(["a", "b", "d", "e", "f"])
   let array = data.iterator().collect()
   array.sort()
   inspect(

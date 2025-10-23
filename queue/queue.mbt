@@ -333,7 +333,7 @@ pub fn[A] Queue::iter(self : Queue[A]) -> Iter[A] {
 ///
 /// # Example
 /// ```mbt
-///   let queue : @queue.Queue[Int] = @queue.of([5, 6, 7, 8])
+///   let queue : @queue.Queue[Int] = @queue.from_array([5, 6, 7, 8])
 ///   let sum = queue.iterator().fold((x, y) => { x + y }, init=0)
 ///   assert_eq(sum, 26)
 /// ```

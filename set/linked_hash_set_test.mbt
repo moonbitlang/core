@@ -171,7 +171,7 @@ test "symmetric_difference" {
 ///|
 test "iterator" {
   let buf = StringBuilder::new(size_hint=20)
-  let map = @set.Set::of(["a", "b", "c"])
+  let map = @set.Set::from_array(["a", "b", "c"])
   map.iterator().each(e => buf.write_string("[\{e}]"))
   inspect(buf, content="[a][b][c]")
   buf.reset()

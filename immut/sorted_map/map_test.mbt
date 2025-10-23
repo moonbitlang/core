@@ -203,7 +203,7 @@ test "compare" {
 ///|
 test "iterator" {
   let buf = StringBuilder::new(size_hint=20)
-  let map = @sorted_map.of([(1, "one"), (2, "two"), (3, "three")])
+  let map = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
   map
   .iterator()
   .each(e => {
