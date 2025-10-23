@@ -24,7 +24,7 @@ fn[A] from_iter_rev(Iter[A]) -> T[A]
 fn[A : @json.FromJson] from_json(Json) -> T[A] raise @json.JsonDecodeError
 
 #deprecated
-fn[A] of(FixedArray[A]) -> T[A]
+fn[A] of(ArrayView[A]) -> T[A]
 
 #deprecated
 fn[A] repeat(Int, A) -> T[A]
@@ -138,6 +138,8 @@ fn[A : Compare] T::minimum(Self[A]) -> A?
 fn[A] T::nth(Self[A], Int) -> A?
 #deprecated
 fn[A] T::nth_exn(Self[A], Int) -> A
+#deprecated
+fn[A] T::of(ArrayView[A]) -> Self[A]
 #deprecated
 fn[A] T::op_add(Self[A], Self[A]) -> Self[A] // from trait `Add`
 #deprecated

@@ -1181,7 +1181,7 @@ pub fn[A] from_iter_rev(iter : Iter[A]) -> T[A] {
 
 ///|
 #deprecated("use `@list` instead")
-pub fn[A] of(arr : FixedArray[A]) -> T[A] {
+pub fn[A] of(arr : ArrayView[A]) -> T[A] {
   for i = arr.length() - 1, list = Nil; i >= 0; {
     continue i - 1, Cons(arr[i], list)
   } else {
