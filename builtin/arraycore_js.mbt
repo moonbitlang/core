@@ -131,19 +131,6 @@ test "UninitializedArray::unsafe_blit_fixed" {
 }
 
 ///|
-test "UninitializedArray::unsafe_blit_fixed" {
-  let src = FixedArray::make(5, 0)
-  let dst = UninitializedArray::make(5)
-  for i in 0..<5 {
-    src[i] = i + 1
-  }
-  UninitializedArray::unsafe_blit_fixed(dst, 0, src, 0, 5)
-  for i in 0..<5 {
-    assert_eq(dst[i], src[i])
-  }
-}
-
-///|
 /// Reserves capacity to ensure that it can hold at least the number of elements
 /// specified by the `capacity` argument.
 ///
