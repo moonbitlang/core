@@ -185,7 +185,7 @@ test "iter2" {
 
 ///|
 test "iterator" {
-  let map = @hashmap.of([(1, "one"), (2, "two"), (3, "three")])
+  let map = @hashmap.from_array([(1, "one"), (2, "two"), (3, "three")])
   let array = map.iterator().collect()
   array.sort()
   inspect(

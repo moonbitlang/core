@@ -63,7 +63,7 @@ test "iter" {
 ///|
 test "iterator" {
   let buf = StringBuilder::new(size_hint=20)
-  let v = @array.of([1, 2, 3])
+  let v = @array.from_array([1, 2, 3])
   v.iterator().each(e => buf.write_string("[\{e}]"))
   inspect(buf, content="[1][2][3]")
   buf.reset()

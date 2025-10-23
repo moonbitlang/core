@@ -187,7 +187,7 @@ test "length" {
 
 ///|
 test "iterator" {
-  let q = @queue.of([1, 2, 3, 4, 5])
+  let q = @queue.from_array([1, 2, 3, 4, 5])
   inspect(q.iterator().fold((x, y) => x + y, init=0), content="15")
 }
 

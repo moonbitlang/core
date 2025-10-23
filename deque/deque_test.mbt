@@ -105,7 +105,7 @@ test "iter" {
 
 ///|
 test "iterator" {
-  let dv = @deque.of([1, 2, 3, 4, 5])
+  let dv = @deque.from_array([1, 2, 3, 4, 5])
   let iter = dv.iterator()
   let buf = StringBuilder::new(size_hint=0)
   let mut i = 0

@@ -67,7 +67,7 @@ test "iter" {
 ///|
 test "iterator" {
   let buf = StringBuilder::new(size_hint=20)
-  let v = @priority_queue.of([1, 2, 3])
+  let v = @priority_queue.from_array([1, 2, 3])
   let it = v.iterator()
   while it.next() is Some(e) {
     buf.write_string("[\{e}]")

@@ -147,7 +147,7 @@ test "iter" {
 
 ///|
 test "iterator" {
-  let m = @hashset.of(["a", "b", "c"]).iterator().collect()
+  let m = @hashset.from_array(["a", "b", "c"]).iterator().collect()
   m.sort()
   inspect(
     m,

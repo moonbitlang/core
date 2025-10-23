@@ -74,7 +74,7 @@ test "iter with early termination on left subtree" {
 
 ///|
 test "iterator" {
-  let set = @sorted_set.of([2, 1, 3])
+  let set = @sorted_set.from_array([2, 1, 3])
   let result = set.iterator().collect()
   inspect(result, content="[1, 2, 3]")
 }
