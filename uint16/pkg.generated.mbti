@@ -30,6 +30,10 @@ fn UInt16::op_add(UInt16, UInt16) -> UInt16 // from trait `Add`
 fn UInt16::op_div(UInt16, UInt16) -> UInt16 // from trait `Div`
 #deprecated
 fn UInt16::op_equal(UInt16, UInt16) -> Bool // from trait `Eq`
+fn UInt16::op_ge(UInt16, UInt16) -> Bool // from trait `Compare`
+fn UInt16::op_gt(UInt16, UInt16) -> Bool // from trait `Compare`
+fn UInt16::op_le(UInt16, UInt16) -> Bool // from trait `Compare`
+fn UInt16::op_lt(UInt16, UInt16) -> Bool // from trait `Compare`
 #deprecated
 fn UInt16::op_mod(UInt16, UInt16) -> UInt16 // from trait `Mod`
 #deprecated

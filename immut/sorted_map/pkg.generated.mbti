@@ -66,6 +66,10 @@ fn[K, V] SortedMap::new() -> Self[K, V]
 fn[K : Compare, V] SortedMap::of(FixedArray[(K, V)]) -> Self[K, V]
 #deprecated
 fn[K : Eq, V : Eq] SortedMap::op_equal(Self[K, V], Self[K, V]) -> Bool // from trait `Eq`
+fn[K : Compare, V : Compare] SortedMap::op_ge(Self[K, V], Self[K, V]) -> Bool // from trait `Compare`
+fn[K : Compare, V : Compare] SortedMap::op_gt(Self[K, V], Self[K, V]) -> Bool // from trait `Compare`
+fn[K : Compare, V : Compare] SortedMap::op_le(Self[K, V], Self[K, V]) -> Bool // from trait `Compare`
+fn[K : Compare, V : Compare] SortedMap::op_lt(Self[K, V], Self[K, V]) -> Bool // from trait `Compare`
 fn[K : Show, V : Show] SortedMap::output(Self[K, V], &Logger) -> Unit // from trait `Show`
 fn[K : Compare, V] SortedMap::remove(Self[K, V], K) -> Self[K, V]
 #alias(foldr_with_key)

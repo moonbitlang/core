@@ -15,25 +15,25 @@
 ///|
 #coverage.skip
 pub fn[T : Compare] op_lt(self_ : T, other : T) -> Bool {
-  self_.compare(other).is_neg()
+  Compare::op_lt(self_, other)
 }
 
 ///|
 #coverage.skip
 pub fn[T : Compare] op_gt(self_ : T, other : T) -> Bool {
-  self_.compare(other).is_pos()
+  Compare::op_gt(self_, other)
 }
 
 ///|
 #coverage.skip
 pub fn[T : Compare] op_le(self_ : T, other : T) -> Bool {
-  self_.compare(other).is_non_pos()
+  Compare::op_le(self_, other)
 }
 
 ///|
 #coverage.skip
 pub fn[T : Compare] op_ge(self_ : T, other : T) -> Bool {
-  self_.compare(other).is_non_neg()
+  Compare::op_ge(self_, other)
 }
 
 ///|

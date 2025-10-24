@@ -122,6 +122,26 @@ pub impl Compare for Byte with compare(self : Byte, that : Byte) -> Int {
 }
 
 ///|
+pub impl Compare for Byte with op_lt(x, y) {
+  x.to_int() < y.to_int()
+}
+
+///|
+pub impl Compare for Byte with op_le(x, y) {
+  x.to_int() <= y.to_int()
+}
+
+///|
+pub impl Compare for Byte with op_gt(x, y) {
+  x.to_int() > y.to_int()
+}
+
+///|
+pub impl Compare for Byte with op_ge(x, y) {
+  x.to_int() >= y.to_int()
+}
+
+///|
 fn alphabet(x : Int) -> String {
   match x {
     0 => "0"

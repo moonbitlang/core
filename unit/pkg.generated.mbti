@@ -11,6 +11,10 @@ fn Unit::compare(Unit, Unit) -> Int // from trait `Compare`
 fn Unit::default() -> Unit // from trait `Default`
 fn Unit::hash(Unit) -> Int // from trait `Hash`
 fn Unit::hash_combine(Unit, Hasher) -> Unit // from trait `Hash`
+fn Unit::op_ge(Unit, Unit) -> Bool // from trait `Compare`
+fn Unit::op_gt(Unit, Unit) -> Bool // from trait `Compare`
+fn Unit::op_le(Unit, Unit) -> Bool // from trait `Compare`
+fn Unit::op_lt(Unit, Unit) -> Bool // from trait `Compare`
 fn Unit::to_string(Unit) -> String
 impl Compare for Unit
 impl Default for Unit

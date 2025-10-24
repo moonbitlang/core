@@ -55,6 +55,10 @@ fn T::op_add(Self, Self) -> Self // from trait `Add`
 fn T::op_div(Self, Self) -> Self // from trait `Div`
 #deprecated
 fn T::op_equal(Self, Self) -> Bool // from trait `Eq`
+fn T::op_ge(Self, Self) -> Bool // from trait `Compare`
+fn T::op_gt(Self, Self) -> Bool // from trait `Compare`
+fn T::op_le(Self, Self) -> Bool // from trait `Compare`
+fn T::op_lt(Self, Self) -> Bool // from trait `Compare`
 #deprecated
 fn T::op_mul(Self, Self) -> Self // from trait `Mul`
 #deprecated

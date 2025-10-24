@@ -59,6 +59,10 @@ fn[A : Compare] SortedSet::of(FixedArray[A]) -> Self[A]
 fn[A : Compare] SortedSet::op_add(Self[A], Self[A]) -> Self[A] // from trait `Add`
 #deprecated
 fn[A : Eq] SortedSet::op_equal(Self[A], Self[A]) -> Bool // from trait `Eq`
+fn[A : Compare] SortedSet::op_ge(Self[A], Self[A]) -> Bool // from trait `Compare`
+fn[A : Compare] SortedSet::op_gt(Self[A], Self[A]) -> Bool // from trait `Compare`
+fn[A : Compare] SortedSet::op_le(Self[A], Self[A]) -> Bool // from trait `Compare`
+fn[A : Compare] SortedSet::op_lt(Self[A], Self[A]) -> Bool // from trait `Compare`
 fn[A : Show] SortedSet::output(Self[A], &Logger) -> Unit // from trait `Show`
 fn[A : Compare] SortedSet::remove(Self[A], A) -> Self[A]
 fn[A] SortedSet::remove_min(Self[A]) -> Self[A]

@@ -65,6 +65,10 @@ fn[A] Deque::of(FixedArray[A]) -> Self[A]
 fn[A] Deque::op_add(Self[A], Self[A]) -> Self[A] // from trait `Add`
 #deprecated
 fn[A : Eq] Deque::op_equal(Self[A], Self[A]) -> Bool // from trait `Eq`
+fn[A : Compare] Deque::op_ge(Self[A], Self[A]) -> Bool // from trait `Compare`
+fn[A : Compare] Deque::op_gt(Self[A], Self[A]) -> Bool // from trait `Compare`
+fn[A : Compare] Deque::op_le(Self[A], Self[A]) -> Bool // from trait `Compare`
+fn[A : Compare] Deque::op_lt(Self[A], Self[A]) -> Bool // from trait `Compare`
 fn[A : Show] Deque::output(Self[A], &Logger) -> Unit // from trait `Show`
 fn[A] Deque::pop_back(Self[A]) -> A?
 #deprecated

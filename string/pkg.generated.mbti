@@ -44,6 +44,10 @@ fn String::iterator(String) -> Iterator[Char]
 fn String::iterator2(String) -> Iterator[(Int, Char)]
 fn String::lexical_compare(String, String) -> Int
 fn String::offset_of_nth_char(String, Int, start_offset? : Int, end_offset? : Int) -> Int?
+fn String::op_ge(String, String) -> Bool // from trait `Compare`
+fn String::op_gt(String, String) -> Bool // from trait `Compare`
+fn String::op_le(String, String) -> Bool // from trait `Compare`
+fn String::op_lt(String, String) -> Bool // from trait `Compare`
 fn String::pad_end(String, Int, Char) -> String
 fn String::pad_start(String, Int, Char) -> String
 fn String::repeat(String, Int) -> String
@@ -117,6 +121,10 @@ fn StringView::offset_of_nth_char(Self, Int) -> Int?
 fn StringView::op_add(Self, Self) -> Self // from trait `Add`
 #deprecated
 fn StringView::op_equal(Self, Self) -> Bool // from trait `Eq`
+fn StringView::op_ge(Self, Self) -> Bool // from trait `Compare`
+fn StringView::op_gt(Self, Self) -> Bool // from trait `Compare`
+fn StringView::op_le(Self, Self) -> Bool // from trait `Compare`
+fn StringView::op_lt(Self, Self) -> Bool // from trait `Compare`
 fn StringView::output(Self, &Logger) -> Unit // from trait `Show`
 fn StringView::pad_end(Self, Int, Char) -> String
 fn StringView::pad_start(Self, Int, Char) -> String

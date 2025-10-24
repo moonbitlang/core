@@ -33,6 +33,10 @@ fn[A] PriorityQueue::new() -> Self[A]
 fn[A : Compare] PriorityQueue::of(FixedArray[A]) -> Self[A]
 #deprecated
 fn[A : Compare] PriorityQueue::op_equal(Self[A], Self[A]) -> Bool // from trait `Eq`
+fn[A : Compare] PriorityQueue::op_ge(Self[A], Self[A]) -> Bool // from trait `Compare`
+fn[A : Compare] PriorityQueue::op_gt(Self[A], Self[A]) -> Bool // from trait `Compare`
+fn[A : Compare] PriorityQueue::op_le(Self[A], Self[A]) -> Bool // from trait `Compare`
+fn[A : Compare] PriorityQueue::op_lt(Self[A], Self[A]) -> Bool // from trait `Compare`
 fn[A : Show + Compare] PriorityQueue::output(Self[A], &Logger) -> Unit // from trait `Show`
 fn[A] PriorityQueue::peek(Self[A]) -> A?
 fn[A : Compare] PriorityQueue::pop(Self[A]) -> Self[A]?

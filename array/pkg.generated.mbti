@@ -43,6 +43,10 @@ fn[T, U] FixedArray::mapi(Self[T], (Int, T) -> U raise?) -> Self[U] raise?
 fn[T] FixedArray::op_add(Self[T], Self[T]) -> Self[T] // from trait `Add`
 #deprecated
 fn[T : Eq] FixedArray::op_equal(Self[T], Self[T]) -> Bool // from trait `Eq`
+fn[T : Compare] FixedArray::op_ge(Self[T], Self[T]) -> Bool // from trait `Compare`
+fn[T : Compare] FixedArray::op_gt(Self[T], Self[T]) -> Bool // from trait `Compare`
+fn[T : Compare] FixedArray::op_le(Self[T], Self[T]) -> Bool // from trait `Compare`
+fn[T : Compare] FixedArray::op_lt(Self[T], Self[T]) -> Bool // from trait `Compare`
 fn[T] FixedArray::rev(Self[T]) -> Self[T]
 fn[T] FixedArray::rev_each(Self[T], (T) -> Unit raise?) -> Unit raise?
 fn[T] FixedArray::rev_eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?
@@ -162,6 +166,10 @@ fn[T, U] ArrayView::map(Self[T], (T) -> U raise?) -> Array[U] raise?
 fn[T, U] ArrayView::mapi(Self[T], (Int, T) -> U raise?) -> Array[U] raise?
 #deprecated
 fn[T : Eq] ArrayView::op_equal(Self[T], Self[T]) -> Bool // from trait `Eq`
+fn[T : Compare] ArrayView::op_ge(Self[T], Self[T]) -> Bool // from trait `Compare`
+fn[T : Compare] ArrayView::op_gt(Self[T], Self[T]) -> Bool // from trait `Compare`
+fn[T : Compare] ArrayView::op_le(Self[T], Self[T]) -> Bool // from trait `Compare`
+fn[T : Compare] ArrayView::op_lt(Self[T], Self[T]) -> Bool // from trait `Compare`
 fn[X : Show] ArrayView::output(Self[X], &Logger) -> Unit // from trait `Show`
 fn[A, B] ArrayView::rev_fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 fn[A, B] ArrayView::rev_foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
