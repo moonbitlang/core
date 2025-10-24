@@ -19,19 +19,19 @@ let data : Bytes = b"\xD4\xC3\xB2\xA1\x02\x00\x04\x00\x00\x00\x00\x00\x00\x00\x0
 fn pcap_test(data : BytesView) -> Unit raise {
   match data {
     [
-      u32(0xa1b2c3d4 | 0xa1b23c4d | 0xd4c3b2a1 | 0x4d3cb2a1 as magic),
+      u32be(0xa1b2c3d4 | 0xa1b23c4d | 0xd4c3b2a1 | 0x4d3cb2a1 as magic),
       // major version
       u16le(2),
       // minor version
       u16le(4),
       // time zone
-      u32(_),
+      u32be(_),
       // unused
-      u32(0),
+      u32be(0),
       // snaplen
-      u32(_),
+      u32be(_),
       // network
-      u32(_),
+      u32be(_),
       .. packet,
     ] => {
       assert_eq(magic, 0xd4c3b2a1)
@@ -44,7 +44,7 @@ fn pcap_test(data : BytesView) -> Unit raise {
 ///|
 fn pcap_packet_test(packet : BytesView) -> Unit raise {
   match packet {
-    [u32(_), u32(_), u32le(incl_len), u32le(_orig_len), .. eth] => {
+    [u32be(_), u32be(_), u32le(incl_len), u32le(_orig_len), .. eth] => {
       let incl_len = incl_len.reinterpret_as_int()
       pcap_eth_test(eth[:incl_len])
     }
@@ -56,20 +56,20 @@ fn pcap_packet_test(packet : BytesView) -> Unit raise {
 fn pcap_eth_test(eth : BytesView) -> Unit raise {
   match eth {
     [
-      u8(0x00),
-      u8(0xA0),
-      u8(0xC5),
-      u8(0x8F),
-      u8(0xE3),
+      u8be(0x00),
+      u8be(0xA0),
+      u8be(0xC5),
+      u8be(0x8F),
+      u8be(0xE3),
       //  destination MAC
-      u8(0xC7),
-      u8(0x00),
-      u8(0x0C),
-      u8(0x76),
-      u8(0x1C),
-      u8(0x1B),
+      u8be(0xC7),
+      u8be(0x00),
+      u8be(0x0C),
+      u8be(0x76),
+      u8be(0x1C),
+      u8be(0x1B),
       //  source MAC
-      u8(0x97),
+      u8be(0x97),
       //  ethertype
       u16be(0x0800),
       .. ipv4,
@@ -82,30 +82,30 @@ fn pcap_eth_test(eth : BytesView) -> Unit raise {
 fn pcap_ipv4_test(ipv4 : BytesView) -> Unit raise {
   match ipv4 {
     [
-      u4(4),
-      u4(5),
+      u4be(4),
+      u4be(5),
       //  dscn/ecn
-      u8(0),
+      u8be(0),
       u16be(60),
       //  ident
       u16be(0x92A6),
       //  flags
-      u3(0x02),
+      u3be(0x02),
       // fragment offset
       u13be(0),
       // ttl
-      u8(64),
-      u8(0x06),
+      u8be(64),
+      u8be(0x06),
       //  checksum
       u16be(0xFA91),
-      u8(0xC0),
-      u8(0xA8),
-      u8(0x01),
-      u8(0x21),
-      u8(0xCC),
-      u8(0xB2),
-      u8(0x1F),
-      u8(0x08),
+      u8be(0xC0),
+      u8be(0xA8),
+      u8be(0x01),
+      u8be(0x21),
+      u8be(0xCC),
+      u8be(0xB2),
+      u8be(0x1F),
+      u8be(0x08),
       ..,
     ] => ()
     _ => fail("Not a valid ipv4 layer")
