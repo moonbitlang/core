@@ -516,6 +516,18 @@ pub impl Eq for Int64 with equal(self : Int64, other : Int64) -> Bool = "%i64_eq
 pub impl Compare for Int64 with compare(self, other) = "%i64_compare"
 
 ///|
+pub impl Compare for Int64 with op_lt(x, y) = "%i64.lt"
+
+///|
+pub impl Compare for Int64 with op_le(x, y) = "%i64.le"
+
+///|
+pub impl Compare for Int64 with op_gt(x, y) = "%i64.gt"
+
+///|
+pub impl Compare for Int64 with op_ge(x, y) = "%i64.ge"
+
+///|
 /// Returns the default value for `Int64` type, which is zero (0L).
 ///
 /// Returns a 64-bit signed integer with value 0.
@@ -1222,6 +1234,18 @@ pub impl Mod for UInt64 with mod(self, other) = "%u64.mod"
 ///   inspect(a.compare(a), content="0") // 42 = 42
 /// ```
 pub impl Compare for UInt64 with compare(self, other) = "%u64.compare"
+
+///|
+pub impl Compare for UInt64 with op_lt(x, y) = "%u64.lt"
+
+///|
+pub impl Compare for UInt64 with op_le(x, y) = "%u64.le"
+
+///|
+pub impl Compare for UInt64 with op_gt(x, y) = "%u64.gt"
+
+///|
+pub impl Compare for UInt64 with op_ge(x, y) = "%u64.ge"
 
 ///|
 /// Compares two unsigned 64-bit integers for equality.

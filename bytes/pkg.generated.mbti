@@ -66,6 +66,10 @@ fn BytesView::iterator2(Self) -> Iterator[(Int, Byte)]
 fn BytesView::length(Self) -> Int
 #deprecated
 fn BytesView::op_equal(Self, Self) -> Bool // from trait `Eq`
+fn BytesView::op_ge(Self, Self) -> Bool // from trait `Compare`
+fn BytesView::op_gt(Self, Self) -> Bool // from trait `Compare`
+fn BytesView::op_le(Self, Self) -> Bool // from trait `Compare`
+fn BytesView::op_lt(Self, Self) -> Bool // from trait `Compare`
 fn BytesView::output(Self, &Logger) -> Unit // from trait `Show`
 fn BytesView::rev_find(Self, Self) -> Int?
 fn BytesView::start_offset(Self) -> Int

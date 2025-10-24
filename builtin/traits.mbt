@@ -29,6 +29,30 @@ pub(open) trait Eq {
 /// - positive, if the first argument is greater
 pub(open) trait Compare: Eq {
   compare(Self, Self) -> Int
+  op_lt(Self, Self) -> Bool = _
+  op_gt(Self, Self) -> Bool = _
+  op_le(Self, Self) -> Bool = _
+  op_ge(Self, Self) -> Bool = _
+}
+
+///|
+impl Compare with op_lt(x, y) {
+  x.compare(y).is_neg()
+}
+
+///|
+impl Compare with op_gt(x, y) {
+  x.compare(y).is_pos()
+}
+
+///|
+impl Compare with op_le(x, y) {
+  x.compare(y).is_non_pos()
+}
+
+///|
+impl Compare with op_ge(x, y) {
+  x.compare(y).is_non_neg()
 }
 
 ///|

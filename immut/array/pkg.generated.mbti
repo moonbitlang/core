@@ -54,6 +54,10 @@ fn[A] T::of(FixedArray[A]) -> Self[A]
 fn[A] T::op_add(Self[A], Self[A]) -> Self[A] // from trait `Add`
 #deprecated
 fn[A : Eq] T::op_equal(Self[A], Self[A]) -> Bool // from trait `Eq`
+fn[A : Compare] T::op_ge(Self[A], Self[A]) -> Bool // from trait `Compare`
+fn[A : Compare] T::op_gt(Self[A], Self[A]) -> Bool // from trait `Compare`
+fn[A : Compare] T::op_le(Self[A], Self[A]) -> Bool // from trait `Compare`
+fn[A : Compare] T::op_lt(Self[A], Self[A]) -> Bool // from trait `Compare`
 fn[A : Show] T::output(Self[A], &Logger) -> Unit // from trait `Show`
 fn[A] T::push(Self[A], A) -> Self[A]
 fn[A, B] T::rev_fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?

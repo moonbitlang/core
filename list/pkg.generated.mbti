@@ -83,6 +83,10 @@ fn[A] List::of(FixedArray[A]) -> Self[A]
 fn[A] List::op_add(Self[A], Self[A]) -> Self[A] // from trait `Add`
 #deprecated
 fn[A : Eq] List::op_equal(Self[A], Self[A]) -> Bool // from trait `Eq`
+fn[A : Compare] List::op_ge(Self[A], Self[A]) -> Bool // from trait `Compare`
+fn[A : Compare] List::op_gt(Self[A], Self[A]) -> Bool // from trait `Compare`
+fn[A : Compare] List::op_le(Self[A], Self[A]) -> Bool // from trait `Compare`
+fn[A : Compare] List::op_lt(Self[A], Self[A]) -> Bool // from trait `Compare`
 fn[A : Show] List::output(Self[A], &Logger) -> Unit // from trait `Show`
 #alias(add)
 fn[A] List::prepend(Self[A], A) -> Self[A]

@@ -52,6 +52,10 @@ fn BigInt::op_add(Self, Self) -> Self // from trait `Add`
 fn BigInt::op_div(Self, Self) -> Self // from trait `Div`
 #deprecated
 fn BigInt::op_equal(Self, Self) -> Bool // from trait `Eq`
+fn BigInt::op_ge(Self, Self) -> Bool // from trait `Compare`
+fn BigInt::op_gt(Self, Self) -> Bool // from trait `Compare`
+fn BigInt::op_le(Self, Self) -> Bool // from trait `Compare`
+fn BigInt::op_lt(Self, Self) -> Bool // from trait `Compare`
 #deprecated
 fn BigInt::op_mod(Self, Self) -> Self // from trait `Mod`
 #deprecated

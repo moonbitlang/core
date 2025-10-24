@@ -663,6 +663,18 @@ pub impl Eq for Int with equal(self : Int, other : Int) -> Bool = "%i32_eq"
 pub impl Compare for Int with compare(self, other) = "%i32_compare"
 
 ///|
+pub impl Compare for Int with op_lt(x, y) = "%i32.lt"
+
+///|
+pub impl Compare for Int with op_le(x, y) = "%i32.le"
+
+///|
+pub impl Compare for Int with op_gt(x, y) = "%i32.gt"
+
+///|
+pub impl Compare for Int with op_ge(x, y) = "%i32.ge"
+
+///|
 pub fn Int::is_pos(self : Int) -> Bool = "%i32_is_pos"
 
 ///|
@@ -1026,6 +1038,18 @@ pub fn Double::op_neq(self : Double, other : Double) -> Bool = "%f64_ne"
 pub impl Compare for Double with compare(self, other) = "%f64_compare"
 
 ///|
+pub impl Compare for Double with op_lt(x, y) = "%f64.lt"
+
+///|
+pub impl Compare for Double with op_le(x, y) = "%f64.le"
+
+///|
+pub impl Compare for Double with op_gt(x, y) = "%f64.gt"
+
+///|
+pub impl Compare for Double with op_ge(x, y) = "%f64.ge"
+
+///|
 /// Returns the default value for double-precision floating-point numbers (0.0).
 ///
 /// Returns a `Double` value initialized to 0.0.
@@ -1155,6 +1179,18 @@ pub impl Eq for Char with equal(self : Char, other : Char) -> Bool = "%char_eq"
 ///   inspect('a'.compare('a'), content="0")
 /// ```
 pub impl Compare for Char with compare(self, other) = "%char_compare"
+
+///|
+pub impl Compare for Char with op_lt(x, y) = "%i32.lt"
+
+///|
+pub impl Compare for Char with op_le(x, y) = "%i32.le"
+
+///|
+pub impl Compare for Char with op_gt(x, y) = "%i32.gt"
+
+///|
+pub impl Compare for Char with op_ge(x, y) = "%i32.ge"
 
 ///|
 /// Returns the default value for the `Char` type, which is the null character
@@ -1882,6 +1918,18 @@ pub fn UInt::op_neq(self : UInt, other : UInt) -> Bool = "%u32.ne"
 pub impl Compare for UInt with compare(self, other) = "%u32.compare"
 
 ///|
+pub impl Compare for UInt with op_lt(x, y) = "%u32.lt"
+
+///|
+pub impl Compare for UInt with op_le(x, y) = "%u32.le"
+
+///|
+pub impl Compare for UInt with op_gt(x, y) = "%u32.gt"
+
+///|
+pub impl Compare for UInt with op_ge(x, y) = "%u32.ge"
+
+///|
 /// Performs a bitwise AND operation between two unsigned 32-bit integers. For
 /// each bit position, the result is 1 if the bits at that position in both
 /// operands are 1, and 0 otherwise.
@@ -2469,6 +2517,18 @@ pub fn Float::op_neq(self : Float, other : Float) -> Bool = "%f32.ne"
 ///   inspect(a.compare(a), content="0") // 3.14 = 3.14
 /// ```
 pub impl Compare for Float with compare(self, other) = "%f32.compare"
+
+///|
+pub impl Compare for Float with op_lt(x, y) = "%f32.lt"
+
+///|
+pub impl Compare for Float with op_le(x, y) = "%f32.le"
+
+///|
+pub impl Compare for Float with op_gt(x, y) = "%f32.gt"
+
+///|
+pub impl Compare for Float with op_ge(x, y) = "%f32.ge"
 
 ///|
 /// Converts a 32-bit floating-point number to a double-precision (64-bit)

@@ -29,6 +29,10 @@ fn Int16::op_add(Int16, Int16) -> Int16 // from trait `Add`
 fn Int16::op_div(Int16, Int16) -> Int16 // from trait `Div`
 #deprecated
 fn Int16::op_equal(Int16, Int16) -> Bool // from trait `Eq`
+fn Int16::op_ge(Int16, Int16) -> Bool // from trait `Compare`
+fn Int16::op_gt(Int16, Int16) -> Bool // from trait `Compare`
+fn Int16::op_le(Int16, Int16) -> Bool // from trait `Compare`
+fn Int16::op_lt(Int16, Int16) -> Bool // from trait `Compare`
 #deprecated
 fn Int16::op_mod(Int16, Int16) -> Int16 // from trait `Mod`
 #deprecated
