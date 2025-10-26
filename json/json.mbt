@@ -88,7 +88,7 @@ fn indent_str(level : Int, indent : Int) -> String {
 /// Internal stack frame used by iterative stringify to avoid recursion
 priv enum WriteFrame {
   Array(Array[Json], Int, Int) // (arr, index, depth)
-  Object(Array[(String, Json)], Int, Int) // (kvs, index, depth)
+  Object(Iterator[(String, Json)], Bool, Int) // (kvs, first, depth)
 }
 
 ///|
@@ -115,7 +115,7 @@ pub fn Json::stringify(
             buf.write_char('{')
             buf.write_string(indent_str(depth + 1, indent))
             // After child value printed, we resume from this frame
-            stack.push(WriteFrame::Object(members.to_array(), 0, depth))
+            stack.push(WriteFrame::Object(members.iterator(), true, depth))
             continue (None, depth)
           }
         Array(arr) =>
@@ -174,28 +174,30 @@ pub fn Json::stringify(
                 buf.write_char(']')
                 continue (None, depth)
               }
-            WriteFrame::Object(kvs, i, depth) =>
-              if i < kvs.length() {
-                if i > 0 {
-                  buf.write_char(',')
-                  buf.write_string(indent_str(depth + 1, indent))
+            WriteFrame::Object(iterator, first, depth) =>
+              match iterator.next() {
+                Some((k, v)) => {
+                  if !first {
+                    buf.write_char(',')
+                    buf.write_string(indent_str(depth + 1, indent))
+                  }
+                  buf
+                  ..write_char('\"')
+                  ..write_string(escape(k, escape_slash~))
+                  ..write_char('\"')
+                  ..write_char(':')
+                  if indent > 0 {
+                    buf.write_char(' ')
+                  }
+                  // Resume this object after the child is printed
+                  stack.push(WriteFrame::Object(iterator, false, depth))
+                  continue (Some(v), depth + 1)
                 }
-                let (k, v) = kvs[i]
-                buf
-                ..write_char('\"')
-                ..write_string(escape(k, escape_slash~))
-                ..write_char('\"')
-                ..write_char(':')
-                if indent > 0 {
-                  buf.write_char(' ')
+                None => {
+                  buf.write_string(indent_str(depth, indent))
+                  buf.write_char('}')
+                  continue (None, depth)
                 }
-                // Resume this object after the child is printed
-                stack.push(WriteFrame::Object(kvs, i + 1, depth))
-                continue (Some(v), depth + 1)
-              } else {
-                buf.write_string(indent_str(depth, indent))
-                buf.write_char('}')
-                continue (None, depth)
               }
           }
         None => break
