@@ -183,14 +183,14 @@ test "rev_each" {
 ///|
 test "rev_eachi" {
   let mut i = 6
-  let mut j = 0
+  let mut j = 6
   let mut failed = false
   @deque.of([1, 2, 3, 4, 5]).rev_eachi((index, elem) => {
-    if index != j || elem != i - 1 {
+    if index != j - 2 || elem != i - 1 {
       failed = true
     }
     i = i - 1
-    j = j + 1
+    j = j - 1
   })
   assert_false(failed)
 }
@@ -1096,7 +1096,7 @@ test "rev_iter2 when wrapped around" {
   dq.push_front(6)
   inspect(
     dq.rev_iter2(),
-    content="[(0, 5), (1, 4), (2, 3), (3, 2), (4, 1), (5, 6)]",
+    content="[(5, 5), (4, 4), (3, 3), (2, 2), (1, 1), (0, 6)]",
   )
 }
 
