@@ -329,7 +329,7 @@ pub fn Bytes::iter2(self : Bytes) -> Iter2[Int, Byte] {
 ///   inspect(buf, content="b'\\x61'b'\\x62'b'\\x63'b'\\x64'b'\\x65'")
 ///   inspect(keys, content="[0, 1, 2, 3, 4]")
 /// ```
-pub fn Bytes::iterator2(self : Bytes) -> Iterator[(Int, Byte)] {
+pub fn Bytes::iterator2(self : Bytes) -> Iterator2[Int, Byte] {
   let mut i = 0
   let len = self.length()
   Iterator::new(fn() {

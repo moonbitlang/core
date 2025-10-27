@@ -196,7 +196,7 @@ pub fn String::iter2(self : String) -> Iter2[Int, Char] {
 }
 
 ///|
-pub fn String::iterator2(self : String) -> Iterator[(Int, Char)] {
+pub fn String::iterator2(self : String) -> Iterator2[Int, Char] {
   self.iterator().iterator2()
 }
 

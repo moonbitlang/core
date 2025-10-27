@@ -308,7 +308,7 @@ fn[X] Iterator::intersperse(Self[X], X) -> Self[X]
 fn[X] Iterator::iter(Self[X]) -> Iter[X]
 fn[X] Iterator::iter2(Self[X]) -> Iter2[Int, X]
 fn[X] Iterator::iterator(Self[X]) -> Self[X]
-fn[X] Iterator::iterator2(Self[X]) -> Self[(Int, X)]
+fn[X] Iterator::iterator2(Self[X]) -> Iterator2[Int, X]
 fn Iterator::join(Self[String], String) -> String
 #deprecated
 fn[X] Iterator::just_run(Self[X], (X) -> IterResult) -> Unit
@@ -342,6 +342,17 @@ fn[X : Show] Iterator::to_string(Self[X]) -> String // from trait `Show`
 impl[T] Add for Iterator[T]
 impl[X : Show] Show for Iterator[X]
 impl[X : ToJson] ToJson for Iterator[X]
+
+pub(all) struct Iterator2[X, Y](Iterator[(X, Y)])
+#deprecated
+fn[X, Y] Iterator2::inner(Self[X, Y]) -> Iterator[(X, Y)]
+#alias(iterator2)
+fn[X, Y] Iterator2::iterator(Self[X, Y]) -> Iterator[(X, Y)]
+fn[X, Y] Iterator2::new(() -> (X, Y)?) -> Self[X, Y]
+fn[X, Y] Iterator2::next(Self[X, Y]) -> (X, Y)?
+fn[X : Show, Y : Show] Iterator2::output(Self[X, Y], &Logger) -> Unit // from trait `Show`
+fn[X : Show, Y : Show] Iterator2::to_string(Self[X, Y]) -> String // from trait `Show`
+impl[X : Show, Y : Show] Show for Iterator2[X, Y]
 
 pub enum Json {
   Null

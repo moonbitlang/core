@@ -122,7 +122,7 @@ fn[A, B] Array::filter_map(Self[A], (A) -> B? raise?) -> Self[B] raise?
 fn[T] Array::from_iter(Iter[T]) -> Self[T]
 fn[T] Array::from_iterator(Iterator[T]) -> Self[T]
 fn[X] Array::iterator(Self[X]) -> Iterator[X]
-fn[X] Array::iterator2(Self[X]) -> Iterator[(Int, X)]
+fn[X] Array::iterator2(Self[X]) -> Iterator2[Int, X]
 fn[A : @string.ToStringView] Array::join(Self[A], StringView) -> String
 fn[A] Array::last(Self[A]) -> A?
 fn[T] Array::push_iter(Self[T], Iter[T]) -> Unit
@@ -160,7 +160,7 @@ fn[A : Hash] ArrayView::hash_combine(Self[A], Hasher) -> Unit // from trait `Has
 fn[A] ArrayView::iter(Self[A]) -> Iter[A]
 fn[A] ArrayView::iter2(Self[A]) -> Iter2[Int, A]
 fn[X] ArrayView::iterator(Self[X]) -> Iterator[X]
-fn[X] ArrayView::iterator2(Self[X]) -> Iterator[(Int, X)]
+fn[X] ArrayView::iterator2(Self[X]) -> Iterator2[Int, X]
 fn[A : @string.ToStringView] ArrayView::join(Self[A], StringView) -> String
 fn[T, U] ArrayView::map(Self[T], (T) -> U raise?) -> Array[U] raise?
 fn[T, U] ArrayView::mapi(Self[T], (Int, T) -> U raise?) -> Array[U] raise?

@@ -718,9 +718,9 @@ pub fn[X] Iterator::iter2(self : Iterator[X]) -> Iter2[Int, X] {
 }
 
 ///|
-pub fn[X] Iterator::iterator2(self : Iterator[X]) -> Iterator[(Int, X)] {
+pub fn[X] Iterator::iterator2(self : Iterator[X]) -> Iterator2[Int, X] {
   let mut i = 0
-  fn() {
+  Iterator2::new(fn() {
     match self.next() {
       None => None
       Some(x) => {
@@ -729,7 +729,7 @@ pub fn[X] Iterator::iterator2(self : Iterator[X]) -> Iterator[(Int, X)] {
         result
       }
     }
-  }
+  })
 }
 
 ///|
@@ -882,4 +882,31 @@ pub fn[X : Compare] Iterator::minimum(self : Iterator[X]) -> X? {
     }
   }
   res
+}
+
+///|
+/// This type is used for `for _, _ in ..` loop
+/// (`for .. in` loop with two loop variables),
+/// and should not be used directly in general.
+pub(all) struct Iterator2[X, Y](Iterator[(X, Y)])
+
+///|
+pub fn[X, Y] Iterator2::new(f : () -> (X, Y)?) -> Iterator2[X, Y] {
+  Iterator2(Iterator::new(f))
+}
+
+///|
+#alias(iterator2)
+pub fn[X, Y] Iterator2::iterator(self : Iterator2[X, Y]) -> Iterator[(X, Y)] {
+  self.0
+}
+
+///|
+pub fn[X, Y] Iterator2::next(self : Iterator2[X, Y]) -> (X, Y)? {
+  self.0.next()
+}
+
+///|
+pub impl[X : Show, Y : Show] Show for Iterator2[X, Y] with output(self, logger) {
+  self.0.output(logger)
 }

@@ -116,7 +116,7 @@ test "iterator2" {
   let bs = b"\x00\x01\x02\x03\x04\x05"
   let bv = bs[1:5]
   inspect(
-    bv.iterator2().to_array(),
+    bv.iterator2(),
     content="[(0, b'\\x01'), (1, b'\\x02'), (2, b'\\x03'), (3, b'\\x04')]",
   )
 }

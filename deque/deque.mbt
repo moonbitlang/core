@@ -1507,9 +1507,9 @@ pub fn[A] Deque::iter2(self : Deque[A]) -> Iter2[Int, A] {
 ///   }
 ///   inspect(sum, content="80") // 0*10 + 1*20 + 2*30 = 80
 /// ```
-pub fn[A] Deque::iterator2(self : Deque[A]) -> Iterator[(Int, A)] {
+pub fn[A] Deque::iterator2(self : Deque[A]) -> Iterator2[Int, A] {
   let mut index = 0
-  Iterator::new(fn() {
+  Iterator2::new(fn() {
     guard index < self.len else { None }
     let result = (index, self.buf[(self.head + index) % self.buf.length()])
     index += 1
@@ -1653,9 +1653,9 @@ pub fn[A] Deque::rev_iter2(self : Deque[A]) -> Iter2[Int, A] {
 ///   }
 ///   inspect(s, content="0:3 1:2 2:1 ")
 /// ```
-pub fn[A] Deque::rev_iterator2(self : Deque[A]) -> Iterator[(Int, A)] {
+pub fn[A] Deque::rev_iterator2(self : Deque[A]) -> Iterator2[Int, A] {
   let mut rev_index = self.len
-  Iterator::new(fn() {
+  Iterator2::new(fn() {
     guard rev_index > 0 else { None }
     let index = self.len - rev_index
     rev_index -= 1
