@@ -80,7 +80,19 @@ fn indent_str(level : Int, indent : Int) -> String {
   if indent == 0 {
     ""
   } else {
-    "\n" + " ".repeat(indent * level)
+    let spaces = indent * level
+    match spaces {
+      0 => "\n"
+      1 => "\n "
+      2 => "\n  "
+      3 => "\n   "
+      4 => "\n    "
+      5 => "\n     "
+      6 => "\n      "
+      7 => "\n       "
+      8 => "\n        "
+      _ => "\n" + " ".repeat(spaces)
+    }
   }
 }
 
