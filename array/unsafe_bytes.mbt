@@ -13,8 +13,29 @@
 // limitations under the License.
 
 ///|
+/// **UNSAFE**: Writes a UInt64 to the FixedArray[Byte] in little-endian byte order.
+/// 
+/// ⚠️ **Warning: This function is unsafe and can cause undefined behavior!**
+/// 
+/// # Safety
+/// - **No bounds checking**: This function does not verify that `index + 7 < bytes.length()`
+/// - **Buffer overrun risk**: Writing beyond the array boundary may corrupt memory
+/// - **Alignment**: No alignment requirements, but misaligned access may be slower on some architectures
+/// - **Responsibility**: Caller must ensure sufficient space is available
+/// 
+/// # Parameters
+/// - `bytes`: The FixedArray[Byte] to write to
+/// - `index`: Starting byte index (0-based)
+/// - `value`: The UInt64 value to write
+/// 
+/// # Behavior
+/// Writes 8 bytes starting at `index` in little-endian order:
+/// - `bytes[index]` ← bits 0-7 (least significant)
+/// - `bytes[index+1]` ← bits 8-15
+/// - ...
+/// - `bytes[index+7]` ← bits 56-63 (most significant)
 // #intrinsic("%bytes.unsafe_write_uint64_le")
-pub fn unsafe_write_uint64_le(
+pub fn FixedArray::unsafe_write_uint64_le(
   bytes : FixedArray[Byte],
   index : Int,
   value : UInt64,
@@ -25,8 +46,29 @@ pub fn unsafe_write_uint64_le(
 }
 
 ///|
+/// **UNSAFE**: Writes a UInt64 to the FixedArray[Byte] in big-endian byte order.
+/// 
+/// ⚠️ **Warning: This function is unsafe and can cause undefined behavior!**
+/// 
+/// # Safety
+/// - **No bounds checking**: This function does not verify that `index + 7 < bytes.length()`
+/// - **Buffer overrun risk**: Writing beyond the array boundary may corrupt memory
+/// - **Alignment**: No alignment requirements, but misaligned access may be slower on some architectures
+/// - **Responsibility**: Caller must ensure sufficient space is available
+/// 
+/// # Parameters
+/// - `bytes`: The FixedArray[Byte] to write to
+/// - `index`: Starting byte index (0-based)
+/// - `value`: The UInt64 value to write
+/// 
+/// # Behavior
+/// Writes 8 bytes starting at `index` in big-endian order:
+/// - `bytes[index]` ← bits 56-63 (most significant)
+/// - `bytes[index+1]` ← bits 48-55
+/// - ...
+/// - `bytes[index+7]` ← bits 0-7 (least significant)
 // #intrinsic("%bytes.unsafe_write_uint64_be")
-pub fn unsafe_write_uint64_be(
+pub fn FixedArray::unsafe_write_uint64_be(
   bytes : FixedArray[Byte],
   index : Int,
   value : UInt64,
@@ -37,8 +79,29 @@ pub fn unsafe_write_uint64_be(
 }
 
 ///|
+/// **UNSAFE**: Writes a UInt32 to the FixedArray[Byte] in little-endian byte order.
+/// 
+/// ⚠️ **Warning: This function is unsafe and can cause undefined behavior!**
+/// 
+/// # Safety
+/// - **No bounds checking**: This function does not verify that `index + 3 < bytes.length()`
+/// - **Buffer overrun risk**: Writing beyond the array boundary may corrupt memory
+/// - **Alignment**: No alignment requirements, but misaligned access may be slower on some architectures
+/// - **Responsibility**: Caller must ensure sufficient space is available
+/// 
+/// # Parameters
+/// - `bytes`: The FixedArray[Byte] to write to
+/// - `index`: Starting byte index (0-based)
+/// - `value`: The UInt32 value to write
+/// 
+/// # Behavior
+/// Writes 4 bytes starting at `index` in little-endian order:
+/// - `bytes[index]` ← bits 0-7 (least significant)
+/// - `bytes[index+1]` ← bits 8-15
+/// - `bytes[index+2]` ← bits 16-23
+/// - `bytes[index+3]` ← bits 24-31 (most significant)
 // #intrinsic("%bytes.unsafe_write_uint32_le")
-pub fn unsafe_write_uint32_le(
+pub fn FixedArray::unsafe_write_uint32_le(
   bytes : FixedArray[Byte],
   index : Int,
   value : UInt,
@@ -49,8 +112,29 @@ pub fn unsafe_write_uint32_le(
 }
 
 ///|
+/// **UNSAFE**: Writes a UInt32 to the FixedArray[Byte] in big-endian byte order.
+/// 
+/// ⚠️ **Warning: This function is unsafe and can cause undefined behavior!**
+/// 
+/// # Safety
+/// - **No bounds checking**: This function does not verify that `index + 3 < bytes.length()`
+/// - **Buffer overrun risk**: Writing beyond the array boundary may corrupt memory
+/// - **Alignment**: No alignment requirements, but misaligned access may be slower on some architectures
+/// - **Responsibility**: Caller must ensure sufficient space is available
+/// 
+/// # Parameters
+/// - `bytes`: The FixedArray[Byte] to write to
+/// - `index`: Starting byte index (0-based)
+/// - `value`: The UInt32 value to write
+/// 
+/// # Behavior
+/// Writes 4 bytes starting at `index` in big-endian order:
+/// - `bytes[index]` ← bits 24-31 (most significant)
+/// - `bytes[index+1]` ← bits 16-23
+/// - `bytes[index+2]` ← bits 8-15
+/// - `bytes[index+3]` ← bits 0-7 (least significant)
 // #intrinsic("%bytes.unsafe_write_uint32_be")
-pub fn unsafe_write_uint32_be(
+pub fn FixedArray::unsafe_write_uint32_be(
   bytes : FixedArray[Byte],
   index : Int,
   value : UInt,
@@ -61,8 +145,27 @@ pub fn unsafe_write_uint32_be(
 }
 
 ///|
+/// **UNSAFE**: Writes a UInt16 to the FixedArray[Byte] in little-endian byte order.
+/// 
+/// ⚠️ **Warning: This function is unsafe and can cause undefined behavior!**
+/// 
+/// # Safety
+/// - **No bounds checking**: This function does not verify that `index + 1 < bytes.length()`
+/// - **Buffer overrun risk**: Writing beyond the array boundary may corrupt memory
+/// - **Alignment**: No alignment requirements, but misaligned access may be slower on some architectures
+/// - **Responsibility**: Caller must ensure sufficient space is available
+/// 
+/// # Parameters
+/// - `bytes`: The FixedArray[Byte] to write to
+/// - `index`: Starting byte index (0-based)
+/// - `value`: The UInt16 value to write
+/// 
+/// # Behavior
+/// Writes 2 bytes starting at `index` in little-endian order:
+/// - `bytes[index]` ← bits 0-7 (least significant)
+/// - `bytes[index+1]` ← bits 8-15 (most significant)
 // #intrinsic("%bytes.unsafe_write_uint16_le")
-pub fn unsafe_write_uint16_le(
+pub fn FixedArray::unsafe_write_uint16_le(
   bytes : FixedArray[Byte],
   index : Int,
   value : UInt16,
@@ -73,8 +176,27 @@ pub fn unsafe_write_uint16_le(
 }
 
 ///|
+/// **UNSAFE**: Writes a UInt16 to the FixedArray[Byte] in big-endian byte order.
+/// 
+/// ⚠️ **Warning: This function is unsafe and can cause undefined behavior!**
+/// 
+/// # Safety
+/// - **No bounds checking**: This function does not verify that `index + 1 < bytes.length()`
+/// - **Buffer overrun risk**: Writing beyond the array boundary may corrupt memory
+/// - **Alignment**: No alignment requirements, but misaligned access may be slower on some architectures
+/// - **Responsibility**: Caller must ensure sufficient space is available
+/// 
+/// # Parameters
+/// - `bytes`: The FixedArray[Byte] to write to
+/// - `index`: Starting byte index (0-based)
+/// - `value`: The UInt16 value to write
+/// 
+/// # Behavior
+/// Writes 2 bytes starting at `index` in big-endian order:
+/// - `bytes[index]` ← bits 8-15 (most significant)
+/// - `bytes[index+1]` ← bits 0-7 (least significant)
 // #intrinsic("%bytes.unsafe_write_uint16_be")
-pub fn unsafe_write_uint16_be(
+pub fn FixedArray::unsafe_write_uint16_be(
   bytes : FixedArray[Byte],
   index : Int,
   value : UInt16,
