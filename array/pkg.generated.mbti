@@ -67,6 +67,12 @@ fn FixedArray::unsafe_extract_uint64_be(Self[Byte], Int, Int) -> UInt64
 fn FixedArray::unsafe_extract_uint64_le(Self[Byte], Int, Int) -> UInt64
 fn FixedArray::unsafe_extract_uint_be(Self[Byte], Int, Int) -> UInt
 fn FixedArray::unsafe_extract_uint_le(Self[Byte], Int, Int) -> UInt
+fn FixedArray::unsafe_write_uint16_be(Self[Byte], Int, UInt16) -> Unit
+fn FixedArray::unsafe_write_uint16_le(Self[Byte], Int, UInt16) -> Unit
+fn FixedArray::unsafe_write_uint32_be(Self[Byte], Int, UInt) -> Unit
+fn FixedArray::unsafe_write_uint32_le(Self[Byte], Int, UInt) -> Unit
+fn FixedArray::unsafe_write_uint64_be(Self[Byte], Int, UInt64) -> Unit
+fn FixedArray::unsafe_write_uint64_le(Self[Byte], Int, UInt64) -> Unit
 impl[T] Add for FixedArray[T]
 impl[T : Compare] Compare for FixedArray[T]
 impl[T : Eq] Eq for FixedArray[T]

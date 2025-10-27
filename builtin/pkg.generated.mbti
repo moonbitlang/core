@@ -755,7 +755,15 @@ fn UInt::trunc_double(Double) -> UInt
 #deprecated
 fn UInt::upto(UInt, UInt, inclusive? : Bool) -> Iter[UInt]
 
+fn UInt16::land(UInt16, UInt16) -> UInt16 // from trait `BitAnd`
+fn UInt16::lor(UInt16, UInt16) -> UInt16 // from trait `BitOr`
+#deprecated
+fn UInt16::op_shl(UInt16, Int) -> UInt16 // from trait `Shl`
+#deprecated
+fn UInt16::op_shr(UInt16, Int) -> UInt16 // from trait `Shr`
 fn UInt16::output(UInt16, &Logger) -> Unit // from trait `Show`
+fn UInt16::shl(UInt16, Int) -> UInt16 // from trait `Shl`
+fn UInt16::shr(UInt16, Int) -> UInt16 // from trait `Shr`
 fn UInt16::to_byte(UInt16) -> Byte
 fn UInt16::to_int(UInt16) -> Int
 fn UInt16::to_int64(UInt16) -> Int64
@@ -1218,6 +1226,7 @@ impl BitAnd for Byte
 impl BitAnd for Int
 impl BitAnd for Int64
 impl BitAnd for UInt
+impl BitAnd for UInt16
 impl BitAnd for UInt64
 
 pub(open) trait BitOr {
@@ -1227,6 +1236,7 @@ impl BitOr for Byte
 impl BitOr for Int
 impl BitOr for Int64
 impl BitOr for UInt
+impl BitOr for UInt16
 impl BitOr for UInt64
 
 pub(open) trait BitXOr {
@@ -1400,6 +1410,7 @@ impl Shl for Byte
 impl Shl for Int
 impl Shl for Int64
 impl Shl for UInt
+impl Shl for UInt16
 impl Shl for UInt64
 
 pub(open) trait Show {
@@ -1445,6 +1456,7 @@ impl Shr for Byte
 impl Shr for Int
 impl Shr for Int64
 impl Shr for UInt
+impl Shr for UInt16
 impl Shr for UInt64
 
 pub(open) trait Sub {

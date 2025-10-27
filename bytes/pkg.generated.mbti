@@ -45,6 +45,12 @@ fn Bytes::unsafe_extract_uint64_be(Bytes, Int, Int) -> UInt64
 fn Bytes::unsafe_extract_uint64_le(Bytes, Int, Int) -> UInt64
 fn Bytes::unsafe_extract_uint_be(Bytes, Int, Int) -> UInt
 fn Bytes::unsafe_extract_uint_le(Bytes, Int, Int) -> UInt
+fn Bytes::unsafe_read_uint16_be(Bytes, Int) -> UInt16
+fn Bytes::unsafe_read_uint16_le(Bytes, Int) -> UInt16
+fn Bytes::unsafe_read_uint32_be(Bytes, Int) -> UInt
+fn Bytes::unsafe_read_uint32_le(Bytes, Int) -> UInt
+fn Bytes::unsafe_read_uint64_be(Bytes, Int) -> UInt64
+fn Bytes::unsafe_read_uint64_le(Bytes, Int) -> UInt64
 impl Add for Bytes
 impl Default for Bytes
 impl Hash for Bytes
@@ -98,6 +104,12 @@ fn BytesView::unsafe_extract_uint64_le(Self, Int, Int) -> UInt64
 fn BytesView::unsafe_extract_uint_be(Self, Int, Int) -> UInt
 fn BytesView::unsafe_extract_uint_le(Self, Int, Int) -> UInt
 fn BytesView::unsafe_get(Self, Int) -> Byte
+fn BytesView::unsafe_read_uint16_be(Self, Int) -> UInt16
+fn BytesView::unsafe_read_uint16_le(Self, Int) -> UInt16
+fn BytesView::unsafe_read_uint32_be(Self, Int) -> UInt
+fn BytesView::unsafe_read_uint32_le(Self, Int) -> UInt
+fn BytesView::unsafe_read_uint64_be(Self, Int) -> UInt64
+fn BytesView::unsafe_read_uint64_le(Self, Int) -> UInt64
 impl Compare for BytesView
 impl Eq for BytesView
 impl Hash for BytesView
