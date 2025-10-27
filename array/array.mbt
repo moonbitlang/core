@@ -328,6 +328,6 @@ pub fn[X] Array::rev_iterator(self : Array[X]) -> Iterator[X] {
 }
 
 ///|
-pub fn[X] Array::iterator2(self : Array[X]) -> Iterator[(Int, X)] {
+pub fn[X] Array::iterator2(self : Array[X]) -> Iterator2[Int, X] {
   self[:].iterator2()
 }

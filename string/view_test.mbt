@@ -649,7 +649,7 @@ test "iterator2" {
   let str = "aa😭b😂cc"
   let view = str.view(start_offset=1, end_offset=8)
   inspect(
-    view.iterator2().iter().collect(),
+    view.iterator2(),
     content="[(0, 'a'), (1, '😭'), (2, 'b'), (3, '😂'), (4, 'c')]",
   )
 }

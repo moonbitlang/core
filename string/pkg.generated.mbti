@@ -41,7 +41,7 @@ fn String::is_empty(String) -> Bool
 fn String::iter(String) -> Iter[Char]
 fn String::iter2(String) -> Iter2[Int, Char]
 fn String::iterator(String) -> Iterator[Char]
-fn String::iterator2(String) -> Iterator[(Int, Char)]
+fn String::iterator2(String) -> Iterator2[Int, Char]
 fn String::lexical_compare(String, String) -> Int
 fn String::offset_of_nth_char(String, Int, start_offset? : Int, end_offset? : Int) -> Int?
 fn String::op_ge(String, String) -> Bool // from trait `Compare`
@@ -112,7 +112,7 @@ fn StringView::is_empty(Self) -> Bool
 fn StringView::iter(Self) -> Iter[Char]
 fn StringView::iter2(Self) -> Iter2[Int, Char]
 fn StringView::iterator(Self) -> Iterator[Char]
-fn StringView::iterator2(Self) -> Iterator[(Int, Char)]
+fn StringView::iterator2(Self) -> Iterator2[Int, Char]
 fn StringView::length(Self) -> Int
 fn StringView::lexical_compare(Self, Self) -> Int
 fn StringView::make(Int, Char) -> Self

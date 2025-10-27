@@ -279,12 +279,12 @@ pub fn StringView::iter2(self : StringView) -> Iter2[Int, Char] {
 }
 
 ///|
-pub fn StringView::iterator2(self : StringView) -> Iterator[(Int, Char)] {
+pub fn StringView::iterator2(self : StringView) -> Iterator2[Int, Char] {
   let start = self.start()
   let end = self.end()
   let mut index = start
   let mut char_index = 0
-  Iterator::new(fn() {
+  Iterator2::new(fn() {
     guard index < end else { None }
     let c1 = self.str().unsafe_charcode_at(index)
     if c1.is_leading_surrogate() && index + 1 < self.end() {

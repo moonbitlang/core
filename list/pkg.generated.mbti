@@ -64,7 +64,7 @@ fn[A : Eq] List::is_suffix(Self[A], Self[A]) -> Bool
 fn[A] List::iter(Self[A]) -> Iter[A]
 fn[A] List::iter2(Self[A]) -> Iter2[Int, A]
 fn[A] List::iterator(Self[A]) -> Iterator[A]
-fn[A] List::iterator2(Self[A]) -> Iterator[(Int, A)]
+fn[A] List::iterator2(Self[A]) -> Iterator2[Int, A]
 fn[A] List::last(Self[A]) -> A?
 fn[A] List::length(Self[A]) -> Int
 fn[A : Eq, B] List::lookup(Self[(A, B)], A) -> B?

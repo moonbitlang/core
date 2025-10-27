@@ -294,10 +294,11 @@ test "iter2" {
 
 ///|
 test "iterator2" {
-  let mut str = ""
-  "A😊𠮷BA😊𠮷B"
-  .iterator2()
-  .each(pair => str += "\{pair.0}: \{pair.1.to_int()} \n")
+  let str = StringBuilder::new()
+  let it = "A😊𠮷BA😊𠮷B".iterator2()
+  while it.next() is Some((i, c)) {
+    str.write_string("\{i}: \{c.to_int()} \n")
+  }
   inspect(
     str,
     content=(

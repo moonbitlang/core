@@ -561,7 +561,7 @@ test "iterator2 when tail needs to wrap around" {
   dq.push_back(2) // tail = 1
   dq.unsafe_pop_front() // head = 1
   dq.push_back(3) // tail = 0 (wraps around)
-  inspect(dq.iterator2().to_array(), content="[(0, 2), (1, 3)]")
+  inspect(dq.iterator2(), content="[(0, 2), (1, 3)]")
 }
 
 ///|
@@ -600,10 +600,7 @@ test "rev_iterator2 when head needs to wrap around" {
   for i in 3..=6 {
     dq.push_back(i)
   }
-  inspect(
-    dq.rev_iterator2().to_array(),
-    content="[(0, 6), (1, 5), (2, 4), (3, 3)]",
-  )
+  inspect(dq.rev_iterator2(), content="[(0, 6), (1, 5), (2, 4), (3, 3)]")
 }
 
 ///|

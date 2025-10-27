@@ -1591,10 +1591,10 @@ pub fn[A] List::iter2(self : List[A]) -> Iter2[Int, A] {
 /// let iter = ls.iterator2()
 /// inspect(iter, content="[(0, 10), (1, 20), (2, 30)]")
 /// ```
-pub fn[A] List::iterator2(self : List[A]) -> Iterator[(Int, A)] {
+pub fn[A] List::iterator2(self : List[A]) -> Iterator2[Int, A] {
   let mut i = 0
   let mut next = self
-  Iterator::new(fn() {
+  Iterator2::new(fn() {
     match next {
       Empty => None
       More(head, tail~) => {

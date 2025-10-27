@@ -195,9 +195,9 @@ pub fn[X] ArrayView::rev_iterator(self : ArrayView[X]) -> Iterator[X] {
 }
 
 ///|
-pub fn[X] ArrayView::iterator2(self : ArrayView[X]) -> Iterator[(Int, X)] {
+pub fn[X] ArrayView::iterator2(self : ArrayView[X]) -> Iterator2[Int, X] {
   let mut i = 0
-  Iterator::new(fn() {
+  Iterator2::new(fn() {
     guard i < self.length() else { None }
     let result = Some((i, self.unsafe_get(i)))
     i += 1

@@ -256,10 +256,10 @@ pub fn BytesView::iterator(self : BytesView) -> Iterator[Byte] {
 ///   inspect(buf, content="b'\\x61'b'\\x62'b'\\x63'b'\\x64'b'\\x65'")
 ///   inspect(keys, content="[0, 1, 2, 3, 4]")
 /// ```
-pub fn BytesView::iterator2(self : BytesView) -> Iterator[(Int, Byte)] {
+pub fn BytesView::iterator2(self : BytesView) -> Iterator2[Int, Byte] {
   let mut i = 0
   let len = self.length()
-  Iterator::new(fn() {
+  Iterator2::new(fn() {
     guard i < len else { None }
     let result = (i, self.unsafe_get(i))
     i += 1

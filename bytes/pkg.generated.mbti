@@ -24,7 +24,7 @@ fn Bytes::hash_combine(Bytes, Hasher) -> Unit // from trait `Hash`
 fn Bytes::iter(Bytes) -> Iter[Byte]
 fn Bytes::iter2(Bytes) -> Iter2[Int, Byte]
 fn Bytes::iterator(Bytes) -> Iterator[Byte]
-fn Bytes::iterator2(Bytes) -> Iterator[(Int, Byte)]
+fn Bytes::iterator2(Bytes) -> Iterator2[Int, Byte]
 #as_free_fn
 fn Bytes::of(FixedArray[Byte]) -> Bytes
 #deprecated
@@ -62,7 +62,7 @@ fn BytesView::hash(Self) -> Int // from trait `Hash`
 fn BytesView::hash_combine(Self, Hasher) -> Unit // from trait `Hash`
 fn BytesView::iter(Self) -> Iter[Byte]
 fn BytesView::iterator(Self) -> Iterator[Byte]
-fn BytesView::iterator2(Self) -> Iterator[(Int, Byte)]
+fn BytesView::iterator2(Self) -> Iterator2[Int, Byte]
 fn BytesView::length(Self) -> Int
 #deprecated
 fn BytesView::op_equal(Self, Self) -> Bool // from trait `Eq`
