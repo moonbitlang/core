@@ -1593,7 +1593,7 @@ pub fn[A] Deque::rev_iterator(self : Deque[A]) -> Iterator[A] {
 /// * `self` : The deque to iterate over.
 ///
 /// Returns an iterator that yields tuples of `(index, value)` pairs, where the
-/// index starts from 0 and increments by 1, while values are taken from the
+/// index starts from `length - 1` and decrements by 1, while values are taken from the
 /// deque in reverse order.
 ///
 /// Example:
@@ -1602,7 +1602,7 @@ pub fn[A] Deque::rev_iterator(self : Deque[A]) -> Iterator[A] {
 ///   let dq = @deque.of([1, 2, 3])
 ///   let mut s = ""
 ///   dq.rev_iter2().each((i, x) => { s = s + "\{i}:\{x} " })
-///   inspect(s, content="0:3 1:2 2:1 ")
+///   inspect(s, content="2:3 1:2 0:1 ")
 /// ```
 pub fn[A] Deque::rev_iter2(self : Deque[A]) -> Iter2[Int, A] {
   Iter2::new(yield_ => {
@@ -1610,20 +1610,20 @@ pub fn[A] Deque::rev_iter2(self : Deque[A]) -> Iter2[Int, A] {
     let { head, buf, len, .. } = self
     let cap = buf.length()
     let head_len = cap - head
-    let mut j = 0
+    let mut j = len - 1
     if head_len >= len {
       for i = head + len - 1; i >= head; i = i - 1 {
         guard yield_(j, buf[i]) is IterContinue else { return IterEnd }
-        j += 1
+        j -= 1
       }
     } else {
       for i = len - head_len - 1; i >= 0; i = i - 1 {
         guard yield_(j, buf[i]) is IterContinue else { return IterEnd }
-        j += 1
+        j -= 1
       }
       for i = cap - 1; i >= head; i = i - 1 {
         guard yield_(j, buf[i]) is IterContinue else { return IterEnd }
-        j += 1
+        j -= 1
       }
     }
     IterContinue
