@@ -6,6 +6,7 @@ package "moonbitlang/core/char"
 // Errors
 
 // Types and methods
+fn Char::char_length(Char) -> Int
 fn Char::hash(Char) -> Int // from trait `Hash`
 fn Char::hash_combine(Char, Hasher) -> Unit // from trait `Hash`
 fn Char::is_ascii(Char) -> Bool
@@ -25,11 +26,13 @@ fn Char::is_digit(Char, UInt) -> Bool
 fn Char::is_numeric(Char) -> Bool
 fn Char::is_printable(Char) -> Bool
 fn Char::is_whitespace(Char) -> Bool
+fn Char::length(Char) -> Int
 fn Char::output(Char, &Logger) -> Unit // from trait `Show`
 fn Char::to_ascii_lowercase(Char) -> Char
 fn Char::to_ascii_uppercase(Char) -> Char
 fn Char::to_json(Char) -> Json // from trait `ToJson`
 fn Char::to_string(Char) -> String // from trait `Show`
+#deprecated
 fn Char::utf16_len(Char) -> Int
 impl Hash for Char
 impl Show for Char

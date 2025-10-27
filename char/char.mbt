@@ -512,6 +512,7 @@ pub impl ToJson for Char with to_json(self : Char) -> Json {
 /// inspect('🌟'.utf16_len(), content="2")
 /// ```
 ///
+#deprecated("Use `Char::length` instead.")
 pub fn Char::utf16_len(self : Self) -> Int {
   let code = self.to_int()
   if code <= 0xFFFF {
@@ -519,6 +520,42 @@ pub fn Char::utf16_len(self : Self) -> Int {
   } else {
     2
   }
+}
+
+///|
+/// Returns the number of UTF-16 code units (1 or 2) needed to represent this
+/// character.
+/// Note surrogate pairs are counted as 2, it should not happen in general since
+/// surrogate pair is Int instead of Char.
+/// Example:
+///
+/// ```moonbit
+/// inspect('A'.length(), content="1")
+/// inspect('🌟'.length(), content="2")
+/// ```
+///
+pub fn Char::length(self : Self) -> Int {
+  let code = self.to_int()
+  if code <= 0xFFFF {
+    1
+  } else {
+    2
+  }
+}
+
+///|
+/// Returns the character length, which is always 1.
+///
+/// This function is provided for consistency with `String::char_length`.
+///
+/// Example:
+///
+/// ```moonbit
+/// inspect('A'.char_length(), content="1")
+/// inspect('🌟'.char_length(), content="1")
+/// ```
+pub fn Char::char_length(_self : Self) -> Int {
+  1
 }
 
 ///|

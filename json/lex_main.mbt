@@ -90,7 +90,7 @@ fn ParseContext::lex_value(
         if c > '\u{7f}' && non_ascii_whitespace.contains(c) {
           continue
         }
-        let shift = -c.utf16_len()
+        let shift = -c.length()
         ctx.invalid_char(shift~)
       }
       None => raise InvalidEof
