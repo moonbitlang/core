@@ -798,19 +798,26 @@ pub fn[X] Iterator::sub(
   start? : Int = 0,
   end? : Int,
 ) -> Iterator[X] {
-  let mut index = 0
-  fn() {
-    if end is Some(end) && index >= end {
-      return None
+  match (start, end) {
+    (_..=0, None) => self
+    (_..=0, Some(end)) => self.take(end)
+    (start, None) => self.drop(start)
+    (start, Some(end)) => {
+      let mut index = 0
+      fn() {
+        if index >= end {
+          return None
+        }
+        while index < start {
+          guard self.next() is Some(_) else { return None }
+        }
+        let result = self.next()
+        if result is Some(_) {
+          index += 1
+        }
+        result
+      }
     }
-    while index < start {
-      guard self.next() is Some(_) else { return None }
-    }
-    let result = self.next()
-    if result is Some(_) {
-      index += 1
-    }
-    result
   }
 }
 
