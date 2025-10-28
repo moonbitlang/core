@@ -119,7 +119,103 @@ pub fn Json::apply_replacer(
   self : Json,  
   replacer : JsonReplacer,
 ) -> Json {
-  ...
+  fn is_in_fields(key : String, fields : ArrayView[String]) -> Bool {
+    for i = 0; i < fields.length(); i = i + 1 {
+      if fields[i] == key {
+        return true
+      }
+    }
+    false
+  }
+  fn apply_replacer_impl(
+    json : Json,
+    replacer : JsonReplacer,
+    depth : Int,
+  ) -> Json {
+    match replacer {
+      JsonReplacer::Nop => json
+      JsonReplacer::KeepFields(fields) => {
+        match json {
+          Object(obj) => {
+            let new_obj : Map[String, Json] = {}
+            for key, value in obj {
+              if is_in_fields(key, fields) {
+                new_obj[key] = apply_replacer_impl(value, replacer, depth + 1)
+              }
+            }
+            Object(new_obj)
+          }
+          Array(arr) => {
+            let new_arr = []
+            for item in arr {
+              new_arr.push(apply_replacer_impl(item, replacer, depth + 1))
+            }
+            Array(new_arr)
+          }
+          _ => json
+        }
+      }
+      JsonReplacer::ExcludeFields(fields) => {
+        match json {
+          Object(obj) => {
+            let new_obj : Map[String, Json] = {}
+            for key, value in obj {
+              if !is_in_fields(key, fields) {
+                new_obj[key] = apply_replacer_impl(value, replacer, depth + 1)
+              }
+            }
+            Object(new_obj)
+          }
+          Array(arr) => {
+            let new_arr = []
+            for item in arr {
+              new_arr.push(apply_replacer_impl(item, replacer, depth + 1))
+            }
+            Array(new_arr)
+          }
+          _ => json
+        }
+      }
+      JsonReplacer::Function(func) => {
+        match json {
+          Object(obj) => {
+            let new_obj : Map[String, Json] = {}
+            for key, value in obj {
+              match func(key, value, depth) {
+                Some(replaced_value) => {
+                  new_obj[key] = apply_replacer_impl(replaced_value, replacer, depth + 1)
+                }
+                None => ()
+              }
+            }
+            Object(new_obj)
+          }
+          Array(arr) => {
+            let new_arr = []
+            for i = 0; i < arr.length(); i = i + 1 {
+              let item = arr[i]
+              match func(i.to_string(), item, depth) {
+                Some(replaced_value) => {
+                  new_arr.push(
+                    apply_replacer_impl(replaced_value, replacer, depth + 1),
+                  )
+                }
+                None => ()
+              }
+            }
+            Array(new_arr)
+          }
+          _ => {
+            match func("", json, depth) {
+              Some(replaced_value) => replaced_value
+              None => json
+            }
+          }
+        }
+      }
+    }
+  }
+  apply_replacer_impl(self, replacer, 0)
 }
 ///|
 /// Convert this Json value to a String
