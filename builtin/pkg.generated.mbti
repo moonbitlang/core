@@ -346,8 +346,8 @@ impl[X : ToJson] ToJson for Iterator[X]
 pub(all) struct Iterator2[X, Y](Iterator[(X, Y)])
 #deprecated
 fn[X, Y] Iterator2::inner(Self[X, Y]) -> Iterator[(X, Y)]
-#alias(iterator2)
 fn[X, Y] Iterator2::iterator(Self[X, Y]) -> Iterator[(X, Y)]
+fn[X, Y] Iterator2::iterator2(Self[X, Y]) -> Self[X, Y]
 fn[X, Y] Iterator2::new(() -> (X, Y)?) -> Self[X, Y]
 fn[X, Y] Iterator2::next(Self[X, Y]) -> (X, Y)?
 fn[X : Show, Y : Show] Iterator2::output(Self[X, Y], &Logger) -> Unit // from trait `Show`
@@ -397,8 +397,8 @@ fn[K : Hash + Eq, V] Map::get_or_init(Self[K, V], K, () -> V) -> V
 fn[K, V] Map::is_empty(Self[K, V]) -> Bool
 fn[K, V] Map::iter(Self[K, V]) -> Iter[(K, V)]
 fn[K, V] Map::iter2(Self[K, V]) -> Iter2[K, V]
-#alias(iterator2)
 fn[K, V] Map::iterator(Self[K, V]) -> Iterator[(K, V)]
+fn[K, V] Map::iterator2(Self[K, V]) -> Iterator2[K, V]
 fn[K, V] Map::keys(Self[K, V]) -> Iter[K]
 #alias(size, deprecated)
 fn[K, V] Map::length(Self[K, V]) -> Int

@@ -896,9 +896,13 @@ pub fn[X, Y] Iterator2::new(f : () -> (X, Y)?) -> Iterator2[X, Y] {
 }
 
 ///|
-#alias(iterator2)
 pub fn[X, Y] Iterator2::iterator(self : Iterator2[X, Y]) -> Iterator[(X, Y)] {
   self.0
+}
+
+///|
+pub fn[X, Y] Iterator2::iterator2(self : Iterator2[X, Y]) -> Iterator2[X, Y] {
+  self
 }
 
 ///|
