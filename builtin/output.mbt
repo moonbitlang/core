@@ -31,9 +31,7 @@ fn Int64::output(self : Int64, logger : &Logger, radix? : Int = 10) -> Unit {
     if num2 != 0L {
       write_digits(num2)
     }
-    logger.write_char(
-      ALPHABET.charcode_at(abs(num % radix).to_int()).unsafe_to_char(),
-    )
+    logger.write_char(ALPHABET.at(abs(num % radix).to_int()).unsafe_to_char())
   }
 
   write_digits(abs(self))
@@ -72,7 +70,7 @@ fn UInt::output(self : UInt, logger : &Logger, radix? : Int = 10) -> Unit {
       write_digits(num2)
     }
     logger.write_char(
-      ALPHABET.charcode_at((num % radix).reinterpret_as_int()).unsafe_to_char(),
+      ALPHABET.at((num % radix).reinterpret_as_int()).unsafe_to_char(),
     )
   }
 
@@ -87,9 +85,7 @@ fn UInt64::output(self : UInt64, logger : &Logger, radix? : Int = 10) -> Unit {
     if num2 != 0UL {
       write_digits(num2)
     }
-    logger.write_char(
-      ALPHABET.charcode_at((num % radix).to_int()).unsafe_to_char(),
-    )
+    logger.write_char(ALPHABET.at((num % radix).to_int()).unsafe_to_char())
   }
 
   write_digits(self)

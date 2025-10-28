@@ -41,7 +41,7 @@ pub fn[K : Compare, V] SortedMap::from_array(
 ) -> SortedMap[K, V] {
   let map = { root: None, size: 0 }
   for e in entries {
-    map.add(e.0, e.1)
+    map.set(e.0, e.1)
   }
   map
 }
@@ -541,12 +541,12 @@ test "of" {
 ///|
 test "add1" {
   let map = new()
-  map.add(6, "a")
-  map.add(5, "b")
-  map.add(4, "c")
-  map.add(3, "d")
-  map.add(2, "e")
-  map.add(1, "f")
+  map.set(6, "a")
+  map.set(5, "b")
+  map.set(4, "c")
+  map.set(3, "d")
+  map.set(2, "e")
+  map.set(1, "f")
   inspect(
     map.debug_tree(),
     content="([3]3,d,([2]2,e,([1]1,f,_,_),_),([2]5,b,([1]4,c,_,_),([1]6,a,_,_)))",
@@ -557,12 +557,12 @@ test "add1" {
 ///|
 test "add2" {
   let map = new()
-  map.add(1, "a")
-  map.add(2, "b")
-  map.add(3, "c")
-  map.add(4, "d")
-  map.add(5, "e")
-  map.add(6, "f")
+  map.set(1, "a")
+  map.set(2, "b")
+  map.set(3, "c")
+  map.set(4, "d")
+  map.set(5, "e")
+  map.set(6, "f")
   inspect(
     map.debug_tree(),
     content="([3]4,d,([2]2,b,([1]1,a,_,_),([1]3,c,_,_)),([2]5,e,_,([1]6,f,_,_)))",
@@ -573,10 +573,10 @@ test "add2" {
 ///|
 test "add3" {
   let map = new()
-  map.add(4, "a")
-  map.add(1, "b")
-  map.add(3, "c")
-  map.add(2, "d")
+  map.set(4, "a")
+  map.set(1, "b")
+  map.set(3, "c")
+  map.set(2, "d")
   inspect(
     map.debug_tree(),
     content="([3]3,c,([2]1,b,_,([1]2,d,_,_)),([1]4,a,_,_))",
@@ -586,10 +586,10 @@ test "add3" {
 ///|
 test "add4" {
   let map = new()
-  map.add(1, "a")
-  map.add(4, "b")
-  map.add(2, "c")
-  map.add(3, "d")
+  map.set(1, "a")
+  map.set(4, "b")
+  map.set(2, "c")
+  map.set(3, "d")
   inspect(
     map.debug_tree(),
     content="([3]2,c,([1]1,a,_,_),([2]4,b,([1]3,d,_,_),_))",
@@ -600,7 +600,7 @@ test "add4" {
 test "add duplicate key" {
   let map = from_array([(3, "c"), (2, "b"), (1, "a")])
   inspect(map.debug_tree(), content="([2]2,b,([1]1,a,_,_),([1]3,c,_,_))")
-  map.add(1, "x")
+  map.set(1, "x")
   inspect(map.debug_tree(), content="([2]2,b,([1]1,x,_,_),([1]3,c,_,_))")
 }
 

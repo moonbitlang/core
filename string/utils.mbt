@@ -20,21 +20,21 @@ fn code_point_of_surrogate_pair(leading : Int, trailing : Int) -> Char {
 ///|
 test "code_point_of_surrogate_pair" {
   let s = "😀"
-  let leading = s.charcode_at(0)
-  let trailing = s.charcode_at(1)
+  let leading = s.at(0)
+  let trailing = s.at(1)
   inspect(code_point_of_surrogate_pair(leading, trailing), content="😀")
 }
 
 ///|
 test "is_leading_surrogate" {
-  inspect("🤣".charcode_at(0).is_leading_surrogate(), content="true")
-  inspect("🤣".charcode_at(1).is_leading_surrogate(), content="false")
+  inspect("🤣".at(0).is_leading_surrogate(), content="true")
+  inspect("🤣".at(1).is_leading_surrogate(), content="false")
 }
 
 ///|
 test "is_trailing_surrogate" {
-  inspect("🤣".charcode_at(0).is_trailing_surrogate(), content="false")
-  inspect("🤣".charcode_at(1).is_trailing_surrogate(), content="true")
+  inspect("🤣".at(0).is_trailing_surrogate(), content="false")
+  inspect("🤣".at(1).is_trailing_surrogate(), content="true")
 }
 
 ///|
