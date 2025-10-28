@@ -25,9 +25,271 @@ test "Show for Bool" {
 
 ///|
 test "Show for Int" {
+  // Zero
   inspect((0).to_string(), content="0")
+
+  // Single digit (1-9)
+  inspect((1).to_string(), content="1")
+  inspect((5).to_string(), content="5")
+  inspect((9).to_string(), content="9")
+  inspect((-1).to_string(), content="-1")
+  inspect((-9).to_string(), content="-9")
+
+  // Two digits (10-99)
+  inspect((10).to_string(), content="10")
+  inspect((42).to_string(), content="42")
+  inspect((99).to_string(), content="99")
+  inspect((-10).to_string(), content="-10")
+  inspect((-99).to_string(), content="-99")
+
+  // Three digits (100-999)
+  inspect((100).to_string(), content="100")
+  inspect((256).to_string(), content="256")
+  inspect((999).to_string(), content="999")
+  inspect((-100).to_string(), content="-100")
+  inspect((-999).to_string(), content="-999")
+
+  // Four digits (1000-9999) - exercises different path in decimal_count32
+  inspect((1000).to_string(), content="1000")
+  inspect((5555).to_string(), content="5555")
+  inspect((9999).to_string(), content="9999")
+  inspect((-1000).to_string(), content="-1000")
+  inspect((-9999).to_string(), content="-9999")
+
+  // Five digits (10000-99999) - boundary for decimal_count32
+  inspect((10000).to_string(), content="10000")
+  inspect((12345).to_string(), content="12345")
+  inspect((99999).to_string(), content="99999")
+  inspect((-10000).to_string(), content="-10000")
+  inspect((-99999).to_string(), content="-99999")
+
+  // Six digits (100000-999999) - next branch in decimal_count32
+  inspect((100000).to_string(), content="100000")
+  inspect((654321).to_string(), content="654321")
+  inspect((999999).to_string(), content="999999")
+  inspect((-100000).to_string(), content="-100000")
+  inspect((-999999).to_string(), content="-999999")
+
+  // Seven digits (1000000-9999999)
+  inspect((1000000).to_string(), content="1000000")
+  inspect((1234567).to_string(), content="1234567")
+  inspect((9999999).to_string(), content="9999999")
+  inspect((-1000000).to_string(), content="-1000000")
+  inspect((-9999999).to_string(), content="-9999999")
+
+  // Eight digits (10000000-99999999) - boundary for decimal_count32
+  inspect((10000000).to_string(), content="10000000")
+  inspect((87654321).to_string(), content="87654321")
+  inspect((99999999).to_string(), content="99999999")
+  inspect((-10000000).to_string(), content="-10000000")
+  inspect((-99999999).to_string(), content="-99999999")
+
+  // Nine digits (100000000-999999999)
+  inspect((100000000).to_string(), content="100000000")
+  inspect((123456789).to_string(), content="123456789")
+  inspect((999999999).to_string(), content="999999999")
+  inspect((-100000000).to_string(), content="-100000000")
+  inspect((-999999999).to_string(), content="-999999999")
+
+  // Ten digits (1000000000-2147483647) - boundary for decimal_count32
+  inspect((1000000000).to_string(), content="1000000000")
+  inspect((1234567890).to_string(), content="1234567890")
+  inspect((2000000000).to_string(), content="2000000000")
+  inspect((-1000000000).to_string(), content="-1000000000")
+  inspect((-2000000000).to_string(), content="-2000000000")
+
+  // Edge cases: max and min values
   inspect(@int.max_value.to_string(), content="2147483647")
   inspect(@int.min_value.to_string(), content="-2147483648")
+
+  // Powers of 10 (boundary testing for decimal_count32)
+  inspect((10).to_string(), content="10")
+  inspect((100).to_string(), content="100")
+  inspect((1000).to_string(), content="1000")
+  inspect((10000).to_string(), content="10000")
+  inspect((100000).to_string(), content="100000")
+  inspect((1000000).to_string(), content="1000000")
+  inspect((10000000).to_string(), content="10000000")
+  inspect((100000000).to_string(), content="100000000")
+  inspect((1000000000).to_string(), content="1000000000")
+}
+
+///|
+test "Show for Int - hexadecimal (radix=16)" {
+  // Zero
+  inspect((0).to_string(radix=16), content="0")
+
+  // Single hex digit (0x1-0xf)
+  inspect((1).to_string(radix=16), content="1")
+  inspect((10).to_string(radix=16), content="a")
+  inspect((15).to_string(radix=16), content="f")
+  inspect((-1).to_string(radix=16), content="-1")
+  inspect((-15).to_string(radix=16), content="-f")
+
+  // Two hex digits (0x10-0xff) - tests hex pair writing
+  inspect((16).to_string(radix=16), content="10")
+  inspect((255).to_string(radix=16), content="ff")
+  inspect((171).to_string(radix=16), content="ab")
+  inspect((-16).to_string(radix=16), content="-10")
+  inspect((-255).to_string(radix=16), content="-ff")
+
+  // Three hex digits (0x100-0xfff) - odd number, tests single digit handling
+  inspect((256).to_string(radix=16), content="100")
+  inspect((2748).to_string(radix=16), content="abc")
+  inspect((4095).to_string(radix=16), content="fff")
+  inspect((-256).to_string(radix=16), content="-100")
+  inspect((-4095).to_string(radix=16), content="-fff")
+
+  // Four hex digits (0x1000-0xffff) - tests byte-pair processing
+  inspect((4096).to_string(radix=16), content="1000")
+  inspect((43981).to_string(radix=16), content="abcd")
+  inspect((65535).to_string(radix=16), content="ffff")
+  inspect((-4096).to_string(radix=16), content="-1000")
+  inspect((-65535).to_string(radix=16), content="-ffff")
+
+  // Five hex digits (0x10000-0xfffff)
+  inspect((65536).to_string(radix=16), content="10000")
+  inspect((703710).to_string(radix=16), content="abcde")
+  inspect((1048575).to_string(radix=16), content="fffff")
+  inspect((-65536).to_string(radix=16), content="-10000")
+  inspect((-1048575).to_string(radix=16), content="-fffff")
+
+  // Six hex digits (0x100000-0xffffff)
+  inspect((1048576).to_string(radix=16), content="100000")
+  inspect((11259375).to_string(radix=16), content="abcdef")
+  inspect((16777215).to_string(radix=16), content="ffffff")
+  inspect((-1048576).to_string(radix=16), content="-100000")
+  inspect((-16777215).to_string(radix=16), content="-ffffff")
+
+  // Seven hex digits (0x1000000-0xfffffff)
+  inspect((16777216).to_string(radix=16), content="1000000")
+  inspect((268435455).to_string(radix=16), content="fffffff")
+  inspect((-16777216).to_string(radix=16), content="-1000000")
+  inspect((-268435455).to_string(radix=16), content="-fffffff")
+
+  // Eight hex digits (0x10000000-0x7fffffff) - max for positive Int
+  inspect((268435456).to_string(radix=16), content="10000000")
+  inspect((2147483647).to_string(radix=16), content="7fffffff")
+  inspect((-268435456).to_string(radix=16), content="-10000000")
+  inspect((-2147483648).to_string(radix=16), content="-80000000")
+
+  // Edge cases: max and min
+  inspect(@int.max_value.to_string(radix=16), content="7fffffff")
+  inspect(@int.min_value.to_string(radix=16), content="-80000000")
+
+  // Powers of 16 (boundary testing for hex_count32)
+  inspect((1).to_string(radix=16), content="1")
+  inspect((16).to_string(radix=16), content="10")
+  inspect((256).to_string(radix=16), content="100")
+  inspect((4096).to_string(radix=16), content="1000")
+  inspect((65536).to_string(radix=16), content="10000")
+  inspect((1048576).to_string(radix=16), content="100000")
+  inspect((16777216).to_string(radix=16), content="1000000")
+  inspect((268435456).to_string(radix=16), content="10000000")
+}
+
+///|
+test "Show for Int - binary (radix=2)" {
+  // Power-of-two optimization path
+  inspect((0).to_string(radix=2), content="0")
+  inspect((1).to_string(radix=2), content="1")
+  inspect((2).to_string(radix=2), content="10")
+  inspect((7).to_string(radix=2), content="111")
+  inspect((15).to_string(radix=2), content="1111")
+  inspect((255).to_string(radix=2), content="11111111")
+  inspect((256).to_string(radix=2), content="100000000")
+  inspect((-1).to_string(radix=2), content="-1")
+  inspect((-255).to_string(radix=2), content="-11111111")
+  inspect(
+    @int.max_value.to_string(radix=2),
+    content="1111111111111111111111111111111",
+  )
+  inspect(
+    @int.min_value.to_string(radix=2),
+    content="-10000000000000000000000000000000",
+  )
+}
+
+///|
+test "Show for Int - octal (radix=8)" {
+  // Power-of-two optimization path
+  inspect((0).to_string(radix=8), content="0")
+  inspect((7).to_string(radix=8), content="7")
+  inspect((8).to_string(radix=8), content="10")
+  inspect((64).to_string(radix=8), content="100")
+  inspect((511).to_string(radix=8), content="777")
+  inspect((512).to_string(radix=8), content="1000")
+  inspect((-8).to_string(radix=8), content="-10")
+  inspect((-64).to_string(radix=8), content="-100")
+  inspect(@int.max_value.to_string(radix=8), content="17777777777")
+  inspect(@int.min_value.to_string(radix=8), content="-20000000000")
+}
+
+///|
+test "Show for Int - base 4 (radix=4)" {
+  // Power-of-two optimization path
+  inspect((0).to_string(radix=4), content="0")
+  inspect((3).to_string(radix=4), content="3")
+  inspect((4).to_string(radix=4), content="10")
+  inspect((15).to_string(radix=4), content="33")
+  inspect((16).to_string(radix=4), content="100")
+  inspect((255).to_string(radix=4), content="3333")
+  inspect((-4).to_string(radix=4), content="-10")
+  inspect((-255).to_string(radix=4), content="-3333")
+}
+
+///|
+test "Show for Int - base 32 (radix=32)" {
+  // Power-of-two optimization path
+  inspect((0).to_string(radix=32), content="0")
+  inspect((31).to_string(radix=32), content="v")
+  inspect((32).to_string(radix=32), content="10")
+  inspect((1023).to_string(radix=32), content="vv")
+  inspect((1024).to_string(radix=32), content="100")
+  inspect((-32).to_string(radix=32), content="-10")
+  inspect(@int.max_value.to_string(radix=32), content="1vvvvvv")
+  inspect(@int.min_value.to_string(radix=32), content="-2000000")
+}
+
+///|
+test "Show for Int - base 3 (radix=3)" {
+  // Non-power-of-two, uses division path
+  inspect((0).to_string(radix=3), content="0")
+  inspect((2).to_string(radix=3), content="2")
+  inspect((3).to_string(radix=3), content="10")
+  inspect((8).to_string(radix=3), content="22")
+  inspect((9).to_string(radix=3), content="100")
+  inspect((26).to_string(radix=3), content="222")
+  inspect((27).to_string(radix=3), content="1000")
+  inspect((-3).to_string(radix=3), content="-10")
+  inspect((-27).to_string(radix=3), content="-1000")
+}
+
+///|
+test "Show for Int - base 5 (radix=5)" {
+  // Non-power-of-two, uses division path
+  inspect((0).to_string(radix=5), content="0")
+  inspect((4).to_string(radix=5), content="4")
+  inspect((5).to_string(radix=5), content="10")
+  inspect((24).to_string(radix=5), content="44")
+  inspect((25).to_string(radix=5), content="100")
+  inspect((124).to_string(radix=5), content="444")
+  inspect((125).to_string(radix=5), content="1000")
+  inspect((-5).to_string(radix=5), content="-10")
+  inspect((-125).to_string(radix=5), content="-1000")
+}
+
+///|
+test "Show for Int - base 36 (radix=36)" {
+  // Maximum radix, non-power-of-two
+  inspect((0).to_string(radix=36), content="0")
+  inspect((35).to_string(radix=36), content="z")
+  inspect((36).to_string(radix=36), content="10")
+  inspect((1295).to_string(radix=36), content="zz")
+  inspect((1296).to_string(radix=36), content="100")
+  inspect((-36).to_string(radix=36), content="-10")
+  inspect(@int.max_value.to_string(radix=36), content="zik0zj")
+  inspect(@int.min_value.to_string(radix=36), content="-zik0zk")
 }
 
 ///|
