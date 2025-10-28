@@ -648,7 +648,6 @@ pub fn[K, V] HashMap::iter(self : HashMap[K, V]) -> Iter[(K, V)] {
 
 ///|
 /// Converted to Iterator
-#alias(iterator2)
 pub fn[K, V] HashMap::iterator(self : HashMap[K, V]) -> Iterator[(K, V)] {
   enum CurrNode {
     Tree(Node[K, V])
@@ -690,6 +689,12 @@ pub fn[K, V] HashMap::iterator(self : HashMap[K, V]) -> Iterator[(K, V)] {
       Bucket(Empty) | Tree(Branch(_)) => None
     }
   })
+}
+
+///|
+/// Convert to `Iterator2`
+pub fn[K, V] HashMap::iterator2(self : HashMap[K, V]) -> Iterator2[K, V] {
+  self.iterator()
 }
 
 ///|

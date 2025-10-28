@@ -566,7 +566,6 @@ pub fn[K, V] Map::iter(self : Map[K, V]) -> Iter[(K, V)] {
 
 ///|
 /// Returns the iterator of the hash map, provide elements in the order of insertion.
-#alias(iterator2)
 pub fn[K, V] Map::iterator(self : Map[K, V]) -> Iterator[(K, V)] {
   let mut curr_entry = self.head
   Iterator::new(fn() {
@@ -578,6 +577,11 @@ pub fn[K, V] Map::iterator(self : Map[K, V]) -> Iterator[(K, V)] {
       None => None
     }
   })
+}
+
+///|
+pub fn[K, V] Map::iterator2(self : Map[K, V]) -> Iterator2[K, V] {
+  self.iterator()
 }
 
 ///|

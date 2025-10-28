@@ -248,7 +248,6 @@ pub fn[K, V] SortedMap::iter(self : SortedMap[K, V]) -> Iter[(K, V)] {
 }
 
 ///|
-#alias(iterator2)
 pub fn[K, V] SortedMap::iterator(self : SortedMap[K, V]) -> Iterator[(K, V)] {
   let mut curr_node = self
   let parents = []
@@ -269,6 +268,11 @@ pub fn[K, V] SortedMap::iterator(self : SortedMap[K, V]) -> Iterator[(K, V)] {
       Empty => None
     }
   })
+}
+
+///|
+pub fn[K, V] SortedMap::iterator2(self : SortedMap[K, V]) -> Iterator2[K, V] {
+  self.iterator()
 }
 
 ///|

@@ -96,7 +96,6 @@ pub fn[K, V] HashMap::iter(self : HashMap[K, V]) -> Iter[(K, V)] {
 ///   inspect(pairs.contains((1, "one")), content="true")
 ///   inspect(pairs.contains((2, "two")), content="true")
 /// ```
-#alias(iterator2)
 pub fn[K, V] HashMap::iterator(self : HashMap[K, V]) -> Iterator[(K, V)] {
   let mut i = 0
   let len = self.entries.length()
@@ -111,6 +110,20 @@ pub fn[K, V] HashMap::iterator(self : HashMap[K, V]) -> Iterator[(K, V)] {
       None
     }
   })
+}
+
+///|
+/// Returns an iterator over the key-value pairs in the map.
+///
+/// Parameters:
+///
+/// * `map` : The hash map to iterate over.
+///
+/// Returns an iterator that yields tuples of `(key, value)` for each entry in
+/// the map, in unspecified order.
+/// This is mainly used for `for _, _ in ..` loops.
+pub fn[K, V] HashMap::iterator2(self : HashMap[K, V]) -> Iterator2[K, V] {
+  self.iterator()
 }
 
 ///|
