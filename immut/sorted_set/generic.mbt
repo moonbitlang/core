@@ -83,7 +83,7 @@ test {
 pub impl[A : Eq] Eq for SortedSet[A] with equal(self, other) -> Bool {
   // There's no `Iter::zip` (https://github.com/moonbitlang/core/issues/994#issuecomment-2350935193),
   // so we have to use the manual implementation below:
-  guard self.size() == other.size() else { return false }
+  guard self.length() == other.length() else { return false }
   let iter = self.iterator()
   let iter1 = other.iterator()
   while iter.next() is Some(a) && iter1.next() is Some(b) {
@@ -95,8 +95,8 @@ pub impl[A : Eq] Eq for SortedSet[A] with equal(self, other) -> Bool {
 
 ///|
 pub impl[A : Compare] Compare for SortedSet[A] with compare(self, other) -> Int {
-  let my_size = self.size()
-  let other_size = other.size()
+  let my_size = self.length()
+  let other_size = other.length()
   guard my_size == other_size else { return my_size - other_size }
   let iter = self.iterator()
   let iter1 = other.iterator()
