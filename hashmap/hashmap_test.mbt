@@ -319,7 +319,7 @@ test "from_iterator multiple elements iter" {
 test "from_iterator single element iter" {
   inspect(
     @hashmap.from_iterator([(1, 1)].iterator()),
-    content="HashMap::of([(1, 1)])",
+    content="HashMap::from_array([(1, 1)])",
   )
 }
 
@@ -328,7 +328,7 @@ test "from_iterator empty iter" {
   let map : @hashmap.HashMap[Int, Int] = @hashmap.from_iterator(
     Iterator::empty(),
   )
-  inspect(map, content="HashMap::of([])")
+  inspect(map, content="HashMap::from_array([])")
 }
 
 ///|

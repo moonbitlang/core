@@ -182,7 +182,7 @@ test "from_iter empty iter" {
 test "from_iterator multiple elements iter" {
   inspect(
     @priority_queue.from_iterator([1, 2, 3].iterator()),
-    content="@priority_queue.of([3, 2, 1])",
+    content="@priority_queue.from_array([3, 2, 1])",
   )
 }
 
@@ -190,7 +190,7 @@ test "from_iterator multiple elements iter" {
 test "from_iterator single element iter" {
   inspect(
     @priority_queue.from_iterator([1].iterator()),
-    content="@priority_queue.of([1])",
+    content="@priority_queue.from_array([1])",
   )
 }
 
@@ -199,7 +199,7 @@ test "from_iterator empty iter" {
   let pq : @priority_queue.T[Int] = @priority_queue.from_iterator(
     Iterator::empty(),
   )
-  inspect(pq, content="@priority_queue.of([])")
+  inspect(pq, content="@priority_queue.from_array([])")
 }
 
 ///|

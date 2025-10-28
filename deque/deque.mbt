@@ -1684,7 +1684,7 @@ pub fn[A] Deque::from_iter(iter : Iter[A]) -> Deque[A] {
 /// ```moonbit
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let dq = @deque.from_iterator(arr.iterator())
-///   inspect(dq, content="@deque.of([1, 2, 3, 4, 5])")
+///   inspect(dq, content="@deque.from_array([1, 2, 3, 4, 5])")
 /// ```
 #as_free_fn
 pub fn[A] Deque::from_iterator(iter : Iterator[A]) -> Deque[A] {

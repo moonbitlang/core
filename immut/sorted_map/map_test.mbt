@@ -259,7 +259,7 @@ test "from_iter empty iter" {
 test "from_iterator multiple elements iter" {
   inspect(
     @sorted_map.from_iterator([(1, 1), (2, 2), (3, 3)].iterator()),
-    content="@immut/sorted_map.of([(1, 1), (2, 2), (3, 3)])",
+    content="@immut/sorted_map.from_array([(1, 1), (2, 2), (3, 3)])",
   )
 }
 
@@ -267,7 +267,7 @@ test "from_iterator multiple elements iter" {
 test "from_iterator single element iter" {
   inspect(
     @sorted_map.from_iterator([(1, 1)].iterator()),
-    content="@immut/sorted_map.of([(1, 1)])",
+    content="@immut/sorted_map.from_array([(1, 1)])",
   )
 }
 
@@ -276,7 +276,7 @@ test "from_iterator empty iter" {
   let pq : @sorted_map.SortedMap[Int, Int] = @sorted_map.from_iterator(
     Iterator::empty(),
   )
-  inspect(pq, content="@immut/sorted_map.of([])")
+  inspect(pq, content="@immut/sorted_map.from_array([])")
 }
 
 ///|

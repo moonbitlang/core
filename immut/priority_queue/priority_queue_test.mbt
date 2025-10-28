@@ -153,7 +153,7 @@ test "from_iter empty iter" {
 test "from_iterator multiple elements iter" {
   inspect(
     @priority_queue.PriorityQueue::from_iterator([1, 2, 3].iterator()),
-    content="@immut/priority_queue.of([3, 2, 1])",
+    content="@immut/priority_queue.from_array([3, 2, 1])",
   )
 }
 
@@ -161,7 +161,7 @@ test "from_iterator multiple elements iter" {
 test "from_iterator single element iter" {
   inspect(
     @priority_queue.PriorityQueue::from_iterator([1].iterator()),
-    content="@immut/priority_queue.of([1])",
+    content="@immut/priority_queue.from_array([1])",
   )
 }
 
@@ -170,7 +170,7 @@ test "from_iterator empty iter" {
   let pq : @priority_queue.PriorityQueue[Int] = @priority_queue.PriorityQueue::from_iterator(
     Iterator::empty(),
   )
-  inspect(pq, content="@immut/priority_queue.of([])")
+  inspect(pq, content="@immut/priority_queue.from_array([])")
 }
 
 ///|

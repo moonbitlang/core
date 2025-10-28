@@ -374,13 +374,16 @@ test "from_iterator multiple elements iter" {
 
 ///|
 test "from_iterator single element iter" {
-  inspect(@hashset.from_iterator([1].iterator()), content="@hashset.of([1])")
+  inspect(
+    @hashset.from_iterator([1].iterator()),
+    content="@hashset.from_array([1])",
+  )
 }
 
 ///|
 test "from_iterator empty iter" {
   let map : @hashset.HashSet[Int] = @hashset.from_iterator(Iterator::empty())
-  inspect(map, content="@hashset.of([])")
+  inspect(map, content="@hashset.from_array([])")
 }
 
 ///|

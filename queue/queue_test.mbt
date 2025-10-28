@@ -214,19 +214,22 @@ test "from_iter empty iter" {
 test "from_iterator multiple elements iter" {
   inspect(
     @queue.from_iterator([1, 2, 3].iterator()),
-    content="@queue.of([1, 2, 3])",
+    content="@queue.from_array([1, 2, 3])",
   )
 }
 
 ///|
 test "from_iterator single element iter" {
-  inspect(@queue.from_iterator([1].iterator()), content="@queue.of([1])")
+  inspect(
+    @queue.from_iterator([1].iterator()),
+    content="@queue.from_array([1])",
+  )
 }
 
 ///|
 test "from_iterator empty iter" {
   let pq : @queue.Queue[Int] = @queue.from_iterator(Iterator::empty())
-  inspect(pq, content="@queue.of([])")
+  inspect(pq, content="@queue.from_array([])")
 }
 
 ///|
