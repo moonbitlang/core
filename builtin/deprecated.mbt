@@ -219,7 +219,7 @@ pub fn Double::upto(
 }
 
 ///|
-#deprecated("Use `@encoding/utf16le.encode` instead")
+#deprecated("check `@encoding/utf8.encode`")
 #coverage.skip
 pub fn Bytes::of_string(str : String) -> Bytes {
   FixedArray::make(str.length() * 2, Byte::default())

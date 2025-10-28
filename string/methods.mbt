@@ -463,7 +463,7 @@ pub fn StringView::to_array(self : StringView) -> Array[Char] {
 }
 
 ///|
-#deprecated("Use `@encoding/utf16le.encode` instead")
+#deprecated("Check `@encoding/utf8.encode`")
 #coverage.skip
 pub fn StringView::to_bytes(self : StringView) -> Bytes {
   let array = FixedArray::make(self.length() * 2, Byte::default())
