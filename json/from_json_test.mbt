@@ -13,13 +13,13 @@
 // limitations under the License.
 
 ///|
-typealias Map[String, Int] as TestX
+// typealias Map[String, Int] as TestX
 
 ///|
 test {
   let u = { "x": 3, "y": 4 }
   let j = u.to_json()
-  let h : TestX = @json.from_json(j)
+  let h : Map[String, Int] = @json.from_json(j)
   inspect(
     (j, h),
     content=(

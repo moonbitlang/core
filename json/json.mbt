@@ -104,11 +104,30 @@ priv enum WriteFrame {
 }
 
 ///|
+/// The type is designed to specify how to replace values during JSON stringification
+/// It can also be used to transform JSON itself (not just during stringification)
+/// Its design strike a balance between flexibility and ease of use
+pub (all) enum JsonReplacer {
+  KeepFields(ArrayView[String]) // only keep these fields
+  ExcludeFields(ArrayView[String]) // exclude these fields
+  // custom replacer function (key, value) -> Json?
+  Function((String, Json, Int) -> Json?) 
+  Nop // do nothing
+}
+
+pub fn Json::apply_replacer(
+  self : Json,  
+  replacer : JsonReplacer,
+) -> Json {
+  ...
+}
+///|
 /// Convert this Json value to a String
 /// - `escape_slash`: Whether to escape '/' as '\/' (default: false)
 /// - `indent`: Number of spaces to indent nested structures (default: 0 = non-indented)
 pub fn Json::stringify(
   self : Json,
+  replacer~ : JsonReplacer = Nop,
   escape_slash? : Bool = false,
   indent? : Int = 0,
 ) -> String {
