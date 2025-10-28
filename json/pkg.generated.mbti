@@ -41,6 +41,15 @@ impl Show for ParseError
 impl ToJson for ParseError
 
 // Types and methods
+pub(all) enum Idx {
+  Key(String)
+  Index(Int)
+}
+fn Idx::equal(Self, Self) -> Bool // from trait `Eq`
+#deprecated
+fn Idx::op_equal(Self, Self) -> Bool // from trait `Eq`
+impl Eq for Idx
+
 type JsonPath
 fn JsonPath::add_index(Self, Int) -> Self
 fn JsonPath::add_key(Self, String) -> Self
@@ -65,6 +74,11 @@ fn Position::to_json(Self) -> Json // from trait `ToJson`
 impl Eq for Position
 impl ToJson for Position
 
+type Replacer
+fn Replacer::exclude(Array[Idx]) -> Self
+fn Replacer::keep(Array[Idx]) -> Self
+fn Replacer::new((Idx, Json) -> Json?) -> Self
+
 fn Json::as_array(Self) -> Array[Self]?
 fn Json::as_bool(Self) -> Bool?
 fn Json::as_null(Self) -> Unit?
@@ -74,7 +88,7 @@ fn Json::as_string(Self) -> String?
 fn Json::from_json(Self, JsonPath) -> Self raise JsonDecodeError // from trait `FromJson`
 fn Json::item(Self, Int) -> Self?
 fn Json::output(Self, &Logger) -> Unit // from trait `Show`
-fn Json::stringify(Self, escape_slash? : Bool, indent? : Int) -> String
+fn Json::stringify(Self, escape_slash? : Bool, indent? : Int, replacer? : Replacer) -> String
 fn Json::to_json(Self) -> Self // from trait `ToJson`
 fn Json::to_string(Self) -> String // from trait `Show`
 fn Json::value(Self, String) -> Self?

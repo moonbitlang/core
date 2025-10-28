@@ -83,7 +83,7 @@ test "show JsonPath - JSON Pointer format" {
   @builtin.inspect(Root.add_index(0), content="/0")
 
   // Test mixed path
-  let path = Key(Index(Root, index=0), key="foo")
+  let path : JsonPath = Key(Index(Root, index=0), key="foo")
   @builtin.inspect(path, content="/0/foo")
   @builtin.inspect(path.add_index(1), content="/0/foo/1")
   @builtin.inspect(path.add_key("bar"), content="/0/foo/bar")

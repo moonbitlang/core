@@ -280,6 +280,76 @@ test "stringify" {
 }
 
 ///|
+test "stringify with replacer" {
+  let json : Json = { "a": 1.0, "b": 2.0, "c": 3.0, "d": 4.0 }
+
+  // keep
+  let replacer = @json.Replacer::keep([Key("a"), Key("c"), Key("e")])
+  inspect(
+    json.stringify(replacer~),
+    content=(
+      #|{"a":1,"c":3}
+    ),
+  )
+  // exclude
+  let replacer = @json.Replacer::exclude([Key("b"), Key("d")])
+  inspect(
+    json.stringify(replacer~),
+    content=(
+      #|{"a":1,"c":3}
+    ),
+  )
+  // custom logic
+  let replacer = @json.Replacer::new((idx, value) => match idx {
+    Key("b") => None
+    Key("d") => None
+    _ => Some(value)
+  })
+  inspect(
+    json.stringify(replacer~),
+    content=(
+      #|{"a":1,"c":3}
+    ),
+  )
+}
+
+///|
+test "stringify with replace recursively" {
+  let json : Json = {
+    "a": 1.0,
+    "b": { "a": 2.0, "b": 3.0 },
+    "c": [{ "a": 4.0, "b": 5.0 }, { "a": 6.0, "b": 7.0 }],
+  }
+  // keep
+  let replacer = @json.Replacer::keep([Key("a")])
+  inspect(
+    json.stringify(replacer~),
+    content=(
+      #|{"a":1}
+    ),
+  )
+  // exclude
+  let replacer = @json.Replacer::exclude([Key("b")])
+  inspect(
+    json.stringify(replacer~),
+    content=(
+      #|{"a":1,"c":[{"a":4},{"a":6}]}
+    ),
+  )
+  // custom logic
+  let replacer = @json.Replacer::new((idx, value) => match idx {
+    Key("b") => None
+    _ => Some(value)
+  })
+  inspect(
+    json.stringify(replacer~),
+    content=(
+      #|{"a":1,"c":[{"a":4},{"a":6}]}
+    ),
+  )
+}
+
+///|
 let json : Json = {
   "\b": "\"hello\"",
   "\n": "\n\r\t\u{0C}",
