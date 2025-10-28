@@ -99,8 +99,8 @@ fn indent_str(level : Int, indent : Int) -> String {
 ///|
 /// Internal stack frame used by iterative stringify to avoid recursion
 priv enum WriteFrame {
-  Array(Array[Json], mut i~ : Int, Int) // (arr, index, depth)
-  Object(Iterator[(String, Json)], mut first~ : Bool, Int) // (kvs, first, depth)
+  Array(Array[Json], mut i~ : Int) // (arr, index)
+  Object(Iterator[(String, Json)], mut first~ : Bool) // (kvs, first)
 }
 
 ///|
@@ -116,84 +116,86 @@ pub fn Json::stringify(
 
   // Explicit stack to replace recursive calls
   let stack : Array[WriteFrame] = []
-  loop (Some(self), 0) {
-    (Some(value), depth) =>
+  let mut depth = 0
+  loop Some(self) {
+    Some(value) =>
       match value {
         Object(members) =>
           if members.is_empty() {
             buf.write_string("{}")
-            continue (None, depth)
+            continue None
           } else {
+            depth += 1
             buf.write_char('{')
-            buf.write_string(indent_str(depth + 1, indent))
+            buf.write_string(indent_str(depth, indent))
             // After child value printed, we resume from this frame
-            stack.push(
-              WriteFrame::Object(members.iterator(), first=true, depth),
-            )
-            continue (None, depth)
+            stack.push(WriteFrame::Object(members.iterator(), first=true))
+            continue None
           }
         Array(arr) =>
           if arr.is_empty() {
             buf.write_string("[]")
-            continue (None, depth)
+            continue None
           } else {
+            depth += 1
             buf.write_char('[')
-            buf.write_string(indent_str(depth + 1, indent))
-            stack.push(WriteFrame::Array(arr, i=0, depth))
-            continue (None, depth)
+            buf.write_string(indent_str(depth, indent))
+            stack.push(WriteFrame::Array(arr, i=0))
+            continue None
           }
         String(s) => {
           buf
           ..write_char('\"')
           ..write_string(escape(s, escape_slash~))
           ..write_char('\"')
-          continue (None, depth)
+          continue None
         }
         Number(n, repr~) => {
           match repr {
             None => buf.write_object(n)
             Some(r) => buf.write_string(r)
           }
-          continue (None, depth)
+          continue None
         }
         True => {
           buf.write_string("true")
-          continue (None, depth)
+          continue None
         }
         False => {
           buf.write_string("false")
-          continue (None, depth)
+          continue None
         }
         Null => {
           buf.write_string("null")
-          continue (None, depth)
+          continue None
         }
       }
-    (None, _) =>
+    None =>
       // No current node to write; try to resume a pending container
       match stack {
         [] => break
-        [.., WriteFrame::Array(arr, i~, depth) as frame] =>
+        [.., WriteFrame::Array(arr, i~) as frame] =>
           if i < arr.length() {
             if i > 0 {
               buf.write_char(',')
-              buf.write_string(indent_str(depth + 1, indent))
+              buf.write_string(indent_str(depth, indent))
             }
             let element = arr[i]
             frame.i = i + 1
-            continue (Some(element), depth + 1)
+            continue Some(element)
           } else {
+            depth -= 1
             ignore(stack.pop())
             buf.write_string(indent_str(depth, indent))
             buf.write_char(']')
-            continue (None, depth)
+            continue None
           }
-        [.., WriteFrame::Object(iterator, first~, depth) as frame] =>
+        [.., WriteFrame::Object(iterator, first~) as frame] =>
           match iterator.next() {
             Some((k, v)) => {
               if !first {
                 buf.write_char(',')
-                buf.write_string(indent_str(depth + 1, indent))
+                buf.write_string(indent_str(depth, indent))
               }
               buf
               ..write_char('\"')
@@ -204,13 +206,14 @@ pub fn Json::stringify(
                 buf.write_char(' ')
               }
               frame.first = false
-              continue (Some(v), depth + 1)
+              continue Some(v)
             }
             None => {
+              depth -= 1
               ignore(stack.pop())
               buf.write_string(indent_str(depth, indent))
               buf.write_char('}')
-              continue (None, depth)
+              continue None
             }
           }
       }
