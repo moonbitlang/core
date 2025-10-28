@@ -104,13 +104,39 @@ priv enum WriteFrame {
 }
 
 ///|
+pub(all) enum Idx {
+  Key(String)
+  Index(Int)
+} derive(Eq)
+
+///|
+struct Replacer((Idx, Json) -> Json?)
+
+///|
+pub fn Replacer::new(f : (Idx, Json) -> Json?) -> Replacer {
+  Replacer(f)
+}
+
+///|
+pub fn Replacer::keep(array : Array[Idx]) -> Replacer {
+  Replacer((idx, value) => if array.contains(idx) { Some(value) } else { None })
+}
+
+///|
+pub fn Replacer::exclude(array : Array[Idx]) -> Replacer {
+  Replacer((idx, value) => if array.contains(idx) { None } else { Some(value) })
+}
+
+///|
 /// Convert this Json value to a String
 /// - `escape_slash`: Whether to escape '/' as '\/' (default: false)
 /// - `indent`: Number of spaces to indent nested structures (default: 0 = non-indented)
+/// - `replacer`: An optional Replacer function to transform values during stringification
 pub fn Json::stringify(
   self : Json,
   escape_slash? : Bool = false,
   indent? : Int = 0,
+  replacer? : Replacer,
 ) -> String {
   let buf = StringBuilder::new(size_hint=0)
 
@@ -161,12 +187,19 @@ pub fn Json::stringify(
         [] => break
         [.., WriteFrame::Array(arr, i~) as frame] =>
           if i < arr.length() {
+            let mut element = arr[i]
+            frame.i = i + 1
+            if replacer is Some(replacer) {
+              if replacer(Idx::Index(i), element) is Some(e) {
+                element = e
+              } else {
+                continue None
+              }
+            }
             if i > 0 {
               buf.write_char(',')
               buf.write_string(indent_str(depth, indent))
             }
-            let element = arr[i]
-            frame.i = i + 1
             continue Some(element)
           } else {
             depth -= 1
@@ -178,6 +211,14 @@ pub fn Json::stringify(
         [.., WriteFrame::Object(iterator, first~) as frame] =>
           match iterator.next() {
             Some((k, v)) => {
+              let mut v2 = v
+              if replacer is Some(replacer) {
+                if replacer(Idx::Key(k), v) is Some(v) {
+                  v2 = v
+                } else {
+                  continue None
+                }
+              }
               if !first {
                 buf.write_char(',')
                 buf.write_string(indent_str(depth, indent))
@@ -191,7 +232,7 @@ pub fn Json::stringify(
                 buf.write_char(' ')
               }
               frame.first = false
-              continue Some(v)
+              continue Some(v2)
             }
             None => {
               depth -= 1
