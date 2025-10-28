@@ -28,6 +28,188 @@ pub impl Show for Int64 with to_string(self) {
 }
 
 ///|
+/// Converts an unsigned 32-bit integer to hexadecimal
+fn int_to_string_hex(
+  buffer : FixedArray[UInt16],
+  num : UInt,
+  digit_start : Int,
+  total_len : Int,
+) -> Unit {
+  let mut offset = total_len - digit_start
+  let mut n = num
+
+  // Process 2 hex digits (1 byte) at a time
+  while offset >= 2 {
+    offset = offset - 2
+    let byte_val = n.land(0xFFU).reinterpret_as_int()
+    let hi = byte_val / 16
+    let lo = byte_val % 16
+    buffer.unsafe_set(
+      digit_start + offset,
+      ALPHABET.unsafe_charcode_at(hi).to_uint16(),
+    )
+    buffer.unsafe_set(
+      digit_start + offset + 1,
+      ALPHABET.unsafe_charcode_at(lo).to_uint16(),
+    )
+    n = n.lsr(8)
+  }
+
+  // Handle remaining single hex digit
+  if offset == 1 {
+    let nibble = n.land(0xFU).reinterpret_as_int()
+    buffer.unsafe_set(
+      digit_start,
+      ALPHABET.unsafe_charcode_at(nibble).to_uint16(),
+    )
+  }
+}
+
+///|
+/// Generic radix conversion for any base 2-36
+fn int_to_string_generic(
+  buffer : FixedArray[UInt16],
+  num : UInt,
+  digit_start : Int,
+  total_len : Int,
+  radix : Int,
+) -> Unit {
+  let mut offset = total_len - digit_start
+  let mut n = num
+  let base = radix.reinterpret_as_uint()
+  if (radix & (radix - 1)) == 0 {
+    // Power-of-two radix: use bit shifts
+    let shift = radix.ctz()
+    let mask = base - 1U
+    while n > 0U {
+      offset = offset - 1
+      let digit = n.land(mask).reinterpret_as_int()
+      buffer.unsafe_set(
+        digit_start + offset,
+        ALPHABET.unsafe_charcode_at(digit).to_uint16(),
+      )
+      n = n.lsr(shift)
+    }
+  } else {
+    // General radix: use division
+    while n > 0U {
+      offset = offset - 1
+      let q = n / base
+      let digit = (n - q * base).reinterpret_as_int()
+      buffer.unsafe_set(
+        digit_start + offset,
+        ALPHABET.unsafe_charcode_at(digit).to_uint16(),
+      )
+      n = q
+    }
+  }
+}
+
+///|
+/// Converts an unsigned 32-bit integer to decimal string
+fn int_to_string_dec(
+  buffer : FixedArray[UInt16],
+  num : UInt,
+  digit_start : Int,
+  total_len : Int,
+) -> Unit {
+  let mut num = num
+  let mut offset = total_len - digit_start
+
+  // Process digits in groups of 4 (chunks of 10000)
+  while num >= 10000U {
+    let t = num / 10000U
+    let r = (num % 10000U).reinterpret_as_int()
+    num = t
+    let d1 = r / 100
+    let d2 = r % 100
+    offset = offset - 4
+    let d1_hi = (0x30 + d1 / 10).to_uint16()
+    let d1_lo = (0x30 + d1 % 10).to_uint16()
+    let d2_hi = (0x30 + d2 / 10).to_uint16()
+    let d2_lo = (0x30 + d2 % 10).to_uint16()
+    buffer.unsafe_set(digit_start + offset, d1_hi)
+    buffer.unsafe_set(digit_start + offset + 1, d1_lo)
+    buffer.unsafe_set(digit_start + offset + 2, d2_hi)
+    buffer.unsafe_set(digit_start + offset + 3, d2_lo)
+  }
+
+  // Handle remaining digits (< 10000)
+  let mut remaining = num.reinterpret_as_int()
+
+  // Process pairs of digits
+  while remaining >= 100 {
+    let t = remaining / 100
+    let d = remaining % 100
+    remaining = t
+    offset = offset - 2
+    let d_hi = (0x30 + d / 10).to_uint16()
+    let d_lo = (0x30 + d % 10).to_uint16()
+    buffer.unsafe_set(digit_start + offset, d_hi)
+    buffer.unsafe_set(digit_start + offset + 1, d_lo)
+  }
+
+  // Handle final 1 or 2 digits
+  if remaining >= 10 {
+    offset = offset - 2
+    let d_hi = (0x30 + remaining / 10).to_uint16()
+    let d_lo = (0x30 + remaining % 10).to_uint16()
+    buffer.unsafe_set(digit_start + offset, d_hi)
+    buffer.unsafe_set(digit_start + offset + 1, d_lo)
+  } else {
+    offset = offset - 1
+    buffer.unsafe_set(digit_start + offset, (0x30 + remaining).to_uint16())
+  }
+}
+
+///|
+/// Calculates the number of decimal digits in a u32 value
+fn dec_count32(value : UInt) -> Int {
+  if value < 100000U {
+    if value < 100U {
+      1 + (if value >= 10U { 1 } else { 0 })
+    } else {
+      3 +
+      (if value >= 10000U { 1 } else { 0 }) +
+      (if value >= 1000U { 1 } else { 0 })
+    }
+  } else if value < 10000000U {
+    6 + (if value >= 1000000U { 1 } else { 0 })
+  } else {
+    8 +
+    (if value >= 1000000000U { 1 } else { 0 }) +
+    (if value >= 100000000U { 1 } else { 0 })
+  }
+}
+
+///|
+/// Calculates the number of hex digits needed for a u32 value
+fn hex_count32(value : UInt) -> Int {
+  if value == 0U {
+    1
+  } else {
+    let leading_zeros = value.clz()
+    (31 - leading_zeros) / 4 + 1
+  }
+}
+
+///|
+/// Calculates the number of digits needed for a u32 value in any radix
+fn radix_count32(value : UInt, radix : Int) -> Int {
+  if value == 0U {
+    return 1
+  }
+  let mut num = value
+  let base = radix.reinterpret_as_uint()
+  let mut count = 0
+  while num > 0U {
+    count = count + 1
+    num = num / base
+  }
+  count
+}
+
+///|
 /// Converts an integer to its string representation in the specified radix (base).
 /// Example:
 /// ```
@@ -35,10 +217,64 @@ pub impl Show for Int64 with to_string(self) {
 /// inspect((-255).to_string(radix=16), content="-ff")
 /// ```
 pub fn Int::to_string(self : Int, radix? : Int = 10) -> String {
-  let buf = StringBuilder::new(size_hint=Int::output_size_hint(radix~))
-  self.output(buf, radix~)
-  buf.to_string()
+  // Validate radix
+  if radix < 2 || radix > 36 {
+    abort("radix must be between 2 and 36")
+  }
+
+  // Special case for zero
+  if self == 0 {
+    return "0"
+  }
+
+  // Handle negative numbers
+  let is_negative = self < 0
+  let num : UInt = if is_negative {
+    // Negate and reinterpret as UInt
+    // Works correctly for Int::min_value due to two's complement:
+    // -Int::min_value wraps to itself, then reinterpreting gives 2147483648U
+    (-self).reinterpret_as_uint()
+  } else {
+    self.reinterpret_as_uint()
+  }
+
+  // Calculate length, allocate buffer, and write digits
+  let buffer = match radix {
+    10 => {
+      let digit_len = dec_count32(num)
+      let total_len = digit_len + (if is_negative { 1 } else { 0 })
+      let buffer : FixedArray[UInt16] = FixedArray::make(total_len, 0)
+      let digit_start = if is_negative { 1 } else { 0 }
+      int_to_string_dec(buffer, num, digit_start, total_len)
+      buffer
+    }
+    16 => {
+      let digit_len = hex_count32(num)
+      let total_len = digit_len + (if is_negative { 1 } else { 0 })
+      let buffer : FixedArray[UInt16] = FixedArray::make(total_len, 0)
+      let digit_start = if is_negative { 1 } else { 0 }
+      int_to_string_hex(buffer, num, digit_start, total_len)
+      buffer
+    }
+    _ => {
+      let digit_len = radix_count32(num, radix)
+      let total_len = digit_len + (if is_negative { 1 } else { 0 })
+      let buffer : FixedArray[UInt16] = FixedArray::make(total_len, 0)
+      let digit_start = if is_negative { 1 } else { 0 }
+      int_to_string_generic(buffer, num, digit_start, total_len, radix)
+      buffer
+    }
+  }
+
+  // Write minus sign if negative
+  if is_negative {
+    buffer.unsafe_set(0, 0x002D)
+  }
+  unsafe_fixedarray_to_string(buffer)
 }
+
+///|
+fn unsafe_fixedarray_to_string(buffer : FixedArray[UInt16]) -> String = "%identity"
 
 ///|
 pub impl Show for Int with to_string(self) {
