@@ -75,6 +75,8 @@ pub typealias @builtin.IterResult as IterResult
 
 pub typealias @builtin.Iterator as Iterator
 
+pub typealias @builtin.Iterator2 as Iterator2
+
 pub typealias @builtin.Json as Json
 
 pub typealias @builtin.Map as Map
