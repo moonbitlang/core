@@ -61,6 +61,7 @@ pub using @builtin {
   type Iter,
   type Iterator,
   type Iter2,
+  type Iterator2,
   type IterResult,
   type Json,
   type Map,
