@@ -89,6 +89,9 @@ pub fn String::unsafe_substring(
   start~ : Int,
   end~ : Int,
 ) -> String {
+  if start == 0 && end == str.length() {
+    return str
+  }
   let len = end - start
   let bytes = FixedArray::make(len * 2, Byte::default())
   bytes.blit_from_string(0, str, start, len)
