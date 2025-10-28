@@ -53,14 +53,12 @@ pub fn[X] Iterator::just_run(self : Iterator[X], f : (X) -> IterResult) -> Unit 
 ///|
 pub impl[X : Show] Show for Iterator[X] with output(self, logger) {
   logger.write_string("[")
-  let mut is_first = true
-  while self.next() is Some(x) {
-    if is_first {
-      is_first = false
-    } else {
-      logger.write_string(", ")
-    }
+  if self.next() is Some(x) {
     logger.write_object(x)
+    while self.next() is Some(x) {
+      logger.write_string(", ")
+      logger.write_object(x)
+    }
   }
   logger.write_string("]")
 }
@@ -419,15 +417,13 @@ pub fn[X] Iterator::flatten(self : Iterator[Iterator[X]]) -> Iterator[X] {
 /// Collects the elements of the iterator into a string.
 /// The old iterator `self` must not be used again after calling `join`.
 pub fn Iterator::join(self : Iterator[String], sep : String) -> String {
-  let mut is_first = true
   let result = StringBuilder::new()
-  while self.next() is Some(x) {
-    if is_first {
-      is_first = false
-    } else {
-      result.write_string(sep)
-    }
+  if self.next() is Some(x) {
     result.write_string(x)
+    while self.next() is Some(x) {
+      result.write_string(sep)
+      result.write_string(x)
+    }
   }
   result.to_string()
 }
