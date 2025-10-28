@@ -27,8 +27,6 @@ fn Bytes::iter(Bytes) -> Iter[Byte]
 fn Bytes::iter2(Bytes) -> Iter2[Int, Byte]
 fn Bytes::iterator(Bytes) -> Iterator[Byte]
 fn Bytes::iterator2(Bytes) -> Iterator2[Int, Byte]
-#as_free_fn
-fn Bytes::of(FixedArray[Byte]) -> Bytes
 #deprecated
 fn Bytes::op_add(Bytes, Bytes) -> Bytes // from trait `Add`
 fn Bytes::output(Bytes, &Logger) -> Unit // from trait `Show`
