@@ -465,19 +465,22 @@ test "from_iter empty iter" {
 test "from_iterator multiple elements iter" {
   inspect(
     @deque.from_iterator([1, 2, 3].iterator()),
-    content="@deque.of([1, 2, 3])",
+    content="@deque.from_array([1, 2, 3])",
   )
 }
 
 ///|
 test "from_iterator single element iter" {
-  inspect(@deque.from_iterator([1].iterator()), content="@deque.of([1])")
+  inspect(
+    @deque.from_iterator([1].iterator()),
+    content="@deque.from_array([1])",
+  )
 }
 
 ///|
 test "from_iterator empty iter" {
   let dq : @deque.Deque[Int] = @deque.from_iterator(Iterator::empty())
-  inspect(dq, content="@deque.of([])")
+  inspect(dq, content="@deque.from_array([])")
 }
 
 ///|

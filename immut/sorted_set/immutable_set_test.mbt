@@ -549,7 +549,7 @@ test "from_iter empty iter" {
 test "from_iterator multiple elements iter" {
   inspect(
     @sorted_set.from_iterator([1, 2, 3].iterator()),
-    content="@immut/sorted_set.of([1, 2, 3])",
+    content="@immut/sorted_set.from_array([1, 2, 3])",
   )
 }
 
@@ -557,7 +557,7 @@ test "from_iterator multiple elements iter" {
 test "from_iterator single element iter" {
   inspect(
     @sorted_set.from_iterator([1].iterator()),
-    content="@immut/sorted_set.of([1])",
+    content="@immut/sorted_set.from_array([1])",
   )
 }
 
@@ -566,7 +566,7 @@ test "from_iterator empty iter" {
   let pq : @sorted_set.SortedSet[Int] = @sorted_set.from_iterator(
     Iterator::empty(),
   )
-  inspect(pq, content="@immut/sorted_set.of([])")
+  inspect(pq, content="@immut/sorted_set.from_array([])")
 }
 
 ///|

@@ -794,7 +794,7 @@ test "from_iter empty iter" {
 test "from_iterator multiple elements iter" {
   inspect(
     @list.from_iterator([1, 2, 3].iterator()),
-    content="@list.of([1, 2, 3])",
+    content="@list.from_array([1, 2, 3])",
   )
 }
 
@@ -802,19 +802,19 @@ test "from_iterator multiple elements iter" {
 test "from_iterator_rev multiple elements iter" {
   inspect(
     @list.from_iterator_rev([1, 2, 3].iterator()),
-    content="@list.of([3, 2, 1])",
+    content="@list.from_array([3, 2, 1])",
   )
 }
 
 ///|
 test "from_iterator single element iter" {
-  inspect(@list.from_iterator([1].iterator()), content="@list.of([1])")
+  inspect(@list.from_iterator([1].iterator()), content="@list.from_array([1])")
 }
 
 ///|
 test "from_iterator empty iter" {
   let pq : @list.List[Int] = @list.from_iterator(Iterator::empty())
-  inspect(pq, content="@list.of([])")
+  inspect(pq, content="@list.from_array([])")
 }
 
 ///|
