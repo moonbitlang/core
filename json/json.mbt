@@ -118,58 +118,43 @@ pub fn Json::stringify(
   let stack : Array[WriteFrame] = []
   let mut depth = 0
   loop Some(self) {
-    Some(value) =>
+    Some(value) => {
       match value {
         Object(members) =>
           if members.is_empty() {
             buf.write_string("{}")
-            continue None
           } else {
             depth += 1
             buf.write_char('{')
             buf.write_string(indent_str(depth, indent))
             // After child value printed, we resume from this frame
             stack.push(WriteFrame::Object(members.iterator(), first=true))
-            continue None
           }
         Array(arr) =>
           if arr.is_empty() {
             buf.write_string("[]")
-            continue None
           } else {
             depth += 1
             buf.write_char('[')
             buf.write_string(indent_str(depth, indent))
             stack.push(WriteFrame::Array(arr, i=0))
-            continue None
           }
-        String(s) => {
+        String(s) =>
           buf
           ..write_char('\"')
           ..write_string(escape(s, escape_slash~))
           ..write_char('\"')
-          continue None
-        }
-        Number(n, repr~) => {
+        Number(n, repr~) =>
           match repr {
             None => buf.write_object(n)
             Some(r) => buf.write_string(r)
           }
-          continue None
-        }
-        True => {
-          buf.write_string("true")
-          continue None
-        }
-        False => {
-          buf.write_string("false")
-          continue None
-        }
-        Null => {
-          buf.write_string("null")
-          continue None
-        }
+        True => buf.write_string("true")
+        False => buf.write_string("false")
+        Null => buf.write_string("null")
       }
+      continue None
+    }
     None =>
       // No current node to write; try to resume a pending container
       match stack {
