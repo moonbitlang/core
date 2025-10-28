@@ -869,26 +869,26 @@ pub fn[X] Iterator::nth(self : Iterator[X], n : Int) -> X? {
 
 ///|
 pub fn[X : Compare] Iterator::maximum(self : Iterator[X]) -> X? {
-  let mut res = None
+  guard self.next() is Some(x) else { return None }
+  let mut res = x
   while self.next() is Some(x) {
-    match res {
-      Some(prev) if prev >= x => ()
-      Some(_) | None => res = Some(x)
+    if x > res {
+      res = x
     }
   }
-  res
+  Some(res)
 }
 
 ///|
 pub fn[X : Compare] Iterator::minimum(self : Iterator[X]) -> X? {
-  let mut res = None
+  guard self.next() is Some(x) else { return None }
+  let mut res = x
   while self.next() is Some(x) {
-    match res {
-      Some(prev) if prev <= x => ()
-      Some(_) | None => res = Some(x)
+    if x < res {
+      res = x
     }
   }
-  res
+  Some(res)
 }
 
 ///|
