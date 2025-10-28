@@ -39,26 +39,7 @@ fn Int64::output(self : Int64, logger : &Logger, radix? : Int = 10) -> Unit {
 
 ///|
 fn Int::output(self : Int, logger : &Logger, radix? : Int = 10) -> Unit {
-  fn abs(n : Int) -> Int {
-    if n < 0 {
-      0 - n
-    } else {
-      n
-    }
-  }
-
-  if self < 0 {
-    logger.write_char('-')
-  }
-  fn write_digits(num : Int) {
-    let num2 = num / radix
-    if num2 != 0 {
-      write_digits(num2)
-    }
-    logger.write_char(ALPHABET[abs(num % radix)].unsafe_to_char())
-  }
-
-  write_digits(abs(self))
+  logger.write_string(self.to_string(radix~))
 }
 
 ///|
