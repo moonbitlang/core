@@ -281,8 +281,18 @@ pub fn Int::to_string(self : Int, radix? : Int = 10) -> String {
 }
 
 ///|
-#cfg(not(target="js"))
+#cfg(not(any(target="js", target="wasm-gc")))
 fn unsafe_fixedarray_to_string(buffer : FixedArray[UInt16]) -> String = "%identity"
+
+///|
+#cfg(target="wasm-gc")
+fn unsafe_fixedarray_to_string(buffer : FixedArray[UInt16]) -> String {
+  let sb = StringBuilder::new(size_hint=buffer.length() * 2)
+  for u in buffer {
+    sb.write_char(u.to_int().unsafe_to_char())
+  }
+  sb.to_string()
+}
 
 ///|
 /// Converts an integer to its string representation in the specified radix (base).
