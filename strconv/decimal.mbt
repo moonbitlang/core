@@ -372,7 +372,7 @@ fn Decimal::right_shift(self : Decimal, s : Int) -> Unit {
 /// Cheat sheet for left shift: table indexed by shift count giving
 /// number of new digits that will be introduced by that shift.
 /// left_shift_cheats[s] = (new digits num, (5 ** s))
-let left_shift_cheats = [
+let left_shift_cheats : ReadOnlyArray[(Int, String)] = [
   (0, ""),
   (1, "5"), // * 2
   (1, "25"), // * 4
