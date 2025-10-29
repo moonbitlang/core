@@ -23,13 +23,13 @@
 // ====================================================
 
 ///|
-let pow_bp : FixedArray[Double] = [1.0, 1.5]
+let pow_bp : ReadOnlyArray[Double] = [1.0, 1.5]
 
 ///|
-let pow_dp_h : FixedArray[Double] = [0.0, 5.84962487220764160156e-01]
+let pow_dp_h : ReadOnlyArray[Double] = [0.0, 5.84962487220764160156e-01]
 
 ///|
-let pow_dp_l : FixedArray[Double] = [0.0, 1.35003920212974897128e-08]
+let pow_dp_l : ReadOnlyArray[Double] = [0.0, 1.35003920212974897128e-08]
 
 ///|
 const ZERO = 0.0
