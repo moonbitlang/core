@@ -37,3 +37,7 @@
 /// ```
 #as_free_fn
 pub fn Double::pow(self : Double, other : Double) -> Double = "Math" "pow"
+
+///|
+// a hack to prevent unused package warning
+let _j : (FixedArray[String], StringView) -> String = FixedArray::join
