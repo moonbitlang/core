@@ -29,6 +29,7 @@ pub impl Show for Int64 with to_string(self) {
 
 ///|
 /// Converts an unsigned 32-bit integer to hexadecimal
+#cfg(not(target="js"))
 fn int_to_string_hex(
   buffer : FixedArray[UInt16],
   num : UInt,
@@ -67,6 +68,7 @@ fn int_to_string_hex(
 
 ///|
 /// Generic radix conversion for any base 2-36
+#cfg(not(target="js"))
 fn int_to_string_generic(
   buffer : FixedArray[UInt16],
   num : UInt,
@@ -107,6 +109,7 @@ fn int_to_string_generic(
 
 ///|
 /// Converts an unsigned 32-bit integer to decimal string
+#cfg(not(target="js"))
 fn int_to_string_dec(
   buffer : FixedArray[UInt16],
   num : UInt,
@@ -164,6 +167,7 @@ fn int_to_string_dec(
 
 ///|
 /// Calculates the number of decimal digits in a u32 value
+#cfg(not(target="js"))
 fn dec_count32(value : UInt) -> Int {
   if value < 100000U {
     if value < 100U {
@@ -184,6 +188,7 @@ fn dec_count32(value : UInt) -> Int {
 
 ///|
 /// Calculates the number of hex digits needed for a u32 value
+#cfg(not(target="js"))
 fn hex_count32(value : UInt) -> Int {
   if value == 0U {
     1
@@ -195,6 +200,7 @@ fn hex_count32(value : UInt) -> Int {
 
 ///|
 /// Calculates the number of digits needed for a u32 value in any radix
+#cfg(not(target="js"))
 fn radix_count32(value : UInt, radix : Int) -> Int {
   if value == 0U {
     return 1
@@ -216,6 +222,7 @@ fn radix_count32(value : UInt, radix : Int) -> Int {
 /// inspect((255).to_string(radix=16), content="ff")
 /// inspect((-255).to_string(radix=16), content="-ff")
 /// ```
+#cfg(not(target="js"))
 pub fn Int::to_string(self : Int, radix? : Int = 10) -> String {
   // Validate radix
   if radix < 2 || radix > 36 {
@@ -274,7 +281,22 @@ pub fn Int::to_string(self : Int, radix? : Int = 10) -> String {
 }
 
 ///|
+#cfg(not(target="js"))
 fn unsafe_fixedarray_to_string(buffer : FixedArray[UInt16]) -> String = "%identity"
+
+///|
+/// Converts an integer to its string representation in the specified radix (base).
+#cfg(target="js")
+pub fn Int::to_string(self : Int, radix? : Int = 10) -> String {
+  int_to_string_js(self, radix)
+}
+
+///|
+#cfg(target="js")
+extern "js" fn int_to_string_js(i : Int, radix : Int) -> String =
+  #|(x, radix) => {
+  #|  return x.toString(radix);
+  #|}
 
 ///|
 pub impl Show for Int with to_string(self) {
