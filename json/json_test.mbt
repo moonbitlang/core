@@ -671,3 +671,24 @@ test "stringify deep nested object" {
   let expected = depth * 6 + 4 // each {"a": } plus the outermost null
   assert_eq(s.length(), expected)
 }
+
+///|
+test "transformer" {
+  // custom function
+  let json : Json = { "a": 1.0, "b": { "c": 2.0, "d": [3.0, 4.0] } }
+  let newjson = json.transform(
+    @json.Replacer::new((_, value) => match value {
+      Number(n, ..) => Some(Json::number(n * 10))
+      other => Some(other)
+    }),
+  )
+  @json.inspect(newjson, content={ "a": 10, "b": { "c": 20, "d": [3, 4] } })
+
+  // keep
+  let newjson2 = json.transform(@json.Replacer::keep(["a", "b", "c"]))
+  @json.inspect(newjson2, content={ "a": 1, "b": { "c": 2 } })
+
+  // exclude
+  let newjson3 = json.transform(@json.Replacer::exclude(["a", "d"]))
+  @json.inspect(newjson3, content={ "b": { "c": 2 } })
+}
