@@ -41,15 +41,6 @@ impl Show for ParseError
 impl ToJson for ParseError
 
 // Types and methods
-pub(all) enum Idx {
-  Key(String)
-  Index(Int)
-}
-fn Idx::equal(Self, Self) -> Bool // from trait `Eq`
-#deprecated
-fn Idx::op_equal(Self, Self) -> Bool // from trait `Eq`
-impl Eq for Idx
-
 type JsonPath
 fn JsonPath::add_index(Self, Int) -> Self
 fn JsonPath::add_key(Self, String) -> Self
@@ -75,9 +66,9 @@ impl Eq for Position
 impl ToJson for Position
 
 type Replacer
-fn Replacer::exclude(Array[Idx]) -> Self
-fn Replacer::keep(Array[Idx]) -> Self
-fn Replacer::new((Idx, Json) -> Json?) -> Self
+fn Replacer::exclude(ArrayView[StringView]) -> Self
+fn Replacer::keep(ArrayView[StringView]) -> Self
+fn Replacer::new((String, Json) -> Json?) -> Self
 
 fn Json::as_array(Self) -> Array[Self]?
 fn Json::as_bool(Self) -> Bool?
