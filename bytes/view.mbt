@@ -680,7 +680,8 @@ pub fn BytesView::start_offset(self : BytesView) -> Int {
 
 ///|
 pub fn BytesView::to_bytes(self : BytesView) -> Bytes {
-  if self.length() == 0 && self.length() == self.bytes().length() {
+  if self.length() == self.bytes().length() {
+    // If the view covers the entire bytes, return the original bytes to avoid copying
     return self.bytes()
   }
   let bytes = FixedArray::make(self.length(), (0 : Byte))
