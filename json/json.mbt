@@ -104,26 +104,20 @@ priv enum WriteFrame {
 }
 
 ///|
-pub(all) enum Idx {
-  Key(String)
-  Index(Int)
-} derive(Eq)
+struct Replacer((String, Json) -> Json?)
 
 ///|
-struct Replacer((Idx, Json) -> Json?)
-
-///|
-pub fn Replacer::new(f : (Idx, Json) -> Json?) -> Replacer {
+pub fn Replacer::new(f : (String, Json) -> Json?) -> Replacer {
   Replacer(f)
 }
 
 ///|
-pub fn Replacer::keep(array : Array[Idx]) -> Replacer {
+pub fn Replacer::keep(array : ArrayView[StringView]) -> Replacer {
   Replacer((idx, value) => if array.contains(idx) { Some(value) } else { None })
 }
 
 ///|
-pub fn Replacer::exclude(array : Array[Idx]) -> Replacer {
+pub fn Replacer::exclude(array : ArrayView[StringView]) -> Replacer {
   Replacer((idx, value) => if array.contains(idx) { None } else { Some(value) })
 }
 
@@ -187,15 +181,8 @@ pub fn Json::stringify(
         [] => break
         [.., WriteFrame::Array(arr, i~) as frame] =>
           if i < arr.length() {
-            let mut element = arr[i]
+            let element = arr[i]
             frame.i = i + 1
-            if replacer is Some(replacer) {
-              if replacer(Idx::Index(i), element) is Some(e) {
-                element = e
-              } else {
-                continue None
-              }
-            }
             if i > 0 {
               buf.write_char(',')
               buf.write_string(indent_str(depth, indent))
@@ -213,7 +200,7 @@ pub fn Json::stringify(
             Some((k, v)) => {
               let mut v2 = v
               if replacer is Some(replacer) {
-                if replacer(Idx::Key(k), v) is Some(v) {
+                if replacer(k, v) is Some(v) {
                   v2 = v
                 } else {
                   continue None

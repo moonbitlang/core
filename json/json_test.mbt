@@ -284,7 +284,7 @@ test "stringify with replacer" {
   let json : Json = { "a": 1.0, "b": 2.0, "c": 3.0, "d": 4.0 }
 
   // keep
-  let replacer = @json.Replacer::keep([Key("a"), Key("c"), Key("e")])
+  let replacer = @json.Replacer::keep(["a", "c", "e"])
   inspect(
     json.stringify(replacer~),
     content=(
@@ -292,7 +292,7 @@ test "stringify with replacer" {
     ),
   )
   // exclude
-  let replacer = @json.Replacer::exclude([Key("b"), Key("d")])
+  let replacer = @json.Replacer::exclude(["b", "d"])
   inspect(
     json.stringify(replacer~),
     content=(
@@ -301,8 +301,8 @@ test "stringify with replacer" {
   )
   // custom logic
   let replacer = @json.Replacer::new((idx, value) => match idx {
-    Key("b") => None
-    Key("d") => None
+    "b" => None
+    "d" => None
     _ => Some(value)
   })
   inspect(
@@ -321,7 +321,7 @@ test "stringify with replace recursively" {
     "c": [{ "a": 4.0, "b": 5.0 }, { "a": 6.0, "b": 7.0 }],
   }
   // keep
-  let replacer = @json.Replacer::keep([Key("a")])
+  let replacer = @json.Replacer::keep(["a"])
   inspect(
     json.stringify(replacer~),
     content=(
@@ -329,7 +329,7 @@ test "stringify with replace recursively" {
     ),
   )
   // exclude
-  let replacer = @json.Replacer::exclude([Key("b")])
+  let replacer = @json.Replacer::exclude(["b"])
   inspect(
     json.stringify(replacer~),
     content=(
@@ -338,7 +338,7 @@ test "stringify with replace recursively" {
   )
   // custom logic
   let replacer = @json.Replacer::new((idx, value) => match idx {
-    Key("b") => None
+    "b" => None
     _ => Some(value)
   })
   inspect(

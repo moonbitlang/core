@@ -1,5 +1,6 @@
 {
   "import": [
+    "moonbitlang/core/array",
     "moonbitlang/core/builtin",
     "moonbitlang/core/char",
     "moonbitlang/core/double",
@@ -12,7 +13,6 @@
   "test-import": [
     "moonbitlang/core/result",
     "moonbitlang/core/unit",
-    "moonbitlang/core/array",
     "moonbitlang/core/bigint",
     "moonbitlang/core/bytes"
   ]
