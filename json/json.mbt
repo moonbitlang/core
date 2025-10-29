@@ -268,6 +268,26 @@ fn escape(str : String, escape_slash~ : Bool) -> String {
 }
 
 ///|
+pub fn Json::transform(self : Self, replacer : Replacer) -> Json {
+  match self {
+    Object(members) =>
+      members
+      .iterator()
+      .filter_map(pair => {
+        let (k, v) = pair
+        if replacer(k, v) is Some(v2) {
+          Some((k, v2.transform(replacer)))
+        } else {
+          None
+        }
+      })
+      |> Map::from_iterator()
+      |> Object
+    _ => self
+  }
+}
+
+///|
 /// Useful for json interpolation
 pub impl ToJson for Json with to_json(self) {
   self

@@ -82,6 +82,7 @@ fn Json::output(Self, &Logger) -> Unit // from trait `Show`
 fn Json::stringify(Self, escape_slash? : Bool, indent? : Int, replacer? : Replacer) -> String
 fn Json::to_json(Self) -> Self // from trait `ToJson`
 fn Json::to_string(Self) -> String // from trait `Show`
+fn Json::transform(Self, Replacer) -> Self
 fn Json::value(Self, String) -> Self?
 impl Show for Json
 impl ToJson for Json
