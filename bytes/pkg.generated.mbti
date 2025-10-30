@@ -83,16 +83,12 @@ fn BytesView::unsafe_extract_uint64_be(Self, Int, Int) -> UInt64
 fn BytesView::unsafe_extract_uint64_le(Self, Int, Int) -> UInt64
 fn BytesView::unsafe_extract_uint_be(Self, Int, Int) -> UInt
 fn BytesView::unsafe_extract_uint_le(Self, Int, Int) -> UInt
-fn BytesView::unsafe_get(Self, Int) -> Byte
 fn BytesView::unsafe_read_uint16_be(Self, Int) -> UInt16
 fn BytesView::unsafe_read_uint16_le(Self, Int) -> UInt16
 fn BytesView::unsafe_read_uint32_be(Self, Int) -> UInt
 fn BytesView::unsafe_read_uint32_le(Self, Int) -> UInt
 fn BytesView::unsafe_read_uint64_be(Self, Int) -> UInt64
 fn BytesView::unsafe_read_uint64_le(Self, Int) -> UInt64
-impl Compare for BytesView
-impl Eq for BytesView
-impl Hash for BytesView
 impl Show for BytesView
 impl ToJson for BytesView
 
