@@ -1859,3 +1859,259 @@ test "misc" {
     ),
   )
 }
+
+// ============================================================================
+// 9. Signed Integer Extraction Tests
+// ============================================================================
+
+///|
+test "extract_byte_signed - basic positive and negative values" {
+  // Test with a mix of positive and negative values
+  let bytes = b"\x7F\xFF\x80\x00\xAA\x55"
+  let view = bytes[:]
+
+  // Extract 2-8 bits from 0x7F (01111111) - all should be positive based on MSB = 0
+  inspect(view.unsafe_extract_byte_signed(0, 2), content="1") // 01 -> 1
+  inspect(view.unsafe_extract_byte_signed(0, 3), content="3") // 011 -> 3
+  inspect(view.unsafe_extract_byte_signed(0, 4), content="7") // 0111 -> 7
+  inspect(view.unsafe_extract_byte_signed(0, 5), content="15") // 01111 -> 15
+  inspect(view.unsafe_extract_byte_signed(0, 6), content="31") // 011111 -> 31
+  inspect(view.unsafe_extract_byte_signed(0, 7), content="63") // 0111111 -> 63
+  inspect(view.unsafe_extract_byte_signed(0, 8), content="127") // 01111111 -> 127
+
+  // Extract from 0xFF (11111111) - all should be negative
+  inspect(view.unsafe_extract_byte_signed(8, 2), content="-1") // 11 -> -1
+  inspect(view.unsafe_extract_byte_signed(8, 3), content="-1") // 111 -> -1
+  inspect(view.unsafe_extract_byte_signed(8, 4), content="-1") // 1111 -> -1
+  inspect(view.unsafe_extract_byte_signed(8, 5), content="-1") // 11111 -> -1
+  inspect(view.unsafe_extract_byte_signed(8, 6), content="-1") // 111111 -> -1
+  inspect(view.unsafe_extract_byte_signed(8, 7), content="-1") // 1111111 -> -1
+  inspect(view.unsafe_extract_byte_signed(8, 8), content="-1") // 11111111 -> -1
+
+  // Extract from 0x80 (10000000) - minimum negative value for each bit length
+  inspect(view.unsafe_extract_byte_signed(16, 2), content="-2") // 10 -> -2
+  inspect(view.unsafe_extract_byte_signed(16, 3), content="-4") // 100 -> -4
+  inspect(view.unsafe_extract_byte_signed(16, 4), content="-8") // 1000 -> -8
+  inspect(view.unsafe_extract_byte_signed(16, 5), content="-16") // 10000 -> -16
+  inspect(view.unsafe_extract_byte_signed(16, 6), content="-32") // 100000 -> -32
+  inspect(view.unsafe_extract_byte_signed(16, 7), content="-64") // 1000000 -> -64
+  inspect(view.unsafe_extract_byte_signed(16, 8), content="-128") // 10000000 -> -128
+
+  // Extract from 0x00 (00000000) - all zeros
+  inspect(view.unsafe_extract_byte_signed(24, 2), content="0")
+  inspect(view.unsafe_extract_byte_signed(24, 4), content="0")
+  inspect(view.unsafe_extract_byte_signed(24, 8), content="0")
+}
+
+///|
+test "extract_byte_signed - boundary values" {
+  let bytes = b"\x55\xAA\xC0\x3F"
+  let view = bytes[:]
+
+  // 0x55 = 01010101 - positive values
+  inspect(view.unsafe_extract_byte_signed(0, 4), content="5") // 0101 -> 5
+  inspect(view.unsafe_extract_byte_signed(4, 4), content="5") // 0101 -> 5
+
+  // 0xAA = 10101010 - negative values
+  inspect(view.unsafe_extract_byte_signed(8, 4), content="-6") // 1010 -> -6
+  inspect(view.unsafe_extract_byte_signed(12, 4), content="-6") // 1010 -> -6
+
+  // Cross byte boundaries
+  // bits 6-9: from 0x55 (01010101) bit 6-7 = 01, from 0xAA (10101010) bit 0-1 = 10
+  // Combined: 0110 = 6 (positive)
+  inspect(view.unsafe_extract_byte_signed(6, 4), content="6")
+}
+
+///|
+test "extract_int_le - signed little-endian values" {
+  let bytes = b"\xFF\xFF\xFF\xFF\x00\x00\x00\x80\x01\x00\x00\x00"
+  let view = bytes[:]
+
+  // All 0xFF bytes - should extract -1 in various lengths
+  inspect(view.unsafe_extract_int_le(0, 9), content="-1")
+  inspect(view.unsafe_extract_int_le(0, 16), content="-1")
+  inspect(view.unsafe_extract_int_le(0, 24), content="-1")
+  inspect(view.unsafe_extract_int_le(0, 32), content="-1")
+
+  // 0x80000000 in little-endian (bytes 4-7) - minimum Int32 value
+  inspect(view.unsafe_extract_int_le(32, 32), content="-2147483648")
+
+  // Positive value: 0x00000001 in little-endian (bytes 8-11)
+  inspect(view.unsafe_extract_int_le(64, 32), content="1")
+  inspect(view.unsafe_extract_int_le(64, 16), content="1")
+  inspect(view.unsafe_extract_int_le(64, 9), content="1")
+}
+
+///|
+test "extract_int_be - signed big-endian values" {
+  let bytes = b"\xFF\xFF\xFF\xFF\x80\x00\x00\x00\x00\x00\x00\x01"
+  let view = bytes[:]
+
+  // All 0xFF bytes - should extract -1 in various lengths
+  inspect(view.unsafe_extract_int_be(0, 9), content="-1")
+  inspect(view.unsafe_extract_int_be(0, 16), content="-1")
+  inspect(view.unsafe_extract_int_be(0, 24), content="-1")
+  inspect(view.unsafe_extract_int_be(0, 32), content="-1")
+
+  // 0x80000000 in big-endian (bytes 4-7) - minimum Int32 value
+  inspect(view.unsafe_extract_int_be(32, 32), content="-2147483648")
+
+  // Positive value: 0x00000001 in big-endian (bytes 8-11)
+  inspect(view.unsafe_extract_int_be(64, 32), content="1")
+  inspect(view.unsafe_extract_int_be(64, 16), content="0") // First 16 bits are 0x0000
+  inspect(view.unsafe_extract_int_be(64, 9), content="0") // First 9 bits are all 0
+}
+
+///|
+test "extract_int_signed - various bit lengths" {
+  let bytes = b"\xA5\xB6\xC7\xD8"
+  let view = bytes[:]
+
+  // Test LE extraction with various lengths
+  // 0xA5 = 10100101 in binary
+  let val9_le = view.unsafe_extract_int_le(0, 9)
+  let val16_le = view.unsafe_extract_int_le(0, 16)
+  let val24_le = view.unsafe_extract_int_le(0, 24)
+  let val32_le = view.unsafe_extract_int_le(0, 32)
+
+  // Since MSB is 1, these should be negative
+  inspect(val9_le < 0, content="true")
+  inspect(val16_le < 0, content="true")
+  inspect(val24_le < 0, content="true")
+  inspect(val32_le < 0, content="true")
+
+  // Test BE extraction
+  let val9_be = view.unsafe_extract_int_be(0, 9)
+  let val16_be = view.unsafe_extract_int_be(0, 16)
+  let val24_be = view.unsafe_extract_int_be(0, 24)
+  let val32_be = view.unsafe_extract_int_be(0, 32)
+  inspect(val9_be < 0, content="true")
+  inspect(val16_be < 0, content="true")
+  inspect(val24_be < 0, content="true")
+  inspect(val32_be < 0, content="true")
+}
+
+///|
+test "extract_int64_le - signed 64-bit little-endian" {
+  let bytes = b"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x00\x00\x00\x00\x00\x00\x00\x80\x01\x00\x00\x00\x00\x00\x00\x00"
+  let view = bytes[:]
+
+  // All 0xFF bytes - should be -1
+  inspect(view.unsafe_extract_int64_le(0, 33), content="-1")
+  inspect(view.unsafe_extract_int64_le(0, 40), content="-1")
+  inspect(view.unsafe_extract_int64_le(0, 48), content="-1")
+  inspect(view.unsafe_extract_int64_le(0, 56), content="-1")
+  inspect(view.unsafe_extract_int64_le(0, 64), content="-1")
+
+  // 0x8000000000000000 in little-endian - minimum Int64 value
+  inspect(view.unsafe_extract_int64_le(64, 64), content="-9223372036854775808")
+
+  // Positive value: 1
+  inspect(view.unsafe_extract_int64_le(128, 33), content="1")
+  inspect(view.unsafe_extract_int64_le(128, 40), content="1")
+  inspect(view.unsafe_extract_int64_le(128, 64), content="1")
+}
+
+///|
+test "extract_int64_be - signed 64-bit big-endian" {
+  let bytes = b"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x80\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01"
+  let view = bytes[:]
+
+  // All 0xFF bytes - should be -1
+  inspect(view.unsafe_extract_int64_be(0, 33), content="-1")
+  inspect(view.unsafe_extract_int64_be(0, 40), content="-1")
+  inspect(view.unsafe_extract_int64_be(0, 48), content="-1")
+  inspect(view.unsafe_extract_int64_be(0, 56), content="-1")
+  inspect(view.unsafe_extract_int64_be(0, 64), content="-1")
+
+  // 0x8000000000000000 in big-endian - minimum Int64 value
+  inspect(view.unsafe_extract_int64_be(64, 64), content="-9223372036854775808")
+
+  // Positive value: 1 in big-endian (bytes 16-23)
+  inspect(view.unsafe_extract_int64_be(128, 33), content="0") // First 33 bits are mostly 0
+  inspect(view.unsafe_extract_int64_be(128, 40), content="0") // First 40 bits are mostly 0
+  inspect(view.unsafe_extract_int64_be(128, 64), content="1") // Full 64 bits = 1
+}
+
+///|
+test "extract_signed - non-aligned positions" {
+  let bytes = b"\x7F\xFF\x80\x00\xAA\x55\xC3\x3C"
+  let view = bytes[:]
+
+  // Test byte_signed at non-aligned positions
+  inspect(view.unsafe_extract_byte_signed(1, 7), content="-1") // 1111111 from 0x7F|0xFF
+  inspect(view.unsafe_extract_byte_signed(3, 5), content="-1") // 11111 from middle bits
+
+  // Test int_le at non-aligned positions
+  let val1 = view.unsafe_extract_int_le(4, 12)
+  inspect(val1 < 0, content="true") // Should be negative due to sign bit
+
+  // Test int_be at non-aligned positions
+  let val2 = view.unsafe_extract_int_be(4, 12)
+  inspect(val2 < 0, content="true")
+
+  // Test int64_le at non-aligned positions
+  let val3 = view.unsafe_extract_int64_le(3, 48)
+  inspect(val3 < 0, content="true")
+
+  // Test int64_be at non-aligned positions
+  let val4 = view.unsafe_extract_int64_be(3, 48)
+  inspect(val4 < 0, content="true")
+}
+
+///|
+test "extract_signed - positive vs negative comparison" {
+  let bytes = b"\x7F\xFF\x00\x80"
+  let view = bytes[:]
+
+  // Compare unsigned vs signed extraction for positive values (0x7F = 01111111)
+  let unsigned_pos = view.unsafe_extract_byte(0, 8)
+  let signed_pos = view.unsafe_extract_byte_signed(0, 8)
+  inspect(unsigned_pos, content="127")
+  inspect(signed_pos, content="127")
+
+  // Compare unsigned vs signed extraction for negative values (0xFF = 11111111)
+  let unsigned_neg = view.unsafe_extract_byte(8, 8)
+  let signed_neg = view.unsafe_extract_byte_signed(8, 8)
+  inspect(unsigned_neg, content="255")
+  inspect(signed_neg, content="-1")
+
+  // Compare for 16-bit values
+  let unsigned_16 = view.unsafe_extract_uint_le(0, 16)
+  let signed_16 = view.unsafe_extract_int_le(0, 16)
+  inspect(unsigned_16, content="65407") // 0xFF7F in LE
+  inspect(signed_16, content="-129")
+
+  // Maximum positive value that fits in signed representation
+  let max_pos = view.unsafe_extract_byte_signed(16, 8) // 0x00 = 0
+  inspect(max_pos, content="0")
+
+  // Minimum negative value (0x80 = 10000000)
+  let min_neg = view.unsafe_extract_byte_signed(24, 8)
+  inspect(min_neg, content="-128")
+}
+
+///|
+test "extract_signed - edge cases with sign extension" {
+  // Test that sign extension works correctly for various bit patterns
+  let bytes = b"\x80\x40\x20\x10\x08\x04\x02\x01"
+  let view = bytes[:]
+
+  // Each byte has exactly one bit set, testing sign extension from different positions
+  inspect(view.unsafe_extract_byte_signed(0, 8), content="-128") // 10000000
+  inspect(view.unsafe_extract_byte_signed(8, 8), content="64") // 01000000
+  inspect(view.unsafe_extract_byte_signed(16, 8), content="32") // 00100000
+  inspect(view.unsafe_extract_byte_signed(24, 8), content="16") // 00010000
+
+  // Test with partial byte extraction
+  inspect(view.unsafe_extract_byte_signed(0, 4), content="-8") // 1000
+  inspect(view.unsafe_extract_byte_signed(0, 3), content="-4") // 100
+  inspect(view.unsafe_extract_byte_signed(0, 2), content="-2") // 10
+
+  // Test int extraction with single high bit set
+  // 0x80 = 10000000, extracting 9 bits: 10000000 0 (from next byte 0x40 = 01000000)
+  // BE: 100000000 -> top bit (MSB of 9 bits) is 1, so negative
+  // LE: reads bytes in LE order, so bit pattern is different
+  inspect(view.unsafe_extract_int_be(0, 9) < 0, content="true") // Top bit is 1
+  inspect(view.unsafe_extract_int_le(0, 9) < 0, content="false") // LE: different bit order
+}

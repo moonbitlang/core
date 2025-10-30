@@ -452,3 +452,140 @@ test "FixedArray extract view" {
     }
   }
 }
+
+///|
+test "extract byte signed" {
+  let bs1 : BytesView = b"\x7F\xFF\x80\x00\xAA\x55"
+  let bs2 : ArrayView[Byte] = [0x7F, 0xFF, 0x80, 0x00, 0xAA, 0x55]
+  for i in 0..=(bs1.length() * 8 - 8) {
+    assert_eq(
+      bs1.unsafe_extract_byte_signed(i, 2),
+      bs2.unsafe_extract_byte_signed(i, 2),
+    )
+    assert_eq(
+      bs1.unsafe_extract_byte_signed(i, 3),
+      bs2.unsafe_extract_byte_signed(i, 3),
+    )
+    assert_eq(
+      bs1.unsafe_extract_byte_signed(i, 4),
+      bs2.unsafe_extract_byte_signed(i, 4),
+    )
+    assert_eq(
+      bs1.unsafe_extract_byte_signed(i, 5),
+      bs2.unsafe_extract_byte_signed(i, 5),
+    )
+    assert_eq(
+      bs1.unsafe_extract_byte_signed(i, 8),
+      bs2.unsafe_extract_byte_signed(i, 8),
+    )
+  }
+}
+
+///|
+test "extract int signed" {
+  let bs1 : BytesView = b"\xFF\xFF\xFF\xFF\x00\x00\x00\x80\x01\x00\x00\x00"
+  let bs2 : ArrayView[Byte] = [
+    0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x80, 0x01, 0x00, 0x00, 0x00,
+  ]
+  for i in 0..=(bs1.length() * 8 - 32) {
+    // Test big-endian signed extraction
+    assert_eq(bs1.unsafe_extract_int_be(i, 9), bs2.unsafe_extract_int_be(i, 9))
+    assert_eq(
+      bs1.unsafe_extract_int_be(i, 12),
+      bs2.unsafe_extract_int_be(i, 12),
+    )
+    assert_eq(
+      bs1.unsafe_extract_int_be(i, 16),
+      bs2.unsafe_extract_int_be(i, 16),
+    )
+    assert_eq(
+      bs1.unsafe_extract_int_be(i, 23),
+      bs2.unsafe_extract_int_be(i, 23),
+    )
+    assert_eq(
+      bs1.unsafe_extract_int_be(i, 24),
+      bs2.unsafe_extract_int_be(i, 24),
+    )
+    assert_eq(
+      bs1.unsafe_extract_int_be(i, 32),
+      bs2.unsafe_extract_int_be(i, 32),
+    )
+
+    // Test little-endian signed extraction
+    assert_eq(bs1.unsafe_extract_int_le(i, 9), bs2.unsafe_extract_int_le(i, 9))
+    assert_eq(
+      bs1.unsafe_extract_int_le(i, 12),
+      bs2.unsafe_extract_int_le(i, 12),
+    )
+    assert_eq(
+      bs1.unsafe_extract_int_le(i, 16),
+      bs2.unsafe_extract_int_le(i, 16),
+    )
+    assert_eq(
+      bs1.unsafe_extract_int_le(i, 23),
+      bs2.unsafe_extract_int_le(i, 23),
+    )
+    assert_eq(
+      bs1.unsafe_extract_int_le(i, 24),
+      bs2.unsafe_extract_int_le(i, 24),
+    )
+    assert_eq(
+      bs1.unsafe_extract_int_le(i, 32),
+      bs2.unsafe_extract_int_le(i, 32),
+    )
+  }
+}
+
+///|
+test "extract int64 signed" {
+  let bs1 : BytesView = b"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x00\x00\x00\x00\x00\x00\x00\x80\x01\x00\x00\x00\x00\x00\x00\x00"
+  let bs2 : ArrayView[Byte] = [
+    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x80, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+  ]
+  for i in 0..=(bs1.length() * 8 - 64) {
+    // Test big-endian signed extraction
+    assert_eq(
+      bs1.unsafe_extract_int64_be(i, 33),
+      bs2.unsafe_extract_int64_be(i, 33),
+    )
+    assert_eq(
+      bs1.unsafe_extract_int64_be(i, 40),
+      bs2.unsafe_extract_int64_be(i, 40),
+    )
+    assert_eq(
+      bs1.unsafe_extract_int64_be(i, 48),
+      bs2.unsafe_extract_int64_be(i, 48),
+    )
+    assert_eq(
+      bs1.unsafe_extract_int64_be(i, 56),
+      bs2.unsafe_extract_int64_be(i, 56),
+    )
+    assert_eq(
+      bs1.unsafe_extract_int64_be(i, 64),
+      bs2.unsafe_extract_int64_be(i, 64),
+    )
+
+    // Test little-endian signed extraction
+    assert_eq(
+      bs1.unsafe_extract_int64_le(i, 33),
+      bs2.unsafe_extract_int64_le(i, 33),
+    )
+    assert_eq(
+      bs1.unsafe_extract_int64_le(i, 40),
+      bs2.unsafe_extract_int64_le(i, 40),
+    )
+    assert_eq(
+      bs1.unsafe_extract_int64_le(i, 48),
+      bs2.unsafe_extract_int64_le(i, 48),
+    )
+    assert_eq(
+      bs1.unsafe_extract_int64_le(i, 56),
+      bs2.unsafe_extract_int64_le(i, 56),
+    )
+    assert_eq(
+      bs1.unsafe_extract_int64_le(i, 64),
+      bs2.unsafe_extract_int64_le(i, 64),
+    )
+  }
+}
