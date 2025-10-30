@@ -22,10 +22,7 @@ fn[T] when(Bool, () -> T) -> T?
 // Errors
 
 // Types and methods
-fn[X : @quickcheck.Arbitrary] Option::arbitrary(Int, @splitmix.RandomState) -> X? // from trait `@quickcheck.Arbitrary`
 fn[T, U] Option::bind(T?, (T) -> U? raise?) -> U? raise?
-fn[X : Compare] Option::compare(X?, X?) -> Int // from trait `Compare`
-fn[X] Option::default() -> X? // from trait `Default`
 fn[T] Option::filter(T?, (T) -> Bool raise?) -> T? raise?
 fn[T] Option::flatten(T??) -> T?
 fn[T] Option::is_empty(T?) -> Bool
@@ -38,10 +35,6 @@ fn[T] Option::iterator(T?) -> Iterator[T]
 fn[T, U] Option::map(T?, (T) -> U raise?) -> U? raise?
 fn[T, U] Option::map_or(T?, U, (T) -> U raise?) -> U raise?
 fn[T, U] Option::map_or_else(T?, () -> U raise?, (T) -> U raise?) -> U raise?
-fn[X : Compare] Option::op_ge(X?, X?) -> Bool // from trait `Compare`
-fn[X : Compare] Option::op_gt(X?, X?) -> Bool // from trait `Compare`
-fn[X : Compare] Option::op_le(X?, X?) -> Bool // from trait `Compare`
-fn[X : Compare] Option::op_lt(X?, X?) -> Bool // from trait `Compare`
 #deprecated
 fn[T] Option::or(T?, T) -> T
 #deprecated

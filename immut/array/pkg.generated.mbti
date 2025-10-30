@@ -12,17 +12,13 @@ import(
 
 // Types and methods
 type T[A]
-fn[A] T::add(Self[A], Self[A]) -> Self[A] // from trait `Add`
-fn[X : @quickcheck.Arbitrary] T::arbitrary(Int, @splitmix.RandomState) -> Self[X] // from trait `@quickcheck.Arbitrary`
 #alias("_[_]")
 fn[A] T::at(Self[A], Int) -> A
-fn[A : Compare] T::compare(Self[A], Self[A]) -> Int // from trait `Compare`
 fn[A] T::concat(Self[A], Self[A]) -> Self[A]
 #deprecated
 fn[A] T::copy(Self[A]) -> Self[A]
 fn[A] T::each(Self[A], (A) -> Unit raise?) -> Unit raise?
 fn[A] T::eachi(Self[A], (Int, A) -> Unit raise?) -> Unit raise?
-fn[A : Eq] T::equal(Self[A], Self[A]) -> Bool // from trait `Eq`
 fn[A, B] T::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 #deprecated
 fn[A] T::fold_left(Self[A], (A, A) -> A raise?, init~ : A) -> A raise?
@@ -37,8 +33,6 @@ fn[A] T::from_iter(Iter[A]) -> Self[A]
 #as_free_fn
 fn[A] T::from_iterator(Iterator[A]) -> Self[A]
 fn[A] T::get(Self[A], Int) -> A?
-fn[A : Hash] T::hash(Self[A]) -> Int // from trait `Hash`
-fn[A : Hash] T::hash_combine(Self[A], Hasher) -> Unit // from trait `Hash`
 fn[A] T::is_empty(Self[A]) -> Bool
 fn[A] T::iter(Self[A]) -> Iter[A]
 fn[A] T::iterator(Self[A]) -> Iterator[A]
@@ -50,20 +44,10 @@ fn[A] T::makei(Int, (Int) -> A raise?) -> Self[A] raise?
 fn[A, B] T::map(Self[A], (A) -> B raise?) -> Self[B] raise?
 #as_free_fn
 fn[A] T::new() -> Self[A]
-#deprecated
-fn[A] T::op_add(Self[A], Self[A]) -> Self[A] // from trait `Add`
-#deprecated
-fn[A : Eq] T::op_equal(Self[A], Self[A]) -> Bool // from trait `Eq`
-fn[A : Compare] T::op_ge(Self[A], Self[A]) -> Bool // from trait `Compare`
-fn[A : Compare] T::op_gt(Self[A], Self[A]) -> Bool // from trait `Compare`
-fn[A : Compare] T::op_le(Self[A], Self[A]) -> Bool // from trait `Compare`
-fn[A : Compare] T::op_lt(Self[A], Self[A]) -> Bool // from trait `Compare`
-fn[A : Show] T::output(Self[A], &Logger) -> Unit // from trait `Show`
 fn[A] T::push(Self[A], A) -> Self[A]
 fn[A, B] T::rev_fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 fn[A] T::set(Self[A], Int, A) -> Self[A]
 fn[A] T::to_array(Self[A]) -> Array[A]
-fn[A : Show] T::to_string(Self[A]) -> String // from trait `Show`
 impl[A] Add for T[A]
 impl[A : Compare] Compare for T[A]
 impl[A : Eq] Eq for T[A]
