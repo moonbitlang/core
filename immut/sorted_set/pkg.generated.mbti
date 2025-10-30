@@ -12,20 +12,17 @@ import(
 // Errors
 
 // Types and methods
+#alias(T, deprecated)
 type SortedSet[A]
 fn[A : Compare] SortedSet::add(Self[A], A) -> Self[A]
 fn[A] SortedSet::all(Self[A], (A) -> Bool raise?) -> Bool raise?
 fn[A] SortedSet::any(Self[A], (A) -> Bool raise?) -> Bool raise?
-fn[X : @quickcheck.Arbitrary + Compare] SortedSet::arbitrary(Int, @splitmix.RandomState) -> Self[X] // from trait `@quickcheck.Arbitrary`
-fn[A : Compare] SortedSet::compare(Self[A], Self[A]) -> Int // from trait `Compare`
 fn[A : Compare] SortedSet::contains(Self[A], A) -> Bool
-fn[A] SortedSet::default() -> Self[A] // from trait `Default`
 #deprecated
 fn[A : Compare] SortedSet::diff(Self[A], Self[A]) -> Self[A]
 fn[A : Compare] SortedSet::difference(Self[A], Self[A]) -> Self[A]
 fn[A : Compare] SortedSet::disjoint(Self[A], Self[A]) -> Bool
 fn[A] SortedSet::each(Self[A], (A) -> Unit raise?) -> Unit raise?
-fn[A : Eq] SortedSet::equal(Self[A], Self[A]) -> Bool // from trait `Eq`
 fn[A] SortedSet::filter(Self[A], (A) -> Bool raise?) -> Self[A] raise?
 fn[A, B] SortedSet::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 #alias(of, deprecated)
@@ -38,8 +35,6 @@ fn[A : Compare] SortedSet::from_iter(Iter[A]) -> Self[A]
 fn[A : Compare] SortedSet::from_iterator(Iterator[A]) -> Self[A]
 #as_free_fn
 fn[A : @json.FromJson + Compare] SortedSet::from_json(Json) -> Self[A] raise @json.JsonDecodeError
-fn[A : Hash] SortedSet::hash(Self[A]) -> Int // from trait `Hash`
-fn[A : Hash] SortedSet::hash_combine(Self[A], Hasher) -> Unit // from trait `Hash`
 #deprecated
 fn[A : Compare] SortedSet::inter(Self[A], Self[A]) -> Self[A]
 fn[A : Compare] SortedSet::intersection(Self[A], Self[A]) -> Self[A]
@@ -55,15 +50,6 @@ fn[A] SortedSet::min(Self[A]) -> A
 fn[A] SortedSet::min_option(Self[A]) -> A?
 #as_free_fn
 fn[A] SortedSet::new() -> Self[A]
-#deprecated
-fn[A : Compare] SortedSet::op_add(Self[A], Self[A]) -> Self[A] // from trait `Add`
-#deprecated
-fn[A : Eq] SortedSet::op_equal(Self[A], Self[A]) -> Bool // from trait `Eq`
-fn[A : Compare] SortedSet::op_ge(Self[A], Self[A]) -> Bool // from trait `Compare`
-fn[A : Compare] SortedSet::op_gt(Self[A], Self[A]) -> Bool // from trait `Compare`
-fn[A : Compare] SortedSet::op_le(Self[A], Self[A]) -> Bool // from trait `Compare`
-fn[A : Compare] SortedSet::op_lt(Self[A], Self[A]) -> Bool // from trait `Compare`
-fn[A : Show] SortedSet::output(Self[A], &Logger) -> Unit // from trait `Show`
 fn[A : Compare] SortedSet::remove(Self[A], A) -> Self[A]
 fn[A] SortedSet::remove_min(Self[A]) -> Self[A]
 #as_free_fn
@@ -73,7 +59,6 @@ fn[A : Compare] SortedSet::subset(Self[A], Self[A]) -> Bool
 fn[A : Compare] SortedSet::symmetric_difference(Self[A], Self[A]) -> Self[A]
 fn[A] SortedSet::to_array(Self[A]) -> Array[A]
 fn[A : ToJson] SortedSet::to_json(Self[A]) -> Json
-fn[A : Show] SortedSet::to_string(Self[A]) -> String // from trait `Show`
 fn[A : Compare] SortedSet::union(Self[A], Self[A]) -> Self[A]
 impl[A : Compare] Add for SortedSet[A]
 impl[A : Compare] Compare for SortedSet[A]
@@ -86,7 +71,6 @@ impl[A : @json.FromJson + Compare] @json.FromJson for SortedSet[A]
 impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for SortedSet[X]
 
 // Type aliases
-pub typealias SortedSet as T
 
 // Traits
 

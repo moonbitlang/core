@@ -11,13 +11,12 @@ import(
 // Errors
 
 // Types and methods
+#alias(T, deprecated)
 type HashSet[A]
 fn[A : Eq + Hash] HashSet::add(Self[A], A) -> Self[A]
-fn[K : Eq + Hash + @quickcheck.Arbitrary] HashSet::arbitrary(Int, @splitmix.RandomState) -> Self[K] // from trait `@quickcheck.Arbitrary`
 fn[A : Eq + Hash] HashSet::contains(Self[A], A) -> Bool
 fn[K : Eq] HashSet::difference(Self[K], Self[K]) -> Self[K]
 fn[A] HashSet::each(Self[A], (A) -> Unit raise?) -> Unit raise?
-fn[A : Eq] HashSet::equal(Self[A], Self[A]) -> Bool // from trait `Eq`
 #alias(of, deprecated)
 #as_free_fn(of, deprecated)
 #as_free_fn
@@ -26,8 +25,6 @@ fn[A : Eq + Hash] HashSet::from_array(ArrayView[A]) -> Self[A]
 fn[A : Eq + Hash] HashSet::from_iter(Iter[A]) -> Self[A]
 #as_free_fn
 fn[A : Eq + Hash] HashSet::from_iterator(Iterator[A]) -> Self[A]
-fn[A : Hash] HashSet::hash(Self[A]) -> Int // from trait `Hash`
-fn[A : Hash] HashSet::hash_combine(Self[A], Hasher) -> Unit // from trait `Hash`
 fn[K : Eq] HashSet::intersection(Self[K], Self[K]) -> Self[K]
 fn[A] HashSet::is_empty(Self[A]) -> Bool
 fn[A] HashSet::iter(Self[A]) -> Iter[A]
@@ -36,11 +33,7 @@ fn[A] HashSet::iterator(Self[A]) -> Iterator[A]
 fn[A] HashSet::length(Self[A]) -> Int
 #as_free_fn
 fn[A] HashSet::new() -> Self[A]
-#deprecated
-fn[A : Eq] HashSet::op_equal(Self[A], Self[A]) -> Bool // from trait `Eq`
-fn[A : Show] HashSet::output(Self[A], &Logger) -> Unit // from trait `Show`
 fn[A : Eq + Hash] HashSet::remove(Self[A], A) -> Self[A]
-fn[A : Show] HashSet::to_string(Self[A]) -> String // from trait `Show`
 fn[K : Eq] HashSet::union(Self[K], Self[K]) -> Self[K]
 impl[A : Eq] Eq for HashSet[A]
 impl[A : Hash] Hash for HashSet[A]
@@ -48,7 +41,6 @@ impl[A : Show] Show for HashSet[A]
 impl[K : Eq + Hash + @quickcheck.Arbitrary] @quickcheck.Arbitrary for HashSet[K]
 
 // Type aliases
-pub typealias HashSet as T
 
 // Traits
 

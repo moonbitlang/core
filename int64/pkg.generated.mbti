@@ -14,8 +14,6 @@ let min_value : Int64
 #as_free_fn
 fn Int64::abs(Int64) -> Int64
 fn Int64::from_int(Int) -> Int64
-fn Int64::hash(Int64) -> Int // from trait `Hash`
-fn Int64::hash_combine(Int64, Hasher) -> Unit // from trait `Hash`
 fn Int64::to_be_bytes(Int64) -> Bytes
 fn Int64::to_le_bytes(Int64) -> Bytes
 impl Hash for Int64

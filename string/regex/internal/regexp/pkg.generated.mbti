@@ -29,7 +29,7 @@ fn Regexp::group_names(Self) -> Array[String]
 fn Regexp::match_(Self, StringView) -> MatchResult?
 
 // Type aliases
-pub typealias @parse.RegexpError as RegexpError
+pub using @parse {type RegexpError}
 
 // Traits
 

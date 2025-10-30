@@ -26,8 +26,6 @@ fn Double::ceil(Double) -> Double
 #as_free_fn
 fn Double::floor(Double) -> Double
 fn Double::from_int(Int) -> Double
-fn Double::hash(Double) -> Int // from trait `Hash`
-fn Double::hash_combine(Double, Hasher) -> Unit // from trait `Hash`
 #deprecated
 fn Double::inf(Int) -> Double
 #as_free_fn
@@ -38,12 +36,8 @@ fn Double::is_neg_inf(Double) -> Bool
 fn Double::is_pos_inf(Double) -> Bool
 #deprecated
 fn Double::min_normal() -> Double
-fn Double::mod(Double, Double) -> Double // from trait `Mod`
 #deprecated
 fn Double::nan() -> Double
-#deprecated
-fn Double::op_mod(Double, Double) -> Double // from trait `Mod`
-fn Double::output(Double, &Logger) -> Unit // from trait `Show`
 #as_free_fn
 fn Double::pow(Double, Double) -> Double
 #as_free_fn

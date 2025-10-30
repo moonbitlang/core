@@ -2,7 +2,9 @@
 package "moonbitlang/core/prelude"
 
 import(
+  "moonbitlang/core/bigint"
   "moonbitlang/core/builtin"
+  "moonbitlang/core/set"
 )
 
 // Values
@@ -53,79 +55,79 @@ fn[T, R] then(T, (T) -> R) -> R
 // Types and methods
 
 // Type aliases
-pub typealias @builtin.ArgsLoc as ArgsLoc
+pub using @builtin {type ArgsLoc}
 
-pub typealias @builtin.Array as Array
+pub using @builtin {type Array}
 
-pub typealias @builtin.ArrayView as ArrayView
+pub using @builtin {type ArrayView}
 
-pub typealias @moonbitlang/core/bigint.BigInt as BigInt
+pub using @bigint {type BigInt}
 
-pub typealias @builtin.Failure as Failure
+pub using @builtin {type Failure}
 
-pub typealias @builtin.Hasher as Hasher
+pub using @builtin {type Hasher}
 
-pub typealias @builtin.InspectError as InspectError
+pub using @builtin {type InspectError}
 
-pub typealias @builtin.Iter as Iter
+pub using @builtin {type Iter}
 
-pub typealias @builtin.Iter2 as Iter2
+pub using @builtin {type Iter2}
 
-pub typealias @builtin.IterResult as IterResult
+pub using @builtin {type IterResult}
 
-pub typealias @builtin.Iterator as Iterator
+pub using @builtin {type Iterator}
 
-pub typealias @builtin.Iterator2 as Iterator2
+pub using @builtin {type Iterator2}
 
-pub typealias @builtin.Json as Json
+pub using @builtin {type Json}
 
-pub typealias @builtin.Map as Map
+pub using @builtin {type Map}
 
-pub typealias @moonbitlang/core/set.Set as Set
+pub using @set {type Set}
 
-pub typealias @builtin.SnapshotError as SnapshotError
+pub using @builtin {type SnapshotError}
 
-pub typealias @builtin.SourceLoc as SourceLoc
+pub using @builtin {type SourceLoc}
 
-pub typealias @builtin.StringBuilder as StringBuilder
+pub using @builtin {type StringBuilder}
 
-pub typealias @builtin.UninitializedArray as UninitializedArray
+pub using @builtin {type UninitializedArray}
 
-pub traitalias @builtin.Add as Add
+using @builtin {trait Add}
 
-pub traitalias @builtin.BitAnd as BitAnd
+using @builtin {trait BitAnd}
 
-pub traitalias @builtin.BitOr as BitOr
+using @builtin {trait BitOr}
 
-pub traitalias @builtin.BitXOr as BitXOr
+using @builtin {trait BitXOr}
 
-pub traitalias @builtin.Compare as Compare
+using @builtin {trait Compare}
 
-pub traitalias @builtin.Default as Default
+using @builtin {trait Default}
 
-pub traitalias @builtin.Div as Div
+using @builtin {trait Div}
 
-pub traitalias @builtin.Eq as Eq
+using @builtin {trait Eq}
 
-pub traitalias @builtin.Hash as Hash
+using @builtin {trait Hash}
 
-pub traitalias @builtin.Logger as Logger
+using @builtin {trait Logger}
 
-pub traitalias @builtin.Mod as Mod
+using @builtin {trait Mod}
 
-pub traitalias @builtin.Mul as Mul
+using @builtin {trait Mul}
 
-pub traitalias @builtin.Neg as Neg
+using @builtin {trait Neg}
 
-pub traitalias @builtin.Shl as Shl
+using @builtin {trait Shl}
 
-pub traitalias @builtin.Show as Show
+using @builtin {trait Show}
 
-pub traitalias @builtin.Shr as Shr
+using @builtin {trait Shr}
 
-pub traitalias @builtin.Sub as Sub
+using @builtin {trait Sub}
 
-pub traitalias @builtin.ToJson as ToJson
+using @builtin {trait ToJson}
 
 // Traits
 

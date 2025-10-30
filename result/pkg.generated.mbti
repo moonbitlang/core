@@ -16,9 +16,7 @@ fn[T, E] ok(T) -> Result[T, E]
 // Errors
 
 // Types and methods
-fn[T : @quickcheck.Arbitrary, E : @quickcheck.Arbitrary] Result::arbitrary(Int, @splitmix.RandomState) -> Self[T, E] // from trait `@quickcheck.Arbitrary`
 fn[T, E, U] Result::bind(Self[T, E], (T) -> Self[U, E]) -> Self[U, E]
-fn[T : Compare, E : Compare] Result::compare(Self[T, E], Self[T, E]) -> Int // from trait `Compare`
 fn[T, E] Result::flatten(Self[Self[T, E], E]) -> Self[T, E]
 #deprecated
 fn[T, E, V] Result::fold(Self[T, E], (T) -> V, (E) -> V) -> V
@@ -28,10 +26,6 @@ fn[T, E] Result::is_err(Self[T, E]) -> Bool
 fn[T, E] Result::is_ok(Self[T, E]) -> Bool
 fn[T, E, U] Result::map(Self[T, E], (T) -> U) -> Self[U, E]
 fn[T, E, F] Result::map_err(Self[T, E], (E) -> F) -> Self[T, F]
-fn[T : Compare, E : Compare] Result::op_ge(Self[T, E], Self[T, E]) -> Bool // from trait `Compare`
-fn[T : Compare, E : Compare] Result::op_gt(Self[T, E], Self[T, E]) -> Bool // from trait `Compare`
-fn[T : Compare, E : Compare] Result::op_le(Self[T, E], Self[T, E]) -> Bool // from trait `Compare`
-fn[T : Compare, E : Compare] Result::op_lt(Self[T, E], Self[T, E]) -> Bool // from trait `Compare`
 fn[T, E] Result::or(Self[T, E], T) -> T
 fn[T, E] Result::or_else(Self[T, E], () -> T) -> T
 fn[T, E] Result::to_option(Self[T, E]) -> T?

@@ -68,7 +68,7 @@ pub using @builtin {
   type InspectError,
   type SnapshotError,
   type SourceLoc,
-  type StringBuilder
+  type StringBuilder,
 }
 
 ///|

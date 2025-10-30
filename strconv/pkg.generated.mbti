@@ -22,24 +22,21 @@ fn parse_uint64(StringView, base? : Int) -> UInt64 raise StrConvError
 
 // Errors
 pub(all) suberror StrConvError String
-fn StrConvError::output(Self, &Logger) -> Unit // from trait `Show`
-fn StrConvError::to_string(Self) -> String // from trait `Show`
 impl Show for StrConvError
 
 // Types and methods
+#deprecated
 type Decimal
 #deprecated
 fn Decimal::from_int64(Int64) -> Self
 #deprecated
 fn Decimal::new() -> Self
-fn Decimal::output(Self, &Logger) -> Unit // from trait `Show`
 #deprecated
 fn Decimal::parse_decimal(StringView) -> Self raise StrConvError
 #deprecated
 fn Decimal::shift(Self, Int) -> Unit
 #deprecated
 fn Decimal::to_double(Self) -> Double raise StrConvError
-fn Decimal::to_string(Self) -> String // from trait `Show`
 impl Show for Decimal
 
 // Type aliases

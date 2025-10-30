@@ -1,6 +1,10 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "moonbitlang/core/json"
 
+import(
+  "moonbitlang/core/builtin"
+)
+
 // Values
 fn[T : FromJson] from_json(Json, path? : JsonPath) -> T raise JsonDecodeError
 
@@ -13,12 +17,6 @@ fn valid(StringView) -> Bool
 
 // Errors
 pub(all) suberror JsonDecodeError (JsonPath, String)
-fn JsonDecodeError::equal(Self, Self) -> Bool // from trait `Eq`
-#deprecated
-fn JsonDecodeError::op_equal(Self, Self) -> Bool // from trait `Eq`
-fn JsonDecodeError::output(Self, &Logger) -> Unit // from trait `Show`
-fn JsonDecodeError::to_json(Self) -> Json // from trait `ToJson`
-fn JsonDecodeError::to_string(Self) -> String // from trait `Show`
 impl Eq for JsonDecodeError
 impl Show for JsonDecodeError
 impl ToJson for JsonDecodeError
@@ -30,12 +28,6 @@ pub(all) suberror ParseError {
   InvalidIdentEscape(Position)
   DepthLimitExceeded
 }
-fn ParseError::equal(Self, Self) -> Bool // from trait `Eq`
-#deprecated
-fn ParseError::op_equal(Self, Self) -> Bool // from trait `Eq`
-fn ParseError::output(Self, &Logger) -> Unit // from trait `Show`
-fn ParseError::to_json(Self) -> Json // from trait `ToJson`
-fn ParseError::to_string(Self) -> String // from trait `Show`
 impl Eq for ParseError
 impl Show for ParseError
 impl ToJson for ParseError
@@ -44,12 +36,6 @@ impl ToJson for ParseError
 type JsonPath
 fn JsonPath::add_index(Self, Int) -> Self
 fn JsonPath::add_key(Self, String) -> Self
-fn JsonPath::equal(Self, Self) -> Bool // from trait `Eq`
-#deprecated
-fn JsonPath::op_equal(Self, Self) -> Bool // from trait `Eq`
-fn JsonPath::output(Self, &Logger) -> Unit // from trait `Show`
-fn JsonPath::to_json(Self) -> Json // from trait `ToJson`
-fn JsonPath::to_string(Self) -> String // from trait `Show`
 impl Eq for JsonPath
 impl Show for JsonPath
 impl ToJson for JsonPath
@@ -58,10 +44,6 @@ pub(all) struct Position {
   line : Int
   column : Int
 }
-fn Position::equal(Self, Self) -> Bool // from trait `Eq`
-#deprecated
-fn Position::op_equal(Self, Self) -> Bool // from trait `Eq`
-fn Position::to_json(Self) -> Json // from trait `ToJson`
 impl Eq for Position
 impl ToJson for Position
 
@@ -76,19 +58,15 @@ fn Json::as_null(Self) -> Unit?
 fn Json::as_number(Self) -> Double?
 fn Json::as_object(Self) -> Map[String, Self]?
 fn Json::as_string(Self) -> String?
-fn Json::from_json(Self, JsonPath) -> Self raise JsonDecodeError // from trait `FromJson`
 fn Json::item(Self, Int) -> Self?
-fn Json::output(Self, &Logger) -> Unit // from trait `Show`
 fn Json::stringify(Self, escape_slash? : Bool, indent? : Int, replacer? : Replacer) -> String
-fn Json::to_json(Self) -> Self // from trait `ToJson`
-fn Json::to_string(Self) -> String // from trait `Show`
 fn Json::transform(Self, Replacer) -> Self
 fn Json::value(Self, String) -> Self?
 impl Show for Json
 impl ToJson for Json
 
 // Type aliases
-pub typealias Json as JsonValue
+pub using @builtin {type Json as JsonValue}
 
 // Traits
 pub(open) trait FromJson {

@@ -37,61 +37,40 @@ fn[T, U, V] uncurry((T) -> (U) -> V) -> (T, U) -> V
 // Errors
 
 // Types and methods
-fn[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary] Tuple(2)::arbitrary(Int, @splitmix.RandomState) -> (A, B) // from trait `@quickcheck.Arbitrary`
-fn[A : Default, B : Default] Tuple(2)::default() -> (A, B) // from trait `Default`
 impl[A : Default, B : Default] Default for (A, B)
 impl[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary] @quickcheck.Arbitrary for (A, B)
 
-fn[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary, C : @quickcheck.Arbitrary] Tuple(3)::arbitrary(Int, @splitmix.RandomState) -> (A, B, C) // from trait `@quickcheck.Arbitrary`
-fn[A : Default, B : Default, C : Default] Tuple(3)::default() -> (A, B, C) // from trait `Default`
 impl[A : Default, B : Default, C : Default] Default for (A, B, C)
 impl[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary, C : @quickcheck.Arbitrary] @quickcheck.Arbitrary for (A, B, C)
 
-fn[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary, C : @quickcheck.Arbitrary, D : @quickcheck.Arbitrary] Tuple(4)::arbitrary(Int, @splitmix.RandomState) -> (A, B, C, D) // from trait `@quickcheck.Arbitrary`
-fn[A : Default, B : Default, C : Default, D : Default] Tuple(4)::default() -> (A, B, C, D) // from trait `Default`
 impl[A : Default, B : Default, C : Default, D : Default] Default for (A, B, C, D)
 impl[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary, C : @quickcheck.Arbitrary, D : @quickcheck.Arbitrary] @quickcheck.Arbitrary for (A, B, C, D)
 
-fn[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary, C : @quickcheck.Arbitrary, D : @quickcheck.Arbitrary, E : @quickcheck.Arbitrary] Tuple(5)::arbitrary(Int, @splitmix.RandomState) -> (A, B, C, D, E) // from trait `@quickcheck.Arbitrary`
-fn[A : Default, B : Default, C : Default, D : Default, E : Default] Tuple(5)::default() -> (A, B, C, D, E) // from trait `Default`
 impl[A : Default, B : Default, C : Default, D : Default, E : Default] Default for (A, B, C, D, E)
 impl[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary, C : @quickcheck.Arbitrary, D : @quickcheck.Arbitrary, E : @quickcheck.Arbitrary] @quickcheck.Arbitrary for (A, B, C, D, E)
 
-fn[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary, C : @quickcheck.Arbitrary, D : @quickcheck.Arbitrary, E : @quickcheck.Arbitrary, F : @quickcheck.Arbitrary] Tuple(6)::arbitrary(Int, @splitmix.RandomState) -> (A, B, C, D, E, F) // from trait `@quickcheck.Arbitrary`
-fn[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default] Tuple(6)::default() -> (A, B, C, D, E, F) // from trait `Default`
 impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default] Default for (A, B, C, D, E, F)
 impl[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary, C : @quickcheck.Arbitrary, D : @quickcheck.Arbitrary, E : @quickcheck.Arbitrary, F : @quickcheck.Arbitrary] @quickcheck.Arbitrary for (A, B, C, D, E, F)
 
-fn[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary, C : @quickcheck.Arbitrary, D : @quickcheck.Arbitrary, E : @quickcheck.Arbitrary, F : @quickcheck.Arbitrary, G : @quickcheck.Arbitrary] Tuple(7)::arbitrary(Int, @splitmix.RandomState) -> (A, B, C, D, E, F, G) // from trait `@quickcheck.Arbitrary`
-fn[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default] Tuple(7)::default() -> (A, B, C, D, E, F, G) // from trait `Default`
 impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default] Default for (A, B, C, D, E, F, G)
 impl[A : @quickcheck.Arbitrary, B : @quickcheck.Arbitrary, C : @quickcheck.Arbitrary, D : @quickcheck.Arbitrary, E : @quickcheck.Arbitrary, F : @quickcheck.Arbitrary, G : @quickcheck.Arbitrary] @quickcheck.Arbitrary for (A, B, C, D, E, F, G)
 
-fn[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default] Tuple(8)::default() -> (A, B, C, D, E, F, G, H) // from trait `Default`
 impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default] Default for (A, B, C, D, E, F, G, H)
 
-fn[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default] Tuple(9)::default() -> (A, B, C, D, E, F, G, H, I) // from trait `Default`
 impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default] Default for (A, B, C, D, E, F, G, H, I)
 
-fn[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default, J : Default] Tuple(10)::default() -> (A, B, C, D, E, F, G, H, I, J) // from trait `Default`
 impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default, J : Default] Default for (A, B, C, D, E, F, G, H, I, J)
 
-fn[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default, J : Default, K : Default] Tuple(11)::default() -> (A, B, C, D, E, F, G, H, I, J, K) // from trait `Default`
 impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default, J : Default, K : Default] Default for (A, B, C, D, E, F, G, H, I, J, K)
 
-fn[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default, J : Default, K : Default, L : Default] Tuple(12)::default() -> (A, B, C, D, E, F, G, H, I, J, K, L) // from trait `Default`
 impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default, J : Default, K : Default, L : Default] Default for (A, B, C, D, E, F, G, H, I, J, K, L)
 
-fn[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default, J : Default, K : Default, L : Default, M : Default] Tuple(13)::default() -> (A, B, C, D, E, F, G, H, I, J, K, L, M) // from trait `Default`
 impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default, J : Default, K : Default, L : Default, M : Default] Default for (A, B, C, D, E, F, G, H, I, J, K, L, M)
 
-fn[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default, J : Default, K : Default, L : Default, M : Default, N : Default] Tuple(14)::default() -> (A, B, C, D, E, F, G, H, I, J, K, L, M, N) // from trait `Default`
 impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default, J : Default, K : Default, L : Default, M : Default, N : Default] Default for (A, B, C, D, E, F, G, H, I, J, K, L, M, N)
 
-fn[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default, J : Default, K : Default, L : Default, M : Default, N : Default, O : Default] Tuple(15)::default() -> (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O) // from trait `Default`
 impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default, J : Default, K : Default, L : Default, M : Default, N : Default, O : Default] Default for (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O)
 
-fn[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default, J : Default, K : Default, L : Default, M : Default, N : Default, O : Default, P : Default] Tuple(16)::default() -> (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P) // from trait `Default`
 impl[A : Default, B : Default, C : Default, D : Default, E : Default, F : Default, G : Default, H : Default, I : Default, J : Default, K : Default, L : Default, M : Default, N : Default, O : Default, P : Default] Default for (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P)
 
 // Type aliases

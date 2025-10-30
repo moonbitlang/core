@@ -12,10 +12,8 @@ import(
 
 // Types and methods
 type T[A]
-fn[X : @quickcheck.Arbitrary + Compare] T::arbitrary(Int, @splitmix.RandomState) -> Self[X] // from trait `@quickcheck.Arbitrary`
 fn[A] T::clear(Self[A]) -> Unit
 fn[A] T::copy(Self[A]) -> Self[A]
-fn[K] T::default() -> Self[K] // from trait `Default`
 #alias(of, deprecated)
 #as_free_fn(of, deprecated)
 #as_free_fn
@@ -30,13 +28,10 @@ fn[A : Compare] T::iterator(Self[A]) -> Iterator[A]
 fn[A] T::length(Self[A]) -> Int
 #as_free_fn
 fn[A] T::new() -> Self[A]
-fn[A : Show + Compare] T::output(Self[A], &Logger) -> Unit // from trait `Show`
 fn[A] T::peek(Self[A]) -> A?
 fn[A : Compare] T::pop(Self[A]) -> A?
 fn[A : Compare] T::push(Self[A], A) -> Unit
 fn[A : Compare] T::to_array(Self[A]) -> Array[A]
-fn[A : ToJson + Compare] T::to_json(Self[A]) -> Json // from trait `ToJson`
-fn[A : Show + Compare] T::to_string(Self[A]) -> String // from trait `Show`
 fn[A : Compare] T::unsafe_pop(Self[A]) -> Unit
 impl[K] Default for T[K]
 impl[A : Show + Compare] Show for T[A]

@@ -11,6 +11,7 @@ fn single_bench(name? : String, () -> Unit, count? : UInt) -> Summary
 // Errors
 
 // Types and methods
+#alias(T)
 type Bench
 fn Bench::bench(Self, name? : String, () -> Unit, count? : UInt) -> Unit
 fn Bench::dump_summaries(Self) -> String
@@ -19,13 +20,11 @@ fn[Any] Bench::keep(Self, Any) -> Unit
 fn Bench::new() -> Self
 
 type Summary
-fn Summary::to_json(Self) -> Json // from trait `ToJson`
 impl ToJson for Summary
 
 type Timestamp
 
 // Type aliases
-pub typealias Bench as T
 
 // Traits
 
