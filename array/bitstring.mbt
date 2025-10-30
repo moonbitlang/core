@@ -15,6 +15,22 @@
 // offset and len are all in bits
 
 ///|
+fn UInt::extend_sign(self : UInt, len : Int) -> Int {
+  let b = 32 - len
+  self.reinterpret_as_int() << b >> b
+}
+
+///|
+fn UInt64::extend_sign(self : UInt64, len : Int) -> Int64 {
+  let b = 64 - len
+  self.reinterpret_as_int64() << b >> b
+}
+
+//--------------------------------
+// ArrayView
+//--------------------------------
+
+///|
 /// Extract a single bit.
 #internal(experimental, "subject to breaking change without notice")
 pub fn ArrayView::unsafe_extract_bit(
@@ -298,6 +314,69 @@ pub fn ArrayView::unsafe_extract_bytesview(
 }
 
 ///|
+/// Extract [2..8] bits as a signed integer.
+#internal(experimental, "subject to breaking change without notice")
+pub fn ArrayView::unsafe_extract_byte_signed(
+  bs : ArrayView[Byte],
+  offset : Int,
+  len : Int,
+) -> Int {
+  let unsigned = bs.unsafe_extract_byte(offset, len)
+  unsigned.extend_sign(len)
+}
+
+///|
+/// Extract [9..32] bits as a signed integer.
+#internal(experimental, "subject to breaking change without notice")
+pub fn ArrayView::unsafe_extract_int_le(
+  bs : ArrayView[Byte],
+  offset : Int,
+  len : Int,
+) -> Int {
+  let unsigned = bs.unsafe_extract_uint_le(offset, len)
+  unsigned.extend_sign(len)
+}
+
+///|
+/// Extract [9..32] bits as a signed integer.
+#internal(experimental, "subject to breaking change without notice")
+pub fn ArrayView::unsafe_extract_int_be(
+  bs : ArrayView[Byte],
+  offset : Int,
+  len : Int,
+) -> Int {
+  let unsigned = bs.unsafe_extract_uint_be(offset, len)
+  unsigned.extend_sign(len)
+}
+
+///|
+/// Extract [33..64] bits as a signed integer.
+#internal(experimental, "subject to breaking change without notice")
+pub fn ArrayView::unsafe_extract_int64_le(
+  bs : ArrayView[Byte],
+  offset : Int,
+  len : Int,
+) -> Int64 {
+  let unsigned = bs.unsafe_extract_uint64_le(offset, len)
+  unsigned.extend_sign(len)
+}
+
+///|
+/// Extract [33..64] bits as a signed integer.
+#internal(experimental, "subject to breaking change without notice")
+pub fn ArrayView::unsafe_extract_int64_be(
+  bs : ArrayView[Byte],
+  offset : Int,
+  len : Int,
+) -> Int64 {
+  let unsigned = bs.unsafe_extract_uint64_be(offset, len)
+  unsigned.extend_sign(len)
+}
+//--------------------------------
+// Array
+//--------------------------------
+
+///|
 #internal(experimental, "subject to breaking change without notice")
 pub fn Array::unsafe_extract_bit(
   bs : Array[Byte],
@@ -366,6 +445,10 @@ pub fn Array::unsafe_extract_bytesview(
 ) -> ArrayView[Byte] {
   bs[:].unsafe_extract_bytesview(offset, len)
 }
+
+//--------------------------------
+// FixedArray
+//--------------------------------
 
 ///|
 #internal(experimental, "subject to breaking change without notice")
