@@ -53,6 +53,14 @@ fn[T : Show] repr(T) -> String
 // Errors
 pub(all) suberror BenchError String
 
+pub suberror CreatingViewError {
+  IndexOutOfBounds
+  InvalidIndex
+}
+fn CreatingViewError::output(Self, &Logger) -> Unit // from trait `Show`
+fn CreatingViewError::to_string(Self) -> String // from trait `Show`
+impl Show for CreatingViewError
+
 pub(all) suberror Failure String
 fn Failure::output(Self, &Logger) -> Unit // from trait `Show`
 fn Failure::to_json(Self) -> Json // from trait `ToJson`
@@ -392,6 +400,8 @@ fn[K : Hash + Eq, V] Map::from_array(Array[(K, V)]) -> Self[K, V]
 fn[K : Hash + Eq, V] Map::from_iter(Iter[(K, V)]) -> Self[K, V]
 fn[K : Hash + Eq, V] Map::from_iterator(Iterator[(K, V)]) -> Self[K, V]
 fn[K : Hash + Eq, V] Map::get(Self[K, V], K) -> V?
+fn[V] Map::get_from_bytes(Self[Bytes, V], BytesView) -> V?
+fn[V] Map::get_from_string(Self[String, V], StringView) -> V?
 fn[K : Hash + Eq, V] Map::get_or_default(Self[K, V], K, V) -> V
 fn[K : Hash + Eq, V] Map::get_or_init(Self[K, V], K, () -> V) -> V
 fn[K, V] Map::is_empty(Self[K, V]) -> Bool
@@ -928,6 +938,8 @@ fn String::op_add(String, String) -> String // from trait `Add`
 #deprecated
 fn String::op_equal(String, String) -> Bool // from trait `Eq`
 fn String::output(String, &Logger) -> Unit // from trait `Show`
+#alias("_[_:_]")
+fn String::sub(String, start? : Int, end? : Int) -> StringView raise CreatingViewError
 #deprecated
 fn String::substring(String, start? : Int, end? : Int) -> String
 fn String::to_json(String) -> Json // from trait `ToJson`
@@ -1004,6 +1016,8 @@ fn Bytes::op_ge(Bytes, Bytes) -> Bool // from trait `Compare`
 fn Bytes::op_gt(Bytes, Bytes) -> Bool // from trait `Compare`
 fn Bytes::op_le(Bytes, Bytes) -> Bool // from trait `Compare`
 fn Bytes::op_lt(Bytes, Bytes) -> Bool // from trait `Compare`
+#alias("_[_:_]")
+fn Bytes::sub(Bytes, start? : Int, end? : Int) -> BytesView
 fn Bytes::to_unchecked_string(Bytes, offset? : Int, length? : Int) -> String
 fn Bytes::unsafe_get(Bytes, Int) -> Byte
 
@@ -1202,6 +1216,51 @@ fn[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, 
 fn[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson, K : ToJson, L : ToJson, M : ToJson, N : ToJson, O : ToJson, P : ToJson] Tuple(16)::to_json((A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P)) -> Json // from trait `ToJson`
 fn[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show, T12 : Show, T13 : Show, T14 : Show, T15 : Show] Tuple(16)::to_string((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15)) -> String // from trait `Show`
 
+#alias("_[_]")
+fn BytesView::at(Self, Int) -> Byte
+fn BytesView::bytes(Self) -> Bytes
+fn BytesView::compare(Self, Self) -> Int // from trait `Compare`
+fn BytesView::equal(Self, Self) -> Bool // from trait `Eq`
+fn BytesView::get(Self, Int) -> Byte?
+fn BytesView::hash(Self) -> Int // from trait `Hash`
+fn BytesView::hash_combine(Self, Hasher) -> Unit // from trait `Hash`
+fn BytesView::len(Self) -> Int
+fn BytesView::length(Self) -> Int
+fn BytesView::make(Bytes, Int, Int) -> Self
+#deprecated
+fn BytesView::op_equal(Self, Self) -> Bool // from trait `Eq`
+fn BytesView::op_ge(Self, Self) -> Bool // from trait `Compare`
+fn BytesView::op_gt(Self, Self) -> Bool // from trait `Compare`
+fn BytesView::op_le(Self, Self) -> Bool // from trait `Compare`
+fn BytesView::op_lt(Self, Self) -> Bool // from trait `Compare`
+fn BytesView::start(Self) -> Int
+#alias("_[_:_]")
+fn BytesView::sub(Self, start? : Int, end? : Int) -> Self
+fn BytesView::to_uint_be(Self) -> UInt
+fn BytesView::to_uint_le(Self) -> UInt
+fn BytesView::unsafe_get(Self, Int) -> Byte
+
+#alias("_[_]")
+fn StringView::at(Self, Int) -> Int
+fn StringView::compare(Self, Self) -> Int // from trait `Compare`
+fn StringView::end(Self) -> Int
+fn StringView::equal(Self, Self) -> Bool // from trait `Eq`
+fn StringView::hash(Self) -> Int // from trait `Hash`
+fn StringView::hash_combine(Self, Hasher) -> Unit // from trait `Hash`
+fn StringView::length(Self) -> Int
+fn StringView::make_view(String, Int, Int) -> Self
+#deprecated
+fn StringView::op_equal(Self, Self) -> Bool // from trait `Eq`
+fn StringView::op_ge(Self, Self) -> Bool // from trait `Compare`
+fn StringView::op_gt(Self, Self) -> Bool // from trait `Compare`
+fn StringView::op_le(Self, Self) -> Bool // from trait `Compare`
+fn StringView::op_lt(Self, Self) -> Bool // from trait `Compare`
+fn StringView::start(Self) -> Int
+fn StringView::str(Self) -> String
+#alias("_[_:_]")
+fn StringView::sub(Self, start? : Int, end? : Int) -> Self raise CreatingViewError
+fn StringView::unsafe_charcode_at(Self, Int) -> Int
+
 // Type aliases
 
 // Traits
@@ -1280,6 +1339,8 @@ impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : 
 impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare] Compare for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13)
 impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare, T14 : Compare] Compare for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14)
 impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare, T14 : Compare, T15 : Compare] Compare for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15)
+impl Compare for BytesView
+impl Compare for StringView
 
 pub(open) trait Default {
   default() -> Self
@@ -1340,6 +1401,8 @@ impl[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 
 impl[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq, T13 : Eq] Eq for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13)
 impl[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq, T13 : Eq, T14 : Eq] Eq for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14)
 impl[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq, T13 : Eq, T14 : Eq, T15 : Eq] Eq for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15)
+impl Eq for BytesView
+impl Eq for StringView
 
 pub(open) trait Hash {
   hash_combine(Self, Hasher) -> Unit
@@ -1358,6 +1421,8 @@ impl[A : Hash, B : Hash, C : Hash, D : Hash] Hash for (A, B, C, D)
 impl[A : Hash, B : Hash, C : Hash, D : Hash, E : Hash] Hash for (A, B, C, D, E)
 impl[A : Hash, B : Hash, C : Hash, D : Hash, E : Hash, F : Hash] Hash for (A, B, C, D, E, F)
 impl[A : Hash, B : Hash, C : Hash, D : Hash, E : Hash, F : Hash, G : Hash] Hash for (A, B, C, D, E, F, G)
+impl Hash for BytesView
+impl Hash for StringView
 
 pub(open) trait Logger {
   write_string(Self, String) -> Unit
