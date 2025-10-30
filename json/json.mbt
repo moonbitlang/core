@@ -104,19 +104,64 @@ priv enum WriteFrame {
 }
 
 ///|
+/// A Replacer provides a way to filter and transform JSON object properties during stringification.
+/// 
+/// Replacers contain a function that takes a property key and value, and returns:
+/// - `Some(value)` to include the property in the output (possibly transformed)
+/// - `None` to exclude the property from the output
+/// 
+/// Only applies to object properties, not array elements.
 struct Replacer((String, Json) -> Json?)
 
 ///|
+/// Create a new Replacer with a custom function.
+/// 
+/// The function receives `(key, value)` pairs and should return:
+/// - `Some(transformed_value)` to include the property
+/// - `None` to exclude the property
+/// 
+/// ## Example
+/// 
+/// ```moonbit
+/// // Transform numbers and exclude sensitive fields
+/// ignore(@json.Replacer::new((key, value) => match key {
+///   "password" | "secret" => None  // exclude sensitive fields
+///   _ => match value {
+///     Number(n, ..) => Some(Json::number(n * 2.0))  // double all numbers
+///     _ => Some(value)  // keep other values as-is
+///   }
+/// }))
+/// ```
 pub fn Replacer::new(f : (String, Json) -> Json?) -> Replacer {
   Replacer(f)
 }
 
 ///|
+/// Create a Replacer that only keeps the specified property keys.
+/// All other properties will be excluded from the output.
+/// 
+/// ## Example
+/// 
+/// ```moonbit
+/// let replacer = @json.Replacer::keep(["name", "age", "email"])
+/// let json : Json = { "name": "Alice", "age": 30.0, "email": "alice@example.com", "password": "secret" }
+/// ignore(json.stringify(replacer~))  // {"name":"Alice","age":30,"email":"alice@example.com"}
+/// ```
 pub fn Replacer::keep(array : ArrayView[StringView]) -> Replacer {
   Replacer((idx, value) => if array.contains(idx) { Some(value) } else { None })
 }
 
 ///|
+/// Create a Replacer that excludes the specified property keys.
+/// All other properties will be included in the output.
+/// 
+/// ## Example
+/// 
+/// ```moonbit
+/// let replacer = @json.Replacer::exclude(["password", "secret", "private"])
+/// let json : Json = { "name": "Alice", "age": 30.0, "password": "secret", "email": "alice@example.com" }
+/// ignore(json.stringify(replacer~))  // {"name":"Alice","age":30,"email":"alice@example.com"}
+/// ```
 pub fn Replacer::exclude(array : ArrayView[StringView]) -> Replacer {
   Replacer((idx, value) => if array.contains(idx) { None } else { Some(value) })
 }
@@ -125,7 +170,63 @@ pub fn Replacer::exclude(array : ArrayView[StringView]) -> Replacer {
 /// Convert this Json value to a String
 /// - `escape_slash`: Whether to escape '/' as '\/' (default: false)
 /// - `indent`: Number of spaces to indent nested structures (default: 0 = non-indented)
-/// - `replacer`: An optional Replacer function to transform values during stringification
+/// - `replacer`: An optional Replacer function to transform or filter values during stringification
+/// 
+/// ## Replacer
+/// 
+/// The replacer parameter allows you to control which object properties are included in the output
+/// and optionally transform values during stringification. Only applies to object properties, not array elements.
+/// 
+/// ### Creating Replacers
+/// 
+/// 1. **Replacer::new(f)** - Create a custom replacer with a function `(String, Json) -> Json?`:
+///    - Return `Some(value)` to include the property (possibly transformed)
+///    - Return `None` to exclude the property
+/// 
+/// 2. **Replacer::keep(keys)** - Include only the specified property keys
+/// 
+/// 3. **Replacer::exclude(keys)** - Exclude the specified property keys
+/// 
+/// ### Examples
+/// 
+/// ```moonbit
+/// let json : Json = { "a": 1.0, "b": 2.0, "c": 3.0, "password": "secret" }
+/// 
+/// // Keep only specific keys
+/// let keep_replacer = @json.Replacer::keep(["a", "c"])
+/// ignore(json.stringify(replacer=keep_replacer))  // {"a":1,"c":3}
+/// 
+/// // Exclude sensitive keys
+/// let exclude_replacer = @json.Replacer::exclude(["password"])
+/// ignore(json.stringify(replacer=exclude_replacer))  // {"a":1,"b":2,"c":3}
+/// 
+/// // Custom transformation
+/// let transform_replacer = @json.Replacer::new((_key, value) => match value {
+///   Number(n, ..) => Some(Json::number(n * 10.0))  // multiply numbers by 10
+///   _ => Some(value)  // keep other values unchanged
+/// })
+/// ignore(json.stringify(replacer=transform_replacer))  // {"a":10,"b":20,"c":30,"password":"secret"}
+/// 
+/// // Filter and transform
+/// let filter_replacer = @json.Replacer::new((key, value) => match key {
+///   "password" => None  // exclude password
+///   _ => match value {
+///     Number(n, ..) => Some(Json::number(n + 100.0))  // add 100 to numbers
+///     _ => Some(value)
+///   }
+/// })
+/// ignore(json.stringify(replacer=filter_replacer))  // {"a":101,"b":102,"c":103}
+/// ```
+/// 
+/// ### Nested Objects
+/// 
+/// Replacers work recursively on nested objects:
+/// 
+/// ```moonbit
+/// let nested : Json = { "user": { "name": "Alice", "password": "secret" }, "id": 123.0 }
+/// let safe_replacer = @json.Replacer::exclude(["password"])
+/// ignore(nested.stringify(replacer=safe_replacer))  // {"user":{"name":"Alice"},"id":123}
+/// ```
 pub fn Json::stringify(
   self : Json,
   escape_slash? : Bool = false,
@@ -268,6 +369,35 @@ fn escape(str : String, escape_slash~ : Bool) -> String {
 }
 
 ///|
+/// Transform a JSON value by applying a replacer recursively to all object properties.
+/// 
+/// Unlike `stringify(replacer~)` which only affects the string output, `transform()` 
+/// returns a new JSON value with properties filtered and transformed according to the replacer.
+/// 
+/// This is useful when you want to create a modified JSON structure that can be further 
+/// processed, rather than just converting to a string.
+/// 
+/// ## Example
+/// 
+/// ```moonbit
+/// let json : Json = { "user": { "name": "Alice", "password": "secret", "age": 30.0 }, "id": 123.0 }
+/// 
+/// // Remove sensitive data and double numeric values  
+/// ignore(json.transform(@json.Replacer::new((key, value) => match key {
+///   "password" => None  // exclude password fields
+///   _ => match value {
+///     Number(n, ..) => Some(Json::number(n * 2.0))  // double numbers
+///     _ => Some(value)  // keep other values
+///   }
+/// })))
+/// // Result: { "user": { "name": "Alice", "age": 60 }, "id": 246 }
+/// ```
+/// 
+/// ## Behavior
+/// 
+/// - Recursively applies the replacer to all nested objects
+/// - Non-object values (arrays, strings, numbers, etc.) are returned unchanged
+/// - The original JSON value is not modified; a new value is returned
 pub fn Json::transform(self : Self, replacer : Replacer) -> Json {
   match self {
     Object(members) =>
