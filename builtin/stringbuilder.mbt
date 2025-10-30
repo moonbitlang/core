@@ -74,15 +74,3 @@ pub fn StringBuilder::write_stringview(
   let end = view.end()
   self.write_substring(view.str(), start, end - start)
 }
-
-///|
-/// Returns the source string being viewed.
-fn StringView::str(self : StringView) -> String = "%stringview.str"
-
-///|
-/// Returns the starting UTF-16 code unit index into the string.
-fn StringView::start(self : StringView) -> Int = "%stringview.start"
-
-///|
-/// Returns the ending UTF-16 code unit index into the string (not included).
-fn StringView::end(self : StringView) -> Int = "%stringview.end"
