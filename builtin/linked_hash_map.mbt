@@ -205,6 +205,69 @@ pub fn[K : Hash + Eq, V] Map::get(self : Map[K, V], key : K) -> V? {
 }
 
 ///|
+/// Retrieves the value associated with a StringView key in the map.
+/// 
+/// Parameters:
+/// 
+/// * `self` : The hash map to search in.
+/// * `key` : The StringView key to look up in the map.
+/// 
+/// Returns `Some(value)` if the key exists in the map, `None` otherwise.
+/// 
+/// Example:
+/// 
+/// ```moonbit
+///   let map : Map[String, Int] = { "hello": 1, "world": 2 }
+///   inspect(map.get_from_string("hello"[:]), content="Some(1)")
+///   inspect(map.get_from_string("moonbit"[:]), content="None")
+/// ```
+pub fn[V] Map::get_from_string(self : Map[String, V], key : StringView) -> V? {
+  let hash = key.hash()
+  for i = 0, idx = hash & self.capacity_mask {
+    guard self.entries[idx] is Some(entry) else { break None }
+    if entry.hash == hash &&
+      StringView::make_view(entry.key, 0, entry.key.length()) == key {
+      break Some(entry.value)
+    }
+    if i > entry.psl {
+      break None
+    }
+    continue i + 1, (idx + 1) & self.capacity_mask
+  }
+}
+
+///|
+/// Retrieves the value associated with a BytesView key in the map.
+/// 
+/// Parameters:
+/// 
+/// * `self` : The hash map to search in.
+/// * `key` : The BytesView key to look up in the map.
+/// 
+/// Returns `Some(value)` if the key exists in the map, `None` otherwise.
+/// 
+/// Example:
+/// 
+/// ```moonbit
+///   let map : Map[Bytes, Int] = { b"hello": 1, b"world": 2 }
+///  inspect(map.get_from_bytes(b"hello"[ : ]), content="Some(1)")
+///  inspect(map.get_from_bytes(b"moonbit"[ : ]), content="None")
+/// ```
+pub fn[V] Map::get_from_bytes(self : Map[Bytes, V], key : BytesView) -> V? {
+  let hash = key.hash()
+  for i = 0, idx = hash & self.capacity_mask {
+    guard self.entries[idx] is Some(entry) else { break None }
+    if entry.hash == hash && entry.key[:] == key {
+      break Some(entry.value)
+    }
+    if i > entry.psl {
+      break None
+    }
+    continue i + 1, (idx + 1) & self.capacity_mask
+  }
+}
+
+///|
 #alias("_[_]")
 pub fn[K : Hash + Eq, V] Map::at(self : Map[K, V], key : K) -> V {
   let hash = key.hash()
