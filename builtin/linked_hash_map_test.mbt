@@ -72,6 +72,29 @@ test "Map:: iter2" {
 }
 
 ///|
+test "Map::get_from_string" {
+  let map : Map[String, Int] = { "alpha": 1, "beta": 2 }
+  inspect(map.get_from_string("alpha"[:]), content="Some(1)")
+  let alt_view_candidate = try? "##alpha##"[2:7]
+  let alt_view = match alt_view_candidate {
+    Ok(view) => view
+    Err(err) => fail("unexpected CreatingViewError: \{err}")
+  }
+  inspect(map.get_from_string(alt_view), content="Some(1)")
+  inspect(map.get_from_string("gamma"[:]), content="None")
+}
+
+///|
+test "Map::get_from_bytes" {
+  let map : Map[Bytes, Int] = { b"alpha": 1, b"beta": 2 }
+  inspect(map.get_from_bytes(b"alpha"[:]), content="Some(1)")
+  let alt_bytes = b"\x00alpha\xff"
+  let alt_view = alt_bytes[1:6]
+  inspect(map.get_from_bytes(alt_view), content="Some(1)")
+  inspect(map.get_from_bytes(b"gamma"[:]), content="None")
+}
+
+///|
 test "map::contains_kv" {
   let map = { "a": 1, "b": 2, "c": 3 }
   // contains_kv will be used in the pattern matching
