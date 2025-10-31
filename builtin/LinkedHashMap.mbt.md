@@ -37,6 +37,27 @@ test {
 }
 ```
 
+#### Get from Views
+
+For maps with `String` or `Bytes` keys, you can efficiently retrieve values using `StringView` or `BytesView` without creating new strings or bytes. This is useful when working with substrings or sub-arrays.
+
+```moonbit
+///|
+test {
+  // Using get_from_string with StringView
+  let string_map = { "hello": 1, "world": 2 }
+  let full_string = "say hello to everyone"
+  let hello_view = full_string.view(start_offset=4, end_offset=9)
+  inspect(string_map.get_from_string(hello_view), content="Some(1)")
+
+  // Using get_from_bytes with BytesView
+  let bytes_map = { b"key": 42, b"value": 100 }
+  let full_bytes = b"mykey_data"
+  let key_view = full_bytes[2:5]
+  inspect(bytes_map.get_from_bytes(key_view), content="Some(42)")
+}
+```
+
 ### Remove
 
 You can use `remove()` to remove a key-value pair.
