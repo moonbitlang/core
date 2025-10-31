@@ -185,7 +185,7 @@ pub fn Regexp::execute(self : Regexp, input : StringView) -> MatchResult {
 /// inspect(result.before(), content=("axxf"))
 /// inspect(result.after(), content=(""))
 /// ```
-#deprecated("Use `Regexp::execute` and `MatchResult::before`/`after` instead.")
+#deprecated("Use `Regexp::execute` and `MatchResult::before`/`after` instead.", skip_current_package=false)
 pub fn Regexp::execute_with_remainder(
   self : Regexp,
   input : StringView,
@@ -427,22 +427,25 @@ pub fn MatchResult::after(self : Self) -> StringView {
 ///|
 test "rest method" {
   let engine = compile("hello")
-  let (result, rest) = engine.execute_with_remainder("hello world")
+  let result = engine.execute("hello world")
   inspect(result.matched(), content="true")
-  inspect(rest, content=" world")
-  let (result2, rest2) = engine.execute_with_remainder("say hello")
+  inspect(result.before(), content="")
+  inspect(result.after(), content=" world")
+  let result2 = engine.execute("say hello")
   inspect(result2.matched(), content="true")
-  inspect(rest2, content="")
-  let (result3, rest3) = engine.execute_with_remainder("hi there")
+  inspect(result2.before(), content="say ")
+  inspect(result2.after(), content="")
+  let result3 = engine.execute("hi there")
   inspect(result3.matched(), content="false")
-  inspect(rest3, content="hi there")
+  inspect(result3.before(), content="hi there")
+  inspect(result3.after(), content="")
   inspect("Test rest method completed", content="Test rest method completed")
 }
 
 ///|
 test "rest method with capture groups" {
   let engine = compile("(\\w+)\\s+")
-  let (result, rest) = engine.execute_with_remainder("hello world test")
+  let result = engine.execute("hello world test")
   inspect(result.matched(), content="true")
   inspect(
     result.get(0),
@@ -456,9 +459,9 @@ test "rest method with capture groups" {
       #|Some("hello")
     ),
   )
-  inspect(rest, content="world test")
+  inspect(result.after(), content="world test")
   let engine2 = compile(".*")
-  let (result2, rest2) = engine2.execute_with_remainder("everything")
+  let result2 = engine2.execute("everything")
   inspect(result2.matched(), content="true")
   inspect(
     result2.get(0),
@@ -466,27 +469,27 @@ test "rest method with capture groups" {
       #|Some("everything")
     ),
   )
-  inspect(rest2, content="")
+  inspect(result2.after(), content="")
 }
 
 ///|
 test "rest method usage example" {
   let engine = compile("\\b\\w+\\b")
   let mut input : StringView = "word1 word2 word3"
-  let (result1, rest1) = engine.execute_with_remainder(input)
+  let result1 = engine.execute(input)
   inspect(
     result1.get(0),
     content=(
       #|Some("word1")
     ),
   )
-  input = rest1
-  let (result2, rest2) = engine.execute_with_remainder(input)
+  input = result1.after()
+  let result2 = engine.execute(input)
   inspect(
     result2.get(0),
     content=(
       #|Some("word2")
     ),
   )
-  inspect(rest2, content=" word3")
+  inspect(result2.after(), content=" word3")
 }

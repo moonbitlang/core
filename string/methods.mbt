@@ -463,7 +463,7 @@ pub fn StringView::to_array(self : StringView) -> Array[Char] {
 }
 
 ///|
-#deprecated("Check `@encoding/utf8.encode`")
+#deprecated("Check `@encoding/utf8.encode`", skip_current_package=false)
 #coverage.skip
 pub fn StringView::to_bytes(self : StringView) -> Bytes {
   let array = FixedArray::make(self.length() * 2, Byte::default())
@@ -512,19 +512,6 @@ test "View::to_array" {
   let sub_view = "Hello World"[6:11] // "World"
   let sub_chars = sub_view.to_array()
   assert_eq(sub_chars, ['W', 'o', 'r', 'l', 'd'])
-}
-
-///|
-test "View::to_bytes" {
-  let view = "Hello"[:]
-  let bytes = view.to_bytes()
-  assert_eq(bytes.to_unchecked_string(), "Hello")
-  let unicode_view = "🤣🤔"[:]
-  let unicode_bytes = unicode_view.to_bytes()
-  assert_eq(unicode_bytes.to_unchecked_string(), "🤣🤔")
-  let sub_view = "Hello World"[0:5] // "Hello"
-  let sub_bytes = sub_view.to_bytes()
-  assert_eq(sub_bytes.to_unchecked_string(), "Hello")
 }
 
 ///|
