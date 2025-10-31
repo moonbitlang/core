@@ -53,7 +53,6 @@ fn[T] ArrayView::eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?
 fn[T] ArrayView::filter(Self[T], (T) -> Bool raise?) -> Array[T] raise?
 fn[A, B] ArrayView::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 fn[A, B] ArrayView::foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
-fn[A] ArrayView::iter(Self[A]) -> Iter[A]
 fn[A] ArrayView::iter2(Self[A]) -> Iter2[Int, A]
 fn[X] ArrayView::iterator2(Self[X]) -> Iterator2[Int, X]
 fn[A : @string.ToStringView] ArrayView::join(Self[A], StringView) -> String
@@ -64,10 +63,6 @@ fn[A, B] ArrayView::rev_foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B 
 fn[X] ArrayView::rev_iterator(Self[X]) -> Iterator[X]
 fn[T] ArrayView::start_offset(Self[T]) -> Int
 fn[T] ArrayView::to_array(Self[T]) -> Array[T]
-impl[T : Compare] Compare for ArrayView[T]
-impl[T : Eq] Eq for ArrayView[T]
-impl[A : Hash] Hash for ArrayView[A]
-impl[X : Show] Show for ArrayView[X]
 
 // Type aliases
 pub using @builtin {type ArrayView as View}
