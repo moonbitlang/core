@@ -20,7 +20,7 @@ let max_shift = 59
 ///|
 /// Decimal power of ten to binary power of two.
 /// The Ith entry (starting at I = 0) is the largest power of 2 less than (10 ** I)
-let powtab = [
+let powtab : ReadOnlyArray[Int] = [
   1, 3, 6, 9, 13, 16, 19, 23, 26, 29, 33, 36, 39, 43, 46, 49, 53, 56, 59,
 ]
 
