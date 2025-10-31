@@ -367,3 +367,14 @@ pub impl Compare for Bytes with compare(self, other) {
     0
   }
 }
+
+// intrinsics for bytesview
+
+///|
+fn BytesView::len(self : BytesView) -> Int = "%bytesview.len"
+
+///|
+fn BytesView::bytes(self : BytesView) -> Bytes = "%bytesview.bytes"
+
+///|
+fn BytesView::start(self : BytesView) -> Int = "%bytesview.start"
