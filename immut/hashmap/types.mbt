@@ -25,4 +25,5 @@ priv enum Node[K, V] {
 }
 
 ///|
+#alias(T, deprecated)
 struct HashMap[K, V](Node[K, V]?) derive(Eq)

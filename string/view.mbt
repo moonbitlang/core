@@ -13,14 +13,6 @@
 // limitations under the License.
 
 ///|
-/// `StringView` represents a view of a String that maintains proper Unicode
-/// character boundaries. It allows safe access to a substring while handling 
-/// multi-byte characters correctly.
-#builtin.valtype
-#deprecated("Use `StringView` instead")
-pub typealias StringView as View
-
-///|
 /// Returns the source string being viewed.
 fn StringView::str(self : StringView) -> String = "%stringview.str"
 
