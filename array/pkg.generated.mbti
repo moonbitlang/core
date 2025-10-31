@@ -154,7 +154,12 @@ fn[T] ArrayView::start_offset(Self[T]) -> Int
 fn[T] ArrayView::to_array(Self[T]) -> Array[T]
 fn ArrayView::unsafe_extract_bit(Self[Byte], Int, Int) -> UInt
 fn ArrayView::unsafe_extract_byte(Self[Byte], Int, Int) -> UInt
+fn ArrayView::unsafe_extract_byte_signed(Self[Byte], Int, Int) -> Int
 fn ArrayView::unsafe_extract_bytesview(Self[Byte], Int, Int) -> Self[Byte]
+fn ArrayView::unsafe_extract_int64_be(Self[Byte], Int, Int) -> Int64
+fn ArrayView::unsafe_extract_int64_le(Self[Byte], Int, Int) -> Int64
+fn ArrayView::unsafe_extract_int_be(Self[Byte], Int, Int) -> Int
+fn ArrayView::unsafe_extract_int_le(Self[Byte], Int, Int) -> Int
 fn ArrayView::unsafe_extract_uint64_be(Self[Byte], Int, Int) -> UInt64
 fn ArrayView::unsafe_extract_uint64_le(Self[Byte], Int, Int) -> UInt64
 fn ArrayView::unsafe_extract_uint_be(Self[Byte], Int, Int) -> UInt

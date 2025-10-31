@@ -80,7 +80,12 @@ fn BytesView::to_uint_be(Self) -> UInt
 fn BytesView::to_uint_le(Self) -> UInt
 fn BytesView::unsafe_extract_bit(Self, Int, Int) -> UInt
 fn BytesView::unsafe_extract_byte(Self, Int, Int) -> UInt
+fn BytesView::unsafe_extract_byte_signed(Self, Int, Int) -> Int
 fn BytesView::unsafe_extract_bytesview(Self, Int, Int) -> Self
+fn BytesView::unsafe_extract_int64_be(Self, Int, Int) -> Int64
+fn BytesView::unsafe_extract_int64_le(Self, Int, Int) -> Int64
+fn BytesView::unsafe_extract_int_be(Self, Int, Int) -> Int
+fn BytesView::unsafe_extract_int_le(Self, Int, Int) -> Int
 fn BytesView::unsafe_extract_uint64_be(Self, Int, Int) -> UInt64
 fn BytesView::unsafe_extract_uint64_le(Self, Int, Int) -> UInt64
 fn BytesView::unsafe_extract_uint_be(Self, Int, Int) -> UInt
