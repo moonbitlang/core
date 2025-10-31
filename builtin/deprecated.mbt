@@ -346,7 +346,7 @@ pub fn String::codepoint_at(self : String, index : Int) -> Char {
 
 ///|
 /// Returns the Unicode code point at the given index without bounds checking.
-#deprecated("Use `s.get_char(i).unwrap()` instead", skip_current_package=false)
+#deprecated("Use `s.get_char(i).unwrap()` instead", skip_current_package=true)
 pub fn String::unsafe_char_at(self : String, index : Int) -> Char {
   let c1 = self.unsafe_charcode_at(index)
   if c1.is_leading_surrogate() {
