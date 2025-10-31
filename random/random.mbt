@@ -49,7 +49,7 @@ pub fn Rand::chacha8(
 /// Create a new random number generator with a given [Gen] source.
 pub fn Rand::new(generator? : &Source) -> Rand {
   match generator {
-    None => chacha8()
+    None => Rand::chacha8()
     Some(gen) => Rand(gen)
   }
 }
@@ -62,7 +62,7 @@ fn Rand::next(self : Rand) -> UInt64 {
 
 ///|
 test "next" {
-  let r = new()
+  let r = Rand::new()
   let n = r.next()
   let exp = 13219109469176600229UL
   assert_eq(n, exp)
@@ -119,7 +119,7 @@ pub fn Rand::uint(self : Rand, limit? : UInt = 0) -> UInt {
 
 ///|
 test "uint" {
-  let r = new()
+  let r = Rand::new()
   let n = r.uint(limit=10U)
   inspect(n, content="7")
   let n = r.uint(limit=10U)
@@ -155,11 +155,11 @@ pub fn Rand::uint64(self : Rand, limit? : UInt64 = 0) -> UInt64 {
 
 ///|
 test "UInt64" {
-  let r = new()
+  let r = Rand::new()
   let n = r.uint64()
   let exp = 13219109469176600229UL
   assert_eq(n, exp)
-  let r = new()
+  let r = Rand::new()
   let n = r.uint64(limit=10UL)
   inspect(n, content="7")
   let n = r.uint64(limit=10UL)
@@ -177,7 +177,7 @@ pub fn Rand::double(self : Rand) -> Double {
 
 ///|
 test "double" {
-  let r = new()
+  let r = Rand::new()
   let n = r.double()
   inspect(n, content="0.615969772029264")
 }
@@ -223,7 +223,7 @@ pub fn Rand::bigint(self : Rand, bits : Int) -> @bigint.BigInt {
 
 ///|
 test "bigint" {
-  let r = new()
+  let r = Rand::new()
   inspect(r.bigint(1), content="1")
   inspect(r.bigint(3), content="4")
   inspect(r.bigint(7), content="124")
@@ -320,7 +320,7 @@ pub fn Rand::shuffle(
 
 ///|
 test "shuffle" {
-  let r = new()
+  let r = Rand::new()
   let a = [1, 2, 3, 4, 5]
   r.shuffle(a.length(), (i : Int, j : Int) => {
     let t = a[i]
