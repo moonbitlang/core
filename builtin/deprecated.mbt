@@ -24,7 +24,7 @@
 /// # Returns
 ///
 /// Returns an iterator that iterates over the range of Int from `start` to `end - 1`.
-#deprecated("Use `..<` in for loop or `until` method instead")
+#deprecated("Use `..<` in for loop or `until` method instead", skip_current_package=false)
 #coverage.skip
 pub fn Int::upto(self : Int, end : Int, inclusive? : Bool = false) -> Iter[Int] {
   yield_ => {
@@ -55,7 +55,7 @@ pub fn Int::upto(self : Int, end : Int, inclusive? : Bool = false) -> Iter[Int] 
 /// # Returns
 ///
 /// Returns an iterator that iterates over the range of UInt from `start` to `end - 1`.
-#deprecated("Use `..<` in for loop or `until` method instead")
+#deprecated("Use `..<` in for loop or `until` method instead", skip_current_package=false)
 #coverage.skip
 pub fn UInt::upto(
   self : UInt,
@@ -90,7 +90,7 @@ pub fn UInt::upto(
 /// # Returns
 ///
 /// Returns an iterator that iterates over the range of UInt64 from `start` to `end - 1`.
-#deprecated("Use `..<` in for loop or `until` method instead")
+#deprecated("Use `..<` in for loop or `until` method instead", skip_current_package=false)
 #coverage.skip
 pub fn UInt64::upto(
   self : UInt64,
@@ -125,7 +125,7 @@ pub fn UInt64::upto(
 /// # Returns
 ///
 /// Returns an iterator that iterates over the range of Int64 from `start` to `end - 1`.
-#deprecated("Use `..<` in for loop or `until` method instead")
+#deprecated("Use `..<` in for loop or `until` method instead", skip_current_package=false)
 #coverage.skip
 pub fn Int64::upto(
   self : Int64,
@@ -160,7 +160,7 @@ pub fn Int64::upto(
 /// # Returns
 ///
 /// Returns an iterator that iterates over the range of Float from `start` to `end - 1`.
-#deprecated("Use `..<` in for loop or `until` method instead")
+#deprecated("Use `..<` in for loop or `until` method instead", skip_current_package=false)
 #coverage.skip
 pub fn Float::upto(
   self : Float,
@@ -195,7 +195,7 @@ pub fn Float::upto(
 /// # Returns
 ///
 /// Returns an iterator that iterates over the range of Double from `start` to `end - 1`.
-#deprecated("Use `..<` in for loop or `until` method instead")
+#deprecated("Use `..<` in for loop or `until` method instead", skip_current_package=false)
 #coverage.skip
 pub fn Double::upto(
   self : Double,
@@ -219,7 +219,7 @@ pub fn Double::upto(
 }
 
 ///|
-#deprecated("check `@encoding/utf8.encode`")
+#deprecated("check `@encoding/utf8.encode`", skip_current_package=false)
 #coverage.skip
 pub fn Bytes::of_string(str : String) -> Bytes {
   FixedArray::make(str.length() * 2, Byte::default())
@@ -228,7 +228,7 @@ pub fn Bytes::of_string(str : String) -> Bytes {
 }
 
 ///|
-#deprecated("Bytes are immutable. Use `FixedArray::blit_from_bytes` if it's really necessary.")
+#deprecated("Bytes are immutable. Use `FixedArray::blit_from_bytes` if it's really necessary.", skip_current_package=false)
 pub fn Bytes::copy(self : Bytes) -> Bytes {
   Bytes::makei(self.length(), i => self[i])
 }
@@ -244,7 +244,7 @@ pub fn Bytes::copy(self : Bytes) -> Bytes {
 ///
 /// Returns the resulting `Byte` value after the bitwise left shift operation.
 ///
-#deprecated("Use infix operator `<<` instead")
+#deprecated("Use infix operator `<<` instead", skip_current_package=false)
 #coverage.skip
 pub fn Byte::lsl(self : Byte, count : Int) -> Byte {
   (self.to_int() << count).to_byte()
@@ -260,7 +260,7 @@ pub fn Byte::lsl(self : Byte, count : Int) -> Byte {
 ///
 /// Returns the result of the logical shift right operation as a `Byte`.
 ///
-#deprecated("Use infix operator `>>` instead")
+#deprecated("Use infix operator `>>` instead", skip_current_package=false)
 #coverage.skip
 pub fn Byte::lsr(self : Byte, count : Int) -> Byte {
   (self.to_uint() >> count).reinterpret_as_int().to_byte()
@@ -272,7 +272,7 @@ pub fn Byte::lsr(self : Byte, count : Int) -> Byte {
 /// For example, you can put `dump(())` in each line, the execution will print the line number
 /// when it reaches that line.
 #callsite(autofill(loc))
-#deprecated("This function is for debugging only and should not be used in production")
+#deprecated("This function is for debugging only and should not be used in production", skip_current_package=true)
 pub fn[T] dump(t : T, name? : String, loc~ : SourceLoc) -> T {
   let name = match name {
     Some(name) => name
@@ -310,7 +310,7 @@ test "dump" {
 /// Panics if:
 /// - The index is out of bounds
 /// - The string contains an invalid surrogate pair
-#deprecated("The index will be changed to utf16 index. If you want to access n-th character, use `str.iter().nth(n).unwrap()` instead.")
+#deprecated("The index will be changed to utf16 index. If you want to access n-th character, use `str.iter().nth(n).unwrap()` instead.", skip_current_package=false)
 pub fn String::codepoint_at(self : String, index : Int) -> Char {
   let charcode_len = self.length()
   guard index >= 0 && index < charcode_len else { abort("index out of bounds") }
@@ -346,7 +346,7 @@ pub fn String::codepoint_at(self : String, index : Int) -> Char {
 
 ///|
 /// Returns the Unicode code point at the given index without bounds checking.
-#deprecated("Use `s.get_char(i).unwrap()` instead")
+#deprecated("Use `s.get_char(i).unwrap()` instead", skip_current_package=false)
 pub fn String::unsafe_char_at(self : String, index : Int) -> Char {
   let c1 = self.unsafe_charcode_at(index)
   if c1.is_leading_surrogate() {

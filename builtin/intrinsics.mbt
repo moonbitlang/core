@@ -132,7 +132,7 @@ pub impl Eq for Bool with equal(self : Bool, other : Bool) -> Bool = "%bool_eq"
 ///   inspect(t.compare(t), content="0")
 /// ```
 ///
-#deprecated("Use `compare` instead")
+#deprecated("Use `compare` instead", skip_current_package=false)
 #coverage.skip
 pub fn Bool::op_compare(self : Bool, other : Bool) -> Int = "%bool_compare"
 
@@ -465,7 +465,7 @@ pub impl Shr for Int with shr(self, other) = "%i32_shr"
 ///   inspect(y << 2, content="168") // Binary: 101010 -> 10101000
 /// ```
 ///
-#deprecated("Use infix operator `<<` instead")
+#deprecated("Use infix operator `<<` instead", skip_current_package=false)
 #coverage.skip
 pub fn Int::lsl(self : Int, other : Int) -> Int = "%i32_shl"
 
@@ -491,7 +491,7 @@ pub fn Int::lsl(self : Int, other : Int) -> Int = "%i32_shl"
 ///   inspect(x << 3, content="8") // Equivalent to x << 3
 /// ```
 ///
-#deprecated("Use infix operator `<<` instead")
+#deprecated("Use infix operator `<<` instead", skip_current_package=false)
 #coverage.skip
 pub fn Int::shl(self : Int, other : Int) -> Int = "%i32_shl"
 
@@ -517,7 +517,7 @@ pub fn Int::shl(self : Int, other : Int) -> Int = "%i32_shl"
 ///   inspect(unsigned >> 1, content="2147483646") // Using the recommended operator
 /// ```
 ///
-#deprecated("Use UInt type and infix operator `>>` instead")
+#deprecated("Use UInt type and infix operator `>>` instead", skip_current_package=false)
 #coverage.skip
 pub fn Int::lsr(self : Int, other : Int) -> Int {
   (self.reinterpret_as_uint() >> other).reinterpret_as_int()
@@ -543,7 +543,7 @@ pub fn Int::lsr(self : Int, other : Int) -> Int {
 ///   inspect(x >> 2, content="-4") // Right shift preserves sign bit
 /// ```
 ///
-#deprecated("Use infix operator `>>` instead")
+#deprecated("Use infix operator `>>` instead", skip_current_package=false)
 #coverage.skip
 pub fn Int::asr(self : Int, other : Int) -> Int = "%i32_shr"
 
@@ -567,7 +567,7 @@ pub fn Int::asr(self : Int, other : Int) -> Int = "%i32_shr"
 ///   inspect(n >> 3, content="-128") // Preserves sign bit during right shift
 /// ```
 ///
-#deprecated("Use infix operator `>>` instead")
+#deprecated("Use infix operator `>>` instead", skip_current_package=false)
 #coverage.skip
 pub fn Int::shr(self : Int, other : Int) -> Int = "%i32_shr"
 
@@ -787,7 +787,7 @@ pub fn Int::reinterpret_as_uint(self : Int) -> UInt = "%i32.to_u32_reinterpret"
 ///   inspect(neg.reinterpret_as_uint(), content="4294967295") // 2^32 - 1
 /// ```
 ///
-#deprecated("Use `reinterpret_as_uint` instead")
+#deprecated("Use `reinterpret_as_uint` instead", skip_current_package=false)
 #coverage.skip
 pub fn Int::to_uint(self : Int) -> UInt = "%i32.to_u32_reinterpret"
 // Double primitive ops
@@ -1129,7 +1129,7 @@ pub fn Char::to_uint(self : Char) -> UInt {
 }
 
 ///|
-#deprecated("Use `Int::unsafe_to_char` instead, and use `Int::to_char` for safe conversion")
+#deprecated("Use `Int::unsafe_to_char` instead, and use `Int::to_char` for safe conversion", skip_current_package=false)
 pub fn Char::from_int(val : Int) -> Char = "%char_from_int"
 
 ///|
@@ -1729,7 +1729,7 @@ pub fn UInt::reinterpret_as_int(self : UInt) -> Int = "%u32.to_i32_reinterpret"
 ///   inspect(b.reinterpret_as_int(), content="-1") // becomes -1 when reinterpreted as Int
 /// ```
 ///
-#deprecated("Use `reinterpret_as_int` instead")
+#deprecated("Use `reinterpret_as_int` instead", skip_current_package=false)
 #coverage.skip
 pub fn UInt::to_int(self : UInt) -> Int = "%u32.to_i32_reinterpret"
 
@@ -2038,7 +2038,7 @@ pub fn UInt::lnot(self : UInt) -> UInt = "%u32.bitnot"
 ///   inspect(y << 1, content="16") // Using the recommended operator
 /// ```
 ///
-#deprecated("Use infix operator `<<` instead")
+#deprecated("Use infix operator `<<` instead", skip_current_package=false)
 #coverage.skip
 pub fn UInt::lsl(self : UInt, shift : Int) -> UInt = "%u32.shl"
 
@@ -2062,7 +2062,7 @@ pub fn UInt::lsl(self : UInt, shift : Int) -> UInt = "%u32.shl"
 ///   inspect(x << 3, content="8") // Binary: 1 -> 1000
 /// ```
 ///
-#deprecated("Use infix operator `<<` instead")
+#deprecated("Use infix operator `<<` instead", skip_current_package=false)
 #coverage.skip
 pub fn UInt::shl(self : UInt, shift : Int) -> UInt = "%u32.shl"
 
@@ -2086,7 +2086,7 @@ pub fn UInt::shl(self : UInt, shift : Int) -> UInt = "%u32.shl"
 ///   inspect(x >> 4, content="251658240") // Using the recommended operator
 /// ```
 ///
-#deprecated("Use infix operator `>>` instead")
+#deprecated("Use infix operator `>>` instead", skip_current_package=false)
 #coverage.skip
 pub fn UInt::lsr(self : UInt, shift : Int) -> UInt = "%u32.shr"
 
@@ -2109,7 +2109,7 @@ pub fn UInt::lsr(self : UInt, shift : Int) -> UInt = "%u32.shr"
 ///   inspect(x >> 8, content="16711680") // 0x00FF0000
 /// ```
 ///
-#deprecated("Use infix operator `>>` instead")
+#deprecated("Use infix operator `>>` instead", skip_current_package=false)
 #coverage.skip
 pub fn UInt::shr(self : UInt, shift : Int) -> UInt = "%u32.shr"
 
