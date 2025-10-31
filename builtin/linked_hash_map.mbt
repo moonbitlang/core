@@ -257,7 +257,8 @@ pub fn[V] Map::get_from_bytes(self : Map[Bytes, V], key : BytesView) -> V? {
   let hash = key.hash()
   for i = 0, idx = hash & self.capacity_mask {
     guard self.entries[idx] is Some(entry) else { break None }
-    if entry.hash == hash && entry.key[:] == key {
+    if entry.hash == hash &&
+      BytesView::make(entry.key, 0, entry.key.length()) == key {
       break Some(entry.value)
     }
     if i > entry.psl {
