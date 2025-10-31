@@ -67,14 +67,16 @@ pub fn[K, V] Map::new(capacity? : Int = 8) -> Map[K, V] {
 
 ///|
 /// Create a hash map from array.
-pub fn[K : Hash + Eq, V] Map::from_array(arr : Array[(K, V)]) -> Map[K, V] {
+pub fn[K : Hash + Eq, V] Map::from_array(arr : ArrayView[(K, V)]) -> Map[K, V] {
   let length = arr.length()
   let mut capacity = length.next_power_of_two()
   if length > calc_grow_threshold(capacity) {
     capacity *= 2
   }
   let m = Map::new(capacity~)
-  arr.each(e => m.set(e.0, e.1))
+  for e in arr {
+    m.set(e.0, e.1)
+  }
   m
 }
 
