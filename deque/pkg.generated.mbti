@@ -10,8 +10,8 @@ import(
 // Errors
 
 // Types and methods
+#alias(T, deprecated)
 type Deque[A]
-fn[A] Deque::add(Self[A], Self[A]) -> Self[A] // from trait `Add`
 fn[A] Deque::append(Self[A], Self[A]) -> Unit
 fn[A] Deque::as_views(Self[A]) -> (ArrayView[A], ArrayView[A])
 #alias("_[_]")
@@ -24,13 +24,11 @@ fn[A] Deque::capacity(Self[A]) -> Int
 fn[A] Deque::chunk_by(Self[A], (A, A) -> Bool raise?) -> Self[Self[A]] raise?
 fn[A] Deque::chunks(Self[A], Int) -> Self[Self[A]]
 fn[A] Deque::clear(Self[A]) -> Unit
-fn[A : Compare] Deque::compare(Self[A], Self[A]) -> Int // from trait `Compare`
 fn[A : Eq] Deque::contains(Self[A], A) -> Bool
 fn[A] Deque::copy(Self[A]) -> Self[A]
 fn[A] Deque::drain(Self[A], start~ : Int, len? : Int) -> Self[A]
 fn[A] Deque::each(Self[A], (A) -> Unit) -> Unit
 fn[A] Deque::eachi(Self[A], (Int, A) -> Unit) -> Unit
-fn[A : Eq] Deque::equal(Self[A], Self[A]) -> Bool // from trait `Eq`
 fn[A] Deque::extract_if(Self[A], (A) -> Bool) -> Self[A]
 fn[A] Deque::filter(Self[A], (A) -> Bool raise?) -> Self[A] raise?
 #deprecated
@@ -44,11 +42,8 @@ fn[A] Deque::from_array(ArrayView[A]) -> Self[A]
 fn[A] Deque::from_iter(Iter[A]) -> Self[A]
 #as_free_fn
 fn[A] Deque::from_iterator(Iterator[A]) -> Self[A]
-fn[A : @json.FromJson] Deque::from_json(Json, @json.JsonPath) -> Self[A] raise @json.JsonDecodeError // from trait `@json.FromJson`
 fn[A] Deque::front(Self[A]) -> A?
 fn[A] Deque::get(Self[A], Int) -> A?
-fn[A : Hash] Deque::hash(Self[A]) -> Int // from trait `Hash`
-fn[A : Hash] Deque::hash_combine(Self[A], Hasher) -> Unit // from trait `Hash`
 fn[A] Deque::insert(Self[A], Int, A) -> Unit
 fn[A] Deque::is_empty(Self[A]) -> Bool
 fn[A] Deque::iter(Self[A]) -> Iter[A]
@@ -61,15 +56,6 @@ fn[A, U] Deque::map(Self[A], (A) -> U) -> Self[U]
 fn[A, U] Deque::mapi(Self[A], (Int, A) -> U) -> Self[U]
 #as_free_fn
 fn[A] Deque::new(capacity? : Int) -> Self[A]
-#deprecated
-fn[A] Deque::op_add(Self[A], Self[A]) -> Self[A] // from trait `Add`
-#deprecated
-fn[A : Eq] Deque::op_equal(Self[A], Self[A]) -> Bool // from trait `Eq`
-fn[A : Compare] Deque::op_ge(Self[A], Self[A]) -> Bool // from trait `Compare`
-fn[A : Compare] Deque::op_gt(Self[A], Self[A]) -> Bool // from trait `Compare`
-fn[A : Compare] Deque::op_le(Self[A], Self[A]) -> Bool // from trait `Compare`
-fn[A : Compare] Deque::op_lt(Self[A], Self[A]) -> Bool // from trait `Compare`
-fn[A : Show] Deque::output(Self[A], &Logger) -> Unit // from trait `Show`
 fn[A] Deque::pop_back(Self[A]) -> A?
 #deprecated
 fn[A] Deque::pop_back_exn(Self[A]) -> Unit
@@ -97,8 +83,6 @@ fn[A] Deque::shrink_to_fit(Self[A]) -> Unit
 fn[A] Deque::shuffle(Self[A], rand~ : (Int) -> Int) -> Self[A]
 fn[A] Deque::shuffle_in_place(Self[A], rand~ : (Int) -> Int) -> Unit
 fn[A] Deque::to_array(Self[A]) -> Array[A]
-fn[A : ToJson] Deque::to_json(Self[A]) -> Json // from trait `ToJson`
-fn[A : Show] Deque::to_string(Self[A]) -> String // from trait `Show`
 fn[A] Deque::truncate(Self[A], Int) -> Unit
 fn[A] Deque::unsafe_pop_back(Self[A]) -> Unit
 fn[A] Deque::unsafe_pop_front(Self[A]) -> Unit
@@ -111,7 +95,6 @@ impl[A : ToJson] ToJson for Deque[A]
 impl[A : @json.FromJson] @json.FromJson for Deque[A]
 
 // Type aliases
-pub typealias Deque as T
 
 // Traits
 

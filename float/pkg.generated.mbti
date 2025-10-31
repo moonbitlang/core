@@ -23,20 +23,13 @@ let not_a_number : Float
 fn Float::abs(Float) -> Float
 #as_free_fn
 fn Float::ceil(Float) -> Float
-fn Float::default() -> Float // from trait `Default`
 #as_free_fn
 fn Float::floor(Float) -> Float
-fn Float::hash(Float) -> Int // from trait `Hash`
-fn Float::hash_combine(Float, Hasher) -> Unit // from trait `Hash`
 fn Float::is_close(Float, Float, relative_tolerance? : Float, absolute_tolerance? : Float) -> Bool
 fn Float::is_inf(Float) -> Bool
 fn Float::is_nan(Float) -> Bool
 fn Float::is_neg_inf(Float) -> Bool
 fn Float::is_pos_inf(Float) -> Bool
-fn Float::mod(Float, Float) -> Float // from trait `Mod`
-#deprecated
-fn Float::op_mod(Float, Float) -> Float // from trait `Mod`
-fn Float::output(Float, &Logger) -> Unit // from trait `Show`
 #as_free_fn
 fn Float::pow(Float, Float) -> Float
 #as_free_fn
@@ -44,7 +37,6 @@ fn Float::round(Float) -> Float
 fn Float::to_be_bytes(Float) -> Bytes
 fn Float::to_int(Float) -> Int
 fn Float::to_le_bytes(Float) -> Bytes
-fn Float::to_string(Float) -> String // from trait `Show`
 #as_free_fn
 fn Float::trunc(Float) -> Float
 impl Default for Float

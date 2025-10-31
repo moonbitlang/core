@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-typealias Map[String, Int] as TestX
+type TestX = Map[String, Int]
 
 ///|
 test {

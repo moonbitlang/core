@@ -13,73 +13,33 @@ import(
 
 // Types and methods
 type BigInt
-fn BigInt::add(Self, Self) -> Self // from trait `Add`
-fn BigInt::arbitrary(Int, @splitmix.RandomState) -> Self // from trait `@quickcheck.Arbitrary`
 #deprecated
 fn BigInt::asr(Self, Int) -> Self
 fn BigInt::bit_length(Self) -> Int
-fn BigInt::compare(Self, Self) -> Int // from trait `Compare`
 fn BigInt::compare_int(Self, Int) -> Int
 fn BigInt::compare_int64(Self, Int64) -> Int
 fn BigInt::ctz(Self) -> Int
-fn BigInt::default() -> Self // from trait `Default`
-fn BigInt::div(Self, Self) -> Self // from trait `Div`
-fn BigInt::equal(Self, Self) -> Bool // from trait `Eq`
 fn BigInt::equal_int(Self, Int) -> Bool
 fn BigInt::equal_int64(Self, Int64) -> Bool
 fn BigInt::from_hex(String) -> Self
 fn BigInt::from_int(Int) -> Self
 fn BigInt::from_int64(Int64) -> Self
-fn BigInt::from_json(Json, @json.JsonPath) -> Self raise @json.JsonDecodeError // from trait `@json.FromJson`
 fn BigInt::from_octets(Bytes, signum? : Int) -> Self
 fn BigInt::from_string(String) -> Self
 fn BigInt::from_uint(UInt) -> Self
 fn BigInt::from_uint64(UInt64) -> Self
-fn BigInt::hash(Self) -> Int // from trait `Hash`
-fn BigInt::hash_combine(Self, Hasher) -> Unit // from trait `Hash`
 fn BigInt::is_zero(Self) -> Bool
-fn BigInt::land(Self, Self) -> Self // from trait `BitAnd`
-fn BigInt::lor(Self, Self) -> Self // from trait `BitOr`
 #deprecated
 fn BigInt::lsl(Self, Int) -> Self
-fn BigInt::lxor(Self, Self) -> Self // from trait `BitXOr`
-fn BigInt::mod(Self, Self) -> Self // from trait `Mod`
-fn BigInt::mul(Self, Self) -> Self // from trait `Mul`
-fn BigInt::neg(Self) -> Self // from trait `Neg`
-#deprecated
-fn BigInt::op_add(Self, Self) -> Self // from trait `Add`
-#deprecated
-fn BigInt::op_div(Self, Self) -> Self // from trait `Div`
-#deprecated
-fn BigInt::op_equal(Self, Self) -> Bool // from trait `Eq`
-fn BigInt::op_ge(Self, Self) -> Bool // from trait `Compare`
-fn BigInt::op_gt(Self, Self) -> Bool // from trait `Compare`
-fn BigInt::op_le(Self, Self) -> Bool // from trait `Compare`
-fn BigInt::op_lt(Self, Self) -> Bool // from trait `Compare`
-#deprecated
-fn BigInt::op_mod(Self, Self) -> Self // from trait `Mod`
-#deprecated
-fn BigInt::op_mul(Self, Self) -> Self // from trait `Mul`
-#deprecated
-fn BigInt::op_neg(Self) -> Self // from trait `Neg`
-#deprecated
-fn BigInt::op_shl(Self, Int) -> Self // from trait `Shl`
-#deprecated
-fn BigInt::op_shr(Self, Int) -> Self // from trait `Shr`
-#deprecated
-fn BigInt::op_sub(Self, Self) -> Self // from trait `Sub`
-fn BigInt::output(Self, &Logger) -> Unit // from trait `Show`
 fn BigInt::pow(Self, Self, modulus? : Self) -> Self
 #deprecated
 fn BigInt::shl(Self, Int) -> Self
 #deprecated
 fn BigInt::shr(Self, Int) -> Self
-fn BigInt::sub(Self, Self) -> Self // from trait `Sub`
 fn BigInt::to_hex(Self, uppercase? : Bool) -> String
 fn BigInt::to_int(Self) -> Int
 fn BigInt::to_int16(Self) -> Int16
 fn BigInt::to_int64(Self) -> Int64
-fn BigInt::to_json(Self) -> Json // from trait `ToJson`
 fn BigInt::to_octets(Self, length? : Int) -> Bytes
 fn BigInt::to_string(Self) -> String
 fn BigInt::to_uint(Self) -> UInt

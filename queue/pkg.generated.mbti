@@ -11,8 +11,8 @@ import(
 // Errors
 
 // Types and methods
+#alias(T, deprecated)
 type Queue[A]
-fn[X : @quickcheck.Arbitrary] Queue::arbitrary(Int, @splitmix.RandomState) -> Self[X] // from trait `@quickcheck.Arbitrary`
 fn[A] Queue::clear(Self[A]) -> Unit
 fn[A] Queue::copy(Self[A]) -> Self[A]
 fn[A] Queue::each(Self[A], (A) -> Unit) -> Unit
@@ -32,7 +32,6 @@ fn[A] Queue::iterator(Self[A]) -> Iterator[A]
 fn[A] Queue::length(Self[A]) -> Int
 #as_free_fn
 fn[A] Queue::new() -> Self[A]
-fn[A : Show] Queue::output(Self[A], &Logger) -> Unit // from trait `Show`
 fn[A] Queue::peek(Self[A]) -> A?
 #deprecated
 fn[A] Queue::peek_exn(Self[A]) -> A
@@ -40,7 +39,6 @@ fn[A] Queue::pop(Self[A]) -> A?
 #deprecated
 fn[A] Queue::pop_exn(Self[A]) -> A
 fn[A] Queue::push(Self[A], A) -> Unit
-fn[A : Show] Queue::to_string(Self[A]) -> String // from trait `Show`
 fn[A] Queue::transfer(Self[A], Self[A]) -> Unit
 fn[A] Queue::unsafe_peek(Self[A]) -> A
 fn[A] Queue::unsafe_pop(Self[A]) -> A
@@ -48,7 +46,6 @@ impl[A : Show] Show for Queue[A]
 impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Queue[X]
 
 // Type aliases
-pub typealias Queue as T
 
 // Traits
 

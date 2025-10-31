@@ -15,6 +15,7 @@ fn[T : Show] same_object(T, T, loc~ : SourceLoc) -> Unit raise
 // Errors
 
 // Types and methods
+#alias(T)
 type Test
 fn Test::name(Self) -> String
 #as_free_fn
@@ -25,7 +26,6 @@ fn Test::write(Self, &Show) -> Unit
 fn Test::writeln(Self, &Show) -> Unit
 
 // Type aliases
-pub typealias Test as T
 
 // Traits
 

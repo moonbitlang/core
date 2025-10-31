@@ -12,8 +12,6 @@ fn track(String, CoverageCounter) -> Unit
 type CoverageCounter
 fn CoverageCounter::incr(Self, Int) -> Unit
 fn CoverageCounter::new(Int) -> Self
-fn CoverageCounter::output(Self, &Logger) -> Unit // from trait `Show`
-fn CoverageCounter::to_string(Self) -> String // from trait `Show`
 impl Show for CoverageCounter
 
 // Type aliases
