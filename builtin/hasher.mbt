@@ -462,6 +462,17 @@ pub impl Hash for String with hash_combine(self, hasher) {
 }
 
 ///|
+pub impl Hash for StringView with hash_combine(
+  self : StringView,
+  hasher : Hasher,
+) -> Unit {
+  let str = self.str()
+  for i in self.start()..<self.end() {
+    hasher.combine_uint(str.unsafe_charcode_at(i).reinterpret_as_uint())
+  }
+}
+
+///|
 /// Implements hash combination for integers by combining the integer value with
 /// a hasher. This implementation ensures that integers can be used as keys in
 /// hash-based collections like hash maps and hash sets.
@@ -580,5 +591,26 @@ pub impl[T : Hash, E : Hash] Hash for Result[T, E] with hash_combine(
   match self {
     Ok(x) => hasher..combine_int(0)..combine(x)
     Err(x) => hasher..combine_int(1)..combine(x)
+  }
+}
+
+///|
+pub impl Hash for BytesView with hash_combine(self : BytesView, hasher : Hasher) {
+  let mut start = self.start()
+  let data = self.bytes()
+  let mut rest = self.len()
+  while rest >= 4 {
+    let mut result : UInt = 0
+    for i in 0..=3 {
+      result = result | (data.unsafe_get(i + start).to_uint() << (8 * i))
+    }
+    hasher.combine_uint(result)
+    rest -= 4
+    start += 4
+  }
+  while rest >= 1 {
+    hasher.combine_byte(data.unsafe_get(start))
+    rest -= 1
+    start += 1
   }
 }
