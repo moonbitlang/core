@@ -459,7 +459,7 @@ pub fn[A, B] Iter::filter_map(self : Iter[A], f : (A) -> B?) -> Iter[B] {
 /// Transforms the elements of the iterator using a mapping function that returns an `Option`.
 /// The elements for which the function returns `None` are filtered out.
 ///
-#deprecated("Use `Iter::filter_map` instead")
+#deprecated("Use `Iter::filter_map` instead", skip_current_package=false)
 pub fn[A, B] Iter::map_option(self : Iter[A], f : (A) -> B?) -> Iter[B] {
   self.filter_map(f)
 }
@@ -720,7 +720,7 @@ pub fn[T] Iter::peek(self : Iter[T]) -> T? {
 /// # Returns
 ///
 /// Returns a new iterator with the element `a` prepended to the original iterator.
-#deprecated("Use `Iter::singleton(a) + self` instead")
+#deprecated("Use `Iter::singleton(a) + self` instead", skip_current_package=false)
 pub fn[T] Iter::prepend(self : Iter[T], a : T) -> Iter[T] {
   yield_ => if yield_(a) is IterContinue { self.run(yield_) } else { IterEnd }
 }
@@ -740,7 +740,7 @@ pub fn[T] Iter::prepend(self : Iter[T], a : T) -> Iter[T] {
 /// # Returns
 ///
 /// Returns a new iterator with the element `a` appended to the original iterator.
-#deprecated("Use `self + Iter::singleton(a)` instead")
+#deprecated("Use `self + Iter::singleton(a)` instead", skip_current_package=false)
 pub fn[T] Iter::append(self : Iter[T], a : T) -> Iter[T] {
   yield_ => if self.run(yield_) is IterContinue { yield_(a) } else { IterEnd }
 }

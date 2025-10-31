@@ -53,7 +53,7 @@ fn int_to_string_hex(
       digit_start + offset + 1,
       ALPHABET.unsafe_charcode_at(lo).to_uint16(),
     )
-    n = n.lsr(8)
+    n = n >> 8
   }
 
   // Handle remaining single hex digit
@@ -90,7 +90,7 @@ fn int_to_string_generic(
         digit_start + offset,
         ALPHABET.unsafe_charcode_at(digit).to_uint16(),
       )
-      n = n.lsr(shift)
+      n = n >> shift
     }
   } else {
     // General radix: use division
