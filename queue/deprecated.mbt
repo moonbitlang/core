@@ -13,14 +13,14 @@
 // limitations under the License.
 
 ///|
-#deprecated("Use `unsafe_peek` instead")
+#deprecated("Use `unsafe_peek` instead", skip_current_package=false)
 #coverage.skip
 pub fn[A] Queue::peek_exn(self : Queue[A]) -> A {
   self.unsafe_peek()
 }
 
 ///|
-#deprecated("Use `unsafe_pop` instead")
+#deprecated("Use `unsafe_pop` instead", skip_current_package=false)
 #coverage.skip
 pub fn[A] Queue::pop_exn(self : Queue[A]) -> A {
   self.unsafe_pop()

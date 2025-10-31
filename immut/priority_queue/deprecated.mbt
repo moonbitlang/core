@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-#deprecated("Use `unsafe_pop` instead")
+#deprecated("Use `unsafe_pop` instead", skip_current_package=false)
 #coverage.skip
 pub fn[A : Compare] PriorityQueue::pop_exn(
   self : PriorityQueue[A],

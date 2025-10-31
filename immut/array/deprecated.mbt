@@ -17,7 +17,7 @@
 /// Since it is an immutable data structure,
 /// it is rarely the case that you would need this function.
 /// 
-#deprecated("We don't copy immutable array")
+#deprecated("We don't copy immutable array", skip_current_package=false)
 #coverage.skip
 pub fn[A] T::copy(self : T[A]) -> T[A] {
   fn copy(t : Tree[A]) -> Tree[A] {
@@ -46,7 +46,7 @@ pub fn[A] T::copy(self : T[A]) -> T[A] {
 ///   let v = @array.from_array([1, 2, 3, 4, 5])
 ///   assert_eq(v.fold((a, b) => { a + b }, init=0), 15)
 /// ```
-#deprecated("Use `fold` instead")
+#deprecated("Use `fold` instead", skip_current_package=false)
 #coverage.skip
 pub fn[A] T::fold_left(
   self : T[A],
@@ -64,7 +64,7 @@ pub fn[A] T::fold_left(
 ///   let v = @array.from_array([1, 2, 3, 4, 5])
 ///   assert_eq(v.rev_fold((a, b) => { a + b }, init=0), 15)
 /// ```
-#deprecated("Use `rev_fold` instead")
+#deprecated("Use `rev_fold` instead", skip_current_package=false)
 #coverage.skip
 pub fn[A] T::fold_right(
   self : T[A],

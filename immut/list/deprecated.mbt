@@ -13,14 +13,14 @@
 // limitations under the License.
 
 ///|
-#deprecated("use `@list` instead")
+#deprecated("use `@list` instead", skip_current_package=false)
 pub(all) enum T[A] {
   Nil
   Cons(A, T[A])
 } derive(Eq)
 
 ///|
-#deprecated("use `@immut/list.from_json` instead")
+#deprecated("use `@immut/list.from_json` instead", skip_current_package=false)
 #coverage.skip
 pub fn[A : @json.FromJson] T::from_json(
   json : Json,
@@ -51,7 +51,7 @@ pub fn[A] T::init_(self : T[A]) -> T[A] {
 /// ```mbt
 ///   assert_eq(@list.of([1, 2, 3]) == @list.of([1, 2, 3]), true)
 /// ```
-#deprecated("use `==` instead")
+#deprecated("use `==` instead", skip_current_package=false)
 pub fn[A : Eq] T::equal(self : T[A], other : T[A]) -> Bool {
   loop (self, other) {
     (Nil, Nil) => true
@@ -61,28 +61,28 @@ pub fn[A : Eq] T::equal(self : T[A], other : T[A]) -> Bool {
 }
 
 ///|
-#deprecated("use `@immut/list.from_array` instead")
+#deprecated("use `@immut/list.from_array` instead", skip_current_package=false)
 #coverage.skip
 pub fn[A] T::from_array(arr : ArrayView[A]) -> T[A] {
   from_array(arr)
 }
 
 ///|
-#deprecated("use `@immut/list.default` instead")
+#deprecated("use `@immut/list.default` instead", skip_current_package=false)
 #coverage.skip
 pub fn[X] T::default() -> T[X] {
   Nil
 }
 
 ///|
-#deprecated("use `@immut/list.from_iter` instead")
+#deprecated("use `@immut/list.from_iter` instead", skip_current_package=false)
 #coverage.skip
 pub fn[A] T::from_iter(iter : Iter[A]) -> T[A] {
   from_iter(iter)
 }
 
 ///|
-#deprecated("use `@immut/list.of` instead")
+#deprecated("use `@immut/list.of` instead", skip_current_package=false)
 #coverage.skip
 pub fn[A] T::of(arr : ArrayView[A]) -> T[A] {
   of(arr)

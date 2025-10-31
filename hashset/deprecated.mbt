@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-#deprecated("Use `add` instead.")
+#deprecated("Use `add` instead.", skip_current_package=false)
 #coverage.skip
 pub fn[K : Hash + Eq] HashSet::insert(self : HashSet[K], key : K) -> Unit {
   self.add(key)

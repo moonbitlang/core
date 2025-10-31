@@ -26,7 +26,7 @@
 ///   assert_eq(bv[2], b'\x03')
 /// ```
 #builtin.valtype
-#deprecated("Use `BytesView` instead")
+#deprecated("Use `BytesView` instead", skip_current_package=false)
 pub type View = BytesView
 
 ///|

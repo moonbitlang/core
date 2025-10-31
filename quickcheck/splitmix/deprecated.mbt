@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-#deprecated("use `@splitmix.new` instead")
+#deprecated("use `@splitmix.new` instead", skip_current_package=false)
 pub fn RandomState::new(seed? : UInt64 = 37) -> RandomState {
   new(seed~)
 }

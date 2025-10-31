@@ -16,7 +16,7 @@
 /// It is just copying the tree structure, not the values.
 /// It requires a Clone trait on T, which we don't have yet.
 ///
-#deprecated("Use `copy` instead")
+#deprecated("Use `copy` instead", skip_current_package=false)
 #coverage.skip
 pub fn[V] SortedSet::deep_clone(self : SortedSet[V]) -> SortedSet[V] {
   self.copy()
@@ -25,7 +25,7 @@ pub fn[V] SortedSet::deep_clone(self : SortedSet[V]) -> SortedSet[V] {
 ///|
 /// Returns the difference of two sets.
 ///
-#deprecated("Use `difference` instead")
+#deprecated("Use `difference` instead", skip_current_package=false)
 #coverage.skip
 pub fn[V : Compare] SortedSet::diff(
   self : SortedSet[V],
@@ -38,7 +38,7 @@ pub fn[V : Compare] SortedSet::diff(
 
 ///|
 /// Returns the intersection of two sets.
-#deprecated("Use `intersection` instead")
+#deprecated("Use `intersection` instead", skip_current_package=false)
 #coverage.skip
 pub fn[V : Compare] SortedSet::intersect(
   self : SortedSet[V],
