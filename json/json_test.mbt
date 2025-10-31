@@ -711,4 +711,8 @@ test "transformer with array" {
   // exclude
   let newjson3 = json.transform(@json.Replacer::exclude(["a"]))
   @json.inspect(newjson3, content=[1, {}, [3, 4]])
+  let newjson4 : Json = [{ "a": [{ "b": [{ "c": [{ "d": 1 }] }] }] }]
+  @json.inspect(newjson4.transform(@json.Replacer::exclude(["d"])), content=[
+    { "a": [{ "b": [{ "c": [{}] }] }] },
+  ])
 }
