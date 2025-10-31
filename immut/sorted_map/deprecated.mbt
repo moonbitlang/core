@@ -14,7 +14,7 @@
 
 ///|
 /// Create an empty map.
-#deprecated("Use `new()` instead")
+#deprecated("Use `new()` instead", skip_current_package=false)
 #coverage.skip
 pub fn[K, V] SortedMap::empty() -> SortedMap[K, V] {
   Empty
@@ -23,7 +23,7 @@ pub fn[K, V] SortedMap::empty() -> SortedMap[K, V] {
 ///|
 /// Get the value associated with a key.
 /// O(log n).
-#deprecated("Use `get` instead")
+#deprecated("Use `get` instead", skip_current_package=false)
 #coverage.skip
 pub fn[K : Compare, V] SortedMap::lookup(self : SortedMap[K, V], key : K) -> V? {
   self.get(key)
@@ -31,23 +31,19 @@ pub fn[K : Compare, V] SortedMap::lookup(self : SortedMap[K, V], key : K) -> V? 
 
 ///|
 /// Ts over the values in the map.
-#deprecated("Use `map_with_key` instead. `map` will accept `(K, X) -> Y` in the future.")
+#deprecated("Use `map_with_key` instead. `map` will accept `(K, X) -> Y` in the future.", skip_current_package=false)
 #coverage.skip
 pub fn[K, X, Y] SortedMap::map(
   self : SortedMap[K, X],
   f : (X) -> Y,
 ) -> SortedMap[K, Y] {
-  match self {
-    Empty => Empty
-    Tree(k, value~, size~, l, r) =>
-      Tree(k, value=f(value), size~, l.map(f), r.map(f))
-  }
+  self.map_with_key((_, value) => f(value))
 }
 
 ///|
 /// Fold the values in the map.
 /// O(n).
-#deprecated("Use `foldl_with_key` instead. `fold` will accept `(A, K, V) -> A` in the future.")
+#deprecated("Use `foldl_with_key` instead. `fold` will accept `(A, K, V) -> A` in the future.", skip_current_package=false)
 pub fn[K, V, A] SortedMap::fold(
   self : SortedMap[K, V],
   init~ : A,
@@ -58,14 +54,14 @@ pub fn[K, V, A] SortedMap::fold(
 
 ///|
 /// Return all keys of the map in ascending order.
-#deprecated("Use `keys_as_iter` instead. `keys` will return `Iter[K]` instead of `Array[K]` in the future.")
+#deprecated("Use `keys_as_iter` instead. `keys` will return `Iter[K]` instead of `Array[K]` in the future.", skip_current_package=false)
 #coverage.skip
 pub fn[K, V] SortedMap::keys(self : SortedMap[K, V]) -> Array[K] {
   self.iter().map(p => p.0).collect()
 }
 
 ///|
-#deprecated("Use `values` instead")
+#deprecated("Use `values` instead", skip_current_package=false)
 #coverage.skip
 pub fn[K, V] SortedMap::elems(self : SortedMap[K, V]) -> Array[V] {
   self.values().collect()
@@ -73,7 +69,7 @@ pub fn[K, V] SortedMap::elems(self : SortedMap[K, V]) -> Array[V] {
 
 ///|
 /// Filter values that satisfy the predicate
-#deprecated("Use `filter_with_key` instead. `filter` will accept `(K, V) -> Bool` in the future.")
+#deprecated("Use `filter_with_key` instead. `filter` will accept `(K, V) -> Bool` in the future.", skip_current_package=false)
 #coverage.skip
 pub fn[K, V] SortedMap::filter(
   self : SortedMap[K, V],
