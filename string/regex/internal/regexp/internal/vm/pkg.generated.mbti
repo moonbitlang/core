@@ -15,7 +15,6 @@ pub(all) enum Instruction {
   Split(Int, Int)
   Assertion(Predicate)
 }
-fn Instruction::to_json(Self) -> Json // from trait `ToJson`
 impl ToJson for Instruction
 
 pub(all) enum Predicate {
@@ -26,9 +25,6 @@ pub(all) enum Predicate {
   WordBoundary
   NoWordBoundary
 }
-fn Predicate::output(Self, &Logger) -> Unit // from trait `Show`
-fn Predicate::to_json(Self) -> Json // from trait `ToJson`
-fn Predicate::to_string(Self) -> String // from trait `Show`
 impl Show for Predicate
 impl ToJson for Predicate
 

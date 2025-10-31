@@ -38,6 +38,7 @@ fn[A, S] unfold((S) -> (A, S)? raise?, init~ : S) -> T[A] raise?
 // Errors
 
 // Types and methods
+#deprecated
 pub(all) enum T[A] {
   Nil
   Cons(A, T[A])
@@ -48,8 +49,6 @@ fn[A] T::add(Self[A], A) -> Self[A]
 fn[A] T::all(Self[A], (A) -> Bool raise?) -> Bool raise?
 #deprecated
 fn[A] T::any(Self[A], (A) -> Bool raise?) -> Bool raise?
-fn[X : @quickcheck.Arbitrary] T::arbitrary(Int, @splitmix.RandomState) -> Self[X] // from trait `@quickcheck.Arbitrary`
-fn[A : Compare] T::compare(Self[A], Self[A]) -> Int // from trait `Compare`
 #deprecated
 fn[A] T::concat(Self[A], Self[A]) -> Self[A]
 #deprecated
@@ -98,8 +97,6 @@ fn[A] T::from_array(ArrayView[A]) -> Self[A]
 fn[A] T::from_iter(Iter[A]) -> Self[A]
 #deprecated
 fn[A : @json.FromJson] T::from_json(Json) -> Self[A] raise @json.JsonDecodeError
-fn[A : Hash] T::hash(Self[A]) -> Int // from trait `Hash`
-fn[A : Hash] T::hash_combine(Self[A], Hasher) -> Unit // from trait `Hash`
 #deprecated
 fn[A] T::head(Self[A]) -> A?
 #deprecated
@@ -141,15 +138,6 @@ fn[A] T::nth_exn(Self[A], Int) -> A
 #deprecated
 fn[A] T::of(ArrayView[A]) -> Self[A]
 #deprecated
-fn[A] T::op_add(Self[A], Self[A]) -> Self[A] // from trait `Add`
-#deprecated
-fn[A : Eq] T::op_equal(Self[A], Self[A]) -> Bool // from trait `Eq`
-fn[A : Compare] T::op_ge(Self[A], Self[A]) -> Bool // from trait `Compare`
-fn[A : Compare] T::op_gt(Self[A], Self[A]) -> Bool // from trait `Compare`
-fn[A : Compare] T::op_le(Self[A], Self[A]) -> Bool // from trait `Compare`
-fn[A : Compare] T::op_lt(Self[A], Self[A]) -> Bool // from trait `Compare`
-fn[A : Show] T::output(Self[A], &Logger) -> Unit // from trait `Show`
-#deprecated
 fn[A : Eq] T::remove(Self[A], A) -> Self[A]
 #deprecated
 fn[A] T::remove_at(Self[A], Int) -> Self[A]
@@ -179,7 +167,6 @@ fn[A] T::take_while(Self[A], (A) -> Bool) -> Self[A]
 fn[A] T::to_array(Self[A]) -> Array[A]
 #deprecated
 fn[A : ToJson] T::to_json(Self[A]) -> Json
-fn[A : Show] T::to_string(Self[A]) -> String // from trait `Show`
 #deprecated
 fn[A] T::unsafe_head(Self[A]) -> A
 #deprecated

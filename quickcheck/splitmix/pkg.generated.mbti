@@ -9,7 +9,6 @@ fn new(seed? : UInt64) -> RandomState
 // Types and methods
 type RandomState
 fn RandomState::clone(Self) -> Self
-fn RandomState::default() -> Self // from trait `Default`
 #deprecated
 fn RandomState::new(seed? : UInt64) -> Self
 fn RandomState::next(Self) -> Unit
@@ -21,9 +20,7 @@ fn RandomState::next_positive_int(Self) -> Int
 fn RandomState::next_two_uint(Self) -> (UInt, UInt)
 fn RandomState::next_uint(Self) -> UInt
 fn RandomState::next_uint64(Self) -> UInt64
-fn RandomState::output(Self, &Logger) -> Unit // from trait `Show`
 fn RandomState::split(Self) -> Self
-fn RandomState::to_string(Self) -> String // from trait `Show`
 impl Default for RandomState
 impl Show for RandomState
 

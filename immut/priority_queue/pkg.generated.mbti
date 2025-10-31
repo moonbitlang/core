@@ -11,10 +11,8 @@ import(
 // Errors
 
 // Types and methods
+#alias(T, deprecated)
 type PriorityQueue[A]
-fn[X : @quickcheck.Arbitrary + Compare] PriorityQueue::arbitrary(Int, @splitmix.RandomState) -> Self[X] // from trait `@quickcheck.Arbitrary`
-fn[A : Compare] PriorityQueue::compare(Self[A], Self[A]) -> Int // from trait `Compare`
-fn[A : Compare] PriorityQueue::equal(Self[A], Self[A]) -> Bool // from trait `Eq`
 #alias(of, deprecated)
 #as_free_fn(of, deprecated)
 #as_free_fn
@@ -23,29 +21,18 @@ fn[A : Compare] PriorityQueue::from_array(ArrayView[A]) -> Self[A]
 fn[A : Compare] PriorityQueue::from_iter(Iter[A]) -> Self[A]
 #as_free_fn
 fn[A : Compare] PriorityQueue::from_iterator(Iterator[A]) -> Self[A]
-fn[A : Hash + Compare] PriorityQueue::hash(Self[A]) -> Int // from trait `Hash`
-fn[A : Hash + Compare] PriorityQueue::hash_combine(Self[A], Hasher) -> Unit // from trait `Hash`
 fn[A] PriorityQueue::is_empty(Self[A]) -> Bool
 fn[A : Compare] PriorityQueue::iter(Self[A]) -> Iter[A]
 fn[A : Compare] PriorityQueue::iterator(Self[A]) -> Iterator[A]
 fn[A] PriorityQueue::length(Self[A]) -> Int
 #as_free_fn
 fn[A] PriorityQueue::new() -> Self[A]
-#deprecated
-fn[A : Compare] PriorityQueue::op_equal(Self[A], Self[A]) -> Bool // from trait `Eq`
-fn[A : Compare] PriorityQueue::op_ge(Self[A], Self[A]) -> Bool // from trait `Compare`
-fn[A : Compare] PriorityQueue::op_gt(Self[A], Self[A]) -> Bool // from trait `Compare`
-fn[A : Compare] PriorityQueue::op_le(Self[A], Self[A]) -> Bool // from trait `Compare`
-fn[A : Compare] PriorityQueue::op_lt(Self[A], Self[A]) -> Bool // from trait `Compare`
-fn[A : Show + Compare] PriorityQueue::output(Self[A], &Logger) -> Unit // from trait `Show`
 fn[A] PriorityQueue::peek(Self[A]) -> A?
 fn[A : Compare] PriorityQueue::pop(Self[A]) -> Self[A]?
 #deprecated
 fn[A : Compare] PriorityQueue::pop_exn(Self[A]) -> Self[A]
 fn[A : Compare] PriorityQueue::push(Self[A], A) -> Self[A]
 fn[A : Compare] PriorityQueue::to_array(Self[A]) -> Array[A]
-fn[A : ToJson + Compare] PriorityQueue::to_json(Self[A]) -> Json // from trait `ToJson`
-fn[A : Show + Compare] PriorityQueue::to_string(Self[A]) -> String // from trait `Show`
 fn[A : Compare] PriorityQueue::unsafe_pop(Self[A]) -> Self[A]
 impl[A : Compare] Compare for PriorityQueue[A]
 impl[A : Compare] Eq for PriorityQueue[A]
@@ -55,7 +42,6 @@ impl[A : ToJson + Compare] ToJson for PriorityQueue[A]
 impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for PriorityQueue[X]
 
 // Type aliases
-pub typealias PriorityQueue as T
 
 // Traits
 

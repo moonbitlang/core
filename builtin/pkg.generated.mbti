@@ -53,18 +53,7 @@ fn[T : Show] repr(T) -> String
 // Errors
 pub(all) suberror BenchError String
 
-pub suberror CreatingViewError {
-  IndexOutOfBounds
-  InvalidIndex
-}
-fn CreatingViewError::output(Self, &Logger) -> Unit // from trait `Show`
-fn CreatingViewError::to_string(Self) -> String // from trait `Show`
-impl Show for CreatingViewError
-
 pub(all) suberror Failure String
-fn Failure::output(Self, &Logger) -> Unit // from trait `Show`
-fn Failure::to_json(Self) -> Json // from trait `ToJson`
-fn Failure::to_string(Self) -> String // from trait `Show`
 impl Show for Failure
 impl ToJson for Failure
 
@@ -76,13 +65,10 @@ pub(all) suberror SnapshotError String
 pub(all) struct ArgsLoc(Array[SourceLoc?])
 #deprecated
 fn ArgsLoc::inner(Self) -> Array[SourceLoc?]
-fn ArgsLoc::output(Self, &Logger) -> Unit // from trait `Show`
 fn ArgsLoc::to_json(Self) -> String
-fn ArgsLoc::to_string(Self) -> String // from trait `Show`
 impl Show for ArgsLoc
 
 type Array[T]
-fn[T] Array::add(Self[T], Self[T]) -> Self[T] // from trait `Add`
 fn[T] Array::append(Self[T], Self[T]) -> Unit
 #alias("_[_]")
 fn[T] Array::at(Self[T], Int) -> T
@@ -93,15 +79,12 @@ fn[T] Array::capacity(Self[T]) -> Int
 fn[T] Array::chunk_by(Self[T], (T, T) -> Bool raise?) -> Self[ArrayView[T]] raise?
 fn[T] Array::chunks(Self[T], Int) -> Self[ArrayView[T]]
 fn[T] Array::clear(Self[T]) -> Unit
-fn[T : Compare] Array::compare(Self[T], Self[T]) -> Int // from trait `Compare`
 fn[T : Eq] Array::contains(Self[T], T) -> Bool
 fn[T : Eq] Array::dedup(Self[T]) -> Unit
-fn[T] Array::default() -> Self[T] // from trait `Default`
 fn[T] Array::drain(Self[T], Int, Int) -> Self[T]
 fn[T] Array::each(Self[T], (T) -> Unit raise?) -> Unit raise?
 fn[T] Array::eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?
 fn[T : Eq] Array::ends_with(Self[T], Self[T]) -> Bool
-fn[T : Eq] Array::equal(Self[T], Self[T]) -> Bool // from trait `Eq`
 fn[T] Array::extract_if(Self[T], (T) -> Bool) -> Self[T]
 fn[A] Array::fill(Self[A], A, start? : Int, end? : Int) -> Unit
 fn[T] Array::filter(Self[T], (T) -> Bool raise?) -> Self[T] raise?
@@ -112,8 +95,6 @@ fn[A, B] Array::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 fn[A, B] Array::foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
 fn[T] Array::from_fixed_array(FixedArray[T]) -> Self[T]
 fn[T] Array::get(Self[T], Int) -> T?
-fn[T : Hash] Array::hash(Self[T]) -> Int // from trait `Hash`
-fn[T : Hash] Array::hash_combine(Self[T], Hasher) -> Unit // from trait `Hash`
 fn[T] Array::insert(Self[T], Int, T) -> Unit
 fn[T] Array::is_empty(Self[T]) -> Bool
 fn[T : Compare] Array::is_sorted(Self[T]) -> Bool
@@ -127,15 +108,6 @@ fn[T] Array::map_inplace(Self[T], (T) -> T raise?) -> Unit raise?
 fn[T, U] Array::mapi(Self[T], (Int, T) -> U raise?) -> Self[U] raise?
 fn[T] Array::mapi_inplace(Self[T], (Int, T) -> T raise?) -> Unit raise?
 fn[T] Array::new(capacity? : Int) -> Self[T]
-#deprecated
-fn[T] Array::op_add(Self[T], Self[T]) -> Self[T] // from trait `Add`
-#deprecated
-fn[T : Eq] Array::op_equal(Self[T], Self[T]) -> Bool // from trait `Eq`
-fn[T : Compare] Array::op_ge(Self[T], Self[T]) -> Bool // from trait `Compare`
-fn[T : Compare] Array::op_gt(Self[T], Self[T]) -> Bool // from trait `Compare`
-fn[T : Compare] Array::op_le(Self[T], Self[T]) -> Bool // from trait `Compare`
-fn[T : Compare] Array::op_lt(Self[T], Self[T]) -> Bool // from trait `Compare`
-fn[X : Show] Array::output(Self[X], &Logger) -> Unit // from trait `Show`
 fn[T] Array::pop(Self[T]) -> T?
 fn[T] Array::push(Self[T], T) -> Unit
 fn[T] Array::remove(Self[T], Int) -> T
@@ -167,8 +139,6 @@ fn[T : Eq] Array::strip_suffix(Self[T], Self[T]) -> Self[T]?
 #alias("_[_:_]")
 fn[T] Array::sub(Self[T], start? : Int, end? : Int) -> ArrayView[T]
 fn[T] Array::swap(Self[T], Int, Int) -> Unit
-fn[X : ToJson] Array::to_json(Self[X]) -> Json // from trait `ToJson`
-fn[X : Show] Array::to_string(Self[X]) -> String // from trait `Show`
 fn[A] Array::truncate(Self[A], Int) -> Unit
 fn[A] Array::unsafe_blit(Self[A], Int, Self[A], Int, Int) -> Unit
 fn[A] Array::unsafe_blit_fixed(Self[A], Int, FixedArray[A], Int, Int) -> Unit
@@ -192,7 +162,6 @@ fn[T] ArrayView::at(Self[T], Int) -> T
 fn[T] ArrayView::length(Self[T]) -> Int
 #alias("_[_:_]")
 fn[T] ArrayView::sub(Self[T], start? : Int, end? : Int) -> Self[T]
-fn[X : ToJson] ArrayView::to_json(Self[X]) -> Json // from trait `ToJson`
 fn[T] ArrayView::unsafe_get(Self[T], Int) -> T
 impl[X : ToJson] ToJson for ArrayView[X]
 
@@ -214,7 +183,6 @@ fn Hasher::finalize(Self) -> Int
 fn Hasher::new(seed? : Int) -> Self
 
 type Iter[T]
-fn[T] Iter::add(Self[T], Self[T]) -> Self[T] // from trait `Add`
 fn[T] Iter::all(Self[T], (T) -> Bool) -> Bool
 fn[T] Iter::any(Self[T], (T) -> Bool) -> Bool
 #deprecated
@@ -252,9 +220,6 @@ fn[T : Compare] Iter::maximum(Self[T]) -> T?
 fn[T : Compare] Iter::minimum(Self[T]) -> T?
 fn[T] Iter::new(((T) -> IterResult) -> IterResult) -> Self[T]
 fn[T] Iter::nth(Self[T], Int) -> T?
-#deprecated
-fn[T] Iter::op_add(Self[T], Self[T]) -> Self[T] // from trait `Add`
-fn[T : Show] Iter::output(Self[T], &Logger) -> Unit // from trait `Show`
 fn[T] Iter::peek(Self[T]) -> T?
 #deprecated
 fn[T] Iter::prepend(Self[T], T) -> Self[T]
@@ -267,8 +232,6 @@ fn[T] Iter::take(Self[T], Int) -> Self[T]
 fn[T] Iter::take_while(Self[T], (T) -> Bool) -> Self[T]
 fn[T] Iter::tap(Self[T], (T) -> Unit) -> Self[T]
 fn[T] Iter::to_array(Self[T]) -> Array[T]
-fn[X : ToJson] Iter::to_json(Self[X]) -> Json // from trait `ToJson`
-fn[T : Show] Iter::to_string(Self[T]) -> String // from trait `Show`
 impl[T] Add for Iter[T]
 impl[T : Show] Show for Iter[T]
 impl[X : ToJson] ToJson for Iter[X]
@@ -279,23 +242,17 @@ fn[A, B] Iter2::each(Self[A, B], (A, B) -> Unit) -> Unit
 fn[A, B] Iter2::iter(Self[A, B]) -> Iter[(A, B)]
 fn[A, B] Iter2::iter2(Self[A, B]) -> Self[A, B]
 fn[A, B] Iter2::new(((A, B) -> IterResult) -> IterResult) -> Self[A, B]
-fn[A : Show, B : Show] Iter2::output(Self[A, B], &Logger) -> Unit // from trait `Show`
 fn[A, B] Iter2::run(Self[A, B], (A, B) -> IterResult) -> IterResult
 fn[A, B] Iter2::to_array(Self[A, B]) -> Array[(A, B)]
-fn[A : Show, B : Show] Iter2::to_string(Self[A, B]) -> String // from trait `Show`
 impl[A : Show, B : Show] Show for Iter2[A, B]
 
 pub(all) enum IterResult {
   IterEnd
   IterContinue
 }
-fn IterResult::equal(Self, Self) -> Bool // from trait `Eq`
-#deprecated
-fn IterResult::op_equal(Self, Self) -> Bool // from trait `Eq`
 impl Eq for IterResult
 
 type Iterator[X]
-fn[T] Iterator::add(Self[T], Self[T]) -> Self[T] // from trait `Add`
 fn[X] Iterator::all(Self[X], (X) -> Bool) -> Bool
 fn[X] Iterator::any(Self[X], (X) -> Bool) -> Bool
 fn[X] Iterator::concat(Self[X], Self[X]) -> Self[X]
@@ -331,9 +288,6 @@ fn[X] Iterator::new(() -> X?) -> Self[X]
 #alias(peek, deprecated)
 fn[X] Iterator::next(Self[X]) -> X?
 fn[X] Iterator::nth(Self[X], Int) -> X?
-#deprecated
-fn[T] Iterator::op_add(Self[T], Self[T]) -> Self[T] // from trait `Add`
-fn[X : Show] Iterator::output(Self[X], &Logger) -> Unit // from trait `Show`
 fn[X] Iterator::repeat(X) -> Self[X]
 #deprecated
 fn[X] Iterator::run(Self[X], (X) -> IterResult) -> IterResult
@@ -345,8 +299,6 @@ fn[X] Iterator::take_while(Self[X], (X) -> Bool) -> Self[X]
 fn[X] Iterator::tap(Self[X], (X) -> Unit) -> Self[X]
 #alias(collect)
 fn[X] Iterator::to_array(Self[X]) -> Array[X]
-fn[X : ToJson] Iterator::to_json(Self[X]) -> Json // from trait `ToJson`
-fn[X : Show] Iterator::to_string(Self[X]) -> String // from trait `Show`
 impl[T] Add for Iterator[T]
 impl[X : Show] Show for Iterator[X]
 impl[X : ToJson] ToJson for Iterator[X]
@@ -358,8 +310,6 @@ fn[X, Y] Iterator2::iterator(Self[X, Y]) -> Iterator[(X, Y)]
 fn[X, Y] Iterator2::iterator2(Self[X, Y]) -> Self[X, Y]
 fn[X, Y] Iterator2::new(() -> (X, Y)?) -> Self[X, Y]
 fn[X, Y] Iterator2::next(Self[X, Y]) -> (X, Y)?
-fn[X : Show, Y : Show] Iterator2::output(Self[X, Y], &Logger) -> Unit // from trait `Show`
-fn[X : Show, Y : Show] Iterator2::to_string(Self[X, Y]) -> String // from trait `Show`
 impl[X : Show, Y : Show] Show for Iterator2[X, Y]
 
 pub enum Json {
@@ -373,13 +323,9 @@ pub enum Json {
 }
 fn Json::array(Array[Self]) -> Self
 fn Json::boolean(Bool) -> Self
-fn Json::default() -> Self // from trait `Default`
-fn Json::equal(Self, Self) -> Bool // from trait `Eq`
 fn Json::null() -> Self
 fn Json::number(Double, repr? : String) -> Self
 fn Json::object(Map[String, Self]) -> Self
-#deprecated
-fn Json::op_equal(Self, Self) -> Bool // from trait `Eq`
 fn Json::string(String) -> Self
 impl Default for Json
 impl Eq for Json
@@ -392,10 +338,8 @@ fn[K, V] Map::clear(Self[K, V]) -> Unit
 fn[K : Hash + Eq, V] Map::contains(Self[K, V], K) -> Bool
 fn[K : Hash + Eq, V : Eq] Map::contains_kv(Self[K, V], K, V) -> Bool
 fn[K, V] Map::copy(Self[K, V]) -> Self[K, V]
-fn[K, V] Map::default() -> Self[K, V] // from trait `Default`
 fn[K, V] Map::each(Self[K, V], (K, V) -> Unit raise?) -> Unit raise?
 fn[K, V] Map::eachi(Self[K, V], (Int, K, V) -> Unit raise?) -> Unit raise?
-fn[K : Hash + Eq, V : Eq] Map::equal(Self[K, V], Self[K, V]) -> Bool // from trait `Eq`
 fn[K : Hash + Eq, V] Map::from_array(Array[(K, V)]) -> Self[K, V]
 fn[K : Hash + Eq, V] Map::from_iter(Iter[(K, V)]) -> Self[K, V]
 fn[K : Hash + Eq, V] Map::from_iterator(Iterator[(K, V)]) -> Self[K, V]
@@ -415,16 +359,11 @@ fn[K, V] Map::length(Self[K, V]) -> Int
 fn[K, V, V2] Map::map(Self[K, V], (K, V) -> V2) -> Self[K, V2]
 fn[K, V] Map::new(capacity? : Int) -> Self[K, V]
 fn[K : Hash + Eq, V] Map::of(FixedArray[(K, V)]) -> Self[K, V]
-#deprecated
-fn[K : Hash + Eq, V : Eq] Map::op_equal(Self[K, V], Self[K, V]) -> Bool // from trait `Eq`
-fn[K : Show, V : Show] Map::output(Self[K, V], &Logger) -> Unit // from trait `Show`
 fn[K : Hash + Eq, V] Map::remove(Self[K, V], K) -> Unit
 fn[K, V] Map::retain(Self[K, V], (K, V) -> Bool) -> Unit
 #alias("_[_]=_")
 fn[K : Hash + Eq, V] Map::set(Self[K, V], K, V) -> Unit
 fn[K, V] Map::to_array(Self[K, V]) -> Array[(K, V)]
-fn[K : Show, V : ToJson] Map::to_json(Self[K, V]) -> Json // from trait `ToJson`
-fn[K : Show, V : Show] Map::to_string(Self[K, V]) -> String // from trait `Show`
 fn[K : Hash + Eq, V] Map::update(Self[K, V], K, (V?) -> V?) -> Unit
 fn[K, V] Map::values(Self[K, V]) -> Iter[V]
 impl[K, V] Default for Map[K, V]
@@ -433,22 +372,17 @@ impl[K : Show, V : Show] Show for Map[K, V]
 impl[K : Show, V : ToJson] ToJson for Map[K, V]
 
 pub(all) type SourceLoc
-fn SourceLoc::output(Self, &Logger) -> Unit // from trait `Show`
 fn SourceLoc::to_string(Self) -> String
 impl Show for SourceLoc
 
 type StringBuilder
 fn StringBuilder::is_empty(Self) -> Bool
 fn StringBuilder::new(size_hint? : Int) -> Self
-fn StringBuilder::output(Self, &Logger) -> Unit // from trait `Show`
 fn StringBuilder::reset(Self) -> Unit
 fn StringBuilder::to_string(Self) -> String
-fn StringBuilder::write_char(Self, Char) -> Unit // from trait `Logger`
 fn StringBuilder::write_iter(Self, Iter[Char]) -> Unit
 fn[T : Show] StringBuilder::write_object(Self, T) -> Unit
-fn StringBuilder::write_string(Self, String) -> Unit // from trait `Logger`
 fn StringBuilder::write_stringview(Self, StringView) -> Unit
-fn StringBuilder::write_substring(Self, String, Int, Int) -> Unit // from trait `Logger`
 impl Logger for StringBuilder
 impl Show for StringBuilder
 
@@ -463,69 +397,15 @@ fn[T] UninitializedArray::set(Self[T], Int, T) -> Unit
 fn[T] UninitializedArray::sub(Self[T], start? : Int, end? : Int) -> ArrayView[T]
 fn[T] UninitializedArray::unsafe_blit(Self[T], Int, Self[T], Int, Int) -> Unit
 
-fn Unit::equal(Unit, Unit) -> Bool // from trait `Eq`
-#deprecated
-fn Unit::op_equal(Unit, Unit) -> Bool // from trait `Eq`
-fn Unit::output(Unit, &Logger) -> Unit // from trait `Show`
-fn Unit::to_json(Unit) -> Json // from trait `ToJson`
-fn Unit::to_string(Unit) -> String // from trait `Show`
 
-fn Bool::compare(Bool, Bool) -> Int // from trait `Compare`
-fn Bool::default() -> Bool // from trait `Default`
-fn Bool::equal(Bool, Bool) -> Bool // from trait `Eq`
 #deprecated
 fn Bool::op_compare(Bool, Bool) -> Int
-#deprecated
-fn Bool::op_equal(Bool, Bool) -> Bool // from trait `Eq`
-fn Bool::op_ge(Bool, Bool) -> Bool // from trait `Compare`
-fn Bool::op_gt(Bool, Bool) -> Bool // from trait `Compare`
-fn Bool::op_le(Bool, Bool) -> Bool // from trait `Compare`
-fn Bool::op_lt(Bool, Bool) -> Bool // from trait `Compare`
-fn Bool::output(Bool, &Logger) -> Unit // from trait `Show`
-fn Bool::to_json(Bool) -> Json // from trait `ToJson`
-fn Bool::to_string(Bool) -> String // from trait `Show`
 
-fn Byte::add(Byte, Byte) -> Byte // from trait `Add`
-fn Byte::compare(Byte, Byte) -> Int // from trait `Compare`
-fn Byte::default() -> Byte // from trait `Default`
-fn Byte::div(Byte, Byte) -> Byte // from trait `Div`
-fn Byte::equal(Byte, Byte) -> Bool // from trait `Eq`
-fn Byte::hash(Byte) -> Int // from trait `Hash`
-fn Byte::hash_combine(Byte, Hasher) -> Unit // from trait `Hash`
-fn Byte::land(Byte, Byte) -> Byte // from trait `BitAnd`
 fn Byte::lnot(Byte) -> Byte
-fn Byte::lor(Byte, Byte) -> Byte // from trait `BitOr`
 #deprecated
 fn Byte::lsl(Byte, Int) -> Byte
 #deprecated
 fn Byte::lsr(Byte, Int) -> Byte
-fn Byte::lxor(Byte, Byte) -> Byte // from trait `BitXOr`
-fn Byte::mod(Byte, Byte) -> Byte // from trait `Mod`
-fn Byte::mul(Byte, Byte) -> Byte // from trait `Mul`
-#deprecated
-fn Byte::op_add(Byte, Byte) -> Byte // from trait `Add`
-#deprecated
-fn Byte::op_div(Byte, Byte) -> Byte // from trait `Div`
-#deprecated
-fn Byte::op_equal(Byte, Byte) -> Bool // from trait `Eq`
-fn Byte::op_ge(Byte, Byte) -> Bool // from trait `Compare`
-fn Byte::op_gt(Byte, Byte) -> Bool // from trait `Compare`
-fn Byte::op_le(Byte, Byte) -> Bool // from trait `Compare`
-fn Byte::op_lt(Byte, Byte) -> Bool // from trait `Compare`
-#deprecated
-fn Byte::op_mod(Byte, Byte) -> Byte // from trait `Mod`
-#deprecated
-fn Byte::op_mul(Byte, Byte) -> Byte // from trait `Mul`
-#deprecated
-fn Byte::op_shl(Byte, Int) -> Byte // from trait `Shl`
-#deprecated
-fn Byte::op_shr(Byte, Int) -> Byte // from trait `Shr`
-#deprecated
-fn Byte::op_sub(Byte, Byte) -> Byte // from trait `Sub`
-fn Byte::output(Byte, &Logger) -> Unit // from trait `Show`
-fn Byte::shl(Byte, Int) -> Byte // from trait `Shl`
-fn Byte::shr(Byte, Int) -> Byte // from trait `Shr`
-fn Byte::sub(Byte, Byte) -> Byte // from trait `Sub`
 fn Byte::to_char(Byte) -> Char
 fn Byte::to_double(Byte) -> Double
 fn Byte::to_float(Byte) -> Float
@@ -533,37 +413,20 @@ fn Byte::to_hex(Byte) -> String
 fn Byte::to_int(Byte) -> Int
 fn Byte::to_int16(Byte) -> Int16
 fn Byte::to_int64(Byte) -> Int64
-fn Byte::to_json(Byte) -> Json // from trait `ToJson`
 fn Byte::to_string(Byte) -> String
 fn Byte::to_uint(Byte) -> UInt
 fn Byte::to_uint16(Byte) -> UInt16
 
-fn Char::compare(Char, Char) -> Int // from trait `Compare`
-fn Char::default() -> Char // from trait `Default`
-fn Char::equal(Char, Char) -> Bool // from trait `Eq`
 #deprecated
 fn Char::from_int(Int) -> Char
-#deprecated
-fn Char::op_equal(Char, Char) -> Bool // from trait `Eq`
-fn Char::op_ge(Char, Char) -> Bool // from trait `Compare`
-fn Char::op_gt(Char, Char) -> Bool // from trait `Compare`
-fn Char::op_le(Char, Char) -> Bool // from trait `Compare`
-fn Char::op_lt(Char, Char) -> Bool // from trait `Compare`
 fn Char::to_int(Char) -> Int
 fn Char::to_uint(Char) -> UInt
 
-fn Int::add(Int, Int) -> Int // from trait `Add`
 #deprecated
 fn Int::asr(Int, Int) -> Int
 fn Int::clamp(Int, min~ : Int, max~ : Int) -> Int
 fn Int::clz(Int) -> Int
-fn Int::compare(Int, Int) -> Int // from trait `Compare`
 fn Int::ctz(Int) -> Int
-fn Int::default() -> Int // from trait `Default`
-fn Int::div(Int, Int) -> Int // from trait `Div`
-fn Int::equal(Int, Int) -> Bool // from trait `Eq`
-fn Int::hash(Int) -> Int // from trait `Hash`
-fn Int::hash_combine(Int, Hasher) -> Unit // from trait `Hash`
 fn Int::is_leading_surrogate(Int) -> Bool
 fn Int::is_neg(Int) -> Bool
 fn Int::is_non_neg(Int) -> Bool
@@ -571,43 +434,14 @@ fn Int::is_non_pos(Int) -> Bool
 fn Int::is_pos(Int) -> Bool
 fn Int::is_surrogate(Int) -> Bool
 fn Int::is_trailing_surrogate(Int) -> Bool
-fn Int::land(Int, Int) -> Int // from trait `BitAnd`
 fn Int::lnot(Int) -> Int
-fn Int::lor(Int, Int) -> Int // from trait `BitOr`
 #deprecated
 fn Int::lsl(Int, Int) -> Int
 #deprecated
 fn Int::lsr(Int, Int) -> Int
-fn Int::lxor(Int, Int) -> Int // from trait `BitXOr`
 fn Int::max(Int, Int) -> Int
 fn Int::min(Int, Int) -> Int
-fn Int::mod(Int, Int) -> Int // from trait `Mod`
-fn Int::mul(Int, Int) -> Int // from trait `Mul`
-fn Int::neg(Int) -> Int // from trait `Neg`
 fn Int::next_power_of_two(Int) -> Int
-#deprecated
-fn Int::op_add(Int, Int) -> Int // from trait `Add`
-#deprecated
-fn Int::op_div(Int, Int) -> Int // from trait `Div`
-#deprecated
-fn Int::op_equal(Int, Int) -> Bool // from trait `Eq`
-fn Int::op_ge(Int, Int) -> Bool // from trait `Compare`
-fn Int::op_gt(Int, Int) -> Bool // from trait `Compare`
-fn Int::op_le(Int, Int) -> Bool // from trait `Compare`
-fn Int::op_lt(Int, Int) -> Bool // from trait `Compare`
-#deprecated
-fn Int::op_mod(Int, Int) -> Int // from trait `Mod`
-#deprecated
-fn Int::op_mul(Int, Int) -> Int // from trait `Mul`
-#deprecated
-fn Int::op_neg(Int) -> Int // from trait `Neg`
-#deprecated
-fn Int::op_shl(Int, Int) -> Int // from trait `Shl`
-#deprecated
-fn Int::op_shr(Int, Int) -> Int // from trait `Shr`
-#deprecated
-fn Int::op_sub(Int, Int) -> Int // from trait `Sub`
-fn Int::output(Int, &Logger) -> Unit // from trait `Show`
 fn Int::popcnt(Int) -> Int
 fn Int::reinterpret_as_float(Int) -> Float
 fn Int::reinterpret_as_uint(Int) -> UInt
@@ -615,14 +449,12 @@ fn Int::reinterpret_as_uint(Int) -> UInt
 fn Int::shl(Int, Int) -> Int
 #deprecated
 fn Int::shr(Int, Int) -> Int
-fn Int::sub(Int, Int) -> Int // from trait `Sub`
 fn Int::to_byte(Int) -> Byte
 fn Int::to_char(Int) -> Char?
 fn Int::to_double(Int) -> Double
 fn Int::to_float(Int) -> Float
 fn Int::to_int16(Int) -> Int16
 fn Int::to_int64(Int) -> Int64
-fn Int::to_json(Int) -> Json // from trait `ToJson`
 fn Int::to_string(Int, radix? : Int) -> String
 #deprecated
 fn Int::to_uint(Int) -> UInt
@@ -633,55 +465,20 @@ fn Int::until(Int, Int, step? : Int, inclusive? : Bool) -> Iter[Int]
 #deprecated
 fn Int::upto(Int, Int, inclusive? : Bool) -> Iter[Int]
 
-fn Int16::output(Int16, &Logger) -> Unit // from trait `Show`
 fn Int16::to_byte(Int16) -> Byte
 fn Int16::to_int(Int16) -> Int
 fn Int16::to_int64(Int16) -> Int64
 fn Int16::to_string(Int16, radix? : Int) -> String
 
-fn Int64::add(Int64, Int64) -> Int64 // from trait `Add`
 #deprecated
 fn Int64::asr(Int64, Int) -> Int64
 fn Int64::clz(Int64) -> Int
-fn Int64::compare(Int64, Int64) -> Int // from trait `Compare`
 fn Int64::ctz(Int64) -> Int
-fn Int64::default() -> Int64 // from trait `Default`
-fn Int64::div(Int64, Int64) -> Int64 // from trait `Div`
-fn Int64::equal(Int64, Int64) -> Bool // from trait `Eq`
-fn Int64::land(Int64, Int64) -> Int64 // from trait `BitAnd`
 fn Int64::lnot(Int64) -> Int64
-fn Int64::lor(Int64, Int64) -> Int64 // from trait `BitOr`
 #deprecated
 fn Int64::lsl(Int64, Int) -> Int64
 #deprecated
 fn Int64::lsr(Int64, Int) -> Int64
-fn Int64::lxor(Int64, Int64) -> Int64 // from trait `BitXOr`
-fn Int64::mod(Int64, Int64) -> Int64 // from trait `Mod`
-fn Int64::mul(Int64, Int64) -> Int64 // from trait `Mul`
-fn Int64::neg(Int64) -> Int64 // from trait `Neg`
-#deprecated
-fn Int64::op_add(Int64, Int64) -> Int64 // from trait `Add`
-#deprecated
-fn Int64::op_div(Int64, Int64) -> Int64 // from trait `Div`
-#deprecated
-fn Int64::op_equal(Int64, Int64) -> Bool // from trait `Eq`
-fn Int64::op_ge(Int64, Int64) -> Bool // from trait `Compare`
-fn Int64::op_gt(Int64, Int64) -> Bool // from trait `Compare`
-fn Int64::op_le(Int64, Int64) -> Bool // from trait `Compare`
-fn Int64::op_lt(Int64, Int64) -> Bool // from trait `Compare`
-#deprecated
-fn Int64::op_mod(Int64, Int64) -> Int64 // from trait `Mod`
-#deprecated
-fn Int64::op_mul(Int64, Int64) -> Int64 // from trait `Mul`
-#deprecated
-fn Int64::op_neg(Int64) -> Int64 // from trait `Neg`
-#deprecated
-fn Int64::op_shl(Int64, Int) -> Int64 // from trait `Shl`
-#deprecated
-fn Int64::op_shr(Int64, Int) -> Int64 // from trait `Shr`
-#deprecated
-fn Int64::op_sub(Int64, Int64) -> Int64 // from trait `Sub`
-fn Int64::output(Int64, &Logger) -> Unit // from trait `Show`
 fn Int64::popcnt(Int64) -> Int
 fn Int64::reinterpret_as_double(Int64) -> Double
 fn Int64::reinterpret_as_uint64(Int64) -> UInt64
@@ -689,13 +486,11 @@ fn Int64::reinterpret_as_uint64(Int64) -> UInt64
 fn Int64::shl(Int64, Int) -> Int64
 #deprecated
 fn Int64::shr(Int64, Int) -> Int64
-fn Int64::sub(Int64, Int64) -> Int64 // from trait `Sub`
 fn Int64::to_byte(Int64) -> Byte
 fn Int64::to_double(Int64) -> Double
 fn Int64::to_float(Int64) -> Float
 fn Int64::to_int(Int64) -> Int
 fn Int64::to_int16(Int64) -> Int16
-fn Int64::to_json(Int64) -> Json // from trait `ToJson`
 fn Int64::to_string(Int64, radix? : Int) -> String
 fn Int64::to_uint16(Int64) -> UInt16
 #deprecated
@@ -704,46 +499,14 @@ fn Int64::until(Int64, Int64, step? : Int64, inclusive? : Bool) -> Iter[Int64]
 #deprecated
 fn Int64::upto(Int64, Int64, inclusive? : Bool) -> Iter[Int64]
 
-fn UInt::add(UInt, UInt) -> UInt // from trait `Add`
 fn UInt::clz(UInt) -> Int
-fn UInt::compare(UInt, UInt) -> Int // from trait `Compare`
 fn UInt::ctz(UInt) -> Int
-fn UInt::div(UInt, UInt) -> UInt // from trait `Div`
-fn UInt::equal(UInt, UInt) -> Bool // from trait `Eq`
-fn UInt::hash(UInt) -> Int // from trait `Hash`
-fn UInt::hash_combine(UInt, Hasher) -> Unit // from trait `Hash`
-fn UInt::land(UInt, UInt) -> UInt // from trait `BitAnd`
 fn UInt::lnot(UInt) -> UInt
-fn UInt::lor(UInt, UInt) -> UInt // from trait `BitOr`
 #deprecated
 fn UInt::lsl(UInt, Int) -> UInt
 #deprecated
 fn UInt::lsr(UInt, Int) -> UInt
-fn UInt::lxor(UInt, UInt) -> UInt // from trait `BitXOr`
-fn UInt::mod(UInt, UInt) -> UInt // from trait `Mod`
-fn UInt::mul(UInt, UInt) -> UInt // from trait `Mul`
-#deprecated
-fn UInt::op_add(UInt, UInt) -> UInt // from trait `Add`
-#deprecated
-fn UInt::op_div(UInt, UInt) -> UInt // from trait `Div`
-#deprecated
-fn UInt::op_equal(UInt, UInt) -> Bool // from trait `Eq`
-fn UInt::op_ge(UInt, UInt) -> Bool // from trait `Compare`
-fn UInt::op_gt(UInt, UInt) -> Bool // from trait `Compare`
-fn UInt::op_le(UInt, UInt) -> Bool // from trait `Compare`
-fn UInt::op_lt(UInt, UInt) -> Bool // from trait `Compare`
-#deprecated
-fn UInt::op_mod(UInt, UInt) -> UInt // from trait `Mod`
-#deprecated
-fn UInt::op_mul(UInt, UInt) -> UInt // from trait `Mul`
 fn UInt::op_neq(UInt, UInt) -> Bool
-#deprecated
-fn UInt::op_shl(UInt, Int) -> UInt // from trait `Shl`
-#deprecated
-fn UInt::op_shr(UInt, Int) -> UInt // from trait `Shr`
-#deprecated
-fn UInt::op_sub(UInt, UInt) -> UInt // from trait `Sub`
-fn UInt::output(UInt, &Logger) -> Unit // from trait `Show`
 fn UInt::popcnt(UInt) -> Int
 fn UInt::reinterpret_as_float(UInt) -> Float
 fn UInt::reinterpret_as_int(UInt) -> Int
@@ -751,13 +514,11 @@ fn UInt::reinterpret_as_int(UInt) -> Int
 fn UInt::shl(UInt, Int) -> UInt
 #deprecated
 fn UInt::shr(UInt, Int) -> UInt
-fn UInt::sub(UInt, UInt) -> UInt // from trait `Sub`
 fn UInt::to_byte(UInt) -> Byte
 fn UInt::to_double(UInt) -> Double
 fn UInt::to_float(UInt) -> Float
 #deprecated
 fn UInt::to_int(UInt) -> Int
-fn UInt::to_json(UInt) -> Json // from trait `ToJson`
 fn UInt::to_string(UInt, radix? : Int) -> String
 fn UInt::to_uint16(UInt) -> UInt16
 fn UInt::to_uint64(UInt) -> UInt64
@@ -765,61 +526,19 @@ fn UInt::trunc_double(Double) -> UInt
 #deprecated
 fn UInt::upto(UInt, UInt, inclusive? : Bool) -> Iter[UInt]
 
-fn UInt16::land(UInt16, UInt16) -> UInt16 // from trait `BitAnd`
-fn UInt16::lor(UInt16, UInt16) -> UInt16 // from trait `BitOr`
-#deprecated
-fn UInt16::op_shl(UInt16, Int) -> UInt16 // from trait `Shl`
-#deprecated
-fn UInt16::op_shr(UInt16, Int) -> UInt16 // from trait `Shr`
-fn UInt16::output(UInt16, &Logger) -> Unit // from trait `Show`
-fn UInt16::shl(UInt16, Int) -> UInt16 // from trait `Shl`
-fn UInt16::shr(UInt16, Int) -> UInt16 // from trait `Shr`
 fn UInt16::to_byte(UInt16) -> Byte
 fn UInt16::to_int(UInt16) -> Int
 fn UInt16::to_int64(UInt16) -> Int64
 fn UInt16::to_string(UInt16, radix? : Int) -> String
 
-fn UInt64::add(UInt64, UInt64) -> UInt64 // from trait `Add`
 fn UInt64::clz(UInt64) -> Int
-fn UInt64::compare(UInt64, UInt64) -> Int // from trait `Compare`
 fn UInt64::ctz(UInt64) -> Int
-fn UInt64::default() -> UInt64 // from trait `Default`
-fn UInt64::div(UInt64, UInt64) -> UInt64 // from trait `Div`
-fn UInt64::equal(UInt64, UInt64) -> Bool // from trait `Eq`
 fn UInt64::extend_uint(UInt) -> UInt64
-fn UInt64::hash(UInt64) -> Int // from trait `Hash`
-fn UInt64::hash_combine(UInt64, Hasher) -> Unit // from trait `Hash`
-fn UInt64::land(UInt64, UInt64) -> UInt64 // from trait `BitAnd`
 fn UInt64::lnot(UInt64) -> UInt64
-fn UInt64::lor(UInt64, UInt64) -> UInt64 // from trait `BitOr`
 #deprecated
 fn UInt64::lsl(UInt64, Int) -> UInt64
 #deprecated
 fn UInt64::lsr(UInt64, Int) -> UInt64
-fn UInt64::lxor(UInt64, UInt64) -> UInt64 // from trait `BitXOr`
-fn UInt64::mod(UInt64, UInt64) -> UInt64 // from trait `Mod`
-fn UInt64::mul(UInt64, UInt64) -> UInt64 // from trait `Mul`
-#deprecated
-fn UInt64::op_add(UInt64, UInt64) -> UInt64 // from trait `Add`
-#deprecated
-fn UInt64::op_div(UInt64, UInt64) -> UInt64 // from trait `Div`
-#deprecated
-fn UInt64::op_equal(UInt64, UInt64) -> Bool // from trait `Eq`
-fn UInt64::op_ge(UInt64, UInt64) -> Bool // from trait `Compare`
-fn UInt64::op_gt(UInt64, UInt64) -> Bool // from trait `Compare`
-fn UInt64::op_le(UInt64, UInt64) -> Bool // from trait `Compare`
-fn UInt64::op_lt(UInt64, UInt64) -> Bool // from trait `Compare`
-#deprecated
-fn UInt64::op_mod(UInt64, UInt64) -> UInt64 // from trait `Mod`
-#deprecated
-fn UInt64::op_mul(UInt64, UInt64) -> UInt64 // from trait `Mul`
-#deprecated
-fn UInt64::op_shl(UInt64, Int) -> UInt64 // from trait `Shl`
-#deprecated
-fn UInt64::op_shr(UInt64, Int) -> UInt64 // from trait `Shr`
-#deprecated
-fn UInt64::op_sub(UInt64, UInt64) -> UInt64 // from trait `Sub`
-fn UInt64::output(UInt64, &Logger) -> Unit // from trait `Show`
 fn UInt64::popcnt(UInt64) -> Int
 fn UInt64::reinterpret_as_double(UInt64) -> Double
 fn UInt64::reinterpret_as_int64(UInt64) -> Int64
@@ -827,14 +546,12 @@ fn UInt64::reinterpret_as_int64(UInt64) -> Int64
 fn UInt64::shl(UInt64, Int) -> UInt64
 #deprecated
 fn UInt64::shr(UInt64, Int) -> UInt64
-fn UInt64::sub(UInt64, UInt64) -> UInt64 // from trait `Sub`
 fn UInt64::to_byte(UInt64) -> Byte
 fn UInt64::to_double(UInt64) -> Double
 fn UInt64::to_float(UInt64) -> Float
 fn UInt64::to_int(UInt64) -> Int
 #deprecated
 fn UInt64::to_int64(UInt64) -> Int64
-fn UInt64::to_json(UInt64) -> Json // from trait `ToJson`
 fn UInt64::to_string(UInt64, radix? : Int) -> String
 fn UInt64::to_uint(UInt64) -> UInt
 fn UInt64::to_uint16(UInt64) -> UInt16
@@ -842,65 +559,18 @@ fn UInt64::trunc_double(Double) -> UInt64
 #deprecated
 fn UInt64::upto(UInt64, UInt64, inclusive? : Bool) -> Iter[UInt64]
 
-fn Float::add(Float, Float) -> Float // from trait `Add`
-fn Float::compare(Float, Float) -> Int // from trait `Compare`
-fn Float::div(Float, Float) -> Float // from trait `Div`
-fn Float::equal(Float, Float) -> Bool // from trait `Eq`
-fn Float::mul(Float, Float) -> Float // from trait `Mul`
-fn Float::neg(Float) -> Float // from trait `Neg`
-#deprecated
-fn Float::op_add(Float, Float) -> Float // from trait `Add`
-#deprecated
-fn Float::op_div(Float, Float) -> Float // from trait `Div`
-#deprecated
-fn Float::op_equal(Float, Float) -> Bool // from trait `Eq`
-fn Float::op_ge(Float, Float) -> Bool // from trait `Compare`
-fn Float::op_gt(Float, Float) -> Bool // from trait `Compare`
-fn Float::op_le(Float, Float) -> Bool // from trait `Compare`
-fn Float::op_lt(Float, Float) -> Bool // from trait `Compare`
-#deprecated
-fn Float::op_mul(Float, Float) -> Float // from trait `Mul`
-#deprecated
-fn Float::op_neg(Float) -> Float // from trait `Neg`
 fn Float::op_neq(Float, Float) -> Bool
-#deprecated
-fn Float::op_sub(Float, Float) -> Float // from trait `Sub`
 fn Float::reinterpret_as_int(Float) -> Int
 fn Float::reinterpret_as_uint(Float) -> UInt
 fn Float::sqrt(Float) -> Float
-fn Float::sub(Float, Float) -> Float // from trait `Sub`
 fn Float::to_double(Float) -> Double
-fn Float::to_json(Float) -> Json // from trait `ToJson`
 fn Float::until(Float, Float, step? : Float, inclusive? : Bool) -> Iter[Float]
 #deprecated
 fn Float::upto(Float, Float, inclusive? : Bool) -> Iter[Float]
 
-fn Double::add(Double, Double) -> Double // from trait `Add`
-fn Double::compare(Double, Double) -> Int // from trait `Compare`
 fn Double::convert_uint(UInt) -> Double
 fn Double::convert_uint64(UInt64) -> Double
-fn Double::default() -> Double // from trait `Default`
-fn Double::div(Double, Double) -> Double // from trait `Div`
-fn Double::equal(Double, Double) -> Bool // from trait `Eq`
-fn Double::mul(Double, Double) -> Double // from trait `Mul`
-fn Double::neg(Double) -> Double // from trait `Neg`
-#deprecated
-fn Double::op_add(Double, Double) -> Double // from trait `Add`
-#deprecated
-fn Double::op_div(Double, Double) -> Double // from trait `Div`
-#deprecated
-fn Double::op_equal(Double, Double) -> Bool // from trait `Eq`
-fn Double::op_ge(Double, Double) -> Bool // from trait `Compare`
-fn Double::op_gt(Double, Double) -> Bool // from trait `Compare`
-fn Double::op_le(Double, Double) -> Bool // from trait `Compare`
-fn Double::op_lt(Double, Double) -> Bool // from trait `Compare`
-#deprecated
-fn Double::op_mul(Double, Double) -> Double // from trait `Mul`
-#deprecated
-fn Double::op_neg(Double) -> Double // from trait `Neg`
 fn Double::op_neq(Double, Double) -> Bool
-#deprecated
-fn Double::op_sub(Double, Double) -> Double // from trait `Sub`
 #deprecated
 fn Double::reinterpret_as_i64(Double) -> Int64
 fn Double::reinterpret_as_int64(Double) -> Int64
@@ -908,17 +578,14 @@ fn Double::reinterpret_as_int64(Double) -> Int64
 fn Double::reinterpret_as_u64(Double) -> UInt64
 fn Double::reinterpret_as_uint64(Double) -> UInt64
 fn Double::sqrt(Double) -> Double
-fn Double::sub(Double, Double) -> Double // from trait `Sub`
 fn Double::to_float(Double) -> Float
 fn Double::to_int(Double) -> Int
 fn Double::to_int64(Double) -> Int64
-fn Double::to_json(Double) -> Json // from trait `ToJson`
 fn Double::to_uint64(Double) -> UInt64
 fn Double::until(Double, Double, step? : Double, inclusive? : Bool) -> Iter[Double]
 #deprecated
 fn Double::upto(Double, Double, inclusive? : Bool) -> Iter[Double]
 
-fn String::add(String, String) -> String // from trait `Add`
 #alias("_[_]")
 #alias(charcode_at, deprecated)
 fn String::at(String, Int) -> Int
@@ -926,47 +593,21 @@ fn String::at(String, Int) -> Int
 fn String::char_length(String, start_offset? : Int, end_offset? : Int) -> Int
 #deprecated
 fn String::codepoint_at(String, Int) -> Char
-fn String::equal(String, String) -> Bool // from trait `Eq`
 fn String::escape(String) -> String
-fn String::hash(String) -> Int // from trait `Hash`
-fn String::hash_combine(String, Hasher) -> Unit // from trait `Hash`
 #alias(charcode_length, deprecated)
 fn String::length(String) -> Int
 fn String::make(Int, Char) -> String
 #deprecated
-fn String::op_add(String, String) -> String // from trait `Add`
-#deprecated
-fn String::op_equal(String, String) -> Bool // from trait `Eq`
-fn String::output(String, &Logger) -> Unit // from trait `Show`
-#alias("_[_:_]")
-fn String::sub(String, start? : Int, end? : Int) -> StringView raise CreatingViewError
-#deprecated
 fn String::substring(String, start? : Int, end? : Int) -> String
-fn String::to_json(String) -> Json // from trait `ToJson`
 fn String::to_string(String) -> String
 #deprecated
 fn String::unsafe_char_at(String, Int) -> Char
 fn String::unsafe_charcode_at(String, Int) -> Int
 fn String::unsafe_substring(String, start~ : Int, end~ : Int) -> String
 
-fn[X : Eq] Option::equal(X?, X?) -> Bool // from trait `Eq`
-fn[X : Hash] Option::hash(X?) -> Int // from trait `Hash`
-fn[X : Hash] Option::hash_combine(X?, Hasher) -> Unit // from trait `Hash`
-#deprecated
-fn[X : Eq] Option::op_equal(X?, X?) -> Bool // from trait `Eq`
-fn[X : Show] Option::output(X?, &Logger) -> Unit // from trait `Show`
-fn[T : ToJson] Option::to_json(T?) -> Json // from trait `ToJson`
 fn[X : Show] Option::to_string(X?) -> String
 fn[X] Option::unwrap(X?) -> X
 
-fn[T : Eq, E : Eq] Result::equal(Self[T, E], Self[T, E]) -> Bool // from trait `Eq`
-fn[T : Hash, E : Hash] Result::hash(Self[T, E]) -> Int // from trait `Hash`
-fn[T : Hash, E : Hash] Result::hash_combine(Self[T, E], Hasher) -> Unit // from trait `Hash`
-#deprecated
-fn[T : Eq, E : Eq] Result::op_equal(Self[T, E], Self[T, E]) -> Bool // from trait `Eq`
-fn[T : Show, E : Show] Result::output(Self[T, E], &Logger) -> Unit // from trait `Show`
-fn[Ok : ToJson, Err : ToJson] Result::to_json(Self[Ok, Err]) -> Json // from trait `ToJson`
-fn[T : Show, E : Show] Result::to_string(Self[T, E]) -> String // from trait `Show`
 
 #alias("_[_]")
 fn[T] FixedArray::at(Self[T], Int) -> T
@@ -975,7 +616,6 @@ fn[T] FixedArray::binary_search_by(Self[T], (T) -> Int raise?) -> Result[Int, In
 fn FixedArray::blit_from_bytes(Self[Byte], Int, Bytes, Int, Int) -> Unit
 fn FixedArray::blit_from_string(Self[Byte], Int, String, Int, Int) -> Unit
 fn[A] FixedArray::blit_to(Self[A], Self[A], len~ : Int, src_offset? : Int, dst_offset? : Int) -> Unit
-fn[X] FixedArray::default() -> Self[X] // from trait `Default`
 fn[T] FixedArray::fill(Self[T], T, start? : Int, end? : Int) -> Unit
 fn[T] FixedArray::get(Self[T], Int) -> T?
 fn[T] FixedArray::is_empty(Self[T]) -> Bool
@@ -983,7 +623,6 @@ fn[T] FixedArray::iter(Self[T]) -> Iter[T]
 fn[T] FixedArray::iter2(Self[T]) -> Iter2[Int, T]
 fn[T] FixedArray::length(Self[T]) -> Int
 fn[T] FixedArray::make(Int, T) -> Self[T]
-fn[X : Show] FixedArray::output(Self[X], &Logger) -> Unit // from trait `Show`
 #alias("_[_]=_")
 fn[T] FixedArray::set(Self[T], Int, T) -> Unit
 fn FixedArray::set_utf16be_char(Self[Byte], Int, Char) -> Int
@@ -991,8 +630,6 @@ fn FixedArray::set_utf16le_char(Self[Byte], Int, Char) -> Int
 fn FixedArray::set_utf8_char(Self[Byte], Int, Char) -> Int
 #alias("_[_:_]")
 fn[T] FixedArray::sub(Self[T], start? : Int, end? : Int) -> ArrayView[T]
-fn[X : ToJson] FixedArray::to_json(Self[X]) -> Json // from trait `ToJson`
-fn[X : Show] FixedArray::to_string(Self[X]) -> String // from trait `Show`
 fn[A] FixedArray::unsafe_blit(Self[A], Int, Self[A], Int, Int) -> Unit
 fn[T] FixedArray::unsafe_get(Self[T], Int) -> T
 fn FixedArray::unsafe_reinterpret_as_bytes(Self[Byte]) -> Bytes
@@ -1000,266 +637,45 @@ fn[T] FixedArray::unsafe_set(Self[T], Int, T) -> Unit
 
 #alias("_[_]")
 fn Bytes::at(Bytes, Int) -> Byte
-fn Bytes::compare(Bytes, Bytes) -> Int // from trait `Compare`
 #deprecated
 fn Bytes::copy(Bytes) -> Bytes
-fn Bytes::equal(Bytes, Bytes) -> Bool // from trait `Eq`
 fn Bytes::length(Bytes) -> Int
 fn Bytes::make(Int, Byte) -> Bytes
 fn Bytes::makei(Int, (Int) -> Byte raise?) -> Bytes raise?
 fn Bytes::new(Int) -> Bytes
 #deprecated
 fn Bytes::of_string(String) -> Bytes
-#deprecated
-fn Bytes::op_equal(Bytes, Bytes) -> Bool // from trait `Eq`
-fn Bytes::op_ge(Bytes, Bytes) -> Bool // from trait `Compare`
-fn Bytes::op_gt(Bytes, Bytes) -> Bool // from trait `Compare`
-fn Bytes::op_le(Bytes, Bytes) -> Bool // from trait `Compare`
-fn Bytes::op_lt(Bytes, Bytes) -> Bool // from trait `Compare`
-#alias("_[_:_]")
-fn Bytes::sub(Bytes, start? : Int, end? : Int) -> BytesView
 fn Bytes::to_unchecked_string(Bytes, offset? : Int, length? : Int) -> String
 fn Bytes::unsafe_get(Bytes, Int) -> Byte
 
-fn[X : Show] Ref::output(Self[X], &Logger) -> Unit // from trait `Show`
-fn[X : Show] Ref::to_string(Self[X]) -> String // from trait `Show`
 
-fn[T0 : Compare, T1 : Compare] Tuple(2)::compare((T0, T1), (T0, T1)) -> Int // from trait `Compare`
-fn[T0 : Eq, T1 : Eq] Tuple(2)::equal((T0, T1), (T0, T1)) -> Bool // from trait `Eq`
-fn[A : Hash, B : Hash] Tuple(2)::hash((A, B)) -> Int // from trait `Hash`
-fn[A : Hash, B : Hash] Tuple(2)::hash_combine((A, B), Hasher) -> Unit // from trait `Hash`
-#deprecated
-fn[T0 : Eq, T1 : Eq] Tuple(2)::op_equal((T0, T1), (T0, T1)) -> Bool // from trait `Eq`
-fn[T0 : Compare, T1 : Compare] Tuple(2)::op_ge((T0, T1), (T0, T1)) -> Bool // from trait `Compare`
-fn[T0 : Compare, T1 : Compare] Tuple(2)::op_gt((T0, T1), (T0, T1)) -> Bool // from trait `Compare`
-fn[T0 : Compare, T1 : Compare] Tuple(2)::op_le((T0, T1), (T0, T1)) -> Bool // from trait `Compare`
-fn[T0 : Compare, T1 : Compare] Tuple(2)::op_lt((T0, T1), (T0, T1)) -> Bool // from trait `Compare`
-fn[A : Show, B : Show] Tuple(2)::output((A, B), &Logger) -> Unit // from trait `Show`
-fn[A : ToJson, B : ToJson] Tuple(2)::to_json((A, B)) -> Json // from trait `ToJson`
-fn[A : Show, B : Show] Tuple(2)::to_string((A, B)) -> String // from trait `Show`
 
-fn[T0 : Compare, T1 : Compare, T2 : Compare] Tuple(3)::compare((T0, T1, T2), (T0, T1, T2)) -> Int // from trait `Compare`
-fn[T0 : Eq, T1 : Eq, T2 : Eq] Tuple(3)::equal((T0, T1, T2), (T0, T1, T2)) -> Bool // from trait `Eq`
-fn[A : Hash, B : Hash, C : Hash] Tuple(3)::hash((A, B, C)) -> Int // from trait `Hash`
-fn[A : Hash, B : Hash, C : Hash] Tuple(3)::hash_combine((A, B, C), Hasher) -> Unit // from trait `Hash`
-#deprecated
-fn[T0 : Eq, T1 : Eq, T2 : Eq] Tuple(3)::op_equal((T0, T1, T2), (T0, T1, T2)) -> Bool // from trait `Eq`
-fn[T0 : Compare, T1 : Compare, T2 : Compare] Tuple(3)::op_ge((T0, T1, T2), (T0, T1, T2)) -> Bool // from trait `Compare`
-fn[T0 : Compare, T1 : Compare, T2 : Compare] Tuple(3)::op_gt((T0, T1, T2), (T0, T1, T2)) -> Bool // from trait `Compare`
-fn[T0 : Compare, T1 : Compare, T2 : Compare] Tuple(3)::op_le((T0, T1, T2), (T0, T1, T2)) -> Bool // from trait `Compare`
-fn[T0 : Compare, T1 : Compare, T2 : Compare] Tuple(3)::op_lt((T0, T1, T2), (T0, T1, T2)) -> Bool // from trait `Compare`
-fn[A : Show, B : Show, C : Show] Tuple(3)::output((A, B, C), &Logger) -> Unit // from trait `Show`
-fn[A : ToJson, B : ToJson, C : ToJson] Tuple(3)::to_json((A, B, C)) -> Json // from trait `ToJson`
-fn[A : Show, B : Show, C : Show] Tuple(3)::to_string((A, B, C)) -> String // from trait `Show`
 
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare] Tuple(4)::compare((T0, T1, T2, T3), (T0, T1, T2, T3)) -> Int // from trait `Compare`
-fn[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq] Tuple(4)::equal((T0, T1, T2, T3), (T0, T1, T2, T3)) -> Bool // from trait `Eq`
-fn[A : Hash, B : Hash, C : Hash, D : Hash] Tuple(4)::hash((A, B, C, D)) -> Int // from trait `Hash`
-fn[A : Hash, B : Hash, C : Hash, D : Hash] Tuple(4)::hash_combine((A, B, C, D), Hasher) -> Unit // from trait `Hash`
-#deprecated
-fn[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq] Tuple(4)::op_equal((T0, T1, T2, T3), (T0, T1, T2, T3)) -> Bool // from trait `Eq`
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare] Tuple(4)::op_ge((T0, T1, T2, T3), (T0, T1, T2, T3)) -> Bool // from trait `Compare`
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare] Tuple(4)::op_gt((T0, T1, T2, T3), (T0, T1, T2, T3)) -> Bool // from trait `Compare`
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare] Tuple(4)::op_le((T0, T1, T2, T3), (T0, T1, T2, T3)) -> Bool // from trait `Compare`
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare] Tuple(4)::op_lt((T0, T1, T2, T3), (T0, T1, T2, T3)) -> Bool // from trait `Compare`
-fn[A : Show, B : Show, C : Show, D : Show] Tuple(4)::output((A, B, C, D), &Logger) -> Unit // from trait `Show`
-fn[A : ToJson, B : ToJson, C : ToJson, D : ToJson] Tuple(4)::to_json((A, B, C, D)) -> Json // from trait `ToJson`
-fn[A : Show, B : Show, C : Show, D : Show] Tuple(4)::to_string((A, B, C, D)) -> String // from trait `Show`
 
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare] Tuple(5)::compare((T0, T1, T2, T3, T4), (T0, T1, T2, T3, T4)) -> Int // from trait `Compare`
-fn[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq] Tuple(5)::equal((T0, T1, T2, T3, T4), (T0, T1, T2, T3, T4)) -> Bool // from trait `Eq`
-fn[A : Hash, B : Hash, C : Hash, D : Hash, E : Hash] Tuple(5)::hash((A, B, C, D, E)) -> Int // from trait `Hash`
-fn[A : Hash, B : Hash, C : Hash, D : Hash, E : Hash] Tuple(5)::hash_combine((A, B, C, D, E), Hasher) -> Unit // from trait `Hash`
-#deprecated
-fn[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq] Tuple(5)::op_equal((T0, T1, T2, T3, T4), (T0, T1, T2, T3, T4)) -> Bool // from trait `Eq`
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare] Tuple(5)::op_ge((T0, T1, T2, T3, T4), (T0, T1, T2, T3, T4)) -> Bool // from trait `Compare`
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare] Tuple(5)::op_gt((T0, T1, T2, T3, T4), (T0, T1, T2, T3, T4)) -> Bool // from trait `Compare`
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare] Tuple(5)::op_le((T0, T1, T2, T3, T4), (T0, T1, T2, T3, T4)) -> Bool // from trait `Compare`
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare] Tuple(5)::op_lt((T0, T1, T2, T3, T4), (T0, T1, T2, T3, T4)) -> Bool // from trait `Compare`
-fn[A : Show, B : Show, C : Show, D : Show, E : Show] Tuple(5)::output((A, B, C, D, E), &Logger) -> Unit // from trait `Show`
-fn[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson] Tuple(5)::to_json((A, B, C, D, E)) -> Json // from trait `ToJson`
-fn[A : Show, B : Show, C : Show, D : Show, E : Show] Tuple(5)::to_string((A, B, C, D, E)) -> String // from trait `Show`
 
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare] Tuple(6)::compare((T0, T1, T2, T3, T4, T5), (T0, T1, T2, T3, T4, T5)) -> Int // from trait `Compare`
-fn[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq] Tuple(6)::equal((T0, T1, T2, T3, T4, T5), (T0, T1, T2, T3, T4, T5)) -> Bool // from trait `Eq`
-fn[A : Hash, B : Hash, C : Hash, D : Hash, E : Hash, F : Hash] Tuple(6)::hash((A, B, C, D, E, F)) -> Int // from trait `Hash`
-fn[A : Hash, B : Hash, C : Hash, D : Hash, E : Hash, F : Hash] Tuple(6)::hash_combine((A, B, C, D, E, F), Hasher) -> Unit // from trait `Hash`
-#deprecated
-fn[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq] Tuple(6)::op_equal((T0, T1, T2, T3, T4, T5), (T0, T1, T2, T3, T4, T5)) -> Bool // from trait `Eq`
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare] Tuple(6)::op_ge((T0, T1, T2, T3, T4, T5), (T0, T1, T2, T3, T4, T5)) -> Bool // from trait `Compare`
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare] Tuple(6)::op_gt((T0, T1, T2, T3, T4, T5), (T0, T1, T2, T3, T4, T5)) -> Bool // from trait `Compare`
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare] Tuple(6)::op_le((T0, T1, T2, T3, T4, T5), (T0, T1, T2, T3, T4, T5)) -> Bool // from trait `Compare`
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare] Tuple(6)::op_lt((T0, T1, T2, T3, T4, T5), (T0, T1, T2, T3, T4, T5)) -> Bool // from trait `Compare`
-fn[A : Show, B : Show, C : Show, D : Show, E : Show, F : Show] Tuple(6)::output((A, B, C, D, E, F), &Logger) -> Unit // from trait `Show`
-fn[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson] Tuple(6)::to_json((A, B, C, D, E, F)) -> Json // from trait `ToJson`
-fn[A : Show, B : Show, C : Show, D : Show, E : Show, F : Show] Tuple(6)::to_string((A, B, C, D, E, F)) -> String // from trait `Show`
 
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare] Tuple(7)::compare((T0, T1, T2, T3, T4, T5, T6), (T0, T1, T2, T3, T4, T5, T6)) -> Int // from trait `Compare`
-fn[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq] Tuple(7)::equal((T0, T1, T2, T3, T4, T5, T6), (T0, T1, T2, T3, T4, T5, T6)) -> Bool // from trait `Eq`
-fn[A : Hash, B : Hash, C : Hash, D : Hash, E : Hash, F : Hash, G : Hash] Tuple(7)::hash((A, B, C, D, E, F, G)) -> Int // from trait `Hash`
-fn[A : Hash, B : Hash, C : Hash, D : Hash, E : Hash, F : Hash, G : Hash] Tuple(7)::hash_combine((A, B, C, D, E, F, G), Hasher) -> Unit // from trait `Hash`
-#deprecated
-fn[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq] Tuple(7)::op_equal((T0, T1, T2, T3, T4, T5, T6), (T0, T1, T2, T3, T4, T5, T6)) -> Bool // from trait `Eq`
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare] Tuple(7)::op_ge((T0, T1, T2, T3, T4, T5, T6), (T0, T1, T2, T3, T4, T5, T6)) -> Bool // from trait `Compare`
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare] Tuple(7)::op_gt((T0, T1, T2, T3, T4, T5, T6), (T0, T1, T2, T3, T4, T5, T6)) -> Bool // from trait `Compare`
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare] Tuple(7)::op_le((T0, T1, T2, T3, T4, T5, T6), (T0, T1, T2, T3, T4, T5, T6)) -> Bool // from trait `Compare`
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare] Tuple(7)::op_lt((T0, T1, T2, T3, T4, T5, T6), (T0, T1, T2, T3, T4, T5, T6)) -> Bool // from trait `Compare`
-fn[A : Show, B : Show, C : Show, D : Show, E : Show, F : Show, G : Show] Tuple(7)::output((A, B, C, D, E, F, G), &Logger) -> Unit // from trait `Show`
-fn[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson] Tuple(7)::to_json((A, B, C, D, E, F, G)) -> Json // from trait `ToJson`
-fn[A : Show, B : Show, C : Show, D : Show, E : Show, F : Show, G : Show] Tuple(7)::to_string((A, B, C, D, E, F, G)) -> String // from trait `Show`
 
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare] Tuple(8)::compare((T0, T1, T2, T3, T4, T5, T6, T7), (T0, T1, T2, T3, T4, T5, T6, T7)) -> Int // from trait `Compare`
-fn[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq] Tuple(8)::equal((T0, T1, T2, T3, T4, T5, T6, T7), (T0, T1, T2, T3, T4, T5, T6, T7)) -> Bool // from trait `Eq`
-#deprecated
-fn[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq] Tuple(8)::op_equal((T0, T1, T2, T3, T4, T5, T6, T7), (T0, T1, T2, T3, T4, T5, T6, T7)) -> Bool // from trait `Eq`
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare] Tuple(8)::op_ge((T0, T1, T2, T3, T4, T5, T6, T7), (T0, T1, T2, T3, T4, T5, T6, T7)) -> Bool // from trait `Compare`
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare] Tuple(8)::op_gt((T0, T1, T2, T3, T4, T5, T6, T7), (T0, T1, T2, T3, T4, T5, T6, T7)) -> Bool // from trait `Compare`
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare] Tuple(8)::op_le((T0, T1, T2, T3, T4, T5, T6, T7), (T0, T1, T2, T3, T4, T5, T6, T7)) -> Bool // from trait `Compare`
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare] Tuple(8)::op_lt((T0, T1, T2, T3, T4, T5, T6, T7), (T0, T1, T2, T3, T4, T5, T6, T7)) -> Bool // from trait `Compare`
-fn[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show] Tuple(8)::output((T0, T1, T2, T3, T4, T5, T6, T7), &Logger) -> Unit // from trait `Show`
-fn[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson] Tuple(8)::to_json((A, B, C, D, E, F, G, H)) -> Json // from trait `ToJson`
-fn[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show] Tuple(8)::to_string((T0, T1, T2, T3, T4, T5, T6, T7)) -> String // from trait `Show`
 
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare] Tuple(9)::compare((T0, T1, T2, T3, T4, T5, T6, T7, T8), (T0, T1, T2, T3, T4, T5, T6, T7, T8)) -> Int // from trait `Compare`
-fn[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq] Tuple(9)::equal((T0, T1, T2, T3, T4, T5, T6, T7, T8), (T0, T1, T2, T3, T4, T5, T6, T7, T8)) -> Bool // from trait `Eq`
-#deprecated
-fn[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq] Tuple(9)::op_equal((T0, T1, T2, T3, T4, T5, T6, T7, T8), (T0, T1, T2, T3, T4, T5, T6, T7, T8)) -> Bool // from trait `Eq`
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare] Tuple(9)::op_ge((T0, T1, T2, T3, T4, T5, T6, T7, T8), (T0, T1, T2, T3, T4, T5, T6, T7, T8)) -> Bool // from trait `Compare`
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare] Tuple(9)::op_gt((T0, T1, T2, T3, T4, T5, T6, T7, T8), (T0, T1, T2, T3, T4, T5, T6, T7, T8)) -> Bool // from trait `Compare`
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare] Tuple(9)::op_le((T0, T1, T2, T3, T4, T5, T6, T7, T8), (T0, T1, T2, T3, T4, T5, T6, T7, T8)) -> Bool // from trait `Compare`
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare] Tuple(9)::op_lt((T0, T1, T2, T3, T4, T5, T6, T7, T8), (T0, T1, T2, T3, T4, T5, T6, T7, T8)) -> Bool // from trait `Compare`
-fn[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show] Tuple(9)::output((T0, T1, T2, T3, T4, T5, T6, T7, T8), &Logger) -> Unit // from trait `Show`
-fn[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson] Tuple(9)::to_json((A, B, C, D, E, F, G, H, I)) -> Json // from trait `ToJson`
-fn[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show] Tuple(9)::to_string((T0, T1, T2, T3, T4, T5, T6, T7, T8)) -> String // from trait `Show`
 
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare] Tuple(10)::compare((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9)) -> Int // from trait `Compare`
-fn[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq] Tuple(10)::equal((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9)) -> Bool // from trait `Eq`
-#deprecated
-fn[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq] Tuple(10)::op_equal((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9)) -> Bool // from trait `Eq`
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare] Tuple(10)::op_ge((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9)) -> Bool // from trait `Compare`
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare] Tuple(10)::op_gt((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9)) -> Bool // from trait `Compare`
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare] Tuple(10)::op_le((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9)) -> Bool // from trait `Compare`
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare] Tuple(10)::op_lt((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9)) -> Bool // from trait `Compare`
-fn[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show] Tuple(10)::output((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9), &Logger) -> Unit // from trait `Show`
-fn[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson] Tuple(10)::to_json((A, B, C, D, E, F, G, H, I, J)) -> Json // from trait `ToJson`
-fn[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show] Tuple(10)::to_string((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9)) -> String // from trait `Show`
 
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare] Tuple(11)::compare((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)) -> Int // from trait `Compare`
-fn[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq] Tuple(11)::equal((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)) -> Bool // from trait `Eq`
-#deprecated
-fn[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq] Tuple(11)::op_equal((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)) -> Bool // from trait `Eq`
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare] Tuple(11)::op_ge((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)) -> Bool // from trait `Compare`
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare] Tuple(11)::op_gt((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)) -> Bool // from trait `Compare`
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare] Tuple(11)::op_le((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)) -> Bool // from trait `Compare`
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare] Tuple(11)::op_lt((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)) -> Bool // from trait `Compare`
-fn[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show] Tuple(11)::output((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10), &Logger) -> Unit // from trait `Show`
-fn[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson, K : ToJson] Tuple(11)::to_json((A, B, C, D, E, F, G, H, I, J, K)) -> Json // from trait `ToJson`
-fn[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show] Tuple(11)::to_string((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)) -> String // from trait `Show`
 
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare] Tuple(12)::compare((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11)) -> Int // from trait `Compare`
-fn[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq] Tuple(12)::equal((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11)) -> Bool // from trait `Eq`
-#deprecated
-fn[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq] Tuple(12)::op_equal((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11)) -> Bool // from trait `Eq`
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare] Tuple(12)::op_ge((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11)) -> Bool // from trait `Compare`
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare] Tuple(12)::op_gt((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11)) -> Bool // from trait `Compare`
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare] Tuple(12)::op_le((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11)) -> Bool // from trait `Compare`
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare] Tuple(12)::op_lt((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11)) -> Bool // from trait `Compare`
-fn[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show] Tuple(12)::output((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11), &Logger) -> Unit // from trait `Show`
-fn[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson, K : ToJson, L : ToJson] Tuple(12)::to_json((A, B, C, D, E, F, G, H, I, J, K, L)) -> Json // from trait `ToJson`
-fn[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show] Tuple(12)::to_string((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11)) -> String // from trait `Show`
 
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare] Tuple(13)::compare((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12)) -> Int // from trait `Compare`
-fn[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq] Tuple(13)::equal((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12)) -> Bool // from trait `Eq`
-#deprecated
-fn[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq] Tuple(13)::op_equal((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12)) -> Bool // from trait `Eq`
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare] Tuple(13)::op_ge((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12)) -> Bool // from trait `Compare`
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare] Tuple(13)::op_gt((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12)) -> Bool // from trait `Compare`
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare] Tuple(13)::op_le((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12)) -> Bool // from trait `Compare`
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare] Tuple(13)::op_lt((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12)) -> Bool // from trait `Compare`
-fn[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show, T12 : Show] Tuple(13)::output((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12), &Logger) -> Unit // from trait `Show`
-fn[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson, K : ToJson, L : ToJson, M : ToJson] Tuple(13)::to_json((A, B, C, D, E, F, G, H, I, J, K, L, M)) -> Json // from trait `ToJson`
-fn[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show, T12 : Show] Tuple(13)::to_string((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12)) -> String // from trait `Show`
 
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare] Tuple(14)::compare((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13)) -> Int // from trait `Compare`
-fn[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq, T13 : Eq] Tuple(14)::equal((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13)) -> Bool // from trait `Eq`
-#deprecated
-fn[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq, T13 : Eq] Tuple(14)::op_equal((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13)) -> Bool // from trait `Eq`
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare] Tuple(14)::op_ge((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13)) -> Bool // from trait `Compare`
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare] Tuple(14)::op_gt((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13)) -> Bool // from trait `Compare`
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare] Tuple(14)::op_le((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13)) -> Bool // from trait `Compare`
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare] Tuple(14)::op_lt((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13)) -> Bool // from trait `Compare`
-fn[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show, T12 : Show, T13 : Show] Tuple(14)::output((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13), &Logger) -> Unit // from trait `Show`
-fn[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson, K : ToJson, L : ToJson, M : ToJson, N : ToJson] Tuple(14)::to_json((A, B, C, D, E, F, G, H, I, J, K, L, M, N)) -> Json // from trait `ToJson`
-fn[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show, T12 : Show, T13 : Show] Tuple(14)::to_string((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13)) -> String // from trait `Show`
 
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare, T14 : Compare] Tuple(15)::compare((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14)) -> Int // from trait `Compare`
-fn[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq, T13 : Eq, T14 : Eq] Tuple(15)::equal((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14)) -> Bool // from trait `Eq`
-#deprecated
-fn[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq, T13 : Eq, T14 : Eq] Tuple(15)::op_equal((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14)) -> Bool // from trait `Eq`
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare, T14 : Compare] Tuple(15)::op_ge((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14)) -> Bool // from trait `Compare`
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare, T14 : Compare] Tuple(15)::op_gt((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14)) -> Bool // from trait `Compare`
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare, T14 : Compare] Tuple(15)::op_le((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14)) -> Bool // from trait `Compare`
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare, T14 : Compare] Tuple(15)::op_lt((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14)) -> Bool // from trait `Compare`
-fn[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show, T12 : Show, T13 : Show, T14 : Show] Tuple(15)::output((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14), &Logger) -> Unit // from trait `Show`
-fn[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson, K : ToJson, L : ToJson, M : ToJson, N : ToJson, O : ToJson] Tuple(15)::to_json((A, B, C, D, E, F, G, H, I, J, K, L, M, N, O)) -> Json // from trait `ToJson`
-fn[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show, T12 : Show, T13 : Show, T14 : Show] Tuple(15)::to_string((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14)) -> String // from trait `Show`
 
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare, T14 : Compare, T15 : Compare] Tuple(16)::compare((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15)) -> Int // from trait `Compare`
-fn[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq, T13 : Eq, T14 : Eq, T15 : Eq] Tuple(16)::equal((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15)) -> Bool // from trait `Eq`
-#deprecated
-fn[T0 : Eq, T1 : Eq, T2 : Eq, T3 : Eq, T4 : Eq, T5 : Eq, T6 : Eq, T7 : Eq, T8 : Eq, T9 : Eq, T10 : Eq, T11 : Eq, T12 : Eq, T13 : Eq, T14 : Eq, T15 : Eq] Tuple(16)::op_equal((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15)) -> Bool // from trait `Eq`
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare, T14 : Compare, T15 : Compare] Tuple(16)::op_ge((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15)) -> Bool // from trait `Compare`
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare, T14 : Compare, T15 : Compare] Tuple(16)::op_gt((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15)) -> Bool // from trait `Compare`
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare, T14 : Compare, T15 : Compare] Tuple(16)::op_le((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15)) -> Bool // from trait `Compare`
-fn[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare, T14 : Compare, T15 : Compare] Tuple(16)::op_lt((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15), (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15)) -> Bool // from trait `Compare`
-fn[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show, T12 : Show, T13 : Show, T14 : Show, T15 : Show] Tuple(16)::output((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15), &Logger) -> Unit // from trait `Show`
-fn[A : ToJson, B : ToJson, C : ToJson, D : ToJson, E : ToJson, F : ToJson, G : ToJson, H : ToJson, I : ToJson, J : ToJson, K : ToJson, L : ToJson, M : ToJson, N : ToJson, O : ToJson, P : ToJson] Tuple(16)::to_json((A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P)) -> Json // from trait `ToJson`
-fn[T0 : Show, T1 : Show, T2 : Show, T3 : Show, T4 : Show, T5 : Show, T6 : Show, T7 : Show, T8 : Show, T9 : Show, T10 : Show, T11 : Show, T12 : Show, T13 : Show, T14 : Show, T15 : Show] Tuple(16)::to_string((T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15)) -> String // from trait `Show`
 
-#alias("_[_]")
-fn BytesView::at(Self, Int) -> Byte
 fn BytesView::bytes(Self) -> Bytes
-fn BytesView::compare(Self, Self) -> Int // from trait `Compare`
-fn BytesView::equal(Self, Self) -> Bool // from trait `Eq`
-fn BytesView::get(Self, Int) -> Byte?
-fn BytesView::hash(Self) -> Int // from trait `Hash`
-fn BytesView::hash_combine(Self, Hasher) -> Unit // from trait `Hash`
 fn BytesView::len(Self) -> Int
 fn BytesView::length(Self) -> Int
 fn BytesView::make(Bytes, Int, Int) -> Self
-#deprecated
-fn BytesView::op_equal(Self, Self) -> Bool // from trait `Eq`
-fn BytesView::op_ge(Self, Self) -> Bool // from trait `Compare`
-fn BytesView::op_gt(Self, Self) -> Bool // from trait `Compare`
-fn BytesView::op_le(Self, Self) -> Bool // from trait `Compare`
-fn BytesView::op_lt(Self, Self) -> Bool // from trait `Compare`
 fn BytesView::start(Self) -> Int
-#alias("_[_:_]")
-fn BytesView::sub(Self, start? : Int, end? : Int) -> Self
-fn BytesView::to_uint_be(Self) -> UInt
-fn BytesView::to_uint_le(Self) -> UInt
 fn BytesView::unsafe_get(Self, Int) -> Byte
 
-#alias("_[_]")
-fn StringView::at(Self, Int) -> Int
-fn StringView::compare(Self, Self) -> Int // from trait `Compare`
 fn StringView::end(Self) -> Int
-fn StringView::equal(Self, Self) -> Bool // from trait `Eq`
-fn StringView::hash(Self) -> Int // from trait `Hash`
-fn StringView::hash_combine(Self, Hasher) -> Unit // from trait `Hash`
 fn StringView::length(Self) -> Int
 fn StringView::make_view(String, Int, Int) -> Self
-#deprecated
-fn StringView::op_equal(Self, Self) -> Bool // from trait `Eq`
-fn StringView::op_ge(Self, Self) -> Bool // from trait `Compare`
-fn StringView::op_gt(Self, Self) -> Bool // from trait `Compare`
-fn StringView::op_le(Self, Self) -> Bool // from trait `Compare`
-fn StringView::op_lt(Self, Self) -> Bool // from trait `Compare`
 fn StringView::start(Self) -> Int
 fn StringView::str(Self) -> String
-#alias("_[_:_]")
-fn StringView::sub(Self, start? : Int, end? : Int) -> Self raise CreatingViewError
-fn StringView::unsafe_charcode_at(Self, Int) -> Int
 
 // Type aliases
 
@@ -1339,8 +755,6 @@ impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : 
 impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare] Compare for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13)
 impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare, T14 : Compare] Compare for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14)
 impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare, T14 : Compare, T15 : Compare] Compare for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15)
-impl Compare for BytesView
-impl Compare for StringView
 
 pub(open) trait Default {
   default() -> Self

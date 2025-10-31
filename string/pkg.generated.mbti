@@ -1,19 +1,26 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "moonbitlang/core/string"
 
+import(
+  "moonbitlang/core/builtin"
+)
+
 // Values
 fn default() -> String
 
 // Errors
+pub suberror CreatingViewError {
+  IndexOutOfBounds
+  InvalidIndex
+}
+impl Show for CreatingViewError
 
 // Types and methods
 fn String::char_length_eq(String, Int, start_offset? : Int, end_offset? : Int) -> Bool
 fn String::char_length_ge(String, Int, start_offset? : Int, end_offset? : Int) -> Bool
-fn String::compare(String, String) -> Int // from trait `Compare`
 fn String::contains(String, StringView) -> Bool
 fn String::contains_any(String, chars~ : StringView) -> Bool
 fn String::contains_char(String, Char) -> Bool
-fn String::default() -> String // from trait `Default`
 fn String::find(String, StringView) -> Int?
 fn String::find_by(String, (Char) -> Bool) -> Int?
 fn[A] String::fold(String, init~ : A, (A, Char) -> A) -> A
@@ -37,10 +44,6 @@ fn String::iterator(String) -> Iterator[Char]
 fn String::iterator2(String) -> Iterator2[Int, Char]
 fn String::lexical_compare(String, String) -> Int
 fn String::offset_of_nth_char(String, Int, start_offset? : Int, end_offset? : Int) -> Int?
-fn String::op_ge(String, String) -> Bool // from trait `Compare`
-fn String::op_gt(String, String) -> Bool // from trait `Compare`
-fn String::op_le(String, String) -> Bool // from trait `Compare`
-fn String::op_lt(String, String) -> Bool // from trait `Compare`
 fn String::pad_end(String, Int, Char) -> String
 fn String::pad_start(String, Int, Char) -> String
 fn String::repeat(String, Int) -> String
@@ -54,24 +57,26 @@ fn String::rev_iterator(String) -> Iterator[Char]
 fn String::split(String, StringView) -> Iter[StringView]
 fn String::strip_prefix(String, StringView) -> StringView?
 fn String::strip_suffix(String, StringView) -> StringView?
+#alias("_[_:_]")
+fn String::sub(String, start? : Int, end? : Int) -> StringView raise CreatingViewError
 fn String::to_array(String) -> Array[Char]
 #deprecated
 fn String::to_bytes(String) -> Bytes
 fn String::to_lower(String) -> String
-fn String::to_string_view(String) -> StringView // from trait `ToStringView`
 fn String::to_upper(String) -> String
-#callsite(migration(char_set, allow_positional=true))
+#label_migration(char_set, allow_positional=true)
 fn String::trim(String, char_set~ : StringView) -> StringView
-#callsite(migration(char_set, allow_positional=true))
+#label_migration(char_set, allow_positional=true)
 fn String::trim_end(String, char_set~ : StringView) -> StringView
 fn String::trim_space(String) -> StringView
-#callsite(migration(char_set, allow_positional=true))
+#label_migration(char_set, allow_positional=true)
 fn String::trim_start(String, char_set~ : StringView) -> StringView
 fn String::view(String, start_offset? : Int, end_offset? : Int) -> StringView
 impl Compare for String
 impl Default for String
 
-fn StringView::add(Self, Self) -> Self // from trait `Add`
+#alias("_[_]")
+fn StringView::at(Self, Int) -> Int
 fn StringView::char_length(Self) -> Int
 fn StringView::char_length_eq(Self, Int) -> Bool
 fn StringView::char_length_ge(Self, Int) -> Bool
@@ -79,7 +84,6 @@ fn StringView::contains(Self, Self) -> Bool
 fn StringView::contains_any(Self, chars~ : Self) -> Bool
 fn StringView::contains_char(Self, Char) -> Bool
 fn StringView::data(Self) -> String
-fn StringView::default() -> Self // from trait `Default`
 fn StringView::find(Self, Self) -> Int?
 fn StringView::find_by(Self, (Char) -> Bool) -> Int?
 fn[A] StringView::fold(Self, init~ : A, (A, Char) -> A) -> A
@@ -101,9 +105,6 @@ fn StringView::iterator2(Self) -> Iterator2[Int, Char]
 fn StringView::lexical_compare(Self, Self) -> Int
 fn StringView::make(Int, Char) -> Self
 fn StringView::offset_of_nth_char(Self, Int) -> Int?
-#deprecated
-fn StringView::op_add(Self, Self) -> Self // from trait `Add`
-fn StringView::output(Self, &Logger) -> Unit // from trait `Show`
 fn StringView::pad_end(Self, Int, Char) -> String
 fn StringView::pad_start(Self, Int, Char) -> String
 fn StringView::repeat(Self, Int) -> Self
@@ -118,29 +119,30 @@ fn StringView::split(Self, Self) -> Iter[Self]
 fn StringView::start_offset(Self) -> Int
 fn StringView::strip_prefix(Self, Self) -> Self?
 fn StringView::strip_suffix(Self, Self) -> Self?
+#alias("_[_:_]")
+fn StringView::sub(Self, start? : Int, end? : Int) -> Self raise CreatingViewError
 fn StringView::to_array(Self) -> Array[Char]
 #deprecated
 fn StringView::to_bytes(Self) -> Bytes
-fn StringView::to_json(Self) -> Json // from trait `ToJson`
 fn StringView::to_lower(Self) -> Self
-fn StringView::to_string(Self) -> String // from trait `Show`
-fn StringView::to_string_view(Self) -> Self // from trait `ToStringView`
 fn StringView::to_upper(Self) -> Self
-#callsite(migration(char_set, allow_positional=true))
+#label_migration(char_set, allow_positional=true)
 fn StringView::trim(Self, char_set~ : Self) -> Self
-#callsite(migration(char_set, allow_positional=true))
+#label_migration(char_set, allow_positional=true)
 fn StringView::trim_end(Self, char_set~ : Self) -> Self
 fn StringView::trim_space(Self) -> Self
-#callsite(migration(char_set, allow_positional=true))
+#label_migration(char_set, allow_positional=true)
 fn StringView::trim_start(Self, char_set~ : Self) -> Self
+fn StringView::unsafe_charcode_at(Self, Int) -> Int
 fn StringView::view(Self, start_offset? : Int, end_offset? : Int) -> Self
 impl Add for StringView
+impl Compare for StringView
 impl Default for StringView
 impl Show for StringView
 impl ToJson for StringView
 
 // Type aliases
-pub typealias StringView as View
+pub using @builtin {type StringView as View}
 
 // Traits
 pub trait ToStringView {

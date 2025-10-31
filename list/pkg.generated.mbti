@@ -13,25 +13,22 @@ fn[X] default() -> List[X]
 // Errors
 
 // Types and methods
+#alias(T, deprecated)
 pub enum List[A] {
   Empty
   More(A, mut tail~ : List[A])
 }
 fn[A] List::all(Self[A], (A) -> Bool raise?) -> Bool raise?
 fn[A] List::any(Self[A], (A) -> Bool raise?) -> Bool raise?
-fn[X : @quickcheck.Arbitrary] List::arbitrary(Int, @splitmix.RandomState) -> Self[X] // from trait `@quickcheck.Arbitrary`
-fn[A : Compare] List::compare(Self[A], Self[A]) -> Int // from trait `Compare`
 fn[A] List::concat(Self[A], Self[A]) -> Self[A]
 #as_free_fn(construct, deprecated)
 #as_free_fn
 fn[A] List::cons(A, Self[A]) -> Self[A]
 fn[A : Eq] List::contains(Self[A], A) -> Bool
-fn[X] List::default() -> Self[X] // from trait `Default`
 fn[A] List::drop(Self[A], Int) -> Self[A]
 fn[A] List::drop_while(Self[A], (A) -> Bool raise?) -> Self[A] raise?
 fn[A] List::each(Self[A], (A) -> Unit raise?) -> Unit raise?
 fn[A] List::eachi(Self[A], (Int, A) -> Unit raise?) -> Unit raise?
-fn[A : Eq] List::equal(Self[A], Self[A]) -> Bool // from trait `Eq`
 fn[A] List::filter(Self[A], (A) -> Bool raise?) -> Self[A] raise?
 fn[A, B] List::filter_map(Self[A], (A) -> B? raise?) -> Self[B] raise?
 fn[A] List::find(Self[A], (A) -> Bool raise?) -> A? raise?
@@ -55,8 +52,6 @@ fn[A] List::from_iterator(Iterator[A]) -> Self[A]
 fn[A] List::from_iterator_rev(Iterator[A]) -> Self[A]
 #as_free_fn
 fn[A : @json.FromJson] List::from_json(Json) -> Self[A] raise @json.JsonDecodeError
-fn[A : Hash] List::hash(Self[A]) -> Int // from trait `Hash`
-fn[A : Hash] List::hash_combine(Self[A], Hasher) -> Unit // from trait `Hash`
 fn[A] List::head(Self[A]) -> A?
 fn[A] List::intercalate(Self[Self[A]], Self[A]) -> Self[A]
 fn[A] List::intersperse(Self[A], A) -> Self[A]
@@ -79,15 +74,6 @@ fn[A : Compare] List::minimum(Self[A]) -> A?
 #as_free_fn
 fn[A] List::new() -> Self[A]
 fn[A] List::nth(Self[A], Int) -> A?
-#deprecated
-fn[A] List::op_add(Self[A], Self[A]) -> Self[A] // from trait `Add`
-#deprecated
-fn[A : Eq] List::op_equal(Self[A], Self[A]) -> Bool // from trait `Eq`
-fn[A : Compare] List::op_ge(Self[A], Self[A]) -> Bool // from trait `Compare`
-fn[A : Compare] List::op_gt(Self[A], Self[A]) -> Bool // from trait `Compare`
-fn[A : Compare] List::op_le(Self[A], Self[A]) -> Bool // from trait `Compare`
-fn[A : Compare] List::op_lt(Self[A], Self[A]) -> Bool // from trait `Compare`
-fn[A : Show] List::output(Self[A], &Logger) -> Unit // from trait `Show`
 #alias(add)
 fn[A] List::prepend(Self[A], A) -> Self[A]
 fn[A : Eq] List::remove(Self[A], A) -> Self[A]
@@ -114,7 +100,6 @@ fn[A] List::take(Self[A], Int) -> Self[A]
 fn[A] List::take_while(Self[A], (A) -> Bool raise?) -> Self[A] raise?
 fn[A] List::to_array(Self[A]) -> Array[A]
 fn[A : ToJson] List::to_json(Self[A]) -> Json
-fn[A : Show] List::to_string(Self[A]) -> String // from trait `Show`
 #as_free_fn
 fn[A, S] List::unfold((S) -> (A, S)? raise?, init~ : S) -> Self[A] raise?
 fn[A] List::unsafe_head(Self[A]) -> A
@@ -137,7 +122,6 @@ impl[A : @json.FromJson] @json.FromJson for List[A]
 impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for List[X]
 
 // Type aliases
-pub typealias List as T
 
 // Traits
 

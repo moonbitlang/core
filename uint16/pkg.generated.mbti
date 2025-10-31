@@ -9,39 +9,11 @@ let min_value : UInt16
 // Errors
 
 // Types and methods
-fn UInt16::add(UInt16, UInt16) -> UInt16 // from trait `Add`
-fn UInt16::compare(UInt16, UInt16) -> Int // from trait `Compare`
-fn UInt16::default() -> UInt16 // from trait `Default`
-fn UInt16::div(UInt16, UInt16) -> UInt16 // from trait `Div`
-fn UInt16::equal(UInt16, UInt16) -> Bool // from trait `Eq`
-fn UInt16::hash(UInt16) -> Int // from trait `Hash`
-fn UInt16::hash_combine(UInt16, Hasher) -> Unit // from trait `Hash`
 fn UInt16::is_leading_surrogate(UInt16) -> Bool
 fn UInt16::is_surrogate(UInt16) -> Bool
 fn UInt16::is_trailing_surrogate(UInt16) -> Bool
-fn UInt16::lxor(UInt16, UInt16) -> UInt16 // from trait `BitXOr`
-fn UInt16::mod(UInt16, UInt16) -> UInt16 // from trait `Mod`
-fn UInt16::mul(UInt16, UInt16) -> UInt16 // from trait `Mul`
-#deprecated
-fn UInt16::op_add(UInt16, UInt16) -> UInt16 // from trait `Add`
-#deprecated
-fn UInt16::op_div(UInt16, UInt16) -> UInt16 // from trait `Div`
-#deprecated
-fn UInt16::op_equal(UInt16, UInt16) -> Bool // from trait `Eq`
-fn UInt16::op_ge(UInt16, UInt16) -> Bool // from trait `Compare`
-fn UInt16::op_gt(UInt16, UInt16) -> Bool // from trait `Compare`
-fn UInt16::op_le(UInt16, UInt16) -> Bool // from trait `Compare`
-fn UInt16::op_lt(UInt16, UInt16) -> Bool // from trait `Compare`
-#deprecated
-fn UInt16::op_mod(UInt16, UInt16) -> UInt16 // from trait `Mod`
-#deprecated
-fn UInt16::op_mul(UInt16, UInt16) -> UInt16 // from trait `Mul`
-#deprecated
-fn UInt16::op_sub(UInt16, UInt16) -> UInt16 // from trait `Sub`
 fn UInt16::reinterpret_as_int16(UInt16) -> Int16
-fn UInt16::sub(UInt16, UInt16) -> UInt16 // from trait `Sub`
 fn UInt16::to_char(UInt16) -> Char?
-fn UInt16::to_json(UInt16) -> Json // from trait `ToJson`
 fn UInt16::to_uint(UInt16) -> UInt
 fn UInt16::to_uint64(UInt16) -> UInt64
 fn UInt16::unsafe_to_char(UInt16) -> Char

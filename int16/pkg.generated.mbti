@@ -10,46 +10,7 @@ let min_value : Int16
 
 // Types and methods
 fn Int16::abs(Int16) -> Int16
-fn Int16::add(Int16, Int16) -> Int16 // from trait `Add`
-fn Int16::compare(Int16, Int16) -> Int // from trait `Compare`
-fn Int16::default() -> Int16 // from trait `Default`
-fn Int16::div(Int16, Int16) -> Int16 // from trait `Div`
-fn Int16::equal(Int16, Int16) -> Bool // from trait `Eq`
-fn Int16::hash(Int16) -> Int // from trait `Hash`
-fn Int16::hash_combine(Int16, Hasher) -> Unit // from trait `Hash`
-fn Int16::land(Int16, Int16) -> Int16 // from trait `BitAnd`
-fn Int16::lor(Int16, Int16) -> Int16 // from trait `BitOr`
-fn Int16::lxor(Int16, Int16) -> Int16 // from trait `BitXOr`
-fn Int16::mod(Int16, Int16) -> Int16 // from trait `Mod`
-fn Int16::mul(Int16, Int16) -> Int16 // from trait `Mul`
-fn Int16::neg(Int16) -> Int16 // from trait `Neg`
-#deprecated
-fn Int16::op_add(Int16, Int16) -> Int16 // from trait `Add`
-#deprecated
-fn Int16::op_div(Int16, Int16) -> Int16 // from trait `Div`
-#deprecated
-fn Int16::op_equal(Int16, Int16) -> Bool // from trait `Eq`
-fn Int16::op_ge(Int16, Int16) -> Bool // from trait `Compare`
-fn Int16::op_gt(Int16, Int16) -> Bool // from trait `Compare`
-fn Int16::op_le(Int16, Int16) -> Bool // from trait `Compare`
-fn Int16::op_lt(Int16, Int16) -> Bool // from trait `Compare`
-#deprecated
-fn Int16::op_mod(Int16, Int16) -> Int16 // from trait `Mod`
-#deprecated
-fn Int16::op_mul(Int16, Int16) -> Int16 // from trait `Mul`
-#deprecated
-fn Int16::op_neg(Int16) -> Int16 // from trait `Neg`
-#deprecated
-fn Int16::op_shl(Int16, Int) -> Int16 // from trait `Shl`
-#deprecated
-fn Int16::op_shr(Int16, Int) -> Int16 // from trait `Shr`
-#deprecated
-fn Int16::op_sub(Int16, Int16) -> Int16 // from trait `Sub`
 fn Int16::reinterpret_as_uint16(Int16) -> UInt16
-fn Int16::shl(Int16, Int) -> Int16 // from trait `Shl`
-fn Int16::shr(Int16, Int) -> Int16 // from trait `Shr`
-fn Int16::sub(Int16, Int16) -> Int16 // from trait `Sub`
-fn Int16::to_json(Int16) -> Json // from trait `ToJson`
 impl Add for Int16
 impl BitAnd for Int16
 impl BitOr for Int16

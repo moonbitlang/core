@@ -8,14 +8,11 @@ fn[A : Hash] of(A) -> Path
 
 // Types and methods
 pub(all) struct Path(UInt)
-fn Path::equal(Self, Self) -> Bool // from trait `Eq`
 fn Path::idx(Self) -> Int
 #deprecated
 fn Path::inner(Self) -> UInt
 fn Path::is_last(Self) -> Bool
 fn Path::next(Self) -> Self
-#deprecated
-fn Path::op_equal(Self, Self) -> Bool // from trait `Eq`
 fn Path::push(Self, Int) -> Self
 impl Eq for Path
 
