@@ -903,3 +903,95 @@ pub fn[K : Hash + Eq, V] Map::update(
     self.add_entry_to_tail(idx, entry)
   }
 }
+
+// Special handling for Views as accessors
+
+///|
+impl Hash for StringView with hash_combine(self : StringView, hasher : Hasher) -> Unit {
+  let str = self.str()
+  for i in self.start()..<self.end() {
+    hasher.combine_uint(str.unsafe_charcode_at(i).reinterpret_as_uint())
+  }
+}
+
+///|
+fn StringView::equal_to_string(self : Self, other : String) -> Bool {
+  let str = self.str()
+  let start = self.start()
+  let end = self.end()
+  let len = end - start
+  guard len == other.length() else { return false }
+  if physical_equal(str, other) && self.start() == 0 {
+    return true
+  }
+  for i in 0..<len {
+    guard str.unsafe_charcode_at(self.start() + i) ==
+      other.unsafe_charcode_at(i) else {
+      return false
+    }
+  }
+  true
+}
+
+///|
+impl Hash for BytesView with hash_combine(self : BytesView, hasher : Hasher) {
+  let self_len = self.len()
+  let start = self.start()
+  let data = self.bytes()
+  let mut rest = self.len()
+  while rest >= 4 {
+    let mut result : UInt = 0
+    for i in 0..=3 {
+      result = result | (data.unsafe_get(i + start).to_uint() << (8 * i))
+    }
+    hasher.combine_uint(result)
+    rest -= 4
+  }
+  while rest >= 1 {
+    hasher.combine_byte(data.unsafe_get(start + self_len - rest))
+    rest -= 1
+  }
+}
+
+///|
+fn BytesView::equal_to_bytes(self : Self, other : Bytes) -> Bool {
+  let self_len = self.len()
+  let start = self.start()
+  guard self_len == other.length() else { return false }
+  for i in 0..<self_len {
+    guard self.bytes().unsafe_get(i + start) == other.unsafe_get(i) else {
+      return false
+    }
+  }
+  true
+}
+
+///|
+pub fn[V] Map::get_from_bytes(map : Self[Bytes, V], key : BytesView) -> V? {
+  let hash = key.hash()
+  for i = 0, idx = hash & map.capacity_mask {
+    guard map.entries[idx] is Some(entry) else { break None }
+    if entry.hash == hash && key.equal_to_bytes(entry.key) {
+      break Some(entry.value)
+    }
+    if i > entry.psl {
+      break None
+    }
+    continue i + 1, (idx + 1) & map.capacity_mask
+  }
+}
+
+///|
+pub fn[V] Map::get_from_string(map : Self[String, V], key : StringView) -> V? {
+  let hash = key.hash()
+  for i = 0, idx = hash & map.capacity_mask {
+    guard map.entries[idx] is Some(entry) else { break None }
+    if entry.hash == hash && key.equal_to_string(entry.key) {
+      break Some(entry.value)
+    }
+    if i > entry.psl {
+      break None
+    }
+    continue i + 1, (idx + 1) & map.capacity_mask
+  }
+}
