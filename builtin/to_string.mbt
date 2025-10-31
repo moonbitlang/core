@@ -16,6 +16,67 @@
 const ALPHABET : String = "0123456789abcdefghijklmnopqrstuvwxyz"
 
 ///|
+/// Converts a 64-bit integer to its string representation in the specified radix (base).
+#cfg(not(target="js"))
+pub fn Int64::to_string(self : Int64, radix? : Int = 10) -> String {
+  // Validate radix
+  if radix < 2 || radix > 36 {
+    abort("radix must be between 2 and 36")
+  }
+
+  // Special case for zero
+  if self == 0L {
+    return "0"
+  }
+
+  // Handle negative numbers
+  let is_negative = self < 0L
+  let num : UInt64 = if is_negative {
+    // Negate and reinterpret as UInt64
+    // Works correctly for Int64::min_value due to two's complement
+    (-self).reinterpret_as_uint64()
+  } else {
+    self.reinterpret_as_uint64()
+  }
+
+  // Calculate length, allocate buffer, and write digits
+  let buffer = match radix {
+    10 => {
+      let digit_len = dec_count64(num)
+      let total_len = digit_len + (if is_negative { 1 } else { 0 })
+      let buffer : FixedArray[UInt16] = FixedArray::make(total_len, 0)
+      let digit_start = if is_negative { 1 } else { 0 }
+      int64_to_string_dec(buffer, num, digit_start, total_len)
+      buffer
+    }
+    16 => {
+      let digit_len = hex_count64(num)
+      let total_len = digit_len + (if is_negative { 1 } else { 0 })
+      let buffer : FixedArray[UInt16] = FixedArray::make(total_len, 0)
+      let digit_start = if is_negative { 1 } else { 0 }
+      int64_to_string_hex(buffer, num, digit_start, total_len)
+      buffer
+    }
+    _ => {
+      let digit_len = radix_count64(num, radix)
+      let total_len = digit_len + (if is_negative { 1 } else { 0 })
+      let buffer : FixedArray[UInt16] = FixedArray::make(total_len, 0)
+      let digit_start = if is_negative { 1 } else { 0 }
+      int64_to_string_generic(buffer, num, digit_start, total_len, radix)
+      buffer
+    }
+  }
+
+  // Write minus sign if negative
+  if is_negative {
+    buffer.unsafe_set(0, 0x002D)
+  }
+  unsafe_fixedarray_to_string(buffer)
+}
+
+///|
+/// Converts a 64-bit integer to its string representation in the specified radix (base).
+#cfg(target="js")
 pub fn Int64::to_string(self : Int64, radix? : Int = 10) -> String {
   let buf = StringBuilder::new(size_hint=Int64::output_size_hint(radix~))
   self.output(buf, radix~)
@@ -216,6 +277,204 @@ fn radix_count32(value : UInt, radix : Int) -> Int {
 }
 
 ///|
+/// Calculates the number of decimal digits in a u64 value
+#cfg(not(target="js"))
+fn dec_count64(value : UInt64) -> Int {
+  if value < 100000UL {
+    if value < 100UL {
+      1 + (if value >= 10UL { 1 } else { 0 })
+    } else {
+      3 +
+      (if value >= 10000UL { 1 } else { 0 }) +
+      (if value >= 1000UL { 1 } else { 0 })
+    }
+  } else if value < 10000000UL {
+    6 + (if value >= 1000000UL { 1 } else { 0 })
+  } else if value < 1000000000UL {
+    8 + (if value >= 100000000UL { 1 } else { 0 })
+  } else if value < 100000000000UL {
+    10 + (if value >= 10000000000UL { 1 } else { 0 })
+  } else if value < 10000000000000UL {
+    12 + (if value >= 1000000000000UL { 1 } else { 0 })
+  } else if value < 1000000000000000UL {
+    14 + (if value >= 100000000000000UL { 1 } else { 0 })
+  } else if value < 100000000000000000UL {
+    16 + (if value >= 10000000000000000UL { 1 } else { 0 })
+  } else {
+    18 +
+    (if value >= 10000000000000000000UL { 1 } else { 0 }) +
+    (if value >= 1000000000000000000UL { 1 } else { 0 })
+  }
+}
+
+///|
+/// Calculates the number of hex digits needed for a u64 value
+#cfg(not(target="js"))
+fn hex_count64(value : UInt64) -> Int {
+  if value == 0UL {
+    1
+  } else {
+    let leading_zeros = value.clz()
+    (63 - leading_zeros) / 4 + 1
+  }
+}
+
+///|
+/// Calculates the number of digits needed for a u64 value in any radix
+#cfg(not(target="js"))
+fn radix_count64(value : UInt64, radix : Int) -> Int {
+  if value == 0UL {
+    return 1
+  }
+  let mut num = value
+  let base = radix.to_uint64()
+  let mut count = 0
+  while num > 0UL {
+    count = count + 1
+    num = num / base
+  }
+  count
+}
+
+///|
+/// Converts an unsigned 64-bit integer to hexadecimal
+#cfg(not(target="js"))
+fn int64_to_string_hex(
+  buffer : FixedArray[UInt16],
+  num : UInt64,
+  digit_start : Int,
+  total_len : Int,
+) -> Unit {
+  let mut offset = total_len - digit_start
+  let mut n = num
+
+  // Process 2 hex digits (1 byte) at a time
+  while offset >= 2 {
+    offset = offset - 2
+    let byte_val = n.land(0xFFUL).to_int()
+    let hi = byte_val / 16
+    let lo = byte_val % 16
+    buffer.unsafe_set(
+      digit_start + offset,
+      ALPHABET.unsafe_charcode_at(hi).to_uint16(),
+    )
+    buffer.unsafe_set(
+      digit_start + offset + 1,
+      ALPHABET.unsafe_charcode_at(lo).to_uint16(),
+    )
+    n = n.lsr(8)
+  }
+
+  // Handle remaining single hex digit
+  if offset == 1 {
+    let nibble = n.land(0xFUL).to_int()
+    buffer.unsafe_set(
+      digit_start,
+      ALPHABET.unsafe_charcode_at(nibble).to_uint16(),
+    )
+  }
+}
+
+///|
+/// Generic radix conversion for any base 2-36 (64-bit)
+#cfg(not(target="js"))
+fn int64_to_string_generic(
+  buffer : FixedArray[UInt16],
+  num : UInt64,
+  digit_start : Int,
+  total_len : Int,
+  radix : Int,
+) -> Unit {
+  let mut offset = total_len - digit_start
+  let mut n = num
+  let base = radix.to_uint64()
+  if (radix & (radix - 1)) == 0 {
+    // Power-of-two radix: use bit shifts
+    let shift = radix.ctz()
+    let mask = base - 1UL
+    while n > 0UL {
+      offset = offset - 1
+      let digit = n.land(mask).to_int()
+      buffer.unsafe_set(
+        digit_start + offset,
+        ALPHABET.unsafe_charcode_at(digit).to_uint16(),
+      )
+      n = n.lsr(shift)
+    }
+  } else {
+    // General radix: use division
+    while n > 0UL {
+      offset = offset - 1
+      let q = n / base
+      let digit = (n - q * base).to_int()
+      buffer.unsafe_set(
+        digit_start + offset,
+        ALPHABET.unsafe_charcode_at(digit).to_uint16(),
+      )
+      n = q
+    }
+  }
+}
+
+///|
+/// Converts an unsigned 64-bit integer to decimal string
+#cfg(not(target="js"))
+fn int64_to_string_dec(
+  buffer : FixedArray[UInt16],
+  num : UInt64,
+  digit_start : Int,
+  total_len : Int,
+) -> Unit {
+  let mut num = num
+  let mut offset = total_len - digit_start
+
+  // Process digits in groups of 4 (chunks of 10000)
+  while num >= 10000UL {
+    let t = num / 10000UL
+    let r = (num % 10000UL).to_int()
+    num = t
+    let d1 = r / 100
+    let d2 = r % 100
+    offset = offset - 4
+    let d1_hi = (0x30 + d1 / 10).to_uint16()
+    let d1_lo = (0x30 + d1 % 10).to_uint16()
+    let d2_hi = (0x30 + d2 / 10).to_uint16()
+    let d2_lo = (0x30 + d2 % 10).to_uint16()
+    buffer.unsafe_set(digit_start + offset, d1_hi)
+    buffer.unsafe_set(digit_start + offset + 1, d1_lo)
+    buffer.unsafe_set(digit_start + offset + 2, d2_hi)
+    buffer.unsafe_set(digit_start + offset + 3, d2_lo)
+  }
+
+  // Handle remaining digits (< 10000)
+  let mut remaining = num.to_int()
+
+  // Process pairs of digits
+  while remaining >= 100 {
+    let t = remaining / 100
+    let d = remaining % 100
+    remaining = t
+    offset = offset - 2
+    let d_hi = (0x30 + d / 10).to_uint16()
+    let d_lo = (0x30 + d % 10).to_uint16()
+    buffer.unsafe_set(digit_start + offset, d_hi)
+    buffer.unsafe_set(digit_start + offset + 1, d_lo)
+  }
+
+  // Handle final 1 or 2 digits
+  if remaining >= 10 {
+    offset = offset - 2
+    let d_hi = (0x30 + remaining / 10).to_uint16()
+    let d_lo = (0x30 + remaining % 10).to_uint16()
+    buffer.unsafe_set(digit_start + offset, d_hi)
+    buffer.unsafe_set(digit_start + offset + 1, d_lo)
+  } else {
+    offset = offset - 1
+    buffer.unsafe_set(digit_start + offset, (0x30 + remaining).to_uint16())
+  }
+}
+
+///|
 /// Converts an integer to its string representation in the specified radix (base).
 /// Example:
 /// ```
@@ -314,11 +573,90 @@ pub impl Show for Int with to_string(self) {
 }
 
 ///|
-pub fn UInt::to_string(self : UInt, radix? : Int = 10) -> String {
-  let buf = StringBuilder::new(size_hint=UInt::output_size_hint(radix~))
-  self.output(buf, radix~)
-  buf.to_string()
+/// Converts an unsigned integer to hexadecimal
+#cfg(not(target="js"))
+fn uint_to_string_hex(
+  buffer : FixedArray[UInt16],
+  num : UInt,
+  offset : Int,
+) -> Unit {
+  int_to_string_hex(buffer, num, offset, buffer.length())
 }
+
+///|
+/// Converts an unsigned integer to decimal string
+#cfg(not(target="js"))
+fn uint_to_string_dec(
+  buffer : FixedArray[UInt16],
+  num : UInt,
+  offset : Int,
+) -> Unit {
+  int_to_string_dec(buffer, num, offset, buffer.length())
+}
+
+///|
+/// Generic radix conversion for any base 2-36
+#cfg(not(target="js"))
+fn uint_to_string_generic(
+  buffer : FixedArray[UInt16],
+  num : UInt,
+  radix : Int,
+  offset : Int,
+) -> Unit {
+  int_to_string_generic(buffer, num, offset, buffer.length(), radix)
+}
+
+///|
+/// Converts an unsigned integer to its string representation in the specified radix (base).
+#cfg(not(target="js"))
+pub fn UInt::to_string(self : UInt, radix? : Int = 10) -> String {
+  // Validate radix
+  if radix < 2 || radix > 36 {
+    abort("radix must be between 2 and 36")
+  }
+
+  // Special case for zero
+  if self == 0U {
+    return "0"
+  }
+
+  // Calculate length, allocate buffer, and write digits
+  let buffer = match radix {
+    10 => {
+      let len = dec_count32(self)
+      let buffer : FixedArray[UInt16] = FixedArray::make(len, 0)
+      uint_to_string_dec(buffer, self, 0)
+      buffer
+    }
+    16 => {
+      let len = hex_count32(self)
+      let buffer : FixedArray[UInt16] = FixedArray::make(len, 0)
+      uint_to_string_hex(buffer, self, 0)
+      buffer
+    }
+    _ => {
+      let len = radix_count32(self, radix)
+      let buffer : FixedArray[UInt16] = FixedArray::make(len, 0)
+      uint_to_string_generic(buffer, self, radix, 0)
+      buffer
+    }
+  }
+  unsafe_fixedarray_to_string(buffer)
+}
+
+///|
+/// Converts an unsigned integer to its string representation in the specified radix (base).
+#cfg(target="js")
+pub fn UInt::to_string(self : UInt, radix? : Int = 10) -> String {
+  uint_to_string_js(self, radix)
+}
+
+///|
+#cfg(target="js")
+extern "js" fn uint_to_string_js(i : UInt, radix : Int) -> String =
+  #|(x, radix) => {
+  #|  return (x >>> 0).toString(radix);
+  #|}
 
 ///|
 pub impl Show for UInt with to_string(self) {
@@ -333,6 +671,46 @@ test "UInt::to_string" {
 }
 
 ///|
+/// Converts an unsigned 64-bit integer to its string representation in the specified radix (base).
+#cfg(not(target="js"))
+pub fn UInt64::to_string(self : UInt64, radix? : Int = 10) -> String {
+  // Validate radix
+  if radix < 2 || radix > 36 {
+    abort("radix must be between 2 and 36")
+  }
+
+  // Special case for zero
+  if self == 0UL {
+    return "0"
+  }
+
+  // Calculate length, allocate buffer, and write digits
+  let buffer = match radix {
+    10 => {
+      let len = dec_count64(self)
+      let buffer : FixedArray[UInt16] = FixedArray::make(len, 0)
+      int64_to_string_dec(buffer, self, 0, len)
+      buffer
+    }
+    16 => {
+      let len = hex_count64(self)
+      let buffer : FixedArray[UInt16] = FixedArray::make(len, 0)
+      int64_to_string_hex(buffer, self, 0, len)
+      buffer
+    }
+    _ => {
+      let len = radix_count64(self, radix)
+      let buffer : FixedArray[UInt16] = FixedArray::make(len, 0)
+      int64_to_string_generic(buffer, self, 0, len, radix)
+      buffer
+    }
+  }
+  unsafe_fixedarray_to_string(buffer)
+}
+
+///|
+/// Converts an unsigned 64-bit integer to its string representation in the specified radix (base).
+#cfg(target="js")
 pub fn UInt64::to_string(self : UInt64, radix? : Int = 10) -> String {
   let buf = StringBuilder::new(size_hint=UInt64::output_size_hint(radix~))
   self.output(buf, radix~)
