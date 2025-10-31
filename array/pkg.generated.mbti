@@ -101,6 +101,7 @@ fn[T : Eq] ReadOnlyArray::search(Self[T], T) -> Int?
 fn[T : Eq] ReadOnlyArray::starts_with(Self[T], Self[T]) -> Bool
 #alias("_[_:_]")
 fn[T] ReadOnlyArray::sub(Self[T], start? : Int, end? : Int) -> ArrayView[T]
+impl[T : Compare] Compare for ReadOnlyArray[T]
 impl[T] Default for ReadOnlyArray[T]
 impl[T : Eq] Eq for ReadOnlyArray[T]
 impl[T : Show] Show for ReadOnlyArray[T]
