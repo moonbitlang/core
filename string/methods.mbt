@@ -634,7 +634,7 @@ test "contains_char" {
 ///|
 /// Returns the view of the string without the leading characters that are in
 /// the given string.
-#callsite(migration(chars, allow_positional=true))
+#label_migration(chars, allow_positional=true)
 #label_migration(chars, alias=char_set)
 pub fn StringView::trim_start(
   self : StringView,
@@ -649,7 +649,7 @@ pub fn StringView::trim_start(
 ///|
 /// Returns the view of the string without the leading characters that are in
 /// the given string.
-#callsite(migration(chars, allow_positional=true))
+#label_migration(chars, allow_positional=true)
 #label_migration(chars, alias=char_set)
 pub fn String::trim_start(self : String, chars~ : StringView) -> StringView {
   self[:].trim_start(chars~)
@@ -674,7 +674,7 @@ test "trim_start" {
 ///|
 /// Returns the view of the string without the trailing characters that are in
 /// the given string.
-#callsite(migration(chars, allow_positional=true))
+#label_migration(chars, allow_positional=true)
 #label_migration(chars, alias=char_set)
 pub fn StringView::trim_end(
   self : StringView,
@@ -691,7 +691,7 @@ pub fn StringView::trim_end(
 /// the given string.
 // TODO(upstream): label_migration warning does not apply to the current package
 // TODO: make chars optional with default value of whitespace characters
-#callsite(migration(chars, allow_positional=true))
+#label_migration(chars, allow_positional=true)
 #label_migration(chars, alias=char_set)
 pub fn String::trim_end(self : String, chars~ : StringView) -> StringView {
   self[:].trim_end(chars~)
@@ -715,7 +715,7 @@ test "trim_end" {
 ///|
 /// Returns the view of the string without the leading and trailing characters
 /// that are in the given string.
-#callsite(migration(chars, allow_positional=true))
+#label_migration(chars, allow_positional=true)
 #label_migration(chars, alias=char_set)
 pub fn StringView::trim(self : StringView, chars~ : StringView) -> StringView {
   self.trim_start(chars~).trim_end(chars~)
@@ -724,7 +724,7 @@ pub fn StringView::trim(self : StringView, chars~ : StringView) -> StringView {
 ///|
 /// Returns the view of the string without the leading and trailing characters
 /// that are in the given string.
-#callsite(migration(chars, allow_positional=true))
+#label_migration(chars, allow_positional=true)
 #label_migration(chars, alias=char_set)
 pub fn String::trim(self : String, chars~ : StringView) -> StringView {
   self[:].trim(chars~)
