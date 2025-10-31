@@ -326,16 +326,16 @@ test "Buffer::to_bytes" {
 
 ///|
 test "trim_start" {
-  inspect("aaabcd".trim_start(char_set="a"), content="bcd")
-  inspect("aaabcd".trim_start(char_set=" "), content="aaabcd")
-  inspect("aaabcd".trim_start(char_set=""), content="aaabcd")
-  inspect("  abc".trim_start(char_set=" "), content="abc")
+  inspect("aaabcd".trim_start(chars="a"), content="bcd")
+  inspect("aaabcd".trim_start(chars=" "), content="aaabcd")
+  inspect("aaabcd".trim_start(chars=""), content="aaabcd")
+  inspect("  abc".trim_start(chars=" "), content="abc")
   inspect(
-    "哇你好月兔你好哇".trim_start(char_set="你好哇"),
+    "哇你好月兔你好哇".trim_start(chars="你好哇"),
     content="月兔你好哇",
   )
   inspect(
-    "😍😍😭😡😡".trim_start(char_set="😍"),
+    "😍😍😭😡😡".trim_start(chars="😍"),
     content="😭😡😡",
   )
 }
@@ -350,31 +350,25 @@ test "contains" {
 
 ///|
 test "trim_end" {
-  inspect("abcddd".trim_end(char_set="d"), content="abc")
-  inspect("abcddd".trim_end(char_set=" "), content="abcddd")
-  inspect("abcddd".trim_end(char_set=""), content="abcddd")
-  inspect("abc  ".trim_end(char_set=" "), content="abc")
+  inspect("abcddd".trim_end(chars="d"), content="abc")
+  inspect("abcddd".trim_end(chars=" "), content="abcddd")
+  inspect("abcddd".trim_end(chars=""), content="abcddd")
+  inspect("abc  ".trim_end(chars=" "), content="abc")
   inspect(
-    "哇你好月兔你好哇".trim_end(char_set="你好哇"),
+    "哇你好月兔你好哇".trim_end(chars="你好哇"),
     content="哇你好月兔",
   )
-  inspect(
-    "😍😍😭😡😡".trim_end(char_set="😡"),
-    content="😍😍😭",
-  )
+  inspect("😍😍😭😡😡".trim_end(chars="😡"), content="😍😍😭")
 }
 
 ///|
 test "trim" {
-  inspect("xxxabcxxx".trim(char_set="x"), content="abc")
-  inspect("xxxabcxxx".trim(char_set=""), content="xxxabcxxx")
-  inspect(
-    "哇你好月兔你好哇".trim(char_set="你好哇"),
-    content="月兔",
-  )
-  inspect("\n\r\t abc \n\r\t".trim(char_set=" \n\r\t"), content="abc")
-  inspect("=-wow-=".trim(char_set="-="), content="wow")
-  inspect("😍😍😭😡😡".trim(char_set="😍😡"), content="😭")
+  inspect("xxxabcxxx".trim(chars="x"), content="abc")
+  inspect("xxxabcxxx".trim(chars=""), content="xxxabcxxx")
+  inspect("哇你好月兔你好哇".trim(chars="你好哇"), content="月兔")
+  inspect("\n\r\t abc \n\r\t".trim(chars=" \n\r\t"), content="abc")
+  inspect("=-wow-=".trim(chars="-="), content="wow")
+  inspect("😍😍😭😡😡".trim(chars="😍😡"), content="😭")
 }
 
 ///|
