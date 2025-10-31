@@ -670,18 +670,18 @@ pub fn String::trim_start(self : String, chars~ : StringView) -> StringView {
 
 ///|
 test "trim_start" {
-  inspect("hello".trim_start(char_set="h"), content="ello")
-  inspect("hello".trim_start(char_set="he"), content="llo")
-  inspect("hello".trim_start(char_set="eh"), content="llo")
-  inspect("hello".trim_start(char_set="x"), content="hello")
-  inspect("hello".trim_start(char_set=""), content="hello")
-  inspect("".trim_start(char_set="a"), content="")
-  inspect("   hello".trim_start(char_set=" "), content="hello")
-  inspect("hello world".trim_start(char_set="helo"), content=" world")
-  inspect("😀😀hello".trim_start(char_set="😀"), content="hello")
-  inspect("😀😃hello".trim_start(char_set="😀😃"), content="hello")
-  inspect("aaaabc".trim_start(char_set="a"), content="bc")
-  inspect("aaaa".trim_start(char_set="a"), content="")
+  inspect("hello".trim_start(chars="h"), content="ello")
+  inspect("hello".trim_start(chars="he"), content="llo")
+  inspect("hello".trim_start(chars="eh"), content="llo")
+  inspect("hello".trim_start(chars="x"), content="hello")
+  inspect("hello".trim_start(chars=""), content="hello")
+  inspect("".trim_start(chars="a"), content="")
+  inspect("   hello".trim_start(chars=" "), content="hello")
+  inspect("hello world".trim_start(chars="helo"), content=" world")
+  inspect("😀😀hello".trim_start(chars="😀"), content="hello")
+  inspect("😀😃hello".trim_start(chars="😀😃"), content="hello")
+  inspect("aaaabc".trim_start(chars="a"), content="bc")
+  inspect("aaaa".trim_start(chars="a"), content="")
 }
 
 ///|
@@ -745,27 +745,27 @@ pub fn String::trim(self : String, chars~ : StringView) -> StringView {
 
 ///|
 test "trim" {
-  inspect("hello".trim(char_set="h"), content="ello")
-  inspect("hello".trim(char_set="o"), content="hell")
-  inspect("hello".trim(char_set="ho"), content="ell")
-  inspect("hello".trim(char_set="oh"), content="ell")
-  inspect("hello".trim(char_set="x"), content="hello")
-  inspect("hello".trim(char_set=""), content="hello")
-  inspect("".trim(char_set="a"), content="")
-  inspect("   hello   ".trim(char_set=" "), content="hello")
-  inspect("hello world".trim(char_set="hd"), content="ello worl")
-  inspect("😀hello😀".trim(char_set="😀"), content="hello")
-  inspect("😀😃hello😀😃".trim(char_set="😀😃"), content="hello")
-  inspect("aaaabcaaa".trim(char_set="a"), content="bc")
-  inspect("aaaa".trim(char_set="a"), content="")
-  inspect("  hello world  ".trim(char_set=" "), content="hello world")
-  inspect("abcabc".trim(char_set="abc"), content="")
+  inspect("hello".trim(chars="h"), content="ello")
+  inspect("hello".trim(chars="o"), content="hell")
+  inspect("hello".trim(chars="ho"), content="ell")
+  inspect("hello".trim(chars="oh"), content="ell")
+  inspect("hello".trim(chars="x"), content="hello")
+  inspect("hello".trim(chars=""), content="hello")
+  inspect("".trim(chars="a"), content="")
+  inspect("   hello   ".trim(chars=" "), content="hello")
+  inspect("hello world".trim(chars="hd"), content="ello worl")
+  inspect("😀hello😀".trim(chars="😀"), content="hello")
+  inspect("😀😃hello😀😃".trim(chars="😀😃"), content="hello")
+  inspect("aaaabcaaa".trim(chars="a"), content="bc")
+  inspect("aaaa".trim(chars="a"), content="")
+  inspect("  hello world  ".trim(chars=" "), content="hello world")
+  inspect("abcabc".trim(chars="abc"), content="")
 }
 
 ///|
 /// Returns the view of the string without the leading and trailing spaces.
 pub fn StringView::trim_space(self : StringView) -> StringView {
-  self.trim(char_set=" \n\r\t")
+  self.trim(chars=" \n\r\t")
 }
 
 ///|
