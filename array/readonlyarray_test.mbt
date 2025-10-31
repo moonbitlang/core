@@ -104,4 +104,11 @@ test "ReadOnlyArray trait implementations" {
   // Test join for strings
   let str_arr : ReadOnlyArray[String] = ["a", "b", "c"]
   inspect(str_arr.join(","), content="a,b,c")
+
+  // Test equal
+  let arr1 : ReadOnlyArray[Int] = [1, 2, 3]
+  let arr2 : ReadOnlyArray[Int] = [1, 2, 3]
+  let arr3 : ReadOnlyArray[Int] = [4, 5, 6]
+  inspect(arr1 == arr2, content="true")
+  inspect(arr1 == arr3, content="false")
 }
