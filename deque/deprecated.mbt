@@ -31,9 +31,3 @@ pub fn[A] Deque::pop_back_exn(self : Deque[A]) -> Unit {
 pub fn[A] Deque::filter_map_inplace(self : Deque[A], f : (A) -> A?) -> Unit {
   self.retain_map(f)
 }
-
-///|
-#deprecated("Use `Deque` instead of `T`")
-pub typealias Deque as T
-
-///|

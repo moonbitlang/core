@@ -44,7 +44,3 @@ pub fn[K, V, A] HashMap::map(
 ) -> HashMap[K, A] raise? {
   self.map_with_key((_k, v) => f(v))
 }
-
-///|
-#deprecated("Use `HashMap` instead of `T`")
-pub typealias HashMap as T

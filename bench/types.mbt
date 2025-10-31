@@ -16,14 +16,12 @@
 priv trait OpaqueValue {}
 
 ///|
+#alias(T)
 struct Bench {
   buffer : StringBuilder
   summaries : Array[Summary]
   mut _storage : &OpaqueValue
 }
-
-///|
-pub typealias Bench as T
 
 ///|
 #as_free_fn

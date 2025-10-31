@@ -27,7 +27,7 @@
 /// ```
 #builtin.valtype
 #deprecated("Use `BytesView` instead")
-pub typealias BytesView as View
+pub type View = BytesView
 
 ///|
 /// Retrieves a byte from the view at the specified index.

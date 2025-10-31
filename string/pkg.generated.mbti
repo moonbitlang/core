@@ -1,10 +1,6 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "moonbitlang/core/string"
 
-import(
-  "moonbitlang/core/builtin"
-)
-
 // Values
 fn default() -> String
 
@@ -142,7 +138,6 @@ impl Show for StringView
 impl ToJson for StringView
 
 // Type aliases
-pub using @builtin {type StringView as View}
 
 // Traits
 pub trait ToStringView {

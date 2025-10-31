@@ -13,14 +13,11 @@
 // limitations under the License.
 
 ///|
+#alias(T, deprecated)
 struct Test {
   name : String
   buffer : StringBuilder
 }
-
-///|
-// TODO: deprecate it in the future
-pub typealias Test as T
 
 ///|
 #as_free_fn

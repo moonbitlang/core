@@ -15,6 +15,7 @@
 // head and tail point to non-empty slots. When the buffer is empty, head and tail points to the same slot.
 
 ///|
+#alias(T, deprecated)
 struct Deque[A] {
   mut buf : UninitializedArray[A]
   mut len : Int
