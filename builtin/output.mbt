@@ -73,6 +73,7 @@ fn UInt64::output(self : UInt64, logger : &Logger, radix? : Int = 10) -> Unit {
 }
 
 ///|
+#cfg(target="js")
 fn Int64::output_size_hint(radix? : Int = 10) -> Int {
   match radix {
     2..<7 => 70 // max length is 64, 70 is enough
@@ -83,21 +84,7 @@ fn Int64::output_size_hint(radix? : Int = 10) -> Int {
 }
 
 ///|
-fn Int::output_size_hint(radix? : Int = 10) -> Int {
-  match radix {
-    2..<7 => 36 // max length is 32, 36 is enough
-    8..<15 => 18 // max length is 12, 18 is enough
-    16..=36 => 10 // max length is 8, 10 is enough
-    _ => abort("radix must be between 2 and 36")
-  }
-}
-
-///|
-fn UInt::output_size_hint(radix? : Int = 10) -> Int {
-  Int::output_size_hint(radix~)
-}
-
-///|
+#cfg(target="js")
 fn UInt64::output_size_hint(radix? : Int = 10) -> Int {
   Int64::output_size_hint(radix~)
 }
