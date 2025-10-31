@@ -117,6 +117,7 @@ fn[T] Array::map_in_place(Self[T], (T) -> T raise?) -> Unit raise?
 fn[T, U] Array::mapi(Self[T], (Int, T) -> U raise?) -> Self[U] raise?
 #alias(mapi_inplace, deprecated)
 fn[T] Array::mapi_in_place(Self[T], (Int, T) -> T raise?) -> Unit raise?
+fn[T] Array::mut_sub(Self[T], start? : Int, end? : Int) -> MutArrayView[T]
 fn[T] Array::new(capacity? : Int) -> Self[T]
 fn[T] Array::pop(Self[T]) -> T?
 fn[T] Array::push(Self[T], T) -> Unit
@@ -168,11 +169,16 @@ type ArrayView[T]
 #alias("_[_]")
 fn[T] ArrayView::at(Self[T], Int) -> T
 fn[A] ArrayView::blit_to(Self[A], Array[A], dst_offset? : Int) -> Unit
+fn[A] ArrayView::iter(Self[A]) -> Iter[A]
 fn[X] ArrayView::iterator(Self[X]) -> Iterator[X]
 fn[T] ArrayView::length(Self[T]) -> Int
 #alias("_[_:_]")
 fn[T] ArrayView::sub(Self[T], start? : Int, end? : Int) -> Self[T]
 fn[T] ArrayView::suffixes(Self[T], include_empty? : Bool) -> Iterator[Self[T]]
+impl[T : Compare] Compare for ArrayView[T]
+impl[T : Eq] Eq for ArrayView[T]
+impl[A : Hash] Hash for ArrayView[A]
+impl[X : Show] Show for ArrayView[X]
 impl[X : ToJson] ToJson for ArrayView[X]
 
 type Hasher
@@ -382,6 +388,25 @@ impl[K, V] Default for Map[K, V]
 impl[K : Hash + Eq, V : Eq] Eq for Map[K, V]
 impl[K : Show, V : Show] Show for Map[K, V]
 impl[K : Show, V : ToJson] ToJson for Map[K, V]
+
+type MutArrayView[T]
+#alias("_[_]")
+fn[T] MutArrayView::at(Self[T], Int) -> T
+fn[X] MutArrayView::iterator(Self[X]) -> Iterator[X]
+fn[X] MutArrayView::iterator2(Self[X]) -> Iterator2[Int, X]
+fn[T] MutArrayView::length(Self[T]) -> Int
+fn[T] MutArrayView::mut_sub(Self[T], start? : Int, end? : Int) -> Self[T]
+fn[X] MutArrayView::rev_iterator(Self[X]) -> Iterator[X]
+#alias("_[_]=_")
+fn[T] MutArrayView::set(Self[T], Int, T) -> Unit
+#alias("_[_:_]")
+fn[T] MutArrayView::sub(Self[T], start? : Int, end? : Int) -> ArrayView[T]
+fn[T] MutArrayView::unsafe_get(Self[T], Int) -> T
+fn[T] MutArrayView::unsafe_set(Self[T], Int, T) -> Unit
+impl[T : Compare] Compare for MutArrayView[T]
+impl[T : Eq] Eq for MutArrayView[T]
+impl[A : Hash] Hash for MutArrayView[A]
+impl[X : Show] Show for MutArrayView[X]
 
 pub(all) type SourceLoc
 fn SourceLoc::to_string(Self) -> String
@@ -747,6 +772,7 @@ fn[T] FixedArray::make(Int, T) -> Self[T]
 fn[T] FixedArray::makei(Int, (Int) -> T raise?) -> Self[T] raise?
 fn[T, U] FixedArray::map(Self[T], (T) -> U raise?) -> Self[U] raise?
 fn[T, U] FixedArray::mapi(Self[T], (Int, T) -> U raise?) -> Self[U] raise?
+fn[T] FixedArray::mut_sub(Self[T], start? : Int, end? : Int) -> MutArrayView[T]
 fn[T] FixedArray::rev(Self[T]) -> Self[T]
 fn[T] FixedArray::rev_each(Self[T], (T) -> Unit raise?) -> Unit raise?
 fn[T] FixedArray::rev_eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?
