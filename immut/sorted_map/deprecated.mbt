@@ -81,7 +81,3 @@ pub fn[K, V] SortedMap::filter(
 ) -> SortedMap[K, V] raise? {
   self.filter_with_key((_, v) => pred(v))
 }
-
-///|
-#deprecated("Use `SortedMap` instead of `T`")
-pub typealias SortedMap as T

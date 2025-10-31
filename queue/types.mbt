@@ -22,6 +22,7 @@ priv struct Cons[A] {
 // - length == 0 <=> first is None && last is None
 
 ///|
+#alias(T, deprecated)
 struct Queue[A] {
   mut length : Int
   mut first : Cons[A]?

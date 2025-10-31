@@ -27,7 +27,7 @@
 /// ```
 #builtin.valtype
 #deprecated("Use `BytesView` instead")
-pub typealias BytesView as View
+pub type View = BytesView
 
 ///|
 fn BytesView::bytes(self : BytesView) -> Bytes = "%bytesview.bytes"

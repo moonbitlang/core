@@ -25,7 +25,7 @@
 /// inspect(view.length(), content="3")
 /// ```
 #deprecated
-pub typealias ArrayView as View
+pub type View[T] = ArrayView[T]
 
 ///|
 /// Iterates over each element in the array view and applies a function to it.

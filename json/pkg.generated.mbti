@@ -1,10 +1,6 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "moonbitlang/core/json"
 
-import(
-  "moonbitlang/core/builtin"
-)
-
 // Values
 fn[T : FromJson] from_json(Json, path? : JsonPath) -> T raise JsonDecodeError
 
@@ -66,7 +62,6 @@ impl Show for Json
 impl ToJson for Json
 
 // Type aliases
-pub using @builtin {type Json as JsonValue}
 
 // Traits
 pub(open) trait FromJson {

@@ -51,7 +51,7 @@ test "lazy capture" {
 }
 
 ///|
-test "priority" (t : @test.T) {
+test "priority" (t : @test.Test) {
   // (a.*)(b.*)(c.*)
   let instructions = [
     Save(0),

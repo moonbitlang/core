@@ -18,7 +18,3 @@
 pub fn[K : Hash + Eq] HashSet::insert(self : HashSet[K], key : K) -> Unit {
   self.add(key)
 }
-
-///|
-#deprecated("Use `HashSet` instead of `T`")
-pub typealias HashSet as T

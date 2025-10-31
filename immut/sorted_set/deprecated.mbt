@@ -37,7 +37,3 @@ pub fn[A : Compare] SortedSet::diff(
 ) -> SortedSet[A] {
   self.difference(other)
 }
-
-///|
-#deprecated("Use `SortedSet` instead of `T`")
-pub typealias SortedSet as T
