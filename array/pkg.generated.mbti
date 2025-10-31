@@ -165,6 +165,14 @@ impl[A : Hash] Hash for ArrayView[A]
 impl[X : Show] Show for ArrayView[X]
 impl[A : @quickcheck.Arbitrary] @quickcheck.Arbitrary for ArrayView[A]
 
+fn[X] MutArrayView::iterator(Self[X]) -> Iterator[X]
+fn[X] MutArrayView::iterator2(Self[X]) -> Iterator2[Int, X]
+fn[X] MutArrayView::rev_iterator(Self[X]) -> Iterator[X]
+impl[T : Compare] Compare for MutArrayView[T]
+impl[T : Eq] Eq for MutArrayView[T]
+impl[A : Hash] Hash for MutArrayView[A]
+impl[X : Show] Show for MutArrayView[X]
+
 // Type aliases
 pub using @builtin {type ArrayView as View}
 
