@@ -664,6 +664,8 @@ fn Bytes::unsafe_get(Bytes, Int) -> Byte
 
 
 
+
+
 // Type aliases
 
 // Traits
@@ -820,6 +822,8 @@ impl[A : Hash, B : Hash, C : Hash, D : Hash] Hash for (A, B, C, D)
 impl[A : Hash, B : Hash, C : Hash, D : Hash, E : Hash] Hash for (A, B, C, D, E)
 impl[A : Hash, B : Hash, C : Hash, D : Hash, E : Hash, F : Hash] Hash for (A, B, C, D, E, F)
 impl[A : Hash, B : Hash, C : Hash, D : Hash, E : Hash, F : Hash, G : Hash] Hash for (A, B, C, D, E, F, G)
+impl Hash for BytesView
+impl Hash for StringView
 
 pub(open) trait Logger {
   write_string(Self, String) -> Unit

@@ -94,7 +94,6 @@ fn BytesView::unsafe_read_uint64_be(Self, Int) -> UInt64
 fn BytesView::unsafe_read_uint64_le(Self, Int) -> UInt64
 impl Compare for BytesView
 impl Eq for BytesView
-impl Hash for BytesView
 impl Show for BytesView
 impl ToJson for BytesView
 
