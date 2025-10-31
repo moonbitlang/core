@@ -305,7 +305,6 @@ test "Array::join with Char" {
   let chars : Array[Char] = ['h', 'e', 'l', 'l', 'o']
   let result = chars.join("")
   inspect(result, content="hello")
-  
   let chars2 : Array[Char] = ['a', 'b', 'c']
   let result2 = chars2.join(", ")
   inspect(result2, content="a, b, c")
