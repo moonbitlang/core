@@ -556,3 +556,10 @@ pub impl[T : Show] Show for ReadOnlyArray[T] with output(self, logger) {
 pub impl[T : ToJson] ToJson for ReadOnlyArray[T] with to_json(self) {
   self.unsafe_reinterpret_to_fixed_array().to_json()
 }
+
+///|
+pub impl[T : Eq] Eq for ReadOnlyArray[T] with equal(self, other) {
+  self
+  .unsafe_reinterpret_to_fixed_array()
+  .equal(other.unsafe_reinterpret_to_fixed_array())
+}
