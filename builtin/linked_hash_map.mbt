@@ -967,6 +967,26 @@ fn BytesView::equal_to_bytes(self : Self, other : Bytes) -> Bool {
 }
 
 ///|
+/// Retrieves the value associated with a `BytesView` key in a map with `Bytes` keys.
+///
+/// This function allows efficient lookups using `BytesView` without creating a new `Bytes` object.
+/// It's particularly useful when working with byte slices or subranges of existing byte arrays.
+///
+/// Parameters:
+///
+/// * `map` : The hash map with `Bytes` keys to search in.
+/// * `key` : A `BytesView` representing the key to look up.
+///
+/// Returns `Some(value)` if a matching key exists in the map, `None` otherwise.
+///
+/// Example:
+///
+/// ```moonbit
+///   let map = { b"hello": 1, b"world": 2 }
+///   let bytes = b"prefix_hello_suffix"
+///   let view = bytes[7:12] // view of "hello"
+///   inspect(map.get_from_bytes(view), content="Some(1)")
+/// ```
 pub fn[V] Map::get_from_bytes(map : Self[Bytes, V], key : BytesView) -> V? {
   let hash = key.hash()
   for i = 0, idx = hash & map.capacity_mask {
@@ -982,6 +1002,26 @@ pub fn[V] Map::get_from_bytes(map : Self[Bytes, V], key : BytesView) -> V? {
 }
 
 ///|
+/// Retrieves the value associated with a `StringView` key in a map with `String` keys.
+///
+/// This function allows efficient lookups using `StringView` without creating a new `String` object.
+/// It's particularly useful when working with substrings or string slices.
+///
+/// Parameters:
+///
+/// * `map` : The hash map with `String` keys to search in.
+/// * `key` : A `StringView` representing the key to look up.
+///
+/// Returns `Some(value)` if a matching key exists in the map, `None` otherwise.
+///
+/// Example:
+///
+/// ```moonbit
+///   let map = { "hello": 1, "world": 2 }
+///   let str = "say hello to everyone"
+///   let view = str.view(start_offset=4, end_offset=9) // view of "hello"
+///   inspect(map.get_from_string(view), content="Some(1)")
+/// ```
 pub fn[V] Map::get_from_string(map : Self[String, V], key : StringView) -> V? {
   let hash = key.hash()
   for i = 0, idx = hash & map.capacity_mask {
