@@ -692,3 +692,23 @@ test "transformer" {
   let newjson3 = json.transform(@json.Replacer::exclude(["a", "d"]))
   @json.inspect(newjson3, content={ "b": { "c": 2 } })
 }
+
+///|
+test "transformer with array" {
+  let json : Json = [1.0, { "a": 2.0 }, [3.0, 4.0]]
+  let newjson = json.transform(
+    @json.Replacer::new((_, value) => match value {
+      Number(n, ..) => Some(Json::number(n + 1))
+      other => Some(other)
+    }),
+  )
+  @json.inspect(newjson, content=[1, { "a": 3 }, [3, 4]])
+
+  // keep
+  let newjson2 = json.transform(@json.Replacer::keep(["a"]))
+  @json.inspect(newjson2, content=[1, { "a": 2 }, [3, 4]])
+
+  // exclude
+  let newjson3 = json.transform(@json.Replacer::exclude(["a"]))
+  @json.inspect(newjson3, content=[1, {}, [3, 4]])
+}

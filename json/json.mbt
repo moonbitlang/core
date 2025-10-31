@@ -283,7 +283,8 @@ pub fn Json::transform(self : Self, replacer : Replacer) -> Json {
       })
       |> Map::from_iterator()
       |> Object
-    _ => self
+    Array(members) => Array(members.map(m => m.transform(replacer)))
+    value => value
   }
 }
 
