@@ -111,4 +111,8 @@ test "ReadOnlyArray trait implementations" {
   let arr3 : ReadOnlyArray[Int] = [4, 5, 6]
   inspect(arr1 == arr2, content="true")
   inspect(arr1 == arr3, content="false")
+
+  // Test compare
+  inspect(arr1.compare(arr2), content="0")
+  inspect(arr1.compare(arr3), content="-1")
 }

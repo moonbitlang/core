@@ -563,3 +563,10 @@ pub impl[T : Eq] Eq for ReadOnlyArray[T] with equal(self, other) {
   .unsafe_reinterpret_to_fixed_array()
   .equal(other.unsafe_reinterpret_to_fixed_array())
 }
+
+///|
+pub impl[T : Compare] Compare for ReadOnlyArray[T] with compare(self, other) {
+  self
+  .unsafe_reinterpret_to_fixed_array()
+  .compare(other.unsafe_reinterpret_to_fixed_array())
+}
