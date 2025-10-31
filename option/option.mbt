@@ -15,7 +15,7 @@
 ///|
 test "some equals to Some" {
   let x : Int? = Some(5)
-  let y : Int? = some(5)
+  let y : Int? = Some(5)
   assert_eq(x, y)
 }
 

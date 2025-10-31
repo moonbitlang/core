@@ -13,11 +13,11 @@
 // limitations under the License.
 
 ///|
-#deprecated("Use `PI` instead")
+#deprecated("Use `PI` instead", skip_current_package=false)
 pub let pi = 0x3.243F6A8885A308CA8A54
 
 ///|
-#deprecated("Use @cmp.maximum instead")
+#deprecated("Use @cmp.maximum instead", skip_current_package=false)
 pub fn[T : Compare] maximum(x : T, y : T) -> T {
   if x > y {
     x
@@ -27,7 +27,7 @@ pub fn[T : Compare] maximum(x : T, y : T) -> T {
 }
 
 ///|
-#deprecated("Use @cmp.minimum instead")
+#deprecated("Use @cmp.minimum instead", skip_current_package=false)
 pub fn[T : Compare] minimum(x : T, y : T) -> T {
   if x > y {
     y

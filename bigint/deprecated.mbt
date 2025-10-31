@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-#deprecated("Use infix bitwise operator `>>` instead")
+#deprecated("Use infix bitwise operator `>>` instead", skip_current_package=false)
 #coverage.skip
 pub fn BigInt::asr(self : BigInt, n : Int) -> BigInt {
   self >> n
@@ -24,7 +24,7 @@ pub fn BigInt::asr(self : BigInt, n : Int) -> BigInt {
 /// The sign of the result is the same as the sign of the input.
 /// Only the absolute value is shifted.
 ///
-#deprecated("Use infix bitwise operator `<<` instead")
+#deprecated("Use infix bitwise operator `<<` instead", skip_current_package=false)
 #coverage.skip
 pub fn BigInt::shl(self : BigInt, n : Int) -> BigInt {
   self << n
@@ -35,7 +35,7 @@ pub fn BigInt::shl(self : BigInt, n : Int) -> BigInt {
 /// The sign of the result is the same as the sign of the input.
 /// Only the absolute value is shifted.
 ///
-#deprecated("Use infix bitwise operator `<<` instead")
+#deprecated("Use infix bitwise operator `<<` instead", skip_current_package=false)
 #coverage.skip
 pub fn BigInt::lsl(self : BigInt, n : Int) -> BigInt {
   self << n
@@ -46,7 +46,7 @@ pub fn BigInt::lsl(self : BigInt, n : Int) -> BigInt {
 /// The sign of the result is the same as the sign of the input.
 /// Only the absolute value is shifted.
 ///
-#deprecated("Use infix bitwise operator `>>` instead")
+#deprecated("Use infix bitwise operator `>>` instead", skip_current_package=false)
 #coverage.skip
 pub fn BigInt::shr(self : BigInt, n : Int) -> BigInt {
   self >> n

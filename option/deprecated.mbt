@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-#deprecated("Use `if condition { Some(value()) } else { None }` instead")
+#deprecated("Use `if condition { Some(value()) } else { None }` instead", skip_current_package=false)
 pub fn[T] when(condition : Bool, value : () -> T) -> T? {
   if condition {
     Some(value())
@@ -23,25 +23,29 @@ pub fn[T] when(condition : Bool, value : () -> T) -> T? {
 }
 
 ///|
-#deprecated("Use `if !condition { Some(value()) } else { None }` instead")
+#deprecated("Use `if !condition { Some(value()) } else { None }` instead", skip_current_package=false)
 pub fn[T] unless(condition : Bool, value : () -> T) -> T? {
-  when(!condition, value)
+  if !condition {
+    Some(value())
+  } else {
+    None
+  }
 }
 
 ///|
-#deprecated("Use `None` instead")
+#deprecated("Use `None` instead", skip_current_package=false)
 pub fn[T] empty() -> T? {
   None
 }
 
 ///|
-#deprecated("Use `Some(value)` instead")
+#deprecated("Use `Some(value)` instead", skip_current_package=false)
 pub fn[T] some(value : T) -> T? {
   Some(value)
 }
 
 ///|
-#deprecated("use unwrap_or instead")
+#deprecated("use unwrap_or instead", skip_current_package=false)
 pub fn[T] Option::or(self : T?, default : T) -> T {
   match self {
     None => default
@@ -50,7 +54,7 @@ pub fn[T] Option::or(self : T?, default : T) -> T {
 }
 
 ///|
-#deprecated("use unwrap_or_else instead")
+#deprecated("use unwrap_or_else instead", skip_current_package=false)
 pub fn[T] Option::or_else(self : T?, default : () -> T) -> T {
   match self {
     None => default()
@@ -59,7 +63,7 @@ pub fn[T] Option::or_else(self : T?, default : () -> T) -> T {
 }
 
 ///|
-#deprecated("use unwrap_or_default instead")
+#deprecated("use unwrap_or_default instead", skip_current_package=false)
 pub fn[T : Default] Option::or_default(self : T?) -> T {
   match self {
     None => T::default()
@@ -69,14 +73,14 @@ pub fn[T : Default] Option::or_default(self : T?) -> T {
 
 ///|
 /// Checks if the option contains a value.
-#deprecated("use `x is Some(_)` instead")
+#deprecated("use `x is Some(_)` instead", skip_current_package=false)
 pub fn[T] Option::is_some(self : T?) -> Bool {
   self is Some(_)
 }
 
 ///|
 /// Checks if the option is None.
-#deprecated("use `x is None` instead")
+#deprecated("use `x is None` instead", skip_current_package=false)
 pub fn[T] Option::is_none(self : T?) -> Bool {
   self is None
 }

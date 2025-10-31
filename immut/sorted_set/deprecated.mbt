@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-#deprecated("Use `intersection` instead")
+#deprecated("Use `intersection` instead", skip_current_package=false)
 #coverage.skip
 pub fn[A : Compare] SortedSet::inter(
   self : SortedSet[A],
@@ -29,7 +29,7 @@ pub fn[A : Compare] SortedSet::inter(
 /// ```mbt
 ///   assert_eq(@sorted_set.from_array([1, 2, 3]).difference(@sorted_set.from_array([4, 5, 1])), @sorted_set.from_array([2, 3]))
 /// ```
-#deprecated("Use `difference` instead")
+#deprecated("Use `difference` instead", skip_current_package=false)
 #coverage.skip
 pub fn[A : Compare] SortedSet::diff(
   self : SortedSet[A],

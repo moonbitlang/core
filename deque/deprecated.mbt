@@ -13,21 +13,21 @@
 // limitations under the License.
 
 ///|
-#deprecated("Use `unsafe_pop_front` instead")
+#deprecated("Use `unsafe_pop_front` instead", skip_current_package=false)
 #coverage.skip
 pub fn[A] Deque::pop_front_exn(self : Deque[A]) -> Unit {
   self.unsafe_pop_front()
 }
 
 ///|
-#deprecated("Use `unsafe_pop_back` instead")
+#deprecated("Use `unsafe_pop_back` instead", skip_current_package=false)
 #coverage.skip
 pub fn[A] Deque::pop_back_exn(self : Deque[A]) -> Unit {
   self.unsafe_pop_back()
 }
 
 ///|
-#deprecated("Use `@deque.retain_map` instead")
+#deprecated("Use `@deque.retain_map` instead", skip_current_package=false)
 pub fn[A] Deque::filter_map_inplace(self : Deque[A], f : (A) -> A?) -> Unit {
   self.retain_map(f)
 }
