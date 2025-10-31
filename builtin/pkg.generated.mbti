@@ -344,6 +344,8 @@ fn[K : Hash + Eq, V] Map::from_array(ArrayView[(K, V)]) -> Self[K, V]
 fn[K : Hash + Eq, V] Map::from_iter(Iter[(K, V)]) -> Self[K, V]
 fn[K : Hash + Eq, V] Map::from_iterator(Iterator[(K, V)]) -> Self[K, V]
 fn[K : Hash + Eq, V] Map::get(Self[K, V], K) -> V?
+fn[V] Map::get_from_bytes(Self[Bytes, V], BytesView) -> V?
+fn[V] Map::get_from_string(Self[String, V], StringView) -> V?
 fn[K : Hash + Eq, V] Map::get_or_default(Self[K, V], K, V) -> V
 fn[K : Hash + Eq, V] Map::get_or_init(Self[K, V], K, () -> V) -> V
 fn[K, V] Map::is_empty(Self[K, V]) -> Bool
