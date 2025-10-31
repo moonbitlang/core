@@ -690,19 +690,6 @@ pub fn BytesView::to_bytes(self : BytesView) -> Bytes {
 }
 
 ///|
-pub impl Hash for BytesView with hash_combine(self : BytesView, hasher : Hasher) {
-  let mut data = self
-  while data.length() >= 4 {
-    hasher.combine_uint(data.to_uint_le())
-    data = data[4:]
-  }
-  while data.length() >= 1 {
-    hasher.combine_byte(data[0])
-    data = data[1:]
-  }
-}
-
-///|
 pub impl ToJson for BytesView with to_json(self) -> Json {
   let sb = StringBuilder::new()
   for byte in self {

@@ -464,16 +464,6 @@ pub impl ToJson for StringView with to_json(self) {
 }
 
 ///|
-pub impl Hash for StringView with hash_combine(
-  self : StringView,
-  hasher : Hasher,
-) -> Unit {
-  for i in 0..<self.length() {
-    hasher.combine_uint(self.unsafe_charcode_at(i).reinterpret_as_uint())
-  }
-}
-
-///|
 pub suberror CreatingViewError {
   IndexOutOfBounds
   InvalidIndex

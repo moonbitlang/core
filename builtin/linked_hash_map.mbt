@@ -909,7 +909,10 @@ pub fn[K : Hash + Eq, V] Map::update(
 // Special handling for Views as accessors
 
 ///|
-impl Hash for StringView with hash_combine(self : StringView, hasher : Hasher) -> Unit {
+pub impl Hash for StringView with hash_combine(
+  self : StringView,
+  hasher : Hasher,
+) -> Unit {
   let str = self.str()
   for i in self.start()..<self.end() {
     hasher.combine_uint(str.unsafe_charcode_at(i).reinterpret_as_uint())
@@ -936,9 +939,8 @@ fn StringView::equal_to_string(self : Self, other : String) -> Bool {
 }
 
 ///|
-impl Hash for BytesView with hash_combine(self : BytesView, hasher : Hasher) {
-  let self_len = self.len()
-  let start = self.start()
+pub impl Hash for BytesView with hash_combine(self : BytesView, hasher : Hasher) {
+  let mut start = self.start()
   let data = self.bytes()
   let mut rest = self.len()
   while rest >= 4 {
@@ -948,10 +950,12 @@ impl Hash for BytesView with hash_combine(self : BytesView, hasher : Hasher) {
     }
     hasher.combine_uint(result)
     rest -= 4
+    start += 4
   }
   while rest >= 1 {
-    hasher.combine_byte(data.unsafe_get(start + self_len - rest))
+    hasher.combine_byte(data.unsafe_get(start))
     rest -= 1
+    start += 1
   }
 }
 
