@@ -151,7 +151,7 @@ pub fn Bytes::unsafe_read_uint32_be(bytes : Bytes, index : Int) -> UInt {
 /// Reads 2 bytes starting at `index` and interprets them as a UInt16 in little-endian order:
 /// - `bytes[index]` → bits 0-7 (least significant)
 /// - `bytes[index+1]` → bits 8-15 (most significant)
-// #intrinsic("%bytes.unsafe_read_uint16_le")
+#intrinsic("%bytes.unsafe_read_uint16_le")
 pub fn Bytes::unsafe_read_uint16_le(bytes : Bytes, index : Int) -> UInt16 {
   let mut result : UInt16 = 0
   for i in 0..=1 {
@@ -179,7 +179,7 @@ pub fn Bytes::unsafe_read_uint16_le(bytes : Bytes, index : Int) -> UInt16 {
 /// Reads 2 bytes starting at `index` and interprets them as a UInt16 in big-endian order:
 /// - `bytes[index]` → bits 8-15 (most significant)
 /// - `bytes[index+1]` → bits 0-7 (least significant)
-// #intrinsic("%bytes.unsafe_read_uint16_be")
+#intrinsic("%bytes.unsafe_read_uint16_be")
 pub fn Bytes::unsafe_read_uint16_be(bytes : Bytes, index : Int) -> UInt16 {
   let mut result : UInt16 = 0
   for i in 0..=1 {

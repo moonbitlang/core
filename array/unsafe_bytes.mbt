@@ -34,7 +34,7 @@
 /// - `bytes[index+1]` ← bits 8-15
 /// - ...
 /// - `bytes[index+7]` ← bits 56-63 (most significant)
-// #intrinsic("%bytes.unsafe_write_uint64_le")
+#intrinsic("%bytes.unsafe_write_uint64_le")
 pub fn FixedArray::unsafe_write_uint64_le(
   bytes : FixedArray[Byte],
   index : Int,
@@ -67,7 +67,7 @@ pub fn FixedArray::unsafe_write_uint64_le(
 /// - `bytes[index+1]` ← bits 48-55
 /// - ...
 /// - `bytes[index+7]` ← bits 0-7 (least significant)
-// #intrinsic("%bytes.unsafe_write_uint64_be")
+#intrinsic("%bytes.unsafe_write_uint64_be")
 pub fn FixedArray::unsafe_write_uint64_be(
   bytes : FixedArray[Byte],
   index : Int,
@@ -100,7 +100,7 @@ pub fn FixedArray::unsafe_write_uint64_be(
 /// - `bytes[index+1]` ← bits 8-15
 /// - `bytes[index+2]` ← bits 16-23
 /// - `bytes[index+3]` ← bits 24-31 (most significant)
-// #intrinsic("%bytes.unsafe_write_uint32_le")
+#intrinsic("%bytes.unsafe_write_uint32_le")
 pub fn FixedArray::unsafe_write_uint32_le(
   bytes : FixedArray[Byte],
   index : Int,
@@ -133,7 +133,7 @@ pub fn FixedArray::unsafe_write_uint32_le(
 /// - `bytes[index+1]` ← bits 16-23
 /// - `bytes[index+2]` ← bits 8-15
 /// - `bytes[index+3]` ← bits 0-7 (least significant)
-// #intrinsic("%bytes.unsafe_write_uint32_be")
+#intrinsic("%bytes.unsafe_write_uint32_be")
 pub fn FixedArray::unsafe_write_uint32_be(
   bytes : FixedArray[Byte],
   index : Int,
@@ -164,7 +164,7 @@ pub fn FixedArray::unsafe_write_uint32_be(
 /// Writes 2 bytes starting at `index` in little-endian order:
 /// - `bytes[index]` ← bits 0-7 (least significant)
 /// - `bytes[index+1]` ← bits 8-15 (most significant)
-// #intrinsic("%bytes.unsafe_write_uint16_le")
+#intrinsic("%bytes.unsafe_write_uint16_le")
 pub fn FixedArray::unsafe_write_uint16_le(
   bytes : FixedArray[Byte],
   index : Int,
@@ -195,7 +195,7 @@ pub fn FixedArray::unsafe_write_uint16_le(
 /// Writes 2 bytes starting at `index` in big-endian order:
 /// - `bytes[index]` ← bits 8-15 (most significant)
 /// - `bytes[index+1]` ← bits 0-7 (least significant)
-// #intrinsic("%bytes.unsafe_write_uint16_be")
+#intrinsic("%bytes.unsafe_write_uint16_be")
 pub fn FixedArray::unsafe_write_uint16_be(
   bytes : FixedArray[Byte],
   index : Int,
