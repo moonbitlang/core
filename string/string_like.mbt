@@ -30,5 +30,5 @@ pub impl ToStringView for StringView with to_string_view(self) -> StringView {
 ///|
 /// Implements ToStringView for Char, enabling operations like Array::join on Array[Char]
 pub impl ToStringView for Char with to_string_view(self) -> StringView {
-  self.to_string()[:]
+  [self]
 }
