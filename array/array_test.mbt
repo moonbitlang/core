@@ -299,3 +299,13 @@ test "panic fill with invalid end" {
   let arr = [1, 2, 3, 4, 5]
   arr.fill(0, start=2, end=10)
 }
+
+///|
+test "Array::join with Char" {
+  let chars : Array[Char] = ['h', 'e', 'l', 'l', 'o']
+  let result = chars.join("")
+  inspect(result, content="hello")
+  let chars2 : Array[Char] = ['a', 'b', 'c']
+  let result2 = chars2.join(", ")
+  inspect(result2, content="a, b, c")
+}
