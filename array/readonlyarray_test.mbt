@@ -104,15 +104,53 @@ test "ReadOnlyArray trait implementations" {
   // Test join for strings
   let str_arr : ReadOnlyArray[String] = ["a", "b", "c"]
   inspect(str_arr.join(","), content="a,b,c")
+}
 
-  // Test equal
+///|
+test "ReadOnlyArray equal" {
+  // Test equal arrays
   let arr1 : ReadOnlyArray[Int] = [1, 2, 3]
   let arr2 : ReadOnlyArray[Int] = [1, 2, 3]
-  let arr3 : ReadOnlyArray[Int] = [4, 5, 6]
   inspect(arr1 == arr2, content="true")
+
+  // Test unequal arrays with different values
+  let arr3 : ReadOnlyArray[Int] = [1, 3, 3]
   inspect(arr1 == arr3, content="false")
 
-  // Test compare
-  inspect(arr1.compare(arr2), content="0")
-  inspect(arr1.compare(arr3), content="-1")
+  // Test arrays of different lengths
+  let arr4 : ReadOnlyArray[Int] = [1, 2]
+  inspect(arr1 == arr4, content="false")
+
+  // Test empty arrays
+  let empty1 : ReadOnlyArray[Int] = []
+  let empty2 : ReadOnlyArray[Int] = []
+  inspect(empty1 == empty2, content="true")
+
+  // Test empty vs non-empty
+  inspect(empty1 == arr1, content="false")
+}
+
+///|
+test "ReadOnlyArray compare" {
+  let arr1 : ReadOnlyArray[Int] = [1, 2, 3]
+  let arr2 : ReadOnlyArray[Int] = [1, 2, 4]
+  let arr3 : ReadOnlyArray[Int] = [1, 2]
+
+  // Test lexicographic comparison
+  inspect(arr1.compare(arr2), content="-1") // arr1 < arr2
+  inspect(arr2.compare(arr1), content="1") // arr2 > arr1
+
+  // Test length comparison when prefixes are equal
+  inspect(arr1.compare(arr3), content="1") // arr1 > arr3 (longer)
+  inspect(arr3.compare(arr1), content="-1") // arr3 < arr1 (shorter)
+
+  // Test equal arrays
+  inspect(arr1.compare(arr1), content="0") // arr1 = arr1
+
+  // Test empty arrays
+  let empty1 : ReadOnlyArray[Int] = []
+  let empty2 : ReadOnlyArray[Int] = []
+  inspect(empty1.compare(empty2), content="0") // empty = empty
+  inspect(empty1.compare(arr1), content="-1") // empty < non-empty
+  inspect(arr1.compare(empty1), content="1") // non-empty > empty
 }
