@@ -300,11 +300,152 @@ test "Show for Int64" {
 }
 
 ///|
+test "Show for Int64 - hexadecimal (radix=16)" {
+  // Zero
+  inspect((0 : Int64).to_string(radix=16), content="0")
+
+  // Various hex values
+  inspect((1 : Int64).to_string(radix=16), content="1")
+  inspect((15 : Int64).to_string(radix=16), content="f")
+  inspect((16 : Int64).to_string(radix=16), content="10")
+  inspect((255 : Int64).to_string(radix=16), content="ff")
+  inspect((256 : Int64).to_string(radix=16), content="100")
+  inspect((65535 : Int64).to_string(radix=16), content="ffff")
+  inspect((4294967295 : Int64).to_string(radix=16), content="ffffffff")
+  inspect((-1 : Int64).to_string(radix=16), content="-1")
+  inspect((-255 : Int64).to_string(radix=16), content="-ff")
+  inspect((-65535 : Int64).to_string(radix=16), content="-ffff")
+
+  // Large 64-bit values
+  inspect(
+    (72057594037927935 : Int64).to_string(radix=16),
+    content="ffffffffffffff",
+  )
+  inspect(@int64.max_value.to_string(radix=16), content="7fffffffffffffff")
+  inspect(@int64.min_value.to_string(radix=16), content="-8000000000000000")
+
+  // Powers of 16
+  inspect((1 : Int64).to_string(radix=16), content="1")
+  inspect((16 : Int64).to_string(radix=16), content="10")
+  inspect((256 : Int64).to_string(radix=16), content="100")
+  inspect((4096 : Int64).to_string(radix=16), content="1000")
+  inspect((65536 : Int64).to_string(radix=16), content="10000")
+  inspect((1048576 : Int64).to_string(radix=16), content="100000")
+  inspect((16777216 : Int64).to_string(radix=16), content="1000000")
+  inspect((268435456 : Int64).to_string(radix=16), content="10000000")
+  inspect((4294967296 : Int64).to_string(radix=16), content="100000000")
+}
+
+///|
+test "Show for Int64 - binary (radix=2)" {
+  inspect((0 : Int64).to_string(radix=2), content="0")
+  inspect((1 : Int64).to_string(radix=2), content="1")
+  inspect((2 : Int64).to_string(radix=2), content="10")
+  inspect((7 : Int64).to_string(radix=2), content="111")
+  inspect((255 : Int64).to_string(radix=2), content="11111111")
+  inspect((-1 : Int64).to_string(radix=2), content="-1")
+  inspect((-255 : Int64).to_string(radix=2), content="-11111111")
+  inspect(
+    @int64.max_value.to_string(radix=2),
+    content="111111111111111111111111111111111111111111111111111111111111111",
+  )
+  inspect(
+    @int64.min_value.to_string(radix=2),
+    content="-1000000000000000000000000000000000000000000000000000000000000000",
+  )
+}
+
+///|
+test "Show for Int64 - octal (radix=8)" {
+  inspect((0 : Int64).to_string(radix=8), content="0")
+  inspect((7 : Int64).to_string(radix=8), content="7")
+  inspect((8 : Int64).to_string(radix=8), content="10")
+  inspect((64 : Int64).to_string(radix=8), content="100")
+  inspect((511 : Int64).to_string(radix=8), content="777")
+  inspect((-8 : Int64).to_string(radix=8), content="-10")
+  inspect((-64 : Int64).to_string(radix=8), content="-100")
+  inspect(@int64.max_value.to_string(radix=8), content="777777777777777777777")
+  inspect(
+    @int64.min_value.to_string(radix=8),
+    content="-1000000000000000000000",
+  )
+}
+
+///|
+test "Show for Int64 - base 3 (radix=3)" {
+  inspect((0 : Int64).to_string(radix=3), content="0")
+  inspect((2 : Int64).to_string(radix=3), content="2")
+  inspect((3 : Int64).to_string(radix=3), content="10")
+  inspect((8 : Int64).to_string(radix=3), content="22")
+  inspect((27 : Int64).to_string(radix=3), content="1000")
+  inspect((-3 : Int64).to_string(radix=3), content="-10")
+  inspect((-27 : Int64).to_string(radix=3), content="-1000")
+}
+
+///|
+test "Show for Int64 - base 36 (radix=36)" {
+  inspect((0 : Int64).to_string(radix=36), content="0")
+  inspect((35 : Int64).to_string(radix=36), content="z")
+  inspect((36 : Int64).to_string(radix=36), content="10")
+  inspect((1295 : Int64).to_string(radix=36), content="zz")
+  inspect((-36 : Int64).to_string(radix=36), content="-10")
+  inspect(@int64.max_value.to_string(radix=36), content="1y2p0ij32e8e7")
+  inspect(@int64.min_value.to_string(radix=36), content="-1y2p0ij32e8e8")
+}
+
+///|
 test "Show for Int16" {
   inspect((0 : Int16).to_string(), content="0")
   inspect((32767 : Int16).to_string(), content="32767")
   inspect((-32768 : Int16).to_string(), content="-32768")
   inspect((-32766 : Int16), content="-32766")
+}
+
+///|
+test "Show for Int16 - hexadecimal (radix=16)" {
+  inspect((0 : Int16).to_string(radix=16), content="0")
+  inspect((15 : Int16).to_string(radix=16), content="f")
+  inspect((16 : Int16).to_string(radix=16), content="10")
+  inspect((255 : Int16).to_string(radix=16), content="ff")
+  inspect((256 : Int16).to_string(radix=16), content="100")
+  inspect((4095 : Int16).to_string(radix=16), content="fff")
+  inspect((32767 : Int16).to_string(radix=16), content="7fff")
+  inspect((-1 : Int16).to_string(radix=16), content="-1")
+  inspect((-255 : Int16).to_string(radix=16), content="-ff")
+  inspect((-32768 : Int16).to_string(radix=16), content="-8000")
+}
+
+///|
+test "Show for Int16 - binary (radix=2)" {
+  inspect((0 : Int16).to_string(radix=2), content="0")
+  inspect((1 : Int16).to_string(radix=2), content="1")
+  inspect((7 : Int16).to_string(radix=2), content="111")
+  inspect((255 : Int16).to_string(radix=2), content="11111111")
+  inspect((32767 : Int16).to_string(radix=2), content="111111111111111")
+  inspect((-1 : Int16).to_string(radix=2), content="-1")
+  inspect((-32768 : Int16).to_string(radix=2), content="-1000000000000000")
+}
+
+///|
+test "Show for Int16 - octal (radix=8)" {
+  inspect((0 : Int16).to_string(radix=8), content="0")
+  inspect((7 : Int16).to_string(radix=8), content="7")
+  inspect((8 : Int16).to_string(radix=8), content="10")
+  inspect((511 : Int16).to_string(radix=8), content="777")
+  inspect((32767 : Int16).to_string(radix=8), content="77777")
+  inspect((-8 : Int16).to_string(radix=8), content="-10")
+  inspect((-32768 : Int16).to_string(radix=8), content="-100000")
+}
+
+///|
+test "Show for Int16 - base 36 (radix=36)" {
+  inspect((0 : Int16).to_string(radix=36), content="0")
+  inspect((35 : Int16).to_string(radix=36), content="z")
+  inspect((36 : Int16).to_string(radix=36), content="10")
+  inspect((1295 : Int16).to_string(radix=36), content="zz")
+  inspect((32767 : Int16).to_string(radix=36), content="pa7")
+  inspect((-36 : Int16).to_string(radix=36), content="-10")
+  inspect((-32768 : Int16).to_string(radix=36), content="-pa8")
 }
 
 ///|
@@ -315,10 +456,174 @@ test "Show for UInt" {
 }
 
 ///|
+test "Show for UInt - hexadecimal (radix=16)" {
+  // Zero
+  inspect((0 : UInt).to_string(radix=16), content="0")
+
+  // Single hex digit (0x1-0xf)
+  inspect((1 : UInt).to_string(radix=16), content="1")
+  inspect((10 : UInt).to_string(radix=16), content="a")
+  inspect((15 : UInt).to_string(radix=16), content="f")
+
+  // Two hex digits (0x10-0xff)
+  inspect((16 : UInt).to_string(radix=16), content="10")
+  inspect((255 : UInt).to_string(radix=16), content="ff")
+  inspect((171 : UInt).to_string(radix=16), content="ab")
+
+  // Four hex digits (0x1000-0xffff)
+  inspect((4096 : UInt).to_string(radix=16), content="1000")
+  inspect((43981 : UInt).to_string(radix=16), content="abcd")
+  inspect((65535 : UInt).to_string(radix=16), content="ffff")
+
+  // Eight hex digits (max for UInt)
+  inspect((268435456 : UInt).to_string(radix=16), content="10000000")
+  inspect((4294967295 : UInt).to_string(radix=16), content="ffffffff")
+
+  // Edge cases
+  inspect(@uint.max_value.to_string(radix=16), content="ffffffff")
+  inspect(@uint.min_value.to_string(radix=16), content="0")
+
+  // Powers of 16
+  inspect((1 : UInt).to_string(radix=16), content="1")
+  inspect((16 : UInt).to_string(radix=16), content="10")
+  inspect((256 : UInt).to_string(radix=16), content="100")
+  inspect((4096 : UInt).to_string(radix=16), content="1000")
+  inspect((65536 : UInt).to_string(radix=16), content="10000")
+  inspect((1048576 : UInt).to_string(radix=16), content="100000")
+  inspect((16777216 : UInt).to_string(radix=16), content="1000000")
+  inspect((268435456 : UInt).to_string(radix=16), content="10000000")
+}
+
+///|
+test "Show for UInt - binary (radix=2)" {
+  inspect((0 : UInt).to_string(radix=2), content="0")
+  inspect((1 : UInt).to_string(radix=2), content="1")
+  inspect((2 : UInt).to_string(radix=2), content="10")
+  inspect((7 : UInt).to_string(radix=2), content="111")
+  inspect((15 : UInt).to_string(radix=2), content="1111")
+  inspect((255 : UInt).to_string(radix=2), content="11111111")
+  inspect((256 : UInt).to_string(radix=2), content="100000000")
+  inspect(
+    @uint.max_value.to_string(radix=2),
+    content="11111111111111111111111111111111",
+  )
+}
+
+///|
+test "Show for UInt - octal (radix=8)" {
+  inspect((0 : UInt).to_string(radix=8), content="0")
+  inspect((7 : UInt).to_string(radix=8), content="7")
+  inspect((8 : UInt).to_string(radix=8), content="10")
+  inspect((64 : UInt).to_string(radix=8), content="100")
+  inspect((511 : UInt).to_string(radix=8), content="777")
+  inspect((512 : UInt).to_string(radix=8), content="1000")
+  inspect(@uint.max_value.to_string(radix=8), content="37777777777")
+}
+
+///|
+test "Show for UInt - base 3 (radix=3)" {
+  inspect((0 : UInt).to_string(radix=3), content="0")
+  inspect((2 : UInt).to_string(radix=3), content="2")
+  inspect((3 : UInt).to_string(radix=3), content="10")
+  inspect((8 : UInt).to_string(radix=3), content="22")
+  inspect((9 : UInt).to_string(radix=3), content="100")
+  inspect((26 : UInt).to_string(radix=3), content="222")
+  inspect((27 : UInt).to_string(radix=3), content="1000")
+}
+
+///|
+test "Show for UInt - base 36 (radix=36)" {
+  inspect((0 : UInt).to_string(radix=36), content="0")
+  inspect((35 : UInt).to_string(radix=36), content="z")
+  inspect((36 : UInt).to_string(radix=36), content="10")
+  inspect((1295 : UInt).to_string(radix=36), content="zz")
+  inspect((1296 : UInt).to_string(radix=36), content="100")
+  inspect(@uint.max_value.to_string(radix=36), content="1z141z3")
+}
+
+///|
 test "Show for UInt64" {
   inspect((0 : UInt64).to_string(), content="0")
   inspect(@uint64.max_value.to_string(), content="18446744073709551615")
   inspect(@uint64.min_value.to_string(), content="0")
+}
+
+///|
+test "Show for UInt64 - hexadecimal (radix=16)" {
+  // Zero
+  inspect((0 : UInt64).to_string(radix=16), content="0")
+
+  // Various hex values
+  inspect((1 : UInt64).to_string(radix=16), content="1")
+  inspect((15 : UInt64).to_string(radix=16), content="f")
+  inspect((16 : UInt64).to_string(radix=16), content="10")
+  inspect((255 : UInt64).to_string(radix=16), content="ff")
+  inspect((256 : UInt64).to_string(radix=16), content="100")
+  inspect((65535 : UInt64).to_string(radix=16), content="ffff")
+  inspect((4294967295 : UInt64).to_string(radix=16), content="ffffffff")
+
+  // Large 64-bit values
+  inspect(
+    (72057594037927935 : UInt64).to_string(radix=16),
+    content="ffffffffffffff",
+  )
+  inspect(@uint64.max_value.to_string(radix=16), content="ffffffffffffffff")
+
+  // Powers of 16
+  inspect((1 : UInt64).to_string(radix=16), content="1")
+  inspect((16 : UInt64).to_string(radix=16), content="10")
+  inspect((256 : UInt64).to_string(radix=16), content="100")
+  inspect((4096 : UInt64).to_string(radix=16), content="1000")
+  inspect((65536 : UInt64).to_string(radix=16), content="10000")
+  inspect((1048576 : UInt64).to_string(radix=16), content="100000")
+  inspect((16777216 : UInt64).to_string(radix=16), content="1000000")
+  inspect((268435456 : UInt64).to_string(radix=16), content="10000000")
+  inspect((4294967296 : UInt64).to_string(radix=16), content="100000000")
+  inspect((1099511627776 : UInt64).to_string(radix=16), content="10000000000")
+}
+
+///|
+test "Show for UInt64 - binary (radix=2)" {
+  inspect((0 : UInt64).to_string(radix=2), content="0")
+  inspect((1 : UInt64).to_string(radix=2), content="1")
+  inspect((2 : UInt64).to_string(radix=2), content="10")
+  inspect((7 : UInt64).to_string(radix=2), content="111")
+  inspect((255 : UInt64).to_string(radix=2), content="11111111")
+  inspect(
+    @uint64.max_value.to_string(radix=2),
+    content="1111111111111111111111111111111111111111111111111111111111111111",
+  )
+}
+
+///|
+test "Show for UInt64 - octal (radix=8)" {
+  inspect((0 : UInt64).to_string(radix=8), content="0")
+  inspect((7 : UInt64).to_string(radix=8), content="7")
+  inspect((8 : UInt64).to_string(radix=8), content="10")
+  inspect((64 : UInt64).to_string(radix=8), content="100")
+  inspect((511 : UInt64).to_string(radix=8), content="777")
+  inspect(
+    @uint64.max_value.to_string(radix=8),
+    content="1777777777777777777777",
+  )
+}
+
+///|
+test "Show for UInt64 - base 3 (radix=3)" {
+  inspect((0 : UInt64).to_string(radix=3), content="0")
+  inspect((2 : UInt64).to_string(radix=3), content="2")
+  inspect((3 : UInt64).to_string(radix=3), content="10")
+  inspect((8 : UInt64).to_string(radix=3), content="22")
+  inspect((27 : UInt64).to_string(radix=3), content="1000")
+}
+
+///|
+test "Show for UInt64 - base 36 (radix=36)" {
+  inspect((0 : UInt64).to_string(radix=36), content="0")
+  inspect((35 : UInt64).to_string(radix=36), content="z")
+  inspect((36 : UInt64).to_string(radix=36), content="10")
+  inspect((1295 : UInt64).to_string(radix=36), content="zz")
+  inspect(@uint64.max_value.to_string(radix=36), content="3w5e11264sgsf")
 }
 
 ///|
@@ -330,6 +635,44 @@ test "Show for UInt16" {
   // TODO:
   // inspect((65536 : UInt16), content="65536")
   // 65536 is overflow for uint16
+}
+
+///|
+test "Show for UInt16 - hexadecimal (radix=16)" {
+  inspect((0 : UInt16).to_string(radix=16), content="0")
+  inspect((15 : UInt16).to_string(radix=16), content="f")
+  inspect((16 : UInt16).to_string(radix=16), content="10")
+  inspect((255 : UInt16).to_string(radix=16), content="ff")
+  inspect((256 : UInt16).to_string(radix=16), content="100")
+  inspect((4095 : UInt16).to_string(radix=16), content="fff")
+  inspect((65535 : UInt16).to_string(radix=16), content="ffff")
+}
+
+///|
+test "Show for UInt16 - binary (radix=2)" {
+  inspect((0 : UInt16).to_string(radix=2), content="0")
+  inspect((1 : UInt16).to_string(radix=2), content="1")
+  inspect((7 : UInt16).to_string(radix=2), content="111")
+  inspect((255 : UInt16).to_string(radix=2), content="11111111")
+  inspect((65535 : UInt16).to_string(radix=2), content="1111111111111111")
+}
+
+///|
+test "Show for UInt16 - octal (radix=8)" {
+  inspect((0 : UInt16).to_string(radix=8), content="0")
+  inspect((7 : UInt16).to_string(radix=8), content="7")
+  inspect((8 : UInt16).to_string(radix=8), content="10")
+  inspect((511 : UInt16).to_string(radix=8), content="777")
+  inspect((65535 : UInt16).to_string(radix=8), content="177777")
+}
+
+///|
+test "Show for UInt16 - base 36 (radix=36)" {
+  inspect((0 : UInt16).to_string(radix=36), content="0")
+  inspect((35 : UInt16).to_string(radix=36), content="z")
+  inspect((36 : UInt16).to_string(radix=36), content="10")
+  inspect((1295 : UInt16).to_string(radix=36), content="zz")
+  inspect((65535 : UInt16).to_string(radix=36), content="1ekf")
 }
 
 ///|
