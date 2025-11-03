@@ -177,20 +177,33 @@ fn int_to_string_dec(
 /// Calculates the number of decimal digits in a u32 value
 #cfg(not(target="js"))
 fn dec_count32(value : UInt) -> Int {
-  if value < 100000U {
-    if value < 100U {
-      1 + (if value >= 10U { 1 } else { 0 })
+  // Binary search: split 1-10 digits into halves
+  if value >= 100000U { // >= 10^5 means 6+ digits
+    if value >= 10000000U { // >= 10^7 means 8+ digits
+      if value >= 1000000000U { // >= 10^9 means 10 digits
+        10
+      } else if value >= 100000000U { // >= 10^8 means 9 digits
+        9
+      } else {
+        8
+      }
+    } else if value >= 1000000U { // >= 10^6 means 7 digits
+      7
     } else {
-      3 +
-      (if value >= 10000U { 1 } else { 0 }) +
-      (if value >= 1000U { 1 } else { 0 })
+      6
     }
-  } else if value < 10000000U {
-    6 + (if value >= 1000000U { 1 } else { 0 })
+  } else if value >= 1000U { // >= 10^3 means 4+ digits
+    if value >= 10000U { // >= 10^4 means 5 digits
+      5
+    } else {
+      4
+    }
+  } else if value >= 100U { // >= 10^2 means 3 digits
+    3
+  } else if value >= 10U { // >= 10^1 means 2 digits
+    2
   } else {
-    8 +
-    (if value >= 1000000000U { 1 } else { 0 }) +
-    (if value >= 100000000U { 1 } else { 0 })
+    1
   }
 }
 
@@ -365,30 +378,63 @@ extern "js" fn uint_to_string_js(i : UInt, radix : Int) -> String =
 ///|
 /// Calculates the number of decimal digits in a u64 value
 fn dec_count64(value : UInt64) -> Int {
-  if value < 100000UL {
-    if value < 100UL {
-      1 + (if value >= 10UL { 1 } else { 0 })
+  // Binary search: split 1-20 digits into halves
+  if value >= 10000000000UL { // >= 10^10 means 11+ digits
+    if value >= 100000000000000UL { // >= 10^14 means 15+ digits
+      if value >= 10000000000000000UL { // >= 10^16 means 17+ digits
+        if value >= 1000000000000000000UL { // >= 10^18 means 19+ digits
+          if value >= 10000000000000000000UL { // >= 10^19 means 20 digits
+            20
+          } else {
+            19
+          }
+        } else if value >= 100000000000000000UL { // >= 10^17 means 18 digits
+          18
+        } else {
+          17
+        }
+      } else if value >= 1000000000000000UL { // >= 10^15 means 16 digits
+        16
+      } else {
+        15
+      }
+    } else if value >= 1000000000000UL { // >= 10^12 means 13+ digits
+      if value >= 10000000000000UL { // >= 10^13 means 14 digits
+        14
+      } else {
+        13
+      }
+    } else if value >= 100000000000UL { // >= 10^11 means 12 digits
+      12
     } else {
-      3 +
-      (if value >= 10000UL { 1 } else { 0 }) +
-      (if value >= 1000UL { 1 } else { 0 })
+      11
     }
-  } else if value < 10000000UL {
-    6 + (if value >= 1000000UL { 1 } else { 0 })
-  } else if value < 1000000000UL {
-    8 + (if value >= 100000000UL { 1 } else { 0 })
-  } else if value < 100000000000UL {
-    10 + (if value >= 10000000000UL { 1 } else { 0 })
-  } else if value < 10000000000000UL {
-    12 + (if value >= 1000000000000UL { 1 } else { 0 })
-  } else if value < 1000000000000000UL {
-    14 + (if value >= 100000000000000UL { 1 } else { 0 })
-  } else if value < 100000000000000000UL {
-    16 + (if value >= 10000000000000000UL { 1 } else { 0 })
+  } else if value >= 100000UL { // >= 10^5 means 6+ digits
+    if value >= 10000000UL { // >= 10^7 means 8+ digits
+      if value >= 1000000000UL { // >= 10^9 means 10 digits
+        10
+      } else if value >= 100000000UL { // >= 10^8 means 9 digits
+        9
+      } else {
+        8
+      }
+    } else if value >= 1000000UL { // >= 10^6 means 7 digits
+      7
+    } else {
+      6
+    }
+  } else if value >= 1000UL { // >= 10^3 means 4+ digits
+    if value >= 10000UL { // >= 10^4 means 5 digits
+      5
+    } else {
+      4
+    }
+  } else if value >= 100UL { // >= 10^2 means 3 digits
+    3
+  } else if value >= 10UL { // >= 10^1 means 2 digits
+    2
   } else {
-    18 +
-    (if value >= 10000000000000000000UL { 1 } else { 0 }) +
-    (if value >= 1000000000000000000UL { 1 } else { 0 })
+    1
   }
 }
 
