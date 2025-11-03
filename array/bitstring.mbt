@@ -49,6 +49,24 @@ pub fn ArrayView::unsafe_extract_bit(
 }
 
 ///|
+/// Extract a single bit.
+#internal(experimental, "subject to breaking change without notice")
+pub fn ArrayView::unsafe_extract_bit_signed(
+  bs : ArrayView[Byte],
+  offset : Int,
+  _len : Int,
+) -> Int {
+  let byte_index = offset >> 3
+  let bit_mask = (1 << (7 - (offset & 7))).to_byte()
+  // TODO: branchless for performance
+  if (bs.unsafe_get(byte_index) & bit_mask) != 0 {
+    -1
+  } else {
+    0
+  }
+}
+
+///|
 /// Extract [2..8] bits.
 #internal(experimental, "subject to breaking change without notice")
 pub fn ArrayView::unsafe_extract_byte(

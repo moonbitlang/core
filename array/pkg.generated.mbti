@@ -153,6 +153,7 @@ fn[X] ArrayView::rev_iterator(Self[X]) -> Iterator[X]
 fn[T] ArrayView::start_offset(Self[T]) -> Int
 fn[T] ArrayView::to_array(Self[T]) -> Array[T]
 fn ArrayView::unsafe_extract_bit(Self[Byte], Int, Int) -> UInt
+fn ArrayView::unsafe_extract_bit_signed(Self[Byte], Int, Int) -> Int
 fn ArrayView::unsafe_extract_byte(Self[Byte], Int, Int) -> UInt
 fn ArrayView::unsafe_extract_byte_signed(Self[Byte], Int, Int) -> Int
 fn ArrayView::unsafe_extract_bytesview(Self[Byte], Int, Int) -> Self[Byte]
