@@ -454,6 +454,20 @@ test "FixedArray extract view" {
 }
 
 ///|
+test "extract bit signed" {
+  let bytes : ArrayView[Byte] = [0xAA]
+  let view = bytes[:]
+  inspect(view.unsafe_extract_bit_signed(0, 1), content="-1")
+  inspect(view.unsafe_extract_bit_signed(1, 1), content="0")
+  inspect(view.unsafe_extract_bit_signed(2, 1), content="-1")
+  inspect(view.unsafe_extract_bit_signed(3, 1), content="0")
+  inspect(view.unsafe_extract_bit_signed(4, 1), content="-1")
+  inspect(view.unsafe_extract_bit_signed(5, 1), content="0")
+  inspect(view.unsafe_extract_bit_signed(6, 1), content="-1")
+  inspect(view.unsafe_extract_bit_signed(7, 1), content="0")
+}
+
+///|
 test "extract byte signed" {
   let bs1 : BytesView = b"\x7F\xFF\x80\x00\xAA\x55"
   let bs2 : ArrayView[Byte] = [0x7F, 0xFF, 0x80, 0x00, 0xAA, 0x55]

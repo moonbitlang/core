@@ -1865,6 +1865,20 @@ test "misc" {
 // ============================================================================
 
 ///|
+test "extract_bit_signed - basic functionality" {
+  let bytes = b"\xAA"
+  let view = bytes[:]
+  inspect(view.unsafe_extract_bit_signed(0, 1), content="-1")
+  inspect(view.unsafe_extract_bit_signed(1, 1), content="0")
+  inspect(view.unsafe_extract_bit_signed(2, 1), content="-1")
+  inspect(view.unsafe_extract_bit_signed(3, 1), content="0")
+  inspect(view.unsafe_extract_bit_signed(4, 1), content="-1")
+  inspect(view.unsafe_extract_bit_signed(5, 1), content="0")
+  inspect(view.unsafe_extract_bit_signed(6, 1), content="-1")
+  inspect(view.unsafe_extract_bit_signed(7, 1), content="0")
+}
+
+///|
 test "extract_byte_signed - basic positive and negative values" {
   // Test with a mix of positive and negative values
   let bytes = b"\x7F\xFF\x80\x00\xAA\x55"
