@@ -28,22 +28,22 @@ pub impl Show for Bool with output(self, logger) {
 
 ///|
 pub impl Show for Int with output(self, logger) {
-  self.output(logger)
+  logger.write_string(self.to_string())
 }
 
 ///|
 pub impl Show for Int64 with output(self, logger) {
-  self.output(logger)
+  logger.write_string(self.to_string())
 }
 
 ///|
 pub impl Show for UInt with output(self, logger) {
-  self.output(logger)
+  logger.write_string(self.to_string())
 }
 
 ///|
 pub impl Show for UInt64 with output(self, logger) {
-  self.output(logger)
+  logger.write_string(self.to_string())
 }
 
 ///|
@@ -58,7 +58,7 @@ pub impl Show for Int16 with output(self, logger) {
 
 ///|
 pub impl Show for UInt16 with output(self, logger) {
-  self.to_int().output(logger)
+  logger.write_string(self.to_string())
 }
 
 ///|
