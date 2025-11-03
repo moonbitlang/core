@@ -151,7 +151,6 @@ impl ToJson for StringView
 pub trait ToStringView {
   to_string_view(Self) -> StringView
 }
-impl ToStringView for Char
 impl ToStringView for String
 impl ToStringView for StringView
 
