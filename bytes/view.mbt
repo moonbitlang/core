@@ -281,9 +281,11 @@ pub fn BytesView::iterator2(self : BytesView) -> Iterator2[Int, Byte] {
 /// Example:
 ///
 /// ```moonbit
-///   let bytes = b"\x12\x34\x56\x78"[:]
-///   inspect(bytes.to_uint_be(), content="305419896") // 0x12345678
+///   let bytes = b"\x12\x34\x56\x78"
+///   guard bytes is [u32be(x),..]
+///   inspect(x, content="305419896") // 0x12345678
 /// ```
+#deprecated(skip_current_package=false, "Use bits pattern directly")
 pub fn BytesView::to_uint_be(self : BytesView) -> UInt {
   (self[0].to_uint() << 24) +
   (self[1].to_uint() << 16) +
@@ -310,8 +312,8 @@ pub fn BytesView::to_uint_be(self : BytesView) -> UInt {
 ///
 /// ```moonbit
 /// let bytes = b"\x01\x02\x03\x04"
-/// let view = bytes[:]
-/// inspect(view.to_uint_le(), content="67305985") // 0x04030201
+/// guard bytes is [u32le(x),..]
+/// inspect(x, content="67305985") // 0x04030201
 /// ```
 #deprecated(skip_current_package=false, "Use bits pattern directly")
 pub fn BytesView::to_uint_le(self : BytesView) -> UInt {
@@ -341,9 +343,11 @@ pub fn BytesView::to_uint_le(self : BytesView) -> UInt {
 /// Example:
 ///
 /// ```moonbit
-///   let bytes = b"\x01\x23\x45\x67\x89\xAB\xCD\xEF"[:]
-///   inspect(bytes.to_uint64_be(), content="81985529216486895")
+///   let bytes = b"\x01\x23\x45\x67\x89\xAB\xCD\xEF"
+///   guard bytes is [u64be(x),..]
+///   inspect(x, content="81985529216486895")
 /// ```
+#deprecated(skip_current_package=false, "Use bits pattern directly")
 pub fn BytesView::to_uint64_be(self : BytesView) -> UInt64 {
   (self[0].to_uint().to_uint64() << 56) +
   (self[1].to_uint().to_uint64() << 48) +
@@ -376,9 +380,11 @@ pub fn BytesView::to_uint64_be(self : BytesView) -> UInt64 {
 /// Example:
 ///
 /// ```moonbit
-///   let bytes = b"\x01\x02\x03\x04\x05\x06\x07\x08"[:]
-///   inspect(bytes.to_uint64_le(), content="578437695752307201")
+///   let bytes = b"\x01\x02\x03\x04\x05\x06\x07\x08"
+///   guard bytes is [u64le(x),..]
+///   inspect(x, content="578437695752307201")
 /// ```
+#deprecated(skip_current_package=false, "Use bits pattern directly")
 pub fn BytesView::to_uint64_le(self : BytesView) -> UInt64 {
   self[0].to_uint().to_uint64() +
   (self[1].to_uint().to_uint64() << 8) +
@@ -504,11 +510,12 @@ pub fn BytesView::to_int64_le(self : BytesView) -> Int64 {
 ///
 /// ```moonbit
 ///   let bytes = b"\x40\x48\xF5\xC3" // Represents 3.14 in IEEE 754 format
-///   let view = bytes[:]
-///   let float = view.to_float_be()
+///   guard bytes is [u32be(bits),..]
+///   let float = bits.reinterpret_as_float()
 ///   // Convert to double for comparison since Float doesn't implement Show
 ///   inspect(float.to_double(), content="3.140000104904175")
 /// ```
+#deprecated(skip_current_package=false, "Use bits pattern directly")
 pub fn BytesView::to_float_be(self : BytesView) -> Float {
   self.to_uint_be().reinterpret_as_float()
 }
@@ -528,9 +535,11 @@ pub fn BytesView::to_float_be(self : BytesView) -> Float {
 ///
 /// ```moonbit
 ///   let bytes = b"\x00\x00\x80\x3F" // Represents 1.0 in little-endian IEEE-754
-///   let f = bytes[:].to_float_le()
+///   guard bytes is [u32le(bits),..]
+///   let f = bits.reinterpret_as_float()
 ///   inspect(f.to_double(), content="1")
 /// ```
+#deprecated(skip_current_package=false, "Use bits pattern directly")
 pub fn BytesView::to_float_le(self : BytesView) -> Float {
   self.to_uint_le().reinterpret_as_float()
 }
@@ -553,9 +562,10 @@ pub fn BytesView::to_float_le(self : BytesView) -> Float {
 /// ```moonbit
 ///   // Bytes representing 1.0 in IEEE 754 double-precision format (big-endian)
 ///   let bytes = b"\x3F\xF0\x00\x00\x00\x00\x00\x00"
-///   let view = bytes[:]
-///   inspect(view.to_double_be(), content="1")
+///   guard bytes is [u64be(bits),..]
+///   inspect(bits.reinterpret_as_double(), content="1")
 /// ```
+#deprecated(skip_current_package=false, "Use bits pattern directly")
 pub fn BytesView::to_double_be(self : BytesView) -> Double {
   self.to_uint64_be().reinterpret_as_double()
 }
@@ -576,9 +586,10 @@ pub fn BytesView::to_double_be(self : BytesView) -> Double {
 ///
 /// ```moonbit
 ///   let bytes = b"\x00\x00\x00\x00\x00\x00\xF0\x3F" // represents 1.0 in little-endian
-///   let view = bytes[:]
-///   inspect(view.to_double_le(), content="1")
+///   guard bytes is [u64le(bits),..]
+///   inspect(bits.reinterpret_as_double(), content="1")
 /// ```
+#deprecated(skip_current_package=false, "Use bits pattern directly")
 pub fn BytesView::to_double_le(self : BytesView) -> Double {
   self.to_uint64_le().reinterpret_as_double()
 }

@@ -354,41 +354,47 @@ test "View::get out_of_bounds" {
 ///|
 test "to_uint_be with b'\\xFF\\xFF\\xFF\\xFF'" {
   let bytes = b"\xFF\xFF\xFF\xFF"[:]
-  inspect(bytes.to_uint_be(), content="4294967295")
+  guard bytes is [u32be(x), ..]
+  inspect(x, content="4294967295")
 }
 
 ///|
 test "View::to_uint_le with non-zero bytes" {
   let bytes = b"\x01\x02\x03\x04"
-  let view = bytes[:]
-  inspect(view.to_uint_le(), content="67305985") // 67305985 = 0x04030201
+  guard bytes is [u32le(x), ..]
+  inspect(x, content="67305985") // 67305985 = 0x04030201
 }
 
 ///|
 test "panic View::to_uint_le/out_of_bounds" {
   let bytes = b"\x01\x02\x03" // Only 3 bytes
-  let view = bytes[:]
-  ignore(view.to_uint_le()) // Should panic: index out of bounds
+  match bytes {
+    [u32le(_), ..] => ()
+    _ => abort("Should not reach here")
+  }
 }
 
 ///|
 test "View::to_uint64_be/first_byte_operation" {
-  let bytes = b"\xFF\x00\x00\x00\x00\x00\x00\x00"[:] // First byte is all 1s
-  let result = bytes.to_uint64_be()
+  let bytes = b"\xFF\x00\x00\x00\x00\x00\x00\x00" // First byte is all 1s
+  guard bytes is [u64be(result), ..]
   // First byte shifted left by 56 bits should give us: 0xFF00000000000000
   inspect(result, content="18374686479671623680")
 }
 
 ///|
 test "test View::to_uint64_le with binary pattern" {
-  let bytes = b"\x01\x00\x00\x00\x00\x00\x00\x00"[:]
-  inspect(bytes.to_uint64_le(), content="1")
-  let bytes2 = b"\x00\x01\x00\x00\x00\x00\x00\x00"[:]
-  inspect(bytes2.to_uint64_le(), content="256")
+  let bytes = b"\x01\x00\x00\x00\x00\x00\x00\x00"
+  guard bytes is [u64le(x), ..]
+  inspect(x, content="1")
+  let bytes2 = b"\x00\x01\x00\x00\x00\x00\x00\x00"
+  guard bytes2 is [u64le(x2), ..]
+  inspect(x2, content="256")
 
   // Test all bytes set to non-zero values
-  let bytes3 = b"\x01\x02\x03\x04\x05\x06\x07\x08"[:]
-  inspect(bytes3.to_uint64_le(), content="578437695752307201")
+  let bytes3 = b"\x01\x02\x03\x04\x05\x06\x07\x08"
+  guard bytes3 is [u64le(x3), ..]
+  inspect(x3, content="578437695752307201")
 }
 
 ///|
@@ -424,36 +430,40 @@ test "View::to_int64_le with mixed bytes" {
 test "panic to_float_be/short_input" {
   // Test that trying to read from a view that's too short causes a panic
   let bytes = b"\x40\x49"
-  let view = bytes[:]
-  ignore(BytesView::to_float_be(view)) // Should panic due to insufficient bytes
+  match bytes {
+    [u32be(_), ..] => ()
+    _ => abort("Should not reach here")
+  }
 }
 
 ///|
 test "View::to_float_le with different values" {
   // Test with value 0.0
   let bytes = b"\x00\x00\x00\x00"
-  let f = bytes[:].to_float_le()
+  guard bytes is [u32le(bits), ..]
+  let f = bits.reinterpret_as_float()
   inspect(f.to_double(), content="0")
 
   // Test with value -1.0
   let bytes2 = b"\x00\x00\x80\xBF"
-  let f2 = bytes2[:].to_float_le()
+  guard bytes2 is [u32le(bits2), ..]
+  let f2 = bits2.reinterpret_as_float()
   inspect(f2.to_double(), content="-1")
 }
 
 ///|
 test "View::to_double_be/zero" {
   let bytes = b"\x00\x00\x00\x00\x00\x00\x00\x00"
-  let view = bytes[:]
-  inspect(view.to_double_be(), content="0")
+  guard bytes is [u64be(bits), ..]
+  inspect(bits.reinterpret_as_double(), content="0")
 }
 
 ///|
 test "test to_double_le with normal float" {
   // 3.14 in little-endian IEEE 754 double format
   let bytes = b"\x1F\x85\xEB\x51\xB8\x1E\x09\x40"
-  let view = bytes[:]
-  inspect(view.to_double_le(), content="3.14")
+  guard bytes is [u64le(bits), ..]
+  inspect(bits.reinterpret_as_double(), content="3.14")
 }
 
 ///|
