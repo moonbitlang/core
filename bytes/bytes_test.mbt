@@ -40,7 +40,7 @@ test "bytes literal" {
 
 ///|
 test "from_array" {
-  let b = @bytes.from_array([
+  let b = Bytes::from_array([
     b'\x41', b'\x00', b'\x42', b'\x00', b'\x43', b'\x00',
   ])
   inspect(
@@ -53,7 +53,7 @@ test "from_array" {
 
 ///|
 test "from_array literal" {
-  let b = @bytes.from_array([65, 0, 66, 0, 67, 0])
+  let b = Bytes::from_array([65, 0, 66, 0, 67, 0])
   inspect(
     b,
     content=(
@@ -64,11 +64,11 @@ test "from_array literal" {
 
 ///|
 test "from array literal" {
-  let b1 = @bytes.from_array([
+  let b1 = Bytes::from_array([
     b'\x41', b'\x00', b'\x42', b'\x00', b'\x43', b'\x00', b'\x44', b'\x00', b'\x45',
     b'\x00', b'\x46', b'\x00', b'\x47', b'\x00', b'\x48', b'\x00', b'\x49', b'\x00',
   ])
-  let b2 = @bytes.from_array([
+  let b2 = Bytes::from_array([
     65, 0, 66, 0, 67, 0, 68, 0, 69, 0, 70, 0, 71, 0, 72, 0, 73, 0,
   ])
   assert_eq(b1, b2)
@@ -76,18 +76,18 @@ test "from array literal" {
 
 ///|
 test "hash" {
-  let b1 = @bytes.from_array([
+  let b1 = Bytes::from_array([
     b'\x41', b'\x00', b'\x42', b'\x00', b'\x43', b'\x00', b'\x44', b'\x00', b'\x45',
     b'\x00', b'\x46', b'\x00', b'\x47', b'\x00', b'\x48', b'\x00', b'\x49', b'\x00',
   ])
-  let b2 = @bytes.from_array([
+  let b2 = Bytes::from_array([
     b'\x41', b'\x00', b'\x42', b'\x00', b'\x43', b'\x00', b'\x44', b'\x00', b'\x45',
     b'\x00', b'\x46', b'\x00', b'\x47', b'\x00', b'\x48', b'\x00', b'\x4A', b'\x00',
   ])
-  let b3 = @bytes.from_array([
+  let b3 = Bytes::from_array([
     b'\x80', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00',
   ])
-  let b4 = @bytes.from_array([
+  let b4 = Bytes::from_array([
     b'\x7f', b'\xff', b'\xff', b'\xff', b'\xff', b'\xff', b'\xff', b'\xff',
   ])
   inspect(Hasher::new(seed=0)..combine(b1).finalize(), content="-892426428")
@@ -101,32 +101,32 @@ test "hash" {
 
 ///|
 test "to_array" {
-  let b = @bytes.from_array([b'A', b'B', b'C'])
+  let b = Bytes::from_array([b'A', b'B', b'C'])
   inspect(b.to_array(), content="[b'\\x41', b'\\x42', b'\\x43']")
 }
 
 ///|
 test "from_iter multiple elements" {
   inspect(
-    @bytes.from_iter([b'\x00', b'\x01', b'\x02'].iter()).to_array(),
+    Bytes::from_iter([b'\x00', b'\x01', b'\x02'].iter()).to_array(),
     content="[b'\\x00', b'\\x01', b'\\x02']",
   )
 }
 
 ///|
 test "from_iter single element" {
-  inspect(@bytes.from_iter([b'\x00'].iter()).to_array(), content="[b'\\x00']")
+  inspect(Bytes::from_iter([b'\x00'].iter()).to_array(), content="[b'\\x00']")
 }
 
 ///|
 test "from_iter empty iterator" {
-  inspect(@bytes.from_iter(Iter::empty()).to_array(), content="[]")
+  inspect(Bytes::from_iter(Iter::empty()).to_array(), content="[]")
 }
 
 ///|
 test "from_iterator multiple elements" {
   inspect(
-    @bytes.from_iterator([b'\x00', b'\x01', b'\x02'].iterator()).to_array(),
+    Bytes::from_iterator([b'\x00', b'\x01', b'\x02'].iterator()).to_array(),
     content="[b'\\x00', b'\\x01', b'\\x02']",
   )
 }
@@ -134,14 +134,14 @@ test "from_iterator multiple elements" {
 ///|
 test "from_iterator single element" {
   inspect(
-    @bytes.from_iterator([b'\x00'].iterator()).to_array(),
+    Bytes::from_iterator([b'\x00'].iterator()).to_array(),
     content="[b'\\x00']",
   )
 }
 
 ///|
 test "from_iterator empty iterator" {
-  inspect(@bytes.from_iterator(Iterator::empty()).to_array(), content="[]")
+  inspect(Bytes::from_iterator(Iterator::empty()).to_array(), content="[]")
 }
 
 ///|
@@ -201,7 +201,7 @@ test "to_fixedarray with no length specified" {
 
 ///|
 test "test empty bytes" {
-  let empty = @bytes.default()
+  let empty = Bytes::default()
   inspect(empty.length(), content="0")
 }
 

@@ -41,3 +41,11 @@ test "rev_find" {
   inspect(b"aaa".rev_find("aa"), content="Some(1)")
   inspect(b"aabaaabaa".find("aaa"), content="Some(3)")
 }
+
+///|
+test "Bytes::from_iterator" {
+  inspect(
+    Bytes::from_iterator(([97, 98, 99] : Array[Byte]).iterator()),
+    content="b\"abc\"",
+  )
+}
