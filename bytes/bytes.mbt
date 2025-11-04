@@ -58,7 +58,7 @@ pub fn Bytes::from_array(arr : ArrayView[Byte]) -> Bytes {
 ///
 /// ```moonbit
 ///   let arr : FixedArray[Byte] = [b'h', b'e', b'l', b'l', b'o']
-///   let bytes = Bytes::from_fixedarray(arr, len=3)
+///   let bytes = Bytes::from_array(arr[0:3])
 ///   inspect(
 ///     bytes, 
 ///     content=(
@@ -70,7 +70,8 @@ pub fn Bytes::from_array(arr : ArrayView[Byte]) -> Bytes {
 /// ```
 /// 
 /// Panics if the length is invalid
-#as_free_fn
+#as_free_fn(deprecated)
+#deprecated("Use Bytes::from_array instead")
 pub fn Bytes::from_fixedarray(arr : FixedArray[Byte], len? : Int) -> Bytes {
   let len = match len {
     None => arr.length()
@@ -145,7 +146,7 @@ pub fn Bytes::to_fixedarray(self : Bytes, len? : Int) -> FixedArray[Byte] {
 ///     ),
 ///   )
 /// ```
-#as_free_fn
+#as_free_fn(deprecated)
 pub fn Bytes::from_iter(iter : Iter[Byte]) -> Bytes {
   Bytes::from_array(iter.collect())
 }
@@ -171,7 +172,7 @@ pub fn Bytes::from_iter(iter : Iter[Byte]) -> Bytes {
 ///     ),
 ///   )
 /// ```
-#as_free_fn
+#as_free_fn(deprecated)
 pub fn Bytes::from_iterator(iter : Iterator[Byte]) -> Bytes {
   Bytes::from_array(iter.collect())
 }

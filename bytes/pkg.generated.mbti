@@ -16,11 +16,12 @@ fn Bytes::find(Bytes, BytesView) -> Int?
 #as_free_fn(of, deprecated)
 #as_free_fn(deprecated)
 fn Bytes::from_array(ArrayView[Byte]) -> Bytes
-#as_free_fn
+#as_free_fn(deprecated)
+#deprecated
 fn Bytes::from_fixedarray(FixedArray[Byte], len? : Int) -> Bytes
-#as_free_fn
+#as_free_fn(deprecated)
 fn Bytes::from_iter(Iter[Byte]) -> Bytes
-#as_free_fn
+#as_free_fn(deprecated)
 fn Bytes::from_iterator(Iterator[Byte]) -> Bytes
 fn Bytes::get(Bytes, Int) -> Byte?
 fn Bytes::iter(Bytes) -> Iter[Byte]

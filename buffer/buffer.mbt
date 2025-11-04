@@ -112,19 +112,17 @@ pub fn Buffer::is_empty(self : Buffer) -> Bool {
 /// Example:
 ///
 /// ```moonbit
-///   let buf = @buffer.new()
-///   buf.write_string("Test")
-///   inspect(
-///     buf.contents(),
-///     content=(
-///       
-///   #|b"T\x00e\x00s\x00t\x00"
-/// 
-///     ),
-///   )
+/// let buf = @buffer.new()
+/// buf.write_string("Test")
+/// inspect(
+///   buf.contents(),
+///   content=(
+///     #|b"T\x00e\x00s\x00t\x00"
+///   ),
+/// )
 /// ```
 pub fn Buffer::contents(self : Buffer) -> Bytes {
-  @bytes.from_fixedarray(self.data, len=self.len)
+  Bytes::from_array(self.data[0:self.len])
 }
 
 ///|
@@ -1019,7 +1017,7 @@ pub fn Buffer::reset(self : Buffer) -> Unit {
 ///   inspect(bytes.length(), content="8")
 /// ```
 pub fn Buffer::to_bytes(self : Buffer) -> Bytes {
-  @bytes.from_fixedarray(self.data, len=self.len)
+  Bytes::from_array(self.data[0:self.len])
 }
 
 ///|
