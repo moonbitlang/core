@@ -85,12 +85,7 @@ pub fn ChaCha8::refill(self : ChaCha8) -> Unit {
 
 ///|
 #valtype
-priv struct Quadruple {
-  _0 : UInt
-  _1 : UInt
-  _2 : UInt
-  _3 : UInt
-}
+priv struct Quadruple(UInt, UInt, UInt, UInt)
 
 ///|
 fn chacha_block(
@@ -99,10 +94,7 @@ fn chacha_block(
   counter : UInt,
 ) -> Unit {
   fn qr(t : Quadruple) -> Quadruple {
-    let a = t._0
-    let b = t._1
-    let c = t._2
-    let d = t._3
+    let Quadruple(a, b, c, d) = t
     let a = a + b
     let d = d ^ a
     let d = (d << 16) | (d >> 16)
@@ -115,7 +107,7 @@ fn chacha_block(
     let c = c + d
     let b = b ^ c
     let b = (b << 7) | (b >> 25)
-    { _0: a, _1: b, _2: c, _3: d }
+    Quadruple(a, b, c, d)
   }
 
   setup(seed, buf, counter)
@@ -137,46 +129,54 @@ fn chacha_block(
     let mut b14 = buf[14 * 4 + i]
     let mut b15 = buf[15 * 4 + i]
     for round in 0..<4 {
-      let tb1 = qr({ _0: b0, _1: b4, _2: b8, _3: b12 })
-      b0 = tb1._0
-      b4 = tb1._1
-      b8 = tb1._2
-      b12 = tb1._3
-      let tb2 = qr({ _0: b1, _1: b5, _2: b9, _3: b13 })
-      b1 = tb2._0
-      b5 = tb2._1
-      b9 = tb2._2
-      b13 = tb2._3
-      let tb3 = qr({ _0: b2, _1: b6, _2: b10, _3: b14 })
-      b2 = tb3._0
-      b6 = tb3._1
-      b10 = tb3._2
-      b14 = tb3._3
-      let tb4 = qr({ _0: b3, _1: b7, _2: b11, _3: b15 })
-      b3 = tb4._0
-      b7 = tb4._1
-      b11 = tb4._2
-      b15 = tb4._3
-      let tb5 = qr({ _0: b0, _1: b5, _2: b10, _3: b15 })
-      b0 = tb5._0
-      b5 = tb5._1
-      b10 = tb5._2
-      b15 = tb5._3
-      let tb6 = qr({ _0: b1, _1: b6, _2: b11, _3: b12 })
-      b1 = tb6._0
-      b6 = tb6._1
-      b11 = tb6._2
-      b12 = tb6._3
-      let tb7 = qr({ _0: b2, _1: b7, _2: b8, _3: b13 })
-      b2 = tb7._0
-      b7 = tb7._1
-      b8 = tb7._2
-      b13 = tb7._3
-      let tb8 = qr({ _0: b3, _1: b4, _2: b9, _3: b14 })
-      b3 = tb8._0
-      b4 = tb8._1
-      b9 = tb8._2
-      b14 = tb8._3
+      let Quadruple(tb1_0, tb1_1, tb1_2, tb1_3) = qr(Quadruple(b0, b4, b8, b12))
+      b0 = tb1_0
+      b4 = tb1_1
+      b8 = tb1_2
+      b12 = tb1_3
+      let Quadruple(tb2_0, tb2_1, tb2_2, tb2_3) = qr(Quadruple(b1, b5, b9, b13))
+      b1 = tb2_0
+      b5 = tb2_1
+      b9 = tb2_2
+      b13 = tb2_3
+      let Quadruple(tb3_0, tb3_1, tb3_2, tb3_3) = qr(
+        Quadruple(b2, b6, b10, b14),
+      )
+      b2 = tb3_0
+      b6 = tb3_1
+      b10 = tb3_2
+      b14 = tb3_3
+      let Quadruple(tb4_0, tb4_1, tb4_2, tb4_3) = qr(
+        Quadruple(b3, b7, b11, b15),
+      )
+      b3 = tb4_0
+      b7 = tb4_1
+      b11 = tb4_2
+      b15 = tb4_3
+      let Quadruple(tb5_0, tb5_1, tb5_2, tb5_3) = qr(
+        Quadruple(b0, b5, b10, b15),
+      )
+      b0 = tb5_0
+      b5 = tb5_1
+      b10 = tb5_2
+      b15 = tb5_3
+      let Quadruple(tb6_0, tb6_1, tb6_2, tb6_3) = qr(
+        Quadruple(b1, b6, b11, b12),
+      )
+      b1 = tb6_0
+      b6 = tb6_1
+      b11 = tb6_2
+      b12 = tb6_3
+      let Quadruple(tb7_0, tb7_1, tb7_2, tb7_3) = qr(Quadruple(b2, b7, b8, b13))
+      b2 = tb7_0
+      b7 = tb7_1
+      b8 = tb7_2
+      b13 = tb7_3
+      let Quadruple(tb8_0, tb8_1, tb8_2, tb8_3) = qr(Quadruple(b3, b4, b9, b14))
+      b3 = tb8_0
+      b4 = tb8_1
+      b9 = tb8_2
+      b14 = tb8_3
     }
     buf[0 * 4 + i] = b0
     buf[1 * 4 + i] = b1
