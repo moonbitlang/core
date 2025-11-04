@@ -24,18 +24,16 @@
 /// Example:
 ///
 /// ```moonbit
-///   let arr = [b'h', b'i']
-///   let bytes = @bytes.from_array(arr)
-///   inspect(
-///     bytes, 
-///     content=(
-///       
-///   #|b"hi"
-/// 
-///     ),
-///   )
+/// let arr = [b'h', b'i']
+/// let bytes = Bytes::from_array(arr)
+/// inspect(
+///   bytes,
+///   content=(
+///     #|b"hi"
+///   ),
+/// )
 /// ```
-#as_free_fn
+#as_free_fn(deprecated)
 #alias(of, deprecated="Use from_array instead")
 #as_free_fn(of, deprecated="Use from_array instead")
 pub fn Bytes::from_array(arr : ArrayView[Byte]) -> Bytes {
@@ -60,7 +58,7 @@ pub fn Bytes::from_array(arr : ArrayView[Byte]) -> Bytes {
 ///
 /// ```moonbit
 ///   let arr : FixedArray[Byte] = [b'h', b'e', b'l', b'l', b'o']
-///   let bytes = @bytes.from_fixedarray(arr, len=3)
+///   let bytes = Bytes::from_fixedarray(arr, len=3)
 ///   inspect(
 ///     bytes, 
 ///     content=(
@@ -137,7 +135,7 @@ pub fn Bytes::to_fixedarray(self : Bytes, len? : Int) -> FixedArray[Byte] {
 ///
 /// ```moonbit
 ///   let iter = Iter::singleton(b'h')
-///   let bytes = @bytes.from_iter(iter)
+///   let bytes = Bytes::from_iter(iter)
 ///   inspect(
 ///     bytes, 
 ///     content=(
@@ -165,7 +163,7 @@ pub fn Bytes::from_iter(iter : Iter[Byte]) -> Bytes {
 ///
 /// ```moonbit
 ///   let iter = Iterator::singleton(b'h')
-///   let bytes = @bytes.from_iterator(iter)
+///   let bytes = Bytes::from_iterator(iter)
 ///   inspect(
 ///     bytes, 
 ///     content=(
@@ -192,7 +190,7 @@ pub fn Bytes::from_iterator(iter : Iterator[Byte]) -> Bytes {
 ///
 /// ```moonbit
 ///   let arr : FixedArray[Byte] = [b'h', b'e', b'l', b'l', b'o']
-///   let bytes = @bytes.of(arr)
+///   let bytes = Bytes::of(arr)
 ///   inspect(
 ///     bytes, 
 ///     content=(
@@ -343,7 +341,7 @@ pub fn Bytes::iterator2(self : Bytes) -> Iterator2[Int, Byte] {
 /// Example:
 ///
 /// ```moonbit
-///   let bytes = @bytes.default()
+///   let bytes = Bytes::default()
 ///   inspect(bytes, content="b\"\"")
 ///   inspect(bytes.length(), content="0")
 /// ```
