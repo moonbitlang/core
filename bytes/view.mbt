@@ -309,10 +309,11 @@ pub fn BytesView::to_uint_be(self : BytesView) -> UInt {
 /// Example:
 ///
 /// ```moonbit
-///   let bytes = b"\x01\x02\x03\x04"
-///   let view = bytes[:]
-///   inspect(view.to_uint_le(), content="67305985") // 0x04030201
+/// let bytes = b"\x01\x02\x03\x04"
+/// let view = bytes[:]
+/// inspect(view.to_uint_le(), content="67305985") // 0x04030201
 /// ```
+#deprecated(skip_current_package=false, "Use bits pattern directly")
 pub fn BytesView::to_uint_le(self : BytesView) -> UInt {
   self[0].to_uint() +
   (self[1].to_uint() << 8) +
