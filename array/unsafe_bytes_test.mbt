@@ -205,7 +205,7 @@ test "round-trip test: write then read back" {
   FixedArray::unsafe_write_uint64_be(buffer, 8, original_64)
 
   // Convert buffer to bytes to read back
-  let bytes_data = Bytes::from_fixedarray(buffer)
+  let bytes_data = Bytes::from_array(buffer)
   let read_back_le = bytes_data.unsafe_read_uint64_le(0)
   let read_back_be = bytes_data.unsafe_read_uint64_be(8)
   inspect(read_back_le == original_64, content="true")
@@ -218,7 +218,7 @@ test "round-trip test: UInt32" {
   let original_32 : UInt = 0x12345678U
   FixedArray::unsafe_write_uint32_le(buffer, 0, original_32)
   FixedArray::unsafe_write_uint32_be(buffer, 4, original_32)
-  let bytes_data = Bytes::from_fixedarray(buffer)
+  let bytes_data = Bytes::from_array(buffer)
   let read_back_le = bytes_data.unsafe_read_uint32_le(0)
   let read_back_be = bytes_data.unsafe_read_uint32_be(4)
   inspect(read_back_le == original_32, content="true")

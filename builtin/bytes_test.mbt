@@ -41,7 +41,7 @@ test "blit_from_string" {
   let bytes = FixedArray::make(10, Byte::default())
   let str = "Hello"
   bytes.blit_from_string(0, str, 0, str.length())
-  assert_eq(@bytes.from_fixedarray(bytes).to_unchecked_string(), str)
+  assert_eq(Bytes::from_array(bytes).to_unchecked_string(), str)
 }
 
 ///|
@@ -49,7 +49,7 @@ test "set_utf8_char (ASCII)" {
   let arr = FixedArray::makei(4, _ => b'\x00')
   let char = 'A'
   let len = arr.set_utf8_char(0, char)
-  let bytes = @bytes.from_fixedarray(arr)
+  let bytes = Bytes::from_array(arr)
   assert_eq(len, 1)
   inspect(
     bytes,
@@ -64,7 +64,7 @@ test "set_utf8_char (CJK)" {
   let arr = FixedArray::makei(4, _ => b'\x00')
   let char = '拼'
   let len = arr.set_utf8_char(0, char)
-  let bytes = @bytes.from_fixedarray(arr)
+  let bytes = Bytes::from_array(arr)
   assert_eq(len, 3)
   inspect(
     bytes,
@@ -80,7 +80,7 @@ test "set_utf8_char (0x600)" {
   let char = '؀'
   inspect(char.to_int(), content="1536")
   let len = arr.set_utf8_char(0, char)
-  let bytes = @bytes.from_fixedarray(arr)
+  let bytes = Bytes::from_array(arr)
   assert_eq(len, 2)
   inspect(
     bytes,
@@ -95,7 +95,7 @@ test "set_utf8_char (Emoji)" {
   let arr = FixedArray::makei(4, _ => b'\x00')
   let char = '🙅'
   let len = arr.set_utf8_char(0, char)
-  let bytes = @bytes.from_fixedarray(arr)
+  let bytes = Bytes::from_array(arr)
   assert_eq(len, 4)
   inspect(
     bytes,
@@ -110,7 +110,7 @@ test "set_utf16le_char" {
   let arr = FixedArray::makei(4, _ => b'\x00')
   let char = 'A'
   let len = arr.set_utf16le_char(0, char)
-  let bytes = @bytes.from_fixedarray(arr)
+  let bytes = Bytes::from_array(arr)
   assert_eq(len, 2)
   assert_eq(bytes.to_unchecked_string(offset=0, length=2), "A")
   inspect(
@@ -126,7 +126,7 @@ test "set_utf16le_char (surrogate pair)" {
   let arr = FixedArray::makei(4, _ => b'\x00')
   let char = '🉑'
   let len = arr.set_utf16le_char(0, char)
-  let bytes = @bytes.from_fixedarray(arr)
+  let bytes = Bytes::from_array(arr)
   assert_eq(len, 4)
   assert_eq(bytes.to_unchecked_string(offset=0, length=4), "🉑")
   inspect(
@@ -142,7 +142,7 @@ test "set_utf16be_char" {
   let arr = FixedArray::makei(4, _ => b'\x00')
   let char = 'A'
   let len = arr.set_utf16be_char(0, char)
-  let bytes = @bytes.from_fixedarray(arr)
+  let bytes = Bytes::from_array(arr)
   assert_eq(len, 2)
   inspect(
     bytes,
@@ -166,7 +166,7 @@ test "set_utf16be_char" {
 test "equal" {
   let copy_bytes = FixedArray::make(HELLO_WORLD.length(), Byte::default())
   copy_bytes.blit_from_bytes(0, HELLO_WORLD, 0, HELLO_WORLD.length())
-  let copy_bytes = Bytes::from_fixedarray(copy_bytes)
+  let copy_bytes = Bytes::from_array(copy_bytes)
   assert_eq(HELLO_WORLD, copy_bytes)
   assert_not_eq(HELLO_WORLD, Bytes::new(10))
 }
