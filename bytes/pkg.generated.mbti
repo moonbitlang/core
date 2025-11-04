@@ -69,18 +69,26 @@ fn BytesView::start_offset(Self) -> Int
 fn BytesView::sub(Self, start? : Int, end? : Int) -> Self
 fn BytesView::to_array(Self) -> Array[Byte]
 fn BytesView::to_bytes(Self) -> Bytes
+#deprecated
 fn BytesView::to_double_be(Self) -> Double
+#deprecated
 fn BytesView::to_double_le(Self) -> Double
 fn BytesView::to_fixedarray(Self) -> FixedArray[Byte]
+#deprecated
 fn BytesView::to_float_be(Self) -> Float
+#deprecated
 fn BytesView::to_float_le(Self) -> Float
 fn BytesView::to_int64_be(Self) -> Int64
 fn BytesView::to_int64_le(Self) -> Int64
 fn BytesView::to_int_be(Self) -> Int
 fn BytesView::to_int_le(Self) -> Int
+#deprecated
 fn BytesView::to_uint64_be(Self) -> UInt64
+#deprecated
 fn BytesView::to_uint64_le(Self) -> UInt64
+#deprecated
 fn BytesView::to_uint_be(Self) -> UInt
+#deprecated
 fn BytesView::to_uint_le(Self) -> UInt
 fn BytesView::unsafe_extract_bit(Self, Int, Int) -> UInt
 fn BytesView::unsafe_extract_bit_signed(Self, Int, Int) -> Int

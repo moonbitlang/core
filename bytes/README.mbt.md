@@ -114,7 +114,8 @@ test "numeric interpretation" {
   ])
   let int64_view = int64_bytes[:]
   inspect(int64_view.to_int64_be(), content="66")
-  inspect(int64_view.to_uint64_le(), content="4755801206503243776")
+  guard int64_view is [u64le(x), ..]
+  inspect(x, content="4755801206503243776")
 }
 ```
 
