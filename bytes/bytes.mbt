@@ -105,11 +105,12 @@ pub fn Bytes::from_fixedarray(arr : FixedArray[Byte], len? : Int) -> Bytes {
 ///   let bytes = b"hello"
 ///   let arr = bytes.to_fixedarray()
 ///   inspect(arr, content="[b'\\x68', b'\\x65', b'\\x6C', b'\\x6C', b'\\x6F']")
-///   let arr2 = bytes.to_fixedarray(len=3)
+///   let arr2 = bytes[:3].to_fixedarray()
 ///   inspect(arr2, content="[b'\\x68', b'\\x65', b'\\x6C']")
 /// ```
 /// 
 /// Panics if the length is invalid
+#label_migration(len, fill=false)
 pub fn Bytes::to_fixedarray(self : Bytes, len? : Int) -> FixedArray[Byte] {
   let len = match len {
     None => self.length()
@@ -120,6 +121,14 @@ pub fn Bytes::to_fixedarray(self : Bytes, len? : Int) -> FixedArray[Byte] {
   }
   let arr = unsafe_to_fixedarray(UninitializedArray::make(len))
   arr.blit_from_bytes(0, self, 0, len)
+  arr
+}
+
+///|
+pub fn BytesView::to_fixedarray(self : BytesView) -> FixedArray[Byte] {
+  let len = self.length()
+  let arr = unsafe_to_fixedarray(UninitializedArray::make(len))
+  arr.blit_from_bytes(0, self.data(), self.start_offset(), len)
   arr
 }
 
@@ -220,6 +229,16 @@ pub fn Bytes::from_iterator(iter : Iterator[Byte]) -> Bytes {
 ///   inspect(arr, content="[b'\\x68', b'\\x65', b'\\x6C', b'\\x6C', b'\\x6F']")
 /// ```
 pub fn Bytes::to_array(self : Bytes) -> Array[Byte] {
+  let len = self.length()
+  let rv = Array::make(len, b'0')
+  for i in 0..<len {
+    rv[i] = self[i]
+  }
+  rv
+}
+
+///|
+pub fn BytesView::to_array(self : BytesView) -> Array[Byte] {
   let len = self.length()
   let rv = Array::make(len, b'0')
   for i in 0..<len {
