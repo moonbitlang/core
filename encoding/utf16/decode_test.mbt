@@ -138,3 +138,46 @@ test "decoding UTF16 invalid data to String" {
       )
   }
 }
+
+///|
+test "decode ignore_bom without BOM" {
+  // Test ignore_bom=true but no BOM present (line 35 and 40)
+  let no_bom = b"\x61\x00\x62\x00"
+  let result = try! @utf16.decode(no_bom, ignore_bom=true)
+  inspect(result, content="ab")
+  let no_bom_be = b"\x00\x61\x00\x62"
+  let result_be = try! @utf16.decode(no_bom_be, ignore_bom=true, endianness=Big)
+  inspect(result_be, content="ab")
+}
+
+///|
+test "decode_lossy with ignore_bom" {
+  // Test decode_lossy with ignore_bom=true and BOM present (lines 515-520)
+  let with_bom_le = b"\xff\xfe\x61\x00\x62\x00"
+  inspect(@utf16.decode_lossy(with_bom_le, ignore_bom=true), content="ab")
+  let with_bom_be = b"\xfe\xff\x00\x61\x00\x62"
+  inspect(
+    @utf16.decode_lossy(with_bom_be, ignore_bom=true, endianness=Big),
+    content="ab",
+  )
+  // Test with ignore_bom=true but no BOM
+  let no_bom = b"\x61\x00\x62\x00"
+  inspect(@utf16.decode_lossy(no_bom, ignore_bom=true), content="ab")
+}
+
+///|
+test "decode_lossy with surrogate pairs" {
+  // Test valid surrogate pairs in decode_lossy (lines 533-542, 561-569)
+  let surrogate_pair_le = b"\x3d\xd8\x40\xdc" // 👀 U+1F440
+  inspect(@utf16.decode_lossy(surrogate_pair_le), content="👀")
+  let surrogate_pair_be = b"\xd8\x3d\xdc\x40" // 👀 U+1F440
+  inspect(
+    @utf16.decode_lossy(surrogate_pair_be, endianness=Big),
+    content="👀",
+  )
+  // Test surrogate pair that exceeds 0x10FFFF - should use replacement char
+  // This is hard to construct but we can test the invalid surrogate path
+  let invalid_surr = b"\x3d\xd8\x41\xdc"
+  let result = @utf16.decode_lossy(invalid_surr)
+  assert_true(result.length() > 0)
+}

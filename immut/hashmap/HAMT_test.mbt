@@ -137,6 +137,56 @@ test "HAMT::iter2" {
 }
 
 ///|
+test "HAMT::iter2 with early break" {
+  let data = @hashmap.from_array([(1, "a"), (2, "b"), (3, "c")])
+  let mut count = 0
+  for _k, _v in data.iter2() {
+    count += 1
+    if count == 2 {
+      break
+    }
+  }
+  assert_eq(count, 2)
+}
+
+///|
+test "HAMT::iterator2" {
+  let data = @hashmap.from_array([(1, 10), (2, 20), (3, 30)])
+  let iter = data.iterator2()
+  let mut sum = 0
+  while iter.next() is Some((k, v)) {
+    sum = sum + k + v
+  }
+  assert_eq(sum, 66)
+}
+
+///|
+test "HAMT::from_iter" {
+  let iter = Iter::new(fn(yield_) {
+    if yield_((1, "one")) is IterEnd {
+      return IterEnd
+    }
+    if yield_((2, "two")) is IterEnd {
+      return IterEnd
+    }
+    if yield_((3, "three")) is IterEnd {
+      return IterEnd
+    }
+    IterContinue
+  })
+  let map = @hashmap.from_iter(iter)
+  assert_eq(map.get(1), Some("one"))
+  assert_eq(map.get(2), Some("two"))
+  assert_eq(map.get(3), Some("three"))
+}
+
+///|
+test "HAMT::from_iter empty" {
+  let map : @hashmap.HashMap[Int, Int] = @hashmap.from_iter(Iter::empty())
+  assert_eq(map.length(), 0)
+}
+
+///|
 test "HAMT::to_string" {
   let map = @hashmap.new()
     .add(1, 1)
@@ -204,6 +254,35 @@ test "from_iterator empty iter" {
     Iterator::empty(),
   )
   inspect(pq, content="@immut/hashmap.from_array([])")
+}
+
+///|
+test "HAMT::iterator on empty map" {
+  let map : @hashmap.HashMap[Int, Int] = @hashmap.new()
+  let iter = map.iterator()
+  assert_eq(iter.next(), None)
+}
+
+///|
+test "HAMT::iterator on collision map" {
+  let map = @hashmap.from_array([(MyString("a"), 1), (MyString("b"), 2)])
+  let iter = map.iterator()
+  let results = []
+  while iter.next() is Some(pair) {
+    results.push(pair)
+  }
+  assert_eq(results.length(), 2)
+}
+
+///|
+test "HAMT::iterator on branch map" {
+  let map = @hashmap.from_array([(1, 10), (2, 20), (3, 30), (4, 40)])
+  let iter = map.iterator()
+  let mut count = 0
+  while iter.next() is Some(_) {
+    count += 1
+  }
+  assert_eq(count, 4)
 }
 
 ///|
@@ -570,6 +649,27 @@ test "HAMT::remove_with_hash collision" {
 }
 
 ///|
+test "HAMT::remove from empty map" {
+  let map : @hashmap.HashMap[Int, Int] = @hashmap.new()
+  let map2 = map.remove(42)
+  assert_eq(map2.length(), 0)
+}
+
+///|
+test "HAMT::remove from collision bucket non-primary key" {
+  let map = @hashmap.from_array([
+    (MyString("a"), 1),
+    (MyString("b"), 2),
+    (MyString("c"), 3),
+  ])
+  let map2 = map.remove(MyString("b"))
+  assert_eq(map2.get(MyString("a")), Some(1))
+  assert_eq(map2.get(MyString("b")), None)
+  assert_eq(map2.get(MyString("c")), Some(3))
+  assert_eq(map2.length(), 2)
+}
+
+///|
 test "HAMT::union with empty" {
   let m1 = @hashmap.from_array([(1, 1)])
   let m2 = @hashmap.new()
@@ -605,6 +705,21 @@ test "HAMT::union with collision" {
   assert_eq(u.get(MyString("a")), Some(1))
   assert_eq(u.get(MyString("b")), Some(20))
   assert_eq(u.get(MyString("c")), Some(3))
+}
+
+///|
+test "HAMT::union collision all keys in second" {
+  let m1 = @hashmap.from_array([(MyString("a"), 1), (MyString("b"), 2)])
+  let m2 = @hashmap.from_array([
+    (MyString("a"), 10),
+    (MyString("b"), 20),
+    (MyString("c"), 3),
+  ])
+  let u = m1.union(m2)
+  assert_eq(u.get(MyString("a")), Some(10))
+  assert_eq(u.get(MyString("b")), Some(20))
+  assert_eq(u.get(MyString("c")), Some(3))
+  assert_eq(u.length(), 3)
 }
 
 ///|
@@ -665,6 +780,52 @@ test "HAMT::intersection with branch" {
 }
 
 ///|
+test "HAMT::intersection singleton with non-overlapping branch" {
+  let m1 = @hashmap.singleton(10, 100)
+  let m2 = @hashmap.from_array([(1, 1), (2, 2), (3, 3)])
+  let inter = m1.intersection(m2)
+  assert_eq(inter.length(), 0)
+  assert_eq(inter.get(10), None)
+}
+
+///|
+test "HAMT::intersection branch with non-overlapping branch" {
+  let m1 = @hashmap.from_array([(1, 1), (2, 2)])
+  let m2 = @hashmap.from_array([(3, 3), (4, 4)])
+  let inter = m1.intersection(m2)
+  assert_eq(inter.length(), 0)
+}
+
+///|
+test "HAMT::intersection branch to single flat" {
+  let m1 = @hashmap.from_array([(1, 1), (2, 2), (100, 100)])
+  let m2 = @hashmap.from_array([(1, 10), (3, 3), (200, 200)])
+  let inter = m1.intersection(m2)
+  assert_eq(inter.length(), 1)
+  assert_eq(inter.get(1), Some(10))
+  assert_eq(inter.get(2), None)
+  assert_eq(inter.get(3), None)
+}
+
+///|
+test "HAMT::intersection with collision" {
+  let m1 = @hashmap.from_array([(MyString("a"), 1), (MyString("b"), 2)])
+  let m2 = @hashmap.from_array([(MyString("b"), 20), (MyString("c"), 3)])
+  let inter = m1.intersection(m2)
+  assert_eq(inter.get(MyString("a")), None)
+  assert_eq(inter.get(MyString("b")), Some(20))
+  assert_eq(inter.get(MyString("c")), None)
+}
+
+///|
+test "HAMT::intersection with collision no overlap" {
+  let m1 = @hashmap.from_array([(MyString("a"), 1), (MyString("b"), 2)])
+  let m2 = @hashmap.from_array([(MyString("c"), 3), (MyString("d"), 4)])
+  let inter = m1.intersection(m2)
+  assert_eq(inter.length(), 0)
+}
+
+///|
 test "HAMT::intersection_with with empty" {
   let m1 = @hashmap.from_array([(1, 1)])
   let m2 = @hashmap.new()
@@ -694,6 +855,52 @@ test "HAMT::intersection_with with branch" {
 }
 
 ///|
+test "HAMT::intersection_with singleton with non-overlapping branch" {
+  let m1 = @hashmap.singleton(10, 100)
+  let m2 = @hashmap.from_array([(1, 1), (2, 2), (3, 3)])
+  let inter = m1.intersection_with(m2, (_k, v1, v2) => v1 + v2)
+  assert_eq(inter.length(), 0)
+}
+
+///|
+test "HAMT::intersection_with branch returns single element" {
+  let m1 = @hashmap.from_array([(1, 1), (2, 2), (3, 3)])
+  let m2 = @hashmap.from_array([(2, 20), (4, 4)])
+  let inter = m1.intersection_with(m2, (_k, v1, v2) => v1 + v2)
+  assert_eq(inter.get(1), None)
+  assert_eq(inter.get(2), Some(22))
+  assert_eq(inter.get(3), None)
+  assert_eq(inter.get(4), None)
+}
+
+///|
+test "HAMT::intersection_with branch to single flat" {
+  let m1 = @hashmap.from_array([(1, 1), (2, 2), (100, 100)])
+  let m2 = @hashmap.from_array([(1, 10), (3, 3), (200, 200)])
+  let inter = m1.intersection_with(m2, (_k, v1, v2) => v1 * v2)
+  assert_eq(inter.length(), 1)
+  assert_eq(inter.get(1), Some(10))
+}
+
+///|
+test "HAMT::intersection_with with collision" {
+  let m1 = @hashmap.from_array([(MyString("a"), 1), (MyString("b"), 2)])
+  let m2 = @hashmap.from_array([(MyString("a"), 10), (MyString("c"), 3)])
+  let inter = m1.intersection_with(m2, (_k, v1, v2) => v1 + v2)
+  assert_eq(inter.get(MyString("a")), Some(11))
+  assert_eq(inter.get(MyString("b")), None)
+  assert_eq(inter.get(MyString("c")), None)
+}
+
+///|
+test "HAMT::intersection_with collision no overlap" {
+  let m1 = @hashmap.from_array([(MyString("a"), 1), (MyString("b"), 2)])
+  let m2 = @hashmap.from_array([(MyString("c"), 3), (MyString("d"), 4)])
+  let inter = m1.intersection_with(m2, (_k, v1, v2) => v1 + v2)
+  assert_eq(inter.length(), 0)
+}
+
+///|
 test "HAMT::difference with empty" {
   let m1 = @hashmap.from_array([(1, 1)])
   let m2 = @hashmap.new()
@@ -720,6 +927,52 @@ test "HAMT::difference with branch" {
   assert_eq(diff.get(2), None)
   assert_eq(diff.get(3), None)
   assert_eq(diff.get(4), None)
+}
+
+///|
+test "HAMT::difference singleton with non-overlapping branch" {
+  let m1 = @hashmap.singleton(10, 100)
+  let m2 = @hashmap.from_array([(1, 1), (2, 2), (3, 3)])
+  let diff = m1.difference(m2)
+  assert_eq(diff.get(10), Some(100))
+  assert_eq(diff.length(), 1)
+}
+
+///|
+test "HAMT::difference branch becomes empty" {
+  let m1 = @hashmap.from_array([(1, 1), (2, 2)])
+  let m2 = @hashmap.from_array([(1, 10), (2, 20), (3, 30)])
+  let diff = m1.difference(m2)
+  assert_eq(diff.length(), 0)
+}
+
+///|
+test "HAMT::difference branch to single flat" {
+  let m1 = @hashmap.from_array([(1, 1), (2, 2), (100, 100)])
+  let m2 = @hashmap.from_array([(1, 10), (3, 3), (200, 200)])
+  let diff = m1.difference(m2)
+  assert_eq(diff.length(), 2)
+  assert_eq(diff.get(1), None)
+  assert_eq(diff.get(2), Some(2))
+  assert_eq(diff.get(100), Some(100))
+}
+
+///|
+test "HAMT::difference with collision" {
+  let m1 = @hashmap.from_array([(MyString("a"), 1), (MyString("b"), 2)])
+  let m2 = @hashmap.from_array([(MyString("b"), 20), (MyString("c"), 3)])
+  let diff = m1.difference(m2)
+  assert_eq(diff.get(MyString("a")), Some(1))
+  assert_eq(diff.get(MyString("b")), None)
+  assert_eq(diff.get(MyString("c")), None)
+}
+
+///|
+test "HAMT::difference collision becomes empty" {
+  let m1 = @hashmap.from_array([(MyString("a"), 1), (MyString("b"), 2)])
+  let m2 = @hashmap.from_array([(MyString("a"), 10), (MyString("b"), 20)])
+  let diff = m1.difference(m2)
+  assert_eq(diff.length(), 0)
 }
 
 ///|
@@ -757,4 +1010,113 @@ test "equal imply hash equal when collision" {
   let mb = @hashmap.new().add(s2, 2).add(s1, 1)
   inspect(ma == mb, content="true")
   inspect(ma.hash() == mb.hash(), content="true")
+}
+
+///|
+test "HAMT::union_with with empty" {
+  let m1 = @hashmap.from_array([(1, 1), (2, 2)])
+  let m2 = @hashmap.new()
+  let u1 = m1.union_with(m2, (_k, v1, v2) => v1 + v2)
+  assert_eq(u1.get(1), Some(1))
+  assert_eq(u1.get(2), Some(2))
+  let u2 = m2.union_with(m1, (_k, v1, v2) => v1 + v2)
+  assert_eq(u2.get(1), Some(1))
+  assert_eq(u2.get(2), Some(2))
+}
+
+///|
+test "HAMT::union_with with leaf" {
+  let m1 = @hashmap.from_array([(1, 1), (2, 2)])
+  let m2 = @hashmap.singleton(2, 20)
+  let m3 = @hashmap.singleton(3, 30)
+  let u1 = m1.union_with(m2, (_k, v1, v2) => v1 + v2)
+  assert_eq(u1.get(1), Some(1))
+  assert_eq(u1.get(2), Some(22))
+  let u2 = m1.union_with(m3, (_k, v1, v2) => v1 + v2)
+  assert_eq(u2.get(1), Some(1))
+  assert_eq(u2.get(2), Some(2))
+  assert_eq(u2.get(3), Some(30))
+}
+
+///|
+test "HAMT::union_with with branch" {
+  let m1 = @hashmap.from_array([(1, 1), (2, 2), (3, 3)])
+  let m2 = @hashmap.from_array([(2, 20), (3, 30), (4, 40)])
+  let u = m1.union_with(m2, (_k, v1, v2) => v1 * v2)
+  assert_eq(u.get(1), Some(1))
+  assert_eq(u.get(2), Some(40))
+  assert_eq(u.get(3), Some(90))
+  assert_eq(u.get(4), Some(40))
+}
+
+///|
+test "HAMT::union_with with collision" {
+  let m1 = @hashmap.from_array([(MyString("a"), 1), (MyString("b"), 2)])
+  let m2 = @hashmap.from_array([(MyString("b"), 20), (MyString("c"), 3)])
+  let u = m1.union_with(m2, (_k, v1, v2) => v1 + v2)
+  assert_eq(u.get(MyString("a")), Some(1))
+  assert_eq(u.get(MyString("b")), Some(22))
+  assert_eq(u.get(MyString("c")), Some(3))
+}
+
+///|
+test "HAMT::union_with all non-overlapping" {
+  let m1 = @hashmap.from_array([(1, 10), (2, 20)])
+  let m2 = @hashmap.from_array([(3, 30), (4, 40)])
+  let u = m1.union_with(m2, (_k, v1, v2) => v1 + v2)
+  assert_eq(u.get(1), Some(10))
+  assert_eq(u.get(2), Some(20))
+  assert_eq(u.get(3), Some(30))
+  assert_eq(u.get(4), Some(40))
+}
+
+///|
+test "HAMT::union_with all overlapping" {
+  let m1 = @hashmap.from_array([(1, 1), (2, 2), (3, 3)])
+  let m2 = @hashmap.from_array([(1, 10), (2, 20), (3, 30)])
+  let u = m1.union_with(m2, (_k, v1, v2) => v1 + v2)
+  assert_eq(u.get(1), Some(11))
+  assert_eq(u.get(2), Some(22))
+  assert_eq(u.get(3), Some(33))
+}
+
+///|
+test "HAMT::union_with with custom merge function" {
+  let m1 = @hashmap.from_array([(1, "a"), (2, "b")])
+  let m2 = @hashmap.from_array([(2, "c"), (3, "d")])
+  let u = m1.union_with(m2, (_k, v1, v2) => v1 + v2)
+  assert_eq(u.get(1), Some("a"))
+  assert_eq(u.get(2), Some("bc"))
+  assert_eq(u.get(3), Some("d"))
+}
+
+///|
+test "HAMT::union_with singleton with branch" {
+  let m1 = @hashmap.singleton(1, 10)
+  let m2 = @hashmap.from_array([(1, 1), (2, 2), (3, 3)])
+  let u = m1.union_with(m2, (_k, v1, v2) => v1 + v2)
+  assert_eq(u.get(1), Some(11))
+  assert_eq(u.get(2), Some(2))
+  assert_eq(u.get(3), Some(3))
+}
+
+///|
+test "HAMT::union_with branch with singleton" {
+  let m1 = @hashmap.from_array([(1, 1), (2, 2), (3, 3)])
+  let m2 = @hashmap.singleton(1, 10)
+  let u = m1.union_with(m2, (_k, v1, v2) => v1 * v2)
+  assert_eq(u.get(1), Some(10))
+  assert_eq(u.get(2), Some(2))
+  assert_eq(u.get(3), Some(3))
+}
+
+///|
+test "HAMT::union_with singleton with non-overlapping branch" {
+  let m1 = @hashmap.singleton(10, 100)
+  let m2 = @hashmap.from_array([(1, 1), (2, 2), (3, 3)])
+  let u = m1.union_with(m2, (_k, v1, v2) => v1 + v2)
+  assert_eq(u.get(1), Some(1))
+  assert_eq(u.get(2), Some(2))
+  assert_eq(u.get(3), Some(3))
+  assert_eq(u.get(10), Some(100))
 }

@@ -28,6 +28,37 @@ test "Map keys iter" {
 }
 
 ///|
+test "Map::of" {
+  let arr : FixedArray[(String, Int)] = [("a", 1), ("b", 2), ("c", 3)]
+  let map = Map::of(arr)
+  inspect(map, content="{\"a\": 1, \"b\": 2, \"c\": 3}")
+  inspect(map.length(), content="3")
+  inspect(map.get("a"), content="Some(1)")
+  inspect(map.get("b"), content="Some(2)")
+  inspect(map.get("c"), content="Some(3)")
+  let large_arr : FixedArray[(String, Int)] = [
+    ("k1", 1),
+    ("k2", 2),
+    ("k3", 3),
+    ("k4", 4),
+    ("k5", 5),
+    ("k6", 6),
+    ("k7", 7),
+    ("k8", 8),
+    ("k9", 9),
+    ("k10", 10),
+    ("k11", 11),
+    ("k12", 12),
+    ("k13", 13),
+    ("k14", 14),
+  ]
+  let large_map = Map::of(large_arr)
+  inspect(large_map.length(), content="14")
+  inspect(large_map.get("k1"), content="Some(1)")
+  inspect(large_map.get("k14"), content="Some(14)")
+}
+
+///|
 test "Map::from_iter" {
   let iter = [("a", 1), ("b", 2), ("c", 3)].iter()
   let map = Map::from_iter(iter)

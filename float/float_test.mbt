@@ -160,3 +160,8 @@ test "to_le_bytes for zero" {
     ),
   )
 }
+
+///|
+test "Float::is_close - infinity should return false" {
+  inspect(@float.infinity.is_close(1.0), content="false")
+}

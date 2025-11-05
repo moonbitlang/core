@@ -432,3 +432,12 @@ fn[K : Hash + Eq + Show, V : Eq + Show] verify_content(
   }
   assert_eq(map.length(), expected.length())
 }
+
+///|
+test "hashmap.to_json" {
+  let map = @hashmap.from_array([(1, "one"), (2, "two"), (3, "three")])
+  inspect(
+    map.to_json().stringify(),
+    content="{\"1\":\"one\",\"2\":\"two\",\"3\":\"three\"}",
+  )
+}

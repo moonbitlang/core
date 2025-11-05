@@ -382,3 +382,33 @@ test "UInt16::reinterpret_as_int16" {
   inspect(UInt16::reinterpret_as_int16(12345), content="12345")
   inspect(UInt16::reinterpret_as_int16(54321), content="-11215")
 }
+
+///|
+test "UInt16::unsafe_to_char" {
+  let c1 = (0x41 : UInt16).unsafe_to_char()
+  inspect(c1.to_int(), content="65")
+  let c2 = (0x61 : UInt16).unsafe_to_char()
+  inspect(c2.to_int(), content="97")
+  let c3 = (0x30 : UInt16).unsafe_to_char()
+  inspect(c3.to_int(), content="48")
+  let c4 = (0x20 : UInt16).unsafe_to_char()
+  inspect(c4.to_int(), content="32")
+}
+
+///|
+test "UInt16::to_char" {
+  // Valid characters in BMP (Basic Multilingual Plane)
+  inspect((0x41 : UInt16).to_char(), content="Some('A')")
+  inspect((0x61 : UInt16).to_char(), content="Some('a')")
+  inspect((0x30 : UInt16).to_char(), content="Some('0')")
+  inspect((0 : UInt16).to_char(), content="Some('\\u{00}')")
+  inspect((0xD7FF : UInt16).to_char(), content="Some('퟿')")
+  // Surrogate range - should return None
+  inspect((0xD800 : UInt16).to_char(), content="None")
+  inspect((0xDBFF : UInt16).to_char(), content="None")
+  inspect((0xDC00 : UInt16).to_char(), content="None")
+  inspect((0xDFFF : UInt16).to_char(), content="None")
+  // Valid characters after surrogate range
+  inspect((0xE000 : UInt16).to_char(), content="Some('\\u{e000}')")
+  inspect((0xFFFF : UInt16).to_char(), content="Some('\\u{ffff}')")
+}

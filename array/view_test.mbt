@@ -213,3 +213,39 @@ test "arrayview hash invariant" {
     assert_eq(v.hash(), view.hash())
   }
 }
+
+///|
+test "ArrayView::rev_iterator" {
+  let v = [1, 2, 3, 4, 5]
+  let view = v[1:4]
+  let iter = view.rev_iterator()
+  inspect(iter.to_array(), content="[4, 3, 2]")
+}
+
+///|
+test "ArrayView::rev_iterator empty" {
+  let v = [1, 2, 3]
+  let view = v[1:1]
+  let iter = view.rev_iterator()
+  assert_eq(iter.next(), None)
+}
+
+///|
+test "ArrayView::iterator2" {
+  let v = [10, 20, 30, 40, 50]
+  let view = v[1:4]
+  let iter = view.iterator2()
+  let results = []
+  while iter.next() is Some((i, x)) {
+    results.push((i, x))
+  }
+  inspect(results, content="[(0, 20), (1, 30), (2, 40)]")
+}
+
+///|
+test "ArrayView::iterator2 empty" {
+  let v = [1, 2, 3]
+  let view = v[2:2]
+  let iter = view.iterator2()
+  assert_eq(iter.next(), None)
+}

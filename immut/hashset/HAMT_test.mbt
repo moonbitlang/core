@@ -395,3 +395,86 @@ test "collision equal coverage" {
   let set2 = @hashset.new().add(b).add(a)
   assert_eq(set1, set2)
 }
+
+///|
+test "difference with collision - Leaf case" {
+  // Test (Leaf, Leaf) branch: hash collision handling
+  let set1 = @hashset.from_array([MyString("a"), MyString("b"), MyString("c")])
+  let set2 = @hashset.from_array([MyString("b")])
+  let diff = set1.difference(set2)
+  assert_eq(diff.contains(MyString("a")), true)
+  assert_eq(diff.contains(MyString("b")), false)
+  assert_eq(diff.contains(MyString("c")), true)
+  inspect(diff.length(), content="2")
+  // Test when all elements in set1 are removed
+  let set3 = @hashset.from_array([MyString("a"), MyString("b"), MyString("c")])
+  let diff2 = set1.difference(set3)
+  inspect(diff2.length(), content="0")
+}
+
+///|
+test "difference Flat vs Branch" {
+  // Test (Flat, node) branch where Flat is not in node - line 277-282
+  // When a single-element set is differenced with a multi-element set
+  let small = @hashset.from_array([100])
+  let large = @hashset.from_array([1, 2, 3, 4, 5])
+  let diff1 = small.difference(large)
+  assert_eq(diff1.contains(100), true)
+  inspect(diff1.length(), content="1")
+  // When Flat element is in the other set - should return None
+  let small2 = @hashset.from_array([1])
+  let diff2 = small2.difference(large)
+  inspect(diff2.length(), content="0")
+  // Test Flat vs collision node (Leaf)
+  let single = @hashset.from_array([MyString("z")])
+  let collision_set = @hashset.from_array([MyString("a"), MyString("b")])
+  let diff3 = single.difference(collision_set)
+  assert_eq(diff3.contains(MyString("z")), true)
+  inspect(diff3.length(), content="1")
+  // Test Flat element that exists in collision set
+  let single2 = @hashset.from_array([MyString("a")])
+  let diff4 = single2.difference(collision_set)
+  inspect(diff4.length(), content="0")
+}
+
+///|
+test "difference Branch returns single Flat" {
+  // Test case where Branch.difference returns a single Flat node
+  // This happens when the result has only one element
+  let set1 = @hashset.from_array([1, 2])
+  let set2 = @hashset.from_array([2])
+  let diff = set1.difference(set2)
+  assert_eq(diff.contains(1), true)
+  assert_eq(diff.contains(2), false)
+  inspect(diff.length(), content="1")
+}
+
+///|
+test "difference Leaf collision - More case" {
+  // Test (Leaf, Leaf) returning More(head, tail~) - line 295
+  // Need hash collision where filtering leaves 2+ elements
+  let set1 = @hashset.from_array([
+    MyString("a"),
+    MyString("b"),
+    MyString("c"),
+    MyString("d"),
+  ])
+  let set2 = @hashset.from_array([MyString("a"), MyString("b")])
+  let diff = set1.difference(set2)
+  assert_eq(diff.contains(MyString("a")), false)
+  assert_eq(diff.contains(MyString("b")), false)
+  assert_eq(diff.contains(MyString("c")), true)
+  assert_eq(diff.contains(MyString("d")), true)
+  inspect(diff.length(), content="2")
+}
+
+///|
+test "difference Branch single Flat result" {
+  // Test Branch difference returning single Flat with path.push - line 287
+  let set1 = @hashset.from_array([1, 2, 3, 4, 5])
+  let set2 = @hashset.from_array([2, 3, 4, 5])
+  let diff = set1.difference(set2)
+  assert_eq(diff.contains(1), true)
+  assert_eq(diff.contains(2), false)
+  inspect(diff.length(), content="1")
+}

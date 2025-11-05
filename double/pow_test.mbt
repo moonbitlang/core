@@ -765,6 +765,7 @@ test "pow" {
     (-1.7e5, @double.infinity, @double.infinity),
     (-1.7e5, @double.not_a_number, @double.not_a_number),
     (-1.7e5, @double.neg_infinity, 0),
+    (2.0, -1074.0, 5.0e-324),
     (-2.8e6, 1.1, @double.not_a_number),
     (-2.8e6, 2.2, @double.not_a_number),
     (-2.8e6, 3.3, @double.not_a_number),
