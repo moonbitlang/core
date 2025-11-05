@@ -1534,6 +1534,11 @@ pub fn[T] Array::windows(self : Array[T], size : Int) -> Array[ArrayView[T]] {
 }
 
 ///|
+pub fn[T] Array::suffixes(self : Array[T]) -> Iterator[ArrayView[T]] {
+  self[:].suffixes()
+}
+
+///|
 /// Splits an array into chunks using a predicate function. Creates chunks by
 /// grouping consecutive elements that do not satisfy the predicate function.
 /// Elements that satisfy the predicate function are excluded from the resulting

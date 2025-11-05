@@ -193,3 +193,10 @@ test "fixedarray_sub" {
   inspect(arr[3:-4], content="[(3, 3), (4, 4), (100, 100)]")
   inspect(arr[-5:], content="[(100, 100), (6, 6), (7, 7), (8, 8), (9, 9)]")
 }
+
+///|
+test "ArrayView::suffixes" {
+  let arr = [1, 2, 3]
+  let suffixes = arr[:].suffixes().collect()
+  @json.inspect(suffixes, content=[[1, 2, 3], [2, 3], [3], []])
+}

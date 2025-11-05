@@ -123,6 +123,13 @@ pub fn String::substring(self : String, start? : Int = 0, end? : Int) -> String 
 }
 
 ///|
+/// Iterates over all suffixes of the string as views that reuse the
+/// original storage. Surrogate pairs stay intact while advancing.
+pub fn String::suffixes(self : String) -> Iterator[StringView] {
+  self[:].suffixes()
+}
+
+///|
 test "substring/empty" {
   let s = "test"
   inspect(s.substring(start=2, end=2), content="")
