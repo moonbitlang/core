@@ -65,21 +65,7 @@ pub fn String::char_length(
     end_offset <= self.length() else {
     abort("invalid start or end index for String::codepoint_length")
   }
-  for utf16_index = start_offset, char_count = 0
-      utf16_index < end_offset
-      utf16_index = utf16_index + 1, char_count = char_count + 1 {
-    let c1 = self.unsafe_charcode_at(utf16_index)
-    if c1.is_leading_surrogate() && utf16_index + 1 < end_offset {
-      let c2 = self.unsafe_charcode_at(utf16_index + 1)
-      if c2.is_trailing_surrogate() {
-        continue utf16_index + 2, char_count + 1
-      } else {
-        abort("invalid surrogate pair")
-      }
-    }
-  } else {
-    char_count
-  }
+  StringView::make_view(self, start_offset, end_offset).char_length()
 }
 
 ///|

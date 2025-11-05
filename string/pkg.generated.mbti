@@ -76,9 +76,6 @@ impl Default for String
 
 #alias("_[_]")
 fn StringView::at(Self, Int) -> Int
-fn StringView::char_length(Self) -> Int
-fn StringView::char_length_eq(Self, Int) -> Bool
-fn StringView::char_length_ge(Self, Int) -> Bool
 fn StringView::contains(Self, Self) -> Bool
 fn StringView::contains_any(Self, chars~ : Self) -> Bool
 fn StringView::contains_char(Self, Char) -> Bool

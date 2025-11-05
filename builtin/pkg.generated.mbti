@@ -668,6 +668,13 @@ fn Bytes::unsafe_get(Bytes, Int) -> Byte
 
 
 
+fn StringView::char_length(Self) -> Int
+fn StringView::char_length_eq(Self, Int) -> Bool
+fn StringView::char_length_ge(Self, Int) -> Bool
+fn StringView::end(Self) -> Int
+fn StringView::make_view(String, Int, Int) -> Self
+fn StringView::start(Self) -> Int
+fn StringView::str(Self) -> String
 fn StringView::suffixes(Self, include_empty? : Bool) -> Iterator[Self]
 
 // Type aliases
