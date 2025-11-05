@@ -96,3 +96,11 @@ test "panic codepoint_length with invalid surrogate pair" {
   )
   ignore(s.char_length())
 }
+
+///|
+test "String::suffixes" {
+  let suffixes = "za🤣b".suffixes().map(v => v.to_string()).collect()
+  @json.inspect(suffixes, content=["za🤣b", "a🤣b", "🤣b", "b", ""])
+  let empty_suffix = "".suffixes().map(v => v.to_string()).collect()
+  @json.inspect(empty_suffix, content=[""])
+}

@@ -481,6 +481,14 @@ test "array_windows" {
 }
 
 ///|
+test "array_suffixes" {
+  let suffixes = [1, 2, 3].suffixes().collect()
+  @json.inspect(suffixes, content=[[1, 2, 3], [2, 3], [3], []])
+  let empty_suffixes = ([] : Array[Int]).suffixes().collect()
+  @json.inspect(empty_suffixes, content=[[]])
+}
+
+///|
 test "panic_array_windows_by_zero" {
   let arr = [1, 2, 3, 4, 5]
   let _ = arr.windows(0)
