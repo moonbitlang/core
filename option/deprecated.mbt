@@ -45,33 +45,6 @@ pub fn[T] some(value : T) -> T? {
 }
 
 ///|
-#deprecated("use unwrap_or instead", skip_current_package=false)
-pub fn[T] Option::or(self : T?, default : T) -> T {
-  match self {
-    None => default
-    Some(t) => t
-  }
-}
-
-///|
-#deprecated("use unwrap_or_else instead", skip_current_package=false)
-pub fn[T] Option::or_else(self : T?, default : () -> T) -> T {
-  match self {
-    None => default()
-    Some(t) => t
-  }
-}
-
-///|
-#deprecated("use unwrap_or_default instead", skip_current_package=false)
-pub fn[T : Default] Option::or_default(self : T?) -> T {
-  match self {
-    None => T::default()
-    Some(t) => t
-  }
-}
-
-///|
 /// Checks if the option contains a value.
 #deprecated("use `x is Some(_)` instead", skip_current_package=false)
 pub fn[T] Option::is_some(self : T?) -> Bool {

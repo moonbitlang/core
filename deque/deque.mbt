@@ -579,6 +579,7 @@ pub fn[A] Deque::push_back(self : Deque[A], value : A) -> Unit {
 ///   assert_eq(dv.front(), Some(2))
 /// ```
 #internal(unsafe, "Panic if the deque is empty.")
+#alias(pop_front_exn, deprecated)
 pub fn[A] Deque::unsafe_pop_front(self : Deque[A]) -> Unit {
   match self.len {
     0 => abort("The deque is empty!")
@@ -627,6 +628,7 @@ pub fn[A] Deque::unsafe_pop_front(self : Deque[A]) -> Unit {
 ///   assert_eq(dv.back(), Some(4))
 /// ```
 #internal(unsafe, "Panic if the deque is empty.")
+#alias(pop_back_exn, deprecated)
 pub fn[A] Deque::unsafe_pop_back(self : Deque[A]) -> Unit {
   match self.len {
     0 => abort("The deque is empty!")
@@ -1262,6 +1264,7 @@ pub fn[A] Deque::truncate(self : Deque[A], len : Int) -> Unit {
 ///   dq.retain_map((x) => { if x % 2 == 0 { Some(x * 2) } else { None } })
 ///   inspect(dq, content="@deque.from_array([4, 8])")
 /// ```
+#alias(filter_map_inplace, deprecated)
 pub fn[A] Deque::retain_map(self : Deque[A], f : (A) -> A?) -> Unit {
   guard !self.is_empty() else { return }
   let { head, buf, .. } = self

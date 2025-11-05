@@ -18,8 +18,7 @@ fn[A : Compare] SortedSet::add(Self[A], A) -> Self[A]
 fn[A] SortedSet::all(Self[A], (A) -> Bool raise?) -> Bool raise?
 fn[A] SortedSet::any(Self[A], (A) -> Bool raise?) -> Bool raise?
 fn[A : Compare] SortedSet::contains(Self[A], A) -> Bool
-#deprecated
-fn[A : Compare] SortedSet::diff(Self[A], Self[A]) -> Self[A]
+#alias(diff, deprecated)
 fn[A : Compare] SortedSet::difference(Self[A], Self[A]) -> Self[A]
 fn[A : Compare] SortedSet::disjoint(Self[A], Self[A]) -> Bool
 fn[A] SortedSet::each(Self[A], (A) -> Unit raise?) -> Unit raise?
@@ -35,8 +34,7 @@ fn[A : Compare] SortedSet::from_iter(Iter[A]) -> Self[A]
 fn[A : Compare] SortedSet::from_iterator(Iterator[A]) -> Self[A]
 #as_free_fn
 fn[A : @json.FromJson + Compare] SortedSet::from_json(Json) -> Self[A] raise @json.JsonDecodeError
-#deprecated
-fn[A : Compare] SortedSet::inter(Self[A], Self[A]) -> Self[A]
+#alias(inter, deprecated)
 fn[A : Compare] SortedSet::intersection(Self[A], Self[A]) -> Self[A]
 fn[A] SortedSet::is_empty(Self[A]) -> Bool
 fn[A] SortedSet::iter(Self[A]) -> Iter[A]

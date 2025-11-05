@@ -11,17 +11,3 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
-///|
-#deprecated("Use `unsafe_peek` instead", skip_current_package=false)
-#coverage.skip
-pub fn[A] Queue::peek_exn(self : Queue[A]) -> A {
-  self.unsafe_peek()
-}
-
-///|
-#deprecated("Use `unsafe_pop` instead", skip_current_package=false)
-#coverage.skip
-pub fn[A] Queue::pop_exn(self : Queue[A]) -> A {
-  self.unsafe_pop()
-}

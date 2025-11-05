@@ -11,12 +11,3 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
-///|
-#deprecated("Use `unsafe_pop` instead", skip_current_package=false)
-#coverage.skip
-pub fn[A : Compare] PriorityQueue::pop_exn(
-  self : PriorityQueue[A],
-) -> PriorityQueue[A] {
-  self.unsafe_pop()
-}

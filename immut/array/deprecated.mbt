@@ -37,39 +37,3 @@ pub fn[A] T::copy(self : T[A]) -> T[A] {
 
   { tree: copy(self.tree), size: self.size, shift: self.shift }
 }
-
-///|
-/// Fold the array from left to right.
-///
-/// # Example
-/// ```mbt
-///   let v = @array.from_array([1, 2, 3, 4, 5])
-///   assert_eq(v.fold((a, b) => { a + b }, init=0), 15)
-/// ```
-#deprecated("Use `fold` instead", skip_current_package=false)
-#coverage.skip
-pub fn[A] T::fold_left(
-  self : T[A],
-  f : (A, A) -> A raise?,
-  init~ : A,
-) -> A raise? {
-  self.fold(init~, f)
-}
-
-///|
-/// Fold the array from right to left.
-///
-/// # Example
-/// ```mbt
-///   let v = @array.from_array([1, 2, 3, 4, 5])
-///   assert_eq(v.rev_fold((a, b) => { a + b }, init=0), 15)
-/// ```
-#deprecated("Use `rev_fold` instead", skip_current_package=false)
-#coverage.skip
-pub fn[A] T::fold_right(
-  self : T[A],
-  f : (A, A) -> A raise?,
-  init~ : A,
-) -> A raise? {
-  self.rev_fold(init~, f)
-}

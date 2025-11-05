@@ -333,6 +333,7 @@ pub impl[A : Compare] Add for SortedSet[A] with add(self, other) {
 /// ```mbt
 ///   assert_eq(@sorted_set.from_array([3, 4, 5]).intersection(@sorted_set.from_array([4, 5, 6])), @sorted_set.from_array([4, 5]))
 /// ```
+#alias(inter, deprecated)
 pub fn[A : Compare] SortedSet::intersection(
   self : SortedSet[A],
   other : SortedSet[A],
@@ -355,6 +356,7 @@ pub fn[A : Compare] SortedSet::intersection(
 /// ```mbt
 ///   assert_eq(@sorted_set.from_array([1, 2, 3]).difference(@sorted_set.from_array([4, 5, 1])), @sorted_set.from_array([2, 3]))
 /// ```
+#alias(diff, deprecated)
 pub fn[A : Compare] SortedSet::difference(
   self : SortedSet[A],
   other : SortedSet[A],

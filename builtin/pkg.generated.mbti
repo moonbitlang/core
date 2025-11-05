@@ -199,6 +199,7 @@ fn[T] Iter::each(Self[T], (T) -> Unit raise?) -> Unit raise?
 fn[T] Iter::eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?
 fn[T] Iter::empty() -> Self[T]
 fn[T] Iter::filter(Self[T], (T) -> Bool) -> Self[T]
+#alias(map_option, deprecated)
 fn[A, B] Iter::filter_map(Self[A], (A) -> B?) -> Self[B]
 fn[T] Iter::find_first(Self[T], (T) -> Bool) -> T?
 fn[T, R] Iter::flat_map(Self[T], (T) -> Self[R]) -> Self[R]
@@ -214,8 +215,6 @@ fn Iter::join(Self[String], String) -> String
 fn[T] Iter::just_run(Self[T], (T) -> IterResult) -> Unit
 fn[A] Iter::last(Self[A]) -> A?
 fn[T, R] Iter::map(Self[T], (T) -> R) -> Self[R]
-#deprecated
-fn[A, B] Iter::map_option(Self[A], (A) -> B?) -> Self[B]
 fn[A, B] Iter::map_while(Self[A], (A) -> B?) -> Self[B]
 fn[T, R] Iter::mapi(Self[T], (Int, T) -> R) -> Self[R]
 fn[T : Compare] Iter::maximum(Self[T]) -> T?

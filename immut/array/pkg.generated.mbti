@@ -19,11 +19,8 @@ fn[A] T::concat(Self[A], Self[A]) -> Self[A]
 fn[A] T::copy(Self[A]) -> Self[A]
 fn[A] T::each(Self[A], (A) -> Unit raise?) -> Unit raise?
 fn[A] T::eachi(Self[A], (Int, A) -> Unit raise?) -> Unit raise?
+#alias(fold_left, deprecated)
 fn[A, B] T::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
-#deprecated
-fn[A] T::fold_left(Self[A], (A, A) -> A raise?, init~ : A) -> A raise?
-#deprecated
-fn[A] T::fold_right(Self[A], (A, A) -> A raise?, init~ : A) -> A raise?
 #alias(of, deprecated)
 #as_free_fn(of, deprecated)
 #as_free_fn
@@ -45,6 +42,7 @@ fn[A, B] T::map(Self[A], (A) -> B raise?) -> Self[B] raise?
 #as_free_fn
 fn[A] T::new() -> Self[A]
 fn[A] T::push(Self[A], A) -> Self[A]
+#alias(fold_right, deprecated)
 fn[A, B] T::rev_fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 fn[A] T::set(Self[A], Int, A) -> Self[A]
 fn[A] T::to_array(Self[A]) -> Array[A]
