@@ -1534,8 +1534,11 @@ pub fn[T] Array::windows(self : Array[T], size : Int) -> Array[ArrayView[T]] {
 }
 
 ///|
-pub fn[T] Array::suffixes(self : Array[T]) -> Iterator[ArrayView[T]] {
-  self[:].suffixes()
+pub fn[T] Array::suffixes(
+  self : Array[T],
+  include_empty? : Bool = false,
+) -> Iterator[ArrayView[T]] {
+  self[:].suffixes(include_empty~)
 }
 
 ///|

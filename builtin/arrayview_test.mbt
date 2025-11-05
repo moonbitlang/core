@@ -198,5 +198,9 @@ test "fixedarray_sub" {
 test "ArrayView::suffixes" {
   let arr = [1, 2, 3]
   let suffixes = arr[:].suffixes().collect()
-  @json.inspect(suffixes, content=[[1, 2, 3], [2, 3], [3], []])
+  @json.inspect(suffixes, content=[[1, 2, 3], [2, 3], [3]])
+  let suffixes_with_empty = arr[:].suffixes(include_empty=true).collect()
+  @json.inspect(suffixes_with_empty, content=[[1, 2, 3], [2, 3], [3], []])
+  let suffixes_no_empty = arr[:].suffixes(include_empty=false).collect()
+  @json.inspect(suffixes_no_empty, content=[[1, 2, 3], [2, 3], [3]])
 }
