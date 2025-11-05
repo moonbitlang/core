@@ -166,7 +166,8 @@ fn[K : Eq, V] Node::add_with_path(
 
 ///|
 /// Filter entries that satisfy the predicate
-pub fn[K, V] HashMap::filter_with_key(
+#alias(filter_with_key, deprecated)
+pub fn[K, V] HashMap::filter(
   self : HashMap[K, V],
   pred : (K, V) -> Bool raise?,
 ) -> HashMap[K, V] raise? {
@@ -208,7 +209,8 @@ pub fn[K, V] HashMap::filter_with_key(
 /// TODO: can not mark `f` as `#locals(f)` because 
 /// it will be shadowed by the `f` in the `@list.T::fold` function
 /// TO make it more useful in the future, we may need propagate
-pub fn[K, V, A] HashMap::fold_with_key(
+#alias(fold_with_key, deprecated)
+pub fn[K, V, A] HashMap::fold(
   self : HashMap[K, V],
   init~ : A,
   f : (A, K, V) -> A raise?,
@@ -230,7 +232,8 @@ pub fn[K, V, A] HashMap::fold_with_key(
 
 ///|
 /// Maps over the key-value pairs in the map
-pub fn[K, V, A] HashMap::map_with_key(
+#alias(map_with_key, deprecated)
+pub fn[K, V, A] HashMap::map(
   self : HashMap[K, V],
   f : (K, V) -> A raise?,
 ) -> HashMap[K, A] raise? {
@@ -785,7 +788,7 @@ pub impl[K : Hash, V : Hash] Hash for HashMap[K, V] with hash_combine(
   hasher,
 ) {
   hasher.combine(
-    self.fold_with_key(init=0, (acc, k, v) => acc ^
+    self.fold(init=0, (acc, k, v) => acc ^
       Hasher::new()..combine((k, v)).finalize()),
   )
 }
