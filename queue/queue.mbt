@@ -131,6 +131,7 @@ pub fn[A] Queue::push(self : Queue[A], x : A) -> Unit {
 ///   assert_eq(queue.unsafe_peek(), 1)
 /// ```
 #internal(unsafe, "Panics if the queue is empty.")
+#alias(peek_exn, deprecated)
 pub fn[A] Queue::unsafe_peek(self : Queue[A]) -> A {
   match self.first {
     None => abort("Queue is empty")
@@ -162,6 +163,7 @@ pub fn[A] Queue::peek(self : Queue[A]) -> A? {
 ///   assert_eq(queue.unsafe_pop(), 1)
 /// ```
 #internal(unsafe, "Panics if the queue is empty.")
+#alias(pop_exn, deprecated)
 pub fn[A] Queue::unsafe_pop(self : Queue[A]) -> A {
   match self.first {
     None => abort("Queue is empty")

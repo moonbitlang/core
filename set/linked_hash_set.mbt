@@ -106,6 +106,7 @@ pub fn[K : Hash + Eq] Set::from_array(arr : ArrayView[K]) -> Set[K] {
 ///   set.add("key") // no effect since it already exists
 ///   inspect(set.length(), content="1")
 /// ```
+#alias(insert, deprecated)
 pub fn[K : Hash + Eq] Set::add(self : Set[K], key : K) -> Unit {
   self.add_with_hash(key, key.hash())
 }

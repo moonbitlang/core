@@ -11,29 +11,3 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
-///|
-#deprecated("Use `intersection` instead", skip_current_package=false)
-#coverage.skip
-pub fn[A : Compare] SortedSet::inter(
-  self : SortedSet[A],
-  other : SortedSet[A],
-) -> SortedSet[A] {
-  self.intersection(other)
-}
-
-///|
-/// Returns the difference of two sets.
-///
-/// # Example
-/// ```mbt
-///   assert_eq(@sorted_set.from_array([1, 2, 3]).difference(@sorted_set.from_array([4, 5, 1])), @sorted_set.from_array([2, 3]))
-/// ```
-#deprecated("Use `difference` instead", skip_current_package=false)
-#coverage.skip
-pub fn[A : Compare] SortedSet::diff(
-  self : SortedSet[A],
-  other : SortedSet[A],
-) -> SortedSet[A] {
-  self.difference(other)
-}

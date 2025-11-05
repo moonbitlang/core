@@ -202,6 +202,7 @@ test "filter" {
 
 ///|
 /// Return the contained `Some` value or the provided default.
+#alias(or, deprecated)
 pub fn[T] Option::unwrap_or(self : T?, default : T) -> T {
   match self {
     None => default
@@ -220,6 +221,7 @@ test "unwrap_or" {
 /// Return the contained `Some` value or the provided default.
 ///
 /// Default is lazily evaluated
+#alias(or_else, deprecated)
 pub fn[T] Option::unwrap_or_else(
   self : T?,
   default : () -> T raise?,
@@ -239,6 +241,7 @@ test "or else" {
 
 ///|
 /// Return the contained `Some` value or the result of the `T::default()`.
+#alias(or_default, deprecated)
 pub fn[T : Default] Option::unwrap_or_default(self : T?) -> T {
   match self {
     None => T::default()
