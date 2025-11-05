@@ -258,3 +258,40 @@ test {
   buffer.write_leb128(-65)
   assert_eq(buffer.to_bytes(), b"\xbf\x7f")
 }
+
+///|
+test "write_leb128 UInt64" {
+  let buffer = @buffer.new()
+  buffer.write_leb128(0UL)
+  assert_eq(buffer.to_bytes(), b"\x00")
+  buffer.reset()
+  buffer.write_leb128(127UL)
+  assert_eq(buffer.to_bytes(), b"\x7f")
+  buffer.reset()
+  buffer.write_leb128(128UL)
+  assert_eq(buffer.to_bytes(), b"\x80\x01")
+  buffer.reset()
+  buffer.write_leb128(129UL)
+  assert_eq(buffer.to_bytes(), b"\x81\x01")
+  buffer.reset()
+  buffer.write_leb128(16383UL)
+  assert_eq(buffer.to_bytes(), b"\xff\x7f")
+  buffer.reset()
+  buffer.write_leb128(16384UL)
+  assert_eq(buffer.to_bytes(), b"\x80\x80\x01")
+  buffer.reset()
+  buffer.write_leb128(2097151UL)
+  assert_eq(buffer.to_bytes(), b"\xff\xff\x7f")
+  buffer.reset()
+}
+
+///|
+test "write_leb128 UInt64 large values" {
+  let buffer = @buffer.new()
+  buffer.write_leb128(0xFFFFFFFFUL)
+  assert_eq(buffer.to_bytes(), b"\xff\xff\xff\xff\x0f")
+  buffer.reset()
+  buffer.write_leb128(0x100000000UL)
+  assert_eq(buffer.to_bytes(), b"\x80\x80\x80\x80\x10")
+  buffer.reset()
+}

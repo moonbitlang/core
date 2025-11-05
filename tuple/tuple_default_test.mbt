@@ -19,9 +19,97 @@ test "tuple2 default" {
 }
 
 ///|
+test "tuple3 default" {
+  let t : (Int, Bool, Int) = Default::default()
+  inspect(t, content="(0, false, 0)")
+}
+
+///|
+test "tuple4 default" {
+  let t : (Int, Bool, Int, Int) = Default::default()
+  inspect(t, content="(0, false, 0, 0)")
+}
+
+///|
 test "tuple5 default" {
   let t : (Int, Bool, Int, Int, Int) = Default::default()
   inspect(t, content="(0, false, 0, 0, 0)")
+}
+
+///|
+test "tuple6 default" {
+  let t : (Int, Int, Int, Int, Int, Int) = Default::default()
+  inspect(t, content="(0, 0, 0, 0, 0, 0)")
+}
+
+///|
+test "tuple7 default" {
+  let t : (Int, Int, Int, Int, Int, Int, Int) = Default::default()
+  inspect(t, content="(0, 0, 0, 0, 0, 0, 0)")
+}
+
+///|
+test "tuple8 default" {
+  let t : (Int, Int, Int, Int, Int, Int, Int, Int) = Default::default()
+  inspect(t, content="(0, 0, 0, 0, 0, 0, 0, 0)")
+}
+
+///|
+test "tuple9 default" {
+  let t : (Int, Int, Int, Int, Int, Int, Int, Int, Int) = Default::default()
+  inspect(t, content="(0, 0, 0, 0, 0, 0, 0, 0, 0)")
+}
+
+///|
+test "tuple10 default" {
+  let t : (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int) = Default::default()
+  inspect(t, content="(0, 0, 0, 0, 0, 0, 0, 0, 0, 0)")
+}
+
+///|
+test "tuple11 default" {
+  let t : (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int) = Default::default()
+  inspect(t, content="(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)")
+}
+
+///|
+test "tuple12 default" {
+  let t : (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int) = Default::default()
+  inspect(t, content="(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)")
+}
+
+///|
+test "tuple13 default" {
+  let t : (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int) = Default::default()
+  inspect(t, content="(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)")
+}
+
+///|
+test "tuple14 default" {
+  let t : (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int) = Default::default()
+  inspect(t, content="(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)")
+}
+
+///|
+test "tuple15 default" {
+  let t : (
+    Int,
+    Int,
+    Int,
+    Int,
+    Int,
+    Int,
+    Int,
+    Int,
+    Int,
+    Int,
+    Int,
+    Int,
+    Int,
+    Int,
+    Int,
+  ) = Default::default()
+  inspect(t, content="(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)")
 }
 
 ///|

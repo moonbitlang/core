@@ -59,3 +59,50 @@ test "decoding UTF8 with bom" {
   inspect(try! @utf8.decode(text), content="﻿abc你好👀")
   inspect(try! @utf8.decode(text, ignore_bom=true), content="abc你好👀")
 }
+
+///|
+test "decoding UTF8 with 8+ ASCII characters" {
+  let text1 = b"abcdefgh"
+  inspect(try! @utf8.decode(text1), content="abcdefgh")
+  let text2 = b"12345678901234567890"
+  inspect(try! @utf8.decode(text2), content="12345678901234567890")
+  inspect(@utf8.decode_lossy(text1), content="abcdefgh")
+  inspect(@utf8.decode_lossy(text2), content="12345678901234567890")
+}
+
+///|
+test "decoding UTF8 with 2-byte sequences" {
+  let copyright = b"\xc2\xa9"
+  inspect(try! @utf8.decode(copyright), content="©")
+  let registered = b"\xc2\xae"
+  inspect(try! @utf8.decode(registered), content="®")
+  let micro = b"\xc2\xb5"
+  inspect(try! @utf8.decode(micro), content="µ")
+  let o_slash = b"\xc3\x98"
+  inspect(try! @utf8.decode(o_slash), content="Ø")
+  let mixed = b"\x61\xc2\xa9\x62\xc2\xae\x63"
+  inspect(try! @utf8.decode(mixed), content="a©b®c")
+  inspect(@utf8.decode_lossy(copyright), content="©")
+  inspect(@utf8.decode_lossy(mixed), content="a©b®c")
+}
+
+///|
+test "decode_lossy with valid 3-byte and 4-byte sequences" {
+  let chinese1 = b"\xe4\xb8\xad"
+  inspect(@utf8.decode_lossy(chinese1), content="中")
+  let chinese2 = b"\xe6\x96\x87"
+  inspect(@utf8.decode_lossy(chinese2), content="文")
+  let emoji1 = b"\xf0\x9f\x98\x80"
+  inspect(@utf8.decode_lossy(emoji1), content="😀")
+  let emoji2 = b"\xf0\x9f\x8e\x89" // 🎉 (U+1F389)
+  inspect(@utf8.decode_lossy(emoji2), content="🎉")
+  let mixed = b"\x61\xc2\xa9\xe4\xb8\xad\xf0\x9f\x98\x80\x62"
+  inspect(@utf8.decode_lossy(mixed), content="a©中😀b")
+}
+
+///|
+test "decode_lossy with bom" {
+  let text = b"\xef\xbb\xbf\x61\x62\x63"
+  inspect(@utf8.decode_lossy(text), content="﻿abc")
+  inspect(@utf8.decode_lossy(text, ignore_bom=true), content="abc")
+}

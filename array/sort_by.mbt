@@ -433,3 +433,27 @@ test "sort_by_key" {
 test "sort_by" {
   test_sort(arr => arr.sort_by((a, b) => a - b))
 }
+
+///|
+test "sort_by - many duplicates" {
+  let arr = []
+  for i in 0..<20 {
+    arr.push(5)
+  }
+  for i in 0..<20 {
+    arr.push(3)
+  }
+  for i in 0..<20 {
+    arr.push(5)
+  }
+  for i in 0..<20 {
+    arr.push(1)
+  }
+  for i in 0..<20 {
+    arr.push(5)
+  }
+  arr.sort_by((a, b) => a - b)
+  for i in 1..<arr.length() {
+    assert_true(arr[i - 1] <= arr[i])
+  }
+}

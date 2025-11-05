@@ -299,3 +299,35 @@ test "panic fill with invalid end" {
   let arr = [1, 2, 3, 4, 5]
   arr.fill(0, start=2, end=10)
 }
+
+///|
+test "Array::rev_iterator" {
+  let arr = [1, 2, 3, 4, 5]
+  let iter = arr.rev_iterator()
+  inspect(iter.to_array(), content="[5, 4, 3, 2, 1]")
+}
+
+///|
+test "Array::rev_iterator empty" {
+  let arr : Array[Int] = []
+  let iter = arr.rev_iterator()
+  assert_eq(iter.next(), None)
+}
+
+///|
+test "Array::iterator2" {
+  let arr = [10, 20, 30, 40]
+  let iter = arr.iterator2()
+  let results = []
+  while iter.next() is Some((i, x)) {
+    results.push((i, x))
+  }
+  inspect(results, content="[(0, 10), (1, 20), (2, 30), (3, 40)]")
+}
+
+///|
+test "Array::iterator2 empty" {
+  let arr : Array[Int] = []
+  let iter = arr.iterator2()
+  assert_eq(iter.next(), None)
+}

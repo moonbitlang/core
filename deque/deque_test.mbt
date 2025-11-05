@@ -13,6 +13,17 @@
 // limitations under the License.
 
 ///|
+test "get option" {
+  let dv = @deque.from_array([1, 2, 3, 4, 5])
+  inspect(dv.get(0), content="Some(1)")
+  inspect(dv.get(2), content="Some(3)")
+  inspect(dv.get(4), content="Some(5)")
+  inspect(dv.get(-1), content="None")
+  inspect(dv.get(5), content="None")
+  inspect(dv.get(100), content="None")
+}
+
+///|
 test "search" {
   let dv = @deque.from_array([3, 4, 5])
   assert_eq(dv.search(3), Some(0))
