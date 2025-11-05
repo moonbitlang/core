@@ -431,7 +431,7 @@ test "HAMT::contains" {
 ///|
 test "filter with simple predicate" {
   let map = @hashmap.from_array([(1, 1), (2, 2), (3, 3), (4, 4)])
-  let only_even = map.filter_with_key((_, v) => v % 2 == 0)
+  let only_even = map.filter((_, v) => v % 2 == 0)
   inspect(only_even.contains(1), content="false")
   inspect(only_even.contains(2), content="true")
   inspect(only_even.contains(3), content="false")
@@ -441,7 +441,7 @@ test "filter with simple predicate" {
 ///|
 test "filter with all elements matching" {
   let map = @hashmap.from_array([(1, 1), (2, 2)])
-  let filtered = map.filter_with_key((_, v) => v > 0)
+  let filtered = map.filter((_, v) => v > 0)
   inspect(filtered.contains(1), content="true")
   inspect(filtered.contains(2), content="true")
 }
@@ -449,7 +449,7 @@ test "filter with all elements matching" {
 ///|
 test "filter with no elements matching" {
   let map = @hashmap.from_array([(1, 1), (2, 2), (3, 3)])
-  let filtered = map.filter_with_key((_, v) => v > 10)
+  let filtered = map.filter((_, v) => v > 10)
   assert_eq(filtered.get(1), None)
   assert_eq(filtered.get(2), None)
   assert_eq(filtered.get(3), None)
@@ -459,7 +459,7 @@ test "filter with no elements matching" {
 ///|
 test "filter with collision" {
   let map = @hashmap.from_array([(1, 10), (2, 20)]).add(1, 30)
-  let filtered = map.filter_with_key((_, v) => v == 30)
+  let filtered = map.filter((_, v) => v == 30)
   assert_eq(filtered.get(1), Some(30))
   assert_eq(filtered.get(2), None)
 }
@@ -470,7 +470,7 @@ test "filter with branch nodes" {
     (10, map) => map
     (i, map) => continue (i + 1, map.add(i, i * 10))
   }
-  let filtered = map.filter_with_key((_, v) => v % 20 == 0)
+  let filtered = map.filter((_, v) => v % 20 == 0)
   for i in 0..<10 {
     if i * 10 % 20 == 0 {
       assert_eq(filtered.get(i), Some(i * 10))
@@ -483,7 +483,7 @@ test "filter with branch nodes" {
 ///|
 test "HAMT::fold_with_key" {
   let map = @hashmap.from_array([(1, "a"), (2, "b")])
-  let result = map.fold_with_key(init="", (acc, k, v) => acc + "\{k}:\{v}, ")
+  let result = map.fold(init="", (acc, k, v) => acc + "\{k}:\{v}, ")
   // order of elements is not guaranteed, so we check for substrings
   inspect(result.contains("1:a"), content="true")
   inspect(result.contains("2:b"), content="true")
@@ -492,14 +492,14 @@ test "HAMT::fold_with_key" {
 ///|
 test "HAMT::fold" {
   let map = @hashmap.from_array([(1, 10), (2, 20), (3, 30)])
-  let result = map.fold_with_key(init=0, (acc, _, v) => acc + v)
+  let result = map.fold(init=0, (acc, _, v) => acc + v)
   inspect(result, content="60")
 }
 
 ///|
 test "HAMT::map" {
   let map = @hashmap.from_array([(1, 10), (2, 20)])
-  let mapped = map.map_with_key((_, v) => v * 2)
+  let mapped = map.map((_, v) => v * 2)
   assert_eq(mapped.get(1), Some(20))
   assert_eq(mapped.get(2), Some(40))
   assert_eq(mapped.get(3), None)
@@ -509,21 +509,21 @@ test "HAMT::map" {
 test "HAMT::map with overflow" {
   let max = 2147483647 // Int.max_value
   let map = @hashmap.from_array([(1, max)])
-  let mapped = map.map_with_key((_, v) => v + 1)
+  let mapped = map.map((_, v) => v + 1)
   assert_eq(mapped.get(1), Some(-2147483648))
 }
 
 ///|
 test "HAMT::map_with_key empty" {
   let map : @hashmap.HashMap[Int, Int] = @hashmap.new()
-  let mapped = map.map_with_key((_k, v) => v)
+  let mapped = map.map((_k, v) => v)
   inspect(mapped.length(), content="0")
 }
 
 ///|
 test "HAMT::map_with_key leaf" {
   let map = @hashmap.singleton(42, 100) // Leaf
-  let mapped = map.map_with_key((k, v) => k + v)
+  let mapped = map.map((k, v) => k + v)
   assert_eq(mapped.get(42), Some(142))
   inspect(mapped.length(), content="1")
 }
@@ -531,7 +531,7 @@ test "HAMT::map_with_key leaf" {
 ///|
 test "HAMT::map_with_key collision" {
   let map = @hashmap.from_array([(MyString("a"), 1), (MyString("b"), 2)]) // Collision
-  let mapped = map.map_with_key((k, v) => k.0 + ":" + v.to_string())
+  let mapped = map.map((k, v) => k.0 + ":" + v.to_string())
   assert_eq(mapped.get(MyString("a")), Some("a:1"))
   assert_eq(mapped.get(MyString("b")), Some("b:2"))
   assert_eq(mapped.get(MyString("c")), None)
@@ -543,7 +543,7 @@ test "HAMT::map_with_key branch" {
     (10, map) => map
     (i, map) => continue (i + 1, map.add(i, i * 10))
   } // Branch
-  let mapped = map.map_with_key((k, v) => k * 100 + v)
+  let mapped = map.map((k, v) => k * 100 + v)
   for i in 0..<10 {
     assert_eq(mapped.get(i), Some(i * 100 + i * 10))
   }
@@ -592,21 +592,21 @@ test "add_with_hash collision" {
 ///|
 test "empty filtering" {
   let map : @hashmap.HashMap[Int, Int] = @hashmap.from_array([])
-  let _filtered = map.filter_with_key((_, v) => v > 2)
+  let _filtered = map.filter((_, v) => v > 2)
   inspect(map.length(), content="0")
 }
 
 ///|
 test "filter with collision - all removed" {
   let map = @hashmap.from_array([(MyString("a"), 1), (MyString("b"), 2)])
-  let filtered = map.filter_with_key((_, v) => v > 2)
+  let filtered = map.filter((_, v) => v > 2)
   inspect(filtered.length(), content="0")
 }
 
 ///|
 test "filter with collision - one left" {
   let map = @hashmap.from_array([(MyString("a"), 1), (MyString("b"), 2)])
-  let filtered = map.filter_with_key((_, v) => v == 1)
+  let filtered = map.filter((_, v) => v == 1)
   inspect(filtered.length(), content="1")
 }
 
@@ -617,21 +617,21 @@ test "filter with collision - more than one left" {
     (MyString("b"), 2),
     (MyString("c"), 3),
   ])
-  let filtered = map.filter_with_key((_, v) => v > 1)
+  let filtered = map.filter((_, v) => v > 1)
   inspect(filtered.length(), content="2")
 }
 
 ///|
 test "HAMT::fold_with_key on empty" {
   let map : @hashmap.HashMap[Int, Int] = @hashmap.new()
-  let result = map.fold_with_key(init=0, (acc, _k, _v) => acc + 1)
+  let result = map.fold(init=0, (acc, _k, _v) => acc + 1)
   inspect(result, content="0")
 }
 
 ///|
 test "HAMT::fold_with_key on collision" {
   let map = @hashmap.from_array([(MyString("a"), 1), (MyString("b"), 2)])
-  let result = map.fold_with_key(init=0, (acc, _k, v) => acc + v)
+  let result = map.fold(init=0, (acc, _k, v) => acc + v)
   inspect(result, content="3")
 }
 
