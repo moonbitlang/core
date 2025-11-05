@@ -18,7 +18,10 @@ fn StringView::make_view(str : String, start : Int, end : Int) -> StringView = "
 ///|
 /// Iterates over all suffixes of the view, advancing by a Unicode character at
 /// a time. Each yielded suffix is itself a view into the original string.
-pub fn StringView::suffixes(self : StringView) -> Iterator[StringView] {
+pub fn StringView::suffixes(
+  self : StringView,
+  include_empty? : Bool = false,
+) -> Iterator[StringView] {
   let str = self.str()
   let end = self.end()
   let mut next_start = self.start()
@@ -26,19 +29,22 @@ pub fn StringView::suffixes(self : StringView) -> Iterator[StringView] {
   Iterator::new(fn() -> StringView? {
     if finished {
       None
+    } else if next_start == end {
+      finished = true
+      if include_empty {
+        Some(StringView::make_view(str, next_start, end))
+      } else {
+        None
+      }
     } else {
       let suffix = StringView::make_view(str, next_start, end)
-      if next_start == end {
-        finished = true
+      let code = str.unsafe_charcode_at(next_start)
+      if code.is_leading_surrogate() &&
+        next_start + 1 < end &&
+        str.unsafe_charcode_at(next_start + 1).is_trailing_surrogate() {
+        next_start += 2
       } else {
-        let code = str.unsafe_charcode_at(next_start)
-        if code.is_leading_surrogate() &&
-          next_start + 1 < end &&
-          str.unsafe_charcode_at(next_start + 1).is_trailing_surrogate() {
-          next_start += 2
-        } else {
-          next_start += 1
-        }
+        next_start += 1
       }
       Some(suffix)
     }

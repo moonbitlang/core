@@ -263,14 +263,24 @@ pub fn[T] FixedArray::sub(
 }
 
 ///|
-pub fn[T] ArrayView::suffixes(self : Self[T]) -> Iterator[ArrayView[T]] {
+pub fn[T] ArrayView::suffixes(
+  self : Self[T],
+  include_empty? : Bool = false,
+) -> Iterator[ArrayView[T]] {
   let len = self.length()
   let mut i = 0
   Iterator::new(fn() -> ArrayView[T]? {
-    if i <= len {
+    if i < len {
       let suffix = self[i:]
       i += 1
       Some(suffix)
+    } else if i == len {
+      i += 1
+      if include_empty {
+        Some(self[len:])
+      } else {
+        None
+      }
     } else {
       None
     }

@@ -483,9 +483,17 @@ test "array_windows" {
 ///|
 test "array_suffixes" {
   let suffixes = [1, 2, 3].suffixes().collect()
-  @json.inspect(suffixes, content=[[1, 2, 3], [2, 3], [3], []])
+  @json.inspect(suffixes, content=[[1, 2, 3], [2, 3], [3]])
+  let suffixes_with_empty = [1, 2, 3].suffixes(include_empty=true).collect()
+  @json.inspect(suffixes_with_empty, content=[[1, 2, 3], [2, 3], [3], []])
+  let suffixes_no_empty = [1, 2, 3].suffixes(include_empty=false).collect()
+  @json.inspect(suffixes_no_empty, content=[[1, 2, 3], [2, 3], [3]])
   let empty_suffixes = ([] : Array[Int]).suffixes().collect()
-  @json.inspect(empty_suffixes, content=[[]])
+  @json.inspect(empty_suffixes, content=[])
+  let empty_suffixes_with_empty = ([] : Array[Int])
+    .suffixes(include_empty=true)
+    .collect()
+  @json.inspect(empty_suffixes_with_empty, content=[[]])
 }
 
 ///|

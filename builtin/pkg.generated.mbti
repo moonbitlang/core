@@ -138,7 +138,7 @@ fn[T : Eq] Array::strip_prefix(Self[T], Self[T]) -> Self[T]?
 fn[T : Eq] Array::strip_suffix(Self[T], Self[T]) -> Self[T]?
 #alias("_[_:_]")
 fn[T] Array::sub(Self[T], start? : Int, end? : Int) -> ArrayView[T]
-fn[T] Array::suffixes(Self[T]) -> Iterator[ArrayView[T]]
+fn[T] Array::suffixes(Self[T], include_empty? : Bool) -> Iterator[ArrayView[T]]
 fn[T] Array::swap(Self[T], Int, Int) -> Unit
 fn[A] Array::truncate(Self[A], Int) -> Unit
 fn[A] Array::unsafe_blit(Self[A], Int, Self[A], Int, Int) -> Unit
@@ -163,7 +163,7 @@ fn[T] ArrayView::at(Self[T], Int) -> T
 fn[T] ArrayView::length(Self[T]) -> Int
 #alias("_[_:_]")
 fn[T] ArrayView::sub(Self[T], start? : Int, end? : Int) -> Self[T]
-fn[T] ArrayView::suffixes(Self[T]) -> Iterator[Self[T]]
+fn[T] ArrayView::suffixes(Self[T], include_empty? : Bool) -> Iterator[Self[T]]
 fn[T] ArrayView::unsafe_get(Self[T], Int) -> T
 impl[X : ToJson] ToJson for ArrayView[X]
 
@@ -601,7 +601,7 @@ fn String::length(String) -> Int
 fn String::make(Int, Char) -> String
 #deprecated
 fn String::substring(String, start? : Int, end? : Int) -> String
-fn String::suffixes(String) -> Iterator[StringView]
+fn String::suffixes(String, include_empty? : Bool) -> Iterator[StringView]
 fn String::to_string(String) -> String
 #deprecated
 fn String::unsafe_char_at(String, Int) -> Char
@@ -668,7 +668,7 @@ fn Bytes::unsafe_get(Bytes, Int) -> Byte
 
 
 
-fn StringView::suffixes(Self) -> Iterator[Self]
+fn StringView::suffixes(Self, include_empty? : Bool) -> Iterator[Self]
 
 // Type aliases
 

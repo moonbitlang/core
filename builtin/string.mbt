@@ -125,8 +125,11 @@ pub fn String::substring(self : String, start? : Int = 0, end? : Int) -> String 
 ///|
 /// Iterates over all suffixes of the string as views that reuse the
 /// original storage. Surrogate pairs stay intact while advancing.
-pub fn String::suffixes(self : String) -> Iterator[StringView] {
-  self[:].suffixes()
+pub fn String::suffixes(
+  self : String,
+  include_empty? : Bool = false,
+) -> Iterator[StringView] {
+  self[:].suffixes(include_empty~)
 }
 
 ///|
