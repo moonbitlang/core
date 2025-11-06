@@ -454,3 +454,61 @@ pub fn Bytes::unsafe_extract_bytesview(
 ) -> BytesView {
   bs[:].unsafe_extract_bytesview(offset, len)
 }
+
+///|
+/// Extract a single bit as a signed integer.
+#internal(experimental, "subject to breaking change without notice")
+pub fn Bytes::unsafe_extract_bit_signed(
+  bs : Bytes,
+  offset : Int,
+  len : Int,
+) -> Int {
+  bs[:].unsafe_extract_bit_signed(offset, len)
+}
+
+///|
+/// Extract [2..8] bits as a signed integer.
+#internal(experimental, "subject to breaking change without notice")
+pub fn Bytes::unsafe_extract_byte_signed(
+  bs : Bytes,
+  offset : Int,
+  len : Int,
+) -> Int {
+  bs[:].unsafe_extract_byte_signed(offset, len)
+}
+
+///|
+/// Extract [9..32] bits as a signed integer in little-endian byte order.
+#internal(experimental, "subject to breaking change without notice")
+pub fn Bytes::unsafe_extract_int_le(bs : Bytes, offset : Int, len : Int) -> Int {
+  bs[:].unsafe_extract_int_le(offset, len)
+}
+
+///|
+/// Extract [9..32] bits as a signed integer in big-endian byte order.
+#internal(experimental, "subject to breaking change without notice")
+pub fn Bytes::unsafe_extract_int_be(bs : Bytes, offset : Int, len : Int) -> Int {
+  bs[:].unsafe_extract_int_be(offset, len)
+}
+
+///|
+/// Extract [33..64] bits as a signed integer in little-endian byte order.
+#internal(experimental, "subject to breaking change without notice")
+pub fn Bytes::unsafe_extract_int64_le(
+  bs : Bytes,
+  offset : Int,
+  len : Int,
+) -> Int64 {
+  bs[:].unsafe_extract_int64_le(offset, len)
+}
+
+///|
+/// Extract [33..64] bits as a signed integer in big-endian byte order.
+#internal(experimental, "subject to breaking change without notice")
+pub fn Bytes::unsafe_extract_int64_be(
+  bs : Bytes,
+  offset : Int,
+  len : Int,
+) -> Int64 {
+  bs[:].unsafe_extract_int64_be(offset, len)
+}
