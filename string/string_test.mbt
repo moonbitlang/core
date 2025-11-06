@@ -14,25 +14,25 @@
 
 ///|
 test "String::from_array" {
-  inspect(@string.from_array(['1', '2', '3', '4', '5']), content="12345")
+  inspect(String::from_array(['1', '2', '3', '4', '5']), content="12345")
 }
 
 ///|
 test "String::from_iter" {
-  inspect(@string.from_iter(['1', '2', '3', '4', '5'].iter()), content="12345")
+  inspect(String::from_iter(['1', '2', '3', '4', '5'].iter()), content="12345")
 }
 
 ///|
 test "String::from_iterator" {
   inspect(
-    @string.from_iterator(['1', '2', '3', '4', '5'].iterator()),
+    String::from_iterator(['1', '2', '3', '4', '5'].iterator()),
     content="12345",
   )
 }
 
 ///|
 test "default" {
-  inspect(@string.default())
+  inspect(String::default())
 }
 
 ///|

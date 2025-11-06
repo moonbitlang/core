@@ -16,14 +16,14 @@
 /// Convert char array to string.
 ///
 /// ```mbt
-///   let s = @string.from_array(['H', 'e', 'l', 'l', 'o'])
+///   let s = String::from_array(['H', 'e', 'l', 'l', 'o'])
 ///   assert_eq(s, "Hello")
 /// ```
 ///
 /// Do not convert large datas to `Array[Char]` and build a string with `String::from_array`.
 ///
 /// For efficiency considerations, it's recommended to use `Buffer` instead.
-#as_free_fn
+#as_free_fn(deprecated)
 pub fn String::from_array(chars : ArrayView[Char]) -> String {
   let buf = StringBuilder::new(size_hint=chars.length() * 4)
   for c in chars {
@@ -35,7 +35,7 @@ pub fn String::from_array(chars : ArrayView[Char]) -> String {
 ///|
 /// Convert char iterator to string,
 /// a simple wrapper for `from_array`.
-#as_free_fn
+#as_free_fn(deprecated)
 pub fn String::from_iter(iter : Iter[Char]) -> String {
   let chars = iter.collect()
   String::from_array(chars)
@@ -44,7 +44,7 @@ pub fn String::from_iter(iter : Iter[Char]) -> String {
 ///|
 /// Convert char iterator to string,
 /// a simple wrapper for `from_array`.
-#as_free_fn
+#as_free_fn(deprecated)
 pub fn String::from_iterator(iter : Iterator[Char]) -> String {
   let chars = iter.collect()
   String::from_array(chars)
