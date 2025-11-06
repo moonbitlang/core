@@ -13,21 +13,6 @@
 // limitations under the License.
 
 ///|
-/// Returns the source string being viewed.
-fn StringView::str(self : StringView) -> String = "%stringview.str"
-
-///|
-/// Returns the starting UTF-16 code unit index into the string.
-fn StringView::start(self : StringView) -> Int = "%stringview.start"
-
-///|
-/// Returns the ending UTF-16 code unit index into the string (not included).
-fn StringView::end(self : StringView) -> Int = "%stringview.end"
-
-///|
-fn StringView::make_view(str : String, start : Int, end : Int) -> StringView = "%stringview.make"
-
-///|
 /// Returns the charcode(UTF-16 code unit) at the given index.
 /// 
 /// This method has O(1) complexity.
@@ -156,35 +141,6 @@ pub fn StringView::offset_of_nth_char(self : StringView, i : Int) -> Int? {
 /// TODO: rename to `unsafe_get`
 pub fn StringView::unsafe_charcode_at(self : StringView, index : Int) -> Int {
   self.str().unsafe_charcode_at(self.start() + index)
-}
-
-///|
-/// Returns the number of Unicode characters in this view.
-/// 
-/// Note this has O(n) complexity where n is the length of the code points in 
-/// the view.
-pub fn StringView::char_length(self : StringView) -> Int {
-  self.str().char_length(start_offset=self.start(), end_offset=self.end())
-}
-
-///|
-/// Test if the length of the view is equal to the given length.
-/// 
-/// This has O(n) complexity where n is the length in the parameter.
-pub fn StringView::char_length_eq(self : StringView, len : Int) -> Bool {
-  self
-  .str()
-  .char_length_eq(len, start_offset=self.start(), end_offset=self.end())
-}
-
-///|
-/// Test if the length of the view is greater than or equal to the given length.
-/// 
-/// This has O(n) complexity where n is the length in the parameter.
-pub fn StringView::char_length_ge(self : StringView, len : Int) -> Bool {
-  self
-  .str()
-  .char_length_ge(len, start_offset=self.start(), end_offset=self.end())
 }
 
 ///|
