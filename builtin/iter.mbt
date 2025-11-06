@@ -448,20 +448,12 @@ pub fn[T, R] Iter::mapi(self : Iter[T], f : (Int, T) -> R) -> Iter[R] {
 ///|
 /// Transforms the elements of the iterator using a mapping function that returns an `Option`.
 /// The elements for which the function returns `None` are filtered out.
+#alias(map_option, deprecated)
 pub fn[A, B] Iter::filter_map(self : Iter[A], f : (A) -> B?) -> Iter[B] {
   yield_ => self.run(a => match f(a) {
     Some(b) => yield_(b)
     None => IterContinue
   })
-}
-
-///|
-/// Transforms the elements of the iterator using a mapping function that returns an `Option`.
-/// The elements for which the function returns `None` are filtered out.
-///
-#deprecated("Use `Iter::filter_map` instead", skip_current_package=false)
-pub fn[A, B] Iter::map_option(self : Iter[A], f : (A) -> B?) -> Iter[B] {
-  self.filter_map(f)
 }
 
 ///|

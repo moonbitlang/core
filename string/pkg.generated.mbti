@@ -20,11 +20,11 @@ fn String::contains_char(String, Char) -> Bool
 fn String::find(String, StringView) -> Int?
 fn String::find_by(String, (Char) -> Bool) -> Int?
 fn[A] String::fold(String, init~ : A, (A, Char) -> A) -> A
-#as_free_fn
+#as_free_fn(deprecated)
 fn String::from_array(ArrayView[Char]) -> String
-#as_free_fn
+#as_free_fn(deprecated)
 fn String::from_iter(Iter[Char]) -> String
-#as_free_fn
+#as_free_fn(deprecated)
 fn String::from_iterator(Iterator[Char]) -> String
 fn String::get(String, Int) -> Int?
 fn String::get_char(String, Int) -> Char?

@@ -7,6 +7,7 @@ package "moonbitlang/core/set"
 
 // Types and methods
 type Set[K]
+#alias(insert, deprecated)
 fn[K : Hash + Eq] Set::add(Self[K], K) -> Unit
 fn[K : Hash + Eq] Set::add_and_check(Self[K], K) -> Bool
 fn[K] Set::capacity(Self[K]) -> Int
@@ -24,8 +25,6 @@ fn[K : Hash + Eq] Set::from_array(ArrayView[K]) -> Self[K]
 fn[K : Hash + Eq] Set::from_iter(Iter[K]) -> Self[K]
 #as_free_fn
 fn[K : Hash + Eq] Set::from_iterator(Iterator[K]) -> Self[K]
-#deprecated
-fn[K : Hash + Eq] Set::insert(Self[K], K) -> Unit
 fn[K : Hash + Eq] Set::intersection(Self[K], Self[K]) -> Self[K]
 fn[K : Hash + Eq] Set::is_disjoint(Self[K], Self[K]) -> Bool
 fn[K] Set::is_empty(Self[K]) -> Bool

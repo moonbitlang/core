@@ -15,6 +15,7 @@
 ///|
 /// Create an empty map.
 #as_free_fn
+#alias(empty, deprecated)
 pub fn[K, V] SortedMap::new() -> SortedMap[K, V] {
   Empty
 }
@@ -77,6 +78,7 @@ fn[K, V] make_tree(
 ///|
 /// Get the value associated with a key.
 /// O(log n).
+#alias(lookup, deprecated)
 pub fn[K : Compare, V] SortedMap::get(self : SortedMap[K, V], key : K) -> V? {
   loop self {
     Empty => None

@@ -335,6 +335,7 @@ pub fn[A] T::eachi(self : T[A], f : (Int, A) -> Unit raise?) -> Unit raise? {
 ///   let v = @array.from_array([1, 2, 3, 4, 5])
 ///   assert_eq(v.fold((a, b) => { a + b }, init=0), 15)
 /// ```
+#alias(fold_left, deprecated)
 pub fn[A, B] T::fold(
   self : T[A],
   init~ : B,
@@ -351,6 +352,7 @@ pub fn[A, B] T::fold(
 ///   let v = @array.from_array([1, 2, 3, 4, 5])
 ///   assert_eq(v.rev_fold((a, b) => { a + b }, init=0), 15)
 /// ```
+#alias(fold_right, deprecated)
 pub fn[A, B] T::rev_fold(
   self : T[A],
   init~ : B,

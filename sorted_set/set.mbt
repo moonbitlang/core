@@ -46,6 +46,7 @@ pub fn[V : Compare] SortedSet::from_array(array : ArrayView[V]) -> SortedSet[V] 
 /// 
 /// It is just copying the tree structure, not the values.
 /// 
+#alias(deep_clone, deprecated)
 pub fn[V] SortedSet::copy(self : SortedSet[V]) -> SortedSet[V] {
   match self.root {
     None => new()
@@ -253,6 +254,7 @@ fn[V] join_right(l : Node[V]?, v : V, r : Node[V]?) -> Node[V] {
 
 ///|
 /// Returns the difference of two sets.
+#alias(diff, deprecated)
 pub fn[V : Compare] SortedSet::difference(
   self : SortedSet[V],
   src : SortedSet[V],
@@ -295,6 +297,7 @@ pub fn[V : Compare] SortedSet::symmetric_difference(
 
 ///|
 /// Returns the intersection of two sets.
+#alias(intersect, deprecated)
 pub fn[V : Compare] SortedSet::intersection(
   self : SortedSet[V],
   src : SortedSet[V],

@@ -13,23 +13,6 @@
 // limitations under the License.
 
 ///|
-/// Create an empty map.
-#deprecated("Use `new()` instead", skip_current_package=false)
-#coverage.skip
-pub fn[K, V] SortedMap::empty() -> SortedMap[K, V] {
-  Empty
-}
-
-///|
-/// Get the value associated with a key.
-/// O(log n).
-#deprecated("Use `get` instead", skip_current_package=false)
-#coverage.skip
-pub fn[K : Compare, V] SortedMap::lookup(self : SortedMap[K, V], key : K) -> V? {
-  self.get(key)
-}
-
-///|
 /// Ts over the values in the map.
 #deprecated("Use `map_with_key` instead. `map` will accept `(K, X) -> Y` in the future.", skip_current_package=false)
 #coverage.skip

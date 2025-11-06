@@ -15,11 +15,9 @@ import(
 type SortedSet[V]
 fn[V : Compare] SortedSet::add(Self[V], V) -> Unit
 fn[V : Compare] SortedSet::contains(Self[V], V) -> Bool
+#alias(deep_clone, deprecated)
 fn[V] SortedSet::copy(Self[V]) -> Self[V]
-#deprecated
-fn[V] SortedSet::deep_clone(Self[V]) -> Self[V]
-#deprecated
-fn[V : Compare] SortedSet::diff(Self[V], Self[V]) -> Self[V]
+#alias(diff, deprecated)
 fn[V : Compare] SortedSet::difference(Self[V], Self[V]) -> Self[V]
 fn[V : Compare] SortedSet::disjoint(Self[V], Self[V]) -> Bool
 fn[V] SortedSet::each(Self[V], (V) -> Unit raise?) -> Unit raise?
@@ -32,8 +30,7 @@ fn[V : Compare] SortedSet::from_array(ArrayView[V]) -> Self[V]
 fn[V : Compare] SortedSet::from_iter(Iter[V]) -> Self[V]
 #as_free_fn
 fn[V : Compare] SortedSet::from_iterator(Iterator[V]) -> Self[V]
-#deprecated
-fn[V : Compare] SortedSet::intersect(Self[V], Self[V]) -> Self[V]
+#alias(intersect, deprecated)
 fn[V : Compare] SortedSet::intersection(Self[V], Self[V]) -> Self[V]
 fn[V] SortedSet::is_empty(Self[V]) -> Bool
 fn[V] SortedSet::iter(Self[V]) -> Iter[V]

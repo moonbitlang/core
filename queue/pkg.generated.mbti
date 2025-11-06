@@ -33,14 +33,12 @@ fn[A] Queue::length(Self[A]) -> Int
 #as_free_fn
 fn[A] Queue::new() -> Self[A]
 fn[A] Queue::peek(Self[A]) -> A?
-#deprecated
-fn[A] Queue::peek_exn(Self[A]) -> A
 fn[A] Queue::pop(Self[A]) -> A?
-#deprecated
-fn[A] Queue::pop_exn(Self[A]) -> A
 fn[A] Queue::push(Self[A], A) -> Unit
 fn[A] Queue::transfer(Self[A], Self[A]) -> Unit
+#alias(peek_exn, deprecated)
 fn[A] Queue::unsafe_peek(Self[A]) -> A
+#alias(pop_exn, deprecated)
 fn[A] Queue::unsafe_pop(Self[A]) -> A
 impl[A : Show] Show for Queue[A]
 impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Queue[X]

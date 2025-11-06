@@ -11,38 +11,3 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
-///|
-/// It is just copying the tree structure, not the values.
-/// It requires a Clone trait on T, which we don't have yet.
-///
-#deprecated("Use `copy` instead", skip_current_package=false)
-#coverage.skip
-pub fn[V] SortedSet::deep_clone(self : SortedSet[V]) -> SortedSet[V] {
-  self.copy()
-}
-
-///|
-/// Returns the difference of two sets.
-///
-#deprecated("Use `difference` instead", skip_current_package=false)
-#coverage.skip
-pub fn[V : Compare] SortedSet::diff(
-  self : SortedSet[V],
-  src : SortedSet[V],
-) -> SortedSet[V] {
-  let ret = new()
-  self.each(x => if !src.contains(x) { ret.add(x) })
-  ret
-}
-
-///|
-/// Returns the intersection of two sets.
-#deprecated("Use `intersection` instead", skip_current_package=false)
-#coverage.skip
-pub fn[V : Compare] SortedSet::intersect(
-  self : SortedSet[V],
-  src : SortedSet[V],
-) -> SortedSet[V] {
-  self.intersection(src)
-}
