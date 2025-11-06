@@ -139,6 +139,7 @@ pub fn BytesView::get(self : BytesView, index : Int) -> Byte? {
 /// ```
 ///
 #internal(unsafe, "Panic if index is out of bounds")
+#doc(hidden)
 pub fn BytesView::unsafe_get(self : BytesView, index : Int) -> Byte {
   self.bytes()[self.start() + index]
 }
