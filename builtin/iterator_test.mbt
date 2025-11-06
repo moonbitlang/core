@@ -279,6 +279,23 @@ test "filter_map" {
   inspect(r2, content="[]")
   let r3 : Array[Unit] = [].iter().filter_map(Option::Some(_)).collect()
   inspect(r3, content="[]")
+  // Test using next() directly to ensure the closure is executed
+  let it1 = [1, 2, 3, 4, 5]
+    .iterator()
+    .filter_map(fn(x) { if x % 2 == 0 { Some(x * 10) } else { None } })
+  inspect(it1.next(), content="Some(20)")
+  inspect(it1.next(), content="Some(40)")
+  inspect(it1.next(), content="None")
+  // Test None branch inside while loop
+  let it2 = [1, 2, 3]
+    .iterator()
+    .filter_map(fn(x) { if x == 2 { None } else { Some(x) } })
+  inspect(it2.next(), content="Some(1)")
+  inspect(it2.next(), content="Some(3)")
+  inspect(it2.next(), content="None")
+  // Test iterator exhaustion (else branch)
+  let it3 : Iterator[Unit] = [1].iterator().filter_map(fn(_) { None })
+  inspect(it3.next(), content="None")
 }
 
 ///|
