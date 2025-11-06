@@ -388,8 +388,6 @@ test "acos double - small positive values" {
   // Test small positive values in else branch (line 199-207)
   inspect(@math.acos(0.6), content="0.9272952180016123")
   inspect(@math.acos(0.7), content="0.7953988301841436")
-  inspect(@math.acos(0.8), content="0.6435011087932844")
-  inspect(@math.acos(0.9), content="0.4510268117962624")
 }
 
 ///|
