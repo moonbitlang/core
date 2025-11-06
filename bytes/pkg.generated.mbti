@@ -60,6 +60,7 @@ fn BytesView::data(Self) -> Bytes
 fn BytesView::find(Self, Self) -> Int?
 fn BytesView::get(Self, Int) -> Byte?
 fn BytesView::iter(Self) -> Iter[Byte]
+fn BytesView::iter2(Self) -> Iter2[Int, Byte]
 fn BytesView::iterator(Self) -> Iterator[Byte]
 fn BytesView::iterator2(Self) -> Iterator2[Int, Byte]
 fn BytesView::length(Self) -> Int

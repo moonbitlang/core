@@ -219,6 +219,28 @@ pub fn BytesView::iter(self : BytesView) -> Iter[Byte] {
 }
 
 ///|
+/// Creates an iterator that yields tuples of index and byte,
+/// indices start from 0.
+/// 
+/// # Example
+/// 
+/// ```mbt
+///   let bv = b"\x00\x01\x02\x03\x04\x05"[:]
+///   let mut sum = 0
+///   bv.iter2().each((i, x) => { sum = sum + i + x.to_int() })
+///   inspect(sum, content="30")
+/// ```
+pub fn BytesView::iter2(self : BytesView) -> Iter2[Int, Byte] {
+  Iter2::new(yield_ => for i in 0..<self.length() {
+    if yield_(i, self[i]) is IterEnd {
+      break IterEnd
+    }
+  } else {
+    IterContinue
+  })
+}
+
+///|
 /// Returns an iterator over the `View`.
 /// 
 /// # Example
