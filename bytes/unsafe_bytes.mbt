@@ -204,6 +204,7 @@ pub fn Bytes::unsafe_read_uint16_be(bytes : Bytes, index : Int) -> UInt16 {
 /// 
 /// # Note
 /// This function delegates to `Bytes::unsafe_read_uint64_le` with the proper offset calculation.
+#doc(hidden)
 pub fn BytesView::unsafe_read_uint64_le(
   bytes : BytesView,
   index : Int,
@@ -227,6 +228,7 @@ pub fn BytesView::unsafe_read_uint64_le(
 /// 
 /// # Note
 /// This function delegates to `Bytes::unsafe_read_uint64_be` with the proper offset calculation.
+#doc(hidden)
 pub fn BytesView::unsafe_read_uint64_be(
   bytes : BytesView,
   index : Int,
@@ -250,6 +252,7 @@ pub fn BytesView::unsafe_read_uint64_be(
 /// 
 /// # Note
 /// This function delegates to `Bytes::unsafe_read_uint32_le` with the proper offset calculation.
+#doc(hidden)
 pub fn BytesView::unsafe_read_uint32_le(bytes : BytesView, index : Int) -> UInt {
   bytes.bytes().unsafe_read_uint32_le(bytes.start() + index)
 }
@@ -270,6 +273,7 @@ pub fn BytesView::unsafe_read_uint32_le(bytes : BytesView, index : Int) -> UInt 
 /// 
 /// # Note
 /// This function delegates to `Bytes::unsafe_read_uint32_be` with the proper offset calculation.
+#doc(hidden)
 pub fn BytesView::unsafe_read_uint32_be(bytes : BytesView, index : Int) -> UInt {
   bytes.bytes().unsafe_read_uint32_be(bytes.start() + index)
 }
@@ -290,6 +294,7 @@ pub fn BytesView::unsafe_read_uint32_be(bytes : BytesView, index : Int) -> UInt 
 /// 
 /// # Note
 /// This function delegates to `Bytes::unsafe_read_uint16_le` with the proper offset calculation.
+#doc(hidden)
 pub fn BytesView::unsafe_read_uint16_le(
   bytes : BytesView,
   index : Int,
@@ -313,6 +318,7 @@ pub fn BytesView::unsafe_read_uint16_le(
 /// 
 /// # Note
 /// This function delegates to `Bytes::unsafe_read_uint16_be` with the proper offset calculation.
+#doc(hidden)
 pub fn BytesView::unsafe_read_uint16_be(
   bytes : BytesView,
   index : Int,
