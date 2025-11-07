@@ -173,7 +173,12 @@ pub impl Show for StringView with output(self, logger) {
 ///   inspect(view.to_string(), content="Hello")
 /// ```
 pub impl Show for StringView with to_string(self) {
-  self.str().unsafe_substring(start=self.start(), end=self.end())
+  if self.length() == self.str().length() {
+    // avoid memory allocation
+    self.str()
+  } else {
+    self.str().unsafe_substring(start=self.start(), end=self.end())
+  }
 }
 
 ///|
