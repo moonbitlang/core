@@ -1,6 +1,10 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "moonbitlang/core/string"
 
+import(
+  "moonbitlang/core/builtin"
+)
+
 // Values
 fn default() -> String
 
@@ -124,6 +128,7 @@ fn StringView::trim_space(Self) -> Self
 fn StringView::trim_start(Self, chars~ : Self) -> Self
 
 // Type aliases
+pub using @builtin {type StringView as View}
 
 // Traits
 pub trait ToStringView {

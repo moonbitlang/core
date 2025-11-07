@@ -269,3 +269,6 @@ pub fn StringView::offset_of_nth_char(self : StringView, i : Int) -> Int? {
     None
   }
 }
+
+///|
+pub type View = StringView
