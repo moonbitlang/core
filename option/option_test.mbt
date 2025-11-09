@@ -128,17 +128,17 @@ test "bind" {
 ///|
 test "flatten" {
   let a : Int?? = Some(Some(42))
-  assert_eq(a.flatten(), Some(42))
+  assert_eq(a.bind(fn(x) { x }), Some(42))
   let b : Int?? = Some(None)
-  assert_eq(b.flatten(), None)
+  assert_eq(b.bind(fn(x) { x }), None)
 }
 
 ///|
 test "is_empty" {
   let x = Option::Some(3)
   let y : Int? = None
-  assert_false(x.is_empty())
-  assert_true(y.is_empty())
+  assert_false(x is None)
+  assert_true(y is None)
 }
 
 ///|

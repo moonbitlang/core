@@ -3,9 +3,6 @@
     "moonbitlang/core/builtin"
     
   ],
-  "test-import": [
-    "moonbitlang/core/option"
-  ],
   "targets": {
     "env_wasm.mbt": ["wasm", "wasm-gc"],
     "env_js.mbt": ["js"],

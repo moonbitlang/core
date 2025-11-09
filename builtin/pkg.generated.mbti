@@ -609,7 +609,9 @@ fn String::unsafe_substring(String, start~ : Int, end~ : Int) -> String
 
 fn[T, U] Option::bind(T?, (T) -> U? raise?) -> U? raise?
 fn[T] Option::filter(T?, (T) -> Bool raise?) -> T? raise?
+#deprecated
 fn[T] Option::flatten(T??) -> T?
+#deprecated
 fn[T] Option::is_empty(T?) -> Bool
 #deprecated
 fn[T] Option::is_none(T?) -> Bool
