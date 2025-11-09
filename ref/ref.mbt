@@ -13,6 +13,11 @@
 // limitations under the License.
 
 ///|
+pub impl[X : Show] Show for Ref[X] with output(self, logger) {
+  logger..write_string("{val: ")..write_object(self.val)..write_string("}")
+}
+
+///|
 /// create a reference from value
 pub fn[T] Ref::new(x : T) -> Ref[T] {
   { val: x }

@@ -197,11 +197,6 @@ pub impl[T : Show, E : Show] Show for Result[T, E] with output(self, logger) {
 }
 
 ///|
-pub impl[X : Show] Show for Ref[X] with output(self, logger) {
-  logger..write_string("{val: ")..write_object(self.val)..write_string("}")
-}
-
-///|
 pub impl[X : Show] Show for FixedArray[X] with output(self, logger) {
   logger.write_iter(self.iter())
 }
