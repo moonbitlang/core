@@ -28,5 +28,5 @@ test "now returns reasonable timestamp" {
 ///|
 test "current_dir returns reasonable directory" {
   let dir = @env.current_dir()
-  assert_true(dir.is_empty() == false)
+  assert_false(dir is None)
 }

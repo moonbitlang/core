@@ -200,18 +200,7 @@ pub fn[T, U] Option::bind(self : T?, f : (T) -> U? raise?) -> U? raise? {
 }
 
 ///|
-/// Flattens an `Option` of `Option` into a single `Option`.
-///
-/// If the input `Option` is `Some(Some(value))`, the function returns `Some(value)`.
-///
-/// # Example
-///
-/// ```mbt
-///   let a = Some(Some(42));
-///   assert_eq(a.flatten(), Some(42))
-///   let b : Int?? = Some(None)
-///   assert_eq(b.flatten(), None)
-/// ```
+#deprecated("use `option.bind(x => x)` instead", skip_current_package=false)
 pub fn[T] Option::flatten(self : T??) -> T? {
   match self {
     Some(inner) => inner
@@ -221,6 +210,7 @@ pub fn[T] Option::flatten(self : T??) -> T? {
 
 ///|
 /// Checks if the option is empty.
+#deprecated("use `x is None` instead", skip_current_package=false)
 pub fn[T] Option::is_empty(self : T?) -> Bool {
   self is None
 }

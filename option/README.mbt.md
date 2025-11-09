@@ -116,10 +116,10 @@ Sometimes we want to reduce the nested `Option` values into a single `Option`, y
 ///|
 test {
   let some : Int?? = Some(Some(42))
-  let new_some = some.flatten() // Some(42)
+  let new_some = some.bind(fn(x) { x }) // Some(42)
   assert_eq(new_some, Some(42))
   let none : Int?? = Some(None)
-  let new_none = none.flatten() // None
+  let new_none = none.bind(fn(x) { x }) // None
   assert_eq(new_none, None)
 }
 ```
