@@ -607,8 +607,29 @@ fn String::unsafe_char_at(String, Int) -> Char
 fn String::unsafe_charcode_at(String, Int) -> Int
 fn String::unsafe_substring(String, start~ : Int, end~ : Int) -> String
 
+fn[T, U] Option::bind(T?, (T) -> U? raise?) -> U? raise?
+fn[T] Option::filter(T?, (T) -> Bool raise?) -> T? raise?
+fn[T] Option::flatten(T??) -> T?
+fn[T] Option::is_empty(T?) -> Bool
+#deprecated
+fn[T] Option::is_none(T?) -> Bool
+#deprecated
+fn[T] Option::is_some(T?) -> Bool
+fn[T] Option::iter(T?) -> Iter[T]
+fn[T] Option::iterator(T?) -> Iterator[T]
+fn[T, U] Option::map(T?, (T) -> U raise?) -> U? raise?
+fn[T, U] Option::map_or(T?, U, (T) -> U raise?) -> U raise?
+fn[T, U] Option::map_or_else(T?, () -> U raise?, (T) -> U raise?) -> U raise?
 fn[X : Show] Option::to_string(X?) -> String
 fn[X] Option::unwrap(X?) -> X
+#alias(or, deprecated)
+fn[T] Option::unwrap_or(T?, T) -> T
+#alias(or_default, deprecated)
+fn[T : Default] Option::unwrap_or_default(T?) -> T
+#alias(or_else, deprecated)
+fn[T] Option::unwrap_or_else(T?, () -> T raise?) -> T raise?
+#alias(or_error, deprecated)
+fn[T, Err : Error] Option::unwrap_or_error(T?, Err) -> T raise Err
 
 
 #alias("_[_]")
@@ -748,6 +769,7 @@ impl Compare for UInt
 impl Compare for UInt64
 impl Compare for Float
 impl Compare for Double
+impl[X : Compare] Compare for X?
 impl Compare for Bytes
 impl[T0 : Compare, T1 : Compare] Compare for (T0, T1)
 impl[T0 : Compare, T1 : Compare, T2 : Compare] Compare for (T0, T1, T2)
@@ -776,6 +798,7 @@ impl Default for Int
 impl Default for Int64
 impl Default for UInt64
 impl Default for Double
+impl[X] Default for X?
 impl[X] Default for FixedArray[X]
 impl Default for StringView
 

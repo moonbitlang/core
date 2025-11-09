@@ -17,28 +17,6 @@ fn[T] when(Bool, () -> T) -> T?
 // Errors
 
 // Types and methods
-fn[T, U] Option::bind(T?, (T) -> U? raise?) -> U? raise?
-fn[T] Option::filter(T?, (T) -> Bool raise?) -> T? raise?
-fn[T] Option::flatten(T??) -> T?
-fn[T] Option::is_empty(T?) -> Bool
-#deprecated
-fn[T] Option::is_none(T?) -> Bool
-#deprecated
-fn[T] Option::is_some(T?) -> Bool
-fn[T] Option::iter(T?) -> Iter[T]
-fn[T] Option::iterator(T?) -> Iterator[T]
-fn[T, U] Option::map(T?, (T) -> U raise?) -> U? raise?
-fn[T, U] Option::map_or(T?, U, (T) -> U raise?) -> U raise?
-fn[T, U] Option::map_or_else(T?, () -> U raise?, (T) -> U raise?) -> U raise?
-fn[T, Err : Error] Option::or_error(T?, Err) -> T raise Err
-#alias(or, deprecated)
-fn[T] Option::unwrap_or(T?, T) -> T
-#alias(or_default, deprecated)
-fn[T : Default] Option::unwrap_or_default(T?) -> T
-#alias(or_else, deprecated)
-fn[T] Option::unwrap_or_else(T?, () -> T raise?) -> T raise?
-impl[X : Compare] Compare for X?
-impl[X] Default for X?
 
 // Type aliases
 
