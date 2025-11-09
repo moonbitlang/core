@@ -1,11 +1,6 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "moonbitlang/core/option"
 
-import(
-  "moonbitlang/core/quickcheck"
-  "moonbitlang/core/quickcheck/splitmix"
-)
-
 // Values
 #deprecated
 fn[T] empty() -> T?
@@ -44,7 +39,6 @@ fn[T : Default] Option::unwrap_or_default(T?) -> T
 fn[T] Option::unwrap_or_else(T?, () -> T raise?) -> T raise?
 impl[X : Compare] Compare for X?
 impl[X] Default for X?
-impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for X?
 
 // Type aliases
 

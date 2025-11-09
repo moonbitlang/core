@@ -31,6 +31,7 @@ impl Arbitrary for UInt64
 impl Arbitrary for Float
 impl Arbitrary for Double
 impl Arbitrary for String
+impl[X : Arbitrary] Arbitrary for X?
 impl Arbitrary for Bytes
 impl[X : Arbitrary] Arbitrary for Iter[X]
 

@@ -84,3 +84,153 @@ test "unwrap_or with default value" {
   let none1 : Int? = None
   assert_eq(none1.unwrap_or(42), 42)
 }
+
+///|
+test "some equals to Some" {
+  let x : Int? = Some(5)
+  let y : Int? = Some(5)
+  assert_eq(x, y)
+}
+
+///|
+test "map" {
+  let a = Some(5)
+  let b : Int? = None
+  assert_eq(a.map(x => x * 2), Some(10))
+  assert_eq(b.map(x => x * 2), None)
+}
+
+///|
+test "map_or" {
+  let a = Option::Some("foo")
+  let b : String? = Option::None
+  assert_eq(a.map_or(42, x => x.length()), 3)
+  assert_eq(b.map_or(42, x => x.length()), 42)
+}
+
+///|
+test "map_or_else" {
+  let k = 21
+  let a = Option::Some("foo")
+  let b : String? = Option::None
+  assert_eq(a.map_or_else(() => 2 * k, x => x.length()), 3)
+  assert_eq(b.map_or_else(() => 2 * k, x => x.length()), 42)
+}
+
+///|
+test "bind" {
+  let a = Option::Some(5)
+  let b : Int? = None
+  assert_eq(a.bind(x => Some(x * 2)), Some(10))
+  assert_eq(b.bind(x => Some(x * 2)), None)
+}
+
+///|
+test "flatten" {
+  let a : Int?? = Some(Some(42))
+  assert_eq(a.flatten(), Some(42))
+  let b : Int?? = Some(None)
+  assert_eq(b.flatten(), None)
+}
+
+///|
+test "is_empty" {
+  let x = Option::Some(3)
+  let y : Int? = None
+  assert_false(x.is_empty())
+  assert_true(y.is_empty())
+}
+
+///|
+test "filter" {
+  let x = Option::Some(3)
+  assert_eq(x.filter(x => x > 5), None)
+  assert_eq(x.filter(x => x < 5), Some(3))
+}
+
+///|
+test "unwrap_or" {
+  let x = Option::Some(3)
+  assert_eq(x.unwrap_or(5), 3)
+  assert_eq((None : Int?).unwrap_or(5), 5)
+}
+
+///|
+test "or else" {
+  let x = Option::Some(3)
+  assert_eq(x.unwrap_or_else(() => 5), 3)
+  assert_eq(None.unwrap_or_else(() => 5), 5)
+}
+
+///|
+test "or default" {
+  let x = Option::Some(3)
+  assert_eq(x.unwrap_or_default(), 3)
+  assert_eq((None : Int?).unwrap_or_default(), 0)
+}
+
+///|
+test "compare" {
+  let some1 = Option::Some(1)
+  let some2 = Option::Some(2)
+  let none = Option::None
+  assert_eq(0, some1.compare(Option::Some(1)))
+  assert_eq(-1, some1.compare(some2))
+  assert_eq(1, some2.compare(some1))
+  assert_eq(0, none.compare(none))
+  assert_eq(-1, none.compare(some1))
+  assert_eq(1, some2.compare(none))
+}
+
+///|
+test "iter" {
+  let x = Option::Some(42)
+  let exb = StringBuilder::new(size_hint=0)
+  x
+  .iter()
+  .each(x => {
+    exb.write_string(x.to_string())
+    exb.write_char('\n')
+  })
+  inspect(
+    exb,
+    content=(
+      #|42
+      #|
+    ),
+  )
+  exb.reset()
+  let y : Int? = None
+  y
+  .iter()
+  .each(x => {
+    exb.write_string(x.to_string())
+    exb.write_char('\n')
+  })
+  inspect(exb, content="")
+}
+
+///|
+test "or error" {
+  assert_eq(
+    (None : String?).or_error(Failure("This is serious")) catch {
+      Failure(err) => err
+    },
+    "This is serious",
+  )
+  assert_eq(
+    Some("This is ok").or_error(Failure("This is serious")) catch {
+      Failure(err) => err
+    },
+    "This is ok",
+  )
+}
+
+///|
+test "arbitrary" {
+  let samples : Array[Int?] = @quickcheck.samples(10)
+  inspect(
+    samples,
+    content="[None, None, Some(-1), Some(0), None, Some(0), Some(-5), Some(2), None, Some(4)]",
+  )
+}
