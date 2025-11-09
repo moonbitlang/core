@@ -133,3 +133,12 @@ pub fn[T : Arbitrary] gen(size? : Int, state? : @splitmix.RandomState) -> T {
   }
   Arbitrary::arbitrary(size, state)
 }
+
+///|
+pub impl[X : Arbitrary] Arbitrary for X? with arbitrary(i, rs) {
+  if rs.next_double() < 0.3 {
+    None
+  } else {
+    Some(Arbitrary::arbitrary(i, rs))
+  }
+}
