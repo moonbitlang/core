@@ -689,7 +689,6 @@ fn Bytes::unsafe_get(Bytes, Int) -> Byte
 
 
 
-
 #alias("_[_]")
 fn StringView::at(Self, Int) -> Int
 fn StringView::char_length(Self) -> Int
@@ -944,7 +943,6 @@ impl Show for String
 impl[X : Show] Show for X?
 impl[T : Show, E : Show] Show for Result[T, E]
 impl[X : Show] Show for FixedArray[X]
-impl[X : Show] Show for Ref[X]
 impl[A : Show, B : Show] Show for (A, B)
 impl[A : Show, B : Show, C : Show] Show for (A, B, C)
 impl[A : Show, B : Show, C : Show, D : Show] Show for (A, B, C, D)

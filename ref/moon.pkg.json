@@ -1,3 +1,4 @@
 {
-  "import": ["moonbitlang/core/builtin", "moonbitlang/core/quickcheck"]
+  "import": ["moonbitlang/core/builtin", "moonbitlang/core/quickcheck"],
+  "test-import": []
 }

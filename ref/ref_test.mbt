@@ -27,6 +27,7 @@ test "protect" {
   x.protect(2, () => r = x.val)
   assert_eq(r, 2)
   assert_eq(x.val, 1)
+  inspect(x, content="{val: 1}")
 }
 
 ///|
