@@ -110,7 +110,6 @@ pub fn[T] Iter::eachi(
 /// # Returns
 ///
 /// Returns the final accumulator value after folding all elements of the iterator.
-#intrinsic("%iter.reduce")
 #locals(f)
 pub fn[T, B] Iter::fold(
   self : Iter[T],
