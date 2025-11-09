@@ -43,17 +43,3 @@ pub fn[T] empty() -> T? {
 pub fn[T] some(value : T) -> T? {
   Some(value)
 }
-
-///|
-/// Checks if the option contains a value.
-#deprecated("use `x is Some(_)` instead", skip_current_package=false)
-pub fn[T] Option::is_some(self : T?) -> Bool {
-  self is Some(_)
-}
-
-///|
-/// Checks if the option is None.
-#deprecated("use `x is None` instead", skip_current_package=false)
-pub fn[T] Option::is_none(self : T?) -> Bool {
-  self is None
-}
