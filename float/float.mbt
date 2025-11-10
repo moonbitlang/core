@@ -151,12 +151,7 @@ pub impl Default for Float with default() {
 /// Returns the default value for `Float` type, which is `0.0`.
 ///
 /// Returns a float value of `0.0`.
-///
-/// Example:
-///
-/// ```moonbit
-///   inspect(@float.default(), content="0")
-/// ```
+#deprecated(skip_current_package=false)
 pub fn default() -> Float {
   0.0
 }
