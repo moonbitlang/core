@@ -44,12 +44,6 @@ pub impl Logger for StringBuilder with write_string(self, str) {
 }
 
 ///|
-#intrinsic("%char.to_string")
-fn char_to_string(char : Char) -> String {
-  [char]
-}
-
-///|
 /// Writes a character to the StringBuilder.
 pub impl Logger for StringBuilder with write_char(self, ch) {
   self.val += char_to_string(ch)
