@@ -2,6 +2,7 @@
 package "moonbitlang/core/float"
 
 // Values
+#deprecated
 fn default() -> Float
 
 let infinity : Float
@@ -19,7 +20,7 @@ let not_a_number : Float
 // Errors
 
 // Types and methods
-#as_free_fn
+#as_free_fn(deprecated)
 fn Float::abs(Float) -> Float
 #as_free_fn
 fn Float::ceil(Float) -> Float

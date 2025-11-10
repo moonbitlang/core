@@ -65,7 +65,7 @@ Other useful operations on floats:
 ///|
 test "utility functions" {
   // Absolute value
-  inspect(@float.abs(-3.14), content="3.140000104904175")
+  inspect(Float::abs(-3.14), content="3.140000104904175")
 
   // Conversion to integer
   inspect(3.14.to_int(), content="3")
