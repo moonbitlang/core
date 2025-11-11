@@ -2,16 +2,15 @@
   "import": [
     "moonbitlang/core/builtin",
     "moonbitlang/core/bytes",
-    "moonbitlang/core/string",
-    "moonbitlang/core/quickcheck",
-    "moonbitlang/core/quickcheck/splitmix"
+    "moonbitlang/core/string"        
   ],
   "test-import": [
     "moonbitlang/core/char",
     "moonbitlang/core/test",
     "moonbitlang/core/random",
     "moonbitlang/core/json",
-    "moonbitlang/core/ref"
+    "moonbitlang/core/ref",
+    "moonbitlang/core/quickcheck"
   ],
   "targets": {
     "array_js.mbt": ["js"],

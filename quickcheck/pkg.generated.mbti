@@ -32,6 +32,9 @@ impl Arbitrary for Float
 impl Arbitrary for Double
 impl Arbitrary for String
 impl[X : Arbitrary] Arbitrary for X?
+impl[X : Arbitrary] Arbitrary for FixedArray[X]
 impl Arbitrary for Bytes
+impl[X : Arbitrary] Arbitrary for Array[X]
+impl[A : Arbitrary] Arbitrary for ArrayView[A]
 impl[X : Arbitrary] Arbitrary for Iter[X]
 

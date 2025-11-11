@@ -2,10 +2,10 @@
   "import": [
     "moonbitlang/core/quickcheck/splitmix",
     "moonbitlang/core/builtin",
-    "moonbitlang/core/char"
+    "moonbitlang/core/char",
+    "moonbitlang/core/array"
   ],
   "test-import": [
-    "moonbitlang/core/array",
     "moonbitlang/core/bigint",
     "moonbitlang/core/float",
     "moonbitlang/core/double",

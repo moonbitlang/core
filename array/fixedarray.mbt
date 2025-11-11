@@ -1258,15 +1258,6 @@ test "FixedArray::join" {
 }
 
 ///|
-pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for FixedArray[X] with arbitrary(
-  size,
-  rs,
-) {
-  let len = if size == 0 { 0 } else { rs.next_positive_int() % size }
-  FixedArray::makei(len, i => X::arbitrary(i, rs))
-}
-
-///|
 pub fn[X] FixedArray::iterator(self : FixedArray[X]) -> Iterator[X] {
   self[:].iterator()
 }
