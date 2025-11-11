@@ -279,6 +279,7 @@ pub fn[T] Array::pop(self : Array[T]) -> T? {
 /// ```
 ///
 #internal(unsafe, "Panic if the array is empty.")
+#doc(hidden)
 #alias(pop_exn, deprecated)
 pub fn[T] Array::unsafe_pop(self : Array[T]) -> T {
   let len = self.length()

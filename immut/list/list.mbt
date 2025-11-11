@@ -257,6 +257,7 @@ pub fn[A] T::tail(self : T[A]) -> T[A] {
 ///|
 /// Get first element of the list.
 #internal(unsafe, "Panic if the list is empty")
+#doc(hidden)
 #deprecated("use `@list` instead", skip_current_package=false)
 pub fn[A] T::unsafe_head(self : T[A]) -> A {
   match self {
@@ -290,6 +291,7 @@ pub fn[A] T::head(self : T[A]) -> A? {
 
 ///|
 #internal(unsafe, "Panic if the list is empty")
+#doc(hidden)
 #deprecated("use `@list` instead", skip_current_package=false)
 pub fn[A] T::unsafe_last(self : T[A]) -> A {
   loop self {
@@ -596,6 +598,7 @@ pub fn[A, B] T::filter_map(self : T[A], f : (A) -> B?) -> T[B] {
 
 ///|
 #internal(unsafe, "Panic if the index is out of bounds")
+#doc(hidden)
 #deprecated("use `@list` instead", skip_current_package=false)
 pub fn[A] T::unsafe_nth(self : T[A], n : Int) -> A {
   loop (self, n) {
@@ -708,6 +711,7 @@ pub fn[A] T::flatten(self : T[T[A]]) -> T[A] {
 
 ///|
 #internal(unsafe, "Panic if the list is empty")
+#doc(hidden)
 #deprecated("use `@list` instead", skip_current_package=false)
 pub fn[A : Compare] T::unsafe_maximum(self : T[A]) -> A {
   match self {
@@ -742,6 +746,7 @@ pub fn[A : Compare] T::maximum(self : T[A]) -> A? {
 
 ///|
 #internal(unsafe, "Panic if the list is empty")
+#doc(hidden)
 #deprecated("use `@list` instead", skip_current_package=false)
 pub fn[A : Compare] T::unsafe_minimum(self : T[A]) -> A {
   match self {

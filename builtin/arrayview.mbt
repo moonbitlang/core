@@ -115,6 +115,7 @@ pub fn[T] ArrayView::at(self : ArrayView[T], index : Int) -> T {
 /// ```
 #intrinsic("%arrayview.unsafe_get")
 #internal(unsafe, "Panic if index is out of bounds")
+#doc(hidden)
 pub fn[T] ArrayView::unsafe_get(self : ArrayView[T], index : Int) -> T {
   self.buf()[self.start() + index]
 }

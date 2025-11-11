@@ -19,6 +19,7 @@
 /// byte sequence, so any modification to the original byte sequence will be
 /// reflected in the `Bytes` object.
 #internal(unsafe, "Creating mutable Bytes")
+#doc(hidden)
 pub fn FixedArray::unsafe_reinterpret_as_bytes(
   self : FixedArray[Byte],
 ) -> Bytes = "%identity"

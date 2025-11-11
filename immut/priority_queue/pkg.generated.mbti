@@ -31,8 +31,6 @@ fn[A] PriorityQueue::peek(Self[A]) -> A?
 fn[A : Compare] PriorityQueue::pop(Self[A]) -> Self[A]?
 fn[A : Compare] PriorityQueue::push(Self[A], A) -> Self[A]
 fn[A : Compare] PriorityQueue::to_array(Self[A]) -> Array[A]
-#alias(pop_exn, deprecated)
-fn[A : Compare] PriorityQueue::unsafe_pop(Self[A]) -> Self[A]
 impl[A : Compare] Compare for PriorityQueue[A]
 impl[A : Compare] Eq for PriorityQueue[A]
 impl[A : Hash + Compare] Hash for PriorityQueue[A]

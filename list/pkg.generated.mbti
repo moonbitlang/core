@@ -102,11 +102,6 @@ fn[A] List::to_array(Self[A]) -> Array[A]
 fn[A : ToJson] List::to_json(Self[A]) -> Json
 #as_free_fn
 fn[A, S] List::unfold((S) -> (A, S)? raise?, init~ : S) -> Self[A] raise?
-fn[A] List::unsafe_head(Self[A]) -> A
-fn[A] List::unsafe_last(Self[A]) -> A
-fn[A : Compare] List::unsafe_maximum(Self[A]) -> A
-fn[A : Compare] List::unsafe_minimum(Self[A]) -> A
-fn[A] List::unsafe_nth(Self[A], Int) -> A
 fn[A] List::unsafe_tail(Self[A]) -> Self[A]
 fn[A, B] List::unzip(Self[(A, B)]) -> (Self[A], Self[B])
 #as_free_fn

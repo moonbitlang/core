@@ -394,6 +394,7 @@ pub fn[A] List::any(self : List[A], f : (A) -> Bool raise?) -> Bool raise? {
 ///|
 /// Get first element of the list.
 #internal(unsafe, "Panic if the list is empty")
+#doc(hidden)
 pub fn[A] List::unsafe_head(self : List[A]) -> A {
   match self {
     Empty => abort("head of empty list")
@@ -457,6 +458,7 @@ pub fn[A] List::head(self : List[A]) -> A? {
 /// 
 /// Panics if the list is empty.
 #internal(unsafe, "Panic if the list is empty")
+#doc(hidden)
 pub fn[A] List::unsafe_last(self : List[A]) -> A {
   loop self {
     Empty => abort("last of empty list")
@@ -726,6 +728,7 @@ pub fn[A, B] List::filter_map(
 /// 
 /// Panics if the index is out of bounds.
 #internal(unsafe, "Panic if the index is out of bounds")
+#doc(hidden)
 pub fn[A] List::unsafe_nth(self : List[A], n : Int) -> A {
   loop (self, n) {
     (Empty, _) => abort("nth: index out of bounds")
@@ -912,6 +915,7 @@ pub fn[A] List::flatten(self : List[List[A]]) -> List[A] {
 /// 
 /// Panics if the list is empty.
 #internal(unsafe, "Panic if the list is empty")
+#doc(hidden)
 pub fn[A : Compare] List::unsafe_maximum(self : List[A]) -> A {
   match self {
     Empty => abort("maximum: empty list")
@@ -968,6 +972,7 @@ pub fn[A : Compare] List::maximum(self : List[A]) -> A? {
 /// 
 /// Panics if the list is empty.
 #internal(unsafe, "Panic if the list is empty")
+#doc(hidden)
 pub fn[A : Compare] List::unsafe_minimum(self : List[A]) -> A {
   match self {
     Empty => abort("minimum: empty list")

@@ -579,6 +579,7 @@ pub fn[A] Deque::push_back(self : Deque[A], value : A) -> Unit {
 ///   assert_eq(dv.front(), Some(2))
 /// ```
 #internal(unsafe, "Panic if the deque is empty.")
+#doc(hidden)
 #alias(pop_front_exn, deprecated)
 pub fn[A] Deque::unsafe_pop_front(self : Deque[A]) -> Unit {
   match self.len {
@@ -628,6 +629,7 @@ pub fn[A] Deque::unsafe_pop_front(self : Deque[A]) -> Unit {
 ///   assert_eq(dv.back(), Some(4))
 /// ```
 #internal(unsafe, "Panic if the deque is empty.")
+#doc(hidden)
 #alias(pop_back_exn, deprecated)
 pub fn[A] Deque::unsafe_pop_back(self : Deque[A]) -> Unit {
   match self.len {
