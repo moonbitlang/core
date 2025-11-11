@@ -2,8 +2,6 @@
 package "moonbitlang/core/double"
 
 // Values
-fn from_int(Int) -> Double
-
 let infinity : Double
 
 let max_value : Double
@@ -19,12 +17,13 @@ let not_a_number : Double
 // Errors
 
 // Types and methods
-#as_free_fn
+#as_free_fn(deprecated)
 fn Double::abs(Double) -> Double
 #as_free_fn
 fn Double::ceil(Double) -> Double
 #as_free_fn
 fn Double::floor(Double) -> Double
+#as_free_fn(deprecated)
 fn Double::from_int(Int) -> Double
 #deprecated
 fn Double::inf(Int) -> Double
