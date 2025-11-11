@@ -27,7 +27,7 @@ fn Double::floor(Double) -> Double
 fn Double::from_int(Int) -> Double
 #deprecated
 fn Double::inf(Int) -> Double
-#as_free_fn
+#as_free_fn(deprecated)
 fn Double::is_close(Double, Double, relative_tolerance? : Double, absolute_tolerance? : Double) -> Bool
 fn Double::is_inf(Double) -> Bool
 fn Double::is_nan(Double) -> Bool
