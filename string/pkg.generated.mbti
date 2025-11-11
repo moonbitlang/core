@@ -8,124 +8,18 @@ import(
 // Values
 fn default() -> String
 
+#deprecated
+fn from_array(ArrayView[Char]) -> String
+
+#deprecated
+fn from_iter(Iter[Char]) -> String
+
+#deprecated
+fn from_iterator(Iterator[Char]) -> String
+
 // Errors
-pub suberror CreatingViewError {
-  IndexOutOfBounds
-  InvalidIndex
-}
-impl Show for CreatingViewError
 
 // Types and methods
-fn String::char_length_eq(String, Int, start_offset? : Int, end_offset? : Int) -> Bool
-fn String::char_length_ge(String, Int, start_offset? : Int, end_offset? : Int) -> Bool
-fn String::contains(String, StringView) -> Bool
-fn String::contains_any(String, chars~ : StringView) -> Bool
-fn String::contains_char(String, Char) -> Bool
-fn String::find(String, StringView) -> Int?
-fn String::find_by(String, (Char) -> Bool) -> Int?
-fn[A] String::fold(String, init~ : A, (A, Char) -> A) -> A
-#as_free_fn(deprecated)
-fn String::from_array(ArrayView[Char]) -> String
-#as_free_fn(deprecated)
-fn String::from_iter(Iter[Char]) -> String
-#as_free_fn(deprecated)
-fn String::from_iterator(Iterator[Char]) -> String
-fn String::get(String, Int) -> Int?
-fn String::get_char(String, Int) -> Char?
-#alias(starts_with, deprecated)
-fn String::has_prefix(String, StringView) -> Bool
-#alias(ends_with, deprecated)
-fn String::has_suffix(String, StringView) -> Bool
-fn String::is_blank(String) -> Bool
-fn String::is_empty(String) -> Bool
-fn String::iter(String) -> Iter[Char]
-fn String::iter2(String) -> Iter2[Int, Char]
-fn String::iterator(String) -> Iterator[Char]
-fn String::iterator2(String) -> Iterator2[Int, Char]
-fn String::lexical_compare(String, String) -> Int
-fn String::offset_of_nth_char(String, Int, start_offset? : Int, end_offset? : Int) -> Int?
-fn String::pad_end(String, Int, Char) -> String
-fn String::pad_start(String, Int, Char) -> String
-fn String::repeat(String, Int) -> String
-fn String::replace(String, old~ : StringView, new~ : StringView) -> String
-fn String::replace_all(String, old~ : StringView, new~ : StringView) -> String
-fn String::rev(String) -> String
-fn String::rev_find(String, StringView) -> Int?
-fn[A] String::rev_fold(String, init~ : A, (A, Char) -> A) -> A
-fn String::rev_iter(String) -> Iter[Char]
-fn String::rev_iterator(String) -> Iterator[Char]
-fn String::split(String, StringView) -> Iter[StringView]
-fn String::strip_prefix(String, StringView) -> StringView?
-fn String::strip_suffix(String, StringView) -> StringView?
-#alias("_[_:_]")
-fn String::sub(String, start? : Int, end? : Int) -> StringView raise CreatingViewError
-fn String::to_array(String) -> Array[Char]
-#deprecated
-fn String::to_bytes(String) -> Bytes
-fn String::to_lower(String) -> String
-fn String::to_upper(String) -> String
-#label_migration(chars, alias=char_set)
-#label_migration(chars, allow_positional=true)
-fn String::trim(String, chars~ : StringView) -> StringView
-#label_migration(chars, alias=char_set)
-#label_migration(chars, allow_positional=true)
-fn String::trim_end(String, chars~ : StringView) -> StringView
-fn String::trim_space(String) -> StringView
-#label_migration(chars, alias=char_set)
-#label_migration(chars, allow_positional=true)
-fn String::trim_start(String, chars~ : StringView) -> StringView
-fn String::view(String, start_offset? : Int, end_offset? : Int) -> StringView
-impl Compare for String
-impl Default for String
-
-fn StringView::char_length_eq(Self, Int) -> Bool
-fn StringView::char_length_ge(Self, Int) -> Bool
-fn StringView::contains(Self, Self) -> Bool
-fn StringView::contains_any(Self, chars~ : Self) -> Bool
-fn StringView::contains_char(Self, Char) -> Bool
-fn StringView::find(Self, Self) -> Int?
-fn StringView::find_by(Self, (Char) -> Bool) -> Int?
-fn[A] StringView::fold(Self, init~ : A, (A, Char) -> A) -> A
-fn StringView::from_array(ArrayView[Char]) -> Self
-fn StringView::from_iter(Iter[Char]) -> Self
-fn StringView::from_iterator(Iterator[Char]) -> Self
-fn StringView::get(Self, Int) -> Int?
-fn StringView::get_char(Self, Int) -> Char?
-#alias(starts_with, deprecated)
-fn StringView::has_prefix(Self, Self) -> Bool
-#alias(ends_with, deprecated)
-fn StringView::has_suffix(Self, Self) -> Bool
-fn StringView::is_blank(Self) -> Bool
-fn StringView::is_empty(Self) -> Bool
-fn StringView::offset_of_nth_char(Self, Int) -> Int?
-fn StringView::pad_end(Self, Int, Char) -> String
-fn StringView::pad_start(Self, Int, Char) -> String
-fn StringView::repeat(Self, Int) -> Self
-fn StringView::replace(Self, old~ : Self, new~ : Self) -> Self
-fn StringView::replace_all(Self, old~ : Self, new~ : Self) -> Self
-fn StringView::rev(Self) -> String
-fn StringView::rev_find(Self, Self) -> Int?
-fn[A] StringView::rev_fold(Self, init~ : A, (A, Char) -> A) -> A
-fn StringView::split(Self, Self) -> Iter[Self]
-fn StringView::strip_prefix(Self, Self) -> Self?
-fn StringView::strip_suffix(Self, Self) -> Self?
-#alias("_[_:_]")
-fn StringView::sub(Self, start? : Int, end? : Int) -> Self raise CreatingViewError
-fn StringView::to_array(Self) -> Array[Char]
-#deprecated
-fn StringView::to_bytes(Self) -> Bytes
-fn StringView::to_lower(Self) -> Self
-fn StringView::to_upper(Self) -> Self
-#label_migration(chars, alias=char_set)
-#label_migration(chars, allow_positional=true)
-fn StringView::trim(Self, chars~ : Self) -> Self
-#label_migration(chars, alias=char_set)
-#label_migration(chars, allow_positional=true)
-fn StringView::trim_end(Self, chars~ : Self) -> Self
-fn StringView::trim_space(Self) -> Self
-#label_migration(chars, alias=char_set)
-#label_migration(chars, allow_positional=true)
-fn StringView::trim_start(Self, chars~ : Self) -> Self
 
 // Type aliases
 pub using @builtin {type StringView as View}
