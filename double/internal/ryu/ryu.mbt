@@ -25,7 +25,19 @@ fn string_from_bytes(bytes : FixedArray[Byte], from : Int, to : Int) -> String {
 }
 
 ///|
-fn umul128(a : UInt64, b : UInt64) -> (UInt64, UInt64) {
+#valtype
+priv struct Umul128(UInt64, UInt64)
+
+///|
+#valtype
+priv struct Pow5Pair(UInt64, UInt64)
+
+///|
+#valtype
+priv struct MulShiftAll64Result(UInt64, UInt64, UInt64)
+
+///|
+fn umul128(a : UInt64, b : UInt64) -> Umul128 {
   let aLo = a & 0xffffffff
   let aHi = a >> 32
   let bLo = b & 0xffffffff
@@ -36,7 +48,7 @@ fn umul128(a : UInt64, b : UInt64) -> (UInt64, UInt64) {
   let w = aHi * bHi + (y >> 32) + (z >> 32)
   let lo = a * b
   let hi = w
-  (lo, hi)
+  Umul128(lo, hi)
 }
 
 ///|
@@ -84,36 +96,37 @@ fn multipleOfPowerOf2(value : UInt64, p : Int) -> Bool {
 ///|
 fn mulShiftAll64(
   m : UInt64,
-  mul : (UInt64, UInt64),
+  mul : Pow5Pair,
   j : Int,
   mmShift : Bool,
-) -> (UInt64, UInt64, UInt64) {
+) -> MulShiftAll64Result {
+  let Pow5Pair(mul0, mul1) = mul
   let m = m << 1
-  let (lo, tmp) = umul128(m, mul.0)
-  let (lo2, hi2) = umul128(m, mul.1)
+  let Umul128(lo, tmp) = umul128(m, mul0)
+  let Umul128(lo2, hi2) = umul128(m, mul1)
   let mid = tmp + lo2
-  let hi = hi2 + (if mid < tmp { 1 } else { 0 })
-  let lo2 = lo + mul.0
-  let mid2 = mid + mul.1 + (if lo2 < lo { 1 } else { 0 })
-  let hi2 = hi + (if mid2 < mid { 1 } else { 0 })
-  let vp = shiftright128(mid2, hi2, j - 64 - 1)
+  let hi = hi2 + (if mid < tmp { 1UL } else { 0UL })
+  let lo2 = lo + mul0
+  let mid2 = mid + mul1 + (if lo2 < lo { 1UL } else { 0UL })
+  let hi2 = hi + (if mid2 < mid { 1UL } else { 0UL })
+  let vp : UInt64 = shiftright128(mid2, hi2, j - 64 - 1)
   let mut vm : UInt64 = 0UL
   if mmShift {
-    let lo3 = lo - mul.0
-    let mid3 = mid - mul.1 - (if lo < lo3 { 1 } else { 0 })
-    let hi3 = hi - (if mid < mid3 { 1 } else { 0 })
+    let lo3 = lo - mul0
+    let mid3 = mid - mul1 - (if lo < lo3 { 1UL } else { 0UL })
+    let hi3 = hi - (if mid < mid3 { 1UL } else { 0UL })
     vm = shiftright128(mid3, hi3, j - 64 - 1)
   } else {
     let lo3 : UInt64 = lo + lo
-    let mid3 : UInt64 = mid + mid + (if lo3 < lo { 1 } else { 0 })
-    let hi3 : UInt64 = hi + hi + (if mid3 < mid { 1 } else { 0 })
-    let lo4 : UInt64 = lo3 - mul.0
-    let mid4 : UInt64 = mid3 - mul.1 - (if lo3 < lo4 { 1 } else { 0 })
-    let hi4 : UInt64 = hi3 - (if mid3 < mid4 { 1 } else { 0 })
+    let mid3 : UInt64 = mid + mid + (if lo3 < lo { 1UL } else { 0UL })
+    let hi3 : UInt64 = hi + hi + (if mid3 < mid { 1UL } else { 0UL })
+    let lo4 : UInt64 = lo3 - mul0
+    let mid4 : UInt64 = mid3 - mul1 - (if lo3 < lo4 { 1UL } else { 0UL })
+    let hi4 : UInt64 = hi3 - (if mid3 < mid4 { 1UL } else { 0UL })
     vm = shiftright128(mid4, hi4, j - 64)
   }
-  let vr = shiftright128(mid, hi, j - 64 - 1)
-  (vr, vp, vm)
+  let vr : UInt64 = shiftright128(mid, hi, j - 64 - 1)
+  MulShiftAll64Result(vr, vp, vm)
 }
 
 ///|
@@ -165,55 +178,55 @@ let gDOUBLE_POW5_TABLE : ReadOnlyArray[UInt64] = [
 
 ///|
 /// Computes 5^i in the form required by Ryū.
-fn double_computePow5(i : Int) -> (UInt64, UInt64) {
+fn double_computePow5(i : Int) -> Pow5Pair {
   let base = i / gPOW5_TABLE_SIZE
   let base2 = base * gPOW5_TABLE_SIZE
   let offset = i - base2
   let mul0 = gDOUBLE_POW5_SPLIT2[base * 2]
   let mul1 = gDOUBLE_POW5_SPLIT2[base * 2 + 1]
   if offset == 0 {
-    return (mul0, mul1)
+    return Pow5Pair(mul0, mul1)
   }
   let m : UInt64 = gDOUBLE_POW5_TABLE[offset]
-  let (low1, high1) = umul128(m, mul1)
-  let (low0, high0) = umul128(m, mul0)
+  let Umul128(low1, high1) = umul128(m, mul1)
+  let Umul128(low0, high0) = umul128(m, mul0)
   let sum : UInt64 = high0 + low1
   let mut high1 = high1
   if sum < high0 {
     high1 = high1 + 1UL
   }
   let delta : Int = pow5bits(i) - pow5bits(base2)
-  let a = shiftright128(low0, sum, delta) +
+  let a : UInt64 = shiftright128(low0, sum, delta) +
     ((gPOW5_OFFSETS[i / 16] >> ((i % 16) << 1)) & 3).to_uint64()
-  let b = shiftright128(sum, high1, delta)
-  (a, b)
+  let b : UInt64 = shiftright128(sum, high1, delta)
+  Pow5Pair(a, b)
 }
 
 ///|
 /// Computes 5^-i in the form required by Ryū.
-fn double_computeInvPow5(i : Int) -> (UInt64, UInt64) {
+fn double_computeInvPow5(i : Int) -> Pow5Pair {
   let base = (i + gPOW5_TABLE_SIZE - 1) / gPOW5_TABLE_SIZE
   let base2 = base * gPOW5_TABLE_SIZE
   let offset = base2 - i
   let mul0 = gDOUBLE_POW5_INV_SPLIT2[base * 2]
   let mul1 = gDOUBLE_POW5_INV_SPLIT2[base * 2 + 1]
   if offset == 0 {
-    return (mul0, mul1)
+    return Pow5Pair(mul0, mul1)
   }
   let m = gDOUBLE_POW5_TABLE[offset]
-  let (low1, high1) = umul128(m, mul1)
-  let (low0, high0) = umul128(m, mul0)
+  let Umul128(low1, high1) = umul128(m, mul1)
+  let Umul128(low0, high0) = umul128(m, mul0)
   let sum = high0 + low1
   let mut high1 = high1
   if sum < high0 {
-    high1 = high1 + 1
+    high1 = high1 + 1UL
   }
   let delta : Int = pow5bits(base2) - pow5bits(i)
-  let a = shiftright128(low0, sum, delta) +
-    1 +
+  let a : UInt64 = shiftright128(low0, sum, delta) +
+    1UL +
     ((gPOW5_INV_OFFSETS[i / 16] >> ((i % 16) << 1)) & 3).to_uint64()
-  let b = shiftright128(sum, high1, delta)
-  (a, b)
+  let b : UInt64 = shiftright128(sum, high1, delta)
+  Pow5Pair(a, b)
 }
 
 ///|
@@ -339,11 +352,13 @@ fn d2d(ieeeMantissa : UInt64, ieeeExponent : UInt) -> FloatingDecimal64 {
     e10 = q
     let k = gDOUBLE_POW5_INV_BITCOUNT + pow5bits(q) - 1
     let i = -e2 + q + k
-    let pow5 = double_computeInvPow5(q)
-    let vs = mulShiftAll64(m2, pow5, i, mmShift)
-    vr = vs.0
-    vp = vs.1
-    vm = vs.2
+    let pow5 : Pow5Pair = double_computeInvPow5(q)
+    let MulShiftAll64Result(vrOut, vpOut, vmOut) = mulShiftAll64(
+      m2, pow5, i, mmShift,
+    )
+    vr = vrOut
+    vp = vpOut
+    vm = vmOut
     if q <= 21 {
       // This should use q <= 22, but I think 21 is also safe. Smaller values
       // may still be safe, but it's more difficult to reason about them.
@@ -370,11 +385,13 @@ fn d2d(ieeeMantissa : UInt64, ieeeExponent : UInt) -> FloatingDecimal64 {
     let i : Int = -e2 - q
     let k = pow5bits(i) - gDOUBLE_POW5_BITCOUNT
     let j = q - k
-    let pow5 = double_computePow5(i)
-    let vs = mulShiftAll64(m2, pow5, j, mmShift)
-    vr = vs.0
-    vp = vs.1
-    vm = vs.2
+    let pow5 : Pow5Pair = double_computePow5(i)
+    let MulShiftAll64Result(vrOut, vpOut, vmOut) = mulShiftAll64(
+      m2, pow5, j, mmShift,
+    )
+    vr = vrOut
+    vp = vpOut
+    vm = vmOut
     if q <= 1 {
       // {vr,vp,vm} is trailing zeros if {mv,mp,mm} has at least q trailing 0 bits.
       // mv = 4 * m2, so it always has at least two trailing 0 bits.
@@ -649,7 +666,7 @@ pub fn ryu_to_string(val : Double) -> String {
 test "double/ryu.mbt:205" {
   let m = 123456789UL
   let mul0 = 987654321UL
-  let (_, high0) = umul128(m, mul0)
+  let Umul128(_, high0) = umul128(m, mul0)
   let low1 = 111111111UL
   let high1 = 222222222UL
   let sum = high0 + low1
@@ -664,7 +681,7 @@ test "double/ryu.mbt:205" {
 test "double/ryu.mbt:230" {
   let m = 123456789UL
   let mul0 = 987654321UL
-  let (_, high0) = umul128(m, mul0)
+  let Umul128(_, high0) = umul128(m, mul0)
   let low1 = 111111111UL
   let high1 = 222222222UL
   let sum = high0 + low1
