@@ -290,15 +290,6 @@ pub fn[A, B] Array::zip_to_iter2(
 }
 
 ///|
-pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Array[X] with arbitrary(
-  size,
-  rs,
-) {
-  let len = if size == 0 { 0 } else { rs.next_positive_int() % size }
-  Array::makei(len, x => X::arbitrary(x, rs))
-}
-
-///|
 /// Join an array of strings using the provided `separator`.
 ///
 /// Parameters:

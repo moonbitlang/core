@@ -3,8 +3,6 @@ package "moonbitlang/core/array"
 
 import(
   "moonbitlang/core/builtin"
-  "moonbitlang/core/quickcheck"
-  "moonbitlang/core/quickcheck/splitmix"
   "moonbitlang/core/string"
 )
 
@@ -64,7 +62,6 @@ impl[T] Add for FixedArray[T]
 impl[T : Compare] Compare for FixedArray[T]
 impl[T : Eq] Eq for FixedArray[T]
 impl[T : Hash] Hash for FixedArray[T]
-impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for FixedArray[X]
 
 fn[T] ReadOnlyArray::all(Self[T], (T) -> Bool raise?) -> Bool raise?
 fn[T] ReadOnlyArray::any(Self[T], (T) -> Bool raise?) -> Bool raise?
@@ -132,7 +129,6 @@ fn Array::unsafe_extract_uint_le(Self[Byte], Int, Int) -> UInt
 fn[T1, T2] Array::unzip(Self[(T1, T2)]) -> (Self[T1], Self[T2])
 fn[A, B] Array::zip(Self[A], Self[B]) -> Self[(A, B)]
 fn[A, B] Array::zip_to_iter2(Self[A], Self[B]) -> Iter2[A, B]
-impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Array[X]
 
 fn[T] ArrayView::all(Self[T], (T) -> Bool raise?) -> Bool raise?
 fn[T] ArrayView::any(Self[T], (T) -> Bool raise?) -> Bool raise?
@@ -171,7 +167,6 @@ impl[T : Compare] Compare for ArrayView[T]
 impl[T : Eq] Eq for ArrayView[T]
 impl[A : Hash] Hash for ArrayView[A]
 impl[X : Show] Show for ArrayView[X]
-impl[A : @quickcheck.Arbitrary] @quickcheck.Arbitrary for ArrayView[A]
 
 // Type aliases
 pub using @builtin {type ArrayView as View}

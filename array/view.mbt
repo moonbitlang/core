@@ -483,14 +483,6 @@ pub impl[A : Hash] Hash for ArrayView[A] with hash_combine(self, hasher) {
 }
 
 ///|
-pub impl[A : @quickcheck.Arbitrary] @quickcheck.Arbitrary for ArrayView[A] with arbitrary(
-  size,
-  rs,
-) {
-  Array::arbitrary(size, rs)[:]
-}
-
-///|
 fn[T] ArrayView::start(self : ArrayView[T]) -> Int = "%arrayview.start"
 
 ///|

@@ -142,3 +142,22 @@ pub impl[X : Arbitrary] Arbitrary for X? with arbitrary(i, rs) {
     Some(Arbitrary::arbitrary(i, rs))
   }
 }
+
+///|
+pub impl[X : Arbitrary] Arbitrary for FixedArray[X] with arbitrary(size, rs) {
+  let len = if size == 0 { 0 } else { rs.next_positive_int() % size }
+  FixedArray::makei(len, i => X::arbitrary(i, rs))
+}
+
+///|
+pub impl[A : Arbitrary] Arbitrary for ArrayView[A] with arbitrary(size, rs) {
+  let arr : Array[A] = Arbitrary::arbitrary(size, rs)
+  // Note can not use Array::arbitrary
+  arr[:]
+}
+
+///|
+pub impl[X : Arbitrary] Arbitrary for Array[X] with arbitrary(size, rs) {
+  let len = if size == 0 { 0 } else { rs.next_positive_int() % size }
+  Array::makei(len, x => X::arbitrary(x, rs))
+}
