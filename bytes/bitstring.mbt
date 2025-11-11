@@ -408,18 +408,21 @@ pub fn BytesView::unsafe_extract_int64_be(
 
 ///|
 #internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
 pub fn Bytes::unsafe_extract_bit(bs : Bytes, offset : Int, len : Int) -> UInt {
   bs[:].unsafe_extract_bit(offset, len)
 }
 
 ///|
 #internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
 pub fn Bytes::unsafe_extract_byte(bs : Bytes, offset : Int, len : Int) -> UInt {
   bs[:].unsafe_extract_byte(offset, len)
 }
 
 ///|
 #internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
 pub fn Bytes::unsafe_extract_uint_le(
   bs : Bytes,
   offset : Int,
@@ -430,6 +433,7 @@ pub fn Bytes::unsafe_extract_uint_le(
 
 ///|
 #internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
 pub fn Bytes::unsafe_extract_uint_be(
   bs : Bytes,
   offset : Int,
@@ -440,6 +444,7 @@ pub fn Bytes::unsafe_extract_uint_be(
 
 ///|
 #internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
 pub fn Bytes::unsafe_extract_uint64_le(
   bs : Bytes,
   offset : Int,
@@ -450,6 +455,7 @@ pub fn Bytes::unsafe_extract_uint64_le(
 
 ///|
 #internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
 pub fn Bytes::unsafe_extract_uint64_be(
   bs : Bytes,
   offset : Int,
@@ -460,6 +466,7 @@ pub fn Bytes::unsafe_extract_uint64_be(
 
 ///|
 #internal(experimental, "subject to breaking change without notice")
+#doc(hidden)
 pub fn Bytes::unsafe_extract_bytesview(
   bs : Bytes,
   offset : Int,

@@ -190,6 +190,7 @@ pub fn[A] T::length(self : T[A]) -> Int {
 /// inspect(queue.length(), content="3")
 /// ```
 #internal(unsafe, "Panic if the queue is empty.")
+#doc(hidden)
 pub fn[A : Compare] T::unsafe_pop(self : T[A]) -> Unit {
   self.top = match self.top {
     None => abort("The PriorityQueue is empty!")

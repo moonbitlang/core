@@ -36,10 +36,6 @@ fn[A] Queue::peek(Self[A]) -> A?
 fn[A] Queue::pop(Self[A]) -> A?
 fn[A] Queue::push(Self[A], A) -> Unit
 fn[A] Queue::transfer(Self[A], Self[A]) -> Unit
-#alias(peek_exn, deprecated)
-fn[A] Queue::unsafe_peek(Self[A]) -> A
-#alias(pop_exn, deprecated)
-fn[A] Queue::unsafe_pop(Self[A]) -> A
 impl[A : Show] Show for Queue[A]
 impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Queue[X]
 

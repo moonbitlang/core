@@ -1689,6 +1689,7 @@ pub impl[T] Default for Array[T] with default() {
 ///   assert_eq(array.last(), Some(4))
 /// ```
 #internal(unsafe, "Panic if the array is empty on non-JS backend.")
+#doc(hidden)
 pub fn[A] Array::unsafe_pop_back(self : Array[A]) -> Unit {
   self.unsafe_pop() |> ignore
 }

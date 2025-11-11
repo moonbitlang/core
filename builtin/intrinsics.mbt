@@ -1254,6 +1254,7 @@ pub fn Bytes::at(self : Bytes, idx : Int) -> Byte = "%bytes_get"
 /// ```
 ///
 #internal(unsafe, "Panic if index is out of bounds")
+#doc(hidden)
 pub fn Bytes::unsafe_get(self : Bytes, idx : Int) -> Byte = "%bytes.unsafe_get"
 
 ///|
@@ -1434,10 +1435,12 @@ pub fn[T] FixedArray::at(self : FixedArray[T], idx : Int) -> T = "%fixedarray.ge
 /// ```
 ///
 #internal(unsafe, "Panic if index is out of bounds")
+#doc(hidden)
 pub fn[T] FixedArray::unsafe_get(self : FixedArray[T], idx : Int) -> T = "%fixedarray.unsafe_get"
 
 ///|
 #internal(unsafe, "Panic if index is out of bounds")
+#doc(hidden)
 pub fn[T] FixedArray::unsafe_set(
   self : FixedArray[T],
   idx : Int,
@@ -1577,6 +1580,7 @@ pub fn String::at(self : String, idx : Int) -> Int = "%string_get"
 /// ```
 /// TODO: rename to `unsafe_get`
 #internal(unsafe, "Panic if index is out of bounds.")
+#doc(hidden)
 pub fn String::unsafe_charcode_at(self : String, idx : Int) -> Int = "%string.unsafe_get"
 
 ///|

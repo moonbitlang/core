@@ -79,10 +79,6 @@ fn[A] Deque::shuffle(Self[A], rand~ : (Int) -> Int) -> Self[A]
 fn[A] Deque::shuffle_in_place(Self[A], rand~ : (Int) -> Int) -> Unit
 fn[A] Deque::to_array(Self[A]) -> Array[A]
 fn[A] Deque::truncate(Self[A], Int) -> Unit
-#alias(pop_back_exn, deprecated)
-fn[A] Deque::unsafe_pop_back(Self[A]) -> Unit
-#alias(pop_front_exn, deprecated)
-fn[A] Deque::unsafe_pop_front(Self[A]) -> Unit
 impl[A] Add for Deque[A]
 impl[A : Compare] Compare for Deque[A]
 impl[A : Eq] Eq for Deque[A]

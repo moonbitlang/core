@@ -45,13 +45,6 @@ fn[T, K : Compare] FixedArray::sort_by_key(Self[T], (T) -> K) -> Unit
 fn[T : Compare] FixedArray::stable_sort(Self[T]) -> Unit
 fn[T : Eq] FixedArray::starts_with(Self[T], Self[T]) -> Bool
 fn[T] FixedArray::swap(Self[T], Int, Int) -> Unit
-fn FixedArray::unsafe_extract_bit(Self[Byte], Int, Int) -> UInt
-fn FixedArray::unsafe_extract_byte(Self[Byte], Int, Int) -> UInt
-fn FixedArray::unsafe_extract_bytesview(Self[Byte], Int, Int) -> ArrayView[Byte]
-fn FixedArray::unsafe_extract_uint64_be(Self[Byte], Int, Int) -> UInt64
-fn FixedArray::unsafe_extract_uint64_le(Self[Byte], Int, Int) -> UInt64
-fn FixedArray::unsafe_extract_uint_be(Self[Byte], Int, Int) -> UInt
-fn FixedArray::unsafe_extract_uint_le(Self[Byte], Int, Int) -> UInt
 fn FixedArray::unsafe_write_uint16_be(Self[Byte], Int, UInt16) -> Unit
 fn FixedArray::unsafe_write_uint16_le(Self[Byte], Int, UInt16) -> Unit
 fn FixedArray::unsafe_write_uint32_be(Self[Byte], Int, UInt) -> Unit
@@ -119,13 +112,6 @@ fn[T] Array::shuffle_in_place(Self[T], rand~ : (Int) -> Int) -> Unit
 fn[T : Compare] Array::sort(Self[T]) -> Unit
 fn[T] Array::sort_by(Self[T], (T, T) -> Int) -> Unit
 fn[T, K : Compare] Array::sort_by_key(Self[T], (T) -> K) -> Unit
-fn Array::unsafe_extract_bit(Self[Byte], Int, Int) -> UInt
-fn Array::unsafe_extract_byte(Self[Byte], Int, Int) -> UInt
-fn Array::unsafe_extract_bytesview(Self[Byte], Int, Int) -> ArrayView[Byte]
-fn Array::unsafe_extract_uint64_be(Self[Byte], Int, Int) -> UInt64
-fn Array::unsafe_extract_uint64_le(Self[Byte], Int, Int) -> UInt64
-fn Array::unsafe_extract_uint_be(Self[Byte], Int, Int) -> UInt
-fn Array::unsafe_extract_uint_le(Self[Byte], Int, Int) -> UInt
 fn[T1, T2] Array::unzip(Self[(T1, T2)]) -> (Self[T1], Self[T2])
 fn[A, B] Array::zip(Self[A], Self[B]) -> Self[(A, B)]
 fn[A, B] Array::zip_to_iter2(Self[A], Self[B]) -> Iter2[A, B]
@@ -150,19 +136,6 @@ fn[A, B] ArrayView::rev_foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B 
 fn[X] ArrayView::rev_iterator(Self[X]) -> Iterator[X]
 fn[T] ArrayView::start_offset(Self[T]) -> Int
 fn[T] ArrayView::to_array(Self[T]) -> Array[T]
-fn ArrayView::unsafe_extract_bit(Self[Byte], Int, Int) -> UInt
-fn ArrayView::unsafe_extract_bit_signed(Self[Byte], Int, Int) -> Int
-fn ArrayView::unsafe_extract_byte(Self[Byte], Int, Int) -> UInt
-fn ArrayView::unsafe_extract_byte_signed(Self[Byte], Int, Int) -> Int
-fn ArrayView::unsafe_extract_bytesview(Self[Byte], Int, Int) -> Self[Byte]
-fn ArrayView::unsafe_extract_int64_be(Self[Byte], Int, Int) -> Int64
-fn ArrayView::unsafe_extract_int64_le(Self[Byte], Int, Int) -> Int64
-fn ArrayView::unsafe_extract_int_be(Self[Byte], Int, Int) -> Int
-fn ArrayView::unsafe_extract_int_le(Self[Byte], Int, Int) -> Int
-fn ArrayView::unsafe_extract_uint64_be(Self[Byte], Int, Int) -> UInt64
-fn ArrayView::unsafe_extract_uint64_le(Self[Byte], Int, Int) -> UInt64
-fn ArrayView::unsafe_extract_uint_be(Self[Byte], Int, Int) -> UInt
-fn ArrayView::unsafe_extract_uint_le(Self[Byte], Int, Int) -> UInt
 impl[T : Compare] Compare for ArrayView[T]
 impl[T : Eq] Eq for ArrayView[T]
 impl[A : Hash] Hash for ArrayView[A]

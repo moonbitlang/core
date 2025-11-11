@@ -201,6 +201,7 @@ fn[A : Compare] Node::change_and_down(self : Node[A], value : A) -> Node[A] {
 ///   assert_eq(first, @priority_queue.from_array([1, 2, 3]))
 /// ```
 #internal(unsafe, "Panics if the queue is empty.")
+#doc(hidden)
 #alias(pop_exn, deprecated)
 pub fn[A : Compare] PriorityQueue::unsafe_pop(
   self : PriorityQueue[A],

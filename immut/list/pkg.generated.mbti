@@ -168,16 +168,6 @@ fn[A] T::to_array(Self[A]) -> Array[A]
 #deprecated
 fn[A : ToJson] T::to_json(Self[A]) -> Json
 #deprecated
-fn[A] T::unsafe_head(Self[A]) -> A
-#deprecated
-fn[A] T::unsafe_last(Self[A]) -> A
-#deprecated
-fn[A : Compare] T::unsafe_maximum(Self[A]) -> A
-#deprecated
-fn[A : Compare] T::unsafe_minimum(Self[A]) -> A
-#deprecated
-fn[A] T::unsafe_nth(Self[A], Int) -> A
-#deprecated
 fn[A, B] T::unzip(Self[(A, B)]) -> (Self[A], Self[B])
 #deprecated
 fn[A, B] T::zip(Self[A], Self[B]) -> Self[(A, B)]?

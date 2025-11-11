@@ -141,12 +141,8 @@ fn[T] Array::sub(Self[T], start? : Int, end? : Int) -> ArrayView[T]
 fn[T] Array::suffixes(Self[T], include_empty? : Bool) -> Iterator[ArrayView[T]]
 fn[T] Array::swap(Self[T], Int, Int) -> Unit
 fn[A] Array::truncate(Self[A], Int) -> Unit
-fn[A] Array::unsafe_blit(Self[A], Int, Self[A], Int, Int) -> Unit
 fn[A] Array::unsafe_blit_fixed(Self[A], Int, FixedArray[A], Int, Int) -> Unit
 fn[T] Array::unsafe_get(Self[T], Int) -> T
-#alias(pop_exn, deprecated)
-fn[T] Array::unsafe_pop(Self[T]) -> T
-fn[A] Array::unsafe_pop_back(Self[A]) -> Unit
 fn[T] Array::unsafe_set(Self[T], Int, T) -> Unit
 fn[T] Array::windows(Self[T], Int) -> Self[ArrayView[T]]
 impl[T] Add for Array[T]
@@ -164,7 +160,6 @@ fn[T] ArrayView::length(Self[T]) -> Int
 #alias("_[_:_]")
 fn[T] ArrayView::sub(Self[T], start? : Int, end? : Int) -> Self[T]
 fn[T] ArrayView::suffixes(Self[T], include_empty? : Bool) -> Iterator[Self[T]]
-fn[T] ArrayView::unsafe_get(Self[T], Int) -> T
 impl[X : ToJson] ToJson for ArrayView[X]
 
 type Hasher
@@ -397,7 +392,6 @@ fn[T] UninitializedArray::make(Int) -> Self[T]
 fn[T] UninitializedArray::set(Self[T], Int, T) -> Unit
 #alias("_[_:_]")
 fn[T] UninitializedArray::sub(Self[T], start? : Int, end? : Int) -> ArrayView[T]
-fn[T] UninitializedArray::unsafe_blit(Self[T], Int, Self[T], Int, Int) -> Unit
 
 #deprecated
 fn Bool::op_compare(Bool, Bool) -> Int
@@ -615,7 +609,6 @@ fn String::suffixes(String, include_empty? : Bool) -> Iterator[StringView]
 fn String::to_string(String) -> String
 #deprecated
 fn String::unsafe_char_at(String, Int) -> Char
-fn String::unsafe_charcode_at(String, Int) -> Int
 fn String::unsafe_substring(String, start~ : Int, end~ : Int) -> String
 
 fn[T, U] Option::bind(T?, (T) -> U? raise?) -> U? raise?
@@ -666,9 +659,6 @@ fn FixedArray::set_utf8_char(Self[Byte], Int, Char) -> Int
 #alias("_[_:_]")
 fn[T] FixedArray::sub(Self[T], start? : Int, end? : Int) -> ArrayView[T]
 fn[A] FixedArray::unsafe_blit(Self[A], Int, Self[A], Int, Int) -> Unit
-fn[T] FixedArray::unsafe_get(Self[T], Int) -> T
-fn FixedArray::unsafe_reinterpret_as_bytes(Self[Byte]) -> Bytes
-fn[T] FixedArray::unsafe_set(Self[T], Int, T) -> Unit
 
 #alias("_[_]")
 fn Bytes::at(Bytes, Int) -> Byte
@@ -681,7 +671,6 @@ fn Bytes::new(Int) -> Bytes
 #deprecated
 fn Bytes::of_string(String) -> Bytes
 fn Bytes::to_unchecked_string(Bytes, offset? : Int, length? : Int) -> String
-fn Bytes::unsafe_get(Bytes, Int) -> Byte
 
 #alias("_[_]")
 fn StringView::at(Self, Int) -> Int

@@ -32,7 +32,6 @@ fn[A] T::peek(Self[A]) -> A?
 fn[A : Compare] T::pop(Self[A]) -> A?
 fn[A : Compare] T::push(Self[A], A) -> Unit
 fn[A : Compare] T::to_array(Self[A]) -> Array[A]
-fn[A : Compare] T::unsafe_pop(Self[A]) -> Unit
 impl[K] Default for T[K]
 impl[A : Show + Compare] Show for T[A]
 impl[A : ToJson + Compare] ToJson for T[A]
