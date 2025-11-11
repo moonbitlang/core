@@ -211,11 +211,6 @@ pub impl ToJson for Double with to_json(self : Double) -> Json {
 }
 
 ///|
-pub impl ToJson for Float with to_json(self : Float) -> Json {
-  Json::number(self.to_double())
-}
-
-///|
 pub impl ToJson for String with to_json(self : String) -> Json {
   String(self)
 }

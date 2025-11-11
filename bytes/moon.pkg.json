@@ -8,6 +8,7 @@
     "moonbitlang/core/test",
     "moonbitlang/core/quickcheck",
     "moonbitlang/core/error",
-    "moonbitlang/core/json"
+    "moonbitlang/core/json",
+    "moonbitlang/core/float"
   ]
 }

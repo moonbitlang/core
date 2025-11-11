@@ -26,24 +26,41 @@ fn Float::abs(Float) -> Float
 fn Float::ceil(Float) -> Float
 #as_free_fn
 fn Float::floor(Float) -> Float
+fn Float::from_uint64(UInt64) -> Float
 fn Float::is_close(Float, Float, relative_tolerance? : Float, absolute_tolerance? : Float) -> Bool
 fn Float::is_inf(Float) -> Bool
 fn Float::is_nan(Float) -> Bool
 fn Float::is_neg_inf(Float) -> Bool
 fn Float::is_pos_inf(Float) -> Bool
+fn Float::op_neq(Float, Float) -> Bool
 #as_free_fn
 fn Float::pow(Float, Float) -> Float
+fn Float::reinterpret_as_int(Float) -> Int
+fn Float::reinterpret_as_uint(Float) -> UInt
 #as_free_fn
 fn Float::round(Float) -> Float
+fn Float::sqrt(Float) -> Float
 fn Float::to_be_bytes(Float) -> Bytes
+fn Float::to_double(Float) -> Double
 fn Float::to_int(Float) -> Int
 fn Float::to_le_bytes(Float) -> Bytes
 #as_free_fn
 fn Float::trunc(Float) -> Float
+fn Float::until(Float, Float, step? : Float, inclusive? : Bool) -> Iter[Float]
+#deprecated
+fn Float::upto(Float, Float, inclusive? : Bool) -> Iter[Float]
+impl Add for Float
+impl Compare for Float
 impl Default for Float
+impl Div for Float
+impl Eq for Float
 impl Hash for Float
 impl Mod for Float
+impl Mul for Float
+impl Neg for Float
 impl Show for Float
+impl Sub for Float
+impl ToJson for Float
 
 // Type aliases
 

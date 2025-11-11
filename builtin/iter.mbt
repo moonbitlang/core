@@ -290,49 +290,6 @@ pub fn Int64::until(
 }
 
 ///|
-/// Creates an iterator that iterates over a range of Float with default step 1.0 .
-/// To grow the range downward, set the `step` parameter to a negative value.
-///
-/// # Arguments
-///
-/// * `start` - The starting value of the range (inclusive).
-/// * `end` - The ending value of the range (exclusive by default).
-/// * `step` - The step size of the range (default 1.0).
-/// * `inclusive` - Whether the ending value is inclusive (default false).
-///
-/// # Returns
-///
-/// Returns an iterator that iterates over the range of Float from `start` to `end - 1`.
-pub fn Float::until(
-  self : Float,
-  end : Float,
-  step? : Float = 1.0,
-  inclusive? : Bool = false,
-) -> Iter[Float] {
-  if step == 0.0 {
-    return Iter::empty()
-  }
-  yield_ => {
-    let mut i = self
-    while (step > 0.0 && i < end) ||
-          (step < 0.0 && i > end) ||
-          (inclusive && i == end) {
-      if yield_(i) is IterEnd {
-        break IterEnd
-      }
-      let next = i + step
-      if (step > 0.0 && next >= i) || (step < 0.0 && next <= i) {
-        i = next
-      } else {
-        break IterContinue
-      }
-    } else {
-      IterContinue
-    }
-  }
-}
-
-///|
 /// Creates an iterator that iterates over a range of Double with default step 1.0 .
 /// To grow the range downward, set the `step` parameter to a negative value.
 ///

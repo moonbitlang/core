@@ -174,6 +174,7 @@ fn Hasher::combine_byte(Self, Byte) -> Unit
 fn Hasher::combine_bytes(Self, Bytes) -> Unit
 fn Hasher::combine_char(Self, Char) -> Unit
 fn Hasher::combine_double(Self, Double) -> Unit
+#deprecated
 fn Hasher::combine_float(Self, Float) -> Unit
 fn Hasher::combine_int(Self, Int) -> Unit
 fn Hasher::combine_int64(Self, Int64) -> Unit
@@ -580,15 +581,6 @@ fn UInt64::trunc_double(Double) -> UInt64
 #deprecated
 fn UInt64::upto(UInt64, UInt64, inclusive? : Bool) -> Iter[UInt64]
 
-fn Float::op_neq(Float, Float) -> Bool
-fn Float::reinterpret_as_int(Float) -> Int
-fn Float::reinterpret_as_uint(Float) -> UInt
-fn Float::sqrt(Float) -> Float
-fn Float::to_double(Float) -> Double
-fn Float::until(Float, Float, step? : Float, inclusive? : Bool) -> Iter[Float]
-#deprecated
-fn Float::upto(Float, Float, inclusive? : Bool) -> Iter[Float]
-
 fn Double::convert_uint(UInt) -> Double
 fn Double::convert_uint64(UInt64) -> Double
 fn Double::op_neq(Double, Double) -> Bool
@@ -740,7 +732,6 @@ impl Add for Int
 impl Add for Int64
 impl Add for UInt
 impl Add for UInt64
-impl Add for Float
 impl Add for Double
 impl Add for String
 impl Add for StringView
@@ -788,7 +779,6 @@ impl Compare for Int
 impl Compare for Int64
 impl Compare for UInt
 impl Compare for UInt64
-impl Compare for Float
 impl Compare for Double
 impl[X : Compare] Compare for X?
 impl Compare for Bytes
@@ -833,7 +823,6 @@ impl Div for Int
 impl Div for Int64
 impl Div for UInt
 impl Div for UInt64
-impl Div for Float
 impl Div for Double
 
 pub(open) trait Eq {
@@ -849,7 +838,6 @@ impl Eq for Int
 impl Eq for Int64
 impl Eq for UInt
 impl Eq for UInt64
-impl Eq for Float
 impl Eq for Double
 impl Eq for String
 impl[X : Eq] Eq for X?
@@ -922,7 +910,6 @@ impl Mul for Int
 impl Mul for Int64
 impl Mul for UInt
 impl Mul for UInt64
-impl Mul for Float
 impl Mul for Double
 
 pub(open) trait Neg {
@@ -932,7 +919,6 @@ pub(open) trait Neg {
 }
 impl Neg for Int
 impl Neg for Int64
-impl Neg for Float
 impl Neg for Double
 
 pub(open) trait Shl {
@@ -1004,7 +990,6 @@ impl Sub for Int
 impl Sub for Int64
 impl Sub for UInt
 impl Sub for UInt64
-impl Sub for Float
 impl Sub for Double
 
 pub(open) trait ToJson {
@@ -1018,7 +1003,6 @@ impl ToJson for Int
 impl ToJson for Int64
 impl ToJson for UInt
 impl ToJson for UInt64
-impl ToJson for Float
 impl ToJson for Double
 impl ToJson for String
 impl[T : ToJson] ToJson for T?
