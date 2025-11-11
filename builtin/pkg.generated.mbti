@@ -399,7 +399,6 @@ fn[T] UninitializedArray::set(Self[T], Int, T) -> Unit
 fn[T] UninitializedArray::sub(Self[T], start? : Int, end? : Int) -> ArrayView[T]
 fn[T] UninitializedArray::unsafe_blit(Self[T], Int, Self[T], Int, Int) -> Unit
 
-
 #deprecated
 fn Bool::op_compare(Bool, Bool) -> Int
 
@@ -645,7 +644,6 @@ fn[T] Option::unwrap_or_else(T?, () -> T raise?) -> T raise?
 #alias(or_error, deprecated)
 fn[T, Err : Error] Option::unwrap_or_error(T?, Err) -> T raise Err
 
-
 #alias("_[_]")
 fn[T] FixedArray::at(Self[T], Int) -> T
 fn[T : Compare] FixedArray::binary_search(Self[T], T) -> Result[Int, Int]
@@ -684,22 +682,6 @@ fn Bytes::new(Int) -> Bytes
 fn Bytes::of_string(String) -> Bytes
 fn Bytes::to_unchecked_string(Bytes, offset? : Int, length? : Int) -> String
 fn Bytes::unsafe_get(Bytes, Int) -> Byte
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 #alias("_[_]")
 fn StringView::at(Self, Int) -> Int
