@@ -268,13 +268,13 @@ test "parse unexpected token in array" {
 ///|
 test "parse multi-lines json" {
   let result = try? @json.parse(
-      (
-        #|{
-        #|  "a":2,
-        #|  "b":3
-        #|}
-      ),
-    )
+    (
+      #|{
+      #|  "a":2,
+      #|  "b":3
+      #|}
+    ),
+  )
   inspect(
     result,
     content=(
@@ -286,13 +286,13 @@ test "parse multi-lines json" {
 ///|
 test "parse multi-lines json error" {
   let result = try? @json.parse(
-      (
-        #|{
-        #|  "a":2,
-        #|  "b":a
-        #|}
-      ),
-    )
+    (
+      #|{
+      #|  "a":2,
+      #|  "b":a
+      #|}
+    ),
+  )
   inspect(result, content="Err(Invalid character 'a' at line 3, column 6)")
 }
 

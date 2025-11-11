@@ -281,8 +281,8 @@ test "tuple failure" {
   )
   let u = ((1, 2), (3, 4))
   let v : Result[((Int, Int), Int), _] = try? @json.from_json(
-      ToJson::to_json(u),
-    )
+    ToJson::to_json(u),
+  )
   inspect(
     v.unwrap_err(),
     content=(
@@ -757,8 +757,8 @@ test "Option from_json error handling" {
 test "Result from_json error handling" {
   let json_string = Json::string("not a result")
   let result : Result[Result[Int, String], _] = try? @json.from_json(
-      json_string,
-    )
+    json_string,
+  )
   inspect(
     result,
     content=(
@@ -767,8 +767,8 @@ test "Result from_json error handling" {
   )
   let json_empty_obj = Json::object({})
   let result : Result[Result[Int, String], _] = try? @json.from_json(
-      json_empty_obj,
-    )
+    json_empty_obj,
+  )
   inspect(
     result,
     content=(
@@ -777,8 +777,8 @@ test "Result from_json error handling" {
   )
   let json_invalid_obj = Json::object({ "Invalid": Json::number(1) })
   let result : Result[Result[Int, String], _] = try? @json.from_json(
-      json_invalid_obj,
-    )
+    json_invalid_obj,
+  )
   inspect(
     result,
     content=(

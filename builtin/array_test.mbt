@@ -637,11 +637,11 @@ test "each with error callback" {
   let arr = [1, 2, 3]
   let mut sum = 0
   let v = try? arr.each(x => {
-      if x == 2 {
-        fail("Error at 2")
-      }
-      sum += x
-    })
+    if x == 2 {
+      fail("Error at 2")
+    }
+    sum += x
+  })
   assert_true(v is Err(_))
   inspect(sum, content="1")
 }
@@ -669,11 +669,11 @@ test "eachi with error callback" {
   let arr = [1, 2, 3]
   let mut sum = 0
   let v = try? arr.eachi((i, x) => {
-      if x == 2 {
-        fail("Error at 2")
-      }
-      sum += x + i
-    })
+    if x == 2 {
+      fail("Error at 2")
+    }
+    sum += x + i
+  })
   assert_true(v is Err(_))
   inspect(sum, content="1")
 }
@@ -700,11 +700,11 @@ test "eachi with error callback 2" {
 test "map with error callback" {
   let arr = [1, 2, 3]
   let v = try? arr.map(x => {
-      if x == 2 {
-        raise Failure("Error at 2")
-      }
-      x + 1
-    })
+    if x == 2 {
+      raise Failure("Error at 2")
+    }
+    x + 1
+  })
   inspect(
     v,
     content=(
@@ -734,11 +734,11 @@ test "map with error callback 2" {
 test "mapi with error callback" {
   let arr = [1, 2, 3]
   let v = try? arr.mapi((i, x) => {
-      if x == 2 {
-        raise Failure("Error at 2")
-      }
-      x + i
-    })
+    if x == 2 {
+      raise Failure("Error at 2")
+    }
+    x + i
+  })
   inspect(
     v,
     content=(
@@ -768,11 +768,11 @@ test "mapi with error callback 2" {
 test "filter with error callback" {
   let arr = [1, 2, 3]
   let v = try? arr.filter(x => {
-      if x == 2 {
-        raise Failure("Error at 2")
-      }
-      x % 2 == 0
-    })
+    if x == 2 {
+      raise Failure("Error at 2")
+    }
+    x % 2 == 0
+  })
   inspect(
     v,
     content=(
@@ -802,11 +802,11 @@ test "filter with error callback 2" {
 test "map_inplace with error callback" {
   let arr = [1, 2, 3]
   let v = try? arr.map_inplace(x => {
-      if x == 2 {
-        raise Failure("Error at 2")
-      }
-      x + 1
-    })
+    if x == 2 {
+      raise Failure("Error at 2")
+    }
+    x + 1
+  })
   inspect(
     v,
     content=(
@@ -836,11 +836,11 @@ test "map_inplace with error callback 2" {
 test "mapi_inplace with error callback" {
   let arr = [1, 2, 3]
   let v = try? arr.mapi_inplace((i, x) => {
-      if x == 2 {
-        raise Failure("Error at 2")
-      }
-      x + i
-    })
+    if x == 2 {
+      raise Failure("Error at 2")
+    }
+    x + i
+  })
   inspect(
     v,
     content=(
