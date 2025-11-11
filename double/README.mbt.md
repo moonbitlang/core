@@ -29,23 +29,23 @@ Basic mathematical operations and rounding functions:
 ///|
 test "basic operations" {
   // Absolute value
-  inspect(@double.abs(-3.14), content="3.14")
+  inspect(Double::abs(-3.14), content="3.14")
 
   // Rounding functions
-  inspect(@double.floor(3.7), content="3")
-  inspect(@double.ceil(3.2), content="4")
-  inspect(@double.round(3.5), content="4")
-  inspect(@double.trunc(3.7), content="3")
+  inspect(Double::floor(3.7), content="3")
+  inspect(Double::ceil(3.2), content="4")
+  inspect(Double::round(3.5), content="4")
+  inspect(Double::trunc(3.7), content="3")
 
   // Pow function
-  inspect(2.0.pow(3), content="8")
+  inspect(Double::pow(2.0, 3), content="8")
 
   // Sign
-  inspect((-3.14).signum(), content="-1")
-  inspect(2.0.signum(), content="1")
+  inspect(Double::signum(-3.14), content="-1")
+  inspect(Double::signum(2.0), content="1")
 
   // Type conversion
-  inspect(@double.from_int(42), content="42")
+  inspect(Double::from_int(42), content="42")
 }
 ```
 
@@ -64,7 +64,7 @@ test "special value testing" {
 
   // Approximate equality
   let relative_tolerance = 1.e-9
-  inspect(@double.is_close(0.1 + 0.2, 0.3, relative_tolerance~), content="true")
+  inspect(Double::is_close(0.1 + 0.2, 0.3, relative_tolerance~), content="true")
 }
 ```
 
