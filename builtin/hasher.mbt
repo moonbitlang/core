@@ -280,12 +280,16 @@ pub fn Hasher::combine_double(self : Hasher, value : Double) -> Unit {
 ///
 /// ```moonbit
 ///   let hasher = Hasher::new(seed=0)
-///   hasher.combine_float(3.14)
+///   hasher.combine(3.14F)
 ///   inspect(hasher.finalize(), content="635116317") // Hash of the bits of 3.14
 /// ```
+#deprecated
 pub fn Hasher::combine_float(self : Hasher, value : Float) -> Unit {
   self.combine_uint(value.reinterpret_as_uint())
 }
+
+///|
+fn Float::reinterpret_as_uint(self : Float) -> UInt = "%f32.to_i32_reinterpret"
 
 ///|
 /// Combines a byte value into the hash state.

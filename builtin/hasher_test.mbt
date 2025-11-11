@@ -107,7 +107,7 @@ test "combine double" {
 test "combine float" {
   let hash = (v : Float) => {
     let hasher = Hasher::new(seed=0)
-    hasher.combine_float(v)
+    hasher.combine(v)
     hasher.finalize()
   }
   inspect(hash(0.0), content="148298089")

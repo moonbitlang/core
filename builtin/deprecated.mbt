@@ -149,41 +149,6 @@ pub fn Int64::upto(
 }
 
 ///|
-/// Creates an iterator that iterates over a range of Float with default step 1.0 .
-///
-/// # Arguments
-///
-/// * `start` - The starting value of the range (inclusive).
-/// * `end` - The ending value of the range (exclusive).
-/// * `inclusive` - Whether the ending value is inclusive (default false).
-///
-/// # Returns
-///
-/// Returns an iterator that iterates over the range of Float from `start` to `end - 1`.
-#deprecated("Use `..<` in for loop or `until` method instead", skip_current_package=false)
-#coverage.skip
-pub fn Float::upto(
-  self : Float,
-  end : Float,
-  inclusive? : Bool = false,
-) -> Iter[Float] {
-  yield_ => {
-    let mut i = self
-    while i < end || (inclusive && i == end) {
-      if yield_(i) is IterEnd {
-        break IterEnd
-      }
-      if i == end {
-        break IterContinue
-      }
-      i += 1
-    } else {
-      IterContinue
-    }
-  }
-}
-
-///|
 /// Creates an iterator that iterates over a range of Double with default step 1.0 .
 ///
 /// # Arguments
