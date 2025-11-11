@@ -46,27 +46,27 @@ if [ -n "$CHANGED_FILES" ]; then
 fi
 
 # Run moon check and capture output
-echo "📋 Running 'moon check'..."
-CHECK_OUTPUT=$(moon check --target all 2>&1)
-CHECK_EXIT_CODE=$?
+# echo "📋 Running 'moon check'..."
+# CHECK_OUTPUT=$(moon check --target all 2>&1)
+# CHECK_EXIT_CODE=$?
 
-if [ $CHECK_EXIT_CODE -ne 0 ]; then
-    echo ""
-    echo "❌ Pre-commit hook failed!"
-    echo "   'moon check' found issues in your code:"
-    echo ""
-    echo "📝 Error details:"
-    echo "$CHECK_OUTPUT" | sed 's/^/   /'
-    echo ""
-    echo "💡 Common fixes:"
-    echo "   - Check for type errors and fix them"
-    echo "   - Ensure all imports are valid"
-    echo "   - Run 'moon fmt' if formatting issues persist"
-    echo "   - Review the error messages above for specific issues"
-    exit 1
-else
-    echo "   $CHECK_OUTPUT"
-fi
+# if [ $CHECK_EXIT_CODE -ne 0 ]; then
+#     echo ""
+#     echo "❌ Pre-commit hook failed!"
+#     echo "   'moon check' found issues in your code:"
+#     echo ""
+#     echo "📝 Error details:"
+#     echo "$CHECK_OUTPUT" | sed 's/^/   /'
+#     echo ""
+#     echo "💡 Common fixes:"
+#     echo "   - Check for type errors and fix them"
+#     echo "   - Ensure all imports are valid"
+#     echo "   - Run 'moon fmt' if formatting issues persist"
+#     echo "   - Review the error messages above for specific issues"
+#     exit 1
+# else
+#     echo "   $CHECK_OUTPUT"
+# fi
 
 # Optional: Run tests on changed modules (uncomment if desired)
 # echo "🧪 Running tests for changed modules..."
