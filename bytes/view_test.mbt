@@ -441,13 +441,13 @@ test "View::to_float_le with different values" {
   // Test with value 0.0
   let bytes = b"\x00\x00\x00\x00"
   guard bytes is [u32le(bits), ..]
-  let f = bits.reinterpret_as_float()
+  let f = Float::reinterpret_from_uint(bits)
   inspect(f.to_double(), content="0")
 
   // Test with value -1.0
   let bytes2 = b"\x00\x00\x80\xBF"
   guard bytes2 is [u32le(bits2), ..]
-  let f2 = bits2.reinterpret_as_float()
+  let f2 = Float::reinterpret_from_uint(bits2)
   inspect(f2.to_double(), content="-1")
 }
 

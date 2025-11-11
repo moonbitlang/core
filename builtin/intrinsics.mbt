@@ -2297,89 +2297,19 @@ pub fn UInt::to_byte(self : UInt) -> Byte {
 pub fn UInt::to_double(self : UInt) -> Double = "%u32.to_f64"
 
 ///|
-/// Converts an integer to a 32-bit floating-point number. The conversion is
-/// exact for small integers, but may lose precision for large integers due to
-/// the limited precision of the floating-point format.
-///
-/// Parameters:
-///
-/// * `number` : The integer value to be converted to a floating-point number.
-///
-/// Returns a 32-bit floating-point number representing the same value as the
-/// input integer.
-///
-/// Example:
-///
-/// ```moonbit
-///   let n = 42
-///   let f = n.to_float()
-///   // Convert back to double for comparison since Float doesn't implement Show
-///   inspect(f.to_double(), content="42")
-/// ```
+#deprecated("Use `Float::from_int` instead", skip_current_package=false)
 pub fn Int::to_float(self : Int) -> Float = "%i32.to_f32"
 
 ///|
-/// Reinterprets the bits of a 32-bit integer as a single-precision
-/// floating-point number according to IEEE 754 standard. The bit pattern of the
-/// input is preserved, only the type interpretation changes.
-///
-/// Parameters:
-///
-/// * `self` : The 32-bit integer whose bits are to be reinterpreted as a
-/// single-precision floating-point number.
-///
-/// Returns a 32-bit floating-point number (`Float`) that has the same bit
-/// pattern as the input integer.
-///
-/// Example:
-///
-/// ```moonbit
-///   // 0x3F800000 represents 1.0 in IEEE 754 single-precision format
-///   let n = 1065353216 // 0x3F800000
-///   inspect(n.reinterpret_as_float().to_double(), content="1")
-/// ```
+#deprecated("Use `Float::reinterpret_from_int` instead", skip_current_package=false)
 pub fn Int::reinterpret_as_float(self : Int) -> Float = "%i32.to_f32_reinterpret"
 
 ///|
-/// Reinterprets the bits of an unsigned 32-bit integer as a single-precision
-/// floating-point number (IEEE 754). The bit pattern is preserved exactly, only
-/// the type interpretation changes.
-///
-/// Parameters:
-///
-/// * `self` : The unsigned 32-bit integer whose bits are to be reinterpreted as
-/// a single-precision floating-point number.
-///
-/// Returns a single-precision floating-point number (`Float`) whose bit pattern
-/// is identical to the input integer.
-///
-/// Example:
-///
-/// ```moonbit
-///   let n = 0x3F800000U // Bit pattern for 1.0f
-///   inspect(n.reinterpret_as_float().to_double(), content="1")
-/// ```
+#deprecated("Use `Float::reinterpret_from_uint` instead", skip_current_package=false)
 pub fn UInt::reinterpret_as_float(self : UInt) -> Float = "%i32.to_f32_reinterpret"
 
 ///|
-/// Converts a byte value to a 32-bit floating-point number (IEEE 754
-/// single-precision format). The byte value is treated as an unsigned 8-bit
-/// integer during the conversion.
-///
-/// Parameters:
-///
-/// * `byte` : The byte value to be converted to a float.
-///
-/// Returns a 32-bit floating-point number representing the byte value.
-///
-/// Example:
-///
-/// ```moonbit
-///   let b = b'\xFF' // 255 in decimal
-///   let f = b.to_float()
-///   // Convert to double for comparison since Float doesn't implement Show
-///   inspect(f.to_double(), content="255")
-/// ```
+#deprecated("Use `Float::from_byte` instead", skip_current_package=false)
 pub fn Byte::to_float(self : Byte) -> Float = "%byte.to_f32"
 
 ///|
@@ -2389,45 +2319,11 @@ pub fn Byte::to_double(self : Byte) -> Double {
 }
 
 ///|
-/// Converts a double-precision floating-point number to a single-precision
-/// floating-point number. The conversion may result in a loss of precision due
-/// to the reduced number of bits available in the single-precision format.
-///
-/// Parameters:
-///
-/// * `value` : The double-precision floating-point number to be converted.
-///
-/// Returns a single-precision floating-point number that represents the closest
-/// possible value to the input double-precision number.
-///
-/// Example:
-///
-/// ```moonbit
-///   let d = 3.14159265359
-///   inspect(d.to_float().to_double(), content="3.1415927410125732") // Note the loss of precision
-/// ```
+#deprecated("Use `Float::from_double` instead", skip_current_package=false)
 pub fn Double::to_float(self : Double) -> Float = "%f64.to_f32"
 
 ///|
-/// Converts an unsigned 32-bit integer to a single-precision floating-point
-/// number. Due to the limited precision of the 32-bit floating-point format,
-/// values above 16777216 (2^24) may lose precision during conversion.
-///
-/// Parameters:
-///
-/// * `self` : The unsigned 32-bit integer to be converted.
-///
-/// Returns a 32-bit floating-point number that represents the same numerical
-/// value as the input unsigned integer.
-///
-/// Example:
-///
-/// ```moonbit
-///   let n = 42U
-///   inspect(n.to_float().to_double(), content="42")
-///   let big = 16777216U // 2^24
-///   inspect(big.to_float().to_double(), content="16777216") // Last precisely representable integer
-/// ```
+#deprecated("Use `Float::from_uint` instead", skip_current_package=false)
 pub fn UInt::to_float(self : UInt) -> Float = "%u32.to_f32"
 
 ///|

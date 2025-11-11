@@ -45,7 +45,7 @@ test "scalbn comprehensive" {
 
   // Test with small numbers
   let small_number = 1.0e-20
-  let small_float = small_number.to_float()
+  let small_float = Float::from_double(small_number)
   inspect(@math.scalbnf(small_float, 1), content="1.999999936531045e-20")
 }
 

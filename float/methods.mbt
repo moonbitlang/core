@@ -263,7 +263,7 @@ pub fn Float::is_close(
 ///   inspect((-5.7 : Float).mod(2.0), content="-1.6999998092651367")
 /// ```
 pub impl Mod for Float with mod(self : Float, other : Float) -> Float {
-  (self.to_double() % other.to_double()).to_float()
+  Float::from_double(self.to_double() % other.to_double())
 }
 
 ///|
@@ -359,7 +359,7 @@ pub fn Float::until(
 /// Example:
 ///
 /// ```moonbit
-///   let f = 3.14.to_float()
+///   let f = Float::from_double(3.14)
 ///   inspect(f.to_double(), content="3.140000104904175")
 /// ```
 pub fn Float::to_double(self : Float) -> Double = "%f32.to_f64"
@@ -368,9 +368,6 @@ pub fn Float::to_double(self : Float) -> Double = "%f32.to_f64"
 pub impl ToJson for Float with to_json(self : Float) -> Json {
   Json::number(self.to_double())
 }
-
-///|
-pub fn Float::from_uint64(value : UInt64) -> Float = "%u64.to_f32"
 
 ///|
 /// Calculates the square root of a floating-point number. For non-negative
@@ -391,10 +388,10 @@ pub fn Float::from_uint64(value : UInt64) -> Float = "%u64.to_f32"
 /// Example:
 ///
 /// ```moonbit
-///   let x = 16.0.to_float()
+///   let x = Float::from_double(16.0)
 ///   let root = x.sqrt()
 ///   inspect(root.to_double(), content="4")
-///   let neg = (-4.0).to_float()
+///   let neg = Float::from_double(-4.0)
 ///   let neg_root = neg.sqrt()
 ///   inspect(neg_root.to_double(), content="NaN")
 /// ```
@@ -416,7 +413,7 @@ pub fn Float::sqrt(self : Float) -> Float = "%f32.sqrt"
 /// Example:
 ///
 /// ```moonbit
-///   let f = 1.0.to_float()
+///   let f = Float::from_double(1.0)
 ///   // IEEE 754 representation of 1.0 is 0x3F800000
 ///   inspect(f.reinterpret_as_int(), content="1065353216")
 /// ```
@@ -442,9 +439,9 @@ pub fn Float::reinterpret_as_int(self : Float) -> Int = "%f32.to_i32_reinterpret
 /// Example:
 ///
 /// ```moonbit
-///   let f = 3.14.to_float()
+///   let f = Float::from_double(3.14)
 ///   inspect((-f).to_double(), content="-3.140000104904175")
-///   let zero = 0.0.to_float()
+///   let zero = Float::from_double(0.0)
 ///   inspect((-zero).to_double(), content="0")
 /// ```
 pub impl Neg for Float with neg(self) = "%f32.neg"
@@ -464,8 +461,8 @@ pub impl Neg for Float with neg(self) = "%f32.neg"
 /// Example:
 ///
 /// ```moonbit
-///   let a = 3.14.to_float()
-///   let b = 2.86.to_float()
+///   let a = Float::from_double(3.14)
+///   let b = Float::from_double(2.86)
 ///   let sum = a + b
 ///   inspect(sum.to_double(), content="6")
 /// ```
@@ -485,8 +482,8 @@ pub impl Add for Float with add(self, other) = "%f32.add"
 /// Example:
 ///
 /// ```moonbit
-///   let x = 3.14.to_float()
-///   let y = 1.0.to_float()
+///   let x = Float::from_double(3.14)
+///   let y = Float::from_double(1.0)
 ///   let result = x - y
 ///   inspect(result.to_double(), content="2.140000104904175")
 /// ```
@@ -508,8 +505,8 @@ pub impl Sub for Float with sub(self, other) = "%f32.sub"
 /// Example:
 ///
 /// ```moonbit
-///   let x = Int::to_float(2)
-///   let y = Int::to_float(3)
+///   let x = Float::from_int(2)
+///   let y = Float::from_int(3)
 ///   let z = x * y
 ///   inspect(z.to_double(), content="6")
 /// ```
@@ -534,11 +531,11 @@ pub impl Mul for Float with mul(self, other) = "%f32.mul"
 /// Example:
 ///
 /// ```moonbit
-///   let a = 6.0.to_float()
-///   let b = 2.0.to_float()
+///   let a = Float::from_double(6.0)
+///   let b = Float::from_double(2.0)
 ///   let result = (a / b).to_double()
 ///   inspect(result, content="3")
-///   inspect((0.0.to_float() / 0.0.to_float()).to_double(), content="NaN")
+///   inspect((Float::from_double(0.0) / Float::from_double(0.0)).to_double(), content="NaN")
 /// ```
 pub impl Div for Float with div(self, other) = "%f32.div"
 
@@ -582,9 +579,9 @@ pub impl Eq for Float with equal(self : Float, other : Float) -> Bool = "%f32.eq
 /// Example:
 ///
 /// ```moonbit
-///   let x = 1.0.to_float()
-///   let y = 2.0.to_float()
-///   let nan = (0.0 / 0.0).to_float()
+///   let x = Float::from_double(1.0)
+///   let y = Float::from_double(2.0)
+///   let nan = Float::from_double(0.0 / 0.0)
 ///   inspect(x != y, content="true")
 ///   inspect(x != x, content="false")
 ///   inspect(nan != nan, content="true") // NaN is not equal to itself
@@ -648,3 +645,215 @@ pub impl Compare for Float with op_ge(x, y) = "%f32.ge"
 ///   inspect(x.reinterpret_as_uint(), content="1065353216") // Decimal representation of 0x3F800000
 /// ```
 pub fn Float::reinterpret_as_uint(self : Float) -> UInt = "%f32.to_i32_reinterpret"
+
+///|
+/// Reinterprets the bits of a 32-bit integer as a single-precision
+/// floating-point number according to IEEE 754 standard. The bit pattern of the
+/// input is preserved, only the type interpretation changes.
+///
+/// Parameters:
+///
+/// * `self` : The 32-bit integer whose bits are to be reinterpreted as a
+/// single-precision floating-point number.
+///
+/// Returns a 32-bit floating-point number (`Float`) that has the same bit
+/// pattern as the input integer.
+///
+/// Example:
+///
+/// ```moonbit
+/// // 0x3F800000 represents 1.0 in IEEE 754 single-precision format
+/// let n = 1065353216 // 0x3F800000
+/// inspect(Float::reinterpret_from_int(n), content="1") 
+/// ```
+// TODO(upstream): no test entry found
+pub fn Float::reinterpret_from_int(self : Int) -> Float = "%i32.to_f32_reinterpret"
+
+///|
+/// Reinterprets the bits of an unsigned 32-bit integer as a single-precision
+/// floating-point number (IEEE 754). The bit pattern is preserved exactly, only
+/// the type interpretation changes.
+///
+/// Parameters:
+///
+/// * `self` : The unsigned 32-bit integer whose bits are to be reinterpreted as
+/// a single-precision floating-point number.
+///
+/// Returns a single-precision floating-point number (`Float`) whose bit pattern
+/// is identical to the input integer.
+///
+/// Example:
+///
+/// ```moonbit
+/// let n = 0x3F800000U // Bit pattern for 1.0f
+/// inspect(Float::reinterpret_from_uint(n), content="1")
+/// ```
+// TODO(upstream): no test entry found
+pub fn Float::reinterpret_from_uint(self : UInt) -> Float = "%i32.to_f32_reinterpret"
+
+///|
+test "Float::reinterpret" {
+  inspect(Float::reinterpret_from_int(1065353216), content="1")
+  inspect(Float::reinterpret_from_uint(0x3F800000), content="1")
+}
+
+///|
+/// Converts an integer to a 32-bit floating-point number. The conversion is
+/// exact for small integers, but may lose precision for large integers due to
+/// the limited precision of the floating-point format.
+///
+/// Parameters:
+///
+/// * `number` : The integer value to be converted to a floating-point number.
+///
+/// Returns a 32-bit floating-point number representing the same value as the
+/// input integer.
+///
+/// Example:
+///
+/// ```moonbit
+///   let n = 42
+///   let f = Float::from_int(n)
+///   // Convert back to double for comparison since Float doesn't implement Show
+///   inspect(f.to_double(), content="42")
+/// ```
+pub fn Float::from_int(self : Int) -> Float = "%i32.to_f32"
+
+///|
+/// Converts a byte value to a 32-bit floating-point number (IEEE 754
+/// single-precision format). The byte value is treated as an unsigned 8-bit
+/// integer during the conversion.
+///
+/// Parameters:
+///
+/// * `byte` : The byte value to be converted to a float.
+///
+/// Returns a 32-bit floating-point number representing the byte value.
+///
+/// Example:
+///
+/// ```moonbit
+///   let b = b'\xFF' // 255 in decimal
+///   let f = Float::from_byte(b)
+///   // Convert to double for comparison since Float doesn't implement Show
+///   inspect(f.to_double(), content="255")
+/// ```
+pub fn Float::from_byte(self : Byte) -> Float = "%byte.to_f32"
+
+///|
+/// Converts a double-precision floating-point number to a single-precision
+/// floating-point number. The conversion may result in a loss of precision due
+/// to the reduced number of bits available in the single-precision format.
+///
+/// Parameters:
+///
+/// * `value` : The double-precision floating-point number to be converted.
+///
+/// Returns a single-precision floating-point number that represents the closest
+/// possible value to the input double-precision number.
+///
+/// Example:
+///
+/// ```moonbit
+///   let d = 3.14159265359
+///   inspect(Float::from_double(d).to_double(), content="3.1415927410125732") // Note the loss of precision
+/// ```
+pub fn Float::from_double(self : Double) -> Float = "%f64.to_f32"
+
+///|
+/// Converts an unsigned 32-bit integer to a single-precision floating-point
+/// number. Due to the limited precision of the 32-bit floating-point format,
+/// values above 16777216 (2^24) may lose precision during conversion.
+///
+/// Parameters:
+///
+/// * `self` : The unsigned 32-bit integer to be converted.
+///
+/// Returns a 32-bit floating-point number that represents the same numerical
+/// value as the input unsigned integer.
+///
+/// Example:
+///
+/// ```moonbit
+///   let n = 42U
+///   inspect(Float::from_uint(n).to_double(), content="42")
+///   let big = 16777216U // 2^24
+///   inspect(Float::from_uint(big).to_double(), content="16777216") // Last precisely representable integer
+/// ```
+pub fn Float::from_uint(self : UInt) -> Float = "%u32.to_f32"
+
+///|
+/// Converts an unsigned 64-bit integer to a 32-bit floating-point number. Due to
+/// floating-point precision limitations, the conversion may lose precision if
+/// the integer value is too large to be represented exactly as a float.
+///
+/// Parameters:
+///
+/// * `self` : The unsigned 64-bit integer to be converted.
+///
+/// Returns a 32-bit floating-point number that represents the input value. If
+/// the input value is too large to be represented exactly, the result will be
+/// rounded to the nearest representable float value.
+///
+/// Example:
+///
+/// ```moonbit
+///   let n = 42UL
+///   inspect(Float::from_uint64(n).to_double(), content="42")
+///   let big = 18446744073709551615UL // UInt64::max_value
+///   inspect(Float::from_uint64(big).to_double(), content="18446744073709552000")
+/// ```
+#cfg(not(target="js"))
+pub fn Float::from_uint64(self : UInt64) -> Float = "%u64.to_f32"
+
+///|
+#cfg(target="js")
+pub fn Float::from_uint64(self : UInt64) -> Float {
+  Float::from_double(self.to_double())
+}
+
+///|
+test "Float::from_uint64" {
+  let n = 42UL
+  inspect(Float::from_uint64(n).to_double(), content="42")
+  let big = 18446744073709551615UL // UInt64::max_value
+  inspect(Float::from_uint64(big).to_double(), content="18446744073709552000")
+}
+
+///|
+/// Converts a 64-bit integer to a 32-bit floating-point number. The conversion
+/// may result in loss of precision due to the limited precision of the 32-bit
+/// floating-point format.
+///
+/// Parameters:
+///
+/// * `self` : The 64-bit integer value to be converted.
+///
+/// Returns a 32-bit floating-point number that represents the input integer
+/// value. Note that for values outside the range of representable 32-bit
+/// floating-point numbers, the result will be rounded to the nearest
+/// representable value.
+///
+/// Example:
+///
+/// ```moonbit
+///   let n = 42L
+///   let f = Float::from_int64(n)
+///   // Convert to double for comparison since Float doesn't implement Show
+///   inspect(f.to_double(), content="42")
+/// ```
+#cfg(not(target="js"))
+pub fn Float::from_int64(self : Int64) -> Float = "%i64.to_f32"
+
+///|
+#cfg(target="js")
+pub fn Float::from_int64(self : Int64) -> Float {
+  Float::from_double(self.to_double())
+}
+
+///|
+test "Float::from_int64" {
+  let n = 42L
+  let f = Float::from_int64(n)
+  inspect(f.to_double(), content="42")
+}

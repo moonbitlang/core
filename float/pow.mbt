@@ -32,5 +32,5 @@
 /// ```
 #as_free_fn
 pub fn Float::pow(self : Float, other : Float) -> Float {
-  self.to_double().pow(other.to_double()).to_float()
+  Float::from_double(self.to_double().pow(other.to_double()))
 }

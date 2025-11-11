@@ -213,7 +213,7 @@ pub fn powf(base : Float, exponent : Float) -> Float {
     v = t * ivln2_l - w * ivln2
     t1 = u + v
     i_s = t1.reinterpret_as_int()
-    t1 = (i_s & 0xfffff000).reinterpret_as_float()
+    t1 = Float::reinterpret_from_int(i_s & 0xfffff000)
     t2 = v - (t1 - u)
   } else {
     let mut s2 : Float = 0
@@ -243,7 +243,7 @@ pub fn powf(base : Float, exponent : Float) -> Float {
       n += 1
       ix -= 0x00800000
     }
-    ax = ix.reinterpret_as_float()
+    ax = Float::reinterpret_from_int(ix)
 
     // compute s = s_h+s_l = (x-1)/(x+1) or (x-1.5)/(x+1.5)
     u = ax - bp[k]
@@ -251,12 +251,12 @@ pub fn powf(base : Float, exponent : Float) -> Float {
     s = u * v
     s_h = s
     i_s = s_h.reinterpret_as_int()
-    s_h = (i_s & 0xfffff000).reinterpret_as_float()
+    s_h = Float::reinterpret_from_int(i_s & 0xfffff000)
     // t_h=ax+bp[k] High
     i_s = (((ix.reinterpret_as_uint() >> 1) & 0xfffff000) | 0x20000000).reinterpret_as_int()
-    t_h = (i_s.reinterpret_as_uint() +
-    0x00400000 +
-    (k.reinterpret_as_uint() << 21)).reinterpret_as_float()
+    t_h = Float::reinterpret_from_uint(
+      i_s.reinterpret_as_uint() + 0x00400000 + (k.reinterpret_as_uint() << 21),
+    )
     t_l = ax - (t_h - bp[k])
     s_l = v * (u - s_h * t_h - s_h * t_l)
     // compute log(ax) */
@@ -266,7 +266,7 @@ pub fn powf(base : Float, exponent : Float) -> Float {
     s2 = s_h * s_h
     t_h = (3.0 : Float) + s2 + r
     i_s = t_h.reinterpret_as_int()
-    t_h = (i_s & 0xfffff000).reinterpret_as_float()
+    t_h = Float::reinterpret_from_int(i_s & 0xfffff000)
     t_l = r - (t_h - 3.0 - s2)
     // u+v = s*(1+...)
     u = s_h * t_h
@@ -274,21 +274,21 @@ pub fn powf(base : Float, exponent : Float) -> Float {
     // 2/(3log2)*(s+...)
     p_h = u + v
     i_s = p_h.reinterpret_as_int()
-    p_h = (i_s & 0xfffff000).reinterpret_as_float()
+    p_h = Float::reinterpret_from_int(i_s & 0xfffff000)
     p_l = v - (p_h - u)
     z_h = cp_h * p_h // cp_h+cp_l = 2/(3*log2)
     z_l = cp_l * p_h + p_l * cp + dp_l[k]
     // log2(ax) = (s+..)*2/(3*log2) = n + dp_h + z_h + z_l
-    t = n.to_float()
+    t = Float::from_int(n)
     t1 = z_h + z_l + dp_h[k] + t
     i_s = t1.reinterpret_as_int()
-    t1 = (i_s & 0xfffff000).reinterpret_as_float()
+    t1 = Float::reinterpret_from_int(i_s & 0xfffff000)
     t2 = z_l - (t1 - t - dp_h[k] - z_h)
   }
 
   // split up y into y1+y2 and compute (y1+y2)*(t1+t2)
   i_s = y.reinterpret_as_int()
-  y1 = (i_s & 0xfffff000).reinterpret_as_float()
+  y1 = Float::reinterpret_from_int(i_s & 0xfffff000)
   p_l = (y - y1) * t1 + y * t2
   p_h = y1 * t1
   z = p_l + p_h
@@ -322,7 +322,7 @@ pub fn powf(base : Float, exponent : Float) -> Float {
     // if |z| > 0.5, set n = [z+0.5]
     n = j + (0x00800000 >> (k + 1))
     k = ((n & 0x7fffffff) >> 23) - 0x7f // new k for n
-    t = (n & (0x007fffff >> k).lnot()).reinterpret_as_float()
+    t = Float::reinterpret_from_int(n & (0x007fffff >> k).lnot())
     n = ((n & 0x007fffff) | 0x00800000) >> (23 - k)
     if j < 0 {
       n = -n
@@ -331,7 +331,7 @@ pub fn powf(base : Float, exponent : Float) -> Float {
   }
   t = p_l + p_h
   i_s = t.reinterpret_as_int()
-  t = (i_s & 0xffff8000).reinterpret_as_float()
+  t = Float::reinterpret_from_int(i_s & 0xffff8000)
   u = t * lg2_h
   v = (p_l - (t - p_h)) * lg2 + t * lg2_l
   z = u + v
@@ -346,7 +346,7 @@ pub fn powf(base : Float, exponent : Float) -> Float {
     // subnormal output
     z = scalbnf(z, n)
   } else {
-    z = j.reinterpret_as_float()
+    z = Float::reinterpret_from_int(j)
   }
   sn * z
 }

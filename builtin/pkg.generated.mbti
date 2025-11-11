@@ -410,6 +410,7 @@ fn Byte::lsl(Byte, Int) -> Byte
 fn Byte::lsr(Byte, Int) -> Byte
 fn Byte::to_char(Byte) -> Char
 fn Byte::to_double(Byte) -> Double
+#deprecated
 fn Byte::to_float(Byte) -> Float
 fn Byte::to_hex(Byte) -> String
 fn Byte::to_int(Byte) -> Int
@@ -465,6 +466,7 @@ fn Int::max(Int, Int) -> Int
 fn Int::min(Int, Int) -> Int
 fn Int::next_power_of_two(Int) -> Int
 fn Int::popcnt(Int) -> Int
+#deprecated
 fn Int::reinterpret_as_float(Int) -> Float
 fn Int::reinterpret_as_uint(Int) -> UInt
 #deprecated
@@ -474,6 +476,7 @@ fn Int::shr(Int, Int) -> Int
 fn Int::to_byte(Int) -> Byte
 fn Int::to_char(Int) -> Char?
 fn Int::to_double(Int) -> Double
+#deprecated
 fn Int::to_float(Int) -> Float
 fn Int::to_int16(Int) -> Int16
 fn Int::to_int64(Int) -> Int64
@@ -510,6 +513,7 @@ fn Int64::shl(Int64, Int) -> Int64
 fn Int64::shr(Int64, Int) -> Int64
 fn Int64::to_byte(Int64) -> Byte
 fn Int64::to_double(Int64) -> Double
+#deprecated
 fn Int64::to_float(Int64) -> Float
 fn Int64::to_int(Int64) -> Int
 fn Int64::to_int16(Int64) -> Int16
@@ -530,6 +534,7 @@ fn UInt::lsl(UInt, Int) -> UInt
 fn UInt::lsr(UInt, Int) -> UInt
 fn UInt::op_neq(UInt, UInt) -> Bool
 fn UInt::popcnt(UInt) -> Int
+#deprecated
 fn UInt::reinterpret_as_float(UInt) -> Float
 fn UInt::reinterpret_as_int(UInt) -> Int
 #deprecated
@@ -538,6 +543,7 @@ fn UInt::shl(UInt, Int) -> UInt
 fn UInt::shr(UInt, Int) -> UInt
 fn UInt::to_byte(UInt) -> Byte
 fn UInt::to_double(UInt) -> Double
+#deprecated
 fn UInt::to_float(UInt) -> Float
 #deprecated
 fn UInt::to_int(UInt) -> Int
@@ -570,6 +576,7 @@ fn UInt64::shl(UInt64, Int) -> UInt64
 fn UInt64::shr(UInt64, Int) -> UInt64
 fn UInt64::to_byte(UInt64) -> Byte
 fn UInt64::to_double(UInt64) -> Double
+#deprecated
 fn UInt64::to_float(UInt64) -> Float
 fn UInt64::to_int(UInt64) -> Int
 #deprecated
@@ -591,6 +598,7 @@ fn Double::reinterpret_as_int64(Double) -> Int64
 fn Double::reinterpret_as_u64(Double) -> UInt64
 fn Double::reinterpret_as_uint64(Double) -> UInt64
 fn Double::sqrt(Double) -> Double
+#deprecated
 fn Double::to_float(Double) -> Float
 fn Double::to_int(Double) -> Int
 fn Double::to_int64(Double) -> Int64
