@@ -107,6 +107,7 @@ fn[T, U] Array::map(Self[T], (T) -> U raise?) -> Self[U] raise?
 fn[T] Array::map_inplace(Self[T], (T) -> T raise?) -> Unit raise?
 fn[T, U] Array::mapi(Self[T], (Int, T) -> U raise?) -> Self[U] raise?
 fn[T] Array::mapi_inplace(Self[T], (Int, T) -> T raise?) -> Unit raise?
+fn[T] Array::mut_sub(Self[T], start? : Int, end? : Int) -> MutArrayView[T]
 fn[T] Array::new(capacity? : Int) -> Self[T]
 fn[T] Array::pop(Self[T]) -> T?
 fn[T] Array::push(Self[T], T) -> Unit
@@ -368,6 +369,18 @@ impl[K, V] Default for Map[K, V]
 impl[K : Hash + Eq, V : Eq] Eq for Map[K, V]
 impl[K : Show, V : Show] Show for Map[K, V]
 impl[K : Show, V : ToJson] ToJson for Map[K, V]
+
+type MutArrayView[T]
+#alias("_[_]")
+fn[T] MutArrayView::at(Self[T], Int) -> T
+fn[T] MutArrayView::length(Self[T]) -> Int
+fn[T] MutArrayView::mut_sub(Self[T], start? : Int, end? : Int) -> Self[T]
+#alias("_[_]=_")
+fn[T] MutArrayView::set(Self[T], Int, T) -> Unit
+#alias("_[_:_]")
+fn[T] MutArrayView::sub(Self[T], start? : Int, end? : Int) -> ArrayView[T]
+fn[T] MutArrayView::unsafe_get(Self[T], Int) -> T
+fn[T] MutArrayView::unsafe_set(Self[T], Int, T) -> Unit
 
 pub(all) type SourceLoc
 fn SourceLoc::to_string(Self) -> String
@@ -652,6 +665,7 @@ fn[T] FixedArray::iter(Self[T]) -> Iter[T]
 fn[T] FixedArray::iter2(Self[T]) -> Iter2[Int, T]
 fn[T] FixedArray::length(Self[T]) -> Int
 fn[T] FixedArray::make(Int, T) -> Self[T]
+fn[T] FixedArray::mut_sub(Self[T], start? : Int, end? : Int) -> MutArrayView[T]
 #alias("_[_]=_")
 fn[T] FixedArray::set(Self[T], Int, T) -> Unit
 fn FixedArray::set_utf16be_char(Self[Byte], Int, Char) -> Int
