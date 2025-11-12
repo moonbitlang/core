@@ -16,20 +16,7 @@
 const ALPHABET : String = "0123456789abcdefghijklmnopqrstuvwxyz"
 
 ///|
-// for backends other than JS and WASM-GC, FixedArray[UInt16] and String
-// are the same type, so we can use the identity function.
-#cfg(not(any(target="js", target="wasm-gc")))
-fn unsafe_fixedarray_to_string(buffer : FixedArray[UInt16]) -> String = "%identity"
-
-///|
-#cfg(any(target="js", target="wasm-gc"))
-fn unsafe_fixedarray_to_string(buffer : FixedArray[UInt16]) -> String {
-  let sb = StringBuilder::new(size_hint=buffer.length() * 2)
-  for u in buffer {
-    sb.write_char(u.to_int().unsafe_to_char())
-  }
-  sb.to_string()
-}
+fn unsafe_fixedarray_uint16_to_string(buffer : FixedArray[UInt16]) -> String = "%string.unsafe_from_uint16_fixedarray"
 
 //==========================================
 // Int and UInt (Non JS)
@@ -298,7 +285,7 @@ pub fn Int::to_string(self : Int, radix? : Int = 10) -> String {
   if is_negative {
     buffer.unsafe_set(0, 0x002D)
   }
-  unsafe_fixedarray_to_string(buffer)
+  unsafe_fixedarray_uint16_to_string(buffer)
 }
 
 ///|
@@ -336,7 +323,7 @@ pub fn UInt::to_string(self : UInt, radix? : Int = 10) -> String {
       buffer
     }
   }
-  unsafe_fixedarray_to_string(buffer)
+  unsafe_fixedarray_uint16_to_string(buffer)
 }
 
 //==========================================
@@ -655,7 +642,7 @@ pub fn Int64::to_string(self : Int64, radix? : Int = 10) -> String {
   if is_negative {
     buffer.unsafe_set(0, 0x002D)
   }
-  unsafe_fixedarray_to_string(buffer)
+  unsafe_fixedarray_uint16_to_string(buffer)
 }
 
 ///|
@@ -692,7 +679,7 @@ pub fn UInt64::to_string(self : UInt64, radix? : Int = 10) -> String {
       buffer
     }
   }
-  unsafe_fixedarray_to_string(buffer)
+  unsafe_fixedarray_uint16_to_string(buffer)
 }
 
 //==========================================
