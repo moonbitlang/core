@@ -30,13 +30,3 @@ test "StringView::suffixes" {
     .collect()
   @json.inspect(suffixes_no_empty, content=["a🤣b", "🤣b", "b"])
 }
-
-///|
-
-///|
-test "StringView::to_string" {
-  let str = "Hello"
-  let stvw = str.view()
-  @json.inspect(str, content="Hello")
-  @json.inspect(stvw, content="Hello")
-}

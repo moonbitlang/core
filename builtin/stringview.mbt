@@ -173,12 +173,8 @@ pub impl Show for StringView with output(self, logger) {
 ///   inspect(view.to_string(), content="Hello")
 /// ```
 pub impl Show for StringView with to_string(self) {
-  if self.length() == self.str().length() {
-    // avoid memory allocation
-    self.str()
-  } else {
-    self.str().unsafe_substring(start=self.start(), end=self.end())
-  }
+  // when `self == self.str()`, `String::unsafe_substring` would return original string, which doesn't create a new copy.
+  self.str().unsafe_substring(start=self.start(), end=self.end())
 }
 
 ///|
