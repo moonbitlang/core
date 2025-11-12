@@ -3,8 +3,7 @@
     "moonbitlang/core/builtin",
     "moonbitlang/core/int64",
     "moonbitlang/core/uint64",
-    "moonbitlang/core/double/internal/ryu",
-     "moonbitlang/core/array"
+    "moonbitlang/core/double/internal/ryu"
   ],
   "test-import": ["moonbitlang/core/bytes"],
   "targets": {
