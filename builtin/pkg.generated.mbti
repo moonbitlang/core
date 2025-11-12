@@ -638,6 +638,8 @@ fn[T] Option::unwrap_or_else(T?, () -> T raise?) -> T raise?
 #alias(or_error, deprecated)
 fn[T, Err : Error] Option::unwrap_or_error(T?, Err) -> T raise Err
 
+fn[T] FixedArray::all(Self[T], (T) -> Bool raise?) -> Bool raise?
+fn[T] FixedArray::any(Self[T], (T) -> Bool raise?) -> Bool raise?
 #alias("_[_]")
 fn[T] FixedArray::at(Self[T], Int) -> T
 fn[T : Compare] FixedArray::binary_search(Self[T], T) -> Result[Int, Int]
@@ -645,21 +647,81 @@ fn[T] FixedArray::binary_search_by(Self[T], (T) -> Int raise?) -> Result[Int, In
 fn FixedArray::blit_from_bytes(Self[Byte], Int, Bytes, Int, Int) -> Unit
 fn FixedArray::blit_from_string(Self[Byte], Int, String, Int, Int) -> Unit
 fn[A] FixedArray::blit_to(Self[A], Self[A], len~ : Int, src_offset? : Int, dst_offset? : Int) -> Unit
+fn[T : Eq] FixedArray::contains(Self[T], T) -> Bool
+fn[T] FixedArray::each(Self[T], (T) -> Unit raise?) -> Unit raise?
+fn[T] FixedArray::eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?
+fn[T : Eq] FixedArray::ends_with(Self[T], Self[T]) -> Bool
 fn[T] FixedArray::fill(Self[T], T, start? : Int, end? : Int) -> Unit
+fn[A, B] FixedArray::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
+fn[A, B] FixedArray::foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
+fn[T] FixedArray::from_array(ArrayView[T]) -> Self[T]
+fn[T] FixedArray::from_iter(Iter[T]) -> Self[T]
+fn[T] FixedArray::from_iterator(Iterator[T]) -> Self[T]
 fn[T] FixedArray::get(Self[T], Int) -> T?
 fn[T] FixedArray::is_empty(Self[T]) -> Bool
 fn[T] FixedArray::iter(Self[T]) -> Iter[T]
 fn[T] FixedArray::iter2(Self[T]) -> Iter2[Int, T]
+fn[X] FixedArray::iterator(Self[X]) -> Iterator[X]
+fn FixedArray::join(Self[String], StringView) -> String
+fn[A] FixedArray::last(Self[A]) -> A?
 fn[T] FixedArray::length(Self[T]) -> Int
 fn[T] FixedArray::make(Int, T) -> Self[T]
+fn[T] FixedArray::makei(Int, (Int) -> T raise?) -> Self[T] raise?
+fn[T, U] FixedArray::map(Self[T], (T) -> U raise?) -> Self[U] raise?
+fn[T, U] FixedArray::mapi(Self[T], (Int, T) -> U raise?) -> Self[U] raise?
+fn[T] FixedArray::rev(Self[T]) -> Self[T]
+fn[T] FixedArray::rev_each(Self[T], (T) -> Unit raise?) -> Unit raise?
+fn[T] FixedArray::rev_eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?
+fn[A, B] FixedArray::rev_fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
+fn[A, B] FixedArray::rev_foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
+fn[T] FixedArray::rev_inplace(Self[T]) -> Unit
+fn[T : Eq] FixedArray::search(Self[T], T) -> Int?
 #alias("_[_]=_")
 fn[T] FixedArray::set(Self[T], Int, T) -> Unit
 fn FixedArray::set_utf16be_char(Self[Byte], Int, Char) -> Int
 fn FixedArray::set_utf16le_char(Self[Byte], Int, Char) -> Int
 fn FixedArray::set_utf8_char(Self[Byte], Int, Char) -> Int
+fn[T : Eq] FixedArray::starts_with(Self[T], Self[T]) -> Bool
 #alias("_[_:_]")
 fn[T] FixedArray::sub(Self[T], start? : Int, end? : Int) -> ArrayView[T]
+fn[T] FixedArray::swap(Self[T], Int, Int) -> Unit
 fn[A] FixedArray::unsafe_blit(Self[A], Int, Self[A], Int, Int) -> Unit
+
+fn[T] ReadOnlyArray::all(Self[T], (T) -> Bool raise?) -> Bool raise?
+fn[T] ReadOnlyArray::any(Self[T], (T) -> Bool raise?) -> Bool raise?
+#alias("_[_]")
+fn[T] ReadOnlyArray::at(Self[T], Int) -> T
+fn[T : Compare] ReadOnlyArray::binary_search(Self[T], T) -> Result[Int, Int]
+fn[T] ReadOnlyArray::binary_search_by(Self[T], (T) -> Int raise?) -> Result[Int, Int] raise?
+fn[T : Eq] ReadOnlyArray::contains(Self[T], T) -> Bool
+fn[T] ReadOnlyArray::each(Self[T], (T) -> Unit raise?) -> Unit raise?
+fn[T] ReadOnlyArray::eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?
+fn[T : Eq] ReadOnlyArray::ends_with(Self[T], Self[T]) -> Bool
+fn[A, B] ReadOnlyArray::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
+fn[A, B] ReadOnlyArray::foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
+fn[T] ReadOnlyArray::from_array(ArrayView[T]) -> Self[T]
+fn[T] ReadOnlyArray::from_iter(Iter[T]) -> Self[T]
+fn[T] ReadOnlyArray::from_iterator(Iterator[T]) -> Self[T]
+fn[T] ReadOnlyArray::get(Self[T], Int) -> T?
+fn[T] ReadOnlyArray::is_empty(Self[T]) -> Bool
+fn[T] ReadOnlyArray::iter(Self[T]) -> Iter[T]
+fn[T] ReadOnlyArray::iter2(Self[T]) -> Iter2[Int, T]
+fn[T] ReadOnlyArray::iterator(Self[T]) -> Iterator[T]
+fn ReadOnlyArray::join(Self[String], StringView) -> String
+fn[T] ReadOnlyArray::last(Self[T]) -> T?
+fn[T] ReadOnlyArray::length(Self[T]) -> Int
+fn[T] ReadOnlyArray::makei(Int, (Int) -> T raise?) -> Self[T] raise?
+fn[T, U] ReadOnlyArray::map(Self[T], (T) -> U raise?) -> Self[U] raise?
+fn[T, U] ReadOnlyArray::mapi(Self[T], (Int, T) -> U raise?) -> Self[U] raise?
+fn[T] ReadOnlyArray::rev(Self[T]) -> Self[T]
+fn[T] ReadOnlyArray::rev_each(Self[T], (T) -> Unit raise?) -> Unit raise?
+fn[T] ReadOnlyArray::rev_eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?
+fn[A, B] ReadOnlyArray::rev_fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
+fn[A, B] ReadOnlyArray::rev_foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
+fn[T : Eq] ReadOnlyArray::search(Self[T], T) -> Int?
+fn[T : Eq] ReadOnlyArray::starts_with(Self[T], Self[T]) -> Bool
+#alias("_[_:_]")
+fn[T] ReadOnlyArray::sub(Self[T], start? : Int, end? : Int) -> ArrayView[T]
 
 #alias("_[_]")
 fn Bytes::at(Bytes, Int) -> Byte
@@ -706,6 +768,7 @@ impl Add for UInt
 impl Add for UInt64
 impl Add for Double
 impl Add for String
+impl[T] Add for FixedArray[T]
 impl Add for StringView
 
 pub(open) trait BitAnd {
@@ -753,6 +816,8 @@ impl Compare for UInt
 impl Compare for UInt64
 impl Compare for Double
 impl[X : Compare] Compare for X?
+impl[T : Compare] Compare for FixedArray[T]
+impl[T : Compare] Compare for ReadOnlyArray[T]
 impl Compare for Bytes
 impl[T0 : Compare, T1 : Compare] Compare for (T0, T1)
 impl[T0 : Compare, T1 : Compare, T2 : Compare] Compare for (T0, T1, T2)
@@ -783,6 +848,7 @@ impl Default for UInt64
 impl Default for Double
 impl[X] Default for X?
 impl[X] Default for FixedArray[X]
+impl[T] Default for ReadOnlyArray[T]
 impl Default for StringView
 
 pub(open) trait Div {
@@ -814,6 +880,8 @@ impl Eq for Double
 impl Eq for String
 impl[X : Eq] Eq for X?
 impl[T : Eq, E : Eq] Eq for Result[T, E]
+impl[T : Eq] Eq for FixedArray[T]
+impl[T : Eq] Eq for ReadOnlyArray[T]
 impl Eq for Bytes
 impl[T0 : Eq, T1 : Eq] Eq for (T0, T1)
 impl[T0 : Eq, T1 : Eq, T2 : Eq] Eq for (T0, T1, T2)
@@ -844,6 +912,7 @@ impl Hash for UInt64
 impl Hash for String
 impl[X : Hash] Hash for X?
 impl[T : Hash, E : Hash] Hash for Result[T, E]
+impl[T : Hash] Hash for FixedArray[T]
 impl[A : Hash, B : Hash] Hash for (A, B)
 impl[A : Hash, B : Hash, C : Hash] Hash for (A, B, C)
 impl[A : Hash, B : Hash, C : Hash, D : Hash] Hash for (A, B, C, D)
@@ -923,6 +992,7 @@ impl Show for String
 impl[X : Show] Show for X?
 impl[T : Show, E : Show] Show for Result[T, E]
 impl[X : Show] Show for FixedArray[X]
+impl[T : Show] Show for ReadOnlyArray[T]
 impl[A : Show, B : Show] Show for (A, B)
 impl[A : Show, B : Show, C : Show] Show for (A, B, C)
 impl[A : Show, B : Show, C : Show, D : Show] Show for (A, B, C, D)
@@ -980,6 +1050,7 @@ impl ToJson for String
 impl[T : ToJson] ToJson for T?
 impl[Ok : ToJson, Err : ToJson] ToJson for Result[Ok, Err]
 impl[X : ToJson] ToJson for FixedArray[X]
+impl[T : ToJson] ToJson for ReadOnlyArray[T]
 impl[A : ToJson, B : ToJson] ToJson for (A, B)
 impl[A : ToJson, B : ToJson, C : ToJson] ToJson for (A, B, C)
 impl[A : ToJson, B : ToJson, C : ToJson, D : ToJson] ToJson for (A, B, C, D)
