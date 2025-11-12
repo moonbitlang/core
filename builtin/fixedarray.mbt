@@ -1503,7 +1503,7 @@ pub fn FixedArray::join(
     size_hint += separator.length() + self[i].length()
   }
   let string = StringBuilder::new(size_hint~)
-  if separator is "" {
+  if separator.length() == 0 {
     for i in 0..<len {
       string.write_string(self[i])
     }
