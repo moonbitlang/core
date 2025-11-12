@@ -13,9 +13,11 @@
 // limitations under the License.
 
 ///|
+#cfg(not(target="js"))
 const ALPHABET : String = "0123456789abcdefghijklmnopqrstuvwxyz"
 
 ///|
+#cfg(not(target="js"))
 fn unsafe_fixedarray_uint16_to_string(buffer : FixedArray[UInt16]) -> String = "%string.unsafe_from_uint16_fixedarray"
 
 //==========================================
@@ -364,6 +366,7 @@ extern "js" fn uint_to_string_js(i : UInt, radix : Int) -> String =
 
 ///|
 /// Calculates the number of decimal digits in a u64 value
+#cfg(not(target="js"))
 fn dec_count64(value : UInt64) -> Int {
   // Binary search: split 1-20 digits into halves
   if value >= 10000000000UL { // >= 10^10 means 11+ digits
@@ -427,6 +430,7 @@ fn dec_count64(value : UInt64) -> Int {
 
 ///|
 /// Calculates the number of hex digits needed for a u64 value
+#cfg(not(target="js"))
 fn hex_count64(value : UInt64) -> Int {
   if value == 0UL {
     1
@@ -438,6 +442,7 @@ fn hex_count64(value : UInt64) -> Int {
 
 ///|
 /// Calculates the number of digits needed for a u64 value in any radix
+#cfg(not(target="js"))
 fn radix_count64(value : UInt64, radix : Int) -> Int {
   if value == 0UL {
     return 1
@@ -454,6 +459,7 @@ fn radix_count64(value : UInt64, radix : Int) -> Int {
 
 ///|
 /// Converts an unsigned 64-bit integer to hexadecimal
+#cfg(not(target="js"))
 fn int64_to_string_hex(
   buffer : FixedArray[UInt16],
   num : UInt64,
@@ -492,6 +498,7 @@ fn int64_to_string_hex(
 
 ///|
 /// Generic radix conversion for any base 2-36 (64-bit)
+#cfg(not(target="js"))
 fn int64_to_string_generic(
   buffer : FixedArray[UInt16],
   num : UInt64,
@@ -532,6 +539,7 @@ fn int64_to_string_generic(
 
 ///|
 /// Converts an unsigned 64-bit integer to decimal string
+#cfg(not(target="js"))
 fn int64_to_string_dec(
   buffer : FixedArray[UInt16],
   num : UInt64,
@@ -589,6 +597,7 @@ fn int64_to_string_dec(
 
 ///|
 /// Converts a 64-bit integer to its string representation in the specified radix (base).
+#cfg(not(target="js"))
 pub fn Int64::to_string(self : Int64, radix? : Int = 10) -> String {
   // Validate radix
   if radix < 2 || radix > 36 {
@@ -647,6 +656,7 @@ pub fn Int64::to_string(self : Int64, radix? : Int = 10) -> String {
 
 ///|
 /// Converts an unsigned 64-bit integer to its string representation in the specified radix (base).
+#cfg(not(target="js"))
 pub fn UInt64::to_string(self : UInt64, radix? : Int = 10) -> String {
   // Validate radix
   if radix < 2 || radix > 36 {
@@ -681,6 +691,38 @@ pub fn UInt64::to_string(self : UInt64, radix? : Int = 10) -> String {
   }
   unsafe_fixedarray_uint16_to_string(buffer)
 }
+
+///|
+/// Converts a 64-bit integer to its string representation in the specified radix (base).
+#cfg(target="js")
+pub fn Int64::to_string(self : Int64, radix? : Int = 10) -> String {
+  int64_to_string_js(self, radix)
+}
+
+///|
+#cfg(target="js")
+extern "js" fn int64_to_string_js(num : Int64, radix : Int) -> String =
+  #|(num, radix) => {
+  #|  let val = (BigInt(num.hi >>> 0) << 32n) | BigInt(num.lo >>> 0);
+  #|  if (val & (1n << 63n)) {
+  #|    val = val - (1n << 64n);
+  #|  }
+  #|  return val.toString(radix);
+  #|}
+
+///|
+/// Converts an unsigned 64-bit integer to its string representation in the specified radix (base).
+#cfg(target="js")
+pub fn UInt64::to_string(self : UInt64, radix? : Int = 10) -> String {
+  uint64_to_string_js(self, radix)
+}
+
+///|
+#cfg(target="js")
+extern "js" fn uint64_to_string_js(num : UInt64, radix : Int) -> String =
+  #|(num, radix) => {
+  #|  return (BigInt(num.hi >>> 0) << 32n | BigInt(num.lo >>> 0)).toString(radix);
+  #|}
 
 //==========================================
 // Int16 and UInt16
