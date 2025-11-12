@@ -156,6 +156,7 @@ impl[X : ToJson] ToJson for Array[X]
 type ArrayView[T]
 #alias("_[_]")
 fn[T] ArrayView::at(Self[T], Int) -> T
+fn[X] ArrayView::iterator(Self[X]) -> Iterator[X]
 fn[T] ArrayView::length(Self[T]) -> Int
 #alias("_[_:_]")
 fn[T] ArrayView::sub(Self[T], start? : Int, end? : Int) -> Self[T]
