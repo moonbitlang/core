@@ -287,3 +287,14 @@ pub fn[T] ArrayView::suffixes(
     }
   })
 }
+
+///|
+pub fn[X] ArrayView::iterator(self : ArrayView[X]) -> Iterator[X] {
+  let mut i = 0
+  Iterator::new(fn() {
+    guard i < self.length() else { None }
+    let elem = self.unsafe_get(i)
+    i += 1
+    Some(elem)
+  })
+}
