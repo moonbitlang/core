@@ -54,6 +54,7 @@ fn[K, V] SortedMap::length(Self[K, V]) -> Int
 #deprecated
 fn[K, X, Y] SortedMap::map(Self[K, X], (X) -> Y) -> Self[K, Y]
 fn[K, X, Y] SortedMap::map_with_key(Self[K, X], (K, X) -> Y) -> Self[K, Y]
+fn[K : Compare, V] SortedMap::merge(Self[K, V], Self[K, V]) -> Self[K, V]
 #alias(empty, deprecated)
 #as_free_fn
 fn[K, V] SortedMap::new() -> Self[K, V]

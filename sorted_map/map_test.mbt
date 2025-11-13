@@ -314,3 +314,52 @@ test "json roundtrip verification" {
   let restored : @sorted_map.SortedMap[String, Int] = @json.from_json(original)
   @json.inspect(restored, content={ "key1": 42, "key2": 100, "key3": -5 })
 }
+
+///|
+test "@sorted_map.merge" {
+  let map1 = @sorted_map.from_array([(1, "a"), (2, "b")])
+  let map2 = @sorted_map.from_array([(2, "c"), (3, "d")])
+  let merged = map1.merge(map2)
+  inspect(merged.get(1), content="Some(\"a\")")
+  inspect(merged.get(2), content="Some(\"c\")")
+  inspect(merged.get(3), content="Some(\"d\")")
+  inspect(merged.length(), content="3")
+  // Verify original maps are unchanged
+  inspect(map1.get(2), content="Some(\"b\")")
+  inspect(map1.length(), content="2")
+}
+
+///|
+test "@sorted_map.merge empty maps" {
+  let map1 : @sorted_map.SortedMap[Int, String] = @sorted_map.new()
+  let map2 = @sorted_map.from_array([(1, "a"), (2, "b")])
+  let merged1 = map1.merge(map2)
+  inspect(merged1.to_array(), content="[(1, \"a\"), (2, \"b\")]")
+  let merged2 = map2.merge(map1)
+  inspect(merged2.to_array(), content="[(1, \"a\"), (2, \"b\")]")
+  let merged3 = map1.merge(map1)
+  inspect(merged3.length(), content="0")
+}
+
+///|
+test "@sorted_map.merge_in_place" {
+  let map1 = @sorted_map.from_array([(1, "a"), (2, "b")])
+  let map2 = @sorted_map.from_array([(2, "c"), (3, "d")])
+  map1.merge_in_place(map2)
+  inspect(map1.get(1), content="Some(\"a\")")
+  inspect(map1.get(2), content="Some(\"c\")")
+  inspect(map1.get(3), content="Some(\"d\")")
+  inspect(map1.length(), content="3")
+  // Verify second map is unchanged
+  inspect(map2.length(), content="2")
+}
+
+///|
+test "@sorted_map.merge_in_place empty maps" {
+  let map1 : @sorted_map.SortedMap[Int, String] = @sorted_map.new()
+  let map2 = @sorted_map.from_array([(1, "a"), (2, "b")])
+  map1.merge_in_place(map2)
+  inspect(map1.to_array(), content="[(1, \"a\"), (2, \"b\")]")
+  map1.merge_in_place(map1)
+  inspect(map1.to_array(), content="[(1, \"a\"), (2, \"b\")]")
+}

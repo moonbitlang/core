@@ -439,3 +439,52 @@ test "hashmap.to_json" {
   let json : Json = { "1": "one", "2": "two", "3": "three" }
   assert_eq(map.to_json(), json)
 }
+
+///|
+test "@hashmap.merge" {
+  let map1 = @hashmap.from_array([("a", 1), ("b", 2)])
+  let map2 = @hashmap.from_array([("b", 3), ("c", 4)])
+  let merged = map1.merge(map2)
+  inspect(merged.get("a"), content="Some(1)")
+  inspect(merged.get("b"), content="Some(3)")
+  inspect(merged.get("c"), content="Some(4)")
+  inspect(merged.length(), content="3")
+  // Verify original maps are unchanged
+  inspect(map1.get("b"), content="Some(2)")
+  inspect(map1.length(), content="2")
+}
+
+///|
+test "@hashmap.merge empty maps" {
+  let map1 : @hashmap.HashMap[String, Int] = @hashmap.new()
+  let map2 = @hashmap.from_array([("a", 1), ("b", 2)])
+  let merged1 = map1.merge(map2)
+  verify_content(merged1, [("a", 1), ("b", 2)])
+  let merged2 = map2.merge(map1)
+  verify_content(merged2, [("a", 1), ("b", 2)])
+  let merged3 = map1.merge(map1)
+  inspect(merged3.length(), content="0")
+}
+
+///|
+test "@hashmap.merge_in_place" {
+  let map1 = @hashmap.from_array([("a", 1), ("b", 2)])
+  let map2 = @hashmap.from_array([("b", 3), ("c", 4)])
+  map1.merge_in_place(map2)
+  inspect(map1.get("a"), content="Some(1)")
+  inspect(map1.get("b"), content="Some(3)")
+  inspect(map1.get("c"), content="Some(4)")
+  inspect(map1.length(), content="3")
+  // Verify second map is unchanged
+  inspect(map2.length(), content="2")
+}
+
+///|
+test "@hashmap.merge_in_place empty maps" {
+  let map1 : @hashmap.HashMap[String, Int] = @hashmap.new()
+  let map2 = @hashmap.from_array([("a", 1), ("b", 2)])
+  map1.merge_in_place(map2)
+  verify_content(map1, [("a", 1), ("b", 2)])
+  map1.merge_in_place(map1)
+  verify_content(map1, [("a", 1), ("b", 2)])
+}

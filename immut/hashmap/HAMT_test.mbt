@@ -1120,3 +1120,43 @@ test "HAMT::union_with singleton with non-overlapping branch" {
   assert_eq(u.get(3), Some(3))
   assert_eq(u.get(10), Some(100))
 }
+
+///|
+test "HAMT::merge" {
+  let map1 = @hashmap.from_array([("a", 1), ("b", 2)])
+  let map2 = @hashmap.from_array([("b", 3), ("c", 4)])
+  let merged = map1.merge(map2)
+  inspect(merged.get("a"), content="Some(1)")
+  inspect(merged.get("b"), content="Some(3)")
+  inspect(merged.get("c"), content="Some(4)")
+  inspect(merged.length(), content="3")
+  // Verify original maps are unchanged (immutable)
+  inspect(map1.get("b"), content="Some(2)")
+  inspect(map1.length(), content="2")
+}
+
+///|
+test "HAMT::merge empty maps" {
+  let map1 : @hashmap.HashMap[String, Int] = @hashmap.new()
+  let map2 = @hashmap.from_array([("a", 1), ("b", 2)])
+  let merged1 = map1.merge(map2)
+  inspect(merged1.length(), content="2")
+  inspect(merged1.get("a"), content="Some(1)")
+  let merged2 = map2.merge(map1)
+  inspect(merged2.length(), content="2")
+  inspect(merged2.get("b"), content="Some(2)")
+  let merged3 = map1.merge(map1)
+  inspect(merged3.length(), content="0")
+}
+
+///|
+test "HAMT::merge with overlapping keys" {
+  let map1 = @hashmap.from_array([(1, "one"), (2, "two"), (3, "three")])
+  let map2 = @hashmap.from_array([(2, "TWO"), (3, "THREE"), (4, "FOUR")])
+  let merged = map1.merge(map2)
+  inspect(merged.get(1), content="Some(\"one\")")
+  inspect(merged.get(2), content="Some(\"TWO\")")
+  inspect(merged.get(3), content="Some(\"THREE\")")
+  inspect(merged.get(4), content="Some(\"FOUR\")")
+  inspect(merged.length(), content="4")
+}

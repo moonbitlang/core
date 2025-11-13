@@ -361,6 +361,70 @@ pub fn[K : Compare, V] SortedMap::range(
   })
 }
 
+///|
+/// Merges two sorted maps into a new map. Returns a new map containing all
+/// key-value pairs from both maps. When both maps contain the same key, the
+/// value from `other` takes precedence.
+///
+/// This is a pure operation - it does not modify either of the input maps.
+///
+/// Parameters:
+///
+/// * `self` : The first sorted map.
+/// * `other` : The second sorted map whose values take precedence in case of
+/// key conflicts.
+///
+/// Returns a new sorted map containing all entries from both maps.
+///
+/// Example:
+///
+/// ```moonbit
+///   let map1 = @sorted_map.from_array([(1, "a"), (2, "b")])
+///   let map2 = @sorted_map.from_array([(2, "c"), (3, "d")])
+///   let merged = map1.merge(map2)
+///   inspect(merged.get(1), content="Some(\"a\")")
+///   inspect(merged.get(2), content="Some(\"c\")")
+///   inspect(merged.get(3), content="Some(\"d\")")
+/// ```
+pub fn[K : Compare, V] SortedMap::merge(
+  self : SortedMap[K, V],
+  other : SortedMap[K, V],
+) -> SortedMap[K, V] {
+  let result = new()
+  self.each((k, v) => result.set(k, v))
+  other.each((k, v) => result.set(k, v))
+  result
+}
+
+///|
+/// Merges another sorted map into this map in-place. Updates the current map by
+/// adding all key-value pairs from `other`. When both maps contain the same key,
+/// the value from `other` overwrites the value in this map.
+///
+/// This is a mutating operation - it modifies the receiver map.
+///
+/// Parameters:
+///
+/// * `self` : The sorted map to be modified.
+/// * `other` : The sorted map whose entries will be added to `self`.
+///
+/// Example:
+///
+/// ```moonbit
+///   let map1 = @sorted_map.from_array([(1, "a"), (2, "b")])
+///   let map2 = @sorted_map.from_array([(2, "c"), (3, "d")])
+///   map1.merge_in_place(map2)
+///   inspect(map1.get(1), content="Some(\"a\")")
+///   inspect(map1.get(2), content="Some(\"c\")")
+///   inspect(map1.get(3), content="Some(\"d\")")
+/// ```
+pub fn[K : Compare, V] SortedMap::merge_in_place(
+  self : SortedMap[K, V],
+  other : SortedMap[K, V],
+) -> Unit {
+  other.each((k, v) => self.set(k, v))
+}
+
 // AVL tree operations
 
 ///|

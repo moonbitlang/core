@@ -44,6 +44,7 @@ fn[K, V] HashMap::keys(Self[K, V]) -> Iter[K]
 fn[K, V] HashMap::length(Self[K, V]) -> Int
 #alias(map_with_key, deprecated)
 fn[K, V, A] HashMap::map(Self[K, V], (K, V) -> A raise?) -> Self[K, A] raise?
+fn[K : Eq, V] HashMap::merge(Self[K, V], Self[K, V]) -> Self[K, V]
 #as_free_fn
 fn[K, V] HashMap::new() -> Self[K, V]
 fn[K : Eq + Hash, V] HashMap::remove(Self[K, V], K) -> Self[K, V]
