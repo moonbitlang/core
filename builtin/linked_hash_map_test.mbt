@@ -501,3 +501,55 @@ test "Map::get_from_bytes" {
   let test_view = longer[10:14]
   inspect(map.get_from_bytes(test_view), content="Some(3)")
 }
+
+///|
+test "Map::merge" {
+  let map1 : Map[String, Int] = { "a": 1, "b": 2 }
+  let map2 : Map[String, Int] = { "b": 3, "c": 4 }
+  let merged = map1.merge(map2)
+  inspect(merged.get("a"), content="Some(1)")
+  inspect(merged.get("b"), content="Some(3)")
+  inspect(merged.get("c"), content="Some(4)")
+  inspect(merged.length(), content="3")
+  // Verify original maps are unchanged
+  inspect(map1.get("b"), content="Some(2)")
+  inspect(map1.length(), content="2")
+}
+
+///|
+test "Map::merge empty maps" {
+  let map1 : Map[String, Int] = Map::new()
+  let map2 : Map[String, Int] = { "a": 1, "b": 2 }
+  let merged1 = map1.merge(map2)
+  inspect(merged1.length(), content="2")
+  inspect(merged1.get("a"), content="Some(1)")
+  let merged2 = map2.merge(map1)
+  inspect(merged2.length(), content="2")
+  inspect(merged2.get("b"), content="Some(2)")
+  let merged3 = map1.merge(map1)
+  inspect(merged3.length(), content="0")
+}
+
+///|
+test "Map::merge_in_place" {
+  let map1 : Map[String, Int] = { "a": 1, "b": 2 }
+  let map2 : Map[String, Int] = { "b": 3, "c": 4 }
+  map1.merge_in_place(map2)
+  inspect(map1.get("a"), content="Some(1)")
+  inspect(map1.get("b"), content="Some(3)")
+  inspect(map1.get("c"), content="Some(4)")
+  inspect(map1.length(), content="3")
+  // Verify second map is unchanged
+  inspect(map2.length(), content="2")
+}
+
+///|
+test "Map::merge_in_place empty maps" {
+  let map1 : Map[String, Int] = Map::new()
+  let map2 : Map[String, Int] = { "a": 1, "b": 2 }
+  map1.merge_in_place(map2)
+  inspect(map1.length(), content="2")
+  inspect(map1.get("a"), content="Some(1)")
+  map1.merge_in_place(map1)
+  inspect(map1.length(), content="2")
+}

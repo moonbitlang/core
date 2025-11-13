@@ -358,6 +358,7 @@ pub fn[K, V] HashMap::length(self : HashMap[K, V]) -> Int {
 
 ///|
 /// Union two hashmaps, right-hand side element is prioritized
+#alias(merge)
 pub fn[K : Eq, V] HashMap::union(
   self : HashMap[K, V],
   other : HashMap[K, V],
@@ -449,39 +450,6 @@ fn[K : Eq, V] @list.List::union_with(
   }
   guard @list.from_array(res) is More((k, v), tail~)
   Leaf(k, v, tail)
-}
-
-///|
-/// Merges two immutable hashmaps into a new hashmap. Returns a new hashmap
-/// containing all key-value pairs from both maps. When both maps contain the
-/// same key, the value from `other` takes precedence.
-///
-/// This is a pure operation - it returns a new hashmap without modifying either
-/// input.
-///
-/// Parameters:
-///
-/// * `self` : The first hashmap.
-/// * `other` : The second hashmap whose values take precedence in case of key
-/// conflicts.
-///
-/// Returns a new immutable hashmap containing all entries from both maps.
-///
-/// Example:
-///
-/// ```moonbit
-///   let map1 = @hashmap.from_array([("a", 1), ("b", 2)])
-///   let map2 = @hashmap.from_array([("b", 3), ("c", 4)])
-///   let merged = map1.merge(map2)
-///   inspect(merged.get("a"), content="Some(1)")
-///   inspect(merged.get("b"), content="Some(3)")
-///   inspect(merged.get("c"), content="Some(4)")
-/// ```
-pub fn[K : Eq, V] HashMap::merge(
-  self : HashMap[K, V],
-  other : HashMap[K, V],
-) -> HashMap[K, V] {
-  self.union(other)
 }
 
 ///|
