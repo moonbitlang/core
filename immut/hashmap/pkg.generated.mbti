@@ -50,6 +50,7 @@ fn[K : Eq + Hash, V] HashMap::remove(Self[K, V], K) -> Self[K, V]
 #as_free_fn
 fn[K : Hash, V] HashMap::singleton(K, V) -> Self[K, V]
 fn[K, V] HashMap::to_array(Self[K, V]) -> Array[(K, V)]
+#alias(merge)
 fn[K : Eq, V] HashMap::union(Self[K, V], Self[K, V]) -> Self[K, V]
 fn[K : Eq, V] HashMap::union_with(Self[K, V], Self[K, V], (K, V, V) -> V raise?) -> Self[K, V] raise?
 #alias(elems, deprecated)

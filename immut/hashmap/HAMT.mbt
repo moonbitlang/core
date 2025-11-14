@@ -358,6 +358,7 @@ pub fn[K, V] HashMap::length(self : HashMap[K, V]) -> Int {
 
 ///|
 /// Union two hashmaps, right-hand side element is prioritized
+#alias(merge)
 pub fn[K : Eq, V] HashMap::union(
   self : HashMap[K, V],
   other : HashMap[K, V],

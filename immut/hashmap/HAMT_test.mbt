@@ -1120,3 +1120,13 @@ test "HAMT::union_with singleton with non-overlapping branch" {
   assert_eq(u.get(3), Some(3))
   assert_eq(u.get(10), Some(100))
 }
+
+///|
+test "HAMT::merge is alias for union" {
+  let map1 = @hashmap.from_array([("a", 1), ("b", 2)])
+  let map2 = @hashmap.from_array([("b", 3), ("c", 4)])
+  let merged = map1.merge(map2)
+  inspect(merged.get("a"), content="Some(1)")
+  inspect(merged.get("b"), content="Some(3)")
+  inspect(merged.get("c"), content="Some(4)")
+}
