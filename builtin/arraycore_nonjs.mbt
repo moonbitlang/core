@@ -356,8 +356,16 @@ pub fn[T] Array::drain(self : Array[T], begin : Int, end : Int) -> Array[T] {
 /// This function will panic if the index is out of bounds.
 ///
 /// # Example
-/// ```mbt
-///   [3, 4, 5].insert(1, 6)
+/// ```moonbit
+/// let a = [1, 2, 3]
+/// a.insert(1, 4)
+/// inspect(a, content="[1, 4, 2, 3]")
+/// let b = [1, 2, 3]
+/// b.insert(0, 5)
+/// inspect(b, content="[5, 1, 2, 3]")
+/// let c = [1, 2, 3]
+/// c.insert(3, 6)
+/// inspect(c, content="[1, 2, 3, 6]")
 /// ```
 pub fn[T] Array::insert(self : Array[T], index : Int, value : T) -> Unit {
   guard index >= 0 && index <= self.length() else {
