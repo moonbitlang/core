@@ -39,6 +39,8 @@ fn[K, V] SortedMap::keys(Self[K, V]) -> Array[K]
 fn[K, V] SortedMap::keys_as_iter(Self[K, V]) -> Iter[K]
 #alias(size, deprecated)
 fn[K, V] SortedMap::length(Self[K, V]) -> Int
+fn[K : Compare, V] SortedMap::merge(Self[K, V], Self[K, V]) -> Self[K, V]
+fn[K : Compare, V] SortedMap::merge_in_place(Self[K, V], Self[K, V]) -> Unit
 #as_free_fn
 fn[K, V] SortedMap::new() -> Self[K, V]
 fn[K : Compare, V] SortedMap::range(Self[K, V], K, K) -> Iter2[K, V]
