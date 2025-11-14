@@ -51,13 +51,13 @@ pub fn Float::trunc(self : Float) -> Float {
   let u32 = self.reinterpret_as_uint()
   let biased_exp = ((u32 >> frac_bits) & ((0x1U << exp_bits) - 1)).reinterpret_as_int()
   if biased_exp < exp_bias {
-    return (u32 & sign_mask).reinterpret_as_float()
+    return Float::reinterpret_from_uint(u32 & sign_mask)
   } else if biased_exp >= exp_bias + frac_bits {
     return self
   }
   let mask_shift = biased_exp - exp_bias + exp_bits
   let trunc_mask = (sign_mask.reinterpret_as_int() >> mask_shift).reinterpret_as_uint()
-  return (u32 & trunc_mask).reinterpret_as_float()
+  return Float::reinterpret_from_uint(u32 & trunc_mask)
 }
 
 ///|

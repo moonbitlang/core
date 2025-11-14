@@ -2323,7 +2323,8 @@ pub fn Byte::to_double(self : Byte) -> Double {
 }
 
 ///|
-#deprecated("Use `Float::from_double` instead", skip_current_package=false)
+/// TODO: enable skip_current_package=false
+#deprecated("Use `Float::from_double` instead", skip_current_package=true)
 pub fn Double::to_float(self : Double) -> Float = "%f64.to_f32"
 
 ///|
