@@ -753,6 +753,68 @@ pub fn[K, V] Map::copy(self : Map[K, V]) -> Map[K, V] {
 }
 
 ///|
+/// Merges two maps into a new map. Returns a new map containing all key-value
+/// pairs from both maps. When both maps contain the same key, the value from
+/// `other` takes precedence. The iteration order follows the order of `self`
+/// followed by new entries from `other`.
+///
+/// This is a pure operation - it does not modify either of the input maps.
+///
+/// Parameters:
+///
+/// * `self` : The first map.
+/// * `other` : The second map whose values take precedence in case of key
+/// conflicts.
+///
+/// Returns a new linked hash map containing all entries from both maps.
+///
+/// Example:
+///
+/// ```moonbit
+/// let map1 : Map[String, Int] = { "a": 1, "b": 2 }
+/// let map2 : Map[String, Int] = { "b": 3, "c": 4 }
+/// let merged = map1.merge(map2)
+/// @json.inspect(merged, content={ "a": 1, "b": 3, "c": 4 })
+/// ```
+pub fn[K : Hash + Eq, V] Map::merge(
+  self : Map[K, V],
+  other : Map[K, V],
+) -> Map[K, V] {
+  let result = self.copy()
+  result.merge_in_place(other)
+  result
+}
+
+///|
+/// Merges another map into this map in-place. Updates the current map by adding
+/// all key-value pairs from `other`. When both maps contain the same key, the
+/// value from `other` overwrites the value in this map. New entries from `other`
+/// are added at the end, preserving the original order of `self` and appending
+/// new keys from `other`.
+///
+/// This is a mutating operation - it modifies the receiver map.
+///
+/// Parameters:
+///
+/// * `self` : The map to be modified.
+/// * `other` : The map whose entries will be added to `self`.
+///
+/// Example:
+///
+/// ```moonbit
+/// let map1 : Map[String, Int] = { "a": 1, "b": 2 }
+/// let map2 : Map[String, Int] = { "b": 3, "c": 4 }
+/// map1.merge_in_place(map2)
+/// @json.inspect(map1, content={ "a": 1, "b": 3, "c": 4 })
+/// ```
+pub fn[K : Hash + Eq, V] Map::merge_in_place(
+  self : Map[K, V],
+  other : Map[K, V],
+) -> Unit {
+  other.each((k, v) => self.set(k, v))
+}
+
+///|
 /// Retains only the key-value pairs that satisfy the given predicate function.
 /// This method modifies the map in-place, removing all entries for which
 /// the predicate returns `false`. The order of remaining elements is preserved.
