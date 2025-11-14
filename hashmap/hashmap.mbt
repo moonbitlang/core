@@ -572,6 +572,72 @@ pub fn[K, V] HashMap::copy(self : HashMap[K, V]) -> HashMap[K, V] {
 }
 
 ///|
+/// Merges two maps into a new map. Returns a new map containing all key-value
+/// pairs from both maps. When both maps contain the same key, the value from
+/// `other` takes precedence.
+///
+/// This is a pure operation - it does not modify either of the input maps.
+///
+/// Parameters:
+///
+/// * `self` : The first map.
+/// * `other` : The second map whose values take precedence in case of key
+/// conflicts.
+///
+/// Returns a new hash map containing all entries from both maps.
+///
+/// Example:
+///
+/// ```moonbit
+/// let map1 = @hashmap.from_array([("a", 1), ("b", 2)])
+/// let map2 = @hashmap.from_array([("b", 3), ("c", 4)])
+/// let merged = map1.merge(map2).to_array()
+/// merged.sort()
+/// @json.inspect(merged, content=([["a",1],["b",3],["c",4]]))
+/// ```
+pub fn[K : Eq, V] HashMap::merge(
+  self : HashMap[K, V],
+  other : HashMap[K, V],
+) -> HashMap[K, V] {
+  let result = self.copy()
+  result.merge_in_place(other)
+  result
+}
+
+///|
+/// Merges another map into this map in-place. Updates the current map by adding
+/// all key-value pairs from `other`. When both maps contain the same key, the
+/// value from `other` overwrites the value in this map.
+///
+/// This is a mutating operation - it modifies the receiver map.
+///
+/// Parameters:
+///
+/// * `self` : The map to be modified.
+/// * `other` : The map whose entries will be added to `self`.
+///
+/// Example:
+///
+/// ```moonbit
+/// let map1 = @hashmap.from_array([("a", 1), ("b", 2)])
+/// let map2 = @hashmap.from_array([("b", 3), ("c", 4)])
+/// map1.merge_in_place(map2)
+/// let merged = map1.to_array()
+/// merged.sort()
+/// @json.inspect(merged, content=[["a", 1], ["b", 3], ["c", 4]])
+/// ```
+pub fn[K : Eq, V] HashMap::merge_in_place(
+  self : HashMap[K, V],
+  other : HashMap[K, V],
+) -> Unit {
+  for entry in other.entries {
+    if entry is Some({ key, value, hash, .. }) {
+      self.set_with_hash(key, value, hash)
+    }
+  }
+}
+
+///|
 priv struct MyString(String) derive(Eq)
 
 ///|
