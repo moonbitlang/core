@@ -15,9 +15,9 @@
 ///|
 fn k_expo2f(x : Float) -> Float {
   let k = 235
-  let k_ln2 = (0x4322e3bc).reinterpret_as_float()
+  let k_ln2 = Float::reinterpret_from_int(0x4322e3bc)
   // note that k is odd and scale*scale overflows */
-  let scale = ((0x7f + k / 2) << 23).reinterpret_as_float()
+  let scale = Float::reinterpret_from_int((0x7f + k / 2) << 23)
   // exp(x - k ln2) * 2**(k-1) */
   expf(x - k_ln2) * scale * scale
 }
@@ -57,7 +57,7 @@ pub fn sinhf(x : Float) -> Float {
   }
   // |x|
   ix = ix & 0x7fffffff
-  let absx = ix.reinterpret_as_float()
+  let absx = Float::reinterpret_from_uint(ix)
   let w = ix
 
   // |x| < log(FLT_MAX)
@@ -107,7 +107,7 @@ pub fn coshf(x : Float) -> Float {
   let mut x = x
   let mut ix = x.reinterpret_as_uint()
   ix = ix & 0x7fffffff
-  x = ix.reinterpret_as_float()
+  x = Float::reinterpret_from_uint(ix)
   let w = ix
 
   // |x| < log(2)
@@ -161,7 +161,7 @@ pub fn tanhf(x : Float) -> Float {
   let mut ix = x.reinterpret_as_uint()
   let sign = ix >> 31 != 0
   ix = ix & 0x7fffffff
-  let x = ix.reinterpret_as_float()
+  let x = Float::reinterpret_from_uint(ix)
   let w = ix
   let tt = if w > 0x3f0c9f54 {
     // |x| > log(3)/2 ~= 0.5493 or nan
@@ -222,7 +222,7 @@ pub fn asinhf(x : Float) -> Float {
   let i = u & 0x7fffffff
   let sign = u >> 31 != 0
   let ln2 : Float = 0.693147180559945309417232121458176568
-  let x = i.reinterpret_as_float()
+  let x = Float::reinterpret_from_uint(i)
   let x = if i >= 0x3f800000U + (12U << 23) {
     // |x| >= 0x1p12 or inf or nan
     lnf(x) + ln2
@@ -324,7 +324,7 @@ pub fn atanhf(x : Float) -> Float {
   let u = x.reinterpret_as_uint()
   let sign = u >> 31 != 0
   let u = u & 0x7fffffff
-  let x = u.reinterpret_as_float()
+  let x = Float::reinterpret_from_uint(u)
   let x = if u < 0x3f800000U - (1U << 23) {
     if u < 0x3f800000U - (32U << 23) {
       x

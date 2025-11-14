@@ -2,11 +2,11 @@
   "import": [
     "moonbitlang/core/builtin",
     "moonbitlang/core/double",
+    "moonbitlang/core/float",
     "moonbitlang/core/random/internal/random_source",
     "moonbitlang/core/bigint"
   ],
   "test-import": [
-    "moonbitlang/core/float",
     "moonbitlang/core/bench"
   ]
 }

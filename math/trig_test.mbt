@@ -35,7 +35,7 @@ test "sinf function comprehensive" {
   assert_true(@math.sinf(-1.0).is_close(-0.8414709568023682))
 
   // Testing at multiples of π/2
-  let pi_2 = (@math.PI / 2.0).to_float()
+  let pi_2 = Float::from_double(@math.PI / 2.0)
   assert_true(@math.sinf(pi_2).is_close(1))
   assert_true(@math.sinf(pi_2 * 2.0).is_close(0, absolute_tolerance=1.0e-6))
   assert_true(@math.sinf(pi_2 * 3.0).is_close(-1))
@@ -58,7 +58,7 @@ test "cosf function comprehensive" {
   assert_true(@math.cosf(-1.0).is_close(0.5403022766113281))
 
   // Testing at multiples of π/2
-  let pi_2 = (@math.PI / 2.0).to_float()
+  let pi_2 = Float::from_double(@math.PI / 2.0)
   assert_true(@math.cosf(pi_2).is_close(0, absolute_tolerance=1.0e-6))
   // this precision is pretty low
   // inspect(@math.cosf(pi_2 ), content="-4.371138828673793e-8")
@@ -83,7 +83,7 @@ test "tanf function comprehensive" {
   assert_true(@math.tanf(-1.0).is_close(-1.5574077367782593))
 
   // Testing at multiples of π
-  let pi = @math.PI.to_float()
+  let pi = Float::from_double(@math.PI)
   // inspect(@math.tanf(pi), content="8.742277657347586e-8")
   assert_true(@math.tanf(pi).is_close(0, absolute_tolerance=1.0e-6))
   // inspect(@math.tanf(2.0 * pi), content="1.7484555314695172e-7")
@@ -168,7 +168,7 @@ test "atanf function comprehensive" {
 
 ///|
 test "atan2f function comprehensive" {
-  let pi = @math.PI.to_float()
+  let pi = Float::from_double(@math.PI)
   // Testing quadrant I (x > 0, y > 0)
   assert_true(@math.atan2f(1.0, 1.0).is_close(pi / 4.0))
   assert_true(@math.atan2f(2.0, 1.0).is_close(@math.atanf(2.0)))
@@ -310,7 +310,7 @@ test "atanf edge cases" {
 
 ///|
 test "atan2f additional edge cases" {
-  let pi = @math.PI.to_float()
+  let pi = Float::from_double(@math.PI)
   // Test case where y = 0 and x < 0, m = 3 (both negative)
   let result1 = @math.atan2f(-0.0, -1.0)
   assert_true(result1.is_close(-pi))

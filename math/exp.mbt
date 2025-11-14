@@ -128,7 +128,7 @@ pub fn expf(x : Float) -> Float {
   let y = exp2f_data.poly_scaled[2] * r + 1
   let y = z * r2 + y
   let y = y * s
-  y.to_float()
+  Float::from_double(y)
 }
 
 ///|
@@ -202,9 +202,8 @@ pub fn expm1f(x : Float) -> Float {
       }
     } else {
       k = (inv_ln2 * x + (if sign { -0.5 } else { 0.5 })).to_int()
-      let t = k.to_float()
-      hi = x - t * float_ln2_hi // t*ln2_hi is exact here
-      lo = t * float_ln2_lo
+      hi = x - Float::from_int(k) * float_ln2_hi // t*ln2_hi is exact here
+      lo = Float::from_int(k) * float_ln2_lo
     }
     x = hi - lo
     c = hi - x - lo
@@ -240,7 +239,7 @@ pub fn expm1f(x : Float) -> Float {
     }
     return (1.0 : Float) + (2.0 : Float) * (x - e)
   }
-  let twopk = ((0x7f + k) << 23).reinterpret_as_float() // 2^k
+  let twopk = Float::reinterpret_from_int((0x7f + k) << 23) // 2^k
   if !(k is (0..=56)) {
     // suffice to return exp(x)-1
     let mut y = x - e + 1.0
@@ -251,7 +250,7 @@ pub fn expm1f(x : Float) -> Float {
     }
     return y - 1.0
   }
-  let uf = ((0x7f - k) << 23).reinterpret_as_float() // 2^-k
+  let uf = Float::reinterpret_from_int((0x7f - k) << 23) // 2^-k
   if k < 23 {
     (x - e + ((1.0 : Float) - uf)) * twopk
   } else {

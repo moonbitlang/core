@@ -759,11 +759,13 @@ pub fn UInt64::popcnt(self : UInt64) -> Int {
 }
 
 ///|
+#deprecated("Use `Float::from_int64` instead", skip_current_package=false)
 pub fn Int64::to_float(self : Int64) -> Float {
   self.to_double().to_float()
 }
 
 ///|
+#deprecated("Use `Float::from_uint64` instead", skip_current_package=false)
 pub fn UInt64::to_float(self : UInt64) -> Float {
   Double::convert_uint64(self).to_float()
 }

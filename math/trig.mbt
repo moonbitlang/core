@@ -42,12 +42,12 @@ fn trig_reduce(x : Float, switch_over : Float) -> (Float, Int) {
   if x.abs() <= switch_over {
     let mut j : Float = 0.0
     let mut r : Float = 0.0
-    j = x * (0x3f22f983).reinterpret_as_float() +
-      (0x4b40_0000).reinterpret_as_float()
-    j = (j.reinterpret_as_int() - 0x4b40_0000).to_float()
-    r = x - j * (0x3fc90f80).reinterpret_as_float()
-    r = r - j * (0x37354440).reinterpret_as_float()
-    r = r - j * (0x2c34611a).reinterpret_as_float()
+    j = x * Float::reinterpret_from_int(0x3f22f983) +
+      Float::reinterpret_from_int(0x4b40_0000)
+    j = Float::from_int(j.reinterpret_as_int() - 0x4b40_0000)
+    r = x - j * Float::reinterpret_from_int(0x3fc90f80)
+    r = r - j * Float::reinterpret_from_int(0x37354440)
+    r = r - j * Float::reinterpret_from_int(0x2c34611a)
     return (r, j.to_int())
   }
   let xispos = x > 0.0
@@ -109,17 +109,17 @@ fn trig_reduce(x : Float, switch_over : Float) -> (Float, Int) {
     r = r ^ 0x8000_0000
     q = -q
   }
-  let r = r.reinterpret_as_float()
+  let r = Float::reinterpret_from_uint(r)
   return (r, q)
 }
 
 ///|
 fn sinf_poly(x : Float) -> Float {
   let s = x * x
-  let mut r = (0x3640_5000).reinterpret_as_float()
-  r = r * s - (0x3950_3486).reinterpret_as_float()
-  r = r * s + (0x3c08_88c1).reinterpret_as_float()
-  r = r * s - (0x3e2a_aaab).reinterpret_as_float()
+  let mut r = Float::reinterpret_from_int(0x3640_5000)
+  r = r * s - Float::reinterpret_from_int(0x3950_3486)
+  r = r * s + Float::reinterpret_from_int(0x3c08_88c1)
+  r = r * s - Float::reinterpret_from_int(0x3e2a_aaab)
   let t = x * s
   r = r * t + x
   r
@@ -128,11 +128,11 @@ fn sinf_poly(x : Float) -> Float {
 ///|
 fn cosf_poly(x : Float) -> Float {
   let s = x * x
-  let mut r = (0x37cd_4000).reinterpret_as_float()
-  r = r * s - (0x3ab6_077d).reinterpret_as_float()
-  r = r * s + (0x3d2a_aaa8).reinterpret_as_float()
-  r = r * s - (0x3f00_0000).reinterpret_as_float()
-  r = r * s + (0x3f80_0000).reinterpret_as_float()
+  let mut r = Float::reinterpret_from_int(0x37cd_4000)
+  r = r * s - Float::reinterpret_from_int(0x3ab6_077d)
+  r = r * s + Float::reinterpret_from_int(0x3d2a_aaa8)
+  r = r * s - Float::reinterpret_from_int(0x3f00_0000)
+  r = r * s + Float::reinterpret_from_int(0x3f80_0000)
   r
 }
 
@@ -163,7 +163,7 @@ fn tanf_poly(x : Float, odd : Bool) -> Float {
   let s = z * x
   let u = coef[0] + z * coef[1]
   r = x + s * u + s * w * (t + w * r)
-  (if odd { -1.0 / r } else { r }).to_float()
+  Float::from_double(if odd { -1.0 / r } else { r })
 }
 
 ///|
@@ -297,7 +297,7 @@ pub fn asinf(x : Float) -> Float {
   let ix = hx & 0x7fffffff
   if ix >= 0x3f800000 {
     if ix == 0x3f800000 {
-      return (x.to_double() * pio2 + x1p120).to_float()
+      return Float::from_double(x.to_double() * pio2 + x1p120)
     }
     return @float.not_a_number // asin(|x|>1) is NaN
   }
@@ -309,7 +309,7 @@ pub fn asinf(x : Float) -> Float {
   }
   let z = ((1.0 : Float) - x.abs()) * 0.5
   let s = z.to_double().sqrt()
-  let x = (pio2 - 2.0 * (s + s * r(z).to_double())).to_float()
+  let x = Float::from_double(pio2 - 2.0 * (s + s * r(z).to_double()))
   if hx >> 31 != 0 {
     -x
   } else {

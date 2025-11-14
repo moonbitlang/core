@@ -185,7 +185,7 @@ test "double" {
 ///|
 /// [float] returns a pseudo-random 32-bit Float in the range [0.0, 1.0)
 pub fn Rand::float(self : Rand) -> Float {
-  (self.uint() << 8 >> 8).to_float() / (1U << 24).to_float()
+  Float::from_uint(self.uint() << 8 >> 8) / Float::from_uint(1U << 24)
 }
 
 ///|

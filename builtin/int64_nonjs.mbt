@@ -707,27 +707,7 @@ pub fn Int64::to_uint16(self : Int64) -> UInt16 = "%i64_to_u16"
 pub fn UInt64::trunc_double(val : Double) -> UInt64 = "%f64.to_u64"
 
 ///|
-/// Converts a 64-bit integer to a 32-bit floating-point number. The conversion
-/// may result in loss of precision due to the limited precision of the 32-bit
-/// floating-point format.
-///
-/// Parameters:
-///
-/// * `self` : The 64-bit integer value to be converted.
-///
-/// Returns a 32-bit floating-point number that represents the input integer
-/// value. Note that for values outside the range of representable 32-bit
-/// floating-point numbers, the result will be rounded to the nearest
-/// representable value.
-///
-/// Example:
-///
-/// ```moonbit
-///   let n = 42L
-///   let f = n.to_float()
-///   // Convert to double for comparison since Float doesn't implement Show
-///   inspect(f.to_double(), content="42")
-/// ```
+#deprecated("Use `Float::from_int64` instead", skip_current_package=false)
 pub fn Int64::to_float(self : Int64) -> Float = "%i64.to_f32"
 
 ///|
@@ -1553,24 +1533,5 @@ pub fn UInt64::ctz(self : UInt64) -> Int = "%u64.ctz"
 pub fn UInt64::popcnt(self : UInt64) -> Int = "%u64.popcnt"
 
 ///|
-/// Converts an unsigned 64-bit integer to a 32-bit floating-point number. Due to
-/// floating-point precision limitations, the conversion may lose precision if
-/// the integer value is too large to be represented exactly as a float.
-///
-/// Parameters:
-///
-/// * `self` : The unsigned 64-bit integer to be converted.
-///
-/// Returns a 32-bit floating-point number that represents the input value. If
-/// the input value is too large to be represented exactly, the result will be
-/// rounded to the nearest representable float value.
-///
-/// Example:
-///
-/// ```moonbit
-///   let n = 42UL
-///   inspect(n.to_float().to_double(), content="42")
-///   let big = 18446744073709551615UL // UInt64::max_value
-///   inspect(big.to_float().to_double(), content="18446744073709552000")
-/// ```
+#deprecated("Use `Float::from_uint64` instead", skip_current_package=false)
 pub fn UInt64::to_float(self : UInt64) -> Float = "%u64.to_f32"

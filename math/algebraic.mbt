@@ -77,7 +77,7 @@ pub fn cbrtf(x : Float) -> Float {
   // without causing overflow or underflow.
   //
   let dx = x.to_double()
-  let t = ui.reinterpret_as_float().to_double()
+  let t = Float::reinterpret_from_uint(ui).to_double()
   let r = t * t * t
   let t = t * (dx + dx + r) / (dx + r + r)
 
@@ -89,7 +89,7 @@ pub fn cbrtf(x : Float) -> Float {
   let t = t * (dx + dx + r) / (dx + r + r)
 
   // rounding to 24 bits is perfect in round-to-nearest mode
-  t.to_float()
+  Float::from_double(t)
 }
 
 ///|

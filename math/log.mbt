@@ -110,14 +110,14 @@ pub fn lnf(x : Float) -> Float {
   let iz = ix - (tmp & 0xff800000U)
   let invc = logf_data.invc[i]
   let logc = logf_data.logc[i]
-  let z = iz.reinterpret_as_float().to_double()
+  let z = Float::reinterpret_from_uint(iz).to_double()
   let r = z * invc - 1
   let y0 = logc + k.to_double() * logf_data.ln2
   let r2 = r * r
   let y = logf_data.poly[1] * r + logf_data.poly[2]
   let y = logf_data.poly[0] * r2 + y
   let y = y * r2 + (y0 + r)
-  y.to_float()
+  Float::from_double(y)
 }
 
 ///|
@@ -183,15 +183,15 @@ pub fn ln_1pf(x : Float) -> Float {
     iu += 0x3f800000U - 0x3f3504f3U
     k = (iu >> 23).reinterpret_as_int() - 0x7f
     if k < 25 {
-      let fui = ui.reinterpret_as_float()
+      let fui = Float::reinterpret_from_uint(ui)
       c = if k >= 2 { one - (fui - x) } else { x - (fui - 1.0) }
-      c /= ui.reinterpret_as_float()
+      c /= Float::reinterpret_from_uint(ui)
     } else {
       c = 0.0
     }
     iu = (iu & 0x007fffff) + 0x3f3504f3
     ui = iu
-    f = ui.reinterpret_as_float() - 1.0
+    f = Float::reinterpret_from_uint(ui) - 1.0
   }
   let s = f / (f + 2.0)
   let z = s * s
@@ -200,6 +200,6 @@ pub fn ln_1pf(x : Float) -> Float {
   let t2 = z * (lg1_f + w * lg3_f)
   let r = t2 + t1
   let hfsq = f * f * 0.5
-  let dk = k.to_float()
+  let dk = Float::from_int(k)
   s * (hfsq + r) + (dk * float_ln2_lo + c) - hfsq + f + dk * float_ln2_hi
 }
