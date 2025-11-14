@@ -48,6 +48,14 @@ pub fn[K : Compare, V] SortedMap::from_array(
 
 ///|
 /// Inserts a key-value pair.
+/// ```moonbit
+/// let map = @sorted_map.new()
+/// map.set(1, "a")
+/// map.set(2, "b")
+/// map.set(2, "c") // updates value for key 2
+/// inspect(map.get(1), content="Some(\"a\")")
+/// inspect(map.get(2), content="Some(\"c\")")
+/// ```
 #alias("_[_]=_")
 #alias(add, deprecated="Use set instead")
 pub fn[K : Compare, V] SortedMap::set(
@@ -359,6 +367,112 @@ pub fn[K : Compare, V] SortedMap::range(
 
     go(self.root)
   })
+}
+
+///|
+/// Creates a deep copy of the sorted map.
+///
+/// This operation creates a new map with the same structure and contents as the
+/// original map. The copy is independent - modifications to the copy will not
+/// affect the original map and vice versa.
+///
+/// This is more efficient than creating a new map and inserting all elements,
+/// as it preserves the tree structure without needing to rebalance.
+///
+/// Parameters:
+///
+/// * `self` : The sorted map to copy.
+///
+/// Returns a new sorted map with the same contents and structure.
+///
+/// Example:
+///
+/// ```moonbit
+///   let map1 = @sorted_map.from_array([(1, "a"), (2, "b"), (3, "c")])
+///   let map2 = map1.copy()
+///   map2.set(4, "d")
+///   inspect(map1.length(), content="3")
+///   inspect(map2.length(), content="4")
+/// ```
+pub fn[K, V] SortedMap::copy(self : SortedMap[K, V]) -> SortedMap[K, V] {
+  fn copy_node(node : Node[K, V]?) -> Node[K, V]? {
+    match node {
+      None => None
+      Some({ key, value, left, right, height }) =>
+        Some({
+          key,
+          value,
+          left: copy_node(left),
+          right: copy_node(right),
+          height,
+        })
+    }
+  }
+
+  { root: copy_node(self.root), size: self.size }
+}
+
+///|
+/// Merges two sorted maps into a new map. Returns a new map containing all
+/// key-value pairs from both maps. When both maps contain the same key, the
+/// value from `other` takes precedence.
+///
+/// This is a pure operation - it does not modify either of the input maps.
+///
+/// Parameters:
+///
+/// * `self` : The first sorted map.
+/// * `other` : The second sorted map whose values take precedence in case of
+/// key conflicts.
+///
+/// Returns a new sorted map containing all entries from both maps.
+///
+/// Example:
+///
+/// ```moonbit
+/// let map1 = @sorted_map.from_array([(1, "a"), (2, "b")])
+/// let map2 = @sorted_map.from_array([(2, "c"), (3, "d")])
+/// let merged = map1.merge(map2)
+/// inspect(merged.get(1), content="Some(\"a\")")
+/// inspect(merged.get(2), content="Some(\"c\")")
+/// inspect(merged.get(3), content="Some(\"d\")")
+/// ```
+pub fn[K : Compare, V] SortedMap::merge(
+  self : SortedMap[K, V],
+  other : SortedMap[K, V],
+) -> SortedMap[K, V] {
+  let result = self.copy()
+  other.each((k, v) => result.set(k, v))
+  result
+}
+
+///|
+/// Merges another sorted map into this map in-place. Updates the current map by
+/// adding all key-value pairs from `other`. When both maps contain the same key,
+/// the value from `other` overwrites the value in this map.
+///
+/// This is a mutating operation - it modifies the receiver map.
+///
+/// Parameters:
+///
+/// * `self` : The sorted map to be modified.
+/// * `other` : The sorted map whose entries will be added to `self`.
+///
+/// Example:
+///
+/// ```moonbit
+///   let map1 = @sorted_map.from_array([(1, "a"), (2, "b")])
+///   let map2 = @sorted_map.from_array([(2, "c"), (3, "d")])
+///   map1.merge_in_place(map2)
+///   inspect(map1.get(1), content="Some(\"a\")")
+///   inspect(map1.get(2), content="Some(\"c\")")
+///   inspect(map1.get(3), content="Some(\"d\")")
+/// ```
+pub fn[K : Compare, V] SortedMap::merge_in_place(
+  self : SortedMap[K, V],
+  other : SortedMap[K, V],
+) -> Unit {
+  other.each((k, v) => self.set(k, v))
 }
 
 // AVL tree operations
@@ -674,6 +788,36 @@ test "clear" {
   map.clear()
   inspect(map.debug_tree(), content="_")
   inspect(map.length(), content="0")
+}
+
+///|
+test "copy" {
+  let map1 = from_array([
+    (1, "a"),
+    (2, "b"),
+    (3, "c"),
+    (4, "d"),
+    (5, "e"),
+    (6, "f"),
+  ])
+  let map2 = map1.copy()
+  inspect(map1.debug_tree(), content=map2.debug_tree())
+  inspect(map1.length(), content="6")
+  inspect(map2.length(), content="6")
+
+  // Verify independence - modifying copy doesn't affect original
+  map2.set(7, "g")
+  inspect(map1.length(), content="6")
+  inspect(map2.length(), content="7")
+  inspect(map1.get(7), content="None")
+  inspect(map2.get(7), content="Some(\"g\")")
+
+  // Verify independence - modifying original doesn't affect copy
+  map1.remove(1)
+  inspect(map1.length(), content="5")
+  inspect(map2.length(), content="7")
+  inspect(map1.get(1), content="None")
+  inspect(map2.get(1), content="Some(\"a\")")
 }
 
 ///|
