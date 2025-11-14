@@ -46,9 +46,9 @@ fn[T : @builtin.Show] println(T) -> Unit
 
 fn[T : @builtin.Show] repr(T) -> String
 
-fn[T] tap(T, (T) -> Unit) -> T
+fn[T] tap(T, (T) -> Unit raise) -> T raise
 
-fn[T, R] then(T, (T) -> R) -> R
+fn[T, R] then(T, (T) -> R raise?) -> R raise?
 
 // Errors
 
