@@ -129,6 +129,41 @@ pub fn[K, V] SortedMap::to_array(self : SortedMap[K, V]) -> Array[(K, V)] {
 }
 
 ///|
+/// Merges two immutable sorted maps into a new map. Returns a new map containing
+/// all key-value pairs from both maps. When both maps contain the same key, the
+/// value from `other` takes precedence.
+///
+/// This is a pure operation - it returns a new sorted map without modifying
+/// either input.
+///
+/// Parameters:
+///
+/// * `self` : The first sorted map.
+/// * `other` : The second sorted map whose values take precedence in case of key
+/// conflicts.
+///
+/// Returns a new immutable sorted map containing all entries from both maps.
+///
+/// Example:
+///
+/// ```moonbit
+///   let map1 = @sorted_map.from_array([(1, "a"), (2, "b")])
+///   let map2 = @sorted_map.from_array([(2, "c"), (3, "d")])
+///   let merged = map1.merge(map2)
+///   inspect(merged.get(1), content="Some(\"a\")")
+///   inspect(merged.get(2), content="Some(\"c\")")
+///   inspect(merged.get(3), content="Some(\"d\")")
+/// ```
+pub fn[K : Compare, V] SortedMap::merge(
+  self : SortedMap[K, V],
+  other : SortedMap[K, V],
+) -> SortedMap[K, V] {
+  let mut result = self
+  other.each((k, v) => result = result.add(k, v))
+  result
+}
+
+///|
 /// The ratio between the sizes of the left and right subtrees.
 let ratio = 5
 

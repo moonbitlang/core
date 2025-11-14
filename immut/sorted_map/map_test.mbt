@@ -289,3 +289,41 @@ test "hash" {
   let map4 = @sorted_map.from_array([("one", 1), ("two", 2), ("three", 3)])
   inspect(map1.hash() == map4.hash(), content="false")
 }
+
+///|
+test "@immut/sorted_map.merge" {
+  let map1 = @sorted_map.from_array([(1, "a"), (2, "b")])
+  let map2 = @sorted_map.from_array([(2, "c"), (3, "d")])
+  let merged = map1.merge(map2)
+  inspect(merged.get(1), content="Some(\"a\")")
+  inspect(merged.get(2), content="Some(\"c\")")
+  inspect(merged.get(3), content="Some(\"d\")")
+  inspect(merged.length(), content="3")
+  // Verify original maps are unchanged (immutable)
+  inspect(map1.get(2), content="Some(\"b\")")
+  inspect(map1.length(), content="2")
+}
+
+///|
+test "@immut/sorted_map.merge empty maps" {
+  let map1 : @sorted_map.SortedMap[Int, String] = @sorted_map.new()
+  let map2 = @sorted_map.from_array([(1, "a"), (2, "b")])
+  let merged1 = map1.merge(map2)
+  inspect(merged1.to_array(), content="[(1, \"a\"), (2, \"b\")]")
+  let merged2 = map2.merge(map1)
+  inspect(merged2.to_array(), content="[(1, \"a\"), (2, \"b\")]")
+  let merged3 = map1.merge(map1)
+  inspect(merged3.length(), content="0")
+}
+
+///|
+test "@immut/sorted_map.merge with overlapping keys" {
+  let map1 = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
+  let map2 = @sorted_map.from_array([(2, "TWO"), (3, "THREE"), (4, "FOUR")])
+  let merged = map1.merge(map2)
+  inspect(merged.get(1), content="Some(\"one\")")
+  inspect(merged.get(2), content="Some(\"TWO\")")
+  inspect(merged.get(3), content="Some(\"THREE\")")
+  inspect(merged.get(4), content="Some(\"FOUR\")")
+  inspect(merged.length(), content="4")
+}
