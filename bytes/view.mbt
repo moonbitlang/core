@@ -517,57 +517,6 @@ pub fn BytesView::to_int64_le(self : BytesView) -> Int64 {
 }
 
 ///|
-/// Converts a 4-byte sequence to a 32-bit floating-point number using big-endian
-/// byte order.
-///
-/// Parameters:
-///
-/// * `bytes_view` : A view into a byte sequence that must be exactly 4 bytes
-/// long. The bytes are interpreted in big-endian order (most significant byte
-/// first).
-///
-/// Returns a 32-bit floating-point number obtained by interpreting the 4 bytes
-/// as an IEEE 754 single-precision value.
-///
-/// Example:
-///
-/// ```moonbit
-///   let bytes = b"\x40\x48\xF5\xC3" // Represents 3.14 in IEEE 754 format
-///   guard bytes is [u32be(bits),..]
-///   let float = bits.reinterpret_as_float()
-///   // Convert to double for comparison since Float doesn't implement Show
-///   inspect(float.to_double(), content="3.140000104904175")
-/// ```
-#deprecated(skip_current_package=false, "Use bits pattern directly")
-pub fn BytesView::to_float_be(self : BytesView) -> Float {
-  self.to_uint_be().reinterpret_as_float()
-}
-
-///|
-/// Converts 4 bytes from a bytes view to a 32-bit floating-point number,
-/// interpreting the bytes in little-endian order (least significant byte first).
-///
-/// Parameters:
-///
-/// * `self` : A bytes view containing at least 4 bytes to be interpreted as a
-/// floating-point number.
-///
-/// Returns a 32-bit floating-point value constructed from the bytes.
-///
-/// Example:
-///
-/// ```moonbit
-///   let bytes = b"\x00\x00\x80\x3F" // Represents 1.0 in little-endian IEEE-754
-///   guard bytes is [u32le(bits),..]
-///   let f = bits.reinterpret_as_float()
-///   inspect(f.to_double(), content="1")
-/// ```
-#deprecated(skip_current_package=false, "Use bits pattern directly")
-pub fn BytesView::to_float_le(self : BytesView) -> Float {
-  self.to_uint_le().reinterpret_as_float()
-}
-
-///|
 /// Converts the bytes in a byte view to a double-precision floating-point number
 /// using big-endian byte order. The byte view must contain exactly 8 bytes,
 /// which represent the IEEE 754 double-precision format.
