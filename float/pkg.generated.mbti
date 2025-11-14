@@ -26,6 +26,11 @@ fn Float::abs(Float) -> Float
 fn Float::ceil(Float) -> Float
 #as_free_fn
 fn Float::floor(Float) -> Float
+fn Float::from_byte(Byte) -> Float
+fn Float::from_double(Double) -> Float
+fn Float::from_int(Int) -> Float
+fn Float::from_int64(Int64) -> Float
+fn Float::from_uint(UInt) -> Float
 fn Float::from_uint64(UInt64) -> Float
 fn Float::is_close(Float, Float, relative_tolerance? : Float, absolute_tolerance? : Float) -> Bool
 fn Float::is_inf(Float) -> Bool
@@ -37,6 +42,8 @@ fn Float::op_neq(Float, Float) -> Bool
 fn Float::pow(Float, Float) -> Float
 fn Float::reinterpret_as_int(Float) -> Int
 fn Float::reinterpret_as_uint(Float) -> UInt
+fn Float::reinterpret_from_int(Int) -> Float
+fn Float::reinterpret_from_uint(UInt) -> Float
 #as_free_fn
 fn Float::round(Float) -> Float
 fn Float::sqrt(Float) -> Float

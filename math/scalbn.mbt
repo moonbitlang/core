@@ -106,7 +106,7 @@ pub fn scalbnf(y : Float, exp : Int) -> Float {
     }
   }
   let u = (0x7f + n) << 23
-  return y * u.reinterpret_as_float()
+  return y * Float::reinterpret_from_int(u)
 }
 
 ///|

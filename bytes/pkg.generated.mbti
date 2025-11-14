@@ -68,10 +68,6 @@ fn BytesView::to_double_be(Self) -> Double
 #deprecated
 fn BytesView::to_double_le(Self) -> Double
 fn BytesView::to_fixedarray(Self) -> FixedArray[Byte]
-#deprecated
-fn BytesView::to_float_be(Self) -> Float
-#deprecated
-fn BytesView::to_float_le(Self) -> Float
 fn BytesView::to_int64_be(Self) -> Int64
 fn BytesView::to_int64_le(Self) -> Int64
 fn BytesView::to_int_be(Self) -> Int

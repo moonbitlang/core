@@ -219,8 +219,8 @@ test "float" {
   inspect((-0.3 : Float).compare(-0.6), content="1")
   inspect((0.3 : Float).to_double() == 0.3, content="false")
   inspect((0.3 : Float).reinterpret_as_int(), content="1050253722")
-  inspect(b'5'.to_float().to_double(), content="53")
-  inspect((123456).to_float().to_double(), content="123456")
+  inspect(Float::from_byte(b'5').to_double(), content="53")
+  inspect(Float::from_int(123456).to_double(), content="123456")
   // inspect((0.36 : Float).sqrt().to_double(), content="0.6000000238418579")
 }
 
@@ -345,19 +345,19 @@ test "grouped test for boundary cases" {
 
   // Test for positive infinity
   inspect(
-    Float::reinterpret_as_uint((0x7F800000).reinterpret_as_float()),
+    Float::reinterpret_as_uint(Float::reinterpret_from_int(0x7F800000)),
     content="2139095040",
   )
 
   // Test for negative infinity
   inspect(
-    Float::reinterpret_as_uint((0xFF800000).reinterpret_as_float()),
+    Float::reinterpret_as_uint(Float::reinterpret_from_int(0xFF800000)),
     content="4286578688",
   )
 
   // Test for NaN
   inspect(
-    Float::reinterpret_as_uint((0x7FC00000).reinterpret_as_float()),
+    Float::reinterpret_as_uint(Float::reinterpret_from_int(0x7FC00000)),
     content="2143289344",
   )
 }
@@ -453,7 +453,7 @@ test "UInt::reinterpret_as_float roundtrip" {
      0x007FFFFFU, // largest positive subnormal float
   ]
   for value in values {
-    let float_value = value.reinterpret_as_float()
+    let float_value = Float::reinterpret_from_uint(value)
     let roundtrip_value = Float::reinterpret_as_uint(float_value)
     assert_eq(roundtrip_value, value)
   }
