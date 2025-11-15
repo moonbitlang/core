@@ -96,8 +96,7 @@ pub fn[T] UninitializedArray::sub(
 ///
 /// Returns the length of the uninitialized array as an integer.
 pub fn[A] UninitializedArray::length(self : UninitializedArray[A]) -> Int {
-  let UninitializedArray(self) = self
-  self.length()
+  self.0.length()
 }
 
 ///|
