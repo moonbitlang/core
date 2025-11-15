@@ -3,7 +3,9 @@
     "moonbitlang/core/builtin"    
   ],
   "test-import" : [
-    "moonbitlang/core/quickcheck"
+    "moonbitlang/core/quickcheck",
+    "moonbitlang/core/json",
+    "moonbitlang/core/array"
   ],
   "targets": {
     "panic_test.mbt": ["not", "native", "llvm"]
