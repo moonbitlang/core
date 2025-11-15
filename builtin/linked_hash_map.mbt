@@ -776,10 +776,7 @@ pub fn[K, V] Map::copy(self : Map[K, V]) -> Map[K, V] {
 /// let merged = map1.merge(map2)
 /// @json.inspect(merged, content={ "a": 1, "b": 3, "c": 4 })
 /// ```
-pub fn[K : Hash + Eq, V] Map::merge(
-  self : Map[K, V],
-  other : Map[K, V],
-) -> Map[K, V] {
+pub fn[K : Eq, V] Map::merge(self : Map[K, V], other : Map[K, V]) -> Map[K, V] {
   let result = self.copy()
   result.merge_in_place(other)
   result
@@ -807,11 +804,17 @@ pub fn[K : Hash + Eq, V] Map::merge(
 /// map1.merge_in_place(map2)
 /// @json.inspect(map1, content={ "a": 1, "b": 3, "c": 4 })
 /// ```
-pub fn[K : Hash + Eq, V] Map::merge_in_place(
+pub fn[K : Eq, V] Map::merge_in_place(
   self : Map[K, V],
   other : Map[K, V],
 ) -> Unit {
-  other.each((k, v) => self.set(k, v))
+  loop other.head {
+    Some({ key, value, next, hash, .. }) => {
+      self.set_with_hash(key, value, hash)
+      continue next
+    }
+    None => break
+  }
 }
 
 ///|
