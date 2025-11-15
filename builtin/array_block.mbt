@@ -123,7 +123,7 @@ pub fn[A] Array::unsafe_blit_fixed(
 /// ```moonbit
 ///   let src = [1, 2, 3, 4, 5]
 ///   let dst = [0, 0]
-///   src.blit_to(dst, len=3, dst_offset=1)
+///   src[:3].blit_to(dst, dst_offset=1)
 ///   inspect(dst, content="[0, 1, 2, 3]")
 /// ```
 ///
@@ -134,10 +134,13 @@ pub fn[A] Array::unsafe_blit_fixed(
 /// * `dst_offset` is negative
 /// * `dst_offset` exceeds the length of destination array
 /// * `src_offset + len` exceeds the length of source array
+// TODO: make len optional and deprecate it
+#label_migration(src_offset, fill=false, msg="Use ArrayView::blit_to instead")
+#label_migration(len, fill=false, msg="Use ArrayView::blit_to instead")
 pub fn[A] Array::blit_to(
   self : Array[A],
   dst : Array[A],
-  len~ : Int,
+  len? : Int = self.length(),
   src_offset? : Int = 0,
   dst_offset? : Int = 0,
 ) -> Unit {
@@ -153,14 +156,58 @@ pub fn[A] Array::blit_to(
 }
 
 ///|
+/// Copies all elements from an array view to a destination array, with support
+/// for growing the destination array if needed.
+///
+/// Parameters:
+///
+/// * `self` : The array view to copy elements from.
+/// * `dst` : The array to copy elements to. Will be automatically grown
+/// if needed to accommodate the copied elements.
+/// * `dst_offset` : Starting index in the destination array. Defaults to 0.
+///
+/// Example:
+///
+/// ```moonbit
+///   let src = [1, 2, 3, 4, 5]
+///   let view = src[1:4]  // view = [2, 3, 4]
+///   let dst = [0, 0]
+///   view.blit_to(dst, dst_offset=1)
+///   inspect(dst, content="[0, 2, 3, 4]")
+/// ```
+///
+/// Panics if:
+///
+/// * `dst_offset` is negative
+/// * `dst_offset` exceeds the length of destination array
+pub fn[A] ArrayView::blit_to(
+  self : ArrayView[A],
+  dst : Array[A],
+  dst_offset? : Int = 0,
+) -> Unit {
+  let len = self.len()
+  guard dst_offset >= 0 && dst_offset <= dst.length()
+  if dst_offset + len > dst.length() {
+    dst.unsafe_grow_to_length(dst_offset + len)
+  }
+  UninitializedArray::unsafe_blit(
+    dst.buffer(),
+    dst_offset,
+    self.buf(),
+    self.start(),
+    len,
+  )
+}
+
+///|
 test "Array::blit_to/basic" {
   let src = [1, 2, 3, 4, 5]
   let dst = [0, 0, 0, 0, 0]
-  Array::blit_to(src, dst, len=3, src_offset=1, dst_offset=2)
+  src[1:4].blit_to(dst, dst_offset=2)
   inspect(dst, content="[0, 0, 2, 3, 4]")
   let src = [1, 2, 3, 4, 5]
   let dst = [0, 0, 0, 0, 0]
-  Array::blit_to(src, dst, len=3)
+  src[0:3].blit_to(dst)
   inspect(dst, content="[1, 2, 3, 0, 0]")
 }
 
@@ -168,7 +215,7 @@ test "Array::blit_to/basic" {
 test "Array::blit_to/zero_length" {
   let src = [1, 2, 3]
   let dst = [4, 5, 6]
-  Array::blit_to(src, dst, len=0)
+  src[0:0].blit_to(dst)
   inspect(dst, content="[4, 5, 6]")
 }
 
@@ -176,7 +223,7 @@ test "Array::blit_to/zero_length" {
 test "Array::blit_to/grow_destination" {
   let src = [1, 2, 3, 4, 5]
   let dst = [0, 0]
-  Array::blit_to(src, dst, len=3, dst_offset=1)
+  src[0:3].blit_to(dst, dst_offset=1)
   inspect(dst, content="[0, 1, 2, 3]")
 }
 
@@ -185,19 +232,19 @@ test "Array::blit_to/edge_cases" {
   // Test with src_offset and dst_offset
   let src = [1, 2, 3, 4, 5]
   let dst = [0, 0, 0, 0, 0]
-  Array::blit_to(src, dst, len=2, src_offset=1, dst_offset=2)
+  src[1:3].blit_to(dst, dst_offset=2)
   inspect(dst, content="[0, 0, 2, 3, 0]")
 
   // Test when src and dst are the same array
-  Array::blit_to(src, src, len=2, src_offset=0, dst_offset=3)
+  src[0:2].blit_to(src, dst_offset=3)
   inspect(src, content="[1, 2, 3, 1, 2]")
 
   // Test with len equal to 0
-  Array::blit_to(src, dst, len=0, src_offset=0, dst_offset=0)
+  src[0:0].blit_to(dst, dst_offset=0)
   inspect(dst, content="[0, 0, 2, 3, 0]")
 
   // Test with len equal to the length of src
-  Array::blit_to(src, dst, len=5)
+  src[0:5].blit_to(dst)
   inspect(dst, content="[1, 2, 3, 1, 2]")
 }
 
@@ -206,16 +253,16 @@ test "panic Array::blit_to/boundary_cases1" {
   let src = [1, 2, 3, 4, 5]
   let dst = [0, 0, 0, 0, 0]
 
-  // Invalid len
-  ignore(Array::blit_to(src, dst, len=-1))
+  // Invalid range (start > end will panic)
+  ignore(src[3:1].blit_to(dst))
 }
 
 ///|
 test "panic Array::blit_to/boundary_cases2" {
   let src = [1, 2, 3, 4, 5]
   let dst = [0, 0, 0, 0, 0]
-  // Invalid src_offset
-  ignore(Array::blit_to(src, dst, len=2, src_offset=-1))
+  // Invalid src_offset (negative index in view creation will panic)
+  ignore(src[-1:1].blit_to(dst))
 }
 
 ///|
@@ -223,7 +270,7 @@ test "panic Array::blit_to/boundary_cases3" {
   let src = [1, 2, 3, 4, 5]
   let dst = [0, 0, 0, 0, 0]
   // len exceeding src length
-  ignore(Array::blit_to(src, dst, len=6))
+  ignore(src[0:6].blit_to(dst))
 }
 
 ///|
@@ -231,7 +278,7 @@ test "panic Array::blit_to/boundary_cases4" {
   let src = [1, 2, 3, 4, 5]
   let dst = [0, 0, 0, 0, 0]
   // dst offset exceeding dst length
-  ignore(Array::blit_to(src, dst, len=5, dst_offset=6))
+  ignore(src[0:5].blit_to(dst, dst_offset=6))
 }
 
 ///|
@@ -244,15 +291,15 @@ test "Array::blit_to - random cases" {
   let dst = [0, 0, 0, 0, 0]
 
   // Random len, src_offset, and dst_offset
-  Array::blit_to(src, dst, len=2, src_offset=2, dst_offset=1)
+  src[2:4].blit_to(dst, dst_offset=1)
   inspect(dst, content="[0, 30, 40, 0, 0]")
 
   // Another random case
-  Array::blit_to(src, dst, len=3, src_offset=1, dst_offset=2)
+  src[1:4].blit_to(dst, dst_offset=2)
   inspect(dst, content="[0, 30, 20, 30, 40]")
 
   // Yet another random case
-  Array::blit_to(src, dst, len=1, src_offset=4, dst_offset=4)
+  src[4:5].blit_to(dst, dst_offset=4)
   inspect(dst, content="[0, 30, 20, 30, 50]")
 }
 
@@ -262,15 +309,15 @@ test "Array::blit_to - boundary cases" {
   let dst = [0, 0, 0, 0, 0]
 
   // Test with src_offset at the end of src
-  Array::blit_to(src, dst, len=1, src_offset=4, dst_offset=0)
+  src[4:5].blit_to(dst, dst_offset=0)
   inspect(dst, content="[5, 0, 0, 0, 0]")
 
   // Test with dst_offset at the end of dst
-  Array::blit_to(src, dst, len=1, src_offset=0, dst_offset=4)
+  src[0:1].blit_to(dst, dst_offset=4)
   inspect(dst, content="[5, 0, 0, 0, 1]")
 
   // Test with len equal to the remaining length of src
-  Array::blit_to(src, dst, len=2, src_offset=3, dst_offset=3)
+  src[3:5].blit_to(dst, dst_offset=3)
   inspect(dst, content="[5, 0, 0, 4, 5]")
 }
 
@@ -280,6 +327,68 @@ test "Array::unsafe_blit_fixed" {
   let dst = Array::make(5, 0) // Create an Array with 5 elements of value 0
   Array::unsafe_blit_fixed(dst, 1, src, 0, 2) // Copy 2 elements from src[0] to dst[1]
   inspect(dst, content="[0, 1, 1, 0, 0]")
+}
+
+///|
+test "ArrayView::blit_to/basic" {
+  let src = [1, 2, 3, 4, 5]
+  let view = src[1:4] // view = [2, 3, 4]
+  let dst = [0, 0, 0, 0, 0]
+  view.blit_to(dst)
+  inspect(dst, content="[2, 3, 4, 0, 0]")
+}
+
+///|
+test "ArrayView::blit_to/with_offset" {
+  let src = [1, 2, 3, 4, 5]
+  let view = src[1:4] // view = [2, 3, 4]
+  let dst = [0, 0, 0, 0, 0]
+  view.blit_to(dst, dst_offset=2)
+  inspect(dst, content="[0, 0, 2, 3, 4]")
+}
+
+///|
+test "ArrayView::blit_to/grow_destination" {
+  let src = [1, 2, 3, 4, 5]
+  let view = src[1:4] // view = [2, 3, 4]
+  let dst = [0, 0]
+  view.blit_to(dst, dst_offset=1)
+  inspect(dst, content="[0, 2, 3, 4]")
+}
+
+///|
+test "ArrayView::blit_to/empty_view" {
+  let src = [1, 2, 3, 4, 5]
+  let view = src[2:2] // empty view
+  let dst = [0, 0, 0]
+  view.blit_to(dst)
+  inspect(dst, content="[0, 0, 0]")
+}
+
+///|
+test "ArrayView::blit_to/nested_view" {
+  let src = [1, 2, 3, 4, 5, 6, 7]
+  let view1 = src[1:6] // [2, 3, 4, 5, 6]
+  let view2 = view1[1:4] // [3, 4, 5]
+  let dst = [0, 0, 0, 0, 0]
+  view2.blit_to(dst, dst_offset=1)
+  inspect(dst, content="[0, 3, 4, 5, 0]")
+}
+
+///|
+test "panic ArrayView::blit_to/invalid_offset" {
+  let src = [1, 2, 3, 4, 5]
+  let view = src[1:4]
+  let dst = [0, 0, 0]
+  ignore(view.blit_to(dst, dst_offset=-1))
+}
+
+///|
+test "panic ArrayView::blit_to/offset_exceeds_length" {
+  let src = [1, 2, 3, 4, 5]
+  let view = src[1:4]
+  let dst = [0, 0, 0]
+  ignore(view.blit_to(dst, dst_offset=4))
 }
 
 // test "Array::blit_to - invalid cases" {
