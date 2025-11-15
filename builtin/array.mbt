@@ -379,13 +379,8 @@ pub impl[T] Add for Array[T] with add(self, other) {
 ///   v1.append(v2)
 ///   inspect(v1, content="[1, 2, 3]")
 /// ```
-pub fn[T] Array::append(self : Array[T], other : Array[T]) -> Unit {
-  other.blit_to(
-    self,
-    len=other.length(),
-    src_offset=0,
-    dst_offset=self.length(),
-  )
+pub fn[T] Array::append(self : Array[T], other : ArrayView[T]) -> Unit {
+  other.blit_to(self, dst_offset=self.length())
 }
 
 ///|
