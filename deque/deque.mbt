@@ -2218,6 +2218,7 @@ pub impl[A : Compare] Compare for Deque[A] with compare(self, other) {
 ///   dq.rev_in_place()
 ///   inspect(dq, content="@deque.from_array([])")
 /// ```
+#alias(rev_inplace, deprecated)
 pub fn[A] Deque::rev_in_place(self : Deque[A]) -> Unit {
   guard self.len > 0 else { return }
   let cap = self.buf.length()

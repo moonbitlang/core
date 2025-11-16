@@ -522,6 +522,7 @@ pub fn[T, U] Array::map(
 ///   assert_eq(v, [4, 5, 6])
 /// ```
 #locals(f)
+#alias(map_inplace, deprecated)
 pub fn[T] Array::map_in_place(
   self : Array[T],
   f : (T) -> T raise?,
@@ -565,6 +566,7 @@ pub fn[T, U] Array::mapi(
 ///   assert_eq(v, [3, 5, 7])
 /// ```
 #locals(f)
+#alias(mapi_inplace, deprecated)
 pub fn[T] Array::mapi_in_place(
   self : Array[T],
   f : (Int, T) -> T raise?,
@@ -686,6 +688,7 @@ pub fn[T : Compare] Array::is_sorted(self : Array[T]) -> Bool {
 ///   arr.rev_in_place()
 ///   inspect(arr, content="[]")
 /// ```
+#alias(rev_inplace, deprecated)
 pub fn[T] Array::rev_in_place(self : Array[T]) -> Unit {
   let len = self.length()
   for i in 0..<(len / 2) {
