@@ -399,31 +399,28 @@ test "test View::to_uint64_le with binary pattern" {
 
 ///|
 test "test View::to_int_le with a non-zero 32-bit number" {
-  let bytes = b"\x78\x56\x34\x12"[:]
-  inspect(bytes.to_int_le(), content="305419896")
+  let bytes = b"\x78\x56\x34\x12"
+  guard bytes is [i32le(x), ..]
+  inspect(x, content="305419896")
 }
 
 ///|
-test "View::to_int64_be test cases" {
+test "View::to_int64_(be|le) test cases" {
   // Test positive number
   let bytes = b"\x00\x00\x00\x00\x00\x00\x00\x01"
-  inspect(bytes[:].to_int64_be(), content="1")
-
-  // Test negative number (most significant bit set)
   let bytes2 = b"\xF0\x00\x00\x00\x00\x00\x00\x00"
-  inspect(bytes2[:].to_int64_be(), content="-1152921504606846976")
-
   // Test large positive number
   let bytes3 = b"\x7F\xFF\xFF\xFF\xFF\xFF\xFF\xFF"
-  inspect(bytes3[:].to_int64_be(), content="9223372036854775807")
-}
-
-///|
-test "View::to_int64_le with mixed bytes" {
-  // Test with bytes containing both negative and positive values
-  let bytes = b"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF"
-  let view = bytes[:]
-  inspect(view.to_int64_le(), content="-1")
+  let bytes4 = b"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF"
+  guard bytes is [i64be(a), ..] &&
+    bytes2 is [i64be(b), ..] &&
+    bytes3 is [i64be(c), ..] &&
+    bytes4 is [i64le(d), ..] else {
+    fail("Failed to match int64 big-endian pattern")
+  }
+  @json.inspect((a, b, c, d), content=[
+    "1", "-1152921504606846976", "9223372036854775807", "-1",
+  ])
 }
 
 ///|
@@ -485,7 +482,8 @@ test "iter break early" {
 ///|
 test "View::to_int_be with positive value" {
   let bytes = b"\x00\x00\x00\x01"[:] // Represents 1 in big-endian
-  inspect(bytes.to_int_be(), content="1")
+  guard bytes is [i32be(x), ..]
+  inspect(x, content="1")
 }
 
 ///|
