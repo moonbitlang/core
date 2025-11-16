@@ -34,6 +34,7 @@
 /// - ...
 /// - `bytes[index+7]` → bits 56-63 (most significant)
 #intrinsic("%bytes.unsafe_read_uint64_le")
+#doc(hidden)
 pub fn Bytes::unsafe_read_uint64_le(bytes : Bytes, index : Int) -> UInt64 {
   let mut result : UInt64 = 0
   for i in 0..=7 {
@@ -64,6 +65,7 @@ pub fn Bytes::unsafe_read_uint64_le(bytes : Bytes, index : Int) -> UInt64 {
 /// - ...
 /// - `bytes[index+7]` → bits 0-7 (least significant)
 #intrinsic("%bytes.unsafe_read_uint64_be")
+#doc(hidden)
 pub fn Bytes::unsafe_read_uint64_be(bytes : Bytes, index : Int) -> UInt64 {
   let mut result : UInt64 = 0
   for i in 0..=7 {
@@ -94,6 +96,7 @@ pub fn Bytes::unsafe_read_uint64_be(bytes : Bytes, index : Int) -> UInt64 {
 /// - `bytes[index+2]` → bits 16-23
 /// - `bytes[index+3]` → bits 24-31 (most significant)
 #intrinsic("%bytes.unsafe_read_uint32_le")
+#doc(hidden)
 pub fn Bytes::unsafe_read_uint32_le(bytes : Bytes, index : Int) -> UInt {
   let mut result : UInt = 0
   for i in 0..=3 {
@@ -124,6 +127,7 @@ pub fn Bytes::unsafe_read_uint32_le(bytes : Bytes, index : Int) -> UInt {
 /// - `bytes[index+2]` → bits 8-15
 /// - `bytes[index+3]` → bits 0-7 (least significant)
 #intrinsic("%bytes.unsafe_read_uint32_be")
+#doc(hidden)
 pub fn Bytes::unsafe_read_uint32_be(bytes : Bytes, index : Int) -> UInt {
   let mut result : UInt = 0
   for i in 0..=3 {
@@ -152,6 +156,7 @@ pub fn Bytes::unsafe_read_uint32_be(bytes : Bytes, index : Int) -> UInt {
 /// - `bytes[index]` → bits 0-7 (least significant)
 /// - `bytes[index+1]` → bits 8-15 (most significant)
 #intrinsic("%bytes.unsafe_read_uint16_le")
+#doc(hidden)
 pub fn Bytes::unsafe_read_uint16_le(bytes : Bytes, index : Int) -> UInt16 {
   let mut result : UInt16 = 0
   for i in 0..=1 {
@@ -180,6 +185,7 @@ pub fn Bytes::unsafe_read_uint16_le(bytes : Bytes, index : Int) -> UInt16 {
 /// - `bytes[index]` → bits 8-15 (most significant)
 /// - `bytes[index+1]` → bits 0-7 (least significant)
 #intrinsic("%bytes.unsafe_read_uint16_be")
+#doc(hidden)
 pub fn Bytes::unsafe_read_uint16_be(bytes : Bytes, index : Int) -> UInt16 {
   let mut result : UInt16 = 0
   for i in 0..=1 {
