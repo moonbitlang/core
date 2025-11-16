@@ -518,11 +518,11 @@ pub fn[T, U] Array::map(
 /// # Example
 /// ```mbt
 ///   let v = [3, 4, 5]
-///   v.map_inplace((x) => {x + 1})
+///   v.map_in_place((x) => {x + 1})
 ///   assert_eq(v, [4, 5, 6])
 /// ```
 #locals(f)
-pub fn[T] Array::map_inplace(
+pub fn[T] Array::map_in_place(
   self : Array[T],
   f : (T) -> T raise?,
 ) -> Unit raise? {
@@ -561,11 +561,11 @@ pub fn[T, U] Array::mapi(
 /// # Example
 /// ```mbt
 ///   let v = [3, 4, 5]
-///   v.mapi_inplace((i, x) => {x + i})
+///   v.mapi_in_place((i, x) => {x + i})
 ///   assert_eq(v, [3, 5, 7])
 /// ```
 #locals(f)
-pub fn[T] Array::mapi_inplace(
+pub fn[T] Array::mapi_in_place(
   self : Array[T],
   f : (Int, T) -> T raise?,
 ) -> Unit raise? {
@@ -679,14 +679,14 @@ pub fn[T : Compare] Array::is_sorted(self : Array[T]) -> Bool {
 ///
 /// ```moonbit
 ///   let arr = [1, 2, 3, 4, 5]
-///   arr.rev_inplace()
+///   arr.rev_in_place()
 ///   inspect(arr, content="[5, 4, 3, 2, 1]")
 ///
 ///   let arr : Array[Int] = []
-///   arr.rev_inplace()
+///   arr.rev_in_place()
 ///   inspect(arr, content="[]")
 /// ```
-pub fn[T] Array::rev_inplace(self : Array[T]) -> Unit {
+pub fn[T] Array::rev_in_place(self : Array[T]) -> Unit {
   let len = self.length()
   for i in 0..<(len / 2) {
     let temp = self.unsafe_get(i)

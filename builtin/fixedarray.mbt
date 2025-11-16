@@ -828,10 +828,10 @@ test "rev_foldi" {
 ///
 /// ```moonbit
 ///   let arr : FixedArray[_] = [1, 2, 3, 4, 5]
-///   arr.rev_inplace()
+///   arr.rev_in_place()
 ///   inspect(arr, content="[5, 4, 3, 2, 1]")
 /// ```
-pub fn[T] FixedArray::rev_inplace(self : FixedArray[T]) -> Unit {
+pub fn[T] FixedArray::rev_in_place(self : FixedArray[T]) -> Unit {
   let mid_len = self.length() / 2
   for i in 0..<mid_len {
     let j = self.length() - i - 1
@@ -877,26 +877,26 @@ pub fn[T] FixedArray::rev(self : FixedArray[T]) -> FixedArray[T] {
 test "rev in place" {
   {
     let arr : FixedArray[Int] = []
-    arr.rev_inplace()
+    arr.rev_in_place()
     assert_eq(arr, [])
   }
   {
     let arr : FixedArray[_] = [1]
-    arr.rev_inplace()
+    arr.rev_in_place()
     assert_eq(arr, [1])
   }
   {
     let arr : FixedArray[_] = [1, 2]
-    arr.rev_inplace()
+    arr.rev_in_place()
     assert_eq(arr, [2, 1])
   }
   {
     let arr : FixedArray[_] = [1, 2, 3, 4, 5]
-    arr.rev_inplace()
+    arr.rev_in_place()
     assert_eq(arr, [5, 4, 3, 2, 1])
   }
   let arr : FixedArray[_] = [1, 2, 3, 4, 5, 6]
-  arr.rev_inplace()
+  arr.rev_in_place()
   assert_eq(arr, [6, 5, 4, 3, 2, 1])
 }
 
