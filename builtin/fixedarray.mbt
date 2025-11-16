@@ -831,6 +831,7 @@ test "rev_foldi" {
 ///   arr.rev_in_place()
 ///   inspect(arr, content="[5, 4, 3, 2, 1]")
 /// ```
+#alias(rev_inplace, deprecated)
 pub fn[T] FixedArray::rev_in_place(self : FixedArray[T]) -> Unit {
   let mid_len = self.length() / 2
   for i in 0..<mid_len {
