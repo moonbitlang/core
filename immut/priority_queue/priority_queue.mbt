@@ -64,7 +64,7 @@ pub fn[A : Compare] PriorityQueue::to_array(
     }
   }
   arr.sort()
-  arr.rev_inplace()
+  arr.rev_in_place()
   arr
 }
 

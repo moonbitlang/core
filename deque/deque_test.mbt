@@ -1316,28 +1316,28 @@ test "deque_compare" {
 test "rev_inplace" {
   // Test with odd number of elements
   let dq = @deque.from_array([3, 4, 5])
-  dq.rev_inplace()
+  dq.rev_in_place()
   assert_eq(dq, @deque.from_array([5, 4, 3]))
-  dq.rev_inplace()
+  dq.rev_in_place()
   assert_eq(dq, @deque.from_array([3, 4, 5]))
 
   // Test with even number of elements
   let dq = @deque.from_array([3, 4])
-  dq.rev_inplace()
+  dq.rev_in_place()
   assert_eq(dq, @deque.from_array([4, 3]))
-  dq.rev_inplace()
+  dq.rev_in_place()
   assert_eq(dq, @deque.from_array([3, 4]))
 
   // Test with empty deque
   let empty : @deque.Deque[Int] = @deque.new()
-  empty.rev_inplace()
+  empty.rev_in_place()
   assert_eq(empty, @deque.from_array([]))
 
   // Additional test with more elements
   let dq = @deque.from_array([1, 2, 3, 4, 5])
-  dq.rev_inplace()
+  dq.rev_in_place()
   assert_eq(dq, @deque.from_array([5, 4, 3, 2, 1]))
-  dq.rev_inplace()
+  dq.rev_in_place()
   assert_eq(dq, @deque.from_array([1, 2, 3, 4, 5]))
 
   // Test split case (head_len < len)
@@ -1349,7 +1349,7 @@ test "rev_inplace" {
   dq3.push_back(6)
   // Now the deque should be [3, 4, 5, 6] with internal wrap-around
   @json.inspect(dq3.as_views(), content=[[3, 4], [5, 6]])
-  dq3.rev_inplace()
+  dq3.rev_in_place()
   @json.inspect(dq3.as_views(), content=[[6, 5], [4, 3]])
 }
 

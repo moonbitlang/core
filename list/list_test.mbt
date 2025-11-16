@@ -353,7 +353,7 @@ test "sort" {
 ///|
 test "sort-stack-safety" {
   let arr = FixedArray::makei(100_000, x => x)
-  arr.rev_inplace()
+  arr.rev_in_place()
   let ls = @list.from_array(arr)
   ls.sort() |> ignore
 }

@@ -2211,14 +2211,14 @@ pub impl[A : Compare] Compare for Deque[A] with compare(self, other) {
 ///
 /// ```moonbit
 ///   let dq = @deque.from_array([1, 2, 3, 4, 5])
-///   dq.rev_inplace()
+///   dq.rev_in_place()
 ///   inspect(dq, content="@deque.from_array([5, 4, 3, 2, 1])")
 ///
 ///   let dq : @deque.Deque[Int] = @deque.new()
-///   dq.rev_inplace()
+///   dq.rev_in_place()
 ///   inspect(dq, content="@deque.from_array([])")
 /// ```
-pub fn[A] Deque::rev_inplace(self : Deque[A]) -> Unit {
+pub fn[A] Deque::rev_in_place(self : Deque[A]) -> Unit {
   guard self.len > 0 else { return }
   let cap = self.buf.length()
   let mut left = self.head

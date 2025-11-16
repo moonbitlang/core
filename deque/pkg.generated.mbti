@@ -66,7 +66,7 @@ fn[A] Deque::retain_map(Self[A], (A) -> A?) -> Unit
 fn[A] Deque::rev(Self[A]) -> Self[A]
 fn[A] Deque::rev_each(Self[A], (A) -> Unit) -> Unit
 fn[A] Deque::rev_eachi(Self[A], (Int, A) -> Unit) -> Unit
-fn[A] Deque::rev_inplace(Self[A]) -> Unit
+fn[A] Deque::rev_in_place(Self[A]) -> Unit
 fn[A] Deque::rev_iter(Self[A]) -> Iter[A]
 fn[A] Deque::rev_iter2(Self[A]) -> Iter2[Int, A]
 fn[A] Deque::rev_iterator(Self[A]) -> Iterator[A]
