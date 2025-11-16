@@ -309,6 +309,7 @@ pub fn BytesView::iterator2(self : BytesView) -> Iterator2[Int, Byte] {
 ///   inspect(x, content="305419896") // 0x12345678
 /// ```
 #deprecated(skip_current_package=false, "Use bits pattern directly")
+#doc(hidden)
 pub fn BytesView::to_uint_be(self : BytesView) -> UInt {
   (self[0].to_uint() << 24) +
   (self[1].to_uint() << 16) +
@@ -339,6 +340,7 @@ pub fn BytesView::to_uint_be(self : BytesView) -> UInt {
 /// inspect(x, content="67305985") // 0x04030201
 /// ```
 #deprecated(skip_current_package=false, "Use bits pattern directly")
+#doc(hidden)
 pub fn BytesView::to_uint_le(self : BytesView) -> UInt {
   self[0].to_uint() +
   (self[1].to_uint() << 8) +
@@ -371,6 +373,7 @@ pub fn BytesView::to_uint_le(self : BytesView) -> UInt {
 ///   inspect(x, content="81985529216486895")
 /// ```
 #deprecated(skip_current_package=false, "Use bits pattern directly")
+#doc(hidden)
 pub fn BytesView::to_uint64_be(self : BytesView) -> UInt64 {
   (self[0].to_uint().to_uint64() << 56) +
   (self[1].to_uint().to_uint64() << 48) +
@@ -408,6 +411,7 @@ pub fn BytesView::to_uint64_be(self : BytesView) -> UInt64 {
 ///   inspect(x, content="578437695752307201")
 /// ```
 #deprecated(skip_current_package=false, "Use bits pattern directly")
+#doc(hidden)
 pub fn BytesView::to_uint64_le(self : BytesView) -> UInt64 {
   self[0].to_uint().to_uint64() +
   (self[1].to_uint().to_uint64() << 8) +
@@ -420,98 +424,29 @@ pub fn BytesView::to_uint64_le(self : BytesView) -> UInt64 {
 }
 
 ///|
-/// Converts a 4-byte view of bytes to a 32-bit signed integer by interpreting
-/// the bytes in big-endian order (most significant byte first). Interprets the
-/// resulting unsigned integer as a signed integer using two's complement
-/// representation.
-///
-/// Parameters:
-///
-/// * `View` : A view into a byte sequence that must be exactly 4 bytes
-/// long. The bytes are interpreted in big-endian order, where the first byte is
-/// the most significant byte and the last byte is the least significant byte.
-///
-/// Returns a 32-bit signed integer constructed from the bytes in big-endian
-/// order.
-///
-/// Example:
-///
-/// ```moonbit
-///   let bytes = b"\x80\x00\x00\x00"[:] // Represents -2147483648 in two's complement
-///   inspect(bytes.to_int_be(), content="-2147483648")
-/// ```
+#deprecated
+#doc(hidden)
 pub fn BytesView::to_int_be(self : BytesView) -> Int {
   self.to_uint_be().reinterpret_as_int()
 }
 
 ///|
-/// Converts 4 bytes from a byte sequence into a 32-bit signed integer using
-/// little-endian byte order. The bytes are interpreted as follows: the least
-/// significant byte is at the lowest address (first position), and the most
-/// significant byte is at the highest address (last position).
-///
-/// Parameters:
-///
-/// * `bytes_view` : A view into a byte sequence that must be exactly 4 bytes
-/// long. The bytes are interpreted as a little-endian representation of a 32-bit
-/// integer.
-///
-/// Returns a 32-bit signed integer (`Int`) constructed from the 4 bytes in
-/// little-endian order.
-///
-/// Example:
-///
-/// ```moonbit
-///   let bytes = b"\x78\x56\x34\x12"
-///   let view = bytes[:]
-///   inspect(view.to_int_le(), content="305419896") // 0x12345678 in decimal
-/// ```
+#deprecated
+#doc(hidden)
 pub fn BytesView::to_int_le(self : BytesView) -> Int {
   self.to_uint_le().reinterpret_as_int()
 }
 
 ///|
-/// Interprets an 8-byte view as a signed 64-bit integer in big-endian byte
-/// order. The highest byte (index 0) is treated as the most significant byte.
-///
-/// Parameters:
-///
-/// * `bytes_view` : A view containing exactly 8 bytes to be interpreted as a
-/// big-endian signed 64-bit integer.
-///
-/// Returns a 64-bit signed integer (`Int64`) value constructed by interpreting
-/// the bytes in big-endian order.
-///
-/// Example:
-///
-/// ```moonbit
-///   let bytes = b"\x80\x00\x00\x00\x00\x00\x00\x00"[:] // Most negative 64-bit integer
-///   inspect(bytes.to_int64_be(), content="-9223372036854775808")
-/// ```
+#deprecated
+#doc(hidden)
 pub fn BytesView::to_int64_be(self : BytesView) -> Int64 {
   self.to_uint64_be().reinterpret_as_int64()
 }
 
 ///|
-/// Converts a sequence of 8 bytes into a signed 64-bit integer using
-/// little-endian byte order. In little-endian order, the least significant byte
-/// is stored at the lowest address (first byte).
-///
-/// Parameters:
-///
-/// * `bytes_view` : A view into a sequence of exactly 8 bytes. The first byte
-/// represents the least significant byte of the resulting integer.
-///
-/// Returns a 64-bit signed integer (`Int64`) constructed from the bytes in
-/// little-endian order.
-///
-/// Example:
-///
-/// ```moonbit
-///   let bytes = b"\x01\x02\x03\x04\x05\x06\x07\x08"
-///   let view = bytes[:]
-///   inspect(view.to_int64_le(), content="578437695752307201")
-/// ```
+#deprecated
+#doc(hidden)
 pub fn BytesView::to_int64_le(self : BytesView) -> Int64 {
   self.to_uint64_le().reinterpret_as_int64()
 }
@@ -538,6 +473,7 @@ pub fn BytesView::to_int64_le(self : BytesView) -> Int64 {
 ///   inspect(bits.reinterpret_as_double(), content="1")
 /// ```
 #deprecated(skip_current_package=false, "Use bits pattern directly")
+#doc(hidden)
 pub fn BytesView::to_double_be(self : BytesView) -> Double {
   self.to_uint64_be().reinterpret_as_double()
 }
@@ -562,6 +498,7 @@ pub fn BytesView::to_double_be(self : BytesView) -> Double {
 ///   inspect(bits.reinterpret_as_double(), content="1")
 /// ```
 #deprecated(skip_current_package=false, "Use bits pattern directly")
+#doc(hidden)
 pub fn BytesView::to_double_le(self : BytesView) -> Double {
   self.to_uint64_le().reinterpret_as_double()
 }

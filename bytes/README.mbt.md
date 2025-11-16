@@ -90,10 +90,16 @@ test "bytes view operations" {
   inspect(view[0], content="b'\\x12'")
 
   // Interpret as integers (big-endian)
-  inspect(view.to_int_be(), content="305419896")
+  guard view is [i32be(x), ..] else {
+    fail("Failed to match big-endian integer pattern")
+  }
+  inspect(x, content="305419896")
 
   // Interpret as integers (little-endian)
-  inspect(view.to_int_le(), content="2018915346")
+  guard view is [i32le(y), ..] else {
+    fail("Failed to match little-endian integer pattern")
+  }
+  inspect(y, content="2018915346")
 
   // Create a sub-view
   let sub_view = view[1:3]
@@ -112,9 +118,13 @@ test "numeric interpretation" {
   let int64_bytes = Bytes::from_array([
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x42,
   ])
-  let int64_view = int64_bytes[:]
-  inspect(int64_view.to_int64_be(), content="66")
-  guard int64_view is [u64le(x), ..]
+  guard int64_bytes is [i64be(x), ..] else {
+    fail("Failed to match big-endian int64 pattern")
+  }
+  inspect(x, content="66")
+  guard int64_bytes is [u64le(x), ..] else {
+    fail("Failed to match little-endian uint64 pattern")
+  }
   inspect(x, content="4755801206503243776")
 }
 ```
