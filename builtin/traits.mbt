@@ -111,9 +111,8 @@ pub(open) trait Show {
   to_string(Self) -> String = _
 }
 
-// Default implementation for `Show::to_string`, uses a `Buffer`
-
 ///|
+/// Default implementation for `Show::to_string`, uses a `StringBuilder`
 impl Show with to_string(self) {
   let logger = StringBuilder::new()
   self.output(logger)
