@@ -50,7 +50,7 @@ fn[T] FixedArraySlice::swap(
 }
 
 ///|
-fn[T] FixedArraySlice::rev_inplace(self : FixedArraySlice[T]) -> Unit {
+fn[T] FixedArraySlice::rev_in_place(self : FixedArraySlice[T]) -> Unit {
   let len = self.length()
   let mid_len = len / 2
   for i in 0..<mid_len {

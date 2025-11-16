@@ -90,7 +90,7 @@ pub fn[A : Compare] T::to_array(self : T[A]) -> Array[A] {
     }
   }
   arr.sort()
-  arr.rev_inplace()
+  arr.rev_in_place()
   arr
 }
 

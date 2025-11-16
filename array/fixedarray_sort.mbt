@@ -60,7 +60,7 @@ fn[T : Compare] timsort(arr : FixedArraySlice[T]) -> Unit {
     let (streak_end, was_reversed) = find_streak(arr.slice(start, arr.end))
     end += streak_end
     if was_reversed {
-      arr.slice(start, end).rev_inplace()
+      arr.slice(start, end).rev_in_place()
     }
     // Insert some more elements into the run if it's too short. Insertion sort is faster than
     // merge sort on short sequences, so this significantly improves performance.
@@ -395,7 +395,7 @@ fn[T : Compare] fixed_choose_pivot(arr : FixedArraySlice[T]) -> (Int, Bool) {
     sort_3(a, b, c)
   }
   if swaps == max_swaps {
-    arr.rev_inplace()
+    arr.rev_in_place()
     (len - b - 1, true)
   } else {
     (b, swaps == 0)

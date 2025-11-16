@@ -211,7 +211,7 @@ test "array_map" {
 ///|
 test "array_map_inplace" {
   let arr = [1, 2, 3]
-  arr.map_inplace(x => x * 2)
+  arr.map_in_place(x => x * 2)
   inspect(arr, content="[2, 4, 6]")
 }
 
@@ -226,7 +226,7 @@ test "array_mapi" {
 ///|
 test "array_mapi_inplace" {
   let arr = [1, 2, 3]
-  arr.mapi_inplace((i, x) => i + x)
+  arr.mapi_in_place((i, x) => i + x)
   inspect(arr, content="[1, 3, 5]")
 }
 
@@ -259,10 +259,10 @@ test "array_rev" {
 ///|
 test "array_rev_inplace" {
   let arr = [1, 2, 3]
-  arr.rev_inplace()
+  arr.rev_in_place()
   inspect(arr, content="[3, 2, 1]")
   let arr : Array[Int] = []
-  arr.rev_inplace()
+  arr.rev_in_place()
   inspect(arr, content="[]")
 }
 
@@ -801,7 +801,7 @@ test "filter with error callback 2" {
 ///|
 test "map_inplace with error callback" {
   let arr = [1, 2, 3]
-  let v = try? arr.map_inplace(x => {
+  let v = try? arr.map_in_place(x => {
     if x == 2 {
       raise Failure("Error at 2")
     }
@@ -819,7 +819,7 @@ test "map_inplace with error callback" {
 test "map_inplace with error callback 2" {
   let arr = [1, 2, 3]
   try
-    arr.map_inplace(x => {
+    arr.map_in_place(x => {
       if x == 2 {
         raise Failure("Error at 2")
       }
@@ -835,7 +835,7 @@ test "map_inplace with error callback 2" {
 ///|
 test "mapi_inplace with error callback" {
   let arr = [1, 2, 3]
-  let v = try? arr.mapi_inplace((i, x) => {
+  let v = try? arr.mapi_in_place((i, x) => {
     if x == 2 {
       raise Failure("Error at 2")
     }

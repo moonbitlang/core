@@ -616,7 +616,7 @@ pub fn[A, B] List::zip(self : List[A], other : List[B]) -> List[(A, B)] {
     (More(x, tail=xs), More(y, tail=ys), acc) =>
       continue (xs, ys, More((x, y), tail=acc))
   }
-  res.reverse_inplace()
+  res.reverse_in_place()
 }
 
 ///|
@@ -1275,7 +1275,7 @@ pub fn[A, B] List::scan_right(
   f : (B, A) -> B raise?,
   init~ : B,
 ) -> List[B] raise? {
-  self.rev().scan_left(f, init~).reverse_inplace()
+  self.rev().scan_left(f, init~).reverse_in_place()
 }
 
 ///|
@@ -1777,7 +1777,7 @@ pub impl[A : Hash] Hash for List[A] with hash_combine(self, hasher) {
 /// 
 /// This is an internal helper function that efficiently reverses a list
 /// by modifying the existing structure rather than creating a completely new one.
-fn[A] List::reverse_inplace(self : List[A]) -> List[A] {
+fn[A] List::reverse_in_place(self : List[A]) -> List[A] {
   match self {
     Empty | More(_, tail=Empty) => self
     More(head, tail~) =>
