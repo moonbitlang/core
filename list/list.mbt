@@ -616,7 +616,7 @@ pub fn[A, B] List::zip(self : List[A], other : List[B]) -> List[(A, B)] {
     (More(x, tail=xs), More(y, tail=ys), acc) =>
       continue (xs, ys, More((x, y), tail=acc))
   }
-  res.reverse_in_place()
+  res.rev()
 }
 
 ///|
