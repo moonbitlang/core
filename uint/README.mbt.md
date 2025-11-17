@@ -18,35 +18,6 @@ test "uint basics" {
 }
 ```
 
-## Byte Representation
-
-`UInt` can be converted to bytes in both big-endian and little-endian formats:
-
-```moonbit
-///|
-test "uint byte conversion" {
-  let num = 258U // 0x00000102 in hex
-
-  // Big-endian bytes (most significant byte first)
-  let be_bytes = num.to_be_bytes()
-  inspect(
-    be_bytes,
-    content=(
-      #|b"\x00\x00\x01\x02"
-    ),
-  )
-
-  // Little-endian bytes (least significant byte first)
-  let le_bytes = num.to_le_bytes()
-  inspect(
-    le_bytes,
-    content=(
-      #|b"\x02\x01\x00\x00"
-    ),
-  )
-}
-```
-
 ## Converting to Other Number Types
 
 `UInt` can be converted to `Int64` when you need to work with signed 64-bit integers:
@@ -70,17 +41,5 @@ test "uint methods" {
 
   // Using method syntax
   inspect(num.to_int64(), content="1000")
-  inspect(
-    num.to_be_bytes(),
-    content=(
-      #|b"\x00\x00\x03\xe8"
-    ),
-  )
-  inspect(
-    num.to_le_bytes(),
-    content=(
-      #|b"\xe8\x03\x00\x00"
-    ),
-  )
 }
 ```

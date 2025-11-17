@@ -89,7 +89,13 @@ pub impl Hash for Float with hash_combine(self, hasher) {
 /// )
 /// ```
 pub fn Float::to_be_bytes(self : Float) -> Bytes {
-  self.reinterpret_as_uint().to_be_bytes()
+  let uint = self.reinterpret_as_uint()
+  [
+    (uint >> 24).to_byte(),
+    (uint >> 16).to_byte(),
+    (uint >> 8).to_byte(),
+    uint.to_byte(),
+  ]
 }
 
 ///|
@@ -111,7 +117,13 @@ pub fn Float::to_be_bytes(self : Float) -> Bytes {
 ///   inspect(bytes.length(), content="4")
 /// ```
 pub fn Float::to_le_bytes(self : Float) -> Bytes {
-  self.reinterpret_as_uint().to_le_bytes()
+  let uint = self.reinterpret_as_uint()
+  [
+    uint.to_byte(),
+    (uint >> 8).to_byte(),
+    (uint >> 16).to_byte(),
+    (uint >> 24).to_byte(),
+  ]
 }
 
 ///|

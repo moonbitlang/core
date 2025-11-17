@@ -15,11 +15,12 @@ fn new(size_hint? : Int) -> Buffer
 // Types and methods
 #alias(T, deprecated)
 type Buffer
-fn Buffer::contents(Self) -> Bytes
 fn Buffer::is_empty(Self) -> Bool
 fn Buffer::length(Self) -> Int
 fn Buffer::reset(Self) -> Unit
+#alias(contents)
 fn Buffer::to_bytes(Self) -> Bytes
+fn Buffer::view(Self) -> ArrayView[Byte]
 fn Buffer::write_byte(Self, Byte) -> Unit
 fn Buffer::write_bytes(Self, Bytes) -> Unit
 fn Buffer::write_bytesview(Self, BytesView) -> Unit
