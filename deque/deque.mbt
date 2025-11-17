@@ -1948,14 +1948,18 @@ pub fn[A] Deque::flatten(self : Deque[Deque[A]]) -> Deque[A] {
   if total_len == 0 {
     return Deque::new()
   }
+  let tail = if total_len == 0 { 0 } else { total_len - 1 }
   let target = Deque::{
     buf: UninitializedArray::make(total_len),
     len: total_len,
     head: 0,
-    tail: total_len - 1,
+    tail,
   }
   let mut write_pos = 0
   for deque in self {
+    if deque.is_empty() {
+      continue
+    }
     let (front_view, back_view) = deque.as_views()
     if front_view.length() > 0 {
       target.buf.unsafe_blit(
@@ -1967,12 +1971,7 @@ pub fn[A] Deque::flatten(self : Deque[Deque[A]]) -> Deque[A] {
       write_pos += front_view.length()
     }
     if back_view.length() > 0 {
-      target.buf.unsafe_blit(
-        write_pos,
-        deque.buf,
-        deque.head,
-        back_view.length(),
-      )
+      target.buf.unsafe_blit(write_pos, deque.buf, 0, back_view.length())
       write_pos += back_view.length()
     }
   }
