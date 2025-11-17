@@ -298,3 +298,70 @@ pub fn[X] ArrayView::iterator(self : ArrayView[X]) -> Iterator[X] {
     Some(elem)
   })
 }
+
+///|
+/// Returns an iterator that yields each element of the array view in sequence
+/// from start to end.
+///
+/// Parameters:
+///
+/// * `array_view` : The array view to iterate over.
+///
+/// Returns an iterator that yields elements of type `A` from the array view.
+///
+/// Example:
+///
+/// ```moonbit
+///   let arr = [1, 2, 3]
+///   let view = arr[1:]
+///   let mut sum = 0
+///   view.iter().each(x => sum = sum + x)
+///   inspect(sum, content="5")
+/// ```
+pub fn[A] ArrayView::iter(self : ArrayView[A]) -> Iter[A] {
+  Iter::new(yield_ => for v in self {
+    guard yield_(v) is IterContinue else { break IterEnd }
+  } else {
+    IterContinue
+  })
+}
+
+///|
+pub impl[X : Show] Show for ArrayView[X] with output(self, logger) {
+  logger.write_iter(self.iter())
+}
+
+///|
+pub impl[T : Eq] Eq for ArrayView[T] with equal(self, other) -> Bool {
+  if self.length() != other.length() {
+    return false
+  }
+  for i in 0..<self.length() {
+    if !(self[i] == other[i]) {
+      return false
+    }
+  } else {
+    true
+  }
+}
+
+///|
+pub impl[T : Compare] Compare for ArrayView[T] with compare(self, other) -> Int {
+  let len_self = self.length()
+  let len_other = other.length()
+  let cmp = len_self.compare(len_other)
+  guard cmp == 0 else { return cmp }
+  for i in 0..<len_self {
+    let cmp = self[i].compare(other[i])
+    guard cmp == 0 else { break cmp }
+  } else {
+    0
+  }
+}
+
+///|
+pub impl[A : Hash] Hash for ArrayView[A] with hash_combine(self, hasher) {
+  for e in self {
+    hasher.combine(e)
+  }
+}
