@@ -1941,25 +1941,40 @@ pub fn[A] Deque::chunk_by(
 ///   inspect(deque_test, content="@deque.from_array([1, 2, 3, 4, 5, 6, 7, 8])")
 /// ```
 pub fn[A] Deque::flatten(self : Deque[Deque[A]]) -> Deque[A] {
-  let mut len = 0
+  let mut total_len = 0
   for deque in self {
-    len += deque.length()
+    total_len += deque.length()
+  }
+  if total_len == 0 {
+    return Deque::new()
   }
   let target = Deque::{
-    buf: UninitializedArray::make(len),
-    len,
+    buf: UninitializedArray::make(total_len),
+    len: total_len,
     head: 0,
-    tail: len - 1,
+    tail: total_len - 1,
   }
-  let mut i = 0
+  let mut write_pos = 0
   for deque in self {
-    let cap = deque.buf.length()
-    let head_len = cap - deque.head
-    target.buf.unsafe_blit(i, deque.buf, deque.head, head_len)
-    if head_len < deque.len {
-      target.buf.unsafe_blit(i + head_len, deque.buf, 0, deque.len - head_len)
+    let (front_view, back_view) = deque.as_views()
+    if front_view.length() > 0 {
+      target.buf.unsafe_blit(
+        write_pos,
+        deque.buf,
+        deque.head,
+        front_view.length(),
+      )
+      write_pos += front_view.length()
     }
-    i += deque.len
+    if back_view.length() > 0 {
+      target.buf.unsafe_blit(
+        write_pos,
+        deque.buf,
+        deque.head,
+        back_view.length(),
+      )
+      write_pos += back_view.length()
+    }
   }
   target
 }
