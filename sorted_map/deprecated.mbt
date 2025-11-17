@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-#deprecated("Use `keys_as_iter` instead. `keys` will return `Iter[K]` instead of `Array[K]` in the future.", skip_current_package=false)
+#deprecated("Use `keys_as_iter` instead. `keys` will return `Iter[K]` instead of `Array[K]` in the future.")
 #coverage.skip
 pub fn[K, V] SortedMap::keys(self : SortedMap[K, V]) -> Array[K] {
   let keys = Array::new(capacity=self.size)
@@ -22,7 +22,7 @@ pub fn[K, V] SortedMap::keys(self : SortedMap[K, V]) -> Array[K] {
 }
 
 ///|
-#deprecated("Use `values_as_iter` instead. `values` will return `Iter[V]` instead of `Array[V]` in the future.", skip_current_package=false)
+#deprecated("Use `values_as_iter` instead. `values` will return `Iter[V]` instead of `Array[V]` in the future.")
 #coverage.skip
 pub fn[K, V] SortedMap::values(self : SortedMap[K, V]) -> Array[V] {
   let values = Array::new(capacity=self.size)

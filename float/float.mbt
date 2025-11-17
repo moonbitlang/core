@@ -118,7 +118,7 @@ pub fn Float::abs(self : Float) -> Float = "%f32.abs"
 /// Returns the default value for `Float` type, which is `0.0`.
 ///
 /// Returns a float value of `0.0`.
-#deprecated(skip_current_package=false)
+#deprecated
 pub fn default() -> Float {
   0.0
 }

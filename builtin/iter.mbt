@@ -668,7 +668,7 @@ pub fn[T] Iter::peek(self : Iter[T]) -> T? {
 /// # Returns
 ///
 /// Returns a new iterator with the element `a` prepended to the original iterator.
-#deprecated("Use `Iter::singleton(a) + self` instead", skip_current_package=false)
+#deprecated("Use `Iter::singleton(a) + self` instead")
 pub fn[T] Iter::prepend(self : Iter[T], a : T) -> Iter[T] {
   yield_ => if yield_(a) is IterContinue { self.run(yield_) } else { IterEnd }
 }
@@ -688,7 +688,7 @@ pub fn[T] Iter::prepend(self : Iter[T], a : T) -> Iter[T] {
 /// # Returns
 ///
 /// Returns a new iterator with the element `a` appended to the original iterator.
-#deprecated("Use `self + Iter::singleton(a)` instead", skip_current_package=false)
+#deprecated("Use `self + Iter::singleton(a)` instead")
 pub fn[T] Iter::append(self : Iter[T], a : T) -> Iter[T] {
   yield_ => if self.run(yield_) is IterContinue { yield_(a) } else { IterEnd }
 }

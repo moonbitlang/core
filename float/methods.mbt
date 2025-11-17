@@ -290,7 +290,7 @@ pub impl Mod for Float with mod(self : Float, other : Float) -> Float {
 /// # Returns
 ///
 /// Returns an iterator that iterates over the range of Float from `start` to `end - 1`.
-#deprecated("Use `..<` in for loop or `until` method instead", skip_current_package=false)
+#deprecated("Use `..<` in for loop or `until` method instead")
 #coverage.skip
 pub fn Float::upto(
   self : Float,
