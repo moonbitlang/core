@@ -20,35 +20,35 @@ pub fn[T, U] pair(x : T, y : U) -> (T, U) {
 }
 
 ///|
-#deprecated("use `tuple.0` instead", skip_current_package=false)
+#deprecated("use `tuple.0` instead")
 #coverage.skip
 pub fn[T, U] fst(tuple : (T, U)) -> T {
   tuple.0
 }
 
 ///|
-#deprecated("use `tuple.1` instead", skip_current_package=false)
+#deprecated("use `tuple.1` instead")
 #coverage.skip
 pub fn[T, U] snd(tuple : (T, U)) -> U {
   tuple.1
 }
 
 ///|
-#deprecated("use `{ let (a,b) = tuple; (f(a),b) }` instead", skip_current_package=false)
+#deprecated("use `{ let (a,b) = tuple; (f(a),b) }` instead")
 #coverage.skip
 pub fn[T, U, V] map_fst(f : (T) -> U, tuple : (T, V)) -> (U, V) {
   (f(tuple.0), tuple.1)
 }
 
 ///|
-#deprecated("use `{ let (a,b) = tuple; (a,f(b)) }` instead", skip_current_package=false)
+#deprecated("use `{ let (a,b) = tuple; (a,f(b)) }` instead")
 #coverage.skip
 pub fn[T, U, V] map_snd(f : (T) -> U, tuple : (V, T)) -> (V, U) {
   (tuple.0, f(tuple.1))
 }
 
 ///|
-#deprecated("use `{ let (a,b) = tuple; (f(a),f(b)) }` instead", skip_current_package=false)
+#deprecated("use `{ let (a,b) = tuple; (f(a),f(b)) }` instead")
 #coverage.skip
 pub fn[T, U, V, W] map_both(
   f : (T) -> U,

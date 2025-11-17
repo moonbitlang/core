@@ -101,31 +101,6 @@ pub fn Buffer::is_empty(self : Buffer) -> Bool {
 }
 
 ///|
-/// Returns a copy of the buffer's content as a sequence of bytes.
-///
-/// Parameters:
-///
-/// * `buffer` : The buffer to read from.
-///
-/// Returns a `Bytes` object containing all bytes written to the buffer.
-///
-/// Example:
-///
-/// ```moonbit
-/// let buf = @buffer.new()
-/// buf.write_string("Test")
-/// inspect(
-///   buf.contents(),
-///   content=(
-///     #|b"T\x00e\x00s\x00t\x00"
-///   ),
-/// )
-/// ```
-pub fn Buffer::contents(self : Buffer) -> Bytes {
-  Bytes::from_array(self.data[0:self.len])
-}
-
-///|
 /// Creates a new extensible buffer with specified initial capacity. If the
 /// initial capacity is less than 1, the buffer will be initialized with capacity
 /// 1.
@@ -1014,10 +989,16 @@ pub fn Buffer::reset(self : Buffer) -> Unit {
 ///   let buf = @buffer.new()
 ///   buf.write_string("Test")
 ///   let bytes = buf.to_bytes()
-///   inspect(bytes.length(), content="8")
+///   inspect(bytes.length(), content="8") //utf16
 /// ```
+#alias(contents)
 pub fn Buffer::to_bytes(self : Buffer) -> Bytes {
   Bytes::from_array(self.data[0:self.len])
+}
+
+///|
+pub fn Buffer::view(self : Buffer) -> ArrayView[Byte] {
+  self.data[0:self.len]
 }
 
 ///|

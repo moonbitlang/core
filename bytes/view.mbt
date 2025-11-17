@@ -26,7 +26,7 @@
 ///   assert_eq(bv[2], b'\x03')
 /// ```
 #builtin.valtype
-#deprecated("Use `BytesView` instead", skip_current_package=false)
+#deprecated("Use `BytesView` instead")
 pub type View = BytesView
 
 ///|
@@ -308,7 +308,7 @@ pub fn BytesView::iterator2(self : BytesView) -> Iterator2[Int, Byte] {
 ///   guard bytes is [u32be(x),..]
 ///   inspect(x, content="305419896") // 0x12345678
 /// ```
-#deprecated(skip_current_package=false, "Use bits pattern directly")
+#deprecated("Use bits pattern directly")
 #doc(hidden)
 pub fn BytesView::to_uint_be(self : BytesView) -> UInt {
   (self[0].to_uint() << 24) +
@@ -339,7 +339,7 @@ pub fn BytesView::to_uint_be(self : BytesView) -> UInt {
 /// guard bytes is [u32le(x),..]
 /// inspect(x, content="67305985") // 0x04030201
 /// ```
-#deprecated(skip_current_package=false, "Use bits pattern directly")
+#deprecated("Use bits pattern directly")
 #doc(hidden)
 pub fn BytesView::to_uint_le(self : BytesView) -> UInt {
   self[0].to_uint() +
@@ -372,7 +372,7 @@ pub fn BytesView::to_uint_le(self : BytesView) -> UInt {
 ///   guard bytes is [u64be(x),..]
 ///   inspect(x, content="81985529216486895")
 /// ```
-#deprecated(skip_current_package=false, "Use bits pattern directly")
+#deprecated("Use bits pattern directly")
 #doc(hidden)
 pub fn BytesView::to_uint64_be(self : BytesView) -> UInt64 {
   (self[0].to_uint().to_uint64() << 56) +
@@ -410,7 +410,7 @@ pub fn BytesView::to_uint64_be(self : BytesView) -> UInt64 {
 ///   guard bytes is [u64le(x),..]
 ///   inspect(x, content="578437695752307201")
 /// ```
-#deprecated(skip_current_package=false, "Use bits pattern directly")
+#deprecated("Use bits pattern directly")
 #doc(hidden)
 pub fn BytesView::to_uint64_le(self : BytesView) -> UInt64 {
   self[0].to_uint().to_uint64() +
@@ -427,28 +427,32 @@ pub fn BytesView::to_uint64_le(self : BytesView) -> UInt64 {
 #deprecated
 #doc(hidden)
 pub fn BytesView::to_int_be(self : BytesView) -> Int {
-  self.to_uint_be().reinterpret_as_int()
+  guard self is [u32be(u32), ..]
+  u32.reinterpret_as_int()
 }
 
 ///|
 #deprecated
 #doc(hidden)
 pub fn BytesView::to_int_le(self : BytesView) -> Int {
-  self.to_uint_le().reinterpret_as_int()
+  guard self is [u32le(u32), ..]
+  u32.reinterpret_as_int()
 }
 
 ///|
 #deprecated
 #doc(hidden)
 pub fn BytesView::to_int64_be(self : BytesView) -> Int64 {
-  self.to_uint64_be().reinterpret_as_int64()
+  guard self is [u64be(u64), ..]
+  u64.reinterpret_as_int64()
 }
 
 ///|
 #deprecated
 #doc(hidden)
 pub fn BytesView::to_int64_le(self : BytesView) -> Int64 {
-  self.to_uint64_le().reinterpret_as_int64()
+  guard self is [u64le(u64), ..]
+  u64.reinterpret_as_int64()
 }
 
 ///|
@@ -472,10 +476,11 @@ pub fn BytesView::to_int64_le(self : BytesView) -> Int64 {
 ///   guard bytes is [u64be(bits),..]
 ///   inspect(bits.reinterpret_as_double(), content="1")
 /// ```
-#deprecated(skip_current_package=false, "Use bits pattern directly")
+#deprecated("Use bits pattern directly")
 #doc(hidden)
 pub fn BytesView::to_double_be(self : BytesView) -> Double {
-  self.to_uint64_be().reinterpret_as_double()
+  guard self is [u64be(u64), ..]
+  u64.reinterpret_as_double()
 }
 
 ///|
@@ -497,10 +502,11 @@ pub fn BytesView::to_double_be(self : BytesView) -> Double {
 ///   guard bytes is [u64le(bits),..]
 ///   inspect(bits.reinterpret_as_double(), content="1")
 /// ```
-#deprecated(skip_current_package=false, "Use bits pattern directly")
+#deprecated("Use bits pattern directly")
 #doc(hidden)
 pub fn BytesView::to_double_le(self : BytesView) -> Double {
-  self.to_uint64_le().reinterpret_as_double()
+  guard self is [u64le(u64), ..]
+  u64.reinterpret_as_double()
 }
 
 ///|

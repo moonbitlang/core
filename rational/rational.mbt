@@ -22,7 +22,7 @@
 /// Invariants:
 /// - The denominator is always positive.
 /// - The numerator and denominator are always coprime.
-#deprecated("Use @rational in module moonbitlang/x instead. Note that you need to rename Rational to Rational64.")
+#deprecated("Use @rational in module moonbitlang/x instead. Note that you need to rename Rational to Rational64.", skip_current_package=true)
 #coverage.skip
 struct T {
   numerator : Int64
@@ -51,7 +51,7 @@ fn gcd(a : Int64, b : Int64) -> Int64 {
 /// number is automatically reduced to its simplest form with a positive
 /// denominator. Returns `None` if the denominator is zero.
 ///
-#deprecated("Use @rational in module moonbitlang/x instead. Note that you need to rename Rational to Rational64.")
+#deprecated("Use @rational in module moonbitlang/x instead. Note that you need to rename Rational to Rational64.", skip_current_package=true)
 #coverage.skip
 pub fn new(numerator : Int64, denominator : Int64) -> T? {
   if denominator == 0L {
@@ -269,7 +269,7 @@ fn[T] overflow_error() -> T raise RationalError {
 ///
 /// * `RationalError(String)` : Error with a descriptive message.
 ///
-#deprecated("Use @rational in module moonbitlang/x instead. Note that you need to rename Rational to Rational64.")
+#deprecated("Use @rational in module moonbitlang/x instead. Note that you need to rename Rational to Rational64.", skip_current_package=true)
 #coverage.skip
 pub(all) suberror RationalError String derive(Show, ToJson)
 

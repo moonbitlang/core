@@ -253,7 +253,7 @@ pub impl BitXOr for Int64 with lxor(self, other) = "%i64_lxor"
 ///   inspect(x << 2, content="4") // Binary: 1 -> 100
 /// ```
 ///
-#deprecated("Use infix operator `<<` instead", skip_current_package=false)
+#deprecated("Use infix operator `<<` instead")
 #coverage.skip
 pub fn Int64::lsl(self : Int64, other : Int) -> Int64 = "%i64_shl"
 
@@ -276,7 +276,7 @@ pub fn Int64::lsl(self : Int64, other : Int) -> Int64 = "%i64_shl"
 ///   inspect(x << 3, content="8") // Equivalent to x << 3
 /// ```
 ///
-#deprecated("Use infix operator `<<` instead", skip_current_package=false)
+#deprecated("Use infix operator `<<` instead")
 #coverage.skip
 pub fn Int64::shl(self : Int64, other : Int) -> Int64 = "%i64_shl"
 
@@ -301,7 +301,7 @@ pub fn Int64::shl(self : Int64, other : Int) -> Int64 = "%i64_shl"
 ///   inspect(x >> 1, content="9223372036854775806") // Using the recommended operator
 /// ```
 ///
-#deprecated("Use UInt64 type and infix operator `>>` instead", skip_current_package=false)
+#deprecated("Use UInt64 type and infix operator `>>` instead")
 #coverage.skip
 pub fn Int64::lsr(self : Int64, other : Int) -> Int64 = "%u64.shr"
 
@@ -327,7 +327,7 @@ pub fn Int64::lsr(self : Int64, other : Int) -> Int64 = "%u64.shr"
 ///   inspect(x >> 4, content="-15") // 0b1111_1111_1111_0001, using recommended syntax
 /// ```
 ///
-#deprecated("Use infix operator `>>` instead", skip_current_package=false)
+#deprecated("Use infix operator `>>` instead")
 #coverage.skip
 pub fn Int64::asr(self : Int64, other : Int) -> Int64 = "%i64_shr"
 
@@ -351,7 +351,7 @@ pub fn Int64::asr(self : Int64, other : Int) -> Int64 = "%i64_shr"
 ///   inspect(n >> 3, content="-128") // Preserves sign bit
 /// ```
 ///
-#deprecated("Use infix operator `>>` instead", skip_current_package=false)
+#deprecated("Use infix operator `>>` instead")
 #coverage.skip
 pub fn Int64::shr(self : Int64, other : Int) -> Int64 = "%i64_shr"
 
@@ -707,7 +707,7 @@ pub fn Int64::to_uint16(self : Int64) -> UInt16 = "%i64_to_u16"
 pub fn UInt64::trunc_double(val : Double) -> UInt64 = "%f64.to_u64"
 
 ///|
-#deprecated("Use `Float::from_int64` instead", skip_current_package=false)
+#deprecated("Use `Float::from_int64` instead")
 pub fn Int64::to_float(self : Int64) -> Float = "%i64.to_f32"
 
 ///|
@@ -799,7 +799,7 @@ pub fn UInt16::to_int64(self : UInt16) -> Int64 = "%u16_to_i64"
 ///   inspect(d.reinterpret_as_int64(), content="4607182418800017408")
 /// ```
 ///
-#deprecated("Use `reinterpret_as_int64` instead", skip_current_package=false)
+#deprecated("Use `reinterpret_as_int64` instead")
 #coverage.skip
 pub fn Double::reinterpret_as_i64(self : Double) -> Int64 = "%f64_to_i64_reinterpret"
 
@@ -847,7 +847,7 @@ pub fn Double::reinterpret_as_int64(self : Double) -> Int64 = "%f64_to_i64_reint
 ///   inspect(positive.reinterpret_as_uint64(), content="4607182418800017408")
 /// ```
 ///
-#deprecated("Use `reinterpret_as_uint64` instead", skip_current_package=false)
+#deprecated("Use `reinterpret_as_uint64` instead")
 #coverage.skip
 pub fn Double::reinterpret_as_u64(self : Double) -> UInt64 = "%f64_to_i64_reinterpret"
 
@@ -915,7 +915,7 @@ pub fn Double::convert_uint64(val : UInt64) -> Double = "%u64.to_f64"
 ///   inspect(neg.reinterpret_as_uint64(), content="18446744073709551615") // 2^64 - 1
 /// ```
 ///
-#deprecated("Use `reinterpret_as_uint64` instead", skip_current_package=false)
+#deprecated("Use `reinterpret_as_uint64` instead")
 #coverage.skip
 pub fn Int64::to_uint64(self : Int64) -> UInt64 = "%i64.to_u64_reinterpret"
 
@@ -959,7 +959,7 @@ pub fn Int64::reinterpret_as_uint64(self : Int64) -> UInt64 = "%i64.to_u64_reint
 ///   inspect(max.reinterpret_as_int64(), content="-1")
 /// ```
 ///
-#deprecated("Use `reinterpret_as_int64` instead", skip_current_package=false)
+#deprecated("Use `reinterpret_as_int64` instead")
 #coverage.skip
 pub fn UInt64::to_int64(self : UInt64) -> Int64 = "%u64.to_i64_reinterpret"
 
@@ -1349,7 +1349,7 @@ pub fn UInt64::lnot(self : UInt64) -> UInt64 = "%u64.bitnot"
 ///   inspect(x << 4, content="16") // 1 << 4 = 16
 /// ```
 ///
-#deprecated("Use infix operator `<<` instead", skip_current_package=false)
+#deprecated("Use infix operator `<<` instead")
 #coverage.skip
 pub fn UInt64::lsl(self : UInt64, shift : Int) -> UInt64 = "%u64.shl"
 
@@ -1373,7 +1373,7 @@ pub fn UInt64::lsl(self : UInt64, shift : Int) -> UInt64 = "%u64.shl"
 ///   inspect(x << 2, content="4") // 1 << 2 = 4
 /// ```
 ///
-#deprecated("Use infix operator `<<` instead", skip_current_package=false)
+#deprecated("Use infix operator `<<` instead")
 #coverage.skip
 pub fn UInt64::shl(self : UInt64, shift : Int) -> UInt64 = "%u64.shl"
 
@@ -1395,7 +1395,7 @@ pub fn UInt64::shl(self : UInt64, shift : Int) -> UInt64 = "%u64.shl"
 ///   inspect(x >> 8, content="71776119061217280")
 /// ```
 ///
-#deprecated("Use infix operator `>>` instead", skip_current_package=false)
+#deprecated("Use infix operator `>>` instead")
 #coverage.skip
 pub fn UInt64::shr(self : UInt64, shift : Int) -> UInt64 = "%u64.shr"
 
@@ -1420,7 +1420,7 @@ pub fn UInt64::shr(self : UInt64, shift : Int) -> UInt64 = "%u64.shr"
 ///   inspect(x >> 4, content="1080863910568919040") // 0x0F00000000000000
 /// ```
 ///
-#deprecated("Use infix operator `>>` instead", skip_current_package=false)
+#deprecated("Use infix operator `>>` instead")
 #coverage.skip
 pub fn UInt64::lsr(self : UInt64, shift : Int) -> UInt64 = "%u64.shr"
 
@@ -1533,5 +1533,5 @@ pub fn UInt64::ctz(self : UInt64) -> Int = "%u64.ctz"
 pub fn UInt64::popcnt(self : UInt64) -> Int = "%u64.popcnt"
 
 ///|
-#deprecated("Use `Float::from_uint64` instead", skip_current_package=false)
+#deprecated("Use `Float::from_uint64` instead")
 pub fn UInt64::to_float(self : UInt64) -> Float = "%u64.to_f32"

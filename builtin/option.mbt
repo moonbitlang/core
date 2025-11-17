@@ -200,7 +200,7 @@ pub fn[T, U] Option::bind(self : T?, f : (T) -> U? raise?) -> U? raise? {
 }
 
 ///|
-#deprecated("use `option.bind(x => x)` instead", skip_current_package=false)
+#deprecated("use `option.bind(x => x)` instead")
 pub fn[T] Option::flatten(self : T??) -> T? {
   match self {
     Some(inner) => inner
@@ -210,7 +210,7 @@ pub fn[T] Option::flatten(self : T??) -> T? {
 
 ///|
 /// Checks if the option is empty.
-#deprecated("use `x is None` instead", skip_current_package=false)
+#deprecated("use `x is None` instead")
 pub fn[T] Option::is_empty(self : T?) -> Bool {
   self is None
 }
@@ -236,14 +236,14 @@ pub fn[T] Option::filter(self : T?, f : (T) -> Bool raise?) -> T? raise? {
 
 ///|
 /// Checks if the option contains a value.
-#deprecated("use `x is Some(_)` instead", skip_current_package=false)
+#deprecated("use `x is Some(_)` instead")
 pub fn[T] Option::is_some(self : T?) -> Bool {
   self is Some(_)
 }
 
 ///|
 /// Checks if the option is None.
-#deprecated("use `x is None` instead", skip_current_package=false)
+#deprecated("use `x is None` instead")
 pub fn[T] Option::is_none(self : T?) -> Bool {
   self is None
 }

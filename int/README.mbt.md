@@ -29,7 +29,9 @@ test "byte conversions" {
   let num = 258 // 0x0102 in hex
 
   // Big-endian conversion (most significant byte first)
-  let be_bytes = num.to_be_bytes()
+  let buf = @buffer.new()
+  buf.write_int_be(num)
+  let be_bytes = buf.contents()
   inspect(
     be_bytes.to_string(),
     content=(
@@ -38,7 +40,9 @@ test "byte conversions" {
   )
 
   // Little-endian conversion (least significant byte first)
-  let le_bytes = num.to_le_bytes()
+  buf.reset() // reset the position of the buffer
+  buf.write_int_le(num)
+  let le_bytes = buf.contents()
   inspect(
     le_bytes.to_string(),
     content=(
@@ -61,8 +65,12 @@ test "method syntax" {
   inspect(n.abs(), content="42")
 
   // Byte conversions using method syntax
-  let be = n.to_be_bytes()
-  let le = n.to_le_bytes()
+  let buf = @buffer.new()
+  buf.write_int_be(n)
+  let be = buf.contents()
+  buf.reset()
+  buf.write_int_le(n)
+  let le = buf.contents()
   inspect(
     be.to_string(),
     content=(

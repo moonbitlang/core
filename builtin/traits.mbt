@@ -16,7 +16,7 @@
 /// Trait for types whose elements can test for equality
 pub(open) trait Eq {
   equal(Self, Self) -> Bool = _
-  #deprecated("use `equal` instead")
+  #deprecated("use `equal` instead", skip_current_package=true)
   op_equal(Self, Self) -> Bool = _
 }
 
@@ -111,9 +111,8 @@ pub(open) trait Show {
   to_string(Self) -> String = _
 }
 
-// Default implementation for `Show::to_string`, uses a `Buffer`
-
 ///|
+/// Default implementation for `Show::to_string`, uses a `StringBuilder`
 impl Show with to_string(self) {
   let logger = StringBuilder::new()
   self.output(logger)

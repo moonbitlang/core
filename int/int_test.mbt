@@ -58,7 +58,9 @@ test "abs function coverage" {
 
 ///|
 test "to_le_bytes" {
-  let bytes = (0x12345678).to_le_bytes()
+  let buffer = @buffer.new()
+  buffer.write_int_le(0x12345678)
+  let bytes = buffer.contents()
   inspect(
     bytes,
     content=(
@@ -69,7 +71,9 @@ test "to_le_bytes" {
 
 ///|
 test "to_be_bytes" {
-  let bytes = (0x12345678).to_be_bytes()
+  let buffer = @buffer.new()
+  buffer.write_int_be(0x12345678)
+  let bytes = buffer.contents()
   inspect(
     bytes,
     content=(
