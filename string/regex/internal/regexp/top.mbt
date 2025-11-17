@@ -185,7 +185,7 @@ pub fn Regexp::execute(self : Regexp, input : StringView) -> MatchResult {
 /// inspect(result.before(), content=("axxf"))
 /// inspect(result.after(), content=(""))
 /// ```
-#deprecated("Use `Regexp::execute` and `MatchResult::before`/`after` instead.", skip_current_package=false)
+#deprecated("Use `Regexp::execute` and `MatchResult::before`/`after` instead.")
 pub fn Regexp::execute_with_remainder(
   self : Regexp,
   input : StringView,

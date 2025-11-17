@@ -32,7 +32,7 @@ pub fn[X] Iterator::next(self : Iterator[X]) -> X? {
 
 ///|
 #locals(f)
-#deprecated("write a loop instead.", skip_current_package=false)
+#deprecated("write a loop instead.")
 pub fn[X] Iterator::run(
   self : Iterator[X],
   f : (X) -> IterResult,
@@ -45,7 +45,7 @@ pub fn[X] Iterator::run(
 }
 
 ///|
-#deprecated("write a loop instead.", skip_current_package=false)
+#deprecated("write a loop instead.")
 pub fn[X] Iterator::just_run(self : Iterator[X], f : (X) -> IterResult) -> Unit {
   while self.next() is Some(x) {
     if f(x) is IterEnd {

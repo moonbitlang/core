@@ -47,7 +47,7 @@ pub fn Int::abs(self : Int) -> Int {
 
 ///|
 /// Converts the Int to a Bytes in big-endian byte order.
-#deprecated(skip_current_package=false)
+#deprecated
 #doc(hidden)
 pub fn Int::to_be_bytes(self : Int) -> Bytes {
   let self = self.reinterpret_as_uint()
@@ -61,7 +61,7 @@ pub fn Int::to_be_bytes(self : Int) -> Bytes {
 
 ///|
 /// Converts the Int to a Bytes in little-endian byte order.
-#deprecated(skip_current_package=false)
+#deprecated
 #doc(hidden)
 pub fn Int::to_le_bytes(self : Int) -> Bytes {
   let self = self.reinterpret_as_uint()
