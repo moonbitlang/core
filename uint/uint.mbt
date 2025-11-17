@@ -36,6 +36,8 @@ pub fn default() -> UInt {
 
 ///|
 /// Converts the UInt to a Bytes in big-endian byte order.
+#deprecated(skip_current_package=false)
+#doc(hidden)
 pub fn UInt::to_be_bytes(self : UInt) -> Bytes {
   [
     (self >> 24).to_byte(),
@@ -47,6 +49,8 @@ pub fn UInt::to_be_bytes(self : UInt) -> Bytes {
 
 ///|
 /// Converts the UInt to a Bytes in little-endian byte order.
+#deprecated(skip_current_package=false)
+#doc(hidden)
 pub fn UInt::to_le_bytes(self : UInt) -> Bytes {
   [
     self.to_byte(),
