@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-#deprecated("Use `Rand::new()` instead", skip_current_package=false)
+#deprecated("Use `Rand::new()` instead")
 pub fn new(seed? : Bytes = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456") -> Rand {
   if seed.length() != 32 {
     abort("seed must be 32 bytes long")
@@ -23,7 +23,7 @@ pub fn new(seed? : Bytes = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456") -> Rand {
 
 ///|
 /// Create a new random number generator with [seed].
-#deprecated("You may use `Rand::chacha8(seed~)` instead of `Rand::new(chacha8(seed~))", skip_current_package=false)
+#deprecated("You may use `Rand::chacha8(seed~)` instead of `Rand::new(chacha8(seed~))")
 pub fn chacha8(seed? : Bytes = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ123456") -> &Source {
   @random_source.ChaCha8::new(seed)
 }

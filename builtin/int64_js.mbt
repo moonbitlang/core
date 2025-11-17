@@ -423,35 +423,35 @@ pub impl BitXOr for Int64 with lxor(self : Int64, other : Int64) -> Int64 {
 }
 
 ///|
-#deprecated("Use infix operator `<<` instead", skip_current_package=false)
+#deprecated("Use infix operator `<<` instead")
 #coverage.skip
 pub fn Int64::lsl(self : Int64, other : Int) -> Int64 {
   MyInt64::from_int64(self).lsl(other).to_int64()
 }
 
 ///|
-#deprecated("Use infix operator `<<` instead", skip_current_package=false)
+#deprecated("Use infix operator `<<` instead")
 #coverage.skip
 pub fn Int64::shl(self : Int64, other : Int) -> Int64 {
   MyInt64::from_int64(self).lsl(other).to_int64()
 }
 
 ///|
-#deprecated("Use UInt64 type and infix operator `>>` instead", skip_current_package=false)
+#deprecated("Use UInt64 type and infix operator `>>` instead")
 #coverage.skip
 pub fn Int64::lsr(self : Int64, other : Int) -> Int64 {
   MyInt64::from_int64(self).lsr(other).to_int64()
 }
 
 ///|
-#deprecated("Use infix operator `>>` instead", skip_current_package=false)
+#deprecated("Use infix operator `>>` instead")
 #coverage.skip
 pub fn Int64::shr(self : Int64, other : Int) -> Int64 {
   MyInt64::from_int64(self).asr(other).to_int64()
 }
 
 ///|
-#deprecated("Use infix operator `>>` instead", skip_current_package=false)
+#deprecated("Use infix operator `>>` instead")
 #coverage.skip
 pub fn Int64::asr(self : Int64, other : Int) -> Int64 {
   MyInt64::from_int64(self).asr(other).to_int64()
@@ -553,7 +553,7 @@ pub fn UInt16::to_int64(self : UInt16) -> Int64 {
 }
 
 ///|
-#deprecated("Use `reinterpret_as_int64` instead", skip_current_package=false)
+#deprecated("Use `reinterpret_as_int64` instead")
 #coverage.skip
 pub fn Double::reinterpret_as_i64(self : Double) -> Int64 {
   MyInt64::reinterpret_double(self).to_int64()
@@ -565,7 +565,7 @@ pub fn Double::reinterpret_as_int64(self : Double) -> Int64 {
 }
 
 ///|
-#deprecated("Use `reinterpret_as_uint64` instead", skip_current_package=false)
+#deprecated("Use `reinterpret_as_uint64` instead")
 #coverage.skip
 pub fn Double::reinterpret_as_u64(self : Double) -> UInt64 {
   MyInt64::reinterpret_double(self).to_uint64()
@@ -593,7 +593,7 @@ fn MyInt64::to_uint64(self : MyInt64) -> UInt64 = "%identity"
 fn MyInt64::from_uint64(value : UInt64) -> MyInt64 = "%identity"
 
 ///|
-#deprecated("Use `reinterpret_as_uint64` instead", skip_current_package=false)
+#deprecated("Use `reinterpret_as_uint64` instead")
 #coverage.skip
 pub fn Int64::to_uint64(self : Int64) -> UInt64 = "%identity"
 
@@ -626,7 +626,7 @@ pub impl Mod for UInt64 with mod(self : UInt64, other : UInt64) -> UInt64 {
 }
 
 ///|
-#deprecated("Use reinterpret_as_int64 instead", skip_current_package=false)
+#deprecated("Use reinterpret_as_int64 instead")
 #coverage.skip
 pub fn UInt64::to_int64(self : UInt64) -> Int64 = "%identity"
 
@@ -706,28 +706,28 @@ pub fn UInt64::lnot(self : UInt64) -> UInt64 {
 }
 
 ///|
-#deprecated("Use infix operator `<<` instead", skip_current_package=false)
+#deprecated("Use infix operator `<<` instead")
 #coverage.skip
 pub fn UInt64::lsl(self : UInt64, shift : Int) -> UInt64 {
   MyInt64::lsl(MyInt64::from_uint64(self), shift).to_uint64()
 }
 
 ///|
-#deprecated("Use infix operator `<<` instead", skip_current_package=false)
+#deprecated("Use infix operator `<<` instead")
 #coverage.skip
 pub fn UInt64::lsr(self : UInt64, shift : Int) -> UInt64 {
   MyInt64::lsr(MyInt64::from_uint64(self), shift).to_uint64()
 }
 
 ///|
-#deprecated("Use infix operator `>>` instead", skip_current_package=false)
+#deprecated("Use infix operator `>>` instead")
 #coverage.skip
 pub fn UInt64::shl(self : UInt64, shift : Int) -> UInt64 {
   MyInt64::lsl(MyInt64::from_uint64(self), shift).to_uint64()
 }
 
 ///|
-#deprecated("Use infix operator `>>` instead", skip_current_package=false)
+#deprecated("Use infix operator `>>` instead")
 #coverage.skip
 pub fn UInt64::shr(self : UInt64, shift : Int) -> UInt64 {
   MyInt64::lsr(MyInt64::from_uint64(self), shift).to_uint64()
@@ -759,13 +759,13 @@ pub fn UInt64::popcnt(self : UInt64) -> Int {
 }
 
 ///|
-#deprecated("Use `Float::from_int64` instead", skip_current_package=false)
+#deprecated("Use `Float::from_int64` instead")
 pub fn Int64::to_float(self : Int64) -> Float {
   self.to_double().to_float()
 }
 
 ///|
-#deprecated("Use `Float::from_uint64` instead", skip_current_package=false)
+#deprecated("Use `Float::from_uint64` instead")
 pub fn UInt64::to_float(self : UInt64) -> Float {
   Double::convert_uint64(self).to_float()
 }

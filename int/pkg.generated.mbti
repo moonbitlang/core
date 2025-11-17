@@ -11,8 +11,6 @@ let min_value : Int
 // Types and methods
 #as_free_fn
 fn Int::abs(Int) -> Int
-fn Int::to_be_bytes(Int) -> Bytes
-fn Int::to_le_bytes(Int) -> Bytes
 
 // Type aliases
 

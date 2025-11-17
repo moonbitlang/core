@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-#deprecated("Use `if condition { Some(value()) } else { None }` instead", skip_current_package=false)
+#deprecated("Use `if condition { Some(value()) } else { None }` instead")
 pub fn[T] when(condition : Bool, value : () -> T) -> T? {
   if condition {
     Some(value())
@@ -23,7 +23,7 @@ pub fn[T] when(condition : Bool, value : () -> T) -> T? {
 }
 
 ///|
-#deprecated("Use `if !condition { Some(value()) } else { None }` instead", skip_current_package=false)
+#deprecated("Use `if !condition { Some(value()) } else { None }` instead")
 pub fn[T] unless(condition : Bool, value : () -> T) -> T? {
   if !condition {
     Some(value())
@@ -33,13 +33,13 @@ pub fn[T] unless(condition : Bool, value : () -> T) -> T? {
 }
 
 ///|
-#deprecated("Use `None` instead", skip_current_package=false)
+#deprecated("Use `None` instead")
 pub fn[T] empty() -> T? {
   None
 }
 
 ///|
-#deprecated("Use `Some(value)` instead", skip_current_package=false)
+#deprecated("Use `Some(value)` instead")
 pub fn[T] some(value : T) -> T? {
   Some(value)
 }
