@@ -15,7 +15,7 @@
 ///|
 test "array_mut_sub" {
   let arr = [1, 2, 3, 4, 5]
-  let view = arr.mut_sub()
+  let view = arr.mut_view()
   inspect(view, content="[1, 2, 3, 4, 5]")
   inspect(view.length(), content="5")
   inspect(view[0], content="1")
@@ -31,7 +31,7 @@ test "array_mut_sub" {
 ///|
 test "mutarrayview_get" {
   let arr = [1, 2, 3, 4, 5]
-  let view = arr.mut_sub(start=1, end=4)
+  let view = arr.mut_view(start=1, end=4)
   inspect(view.length(), content="3")
   inspect(view[0], content="2")
   inspect(view[1], content="3")
@@ -41,7 +41,7 @@ test "mutarrayview_get" {
 ///|
 test "mutarrayview_set" {
   let arr = [1, 2, 3, 4, 5]
-  let view = arr.mut_sub(start=1, end=4)
+  let view = arr.mut_view(start=1, end=4)
   view[0] = 10
   view[1] = 20
   view[2] = 30
@@ -57,8 +57,8 @@ test "mutarrayview_set" {
 ///|
 test "mutarrayview_as_mutarrayview" {
   let arr = [1, 2, 3, 4, 5]
-  let view1 = arr.mut_sub(start=1, end=4)
-  let view2 = view1.mut_sub(start=1, end=2)
+  let view1 = arr.mut_view(start=1, end=4)
+  let view2 = view1.mut_view(start=1, end=2)
   inspect(view2.length(), content="1")
   inspect(view2[0], content="3")
   view2[0] = 99
@@ -69,123 +69,123 @@ test "mutarrayview_as_mutarrayview" {
 ///|
 test "negative index1" {
   let arr = [1, 2, 3]
-  let view = arr.mut_sub(start=-1)
+  let view = arr.mut_view(start=-1)
   inspect(view, content="[3]")
-  let view = arr.mut_sub(start=-2)
+  let view = arr.mut_view(start=-2)
   inspect(view, content="[2, 3]")
-  let view = arr.mut_sub(start=-3)
+  let view = arr.mut_view(start=-3)
   inspect(view, content="[1, 2, 3]")
-  let view = arr.mut_sub(end=-1)
+  let view = arr.mut_view(end=-1)
   inspect(view, content="[1, 2]")
-  let view = arr.mut_sub(end=-2)
+  let view = arr.mut_view(end=-2)
   inspect(view, content="[1]")
-  let view = arr.mut_sub(end=-3)
+  let view = arr.mut_view(end=-3)
   inspect(view, content="[]")
-  let view = arr.mut_sub(start=-3, end=-3)
+  let view = arr.mut_view(start=-3, end=-3)
   inspect(view, content="[]")
-  let view = arr.mut_sub(start=-3, end=-2)
+  let view = arr.mut_view(start=-3, end=-2)
   inspect(view, content="[1]")
-  let view = arr.mut_sub(start=-3, end=-1)
+  let view = arr.mut_view(start=-3, end=-1)
   inspect(view, content="[1, 2]")
-  let view = arr.mut_sub(start=-3, end=0)
+  let view = arr.mut_view(start=-3, end=0)
   inspect(view, content="[]")
-  let view = arr.mut_sub(start=-3, end=1)
+  let view = arr.mut_view(start=-3, end=1)
   inspect(view, content="[1]")
-  let view = arr.mut_sub(start=-3, end=2)
+  let view = arr.mut_view(start=-3, end=2)
   inspect(view, content="[1, 2]")
-  let view = arr.mut_sub(start=-3, end=3)
+  let view = arr.mut_view(start=-3, end=3)
   inspect(view, content="[1, 2, 3]")
 }
 
 ///|
 test "negative index2" {
   let arr = [0, 1, 2, 3, 4]
-  let view = arr.mut_sub(start=1, end=4)
-  let view2 = view.mut_sub(start=-1)
+  let view = arr.mut_view(start=1, end=4)
+  let view2 = view.mut_view(start=-1)
   inspect(view2, content="[3]")
-  let view2 = view.mut_sub(start=-2)
+  let view2 = view.mut_view(start=-2)
   inspect(view2, content="[2, 3]")
-  let view2 = view.mut_sub(start=-3)
+  let view2 = view.mut_view(start=-3)
   inspect(view2, content="[1, 2, 3]")
-  let view2 = view.mut_sub(end=-1)
+  let view2 = view.mut_view(end=-1)
   inspect(view2, content="[1, 2]")
-  let view2 = view.mut_sub(end=-2)
+  let view2 = view.mut_view(end=-2)
   inspect(view2, content="[1]")
-  let view2 = view.mut_sub(end=-3)
+  let view2 = view.mut_view(end=-3)
   inspect(view2, content="[]")
-  let view2 = view.mut_sub(start=-3, end=-3)
+  let view2 = view.mut_view(start=-3, end=-3)
   inspect(view2, content="[]")
-  let view2 = view.mut_sub(start=-3, end=-2)
+  let view2 = view.mut_view(start=-3, end=-2)
   inspect(view2, content="[1]")
-  let view2 = view.mut_sub(start=-3, end=-1)
+  let view2 = view.mut_view(start=-3, end=-1)
   inspect(view2, content="[1, 2]")
-  let view2 = view.mut_sub(start=-3, end=0)
+  let view2 = view.mut_view(start=-3, end=0)
   inspect(view2, content="[]")
-  let view2 = view.mut_sub(start=-3, end=1)
+  let view2 = view.mut_view(start=-3, end=1)
   inspect(view2, content="[1]")
-  let view2 = view.mut_sub(start=-3, end=2)
+  let view2 = view.mut_view(start=-3, end=2)
   inspect(view2, content="[1, 2]")
-  let view2 = view.mut_sub(start=-3, end=3)
+  let view2 = view.mut_view(start=-3, end=3)
   inspect(view2, content="[1, 2, 3]")
 }
 
 ///|
 test "panic negative index1" {
   let arr = [1, 2, 3]
-  let _ = arr.mut_sub(start=-4)
+  let _ = arr.mut_view(start=-4)
 
 }
 
 ///|
 test "panic negative index2" {
   let arr = [1, 2, 3]
-  let _ = arr.mut_sub(end=-4)
+  let _ = arr.mut_view(end=-4)
 
 }
 
 ///|
 test "panic negative index3" {
   let arr = [1, 2, 3]
-  let _ = arr.mut_sub(start=-1, end=-2)
+  let _ = arr.mut_view(start=-1, end=-2)
 
 }
 
 ///|
 test "panic negative index4" {
   let arr = [1, 2, 3]
-  let _ = arr.mut_sub(start=-1, end=-3)
+  let _ = arr.mut_view(start=-1, end=-3)
 
 }
 
 ///|
 test "panic negative index5" {
   let arr = [1, 2, 3]
-  let view = arr.mut_sub()
-  let _ = view.mut_sub(start=-4)
+  let view = arr.mut_view()
+  let _ = view.mut_view(start=-4)
 
 }
 
 ///|
 test "panic negative index6" {
   let arr = [1, 2, 3]
-  let view = arr.mut_sub()
-  let _ = view.mut_sub(end=-4)
+  let view = arr.mut_view()
+  let _ = view.mut_view(end=-4)
 
 }
 
 ///|
 test "panic negative index7" {
   let arr = [1, 2, 3]
-  let view = arr.mut_sub()
-  let _ = view.mut_sub(start=-1, end=-2)
+  let view = arr.mut_view()
+  let _ = view.mut_view(start=-1, end=-2)
 
 }
 
 ///|
 test "panic negative index8" {
   let arr = [1, 2, 3]
-  let view = arr.mut_sub()
-  let _ = view.mut_sub(start=-1, end=-3)
+  let view = arr.mut_view()
+  let _ = view.mut_view(start=-1, end=-3)
 
 }
 
@@ -193,38 +193,38 @@ test "panic negative index8" {
 test "fixedarray_mut_sub" {
   // scalar case
   let arr = FixedArray::makei(10, i => i)
-  let view = arr.mut_sub()
+  let view = arr.mut_view()
   inspect(view, content="[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]")
-  let view = arr.mut_sub(start=1)
+  let view = arr.mut_view(start=1)
   inspect(view, content="[1, 2, 3, 4, 5, 6, 7, 8, 9]")
-  let view = arr.mut_sub(end=-2)
+  let view = arr.mut_view(end=-2)
   inspect(view, content="[0, 1, 2, 3, 4, 5, 6, 7]")
-  let view = arr.mut_sub(start=3, end=-4)
+  let view = arr.mut_view(start=3, end=-4)
   inspect(view, content="[3, 4, 5]")
-  let view = arr.mut_sub(start=-5)
+  let view = arr.mut_view(start=-5)
   inspect(view, content="[5, 6, 7, 8, 9]")
 
   // Test mutation through view
-  let view = arr.mut_sub(start=3, end=-4)
+  let view = arr.mut_view(start=3, end=-4)
   view[0] = 100
   inspect(arr[3], content="100")
   inspect(view, content="[100, 4, 5]")
 
   // reference case
   let arr = FixedArray::makei(10, i => (i, i))
-  let view = arr.mut_sub()
+  let view = arr.mut_view()
   inspect(
     view,
     content="[(0, 0), (1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6), (7, 7), (8, 8), (9, 9)]",
   )
-  let view = arr.mut_sub(start=1)
+  let view = arr.mut_view(start=1)
   inspect(
     view,
     content="[(1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6), (7, 7), (8, 8), (9, 9)]",
   )
 
   // Test mutation
-  let view = arr.mut_sub(start=3, end=-4)
+  let view = arr.mut_view(start=3, end=-4)
   view[0] = (100, 100)
   inspect(arr[3], content="(100, 100)")
   inspect(view, content="[(100, 100), (4, 4), (5, 5)]")
