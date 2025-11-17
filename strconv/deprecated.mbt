@@ -19,7 +19,7 @@
 /// reference:
 /// - <https://nigeltao.github.io/blog/2020/parse-number-f64-simple.html>
 /// - <https://nigeltao.github.io/blog/2020/eisel-lemire.html>
-#deprecated("Decimal will be changed to private. Use `@strconv.parse_double` instead")
+#deprecated("Decimal will be changed to private. Use `@strconv.parse_double` instead", skip_current_package=true)
 struct Decimal {
   digits : FixedArray[Byte]
   mut digits_num : Int

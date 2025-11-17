@@ -16,7 +16,7 @@
 /// Trait for types whose elements can test for equality
 pub(open) trait Eq {
   equal(Self, Self) -> Bool = _
-  #deprecated("use `equal` instead")
+  #deprecated("use `equal` instead", skip_current_package=true)
   op_equal(Self, Self) -> Bool = _
 }
 

@@ -16,7 +16,7 @@
 /// types implementing this trait can use the `+` operator
 pub(open) trait Add {
   add(Self, Self) -> Self = _
-  #deprecated("use `add` instead")
+  #deprecated("use `add` instead", skip_current_package=true)
   op_add(Self, Self) -> Self = _
 }
 
@@ -24,7 +24,7 @@ pub(open) trait Add {
 /// types implementing this trait can use the `-` operator
 pub(open) trait Sub {
   sub(Self, Self) -> Self = _
-  #deprecated("use `sub` instead")
+  #deprecated("use `sub` instead", skip_current_package=true)
   op_sub(Self, Self) -> Self = _
 }
 
@@ -32,7 +32,7 @@ pub(open) trait Sub {
 /// types implementing this trait can use the `*` operator
 pub(open) trait Mul {
   mul(Self, Self) -> Self = _
-  #deprecated("use `mul` instead")
+  #deprecated("use `mul` instead", skip_current_package=true)
   op_mul(Self, Self) -> Self = _
 }
 
@@ -40,7 +40,7 @@ pub(open) trait Mul {
 /// types implementing this trait can use the `/` operator
 pub(open) trait Div {
   div(Self, Self) -> Self = _
-  #deprecated("use `div` instead")
+  #deprecated("use `div` instead", skip_current_package=true)
   op_div(Self, Self) -> Self = _
 }
 
@@ -48,7 +48,7 @@ pub(open) trait Div {
 /// types implementing this trait can use the unary `-` operator
 pub(open) trait Neg {
   neg(Self) -> Self = _
-  #deprecated("use `neg` instead")
+  #deprecated("use `neg` instead", skip_current_package=true)
   op_neg(Self) -> Self = _
 }
 
@@ -56,7 +56,7 @@ pub(open) trait Neg {
 /// types implementing this trait can use the `%` operator
 pub(open) trait Mod {
   mod(Self, Self) -> Self = _
-  #deprecated("use `mod` instead")
+  #deprecated("use `mod` instead", skip_current_package=true)
   op_mod(Self, Self) -> Self = _
 }
 
@@ -82,7 +82,7 @@ pub(open) trait BitXOr {
 /// types implementing this trait can use the `<<` operator
 pub(open) trait Shl {
   shl(Self, Int) -> Self = _
-  #deprecated("use `shl` instead")
+  #deprecated("use `shl` instead", skip_current_package=true)
   op_shl(Self, Int) -> Self = _
 }
 
@@ -90,7 +90,7 @@ pub(open) trait Shl {
 /// types implementing this trait can use the `>>` operator
 pub(open) trait Shr {
   shr(Self, Int) -> Self = _
-  #deprecated("use `shr` instead")
+  #deprecated("use `shr` instead", skip_current_package=true)
   op_shr(Self, Int) -> Self = _
 }
 
