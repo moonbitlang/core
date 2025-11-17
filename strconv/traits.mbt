@@ -22,7 +22,7 @@
 pub(open) trait FromStr {
   #as_free_fn
   from_str(StringView) -> Self raise StrConvError = _
-  #deprecated("use `from_str` instead")
+  #deprecated("use `from_str` instead", skip_current_package=true)
   from_string(String) -> Self raise StrConvError = _
 }
 

@@ -111,7 +111,7 @@ pub fn String::unsafe_substring(
 ///
 /// Returns a new string containing the specified substring.
 ///
-#deprecated("Use `str[:]` or `str[:].to_string()` instead")
+#deprecated("Use `str[:]` or `str[:].to_string()` instead", skip_current_package=true)
 pub fn String::substring(self : String, start? : Int = 0, end? : Int) -> String {
   let len = self.length()
   let end = match end {
