@@ -478,6 +478,7 @@ fn Char::to_int(Char) -> Int
 fn Char::to_uint(Char) -> UInt
 fn Char::utf16_len(Char) -> Int
 
+fn Int::abs(Int) -> Int
 #deprecated
 fn Int::asr(Int, Int) -> Int
 fn Int::clamp(Int, min~ : Int, max~ : Int) -> Int

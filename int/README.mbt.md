@@ -10,8 +10,8 @@ This section shows the basic operations available for integers:
 ///|
 test "basic int operations" {
   // Get absolute value
-  inspect(@int.abs(-42), content="42")
-  inspect(@int.abs(42), content="42")
+  inspect(Int::abs(-42), content="42")
+  inspect(Int::abs(42), content="42")
 
   // Access min/max values
   inspect(@int.min_value, content="-2147483648")
