@@ -140,3 +140,27 @@ pub fn Int::is_trailing_surrogate(self : Int) -> Bool {
 pub fn Int::is_surrogate(self : Int) -> Bool {
   0xD800 <= self && self <= 0xDFFF
 }
+
+///|
+/// Computes the absolute value of an integer.
+///
+/// Parameters:
+///
+/// * `self` : The integer whose absolute value is to be computed.
+///
+/// Returns the absolute value of the integer.
+///
+/// Example:
+///
+/// ```moonbit
+///   inspect(Int::abs(42), content="42")
+///   inspect(Int::abs(-42), content="42")
+///   inspect(Int::abs(0), content="0")
+/// ```
+pub fn Int::abs(self : Int) -> Int {
+  if self < 0 {
+    -self
+  } else {
+    self
+  }
+}

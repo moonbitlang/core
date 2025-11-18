@@ -44,9 +44,9 @@ pub impl[T : Compare] Compare for Reverse[T] with compare(a, b) {
 /// # Examples
 ///
 /// ```mbt
-///   inspect(@cmp.maximum_by_key(1, -2, @int.abs), content="-2")
-///   inspect(@cmp.maximum_by_key(-2, 1, @int.abs), content="-2")
-///   inspect(@cmp.maximum_by_key(-2, 2, @int.abs), content="2")
+///   inspect(@cmp.maximum_by_key(1, -2, Int::abs), content="-2")
+///   inspect(@cmp.maximum_by_key(-2, 1, Int::abs), content="-2")
+///   inspect(@cmp.maximum_by_key(-2, 2, Int::abs), content="2")
 /// ```
 pub fn[T, K : Compare] maximum_by_key(x : T, y : T, f : (T) -> K) -> T {
   if f(x) > f(y) {
@@ -64,9 +64,9 @@ pub fn[T, K : Compare] maximum_by_key(x : T, y : T, f : (T) -> K) -> T {
 /// # Examples
 ///
 /// ```mbt
-///   inspect(@cmp.minimum_by_key(1, -2, @int.abs), content="1")
-///   inspect(@cmp.minimum_by_key(-2, 1, @int.abs), content="1")
-///   inspect(@cmp.minimum_by_key(-2, 2, @int.abs), content="-2")
+///   inspect(@cmp.minimum_by_key(1, -2, Int::abs), content="1")
+///   inspect(@cmp.minimum_by_key(-2, 1, Int::abs), content="1")
+///   inspect(@cmp.minimum_by_key(-2, 2, Int::abs), content="-2")
 /// ```
 pub fn[T, K : Compare] minimum_by_key(x : T, y : T, f : (T) -> K) -> T {
   if f(x) > f(y) {
@@ -167,9 +167,9 @@ pub fn[T : Compare] minmax(x : T, y : T) -> (T, T) {
 /// Examples:
 ///
 /// ```moonbit
-/// inspect(@cmp.minmax_by_key(1, -2, @int.abs), content="(1, -2)")
-/// inspect(@cmp.minmax_by_key(-2, 1, @int.abs), content="(1, -2)")
-/// inspect(@cmp.minmax_by_key(-2, 2, @int.abs), content="(-2, 2)")
+/// inspect(@cmp.minmax_by_key(1, -2, Int::abs), content="(1, -2)")
+/// inspect(@cmp.minmax_by_key(-2, 1, Int::abs), content="(1, -2)")
+/// inspect(@cmp.minmax_by_key(-2, 2, Int::abs), content="(-2, 2)")
 /// ```
 pub fn[T, K : Compare] minmax_by_key(x : T, y : T, f : (T) -> K) -> (T, T) {
   if f(x) > f(y) {

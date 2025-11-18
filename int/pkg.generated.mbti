@@ -2,6 +2,9 @@
 package "moonbitlang/core/int"
 
 // Values
+#deprecated
+fn abs(Int) -> Int
+
 let max_value : Int
 
 let min_value : Int
@@ -9,8 +12,6 @@ let min_value : Int
 // Errors
 
 // Types and methods
-#as_free_fn
-fn Int::abs(Int) -> Int
 
 // Type aliases
 
