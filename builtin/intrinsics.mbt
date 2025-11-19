@@ -981,7 +981,7 @@ pub fn Double::sqrt(self : Double) -> Double = "%f64_sqrt"
 ///   inspect(a == b, content="true")
 ///   inspect(a == c, content="false")
 ///   let nan = 0.0 / 0.0 // NaN
-///   inspect(nan == nan, content="false") // Note: NaN equals itself in MoonBit
+///   inspect(nan == nan, content="false") // NaN != NaN
 /// ```
 pub impl Eq for Double with equal(self : Double, other : Double) -> Bool = "%f64_eq"
 
