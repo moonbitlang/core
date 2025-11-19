@@ -8,27 +8,10 @@ on:
   merge_group:
 
 jobs:
-  setup-matrix:
-    runs-on: ubuntu-latest
-    outputs:
-      os: ${{ steps.setup-os-matrix.outputs.os }}
-    steps:
-      - name: setup os matrix
-        id: setup-os-matrix
-        run: |
-          if ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}; then
-            os='["ubuntu-latest","macos-latest", "windows-latest"]'
-          else
-            os='["ubuntu-latest","macos-latest","windows-latest"]'
-          fi
-          list=$(echo ${os} | jq -c)
-          echo "os=${list}" >> $GITHUB_OUTPUT
-
   stable-check:
-    needs: setup-matrix
     strategy:
       matrix:
-        os: ${{ fromJson(needs.setup-matrix.outputs.os) }}
+        os: ["ubuntu-latest","macos-latest", "windows-latest"]
       fail-fast: false
     runs-on: ${{ matrix.os }}
     continue-on-error: false
@@ -91,10 +74,9 @@ jobs:
         run: Get-ChildItem -Path ".\target" -Recurse -Filter "*.core" | ForEach-Object { "{0} ({1} bytes)" -f $_.FullName, $_.Length }
 
   stable-native-opt-test:
-    needs: setup-matrix
     strategy:
       matrix:
-        os: ${{ fromJson(needs.setup-matrix.outputs.os) }}
+        os: ["ubuntu-latest","macos-latest", "windows-latest"]
       fail-fast: false
     runs-on: ${{ matrix.os }}
     continue-on-error: false
