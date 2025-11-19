@@ -25,7 +25,7 @@
 ///   assert_eq(arr, [1, 2, 3, 4, 5])
 /// ```
 pub fn[T : Compare] FixedArray::stable_sort(self : FixedArray[T]) -> Unit {
-  timsort({ array: self, start: 0, end: self.length() })
+  timsort(self.mut_view())
 }
 
 ///|
@@ -44,23 +44,23 @@ priv struct TimSortRun {
 /// 2. for every `i` in `2..runs.len()`: `runs[i - 2].len > runs[i - 1].len + runs[i].len`
 ///
 /// The invariants ensure that the total running time is *O*(*n* \* log(*n*)) worst-case.
-fn[T : Compare] timsort(arr : FixedArraySlice[T]) -> Unit {
+fn[T : Compare] timsort(arr : MutArrayView[T]) -> Unit {
   // Slices of up to this length get sorted using insertion sort.
   let max_insertion = 20
 
   // Short arrays get sorted in-place via insertion sort to avoid allocations.
   let len = arr.length()
   if len <= max_insertion {
-    FixedArraySlice::insertion_sort(arr)
+    MutArrayView::insertion_sort(arr)
   }
   let mut end = 0
   let mut start = 0
   let runs : Array[TimSortRun] = []
   while end < len {
-    let (streak_end, was_reversed) = find_streak(arr.slice(start, arr.end))
+    let (streak_end, was_reversed) = find_streak(arr.mut_view(start~))
     end += streak_end
     if was_reversed {
-      arr.slice(start, end).rev_in_place()
+      arr.mut_view(start~, end~).rev_in_place()
     }
     // Insert some more elements into the run if it's too short. Insertion sort is faster than
     // merge sort on short sequences, so this significantly improves performance.
@@ -79,9 +79,7 @@ fn[T : Compare] timsort(arr : FixedArraySlice[T]) -> Unit {
 }
 
 ///|
-fn[T : Compare] FixedArraySlice::insertion_sort(
-  arr : FixedArraySlice[T],
-) -> Unit {
+fn[T : Compare] MutArrayView::insertion_sort(arr : MutArrayView[T]) -> Unit {
   for i in 1..<arr.length() {
     for j = i; j > 0 && arr[j] < arr[j - 1]; j = j - 1 {
       arr.swap(j, j - 1)
@@ -92,13 +90,13 @@ fn[T : Compare] FixedArraySlice::insertion_sort(
 ///|
 /// Merges non-decreasing runs `arr[:mid]` and `arr[mid:]`. Copy `arr[mid:]` to buf and merge 
 /// `buf` and `arr[:mid]` to `arr[:]`
-fn[T : Compare] merge(arr : FixedArraySlice[T], mid : Int) -> Unit {
+fn[T : Compare] merge(arr : MutArrayView[T], mid : Int) -> Unit {
   let buf_len = arr.length() - mid
   let buf : FixedArray[T] = FixedArray::make(buf_len, arr[mid])
   for i in 0..<buf.length() {
     buf[i] = arr[mid + i]
   }
-  let buf : FixedArraySlice[T] = { array: buf, start: 0, end: buf_len }
+  let buf : MutArrayView[T] = buf.mut_view()
   let buf_remaining = for p1 = mid - 1, p2 = buf_len - 1, p = mid + buf_len - 1; p1 >=
                          0 &&
                          p2 >= 0; {
@@ -121,7 +119,7 @@ fn[T : Compare] merge(arr : FixedArraySlice[T], mid : Int) -> Unit {
 /// Finds a streak of presorted elements starting at the beginning of the slice. Returns the first
 /// value that is not part of said streak, and a bool denoting whether the streak was reversed.
 /// Streaks can be increasing or decreasing.
-fn[T : Compare] find_streak(arr : FixedArraySlice[T]) -> (Int, Bool) {
+fn[T : Compare] find_streak(arr : MutArrayView[T]) -> (Int, Bool) {
   let len = arr.length()
   if len < 2 {
     return (len, false)
@@ -148,7 +146,7 @@ fn[T : Compare] find_streak(arr : FixedArraySlice[T]) -> (Int, Bool) {
 
 ///|
 fn[T : Compare] provide_sorted_batch(
-  arr : FixedArraySlice[T],
+  arr : MutArrayView[T],
   start : Int,
   end : Int,
 ) -> Int {
@@ -164,7 +162,7 @@ fn[T : Compare] provide_sorted_batch(
     // the sorted region to the left, so we push up MIN_INSERTION_RUN - 1 to the right. Which is
     // more efficient that trying to push those already sorted elements to the left.
     let sort_end = minimum(len, start + min_insertion_run)
-    FixedArraySlice::insertion_sort(arr.slice(start, sort_end))
+    MutArrayView::insertion_sort(arr.slice(start, sort_end))
     sort_end
   } else {
     end
@@ -211,16 +209,41 @@ fn collapse(runs : Array[TimSortRun], stop : Int) -> Int? {
 ///   assert_eq(arr, [1, 2, 3, 4, 5])
 /// ```
 pub fn[T : Compare] FixedArray::sort(self : FixedArray[T]) -> Unit {
-  fixed_quick_sort(
-    { array: self, start: 0, end: self.length() },
-    None,
-    fixed_get_limit(self.length()),
-  )
+  fixed_quick_sort(self.mut_view(), None, fixed_get_limit(self.length()))
+}
+
+///|
+fn[T] MutArrayView::slice(
+  arr : MutArrayView[T],
+  start : Int,
+  end : Int,
+) -> MutArrayView[T] {
+  arr.mut_view(start~, end~)
+}
+
+///|
+fn[T] MutArrayView::swap(arr : MutArrayView[T], i : Int, j : Int) -> Unit {
+  let temp = arr[i]
+  arr[i] = arr[j]
+  arr[j] = temp
+}
+
+///|
+fn[T] MutArrayView::rev_in_place(arr : MutArrayView[T]) -> Unit {
+  let len = arr.length()
+  let mid_len = len / 2
+  for i in 0..<mid_len {
+    let j = len - i - 1
+    // Swap elements
+    let temp = arr[i]
+    arr[i] = arr[j]
+    arr[j] = temp
+  }
 }
 
 ///|
 fn[T : Compare] fixed_quick_sort(
-  arr : FixedArraySlice[T],
+  arr : MutArrayView[T],
   pred : T?,
   limit : Int,
 ) -> Unit {
@@ -300,7 +323,7 @@ fn fixed_get_limit(len : Int) -> Int {
 /// It will only tolerate at most 8 unsorted elements. The time complexity is O(n).
 /// 
 /// Returns whether the array is sorted.
-fn[T : Compare] fixed_try_bubble_sort(arr : FixedArraySlice[T]) -> Bool {
+fn[T : Compare] fixed_try_bubble_sort(arr : MutArrayView[T]) -> Bool {
   let max_tries = 8
   let mut tries = 0
   for i in 1..<arr.length() {
@@ -325,7 +348,7 @@ fn[T : Compare] fixed_try_bubble_sort(arr : FixedArraySlice[T]) -> Bool {
 /// It will only tolerate at most 8 unsorted elements. The time complexity is O(n).
 /// 
 /// Returns whether the array is sorted.
-fn[T : Compare] fixed_bubble_sort(arr : FixedArraySlice[T]) -> Unit {
+fn[T : Compare] fixed_bubble_sort(arr : MutArrayView[T]) -> Unit {
   for i in 1..<arr.length() {
     for j = i; j > 0 && arr[j - 1] > arr[j]; j = j - 1 {
       arr.swap(j, j - 1)
@@ -336,14 +359,14 @@ fn[T : Compare] fixed_bubble_sort(arr : FixedArraySlice[T]) -> Unit {
 ///|
 test "fixed_try_bubble_sort" {
   let arr : FixedArray[_] = [8, 7, 6, 5, 4, 3, 2, 1]
-  let sorted = fixed_try_bubble_sort({ array: arr, start: 0, end: 8 })
+  let sorted = fixed_try_bubble_sort(arr.mut_view())
   inspect(sorted, content="true")
   assert_eq(arr, [1, 2, 3, 4, 5, 6, 7, 8])
 }
 
 ///|
 fn[T : Compare] fixed_partition(
-  arr : FixedArraySlice[T],
+  arr : MutArrayView[T],
   pivot_index : Int,
 ) -> (Int, Bool) {
   arr.swap(pivot_index, arr.length() - 1)
@@ -369,7 +392,7 @@ fn[T : Compare] fixed_partition(
 /// It avoids worst case performance by choosing a pivot that is likely to be close to the median.
 /// 
 /// Returns the pivot index and whether the array is likely sorted.
-fn[T : Compare] fixed_choose_pivot(arr : FixedArraySlice[T]) -> (Int, Bool) {
+fn[T : Compare] fixed_choose_pivot(arr : MutArrayView[T]) -> (Int, Bool) {
   let len = arr.length()
   let use_median_of_medians = 50
   let max_swaps = 4 * 3
@@ -403,7 +426,7 @@ fn[T : Compare] fixed_choose_pivot(arr : FixedArraySlice[T]) -> (Int, Bool) {
 }
 
 ///|
-fn[T : Compare] fixed_heap_sort(arr : FixedArraySlice[T]) -> Unit {
+fn[T : Compare] fixed_heap_sort(arr : MutArrayView[T]) -> Unit {
   let len = arr.length()
   for i = len / 2 - 1; i >= 0; i = i - 1 {
     fixed_sift_down(arr, i)
@@ -415,7 +438,7 @@ fn[T : Compare] fixed_heap_sort(arr : FixedArraySlice[T]) -> Unit {
 }
 
 ///|
-fn[T : Compare] fixed_sift_down(arr : FixedArraySlice[T], index : Int) -> Unit {
+fn[T : Compare] fixed_sift_down(arr : MutArrayView[T], index : Int) -> Unit {
   let mut index = index
   let len = arr.length()
   let mut child = index * 2 + 1
@@ -460,20 +483,12 @@ fn fixed_test_sort(f : (FixedArray[Int]) -> Unit) -> Unit raise {
 
 ///|
 test "fixed_heap_sort" {
-  fixed_test_sort(arr => fixed_heap_sort({
-    array: arr,
-    start: 0,
-    end: arr.length(),
-  }))
+  fixed_test_sort(arr => fixed_heap_sort(arr.mut_view()))
 }
 
 ///|
 test "fixed_bubble_sort" {
-  fixed_test_sort(arr => fixed_bubble_sort({
-    array: arr,
-    start: 0,
-    end: arr.length(),
-  }))
+  fixed_test_sort(arr => fixed_bubble_sort(arr.mut_view()))
 }
 
 ///|
@@ -551,7 +566,7 @@ test "stable_sort_complex" {
 ///|
 test "find_streak with empty array" {
   let arr : FixedArray[Int] = []
-  let (streak_end, was_reversed) = find_streak({ array: arr, start: 0, end: 0 })
+  let (streak_end, was_reversed) = find_streak(arr.mut_view())
   inspect(streak_end, content="0")
   inspect(was_reversed, content="false")
 }
@@ -559,7 +574,7 @@ test "find_streak with empty array" {
 ///|
 test "find_streak with single element array" {
   let arr : FixedArray[_] = [1]
-  let (streak_end, was_reversed) = find_streak({ array: arr, start: 0, end: 1 })
+  let (streak_end, was_reversed) = find_streak(arr.mut_view())
   inspect(streak_end, content="1")
   inspect(was_reversed, content="false")
 }
@@ -567,7 +582,7 @@ test "find_streak with single element array" {
 ///|
 test "find_streak with increasing elements" {
   let arr : FixedArray[_] = [1, 2, 3, 4, 5]
-  let (streak_end, was_reversed) = find_streak({ array: arr, start: 0, end: 5 })
+  let (streak_end, was_reversed) = find_streak(arr.mut_view())
   inspect(streak_end, content="5")
   inspect(was_reversed, content="false")
 }
@@ -575,7 +590,7 @@ test "find_streak with increasing elements" {
 ///|
 test "find_streak with decreasing elements" {
   let arr : FixedArray[_] = [5, 4, 3, 2, 1]
-  let (streak_end, was_reversed) = find_streak({ array: arr, start: 0, end: 5 })
+  let (streak_end, was_reversed) = find_streak(arr.mut_view())
   inspect(streak_end, content="5")
   inspect(was_reversed, content="true")
 }
@@ -583,20 +598,20 @@ test "find_streak with decreasing elements" {
 ///|
 test "provide_sorted_batch with long run" {
   let arr : FixedArray[_] = [1, 2, 3, 4, 5]
-  let end = provide_sorted_batch({ array: arr, start: 0, end: 5 }, 0, 5)
+  let end = provide_sorted_batch(arr.mut_view(), 0, 5)
   inspect(end, content="5")
 }
 
 ///|
 test "fixed_quick_sort with limit reached" {
   let arr : FixedArray[_] = [5, 4, 3, 2, 1]
-  fixed_quick_sort({ array: arr, start: 0, end: 5 }, None, 0)
+  fixed_quick_sort(arr.mut_view(), None, 0)
   assert_true(FixedArray::is_sorted(arr))
 }
 
 ///|
 test "fixed_quick_sort with balanced partitions" {
   let arr : FixedArray[_] = [5, 4, 3, 2, 1]
-  fixed_quick_sort({ array: arr, start: 0, end: 5 }, None, 10)
+  fixed_quick_sort(arr.mut_view(), None, 10)
   assert_true(FixedArray::is_sorted(arr))
 }

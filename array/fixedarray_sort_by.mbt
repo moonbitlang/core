@@ -29,10 +29,10 @@ pub fn[T, K : Compare] FixedArray::sort_by_key(
   map : (T) -> K,
 ) -> Unit {
   fixed_quick_sort_by(
-    { array: self, start: 0, end: self.length() },
+    self.mut_view(),
     (a, b) => map(a).compare(map(b)),
     None,
-    get_limit(self.length()),
+    fixed_get_limit(self.length()),
   )
 }
 
@@ -62,12 +62,7 @@ pub fn[T] FixedArray::sort_by(
   self : FixedArray[T],
   cmp : (T, T) -> Int,
 ) -> Unit {
-  fixed_quick_sort_by(
-    { array: self, start: 0, end: self.length() },
-    cmp,
-    None,
-    get_limit(self.length()),
-  )
+  fixed_quick_sort_by(self.mut_view(), cmp, None, fixed_get_limit(self.length()))
 }
 
 ///|
@@ -124,7 +119,7 @@ test "sort_by: mixed positive and negative numbers" {
 
 ///|
 fn[T] fixed_quick_sort_by(
-  arr : FixedArraySlice[T],
+  arr : MutArrayView[T],
   cmp : (T, T) -> Int,
   pred : T?,
   limit : Int,
@@ -195,7 +190,7 @@ fn[T] fixed_quick_sort_by(
 ///
 /// Returns whether the array is sorted.
 fn[T] fixed_try_bubble_sort_by(
-  arr : FixedArraySlice[T],
+  arr : MutArrayView[T],
   cmp : (T, T) -> Int,
 ) -> Bool {
   let max_tries = 8
@@ -222,10 +217,7 @@ fn[T] fixed_try_bubble_sort_by(
 /// It will only tolerate at most 8 unsorted elements. The time complexity is O(n).
 ///
 /// Returns whether the array is sorted.
-fn[T] fixed_bubble_sort_by(
-  arr : FixedArraySlice[T],
-  cmp : (T, T) -> Int,
-) -> Unit {
+fn[T] fixed_bubble_sort_by(arr : MutArrayView[T], cmp : (T, T) -> Int) -> Unit {
   for i in 1..<arr.length() {
     for j = i; j > 0 && cmp(arr[j - 1], arr[j]) > 0; j = j - 1 {
       arr.swap(j, j - 1)
@@ -236,15 +228,14 @@ fn[T] fixed_bubble_sort_by(
 ///|
 test "try_bubble_sort" {
   let arr : FixedArray[_] = [8, 7, 6, 5, 4, 3, 2, 1]
-  let sorted = fixed_try_bubble_sort_by({ array: arr, start: 0, end: 8 }, (a, b) => a -
-    b)
+  let sorted = fixed_try_bubble_sort_by(arr.mut_view(), (a, b) => a - b)
   inspect(sorted, content="true")
   assert_eq(arr, [1, 2, 3, 4, 5, 6, 7, 8])
 }
 
 ///|
 fn[T] fixed_partition_by(
-  arr : FixedArraySlice[T],
+  arr : MutArrayView[T],
   cmp : (T, T) -> Int,
   pivot_index : Int,
 ) -> (Int, Bool) {
@@ -272,7 +263,7 @@ fn[T] fixed_partition_by(
 ///
 /// Returns the pivot index and whether the array is likely sorted.
 fn[T] fixed_choose_pivot_by(
-  arr : FixedArraySlice[T],
+  arr : MutArrayView[T],
   cmp : (T, T) -> Int,
 ) -> (Int, Bool) {
   let len = arr.length()
@@ -308,7 +299,7 @@ fn[T] fixed_choose_pivot_by(
 }
 
 ///|
-fn[T] fixed_heap_sort_by(arr : FixedArraySlice[T], cmp : (T, T) -> Int) -> Unit {
+fn[T] fixed_heap_sort_by(arr : MutArrayView[T], cmp : (T, T) -> Int) -> Unit {
   let len = arr.length()
   for i = len / 2 - 1; i >= 0; i = i - 1 {
     fixed_sift_down_by(arr, i, cmp)
@@ -321,7 +312,7 @@ fn[T] fixed_heap_sort_by(arr : FixedArraySlice[T], cmp : (T, T) -> Int) -> Unit 
 
 ///|
 fn[T] fixed_sift_down_by(
-  arr : FixedArraySlice[T],
+  arr : MutArrayView[T],
   index : Int,
   cmp : (T, T) -> Int,
 ) -> Unit {
@@ -343,18 +334,12 @@ fn[T] fixed_sift_down_by(
 
 ///|
 test "heap_sort" {
-  fixed_test_sort(arr => fixed_heap_sort_by(
-    { array: arr, start: 0, end: arr.length() },
-    (a, b) => a - b,
-  ))
+  fixed_test_sort(arr => fixed_heap_sort_by(arr.mut_view(), (a, b) => a - b))
 }
 
 ///|
 test "bubble_sort" {
-  fixed_test_sort(arr => fixed_bubble_sort_by(
-    { array: arr, start: 0, end: arr.length() },
-    (a, b) => a - b,
-  ))
+  fixed_test_sort(arr => fixed_bubble_sort_by(arr.mut_view(), (a, b) => a - b))
 }
 
 ///|
