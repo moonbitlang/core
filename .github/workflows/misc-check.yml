@@ -12,6 +12,7 @@ jobs:
     continue-on-error: true
     runs-on: ubuntu-latest
     env:
+      HAWKEYE_VERSION: v5.8.1
       FORCE_COLOR: 1
     steps:
       - uses: actions/checkout@v4
@@ -30,12 +31,17 @@ jobs:
           done
           (exit $_passed)
 
+      # The action is too slow. See https://github.com/korandoru/hawkeye/issues/189
+      - name: Download HawkEye
+        run: curl --proto '=https' --tlsv1.2 -LsSf https://github.com/korandoru/hawkeye/releases/download/$HAWKEYE_VERSION/hawkeye-installer.sh | sh
+
       - name: Check License Header
-        uses: korandoru/hawkeye@v5.8.1
+        run: |
+          hawkeye check
 
       - name: check typos
         uses: crate-ci/typos@v1
-      
+
       - name: install moonbit
         uses: ./.github/actions/setup
 
@@ -57,4 +63,3 @@ jobs:
             --send-to coveralls
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      
