@@ -67,3 +67,59 @@ fn[T] FixedArraySlice::slice(
 ) -> FixedArraySlice[T] {
   { array: self.array, start: self.start + start, end: self.start + end }
 }
+
+///|
+priv struct ArraySlice[T] {
+  array : Array[T]
+  start : Int
+  end : Int
+}
+
+///|
+fn[T] ArraySlice::length(self : ArraySlice[T]) -> Int {
+  self.end - self.start
+}
+
+///|
+#alias("_[_]")
+fn[T] ArraySlice::at(self : ArraySlice[T], index : Int) -> T {
+  self.array[self.start + index]
+}
+
+///|
+#alias("_[_]=_")
+fn[T] ArraySlice::set(
+  self : ArraySlice[T],
+  index : Int,
+  value : T,
+) -> Unit {
+  self.array[self.start + index] = value
+}
+
+///|
+fn[T] ArraySlice::swap(
+  self : ArraySlice[T],
+  a : Int,
+  b : Int,
+) -> Unit {
+  self.array.swap(self.start + a, self.start + b)
+}
+
+///|
+fn[T] ArraySlice::rev_in_place(self : ArraySlice[T]) -> Unit {
+  let len = self.length()
+  let mid_len = len / 2
+  for i in 0..<mid_len {
+    let j = len - i - 1
+    self.swap(i, j)
+  }
+}
+
+///|
+fn[T] ArraySlice::slice(
+  self : ArraySlice[T],
+  start : Int,
+  end : Int,
+) -> ArraySlice[T] {
+  { array: self.array, start: self.start + start, end: self.start + end }
+}

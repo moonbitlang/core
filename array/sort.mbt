@@ -26,95 +26,71 @@
 /// ```
 pub fn[T : Compare] Array::sort(self : Array[T]) -> Unit {
   let len = self.length()
-  self.quick_sort(start=0, end=len, None, get_limit(len))
+  quick_sort({ array: self, start: 0, end: len }, None, get_limit(len))
 }
 
 ///|
 /// Performs quicksort on the array within the given range.
-fn[T : Compare] Array::quick_sort(
-  arr : Array[T],
-  start~ : Int,
-  end~ : Int,
+fn[T : Compare] quick_sort(
+  arr : ArraySlice[T],
   pred : T?,
   limit : Int,
 ) -> Unit {
   let mut limit = limit
-  let mut current_start = start
-  let mut current_end = end
+  let mut arr = arr
   let mut pred = pred
   let mut was_partitioned = true
   let mut balanced = true
   let insertion_sort_len = 16
   while true {
-    let len = current_end - current_start
+    let len = arr.length()
     if len <= insertion_sort_len {
       if len >= 2 {
-        arr.insertion_sort(start=current_start, end=current_end)
+        insertion_sort(arr)
       }
       return
     }
     // Too many imbalanced partitions may lead to O(n^2) performance in quick sort.
     // If the limit is reached, use heap sort to ensure O(n log n) performance.
     if limit == 0 {
-      arr.heap_sort(start=current_start, end=current_end)
+      heap_sort(arr)
       return
     }
-    let (pivot_index, likely_sorted) = arr.choose_pivot(
-      start=current_start,
-      end=current_end,
-    )
+    let (pivot_index, likely_sorted) = choose_pivot(arr)
     // Try bubble sort if the array is likely already sorted.
     if was_partitioned && balanced && likely_sorted {
-      if arr.try_bubble_sort(start=current_start, end=current_end) {
+      if try_bubble_sort(arr) {
         return
       }
     }
-    let (actual_pivot_pos, partitioned) = arr.partition(
-      start=current_start,
-      end=current_end,
-      pivot_index, // Now passing absolute index directly
-    )
+    let (pivot, partitioned) = partition(arr, pivot_index)
     was_partitioned = partitioned
-    balanced = {
-      let pivot_pos = actual_pivot_pos - current_start
-      let diff = len - pivot_pos
-      (if pivot_pos < diff { pivot_pos } else { diff }) >= len / 8
-    }
+    balanced = minimum(pivot, len - pivot) >= len / 8
     if !balanced {
       limit -= 1
     }
     if pred is Some(pred) {
       // pred is less than all elements in arr
       // If pivot equals to pred, then we can skip all elements that are equal to pred.
-      if pred == arr[actual_pivot_pos] {
-        let mut i = actual_pivot_pos
-        while i < current_end && pred == arr[i] {
+      if pred == arr[pivot] {
+        let mut i = pivot
+        while i < len && pred == arr[i] {
           i = i + 1
         }
-        current_start = i
+        arr = arr.slice(i, len)
         continue
       }
     }
-    let left_start = current_start
-    let left_end = actual_pivot_pos
-    let right_start = actual_pivot_pos + 1
-    let right_end = current_end
-
+    let left = arr.slice(0, pivot)
+    let right = arr.slice(pivot + 1, len)
     // Reduce the stack depth by only calling quick_sort on the smaller partition.
-    if left_end - left_start < right_end - right_start {
-      arr.quick_sort(start=left_start, end=left_end, pred, limit)
-      pred = Some(arr[actual_pivot_pos])
-      current_start = right_start
-      current_end = right_end
+    if left.length() < right.length() {
+      quick_sort(left, pred, limit)
+      pred = Some(arr[pivot])
+      arr = right
     } else {
-      arr.quick_sort(
-        start=right_start,
-        end=right_end,
-        Some(arr[actual_pivot_pos]),
-        limit,
-      )
-      current_start = left_start
-      current_end = left_end
+      quick_sort(right, Some(arr[pivot]), limit)
+      arr = left
     }
   }
 }
@@ -136,28 +112,14 @@ fn get_limit(len : Int) -> Int {
 /// It will only tolerate at most 8 unsorted elements. The time complexity is O(n).
 ///
 /// Returns whether the array is sorted.
-fn[T : Compare] Array::try_bubble_sort(
-  arr : Array[T],
-  start~ : Int,
-  end~ : Int,
-) -> Bool {
+fn[T : Compare] try_bubble_sort(arr : ArraySlice[T]) -> Bool {
   let max_tries = 8
   let mut tries = 0
-
-  // Validate and adjust boundaries
-  let actual_start = if start < 0 { 0 } else { start }
-  let actual_end = if end > arr.length() { arr.length() } else { end }
-  if actual_start >= actual_end {
-    return true // Empty or invalid range is considered sorted
-  }
-  for i in (actual_start + 1)..<actual_end {
+  for i in 1..<arr.length() {
     let mut sorted = true
-    for j = i; j > actual_start && arr[j - 1] > arr[j]; j = j - 1 {
+    for j = i; j > 0 && arr[j - 1] > arr[j]; j = j - 1 {
       sorted = false
-      // Swap elements
-      let temp = arr[j]
-      arr[j] = arr[j - 1]
-      arr[j - 1] = temp
+      arr.swap(j, j - 1)
     }
     if !sorted {
       tries += 1
@@ -172,69 +134,36 @@ fn[T : Compare] Array::try_bubble_sort(
 ///|
 /// Performs insertion sort on the array within the given range.
 /// Used when the array is small enough (<=16) to avoid recursion overhead.
-fn[T : Compare] Array::insertion_sort(
-  arr : Array[T],
-  start~ : Int,
-  end~ : Int,
-) -> Unit {
-  // Validate and adjust boundaries
-  let actual_start = if start < 0 { 0 } else { start }
-  let actual_end = if end > arr.length() { arr.length() } else { end }
-  if actual_start >= actual_end {
-    return // Empty or invalid range, nothing to sort
-  }
-  for i in (actual_start + 1)..<actual_end {
-    for j = i; j > actual_start && arr[j - 1] > arr[j]; j = j - 1 {
-      // Swap elements
-      let temp = arr[j]
-      arr[j] = arr[j - 1]
-      arr[j - 1] = temp
+fn[T : Compare] insertion_sort(arr : ArraySlice[T]) -> Unit {
+  for i in 1..<arr.length() {
+    for j = i; j > 0 && arr[j - 1] > arr[j]; j = j - 1 {
+      arr.swap(j, j - 1)
     }
   }
 }
 
 ///|
 /// Partitions the array around a pivot element.
-/// Returns the final absolute pivot position and whether the array was already partitioned.
-fn[T : Compare] Array::partition(
-  arr : Array[T],
-  start~ : Int,
-  end~ : Int,
-  pivot_index : Int, // Now expects absolute index
+/// Returns the final pivot position and whether the array was already partitioned.
+fn[T : Compare] partition(
+  arr : ArraySlice[T],
+  pivot_index : Int,
 ) -> (Int, Bool) {
-  // Validate and adjust boundaries
-  let actual_start = if start < 0 { 0 } else { start }
-  let actual_end = if end > arr.length() { arr.length() } else { end }
-  if actual_start >= actual_end {
-    return (actual_start, true) // Empty or invalid range - return absolute position
-  }
-  let last_index = actual_end - 1
-
-  // Swap pivot to the end
-  let temp = arr[pivot_index]
-  arr[pivot_index] = arr[last_index]
-  arr[last_index] = temp
-  let pivot = arr[last_index]
-  let mut i = actual_start
+  arr.swap(pivot_index, arr.length() - 1)
+  let pivot = arr[arr.length() - 1]
+  let mut i = 0
   let mut partitioned = true
-  for j in actual_start..<last_index {
+  for j in 0..<(arr.length() - 1) {
     if arr[j] < pivot {
       if i != j {
-        // Swap elements
-        let temp = arr[i]
-        arr[i] = arr[j]
-        arr[j] = temp
+        arr.swap(i, j)
         partitioned = false
       }
       i = i + 1
     }
   }
-
-  // Swap pivot back to its final position
-  let temp = arr[i]
-  arr[i] = arr[last_index]
-  arr[last_index] = temp
-  (i, partitioned) // Return absolute position
+  arr.swap(i, arr.length() - 1)
+  (i, partitioned)
 }
 
 ///|
@@ -242,19 +171,9 @@ fn[T : Compare] Array::partition(
 ///
 /// It avoids worst case performance by choosing a pivot that is likely to be close to the median.
 ///
-/// Returns the absolute pivot index and whether the array is likely sorted.
-fn[T : Compare] Array::choose_pivot(
-  arr : Array[T],
-  start~ : Int,
-  end~ : Int,
-) -> (Int, Bool) {
-  // Validate and adjust boundaries
-  let actual_start = if start < 0 { 0 } else { start }
-  let actual_end = if end > arr.length() { arr.length() } else { end }
-  if actual_start >= actual_end {
-    return (actual_start, true) // Empty or invalid range - return absolute position
-  }
-  let len = actual_end - actual_start
+/// Returns the pivot index and whether the array is likely sorted.
+fn[T : Compare] choose_pivot(arr : ArraySlice[T]) -> (Int, Bool) {
+  let len = arr.length()
   let use_median_of_medians = 50
   let max_swaps = 4 * 3
   let mut swaps = 0
@@ -262,21 +181,14 @@ fn[T : Compare] Array::choose_pivot(
   if len >= 8 {
     let a = len / 4 * 1
     let c = len / 4 * 3
-    let sort_2 = (a_idx : Int, b_idx : Int) => {
-      let a_pos = actual_start + a_idx
-      let b_pos = actual_start + b_idx
-      if arr[a_pos] > arr[b_pos] {
-        // Swap elements
-        let temp = arr[a_pos]
-        arr[a_pos] = arr[b_pos]
-        arr[b_pos] = temp
-        swaps += 1
-      }
+    let sort_2 = (a : Int, b : Int) => if arr[a] > arr[b] {
+      arr.swap(a, b)
+      swaps += 1
     }
-    let sort_3 = (a_idx : Int, b_idx : Int, c_idx : Int) => {
-      sort_2(a_idx, b_idx)
-      sort_2(b_idx, c_idx)
-      sort_2(a_idx, b_idx)
+    let sort_3 = (a : Int, b : Int, c : Int) => {
+      sort_2(a, b)
+      sort_2(b, c)
+      sort_2(a, b)
     }
     if len > use_median_of_medians {
       sort_3(a - 1, a, a + 1)
@@ -286,88 +198,45 @@ fn[T : Compare] Array::choose_pivot(
     sort_3(a, b, c)
   }
   if swaps == max_swaps {
-    // Reverse the array in place
-    let mid_len = len / 2
-    for i in 0..<mid_len {
-      let j = len - i - 1
-      let i_pos = actual_start + i
-      let j_pos = actual_start + j
-      // Swap elements
-      let temp = arr[i_pos]
-      arr[i_pos] = arr[j_pos]
-      arr[j_pos] = temp
-    }
-    (actual_start + len - b - 1, true)
+    arr.rev_in_place()
+    (len - b - 1, true)
   } else {
-    (actual_start + b, swaps == 0)
+    (b, swaps == 0)
   }
 }
 
 ///|
 /// Performs heap sort on the array within the given range.
-fn[T : Compare] Array::heap_sort(
-  arr : Array[T],
-  start~ : Int,
-  end~ : Int,
-) -> Unit {
-  // Validate and adjust boundaries
-  let actual_start = if start < 0 { 0 } else { start }
-  let actual_end = if end > arr.length() { arr.length() } else { end }
-  if actual_start >= actual_end {
-    return // Empty or invalid range, nothing to sort
-  }
-  let len = actual_end - actual_start
-
+fn[T : Compare] heap_sort(arr : ArraySlice[T]) -> Unit {
+  let len = arr.length()
   // Build heap - heapify all non-leaf nodes
   for i = len / 2 - 1; i >= 0; i = i - 1 {
-    arr.sift_down(start=actual_start, end=actual_end, i)
+    sift_down(arr, i)
   }
-
   // Extract elements from heap one by one
   for i = len - 1; i > 0; i = i - 1 {
-    // Move current root to end
-    let root = actual_start
-    let last = actual_start + i
-    let temp = arr[root]
-    arr[root] = arr[last]
-    arr[last] = temp
-
-    // Call sift_down on the reduced heap
-    arr.sift_down(start=actual_start, end=actual_start + i, 0)
+    arr.swap(0, i)
+    sift_down(arr.slice(0, i), 0)
   }
 }
 
 ///|
 /// Maintains the heap property by moving an element down the heap.
-fn[T : Compare] Array::sift_down(
-  arr : Array[T],
-  start~ : Int,
-  end~ : Int,
-  index : Int,
-) -> Unit {
+fn[T : Compare] sift_down(arr : ArraySlice[T], index : Int) -> Unit {
   let mut current = index
-  let len = end - start
+  let len = arr.length()
   let mut child = current * 2 + 1
   while child < len {
-    let child_pos = start + child
-    let current_pos = start + current
-
     // Find the larger child
-    if child + 1 < len && arr[child_pos] < arr[child_pos + 1] {
+    if child + 1 < len && arr[child] < arr[child + 1] {
       child = child + 1
     }
-    let new_child_pos = start + child
-
     // If current is greater than or equal to the larger child, heap property is satisfied
-    if arr[current_pos] >= arr[new_child_pos] {
+    if arr[current] >= arr[child] {
       return
     }
-
     // Swap with the larger child
-    let temp = arr[current_pos]
-    arr[current_pos] = arr[new_child_pos]
-    arr[new_child_pos] = temp
-
+    arr.swap(current, child)
     // Move down the heap
     current = child
     child = current * 2 + 1
@@ -403,19 +272,19 @@ fn test_sort(f : (Array[Int]) -> Unit) -> Unit raise {
 ///|
 test "try_bubble_sort" {
   let arr = [8, 7, 6, 5, 4, 3, 2, 1]
-  let sorted = arr.try_bubble_sort(start=0, end=8)
+  let sorted = try_bubble_sort({ array: arr, start: 0, end: 8 })
   inspect(sorted, content="true")
   assert_eq(arr, [1, 2, 3, 4, 5, 6, 7, 8])
 }
 
 ///|
 test "heap_sort" {
-  test_sort(arr => arr.heap_sort(start=0, end=arr.length()))
+  test_sort(arr => heap_sort({ array: arr, start: 0, end: arr.length() }))
 }
 
 ///|
 test "insertion_sort" {
-  test_sort(arr => arr.insertion_sort(start=0, end=arr.length()))
+  test_sort(arr => insertion_sort({ array: arr, start: 0, end: arr.length() }))
 }
 
 ///|
@@ -437,29 +306,29 @@ test "sort with same pivot optimization" {
 ///|
 test "heap_sort coverage" {
   let arr = [5, 4, 3, 2, 1]
-  arr.heap_sort(start=0, end=arr.length())
+  heap_sort({ array: arr, start: 0, end: arr.length() })
   assert_eq(arr, [1, 2, 3, 4, 5])
   let arr2 = [1, 2, 3, 4, 5]
-  arr2.heap_sort(start=0, end=arr2.length())
+  heap_sort({ array: arr2, start: 0, end: arr2.length() })
   assert_eq(arr2, [1, 2, 3, 4, 5])
   let arr2 = [1, 2, 3, 4, 5]
-  arr2.heap_sort(start=0, end=arr2.length())
+  heap_sort({ array: arr2, start: 0, end: arr2.length() })
   assert_eq(arr2, [1, 2, 3, 4, 5])
   let arr3 = [5, 5, 5, 5, 1]
-  arr3.heap_sort(start=0, end=arr3.length())
+  heap_sort({ array: arr3, start: 0, end: arr3.length() })
   assert_eq(arr3, [1, 5, 5, 5, 5])
 }
 
 ///|
 test "quick_sort limit check" {
   let arr = [5, 4, 3, 2, 1]
-  arr.quick_sort(start=0, end=arr.length(), None, 0)
+  quick_sort({ array: arr, start: 0, end: arr.length() }, None, 0)
   assert_eq(arr, [1, 2, 3, 4, 5])
   let arr2 = [1, 2, 3, 4, 5]
-  arr2.quick_sort(start=0, end=arr2.length(), None, 0)
+  quick_sort({ array: arr2, start: 0, end: arr2.length() }, None, 0)
   assert_eq(arr2, [1, 2, 3, 4, 5])
   let arr3 = [5, 5, 5, 5, 1]
-  arr3.quick_sort(start=0, end=arr3.length(), None, 0)
+  quick_sort({ array: arr3, start: 0, end: arr3.length() }, None, 0)
   assert_eq(arr3, [1, 5, 5, 5, 5])
 }
 
@@ -469,16 +338,16 @@ test "quick_sort with pred check" {
   for i = 16; i >= 0; i = i - 1 {
     arr.push(i)
   }
-  arr.quick_sort(start=0, end=arr.length(), Some(8), 0)
+  quick_sort({ array: arr, start: 0, end: arr.length() }, Some(8), 0)
   assert_eq(arr, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16])
   let arr = [5, 4, 3, 2, 1]
-  arr.quick_sort(start=0, end=arr.length(), Some(3), 0)
+  quick_sort({ array: arr, start: 0, end: arr.length() }, Some(3), 0)
   assert_eq(arr, [1, 2, 3, 4, 5])
   let arr2 = [1, 2, 3, 4, 5]
-  arr2.quick_sort(start=0, end=arr2.length(), Some(3), 0)
+  quick_sort({ array: arr2, start: 0, end: arr2.length() }, Some(3), 0)
   assert_eq(arr2, [1, 2, 3, 4, 5])
   let arr3 = [5, 5, 5, 5, 1]
-  arr3.quick_sort(start=0, end=arr3.length(), Some(3), 0)
+  quick_sort({ array: arr3, start: 0, end: arr3.length() }, Some(3), 0)
   assert_eq(arr3, [1, 5, 5, 5, 5])
 }
 
@@ -488,37 +357,37 @@ test "quick_sort with unbalanced partitions" {
   for i = 16; i >= 0; i = i - 1 {
     arr.push(if i >= 8 { i } else { 8 })
   }
-  arr.quick_sort(start=0, end=arr.length(), Some(8), 42)
+  quick_sort({ array: arr, start: 0, end: arr.length() }, Some(8), 42)
   assert_eq(arr, [8, 8, 8, 8, 8, 8, 8, 8, 8, 9, 10, 11, 12, 13, 14, 15, 16])
   let arr = [5, 4, 3, 2, 1]
-  arr.quick_sort(start=0, end=arr.length(), None, 1)
+  quick_sort({ array: arr, start: 0, end: arr.length() }, None, 1)
   assert_eq(arr, [1, 2, 3, 4, 5])
   let arr2 = [1, 2, 3, 4, 5]
-  arr2.quick_sort(start=0, end=arr2.length(), None, 1)
+  quick_sort({ array: arr2, start: 0, end: arr2.length() }, None, 1)
   assert_eq(arr2, [1, 2, 3, 4, 5])
   let arr3 = [5, 5, 5, 5, 1]
-  arr3.quick_sort(start=0, end=arr3.length(), None, 1)
+  quick_sort({ array: arr3, start: 0, end: arr3.length() }, None, 1)
   assert_eq(arr3, [1, 5, 5, 5, 5])
 }
 
 ///|
 test "quick_sort with pivot equal to pred" {
   let arr = [5, 4, 3, 2, 1]
-  arr.quick_sort(start=0, end=arr.length(), Some(3), 0)
+  quick_sort({ array: arr, start: 0, end: arr.length() }, Some(3), 0)
   assert_eq(arr, [1, 2, 3, 4, 5])
 }
 
 ///|
 test "quick_sort with pred less than all elements" {
   let arr = [5, 4, 3, 2, 1]
-  arr.quick_sort(start=0, end=arr.length(), Some(0), 0)
+  quick_sort({ array: arr, start: 0, end: arr.length() }, Some(0), 0)
   assert_eq(arr, [1, 2, 3, 4, 5])
 }
 
 ///|
 test "quick_sort with pred greater than all elements" {
   let arr = [5, 4, 3, 2, 1]
-  arr.quick_sort(start=0, end=arr.length(), Some(6), 0)
+  quick_sort({ array: arr, start: 0, end: arr.length() }, Some(6), 0)
   assert_eq(arr, [1, 2, 3, 4, 5])
 }
 
@@ -530,29 +399,29 @@ test "partition with edge cases - verify relative position fix" {
   // Test 1: Empty array segment
   let arr1 = [3, 1, 4, 1, 5, 9, 2, 6]
   // Call quick_sort on an empty segment (should handle gracefully)
-  arr1.quick_sort(start=4, end=4, None, 10)
+  quick_sort({ array: arr1, start: 4, end: 4 }, None, 10)
   assert_eq(arr1, [3, 1, 4, 1, 5, 9, 2, 6]) // Should remain unchanged
 
   // Test 2: Single element segment
   let arr2 = [3, 1, 4, 1, 5, 9, 2, 6]
-  arr2.quick_sort(start=3, end=4, None, 10)
+  quick_sort({ array: arr2, start: 3, end: 4 }, None, 10)
   assert_eq(arr2, [3, 1, 4, 1, 5, 9, 2, 6]) // Single element is already sorted
 
   // Test 3: Small segment in middle of array
   let arr3 = [5, 4, 3, 2, 1]
-  arr3.quick_sort(start=2, end=3, None, 10)
+  quick_sort({ array: arr3, start: 2, end: 3 }, None, 10)
   assert_eq(arr3, [5, 4, 3, 2, 1]) // Only one element, no change
 
   // Test 4: Sorting a segment that starts at non-zero position
   // This would fail with the old bug because partition would return absolute position
   let arr4 = [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
-  arr4.quick_sort(start=5, end=10, None, 10)
+  quick_sort({ array: arr4, start: 5, end: 10 }, None, 10)
   assert_eq(arr4, [10, 9, 8, 7, 6, 1, 2, 3, 4, 5]) // Only last 5 elements sorted
 
   // Test 5: Multiple segments to ensure consistency
   let arr5 = [9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
-  arr5.quick_sort(start=0, end=3, None, 10) // Sort first 3
-  arr5.quick_sort(start=7, end=10, None, 10) // Sort last 3
+  quick_sort({ array: arr5, start: 0, end: 3 }, None, 10) // Sort first 3
+  quick_sort({ array: arr5, start: 7, end: 10 }, None, 10) // Sort last 3
   assert_eq(arr5, [7, 8, 9, 6, 5, 4, 3, 0, 1, 2])
 }
 
@@ -562,17 +431,17 @@ test "partition_by with edge cases - verify relative position fix" {
 
   // Test with custom comparator on segment starting at non-zero position
   let arr1 = [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
-  arr1.quick_sort_by(start=3, end=7, (a, b) => a - b, None, 10)
+  quick_sort_by({ array: arr1, start: 3, end: 7 }, (a, b) => a - b, None, 10)
   assert_eq(arr1, [10, 9, 8, 4, 5, 6, 7, 3, 2, 1]) // Middle segment sorted
 
   // Test empty segment
   let arr2 = [5, 4, 3, 2, 1]
-  arr2.quick_sort_by(start=2, end=2, (a, b) => a - b, None, 10)
+  quick_sort_by({ array: arr2, start: 2, end: 2 }, (a, b) => a - b, None, 10)
   assert_eq(arr2, [5, 4, 3, 2, 1]) // No change for empty segment
 
   // Test segment at the end
   let arr3 = [5, 4, 3, 2, 1]
-  arr3.quick_sort_by(start=3, end=5, (a, b) => a - b, None, 10)
+  quick_sort_by({ array: arr3, start: 3, end: 5 }, (a, b) => a - b, None, 10)
   assert_eq(arr3, [5, 4, 3, 1, 2]) // Last two elements sorted
 }
 
@@ -580,7 +449,7 @@ test "partition_by with edge cases - verify relative position fix" {
 test "Array::partition - basic partitioning" {
   // Test 1: Basic partition with middle pivot
   let arr1 = [3, 7, 1, 4, 6, 2, 5]
-  let (pos, partitioned) = arr1.partition(start=0, end=7, 3)
+  let (pos, partitioned) = partition({ array: arr1, start: 0, end: 7 }, 3)
   // Pivot was 4, should end up at position 3
   assert_eq(pos, 3)
   assert_eq(partitioned, false) // Elements were rearranged
@@ -595,7 +464,7 @@ test "Array::partition - basic partitioning" {
 
   // Test 2: Already partitioned array
   let arr2 = [1, 2, 3, 4, 5, 6, 7]
-  let (pos2, partitioned2) = arr2.partition(start=0, end=7, 3)
+  let (pos2, partitioned2) = partition({ array: arr2, start: 0, end: 7 }, 3)
   assert_eq(pos2, 3)
   assert_eq(partitioned2, true) // Array was already partitioned
   assert_eq(arr2, [1, 2, 3, 4, 5, 6, 7]) // No change needed
@@ -603,37 +472,23 @@ test "Array::partition - basic partitioning" {
 
 ///|
 test "Array::partition - edge cases" {
-  // Test 1: Empty range
-  let arr1 = [5, 4, 3, 2, 1]
-  let (pos1, partitioned1) = arr1.partition(start=2, end=2, 2) // Absolute pivot index
-  assert_eq(pos1, 2) // Should return absolute position (start)
-  assert_eq(partitioned1, true)
-  assert_eq(arr1, [5, 4, 3, 2, 1]) // No change
-
-  // Test 2: Single element
-  let arr2 = [5, 4, 3, 2, 1]
-  let (pos2, partitioned2) = arr2.partition(start=2, end=3, 2) // Absolute pivot index
-  assert_eq(pos2, 2) // Single element stays at absolute position 2
-  assert_eq(partitioned2, true)
-  assert_eq(arr2, [5, 4, 3, 2, 1]) // Single element is already partitioned
-
   // Test 3: Two elements - pivot at first position
   let arr3 = [5, 3]
-  let (pos3, partitioned3) = arr3.partition(start=0, end=2, 0)
+  let (pos3, partitioned3) = partition({ array: arr3, start: 0, end: 2 }, 0)
   assert_eq(pos3, 1) // Pivot 5 should end at position 1
   assert_eq(partitioned3, true) // No element rearrangement needed during partitioning
   assert_eq(arr3, [3, 5]) // Should be swapped
 
   // Test 4: Two elements - no swap needed
   let arr4 = [3, 5]
-  let (pos4, partitioned4) = arr4.partition(start=0, end=2, 1)
+  let (pos4, partitioned4) = partition({ array: arr4, start: 0, end: 2 }, 1)
   assert_eq(pos4, 1) // Pivot 5 stays at position 1
   assert_eq(partitioned4, true)
   assert_eq(arr4, [3, 5]) // Already in correct order
 
   // Test 5: Two elements - actual rearrangement during partition
   let arr5 = [3, 5]
-  let (pos5, partitioned5) = arr5.partition(start=0, end=2, 0)
+  let (pos5, partitioned5) = partition({ array: arr5, start: 0, end: 2 }, 0)
   assert_eq(pos5, 0) // Pivot 3 should end at position 0
   assert_eq(partitioned5, true) // No rearrangement needed
   assert_eq(arr5, [3, 5]) // No change needed
@@ -643,7 +498,7 @@ test "Array::partition - edge cases" {
 test "Array::partition - with duplicates" {
   // Test with duplicate values
   let arr = [3, 5, 2, 5, 1, 5, 4, 5]
-  let (pos, _partitioned) = arr.partition(start=0, end=8, 1)
+  let (pos, _partitioned) = partition({ array: arr, start: 0, end: 8 }, 1)
   // Pivot is 5 (from index 1)
   assert_eq(arr[pos], 5) // Pivot should be at returned position
 
@@ -665,31 +520,32 @@ test "Array::partition - with duplicates" {
 test "Array::partition - different pivot positions" {
   // Test 1: First element as pivot
   let arr1 = [5, 2, 8, 1, 9, 3]
-  let (pos1, _) = arr1.partition(start=0, end=6, 0)
+  let (pos1, _) = partition({ array: arr1, start: 0, end: 6 }, 0)
   assert_eq(arr1[pos1], 5)
   // Elements < 5: [2, 1, 3] = 3 elements
   assert_eq(pos1, 3)
 
   // Test 2: Last element as pivot
   let arr2 = [5, 2, 8, 1, 9, 3]
-  let (pos2, _) = arr2.partition(start=0, end=6, 5)
+  let (pos2, _) = partition({ array: arr2, start: 0, end: 6 }, 5)
   assert_eq(arr2[pos2], 3)
   // Elements < 3: [2, 1] = 2 elements
   assert_eq(pos2, 2)
 
-  // Test 3: Pivot in a sub-range
+  // Test 3: Pivot in a sub-range - now using slice indices
   let arr3 = [9, 8, 5, 2, 6, 1, 4, 7, 3]
-  let (pos3, _) = arr3.partition(start=2, end=7, 4) // Absolute pivot index (was 2+2=4)
-  // Working on sub-array [5, 2, 6, 1, 4], pivot is 6
-  assert_eq(arr3[pos3], 6)
-  // In sub-array, elements < 6: [5, 2, 1, 4] = 4 elements, absolute position = 2 + 4 = 6
-  assert_eq(pos3, 6)
+  let slice : ArraySlice[Int] = { array: arr3, start: 2, end: 7 }
+  let (pos3, _) = partition(slice, 2) // Relative index within slice
+  // Working on sub-array [5, 2, 6, 1, 4], pivot is 6 at relative index 2
+  assert_eq(arr3[2 + pos3], 6) // Check in absolute terms
+  // In sub-array, elements < 6: [5, 2, 1, 4] = 4 elements
+  assert_eq(pos3, 4)
 }
 
 ///|
 test "Array::partition - all elements same" {
   let arr = [5, 5, 5, 5, 5]
-  let (pos, partitioned) = arr.partition(start=0, end=5, 2)
+  let (pos, partitioned) = partition({ array: arr, start: 0, end: 5 }, 2)
   // When all elements are equal, pivot stays at the beginning
   assert_eq(pos, 0)
   assert_eq(partitioned, true) // No swaps needed
@@ -699,7 +555,7 @@ test "Array::partition - all elements same" {
 ///|
 test "Array::partition - reverse sorted array" {
   let arr = [9, 8, 7, 6, 5, 4, 3, 2, 1]
-  let (pos, partitioned) = arr.partition(start=0, end=9, 4)
+  let (pos, partitioned) = partition({ array: arr, start: 0, end: 9 }, 4)
   // Pivot is 5
   assert_eq(arr[pos], 5)
   assert_eq(partitioned, false) // Elements were rearranged
