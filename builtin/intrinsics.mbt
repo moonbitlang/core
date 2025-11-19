@@ -1555,6 +1555,12 @@ pub fn String::length(self : String) -> Int = "%string_length"
 pub fn String::at(self : String, idx : Int) -> Int = "%string_get"
 
 ///|
+/// Returns the UTF-16 code unit at the given index.
+/// 
+/// This method has O(1) complexity.
+pub fn String::code_unit_at(self : String, idx : Int) -> UInt16 = "%string_get"
+
+///|
 /// Returns the UTF-16 code unit at a given position in the string without
 /// performing bounds checking. This is a low-level function that provides direct
 /// access to the internal representation of the string.
