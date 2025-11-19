@@ -11,14 +11,14 @@ This package provides operations for working with 64-bit signed integers (`Int64
 test "basic operations" {
   let i : Int64 = -12345L // Int64 literal
   // You can also convert from an `Int` like so:
-  inspect(@int64.from_int(-12345) == i, content="true")
+  inspect(Int64::from_int(-12345) == i, content="true")
 
   // Max and min values
   inspect(@int64.max_value, content="9223372036854775807")
   inspect(@int64.min_value, content="-9223372036854775808")
 
   // Absolute value
-  inspect(@int64.abs(i), content="12345")
+  inspect(Int64::abs(i), content="12345")
 }
 ```
 
@@ -30,8 +30,8 @@ The package provides functions to convert `Int64` values to their binary represe
 ///|
 test "binary conversion" {
   let x = 258L // Int64 value of 258
-  let be_bytes = x.to_be_bytes()
-  let le_bytes = x.to_le_bytes()
+  let be_bytes = x.to_be_bytes_local()
+  let le_bytes = x.to_le_bytes_local()
 
   // Convert to String for inspection
   inspect(
@@ -67,7 +67,7 @@ test "method style" {
 
   // Binary conversions as methods
   inspect(
-    x.to_be_bytes(),
+    x.to_be_bytes_local(),
     content=(
       #|b"\xff\xff\xff\xff\xff\xff\xff\xd6"
     ),

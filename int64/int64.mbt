@@ -19,67 +19,32 @@ pub let max_value = 9223372036854775807L
 pub let min_value = -9223372036854775808L
 
 ///|
-/// Converts a 32-bit integer (`Int`) to a 64-bit integer (`Int64`).
-///
-/// Parameters:
-///
-/// * `i` : The integer value to be converted.
-///
-/// Returns the converted 64-bit integer (`Int64`) value.
-///
-/// Example:
-///
-/// ```moonbit
-///   inspect(@int64.from_int(42), content="42")
-/// ```
-pub fn Int64::from_int(i : Int) -> Int64 {
-  i.to_int64()
-}
-
-///|
 /// same as `Int64::from_int`
+#deprecated("Use Int64::from_int instead")
+#doc(hidden)
 pub fn from_int(i : Int) -> Int64 {
   i.to_int64()
 }
 
 ///|
-/// Computes the absolute value of a 64-bit integer.
-///
-/// Parameters:
-///
-/// * `self` : The 64-bit integer whose absolute value is to be computed.
-///
-/// Returns the absolute value of the input integer.
-///
-/// Example:
-///
-/// ```moonbit
-///   inspect(42L.abs(), content="42")
-///   inspect((-42L).abs(), content="42")
-///   inspect(0L.abs(), content="0")
-/// ```
-#as_free_fn
-pub fn Int64::abs(self : Int64) -> Int64 {
-  if self < 0L {
-    -self
-  } else {
-    self
-  }
+#deprecated("Use Int64::abs instead")
+#doc(hidden)
+pub fn abs(x : Int64) -> Int64 {
+  Int64::abs(x)
 }
 
 ///|
 /// Converts the Int64 to a Bytes in big-endian byte order.
+#deprecated
+#doc(hidden)
 pub fn Int64::to_be_bytes(self : Int64) -> Bytes {
   self.reinterpret_as_uint64().to_be_bytes()
 }
 
 ///|
 /// Converts the Int64 to a Bytes in little-endian byte order.
+#deprecated
+#doc(hidden)
 pub fn Int64::to_le_bytes(self : Int64) -> Bytes {
   self.reinterpret_as_uint64().to_le_bytes()
-}
-
-///|
-pub impl Hash for Int64 with hash_combine(self, hasher) {
-  hasher.combine_int64(self)
 }
