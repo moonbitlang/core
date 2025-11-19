@@ -36,21 +36,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: install
-        if: ${{ matrix.os != 'windows-latest' }}
-        run: |
-          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
-          echo "$HOME/.moon/bin" >> $GITHUB_PATH
-
-      - name: install on windows
-        if: ${{ matrix.os == 'windows-latest' }}
-        run: |
-          Set-ExecutionPolicy RemoteSigned -Scope CurrentUser; irm https://cli.moonbitlang.com/install/powershell.ps1 | iex
-          "C:\Users\runneradmin\.moon\bin" | Out-File -FilePath $env:GITHUB_PATH -Append
-
-      - name: moon version
-        run: |
-          moon version --all
-          moonrun --version
+        uses: ./.github/actions/setup
 
       - name: check
         run: moon check --deny-warn --target all
@@ -116,20 +102,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: install
-        if: ${{ matrix.os != 'windows-latest' }}
-        run: |
-          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
-          echo "$HOME/.moon/bin" >> $GITHUB_PATH
-
-      - name: install on windows
-        if: ${{ matrix.os == 'windows-latest' }}
-        run: |
-          Set-ExecutionPolicy RemoteSigned -Scope CurrentUser; irm https://cli.moonbitlang.com/install/powershell.ps1 | iex
-          "C:\Users\runneradmin\.moon\bin" | Out-File -FilePath $env:GITHUB_PATH -Append
-
-      - name: moon version
-        run: |
-          moon version --all
+        uses: ./.github/actions/setup
 
       - name: check
         run: moon check --target native --deny-warn

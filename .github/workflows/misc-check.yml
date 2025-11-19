@@ -12,9 +12,7 @@ jobs:
     continue-on-error: true
     runs-on: ubuntu-latest
     env:
-      HAWKEYE_VERSION: v5.8.1
       FORCE_COLOR: 1
-      TYPOS_VERSION: v1.19.0
     steps:
       - uses: actions/checkout@v4
         with:
@@ -31,29 +29,15 @@ jobs:
             fi
           done
           (exit $_passed)
-      
-      - name: Download HawkEye
-        run: curl --proto '=https' --tlsv1.2 -LsSf https://github.com/korandoru/hawkeye/releases/download/$HAWKEYE_VERSION/hawkeye-installer.sh | sh
 
       - name: Check License Header
-        run: |
-          hawkeye check
-
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-      
-      - name: download typos
-        run: curl -LsSf https://github.com/crate-ci/typos/releases/download/$TYPOS_VERSION/typos-$TYPOS_VERSION-x86_64-unknown-linux-musl.tar.gz | tar zxf - -C ${CARGO_HOME:-~/.cargo}/bin
+        uses: korandoru/hawkeye@v5.8.1
 
       - name: check typos
-        run: typos
+        uses: crate-ci/typos@v1
       
       - name: install moonbit
-        run: |
-          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
-          echo "$HOME/.moon/bin" >> $GITHUB_PATH
+        uses: ./.github/actions/setup
 
       - name: moon test
         run: moon test --enable-coverage
