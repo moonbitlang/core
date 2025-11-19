@@ -16,9 +16,9 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: install pre-release
-        run: |
-          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash -s pre-release
-          echo "$HOME/.moon/bin" >> $GITHUB_PATH
+        uses: ./.github/actions/setup
+        with:
+          version: pre-release
 
       - name: get latest version info
         id: latest
@@ -88,14 +88,9 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: install
-        run: |
-          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash -s pre-release
-          echo "$HOME/.moon/bin" >> $GITHUB_PATH
-
-      - name: moon version
-        run: |
-          moon version --all
-          moonrun --version
+        uses: ./.github/actions/setup
+        with:
+          version: pre-release
 
       - name: moon info
         run: |
@@ -116,14 +111,9 @@ jobs:
 
       - name: install
         if: ${{ matrix.os != 'windows-latest' }}
-        run: |
-          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash -s pre-release
-          echo "$HOME/.moon/bin" >> $GITHUB_PATH
-
-      - name: moon version
-        run: |
-          moon version --all
-          moonrun --version
+        uses: ./.github/actions/setup
+        with:
+          version: pre-release
 
       - name: format diff
         run: |
@@ -143,23 +133,9 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: install
-        if: ${{ matrix.os != 'windows-latest' }}
-        run: |
-          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash -s pre-release
-          echo "$HOME/.moon/bin" >> $GITHUB_PATH
-
-      - name: install on windows
-        env:
-          MOONBIT_INSTALL_VERSION: pre-release
-        if: ${{ matrix.os == 'windows-latest' }}
-        run: |
-          Set-ExecutionPolicy RemoteSigned -Scope CurrentUser; irm https://cli.moonbitlang.com/install/powershell.ps1 | iex
-          "C:\Users\runneradmin\.moon\bin" | Out-File -FilePath $env:GITHUB_PATH -Append
-
-      - name: moon version
-        run: |
-          moon version --all
-          moonrun --version
+        uses: ./.github/actions/setup
+        with:
+          version: pre-release
 
       - name: check
         run: moon check --deny-warn
