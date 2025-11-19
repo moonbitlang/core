@@ -27,7 +27,7 @@ test "Int64::from_int" {
 
 ///|
 test "from_int" {
-  inspect(@int64.from_int(1256), content="1256")
+  inspect(Int64::from_int(1256), content="1256")
 }
 
 ///|
@@ -127,10 +127,18 @@ test "Int64::popcnt mixed cases" {
 }
 
 ///|
+fn Int64::to_be_bytes_local(self : Int64) -> Bytes {
+  // self.reinterpret_as_uint64().to_be_bytes()
+  let buf = @buffer.new(size_hint=8)
+  buf.write_int64_be(self)
+  buf.to_bytes()
+}
+
+///|
 test "to_be_bytes" {
   let num = 0x1234567890ABCDEFL
   inspect(
-    num.to_be_bytes(),
+    num.to_be_bytes_local(),
     content=(
       #|b"\x124Vx\x90\xab\xcd\xef"
     ),
@@ -138,10 +146,18 @@ test "to_be_bytes" {
 }
 
 ///|
+fn Int64::to_le_bytes_local(self : Int64) -> Bytes {
+  // self.reinterpret_as_uint64().to_le_bytes()
+  let buf = @buffer.new(size_hint=8)
+  buf.write_int64_le(self)
+  buf.to_bytes()
+}
+
+///|
 test "to_le_bytes of negative Int64" {
   let num = -0x1234567890ABCDEFL
   inspect(
-    num.to_le_bytes(),
+    num.to_le_bytes_local(),
     content=(
       #|b"\x112To\x87\xa9\xcb\xed"
     ),
