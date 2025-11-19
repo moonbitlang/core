@@ -1400,8 +1400,7 @@ pub fn UInt64::to_byte(self : UInt64) -> Byte {
 ///
 /// Returns the element at the specified index.
 ///
-/// Throws a runtime error if the index is out of bounds (negative or greater
-/// than or equal to the length of the array).
+/// Panics if the index is out of bounds.
 ///
 /// Example:
 ///
