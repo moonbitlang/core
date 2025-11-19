@@ -650,6 +650,7 @@ fn String::at(String, Int) -> Int
 fn String::char_length(String, start_offset? : Int, end_offset? : Int) -> Int
 fn String::char_length_eq(String, Int, start_offset? : Int, end_offset? : Int) -> Bool
 fn String::char_length_ge(String, Int, start_offset? : Int, end_offset? : Int) -> Bool
+fn String::code_unit_at(String, Int) -> UInt16
 #deprecated
 fn String::codepoint_at(String, Int) -> Char
 fn String::contains(String, StringView) -> Bool

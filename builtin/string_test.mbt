@@ -121,3 +121,13 @@ test "String::suffixes" {
     .collect()
   @json.inspect(empty_suffixes_with_empty, content=[""])
 }
+
+///|
+test "code_unit_at" {
+  let s = "Hello, 世界!😀"
+  inspect(s.code_unit_at(0), content="72") // 'H'
+  inspect(s.code_unit_at(7), content="19990") // '世'
+  inspect(s.code_unit_at(8), content="30028") // '界'
+  inspect(s.code_unit_at(10), content="55357") // High surrogate of '😀'
+  inspect(s.code_unit_at(11), content="56832") // Low surrogate of '😀'
+}
