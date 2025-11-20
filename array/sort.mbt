@@ -31,7 +31,7 @@ pub fn[T : Compare] Array::sort(self : Array[T]) -> Unit {
 ///|
 /// Sorts the array
 /// 
-/// It's an stable sort(it will not reorder equal elements). The time complexity is *O*(*n* \* log(*n*)) in the worst case.
+/// It's a stable sort(it will not reorder equal elements). The time complexity is *O*(*n* \* log(*n*)) in the worst case.
 /// 
 /// # Example
 /// 

@@ -21,7 +21,7 @@
 ///
 /// * `self` : The double-precision floating-point number to be converted.
 ///
-/// Returns an 32-bit unsigned integer value according to the following rules:
+/// Returns a 32-bit unsigned integer value according to the following rules:
 ///
 /// * Returns 0 if the input is NaN
 /// * Returns `@uint.max_value` (4294967295U) if the input is greater than or
