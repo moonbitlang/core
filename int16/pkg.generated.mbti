@@ -10,6 +10,9 @@ let min_value : Int16
 
 // Types and methods
 fn Int16::abs(Int16) -> Int16
+fn Int16::from_byte(Byte) -> Int16
+fn Int16::from_int(Int) -> Int16
+fn Int16::from_int64(Int64) -> Int16
 fn Int16::reinterpret_as_uint16(Int16) -> UInt16
 impl Add for Int16
 impl BitAnd for Int16
@@ -26,7 +29,6 @@ impl Neg for Int16
 impl Shl for Int16
 impl Shr for Int16
 impl Sub for Int16
-impl ToJson for Int16
 
 // Type aliases
 
