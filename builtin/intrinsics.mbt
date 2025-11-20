@@ -2377,6 +2377,7 @@ pub fn Int16::to_int(self : Int16) -> Int = "%i16_to_i32"
 pub fn Int16::to_byte(self : Int16) -> Byte = "%i16_to_byte"
 
 ///|
+#deprecated("Use `Int16::from_int` instead")
 pub fn Int::to_int16(self : Int) -> Int16 = "%i32_to_i16"
 
 ///|
@@ -2398,6 +2399,7 @@ pub fn Int::to_int16(self : Int) -> Int16 = "%i32_to_i16"
 ///   let p = b'\x7F' // 127 as a signed byte
 ///   inspect(p.to_int16(), content="127")
 /// ```
+#deprecated("Use `Int16::from_byte` instead")
 pub fn Byte::to_int16(self : Byte) -> Int16 = "%byte_to_i16"
 
 ///|

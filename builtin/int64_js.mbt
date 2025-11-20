@@ -513,6 +513,7 @@ pub fn Int64::to_byte(self : Int64) -> Byte {
 }
 
 ///|
+#deprecated("Use `Int16::from_int64` instead")
 pub fn Int64::to_int16(self : Int64) -> Int16 {
   MyInt64::from_int64(self).to_int().to_int16()
 }

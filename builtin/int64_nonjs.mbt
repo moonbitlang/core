@@ -664,6 +664,7 @@ pub fn Int64::to_byte(self : Int64) -> Byte = "%i64_to_byte"
 ///   let small = 42L
 ///   inspect(small.to_int16(), content="42") // 42 fits in Int16, remains unchanged
 /// ```
+#deprecated("Use `Int16::from_int64` instead")
 pub fn Int64::to_int16(self : Int64) -> Int16 = "%i64_to_i16"
 
 ///|

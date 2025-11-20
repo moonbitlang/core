@@ -20,27 +20,27 @@ pub let min_value : Int16 = -32768
 
 ///|
 pub impl Add for Int16 with add(self : Int16, that : Int16) -> Int16 {
-  (self.to_int() + that.to_int()).to_int16()
+  Int16::from_int(self.to_int() + that.to_int())
 }
 
 ///|
 pub impl Sub for Int16 with sub(self : Int16, that : Int16) -> Int16 {
-  (self.to_int() - that.to_int()).to_int16()
+  Int16::from_int(self.to_int() - that.to_int())
 }
 
 ///|
 pub impl Mul for Int16 with mul(self : Int16, that : Int16) -> Int16 {
-  (self.to_int() * that.to_int()).to_int16()
+  Int16::from_int(self.to_int() * that.to_int())
 }
 
 ///|
 pub impl Div for Int16 with div(self : Int16, that : Int16) -> Int16 {
-  (self.to_int() / that.to_int()).to_int16()
+  Int16::from_int(self.to_int() / that.to_int())
 }
 
 ///|
 pub impl Mod for Int16 with mod(self : Int16, that : Int16) -> Int16 {
-  (self.to_int() % that.to_int()).to_int16()
+  Int16::from_int(self.to_int() % that.to_int())
 }
 
 ///|
@@ -60,32 +60,32 @@ pub impl Hash for Int16 with hash_combine(self, hasher) {
 
 ///|
 pub impl Shl for Int16 with shl(self : Int16, that : Int) -> Int16 {
-  (self.to_int() << that).to_int16()
+  Int16::from_int(self.to_int() << that)
 }
 
 ///|
 pub impl Shr for Int16 with shr(self : Int16, that : Int) -> Int16 {
-  (self.to_int() >> that).to_int16()
+  Int16::from_int(self.to_int() >> that)
 }
 
 ///|
 pub impl BitOr for Int16 with lor(self : Int16, that : Int16) -> Int16 {
-  (self.to_int() | that.to_int()).to_int16()
+  Int16::from_int(self.to_int() | that.to_int())
 }
 
 ///|
 pub impl BitAnd for Int16 with land(self : Int16, that : Int16) -> Int16 {
-  (self.to_int() & that.to_int()).to_int16()
+  Int16::from_int(self.to_int() & that.to_int())
 }
 
 ///|
 pub impl BitXOr for Int16 with lxor(self : Int16, that : Int16) -> Int16 {
-  (self.to_int() ^ that.to_int()).to_int16()
+  Int16::from_int(self.to_int() ^ that.to_int())
 }
 
 ///|
 pub impl Neg for Int16 with neg(self : Int16) -> Int16 {
-  (-self.to_int()).to_int16()
+  Int16::from_int(-self.to_int())
 }
 
 ///|
@@ -103,12 +103,85 @@ pub impl Default for Int16 with default() {
 }
 
 ///|
-pub impl ToJson for Int16 with to_json(self : Int16) -> Json {
-  Json::number(self.to_int().to_double())
-}
-
-///|
 /// reinterpret as an unsigned integer with binary complement
 pub fn Int16::reinterpret_as_uint16(self : Int16) -> UInt16 {
   self.to_int().to_uint16()
+}
+
+///|
+/// Converts an `Int` value to a 16-bit signed integer (`Int16`).
+///
+/// This function performs a truncating conversion from a 32-bit signed integer
+/// to a 16-bit signed integer. Values outside the valid range for Int16
+/// (-32768 to 32767) will be truncated.
+///
+/// Parameters:
+///
+/// * `self` : The `Int` value to be converted.
+///
+/// Returns an `Int16` representing the lower 16 bits of the input value,
+/// interpreted as a signed integer.
+///
+/// Example:
+///
+/// ```moonbit
+///   let n = Int16::from_int(42)
+///   inspect(n, content="42")
+///   let neg = Int16::from_int(-42)
+///   inspect(neg, content="-42")
+/// ```
+pub fn Int16::from_int(self : Int) -> Int16 = "%i32_to_i16"
+
+///|
+/// Converts a `Byte` value to a 16-bit signed integer (`Int16`).
+///
+/// This function extends the byte value (0-255) to a 16-bit signed integer.
+/// Values from 0-127 map to themselves. Values from 128-255 are treated as
+/// unsigned and map to 128-255 in Int16.
+///
+/// Parameters:
+///
+/// * `self` : The byte value to be converted to an `Int16`.
+///
+/// Returns an `Int16` value where the byte is zero-extended to 16 bits
+/// and then interpreted as a signed integer.
+///
+/// Example:
+///
+/// ```moonbit
+///   let b = b'\xFF'
+///   inspect(Int16::from_byte(b), content="255") // Sign is preserved
+///   let p = b'\x7F'
+///   inspect(Int16::from_byte(p), content="127")
+/// ```
+pub fn Int16::from_byte(self : Byte) -> Int16 = "%byte_to_i16"
+
+///|
+/// Converts an `Int64` value to a 16-bit signed integer (`Int16`).
+///
+/// This function performs a truncating conversion from a 64-bit signed integer
+/// to a 16-bit signed integer, taking only the lower 16 bits of the input.
+/// Values outside the valid range for Int16 will be truncated to fit.
+///
+/// Parameters:
+///
+/// * `self` : The `Int64` value to be converted.
+///
+/// Returns an `Int16` representing the lower 16 bits of the input value.
+///
+/// Example:
+///
+/// ```moonbit
+///   let big = 100000L
+///   inspect(Int16::from_int64(big), content="-31072") // 100000 doesn't fit in Int16, gets truncated
+///   let small = 42L
+///   inspect(Int16::from_int64(small), content="42") // 42 fits in Int16, remains unchanged
+/// ```
+#cfg(not(target="js"))
+pub fn Int16::from_int64(self : Int64) -> Int16 = "%i64_to_i16"
+
+///|
+#cfg(target="js")
+pub fn Int16::from_int64(self : Int64) -> Int16 {
+  self.to_int().to_int16()
 }
