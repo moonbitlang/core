@@ -17,3 +17,23 @@ pub let max_value : UInt16 = 65535
 
 ///|
 pub let min_value : UInt16 = 0
+
+///|
+pub impl Shl for UInt16 with shl(self : UInt16, that : Int) -> UInt16 {
+  (self.to_int() << that).to_uint16()
+}
+
+///|
+pub impl Shr for UInt16 with shr(self : UInt16, that : Int) -> UInt16 {
+  (self.to_int() >> that).to_uint16()
+}
+
+///|
+pub impl BitOr for UInt16 with lor(self : UInt16, that : UInt16) -> UInt16 {
+  (self.to_int() | that.to_int()).to_uint16()
+}
+
+///|
+pub impl BitAnd for UInt16 with land(self : UInt16, that : UInt16) -> UInt16 {
+  (self.to_int() & that.to_int()).to_uint16()
+}

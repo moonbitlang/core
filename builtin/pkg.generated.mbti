@@ -451,6 +451,7 @@ fn Byte::to_double(Byte) -> Double
 fn Byte::to_float(Byte) -> Float
 fn Byte::to_hex(Byte) -> String
 fn Byte::to_int(Byte) -> Int
+#deprecated
 fn Byte::to_int16(Byte) -> Int16
 fn Byte::to_int64(Byte) -> Int64
 fn Byte::to_string(Byte) -> String
@@ -516,6 +517,7 @@ fn Int::to_char(Int) -> Char?
 fn Int::to_double(Int) -> Double
 #deprecated
 fn Int::to_float(Int) -> Float
+#deprecated
 fn Int::to_int16(Int) -> Int16
 fn Int::to_int64(Int) -> Int64
 fn Int::to_string(Int, radix? : Int) -> String
@@ -556,6 +558,7 @@ fn Int64::to_double(Int64) -> Double
 #deprecated
 fn Int64::to_float(Int64) -> Float
 fn Int64::to_int(Int64) -> Int
+#deprecated
 fn Int64::to_int16(Int64) -> Int16
 fn Int64::to_string(Int64, radix? : Int) -> String
 fn Int64::to_uint16(Int64) -> UInt16
@@ -951,7 +954,6 @@ impl BitAnd for Byte
 impl BitAnd for Int
 impl BitAnd for Int64
 impl BitAnd for UInt
-impl BitAnd for UInt16
 impl BitAnd for UInt64
 
 pub(open) trait BitOr {
@@ -961,7 +963,6 @@ impl BitOr for Byte
 impl BitOr for Int
 impl BitOr for Int64
 impl BitOr for UInt
-impl BitOr for UInt16
 impl BitOr for UInt64
 
 pub(open) trait BitXOr {
@@ -1155,7 +1156,6 @@ impl Shl for Byte
 impl Shl for Int
 impl Shl for Int64
 impl Shl for UInt
-impl Shl for UInt16
 impl Shl for UInt64
 
 pub(open) trait Show {
@@ -1203,7 +1203,6 @@ impl Shr for Byte
 impl Shr for Int
 impl Shr for Int64
 impl Shr for UInt
-impl Shr for UInt16
 impl Shr for UInt64
 
 pub(open) trait Sub {
@@ -1227,6 +1226,7 @@ impl ToJson for Bool
 impl ToJson for Byte
 impl ToJson for Char
 impl ToJson for Int
+impl ToJson for Int16
 impl ToJson for Int64
 impl ToJson for UInt
 impl ToJson for UInt16
