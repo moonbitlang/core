@@ -79,7 +79,7 @@ pub fn cbrt(x : Double) -> Double {
 }
 
 ///|
-/// Calculates the the square root of the sum of the squares of its arguments.
+/// Calculates the square root of the sum of the squares of its arguments.
 ///
 /// Parameters:
 ///

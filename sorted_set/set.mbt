@@ -29,7 +29,7 @@ pub fn[V] SortedSet::singleton(value : V) -> SortedSet[V] {
 }
 
 ///|
-/// Initialize an set from an array.
+/// Initialize a set from an array.
 #as_free_fn
 #alias(of, deprecated="Use from_array instead")
 #as_free_fn(of, deprecated="Use from_array instead")

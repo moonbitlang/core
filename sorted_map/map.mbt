@@ -337,7 +337,7 @@ pub impl[K : @quickcheck.Arbitrary + Compare, V : @quickcheck.Arbitrary] @quickc
 }
 
 ///|
-///Returns a new array of key-value pairs that are within the specified range [low, high].
+/// Returns a new array of key-value pairs that are within the specified range [low, high].
 pub fn[K : Compare, V] SortedMap::range(
   self : SortedMap[K, V],
   low : K,

@@ -292,7 +292,7 @@ pub fn acoshf(x : Float) -> Float {
 }
 
 ///|
-/// Calculates the inverse hyperbolic tangent of an fp32 number.
+/// Calculates the inverse hyperbolic tangent of a fp32 number.
 ///
 /// Parameters:
 ///
