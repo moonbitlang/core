@@ -28,12 +28,7 @@ pub fn[T, K : Compare] FixedArray::sort_by_key(
   self : FixedArray[T],
   map : (T) -> K,
 ) -> Unit {
-  fixed_quick_sort_by(
-    self.mut_view(),
-    (a, b) => map(a).compare(map(b)),
-    None,
-    fixed_get_limit(self.length()),
-  )
+  self.mut_view().sort_by_key(map)
 }
 
 ///|
@@ -62,7 +57,7 @@ pub fn[T] FixedArray::sort_by(
   self : FixedArray[T],
   cmp : (T, T) -> Int,
 ) -> Unit {
-  fixed_quick_sort_by(self.mut_view(), cmp, None, fixed_get_limit(self.length()))
+  self.mut_view().sort_by(cmp)
 }
 
 ///|

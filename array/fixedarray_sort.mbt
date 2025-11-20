@@ -209,7 +209,7 @@ fn collapse(runs : Array[TimSortRun], stop : Int) -> Int? {
 ///   assert_eq(arr, [1, 2, 3, 4, 5])
 /// ```
 pub fn[T : Compare] FixedArray::sort(self : FixedArray[T]) -> Unit {
-  fixed_quick_sort(self.mut_view(), None, fixed_get_limit(self.length()))
+  self.mut_view().sort()
 }
 
 ///|

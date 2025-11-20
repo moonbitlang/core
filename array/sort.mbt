@@ -25,5 +25,21 @@
 ///   assert_eq(arr, [1, 2, 3, 4, 5])
 /// ```
 pub fn[T : Compare] Array::sort(self : Array[T]) -> Unit {
-  fixed_quick_sort(self.mut_view(), None, fixed_get_limit(self.length()))
+  self.mut_view().sort()
+}
+
+///|
+/// Sorts the array in place.
+///
+/// It's an in-place, unstable sort(it will reorder equal elements). The time complexity is O(n log n) in the worst case.
+///
+/// # Example
+///
+/// ```mbt
+///   let arr = [5, 4, 3, 2, 1]
+///   arr.mut_view().sort()
+///   assert_eq(arr, [1, 2, 3, 4, 5])
+/// ```
+pub fn[T : Compare] MutArrayView::sort(self : MutArrayView[T]) -> Unit {
+  fixed_quick_sort(self, None, fixed_get_limit(self.length()))
 }
