@@ -14,8 +14,6 @@ fn[A, B, C] zip_with(Array[A], Array[B], (A, B) -> C raise?) -> Array[C] raise?
 // Types and methods
 fn FixedArray::blit_from_bytesview(Self[Byte], Int, BytesView) -> Unit
 fn[T] FixedArray::copy(Self[T]) -> Self[T]
-fn[T : Compare] FixedArray::is_sorted(Self[T]) -> Bool
-fn[T : Compare] FixedArray::sort(Self[T]) -> Unit
 fn[T] FixedArray::sort_by(Self[T], (T, T) -> Int) -> Unit
 fn[T, K : Compare] FixedArray::sort_by_key(Self[T], (T) -> K) -> Unit
 fn[T : Compare] FixedArray::stable_sort(Self[T]) -> Unit
@@ -63,10 +61,6 @@ fn[A, B] ArrayView::rev_foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B 
 fn[X] ArrayView::rev_iterator(Self[X]) -> Iterator[X]
 fn[T] ArrayView::start_offset(Self[T]) -> Int
 fn[T] ArrayView::to_array(Self[T]) -> Array[T]
-
-fn[T : Compare] MutArrayView::sort(Self[T]) -> Unit
-fn[T] MutArrayView::sort_by(Self[T], (T, T) -> Int) -> Unit
-fn[T, K : Compare] MutArrayView::sort_by_key(Self[T], (T) -> K) -> Unit
 
 // Type aliases
 pub using @builtin {type ArrayView as View}

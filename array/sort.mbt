@@ -29,17 +29,17 @@ pub fn[T : Compare] Array::sort(self : Array[T]) -> Unit {
 }
 
 ///|
-/// Sorts the array in place.
-///
-/// It's an in-place, unstable sort(it will reorder equal elements). The time complexity is O(n log n) in the worst case.
-///
+/// Sorts the array
+/// 
+/// It's an stable sort(it will not reorder equal elements). The time complexity is *O*(*n* \* log(*n*)) in the worst case.
+/// 
 /// # Example
-///
+/// 
 /// ```mbt
-///   let arr = [5, 4, 3, 2, 1]
-///   arr.mut_view().sort()
+///   let arr: FixedArray[Int] = [5, 4, 3, 2, 1]
+///   arr.stable_sort()
 ///   assert_eq(arr, [1, 2, 3, 4, 5])
 /// ```
-pub fn[T : Compare] MutArrayView::sort(self : MutArrayView[T]) -> Unit {
-  fixed_quick_sort(self, None, fixed_get_limit(self.length()))
+pub fn[T : Compare] FixedArray::stable_sort(self : FixedArray[T]) -> Unit {
+  self.mut_view().stable_sort()
 }
