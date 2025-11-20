@@ -141,17 +141,34 @@ Built-in array types for storing collections:
 ///|
 test "arrays" {
   // Dynamic arrays
-  let arr = Array::new()
-  arr.push(1)
-  arr.push(2)
-  arr.push(3)
-  inspect(arr, content="[1, 2, 3]")
+  let arr1 = Array::new()
+  arr1.push(1)
+  arr1.push(2)
+  arr1.push(3)
+  inspect(arr1, content="[1, 2, 3]")
 
   // Array from literal
-  let fixed_arr = [10, 20, 30]
-  inspect(fixed_arr, content="[10, 20, 30]")
+  let arr2 = [10, 20, 30]
+  inspect(arr2, content="[10, 20, 30]")
 
   // Array operations
+  let length = arr2.length()
+  inspect(length, content="3")
+  let first = arr2[0]
+  inspect(first, content="10")
+}
+```
+
+Fixed-size array for storing collections of constant size:
+
+```moonbit
+///|
+test "fixed arrays" {
+  // FixedArray from literal
+  let fixed_arr : FixedArray[Int] = [10, 20, 30]
+  inspect(fixed_arr, content="[10, 20, 30]")
+
+  // FixedArray operations
   let length = fixed_arr.length()
   inspect(length, content="3")
   let first = fixed_arr[0]
