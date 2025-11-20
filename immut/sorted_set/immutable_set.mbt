@@ -229,7 +229,7 @@ pub fn[A] SortedSet::max_option(self : SortedSet[A]) -> A? {
 ///|
 /// Returns a triple (left, present, right), where left < divide < right.
 /// present == false if self contains no value equal to divide,
-/// present == true  if self contains an value equal to divide.
+/// present == true  if self contains a value equal to divide.
 ///
 /// # Example
 ///
