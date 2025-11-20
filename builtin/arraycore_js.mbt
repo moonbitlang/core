@@ -181,7 +181,7 @@ pub fn[T] Array::push(self : Array[T], value : T) -> Unit {
 }
 
 ///|
-/// Removes the last element from a array and returns it, or `None` if it is empty.
+/// Removes the last element from an array and returns it, or `None` if it is empty.
 ///
 /// # Example
 /// ```mbt
@@ -200,7 +200,7 @@ pub fn[T] Array::pop(self : Array[T]) -> T? {
 }
 
 ///|
-/// Removes the last element from a array and returns it.
+/// Removes the last element from an array and returns it.
 ///
 /// **NOTE** This method will not cause a panic, but it may result in undefined
 /// behavior on the JavaScript platform. Use with caution.
@@ -240,7 +240,7 @@ pub fn[T] Array::remove(self : Array[T], index : Int) -> T {
 ///|
 /// Removes the specified range from the array and returns it.
 ///
-/// This functions returns a array range from `begin` to `end` `[begin, end)`
+/// This functions returns an array range from `begin` to `end` `[begin, end)`
 /// 
 /// This function will panic if the index is out of bounds.
 ///

@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-/// Writes the string representation of a object to the StringBuilder.
+/// Writes the string representation of an object to the StringBuilder.
 pub fn[T : Show] StringBuilder::write_object(
   self : StringBuilder,
   obj : T,

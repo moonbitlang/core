@@ -16,7 +16,7 @@
 /// A big integer represented as an array of Int.
 //
 // Design explained:
-// - Why use an FixedArray of Int with a len field instead of a Array[Int]?
+// - Why use an FixedArray of Int with a len field instead of an Array[Int]?
 //   - It follows the principle of least dependency in MoonBit's core.
 //   - In our case, we always do one-off array allocation for each BigInt.
 // - Why keep a separate len field instead of using limbs.length()?

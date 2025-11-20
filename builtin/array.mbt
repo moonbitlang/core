@@ -1203,7 +1203,7 @@ pub fn[T] Array::resize(self : Array[T], new_len : Int, f : T) -> Unit {
 }
 
 ///|
-/// Flattens a array of arrays into a array.
+/// Flattens an array of arrays into an array.
 ///
 /// Example:
 ///
@@ -1226,7 +1226,7 @@ pub fn[T] Array::flatten(self : Array[Array[T]]) -> Array[T] {
 }
 
 ///|
-/// Create a array by repeat a given array for a given times.
+/// Create an array by repeat a given array for a given times.
 ///
 /// Example:
 ///

@@ -32,7 +32,7 @@ pub fn[K, V] SortedMap::new() -> SortedMap[K, V] {
 }
 
 ///|
-/// Creates a sorted map from a array of key-value pairs.
+/// Creates a sorted map from an array of key-value pairs.
 #as_free_fn
 #alias(of, deprecated="Use from_array instead")
 #as_free_fn(of, deprecated="Use from_array instead")
