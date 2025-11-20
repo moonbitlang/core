@@ -13,4 +13,5 @@
 // limitations under the License.
 
 ///|
+#deprecated("Use `StringView` instead")
 pub type View = StringView
