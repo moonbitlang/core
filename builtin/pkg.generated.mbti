@@ -399,6 +399,10 @@ fn[T] MutArrayView::mut_view(Self[T], start? : Int, end? : Int) -> Self[T]
 fn[X] MutArrayView::rev_iterator(Self[X]) -> Iterator[X]
 #alias("_[_]=_")
 fn[T] MutArrayView::set(Self[T], Int, T) -> Unit
+fn[T : Compare] MutArrayView::sort(Self[T]) -> Unit
+fn[T] MutArrayView::sort_by(Self[T], (T, T) -> Int) -> Unit
+fn[T, K : Compare] MutArrayView::sort_by_key(Self[T], (T) -> K) -> Unit
+fn[T : Compare] MutArrayView::stable_sort(Self[T]) -> Unit
 #alias("_[_:_]")
 fn[T] MutArrayView::sub(Self[T], start? : Int, end? : Int) -> ArrayView[T]
 fn[T] MutArrayView::unsafe_get(Self[T], Int) -> T
@@ -766,6 +770,7 @@ fn[T] FixedArray::from_iter(Iter[T]) -> Self[T]
 fn[T] FixedArray::from_iterator(Iterator[T]) -> Self[T]
 fn[T] FixedArray::get(Self[T], Int) -> T?
 fn[T] FixedArray::is_empty(Self[T]) -> Bool
+fn[T : Compare] FixedArray::is_sorted(Self[T]) -> Bool
 fn[T] FixedArray::iter(Self[T]) -> Iter[T]
 fn[T] FixedArray::iter2(Self[T]) -> Iter2[Int, T]
 fn[X] FixedArray::iterator(Self[X]) -> Iterator[X]
@@ -790,6 +795,7 @@ fn[T] FixedArray::set(Self[T], Int, T) -> Unit
 fn FixedArray::set_utf16be_char(Self[Byte], Int, Char) -> Int
 fn FixedArray::set_utf16le_char(Self[Byte], Int, Char) -> Int
 fn FixedArray::set_utf8_char(Self[Byte], Int, Char) -> Int
+fn[T : Compare] FixedArray::sort(Self[T]) -> Unit
 fn[T : Eq] FixedArray::starts_with(Self[T], Self[T]) -> Bool
 #alias("_[_:_]")
 fn[T] FixedArray::sub(Self[T], start? : Int, end? : Int) -> ArrayView[T]

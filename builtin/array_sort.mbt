@@ -13,6 +13,22 @@
 // limitations under the License.
 
 ///|
+/// Sorts the array in place.
+///
+/// It's an in-place, unstable sort(it will reorder equal elements). The time complexity is O(n log n) in the worst case.
+///
+/// # Example
+///
+/// ```mbt
+///   let arr = [5, 4, 3, 2, 1]
+///   arr.mut_view().sort()
+///   assert_eq(arr, [1, 2, 3, 4, 5])
+/// ```
+pub fn[T : Compare] MutArrayView::sort(self : MutArrayView[T]) -> Unit {
+  fixed_quick_sort(self, None, fixed_get_limit(self.length()))
+}
+
+///|
 /// Sorts the array
 /// 
 /// It's an stable sort(it will not reorder equal elements). The time complexity is *O*(*n* \* log(*n*)) in the worst case.
@@ -21,11 +37,11 @@
 /// 
 /// ```mbt
 ///   let arr: FixedArray[Int] = [5, 4, 3, 2, 1]
-///   arr.stable_sort()
+///   arr.mut_view().stable_sort()
 ///   assert_eq(arr, [1, 2, 3, 4, 5])
 /// ```
-pub fn[T : Compare] FixedArray::stable_sort(self : FixedArray[T]) -> Unit {
-  timsort(self.mut_view())
+pub fn[T : Compare] MutArrayView::stable_sort(self : MutArrayView[T]) -> Unit {
+  timsort(self)
 }
 
 ///|
@@ -456,15 +472,15 @@ fn[T : Compare] fixed_sift_down(arr : MutArrayView[T], index : Int) -> Unit {
 }
 
 ///|
-fn fixed_test_sort(f : (FixedArray[Int]) -> Unit) -> Unit raise {
+fn fixed_test_sort(f : (MutArrayView[Int]) -> Unit) -> Unit raise {
   let arr : FixedArray[_] = [5, 4, 3, 2, 1]
-  f(arr)
+  f(arr.mut_view())
   assert_eq(arr, [1, 2, 3, 4, 5])
   let arr : FixedArray[_] = [5, 5, 5, 5, 1]
-  f(arr)
+  f(arr.mut_view())
   assert_eq(arr, [1, 5, 5, 5, 5])
   let arr : FixedArray[_] = [1, 2, 3, 4, 5]
-  f(arr)
+  f(arr.mut_view())
   assert_eq(arr, [1, 2, 3, 4, 5])
   let arr = FixedArray::make(1000, 0)
   for i in 0..<1000 {
@@ -473,7 +489,7 @@ fn fixed_test_sort(f : (FixedArray[Int]) -> Unit) -> Unit raise {
   for i = 10; i < 1000; i = i + 10 {
     arr.swap(i, i - 1)
   }
-  f(arr)
+  f(arr.mut_view())
   let expected = FixedArray::make(1000, 0)
   for i in 0..<1000 {
     expected[i] = i
@@ -499,7 +515,7 @@ test "sort" {
 ///|
 test "stable_sort" {
   let arr : FixedArray[_] = [5, 1, 3, 4, 2]
-  arr.stable_sort()
+  arr.mut_view().stable_sort()
   assert_eq(arr, [1, 2, 3, 4, 5])
   let arr = FixedArray::make(1000, 0)
   for i in 0..<1000 {
@@ -508,7 +524,7 @@ test "stable_sort" {
   for i = 10; i < 1000; i = i + 10 {
     arr.swap(i, i - 1)
   }
-  arr.stable_sort()
+  arr.mut_view().stable_sort()
   let expected = FixedArray::make(1000, 0)
   for i in 0..<1000 {
     expected[i] = i
@@ -559,7 +575,7 @@ test "stable_sort_complex" {
     }
   }
   assert_false(arr.is_sorted())
-  arr.stable_sort()
+  arr.mut_view().stable_sort()
   assert_true(arr.is_sorted())
 }
 
@@ -614,4 +630,13 @@ test "fixed_quick_sort with balanced partitions" {
   let arr : FixedArray[_] = [5, 4, 3, 2, 1]
   fixed_quick_sort(arr.mut_view(), None, 10)
   assert_true(FixedArray::is_sorted(arr))
+}
+
+///|
+fn minimum(x : Int, y : Int) -> Int {
+  if x > y {
+    y
+  } else {
+    x
+  }
 }
