@@ -169,6 +169,7 @@ type ArrayView[T]
 #alias("_[_]")
 fn[T] ArrayView::at(Self[T], Int) -> T
 fn[A] ArrayView::blit_to(Self[A], Array[A], dst_offset? : Int) -> Unit
+fn[T : Compare] ArrayView::is_sorted(Self[T]) -> Bool
 fn[A] ArrayView::iter(Self[A]) -> Iter[A]
 fn[X] ArrayView::iterator(Self[X]) -> Iterator[X]
 fn[T] ArrayView::length(Self[T]) -> Int
