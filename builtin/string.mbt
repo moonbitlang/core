@@ -589,7 +589,7 @@ pub fn String::lexical_compare(self : String, other : String) -> Int {
 ///   assert_eq(s, "Hello")
 /// ```
 ///
-/// Do not convert large datas to `Array[Char]` and build a string with `String::from_array`.
+/// Do not convert large data to `Array[Char]` and build a string with `String::from_array`.
 ///
 /// For efficiency considerations, it's recommended to use `Buffer` instead.
 pub fn String::from_array(chars : ArrayView[Char]) -> String {
