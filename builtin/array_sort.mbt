@@ -553,13 +553,7 @@ test "stable_sort" {
 ///   inspect(FixedArray::is_sorted(unsorted), content="false")
 /// ```
 pub fn[T : Compare] FixedArray::is_sorted(arr : FixedArray[T]) -> Bool {
-  for i in 1..<arr.length() {
-    if arr[i] < arr[i - 1] {
-      break false
-    }
-  } else {
-    true
-  }
+  arr[:].is_sorted()
 }
 
 ///|

@@ -365,3 +365,38 @@ pub impl[A : Hash] Hash for ArrayView[A] with hash_combine(self, hasher) {
     hasher.combine(e)
   }
 }
+
+///|
+/// Tests whether the array view is sorted in ascending order.
+///
+/// Parameters:
+///
+/// * `self` : The array view to be tested.
+/// * `T` : The type of elements in the array view. Must implement the `Compare`
+/// trait.
+///
+/// Returns a boolean value indicating whether the array view is sorted in ascending
+/// order:
+///
+/// * `true` if the array view is empty, contains only one element, or all elements
+/// are in ascending order.
+/// * `false` if any element is greater than the element that follows it.
+///
+/// Example:
+///
+/// ```moonbit
+///   let arr = [1, 2, 3, 4, 5]
+///   let view = arr[1:4]
+///   inspect(view.is_sorted(), content="true")
+///   let descending = [5, 4, 3, 2, 1]
+///   inspect(descending[:].is_sorted(), content="false")
+/// ```
+pub fn[T : Compare] ArrayView::is_sorted(self : ArrayView[T]) -> Bool {
+  for i in 1..<self.length() {
+    if self[i - 1] > self[i] {
+      break false
+    }
+  } else {
+    true
+  }
+}

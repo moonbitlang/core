@@ -658,15 +658,7 @@ pub fn[T] Array::is_empty(self : Array[T]) -> Bool {
 ///   inspect(unsorted.is_sorted(), content="false")
 /// ```
 pub fn[T : Compare] Array::is_sorted(self : Array[T]) -> Bool {
-  for i = 1 {
-    if i >= self.length() {
-      break true
-    }
-    if self[i - 1] > self[i] {
-      break false
-    }
-    continue i + 1
-  }
+  self[:].is_sorted()
 }
 
 ///|
