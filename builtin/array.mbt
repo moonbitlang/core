@@ -735,7 +735,6 @@ pub fn[T] Array::rev(self : Array[T]) -> Array[T] {
 ///   assert_eq(v1, [3])
 ///   assert_eq(v2, [4, 5])
 /// ```
-/// TODO: perf could be optimized
 pub fn[T] Array::split_at(self : Array[T], index : Int) -> (Array[T], Array[T]) {
   if index < 0 || index > self.length() {
     let len = self.length()
@@ -743,18 +742,11 @@ pub fn[T] Array::split_at(self : Array[T], index : Int) -> (Array[T], Array[T]) 
       "index out of bounds: the len is from 0 to \{len} but the index is \{index}",
     )
   }
+  let len2 = self.length() - index
   let v1 = Array::make_uninit(index)
-  let v2 = Array::make_uninit(self.length() - index)
+  let v2 = Array::make_uninit(len2)
   UninitializedArray::unsafe_blit(v1.buffer(), 0, self.buffer(), 0, index)
-  if index != self.length() {
-    UninitializedArray::unsafe_blit(
-      v2.buffer(),
-      0,
-      self.buffer(),
-      index,
-      self.length() - index,
-    )
-  }
+  UninitializedArray::unsafe_blit(v2.buffer(), 0, self.buffer(), index, len2)
   (v1, v2)
 }
 
