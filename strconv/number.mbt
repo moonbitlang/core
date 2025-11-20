@@ -98,7 +98,7 @@ fn parse_number(s : StringView) -> Number? raise StrConvError {
   if s is ['.', .. rest] {
     s = rest
     // TODO: optimization chance. In the original Rust implementation,
-    // the the digits are stored as consecutive bytes in the string.
+    // the digits are stored as consecutive bytes in the string.
     // It directly reads 8 bytes to `u64`.
     let (new_s, new_mantissa, consumed_digit) = parse_digits(s, mantissa)
     s = new_s

@@ -15,7 +15,7 @@
 /// Constructions
 
 ///|
-/// Construct a empty set.
+/// Construct an empty set.
 #as_free_fn
 pub fn[V] SortedSet::new() -> SortedSet[V] {
   { root: None, size: 0 }
@@ -410,7 +410,7 @@ pub fn[V] SortedSet::to_array(self : SortedSet[V]) -> Array[V] {
 }
 
 ///|
-/// Returns a iterator.
+/// Returns an iterator.
 pub fn[V] SortedSet::iter(self : SortedSet[V]) -> Iter[V] {
   Iter::new(yield_ => {
     fn go(x : Node[V]?) {
@@ -432,7 +432,7 @@ pub fn[V] SortedSet::iter(self : SortedSet[V]) -> Iter[V] {
 }
 
 ///|
-/// Returns a iterator.
+/// Returns an iterator.
 pub fn[V] SortedSet::iterator(self : SortedSet[V]) -> Iterator[V] {
   let mut curr_node = self.root
   let parents = []
