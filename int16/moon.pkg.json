@@ -1,4 +1,4 @@
 {
-  "import": ["moonbitlang/core/builtin", "moonbitlang/core/json"],
-  "test-import": ["moonbitlang/core/uint16"]
+  "import": ["moonbitlang/core/builtin"],
+  "test-import": ["moonbitlang/core/uint16", "moonbitlang/core/json"]
 }

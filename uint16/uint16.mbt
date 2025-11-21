@@ -64,13 +64,28 @@ pub impl BitXOr for UInt16 with lxor(self : UInt16, that : UInt16) -> UInt16 {
 }
 
 ///|
-pub impl Default for UInt16 with default() {
-  0
+pub impl Shl for UInt16 with shl(self : UInt16, that : Int) -> UInt16 {
+  (self.to_int() << that).to_uint16()
 }
 
 ///|
-pub impl ToJson for UInt16 with to_json(self : UInt16) -> Json {
-  Json::number(self.to_int().to_double())
+pub impl Shr for UInt16 with shr(self : UInt16, that : Int) -> UInt16 {
+  (self.to_int() >> that).to_uint16()
+}
+
+///|
+pub impl BitOr for UInt16 with lor(self : UInt16, that : UInt16) -> UInt16 {
+  (self.to_int() | that.to_int()).to_uint16()
+}
+
+///|
+pub impl BitAnd for UInt16 with land(self : UInt16, that : UInt16) -> UInt16 {
+  (self.to_int() & that.to_int()).to_uint16()
+}
+
+///|
+pub impl Default for UInt16 with default() {
+  0
 }
 
 ///|
@@ -84,6 +99,7 @@ pub fn UInt16::to_uint64(self : UInt16) -> UInt64 {
 }
 
 ///|
+#deprecated("Use `Int16::reinterpret_from_uint16` instead.")
 pub fn UInt16::reinterpret_as_int16(self : UInt16) -> Int16 {
-  self.to_int().to_int16()
+  Int16::from_int(self.to_int())
 }
