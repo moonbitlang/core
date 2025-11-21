@@ -530,8 +530,6 @@ fn Int::until(Int, Int, step? : Int, inclusive? : Bool) -> Iter[Int]
 #deprecated
 fn Int::upto(Int, Int, inclusive? : Bool) -> Iter[Int]
 
-fn Int16::to_int64(Int16) -> Int64
-
 fn Int64::abs(Int64) -> Int64
 #deprecated
 fn Int64::asr(Int64, Int) -> Int64
@@ -555,8 +553,6 @@ fn Int64::to_double(Int64) -> Double
 #deprecated
 fn Int64::to_float(Int64) -> Float
 fn Int64::to_int(Int64) -> Int
-#deprecated
-fn Int64::to_int16(Int64) -> Int16
 fn Int64::to_string(Int64, radix? : Int) -> String
 fn Int64::to_uint16(Int64) -> UInt16
 #deprecated
