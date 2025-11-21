@@ -530,10 +530,7 @@ fn Int::until(Int, Int, step? : Int, inclusive? : Bool) -> Iter[Int]
 #deprecated
 fn Int::upto(Int, Int, inclusive? : Bool) -> Iter[Int]
 
-fn Int16::to_byte(Int16) -> Byte
-fn Int16::to_int(Int16) -> Int
 fn Int16::to_int64(Int16) -> Int64
-fn Int16::to_string(Int16, radix? : Int) -> String
 
 fn Int64::abs(Int64) -> Int64
 #deprecated
@@ -1167,7 +1164,6 @@ impl Show for Bool
 impl Show for Byte
 impl Show for Char
 impl Show for Int
-impl Show for Int16
 impl Show for Int64
 impl Show for UInt
 impl Show for UInt16
@@ -1226,7 +1222,6 @@ impl ToJson for Bool
 impl ToJson for Byte
 impl ToJson for Char
 impl ToJson for Int
-impl ToJson for Int16
 impl ToJson for Int64
 impl ToJson for UInt
 impl ToJson for UInt16
