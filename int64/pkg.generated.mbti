@@ -9,6 +9,8 @@ let min_value : Int64
 // Errors
 
 // Types and methods
+#deprecated
+fn Int64::to_int16(Int64) -> Int16
 
 // Type aliases
 

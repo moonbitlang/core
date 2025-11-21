@@ -199,8 +199,18 @@ pub fn Int16::from_int64(self : Int64) -> Int16 = "%i64_to_i16"
 ///|
 #cfg(target="js")
 pub fn Int16::from_int64(self : Int64) -> Int16 {
-  self.to_int().to_int16()
+  Int16::from_int(self.to_int())
 }
+
+///|
+#cfg(target="js")
+pub fn Int16::to_int64(self : Int16) -> Int64 {
+  self.to_int().to_int64()
+}
+
+///|
+#cfg(not(target="js"))
+pub fn Int16::to_int64(self : Int16) -> Int64 = "%i16_to_i64"
 
 ///|
 /// Converts a 16-bit signed integer to a 32-bit signed integer by sign

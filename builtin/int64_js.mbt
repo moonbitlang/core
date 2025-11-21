@@ -513,12 +513,6 @@ pub fn Int64::to_byte(self : Int64) -> Byte {
 }
 
 ///|
-#deprecated("Use `Int16::from_int64` instead")
-pub fn Int64::to_int16(self : Int64) -> Int16 {
-  MyInt64::from_int64(self).to_int().to_int16()
-}
-
-///|
 pub fn Int64::to_uint16(self : Int64) -> UInt16 {
   MyInt64::from_int64(self).to_int().to_uint16()
 }
@@ -541,11 +535,6 @@ pub fn UInt64::reinterpret_as_double(self : UInt64) -> Double {
 ///|
 pub fn Int::to_int64(self : Int) -> Int64 {
   MyInt64::from_int(self).to_int64()
-}
-
-///|
-pub fn Int16::to_int64(self : Int16) -> Int64 {
-  MyInt64::from_int(self.to_int()).to_int64()
 }
 
 ///|

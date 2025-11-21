@@ -646,19 +646,6 @@ pub fn UInt64::reinterpret_as_double(self : UInt64) -> Double = "%i64_to_f64_rei
 pub fn Int64::to_byte(self : Int64) -> Byte = "%i64_to_byte"
 
 ///|
-/// Converts a 64-bit signed integer to a 16-bit signed integer by truncating the
-/// value to fit within the 16-bit range (-32768 to 32767).
-///
-/// Parameters:
-///
-/// * `value` : The 64-bit signed integer to be converted.
-///
-/// Returns a 16-bit signed integer representing the lower 16 bits of the input
-/// value.
-#deprecated("Use `Int16::from_int64` instead")
-pub fn Int64::to_int16(self : Int64) -> Int16 = "%i64_to_i16"
-
-///|
 /// Converts a 64-bit signed integer to a 16-bit unsigned integer by truncating
 /// the value to fit within the range of UInt16 (0 to 65535).
 ///
@@ -745,9 +732,6 @@ pub fn UInt64::extend_uint(val : UInt) -> UInt64 = "%u32.to_u64"
 ///   inspect(neg.to_int64(), content="-42")
 /// ```
 pub fn Int::to_int64(self : Int) -> Int64 = "%i32_to_i64"
-
-///|
-pub fn Int16::to_int64(self : Int16) -> Int64 = "%i16_to_i64"
 
 ///|
 /// Converts an unsigned 16-bit integer to a signed 64-bit integer. The resulting
