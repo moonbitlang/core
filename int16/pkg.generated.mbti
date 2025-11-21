@@ -14,6 +14,10 @@ fn Int16::from_byte(Byte) -> Int16
 fn Int16::from_int(Int) -> Int16
 fn Int16::from_int64(Int64) -> Int16
 fn Int16::reinterpret_as_uint16(Int16) -> UInt16
+fn Int16::reinterpret_from_uint16(UInt16) -> Int16
+fn Int16::to_byte(Int16) -> Byte
+fn Int16::to_int(Int16) -> Int
+fn Int16::to_string(Int16, radix? : Int) -> String
 impl Add for Int16
 impl BitAnd for Int16
 impl BitOr for Int16
@@ -27,8 +31,10 @@ impl Mod for Int16
 impl Mul for Int16
 impl Neg for Int16
 impl Shl for Int16
+impl Show for Int16
 impl Shr for Int16
 impl Sub for Int16
+impl ToJson for Int16
 
 // Type aliases
 

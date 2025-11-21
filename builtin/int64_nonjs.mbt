@@ -655,15 +655,6 @@ pub fn Int64::to_byte(self : Int64) -> Byte = "%i64_to_byte"
 ///
 /// Returns a 16-bit signed integer representing the lower 16 bits of the input
 /// value.
-///
-/// Example:
-///
-/// ```moonbit
-///   let big = 100000L
-///   inspect(big.to_int16(), content="-31072") // 100000 doesn't fit in Int16, gets truncated
-///   let small = 42L
-///   inspect(small.to_int16(), content="42") // 42 fits in Int16, remains unchanged
-/// ```
 #deprecated("Use `Int16::from_int64` instead")
 pub fn Int64::to_int16(self : Int64) -> Int16 = "%i64_to_i16"
 

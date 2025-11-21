@@ -4,7 +4,9 @@
     "moonbitlang/core/bytes",
     "moonbitlang/core/array",
     "moonbitlang/core/string",
-    "moonbitlang/core/float"
+    "moonbitlang/core/float",
+    "moonbitlang/core/int16",
+    "moonbitlang/core/uint16"
   ],
   "test-import": ["moonbitlang/core/int"]
 }
