@@ -193,11 +193,6 @@ pub impl ToJson for UInt with to_json(self : UInt) -> Json {
 }
 
 ///|
-pub impl ToJson for Int16 with to_json(self : Int16) -> Json {
-  Json::number(self.to_int().to_double())
-}
-
-///|
 pub impl ToJson for UInt16 with to_json(self : UInt16) -> Json {
   Json::number(self.to_int().to_double())
 }

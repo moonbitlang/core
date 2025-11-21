@@ -99,6 +99,7 @@ pub fn UInt16::to_uint64(self : UInt16) -> UInt64 {
 }
 
 ///|
+#deprecated("Use `Int16::reinterpret_from_uint16` instead.")
 pub fn UInt16::reinterpret_as_int16(self : UInt16) -> Int16 {
-  self.to_int().to_int16()
+  Int16::from_int(self.to_int())
 }

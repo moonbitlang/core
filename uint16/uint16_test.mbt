@@ -373,14 +373,14 @@ test "UInt16::default" {
 }
 
 ///|
-test "UInt16::reinterpret_as_int16" {
-  inspect(UInt16::reinterpret_as_int16(0), content="0")
-  inspect(UInt16::reinterpret_as_int16(1), content="1")
-  inspect(UInt16::reinterpret_as_int16(32768), content="-32768")
-  inspect(UInt16::reinterpret_as_int16(65535), content="-1")
-  inspect(UInt16::reinterpret_as_int16(65534), content="-2")
-  inspect(UInt16::reinterpret_as_int16(12345), content="12345")
-  inspect(UInt16::reinterpret_as_int16(54321), content="-11215")
+test "Int16::reinterpret_from_uint16" {
+  inspect(Int16::reinterpret_from_uint16(0), content="0")
+  inspect(Int16::reinterpret_from_uint16(1), content="1")
+  inspect(Int16::reinterpret_from_uint16(32768), content="-32768")
+  inspect(Int16::reinterpret_from_uint16(65535), content="-1")
+  inspect(Int16::reinterpret_from_uint16(65534), content="-2")
+  inspect(Int16::reinterpret_from_uint16(12345), content="12345")
+  inspect(Int16::reinterpret_from_uint16(54321), content="-11215")
 }
 
 ///|

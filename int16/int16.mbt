@@ -103,9 +103,25 @@ pub impl Default for Int16 with default() {
 }
 
 ///|
+pub impl ToJson for Int16 with to_json(self : Int16) -> Json {
+  Json::number(self.to_int().to_double())
+}
+
+///|
+pub impl Show for Int16 with output(self, logger) {
+  logger.write_string(self.to_string())
+}
+
+///|
 /// reinterpret as an unsigned integer with binary complement
 pub fn Int16::reinterpret_as_uint16(self : Int16) -> UInt16 {
   self.to_int().to_uint16()
+}
+
+///|
+/// reinterpret from an unsigned integer with binary complement
+pub fn Int16::reinterpret_from_uint16(self : UInt16) -> Int16 {
+  Int16::from_int(self.to_int())
 }
 
 ///|
@@ -184,4 +200,48 @@ pub fn Int16::from_int64(self : Int64) -> Int16 = "%i64_to_i16"
 #cfg(target="js")
 pub fn Int16::from_int64(self : Int64) -> Int16 {
   self.to_int().to_int16()
+}
+
+///|
+/// Converts a 16-bit signed integer to a 32-bit signed integer by sign
+/// extension.
+///
+/// Parameters:
+///
+/// * `value` : The 16-bit signed integer to be converted.
+///
+/// Returns a 32-bit signed integer that has the same value as the input.
+///
+/// Example:
+///
+/// ```moonbit
+///   let n = (42 : Int16)
+///   inspect(n.to_int(), content="42")
+///   let neg = (-42 : Int16)
+///   inspect(neg.to_int(), content="-42")
+/// ```
+pub fn Int16::to_int(self : Int16) -> Int = "%i16_to_i32"
+
+///|
+/// Converts a 16-bit signed integer to a byte by truncating its value to fit
+/// within the byte range (0 to 255). Only the least significant 8 bits of the
+/// integer are retained.
+///
+/// Parameters:
+///
+/// * `value` : The 16-bit signed integer to be converted to a byte.
+///
+/// Returns a byte containing the least significant 8 bits of the input value.
+///
+/// Example:
+///
+/// ```moonbit
+/// let x : Int16 = (258) // In binary: 0000_0001_0000_0010
+/// inspect(x.to_byte(), content="b'\\x02'") // Only keeps 0000_0010
+/// ```
+pub fn Int16::to_byte(self : Int16) -> Byte = "%i16_to_byte"
+
+///|
+pub fn Int16::to_string(self : Int16, radix? : Int = 10) -> String {
+  self.to_int().to_string(radix~)
 }

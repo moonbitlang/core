@@ -729,11 +729,6 @@ extern "js" fn uint64_to_string_js(num : UInt64, radix : Int) -> String =
 //==========================================
 
 ///|
-pub fn Int16::to_string(self : Int16, radix? : Int = 10) -> String {
-  self.to_int().to_string(radix~)
-}
-
-///|
 pub fn UInt16::to_string(self : UInt16, radix? : Int = 10) -> String {
   self.to_int().to_string(radix~)
 }
