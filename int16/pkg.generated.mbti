@@ -17,6 +17,7 @@ fn Int16::reinterpret_as_uint16(Int16) -> UInt16
 fn Int16::reinterpret_from_uint16(UInt16) -> Int16
 fn Int16::to_byte(Int16) -> Byte
 fn Int16::to_int(Int16) -> Int
+fn Int16::to_int64(Int16) -> Int64
 fn Int16::to_string(Int16, radix? : Int) -> String
 impl Add for Int16
 impl BitAnd for Int16
