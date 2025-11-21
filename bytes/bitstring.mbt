@@ -40,13 +40,9 @@ pub fn BytesView::unsafe_extract_bit(
   _len : Int,
 ) -> UInt {
   let byte_index = offset >> 3
-  let bit_mask = (1 << (7 - (offset & 7))).to_byte()
-  // TODO: branchless for performance
-  if (bs.unsafe_get(byte_index) & bit_mask) != 0 {
-    1
-  } else {
-    0
-  }
+  let bit_shift = 7 - (offset & 7)
+  let byte_val = bs.unsafe_get(byte_index).to_uint()
+  (byte_val >> bit_shift) & 1U
 }
 
 ///|
@@ -59,13 +55,10 @@ pub fn BytesView::unsafe_extract_bit_signed(
   _len : Int,
 ) -> Int {
   let byte_index = offset >> 3
-  let bit_mask = (1 << (7 - (offset & 7))).to_byte()
-  // TODO: branchless for performance
-  if (bs.unsafe_get(byte_index) & bit_mask) != 0 {
-    -1
-  } else {
-    0
-  }
+  let bit_shift = 7 - (offset & 7)
+  let byte_val = bs.unsafe_get(byte_index).to_int()
+  // Extract bit and convert to signed: 0 -> 0, 1 -> -1
+  (((byte_val >> bit_shift) & 1) * -1) | 0
 }
 
 ///|
