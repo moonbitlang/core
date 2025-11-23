@@ -27,23 +27,20 @@ test "array creation" {
 
 Common array operations include mapping, filtering, and folding:
 
-```moonbit
-///|
-test "array operations" {
-  let nums = [1, 2, 3, 4, 5]
+```mbt test
+let nums = [1, 2, 3, 4, 5] // TODO: moon fmt regressed ?
 
-  // Filtering out odd numbers and negating the remaining
-  let neg_evens = nums.filter_map(x => if x % 2 == 0 { Some(-x) } else { None })
-  inspect(neg_evens, content="[-2, -4]")
+// Filtering out odd numbers and negating the remaining
+let neg_evens = nums.filter_map(x => if x % 2 == 0 { Some(-x) } else { None })
+inspect(neg_evens, content="[-2, -4]")
 
-  // Summing array
-  let sum = nums.fold(init=0, (acc, x) => acc + x)
-  inspect(sum, content="15")
+// Summing array
+let sum = nums.fold(init=0, (acc, x) => acc + x)
+inspect(sum, content="15")
 
-  // Finding last element
-  let last = nums.last()
-  inspect(last, content="Some(5)")
-}
+// Finding last element
+let last = nums.last()
+inspect(last, content="Some(5)")
 ```
 
 ## Sorting
