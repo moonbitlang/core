@@ -58,7 +58,7 @@ pub fn ArrayView::unsafe_extract_bit_signed(
   let bit_shift = 7 - (offset & 7)
   let byte_val = bs.unsafe_get(byte_index).to_int()
   // Extract bit and convert to signed: 0 -> 0, 1 -> -1
-  (((byte_val >> bit_shift) & 1) * -1) | 0
+  (((byte_val >> bit_shift) & 1) * -1)
 }
 
 ///|
