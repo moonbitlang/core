@@ -1,0 +1,21 @@
+name: "Run MoonBit Native Release Tests"
+description: "Run MoonBit tests with --target native --release"
+runs:
+  using: "composite"
+  steps:
+    - name: Set ulimit and run moon test (--release + --target native)
+      if: ${{ runner.os != 'Windows' }}
+      shell: bash
+      run: |
+        ulimit -s 8176
+        moon test --target native --release
+
+    - name: Setup MSVC
+      if: ${{ runner.os == 'Windows' }}
+      uses: ilammy/msvc-dev-cmd@v1
+
+    - name: Run moon test on Windows (--release + --target native)
+      if: ${{ runner.os == 'Windows' }}
+      shell: bash
+      run: |
+        moon test --target native --release

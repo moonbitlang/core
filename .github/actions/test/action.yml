@@ -1,0 +1,42 @@
+name: "Run MoonBit Tests"
+description: "Run comprehensive MoonBit tests across all targets"
+runs:
+  using: "composite"
+  steps:
+    - name: Set ulimit and run moon test
+      if: ${{ runner.os != 'Windows' }}
+      shell: bash
+      run: |
+        ulimit -s 8176
+        moon test --target all
+        moon test --release --target js,wasm,wasm-gc # native test in release mode is run in a separate job
+
+    - name: Setup MSVC
+      if: ${{ runner.os == 'Windows' }}
+      uses: ilammy/msvc-dev-cmd@v1
+
+    - name: Run moon test on Windows
+      if: ${{ runner.os == 'Windows' }}
+      shell: bash
+      run: |
+        moon test --target all
+        moon test --release --target js,wasm,wasm-gc # native test in release mode is run in a separate job
+
+    - name: Run moon test with JS builtin string
+      if: ${{ runner.os != 'Windows' }}
+      shell: bash
+      run: |
+        ulimit -s 8176
+        moon test --target wasm-gc
+        moon test --target wasm-gc --release
+      env:
+        MOONC_INTERNAL_PARAMS: use_js_builtin_string = 1 |
+
+    - name: Run moon test with JS builtin string
+      if: ${{ runner.os == 'Windows' }}
+      shell: bash
+      run: |
+        moon test --target wasm-gc
+        moon test --target wasm-gc --release
+      env:
+        MOONC_INTERNAL_PARAMS: use_js_builtin_string = 1 |
