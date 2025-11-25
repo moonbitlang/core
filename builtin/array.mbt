@@ -728,6 +728,7 @@ pub fn[T] Array::rev(self : Array[T]) -> Array[T] {
 ///   assert_eq(v2, [4, 5])
 /// ```
 #deprecated("Use ArrayView instead, e.g, (a[:index], a[index:])")
+#doc(hidden)
 pub fn[T] Array::split_at(self : Array[T], index : Int) -> (Array[T], Array[T]) {
   if index < 0 || index > self.length() {
     let len = self.length()
