@@ -13,11 +13,6 @@
 // limitations under the License.
 
 ///|
-test "panic array_split_at" {
-  [1].split_at(3) |> ignore
-}
-
-///|
 test "panic array_swap" {
   [1, 2, 3].swap(1, 5)
 }

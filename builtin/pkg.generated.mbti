@@ -144,6 +144,7 @@ fn[T] Array::search_by(Self[T], (T) -> Bool) -> Int?
 fn[T] Array::set(Self[T], Int, T) -> Unit
 fn[T] Array::shrink_to_fit(Self[T]) -> Unit
 fn[T] Array::split(Self[T], (T) -> Bool raise?) -> Self[Self[T]] raise?
+#deprecated
 fn[T] Array::split_at(Self[T], Int) -> (Self[T], Self[T])
 fn[T : Eq] Array::starts_with(Self[T], Self[T]) -> Bool
 fn[T : Eq] Array::strip_prefix(Self[T], Self[T]) -> Self[T]?
