@@ -1893,6 +1893,17 @@ test "extract_bit_signed - basic functionality" {
 }
 
 ///|
+test "extract_bit_signed - edge bytes" {
+  let bytes = b"\x80\xFF\x00"
+  let view = bytes[:]
+  inspect(view.unsafe_extract_bit_signed(0, 1), content="-1")
+  inspect(view.unsafe_extract_bit_signed(7, 1), content="0")
+  inspect(view.unsafe_extract_bit_signed(8, 1), content="-1")
+  inspect(view.unsafe_extract_bit_signed(15, 1), content="-1")
+  inspect(view.unsafe_extract_bit_signed(16, 1), content="0")
+}
+
+///|
 test "extract_byte_signed - basic positive and negative values" {
   // Test with a mix of positive and negative values
   let bytes = b"\x7F\xFF\x80\x00\xAA\x55"
