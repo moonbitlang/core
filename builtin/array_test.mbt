@@ -269,9 +269,9 @@ test "array_rev_inplace" {
 ///|
 test "array_split_at" {
   let arr = [1, 2, 3, 4, 5]
-  inspect(arr.split_at(2), content="([1, 2], [3, 4, 5])")
-  inspect(arr.split_at(0), content="([], [1, 2, 3, 4, 5])")
-  inspect(arr.split_at(5), content="([1, 2, 3, 4, 5], [])")
+  inspect((arr[:2], arr[2:]), content="([1, 2], [3, 4, 5])")
+  inspect((arr[:0], arr[0:]), content="([], [1, 2, 3, 4, 5])")
+  inspect((arr[:5], arr[5:]), content="([1, 2, 3, 4, 5], [])")
 }
 
 ///|

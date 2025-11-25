@@ -723,11 +723,11 @@ pub fn[T] Array::rev(self : Array[T]) -> Array[T] {
 /// # Example
 /// ```mbt
 ///   let v = [3, 4, 5]
-///   let (v1, v2) = v.split_at(1)
+///   let (v1, v2) = (v[:1], v[1:])
 ///   assert_eq(v1, [3])
 ///   assert_eq(v2, [4, 5])
 /// ```
-/// TODO: perf could be optimized
+#deprecated("Use ArrayView instead, e.g, (a[:index], a[index:])")
 pub fn[T] Array::split_at(self : Array[T], index : Int) -> (Array[T], Array[T]) {
   if index < 0 || index > self.length() {
     let len = self.length()
