@@ -1044,7 +1044,7 @@ test "StringView add" {
 test "panic view op_get out of bounds" {
   let str = "Hello"
   let view = str.view(start_offset=0, end_offset=5)
-  view[5] |> ignore
+  view.code_unit_at(5) |> ignore
 }
 
 // Added test to cover start index pointing to trailing surrogate

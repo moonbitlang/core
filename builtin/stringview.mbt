@@ -31,15 +31,6 @@ fn StringView::make_view(str : String, start : Int, end : Int) -> StringView = "
 /// Returns the charcode(UTF-16 code unit) at the given index.
 /// 
 /// This method has O(1) complexity.
-/// 
-/// # Example
-/// 
-/// ```mbt
-///   let str = "Hello🤣🤣🤣"
-///   let view = str.view(start_offset = str.offset_of_nth_char(1).unwrap(), end_offset = str.offset_of_nth_char(6).unwrap())
-///   inspect(view[0].to_char(), content="Some('e')")
-///   inspect(view[4], content="55358")
-/// ```
 #alias("_[_]")
 #deprecated("Use `code_unit_at` instead which returns UInt16")
 pub fn StringView::at(self : StringView, index : Int) -> Int {
