@@ -30,3 +30,22 @@ test "StringView::suffixes" {
     .collect()
   @json.inspect(suffixes_no_empty, content=["a🤣b", "🤣b", "b"])
 }
+
+///|
+test "code_unit_at" {
+  let s = "Hello, 世界!😀"
+  assert_true(s[:].code_unit_at(0) is 'H')
+  assert_true(s[:].code_unit_at(7) is '世')
+  assert_true(s[:].code_unit_at(8) is '界')
+  assert_true(s[:].code_unit_at(0) is ('A'..='Z'))
+  inspect(s[:].code_unit_at(0), content="72") // 'H'
+  inspect(s[:].code_unit_at(7), content="19990") // '世'
+  inspect(s[:].code_unit_at(8), content="30028") // '界'
+  inspect(s[:].code_unit_at(10), content="55357") // High surrogate of '😀'
+  inspect(s[:].code_unit_at(11), content="56832") // Low surrogate of '😀'
+  let view = s[7:] // "世界!😀"
+  inspect(view.code_unit_at(0), content="19990") // '世'
+  inspect(view.code_unit_at(1), content="30028") // '界'
+  inspect(view.code_unit_at(3), content="55357") // High surrogate of '😀'
+  inspect(view.code_unit_at(4), content="56832") // Low surrogate of '😀'
+}
