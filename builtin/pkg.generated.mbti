@@ -855,10 +855,12 @@ fn Bytes::of_string(String) -> Bytes
 fn Bytes::to_unchecked_string(Bytes, offset? : Int, length? : Int) -> String
 
 #alias("_[_]")
+#deprecated
 fn StringView::at(Self, Int) -> Int
 fn StringView::char_length(Self) -> Int
 fn StringView::char_length_eq(Self, Int) -> Bool
 fn StringView::char_length_ge(Self, Int) -> Bool
+fn StringView::code_unit_at(Self, Int) -> UInt16
 fn StringView::contains(Self, Self) -> Bool
 fn StringView::contains_any(Self, chars~ : Self) -> Bool
 fn StringView::contains_char(Self, Char) -> Bool
