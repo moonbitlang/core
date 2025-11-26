@@ -1550,8 +1550,9 @@ pub fn String::length(self : String) -> Int = "%string_length"
 /// * `index` : The position in the string from which to retrieve the code unit.
 ///
 /// This method has O(1) complexity.
-#alias(charcode_at, deprecated)
+#alias(charcode_at)
 #alias("_[_]")
+#deprecated("Use `code_unit_at` instead which returns UInt16")
 pub fn String::at(self : String, idx : Int) -> Int = "%string_get"
 
 ///|
