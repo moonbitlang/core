@@ -9,25 +9,6 @@ let min_value : UInt16
 // Errors
 
 // Types and methods
-fn UInt16::is_leading_surrogate(UInt16) -> Bool
-fn UInt16::is_surrogate(UInt16) -> Bool
-fn UInt16::is_trailing_surrogate(UInt16) -> Bool
-fn UInt16::reinterpret_as_int16(UInt16) -> Int16
-fn UInt16::to_char(UInt16) -> Char?
-fn UInt16::to_uint(UInt16) -> UInt
-fn UInt16::to_uint64(UInt16) -> UInt64
-fn UInt16::unsafe_to_char(UInt16) -> Char
-impl Add for UInt16
-impl BitXOr for UInt16
-impl Compare for UInt16
-impl Default for UInt16
-impl Div for UInt16
-impl Eq for UInt16
-impl Hash for UInt16
-impl Mod for UInt16
-impl Mul for UInt16
-impl Sub for UInt16
-impl ToJson for UInt16
 
 // Type aliases
 

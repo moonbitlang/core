@@ -594,10 +594,18 @@ fn UInt::trunc_double(Double) -> UInt
 #deprecated
 fn UInt::upto(UInt, UInt, inclusive? : Bool) -> Iter[UInt]
 
+fn UInt16::is_leading_surrogate(UInt16) -> Bool
+fn UInt16::is_surrogate(UInt16) -> Bool
+fn UInt16::is_trailing_surrogate(UInt16) -> Bool
+fn UInt16::reinterpret_as_int16(UInt16) -> Int16
 fn UInt16::to_byte(UInt16) -> Byte
+fn UInt16::to_char(UInt16) -> Char?
 fn UInt16::to_int(UInt16) -> Int
 fn UInt16::to_int64(UInt16) -> Int64
 fn UInt16::to_string(UInt16, radix? : Int) -> String
+fn UInt16::to_uint(UInt16) -> UInt
+fn UInt16::to_uint64(UInt16) -> UInt64
+fn UInt16::unsafe_to_char(UInt16) -> Char
 
 fn UInt64::clz(UInt64) -> Int
 fn UInt64::ctz(UInt64) -> Int
@@ -647,8 +655,9 @@ fn Double::until(Double, Double, step? : Double, inclusive? : Bool) -> Iter[Doub
 #deprecated
 fn Double::upto(Double, Double, inclusive? : Bool) -> Iter[Double]
 
-#alias("_[_]")
+#alias("_[_]", deprecated)
 #alias(charcode_at, deprecated)
+#deprecated
 fn String::at(String, Int) -> Int
 #alias(codepoint_length, deprecated)
 fn String::char_length(String, start_offset? : Int, end_offset? : Int) -> Int
@@ -928,6 +937,7 @@ impl Add for Byte
 impl Add for Int
 impl Add for Int64
 impl Add for UInt
+impl Add for UInt16
 impl Add for UInt64
 impl Add for Double
 impl Add for String
@@ -961,6 +971,7 @@ impl BitXOr for Byte
 impl BitXOr for Int
 impl BitXOr for Int64
 impl BitXOr for UInt
+impl BitXOr for UInt16
 impl BitXOr for UInt64
 
 pub(open) trait Compare : Eq {
@@ -976,6 +987,7 @@ impl Compare for Char
 impl Compare for Int
 impl Compare for Int64
 impl Compare for UInt
+impl Compare for UInt16
 impl Compare for UInt64
 impl Compare for Double
 impl Compare for String
@@ -1008,6 +1020,7 @@ impl Default for Byte
 impl Default for Char
 impl Default for Int
 impl Default for Int64
+impl Default for UInt16
 impl Default for UInt64
 impl Default for Double
 impl Default for String
@@ -1025,6 +1038,7 @@ impl Div for Byte
 impl Div for Int
 impl Div for Int64
 impl Div for UInt
+impl Div for UInt16
 impl Div for UInt64
 impl Div for Double
 
@@ -1040,6 +1054,7 @@ impl Eq for Char
 impl Eq for Int
 impl Eq for Int64
 impl Eq for UInt
+impl Eq for UInt16
 impl Eq for UInt64
 impl Eq for Double
 impl Eq for String
@@ -1074,6 +1089,7 @@ impl Hash for Char
 impl Hash for Int
 impl Hash for Int64
 impl Hash for UInt
+impl Hash for UInt16
 impl Hash for UInt64
 impl Hash for String
 impl[X : Hash] Hash for X?
@@ -1105,6 +1121,7 @@ impl Mod for Byte
 impl Mod for Int
 impl Mod for Int64
 impl Mod for UInt
+impl Mod for UInt16
 impl Mod for UInt64
 
 pub(open) trait Mul {
@@ -1116,6 +1133,7 @@ impl Mul for Byte
 impl Mul for Int
 impl Mul for Int64
 impl Mul for UInt
+impl Mul for UInt16
 impl Mul for UInt64
 impl Mul for Double
 
@@ -1197,6 +1215,7 @@ impl Sub for Byte
 impl Sub for Int
 impl Sub for Int64
 impl Sub for UInt
+impl Sub for UInt16
 impl Sub for UInt64
 impl Sub for Double
 
@@ -1210,6 +1229,7 @@ impl ToJson for Char
 impl ToJson for Int
 impl ToJson for Int64
 impl ToJson for UInt
+impl ToJson for UInt16
 impl ToJson for UInt64
 impl ToJson for Double
 impl ToJson for String
