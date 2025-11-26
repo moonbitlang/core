@@ -9,6 +9,8 @@ let min_value : UInt16
 // Errors
 
 // Types and methods
+#deprecated
+fn UInt16::reinterpret_as_int16(UInt16) -> Int16
 impl BitAnd for UInt16
 impl BitOr for UInt16
 impl Shl for UInt16

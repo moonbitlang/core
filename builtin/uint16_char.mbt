@@ -135,8 +135,3 @@ pub fn UInt16::to_uint(self : UInt16) -> UInt {
 pub fn UInt16::to_uint64(self : UInt16) -> UInt64 {
   self.to_int().to_uint64()
 }
-
-///|
-pub fn UInt16::reinterpret_as_int16(self : UInt16) -> Int16 {
-  self.to_int().to_int16()
-}

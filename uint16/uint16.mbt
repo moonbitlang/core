@@ -37,3 +37,9 @@ pub impl BitOr for UInt16 with lor(self : UInt16, that : UInt16) -> UInt16 {
 pub impl BitAnd for UInt16 with land(self : UInt16, that : UInt16) -> UInt16 {
   (self.to_int() & that.to_int()).to_uint16()
 }
+
+///|
+#deprecated("Use `Int16::reinterpret_from_uint16` instead")
+pub fn UInt16::reinterpret_as_int16(self : UInt16) -> Int16 {
+  Int16::from_int(self.to_int())
+}
