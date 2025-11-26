@@ -655,8 +655,8 @@ fn Double::until(Double, Double, step? : Double, inclusive? : Bool) -> Iter[Doub
 #deprecated
 fn Double::upto(Double, Double, inclusive? : Bool) -> Iter[Double]
 
-#alias("_[_]", deprecated)
-#alias(charcode_at, deprecated)
+#alias("_[_]")
+#alias(charcode_at)
 #deprecated
 fn String::at(String, Int) -> Int
 #alias(codepoint_length, deprecated)
