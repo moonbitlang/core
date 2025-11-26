@@ -946,6 +946,7 @@ impl BitAnd for Byte
 impl BitAnd for Int
 impl BitAnd for Int64
 impl BitAnd for UInt
+impl BitAnd for UInt16
 impl BitAnd for UInt64
 
 pub(open) trait BitOr {
@@ -955,6 +956,7 @@ impl BitOr for Byte
 impl BitOr for Int
 impl BitOr for Int64
 impl BitOr for UInt
+impl BitOr for UInt16
 impl BitOr for UInt64
 
 pub(open) trait BitXOr {
@@ -1148,6 +1150,7 @@ impl Shl for Byte
 impl Shl for Int
 impl Shl for Int64
 impl Shl for UInt
+impl Shl for UInt16
 impl Shl for UInt64
 
 pub(open) trait Show {
@@ -1194,6 +1197,7 @@ impl Shr for Byte
 impl Shr for Int
 impl Shr for Int64
 impl Shr for UInt
+impl Shr for UInt16
 impl Shr for UInt64
 
 pub(open) trait Sub {
