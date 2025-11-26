@@ -13,28 +13,28 @@
 // limitations under the License.
 
 ///|
-fn code_point_of_surrogate_pair(leading : Int, trailing : Int) -> Char {
-  ((leading - 0xD800) * 0x400 + trailing - 0xDC00 + 0x10000).unsafe_to_char()
+fn code_point_of_surrogate_pair(leading : UInt16, trailing : UInt16) -> Char {
+  ((leading - 0xD800).to_int() * 0x400 + trailing.to_int() - 0xDC00 + 0x10000).unsafe_to_char()
 }
 
 ///|
 test "code_point_of_surrogate_pair" {
   let s = "😀"
-  let leading = s.at(0)
-  let trailing = s.at(1)
+  let leading = s.code_unit_at(0)
+  let trailing = s.code_unit_at(1)
   inspect(code_point_of_surrogate_pair(leading, trailing), content="😀")
 }
 
 ///|
 test "is_leading_surrogate" {
-  inspect("🤣".at(0).is_leading_surrogate(), content="true")
-  inspect("🤣".at(1).is_leading_surrogate(), content="false")
+  inspect("🤣".code_unit_at(0).is_leading_surrogate(), content="true")
+  inspect("🤣".code_unit_at(1).is_leading_surrogate(), content="false")
 }
 
 ///|
 test "is_trailing_surrogate" {
-  inspect("🤣".at(0).is_trailing_surrogate(), content="false")
-  inspect("🤣".at(1).is_trailing_surrogate(), content="true")
+  inspect("🤣".code_unit_at(0).is_trailing_surrogate(), content="false")
+  inspect("🤣".code_unit_at(1).is_trailing_surrogate(), content="true")
 }
 
 ///|
