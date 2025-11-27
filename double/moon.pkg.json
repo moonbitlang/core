@@ -1,11 +1,13 @@
 {
   "import": [
     "moonbitlang/core/builtin",
-    "moonbitlang/core/int64",
     "moonbitlang/core/uint64",
     "moonbitlang/core/double/internal/ryu"
   ],
-  "test-import": ["moonbitlang/core/bytes"],
+  "test-import": [
+    "moonbitlang/core/bytes",
+    "moonbitlang/core/buffer"
+  ],
   "targets": {
     "exp_js.mbt": ["js"],
     "exp_nonjs.mbt": ["not", "js"],
