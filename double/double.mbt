@@ -256,17 +256,8 @@ pub fn Double::is_close(
 /// Returns a sequence of 8 bytes representing the double-precision
 /// floating-point number in big-endian byte order.
 ///
-/// Example:
-///
-/// ```moonbit
-/// let d = 1.0
-/// inspect(
-///   d.to_be_bytes(),
-///   content=(
-///     #|b"?\xf0\x00\x00\x00\x00\x00\x00"
-///   ),
-/// )
-/// ```
+#deprecated
+#doc(hidden)
 pub fn Double::to_be_bytes(self : Double) -> Bytes {
   self.reinterpret_as_uint64().to_be_bytes()
 }
@@ -282,17 +273,8 @@ pub fn Double::to_be_bytes(self : Double) -> Bytes {
 /// Returns a sequence of 8 bytes representing the double-precision
 /// floating-point number in little-endian order.
 ///
-/// Example:
-///
-/// ```moonbit
-/// let d = 1.0
-/// inspect(
-///   d.to_le_bytes(),
-///   content=(
-///     #|b"\x00\x00\x00\x00\x00\x00\xf0?"
-///   ),
-/// )
-/// ```
+#deprecated
+#doc(hidden)
 pub fn Double::to_le_bytes(self : Double) -> Bytes {
   self.reinterpret_as_uint64().to_le_bytes()
 }

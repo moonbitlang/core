@@ -74,10 +74,26 @@ test "panic is_close with invalid relative and absolute tolerances" {
 }
 
 ///|
+fn Double::to_le_bytes_local(self : Double) -> Bytes {
+  // self.reinterpret_as_uint64().to_le_bytes()
+  let buf = @buffer.new(size_hint=8)
+  buf.write_uint64_le(self.reinterpret_as_uint64())
+  return buf.to_bytes()
+}
+
+///|
+fn Double::to_be_bytes_local(self : Double) -> Bytes {
+  // self.reinterpret_as_uint64().to_be_bytes()
+  let buf = @buffer.new(size_hint=8)
+  buf.write_uint64_be(self.reinterpret_as_uint64())
+  return buf.to_bytes()
+}
+
+///|
 test "to_be_bytes with negative number" {
   let d = -123.456
   inspect(
-    d.to_be_bytes(),
+    d.to_be_bytes_local(),
     content=(
       #|b"\xc0^\xdd/\x1a\x9f\xbew"
     ),
@@ -87,7 +103,7 @@ test "to_be_bytes with negative number" {
 ///|
 test "to_le_bytes with infinity" {
   inspect(
-    (1.0 / 0.0).to_le_bytes(),
+    (1.0 / 0.0).to_le_bytes_local(),
     content="b\"\\x00\\x00\\x00\\x00\\x00\\x00\\xf0\\x7f\"",
   )
 }

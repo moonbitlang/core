@@ -80,13 +80,13 @@ test "binary representation" {
   // Convert to big-endian and little-endian bytes
   // Different byte orders should produce different results
   inspect(
-    num.to_be_bytes(),
+    num.to_be_bytes_local(),
     content=(
       #|b"?\xf0\x00\x00\x00\x00\x00\x00"
     ),
   )
   inspect(
-    num.to_le_bytes(),
+    num.to_le_bytes_local(),
     content=(
       #|b"\x00\x00\x00\x00\x00\x00\xf0?"
     ),
