@@ -38,7 +38,7 @@ test "basic operations" {
   inspect(Double::trunc(3.7), content="3")
 
   // Pow function
-  inspect(Double::pow(2.0, 3), content="8")
+  inspect(@math.pow(2.0, 3), content="8")
 
   // Sign
   inspect(Double::signum(-3.14), content="-1")

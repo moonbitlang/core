@@ -31,6 +31,7 @@
 ///   inspect((1.0 : Float).pow(-1.0), content="1")
 /// ```
 #as_free_fn
+#deprecated("Use @math.powf(base, exponent) instead.")
 pub fn Float::pow(self : Float, other : Float) -> Float {
   Float::from_double(self.to_double().pow(other.to_double()))
 }
