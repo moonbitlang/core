@@ -1953,13 +1953,11 @@ pub fn[A] Deque::flatten(self : Deque[Deque[A]]) -> Deque[A] {
   }
   let mut i = 0
   for deque in self {
-    let cap = deque.buf.length()
-    let head_len = cap - deque.head
-    target.buf.unsafe_blit(i, deque.buf, deque.head, head_len)
-    if head_len < deque.len {
-      target.buf.unsafe_blit(i + head_len, deque.buf, 0, deque.len - head_len)
-    }
-    i += deque.len
+    let (front, end) = deque.as_views()
+    target.buf.unsafe_blit(i, deque.buf, front.start_offset(), front.length())
+    i += front.length()
+    target.buf.unsafe_blit(i, deque.buf, end.start_offset(), end.length())
+    i += end.length()
   }
   target
 }
