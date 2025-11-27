@@ -32,14 +32,6 @@ fn not(Bool) -> Bool
 
 let null : Json
 
-fn[T : Compare] op_ge(T, T) -> Bool
-
-fn[T : Compare] op_gt(T, T) -> Bool
-
-fn[T : Compare] op_le(T, T) -> Bool
-
-fn[T : Compare] op_lt(T, T) -> Bool
-
 fn[T : Eq] op_notequal(T, T) -> Bool
 
 fn[T] panic() -> T
