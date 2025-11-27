@@ -380,23 +380,19 @@ pub fn[A : @string.ToStringView] ArrayView::join(
       size_hint = size_hint << 1
       let buf = StringBuilder::new(size_hint~)
       // buf.write_string(hd)
-      buf.write_substring(hd.data(), hd.start_offset(), hd.length())
+      buf.write_view(hd)
       if separator is "" {
         for s in tl {
           // buf.write_string(s)
           let s = s.to_string_view()
-          buf.write_substring(s.data(), s.start_offset(), s.length())
+          buf.write_view(s)
         }
       } else {
         for s in tl {
           let s = s.to_string_view()
-          buf.write_substring(
-            separator.data(),
-            separator.start_offset(),
-            separator.length(),
-          )
+          buf.write_view(separator)
           // buf.write_string(s)
-          buf.write_substring(s.data(), s.start_offset(), s.length())
+          buf.write_view(s)
         }
       }
       buf.to_string()
