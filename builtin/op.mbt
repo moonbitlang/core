@@ -14,24 +14,32 @@
 
 ///|
 #coverage.skip
+#deprecated
+#doc(hidden)
 pub fn[T : Compare] op_lt(self_ : T, other : T) -> Bool {
   Compare::op_lt(self_, other)
 }
 
 ///|
 #coverage.skip
+#deprecated
+#doc(hidden)
 pub fn[T : Compare] op_gt(self_ : T, other : T) -> Bool {
   Compare::op_gt(self_, other)
 }
 
 ///|
 #coverage.skip
+#deprecated
+#doc(hidden)
 pub fn[T : Compare] op_le(self_ : T, other : T) -> Bool {
   Compare::op_le(self_, other)
 }
 
 ///|
 #coverage.skip
+#deprecated
+#doc(hidden)
 pub fn[T : Compare] op_ge(self_ : T, other : T) -> Bool {
   Compare::op_ge(self_, other)
 }
