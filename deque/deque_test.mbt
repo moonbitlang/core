@@ -2079,3 +2079,14 @@ test "extract_if_folded" {
   inspect(extracted.as_views(), content="([10, 11, 12], [])")
   inspect(d.as_views(), content="([5, 6, 7, 8], [9])")
 }
+
+///|
+test "flatten reads uninitialized memory" {
+  let inner_deque_with_slack = @deque.new(capacity=10)
+  inner_deque_with_slack.push_back(1)
+  inner_deque_with_slack.push_back(2)
+  let outer_deque = @deque.from_array([inner_deque_with_slack])
+  let flat_deque = outer_deque.flatten()
+  assert_eq(flat_deque.length(), 2)
+  assert_eq(flat_deque.to_array(), [1, 2])
+}
