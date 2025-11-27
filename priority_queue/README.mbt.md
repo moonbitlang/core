@@ -11,7 +11,7 @@ You can use `new()` or `of()` to create a priority queue.
 ```moonbit
 ///|
 test {
-  let queue1 : @priority_queue.T[Int] = @priority_queue.new()
+  let queue1 : @priority_queue.PriorityQueue[Int] = @priority_queue.new()
   let queue2 = @priority_queue.from_array([1, 2, 3])
   @json.inspect(queue1, content=[])
   @json.inspect(queue2, content=[3, 2, 1])
@@ -57,7 +57,7 @@ Similarly, you can use the `is_empty` to determine whether the priority queue is
 ```moonbit
 ///|
 test {
-  let pq : @priority_queue.T[Int] = @priority_queue.new()
+  let pq : @priority_queue.PriorityQueue[Int] = @priority_queue.new()
   assert_eq(pq.is_empty(), true)
 }
 ```
@@ -81,7 +81,7 @@ You can use `push()` to add elements to the priority queue.
 ```moonbit
 ///|
 test {
-  let pq : @priority_queue.T[Int] = @priority_queue.new()
+  let pq : @priority_queue.PriorityQueue[Int] = @priority_queue.new()
   pq.push(1)
   pq.push(2)
   assert_eq(pq.peek(), Some(2))

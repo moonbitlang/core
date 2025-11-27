@@ -17,11 +17,11 @@
 ///
 /// # Example
 /// ```mbt
-///   let queue : @priority_queue.T[Int] = @priority_queue.new()
+///   let queue : @priority_queue.PriorityQueue[Int] = @priority_queue.new()
 ///   assert_eq(queue.length(), 0)
 /// ```
 #as_free_fn
-pub fn[A] T::new() -> T[A] {
+pub fn[A] PriorityQueue::new() -> PriorityQueue[A] {
   { len: 0, top: None }
 }
 
@@ -36,7 +36,9 @@ pub fn[A] T::new() -> T[A] {
 #as_free_fn
 #alias(of, deprecated="Use from_array instead")
 #as_free_fn(of, deprecated="Use from_array instead")
-pub fn[A : Compare] T::from_array(arr : ArrayView[A]) -> T[A] {
+pub fn[A : Compare] PriorityQueue::from_array(
+  arr : ArrayView[A],
+) -> PriorityQueue[A] {
   guard arr is [a0, ..] else { return new() }
   let len = arr.length()
   for i = 1, acc = { content: a0, sibling: None, child: None } {
@@ -70,13 +72,15 @@ fn[A] copy_node(x : Node[A]?) -> Node[A]? {
 /// let queue2 = queue.copy()
 /// inspect(queue2.length(), content="4")
 /// ```
-pub fn[A] T::copy(self : T[A]) -> T[A] {
-  let new_que : T[A] = { len: self.len, top: copy_node(self.top) }
+pub fn[A] PriorityQueue::copy(self : PriorityQueue[A]) -> PriorityQueue[A] {
+  let new_que : PriorityQueue[A] = { len: self.len, top: copy_node(self.top) }
   new_que
 }
 
 ///|
-pub fn[A : Compare] T::to_array(self : T[A]) -> Array[A] {
+pub fn[A : Compare] PriorityQueue::to_array(
+  self : PriorityQueue[A],
+) -> Array[A] {
   let arr = Array::new(capacity=self.len)
   let stack : Array[Node[A]?] = [self.top]
   while stack.pop() is Some(node) {
@@ -95,7 +99,7 @@ pub fn[A : Compare] T::to_array(self : T[A]) -> Array[A] {
 }
 
 ///|
-pub fn[A : Compare] T::iter(self : T[A]) -> Iter[A] {
+pub fn[A : Compare] PriorityQueue::iter(self : PriorityQueue[A]) -> Iter[A] {
   Iter::new(yield_ => {
     let arr = self.to_array()
     for i in 0..<arr.length() {
@@ -109,12 +113,14 @@ pub fn[A : Compare] T::iter(self : T[A]) -> Iter[A] {
 }
 
 ///|
-pub fn[A : Compare] T::iterator(self : T[A]) -> Iterator[A] {
+pub fn[A : Compare] PriorityQueue::iterator(
+  self : PriorityQueue[A],
+) -> Iterator[A] {
   self.to_array().iterator()
 }
 
 ///|
-pub impl[A : ToJson + Compare] ToJson for T[A] with to_json(self) {
+pub impl[A : ToJson + Compare] ToJson for PriorityQueue[A] with to_json(self) {
   let arr = []
   for x in self {
     arr.push(x.to_json())
@@ -124,7 +130,9 @@ pub impl[A : ToJson + Compare] ToJson for T[A] with to_json(self) {
 
 ///|
 #as_free_fn
-pub fn[K : Compare] T::from_iter(iter : Iter[K]) -> T[K] {
+pub fn[K : Compare] PriorityQueue::from_iter(
+  iter : Iter[K],
+) -> PriorityQueue[K] {
   let s = new()
   iter.each(e => s.push(e))
   s
@@ -132,7 +140,9 @@ pub fn[K : Compare] T::from_iter(iter : Iter[K]) -> T[K] {
 
 ///|
 #as_free_fn
-pub fn[K : Compare] T::from_iterator(iter : Iterator[K]) -> T[K] {
+pub fn[K : Compare] PriorityQueue::from_iterator(
+  iter : Iterator[K],
+) -> PriorityQueue[K] {
   let s = new()
   while iter.next() is Some(e) {
     s.push(e)
@@ -176,7 +186,7 @@ fn[A : Compare] merges(x : Node[A]?) -> Node[A]? {
 }
 
 ///|
-pub fn[A] T::length(self : T[A]) -> Int {
+pub fn[A] PriorityQueue::length(self : PriorityQueue[A]) -> Int {
   self.len
 }
 
@@ -191,7 +201,7 @@ pub fn[A] T::length(self : T[A]) -> Int {
 /// ```
 #internal(unsafe, "Panic if the queue is empty.")
 #doc(hidden)
-pub fn[A : Compare] T::unsafe_pop(self : T[A]) -> Unit {
+pub fn[A : Compare] PriorityQueue::unsafe_pop(self : PriorityQueue[A]) -> Unit {
   self.top = match self.top {
     None => abort("The PriorityQueue is empty!")
     Some({ child, .. }) => merges(child)
@@ -209,7 +219,7 @@ pub fn[A : Compare] T::unsafe_pop(self : T[A]) -> Unit {
 /// inspect(first, content="Some(4)")
 /// inspect(queue.length(), content="3")
 /// ```
-pub fn[A : Compare] T::pop(self : T[A]) -> A? {
+pub fn[A : Compare] PriorityQueue::pop(self : PriorityQueue[A]) -> A? {
   match self.top {
     None => None
     Some({ content, child, .. }) => {
@@ -229,7 +239,10 @@ pub fn[A : Compare] T::pop(self : T[A]) -> A? {
 /// queue.push(1)
 /// assert_eq(queue.length(), 1)
 /// ```
-pub fn[A : Compare] T::push(self : T[A], value : A) -> Unit {
+pub fn[A : Compare] PriorityQueue::push(
+  self : PriorityQueue[A],
+  value : A,
+) -> Unit {
   let x = { content: value, sibling: None, child: None }
   self.top = match self.top {
     None => Some(x)
@@ -247,7 +260,7 @@ pub fn[A : Compare] T::push(self : T[A], value : A) -> Unit {
 ///   let first = queue.peek() // Some(4)
 ///   assert_eq(first, Some(4))
 /// ```
-pub fn[A] T::peek(self : T[A]) -> A? {
+pub fn[A] PriorityQueue::peek(self : PriorityQueue[A]) -> A? {
   match self.top {
     None => None
     Some({ content, .. }) => Some(content)
@@ -263,7 +276,7 @@ pub fn[A] T::peek(self : T[A]) -> A? {
 /// queue.clear()
 /// assert_eq(queue.length(), 0)
 /// ```
-pub fn[A] T::clear(self : T[A]) -> Unit {
+pub fn[A] PriorityQueue::clear(self : PriorityQueue[A]) -> Unit {
   self.top = None
   self.len = 0
 }
@@ -273,15 +286,15 @@ pub fn[A] T::clear(self : T[A]) -> Unit {
 ///
 /// # Example
 /// ```mbt
-///   let queue : @priority_queue.T[Int] = @priority_queue.new()
+///   let queue : @priority_queue.PriorityQueue[Int] = @priority_queue.new()
 ///   assert_eq(queue.is_empty(), true)
 /// ```
-pub fn[A] T::is_empty(self : T[A]) -> Bool {
+pub fn[A] PriorityQueue::is_empty(self : PriorityQueue[A]) -> Bool {
   self.len == 0
 }
 
 ///|
-pub impl[A : Show + Compare] Show for T[A] with output(self, logger) {
+pub impl[A : Show + Compare] Show for PriorityQueue[A] with output(self, logger) {
   logger.write_iter(
     self.iter(),
     prefix="@priority_queue.from_array([",
@@ -290,10 +303,9 @@ pub impl[A : Show + Compare] Show for T[A] with output(self, logger) {
 }
 
 ///|
-pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for T[X] with arbitrary(
-  size,
-  rs,
-) {
+pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for PriorityQueue[
+  X,
+] with arbitrary(size, rs) {
   let len = if size == 0 { 0 } else { rs.next_positive_int() % size }
   guard len > 0 else { return new() }
   for i = 1, acc = { content: X::arbitrary(0, rs), sibling: None, child: None } {
@@ -308,7 +320,7 @@ pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for T[X] wit
 
 ///|
 test "priority queue arbitrary" {
-  let samples : Array[T[Int]] = @quickcheck.samples(20)
+  let samples : Array[PriorityQueue[Int]] = @quickcheck.samples(20)
   inspect(
     samples[5:10],
     content="[@priority_queue.from_array([]), @priority_queue.from_array([]), @priority_queue.from_array([0]), @priority_queue.from_array([0, 0]), @priority_queue.from_array([3, 2, 1, 0, 0, 0, 0])]",
@@ -320,6 +332,6 @@ test "priority queue arbitrary" {
 }
 
 ///|
-pub impl[K] Default for T[K] with default() {
+pub impl[K] Default for PriorityQueue[K] with default() {
   new()
 }
