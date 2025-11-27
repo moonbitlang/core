@@ -85,9 +85,27 @@ pub(open) trait Default {
 ///|
 /// Trait for a logger, where debug logs can be written into
 pub(open) trait Logger {
-  write_string(Self, String) -> Unit
-  write_substring(Self, String, Int, Int) -> Unit
+  write_string(Self, String) -> Unit = _
+  #deprecated("use `write_view` instead", skip_current_package=true)
+  write_substring(Self, String, Int, Int) -> Unit = _
+  write_view(Self, StringView) -> Unit = _
   write_char(Self, Char) -> Unit = _
+}
+
+///|
+impl Logger with write_substring(self, value, start, len) {
+  self.write_view(try! value[start:start + len])
+}
+
+///|
+impl Logger with write_string(self, value) {
+  self.write_view(value[:])
+}
+
+///|
+#deprecated("replace `impl write_substring` with `impl write_view`")
+impl Logger with write_view(self, value) {
+  self.write_substring(value.data(), value.start_offset(), value.length())
 }
 
 ///|

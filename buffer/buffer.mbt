@@ -846,7 +846,7 @@ pub fn Buffer::write_string_utf16be(buf : Self, string : StringView) -> Unit {
 ///
 /// ```moonbit
 ///   let buf = @buffer.new()
-///   buf.write_substring("Hello, World!", 0, 5)
+///   buf.write_view("Hello, World!"[:5])
 ///   inspect(
 ///     buf.contents(),
 ///     content=(
@@ -856,16 +856,15 @@ pub fn Buffer::write_string_utf16be(buf : Self, string : StringView) -> Unit {
 ///     ),
 ///   )
 /// ```
-pub impl Logger for Buffer with write_substring(
-  self : Buffer,
-  value : String,
-  start : Int,
-  len : Int,
-) -> Unit {
-  guard start >= 0 && len >= 0 && start + len <= value.length()
-  self.grow_if_necessary(self.len + len * 2)
-  self.data.blit_from_string(self.len, value, start, len)
-  self.len += len * 2
+pub impl Logger for Buffer with write_view(self : Buffer, value : StringView) -> Unit {
+  self.grow_if_necessary(self.len + value.length() * 2)
+  self.data.blit_from_string(
+    self.len,
+    value.data(),
+    value.start_offset(),
+    value.length(),
+  )
+  self.len += value.length() * 2
 }
 
 ///|

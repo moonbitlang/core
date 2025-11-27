@@ -111,14 +111,14 @@ pub fn end() -> Unit {
     let mut start = 0
     for j in 0..<str.length() {
       if str.unsafe_charcode_at(j) == '\n' {
-        line_buf.write_substring(str, start, j)
+        line_buf.write_view(try! str[start:j])
         println(line_buf.to_string())
         line_buf.reset()
         start = j + 1
       }
     }
     if start < str.length() {
-      line_buf.write_substring(str, start, str.length())
+      line_buf.write_view(try! str[start:])
     }
   }
   let trailing_line = line_buf.to_string()

@@ -91,19 +91,21 @@ pub impl Logger for StringBuilder with write_char(self, ch) {
 ///
 /// ```moonbit
 ///   let sb = StringBuilder::new()
-///   sb.write_substring("Hello, world!", 0, 5)
+///   sb.write_view("Hello, world!"[:5])
 ///   assert_eq(sb.to_string(), "Hello")
 /// ```
-pub impl Logger for StringBuilder with write_substring(
+pub impl Logger for StringBuilder with write_view(
   self : StringBuilder,
-  str : String,
-  start : Int,
-  len : Int,
+  str : StringView,
 ) -> Unit {
-  guard start >= 0 && len >= 0 && start + len <= str.length()
-  self.grow_if_necessary(self.len + len * 2)
-  self.data.blit_from_string(self.len, str, start, len)
-  self.len += len * 2
+  self.grow_if_necessary(self.len + str.length() * 2)
+  self.data.blit_from_string(
+    self.len,
+    str.data(),
+    str.start_offset(),
+    str.length(),
+  )
+  self.len += str.length() * 2
 }
 
 ///|

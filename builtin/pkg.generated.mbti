@@ -1094,8 +1094,10 @@ impl Hash for BytesView
 impl Hash for StringView
 
 pub(open) trait Logger {
-  write_string(Self, String) -> Unit
-  write_substring(Self, String, Int, Int) -> Unit
+  write_string(Self, String) -> Unit = _
+  #deprecated
+  write_substring(Self, String, Int, Int) -> Unit = _
+  write_view(Self, StringView) -> Unit = _
   write_char(Self, Char) -> Unit = _
 }
 fn[T : Show] &Logger::write_iter(Self, Iter[T], prefix? : String, suffix? : String, sep? : String, trailing? : Bool) -> Unit

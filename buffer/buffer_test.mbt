@@ -74,7 +74,7 @@ test "grow_if_necessary method" {
 ///|
 test "write_substring method" {
   let buf = @buffer.new(size_hint=10)
-  buf.write_substring("Hello, World!", 7, 5)
+  buf.write_view("Hello, World!"[7:12])
   inspect(buf, content="World")
 }
 
