@@ -97,6 +97,6 @@ test "weird behavior after drain" {
   inspect(deque.as_views(), content="([], [])")
   deque.push_back(31)
   deque.push_back(32)
-  inspect(deque.as_views(), content="([32, 16], [])") // <- here
+  inspect(deque.as_views(), content="([31, 32], [])") // <- here
   ignore(deque.pop_front())
 }

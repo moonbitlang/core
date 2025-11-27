@@ -1986,49 +1986,124 @@ pub fn[A] Deque::flatten(self : Deque[Deque[A]]) -> Deque[A] {
 /// inspect(deque, content="@deque.from_array([1, 2, 7, 8, 9])")
 /// ```
 pub fn[A] Deque::drain(self : Deque[A], start~ : Int, len? : Int) -> Deque[A] {
-  let len = match len {
-    Some(l) => if l > self.len { self.len } else { l }
-    None => self.len - start
+  // Verify parameters
+  if start >= self.len {
+    return new()
   }
+  let max_len = self.len - start
+  let len = if len is Some(l) && l <= max_len { l } else { max_len }
   if len == 0 {
     return new()
   }
+  // Prepare deque to return
   let deque = Deque::{
     buf: UninitializedArray::make(len),
     len,
     head: 0,
     tail: len - 1,
   }
-  let cap = self.buf.length()
-  let start_idx = (self.head + start) % cap
-  let start_len = cap - start_idx
-
-  // copy to deque
-  if start_len < len {
-    deque.buf.unsafe_blit(0, self.buf, start_idx, start_len)
-    deque.buf.unsafe_blit(start_len, self.buf, 0, len - start_len)
-    for i in 0..<start_len {
-      set_null(self.buf, (start_idx + i) % cap)
-    }
-    for i in 0..<(len - start_len) {
-      set_null(self.buf, i)
+  // Prepare slices
+  let (front, back) = self.as_views()
+  // We drain from front and back accordingly
+  if start < front.length() {
+    // draining from front
+    let front_max_drain = front.length() - start
+    if len <= front_max_drain {
+      // draining front only
+      // copy to deque
+      deque.buf.unsafe_blit(0, self.buf, front.start_offset() + start, len)
+      if start == 0 && len == front_max_drain {
+        // just set_null
+        for i in front.start_offset()..<self.buf.length() {
+          set_null(self.buf, i)
+        }
+        self.head = 0
+      } else {
+        // move back
+        let new_head = front.start_offset() + len
+        self.buf.unsafe_blit(new_head, self.buf, front.start_offset(), start)
+        // set_null
+        for i in front.start_offset()..<new_head {
+          set_null(self.buf, i)
+        }
+        self.head = new_head
+      }
+    } else {
+      // draining front and back
+      // copy to deque
+      deque.buf.unsafe_blit(
+        0,
+        self.buf,
+        front.start_offset() + start,
+        front_max_drain,
+      )
+      deque.buf.unsafe_blit(front_max_drain, self.buf, 0, len - front_max_drain)
+      // move back
+      if start > 0 {
+        // front is not empty
+        let back_remaining = len - front_max_drain
+        let back_len = back.length() - back_remaining
+        if back_len == 0 {
+          // back is empty
+          for i in 0..<back.length() {
+            set_null(self.buf, i)
+          }
+          for i in (front.start_offset() + start)..<self.buf.length() {
+            set_null(self.buf, i)
+          }
+          self.tail = front.start_offset() + start - 1
+        } else {
+          // back is not empty
+          let new_head = front.start_offset() + front_max_drain
+          self.buf.unsafe_blit(new_head, self.buf, front.start_offset(), start)
+          for i in front.start_offset()..<new_head {
+            set_null(self.buf, i)
+          }
+          self.head = new_head
+          self.buf.unsafe_blit(0, self.buf, back_remaining, back_len)
+          for i in back_len..<back.length() {
+            set_null(self.buf, i)
+          }
+          self.tail = back_len - 1
+        }
+      } else {
+        // set_null
+        for i in (front.start_offset() + start)..<self.buf.length() {
+          set_null(self.buf, i)
+        }
+        for i in 0..<(len - front_max_drain) {
+          set_null(self.buf, i)
+        }
+        self.head = len - front_max_drain
+      }
     }
   } else {
-    deque.buf.unsafe_blit(0, self.buf, start_idx, len)
-    for i in 0..<len {
-      set_null(self.buf, start_idx + i)
+    // draining from back only
+    // copy to deque
+    let back_start = start - front.length()
+    deque.buf.unsafe_blit(0, self.buf, back_start, len)
+    // move back
+    self.buf.unsafe_blit(
+      back_start,
+      self.buf,
+      back_start + len,
+      back.length() - back_start - len,
+    )
+    // set_null
+    for i in (back.length() - len)..<back.length() {
+      set_null(self.buf, i)
+    }
+    if back.length() == len {
+      self.tail = self.buf.length() - 1
+    } else {
+      self.tail = back.length() - len - 1
     }
   }
-
-  // move self
-  // TODO: use blit
-  let new_head = self.head + len
-  for i = start - 1; i >= 0; i = i - 1 {
-    self.buf[(new_head + i) % cap] = self.buf[(self.head + i) % cap]
-    set_null(self.buf, (self.head + i) % cap)
-  }
-  self.head = new_head % cap
   self.len -= len
+  if self.len == 0 {
+    self.head = 0
+    self.tail = 0
+  }
   deque
 }
 

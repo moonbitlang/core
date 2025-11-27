@@ -1156,7 +1156,7 @@ test "drain when wrapped around" {
   dq..push_front(3)..push_front(2)..push_front(1)
   inspect(dq.as_views(), content="([1, 2, 3], [4, 5, 6])")
   let dq2 = dq.drain(start=2, len=2)
-  inspect(dq.as_views(), content="([1], [2, 5, 6])")
+  inspect(dq.as_views(), content="([1, 2], [5, 6])")
   inspect(dq2, content="@deque.from_array([3, 4])")
 
   // when the area to be drained is not wrapped around
@@ -1172,8 +1172,51 @@ test "drain when wrapped around" {
   dq..push_front(4)..push_front(3)..push_front(2)..push_front(1)
   inspect(dq.as_views(), content="([1, 2], [3, 4, 5, 6])")
   let dq2 = dq.drain(start=3, len=2)
-  inspect(dq.as_views(), content="([1, 2, 3, 6], [])")
+  inspect(dq.as_views(), content="([1, 2], [3, 6])")
   inspect(dq2, content="@deque.from_array([4, 5])")
+}
+
+///|
+test "drain invalid inputs" {
+  let dq = @deque.from_array([5, 6])
+  let dq2 = dq.drain(start=100)
+  inspect(dq.as_views(), content="([5, 6], [])")
+  inspect(dq2, content="@deque.from_array([])")
+  let dq = @deque.from_array([5, 6])
+  let dq2 = dq.drain(start=1, len=100)
+  inspect(dq.as_views(), content="([5], [])")
+  inspect(dq2, content="@deque.from_array([6])")
+  let dq = @deque.from_array([5, 6])
+  let dq2 = dq.drain(start=1, len=0)
+  inspect(dq.as_views(), content="([5, 6], [])")
+  inspect(dq2, content="@deque.from_array([])")
+}
+
+///|
+test "drain complementary tests" {
+  // when back is drained completely
+  let dq = @deque.from_array([5, 6])
+  dq..push_front(4)..push_front(3)..push_front(2)..push_front(1)
+  inspect(dq.as_views(), content="([1, 2], [3, 4, 5, 6])")
+  let dq2 = dq.drain(start=1, len=5)
+  inspect(dq.as_views(), content="([1], [])")
+  inspect(dq2, content="@deque.from_array([2, 3, 4, 5, 6])")
+
+  // when front is drained completely
+  let dq = @deque.from_array([5, 6])
+  dq..push_front(4)..push_front(3)..push_front(2)..push_front(1)
+  inspect(dq.as_views(), content="([1, 2], [3, 4, 5, 6])")
+  let dq2 = dq.drain(start=0, len=5)
+  inspect(dq.as_views(), content="([6], [])")
+  inspect(dq2, content="@deque.from_array([1, 2, 3, 4, 5])")
+
+  // when only back is drained
+  let dq = @deque.from_array([5, 6])
+  dq..push_front(4)..push_front(3)..push_front(2)..push_front(1)
+  inspect(dq.as_views(), content="([1, 2], [3, 4, 5, 6])")
+  let dq2 = dq.drain(start=2, len=4)
+  inspect(dq.as_views(), content="([1, 2], [])")
+  inspect(dq2, content="@deque.from_array([3, 4, 5, 6])")
 }
 
 ///|
