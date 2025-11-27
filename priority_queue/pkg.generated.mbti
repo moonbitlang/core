@@ -11,31 +11,32 @@ import(
 // Errors
 
 // Types and methods
-type T[A]
-fn[A] T::clear(Self[A]) -> Unit
-fn[A] T::copy(Self[A]) -> Self[A]
+#alias(T, deprecated)
+type PriorityQueue[A]
+fn[A] PriorityQueue::clear(Self[A]) -> Unit
+fn[A] PriorityQueue::copy(Self[A]) -> Self[A]
 #alias(of, deprecated)
 #as_free_fn(of, deprecated)
 #as_free_fn
-fn[A : Compare] T::from_array(ArrayView[A]) -> Self[A]
+fn[A : Compare] PriorityQueue::from_array(ArrayView[A]) -> Self[A]
 #as_free_fn
-fn[K : Compare] T::from_iter(Iter[K]) -> Self[K]
+fn[K : Compare] PriorityQueue::from_iter(Iter[K]) -> Self[K]
 #as_free_fn
-fn[K : Compare] T::from_iterator(Iterator[K]) -> Self[K]
-fn[A] T::is_empty(Self[A]) -> Bool
-fn[A : Compare] T::iter(Self[A]) -> Iter[A]
-fn[A : Compare] T::iterator(Self[A]) -> Iterator[A]
-fn[A] T::length(Self[A]) -> Int
+fn[K : Compare] PriorityQueue::from_iterator(Iterator[K]) -> Self[K]
+fn[A] PriorityQueue::is_empty(Self[A]) -> Bool
+fn[A : Compare] PriorityQueue::iter(Self[A]) -> Iter[A]
+fn[A : Compare] PriorityQueue::iterator(Self[A]) -> Iterator[A]
+fn[A] PriorityQueue::length(Self[A]) -> Int
 #as_free_fn
-fn[A] T::new() -> Self[A]
-fn[A] T::peek(Self[A]) -> A?
-fn[A : Compare] T::pop(Self[A]) -> A?
-fn[A : Compare] T::push(Self[A], A) -> Unit
-fn[A : Compare] T::to_array(Self[A]) -> Array[A]
-impl[K] Default for T[K]
-impl[A : Show + Compare] Show for T[A]
-impl[A : ToJson + Compare] ToJson for T[A]
-impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for T[X]
+fn[A] PriorityQueue::new() -> Self[A]
+fn[A] PriorityQueue::peek(Self[A]) -> A?
+fn[A : Compare] PriorityQueue::pop(Self[A]) -> A?
+fn[A : Compare] PriorityQueue::push(Self[A], A) -> Unit
+fn[A : Compare] PriorityQueue::to_array(Self[A]) -> Array[A]
+impl[K] Default for PriorityQueue[K]
+impl[A : Show + Compare] Show for PriorityQueue[A]
+impl[A : ToJson + Compare] ToJson for PriorityQueue[A]
+impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for PriorityQueue[X]
 
 // Type aliases
 

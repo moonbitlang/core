@@ -14,7 +14,7 @@
 
 ///|
 test "new" {
-  let queue : @priority_queue.T[Int] = @priority_queue.new()
+  let queue : @priority_queue.PriorityQueue[Int] = @priority_queue.new()
   assert_eq(queue.length(), 0)
 }
 
@@ -22,7 +22,7 @@ test "new" {
 test "from_array" {
   let pq = @priority_queue.from_array([1, 3, 6, 4, 5])
   inspect(pq.peek(), content="Some(6)")
-  let pq_ : @priority_queue.T[Int] = @priority_queue.from_array([])
+  let pq_ : @priority_queue.PriorityQueue[Int] = @priority_queue.from_array([])
   inspect(pq_.peek(), content="None")
 }
 
@@ -174,7 +174,9 @@ test "from_iter single element iter" {
 
 ///|
 test "from_iter empty iter" {
-  let pq : @priority_queue.T[Int] = @priority_queue.from_iter(Iter::empty())
+  let pq : @priority_queue.PriorityQueue[Int] = @priority_queue.from_iter(
+    Iter::empty(),
+  )
   inspect(pq, content="@priority_queue.from_array([])")
 }
 
@@ -196,7 +198,7 @@ test "from_iterator single element iter" {
 
 ///|
 test "from_iterator empty iter" {
-  let pq : @priority_queue.T[Int] = @priority_queue.from_iterator(
+  let pq : @priority_queue.PriorityQueue[Int] = @priority_queue.from_iterator(
     Iterator::empty(),
   )
   inspect(pq, content="@priority_queue.from_array([])")
