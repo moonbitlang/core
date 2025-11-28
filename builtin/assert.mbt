@@ -76,7 +76,6 @@ pub fn[T : Eq + Show] assert_eq(
 ///
 /// ```moonbit
 ///   assert_not_eq(1, 2) // Passes
-///
 /// ```
 #callsite(autofill(loc))
 #coverage.skip

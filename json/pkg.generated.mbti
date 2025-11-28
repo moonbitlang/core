@@ -2,20 +2,20 @@
 package "moonbitlang/core/json"
 
 // Values
-fn[T : FromJson] from_json(Json, path? : JsonPath) -> T raise JsonDecodeError
+pub fn[T : FromJson] from_json(Json, path? : JsonPath) -> T raise JsonDecodeError
 
 #callsite(autofill(args_loc, loc))
-fn inspect(&ToJson, content? : Json, loc~ : SourceLoc, args_loc~ : ArgsLoc) -> Unit raise InspectError
+pub fn inspect(&ToJson, content? : Json, loc~ : SourceLoc, args_loc~ : ArgsLoc) -> Unit raise InspectError
 
-fn parse(StringView, max_nesting_depth? : Int) -> Json raise ParseError
+pub fn parse(StringView, max_nesting_depth? : Int) -> Json raise ParseError
 
-fn valid(StringView) -> Bool
+pub fn valid(StringView) -> Bool
 
 // Errors
 pub(all) suberror JsonDecodeError (JsonPath, String)
-impl Eq for JsonDecodeError
-impl Show for JsonDecodeError
-impl ToJson for JsonDecodeError
+pub impl Eq for JsonDecodeError
+pub impl Show for JsonDecodeError
+pub impl ToJson for JsonDecodeError
 
 pub(all) suberror ParseError {
   InvalidChar(Position, Char)
@@ -24,42 +24,42 @@ pub(all) suberror ParseError {
   InvalidIdentEscape(Position)
   DepthLimitExceeded
 }
-impl Eq for ParseError
-impl Show for ParseError
-impl ToJson for ParseError
+pub impl Eq for ParseError
+pub impl Show for ParseError
+pub impl ToJson for ParseError
 
 // Types and methods
 type JsonPath
-fn JsonPath::add_index(Self, Int) -> Self
-fn JsonPath::add_key(Self, String) -> Self
-impl Eq for JsonPath
-impl Show for JsonPath
-impl ToJson for JsonPath
+pub fn JsonPath::add_index(Self, Int) -> Self
+pub fn JsonPath::add_key(Self, String) -> Self
+pub impl Eq for JsonPath
+pub impl Show for JsonPath
+pub impl ToJson for JsonPath
 
 pub(all) struct Position {
   line : Int
   column : Int
 }
-impl Eq for Position
-impl ToJson for Position
+pub impl Eq for Position
+pub impl ToJson for Position
 
 type Replacer
-fn Replacer::exclude(ArrayView[StringView]) -> Self
-fn Replacer::keep(ArrayView[StringView]) -> Self
-fn Replacer::new((String, Json) -> Json?) -> Self
+pub fn Replacer::exclude(ArrayView[StringView]) -> Self
+pub fn Replacer::keep(ArrayView[StringView]) -> Self
+pub fn Replacer::new((String, Json) -> Json?) -> Self
 
-fn Json::as_array(Self) -> Array[Self]?
-fn Json::as_bool(Self) -> Bool?
-fn Json::as_null(Self) -> Unit?
-fn Json::as_number(Self) -> Double?
-fn Json::as_object(Self) -> Map[String, Self]?
-fn Json::as_string(Self) -> String?
-fn Json::item(Self, Int) -> Self?
-fn Json::stringify(Self, escape_slash? : Bool, indent? : Int, replacer? : Replacer) -> String
-fn Json::transform(Self, Replacer) -> Self
-fn Json::value(Self, String) -> Self?
-impl Show for Json
-impl ToJson for Json
+pub fn Json::as_array(Self) -> Array[Self]?
+pub fn Json::as_bool(Self) -> Bool?
+pub fn Json::as_null(Self) -> Unit?
+pub fn Json::as_number(Self) -> Double?
+pub fn Json::as_object(Self) -> Map[String, Self]?
+pub fn Json::as_string(Self) -> String?
+pub fn Json::item(Self, Int) -> Self?
+pub fn Json::stringify(Self, escape_slash? : Bool, indent? : Int, replacer? : Replacer) -> String
+pub fn Json::transform(Self, Replacer) -> Self
+pub fn Json::value(Self, String) -> Self?
+pub impl Show for Json
+pub impl ToJson for Json
 
 // Type aliases
 
@@ -67,37 +67,37 @@ impl ToJson for Json
 pub(open) trait FromJson {
   from_json(Json, JsonPath) -> Self raise JsonDecodeError
 }
-impl FromJson for Unit
-impl FromJson for Bool
-impl FromJson for Char
-impl FromJson for Int
-impl FromJson for Int64
-impl FromJson for UInt
-impl FromJson for UInt64
-impl FromJson for Float
-impl FromJson for Double
-impl FromJson for String
-impl[T : FromJson] FromJson for T?
-impl[Ok : FromJson, Err : FromJson] FromJson for Result[Ok, Err]
-impl[X : FromJson] FromJson for FixedArray[X]
-impl FromJson for Bytes
-impl[X : FromJson] FromJson for Array[X]
-impl FromJson for Json
-impl[V : FromJson] FromJson for Map[String, V]
-impl[A : FromJson, B : FromJson] FromJson for (A, B)
-impl[A : FromJson, B : FromJson, C : FromJson] FromJson for (A, B, C)
-impl[A : FromJson, B : FromJson, C : FromJson, D : FromJson] FromJson for (A, B, C, D)
-impl[A : FromJson, B : FromJson, C : FromJson, D : FromJson, E : FromJson] FromJson for (A, B, C, D, E)
-impl[A : FromJson, B : FromJson, C : FromJson, D : FromJson, E : FromJson, F : FromJson] FromJson for (A, B, C, D, E, F)
-impl[A : FromJson, B : FromJson, C : FromJson, D : FromJson, E : FromJson, F : FromJson, G : FromJson] FromJson for (A, B, C, D, E, F, G)
-impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJson, T5 : FromJson, T6 : FromJson, T7 : FromJson] FromJson for (T0, T1, T2, T3, T4, T5, T6, T7)
-impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJson, T5 : FromJson, T6 : FromJson, T7 : FromJson, T8 : FromJson] FromJson for (T0, T1, T2, T3, T4, T5, T6, T7, T8)
-impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJson, T5 : FromJson, T6 : FromJson, T7 : FromJson, T8 : FromJson, T9 : FromJson] FromJson for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9)
-impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJson, T5 : FromJson, T6 : FromJson, T7 : FromJson, T8 : FromJson, T9 : FromJson, T10 : FromJson] FromJson for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)
-impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJson, T5 : FromJson, T6 : FromJson, T7 : FromJson, T8 : FromJson, T9 : FromJson, T10 : FromJson, T11 : FromJson] FromJson for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11)
-impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJson, T5 : FromJson, T6 : FromJson, T7 : FromJson, T8 : FromJson, T9 : FromJson, T10 : FromJson, T11 : FromJson, T12 : FromJson] FromJson for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12)
-impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJson, T5 : FromJson, T6 : FromJson, T7 : FromJson, T8 : FromJson, T9 : FromJson, T10 : FromJson, T11 : FromJson, T12 : FromJson, T13 : FromJson] FromJson for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13)
-impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJson, T5 : FromJson, T6 : FromJson, T7 : FromJson, T8 : FromJson, T9 : FromJson, T10 : FromJson, T11 : FromJson, T12 : FromJson, T13 : FromJson, T14 : FromJson] FromJson for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14)
-impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJson, T5 : FromJson, T6 : FromJson, T7 : FromJson, T8 : FromJson, T9 : FromJson, T10 : FromJson, T11 : FromJson, T12 : FromJson, T13 : FromJson, T14 : FromJson, T15 : FromJson] FromJson for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15)
-impl FromJson for StringView
+pub impl FromJson for Unit
+pub impl FromJson for Bool
+pub impl FromJson for Char
+pub impl FromJson for Int
+pub impl FromJson for Int64
+pub impl FromJson for UInt
+pub impl FromJson for UInt64
+pub impl FromJson for Float
+pub impl FromJson for Double
+pub impl FromJson for String
+pub impl[T : FromJson] FromJson for T?
+pub impl[Ok : FromJson, Err : FromJson] FromJson for Result[Ok, Err]
+pub impl[X : FromJson] FromJson for FixedArray[X]
+pub impl FromJson for Bytes
+pub impl[X : FromJson] FromJson for Array[X]
+pub impl FromJson for Json
+pub impl[V : FromJson] FromJson for Map[String, V]
+pub impl[A : FromJson, B : FromJson] FromJson for (A, B)
+pub impl[A : FromJson, B : FromJson, C : FromJson] FromJson for (A, B, C)
+pub impl[A : FromJson, B : FromJson, C : FromJson, D : FromJson] FromJson for (A, B, C, D)
+pub impl[A : FromJson, B : FromJson, C : FromJson, D : FromJson, E : FromJson] FromJson for (A, B, C, D, E)
+pub impl[A : FromJson, B : FromJson, C : FromJson, D : FromJson, E : FromJson, F : FromJson] FromJson for (A, B, C, D, E, F)
+pub impl[A : FromJson, B : FromJson, C : FromJson, D : FromJson, E : FromJson, F : FromJson, G : FromJson] FromJson for (A, B, C, D, E, F, G)
+pub impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJson, T5 : FromJson, T6 : FromJson, T7 : FromJson] FromJson for (T0, T1, T2, T3, T4, T5, T6, T7)
+pub impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJson, T5 : FromJson, T6 : FromJson, T7 : FromJson, T8 : FromJson] FromJson for (T0, T1, T2, T3, T4, T5, T6, T7, T8)
+pub impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJson, T5 : FromJson, T6 : FromJson, T7 : FromJson, T8 : FromJson, T9 : FromJson] FromJson for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9)
+pub impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJson, T5 : FromJson, T6 : FromJson, T7 : FromJson, T8 : FromJson, T9 : FromJson, T10 : FromJson] FromJson for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)
+pub impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJson, T5 : FromJson, T6 : FromJson, T7 : FromJson, T8 : FromJson, T9 : FromJson, T10 : FromJson, T11 : FromJson] FromJson for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11)
+pub impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJson, T5 : FromJson, T6 : FromJson, T7 : FromJson, T8 : FromJson, T9 : FromJson, T10 : FromJson, T11 : FromJson, T12 : FromJson] FromJson for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12)
+pub impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJson, T5 : FromJson, T6 : FromJson, T7 : FromJson, T8 : FromJson, T9 : FromJson, T10 : FromJson, T11 : FromJson, T12 : FromJson, T13 : FromJson] FromJson for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13)
+pub impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJson, T5 : FromJson, T6 : FromJson, T7 : FromJson, T8 : FromJson, T9 : FromJson, T10 : FromJson, T11 : FromJson, T12 : FromJson, T13 : FromJson, T14 : FromJson] FromJson for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14)
+pub impl[T0 : FromJson, T1 : FromJson, T2 : FromJson, T3 : FromJson, T4 : FromJson, T5 : FromJson, T6 : FromJson, T7 : FromJson, T8 : FromJson, T9 : FromJson, T10 : FromJson, T11 : FromJson, T12 : FromJson, T13 : FromJson, T14 : FromJson, T15 : FromJson] FromJson for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15)
+pub impl FromJson for StringView
 

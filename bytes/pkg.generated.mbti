@@ -6,64 +6,65 @@ import(
 )
 
 // Values
-fn default() -> Bytes
+pub fn default() -> Bytes
 
 // Errors
 
 // Types and methods
-fn Bytes::find(Bytes, BytesView) -> Int?
+pub fn Bytes::find(Bytes, BytesView) -> Int?
 #alias(of, deprecated)
 #as_free_fn(of, deprecated)
 #as_free_fn(deprecated)
-fn Bytes::from_array(ArrayView[Byte]) -> Bytes
+pub fn Bytes::from_array(ArrayView[Byte]) -> Bytes
 #as_free_fn(deprecated)
 #deprecated
-fn Bytes::from_fixedarray(FixedArray[Byte], len? : Int) -> Bytes
+pub fn Bytes::from_fixedarray(FixedArray[Byte], len? : Int) -> Bytes
 #as_free_fn(deprecated)
-fn Bytes::from_iter(Iter[Byte]) -> Bytes
+pub fn Bytes::from_iter(Iter[Byte]) -> Bytes
 #as_free_fn(deprecated)
-fn Bytes::from_iterator(Iterator[Byte]) -> Bytes
-fn Bytes::get(Bytes, Int) -> Byte?
-fn Bytes::iter(Bytes) -> Iter[Byte]
-fn Bytes::iter2(Bytes) -> Iter2[Int, Byte]
-fn Bytes::iterator(Bytes) -> Iterator[Byte]
-fn Bytes::iterator2(Bytes) -> Iterator2[Int, Byte]
-fn Bytes::repeat(Bytes, Int) -> Bytes
-fn Bytes::rev_find(Bytes, BytesView) -> Int?
+pub fn Bytes::from_iterator(Iterator[Byte]) -> Bytes
+pub fn Bytes::get(Bytes, Int) -> Byte?
+pub fn Bytes::iter(Bytes) -> Iter[Byte]
+pub fn Bytes::iter2(Bytes) -> Iter2[Int, Byte]
+pub fn Bytes::iterator(Bytes) -> Iterator[Byte]
+pub fn Bytes::iterator2(Bytes) -> Iterator2[Int, Byte]
+pub fn Bytes::repeat(Bytes, Int) -> Bytes
+pub fn Bytes::rev_find(Bytes, BytesView) -> Int?
 #alias("_[_:_]")
-fn Bytes::sub(Bytes, start? : Int, end? : Int) -> BytesView
-fn Bytes::to_array(Bytes) -> Array[Byte]
+pub fn Bytes::sub(Bytes, start? : Int, end? : Int) -> BytesView
+pub fn Bytes::to_array(Bytes) -> Array[Byte]
 #label_migration(len, fill=false)
-fn Bytes::to_fixedarray(Bytes, len? : Int) -> FixedArray[Byte]
-impl Add for Bytes
-impl Default for Bytes
-impl Hash for Bytes
-impl Show for Bytes
-impl ToJson for Bytes
+pub fn Bytes::to_fixedarray(Bytes, len? : Int) -> FixedArray[Byte]
+pub impl Add for Bytes
+pub impl Default for Bytes
+pub impl Hash for Bytes
+pub impl Show for Bytes
+pub impl ToJson for Bytes
 
 #alias("_[_]")
-fn BytesView::at(Self, Int) -> Byte
-fn BytesView::data(Self) -> Bytes
-fn BytesView::find(Self, Self) -> Int?
-fn BytesView::get(Self, Int) -> Byte?
-fn BytesView::iter(Self) -> Iter[Byte]
-fn BytesView::iter2(Self) -> Iter2[Int, Byte]
-fn BytesView::iterator(Self) -> Iterator[Byte]
-fn BytesView::iterator2(Self) -> Iterator2[Int, Byte]
-fn BytesView::length(Self) -> Int
-fn BytesView::rev_find(Self, Self) -> Int?
-fn BytesView::start_offset(Self) -> Int
+pub fn BytesView::at(Self, Int) -> Byte
+pub fn BytesView::data(Self) -> Bytes
+pub fn BytesView::find(Self, Self) -> Int?
+pub fn BytesView::get(Self, Int) -> Byte?
+pub fn BytesView::iter(Self) -> Iter[Byte]
+pub fn BytesView::iter2(Self) -> Iter2[Int, Byte]
+pub fn BytesView::iterator(Self) -> Iterator[Byte]
+pub fn BytesView::iterator2(Self) -> Iterator2[Int, Byte]
+pub fn BytesView::length(Self) -> Int
+pub fn BytesView::rev_find(Self, Self) -> Int?
+pub fn BytesView::start_offset(Self) -> Int
 #alias("_[_:_]")
-fn BytesView::sub(Self, start? : Int, end? : Int) -> Self
-fn BytesView::to_array(Self) -> Array[Byte]
-fn BytesView::to_bytes(Self) -> Bytes
-fn BytesView::to_fixedarray(Self) -> FixedArray[Byte]
-impl Compare for BytesView
-impl Eq for BytesView
-impl Show for BytesView
-impl ToJson for BytesView
+pub fn BytesView::sub(Self, start? : Int, end? : Int) -> Self
+pub fn BytesView::to_array(Self) -> Array[Byte]
+pub fn BytesView::to_bytes(Self) -> Bytes
+pub fn BytesView::to_fixedarray(Self) -> FixedArray[Byte]
+pub impl Compare for BytesView
+pub impl Eq for BytesView
+pub impl Show for BytesView
+pub impl ToJson for BytesView
 
 // Type aliases
+#deprecated
 pub using @builtin {type BytesView as View}
 
 // Traits

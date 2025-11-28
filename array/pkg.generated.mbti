@@ -7,62 +7,63 @@ import(
 )
 
 // Values
-fn[A, B, C] zip_with(Array[A], Array[B], (A, B) -> C raise?) -> Array[C] raise?
+pub fn[A, B, C] zip_with(Array[A], Array[B], (A, B) -> C raise?) -> Array[C] raise?
 
 // Errors
 
 // Types and methods
-fn FixedArray::blit_from_bytesview(Self[Byte], Int, BytesView) -> Unit
-fn[T] FixedArray::copy(Self[T]) -> Self[T]
-fn[T] FixedArray::sort_by(Self[T], (T, T) -> Int) -> Unit
-fn[T, K : Compare] FixedArray::sort_by_key(Self[T], (T) -> K) -> Unit
-fn[T : Compare] FixedArray::stable_sort(Self[T]) -> Unit
-fn FixedArray::unsafe_write_uint16_be(Self[Byte], Int, UInt16) -> Unit
-fn FixedArray::unsafe_write_uint16_le(Self[Byte], Int, UInt16) -> Unit
-fn FixedArray::unsafe_write_uint32_be(Self[Byte], Int, UInt) -> Unit
-fn FixedArray::unsafe_write_uint32_le(Self[Byte], Int, UInt) -> Unit
-fn FixedArray::unsafe_write_uint64_be(Self[Byte], Int, UInt64) -> Unit
-fn FixedArray::unsafe_write_uint64_le(Self[Byte], Int, UInt64) -> Unit
+pub fn FixedArray::blit_from_bytesview(Self[Byte], Int, BytesView) -> Unit
+pub fn[T] FixedArray::copy(Self[T]) -> Self[T]
+pub fn[T] FixedArray::sort_by(Self[T], (T, T) -> Int) -> Unit
+pub fn[T, K : Compare] FixedArray::sort_by_key(Self[T], (T) -> K) -> Unit
+pub fn[T : Compare] FixedArray::stable_sort(Self[T]) -> Unit
+pub fn FixedArray::unsafe_write_uint16_be(Self[Byte], Int, UInt16) -> Unit
+pub fn FixedArray::unsafe_write_uint16_le(Self[Byte], Int, UInt16) -> Unit
+pub fn FixedArray::unsafe_write_uint32_be(Self[Byte], Int, UInt) -> Unit
+pub fn FixedArray::unsafe_write_uint32_le(Self[Byte], Int, UInt) -> Unit
+pub fn FixedArray::unsafe_write_uint64_be(Self[Byte], Int, UInt64) -> Unit
+pub fn FixedArray::unsafe_write_uint64_le(Self[Byte], Int, UInt64) -> Unit
 
-fn[T] Array::copy(Self[T]) -> Self[T]
-fn[A, B] Array::filter_map(Self[A], (A) -> B? raise?) -> Self[B] raise?
-fn[T] Array::from_iter(Iter[T]) -> Self[T]
-fn[T] Array::from_iterator(Iterator[T]) -> Self[T]
-fn[X] Array::iterator(Self[X]) -> Iterator[X]
-fn[X] Array::iterator2(Self[X]) -> Iterator2[Int, X]
-fn[A : @string.ToStringView] Array::join(Self[A], StringView) -> String
-fn[A] Array::last(Self[A]) -> A?
-fn[T] Array::push_iter(Self[T], Iter[T]) -> Unit
-fn[X] Array::rev_iterator(Self[X]) -> Iterator[X]
-fn[T] Array::shuffle(Self[T], rand~ : (Int) -> Int) -> Self[T]
-fn[T] Array::shuffle_in_place(Self[T], rand~ : (Int) -> Int) -> Unit
-fn[T : Compare] Array::sort(Self[T]) -> Unit
-fn[T] Array::sort_by(Self[T], (T, T) -> Int) -> Unit
-fn[T, K : Compare] Array::sort_by_key(Self[T], (T) -> K) -> Unit
-fn[T1, T2] Array::unzip(Self[(T1, T2)]) -> (Self[T1], Self[T2])
-fn[A, B] Array::zip(Self[A], Self[B]) -> Self[(A, B)]
-fn[A, B] Array::zip_to_iter2(Self[A], Self[B]) -> Iter2[A, B]
+pub fn[T] Array::copy(Self[T]) -> Self[T]
+pub fn[A, B] Array::filter_map(Self[A], (A) -> B? raise?) -> Self[B] raise?
+pub fn[T] Array::from_iter(Iter[T]) -> Self[T]
+pub fn[T] Array::from_iterator(Iterator[T]) -> Self[T]
+pub fn[X] Array::iterator(Self[X]) -> Iterator[X]
+pub fn[X] Array::iterator2(Self[X]) -> Iterator2[Int, X]
+pub fn[A : @string.ToStringView] Array::join(Self[A], StringView) -> String
+pub fn[A] Array::last(Self[A]) -> A?
+pub fn[T] Array::push_iter(Self[T], Iter[T]) -> Unit
+pub fn[X] Array::rev_iterator(Self[X]) -> Iterator[X]
+pub fn[T] Array::shuffle(Self[T], rand~ : (Int) -> Int) -> Self[T]
+pub fn[T] Array::shuffle_in_place(Self[T], rand~ : (Int) -> Int) -> Unit
+pub fn[T : Compare] Array::sort(Self[T]) -> Unit
+pub fn[T] Array::sort_by(Self[T], (T, T) -> Int) -> Unit
+pub fn[T, K : Compare] Array::sort_by_key(Self[T], (T) -> K) -> Unit
+pub fn[T1, T2] Array::unzip(Self[(T1, T2)]) -> (Self[T1], Self[T2])
+pub fn[A, B] Array::zip(Self[A], Self[B]) -> Self[(A, B)]
+pub fn[A, B] Array::zip_to_iter2(Self[A], Self[B]) -> Iter2[A, B]
 
-fn[T] ArrayView::all(Self[T], (T) -> Bool raise?) -> Bool raise?
-fn[T] ArrayView::any(Self[T], (T) -> Bool raise?) -> Bool raise?
-fn[T : Eq] ArrayView::contains(Self[T], T) -> Bool
-fn[T] ArrayView::each(Self[T], (T) -> Unit raise?) -> Unit raise?
-fn[T] ArrayView::eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?
-fn[T] ArrayView::filter(Self[T], (T) -> Bool raise?) -> Array[T] raise?
-fn[A, B] ArrayView::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
-fn[A, B] ArrayView::foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
-fn[A] ArrayView::iter2(Self[A]) -> Iter2[Int, A]
-fn[X] ArrayView::iterator2(Self[X]) -> Iterator2[Int, X]
-fn[A : @string.ToStringView] ArrayView::join(Self[A], StringView) -> String
-fn[T, U] ArrayView::map(Self[T], (T) -> U raise?) -> Array[U] raise?
-fn[T, U] ArrayView::mapi(Self[T], (Int, T) -> U raise?) -> Array[U] raise?
-fn[A, B] ArrayView::rev_fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
-fn[A, B] ArrayView::rev_foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
-fn[X] ArrayView::rev_iterator(Self[X]) -> Iterator[X]
-fn[T] ArrayView::start_offset(Self[T]) -> Int
-fn[T] ArrayView::to_array(Self[T]) -> Array[T]
+pub fn[T] ArrayView::all(Self[T], (T) -> Bool raise?) -> Bool raise?
+pub fn[T] ArrayView::any(Self[T], (T) -> Bool raise?) -> Bool raise?
+pub fn[T : Eq] ArrayView::contains(Self[T], T) -> Bool
+pub fn[T] ArrayView::each(Self[T], (T) -> Unit raise?) -> Unit raise?
+pub fn[T] ArrayView::eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?
+pub fn[T] ArrayView::filter(Self[T], (T) -> Bool raise?) -> Array[T] raise?
+pub fn[A, B] ArrayView::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
+pub fn[A, B] ArrayView::foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
+pub fn[A] ArrayView::iter2(Self[A]) -> Iter2[Int, A]
+pub fn[X] ArrayView::iterator2(Self[X]) -> Iterator2[Int, X]
+pub fn[A : @string.ToStringView] ArrayView::join(Self[A], StringView) -> String
+pub fn[T, U] ArrayView::map(Self[T], (T) -> U raise?) -> Array[U] raise?
+pub fn[T, U] ArrayView::mapi(Self[T], (Int, T) -> U raise?) -> Array[U] raise?
+pub fn[A, B] ArrayView::rev_fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
+pub fn[A, B] ArrayView::rev_foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
+pub fn[X] ArrayView::rev_iterator(Self[X]) -> Iterator[X]
+pub fn[T] ArrayView::start_offset(Self[T]) -> Int
+pub fn[T] ArrayView::to_array(Self[T]) -> Array[T]
 
 // Type aliases
+#deprecated
 pub using @builtin {type ArrayView as View}
 
 // Traits

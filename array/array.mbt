@@ -113,12 +113,14 @@ pub fn[T] Array::shuffle_in_place(
 /// # Example
 ///
 /// ```mbt
-///   let arr = [1, 2, 3, 4, 5]
-///   fn rand(upper : Int) -> Int {
-///     let rng = @random.Rand::new()
-///     rng.int(limit=upper)
-///   }
-///   let _shuffled = Array::shuffle(arr, rand=rand)
+/// let arr = [1, 2, 3, 4, 5]
+///
+/// fn rand(upper : Int) -> Int {
+///   let rng = @random.Rand::new()
+///   rng.int(limit=upper)
+/// }
+///
+/// let _shuffled = Array::shuffle(arr, rand~)
 /// ```
 pub fn[T] Array::shuffle(self : Array[T], rand~ : (Int) -> Int) -> Array[T] {
   let new_arr = self.copy()

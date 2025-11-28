@@ -358,7 +358,7 @@ pub fn[A] List::filter(
 /// ```moonbit
 /// let ls = @list.from_array([2, 4, 6, 8])
 /// assert_eq(ls.all(x => x % 2 == 0), true)
-/// 
+///
 /// let ls2 = @list.from_array([2, 3, 6, 8])
 /// assert_eq(ls2.all(x => x % 2 == 0), false)
 /// ```
@@ -380,7 +380,7 @@ pub fn[A] List::all(self : List[A], f : (A) -> Bool raise?) -> Bool raise? {
 /// ```moonbit
 /// let ls = @list.from_array([1, 3, 5, 6])
 /// assert_eq(ls.any(x => x % 2 == 0), true)
-/// 
+///
 /// let ls2 = @list.from_array([1, 3, 5, 7])
 /// assert_eq(ls2.any(x => x % 2 == 0), false)
 /// ```
@@ -604,7 +604,7 @@ pub fn[A, B] List::foldi(
 /// ```moonbit
 /// let r = @list.zip(@list.from_array([1, 2, 3, 4, 5]), @list.from_array([6, 7, 8, 9, 10]))
 /// assert_eq(r, @list.from_array([(1, 6), (2, 7), (3, 8), (4, 9), (5, 10)]))
-/// 
+///
 /// let r2 = @list.zip(@list.from_array([1, 2]), @list.from_array([6, 7, 8, 9, 10]))
 /// assert_eq(r2, @list.from_array([(1, 6), (2, 7)]))
 /// ```
@@ -813,7 +813,7 @@ pub fn[A] List::intersperse(self : List[A], separator : A) -> List[A] {
 /// ```moonbit
 /// let empty_list : @list.List[Int] = @list.empty()
 /// assert_eq(empty_list.is_empty(), true)
-/// 
+///
 /// let non_empty = @list.from_array([1, 2, 3])
 /// assert_eq(non_empty.is_empty(), false)
 /// ```
@@ -996,7 +996,7 @@ pub fn[A : Compare] List::unsafe_minimum(self : List[A]) -> A {
 /// ```moonbit
 /// let ls = @list.from_array([1, 3, 2, 5, 4])
 /// assert_eq(ls.minimum(), Some(1))
-/// 
+///
 /// let empty : @list.List[Int] = @list.empty()
 /// assert_eq(empty.minimum(), None)
 /// ```

@@ -31,7 +31,7 @@
 ///     content=(
 ///       
 ///   #|b"T\x00e\x00s\x00t\x00"
-/// 
+///
 ///     ),
 ///   )
 /// ```
@@ -192,7 +192,7 @@ pub fn from_iter(iter : Iter[Byte]) -> Buffer {
 ///     content=(
 ///       
 ///   #|b"T\x00e\x00s\x00t\x00"
-/// 
+///
 ///     ),
 ///   )
 /// ```
@@ -222,7 +222,7 @@ pub impl Logger for Buffer with write_string(self, value) {
 ///     content=(
 ///       
 ///   #|b"\xaa\xbb\xcc\xdd\x11\x223D"
-/// 
+///
 ///     ),
 ///   )
 /// ```
@@ -259,7 +259,7 @@ pub fn Buffer::write_uint64_be(self : Buffer, value : UInt64) -> Unit {
 ///     content=(
 ///       
 ///   #|b"\xef\xcd\xab\x89gE#\x01"
-/// 
+///
 ///     ),
 ///   )
 /// ```
@@ -443,7 +443,7 @@ pub fn Buffer::write_int_le(self : Buffer, value : Int) -> Unit {
 ///   inspect(buf.contents(), content=(
 ///   
 ///   #|b"\x124"
-/// 
+///
 /// ))
 /// ```
 pub fn Buffer::write_uint16_be(self : Buffer, value : UInt16) -> Unit {
@@ -472,7 +472,7 @@ pub fn Buffer::write_uint16_be(self : Buffer, value : UInt16) -> Unit {
 ///   inspect(buf.contents(), content=(
 ///   
 ///   #|b"4\x12"
-/// 
+///
 /// ))
 /// ```
 pub fn Buffer::write_uint16_le(self : Buffer, value : UInt16) -> Unit {
@@ -500,7 +500,7 @@ pub fn Buffer::write_uint16_le(self : Buffer, value : UInt16) -> Unit {
 ///   inspect(buf.contents(), content=(
 ///   
 ///   #|b"\x124"
-/// 
+///
 /// ))
 /// ```
 pub fn Buffer::write_int16_be(self : Buffer, value : Int16) -> Unit {
@@ -671,7 +671,7 @@ pub fn Buffer::write_object(self : Buffer, value : &Show) -> Unit {
 ///     content=(
 ///       
 ///   #|b"Test"
-/// 
+///
 ///     ),
 ///   )
 /// ```
@@ -701,7 +701,7 @@ pub fn Buffer::write_bytes(self : Buffer, value : Bytes) -> Unit {
 ///     content=(
 ///       
 ///   #|b"es"
-/// 
+///
 ///     ),
 ///   )
 /// ```
@@ -852,7 +852,7 @@ pub fn Buffer::write_string_utf16be(buf : Self, string : StringView) -> Unit {
 ///     content=(
 ///       
 ///   #|b"H\x00e\x00l\x00l\x00o\x00"
-/// 
+///
 ///     ),
 ///   )
 /// ```
@@ -886,7 +886,7 @@ pub impl Logger for Buffer with write_view(self : Buffer, value : StringView) ->
 ///     content=(
 ///       
 ///   #|b"A\x00"
-/// 
+///
 ///     ),
 ///   )
 /// ```
@@ -939,7 +939,7 @@ pub fn Buffer::write_byte(self : Buffer, value : Byte) -> Unit {
 ///     content=(
 ///       
 ///   #|b"Hello"
-/// 
+///
 ///     ),
 ///   )
 /// ```

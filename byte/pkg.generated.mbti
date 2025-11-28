@@ -2,15 +2,15 @@
 package "moonbitlang/core/byte"
 
 // Values
-let max_value : Byte
+pub let max_value : Byte
 
-let min_value : Byte
+pub let min_value : Byte
 
 // Errors
 
 // Types and methods
-fn Byte::popcnt(Byte) -> Int
-fn Byte::to_uint64(Byte) -> UInt64
+pub fn Byte::popcnt(Byte) -> Int
+pub fn Byte::to_uint64(Byte) -> UInt64
 
 // Type aliases
 
