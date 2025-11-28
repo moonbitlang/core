@@ -38,7 +38,7 @@ test "basic operations" {
   inspect(Double::trunc(3.7), content="3")
 
   // Pow function
-  inspect(Double::pow(2.0, 3), content="8")
+  inspect(@math.pow(2.0, 3), content="8")
 
   // Sign
   inspect(Double::signum(-3.14), content="-1")
@@ -80,13 +80,13 @@ test "binary representation" {
   // Convert to big-endian and little-endian bytes
   // Different byte orders should produce different results
   inspect(
-    num.to_be_bytes(),
+    num.to_be_bytes_local(),
     content=(
       #|b"?\xf0\x00\x00\x00\x00\x00\x00"
     ),
   )
   inspect(
-    num.to_le_bytes(),
+    num.to_le_bytes_local(),
     content=(
       #|b"\x00\x00\x00\x00\x00\x00\xf0?"
     ),
