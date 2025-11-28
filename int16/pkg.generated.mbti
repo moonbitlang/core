@@ -2,40 +2,40 @@
 package "moonbitlang/core/int16"
 
 // Values
-let max_value : Int16
+pub let max_value : Int16
 
-let min_value : Int16
+pub let min_value : Int16
 
 // Errors
 
 // Types and methods
-fn Int16::abs(Int16) -> Int16
-fn Int16::from_byte(Byte) -> Int16
-fn Int16::from_int(Int) -> Int16
-fn Int16::from_int64(Int64) -> Int16
-fn Int16::reinterpret_as_uint16(Int16) -> UInt16
-fn Int16::reinterpret_from_uint16(UInt16) -> Int16
-fn Int16::to_byte(Int16) -> Byte
-fn Int16::to_int(Int16) -> Int
-fn Int16::to_int64(Int16) -> Int64
-fn Int16::to_string(Int16, radix? : Int) -> String
-impl Add for Int16
-impl BitAnd for Int16
-impl BitOr for Int16
-impl BitXOr for Int16
-impl Compare for Int16
-impl Default for Int16
-impl Div for Int16
-impl Eq for Int16
-impl Hash for Int16
-impl Mod for Int16
-impl Mul for Int16
-impl Neg for Int16
-impl Shl for Int16
-impl Show for Int16
-impl Shr for Int16
-impl Sub for Int16
-impl ToJson for Int16
+pub fn Int16::abs(Int16) -> Int16
+pub fn Int16::from_byte(Byte) -> Int16
+pub fn Int16::from_int(Int) -> Int16
+pub fn Int16::from_int64(Int64) -> Int16
+pub fn Int16::reinterpret_as_uint16(Int16) -> UInt16
+pub fn Int16::reinterpret_from_uint16(UInt16) -> Int16
+pub fn Int16::to_byte(Int16) -> Byte
+pub fn Int16::to_int(Int16) -> Int
+pub fn Int16::to_int64(Int16) -> Int64
+pub fn Int16::to_string(Int16, radix? : Int) -> String
+pub impl Add for Int16
+pub impl BitAnd for Int16
+pub impl BitOr for Int16
+pub impl BitXOr for Int16
+pub impl Compare for Int16
+pub impl Default for Int16
+pub impl Div for Int16
+pub impl Eq for Int16
+pub impl Hash for Int16
+pub impl Mod for Int16
+pub impl Mul for Int16
+pub impl Neg for Int16
+pub impl Shl for Int16
+pub impl Show for Int16
+pub impl Shr for Int16
+pub impl Sub for Int16
+pub impl ToJson for Int16
 
 // Type aliases
 

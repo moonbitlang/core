@@ -3,16 +3,16 @@ package "moonbitlang/core/option"
 
 // Values
 #deprecated
-fn[T] empty() -> T?
+pub fn[T] empty() -> T?
 
 #deprecated
-fn[T] some(T) -> T?
+pub fn[T] some(T) -> T?
 
 #deprecated
-fn[T] unless(Bool, () -> T) -> T?
+pub fn[T] unless(Bool, () -> T) -> T?
 
 #deprecated
-fn[T] when(Bool, () -> T) -> T?
+pub fn[T] when(Bool, () -> T) -> T?
 
 // Errors
 

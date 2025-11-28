@@ -2,46 +2,46 @@
 package "moonbitlang/core/immut/internal/sparse_array"
 
 // Values
-fn[X] doubleton(Int, X, Int, X) -> SparseArray[X]
+pub fn[X] doubleton(Int, X, Int, X) -> SparseArray[X]
 
-fn[X] empty() -> SparseArray[X]
+pub fn[X] empty() -> SparseArray[X]
 
-fn[X] singleton(Int, X) -> SparseArray[X]
+pub fn[X] singleton(Int, X) -> SparseArray[X]
 
 // Errors
 
 // Types and methods
 pub(all) struct Bitset(UInt)
-fn Bitset::add(Self, Int) -> Self
-fn Bitset::first_idx(Self) -> Int
-fn Bitset::has(Self, Int) -> Bool
-fn Bitset::index_of(Self, Int) -> Int
+pub fn Bitset::add(Self, Int) -> Self
+pub fn Bitset::first_idx(Self) -> Int
+pub fn Bitset::has(Self, Int) -> Bool
+pub fn Bitset::index_of(Self, Int) -> Int
 #deprecated
-fn Bitset::inner(Self) -> UInt
-fn Bitset::intersection(Self, Self) -> Self
+pub fn Bitset::inner(Self) -> UInt
+pub fn Bitset::intersection(Self, Self) -> Self
 #alias(size, deprecated)
-fn Bitset::length(Self) -> Int
-fn Bitset::remove(Self, Int) -> Self
-fn Bitset::union(Self, Self) -> Self
-impl Eq for Bitset
+pub fn Bitset::length(Self) -> Int
+pub fn Bitset::remove(Self, Int) -> Self
+pub fn Bitset::union(Self, Self) -> Self
+pub impl Eq for Bitset
 
 pub(all) struct SparseArray[X] {
   elem_info : Bitset
   data : FixedArray[X]
 }
-fn[X] SparseArray::add(Self[X], Int, X) -> Self[X]
-fn[X] SparseArray::difference(Self[X], Self[X], (X, X) -> X?) -> Self[X]?
-fn[X] SparseArray::each(Self[X], (X) -> Unit raise?) -> Unit raise?
-fn[X] SparseArray::filter(Self[X], (X) -> X? raise?) -> Self[X]? raise?
-fn[X] SparseArray::get(Self[X], Int) -> X?
-fn[X] SparseArray::intersection(Self[X], Self[X], (X, X) -> X? raise?) -> Self[X]? raise?
+pub fn[X] SparseArray::add(Self[X], Int, X) -> Self[X]
+pub fn[X] SparseArray::difference(Self[X], Self[X], (X, X) -> X?) -> Self[X]?
+pub fn[X] SparseArray::each(Self[X], (X) -> Unit raise?) -> Unit raise?
+pub fn[X] SparseArray::filter(Self[X], (X) -> X? raise?) -> Self[X]? raise?
+pub fn[X] SparseArray::get(Self[X], Int) -> X?
+pub fn[X] SparseArray::intersection(Self[X], Self[X], (X, X) -> X? raise?) -> Self[X]? raise?
 #alias(size, deprecated)
-fn[X] SparseArray::length(Self[X]) -> Int
-fn[X, Y] SparseArray::map(Self[X], (X) -> Y raise?) -> Self[Y] raise?
-fn[X] SparseArray::remove(Self[X], Int) -> Self[X]
-fn[X] SparseArray::replace(Self[X], Int, X) -> Self[X]
-fn[X] SparseArray::union(Self[X], Self[X], (X, X) -> X raise?) -> Self[X] raise?
-impl[X : Eq] Eq for SparseArray[X]
+pub fn[X] SparseArray::length(Self[X]) -> Int
+pub fn[X, Y] SparseArray::map(Self[X], (X) -> Y raise?) -> Self[Y] raise?
+pub fn[X] SparseArray::remove(Self[X], Int) -> Self[X]
+pub fn[X] SparseArray::replace(Self[X], Int, X) -> Self[X]
+pub fn[X] SparseArray::union(Self[X], Self[X], (X, X) -> X raise?) -> Self[X] raise?
+pub impl[X : Eq] Eq for SparseArray[X]
 
 // Type aliases
 

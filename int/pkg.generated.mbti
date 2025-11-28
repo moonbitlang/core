@@ -3,11 +3,11 @@ package "moonbitlang/core/int"
 
 // Values
 #deprecated
-fn abs(Int) -> Int
+pub fn abs(Int) -> Int
 
-let max_value : Int
+pub let max_value : Int
 
-let min_value : Int
+pub let min_value : Int
 
 // Errors
 

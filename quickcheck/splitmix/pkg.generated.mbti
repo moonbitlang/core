@@ -2,27 +2,27 @@
 package "moonbitlang/core/quickcheck/splitmix"
 
 // Values
-fn new(seed? : UInt64) -> RandomState
+pub fn new(seed? : UInt64) -> RandomState
 
 // Errors
 
 // Types and methods
 type RandomState
-fn RandomState::clone(Self) -> Self
+pub fn RandomState::clone(Self) -> Self
 #deprecated
-fn RandomState::new(seed? : UInt64) -> Self
-fn RandomState::next(Self) -> Unit
-fn RandomState::next_double(Self) -> Double
-fn RandomState::next_float(Self) -> Float
-fn RandomState::next_int(Self) -> Int
-fn RandomState::next_int64(Self) -> Int64
-fn RandomState::next_positive_int(Self) -> Int
-fn RandomState::next_two_uint(Self) -> (UInt, UInt)
-fn RandomState::next_uint(Self) -> UInt
-fn RandomState::next_uint64(Self) -> UInt64
-fn RandomState::split(Self) -> Self
-impl Default for RandomState
-impl Show for RandomState
+pub fn RandomState::new(seed? : UInt64) -> Self
+pub fn RandomState::next(Self) -> Unit
+pub fn RandomState::next_double(Self) -> Double
+pub fn RandomState::next_float(Self) -> Float
+pub fn RandomState::next_int(Self) -> Int
+pub fn RandomState::next_int64(Self) -> Int64
+pub fn RandomState::next_positive_int(Self) -> Int
+pub fn RandomState::next_two_uint(Self) -> (UInt, UInt)
+pub fn RandomState::next_uint(Self) -> UInt
+pub fn RandomState::next_uint64(Self) -> UInt64
+pub fn RandomState::split(Self) -> Self
+pub impl Default for RandomState
+pub impl Show for RandomState
 
 // Type aliases
 

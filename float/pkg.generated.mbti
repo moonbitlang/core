@@ -3,71 +3,71 @@ package "moonbitlang/core/float"
 
 // Values
 #deprecated
-fn default() -> Float
+pub fn default() -> Float
 
-let infinity : Float
+pub let infinity : Float
 
-let max_value : Float
+pub let max_value : Float
 
-let min_positive : Float
+pub let min_positive : Float
 
-let min_value : Float
+pub let min_value : Float
 
-let neg_infinity : Float
+pub let neg_infinity : Float
 
-let not_a_number : Float
+pub let not_a_number : Float
 
 // Errors
 
 // Types and methods
 #as_free_fn(deprecated)
-fn Float::abs(Float) -> Float
+pub fn Float::abs(Float) -> Float
 #as_free_fn
-fn Float::ceil(Float) -> Float
+pub fn Float::ceil(Float) -> Float
 #as_free_fn
-fn Float::floor(Float) -> Float
-fn Float::from_byte(Byte) -> Float
-fn Float::from_double(Double) -> Float
-fn Float::from_int(Int) -> Float
-fn Float::from_int64(Int64) -> Float
-fn Float::from_uint(UInt) -> Float
-fn Float::from_uint64(UInt64) -> Float
-fn Float::is_close(Float, Float, relative_tolerance? : Float, absolute_tolerance? : Float) -> Bool
-fn Float::is_inf(Float) -> Bool
-fn Float::is_nan(Float) -> Bool
-fn Float::is_neg_inf(Float) -> Bool
-fn Float::is_pos_inf(Float) -> Bool
-fn Float::op_neq(Float, Float) -> Bool
+pub fn Float::floor(Float) -> Float
+pub fn Float::from_byte(Byte) -> Float
+pub fn Float::from_double(Double) -> Float
+pub fn Float::from_int(Int) -> Float
+pub fn Float::from_int64(Int64) -> Float
+pub fn Float::from_uint(UInt) -> Float
+pub fn Float::from_uint64(UInt64) -> Float
+pub fn Float::is_close(Float, Float, relative_tolerance? : Float, absolute_tolerance? : Float) -> Bool
+pub fn Float::is_inf(Float) -> Bool
+pub fn Float::is_nan(Float) -> Bool
+pub fn Float::is_neg_inf(Float) -> Bool
+pub fn Float::is_pos_inf(Float) -> Bool
+pub fn Float::op_neq(Float, Float) -> Bool
 #as_free_fn
-fn Float::pow(Float, Float) -> Float
-fn Float::reinterpret_as_int(Float) -> Int
-fn Float::reinterpret_as_uint(Float) -> UInt
-fn Float::reinterpret_from_int(Int) -> Float
-fn Float::reinterpret_from_uint(UInt) -> Float
+pub fn Float::pow(Float, Float) -> Float
+pub fn Float::reinterpret_as_int(Float) -> Int
+pub fn Float::reinterpret_as_uint(Float) -> UInt
+pub fn Float::reinterpret_from_int(Int) -> Float
+pub fn Float::reinterpret_from_uint(UInt) -> Float
 #as_free_fn
-fn Float::round(Float) -> Float
-fn Float::sqrt(Float) -> Float
-fn Float::to_be_bytes(Float) -> Bytes
-fn Float::to_double(Float) -> Double
-fn Float::to_int(Float) -> Int
-fn Float::to_le_bytes(Float) -> Bytes
+pub fn Float::round(Float) -> Float
+pub fn Float::sqrt(Float) -> Float
+pub fn Float::to_be_bytes(Float) -> Bytes
+pub fn Float::to_double(Float) -> Double
+pub fn Float::to_int(Float) -> Int
+pub fn Float::to_le_bytes(Float) -> Bytes
 #as_free_fn
-fn Float::trunc(Float) -> Float
-fn Float::until(Float, Float, step? : Float, inclusive? : Bool) -> Iter[Float]
+pub fn Float::trunc(Float) -> Float
+pub fn Float::until(Float, Float, step? : Float, inclusive? : Bool) -> Iter[Float]
 #deprecated
-fn Float::upto(Float, Float, inclusive? : Bool) -> Iter[Float]
-impl Add for Float
-impl Compare for Float
-impl Default for Float
-impl Div for Float
-impl Eq for Float
-impl Hash for Float
-impl Mod for Float
-impl Mul for Float
-impl Neg for Float
-impl Show for Float
-impl Sub for Float
-impl ToJson for Float
+pub fn Float::upto(Float, Float, inclusive? : Bool) -> Iter[Float]
+pub impl Add for Float
+pub impl Compare for Float
+pub impl Default for Float
+pub impl Div for Float
+pub impl Eq for Float
+pub impl Hash for Float
+pub impl Mod for Float
+pub impl Mul for Float
+pub impl Neg for Float
+pub impl Show for Float
+pub impl Sub for Float
+pub impl ToJson for Float
 
 // Type aliases
 

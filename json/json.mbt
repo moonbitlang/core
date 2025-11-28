@@ -191,22 +191,22 @@ pub fn Replacer::exclude(array : ArrayView[StringView]) -> Replacer {
 /// 
 /// ```moonbit
 /// let json : Json = { "a": 1.0, "b": 2.0, "c": 3.0, "password": "secret" }
-/// 
+///
 /// // Keep only specific keys
 /// let keep_replacer = @json.Replacer::keep(["a", "c"])
 /// ignore(json.stringify(replacer=keep_replacer))  // {"a":1,"c":3}
-/// 
+///
 /// // Exclude sensitive keys
 /// let exclude_replacer = @json.Replacer::exclude(["password"])
 /// ignore(json.stringify(replacer=exclude_replacer))  // {"a":1,"b":2,"c":3}
-/// 
+///
 /// // Custom transformation
 /// let transform_replacer = @json.Replacer::new((_key, value) => match value {
 ///   Number(n, ..) => Some(Json::number(n * 10.0))  // multiply numbers by 10
 ///   _ => Some(value)  // keep other values unchanged
 /// })
 /// ignore(json.stringify(replacer=transform_replacer))  // {"a":10,"b":20,"c":30,"password":"secret"}
-/// 
+///
 /// // Filter and transform
 /// let filter_replacer = @json.Replacer::new((key, value) => match key {
 ///   "password" => None  // exclude password
@@ -381,7 +381,7 @@ fn escape(str : String, escape_slash~ : Bool) -> String {
 /// 
 /// ```moonbit
 /// let json : Json = { "user": { "name": "Alice", "password": "secret", "age": 30.0 }, "id": 123.0 }
-/// 
+///
 /// // Remove sensitive data and double numeric values  
 /// ignore(json.transform(@json.Replacer::new((key, value) => match key {
 ///   "password" => None  // exclude password fields

@@ -14,47 +14,47 @@ import(
 #alias(T, deprecated)
 type HashSet[K]
 #alias(insert, deprecated)
-fn[K : Hash + Eq] HashSet::add(Self[K], K) -> Unit
-fn[K : Hash + Eq] HashSet::add_and_check(Self[K], K) -> Bool
-fn[K] HashSet::capacity(Self[K]) -> Int
-fn[K] HashSet::clear(Self[K]) -> Unit
-fn[K : Hash + Eq] HashSet::contains(Self[K], K) -> Bool
-fn[K] HashSet::copy(Self[K]) -> Self[K]
-fn[K : Hash + Eq] HashSet::difference(Self[K], Self[K]) -> Self[K]
-fn[K] HashSet::each(Self[K], (K) -> Unit raise?) -> Unit raise?
-fn[K] HashSet::eachi(Self[K], (Int, K) -> Unit raise?) -> Unit raise?
+pub fn[K : Hash + Eq] HashSet::add(Self[K], K) -> Unit
+pub fn[K : Hash + Eq] HashSet::add_and_check(Self[K], K) -> Bool
+pub fn[K] HashSet::capacity(Self[K]) -> Int
+pub fn[K] HashSet::clear(Self[K]) -> Unit
+pub fn[K : Hash + Eq] HashSet::contains(Self[K], K) -> Bool
+pub fn[K] HashSet::copy(Self[K]) -> Self[K]
+pub fn[K : Hash + Eq] HashSet::difference(Self[K], Self[K]) -> Self[K]
+pub fn[K] HashSet::each(Self[K], (K) -> Unit raise?) -> Unit raise?
+pub fn[K] HashSet::eachi(Self[K], (Int, K) -> Unit raise?) -> Unit raise?
 #alias(of, deprecated)
 #as_free_fn(of, deprecated)
 #as_free_fn
-fn[K : Hash + Eq] HashSet::from_array(ArrayView[K]) -> Self[K]
+pub fn[K : Hash + Eq] HashSet::from_array(ArrayView[K]) -> Self[K]
 #as_free_fn
-fn[K : Hash + Eq] HashSet::from_iter(Iter[K]) -> Self[K]
+pub fn[K : Hash + Eq] HashSet::from_iter(Iter[K]) -> Self[K]
 #as_free_fn
-fn[K : Hash + Eq] HashSet::from_iterator(Iterator[K]) -> Self[K]
-fn[K : Hash + Eq] HashSet::intersection(Self[K], Self[K]) -> Self[K]
-fn[K : Hash + Eq] HashSet::is_disjoint(Self[K], Self[K]) -> Bool
-fn[K] HashSet::is_empty(Self[K]) -> Bool
-fn[K : Hash + Eq] HashSet::is_subset(Self[K], Self[K]) -> Bool
-fn[K : Hash + Eq] HashSet::is_superset(Self[K], Self[K]) -> Bool
-fn[K] HashSet::iter(Self[K]) -> Iter[K]
-fn[K] HashSet::iterator(Self[K]) -> Iterator[K]
+pub fn[K : Hash + Eq] HashSet::from_iterator(Iterator[K]) -> Self[K]
+pub fn[K : Hash + Eq] HashSet::intersection(Self[K], Self[K]) -> Self[K]
+pub fn[K : Hash + Eq] HashSet::is_disjoint(Self[K], Self[K]) -> Bool
+pub fn[K] HashSet::is_empty(Self[K]) -> Bool
+pub fn[K : Hash + Eq] HashSet::is_subset(Self[K], Self[K]) -> Bool
+pub fn[K : Hash + Eq] HashSet::is_superset(Self[K], Self[K]) -> Bool
+pub fn[K] HashSet::iter(Self[K]) -> Iter[K]
+pub fn[K] HashSet::iterator(Self[K]) -> Iterator[K]
 #alias(size, deprecated)
-fn[K] HashSet::length(Self[K]) -> Int
+pub fn[K] HashSet::length(Self[K]) -> Int
 #as_free_fn
-fn[K] HashSet::new(capacity? : Int) -> Self[K]
-fn[K : Hash + Eq] HashSet::remove(Self[K], K) -> Unit
-fn[K : Hash + Eq] HashSet::remove_and_check(Self[K], K) -> Bool
-fn[K : Hash + Eq] HashSet::symmetric_difference(Self[K], Self[K]) -> Self[K]
-fn[K] HashSet::to_array(Self[K]) -> Array[K]
-fn[K : Hash + Eq] HashSet::union(Self[K], Self[K]) -> Self[K]
-impl[K : Hash + Eq] BitAnd for HashSet[K]
-impl[K : Hash + Eq] BitOr for HashSet[K]
-impl[K : Hash + Eq] BitXOr for HashSet[K]
-impl[K] Default for HashSet[K]
-impl[K : Show] Show for HashSet[K]
-impl[K : Hash + Eq] Sub for HashSet[K]
-impl[X : ToJson] ToJson for HashSet[X]
-impl[X : @quickcheck.Arbitrary + Eq + Hash] @quickcheck.Arbitrary for HashSet[X]
+pub fn[K] HashSet::new(capacity? : Int) -> Self[K]
+pub fn[K : Hash + Eq] HashSet::remove(Self[K], K) -> Unit
+pub fn[K : Hash + Eq] HashSet::remove_and_check(Self[K], K) -> Bool
+pub fn[K : Hash + Eq] HashSet::symmetric_difference(Self[K], Self[K]) -> Self[K]
+pub fn[K] HashSet::to_array(Self[K]) -> Array[K]
+pub fn[K : Hash + Eq] HashSet::union(Self[K], Self[K]) -> Self[K]
+pub impl[K : Hash + Eq] BitAnd for HashSet[K]
+pub impl[K : Hash + Eq] BitOr for HashSet[K]
+pub impl[K : Hash + Eq] BitXOr for HashSet[K]
+pub impl[K] Default for HashSet[K]
+pub impl[K : Show] Show for HashSet[K]
+pub impl[K : Hash + Eq] Sub for HashSet[K]
+pub impl[X : ToJson] ToJson for HashSet[X]
+pub impl[X : @quickcheck.Arbitrary + Eq + Hash] @quickcheck.Arbitrary for HashSet[X]
 
 // Type aliases
 

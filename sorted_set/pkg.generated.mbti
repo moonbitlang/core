@@ -13,44 +13,44 @@ import(
 // Types and methods
 #alias(T, deprecated)
 type SortedSet[V]
-fn[V : Compare] SortedSet::add(Self[V], V) -> Unit
-fn[V : Compare] SortedSet::contains(Self[V], V) -> Bool
+pub fn[V : Compare] SortedSet::add(Self[V], V) -> Unit
+pub fn[V : Compare] SortedSet::contains(Self[V], V) -> Bool
 #alias(deep_clone, deprecated)
-fn[V] SortedSet::copy(Self[V]) -> Self[V]
+pub fn[V] SortedSet::copy(Self[V]) -> Self[V]
 #alias(diff, deprecated)
-fn[V : Compare] SortedSet::difference(Self[V], Self[V]) -> Self[V]
-fn[V : Compare] SortedSet::disjoint(Self[V], Self[V]) -> Bool
-fn[V] SortedSet::each(Self[V], (V) -> Unit raise?) -> Unit raise?
-fn[V] SortedSet::eachi(Self[V], (Int, V) -> Unit raise?) -> Unit raise?
+pub fn[V : Compare] SortedSet::difference(Self[V], Self[V]) -> Self[V]
+pub fn[V : Compare] SortedSet::disjoint(Self[V], Self[V]) -> Bool
+pub fn[V] SortedSet::each(Self[V], (V) -> Unit raise?) -> Unit raise?
+pub fn[V] SortedSet::eachi(Self[V], (Int, V) -> Unit raise?) -> Unit raise?
 #alias(of, deprecated)
 #as_free_fn(of, deprecated)
 #as_free_fn
-fn[V : Compare] SortedSet::from_array(ArrayView[V]) -> Self[V]
+pub fn[V : Compare] SortedSet::from_array(ArrayView[V]) -> Self[V]
 #as_free_fn
-fn[V : Compare] SortedSet::from_iter(Iter[V]) -> Self[V]
+pub fn[V : Compare] SortedSet::from_iter(Iter[V]) -> Self[V]
 #as_free_fn
-fn[V : Compare] SortedSet::from_iterator(Iterator[V]) -> Self[V]
+pub fn[V : Compare] SortedSet::from_iterator(Iterator[V]) -> Self[V]
 #alias(intersect, deprecated)
-fn[V : Compare] SortedSet::intersection(Self[V], Self[V]) -> Self[V]
-fn[V] SortedSet::is_empty(Self[V]) -> Bool
-fn[V] SortedSet::iter(Self[V]) -> Iter[V]
-fn[V] SortedSet::iterator(Self[V]) -> Iterator[V]
+pub fn[V : Compare] SortedSet::intersection(Self[V], Self[V]) -> Self[V]
+pub fn[V] SortedSet::is_empty(Self[V]) -> Bool
+pub fn[V] SortedSet::iter(Self[V]) -> Iter[V]
+pub fn[V] SortedSet::iterator(Self[V]) -> Iterator[V]
 #alias(size, deprecated)
-fn[V] SortedSet::length(Self[V]) -> Int
+pub fn[V] SortedSet::length(Self[V]) -> Int
 #as_free_fn
-fn[V] SortedSet::new() -> Self[V]
-fn[V : Compare] SortedSet::range(Self[V], V, V) -> Iter[V]
-fn[V : Compare] SortedSet::remove(Self[V], V) -> Unit
+pub fn[V] SortedSet::new() -> Self[V]
+pub fn[V : Compare] SortedSet::range(Self[V], V, V) -> Iter[V]
+pub fn[V : Compare] SortedSet::remove(Self[V], V) -> Unit
 #as_free_fn
-fn[V] SortedSet::singleton(V) -> Self[V]
-fn[V : Compare] SortedSet::subset(Self[V], Self[V]) -> Bool
-fn[V : Compare] SortedSet::symmetric_difference(Self[V], Self[V]) -> Self[V]
-fn[V] SortedSet::to_array(Self[V]) -> Array[V]
-fn[V : Compare] SortedSet::union(Self[V], Self[V]) -> Self[V]
-impl[K] Default for SortedSet[K]
-impl[V : Eq] Eq for SortedSet[V]
-impl[V : Show] Show for SortedSet[V]
-impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for SortedSet[X]
+pub fn[V] SortedSet::singleton(V) -> Self[V]
+pub fn[V : Compare] SortedSet::subset(Self[V], Self[V]) -> Bool
+pub fn[V : Compare] SortedSet::symmetric_difference(Self[V], Self[V]) -> Self[V]
+pub fn[V] SortedSet::to_array(Self[V]) -> Array[V]
+pub fn[V : Compare] SortedSet::union(Self[V], Self[V]) -> Self[V]
+pub impl[K] Default for SortedSet[K]
+pub impl[V : Eq] Eq for SortedSet[V]
+pub impl[V : Show] Show for SortedSet[V]
+pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for SortedSet[X]
 
 // Type aliases
 

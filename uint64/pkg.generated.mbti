@@ -2,15 +2,15 @@
 package "moonbitlang/core/uint64"
 
 // Values
-let max_value : UInt64
+pub let max_value : UInt64
 
-let min_value : UInt64
+pub let min_value : UInt64
 
 // Errors
 
 // Types and methods
-fn UInt64::to_be_bytes(UInt64) -> Bytes
-fn UInt64::to_le_bytes(UInt64) -> Bytes
+pub fn UInt64::to_be_bytes(UInt64) -> Bytes
+pub fn UInt64::to_le_bytes(UInt64) -> Bytes
 
 // Type aliases
 

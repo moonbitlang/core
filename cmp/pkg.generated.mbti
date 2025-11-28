@@ -2,28 +2,28 @@
 package "moonbitlang/core/cmp"
 
 // Values
-fn[T : Compare] maximum(T, T) -> T
+pub fn[T : Compare] maximum(T, T) -> T
 
-fn[T, K : Compare] maximum_by_key(T, T, (T) -> K) -> T
+pub fn[T, K : Compare] maximum_by_key(T, T, (T) -> K) -> T
 
-fn[T : Compare] minimum(T, T) -> T
+pub fn[T : Compare] minimum(T, T) -> T
 
-fn[T, K : Compare] minimum_by_key(T, T, (T) -> K) -> T
+pub fn[T, K : Compare] minimum_by_key(T, T, (T) -> K) -> T
 
-fn[T : Compare] minmax(T, T) -> (T, T)
+pub fn[T : Compare] minmax(T, T) -> (T, T)
 
-fn[T, K : Compare] minmax_by_key(T, T, (T) -> K) -> (T, T)
+pub fn[T, K : Compare] minmax_by_key(T, T, (T) -> K) -> (T, T)
 
 // Errors
 
 // Types and methods
 pub(all) struct Reverse[T](T)
 #deprecated
-fn[T] Reverse::inner(Self[T]) -> T
-impl[T : Compare] Compare for Reverse[T]
-impl[T : Eq] Eq for Reverse[T]
-impl[T : Hash] Hash for Reverse[T]
-impl[T : Show] Show for Reverse[T]
+pub fn[T] Reverse::inner(Self[T]) -> T
+pub impl[T : Compare] Compare for Reverse[T]
+pub impl[T : Eq] Eq for Reverse[T]
+pub impl[T : Hash] Hash for Reverse[T]
+pub impl[T : Show] Show for Reverse[T]
 
 // Type aliases
 

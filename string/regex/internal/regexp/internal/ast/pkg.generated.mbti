@@ -22,9 +22,9 @@ pub(all) enum Ast {
   Concat(Array[Ast])
   Alternate(Ast, Ast)
 }
-fn Ast::compile(Self) -> Array[@vm.Instruction]
-impl Show for Ast
-impl ToJson for Ast
+pub fn Ast::compile(Self) -> Array[@vm.Instruction]
+pub impl Show for Ast
+pub impl ToJson for Ast
 
 // Type aliases
 

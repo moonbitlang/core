@@ -3,41 +3,41 @@ package "moonbitlang/core/strconv"
 
 // Values
 #deprecated
-fn[A : FromStr] parse(StringView) -> A raise StrConvError
+pub fn[A : FromStr] parse(StringView) -> A raise StrConvError
 
-fn parse_bool(StringView) -> Bool raise StrConvError
+pub fn parse_bool(StringView) -> Bool raise StrConvError
 
 #deprecated
-fn parse_decimal(StringView) -> Decimal raise StrConvError
+pub fn parse_decimal(StringView) -> Decimal raise StrConvError
 
-fn parse_double(StringView) -> Double raise StrConvError
+pub fn parse_double(StringView) -> Double raise StrConvError
 
-fn parse_int(StringView, base? : Int) -> Int raise StrConvError
+pub fn parse_int(StringView, base? : Int) -> Int raise StrConvError
 
-fn parse_int64(StringView, base? : Int) -> Int64 raise StrConvError
+pub fn parse_int64(StringView, base? : Int) -> Int64 raise StrConvError
 
-fn parse_uint(StringView, base? : Int) -> UInt raise StrConvError
+pub fn parse_uint(StringView, base? : Int) -> UInt raise StrConvError
 
-fn parse_uint64(StringView, base? : Int) -> UInt64 raise StrConvError
+pub fn parse_uint64(StringView, base? : Int) -> UInt64 raise StrConvError
 
 // Errors
 pub(all) suberror StrConvError String
-impl Show for StrConvError
+pub impl Show for StrConvError
 
 // Types and methods
 #deprecated
 type Decimal
 #deprecated
-fn Decimal::from_int64(Int64) -> Self
+pub fn Decimal::from_int64(Int64) -> Self
 #deprecated
-fn Decimal::new() -> Self
+pub fn Decimal::new() -> Self
 #deprecated
-fn Decimal::parse_decimal(StringView) -> Self raise StrConvError
+pub fn Decimal::parse_decimal(StringView) -> Self raise StrConvError
 #deprecated
-fn Decimal::shift(Self, Int) -> Unit
+pub fn Decimal::shift(Self, Int) -> Unit
 #deprecated
-fn Decimal::to_double(Self) -> Double raise StrConvError
-impl Show for Decimal
+pub fn Decimal::to_double(Self) -> Double raise StrConvError
+pub impl Show for Decimal
 
 // Type aliases
 
@@ -48,10 +48,10 @@ pub(open) trait FromStr {
   #deprecated
   from_string(String) -> Self raise StrConvError = _
 }
-impl FromStr for Bool
-impl FromStr for Int
-impl FromStr for Int64
-impl FromStr for UInt
-impl FromStr for UInt64
-impl FromStr for Double
+pub impl FromStr for Bool
+pub impl FromStr for Int
+pub impl FromStr for Int64
+pub impl FromStr for UInt
+pub impl FromStr for UInt64
+pub impl FromStr for Double
 

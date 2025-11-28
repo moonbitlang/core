@@ -8,47 +8,47 @@ import(
 )
 
 // Values
-fn[T] abort(String) -> T
+pub fn[T] abort(String) -> T
 
 #callsite(autofill(loc))
-fn[T : @builtin.Eq + @builtin.Show] assert_eq(T, T, msg? : String, loc~ : @builtin.SourceLoc) -> Unit raise
+pub fn[T : @builtin.Eq + @builtin.Show] assert_eq(T, T, msg? : String, loc~ : @builtin.SourceLoc) -> Unit raise
 
 #callsite(autofill(loc))
-fn assert_false(Bool, msg? : String, loc~ : @builtin.SourceLoc) -> Unit raise
+pub fn assert_false(Bool, msg? : String, loc~ : @builtin.SourceLoc) -> Unit raise
 
 #callsite(autofill(loc))
-fn[T : @builtin.Eq + @builtin.Show] assert_not_eq(T, T, msg? : String, loc~ : @builtin.SourceLoc) -> Unit raise
+pub fn[T : @builtin.Eq + @builtin.Show] assert_not_eq(T, T, msg? : String, loc~ : @builtin.SourceLoc) -> Unit raise
 
 #callsite(autofill(loc))
-fn assert_true(Bool, msg? : String, loc~ : @builtin.SourceLoc) -> Unit raise
+pub fn assert_true(Bool, msg? : String, loc~ : @builtin.SourceLoc) -> Unit raise
 
 #deprecated
 #callsite(autofill(loc))
-fn[T] dump(T, name? : String, loc~ : @builtin.SourceLoc) -> T
+pub fn[T] dump(T, name? : String, loc~ : @builtin.SourceLoc) -> T
 
 #callsite(autofill(loc))
-fn[T] fail(String, loc~ : @builtin.SourceLoc) -> T raise @builtin.Failure
+pub fn[T] fail(String, loc~ : @builtin.SourceLoc) -> T raise @builtin.Failure
 
-fn[T] ignore(T) -> Unit
+pub fn[T] ignore(T) -> Unit
 
 #callsite(autofill(args_loc, loc))
-fn inspect(&@builtin.Show, content? : String, loc~ : @builtin.SourceLoc, args_loc~ : @builtin.ArgsLoc) -> Unit raise @builtin.InspectError
+pub fn inspect(&@builtin.Show, content? : String, loc~ : @builtin.SourceLoc, args_loc~ : @builtin.ArgsLoc) -> Unit raise @builtin.InspectError
 
-fn not(Bool) -> Bool
+pub fn not(Bool) -> Bool
 
-let null : @builtin.Json
+pub let null : @builtin.Json
 
-fn[T] panic() -> T
+pub fn[T] panic() -> T
 
-fn[T] physical_equal(T, T) -> Bool
+pub fn[T] physical_equal(T, T) -> Bool
 
-fn[T : @builtin.Show] println(T) -> Unit
+pub fn[T : @builtin.Show] println(T) -> Unit
 
-fn[T : @builtin.Show] repr(T) -> String
+pub fn[T : @builtin.Show] repr(T) -> String
 
-fn[T] tap(T, (T) -> Unit raise) -> T raise
+pub fn[T] tap(T, (T) -> Unit raise) -> T raise
 
-fn[T, R] then(T, (T) -> R raise?) -> R raise?
+pub fn[T, R] then(T, (T) -> R raise?) -> R raise?
 
 // Errors
 
@@ -93,41 +93,41 @@ pub using @builtin {type StringBuilder}
 
 pub using @builtin {type UninitializedArray}
 
-using @builtin {trait Add}
+pub using @builtin {trait Add}
 
-using @builtin {trait BitAnd}
+pub using @builtin {trait BitAnd}
 
-using @builtin {trait BitOr}
+pub using @builtin {trait BitOr}
 
-using @builtin {trait BitXOr}
+pub using @builtin {trait BitXOr}
 
-using @builtin {trait Compare}
+pub using @builtin {trait Compare}
 
-using @builtin {trait Default}
+pub using @builtin {trait Default}
 
-using @builtin {trait Div}
+pub using @builtin {trait Div}
 
-using @builtin {trait Eq}
+pub using @builtin {trait Eq}
 
-using @builtin {trait Hash}
+pub using @builtin {trait Hash}
 
-using @builtin {trait Logger}
+pub using @builtin {trait Logger}
 
-using @builtin {trait Mod}
+pub using @builtin {trait Mod}
 
-using @builtin {trait Mul}
+pub using @builtin {trait Mul}
 
-using @builtin {trait Neg}
+pub using @builtin {trait Neg}
 
-using @builtin {trait Shl}
+pub using @builtin {trait Shl}
 
-using @builtin {trait Show}
+pub using @builtin {trait Show}
 
-using @builtin {trait Shr}
+pub using @builtin {trait Shr}
 
-using @builtin {trait Sub}
+pub using @builtin {trait Sub}
 
-using @builtin {trait ToJson}
+pub using @builtin {trait ToJson}
 
 // Traits
 

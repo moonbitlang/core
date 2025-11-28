@@ -6,9 +6,9 @@ import(
 )
 
 // Values
-fn[T : Arbitrary] gen(size? : Int, state? : @splitmix.RandomState) -> T
+pub fn[T : Arbitrary] gen(size? : Int, state? : @splitmix.RandomState) -> T
 
-fn[X : Arbitrary] samples(Int) -> Array[X]
+pub fn[X : Arbitrary] samples(Int) -> Array[X]
 
 // Errors
 
@@ -20,21 +20,21 @@ fn[X : Arbitrary] samples(Int) -> Array[X]
 pub(open) trait Arbitrary {
   arbitrary(Int, @splitmix.RandomState) -> Self
 }
-impl Arbitrary for Unit
-impl Arbitrary for Bool
-impl Arbitrary for Byte
-impl Arbitrary for Char
-impl Arbitrary for Int
-impl Arbitrary for Int64
-impl Arbitrary for UInt
-impl Arbitrary for UInt64
-impl Arbitrary for Float
-impl Arbitrary for Double
-impl Arbitrary for String
-impl[X : Arbitrary] Arbitrary for X?
-impl[X : Arbitrary] Arbitrary for FixedArray[X]
-impl Arbitrary for Bytes
-impl[X : Arbitrary] Arbitrary for Array[X]
-impl[A : Arbitrary] Arbitrary for ArrayView[A]
-impl[X : Arbitrary] Arbitrary for Iter[X]
+pub impl Arbitrary for Unit
+pub impl Arbitrary for Bool
+pub impl Arbitrary for Byte
+pub impl Arbitrary for Char
+pub impl Arbitrary for Int
+pub impl Arbitrary for Int64
+pub impl Arbitrary for UInt
+pub impl Arbitrary for UInt64
+pub impl Arbitrary for Float
+pub impl Arbitrary for Double
+pub impl Arbitrary for String
+pub impl[X : Arbitrary] Arbitrary for X?
+pub impl[X : Arbitrary] Arbitrary for FixedArray[X]
+pub impl Arbitrary for Bytes
+pub impl[X : Arbitrary] Arbitrary for Array[X]
+pub impl[A : Arbitrary] Arbitrary for ArrayView[A]
+pub impl[X : Arbitrary] Arbitrary for Iter[X]
 
