@@ -124,9 +124,9 @@ let wasm_helper_cache : WasmHelperCache = { tried: false, exports: None }
 ///|
 fn try_get_int64_wasm_helper() -> Bool {
   if wasm_helper_cache.tried {
-    match wasm_helper_cache.exports {
-      Some(_) => return true
-      None => return false
+    return match wasm_helper_cache.exports {
+      Some(_) => true
+      None => false
     }
   }
   wasm_helper_cache.tried = true
