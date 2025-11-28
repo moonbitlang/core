@@ -113,54 +113,168 @@ priv struct Int64WasmHelper {
 }
 
 ///|
-extern "js" fn get_int64_wasm_helper() -> Int64WasmHelper =
-  #|function f() {
-  #|  if (f._exports) return f._exports;
-  #|  return f._exports = new WebAssembly.Instance(new WebAssembly.Module(new Uint8Array([0, 97, 115, 109, 1, 0, 0, 0, 1, 13, 2, 96, 0, 1, 127, 96, 4, 127, 127, 127, 127, 1, 127, 3, 7, 6, 0, 1, 1, 1, 1, 1, 6, 6, 1, 127, 1, 65, 0, 11, 7, 50, 6, 3, 109, 117, 108, 0, 1, 5, 100, 105, 118, 95, 115, 0, 2, 5, 100, 105, 118, 95, 117, 0, 3, 5, 114, 101, 109, 95, 115, 0, 4, 5, 114, 101, 109, 95, 117, 0, 5, 8, 103, 101, 116, 95, 104, 105, 103, 104, 0, 0, 10, 191, 1, 6, 4, 0, 35, 0, 11, 36, 1, 1, 126, 32, 0, 173, 32, 1, 173, 66, 32, 134, 132, 32, 2, 173, 32, 3, 173, 66, 32, 134, 132, 126, 34, 4, 66, 32, 135, 167, 36, 0, 32, 4, 167, 11, 36, 1, 1, 126, 32, 0, 173, 32, 1, 173, 66, 32, 134, 132, 32, 2, 173, 32, 3, 173, 66, 32, 134, 132, 127, 34, 4, 66, 32, 135, 167, 36, 0, 32, 4, 167, 11, 36, 1, 1, 126, 32, 0, 173, 32, 1, 173, 66, 32, 134, 132, 32, 2, 173, 32, 3, 173, 66, 32, 134, 132, 128, 34, 4, 66, 32, 135, 167, 36, 0, 32, 4, 167, 11, 36, 1, 1, 126, 32, 0, 173, 32, 1, 173, 66, 32, 134, 132, 32, 2, 173, 32, 3, 173, 66, 32, 134, 132, 129, 34, 4, 66, 32, 135, 167, 36, 0, 32, 4, 167, 11, 36, 1, 1, 126, 32, 0, 173, 32, 1, 173, 66, 32, 134, 132, 32, 2, 173, 32, 3, 173, 66, 32, 134, 132, 130, 34, 4, 66, 32, 135, 167, 36, 0, 32, 4, 167, 11])), {}).exports;
+priv struct WasmHelperCache {
+  mut tried : Bool
+  mut exports : Int64WasmHelper?
+}
+
+///|
+let wasm_helper_cache : WasmHelperCache = { tried: false, exports: None }
+
+///|
+fn try_get_int64_wasm_helper() -> Bool {
+  if wasm_helper_cache.tried {
+    return match wasm_helper_cache.exports {
+      Some(_) => true
+      None => false
+    }
+  }
+  wasm_helper_cache.tried = true
+  wasm_helper_cache.exports = try_init_wasm_helper()
+  match wasm_helper_cache.exports {
+    Some(_) => true
+    None => false
+  }
+}
+
+///|
+extern "js" fn try_init_wasm_helper() -> Int64WasmHelper? =
+  #|function() {
+  #|  try {
+  #|    return new WebAssembly.Instance(new WebAssembly.Module(new Uint8Array([0, 97, 115, 109, 1, 0, 0, 0, 1, 13, 2, 96, 0, 1, 127, 96, 4, 127, 127, 127, 127, 1, 127, 3, 7, 6, 0, 1, 1, 1, 1, 1, 6, 6, 1, 127, 1, 65, 0, 11, 7, 50, 6, 3, 109, 117, 108, 0, 1, 5, 100, 105, 118, 95, 115, 0, 2, 5, 100, 105, 118, 95, 117, 0, 3, 5, 114, 101, 109, 95, 115, 0, 4, 5, 114, 101, 109, 95, 117, 0, 5, 8, 103, 101, 116, 95, 104, 105, 103, 104, 0, 0, 10, 191, 1, 6, 4, 0, 35, 0, 11, 36, 1, 1, 126, 32, 0, 173, 32, 1, 173, 66, 32, 134, 132, 32, 2, 173, 32, 3, 173, 66, 32, 134, 132, 126, 34, 4, 66, 32, 135, 167, 36, 0, 32, 4, 167, 11, 36, 1, 1, 126, 32, 0, 173, 32, 1, 173, 66, 32, 134, 132, 32, 2, 173, 32, 3, 173, 66, 32, 134, 132, 127, 34, 4, 66, 32, 135, 167, 36, 0, 32, 4, 167, 11, 36, 1, 1, 126, 32, 0, 173, 32, 1, 173, 66, 32, 134, 132, 32, 2, 173, 32, 3, 173, 66, 32, 134, 132, 128, 34, 4, 66, 32, 135, 167, 36, 0, 32, 4, 167, 11, 36, 1, 1, 126, 32, 0, 173, 32, 1, 173, 66, 32, 134, 132, 32, 2, 173, 32, 3, 173, 66, 32, 134, 132, 129, 34, 4, 66, 32, 135, 167, 36, 0, 32, 4, 167, 11, 36, 1, 1, 126, 32, 0, 173, 32, 1, 173, 66, 32, 134, 132, 32, 2, 173, 32, 3, 173, 66, 32, 134, 132, 130, 34, 4, 66, 32, 135, 167, 36, 0, 32, 4, 167, 11])), {}).exports;
+  #|  } catch (e) {
+  #|    return undefined;
+  #|  }
+  #|}
+
+///|
+// BigInt-based fallback for signed division
+extern "js" fn MyInt64::div_bigint(self : MyInt64, other : MyInt64) -> MyInt64 =
+  #|(a, b) => {
+  #|  const aVal = (BigInt(a.hi) << 32n) | BigInt(a.lo >>> 0);
+  #|  const bVal = (BigInt(b.hi) << 32n) | BigInt(b.lo >>> 0);
+  #|  const result = aVal / bVal;
+  #|  const lo = Number(result & 0xFFFFFFFFn);
+  #|  const hi = Number((result >> 32n) & 0xFFFFFFFFn);
+  #|  return { hi: hi | 0, lo: lo | 0 };
+  #|}
+
+///|
+// BigInt-based fallback for unsigned division
+extern "js" fn MyInt64::div_u_bigint(
+  self : MyInt64,
+  other : MyInt64,
+) -> MyInt64 =
+  #|(a, b) => {
+  #|  const aVal = (BigInt(a.hi >>> 0) << 32n) | BigInt(a.lo >>> 0);
+  #|  const bVal = (BigInt(b.hi >>> 0) << 32n) | BigInt(b.lo >>> 0);
+  #|  const result = aVal / bVal;
+  #|  const lo = Number(result & 0xFFFFFFFFn);
+  #|  const hi = Number((result >> 32n) & 0xFFFFFFFFn);
+  #|  return { hi: hi | 0, lo: lo | 0 };
+  #|}
+
+///|
+// BigInt-based fallback for signed modulo
+extern "js" fn MyInt64::mod_bigint(self : MyInt64, other : MyInt64) -> MyInt64 =
+  #|(a, b) => {
+  #|  const aVal = (BigInt(a.hi) << 32n) | BigInt(a.lo >>> 0);
+  #|  const bVal = (BigInt(b.hi) << 32n) | BigInt(b.lo >>> 0);
+  #|  const result = aVal % bVal;
+  #|  const lo = Number(result & 0xFFFFFFFFn);
+  #|  const hi = Number((result >> 32n) & 0xFFFFFFFFn);
+  #|  return { hi: hi | 0, lo: lo | 0 };
+  #|}
+
+///|
+// BigInt-based fallback for unsigned modulo
+extern "js" fn MyInt64::mod_u_bigint(
+  self : MyInt64,
+  other : MyInt64,
+) -> MyInt64 =
+  #|(a, b) => {
+  #|  const aVal = (BigInt(a.hi >>> 0) << 32n) | BigInt(a.lo >>> 0);
+  #|  const bVal = (BigInt(b.hi >>> 0) << 32n) | BigInt(b.lo >>> 0);
+  #|  const result = aVal % bVal;
+  #|  const lo = Number(result & 0xFFFFFFFFn);
+  #|  const hi = Number((result >> 32n) & 0xFFFFFFFFn);
+  #|  return { hi: hi | 0, lo: lo | 0 };
   #|}
 
 ///|
 impl Div for MyInt64 with div(self : MyInt64, other : MyInt64) -> MyInt64 {
   guard not(other.hi == 0 && other.lo == 0) else { panic() }
-  let exports = get_int64_wasm_helper()
-  let { hi: ahi, lo: alo } = self
-  let { hi: bhi, lo: blo } = other
-  let lo = (exports.div_s)(alo, ahi, blo, bhi)
-  let hi = (exports.get_high)()
-  { hi, lo }
+  if not(try_get_int64_wasm_helper()) {
+    // Fallback to BigInt if WebAssembly is not available
+    return self.div_bigint(other)
+  }
+  match wasm_helper_cache.exports {
+    Some(exports) => {
+      let { hi: ahi, lo: alo } = self
+      let { hi: bhi, lo: blo } = other
+      let lo = (exports.div_s)(alo, ahi, blo, bhi)
+      let hi = (exports.get_high)()
+      { hi, lo }
+    }
+    None => panic()
+  }
 }
 
 ///|
 fn MyInt64::div_u(self : MyInt64, other : MyInt64) -> MyInt64 {
   guard not(other.hi == 0 && other.lo == 0) else { panic() }
-  let exports = get_int64_wasm_helper()
-  let { hi: ahi, lo: alo } = self
-  let { hi: bhi, lo: blo } = other
-  let lo = (exports.div_u)(alo, ahi, blo, bhi)
-  let hi = (exports.get_high)()
-  { hi, lo }
+  if not(try_get_int64_wasm_helper()) {
+    // Fallback to BigInt if WebAssembly is not available
+    return self.div_u_bigint(other)
+  }
+  match wasm_helper_cache.exports {
+    Some(exports) => {
+      let { hi: ahi, lo: alo } = self
+      let { hi: bhi, lo: blo } = other
+      let lo = (exports.div_u)(alo, ahi, blo, bhi)
+      let hi = (exports.get_high)()
+      { hi, lo }
+    }
+    None => panic()
+  }
 }
 
 ///|
 impl Mod for MyInt64 with mod(self : MyInt64, other : MyInt64) -> MyInt64 {
   guard not(other.hi == 0 && other.lo == 0) else { panic() }
-  let exports = get_int64_wasm_helper()
-  let { hi: ahi, lo: alo } = self
-  let { hi: bhi, lo: blo } = other
-  let lo = (exports.rem_s)(alo, ahi, blo, bhi)
-  let hi = (exports.get_high)()
-  { hi, lo }
+  if not(try_get_int64_wasm_helper()) {
+    // Fallback to BigInt if WebAssembly is not available
+    return self.mod_bigint(other)
+  }
+  match wasm_helper_cache.exports {
+    Some(exports) => {
+      let { hi: ahi, lo: alo } = self
+      let { hi: bhi, lo: blo } = other
+      let lo = (exports.rem_s)(alo, ahi, blo, bhi)
+      let hi = (exports.get_high)()
+      { hi, lo }
+    }
+    None => panic()
+  }
 }
 
 ///|
 fn MyInt64::mod_u(self : MyInt64, other : MyInt64) -> MyInt64 {
   guard not(other.hi == 0 && other.lo == 0) else { panic() }
-  let exports = get_int64_wasm_helper()
-  let { hi: ahi, lo: alo } = self
-  let { hi: bhi, lo: blo } = other
-  let lo = (exports.rem_u)(alo, ahi, blo, bhi)
-  let hi = (exports.get_high)()
-  { hi, lo }
+  if not(try_get_int64_wasm_helper()) {
+    // Fallback to BigInt if WebAssembly is not available
+    return self.mod_u_bigint(other)
+  }
+  match wasm_helper_cache.exports {
+    Some(exports) => {
+      let { hi: ahi, lo: alo } = self
+      let { hi: bhi, lo: blo } = other
+      let lo = (exports.rem_u)(alo, ahi, blo, bhi)
+      let hi = (exports.get_high)()
+      { hi, lo }
+    }
+    None => panic()
+  }
 }
 
 ///|
