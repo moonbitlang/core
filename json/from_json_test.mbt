@@ -883,3 +883,10 @@ test "Float from_json error handling" {
     ),
   )
 }
+
+///|
+test "ArrayView::from_json" {
+  let u = Json::array([Json::number(1), Json::number(2), Json::number(3)])
+  let v : ArrayView[Int] = @json.from_json(u)
+  inspect(v, content="[1, 2, 3]")
+}

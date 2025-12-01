@@ -82,6 +82,7 @@ impl[Ok : FromJson, Err : FromJson] FromJson for Result[Ok, Err]
 impl[X : FromJson] FromJson for FixedArray[X]
 impl FromJson for Bytes
 impl[X : FromJson] FromJson for Array[X]
+impl[X : FromJson] FromJson for ArrayView[X]
 impl FromJson for Json
 impl[V : FromJson] FromJson for Map[String, V]
 impl[A : FromJson, B : FromJson] FromJson for (A, B)
