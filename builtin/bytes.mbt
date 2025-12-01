@@ -40,7 +40,7 @@ pub fn FixedArray::unsafe_reinterpret_as_bytes(
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let bytes = Bytes::makei(3, (i) => { (i + 65).to_byte() })
 ///   assert_eq(bytes, b"ABC")
 /// ```
@@ -108,7 +108,7 @@ pub fn Bytes::to_unchecked_string(
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let bytes = FixedArray::make(6, b'\x00')
 ///   bytes.blit_from_string(0, "ABC", 0, 3)
 ///   @json.inspect(bytes, content=[65,0,66,0,67,0]) // 'A'
@@ -186,7 +186,7 @@ pub fn FixedArray::blit_from_bytes(
 /// Throws a panic if:
 ///
 /// * The character's code point is greater than 0x10FFFF.
-/// ```mbt check
+/// ```moonbit
 ///   let buf = FixedArray::make(4, b'\x00')
 ///   let written = buf.set_utf8_char(0, '€') // Euro symbol (U+20AC)
 ///   inspect(written, content="3") // UTF-8 encoding takes 3 bytes
@@ -298,7 +298,7 @@ pub fn FixedArray::set_utf16be_char(
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let bytes1 = b"\x01\x02\x03"
 ///   let bytes2 = b"\x01\x02\x03"
 ///   let bytes3 = b"\x01\x02\x04"
@@ -338,7 +338,7 @@ pub impl Eq for Bytes with equal(self : Bytes, other : Bytes) -> Bool {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let a = b"\x01\x02\x03"
 ///   let b = b"\x01\x02\x04"
 ///   inspect(a.compare(b), content="-1") // a < b

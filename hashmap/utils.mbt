@@ -37,7 +37,7 @@ fn[K : Show, V : Show] HashMap::_debug_entries(self : HashMap[K, V]) -> String {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let map = @hashmap.from_array([("a", 1), ("b", 2)])
 ///   map.clear()
 ///   inspect(map.length(), content="0")
@@ -60,7 +60,7 @@ pub fn[K, V] HashMap::clear(self : HashMap[K, V]) -> Unit {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let map = @hashmap.from_array([(1, "one"), (2, "two")])
 ///   let pairs = map.iter().to_array()
 ///   inspect(pairs.length(), content="2")
@@ -89,7 +89,7 @@ pub fn[K, V] HashMap::iter(self : HashMap[K, V]) -> Iter[(K, V)] {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let map = @hashmap.from_array([(1, "one"), (2, "two")])
 ///   let pairs = map.iterator().to_array()
 ///   inspect(pairs.length(), content="2")
@@ -140,7 +140,7 @@ pub fn[K, V] HashMap::iterator2(self : HashMap[K, V]) -> Iterator2[K, V] {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let map = @hashmap.from_array([(1, "one"), (2, "two")])
 ///   let mut sum = 0
 ///   map.iter2().each((k, _) => { sum = sum + k })
@@ -170,7 +170,7 @@ pub fn[K, V] HashMap::iter2(self : HashMap[K, V]) -> Iter2[K, V] {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let arr = [(1, "one"), (2, "two")]
 ///   let iter = Iter::new((yield_) => {
 ///     for pair in arr {
@@ -208,7 +208,7 @@ pub fn[K : Hash + Eq, V] HashMap::from_iter(
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let iter = Iterator::singleton((1, "one")) + Iterator::singleton((2, "two"))
 ///   let map = @hashmap.from_iterator(iter)
 ///   inspect(map.get(1), content="Some(\"one\")")
@@ -237,7 +237,7 @@ pub fn[K : Hash + Eq, V] HashMap::from_iterator(
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let map = @hashmap.from_array([(1, "one"), (2, "two")])
 ///   let arr = map.to_array()
 ///   arr.sort()
@@ -283,7 +283,7 @@ pub fn[K, V] HashMap::to_array(self : HashMap[K, V]) -> Array[(K, V)] {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let map = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
 ///   inspect(map.length(), content="3")
 /// ```
@@ -306,7 +306,7 @@ pub fn[K, V] HashMap::length(self : HashMap[K, V]) -> Int {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let map : @hashmap.HashMap[Int, String] = @hashmap.new(capacity=16)
 ///   inspect(map.capacity(), content="16")
 /// ```
@@ -326,7 +326,7 @@ pub fn[K, V] HashMap::capacity(self : HashMap[K, V]) -> Int {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let map : @hashmap.HashMap[String, Int] = @hashmap.new()
 ///   inspect(map.is_empty(), content="true")
 ///   map.set("key", 42)
@@ -348,7 +348,7 @@ pub fn[K, V] HashMap::is_empty(self : HashMap[K, V]) -> Bool {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let map = @hashmap.from_array([(1, "one"), (2, "two")])
 ///   let array = []
 ///   map.each((k, v) => { array.push((k, v)) })
@@ -412,7 +412,7 @@ pub fn[K, V] HashMap::eachi(
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let map = @hashmap.from_array([(1, "one"), (2, "two")])
 ///   let array = map.to_array()
 ///   assert_eq(map.to_string(), "HashMap::from_array(\{array})")
@@ -445,7 +445,7 @@ pub impl[K : Show, V : Show] Show for HashMap[K, V] with output(self, logger) {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let map = @hashmap.from_array([(1, "one"), (2, "two"), (3, "three")])
 ///   let keys = map.keys().to_array()
 ///   inspect(keys.length(), content="3")
@@ -475,7 +475,7 @@ pub fn[K, V] HashMap::keys(self : HashMap[K, V]) -> Iter[K] {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let map = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
 ///   let values = map.values().to_array()
 ///   inspect(values.length(), content="3")
@@ -506,7 +506,7 @@ pub fn[K, V] HashMap::values(self : HashMap[K, V]) -> Iter[V] {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let map = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3), ("d", 4)])
 ///   map.retain((_k, v) => v % 2 == 0)  // Keep only even values
 ///   inspect(map.length(), content="2")

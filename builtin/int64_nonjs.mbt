@@ -27,7 +27,7 @@
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   inspect(-42L, content="-42")
 ///   inspect(--42L, content="42")
 ///   inspect(-9223372036854775808L, content="-9223372036854775808") // negating min value
@@ -47,7 +47,7 @@ pub impl Neg for Int64 with neg(self : Int64) -> Int64 = "%i64_neg"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let a = 9223372036854775807L // Int64 maximum value
 ///   let b = 1L
 ///   inspect(a + b, content="-9223372036854775808") // Wraps around to minimum value
@@ -67,7 +67,7 @@ pub impl Add for Int64 with add(self, other) = "%i64_add"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let a = 9223372036854775807L // Int64 maximum value
 ///   let b = 1L
 ///   inspect(a - b, content="9223372036854775806")
@@ -91,7 +91,7 @@ pub impl Sub for Int64 with sub(self, other) = "%i64_sub"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let a = 42L
 ///   let b = 100L
 ///   inspect(a * b, content="4200")
@@ -115,7 +115,7 @@ pub impl Mul for Int64 with mul(self, other) = "%i64_mul"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let a = 42L
 ///   let b = 5L
 ///   inspect(a / b, content="8")
@@ -141,7 +141,7 @@ pub impl Div for Int64 with div(self, other) = "%i64_div"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   inspect(7L % 3L, content="1")
 ///   inspect(-7L % 3L, content="-1")
 ///   inspect(7L % -3L, content="1")
@@ -161,7 +161,7 @@ pub impl Mod for Int64 with mod(self, other) = "%i64_mod"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let a = -1L // All bits are 1
 ///   let b = 0L // All bits are 0
 ///   inspect(a.lnot(), content="0")
@@ -182,7 +182,7 @@ pub fn Int64::lnot(self : Int64) -> Int64 = "%i64_lnot"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let a = 0xFF00FF00L
 ///   let b = 0x0F0F0F0FL
 ///   inspect(a & b, content="251662080") // 0x0F000F00
@@ -202,7 +202,7 @@ pub impl BitAnd for Int64 with land(self, other) = "%i64_land"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let a = 0xFF00L // 1111_1111_0000_0000
 ///   let b = 0x0FF0L // 0000_1111_1111_0000
 ///   inspect(a | b, content="65520") // 1111_1111_1111_0000 = 65520
@@ -224,7 +224,7 @@ pub impl BitOr for Int64 with lor(self, other) = "%i64_lor"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let a = 0xF0F0F0F0F0F0F0F0L
 ///   let b = 0x0F0F0F0F0F0F0F0FL
 ///   inspect(a ^ b, content="-1") // All bits set to 1
@@ -248,7 +248,7 @@ pub impl BitXOr for Int64 with lxor(self, other) = "%i64_lxor"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let x = 1L
 ///   inspect(x << 2, content="4") // Binary: 1 -> 100
 /// ```
@@ -271,7 +271,7 @@ pub fn Int64::lsl(self : Int64, other : Int) -> Int64 = "%i64_shl"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let x = 1L
 ///   inspect(x << 3, content="8") // Equivalent to x << 3
 /// ```
@@ -296,7 +296,7 @@ pub fn Int64::shl(self : Int64, other : Int) -> Int64 = "%i64_shl"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let x = (-4L).reinterpret_as_uint64() // Convert to UInt64 first
 ///   inspect(x >> 1, content="9223372036854775806") // Using the recommended operator
 /// ```
@@ -322,7 +322,7 @@ pub fn Int64::lsr(self : Int64, other : Int) -> Int64 = "%u64.shr"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let x = -240L // 0b1111_1111_0001_0000 in two's complement
 ///   inspect(x >> 4, content="-15") // 0b1111_1111_1111_0001, using recommended syntax
 /// ```
@@ -346,7 +346,7 @@ pub fn Int64::asr(self : Int64, other : Int) -> Int64 = "%i64_shr"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let n = -1024L
 ///   inspect(n >> 3, content="-128") // Preserves sign bit
 /// ```
@@ -371,7 +371,7 @@ pub fn Int64::shr(self : Int64, other : Int) -> Int64 = "%i64_shr"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let n = 1L
 ///   inspect(n << 3, content="8") // 1 shifted left by 3 positions becomes 8
 ///   let m = -4L
@@ -396,7 +396,7 @@ pub impl Shl for Int64 with shl(self, other) = "%i64_shl"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let n = -1024L
 ///   inspect(n >> 3, content="-128") // Preserves sign bit
 ///   let p = 1024L
@@ -416,7 +416,7 @@ pub impl Shr for Int64 with shr(self, other) = "%i64_shr"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   inspect(0x8000000000000000L.ctz(), content="63") // Binary: 1000...0000
 ///   inspect(0x0000000000000001L.ctz(), content="0") // Binary: ...0001
 ///   inspect(0L.ctz(), content="64") // All zeros
@@ -435,7 +435,7 @@ pub fn Int64::ctz(self : Int64) -> Int = "%i64_ctz"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let a = 0x0000_0001_0000_0000L
 ///   inspect(a.clz(), content="31") // 31 leading zeros before the first 1 bit
 ///   let b = 0L
@@ -456,12 +456,12 @@ pub fn Int64::clz(self : Int64) -> Int = "%i64_clz"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let x = 0x7000_0001_1F00_100FL // 0111000000000000000000000001000111110000000100001111
 ///   inspect(x.popcnt(), content="14")
 /// ```
 ///
-/// ```mbt check
+/// ```moonbit
 ///   inspect((-1L).popcnt(), content="64") // All bits set
 ///   inspect(0L.popcnt(), content="0") // No bits set
 /// ```
@@ -479,7 +479,7 @@ pub fn Int64::popcnt(self : Int64) -> Int = "%i64_popcnt"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let a = 42L
 ///   let b = 42L
 ///   let c = -42L
@@ -504,7 +504,7 @@ pub impl Eq for Int64 with equal(self : Int64, other : Int64) -> Bool = "%i64_eq
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let a = 42L
 ///   let b = 24L
 ///   let c = -42L
@@ -534,7 +534,7 @@ pub impl Compare for Int64 with op_ge(x, y) = "%i64.ge"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   inspect(Int64::default(), content="0")
 /// ```
 pub impl Default for Int64 with default() = "%i64_default"
@@ -553,7 +553,7 @@ pub impl Default for Int64 with default() = "%i64_default"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let small = 42L
 ///   let big = 2147483648L // 2^31
 ///   inspect(small.to_int(), content="42")
@@ -573,7 +573,7 @@ pub fn Int64::to_int(self : Int64) -> Int = "%i64_to_i32"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let big = 9223372036854775807L // max value of Int64
 ///   inspect(big.to_double(), content="9223372036854776000")
 ///   let neg = -42L
@@ -596,7 +596,7 @@ pub fn Int64::to_double(self : Int64) -> Double = "%i64_to_f64"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let n = 4607182418800017408L // Bit pattern for 1.0
 ///   inspect(n.reinterpret_as_double(), content="1")
 /// ```
@@ -617,7 +617,7 @@ pub fn Int64::reinterpret_as_double(self : Int64) -> Double = "%i64_to_f64_reint
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   // 0x4045000000000000 represents 42.0 in IEEE 754 double format
 ///   let n = 4636737291354636288UL
 ///   inspect(n.reinterpret_as_double(), content="100")
@@ -637,7 +637,7 @@ pub fn UInt64::reinterpret_as_double(self : UInt64) -> Double = "%i64_to_f64_rei
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let n = 258L // In binary: 100000010
 ///   inspect(n.to_byte(), content="b'\\x02'") // Only keeps 00000010
 ///   let neg = -1L // In binary: all 1's
@@ -658,7 +658,7 @@ pub fn Int64::to_byte(self : Int64) -> Byte = "%i64_to_byte"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   inspect(42L.to_uint16(), content="42")
 ///   inspect((-1L).to_uint16(), content="65535") // Wraps around to maximum UInt16 value
 ///   inspect(70000L.to_uint16(), content="4464") // Value is truncated
@@ -680,7 +680,7 @@ pub fn Int64::to_uint16(self : Int64) -> UInt16 = "%i64_to_u16"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   inspect(UInt64::trunc_double(42.75), content="42")
 /// ```
 pub fn UInt64::trunc_double(val : Double) -> UInt64 = "%f64.to_u64"
@@ -703,7 +703,7 @@ pub fn Int64::to_float(self : Int64) -> Float = "%i64.to_f32"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let n = 42U
 ///   inspect(UInt64::extend_uint(n), content="42")
 ///   let max = 4294967295U // Maximum value of UInt
@@ -725,7 +725,7 @@ pub fn UInt64::extend_uint(val : UInt) -> UInt64 = "%u32.to_u64"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let n = 42
 ///   inspect(n.to_int64(), content="42")
 ///   let neg = -42
@@ -746,7 +746,7 @@ pub fn Int::to_int64(self : Int) -> Int64 = "%i32_to_i64"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let x = Int::to_uint16(42)
 ///   inspect(x.to_int64(), content="42")
 ///   let max = Int::to_uint16(65535) // maximum value of UInt16
@@ -769,7 +769,7 @@ pub fn UInt16::to_int64(self : UInt16) -> Int64 = "%u16_to_i64"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let d = 1.0
 ///   // 1.0 in IEEE 754 double format has the bit pattern 0x3FF0000000000000
 ///   inspect(d.reinterpret_as_int64(), content="4607182418800017408")
@@ -794,7 +794,7 @@ pub fn Double::reinterpret_as_i64(self : Double) -> Int64 = "%f64_to_i64_reinter
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let d = 1.0
 ///   inspect(d.reinterpret_as_int64(), content="4607182418800017408") // IEEE 754 representation of 1.0
 ///   let neg = -0.0
@@ -816,7 +816,7 @@ pub fn Double::reinterpret_as_int64(self : Double) -> Int64 = "%f64_to_i64_reint
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let zero = 0.0
 ///   let positive = 1.0
 ///   inspect(zero.reinterpret_as_uint64(), content="0")
@@ -842,7 +842,7 @@ pub fn Double::reinterpret_as_u64(self : Double) -> UInt64 = "%f64_to_i64_reinte
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let d = 1.0
 ///   inspect(d.reinterpret_as_uint64(), content="4607182418800017408") // Binary: 0x3FF0000000000000
 /// ```
@@ -884,7 +884,7 @@ pub fn Double::convert_uint64(val : UInt64) -> Double = "%u64.to_f64"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let pos = 42L
 ///   let neg = -1L
 ///   inspect(pos.reinterpret_as_uint64(), content="42")
@@ -908,7 +908,7 @@ pub fn Int64::to_uint64(self : Int64) -> UInt64 = "%i64.to_u64_reinterpret"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let neg = -1L
 ///   inspect(neg.reinterpret_as_uint64(), content="18446744073709551615") // All bits set to 1
 ///   let pos = 42L
@@ -930,7 +930,7 @@ pub fn Int64::reinterpret_as_uint64(self : Int64) -> UInt64 = "%i64.to_u64_reint
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let max = 18446744073709551615UL
 ///   inspect(max.reinterpret_as_int64(), content="-1")
 /// ```
@@ -954,7 +954,7 @@ pub fn UInt64::to_int64(self : UInt64) -> Int64 = "%u64.to_i64_reinterpret"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let max = 18446744073709551615UL // Maximum value of UInt64
 ///   inspect(max.reinterpret_as_int64(), content="-1") // All bits set to 1 represents -1 in two's complement
 /// ```
@@ -973,7 +973,7 @@ pub fn UInt64::reinterpret_as_int64(self : UInt64) -> Int64 = "%u64.to_i64_reint
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   inspect(42UL.to_uint16(), content="42")
 ///   inspect(18446744073709551615UL.to_uint16(), content="65535") // Wraps around to maximum UInt16 value
 ///   inspect(70000UL.to_uint16(), content="4464") // Value is truncated
@@ -995,7 +995,7 @@ pub fn UInt64::to_uint16(self : UInt64) -> UInt16 {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let big = 0xFFFFFFFFFFFFFFFFUL // max value of UInt64
 ///   inspect(big.to_uint(), content="4294967295") // 0xFFFFFFFF, max value of UInt
 ///   let small = 42UL
@@ -1019,7 +1019,7 @@ pub fn UInt64::to_uint(self : UInt64) -> UInt = "%u64.to_u32"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let a = 42UL
 ///   inspect(a.to_int(), content="42")
 ///   let b = 18446744073709551615UL // max value of UInt64
@@ -1064,7 +1064,7 @@ pub fn UInt64::to_double(self : UInt64) -> Double = "%u64.to_f64"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let a = 42UL
 ///   let b = 100UL
 ///   inspect(a + b, content="142")
@@ -1089,7 +1089,7 @@ pub impl Add for UInt64 with add(self, other) = "%u64.add"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let a = 5UL
 ///   let b = 3UL
 ///   inspect(a - b, content="2")
@@ -1112,7 +1112,7 @@ pub impl Sub for UInt64 with sub(self, other) = "%u64.sub"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let a = 2UL
 ///   let b = 3UL
 ///   inspect(a * b, content="6")
@@ -1137,7 +1137,7 @@ pub impl Mul for UInt64 with mul(self, other) = "%u64.mul"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let a = 100UL
 ///   let b = 20UL
 ///   inspect(a / b, content="5") // Using infix operator
@@ -1158,7 +1158,7 @@ pub impl Div for UInt64 with div(self, other) = "%u64.div"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let a = 17UL
 ///   let b = 5UL
 ///   inspect(a % b, content="2") // 17 divided by 5 gives quotient 3 and remainder 2
@@ -1182,7 +1182,7 @@ pub impl Mod for UInt64 with mod(self, other) = "%u64.mod"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let a = 42UL
 ///   let b = 24UL
 ///   inspect(a.compare(b), content="1") // 42 > 24
@@ -1215,7 +1215,7 @@ pub impl Compare for UInt64 with op_ge(x, y) = "%u64.ge"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let a = 42UL
 ///   let b = 42UL
 ///   let c = 24UL
@@ -1236,7 +1236,7 @@ pub impl Eq for UInt64 with equal(self : UInt64, other : UInt64) -> Bool = "%u64
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let a = 0xF0F0F0F0F0F0F0F0UL
 ///   let b = 0xFF00FF00FF00FF00UL
 ///   inspect(a & b, content="17294086455919964160") // 0xF000F000F000F000
@@ -1256,7 +1256,7 @@ pub impl BitAnd for UInt64 with land(self, other) = "%u64.bitand"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let a = 0xF0F0F0F0UL
 ///   let b = 0x0F0F0F0FUL
 ///   inspect(a | b, content="4294967295") // All bits set to 1
@@ -1278,7 +1278,7 @@ pub impl BitOr for UInt64 with lor(self, other) = "%u64.bitor"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let a = 0xF0F0F0F0UL
 ///   let b = 0x0F0F0F0FUL
 ///   inspect(a ^ b, content="4294967295") // 0xFFFFFFFF
@@ -1298,7 +1298,7 @@ pub impl BitXOr for UInt64 with lxor(self, other) = "%u64.bitxor"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let x = 0xFFFF_FFFF_0000_0000UL
 ///   inspect(x.lnot(), content="4294967295") // 0x0000_0000_FFFF_FFFF
 /// ```
@@ -1320,7 +1320,7 @@ pub fn UInt64::lnot(self : UInt64) -> UInt64 = "%u64.bitnot"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let x = 1UL
 ///   inspect(x << 4, content="16") // 1 << 4 = 16
 /// ```
@@ -1344,7 +1344,7 @@ pub fn UInt64::lsl(self : UInt64, shift : Int) -> UInt64 = "%u64.shl"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let x = 1UL
 ///   inspect(x << 2, content="4") // 1 << 2 = 4
 /// ```
@@ -1366,7 +1366,7 @@ pub fn UInt64::shl(self : UInt64, shift : Int) -> UInt64 = "%u64.shl"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let x = 0xFF00000000000000UL
 ///   inspect(x >> 8, content="71776119061217280")
 /// ```
@@ -1391,7 +1391,7 @@ pub fn UInt64::shr(self : UInt64, shift : Int) -> UInt64 = "%u64.shr"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let x = 0xF000000000000000UL
 ///   inspect(x >> 4, content="1080863910568919040") // 0x0F00000000000000
 /// ```
@@ -1416,7 +1416,7 @@ pub fn UInt64::lsr(self : UInt64, shift : Int) -> UInt64 = "%u64.shr"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let x = 1UL
 ///   inspect(x << 3, content="8") // 1 shifted left by 3 positions becomes 8
 ///   inspect(x << 63, content="9223372036854775808") // 1 shifted left by 63 positions
@@ -1440,7 +1440,7 @@ pub impl Shl for UInt64 with shl(self, shift) = "%u64.shl"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let x = 0xFF00FF00FF00FF00UL
 ///   inspect(x >> 8, content="71777214294589695") // Shifted right by 8 bits
 ///   inspect(x >> 64, content="18374966859414961920") // Equivalent to x >> 0 due to masking
@@ -1460,7 +1460,7 @@ pub impl Shr for UInt64 with shr(self, shift) = "%u64.shr"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   inspect(0UL.clz(), content="64")
 ///   inspect(1UL.clz(), content="63")
 ///   inspect(0x8000_0000_0000_0000UL.clz(), content="0")
@@ -1481,7 +1481,7 @@ pub fn UInt64::clz(self : UInt64) -> Int = "%u64.clz"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let x = 0x8000000000000000UL // Binary: 1000...0000 (63 trailing zeros)
 ///   inspect(x.ctz(), content="63")
 ///   let y = 0UL
@@ -1502,7 +1502,7 @@ pub fn UInt64::ctz(self : UInt64) -> Int = "%u64.ctz"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let n = 0x7000_0001_1F00_100FUL // Binary: 0111 0000 ... 0001 1111 0000 0000 0001 0000 0000 1111
 ///   inspect(n.popcnt(), content="14") // Has 14 bits set to 1
 /// ```

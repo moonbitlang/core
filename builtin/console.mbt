@@ -28,7 +28,7 @@ fn[T] any_to_string(any : T) -> String = "%any.to_string"
 ///
 /// Example:
 ///
-/// ```mbt check skip
+/// ```moonbit skip
 ///   println(42)
 ///   println("Hello, World!")
 ///   println([1, 2, 3])
@@ -46,7 +46,7 @@ pub fn[T : Show] println(input : T) -> Unit {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let x : Int = 42
 ///   inspect(x, content="42") // Raises InspectError with detailed failure message
 /// ```
@@ -169,7 +169,7 @@ test {
 ///
 /// Example:
 ///
-/// ```mbt check skip
+/// ```moonbit skip
 ///   inspect(42, content="42")
 ///   inspect("hello", content="hello")
 ///   inspect([1, 2, 3], content="[1, 2, 3]")
@@ -204,7 +204,7 @@ pub fn inspect(
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let err : SnapshotError = SnapshotError("failed to load snapshot")
 ///   match err {
 ///     SnapshotError(msg) => assert_eq(msg, "failed to load snapshot")

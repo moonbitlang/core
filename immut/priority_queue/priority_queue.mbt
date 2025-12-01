@@ -345,7 +345,7 @@ pub impl[A : Hash + Compare] Hash for PriorityQueue[A] with hash_combine(
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let pq1 = @priority_queue.from_array([1, 2, 3])
 ///   let pq2 = @priority_queue.from_array([1, 2, 4])
 ///   let pq3 = @priority_queue.from_array([1, 2])

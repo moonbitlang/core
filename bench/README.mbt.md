@@ -6,7 +6,7 @@ This package provides benchmarking utilities for measuring the performance of Mo
 
 Use the `single_bench` function to benchmark individual operations:
 
-```mbt check
+```moonbit
 ///|
 #skip("slow tests")
 test "basic benchmarking" {
@@ -27,7 +27,7 @@ test "basic benchmarking" {
 
 Use the `T` type to collect multiple benchmarks:
 
-```mbt check
+```moonbit
 ///|
 #skip("slow tests")
 test "benchmark collection" {
@@ -58,7 +58,7 @@ test "benchmark collection" {
 
 Compare the performance of different implementations:
 
-```mbt check
+```moonbit
 ///|
 #skip("slow tests")
 test "algorithm comparison" {
@@ -92,7 +92,7 @@ test "algorithm comparison" {
 
 Benchmark different data structure operations:
 
-```mbt check
+```moonbit
 ///|
 #skip("slow tests")
 test "data structure benchmarks" {
@@ -124,7 +124,7 @@ test "data structure benchmarks" {
 
 Measure string manipulation performance:
 
-```mbt check
+```moonbit
 ///|
 #skip("slow tests")
 test "string benchmarks" {
@@ -155,7 +155,7 @@ test "string benchmarks" {
 
 Use `keep` to prevent compiler optimizations from eliminating benchmarked code:
 
-```mbt check
+```moonbit
 ///|
 #skip("slow tests")
 test "preventing optimization" {
@@ -174,7 +174,7 @@ test "preventing optimization" {
 
 Control the number of benchmark iterations:
 
-```mbt check
+```moonbit
 ///|
 #skip("slow tests")
 test "iteration control" {
@@ -212,7 +212,7 @@ test "iteration control" {
 
 ### 1. Isolate What You're Measuring
 
-```mbt check
+```moonbit
 ///|
 #skip("slow tests")
 test "isolation example" {
@@ -234,7 +234,7 @@ test "isolation example" {
 
 ### 2. Warm Up Before Measuring
 
-```mbt check
+```moonbit
 ///|
 #skip("slow tests")
 test "warmup example" {
@@ -264,7 +264,7 @@ test "warmup example" {
 
 ### 3. Use Meaningful Names
 
-```mbt check
+```moonbit
 ///|
 #skip("slow tests")
 test "meaningful names" {
@@ -301,7 +301,7 @@ The benchmark results include statistical information:
 
 Benchmarks can be integrated into your testing workflow:
 
-```mbt check
+```moonbit
 ///|
 #skip("slow tests")
 test "performance regression test" {

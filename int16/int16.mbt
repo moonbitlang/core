@@ -140,7 +140,7 @@ pub fn Int16::reinterpret_from_uint16(self : UInt16) -> Int16 {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let n = Int16::from_int(42)
 ///   inspect(n, content="42")
 ///   let neg = Int16::from_int(-42)
@@ -164,7 +164,7 @@ pub fn Int16::from_int(self : Int) -> Int16 = "%i32_to_i16"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let b = b'\xFF'
 ///   inspect(Int16::from_byte(b), content="255") // Sign is preserved
 ///   let p = b'\x7F'
@@ -187,7 +187,7 @@ pub fn Int16::from_byte(self : Byte) -> Int16 = "%byte_to_i16"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let big = 100000L
 ///   inspect(Int16::from_int64(big), content="-31072") // 100000 doesn't fit in Int16, gets truncated
 ///   let small = 42L
@@ -224,7 +224,7 @@ pub fn Int16::to_int64(self : Int16) -> Int64 = "%i16_to_i64"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let n = (42 : Int16)
 ///   inspect(n.to_int(), content="42")
 ///   let neg = (-42 : Int16)
@@ -245,7 +245,7 @@ pub fn Int16::to_int(self : Int16) -> Int = "%i16_to_i32"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 /// let x : Int16 = (258) // In binary: 0000_0001_0000_0010
 /// inspect(x.to_byte(), content="b'\\x02'") // Only keeps 0000_0010
 /// ```

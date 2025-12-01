@@ -31,7 +31,7 @@
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   inspect(42.0.to_int64(), content="42")
 ///   inspect((-42.5).to_int64(), content="-42")
 ///   inspect((0.0 / 0.0).to_int64(), content="0") // NaN
@@ -58,7 +58,7 @@ pub fn Double::to_int64(self : Double) -> Int64 = "%f64_to_i64_saturate"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   inspect(42.0.to_uint64(), content="42")
 ///   inspect((-42.5).to_uint64(), content="0")
 ///   inspect((0.0 / 0.0).to_uint64(), content="0") // NaN

@@ -13,31 +13,31 @@ import(
 // Types and methods
 #alias(T, deprecated)
 type Queue[A]
-pub fn[A] Queue::clear(Self[A]) -> Unit
-pub fn[A] Queue::copy(Self[A]) -> Self[A]
-pub fn[A] Queue::each(Self[A], (A) -> Unit) -> Unit
-pub fn[A] Queue::eachi(Self[A], (Int, A) -> Unit) -> Unit
-pub fn[A, B] Queue::fold(Self[A], init~ : B, (B, A) -> B) -> B
+fn[A] Queue::clear(Self[A]) -> Unit
+fn[A] Queue::copy(Self[A]) -> Self[A]
+fn[A] Queue::each(Self[A], (A) -> Unit) -> Unit
+fn[A] Queue::eachi(Self[A], (Int, A) -> Unit) -> Unit
+fn[A, B] Queue::fold(Self[A], init~ : B, (B, A) -> B) -> B
 #alias(of, deprecated)
 #as_free_fn(of, deprecated)
 #as_free_fn
-pub fn[A] Queue::from_array(ArrayView[A]) -> Self[A]
+fn[A] Queue::from_array(ArrayView[A]) -> Self[A]
 #as_free_fn
-pub fn[A] Queue::from_iter(Iter[A]) -> Self[A]
+fn[A] Queue::from_iter(Iter[A]) -> Self[A]
 #as_free_fn
-pub fn[A] Queue::from_iterator(Iterator[A]) -> Self[A]
-pub fn[A] Queue::is_empty(Self[A]) -> Bool
-pub fn[A] Queue::iter(Self[A]) -> Iter[A]
-pub fn[A] Queue::iterator(Self[A]) -> Iterator[A]
-pub fn[A] Queue::length(Self[A]) -> Int
+fn[A] Queue::from_iterator(Iterator[A]) -> Self[A]
+fn[A] Queue::is_empty(Self[A]) -> Bool
+fn[A] Queue::iter(Self[A]) -> Iter[A]
+fn[A] Queue::iterator(Self[A]) -> Iterator[A]
+fn[A] Queue::length(Self[A]) -> Int
 #as_free_fn
-pub fn[A] Queue::new() -> Self[A]
-pub fn[A] Queue::peek(Self[A]) -> A?
-pub fn[A] Queue::pop(Self[A]) -> A?
-pub fn[A] Queue::push(Self[A], A) -> Unit
-pub fn[A] Queue::transfer(Self[A], Self[A]) -> Unit
-pub impl[A : Show] Show for Queue[A]
-pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Queue[X]
+fn[A] Queue::new() -> Self[A]
+fn[A] Queue::peek(Self[A]) -> A?
+fn[A] Queue::pop(Self[A]) -> A?
+fn[A] Queue::push(Self[A], A) -> Unit
+fn[A] Queue::transfer(Self[A], Self[A]) -> Unit
+impl[A : Show] Show for Queue[A]
+impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Queue[X]
 
 // Type aliases
 

@@ -8,7 +8,7 @@ It is an enum with two variants: `Ok(T)`, which represents success and contains 
 ## Usage
 ### Constructing Result
 You can create a `Result` value using the `Ok` and `Err` constructors, remember to give proper type annotations.
-```mbt check
+```moonbit
 ///|
 test {
   let _result : Result[Int, String] = Ok(42)
@@ -18,7 +18,7 @@ test {
 ```
 
 Or use the `ok` and `err` functions to create a `Result` value.
-```mbt check
+```moonbit
 ///|
 test {
   let _result : Result[String, Unit] = Ok("yes")
@@ -29,7 +29,7 @@ test {
 
 ### Querying variant
 You can check the variant of a `Result` using the `is_ok` and `is_err` methods.
-```mbt check
+```moonbit
 ///|
 test {
   let result : Result[Int, String] = Ok(42)
@@ -42,7 +42,7 @@ test {
 
 ### Extracting values
 You can extract the value from a `Result` using the `match` expression (Pattern Matching).
-```mbt check
+```moonbit
 ///|
 test {
   let result : Result[Int, Unit] = Ok(33)
@@ -55,7 +55,7 @@ test {
 ```
 
 Or using the `unwrap` method, which will panic if the result is `Err` and return the value if it is `Ok`.
-```mbt check
+```moonbit
 ///|
 test {
   let result : Result[Int, String] = Ok(42)
@@ -65,7 +65,7 @@ test {
 ```
 
 A safe alternative is the `or` method, which returns the value if the result is `Ok` or a default value if it is `Err`.
-```mbt check
+```moonbit
 ///|
 test {
   let result : Result[Int, String] = Err("error")
@@ -75,7 +75,7 @@ test {
 ```
 
 There is a lazy version of `or` called `or_else`, which takes a function that returns a default value.
-```mbt check
+```moonbit
 ///|
 test {
   let result : Result[Int, String] = Err("error")
@@ -87,7 +87,7 @@ test {
 ### Transforming values
 To transform values inside a `Result`, you can use the `map` method, which applies a function to the value if the result is `Ok`,
 and remains unchanged if it is `Err`.
-```mbt check
+```moonbit
 ///|
 test {
   let result : Result[Int, String] = Ok(42)
@@ -97,7 +97,7 @@ test {
 ```
 
 A dual method to `map` is `map_err`, which applies a function to the error value if the result is `Err`, and remains unchanged if it is `Ok`.
-```mbt check
+```moonbit
 ///|
 test {
   let result : Result[Int, String] = Err("error")
@@ -107,7 +107,7 @@ test {
 ```
 
 You can turn a `Result[T, E]` into a `Option[T]` by using the method `to_option`, which returns `Some(value)` if the result is `Ok`, and `None` if it is `Err`.
-```mbt check
+```moonbit
 ///|
 test {
   let result : Result[Int, String] = Ok(42)
@@ -121,7 +121,7 @@ test {
 
 ### Monadic operations
 Moonbit provides monadic operations for `Result`, such as `flatten` and `bind`, which allow chaining of computations that return `Result`.
-```mbt check
+```moonbit
 ///|
 test {
   let result : Result[Result[Int, String], String] = Ok(Ok(42))
@@ -131,7 +131,7 @@ test {
 ```
 
 The `bind` method is similar to `map`, but the function passed to it should return a `Result` value. 
-```mbt check
+```moonbit
 ///|
 test {
   let result : Result[Int, String] = Ok(42)

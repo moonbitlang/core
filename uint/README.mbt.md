@@ -6,7 +6,7 @@ This package provides functionalities for handling 32-bit unsigned integers in M
 
 `uint` provides constants for `UInt`'s value range and default value:
 
-```mbt check
+```moonbit
 ///|
 test "uint basics" {
   // Default value is 0
@@ -22,7 +22,7 @@ test "uint basics" {
 
 `UInt` can be converted to `Int64` when you need to work with signed 64-bit integers:
 
-```mbt check
+```moonbit
 ///|
 test "uint type conversion" {
   let num = 42U
@@ -34,7 +34,7 @@ test "uint type conversion" {
 
 These conversion functions are also available as methods:
 
-```mbt check
+```moonbit
 ///|
 test "uint methods" {
   let num = 1000U

@@ -23,7 +23,7 @@
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 /// let arr = [b'h', b'i']
 /// let bytes = Bytes::from_array(arr)
 /// inspect(
@@ -56,7 +56,7 @@ pub fn Bytes::from_array(arr : ArrayView[Byte]) -> Bytes {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let arr : FixedArray[Byte] = [b'h', b'e', b'l', b'l', b'o']
 ///   let bytes = Bytes::from_array(arr[0:3])
 ///   inspect(
@@ -64,7 +64,7 @@ pub fn Bytes::from_array(arr : ArrayView[Byte]) -> Bytes {
 ///     content=(
 ///       
 ///   #|b"hel"
-///
+/// 
 ///     ),
 ///   )
 /// ```
@@ -101,7 +101,7 @@ pub fn Bytes::from_fixedarray(arr : FixedArray[Byte], len? : Int) -> Bytes {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let bytes = b"hello"
 ///   let arr = bytes.to_fixedarray()
 ///   inspect(arr, content="[b'\\x68', b'\\x65', b'\\x6C', b'\\x6C', b'\\x6F']")
@@ -143,7 +143,7 @@ pub fn BytesView::to_fixedarray(self : BytesView) -> FixedArray[Byte] {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let iter = Iter::singleton(b'h')
 ///   let bytes = Bytes::from_iter(iter)
 ///   inspect(
@@ -151,7 +151,7 @@ pub fn BytesView::to_fixedarray(self : BytesView) -> FixedArray[Byte] {
 ///     content=(
 ///       
 ///   #|b"h"
-///
+/// 
 ///     ),
 ///   )
 /// ```
@@ -171,7 +171,7 @@ pub fn Bytes::from_iter(iter : Iter[Byte]) -> Bytes {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let iter = Iterator::singleton(b'h')
 ///   let bytes = Bytes::from_iterator(iter)
 ///   inspect(
@@ -198,7 +198,7 @@ pub fn Bytes::from_iterator(iter : Iterator[Byte]) -> Bytes {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let arr : FixedArray[Byte] = [b'h', b'e', b'l', b'l', b'o']
 ///   let bytes = Bytes::of(arr)
 ///   inspect(
@@ -223,7 +223,7 @@ pub fn Bytes::from_iterator(iter : Iterator[Byte]) -> Bytes {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let bytes = b"hello"
 ///   let arr = bytes.to_array()
 ///   inspect(arr, content="[b'\\x68', b'\\x65', b'\\x6C', b'\\x6C', b'\\x6F']")
@@ -258,7 +258,7 @@ pub fn BytesView::to_array(self : BytesView) -> Array[Byte] {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let bytes = Bytes::from_array([b'h', b'i'])
 ///   let mut sum = 0
 ///   bytes.iter().each((b) => { sum = sum + b.to_int() })
@@ -285,7 +285,7 @@ pub fn Bytes::iter(self : Bytes) -> Iter[Byte] {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let bytes = Bytes::from_array([b'h', b'i'])
 ///   let mut sum = 0
 ///   bytes.iterator().each((b) => { sum = sum + b.to_int() })
@@ -331,7 +331,7 @@ pub fn Bytes::iter2(self : Bytes) -> Iter2[Int, Byte] {
 /// 
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let buf = StringBuilder::new(size_hint=5)
 ///   let keys = []
 ///   let it = b"abcde".iterator2()
@@ -360,7 +360,7 @@ pub fn Bytes::iterator2(self : Bytes) -> Iterator2[Int, Byte] {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let bytes = Bytes::default()
 ///   inspect(bytes, content="b\"\"")
 ///   inspect(bytes.length(), content="0")
@@ -387,7 +387,7 @@ pub fn default() -> Bytes {
 ///
 /// Example:
 /// 
-/// ```mbt check
+/// ```moonbit
 ///   let bytes = b"\x01\x02\x03"
 ///   let byte = bytes.get(1)
 ///   inspect(byte, content="Some(b'\\x02')")
@@ -445,7 +445,7 @@ pub impl Hash for Bytes with hash_combine(self, hasher) {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   inspect(b"ab".repeat(3), content=(
 ///     #|b"ababab"
 ///   ))

@@ -8,47 +8,47 @@ package "moonbitlang/core/set"
 // Types and methods
 type Set[K]
 #alias(insert, deprecated)
-pub fn[K : Hash + Eq] Set::add(Self[K], K) -> Unit
-pub fn[K : Hash + Eq] Set::add_and_check(Self[K], K) -> Bool
-pub fn[K] Set::capacity(Self[K]) -> Int
-pub fn[K] Set::clear(Self[K]) -> Unit
-pub fn[K : Hash + Eq] Set::contains(Self[K], K) -> Bool
-pub fn[K] Set::copy(Self[K]) -> Self[K]
-pub fn[K : Hash + Eq] Set::difference(Self[K], Self[K]) -> Self[K]
-pub fn[K] Set::each(Self[K], (K) -> Unit raise?) -> Unit raise?
-pub fn[K] Set::eachi(Self[K], (Int, K) -> Unit raise?) -> Unit raise?
+fn[K : Hash + Eq] Set::add(Self[K], K) -> Unit
+fn[K : Hash + Eq] Set::add_and_check(Self[K], K) -> Bool
+fn[K] Set::capacity(Self[K]) -> Int
+fn[K] Set::clear(Self[K]) -> Unit
+fn[K : Hash + Eq] Set::contains(Self[K], K) -> Bool
+fn[K] Set::copy(Self[K]) -> Self[K]
+fn[K : Hash + Eq] Set::difference(Self[K], Self[K]) -> Self[K]
+fn[K] Set::each(Self[K], (K) -> Unit raise?) -> Unit raise?
+fn[K] Set::eachi(Self[K], (Int, K) -> Unit raise?) -> Unit raise?
 #alias(of, deprecated)
 #as_free_fn(of, deprecated)
 #as_free_fn
-pub fn[K : Hash + Eq] Set::from_array(ArrayView[K]) -> Self[K]
+fn[K : Hash + Eq] Set::from_array(ArrayView[K]) -> Self[K]
 #as_free_fn
-pub fn[K : Hash + Eq] Set::from_iter(Iter[K]) -> Self[K]
+fn[K : Hash + Eq] Set::from_iter(Iter[K]) -> Self[K]
 #as_free_fn
-pub fn[K : Hash + Eq] Set::from_iterator(Iterator[K]) -> Self[K]
-pub fn[K : Hash + Eq] Set::intersection(Self[K], Self[K]) -> Self[K]
-pub fn[K : Hash + Eq] Set::is_disjoint(Self[K], Self[K]) -> Bool
-pub fn[K] Set::is_empty(Self[K]) -> Bool
-pub fn[K : Hash + Eq] Set::is_subset(Self[K], Self[K]) -> Bool
-pub fn[K : Hash + Eq] Set::is_superset(Self[K], Self[K]) -> Bool
-pub fn[K] Set::iter(Self[K]) -> Iter[K]
-pub fn[K] Set::iterator(Self[K]) -> Iterator[K]
+fn[K : Hash + Eq] Set::from_iterator(Iterator[K]) -> Self[K]
+fn[K : Hash + Eq] Set::intersection(Self[K], Self[K]) -> Self[K]
+fn[K : Hash + Eq] Set::is_disjoint(Self[K], Self[K]) -> Bool
+fn[K] Set::is_empty(Self[K]) -> Bool
+fn[K : Hash + Eq] Set::is_subset(Self[K], Self[K]) -> Bool
+fn[K : Hash + Eq] Set::is_superset(Self[K], Self[K]) -> Bool
+fn[K] Set::iter(Self[K]) -> Iter[K]
+fn[K] Set::iterator(Self[K]) -> Iterator[K]
 #alias(size, deprecated)
-pub fn[K] Set::length(Self[K]) -> Int
+fn[K] Set::length(Self[K]) -> Int
 #as_free_fn
-pub fn[K] Set::new(capacity? : Int) -> Self[K]
-pub fn[K : Hash + Eq] Set::remove(Self[K], K) -> Unit
-pub fn[K : Hash + Eq] Set::remove_and_check(Self[K], K) -> Bool
-pub fn[K : Hash + Eq] Set::symmetric_difference(Self[K], Self[K]) -> Self[K]
-pub fn[K] Set::to_array(Self[K]) -> Array[K]
-pub fn[K : Hash + Eq] Set::union(Self[K], Self[K]) -> Self[K]
-pub impl[K : Hash + Eq] BitAnd for Set[K]
-pub impl[K : Hash + Eq] BitOr for Set[K]
-pub impl[K : Hash + Eq] BitXOr for Set[K]
-pub impl[K] Default for Set[K]
-pub impl[K : Hash + Eq] Eq for Set[K]
-pub impl[K : Show] Show for Set[K]
-pub impl[K : Hash + Eq] Sub for Set[K]
-pub impl[X : ToJson] ToJson for Set[X]
+fn[K] Set::new(capacity? : Int) -> Self[K]
+fn[K : Hash + Eq] Set::remove(Self[K], K) -> Unit
+fn[K : Hash + Eq] Set::remove_and_check(Self[K], K) -> Bool
+fn[K : Hash + Eq] Set::symmetric_difference(Self[K], Self[K]) -> Self[K]
+fn[K] Set::to_array(Self[K]) -> Array[K]
+fn[K : Hash + Eq] Set::union(Self[K], Self[K]) -> Self[K]
+impl[K : Hash + Eq] BitAnd for Set[K]
+impl[K : Hash + Eq] BitOr for Set[K]
+impl[K : Hash + Eq] BitXOr for Set[K]
+impl[K] Default for Set[K]
+impl[K : Hash + Eq] Eq for Set[K]
+impl[K : Show] Show for Set[K]
+impl[K : Hash + Eq] Sub for Set[K]
+impl[X : ToJson] ToJson for Set[X]
 
 // Type aliases
 

@@ -81,7 +81,7 @@ let logf_data : LogfData = {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   inspect(@math.lnf(1), content="0")
 ///   inspect(@math.lnf(2.718281828459045), content="0.9999999403953552")
 ///   inspect(@math.lnf(0), content="-Infinity")
@@ -137,7 +137,7 @@ pub fn lnf(x : Float) -> Float {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   inspect(@math.ln_1pf(0), content="0")
 ///   inspect(@math.ln_1pf(1), content="0.6931471824645996")
 ///   inspect(@math.ln_1pf(-1), content="-Infinity")

@@ -29,7 +29,7 @@ pub let min_value : Byte = b'\x00'
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let b = b'\xFF'
 ///   inspect(b.to_uint64(), content="255")
 /// ```
@@ -48,7 +48,7 @@ pub fn Byte::to_uint64(self : Byte) -> UInt64 {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let b = b'\x0F'
 ///   inspect(b.popcnt(), content="4")
 /// ```

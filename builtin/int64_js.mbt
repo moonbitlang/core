@@ -755,7 +755,7 @@ pub fn UInt64::to_uint(self : UInt64) -> UInt {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   inspect(42UL.to_uint16(), content="42")
 ///   inspect(18446744073709551615UL.to_uint16(), content="65535") // Wraps around to maximum UInt16 value
 ///   inspect(70000UL.to_uint16(), content="4464") // Value is truncated

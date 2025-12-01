@@ -2,17 +2,17 @@
 package "moonbitlang/core/uint"
 
 // Values
-pub fn default() -> UInt
+fn default() -> UInt
 
-pub let max_value : UInt
+let max_value : UInt
 
-pub let min_value : UInt
+let min_value : UInt
 
 // Errors
 
 // Types and methods
-pub fn UInt::to_int64(UInt) -> Int64
-pub impl Default for UInt
+fn UInt::to_int64(UInt) -> Int64
+impl Default for UInt
 
 // Type aliases
 

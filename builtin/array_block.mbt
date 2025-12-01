@@ -36,7 +36,7 @@
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let src = [1, 2, 3, 4, 5]
 ///   let dst = [0, 0, 0, 0, 0]
 ///   Array::unsafe_blit(dst, 1, src, 2, 2)
@@ -78,7 +78,7 @@ pub fn[A] Array::unsafe_blit(
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let src = FixedArray::make(5, 0)
 ///   let dst = Array::make(5, 0)
 ///   for i in 0..<5 {
@@ -120,7 +120,7 @@ pub fn[A] Array::unsafe_blit_fixed(
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let src = [1, 2, 3, 4, 5]
 ///   let dst = [0, 0]
 ///   src[:3].blit_to(dst, dst_offset=1)
@@ -168,7 +168,7 @@ pub fn[A] Array::blit_to(
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let src = [1, 2, 3, 4, 5]
 ///   let view = src[1:4]  // view = [2, 3, 4]
 ///   let dst = [0, 0]

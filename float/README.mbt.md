@@ -6,7 +6,7 @@ This package provides operations on 32-bit floating-point numbers (`Float`). It 
 
 The package defines several special floating-point values:
 
-```mbt check
+```moonbit
 ///|
 test "special float values" {
   // Infinity values
@@ -36,7 +36,7 @@ test "checking special values" {
 
 The package provides various ways to round floating-point numbers:
 
-```mbt check
+```moonbit
 ///|
 test "rounding functions" {
   // Ceiling - rounds up
@@ -61,7 +61,7 @@ test "rounding functions" {
 
 Other useful operations on floats:
 
-```mbt check
+```moonbit
 ///|
 test "utility functions" {
   // Absolute value
@@ -79,7 +79,7 @@ test "utility functions" {
 
 Functions to convert floats to their byte representation:
 
-```mbt check
+```moonbit
 ///|
 test "byte representation" {
   let x : Float = 3.14
@@ -96,7 +96,7 @@ test "byte representation" {
 
 All functions can also be called in method style:
 
-```mbt check
+```moonbit
 ///|
 test "method style calls" {
   let x : Float = 3.14

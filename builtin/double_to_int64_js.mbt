@@ -61,7 +61,7 @@ extern "js" fn MyInt64::from_double(value : Double) -> MyInt64 =
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   inspect(42.0.to_int64(), content="42")
 ///   inspect((-42.5).to_int64(), content="-42")
 ///   inspect((0.0 / 0.0).to_int64(), content="0") // NaN
@@ -107,7 +107,7 @@ extern "js" fn MyInt64::from_double_unsigned(value : Double) -> MyInt64 =
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   inspect(42.0.to_uint64(), content="42")
 ///   inspect((-42.5).to_uint64(), content="0")
 ///   inspect((0.0 / 0.0).to_uint64(), content="0") // NaN

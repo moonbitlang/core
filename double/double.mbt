@@ -24,7 +24,7 @@
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 /// inspect(Double::from_int(42), content="42")
 /// inspect(Double::from_int(-1), content="-1")
 /// ```
@@ -46,7 +46,7 @@ pub fn Double::from_int(i : Int) -> Double {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   inspect((-2.5).abs(), content="2.5")
 ///   inspect(3.14.abs(), content="3.14")
 ///   inspect(0.0.abs(), content="0")
@@ -81,7 +81,7 @@ pub fn Double::signum(self : Double) -> Double {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 /// inspect(@double.not_a_number.is_nan(), content="true")
 /// inspect(42.0.is_nan(), content="false")
 /// inspect((0.0 / 0.0).is_nan(), content="true")
@@ -104,7 +104,7 @@ pub fn Double::is_nan(self : Double) -> Bool {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   inspect(@double.infinity.is_inf(), content="true")
 ///   inspect(@double.neg_infinity.is_inf(), content="true")
 ///   inspect(42.0.is_inf(), content="false")
@@ -124,7 +124,7 @@ pub fn Double::is_inf(self : Double) -> Bool {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 /// inspect(@double.infinity.is_pos_inf(), content="true")
 /// inspect(@double.neg_infinity.is_pos_inf(), content="false")
 /// inspect(42.0.is_pos_inf(), content="false") // TODO: better formatter
@@ -144,7 +144,7 @@ pub fn Double::is_pos_inf(self : Double) -> Bool {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   inspect((-1.0 / 0.0).is_neg_inf(), content="true")
 ///   inspect(42.0.is_neg_inf(), content="false")
 ///   inspect((1.0 / 0.0).is_neg_inf(), content="false") // positive infinity
@@ -171,7 +171,7 @@ pub impl Hash for Double with hash_combine(self, hasher) {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   inspect(42.0.to_string(), content="42")
 ///   inspect(3.14159.to_string(), content="3.14159")
 ///   inspect((-0.0).to_string(), content="0")
@@ -214,7 +214,7 @@ pub impl Show for Double with output(self, logger) {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let x = 1.0
 ///   let y = 1.000000001
 ///   inspect(x.is_close(y), content="false")
@@ -258,7 +258,7 @@ pub fn Double::is_close(
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 /// let d = 1.0
 /// inspect(
 ///   d.to_be_bytes(),
@@ -284,7 +284,7 @@ pub fn Double::to_be_bytes(self : Double) -> Bytes {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 /// let d = 1.0
 /// inspect(
 ///   d.to_le_bytes(),

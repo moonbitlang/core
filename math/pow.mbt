@@ -39,7 +39,7 @@
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   inspect((2.0 : Float).pow(3.0), content="8")
 ///   inspect((4.0 : Float).pow(0.5), content="2")
 ///   inspect((1.0 : Float).pow(-1.0), content="1")

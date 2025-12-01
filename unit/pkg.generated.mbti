@@ -2,15 +2,15 @@
 package "moonbitlang/core/unit"
 
 // Values
-pub fn default() -> Unit
+fn default() -> Unit
 
 // Errors
 
 // Types and methods
-pub fn Unit::to_string(Unit) -> String
-pub impl Compare for Unit
-pub impl Default for Unit
-pub impl Hash for Unit
+fn Unit::to_string(Unit) -> String
+impl Compare for Unit
+impl Default for Unit
+impl Hash for Unit
 
 // Type aliases
 

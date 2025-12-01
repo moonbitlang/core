@@ -22,7 +22,7 @@
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let f : Float = 3.14
 ///   let s = f.to_double().to_string()
 ///   inspect(s, content="3.140000104904175")
@@ -38,7 +38,7 @@ pub impl Show for Float with output(self, logger) {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   inspect(Float::default(), content="0")
 /// ```
 pub impl Default for Float with default() {
@@ -55,7 +55,7 @@ pub impl Default for Float with default() {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let x : Float = 3.14
 ///   let y : Float = 3.14
 ///   // Same values should produce same hash combinations
@@ -79,7 +79,7 @@ pub impl Hash for Float with hash_combine(self, hasher) {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 /// let x : Float = 1.0
 /// inspect(
 ///   x.to_be_bytes(),
@@ -111,7 +111,7 @@ pub fn Float::to_be_bytes(self : Float) -> Bytes {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let f : Float = 1.0
 ///   let bytes = f.to_le_bytes()
 ///   inspect(bytes.length(), content="4")
@@ -138,7 +138,7 @@ pub fn Float::to_le_bytes(self : Float) -> Bytes {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   inspect(@float.infinity.is_inf(), content="true")
 ///   inspect(@float.neg_infinity.is_inf(), content="true")
 ///   inspect((1.0 : Float).is_inf(), content="false")
@@ -158,7 +158,7 @@ pub fn Float::is_inf(self : Float) -> Bool {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   inspect(@float.infinity.is_pos_inf(), content="true")
 ///   inspect((1.0 : Float).is_pos_inf(), content="false")
 ///   inspect(@float.neg_infinity.is_pos_inf(), content="false")
@@ -178,7 +178,7 @@ pub fn Float::is_pos_inf(self : Float) -> Bool {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   inspect(@float.neg_infinity.is_neg_inf(), content="true")
 ///   inspect((1.0 : Float).is_neg_inf(), content="false")
 ///   inspect(@float.infinity.is_neg_inf(), content="false")
@@ -198,7 +198,7 @@ pub fn Float::is_neg_inf(self : Float) -> Bool {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   inspect(@float.not_a_number.is_nan(), content="true")
 ///   inspect((1.0 : Float).is_nan(), content="false")
 ///   inspect(@float.infinity.is_nan(), content="false")
@@ -228,7 +228,7 @@ pub fn Float::is_nan(self : Float) -> Bool {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let x = 1.0
 ///   let y = 1.000000001
 ///   inspect(x.is_close(y), content="false")
@@ -270,7 +270,7 @@ pub fn Float::is_close(
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   inspect((5.7 : Float).mod(2.0), content="1.6999998092651367")
 ///   inspect((-5.7 : Float).mod(2.0), content="-1.6999998092651367")
 /// ```
@@ -370,7 +370,7 @@ pub fn Float::until(
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let f = Float::from_double(3.14)
 ///   inspect(f.to_double(), content="3.140000104904175")
 /// ```
@@ -399,7 +399,7 @@ pub impl ToJson for Float with to_json(self : Float) -> Json {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let x = Float::from_double(16.0)
 ///   let root = x.sqrt()
 ///   inspect(root.to_double(), content="4")
@@ -424,7 +424,7 @@ pub fn Float::sqrt(self : Float) -> Float = "%f32.sqrt"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let f = Float::from_double(1.0)
 ///   // IEEE 754 representation of 1.0 is 0x3F800000
 ///   inspect(f.reinterpret_as_int(), content="1065353216")
@@ -450,7 +450,7 @@ pub fn Float::reinterpret_as_int(self : Float) -> Int = "%f32.to_i32_reinterpret
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let f = Float::from_double(3.14)
 ///   inspect((-f).to_double(), content="-3.140000104904175")
 ///   let zero = Float::from_double(0.0)
@@ -472,7 +472,7 @@ pub impl Neg for Float with neg(self) = "%f32.neg"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let a = Float::from_double(3.14)
 ///   let b = Float::from_double(2.86)
 ///   let sum = a + b
@@ -493,7 +493,7 @@ pub impl Add for Float with add(self, other) = "%f32.add"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let x = Float::from_double(3.14)
 ///   let y = Float::from_double(1.0)
 ///   let result = x - y
@@ -516,7 +516,7 @@ pub impl Sub for Float with sub(self, other) = "%f32.sub"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let x = Float::from_int(2)
 ///   let y = Float::from_int(3)
 ///   let z = x * y
@@ -542,7 +542,7 @@ pub impl Mul for Float with mul(self, other) = "%f32.mul"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let a = Float::from_double(6.0)
 ///   let b = Float::from_double(2.0)
 ///   let result = (a / b).to_double()
@@ -566,7 +566,7 @@ pub impl Div for Float with div(self, other) = "%f32.div"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let x = 3.14
 ///   let y = 3.14
 ///   let z = 0.0 / 0.0 // NaN
@@ -590,7 +590,7 @@ pub impl Eq for Float with equal(self : Float, other : Float) -> Bool = "%f32.eq
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let x = Float::from_double(1.0)
 ///   let y = Float::from_double(2.0)
 ///   let nan = Float::from_double(0.0 / 0.0)
@@ -616,7 +616,7 @@ pub fn Float::op_neq(self : Float, other : Float) -> Bool = "%f32.ne"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let a = 3.14
 ///   let b = 2.718
 ///   inspect(a.compare(b), content="1") // 3.14 > 2.718
@@ -652,7 +652,7 @@ pub impl Compare for Float with op_ge(x, y) = "%f32.ge"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let x : Float = 1.0
 ///   inspect(x.reinterpret_as_uint(), content="1065353216") // Decimal representation of 0x3F800000
 /// ```
@@ -673,10 +673,10 @@ pub fn Float::reinterpret_as_uint(self : Float) -> UInt = "%f32.to_i32_reinterpr
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 /// // 0x3F800000 represents 1.0 in IEEE 754 single-precision format
 /// let n = 1065353216 // 0x3F800000
-/// inspect(Float::reinterpret_from_int(n), content="1")
+/// inspect(Float::reinterpret_from_int(n), content="1") 
 /// ```
 // TODO(upstream): no test entry found
 pub fn Float::reinterpret_from_int(self : Int) -> Float = "%i32.to_f32_reinterpret"
@@ -696,7 +696,7 @@ pub fn Float::reinterpret_from_int(self : Int) -> Float = "%i32.to_f32_reinterpr
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 /// let n = 0x3F800000U // Bit pattern for 1.0f
 /// inspect(Float::reinterpret_from_uint(n), content="1")
 /// ```
@@ -723,7 +723,7 @@ test "Float::reinterpret" {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let n = 42
 ///   let f = Float::from_int(n)
 ///   // Convert back to double for comparison since Float doesn't implement Show
@@ -744,7 +744,7 @@ pub fn Float::from_int(self : Int) -> Float = "%i32.to_f32"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let b = b'\xFF' // 255 in decimal
 ///   let f = Float::from_byte(b)
 ///   // Convert to double for comparison since Float doesn't implement Show
@@ -766,7 +766,7 @@ pub fn Float::from_byte(self : Byte) -> Float = "%byte.to_f32"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let d = 3.14159265359
 ///   inspect(Float::from_double(d).to_double(), content="3.1415927410125732") // Note the loss of precision
 /// ```
@@ -786,7 +786,7 @@ pub fn Float::from_double(self : Double) -> Float = "%f64.to_f32"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let n = 42U
 ///   inspect(Float::from_uint(n).to_double(), content="42")
 ///   let big = 16777216U // 2^24
@@ -809,7 +809,7 @@ pub fn Float::from_uint(self : UInt) -> Float = "%u32.to_f32"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let n = 42UL
 ///   inspect(Float::from_uint64(n).to_double(), content="42")
 ///   let big = 18446744073709551615UL // UInt64::max_value
@@ -848,7 +848,7 @@ test "Float::from_uint64" {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let n = 42L
 ///   let f = Float::from_int64(n)
 ///   // Convert to double for comparison since Float doesn't implement Show

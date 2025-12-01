@@ -8,7 +8,7 @@ Deque is a double-ended queue implemented as a round-robin queue, supporting O(1
 
 You can create a deque manually via the `new()` or construct it using the `of()`.
 
-```mbt check
+```moonbit
 ///|
 test {
   let _dv : @deque.Deque[Int] = @deque.new()
@@ -19,7 +19,7 @@ test {
 
 If you want to set the length at creation time to minimize expansion consumption, you can add parameter `capacity` to the `new()` function.
 
-```mbt check
+```moonbit
 ///|
 test {
   let _dv : @deque.Deque[Int] = @deque.new(capacity=10)
@@ -31,7 +31,7 @@ test {
 
 A deque is an indefinite-length, auto-expandable datatype. You can use `length()` to get the number of elements in the current queue, or `capacity()` to get the current capacity.
 
-```mbt check
+```moonbit
 ///|
 test {
   let dv = @deque.from_array([1, 2, 3, 4, 5])
@@ -41,7 +41,7 @@ test {
 ```
 Similarly, you can use the `is_empty` to determine whether the queue is empty.
 
-```mbt check
+```moonbit
 ///|
 test {
   let dv : @deque.Deque[Int] = @deque.new()
@@ -51,7 +51,7 @@ test {
 You can use `reserve_capacity` to reserve capacity, ensures that it can hold at least the number of elements
 specified by the `capacity` argument.
 
-```mbt check
+```moonbit
 ///|
 test {
   let dv = @deque.from_array([1])
@@ -62,7 +62,7 @@ test {
 
 Also, you can use `shrink_to_fit` to shrink the capacity of the deque.
 
-```mbt check
+```moonbit
 ///|
 test {
   let dv = @deque.new(capacity=10)
@@ -79,7 +79,7 @@ test {
 
 You can use `front()` and `back()` to get the head and tail elements of the queue, respectively. Since the queue may be empty, their return values are both `Option`, or `None` if the queue is empty.
 
-```mbt check
+```moonbit
 ///|
 test {
   let dv = @deque.from_array([1, 2, 3, 4, 5])
@@ -90,7 +90,7 @@ test {
 
 You can also use `get` to access elements of the queue directly, but be careful not to cross the boundaries!
 
-```mbt check
+```moonbit
 ///|
 test {
   let dv = @deque.from_array([1, 2, 3, 4, 5])
@@ -103,7 +103,7 @@ test {
 
 Since the queue is bi-directional, you can use `push_front()` and `push_back()` to add values to the head or tail of the queue, respectively.
 
-```mbt check
+```moonbit
 ///|
 test {
   let dv = @deque.from_array([1, 2, 3, 4, 5])
@@ -117,7 +117,7 @@ test {
 
 You can also use `Deque::set` or operator `_[_]=_`to set elements of the queue directly, but be careful not to cross the boundaries!
 
-```mbt check
+```moonbit
 ///|
 test {
   let dv = @deque.from_array([1, 2, 3, 4, 5])
@@ -130,7 +130,7 @@ test {
 
 You can use `pop_front()` and `pop_back()` to pop the element at the head or tail of the queue, respectively, and like [Front & Back](#Front & Back & Get), their return values are `Option`, loaded with the value of the element being popped.
 
-```mbt check
+```moonbit
 ///|
 test {
   let dv = @deque.from_array([1, 2, 3, 4, 5])
@@ -143,7 +143,7 @@ test {
 ```    
 If you only want to pop an element without getting the return value, you can use `unsafe_pop_front()` with `unsafe_pop_back()`. These two functions will panic if the queue is empty.
 
-```mbt check
+```moonbit
 ///|
 test {
   let dv = @deque.from_array([1, 2, 3, 4, 5])
@@ -158,7 +158,7 @@ test {
 
 You can use `clear` to clear a deque. But note that the memory it already occupies does not change.
 
-```mbt check
+```moonbit
 ///|
 test {
   let dv = @deque.from_array([1, 2, 3, 4, 5])
@@ -171,7 +171,7 @@ test {
 
 deque supports comparing them directly using `equal`.
 
-```mbt check
+```moonbit
 ///|
 test {
   let dqa = @deque.from_array([1, 2, 3, 4, 5])
@@ -184,7 +184,7 @@ test {
 
 deque supports vector-like `iter/iteri/map/mapi` functions and their inverse forms.
 
-```mbt check
+```moonbit
 ///|
 test {
   let dv = @deque.from_array([1, 2, 3, 4, 5])
@@ -207,7 +207,7 @@ test {
 
 You can use `contains()` to find out if a value is in the deque, or `search()` to find its index in the deque.
 
-```mbt check
+```moonbit
 ///|
 test {
   let dv = @deque.from_array([1, 2, 3, 4, 5])

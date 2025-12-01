@@ -6,8 +6,10 @@
     "moonbitlang/core/json",
     "moonbitlang/core/option"
   ],
-  "test-import": ["moonbitlang/core/double"],
-  "warn-list": "-deprecated",
+  "test-import": [
+    "moonbitlang/core/double"
+  ],
+  "alert-list": "-deprecated",
   "targets": {
     "panic_test.mbt": ["not", "native", "llvm"]
   }

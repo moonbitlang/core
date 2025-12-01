@@ -2,25 +2,25 @@
 package "moonbitlang/core/bench"
 
 // Values
-pub fn monotonic_clock_end(Timestamp) -> Double
+fn monotonic_clock_end(Timestamp) -> Double
 
-pub fn monotonic_clock_start() -> Timestamp
+fn monotonic_clock_start() -> Timestamp
 
-pub fn single_bench(name? : String, () -> Unit, count? : UInt) -> Summary
+fn single_bench(name? : String, () -> Unit, count? : UInt) -> Summary
 
 // Errors
 
 // Types and methods
 #alias(T)
 type Bench
-pub fn Bench::bench(Self, name? : String, () -> Unit, count? : UInt) -> Unit
-pub fn Bench::dump_summaries(Self) -> String
-pub fn[Any] Bench::keep(Self, Any) -> Unit
+fn Bench::bench(Self, name? : String, () -> Unit, count? : UInt) -> Unit
+fn Bench::dump_summaries(Self) -> String
+fn[Any] Bench::keep(Self, Any) -> Unit
 #as_free_fn
-pub fn Bench::new() -> Self
+fn Bench::new() -> Self
 
 type Summary
-pub impl ToJson for Summary
+impl ToJson for Summary
 
 type Timestamp
 

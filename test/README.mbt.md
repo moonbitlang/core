@@ -6,7 +6,7 @@ This package provides testing utilities and assertion functions for MoonBit prog
 
 MoonBit tests are written using the `test` keyword:
 
-```mbt check
+```moonbit
 ///|
 test "basic test example" {
   let result = 2 + 2
@@ -22,7 +22,7 @@ test "basic test example" {
 
 Test whether two values refer to the same object in memory:
 
-```mbt check
+```moonbit
 ///|
 test "object identity" {
   let str1 = "hello"
@@ -51,7 +51,7 @@ test "object identity" {
 
 Explicitly fail tests with custom messages:
 
-```mbt check
+```moonbit
 ///|
 test "conditional failure" {
   let value = 10
@@ -68,7 +68,7 @@ test "conditional failure" {
 
 Create structured test outputs using the Test type:
 
-```mbt check
+```moonbit
 ///|
 test "test output" {
   let t = @test.new("Example Test")
@@ -90,7 +90,7 @@ test "test output" {
 
 Compare test outputs against saved snapshots:
 
-```mbt check
+```moonbit
 ///|
 test "snapshot testing" {
   let t = @test.new("Snapshot Test")
@@ -112,7 +112,7 @@ test "snapshot testing" {
 
 Test functions that work with complex data structures:
 
-```mbt check
+```moonbit
 ///|
 test "complex data testing" {
   // Test with arrays
@@ -131,7 +131,7 @@ test "complex data testing" {
 
 Test that functions properly handle error conditions:
 
-```mbt check
+```moonbit
 ///|
 test "error handling" {
   fn safe_divide(a : Int, b : Int) -> Int? {
@@ -156,7 +156,7 @@ test "error handling" {
 
 Test properties that should hold for various inputs:
 
-```mbt check
+```moonbit
 ///|
 test "property testing" {
   fn is_even(n : Int) -> Bool {
@@ -187,7 +187,7 @@ test "property testing" {
 
 Use descriptive test names to group related functionality:
 
-```mbt check
+```moonbit
 ///|
 test "string operations - concatenation" {
   let result = "hello" + " " + "world"
@@ -212,7 +212,7 @@ test "string operations - substring" {
 
 Create helper functions for common test setup:
 
-```mbt check
+```moonbit
 ///|
 test "with setup helper" {
   fn setup_test_data() -> Array[Int] {
@@ -239,7 +239,7 @@ test "with setup helper" {
 
 Use descriptive names that explain what is being tested:
 
-```mbt check
+```moonbit
 ///|
 test "user_can_login_with_valid_credentials" {
   // Test implementation
@@ -260,7 +260,7 @@ test "shopping_cart_calculates_total_correctly" {
 
 Keep tests focused on a single concept:
 
-```mbt check
+```moonbit
 ///|
 ///  Good - tests one specific behavior
 test "array_push_increases_length" {
@@ -285,7 +285,7 @@ test "array_push_adds_element_at_end" {
 
 Choose test data that makes the test's intent clear:
 
-```mbt check
+```moonbit
 ///|
 test "tax_calculation_for_standard_rate" {
   let price = 100

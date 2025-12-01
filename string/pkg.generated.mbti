@@ -6,29 +6,28 @@ import(
 )
 
 // Values
-pub fn default() -> String
+fn default() -> String
 
 #deprecated
-pub fn from_array(ArrayView[Char]) -> String
+fn from_array(ArrayView[Char]) -> String
 
 #deprecated
-pub fn from_iter(Iter[Char]) -> String
+fn from_iter(Iter[Char]) -> String
 
 #deprecated
-pub fn from_iterator(Iterator[Char]) -> String
+fn from_iterator(Iterator[Char]) -> String
 
 // Errors
 
 // Types and methods
 
 // Type aliases
-#deprecated
 pub using @builtin {type StringView as View}
 
 // Traits
 pub trait ToStringView {
   to_string_view(Self) -> StringView
 }
-pub impl ToStringView for String
-pub impl ToStringView for StringView
+impl ToStringView for String
+impl ToStringView for StringView
 

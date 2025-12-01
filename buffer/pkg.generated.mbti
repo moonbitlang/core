@@ -2,63 +2,63 @@
 package "moonbitlang/core/buffer"
 
 // Values
-pub fn from_array(ArrayView[Byte]) -> Buffer
+fn from_array(ArrayView[Byte]) -> Buffer
 
-pub fn from_bytes(Bytes) -> Buffer
+fn from_bytes(Bytes) -> Buffer
 
-pub fn from_iter(Iter[Byte]) -> Buffer
+fn from_iter(Iter[Byte]) -> Buffer
 
-pub fn new(size_hint? : Int) -> Buffer
+fn new(size_hint? : Int) -> Buffer
 
 // Errors
 
 // Types and methods
 #alias(T, deprecated)
 type Buffer
-pub fn Buffer::is_empty(Self) -> Bool
-pub fn Buffer::length(Self) -> Int
-pub fn Buffer::reset(Self) -> Unit
+fn Buffer::is_empty(Self) -> Bool
+fn Buffer::length(Self) -> Int
+fn Buffer::reset(Self) -> Unit
 #alias(contents)
-pub fn Buffer::to_bytes(Self) -> Bytes
-pub fn Buffer::view(Self) -> ArrayView[Byte]
-pub fn Buffer::write_byte(Self, Byte) -> Unit
-pub fn Buffer::write_bytes(Self, Bytes) -> Unit
-pub fn Buffer::write_bytesview(Self, BytesView) -> Unit
-pub fn Buffer::write_char_utf16be(Self, Char) -> Unit
-pub fn Buffer::write_char_utf16le(Self, Char) -> Unit
-pub fn Buffer::write_char_utf8(Self, Char) -> Unit
-pub fn Buffer::write_double_be(Self, Double) -> Unit
-pub fn Buffer::write_double_le(Self, Double) -> Unit
-pub fn Buffer::write_float_be(Self, Float) -> Unit
-pub fn Buffer::write_float_le(Self, Float) -> Unit
-pub fn Buffer::write_int16_be(Self, Int16) -> Unit
-pub fn Buffer::write_int16_le(Self, Int16) -> Unit
-pub fn Buffer::write_int64_be(Self, Int64) -> Unit
-pub fn Buffer::write_int64_le(Self, Int64) -> Unit
-pub fn Buffer::write_int_be(Self, Int) -> Unit
-pub fn Buffer::write_int_le(Self, Int) -> Unit
-pub fn Buffer::write_iter(Self, Iter[Byte]) -> Unit
-pub fn[A : Leb128] Buffer::write_leb128(Self, A) -> Unit
-pub fn Buffer::write_object(Self, &Show) -> Unit
-pub fn Buffer::write_string_utf16be(Self, StringView) -> Unit
+fn Buffer::to_bytes(Self) -> Bytes
+fn Buffer::view(Self) -> ArrayView[Byte]
+fn Buffer::write_byte(Self, Byte) -> Unit
+fn Buffer::write_bytes(Self, Bytes) -> Unit
+fn Buffer::write_bytesview(Self, BytesView) -> Unit
+fn Buffer::write_char_utf16be(Self, Char) -> Unit
+fn Buffer::write_char_utf16le(Self, Char) -> Unit
+fn Buffer::write_char_utf8(Self, Char) -> Unit
+fn Buffer::write_double_be(Self, Double) -> Unit
+fn Buffer::write_double_le(Self, Double) -> Unit
+fn Buffer::write_float_be(Self, Float) -> Unit
+fn Buffer::write_float_le(Self, Float) -> Unit
+fn Buffer::write_int16_be(Self, Int16) -> Unit
+fn Buffer::write_int16_le(Self, Int16) -> Unit
+fn Buffer::write_int64_be(Self, Int64) -> Unit
+fn Buffer::write_int64_le(Self, Int64) -> Unit
+fn Buffer::write_int_be(Self, Int) -> Unit
+fn Buffer::write_int_le(Self, Int) -> Unit
+fn Buffer::write_iter(Self, Iter[Byte]) -> Unit
+fn[A : Leb128] Buffer::write_leb128(Self, A) -> Unit
+fn Buffer::write_object(Self, &Show) -> Unit
+fn Buffer::write_string_utf16be(Self, StringView) -> Unit
 #alias(write_stringview, deprecated)
-pub fn Buffer::write_string_utf16le(Self, StringView) -> Unit
-pub fn Buffer::write_string_utf8(Self, StringView) -> Unit
-pub fn Buffer::write_uint16_be(Self, UInt16) -> Unit
-pub fn Buffer::write_uint16_le(Self, UInt16) -> Unit
-pub fn Buffer::write_uint64_be(Self, UInt64) -> Unit
-pub fn Buffer::write_uint64_le(Self, UInt64) -> Unit
-pub fn Buffer::write_uint_be(Self, UInt) -> Unit
-pub fn Buffer::write_uint_le(Self, UInt) -> Unit
-pub impl Logger for Buffer
-pub impl Show for Buffer
+fn Buffer::write_string_utf16le(Self, StringView) -> Unit
+fn Buffer::write_string_utf8(Self, StringView) -> Unit
+fn Buffer::write_uint16_be(Self, UInt16) -> Unit
+fn Buffer::write_uint16_le(Self, UInt16) -> Unit
+fn Buffer::write_uint64_be(Self, UInt64) -> Unit
+fn Buffer::write_uint64_le(Self, UInt64) -> Unit
+fn Buffer::write_uint_be(Self, UInt) -> Unit
+fn Buffer::write_uint_le(Self, UInt) -> Unit
+impl Logger for Buffer
+impl Show for Buffer
 
 // Type aliases
 
 // Traits
 trait Leb128
-pub impl Leb128 for Int
-pub impl Leb128 for Int64
-pub impl Leb128 for UInt
-pub impl Leb128 for UInt64
+impl Leb128 for Int
+impl Leb128 for Int64
+impl Leb128 for UInt
+impl Leb128 for UInt64
 

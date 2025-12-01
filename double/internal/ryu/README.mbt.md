@@ -10,7 +10,7 @@ The Ryu algorithm is used internally by the `double` package to convert floating
 
 The main function provided by this package:
 
-```mbt check
+```moonbit
 ///|
 test "ryu conversion" {
   // The @ryu.ryu_to_string function converts doubles to strings
@@ -34,7 +34,7 @@ test "ryu conversion" {
 The Ryu algorithm provides several important properties:
 
 ### Accuracy
-```mbt check
+```moonbit
 ///|
 test "accuracy properties" {
   // Ryu produces the shortest decimal representation
@@ -55,7 +55,7 @@ test "accuracy properties" {
 ```
 
 ### Edge Cases
-```mbt check
+```moonbit
 ///|
 test "edge cases" {
   // Test special values
@@ -83,7 +83,7 @@ The Ryu algorithm is optimized for:
 3. **Determinism**: Same input always produces same output
 4. **Memory efficiency**: Uses minimal temporary storage
 
-```mbt check
+```moonbit
 ///|
 test "performance demonstration" {
   // Ryu is designed to be fast for common values

@@ -8,7 +8,7 @@ Immutable array is a persistent data structure that provides random access and u
 
 You can create an empty array using `new()` or construct it using `of()`, or use `from_iter()` to construct it from an iterator.
 
-```mbt check
+```moonbit
 ///|
 test {
   let _arr1 = @array.from_array([1, 2, 3, 4, 5])
@@ -21,7 +21,7 @@ test {
 
 Or use `make()`, `makei()` to create an array with some elements.
 
-```mbt check
+```moonbit
 ///|
 test {
   let arr1 = @array.make(5, 1)
@@ -35,7 +35,7 @@ test {
 
 Since the array is immutable, the `set()`, `push()` operation is not in-place. It returns a new array with the updated value.
 
-```mbt check
+```moonbit
 ///|
 test {
   let arr1 = @array.from_array([1, 2, 3, 4, 5])
@@ -49,7 +49,7 @@ test {
 
 You can use `concat()` to concatenate two arrays.
 
-```mbt check
+```moonbit
 ///|
 test {
   let arr1 = @array.from_array([1, 2, 3])
@@ -63,7 +63,7 @@ test {
 
 You can use `get()` to get the value at the index, or `length()` to get the length of the array, or `is_empty()` to check whether the array is empty.
 
-```mbt check
+```moonbit
 ///|
 test {
   let arr = @array.from_array([1, 2, 3, 4, 5])
@@ -77,7 +77,7 @@ test {
 
 You can use `iter()` to get an iterator of the array, or use `each()` to iterate over the array.
 
-```mbt check
+```moonbit
 ///|
 test {
   let arr = @array.from_array([1, 2, 3, 4, 5])

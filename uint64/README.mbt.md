@@ -6,7 +6,7 @@ The `moonbitlang/core/uint64` package provides functionality for working with 64
 
 The package defines the minimum and maximum values for UInt64:
 
-```mbt check
+```moonbit
 ///|
 test "UInt64 constants" {
   // Minimum value of UInt64
@@ -21,7 +21,7 @@ test "UInt64 constants" {
 
 UInt64 supports standard arithmetic operations:
 
-```mbt check
+```moonbit
 ///|
 test "UInt64 arithmetic" {
   let a : UInt64 = 100UL
@@ -49,7 +49,7 @@ test "UInt64 arithmetic" {
 
 UInt64 supports various bitwise operations:
 
-```mbt check
+```moonbit
 ///|
 test "UInt64 bitwise operations" {
   let a : UInt64 = 0b1010UL
@@ -78,7 +78,7 @@ test "UInt64 bitwise operations" {
 
 UInt64 supports comparison and equality operations:
 
-```mbt check
+```moonbit
 ///|
 test "UInt64 comparison and equality" {
   let a : UInt64 = 100UL
@@ -101,7 +101,7 @@ test "UInt64 comparison and equality" {
 
 UInt64 provides methods for converting to bytes in both big-endian and little-endian formats:
 
-```mbt check
+```moonbit
 ///|
 test "UInt64 byte conversion" {
   // Convert to bytes in big-endian order (most significant byte first)
@@ -128,7 +128,7 @@ test "UInt64 byte conversion" {
 
 UInt64 implements the Default trait:
 
-```mbt check
+```moonbit
 ///|
 test "UInt64 default value" {
   // Default value is 0
@@ -145,7 +145,7 @@ test "UInt64 default value" {
 
 UInt64 works with various conversions to and from other types:
 
-```mbt check
+```moonbit
 ///|
 test "UInt64 conversions" {
   // From Int to UInt64
@@ -170,7 +170,7 @@ test "UInt64 conversions" {
 
 UInt64 is especially useful for applications requiring large unsigned integers:
 
-```mbt check
+```moonbit
 ///|
 test "UInt64 for large numbers" {
   // UInt64 can represent very large numbers
@@ -189,7 +189,7 @@ test "UInt64 for large numbers" {
 
 UInt64 works well with hexadecimal literals for clarity when working with bit patterns:
 
-```mbt check
+```moonbit
 ///|
 test "UInt64 hexadecimal literals" {
   // Using hex literals for better readability when working with bit patterns

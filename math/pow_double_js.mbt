@@ -26,7 +26,7 @@
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 /// let x = 2.0
 /// inspect(@math.pow(x, 3.0), content="8")
 /// inspect(@math.pow(x, 0.5), content="1.4142135623730951")

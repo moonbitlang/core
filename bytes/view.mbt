@@ -49,7 +49,7 @@ fn BytesView::make(b : Bytes, start : Int, len : Int) -> BytesView = "%bytesview
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let bytes = b"\x00\x01\x02\x03\x04"
 ///   let view = bytes[2:4]
 ///   inspect(view.length(), content="2")
@@ -73,7 +73,7 @@ fn BytesView::len(self : BytesView) -> Int = "%bytesview.len"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let bytes = b"\x01\x02\x03\x04\x05"
 ///   let view = bytes[1:4] // view contains [0x02, 0x03, 0x04]
 ///   inspect(view[1], content="b'\\x03'")
@@ -100,7 +100,7 @@ pub fn BytesView::at(self : BytesView, index : Int) -> Byte {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let bytes = b"\x01\x02\x03\x04\x05"
 ///   let view = bytes[1:4] 
 ///   let result = view.get(1)
@@ -132,7 +132,7 @@ pub fn BytesView::get(self : BytesView, index : Int) -> Byte? {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let bytes = b"\x01\x02\x03\x04\x05"
 ///   let view = bytes[2:4] // view contains [0x03, 0x04]
 ///   inspect(view.unsafe_get(0), content="b'\\x03'")
@@ -268,7 +268,7 @@ pub fn BytesView::iterator(self : BytesView) -> Iterator[Byte] {
 /// 
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let buf = StringBuilder::new(size_hint=5)
 ///   let keys = []
 ///   let it = b"abcde"[:].iterator2()
@@ -303,7 +303,7 @@ pub fn BytesView::iterator2(self : BytesView) -> Iterator2[Int, Byte] {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let bytes = b"\x12\x34\x56\x78"
 ///   guard bytes is [u32be(x),..]
 ///   inspect(x, content="305419896") // 0x12345678
@@ -334,7 +334,7 @@ pub fn BytesView::to_uint_be(self : BytesView) -> UInt {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 /// let bytes = b"\x01\x02\x03\x04"
 /// guard bytes is [u32le(x),..]
 /// inspect(x, content="67305985") // 0x04030201
@@ -367,7 +367,7 @@ pub fn BytesView::to_uint_le(self : BytesView) -> UInt {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let bytes = b"\x01\x23\x45\x67\x89\xAB\xCD\xEF"
 ///   guard bytes is [u64be(x),..]
 ///   inspect(x, content="81985529216486895")
@@ -405,7 +405,7 @@ pub fn BytesView::to_uint64_be(self : BytesView) -> UInt64 {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let bytes = b"\x01\x02\x03\x04\x05\x06\x07\x08"
 ///   guard bytes is [u64le(x),..]
 ///   inspect(x, content="578437695752307201")
@@ -470,7 +470,7 @@ pub fn BytesView::to_int64_le(self : BytesView) -> Int64 {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   // Bytes representing 1.0 in IEEE 754 double-precision format (big-endian)
 ///   let bytes = b"\x3F\xF0\x00\x00\x00\x00\x00\x00"
 ///   guard bytes is [u64be(bits),..]
@@ -497,7 +497,7 @@ pub fn BytesView::to_double_be(self : BytesView) -> Double {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let bytes = b"\x00\x00\x00\x00\x00\x00\xF0\x3F" // represents 1.0 in little-endian
 ///   guard bytes is [u64le(bits),..]
 ///   inspect(bits.reinterpret_as_double(), content="1")
@@ -539,7 +539,7 @@ pub impl Show for Bytes with output(self, logger) {
 /// Returns `true` if the byte sequences are equal, `false` otherwise.
 ///
 /// Example:
-/// ```mbt check
+/// ```moonbit
 ///   let bytes = b"abcabc"
 ///   inspect(bytes[0:3] == bytes[3:6], content="true")
 ///   inspect(bytes[0:3] == bytes[2:5], content="false")
@@ -571,7 +571,7 @@ pub impl Eq for BytesView with equal(self, other) -> Bool {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let bytes = b"abcabc"
 ///   inspect(bytes[0:3].compare(bytes[3:6]), content="0")  // abc = abc
 ///   inspect(bytes[0:3].compare(bytes[2:5]), content="-1") // abc < cab

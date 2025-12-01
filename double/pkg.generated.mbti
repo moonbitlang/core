@@ -2,55 +2,55 @@
 package "moonbitlang/core/double"
 
 // Values
-pub let infinity : Double
+let infinity : Double
 
-pub let max_value : Double
+let max_value : Double
 
-pub let min_positive : Double
+let min_positive : Double
 
-pub let min_value : Double
+let min_value : Double
 
-pub let neg_infinity : Double
+let neg_infinity : Double
 
-pub let not_a_number : Double
+let not_a_number : Double
 
 // Errors
 
 // Types and methods
 #as_free_fn(deprecated)
-pub fn Double::abs(Double) -> Double
+fn Double::abs(Double) -> Double
 #as_free_fn
-pub fn Double::ceil(Double) -> Double
+fn Double::ceil(Double) -> Double
 #as_free_fn
-pub fn Double::floor(Double) -> Double
+fn Double::floor(Double) -> Double
 #as_free_fn(deprecated)
-pub fn Double::from_int(Int) -> Double
+fn Double::from_int(Int) -> Double
 #deprecated
-pub fn Double::inf(Int) -> Double
+fn Double::inf(Int) -> Double
 #as_free_fn(deprecated)
-pub fn Double::is_close(Double, Double, relative_tolerance? : Double, absolute_tolerance? : Double) -> Bool
-pub fn Double::is_inf(Double) -> Bool
-pub fn Double::is_nan(Double) -> Bool
-pub fn Double::is_neg_inf(Double) -> Bool
-pub fn Double::is_pos_inf(Double) -> Bool
+fn Double::is_close(Double, Double, relative_tolerance? : Double, absolute_tolerance? : Double) -> Bool
+fn Double::is_inf(Double) -> Bool
+fn Double::is_nan(Double) -> Bool
+fn Double::is_neg_inf(Double) -> Bool
+fn Double::is_pos_inf(Double) -> Bool
 #deprecated
-pub fn Double::min_normal() -> Double
+fn Double::min_normal() -> Double
 #deprecated
-pub fn Double::nan() -> Double
+fn Double::nan() -> Double
 #as_free_fn
-pub fn Double::pow(Double, Double) -> Double
+fn Double::pow(Double, Double) -> Double
 #as_free_fn
-pub fn Double::round(Double) -> Double
-pub fn Double::signum(Double) -> Double
-pub fn Double::to_be_bytes(Double) -> Bytes
-pub fn Double::to_le_bytes(Double) -> Bytes
-pub fn Double::to_string(Double) -> String
-pub fn Double::to_uint(Double) -> UInt
+fn Double::round(Double) -> Double
+fn Double::signum(Double) -> Double
+fn Double::to_be_bytes(Double) -> Bytes
+fn Double::to_le_bytes(Double) -> Bytes
+fn Double::to_string(Double) -> String
+fn Double::to_uint(Double) -> UInt
 #as_free_fn
-pub fn Double::trunc(Double) -> Double
-pub impl Hash for Double
-pub impl Mod for Double
-pub impl Show for Double
+fn Double::trunc(Double) -> Double
+impl Hash for Double
+impl Mod for Double
+impl Show for Double
 
 // Type aliases
 

@@ -6,7 +6,7 @@ This package provides array manipulation utilities for MoonBit, including fixed-
 
 There are several ways to create arrays in MoonBit:
 
-```mbt check
+```moonbit
 ///|
 test "array creation" {
   // Using array literal
@@ -27,7 +27,7 @@ test "array creation" {
 
 Common array operations include mapping, filtering, and folding:
 
-```mbt check
+```moonbit
 ///|
 test "array operations" {
   let nums = [1, 2, 3, 4, 5]
@@ -50,7 +50,7 @@ test "array operations" {
 
 The package provides various sorting utilities:
 
-```mbt check
+```moonbit
 ///|
 test "sorting" {
   let arr = [3, 1, 4, 1, 5, 9, 2, 6]
@@ -88,7 +88,7 @@ test "sorting" {
 
 Array views provide a lightweight way to work with array slices:
 
-```mbt check
+```moonbit
 ///|
 test "array views" {
   let arr = [1, 2, 3, 4, 5]
@@ -105,7 +105,7 @@ test "array views" {
 
 Fixed arrays provide immutable array operations:
 
-```mbt check
+```moonbit
 ///|
 test "fixed arrays" {
   let fixed : FixedArray[_] = [1, 2, 3]
@@ -130,7 +130,7 @@ test "fixed arrays" {
 
 Additional array utilities for common operations:
 
-```mbt check
+```moonbit
 ///|
 test "utilities" {
   // Join string array

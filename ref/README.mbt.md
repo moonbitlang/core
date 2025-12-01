@@ -6,7 +6,7 @@ This package provides functionality for working with mutable references, allowin
 
 References can be created using `@ref.new()`. The reference value can be accessed through the `val` field:
 
-```mbt check
+```moonbit
 ///|
 test "creating and accessing refs" {
   let r1 = @ref.new(42)
@@ -18,7 +18,7 @@ test "creating and accessing refs" {
 
 The `update` function allows modifying the contained value using a transformation function:
 
-```mbt check
+```moonbit
 ///|
 test "updating refs" {
   let counter = @ref.new(0)
@@ -33,7 +33,7 @@ test "updating refs" {
 
 The `map` function transforms a reference while preserving the reference wrapper:
 
-```mbt check
+```moonbit
 ///|
 test "mapping refs" {
   let num = @ref.new(10)
@@ -48,7 +48,7 @@ test "mapping refs" {
 
 You can exchange the values of two references using the `swap` function:
 
-```mbt check
+```moonbit
 ///|
 test "swapping refs" {
   let r1 = @ref.new("first")
@@ -63,7 +63,7 @@ test "swapping refs" {
 
 The `protect` function temporarily sets a reference to a value and restores it after executing a block:
 
-```mbt check
+```moonbit
 ///|
 test "protected updates" {
   let state = @ref.new(100)

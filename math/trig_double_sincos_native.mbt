@@ -24,7 +24,7 @@
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 /// inspect(@math.sin(0.0), content="0")
 /// inspect(@math.sin(1.570796326794897), content="1") // pi / 2
 /// inspect(@math.sin(2.0), content="0.9092974268256817")
@@ -48,7 +48,7 @@ pub extern "C" fn sin(x : Double) -> Double = "sin"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 /// inspect(@math.cos(0.0), content="1")
 /// inspect(@math.cos(2.5), content="-0.8011436155469337")
 /// inspect(@math.cos(-3.141592653589793), content="-1") // -pi

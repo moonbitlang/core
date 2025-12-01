@@ -21,7 +21,7 @@
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 /// inspect(@float.not_a_number.is_nan(), content="true")
 /// inspect(@float.not_a_number + 1.0, content="NaN")
 /// ```
@@ -35,7 +35,7 @@ pub let not_a_number : Float = Float::reinterpret_from_int(0x7FC00000)
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 /// inspect(@float.infinity.is_pos_inf(), content="true")
 /// inspect(@float.infinity > 1.0, content="true")
 /// ```
@@ -50,7 +50,7 @@ pub let infinity : Float = Float::reinterpret_from_int(0x7F800000)
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 /// inspect(@float.neg_infinity.is_neg_inf(), content="true")
 /// inspect(@float.neg_infinity < (-1.0 : Float), content="true")
 /// ```
@@ -62,7 +62,7 @@ pub let neg_infinity : Float = Float::reinterpret_from_int(0xFF800000)
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 /// inspect(@float.max_value < @float.infinity, content="true")
 /// inspect(@float.max_value > 0.0, content="true")
 /// ```
@@ -73,7 +73,7 @@ pub let max_value : Float = Float::reinterpret_from_int(0x7F7FFFFF)
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 /// inspect(@float.min_value < -1.0, content="true")
 /// inspect(@float.min_value > @float.neg_infinity, content="true")
 /// ```
@@ -85,7 +85,7 @@ pub let min_value : Float = Float::reinterpret_from_int(0xFF7FFFFF)
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 /// inspect(@float.min_positive > 0.0, content="true")
 /// inspect(@float.min_positive < 1.2e-38, content="true")
 /// ```
@@ -104,7 +104,7 @@ pub let min_positive : Float = Float::reinterpret_from_int(0x00800000)
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   inspect((1.5 : Float).abs(), content="1.5")
 ///   inspect((-1.5 : Float).abs(), content="1.5")
 ///   inspect((0.0 : Float).abs(), content="0")

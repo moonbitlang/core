@@ -28,7 +28,7 @@
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   inspect(5.0.mod(3.0), content="2")
 ///   inspect((-5.0).mod(3.0), content="-2")
 ///   inspect(5.0.mod(@double.not_a_number), content="NaN")

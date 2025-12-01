@@ -15,7 +15,7 @@ Boolean values in MoonBit can be seamlessly converted to numeric types, followin
 
 Convert boolean values to standard integers for arithmetic operations:
 
-```mbt check
+```moonbit
 ///|
 test "bool to integer conversions" {
   // Basic conversions
@@ -39,7 +39,7 @@ test "bool to integer conversions" {
 
 For specific use cases requiring different integer widths and signedness:
 
-```mbt check
+```moonbit
 ///|
 test "bool to specialized integer types" {
   let flag = true
@@ -63,7 +63,7 @@ test "bool to specialized integer types" {
 
 ### Boolean Indexing and Selection
 
-```mbt check
+```moonbit
 ///|
 test "boolean indexing" {
   // Use boolean conversion for array indexing
@@ -83,7 +83,7 @@ test "boolean indexing" {
 
 ### Bit Manipulation and Flags
 
-```mbt check
+```moonbit
 ///|
 test "flags and bit operations" {
   // Convert booleans to create bit flags
@@ -99,7 +99,7 @@ test "flags and bit operations" {
 
 ### Statistical and Mathematical Operations
 
-```mbt check
+```moonbit
 ///|
 test "statistical operations" {
   // Calculate success rate from boolean results

@@ -2,11 +2,11 @@
 package "moonbitlang/core/env"
 
 // Values
-pub fn args() -> Array[String]
+fn args() -> Array[String]
 
-pub fn current_dir() -> String?
+fn current_dir() -> String?
 
-pub fn now() -> UInt64
+fn now() -> UInt64
 
 // Errors
 

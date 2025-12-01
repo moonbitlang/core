@@ -6,7 +6,7 @@ This package provides arbitrary-precision integer arithmetic through the `BigInt
 
 There are several ways to create BigInt values:
 
-```mbt check
+```moonbit
 ///|
 test "creating bigint values" {
   // From integer literals with 'N' suffix
@@ -35,7 +35,7 @@ test "creating bigint values" {
 
 BigInt supports all standard arithmetic operations:
 
-```mbt check
+```moonbit
 ///|
 test "arithmetic operations" {
   let a = 123456789012345678901234567890N
@@ -71,7 +71,7 @@ test "arithmetic operations" {
 
 Compare BigInt values with each other and with regular integers:
 
-```mbt check
+```moonbit
 ///|
 test "comparisons" {
   let big = 12345N
@@ -98,7 +98,7 @@ test "comparisons" {
 
 BigInt supports bitwise operations for bit manipulation:
 
-```mbt check
+```moonbit
 ///|
 test "bitwise operations" {
   let a = 0b11110000N // 240 in decimal
@@ -131,7 +131,7 @@ test "bitwise operations" {
 
 BigInt provides efficient power and modular exponentiation:
 
-```mbt check
+```moonbit
 ///|
 test "power operations" {
   // Basic power
@@ -160,7 +160,7 @@ test "power operations" {
 
 Convert BigInt to and from various string representations:
 
-```mbt check
+```moonbit
 ///|
 test "string conversions" {
   let big = 255N
@@ -193,7 +193,7 @@ test "string conversions" {
 
 Convert BigInt to and from byte arrays:
 
-```mbt check
+```moonbit
 ///|
 test "byte conversions" {
   let big = 0x123456789abcdefN
@@ -223,7 +223,7 @@ test "byte conversions" {
 
 Convert BigInt to standard integer types:
 
-```mbt check
+```moonbit
 ///|
 test "type conversions" {
   let big = 12345N
@@ -253,7 +253,7 @@ test "type conversions" {
 
 BigInt values can be serialized to and from JSON:
 
-```mbt check
+```moonbit
 ///|
 test "json serialization" {
   let big = 12345678901234567890N
@@ -273,7 +273,7 @@ test "json serialization" {
 
 Check properties of BigInt values:
 
-```mbt check
+```moonbit
 ///|
 test "utility functions" {
   let zero = 0N

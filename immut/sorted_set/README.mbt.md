@@ -10,7 +10,7 @@ Since set is based on comparison, the type used to construct ImmutableSet needs 
 
 You can create an empty ImmutableSet with a value separately through the following methods, or create it directly from the Array.
 
-```mbt check
+```moonbit
 ///|
 test {
   let _set1 : @sorted_set.SortedSet[Int] = @sorted_set.new()
@@ -25,7 +25,7 @@ test {
 
 You can convert an immutable set to an array, which will be sorted.
 
-```mbt check
+```moonbit
 ///|
 test {
   let set = @sorted_set.from_array([3, 2, 1])
@@ -37,7 +37,7 @@ test {
 
 You can use `add` to add an element to the ImmutableSet.
 
-```mbt check
+```moonbit
 ///|
 test {
   let set = @sorted_set.from_array([1, 2, 3, 4])
@@ -47,7 +47,7 @@ test {
 
 You can use `remove` to remove a specific value.
 
-```mbt check
+```moonbit
 ///|
 test {
   let set = @sorted_set.from_array([3, 8, 1])
@@ -59,7 +59,7 @@ test {
 
 You can use `contains` to query whether an element is in the set.
 
-```mbt check
+```moonbit
 ///|
 test {
   let set = @sorted_set.from_array([1, 2, 3, 4])
@@ -70,7 +70,7 @@ test {
 
 You can also use `min` and `max` to obtain the minimum or maximum value in the set. When the set is empty, an error will be reported, and they have corresponding Option versions to handle this.
 
-```mbt check
+```moonbit
 ///|
 test {
   let set = @sorted_set.from_array([1, 2, 3, 4])
@@ -85,7 +85,7 @@ test {
 
 You can provide an intermediate value to divide a set into two sets by `split`, and whether the intermediate value is in the set will also be returned as the return value.
 
-```mbt check
+```moonbit
 ///|
 test {
   let (left, present, right) = @sorted_set.from_array([
@@ -99,7 +99,7 @@ test {
 
 At the same time, you can use union and inter to take the union or intersection of two sets.
 
-```mbt check
+```moonbit
 ///|
 test {
   let set1 = @sorted_set.from_array([3, 4, 5])
@@ -111,7 +111,7 @@ test {
 
 You can also use the `diff` function to obtain the difference between two sets.
 
-```mbt check
+```moonbit
 ///|
 test {
   let set1 = @sorted_set.from_array([1, 2, 3])
@@ -122,7 +122,7 @@ test {
 
 You can use `filter` to filter the elements in the set.
 
-```mbt check
+```moonbit
 ///|
 test {
   let set = @sorted_set.from_array([1, 2, 3, 4, 5, 6])
@@ -134,7 +134,7 @@ test {
 
 You can use `subsets` and `disjoint` to determine the inclusion and separation relationship between two sets
 
-```mbt check
+```moonbit
 ///|
 test {
   assert_eq(
@@ -156,7 +156,7 @@ test {
 
 Like other sequential containers, set also has iterative methods such as `iter`, `fold`, and `map`, and their order is based on the comparison being less than the order.
 
-```mbt check
+```moonbit
 ///|
 test {
   let arr = []
@@ -174,7 +174,7 @@ test {
 
 `all` and `any` can detect whether all elements in the set match or if there are elements that match.
 
-```mbt check
+```moonbit
 ///|
 test {
   assert_eq(@sorted_set.from_array([2, 4, 6]).all(v => v % 2 == 0), true)
@@ -186,7 +186,7 @@ test {
 
 `is_empty` can determine whether a set is empty.
 
-```mbt check
+```moonbit
 ///|
 test {
   let set1 : @sorted_set.SortedSet[Int] = @sorted_set.from_array([])

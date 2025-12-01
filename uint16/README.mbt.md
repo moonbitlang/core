@@ -8,7 +8,7 @@ conversions for UInt16 values.
 
 The package defines the minimum and maximum values for UInt16:
 
-```mbt check
+```moonbit
 ///|
 test "UInt16 constants" {
   // Minimum value of UInt16
@@ -23,7 +23,7 @@ test "UInt16 constants" {
 
 UInt16 supports standard arithmetic operations:
 
-```mbt check
+```moonbit
 ///|
 test "UInt16 arithmetic" {
   let a : UInt16 = 100
@@ -51,7 +51,7 @@ test "UInt16 arithmetic" {
 
 UInt16 supports various bitwise operations:
 
-```mbt check
+```moonbit
 ///|
 test "UInt16 bitwise operations" {
   let a : UInt16 = 0b1010
@@ -80,7 +80,7 @@ test "UInt16 bitwise operations" {
 
 UInt16 supports comparison and equality operations:
 
-```mbt check
+```moonbit
 ///|
 test "UInt16 comparison and equality" {
   let a : UInt16 = 100
@@ -103,7 +103,7 @@ test "UInt16 comparison and equality" {
 
 UInt16 implements the Default trait:
 
-```mbt check
+```moonbit
 ///|
 test "UInt16 default value" {
   // Default value is 0
@@ -122,7 +122,7 @@ test "UInt16 default value" {
 
 UInt16 works with various conversions to and from other types:
 
-```mbt check
+```moonbit
 ///|
 test "UInt16 conversions" {
   // From Int to UInt16

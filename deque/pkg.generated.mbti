@@ -12,81 +12,81 @@ import(
 // Types and methods
 #alias(T, deprecated)
 type Deque[A]
-pub fn[A] Deque::append(Self[A], Self[A]) -> Unit
-pub fn[A] Deque::as_views(Self[A]) -> (ArrayView[A], ArrayView[A])
+fn[A] Deque::append(Self[A], Self[A]) -> Unit
+fn[A] Deque::as_views(Self[A]) -> (ArrayView[A], ArrayView[A])
 #alias("_[_]")
-pub fn[A] Deque::at(Self[A], Int) -> A
-pub fn[A] Deque::back(Self[A]) -> A?
-pub fn[A : Compare] Deque::binary_search(Self[A], A) -> Result[Int, Int]
-pub fn[A] Deque::binary_search_by(Self[A], (A) -> Int) -> Result[Int, Int]
-pub fn[A] Deque::blit_to(Self[A], Self[A], len~ : Int, src_offset? : Int, dst_offset? : Int) -> Unit
-pub fn[A] Deque::capacity(Self[A]) -> Int
-pub fn[A] Deque::chunk_by(Self[A], (A, A) -> Bool raise?) -> Self[Self[A]] raise?
-pub fn[A] Deque::chunks(Self[A], Int) -> Self[Self[A]]
-pub fn[A] Deque::clear(Self[A]) -> Unit
-pub fn[A : Eq] Deque::contains(Self[A], A) -> Bool
-pub fn[A] Deque::copy(Self[A]) -> Self[A]
-pub fn[A] Deque::drain(Self[A], start~ : Int, len? : Int) -> Self[A]
-pub fn[A] Deque::each(Self[A], (A) -> Unit) -> Unit
-pub fn[A] Deque::eachi(Self[A], (Int, A) -> Unit) -> Unit
-pub fn[A] Deque::extract_if(Self[A], (A) -> Bool) -> Self[A]
-pub fn[A] Deque::filter(Self[A], (A) -> Bool raise?) -> Self[A] raise?
-pub fn[A] Deque::flatten(Self[Self[A]]) -> Self[A]
+fn[A] Deque::at(Self[A], Int) -> A
+fn[A] Deque::back(Self[A]) -> A?
+fn[A : Compare] Deque::binary_search(Self[A], A) -> Result[Int, Int]
+fn[A] Deque::binary_search_by(Self[A], (A) -> Int) -> Result[Int, Int]
+fn[A] Deque::blit_to(Self[A], Self[A], len~ : Int, src_offset? : Int, dst_offset? : Int) -> Unit
+fn[A] Deque::capacity(Self[A]) -> Int
+fn[A] Deque::chunk_by(Self[A], (A, A) -> Bool raise?) -> Self[Self[A]] raise?
+fn[A] Deque::chunks(Self[A], Int) -> Self[Self[A]]
+fn[A] Deque::clear(Self[A]) -> Unit
+fn[A : Eq] Deque::contains(Self[A], A) -> Bool
+fn[A] Deque::copy(Self[A]) -> Self[A]
+fn[A] Deque::drain(Self[A], start~ : Int, len? : Int) -> Self[A]
+fn[A] Deque::each(Self[A], (A) -> Unit) -> Unit
+fn[A] Deque::eachi(Self[A], (Int, A) -> Unit) -> Unit
+fn[A] Deque::extract_if(Self[A], (A) -> Bool) -> Self[A]
+fn[A] Deque::filter(Self[A], (A) -> Bool raise?) -> Self[A] raise?
+fn[A] Deque::flatten(Self[Self[A]]) -> Self[A]
 #alias(of, deprecated)
 #as_free_fn(of, deprecated)
 #as_free_fn
-pub fn[A] Deque::from_array(ArrayView[A]) -> Self[A]
+fn[A] Deque::from_array(ArrayView[A]) -> Self[A]
 #as_free_fn
-pub fn[A] Deque::from_iter(Iter[A]) -> Self[A]
+fn[A] Deque::from_iter(Iter[A]) -> Self[A]
 #as_free_fn
-pub fn[A] Deque::from_iterator(Iterator[A]) -> Self[A]
-pub fn[A] Deque::front(Self[A]) -> A?
-pub fn[A] Deque::get(Self[A], Int) -> A?
-pub fn[A] Deque::insert(Self[A], Int, A) -> Unit
-pub fn[A] Deque::is_empty(Self[A]) -> Bool
-pub fn[A] Deque::iter(Self[A]) -> Iter[A]
-pub fn[A] Deque::iter2(Self[A]) -> Iter2[Int, A]
-pub fn[A] Deque::iterator(Self[A]) -> Iterator[A]
-pub fn[A] Deque::iterator2(Self[A]) -> Iterator2[Int, A]
-pub fn Deque::join(Self[String], StringView) -> String
-pub fn[A] Deque::length(Self[A]) -> Int
-pub fn[A, U] Deque::map(Self[A], (A) -> U) -> Self[U]
-pub fn[A, U] Deque::mapi(Self[A], (Int, A) -> U) -> Self[U]
+fn[A] Deque::from_iterator(Iterator[A]) -> Self[A]
+fn[A] Deque::front(Self[A]) -> A?
+fn[A] Deque::get(Self[A], Int) -> A?
+fn[A] Deque::insert(Self[A], Int, A) -> Unit
+fn[A] Deque::is_empty(Self[A]) -> Bool
+fn[A] Deque::iter(Self[A]) -> Iter[A]
+fn[A] Deque::iter2(Self[A]) -> Iter2[Int, A]
+fn[A] Deque::iterator(Self[A]) -> Iterator[A]
+fn[A] Deque::iterator2(Self[A]) -> Iterator2[Int, A]
+fn Deque::join(Self[String], StringView) -> String
+fn[A] Deque::length(Self[A]) -> Int
+fn[A, U] Deque::map(Self[A], (A) -> U) -> Self[U]
+fn[A, U] Deque::mapi(Self[A], (Int, A) -> U) -> Self[U]
 #as_free_fn
-pub fn[A] Deque::new(capacity? : Int) -> Self[A]
-pub fn[A] Deque::pop_back(Self[A]) -> A?
-pub fn[A] Deque::pop_front(Self[A]) -> A?
-pub fn[A] Deque::push_back(Self[A], A) -> Unit
-pub fn[A] Deque::push_front(Self[A], A) -> Unit
-pub fn[A] Deque::remove(Self[A], Int) -> A
-pub fn[A] Deque::reserve_capacity(Self[A], Int) -> Unit
-pub fn[A] Deque::retain(Self[A], (A) -> Bool) -> Unit
+fn[A] Deque::new(capacity? : Int) -> Self[A]
+fn[A] Deque::pop_back(Self[A]) -> A?
+fn[A] Deque::pop_front(Self[A]) -> A?
+fn[A] Deque::push_back(Self[A], A) -> Unit
+fn[A] Deque::push_front(Self[A], A) -> Unit
+fn[A] Deque::remove(Self[A], Int) -> A
+fn[A] Deque::reserve_capacity(Self[A], Int) -> Unit
+fn[A] Deque::retain(Self[A], (A) -> Bool) -> Unit
 #alias(filter_map_inplace, deprecated)
-pub fn[A] Deque::retain_map(Self[A], (A) -> A?) -> Unit
-pub fn[A] Deque::rev(Self[A]) -> Self[A]
-pub fn[A] Deque::rev_each(Self[A], (A) -> Unit) -> Unit
-pub fn[A] Deque::rev_eachi(Self[A], (Int, A) -> Unit) -> Unit
+fn[A] Deque::retain_map(Self[A], (A) -> A?) -> Unit
+fn[A] Deque::rev(Self[A]) -> Self[A]
+fn[A] Deque::rev_each(Self[A], (A) -> Unit) -> Unit
+fn[A] Deque::rev_eachi(Self[A], (Int, A) -> Unit) -> Unit
 #alias(rev_inplace, deprecated)
-pub fn[A] Deque::rev_in_place(Self[A]) -> Unit
-pub fn[A] Deque::rev_iter(Self[A]) -> Iter[A]
-pub fn[A] Deque::rev_iter2(Self[A]) -> Iter2[Int, A]
-pub fn[A] Deque::rev_iterator(Self[A]) -> Iterator[A]
-pub fn[A] Deque::rev_iterator2(Self[A]) -> Iterator2[Int, A]
-pub fn[A : Eq] Deque::search(Self[A], A) -> Int?
+fn[A] Deque::rev_in_place(Self[A]) -> Unit
+fn[A] Deque::rev_iter(Self[A]) -> Iter[A]
+fn[A] Deque::rev_iter2(Self[A]) -> Iter2[Int, A]
+fn[A] Deque::rev_iterator(Self[A]) -> Iterator[A]
+fn[A] Deque::rev_iterator2(Self[A]) -> Iterator2[Int, A]
+fn[A : Eq] Deque::search(Self[A], A) -> Int?
 #alias("_[_]=_")
-pub fn[A] Deque::set(Self[A], Int, A) -> Unit
-pub fn[A] Deque::shrink_to_fit(Self[A]) -> Unit
-pub fn[A] Deque::shuffle(Self[A], rand~ : (Int) -> Int) -> Self[A]
-pub fn[A] Deque::shuffle_in_place(Self[A], rand~ : (Int) -> Int) -> Unit
-pub fn[A] Deque::to_array(Self[A]) -> Array[A]
-pub fn[A] Deque::truncate(Self[A], Int) -> Unit
-pub impl[A] Add for Deque[A]
-pub impl[A : Compare] Compare for Deque[A]
-pub impl[A : Eq] Eq for Deque[A]
-pub impl[A : Hash] Hash for Deque[A]
-pub impl[A : Show] Show for Deque[A]
-pub impl[A : ToJson] ToJson for Deque[A]
-pub impl[A : @json.FromJson] @json.FromJson for Deque[A]
+fn[A] Deque::set(Self[A], Int, A) -> Unit
+fn[A] Deque::shrink_to_fit(Self[A]) -> Unit
+fn[A] Deque::shuffle(Self[A], rand~ : (Int) -> Int) -> Self[A]
+fn[A] Deque::shuffle_in_place(Self[A], rand~ : (Int) -> Int) -> Unit
+fn[A] Deque::to_array(Self[A]) -> Array[A]
+fn[A] Deque::truncate(Self[A], Int) -> Unit
+impl[A] Add for Deque[A]
+impl[A : Compare] Compare for Deque[A]
+impl[A : Eq] Eq for Deque[A]
+impl[A : Hash] Hash for Deque[A]
+impl[A : Show] Show for Deque[A]
+impl[A : ToJson] ToJson for Deque[A]
+impl[A : @json.FromJson] @json.FromJson for Deque[A]
 
 // Type aliases
 

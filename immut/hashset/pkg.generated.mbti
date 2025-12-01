@@ -13,32 +13,32 @@ import(
 // Types and methods
 #alias(T, deprecated)
 type HashSet[A]
-pub fn[A : Eq + Hash] HashSet::add(Self[A], A) -> Self[A]
-pub fn[A : Eq + Hash] HashSet::contains(Self[A], A) -> Bool
-pub fn[K : Eq] HashSet::difference(Self[K], Self[K]) -> Self[K]
-pub fn[A] HashSet::each(Self[A], (A) -> Unit raise?) -> Unit raise?
+fn[A : Eq + Hash] HashSet::add(Self[A], A) -> Self[A]
+fn[A : Eq + Hash] HashSet::contains(Self[A], A) -> Bool
+fn[K : Eq] HashSet::difference(Self[K], Self[K]) -> Self[K]
+fn[A] HashSet::each(Self[A], (A) -> Unit raise?) -> Unit raise?
 #alias(of, deprecated)
 #as_free_fn(of, deprecated)
 #as_free_fn
-pub fn[A : Eq + Hash] HashSet::from_array(ArrayView[A]) -> Self[A]
+fn[A : Eq + Hash] HashSet::from_array(ArrayView[A]) -> Self[A]
 #as_free_fn
-pub fn[A : Eq + Hash] HashSet::from_iter(Iter[A]) -> Self[A]
+fn[A : Eq + Hash] HashSet::from_iter(Iter[A]) -> Self[A]
 #as_free_fn
-pub fn[A : Eq + Hash] HashSet::from_iterator(Iterator[A]) -> Self[A]
-pub fn[K : Eq] HashSet::intersection(Self[K], Self[K]) -> Self[K]
-pub fn[A] HashSet::is_empty(Self[A]) -> Bool
-pub fn[A] HashSet::iter(Self[A]) -> Iter[A]
-pub fn[A] HashSet::iterator(Self[A]) -> Iterator[A]
+fn[A : Eq + Hash] HashSet::from_iterator(Iterator[A]) -> Self[A]
+fn[K : Eq] HashSet::intersection(Self[K], Self[K]) -> Self[K]
+fn[A] HashSet::is_empty(Self[A]) -> Bool
+fn[A] HashSet::iter(Self[A]) -> Iter[A]
+fn[A] HashSet::iterator(Self[A]) -> Iterator[A]
 #alias(size, deprecated)
-pub fn[A] HashSet::length(Self[A]) -> Int
+fn[A] HashSet::length(Self[A]) -> Int
 #as_free_fn
-pub fn[A] HashSet::new() -> Self[A]
-pub fn[A : Eq + Hash] HashSet::remove(Self[A], A) -> Self[A]
-pub fn[K : Eq] HashSet::union(Self[K], Self[K]) -> Self[K]
-pub impl[A : Eq] Eq for HashSet[A]
-pub impl[A : Hash] Hash for HashSet[A]
-pub impl[A : Show] Show for HashSet[A]
-pub impl[K : Eq + Hash + @quickcheck.Arbitrary] @quickcheck.Arbitrary for HashSet[K]
+fn[A] HashSet::new() -> Self[A]
+fn[A : Eq + Hash] HashSet::remove(Self[A], A) -> Self[A]
+fn[K : Eq] HashSet::union(Self[K], Self[K]) -> Self[K]
+impl[A : Eq] Eq for HashSet[A]
+impl[A : Hash] Hash for HashSet[A]
+impl[A : Show] Show for HashSet[A]
+impl[K : Eq + Hash + @quickcheck.Arbitrary] @quickcheck.Arbitrary for HashSet[K]
 
 // Type aliases
 

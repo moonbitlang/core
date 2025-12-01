@@ -8,7 +8,7 @@ A priority queue is a data structure capable of maintaining maximum/minimum valu
 
 You can use `new()` or `of()` to create a priority queue.
 
-```mbt check
+```moonbit
 ///|
 test {
   let queue1 : @priority_queue.PriorityQueue[Int] = @priority_queue.new()
@@ -24,7 +24,7 @@ Note, however, that the default priority queue created is greater-first; if you 
 
 You can easily create a min-heap (smallest element first) using `@cmp.Reverse` to reverse the comparison order:
 
-```mbt check
+```moonbit
 ///|
 test {
   // Create a min-heap by wrapping elements with @cmp.Reverse
@@ -44,7 +44,7 @@ test {
 
 You can use `length()` to get the number of elements in the current priority queue.
 
-```mbt check
+```moonbit
 ///|
 test {
   let pq = @priority_queue.from_array([1, 2, 3, 4, 5])
@@ -54,7 +54,7 @@ test {
 
 Similarly, you can use the `is_empty` to determine whether the priority queue is empty.
 
-```mbt check
+```moonbit
 ///|
 test {
   let pq : @priority_queue.PriorityQueue[Int] = @priority_queue.new()
@@ -66,7 +66,7 @@ test {
 
 You can use `peek()` to look at the head element of a queue, which must be either the maximum or minimum value of an element in the queue, depending on the nature of the specification. The return value of `peek()` is an Option, which means that the result will be `None` when the queue is empty.
 
-```mbt check
+```moonbit
 ///|
 test {
   let pq = @priority_queue.from_array([1, 2, 3, 4, 5])
@@ -78,7 +78,7 @@ test {
 
 You can use `push()` to add elements to the priority queue.
 
-```mbt check
+```moonbit
 ///|
 test {
   let pq : @priority_queue.PriorityQueue[Int] = @priority_queue.new()
@@ -92,7 +92,7 @@ test {
 
 You can use `pop()` to pop the element at the front of the priority queue, respectively, and like [Peek](#Peek), its return values are `Option`, loaded with the value of the element being popped.
 
-```mbt check
+```moonbit
 ///|
 test {
   let pq = @priority_queue.from_array([5, 4, 3, 2, 1])
@@ -100,7 +100,7 @@ test {
 }
 ```
 
-```mbt check
+```moonbit
 ///|
 test {
   let pq = @priority_queue.from_array([5, 4, 3, 2, 1])
@@ -112,7 +112,7 @@ test {
 
 You can use `clear` to clear a priority queue.
 
-```mbt check
+```moonbit
 ///|
 test {
   let pq = @priority_queue.from_array([1, 2, 3, 4, 5])
@@ -125,7 +125,7 @@ test {
 
 You can copy a priority queue using the `copy` method.
 
-```mbt check
+```moonbit
 ///|
 test {
   let pq = @priority_queue.from_array([1, 2, 3])

@@ -8,7 +8,7 @@ This package provides the core built-in types, functions, and utilities that are
 
 MoonBit provides built-in assertion functions for testing:
 
-```mbt check
+```moonbit
 ///|
 test "assertions" {
   // Basic equality assertion
@@ -29,7 +29,7 @@ test "assertions" {
 
 The `inspect` function is used for testing and debugging:
 
-```mbt check
+```moonbit
 ///|
 test "inspect usage" {
   let value = 42
@@ -45,7 +45,7 @@ test "inspect usage" {
 
 The `Result[T, E]` type represents operations that can succeed or fail:
 
-```mbt check
+```moonbit
 ///|
 test "result type" {
   fn divide(a : Int, b : Int) -> Result[Int, String] {
@@ -76,7 +76,7 @@ test "result type" {
 
 The `Option[T]` type represents values that may or may not exist:
 
-```mbt check
+```moonbit
 ///|
 test "option type" {
   fn find_first_even(numbers : Array[Int]) -> Int? {
@@ -108,7 +108,7 @@ test "option type" {
 
 The `Iter[T]` type provides lazy iteration over sequences:
 
-```mbt check
+```moonbit
 ///|
 test "iterators" {
   // Create iterator from array
@@ -137,7 +137,7 @@ test "iterators" {
 
 Built-in array types for storing collections:
 
-```mbt check
+```moonbit
 ///|
 test "arrays" {
   // Dynamic arrays
@@ -161,7 +161,7 @@ test "arrays" {
 
 Fixed-size array for storing collections of constant size:
 
-```mbt check
+```moonbit
 ///|
 test "fixed arrays" {
   // FixedArray from literal
@@ -180,7 +180,7 @@ test "fixed arrays" {
 
 Basic string functionality:
 
-```mbt check
+```moonbit
 ///|
 test "strings" {
   let text = "Hello, World!"
@@ -203,7 +203,7 @@ test "strings" {
 
 Efficient string building:
 
-```mbt check
+```moonbit
 ///|
 test "string builder" {
   let builder = StringBuilder::new()
@@ -219,7 +219,7 @@ test "string builder" {
 
 Basic JSON operations:
 
-```mbt check
+```moonbit
 ///|
 test "json" {
   // JSON values
@@ -243,7 +243,7 @@ test "json" {
 
 Built-in comparison operators:
 
-```mbt check
+```moonbit
 ///|
 test "comparisons" {
   // Equality
@@ -266,7 +266,7 @@ test "comparisons" {
 
 Helpful utility functions:
 
-```mbt check
+```moonbit
 ///|
 test "utilities" {
   // Identity and ignore
@@ -290,7 +290,7 @@ test "utilities" {
 
 Basic error handling with panic and abort:
 
-```mbt check
+```moonbit
 ///|
 test "error handling" {
   // This would panic in a real scenario, but we demonstrate the concept

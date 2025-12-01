@@ -43,7 +43,7 @@ fn ParseResult::compile(self : Self) -> Regexp {
 /// Throws: `Error_` if the regular expression syntax is invalid.
 /// 
 /// Example:
-/// ```mbt check
+/// ```moonbit
 /// let engine = @regexp.compile("a(bc|de)f")
 /// inspect(engine.execute("xxabcf").results(), content=(
 ///   #|[Some("abcf"), Some("bc")]
@@ -75,7 +75,7 @@ pub fn compile(
 /// Returns: The index of the capture group, or `None` if the group name does not exist.
 /// 
 /// Example:
-/// ```mbt check
+/// ```moonbit
 /// let engine = @regexp.compile("(?<word>\\w+)")
 /// inspect(engine.group_by_name("word"), content="Some(1)")
 /// ```
@@ -95,7 +95,7 @@ pub fn Regexp::group_by_name(self : Regexp, name : String) -> Int? {
 /// Returns: The total number of capture groups (including the full match at index 0).
 /// 
 /// Example:
-/// ```mbt check
+/// ```moonbit
 /// let engine = @regexp.compile("(a)(b|c)")
 /// inspect(engine.group_count(), content="3")
 /// ```
@@ -115,7 +115,7 @@ pub fn Regexp::group_count(self : Regexp) -> Int {
 /// Returns: An iterator containing all group names.
 /// 
 /// Example:
-/// ```mbt check
+/// ```moonbit
 /// let engine = @regexp.compile("(?<first>a)(?<second>b)")
 /// inspect(engine.group_names(), content=(
 ///   #|["first", "second"]
@@ -139,7 +139,7 @@ pub fn Regexp::group_names(self : Regexp) -> Array[String] {
 /// Returns: A `MatchResult` object containing the match status and capture group information.
 /// 
 /// Example:
-/// ```mbt check
+/// ```moonbit
 /// let engine = @regexp.compile("a(bc|de)f")
 /// let result = engine.execute("xxabcf")
 /// if result.matched() { 
@@ -174,7 +174,7 @@ pub fn Regexp::execute(self : Regexp, input : StringView) -> MatchResult {
 /// - `StringView` representing the remaining text after the match.
 /// 
 /// Example:
-/// ```mbt check
+/// ```moonbit
 /// let engine = @regexp.compile("a(bc|de)f")
 /// let result = engine.execute("abcfxx")
 /// guard result.matched()
@@ -231,7 +231,7 @@ pub fn Regexp::execute_with_remainder(
 /// - `MatchResult` object containing the match status and capture group information.
 /// 
 /// Example:
-/// ```mbt check
+/// ```moonbit
 /// let engine = @regexp.compile("a(bc|de)f")
 /// guard engine.match_("abcfxx") is Some(result)
 /// inspect(result.after(), content=("xx"))
@@ -278,7 +278,7 @@ struct MatchResult {
 /// Returns: `true` if a match was found, otherwise `false`.
 /// 
 /// Example:
-/// ```mbt check
+/// ```moonbit
 /// let result = @regexp.compile("text").execute("text")
 /// inspect(result.matched(), content="true")
 /// ```
@@ -301,7 +301,7 @@ pub fn MatchResult::matched(self : Self) -> Bool {
 /// - `None`: If the index is invalid or the capture group did not match.
 /// 
 /// Example:
-/// ```mbt check
+/// ```moonbit
 /// let result = @regexp.compile(".(bc)").execute("abc")
 /// inspect(result.get(0), content=(
 ///   #|Some("abc")
@@ -340,7 +340,7 @@ pub fn MatchResult::get(self : Self, index : Int) -> StringView? {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 /// let engine = @regexp.compile("(?<word>\\w+)\\s+(?<num>\\d+)")
 /// let result = engine.execute("hello 123")
 /// inspect(result.groups(), content=(
@@ -372,7 +372,7 @@ pub fn MatchResult::groups(self : Self) -> Map[String, StringView] {
 /// Returns: An iterator containing the content of all valid capture groups.
 /// 
 /// Example:
-/// ```mbt check
+/// ```moonbit
 /// let result = @regexp.compile("(\\w)+").execute("abc")
 /// inspect(result.results(), content=(
 ///   #|[Some("abc"), Some("c")]
@@ -397,7 +397,7 @@ pub fn MatchResult::results(self : Self) -> Array[StringView?] {
 /// 
 /// If the match was not successful, this will return the entire input text.
 /// 
-/// ```mbt check
+/// ```moonbit
 /// let engine = @regexp.compile("world")
 /// let result = engine.execute("hello world")
 /// inspect(result.before(), content="hello ")
@@ -413,7 +413,7 @@ pub fn MatchResult::before(self : Self) -> StringView {
 /// 
 /// If the match was not successful, this will return the empty string.
 /// 
-/// ```mbt check
+/// ```moonbit
 /// let engine = @regexp.compile("hello")
 /// let result = engine.execute("hello world")
 /// inspect(result.after(), content=" world")

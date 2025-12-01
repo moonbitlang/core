@@ -9,7 +9,7 @@ An immutable tree map based on size balanced tree.
 You can create an empty map using `new()` or construct it with a single
 key-value pair using `singleton()`.
 
-```mbt check
+```moonbit
 ///|
 test {
   let map1 : @sorted_map.SortedMap[String, Int] = @sorted_map.new()
@@ -21,7 +21,7 @@ test {
 
 Also, you can construct it from an array using `of()` or `from_array()`.
 
-```mbt check
+```moonbit
 ///|
 test {
   let map = @sorted_map.from_array([("a", 1), ("b", 2), ("c", 3)])
@@ -35,7 +35,7 @@ test {
 You can use `add()` to add a key-value pair to the map and create a new map. Or
 use `lookup()` to get the value associated with a key.
 
-```mbt check
+```moonbit
 ///|
 test {
   let map : @sorted_map.SortedMap[String, Int] = @sorted_map.new()
@@ -48,7 +48,7 @@ test {
 
 You can use `remove()` to remove a key-value pair from the map.
 
-```mbt check
+```moonbit
 ///|
 test {
   let map = @sorted_map.from_array([("a", 1), ("b", 2), ("c", 3)])
@@ -61,7 +61,7 @@ test {
 
 You can use `contains()` to check whether a key exists.
 
-```mbt check
+```moonbit
 ///|
 test {
   let map = @sorted_map.from_array([("a", 1), ("b", 2), ("c", 3)])
@@ -74,7 +74,7 @@ test {
 
 You can use `size()` to get the number of key-value pairs in the map.
 
-```mbt check
+```moonbit
 ///|
 test {
   let map = @sorted_map.from_array([("a", 1), ("b", 2), ("c", 3)])
@@ -84,7 +84,7 @@ test {
 
 Similarly, you can use `is_empty()` to check whether the map is empty.
 
-```mbt check
+```moonbit
 ///|
 test {
   let map : @sorted_map.SortedMap[String, Int] = @sorted_map.new()
@@ -96,7 +96,7 @@ test {
 
 Use `each()` or `eachi()` to iterate through all key-value pairs.
 
-```mbt check
+```moonbit
 ///|
 test {
   let map = @sorted_map.from_array([("a", 1), ("b", 2), ("c", 3)])
@@ -113,7 +113,7 @@ test {
 
 Use `map_with_key()` to map a function over all values.
 
-```mbt check
+```moonbit
 ///|
 test {
   let map = @sorted_map.from_array([("a", 1), ("b", 2), ("c", 3)])
@@ -127,7 +127,7 @@ test {
 Use `foldl_with_key()` to fold the values in the map. The default order of fold
 is Pre-order. Similarly, you can use `rev_fold()` to do a Post-order fold.
 
-```mbt check
+```moonbit
 ///|
 test {
   let map = @sorted_map.from_array([("a", 1), ("b", 2), ("c", 3)])
@@ -145,7 +145,7 @@ test {
 
 Use `filter_with_key()` to filter all keys/values that satisfy the predicate.
 
-```mbt check
+```moonbit
 ///|
 test {
   let map = @sorted_map.from_array([("a", 1), ("b", 2), ("c", 3)])
@@ -162,7 +162,7 @@ test {
 
 Use `values()` to get all values in ascending order of their keys.
 
-```mbt check
+```moonbit
 ///|
 test {
   let map = @sorted_map.from_array([("a", 1), ("b", 2), ("c", 3)])
@@ -173,7 +173,7 @@ test {
 
 Use `keys()` to get all keys of the map in ascending order.
 
-```mbt check
+```moonbit
 ///|
 test {
   let map = @sorted_map.from_array([("a", 1), ("b", 2), ("c", 3)])

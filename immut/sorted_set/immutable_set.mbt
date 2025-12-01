@@ -386,7 +386,7 @@ pub fn[A : Compare] SortedSet::difference(
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```moonbit
 ///   let set1 = @sorted_set.from_array([1, 2, 3, 4])
 ///   let set2 = @sorted_set.from_array([3, 4, 5, 6])
 ///   inspect(

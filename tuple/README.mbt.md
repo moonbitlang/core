@@ -8,7 +8,7 @@ Tuple is a fixed-size collection of elements of different types. It is a lightwe
 
 Create a new tuple using the tuple literal syntax.
 
-```mbt check
+```moonbit
 ///|
 test {
   let tuple2 = (1, 2)
@@ -21,7 +21,7 @@ test {
 
 You can access the elements of the tuple using pattern match or  dot access.
 
-```mbt check
+```moonbit
 ///|
 test {
   let tuple = (1, 2)
@@ -37,7 +37,7 @@ test {
 
 You can transform the tuple using the matrix functions combined with `then`.
 
-```mbt check  
+```moonbit  
 ///|
 test {
   let tuple = (1, 2)

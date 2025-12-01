@@ -13,45 +13,45 @@ import(
 // Types and methods
 type T[A]
 #alias("_[_]")
-pub fn[A] T::at(Self[A], Int) -> A
-pub fn[A] T::concat(Self[A], Self[A]) -> Self[A]
+fn[A] T::at(Self[A], Int) -> A
+fn[A] T::concat(Self[A], Self[A]) -> Self[A]
 #deprecated
-pub fn[A] T::copy(Self[A]) -> Self[A]
-pub fn[A] T::each(Self[A], (A) -> Unit raise?) -> Unit raise?
-pub fn[A] T::eachi(Self[A], (Int, A) -> Unit raise?) -> Unit raise?
+fn[A] T::copy(Self[A]) -> Self[A]
+fn[A] T::each(Self[A], (A) -> Unit raise?) -> Unit raise?
+fn[A] T::eachi(Self[A], (Int, A) -> Unit raise?) -> Unit raise?
 #alias(fold_left, deprecated)
-pub fn[A, B] T::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
+fn[A, B] T::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 #alias(of, deprecated)
 #as_free_fn(of, deprecated)
 #as_free_fn
-pub fn[A] T::from_array(ArrayView[A]) -> Self[A]
+fn[A] T::from_array(ArrayView[A]) -> Self[A]
 #as_free_fn
-pub fn[A] T::from_iter(Iter[A]) -> Self[A]
+fn[A] T::from_iter(Iter[A]) -> Self[A]
 #as_free_fn
-pub fn[A] T::from_iterator(Iterator[A]) -> Self[A]
-pub fn[A] T::get(Self[A], Int) -> A?
-pub fn[A] T::is_empty(Self[A]) -> Bool
-pub fn[A] T::iter(Self[A]) -> Iter[A]
-pub fn[A] T::iterator(Self[A]) -> Iterator[A]
-pub fn[A] T::length(Self[A]) -> Int
+fn[A] T::from_iterator(Iterator[A]) -> Self[A]
+fn[A] T::get(Self[A], Int) -> A?
+fn[A] T::is_empty(Self[A]) -> Bool
+fn[A] T::iter(Self[A]) -> Iter[A]
+fn[A] T::iterator(Self[A]) -> Iterator[A]
+fn[A] T::length(Self[A]) -> Int
 #as_free_fn
-pub fn[A] T::make(Int, A) -> Self[A]
+fn[A] T::make(Int, A) -> Self[A]
 #as_free_fn
-pub fn[A] T::makei(Int, (Int) -> A raise?) -> Self[A] raise?
-pub fn[A, B] T::map(Self[A], (A) -> B raise?) -> Self[B] raise?
+fn[A] T::makei(Int, (Int) -> A raise?) -> Self[A] raise?
+fn[A, B] T::map(Self[A], (A) -> B raise?) -> Self[B] raise?
 #as_free_fn
-pub fn[A] T::new() -> Self[A]
-pub fn[A] T::push(Self[A], A) -> Self[A]
+fn[A] T::new() -> Self[A]
+fn[A] T::push(Self[A], A) -> Self[A]
 #alias(fold_right, deprecated)
-pub fn[A, B] T::rev_fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
-pub fn[A] T::set(Self[A], Int, A) -> Self[A]
-pub fn[A] T::to_array(Self[A]) -> Array[A]
-pub impl[A] Add for T[A]
-pub impl[A : Compare] Compare for T[A]
-pub impl[A : Eq] Eq for T[A]
-pub impl[A : Hash] Hash for T[A]
-pub impl[A : Show] Show for T[A]
-pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[X]
+fn[A, B] T::rev_fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
+fn[A] T::set(Self[A], Int, A) -> Self[A]
+fn[A] T::to_array(Self[A]) -> Array[A]
+impl[A] Add for T[A]
+impl[A : Compare] Compare for T[A]
+impl[A : Eq] Eq for T[A]
+impl[A : Hash] Hash for T[A]
+impl[A : Show] Show for T[A]
+impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[X]
 
 // Type aliases
 

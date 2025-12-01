@@ -6,7 +6,7 @@ This package provides internal path utilities for immutable data structures, spe
 
 The `Path` type represents a position in a HAMT structure:
 
-```mbt check
+```moonbit
 ///|
 test "path basics" {
   // Create a path from a hashable value
@@ -26,7 +26,7 @@ test "path basics" {
 
 Navigate through HAMT tree levels:
 
-```mbt check
+```moonbit
 ///|
 test "path navigation" {
   let initial_path = @path.of("test_key")
@@ -49,7 +49,7 @@ test "path navigation" {
 
 Build paths for tree navigation:
 
-```mbt check
+```moonbit
 ///|
 test "path construction" {
   let base_path = @path.of(12345)
