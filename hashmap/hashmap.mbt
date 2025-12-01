@@ -372,7 +372,7 @@ pub fn[K : Hash + Eq, V] HashMap::contains(
 /// Example:
 ///
 /// ```mbt check
-/// 
+///
 ///   let map = @hashmap.new()
 ///   map..set("a", 1)..set("b", 2)
 ///   inspect(map.contains_kv("a", 1), content="true")

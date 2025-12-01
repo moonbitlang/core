@@ -139,12 +139,12 @@ pub impl[X] Default for FixedArray[X] with default() {
 /// let fa : FixedArray[Int] = [0, 0, 0, 0, 0]
 /// fa.fill(3)
 /// inspect(fa, content="[3, 3, 3, 3, 3]")
-/// 
+///
 /// // Fill from index 1 to 3 (exclusive)
 /// let fa2 : FixedArray[Int] = [0, 0, 0, 0, 0]
 /// fa2.fill(9, start=1, end=3)
 /// inspect(fa2, content="[0, 9, 9, 0, 0]")
-/// 
+///
 /// // Fill from index 2 to end
 /// let fa3 : FixedArray[String] = ["a", "b", "c", "d"]
 /// fa3.fill("x", start=2)

@@ -64,7 +64,7 @@ pub fn Bytes::from_array(arr : ArrayView[Byte]) -> Bytes {
 ///     content=(
 ///       
 ///   #|b"hel"
-/// 
+///
 ///     ),
 ///   )
 /// ```
@@ -151,7 +151,7 @@ pub fn BytesView::to_fixedarray(self : BytesView) -> FixedArray[Byte] {
 ///     content=(
 ///       
 ///   #|b"h"
-/// 
+///
 ///     ),
 ///   )
 /// ```

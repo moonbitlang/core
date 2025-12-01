@@ -343,7 +343,7 @@ pub fn[K : Hash + Eq, V] Map::contains(self : Map[K, V], key : K) -> Bool {
 /// Example:
 ///
 /// ```mbt check
-/// 
+///
 ///   let map = { "a": 1, "b": 2 }
 ///   inspect(map.contains_kv("a", 1), content="true")
 ///   inspect(map.contains_kv("a", 2), content="false")

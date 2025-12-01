@@ -676,7 +676,7 @@ pub fn Float::reinterpret_as_uint(self : Float) -> UInt = "%f32.to_i32_reinterpr
 /// ```mbt check
 /// // 0x3F800000 represents 1.0 in IEEE 754 single-precision format
 /// let n = 1065353216 // 0x3F800000
-/// inspect(Float::reinterpret_from_int(n), content="1") 
+/// inspect(Float::reinterpret_from_int(n), content="1")
 /// ```
 // TODO(upstream): no test entry found
 pub fn Float::reinterpret_from_int(self : Int) -> Float = "%i32.to_f32_reinterpret"
