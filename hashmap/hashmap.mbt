@@ -27,7 +27,7 @@
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let map : @hashmap.HashMap[String, Int] = @hashmap.new(capacity=16)
 ///   inspect(map.capacity(), content="16")
 ///   inspect(map.is_empty(), content="true")
@@ -57,7 +57,7 @@ pub fn[K, V] HashMap::new(capacity? : Int = 8) -> HashMap[K, V] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let arr = [(1, "one"), (2, "two"), (1, "ONE")]
 ///   let map = @hashmap.from_array(arr)
 ///   inspect(map.get(1), content="Some(\"ONE\")")
@@ -87,7 +87,7 @@ pub fn[K : Hash + Eq, V] HashMap::from_array(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let map : @hashmap.HashMap[String, Int] = @hashmap.new()
 ///   map.set("key", 42)
 ///   inspect(map.get("key"), content="Some(42)")
@@ -173,7 +173,7 @@ fn[K, V] HashMap::push_away(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let map = @hashmap.from_array([("key", 42)])
 ///   inspect(map.get("key"), content="Some(42)")
 ///   inspect(map.get("nonexistent"), content="None")
@@ -205,7 +205,7 @@ pub fn[K : Hash + Eq, V] HashMap::get(self : HashMap[K, V], key : K) -> V? {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let map = @hashmap.from_array([("key", 42)])
 ///   inspect(map["key"], content="42")
 /// ```
@@ -239,7 +239,7 @@ pub fn[K : Hash + Eq, V] HashMap::at(self : HashMap[K, V], key : K) -> V {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let map : @hashmap.HashMap[String, Int] = @hashmap.new()
 ///   let value = map.get_or_init("key", () => { 42 })
 ///   inspect(value, content="42")
@@ -300,7 +300,7 @@ pub fn[K : Hash + Eq, V] HashMap::get_or_init(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let map = @hashmap.from_array([("a", 1), ("b", 2)])
 ///   inspect(map.get_or_default("a", 0), content="1")
 ///   inspect(map.get_or_default("c", 0), content="0")
@@ -335,7 +335,7 @@ pub fn[K : Hash + Eq, V] HashMap::get_or_default(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let map = @hashmap.from_array([("a", 1), ("b", 2)])
 ///   inspect(map.contains("a"), content="true")
 ///   inspect(map.contains("c"), content="false")
@@ -371,7 +371,7 @@ pub fn[K : Hash + Eq, V] HashMap::contains(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 /// 
 ///   let map = @hashmap.new()
 ///   map..set("a", 1)..set("b", 2)
@@ -410,7 +410,7 @@ pub fn[K : Hash + Eq, V : Eq] HashMap::contains_kv(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let map = @hashmap.from_array([("a", 1), ("b", 2)])
 ///   map.remove("a")
 ///   inspect(map.get("a"), content="None")
@@ -506,7 +506,7 @@ test "of" {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let samples : Array[@hashmap.HashMap[Int, String]] = @quickcheck.samples(5)
 ///   inspect(samples.length(), content="5")
 /// ```
@@ -588,7 +588,7 @@ pub fn[K, V] HashMap::copy(self : HashMap[K, V]) -> HashMap[K, V] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 /// let map1 = @hashmap.from_array([("a", 1), ("b", 2)])
 /// let map2 = @hashmap.from_array([("b", 3), ("c", 4)])
 /// let merged = map1.merge(map2).to_array()
@@ -618,7 +618,7 @@ pub fn[K : Eq, V] HashMap::merge(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 /// let map1 = @hashmap.from_array([("a", 1), ("b", 2)])
 /// let map2 = @hashmap.from_array([("b", 3), ("c", 4)])
 /// map1.merge_in_place(map2)

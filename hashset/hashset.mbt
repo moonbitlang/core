@@ -52,7 +52,7 @@ pub fn[K : Hash + Eq] HashSet::from_array(arr : ArrayView[K]) -> HashSet[K] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let set : @hashset.HashSet[String] = @hashset.new()
 ///   set.add("key")
 ///   inspect(set.contains("key"), content="true")
@@ -160,7 +160,7 @@ pub fn[K : Hash + Eq] HashSet::contains(self : HashSet[K], key : K) -> Bool {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let set = @hashset.from_array(["a", "b"])
 ///   set.remove("a")
 ///   inspect(set.contains("a"), content="false")
@@ -601,7 +601,7 @@ test "clear" {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let set : @hashset.HashSet[String] = @hashset.new()
 ///   inspect(set.add_and_check("key"), content="true")  // First insertion
 ///   inspect(set.add_and_check("key"), content="false") // Already exists
@@ -629,7 +629,7 @@ pub fn[K : Hash + Eq] HashSet::add_and_check(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let set = @hashset.from_array(["a", "b"])
 ///   inspect(set.remove_and_check("a"), content="true")  // Successfully removed
 ///   inspect(set.remove_and_check("a"), content="false") // Already removed

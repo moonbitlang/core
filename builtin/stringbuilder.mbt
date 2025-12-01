@@ -31,7 +31,7 @@ pub fn[T : Show] StringBuilder::write_object(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let sb = StringBuilder::new()
 ///   let chars = "Hello🤣".iter()
 ///   sb.write_iter(chars)
@@ -59,7 +59,7 @@ pub fn StringBuilder::write_iter(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let sb = StringBuilder::new()
 ///   let str = "Hello, world!"
 ///   let view = str[7:12]  // "world"

@@ -8,7 +8,7 @@ A mutable hash set based on a Robin Hood hash table.
 
 You can create an empty set using `new()` or construct it using `from_array()`.
 
-```moonbit
+```mbt check
 ///|
 test {
   let _set1 = @hashset.from_array([1, 2, 3, 4, 5])
@@ -21,7 +21,7 @@ test {
 
 You can use `insert()` to add a key to the set, and `contains()` to check whether a key exists.
 
-```moonbit
+```mbt check
 ///|
 test {
   let set : @hashset.HashSet[String] = @hashset.new()
@@ -34,7 +34,7 @@ test {
 
 You can use `remove()` to remove a key.
 
-```moonbit
+```mbt check
 ///|
 test {
   let set = @hashset.from_array(["a", "b", "c"])
@@ -47,7 +47,7 @@ test {
 
 You can use `size()` to get the number of keys in the set, or `capacity()` to get the current capacity.
 
-```moonbit
+```mbt check
 ///|
 test {
   let set = @hashset.from_array(["a", "b", "c"])
@@ -58,7 +58,7 @@ test {
 
 Similarly, you can use `is_empty()` to check whether the set is empty.
 
-```moonbit
+```mbt check
 ///|
 test {
   let set : @hashset.HashSet[Int] = @hashset.new()
@@ -70,7 +70,7 @@ test {
 
 You can use `clear` to remove all keys from the set, but the allocated memory will not change.
 
-```moonbit
+```mbt check
 ///|
 test {
   let set = @hashset.from_array(["a", "b", "c"])
@@ -83,7 +83,7 @@ test {
 
 You can use `each()` or `eachi()` to iterate through all keys.
 
-```moonbit
+```mbt check
 ///|
 test {
   let set = @hashset.from_array(["a", "b", "c"])
@@ -98,7 +98,7 @@ test {
 
 You can use `union()`, `intersection()`, `difference()` and `symmetric_difference()` to perform set operations.
 
-```moonbit
+```mbt check
 ///|
 test {
   let m1 = @hashset.from_array(["a", "b", "c"])

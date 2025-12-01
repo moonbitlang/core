@@ -279,7 +279,7 @@ pub fn[V : Compare] SortedSet::difference(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let set1 = @sorted_set.from_array([1, 2, 3, 4])
 ///   let set2 = @sorted_set.from_array([3, 4, 5, 6])
 ///   let diff = set1.symmetric_difference(set2)

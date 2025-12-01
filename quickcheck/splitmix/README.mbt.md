@@ -6,7 +6,7 @@ This package provides the SplitMix random number generator, which is used intern
 
 Create and initialize random number generators:
 
-```moonbit
+```mbt check
 ///|
 test "random state creation" {
   // Create with default seed
@@ -27,7 +27,7 @@ test "random state creation" {
 
 Generate various types of random numbers:
 
-```moonbit
+```mbt check
 ///|
 test "random number generation" {
   let rng = @splitmix.new(seed=42UL)
@@ -58,7 +58,7 @@ test "random number generation" {
 
 Generate random floating-point values:
 
-```moonbit
+```mbt check
 ///|
 test "floating point generation" {
   let rng = @splitmix.new(seed=123UL)
@@ -86,7 +86,7 @@ test "floating point generation" {
 
 Use advanced RNG operations:
 
-```moonbit
+```mbt check
 ///|
 test "advanced operations" {
   let rng = @splitmix.new(seed=999UL)
@@ -111,7 +111,7 @@ test "advanced operations" {
 
 Manage random number generator state:
 
-```moonbit
+```mbt check
 ///|
 test "state management" {
   let rng = @splitmix.new(seed=555UL)
@@ -137,7 +137,7 @@ test "state management" {
 
 Use seeded generators for reproducible tests:
 
-```moonbit
+```mbt check
 ///|
 test "deterministic testing" {
   // Same seed should produce same sequence
@@ -157,7 +157,7 @@ test "deterministic testing" {
 
 This generator is used by QuickCheck for property testing:
 
-```moonbit
+```mbt check
 ///|
 test "quickcheck integration concept" {
   // Conceptual usage in property-based testing

@@ -46,7 +46,7 @@ The `List` package provides an immutable linked list data structure with a varie
 
 You can create an empty list or a list from an array.
 
-```moonbit
+```mbt check
 ///|
 test {
   let empty_list : @list.List[Int] = @list.new()
@@ -64,7 +64,7 @@ test {
 
 Add an element to the beginning of the list.
 
-```moonbit
+```mbt check
 ///|
 test {
   let list = @list.from_array([2, 3, 4, 5]).prepend(1)
@@ -76,7 +76,7 @@ test {
 
 Get the number of elements in the list.
 
-```moonbit
+```mbt check
 ///|
 test {
   let list = @list.from_array([1, 2, 3, 4, 5])
@@ -88,7 +88,7 @@ test {
 
 Determine if the list is empty.
 
-```moonbit
+```mbt check
 ///|
 test {
   let empty_list : @list.List[Int] = @list.new()
@@ -104,7 +104,7 @@ test {
 
 Get the first element of the list as an `Option`.
 
-```moonbit
+```mbt check
 ///|
 test {
   let list = @list.from_array([1, 2, 3, 4, 5])
@@ -116,7 +116,7 @@ test {
 
 Get the list without its first element.
 
-```moonbit
+```mbt check
 ///|
 test {
   let list = @list.from_array([1, 2, 3, 4, 5])
@@ -128,7 +128,7 @@ test {
 
 Get the nth element of the list as an `Option`.
 
-```moonbit
+```mbt check
 ///|
 test {
   let list = @list.from_array([1, 2, 3, 4, 5])
@@ -144,7 +144,7 @@ test {
 
 Iterate over the elements of the list.
 
-```moonbit
+```mbt check
 ///|
 test {
   let arr = []
@@ -157,7 +157,7 @@ test {
 
 Transform each element of the list.
 
-```moonbit
+```mbt check
 ///|
 test {
   let list = @list.from_array([1, 2, 3, 4, 5]).map(x => x * 2)
@@ -169,7 +169,7 @@ test {
 
 Keep elements that satisfy a predicate.
 
-```moonbit
+```mbt check
 ///|
 test {
   let list = @list.from_array([1, 2, 3, 4, 5]).filter(x => x % 2 == 0)
@@ -185,7 +185,7 @@ test {
 
 Reverse the list.
 
-```moonbit
+```mbt check
 ///|
 test {
   let list = @list.from_array([1, 2, 3, 4, 5]).rev()
@@ -197,7 +197,7 @@ test {
 
 Concatenate two lists.
 
-```moonbit
+```mbt check
 ///|
 test {
   let list = @list.from_array([1, 2, 3]).concat(@list.from_array([4, 5]))
@@ -209,7 +209,7 @@ test {
 
 Flatten a list of lists.
 
-```moonbit
+```mbt check
 ///|
 test {
   let list = @list.from_array([
@@ -224,7 +224,7 @@ test {
 
 Sort the list in ascending order.
 
-```moonbit
+```mbt check
 ///|
 test {
   let list = @list.from_array([3, 1, 4, 1, 5, 9]).sort()
@@ -240,7 +240,7 @@ test {
 
 Convert a list to an array.
 
-```moonbit
+```mbt check
 ///|
 test {
   let list = @list.from_array([1, 2, 3, 4, 5])
@@ -252,7 +252,7 @@ test {
 
 Create a list from an array.
 
-```moonbit
+```mbt check
 ///|
 test {
   let list = @list.from_array([1, 2, 3, 4, 5])
@@ -266,7 +266,7 @@ test {
 
 Lists with the same elements in the same order are considered equal.
 
-```moonbit
+```mbt check
 ///|
 test {
   let list1 = @list.from_array([1, 2, 3])
@@ -281,7 +281,7 @@ test {
 
 When accessing elements that might not exist, use pattern matching for safety:
 
-```moonbit
+```mbt check
 ///|
 fn safe_head(list : @list.List[Int]) -> Int {
   match list.head() {

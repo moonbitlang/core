@@ -41,7 +41,7 @@ fn[T] Array::make_uninit(len : Int) -> Array[T] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let arr : Array[Int] = Array::new(capacity=10)
 ///   inspect(arr.length(), content="0")
 ///   inspect(arr.capacity(), content="10")
@@ -68,7 +68,7 @@ pub fn[T] Array::new(capacity? : Int = 0) -> Array[T] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let arr = [1, 2, 3]
 ///   inspect(arr.length(), content="3")
 ///   let empty : Array[Int] = []
@@ -272,7 +272,7 @@ pub fn[T] Array::pop(self : Array[T]) -> T? {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let arr = [1, 2, 3]
 ///   inspect(arr.unsafe_pop(), content="3")
 ///   inspect(arr, content="[1, 2]")
@@ -356,7 +356,7 @@ pub fn[T] Array::drain(self : Array[T], begin : Int, end : Int) -> Array[T] {
 /// This function will panic if the index is out of bounds.
 ///
 /// # Example
-/// ```moonbit
+/// ```mbt check
 /// let a = [1, 2, 3]
 /// a.insert(1, 4)
 /// inspect(a, content="[1, 4, 2, 3]")
@@ -422,7 +422,7 @@ fn[T] Array::unsafe_grow_to_length(self : Array[T], new_len : Int) -> Unit {
 /// - Does nothing if the array is empty
 /// 
 /// # Example
-/// ```moonbit
+/// ```mbt check
 /// // Fill entire array
 /// let arr = [1, 2, 3, 4, 5]
 /// arr.fill(0)

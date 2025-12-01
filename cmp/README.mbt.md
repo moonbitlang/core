@@ -6,7 +6,7 @@ This package provides utility functions for comparing values and the `Reverse` n
 
 The library provides generic comparison functions that work with any type implementing the `Compare` trait:
 
-```moonbit
+```mbt check
 ///|
 test "generic comparison" {
   // Works with numbers
@@ -24,7 +24,7 @@ The `@cmp.Reverse[T]` newtype wrapper reverses the comparison order of any type 
 - Sorting in descending order
 - Reversing the priority in priority queues
 
-```moonbit
+```mbt check
 ///|
 test "reverse comparison" {
   let a = @cmp.Reverse(1)
@@ -44,7 +44,7 @@ test "reverse comparison" {
 
 `@cmp.Reverse` can be used with sorted collections to change their ordering:
 
-```moonbit
+```mbt check
 ///|
 test "reverse with arrays" {
   // Create an array with reversed integers for descending sort
@@ -58,7 +58,7 @@ test "reverse with arrays" {
 
 With `@cmp.maximum_by_key()` and `@cmp.minimum_by_key()`, it is possible to compare values based on arbitrary keys derived from the them. This is particularly useful when you need to compare complex objects based on some specific aspect or field.
 
-```moonbit
+```mbt check
 ///|
 test "cmp_by_key" {
   struct Person {

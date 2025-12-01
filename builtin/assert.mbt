@@ -36,7 +36,7 @@ fn[T : Show] debug_string(t : T) -> String {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   assert_eq(1, 1)
 ///   assert_eq("hello", "hello")
 /// ```
@@ -74,7 +74,7 @@ pub fn[T : Eq + Show] assert_eq(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   assert_not_eq(1, 2) // Passes
 ///
 /// ```
@@ -110,7 +110,7 @@ pub fn[T : Eq + Show] assert_not_eq(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   assert_true(true)
 /// ```
 #callsite(autofill(loc))
@@ -140,7 +140,7 @@ pub fn assert_true(x : Bool, msg? : String, loc~ : SourceLoc) -> Unit raise {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   assert_false(false)
 ///   assert_false(1 > 2)
 /// ```

@@ -6,7 +6,7 @@ This package provides an immutable hash-based set implementation using Hash Arra
 
 Create immutable sets using various methods:
 
-```moonbit
+```mbt check
 ///|
 test "creating immutable sets" {
   // Empty set
@@ -32,7 +32,7 @@ test "creating immutable sets" {
 
 All operations return new sets without modifying the original:
 
-```moonbit
+```mbt check
 ///|
 test "immutable operations" {
   let original = @hashset.from_array([1, 2, 3])
@@ -58,7 +58,7 @@ test "immutable operations" {
 
 Perform mathematical set operations immutably:
 
-```moonbit
+```mbt check
 ///|
 test "set operations" {
   let set1 = @hashset.from_array([1, 2, 3, 4])
@@ -86,7 +86,7 @@ test "set operations" {
 
 Test membership and query the set:
 
-```moonbit
+```mbt check
 ///|
 test "membership and queries" {
   let numbers = @hashset.from_array([10, 20, 30, 40, 50])
@@ -110,7 +110,7 @@ test "membership and queries" {
 
 Immutable sets share structure efficiently:
 
-```moonbit
+```mbt check
 ///|
 test "structural sharing" {
   let base_set = @hashset.from_array([1, 2, 3, 4, 5])
@@ -137,7 +137,7 @@ test "structural sharing" {
 
 Transform sets while maintaining immutability:
 
-```moonbit
+```mbt check
 ///|
 test "filtering and transformation" {
   let numbers = @hashset.from_array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
@@ -159,7 +159,7 @@ test "filtering and transformation" {
 
 Build complex sets from simpler ones:
 
-```moonbit
+```mbt check
 ///|
 test "combining sets" {
   let small_primes = @hashset.from_array([2, 3, 5, 7])
@@ -185,7 +185,7 @@ test "combining sets" {
 
 Key differences from mutable sets:
 
-```moonbit
+```mbt check
 ///|
 test "immutable vs mutable comparison" {
   // Immutable set - creates new instances
@@ -206,7 +206,7 @@ test "immutable vs mutable comparison" {
 
 More complex set operations:
 
-```moonbit
+```mbt check
 ///|
 test "advanced operations" {
   let set1 = @hashset.from_array([1, 2, 3, 4, 5])
@@ -230,7 +230,7 @@ test "advanced operations" {
 
 Immutable sets provide several performance advantages:
 
-```moonbit
+```mbt check
 ///|
 test "performance benefits" {
   let base = @hashset.from_array([1, 2, 3, 4, 5])
@@ -265,7 +265,7 @@ Immutable sets are particularly useful for:
 
 ### 1. Prefer Immutable for Functional Code
 
-```moonbit
+```mbt check
 ///|
 test "functional programming style" {
   fn process_numbers(
@@ -289,7 +289,7 @@ test "functional programming style" {
 
 ### 2. Use for Configuration and State
 
-```moonbit
+```mbt check
 ///|
 test "configuration usage" {
   let base_config = @hashset.from_array(["feature1", "feature2", "feature3"])

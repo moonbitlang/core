@@ -9,7 +9,7 @@ List is implemented as a **linked list**, supporting O(1) head access.
 ## Building lists 
 
 You can create a list manually via the `default()` or construct it using the `of()` method: 
-```moonbit
+```mbt check
 ///|
 test {
   let list0 : @list.T[Int] = @list.default()
@@ -20,7 +20,7 @@ test {
 ```
 
 Or use `Cons` constructor directly (Adds a single element to the beginning of a list):
-```moonbit
+```mbt check
 ///|
 test {
   let list = @list.Cons(1, Cons(2, Cons(3, Nil)))
@@ -29,7 +29,7 @@ test {
 ```
 
 Build a repeated list by using the `repeat()` method:
-```moonbit
+```mbt check
 ///|
 test {
   assert_eq(@list.repeat(3, 1).to_array(), [1, 1, 1])
@@ -38,7 +38,7 @@ test {
 
 ## Pattern matching
 You can use pattern matching to destructure a list:
-```moonbit
+```mbt check
 ///|
 test {
   let list = @list.of([1, 2, 3, 4, 5])
@@ -53,7 +53,7 @@ test {
 
 ## Iterating over a list
 The standard library provides a lot of tools for iterating over a list, such as `each()`, `eachi()`, etc. (For details check the API documentation)
-```moonbit
+```mbt check
 ///|
 test {
   let list = @list.of([1, 2, 3, 4, 5])
@@ -65,7 +65,7 @@ test {
 
 ## Appending / Joining lists
 To simply concatenate two lists, you can use the `concat()` method (or `+` operator):
-```moonbit
+```mbt check
 ///|
 test {
   let list1 = @list.of([1, 2, 3])
@@ -78,7 +78,7 @@ test {
 ```
 
 For concatenating multiple lists (especially the length is unknown), you can use the `flatten()` method:
-```moonbit
+```mbt check
 ///|
 test {
   let ls1 = @list.of([1, 2, 3])
@@ -91,7 +91,7 @@ test {
 
 To insert separate elements into a list, you can use the `intersperse()` method:
 
-```moonbit
+```mbt check
 ///|
 test {
   let list = @list.of([1, 2, 3])
@@ -105,7 +105,7 @@ There are three ways to filter / reject / select multiple elements from a list:
 - To extract the first (or last) N elements of a list (and N is independent of the contents of the list). Use `take` or `drop` in this case.
 - To stop selecting elements (terminate the iteration) as soon as a condition is met, using `take_while` or `drop_while`
 
-```moonbit
+```mbt check
 ///|
 test {
   let ls = @list.of([1, 2, 3, 4, 5])
@@ -121,7 +121,7 @@ test {
 You can access the head of the list using the `head()` (O(1)) method. It returns `Some(head)` or `None` if the list is empty.
 And access the last element using the `last()` method (O(n)). 
 
-```moonbit
+```mbt check
 ///|
 test {
   let list = @list.of([1, 2, 3, 4, 5])
@@ -132,7 +132,7 @@ test {
 
 For randomly accessing, you can use the `nth()` method, which returns the nth element in the list (O(n)). 
 If the index is out of bounds, it returns `None`.
-```moonbit
+```mbt check
 ///|
 test {
   let list = @list.of([1, 2, 3, 4, 5])
@@ -142,7 +142,7 @@ test {
 ```
 
 To get a sub-list from the list, you can use `tail()` for getting all elements except the first one.
-```moonbit
+```mbt check
 ///|
 test {
   let list = @list.of([1, 2, 3, 4, 5])
@@ -152,7 +152,7 @@ test {
 
 ## Reducing Lists
 You can reduce (fold) a list to a single value using the `fold()` method.
-```moonbit
+```mbt check
 ///|
 test {
   let list = @list.of([1, 2, 3, 4, 5])
@@ -164,7 +164,7 @@ There are some special folds that you can use like `any`, `all`, `sum`, `maximum
 
 ## List transformations
 To transform list elements, you can use the `map()` method.
-```moonbit
+```mbt check
 ///|
 test {
   let list = @list.of([1, 2, 3, 4, 5])
@@ -173,7 +173,7 @@ test {
 ```
 
 The `rev` method reverses the list.
-```moonbit
+```mbt check
 ///|
 test {
   let list = @list.of([1, 2, 3, 4, 5])

@@ -91,7 +91,7 @@ fn[T] UninitializedArray::unsafe_blit_fixed(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let src = FixedArray::make(5, 1)
 ///   let dst = FixedArray::make(5, 0)
 ///   src.blit_to(dst, len=3, src_offset=1, dst_offset=2)

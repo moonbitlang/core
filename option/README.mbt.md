@@ -12,7 +12,7 @@ Note that some methods of the Option are defined in the `core/builtin` package.
 
 You can create an `Option` value using the `Some` and `None` constructors, remember to give proper type annotations.
 
-```moonbit
+```mbt check
 ///|
 test {
   let some : Int? = Some(42)
@@ -26,7 +26,7 @@ test {
 
 You can extract the value from an `Option` using the `match` expression (Pattern Matching).
 
-```moonbit
+```mbt check
 ///|
 test {
   let i = Some(42)
@@ -40,7 +40,7 @@ test {
 
 Or using the `unwrap` method, which will panic if the result is `None` and return the value if it is `Some`.
 
-```moonbit
+```mbt check
 ///|
 test {
   let some : Int? = Some(42)
@@ -51,7 +51,7 @@ test {
 
 A safer alternative to `unwrap` is the `or` method, which returns the value if it is `Some`, otherwise, it returns the default value.
 
-```moonbit
+```mbt check
 ///|
 test {
   let none : Int? = None
@@ -62,7 +62,7 @@ test {
 
 There is also the `or_else` method, which returns the value if it is `Some`, otherwise, it returns the result of the provided function.
 
-```moonbit
+```mbt check
 ///|
 test {
   let none : Int? = None
@@ -75,7 +75,7 @@ test {
 
 You can transform the value of an `Option` using the `map` method. It applies the provided function to the value if it is `Some`, otherwise, it returns `None`.
 
-```moonbit
+```mbt check
 ///|
 test {
   let some : Int? = Some(42)
@@ -86,7 +86,7 @@ test {
 
 There is a `filter` method that applies a predicate to the value if it is `Some`, otherwise, it returns `None`.
 
-```moonbit
+```mbt check
 ///|
 test {
   let some : Int? = Some(42)
@@ -101,7 +101,7 @@ test {
 
 You can chain multiple operations that return `Option` using the `bind` method, which applies a function to the value if it is `Some`, otherwise, it returns `None`. Different from `map`, the function in argument returns an `Option`.
 
-```moonbit
+```mbt check
 ///|
 test {
   let some : Int? = Some(42)
@@ -112,7 +112,7 @@ test {
 
 Sometimes we want to reduce the nested `Option` values into a single `Option`, you can use the `flatten` method to achieve this. It transforms `Some(Some(value))` into `Some(value)`, and `None` otherwise.
 
-```moonbit
+```mbt check
 ///|
 test {
   let some : Int?? = Some(Some(42))

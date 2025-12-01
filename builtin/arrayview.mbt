@@ -17,7 +17,7 @@
 ///
 /// # Example
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let view = arr[1:4]  // Creates a view of elements at indices 1,2,3
 ///   assert_eq(view[0], 2)
@@ -53,7 +53,7 @@ fn[T] ArrayView::make(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let view = arr[2:4]
 ///   inspect(view.length(), content="2")
@@ -78,7 +78,7 @@ pub fn[T] ArrayView::length(self : ArrayView[T]) -> Int {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let view = arr[2:4]
 ///   inspect(view[0], content="3")
@@ -108,7 +108,7 @@ pub fn[T] ArrayView::at(self : ArrayView[T], index : Int) -> T {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let view = arr[1:4]
 ///   inspect(view.unsafe_get(1), content="3")
@@ -139,7 +139,7 @@ pub fn[T] ArrayView::unsafe_get(self : ArrayView[T], index : Int) -> T {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let view = arr[1:4] // Create a view of elements at indices 1, 2, and 3
 ///   inspect(view[0], content="2") // First element of view is arr[1]
@@ -186,7 +186,7 @@ pub fn[T] Array::sub(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let view = arr[1:4] // view = [2, 3, 4]
 ///   let subview = view[1:2] // subview = [3]
@@ -236,7 +236,7 @@ fn[T] unsafe_cast_fixedarray_to_uninitializedarray(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let arr: FixedArray[Int] = [1, 2, 3, 4, 5]
 ///   let view = arr[1:4] // view = [2, 3, 4]
 ///   inspect(view[0], content="2")
@@ -311,7 +311,7 @@ pub fn[X] ArrayView::iterator(self : ArrayView[X]) -> Iterator[X] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let arr = [1, 2, 3]
 ///   let view = arr[1:]
 ///   let mut sum = 0
@@ -384,7 +384,7 @@ pub impl[A : Hash] Hash for ArrayView[A] with hash_combine(self, hasher) {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let view = arr[1:4]
 ///   inspect(view.is_sorted(), content="true")

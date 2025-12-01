@@ -32,7 +32,7 @@ pub fn[T] ReadOnlyArray::at(self : ReadOnlyArray[T], index : Int) -> T {
 /// Creates an ReadOnlyArray from a dynamic Array.
 ///
 /// # Example
-/// ```moonbit
+/// ```mbt check
 /// let dynamic_array = [1, 2, 3, 4, 5]
 /// let immut_array = ReadOnlyArray::from_array(dynamic_array)
 /// inspect(immut_array[0], content="1")
@@ -45,7 +45,7 @@ pub fn[T] ReadOnlyArray::from_array(array : ArrayView[T]) -> ReadOnlyArray[T] {
 /// Creates an ReadOnlyArray from an iterator.
 ///
 /// # Example
-/// ```moonbit
+/// ```mbt check
 /// let iter = [1, 2, 3].iter()
 /// let immut_array = ReadOnlyArray::from_iter(iter)
 /// inspect(immut_array[0], content="1")
@@ -58,7 +58,7 @@ pub fn[T] ReadOnlyArray::from_iter(iter : Iter[T]) -> ReadOnlyArray[T] {
 /// Creates an ReadOnlyArray from an iterator.
 ///
 /// # Example
-/// ```moonbit
+/// ```mbt check
 /// let iter = [1, 2, 3].iterator()
 /// let immut_array = ReadOnlyArray::from_iterator(iter)
 /// inspect(immut_array[0], content="1")
@@ -71,7 +71,7 @@ pub fn[T] ReadOnlyArray::from_iterator(iter : Iterator[T]) -> ReadOnlyArray[T] {
 /// Creates an ReadOnlyArray by applying a function to each index.
 ///
 /// # Example
-/// ```moonbit
+/// ```mbt check
 /// let immut_array = ReadOnlyArray::makei(3, fn(i) { i * 2 })
 /// inspect(immut_array[1], content="2")
 /// ```
@@ -87,7 +87,7 @@ pub fn[T] ReadOnlyArray::makei(
 /// Returns Some(element) if the index is valid, None otherwise.
 ///
 /// # Example
-/// ```moonbit
+/// ```mbt check
 /// let arr : ReadOnlyArray[Int] = [1, 2, 3]
 /// inspect(arr.get(1), content="Some(2)")
 /// inspect(arr.get(5), content="None")
@@ -100,7 +100,7 @@ pub fn[T] ReadOnlyArray::get(self : ReadOnlyArray[T], index : Int) -> T? {
 /// Returns the length of the ReadOnlyArray.
 ///
 /// # Example
-/// ```moonbit
+/// ```mbt check
 /// let arr : ReadOnlyArray[Int] = [1, 2, 3]
 /// inspect(arr.length(), content="3")
 /// ```
@@ -112,7 +112,7 @@ pub fn[T] ReadOnlyArray::length(self : ReadOnlyArray[T]) -> Int {
 /// Checks if the ReadOnlyArray is empty.
 ///
 /// # Example
-/// ```moonbit
+/// ```mbt check
 /// let empty_arr : ReadOnlyArray[Int] = []
 /// inspect(empty_arr.is_empty(), content="true")
 /// let arr : ReadOnlyArray[Int] = [1, 2, 3]
@@ -126,7 +126,7 @@ pub fn[T] ReadOnlyArray::is_empty(self : ReadOnlyArray[T]) -> Bool {
 /// Returns the last element of the ReadOnlyArray, if any.
 ///
 /// # Example
-/// ```moonbit
+/// ```mbt check
 /// let arr : ReadOnlyArray[Int] = [1, 2, 3]
 /// inspect(arr.last(), content="Some(3)")
 /// let empty_arr : ReadOnlyArray[Int] = []
@@ -140,7 +140,7 @@ pub fn[T] ReadOnlyArray::last(self : ReadOnlyArray[T]) -> T? {
 /// Creates an iterator over the elements of the ReadOnlyArray.
 ///
 /// # Example
-/// ```moonbit
+/// ```mbt check
 /// let arr : ReadOnlyArray[Int] = [1, 2, 3]
 /// let mut sum = 0
 /// arr.iter().each(fn(x) { sum = sum + x })
@@ -154,7 +154,7 @@ pub fn[T] ReadOnlyArray::iter(self : ReadOnlyArray[T]) -> Iter[T] {
 /// Creates an iterator over the elements of the ReadOnlyArray.
 ///
 /// # Example
-/// ```moonbit
+/// ```mbt check
 /// let arr : ReadOnlyArray[Int] = [1, 2, 3]
 /// let mut sum = 0
 /// arr.iter().each(fn(x) { sum = sum + x })
@@ -168,7 +168,7 @@ pub fn[T] ReadOnlyArray::iterator(self : ReadOnlyArray[T]) -> Iterator[T] {
 /// Creates an iterator that yields both indices and values.
 ///
 /// # Example
-/// ```moonbit
+/// ```mbt check
 /// let arr : ReadOnlyArray[Int] = [10, 20, 30]
 /// let mut sum = 0
 /// arr.iter2().each(fn(i, x) { sum = sum + i + x })
@@ -182,7 +182,7 @@ pub fn[T] ReadOnlyArray::iter2(self : ReadOnlyArray[T]) -> Iter2[Int, T] {
 /// Iterates over each element in the ReadOnlyArray.
 ///
 /// # Example
-/// ```moonbit
+/// ```mbt check
 /// let arr : ReadOnlyArray[Int] = [1, 2, 3]
 /// let result = []
 /// arr.each(fn(x) { result.push(x * 2) })
@@ -199,7 +199,7 @@ pub fn[T] ReadOnlyArray::each(
 /// Iterates over each element with its index.
 ///
 /// # Example
-/// ```moonbit
+/// ```mbt check
 /// let arr : ReadOnlyArray[Int] = [10, 20, 30]
 /// let result = []
 /// arr.eachi(fn(i, x) { result.push((i, x)) })
@@ -216,7 +216,7 @@ pub fn[T] ReadOnlyArray::eachi(
 /// Iterates over each element in reverse order.
 ///
 /// # Example
-/// ```moonbit
+/// ```mbt check
 /// let arr : ReadOnlyArray[Int] = [1, 2, 3]
 /// let result = []
 /// arr.rev_each(fn(x) { result.push(x) })
@@ -233,7 +233,7 @@ pub fn[T] ReadOnlyArray::rev_each(
 /// Iterates over each element in reverse order with its index.
 ///
 /// # Example
-/// ```moonbit
+/// ```mbt check
 /// let arr : ReadOnlyArray[Int] = [10, 20, 30]
 /// let result = []
 /// arr.rev_eachi(fn(i, x) { result.push((i, x)) })
@@ -250,7 +250,7 @@ pub fn[T] ReadOnlyArray::rev_eachi(
 /// Creates a new ReadOnlyArray by applying a function to each element.
 ///
 /// # Example
-/// ```moonbit
+/// ```mbt check
 /// let arr : ReadOnlyArray[Int] = [1, 2, 3]
 /// let doubled = arr.map(fn(x) { x * 2 })
 /// inspect(doubled[0], content="2")
@@ -269,7 +269,7 @@ pub fn[T, U] ReadOnlyArray::map(
 /// Creates a new ReadOnlyArray by applying a function to each element with its index.
 ///
 /// # Example
-/// ```moonbit
+/// ```mbt check
 /// let arr : ReadOnlyArray[Int] = [10, 20, 30]
 /// let result = arr.mapi(fn(i, x) { i + x })
 /// inspect(result[1], content="21") // index 1 + value 20 = 21
@@ -287,7 +287,7 @@ pub fn[T, U] ReadOnlyArray::mapi(
 /// Folds the ReadOnlyArray from left to right.
 ///
 /// # Example
-/// ```moonbit
+/// ```mbt check
 /// let arr : ReadOnlyArray[Int] = [1, 2, 3, 4, 5]
 /// let sum = arr.fold(init=0, fn(acc, x) { acc + x })
 /// inspect(sum, content="15")
@@ -304,7 +304,7 @@ pub fn[A, B] ReadOnlyArray::fold(
 /// Folds the ReadOnlyArray from right to left.
 ///
 /// # Example
-/// ```moonbit
+/// ```mbt check
 /// let arr : ReadOnlyArray[Int] = [1, 2, 3]
 /// let result = arr.rev_fold(init="", fn(acc, x) { acc + x.to_string() })
 /// inspect(result, content="321") // Processed in reverse order
@@ -321,7 +321,7 @@ pub fn[A, B] ReadOnlyArray::rev_fold(
 /// Folds the ReadOnlyArray from left to right with index.
 ///
 /// # Example
-/// ```moonbit
+/// ```mbt check
 /// let arr : ReadOnlyArray[Int] = [2, 3]
 /// let sum = arr.foldi(init=0, fn(i, acc, x) { acc + i * x })
 /// inspect(sum, content="3") // 0 + (0*2) + (1*3) = 3
@@ -338,7 +338,7 @@ pub fn[A, B] ReadOnlyArray::foldi(
 /// Folds the ReadOnlyArray from right to left with index.
 ///
 /// # Example
-/// ```moonbit
+/// ```mbt check
 /// let arr : ReadOnlyArray[Int] = [2, 3]
 /// let sum = arr.rev_foldi(init=0, fn(i, acc, x) { acc + i * x })
 /// inspect(sum, content="2") // 0 + (1*3) + (0*2) = 3
@@ -355,7 +355,7 @@ pub fn[A, B] ReadOnlyArray::rev_foldi(
 /// Returns a new ReadOnlyArray with elements in reverse order.
 ///
 /// # Example
-/// ```moonbit
+/// ```mbt check
 /// let arr : ReadOnlyArray[Int] = [1, 2, 3, 4, 5]
 /// let reversed = arr.rev()
 /// inspect(reversed[0], content="5")
@@ -371,7 +371,7 @@ pub fn[T] ReadOnlyArray::rev(self : ReadOnlyArray[T]) -> ReadOnlyArray[T] {
 /// Searches for an element and returns its index if found.
 ///
 /// # Example
-/// ```moonbit
+/// ```mbt check
 /// let arr : ReadOnlyArray[Int] = [1, 2, 3, 2, 4]
 /// inspect(arr.search(2), content="Some(1)") // Returns first occurrence
 /// inspect(arr.search(5), content="None")
@@ -387,7 +387,7 @@ pub fn[T : Eq] ReadOnlyArray::search(
 /// Checks if the ReadOnlyArray contains a specific value.
 ///
 /// # Example
-/// ```moonbit
+/// ```mbt check
 /// let arr : ReadOnlyArray[Int] = [1, 2, 3]
 /// inspect(arr.contains(2), content="true")
 /// inspect(arr.contains(4), content="false")
@@ -403,7 +403,7 @@ pub fn[T : Eq] ReadOnlyArray::contains(
 /// Checks if the ReadOnlyArray starts with the given prefix.
 ///
 /// # Example
-/// ```moonbit
+/// ```mbt check
 /// let arr : ReadOnlyArray[Int] = [1, 2, 3, 4, 5]
 /// let prefix : ReadOnlyArray[Int] = [1, 2]
 /// inspect(arr.starts_with(prefix), content="true")
@@ -421,7 +421,7 @@ pub fn[T : Eq] ReadOnlyArray::starts_with(
 /// Checks if the ReadOnlyArray ends with the given suffix.
 ///
 /// # Example
-/// ```moonbit
+/// ```mbt check
 /// let arr : ReadOnlyArray[Int] = [1, 2, 3, 4, 5]
 /// let suffix : ReadOnlyArray[Int] = [4, 5]
 /// inspect(arr.ends_with(suffix), content="true")
@@ -439,7 +439,7 @@ pub fn[T : Eq] ReadOnlyArray::ends_with(
 /// Checks if all elements satisfy the given predicate.
 ///
 /// # Example
-/// ```moonbit
+/// ```mbt check
 /// let arr : ReadOnlyArray[Int] = [2, 4, 6]
 /// inspect(arr.all(fn(x) { x % 2 == 0 }), content="true")
 /// let arr2 : ReadOnlyArray[Int] = [1, 2, 3]
@@ -456,7 +456,7 @@ pub fn[T] ReadOnlyArray::all(
 /// Checks if any element satisfies the given predicate.
 ///
 /// # Example
-/// ```moonbit
+/// ```mbt check
 /// let arr : ReadOnlyArray[Int] = [1, 3, 5]
 /// inspect(arr.any(fn(x) { x % 2 == 0 }), content="false")
 /// let arr2 : ReadOnlyArray[Int] = [1, 2, 3]
@@ -473,7 +473,7 @@ pub fn[T] ReadOnlyArray::any(
 /// Performs binary search on a sorted ReadOnlyArray.
 ///
 /// # Example
-/// ```moonbit
+/// ```mbt check
 /// let arr : ReadOnlyArray[Int] = [1, 3, 5, 7, 9]
 /// inspect(arr.binary_search(5), content="Ok(2)")
 /// inspect(arr.binary_search(6), content="Err(3)")
@@ -489,7 +489,7 @@ pub fn[T : Compare] ReadOnlyArray::binary_search(
 /// Performs binary search using a custom comparison function.
 ///
 /// # Example
-/// ```moonbit
+/// ```mbt check
 /// let arr : ReadOnlyArray[Int] = [1, 3, 5, 7, 9]
 /// let result = arr.binary_search_by(fn(x) { x.compare(5) })
 /// inspect(result, content="Ok(2)")
@@ -505,7 +505,7 @@ pub fn[T] ReadOnlyArray::binary_search_by(
 /// Creates a view of a subarray.
 ///
 /// # Example
-/// ```moonbit
+/// ```mbt check
 /// let arr : ReadOnlyArray[Int] = [1, 2, 3, 4, 5]
 /// let view = arr.sub(start=1, end=4)
 /// inspect(view[0], content="2")
@@ -527,7 +527,7 @@ pub fn[T] ReadOnlyArray::sub(
 /// Joins string elements with a separator.
 ///
 /// # Example
-/// ```moonbit
+/// ```mbt check
 /// let arr : ReadOnlyArray[String] = ["hello", "world", "moon"]
 /// inspect(arr.join(","), content="hello,world,moon")
 /// inspect(arr.join(" "), content="hello world moon")

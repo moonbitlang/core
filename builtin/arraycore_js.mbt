@@ -310,7 +310,7 @@ fn[T] Array::unsafe_grow_to_length(self : Array[T], new_len : Int) -> Unit {
 /// - Does nothing if the array is empty
 /// 
 /// # Example
-/// ```moonbit
+/// ```mbt check
 /// // Fill entire array
 /// let arr = [1, 2, 3, 4, 5]
 /// arr.fill(0)

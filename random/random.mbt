@@ -204,7 +204,7 @@ pub fn Rand::boolean(self : Rand) -> Bool {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let rand = @random.Rand::new()
 ///   let n = rand.bigint(8) // Generate random 8-bit number
 ///   inspect(n.bit_length() <= 8, content="true")

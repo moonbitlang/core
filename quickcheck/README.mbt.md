@@ -6,7 +6,7 @@ MoonBit QuickCheck package provides property-based testing capabilities by gener
 
 Generate random values of any type that implements the `Arbitrary` trait:
 
-```moonbit
+```mbt check
 ///|
 test "basic generation" {
   let b : Bool = @quickcheck.gen()
@@ -24,7 +24,7 @@ test "basic generation" {
 
 Generate multiple test cases using the `samples` function:
 
-```moonbit
+```mbt check
 ///|
 test "multiple samples" {
   let ints : Array[Int] = @quickcheck.samples(5)
@@ -43,7 +43,7 @@ test "multiple samples" {
 
 QuickCheck provides `Arbitrary` implementations for all basic MoonBit types:
 
-```moonbit
+```mbt check
 ///|
 test "builtin types" {
   // Basic types
@@ -67,7 +67,7 @@ test "builtin types" {
 
 Implement `Arbitrary` trait for custom types:
 
-```moonbit
+```mbt check
 ///|
 struct Point {
   x : Int

@@ -25,7 +25,7 @@
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let fixed = FixedArray::make(3, 42)
 ///   let dynamic = Array::from_fixed_array(fixed)
 ///   inspect(dynamic, content="[42, 42, 42]")
@@ -54,13 +54,13 @@ pub fn[T] Array::from_fixed_array(arr : FixedArray[T]) -> Array[T] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let arr = Array::make(3, 42)
 ///   inspect(arr, content="[42, 42, 42]")
 /// ```
 ///
 /// WARNING: A common pitfall is creating with the same initial value, for example:
-/// ```moonbit
+/// ```mbt check
 ///   let two_dimension_array = Array::make(10, Array::make(10, 0))
 ///   two_dimension_array[0][5] = 10
 ///   assert_eq(two_dimension_array[5][5], 10)
@@ -92,7 +92,7 @@ pub fn[T] Array::make(len : Int, elem : T) -> Array[T] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let arr = Array::makei(3, i => i * 2)
 ///   inspect(arr, content="[0, 2, 4]")
 /// ```
@@ -141,7 +141,7 @@ pub fn[T] Array::capacity(self : Array[T]) -> Int {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let arr = [1, 2, 3]
 ///   inspect(arr.unsafe_get(1), content="2")
 /// ```
@@ -166,7 +166,7 @@ pub fn[T] Array::unsafe_get(self : Array[T], idx : Int) -> T {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let arr = [1, 2, 3]
 ///   inspect(arr[1], content="2")
 /// ```
@@ -192,7 +192,7 @@ pub fn[T] Array::at(self : Array[T], index : Int) -> T {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let arr = [1, 2, 3]
 ///   inspect(arr.get(-1), content="None")
 ///   inspect(arr.get(0), content="Some(1)")
@@ -225,7 +225,7 @@ pub fn[T] Array::unsafe_set(self : Array[T], idx : Int, val : T) -> Unit {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let arr = [1, 2, 3]
 ///   arr[1] = 42
 ///   inspect(arr, content="[1, 42, 3]")
@@ -252,7 +252,7 @@ pub fn[T] Array::set(self : Array[T], index : Int, value : T) -> Unit {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let arr1 = [1, 2, 3]
 ///   let arr2 = [1, 2, 3]
 ///   let arr3 = [1, 2, 4]
@@ -298,7 +298,7 @@ pub impl[T : Hash] Hash for Array[T] with hash_combine(self, hasher) {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let arr1 = [1, 2, 3]
 ///   let arr2 = [1, 2, 4]
 ///   let arr3 = [1, 2]
@@ -333,7 +333,7 @@ pub impl[T : Compare] Compare for Array[T] with compare(self, other) {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let a = [1, 2, 3]
 ///   let b = [4, 5]
 ///   inspect(a + b, content="[1, 2, 3, 4, 5]")
@@ -368,7 +368,7 @@ pub impl[T] Add for Array[T] with add(self, other) {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let v1 = [1, 2, 3]
 ///   let v2 = [4, 5, 6]
 ///   v1.append(v2)
@@ -396,7 +396,7 @@ pub fn[T] Array::append(self : Array[T], other : ArrayView[T]) -> Unit {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let arr = [1, 2, 3]
 ///   let mut sum = 0
 ///   arr.each((x) => { sum = sum + x })
@@ -460,7 +460,7 @@ pub fn[T] Array::rev_eachi(
 /// Iterates over the elements of the array with index.
 ///
 /// # Example
-/// ```moonbit
+/// ```mbt check
 ///   let v = [3, 4, 5]
 ///   let mut sum = 0
 ///   v.eachi((i, x) => {sum = sum + x + i})
@@ -591,7 +591,7 @@ pub fn[T] Array::mapi_in_place(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let evens = arr.filter((x) => { x % 2 == 0 })
 ///   inspect(evens, content="[2, 4]")
@@ -621,7 +621,7 @@ pub fn[T] Array::filter(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let empty : Array[Int] = []
 ///   inspect(empty.is_empty(), content="true")
 ///   let non_empty = [1, 2, 3]
@@ -649,7 +649,7 @@ pub fn[T] Array::is_empty(self : Array[T]) -> Bool {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let ascending = [1, 2, 3, 4, 5]
 ///   let descending = [5, 4, 3, 2, 1]
 ///   let unsorted = [1, 3, 2, 4, 5]
@@ -671,7 +671,7 @@ pub fn[T : Compare] Array::is_sorted(self : Array[T]) -> Bool {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let arr = [1, 2, 3, 4, 5]
 ///   arr.rev_in_place()
 ///   inspect(arr, content="[5, 4, 3, 2, 1]")
@@ -702,7 +702,7 @@ pub fn[T] Array::rev_in_place(self : Array[T]) -> Unit {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let arr = [1, 2, 3, 4, 5]
 ///   inspect(arr.rev(), content="[5, 4, 3, 2, 1]")
 ///   inspect(arr, content="[1, 2, 3, 4, 5]") // original array unchanged
@@ -764,7 +764,7 @@ pub fn[T] Array::split_at(self : Array[T], index : Int) -> (Array[T], Array[T]) 
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let arr = [1, 2, 3, 4, 5]
 ///   inspect(arr.contains(3), content="true")
 ///   inspect(arr.contains(6), content="false")
@@ -798,7 +798,7 @@ pub fn[T : Eq] Array::contains(self : Array[T], value : T) -> Bool {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let arr = [1, 2, 3, 4, 5]
 ///   inspect(arr.starts_with([1, 2]), content="true")
 ///   inspect(arr.starts_with([2, 3]), content="false")
@@ -830,7 +830,7 @@ pub fn[T : Eq] Array::starts_with(self : Array[T], prefix : Array[T]) -> Bool {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let arr = [1, 2, 3, 4, 5]
 ///   inspect(arr.ends_with([4, 5]), content="true")
 ///   inspect(arr.ends_with([3, 4]), content="false")
@@ -868,7 +868,7 @@ pub fn[T : Eq] Array::ends_with(self : Array[T], suffix : Array[T]) -> Bool {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let arr = [1, 2, 3, 4, 5]
 ///   inspect(arr.strip_prefix([1, 2]), content="Some([3, 4, 5])")
 ///   inspect(arr.strip_prefix([2, 3]), content="None")
@@ -931,7 +931,7 @@ pub fn[T : Eq] Array::strip_suffix(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let arr = [1, 2, 3, 2, 4]
 ///   inspect(arr.search(2), content="Some(1)") // first occurrence
 ///   inspect(arr.search(5), content="None") // not found
@@ -1039,7 +1039,7 @@ pub fn[T : Compare] Array::binary_search(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let arr = [1, 3, 5, 7, 9]
 ///   let find_3 = arr.binary_search_by((x) => {
 ///     x.compare(3)
@@ -1096,7 +1096,7 @@ pub fn[T] Array::binary_search_by(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let arr = [1, 2, 3]
 ///   arr.swap(0, 2)
 ///   inspect(arr, content="[3, 2, 1]")
@@ -1126,7 +1126,7 @@ pub fn[T] Array::swap(self : Array[T], i : Int, j : Int) -> Unit {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let arr = [1, 2, 3, 4, 5]
 ///   arr.retain((x) => { x % 2 == 0 })
 ///   inspect(arr, content="[2, 4]")
@@ -1171,7 +1171,7 @@ pub fn[T] Array::retain(self : Array[T], f : (T) -> Bool raise?) -> Unit raise? 
 ///
 /// Examples:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let arr = [1, 2, 3, 4, 5]
 ///   arr.resize(3, 0)
 ///   inspect(arr, content="[1, 2, 3]")
@@ -1200,7 +1200,7 @@ pub fn[T] Array::resize(self : Array[T], new_len : Int, f : T) -> Unit {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let v = [[3, 4], [5, 6]].flatten()
 ///   assert_eq(v, [3, 4, 5, 6])
 /// ```
@@ -1223,7 +1223,7 @@ pub fn[T] Array::flatten(self : Array[Array[T]]) -> Array[T] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let v = [3, 4].repeat(2)
 ///   assert_eq(v, [3, 4, 3, 4])
 /// ```
@@ -1240,7 +1240,7 @@ pub fn[T] Array::repeat(self : Array[T], times : Int) -> Array[T] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let sum = [1, 2, 3, 4, 5].fold(init=0, (sum, elem) => sum + elem)
 ///   assert_eq(sum, 15)
 /// ```
@@ -1263,7 +1263,7 @@ pub fn[A, B] Array::fold(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let sum = [1, 2, 3, 4, 5].rev_fold(init=0, (sum, elem) => sum + elem)
 ///   assert_eq(sum, 15)
 /// ```
@@ -1286,7 +1286,7 @@ pub fn[A, B] Array::rev_fold(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let sum = [1, 2, 3, 4, 5].foldi(init=0, (index, sum, _elem) => sum + index)
 ///   assert_eq(sum, 10)
 /// ```
@@ -1309,7 +1309,7 @@ pub fn[A, B] Array::foldi(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let sum = [1, 2, 3, 4, 5].rev_foldi(init=0, (index, sum, _elem) => sum + index)
 ///   assert_eq(sum, 10)
 /// ```
@@ -1340,7 +1340,7 @@ pub fn[A, B] Array::rev_foldi(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let arr = [1, 2, 2, 3, 3, 3, 2]
 ///   arr.dedup()
 ///   inspect(arr, content="[1, 2, 3, 2]")
@@ -1387,7 +1387,7 @@ pub fn[T : Eq] Array::dedup(self : Array[T]) -> Unit {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let extracted = arr.extract_if((x) => { x % 2 == 0 })
 ///   inspect(extracted, content="[2, 4]")
@@ -1427,7 +1427,7 @@ pub fn[T] Array::extract_if(self : Array[T], f : (T) -> Bool) -> Array[T] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let chunks = arr.chunks(2)
 ///   inspect(chunks, content="[[1, 2], [3, 4], [5]]")
@@ -1464,7 +1464,7 @@ pub fn[T] Array::chunks(self : Array[T], size : Int) -> Array[ArrayView[T]] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let v = [1, 1, 2, 3, 2, 3, 2, 3, 4]
 ///   let chunks = v.chunk_by((x, y) => { x <= y })
 ///   inspect(chunks, content="[[1, 1, 2, 3], [2, 3], [2, 3, 4]]")
@@ -1507,7 +1507,7 @@ pub fn[T] Array::chunk_by(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let windows = arr.windows(2)
 ///   inspect(windows, content="[[1, 2], [2, 3], [3, 4], [4, 5]]")
@@ -1549,7 +1549,7 @@ pub fn[T] Array::suffixes(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let arr = [1, 0, 2, 0, 3, 0, 4]
 ///   inspect(arr.split((x) => { x == 0 }), content="[[1], [2], [3], [4]]")
 ///
@@ -1586,7 +1586,7 @@ pub fn[T] Array::split(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let arr = [1, 2, 3]
 ///   let mut sum = 0
 ///   arr.iter().each((x) => { sum = sum + x })
@@ -1613,7 +1613,7 @@ pub fn[T] Array::iter(self : Array[T]) -> Iter[T] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let arr = [1, 2, 3]
 ///   let result = []
 ///   arr.rev_iter().each((x) => { result.push(x) })
@@ -1640,7 +1640,7 @@ pub fn[T] Array::rev_iter(self : Array[T]) -> Iter[T] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let arr = [10, 20, 30]
 ///   let mut sum = 0
 ///   arr.iter2().each((i, x) => { sum = sum + i + x })
@@ -1661,7 +1661,7 @@ pub fn[A] Array::iter2(self : Array[A]) -> Iter2[Int, A] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let arr : Array[Int] = Array::default()
 ///   inspect(arr.length(), content="0")
 ///   inspect(arr.is_empty(), content="true")
@@ -1703,7 +1703,7 @@ pub fn[A] Array::unsafe_pop_back(self : Array[A]) -> Unit {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 /// let arr = [1, 2, 3, 4, 5]
 /// arr.truncate(3)
 /// inspect(arr, content="[1, 2, 3]")
@@ -1717,7 +1717,7 @@ pub fn[A] Array::truncate(self : Array[A], len : Int) -> Unit {
 /// In-place filter and map for Array
 ///
 /// # Example
-/// ```moonbit
+/// ```mbt check
 /// let arr = [1, 2, 3, 4, 5]
 /// arr.retain_map(fn(x) {
 ///   if x % 2 == 0 {

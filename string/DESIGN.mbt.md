@@ -40,7 +40,7 @@
     - Iterators: `str.iter()` yields proper Unicode characters
     - Pattern matching: Handles surrogate pairs correctly
   - Example of safe vs unsafe operations:
-```moonbit
+```mbt check
 ///|
 test "unsafe vs safe" {
   // Unsafe: May split surrogate pairs
@@ -81,7 +81,7 @@ test "unsafe vs safe" {
     is mostly clear. This design allows both String and View to be passed to
     functions expecting View parameters, leveraging implicit conversion.
 
-```moonbit
+```mbt check
 ///|
 test "view conversion" {
   fn process_text(text : StringView) -> Int {

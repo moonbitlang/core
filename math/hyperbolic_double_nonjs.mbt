@@ -45,7 +45,7 @@
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 /// inspect(@math.sinh(0.0), content="0")
 /// inspect(@math.sinh(-0.0), content="0")
 /// inspect(@math.sinh(1.0), content="1.1752011936438014")
@@ -103,7 +103,7 @@ pub fn sinh(x : Double) -> Double {
 ///
 /// Example
 ///
-/// ```moonbit
+/// ```mbt check
 /// inspect(@math.cosh(0.0), content="1")
 /// inspect(@math.cosh(-0.0), content="1")
 /// inspect(@math.cosh(1.0), content="1.5430806348152437")
@@ -163,7 +163,7 @@ pub fn cosh(x : Double) -> Double {
 ///
 /// Example
 ///
-/// ```moonbit
+/// ```mbt check
 ///  inspect(@math.tanh(0.0), content="0")
 ///  inspect(@math.tanh(-0.0), content="0")
 ///  inspect(@math.tanh(1.0), content="0.7615941559557649")
@@ -222,7 +222,7 @@ pub fn tanh(x : Double) -> Double {
 ///
 /// Example
 ///
-/// ```moonbit
+/// ```mbt check
 ///  inspect(@math.asinh(0.0), content="0")
 ///  inspect(@math.asinh(-0.0), content="0")
 ///  inspect(@math.asinh(1.0), content="0.881373587019543")
@@ -281,7 +281,7 @@ pub fn asinh(x : Double) -> Double {
 ///
 /// Example
 ///
-/// ```moonbit
+/// ```mbt check
 ///  inspect(@math.acosh(1.0), content="0")
 ///  inspect(@math.acosh(2.0), content="1.3169578969248166")
 ///  inspect(@math.acosh(1000.0), content="7.600902209541989")
@@ -328,7 +328,7 @@ pub fn acosh(x : Double) -> Double {
 ///
 /// Example
 ///
-/// ```moonbit
+/// ```mbt check
 /// inspect(@math.atanh(0.0), content="0")
 /// inspect(@math.atanh(-0.0), content="0")
 /// inspect(@math.atanh(0.5), content="0.5493061443340548")

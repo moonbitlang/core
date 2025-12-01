@@ -6,7 +6,7 @@ This package provides a set of utilities for working with characters, focusing o
 
 Functions for determining if a character belongs to various ASCII categories.
 
-```moonbit
+```mbt check
 ///|
 test "ascii classification" {
   // Basic ASCII checks
@@ -29,7 +29,7 @@ test "ascii classification" {
 
 Functions for identifying digits in different number bases.
 
-```moonbit
+```mbt check
 ///|
 test "number classification" {
   // Decimal digits
@@ -58,7 +58,7 @@ test "number classification" {
 
 Functions for identifying whitespace, control characters and other special characters.
 
-```moonbit
+```mbt check
 ///|
 test "special characters" {
   // Whitespace characters
@@ -80,7 +80,7 @@ test "special characters" {
 
 All character classification functions can also be called as methods directly on characters.
 
-```moonbit
+```mbt check
 ///|
 test "method style" {
   // Letter methods

@@ -21,7 +21,7 @@ SortedMap is an ordered map implementation that keeps entries sorted by keys. It
 
 You can create an empty SortedMap or a SortedMap from other containers.
 
-```moonbit
+```mbt check
 ///|
 test {
   let _map1 : @sorted_map.SortedMap[Int, String] = @sorted_map.new()
@@ -34,7 +34,7 @@ test {
 
 Add a key-value pair to the SortedMap in place.
 
-```moonbit
+```mbt check
 ///|
 test {
   let map = @sorted_map.from_array([(1, "one"), (2, "two")])
@@ -45,7 +45,7 @@ test {
 
 You can also use the convenient subscript syntax to add or update values:
 
-```moonbit
+```mbt check
 ///|
 test {
   let map = @sorted_map.new()
@@ -57,7 +57,7 @@ test {
 
 Remove a key-value pair from the SortedMap in place.
 
-```moonbit
+```mbt check
 ///|
 test {
   let map = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
@@ -69,7 +69,7 @@ test {
 
 Get a value by its key. The return type is `Option[V]`.
 
-```moonbit
+```mbt check
 ///|
 test {
   let map = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
@@ -80,7 +80,7 @@ test {
 
 Safe access with error handling:
 
-```moonbit
+```mbt check
 ///|
 test {
   let map = @sorted_map.from_array([(1, "one"), (2, "two")])
@@ -91,7 +91,7 @@ test {
 
 Check if a key exists in the map.
 
-```moonbit
+```mbt check
 ///|
 test {
   let map = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
@@ -102,7 +102,7 @@ test {
 
 Iterate over all key-value pairs in the map in sorted key order.
 
-```moonbit
+```mbt check
 ///|
 test {
   let map = @sorted_map.from_array([(3, "three"), (1, "one"), (2, "two")])
@@ -119,7 +119,7 @@ test {
 
 Iterate with index:
 
-```moonbit
+```mbt check
 ///|
 test {
   let map = @sorted_map.from_array([(3, "three"), (1, "one"), (2, "two")])
@@ -131,7 +131,7 @@ test {
 
 Get the size of the map.
 
-```moonbit
+```mbt check
 ///|
 test {
   let map = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
@@ -141,7 +141,7 @@ test {
 
 Check if the map is empty.
 
-```moonbit
+```mbt check
 ///|
 test {
   let map : @sorted_map.SortedMap[Int, String] = @sorted_map.new()
@@ -151,7 +151,7 @@ test {
 
 Clear the map.
 
-```moonbit
+```mbt check
 ///|
 test {
   let map = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
@@ -164,7 +164,7 @@ test {
 
 Get all keys or values from the map.
 
-```moonbit
+```mbt check
 ///|
 test {
   let map = @sorted_map.from_array([(3, "three"), (1, "one"), (2, "two")])
@@ -175,7 +175,7 @@ test {
 
 Convert the map to an array of key-value pairs.
 
-```moonbit
+```mbt check
 ///|
 test {
   let map = @sorted_map.from_array([(3, "three"), (1, "one"), (2, "two")])
@@ -187,7 +187,7 @@ test {
 
 Get a subset of the map within a specified range of keys. The range is inclusive for both bounds `[low, high]`.
 
-```moonbit
+```mbt check
 ///|
 test {
   let map = @sorted_map.from_array([
@@ -208,7 +208,7 @@ Edge cases for range operations:
 - If `low` or `high` are outside the map bounds, returns only pairs within valid bounds
 - The returned iterator preserves the sorted order of keys
 
-```moonbit
+```mbt check
 ///|
 ///  Example with out-of-bounds range
 test {
@@ -228,7 +228,7 @@ test {
 
 The SortedMap supports several iterator patterns. Create a map from an iterator:
 
-```moonbit
+```mbt check
 ///|
 test {
   let pairs = [(1, "one"), (2, "two"), (3, "three")].iter()
@@ -239,7 +239,7 @@ test {
 
 Use the `iter` method to get an iterator over key-value pairs:
 
-```moonbit
+```mbt check
 ///|
 test {
   let map = @sorted_map.from_array([(3, "three"), (1, "one"), (2, "two")])
@@ -250,7 +250,7 @@ test {
 
 Use the `iter2` method for a more convenient key-value iteration:
 
-```moonbit
+```mbt check
 ///|
 test {
   let map = @sorted_map.from_array([(3, "three"), (1, "one"), (2, "two")])
@@ -264,7 +264,7 @@ test {
 
 Maps with the same key-value pairs are considered equal, regardless of the order in which elements were added.
 
-```moonbit
+```mbt check
 ///|
 test {
   let map1 = @sorted_map.from_array([(1, "one"), (2, "two")])
@@ -277,7 +277,7 @@ test {
 
 When working with keys that might not exist, prefer using pattern matching for safety:
 
-```moonbit
+```mbt check
 ///|
 fn get_score(scores : @sorted_map.SortedMap[Int, Int], student_id : Int) -> Int {
   match scores.get(student_id) {

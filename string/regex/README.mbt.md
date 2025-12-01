@@ -10,7 +10,7 @@
 
 ## ⚡ Quick Start
 
-```moonbit
+```mbt check
 ///|
 test {
   // Compile once, use everywhere
@@ -87,7 +87,7 @@ test {
 
 Match characters by their Unicode general categories:
 
-```moonbit
+```mbt check
 ///|
 test "unicode properties" {
   // Matching gc=L
@@ -116,7 +116,7 @@ test "unicode properties" {
 
 ## 💡 Real Examples
 
-```moonbit
+```mbt check
 ///|
 test "character classes" {
   // Email validation (simplified)
@@ -169,7 +169,7 @@ test "character classes" {
 
 ## 🚨 Error Handling
 
-```moonbit
+```mbt check
 ///|
 test {
   try {

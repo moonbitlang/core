@@ -6,7 +6,7 @@ This package provides operations for working with 64-bit signed integers (`Int64
 
 `Int64` values can be created from regular 32-bit integers using `from_int`. The package also provides constants for the maximum and minimum values representable by `Int64`.
 
-```moonbit
+```mbt check
 ///|
 test "basic operations" {
   let i : Int64 = -12345L // Int64 literal
@@ -26,7 +26,7 @@ test "basic operations" {
 
 The package provides functions to convert `Int64` values to their binary representation in both big-endian and little-endian byte order:
 
-```moonbit
+```mbt check
 ///|
 test "binary conversion" {
   let x = 258L // Int64 value of 258
@@ -57,7 +57,7 @@ test "binary conversion" {
 
 All operations are also available as methods on `Int64` values:
 
-```moonbit
+```mbt check
 ///|
 test "method style" {
   let x = -42L

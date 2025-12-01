@@ -6,7 +6,7 @@ This package provides utilities for interacting with the runtime environment, in
 
 Access command line arguments passed to your program:
 
-```moonbit
+```mbt check
 ///|
 test "command line arguments" {
   let arguments = @env.args()
@@ -33,7 +33,7 @@ test "command line arguments" {
 
 Get the current time in milliseconds since Unix epoch:
 
-```moonbit
+```mbt check
 ///|
 test "current time" {
   let timestamp = @env.now()
@@ -56,7 +56,7 @@ test "current time" {
 
 Get the current working directory:
 
-```moonbit
+```mbt check
 ///|
 test "working directory" {
   let cwd = @env.current_dir()
@@ -77,7 +77,7 @@ test "working directory" {
 
 ### Command Line Tool Pattern
 
-```moonbit
+```mbt check
 ///|
 test "command line tool pattern" {
   fn parse_command(args : Array[String]) -> Result[String, String] {
@@ -107,7 +107,7 @@ test "command line tool pattern" {
 
 ### Configuration Loading
 
-```moonbit
+```mbt check
 ///|
 test "configuration loading" {
   fn load_config_path() -> String {
@@ -124,7 +124,7 @@ test "configuration loading" {
 
 ### Logging with Timestamps
 
-```moonbit
+```mbt check
 ///|
 test "logging with timestamps" {
   fn log_message(level : String, message : String) -> String {
@@ -140,7 +140,7 @@ test "logging with timestamps" {
 
 ### File Path Operations
 
-```moonbit
+```mbt check
 ///|
 test "file path operations" {
   fn resolve_relative_path(relative : String) -> String {
@@ -178,7 +178,7 @@ The env package behaves differently across platforms:
 
 Handle cases where environment information is unavailable:
 
-```moonbit
+```mbt check
 ///|
 test "error handling" {
   fn safe_get_cwd() -> String {
@@ -215,7 +215,7 @@ test "error handling" {
 
 ### 1. Handle Missing Environment Data Gracefully
 
-```moonbit
+```mbt check
 ///|
 test "graceful handling" {
   fn get_work_dir() -> String {
@@ -232,7 +232,7 @@ test "graceful handling" {
 
 ### 2. Validate Command Line Arguments
 
-```moonbit
+```mbt check
 ///|
 test "argument validation" {
   fn validate_and_parse_args(
@@ -265,7 +265,7 @@ test "argument validation" {
 
 ### 3. Use Timestamps for Unique Identifiers
 
-```moonbit
+```mbt check
 ///|
 test "unique identifiers" {
   fn generate_unique_id(prefix : String) -> String {

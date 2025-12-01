@@ -18,7 +18,7 @@
 ///
 /// # Example
 ///
-/// ```moonbit
+/// ```mbt check
 /// let arr = [1, 2, 3, 4, 5]
 /// let view = arr[1:4] // Creates a view of elements at indices 1,2,3
 /// inspect(view[0], content="2")
@@ -38,7 +38,7 @@ pub type View[T] = ArrayView[T]
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let arr = [1, 2, 3][:]
 ///   let mut sum = 0
 ///   arr.each(x => sum = sum + x)
@@ -131,7 +131,7 @@ pub fn[T] ArrayView::any(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let arr = [1, 2, 3, 4, 5][:]
 ///   inspect(arr.contains(3), content="true")
 ///   inspect(arr.contains(6), content="false")
@@ -172,7 +172,7 @@ pub fn[X] ArrayView::iterator2(self : ArrayView[X]) -> Iterator2[Int, X] {
 /// indices start from 0.
 /// 
 /// Example:
-/// ```moonbit
+/// ```mbt check
 ///   let arr = [1, 2, 3]
 ///   let view = arr[1:]
 ///   let mut sum = 0
@@ -360,7 +360,7 @@ pub fn[T] ArrayView::to_array(self : ArrayView[T]) -> Array[T] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let a : Array[String] = ["1", "2", "3"]
 ///   let array_view = a[:]
 ///   inspect(array_view.join(","), content="1,2,3")

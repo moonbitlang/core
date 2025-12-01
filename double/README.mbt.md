@@ -6,7 +6,7 @@ This package provides comprehensive support for double-precision floating-point 
 
 The package provides several important constants and special floating-point values:
 
-```moonbit
+```mbt check
 ///|
 test "special values" {
   // Special values
@@ -25,7 +25,7 @@ test "special values" {
 
 Basic mathematical operations and rounding functions:
 
-```moonbit
+```mbt check
 ///|
 test "basic operations" {
   // Absolute value
@@ -53,7 +53,7 @@ test "basic operations" {
 
 Functions for testing special floating-point values and comparing numbers:
 
-```moonbit
+```mbt check
 ///|
 test "special value testing" {
   // Testing for special values
@@ -72,7 +72,7 @@ test "special value testing" {
 
 Functions for converting doubles to their binary representation:
 
-```moonbit
+```mbt check
 ///|
 test "binary representation" {
   let num = 1.0

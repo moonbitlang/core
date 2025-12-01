@@ -6,7 +6,7 @@ A package for working with bytes (8-bit unsigned integers) in MoonBit.
 
 The package provides constants for the minimum and maximum values of a byte:
 
-```moonbit
+```mbt check
 ///|
 test "byte constants" {
   inspect(@byte.min_value, content="b'\\x00'")
@@ -18,7 +18,7 @@ test "byte constants" {
 
 Bytes can be converted to other numeric types. The package provides conversion to `UInt64`:
 
-```moonbit
+```mbt check
 ///|
 test "byte conversion" {
   let byte = b'A'
@@ -32,7 +32,7 @@ test "byte conversion" {
 
 Although not directly part of this package, MoonBit provides byte literals with the `b` prefix:
 
-```moonbit
+```mbt check
 ///|
 test "byte literals" {
   // ASCII character

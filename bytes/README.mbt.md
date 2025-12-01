@@ -6,7 +6,7 @@ This package provides utilities for working with sequences of bytes, offering bo
 
 You can create `Bytes` from various sources including arrays, fixed arrays, and iterators:
 
-```moonbit
+```mbt check
 ///|
 test "bytes creation" {
   // Create from array of bytes
@@ -53,7 +53,7 @@ test "bytes creation" {
 
 `Bytes` can be converted to and from different formats:
 
-```moonbit
+```mbt check
 ///|
 test "bytes conversion" {
   let original = [b'x', b'y', b'z']
@@ -77,7 +77,7 @@ test "bytes conversion" {
 
 Views provide a way to work with portions of bytes and interpret them as various numeric types:
 
-```moonbit
+```mbt check
 ///|
 test "bytes view operations" {
   // Create bytes with numeric data
@@ -111,7 +111,7 @@ test "bytes view operations" {
 
 Views provide methods to interpret byte sequences as various numeric types in both little-endian and big-endian formats:
 
-```moonbit
+```mbt check
 ///|
 test "numeric interpretation" {
   // Create test data
@@ -133,7 +133,7 @@ test "numeric interpretation" {
 
 Bytes can be concatenated and compared:
 
-```moonbit
+```mbt check
 ///|
 test "bytes operations" {
   let b1 = Bytes::from_array([b'a', b'b'])

@@ -21,7 +21,7 @@
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let nan = @double.not_a_number
 ///   inspect(nan.is_nan(), content="true")
 /// ```
@@ -53,7 +53,7 @@ pub fn Double::inf(sign : Int) -> Double {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   inspect(@double.min_positive, content="2.2250738585072014e-308")
 /// ```
 #deprecated("Use `@double.min_positive` instead")

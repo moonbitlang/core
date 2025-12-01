@@ -138,7 +138,7 @@ pub fn[T : Compare] minimum(x : T, y : T) -> T {
 ///
 /// Examples:
 ///
-/// ```moonbit
+/// ```mbt check
 /// inspect(@cmp.minmax(1, 2), content="(1, 2)")
 /// inspect(@cmp.minmax(2, 1), content="(1, 2)")
 /// ```
@@ -166,7 +166,7 @@ pub fn[T : Compare] minmax(x : T, y : T) -> (T, T) {
 ///
 /// Examples:
 ///
-/// ```moonbit
+/// ```mbt check
 /// inspect(@cmp.minmax_by_key(1, -2, Int::abs), content="(1, -2)")
 /// inspect(@cmp.minmax_by_key(-2, 1, Int::abs), content="(1, -2)")
 /// inspect(@cmp.minmax_by_key(-2, 2, Int::abs), content="(-2, 2)")

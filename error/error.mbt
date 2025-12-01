@@ -26,7 +26,7 @@ fn Error::to_string(self : Error) -> String = "%error.to_string"
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let error : Error = Failure("test error")
 ///   inspect(
 ///     error, 

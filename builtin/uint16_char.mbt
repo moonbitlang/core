@@ -17,7 +17,7 @@
 /// Leading surrogates are in the range 0xD800 to 0xDBFF.
 ///
 /// Example:
-/// ```moonbit
+/// ```mbt check
 /// inspect((0xD800 : UInt16).is_leading_surrogate(), content="true")
 /// inspect((0xDBFF : UInt16).is_leading_surrogate(), content="true")
 /// inspect((0xDC00 : UInt16).is_leading_surrogate(), content="false")
@@ -32,7 +32,7 @@ pub fn UInt16::is_leading_surrogate(self : Self) -> Bool {
 /// Trailing surrogates are in the range 0xDC00 to 0xDFFF.
 ///
 /// Example:
-/// ```moonbit
+/// ```mbt check
 ///   inspect((0xDC00 : UInt16).is_trailing_surrogate(), content="true")
 ///   inspect((0xDFFF : UInt16).is_trailing_surrogate(), content="true")
 ///   inspect((0xD800 : UInt16).is_trailing_surrogate(), content="false")
@@ -47,7 +47,7 @@ pub fn UInt16::is_trailing_surrogate(self : Self) -> Bool {
 /// Surrogates are in the range 0xD800 to 0xDFFF.
 ///
 /// Example:
-/// ```moonbit
+/// ```mbt check
 ///   inspect((0xD800 : UInt16).is_surrogate(), content="true")  // leading surrogate
 ///   inspect((0xDC00 : UInt16).is_surrogate(), content="true")  // trailing surrogate
 ///   inspect((0xDFFF : UInt16).is_surrogate(), content="true")  // trailing surrogate

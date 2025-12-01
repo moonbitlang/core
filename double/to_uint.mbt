@@ -32,7 +32,7 @@
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   inspect(42.0.to_uint(), content="42")
 ///   inspect((-42.5).to_uint(), content="0")
 ///   inspect((0.0 / 0.0).to_uint(), content="0") // NaN
