@@ -2,15 +2,15 @@
 package "moonbitlang/core/uint16"
 
 // Values
-let max_value : UInt16
+pub let max_value : UInt16
 
-let min_value : UInt16
+pub let min_value : UInt16
 
 // Errors
 
 // Types and methods
 #deprecated
-fn UInt16::reinterpret_as_int16(UInt16) -> Int16
+pub fn UInt16::reinterpret_as_int16(UInt16) -> Int16
 
 // Type aliases
 

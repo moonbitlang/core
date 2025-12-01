@@ -7,26 +7,26 @@ import(
 
 // Values
 #deprecated
-fn chacha8(seed? : Bytes) -> &Source
+pub fn chacha8(seed? : Bytes) -> &Source
 
 #deprecated
-fn new(seed? : Bytes) -> Rand
+pub fn new(seed? : Bytes) -> Rand
 
 // Errors
 
 // Types and methods
 type Rand
-fn Rand::bigint(Self, Int) -> @bigint.BigInt
-fn Rand::boolean(Self) -> Bool
-fn Rand::chacha8(seed? : Bytes) -> Self
-fn Rand::double(Self) -> Double
-fn Rand::float(Self) -> Float
-fn Rand::int(Self, limit? : Int) -> Int
-fn Rand::int64(Self, limit? : Int64) -> Int64
-fn Rand::new(generator? : &Source) -> Self
-fn Rand::shuffle(Self, Int, (Int, Int) -> Unit) -> Unit
-fn Rand::uint(Self, limit? : UInt) -> UInt
-fn Rand::uint64(Self, limit? : UInt64) -> UInt64
+pub fn Rand::bigint(Self, Int) -> @bigint.BigInt
+pub fn Rand::boolean(Self) -> Bool
+pub fn Rand::chacha8(seed? : Bytes) -> Self
+pub fn Rand::double(Self) -> Double
+pub fn Rand::float(Self) -> Float
+pub fn Rand::int(Self, limit? : Int) -> Int
+pub fn Rand::int64(Self, limit? : Int64) -> Int64
+pub fn Rand::new(generator? : &Source) -> Self
+pub fn Rand::shuffle(Self, Int, (Int, Int) -> Unit) -> Unit
+pub fn Rand::uint(Self, limit? : UInt) -> UInt
+pub fn Rand::uint64(Self, limit? : UInt64) -> UInt64
 
 // Type aliases
 
