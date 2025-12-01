@@ -172,6 +172,18 @@ pub impl[X : FromJson] FromJson for Array[X] with from_json(json, path) {
 }
 
 ///|
+pub impl[X : FromJson] FromJson for ArrayView[X] with from_json(json, path) {
+  guard json is Array(a) else {
+    decode_error(path, "ArrayView::from_json: expected array")
+  }
+  guard JsonPath::Index(path, index=0) is (Index(_) as new_path)
+  a.mapi((i, x) => {
+    new_path.index = i
+    FromJson::from_json(x, new_path)
+  })
+}
+
+///|
 pub impl[X : FromJson] FromJson for FixedArray[X] with from_json(json, path) {
   guard json is Array(a) else {
     decode_error(path, "FixedArray::from_json: expected array")
