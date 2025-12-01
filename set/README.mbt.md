@@ -6,7 +6,7 @@ This package provides a hash-based set data structure that maintains insertion o
 
 There are several ways to create sets:
 
-```moonbit
+```mbt check
 ///|
 test "creating sets" {
   // Empty set
@@ -36,7 +36,7 @@ test "creating sets" {
 
 Add, remove, and check membership:
 
-```moonbit
+```mbt check
 ///|
 test "basic operations" {
   let set = @set.Set::new()
@@ -76,7 +76,7 @@ test "basic operations" {
 
 Perform mathematical set operations:
 
-```moonbit
+```mbt check
 ///|
 test "set operations" {
   let set1 = @set.Set::from_array([1, 2, 3, 4])
@@ -124,7 +124,7 @@ test "set operations" {
 
 Test relationships between sets:
 
-```moonbit
+```mbt check
 ///|
 test "set relationships" {
   let small_set = @set.Set::from_array([1, 2])
@@ -154,7 +154,7 @@ test "set relationships" {
 
 Iterate over sets and convert to other types:
 
-```moonbit
+```mbt check
 ///|
 test "iteration and conversion" {
   let set = @set.Set::from_array(["first", "second", "third"])
@@ -188,7 +188,7 @@ test "iteration and conversion" {
 
 Clear and modify existing sets:
 
-```moonbit
+```mbt check
 ///|
 test "modifying sets" {
   let set = @set.Set::from_array([10, 20, 30, 40, 50])
@@ -211,7 +211,7 @@ test "modifying sets" {
 
 Sets can be serialized to JSON as arrays:
 
-```moonbit
+```mbt check
 ///|
 test "json serialization" {
   let set = @set.Set::from_array([1, 2, 3])
@@ -234,7 +234,7 @@ test "json serialization" {
 
 Sets work with any type that implements `Hash` and `Eq`:
 
-```moonbit
+```mbt check
 ///|
 test "different types" {
   // Integer set
@@ -260,7 +260,7 @@ test "different types" {
 
 Demonstrate efficient operations:
 
-```moonbit
+```mbt check
 ///|
 test "performance examples" {
   // Large set operations

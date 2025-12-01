@@ -7,7 +7,7 @@ including string creation, conversion, searching, and Unicode handling.
 
 Create strings from various sources:
 
-```moonbit
+```mbt check
 ///|
 test "string creation" {
   // From character array
@@ -29,7 +29,7 @@ test "string creation" {
 
 Iterate over Unicode characters in strings:
 
-```moonbit
+```mbt check
 ///|
 test "string iteration" {
   let text = "Hello🌍"
@@ -62,7 +62,7 @@ test "string iteration" {
 
 Convert strings to other formats:
 
-```moonbit
+```mbt check
 ///|
 test "string conversion" {
   let text = "Hello 你好"
@@ -86,7 +86,7 @@ test "string conversion" {
 
 Work with Unicode characters and surrogate pairs:
 
-```moonbit
+```mbt check
 ///|
 test "unicode handling" {
   let emoji_text = "Hello🤣World"
@@ -111,7 +111,7 @@ test "unicode handling" {
 
 Strings are ordered using shortlex order by Unicode code points:
 
-```moonbit
+```mbt check
 ///|
 test "string comparison" {
   let result1 = "apple".compare("banana")
@@ -127,7 +127,7 @@ test "string comparison" {
 
 String views provide efficient substring operations without copying:
 
-```moonbit
+```mbt check
 ///|
 test "string views" {
   let text = "Hello, World!"
@@ -147,7 +147,7 @@ test "string views" {
 
 Common string manipulation tasks:
 
-```moonbit
+```mbt check
 ///|
 test "practical examples" {
   let text = "The quick brown fox"

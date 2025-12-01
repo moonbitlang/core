@@ -30,7 +30,7 @@
 ///
 /// Example
 ///
-/// ```moonbit
+/// ```mbt check
 /// inspect(@math.cbrt(1.0), content="1")
 /// inspect(@math.cbrt(3.0), content="1.4422495703074083")
 /// inspect(@math.cbrt(-3.0), content="-1.4422495703074083")
@@ -54,7 +54,7 @@ pub fn cbrt(x : Double) -> Double = "Math" "cbrt"
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 /// inspect(@math.hypot(3.0, 4.0), content="5")
 /// inspect(@math.hypot(5.0, 12.0), content="13")
 /// inspect(@math.hypot(8.0, 15.0), content="17")

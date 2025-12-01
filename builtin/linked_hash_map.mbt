@@ -93,7 +93,7 @@ pub fn[K : Hash + Eq, V] Map::from_array(arr : ArrayView[(K, V)]) -> Map[K, V] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let map : Map[String, Int] = Map::new()
 ///   map.set("key", 42)
 ///   inspect(map.get("key"), content="Some(42)")
@@ -187,7 +187,7 @@ fn[K, V] Map::set_entry(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let map = { "key": 42 }
 ///   inspect(map.get("key"), content="Some(42)")
 ///   inspect(map.get("nonexistent"), content="None")
@@ -236,7 +236,7 @@ pub fn[K : Hash + Eq, V] Map::at(self : Map[K, V], key : K) -> V {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let map = { "a": 1, "b": 2 }
 ///   inspect(map.get_or_default("a", 0), content="1")
 ///   inspect(map.get_or_default("c", 42), content="42")
@@ -342,8 +342,8 @@ pub fn[K : Hash + Eq, V] Map::contains(self : Map[K, V], key : K) -> Bool {
 ///
 /// Example:
 ///
-/// ```moonbit
-/// 
+/// ```mbt check
+///
 ///   let map = { "a": 1, "b": 2 }
 ///   inspect(map.contains_kv("a", 1), content="true")
 ///   inspect(map.contains_kv("a", 2), content="false")
@@ -381,7 +381,7 @@ pub fn[K : Hash + Eq, V : Eq] Map::contains_kv(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let map = { "a": 1, "b": 2 }
 ///   map.remove("a")
 ///   inspect(map.get("a"), content="None")
@@ -770,7 +770,7 @@ pub fn[K, V] Map::copy(self : Map[K, V]) -> Map[K, V] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 /// let map1 : Map[String, Int] = { "a": 1, "b": 2 }
 /// let map2 : Map[String, Int] = { "b": 3, "c": 4 }
 /// let merged = map1.merge(map2)
@@ -798,7 +798,7 @@ pub fn[K : Eq, V] Map::merge(self : Map[K, V], other : Map[K, V]) -> Map[K, V] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 /// let map1 : Map[String, Int] = { "a": 1, "b": 2 }
 /// let map2 : Map[String, Int] = { "b": 3, "c": 4 }
 /// map1.merge_in_place(map2)
@@ -830,7 +830,7 @@ pub fn[K : Eq, V] Map::merge_in_place(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let map = { "a": 1, "b": 2, "c": 3, "d": 4 }
 ///   map.retain((_k, v) => v % 2 == 0)  // Keep only even values
 ///   inspect(map.length(), content="2")
@@ -886,7 +886,7 @@ pub fn[K, V] Map::retain(self : Map[K, V], f : (K, V) -> Bool) -> Unit {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 /// let map = { "a": 1, "b": 2 }
 ///
 /// // Update existing value
@@ -1020,7 +1020,7 @@ fn BytesView::equal_to_bytes(self : Self, other : Bytes) -> Bool {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let map = { b"hello": 1, b"world": 2 }
 ///   let bytes = b"prefix_hello_suffix"
 ///   let view = bytes[7:12] // view of "hello"
@@ -1055,7 +1055,7 @@ pub fn[V] Map::get_from_bytes(map : Self[Bytes, V], key : BytesView) -> V? {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let map = { "hello": 1, "world": 2 }
 ///   let str = "say hello to everyone"
 ///   let view = str.view(start_offset=4, end_offset=9) // view of "hello"

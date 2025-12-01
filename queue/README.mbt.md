@@ -6,7 +6,7 @@ Queue is a first in first out (FIFO) data structure, allowing to process their e
 
 ## Create and Clear
 You can create a queue manually by using the `new` or construct it using the `from_array`.
-```moonbit
+```mbt check
 ///|
 test {
   let _queue : @queue.Queue[Int] = @queue.new()
@@ -16,7 +16,7 @@ test {
 ```
 
 To clear the queue, you can use the `clear` method.
-```moonbit
+```mbt check
 ///|
 test {
   let queue = @queue.from_array([1, 2, 3])
@@ -26,7 +26,7 @@ test {
 
 ## Length
 You can get the length of the queue by using the `length` method. The `is_empty` method can be used to check if the queue is empty.
-```moonbit
+```mbt check
 ///|
 test {
   let queue = @queue.from_array([1, 2, 3])
@@ -37,7 +37,7 @@ test {
 
 ## Pop and Push
 You can add elements to the queue using the `push` method and remove them using the `pop` method.
-```moonbit
+```mbt check
 ///|
 test {
   let queue = @queue.new()
@@ -50,7 +50,7 @@ test {
 
 ## Peek
 You can get the first element of the queue without removing it using the `peek` method.
-```moonbit
+```mbt check
 ///|
 test {
   let queue = @queue.from_array([1, 2, 3])
@@ -62,7 +62,7 @@ test {
 
 You can traverse the queue using the `each` method.
 
-```moonbit
+```mbt check
 ///|
 test {
   let queue = @queue.from_array([1, 2, 3])
@@ -73,7 +73,7 @@ test {
 ```
 
 You can fold the queue using the `fold` method.
-```moonbit
+```mbt check
 ///|
 test {
   let queue = @queue.from_array([1, 2, 3])
@@ -84,7 +84,7 @@ test {
 
 ## Copy and Transfer
 You can copy a queue using the `copy` method.
-```moonbit
+```mbt check
 ///|
 test {
   let queue = @queue.from_array([1, 2, 3])
@@ -94,7 +94,7 @@ test {
 ```
 
 Transfer the elements from one queue to another using the `transfer` method.
-```moonbit
+```mbt check
 ///|
 test {
   let dst : @queue.Queue[Int] = @queue.new()

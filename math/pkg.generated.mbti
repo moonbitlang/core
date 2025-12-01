@@ -7,120 +7,116 @@ import(
 )
 
 // Values
-const PI : Double = 0x3.243F6A8885A308CA8A54
+pub const PI : Double = 0x3.243F6A8885A308CA8A54
 
-fn acos(Double) -> Double
+pub fn acos(Double) -> Double
 
-fn acosf(Float) -> Float
+pub fn acosf(Float) -> Float
 
-fn acosh(Double) -> Double
+pub fn acosh(Double) -> Double
 
-fn acoshf(Float) -> Float
+pub fn acoshf(Float) -> Float
 
-fn asin(Double) -> Double
+pub fn asin(Double) -> Double
 
-fn asinf(Float) -> Float
+pub fn asinf(Float) -> Float
 
-fn asinh(Double) -> Double
+pub fn asinh(Double) -> Double
 
-fn asinhf(Float) -> Float
+pub fn asinhf(Float) -> Float
 
-fn atan(Double) -> Double
+pub fn atan(Double) -> Double
 
-fn atan2(Double, Double) -> Double
+pub fn atan2(Double, Double) -> Double
 
-fn atan2f(Float, Float) -> Float
+pub fn atan2f(Float, Float) -> Float
 
-fn atanf(Float) -> Float
+pub fn atanf(Float) -> Float
 
-fn atanh(Double) -> Double
+pub fn atanh(Double) -> Double
 
-fn atanhf(Float) -> Float
+pub fn atanhf(Float) -> Float
 
-fn cbrt(Double) -> Double
+pub fn cbrt(Double) -> Double
 
-fn cbrtf(Float) -> Float
+pub fn cbrtf(Float) -> Float
 
-#as_free_fn
-fn ceil(Double) -> Double
+pub fn ceil(Double) -> Double
 
-fn cos(Double) -> Double
+pub fn cos(Double) -> Double
 
-fn cosf(Float) -> Float
+pub fn cosf(Float) -> Float
 
-fn cosh(Double) -> Double
+pub fn cosh(Double) -> Double
 
-fn coshf(Float) -> Float
+pub fn coshf(Float) -> Float
 
-fn exp(Double) -> Double
+pub fn exp(Double) -> Double
 
-fn expf(Float) -> Float
+pub fn expf(Float) -> Float
 
-fn expm1(Double) -> Double
+pub fn expm1(Double) -> Double
 
-fn expm1f(Float) -> Float
+pub fn expm1f(Float) -> Float
 
-#as_free_fn
-fn floor(Double) -> Double
+pub fn floor(Double) -> Double
 
-fn hypot(Double, Double) -> Double
+pub fn hypot(Double, Double) -> Double
 
-fn hypotf(Float, Float) -> Float
+pub fn hypotf(Float, Float) -> Float
 
-fn is_probable_prime(@bigint.BigInt, @random.Rand, iters? : Int) -> Bool
+pub fn is_probable_prime(@bigint.BigInt, @random.Rand, iters? : Int) -> Bool
 
-fn ln(Double) -> Double
+pub fn ln(Double) -> Double
 
-fn ln_1p(Double) -> Double
+pub fn ln_1p(Double) -> Double
 
-fn ln_1pf(Float) -> Float
+pub fn ln_1pf(Float) -> Float
 
-fn lnf(Float) -> Float
+pub fn lnf(Float) -> Float
 
-fn log10(Double) -> Double
+pub fn log10(Double) -> Double
 
-fn log2(Double) -> Double
+pub fn log2(Double) -> Double
 
 #deprecated
-fn[T : Compare] maximum(T, T) -> T
+pub fn[T : Compare] maximum(T, T) -> T
 
 #deprecated
-fn[T : Compare] minimum(T, T) -> T
+pub fn[T : Compare] minimum(T, T) -> T
 
 #deprecated
-let pi : Double
+pub let pi : Double
 
-fn pow(Double, Double) -> Double
+pub fn pow(Double, Double) -> Double
 
-fn powf(Float, Float) -> Float
+pub fn powf(Float, Float) -> Float
 
-fn probable_prime(Int, @random.Rand) -> @bigint.BigInt
+pub fn probable_prime(Int, @random.Rand) -> @bigint.BigInt
 
-#as_free_fn
-fn round(Double) -> Double
+pub fn round(Double) -> Double
 
-fn scalbn(Double, Int) -> Double
+pub fn scalbn(Double, Int) -> Double
 
-fn scalbnf(Float, Int) -> Float
+pub fn scalbnf(Float, Int) -> Float
 
-fn sin(Double) -> Double
+pub fn sin(Double) -> Double
 
-fn sinf(Float) -> Float
+pub fn sinf(Float) -> Float
 
-fn sinh(Double) -> Double
+pub fn sinh(Double) -> Double
 
-fn sinhf(Float) -> Float
+pub fn sinhf(Float) -> Float
 
-fn tan(Double) -> Double
+pub fn tan(Double) -> Double
 
-fn tanf(Float) -> Float
+pub fn tanf(Float) -> Float
 
-fn tanh(Double) -> Double
+pub fn tanh(Double) -> Double
 
-fn tanhf(Float) -> Float
+pub fn tanhf(Float) -> Float
 
-#as_free_fn
-fn trunc(Double) -> Double
+pub fn trunc(Double) -> Double
 
 // Errors
 

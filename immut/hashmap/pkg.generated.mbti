@@ -13,52 +13,52 @@ import(
 // Types and methods
 #alias(T, deprecated)
 type HashMap[K, V]
-fn[K : Eq + Hash, V] HashMap::add(Self[K, V], K, V) -> Self[K, V]
+pub fn[K : Eq + Hash, V] HashMap::add(Self[K, V], K, V) -> Self[K, V]
 #alias("_[_]")
-fn[K : Eq + Hash, V] HashMap::at(Self[K, V], K) -> V
-fn[K : Eq + Hash, V] HashMap::contains(Self[K, V], K) -> Bool
-fn[K : Eq, V] HashMap::difference(Self[K, V], Self[K, V]) -> Self[K, V]
-fn[K, V] HashMap::each(Self[K, V], (K, V) -> Unit raise?) -> Unit raise?
+pub fn[K : Eq + Hash, V] HashMap::at(Self[K, V], K) -> V
+pub fn[K : Eq + Hash, V] HashMap::contains(Self[K, V], K) -> Bool
+pub fn[K : Eq, V] HashMap::difference(Self[K, V], Self[K, V]) -> Self[K, V]
+pub fn[K, V] HashMap::each(Self[K, V], (K, V) -> Unit raise?) -> Unit raise?
 #alias(filter_with_key, deprecated)
-fn[K, V] HashMap::filter(Self[K, V], (K, V) -> Bool raise?) -> Self[K, V] raise?
+pub fn[K, V] HashMap::filter(Self[K, V], (K, V) -> Bool raise?) -> Self[K, V] raise?
 #alias(fold_with_key, deprecated)
-fn[K, V, A] HashMap::fold(Self[K, V], init~ : A, (A, K, V) -> A raise?) -> A raise?
+pub fn[K, V, A] HashMap::fold(Self[K, V], init~ : A, (A, K, V) -> A raise?) -> A raise?
 #alias(of, deprecated)
 #as_free_fn(of, deprecated)
 #as_free_fn
-fn[K : Eq + Hash, V] HashMap::from_array(ArrayView[(K, V)]) -> Self[K, V]
+pub fn[K : Eq + Hash, V] HashMap::from_array(ArrayView[(K, V)]) -> Self[K, V]
 #as_free_fn
-fn[K : Eq + Hash, V] HashMap::from_iter(Iter[(K, V)]) -> Self[K, V]
+pub fn[K : Eq + Hash, V] HashMap::from_iter(Iter[(K, V)]) -> Self[K, V]
 #as_free_fn
-fn[K : Eq + Hash, V] HashMap::from_iterator(Iterator[(K, V)]) -> Self[K, V]
+pub fn[K : Eq + Hash, V] HashMap::from_iterator(Iterator[(K, V)]) -> Self[K, V]
 #alias(find, deprecated)
-fn[K : Eq + Hash, V] HashMap::get(Self[K, V], K) -> V?
-fn[K : Eq, V] HashMap::intersection(Self[K, V], Self[K, V]) -> Self[K, V]
-fn[K : Eq, V] HashMap::intersection_with(Self[K, V], Self[K, V], (K, V, V) -> V raise?) -> Self[K, V] raise?
-fn[K, V] HashMap::iter(Self[K, V]) -> Iter[(K, V)]
-fn[K, V] HashMap::iter2(Self[K, V]) -> Iter2[K, V]
-fn[K, V] HashMap::iterator(Self[K, V]) -> Iterator[(K, V)]
-fn[K, V] HashMap::iterator2(Self[K, V]) -> Iterator2[K, V]
-fn[K, V] HashMap::keys(Self[K, V]) -> Iter[K]
+pub fn[K : Eq + Hash, V] HashMap::get(Self[K, V], K) -> V?
+pub fn[K : Eq, V] HashMap::intersection(Self[K, V], Self[K, V]) -> Self[K, V]
+pub fn[K : Eq, V] HashMap::intersection_with(Self[K, V], Self[K, V], (K, V, V) -> V raise?) -> Self[K, V] raise?
+pub fn[K, V] HashMap::iter(Self[K, V]) -> Iter[(K, V)]
+pub fn[K, V] HashMap::iter2(Self[K, V]) -> Iter2[K, V]
+pub fn[K, V] HashMap::iterator(Self[K, V]) -> Iterator[(K, V)]
+pub fn[K, V] HashMap::iterator2(Self[K, V]) -> Iterator2[K, V]
+pub fn[K, V] HashMap::keys(Self[K, V]) -> Iter[K]
 #alias(size, deprecated)
-fn[K, V] HashMap::length(Self[K, V]) -> Int
+pub fn[K, V] HashMap::length(Self[K, V]) -> Int
 #alias(map_with_key, deprecated)
-fn[K, V, A] HashMap::map(Self[K, V], (K, V) -> A raise?) -> Self[K, A] raise?
+pub fn[K, V, A] HashMap::map(Self[K, V], (K, V) -> A raise?) -> Self[K, A] raise?
 #as_free_fn
-fn[K, V] HashMap::new() -> Self[K, V]
-fn[K : Eq + Hash, V] HashMap::remove(Self[K, V], K) -> Self[K, V]
+pub fn[K, V] HashMap::new() -> Self[K, V]
+pub fn[K : Eq + Hash, V] HashMap::remove(Self[K, V], K) -> Self[K, V]
 #as_free_fn
-fn[K : Hash, V] HashMap::singleton(K, V) -> Self[K, V]
-fn[K, V] HashMap::to_array(Self[K, V]) -> Array[(K, V)]
+pub fn[K : Hash, V] HashMap::singleton(K, V) -> Self[K, V]
+pub fn[K, V] HashMap::to_array(Self[K, V]) -> Array[(K, V)]
 #alias(merge)
-fn[K : Eq, V] HashMap::union(Self[K, V], Self[K, V]) -> Self[K, V]
-fn[K : Eq, V] HashMap::union_with(Self[K, V], Self[K, V], (K, V, V) -> V raise?) -> Self[K, V] raise?
+pub fn[K : Eq, V] HashMap::union(Self[K, V], Self[K, V]) -> Self[K, V]
+pub fn[K : Eq, V] HashMap::union_with(Self[K, V], Self[K, V], (K, V, V) -> V raise?) -> Self[K, V] raise?
 #alias(elems, deprecated)
-fn[K, V] HashMap::values(Self[K, V]) -> Iter[V]
-impl[K : Eq, V : Eq] Eq for HashMap[K, V]
-impl[K : Hash, V : Hash] Hash for HashMap[K, V]
-impl[K : Show, V : Show] Show for HashMap[K, V]
-impl[K : Eq + Hash + @quickcheck.Arbitrary, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for HashMap[K, V]
+pub fn[K, V] HashMap::values(Self[K, V]) -> Iter[V]
+pub impl[K : Eq, V : Eq] Eq for HashMap[K, V]
+pub impl[K : Hash, V : Hash] Hash for HashMap[K, V]
+pub impl[K : Show, V : Show] Show for HashMap[K, V]
+pub impl[K : Eq + Hash + @quickcheck.Arbitrary, V : @quickcheck.Arbitrary] @quickcheck.Arbitrary for HashMap[K, V]
 
 // Type aliases
 

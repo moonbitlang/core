@@ -18,7 +18,7 @@
 ///
 /// # Example
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let view = arr.mut_view(start=1, end=4)  // Creates a view of elements at indices 1,2,3
 ///   assert_eq(view[0], 2)
@@ -54,7 +54,7 @@ fn[T] MutArrayView::make(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let view = arr.mut_view(start=2, end=4)
 ///   inspect(view.length(), content="2")
@@ -79,7 +79,7 @@ pub fn[T] MutArrayView::length(self : MutArrayView[T]) -> Int {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let view = arr.mut_view(start=2, end=4)
 ///   inspect(view[0], content="3")
@@ -109,7 +109,7 @@ pub fn[T] MutArrayView::at(self : MutArrayView[T], index : Int) -> T {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let view = arr.mut_view(start=1, end=4)
 ///   inspect(view.unsafe_get(1), content="3")
@@ -134,7 +134,7 @@ pub fn[T] MutArrayView::unsafe_get(self : MutArrayView[T], index : Int) -> T {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let view = arr.mut_view(start=2, end=4)
 ///   view[0] = 10
@@ -167,7 +167,7 @@ pub fn[T] MutArrayView::set(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let view = arr.mut_view(start=1, end=4)
 ///   view.unsafe_set(1, 10)
@@ -202,7 +202,7 @@ pub fn[T] MutArrayView::unsafe_set(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let view = arr.mut_view(start=1, end=4) // Create a view of elements at indices 1, 2, and 3
 ///   inspect(view[0], content="2") // First element of view is arr[1]
@@ -248,7 +248,7 @@ pub fn[T] Array::mut_view(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let view = arr.mut_view(start=1, end=4) // view = [2, 3, 4]
 ///   let subview = view.mut_view(start=1, end=2) // subview = [3]
@@ -293,7 +293,7 @@ pub fn[T] MutArrayView::mut_view(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let arr: FixedArray[Int] = [1, 2, 3, 4, 5]
 ///   let view = arr.mut_view(start=1, end=4) // view = [2, 3, 4]
 ///   inspect(view[0], content="2")

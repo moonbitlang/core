@@ -2,7 +2,7 @@
 
 # when using longest
 
-```moonbit
+```mbt check
 lexmatch s using longest {
   ("re1" ("re2" as re2), next)  => ...
   ...
@@ -15,7 +15,7 @@ has an implicit "$"  at the beginning
 
 # default
 
-```moonbit
+```mbt check
 lexmatch s {
     (_,"re1" ("re2" as r) ,_) => ...
     "re3" => ... // implicit $ at the beginning and ^ at end
@@ -25,7 +25,7 @@ lexmatch s {
 ```
 Top down, matched one by one using re2 style submatch semantics
 
-```moonbit
+```mbt check
 if s lexmatch? (_,"re1" ("re2" as r) ,_) {
     ...
 }

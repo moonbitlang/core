@@ -8,7 +8,7 @@ A mutable set backed by a red-black tree.
 
 You can create an empty SortedSet or a SortedSet from other containers.
 
-```moonbit
+```mbt check
 ///|
 test {
   let _set1 : @sorted_set.SortedSet[Int] = @sorted_set.new()
@@ -21,7 +21,7 @@ test {
 
 Add an element to the SortedSet in place.
 
-```moonbit
+```mbt check
 ///|
 test {
   let set4 = @sorted_set.from_array([1, 2, 3, 4])
@@ -33,7 +33,7 @@ test {
 
 Remove an element from the SortedSet in place.
 
-```moonbit
+```mbt check
 ///|
 test {
   let set = @sorted_set.from_array([3, 8, 1])
@@ -45,7 +45,7 @@ test {
 
 Whether an element is in the set.
 
-```moonbit
+```mbt check
 ///|
 test {
   let set = @sorted_set.from_array([1, 2, 3, 4])
@@ -56,7 +56,7 @@ test {
 
 Iterates over the elements in the set.
 
-```moonbit
+```mbt check
 ///|
 test {
   let arr = []
@@ -67,7 +67,7 @@ test {
 
 Get the size of the set.
 
-```moonbit
+```mbt check
 ///|
 test {
   let set = @sorted_set.from_array([1, 2, 3, 4])
@@ -77,7 +77,7 @@ test {
 
 Whether the set is empty.
 
-```moonbit
+```mbt check
 ///|
 test {
   let set : @sorted_set.SortedSet[Int] = @sorted_set.new()
@@ -89,7 +89,7 @@ test {
 
 Union, intersection and difference of two sets. They return a new set that does not overlap with the original sets in memory.
 
-```moonbit
+```mbt check
 ///|
 test {
   let set1 = @sorted_set.from_array([3, 4, 5])
@@ -105,7 +105,7 @@ test {
 
 Determine the inclusion and separation relationship between two sets.
 
-```moonbit
+```mbt check
 ///|
 test {
   let set1 = @sorted_set.from_array([1, 2, 3])
@@ -120,7 +120,7 @@ test {
 
 SortedSet implements to_string (i.e. Show trait), which allows you to directly output it.
 
-```moonbit
+```mbt check
 ///|
 test {
   let set = @sorted_set.from_array([1, 2, 3])

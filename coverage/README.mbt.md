@@ -6,7 +6,7 @@ This package provides code coverage tracking utilities for MoonBit programs. It 
 
 The core component for tracking code execution:
 
-```moonbit
+```mbt check
 ///|
 test "coverage counter basics" {
   // Create a coverage counter for tracking 5 code points
@@ -29,7 +29,7 @@ test "coverage counter basics" {
 
 Use coverage counters to track which code paths are executed:
 
-```moonbit
+```mbt check
 ///|
 test "tracking execution paths" {
   let counter = CoverageCounter::new(3)
@@ -63,7 +63,7 @@ test "tracking execution paths" {
 
 Track coverage in loops and iterations:
 
-```moonbit
+```mbt check
 ///|
 test "loop coverage" {
   let counter = CoverageCounter::new(2)
@@ -97,7 +97,7 @@ test "loop coverage" {
 
 Track coverage across different functions:
 
-```moonbit
+```mbt check
 ///|
 test "function coverage" {
   let counter = CoverageCounter::new(4)
@@ -145,7 +145,7 @@ test "function coverage" {
 
 Analyze coverage data to understand code execution:
 
-```moonbit
+```mbt check
 ///|
 test "coverage analysis" {
   let counter = CoverageCounter::new(6)
@@ -188,7 +188,7 @@ test "coverage analysis" {
 
 Coverage tracking integrates with MoonBit's testing system:
 
-```moonbit
+```mbt check
 ///|
 test "testing integration" {
   // In real usage, coverage counters are typically generated automatically
@@ -222,7 +222,7 @@ test "testing integration" {
 
 Generate and analyze coverage reports:
 
-```moonbit
+```mbt check
 ///|
 test "coverage reporting" {
   let counter = CoverageCounter::new(3)
@@ -255,7 +255,7 @@ test "coverage reporting" {
 
 In real applications, coverage tracking is typically generated automatically:
 
-```moonbit
+```mbt check
 ///|
 ///  This is conceptual - actual coverage is compiler-generated
 fn example_function(x : Int) -> String {
@@ -281,7 +281,7 @@ test "automatic coverage concept" {
 
 Use coverage information to improve test quality:
 
-```moonbit
+```mbt check
 ///|
 test "coverage driven testing" {
   // Write tests to ensure all code paths are covered

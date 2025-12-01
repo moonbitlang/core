@@ -44,7 +44,7 @@
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 /// inspect(@math.ln(2.0), content="0.6931471805599453")
 /// inspect(@math.ln(1.0), content="0")
 /// inspect(@math.ln(-1.0), content="NaN")
@@ -92,7 +92,7 @@ pub fn ln(x : Double) -> Double {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 /// inspect(@math.log2(2.0), content="1")
 /// inspect(@math.log2(0.5), content="-1")
 /// inspect(@math.log2(3.0), content="1.584962500721156")
@@ -118,7 +118,7 @@ pub fn log2(x : Double) -> Double {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 /// inspect(@math.log10(0.1), content="-1")
 /// inspect(@math.log10(1.0), content="0")
 /// inspect(@math.log10(10.0), content="1")
@@ -163,7 +163,7 @@ pub fn log10(x : Double) -> Double {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 /// inspect(@math.ln_1p(0.0), content="0")
 /// inspect(@math.ln_1p(1.0), content="0.6931471805599453")
 /// inspect(@math.ln_1p(2.0), content="1.0986122886681096")

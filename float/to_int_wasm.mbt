@@ -28,7 +28,7 @@
 ///
 /// Examples:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   inspect((1.5 : Float).to_int(), content="1")
 ///   inspect((-1.5 : Float).to_int(), content="-1")
 ///   inspect(@float.not_a_number.to_int(), content="0")

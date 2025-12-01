@@ -38,7 +38,7 @@ const GPRIME5 : UInt = 0x165667B1
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let hasher = Hasher::new(seed=0)
 ///   hasher.combine_int(42)
 ///   hasher.combine_string("hello")
@@ -60,7 +60,7 @@ struct Hasher {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let h1 = Hasher::new(seed=0) // Create a hasher with default seed
 ///   let h2 = Hasher::new(seed=42) // Create a hasher with custom seed
 ///   let x = 123
@@ -105,7 +105,7 @@ extern "js" fn random_seed() -> Int =
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let hasher = Hasher::new(seed=0)
 ///   hasher.combine(42)
 ///   hasher.combine("hello")
@@ -125,7 +125,7 @@ pub fn[T : Hash] Hasher::combine(self : Hasher, value : T) -> Unit {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let hasher = Hasher::new(seed=0)
 ///   hasher.combine_unit()
 ///   inspect(hasher.finalize(), content="148298089")
@@ -146,7 +146,7 @@ pub fn Hasher::combine_unit(self : Hasher) -> Unit {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let hasher = Hasher::new(seed=0)
 ///   hasher.combine_bool(true)
 ///   inspect(hasher.finalize(), content="-205818221")
@@ -167,7 +167,7 @@ pub fn Hasher::combine_bool(self : Hasher, value : Bool) -> Unit {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let hasher = Hasher::new(seed=0)
 ///   hasher.combine_int(42)
 ///   inspect(hasher.finalize(), content="1161967057")
@@ -189,7 +189,7 @@ pub fn Hasher::combine_int(self : Hasher, value : Int) -> Unit {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let hasher = Hasher::new(seed=0)
 ///   hasher.combine_int64(42L)
 ///   inspect(hasher.finalize(), content="-1962516083")
@@ -212,7 +212,7 @@ pub fn Hasher::combine_int64(self : Hasher, value : Int64) -> Unit {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let hasher = Hasher::new(seed=0)
 ///   hasher.combine_uint(42U)
 ///   inspect(hasher.finalize(), content="1161967057")
@@ -234,7 +234,7 @@ pub fn Hasher::combine_uint(self : Hasher, value : UInt) -> Unit {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let hasher = Hasher::new(seed=0)
 ///   hasher.combine_uint64(42UL)
 ///   inspect(hasher.finalize(), content="-1962516083")
@@ -256,7 +256,7 @@ pub fn Hasher::combine_uint64(self : Hasher, value : UInt64) -> Unit {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let hasher = Hasher::new(seed=0)
 ///   hasher.combine_double(3.14)
 ///   inspect(hasher.finalize(), content="-428265677")
@@ -278,7 +278,7 @@ pub fn Hasher::combine_double(self : Hasher, value : Double) -> Unit {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let hasher = Hasher::new(seed=0)
 ///   hasher.combine(3.14F)
 ///   inspect(hasher.finalize(), content="635116317") // Hash of the bits of 3.14
@@ -301,7 +301,7 @@ fn Float::reinterpret_as_uint(self : Float) -> UInt = "%f32.to_i32_reinterpret"
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let hasher = Hasher::new(seed=0)
 ///   hasher.combine_byte(b'\xFF')
 ///   inspect(hasher.finalize(), content="1955036104")
@@ -322,7 +322,7 @@ pub fn Hasher::combine_byte(self : Hasher, value : Byte) -> Unit {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let hasher = Hasher::new(seed=0)
 ///   hasher.combine_bytes(b"\xFF\x00\xFF\x00")
 ///   inspect(hasher.finalize(), content="-686861102")
@@ -353,7 +353,7 @@ pub fn Hasher::combine_bytes(self : Hasher, value : Bytes) -> Unit {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let hasher = Hasher::new(seed=0)
 ///   hasher.combine_string("hello")
 ///   inspect(hasher.finalize(), content="-655549713")
@@ -376,7 +376,7 @@ pub fn Hasher::combine_string(self : Hasher, value : String) -> Unit {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let hasher = Hasher::new(seed=0)
 ///   hasher.combine_char('A')
 ///   inspect(hasher.finalize(), content="-1625495534")
@@ -397,7 +397,7 @@ pub fn Hasher::combine_char(self : Hasher, value : Char) -> Unit {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let hasher = Hasher::new(seed=0)
 ///   hasher.combine_byte(b'\xFF')
 ///   inspect(hasher.finalize(), content="1955036104")
@@ -454,7 +454,7 @@ fn endian32(input : Bytes, cur : Int) -> UInt {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let s1 = "hello"
 ///   let s2 = "hello"
 ///   let s3 = "world"
@@ -488,7 +488,7 @@ pub impl Hash for StringView with hash_combine(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let hasher = Hasher::new(seed=0)
 ///   hasher.combine_int(42)
 ///   inspect(hasher.finalize(), content="1161967057")
@@ -510,7 +510,7 @@ pub impl Hash for Int with hash_combine(self, hasher) {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let hasher = Hasher::new(seed=0)
 ///   hasher.combine_uint(42U)
 ///   inspect(hasher.finalize(), content="1161967057")
@@ -530,7 +530,7 @@ pub impl Hash for UInt with hash_combine(self, hasher) {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let hasher = Hasher::new(seed=0)
 ///   hasher.combine_uint64(42UL)
 ///   inspect(hasher.finalize(), content="-1962516083")
@@ -550,7 +550,7 @@ pub impl Hash for UInt64 with hash_combine(self, hasher) {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let hasher = Hasher::new(seed=0)
 ///   let some_value : Int? = Some(42)
 ///   let none_value : Int? = None
@@ -578,7 +578,7 @@ pub impl[X : Hash] Hash for X? with hash_combine(self, hasher) {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let hasher = Hasher::new(seed=0)
 ///   let ok_result : Result[Int, String] = Ok(42)
 ///   let err_result : Result[Int, String] = Err("error")

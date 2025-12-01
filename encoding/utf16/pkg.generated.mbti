@@ -2,11 +2,11 @@
 package "moonbitlang/core/encoding/utf16"
 
 // Values
-fn decode(BytesView, ignore_bom? : Bool, endianness? : Endian) -> String raise Malformed
+pub fn decode(BytesView, ignore_bom? : Bool, endianness? : Endian) -> String raise Malformed
 
-fn decode_lossy(BytesView, ignore_bom? : Bool, endianness? : Endian) -> String
+pub fn decode_lossy(BytesView, ignore_bom? : Bool, endianness? : Endian) -> String
 
-fn encode(StringView, bom? : Bool, endianness? : Endian) -> Bytes
+pub fn encode(StringView, bom? : Bool, endianness? : Endian) -> Bytes
 
 // Errors
 pub suberror Malformed BytesView

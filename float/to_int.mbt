@@ -31,7 +31,7 @@ fn Float::to_unchecked_int(self : Float) -> Int = "%f32.to_i32"
 ///
 /// Examples:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   inspect((1.5 : Float).to_int(), content="1")
 ///   inspect((-1.5 : Float).to_int(), content="-1")
 ///   inspect(@float.not_a_number.to_int(), content="0")

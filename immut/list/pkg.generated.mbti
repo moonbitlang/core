@@ -9,31 +9,31 @@ import(
 
 // Values
 #deprecated
-fn[X] default() -> T[X]
+pub fn[X] default() -> T[X]
 
 #deprecated
-fn[A] from_array(ArrayView[A]) -> T[A]
+pub fn[A] from_array(ArrayView[A]) -> T[A]
 
 #deprecated
-fn[A] from_iter(Iter[A]) -> T[A]
+pub fn[A] from_iter(Iter[A]) -> T[A]
 
 #deprecated
-fn[A] from_iter_rev(Iter[A]) -> T[A]
+pub fn[A] from_iter_rev(Iter[A]) -> T[A]
 
 #deprecated
-fn[A : @json.FromJson] from_json(Json) -> T[A] raise @json.JsonDecodeError
+pub fn[A : @json.FromJson] from_json(Json) -> T[A] raise @json.JsonDecodeError
 
 #deprecated
-fn[A] of(ArrayView[A]) -> T[A]
+pub fn[A] of(ArrayView[A]) -> T[A]
 
 #deprecated
-fn[A] repeat(Int, A) -> T[A]
+pub fn[A] repeat(Int, A) -> T[A]
 
 #deprecated
-fn[A] singleton(A) -> T[A]
+pub fn[A] singleton(A) -> T[A]
 
 #deprecated
-fn[A, S] unfold((S) -> (A, S)? raise?, init~ : S) -> T[A] raise?
+pub fn[A, S] unfold((S) -> (A, S)? raise?, init~ : S) -> T[A] raise?
 
 // Errors
 
@@ -44,142 +44,142 @@ pub(all) enum T[A] {
   Cons(A, T[A])
 }
 #deprecated
-fn[A] T::add(Self[A], A) -> Self[A]
+pub fn[A] T::add(Self[A], A) -> Self[A]
 #deprecated
-fn[A] T::all(Self[A], (A) -> Bool raise?) -> Bool raise?
+pub fn[A] T::all(Self[A], (A) -> Bool raise?) -> Bool raise?
 #deprecated
-fn[A] T::any(Self[A], (A) -> Bool raise?) -> Bool raise?
+pub fn[A] T::any(Self[A], (A) -> Bool raise?) -> Bool raise?
 #deprecated
-fn[A] T::concat(Self[A], Self[A]) -> Self[A]
+pub fn[A] T::concat(Self[A], Self[A]) -> Self[A]
 #deprecated
-fn[A, B] T::concat_map(Self[A], (A) -> Self[B]) -> Self[B]
+pub fn[A, B] T::concat_map(Self[A], (A) -> Self[B]) -> Self[B]
 #deprecated
-fn[A : Eq] T::contains(Self[A], A) -> Bool
+pub fn[A : Eq] T::contains(Self[A], A) -> Bool
 #deprecated
-fn[X] T::default() -> Self[X]
+pub fn[X] T::default() -> Self[X]
 #deprecated
-fn[A] T::drop(Self[A], Int) -> Self[A]
+pub fn[A] T::drop(Self[A], Int) -> Self[A]
 #deprecated
-fn[A] T::drop_while(Self[A], (A) -> Bool raise?) -> Self[A] raise?
+pub fn[A] T::drop_while(Self[A], (A) -> Bool raise?) -> Self[A] raise?
 #deprecated
-fn[A] T::each(Self[A], (A) -> Unit raise?) -> Unit raise?
+pub fn[A] T::each(Self[A], (A) -> Unit raise?) -> Unit raise?
 #deprecated
-fn[A] T::eachi(Self[A], (Int, A) -> Unit raise?) -> Unit raise?
+pub fn[A] T::eachi(Self[A], (Int, A) -> Unit raise?) -> Unit raise?
 #deprecated
-fn[A : Eq] T::equal(Self[A], Self[A]) -> Bool
+pub fn[A : Eq] T::equal(Self[A], Self[A]) -> Bool
 #deprecated
-fn[A] T::filter(Self[A], (A) -> Bool raise?) -> Self[A] raise?
+pub fn[A] T::filter(Self[A], (A) -> Bool raise?) -> Self[A] raise?
 #deprecated
-fn[A, B] T::filter_map(Self[A], (A) -> B?) -> Self[B]
+pub fn[A, B] T::filter_map(Self[A], (A) -> B?) -> Self[B]
 #deprecated
-fn[A] T::find(Self[A], (A) -> Bool raise?) -> A? raise?
+pub fn[A] T::find(Self[A], (A) -> Bool raise?) -> A? raise?
 #deprecated
-fn[A] T::findi(Self[A], (A, Int) -> Bool raise?) -> A? raise?
+pub fn[A] T::findi(Self[A], (A, Int) -> Bool raise?) -> A? raise?
 #deprecated
-fn[A, B] T::flat_map(Self[A], (A) -> Self[B] raise?) -> Self[B] raise?
+pub fn[A, B] T::flat_map(Self[A], (A) -> Self[B] raise?) -> Self[B] raise?
 #deprecated
-fn[A] T::flatten(Self[Self[A]]) -> Self[A]
+pub fn[A] T::flatten(Self[Self[A]]) -> Self[A]
 #deprecated
-fn[A, B] T::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
+pub fn[A, B] T::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 #deprecated
-fn[A, B] T::fold_left(Self[A], (B, A) -> B raise?, init~ : B) -> B raise?
+pub fn[A, B] T::fold_left(Self[A], (B, A) -> B raise?, init~ : B) -> B raise?
 #deprecated
-fn[A, B] T::fold_lefti(Self[A], (Int, B, A) -> B raise?, init~ : B) -> B raise?
+pub fn[A, B] T::fold_lefti(Self[A], (Int, B, A) -> B raise?, init~ : B) -> B raise?
 #deprecated
-fn[A, B] T::fold_right(Self[A], (A, B) -> B raise?, init~ : B) -> B raise?
+pub fn[A, B] T::fold_right(Self[A], (A, B) -> B raise?, init~ : B) -> B raise?
 #deprecated
-fn[A, B] T::fold_righti(Self[A], (Int, A, B) -> B raise?, init~ : B) -> B raise?
+pub fn[A, B] T::fold_righti(Self[A], (Int, A, B) -> B raise?, init~ : B) -> B raise?
 #deprecated
-fn[A, B] T::foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
+pub fn[A, B] T::foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
 #deprecated
-fn[A] T::from_array(ArrayView[A]) -> Self[A]
+pub fn[A] T::from_array(ArrayView[A]) -> Self[A]
 #deprecated
-fn[A] T::from_iter(Iter[A]) -> Self[A]
+pub fn[A] T::from_iter(Iter[A]) -> Self[A]
 #deprecated
-fn[A : @json.FromJson] T::from_json(Json) -> Self[A] raise @json.JsonDecodeError
+pub fn[A : @json.FromJson] T::from_json(Json) -> Self[A] raise @json.JsonDecodeError
 #deprecated
-fn[A] T::head(Self[A]) -> A?
+pub fn[A] T::head(Self[A]) -> A?
 #deprecated
-fn[A] T::head_exn(Self[A]) -> A
+pub fn[A] T::head_exn(Self[A]) -> A
 #deprecated
-fn[A] T::init_(Self[A]) -> Self[A]
+pub fn[A] T::init_(Self[A]) -> Self[A]
 #deprecated
-fn[A] T::intercalate(Self[Self[A]], Self[A]) -> Self[A]
+pub fn[A] T::intercalate(Self[Self[A]], Self[A]) -> Self[A]
 #deprecated
-fn[A] T::intersperse(Self[A], A) -> Self[A]
+pub fn[A] T::intersperse(Self[A], A) -> Self[A]
 #deprecated
-fn[A] T::is_empty(Self[A]) -> Bool
+pub fn[A] T::is_empty(Self[A]) -> Bool
 #deprecated
-fn[A : Eq] T::is_prefix(Self[A], Self[A]) -> Bool
+pub fn[A : Eq] T::is_prefix(Self[A], Self[A]) -> Bool
 #deprecated
-fn[A : Eq] T::is_suffix(Self[A], Self[A]) -> Bool
+pub fn[A : Eq] T::is_suffix(Self[A], Self[A]) -> Bool
 #deprecated
-fn[A] T::iter(Self[A]) -> Iter[A]
+pub fn[A] T::iter(Self[A]) -> Iter[A]
 #deprecated
-fn[A] T::iter2(Self[A]) -> Iter2[Int, A]
+pub fn[A] T::iter2(Self[A]) -> Iter2[Int, A]
 #deprecated
-fn[A] T::last(Self[A]) -> A?
+pub fn[A] T::last(Self[A]) -> A?
 #deprecated
-fn[A] T::length(Self[A]) -> Int
+pub fn[A] T::length(Self[A]) -> Int
 #deprecated
-fn[A : Eq, B] T::lookup(Self[(A, B)], A) -> B?
+pub fn[A : Eq, B] T::lookup(Self[(A, B)], A) -> B?
 #deprecated
-fn[A, B] T::map(Self[A], (A) -> B) -> Self[B]
+pub fn[A, B] T::map(Self[A], (A) -> B) -> Self[B]
 #deprecated
-fn[A, B] T::mapi(Self[A], (Int, A) -> B raise?) -> Self[B] raise?
+pub fn[A, B] T::mapi(Self[A], (Int, A) -> B raise?) -> Self[B] raise?
 #deprecated
-fn[A : Compare] T::maximum(Self[A]) -> A?
+pub fn[A : Compare] T::maximum(Self[A]) -> A?
 #deprecated
-fn[A : Compare] T::minimum(Self[A]) -> A?
+pub fn[A : Compare] T::minimum(Self[A]) -> A?
 #deprecated
-fn[A] T::nth(Self[A], Int) -> A?
+pub fn[A] T::nth(Self[A], Int) -> A?
 #deprecated
-fn[A] T::nth_exn(Self[A], Int) -> A
+pub fn[A] T::nth_exn(Self[A], Int) -> A
 #deprecated
-fn[A] T::of(ArrayView[A]) -> Self[A]
+pub fn[A] T::of(ArrayView[A]) -> Self[A]
 #deprecated
-fn[A : Eq] T::remove(Self[A], A) -> Self[A]
+pub fn[A : Eq] T::remove(Self[A], A) -> Self[A]
 #deprecated
-fn[A] T::remove_at(Self[A], Int) -> Self[A]
+pub fn[A] T::remove_at(Self[A], Int) -> Self[A]
 #deprecated
-fn[A] T::rev(Self[A]) -> Self[A]
+pub fn[A] T::rev(Self[A]) -> Self[A]
 #deprecated
-fn[A] T::rev_concat(Self[A], Self[A]) -> Self[A]
+pub fn[A] T::rev_concat(Self[A], Self[A]) -> Self[A]
 #deprecated
-fn[A, B] T::rev_fold(Self[A], init~ : B, (A, B) -> B raise?) -> B raise?
+pub fn[A, B] T::rev_fold(Self[A], init~ : B, (A, B) -> B raise?) -> B raise?
 #deprecated
-fn[A, B] T::rev_foldi(Self[A], init~ : B, (Int, A, B) -> B raise?) -> B raise?
+pub fn[A, B] T::rev_foldi(Self[A], init~ : B, (Int, A, B) -> B raise?) -> B raise?
 #deprecated
-fn[A, B] T::rev_map(Self[A], (A) -> B raise?) -> Self[B] raise?
+pub fn[A, B] T::rev_map(Self[A], (A) -> B raise?) -> Self[B] raise?
 #deprecated
-fn[A, E] T::scan_left(Self[A], (E, A) -> E raise?, init~ : E) -> Self[E] raise?
+pub fn[A, E] T::scan_left(Self[A], (E, A) -> E raise?, init~ : E) -> Self[E] raise?
 #deprecated
-fn[A, B] T::scan_right(Self[A], (A, B) -> B raise?, init~ : B) -> Self[B] raise?
+pub fn[A, B] T::scan_right(Self[A], (A, B) -> B raise?, init~ : B) -> Self[B] raise?
 #deprecated
-fn[A : Compare] T::sort(Self[A]) -> Self[A]
+pub fn[A : Compare] T::sort(Self[A]) -> Self[A]
 #deprecated
-fn[A] T::tail(Self[A]) -> Self[A]
+pub fn[A] T::tail(Self[A]) -> Self[A]
 #deprecated
-fn[A] T::take(Self[A], Int) -> Self[A]
+pub fn[A] T::take(Self[A], Int) -> Self[A]
 #deprecated
-fn[A] T::take_while(Self[A], (A) -> Bool) -> Self[A]
+pub fn[A] T::take_while(Self[A], (A) -> Bool) -> Self[A]
 #deprecated
-fn[A] T::to_array(Self[A]) -> Array[A]
+pub fn[A] T::to_array(Self[A]) -> Array[A]
 #deprecated
-fn[A : ToJson] T::to_json(Self[A]) -> Json
+pub fn[A : ToJson] T::to_json(Self[A]) -> Json
 #deprecated
-fn[A, B] T::unzip(Self[(A, B)]) -> (Self[A], Self[B])
+pub fn[A, B] T::unzip(Self[(A, B)]) -> (Self[A], Self[B])
 #deprecated
-fn[A, B] T::zip(Self[A], Self[B]) -> Self[(A, B)]?
-impl[A] Add for T[A]
-impl[A : Compare] Compare for T[A]
-impl[X] Default for T[X]
-impl[A : Eq] Eq for T[A]
-impl[A : Hash] Hash for T[A]
-impl[A : Show] Show for T[A]
-impl[A : ToJson] ToJson for T[A]
-impl[A : @json.FromJson] @json.FromJson for T[A]
-impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[X]
+pub fn[A, B] T::zip(Self[A], Self[B]) -> Self[(A, B)]?
+pub impl[A] Add for T[A]
+pub impl[A : Compare] Compare for T[A]
+pub impl[X] Default for T[X]
+pub impl[A : Eq] Eq for T[A]
+pub impl[A : Hash] Hash for T[A]
+pub impl[A : Show] Show for T[A]
+pub impl[A : ToJson] ToJson for T[A]
+pub impl[A : @json.FromJson] @json.FromJson for T[A]
+pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for T[X]
 
 // Type aliases
 

@@ -15,7 +15,7 @@ The `Unit` type has exactly one value: `()`. This might seem trivial, but it ser
 
 The unit value can be created in multiple ways:
 
-```moonbit
+```mbt check
 ///|
 test "unit construction" {
   // Direct literal syntax
@@ -45,7 +45,7 @@ test "unit construction" {
 
 Functions that return `Unit` are typically called for their side effects:
 
-```moonbit
+```mbt check
 ///|
 test "side effect patterns" {
   let numbers = [1, 2, 3, 4, 5]
@@ -72,7 +72,7 @@ test "side effect patterns" {
 
 Unit values have a standard string representation for debugging:
 
-```moonbit
+```mbt check
 ///|
 test "unit string conversion" {
   let u = ()
@@ -94,7 +94,7 @@ test "unit string conversion" {
 
 Unit is particularly useful in generic contexts where you need to represent "no meaningful value":
 
-```moonbit
+```mbt check
 ///|
 test "generic unit usage" {
   // Simulating a function that processes data and optionally returns a result
@@ -121,7 +121,7 @@ test "generic unit usage" {
 
 Unit implements essential traits for seamless integration with MoonBit's type system:
 
-```moonbit
+```mbt check
 ///|
 test "unit trait implementations" {
   let u1 = ()
@@ -148,7 +148,7 @@ test "unit trait implementations" {
 
 ### Result Accumulation
 
-```moonbit
+```mbt check
 ///|
 test "result accumulation" {
   // Accumulating side effects without meaningful return values
@@ -167,7 +167,7 @@ test "result accumulation" {
 
 ### Builder Pattern Termination
 
-```moonbit
+```mbt check
 ///|
 test "builder pattern" {
   // Simulating a builder pattern where build() returns Unit

@@ -6,7 +6,7 @@ This library provides common mathematical functions for floating-point arithmeti
 
 MoonBit math library provides the mathematical constant π:
 
-```moonbit
+```mbt check
 ///|
 test "mathematical constants" {
   inspect(@math.PI, content="3.141592653589793")
@@ -19,7 +19,7 @@ test "mathematical constants" {
 
 Several functions are available for rounding numbers in different ways:
 
-```moonbit
+```mbt check
 ///|
 test "rounding functions" {
   // Round to nearest integer
@@ -44,7 +44,7 @@ test "rounding functions" {
 
 The library provides standard exponential and logarithmic operations:
 
-```moonbit
+```mbt check
 ///|
 test "exponential and logarithmic" {
   // Exponential functions
@@ -67,7 +67,7 @@ test "exponential and logarithmic" {
 
 Standard trigonometric functions operating in radians:
 
-```moonbit
+```mbt check
 ///|
 test "basic trigonometry" {
   // Basic trig functions
@@ -86,7 +86,7 @@ test "basic trigonometry" {
 
 The library also includes hyperbolic functions and their inverses:
 
-```moonbit
+```mbt check
 ///|
 test "hyperbolic functions" {
   // Hyperbolic functions
@@ -107,7 +107,7 @@ test "hyperbolic functions" {
 
 Some special mathematical functions taking two arguments:
 
-```moonbit
+```mbt check
 ///|
 test "special functions" {
   // atan2 gives the angle in radians between the positive x-axis and the ray to point (x,y)

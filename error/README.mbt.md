@@ -6,7 +6,7 @@ This package provides utilities for working with MoonBit's error handling system
 
 MoonBit uses a structured error system with `raise` and `try` constructs:
 
-```moonbit
+```mbt check
 ///|
 test "basic error handling" {
   fn divide(a : Int, b : Int) -> Int raise {
@@ -31,7 +31,7 @@ test "basic error handling" {
 
 Define custom error types using `suberror`:
 
-```moonbit
+```mbt check
 ///|
 suberror ValidationError String
 
@@ -76,7 +76,7 @@ test "custom errors" {
 
 The error package provides `Show` and `ToJson` implementations:
 
-```moonbit
+```mbt check
 ///|
 suberror MyError Int derive(ToJson)
 
@@ -98,7 +98,7 @@ test "error display and json" {
 
 Handle errors at different levels of your application:
 
-```moonbit
+```mbt check
 ///|
 suberror ParseError String
 
@@ -138,7 +138,7 @@ test "error propagation" {
 
 Use `protect` functions for resource cleanup:
 
-```moonbit
+```mbt check
 ///|
 suberror ResourceError String
 
@@ -170,7 +170,7 @@ test "resource management" {
 
 Combine multiple error-producing operations:
 
-```moonbit
+```mbt check
 ///|
 suberror ConfigError String
 

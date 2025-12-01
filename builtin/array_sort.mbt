@@ -546,7 +546,7 @@ test "stable_sort" {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let sorted : FixedArray[Int] = [1, 2, 3, 4, 5]
 ///   let unsorted : FixedArray[Int] = [5, 4, 3, 2, 1]
 ///   inspect(FixedArray::is_sorted(sorted), content="true")

@@ -43,7 +43,7 @@ extern "js" fn JSArray::copy(self : JSArray) -> JSArray =
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let original = [1, 2, 3]
 ///   let copied = original.copy()
 ///   inspect(copied, content="[1, 2, 3]")

@@ -258,7 +258,7 @@ pub fn[T, E] Result::unwrap(self : Result[T, E]) -> T {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let err : Result[Int, String] = Err("error message")
 ///   inspect(err.unwrap_err(), content="error message")
 /// ```

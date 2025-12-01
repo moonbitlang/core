@@ -38,7 +38,7 @@ fn k_expo2f(x : Float) -> Float {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   inspect(@math.sinhf(0), content="0")
 ///   inspect(@math.sinhf(-0), content="0")
 ///   inspect(@math.sinhf(1), content="1.175201177597046")
@@ -92,7 +92,7 @@ pub fn sinhf(x : Float) -> Float {
 ///
 /// Example
 ///
-/// ```moonbit
+/// ```mbt check
 ///   inspect(@math.coshf(0), content="1")
 ///   inspect(@math.coshf(-0), content="1")
 ///   inspect(@math.coshf(1), content="1.5430805683135986")
@@ -146,7 +146,7 @@ pub fn coshf(x : Float) -> Float {
 ///
 /// Example
 ///
-/// ```moonbit
+/// ```mbt check
 ///   inspect(@math.tanhf(0), content="0")
 ///   inspect(@math.tanhf(-0), content="0")
 ///   inspect(@math.tanhf(1), content="0.7615941762924194")
@@ -207,7 +207,7 @@ pub fn tanhf(x : Float) -> Float {
 ///
 /// Example
 ///
-/// ```moonbit
+/// ```mbt check
 ///   inspect(@math.asinhf(0), content="0")
 ///   inspect(@math.asinhf(-0), content="0")
 ///   inspect(@math.asinhf(1), content="0.8813735842704773")
@@ -262,7 +262,7 @@ pub fn asinhf(x : Float) -> Float {
 ///
 /// Example
 ///
-/// ```moonbit
+/// ```mbt check
 ///   inspect(@math.acoshf(1), content="0")
 ///   inspect(@math.acoshf(2), content="1.316957950592041")
 ///   inspect(@math.acoshf(1000), content="7.600902080535889")
@@ -308,7 +308,7 @@ pub fn acoshf(x : Float) -> Float {
 ///
 /// Example
 ///
-/// ```moonbit
+/// ```mbt check
 ///   inspect(@math.atanhf(0), content="0")
 ///   inspect(@math.atanhf(-0), content="0")
 ///   inspect(@math.atanhf(0.5), content="0.5493061542510986")

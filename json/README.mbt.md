@@ -6,7 +6,7 @@ The `json` package provides comprehensive JSON handling capabilities, including 
 
 ### Parsing and Validating JSON
 
-```moonbit
+```mbt check
 ///|
 test "parse and validate jsons" {
   // Check if a string is valid JSON
@@ -37,7 +37,7 @@ test "parse and validate jsons" {
 
 ### Object Navigation
 
-```moonbit
+```mbt check
 ///|
 test "json object navigation" {
   let json = @json.parse(
@@ -68,7 +68,7 @@ test "json object navigation" {
 
 ### Array Navigation
 
-```moonbit
+```mbt check
 ///|
 test "json array navigation" {
   let array = @json.parse("[1,2,3,4,5]")
@@ -94,7 +94,7 @@ test "json array navigation" {
 
 ### From JSON to Native Types
 
-```moonbit
+```mbt check
 ///|
 test "json decode" {
   // Decode basic types
@@ -121,7 +121,7 @@ test "json decode" {
 
 ### Error Handling with JSON Path
 
-```moonbit
+```mbt check
 ///|
 test "json path" {
   // Handle decode errors
@@ -142,7 +142,7 @@ test "json path" {
 `@json.inspect()` can be used as an alternative to `inspect()` when a value's `ToJson` implementation is considered a better debugging representation than its `Show` implementation.
 This is particularly true for deeply-nested data structures.
 
-```moonbit
+```mbt check
 ///|
 test "json inspection" {
   let null = null

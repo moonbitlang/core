@@ -26,7 +26,7 @@
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let a = b'\x02'
 ///   let b = b'\x03'
 ///   inspect(a * b, content="b'\\x06'") // 2 * 3 = 6
@@ -50,7 +50,7 @@ pub impl Mul for Byte with mul(self : Byte, that : Byte) -> Byte {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let a = b'\xFF' // 255
 ///   let b = b'\x03' // 3
 ///   inspect(a / b, content="b'\\x55'") // 255 / 3 = 85 (0x55)
@@ -192,7 +192,7 @@ pub fn Byte::to_string(self : Byte) -> String {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let hasher = Hasher::new(seed=0)
 ///   hasher.combine_byte(b'\xFF')
 ///   inspect(hasher.finalize(), content="1955036104")

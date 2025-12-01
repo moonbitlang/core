@@ -6,7 +6,7 @@ Internally, it uses the `Chacha8` cipher to generate random numbers. It is a cry
 
 # Usage
 
-```moonbit
+```mbt check
 ///|
 test {
   let r = @random.Rand::new()

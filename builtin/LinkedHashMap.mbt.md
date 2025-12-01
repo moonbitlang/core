@@ -10,7 +10,7 @@ A mutable linked hash map based on a Robin Hood hash table, links all entry node
 
 You can create an empty map using `new()` or construct it using `from_array()`.
 
-```moonbit 
+```mbt check 
 ///|
 test {
   let _map1 : Map[String, Int] = {}
@@ -23,7 +23,7 @@ test {
 
 You can use `set()` to add a key-value pair to the map, and use `get()` to get a key-value pair.
 
-```moonbit
+```mbt check
 ///|
 test {
   let map : Map[String, Int] = {}
@@ -41,7 +41,7 @@ test {
 
 For maps with `String` or `Bytes` keys, you can efficiently retrieve values using `StringView` or `BytesView` without creating new strings or bytes. This is useful when working with substrings or sub-arrays.
 
-```moonbit
+```mbt check
 ///|
 test {
   // Using get_from_string with StringView
@@ -62,7 +62,7 @@ test {
 
 You can use `remove()` to remove a key-value pair.
 
-```moonbit
+```mbt check
 ///|
 test {
   let map = { "a": 1, "b": 2, "c": 3 }
@@ -80,7 +80,7 @@ test {
 
 You can use `contains()` to check whether a key exists.
 
-```moonbit
+```mbt check
 ///|
 test {
   let map = { "a": 1, "b": 2, "c": 3 }
@@ -93,7 +93,7 @@ test {
 
 You can use `size()` to get the number of key-value pairs in the map, or `capacity()` to get the current capacity.
 
-```moonbit
+```mbt check
 ///|
 test {
   let map = { "a": 1, "b": 2, "c": 3 }
@@ -104,7 +104,7 @@ test {
 
 Similarly, you can use `is_empty()` to check whether the map is empty.
 
-```moonbit
+```mbt check
 ///|
 test {
   let map : Map[String, Int] = {}
@@ -116,7 +116,7 @@ test {
 
 You can use `clear` to remove all key-value pairs from the map, but the allocated memory will not change.
 
-```moonbit
+```mbt check
 ///|
 test {
   let map = { "a": 1, "b": 2, "c": 3 }
@@ -129,7 +129,7 @@ test {
 
 You can use `each()` or `eachi()` to iterate through all key-value pairs in the order of insertion.
 
-```moonbit
+```mbt check
 ///|
 test {
   let map = { "a": 1, "b": 2, "c": 3 }

@@ -31,7 +31,7 @@
 ///     content=(
 ///       
 ///   #|b"T\x00e\x00s\x00t\x00"
-/// 
+///
 ///     ),
 ///   )
 /// ```
@@ -69,7 +69,7 @@ fn Buffer::grow_if_necessary(self : Buffer, required : Int) -> Unit {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let buf = @buffer.new()
 ///   buf.write_string("Test")
 ///   inspect(buf.length(), content="8") // each char takes 2 bytes in UTF-16
@@ -90,7 +90,7 @@ pub fn Buffer::length(self : Buffer) -> Int {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let buf = @buffer.new()
 ///   inspect(buf.is_empty(), content="true")
 ///   buf.write_string("test")
@@ -113,7 +113,7 @@ pub fn Buffer::is_empty(self : Buffer) -> Bool {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let buf = @buffer.new(size_hint=10)
 ///   inspect(buf.length(), content="0")
 ///   buf.write_string("test")
@@ -179,7 +179,7 @@ pub fn from_iter(iter : Iter[Byte]) -> Buffer {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let buf = @buffer.new()
 ///   buf.write_string("Test")
 ///   // Each UTF-16 char takes 2 bytes in little-endian format
@@ -192,7 +192,7 @@ pub fn from_iter(iter : Iter[Byte]) -> Buffer {
 ///     content=(
 ///       
 ///   #|b"T\x00e\x00s\x00t\x00"
-/// 
+///
 ///     ),
 ///   )
 /// ```
@@ -213,7 +213,7 @@ pub impl Logger for Buffer with write_string(self, value) {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let buf = @buffer.new()
 ///   buf.write_uint64_be(0xAABBCCDD11223344)
 ///   // Bytes are written in big-endian order
@@ -222,7 +222,7 @@ pub impl Logger for Buffer with write_string(self, value) {
 ///     content=(
 ///       
 ///   #|b"\xaa\xbb\xcc\xdd\x11\x223D"
-/// 
+///
 ///     ),
 ///   )
 /// ```
@@ -251,7 +251,7 @@ pub fn Buffer::write_uint64_be(self : Buffer, value : UInt64) -> Unit {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let buf = @buffer.new()
 ///   buf.write_uint64_le(0x0123456789ABCDEF)
 ///   inspect(
@@ -259,7 +259,7 @@ pub fn Buffer::write_uint64_be(self : Buffer, value : UInt64) -> Unit {
 ///     content=(
 ///       
 ///   #|b"\xef\xcd\xab\x89gE#\x01"
-/// 
+///
 ///     ),
 ///   )
 /// ```
@@ -288,7 +288,7 @@ pub fn Buffer::write_uint64_le(self : Buffer, value : UInt64) -> Unit {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let buf = @buffer.new()
 ///   buf.write_int64_be(0x0102030405060708L)
 ///   inspect(
@@ -312,7 +312,7 @@ pub fn Buffer::write_int64_be(self : Buffer, value : Int64) -> Unit {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let buf = @buffer.new()
 ///   buf.write_int64_le(-1L)
 ///   inspect(
@@ -337,7 +337,7 @@ pub fn Buffer::write_int64_le(self : Buffer, value : Int64) -> Unit {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let buf = @buffer.new()
 ///   buf.write_uint_be(0x12345678)
 ///   inspect(buf.contents(), content=(
@@ -366,7 +366,7 @@ pub fn Buffer::write_uint_be(self : Buffer, value : UInt) -> Unit {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let buf = @buffer.new()
 ///   buf.write_uint_le(0x12345678)
 ///   inspect(buf.contents(), content=(
@@ -394,7 +394,7 @@ pub fn Buffer::write_uint_le(self : Buffer, value : UInt) -> Unit {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let buf = @buffer.new()
 ///   buf.write_int_be(0x12345678)
 ///   inspect(buf.contents(), content=(
@@ -417,7 +417,7 @@ pub fn Buffer::write_int_be(self : Buffer, value : Int) -> Unit {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let buf = @buffer.new()
 ///   buf.write_int_le(-1)
 ///   inspect(buf.contents(), content="b\"\\xff\\xff\\xff\\xff\"")
@@ -437,13 +437,13 @@ pub fn Buffer::write_int_le(self : Buffer, value : Int) -> Unit {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let buf = @buffer.new()
 ///   buf.write_uint16_be(0x1234)
 ///   inspect(buf.contents(), content=(
 ///   
 ///   #|b"\x124"
-/// 
+///
 /// ))
 /// ```
 pub fn Buffer::write_uint16_be(self : Buffer, value : UInt16) -> Unit {
@@ -466,13 +466,13 @@ pub fn Buffer::write_uint16_be(self : Buffer, value : UInt16) -> Unit {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let buf = @buffer.new()
 ///   buf.write_uint16_le(0x1234)
 ///   inspect(buf.contents(), content=(
 ///   
 ///   #|b"4\x12"
-/// 
+///
 /// ))
 /// ```
 pub fn Buffer::write_uint16_le(self : Buffer, value : UInt16) -> Unit {
@@ -494,13 +494,13 @@ pub fn Buffer::write_uint16_le(self : Buffer, value : UInt16) -> Unit {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let buf = @buffer.new()
 ///   buf.write_int16_be(0x1234)
 ///   inspect(buf.contents(), content=(
 ///   
 ///   #|b"\x124"
-/// 
+///
 /// ))
 /// ```
 pub fn Buffer::write_int16_be(self : Buffer, value : Int16) -> Unit {
@@ -522,7 +522,7 @@ pub fn Buffer::write_int16_be(self : Buffer, value : Int16) -> Unit {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let buf = @buffer.new()
 ///   buf.write_int16_le(-1)
 ///   inspect(buf.contents(), content=(
@@ -548,7 +548,7 @@ pub fn Buffer::write_int16_le(self : Buffer, value : Int16) -> Unit {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let buf = @buffer.new()
 ///   buf.write_double_be(1.0)
 ///   inspect(buf.contents(), content=(
@@ -570,7 +570,7 @@ pub fn Buffer::write_double_be(self : Buffer, value : Double) -> Unit {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let buf = @buffer.new()
 ///   buf.write_double_le(3.14)
 ///   inspect(
@@ -596,7 +596,7 @@ pub fn Buffer::write_double_le(self : Buffer, value : Double) -> Unit {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let buf = @buffer.new()
 ///   buf.write_float_be(3.14)
 ///   // In big-endian format, 3.14 is represented as [0x40, 0x48, 0xF5, 0xC3]
@@ -619,7 +619,7 @@ pub fn Buffer::write_float_be(self : Buffer, value : Float) -> Unit {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let buf = @buffer.new()
 ///   buf.write_float_le(3.14)
 ///   // The bytes are written in little-endian format
@@ -644,7 +644,7 @@ pub fn Buffer::write_float_le(self : Buffer, value : Float) -> Unit {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let buf = @buffer.new()
 ///   buf.write_object(42)
 ///   inspect(buf.contents().to_unchecked_string(), content="42")
@@ -663,7 +663,7 @@ pub fn Buffer::write_object(self : Buffer, value : &Show) -> Unit {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let buf = @buffer.new()
 ///   buf.write_bytes(b"Test")
 ///   inspect(
@@ -671,7 +671,7 @@ pub fn Buffer::write_object(self : Buffer, value : &Show) -> Unit {
 ///     content=(
 ///       
 ///   #|b"Test"
-/// 
+///
 ///     ),
 ///   )
 /// ```
@@ -692,7 +692,7 @@ pub fn Buffer::write_bytes(self : Buffer, value : Bytes) -> Unit {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let buf = @buffer.new()
 ///   let view = b"Test"[1:3]
 ///   buf.write_bytesview(view)
@@ -701,7 +701,7 @@ pub fn Buffer::write_bytes(self : Buffer, value : Bytes) -> Unit {
 ///     content=(
 ///       
 ///   #|b"es"
-/// 
+///
 ///     ),
 ///   )
 /// ```
@@ -844,7 +844,7 @@ pub fn Buffer::write_string_utf16be(buf : Self, string : StringView) -> Unit {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let buf = @buffer.new()
 ///   buf.write_view("Hello, World!"[:5])
 ///   inspect(
@@ -852,7 +852,7 @@ pub fn Buffer::write_string_utf16be(buf : Self, string : StringView) -> Unit {
 ///     content=(
 ///       
 ///   #|b"H\x00e\x00l\x00l\x00o\x00"
-/// 
+///
 ///     ),
 ///   )
 /// ```
@@ -878,7 +878,7 @@ pub impl Logger for Buffer with write_view(self : Buffer, value : StringView) ->
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let buf = @buffer.new()
 ///   buf.write_char('A')
 ///   inspect(
@@ -886,7 +886,7 @@ pub impl Logger for Buffer with write_view(self : Buffer, value : StringView) ->
 ///     content=(
 ///       
 ///   #|b"A\x00"
-/// 
+///
 ///     ),
 ///   )
 /// ```
@@ -907,7 +907,7 @@ pub impl Logger for Buffer with write_char(self : Buffer, value : Char) -> Unit 
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let buf = @buffer.new()
 ///   buf.write_byte(b'\x41')
 ///   inspect(buf.contents(), content=(
@@ -930,7 +930,7 @@ pub fn Buffer::write_byte(self : Buffer, value : Byte) -> Unit {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let buf = @buffer.new()
 ///   let bytes = b"Hello"
 ///   buf.write_iter(bytes.iter())
@@ -939,7 +939,7 @@ pub fn Buffer::write_byte(self : Buffer, value : Byte) -> Unit {
 ///     content=(
 ///       
 ///   #|b"Hello"
-/// 
+///
 ///     ),
 ///   )
 /// ```
@@ -959,7 +959,7 @@ pub fn Buffer::write_iter(self : Buffer, iter : Iter[Byte]) -> Unit {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 /// let buf = @buffer.new()
 /// buf.write_string("Hello")
 /// inspect(buf.length(), content="10")
@@ -984,7 +984,7 @@ pub fn Buffer::reset(self : Buffer) -> Unit {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```mbt check
 ///   let buf = @buffer.new()
 ///   buf.write_string("Test")
 ///   let bytes = buf.to_bytes()

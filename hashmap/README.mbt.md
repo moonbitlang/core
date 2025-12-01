@@ -8,7 +8,7 @@ A mutable hash map based on a Robin Hood hash table.
 
 You can create an empty map using `new()` or construct it using `from_array()`.
 
-```moonbit
+```mbt check
 ///|
 test {
   let _map2 : @hashmap.HashMap[String, Int] = @hashmap.new()
@@ -20,7 +20,7 @@ test {
 
 You can use `set()` to add a key-value pair to the map, and use `get()` to get a value.
 
-```moonbit
+```mbt check
 ///|
 test {
   let map : @hashmap.HashMap[String, Int] = @hashmap.new()
@@ -37,7 +37,7 @@ test {
 
 You can use `remove()` to remove a key-value pair.
 
-```moonbit
+```mbt check
 ///|
 test {
   let map = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
@@ -50,7 +50,7 @@ test {
 
 You can use `contains()` to check whether a key exists.
 
-```moonbit
+```mbt check
 ///|
 test {
   let map = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
@@ -63,7 +63,7 @@ test {
 
 You can use `size()` to get the number of key-value pairs in the map, or `capacity()` to get the current capacity.
 
-```moonbit
+```mbt check
 ///|
 test {
   let map = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
@@ -74,7 +74,7 @@ test {
 
 Similarly, you can use `is_empty()` to check whether the map is empty.
 
-```moonbit
+```mbt check
 ///|
 test {
   let map : @hashmap.HashMap[String, Int] = @hashmap.new()
@@ -86,7 +86,7 @@ test {
 
 You can use `clear` to remove all key-value pairs from the map, but the allocated memory will not change.
 
-```moonbit
+```mbt check
 ///|
 test {
   let map = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
@@ -99,7 +99,7 @@ test {
 
 You can use `each()` or `eachi()` to iterate through all key-value pairs.
 
-```moonbit
+```mbt check
 ///|
 test {
   let map = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
@@ -112,7 +112,7 @@ test {
 
 Or use `iter()` to get an iterator of hashmap.
 
-```moonbit
+```mbt check
 ///|
 test {
   let map = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])

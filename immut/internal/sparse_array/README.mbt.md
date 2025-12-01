@@ -6,7 +6,7 @@ This package provides sparse array and bitset utilities used internally by immut
 
 Create and manipulate sparse arrays:
 
-```moonbit
+```mbt check
 ///|
 test "sparse array basics" {
   // Empty sparse array
@@ -33,7 +33,7 @@ test "sparse array basics" {
 
 Add, remove, and modify elements:
 
-```moonbit
+```mbt check
 ///|
 test "sparse array operations" {
   let arr = @sparse_array.singleton(3, 100)
@@ -62,7 +62,7 @@ test "sparse array operations" {
 
 Work with compact bitsets for tracking presence:
 
-```moonbit
+```mbt check
 ///|
 test "bitset operations" {
   // Note: Bitset constructor is internal, so we demonstrate concepts
@@ -91,7 +91,7 @@ test "bitset operations" {
 
 Perform set-like operations on sparse arrays:
 
-```moonbit
+```mbt check
 ///|
 test "sparse array set operations" {
   let arr1 = @sparse_array.doubleton(1, "a", 3, "c")
@@ -119,7 +119,7 @@ test "sparse array set operations" {
 
 Transform sparse arrays while maintaining efficiency:
 
-```moonbit
+```mbt check
 ///|
 test "sparse array transformations" {
   let numbers = @sparse_array.doubleton(1, 10, 5, 50)
@@ -145,7 +145,7 @@ test "sparse array transformations" {
 
 Combine multiple sparse arrays:
 
-```moonbit
+```mbt check
 ///|
 test "sparse array combinations" {
   let arr1 = @sparse_array.doubleton(1, "a", 3, "c")
@@ -167,7 +167,7 @@ test "sparse array combinations" {
 
 Work with sparse arrays efficiently:
 
-```moonbit
+```mbt check
 ///|
 test "advanced sparse operations" {
   let numbers = @sparse_array.doubleton(2, 20, 5, 50)

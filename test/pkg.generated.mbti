@@ -3,27 +3,27 @@ package "moonbitlang/core/test"
 
 // Values
 #callsite(autofill(loc))
-fn[T] fail(String, loc~ : SourceLoc) -> T raise
+pub fn[T] fail(String, loc~ : SourceLoc) -> T raise
 
 #alias(is_not, deprecated)
 #callsite(autofill(loc))
-fn[T : Show] not_same_object(T, T, loc~ : SourceLoc) -> Unit raise
+pub fn[T : Show] not_same_object(T, T, loc~ : SourceLoc) -> Unit raise
 
 #callsite(autofill(loc))
-fn[T : Show] same_object(T, T, loc~ : SourceLoc) -> Unit raise
+pub fn[T : Show] same_object(T, T, loc~ : SourceLoc) -> Unit raise
 
 // Errors
 
 // Types and methods
 #alias(T, deprecated)
 type Test
-fn Test::name(Self) -> String
+pub fn Test::name(Self) -> String
 #as_free_fn
-fn Test::new(String) -> Self
+pub fn Test::new(String) -> Self
 #callsite(autofill(args_loc, loc))
-fn Test::snapshot(Self, filename~ : String, loc~ : SourceLoc, args_loc~ : ArgsLoc) -> Unit raise SnapshotError
-fn Test::write(Self, &Show) -> Unit
-fn Test::writeln(Self, &Show) -> Unit
+pub fn Test::snapshot(Self, filename~ : String, loc~ : SourceLoc, args_loc~ : ArgsLoc) -> Unit raise SnapshotError
+pub fn Test::write(Self, &Show) -> Unit
+pub fn Test::writeln(Self, &Show) -> Unit
 
 // Type aliases
 
