@@ -214,7 +214,7 @@ pub fn[A] T::at(self : T[A], index : Int) -> A {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 ///   let v = @array.from_array([1, 2, 3])
 ///   inspect(v.get(1), content="Some(2)")
 ///   inspect(v.get(-1), content="None")
@@ -427,7 +427,7 @@ pub impl[A : Show] Show for T[A] with output(self, logger) {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 ///   let arr1 = @array.from_array([1, 2, 3])
 ///   let arr2 = @array.from_array([1, 2, 4])
 ///   let arr3 = @array.from_array([1, 2])

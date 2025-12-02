@@ -196,7 +196,7 @@ let small_primes : Array[@bigint.BigInt] = [
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 ///   let rand = @random.Rand::new()
 ///   let prime = BigInt::from_string("17")
 ///   let composite = BigInt::from_string("15")
@@ -240,7 +240,7 @@ pub fn is_probable_prime(
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 ///   let rand = @random.Rand::new()
 ///   let prime = @math.probable_prime(64, rand)
 ///   inspect(@math.is_probable_prime(prime, rand), content="true")

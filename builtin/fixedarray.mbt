@@ -25,7 +25,7 @@
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 ///   let arr : FixedArray[Int] = [1, 2, 3]
 ///   inspect(arr.get(1), content="Some(2)")
 ///
@@ -52,7 +52,7 @@ pub fn[T] FixedArray::get(self : FixedArray[T], idx : Int) -> T? {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 ///   let arr = FixedArray::make(3, 42)
 ///   let mut sum = 0
 ///   arr.iter().each((x) => { sum = sum + x })
@@ -81,7 +81,7 @@ pub fn[T] FixedArray::iter(self : FixedArray[T]) -> Iter[T] {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 ///   let arr = FixedArray::make(3, 10)
 ///   let mut sum = 0
 ///   arr.iter2().each((i, x) => { sum = sum + i + x })
@@ -106,7 +106,7 @@ pub fn[T] FixedArray::iter2(self : FixedArray[T]) -> Iter2[Int, T] {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 ///   let arr : FixedArray[Int] = FixedArray::default()
 ///   inspect(arr.length(), content="0")
 ///   inspect(arr.is_empty(), content="true")
@@ -134,7 +134,7 @@ pub impl[X] Default for FixedArray[X] with default() {
 /// - Does nothing if the array is empty
 /// 
 /// # Example
-/// ```mbt check
+/// ```mbt test
 /// // Fill entire array
 /// let fa : FixedArray[Int] = [0, 0, 0, 0, 0]
 /// fa.fill(3)
@@ -195,7 +195,7 @@ fn[T] FixedArray::unchecked_fill(
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 ///   let empty : FixedArray[Int] = []
 ///   inspect(empty.is_empty(), content="true")
 ///   let non_empty = [1, 2, 3]
@@ -275,7 +275,7 @@ pub fn[T : Compare] FixedArray::binary_search(
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 ///   let arr : FixedArray[Int] = [1, 3, 5, 7, 9]
 ///   let find_3 = arr.binary_search_by((x) => {
 ///     x.compare(3)
@@ -622,7 +622,7 @@ test "mapi" {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 ///   let arr = FixedArray::makei(3, i => i * 2)
 ///   inspect(arr, content="[0, 2, 4]")
 /// ```
@@ -668,7 +668,7 @@ test "fixedarray_new_with_index" {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 ///   let dynamic_array = [1, 2, 3, 4, 5]
 ///   let fixed_array = FixedArray::from_array(dynamic_array)
 ///   inspect(fixed_array, content="[1, 2, 3, 4, 5]")
@@ -826,7 +826,7 @@ test "rev_foldi" {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 ///   let arr : FixedArray[_] = [1, 2, 3, 4, 5]
 ///   arr.rev_in_place()
 ///   inspect(arr, content="[5, 4, 3, 2, 1]")
@@ -854,7 +854,7 @@ pub fn[T] FixedArray::rev_in_place(self : FixedArray[T]) -> Unit {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 ///   let arr : FixedArray[Int] = [1, 2, 3, 4, 5]
 ///   inspect(arr.rev(), content="[5, 4, 3, 2, 1]")
 ///   // Original array remains unchanged
@@ -1245,7 +1245,7 @@ test "ends_with" {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 ///   let arr1 : FixedArray[Int] = [1, 2, 3]
 ///   let arr2 : FixedArray[Int] = [1, 2, 3]
 ///   let arr3 : FixedArray[Int] = [1, 2, 4]
@@ -1313,7 +1313,7 @@ test "equal" {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 ///   let arr1 = [1, 2, 3]
 ///   let arr2 = [1, 2, 4]
 ///   let arr3 = [1, 2]
@@ -1350,7 +1350,7 @@ pub impl[T : Compare] Compare for FixedArray[T] with compare(self, other) {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 ///   let arr1 : FixedArray[Int] = [1, 2, 3]
 ///   let arr2 : FixedArray[Int] = [4, 5, 6]
 ///   inspect(arr1 + arr2, content="[1, 2, 3, 4, 5, 6]")
@@ -1426,7 +1426,7 @@ test "iter" {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 ///   let arr = [1, 2, 3]
 ///   let fixed_arr = FixedArray::from_iter(arr.iter())
 ///   inspect(fixed_arr, content="[1, 2, 3]")
@@ -1447,7 +1447,7 @@ pub fn[T] FixedArray::from_iter(iter : Iter[T]) -> FixedArray[T] {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 ///   let arr = [1, 2, 3]
 ///   let fixed_arr = FixedArray::from_iterator(arr.iterator())
 ///   inspect(fixed_arr, content="[1, 2, 3]")
@@ -1468,7 +1468,7 @@ pub fn[T] FixedArray::from_iterator(iter : Iterator[T]) -> FixedArray[T] {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 ///   let array : FixedArray[Int] = [1, 2, 3]
 ///   inspect(array.last(), content="Some(3)")
 ///   let empty : FixedArray[Int] = []
@@ -1486,7 +1486,7 @@ pub fn[A] FixedArray::last(self : FixedArray[A]) -> A? {
 ///
 /// Example:
 /// 
-/// ```mbt check
+/// ```mbt test
 ///   let fixed_array : FixedArray[String] = ["1", "2", "3"]
 ///   inspect(fixed_array.join(","), content="1,2,3")
 /// ```

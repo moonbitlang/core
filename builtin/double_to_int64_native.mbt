@@ -34,7 +34,7 @@ fn Double::to_unchecked_int64(self : Double) -> Int64 = "%f64_to_i64"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 ///   inspect(42.0.to_int64(), content="42")
 ///   inspect((-42.5).to_int64(), content="-42")
 ///   inspect((0.0 / 0.0).to_int64(), content="0") // NaN
@@ -75,7 +75,7 @@ fn Double::to_unchecked_uint64(self : Double) -> UInt64 = "%f64_to_i64"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 ///   inspect(42.0.to_int64(), content="42")
 ///   inspect((-42.5).to_int64(), content="-42")
 ///   inspect((0.0 / 0.0).to_int64(), content="0") // NaN

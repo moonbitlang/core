@@ -31,7 +31,7 @@
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 ///   inspect(42.0.to_int(), content="42")
 ///   inspect((-42.5).to_int(), content="-42")
 ///   inspect((0.0 / 0.0).to_int(), content="0") // NaN

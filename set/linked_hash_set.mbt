@@ -99,7 +99,7 @@ pub fn[K : Hash + Eq] Set::from_array(arr : ArrayView[K]) -> Set[K] {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 ///   let set : @set.Set[String] = @set.Set::new()
 ///   set.add("key")
 ///   inspect(set.contains("key"), content="true")
@@ -180,7 +180,7 @@ fn[K] Set::set_entry(self : Set[K], entry : Entry[K], new_idx : Int) -> Unit {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 ///   let set : @set.Set[String] = @set.Set::new()
 ///   inspect(set.add_and_check("key"), content="true")  // First insertion
 ///   inspect(set.add_and_check("key"), content="false") // Already exists
@@ -243,7 +243,7 @@ pub fn[K : Hash + Eq] Set::contains(self : Set[K], key : K) -> Bool {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 ///   let set = @set.Set::from_array(["a", "b"])
 ///   set.remove("a")
 ///   inspect(set.contains("a"), content="false")
@@ -279,7 +279,7 @@ pub fn[K : Hash + Eq] Set::remove(self : Set[K], key : K) -> Unit {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 ///   let set = @set.Set::from_array(["a", "b"])
 ///   inspect(set.remove_and_check("a"), content="true")  // Successfully removed
 ///   inspect(set.remove_and_check("a"), content="false") // Already removed

@@ -31,7 +31,7 @@
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 /// inspect(@math.exp(0.0), content="1")
 /// inspect(@math.exp(1.0), content="2.718281828459045")
 /// inspect(@math.exp(-1.0), content="0.36787944117144233")
@@ -56,7 +56,7 @@ pub fn exp(x : Double) -> Double = "Math" "exp"
 ///
 /// Example
 ///
-/// ```mbt check
+/// ```mbt test
 /// inspect(@math.expm1(0.0), content="0")
 /// inspect(@math.expm1(1.0), content="1.718281828459045")
 /// inspect(@math.expm1(2.0), content="6.38905609893065")

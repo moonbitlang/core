@@ -60,7 +60,7 @@ pub let null : Json = Null
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 /// inspect(Json::number(3.14), content="Number(3.14)")
 /// inspect(
 ///   Json::number(@double.infinity, repr="1e9999999999999999999999999999999").stringify(), 
@@ -82,7 +82,7 @@ pub fn Json::number(number : Double, repr? : String) -> Json {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 ///   inspect(Json::string("hello"), content="String(\"hello\")")
 /// ```
 pub fn Json::string(string : String) -> Json {
@@ -100,7 +100,7 @@ pub fn Json::string(string : String) -> Json {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 ///   inspect(Json::boolean(true), content="True")
 ///   inspect(Json::boolean(false), content="False")
 /// ```
@@ -123,7 +123,7 @@ pub fn Json::boolean(boolean : Bool) -> Json {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 ///   let values : Array[Json] = [1.0, "hello"]
 ///   inspect(
 ///     Json::array(values),
@@ -146,7 +146,7 @@ pub fn Json::array(array : Array[Json]) -> Json {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 ///   let map : Map[String, Json] = { "name": "John", "age": 42.0 }
 ///   inspect(
 ///     Json::object(map),

@@ -48,7 +48,7 @@ pub fn[K : Compare, V] SortedMap::from_array(
 
 ///|
 /// Inserts a key-value pair.
-/// ```mbt check
+/// ```mbt test
 /// let map = @sorted_map.new()
 /// map.set(1, "a")
 /// map.set(2, "b")
@@ -387,7 +387,7 @@ pub fn[K : Compare, V] SortedMap::range(
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 ///   let map1 = @sorted_map.from_array([(1, "a"), (2, "b"), (3, "c")])
 ///   let map2 = map1.copy()
 ///   map2.set(4, "d")
@@ -429,7 +429,7 @@ pub fn[K, V] SortedMap::copy(self : SortedMap[K, V]) -> SortedMap[K, V] {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 /// let map1 = @sorted_map.from_array([(1, "a"), (2, "b")])
 /// let map2 = @sorted_map.from_array([(2, "c"), (3, "d")])
 /// let merged = map1.merge(map2)
@@ -460,7 +460,7 @@ pub fn[K : Compare, V] SortedMap::merge(
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 ///   let map1 = @sorted_map.from_array([(1, "a"), (2, "b")])
 ///   let map2 = @sorted_map.from_array([(2, "c"), (3, "d")])
 ///   map1.merge_in_place(map2)

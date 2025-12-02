@@ -305,7 +305,7 @@ extern "js" fn BigInt::js_lor(self : BigInt, other : BigInt) -> BigInt =
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 ///   let a = @bigint.BigInt::from_string("42")
 ///   let b = @bigint.BigInt::from_string("-12")
 ///   inspect(a | b, content="-2")
@@ -341,7 +341,7 @@ extern "js" fn BigInt::js_lxor(self : BigInt, other : BigInt) -> BigInt =
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 ///   let a = @bigint.BigInt::from_string("42")  // 0b101010
 ///   let b = @bigint.BigInt::from_string("25")  // 0b011001
 ///   inspect(a.lxor(b), content="51")   // 0b110011
@@ -369,7 +369,7 @@ pub impl BitXOr for BigInt with lxor(self, other) {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 ///   let n = 42N
 ///   inspect(n.to_uint(), content="42")
 ///   let neg = -1N
@@ -390,7 +390,7 @@ pub extern "js" fn BigInt::to_uint(self : BigInt) -> UInt =
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 ///   let big = 2147483648N // 2^31
 ///   inspect(big.to_int(), content="-2147483648") // Overflow to Int.min_value
 /// ```
@@ -409,7 +409,7 @@ pub extern "js" fn BigInt::to_int(self : BigInt) -> Int =
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 ///   let n = 12345678901234567890N
 ///   inspect(n.to_uint64(), content="12345678901234567890")
 ///   let neg = -1N
@@ -433,7 +433,7 @@ pub fn BigInt::to_uint64(self : BigInt) -> UInt64 {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 ///   let big = 9223372036854775807N // max value of Int64
 ///   inspect(big.to_int64(), content="9223372036854775807")
 ///   let bigger = big + 1
@@ -455,7 +455,7 @@ pub fn BigInt::to_int64(self : BigInt) -> Int64 {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 ///   let pos = 16N // 10000
 ///   inspect(pos.bit_length(), content="5")
 ///   let neg = -16N // 
@@ -481,7 +481,7 @@ pub extern "js" fn BigInt::bit_length(self : BigInt) -> Int =
 /// For zero, it returns -1.
 ///
 /// Example:
-/// ```mbt check
+/// ```mbt test
 ///   inspect(8N.ctz(), content="3") // 0b1000
 ///   inspect(12N.ctz(), content="2") // 0b1100
 ///   inspect(0N.ctz(), content="0")

@@ -24,7 +24,7 @@
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 ///   let original = [1, 2, 3]
 ///   let copied = original.copy()
 ///   inspect(copied, content="[1, 2, 3]")

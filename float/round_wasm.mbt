@@ -28,7 +28,7 @@
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 ///   inspect((1.9 : Float).trunc(), content="1")
 ///   inspect((-1.9 : Float).trunc(), content="-1")
 ///   inspect((0.1 : Float).trunc(), content="0")
@@ -48,7 +48,7 @@ pub fn Float::trunc(self : Float) -> Float = "(func (param $f f32) (result f32) 
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 ///   inspect((1.4 : Float).ceil(), content="2")
 ///   inspect((1.0 : Float).ceil(), content="1")
 ///   inspect((-1.4 : Float).ceil(), content="-1")
@@ -69,7 +69,7 @@ pub fn Float::ceil(self : Float) -> Float = "(func (param $f f32) (result f32) (
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 ///   inspect((3.7 : Float).floor(), content="3")
 ///   inspect((-3.7 : Float).floor(), content="-4")
 /// ```
@@ -89,7 +89,7 @@ pub fn Float::floor(self : Float) -> Float = "(func (param $f f32) (result f32) 
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 ///   inspect((1.4 : Float).round(), content="1")
 ///   inspect((1.5 : Float).round(), content="2")
 ///   inspect((1.6 : Float).round(), content="2")

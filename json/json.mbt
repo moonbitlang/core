@@ -122,7 +122,7 @@ struct Replacer((String, Json) -> Json?)
 /// 
 /// ## Example
 /// 
-/// ```mbt check
+/// ```mbt test
 /// // Transform numbers and exclude sensitive fields
 /// ignore(@json.Replacer::new((key, value) => match key {
 ///   "password" | "secret" => None  // exclude sensitive fields
@@ -142,7 +142,7 @@ pub fn Replacer::new(f : (String, Json) -> Json?) -> Replacer {
 /// 
 /// ## Example
 /// 
-/// ```mbt check
+/// ```mbt test
 /// let replacer = @json.Replacer::keep(["name", "age", "email"])
 /// let json : Json = { "name": "Alice", "age": 30.0, "email": "alice@example.com", "password": "secret" }
 /// ignore(json.stringify(replacer~))  // {"name":"Alice","age":30,"email":"alice@example.com"}
@@ -157,7 +157,7 @@ pub fn Replacer::keep(array : ArrayView[StringView]) -> Replacer {
 /// 
 /// ## Example
 /// 
-/// ```mbt check
+/// ```mbt test
 /// let replacer = @json.Replacer::exclude(["password", "secret", "private"])
 /// let json : Json = { "name": "Alice", "age": 30.0, "password": "secret", "email": "alice@example.com" }
 /// ignore(json.stringify(replacer~))  // {"name":"Alice","age":30,"email":"alice@example.com"}
@@ -189,7 +189,7 @@ pub fn Replacer::exclude(array : ArrayView[StringView]) -> Replacer {
 /// 
 /// ### Examples
 /// 
-/// ```mbt check
+/// ```mbt test
 /// let json : Json = { "a": 1.0, "b": 2.0, "c": 3.0, "password": "secret" }
 ///
 /// // Keep only specific keys
@@ -222,7 +222,7 @@ pub fn Replacer::exclude(array : ArrayView[StringView]) -> Replacer {
 /// 
 /// Replacers work recursively on nested objects:
 /// 
-/// ```mbt check
+/// ```mbt test
 /// let nested : Json = { "user": { "name": "Alice", "password": "secret" }, "id": 123.0 }
 /// let safe_replacer = @json.Replacer::exclude(["password"])
 /// ignore(nested.stringify(replacer=safe_replacer))  // {"user":{"name":"Alice"},"id":123}
@@ -379,7 +379,7 @@ fn escape(str : String, escape_slash~ : Bool) -> String {
 /// 
 /// ## Example
 /// 
-/// ```mbt check
+/// ```mbt test
 /// let json : Json = { "user": { "name": "Alice", "password": "secret", "age": 30.0 }, "id": 123.0 }
 ///
 /// // Remove sensitive data and double numeric values  

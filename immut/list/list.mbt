@@ -1235,7 +1235,7 @@ pub impl[A : Hash] Hash for T[A] with hash_combine(self, hasher) {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 ///   let list1 = @list.of([1, 2, 3])
 ///   let list2 = @list.of([1, 2, 4])
 ///   let list3 = @list.of([1, 2])

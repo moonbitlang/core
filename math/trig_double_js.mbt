@@ -24,7 +24,7 @@
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 /// inspect(@math.sin(0.0), content="0")
 /// inspect(@math.sin(1.570796326794897), content="1") // pi / 2
 /// inspect(@math.sin(2.0), content="0.9092974268256817")
@@ -48,7 +48,7 @@ pub fn sin(x : Double) -> Double = "Math" "sin"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 /// inspect(@math.cos(0.0), content="1")
 /// inspect(@math.cos(2.5), content="-0.8011436155469337")
 /// inspect(@math.cos(-3.141592653589793), content="-1") // -pi
@@ -72,7 +72,7 @@ pub fn cos(x : Double) -> Double = "Math" "cos"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 /// inspect(@math.tan(0.0), content="0")
 /// inspect(@math.tan(0.7853981633974483), content="0.9999999999999999")
 /// inspect(@math.tan(4.0), content="1.1578212823495777")
@@ -99,7 +99,7 @@ pub fn tan(x : Double) -> Double = "Math" "tan"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 /// inspect(@math.asin(0.0), content="0")
 /// inspect(@math.asin(1.0), content="1.5707963267948966")
 /// inspect(@math.asin(-1.0), content="-1.5707963267948966")
@@ -123,7 +123,7 @@ pub fn asin(x : Double) -> Double = "Math" "asin"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 /// inspect(@math.acos(0.0), content="1.5707963267948966")
 /// inspect(@math.acos(1.0), content="0")
 /// inspect(@math.acos(-1.0), content="3.141592653589793")
@@ -147,7 +147,7 @@ pub fn acos(x : Double) -> Double = "Math" "acos"
 ///
 /// * Returns NaN if the input is NaN.
 ///
-/// ```mbt check
+/// ```mbt test
 /// inspect(@math.atan(0.0), content="0")
 /// inspect(@math.atan(1.0), content="0.7853981633974483")
 /// inspect(@math.atan(-1.0), content="-0.7853981633974483")
@@ -171,7 +171,7 @@ pub fn atan(x : Double) -> Double = "Math" "atan"
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 /// inspect(@math.atan2(0.0, -1.0), content="3.141592653589793")
 /// inspect(@math.atan2(1.0, 0.0), content="1.5707963267948966")
 /// inspect(@math.atan2(1.0, 1.0), content="0.7853981633974483")
