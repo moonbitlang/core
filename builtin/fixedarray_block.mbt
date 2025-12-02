@@ -91,11 +91,11 @@ fn[T] UninitializedArray::unsafe_blit_fixed(
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let src = FixedArray::make(5, 1)
-///   let dst = FixedArray::make(5, 0)
-///   src.blit_to(dst, len=3, src_offset=1, dst_offset=2)
-///   inspect(dst, content="[0, 0, 1, 1, 1]")
+/// ```mbt test
+/// let src = FixedArray::make(5, 1)
+/// let dst = FixedArray::make(5, 0)
+/// src.blit_to(dst, len=3, src_offset=1, dst_offset=2)
+/// inspect(dst, content="[0, 0, 1, 1, 1]")
 /// ```
 pub fn[A] FixedArray::blit_to(
   self : FixedArray[A],

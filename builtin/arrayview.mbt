@@ -17,11 +17,11 @@
 ///
 /// # Example
 ///
-/// ```mbt check
-///   let arr = [1, 2, 3, 4, 5]
-///   let view = arr[1:4]  // Creates a view of elements at indices 1,2,3
-///   assert_eq(view[0], 2)
-///   assert_eq(view.length(), 3)
+/// ```mbt test
+/// let arr = [1, 2, 3, 4, 5]
+/// let view = arr[1:4] // Creates a view of elements at indices 1,2,3
+/// assert_eq(view[0], 2)
+/// assert_eq(view.length(), 3)
 /// ```
 #builtin.valtype
 type ArrayView[T]
@@ -53,10 +53,10 @@ fn[T] ArrayView::make(
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let arr = [1, 2, 3, 4, 5]
-///   let view = arr[2:4]
-///   inspect(view.length(), content="2")
+/// ```mbt test
+/// let arr = [1, 2, 3, 4, 5]
+/// let view = arr[2:4]
+/// inspect(view.length(), content="2")
 /// ```
 pub fn[T] ArrayView::length(self : ArrayView[T]) -> Int {
   self.len()
@@ -78,11 +78,11 @@ pub fn[T] ArrayView::length(self : ArrayView[T]) -> Int {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let arr = [1, 2, 3, 4, 5]
-///   let view = arr[2:4]
-///   inspect(view[0], content="3")
-///   inspect(view[1], content="4")
+/// ```mbt test
+/// let arr = [1, 2, 3, 4, 5]
+/// let view = arr[2:4]
+/// inspect(view[0], content="3")
+/// inspect(view[1], content="4")
 /// ```
 #alias("_[_]")
 pub fn[T] ArrayView::at(self : ArrayView[T], index : Int) -> T {
@@ -108,10 +108,10 @@ pub fn[T] ArrayView::at(self : ArrayView[T], index : Int) -> T {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let arr = [1, 2, 3, 4, 5]
-///   let view = arr[1:4]
-///   inspect(view.unsafe_get(1), content="3")
+/// ```mbt test
+/// let arr = [1, 2, 3, 4, 5]
+/// let view = arr[1:4]
+/// inspect(view.unsafe_get(1), content="3")
 /// ```
 #intrinsic("%arrayview.unsafe_get")
 #internal(unsafe, "Panic if index is out of bounds")
@@ -139,11 +139,11 @@ pub fn[T] ArrayView::unsafe_get(self : ArrayView[T], index : Int) -> T {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let arr = [1, 2, 3, 4, 5]
-///   let view = arr[1:4] // Create a view of elements at indices 1, 2, and 3
-///   inspect(view[0], content="2") // First element of view is arr[1]
-///   inspect(view.length(), content="3") // View contains 3 elements
+/// ```mbt test
+/// let arr = [1, 2, 3, 4, 5]
+/// let view = arr[1:4] // Create a view of elements at indices 1, 2, and 3
+/// inspect(view[0], content="2") // First element of view is arr[1]
+/// inspect(view.length(), content="3") // View contains 3 elements
 /// ```
 #alias("_[_:_]")
 pub fn[T] Array::sub(
@@ -186,11 +186,11 @@ pub fn[T] Array::sub(
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let arr = [1, 2, 3, 4, 5]
-///   let view = arr[1:4] // view = [2, 3, 4]
-///   let subview = view[1:2] // subview = [3]
-///   inspect(subview[0], content="3")
+/// ```mbt test
+/// let arr = [1, 2, 3, 4, 5]
+/// let view = arr[1:4] // view = [2, 3, 4]
+/// let subview = view[1:2] // subview = [3]
+/// inspect(subview[0], content="3")
 /// ```
 #alias("_[_:_]")
 pub fn[T] ArrayView::sub(
@@ -236,10 +236,10 @@ fn[T] unsafe_cast_fixedarray_to_uninitializedarray(
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let arr: FixedArray[Int] = [1, 2, 3, 4, 5]
-///   let view = arr[1:4] // view = [2, 3, 4]
-///   inspect(view[0], content="2")
+/// ```mbt test
+/// let arr : FixedArray[Int] = [1, 2, 3, 4, 5]
+/// let view = arr[1:4] // view = [2, 3, 4]
+/// inspect(view[0], content="2")
 /// ```
 #alias("_[_:_]")
 pub fn[T] FixedArray::sub(
@@ -311,12 +311,12 @@ pub fn[X] ArrayView::iterator(self : ArrayView[X]) -> Iterator[X] {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let arr = [1, 2, 3]
-///   let view = arr[1:]
-///   let mut sum = 0
-///   view.iter().each(x => sum = sum + x)
-///   inspect(sum, content="5")
+/// ```mbt test
+/// let arr = [1, 2, 3]
+/// let view = arr[1:]
+/// let mut sum = 0
+/// view.iter().each(x => sum = sum + x)
+/// inspect(sum, content="5")
 /// ```
 pub fn[A] ArrayView::iter(self : ArrayView[A]) -> Iter[A] {
   Iter::new(yield_ => for v in self {
@@ -384,12 +384,12 @@ pub impl[A : Hash] Hash for ArrayView[A] with hash_combine(self, hasher) {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let arr = [1, 2, 3, 4, 5]
-///   let view = arr[1:4]
-///   inspect(view.is_sorted(), content="true")
-///   let descending = [5, 4, 3, 2, 1]
-///   inspect(descending[:].is_sorted(), content="false")
+/// ```mbt test
+/// let arr = [1, 2, 3, 4, 5]
+/// let view = arr[1:4]
+/// inspect(view.is_sorted(), content="true")
+/// let descending = [5, 4, 3, 2, 1]
+/// inspect(descending[:].is_sorted(), content="false")
 /// ```
 pub fn[T : Compare] ArrayView::is_sorted(self : ArrayView[T]) -> Bool {
   for i in 1..<self.length() {

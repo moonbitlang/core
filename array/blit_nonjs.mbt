@@ -25,11 +25,11 @@
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let original = [1, 2, 3]
-///   let copied = original.copy()
-///   inspect(copied, content="[1, 2, 3]")
-///   inspect(physical_equal(original, copied), content="false")
+/// ```mbt test
+/// let original = [1, 2, 3]
+/// let copied = original.copy()
+/// inspect(copied, content="[1, 2, 3]")
+/// inspect(physical_equal(original, copied), content="false")
 /// ```
 pub fn[T] FixedArray::copy(self : FixedArray[T]) -> FixedArray[T] {
   let len = self.length()

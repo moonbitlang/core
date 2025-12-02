@@ -196,12 +196,12 @@ let small_primes : Array[@bigint.BigInt] = [
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let rand = @random.Rand::new()
-///   let prime = BigInt::from_string("17")
-///   let composite = BigInt::from_string("15")
-///   inspect(@math.is_probable_prime(prime, rand), content="true")
-///   inspect(@math.is_probable_prime(composite, rand), content="false")
+/// ```mbt test
+/// let rand = @random.Rand::new()
+/// let prime = BigInt::from_string("17")
+/// let composite = BigInt::from_string("15")
+/// inspect(@math.is_probable_prime(prime, rand), content="true")
+/// inspect(@math.is_probable_prime(composite, rand), content="false")
 /// ```
 pub fn is_probable_prime(
   number : @bigint.BigInt,
@@ -240,10 +240,10 @@ pub fn is_probable_prime(
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let rand = @random.Rand::new()
-///   let prime = @math.probable_prime(64, rand)
-///   inspect(@math.is_probable_prime(prime, rand), content="true")
+/// ```mbt test
+/// let rand = @random.Rand::new()
+/// let prime = @math.probable_prime(64, rand)
+/// inspect(@math.is_probable_prime(prime, rand), content="true")
 /// ```
 pub fn probable_prime(bits : Int, rand : @random.Rand) -> @bigint.BigInt {
   for {

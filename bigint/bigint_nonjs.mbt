@@ -89,11 +89,11 @@ let one : BigInt = 1N
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let big = @bigint.BigInt::from_int(42)
-///   inspect(big, content="42")
-///   let neg = @bigint.BigInt::from_int(-42)
-///   inspect(neg, content="-42")
+/// ```mbt test
+/// let big = @bigint.BigInt::from_int(42)
+/// inspect(big, content="42")
+/// let neg = @bigint.BigInt::from_int(-42)
+/// inspect(neg, content="-42")
 /// ```
 pub fn BigInt::from_int(n : Int) -> BigInt {
   BigInt::from_int64(n.to_int64())
@@ -110,9 +110,9 @@ pub fn BigInt::from_int(n : Int) -> BigInt {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let n = 42U
-///   inspect(@bigint.BigInt::from_uint(n), content="42")
+/// ```mbt test
+/// let n = 42U
+/// inspect(@bigint.BigInt::from_uint(n), content="42")
 /// ```
 pub fn BigInt::from_uint(n : UInt) -> BigInt {
   BigInt::from_uint64(n.to_uint64())
@@ -130,11 +130,11 @@ pub fn BigInt::from_uint(n : UInt) -> BigInt {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let big = @bigint.BigInt::from_int64(9223372036854775807L) // max value of Int64
-///   inspect(big, content="9223372036854775807")
-///   let neg = @bigint.BigInt::from_int64(-9223372036854775808L) // min value of Int64
-///   inspect(neg, content="-9223372036854775808")
+/// ```mbt test
+/// let big = @bigint.BigInt::from_int64(9223372036854775807L) // max value of Int64
+/// inspect(big, content="9223372036854775807")
+/// let neg = @bigint.BigInt::from_int64(-9223372036854775808L) // min value of Int64
+/// inspect(neg, content="-9223372036854775808")
 /// ```
 pub fn BigInt::from_int64(n : Int64) -> BigInt {
   if n < 0L {
@@ -157,11 +157,11 @@ pub fn BigInt::from_int64(n : Int64) -> BigInt {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let n = @bigint.BigInt::from_uint64(12345678901234567890UL)
-///   inspect(n, content="12345678901234567890")
-///   let zero = @bigint.BigInt::from_uint64(0UL)
-///   inspect(zero, content="0")
+/// ```mbt test
+/// let n = @bigint.BigInt::from_uint64(12345678901234567890UL)
+/// inspect(n, content="12345678901234567890")
+/// let zero = @bigint.BigInt::from_uint64(0UL)
+/// inspect(zero, content="0")
 /// ```
 pub fn BigInt::from_uint64(n : UInt64) -> BigInt {
   if n == 0UL {
@@ -193,10 +193,10 @@ pub fn BigInt::from_uint64(n : UInt64) -> BigInt {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   inspect(-42N, content="-42")
-///   inspect(-(-42N), content="42")
-///   inspect(-0N, content="0")
+/// ```mbt test
+/// inspect(-42N, content="-42")
+/// inspect(-(-42N), content="42")
+/// inspect(-0N, content="0")
 /// ```
 pub impl Neg for BigInt with neg(self : BigInt) -> BigInt {
   if self.is_zero() {
@@ -219,11 +219,11 @@ pub impl Neg for BigInt with neg(self : BigInt) -> BigInt {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let a = 9223372036854775807N // Max value of Int64
-///   let b = 1N
-///   inspect(a + b, content="9223372036854775808") // Beyond Int64 range
-///   inspect(-a + -b, content="-9223372036854775808")
+/// ```mbt test
+/// let a = 9223372036854775807N // Max value of Int64
+/// let b = 1N
+/// inspect(a + b, content="9223372036854775808") // Beyond Int64 range
+/// inspect(-a + -b, content="-9223372036854775808")
 /// ```
 pub impl Add for BigInt with add(self : BigInt, other : BigInt) -> BigInt {
   if self.sign == Negative {
@@ -265,11 +265,11 @@ pub impl Add for BigInt with add(self : BigInt, other : BigInt) -> BigInt {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let a = 12345678901234567890N
-///   let b = 9876543210987654321N
-///   inspect(a - b, content="2469135690246913569")
-///   inspect(-a - b, content="-22222222112222222211")
+/// ```mbt test
+/// let a = 12345678901234567890N
+/// let b = 9876543210987654321N
+/// inspect(a - b, content="2469135690246913569")
+/// inspect(-a - b, content="-22222222112222222211")
 /// ```
 pub impl Sub for BigInt with sub(self : BigInt, other : BigInt) -> BigInt {
   // first make sure self and other > 0
@@ -331,11 +331,11 @@ pub impl Sub for BigInt with sub(self : BigInt, other : BigInt) -> BigInt {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let a = 12345678901234567890N
-///   let b = -98765432109876543210N
-///   inspect(a * b, content="-1219326311370217952237463801111263526900")
-///   inspect(a * 0N, content="0")
+/// ```mbt test
+/// let a = 12345678901234567890N
+/// let b = -98765432109876543210N
+/// inspect(a * b, content="-1219326311370217952237463801111263526900")
+/// inspect(a * 0N, content="0")
 /// ```
 pub impl Mul for BigInt with mul(self : BigInt, other : BigInt) -> BigInt {
   if self.is_zero() || other.is_zero() {
@@ -428,13 +428,13 @@ fn BigInt::split(self : BigInt, half : Int) -> (BigInt, BigInt) {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let a = @bigint.BigInt::from_string("100")
-///   let b = @bigint.BigInt::from_string("20")
-///   inspect(a / b, content="5")
-///   inspect(-a / b, content="-5")
-///   inspect(a / -b, content="-5")
-///   inspect(-a / -b, content="5")
+/// ```mbt test
+/// let a = @bigint.BigInt::from_string("100")
+/// let b = @bigint.BigInt::from_string("20")
+/// inspect(a / b, content="5")
+/// inspect(-a / b, content="-5")
+/// inspect(a / -b, content="-5")
+/// inspect(-a / -b, content="5")
 /// ```
 pub impl Div for BigInt with div(self : BigInt, other : BigInt) -> BigInt {
   if other is 0 {
@@ -469,13 +469,13 @@ pub impl Div for BigInt with div(self : BigInt, other : BigInt) -> BigInt {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let a = 42N
-///   let b = 5N
-///   inspect(a % b, content="2")
-///   let c = -42N
-///   let d = -5N
-///   inspect(c % d, content="-2")
+/// ```mbt test
+/// let a = 42N
+/// let b = 5N
+/// inspect(a % b, content="2")
+/// let c = -42N
+/// let d = -5N
+/// inspect(c % d, content="-2")
 /// ```
 pub impl Mod for BigInt with mod(self : BigInt, other : BigInt) -> BigInt {
   if other == zero {
@@ -651,11 +651,11 @@ fn BigInt::grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let x = 5N
-///   inspect(x << 2, content="20")
-///   let y = -5N
-///   inspect(y << 2, content="-20")
+/// ```mbt test
+/// let x = 5N
+/// inspect(x << 2, content="20")
+/// let y = -5N
+/// inspect(y << 2, content="-20")
 /// ```
 pub impl Shl for BigInt with shl(self : BigInt, n : Int) -> BigInt {
   if n < 0 {
@@ -708,11 +708,11 @@ pub impl Shl for BigInt with shl(self : BigInt, n : Int) -> BigInt {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let n = @bigint.BigInt::from_string("1024")
-///   inspect(n >> 3, content="128")
-///   let neg = @bigint.BigInt::from_string("-1024")
-///   inspect(neg >> 3, content="-128")
+/// ```mbt test
+/// let n = @bigint.BigInt::from_string("1024")
+/// inspect(n >> 3, content="128")
+/// let neg = @bigint.BigInt::from_string("-1024")
+/// inspect(neg >> 3, content="-128")
 /// ```
 pub impl Shr for BigInt with shr(self : BigInt, n : Int) -> BigInt {
   if n < 0 {
@@ -765,10 +765,10 @@ pub impl Shr for BigInt with shr(self : BigInt, n : Int) -> BigInt {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   inspect(0N.is_zero(), content="true")
-///   inspect(42N.is_zero(), content="false")
-///   inspect((-1N).is_zero(), content="false")
+/// ```mbt test
+/// inspect(0N.is_zero(), content="true")
+/// inspect(42N.is_zero(), content="false")
+/// inspect((-1N).is_zero(), content="false")
 /// ```
 pub fn BigInt::is_zero(self : BigInt) -> Bool {
   self.len == 1 && self.limbs[0] == 0
@@ -790,14 +790,14 @@ pub fn BigInt::is_zero(self : BigInt) -> Bool {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let a = @bigint.BigInt::from_string("42")
-///   let b = @bigint.BigInt::from_string("24")
-///   let c = @bigint.BigInt::from_string("-42")
-///   inspect(a.compare(b), content="1") // 42 > 24
-///   inspect(b.compare(a), content="-1") // 24 < 42
-///   inspect(c.compare(a), content="-1") // -42 < 42
-///   inspect(a.compare(a), content="0") // 42 = 42
+/// ```mbt test
+/// let a = @bigint.BigInt::from_string("42")
+/// let b = @bigint.BigInt::from_string("24")
+/// let c = @bigint.BigInt::from_string("-42")
+/// inspect(a.compare(b), content="1") // 42 > 24
+/// inspect(b.compare(a), content="-1") // 24 < 42
+/// inspect(c.compare(a), content="-1") // -42 < 42
+/// inspect(a.compare(a), content="0") // 42 = 42
 /// ```
 pub impl Compare for BigInt with compare(self, other) {
   if self.sign != other.sign {
@@ -837,12 +837,12 @@ pub impl Compare for BigInt with compare(self, other) {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let a = 123456789N
-///   let b = 123456789N
-///   let c = -123456789N
-///   inspect(a == b, content="true")
-///   inspect(a == c, content="false")
+/// ```mbt test
+/// let a = 123456789N
+/// let b = 123456789N
+/// let c = -123456789N
+/// inspect(a == b, content="true")
+/// inspect(a == c, content="false")
 /// ```
 pub impl Eq for BigInt with equal(self, other) {
   if self.sign != other.sign || self.len != other.len {
@@ -868,13 +868,13 @@ pub impl Eq for BigInt with equal(self, other) {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let n = 12345678901234567890N
-///   inspect(n.to_string(), content="12345678901234567890")
-///   let neg = -42N
-///   inspect(neg.to_string(), content="-42")
-///   let zero = 0N
-///   inspect(zero.to_string(), content="0")
+/// ```mbt test
+/// let n = 12345678901234567890N
+/// inspect(n.to_string(), content="12345678901234567890")
+/// let neg = -42N
+/// inspect(neg.to_string(), content="-42")
+/// let zero = 0N
+/// inspect(zero.to_string(), content="0")
 /// ```
 pub fn BigInt::to_string(self : BigInt) -> String {
   // This function first converts the BigInt to a decimal representation, with a radix of 2^(`decimal_radix_bit_len`).
@@ -940,11 +940,11 @@ pub fn BigInt::to_string(self : BigInt) -> String {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let n = 12345678901234567890N
-///   inspect(n, content="12345678901234567890")
-///   let neg = -42N
-///   inspect(neg, content="-42")
+/// ```mbt test
+/// let n = 12345678901234567890N
+/// inspect(n, content="12345678901234567890")
+/// let neg = -42N
+/// inspect(neg, content="-42")
 /// ```
 pub impl Show for BigInt with output(self, logger) {
   logger.write_string(self.to_string())
@@ -969,11 +969,11 @@ pub impl Show for BigInt with output(self, logger) {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let pos = @bigint.BigInt::from_string("12345")
-///   let neg = @bigint.BigInt::from_string("-12345")
-///   inspect(pos, content="12345")
-///   inspect(neg, content="-12345")
+/// ```mbt test
+/// let pos = @bigint.BigInt::from_string("12345")
+/// let neg = @bigint.BigInt::from_string("-12345")
+/// inspect(pos, content="12345")
+/// inspect(neg, content="-12345")
 /// ```
 pub fn BigInt::from_string(input : String) -> BigInt {
   let len = input.length()
@@ -1036,10 +1036,10 @@ pub fn BigInt::from_string(input : String) -> BigInt {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   inspect(@bigint.BigInt::from_hex("ff"), content="255")
-///   inspect(@bigint.BigInt::from_hex("-ff"), content="-255")
-///   inspect(@bigint.BigInt::from_hex("DEADBEEF"), content="3735928559")
+/// ```mbt test
+/// inspect(@bigint.BigInt::from_hex("ff"), content="255")
+/// inspect(@bigint.BigInt::from_hex("-ff"), content="-255")
+/// inspect(@bigint.BigInt::from_hex("DEADBEEF"), content="3735928559")
 /// ```
 pub fn BigInt::from_hex(input : String) -> BigInt {
   // WARN: this implementation assumes that `radix_bit_len` is a multiple of 4.
@@ -1101,13 +1101,13 @@ pub fn BigInt::from_hex(input : String) -> BigInt {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let pos = @bigint.BigInt::from_string("255")
-///   let neg = @bigint.BigInt::from_string("-255")
-///   inspect(pos.to_hex(), content="FF")
-///   inspect(neg.to_hex(), content="-FF")
-///   inspect(pos.to_hex(uppercase=false), content="ff")
-///   inspect(0N.to_hex(), content="0")
+/// ```mbt test
+/// let pos = @bigint.BigInt::from_string("255")
+/// let neg = @bigint.BigInt::from_string("-255")
+/// inspect(pos.to_hex(), content="FF")
+/// inspect(neg.to_hex(), content="-FF")
+/// inspect(pos.to_hex(uppercase=false), content="ff")
+/// inspect(0N.to_hex(), content="0")
 /// ```
 pub fn BigInt::to_hex(self : BigInt, uppercase? : Bool = true) -> String {
   if self.is_zero() {
@@ -1191,11 +1191,11 @@ fn[T : Compare] max(a : T, b : T) -> T {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let base = @bigint.BigInt::from_string("3")
-///   let exp = @bigint.BigInt::from_string("4")
-///   inspect(base.pow(exp), content="81")
-///   inspect(base.pow(exp, modulus=@bigint.BigInt::from_string("10")), content="1")
+/// ```mbt test
+/// let base = @bigint.BigInt::from_string("3")
+/// let exp = @bigint.BigInt::from_string("4")
+/// inspect(base.pow(exp), content="81")
+/// inspect(base.pow(exp, modulus=@bigint.BigInt::from_string("10")), content="1")
 /// ```
 pub fn BigInt::pow(self : BigInt, exp : BigInt, modulus? : BigInt) -> BigInt {
   if exp.sign == Negative {
@@ -1253,12 +1253,12 @@ pub fn BigInt::pow(self : BigInt, exp : BigInt, modulus? : BigInt) -> BigInt {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let bytes = b"\x01\x02\x03" // Represents 0x010203
-///   let positive = @bigint.BigInt::from_octets(bytes)
-///   let negative = @bigint.BigInt::from_octets(bytes, signum=-1)
-///   inspect(positive, content="66051")
-///   inspect(negative, content="-66051")
+/// ```mbt test
+/// let bytes = b"\x01\x02\x03" // Represents 0x010203
+/// let positive = @bigint.BigInt::from_octets(bytes)
+/// let negative = @bigint.BigInt::from_octets(bytes, signum=-1)
+/// inspect(positive, content="66051")
+/// inspect(negative, content="-66051")
 /// ```
 pub fn BigInt::from_octets(input : Bytes, signum? : Int = 1) -> BigInt {
   let len = input.length() // number of bytes
@@ -1315,11 +1315,11 @@ pub fn BigInt::from_octets(input : Bytes, signum? : Int = 1) -> BigInt {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let n = @bigint.BigInt::from_hex("abcdef")
-///   inspect(n.to_octets(length=4), content="b\"\\x00\\xab\\xcd\\xef\"")
-///   let m = @bigint.BigInt::from_string("0")
-///   inspect(m.to_octets(), content="b\"\\x00\"")
+/// ```mbt test
+/// let n = @bigint.BigInt::from_hex("abcdef")
+/// inspect(n.to_octets(length=4), content="b\"\\x00\\xab\\xcd\\xef\"")
+/// let m = @bigint.BigInt::from_string("0")
+/// inspect(m.to_octets(), content="b\"\\x00\"")
 /// ```
 pub fn BigInt::to_octets(self : BigInt, length? : Int) -> Bytes {
   let length = match length {
@@ -1362,14 +1362,13 @@ pub fn BigInt::to_octets(self : BigInt, length? : Int) -> Bytes {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let a = @bigint.BigInt::from_string("42") // 0b101010
-///   let b = @bigint.BigInt::from_string("-12") // ~0b1011 + 1
-///   inspect(a & b, content="32") // 0b100000
-///
-///   let a = @bigint.BigInt::from_string("-8") // ~0b111 + 1
-///   let b = @bigint.BigInt::from_string("-4") // ~0b11 + 1
-///   inspect(a & b, content="-8") // ~0b1011 + 1
+/// ```mbt test
+/// let a = @bigint.BigInt::from_string("42") // 0b101010
+/// let b = @bigint.BigInt::from_string("-12") // ~0b1011 + 1
+/// inspect(a & b, content="32") // 0b100000
+/// let a = @bigint.BigInt::from_string("-8") // ~0b111 + 1
+/// let b = @bigint.BigInt::from_string("-4") // ~0b11 + 1
+/// inspect(a & b, content="-8") // ~0b1011 + 1
 /// ```
 pub impl BitAnd for BigInt with land(self : BigInt, other : BigInt) -> BigInt {
   let max_length = if self.limbs.length() < other.limbs.length() {
@@ -1459,13 +1458,13 @@ pub impl BitAnd for BigInt with land(self : BigInt, other : BigInt) -> BigInt {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let a = @bigint.BigInt::from_string("42")
-///   let b = @bigint.BigInt::from_string("-12")
-///   inspect(a | b, content="-2")
-///   let c = @bigint.BigInt::from_string("-8")
-///   let d = @bigint.BigInt::from_string("-4")
-///   inspect(c | d, content="-4")
+/// ```mbt test
+/// let a = @bigint.BigInt::from_string("42")
+/// let b = @bigint.BigInt::from_string("-12")
+/// inspect(a | b, content="-2")
+/// let c = @bigint.BigInt::from_string("-8")
+/// let d = @bigint.BigInt::from_string("-4")
+/// inspect(c | d, content="-4")
 /// ```
 pub impl BitOr for BigInt with lor(self : BigInt, other : BigInt) -> BigInt {
   let max_length = if self.limbs.length() < other.limbs.length() {
@@ -1556,13 +1555,12 @@ pub impl BitOr for BigInt with lor(self : BigInt, other : BigInt) -> BigInt {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let a = @bigint.BigInt::from_string("42")
-///   let b = @bigint.BigInt::from_string("-7")
-///   inspect(a ^ b, content="-45")
-///
-///   let a = @bigint.BigInt::from_string("42")
-///   inspect(a ^ a, content="0") // XOR with self gives 0
+/// ```mbt test
+/// let a = @bigint.BigInt::from_string("42")
+/// let b = @bigint.BigInt::from_string("-7")
+/// inspect(a ^ b, content="-45")
+/// let a = @bigint.BigInt::from_string("42")
+/// inspect(a ^ a, content="0") // XOR with self gives 0
 /// ```
 pub impl BitXOr for BigInt with lxor(self : BigInt, other : BigInt) -> BigInt {
   let max_length = if self.limbs.length() < other.limbs.length() {
@@ -1651,9 +1649,9 @@ pub impl BitXOr for BigInt with lxor(self : BigInt, other : BigInt) -> BigInt {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let big = 2147483648N // 2^31
-///   inspect(big.to_int(), content="-2147483648") // Overflow to Int.min_value
+/// ```mbt test
+/// let big = 2147483648N // 2^31
+/// inspect(big.to_int(), content="-2147483648") // Overflow to Int.min_value
 /// ```
 pub fn BigInt::to_int(self : BigInt) -> Int {
   self.to_uint().reinterpret_as_int()
@@ -1670,11 +1668,11 @@ pub fn BigInt::to_int(self : BigInt) -> Int {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let n = 42N
-///   inspect(n.to_uint(), content="42")
-///   let neg = -1N
-///   inspect(neg.to_uint(), content="4294967295") // 2^32 - 1
+/// ```mbt test
+/// let n = 42N
+/// inspect(n.to_uint(), content="42")
+/// let neg = -1N
+/// inspect(neg.to_uint(), content="4294967295") // 2^32 - 1
 /// ```
 pub fn BigInt::to_uint(self : BigInt) -> UInt {
   let value = if self.sign == Negative { (1N << 32) + self } else { self }
@@ -1693,11 +1691,11 @@ pub fn BigInt::to_uint(self : BigInt) -> UInt {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let big = 9223372036854775807N // max value of Int64
-///   inspect(big.to_int64(), content="9223372036854775807")
-///   let bigger = big + 1
-///   inspect(bigger.to_int64(), content="-9223372036854775808") // Overflow to Int64.min_value
+/// ```mbt test
+/// let big = 9223372036854775807N // max value of Int64
+/// inspect(big.to_int64(), content="9223372036854775807")
+/// let bigger = big + 1
+/// inspect(bigger.to_int64(), content="-9223372036854775808") // Overflow to Int64.min_value
 /// ```
 pub fn BigInt::to_int64(self : BigInt) -> Int64 {
   self.to_uint64().reinterpret_as_int64()
@@ -1715,11 +1713,11 @@ pub fn BigInt::to_int64(self : BigInt) -> Int64 {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let n = 12345678901234567890N
-///   inspect(n.to_uint64(), content="12345678901234567890")
-///   let neg = -1N
-///   inspect(neg.to_uint64(), content="18446744073709551615") // 2^64 - 1
+/// ```mbt test
+/// let n = 12345678901234567890N
+/// inspect(n.to_uint64(), content="12345678901234567890")
+/// let neg = -1N
+/// inspect(neg.to_uint64(), content="18446744073709551615") // 2^64 - 1
 /// ```
 pub fn BigInt::to_uint64(self : BigInt) -> UInt64 {
   let value = if self.sign == Negative { (1N << 64) + self } else { self }
@@ -1743,13 +1741,13 @@ pub fn BigInt::to_uint64(self : BigInt) -> UInt64 {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let pos = 16N // 10000
-///   inspect(pos.bit_length(), content="5")
-///   let neg = -16N // 
-///   inspect(neg.bit_length(), content="4")
-///   let zero = 0N
-///   inspect(zero.bit_length(), content="0")
+/// ```mbt test
+/// let pos = 16N // 10000
+/// inspect(pos.bit_length(), content="5")
+/// let neg = -16N // 
+/// inspect(neg.bit_length(), content="4")
+/// let zero = 0N
+/// inspect(zero.bit_length(), content="0")
 /// ```
 pub fn BigInt::bit_length(self : BigInt) -> Int {
   if self.len == 0 {
@@ -1775,10 +1773,10 @@ pub fn BigInt::bit_length(self : BigInt) -> Int {
 /// the absolute value of this BigInt.
 ///
 /// Example:
-/// ```mbt check
-///   inspect(8N.ctz(), content="3") // 0b1000
-///   inspect(12N.ctz(), content="2") // 0b1100
-///   inspect(0N.ctz(), content="0")
+/// ```mbt test
+/// inspect(8N.ctz(), content="3") // 0b1000
+/// inspect(12N.ctz(), content="2") // 0b1100
+/// inspect(0N.ctz(), content="0")
 /// ```
 pub fn BigInt::ctz(self : BigInt) -> Int {
   if self.is_zero() {

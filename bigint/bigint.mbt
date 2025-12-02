@@ -28,15 +28,15 @@
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let big = 12345678901234567890N
-///   let json = big.to_json()
-///   inspect(
-///     json, 
-///     content=(
-///       #|String("12345678901234567890")
-///     ),
-///   )
+/// ```mbt test
+/// let big = 12345678901234567890N
+/// let json = big.to_json()
+/// inspect(
+///   json,
+///   content=(
+///     #|String("12345678901234567890")
+///   ),
+/// )
 /// ```
 ///
 pub impl ToJson for BigInt with to_json(self : BigInt) -> Json {
@@ -87,12 +87,12 @@ pub impl Default for BigInt with default() {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let big = 42N
-///   inspect(big.equal_int(42), content="true")
-///   inspect(big.equal_int(41), content="false")
-///   let large = 9223372036854775808N // Beyond Int64 range
-///   inspect(large.equal_int(42), content="false")
+/// ```mbt test
+/// let big = 42N
+/// inspect(big.equal_int(42), content="true")
+/// inspect(big.equal_int(41), content="false")
+/// let large = 9223372036854775808N // Beyond Int64 range
+/// inspect(large.equal_int(42), content="false")
 /// ```
 ///
 pub fn BigInt::equal_int(self : BigInt, other : Int) -> Bool {
@@ -116,13 +116,12 @@ pub fn BigInt::equal_int(self : BigInt, other : Int) -> Bool {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let big = @bigint.BigInt::from_int64(9223372036854775807L) // Int64 max value
-///   inspect(big.equal_int64(9223372036854775807L), content="true")
-///   inspect(big.equal_int64(42L), content="false")
-///   
-///   let overflow = @bigint.BigInt::from_string("9223372036854775808") // Beyond Int64 range
-///   inspect(overflow.equal_int64(9223372036854775807L), content="false")
+/// ```mbt test
+/// let big = @bigint.BigInt::from_int64(9223372036854775807L) // Int64 max value
+/// inspect(big.equal_int64(9223372036854775807L), content="true")
+/// inspect(big.equal_int64(42L), content="false")
+/// let overflow = @bigint.BigInt::from_string("9223372036854775808") // Beyond Int64 range
+/// inspect(overflow.equal_int64(9223372036854775807L), content="false")
 /// ```
 ///
 pub fn BigInt::equal_int64(self : BigInt, other : Int64) -> Bool {
@@ -145,11 +144,11 @@ pub fn BigInt::equal_int64(self : BigInt, other : Int64) -> Bool {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let big = 42N
-///   inspect(big.compare_int(24), content="1") // 42 > 24
-///   inspect(big.compare_int(42), content="0") // 42 = 42
-///   inspect(big.compare_int(100), content="-1") // 42 < 100
+/// ```mbt test
+/// let big = 42N
+/// inspect(big.compare_int(24), content="1") // 42 > 24
+/// inspect(big.compare_int(42), content="0") // 42 = 42
+/// inspect(big.compare_int(100), content="-1") // 42 < 100
 /// ```
 ///
 pub fn BigInt::compare_int(self : BigInt, other : Int) -> Int {
@@ -220,11 +219,11 @@ test "can_convert_to_int64" {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let hasher = Hasher::new(seed=0)
-///   let big = 12345N
-///   hasher.combine(big)
-///   inspect(hasher.finalize(), content="890579181")
+/// ```mbt test
+/// let hasher = Hasher::new(seed=0)
+/// let big = 12345N
+/// hasher.combine(big)
+/// inspect(hasher.finalize(), content="890579181")
 /// ```
 pub impl Hash for BigInt with hash_combine(self, hasher) {
   hasher.combine(self.signum())
@@ -256,7 +255,7 @@ fn BigInt::signum(self : Self) -> Int {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 /// let n = 42N
 /// inspect(n.to_uint16(), content="42")
 /// let neg = -1N
@@ -279,7 +278,7 @@ pub fn BigInt::to_uint16(self : BigInt) -> UInt16 {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 /// let n = 42N
 /// inspect(n.to_int16(), content="42")
 /// let neg = -1N

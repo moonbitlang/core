@@ -24,7 +24,7 @@
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 /// inspect(Double::from_int(42), content="42")
 /// inspect(Double::from_int(-1), content="-1")
 /// ```
@@ -46,10 +46,10 @@ pub fn Double::from_int(i : Int) -> Double {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   inspect((-2.5).abs(), content="2.5")
-///   inspect(3.14.abs(), content="3.14")
-///   inspect(0.0.abs(), content="0")
+/// ```mbt test
+/// inspect((-2.5).abs(), content="2.5")
+/// inspect(3.14.abs(), content="3.14")
+/// inspect(0.0.abs(), content="0")
 /// ```
 #as_free_fn(deprecated)
 pub fn Double::abs(self : Double) -> Double = "%f64.abs"
@@ -81,7 +81,7 @@ pub fn Double::signum(self : Double) -> Double {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 /// inspect(@double.not_a_number.is_nan(), content="true")
 /// inspect(42.0.is_nan(), content="false")
 /// inspect((0.0 / 0.0).is_nan(), content="true")
@@ -104,10 +104,10 @@ pub fn Double::is_nan(self : Double) -> Bool {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   inspect(@double.infinity.is_inf(), content="true")
-///   inspect(@double.neg_infinity.is_inf(), content="true")
-///   inspect(42.0.is_inf(), content="false")
+/// ```mbt test
+/// inspect(@double.infinity.is_inf(), content="true")
+/// inspect(@double.neg_infinity.is_inf(), content="true")
+/// inspect(42.0.is_inf(), content="false")
 /// ```
 pub fn Double::is_inf(self : Double) -> Bool {
   self > max_value || self < min_value
@@ -124,7 +124,7 @@ pub fn Double::is_inf(self : Double) -> Bool {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 /// inspect(@double.infinity.is_pos_inf(), content="true")
 /// inspect(@double.neg_infinity.is_pos_inf(), content="false")
 /// inspect(42.0.is_pos_inf(), content="false") // TODO: better formatter
@@ -144,10 +144,10 @@ pub fn Double::is_pos_inf(self : Double) -> Bool {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   inspect((-1.0 / 0.0).is_neg_inf(), content="true")
-///   inspect(42.0.is_neg_inf(), content="false")
-///   inspect((1.0 / 0.0).is_neg_inf(), content="false") // positive infinity
+/// ```mbt test
+/// inspect((-1.0 / 0.0).is_neg_inf(), content="true")
+/// inspect(42.0.is_neg_inf(), content="false")
+/// inspect((1.0 / 0.0).is_neg_inf(), content="false") // positive infinity
 /// ```
 pub fn Double::is_neg_inf(self : Double) -> Bool {
   self < min_value
@@ -171,11 +171,11 @@ pub impl Hash for Double with hash_combine(self, hasher) {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   inspect(42.0.to_string(), content="42")
-///   inspect(3.14159.to_string(), content="3.14159")
-///   inspect((-0.0).to_string(), content="0")
-///   inspect(@double.not_a_number.to_string(), content="NaN")
+/// ```mbt test
+/// inspect(42.0.to_string(), content="42")
+/// inspect(3.14159.to_string(), content="3.14159")
+/// inspect((-0.0).to_string(), content="0")
+/// inspect(@double.not_a_number.to_string(), content="NaN")
 /// ```
 ///
 pub fn Double::to_string(self : Double) -> String {
@@ -214,12 +214,12 @@ pub impl Show for Double with output(self, logger) {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let x = 1.0
-///   let y = 1.000000001
-///   inspect(x.is_close(y), content="false")
-///   inspect(x.is_close(y, relative_tolerance=1.0e-10), content="false")
-///   inspect(@double.infinity.is_close(@double.infinity), content="true")
+/// ```mbt test
+/// let x = 1.0
+/// let y = 1.000000001
+/// inspect(x.is_close(y), content="false")
+/// inspect(x.is_close(y, relative_tolerance=1.0e-10), content="false")
+/// inspect(@double.infinity.is_close(@double.infinity), content="true")
 /// ```
 #as_free_fn(deprecated)
 pub fn Double::is_close(
@@ -258,7 +258,7 @@ pub fn Double::is_close(
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 /// let d = 1.0
 /// inspect(
 ///   d.to_be_bytes(),
@@ -284,7 +284,7 @@ pub fn Double::to_be_bytes(self : Double) -> Bytes {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 /// let d = 1.0
 /// inspect(
 ///   d.to_le_bytes(),

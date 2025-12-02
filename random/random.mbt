@@ -204,10 +204,10 @@ pub fn Rand::boolean(self : Rand) -> Bool {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let rand = @random.Rand::new()
-///   let n = rand.bigint(8) // Generate random 8-bit number
-///   inspect(n.bit_length() <= 8, content="true")
+/// ```mbt test
+/// let rand = @random.Rand::new()
+/// let n = rand.bigint(8) // Generate random 8-bit number
+/// inspect(n.bit_length() <= 8, content="true")
 /// ```
 pub fn Rand::bigint(self : Rand, bits : Int) -> @bigint.BigInt {
   let mod = bits % 8

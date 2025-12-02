@@ -28,10 +28,10 @@
 ///
 /// Example:
 ///
-/// ```mbt check
-///   inspect((1.9 : Float).trunc(), content="1")
-///   inspect((-1.9 : Float).trunc(), content="-1")
-///   inspect((0.1 : Float).trunc(), content="0")
+/// ```mbt test
+/// inspect((1.9 : Float).trunc(), content="1")
+/// inspect((-1.9 : Float).trunc(), content="-1")
+/// inspect((0.1 : Float).trunc(), content="0")
 /// ```
 #as_free_fn
 pub fn Float::trunc(self : Float) -> Float = "(func (param $f f32) (result f32) (f32.trunc (local.get $f)))"
@@ -48,10 +48,10 @@ pub fn Float::trunc(self : Float) -> Float = "(func (param $f f32) (result f32) 
 ///
 /// Example:
 ///
-/// ```mbt check
-///   inspect((1.4 : Float).ceil(), content="2")
-///   inspect((1.0 : Float).ceil(), content="1")
-///   inspect((-1.4 : Float).ceil(), content="-1")
+/// ```mbt test
+/// inspect((1.4 : Float).ceil(), content="2")
+/// inspect((1.0 : Float).ceil(), content="1")
+/// inspect((-1.4 : Float).ceil(), content="-1")
 /// ```
 #as_free_fn
 pub fn Float::ceil(self : Float) -> Float = "(func (param $f f32) (result f32) (f32.ceil (local.get $f)))"
@@ -69,9 +69,9 @@ pub fn Float::ceil(self : Float) -> Float = "(func (param $f f32) (result f32) (
 ///
 /// Example:
 ///
-/// ```mbt check
-///   inspect((3.7 : Float).floor(), content="3")
-///   inspect((-3.7 : Float).floor(), content="-4")
+/// ```mbt test
+/// inspect((3.7 : Float).floor(), content="3")
+/// inspect((-3.7 : Float).floor(), content="-4")
 /// ```
 #as_free_fn
 pub fn Float::floor(self : Float) -> Float = "(func (param $f f32) (result f32) (f32.floor (local.get $f)))"
@@ -89,11 +89,11 @@ pub fn Float::floor(self : Float) -> Float = "(func (param $f f32) (result f32) 
 ///
 /// Example:
 ///
-/// ```mbt check
-///   inspect((1.4 : Float).round(), content="1")
-///   inspect((1.5 : Float).round(), content="2")
-///   inspect((1.6 : Float).round(), content="2")
-///   inspect((-1.5 : Float).round(), content="-1")
+/// ```mbt test
+/// inspect((1.4 : Float).round(), content="1")
+/// inspect((1.5 : Float).round(), content="2")
+/// inspect((1.6 : Float).round(), content="2")
+/// inspect((-1.5 : Float).round(), content="-1")
 /// ```
 #as_free_fn
 pub fn Float::round(self : Float) -> Float {

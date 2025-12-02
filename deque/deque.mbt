@@ -28,14 +28,13 @@ fn[T] set_null(buffer : UninitializedArray[T], index : Int) = "%fixedarray.set_n
 ///
 ///# Example
 ///
-/// ```mbt check
-///   let dq : @deque.Deque[Int] = @deque.new()
-///   inspect(dq.length(), content="0")
-///   inspect(dq.capacity(), content="0")
-///
-///   let dq : @deque.Deque[Int] = @deque.new(capacity=10)
-///   inspect(dq.length(), content="0")
-///   inspect(dq.capacity(), content="10")
+/// ```mbt test
+/// let dq : @deque.Deque[Int] = @deque.new()
+/// inspect(dq.length(), content="0")
+/// inspect(dq.capacity(), content="0")
+/// let dq : @deque.Deque[Int] = @deque.new(capacity=10)
+/// inspect(dq.length(), content="0")
+/// inspect(dq.capacity(), content="10")
 /// ```
 #as_free_fn
 pub fn[A] Deque::new(capacity? : Int = 0) -> Deque[A] {
@@ -54,9 +53,9 @@ pub fn[A] Deque::new(capacity? : Int = 0) -> Deque[A] {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let dq = @deque.from_array([1, 2, 3])
-///   inspect(dq, content="@deque.from_array([1, 2, 3])")
+/// ```mbt test
+/// let dq = @deque.from_array([1, 2, 3])
+/// inspect(dq, content="@deque.from_array([1, 2, 3])")
 /// ```
 ///
 pub impl[A : Show] Show for Deque[A] with output(self, logger) {
@@ -78,7 +77,7 @@ pub impl[A : Show] Show for Deque[A] with output(self, logger) {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 /// let dq1 = @deque.from_array([1, 2, 3])
 /// let dq2 = @deque.from_array([1, 2, 3])
 /// let dq3 = @deque.from_array([1, 2, 3, 4])
@@ -109,13 +108,13 @@ pub impl[A : Hash] Hash for Deque[A] with hash_combine(self, hasher) {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let dq1 = @deque.from_array([1, 2, 3])
-///   let dq2 = @deque.from_array([4, 5, 6])
-///   inspect((dq1 + dq2).to_array(), content="[1, 2, 3, 4, 5, 6]")
-///   let mut dq3 = dq2.copy()
-///   dq3 += @deque.from_array([7])
-///   inspect(dq3.to_array(), content="[4, 5, 6, 7]")
+/// ```mbt test
+/// let dq1 = @deque.from_array([1, 2, 3])
+/// let dq2 = @deque.from_array([4, 5, 6])
+/// inspect((dq1 + dq2).to_array(), content="[1, 2, 3, 4, 5, 6]")
+/// let mut dq3 = dq2.copy()
+/// dq3 += @deque.from_array([7])
+/// inspect(dq3.to_array(), content="[4, 5, 6, 7]")
 /// ```
 pub impl[A] Add for Deque[A] with add(self, other) {
   let len = self.len + other.len
@@ -141,10 +140,10 @@ pub impl[A] Add for Deque[A] with add(self, other) {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let arr = [1, 2, 3, 4, 5]
-///   let dq = @deque.from_array(arr)
-///   inspect(dq, content="@deque.from_array([1, 2, 3, 4, 5])")
+/// ```mbt test
+/// let arr = [1, 2, 3, 4, 5]
+/// let dq = @deque.from_array(arr)
+/// inspect(dq, content="@deque.from_array([1, 2, 3, 4, 5])")
 /// ```
 #as_free_fn
 #alias(of, deprecated="Use from_array instead")
@@ -172,10 +171,10 @@ pub fn[A] Deque::from_array(arr : ArrayView[A]) -> Deque[A] {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let dq = @deque.from_array([1, 2, 3, 4, 5])
-///   let copied = dq.copy()
-///   inspect(copied, content="@deque.from_array([1, 2, 3, 4, 5])")
+/// ```mbt test
+/// let dq = @deque.from_array([1, 2, 3, 4, 5])
+/// let copied = dq.copy()
+/// inspect(copied, content="@deque.from_array([1, 2, 3, 4, 5])")
 /// ```
 pub fn[A] Deque::copy(self : Deque[A]) -> Deque[A] {
   let len = self.len
@@ -204,11 +203,11 @@ pub fn[A] Deque::copy(self : Deque[A]) -> Deque[A] {
 /// 
 /// Example:
 /// 
-/// ```mbt check
-///   let d1 = @deque.from_array([1, 2, 3, 4, 5])
-///   let d2 = @deque.from_array([0, 0])
-///   d1.blit_to(d2, len=3, dst_offset=1)
-///   inspect(d2.to_array(), content="[0, 1, 2, 3]")
+/// ```mbt test
+/// let d1 = @deque.from_array([1, 2, 3, 4, 5])
+/// let d2 = @deque.from_array([0, 0])
+/// d1.blit_to(d2, len=3, dst_offset=1)
+/// inspect(d2.to_array(), content="[0, 1, 2, 3]")
 /// ```
 /// 
 /// Panics if:
@@ -258,7 +257,7 @@ pub fn[A] Deque::blit_to(
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 /// let v1 = @deque.from_array([1, 2, 3])
 /// let v2 = @deque.from_array([4, 5, 6])
 /// v1.append(v2)
@@ -312,7 +311,7 @@ pub fn[A] Deque::append(self : Deque[A], other : Deque[A]) -> Unit {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 /// let v1 = @deque.from_array([1, 2, 3])
 /// v1.insert(0, 0) // insert at the front
 /// inspect(v1, content="@deque.from_array([0, 1, 2, 3])")
@@ -373,7 +372,7 @@ pub fn[A] Deque::insert(self : Deque[A], index : Int, value : A) -> Unit {
 /// 
 /// Example:
 /// 
-/// ```mbt check
+/// ```mbt test
 /// let v1 = @deque.from_array([0, 1, 2, 3])
 /// let x = v1.remove(0) // remove from the front
 /// inspect((x, v1), content="(0, @deque.from_array([1, 2, 3]))")
@@ -431,11 +430,11 @@ pub fn[A] Deque::remove(self : Deque[A], index : Int) -> A {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let dq = @deque.from_array([1, 2, 3])
-///   inspect(dq.length(), content="3")
-///   dq.push_back(4)
-///   inspect(dq.length(), content="4")
+/// ```mbt test
+/// let dq = @deque.from_array([1, 2, 3])
+/// inspect(dq.length(), content="3")
+/// dq.push_back(4)
+/// inspect(dq.length(), content="4")
 /// ```
 pub fn[A] Deque::length(self : Deque[A]) -> Int {
   self.len
@@ -453,11 +452,11 @@ pub fn[A] Deque::length(self : Deque[A]) -> Int {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let dq = @deque.new(capacity=10)
-///   dq.push_back(1)
-///   dq.push_back(2)
-///   inspect(dq.capacity(), content="10")
+/// ```mbt test
+/// let dq = @deque.new(capacity=10)
+/// dq.push_back(1)
+/// dq.push_back(2)
+/// inspect(dq.capacity(), content="10")
 /// ```
 pub fn[A] Deque::capacity(self : Deque[A]) -> Int {
   self.buf.length()
@@ -612,7 +611,7 @@ pub fn[A] Deque::unsafe_pop_front(self : Deque[A]) -> Unit {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 ///   let dq = @deque.from_array([1, 2, 3])
 ///   dq.unsafe_pop_front()
 ///   inspect(dq, content="@deque.from_array([2, 3])")
@@ -661,7 +660,7 @@ pub fn[A] Deque::unsafe_pop_back(self : Deque[A]) -> Unit {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 ///   let dq = @deque.from_array([1, 2, 3])
 ///   // Deprecated way:
 ///   // dq.pop_back_exn()
@@ -802,11 +801,11 @@ pub fn[A] Deque::set(self : Deque[A], index : Int, value : A) -> Unit {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let dq = @deque.from_array([1, 2, 3, 4, 5])
-///   let (v1, v2) = dq.as_views()
-///   inspect(v1.length(), content="5")
-///   inspect(v2.length(), content="0")
+/// ```mbt test
+/// let dq = @deque.from_array([1, 2, 3, 4, 5])
+/// let (v1, v2) = dq.as_views()
+/// inspect(v1.length(), content="5")
+/// inspect(v2.length(), content="0")
 /// ```
 pub fn[A] Deque::as_views(self : Deque[A]) -> (ArrayView[A], ArrayView[A]) {
   guard self.len != 0 else { ([][:], [][:]) }
@@ -833,12 +832,12 @@ pub fn[A] Deque::as_views(self : Deque[A]) -> (ArrayView[A], ArrayView[A]) {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let dq1 = @deque.from_array([1, 2, 3])
-///   let dq2 = @deque.from_array([1, 2, 3])
-///   let dq3 = @deque.from_array([3, 2, 1])
-///   inspect(dq1 == dq2, content="true")
-///   inspect(dq1 == dq3, content="false")
+/// ```mbt test
+/// let dq1 = @deque.from_array([1, 2, 3])
+/// let dq2 = @deque.from_array([1, 2, 3])
+/// let dq3 = @deque.from_array([3, 2, 1])
+/// inspect(dq1 == dq2, content="true")
+/// inspect(dq1 == dq3, content="false")
 /// ```
 pub impl[A : Eq] Eq for Deque[A] with equal(self, other) {
   if self.len != other.len {
@@ -1021,10 +1020,10 @@ pub fn[A] Deque::is_empty(self : Deque[A]) -> Bool {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let dq = @deque.from_array([1, 2, 3, 2, 1])
-///   inspect(dq.search(2), content="Some(1)")
-///   inspect(dq.search(4), content="None")
+/// ```mbt test
+/// let dq = @deque.from_array([1, 2, 3, 2, 1])
+/// inspect(dq.search(2), content="Some(1)")
+/// inspect(dq.search(4), content="None")
 /// ```
 pub fn[A : Eq] Deque::search(self : Deque[A], value : A) -> Int? {
   let cap = self.buf.length()
@@ -1050,10 +1049,10 @@ pub fn[A : Eq] Deque::search(self : Deque[A], value : A) -> Int? {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let dq = @deque.from_array([1, 2, 3, 4, 5])
-///   inspect(dq.contains(3), content="true")
-///   inspect(dq.contains(6), content="false")
+/// ```mbt test
+/// let dq = @deque.from_array([1, 2, 3, 4, 5])
+/// inspect(dq.contains(3), content="true")
+/// inspect(dq.contains(6), content="false")
 /// ```
 pub fn[A : Eq] Deque::contains(self : Deque[A], value : A) -> Bool {
   self.iter().contains(value)
@@ -1075,7 +1074,7 @@ pub fn[A : Eq] Deque::contains(self : Deque[A], value : A) -> Bool {
 /// 
 /// Example:
 /// 
-/// ```mbt check
+/// ```mbt test
 /// let d = @deque.from_array([1, 2, 3, 4, 5])
 /// let extracted = d.extract_if(x => x % 2 == 0)
 /// inspect(extracted.to_array(), content="[2, 4]")
@@ -1123,10 +1122,10 @@ pub fn[A] Deque::extract_if(self : Deque[A], f : (A) -> Bool) -> Deque[A] {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let dq = @deque.from_array([1, 2, 3, 4, 5])
-///   let evens = dq.filter((x) => { x % 2 == 0 })
-///   inspect(evens, content="@deque.from_array([2, 4])")
+/// ```mbt test
+/// let dq = @deque.from_array([1, 2, 3, 4, 5])
+/// let evens = dq.filter(x => x % 2 == 0)
+/// inspect(evens, content="@deque.from_array([2, 4])")
 /// ```
 #locals(f)
 pub fn[A] Deque::filter(
@@ -1210,10 +1209,10 @@ pub fn[A] Deque::shrink_to_fit(self : Deque[A]) -> Unit {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let dq = @deque.from_array([1, 2, 3, 4, 5])
-///   dq.truncate(3)
-///   inspect(dq, content="@deque.from_array([1, 2, 3])")
+/// ```mbt test
+/// let dq = @deque.from_array([1, 2, 3, 4, 5])
+/// dq.truncate(3)
+/// inspect(dq, content="@deque.from_array([1, 2, 3])")
 /// ```
 pub fn[A] Deque::truncate(self : Deque[A], len : Int) -> Unit {
   guard len >= 0 && len < self.len else { return }
@@ -1261,10 +1260,10 @@ pub fn[A] Deque::truncate(self : Deque[A], len : Int) -> Unit {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let dq = @deque.from_array([1, 2, 3, 4, 5])
-///   dq.retain_map((x) => { if x % 2 == 0 { Some(x * 2) } else { None } })
-///   inspect(dq, content="@deque.from_array([4, 8])")
+/// ```mbt test
+/// let dq = @deque.from_array([1, 2, 3, 4, 5])
+/// dq.retain_map(x => if x % 2 == 0 { Some(x * 2) } else { None })
+/// inspect(dq, content="@deque.from_array([4, 8])")
 /// ```
 #alias(filter_map_inplace, deprecated)
 pub fn[A] Deque::retain_map(self : Deque[A], f : (A) -> A?) -> Unit {
@@ -1319,10 +1318,10 @@ pub fn[A] Deque::retain_map(self : Deque[A], f : (A) -> A?) -> Unit {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let dq = @deque.from_array([1, 2, 3, 4, 5])
-///   dq.retain((x) => { x % 2 == 0 })
-///   inspect(dq, content="@deque.from_array([2, 4])")
+/// ```mbt test
+/// let dq = @deque.from_array([1, 2, 3, 4, 5])
+/// dq.retain(x => x % 2 == 0)
+/// inspect(dq, content="@deque.from_array([2, 4])")
 /// ```
 pub fn[A] Deque::retain(self : Deque[A], f : (A) -> Bool) -> Unit {
   guard !self.is_empty() else { return }
@@ -1369,11 +1368,11 @@ pub fn[A] Deque::retain(self : Deque[A], f : (A) -> Bool) -> Unit {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let dq = @deque.from_array([1, 2, 3, 4, 5])
-///   let mut sum = 0
-///   dq.iter().each((x) => { sum = sum + x })
-///   inspect(sum, content="15")
+/// ```mbt test
+/// let dq = @deque.from_array([1, 2, 3, 4, 5])
+/// let mut sum = 0
+/// dq.iter().each(x => sum = sum + x)
+/// inspect(sum, content="15")
 /// ```
 pub fn[A] Deque::iter(self : Deque[A]) -> Iter[A] {
   Iter::new(yield_ => {
@@ -1409,11 +1408,11 @@ pub fn[A] Deque::iter(self : Deque[A]) -> Iter[A] {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let dq = @deque.from_array([1, 2, 3, 4, 5])
-///   let mut sum = 0
-///   dq.iterator().each((x) => { sum = sum + x })
-///   inspect(sum, content="15")
+/// ```mbt test
+/// let dq = @deque.from_array([1, 2, 3, 4, 5])
+/// let mut sum = 0
+/// dq.iterator().each(x => sum = sum + x)
+/// inspect(sum, content="15")
 /// ```
 pub fn[A] Deque::iterator(self : Deque[A]) -> Iterator[A] {
   let mut index = 0
@@ -1439,11 +1438,11 @@ pub fn[A] Deque::iterator(self : Deque[A]) -> Iterator[A] {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let dq = @deque.from_array([10, 20, 30])
-///   let mut sum = 0
-///   dq.iter2().each((i, x) => { sum = sum + i * x })
-///   inspect(sum, content="80") // 0*10 + 1*20 + 2*30 = 80
+/// ```mbt test
+/// let dq = @deque.from_array([10, 20, 30])
+/// let mut sum = 0
+/// dq.iter2().each((i, x) => sum = sum + i * x)
+/// inspect(sum, content="80") // 0*10 + 1*20 + 2*30 = 80
 /// ```
 pub fn[A] Deque::iter2(self : Deque[A]) -> Iter2[Int, A] {
   Iter2::new(yield_ => {
@@ -1485,14 +1484,14 @@ pub fn[A] Deque::iter2(self : Deque[A]) -> Iter2[Int, A] {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let dq = @deque.from_array([10, 20, 30])
-///   let mut sum = 0
-///   let it = dq.iterator2()
-///   while it.next() is Some((i, x)) {
-///     sum = sum + i * x
-///   }
-///   inspect(sum, content="80") // 0*10 + 1*20 + 2*30 = 80
+/// ```mbt test
+/// let dq = @deque.from_array([10, 20, 30])
+/// let mut sum = 0
+/// let it = dq.iterator2()
+/// while it.next() is Some((i, x)) {
+///   sum = sum + i * x
+/// }
+/// inspect(sum, content="80") // 0*10 + 1*20 + 2*30 = 80
 /// ```
 pub fn[A] Deque::iterator2(self : Deque[A]) -> Iterator2[Int, A] {
   let mut index = 0
@@ -1516,11 +1515,11 @@ pub fn[A] Deque::iterator2(self : Deque[A]) -> Iterator2[Int, A] {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let dq = @deque.from_array([1, 2, 3])
-///   let mut sum = 0
-///   dq.rev_iter().each((x) => { sum = sum * 10 + x })
-///   inspect(sum, content="321")
+/// ```mbt test
+/// let dq = @deque.from_array([1, 2, 3])
+/// let mut sum = 0
+/// dq.rev_iter().each(x => sum = sum * 10 + x)
+/// inspect(sum, content="321")
 /// ```
 pub fn[A] Deque::rev_iter(self : Deque[A]) -> Iter[A] {
   Iter::new(yield_ => {
@@ -1556,11 +1555,11 @@ pub fn[A] Deque::rev_iter(self : Deque[A]) -> Iter[A] {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let dq = @deque.from_array([1, 2, 3])
-///   let mut sum = 0
-///   dq.rev_iterator().each((x) => { sum = sum * 10 + x })
-///   inspect(sum, content="321")
+/// ```mbt test
+/// let dq = @deque.from_array([1, 2, 3])
+/// let mut sum = 0
+/// dq.rev_iterator().each(x => sum = sum * 10 + x)
+/// inspect(sum, content="321")
 /// ```
 pub fn[A] Deque::rev_iterator(self : Deque[A]) -> Iterator[A] {
   let mut index = self.len
@@ -1585,11 +1584,11 @@ pub fn[A] Deque::rev_iterator(self : Deque[A]) -> Iterator[A] {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let dq = @deque.from_array([1, 2, 3])
-///   let mut s = ""
-///   dq.rev_iter2().each((i, x) => { s = s + "\{i}:\{x} " })
-///   inspect(s, content="0:3 1:2 2:1 ")
+/// ```mbt test
+/// let dq = @deque.from_array([1, 2, 3])
+/// let mut s = ""
+/// dq.rev_iter2().each((i, x) => s = s + "\{i}:\{x} ")
+/// inspect(s, content="0:3 1:2 2:1 ")
 /// ```
 pub fn[A] Deque::rev_iter2(self : Deque[A]) -> Iter2[Int, A] {
   Iter2::new(yield_ => {
@@ -1631,14 +1630,14 @@ pub fn[A] Deque::rev_iter2(self : Deque[A]) -> Iter2[Int, A] {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let dq = @deque.from_array([1, 2, 3])
-///   let mut s = ""
-///   let it = dq.rev_iterator2()
-///   while it.next() is Some((i, x)) {
-///     s = s + "\{i}:\{x} "
-///   }
-///   inspect(s, content="0:3 1:2 2:1 ")
+/// ```mbt test
+/// let dq = @deque.from_array([1, 2, 3])
+/// let mut s = ""
+/// let it = dq.rev_iterator2()
+/// while it.next() is Some((i, x)) {
+///   s = s + "\{i}:\{x} "
+/// }
+/// inspect(s, content="0:3 1:2 2:1 ")
 /// ```
 pub fn[A] Deque::rev_iterator2(self : Deque[A]) -> Iterator2[Int, A] {
   let mut rev_index = self.len
@@ -1662,10 +1661,10 @@ pub fn[A] Deque::rev_iterator2(self : Deque[A]) -> Iterator2[Int, A] {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let arr = [1, 2, 3, 4, 5]
-///   let dq = @deque.from_iter(arr.iter())
-///   inspect(dq, content="@deque.from_array([1, 2, 3, 4, 5])")
+/// ```mbt test
+/// let arr = [1, 2, 3, 4, 5]
+/// let dq = @deque.from_iter(arr.iter())
+/// inspect(dq, content="@deque.from_array([1, 2, 3, 4, 5])")
 /// ```
 #as_free_fn
 pub fn[A] Deque::from_iter(iter : Iter[A]) -> Deque[A] {
@@ -1686,10 +1685,10 @@ pub fn[A] Deque::from_iter(iter : Iter[A]) -> Deque[A] {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let arr = [1, 2, 3, 4, 5]
-///   let dq = @deque.from_iterator(arr.iterator())
-///   inspect(dq, content="@deque.from_array([1, 2, 3, 4, 5])")
+/// ```mbt test
+/// let arr = [1, 2, 3, 4, 5]
+/// let dq = @deque.from_iterator(arr.iterator())
+/// inspect(dq, content="@deque.from_array([1, 2, 3, 4, 5])")
 /// ```
 #as_free_fn
 pub fn[A] Deque::from_iterator(iter : Iterator[A]) -> Deque[A] {
@@ -1712,10 +1711,10 @@ pub fn[A] Deque::from_iterator(iter : Iterator[A]) -> Deque[A] {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let dq = @deque.from_array([1, 2, 3, 4, 5])
-///   let arr = dq.to_array()
-///   inspect(arr, content="[1, 2, 3, 4, 5]")
+/// ```mbt test
+/// let dq = @deque.from_array([1, 2, 3, 4, 5])
+/// let arr = dq.to_array()
+/// inspect(arr, content="[1, 2, 3, 4, 5]")
 /// ```
 ///
 pub fn[A] Deque::to_array(self : Deque[A]) -> Array[A] {
@@ -1747,13 +1746,12 @@ pub fn[A] Deque::to_array(self : Deque[A]) -> Array[A] {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let deque = @deque.from_array(["a","b","c"])
-///   let s1 = deque.join("")
-///   inspect(s1, content="abc")
-///
-///   let s2 = deque.join(",")
-///   inspect(s2, content="a,b,c")
+/// ```mbt test
+/// let deque = @deque.from_array(["a", "b", "c"])
+/// let s1 = deque.join("")
+/// inspect(s1, content="abc")
+/// let s2 = deque.join(",")
+/// inspect(s2, content="a,b,c")
 /// ```
 pub fn Deque::join(self : Deque[String], separator : StringView) -> String {
   let str = separator.to_string()
@@ -1800,7 +1798,7 @@ pub impl[A : ToJson] ToJson for Deque[A] with to_json(self : Deque[A]) -> Json {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 /// let json = @json.parse("[1, 2, 3]")
 /// let dq : @deque.Deque[Int] = @json.from_json(json)
 /// inspect(dq, content="@deque.from_array([1, 2, 3])")
@@ -1838,7 +1836,7 @@ pub impl[A : @json.FromJson] @json.FromJson for Deque[A] with from_json(
 /// 
 /// Example:
 /// 
-/// ```mbt check
+/// ```mbt test
 /// let d = @deque.from_array([1, 2, 3, 4, 5])
 /// let chunks = d.chunks(2)
 /// inspect(
@@ -1888,7 +1886,7 @@ pub fn[A] Deque::chunks(self : Deque[A], size : Int) -> Deque[Deque[A]] {
 /// 
 /// Example:
 /// 
-/// ```mbt check
+/// ```mbt test
 /// let d = @deque.from_array([1, 1, 2, 3, 2, 3, 2, 3, 4])
 /// let chunks = d.chunk_by((x, y) => x <= y)
 /// inspect(
@@ -1935,10 +1933,14 @@ pub fn[A] Deque::chunk_by(
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let deque = @deque.from_array([@deque.from_array([1,2,3]),@deque.from_array([4,5,6]),@deque.from_array([7,8])])
-///   let deque_test = deque.flatten()
-///   inspect(deque_test, content="@deque.from_array([1, 2, 3, 4, 5, 6, 7, 8])")
+/// ```mbt test
+/// let deque = @deque.from_array([
+///   @deque.from_array([1, 2, 3]),
+///   @deque.from_array([4, 5, 6]),
+///   @deque.from_array([7, 8]),
+/// ])
+/// let deque_test = deque.flatten()
+/// inspect(deque_test, content="@deque.from_array([1, 2, 3, 4, 5, 6, 7, 8])")
 /// ```
 pub fn[A] Deque::flatten(self : Deque[Deque[A]]) -> Deque[A] {
   let mut len = 0
@@ -1977,8 +1979,8 @@ pub fn[A] Deque::flatten(self : Deque[Deque[A]]) -> Deque[A] {
 ///
 /// Example:
 ///
-/// ```mbt check
-/// let deque = @deque.from_array([1,2,3,4,5,6,7,8,9])
+/// ```mbt test
+/// let deque = @deque.from_array([1, 2, 3, 4, 5, 6, 7, 8, 9])
 /// let deque_test = deque.drain(start=2, len=4)
 /// inspect(deque_test, content="@deque.from_array([3, 4, 5, 6])")
 /// inspect(deque, content="@deque.from_array([1, 2, 7, 8, 9])")
@@ -2126,19 +2128,11 @@ pub fn[A] Deque::drain(self : Deque[A], start~ : Int, len? : Int) -> Deque[A] {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 /// let dq = @deque.from_array([1, 3, 5, 7, 9])
-///
-///
-/// let find_3 = dq.binary_search_by((x) => {
-///   x.compare(3)
-/// })
+/// let find_3 = dq.binary_search_by(x => x.compare(3))
 /// inspect(find_3, content="Ok(1)")
-///
-///
-/// let find_4 = dq.binary_search_by((x) => {
-///   x.compare(4)
-/// })
+/// let find_4 = dq.binary_search_by(x => x.compare(4))
 /// inspect(find_4, content="Err(2)")
 /// ```
 ///
@@ -2212,7 +2206,7 @@ pub fn[A] Deque::get(self : Deque[A], index : Int) -> A? {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 /// let dq = @deque.from_array([1, 3, 5, 7, 9])
 /// let result = dq.binary_search(5)
 /// inspect(result, content="Ok(2)")
@@ -2251,14 +2245,14 @@ pub fn[A : Compare] Deque::binary_search(
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let dq1 = @deque.from_array([1, 2, 3])
-///   let dq2 = @deque.from_array([1, 2, 4])
-///   let dq3 = @deque.from_array([1, 2])
-///   inspect(dq1.compare(dq2), content="-1") // dq1 < dq2
-///   inspect(dq2.compare(dq1), content="1") // dq2 > dq1
-///   inspect(dq1.compare(dq3), content="1") // dq1 > dq3 (longer)
-///   inspect(dq1.compare(dq1), content="0") // dq1 = dq1
+/// ```mbt test
+/// let dq1 = @deque.from_array([1, 2, 3])
+/// let dq2 = @deque.from_array([1, 2, 4])
+/// let dq3 = @deque.from_array([1, 2])
+/// inspect(dq1.compare(dq2), content="-1") // dq1 < dq2
+/// inspect(dq2.compare(dq1), content="1") // dq2 > dq1
+/// inspect(dq1.compare(dq3), content="1") // dq1 > dq3 (longer)
+/// inspect(dq1.compare(dq1), content="0") // dq1 = dq1
 /// ```
 pub impl[A : Compare] Compare for Deque[A] with compare(self, other) {
   let len_self = self.length()
@@ -2282,14 +2276,13 @@ pub impl[A : Compare] Compare for Deque[A] with compare(self, other) {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let dq = @deque.from_array([1, 2, 3, 4, 5])
-///   dq.rev_in_place()
-///   inspect(dq, content="@deque.from_array([5, 4, 3, 2, 1])")
-///
-///   let dq : @deque.Deque[Int] = @deque.new()
-///   dq.rev_in_place()
-///   inspect(dq, content="@deque.from_array([])")
+/// ```mbt test
+/// let dq = @deque.from_array([1, 2, 3, 4, 5])
+/// dq.rev_in_place()
+/// inspect(dq, content="@deque.from_array([5, 4, 3, 2, 1])")
+/// let dq : @deque.Deque[Int] = @deque.new()
+/// dq.rev_in_place()
+/// inspect(dq, content="@deque.from_array([])")
 /// ```
 #alias(rev_inplace, deprecated)
 pub fn[A] Deque::rev_in_place(self : Deque[A]) -> Unit {
@@ -2318,10 +2311,10 @@ pub fn[A] Deque::rev_in_place(self : Deque[A]) -> Unit {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let dq = @deque.from_array([1, 2, 3, 4, 5])
-///   inspect(dq.rev(), content="@deque.from_array([5, 4, 3, 2, 1])")
-///   inspect(dq, content="@deque.from_array([1, 2, 3, 4, 5])") // original deque unchanged
+/// ```mbt test
+/// let dq = @deque.from_array([1, 2, 3, 4, 5])
+/// inspect(dq.rev(), content="@deque.from_array([5, 4, 3, 2, 1])")
+/// inspect(dq, content="@deque.from_array([1, 2, 3, 4, 5])") // original deque unchanged
 /// ```
 pub fn[A] Deque::rev(self : Deque[A]) -> Deque[A] {
   let len = self.len

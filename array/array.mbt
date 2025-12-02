@@ -24,10 +24,10 @@
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let iter = Iter::singleton(42)
-///   let arr = Array::from_iter(iter)
-///   inspect(arr, content="[42]")
+/// ```mbt test
+/// let iter = Iter::singleton(42)
+/// let arr = Array::from_iter(iter)
+/// inspect(arr, content="[42]")
 /// ```
 pub fn[T] Array::from_iter(iter : Iter[T]) -> Array[T] {
   iter.collect()
@@ -45,10 +45,10 @@ pub fn[T] Array::from_iter(iter : Iter[T]) -> Array[T] {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let iter = Iterator::singleton(42)
-///   let arr = Array::from_iterator(iter)
-///   inspect(arr, content="[42]")
+/// ```mbt test
+/// let iter = Iterator::singleton(42)
+/// let arr = Array::from_iterator(iter)
+/// inspect(arr, content="[42]")
 /// ```
 pub fn[T] Array::from_iterator(iter : Iterator[T]) -> Array[T] {
   iter.collect()
@@ -83,13 +83,14 @@ pub fn[T] Array::push_iter(self : Self[T], iter : Iter[T]) -> Unit {
 /// *rand n* is expected to returns a uniformly distribution integer between 0 and n - 1
 /// # Example
 ///
-/// ```mbt check
-///   let arr = [1, 2, 3, 4, 5]
-///   fn rand(upper : Int) -> Int {
-///     let rng = @random.Rand::new()
-///     rng.int(limit=upper)
-///   }
-///   Array::shuffle_in_place(arr, rand=rand)
+/// ```mbt test
+/// let arr = [1, 2, 3, 4, 5]
+/// fn rand(upper : Int) -> Int {
+///   let rng = @random.Rand::new()
+///   rng.int(limit=upper)
+/// }
+///
+/// Array::shuffle_in_place(arr, rand~)
 /// ```
 pub fn[T] Array::shuffle_in_place(
   self : Array[T],
@@ -164,11 +165,11 @@ pub fn[A, B] Array::filter_map(
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let arr = [1, 2, 3]
-///   inspect(arr.last(), content="Some(3)")
-///   let empty : Array[Int] = []
-///   inspect(empty.last(), content="None")
+/// ```mbt test
+/// let arr = [1, 2, 3]
+/// inspect(arr.last(), content="Some(3)")
+/// let empty : Array[Int] = []
+/// inspect(empty.last(), content="None")
 /// ```
 pub fn[A] Array::last(self : Array[A]) -> A? {
   match self {
@@ -190,10 +191,10 @@ pub fn[A] Array::last(self : Array[A]) -> A? {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let arr1 = [1, 2, 3]
-///   let arr2 = ['a', 'b', 'c']
-///   inspect(arr1.zip(arr2), content="[(1, 'a'), (2, 'b'), (3, 'c')]")
+/// ```mbt test
+/// let arr1 = [1, 2, 3]
+/// let arr2 = ['a', 'b', 'c']
+/// inspect(arr1.zip(arr2), content="[(1, 'a'), (2, 'b'), (3, 'c')]")
 /// ```
 pub fn[A, B] Array::zip(self : Array[A], other : Array[B]) -> Array[(A, B)] {
   let length = if self.length() < other.length() {
@@ -208,11 +209,11 @@ pub fn[A, B] Array::zip(self : Array[A], other : Array[B]) -> Array[(A, B)] {
 /// Splits an array of pairs into two arrays, separating the first and second elements.
 ///
 /// # Example
-/// ```mbt check
-///   let arr = [(1, "a"), (2, "b"), (3, "c")]
-///   let (nums, strs) = arr.unzip()
-///   inspect(nums, content="[1, 2, 3]")
-///   inspect(strs, content="[\"a\", \"b\", \"c\"]")
+/// ```mbt test
+/// let arr = [(1, "a"), (2, "b"), (3, "c")]
+/// let (nums, strs) = arr.unzip()
+/// inspect(nums, content="[1, 2, 3]")
+/// inspect(strs, content="[\"a\", \"b\", \"c\"]")
 /// ```
 pub fn[T1, T2] Array::unzip(self : Array[(T1, T2)]) -> (Array[T1], Array[T2]) {
   let arr1 : Array[T1] = Array::new(capacity=self.length())
@@ -238,11 +239,11 @@ pub fn[T1, T2] Array::unzip(self : Array[(T1, T2)]) -> (Array[T1], Array[T2]) {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let arr1 = [1, 2, 3]
-///   let arr2 = [4, 5, 6]
-///   let add = (a, b) => a + b
-///   inspect(@array.zip_with(arr1, arr2, add), content="[5, 7, 9]")
+/// ```mbt test
+/// let arr1 = [1, 2, 3]
+/// let arr2 = [4, 5, 6]
+/// let add = (a, b) => a + b
+/// inspect(@array.zip_with(arr1, arr2, add), content="[5, 7, 9]")
 /// ```
 pub fn[A, B, C] zip_with(
   l : Array[A],
@@ -266,10 +267,13 @@ pub fn[A, B, C] zip_with(
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let arr1 = [1, 2, 3]
-///   let arr2 = ['a', 'b', 'c']
-///   inspect(arr1.zip_to_iter2(arr2).to_array(), content="[(1, 'a'), (2, 'b'), (3, 'c')]")
+/// ```mbt test
+/// let arr1 = [1, 2, 3]
+/// let arr2 = ['a', 'b', 'c']
+/// inspect(
+///   arr1.zip_to_iter2(arr2).to_array(),
+///   content="[(1, 'a'), (2, 'b'), (3, 'c')]",
+/// )
 /// ```
 pub fn[A, B] Array::zip_to_iter2(
   self : Array[A],
@@ -299,7 +303,7 @@ pub fn[A, B] Array::zip_to_iter2(
 ///
 /// Returns a single concatenated `String`.
 /// # Example:
-/// ```mbt check
+/// ```mbt test
 /// let s = "hello world"
 /// inspect(s.split(" ").to_array().join(":"), content="hello:world")
 /// ```

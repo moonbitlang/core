@@ -756,10 +756,10 @@ pub fn[X] Iterator::last(self : Iterator[X]) -> X? {
 ///
 /// # Examples
 ///
-/// ```mbt check
-///   let arr = []
-///   [1, 2, 3].iterator().intersperse(0).each((i) => {arr.push(i)})
-///   assert_eq(arr, [1, 0, 2, 0, 3])
+/// ```mbt test
+/// let arr = []
+/// [1, 2, 3].iterator().intersperse(0).each(i => arr.push(i))
+/// assert_eq(arr, [1, 0, 2, 0, 3])
 /// ```
 ///
 /// # Note
@@ -838,13 +838,12 @@ pub fn[X] Iterator::sub(
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let iter = [1, 2, 3, 4, 5].iterator()
-///   inspect(iter.contains(3), content="true")
-///   inspect(iter.contains(6), content="false")
-///
-///   let iter = Iterator::empty()
-///   inspect(iter.contains(1), content="false")
+/// ```mbt test
+/// let iter = [1, 2, 3, 4, 5].iterator()
+/// inspect(iter.contains(3), content="true")
+/// inspect(iter.contains(6), content="false")
+/// let iter = Iterator::empty()
+/// inspect(iter.contains(1), content="false")
 /// ```
 ///
 /// # Note

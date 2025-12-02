@@ -41,13 +41,12 @@ fn[T] Array::make_uninit(len : Int) -> Array[T] {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let arr : Array[Int] = Array::new(capacity=10)
-///   inspect(arr.length(), content="0")
-///   inspect(arr.capacity(), content="10")
-///
-///   let arr : Array[Int] = Array::new()
-///   inspect(arr.length(), content="0")
+/// ```mbt test
+/// let arr : Array[Int] = Array::new(capacity=10)
+/// inspect(arr.length(), content="0")
+/// inspect(arr.capacity(), content="10")
+/// let arr : Array[Int] = Array::new()
+/// inspect(arr.length(), content="0")
 /// ```
 pub fn[T] Array::new(capacity? : Int = 0) -> Array[T] {
   if capacity == 0 {
@@ -68,11 +67,11 @@ pub fn[T] Array::new(capacity? : Int = 0) -> Array[T] {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let arr = [1, 2, 3]
-///   inspect(arr.length(), content="3")
-///   let empty : Array[Int] = []
-///   inspect(empty.length(), content="0")
+/// ```mbt test
+/// let arr = [1, 2, 3]
+/// inspect(arr.length(), content="3")
+/// let empty : Array[Int] = []
+/// inspect(empty.length(), content="0")
 /// ```
 #intrinsic("%array.length")
 pub fn[T] Array::length(self : Array[T]) -> Int {
@@ -272,10 +271,10 @@ pub fn[T] Array::pop(self : Array[T]) -> T? {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let arr = [1, 2, 3]
-///   inspect(arr.unsafe_pop(), content="3")
-///   inspect(arr, content="[1, 2]")
+/// ```mbt test
+/// let arr = [1, 2, 3]
+/// inspect(arr.unsafe_pop(), content="3")
+/// inspect(arr, content="[1, 2]")
 /// ```
 ///
 #internal(unsafe, "Panic if the array is empty.")
@@ -356,7 +355,7 @@ pub fn[T] Array::drain(self : Array[T], begin : Int, end : Int) -> Array[T] {
 /// This function will panic if the index is out of bounds.
 ///
 /// # Example
-/// ```mbt check
+/// ```mbt test
 /// let a = [1, 2, 3]
 /// a.insert(1, 4)
 /// inspect(a, content="[1, 4, 2, 3]")
@@ -422,7 +421,7 @@ fn[T] Array::unsafe_grow_to_length(self : Array[T], new_len : Int) -> Unit {
 /// - Does nothing if the array is empty
 /// 
 /// # Example
-/// ```mbt check
+/// ```mbt test
 /// // Fill entire array
 /// let arr = [1, 2, 3, 4, 5]
 /// arr.fill(0)
@@ -436,9 +435,12 @@ fn[T] Array::unsafe_grow_to_length(self : Array[T], new_len : Int) -> Unit {
 /// // Fill from index 2 to end
 /// let arr3 = ["a", "b", "c", "d"]
 /// arr3.fill("x", start=2)
-/// inspect(arr3, content=(
-///   #|["a", "b", "x", "x"]
-/// ))
+/// inspect(
+///   arr3,
+///   content=(
+///     #|["a", "b", "x", "x"]
+///   ),
+/// )
 /// ```
 pub fn[A] Array::fill(
   self : Array[A],

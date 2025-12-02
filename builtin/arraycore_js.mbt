@@ -310,7 +310,7 @@ fn[T] Array::unsafe_grow_to_length(self : Array[T], new_len : Int) -> Unit {
 /// - Does nothing if the array is empty
 /// 
 /// # Example
-/// ```mbt check
+/// ```mbt test
 /// // Fill entire array
 /// let arr = [1, 2, 3, 4, 5]
 /// arr.fill(0)
@@ -324,9 +324,12 @@ fn[T] Array::unsafe_grow_to_length(self : Array[T], new_len : Int) -> Unit {
 /// // Fill from index 2 to end
 /// let arr3 = ["a", "b", "c", "d"]
 /// arr3.fill("x", start=2)
-/// inspect(arr3, content=(
-///   #|["a", "b", "x", "x"]
-/// ))
+/// inspect(
+///   arr3,
+///   content=(
+///     #|["a", "b", "x", "x"]
+///   ),
+/// )
 /// ```
 pub fn[A] Array::fill(
   self : Array[A],

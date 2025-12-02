@@ -28,11 +28,11 @@
 ///
 /// Example:
 ///
-/// ```mbt check
-///   inspect(5.0.mod(3.0), content="2")
-///   inspect((-5.0).mod(3.0), content="-2")
-///   inspect(5.0.mod(@double.not_a_number), content="NaN")
-///   inspect(@double.infinity.mod(3.0), content="NaN")
+/// ```mbt test
+/// inspect(5.0.mod(3.0), content="2")
+/// inspect((-5.0).mod(3.0), content="-2")
+/// inspect(5.0.mod(@double.not_a_number), content="NaN")
+/// inspect(@double.infinity.mod(3.0), content="NaN")
 /// ```
 pub impl Mod for Double with mod(self : Double, other : Double) -> Double {
   let x = self

@@ -435,7 +435,7 @@ pub fn[T, R] Iter::flat_map(self : Iter[T], f : (T) -> Iter[R]) -> Iter[R] {
 
 ///|
 /// iter.map(f).flatten() == iter..flat_map(f)
-/// ```mbt check 
+/// ```mbt test 
 /// // ignore this test case for now since it will cause ice in release build
 /// // test {
 /// //   fn f(n : Int) { Int::until(0,n) }
@@ -790,12 +790,11 @@ pub fn[A] Iter::last(self : Iter[A]) -> A? {
 ///
 /// # Examples
 ///
-/// ```mbt check
-///   let iter = Iter::singleton(42)
-///   assert_eq(iter.head(), Some(42))
-///
-///   let iter : Iter[Int]= Iter::empty()
-///   assert_eq(iter.head(), None)
+/// ```mbt test
+/// let iter = Iter::singleton(42)
+/// assert_eq(iter.head(), Some(42))
+/// let iter : Iter[Int] = Iter::empty()
+/// assert_eq(iter.head(), None)
 /// ```
 pub fn[A] Iter::head(self : Iter[A]) -> A? {
   for i in self {
@@ -815,10 +814,10 @@ pub fn[A] Iter::head(self : Iter[A]) -> A? {
 ///
 /// # Examples
 ///
-/// ```mbt check
-///   let arr = []
-///   [1, 2, 3].iter().intersperse(0).each((i) => {arr.push(i)})
-///   assert_eq(arr, [1, 0, 2, 0, 3])
+/// ```mbt test
+/// let arr = []
+/// [1, 2, 3].iter().intersperse(0).each(i => arr.push(i))
+/// assert_eq(arr, [1, 0, 2, 0, 3])
 /// ```
 pub fn[A] Iter::intersperse(self : Iter[A], sep : A) -> Iter[A] {
   yield_ => {
@@ -863,13 +862,12 @@ pub fn[A] Iter::sub(self : Iter[A], start? : Int = 0, end? : Int) -> Iter[A] {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let iter = [1, 2, 3, 4, 5].iter()
-///   inspect(iter.contains(3), content="true")
-///   inspect(iter.contains(6), content="false")
-///
-///   let iter = Iter::empty()
-///   inspect(iter.contains(1), content="false")
+/// ```mbt test
+/// let iter = [1, 2, 3, 4, 5].iter()
+/// inspect(iter.contains(3), content="true")
+/// inspect(iter.contains(6), content="false")
+/// let iter = Iter::empty()
+/// inspect(iter.contains(1), content="false")
 /// ```
 pub fn[A : Eq] Iter::contains(self : Iter[A], value : A) -> Bool {
   for v in self {
@@ -927,7 +925,7 @@ pub fn[T : Compare] Iter::minimum(self : Iter[T]) -> T? {
 ///
 /// # Example
 ///
-/// ```mbt check,notest
+/// ```mbt test,notest
 ///   let iter = [1, 1, 2, 3, 2, 2, 1].iter()
 ///   let result = iter.group_by((x) => x)
 ///   assert_eq(result.get(1), Some([1, 1, 1]))

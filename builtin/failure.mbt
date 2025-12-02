@@ -25,7 +25,7 @@
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 /// let err : Failure = Failure("Test assertion failed")
 /// match err {
 ///   Failure(msg) => inspect(msg, content="Test assertion failed")

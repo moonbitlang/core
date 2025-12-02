@@ -1235,14 +1235,14 @@ pub impl[A : Hash] Hash for T[A] with hash_combine(self, hasher) {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let list1 = @list.of([1, 2, 3])
-///   let list2 = @list.of([1, 2, 4])
-///   let list3 = @list.of([1, 2])
-///   inspect(list1.compare(list2), content="-1") // list1 < list2
-///   inspect(list1.compare(list3), content="1") // list2 > list1
-///   inspect(list3.compare(list1), content="-1") // list1 > list3 (longer)
-///   inspect(list1.compare(list1), content="0") // list1 = list1
+/// ```mbt test
+/// let list1 = @list.of([1, 2, 3])
+/// let list2 = @list.of([1, 2, 4])
+/// let list3 = @list.of([1, 2])
+/// inspect(list1.compare(list2), content="-1") // list1 < list2
+/// inspect(list1.compare(list3), content="1") // list2 > list1
+/// inspect(list3.compare(list1), content="-1") // list1 > list3 (longer)
+/// inspect(list1.compare(list1), content="0") // list1 = list1
 /// ```
 pub impl[A : Compare] Compare for T[A] with compare(self, other) {
   loop (self, other) {

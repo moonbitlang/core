@@ -70,7 +70,7 @@ pub fn scalbn(x : Double, exp : Int) -> Double {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt test
 /// inspect(@math.scalbnf(1.5, 2), content="6")
 /// inspect(@math.scalbnf(2, -1), content="1")
 /// inspect(@math.scalbnf(3, 0), content="3")

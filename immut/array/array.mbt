@@ -214,11 +214,11 @@ pub fn[A] T::at(self : T[A], index : Int) -> A {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let v = @array.from_array([1, 2, 3])
-///   inspect(v.get(1), content="Some(2)")
-///   inspect(v.get(-1), content="None")
-///   inspect(v.get(3), content="None")
+/// ```mbt test
+/// let v = @array.from_array([1, 2, 3])
+/// inspect(v.get(1), content="Some(2)")
+/// inspect(v.get(-1), content="None")
+/// inspect(v.get(3), content="None")
 /// ```
 pub fn[A] T::get(self : T[A], index : Int) -> A? {
   guard 0 <= index && index < self.size else { None }
@@ -427,14 +427,14 @@ pub impl[A : Show] Show for T[A] with output(self, logger) {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let arr1 = @array.from_array([1, 2, 3])
-///   let arr2 = @array.from_array([1, 2, 4])
-///   let arr3 = @array.from_array([1, 2])
-///   inspect(arr1.compare(arr2), content="-1") // arr1 < arr2
-///   inspect(arr1.compare(arr3), content="1") // arr2 > arr1
-///   inspect(arr3.compare(arr1), content="-1") // arr1 > arr3 (longer)
-///   inspect(arr1.compare(arr1), content="0") // arr1 = arr1
+/// ```mbt test
+/// let arr1 = @array.from_array([1, 2, 3])
+/// let arr2 = @array.from_array([1, 2, 4])
+/// let arr3 = @array.from_array([1, 2])
+/// inspect(arr1.compare(arr2), content="-1") // arr1 < arr2
+/// inspect(arr1.compare(arr3), content="1") // arr2 > arr1
+/// inspect(arr3.compare(arr1), content="-1") // arr1 > arr3 (longer)
+/// inspect(arr1.compare(arr1), content="0") // arr1 = arr1
 /// ```
 pub impl[A : Compare] Compare for T[A] with compare(self, other) {
   let len_self = self.length()

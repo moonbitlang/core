@@ -18,7 +18,7 @@
 ///
 /// # Example
 ///
-/// ```mbt check
+/// ```mbt test
 /// let arr = [1, 2, 3, 4, 5]
 /// let view = arr[1:4] // Creates a view of elements at indices 1,2,3
 /// inspect(view[0], content="2")
@@ -38,11 +38,11 @@ pub type View[T] = ArrayView[T]
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let arr = [1, 2, 3][:]
-///   let mut sum = 0
-///   arr.each(x => sum = sum + x)
-///   inspect(sum, content="6")
+/// ```mbt test
+/// let arr = [1, 2, 3][:]
+/// let mut sum = 0
+/// arr.each(x => sum = sum + x)
+/// inspect(sum, content="6")
 /// ```
 pub fn[T] ArrayView::each(
   self : ArrayView[T],
@@ -131,10 +131,10 @@ pub fn[T] ArrayView::any(
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let arr = [1, 2, 3, 4, 5][:]
-///   inspect(arr.contains(3), content="true")
-///   inspect(arr.contains(6), content="false")
+/// ```mbt test
+/// let arr = [1, 2, 3, 4, 5][:]
+/// inspect(arr.contains(3), content="true")
+/// inspect(arr.contains(6), content="false")
 /// ```
 pub fn[T : Eq] ArrayView::contains(self : ArrayView[T], value : T) -> Bool {
   for v in self {
@@ -172,17 +172,19 @@ pub fn[X] ArrayView::iterator2(self : ArrayView[X]) -> Iterator2[Int, X] {
 /// indices start from 0.
 /// 
 /// Example:
-/// ```mbt check
-///   let arr = [1, 2, 3]
-///   let view = arr[1:]
-///   let mut sum = 0
-///   let mut sum_keys = 0
-///   view.iter2().each((i, x) => {
-///     sum = sum + x 
-///     sum_keys = sum_keys + i
-///   })
-///   inspect(sum, content="5")
-///   inspect(sum_keys, content="1")
+/// ```mbt test
+/// let arr = [1, 2, 3]
+/// let view = arr[1:]
+/// let mut sum = 0
+/// let mut sum_keys = 0
+/// view
+/// .iter2()
+/// .each((i, x) => {
+///   sum = sum + x
+///   sum_keys = sum_keys + i
+/// })
+/// inspect(sum, content="5")
+/// inspect(sum_keys, content="1")
 /// ```
 pub fn[A] ArrayView::iter2(self : ArrayView[A]) -> Iter2[Int, A] {
   Iter2::new(yield_ => for i, v in self {
@@ -360,10 +362,10 @@ pub fn[T] ArrayView::to_array(self : ArrayView[T]) -> Array[T] {
 ///
 /// Example:
 ///
-/// ```mbt check
-///   let a : Array[String] = ["1", "2", "3"]
-///   let array_view = a[:]
-///   inspect(array_view.join(","), content="1,2,3")
+/// ```mbt test
+/// let a : Array[String] = ["1", "2", "3"]
+/// let array_view = a[:]
+/// inspect(array_view.join(","), content="1,2,3")
 /// ```
 pub fn[A : @string.ToStringView] ArrayView::join(
   self : ArrayView[A],
