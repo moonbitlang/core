@@ -58,7 +58,16 @@ pub fn[T] ignore(t : T) -> Unit = "%ignore"
 pub fn[T] physical_equal(a : T, b : T) -> Bool = "%refeq"
 
 ///|
-pub using @abort {abort}
+#callsite(autofill(loc))
+pub fn[T] abort(string : String, loc~ : SourceLoc) -> T {
+  @abort.abort(
+    (
+      $|\{string}
+      $|  at\{loc}
+      $|
+    ),
+  )
+}
 
 ///|
 pub fn[T] panic() -> T = "%panic"
