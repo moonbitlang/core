@@ -1545,6 +1545,7 @@ test "rev_fold" {
 ///|
 /// Returns the UTF-16 code unit at the given index. Returns `None` if the index
 /// is out of bounds.
+#deprecated("The return type is about to change to `UInt16?` in a future release. Please check boundaries manually and use `String::code_unit_at` instead.", skip_current_package=true)
 pub fn String::get(self : String, idx : Int) -> Int? {
   guard idx >= 0 && idx < self.length() else { return None }
   Some(self.unsafe_charcode_at(idx))
@@ -1553,6 +1554,7 @@ pub fn String::get(self : String, idx : Int) -> Int? {
 ///|
 /// Returns the UTF-16 code unit at the given index. Returns `None` if the index
 /// is out of bounds.
+#deprecated("The return type is about to change to `UInt16?` in a future release. Please check boundaries manually and use `StringView::code_unit_at` instead.", skip_current_package=true)
 pub fn StringView::get(self : StringView, idx : Int) -> Int? {
   guard idx >= 0 && idx < self.length() else { return None }
   Some(self.unsafe_charcode_at(idx))

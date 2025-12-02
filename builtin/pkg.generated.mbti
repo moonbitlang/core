@@ -663,6 +663,7 @@ pub fn[A] String::fold(String, init~ : A, (A, Char) -> A) -> A
 pub fn String::from_array(ArrayView[Char]) -> String
 pub fn String::from_iter(Iter[Char]) -> String
 pub fn String::from_iterator(Iterator[Char]) -> String
+#deprecated
 pub fn String::get(String, Int) -> Int?
 pub fn String::get_char(String, Int) -> Char?
 #alias(starts_with, deprecated)
@@ -863,6 +864,7 @@ pub fn[A] StringView::fold(Self, init~ : A, (A, Char) -> A) -> A
 pub fn StringView::from_array(ArrayView[Char]) -> Self
 pub fn StringView::from_iter(Iter[Char]) -> Self
 pub fn StringView::from_iterator(Iterator[Char]) -> Self
+#deprecated
 pub fn StringView::get(Self, Int) -> Int?
 pub fn StringView::get_char(Self, Int) -> Char?
 #alias(starts_with, deprecated)
