@@ -45,6 +45,78 @@ pub impl Show for SourceLoc with output(self, logger) {
 }
 
 ///|
+priv enum SourceLocRepr {
+  Legacy(String)
+  New(
+    pkg~ : StringView,
+    filename~ : StringView,
+    start_line~ : StringView,
+    start_column~ : StringView,
+    end_line~ : StringView,
+    end_column~ : StringView
+  )
+}
+
+///|
+fn SourceLocRepr::parse(repr : String) -> SourceLocRepr {
+  fn parse_loc(view : StringView) -> (StringView, StringView)? {
+    guard view.find(":") is Some(i) else { None }
+    guard i > 0 && i + 1 < view.length() else { None }
+    Some((view.view(end_offset=i), view.view(start_offset=i + 1)))
+  }
+  // extract package name
+  guard repr is ['@', .. rest] else { Legacy(repr) }
+  guard rest.find(":") is Some(pkg_end) else { Legacy(repr) }
+  let pkg = rest.view(start_offset=0, end_offset=pkg_end)
+
+  // extract end location in reverse
+  guard rest.rev_find("-") is Some(start_loc_end) else { Legacy(repr) }
+  guard start_loc_end + 1 < rest.length()
+  let end_loc = rest.view(start_offset=start_loc_end + 1)
+  guard parse_loc(end_loc) is Some((end_line, end_column)) else { Legacy(repr) }
+  let rest = rest.view(end_offset=start_loc_end)
+
+  // extract start location
+  guard rest.rev_find(":") is Some(start_line_end) &&
+    rest.view(end_offset=start_line_end).rev_find(":") is Some(filename_end) else {
+    Legacy(repr)
+  }
+  guard filename_end + 1 < rest.length()
+  let start_loc = rest.view(start_offset=filename_end + 1)
+  guard parse_loc(start_loc) is Some((start_line, start_column)) else {
+    Legacy(repr)
+  }
+
+  // everything else remaining is treated as filename
+  guard filename_end > pkg_end + 1 else { Legacy(repr) }
+  let filename = rest.view(start_offset=pkg_end + 1, end_offset=filename_end)
+  New(pkg~, filename~, start_line~, start_column~, end_line~, end_column~)
+}
+
+///|
+fn SourceLocRepr::to_json_string(self : SourceLocRepr) -> String {
+  match self {
+    Legacy(repr) => repr.escape()
+    New(pkg~, filename~, start_line~, start_column~, end_line~, end_column~) =>
+      StringBuilder::new()
+      ..write_string("{\"pkg\":\"\{pkg}\"")
+      ..write_string(",\"filename\":")
+      ..write_object(filename)
+      ..write_string(",\"start_line\":\{start_line}")
+      ..write_string(",\"start_column\":\{start_column}")
+      ..write_string(",\"end_line\":\{end_line}")
+      ..write_string(",\"end_column\":\{end_column}}")
+      .to_string()
+  }
+}
+
+///|
+/// Convert a source location to a JSON string
+pub fn SourceLoc::to_json_string(self : SourceLoc) -> String {
+  SourceLocRepr::parse(self.to_string()).to_json_string()
+}
+
+///|
 /// Represents a type for storing argument locations in source code. It is an
 /// array of optional source locations, where each element corresponds to an
 /// argument's location in the source code. Used internally by the compiler for
@@ -73,7 +145,7 @@ pub fn ArgsLoc::to_json(self : ArgsLoc) -> String {
     let item = self[i]
     match item {
       None => buf.write_string("null")
-      Some(loc) => loc.to_string() |> Show::output(buf)
+      Some(loc) => buf.write_string(loc.to_json_string())
     }
   }
   buf.write_char(']')

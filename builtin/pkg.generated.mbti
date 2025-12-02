@@ -406,6 +406,7 @@ pub impl[A : Hash] Hash for MutArrayView[A]
 pub impl[X : Show] Show for MutArrayView[X]
 
 pub(all) type SourceLoc
+pub fn SourceLoc::to_json_string(Self) -> String
 pub fn SourceLoc::to_string(Self) -> String
 pub impl Show for SourceLoc
 

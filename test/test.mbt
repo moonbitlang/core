@@ -113,7 +113,7 @@ pub fn Test::snapshot(
   loc~ : SourceLoc,
   args_loc~ : ArgsLoc,
 ) -> Unit raise SnapshotError {
-  let loc = loc.to_string().escape()
+  let loc = loc.to_json_string()
   let args_loc = args_loc.to_json().escape()
   let actual = self.buffer.to_string().escape()
   let expect = filename.escape()
