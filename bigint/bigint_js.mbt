@@ -306,12 +306,12 @@ extern "js" fn BigInt::js_lor(self : BigInt, other : BigInt) -> BigInt =
 /// Example:
 ///
 /// ```mbt test
-///   let a = @bigint.BigInt::from_string("42")
-///   let b = @bigint.BigInt::from_string("-12")
-///   inspect(a | b, content="-2")
-///   let c = @bigint.BigInt::from_string("-8")
-///   let d = @bigint.BigInt::from_string("-4")
-///   inspect(c | d, content="-4")
+/// let a = @bigint.BigInt::from_string("42")
+/// let b = @bigint.BigInt::from_string("-12")
+/// inspect(a | b, content="-2")
+/// let c = @bigint.BigInt::from_string("-8")
+/// let d = @bigint.BigInt::from_string("-4")
+/// inspect(c | d, content="-4")
 /// ```
 ///
 pub impl BitOr for BigInt with lor(self, other) {
@@ -342,16 +342,14 @@ extern "js" fn BigInt::js_lxor(self : BigInt, other : BigInt) -> BigInt =
 /// Example:
 ///
 /// ```mbt test
-///   let a = @bigint.BigInt::from_string("42")  // 0b101010
-///   let b = @bigint.BigInt::from_string("25")  // 0b011001
-///   inspect(a.lxor(b), content="51")   // 0b110011
-///
-///   let a = @bigint.BigInt::from_string("42")
-///   let b = @bigint.BigInt::from_string("-7")
-///   inspect(a.lxor(b), content="-45")
-///
-///   let a = @bigint.BigInt::from_string("42")
-///   inspect(a.lxor(a), content="0")    // XOR with self gives 0
+/// let a = @bigint.BigInt::from_string("42") // 0b101010
+/// let b = @bigint.BigInt::from_string("25") // 0b011001
+/// inspect(a ^ b, content="51") // 0b110011
+/// let a = @bigint.BigInt::from_string("42")
+/// let b = @bigint.BigInt::from_string("-7")
+/// inspect(a ^ b, content="-45")
+/// let a = @bigint.BigInt::from_string("42")
+/// inspect(a ^ a, content="0") // XOR with self gives 0
 /// ```
 ///
 pub impl BitXOr for BigInt with lxor(self, other) {
@@ -370,10 +368,10 @@ pub impl BitXOr for BigInt with lxor(self, other) {
 /// Example:
 ///
 /// ```mbt test
-///   let n = 42N
-///   inspect(n.to_uint(), content="42")
-///   let neg = -1N
-///   inspect(neg.to_uint(), content="4294967295") // 2^32 - 1
+/// let n = 42N
+/// inspect(n.to_uint(), content="42")
+/// let neg = -1N
+/// inspect(neg.to_uint(), content="4294967295") // 2^32 - 1
 /// ```
 pub extern "js" fn BigInt::to_uint(self : BigInt) -> UInt =
   #|(x) => Number(BigInt.asUintN(32, x)) | 0
@@ -391,8 +389,8 @@ pub extern "js" fn BigInt::to_uint(self : BigInt) -> UInt =
 /// Example:
 ///
 /// ```mbt test
-///   let big = 2147483648N // 2^31
-///   inspect(big.to_int(), content="-2147483648") // Overflow to Int.min_value
+/// let big = 2147483648N // 2^31
+/// inspect(big.to_int(), content="-2147483648") // Overflow to Int.min_value
 /// ```
 pub extern "js" fn BigInt::to_int(self : BigInt) -> Int =
   #|(x) => Number(BigInt.asIntN(32, x))
@@ -410,10 +408,10 @@ pub extern "js" fn BigInt::to_int(self : BigInt) -> Int =
 /// Example:
 ///
 /// ```mbt test
-///   let n = 12345678901234567890N
-///   inspect(n.to_uint64(), content="12345678901234567890")
-///   let neg = -1N
-///   inspect(neg.to_uint64(), content="18446744073709551615") // 2^64 - 1
+/// let n = 12345678901234567890N
+/// inspect(n.to_uint64(), content="12345678901234567890")
+/// let neg = -1N
+/// inspect(neg.to_uint64(), content="18446744073709551615") // 2^64 - 1
 /// ```
 pub fn BigInt::to_uint64(self : BigInt) -> UInt64 {
   let hi = (self >> 32).to_uint()
@@ -434,10 +432,10 @@ pub fn BigInt::to_uint64(self : BigInt) -> UInt64 {
 /// Example:
 ///
 /// ```mbt test
-///   let big = 9223372036854775807N // max value of Int64
-///   inspect(big.to_int64(), content="9223372036854775807")
-///   let bigger = big + 1
-///   inspect(bigger.to_int64(), content="-9223372036854775808") // Overflow to Int64.min_value
+/// let big = 9223372036854775807N // max value of Int64
+/// inspect(big.to_int64(), content="9223372036854775807")
+/// let bigger = big + 1
+/// inspect(bigger.to_int64(), content="-9223372036854775808") // Overflow to Int64.min_value
 /// ```
 pub fn BigInt::to_int64(self : BigInt) -> Int64 {
   let hi = (self >> 32).to_uint()
@@ -456,12 +454,12 @@ pub fn BigInt::to_int64(self : BigInt) -> Int64 {
 /// Example:
 ///
 /// ```mbt test
-///   let pos = 16N // 10000
-///   inspect(pos.bit_length(), content="5")
-///   let neg = -16N // 
-///   inspect(neg.bit_length(), content="4")
-///   let zero = 0N
-///   inspect(zero.bit_length(), content="0")
+/// let pos = 16N // 10000
+/// inspect(pos.bit_length(), content="5")
+/// let neg = -16N // 
+/// inspect(neg.bit_length(), content="4")
+/// let zero = 0N
+/// inspect(zero.bit_length(), content="0")
 /// ```
 pub extern "js" fn BigInt::bit_length(self : BigInt) -> Int =
   #|(n) => {
@@ -482,9 +480,9 @@ pub extern "js" fn BigInt::bit_length(self : BigInt) -> Int =
 ///
 /// Example:
 /// ```mbt test
-///   inspect(8N.ctz(), content="3") // 0b1000
-///   inspect(12N.ctz(), content="2") // 0b1100
-///   inspect(0N.ctz(), content="0")
+/// inspect(8N.ctz(), content="3") // 0b1000
+/// inspect(12N.ctz(), content="2") // 0b1100
+/// inspect(0N.ctz(), content="0")
 /// ```
 pub extern "js" fn BigInt::ctz(self : BigInt) -> Int =
   #|(n) => {

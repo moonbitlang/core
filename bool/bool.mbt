@@ -24,8 +24,8 @@
 /// Example:
 ///
 /// ```mbt test
-///   inspect(true.to_int(), content="1")
-///   inspect(false.to_int(), content="0")
+/// inspect(true.to_int(), content="1")
+/// inspect(false.to_int(), content="0")
 /// ```
 pub fn Bool::to_int(self : Bool) -> Int {
   if self {
@@ -48,8 +48,8 @@ pub fn Bool::to_int(self : Bool) -> Int {
 /// Example:
 ///
 /// ```mbt test
-///   inspect(true.to_int64(), content="1")
-///   inspect(false.to_int64(), content="0")
+/// inspect(true.to_int64(), content="1")
+/// inspect(false.to_int64(), content="0")
 /// ```
 pub fn Bool::to_int64(self : Bool) -> Int64 {
   if self {
@@ -72,8 +72,8 @@ pub fn Bool::to_int64(self : Bool) -> Int64 {
 /// Example:
 ///
 /// ```mbt test
-///   inspect(true.to_uint(), content="1")
-///   inspect(false.to_uint(), content="0")
+/// inspect(true.to_uint(), content="1")
+/// inspect(false.to_uint(), content="0")
 /// ```
 pub fn Bool::to_uint(self : Bool) -> UInt {
   if self {
@@ -96,8 +96,8 @@ pub fn Bool::to_uint(self : Bool) -> UInt {
 /// Example:
 ///
 /// ```mbt test
-///   inspect(true.to_uint64(), content="1")
-///   inspect(false.to_uint64(), content="0")
+/// inspect(true.to_uint64(), content="1")
+/// inspect(false.to_uint64(), content="0")
 /// ```
 pub fn Bool::to_uint64(self : Bool) -> UInt64 {
   if self {

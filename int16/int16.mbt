@@ -141,10 +141,10 @@ pub fn Int16::reinterpret_from_uint16(self : UInt16) -> Int16 {
 /// Example:
 ///
 /// ```mbt test
-///   let n = Int16::from_int(42)
-///   inspect(n, content="42")
-///   let neg = Int16::from_int(-42)
-///   inspect(neg, content="-42")
+/// let n = Int16::from_int(42)
+/// inspect(n, content="42")
+/// let neg = Int16::from_int(-42)
+/// inspect(neg, content="-42")
 /// ```
 pub fn Int16::from_int(self : Int) -> Int16 = "%i32_to_i16"
 
@@ -165,10 +165,10 @@ pub fn Int16::from_int(self : Int) -> Int16 = "%i32_to_i16"
 /// Example:
 ///
 /// ```mbt test
-///   let b = b'\xFF'
-///   inspect(Int16::from_byte(b), content="255") // Sign is preserved
-///   let p = b'\x7F'
-///   inspect(Int16::from_byte(p), content="127")
+/// let b = b'\xFF'
+/// inspect(Int16::from_byte(b), content="255") // Sign is preserved
+/// let p = b'\x7F'
+/// inspect(Int16::from_byte(p), content="127")
 /// ```
 pub fn Int16::from_byte(self : Byte) -> Int16 = "%byte_to_i16"
 
@@ -188,10 +188,10 @@ pub fn Int16::from_byte(self : Byte) -> Int16 = "%byte_to_i16"
 /// Example:
 ///
 /// ```mbt test
-///   let big = 100000L
-///   inspect(Int16::from_int64(big), content="-31072") // 100000 doesn't fit in Int16, gets truncated
-///   let small = 42L
-///   inspect(Int16::from_int64(small), content="42") // 42 fits in Int16, remains unchanged
+/// let big = 100000L
+/// inspect(Int16::from_int64(big), content="-31072") // 100000 doesn't fit in Int16, gets truncated
+/// let small = 42L
+/// inspect(Int16::from_int64(small), content="42") // 42 fits in Int16, remains unchanged
 /// ```
 #cfg(not(target="js"))
 pub fn Int16::from_int64(self : Int64) -> Int16 = "%i64_to_i16"
@@ -225,10 +225,10 @@ pub fn Int16::to_int64(self : Int16) -> Int64 = "%i16_to_i64"
 /// Example:
 ///
 /// ```mbt test
-///   let n = (42 : Int16)
-///   inspect(n.to_int(), content="42")
-///   let neg = (-42 : Int16)
-///   inspect(neg.to_int(), content="-42")
+/// let n = (42 : Int16)
+/// inspect(n.to_int(), content="42")
+/// let neg = (-42 : Int16)
+/// inspect(neg.to_int(), content="-42")
 /// ```
 pub fn Int16::to_int(self : Int16) -> Int = "%i16_to_i32"
 
@@ -246,7 +246,7 @@ pub fn Int16::to_int(self : Int16) -> Int = "%i16_to_i32"
 /// Example:
 ///
 /// ```mbt test
-/// let x : Int16 = (258) // In binary: 0000_0001_0000_0010
+/// let x : Int16 = 258 // In binary: 0000_0001_0000_0010
 /// inspect(x.to_byte(), content="b'\\x02'") // Only keeps 0000_0010
 /// ```
 pub fn Int16::to_byte(self : Int16) -> Byte = "%i16_to_byte"

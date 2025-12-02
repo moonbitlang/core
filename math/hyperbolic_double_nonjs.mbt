@@ -164,15 +164,15 @@ pub fn cosh(x : Double) -> Double {
 /// Example
 ///
 /// ```mbt test
-///  inspect(@math.tanh(0.0), content="0")
-///  inspect(@math.tanh(-0.0), content="0")
-///  inspect(@math.tanh(1.0), content="0.7615941559557649")
-///  inspect(@math.tanh(2.0), content="0.9640275800758169")
-///  inspect(@math.tanh(1000.0), content="1")
-///  inspect(@math.tanh(-1000.0), content="-1")
-///  inspect(@math.tanh(@double.not_a_number), content="NaN")
-///  inspect(@math.tanh(@double.infinity), content="1")
-///  inspect(@math.tanh(@double.neg_infinity), content="-1")
+/// inspect(@math.tanh(0.0), content="0")
+/// inspect(@math.tanh(-0.0), content="0")
+/// inspect(@math.tanh(1.0), content="0.7615941559557649")
+/// inspect(@math.tanh(2.0), content="0.9640275800758169")
+/// inspect(@math.tanh(1000.0), content="1")
+/// inspect(@math.tanh(-1000.0), content="-1")
+/// inspect(@math.tanh(@double.not_a_number), content="NaN")
+/// inspect(@math.tanh(@double.infinity), content="1")
+/// inspect(@math.tanh(@double.neg_infinity), content="-1")
 /// ```
 pub fn tanh(x : Double) -> Double {
   if x.is_nan() {
@@ -223,15 +223,15 @@ pub fn tanh(x : Double) -> Double {
 /// Example
 ///
 /// ```mbt test
-///  inspect(@math.asinh(0.0), content="0")
-///  inspect(@math.asinh(-0.0), content="0")
-///  inspect(@math.asinh(1.0), content="0.881373587019543")
-///  inspect(@math.asinh(2.0), content="1.4436354751788103")
-///  inspect(@math.asinh(1000.0), content="7.600902709541988")
-///  inspect(@math.asinh(-1000.0), content="-7.600902709541988")
-///  inspect(@math.asinh(@double.not_a_number), content="NaN")
-///  inspect(@math.asinh(@double.infinity), content="Infinity")
-///  inspect(@math.asinh(@double.neg_infinity), content="-Infinity")
+/// inspect(@math.asinh(0.0), content="0")
+/// inspect(@math.asinh(-0.0), content="0")
+/// inspect(@math.asinh(1.0), content="0.881373587019543")
+/// inspect(@math.asinh(2.0), content="1.4436354751788103")
+/// inspect(@math.asinh(1000.0), content="7.600902709541988")
+/// inspect(@math.asinh(-1000.0), content="-7.600902709541988")
+/// inspect(@math.asinh(@double.not_a_number), content="NaN")
+/// inspect(@math.asinh(@double.infinity), content="Infinity")
+/// inspect(@math.asinh(@double.neg_infinity), content="-Infinity")
 /// ```
 pub fn asinh(x : Double) -> Double {
   if x.is_nan() || x.is_inf() {

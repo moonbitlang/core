@@ -45,9 +45,12 @@ fn ParseResult::compile(self : Self) -> Regexp {
 /// Example:
 /// ```mbt test
 /// let engine = @regexp.compile("a(bc|de)f")
-/// inspect(engine.execute("xxabcf").results(), content=(
-///   #|[Some("abcf"), Some("bc")]
-/// ))
+/// inspect(
+///   engine.execute("xxabcf").results(),
+///   content=(
+///     #|[Some("abcf"), Some("bc")]
+///   ),
+/// )
 /// ```
 pub fn compile(
   regexp : StringView,
@@ -117,9 +120,12 @@ pub fn Regexp::group_count(self : Regexp) -> Int {
 /// Example:
 /// ```mbt test
 /// let engine = @regexp.compile("(?<first>a)(?<second>b)")
-/// inspect(engine.group_names(), content=(
-///   #|["first", "second"]
-/// ))
+/// inspect(
+///   engine.group_names(),
+///   content=(
+///     #|["first", "second"]
+///   ),
+/// )
 /// ```
 pub fn Regexp::group_names(self : Regexp) -> Array[String] {
   self.map.keys().collect()
@@ -142,10 +148,13 @@ pub fn Regexp::group_names(self : Regexp) -> Array[String] {
 /// ```mbt test
 /// let engine = @regexp.compile("a(bc|de)f")
 /// let result = engine.execute("xxabcf")
-/// if result.matched() { 
-///   inspect(result.get(0), content=(
-///     #|Some("abcf")
-///   ))
+/// if result.matched() {
+///   inspect(
+///     result.get(0),
+///     content=(
+///       #|Some("abcf")
+///     ),
+///   )
 /// }
 /// ```
 pub fn Regexp::execute(self : Regexp, input : StringView) -> MatchResult {
@@ -178,12 +187,12 @@ pub fn Regexp::execute(self : Regexp, input : StringView) -> MatchResult {
 /// let engine = @regexp.compile("a(bc|de)f")
 /// let result = engine.execute("abcfxx")
 /// guard result.matched()
-/// inspect(result.before(), content=(""))
-/// inspect(result.after(), content=("xx"))
+/// inspect(result.before(), content="")
+/// inspect(result.after(), content="xx")
 /// let result = engine.execute("axxf")
 /// guard !result.matched()
-/// inspect(result.before(), content=("axxf"))
-/// inspect(result.after(), content=(""))
+/// inspect(result.before(), content="axxf")
+/// inspect(result.after(), content="")
 /// ```
 #deprecated("Use `Regexp::execute` and `MatchResult::before`/`after` instead.")
 pub fn Regexp::execute_with_remainder(
@@ -234,7 +243,7 @@ pub fn Regexp::execute_with_remainder(
 /// ```mbt test
 /// let engine = @regexp.compile("a(bc|de)f")
 /// guard engine.match_("abcfxx") is Some(result)
-/// inspect(result.after(), content=("xx"))
+/// inspect(result.after(), content="xx")
 /// assert_true(engine.match_("axxf") is None)
 /// ```
 pub fn Regexp::match_(self : Regexp, input : StringView) -> MatchResult? {
@@ -303,13 +312,19 @@ pub fn MatchResult::matched(self : Self) -> Bool {
 /// Example:
 /// ```mbt test
 /// let result = @regexp.compile(".(bc)").execute("abc")
-/// inspect(result.get(0), content=(
-///   #|Some("abc")
-/// ))
+/// inspect(
+///   result.get(0),
+///   content=(
+///     #|Some("abc")
+///   ),
+/// )
 /// let first_group = result.get(1)
-/// inspect(first_group, content=(
-///   #|Some("bc")
-/// ))
+/// inspect(
+///   first_group,
+///   content=(
+///     #|Some("bc")
+///   ),
+/// )
 /// ```
 pub fn MatchResult::get(self : Self, index : Int) -> StringView? {
   if self.captures.is_empty() ||
@@ -343,9 +358,12 @@ pub fn MatchResult::get(self : Self, index : Int) -> StringView? {
 /// ```mbt test
 /// let engine = @regexp.compile("(?<word>\\w+)\\s+(?<num>\\d+)")
 /// let result = engine.execute("hello 123")
-/// inspect(result.groups(), content=(
-///   #|{"word": "hello", "num": "123"}
-/// ))
+/// inspect(
+///   result.groups(),
+///   content=(
+///     #|{"word": "hello", "num": "123"}
+///   ),
+/// )
 /// ```
 ///
 pub fn MatchResult::groups(self : Self) -> Map[String, StringView] {
@@ -374,9 +392,12 @@ pub fn MatchResult::groups(self : Self) -> Map[String, StringView] {
 /// Example:
 /// ```mbt test
 /// let result = @regexp.compile("(\\w)+").execute("abc")
-/// inspect(result.results(), content=(
-///   #|[Some("abc"), Some("c")]
-/// ))
+/// inspect(
+///   result.results(),
+///   content=(
+///     #|[Some("abc"), Some("c")]
+///   ),
+/// )
 /// ```
 pub fn MatchResult::results(self : Self) -> Array[StringView?] {
   let results = []

@@ -332,10 +332,22 @@ pub fn atan(x : Double) -> Double {
 /// inspect(@math.atan2(1.0, @double.infinity), content="0")
 /// inspect(@math.atan2(@double.neg_infinity, 1.0), content="-1.5707963267948966")
 /// inspect(@math.atan2(1.0, @double.neg_infinity), content="3.141592653589793")
-/// inspect(@math.atan2(@double.infinity, @double.infinity), content="0.7853981633974483")
-/// inspect(@math.atan2(@double.neg_infinity, @double.neg_infinity), content="-2.356194490192345")
-/// inspect(@math.atan2(@double.infinity, @double.neg_infinity), content="2.356194490192345")
-/// inspect(@math.atan2(@double.neg_infinity, @double.infinity), content="-0.7853981633974483")
+/// inspect(
+///   @math.atan2(@double.infinity, @double.infinity),
+///   content="0.7853981633974483",
+/// )
+/// inspect(
+///   @math.atan2(@double.neg_infinity, @double.neg_infinity),
+///   content="-2.356194490192345",
+/// )
+/// inspect(
+///   @math.atan2(@double.infinity, @double.neg_infinity),
+///   content="2.356194490192345",
+/// )
+/// inspect(
+///   @math.atan2(@double.neg_infinity, @double.infinity),
+///   content="-0.7853981633974483",
+/// )
 /// ```
 pub fn atan2(y : Double, x : Double) -> Double {
   if x.is_nan() || y.is_nan() {

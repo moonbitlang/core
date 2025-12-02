@@ -35,11 +35,11 @@ fn Double::to_unchecked_int64(self : Double) -> Int64 = "%f64_to_i64"
 /// Example:
 ///
 /// ```mbt test
-///   inspect(42.0.to_int64(), content="42")
-///   inspect((-42.5).to_int64(), content="-42")
-///   inspect((0.0 / 0.0).to_int64(), content="0") // NaN
-///   inspect((1.0 / 0.0).to_int64(), content="9223372036854775807") // Infinity
-///   inspect((-1.0 / 0.0).to_int64(), content="-9223372036854775808") // -Infinity
+/// inspect(42.0.to_int64(), content="42")
+/// inspect((-42.5).to_int64(), content="-42")
+/// inspect((0.0 / 0.0).to_int64(), content="0") // NaN
+/// inspect((1.0 / 0.0).to_int64(), content="9223372036854775807") // Infinity
+/// inspect((-1.0 / 0.0).to_int64(), content="-9223372036854775808") // -Infinity
 /// ```
 pub fn Double::to_int64(self : Double) -> Int64 {
   if self != self {
@@ -76,11 +76,11 @@ fn Double::to_unchecked_uint64(self : Double) -> UInt64 = "%f64_to_i64"
 /// Example:
 ///
 /// ```mbt test
-///   inspect(42.0.to_int64(), content="42")
-///   inspect((-42.5).to_int64(), content="-42")
-///   inspect((0.0 / 0.0).to_int64(), content="0") // NaN
-///   inspect((1.0 / 0.0).to_int64(), content="9223372036854775807") // Infinity
-///   inspect((-1.0 / 0.0).to_int64(), content="-9223372036854775808") // -Infinity
+/// inspect(42.0.to_int64(), content="42")
+/// inspect((-42.5).to_int64(), content="-42")
+/// inspect((0.0 / 0.0).to_int64(), content="0") // NaN
+/// inspect((1.0 / 0.0).to_int64(), content="9223372036854775807") // Infinity
+/// inspect((-1.0 / 0.0).to_int64(), content="-9223372036854775808") // -Infinity
 /// ```
 pub fn Double::to_uint64(self : Double) -> UInt64 {
   if self != self {

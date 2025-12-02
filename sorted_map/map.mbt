@@ -388,11 +388,11 @@ pub fn[K : Compare, V] SortedMap::range(
 /// Example:
 ///
 /// ```mbt test
-///   let map1 = @sorted_map.from_array([(1, "a"), (2, "b"), (3, "c")])
-///   let map2 = map1.copy()
-///   map2.set(4, "d")
-///   inspect(map1.length(), content="3")
-///   inspect(map2.length(), content="4")
+/// let map1 = @sorted_map.from_array([(1, "a"), (2, "b"), (3, "c")])
+/// let map2 = map1.copy()
+/// map2.set(4, "d")
+/// inspect(map1.length(), content="3")
+/// inspect(map2.length(), content="4")
 /// ```
 pub fn[K, V] SortedMap::copy(self : SortedMap[K, V]) -> SortedMap[K, V] {
   fn copy_node(node : Node[K, V]?) -> Node[K, V]? {
@@ -461,12 +461,12 @@ pub fn[K : Compare, V] SortedMap::merge(
 /// Example:
 ///
 /// ```mbt test
-///   let map1 = @sorted_map.from_array([(1, "a"), (2, "b")])
-///   let map2 = @sorted_map.from_array([(2, "c"), (3, "d")])
-///   map1.merge_in_place(map2)
-///   inspect(map1.get(1), content="Some(\"a\")")
-///   inspect(map1.get(2), content="Some(\"c\")")
-///   inspect(map1.get(3), content="Some(\"d\")")
+/// let map1 = @sorted_map.from_array([(1, "a"), (2, "b")])
+/// let map2 = @sorted_map.from_array([(2, "c"), (3, "d")])
+/// map1.merge_in_place(map2)
+/// inspect(map1.get(1), content="Some(\"a\")")
+/// inspect(map1.get(2), content="Some(\"c\")")
+/// inspect(map1.get(3), content="Some(\"d\")")
 /// ```
 pub fn[K : Compare, V] SortedMap::merge_in_place(
   self : SortedMap[K, V],

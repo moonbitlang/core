@@ -105,11 +105,11 @@ pub let min_positive : Float = Float::reinterpret_from_int(0x00800000)
 /// Example:
 ///
 /// ```mbt test
-///   inspect((1.5 : Float).abs(), content="1.5")
-///   inspect((-1.5 : Float).abs(), content="1.5")
-///   inspect((0.0 : Float).abs(), content="0")
-///   inspect((-0.0 : Float).abs(), content="0")
-///   inspect(@float.not_a_number.abs().is_nan(), content="true")
+/// inspect((1.5 : Float).abs(), content="1.5")
+/// inspect((-1.5 : Float).abs(), content="1.5")
+/// inspect((0.0 : Float).abs(), content="0")
+/// inspect((-0.0 : Float).abs(), content="0")
+/// inspect(@float.not_a_number.abs().is_nan(), content="true")
 /// ```
 #as_free_fn(deprecated)
 pub fn Float::abs(self : Float) -> Float = "%f32.abs"

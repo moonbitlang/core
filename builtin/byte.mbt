@@ -27,11 +27,11 @@
 /// Example:
 ///
 /// ```mbt test
-///   let a = b'\x02'
-///   let b = b'\x03'
-///   inspect(a * b, content="b'\\x06'") // 2 * 3 = 6
-///   let c = b'\xFF'
-///   inspect(c * c, content="b'\\x01'") // 255 * 255 = 65025, truncated to 1
+/// let a = b'\x02'
+/// let b = b'\x03'
+/// inspect(a * b, content="b'\\x06'") // 2 * 3 = 6
+/// let c = b'\xFF'
+/// inspect(c * c, content="b'\\x01'") // 255 * 255 = 65025, truncated to 1
 /// ```
 pub impl Mul for Byte with mul(self : Byte, that : Byte) -> Byte {
   (self.to_int() * that.to_int()).to_byte()
@@ -51,9 +51,9 @@ pub impl Mul for Byte with mul(self : Byte, that : Byte) -> Byte {
 /// Example:
 ///
 /// ```mbt test
-///   let a = b'\xFF' // 255
-///   let b = b'\x03' // 3
-///   inspect(a / b, content="b'\\x55'") // 255 / 3 = 85 (0x55)
+/// let a = b'\xFF' // 255
+/// let b = b'\x03' // 3
+/// inspect(a / b, content="b'\\x55'") // 255 / 3 = 85 (0x55)
 /// ```
 pub impl Div for Byte with div(self : Byte, that : Byte) -> Byte {
   (self.to_int() / that.to_int()).to_byte()
@@ -193,9 +193,9 @@ pub fn Byte::to_string(self : Byte) -> String {
 /// Example:
 ///
 /// ```mbt test
-///   let hasher = Hasher::new(seed=0)
-///   hasher.combine_byte(b'\xFF')
-///   inspect(hasher.finalize(), content="1955036104")
+/// let hasher = Hasher::new(seed=0)
+/// hasher.combine_byte(b'\xFF')
+/// inspect(hasher.finalize(), content="1955036104")
 /// ```
 pub impl Hash for Byte with hash_combine(self, hasher) {
   hasher.combine_byte(self)

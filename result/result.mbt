@@ -259,8 +259,8 @@ pub fn[T, E] Result::unwrap(self : Result[T, E]) -> T {
 /// Example:
 ///
 /// ```mbt test
-///   let err : Result[Int, String] = Err("error message")
-///   inspect(err.unwrap_err(), content="error message")
+/// let err : Result[Int, String] = Err("error message")
+/// inspect(err.unwrap_err(), content="error message")
 /// ```
 pub fn[T, E] Result::unwrap_err(self : Result[T, E]) -> E {
   match self {

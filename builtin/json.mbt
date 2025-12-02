@@ -63,8 +63,8 @@ pub let null : Json = Null
 /// ```mbt test
 /// inspect(Json::number(3.14), content="Number(3.14)")
 /// inspect(
-///   Json::number(@double.infinity, repr="1e9999999999999999999999999999999").stringify(), 
-///   content="1e9999999999999999999999999999999"
+///   Json::number(@double.infinity, repr="1e9999999999999999999999999999999").stringify(),
+///   content="1e9999999999999999999999999999999",
 /// )
 /// ```
 pub fn Json::number(number : Double, repr? : String) -> Json {
@@ -83,7 +83,7 @@ pub fn Json::number(number : Double, repr? : String) -> Json {
 /// Example:
 ///
 /// ```mbt test
-///   inspect(Json::string("hello"), content="String(\"hello\")")
+/// inspect(Json::string("hello"), content="String(\"hello\")")
 /// ```
 pub fn Json::string(string : String) -> Json {
   return String(string)
@@ -101,8 +101,8 @@ pub fn Json::string(string : String) -> Json {
 /// Example:
 ///
 /// ```mbt test
-///   inspect(Json::boolean(true), content="True")
-///   inspect(Json::boolean(false), content="False")
+/// inspect(Json::boolean(true), content="True")
+/// inspect(Json::boolean(false), content="False")
 /// ```
 pub fn Json::boolean(boolean : Bool) -> Json {
   if boolean {
@@ -124,11 +124,8 @@ pub fn Json::boolean(boolean : Bool) -> Json {
 /// Example:
 ///
 /// ```mbt test
-///   let values : Array[Json] = [1.0, "hello"]
-///   inspect(
-///     Json::array(values),
-///     content="Array([Number(1), String(\"hello\")])",
-///   )
+/// let values : Array[Json] = [1.0, "hello"]
+/// inspect(Json::array(values), content="Array([Number(1), String(\"hello\")])")
 /// ```
 pub fn Json::array(array : Array[Json]) -> Json {
   return Array(array)
@@ -147,11 +144,11 @@ pub fn Json::array(array : Array[Json]) -> Json {
 /// Example:
 ///
 /// ```mbt test
-///   let map : Map[String, Json] = { "name": "John", "age": 42.0 }
-///   inspect(
-///     Json::object(map),
-///     content="Object({\"name\": String(\"John\"), \"age\": Number(42)})",
-///   )
+/// let map : Map[String, Json] = { "name": "John", "age": 42.0 }
+/// inspect(
+///   Json::object(map),
+///   content="Object({\"name\": String(\"John\"), \"age\": Number(42)})",
+/// )
 /// ```
 pub fn Json::object(object : Map[String, Json]) -> Json {
   return Object(object)

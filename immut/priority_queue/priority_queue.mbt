@@ -346,13 +346,13 @@ pub impl[A : Hash + Compare] Hash for PriorityQueue[A] with hash_combine(
 /// Example:
 ///
 /// ```mbt test
-///   let pq1 = @priority_queue.from_array([1, 2, 3])
-///   let pq2 = @priority_queue.from_array([1, 2, 4])
-///   let pq3 = @priority_queue.from_array([1, 2])
-///   inspect(pq1.compare(pq2), content="-1") // pq1 < pq2
-///   inspect(pq1.compare(pq3), content="1")  // pq2 > pq1
-///   inspect(pq3.compare(pq1), content="-1") // pq1 > pq3 (longer)
-///   inspect(pq1.compare(pq1), content="0")  // pq1 = pq1
+/// let pq1 = @priority_queue.from_array([1, 2, 3])
+/// let pq2 = @priority_queue.from_array([1, 2, 4])
+/// let pq3 = @priority_queue.from_array([1, 2])
+/// inspect(pq1.compare(pq2), content="-1") // pq1 < pq2
+/// inspect(pq1.compare(pq3), content="1") // pq2 > pq1
+/// inspect(pq3.compare(pq1), content="-1") // pq1 > pq3 (longer)
+/// inspect(pq1.compare(pq1), content="0") // pq1 = pq1
 /// ```
 pub impl[A : Compare] Compare for PriorityQueue[A] with compare(self, other) {
   let len_cmp = self.length().compare(other.length())

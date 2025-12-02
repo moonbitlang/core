@@ -493,10 +493,22 @@ pub fn atanf(x : Float) -> Float {
 /// inspect(@math.atan2f(1.0, @float.infinity), content="0")
 /// inspect(@math.atan2f(@float.neg_infinity, 1.0), content="-1.570796251296997")
 /// inspect(@math.atan2f(1.0, @float.neg_infinity), content="3.1415927410125732")
-/// inspect(@math.atan2f(@float.infinity, @float.infinity), content="0.7853981852531433")
-/// inspect(@math.atan2f(@float.neg_infinity, @float.neg_infinity), content="-2.356194496154785")
-/// inspect(@math.atan2f(@float.infinity, @float.neg_infinity), content="2.356194496154785")
-/// inspect(@math.atan2f(@float.neg_infinity, @float.infinity), content="-0.7853981852531433")
+/// inspect(
+///   @math.atan2f(@float.infinity, @float.infinity),
+///   content="0.7853981852531433",
+/// )
+/// inspect(
+///   @math.atan2f(@float.neg_infinity, @float.neg_infinity),
+///   content="-2.356194496154785",
+/// )
+/// inspect(
+///   @math.atan2f(@float.infinity, @float.neg_infinity),
+///   content="2.356194496154785",
+/// )
+/// inspect(
+///   @math.atan2f(@float.neg_infinity, @float.infinity),
+///   content="-0.7853981852531433",
+/// )
 /// ```
 pub fn atan2f(y : Float, x : Float) -> Float {
   if x.is_nan() || y.is_nan() {

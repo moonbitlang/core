@@ -26,8 +26,8 @@
 /// Example:
 ///
 /// ```mbt test
-///   inspect((3.7 : Float).trunc(), content="3")
-///   inspect((-3.7 : Float).trunc(), content="-3")
+/// inspect((3.7 : Float).trunc(), content="3")
+/// inspect((-3.7 : Float).trunc(), content="-3")
 /// ```
 #as_free_fn
 pub fn Float::trunc(self : Float) -> Float = "Math" "trunc"
@@ -45,8 +45,8 @@ pub fn Float::trunc(self : Float) -> Float = "Math" "trunc"
 /// Example:
 ///
 /// ```mbt test
-///   inspect((1.5 : Float).ceil(), content="2")
-///   inspect((-1.5 : Float).ceil(), content="-1")
+/// inspect((1.5 : Float).ceil(), content="2")
+/// inspect((-1.5 : Float).ceil(), content="-1")
 /// ```
 #as_free_fn
 pub fn Float::ceil(self : Float) -> Float = "Math" "ceil"
@@ -65,8 +65,8 @@ pub fn Float::ceil(self : Float) -> Float = "Math" "ceil"
 /// Example:
 ///
 /// ```mbt test
-///   inspect((3.7 : Float).floor(), content="3")
-///   inspect((-3.7 : Float).floor(), content="-4")
+/// inspect((3.7 : Float).floor(), content="3")
+/// inspect((-3.7 : Float).floor(), content="-4")
 /// ```
 #as_free_fn
 pub fn Float::floor(self : Float) -> Float = "Math" "floor"
@@ -84,10 +84,10 @@ pub fn Float::floor(self : Float) -> Float = "Math" "floor"
 /// Example:
 ///
 /// ```mbt test
-///   inspect((1.4 : Float).round(), content="1")
-///   inspect((1.5 : Float).round(), content="2")
-///   inspect((1.6 : Float).round(), content="2")
-///   inspect((-1.5 : Float).round(), content="-1")
+/// inspect((1.4 : Float).round(), content="1")
+/// inspect((1.5 : Float).round(), content="2")
+/// inspect((1.6 : Float).round(), content="2")
+/// inspect((-1.5 : Float).round(), content="-1")
 /// ```
 #as_free_fn
 pub fn Float::round(self : Float) -> Float = "Math" "round"

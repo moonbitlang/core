@@ -24,7 +24,7 @@
 /// Example:
 ///
 /// ```mbt test
-///   inspect(Int64::from_int(42), content="42")
+/// inspect(Int64::from_int(42), content="42")
 /// ```
 pub fn Int64::from_int(i : Int) -> Int64 {
   i.to_int64()
@@ -42,9 +42,9 @@ pub fn Int64::from_int(i : Int) -> Int64 {
 /// Example:
 ///
 /// ```mbt test
-///   inspect(42L.abs(), content="42")
-///   inspect((-42L).abs(), content="42")
-///   inspect(0L.abs(), content="0")
+/// inspect(42L.abs(), content="42")
+/// inspect((-42L).abs(), content="42")
+/// inspect(0L.abs(), content="0")
 /// ```
 pub fn Int64::abs(self : Int64) -> Int64 {
   if self < 0L {

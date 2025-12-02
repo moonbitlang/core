@@ -23,9 +23,9 @@
 /// Example:
 ///
 /// ```mbt test
-///   let f : Float = 3.14
-///   let s = f.to_double().to_string()
-///   inspect(s, content="3.140000104904175")
+/// let f : Float = 3.14
+/// let s = f.to_double().to_string()
+/// inspect(s, content="3.140000104904175")
 /// ```
 pub impl Show for Float with output(self, logger) {
   logger.write_string(self.to_double().to_string())
@@ -39,7 +39,7 @@ pub impl Show for Float with output(self, logger) {
 /// Example:
 ///
 /// ```mbt test
-///   inspect(Float::default(), content="0")
+/// inspect(Float::default(), content="0")
 /// ```
 pub impl Default for Float with default() {
   0
@@ -56,10 +56,10 @@ pub impl Default for Float with default() {
 /// Example:
 ///
 /// ```mbt test
-///   let x : Float = 3.14
-///   let y : Float = 3.14
-///   // Same values should produce same hash combinations
-///   inspect(Hash::hash(x) == Hash::hash(y), content="true")
+/// let x : Float = 3.14
+/// let y : Float = 3.14
+/// // Same values should produce same hash combinations
+/// inspect(Hash::hash(x) == Hash::hash(y), content="true")
 /// ```
 pub impl Hash for Float with hash_combine(self, hasher) {
   hasher.combine_uint(self.reinterpret_as_uint())
@@ -112,9 +112,9 @@ pub fn Float::to_be_bytes(self : Float) -> Bytes {
 /// Example:
 ///
 /// ```mbt test
-///   let f : Float = 1.0
-///   let bytes = f.to_le_bytes()
-///   inspect(bytes.length(), content="4")
+/// let f : Float = 1.0
+/// let bytes = f.to_le_bytes()
+/// inspect(bytes.length(), content="4")
 /// ```
 pub fn Float::to_le_bytes(self : Float) -> Bytes {
   let uint = self.reinterpret_as_uint()
@@ -139,9 +139,9 @@ pub fn Float::to_le_bytes(self : Float) -> Bytes {
 /// Example:
 ///
 /// ```mbt test
-///   inspect(@float.infinity.is_inf(), content="true")
-///   inspect(@float.neg_infinity.is_inf(), content="true")
-///   inspect((1.0 : Float).is_inf(), content="false")
+/// inspect(@float.infinity.is_inf(), content="true")
+/// inspect(@float.neg_infinity.is_inf(), content="true")
+/// inspect((1.0 : Float).is_inf(), content="false")
 /// ```
 pub fn Float::is_inf(self : Float) -> Bool {
   self.is_pos_inf() || self.is_neg_inf()
@@ -159,9 +159,9 @@ pub fn Float::is_inf(self : Float) -> Bool {
 /// Example:
 ///
 /// ```mbt test
-///   inspect(@float.infinity.is_pos_inf(), content="true")
-///   inspect((1.0 : Float).is_pos_inf(), content="false")
-///   inspect(@float.neg_infinity.is_pos_inf(), content="false")
+/// inspect(@float.infinity.is_pos_inf(), content="true")
+/// inspect((1.0 : Float).is_pos_inf(), content="false")
+/// inspect(@float.neg_infinity.is_pos_inf(), content="false")
 /// ```
 pub fn Float::is_pos_inf(self : Float) -> Bool {
   self > max_value
@@ -179,9 +179,9 @@ pub fn Float::is_pos_inf(self : Float) -> Bool {
 /// Example:
 ///
 /// ```mbt test
-///   inspect(@float.neg_infinity.is_neg_inf(), content="true")
-///   inspect((1.0 : Float).is_neg_inf(), content="false")
-///   inspect(@float.infinity.is_neg_inf(), content="false")
+/// inspect(@float.neg_infinity.is_neg_inf(), content="true")
+/// inspect((1.0 : Float).is_neg_inf(), content="false")
+/// inspect(@float.infinity.is_neg_inf(), content="false")
 /// ```
 pub fn Float::is_neg_inf(self : Float) -> Bool {
   self < min_value
@@ -199,9 +199,9 @@ pub fn Float::is_neg_inf(self : Float) -> Bool {
 /// Example:
 ///
 /// ```mbt test
-///   inspect(@float.not_a_number.is_nan(), content="true")
-///   inspect((1.0 : Float).is_nan(), content="false")
-///   inspect(@float.infinity.is_nan(), content="false")
+/// inspect(@float.not_a_number.is_nan(), content="true")
+/// inspect((1.0 : Float).is_nan(), content="false")
+/// inspect(@float.infinity.is_nan(), content="false")
 /// ```
 pub fn Float::is_nan(self : Float) -> Bool {
   self != self
@@ -229,11 +229,11 @@ pub fn Float::is_nan(self : Float) -> Bool {
 /// Example:
 ///
 /// ```mbt test
-///   let x = 1.0
-///   let y = 1.000000001
-///   inspect(x.is_close(y), content="false")
-///   inspect(x.is_close(y, relative_tolerance=1.0e-10), content="false")
-///   inspect(@float.infinity.is_close(@float.infinity), content="true")
+/// let x = 1.0
+/// let y = 1.000000001
+/// inspect(x.is_close(y), content="false")
+/// inspect(x.is_close(y, relative_tolerance=1.0e-10), content="false")
+/// inspect(@float.infinity.is_close(@float.infinity), content="true")
 /// ```
 pub fn Float::is_close(
   self : Self,
@@ -271,8 +271,8 @@ pub fn Float::is_close(
 /// Example:
 ///
 /// ```mbt test
-///   inspect((5.7 : Float).mod(2.0), content="1.6999998092651367")
-///   inspect((-5.7 : Float).mod(2.0), content="-1.6999998092651367")
+/// inspect((5.7 : Float).mod(2.0), content="1.6999998092651367")
+/// inspect((-5.7 : Float).mod(2.0), content="-1.6999998092651367")
 /// ```
 pub impl Mod for Float with mod(self : Float, other : Float) -> Float {
   Float::from_double(self.to_double() % other.to_double())
@@ -371,8 +371,8 @@ pub fn Float::until(
 /// Example:
 ///
 /// ```mbt test
-///   let f = Float::from_double(3.14)
-///   inspect(f.to_double(), content="3.140000104904175")
+/// let f = Float::from_double(3.14)
+/// inspect(f.to_double(), content="3.140000104904175")
 /// ```
 pub fn Float::to_double(self : Float) -> Double = "%f32.to_f64"
 
@@ -400,12 +400,12 @@ pub impl ToJson for Float with to_json(self : Float) -> Json {
 /// Example:
 ///
 /// ```mbt test
-///   let x = Float::from_double(16.0)
-///   let root = x.sqrt()
-///   inspect(root.to_double(), content="4")
-///   let neg = Float::from_double(-4.0)
-///   let neg_root = neg.sqrt()
-///   inspect(neg_root.to_double(), content="NaN")
+/// let x = Float::from_double(16.0)
+/// let root = x.sqrt()
+/// inspect(root.to_double(), content="4")
+/// let neg = Float::from_double(-4.0)
+/// let neg_root = neg.sqrt()
+/// inspect(neg_root.to_double(), content="NaN")
 /// ```
 pub fn Float::sqrt(self : Float) -> Float = "%f32.sqrt"
 
@@ -425,9 +425,9 @@ pub fn Float::sqrt(self : Float) -> Float = "%f32.sqrt"
 /// Example:
 ///
 /// ```mbt test
-///   let f = Float::from_double(1.0)
-///   // IEEE 754 representation of 1.0 is 0x3F800000
-///   inspect(f.reinterpret_as_int(), content="1065353216")
+/// let f = Float::from_double(1.0)
+/// // IEEE 754 representation of 1.0 is 0x3F800000
+/// inspect(f.reinterpret_as_int(), content="1065353216")
 /// ```
 pub fn Float::reinterpret_as_int(self : Float) -> Int = "%f32.to_i32_reinterpret"
 
@@ -451,10 +451,10 @@ pub fn Float::reinterpret_as_int(self : Float) -> Int = "%f32.to_i32_reinterpret
 /// Example:
 ///
 /// ```mbt test
-///   let f = Float::from_double(3.14)
-///   inspect((-f).to_double(), content="-3.140000104904175")
-///   let zero = Float::from_double(0.0)
-///   inspect((-zero).to_double(), content="0")
+/// let f = Float::from_double(3.14)
+/// inspect((-f).to_double(), content="-3.140000104904175")
+/// let zero = Float::from_double(0.0)
+/// inspect((-zero).to_double(), content="0")
 /// ```
 pub impl Neg for Float with neg(self) = "%f32.neg"
 
@@ -473,10 +473,10 @@ pub impl Neg for Float with neg(self) = "%f32.neg"
 /// Example:
 ///
 /// ```mbt test
-///   let a = Float::from_double(3.14)
-///   let b = Float::from_double(2.86)
-///   let sum = a + b
-///   inspect(sum.to_double(), content="6")
+/// let a = Float::from_double(3.14)
+/// let b = Float::from_double(2.86)
+/// let sum = a + b
+/// inspect(sum.to_double(), content="6")
 /// ```
 pub impl Add for Float with add(self, other) = "%f32.add"
 
@@ -494,10 +494,10 @@ pub impl Add for Float with add(self, other) = "%f32.add"
 /// Example:
 ///
 /// ```mbt test
-///   let x = Float::from_double(3.14)
-///   let y = Float::from_double(1.0)
-///   let result = x - y
-///   inspect(result.to_double(), content="2.140000104904175")
+/// let x = Float::from_double(3.14)
+/// let y = Float::from_double(1.0)
+/// let result = x - y
+/// inspect(result.to_double(), content="2.140000104904175")
 /// ```
 pub impl Sub for Float with sub(self, other) = "%f32.sub"
 
@@ -517,10 +517,10 @@ pub impl Sub for Float with sub(self, other) = "%f32.sub"
 /// Example:
 ///
 /// ```mbt test
-///   let x = Float::from_int(2)
-///   let y = Float::from_int(3)
-///   let z = x * y
-///   inspect(z.to_double(), content="6")
+/// let x = Float::from_int(2)
+/// let y = Float::from_int(3)
+/// let z = x * y
+/// inspect(z.to_double(), content="6")
 /// ```
 pub impl Mul for Float with mul(self, other) = "%f32.mul"
 
@@ -543,11 +543,14 @@ pub impl Mul for Float with mul(self, other) = "%f32.mul"
 /// Example:
 ///
 /// ```mbt test
-///   let a = Float::from_double(6.0)
-///   let b = Float::from_double(2.0)
-///   let result = (a / b).to_double()
-///   inspect(result, content="3")
-///   inspect((Float::from_double(0.0) / Float::from_double(0.0)).to_double(), content="NaN")
+/// let a = Float::from_double(6.0)
+/// let b = Float::from_double(2.0)
+/// let result = (a / b).to_double()
+/// inspect(result, content="3")
+/// inspect(
+///   (Float::from_double(0.0) / Float::from_double(0.0)).to_double(),
+///   content="NaN",
+/// )
 /// ```
 pub impl Div for Float with div(self, other) = "%f32.div"
 
@@ -567,11 +570,11 @@ pub impl Div for Float with div(self, other) = "%f32.div"
 /// Example:
 ///
 /// ```mbt test
-///   let x = 3.14
-///   let y = 3.14
-///   let z = 0.0 / 0.0 // NaN
-///   inspect(x == y, content="true")
-///   inspect(z == z, content="false") // NaN is not equal to itself
+/// let x = 3.14
+/// let y = 3.14
+/// let z = 0.0 / 0.0 // NaN
+/// inspect(x == y, content="true")
+/// inspect(z == z, content="false") // NaN is not equal to itself
 /// ```
 pub impl Eq for Float with equal(self : Float, other : Float) -> Bool = "%f32.eq"
 
@@ -591,12 +594,12 @@ pub impl Eq for Float with equal(self : Float, other : Float) -> Bool = "%f32.eq
 /// Example:
 ///
 /// ```mbt test
-///   let x = Float::from_double(1.0)
-///   let y = Float::from_double(2.0)
-///   let nan = Float::from_double(0.0 / 0.0)
-///   inspect(x != y, content="true")
-///   inspect(x != x, content="false")
-///   inspect(nan != nan, content="true") // NaN is not equal to itself
+/// let x = Float::from_double(1.0)
+/// let y = Float::from_double(2.0)
+/// let nan = Float::from_double(0.0 / 0.0)
+/// inspect(x != y, content="true")
+/// inspect(x != x, content="false")
+/// inspect(nan != nan, content="true") // NaN is not equal to itself
 /// ```
 pub fn Float::op_neq(self : Float, other : Float) -> Bool = "%f32.ne"
 
@@ -617,11 +620,11 @@ pub fn Float::op_neq(self : Float, other : Float) -> Bool = "%f32.ne"
 /// Example:
 ///
 /// ```mbt test
-///   let a = 3.14
-///   let b = 2.718
-///   inspect(a.compare(b), content="1") // 3.14 > 2.718
-///   inspect(b.compare(a), content="-1") // 2.718 < 3.14
-///   inspect(a.compare(a), content="0") // 3.14 = 3.14
+/// let a = 3.14
+/// let b = 2.718
+/// inspect(a.compare(b), content="1") // 3.14 > 2.718
+/// inspect(b.compare(a), content="-1") // 2.718 < 3.14
+/// inspect(a.compare(a), content="0") // 3.14 = 3.14
 /// ```
 pub impl Compare for Float with compare(self, other) = "%f32.compare"
 
@@ -653,8 +656,8 @@ pub impl Compare for Float with op_ge(x, y) = "%f32.ge"
 /// Example:
 ///
 /// ```mbt test
-///   let x : Float = 1.0
-///   inspect(x.reinterpret_as_uint(), content="1065353216") // Decimal representation of 0x3F800000
+/// let x : Float = 1.0
+/// inspect(x.reinterpret_as_uint(), content="1065353216") // Decimal representation of 0x3F800000
 /// ```
 pub fn Float::reinterpret_as_uint(self : Float) -> UInt = "%f32.to_i32_reinterpret"
 
@@ -724,10 +727,10 @@ test "Float::reinterpret" {
 /// Example:
 ///
 /// ```mbt test
-///   let n = 42
-///   let f = Float::from_int(n)
-///   // Convert back to double for comparison since Float doesn't implement Show
-///   inspect(f.to_double(), content="42")
+/// let n = 42
+/// let f = Float::from_int(n)
+/// // Convert back to double for comparison since Float doesn't implement Show
+/// inspect(f.to_double(), content="42")
 /// ```
 pub fn Float::from_int(self : Int) -> Float = "%i32.to_f32"
 
@@ -745,10 +748,10 @@ pub fn Float::from_int(self : Int) -> Float = "%i32.to_f32"
 /// Example:
 ///
 /// ```mbt test
-///   let b = b'\xFF' // 255 in decimal
-///   let f = Float::from_byte(b)
-///   // Convert to double for comparison since Float doesn't implement Show
-///   inspect(f.to_double(), content="255")
+/// let b = b'\xFF' // 255 in decimal
+/// let f = Float::from_byte(b)
+/// // Convert to double for comparison since Float doesn't implement Show
+/// inspect(f.to_double(), content="255")
 /// ```
 pub fn Float::from_byte(self : Byte) -> Float = "%byte.to_f32"
 
@@ -767,8 +770,8 @@ pub fn Float::from_byte(self : Byte) -> Float = "%byte.to_f32"
 /// Example:
 ///
 /// ```mbt test
-///   let d = 3.14159265359
-///   inspect(Float::from_double(d).to_double(), content="3.1415927410125732") // Note the loss of precision
+/// let d = 3.14159265359
+/// inspect(Float::from_double(d).to_double(), content="3.1415927410125732") // Note the loss of precision
 /// ```
 pub fn Float::from_double(self : Double) -> Float = "%f64.to_f32"
 
@@ -787,10 +790,10 @@ pub fn Float::from_double(self : Double) -> Float = "%f64.to_f32"
 /// Example:
 ///
 /// ```mbt test
-///   let n = 42U
-///   inspect(Float::from_uint(n).to_double(), content="42")
-///   let big = 16777216U // 2^24
-///   inspect(Float::from_uint(big).to_double(), content="16777216") // Last precisely representable integer
+/// let n = 42U
+/// inspect(Float::from_uint(n).to_double(), content="42")
+/// let big = 16777216U // 2^24
+/// inspect(Float::from_uint(big).to_double(), content="16777216") // Last precisely representable integer
 /// ```
 pub fn Float::from_uint(self : UInt) -> Float = "%u32.to_f32"
 
@@ -810,10 +813,10 @@ pub fn Float::from_uint(self : UInt) -> Float = "%u32.to_f32"
 /// Example:
 ///
 /// ```mbt test
-///   let n = 42UL
-///   inspect(Float::from_uint64(n).to_double(), content="42")
-///   let big = 18446744073709551615UL // UInt64::max_value
-///   inspect(Float::from_uint64(big).to_double(), content="18446744073709552000")
+/// let n = 42UL
+/// inspect(Float::from_uint64(n).to_double(), content="42")
+/// let big = 18446744073709551615UL // UInt64::max_value
+/// inspect(Float::from_uint64(big).to_double(), content="18446744073709552000")
 /// ```
 #cfg(not(target="js"))
 pub fn Float::from_uint64(self : UInt64) -> Float = "%u64.to_f32"
@@ -849,10 +852,10 @@ test "Float::from_uint64" {
 /// Example:
 ///
 /// ```mbt test
-///   let n = 42L
-///   let f = Float::from_int64(n)
-///   // Convert to double for comparison since Float doesn't implement Show
-///   inspect(f.to_double(), content="42")
+/// let n = 42L
+/// let f = Float::from_int64(n)
+/// // Convert to double for comparison since Float doesn't implement Show
+/// inspect(f.to_double(), content="42")
 /// ```
 #cfg(not(target="js"))
 pub fn Float::from_int64(self : Int64) -> Float = "%i64.to_f32"

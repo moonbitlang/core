@@ -332,9 +332,9 @@ test "has_prefix" {
 /// # Example
 /// 
 /// ```mbt test
-///   inspect("hello world".strip_suffix(" world"), content="Some(\"hello\")")
-///   inspect("hello world".strip_suffix(" moon"), content="None")
-///   inspect("hello".strip_suffix("hello"), content="Some(\"\")")
+/// inspect("hello world".strip_suffix(" world"), content="Some(\"hello\")")
+/// inspect("hello world".strip_suffix(" moon"), content="None")
+/// inspect("hello".strip_suffix("hello"), content="Some(\"\")")
 /// ```
 pub fn String::strip_suffix(self : String, suffix : StringView) -> StringView? {
   if self.has_suffix(suffix) {
@@ -378,9 +378,9 @@ test "strip_suffix" {
 /// # Example
 /// 
 /// ```mbt test
-///   inspect("hello world".strip_prefix("hello "), content="Some(\"world\")")
-///   inspect("hello world".strip_prefix("hi "), content="None")
-///   inspect("hello".strip_prefix("hello"), content="Some(\"\")")
+/// inspect("hello world".strip_prefix("hello "), content="Some(\"world\")")
+/// inspect("hello world".strip_prefix("hi "), content="None")
+/// inspect("hello".strip_prefix("hello"), content="Some(\"\")")
 /// ```
 pub fn String::strip_prefix(self : String, prefix : StringView) -> StringView? {
   if self.has_prefix(prefix) {
@@ -400,10 +400,10 @@ pub fn String::strip_prefix(self : String, prefix : StringView) -> StringView? {
 /// # Example
 /// 
 /// ```mbt test
-///   let view = "hello world"[:]
-///   inspect(view.strip_prefix("hello "), content="Some(\"world\")")
-///   inspect(view.strip_prefix("hi "), content="None")
-///   inspect(view.strip_prefix("hello world"), content="Some(\"\")")
+/// let view = "hello world"[:]
+/// inspect(view.strip_prefix("hello "), content="Some(\"world\")")
+/// inspect(view.strip_prefix("hi "), content="None")
+/// inspect(view.strip_prefix("hello world"), content="Some(\"\")")
 /// ```
 /// 
 pub fn StringView::strip_prefix(
@@ -427,10 +427,10 @@ pub fn StringView::strip_prefix(
 /// # Example
 /// 
 /// ```mbt test
-///   let view = "hello world"[:]
-///   inspect(view.strip_suffix(" world"), content="Some(\"hello\")")
-///   inspect(view.strip_suffix(" moon"), content="None")
-///   inspect(view.strip_suffix("hello world"), content="Some(\"\")")
+/// let view = "hello world"[:]
+/// inspect(view.strip_suffix(" world"), content="Some(\"hello\")")
+/// inspect(view.strip_suffix(" moon"), content="None")
+/// inspect(view.strip_suffix("hello world"), content="Some(\"\")")
 /// ```
 pub fn StringView::strip_suffix(
   self : StringView,
@@ -449,9 +449,9 @@ pub fn StringView::strip_suffix(
 /// # Example
 /// 
 /// ```mbt test
-///   let view = "Hello🤣xa"[1:-1]
-///   let chars = view.to_array()
-///   inspect(chars, content="['e', 'l', 'l', 'o', '🤣', 'x']")
+/// let view = "Hello🤣xa"[1:-1]
+/// let chars = view.to_array()
+/// inspect(chars, content="['e', 'l', 'l', 'o', '🤣', 'x']")
 /// ```
 pub fn StringView::to_array(self : StringView) -> Array[Char] {
   self

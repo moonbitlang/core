@@ -47,8 +47,8 @@ pub fn[T : Show] println(input : T) -> Unit {
 /// Example:
 ///
 /// ```mbt test
-///   let x : Int = 42
-///   inspect(x, content="42") // Raises InspectError with detailed failure message
+/// let x : Int = 42
+/// inspect(x, content="42") // Raises InspectError with detailed failure message
 /// ```
 pub(all) suberror InspectError String
 
@@ -170,9 +170,9 @@ test {
 /// Example:
 ///
 /// ```mbt test skip
-///   inspect(42, content="42")
-///   inspect("hello", content="hello")
-///   inspect([1, 2, 3], content="[1, 2, 3]")
+/// inspect(42, content="42")
+/// inspect("hello", content="hello")
+/// inspect([1, 2, 3], content="[1, 2, 3]")
 /// ```
 #callsite(autofill(args_loc, loc))
 pub fn inspect(
@@ -205,10 +205,10 @@ pub fn inspect(
 /// Example:
 ///
 /// ```mbt test
-///   let err : SnapshotError = SnapshotError("failed to load snapshot")
-///   match err {
-///     SnapshotError(msg) => assert_eq(msg, "failed to load snapshot")
-///   }
+/// let err : SnapshotError = SnapshotError("failed to load snapshot")
+/// match err {
+///   SnapshotError(msg) => assert_eq(msg, "failed to load snapshot")
+/// }
 /// ```
 pub(all) suberror SnapshotError String
 

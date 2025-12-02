@@ -41,8 +41,8 @@ pub fn FixedArray::unsafe_reinterpret_as_bytes(
 /// Example:
 ///
 /// ```mbt test
-///   let bytes = Bytes::makei(3, (i) => { (i + 65).to_byte() })
-///   assert_eq(bytes, b"ABC")
+/// let bytes = Bytes::makei(3, i => (i + 65).to_byte())
+/// assert_eq(bytes, b"ABC")
 /// ```
 pub fn Bytes::makei(length : Int, value : (Int) -> Byte raise?) -> Bytes raise? {
   if length <= 0 {
@@ -109,13 +109,13 @@ pub fn Bytes::to_unchecked_string(
 /// Example:
 ///
 /// ```mbt test
-///   let bytes = FixedArray::make(6, b'\x00')
-///   bytes.blit_from_string(0, "ABC", 0, 3)
-///   @json.inspect(bytes, content=[65,0,66,0,67,0]) // 'A'
-///   bytes.blit_from_string(0, "你好啊", 0, 3)
-///   @json.inspect(bytes, content=[96,79,125,89,74,85]) // '你好啊'
-///   bytes.blit_from_string(0, "😈", 0, 2)
-///   @json.inspect(bytes, content=[61,216,8,222,74,85]) // '😈'
+/// let bytes = FixedArray::make(6, b'\x00')
+/// bytes.blit_from_string(0, "ABC", 0, 3)
+/// @json.inspect(bytes, content=[65, 0, 66, 0, 67, 0]) // 'A'
+/// bytes.blit_from_string(0, "你好啊", 0, 3)
+/// @json.inspect(bytes, content=[96, 79, 125, 89, 74, 85]) // '你好啊'
+/// bytes.blit_from_string(0, "😈", 0, 2)
+/// @json.inspect(bytes, content=[61, 216, 8, 222, 74, 85]) // '😈'
 /// ```
 pub fn FixedArray::blit_from_string(
   self : FixedArray[Byte],
@@ -187,12 +187,12 @@ pub fn FixedArray::blit_from_bytes(
 ///
 /// * The character's code point is greater than 0x10FFFF.
 /// ```mbt test
-///   let buf = FixedArray::make(4, b'\x00')
-///   let written = buf.set_utf8_char(0, '€') // Euro symbol (U+20AC)
-///   inspect(written, content="3") // UTF-8 encoding takes 3 bytes
-///   inspect(buf[0], content="b'\\xE2'")
-///   inspect(buf[1], content="b'\\x82'")
-///   inspect(buf[2], content="b'\\xAC'")
+/// let buf = FixedArray::make(4, b'\x00')
+/// let written = buf.set_utf8_char(0, '€') // Euro symbol (U+20AC)
+/// inspect(written, content="3") // UTF-8 encoding takes 3 bytes
+/// inspect(buf[0], content="b'\\xE2'")
+/// inspect(buf[1], content="b'\\x82'")
+/// inspect(buf[2], content="b'\\xAC'")
 /// ```
 pub fn FixedArray::set_utf8_char(
   self : FixedArray[Byte],
@@ -299,11 +299,11 @@ pub fn FixedArray::set_utf16be_char(
 /// Example:
 ///
 /// ```mbt test
-///   let bytes1 = b"\x01\x02\x03"
-///   let bytes2 = b"\x01\x02\x03"
-///   let bytes3 = b"\x01\x02\x04"
-///   inspect(bytes1 == bytes2, content="true")
-///   inspect(bytes1 == bytes3, content="false")
+/// let bytes1 = b"\x01\x02\x03"
+/// let bytes2 = b"\x01\x02\x03"
+/// let bytes3 = b"\x01\x02\x04"
+/// inspect(bytes1 == bytes2, content="true")
+/// inspect(bytes1 == bytes3, content="false")
 /// ```
 pub impl Eq for Bytes with equal(self : Bytes, other : Bytes) -> Bool {
   if self.length() != other.length() {
@@ -339,16 +339,15 @@ pub impl Eq for Bytes with equal(self : Bytes, other : Bytes) -> Bool {
 /// Example:
 ///
 /// ```mbt test
-///   let a = b"\x01\x02\x03"
-///   let b = b"\x01\x02\x04"
-///   inspect(a.compare(b), content="-1") // a < b
-///   inspect(b.compare(a), content="1") // b > a
-///   inspect(a.compare(a), content="0") // a = a
-///
-///   let a = b"\x01\x02"
-///   let b = b"\x01\x02\x03"
-///   inspect(a.compare(b), content="-1") // shorter sequence is less
-///   inspect(b.compare(a), content="1") // longer sequence is greater
+/// let a = b"\x01\x02\x03"
+/// let b = b"\x01\x02\x04"
+/// inspect(a.compare(b), content="-1") // a < b
+/// inspect(b.compare(a), content="1") // b > a
+/// inspect(a.compare(a), content="0") // a = a
+/// let a = b"\x01\x02"
+/// let b = b"\x01\x02\x03"
+/// inspect(a.compare(b), content="-1") // shorter sequence is less
+/// inspect(b.compare(a), content="1") // longer sequence is greater
 /// ```
 pub impl Compare for Bytes with compare(self, other) {
   let self_len = self.length()

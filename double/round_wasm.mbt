@@ -25,9 +25,9 @@
 /// Example:
 ///
 /// ```mbt test
-///   inspect(3.7.trunc(), content="3")
-///   inspect((-3.7).trunc(), content="-3")
-///   inspect(0.0.trunc(), content="0")
+/// inspect(3.7.trunc(), content="3")
+/// inspect((-3.7).trunc(), content="-3")
+/// inspect(0.0.trunc(), content="0")
 /// ```
 #as_free_fn
 pub fn Double::trunc(self : Double) -> Double = "(func (param $d f64) (result f64) (f64.trunc (local.get $d)))"
@@ -44,9 +44,9 @@ pub fn Double::trunc(self : Double) -> Double = "(func (param $d f64) (result f6
 /// Example:
 ///
 /// ```mbt test
-///   inspect(3.7.ceil(), content="4")
-///   inspect((-3.7).ceil(), content="-3")
-///   inspect(42.0.ceil(), content="42")
+/// inspect(3.7.ceil(), content="4")
+/// inspect((-3.7).ceil(), content="-3")
+/// inspect(42.0.ceil(), content="42")
 /// ```
 #as_free_fn
 pub fn Double::ceil(self : Double) -> Double = "(func (param $d f64) (result f64) (f64.ceil (local.get $d)))"
@@ -64,9 +64,9 @@ pub fn Double::ceil(self : Double) -> Double = "(func (param $d f64) (result f64
 /// Example:
 ///
 /// ```mbt test
-///   inspect(3.7.floor(), content="3")
-///   inspect((-3.7).floor(), content="-4")
-///   inspect(0.0.floor(), content="0")
+/// inspect(3.7.floor(), content="3")
+/// inspect((-3.7).floor(), content="-4")
+/// inspect(0.0.floor(), content="0")
 /// ```
 #as_free_fn
 pub fn Double::floor(self : Double) -> Double = "(func (param $d f64) (result f64) (f64.floor (local.get $d)))"
@@ -85,10 +85,10 @@ pub fn Double::floor(self : Double) -> Double = "(func (param $d f64) (result f6
 /// Example:
 ///
 /// ```mbt test
-///   inspect(3.7.round(), content="4")
-///   inspect(3.2.round(), content="3")
-///   inspect(3.5.round(), content="4")
-///   inspect((-3.5).round(), content="-3")
+/// inspect(3.7.round(), content="4")
+/// inspect(3.2.round(), content="3")
+/// inspect(3.5.round(), content="4")
+/// inspect((-3.5).round(), content="-3")
 /// ```
 #as_free_fn
 pub fn Double::round(self : Double) -> Double {

@@ -90,9 +90,9 @@ pub impl Logger for StringBuilder with write_char(self, ch) {
 /// Example:
 ///
 /// ```mbt test
-///   let sb = StringBuilder::new()
-///   sb.write_view("Hello, world!"[:5])
-///   assert_eq(sb.to_string(), "Hello")
+/// let sb = StringBuilder::new()
+/// sb.write_view("Hello, world!"[:5])
+/// assert_eq(sb.to_string(), "Hello")
 /// ```
 pub impl Logger for StringBuilder with write_view(
   self : StringBuilder,

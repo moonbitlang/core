@@ -94,11 +94,11 @@ pub fn[K : Hash + Eq, V] Map::from_array(arr : ArrayView[(K, V)]) -> Map[K, V] {
 /// Example:
 ///
 /// ```mbt test
-///   let map : Map[String, Int] = Map::new()
-///   map.set("key", 42)
-///   inspect(map.get("key"), content="Some(42)")
-///   map.set("key", 24) // update existing key
-///   inspect(map.get("key"), content="Some(24)")
+/// let map : Map[String, Int] = Map::new()
+/// map.set("key", 42)
+/// inspect(map.get("key"), content="Some(42)")
+/// map.set("key", 24) // update existing key
+/// inspect(map.get("key"), content="Some(24)")
 /// ```
 #alias("_[_]=_")
 pub fn[K : Hash + Eq, V] Map::set(self : Map[K, V], key : K, value : V) -> Unit {
@@ -188,9 +188,9 @@ fn[K, V] Map::set_entry(
 /// Example:
 ///
 /// ```mbt test
-///   let map = { "key": 42 }
-///   inspect(map.get("key"), content="Some(42)")
-///   inspect(map.get("nonexistent"), content="None")
+/// let map = { "key": 42 }
+/// inspect(map.get("key"), content="Some(42)")
+/// inspect(map.get("nonexistent"), content="None")
 /// ```
 pub fn[K : Hash + Eq, V] Map::get(self : Map[K, V], key : K) -> V? {
   let hash = key.hash()
@@ -237,9 +237,9 @@ pub fn[K : Hash + Eq, V] Map::at(self : Map[K, V], key : K) -> V {
 /// Example:
 ///
 /// ```mbt test
-///   let map = { "a": 1, "b": 2 }
-///   inspect(map.get_or_default("a", 0), content="1")
-///   inspect(map.get_or_default("c", 42), content="42")
+/// let map = { "a": 1, "b": 2 }
+/// inspect(map.get_or_default("a", 0), content="1")
+/// inspect(map.get_or_default("c", 42), content="42")
 /// ```
 pub fn[K : Hash + Eq, V] Map::get_or_default(
   self : Map[K, V],
@@ -343,11 +343,10 @@ pub fn[K : Hash + Eq, V] Map::contains(self : Map[K, V], key : K) -> Bool {
 /// Example:
 ///
 /// ```mbt test
-///
-///   let map = { "a": 1, "b": 2 }
-///   inspect(map.contains_kv("a", 1), content="true")
-///   inspect(map.contains_kv("a", 2), content="false")
-///   inspect(map.contains_kv("c", 3), content="false")
+/// let map = { "a": 1, "b": 2 }
+/// inspect(map.contains_kv("a", 1), content="true")
+/// inspect(map.contains_kv("a", 2), content="false")
+/// inspect(map.contains_kv("c", 3), content="false")
 /// ```
 pub fn[K : Hash + Eq, V : Eq] Map::contains_kv(
   self : Map[K, V],
@@ -382,10 +381,10 @@ pub fn[K : Hash + Eq, V : Eq] Map::contains_kv(
 /// Example:
 ///
 /// ```mbt test
-///   let map = { "a": 1, "b": 2 }
-///   map.remove("a")
-///   inspect(map.get("a"), content="None")
-///   inspect(map.length(), content="1")
+/// let map = { "a": 1, "b": 2 }
+/// map.remove("a")
+/// inspect(map.get("a"), content="None")
+/// inspect(map.length(), content="1")
 /// ```
 pub fn[K : Hash + Eq, V] Map::remove(self : Map[K, V], key : K) -> Unit {
   self.remove_with_hash(key, key.hash())
@@ -831,13 +830,13 @@ pub fn[K : Eq, V] Map::merge_in_place(
 /// Example:
 ///
 /// ```mbt test
-///   let map = { "a": 1, "b": 2, "c": 3, "d": 4 }
-///   map.retain((_k, v) => v % 2 == 0)  // Keep only even values
-///   inspect(map.length(), content="2")
-///   inspect(map.get("a"), content="None")
-///   inspect(map.get("b"), content="Some(2)")
-///   inspect(map.get("c"), content="None")
-///   inspect(map.get("d"), content="Some(4)")
+/// let map = { "a": 1, "b": 2, "c": 3, "d": 4 }
+/// map.retain((_k, v) => v % 2 == 0) // Keep only even values
+/// inspect(map.length(), content="2")
+/// inspect(map.get("a"), content="None")
+/// inspect(map.get("b"), content="Some(2)")
+/// inspect(map.get("c"), content="None")
+/// inspect(map.get("d"), content="Some(4)")
 /// ```
 #locals(f)
 pub fn[K, V] Map::retain(self : Map[K, V], f : (K, V) -> Bool) -> Unit {
@@ -890,32 +889,41 @@ pub fn[K, V] Map::retain(self : Map[K, V], f : (K, V) -> Bool) -> Unit {
 /// let map = { "a": 1, "b": 2 }
 ///
 /// // Update existing value
-/// map.update("a", fn(v) { 
-///   match v { 
-///     Some(x) => Some(x + 10) 
-///     None => Some(0) 
-///   } 
+/// map.update("a", fn(v) {
+///   match v {
+///     Some(x) => Some(x + 10)
+///     None => Some(0)
+///   }
 /// })
-/// inspect(map, content=(
-///   #|{"a": 11, "b": 2}
-/// ))
+/// inspect(
+///   map,
+///   content=(
+///     #|{"a": 11, "b": 2}
+///   ),
+/// )
 ///
 /// // Insert new value
-/// map.update("c", fn(v) { 
-///   match v { 
-///     Some(x) => Some(x) 
-///     None => Some(3) 
-///   } 
+/// map.update("c", fn(v) {
+///   match v {
+///     Some(x) => Some(x)
+///     None => Some(3)
+///   }
 /// })
-/// inspect(map, content=(
-///   #|{"a": 11, "b": 2, "c": 3}
-/// ))
+/// inspect(
+///   map,
+///   content=(
+///     #|{"a": 11, "b": 2, "c": 3}
+///   ),
+/// )
 ///
 /// // Remove existing value
 /// map.update("b", fn(_) { None })
-/// inspect(map, content=(
-///   #|{"a": 11, "c": 3}
-/// ))
+/// inspect(
+///   map,
+///   content=(
+///     #|{"a": 11, "c": 3}
+///   ),
+/// )
 /// ```
 pub fn[K : Hash + Eq, V] Map::update(
   self : Map[K, V],
@@ -1021,10 +1029,10 @@ fn BytesView::equal_to_bytes(self : Self, other : Bytes) -> Bool {
 /// Example:
 ///
 /// ```mbt test
-///   let map = { b"hello": 1, b"world": 2 }
-///   let bytes = b"prefix_hello_suffix"
-///   let view = bytes[7:12] // view of "hello"
-///   inspect(map.get_from_bytes(view), content="Some(1)")
+/// let map = { b"hello": 1, b"world": 2 }
+/// let bytes = b"prefix_hello_suffix"
+/// let view = bytes[7:12] // view of "hello"
+/// inspect(map.get_from_bytes(view), content="Some(1)")
 /// ```
 pub fn[V] Map::get_from_bytes(map : Self[Bytes, V], key : BytesView) -> V? {
   let hash = key.hash()
@@ -1056,10 +1064,10 @@ pub fn[V] Map::get_from_bytes(map : Self[Bytes, V], key : BytesView) -> V? {
 /// Example:
 ///
 /// ```mbt test
-///   let map = { "hello": 1, "world": 2 }
-///   let str = "say hello to everyone"
-///   let view = str.view(start_offset=4, end_offset=9) // view of "hello"
-///   inspect(map.get_from_string(view), content="Some(1)")
+/// let map = { "hello": 1, "world": 2 }
+/// let str = "say hello to everyone"
+/// let view = str.view(start_offset=4, end_offset=9) // view of "hello"
+/// inspect(map.get_from_string(view), content="Some(1)")
 /// ```
 pub fn[V] Map::get_from_string(map : Self[String, V], key : StringView) -> V? {
   let hash = key.hash()

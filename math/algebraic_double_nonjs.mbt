@@ -33,7 +33,7 @@
 /// ```mbt test
 /// inspect(@math.cbrt(1.0), content="1")
 /// inspect(@math.cbrt(3.0), content="1.4422495703074083")
-/// inspect(@math.cbrt((-3.0)), content="-1.4422495703074083")
+/// inspect(@math.cbrt(-3.0), content="-1.4422495703074083")
 /// inspect(@math.cbrt(10.0), content="2.154434690031884")
 /// inspect(@math.cbrt(1000.0), content="10")
 /// inspect(@math.cbrt(@double.not_a_number), content="NaN")

@@ -387,12 +387,12 @@ pub fn[A : Compare] SortedSet::difference(
 /// Example:
 ///
 /// ```mbt test
-///   let set1 = @sorted_set.from_array([1, 2, 3, 4])
-///   let set2 = @sorted_set.from_array([3, 4, 5, 6])
-///   inspect(
-///     set1.symmetric_difference(set2),
-///     content="@immut/sorted_set.from_array([1, 2, 5, 6])",
-///   )
+/// let set1 = @sorted_set.from_array([1, 2, 3, 4])
+/// let set2 = @sorted_set.from_array([3, 4, 5, 6])
+/// inspect(
+///   set1.symmetric_difference(set2),
+///   content="@immut/sorted_set.from_array([1, 2, 5, 6])",
+/// )
 /// ```
 pub fn[A : Compare] SortedSet::symmetric_difference(
   self : SortedSet[A],
