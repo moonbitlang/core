@@ -183,7 +183,7 @@ pub fn inspect(
 ) -> Unit raise InspectError {
   let actual = obj.to_string()
   if actual != content {
-    let loc = loc.to_string().escape()
+    let loc = loc.to_json_string()
     let args_loc = args_loc.to_json().escape()
     let expect_escaped = content.escape()
     let actual_escaped = actual.escape()
