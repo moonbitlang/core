@@ -28,7 +28,7 @@ fn[T] any_to_string(any : T) -> String = "%any.to_string"
 ///
 /// Example:
 ///
-/// ```mbt test skip
+/// ```mbt
 ///   println(42)
 ///   println("Hello, World!")
 ///   println([1, 2, 3])
