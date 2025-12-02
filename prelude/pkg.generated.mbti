@@ -8,7 +8,8 @@ import(
 )
 
 // Values
-pub fn[T] abort(String) -> T
+#callsite(autofill(loc))
+pub fn[T] abort(String, loc~ : @builtin.SourceLoc) -> T
 
 #callsite(autofill(loc))
 pub fn[T : @builtin.Eq + @builtin.Show] assert_eq(T, T, msg? : String, loc~ : @builtin.SourceLoc) -> Unit raise
