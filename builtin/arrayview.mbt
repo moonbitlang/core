@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// #region type definition and intrinsics
+
 ///|
 /// An `ArrayView` represents a view into a section of an array without copying the data.
 ///
@@ -42,6 +44,10 @@ fn[T] ArrayView::make(
   len : Int,
 ) -> ArrayView[T] = "%arrayview.make"
 
+// #endregion
+
+// #region methods
+
 ///|
 /// Returns the length (number of elements) of an array view.
 ///
@@ -60,6 +66,11 @@ fn[T] ArrayView::make(
 /// ```
 pub fn[T] ArrayView::length(self : ArrayView[T]) -> Int {
   self.len()
+}
+
+///|
+pub fn[T] ArrayView::start_offset(self : Self[T]) -> Int {
+  self.start()
 }
 
 ///|
@@ -355,6 +366,385 @@ pub fn[A] ArrayView::iter(self : ArrayView[A]) -> Iter[A] {
 }
 
 ///|
+pub fn[X] ArrayView::rev_iterator(self : ArrayView[X]) -> Iterator[X] {
+  let mut i = self.length()
+  Iterator::new(fn() {
+    guard i > 0 else { None }
+    i -= 1
+    Some(self.unsafe_get(i))
+  })
+}
+
+///|
+pub fn[X] ArrayView::iterator2(self : ArrayView[X]) -> Iterator2[Int, X] {
+  let mut i = 0
+  Iterator2::new(fn() {
+    guard i < self.length() else { None }
+    let result = Some((i, self.unsafe_get(i)))
+    i += 1
+    result
+  })
+}
+
+///|
+/// Returns an iterator that yields tuples of index and value
+/// indices start from 0.
+/// 
+/// Example:
+/// ```mbt test
+/// let arr = [1, 2, 3]
+/// let view = arr[1:]
+/// let mut sum = 0
+/// let mut sum_keys = 0
+/// view
+/// .iter2()
+/// .each((i, x) => {
+///   sum = sum + x
+///   sum_keys = sum_keys + i
+/// })
+/// inspect(sum, content="5")
+/// inspect(sum_keys, content="1")
+/// ```
+pub fn[A] ArrayView::iter2(self : ArrayView[A]) -> Iter2[Int, A] {
+  Iter2::new(yield_ => for i, v in self {
+    guard yield_(i, v) is IterContinue else { break IterEnd }
+  } else {
+    IterContinue
+  })
+}
+
+///|
+/// Iterates over each element in the array view and applies a function to it.
+///
+/// Parameters:
+///
+/// * `self` : The array view to iterate over.
+/// * `function` : A function that takes an element of type `T` and returns
+/// nothing. This function will be applied to each element in the array view.
+///
+/// Example:
+///
+/// ```mbt test
+/// let arr = [1, 2, 3][:]
+/// let mut sum = 0
+/// arr.each(x => sum = sum + x)
+/// inspect(sum, content="6")
+/// ```
+pub fn[T] ArrayView::each(
+  self : ArrayView[T],
+  f : (T) -> Unit raise?,
+) -> Unit raise? {
+  for v in self {
+    f(v)
+  }
+}
+
+///|
+/// Iterates over the elements of the array view with index.
+///
+/// # Example
+/// 
+/// ```mbt
+///   let v = [3, 4, 5][:]
+///   let mut sum = 0
+///   v.eachi((i, x) => { sum = sum + x + i })
+///   inspect(sum, content="15")
+/// ```
+pub fn[T] ArrayView::eachi(
+  self : ArrayView[T],
+  f : (Int, T) -> Unit raise?,
+) -> Unit raise? {
+  for i, v in self {
+    f(i, v)
+  }
+}
+
+///|
+/// Checks if all elements in the array view match the condition.
+/// 
+/// # Example
+/// 
+/// ```mbt
+///   let v = [1, 4, 6, 8, 9]
+///   assert_false(v[:].all(elem => elem % 2 == 0))
+///   assert_true(v[1:4].all(elem => elem % 2 == 0))
+/// ```
+pub fn[T] ArrayView::all(
+  self : ArrayView[T],
+  f : (T) -> Bool raise?,
+) -> Bool raise? {
+  for v in self {
+    if !f(v) {
+      return false
+    }
+  }
+  true
+}
+
+///|
+/// Check if any of the elements in the array view match the condition.
+///
+/// # Example
+///
+/// ```mbt
+///   let v = [1, 2, 3, 4, 5][:]
+///   assert_true(v.any(ele => ele < 6))
+///   assert_false(v.any(ele => ele < 1))
+/// ```
+pub fn[T] ArrayView::any(
+  self : ArrayView[T],
+  f : (T) -> Bool raise?,
+) -> Bool raise? {
+  for v in self {
+    if f(v) {
+      return true
+    }
+  }
+  false
+}
+
+///|
+/// Checks whether the array view contains a specific element by comparing each
+/// element with the target value using the equality operator.
+///
+/// Parameters:
+///
+/// * `view` : The array view to search in.
+/// * `target` : The value to search for in the array view.
+///
+/// Returns a boolean value indicating whether the target value exists in the
+/// array view.
+///
+/// Example:
+///
+/// ```mbt test
+/// let arr = [1, 2, 3, 4, 5][:]
+/// inspect(arr.contains(3), content="true")
+/// inspect(arr.contains(6), content="false")
+/// ```
+pub fn[T : Eq] ArrayView::contains(self : ArrayView[T], value : T) -> Bool {
+  for v in self {
+    if v == value {
+      break true
+    }
+  } else {
+    false
+  }
+}
+
+///|
+/// Fold out values from an ArrayView according to certain rules.
+///
+/// # Example
+/// ```mbt
+///   let sum = [1, 2, 3, 4, 5][:].fold(init=0, (sum, elem) => sum + elem)
+///   inspect(sum, content="15")
+/// ```
+pub fn[A, B] ArrayView::fold(
+  self : ArrayView[A],
+  init~ : B,
+  f : (B, A) -> B raise?,
+) -> B raise? {
+  for i = 0, acc = init; i < self.length(); {
+    continue i + 1, f(acc, self[i])
+  } else {
+    acc
+  }
+}
+
+///|
+/// Fold out values from an ArrayView according to certain rules in reversed turn.
+///
+/// # Example
+/// ```mbt
+///   let sum = [1, 2, 3, 4, 5][:].rev_fold(init=0, (sum, elem) => sum + elem)
+///   inspect(sum, content="15")
+/// ```
+pub fn[A, B] ArrayView::rev_fold(
+  self : ArrayView[A],
+  init~ : B,
+  f : (B, A) -> B raise?,
+) -> B raise? {
+  for i = self.length() - 1, acc = init; i >= 0; {
+    continue i - 1, f(acc, self[i])
+  } else {
+    acc
+  }
+}
+
+///|
+/// Fold out values from an ArrayView according to certain rules with index.
+///
+/// # Example
+/// ```mbt
+///   let sum = [1, 2, 3, 4, 5][:].foldi(init=0, (index, sum, _elem) => sum + index)
+///   inspect(sum, content="10")
+/// ```
+pub fn[A, B] ArrayView::foldi(
+  self : ArrayView[A],
+  init~ : B,
+  f : (Int, B, A) -> B raise?,
+) -> B raise? {
+  for i = 0, acc = init; i < self.length(); {
+    continue i + 1, f(i, acc, self[i])
+  } else {
+    acc
+  }
+}
+
+///|
+/// Fold out values from an ArrayView according to certain rules in reversed turn with index.
+///
+/// # Example
+/// ```mbt
+///   let sum = [1, 2, 3, 4, 5][:].rev_foldi(init=0, (index, sum, _elem)=> { sum + index })
+///   inspect(sum, content="10")
+/// ```
+pub fn[A, B] ArrayView::rev_foldi(
+  self : ArrayView[A],
+  init~ : B,
+  f : (Int, B, A) -> B raise?,
+) -> B raise? {
+  let len = self.length()
+  for i = len - 1, acc = init; i >= 0; {
+    continue i - 1, f(len - i - 1, acc, self[i])
+  } else {
+    acc
+  }
+}
+
+///|
+/// Maps a function over the elements of the array view.
+///
+/// # Example
+/// ```mbt
+///   let v = [3, 4, 5]
+///   let v2 = v[1:].map((x) => {x + 1})
+///   assert_eq(v2, [5, 6])
+/// ```
+pub fn[T, U] ArrayView::map(
+  self : ArrayView[T],
+  f : (T) -> U raise?,
+) -> Array[U] raise? {
+  if self.length() == 0 {
+    return []
+  }
+  Array::makei(self.length(), i => f(self[i]))
+}
+
+///|
+/// Maps a function over the elements of the array view with index.
+///
+/// # Example
+/// ```mbt
+///   let v = [3, 4, 5]
+///   let v2 = v[1:].mapi((i, x) => {x + i})
+///   assert_eq(v2, [4, 6])
+/// ```
+pub fn[T, U] ArrayView::mapi(
+  self : ArrayView[T],
+  f : (Int, T) -> U raise?,
+) -> Array[U] raise? {
+  if self.length() == 0 {
+    return []
+  }
+  Array::makei(self.length(), i => f(i, self[i]))
+}
+
+///|
+/// Filters the array view with a predicate function.
+///
+/// # Example
+/// ```mbt
+///   let arr = [1, 2, 3, 4, 5, 6]
+///   let v = arr[2:].filter((x) => { x % 2 == 0 })
+///   assert_eq(v, [4, 6])
+/// ```
+pub fn[T] ArrayView::filter(
+  self : ArrayView[T],
+  f : (T) -> Bool raise?,
+) -> Array[T] raise? {
+  let arr = []
+  for v in self {
+    if f(v) {
+      arr.push(v)
+    }
+  }
+  arr
+}
+
+///|
+/// Copy the view elements to a new array
+///
+/// # Example
+/// ```mbt
+///   let view = [1, 2, 3, 4, 5, 6][2:4]
+///   let arr = view.to_array()
+///   assert_eq(arr, [3, 4])
+/// ```
+pub fn[T] ArrayView::to_array(self : ArrayView[T]) -> Array[T] {
+  let len = self.length()
+  if len == 0 {
+    []
+  } else {
+    let arr = Array::make(len, self[0])
+    for i, v in self {
+      arr[i] = v
+    }
+    arr
+  }
+}
+
+///|
+/// Concatenate strings within an array into a single complete string.
+///
+/// Example:
+///
+/// ```mbt test
+/// let a : Array[String] = ["1", "2", "3"]
+/// let array_view = a[:]
+/// inspect(array_view.join(","), content="1,2,3")
+/// ```
+pub fn[A : ToStringView] ArrayView::join(
+  self : ArrayView[A],
+  separator : StringView,
+) -> String {
+  match self {
+    [] => ""
+    [hd, .. tl] => {
+      let hd = hd.to_string_view()
+      let mut size_hint = hd.length()
+      for s in tl {
+        size_hint += s.to_string_view().length() + separator.length()
+      }
+      size_hint = size_hint << 1
+      let buf = StringBuilder::new(size_hint~)
+      // buf.write_string(hd)
+      buf.write_view(hd)
+      if separator is "" {
+        for s in tl {
+          // buf.write_string(s)
+          let s = s.to_string_view()
+          buf.write_view(s)
+        }
+      } else {
+        for s in tl {
+          let s = s.to_string_view()
+          buf.write_view(separator)
+          // buf.write_string(s)
+          buf.write_view(s)
+        }
+      }
+      buf.to_string()
+    }
+  }
+}
+
+// #endregion
+
+// #region trait impls
+
+///|
 pub impl[X : Show] Show for ArrayView[X] with output(self, logger) {
   logger.write_iter(self.iter())
 }
@@ -393,3 +783,5 @@ pub impl[A : Hash] Hash for ArrayView[A] with hash_combine(self, hasher) {
     hasher.combine(e)
   }
 }
+
+// #endregion
