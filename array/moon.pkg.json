@@ -5,11 +5,7 @@
   ],
   "test-import": [
     "moonbitlang/core/char",
-    "moonbitlang/core/test",
-    "moonbitlang/core/random",
-    "moonbitlang/core/json",
-    "moonbitlang/core/ref",
-    "moonbitlang/core/quickcheck"
+    "moonbitlang/core/random"
   ],
   "targets": {
     "array_js.mbt": ["js"],
