@@ -170,6 +170,41 @@ pub fn FixedArray::blit_from_bytes(
 }
 
 ///|
+/// Copy bytes from a BytesView into a fixed array of bytes.
+///
+/// Parameters:
+///
+/// * `self` : The destination fixed array of bytes.
+/// * `bytes_offset` : The starting position in the destination array where bytes will be copied.
+/// * `src` : The source View to copy from.
+///
+/// Throws a panic if:
+/// * `bytes_offset` is negative
+/// * The destination array is too small to hold all bytes from the source View
+///
+/// Example:
+///
+/// ```mbt
+///  let arr = FixedArray::make(4, b'\x00')
+///  let view = b"\x01\x02\x03"[1:]
+///  arr.blit_from_bytesview(1, view)
+///  inspect(arr, content="[b'\\x00', b'\\x02', b'\\x03', b'\\x00']")
+/// ```
+pub fn FixedArray::blit_from_bytesview(
+  self : FixedArray[Byte],
+  bytes_offset : Int,
+  src : BytesView,
+) -> Unit {
+  FixedArray::blit_from_bytes(
+    self,
+    bytes_offset,
+    src.bytes(),
+    src.start(),
+    src.len(),
+  )
+}
+
+///|
 /// Encodes a Unicode character into UTF-8 bytes and writes them into a fixed
 /// array of bytes at the specified offset.
 ///

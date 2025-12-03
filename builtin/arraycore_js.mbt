@@ -37,6 +37,12 @@ fn[T] JSArray::ofAnyArray(array : Array[T]) -> JSArray = "%identity"
 fn[T] JSArray::toAnyArray(self : JSArray) -> Array[T] = "%identity"
 
 ///|
+fn[T] JSArray::ofAnyFixedArray(array : FixedArray[T]) -> JSArray = "%identity"
+
+///|
+fn[T] JSArray::toAnyFixedArray(self : JSArray) -> FixedArray[T] = "%identity"
+
+///|
 extern "js" fn JSArray::set_length(self : JSArray, new_len : Int) -> Unit =
   #| (arr, len) => { arr.length = len; }
 
@@ -73,6 +79,10 @@ extern "js" fn JSArray::fill(
   end : Int,
 ) -> Unit =
   #| (arr, val, start, end) => arr.fill(val, start, end)
+
+///|
+extern "js" fn JSArray::copy(self : JSArray) -> JSArray =
+  #|(arr) => arr.slice(0)
 
 //#endregion
 
@@ -348,4 +358,26 @@ pub fn[A] Array::fill(
     }
   }
   JSArray::ofAnyArray(self).fill(JSValue::ofAny(value), start, end)
+}
+
+///|
+/// Creates and returns a new array with a copy of all elements from the input
+/// array.
+///
+/// Parameters:
+///
+/// * `array` : The array to be copied.
+///
+/// Returns a new array containing all elements from the original array.
+///
+/// Example:
+///
+/// ```mbt test
+/// let original = [1, 2, 3]
+/// let copied = original.copy()
+/// inspect(copied, content="[1, 2, 3]")
+/// inspect(physical_equal(original, copied), content="false")
+/// ```
+pub fn[T] Array::copy(self : Array[T]) -> Array[T] {
+  JSArray::ofAnyArray(self).copy().toAnyArray()
 }
