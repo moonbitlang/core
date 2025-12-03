@@ -25,10 +25,7 @@ pub fn from_iterator(Iterator[Char]) -> String
 #deprecated
 pub using @builtin {type StringView as View}
 
+pub using @builtin {trait ToStringView}
+
 // Traits
-pub trait ToStringView {
-  to_string_view(Self) -> StringView
-}
-pub impl ToStringView for String
-pub impl ToStringView for StringView
 
