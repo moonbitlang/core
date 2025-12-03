@@ -55,6 +55,7 @@ pub using @builtin {
   type ArgsLoc,
   type Array,
   type ArrayView,
+  type MutArrayView,
   type UninitializedArray,
   type Failure,
   type Hasher,
