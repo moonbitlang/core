@@ -13,38 +13,6 @@
 // limitations under the License.
 
 ///|
-/// Sorts the array in place.
-///
-/// It's an in-place, unstable sort(it will reorder equal elements). The time complexity is O(n log n) in the worst case.
-///
-/// # Example
-///
-/// ```mbt
-///   let arr = [5, 4, 3, 2, 1]
-///   arr.mut_view().sort()
-///   assert_eq(arr, [1, 2, 3, 4, 5])
-/// ```
-pub fn[T : Compare] MutArrayView::sort(self : MutArrayView[T]) -> Unit {
-  fixed_quick_sort(self, None, fixed_get_limit(self.length()))
-}
-
-///|
-/// Sorts the array
-/// 
-/// It's an stable sort(it will not reorder equal elements). The time complexity is *O*(*n* \* log(*n*)) in the worst case.
-/// 
-/// # Example
-/// 
-/// ```mbt
-///   let arr: FixedArray[Int] = [5, 4, 3, 2, 1]
-///   arr.mut_view().stable_sort()
-///   assert_eq(arr, [1, 2, 3, 4, 5])
-/// ```
-pub fn[T : Compare] MutArrayView::stable_sort(self : MutArrayView[T]) -> Unit {
-  timsort(self)
-}
-
-///|
 priv struct TimSortRun {
   len : Int
   start : Int
@@ -530,30 +498,6 @@ test "stable_sort" {
     expected[i] = i
   }
   assert_eq(arr, expected)
-}
-
-///|
-/// Checks if the elements in the array are sorted in ascending order according
-/// to their natural ordering.
-///
-/// Parameters:
-///
-/// * `array` : A fixed array of type `T`, where `T` must implement the `Compare`
-/// trait.
-///
-/// Returns `true` if the array is sorted in ascending order, `false` otherwise.
-/// An empty array or an array with a single element is considered sorted.
-///
-/// Example:
-///
-/// ```mbt test
-/// let sorted : FixedArray[Int] = [1, 2, 3, 4, 5]
-/// let unsorted : FixedArray[Int] = [5, 4, 3, 2, 1]
-/// inspect(FixedArray::is_sorted(sorted), content="true")
-/// inspect(FixedArray::is_sorted(unsorted), content="false")
-/// ```
-pub fn[T : Compare] FixedArray::is_sorted(arr : FixedArray[T]) -> Bool {
-  arr[:].is_sorted()
 }
 
 ///|
