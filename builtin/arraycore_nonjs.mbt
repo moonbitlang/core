@@ -460,3 +460,32 @@ pub fn[A] Array::fill(
   }
   self.buf.unchecked_fill(start, value, length - start)
 }
+
+///|
+/// Creates and returns a new array with a copy of all elements from the input
+/// array.
+///
+/// Parameters:
+///
+/// * `array` : The array to be copied.
+///
+/// Returns a new array containing all elements from the original array.
+///
+/// Example:
+///
+/// ```mbt test
+/// let original = [1, 2, 3]
+/// let copied = original.copy()
+/// inspect(copied, content="[1, 2, 3]")
+/// inspect(physical_equal(original, copied), content="false")
+/// ```
+pub fn[T] Array::copy(self : Array[T]) -> Array[T] {
+  let len = self.length()
+  if len == 0 {
+    []
+  } else {
+    let arr = Array::make(len, self[0])
+    Array::unsafe_blit(arr, 0, self, 0, len)
+    arr
+  }
+}

@@ -1566,3 +1566,58 @@ test "FixedArray::join" {
 pub fn[X] FixedArray::iterator(self : FixedArray[X]) -> Iterator[X] {
   self[:].iterator()
 }
+
+///|
+/// Creates a new array that is a copy of the original array.
+///
+/// Parameters:
+///
+/// * `self` : The array to be copied. The type of elements in the array must be
+/// `T`.
+///
+/// Returns a new array containing all elements from the original array in the
+/// same order.
+///
+/// Example:
+///
+/// ```mbt test
+/// let original = [1, 2, 3]
+/// let copied = original.copy()
+/// inspect(copied, content="[1, 2, 3]")
+/// inspect(physical_equal(original, copied), content="false")
+/// ```
+#cfg(not(target="js"))
+pub fn[T] FixedArray::copy(self : FixedArray[T]) -> FixedArray[T] {
+  let len = self.length()
+  if len == 0 {
+    []
+  } else {
+    let arr = FixedArray::make(len, self[0])
+    FixedArray::unsafe_blit(arr, 0, self, 0, len)
+    arr
+  }
+}
+
+///|
+/// Creates a new array that is a copy of the original array.
+///
+/// Parameters:
+///
+/// * `self` : The array to be copied. The type of elements in the array must be
+/// `T`.
+///
+/// Returns a new array containing all elements from the original array in the
+/// same order.
+///
+/// Example:
+///
+/// ```mbt test
+/// let original = [1, 2, 3]
+/// let copied = original.copy()
+/// inspect(copied, content="[1, 2, 3]")
+/// inspect(physical_equal(original, copied), content="false")
+/// ```
+#cfg(target="js")
+pub fn[T] FixedArray::copy(self : FixedArray[T]) -> FixedArray[T] {
+  JSArray::ofAnyFixedArray(self).copy().toAnyFixedArray()
+}
