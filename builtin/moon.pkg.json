@@ -15,7 +15,10 @@
     "moonbitlang/core/json",
     "moonbitlang/core/bigint",
     "moonbitlang/core/ref",
-    "moonbitlang/core/float"
+    "moonbitlang/core/float",
+    "moonbitlang/core/quickcheck",
+    "moonbitlang/core/test",
+    "moonbitlang/core/random"
   ],
   "alert-list": "-test_import_all",
   "targets": {

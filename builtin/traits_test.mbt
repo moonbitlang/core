@@ -20,3 +20,15 @@ test "write_iter with trailing" {
   logger.write_iter(arr.iter(), prefix="[", suffix="]", sep=",", trailing=true)
   inspect(builder.to_string(), content="[1,2,]")
 }
+
+///|
+test "hash_data" {
+  struct Data {
+    x : Array[Int]
+    y : FixedArray[Int]
+  } derive(Hash, Eq, Show)
+  let data = Data::{ x: [1, 2, 3], y: [4, 5, 6] }
+  let map = {}
+  map[data] = 1
+  inspect(map, content="{{x: [1, 2, 3], y: [4, 5, 6]}: 1}")
+}
