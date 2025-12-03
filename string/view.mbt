@@ -15,3 +15,6 @@
 ///|
 #deprecated("Use `StringView` instead")
 pub type View = StringView
+
+///|
+pub using @builtin {trait ToStringView}
