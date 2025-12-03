@@ -631,36 +631,6 @@ pub fn[T] Array::is_empty(self : Array[T]) -> Bool {
 }
 
 ///|
-/// Tests whether the array is sorted in ascending order.
-///
-/// Parameters:
-///
-/// * `self` : The array to be tested.
-/// * `T` : The type of elements in the array. Must implement the `Compare`
-/// trait.
-///
-/// Returns a boolean value indicating whether the array is sorted in ascending
-/// order:
-///
-/// * `true` if the array is empty, contains only one element, or all elements
-/// are in ascending order.
-/// * `false` if any element is greater than the element that follows it.
-///
-/// Example:
-///
-/// ```mbt test
-/// let ascending = [1, 2, 3, 4, 5]
-/// let descending = [5, 4, 3, 2, 1]
-/// let unsorted = [1, 3, 2, 4, 5]
-/// inspect(ascending.is_sorted(), content="true")
-/// inspect(descending.is_sorted(), content="false")
-/// inspect(unsorted.is_sorted(), content="false")
-/// ```
-pub fn[T : Compare] Array::is_sorted(self : Array[T]) -> Bool {
-  self[:].is_sorted()
-}
-
-///|
 /// Reverses the order of elements in an array in place, modifying the original
 /// array.
 ///

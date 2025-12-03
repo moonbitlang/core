@@ -13,46 +13,6 @@
 // limitations under the License.
 
 ///|
-/// Sorts the array with a key extraction function.
-///
-/// It's an in-place, unstable sort(it will reorder equal elements). The time complexity is O(n log n) in the worst case.
-///
-/// # Example
-///
-/// ```mbt
-///   let arr = [5, 3, 2, 4, 1]
-///   arr.mut_view().sort_by_key((x) => {-x})
-///   assert_eq(arr, [5, 4, 3, 2, 1])
-/// ```
-pub fn[T, K : Compare] MutArrayView::sort_by_key(
-  self : Self[T],
-  map : (T) -> K,
-) -> Unit {
-  fixed_quick_sort_by(
-    self,
-    (a, b) => map(a).compare(map(b)),
-    None,
-    fixed_get_limit(self.length()),
-  )
-}
-
-///|
-/// Sorts the array with a custom comparison function.
-///
-/// It's an in-place, unstable sort(it will reorder equal elements). The time complexity is O(n log n) in the worst case.
-///
-/// # Example
-///
-/// ```mbt
-///   let arr = [5, 3, 2, 4, 1]
-///   arr.mut_view().sort_by((a, b) => { a - b })
-///   assert_eq(arr, [1, 2, 3, 4, 5])
-/// ```
-pub fn[T] MutArrayView::sort_by(self : Self[T], cmp : (T, T) -> Int) -> Unit {
-  fixed_quick_sort_by(self, cmp, None, fixed_get_limit(self.length()))
-}
-
-///|
 fn[T] fixed_quick_sort_by(
   arr : MutArrayView[T],
   cmp : (T, T) -> Int,
