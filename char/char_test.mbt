@@ -514,3 +514,200 @@ test "Case conversion with non-letters" {
   assert_eq('a'.to_ascii_uppercase(), 'A')
   assert_eq('z'.to_ascii_uppercase(), 'Z')
 }
+
+///|
+test "Char conversion from Int" {
+  // Test Int::to_char with valid characters
+  inspect((65 : Int).to_char(), content="Some('A')")
+  inspect((97 : Int).to_char(), content="Some('a')")
+  inspect((48 : Int).to_char(), content="Some('0')")
+  inspect((0x1F600 : Int).to_char(), content="Some('😀')")
+
+  // Test surrogate range (should return None)
+  inspect((0xD800 : Int).to_char(), content="None")
+  inspect((0xDBFF : Int).to_char(), content="None")
+  inspect((0xDC00 : Int).to_char(), content="None")
+  inspect((0xDFFF : Int).to_char(), content="None")
+
+  // Test valid chars around surrogate boundaries
+  inspect((0xD7FF : Int).to_char(), content="Some('\u{D7FF}')")
+  inspect((0xE000 : Int).to_char(), content="Some('\\u{e000}')")
+}
+
+///|
+test "Char unsafe_to_char conversion" {
+  // Test Int::unsafe_to_char (unsafe conversion)
+  inspect((65 : Int).unsafe_to_char(), content="A")
+  inspect((97 : Int).unsafe_to_char(), content="a")
+  inspect((0x1F600 : Int).unsafe_to_char(), content="😀")
+  inspect((0 : Int).unsafe_to_char(), content="\u{0}")
+}
+
+///|
+test "Char to_int conversion" {
+  // Test Char::to_int
+  inspect('A'.to_int(), content="65")
+  inspect('a'.to_int(), content="97")
+  inspect('0'.to_int(), content="48")
+  inspect('\u{0}'.to_int(), content="0")
+  inspect('😀'.to_int(), content="128512")
+}
+
+///|
+test "Char utf16_len" {
+  // Test characters that fit in one UTF-16 code unit
+  inspect('A'.utf16_len(), content="1")
+  inspect('a'.utf16_len(), content="1")
+  inspect('\u{0}'.utf16_len(), content="1")
+  inspect('\u{FFFF}'.utf16_len(), content="1")
+
+  // Test characters that require two UTF-16 code units
+  inspect('😀'.utf16_len(), content="2")
+  inspect('🚀'.utf16_len(), content="2")
+  inspect('\u{10000}'.utf16_len(), content="2")
+  inspect('\u{10FFFF}'.utf16_len(), content="2")
+}
+
+///|
+test "Char is_bmp" {
+  // Test characters in the Basic Multilingual Plane
+  inspect('A'.is_bmp(), content="true")
+  inspect('a'.is_bmp(), content="true")
+  inspect('\u{0}'.is_bmp(), content="true")
+  inspect('\u{FFFF}'.is_bmp(), content="true")
+  inspect('中'.is_bmp(), content="true")
+
+  // Test characters outside the BMP
+  inspect('😀'.is_bmp(), content="false")
+  inspect('🚀'.is_bmp(), content="false")
+  inspect('\u{10000}'.is_bmp(), content="false")
+  inspect('\u{10FFFF}'.is_bmp(), content="false")
+}
+
+///|
+test "Int is_surrogate" {
+  // Test surrogate detection
+  inspect((0xD800 : Int).is_surrogate(), content="true")
+  inspect((0xDBFF : Int).is_surrogate(), content="true")
+  inspect((0xDC00 : Int).is_surrogate(), content="true")
+  inspect((0xDFFF : Int).is_surrogate(), content="true")
+
+  // Test non-surrogate values
+  inspect((0xD7FF : Int).is_surrogate(), content="false")
+  inspect((0xE000 : Int).is_surrogate(), content="false")
+  inspect((0x41 : Int).is_surrogate(), content="false")
+  inspect((0x1F600 : Int).is_surrogate(), content="false")
+}
+
+///|
+test "is_ascii_digit" {
+  // Test ASCII digits
+  inspect('0'.is_ascii_digit(), content="true")
+  inspect('5'.is_ascii_digit(), content="true")
+  inspect('9'.is_ascii_digit(), content="true")
+
+  // Test non-digit characters
+  inspect('A'.is_ascii_digit(), content="false")
+  inspect('a'.is_ascii_digit(), content="false")
+  inspect('/'.is_ascii_digit(), content="false") // Character before '0'
+  inspect(':'.is_ascii_digit(), content="false") // Character after '9'
+  inspect('٣'.is_ascii_digit(), content="false") // Arabic-Indic digit (not ASCII)
+}
+
+///|
+test "Char equality and comparison" {
+  // Test equality
+  assert_eq('a', 'a')
+  assert_eq('A', 'A')
+  assert_eq('\u{0}', '\u{0}')
+  assert_eq('😀', '😀')
+
+  // Test inequality
+  assert_true('a' != 'A')
+  assert_true('a' != 'b')
+  assert_true('😀' != '🚀')
+
+  // Test comparison
+  assert_true('a' < 'b')
+  assert_true('A' < 'a')
+  assert_true('0' < '9')
+  assert_true('\u{0}' < 'A')
+}
+
+///|
+test "Char conversion methods" {
+  // Test to_int and unsafe_to_char round-trip
+  let chars = ['A', 'z', '0', '中', '😀']
+  for char in chars {
+    let code = char.to_int()
+    let reconstructed = code.unsafe_to_char()
+    assert_eq(char, reconstructed)
+  }
+
+  // Test to_uint
+  inspect('A'.to_uint(), content="65")
+  inspect('0'.to_uint(), content="48")
+}
+
+///|
+test "Zero-width and special Unicode characters" {
+  // Zero-width space
+  let zwsp = '\u{200B}'
+  inspect(zwsp.is_printable(), content="false")
+  inspect(zwsp.is_whitespace(), content="false")
+  inspect(zwsp.is_control(), content="false")
+
+  // Zero-width joiner
+  let zwj = '\u{200D}'
+  inspect(zwj.is_printable(), content="false")
+  inspect(zwj.is_whitespace(), content="false")
+
+  // Soft hyphen
+  let shy = '\u{00AD}'
+  inspect(shy.is_printable(), content="false")
+  inspect(shy.is_whitespace(), content="false")
+}
+
+///|
+test "Char with complex Unicode" {
+  // Test emoji with skin tone modifiers (single char)
+  let emoji = '👋'
+  inspect(emoji.is_printable(), content="true")
+  inspect(emoji.is_ascii(), content="false")
+  inspect(emoji.utf16_len(), content="2")
+
+  // Test Chinese/Japanese/Korean characters
+  let chinese = '中'
+  let japanese = 'あ'
+  let korean = '한'
+  inspect(chinese.is_printable(), content="true")
+  inspect(japanese.is_printable(), content="true")
+  inspect(korean.is_printable(), content="true")
+  inspect(chinese.is_bmp(), content="true")
+  inspect(japanese.is_bmp(), content="true")
+  inspect(korean.is_bmp(), content="true")
+}
+
+///|
+test "Char with mathematical and technical symbols" {
+  // Mathematical symbols
+  let sum = '∑'
+  let integral = '∫'
+  let pi = 'π'
+  inspect(sum.is_printable(), content="true")
+  inspect(integral.is_printable(), content="true")
+  inspect(pi.is_printable(), content="true")
+  inspect(sum.is_numeric(), content="false")
+  inspect(integral.is_numeric(), content="false")
+
+  // Currency symbols
+  let dollar = '$'
+  let euro = '€'
+  let yen = '¥'
+  inspect(dollar.is_printable(), content="true")
+  inspect(euro.is_printable(), content="true")
+  inspect(yen.is_printable(), content="true")
+  inspect(dollar.is_ascii(), content="true")
+  inspect(euro.is_ascii(), content="false")
+  inspect(yen.is_ascii(), content="false")
+}
