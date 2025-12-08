@@ -68,11 +68,15 @@ pub fn exp(x : Double) -> Double {
   let ori_x = x
   let mut x = x
   let one = 1.0
-  let halF = [0.5, -0.5]
+  let halF : ReadOnlyArray[Double] = [0.5, -0.5]
   let o_threshold = 7.09782712893383973096e+02
   let u_threshold = -7.45133219101941108420e+02
-  let ln2HI = [6.93147180369123816490e-01, -6.93147180369123816490e-01]
-  let ln2LO = [1.90821492927058770002e-10, -1.90821492927058770002e-10]
+  let ln2HI : ReadOnlyArray[Double] = [
+    6.93147180369123816490e-01, -6.93147180369123816490e-01,
+  ]
+  let ln2LO : ReadOnlyArray[Double] = [
+    1.90821492927058770002e-10, -1.90821492927058770002e-10,
+  ]
   let invln2 = 1.44269504088896338700e+00
   let p1 = 1.66666666666666019037e-01
   let p2 = -2.77777777770155933842e-03
