@@ -95,6 +95,34 @@ pub fn[T] ArrayView::at(self : ArrayView[T], index : Int) -> T {
 }
 
 ///|
+/// Retrieves an element from the array view at the specified index.
+///
+/// Parameters:
+///
+/// * `self` : The array view to retrieve the element from.
+/// * `index` : The position in the array view from which to retrieve the
+/// element.
+///
+/// Returns `Some(element)` if the index is within bounds, or `None` if the index
+/// is out of bounds.
+///
+/// Example:
+///
+/// ```mbt test
+/// let arr = [1, 2, 3, 4, 5]
+/// let view = arr[1:4]
+/// inspect(view.get(0), content="Some(2)")
+/// inspect(view.get(1), content="Some(3)")
+/// inspect(view.get(2), content="Some(4)")
+/// inspect(view.get(5), content="None")
+/// ```
+pub fn[T] ArrayView::get(self : ArrayView[T], index : Int) -> T? {
+  let len = self.length()
+  guard index >= 0 && index < len else { None }
+  Some(self.buf()[self.start() + index])
+}
+
+///|
 /// Retrieves an element from the array view at the specified index without
 /// performing bounds checking.
 ///
