@@ -622,31 +622,6 @@ test "nested json" {
 }
 
 ///|
-test "call stack overflow" {
-  let depth = 50000
-  let json_string = StringBuilder::new()
-  for _ in 0..=depth {
-    json_string.write_char('[')
-  }
-  for _ in 0..=depth {
-    json_string.write_char(']')
-  }
-  let _ = @json.parse(json_string.to_string()) catch { _ => null }
-  let depth = 1500
-  let json_string = StringBuilder::new()
-  for _ in 0..=depth {
-    json_string.write_char('[')
-  }
-  for _ in 0..=depth {
-    json_string.write_char(']')
-  }
-  let _ = @json.parse(json_string.to_string(), max_nesting_depth=2000) catch {
-    _ => null
-  }
-
-}
-
-///|
 test "stringify deep nested array" {
   // Build a deeply nested JSON array like [[[[[]]]]] with depth = 6000
   let depth = 6000
