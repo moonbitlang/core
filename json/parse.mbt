@@ -23,10 +23,15 @@ pub fn valid(input : StringView) -> Bool {
 }
 
 ///|
-/// Parse a JSON input string into a Json value, with an optional maximum nesting depth (default is 1024)
-pub fn parse(
+/// Parse a JSON input string into a Json value
+pub fn parse(input : StringView) -> Json raise ParseError {
+  parse_with_max_nesting_depth(input, 1024)
+}
+
+///|
+fn parse_with_max_nesting_depth(
   input : StringView,
-  max_nesting_depth? : Int = 1024,
+  max_nesting_depth : Int,
 ) -> Json raise ParseError {
   let ctx = ParseContext::make(input, max_nesting_depth)
   let val = ctx.parse_value()
