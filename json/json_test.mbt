@@ -640,10 +640,20 @@ test "call stack overflow" {
   for _ in 0..=depth {
     json_string.write_char(']')
   }
-  let _ = @json.parse(json_string.to_string(), max_nesting_depth=2000) catch {
-    _ => null
+  try @json.parse(json_string.to_string()) catch {
+    DepthLimitExceeded => assert_true(true)
+    _ => fail("should not happen")
+  } noraise {
+    _ => fail("should not happen")
   }
 
+  // under windows/msvc debug mode, the function call stack limit is lower
+  // that this will stackoverflow, this will not be caught by catch
+  // try @json.parse(json_string.to_string(), max_nesting_depth=2000) catch {
+  //   _ => dump(())
+  // } noraise {
+  //   _ => dump(()) // under macos
+  // }
 }
 
 ///|
