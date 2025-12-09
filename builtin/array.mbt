@@ -96,17 +96,14 @@ pub fn[T] Array::make(len : Int, elem : T) -> Array[T] {
 /// let arr = Array::makei(3, i => i * 2)
 /// inspect(arr, content="[0, 2, 4]")
 /// ```
-#locals(value)
-pub fn[T] Array::makei(
-  length : Int,
-  value : (Int) -> T raise?,
-) -> Array[T] raise? {
+#locals(f)
+pub fn[T] Array::makei(length : Int, f : (Int) -> T raise?) -> Array[T] raise? {
   if length <= 0 {
     []
   } else {
     let array = Array::make_uninit(length)
     for i in 0..<length {
-      array.unsafe_set(i, value(i))
+      array.unsafe_set(i, f(i))
     }
     array
   }
