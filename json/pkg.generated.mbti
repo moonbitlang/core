@@ -7,6 +7,7 @@ pub fn[T : FromJson] from_json(Json, path? : JsonPath) -> T raise JsonDecodeErro
 #callsite(autofill(args_loc, loc))
 pub fn inspect(&ToJson, content? : Json, loc~ : SourceLoc, args_loc~ : ArgsLoc) -> Unit raise InspectError
 
+#label_migration(max_nesting_depth, fill=false)
 pub fn parse(StringView, max_nesting_depth? : Int) -> Json raise ParseError
 
 pub fn valid(StringView) -> Bool
