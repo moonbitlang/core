@@ -13,27 +13,13 @@
 // limitations under the License.
 
 ///|
-/// A `BytesView` represents a view into a section of a `Bytes` without copying the data.
-///
-/// # Example
-/// 
-/// ```mbt
-///   let bs = b"\x00\x01\x02\x03\x04\x05"
-///   let bv = bs[1:4]
-///   inspect(bv.length(), content="3")
-///   assert_eq(bv[0], b'\x01')
-///   assert_eq(bv[1], b'\x02')
-///   assert_eq(bv[2], b'\x03')
-/// ```
-#builtin.valtype
-#deprecated("Use `BytesView` instead")
-pub type View = BytesView
-
-///|
 fn BytesView::bytes(self : BytesView) -> Bytes = "%bytesview.bytes"
 
 ///|
 fn BytesView::start(self : BytesView) -> Int = "%bytesview.start"
+
+///|
+fn BytesView::len(self : BytesView) -> Int = "%bytesview.len"
 
 ///|
 fn BytesView::make(b : Bytes, start : Int, len : Int) -> BytesView = "%bytesview.make"
@@ -57,9 +43,6 @@ fn BytesView::make(b : Bytes, start : Int, len : Int) -> BytesView = "%bytesview
 pub fn BytesView::length(self : BytesView) -> Int {
   self.len()
 }
-
-///|
-fn BytesView::len(self : BytesView) -> Int = "%bytesview.len"
 
 ///|
 /// Retrieves a byte from the view at the specified index.
