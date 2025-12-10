@@ -9,8 +9,6 @@ pub let min_value : Byte
 // Errors
 
 // Types and methods
-pub fn Byte::popcnt(Byte) -> Int
-pub fn Byte::to_uint64(Byte) -> UInt64
 
 // Type aliases
 

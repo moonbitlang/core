@@ -476,6 +476,7 @@ pub fn Byte::lnot(Byte) -> Byte
 pub fn Byte::lsl(Byte, Int) -> Byte
 #deprecated
 pub fn Byte::lsr(Byte, Int) -> Byte
+pub fn Byte::popcnt(Byte) -> Int
 pub fn Byte::to_char(Byte) -> Char
 pub fn Byte::to_double(Byte) -> Double
 #deprecated
@@ -488,6 +489,7 @@ pub fn Byte::to_int64(Byte) -> Int64
 pub fn Byte::to_string(Byte) -> String
 pub fn Byte::to_uint(Byte) -> UInt
 pub fn Byte::to_uint16(Byte) -> UInt16
+pub fn Byte::to_uint64(Byte) -> UInt64
 
 #deprecated
 pub fn Char::from_int(Int) -> Char
