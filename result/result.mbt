@@ -70,16 +70,18 @@ test "map_err" {
 }
 
 ///|
-/// Return the inner `Ok` value, if it exists, otherwise return the provided default.
+/// Return the contained `Ok` value or the provided default.
 ///
 /// # Example
 ///
 /// ```mbt
-///   let x: Result[Int, String] = Ok(6)
-///   let y = x.or(0)
-///   assert_eq(y, 6)
+///   let x: Result[Int, String] = Ok(3)
+///   let y: Result[Int, String] = Err("error")
+///   assert_eq(x.unwrap_or(5), 3)
+///   assert_eq(y.unwrap_or(5), 5)
 /// ```
-pub fn[T, E] Result::or(self : Result[T, E], default : T) -> T {
+#alias(or)
+pub fn[T, E] Result::unwrap_or(self : Result[T, E], default : T) -> T {
   match self {
     Ok(value) => value
     Err(_) => default
@@ -87,27 +89,31 @@ pub fn[T, E] Result::or(self : Result[T, E], default : T) -> T {
 }
 
 ///|
-test "or" {
-  let x : Result[Int, String] = Ok(6)
+test "unwrap_or" {
+  let x : Result[Int, String] = Ok(3)
   let y : Result[Int, String] = Err("error")
-  let z = x.or(0)
-  let w = y.or(0)
-  assert_eq(z, 6)
-  assert_eq(w, 0)
+  assert_eq(x.unwrap_or(5), 3)
+  assert_eq(y.unwrap_or(5), 5)
 }
 
 ///|
-/// Return the inner `Ok` value, if it exists, otherwise return the provided default.
+/// Return the contained `Ok` value or the provided default.
 ///
 /// Default is lazily evaluated.
+///
 /// # Example
 ///
 /// ```mbt
-///   let x: Result[Int, String] = Ok(6)
-///   let y = x.or_else(() => { 0 })
-///   assert_eq(y, 6)
+///   let x: Result[Int, String] = Ok(3)
+///   let y: Result[Int, String] = Err("error")
+///   assert_eq(x.unwrap_or_else(() => 5), 3)
+///   assert_eq(y.unwrap_or_else(() => 5), 5)
 /// ```
-pub fn[T, E] Result::or_else(self : Result[T, E], default : () -> T) -> T {
+#alias(or_else)
+pub fn[T, E] Result::unwrap_or_else(
+  self : Result[T, E],
+  default : () -> T raise?,
+) -> T raise? {
   match self {
     Ok(value) => value
     Err(_) => default()
@@ -115,13 +121,11 @@ pub fn[T, E] Result::or_else(self : Result[T, E], default : () -> T) -> T {
 }
 
 ///|
-test "or_else" {
-  let x : Result[Int, String] = Ok(6)
+test "unwrap_or_else" {
+  let x : Result[Int, String] = Ok(3)
   let y : Result[Int, String] = Err("error")
-  let z = x.or_else(() => 0)
-  let w = y.or_else(() => 0)
-  assert_eq(z, 6)
-  assert_eq(w, 0)
+  assert_eq(x.unwrap_or_else(() => 5), 3)
+  assert_eq(y.unwrap_or_else(() => 5), 5)
 }
 
 ///|
@@ -285,45 +289,6 @@ test "show" {
       #|Err("world")
     ),
   )
-}
-
-///|
-/// Return the contained `Ok` value or the provided default.
-pub fn[T, E] Result::unwrap_or(self : Result[T, E], default : T) -> T {
-  match self {
-    Ok(value) => value
-    Err(_) => default
-  }
-}
-
-///|
-test "unwrap_or" {
-  let x : Result[Int, String] = Ok(3)
-  let y : Result[Int, String] = Err("error")
-  assert_eq(x.unwrap_or(5), 3)
-  assert_eq(y.unwrap_or(5), 5)
-}
-
-///|
-/// Return the contained `Ok` value or the provided default.
-///
-/// Default is lazily evaluated
-pub fn[T, E] Result::unwrap_or_else(
-  self : Result[T, E],
-  default : () -> T raise?,
-) -> T raise? {
-  match self {
-    Ok(value) => value
-    Err(_) => default()
-  }
-}
-
-///|
-test "unwrap_or_else" {
-  let x : Result[Int, String] = Ok(3)
-  let y : Result[Int, String] = Err("error")
-  assert_eq(x.unwrap_or_else(() => 5), 3)
-  assert_eq(y.unwrap_or_else(() => 5), 5)
 }
 
 ///|

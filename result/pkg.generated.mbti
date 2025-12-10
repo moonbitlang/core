@@ -26,13 +26,13 @@ pub fn[T, E] Result::is_err(Self[T, E]) -> Bool
 pub fn[T, E] Result::is_ok(Self[T, E]) -> Bool
 pub fn[T, E, U] Result::map(Self[T, E], (T) -> U) -> Self[U, E]
 pub fn[T, E, F] Result::map_err(Self[T, E], (E) -> F) -> Self[T, F]
-pub fn[T, E] Result::or(Self[T, E], T) -> T
-pub fn[T, E] Result::or_else(Self[T, E], () -> T) -> T
 pub fn[T, E] Result::to_option(Self[T, E]) -> T?
 pub fn[T, E] Result::unwrap(Self[T, E]) -> T
 pub fn[T, E] Result::unwrap_err(Self[T, E]) -> E
+#alias(or)
 pub fn[T, E] Result::unwrap_or(Self[T, E], T) -> T
 pub fn[T : Default, E] Result::unwrap_or_default(Self[T, E]) -> T
+#alias(or_else)
 pub fn[T, E] Result::unwrap_or_else(Self[T, E], () -> T raise?) -> T raise?
 pub fn[T, E : Error] Result::unwrap_or_error(Self[T, E]) -> T raise E
 pub impl[T : Compare, E : Compare] Compare for Result[T, E]
