@@ -14,6 +14,7 @@
 
 ///|
 /// Try to get this element as a Null
+#deprecated("Suggestion: `if json is Null { Some(()) } else { None }`")
 pub fn Json::as_null(self : Json) -> Unit? {
   guard self is Null else { return None }
   Some(())
@@ -21,6 +22,7 @@ pub fn Json::as_null(self : Json) -> Unit? {
 
 ///|
 /// Try to get this element as a Boolean
+#deprecated("Suggestion: `if json is True { Some(true) } else if json is False { Some(false) } else { None }`")
 pub fn Json::as_bool(self : Json) -> Bool? {
   match self {
     True => Some(true)
@@ -31,6 +33,7 @@ pub fn Json::as_bool(self : Json) -> Bool? {
 
 ///|
 /// Try to get this element as a Number
+#deprecated("Suggestion: `if json is Number(n) { Some(n) } else { None }`")
 pub fn Json::as_number(self : Json) -> Double? {
   guard self is Number(n, ..) else { return None }
   Some(n)
@@ -38,6 +41,7 @@ pub fn Json::as_number(self : Json) -> Double? {
 
 ///|
 /// Try to get this element as a String
+#deprecated("Suggestion: `if json is String(s) { Some(s) } else { None }`")
 pub fn Json::as_string(self : Json) -> String? {
   guard self is String(s) else { return None }
   Some(s)
@@ -45,6 +49,7 @@ pub fn Json::as_string(self : Json) -> String? {
 
 ///|
 /// Try to get this element as an Array
+#deprecated("Suggestion: `if json is Array(array) { Some(array) } else { None }`")
 pub fn Json::as_array(self : Json) -> Array[Json]? {
   guard self is Array(arr) else { return None }
   Some(arr)
@@ -52,15 +57,18 @@ pub fn Json::as_array(self : Json) -> Array[Json]? {
 
 ///|
 /// Try to get this element as a Json Array and get the element at the `index` as a Json Value
+#deprecated("Suggestion: `if json is Array(array) { array.get(index) } else { None }`")
 pub fn Json::item(self : Json, index : Int) -> Json? {
-  match self.as_array() {
-    Some(arr) => arr.get(index)
-    None => None
+  if self is Array(arr) {
+    arr.get(index)
+  } else {
+    None
   }
 }
 
 ///|
 /// Try to get this element as an Object
+#deprecated
 pub fn Json::as_object(self : Json) -> Map[String, Json]? {
   guard self is Object(obj) else { return None }
   Some(obj)
@@ -68,10 +76,12 @@ pub fn Json::as_object(self : Json) -> Map[String, Json]? {
 
 ///|
 /// Try to get this element as a Json Object and get the element with the `key` as a Json Value
+#deprecated("Suggestion: `if json is Object(obj) { obj.get(key) } else { None }`")
 pub fn Json::value(self : Json, key : String) -> Json? {
-  match self.as_object() {
-    Some(obj) => obj.get(key)
-    None => None
+  if self is Object(obj) {
+    obj.get(key)
+  } else {
+    None
   }
 }
 

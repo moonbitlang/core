@@ -13,203 +13,6 @@
 // limitations under the License.
 
 ///|
-test "get as null" {
-  inspect(null.as_null(), content="Some(())")
-  inspect(Json::boolean(true).as_null(), content="None")
-  inspect(Json::boolean(false).as_null(), content="None")
-  inspect(Json::number(1.0).as_null(), content="None")
-  inspect(Json::string("Hello World").as_null(), content="None")
-  inspect(Json::array([Json::string("Hello World")]).as_null(), content="None")
-  inspect(
-    Json::object({ "key": Json::string("key"), "value": Json::number(100.0) }).as_null(),
-    content="None",
-  )
-}
-
-///|
-test "get as bool" {
-  inspect(null.as_bool(), content="None")
-  inspect(Json::boolean(true).as_bool(), content="Some(true)")
-  inspect(Json::boolean(false).as_bool(), content="Some(false)")
-  inspect(Json::number(1.0).as_bool(), content="None")
-  inspect(Json::string("Hello World").as_bool(), content="None")
-  inspect(Json::array([Json::string("Hello World")]).as_bool(), content="None")
-  inspect(Json::as_bool({ "key": "key", "value": 100.0 }), content="None")
-}
-
-///|
-fn _check(x : String) -> Json raise {
-  @json.parse(x)
-}
-
-///|
-fn _check2(x : String) -> Json raise @json.ParseError {
-  @json.parse(x)
-}
-
-///|
-test "get as number" {
-  inspect(null.as_number(), content="None")
-  inspect(Json::boolean(false).as_number(), content="None")
-  inspect(Json::boolean(true).as_number(), content="None")
-  inspect(Json::number(1.0).as_number(), content="Some(1)")
-  inspect(Json::string("Hello World").as_number(), content="None")
-  inspect(
-    Json::array([Json::string("Hello World")]).as_number(),
-    content="None",
-  )
-  inspect(
-    Json::object(
-      Map::from_array([
-        ("key", Json::string("key")),
-        ("value", Json::number(100.0)),
-      ]),
-    ).as_number(),
-    content="None",
-  )
-}
-
-///|
-test "get as string" {
-  inspect(null.as_string(), content="None")
-  inspect(Json::boolean(true).as_string(), content="None")
-  inspect(Json::boolean(false).as_string(), content="None")
-  inspect(Json::number(1.0).as_string(), content="None")
-  inspect(
-    Json::string("Hello World").as_string(),
-    content=(
-      #|Some("Hello World")
-    ),
-  )
-  inspect(
-    Json::array([Json::string("Hello World")]).as_string(),
-    content="None",
-  )
-  inspect(
-    Json::object(
-      Map::from_array([
-        ("key", Json::string("key")),
-        ("value", Json::number(100.0)),
-      ]),
-    ).as_string(),
-    content="None",
-  )
-}
-
-///|
-test "get as array" {
-  inspect(null.as_array(), content="None")
-  inspect(Json::boolean(true).as_array(), content="None")
-  inspect(Json::boolean(false).as_array(), content="None")
-  inspect(Json::number(1.0).as_array(), content="None")
-  inspect(Json::string("Hello World").as_array(), content="None")
-  inspect(
-    Json::array([Json::string("Hello World")]).as_array(),
-    content=(
-      #|Some([String("Hello World")])
-    ),
-  )
-  inspect(
-    Json::array([Json::string("Hello World")]).item(0).bind(Json::as_string),
-    content=(
-      #|Some("Hello World")
-    ),
-  )
-  inspect(
-    Json::array([Json::string("Hello World")]).item(1).bind(Json::as_string),
-    content="None",
-  )
-  inspect(
-    Json::array([Json::string("Hello World")]).item(0).bind(Json::as_number),
-    content="None",
-  )
-  inspect(
-    Json::object(
-      Map::from_array([
-        ("key", Json::string("key")),
-        ("value", Json::number(100.0)),
-      ]),
-    ).as_array(),
-    content="None",
-  )
-}
-
-///|
-test "get as object" {
-  inspect(null.as_object().map(_.to_array()), content="None")
-  inspect(Json::boolean(true).as_object().map(_.to_array()), content="None")
-  inspect(Json::boolean(false).as_object().map(_.to_array()), content="None")
-  inspect(Json::number(1.0).as_object().map(_.to_array()), content="None")
-  inspect(
-    Json::string("Hello World").as_object().map(_.to_array()),
-    content="None",
-  )
-  inspect(
-    Json::array([Json::string("Hello World")]).as_object().map(_.to_array()),
-    content="None",
-  )
-  inspect(
-    Json::object(
-      Map::from_array([
-        ("key", Json::string("key")),
-        ("value", Json::number(100.0)),
-      ]),
-    )
-    .as_object()
-    .map(_.to_array()),
-    content=(
-      #|Some([("key", String("key")), ("value", Number(100))])
-    ),
-  )
-  inspect(
-    Json::object(
-      Map::from_array([
-        ("key", Json::string("key")),
-        ("value", Json::number(100.0)),
-      ]),
-    )
-    .value("key")
-    .bind(_.as_string()),
-    content=(
-      #|Some("key")
-    ),
-  )
-  inspect(
-    Json::object(
-      Map::from_array([
-        ("key", Json::string("key")),
-        ("value", Json::number(100.0)),
-      ]),
-    )
-    .value("value")
-    .bind(_.as_number()),
-    content="Some(100)",
-  )
-  inspect(
-    Json::object(
-      Map::from_array([
-        ("key", Json::string("key")),
-        ("value", Json::number(100.0)),
-      ]),
-    )
-    .value("key")
-    .bind(_.as_number()),
-    content="None",
-  )
-  inspect(
-    Json::object(
-      Map::from_array([
-        ("key", Json::string("key")),
-        ("value", Json::number(100.0)),
-      ]),
-    )
-    .value("asdf")
-    .bind(_.as_number()),
-    content="None",
-  )
-}
-
-///|
 test "deep access" {
   let json : Json = {
     "key": [1.0, true, null, [], { "key": "value", "value": 100.0 }],
@@ -219,35 +22,76 @@ test "deep access" {
     "bool": false,
     "obj": {},
   }
-  inspect(json.value("null").bind(_.as_null()), content="Some(())")
   inspect(
-    json.value("key").bind(_.item(2)).bind(_.as_null()),
+    if json is Object({ "null": Null, .. }) {
+      Some(())
+    } else {
+      None
+    },
     content="Some(())",
   )
-  inspect(json.value("bool").bind(_.as_bool()), content="Some(false)")
   inspect(
-    json.value("key").bind(_.item(1)).bind(_.as_bool()),
+    if json is Object({ "key": Array(arr), .. }) && arr.get(2) is Some(Null) {
+      Some(())
+    } else {
+      None
+    },
+    content="Some(())",
+  )
+  inspect(
+    if json is Object({ "bool": True | False as t, .. }) {
+      Some(t is True)
+    } else {
+      None
+    },
+    content="Some(false)",
+  )
+  inspect(
+    if json is Object({ "key": Array(arr), .. }) &&
+      arr.get(1) is Some(True | False as b) {
+      Some(b is True)
+    } else {
+      None
+    },
     content="Some(true)",
   )
   inspect(
-    json.value("key").bind(_.as_array()),
+    if json is Object({ "key": Array(arr), .. }) {
+      Some(arr)
+    } else {
+      None
+    },
     content=(
       #|Some([Number(1), True, Null, Array([]), Object({"key": String("value"), "value": Number(100)})])
     ),
   )
   inspect(
-    json.value("key").bind(_.item(3)).bind(_.as_array()),
+    if json is Object({ "key": Array(arr), .. }) &&
+      arr.get(3) is Some(Array(arr)) {
+      Some(arr)
+    } else {
+      None
+    },
     content="Some([])",
   )
   inspect(
-    json.value("key").bind(_.item(4)).bind(_.as_object()).map(_.to_array()),
+    if json is Object({ "key": Array(arr), .. }) &&
+      arr.get(4) is Some(Object(obj)) {
+      Some(obj.to_array())
+    } else {
+      None
+    },
     content=(
       #|Some([("key", String("value")), ("value", Number(100))])
     ),
   )
   inspect(
-    json.value("obj").bind(_.as_object()).map(_.to_array()),
-    content="Some([])",
+    if json is Object({ "obj": Object(obj), .. }) {
+      Some(obj)
+    } else {
+      None
+    },
+    content="Some({})",
   )
 }
 
