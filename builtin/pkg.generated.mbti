@@ -787,6 +787,20 @@ pub fn[T] Option::unwrap_or_else(T?, () -> T raise?) -> T raise?
 #alias(or_error, deprecated)
 pub fn[T, Err : Error] Option::unwrap_or_error(T?, Err) -> T raise Err
 
+pub fn[T, E, U] Result::bind(Self[T, E], (T) -> Self[U, E]) -> Self[U, E]
+pub fn[T, E] Result::flatten(Self[Self[T, E], E]) -> Self[T, E]
+pub fn[T, E, U] Result::map(Self[T, E], (T) -> U) -> Self[U, E]
+pub fn[T, E, F] Result::map_err(Self[T, E], (E) -> F) -> Self[T, F]
+pub fn[T, E] Result::to_option(Self[T, E]) -> T?
+pub fn[T, E] Result::unwrap(Self[T, E]) -> T
+pub fn[T, E] Result::unwrap_err(Self[T, E]) -> E
+#alias(or)
+pub fn[T, E] Result::unwrap_or(Self[T, E], T) -> T
+pub fn[T : Default, E] Result::unwrap_or_default(Self[T, E]) -> T
+#alias(or_else)
+pub fn[T, E] Result::unwrap_or_else(Self[T, E], () -> T raise?) -> T raise?
+pub fn[T, E : Error] Result::unwrap_or_error(Self[T, E]) -> T raise E
+
 pub fn[T] FixedArray::all(Self[T], (T) -> Bool raise?) -> Bool raise?
 pub fn[T] FixedArray::any(Self[T], (T) -> Bool raise?) -> Bool raise?
 #alias("_[_]")
@@ -1078,6 +1092,7 @@ pub impl Compare for UInt64
 pub impl Compare for Double
 pub impl Compare for String
 pub impl[X : Compare] Compare for X?
+pub impl[T : Compare, E : Compare] Compare for Result[T, E]
 pub impl[T : Compare] Compare for FixedArray[T]
 pub impl[T : Compare] Compare for ReadOnlyArray[T]
 pub impl Compare for Bytes

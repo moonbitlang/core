@@ -144,6 +144,18 @@ pub impl[X : Arbitrary] Arbitrary for X? with arbitrary(i, rs) {
 }
 
 ///|
+pub impl[T : Arbitrary, E : Arbitrary] Arbitrary for Result[T, E] with arbitrary(
+  size,
+  rs,
+) {
+  if Arbitrary::arbitrary(size, rs) {
+    Ok(T::arbitrary(size, rs))
+  } else {
+    Err(E::arbitrary(size, rs))
+  }
+}
+
+///|
 pub impl[X : Arbitrary] Arbitrary for FixedArray[X] with arbitrary(size, rs) {
   let len = if size == 0 { 0 } else { rs.next_positive_int() % size }
   FixedArray::makei(len, i => X::arbitrary(i, rs))

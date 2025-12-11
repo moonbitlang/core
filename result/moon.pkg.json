@@ -1,5 +1,5 @@
 {
-  "import": ["moonbitlang/core/builtin", "moonbitlang/core/quickcheck"],
+  "import": ["moonbitlang/core/builtin"],
   "targets": {
     "panic_test.mbt": ["not", "native", "llvm"]
   }
