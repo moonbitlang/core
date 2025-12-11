@@ -1479,8 +1479,8 @@ test "View::to_upper" {
 pub fn[A] StringView::fold(
   self : StringView,
   init~ : A,
-  f : (A, Char) -> A,
-) -> A {
+  f : (A, Char) -> A raise?,
+) -> A raise? {
   let mut rv = init
   for c in self {
     rv = f(rv, c)
@@ -1490,7 +1490,11 @@ pub fn[A] StringView::fold(
 
 ///|
 /// Folds the characters of the string into a single value.
-pub fn[A] String::fold(self : String, init~ : A, f : (A, Char) -> A) -> A {
+pub fn[A] String::fold(
+  self : String,
+  init~ : A,
+  f : (A, Char) -> A raise?,
+) -> A raise? {
   self[:].fold(init~, f)
 }
 
@@ -1510,11 +1514,22 @@ test "fold" {
 }
 
 ///|
+test "fold with raise" {
+  let result = try? "hello".fold(init=0, (acc, c) => {
+    if c == 'l' {
+      raise Failure("found l")
+    }
+    acc + 1
+  })
+  inspect(result, content="Err(Failure(\"found l\"))")
+}
+
+///|
 pub fn[A] StringView::rev_fold(
   self : StringView,
   init~ : A,
-  f : (A, Char) -> A,
-) -> A {
+  f : (A, Char) -> A raise?,
+) -> A raise? {
   let mut rv = init
   for c in self.rev_iter() {
     rv = f(rv, c)
@@ -1523,7 +1538,11 @@ pub fn[A] StringView::rev_fold(
 }
 
 ///|
-pub fn[A] String::rev_fold(self : String, init~ : A, f : (A, Char) -> A) -> A {
+pub fn[A] String::rev_fold(
+  self : String,
+  init~ : A,
+  f : (A, Char) -> A raise?,
+) -> A raise? {
   self[:].rev_fold(init~, f)
 }
 
@@ -1540,6 +1559,17 @@ test "rev_fold" {
     "hello".rev_fold(init=0, (acc, c) => acc + c.to_int()),
     111 + 108 + 108 + 101 + 104,
   )
+}
+
+///|
+test "rev_fold with raise" {
+  let result = try? "hello".rev_fold(init=0, (acc, c) => {
+    if c == 'l' {
+      raise Failure("found l")
+    }
+    acc + 1
+  })
+  inspect(result, content="Err(Failure(\"found l\"))")
 }
 
 ///|

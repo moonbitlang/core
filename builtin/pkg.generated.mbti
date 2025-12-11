@@ -700,7 +700,7 @@ pub fn String::contains_char(String, Char) -> Bool
 pub fn String::escape(String) -> String
 pub fn String::find(String, StringView) -> Int?
 pub fn String::find_by(String, (Char) -> Bool) -> Int?
-pub fn[A] String::fold(String, init~ : A, (A, Char) -> A) -> A
+pub fn[A] String::fold(String, init~ : A, (A, Char) -> A raise?) -> A raise?
 pub fn String::from_array(ArrayView[Char]) -> String
 pub fn String::from_iter(Iter[Char]) -> String
 pub fn String::from_iterator(Iterator[Char]) -> String
@@ -729,7 +729,7 @@ pub fn String::replace(String, old~ : StringView, new~ : StringView) -> String
 pub fn String::replace_all(String, old~ : StringView, new~ : StringView) -> String
 pub fn String::rev(String) -> String
 pub fn String::rev_find(String, StringView) -> Int?
-pub fn[A] String::rev_fold(String, init~ : A, (A, Char) -> A) -> A
+pub fn[A] String::rev_fold(String, init~ : A, (A, Char) -> A raise?) -> A raise?
 pub fn String::rev_iter(String) -> Iter[Char]
 pub fn String::rev_iterator(String) -> Iterator[Char]
 pub fn String::split(String, StringView) -> Iter[StringView]
@@ -968,7 +968,7 @@ pub fn StringView::contains_char(Self, Char) -> Bool
 pub fn StringView::data(Self) -> String
 pub fn StringView::find(Self, Self) -> Int?
 pub fn StringView::find_by(Self, (Char) -> Bool) -> Int?
-pub fn[A] StringView::fold(Self, init~ : A, (A, Char) -> A) -> A
+pub fn[A] StringView::fold(Self, init~ : A, (A, Char) -> A raise?) -> A raise?
 pub fn StringView::from_array(ArrayView[Char]) -> Self
 pub fn StringView::from_iter(Iter[Char]) -> Self
 pub fn StringView::from_iterator(Iterator[Char]) -> Self
@@ -996,7 +996,7 @@ pub fn StringView::replace(Self, old~ : Self, new~ : Self) -> Self
 pub fn StringView::replace_all(Self, old~ : Self, new~ : Self) -> Self
 pub fn StringView::rev(Self) -> String
 pub fn StringView::rev_find(Self, Self) -> Int?
-pub fn[A] StringView::rev_fold(Self, init~ : A, (A, Char) -> A) -> A
+pub fn[A] StringView::rev_fold(Self, init~ : A, (A, Char) -> A raise?) -> A raise?
 pub fn StringView::rev_iter(Self) -> Iter[Char]
 pub fn StringView::rev_iterator(Self) -> Iterator[Char]
 pub fn StringView::split(Self, Self) -> Iter[Self]
