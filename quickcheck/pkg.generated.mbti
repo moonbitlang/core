@@ -32,6 +32,7 @@ pub impl Arbitrary for Float
 pub impl Arbitrary for Double
 pub impl Arbitrary for String
 pub impl[X : Arbitrary] Arbitrary for X?
+pub impl[T : Arbitrary, E : Arbitrary] Arbitrary for Result[T, E]
 pub impl[X : Arbitrary] Arbitrary for FixedArray[X]
 pub impl Arbitrary for Bytes
 pub impl[X : Arbitrary] Arbitrary for Array[X]
