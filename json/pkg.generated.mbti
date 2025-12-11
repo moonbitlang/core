@@ -49,15 +49,23 @@ pub fn Replacer::exclude(ArrayView[StringView]) -> Self
 pub fn Replacer::keep(ArrayView[StringView]) -> Self
 pub fn Replacer::new((String, Json) -> Json?) -> Self
 
+#deprecated
 pub fn Json::as_array(Self) -> Array[Self]?
+#deprecated
 pub fn Json::as_bool(Self) -> Bool?
+#deprecated
 pub fn Json::as_null(Self) -> Unit?
+#deprecated
 pub fn Json::as_number(Self) -> Double?
+#deprecated
 pub fn Json::as_object(Self) -> Map[String, Self]?
+#deprecated
 pub fn Json::as_string(Self) -> String?
+#deprecated
 pub fn Json::item(Self, Int) -> Self?
 pub fn Json::stringify(Self, escape_slash? : Bool, indent? : Int, replacer? : Replacer) -> String
 pub fn Json::transform(Self, Replacer) -> Self
+#deprecated
 pub fn Json::value(Self, String) -> Self?
 pub impl Show for Json
 pub impl ToJson for Json

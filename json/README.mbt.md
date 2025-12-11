@@ -1,6 +1,8 @@
 # `json`
 
-The `json` package provides comprehensive JSON handling capabilities, including parsing, stringifying, and type-safe conversion between JSON and other MoonBit data types.
+The `json` package provides comprehensive JSON handling capabilities, including
+parsing, stringifying, and type-safe conversion between JSON and other MoonBit
+data types.
 
 ## Basic JSON Operations
 
@@ -45,7 +47,11 @@ test "json object navigation" {
   )
 
   // Access string
-  let string_opt = json.value("string").unwrap().as_string()
+  let string_opt = if json is { "string": String(str), .. } {
+    Some(str)
+  } else {
+    None
+  }
   inspect(
     string_opt,
     content=(
@@ -54,15 +60,24 @@ test "json object navigation" {
   )
 
   // Access number
-  let number_opt = json.value("number").unwrap().as_number()
+  let number_opt = if json is { "number": Number(num, ..), .. } {
+    Some(num)
+  } else {
+    None
+  }
   inspect(number_opt, content="Some(42)")
 
   // Access array
-  let array_opt = json.value("array").unwrap().as_array()
+  let array_opt = if json is { "array": Array(arr), .. } {
+    Some(arr)
+  } else {
+    None
+  }
   inspect(array_opt, content="Some([Number(1), Number(2), Number(3)])")
 
   // Handle missing keys gracefully
-  inspect(json.value("missing"), content="None")
+  guard json is { "value"? : value, .. }
+  inspect(value, content="None")
 }
 ```
 
@@ -74,15 +89,15 @@ test "json array navigation" {
   let array = @json.parse("[1,2,3,4,5]")
 
   // Access by index
-  let first = array.item(0)
+  let first = if array is Array([f, ..]) { Some(f) } else { None }
   inspect(first, content="Some(Number(1))")
 
   // Access out of bounds
-  let missing = array.item(10)
+  let missing = if array is Array(arr) { arr.get(10) } else { None }
   inspect(missing, content="None")
 
   // Iterate through array
-  let values = array.as_array().unwrap()
+  guard array is Array(values)
   inspect(
     values.iter(),
     content="[Number(1), Number(2), Number(3), Number(4), Number(5)]",
@@ -139,8 +154,10 @@ test "json path" {
 
 ## JSON-based Snapshot Testing
 
-`@json.inspect()` can be used as an alternative to `inspect()` when a value's `ToJson` implementation is considered a better debugging representation than its `Show` implementation.
-This is particularly true for deeply-nested data structures.
+`@json.inspect()` can be used as an alternative to `inspect()` when a value's
+`ToJson` implementation is considered a better debugging representation than its
+`Show` implementation. This is particularly true for deeply-nested data
+structures.
 
 ```mbt check
 ///|
