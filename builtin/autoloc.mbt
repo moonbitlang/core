@@ -32,16 +32,16 @@ pub(all) type SourceLoc
 /// file path, line number, and column number.
 ///
 /// Returns a string representation of the source location, typically in the
-/// format "file:line:column".
+/// format "@package:file:start_line:start_column-end_line:end_column".
 ///
 /// Note: This function is primarily used internally by the compiler for error
 /// reporting and debugging purposes. Source locations are automatically created
 /// by the compiler when needed.
-pub fn SourceLoc::to_string(self : Self) -> String = "%loc_to_string"
+fn SourceLoc::repr(self : Self) -> String = "%loc_to_string"
 
 ///|
 pub impl Show for SourceLoc with output(self, logger) {
-  logger.write_string(self.to_string())
+  SourceLocRepr::parse(self.repr()).output(logger)
 }
 
 ///|
@@ -55,6 +55,42 @@ priv enum SourceLocRepr {
     end_line~ : StringView,
     end_column~ : StringView
   )
+}
+
+///|
+impl Show for SourceLocRepr with output(self, logger) {
+  match self {
+    Legacy(repr) => logger.write_string(repr)
+    New(pkg~, filename~, start_line~, start_column~, end_line~, end_column~) => {
+      let (module_name, package_name) = {
+        guard pkg.find("/") is Some(first_slash) else { (pkg, None) }
+        guard pkg.view(start_offset=first_slash + 1).find("/")
+          is Some(second_slash) else {
+          (pkg, None)
+        }
+        let module_name_end = first_slash + 1 + second_slash
+        (
+          pkg.view(end_offset=module_name_end),
+          Some(pkg.view(start_offset=module_name_end + 1)),
+        )
+      }
+      if package_name is Some(pkg_name) {
+        logger..write_view(pkg_name)..write_char('/')
+      }
+      logger
+      ..write_view(filename)
+      ..write_char(':')
+      ..write_view(start_line)
+      ..write_char(':')
+      ..write_view(start_column)
+      ..write_char('-')
+      ..write_view(end_line)
+      ..write_char(':')
+      ..write_view(end_column)
+      ..write_char('@')
+      ..write_view(module_name)
+    }
+  }
 }
 
 ///|
@@ -113,7 +149,7 @@ fn SourceLocRepr::to_json_string(self : SourceLocRepr) -> String {
 ///|
 /// Convert a source location to a JSON string
 pub fn SourceLoc::to_json_string(self : SourceLoc) -> String {
-  SourceLocRepr::parse(self.to_string()).to_json_string()
+  SourceLocRepr::parse(self.repr()).to_json_string()
 }
 
 ///|
