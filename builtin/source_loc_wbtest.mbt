@@ -57,3 +57,35 @@ test "SourceLocRepr::parse" {
     ),
   )
 }
+
+///|
+test "SourceLocRepr::to_string" {
+  // legacy format
+  inspect(
+    SourceLocRepr::parse("file.mbt:1:1-2:2").to_string(),
+    content="file.mbt:1:1-2:2",
+  )
+  inspect(
+    SourceLocRepr::parse("中文路径/中文文件.mbt:1:1-2:2").to_string(),
+    content="中文路径/中文文件.mbt:1:1-2:2",
+  )
+  // new format
+  inspect(
+    SourceLocRepr::parse(
+      "@moonbitlang/core/builtin:source_loc_wbtest.mbt:1:1-2:2",
+    ),
+    content="builtin/source_loc_wbtest.mbt:1:1-2:2@moonbitlang/core",
+  )
+  inspect(
+    SourceLocRepr::parse("@module/root:file.mbt:1:1-2:2"),
+    content="file.mbt:1:1-2:2@module/root",
+  )
+  inspect(
+    SourceLocRepr::parse("@module/root/internal/package:file.mbt:1:1-2:2"),
+    content="internal/package/file.mbt:1:1-2:2@module/root",
+  )
+  inspect(
+    SourceLocRepr::parse("@bad_module_name:file.mbt:1:1-2:2"),
+    content="file.mbt:1:1-2:2@bad_module_name",
+  )
+}
