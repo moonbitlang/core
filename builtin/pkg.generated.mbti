@@ -683,14 +683,14 @@ pub fn Double::until(Double, Double, step? : Double, inclusive? : Bool) -> Iter[
 pub fn Double::upto(Double, Double, inclusive? : Bool) -> Iter[Double]
 
 #alias("_[_]")
-#alias(charcode_at)
-#deprecated
-pub fn String::at(String, Int) -> Int
+#alias(code_unit_at)
+pub fn String::at(String, Int) -> UInt16
 #alias(codepoint_length, deprecated)
 pub fn String::char_length(String, start_offset? : Int, end_offset? : Int) -> Int
 pub fn String::char_length_eq(String, Int, start_offset? : Int, end_offset? : Int) -> Bool
 pub fn String::char_length_ge(String, Int, start_offset? : Int, end_offset? : Int) -> Bool
-pub fn String::code_unit_at(String, Int) -> UInt16
+#deprecated
+pub fn String::charcode_at(String, Int) -> Int
 #deprecated
 pub fn String::codepoint_at(String, Int) -> Char
 pub fn String::contains(String, StringView) -> Bool
@@ -955,12 +955,11 @@ pub fn BytesView::to_bytes(Self) -> Bytes
 pub fn BytesView::to_fixedarray(Self) -> FixedArray[Byte]
 
 #alias("_[_]")
-#deprecated
-pub fn StringView::at(Self, Int) -> Int
+#alias(code_unit_at)
+pub fn StringView::at(Self, Int) -> UInt16
 pub fn StringView::char_length(Self) -> Int
 pub fn StringView::char_length_eq(Self, Int) -> Bool
 pub fn StringView::char_length_ge(Self, Int) -> Bool
-pub fn StringView::code_unit_at(Self, Int) -> UInt16
 pub fn StringView::contains(Self, Self) -> Bool
 pub fn StringView::contains_any(Self, chars~ : Self) -> Bool
 pub fn StringView::contains_char(Self, Char) -> Bool
