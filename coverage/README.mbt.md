@@ -10,7 +10,7 @@ The core component for tracking code execution:
 ///|
 test "coverage counter basics" {
   // Create a coverage counter for tracking 5 code points
-  let counter = CoverageCounter::new(5)
+  let counter = @coverage.CoverageCounter::new(5)
 
   // Initially all counters should be zero
   inspect(counter.to_string(), content="[0, 0, 0, 0, 0]")
@@ -32,8 +32,11 @@ Use coverage counters to track which code paths are executed:
 ```mbt check
 ///|
 test "tracking execution paths" {
-  let counter = CoverageCounter::new(3)
-  fn conditional_function(x : Int, coverage : CoverageCounter) -> String {
+  let counter = @coverage.CoverageCounter::new(3)
+  fn conditional_function(
+    x : Int,
+    coverage : @coverage.CoverageCounter,
+  ) -> String {
     if x > 0 {
       coverage.incr(0) // Positive path
       "positive"
@@ -66,8 +69,11 @@ Track coverage in loops and iterations:
 ```mbt check
 ///|
 test "loop coverage" {
-  let counter = CoverageCounter::new(2)
-  fn process_array(arr : Array[Int], coverage : CoverageCounter) -> Int {
+  let counter = @coverage.CoverageCounter::new(2)
+  fn process_array(
+    arr : Array[Int],
+    coverage : @coverage.CoverageCounter,
+  ) -> Int {
     let mut sum = 0
     for x in arr {
       if x % 2 == 0 {
@@ -100,12 +106,12 @@ Track coverage across different functions:
 ```mbt check
 ///|
 test "function coverage" {
-  let counter = CoverageCounter::new(4)
+  let counter = @coverage.CoverageCounter::new(4)
   fn math_operations(
     a : Int,
     b : Int,
     op : String,
-    coverage : CoverageCounter,
+    coverage : @coverage.CoverageCounter,
   ) -> Int {
     match op {
       "add" => {
@@ -148,8 +154,11 @@ Analyze coverage data to understand code execution:
 ```mbt check
 ///|
 test "coverage analysis" {
-  let counter = CoverageCounter::new(6)
-  fn complex_function(input : Int, coverage : CoverageCounter) -> String {
+  let counter = @coverage.CoverageCounter::new(6)
+  fn complex_function(
+    input : Int,
+    coverage : @coverage.CoverageCounter,
+  ) -> String {
     coverage.incr(0) // Function entry
     if input < 0 {
       coverage.incr(1) // Negative branch
@@ -196,8 +205,8 @@ test "testing integration" {
 
   fn test_function_with_coverage() -> Bool {
     // This would normally have auto-generated coverage tracking
-    let counter = CoverageCounter::new(2)
-    fn helper(condition : Bool, cov : CoverageCounter) -> String {
+    let counter = @coverage.CoverageCounter::new(2)
+    fn helper(condition : Bool, cov : @coverage.CoverageCounter) -> String {
       if condition {
         cov.incr(0)
         "true_branch"
@@ -225,7 +234,7 @@ Generate and analyze coverage reports:
 ```mbt check
 ///|
 test "coverage reporting" {
-  let counter = CoverageCounter::new(3)
+  let counter = @coverage.CoverageCounter::new(3)
 
   // Simulate some code execution
   counter.incr(0) // Line 1 executed

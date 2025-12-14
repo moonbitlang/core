@@ -20,7 +20,7 @@
     "moonbitlang/core/test",
     "moonbitlang/core/random"
   ],
-  "alert-list": "-test_import_all",
+   "warn-list": "-test_unqualified_package",
   "targets": {
     "int64_js.mbt": ["js"],
     "int64_nonjs.mbt": ["not", "js"],
