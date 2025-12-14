@@ -1558,16 +1558,16 @@ pub fn String::length(self : String) -> Int = "%string_length"
 /// * `index` : The position in the string from which to retrieve the code unit.
 ///
 /// This method has O(1) complexity.
-#alias(charcode_at)
-#alias("_[_]")
 #deprecated("Use `code_unit_at` instead which returns UInt16")
-pub fn String::at(self : String, idx : Int) -> Int = "%string_get"
+pub fn String::charcode_at(self : String, idx : Int) -> Int = "%string_get"
 
 ///|
 /// Returns the UTF-16 code unit at the given index.
 /// 
 /// This method has O(1) complexity.
-pub fn String::code_unit_at(self : String, idx : Int) -> UInt16 = "%string_get"
+#alias("_[_]")
+#alias(code_unit_at)
+pub fn String::at(self : String, idx : Int) -> UInt16 = "%string_get"
 
 ///|
 /// Returns the UTF-16 code unit at a given position in the string without

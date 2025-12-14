@@ -28,23 +28,12 @@ fn StringView::end(self : StringView) -> Int = "%stringview.end"
 fn StringView::make_view(str : String, start : Int, end : Int) -> StringView = "%stringview.make"
 
 ///|
-/// Returns the charcode(UTF-16 code unit) at the given index.
-/// 
-/// This method has O(1) complexity.
-#alias("_[_]")
-#deprecated("Use `code_unit_at` instead which returns UInt16")
-pub fn StringView::at(self : StringView, index : Int) -> Int {
-  guard index >= 0 && index < self.length() else {
-    abort("Index out of bounds")
-  }
-  self.str().unsafe_charcode_at(self.start() + index)
-}
-
-///|
 /// Returns the UTF-16 code unit at the given index.
 /// 
 /// This method has O(1) complexity.
-pub fn StringView::code_unit_at(self : StringView, index : Int) -> UInt16 {
+#alias("_[_]")
+#alias(code_unit_at)
+pub fn StringView::at(self : StringView, index : Int) -> UInt16 {
   guard index >= 0 && index < self.length() else {
     abort("Index out of bounds")
   }
