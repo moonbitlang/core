@@ -4,5 +4,5 @@
     "moonbitlang/core/bigint",
     "moonbitlang/core/set"
   ],
-  "alert-list": "-test_import_all"
+  "warn-list": "-test_unqualified_package"
 }
