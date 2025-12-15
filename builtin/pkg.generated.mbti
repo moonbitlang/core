@@ -746,15 +746,13 @@ pub fn String::to_lower(String) -> String
 pub fn String::to_string(String) -> String
 pub fn String::to_upper(String) -> String
 #label_migration(chars, alias=char_set)
-#label_migration(chars, allow_positional=true)
-pub fn String::trim(String, chars~ : StringView) -> StringView
+pub fn String::trim(String, chars? : StringView) -> StringView
 #label_migration(chars, alias=char_set)
-#label_migration(chars, allow_positional=true)
-pub fn String::trim_end(String, chars~ : StringView) -> StringView
+pub fn String::trim_end(String, chars? : StringView) -> StringView
+#deprecated
 pub fn String::trim_space(String) -> StringView
 #label_migration(chars, alias=char_set)
-#label_migration(chars, allow_positional=true)
-pub fn String::trim_start(String, chars~ : StringView) -> StringView
+pub fn String::trim_start(String, chars? : StringView) -> StringView
 #deprecated
 pub fn String::unsafe_char_at(String, Int) -> Char
 pub fn String::unsafe_substring(String, start~ : Int, end~ : Int) -> String
@@ -1010,11 +1008,10 @@ pub fn StringView::to_bytes(Self) -> Bytes
 pub fn StringView::to_lower(Self) -> Self
 pub fn StringView::to_upper(Self) -> Self
 #label_migration(chars, alias=char_set)
-#label_migration(chars, allow_positional=true)
-pub fn StringView::trim(Self, chars~ : Self) -> Self
+pub fn StringView::trim(Self, chars? : Self) -> Self
 #label_migration(chars, alias=char_set)
-#label_migration(chars, allow_positional=true)
-pub fn StringView::trim_end(Self, chars~ : Self) -> Self
+pub fn StringView::trim_end(Self, chars? : Self) -> Self
+#deprecated
 pub fn StringView::trim_space(Self) -> Self
 #label_migration(chars, alias=char_set)
 #label_migration(chars, allow_positional=true)

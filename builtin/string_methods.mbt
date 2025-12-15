@@ -649,9 +649,11 @@ pub fn StringView::trim_start(
 ///|
 /// Returns the view of the string without the leading characters that are in
 /// the given string.
-#label_migration(chars, allow_positional=true)
 #label_migration(chars, alias=char_set)
-pub fn String::trim_start(self : String, chars~ : StringView) -> StringView {
+pub fn String::trim_start(
+  self : String,
+  chars? : StringView = "\t\n\r ",
+) -> StringView {
   self[:].trim_start(chars~)
 }
 
@@ -674,11 +676,10 @@ test "trim_start" {
 ///|
 /// Returns the view of the string without the trailing characters that are in
 /// the given string.
-#label_migration(chars, allow_positional=true)
 #label_migration(chars, alias=char_set)
 pub fn StringView::trim_end(
   self : StringView,
-  chars~ : StringView,
+  chars? : StringView = "\t\n\r ",
 ) -> StringView {
   loop self {
     [] as v => v
@@ -691,9 +692,11 @@ pub fn StringView::trim_end(
 /// the given string.
 // TODO(upstream): label_migration warning does not apply to the current package
 // TODO: make chars optional with default value of whitespace characters
-#label_migration(chars, allow_positional=true)
 #label_migration(chars, alias=char_set)
-pub fn String::trim_end(self : String, chars~ : StringView) -> StringView {
+pub fn String::trim_end(
+  self : String,
+  chars? : StringView = "\t\n\r ",
+) -> StringView {
   self[:].trim_end(chars~)
 }
 
@@ -715,18 +718,22 @@ test "trim_end" {
 ///|
 /// Returns the view of the string without the leading and trailing characters
 /// that are in the given string.
-#label_migration(chars, allow_positional=true)
 #label_migration(chars, alias=char_set)
-pub fn StringView::trim(self : StringView, chars~ : StringView) -> StringView {
+pub fn StringView::trim(
+  self : StringView,
+  chars? : StringView = "\t\n\r ",
+) -> StringView {
   self.trim_start(chars~).trim_end(chars~)
 }
 
 ///|
 /// Returns the view of the string without the leading and trailing characters
 /// that are in the given string.
-#label_migration(chars, allow_positional=true)
 #label_migration(chars, alias=char_set)
-pub fn String::trim(self : String, chars~ : StringView) -> StringView {
+pub fn String::trim(
+  self : String,
+  chars? : StringView = "\t\n\r ",
+) -> StringView {
   self[:].trim(chars~)
 }
 
@@ -751,28 +758,30 @@ test "trim" {
 
 ///|
 /// Returns the view of the string without the leading and trailing spaces.
+#deprecated("Use `trim` with default whitespace characters instead")
 pub fn StringView::trim_space(self : StringView) -> StringView {
-  self.trim(chars=" \n\r\t")
+  self.trim()
 }
 
 ///|
 /// Returns the view of the string without the leading and trailing spaces.
+#deprecated("Use `trim` with default whitespace characters instead")
 pub fn String::trim_space(self : String) -> StringView {
-  self[:].trim_space()
+  self.trim()
 }
 
 ///|
-test "trim_space" {
-  inspect("hello".trim_space(), content="hello")
-  inspect("  hello  ".trim_space(), content="hello")
-  inspect("hello  ".trim_space(), content="hello")
-  inspect("  hello".trim_space(), content="hello")
-  inspect("\t\nhello\r\n".trim_space(), content="hello")
-  inspect("  hello world  ".trim_space(), content="hello world")
-  inspect("  ".trim_space(), content="")
-  inspect("\n\r\t".trim_space(), content="")
-  inspect("".trim_space(), content="")
-  inspect("  hello\nworld\t".trim_space(), content="hello\nworld")
+test "trim whitespace for string" {
+  inspect("hello".trim(), content="hello")
+  inspect("  hello  ".trim(), content="hello")
+  inspect("hello  ".trim(), content="hello")
+  inspect("  hello".trim(), content="hello")
+  inspect("\t\nhello\r\n".trim(), content="hello")
+  inspect("  hello world  ".trim(), content="hello world")
+  inspect("  ".trim(), content="")
+  inspect("\n\r\t".trim(), content="")
+  inspect("".trim(), content="")
+  inspect("  hello\nworld\t".trim(), content="hello\nworld")
 }
 
 ///|
@@ -807,7 +816,7 @@ test "is_empty" {
 ///|
 /// Returns true if this string is blank.
 pub fn StringView::is_blank(self : StringView) -> Bool {
-  self.trim_space().is_empty()
+  self.trim().is_empty()
 }
 
 ///|
