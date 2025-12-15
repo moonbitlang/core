@@ -424,9 +424,7 @@ pub impl Compare for Bytes with compare(self, other) {
 ///   ),
 /// )
 /// ```
-#as_free_fn(deprecated)
-#alias(of, deprecated="Use from_array instead")
-#as_free_fn(of, deprecated="Use from_array instead")
+#alias(of, deprecated="Use Bytes::from_array instead")
 pub fn Bytes::from_array(arr : ArrayView[Byte]) -> Bytes {
   Bytes::makei(arr.length(), i => arr[i])
 }
@@ -459,7 +457,6 @@ pub fn Bytes::from_array(arr : ArrayView[Byte]) -> Bytes {
 /// ```
 /// 
 /// Panics if the length is invalid
-#as_free_fn(deprecated)
 #deprecated("Use Bytes::from_array instead")
 pub fn Bytes::from_fixedarray(arr : FixedArray[Byte], len? : Int) -> Bytes {
   let len = match len {
@@ -542,7 +539,6 @@ pub fn BytesView::to_fixedarray(self : BytesView) -> FixedArray[Byte] {
 ///   ),
 /// )
 /// ```
-#as_free_fn(deprecated)
 pub fn Bytes::from_iter(iter : Iter[Byte]) -> Bytes {
   Bytes::from_array(iter.collect())
 }
@@ -568,7 +564,6 @@ pub fn Bytes::from_iter(iter : Iter[Byte]) -> Bytes {
 ///   ),
 /// )
 /// ```
-#as_free_fn(deprecated)
 pub fn Bytes::from_iterator(iter : Iterator[Byte]) -> Bytes {
   Bytes::from_array(iter.collect())
 }

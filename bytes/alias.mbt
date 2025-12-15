@@ -34,3 +34,33 @@ pub type View = BytesView
 pub fn default() -> Bytes {
   b""
 }
+
+///|
+#deprecated("Use `Bytes::from_array` instead")
+pub fn from_fixedarray(arr : FixedArray[Byte], len? : Int) -> Bytes {
+  Bytes::from_array(arr[:len.unwrap_or(arr.length())])
+}
+
+///|
+#deprecated("Use `Bytes::from_iter` instead")
+pub fn from_iter(iter : Iter[Byte]) -> Bytes {
+  Bytes::from_iter(iter)
+}
+
+///|
+#deprecated("Use `Bytes::from_iterator` instead")
+pub fn from_iterator(iter : Iterator[Byte]) -> Bytes {
+  Bytes::from_array(iter.collect())
+}
+
+///|
+#deprecated("Use `Bytes::from_array` instead")
+pub fn of(arr : ArrayView[Byte]) -> Bytes {
+  Bytes::from_array(arr)
+}
+
+///|
+#deprecated("Use `Bytes::from_array` instead")
+pub fn from_array(arr : ArrayView[Byte]) -> Bytes {
+  Bytes::from_array(arr)
+}
