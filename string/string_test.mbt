@@ -372,19 +372,19 @@ test "trim" {
 }
 
 ///|
-test "trim_space" {
-  inspect(" abc ".trim_space(), content="abc")
-  inspect("abc ".trim_space(), content="abc")
-  inspect(" abc".trim_space(), content="abc")
-  inspect("\nabc\n".trim_space(), content="abc")
-  inspect("\tabc\t".trim_space(), content="abc")
-  inspect("\rabc\r".trim_space(), content="abc")
-  inspect("abc".trim_space(), content="abc")
-  inspect("".trim_space(), content="")
-  inspect("  ".trim_space(), content="")
-  inspect("\n\n".trim_space(), content="")
-  inspect("\t\t".trim_space(), content="")
-  inspect("\r\r".trim_space(), content="")
+test "trim whitespace" {
+  inspect(" abc ".trim(), content="abc")
+  inspect("abc ".trim(), content="abc")
+  inspect(" abc".trim(), content="abc")
+  inspect("\nabc\n".trim(), content="abc")
+  inspect("\tabc\t".trim(), content="abc")
+  inspect("\rabc\r".trim(), content="abc")
+  inspect("abc".trim(), content="abc")
+  inspect("".trim(), content="")
+  inspect("  ".trim(), content="")
+  inspect("\n\n".trim(), content="")
+  inspect("\t\t".trim(), content="")
+  inspect("\r\r".trim(), content="")
 }
 
 ///|
