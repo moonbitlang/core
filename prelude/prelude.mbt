@@ -120,3 +120,6 @@ pub fn[T, R] then(value : T, f : (T) -> R raise?) -> R raise? {
 
 ///|
 pub let null : Json = @builtin.null
+
+///|
+pub using @json {trait FromJson}

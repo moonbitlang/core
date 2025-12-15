@@ -726,3 +726,15 @@ test "transformer with array" {
     { "a": [{ "b": [{ "c": [{}] }] }] },
   ])
 }
+
+///|
+#warnings("-unused_trait_bound")
+fn[A : FromJson] test_json_export(x : A) -> A {
+  x
+}
+
+///|
+test {
+  let _ : Int = test_json_export(42)
+
+}

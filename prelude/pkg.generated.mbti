@@ -4,6 +4,7 @@ package "moonbitlang/core/prelude"
 import(
   "moonbitlang/core/bigint"
   "moonbitlang/core/builtin"
+  "moonbitlang/core/json"
   "moonbitlang/core/set"
 )
 
@@ -111,6 +112,8 @@ pub using @builtin {trait Default}
 pub using @builtin {trait Div}
 
 pub using @builtin {trait Eq}
+
+pub using @json {trait FromJson}
 
 pub using @builtin {trait Hash}
 

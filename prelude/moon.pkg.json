@@ -2,7 +2,8 @@
   "import": [
     "moonbitlang/core/builtin",
     "moonbitlang/core/bigint",
-    "moonbitlang/core/set"
+    "moonbitlang/core/set",
+    "moonbitlang/core/json"
   ],
   "warn-list": "-test_unqualified_package"
 }

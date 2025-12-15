@@ -10,6 +10,8 @@ changelog should follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 #### Added
 
+- Export `FromJson` trait from `@json` package in prelude for easier JSON deserialization
+
 #### Changed
 
 - **BREAKING**: `String::at` and `StringView::at` now return `UInt16` instead of `Int` and are the primary methods for accessing UTF-16 code units
