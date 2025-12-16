@@ -88,3 +88,18 @@ test "StringBuilder::write_stringview" {
   sb.write_stringview(ascii[1:4])
   inspect(sb.to_string(), content="orl")
 }
+
+///|
+test "StringBuild Fragments" {
+  let sb = StringBuilder::new()
+  sb.write_string(" hi hi ")
+  sb.write_object("world") 
+  // NOTE: write_obj
+  sb.write_string(" ")
+  inspect(
+    sb.to_string(),
+    content=(
+      #| hi hi "world" 
+    ),
+  )
+}
