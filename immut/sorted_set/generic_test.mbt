@@ -78,3 +78,86 @@ test "iterator" {
   let result = set.iterator().collect()
   inspect(result, content="[1, 2, 3]")
 }
+
+///|
+test "rev_iterator returns elements in descending order" {
+  let set = @sorted_set.from_array([1, 2, 3, 4, 5])
+  let result = set.rev_iterator().collect()
+  inspect(result, content="[5, 4, 3, 2, 1]")
+}
+
+///|
+test "rev_iterator on empty set" {
+  let set : @sorted_set.SortedSet[Int] = @sorted_set.new()
+  let result = set.rev_iterator().collect()
+  inspect(result, content="[]")
+}
+
+///|
+test "rev_iterator on single element set" {
+  let set = @sorted_set.singleton(42)
+  let result = set.rev_iterator().collect()
+  inspect(result, content="[42]")
+}
+
+///|
+test "rev_iterator early termination" {
+  let set = @sorted_set.from_array([1, 2, 3, 4, 5])
+  let result = set.rev_iterator().take(3).collect()
+  inspect(result, content="[5, 4, 3]")
+}
+
+///|
+test "rev_iterator on unbalanced insertion" {
+  let set = @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1])
+  let result = set.rev_iterator().collect()
+  inspect(result, content="[9, 8, 7, 6, 5, 4, 3, 2, 1]")
+}
+
+///|
+test "rev_iterator is reverse of iter" {
+  let set = @sorted_set.from_array([3, 1, 4, 1, 5, 9, 2, 6])
+  let forward = set.iter().collect()
+  let reverse = set.rev_iterator().collect()
+  assert_eq(reverse, forward.rev())
+}
+
+///|
+test "rev_iterator with early termination on right subtree" {
+  // Create a binary search tree with both left and right subtrees
+  let set = @sorted_set.new()
+    .add(2) // root
+    .add(1) // left child
+    .add(3) // right child
+
+  // Create an iterator that stops after processing the first element (from right)
+  let mut count = 0
+  for _ in set.rev_iterator() {
+    count = count + 1
+    if count == 1 {
+      break
+    }
+  }
+
+  // Verify that we stopped after processing the first element
+  inspect(count, content="1")
+}
+
+///|
+test "rev_iterator with complex tree structure" {
+  let set = @sorted_set.from_array([
+    15, 10, 20, 5, 12, 18, 25, 3, 7, 11, 14, 17, 19, 23, 27,
+  ])
+  let result = set.rev_iterator().collect()
+  inspect(
+    result,
+    content="[27, 25, 23, 20, 19, 18, 17, 15, 14, 12, 11, 10, 7, 5, 3]",
+  )
+}
+
+///|
+test "rev_iterator terminates on left" {
+  let set = @sorted_set.from_array([1, 2, 3])
+  let result = set.rev_iterator().take(2).to_array()
+  inspect(result, content="[3, 2]")
+}
