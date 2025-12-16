@@ -261,6 +261,60 @@ pub fn[K, V] SortedMap::iter2(self : SortedMap[K, V]) -> Iter2[K, V] {
 }
 
 ///|
+/// Returns an iterator over all key-value pairs in the map where keys fall within [low, high].
+/// The range is inclusive on both ends.
+/// O(log n + k) where k is the number of elements in the range.
+///
+/// # Example
+///
+/// ```mbt
+/// let map = @immut/sorted_map.from_array([
+///   (1, "a"),
+///   (2, "b"),
+///   (3, "c"),
+///   (4, "d"),
+///   (5, "e"),
+/// ])
+///
+/// let result = map.range(2, 4)
+/// // Yields: (2, "b"), (3, "c"), (4, "d")
+/// ```
+pub fn[K : Compare, V] SortedMap::range(
+  self : SortedMap[K, V],
+  low : K,
+  high : K,
+) -> Iterator2[K, V] {
+  let todo_list = []
+  let mut next_node = self
+  Iterator2::new(fn() {
+    loop next_node {
+      Tree(k, value~, l, r, ..) => {
+        let cmp_key_low = k.compare(low)
+        let cmp_key_high = k.compare(high)
+        if cmp_key_low < 0 {
+          // k < low, skip left subtree and current node, visit right
+          continue r
+        } else if cmp_key_high > 0 {
+          // k > high, skip right subtree and current node, visit left
+          continue l
+        } else if l is Empty {
+          next_node = r
+          Some((k, value))
+        } else {
+          todo_list.push((k, value, r))
+          continue l
+        }
+      }
+      Empty if todo_list.pop() is Some((k, value, r)) => {
+        next_node = r
+        Some((k, value))
+      }
+      Empty => None
+    }
+  })
+}
+
+///|
 #as_free_fn
 #alias(from_iterator, deprecated)
 #as_free_fn(from_iterator, deprecated)

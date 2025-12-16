@@ -303,6 +303,54 @@ pub fn[A : Compare] SortedSet::contains(self : SortedSet[A], value : A) -> Bool 
 }
 
 ///|
+/// Returns an iterator over all values in the set where values fall within [low, high].
+/// The range is inclusive on both ends.
+/// O(log n + k) where k is the number of elements in the range.
+///
+/// # Example
+///
+/// ```mbt
+/// let set = @immut/sorted_set.from_array([1, 2, 3, 4, 5])
+///
+/// let result = set.range(2, 4)
+/// // Yields: 2, 3, 4
+/// ```
+pub fn[A : Compare] SortedSet::range(
+  self : SortedSet[A],
+  low : A,
+  high : A,
+) -> Iterator[A] {
+  let todo_list = []
+  let mut next_node = self
+  Iterator::new(fn() {
+    loop next_node {
+      Node(left~, right~, value~, ..) => {
+        let cmp_value_low = value.compare(low)
+        let cmp_value_high = value.compare(high)
+        if cmp_value_low < 0 {
+          // value < low, skip left subtree and current node, visit right
+          continue right
+        } else if cmp_value_high > 0 {
+          // value > high, skip right subtree and current node, visit left
+          continue left
+        } else if left is Empty {
+          next_node = right
+          Some(value)
+        } else {
+          todo_list.push((value, right))
+          continue left
+        }
+      }
+      Empty if todo_list.pop() is Some((value, right)) => {
+        next_node = right
+        Some(value)
+      }
+      Empty => None
+    }
+  })
+}
+
+///|
 /// Returns the union of self and other.
 ///
 /// # Example
