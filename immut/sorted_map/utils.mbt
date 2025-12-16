@@ -297,6 +297,70 @@ pub fn[K, V] SortedMap::values(self : SortedMap[K, V]) -> Iter[V] {
 }
 
 ///|
+/// Return all keys of the map in descending order.
+///
+/// # Example
+///
+/// ```mbt
+///   let map = @sorted_map.from_array([("a", 1), ("b", 2), ("c", 3)])
+///   let keys = map.rev_keys().collect()
+///   assert_eq(keys, ["c", "b", "a"])
+/// ```
+pub fn[K, V] SortedMap::rev_keys(self : SortedMap[K, V]) -> Iterator[K] {
+  let mut curr_node = self
+  let parents = []
+  Iterator::new(fn() {
+    loop curr_node {
+      Tree(k, l, Empty, ..) => {
+        curr_node = l
+        Some(k)
+      }
+      Tree(k, l, r, ..) => {
+        parents.push((k, l))
+        continue r
+      }
+      Empty if parents.pop() is Some((k, l)) => {
+        curr_node = l
+        Some(k)
+      }
+      Empty => None
+    }
+  })
+}
+
+///|
+/// Return all values of the map in descending order of their keys.
+///
+/// # Example
+///
+/// ```mbt
+///   let map = @sorted_map.from_array([("a", 1), ("b", 2), ("c", 3)])
+///   let values = map.rev_values().collect()
+///   assert_eq(values, [3, 2, 1])
+/// ```
+pub fn[K, V] SortedMap::rev_values(self : SortedMap[K, V]) -> Iterator[V] {
+  let mut curr_node = self
+  let parents = []
+  Iterator::new(fn() {
+    loop curr_node {
+      Tree(_k, value~, l, Empty, ..) => {
+        curr_node = l
+        Some(value)
+      }
+      Tree(_k, value~, l, r, ..) => {
+        parents.push((value, l))
+        continue r
+      }
+      Empty if parents.pop() is Some((v, l)) => {
+        curr_node = l
+        Some(v)
+      }
+      Empty => None
+    }
+  })
+}
+
+///|
 pub fn[K : Show, V : ToJson] SortedMap::to_json(self : SortedMap[K, V]) -> Json {
   ToJson::to_json(self)
 }

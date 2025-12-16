@@ -61,6 +61,8 @@ pub fn[K, V] SortedMap::new() -> Self[K, V]
 pub fn[K : Compare, V] SortedMap::remove(Self[K, V], K) -> Self[K, V]
 #alias(foldr_with_key)
 pub fn[K, V, A] SortedMap::rev_fold(Self[K, V], (A, K, V) -> A, init~ : A) -> A
+pub fn[K, V] SortedMap::rev_keys(Self[K, V]) -> Iterator[K]
+pub fn[K, V] SortedMap::rev_values(Self[K, V]) -> Iterator[V]
 #as_free_fn
 pub fn[K, V] SortedMap::singleton(K, V) -> Self[K, V]
 pub fn[K, V] SortedMap::to_array(Self[K, V]) -> Array[(K, V)]
