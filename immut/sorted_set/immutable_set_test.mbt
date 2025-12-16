@@ -664,3 +664,127 @@ test "@sorted_set.symmetric_difference/overlapping" {
     content="@immut/sorted_set.from_array([1, 2, 5, 6])",
   )
 }
+
+///|
+test "range on empty set" {
+  let empty : @sorted_set.SortedSet[Int] = @sorted_set.new()
+  let mut count = 0
+  for _ in empty.range(1, 5) {
+    count = count + 1
+  }
+  inspect(count, content="0")
+}
+
+///|
+test "range with no matches" {
+  let set = @sorted_set.from_array([1, 2, 3])
+  let mut count = 0
+  for _ in set.range(10, 20) {
+    count = count + 1
+  }
+  inspect(count, content="0")
+}
+
+///|
+test "range matching all elements" {
+  let set = @sorted_set.from_array([1, 2, 3])
+  let arr = []
+  for v in set.range(0, 10) {
+    arr.push(v)
+  }
+  inspect(arr, content="[1, 2, 3]")
+}
+
+///|
+test "range partial match" {
+  let set = @sorted_set.from_array([1, 2, 3, 4, 5])
+  let arr = []
+  for v in set.range(2, 4) {
+    arr.push(v)
+  }
+  inspect(arr, content="[2, 3, 4]")
+}
+
+///|
+test "range with single element" {
+  let set = @sorted_set.from_array([1, 2, 3, 4, 5])
+  let arr = []
+  for v in set.range(3, 3) {
+    arr.push(v)
+  }
+  inspect(arr, content="[3]")
+}
+
+///|
+test "range at left boundary" {
+  let set = @sorted_set.from_array([1, 2, 3, 4, 5])
+  let arr = []
+  for v in set.range(1, 2) {
+    arr.push(v)
+  }
+  inspect(arr, content="[1, 2]")
+}
+
+///|
+test "range at right boundary" {
+  let set = @sorted_set.from_array([1, 2, 3, 4, 5])
+  let arr = []
+  for v in set.range(4, 5) {
+    arr.push(v)
+  }
+  inspect(arr, content="[4, 5]")
+}
+
+///|
+test "range with gaps in data" {
+  let set = @sorted_set.from_array([1, 3, 5, 7, 9])
+  let arr = []
+  for v in set.range(2, 8) {
+    arr.push(v)
+  }
+  inspect(arr, content="[3, 5, 7]")
+}
+
+///|
+test "range with inverted bounds" {
+  let set = @sorted_set.from_array([1, 2, 3, 4, 5])
+  let mut count = 0
+  for _ in set.range(5, 2) {
+    count = count + 1
+  }
+  inspect(count, content="0")
+}
+
+///|
+test "range with early termination" {
+  let set = @sorted_set.from_array([1, 2, 3, 4, 5])
+  let mut count = 0
+  for _ in set.range(1, 5) {
+    count = count + 1
+    if count == 2 {
+      break
+    }
+  }
+  inspect(count, content="2")
+}
+
+///|
+test "range on large dataset" {
+  let arr = Array::makei(100, fn(i) { i })
+  let set = @sorted_set.from_array(arr[:])
+  let mut count = 0
+  for _ in set.range(25, 75) {
+    count = count + 1
+  }
+  inspect(count, content="51")
+}
+
+///|
+test "range with non-existent boundaries" {
+  let set = @sorted_set.from_array([2, 4, 6, 8])
+  let arr = []
+  for v in set.range(3, 7) {
+    arr.push(v)
+  }
+  inspect(arr, content="[4, 6]")
+}
