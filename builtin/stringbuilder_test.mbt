@@ -93,7 +93,7 @@ test "StringBuilder::write_stringview" {
 test "StringBuild Fragments" {
   let sb = StringBuilder::new()
   sb.write_string(" hi hi ")
-  sb.write_object("world") 
+  sb.write_object("world")
   // NOTE: write_obj
   sb.write_string(" ")
   inspect(

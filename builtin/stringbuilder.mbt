@@ -18,9 +18,7 @@ pub fn[T : Show] StringBuilder::write_object(
   self : StringBuilder,
   obj : T,
 ) -> Unit {
-  //FIXME(upstream): goto-def does not work
-  Show::output(obj, self)
-
+  obj.output(self)
 }
 
 ///|
