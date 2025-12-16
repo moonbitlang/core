@@ -181,3 +181,27 @@ test {
   assert_eq(keys.collect(), ["a", "b", "c"])
 }
 ```
+
+### Reverse Iteration
+
+Use `rev_keys()` to get all keys in descending order.
+
+```mbt check
+///|
+test {
+  let map = @sorted_map.from_array([("a", 1), ("b", 2), ("c", 3)])
+  let keys = map.rev_keys().collect()
+  assert_eq(keys, ["c", "b", "a"])
+}
+```
+
+Use `rev_values()` to get all values in descending order of their keys.
+
+```mbt check
+///|
+test {
+  let map = @sorted_map.from_array([("a", 1), ("b", 2), ("c", 3)])
+  let values = map.rev_values().collect()
+  assert_eq(values, [3, 2, 1])
+}
+```
