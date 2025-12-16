@@ -19,5 +19,13 @@
 
 ### MoonBit Language Changes
 
+- Enhancement: `#module` attribute now supports importing JS modules in CJS format
 
+- Enhancement: Docstrings now support `mbt check` to mark MoonBit code blocks that participate in compilation. Currently, `mbt check` blocks in docstrings have the following restrictions:
+  1. Only test code is allowed in `mbt check` blocks
+  2. `mbt check` blocks must not contain parse errors
+
+- Enhancement: An array literal without a type annotation that is bound to a local variable is now inferred as `Array`; if the variable is only read, or only read and written, the user is prompted to annotate it as `ReadOnlyArray` or `FixedArray`
+
+- Deprecated: We will remove the previously added `mbt test` and `mbt test(async)` support in the future, keeping only `mbt check`
 
