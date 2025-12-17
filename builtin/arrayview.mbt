@@ -700,10 +700,12 @@ pub fn[T] ArrayView::to_array(self : ArrayView[T]) -> Array[T] {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let a : Array[String] = ["1", "2", "3"]
-/// let array_view = a[:]
-/// inspect(array_view.join(","), content="1,2,3")
+/// ```mbt check
+/// test {
+///   let a : Array[String] = ["1", "2", "3"]
+///   let array_view = a[:]
+///   inspect(array_view.join(","), content="1,2,3")
+/// }
 /// ```
 pub fn[A : ToStringView] ArrayView::join(
   self : ArrayView[A],
