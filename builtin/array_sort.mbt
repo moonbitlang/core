@@ -21,10 +21,12 @@
 ///
 /// # Example
 ///
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let arr = [5, 3, 2, 4, 1]
-///   arr.mut_view().sort_by((a, b) => { a - b })
+///   arr.mut_view().sort_by((a, b) => a - b)
 ///   assert_eq(arr, [1, 2, 3, 4, 5])
+/// }
 /// ```
 pub fn[T] MutArrayView::sort_by(self : Self[T], cmp : (T, T) -> Int) -> Unit {
   fixed_quick_sort_by(self, cmp, None, fixed_get_limit(self.length()))
