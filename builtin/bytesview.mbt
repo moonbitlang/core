@@ -195,11 +195,7 @@ pub fn BytesView::sub(
 ///   inspect(sum, content="15")
 /// ```
 pub fn BytesView::iter(self : BytesView) -> Iter[Byte] {
-  Iter::new(yield_ => for i in 0..<self.length() {
-    guard yield_(self[i]) is IterContinue else { break IterEnd }
-  } else {
-    IterContinue
-  })
+  self.iterator().iter()
 }
 
 ///|

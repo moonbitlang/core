@@ -59,11 +59,7 @@ pub fn[T] FixedArray::get(self : FixedArray[T], idx : Int) -> T? {
 /// ```
 #intrinsic("%iter.from_array")
 pub fn[T] FixedArray::iter(self : FixedArray[T]) -> Iter[T] {
-  Iter::new(yield_ => for v in self {
-    guard yield_(v) is IterContinue else { break IterEnd }
-  } else {
-    IterContinue
-  })
+  self.iterator().iter()
 }
 
 ///|

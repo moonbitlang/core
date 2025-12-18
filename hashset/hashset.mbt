@@ -285,13 +285,7 @@ pub fn[K] HashSet::clear(self : HashSet[K]) -> Unit {
 ///|
 /// Returns the iterator of the hash set.
 pub fn[K] HashSet::iter(self : HashSet[K]) -> Iter[K] {
-  Iter::new(yield_ => for entry in self.entries {
-    if entry is Some({ key, .. }) {
-      guard yield_(key) is IterContinue else { break IterEnd }
-    }
-  } else {
-    IterContinue
-  })
+  self.iterator().iter()
 }
 
 ///|

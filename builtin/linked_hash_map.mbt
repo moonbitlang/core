@@ -556,13 +556,7 @@ pub fn[K, V] Map::clear(self : Map[K, V]) -> Unit {
 ///|
 /// Returns the iterator of the hash map, provide elements in the order of insertion.
 pub fn[K, V] Map::iter(self : Map[K, V]) -> Iter[(K, V)] {
-  Iter::new(yield_ => loop self.head {
-    Some({ key, value, next, .. }) => {
-      guard yield_((key, value)) is IterContinue else { break IterEnd }
-      continue next
-    }
-    None => break IterContinue
-  })
+  self.iterator().iter()
 }
 
 ///|
@@ -598,24 +592,30 @@ pub fn[K, V] Map::iter2(self : Map[K, V]) -> Iter2[K, V] {
 
 ///|
 pub fn[K, V] Map::keys(self : Map[K, V]) -> Iter[K] {
-  Iter::new(yield_ => loop self.head {
-    Some({ key, next, .. }) => {
-      guard yield_(key) is IterContinue else { break IterEnd }
-      continue next
+  let mut curr_entry = self.head
+  Iterator::new(fn() {
+    match curr_entry {
+      Some({ key, next, .. }) => {
+        curr_entry = next
+        Some(key)
+      }
+      None => None
     }
-    None => IterContinue
-  })
+  }).iter()
 }
 
 ///|
 pub fn[K, V] Map::values(self : Map[K, V]) -> Iter[V] {
-  Iter::new(yield_ => loop self.head {
-    Some({ value, next, .. }) => {
-      guard yield_(value) is IterContinue else { break IterEnd }
-      continue next
+  let mut curr_entry = self.head
+  Iterator::new(fn() {
+    match curr_entry {
+      Some({ value, next, .. }) => {
+        curr_entry = next
+        Some(value)
+      }
+      None => None
     }
-    None => IterContinue
-  })
+  }).iter()
 }
 
 ///|

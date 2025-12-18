@@ -321,15 +321,7 @@ pub fn[A] Queue::transfer(self : Queue[A], dst : Queue[A]) -> Unit {
 ///   assert_eq(sum, 26)
 /// ```
 pub fn[A] Queue::iter(self : Queue[A]) -> Iter[A] {
-  Iter::new(yield_ => loop self.first {
-    Some({ content, next }) => {
-      if yield_(content) is IterEnd {
-        break IterEnd
-      }
-      continue next
-    }
-    None => IterContinue
-  })
+  self.iterator().iter()
 }
 
 ///|

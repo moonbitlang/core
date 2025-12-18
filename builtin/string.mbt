@@ -236,24 +236,7 @@ pub fn String::to_array(self : String) -> Array[Char] {
 ///   assert_eq(s.length(), 15); // Utf16 code units
 /// ```
 pub fn String::iter(self : String) -> Iter[Char] {
-  Iter::new(yield_ => {
-    let len = self.length()
-    for index in 0..<len {
-      let c1 = self.unsafe_charcode_at(index)
-      if c1.is_leading_surrogate() && index + 1 < len {
-        let c2 = self.unsafe_charcode_at(index + 1)
-        if c2.is_trailing_surrogate() {
-          let c = code_point_of_surrogate_pair(c1, c2)
-          guard yield_(c) is IterContinue else { break IterEnd }
-          continue index + 2
-        }
-      }
-      //TODO: handle garbage input
-      guard yield_(c1.unsafe_to_char()) is IterContinue else { break IterEnd }
-    } else {
-      IterContinue
-    }
-  })
+  self.iterator().iter()
 }
 
 ///|
@@ -343,24 +326,7 @@ pub fn String::iterator2(self : String) -> Iterator2[Int, Char] {
 ///   assert_eq(reversed, ['!', 'd', 'l', 'r', 'o', 'W', ' ', ',', 'o', 'l', 'l', 'e', 'H'])
 /// ```
 pub fn String::rev_iter(self : String) -> Iter[Char] {
-  Iter::new(yield_ => {
-    let len = self.length()
-    for index = len - 1; index >= 0; index = index - 1 {
-      let c1 = self.unsafe_charcode_at(index)
-      if c1.is_trailing_surrogate() && index - 1 >= 0 {
-        let c2 = self.unsafe_charcode_at(index - 1)
-        if c2.is_leading_surrogate() {
-          let c = code_point_of_surrogate_pair(c2, c1)
-          guard yield_(c) is IterContinue else { break IterEnd }
-          continue index - 2
-        }
-      }
-      // TODO: handle garbage input
-      guard yield_(c1.unsafe_to_char()) is IterContinue else { break IterEnd }
-    } else {
-      IterContinue
-    }
-  })
+  self.rev_iterator().iter()
 }
 
 ///|

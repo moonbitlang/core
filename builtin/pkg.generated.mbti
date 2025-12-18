@@ -264,6 +264,7 @@ pub fn[A, B] Iter::map_while(Self[A], (A) -> B?) -> Self[B]
 pub fn[T, R] Iter::mapi(Self[T], (Int, T) -> R) -> Self[R]
 pub fn[T : Compare] Iter::maximum(Self[T]) -> T?
 pub fn[T : Compare] Iter::minimum(Self[T]) -> T?
+#deprecated
 pub fn[T] Iter::new(((T) -> IterResult) -> IterResult) -> Self[T]
 pub fn[T] Iter::nth(Self[T], Int) -> T?
 pub fn[T] Iter::peek(Self[T]) -> T?

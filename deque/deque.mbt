@@ -1375,25 +1375,7 @@ pub fn[A] Deque::retain(self : Deque[A], f : (A) -> Bool) -> Unit {
 /// inspect(sum, content="15")
 /// ```
 pub fn[A] Deque::iter(self : Deque[A]) -> Iter[A] {
-  Iter::new(yield_ => {
-    guard !self.is_empty() else { IterContinue }
-    let { head, buf, len, .. } = self
-    let cap = buf.length()
-    let head_len = cap - head
-    if head_len >= len {
-      for i in head..<(head + len) {
-        guard yield_(buf[i]) is IterContinue else { return IterEnd }
-      }
-    } else {
-      for i in head..<cap {
-        guard yield_(buf[i]) is IterContinue else { return IterEnd }
-      }
-      for i in 0..<(len - head_len) {
-        guard yield_(buf[i]) is IterContinue else { return IterEnd }
-      }
-    }
-    IterContinue
-  })
+  self.iterator().iter()
 }
 
 ///|
@@ -1522,25 +1504,7 @@ pub fn[A] Deque::iterator2(self : Deque[A]) -> Iterator2[Int, A] {
 /// inspect(sum, content="321")
 /// ```
 pub fn[A] Deque::rev_iter(self : Deque[A]) -> Iter[A] {
-  Iter::new(yield_ => {
-    guard !self.is_empty() else { IterContinue }
-    let { head, buf, len, .. } = self
-    let cap = buf.length()
-    let head_len = cap - head
-    if head_len >= len {
-      for i = head + len - 1; i >= head; i = i - 1 {
-        guard yield_(buf[i]) is IterContinue else { return IterEnd }
-      }
-    } else {
-      for i = len - head_len - 1; i >= 0; i = i - 1 {
-        guard yield_(buf[i]) is IterContinue else { return IterEnd }
-      }
-      for i = cap - 1; i >= head; i = i - 1 {
-        guard yield_(buf[i]) is IterContinue else { return IterEnd }
-      }
-    }
-    IterContinue
-  })
+  self.rev_iterator().iter()
 }
 
 ///|

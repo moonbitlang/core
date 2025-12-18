@@ -412,23 +412,7 @@ pub fn[V] SortedSet::to_array(self : SortedSet[V]) -> Array[V] {
 ///|
 /// Returns an iterator.
 pub fn[V] SortedSet::iter(self : SortedSet[V]) -> Iter[V] {
-  Iter::new(yield_ => {
-    fn go(x : Node[V]?) {
-      match x {
-        None => IterContinue
-        Some({ left, right, value, .. }) =>
-          if go(left) is IterEnd {
-            IterEnd
-          } else if yield_(value) is IterEnd {
-            IterEnd
-          } else {
-            go(right)
-          }
-      }
-    }
-
-    go(self.root)
-  })
+  self.iterator().iter()
 }
 
 ///|
@@ -500,30 +484,38 @@ pub fn[V : Compare] SortedSet::range(
   low : V,
   high : V,
 ) -> Iter[V] {
-  Iter::new(yield_ => {
-    fn go(x : Node[V]?) {
-      match x {
-        None => IterContinue
-        Some({ left, right, value, .. }) => {
-          let cmp_key_low = value.compare(low)
-          let cmp_key_high = value.compare(high)
-          if cmp_key_low > 0 && go(left) is IterEnd {
-            IterEnd
-          } else if cmp_key_low >= 0 &&
-            cmp_key_high <= 0 &&
-            yield_(value) is IterEnd {
-            IterEnd
-          } else if cmp_key_high < 0 {
-            go(right)
-          } else {
-            IterContinue
-          }
-        }
+  let mut curr_node = self.root
+  let parents = []
+  let iter = Iterator::new(() => loop curr_node {
+    Some({ value, left, right, height: _ }) => {
+      let cmp_key_low = value.compare(low)
+      let cmp_key_high = value.compare(high)
+      if cmp_key_high > 0 {
+        // `value > high`, the left subtree and the value itself
+        // should not be visited
+        continue right
+      } else if cmp_key_low < 0 {
+        // `value < low`, the right subtree and the value itself
+        // should not be visited
+        continue left
+        // `low <= value <= high`,
+        // the value itself falls in the range,
+        // and both the left and right sub tree need to be visited
+      } else if left is None {
+        curr_node = right
+        Some(value)
+      } else {
+        parents.push((value, right))
+        continue left
       }
     }
-
-    go(self.root)
+    None if parents.pop() is Some((value, right)) => {
+      curr_node = right
+      Some(value)
+    }
+    None => None
   })
+  iter.iter()
 }
 
 // AVL tree operations
