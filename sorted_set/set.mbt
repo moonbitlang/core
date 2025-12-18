@@ -490,12 +490,12 @@ pub fn[V : Compare] SortedSet::range(
     Some({ value, left, right, height: _ }) => {
       let cmp_key_low = value.compare(low)
       let cmp_key_high = value.compare(high)
-      if cmp_key_high > 0 {
-        // `value > high`, the left subtree and the value itself
+      if cmp_key_low < 0 {
+        // `key < low`, the left subtree and the value itself
         // should not be visited
         continue right
-      } else if cmp_key_low < 0 {
-        // `value < low`, the right subtree and the value itself
+      } else if cmp_key_high > 0 {
+        // `key > high`, the right subtree and the value itself
         // should not be visited
         continue left
         // `low <= value <= high`,

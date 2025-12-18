@@ -268,12 +268,24 @@ test "range" {
     (4, "d"),
     (5, "e"),
   ])
-  let result = map.range(2, 4)
-  let buf = StringBuilder::new()
-  for k, v in result {
-    buf.write_string("[\{k}\{v}]")
-  }
-  inspect(buf, content="[2b][3c][4d]")
+  inspect(
+    map.range(2, 4),
+    content=(
+      #|[(2, "b"), (3, "c"), (4, "d")]
+    ),
+  )
+  inspect(
+    map.range(1, 1),
+    content=(
+      #|[(1, "a")]
+    ),
+  )
+  inspect(
+    map.range(5, 5),
+    content=(
+      #|[(5, "e")]
+    ),
+  )
 }
 
 ///|

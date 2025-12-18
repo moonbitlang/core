@@ -314,15 +314,15 @@ pub fn[K : Compare, V] SortedMap::range(
       Some({ left, key, value, right, height: _ }) => {
         let cmp_key_low = key.compare(low)
         let cmp_key_high = key.compare(high)
-        if cmp_key_high > 0 {
-          // `value > high`, the left subtree and the value itself
+        if cmp_key_low < 0 {
+          // `key > low`, the left subtree and the value itself
           // should not be visited
           continue right
-        } else if cmp_key_low < 0 {
-          // `value < low`, the right subtree and the value itself
+        } else if cmp_key_high > 0 {
+          // `key > right`, the right subtree and the value itself
           // should not be visited
           continue left
-          // `low <= value <= high`,
+          // `low <= key <= high`,
           // the value itself falls in the range,
           // and both the left and right sub tree need to be visited
         } else if left is None {
