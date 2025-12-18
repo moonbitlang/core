@@ -609,7 +609,6 @@ pub fn UInt::lnot(UInt) -> UInt
 pub fn UInt::lsl(UInt, Int) -> UInt
 #deprecated
 pub fn UInt::lsr(UInt, Int) -> UInt
-pub fn UInt::op_neq(UInt, UInt) -> Bool
 pub fn UInt::popcnt(UInt) -> Int
 #deprecated
 pub fn UInt::reinterpret_as_float(UInt) -> Float
@@ -674,7 +673,6 @@ pub fn UInt64::upto(UInt64, UInt64, inclusive? : Bool) -> Iter[UInt64]
 
 pub fn Double::convert_uint(UInt) -> Double
 pub fn Double::convert_uint64(UInt64) -> Double
-pub fn Double::op_neq(Double, Double) -> Bool
 #deprecated
 pub fn Double::reinterpret_as_i64(Double) -> Int64
 pub fn Double::reinterpret_as_int64(Double) -> Int64
