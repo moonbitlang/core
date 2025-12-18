@@ -328,8 +328,9 @@ test "from_iterator empty iter" {
 ///|
 test "range" {
   let set = @sorted_set.from_array([1, 2, 3, 4, 5])
-  let result = set.range(2, 4)
-  inspect(result, content="[2, 3, 4]")
+  inspect(set.range(2, 4), content="[2, 3, 4]")
+  inspect(set.range(1, 1), content="[1]")
+  inspect(set.range(5, 5), content="[5]")
 }
 
 ///|
