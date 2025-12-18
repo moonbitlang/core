@@ -37,7 +37,6 @@ pub fn Float::is_inf(Float) -> Bool
 pub fn Float::is_nan(Float) -> Bool
 pub fn Float::is_neg_inf(Float) -> Bool
 pub fn Float::is_pos_inf(Float) -> Bool
-pub fn Float::op_neq(Float, Float) -> Bool
 #as_free_fn
 pub fn Float::pow(Float, Float) -> Float
 pub fn Float::reinterpret_as_int(Float) -> Int

@@ -995,25 +995,8 @@ pub fn Double::sqrt(self : Double) -> Double = "%f64_sqrt"
 pub impl Eq for Double with equal(self : Double, other : Double) -> Bool = "%f64_eq"
 
 ///|
-/// Tests for inequality between two double-precision floating-point numbers.
-/// Takes into account special cases like NaN, where two NaN values are
-/// considered not equal to each other.
-///
-/// Parameters:
-///
-/// * `self` : The first double-precision floating-point number to compare.
-/// * `other` : The second double-precision floating-point number to compare.
-///
-/// Returns `true` if the two numbers are not equal according to IEEE 754 rules,
-/// `false` otherwise.
-///
-/// Example:
-///
-/// ```mbt test
-/// inspect(1.0 != 2.0, content="true")
-/// inspect(1.0 != 1.0, content="false")
-/// inspect(0.0 / 0.0 != 0.0 / 0.0, content="true") // NaN != NaN
-/// ```
+#deprecated("Use `a != b` instead")
+#doc(hidden)
 pub fn Double::op_neq(self : Double, other : Double) -> Bool = "%f64_ne"
 
 ///|
@@ -1891,23 +1874,8 @@ pub impl Mod for UInt with mod(self, other) = "%u32.mod"
 pub impl Eq for UInt with equal(self : UInt, other : UInt) -> Bool = "%u32.eq"
 
 ///|
-/// Checks if two unsigned 32-bit integers are not equal.
-///
-/// Parameters:
-///
-/// * `self` : The first unsigned integer to compare.
-/// * `other` : The second unsigned integer to compare.
-///
-/// Returns `true` if the two integers are not equal, `false` otherwise.
-///
-/// Example:
-///
-/// ```mbt test
-/// let a = 42U
-/// let b = 24U
-/// inspect(a != b, content="true")
-/// inspect(a != a, content="false")
-/// ```
+#deprecated("Use `a != b` instead")
+#doc(hidden)
 pub fn UInt::op_neq(self : UInt, other : UInt) -> Bool = "%u32.ne"
 
 ///|
