@@ -472,6 +472,12 @@ pub fn[T] UninitializedArray::sub(Self[T], start? : Int, end? : Int) -> ArrayVie
 
 #deprecated
 pub fn Bool::op_compare(Bool, Bool) -> Int
+pub fn Bool::to_int(Bool) -> Int
+pub fn Bool::to_int16(Bool) -> Int16
+pub fn Bool::to_int64(Bool) -> Int64
+pub fn Bool::to_uint(Bool) -> UInt
+pub fn Bool::to_uint16(Bool) -> UInt16
+pub fn Bool::to_uint64(Bool) -> UInt64
 
 pub fn Byte::lnot(Byte) -> Byte
 #deprecated
@@ -1182,6 +1188,7 @@ pub(open) trait Hash {
   hash_combine(Self, Hasher) -> Unit
   hash(Self) -> Int = _
 }
+pub impl Hash for Bool
 pub impl Hash for Byte
 pub impl Hash for Char
 pub impl Hash for Int
