@@ -297,20 +297,15 @@ pub fn Float::upto(
   end : Float,
   inclusive? : Bool = false,
 ) -> Iter[Float] {
-  Iter::new(yield_ => {
-    let mut i = self
-    while i < end || (inclusive && i == end) {
-      if yield_(i) is IterEnd {
-        break IterEnd
-      }
-      if i == end {
-        break IterContinue
-      }
+  let mut i = self
+  Iterator::new(() => {
+    guard i < end || (inclusive && i == end) else { None }
+    let result = i
+    if i != end {
       i += 1
-    } else {
-      IterContinue
     }
-  })
+    Some(result)
+  }).iter()
 }
 
 ///|
@@ -336,24 +331,24 @@ pub fn Float::until(
   if step == 0.0 {
     return Iter::empty()
   }
-  Iter::new(yield_ => {
-    let mut i = self
-    while (step > 0.0 && i < end) ||
-          (step < 0.0 && i > end) ||
-          (inclusive && i == end) {
-      if yield_(i) is IterEnd {
-        break IterEnd
-      }
-      let next = i + step
-      if (step > 0.0 && next >= i) || (step < 0.0 && next <= i) {
-        i = next
-      } else {
-        break IterContinue
-      }
-    } else {
-      IterContinue
+  let mut curr_value = Some(self)
+  let iter = Iterator::new(() => {
+    guard curr_value is Some(i) else { None }
+    guard (step > 0.0 && i < end) ||
+      (step < 0.0 && i > end) ||
+      (inclusive && i == end) else {
+      None
     }
+    let next = i + step
+    if (step > 0.0 && next >= i) || (step < 0.0 && next <= i) {
+      curr_value = Some(next)
+    } else {
+      // overflow
+      curr_value = None
+    }
+    Some(i)
   })
+  iter.iter()
 }
 
 ///|

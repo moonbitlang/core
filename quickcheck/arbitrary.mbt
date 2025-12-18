@@ -110,15 +110,21 @@ pub impl Arbitrary for String with arbitrary(size, rs) {
 }
 
 ///|
-pub impl[X : Arbitrary] Arbitrary for Iter[X] with arbitrary(size, rs) {
+pub impl[X : Arbitrary] Arbitrary for Iterator[X] with arbitrary(size, rs) {
   let len = if size == 0 { 0 } else { rs.next_positive_int() % size }
-  Iter::new(yield_ => for i in 0..<len {
-    if yield_(X::arbitrary(i, rs)) is IterEnd {
-      break IterEnd
-    }
-  } else {
-    IterContinue
+  let mut i = 0
+  Iterator::new(() => {
+    guard i < len else { None }
+    let elem = X::arbitrary(i, rs)
+    i += 1
+    Some(elem)
   })
+}
+
+///|
+pub impl[X : Arbitrary] Arbitrary for Iter[X] with arbitrary(size, rs) {
+  let iter : Iterator[X] = Arbitrary::arbitrary(size, rs)
+  iter.iter()
 }
 
 ///|

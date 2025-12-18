@@ -1840,6 +1840,6 @@ test "limb length" {
 }
 
 ///|
-fn BigInt::limbs(self : Self) -> Iter[UInt] {
-  self.limbs.iter().take(self.len)
+fn BigInt::limbs(self : Self) -> Array[UInt] {
+  self.limbs[:self.len].to_array()
 }

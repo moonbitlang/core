@@ -647,13 +647,7 @@ pub fn BytesView::to_array(self : BytesView) -> Array[Byte] {
 /// inspect(sum, content="209") // ASCII values: 'h'(104) + 'i'(105) = 209
 /// ```
 pub fn Bytes::iter(self : Bytes) -> Iter[Byte] {
-  Iter::new(yield_ => for i in 0..<self.length() {
-    if yield_(self[i]) is IterEnd {
-      break IterEnd
-    }
-  } else {
-    IterContinue
-  })
+  self.iterator().iter()
 }
 
 ///|

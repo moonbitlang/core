@@ -145,6 +145,7 @@ pub fn[T] Iter::count(self : Iter[T]) -> Int {
 
 ///|
 /// Do not use this method, it is for internal use only.
+#deprecated("`Iter::new`, and the internal iterator type `Iter`, is deprecated. Create an external iterator `Iterator`, and use `Iterator::iter` to migrate usage of `Iter::new`. `Iter` will become an alias of `Iterator` in the future.")
 pub fn[T] Iter::new(f : ((T) -> IterResult) -> IterResult) -> Iter[T] {
   Iter(f)
 }

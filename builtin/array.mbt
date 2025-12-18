@@ -1543,11 +1543,7 @@ pub fn[T] Array::split(
 /// inspect(sum, content="6")
 /// ```
 pub fn[T] Array::iter(self : Array[T]) -> Iter[T] {
-  Iter::new(yield_ => for v in self {
-    guard yield_(v) is IterContinue else { break IterEnd }
-  } else {
-    IterContinue
-  })
+  self.iterator().iter()
 }
 
 ///|
@@ -1570,11 +1566,7 @@ pub fn[T] Array::iter(self : Array[T]) -> Iter[T] {
 /// inspect(result, content="[3, 2, 1]")
 /// ```
 pub fn[T] Array::rev_iter(self : Array[T]) -> Iter[T] {
-  Iter::new(yield_ => for i = self.length() - 1; i >= 0; i = i - 1 {
-    guard yield_(self.unsafe_get(i)) is IterContinue else { break IterEnd }
-  } else {
-    IterContinue
-  })
+  self.rev_iterator().iter()
 }
 
 ///|

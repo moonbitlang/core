@@ -88,10 +88,11 @@ test "shrink_to_fit_2" {
 ///|
 test "iter" {
   let dv = @deque.from_array([1, 2, 3, 4, 5])
-  let iter = dv.iter()
   let buf = StringBuilder::new(size_hint=0)
   let mut i = 0
-  iter.each(x => {
+  dv
+  .iter()
+  .each(x => {
     buf.write_string(x.to_string())
     buf.write_char('\n')
     i = i + 1
@@ -109,7 +110,7 @@ test "iter" {
     ),
   )
   inspect(
-    iter.take(4).filter(x => x % 2 == 0).fold((a, x) => a + x, init=0),
+    dv.iter().take(4).filter(x => x % 2 == 0).fold((a, x) => a + x, init=0),
     content="6",
   )
 }

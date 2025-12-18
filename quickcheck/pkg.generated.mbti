@@ -38,4 +38,5 @@ pub impl Arbitrary for Bytes
 pub impl[X : Arbitrary] Arbitrary for Array[X]
 pub impl[A : Arbitrary] Arbitrary for ArrayView[A]
 pub impl[X : Arbitrary] Arbitrary for Iter[X]
+pub impl[X : Arbitrary] Arbitrary for Iterator[X]
 

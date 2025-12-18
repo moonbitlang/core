@@ -281,20 +281,6 @@ fn[A] Tree::each(self : Tree[A], f : (A) -> Unit raise?) -> Unit raise? {
 }
 
 ///|
-fn[A] Tree::iter(self : Tree[A]) -> Iter[A] {
-  Iter::new(yield_ => match self {
-    Empty => IterContinue
-    Leaf(l) => l.iter().run(yield_)
-    Node(ns, _) =>
-      for n in ns {
-        guard n.iter().run(yield_) is IterContinue else { break IterEnd }
-      } else {
-        IterContinue
-      }
-  })
-}
-
-///|
 fn[A] Tree::iterator(self : Tree[A]) -> Iterator[A] {
   let mut curr_tree = self
   let mut curr_index = 0
@@ -304,6 +290,7 @@ fn[A] Tree::iterator(self : Tree[A]) -> Iterator[A] {
       Node(children, _) as t if curr_index < children.length() => {
         let child = children.unsafe_get(curr_index)
         parents.push((t, curr_index + 1))
+        curr_tree = child
         curr_index = 0
         continue child
       }

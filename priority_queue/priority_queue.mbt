@@ -100,16 +100,7 @@ pub fn[A : Compare] PriorityQueue::to_array(
 
 ///|
 pub fn[A : Compare] PriorityQueue::iter(self : PriorityQueue[A]) -> Iter[A] {
-  Iter::new(yield_ => {
-    let arr = self.to_array()
-    for i in 0..<arr.length() {
-      if yield_(arr[i]) is IterEnd {
-        break IterEnd
-      }
-    } else {
-      IterContinue
-    }
-  })
+  self.iterator().iter()
 }
 
 ///|

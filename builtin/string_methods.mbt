@@ -1059,17 +1059,16 @@ pub fn StringView::split(
   if sep_len == 0 {
     return self.iter().map(c => c.to_string().view())
   }
-  Iter::new(yield_ => {
-    let mut view = self
-    while view.find(sep) is Some(end) {
-      guard yield_(view.view(end_offset=end)) is IterContinue else {
-        break IterEnd
-      }
-      view = view.view(start_offset=end + sep_len)
-    } else {
-      yield_(view)
+  let mut remaining = Some(self)
+  Iterator::new(() => {
+    guard remaining is Some(view) else { None }
+    guard view.find(sep) is Some(end) else {
+      remaining = None
+      Some(view)
     }
-  })
+    remaining = Some(view.view(start_offset=end + sep_len))
+    Some(view.view(end_offset=end))
+  }).iter()
 }
 
 ///|

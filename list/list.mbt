@@ -1523,15 +1523,7 @@ pub fn[X] default() -> List[X] {
 /// inspect(sum, content="15")
 /// ```
 pub fn[A] List::iter(self : List[A]) -> Iter[A] {
-  Iter::new(yield_ => loop self {
-    Empty => IterContinue
-    More(head, tail~) => {
-      if yield_(head) is IterEnd {
-        break IterEnd
-      }
-      continue tail
-    }
-  })
+  self.iterator().iter()
 }
 
 ///|

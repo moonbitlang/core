@@ -436,13 +436,7 @@ pub fn[K] Set::clear(self : Set[K]) -> Unit {
 ///|
 /// Returns the iterator of the hash set, provide elements in the order of insertion.
 pub fn[K] Set::iter(self : Set[K]) -> Iter[K] {
-  Iter::new(yield_ => loop self.head {
-    Some({ key, next, .. }) => {
-      guard yield_(key) is IterContinue else { break IterEnd }
-      continue next
-    }
-    None => break IterContinue
-  })
+  self.iterator().iter()
 }
 
 ///|

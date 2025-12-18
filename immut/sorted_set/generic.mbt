@@ -18,23 +18,7 @@
 
 ///|
 pub fn[A] SortedSet::iter(self : SortedSet[A]) -> Iter[A] {
-  Iter::new(yield_ => {
-    fn go(t) {
-      match t {
-        Empty => IterContinue
-        Node(left~, right~, value~, ..) =>
-          if go(left) is IterEnd {
-            IterEnd
-          } else if yield_(value) is IterEnd {
-            IterEnd
-          } else {
-            go(right)
-          }
-      }
-    }
-
-    go(self)
-  })
+  self.iterator().iter()
 }
 
 ///|
