@@ -6,13 +6,6 @@ package "moonbitlang/core/bool"
 // Errors
 
 // Types and methods
-pub fn Bool::to_int(Bool) -> Int
-pub fn Bool::to_int16(Bool) -> Int16
-pub fn Bool::to_int64(Bool) -> Int64
-pub fn Bool::to_uint(Bool) -> UInt
-pub fn Bool::to_uint16(Bool) -> UInt16
-pub fn Bool::to_uint64(Bool) -> UInt64
-pub impl Hash for Bool
 
 // Type aliases
 
