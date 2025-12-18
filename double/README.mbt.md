@@ -87,7 +87,6 @@ test "binary representation" {
       #|b"?\xf0\x00\x00\x00\x00\x00\x00"
     ),
   )
-
   buffer.reset()
   buffer.write_double_le(num)
   inspect(
