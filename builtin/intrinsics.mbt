@@ -63,7 +63,7 @@ pub fn[T] abort(string : String, loc~ : SourceLoc) -> T {
   @abort.abort(
     (
       $|\{string}
-      $|  at\{loc}
+      $|  at \{loc}
       $|
     ),
   )
