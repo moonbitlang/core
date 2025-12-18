@@ -83,19 +83,19 @@ test "HAMT::remove" {
 ///|
 test "keys" {
   let m = @hashmap.from_array([(1, "one"), (2, "two")])
-  let keys = m.keys()
-  inspect(keys.contains(1), content="true")
-  inspect(keys.contains(2), content="true")
-  inspect(keys.contains(3), content="false")
+  let keys = () => m.keys()
+  inspect(keys().contains(1), content="true")
+  inspect(keys().contains(2), content="true")
+  inspect(keys().contains(3), content="false")
 }
 
 ///|
 test "HAMT::values" {
   let m = @hashmap.from_array([(1, "one"), (2, "two")])
-  let values = m.values()
-  inspect(values.contains("one"), content="true")
-  inspect(values.contains("two"), content="true")
-  inspect(values.contains("three"), content="false")
+  let values = () => m.values()
+  inspect(values().contains("one"), content="true")
+  inspect(values().contains("two"), content="true")
+  inspect(values().contains("three"), content="false")
 }
 
 ///|
@@ -161,6 +161,7 @@ test "HAMT::iterator2" {
 }
 
 ///|
+#warnings("-deprecated")
 test "HAMT::from_iter" {
   let iter = Iter::new(fn(yield_) {
     if yield_((1, "one")) is IterEnd {

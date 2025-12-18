@@ -358,11 +358,7 @@ pub fn[X] ArrayView::iterator(self : ArrayView[X]) -> Iterator[X] {
 /// inspect(sum, content="5")
 /// ```
 pub fn[A] ArrayView::iter(self : ArrayView[A]) -> Iter[A] {
-  Iter::new(yield_ => for v in self {
-    guard yield_(v) is IterContinue else { break IterEnd }
-  } else {
-    IterContinue
-  })
+  self.iterator().iter()
 }
 
 ///|
@@ -406,11 +402,7 @@ pub fn[X] ArrayView::iterator2(self : ArrayView[X]) -> Iterator2[Int, X] {
 /// inspect(sum_keys, content="1")
 /// ```
 pub fn[A] ArrayView::iter2(self : ArrayView[A]) -> Iter2[Int, A] {
-  Iter2::new(yield_ => for i, v in self {
-    guard yield_(i, v) is IterContinue else { break IterEnd }
-  } else {
-    IterContinue
-  })
+  self.iterator2().iter2()
 }
 
 ///|

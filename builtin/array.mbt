@@ -1543,11 +1543,7 @@ pub fn[T] Array::split(
 /// inspect(sum, content="6")
 /// ```
 pub fn[T] Array::iter(self : Array[T]) -> Iter[T] {
-  Iter::new(yield_ => for v in self {
-    guard yield_(v) is IterContinue else { break IterEnd }
-  } else {
-    IterContinue
-  })
+  self.iterator().iter()
 }
 
 ///|
@@ -1570,11 +1566,7 @@ pub fn[T] Array::iter(self : Array[T]) -> Iter[T] {
 /// inspect(result, content="[3, 2, 1]")
 /// ```
 pub fn[T] Array::rev_iter(self : Array[T]) -> Iter[T] {
-  Iter::new(yield_ => for i = self.length() - 1; i >= 0; i = i - 1 {
-    guard yield_(self.unsafe_get(i)) is IterContinue else { break IterEnd }
-  } else {
-    IterContinue
-  })
+  self.rev_iterator().iter()
 }
 
 ///|
@@ -1597,11 +1589,7 @@ pub fn[T] Array::rev_iter(self : Array[T]) -> Iter[T] {
 /// inspect(sum, content="63") // (0 + 10) + (1 + 20) + (2 + 30) = 63
 /// ```
 pub fn[A] Array::iter2(self : Array[A]) -> Iter2[Int, A] {
-  Iter2::new(yield_ => for i, v in self {
-    guard yield_(i, v) is IterContinue else { break IterEnd }
-  } else {
-    IterContinue
-  })
+  self.iterator2().iter2()
 }
 
 ///|
@@ -1931,20 +1919,18 @@ pub fn[A, B] Array::zip_to_iter2(
   self : Array[A],
   other : Array[B],
 ) -> Iter2[A, B] {
-  Iter2::new(yield_ => {
-    let length = if self.length() < other.length() {
-      self.length()
-    } else {
-      other.length()
-    }
-    for i in 0..<length {
-      if yield_(self[i], other[i]) is IterEnd {
-        break IterEnd
-      }
-    } else {
-      IterContinue
-    }
-  })
+  let length = if self.length() < other.length() {
+    self.length()
+  } else {
+    other.length()
+  }
+  let mut i = 0
+  Iterator2::new(() => {
+    guard i < length else { None }
+    let elem = (self[i], other[i])
+    i += 1
+    Some(elem)
+  }).iter2()
 }
 
 ///|

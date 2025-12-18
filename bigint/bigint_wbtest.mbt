@@ -762,10 +762,10 @@ test "pow" {
 test "BigInt::limbs" {
   // Test zero
   inspect(0N.limbs(), content="[0]")
-  assert_eq(0N.limbs().to_array(), (-0N).limbs().to_array())
+  assert_eq(0N.limbs(), (-0N).limbs())
 
   // Positive and negative of same magnitude should have same limbs
-  assert_eq(1N.limbs().to_array(), (-1N).limbs().to_array())
+  assert_eq(1N.limbs(), (-1N).limbs())
 
   // Test small positive numbers
   inspect(42N.limbs(), content="[42]")
@@ -776,22 +776,22 @@ test "BigInt::limbs" {
   // Test larger numbers
   let large = 123456789N
   inspect(large.limbs(), content="[123456789]")
-  assert_eq(large.limbs().to_array(), (-large).limbs().to_array())
+  assert_eq(large.limbs(), (-large).limbs())
 
   // Test very large numbers (multi-limb)
   let very_large = 12345678901234567890123456789N
   inspect(very_large.limbs(), content="[1849262357, 1186908593, 669260594]")
   inspect((-very_large).limbs(), content="[1849262357, 1186908593, 669260594]")
-  assert_eq(very_large.limbs().to_array(), (-very_large).limbs().to_array())
+  assert_eq(very_large.limbs(), (-very_large).limbs())
 
   // Test that equal BigInts have equal limbs
   let a = 987654321098765432N
   let b = BigInt::from_string("00987654321098765432")
   inspect(a.limbs(), content="[1241035896, 229956191]")
-  assert_eq(a.limbs().to_array(), b.limbs().to_array())
+  assert_eq(a.limbs(), b.limbs())
 
   // Test that different BigInts have different limbs
   let c = a + 1N
   inspect(c.limbs(), content="[1241035897, 229956191]")
-  assert_not_eq(a.limbs().to_array(), c.limbs().to_array())
+  assert_not_eq(a.limbs(), c.limbs())
 }

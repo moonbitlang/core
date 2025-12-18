@@ -310,18 +310,16 @@ test "panic negative index 9" {
 test "stringview iter" {
   let str = "hello🤣🤣🤣"
   let view = str.view(start_offset=1, end_offset=7)
-  let iter = view.iter()
-  inspect(iter.count(), content="5")
-  inspect(iter, content="['e', 'l', 'l', 'o', '🤣']")
+  inspect(view.iter().count(), content="5")
+  inspect(view.iter(), content="['e', 'l', 'l', 'o', '🤣']")
 }
 
 ///|
 test "stringview rev_iter" {
   let str = "hello🤣🤣🤣"
   let view = str.view(start_offset=1, end_offset=7)
-  let iter = view.rev_iter()
-  inspect(iter.count(), content="5")
-  inspect(iter, content="['🤣', 'o', 'l', 'l', 'e']")
+  inspect(view.rev_iter().count(), content="5")
+  inspect(view.rev_iter(), content="['🤣', 'o', 'l', 'l', 'e']")
 }
 
 ///|

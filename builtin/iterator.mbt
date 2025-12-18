@@ -696,7 +696,7 @@ pub fn[X] Iterator::to_array(self : Iterator[X]) -> Array[X] {
 
 ///|
 pub fn[X] Iterator::iter(self : Iterator[X]) -> Iter[X] {
-  Iter::new(yield_ => while self.next() is Some(x) {
+  Iter(yield_ => while self.next() is Some(x) {
     guard yield_(x) is IterContinue else { break IterEnd }
   } else {
     IterContinue
@@ -710,7 +710,7 @@ pub fn[X] Iterator::iterator(self : Iterator[X]) -> Iterator[X] {
 
 ///|
 pub fn[X] Iterator::iter2(self : Iterator[X]) -> Iter2[Int, X] {
-  Iter2::new(fn(yield_) {
+  Iter2(fn(yield_) {
     let mut i = 0
     while self.next() is Some(x) {
       guard yield_(i, x) is IterContinue else { break IterEnd }
@@ -918,6 +918,15 @@ pub fn[X, Y] Iterator2::iterator2(self : Iterator2[X, Y]) -> Iterator2[X, Y] {
 ///|
 pub fn[X, Y] Iterator2::next(self : Iterator2[X, Y]) -> (X, Y)? {
   self.0.next()
+}
+
+///|
+pub fn[X, Y] Iterator2::iter2(self : Iterator2[X, Y]) -> Iter2[X, Y] {
+  Iter2(yield_ => while self.next() is Some((x, y)) {
+    guard yield_(x, y) is IterContinue else { break IterEnd }
+  } else {
+    IterContinue
+  })
 }
 
 ///|

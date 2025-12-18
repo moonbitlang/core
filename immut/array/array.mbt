@@ -290,7 +290,7 @@ pub impl[A] Add for T[A] with add(self, other) {
 ///|
 /// Return an iterator over the array.
 pub fn[A] T::iter(self : T[A]) -> Iter[A] {
-  self.tree.iter()
+  self.tree.iterator().iter()
 }
 
 ///|

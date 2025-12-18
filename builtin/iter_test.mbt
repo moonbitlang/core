@@ -336,6 +336,7 @@ test "concat" {
 }
 
 ///|
+#warnings("-deprecated")
 test "collect" {
   let arr = ['1', '2', '3', '4', '5']
   let iter = Iter::new(yield_ => {
@@ -463,6 +464,7 @@ test "eachi" {
 // For testing purposes
 
 ///|
+#warnings("-deprecated")
 fn[T] test_from_array(arr : Array[T]) -> Iter[T] {
   Iter::new(yield_ => for i in 0..<arr.length() {
     if yield_(arr[i]) is IterEnd {
@@ -500,6 +502,7 @@ enum Tree {
 }
 
 ///|
+#warnings("-deprecated")
 fn Tree::iter(self : Tree) -> Iter[Int] {
   Iter::new(yield_ => match self {
     Leaf(x) => yield_(x)
@@ -621,16 +624,16 @@ test "@builtin.join/multiple_elements_without_separator" {
 
 ///|
 test "Iter::nth" {
-  let it = [1, 2, 3, 4, 5].iter()
-  inspect(it.nth(2), content="Some(3)")
-  inspect(it.nth(4), content="Some(5)")
-  inspect(it.nth(5), content="None")
-  inspect(it.concat(it).nth(5), content="Some(1)")
-  inspect(it.concat(it).nth(10), content="None")
-  inspect(it.drop(1).nth(3), content="Some(5)")
-  inspect(it.drop(1).nth(4), content="None")
-  inspect(it.take(1).nth(1), content="None")
-  inspect(it.take(2).nth(1), content="Some(2)")
+  let it = () => [1, 2, 3, 4, 5].iter()
+  inspect(it().nth(2), content="Some(3)")
+  inspect(it().nth(4), content="Some(5)")
+  inspect(it().nth(5), content="None")
+  inspect(it().concat(it()).nth(5), content="Some(1)")
+  inspect(it().concat(it()).nth(10), content="None")
+  inspect(it().drop(1).nth(3), content="Some(5)")
+  inspect(it().drop(1).nth(4), content="None")
+  inspect(it().take(1).nth(1), content="None")
+  inspect(it().take(2).nth(1), content="Some(2)")
 }
 
 ///|

@@ -509,14 +509,12 @@ extern "js" fn is_neg(x : BigInt) -> Bool =
   #|(x) => x < 0n
 
 ///|
-fn BigInt::limbs(self : Self) -> Iter[UInt] {
-  guard !self.is_zero() else { Iter::singleton(0) }
-  Iter::new(yield_ => for n = self * BigInt::from_int(self.signum())
-                          n > 0
-                          n = n >> 32 {
+fn BigInt::limbs(self : Self) -> Array[UInt] {
+  guard !self.is_zero() else { [0] }
+  let result = []
+  for n = self * BigInt::from_int(self.signum()); n > 0; n = n >> 32 {
     let limb = n.to_uint()
-    guard yield_(limb) is IterContinue else { break IterEnd }
-  } else {
-    IterContinue
-  })
+    result.push(limb)
+  }
+  result
 }

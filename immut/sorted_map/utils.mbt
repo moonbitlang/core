@@ -232,23 +232,7 @@ pub fn[K : Compare, V] SortedMap::from_array(
 
 ///|
 pub fn[K, V] SortedMap::iter(self : SortedMap[K, V]) -> Iter[(K, V)] {
-  Iter::new(yield_ => {
-    fn go(t) {
-      match t {
-        Empty => IterContinue
-        Tree(k, value~, l, r, ..) =>
-          if go(l) is IterEnd {
-            IterEnd
-          } else if yield_((k, value)) is IterEnd {
-            IterEnd
-          } else {
-            go(r)
-          }
-      }
-    }
-
-    go(self)
-  })
+  self.iterator().iter()
 }
 
 ///|
@@ -281,23 +265,7 @@ pub fn[K, V] SortedMap::iterator2(self : SortedMap[K, V]) -> Iterator2[K, V] {
 
 ///|
 pub fn[K, V] SortedMap::iter2(self : SortedMap[K, V]) -> Iter2[K, V] {
-  Iter2::new(yield_ => {
-    fn go(t) {
-      match t {
-        Empty => IterContinue
-        Tree(k, value~, l, r, ..) =>
-          if go(l) is IterEnd {
-            IterEnd
-          } else if yield_(k, value) is IterEnd {
-            IterEnd
-          } else {
-            go(r)
-          }
-      }
-    }
-
-    go(self)
-  })
+  self.iterator2().iter2()
 }
 
 ///|

@@ -191,45 +191,41 @@ pub fn[K, V] SortedMap::eachi(
 ///|
 /// Returns all keys in the map.
 pub fn[K, V] SortedMap::keys_as_iter(self : SortedMap[K, V]) -> Iter[K] {
-  Iter::new(fn(yield_) {
-    fn go(x : Node[K, V]?) {
-      match x {
-        None => IterContinue
-        Some({ left, right, key, .. }) =>
-          if go(left) is IterEnd {
-            IterEnd
-          } else if yield_(key) is IterEnd {
-            IterEnd
-          } else {
-            go(right)
-          }
+  let todo_list = []
+  let mut next_node = self.root
+  Iterator::new(fn() {
+    loop next_node {
+      Some({ left, key, value: _, right, height: _ }) => {
+        todo_list.push((key, right))
+        continue left
       }
+      None if todo_list.pop() is Some((key, right)) => {
+        next_node = right
+        Some(key)
+      }
+      None => None
     }
-
-    go(self.root)
-  })
+  }).iter()
 }
 
 ///|
 /// Returns all values in the map.
 pub fn[K, V] SortedMap::values_as_iter(self : SortedMap[K, V]) -> Iter[V] {
-  Iter::new(fn(yield_) {
-    fn go(x : Node[K, V]?) {
-      match x {
-        None => IterContinue
-        Some({ left, right, value, .. }) =>
-          if go(left) is IterEnd {
-            IterEnd
-          } else if yield_(value) is IterEnd {
-            IterEnd
-          } else {
-            go(right)
-          }
+  let todo_list = []
+  let mut next_node = self.root
+  Iterator::new(fn() {
+    loop next_node {
+      Some({ left, key: _, value, right, height: _ }) => {
+        todo_list.push((value, right))
+        continue left
       }
+      None if todo_list.pop() is Some((value, right)) => {
+        next_node = right
+        Some(value)
+      }
+      None => None
     }
-
-    go(self.root)
-  })
+  }).iter()
 }
 
 ///|
@@ -242,44 +238,12 @@ pub fn[K, V] SortedMap::to_array(self : SortedMap[K, V]) -> Array[(K, V)] {
 
 ///|
 pub fn[K, V] SortedMap::iter(self : SortedMap[K, V]) -> Iter[(K, V)] {
-  Iter::new(yield_ => {
-    fn go(x : Node[K, V]?) {
-      match x {
-        None => IterContinue
-        Some({ left, right, key, value, .. }) =>
-          if go(left) is IterEnd {
-            IterEnd
-          } else if yield_((key, value)) is IterEnd {
-            IterEnd
-          } else {
-            go(right)
-          }
-      }
-    }
-
-    go(self.root)
-  })
+  self.iterator().iter()
 }
 
 ///|
 pub fn[K, V] SortedMap::iter2(self : SortedMap[K, V]) -> Iter2[K, V] {
-  Iter2::new(yield_ => {
-    fn go(x : Node[K, V]?) {
-      match x {
-        None => IterContinue
-        Some({ left, right, key, value, .. }) =>
-          if go(left) is IterEnd {
-            IterEnd
-          } else if yield_(key, value) is IterEnd {
-            IterEnd
-          } else {
-            go(right)
-          }
-      }
-    }
-
-    go(self.root)
-  })
+  self.iterator2().iter2()
 }
 
 ///|
@@ -343,30 +307,39 @@ pub fn[K : Compare, V] SortedMap::range(
   low : K,
   high : K,
 ) -> Iter2[K, V] {
-  Iter2::new(yield_ => {
-    fn go(x : Node[K, V]?) {
-      match x {
-        None => IterContinue
-        Some({ left, right, key, value, .. }) => {
-          let cmp_key_low = key.compare(low)
-          let cmp_key_high = key.compare(high)
-          if cmp_key_low > 0 && go(left) is IterEnd {
-            IterEnd
-          } else if cmp_key_low >= 0 &&
-            cmp_key_high <= 0 &&
-            yield_(key, value) is IterEnd {
-            IterEnd
-          } else if cmp_key_high < 0 {
-            go(right)
-          } else {
-            IterContinue
-          }
+  let todo_list = []
+  let mut next_node = self.root
+  Iterator2::new(fn() {
+    loop next_node {
+      Some({ left, key, value, right, height: _ }) => {
+        let cmp_key_low = key.compare(low)
+        let cmp_key_high = key.compare(high)
+        if cmp_key_high > 0 {
+          // `value > high`, the left subtree and the value itself
+          // should not be visited
+          continue right
+        } else if cmp_key_low < 0 {
+          // `value < low`, the right subtree and the value itself
+          // should not be visited
+          continue left
+          // `low <= value <= high`,
+          // the value itself falls in the range,
+          // and both the left and right sub tree need to be visited
+        } else if left is None {
+          next_node = right
+          Some((key, value))
+        } else {
+          todo_list.push((key, value, right))
+          continue left
         }
       }
+      None if todo_list.pop() is Some((key, value, right)) => {
+        next_node = right
+        Some((key, value))
+      }
+      None => None
     }
-
-    go(self.root)
-  })
+  }).iter2()
 }
 
 ///|

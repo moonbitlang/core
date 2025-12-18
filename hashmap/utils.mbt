@@ -68,13 +68,7 @@ pub fn[K, V] HashMap::clear(self : HashMap[K, V]) -> Unit {
 /// inspect(pairs.contains((2, "two")), content="true")
 /// ```
 pub fn[K, V] HashMap::iter(self : HashMap[K, V]) -> Iter[(K, V)] {
-  Iter::new(yield_ => for entry in self.entries {
-    if entry is Some({ key, value, .. }) {
-      guard yield_((key, value)) is IterContinue else { break IterEnd }
-    }
-  } else {
-    IterContinue
-  })
+  self.iterator().iter()
 }
 
 ///|
@@ -147,13 +141,7 @@ pub fn[K, V] HashMap::iterator2(self : HashMap[K, V]) -> Iterator2[K, V] {
 /// inspect(sum, content="3")
 /// ```
 pub fn[K, V] HashMap::iter2(self : HashMap[K, V]) -> Iter2[K, V] {
-  Iter2::new(yield_ => for entry in self.entries {
-    if entry is Some({ key, value, .. }) {
-      guard yield_(key, value) is IterContinue else { break IterEnd }
-    }
-  } else {
-    IterContinue
-  })
+  self.iterator2().iter2()
 }
 
 ///|
@@ -172,13 +160,7 @@ pub fn[K, V] HashMap::iter2(self : HashMap[K, V]) -> Iter2[K, V] {
 ///
 /// ```mbt test
 /// let arr = [(1, "one"), (2, "two")]
-/// let iter = Iter::new(yield_ => for pair in arr {
-///   if yield_(pair) is IterEnd {
-///     break IterEnd
-///   }
-/// } else {
-///   IterContinue
-/// })
+/// let iter = arr.iter()
 /// let map = @hashmap.from_iter(iter)
 /// inspect(map.get(1), content="Some(\"one\")")
 /// inspect(map.get(2), content="Some(\"two\")")
@@ -455,13 +437,17 @@ pub impl[K : Show, V : Show] Show for HashMap[K, V] with output(self, logger) {
 /// inspect(keys.contains(3), content="true")
 /// ```
 pub fn[K, V] HashMap::keys(self : HashMap[K, V]) -> Iter[K] {
-  Iter::new(yield_ => for entry in self.entries {
+  let mut i = 0
+  let iter = Iterator::new(() => while i < self.entries.length() {
+    let entry = self.entries[i]
+    i += 1
     if entry is Some({ key, .. }) {
-      guard yield_(key) is IterContinue else { break IterEnd }
+      break Some(key)
     }
   } else {
-    IterContinue
+    None
   })
+  iter.iter()
 }
 
 ///|
@@ -485,13 +471,17 @@ pub fn[K, V] HashMap::keys(self : HashMap[K, V]) -> Iter[K] {
 /// inspect(values.contains(3), content="true")
 /// ```
 pub fn[K, V] HashMap::values(self : HashMap[K, V]) -> Iter[V] {
-  Iter::new(yield_ => for entry in self.entries {
+  let mut i = 0
+  let iter = Iterator::new(() => while i < self.entries.length() {
+    let entry = self.entries[i]
+    i += 1
     if entry is Some({ value, .. }) {
-      guard yield_(value) is IterContinue else { break IterEnd }
+      break Some(value)
     }
   } else {
-    IterContinue
+    None
   })
+  iter.iter()
 }
 
 ///|

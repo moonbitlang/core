@@ -70,7 +70,7 @@ test "special value testing" {
 
 ## Binary Representation
 
-Functions for converting doubles to their binary representation:
+To convert doubles to their binary representation, use `@buffer` instead:
 
 ```mbt check
 ///|
@@ -79,14 +79,18 @@ test "binary representation" {
 
   // Convert to big-endian and little-endian bytes
   // Different byte orders should produce different results
+  let buffer = @buffer.new()
+  buffer.write_double_be(num)
   inspect(
-    num.to_be_bytes_local(),
+    buffer.to_bytes(),
     content=(
       #|b"?\xf0\x00\x00\x00\x00\x00\x00"
     ),
   )
+  buffer.reset()
+  buffer.write_double_le(num)
   inspect(
-    num.to_le_bytes_local(),
+    buffer.to_bytes(),
     content=(
       #|b"\x00\x00\x00\x00\x00\x00\xf0?"
     ),
