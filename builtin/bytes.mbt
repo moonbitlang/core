@@ -692,13 +692,7 @@ pub fn Bytes::iterator(self : Bytes) -> Iterator[Byte] {
 ///   inspect(buf, content="b'\\x61'b'\\x62'b'\\x63'b'\\x64'b'\\x65'")
 ///   inspect(keys, content="[0, 1, 2, 3, 4]")
 pub fn Bytes::iter2(self : Bytes) -> Iter2[Int, Byte] {
-  Iter2::new(yield_ => for i in 0..<self.length() {
-    if yield_(i, self[i]) is IterEnd {
-      break IterEnd
-    }
-  } else {
-    IterContinue
-  })
+  self.iterator2().iter2()
 }
 
 ///|

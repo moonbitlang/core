@@ -581,13 +581,7 @@ pub fn[K, V] Map::iterator2(self : Map[K, V]) -> Iterator2[K, V] {
 
 ///|
 pub fn[K, V] Map::iter2(self : Map[K, V]) -> Iter2[K, V] {
-  Iter2::new(yield_ => loop self.head {
-    Some({ key, value, next, .. }) => {
-      guard yield_(key, value) is IterContinue else { break IterEnd }
-      continue next
-    }
-    None => IterContinue
-  })
+  self.iterator2().iter2()
 }
 
 ///|

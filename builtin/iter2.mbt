@@ -55,6 +55,7 @@ pub impl[A : Show, B : Show] Show for Iter2[A, B] with output(self, logger) {
 }
 
 ///|
+#deprecated("`Iter2::new`, and the internal iterator type `Iter2`, is deprecated. Create an external iterator `Iterator2`, and use `Iterator2::iter2` to migrate usage of `Iter2::new`. `Iter2` will become an alias of `Iterator2` in the future.")
 pub fn[A, B] Iter2::new(
   f : ((A, B) -> IterResult) -> IterResult,
 ) -> Iter2[A, B] {

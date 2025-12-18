@@ -41,6 +41,7 @@ test "Iter2::concat" {
 }
 
 ///|
+#warnings("-deprecated")
 test "Iter2::concat with early return" {
   let first = Iter2::new(y => {
     for i, v in "abcde" {
