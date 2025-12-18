@@ -462,6 +462,7 @@ type UninitializedArray[T]
 pub fn[T] UninitializedArray::at(Self[T], Int) -> T
 pub fn[A] UninitializedArray::length(Self[A]) -> Int
 pub fn[T] UninitializedArray::make(Int) -> Self[T]
+pub fn[T] UninitializedArray::mut_view(Self[T], start? : Int, end? : Int) -> MutArrayView[T]
 #alias("_[_]=_")
 pub fn[T] UninitializedArray::set(Self[T], Int, T) -> Unit
 #alias("_[_:_]")
