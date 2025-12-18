@@ -83,11 +83,7 @@ pub fn[T] FixedArray::iter(self : FixedArray[T]) -> Iter[T] {
 /// inspect(sum, content="33") // (0 + 10) + (1 + 10) + (2 + 10) = 33
 /// ```
 pub fn[T] FixedArray::iter2(self : FixedArray[T]) -> Iter2[Int, T] {
-  Iter2::new(yield_ => for i, v in self {
-    guard yield_(i, v) is IterContinue else { break IterEnd }
-  } else {
-    IterContinue
-  })
+  self.iterator2().iter2()
 }
 
 ///|
@@ -1561,6 +1557,11 @@ test "FixedArray::join" {
 ///|
 pub fn[X] FixedArray::iterator(self : FixedArray[X]) -> Iterator[X] {
   self[:].iterator()
+}
+
+///|
+pub fn[X] FixedArray::iterator2(self : FixedArray[X]) -> Iterator2[Int, X] {
+  self[:].iterator2()
 }
 
 ///|

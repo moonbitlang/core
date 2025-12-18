@@ -703,11 +703,7 @@ pub fn[K, V] HashMap::iterator2(self : HashMap[K, V]) -> Iterator2[K, V] {
 
 ///|
 pub fn[K, V] HashMap::iter2(self : HashMap[K, V]) -> Iter2[K, V] {
-  Iter2::new(yield_ => for kv in self {
-    guard yield_(kv.0, kv.1) is IterContinue else { break IterEnd }
-  } else {
-    IterContinue
-  })
+  self.iterator2().iter2()
 }
 
 ///|

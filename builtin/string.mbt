@@ -272,26 +272,7 @@ pub fn String::iterator(self : String) -> Iterator[Char] {
 
 ///|
 pub fn String::iter2(self : String) -> Iter2[Int, Char] {
-  Iter2::new(yield_ => {
-    let len = self.length()
-    for index = 0, n = 0; index < len; index = index + 1, n = n + 1 {
-      let c1 = self.unsafe_charcode_at(index)
-      if c1.is_leading_surrogate() && index + 1 < len {
-        let c2 = self.unsafe_charcode_at(index + 1)
-        if c2.is_trailing_surrogate() {
-          let c = code_point_of_surrogate_pair(c1, c2)
-          guard yield_(n, c) is IterContinue else { break IterEnd }
-          continue index + 2, n + 1
-        }
-      }
-      //TODO: handle garbage input
-      guard yield_(n, c1.unsafe_to_char()) is IterContinue else {
-        break IterEnd
-      }
-    } else {
-      IterContinue
-    }
-  })
+  self.iterator2().iter2()
 }
 
 ///|

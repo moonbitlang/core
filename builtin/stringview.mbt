@@ -198,25 +198,7 @@ pub fn StringView::iterator(self : StringView) -> Iterator[Char] {
 
 ///|
 pub fn StringView::iter2(self : StringView) -> Iter2[Int, Char] {
-  Iter2::new(yield_ => {
-    let len = self.length()
-    for index = 0, n = 0; index < len; index = index + 1, n = n + 1 {
-      let c1 = self.str().unsafe_charcode_at(self.start() + index)
-      if c1.is_leading_surrogate() && index + 1 < len {
-        let c2 = self.str().unsafe_charcode_at(self.start() + index + 1)
-        if c2.is_trailing_surrogate() {
-          let c = code_point_of_surrogate_pair(c1, c2)
-          guard yield_(n, c) is IterContinue else { break IterEnd }
-          continue index + 2, n + 1
-        }
-      }
-      guard yield_(n, c1.unsafe_to_char()) is IterContinue else {
-        break IterEnd
-      }
-    } else {
-      IterContinue
-    }
-  })
+  self.iterator2().iter2()
 }
 
 ///|

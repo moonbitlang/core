@@ -141,13 +141,7 @@ pub fn[K, V] HashMap::iterator2(self : HashMap[K, V]) -> Iterator2[K, V] {
 /// inspect(sum, content="3")
 /// ```
 pub fn[K, V] HashMap::iter2(self : HashMap[K, V]) -> Iter2[K, V] {
-  Iter2::new(yield_ => for entry in self.entries {
-    if entry is Some({ key, value, .. }) {
-      guard yield_(key, value) is IterContinue else { break IterEnd }
-    }
-  } else {
-    IterContinue
-  })
+  self.iterator2().iter2()
 }
 
 ///|

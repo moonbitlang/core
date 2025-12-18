@@ -1566,15 +1566,7 @@ pub fn[A] List::iterator(self : List[A]) -> Iterator[A] {
 /// inspect(iter, content="[(0, 10), (1, 20), (2, 30)]")
 /// ```
 pub fn[A] List::iter2(self : List[A]) -> Iter2[Int, A] {
-  Iter2::new(yield_ => loop (self, 0) {
-    (Empty, _) => IterEnd
-    (More(head, tail~), i) => {
-      if yield_(i, head) is IterEnd {
-        break IterEnd
-      }
-      continue (tail, i + 1)
-    }
-  })
+  self.iterator2().iter2()
 }
 
 ///|
