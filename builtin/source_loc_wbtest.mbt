@@ -15,24 +15,6 @@
 ///|
 test "SourceLocRepr::parse" {
   inspect(
-    SourceLocRepr::parse("file.mbt:1:1-2:2").to_json_string(),
-    content=(
-      #|"file.mbt:1:1-2:2"
-    ),
-  )
-  inspect(
-    SourceLocRepr::parse("/path/to/file.mbt:1:1-2:2").to_json_string(),
-    content=(
-      #|"/path/to/file.mbt:1:1-2:2"
-    ),
-  )
-  inspect(
-    SourceLocRepr::parse("/中文路径/中文文件.mbt:1:1-2:2").to_json_string(),
-    content=(
-      #|"/中文路径/中文文件.mbt:1:1-2:2"
-    ),
-  )
-  inspect(
     SourceLocRepr::parse("@pkg:file.mbt:1:1-2:2").to_json_string(),
     content=(
       #|{"pkg":"pkg","filename":"file.mbt","start_line":1,"start_column":1,"end_line":2,"end_column":2}
@@ -50,26 +32,10 @@ test "SourceLocRepr::parse" {
       #|{"pkg":"path/to/pkg","filename":"/中文路径/中文文件.mbt","start_line":1,"start_column":1,"end_line":2,"end_column":2}
     ),
   )
-  inspect(
-    SourceLocRepr::parse("@file.mbt:1:1-2:2").to_json_string(),
-    content=(
-      #|"@file.mbt:1:1-2:2"
-    ),
-  )
 }
 
 ///|
 test "SourceLocRepr::to_string" {
-  // legacy format
-  inspect(
-    SourceLocRepr::parse("file.mbt:1:1-2:2").to_string(),
-    content="file.mbt:1:1-2:2",
-  )
-  inspect(
-    SourceLocRepr::parse("中文路径/中文文件.mbt:1:1-2:2").to_string(),
-    content="中文路径/中文文件.mbt:1:1-2:2",
-  )
-  // new format
   inspect(
     SourceLocRepr::parse(
       "@moonbitlang/core/builtin:source_loc_wbtest.mbt:1:1-2:2",
