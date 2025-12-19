@@ -45,52 +45,44 @@ pub impl Show for SourceLoc with output(self, logger) {
 }
 
 ///|
-priv enum SourceLocRepr {
-  Legacy(String)
-  New(
-    pkg~ : StringView,
-    filename~ : StringView,
-    start_line~ : StringView,
-    start_column~ : StringView,
-    end_line~ : StringView,
-    end_column~ : StringView
-  )
+priv struct SourceLocRepr {
+  pkg : StringView
+  filename : StringView
+  start_line : StringView
+  start_column : StringView
+  end_line : StringView
+  end_column : StringView
 }
 
 ///|
 impl Show for SourceLocRepr with output(self, logger) {
-  match self {
-    Legacy(repr) => logger.write_string(repr)
-    New(pkg~, filename~, start_line~, start_column~, end_line~, end_column~) => {
-      let (module_name, package_name) = {
-        guard pkg.find("/") is Some(first_slash) else { (pkg, None) }
-        guard pkg.view(start_offset=first_slash + 1).find("/")
-          is Some(second_slash) else {
-          (pkg, None)
-        }
-        let module_name_end = first_slash + 1 + second_slash
-        (
-          pkg.view(end_offset=module_name_end),
-          Some(pkg.view(start_offset=module_name_end + 1)),
-        )
-      }
-      if package_name is Some(pkg_name) {
-        logger..write_view(pkg_name)..write_char('/')
-      }
-      logger
-      ..write_view(filename)
-      ..write_char(':')
-      ..write_view(start_line)
-      ..write_char(':')
-      ..write_view(start_column)
-      ..write_char('-')
-      ..write_view(end_line)
-      ..write_char(':')
-      ..write_view(end_column)
-      ..write_char('@')
-      ..write_view(module_name)
+  let pkg = self.pkg
+  let (module_name, package_name) = {
+    guard pkg.find("/") is Some(first_slash) else { (pkg, None) }
+    guard pkg.view(start_offset=first_slash + 1).find("/") is Some(second_slash) else {
+      (pkg, None)
     }
+    let module_name_end = first_slash + 1 + second_slash
+    (
+      pkg.view(end_offset=module_name_end),
+      Some(pkg.view(start_offset=module_name_end + 1)),
+    )
   }
+  if package_name is Some(pkg_name) {
+    logger..write_view(pkg_name)..write_char('/')
+  }
+  logger
+  ..write_view(self.filename)
+  ..write_char(':')
+  ..write_view(self.start_line)
+  ..write_char(':')
+  ..write_view(self.start_column)
+  ..write_char('-')
+  ..write_view(self.end_line)
+  ..write_char(':')
+  ..write_view(self.end_column)
+  ..write_char('@')
+  ..write_view(module_name)
 }
 
 ///|
@@ -101,49 +93,41 @@ fn SourceLocRepr::parse(repr : String) -> SourceLocRepr {
     Some((view.view(end_offset=i), view.view(start_offset=i + 1)))
   }
   // extract package name
-  guard repr is ['@', .. rest] else { Legacy(repr) }
-  guard rest.find(":") is Some(pkg_end) else { Legacy(repr) }
+  guard repr is ['@', .. rest]
+  guard rest.find(":") is Some(pkg_end)
   let pkg = rest.view(start_offset=0, end_offset=pkg_end)
 
   // extract end location in reverse
-  guard rest.rev_find("-") is Some(start_loc_end) else { Legacy(repr) }
+  guard rest.rev_find("-") is Some(start_loc_end)
   guard start_loc_end + 1 < rest.length()
   let end_loc = rest.view(start_offset=start_loc_end + 1)
-  guard parse_loc(end_loc) is Some((end_line, end_column)) else { Legacy(repr) }
+  guard parse_loc(end_loc) is Some((end_line, end_column))
   let rest = rest.view(end_offset=start_loc_end)
 
   // extract start location
   guard rest.rev_find(":") is Some(start_line_end) &&
-    rest.view(end_offset=start_line_end).rev_find(":") is Some(filename_end) else {
-    Legacy(repr)
-  }
+    rest.view(end_offset=start_line_end).rev_find(":") is Some(filename_end)
   guard filename_end + 1 < rest.length()
   let start_loc = rest.view(start_offset=filename_end + 1)
-  guard parse_loc(start_loc) is Some((start_line, start_column)) else {
-    Legacy(repr)
-  }
+  guard parse_loc(start_loc) is Some((start_line, start_column))
 
   // everything else remaining is treated as filename
-  guard filename_end > pkg_end + 1 else { Legacy(repr) }
+  guard filename_end > pkg_end + 1
   let filename = rest.view(start_offset=pkg_end + 1, end_offset=filename_end)
-  New(pkg~, filename~, start_line~, start_column~, end_line~, end_column~)
+  { pkg, filename, start_line, start_column, end_line, end_column }
 }
 
 ///|
 fn SourceLocRepr::to_json_string(self : SourceLocRepr) -> String {
-  match self {
-    Legacy(repr) => repr.escape()
-    New(pkg~, filename~, start_line~, start_column~, end_line~, end_column~) =>
-      StringBuilder::new()
-      ..write_string("{\"pkg\":\"\{pkg}\"")
-      ..write_string(",\"filename\":")
-      ..write_object(filename)
-      ..write_string(",\"start_line\":\{start_line}")
-      ..write_string(",\"start_column\":\{start_column}")
-      ..write_string(",\"end_line\":\{end_line}")
-      ..write_string(",\"end_column\":\{end_column}}")
-      .to_string()
-  }
+  StringBuilder::new()
+  ..write_string("{\"pkg\":\"\{self.pkg}\"")
+  ..write_string(",\"filename\":")
+  ..write_object(self.filename)
+  ..write_string(",\"start_line\":\{self.start_line}")
+  ..write_string(",\"start_column\":\{self.start_column}")
+  ..write_string(",\"end_line\":\{self.end_line}")
+  ..write_string(",\"end_column\":\{self.end_column}}")
+  .to_string()
 }
 
 ///|
