@@ -468,7 +468,7 @@ pub fn inspect(
   args_loc~ : ArgsLoc,
 ) -> Unit raise InspectError {
   let loc = loc.to_json_string()
-  let args_loc = args_loc.to_json().escape()
+  let args_loc = args_loc.to_json()
   let actual = obj.to_json().stringify(escape_slash=false)
   let want = match content {
     None => "".to_json().stringify(escape_slash=false)

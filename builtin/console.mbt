@@ -184,7 +184,7 @@ pub fn inspect(
   let actual = obj.to_string()
   if actual != content {
     let loc = loc.to_json_string()
-    let args_loc = args_loc.to_json().escape()
+    let args_loc = args_loc.to_json()
     let expect_escaped = content.escape()
     let actual_escaped = actual.escape()
     let expect_base64 = "\"\{base64_encode_string_codepoint(content)}\""
