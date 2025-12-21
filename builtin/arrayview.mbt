@@ -594,6 +594,148 @@ pub fn[T : Eq] ArrayView::contains(self : ArrayView[T], value : T) -> Bool {
 }
 
 ///|
+/// Searches for the first occurrence of a value in the array view.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let view = [1, 2, 3, 2, 4][:]
+///   inspect(view.search(2), content="Some(1)")
+///   inspect(view.search(5), content="None")
+/// }
+/// ```
+pub fn[T : Eq] ArrayView::search(self : ArrayView[T], value : T) -> Int? {
+  for i in 0..<self.length() {
+    if self.unsafe_get(i) == value {
+      break Some(i)
+    }
+  } else {
+    None
+  }
+}
+
+///|
+/// Checks if the array view starts with the given prefix.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let view = [1, 2, 3, 4, 5][:]
+///   inspect(view.starts_with([1, 2][:]), content="true")
+///   inspect(view.starts_with([2, 3][:]), content="false")
+/// }
+/// ```
+pub fn[T : Eq] ArrayView::starts_with(
+  self : ArrayView[T],
+  prefix : ArrayView[T],
+) -> Bool {
+  if prefix.length() > self.length() {
+    return false
+  }
+  for i in 0..<prefix.length() {
+    if self.unsafe_get(i) != prefix.unsafe_get(i) {
+      break false
+    }
+  } else {
+    true
+  }
+}
+
+///|
+/// Checks if the array view ends with the given suffix.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let view = [1, 2, 3, 4, 5][:]
+///   inspect(view.ends_with([4, 5][:]), content="true")
+///   inspect(view.ends_with([3, 4][:]), content="false")
+/// }
+/// ```
+pub fn[T : Eq] ArrayView::ends_with(
+  self : ArrayView[T],
+  suffix : ArrayView[T],
+) -> Bool {
+  let suffix_len = suffix.length()
+  let self_len = self.length()
+  if suffix_len > self_len {
+    return false
+  }
+  for i in 0..<suffix_len {
+    if self.unsafe_get(self_len - suffix_len + i) != suffix.unsafe_get(i) {
+      break false
+    }
+  } else {
+    true
+  }
+}
+
+///|
+/// Performs a binary search on a sorted array view.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let view = [1, 3, 5, 7, 9][:]
+///   inspect(view.binary_search(5), content="Ok(2)")
+///   inspect(view.binary_search(6), content="Err(3)")
+/// }
+/// ```
+pub fn[T : Compare] ArrayView::binary_search(
+  self : ArrayView[T],
+  value : T,
+) -> Result[Int, Int] {
+  let len = self.length()
+  for i = 0, j = len; i < j; {
+    let h = i + (j - i) / 2
+    if self.unsafe_get(h) < value {
+      continue h + 1, j
+    } else {
+      continue i, h
+    }
+  } else {
+    if i < len && self.unsafe_get(i) == value {
+      Ok(i)
+    } else {
+      Err(i)
+    }
+  }
+}
+
+///|
+/// Performs a binary search using a custom comparison function.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let view = [1, 3, 5, 7, 9][:]
+///   let result = view.binary_search_by(x => x.compare(5))
+///   inspect(result, content="Ok(2)")
+/// }
+/// ```
+#locals(cmp)
+pub fn[T] ArrayView::binary_search_by(
+  self : ArrayView[T],
+  cmp : (T) -> Int raise?,
+) -> Result[Int, Int] raise? {
+  let len = self.length()
+  for i = 0, j = len; i < j; {
+    let h = i + (j - i) / 2
+    if cmp(self.unsafe_get(h)) < 0 {
+      continue h + 1, j
+    } else {
+      continue i, h
+    }
+  } else {
+    if i < len && cmp(self.unsafe_get(i)) == 0 {
+      Ok(i)
+    } else {
+      Err(i)
+    }
+  }
+}
+
+///|
 /// Fold out values from an ArrayView according to certain rules.
 ///
 /// # Example
