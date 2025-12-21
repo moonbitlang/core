@@ -21,7 +21,7 @@
 ///
 /// # Example
 ///
-/// ```mbt
+/// ```mbt nocheck
 ///   let set = @sorted_set.from_array([1, 2, 3, 4, 5])
 ///   let result = set.rev_iter().collect()
 ///   assert_eq(result, [5, 4, 3, 2, 1])

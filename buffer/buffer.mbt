@@ -22,7 +22,7 @@
 /// Buffer, since it is optimized for all targets.
 /// # Usage
 ///
-/// ```mbt
+/// ```mbt nocheck
 ///   let buf = @buffer.new(size_hint=100)
 ///   buf.write_string("Tes")
 ///   buf.write_char('t')

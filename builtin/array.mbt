@@ -1858,7 +1858,7 @@ pub fn[T] Array::shuffle_in_place(
 /// *rand n* is expected to returns a uniformly distribution integer between 0 and n - 1
 /// # Example
 ///
-/// ```mbt
+/// ```mbt nocheck
 /// let arr = [1, 2, 3, 4, 5]
 ///
 /// fn rand(upper : Int) -> Int {

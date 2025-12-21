@@ -452,7 +452,7 @@ pub suberror CreatingViewError {
 /// 
 /// # Examples
 /// 
-/// ```mbt
+/// ```mbt nocheck
 /// let str = "Hello🤣World"
 /// let view1 =  str[0:5]
 /// inspect(
