@@ -241,23 +241,7 @@ pub fn[T : Compare] FixedArray::binary_search(
   self : FixedArray[T],
   value : T,
 ) -> Result[Int, Int] {
-  let len = self.length()
-  for i = 0, j = len; i < j; {
-    let h = i + (j - i) / 2
-    // Note even if self[h] == value, we still continue the search
-    // because we want to find the leftmost match
-    if self.unsafe_get(h) < value {
-      continue h + 1, j
-    } else {
-      continue i, h
-    }
-  } else {
-    if i < len && self.unsafe_get(i) == value {
-      Ok(i)
-    } else {
-      Err(i)
-    }
-  }
+  self[:].binary_search(value)
 }
 
 ///|
@@ -300,28 +284,11 @@ pub fn[T : Compare] FixedArray::binary_search(
 /// * For multiple matches, returns the leftmost matching position
 /// * Returns an insertion point that maintains the sort order when no match is
 /// found
-#locals(cmp)
 pub fn[T] FixedArray::binary_search_by(
   self : FixedArray[T],
   cmp : (T) -> Int raise?,
 ) -> Result[Int, Int] raise? {
-  let len = self.length()
-  for i = 0, j = len; i < j; {
-    let h = i + (j - i) / 2
-    // Note even if self[h] == value, we still continue the search
-    // because we want to find the leftmost match
-    if cmp(self.unsafe_get(h)) < 0 {
-      continue h + 1, j
-    } else {
-      continue i, h
-    }
-  } else {
-    if i < len && cmp(self.unsafe_get(i)) == 0 {
-      Ok(i)
-    } else {
-      Err(i)
-    }
-  }
+  self[:].binary_search_by(cmp)
 }
 
 ///|
@@ -1107,12 +1074,7 @@ test "fill" {
 /// }
 /// ```
 pub fn[T : Eq] FixedArray::search(self : FixedArray[T], value : T) -> Int? {
-  for i in 0..<self.length() {
-    if self[i] == value {
-      return Some(i)
-    }
-  }
-  None
+  self[:].search(value)
 }
 
 ///|
@@ -1186,15 +1148,7 @@ pub fn[T : Eq] FixedArray::starts_with(
   self : FixedArray[T],
   prefix : FixedArray[T],
 ) -> Bool {
-  if prefix.length() > self.length() {
-    return false
-  }
-  for i in 0..<prefix.length() {
-    if self[i] != prefix[i] {
-      return false
-    }
-  }
-  true
+  self[:].starts_with(prefix[:])
 }
 
 ///|
@@ -1236,17 +1190,7 @@ pub fn[T : Eq] FixedArray::ends_with(
   self : FixedArray[T],
   suffix : FixedArray[T],
 ) -> Bool {
-  let self_len = self.length()
-  let suf_len = suffix.length()
-  if suf_len > self_len {
-    return false
-  }
-  for i in 0..<suf_len {
-    if self[self_len - suf_len + i] != suffix[i] {
-      return false
-    }
-  }
-  true
+  self[:].ends_with(suffix[:])
 }
 
 ///|
