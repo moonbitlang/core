@@ -26,13 +26,15 @@
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let x = 2.0
-/// inspect(@math.pow(x, 3.0), content="8")
-/// inspect(@math.pow(x, 0.5), content="1.4142135623730951")
-/// inspect(@math.pow(2, 0.0), content="1")
-/// inspect(@math.pow(-1.0, 2.0), content="1")
-/// inspect(@math.pow(0.0, 0.0), content="1")
-/// inspect(@math.pow(@double.infinity, -1.0), content="0")
+/// ```mbt check
+/// test {
+///   let x = 2.0
+///   inspect(@math.pow(x, 3.0), content="8")
+///   inspect(@math.pow(x, 0.5), content="1.4142135623730951")
+///   inspect(@math.pow(2, 0.0), content="1")
+///   inspect(@math.pow(-1.0, 2.0), content="1")
+///   inspect(@math.pow(0.0, 0.0), content="1")
+///   inspect(@math.pow(@double.infinity, -1.0), content="0")
+/// }
 /// ```
 pub fn pow(base : Double, exponent : Double) -> Double = "Math" "pow"

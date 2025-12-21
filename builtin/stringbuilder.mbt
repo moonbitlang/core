@@ -31,11 +31,13 @@ pub fn[T : Show] StringBuilder::write_object(
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let sb = StringBuilder::new()
-/// let chars = "Hello🤣".iter()
-/// sb.write_iter(chars)
-/// assert_eq(sb.to_string(), "Hello🤣")
+/// ```mbt check
+/// test {
+///   let sb = StringBuilder::new()
+///   let chars = "Hello🤣".iter()
+///   sb.write_iter(chars)
+///   assert_eq(sb.to_string(), "Hello🤣")
+/// }
 /// ```
 pub fn StringBuilder::write_iter(
   self : StringBuilder,
@@ -59,12 +61,14 @@ pub fn StringBuilder::write_iter(
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let sb = StringBuilder::new()
-/// let str = "Hello, world!"
-/// let view = str[7:12] // "world"
-/// sb.write_stringview(view)
-/// assert_eq(sb.to_string(), "world")
+/// ```mbt check
+/// test {
+///   let sb = StringBuilder::new()
+///   let str = "Hello, world!"
+///   let view = str[7:12] // "world"
+///   sb.write_stringview(view)
+///   assert_eq(sb.to_string(), "world")
+/// }
 /// ```
 pub fn StringBuilder::write_stringview(
   self : StringBuilder,

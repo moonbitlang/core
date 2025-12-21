@@ -21,9 +21,11 @@
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let nan = @double.not_a_number
-/// inspect(nan.is_nan(), content="true")
+/// ```mbt check
+/// test {
+///   let nan = @double.not_a_number
+///   inspect(nan.is_nan(), content="true")
+/// }
 /// ```
 #deprecated("Use `@double.not_a_number` instead")
 #coverage.skip
@@ -53,8 +55,10 @@ pub fn Double::inf(sign : Int) -> Double {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// inspect(@double.min_positive, content="2.2250738585072014e-308")
+/// ```mbt check
+/// test {
+///   inspect(@double.min_positive, content="2.2250738585072014e-308")
+/// }
 /// ```
 #deprecated("Use `@double.min_positive` instead")
 #coverage.skip

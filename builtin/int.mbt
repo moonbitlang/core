@@ -19,14 +19,16 @@
 /// the largest representable power of two.
 ///
 /// Example:
-/// ```mbt test
-/// inspect((0).next_power_of_two(), content="1")
-/// inspect((1).next_power_of_two(), content="1")
-/// inspect((2).next_power_of_two(), content="2")
-/// inspect((3).next_power_of_two(), content="4")
-/// inspect((8).next_power_of_two(), content="8")
-/// inspect((1073741824).next_power_of_two(), content="1073741824")
-/// inspect((2000000000).next_power_of_two(), content="1073741824")
+/// ```mbt check
+/// test {
+///   inspect((0).next_power_of_two(), content="1")
+///   inspect((1).next_power_of_two(), content="1")
+///   inspect((2).next_power_of_two(), content="2")
+///   inspect((3).next_power_of_two(), content="4")
+///   inspect((8).next_power_of_two(), content="8")
+///   inspect((1073741824).next_power_of_two(), content="1073741824")
+///   inspect((2000000000).next_power_of_two(), content="1073741824")
+/// }
 /// ```
 pub fn Int::next_power_of_two(self : Int) -> Int {
   guard self >= 0
@@ -46,9 +48,11 @@ pub fn Int::next_power_of_two(self : Int) -> Int {
 /// Returns the minimum of two integers.
 ///
 /// Example:
-/// ```mbt test
-/// inspect((1).min(2), content="1")
-/// inspect((2).min(1), content="1")
+/// ```mbt check
+/// test {
+///   inspect((1).min(2), content="1")
+///   inspect((2).min(1), content="1")
+/// }
 /// ```
 pub fn Int::min(self : Int, other : Int) -> Int {
   if self < other {
@@ -62,9 +66,11 @@ pub fn Int::min(self : Int, other : Int) -> Int {
 /// Returns the maximum of two integers.
 ///
 /// Example:
-/// ```mbt test
-/// inspect((1).max(2), content="2")
-/// inspect((2).max(1), content="2")
+/// ```mbt check
+/// test {
+///   inspect((1).max(2), content="2")
+///   inspect((2).max(1), content="2")
+/// }
 /// ```
 pub fn Int::max(self : Int, other : Int) -> Int {
   if self > other {
@@ -78,11 +84,13 @@ pub fn Int::max(self : Int, other : Int) -> Int {
 /// Clamps the value `self` between `min` and `max`.
 ///
 /// Example:
-/// ```mbt test
-/// inspect((1).clamp(min=0, max=2), content="1")
-/// inspect((-1).clamp(min=0, max=2), content="0")
-/// inspect((3).clamp(min=0, max=2), content="2")
-/// inspect((-1).clamp(min=0, max=2), content="0")
+/// ```mbt check
+/// test {
+///   inspect((1).clamp(min=0, max=2), content="1")
+///   inspect((-1).clamp(min=0, max=2), content="0")
+///   inspect((3).clamp(min=0, max=2), content="2")
+///   inspect((-1).clamp(min=0, max=2), content="0")
+/// }
 /// ```
 pub fn Int::clamp(self : Int, min~ : Int, max~ : Int) -> Int {
   guard min <= max
@@ -100,11 +108,13 @@ pub fn Int::clamp(self : Int, min~ : Int, max~ : Int) -> Int {
 /// Leading surrogates are in the range 0xD800 to 0xDBFF.
 ///
 /// Example:
-/// ```mbt test
-/// inspect((0xD800).is_leading_surrogate(), content="true")
-/// inspect((0xDBFF).is_leading_surrogate(), content="true")
-/// inspect((0xDC00).is_leading_surrogate(), content="false")
-/// inspect((0x41).is_leading_surrogate(), content="false") // 'A'
+/// ```mbt check
+/// test {
+///   inspect((0xD800).is_leading_surrogate(), content="true")
+///   inspect((0xDBFF).is_leading_surrogate(), content="true")
+///   inspect((0xDC00).is_leading_surrogate(), content="false")
+///   inspect((0x41).is_leading_surrogate(), content="false") // 'A'
+/// }
 /// ```
 pub fn Int::is_leading_surrogate(self : Int) -> Bool {
   0xD800 <= self && self <= 0xDBFF
@@ -115,11 +125,13 @@ pub fn Int::is_leading_surrogate(self : Int) -> Bool {
 /// Trailing surrogates are in the range 0xDC00 to 0xDFFF.
 ///
 /// Example:
-/// ```mbt test
-/// inspect((0xDC00).is_trailing_surrogate(), content="true")
-/// inspect((0xDFFF).is_trailing_surrogate(), content="true")
-/// inspect((0xD800).is_trailing_surrogate(), content="false")
-/// inspect((0x41).is_trailing_surrogate(), content="false") // 'A'
+/// ```mbt check
+/// test {
+///   inspect((0xDC00).is_trailing_surrogate(), content="true")
+///   inspect((0xDFFF).is_trailing_surrogate(), content="true")
+///   inspect((0xD800).is_trailing_surrogate(), content="false")
+///   inspect((0x41).is_trailing_surrogate(), content="false") // 'A'
+/// }
 /// ```
 pub fn Int::is_trailing_surrogate(self : Int) -> Bool {
   0xDC00 <= self && self <= 0xDFFF
@@ -130,12 +142,14 @@ pub fn Int::is_trailing_surrogate(self : Int) -> Bool {
 /// Surrogates are in the range 0xD800 to 0xDFFF.
 ///
 /// Example:
-/// ```mbt test
-/// inspect((0xD800).is_surrogate(), content="true") // leading surrogate
-/// inspect((0xDC00).is_surrogate(), content="true") // trailing surrogate
-/// inspect((0xDFFF).is_surrogate(), content="true") // trailing surrogate
-/// inspect((0x41).is_surrogate(), content="false") // 'A'
-/// inspect((0x1F600).is_surrogate(), content="false") // 😀 emoji codepoint
+/// ```mbt check
+/// test {
+///   inspect((0xD800).is_surrogate(), content="true") // leading surrogate
+///   inspect((0xDC00).is_surrogate(), content="true") // trailing surrogate
+///   inspect((0xDFFF).is_surrogate(), content="true") // trailing surrogate
+///   inspect((0x41).is_surrogate(), content="false") // 'A'
+///   inspect((0x1F600).is_surrogate(), content="false") // 😀 emoji codepoint
+/// }
 /// ```
 pub fn Int::is_surrogate(self : Int) -> Bool {
   0xD800 <= self && self <= 0xDFFF
@@ -152,10 +166,12 @@ pub fn Int::is_surrogate(self : Int) -> Bool {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// inspect(Int::abs(42), content="42")
-/// inspect(Int::abs(-42), content="42")
-/// inspect(Int::abs(0), content="0")
+/// ```mbt check
+/// test {
+///   inspect(Int::abs(42), content="42")
+///   inspect(Int::abs(-42), content="42")
+///   inspect(Int::abs(0), content="0")
+/// }
 /// ```
 pub fn Int::abs(self : Int) -> Int {
   if self < 0 {

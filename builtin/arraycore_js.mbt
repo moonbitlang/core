@@ -320,26 +320,28 @@ fn[T] Array::unsafe_grow_to_length(self : Array[T], new_len : Int) -> Unit {
 /// - Does nothing if the array is empty
 /// 
 /// # Example
-/// ```mbt test
-/// // Fill entire array
-/// let arr = [1, 2, 3, 4, 5]
-/// arr.fill(0)
-/// inspect(arr, content="[0, 0, 0, 0, 0]")
+/// ```mbt check
+/// test {
+///   // Fill entire array
+///   let arr = [1, 2, 3, 4, 5]
+///   arr.fill(0)
+///   inspect(arr, content="[0, 0, 0, 0, 0]")
 ///
-/// // Fill from index 1 to 3 (exclusive)
-/// let arr2 = [1, 2, 3, 4, 5]
-/// arr2.fill(99, start=1, end=3)
-/// inspect(arr2, content="[1, 99, 99, 4, 5]")
+///   // Fill from index 1 to 3 (exclusive)
+///   let arr2 = [1, 2, 3, 4, 5]
+///   arr2.fill(99, start=1, end=3)
+///   inspect(arr2, content="[1, 99, 99, 4, 5]")
 ///
-/// // Fill from index 2 to end
-/// let arr3 = ["a", "b", "c", "d"]
-/// arr3.fill("x", start=2)
-/// inspect(
-///   arr3,
-///   content=(
-///     #|["a", "b", "x", "x"]
-///   ),
-/// )
+///   // Fill from index 2 to end
+///   let arr3 = ["a", "b", "c", "d"]
+///   arr3.fill("x", start=2)
+///   inspect(
+///     arr3,
+///     content=(
+///       #|["a", "b", "x", "x"]
+///     ),
+///   )
+/// }
 /// ```
 pub fn[A] Array::fill(
   self : Array[A],
@@ -372,11 +374,13 @@ pub fn[A] Array::fill(
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let original = [1, 2, 3]
-/// let copied = original.copy()
-/// inspect(copied, content="[1, 2, 3]")
-/// inspect(physical_equal(original, copied), content="false")
+/// ```mbt check
+/// test {
+///   let original = [1, 2, 3]
+///   let copied = original.copy()
+///   inspect(copied, content="[1, 2, 3]")
+///   inspect(physical_equal(original, copied), content="false")
+/// }
 /// ```
 pub fn[T] Array::copy(self : Array[T]) -> Array[T] {
   JSArray::ofAnyArray(self).copy().toAnyArray()

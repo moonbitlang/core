@@ -24,15 +24,17 @@
 ///
 /// Example:
 ///
-/// ```mbt test
-/// inspect(@math.tan(0.0), content="0")
-/// inspect(@math.tan(0.7853981633974483), content="0.9999999999999999")
-/// inspect(@math.tan(4.0), content="1.1578212823495777")
-/// inspect(@math.tan(5.0), content="-3.380515006246586")
-/// inspect(@math.tan(31415926535897.9323846), content="0.0012091241554056254")
-/// inspect(@math.tan(@double.not_a_number), content="NaN")
-/// inspect(@math.tan(@double.infinity), content="NaN")
-/// inspect(@math.tan(@double.neg_infinity), content="NaN")
+/// ```mbt check
+/// test {
+///   inspect(@math.tan(0.0), content="0")
+///   inspect(@math.tan(0.7853981633974483), content="0.9999999999999999")
+///   inspect(@math.tan(4.0), content="1.1578212823495777")
+///   inspect(@math.tan(5.0), content="-3.380515006246586")
+///   inspect(@math.tan(31415926535897.9323846), content="0.0012091241554056254")
+///   inspect(@math.tan(@double.not_a_number), content="NaN")
+///   inspect(@math.tan(@double.infinity), content="NaN")
+///   inspect(@math.tan(@double.neg_infinity), content="NaN")
+/// }
 /// ```
 pub fn tan(x : Double) -> Double {
   if x.is_inf() || x.is_nan() {
@@ -63,13 +65,15 @@ pub fn tan(x : Double) -> Double {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// inspect(@math.asin(0.0), content="0")
-/// inspect(@math.asin(1.0), content="1.5707963267948966")
-/// inspect(@math.asin(-1.0), content="-1.5707963267948966")
-/// inspect(@math.asin(@double.not_a_number), content="NaN")
-/// inspect(@math.asin(@double.infinity), content="NaN")
-/// inspect(@math.asin(@double.neg_infinity), content="NaN")
+/// ```mbt check
+/// test {
+///   inspect(@math.asin(0.0), content="0")
+///   inspect(@math.asin(1.0), content="1.5707963267948966")
+///   inspect(@math.asin(-1.0), content="-1.5707963267948966")
+///   inspect(@math.asin(@double.not_a_number), content="NaN")
+///   inspect(@math.asin(@double.infinity), content="NaN")
+///   inspect(@math.asin(@double.neg_infinity), content="NaN")
+/// }
 /// ```
 pub fn asin(x : Double) -> Double {
   let huge = 1.0e+300
@@ -143,13 +147,15 @@ pub fn asin(x : Double) -> Double {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// inspect(@math.acos(0.0), content="1.5707963267948966")
-/// inspect(@math.acos(1.0), content="0")
-/// inspect(@math.acos(-1.0), content="3.141592653589793")
-/// inspect(@math.acos(@double.not_a_number), content="NaN")
-/// inspect(@math.acos(@double.infinity), content="NaN")
-/// inspect(@math.acos(@double.neg_infinity), content="NaN")
+/// ```mbt check
+/// test {
+///   inspect(@math.acos(0.0), content="1.5707963267948966")
+///   inspect(@math.acos(1.0), content="0")
+///   inspect(@math.acos(-1.0), content="3.141592653589793")
+///   inspect(@math.acos(@double.not_a_number), content="NaN")
+///   inspect(@math.acos(@double.infinity), content="NaN")
+///   inspect(@math.acos(@double.neg_infinity), content="NaN")
+/// }
 /// ```
 pub fn acos(x : Double) -> Double {
   let one : Double = 1.0
@@ -221,13 +227,15 @@ pub fn acos(x : Double) -> Double {
 ///
 /// * Returns NaN if the input is NaN.
 ///
-/// ```mbt test
-/// inspect(@math.atan(0.0), content="0")
-/// inspect(@math.atan(1.0), content="0.7853981633974483")
-/// inspect(@math.atan(-1.0), content="-0.7853981633974483")
-/// inspect(@math.atan(@double.not_a_number), content="NaN")
-/// inspect(@math.atan(@double.infinity), content="1.5707963267948966")
-/// inspect(@math.atan(@double.neg_infinity), content="-1.5707963267948966")
+/// ```mbt check
+/// test {
+///   inspect(@math.atan(0.0), content="0")
+///   inspect(@math.atan(1.0), content="0.7853981633974483")
+///   inspect(@math.atan(-1.0), content="-0.7853981633974483")
+///   inspect(@math.atan(@double.not_a_number), content="NaN")
+///   inspect(@math.atan(@double.infinity), content="1.5707963267948966")
+///   inspect(@math.atan(@double.neg_infinity), content="-1.5707963267948966")
+/// }
 /// ```
 pub fn atan(x : Double) -> Double {
   if x.is_nan() || x == 0.0 {
@@ -322,32 +330,34 @@ pub fn atan(x : Double) -> Double {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// inspect(@math.atan2(0.0, -1.0), content="3.141592653589793")
-/// inspect(@math.atan2(1.0, 0.0), content="1.5707963267948966")
-/// inspect(@math.atan2(1.0, 1.0), content="0.7853981633974483")
-/// inspect(@math.atan2(@double.not_a_number, 1.0), content="NaN")
-/// inspect(@math.atan2(1.0, @double.not_a_number), content="NaN")
-/// inspect(@math.atan2(@double.infinity, 1.0), content="1.5707963267948966")
-/// inspect(@math.atan2(1.0, @double.infinity), content="0")
-/// inspect(@math.atan2(@double.neg_infinity, 1.0), content="-1.5707963267948966")
-/// inspect(@math.atan2(1.0, @double.neg_infinity), content="3.141592653589793")
-/// inspect(
-///   @math.atan2(@double.infinity, @double.infinity),
-///   content="0.7853981633974483",
-/// )
-/// inspect(
-///   @math.atan2(@double.neg_infinity, @double.neg_infinity),
-///   content="-2.356194490192345",
-/// )
-/// inspect(
-///   @math.atan2(@double.infinity, @double.neg_infinity),
-///   content="2.356194490192345",
-/// )
-/// inspect(
-///   @math.atan2(@double.neg_infinity, @double.infinity),
-///   content="-0.7853981633974483",
-/// )
+/// ```mbt check
+/// test {
+///   inspect(@math.atan2(0.0, -1.0), content="3.141592653589793")
+///   inspect(@math.atan2(1.0, 0.0), content="1.5707963267948966")
+///   inspect(@math.atan2(1.0, 1.0), content="0.7853981633974483")
+///   inspect(@math.atan2(@double.not_a_number, 1.0), content="NaN")
+///   inspect(@math.atan2(1.0, @double.not_a_number), content="NaN")
+///   inspect(@math.atan2(@double.infinity, 1.0), content="1.5707963267948966")
+///   inspect(@math.atan2(1.0, @double.infinity), content="0")
+///   inspect(@math.atan2(@double.neg_infinity, 1.0), content="-1.5707963267948966")
+///   inspect(@math.atan2(1.0, @double.neg_infinity), content="3.141592653589793")
+///   inspect(
+///     @math.atan2(@double.infinity, @double.infinity),
+///     content="0.7853981633974483",
+///   )
+///   inspect(
+///     @math.atan2(@double.neg_infinity, @double.neg_infinity),
+///     content="-2.356194490192345",
+///   )
+///   inspect(
+///     @math.atan2(@double.infinity, @double.neg_infinity),
+///     content="2.356194490192345",
+///   )
+///   inspect(
+///     @math.atan2(@double.neg_infinity, @double.infinity),
+///     content="-0.7853981633974483",
+///   )
+/// }
 /// ```
 pub fn atan2(y : Double, x : Double) -> Double {
   if x.is_nan() || y.is_nan() {

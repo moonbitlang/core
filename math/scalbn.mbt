@@ -70,16 +70,18 @@ pub fn scalbn(x : Double, exp : Int) -> Double {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// inspect(@math.scalbnf(1.5, 2), content="6")
-/// inspect(@math.scalbnf(2, -1), content="1")
-/// inspect(@math.scalbnf(3, 0), content="3")
-/// inspect(@math.scalbnf(1, 128), content="Infinity")
-/// inspect(@math.scalbnf(1, -150), content="0")
-/// inspect(@math.scalbnf(1, 254), content="Infinity")
-/// inspect(@math.scalbnf(@float.not_a_number, 1), content="NaN")
-/// inspect(@math.scalbnf(-2, 1), content="-4")
-/// inspect(@math.scalbnf(-2, 128), content="-Infinity")
+/// ```mbt check
+/// test {
+///   inspect(@math.scalbnf(1.5, 2), content="6")
+///   inspect(@math.scalbnf(2, -1), content="1")
+///   inspect(@math.scalbnf(3, 0), content="3")
+///   inspect(@math.scalbnf(1, 128), content="Infinity")
+///   inspect(@math.scalbnf(1, -150), content="0")
+///   inspect(@math.scalbnf(1, 254), content="Infinity")
+///   inspect(@math.scalbnf(@float.not_a_number, 1), content="NaN")
+///   inspect(@math.scalbnf(-2, 1), content="-4")
+///   inspect(@math.scalbnf(-2, 128), content="-Infinity")
+/// }
 /// ```
 pub fn scalbnf(y : Float, exp : Int) -> Float {
   let mut y = y

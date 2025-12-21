@@ -177,13 +177,15 @@ fn tanf_poly(x : Float, odd : Bool) -> Float {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// inspect(@math.sinf(0), content="0")
-/// inspect(@math.sinf(2), content="0.9092974066734314")
-/// inspect(@math.sinf(-5), content="0.9589242935180664")
-/// inspect(@math.sinf(@float.not_a_number), content="NaN")
-/// inspect(@math.sinf(@float.infinity), content="NaN")
-/// inspect(@math.sinf(@float.neg_infinity), content="NaN")
+/// ```mbt check
+/// test {
+///   inspect(@math.sinf(0), content="0")
+///   inspect(@math.sinf(2), content="0.9092974066734314")
+///   inspect(@math.sinf(-5), content="0.9589242935180664")
+///   inspect(@math.sinf(@float.not_a_number), content="NaN")
+///   inspect(@math.sinf(@float.infinity), content="NaN")
+///   inspect(@math.sinf(@float.neg_infinity), content="NaN")
+/// }
 /// ```
 pub fn sinf(x : Float) -> Float {
   if x.is_nan() || x.is_inf() {
@@ -207,13 +209,15 @@ pub fn sinf(x : Float) -> Float {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// inspect(@math.cosf(0), content="1")
-/// inspect(@math.cosf(2), content="-0.41614681482315063")
-/// inspect(@math.cosf(-5), content="0.28366217017173767")
-/// inspect(@math.cosf(@float.not_a_number), content="NaN")
-/// inspect(@math.cosf(@float.infinity), content="NaN")
-/// inspect(@math.cosf(@float.neg_infinity), content="NaN")
+/// ```mbt check
+/// test {
+///   inspect(@math.cosf(0), content="1")
+///   inspect(@math.cosf(2), content="-0.41614681482315063")
+///   inspect(@math.cosf(-5), content="0.28366217017173767")
+///   inspect(@math.cosf(@float.not_a_number), content="NaN")
+///   inspect(@math.cosf(@float.infinity), content="NaN")
+///   inspect(@math.cosf(@float.neg_infinity), content="NaN")
+/// }
 /// ```
 pub fn cosf(x : Float) -> Float {
   if x.is_nan() || x.is_inf() {
@@ -237,13 +241,15 @@ pub fn cosf(x : Float) -> Float {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// inspect(@math.tanf(0), content="0")
-/// inspect(@math.tanf(2), content="-2.18503999710083")
-/// inspect(@math.tanf(-5), content="3.3805150985717773")
-/// inspect(@math.tanf(@float.not_a_number), content="NaN")
-/// inspect(@math.tanf(@float.infinity), content="NaN")
-/// inspect(@math.tanf(@float.neg_infinity), content="NaN")
+/// ```mbt check
+/// test {
+///   inspect(@math.tanf(0), content="0")
+///   inspect(@math.tanf(2), content="-2.18503999710083")
+///   inspect(@math.tanf(-5), content="3.3805150985717773")
+///   inspect(@math.tanf(@float.not_a_number), content="NaN")
+///   inspect(@math.tanf(@float.infinity), content="NaN")
+///   inspect(@math.tanf(@float.neg_infinity), content="NaN")
+/// }
 /// ```
 pub fn tanf(x : Float) -> Float {
   if x.is_nan() || x.is_inf() {
@@ -270,13 +276,15 @@ pub fn tanf(x : Float) -> Float {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// inspect(@math.asinf(0), content="0")
-/// inspect(@math.asinf(1), content="1.5707963705062866")
-/// inspect(@math.asinf(-1), content="-1.5707963705062866")
-/// inspect(@math.asinf(@float.not_a_number), content="NaN")
-/// inspect(@math.asinf(@float.infinity), content="NaN")
-/// inspect(@math.asinf(@float.neg_infinity), content="NaN")
+/// ```mbt check
+/// test {
+///   inspect(@math.asinf(0), content="0")
+///   inspect(@math.asinf(1), content="1.5707963705062866")
+///   inspect(@math.asinf(-1), content="-1.5707963705062866")
+///   inspect(@math.asinf(@float.not_a_number), content="NaN")
+///   inspect(@math.asinf(@float.infinity), content="NaN")
+///   inspect(@math.asinf(@float.neg_infinity), content="NaN")
+/// }
 /// ```
 pub fn asinf(x : Float) -> Float {
   let x1p120 = 0x3870000000000000UL.reinterpret_as_double()
@@ -331,13 +339,15 @@ pub fn asinf(x : Float) -> Float {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// inspect(@math.acosf(0), content="1.570796251296997")
-/// inspect(@math.acosf(1), content="0")
-/// inspect(@math.acosf(-1), content="3.141592502593994")
-/// inspect(@math.acosf(@float.not_a_number), content="NaN")
-/// inspect(@math.acosf(@float.infinity), content="NaN")
-/// inspect(@math.acosf(@float.neg_infinity), content="NaN")
+/// ```mbt check
+/// test {
+///   inspect(@math.acosf(0), content="1.570796251296997")
+///   inspect(@math.acosf(1), content="0")
+///   inspect(@math.acosf(-1), content="3.141592502593994")
+///   inspect(@math.acosf(@float.not_a_number), content="NaN")
+///   inspect(@math.acosf(@float.infinity), content="NaN")
+///   inspect(@math.acosf(@float.neg_infinity), content="NaN")
+/// }
 /// ```
 pub fn acosf(x : Float) -> Float {
   let pio2_hi : Float = 1.5707962513
@@ -398,13 +408,15 @@ pub fn acosf(x : Float) -> Float {
 ///
 /// * Returns NaN if the input is NaN.
 ///
-/// ```mbt test
-/// inspect(@math.atanf(0), content="0")
-/// inspect(@math.atanf(1), content="0.7853981852531433")
-/// inspect(@math.atanf(-1), content="-0.7853981852531433")
-/// inspect(@math.atanf(@float.not_a_number), content="NaN")
-/// inspect(@math.atanf(@float.infinity), content="1.570796251296997")
-/// inspect(@math.atanf(@float.neg_infinity), content="-1.570796251296997")
+/// ```mbt check
+/// test {
+///   inspect(@math.atanf(0), content="0")
+///   inspect(@math.atanf(1), content="0.7853981852531433")
+///   inspect(@math.atanf(-1), content="-0.7853981852531433")
+///   inspect(@math.atanf(@float.not_a_number), content="NaN")
+///   inspect(@math.atanf(@float.infinity), content="1.570796251296997")
+///   inspect(@math.atanf(@float.neg_infinity), content="-1.570796251296997")
+/// }
 /// ```
 pub fn atanf(x : Float) -> Float {
   let atanhi : Array[Float] = [
@@ -483,32 +495,34 @@ pub fn atanf(x : Float) -> Float {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// inspect(@math.atan2f(0.0, -1.0), content="3.1415927410125732")
-/// inspect(@math.atan2f(1.0, 0.0), content="1.5707963705062866")
-/// inspect(@math.atan2f(1.0, 1.0), content="0.7853981852531433")
-/// inspect(@math.atan2f(@float.not_a_number, 1.0), content="NaN")
-/// inspect(@math.atan2f(1.0, @float.not_a_number), content="NaN")
-/// inspect(@math.atan2f(@float.infinity, 1.0), content="1.570796251296997")
-/// inspect(@math.atan2f(1.0, @float.infinity), content="0")
-/// inspect(@math.atan2f(@float.neg_infinity, 1.0), content="-1.570796251296997")
-/// inspect(@math.atan2f(1.0, @float.neg_infinity), content="3.1415927410125732")
-/// inspect(
-///   @math.atan2f(@float.infinity, @float.infinity),
-///   content="0.7853981852531433",
-/// )
-/// inspect(
-///   @math.atan2f(@float.neg_infinity, @float.neg_infinity),
-///   content="-2.356194496154785",
-/// )
-/// inspect(
-///   @math.atan2f(@float.infinity, @float.neg_infinity),
-///   content="2.356194496154785",
-/// )
-/// inspect(
-///   @math.atan2f(@float.neg_infinity, @float.infinity),
-///   content="-0.7853981852531433",
-/// )
+/// ```mbt check
+/// test {
+///   inspect(@math.atan2f(0.0, -1.0), content="3.1415927410125732")
+///   inspect(@math.atan2f(1.0, 0.0), content="1.5707963705062866")
+///   inspect(@math.atan2f(1.0, 1.0), content="0.7853981852531433")
+///   inspect(@math.atan2f(@float.not_a_number, 1.0), content="NaN")
+///   inspect(@math.atan2f(1.0, @float.not_a_number), content="NaN")
+///   inspect(@math.atan2f(@float.infinity, 1.0), content="1.570796251296997")
+///   inspect(@math.atan2f(1.0, @float.infinity), content="0")
+///   inspect(@math.atan2f(@float.neg_infinity, 1.0), content="-1.570796251296997")
+///   inspect(@math.atan2f(1.0, @float.neg_infinity), content="3.1415927410125732")
+///   inspect(
+///     @math.atan2f(@float.infinity, @float.infinity),
+///     content="0.7853981852531433",
+///   )
+///   inspect(
+///     @math.atan2f(@float.neg_infinity, @float.neg_infinity),
+///     content="-2.356194496154785",
+///   )
+///   inspect(
+///     @math.atan2f(@float.infinity, @float.neg_infinity),
+///     content="2.356194496154785",
+///   )
+///   inspect(
+///     @math.atan2f(@float.neg_infinity, @float.infinity),
+///     content="-0.7853981852531433",
+///   )
+/// }
 /// ```
 pub fn atan2f(y : Float, x : Float) -> Float {
   if x.is_nan() || y.is_nan() {

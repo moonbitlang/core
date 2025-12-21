@@ -36,11 +36,13 @@
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let src = [1, 2, 3, 4, 5]
-/// let dst = [0, 0, 0, 0, 0]
-/// Array::unsafe_blit(dst, 1, src, 2, 2)
-/// inspect(dst, content="[0, 3, 4, 0, 0]")
+/// ```mbt check
+/// test {
+///   let src = [1, 2, 3, 4, 5]
+///   let dst = [0, 0, 0, 0, 0]
+///   Array::unsafe_blit(dst, 1, src, 2, 2)
+///   inspect(dst, content="[0, 3, 4, 0, 0]")
+/// }
 /// ```
 ///
 #internal(unsafe, "Panic if the indices or length are out of bounds")
@@ -78,14 +80,16 @@ pub fn[A] Array::unsafe_blit(
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let src = FixedArray::make(5, 0)
-/// let dst = Array::make(5, 0)
-/// for i in 0..<5 {
-///   src[i] = i + 1
+/// ```mbt check
+/// test {
+///   let src = FixedArray::make(5, 0)
+///   let dst = Array::make(5, 0)
+///   for i in 0..<5 {
+///     src[i] = i + 1
+///   }
+///   Array::unsafe_blit_fixed(dst, 1, src, 0, 2)
+///   inspect(dst, content="[0, 1, 2, 0, 0]")
 /// }
-/// Array::unsafe_blit_fixed(dst, 1, src, 0, 2)
-/// inspect(dst, content="[0, 1, 2, 0, 0]")
 /// ```
 pub fn[A] Array::unsafe_blit_fixed(
   dst : Array[A],
@@ -120,11 +124,13 @@ pub fn[A] Array::unsafe_blit_fixed(
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let src = [1, 2, 3, 4, 5]
-/// let dst = [0, 0]
-/// src[:3].blit_to(dst, dst_offset=1)
-/// inspect(dst, content="[0, 1, 2, 3]")
+/// ```mbt check
+/// test {
+///   let src = [1, 2, 3, 4, 5]
+///   let dst = [0, 0]
+///   src[:3].blit_to(dst, dst_offset=1)
+///   inspect(dst, content="[0, 1, 2, 3]")
+/// }
 /// ```
 ///
 /// Panics if:
@@ -168,12 +174,14 @@ pub fn[A] Array::blit_to(
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let src = [1, 2, 3, 4, 5]
-/// let view = src[1:4] // view = [2, 3, 4]
-/// let dst = [0, 0]
-/// view.blit_to(dst, dst_offset=1)
-/// inspect(dst, content="[0, 2, 3, 4]")
+/// ```mbt check
+/// test {
+///   let src = [1, 2, 3, 4, 5]
+///   let view = src[1:4] // view = [2, 3, 4]
+///   let dst = [0, 0]
+///   view.blit_to(dst, dst_offset=1)
+///   inspect(dst, content="[0, 2, 3, 4]")
+/// }
 /// ```
 ///
 /// Panics if:

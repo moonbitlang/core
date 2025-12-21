@@ -25,12 +25,14 @@
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let err : Failure = Failure("Test assertion failed")
-/// match err {
-///   Failure(msg) => inspect(msg, content="Test assertion failed")
+/// ```mbt check
+/// test {
+///   let err : Failure = Failure("Test assertion failed")
+///   match err {
+///     Failure(msg) => inspect(msg, content="Test assertion failed")
+///   }
+///   @json.inspect(err, content=["Failure", "Test assertion failed"])
 /// }
-/// @json.inspect(err, content=["Failure", "Test assertion failed"])
 /// ```
 pub(all) suberror Failure String derive(ToJson, Show)
 
