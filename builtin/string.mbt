@@ -18,8 +18,10 @@ fn unsafe_make_string(length : Int, value : Char) -> String = "$moonbit.unsafe_m
 ///|
 /// Create new string of `length`, where each character is `value`
 ///
-/// ```mbt
-///   assert_eq(String::make(5,'S'), "SSSSS")
+/// ```mbt check
+/// test {
+///   assert_eq(String::make(5, 'S'), "SSSSS")
+/// }
 /// ```
 pub fn String::make(length : Int, value : Char) -> String {
   guard length >= 0 else { abort("invalid length") }
@@ -48,10 +50,12 @@ fn code_point_of_surrogate_pair(leading : Int, trailing : Int) -> Char {
 ///
 /// # Examples
 ///
-/// ```mbt
-///   let s = "Hello🤣";
-///   inspect(s.char_length(), content = "6"); // 6 actual characters
-///   inspect(s.length(), content = "7");  // 5 ASCII chars + 2 surrogate pairs
+/// ```mbt check
+/// test {
+///   let s = "Hello🤣"
+///   inspect(s.char_length(), content="6") // 6 actual characters
+///   inspect(s.length(), content="7")
+/// } // 5 ASCII chars + 2 surrogate pairs
 /// ```
 #alias(codepoint_length, deprecated)
 pub fn String::char_length(
@@ -230,10 +234,12 @@ pub fn String::to_array(self : String) -> Array[Char] {
 /// Note: This iterator yields Unicode characters, not Utf16 code units.
 /// As a result, the count of characters returned by `iter().count()` may not be equal to the length of the string returned by `length()`.
 ///
-/// ```mbt
-///   let s = "Hello, World!🤣";
-///   assert_eq(s.iter().count(), 14); // Unicode characters
-///   assert_eq(s.length(), 15); // Utf16 code units
+/// ```mbt check
+/// test {
+///   let s = "Hello, World!🤣"
+///   assert_eq(s.iter().count(), 14) // Unicode characters
+///   assert_eq(s.length(), 15)
+/// } // Utf16 code units
 /// ```
 pub fn String::iter(self : String) -> Iter[Char] {
   self.iterator().iter()
@@ -245,10 +251,12 @@ pub fn String::iter(self : String) -> Iter[Char] {
 /// Note: This iterator yields Unicode characters, not Utf16 code units.
 /// As a result, the count of characters returned by `iterator().count()` may not be equal to the length of the string returned by `length()`.
 ///
-/// ```mbt
-///   let s = "Hello, World!🤣";
-///   assert_eq(s.iterator().count(), 14); // Unicode characters
-///   assert_eq(s.length(), 15); // Utf16 code units
+/// ```mbt check
+/// test {
+///   let s = "Hello, World!🤣"
+///   assert_eq(s.iterator().count(), 14) // Unicode characters
+///   assert_eq(s.length(), 15)
+/// } // Utf16 code units
 /// ```
 pub fn String::iterator(self : String) -> Iterator[Char] {
   let len = self.length()
@@ -301,10 +309,14 @@ pub fn String::iterator2(self : String) -> Iterator2[Int, Char] {
 ///
 /// # Examples
 ///
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let input = "Hello, World!"
 ///   let reversed = input.rev_iter().collect()
-///   assert_eq(reversed, ['!', 'd', 'l', 'r', 'o', 'W', ' ', ',', 'o', 'l', 'l', 'e', 'H'])
+///   assert_eq(reversed, [
+///     '!', 'd', 'l', 'r', 'o', 'W', ' ', ',', 'o', 'l', 'l', 'e', 'H',
+///   ])
+/// }
 /// ```
 pub fn String::rev_iter(self : String) -> Iter[Char] {
   self.rev_iterator().iter()
@@ -331,10 +343,14 @@ pub fn String::rev_iter(self : String) -> Iter[Char] {
 ///
 /// # Examples
 ///
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let input = "Hello, World!"
 ///   let reversed = input.rev_iterator().collect()
-///   assert_eq(reversed, ['!', 'd', 'l', 'r', 'o', 'W', ' ', ',', 'o', 'l', 'l', 'e', 'H'])
+///   assert_eq(reversed, [
+///     '!', 'd', 'l', 'r', 'o', 'W', ' ', ',', 'o', 'l', 'l', 'e', 'H',
+///   ])
+/// }
 /// ```
 pub fn String::rev_iterator(self : String) -> Iterator[Char] {
   let len = self.length()
@@ -512,11 +528,13 @@ pub fn String::char_length_ge(
 ///
 /// # Example
 ///
-/// ```mbt
-/// inspect("ab".lexical_compare("abc"), content="-1")
-/// inspect("abc".lexical_compare("ab"), content="1")
-/// inspect("abc".lexical_compare("abc"), content="0")
-/// inspect("abc".lexical_compare("abd"), content="-1")
+/// ```mbt check
+/// test {
+///   inspect("ab".lexical_compare("abc"), content="-1")
+///   inspect("abc".lexical_compare("ab"), content="1")
+///   inspect("abc".lexical_compare("abc"), content="0")
+///   inspect("abc".lexical_compare("abd"), content="-1")
+/// }
 /// ```
 ///
 /// # Note
@@ -531,9 +549,11 @@ pub fn String::lexical_compare(self : String, other : String) -> Int {
 ///|
 /// Convert char array to string.
 ///
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let s = String::from_array(['H', 'e', 'l', 'l', 'o'])
 ///   assert_eq(s, "Hello")
+/// }
 /// ```
 ///
 /// Do not convert large data to `Array[Char]` and build a string with `String::from_array`.

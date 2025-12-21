@@ -4,7 +4,7 @@ This package provides an immutable hash map data structure.
 
 ## Basic usage
 
-```mbt
+```mbt check
 ///|
 test {
   let map = @hashmap.new().add("a", 1).add("b", 2).add("c", 3)

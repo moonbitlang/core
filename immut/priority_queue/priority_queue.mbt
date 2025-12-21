@@ -16,9 +16,11 @@
 /// Creates a new empty immutable priority queue.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let queue = @priority_queue.new()
 ///   assert_eq(queue.push(1).length(), 1)
+/// }
 /// ```
 #as_free_fn
 pub fn[A] PriorityQueue::new() -> PriorityQueue[A] {
@@ -29,9 +31,11 @@ pub fn[A] PriorityQueue::new() -> PriorityQueue[A] {
 /// Creates a new immutable priority queue from an array.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let queue = @priority_queue.from_array([1, 2, 3, 4, 5])
 ///   inspect(queue.length(), content="5")
+/// }
 /// ```
 #as_free_fn
 #alias(of, deprecated="Use from_array instead")
@@ -122,10 +126,12 @@ fn Path::next(self : Path) -> Path {
 /// Pops the first value from the immutable priority queue, which returns None if the queue is empty.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let queue = @priority_queue.from_array([1, 2, 3, 4])
 ///   let first = queue.pop()
 ///   assert_eq(first, Some(@priority_queue.from_array([1, 2, 3])))
+/// }
 /// ```
 pub fn[A : Compare] PriorityQueue::pop(
   self : PriorityQueue[A],
@@ -188,10 +194,12 @@ fn[A : Compare] Node::change_and_down(self : Node[A], value : A) -> Node[A] {
 /// Pops the first value from the immutable priority queue.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let queue = @priority_queue.from_array([1, 2, 3, 4])
 ///   let first = queue.unsafe_pop()
 ///   assert_eq(first, @priority_queue.from_array([1, 2, 3]))
+/// }
 /// ```
 #internal(unsafe, "Panics if the queue is empty.")
 #doc(hidden)
@@ -213,9 +221,11 @@ pub fn[A : Compare] PriorityQueue::unsafe_pop(
 /// Adds a value to the immutable priority queue.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let queue = @priority_queue.new()
 ///   assert_eq(queue.push(1).length(), 1)
+/// }
 /// ```
 pub fn[A : Compare] PriorityQueue::push(
   self : PriorityQueue[A],
@@ -253,9 +263,11 @@ fn[A : Compare] Node::push(self : Node[A], value : A, path : Path) -> Node[A] {
 /// Peeks at the first value in the immutable priority queue, which returns None if the immutable priority queue is empty.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let queue = @priority_queue.from_array([1, 2, 3, 4])
 ///   assert_eq(queue.peek(), Some(4))
+/// }
 /// ```
 pub fn[A] PriorityQueue::peek(self : PriorityQueue[A]) -> A? {
   match self.node {
@@ -269,10 +281,12 @@ pub fn[A] PriorityQueue::peek(self : PriorityQueue[A]) -> A? {
 /// Checks if the immutable priority queue is empty.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let queue = @priority_queue.new()
 ///   inspect(queue.is_empty(), content="true")
 ///   assert_eq(queue.push(1).is_empty(), false)
+/// }
 /// ```
 pub fn[A] PriorityQueue::is_empty(self : PriorityQueue[A]) -> Bool {
   self.node is Empty
@@ -282,10 +296,12 @@ pub fn[A] PriorityQueue::is_empty(self : PriorityQueue[A]) -> Bool {
 /// Return the length of the immutable priority queue.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let queue = @priority_queue.new()
 ///   inspect(queue.length(), content="0")
 ///   assert_eq(queue.push(1).length(), 1)
+/// }
 /// ```
 pub fn[A] PriorityQueue::length(self : PriorityQueue[A]) -> Int {
   self.size

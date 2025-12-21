@@ -124,7 +124,8 @@ pub fn StringView::view(
 /// This method has O(1) complexity.
 /// #Example
 /// 
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let str = "B🤣🤣C"
 ///   let view = str[:]
 ///   inspect(view.unsafe_charcode_at(0), content="66")
@@ -133,6 +134,7 @@ pub fn StringView::view(
 ///   inspect(view.unsafe_charcode_at(3), content="55358")
 ///   inspect(view.unsafe_charcode_at(4), content="56611")
 ///   inspect(view.unsafe_charcode_at(5), content="67")
+/// }
 /// ```
 /// TODO: rename to `unsafe_get`
 pub fn StringView::unsafe_charcode_at(self : StringView, index : Int) -> Int {
@@ -159,10 +161,15 @@ pub impl Show for StringView with output(self, logger) {
 /// 
 /// # Examples
 /// 
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let str = "Hello World"
-///   let view = str.view(start_offset = str.offset_of_nth_char(0).unwrap(),end_offset = str.offset_of_nth_char(5).unwrap()) // "Hello"
+///   let view = str.view(
+///     start_offset=str.offset_of_nth_char(0).unwrap(),
+///     end_offset=str.offset_of_nth_char(5).unwrap(),
+///   ) // "Hello"
 ///   inspect(view.to_string(), content="Hello")
+/// }
 /// ```
 pub impl Show for StringView with to_string(self) {
   // when `self == self.str()`, `String::unsafe_substring` would return original string, which doesn't create a new copy.
@@ -310,11 +317,28 @@ pub impl Compare for StringView with compare(self, other) {
 ///
 /// # Example
 ///
-/// ```mbt
-/// let str = "abc"
-/// inspect(str.view(start_offset=0, end_offset=2).lexical_compare(str.view(start_offset=0, end_offset=3)), content="-1")
-/// inspect(str.view(start_offset=0, end_offset=3).lexical_compare(str.view(start_offset=0, end_offset=2)), content="1")
-/// inspect(str.view(start_offset=0, end_offset=2).lexical_compare(str.view(start_offset=1, end_offset=3)), content="-1")
+/// ```mbt check
+/// test {
+///   let str = "abc"
+///   inspect(
+///     str
+///     .view(start_offset=0, end_offset=2)
+///     .lexical_compare(str.view(start_offset=0, end_offset=3)),
+///     content="-1",
+///   )
+///   inspect(
+///     str
+///     .view(start_offset=0, end_offset=3)
+///     .lexical_compare(str.view(start_offset=0, end_offset=2)),
+///     content="1",
+///   )
+///   inspect(
+///     str
+///     .view(start_offset=0, end_offset=2)
+///     .lexical_compare(str.view(start_offset=1, end_offset=3)),
+///     content="-1",
+///   )
+/// }
 /// ```
 ///
 /// # Note
@@ -349,18 +373,16 @@ pub fn StringView::lexical_compare(
 /// 
 /// # Example
 /// 
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let str = "Hello🤣🤣🤣"
 ///   let view1 = str.view()
-///   inspect(view1, content=
-///    "Hello🤣🤣🤣"
-///   )
+///   inspect(view1, content="Hello🤣🤣🤣")
 ///   let start_offset = str.offset_of_nth_char(1).unwrap()
 ///   let end_offset = str.offset_of_nth_char(6).unwrap() // the second emoji
 ///   let view2 = str.view(start_offset~, end_offset~)
-///   inspect(view2, content=
-///    "ello🤣"
-///   )
+///   inspect(view2, content="ello🤣")
+/// }
 /// ```
 pub fn String::view(
   self : String,
@@ -505,14 +527,16 @@ pub fn String::sub(
 /// 
 /// # Examples
 /// 
-/// ```mbt
-/// let str = "Hello🤣World"[1:-1] // "ello🤣Worl"
-/// let view1 = str[0:6]
-/// inspect(view1, content="ello🤣")
-/// let view2 = str[-2:]
-/// inspect(view2, content="rl")
-/// let view3 = try? str[:5]
-/// inspect(view3, content="Err(InvalidIndex)")
+/// ```mbt check
+/// test {
+///   let str = "Hello🤣World"[1:-1] // "ello🤣Worl"
+///   let view1 = str[0:6]
+///   inspect(view1, content="ello🤣")
+///   let view2 = str[-2:]
+///   inspect(view2, content="rl")
+///   let view3 = try? str[:5]
+///   inspect(view3, content="Err(InvalidIndex)")
+/// }
 /// ```
 #alias("_[_:_]")
 pub fn StringView::sub(

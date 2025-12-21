@@ -28,13 +28,15 @@ priv struct Entry[K] {
 ///
 /// # Example
 ///
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let set = @set.Set::from_array(["three", "eight", "one"])
 ///   assert_eq(set.contains("two"), false)
 ///   assert_eq(set.contains("three"), true)
 ///   set.add("three") // no effect since it already exists
 ///   set.add("two")
 ///   assert_eq(set.contains("two"), true)
+/// }
 /// ```
 struct Set[K] {
   mut entries : FixedArray[Entry[K]?]

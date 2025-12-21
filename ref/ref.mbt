@@ -39,8 +39,10 @@ pub fn[T] new(x : T) -> Ref[T] {
 ///
 /// # Example
 ///
-/// ```mbt
-///   assert_eq(@ref.new(1).map((a) => { a + 1 }).val, 2)
+/// ```mbt check
+/// test {
+///   assert_eq(@ref.new(1).map(a => a + 1).val, 2)
+/// }
 /// ```
 pub fn[T, R] Ref::map(self : Ref[T], f : (T) -> R raise?) -> Ref[R] raise? {
   { val: f(self.val) }
@@ -62,10 +64,12 @@ pub fn[T, R] Ref::map(self : Ref[T], f : (T) -> R raise?) -> Ref[R] raise? {
 ///
 /// # Example
 ///
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let x = @ref.new(1)
-///   x.protect(2, () => { x.val = 3 })
+///   x.protect(2, () => x.val = 3)
 ///   assert_eq(x.val, 1)
+/// }
 /// ```
 pub fn[T, R] Ref::protect(self : Ref[T], a : T, f : () -> R raise?) -> R raise? {
   let old = self.val
@@ -88,12 +92,14 @@ pub fn[T, R] Ref::protect(self : Ref[T], a : T, f : () -> R raise?) -> R raise? 
 ///
 /// # Example
 ///
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let x = @ref.new(1)
 ///   let y = @ref.new(2)
 ///   @ref.swap(x, y)
 ///   assert_eq(x.val, 2)
 ///   assert_eq(y.val, 1)
+/// }
 /// ```
 #as_free_fn
 pub fn[T] Ref::swap(self : Ref[T], that : Ref[T]) -> Unit {

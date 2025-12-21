@@ -83,11 +83,13 @@ pub using @builtin {
 /// The original value, unchanged.
 ///
 /// # Examples
-/// ```mbt
-/// let val : Ref[Int] = { val : 1 }
-/// let x : Int = 5
-/// assert_eq(x |> tap(n => val.val += n), 5)
-/// assert_eq(val.val, 6)
+/// ```mbt check
+/// test {
+///   let val : Ref[Int] = { val: 1 }
+///   let x : Int = 5
+///   assert_eq(x |> tap(n => val.val += n), 5)
+///   assert_eq(val.val, 6)
+/// }
 /// ```
 pub fn[T] tap(value : T, f : (T) -> Unit raise) -> T raise {
   f(value)
@@ -113,8 +115,14 @@ pub fn[T] tap(value : T, f : (T) -> Unit raise) -> T raise {
 /// }
 /// ```
 /// 
-/// ```mbt
-/// x |> then(x => fail(x.to_string()))
+/// ```mbt check
+/// test {
+///   let result : Result[Unit, Failure] = try? (5 |> then(x => fail(x.to_string())))
+///   match result {
+///     Err(Failure(_)) => ()
+///     Ok(_) => fail("expected failure")
+///   }
+/// }
 /// ```
 pub fn[T, R] then(value : T, f : (T) -> R raise?) -> R raise? {
   f(value)

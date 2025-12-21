@@ -69,15 +69,17 @@ test {
 /// For readability, underscores may appear after base prefixes or between digits.
 /// These underscores do not affect the value.
 /// Examples:
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   inspect(@strconv.parse_int64("123"), content="123")
-///   inspect(@strconv.parse_int64("0xff", base=0), content="255") 
+///   inspect(@strconv.parse_int64("0xff", base=0), content="255")
 ///   inspect(@strconv.parse_int64("0o10"), content="8")
 ///   inspect(@strconv.parse_int64("0b1010"), content="10")
 ///   inspect(@strconv.parse_int64("1_234"), content="1234")
 ///   inspect(@strconv.parse_int64("-123"), content="-123")
 ///   inspect(@strconv.parse_int64("ff", base=16), content="255")
 ///   inspect(@strconv.parse_int64("zz", base=36), content="1295")
+/// }
 /// ```
 /// 
 pub fn parse_int64(

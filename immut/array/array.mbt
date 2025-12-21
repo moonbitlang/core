@@ -75,9 +75,11 @@ pub fn[A] T::makei(len : Int, f : (Int) -> A raise?) -> T[A] raise? {
 /// Create a persistent array from an array.
 /// 
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let v = @array.from_array([1, 2, 3])
 ///   assert_eq(v, @array.from_array([1, 2, 3]))
+/// }
 /// ```
 #as_free_fn
 #alias(of, deprecated="Use from_array instead")
@@ -185,9 +187,11 @@ pub fn[A] T::length(self : T[A]) -> Int {
 /// Get a value at the given index.
 ///
 /// # Examples
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let v = @array.from_array([1, 2, 3, 4, 5])
 ///   inspect(v[0], content="1")
+/// }
 /// ```
 #alias("_[_]")
 pub fn[A] T::at(self : T[A], index : Int) -> A {
@@ -235,9 +239,11 @@ pub fn[A] T::get(self : T[A], index : Int) -> A? {
 /// Set a value at the given index (immutable).
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let v = @array.from_array([1, 2, 3, 4, 5])
 ///   assert_eq(v.set(1, 10), @array.from_array([1, 10, 3, 4, 5]))
+/// }
 /// ```
 pub fn[A] T::set(self : T[A], index : Int, value : A) -> T[A] {
   {
@@ -251,9 +257,11 @@ pub fn[A] T::set(self : T[A], index : Int, value : A) -> T[A] {
 /// Push a value to the end of the array.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let v = @array.from_array([1, 2, 3])
 ///   assert_eq(v.push(4), @array.from_array([1, 2, 3, 4]))
+/// }
 /// ```
 pub fn[A] T::push(self : T[A], value : A) -> T[A] {
   let (tree, shift) = self.tree.push_end(self.shift, value)
@@ -305,11 +313,13 @@ pub fn[A] T::iterator(self : T[A]) -> Iterator[A] {
 /// Iterate over the array.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let arr = []
 ///   let v = @array.from_array([1, 2, 3, 4, 5])
-///   v.each((e) => { arr.push(e) })
+///   v.each(e => arr.push(e))
 ///   assert_eq(arr, [1, 2, 3, 4, 5])
+/// }
 /// ```
 pub fn[A] T::each(self : T[A], f : (A) -> Unit raise?) -> Unit raise? {
   self.tree.each(f)
@@ -319,11 +329,13 @@ pub fn[A] T::each(self : T[A], f : (A) -> Unit raise?) -> Unit raise? {
 /// Iterate over the array with index.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let arr = []
 ///   let v = @array.from_array([1, 2, 3, 4, 5])
-///   v.eachi((i, e) => { arr.push(i * e) })
+///   v.eachi((i, e) => arr.push(i * e))
 ///   assert_eq(arr, [0, 2, 6, 12, 20])
+/// }
 /// ```
 pub fn[A] T::eachi(self : T[A], f : (Int, A) -> Unit raise?) -> Unit raise? {
   self.tree.eachi(f, self.shift, 0)
@@ -333,9 +345,11 @@ pub fn[A] T::eachi(self : T[A], f : (Int, A) -> Unit raise?) -> Unit raise? {
 /// Fold the array.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let v = @array.from_array([1, 2, 3, 4, 5])
-///   assert_eq(v.fold((a, b) => { a + b }, init=0), 15)
+///   assert_eq(v.fold((a, b) => a + b, init=0), 15)
+/// }
 /// ```
 #alias(fold_left, deprecated)
 pub fn[A, B] T::fold(
@@ -350,9 +364,11 @@ pub fn[A, B] T::fold(
 /// Fold the array in reverse order.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let v = @array.from_array([1, 2, 3, 4, 5])
-///   assert_eq(v.rev_fold((a, b) => { a + b }, init=0), 15)
+///   assert_eq(v.rev_fold((a, b) => a + b, init=0), 15)
+/// }
 /// ```
 #alias(fold_right, deprecated)
 pub fn[A, B] T::rev_fold(
@@ -367,9 +383,11 @@ pub fn[A, B] T::rev_fold(
 /// Map a function over the array.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let v = @array.from_array([1, 2, 3, 4, 5])
-///   assert_eq(v.map((e) => { e * 2 }), @array.from_array([2, 4, 6, 8, 10]))
+///   assert_eq(v.map(e => e * 2), @array.from_array([2, 4, 6, 8, 10]))
+/// }
 /// ```
 pub fn[A, B] T::map(self : T[A], f : (A) -> B raise?) -> T[B] raise? {
   { tree: self.tree.map(f), size: self.size, shift: self.shift }

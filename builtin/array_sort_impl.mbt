@@ -187,10 +187,12 @@ fn collapse(runs : Array[TimSortRun], stop : Int) -> Int? {
 /// 
 /// # Example
 /// 
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let arr = [5, 4, 3, 2, 1]
 ///   arr.sort()
 ///   assert_eq(arr, [1, 2, 3, 4, 5])
+/// }
 /// ```
 pub fn[T : Compare] FixedArray::sort(self : FixedArray[T]) -> Unit {
   self.mut_view().sort()

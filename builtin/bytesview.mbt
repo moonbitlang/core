@@ -140,13 +140,15 @@ pub fn BytesView::unsafe_get(self : BytesView, index : Int) -> Byte {
 /// 
 /// # Example
 /// 
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let bs = b"\x00\x01\x02\x03\x04\x05"
 ///   let bv = bs[1:4]
 ///   inspect(bv.length(), content="3")
 ///   assert_eq(bv[0], b'\x01')
 ///   assert_eq(bv[1], b'\x02')
 ///   assert_eq(bv[2], b'\x03')
+/// }
 /// ```
 #alias("_[_:_]")
 pub fn Bytes::sub(self : Bytes, start? : Int = 0, end? : Int) -> BytesView {
@@ -167,11 +169,13 @@ pub fn Bytes::sub(self : Bytes, start? : Int = 0, end? : Int) -> BytesView {
 /// 
 /// # Example
 /// 
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let bv = b"\x00\x01\x02\x03\x04\x05"[:]
 ///   let bv2 = bv[1:4]
 ///   inspect(bv2.length(), content="3")
 ///   assert_eq(bv2[1], b'\x02')
+/// }
 /// ```
 #alias("_[_:_]")
 pub fn BytesView::sub(
@@ -196,11 +200,13 @@ pub fn BytesView::sub(
 /// 
 /// # Example
 /// 
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let bv = b"\x00\x01\x02\x03\x04\x05"[:]
 ///   let mut sum = 0
-///   bv.iter().each((x) => { sum = sum + x.to_int() })
+///   bv.iter().each(x => sum = sum + x.to_int())
 ///   inspect(sum, content="15")
+/// }
 /// ```
 pub fn BytesView::iter(self : BytesView) -> Iter[Byte] {
   self.iterator().iter()
@@ -212,11 +218,13 @@ pub fn BytesView::iter(self : BytesView) -> Iter[Byte] {
 /// 
 /// # Example
 /// 
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let bv = b"\x00\x01\x02\x03\x04\x05"[:]
 ///   let mut sum = 0
-///   bv.iter2().each((i, x) => { sum = sum + i + x.to_int() })
+///   bv.iter2().each((i, x) => sum = sum + i + x.to_int())
 ///   inspect(sum, content="30")
+/// }
 /// ```
 pub fn BytesView::iter2(self : BytesView) -> Iter2[Int, Byte] {
   self.iterator2().iter2()
@@ -227,11 +235,13 @@ pub fn BytesView::iter2(self : BytesView) -> Iter2[Int, Byte] {
 /// 
 /// # Example
 /// 
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let bv = b"\x00\x01\x02\x03\x04\x05"[:]
 ///   let mut sum = 0
-///   bv.iterator().each((x) => { sum = sum + x.to_int() })
+///   bv.iterator().each(x => sum = sum + x.to_int())
 ///   inspect(sum, content="15")
+/// }
 /// ```
 pub fn BytesView::iterator(self : BytesView) -> Iterator[Byte] {
   let mut i = 0

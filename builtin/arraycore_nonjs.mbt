@@ -191,10 +191,12 @@ fn[T] Array::realloc(self : Array[T]) -> Unit {
 ///
 /// # Example
 ///
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let v = [1]
 ///   v.reserve_capacity(10)
 ///   assert_eq(v.capacity(), 10)
+/// }
 /// ```
 pub fn[T] Array::reserve_capacity(self : Array[T], capacity : Int) -> Unit {
   if self.capacity() >= capacity {
@@ -208,13 +210,15 @@ pub fn[T] Array::reserve_capacity(self : Array[T], capacity : Int) -> Unit {
 ///
 /// # Example
 ///
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let v = Array::new(capacity=10)
 ///   v.push(1)
 ///   v.push(2)
 ///   v.push(3)
 ///   v.shrink_to_fit()
 ///   assert_eq(v.capacity(), 3)
+/// }
 /// ```
 pub fn[T] Array::shrink_to_fit(self : Array[T]) -> Unit {
   if self.capacity() <= self.length() {
@@ -229,9 +233,11 @@ pub fn[T] Array::shrink_to_fit(self : Array[T]) -> Unit {
 /// If the array is at capacity, it will be reallocated.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let v = []
 ///   v.push(3)
+/// }
 /// ```
 pub fn[T] Array::push(self : Array[T], value : T) -> Unit {
   if self.length() == self.buffer().0.length() {
@@ -246,10 +252,12 @@ pub fn[T] Array::push(self : Array[T], value : T) -> Unit {
 /// Removes the last element from an array and returns it, or `None` if it is empty.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let v = [1, 2, 3]
 ///   assert_eq(v.pop(), Some(3))
 ///   assert_eq(v, [1, 2])
+/// }
 /// ```
 pub fn[T] Array::pop(self : Array[T]) -> T? {
   let len = self.length()
@@ -303,10 +311,12 @@ pub fn[T] Array::unsafe_pop(self : Array[T]) -> T {
 /// This function will panic if the index is out of bounds.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let v = [3, 4, 5]
 ///   assert_eq(v.remove(1), 4)
 ///   assert_eq(v, [3, 5])
+/// }
 /// ```
 pub fn[T] Array::remove(self : Array[T], index : Int) -> T {
   guard index >= 0 && index < self.length() else {
@@ -334,11 +344,13 @@ pub fn[T] Array::remove(self : Array[T], index : Int) -> T {
 /// This function will panic if the index is out of bounds.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let v = [3, 4, 5]
 ///   let vv = v.drain(1, 2) // vv = [4], v = [3, 5]
 ///   assert_eq(vv, [4])
 ///   assert_eq(v, [3, 5])
+/// }
 /// ```
 pub fn[T] Array::drain(self : Array[T], begin : Int, end : Int) -> Array[T] {
   guard begin >= 0 && end <= self.length() && begin <= end

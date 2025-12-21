@@ -140,9 +140,11 @@ pub fn[A : @json.FromJson] List::from_json(
 ///
 /// # Example
 ///
-/// ```mbt
-/// let ls = @list.from_array([1, 2, 3, 4, 5])
-/// assert_eq(ls, @list.from_array([1, 2, 3, 4, 5]))
+/// ```mbt check
+/// test {
+///   let ls = @list.from_array([1, 2, 3, 4, 5])
+///   assert_eq(ls, @list.from_array([1, 2, 3, 4, 5]))
+/// }
 /// ```
 #as_free_fn
 #alias(of, deprecated="Use from_array instead")
@@ -169,10 +171,12 @@ pub fn[A] List::length(self : List[A]) -> Int {
 ///
 /// # Example
 ///
-/// ```mbt
-/// let arr = []
-/// @list.from_array([1, 2, 3, 4, 5]).each(x => arr.push(x))
-/// assert_eq(arr, [1, 2, 3, 4, 5])
+/// ```mbt check
+/// test {
+///   let arr = []
+///   @list.from_array([1, 2, 3, 4, 5]).each(x => arr.push(x))
+///   assert_eq(arr, [1, 2, 3, 4, 5])
+/// }
 /// ```
 #locals(f)
 pub fn[A] List::each(self : List[A], f : (A) -> Unit raise?) -> Unit raise? {
@@ -190,10 +194,12 @@ pub fn[A] List::each(self : List[A], f : (A) -> Unit raise?) -> Unit raise? {
 ///
 /// # Example
 ///
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let arr = []
 ///   @list.from_array([1, 2, 3, 4, 5]).eachi((i, x) => arr.push("(\{i},\{x})"))
 ///   assert_eq(arr, ["(0,1)", "(1,2)", "(2,3)", "(3,4)", "(4,5)"])
+/// }
 /// ```
 pub fn[A] List::eachi(
   self : List[A],
@@ -213,8 +219,13 @@ pub fn[A] List::eachi(
 ///
 /// # Example
 ///
-/// ```mbt
-/// assert_eq(@list.from_array([1, 2, 3, 4, 5]).map(x => x * 2), @list.from_array([2, 4, 6, 8, 10]))
+/// ```mbt check
+/// test {
+///   assert_eq(
+///     @list.from_array([1, 2, 3, 4, 5]).map(x => x * 2),
+///     @list.from_array([2, 4, 6, 8, 10]),
+///   )
+/// }
 /// ```
 pub fn[A, B] List::map(self : List[A], f : (A) -> B raise?) -> List[B] raise? {
   match self {
@@ -278,8 +289,13 @@ pub fn[A, B] List::mapi(
 /// `list.rev_map(f)` is equivalent to `list.map(f).rev()` but more efficient.
 ///
 /// # Example
-/// ```mbt
-/// assert_eq(@list.from_array([1, 2, 3, 4, 5]).rev_map(x => x * 2), @list.from_array([10, 8, 6, 4, 2]))
+/// ```mbt check
+/// test {
+///   assert_eq(
+///     @list.from_array([1, 2, 3, 4, 5]).rev_map(x => x * 2),
+///     @list.from_array([10, 8, 6, 4, 2]),
+///   )
+/// }
 /// ```
 pub fn[A, B] List::rev_map(
   self : List[A],
@@ -327,8 +343,13 @@ pub fn[A] List::to_array(self : List[A]) -> Array[A] {
 ///
 /// # Example
 ///
-/// ```mbt
-/// assert_eq(@list.from_array([1, 2, 3, 4, 5]).filter(x => x % 2 == 0), @list.from_array([2, 4]))
+/// ```mbt check
+/// test {
+///   assert_eq(
+///     @list.from_array([1, 2, 3, 4, 5]).filter(x => x % 2 == 0),
+///     @list.from_array([2, 4]),
+///   )
+/// }
 /// ```
 pub fn[A] List::filter(
   self : List[A],
@@ -447,8 +468,10 @@ pub fn[A] List::unsafe_tail(self : List[A]) -> List[A] {
 ///
 /// # Example
 ///
-/// ```mbt
-/// assert_eq(@list.from_array([1, 2, 3, 4, 5]).head(), Some(1))
+/// ```mbt check
+/// test {
+///   assert_eq(@list.from_array([1, 2, 3, 4, 5]).head(), Some(1))
+/// }
 /// ```
 pub fn[A] List::head(self : List[A]) -> A? {
   match self {
@@ -490,8 +513,10 @@ pub fn[A] List::unsafe_last(self : List[A]) -> A {
 ///
 /// # Example
 ///
-/// ```mbt
-/// assert_eq(@list.from_array([1, 2, 3, 4, 5]).last(), Some(5))
+/// ```mbt check
+/// test {
+///   assert_eq(@list.from_array([1, 2, 3, 4, 5]).last(), Some(5))
+/// }
 /// ```
 pub fn[A] List::last(self : List[A]) -> A? {
   loop self {
@@ -506,9 +531,13 @@ pub fn[A] List::last(self : List[A]) -> A? {
 ///
 /// # Example
 ///
-/// ```mbt
-/// let ls = @list.from_array([1, 2, 3, 4, 5]).concat(@list.from_array([6, 7, 8, 9, 10]))
-/// assert_eq(ls, @list.from_array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]))
+/// ```mbt check
+/// test {
+///   let ls = @list.from_array([1, 2, 3, 4, 5]).concat(
+///     @list.from_array([6, 7, 8, 9, 10]),
+///   )
+///   assert_eq(ls, @list.from_array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]))
+/// }
 /// ```
 pub fn[A] List::concat(self : List[A], other : List[A]) -> List[A] {
   match self {
@@ -535,9 +564,13 @@ pub fn[A] List::concat(self : List[A], other : List[A]) -> List[A] {
 ///
 /// # Example
 ///
-/// ```mbt
-/// let ls = @list.from_array([1, 2, 3, 4, 5]).rev_concat(@list.from_array([6, 7, 8, 9, 10]))
-/// assert_eq(ls, @list.from_array([5, 4, 3, 2, 1, 6, 7, 8, 9, 10]))
+/// ```mbt check
+/// test {
+///   let ls = @list.from_array([1, 2, 3, 4, 5]).rev_concat(
+///     @list.from_array([6, 7, 8, 9, 10]),
+///   )
+///   assert_eq(ls, @list.from_array([5, 4, 3, 2, 1, 6, 7, 8, 9, 10]))
+/// }
 /// ```
 pub fn[A] List::rev_concat(self : List[A], other : List[A]) -> List[A] {
   loop (self, other) {
@@ -551,8 +584,13 @@ pub fn[A] List::rev_concat(self : List[A], other : List[A]) -> List[A] {
 ///
 /// # Example
 ///
-/// ```mbt
-/// assert_eq(@list.from_array([1, 2, 3, 4, 5]).rev(), @list.from_array([5, 4, 3, 2, 1]))
+/// ```mbt check
+/// test {
+///   assert_eq(
+///     @list.from_array([1, 2, 3, 4, 5]).rev(),
+///     @list.from_array([5, 4, 3, 2, 1]),
+///   )
+/// }
 /// ```
 pub fn[A] List::rev(self : List[A]) -> List[A] {
   self.rev_concat(Empty)
@@ -563,9 +601,11 @@ pub fn[A] List::rev(self : List[A]) -> List[A] {
 ///
 /// # Example
 ///
-/// ```mbt
-/// let r = @list.from_array([1, 2, 3, 4, 5]).fold(init=0, (acc, x) => acc + x)
-/// inspect(r, content="15")
+/// ```mbt check
+/// test {
+///   let r = @list.from_array([1, 2, 3, 4, 5]).fold(init=0, (acc, x) => acc + x)
+///   inspect(r, content="15")
+/// }
 /// ```
 pub fn[A, B] List::fold(
   self : List[A],
@@ -653,10 +693,12 @@ pub fn[A, B] List::zip(self : List[A], other : List[B]) -> List[(A, B)] {
 ///
 /// # Example
 ///
-/// ```mbt
-/// let ls = @list.from_array([1, 2, 3])
-/// let r = ls.flat_map(x => @list.from_array([x, x * 2]))
-/// assert_eq(r, @list.from_array([1, 2, 2, 4, 3, 6]))
+/// ```mbt check
+/// test {
+///   let ls = @list.from_array([1, 2, 3])
+///   let r = ls.flat_map(x => @list.from_array([x, x * 2]))
+///   assert_eq(r, @list.from_array([1, 2, 2, 4, 3, 6]))
+/// }
 /// ```
 pub fn[A, B] List::flat_map(
   self : List[A],
@@ -704,10 +746,12 @@ pub fn[A, B] List::flat_map(
 ///
 /// # Example
 ///
-/// ```mbt
-/// let ls = @list.from_array([4, 2, 2, 6, 3, 1])
-/// let r = ls.filter_map(x => if (x >= 3) { Some(x) } else { None })
-/// assert_eq(r, @list.from_array([4, 6, 3]))
+/// ```mbt check
+/// test {
+///   let ls = @list.from_array([4, 2, 2, 6, 3, 1])
+///   let r = ls.filter_map(x => if x >= 3 { Some(x) } else { None })
+///   assert_eq(r, @list.from_array([4, 6, 3]))
+/// }
 /// ```
 pub fn[A, B] List::filter_map(
   self : List[A],
@@ -794,8 +838,10 @@ pub fn[A] List::nth(self : List[A], n : Int) -> A? {
 ///
 /// # Example
 ///
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   assert_eq(@list.repeat(5, 1), @list.from_array([1, 1, 1, 1, 1]))
+/// }
 /// ```
 #as_free_fn
 pub fn[A] List::repeat(n : Int, x : A) -> List[A] {
@@ -809,9 +855,11 @@ pub fn[A] List::repeat(n : Int, x : A) -> List[A] {
 ///
 /// # Example
 ///
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let ls = @list.from_array(["1", "2", "3", "4", "5"]).intersperse("|")
 ///   assert_eq(ls, @list.from_array(["1", "|", "2", "|", "3", "|", "4", "|", "5"]))
+/// }
 /// ```
 pub fn[A] List::intersperse(self : List[A], separator : A) -> List[A] {
   match self {
@@ -858,10 +906,12 @@ pub fn[A] List::is_empty(self : List[A]) -> Bool {
 ///
 /// # Example
 ///
-/// ```mbt
-/// let (a,b) = @list.from_array([(1,2),(3,4),(5,6)]).unzip()
-/// assert_eq(a, @list.from_array([1, 3, 5]))
-/// assert_eq(b, @list.from_array([2, 4, 6]))
+/// ```mbt check
+/// test {
+///   let (a, b) = @list.from_array([(1, 2), (3, 4), (5, 6)]).unzip()
+///   assert_eq(a, @list.from_array([1, 3, 5]))
+///   assert_eq(b, @list.from_array([2, 4, 6]))
+/// }
 /// ```
 pub fn[A, B] List::unzip(self : List[(A, B)]) -> (List[A], List[B]) {
   match self {
@@ -888,9 +938,15 @@ pub fn[A, B] List::unzip(self : List[(A, B)]) -> (List[A], List[B]) {
 ///
 /// # Example
 ///
-/// ```mbt
-/// let ls = @list.from_array([@list.from_array([1,2,3]), @list.from_array([4,5,6]), @list.from_array([7,8,9])]).flatten()
-/// assert_eq(ls, @list.from_array([1, 2, 3, 4, 5, 6, 7, 8, 9]))
+/// ```mbt check
+/// test {
+///   let ls = @list.from_array([
+///     @list.from_array([1, 2, 3]),
+///     @list.from_array([4, 5, 6]),
+///     @list.from_array([7, 8, 9]),
+///   ]).flatten()
+///   assert_eq(ls, @list.from_array([1, 2, 3, 4, 5, 6, 7, 8, 9]))
+/// }
 /// ```
 pub fn[A] List::flatten(self : List[List[A]]) -> List[A] {
   loop self {
@@ -1055,9 +1111,11 @@ pub fn[A : Compare] List::minimum(self : List[A]) -> A? {
 ///
 /// # Example
 ///
-/// ```mbt
-///   let ls = @list.from_array([1,123,52,3,6,0,-6,-76]).sort()
+/// ```mbt check
+/// test {
+///   let ls = @list.from_array([1, 123, 52, 3, 6, 0, -6, -76]).sort()
 ///   assert_eq(ls, @list.from_array([-76, -6, 0, 1, 3, 6, 52, 123]))
+/// }
 /// ```
 pub fn[A : Compare] List::sort(self : List[A]) -> List[A] {
   let arr = self.to_array()
@@ -1112,9 +1170,11 @@ pub fn[A : Eq] List::contains(self : List[A], value : A) -> Bool {
 ///
 /// # Example
 ///
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let r = @list.unfold(init=0, i => if i == 3 { None } else { Some((i, i + 1)) })
 ///   assert_eq(r, @list.from_array([0, 1, 2]))
+/// }
 /// ```
 #as_free_fn
 pub fn[A, S] List::unfold(
@@ -1173,10 +1233,12 @@ pub fn[A, S] List::rev_unfold(
 ///
 /// # Example
 ///
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let ls = @list.from_array([1, 2, 3, 4, 5])
 ///   let r = ls.take(3)
 ///   assert_eq(r, @list.from_array([1, 2, 3]))
+/// }
 /// ```
 pub fn[A] List::take(self : List[A], n : Int) -> List[A] {
   if n <= 0 {
@@ -1207,10 +1269,12 @@ pub fn[A] List::take(self : List[A], n : Int) -> List[A] {
 ///
 /// # Example
 ///
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let ls = @list.from_array([1, 2, 3, 4, 5])
 ///   let r = ls.drop(3)
 ///   assert_eq(r, @list.from_array([4, 5]))
+/// }
 /// ```
 pub fn[A] List::drop(self : List[A], n : Int) -> List[A] {
   if n <= 0 {
@@ -1229,10 +1293,12 @@ pub fn[A] List::drop(self : List[A], n : Int) -> List[A] {
 ///
 /// # Example
 ///
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let ls = @list.from_array([1, 2, 3, 4])
 ///   let r = ls.take_while(x => x < 3)
 ///   assert_eq(r, @list.from_array([1, 2]))
+/// }
 /// ```
 pub fn[A] List::take_while(
   self : List[A],
@@ -1264,10 +1330,12 @@ pub fn[A] List::take_while(
 ///
 /// # Example
 ///
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let ls = @list.from_array([1, 2, 3, 4])
 ///   let r = ls.drop_while(x => x < 3)
 ///   assert_eq(r, @list.from_array([3, 4]))
+/// }
 /// ```
 pub fn[A] List::drop_while(
   self : List[A],
@@ -1284,10 +1352,12 @@ pub fn[A] List::drop_while(
 ///
 /// # Example
 ///
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let ls = @list.from_array([1, 2, 3, 4, 5])
 ///   let r = ls.scan_left((acc, x) => acc + x, init=0)
 ///   assert_eq(r, @list.from_array([0, 1, 3, 6, 10, 15]))
+/// }
 /// ```
 pub fn[A, E] List::scan_left(
   self : List[A],
@@ -1312,10 +1382,12 @@ pub fn[A, E] List::scan_left(
 /// Note that the order of parameters on the accumulating function are reversed.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let ls = @list.from_array([1, 2, 3, 4, 5])
 ///   let r = ls.scan_right((acc, x) => acc + x, init=0)
 ///   assert_eq(r, @list.from_array([15, 14, 12, 9, 5, 0]))
+/// }
 /// ```
 pub fn[A, B] List::scan_right(
   self : List[A],
@@ -1330,9 +1402,11 @@ pub fn[A, B] List::scan_right(
 ///
 /// # Example
 ///
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let ls = @list.from_array([(1, "a"), (2, "b"), (3, "c")])
 ///   assert_eq(ls.lookup(3), Some("c"))
+/// }
 /// ```
 pub fn[A : Eq, B] List::lookup(self : List[(A, B)], v : A) -> B? {
   loop self {
@@ -1346,9 +1420,14 @@ pub fn[A : Eq, B] List::lookup(self : List[(A, B)], v : A) -> B? {
 ///
 /// # Example
 ///
-/// ```mbt
-///   assert_eq(@list.from_array([1, 3, 5, 8]).find(element => element % 2 == 0), Some(8))
+/// ```mbt check
+/// test {
+///   assert_eq(
+///     @list.from_array([1, 3, 5, 8]).find(element => element % 2 == 0),
+///     Some(8),
+///   )
 ///   assert_eq(@list.from_array([1, 3, 5]).find(element => element % 2 == 0), None)
+/// }
 /// ```
 pub fn[A] List::find(self : List[A], f : (A) -> Bool raise?) -> A? raise? {
   loop self {
@@ -1405,9 +1484,19 @@ pub fn[A] List::find_index(
 ///
 /// # Example
 ///
-/// ```mbt
-///   assert_eq(@list.from_array([1, 3, 5, 8]).findi((element, index) => (element % 2 == 0) && (index == 3)), Some(8))
-///   assert_eq(@list.from_array([1, 3, 8, 5]).findi((element, index) => (element % 2 == 0) && (index == 3)), None)
+/// ```mbt check
+/// test {
+///   assert_eq(
+///     @list.from_array([1, 3, 5, 8]).findi((element, index) => element % 2 == 0 &&
+///       index == 3),
+///     Some(8),
+///   )
+///   assert_eq(
+///     @list.from_array([1, 3, 8, 5]).findi((element, index) => element % 2 == 0 &&
+///       index == 3),
+///     None,
+///   )
+/// }
 /// ```
 pub fn[A] List::findi(self : List[A], f : (A, Int) -> Bool raise?) -> A? raise? {
   loop (self, 0) {
@@ -1429,8 +1518,13 @@ pub fn[A] List::findi(self : List[A], f : (A, Int) -> Bool raise?) -> A? raise? 
 ///
 /// # Example
 ///
-/// ```mbt
-///   assert_eq(@list.from_array([1, 2, 3, 4, 5]).remove_at(2), @list.from_array([1, 2, 4, 5]))
+/// ```mbt check
+/// test {
+///   assert_eq(
+///     @list.from_array([1, 2, 3, 4, 5]).remove_at(2),
+///     @list.from_array([1, 2, 4, 5]),
+///   )
+/// }
 /// ```
 pub fn[A] List::remove_at(self : List[A], index : Int) -> List[A] {
   match (index, self) {
@@ -1458,8 +1552,13 @@ pub fn[A] List::remove_at(self : List[A], index : Int) -> List[A] {
 ///
 /// # Example
 ///
-/// ```mbt
-///   assert_eq(@list.from_array([1, 2, 3, 4, 5]).remove(3), @list.from_array([1, 2, 4, 5]))
+/// ```mbt check
+/// test {
+///   assert_eq(
+///     @list.from_array([1, 2, 3, 4, 5]).remove(3),
+///     @list.from_array([1, 2, 4, 5]),
+///   )
+/// }
 /// ```
 pub fn[A : Eq] List::remove(self : List[A], elem : A) -> List[A] {
   match self {
@@ -1488,8 +1587,13 @@ pub fn[A : Eq] List::remove(self : List[A], elem : A) -> List[A] {
 ///
 /// # Example
 ///
-/// ```mbt
-///   assert_eq(@list.from_array([1, 2, 3, 4, 5]).is_prefix(@list.from_array([1, 2, 3])), true)
+/// ```mbt check
+/// test {
+///   assert_eq(
+///     @list.from_array([1, 2, 3, 4, 5]).is_prefix(@list.from_array([1, 2, 3])),
+///     true,
+///   )
+/// }
 /// ```
 pub fn[A : Eq] List::is_prefix(self : List[A], prefix : List[A]) -> Bool {
   loop (self, prefix) {
@@ -1509,8 +1613,13 @@ pub fn[A : Eq] List::is_prefix(self : List[A], prefix : List[A]) -> Bool {
 ///
 /// # Example
 ///
-/// ```mbt
-///   assert_eq(@list.from_array([1, 2, 3, 4, 5]).is_suffix(@list.from_array([3, 4, 5])), true)
+/// ```mbt check
+/// test {
+///   assert_eq(
+///     @list.from_array([1, 2, 3, 4, 5]).is_suffix(@list.from_array([3, 4, 5])),
+///     true,
+///   )
+/// }
 /// ```
 pub fn[A : Eq] List::is_suffix(self : List[A], suffix : List[A]) -> Bool {
   self.rev().is_prefix(suffix.rev())

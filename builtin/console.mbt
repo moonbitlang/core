@@ -28,10 +28,12 @@ fn[T] any_to_string(any : T) -> String = "%any.to_string"
 ///
 /// Example:
 ///
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   println(42)
 ///   println("Hello, World!")
 ///   println([1, 2, 3])
+/// }
 /// ```
 pub fn[T : Show] println(input : T) -> Unit {
   println_mono(input.to_string())
