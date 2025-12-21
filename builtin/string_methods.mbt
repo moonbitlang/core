@@ -644,11 +644,10 @@ test "contains_char" {
 ///|
 /// Returns the view of the string without the leading characters that are in
 /// the given string.
-#label_migration(chars, allow_positional=true)
 #label_migration(chars, alias=char_set)
 pub fn StringView::trim_start(
   self : StringView,
-  chars~ : StringView,
+  chars? : StringView = "\t\n\r ",
 ) -> StringView {
   loop self {
     [] as v => v
