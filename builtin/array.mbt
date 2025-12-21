@@ -826,16 +826,7 @@ pub fn[T : Eq] Array::contains(self : Array[T], value : T) -> Bool {
 /// }
 /// ```
 pub fn[T : Eq] Array::starts_with(self : Array[T], prefix : Array[T]) -> Bool {
-  if prefix.length() > self.length() {
-    return false
-  }
-  for i in 0..<prefix.length() {
-    if self.unsafe_get(i) != prefix.unsafe_get(i) {
-      break false
-    }
-  } else {
-    true
-  }
+  self[:].starts_with(prefix[:])
 }
 
 ///|
@@ -862,17 +853,7 @@ pub fn[T : Eq] Array::starts_with(self : Array[T], prefix : Array[T]) -> Bool {
 /// }
 /// ```
 pub fn[T : Eq] Array::ends_with(self : Array[T], suffix : Array[T]) -> Bool {
-  if suffix.length() > self.length() {
-    return false
-  }
-  for i in 0..<suffix.length() {
-    if self.unsafe_get(self.length() - suffix.length() + i) !=
-      suffix.unsafe_get(i) {
-      break false
-    }
-  } else {
-    true
-  }
+  self[:].ends_with(suffix[:])
 }
 
 ///|
@@ -964,13 +945,7 @@ pub fn[T : Eq] Array::strip_suffix(
 /// }
 /// ```
 pub fn[T : Eq] Array::search(self : Array[T], value : T) -> Int? {
-  for i, v in self {
-    if v == value {
-      break Some(i)
-    }
-  } else {
-    None
-  }
+  self[:].search(value)
 }
 
 ///|
@@ -1028,23 +1003,7 @@ pub fn[T : Compare] Array::binary_search(
   self : Array[T],
   value : T,
 ) -> Result[Int, Int] {
-  let len = self.length()
-  for i = 0, j = len; i < j; {
-    let h = i + (j - i) / 2
-    // Note even if self[h] == value, we still continue the search
-    // because we want to find the leftmost match
-    if self.unsafe_get(h) < value {
-      continue h + 1, j
-    } else {
-      continue i, h
-    }
-  } else {
-    if i < len && self.unsafe_get(i) == value {
-      Ok(i)
-    } else {
-      Err(i)
-    }
-  }
+  self[:].binary_search(value)
 }
 
 ///|
@@ -1087,28 +1046,11 @@ pub fn[T : Compare] Array::binary_search(
 /// * For multiple matches, returns the leftmost matching position
 /// * Returns an insertion point that maintains the sort order when no match is
 /// found
-#locals(cmp)
 pub fn[T] Array::binary_search_by(
   self : Array[T],
   cmp : (T) -> Int raise?,
 ) -> Result[Int, Int] raise? {
-  let len = self.length()
-  for i = 0, j = len; i < j; {
-    let h = i + (j - i) / 2
-    // Note even if self[h] == value, we still continue the search
-    // because we want to find the leftmost match
-    if cmp(self.unsafe_get(h)) < 0 {
-      continue h + 1, j
-    } else {
-      continue i, h
-    }
-  } else {
-    if i < len && cmp(self.unsafe_get(i)) == 0 {
-      Ok(i)
-    } else {
-      Err(i)
-    }
-  }
+  self[:].binary_search_by(cmp)
 }
 
 ///|
