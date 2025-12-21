@@ -39,6 +39,16 @@ test "bytes literal" {
 }
 
 ///|
+test "is_empty" {
+  inspect(b"".is_empty(), content="true")
+  inspect(b"\x00".is_empty(), content="false")
+  let view = b"\x00\x01"[1:1]
+  inspect(view.is_empty(), content="true")
+  let view = b"\x00\x01"[0:1]
+  inspect(view.is_empty(), content="false")
+}
+
+///|
 test "from_array" {
   let b = Bytes::from_array([
     b'\x41', b'\x00', b'\x42', b'\x00', b'\x43', b'\x00',

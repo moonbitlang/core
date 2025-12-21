@@ -393,6 +393,7 @@ pub impl[K : Show, V : ToJson] ToJson for Map[K, V]
 type MutArrayView[T]
 #alias("_[_]")
 pub fn[T] MutArrayView::at(Self[T], Int) -> T
+pub fn[T] MutArrayView::is_empty(Self[T]) -> Bool
 #alias(iterator, deprecated)
 pub fn[X] MutArrayView::iter(Self[X]) -> Iter[X]
 #alias(iterator2, deprecated)
@@ -407,8 +408,10 @@ pub fn[T : Compare] MutArrayView::sort(Self[T]) -> Unit
 pub fn[T] MutArrayView::sort_by(Self[T], (T, T) -> Int) -> Unit
 pub fn[T, K : Compare] MutArrayView::sort_by_key(Self[T], (T) -> K) -> Unit
 pub fn[T : Compare] MutArrayView::stable_sort(Self[T]) -> Unit
+pub fn[T] MutArrayView::start_offset(Self[T]) -> Int
 #alias("_[_:_]")
 pub fn[T] MutArrayView::sub(Self[T], start? : Int, end? : Int) -> ArrayView[T]
+pub fn[T] MutArrayView::to_array(Self[T]) -> Array[T]
 pub fn[T] MutArrayView::unsafe_get(Self[T], Int) -> T
 pub fn[T] MutArrayView::unsafe_set(Self[T], Int, T) -> Unit
 pub impl[T : Compare] Compare for MutArrayView[T]
@@ -885,6 +888,7 @@ pub fn Bytes::from_fixedarray(FixedArray[Byte], len? : Int) -> Bytes
 #alias(from_iterator, deprecated)
 pub fn Bytes::from_iter(Iter[Byte]) -> Bytes
 pub fn Bytes::get(Bytes, Int) -> Byte?
+pub fn Bytes::is_empty(Bytes) -> Bool
 #alias(iterator, deprecated)
 pub fn Bytes::iter(Bytes) -> Iter[Byte]
 #alias(iterator2, deprecated)
@@ -910,6 +914,7 @@ pub fn BytesView::at(Self, Int) -> Byte
 pub fn BytesView::data(Self) -> Bytes
 pub fn BytesView::find(Self, Self) -> Int?
 pub fn BytesView::get(Self, Int) -> Byte?
+pub fn BytesView::is_empty(Self) -> Bool
 #alias(iterator, deprecated)
 pub fn BytesView::iter(Self) -> Iter[Byte]
 #alias(iterator2, deprecated)

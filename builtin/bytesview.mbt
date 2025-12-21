@@ -47,6 +47,23 @@ pub fn BytesView::length(self : BytesView) -> Int {
 }
 
 ///|
+/// Returns whether the bytes view is empty.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let view = b"\x00\x01"[1:1]
+///   inspect(view.is_empty(), content="true")
+///   let view = b"\x00\x01"[0:1]
+///   inspect(view.is_empty(), content="false")
+/// }
+/// ```
+pub fn BytesView::is_empty(self : BytesView) -> Bool {
+  self.length() == 0
+}
+
+///|
 /// Retrieves a byte from the view at the specified index.
 ///
 /// Parameters:

@@ -55,6 +55,24 @@ test "mutarrayview_set" {
 }
 
 ///|
+test "mutarrayview_helpers" {
+  let arr = [1, 2, 3, 4, 5]
+  let empty_view = arr.mut_view(start=2, end=2)
+  inspect(empty_view.is_empty(), content="true")
+  inspect(empty_view.start_offset(), content="2")
+  let view = arr.mut_view(start=1, end=4)
+  inspect(view.is_empty(), content="false")
+  inspect(view.start_offset(), content="1")
+  inspect(view.to_array(), content="[2, 3, 4]")
+  let values = []
+  view.iter().each(v => values.push(v))
+  inspect(values, content="[2, 3, 4]")
+  let pairs = []
+  view.iter2().each((i, v) => pairs.push((i, v)))
+  inspect(pairs, content="[(0, 2), (1, 3), (2, 4)]")
+}
+
+///|
 test "mutarrayview_as_mutarrayview" {
   let arr = [1, 2, 3, 4, 5]
   let view1 = arr.mut_view(start=1, end=4)
