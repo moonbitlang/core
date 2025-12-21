@@ -694,6 +694,21 @@ pub impl Default for Bytes with default() {
 }
 
 ///|
+/// Returns whether the byte sequence is empty.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(b"".is_empty(), content="true")
+///   inspect(b"\x00".is_empty(), content="false")
+/// }
+/// ```
+pub fn Bytes::is_empty(self : Bytes) -> Bool {
+  self.length() == 0
+}
+
+///|
 /// Retrieves a byte from the view at the specified index.
 ///
 /// Parameters:

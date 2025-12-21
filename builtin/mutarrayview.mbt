@@ -68,6 +68,27 @@ pub fn[T] MutArrayView::length(self : MutArrayView[T]) -> Int {
 }
 
 ///|
+/// Returns whether the mutable array view is empty.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let view = [1, 2, 3].mut_view(start=1, end=1)
+///   inspect(view.is_empty(), content="true")
+/// }
+/// ```
+pub fn[T] MutArrayView::is_empty(self : MutArrayView[T]) -> Bool {
+  self.length() == 0
+}
+
+///|
+/// Returns the start offset of the mutable array view in its backing array.
+pub fn[T] MutArrayView::start_offset(self : MutArrayView[T]) -> Int {
+  self.start()
+}
+
+///|
 /// Retrieves an element at the specified index from the mutable array view.
 ///
 /// Parameters:
@@ -362,6 +383,12 @@ pub fn[T] MutArrayView::sub(
     abort("View index out of bounds")
   }
   ArrayView::make(self.buf(), self.start() + start, end - start)
+}
+
+///|
+/// Copies the elements of the mutable array view into a new array.
+pub fn[T] MutArrayView::to_array(self : MutArrayView[T]) -> Array[T] {
+  self[:].to_array()
 }
 
 // Copyright 2026 International Digital Economy Academy
