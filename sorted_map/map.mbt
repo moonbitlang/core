@@ -47,14 +47,16 @@ pub fn[K : Compare, V] SortedMap::from_array(
 }
 
 ///|
-/// Inserts a key-value pair.
-/// ```mbt test
-/// let map = @sorted_map.new()
-/// map.set(1, "a")
-/// map.set(2, "b")
-/// map.set(2, "c") // updates value for key 2
-/// inspect(map.get(1), content="Some(\"a\")")
-/// inspect(map.get(2), content="Some(\"c\")")
+/// FIXME: (remove this line will break formatter)
+/// ```mbt check
+/// test {
+///   let map = @sorted_map.new()
+///   map.set(1, "a")
+///   map.set(2, "b")
+///   map.set(2, "c") // updates value for key 2
+///   inspect(map.get(1), content="Some(\"a\")")
+///   inspect(map.get(2), content="Some(\"c\")")
+/// }
 /// ```
 #alias("_[_]=_")
 #alias(add, deprecated="Use set instead")
@@ -360,12 +362,14 @@ pub fn[K : Compare, V] SortedMap::range(
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let map1 = @sorted_map.from_array([(1, "a"), (2, "b"), (3, "c")])
-/// let map2 = map1.copy()
-/// map2.set(4, "d")
-/// inspect(map1.length(), content="3")
-/// inspect(map2.length(), content="4")
+/// ```mbt check
+/// test {
+///   let map1 = @sorted_map.from_array([(1, "a"), (2, "b"), (3, "c")])
+///   let map2 = map1.copy()
+///   map2.set(4, "d")
+///   inspect(map1.length(), content="3")
+///   inspect(map2.length(), content="4")
+/// }
 /// ```
 pub fn[K, V] SortedMap::copy(self : SortedMap[K, V]) -> SortedMap[K, V] {
   fn copy_node(node : Node[K, V]?) -> Node[K, V]? {
@@ -402,13 +406,15 @@ pub fn[K, V] SortedMap::copy(self : SortedMap[K, V]) -> SortedMap[K, V] {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let map1 = @sorted_map.from_array([(1, "a"), (2, "b")])
-/// let map2 = @sorted_map.from_array([(2, "c"), (3, "d")])
-/// let merged = map1.merge(map2)
-/// inspect(merged.get(1), content="Some(\"a\")")
-/// inspect(merged.get(2), content="Some(\"c\")")
-/// inspect(merged.get(3), content="Some(\"d\")")
+/// ```mbt check
+/// test {
+///   let map1 = @sorted_map.from_array([(1, "a"), (2, "b")])
+///   let map2 = @sorted_map.from_array([(2, "c"), (3, "d")])
+///   let merged = map1.merge(map2)
+///   inspect(merged.get(1), content="Some(\"a\")")
+///   inspect(merged.get(2), content="Some(\"c\")")
+///   inspect(merged.get(3), content="Some(\"d\")")
+/// }
 /// ```
 pub fn[K : Compare, V] SortedMap::merge(
   self : SortedMap[K, V],
@@ -433,13 +439,15 @@ pub fn[K : Compare, V] SortedMap::merge(
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let map1 = @sorted_map.from_array([(1, "a"), (2, "b")])
-/// let map2 = @sorted_map.from_array([(2, "c"), (3, "d")])
-/// map1.merge_in_place(map2)
-/// inspect(map1.get(1), content="Some(\"a\")")
-/// inspect(map1.get(2), content="Some(\"c\")")
-/// inspect(map1.get(3), content="Some(\"d\")")
+/// ```mbt check
+/// test {
+///   let map1 = @sorted_map.from_array([(1, "a"), (2, "b")])
+///   let map2 = @sorted_map.from_array([(2, "c"), (3, "d")])
+///   map1.merge_in_place(map2)
+///   inspect(map1.get(1), content="Some(\"a\")")
+///   inspect(map1.get(2), content="Some(\"c\")")
+///   inspect(map1.get(3), content="Some(\"d\")")
+/// }
 /// ```
 pub fn[K : Compare, V] SortedMap::merge_in_place(
   self : SortedMap[K, V],

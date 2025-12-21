@@ -99,12 +99,14 @@ pub fn[K : Hash + Eq] Set::from_array(arr : ArrayView[K]) -> Set[K] {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let set : @set.Set[String] = @set.Set::new()
-/// set.add("key")
-/// inspect(set.contains("key"), content="true")
-/// set.add("key") // no effect since it already exists
-/// inspect(set.length(), content="1")
+/// ```mbt check
+/// test {
+///   let set : @set.Set[String] = @set.Set::new()
+///   set.add("key")
+///   inspect(set.contains("key"), content="true")
+///   set.add("key") // no effect since it already exists
+///   inspect(set.length(), content="1")
+/// }
 /// ```
 #alias(insert, deprecated)
 pub fn[K : Hash + Eq] Set::add(self : Set[K], key : K) -> Unit {
@@ -180,11 +182,13 @@ fn[K] Set::set_entry(self : Set[K], entry : Entry[K], new_idx : Int) -> Unit {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let set : @set.Set[String] = @set.Set::new()
-/// inspect(set.add_and_check("key"), content="true") // First insertion
-/// inspect(set.add_and_check("key"), content="false") // Already exists
-/// inspect(set.length(), content="1")
+/// ```mbt check
+/// test {
+///   let set : @set.Set[String] = @set.Set::new()
+///   inspect(set.add_and_check("key"), content="true") // First insertion
+///   inspect(set.add_and_check("key"), content="false") // Already exists
+///   inspect(set.length(), content="1")
+/// }
 /// ```
 pub fn[K : Hash + Eq] Set::add_and_check(self : Set[K], key : K) -> Bool {
   if self.size >= self.grow_at {
@@ -243,11 +247,13 @@ pub fn[K : Hash + Eq] Set::contains(self : Set[K], key : K) -> Bool {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let set = @set.Set::from_array(["a", "b"])
-/// set.remove("a")
-/// inspect(set.contains("a"), content="false")
-/// inspect(set.length(), content="1")
+/// ```mbt check
+/// test {
+///   let set = @set.Set::from_array(["a", "b"])
+///   set.remove("a")
+///   inspect(set.contains("a"), content="false")
+///   inspect(set.length(), content="1")
+/// }
 /// ```
 pub fn[K : Hash + Eq] Set::remove(self : Set[K], key : K) -> Unit {
   let hash = key.hash()
@@ -279,11 +285,13 @@ pub fn[K : Hash + Eq] Set::remove(self : Set[K], key : K) -> Unit {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let set = @set.Set::from_array(["a", "b"])
-/// inspect(set.remove_and_check("a"), content="true") // Successfully removed
-/// inspect(set.remove_and_check("a"), content="false") // Already removed
-/// inspect(set.length(), content="1")
+/// ```mbt check
+/// test {
+///   let set = @set.Set::from_array(["a", "b"])
+///   inspect(set.remove_and_check("a"), content="true") // Successfully removed
+///   inspect(set.remove_and_check("a"), content="false") // Already removed
+///   inspect(set.length(), content="1")
+/// }
 /// ```
 pub fn[K : Hash + Eq] Set::remove_and_check(self : Set[K], key : K) -> Bool {
   let hash = key.hash()

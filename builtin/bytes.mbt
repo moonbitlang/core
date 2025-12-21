@@ -40,9 +40,11 @@ pub fn FixedArray::unsafe_reinterpret_as_bytes(
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let bytes = Bytes::makei(3, i => (i + 65).to_byte())
-/// assert_eq(bytes, b"ABC")
+/// ```mbt check
+/// test {
+///   let bytes = Bytes::makei(3, i => (i + 65).to_byte())
+///   assert_eq(bytes, b"ABC")
+/// }
 /// ```
 pub fn Bytes::makei(length : Int, value : (Int) -> Byte raise?) -> Bytes raise? {
   if length <= 0 {
@@ -108,14 +110,16 @@ pub fn Bytes::to_unchecked_string(
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let bytes = FixedArray::make(6, b'\x00')
-/// bytes.blit_from_string(0, "ABC", 0, 3)
-/// @json.inspect(bytes, content=[65, 0, 66, 0, 67, 0]) // 'A'
-/// bytes.blit_from_string(0, "你好啊", 0, 3)
-/// @json.inspect(bytes, content=[96, 79, 125, 89, 74, 85]) // '你好啊'
-/// bytes.blit_from_string(0, "😈", 0, 2)
-/// @json.inspect(bytes, content=[61, 216, 8, 222, 74, 85]) // '😈'
+/// ```mbt check
+/// test {
+///   let bytes = FixedArray::make(6, b'\x00')
+///   bytes.blit_from_string(0, "ABC", 0, 3)
+///   @json.inspect(bytes, content=[65, 0, 66, 0, 67, 0]) // 'A'
+///   bytes.blit_from_string(0, "你好啊", 0, 3)
+///   @json.inspect(bytes, content=[96, 79, 125, 89, 74, 85]) // '你好啊'
+///   bytes.blit_from_string(0, "😈", 0, 2)
+///   @json.inspect(bytes, content=[61, 216, 8, 222, 74, 85]) // '😈'
+/// }
 /// ```
 pub fn FixedArray::blit_from_string(
   self : FixedArray[Byte],
@@ -221,13 +225,15 @@ pub fn FixedArray::blit_from_bytesview(
 /// Throws a panic if:
 ///
 /// * The character's code point is greater than 0x10FFFF.
-/// ```mbt test
-/// let buf = FixedArray::make(4, b'\x00')
-/// let written = buf.set_utf8_char(0, '€') // Euro symbol (U+20AC)
-/// inspect(written, content="3") // UTF-8 encoding takes 3 bytes
-/// inspect(buf[0], content="b'\\xE2'")
-/// inspect(buf[1], content="b'\\x82'")
-/// inspect(buf[2], content="b'\\xAC'")
+/// ```mbt check
+/// test {
+///   let buf = FixedArray::make(4, b'\x00')
+///   let written = buf.set_utf8_char(0, '€') // Euro symbol (U+20AC)
+///   inspect(written, content="3") // UTF-8 encoding takes 3 bytes
+///   inspect(buf[0], content="b'\\xE2'")
+///   inspect(buf[1], content="b'\\x82'")
+///   inspect(buf[2], content="b'\\xAC'")
+/// }
 /// ```
 pub fn FixedArray::set_utf8_char(
   self : FixedArray[Byte],
@@ -333,12 +339,14 @@ pub fn FixedArray::set_utf16be_char(
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let bytes1 = b"\x01\x02\x03"
-/// let bytes2 = b"\x01\x02\x03"
-/// let bytes3 = b"\x01\x02\x04"
-/// inspect(bytes1 == bytes2, content="true")
-/// inspect(bytes1 == bytes3, content="false")
+/// ```mbt check
+/// test {
+///   let bytes1 = b"\x01\x02\x03"
+///   let bytes2 = b"\x01\x02\x03"
+///   let bytes3 = b"\x01\x02\x04"
+///   inspect(bytes1 == bytes2, content="true")
+///   inspect(bytes1 == bytes3, content="false")
+/// }
 /// ```
 pub impl Eq for Bytes with equal(self : Bytes, other : Bytes) -> Bool {
   if self.length() != other.length() {
@@ -373,16 +381,18 @@ pub impl Eq for Bytes with equal(self : Bytes, other : Bytes) -> Bool {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let a = b"\x01\x02\x03"
-/// let b = b"\x01\x02\x04"
-/// inspect(a.compare(b), content="-1") // a < b
-/// inspect(b.compare(a), content="1") // b > a
-/// inspect(a.compare(a), content="0") // a = a
-/// let a = b"\x01\x02"
-/// let b = b"\x01\x02\x03"
-/// inspect(a.compare(b), content="-1") // shorter sequence is less
-/// inspect(b.compare(a), content="1") // longer sequence is greater
+/// ```mbt check
+/// test {
+///   let a = b"\x01\x02\x03"
+///   let b = b"\x01\x02\x04"
+///   inspect(a.compare(b), content="-1") // a < b
+///   inspect(b.compare(a), content="1") // b > a
+///   inspect(a.compare(a), content="0") // a = a
+///   let a = b"\x01\x02"
+///   let b = b"\x01\x02\x03"
+///   inspect(a.compare(b), content="-1") // shorter sequence is less
+///   inspect(b.compare(a), content="1") // longer sequence is greater
+/// }
 /// ```
 pub impl Compare for Bytes with compare(self, other) {
   let self_len = self.length()
@@ -414,15 +424,17 @@ pub impl Compare for Bytes with compare(self, other) {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let arr = [b'h', b'i']
-/// let bytes = Bytes::from_array(arr)
-/// inspect(
-///   bytes,
-///   content=(
-///     #|b"hi"
-///   ),
-/// )
+/// ```mbt check
+/// test {
+///   let arr = [b'h', b'i']
+///   let bytes = Bytes::from_array(arr)
+///   inspect(
+///     bytes,
+///     content=(
+///       #|b"hi"
+///     ),
+///   )
+/// }
 /// ```
 #alias(of, deprecated="Use Bytes::from_array instead")
 pub fn Bytes::from_array(arr : ArrayView[Byte]) -> Bytes {
@@ -445,15 +457,17 @@ pub fn Bytes::from_array(arr : ArrayView[Byte]) -> Bytes {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let arr : FixedArray[Byte] = [b'h', b'e', b'l', b'l', b'o']
-/// let bytes = Bytes::from_array(arr[0:3])
-/// inspect(
-///   bytes,
-///   content=(
-///     #|b"hel"
-///   ),
-/// )
+/// ```mbt check
+/// test {
+///   let arr : FixedArray[Byte] = [b'h', b'e', b'l', b'l', b'o']
+///   let bytes = Bytes::from_array(arr[0:3])
+///   inspect(
+///     bytes,
+///     content=(
+///       #|b"hel"
+///     ),
+///   )
+/// }
 /// ```
 /// 
 /// Panics if the length is invalid
@@ -487,12 +501,14 @@ pub fn Bytes::from_fixedarray(arr : FixedArray[Byte], len? : Int) -> Bytes {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let bytes = b"hello"
-/// let arr = bytes.to_fixedarray()
-/// inspect(arr, content="[b'\\x68', b'\\x65', b'\\x6C', b'\\x6C', b'\\x6F']")
-/// let arr2 = bytes[:3].to_fixedarray()
-/// inspect(arr2, content="[b'\\x68', b'\\x65', b'\\x6C']")
+/// ```mbt check
+/// test {
+///   let bytes = b"hello"
+///   let arr = bytes.to_fixedarray()
+///   inspect(arr, content="[b'\\x68', b'\\x65', b'\\x6C', b'\\x6C', b'\\x6F']")
+///   let arr2 = bytes[:3].to_fixedarray()
+///   inspect(arr2, content="[b'\\x68', b'\\x65', b'\\x6C']")
+/// }
 /// ```
 /// 
 /// Panics if the length is invalid
@@ -529,15 +545,17 @@ pub fn BytesView::to_fixedarray(self : BytesView) -> FixedArray[Byte] {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let iter = Iter::singleton(b'h')
-/// let bytes = Bytes::from_iter(iter)
-/// inspect(
-///   bytes,
-///   content=(
-///     #|b"h"
-///   ),
-/// )
+/// ```mbt check
+/// test {
+///   let iter = Iter::singleton(b'h')
+///   let bytes = Bytes::from_iter(iter)
+///   inspect(
+///     bytes,
+///     content=(
+///       #|b"h"
+///     ),
+///   )
+/// }
 /// ```
 pub fn Bytes::from_iter(iter : Iter[Byte]) -> Bytes {
   Bytes::from_array(iter.collect())
@@ -554,15 +572,17 @@ pub fn Bytes::from_iter(iter : Iter[Byte]) -> Bytes {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let iter = Iterator::singleton(b'h')
-/// let bytes = Bytes::from_iterator(iter)
-/// inspect(
-///   bytes,
-///   content=(
-///     #|b"h"
-///   ),
-/// )
+/// ```mbt check
+/// test {
+///   let iter = Iterator::singleton(b'h')
+///   let bytes = Bytes::from_iterator(iter)
+///   inspect(
+///     bytes,
+///     content=(
+///       #|b"h"
+///     ),
+///   )
+/// }
 /// ```
 pub fn Bytes::from_iterator(iter : Iterator[Byte]) -> Bytes {
   Bytes::from_array(iter.collect())
@@ -605,10 +625,12 @@ pub fn Bytes::from_iterator(iter : Iterator[Byte]) -> Bytes {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let bytes = b"hello"
-/// let arr = bytes.to_array()
-/// inspect(arr, content="[b'\\x68', b'\\x65', b'\\x6C', b'\\x6C', b'\\x6F']")
+/// ```mbt check
+/// test {
+///   let bytes = b"hello"
+///   let arr = bytes.to_array()
+///   inspect(arr, content="[b'\\x68', b'\\x65', b'\\x6C', b'\\x6C', b'\\x6F']")
+/// }
 /// ```
 pub fn Bytes::to_array(self : Bytes) -> Array[Byte] {
   let len = self.length()
@@ -640,11 +662,13 @@ pub fn BytesView::to_array(self : BytesView) -> Array[Byte] {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let bytes = Bytes::from_array([b'h', b'i'])
-/// let mut sum = 0
-/// bytes.iter().each(b => sum = sum + b.to_int())
-/// inspect(sum, content="209") // ASCII values: 'h'(104) + 'i'(105) = 209
+/// ```mbt check
+/// test {
+///   let bytes = Bytes::from_array([b'h', b'i'])
+///   let mut sum = 0
+///   bytes.iter().each(b => sum = sum + b.to_int())
+///   inspect(sum, content="209") // ASCII values: 'h'(104) + 'i'(105) = 209
+/// }
 /// ```
 pub fn Bytes::iter(self : Bytes) -> Iter[Byte] {
   self.iterator().iter()
@@ -661,11 +685,13 @@ pub fn Bytes::iter(self : Bytes) -> Iter[Byte] {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let bytes = Bytes::from_array([b'h', b'i'])
-/// let mut sum = 0
-/// bytes.iterator().each(b => sum = sum + b.to_int())
-/// inspect(sum, content="209") // ASCII values: 'h'(104) + 'i'(105) = 209
+/// ```mbt check
+/// test {
+///   let bytes = Bytes::from_array([b'h', b'i'])
+///   let mut sum = 0
+///   bytes.iterator().each(b => sum = sum + b.to_int())
+///   inspect(sum, content="209") // ASCII values: 'h'(104) + 'i'(105) = 209
+/// }
 /// ```
 pub fn Bytes::iterator(self : Bytes) -> Iterator[Byte] {
   let mut i = 0
@@ -701,16 +727,18 @@ pub fn Bytes::iter2(self : Bytes) -> Iter2[Int, Byte] {
 /// 
 /// Example:
 ///
-/// ```mbt test
-/// let buf = StringBuilder::new(size_hint=5)
-/// let keys = []
-/// let it = b"abcde".iterator2()
-/// while it.next() is Some((i, x)) {
-///   buf.write_string(x.to_string())
-///   keys.push(i)
+/// ```mbt check
+/// test {
+///   let buf = StringBuilder::new(size_hint=5)
+///   let keys = []
+///   let it = b"abcde".iterator2()
+///   while it.next() is Some((i, x)) {
+///     buf.write_string(x.to_string())
+///     keys.push(i)
+///   }
+///   inspect(buf, content="b'\\x61'b'\\x62'b'\\x63'b'\\x64'b'\\x65'")
+///   inspect(keys, content="[0, 1, 2, 3, 4]")
 /// }
-/// inspect(buf, content="b'\\x61'b'\\x62'b'\\x63'b'\\x64'b'\\x65'")
-/// inspect(keys, content="[0, 1, 2, 3, 4]")
 /// ```
 pub fn Bytes::iterator2(self : Bytes) -> Iterator2[Int, Byte] {
   let mut i = 0
@@ -730,10 +758,12 @@ pub fn Bytes::iterator2(self : Bytes) -> Iterator2[Int, Byte] {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let bytes = Bytes::default()
-/// inspect(bytes, content="b\"\"")
-/// inspect(bytes.length(), content="0")
+/// ```mbt check
+/// test {
+///   let bytes = Bytes::default()
+///   inspect(bytes, content="b\"\"")
+///   inspect(bytes.length(), content="0")
+/// }
 /// ```
 pub impl Default for Bytes with default() {
   b""
@@ -751,13 +781,15 @@ pub impl Default for Bytes with default() {
 ///
 /// Example:
 /// 
-/// ```mbt test
-/// let bytes = b"\x01\x02\x03"
-/// let byte = bytes.get(1)
-/// inspect(byte, content="Some(b'\\x02')")
-/// let bytes = b"\x01\x02\x03"
-/// let byte = bytes.get(3)
-/// inspect(byte, content="None")
+/// ```mbt check
+/// test {
+///   let bytes = b"\x01\x02\x03"
+///   let byte = bytes.get(1)
+///   inspect(byte, content="Some(b'\\x02')")
+///   let bytes = b"\x01\x02\x03"
+///   let byte = bytes.get(3)
+///   inspect(byte, content="None")
+/// }
 /// ```
 pub fn Bytes::get(self : Bytes, index : Int) -> Byte? {
   guard index >= 0 && index < self.length() else { None }
@@ -805,19 +837,21 @@ pub impl Hash for Bytes with hash_combine(self, hasher) {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// inspect(
-///   b"ab".repeat(3),
-///   content=(
-///     #|b"ababab"
-///   ),
-/// )
-/// inspect(
-///   b"xyz".repeat(0),
-///   content=(
-///     #|b""
-///   ),
-/// )
+/// ```mbt check
+/// test {
+///   inspect(
+///     b"ab".repeat(3),
+///     content=(
+///       #|b"ababab"
+///     ),
+///   )
+///   inspect(
+///     b"xyz".repeat(0),
+///     content=(
+///       #|b""
+///     ),
+///   )
+/// }
 /// ```
 pub fn Bytes::repeat(self : Self, count : Int) -> Bytes {
   if count <= 0 || self.length() == 0 {

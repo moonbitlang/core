@@ -132,18 +132,20 @@ struct Replacer((String, Json) -> Json?)
 /// 
 /// ## Example
 /// 
-/// ```mbt test
-/// // Transform numbers and exclude sensitive fields
-/// ignore(
-///   @json.Replacer::new((key, value) => match key {
-///     "password" | "secret" => None // exclude sensitive fields
-///     _ =>
-///       match value {
-///         Number(n, ..) => Some(Json::number(n * 2.0)) // double all numbers
-///         _ => Some(value) // keep other values as-is
-///       }
-///   }),
-/// )
+/// ```mbt check
+/// test {
+///   // Transform numbers and exclude sensitive fields
+///   ignore(
+///     @json.Replacer::new((key, value) => match key {
+///       "password" | "secret" => None // exclude sensitive fields
+///       _ =>
+///         match value {
+///           Number(n, ..) => Some(Json::number(n * 2.0)) // double all numbers
+///           _ => Some(value) // keep other values as-is
+///         }
+///     }),
+///   )
+/// }
 /// ```
 pub fn Replacer::new(f : (String, Json) -> Json?) -> Replacer {
   Replacer(f)
@@ -155,15 +157,17 @@ pub fn Replacer::new(f : (String, Json) -> Json?) -> Replacer {
 /// 
 /// ## Example
 /// 
-/// ```mbt test
-/// let replacer = @json.Replacer::keep(["name", "age", "email"])
-/// let json : Json = {
-///   "name": "Alice",
-///   "age": 30.0,
-///   "email": "alice@example.com",
-///   "password": "secret",
+/// ```mbt check
+/// test {
+///   let replacer = @json.Replacer::keep(["name", "age", "email"])
+///   let json : Json = {
+///     "name": "Alice",
+///     "age": 30.0,
+///     "email": "alice@example.com",
+///     "password": "secret",
+///   }
+///   ignore(json.stringify(replacer~)) // {"name":"Alice","age":30,"email":"alice@example.com"}
 /// }
-/// ignore(json.stringify(replacer~)) // {"name":"Alice","age":30,"email":"alice@example.com"}
 /// ```
 pub fn Replacer::keep(array : ArrayView[StringView]) -> Replacer {
   Replacer((idx, value) => if array.contains(idx) { Some(value) } else { None })
@@ -175,15 +179,17 @@ pub fn Replacer::keep(array : ArrayView[StringView]) -> Replacer {
 /// 
 /// ## Example
 /// 
-/// ```mbt test
-/// let replacer = @json.Replacer::exclude(["password", "secret", "private"])
-/// let json : Json = {
-///   "name": "Alice",
-///   "age": 30.0,
-///   "password": "secret",
-///   "email": "alice@example.com",
+/// ```mbt check
+/// test {
+///   let replacer = @json.Replacer::exclude(["password", "secret", "private"])
+///   let json : Json = {
+///     "name": "Alice",
+///     "age": 30.0,
+///     "password": "secret",
+///     "email": "alice@example.com",
+///   }
+///   ignore(json.stringify(replacer~)) // {"name":"Alice","age":30,"email":"alice@example.com"}
 /// }
-/// ignore(json.stringify(replacer~)) // {"name":"Alice","age":30,"email":"alice@example.com"}
 /// ```
 pub fn Replacer::exclude(array : ArrayView[StringView]) -> Replacer {
   Replacer((idx, value) => if array.contains(idx) { None } else { Some(value) })
@@ -212,47 +218,51 @@ pub fn Replacer::exclude(array : ArrayView[StringView]) -> Replacer {
 /// 
 /// ### Examples
 /// 
-/// ```mbt test
-/// let json : Json = { "a": 1.0, "b": 2.0, "c": 3.0, "password": "secret" }
+/// ```mbt check
+/// test {
+///   let json : Json = { "a": 1.0, "b": 2.0, "c": 3.0, "password": "secret" }
 ///
-/// // Keep only specific keys
-/// let keep_replacer = @json.Replacer::keep(["a", "c"])
-/// ignore(json.stringify(replacer=keep_replacer)) // {"a":1,"c":3}
+///   // Keep only specific keys
+///   let keep_replacer = @json.Replacer::keep(["a", "c"])
+///   ignore(json.stringify(replacer=keep_replacer)) // {"a":1,"c":3}
 ///
-/// // Exclude sensitive keys
-/// let exclude_replacer = @json.Replacer::exclude(["password"])
-/// ignore(json.stringify(replacer=exclude_replacer)) // {"a":1,"b":2,"c":3}
+///   // Exclude sensitive keys
+///   let exclude_replacer = @json.Replacer::exclude(["password"])
+///   ignore(json.stringify(replacer=exclude_replacer)) // {"a":1,"b":2,"c":3}
 ///
-/// // Custom transformation
-/// let transform_replacer = @json.Replacer::new((_key, value) => match value {
-///   Number(n, ..) => Some(Json::number(n * 10.0)) // multiply numbers by 10
-///   _ => Some(value) // keep other values unchanged
-/// })
-/// ignore(json.stringify(replacer=transform_replacer)) // {"a":10,"b":20,"c":30,"password":"secret"}
+///   // Custom transformation
+///   let transform_replacer = @json.Replacer::new((_key, value) => match value {
+///     Number(n, ..) => Some(Json::number(n * 10.0)) // multiply numbers by 10
+///     _ => Some(value) // keep other values unchanged
+///   })
+///   ignore(json.stringify(replacer=transform_replacer)) // {"a":10,"b":20,"c":30,"password":"secret"}
 ///
-/// // Filter and transform
-/// let filter_replacer = @json.Replacer::new((key, value) => match key {
-///   "password" => None // exclude password
-///   _ =>
-///     match value {
-///       Number(n, ..) => Some(Json::number(n + 100.0)) // add 100 to numbers
-///       _ => Some(value)
-///     }
-/// })
-/// ignore(json.stringify(replacer=filter_replacer)) // {"a":101,"b":102,"c":103}
+///   // Filter and transform
+///   let filter_replacer = @json.Replacer::new((key, value) => match key {
+///     "password" => None // exclude password
+///     _ =>
+///       match value {
+///         Number(n, ..) => Some(Json::number(n + 100.0)) // add 100 to numbers
+///         _ => Some(value)
+///       }
+///   })
+///   ignore(json.stringify(replacer=filter_replacer)) // {"a":101,"b":102,"c":103}
+/// }
 /// ```
 /// 
 /// ### Nested Objects
 /// 
 /// Replacers work recursively on nested objects:
 /// 
-/// ```mbt test
-/// let nested : Json = {
-///   "user": { "name": "Alice", "password": "secret" },
-///   "id": 123.0,
+/// ```mbt check
+/// test {
+///   let nested : Json = {
+///     "user": { "name": "Alice", "password": "secret" },
+///     "id": 123.0,
+///   }
+///   let safe_replacer = @json.Replacer::exclude(["password"])
+///   ignore(nested.stringify(replacer=safe_replacer)) // {"user":{"name":"Alice"},"id":123}
 /// }
-/// let safe_replacer = @json.Replacer::exclude(["password"])
-/// ignore(nested.stringify(replacer=safe_replacer)) // {"user":{"name":"Alice"},"id":123}
 /// ```
 pub fn Json::stringify(
   self : Json,
@@ -406,26 +416,28 @@ fn escape(str : String, escape_slash~ : Bool) -> String {
 /// 
 /// ## Example
 /// 
-/// ```mbt test
-/// let json : Json = {
-///   "user": { "name": "Alice", "password": "secret", "age": 30.0 },
-///   "id": 123.0,
-/// }
+/// ```mbt check
+/// test {
+///   let json : Json = {
+///     "user": { "name": "Alice", "password": "secret", "age": 30.0 },
+///     "id": 123.0,
+///   }
 ///
-/// // Remove sensitive data and double numeric values  
-/// ignore(
-///   json.transform(
-///     @json.Replacer::new((key, value) => match key {
-///       "password" => None // exclude password fields
-///       _ =>
-///         match value {
-///           Number(n, ..) => Some(Json::number(n * 2.0)) // double numbers
-///           _ => Some(value) // keep other values
-///         }
-///     }),
-///   ),
-/// )
-/// // Result: { "user": { "name": "Alice", "age": 60 }, "id": 246 }
+///   // Remove sensitive data and double numeric values  
+///   ignore(
+///     json.transform(
+///       @json.Replacer::new((key, value) => match key {
+///         "password" => None // exclude password fields
+///         _ =>
+///           match value {
+///             Number(n, ..) => Some(Json::number(n * 2.0)) // double numbers
+///             _ => Some(value) // keep other values
+///           }
+///       }),
+///     ),
+///   )
+///   // Result: { "user": { "name": "Alice", "age": 60 }, "id": 246 }
+/// }
 /// ```
 /// 
 /// ## Behavior
