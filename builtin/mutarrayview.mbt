@@ -18,11 +18,13 @@
 ///
 /// # Example
 ///
-/// ```mbt test
-/// let arr = [1, 2, 3, 4, 5]
-/// let view = arr.mut_view(start=1, end=4) // Creates a view of elements at indices 1,2,3
-/// assert_eq(view[0], 2)
-/// assert_eq(view.length(), 3)
+/// ```mbt check
+/// test {
+///   let arr = [1, 2, 3, 4, 5]
+///   let view = arr.mut_view(start=1, end=4) // Creates a view of elements at indices 1,2,3
+///   assert_eq(view[0], 2)
+///   assert_eq(view.length(), 3)
+/// }
 /// ```
 #builtin.valtype
 type MutArrayView[T]
@@ -54,10 +56,12 @@ fn[T] MutArrayView::make(
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let arr = [1, 2, 3, 4, 5]
-/// let view = arr.mut_view(start=2, end=4)
-/// inspect(view.length(), content="2")
+/// ```mbt check
+/// test {
+///   let arr = [1, 2, 3, 4, 5]
+///   let view = arr.mut_view(start=2, end=4)
+///   inspect(view.length(), content="2")
+/// }
 /// ```
 pub fn[T] MutArrayView::length(self : MutArrayView[T]) -> Int {
   self.len()
@@ -79,11 +83,13 @@ pub fn[T] MutArrayView::length(self : MutArrayView[T]) -> Int {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let arr = [1, 2, 3, 4, 5]
-/// let view = arr.mut_view(start=2, end=4)
-/// inspect(view[0], content="3")
-/// inspect(view[1], content="4")
+/// ```mbt check
+/// test {
+///   let arr = [1, 2, 3, 4, 5]
+///   let view = arr.mut_view(start=2, end=4)
+///   inspect(view[0], content="3")
+///   inspect(view[1], content="4")
+/// }
 /// ```
 #alias("_[_]")
 pub fn[T] MutArrayView::at(self : MutArrayView[T], index : Int) -> T {
@@ -109,10 +115,12 @@ pub fn[T] MutArrayView::at(self : MutArrayView[T], index : Int) -> T {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let arr = [1, 2, 3, 4, 5]
-/// let view = arr.mut_view(start=1, end=4)
-/// inspect(view.unsafe_get(1), content="3")
+/// ```mbt check
+/// test {
+///   let arr = [1, 2, 3, 4, 5]
+///   let view = arr.mut_view(start=1, end=4)
+///   inspect(view.unsafe_get(1), content="3")
+/// }
 /// ```
 #intrinsic("%arrayview.unsafe_get")
 #internal(unsafe, "Panic if index is out of bounds")
@@ -134,12 +142,14 @@ pub fn[T] MutArrayView::unsafe_get(self : MutArrayView[T], index : Int) -> T {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let arr = [1, 2, 3, 4, 5]
-/// let view = arr.mut_view(start=2, end=4)
-/// view[0] = 10
-/// inspect(view[0], content="10")
-/// inspect(arr[2], content="10")
+/// ```mbt check
+/// test {
+///   let arr = [1, 2, 3, 4, 5]
+///   let view = arr.mut_view(start=2, end=4)
+///   view[0] = 10
+///   inspect(view[0], content="10")
+///   inspect(arr[2], content="10")
+/// }
 /// ```
 #alias("_[_]=_")
 pub fn[T] MutArrayView::set(
@@ -167,11 +177,13 @@ pub fn[T] MutArrayView::set(
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let arr = [1, 2, 3, 4, 5]
-/// let view = arr.mut_view(start=1, end=4)
-/// view.unsafe_set(1, 10)
-/// inspect(view[1], content="10")
+/// ```mbt check
+/// test {
+///   let arr = [1, 2, 3, 4, 5]
+///   let view = arr.mut_view(start=1, end=4)
+///   view.unsafe_set(1, 10)
+///   inspect(view[1], content="10")
+/// }
 /// ```
 #intrinsic("%arrayview.unsafe_set")
 #internal(unsafe, "Panic if index is out of bounds")
@@ -202,11 +214,13 @@ pub fn[T] MutArrayView::unsafe_set(
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let arr = [1, 2, 3, 4, 5]
-/// let view = arr.mut_view(start=1, end=4) // Create a view of elements at indices 1, 2, and 3
-/// inspect(view[0], content="2") // First element of view is arr[1]
-/// inspect(view.length(), content="3") // View contains 3 elements
+/// ```mbt check
+/// test {
+///   let arr = [1, 2, 3, 4, 5]
+///   let view = arr.mut_view(start=1, end=4) // Create a view of elements at indices 1, 2, and 3
+///   inspect(view[0], content="2") // First element of view is arr[1]
+///   inspect(view.length(), content="3") // View contains 3 elements
+/// }
 /// ```
 pub fn[T] Array::mut_view(
   self : Array[T],
@@ -248,11 +262,13 @@ pub fn[T] Array::mut_view(
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let arr = [1, 2, 3, 4, 5]
-/// let view = arr.mut_view(start=1, end=4) // view = [2, 3, 4]
-/// let subview = view.mut_view(start=1, end=2) // subview = [3]
-/// inspect(subview[0], content="3")
+/// ```mbt check
+/// test {
+///   let arr = [1, 2, 3, 4, 5]
+///   let view = arr.mut_view(start=1, end=4) // view = [2, 3, 4]
+///   let subview = view.mut_view(start=1, end=2) // subview = [3]
+///   inspect(subview[0], content="3")
+/// }
 /// ```
 // TODO: rename does not work with docstring test
 pub fn[T] MutArrayView::mut_view(
@@ -293,10 +309,12 @@ pub fn[T] MutArrayView::mut_view(
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let arr : FixedArray[Int] = [1, 2, 3, 4, 5]
-/// let view = arr.mut_view(start=1, end=4) // view = [2, 3, 4]
-/// inspect(view[0], content="2")
+/// ```mbt check
+/// test {
+///   let arr : FixedArray[Int] = [1, 2, 3, 4, 5]
+///   let view = arr.mut_view(start=1, end=4) // view = [2, 3, 4]
+///   inspect(view[0], content="2")
+/// }
 /// ```
 pub fn[T] FixedArray::mut_view(
   self : FixedArray[T],

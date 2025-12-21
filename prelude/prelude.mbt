@@ -105,10 +105,12 @@ pub fn[T] tap(value : T, f : (T) -> Unit raise) -> T raise {
 /// The result of applying the function to the value.
 ///
 /// # Examples
-/// ```mbt test
-/// let x = 5
-/// let result = x |> then(n => n * 2)
-/// assert_eq(result, 10)
+/// ```mbt check
+/// test {
+///   let x = 5
+///   let result = x |> then(n => n * 2)
+///   assert_eq(result, 10)
+/// }
 /// ```
 /// 
 /// ```mbt

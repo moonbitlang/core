@@ -39,10 +39,12 @@
 ///
 /// Example:
 ///
-/// ```mbt test
-/// inspect((2.0 : Float).pow(3.0), content="8")
-/// inspect((4.0 : Float).pow(0.5), content="2")
-/// inspect((1.0 : Float).pow(-1.0), content="1")
+/// ```mbt check
+/// test {
+///   inspect((2.0 : Float).pow(3.0), content="8")
+///   inspect((4.0 : Float).pow(0.5), content="2")
+///   inspect((1.0 : Float).pow(-1.0), content="1")
+/// }
 /// ```
 pub fn powf(base : Float, exponent : Float) -> Float {
   let huge : Float = 1.0e30

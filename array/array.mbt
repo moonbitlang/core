@@ -25,11 +25,13 @@
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let arr1 = [1, 2, 3]
-/// let arr2 = [4, 5, 6]
-/// let add = (a, b) => a + b
-/// inspect(@array.zip_with(arr1, arr2, add), content="[5, 7, 9]")
+/// ```mbt check
+/// test {
+///   let arr1 = [1, 2, 3]
+///   let arr2 = [4, 5, 6]
+///   let add = (a, b) => a + b
+///   inspect(@array.zip_with(arr1, arr2, add), content="[5, 7, 9]")
+/// }
 /// ```
 pub fn[A, B, C] zip_with(
   l : Array[A],

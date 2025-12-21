@@ -534,9 +534,11 @@ pub impl ToJson for Char with to_json(self : Char) -> Json {
 /// surrogate pair is Int instead of Char.
 /// Example:
 ///
-/// ```mbt test
-/// inspect('A'.utf16_len(), content="1")
-/// inspect('🌟'.utf16_len(), content="2")
+/// ```mbt check
+/// test {
+///   inspect('A'.utf16_len(), content="1")
+///   inspect('🌟'.utf16_len(), content="2")
+/// }
 /// ```
 ///
 pub fn Char::utf16_len(self : Self) -> Int {
@@ -566,9 +568,11 @@ pub fn Char::utf16_len(self : Self) -> Int {
 /// 
 /// Example:
 ///
-/// ```mbt test
-/// inspect('A'.is_bmp(), content="true")
-/// inspect('🌟'.is_bmp(), content="false")
+/// ```mbt check
+/// test {
+///   inspect('A'.is_bmp(), content="true")
+///   inspect('🌟'.is_bmp(), content="false")
+/// }
 /// ```
 /// 
 pub fn Char::is_bmp(self : Self) -> Bool {

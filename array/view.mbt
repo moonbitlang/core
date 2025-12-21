@@ -18,11 +18,13 @@
 ///
 /// # Example
 ///
-/// ```mbt test
-/// let arr = [1, 2, 3, 4, 5]
-/// let view = arr[1:4] // Creates a view of elements at indices 1,2,3
-/// inspect(view[0], content="2")
-/// inspect(view.length(), content="3")
+/// ```mbt check
+/// test {
+///   let arr = [1, 2, 3, 4, 5]
+///   let view = arr[1:4] // Creates a view of elements at indices 1,2,3
+///   inspect(view[0], content="2")
+///   inspect(view.length(), content="3")
+/// }
 /// ```
 #deprecated
 pub type View[T] = ArrayView[T]

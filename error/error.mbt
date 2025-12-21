@@ -26,14 +26,16 @@ fn Error::to_string(self : Error) -> String = "%error.to_string"
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let error : Error = Failure("test error")
-/// inspect(
-///   error,
-///   content=(
-///     #|Failure("test error")
-///   ),
-/// )
+/// ```mbt check
+/// test {
+///   let error : Error = Failure("test error")
+///   inspect(
+///     error,
+///     content=(
+///       #|Failure("test error")
+///     ),
+///   )
+/// }
 /// ```
 pub impl Show for Error with output(self, logger) {
   logger.write_string(self.to_string())

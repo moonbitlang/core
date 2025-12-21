@@ -43,11 +43,13 @@
 ///
 /// Example:
 ///
-/// ```mbt test
-/// inspect(@math.exp(0.0), content="1")
-/// inspect(@math.exp(1.0), content="2.718281828459045")
-/// inspect(@math.exp(-1.0), content="0.36787944117144233")
-/// inspect(@math.exp(@double.not_a_number), content="NaN")
+/// ```mbt check
+/// test {
+///   inspect(@math.exp(0.0), content="1")
+///   inspect(@math.exp(1.0), content="2.718281828459045")
+///   inspect(@math.exp(-1.0), content="0.36787944117144233")
+///   inspect(@math.exp(@double.not_a_number), content="NaN")
+/// }
 /// ```
 pub fn exp(x : Double) -> Double {
   fn get_high_word(x : Double) -> UInt {
@@ -180,15 +182,17 @@ pub fn exp(x : Double) -> Double {
 ///
 /// Example
 ///
-/// ```mbt test
-/// inspect(@math.expm1(0.0), content="0")
-/// inspect(@math.expm1(1.0), content="1.718281828459045")
-/// inspect(@math.expm1(2.0), content="6.38905609893065")
-/// inspect(@math.expm1(-1.0), content="-0.6321205588285577")
-/// inspect(@math.expm1(-2.0), content="-0.8646647167633873")
-/// inspect(@math.expm1(@double.not_a_number), content="NaN")
-/// inspect(@math.expm1(@double.infinity), content="Infinity")
-/// inspect(@math.expm1(@double.neg_infinity), content="-1")
+/// ```mbt check
+/// test {
+///   inspect(@math.expm1(0.0), content="0")
+///   inspect(@math.expm1(1.0), content="1.718281828459045")
+///   inspect(@math.expm1(2.0), content="6.38905609893065")
+///   inspect(@math.expm1(-1.0), content="-0.6321205588285577")
+///   inspect(@math.expm1(-2.0), content="-0.8646647167633873")
+///   inspect(@math.expm1(@double.not_a_number), content="NaN")
+///   inspect(@math.expm1(@double.infinity), content="Infinity")
+///   inspect(@math.expm1(@double.neg_infinity), content="-1")
+/// }
 /// ```
 pub fn expm1(x : Double) -> Double {
   if x.is_nan() {

@@ -24,15 +24,17 @@
 ///
 /// Example:
 ///
-/// ```mbt test
-/// inspect(@math.sin(0.0), content="0")
-/// inspect(@math.sin(1.570796326794897), content="1") // pi / 2
-/// inspect(@math.sin(2.0), content="0.9092974268256817")
-/// inspect(@math.sin(-5.0), content="0.9589242746631385")
-/// inspect(@math.sin(31415926535897.9323846), content="0.0012091232715481885")
-/// inspect(@math.sin(@double.not_a_number), content="NaN")
-/// inspect(@math.sin(@double.infinity), content="NaN")
-/// inspect(@math.sin(@double.neg_infinity), content="NaN")
+/// ```mbt check
+/// test {
+///   inspect(@math.sin(0.0), content="0")
+///   inspect(@math.sin(1.570796326794897), content="1") // pi / 2
+///   inspect(@math.sin(2.0), content="0.9092974268256817")
+///   inspect(@math.sin(-5.0), content="0.9589242746631385")
+///   inspect(@math.sin(31415926535897.9323846), content="0.0012091232715481885")
+///   inspect(@math.sin(@double.not_a_number), content="NaN")
+///   inspect(@math.sin(@double.infinity), content="NaN")
+///   inspect(@math.sin(@double.neg_infinity), content="NaN")
+/// }
 /// ```
 pub extern "C" fn sin(x : Double) -> Double = "sin"
 
@@ -48,14 +50,16 @@ pub extern "C" fn sin(x : Double) -> Double = "sin"
 ///
 /// Example:
 ///
-/// ```mbt test
-/// inspect(@math.cos(0.0), content="1")
-/// inspect(@math.cos(2.5), content="-0.8011436155469337")
-/// inspect(@math.cos(-3.141592653589793), content="-1") // -pi
-/// inspect(@math.cos(-5.0), content="0.28366218546322625")
-/// inspect(@math.cos(31415926535897.9323846), content="0.9999992690101899")
-/// inspect(@math.cos(@double.not_a_number), content="NaN")
-/// inspect(@math.cos(@double.infinity), content="NaN")
-/// inspect(@math.cos(@double.neg_infinity), content="NaN")
+/// ```mbt check
+/// test {
+///   inspect(@math.cos(0.0), content="1")
+///   inspect(@math.cos(2.5), content="-0.8011436155469337")
+///   inspect(@math.cos(-3.141592653589793), content="-1") // -pi
+///   inspect(@math.cos(-5.0), content="0.28366218546322625")
+///   inspect(@math.cos(31415926535897.9323846), content="0.9999992690101899")
+///   inspect(@math.cos(@double.not_a_number), content="NaN")
+///   inspect(@math.cos(@double.infinity), content="NaN")
+///   inspect(@math.cos(@double.neg_infinity), content="NaN")
+/// }
 /// ```
 pub extern "C" fn cos(x : Double) -> Double = "cos"
