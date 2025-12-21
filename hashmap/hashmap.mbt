@@ -227,7 +227,7 @@ pub fn[K : Hash + Eq, V] HashMap::at(self : HashMap[K, V], key : K) -> V {
     if entry.hash == hash && entry.key == key {
       break entry.value
     }
-    guard entry.psl <= i
+    guard i <= entry.psl
     continue i + 1, (idx + 1) & self.capacity_mask
   }
 }
@@ -843,6 +843,18 @@ test "grow" {
   //   m._debug_entries(),
   //   content="_,(0,C,1),(0,Go,2),(0,C++,3),(0,Java,4),(0,Scala,5),(1,Julia,5),(2,Cobol,5),(2,Python,6),(2,Haskell,7),(2,Rescript,8),_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_",
   // )
+}
+
+///|
+test "_[_]" {
+  let m : HashMap[MyString, Int] = new()
+  m.set("a", 1)
+  m.set("b", 1)
+  m.set("cc", 2)
+  inspect(m["a"], content="1")
+  inspect(m["b"], content="1")
+  inspect(m["cc"], content="2")
+  // inspect(m._debug_entries(), content="_,(0,a,1),(1,b,1),(1,cc,2),_,_,_,_")
 }
 
 ///|
