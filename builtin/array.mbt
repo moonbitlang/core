@@ -1090,8 +1090,8 @@ pub fn[T : Compare] Array::binary_search(
 #locals(cmp)
 pub fn[T] Array::binary_search_by(
   self : Array[T],
-  cmp : (T) -> Int,
-) -> Result[Int, Int] {
+  cmp : (T) -> Int raise?,
+) -> Result[Int, Int] raise? {
   let len = self.length()
   for i = 0, j = len; i < j; {
     let h = i + (j - i) / 2
