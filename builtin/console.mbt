@@ -30,9 +30,11 @@ fn[T] any_to_string(any : T) -> String = "%any.to_string"
 ///
 /// ```mbt check
 /// test {
-///   println(42)
-///   println("Hello, World!")
-///   println([1, 2, 3])
+///   if false {
+///     println(42)
+///     println("Hello, World!")
+///     println([1, 2, 3])
+///   }
 /// }
 /// ```
 pub fn[T : Show] println(input : T) -> Unit {
