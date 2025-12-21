@@ -17,10 +17,12 @@
 ///
 /// # Example
 ///
-/// ```mbt
-///   let x: Result[Int, Unit] = Ok(6)
-///   let y = x.map((v : Int) => { v * 7 })
+/// ```mbt check
+/// test {
+///   let x : Result[Int, Unit] = Ok(6)
+///   let y = x.map((v : Int) => v * 7)
 ///   assert_eq(y, Ok(42))
+/// }
 /// ```
 pub fn[T, E, U] Result::map(self : Result[T, E], f : (T) -> U) -> Result[U, E] {
   match self {
@@ -44,10 +46,12 @@ test "map" {
 ///
 /// # Example
 ///
-/// ```mbt
-///   let x: Result[Int, String] = Err("error")
-///   let y = x.map_err((v : String) => { v + "!" })
+/// ```mbt check
+/// test {
+///   let x : Result[Int, String] = Err("error")
+///   let y = x.map_err((v : String) => v + "!")
 ///   assert_eq(y, Err("error!"))
+/// }
 /// ```
 pub fn[T, E, F] Result::map_err(
   self : Result[T, E],
@@ -74,11 +78,13 @@ test "map_err" {
 ///
 /// # Example
 ///
-/// ```mbt
-///   let x: Result[Int, String] = Ok(3)
-///   let y: Result[Int, String] = Err("error")
+/// ```mbt check
+/// test {
+///   let x : Result[Int, String] = Ok(3)
+///   let y : Result[Int, String] = Err("error")
 ///   assert_eq(x.unwrap_or(5), 3)
 ///   assert_eq(y.unwrap_or(5), 5)
+/// }
 /// ```
 #alias(or)
 pub fn[T, E] Result::unwrap_or(self : Result[T, E], default : T) -> T {
@@ -103,11 +109,13 @@ test "unwrap_or" {
 ///
 /// # Example
 ///
-/// ```mbt
-///   let x: Result[Int, String] = Ok(3)
-///   let y: Result[Int, String] = Err("error")
+/// ```mbt check
+/// test {
+///   let x : Result[Int, String] = Ok(3)
+///   let y : Result[Int, String] = Err("error")
 ///   assert_eq(x.unwrap_or_else(() => 5), 3)
 ///   assert_eq(y.unwrap_or_else(() => 5), 5)
+/// }
 /// ```
 #alias(or_else)
 pub fn[T, E] Result::unwrap_or_else(
@@ -135,10 +143,12 @@ test "unwrap_or_else" {
 ///
 /// # Example
 ///
-/// ```mbt
-///   let x: Result[Result[Int, String], String] = Ok(Ok(6))
+/// ```mbt check
+/// test {
+///   let x : Result[Result[Int, String], String] = Ok(Ok(6))
 ///   let y = x.flatten()
 ///   assert_eq(y, Ok(6))
+/// }
 /// ```
 pub fn[T, E] Result::flatten(self : Result[Result[T, E], E]) -> Result[T, E] {
   match self {
@@ -162,10 +172,12 @@ test "flatten" {
 ///
 /// # Example
 ///
-/// ```mbt
-///   let x: Result[Int, String] = Ok(6)
-///   let y = x.bind((v : Int) => { Ok(v * 7) })
+/// ```mbt check
+/// test {
+///   let x : Result[Int, String] = Ok(6)
+///   let y = x.bind((v : Int) => Ok(v * 7))
 ///   assert_eq(y, Ok(42))
+/// }
 /// ```
 pub fn[T, E, U] Result::bind(
   self : Result[T, E],
@@ -191,10 +203,12 @@ test "bind" {
 ///
 /// # Example
 ///
-/// ```mbt
-///   let x: Result[Int, String] = Ok(6)
+/// ```mbt check
+/// test {
+///   let x : Result[Int, String] = Ok(6)
 ///   let y = x.to_option()
 ///   assert_eq(y, Some(6))
+/// }
 /// ```
 pub fn[T, E] Result::to_option(self : Result[T, E]) -> T? {
   match self {

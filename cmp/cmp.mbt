@@ -21,13 +21,15 @@
 ///
 /// # Examples
 ///
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let a = @cmp.Reverse(1)
 ///   let b = @cmp.Reverse(2)
-///   inspect(a.compare(b), content="1")  // 1 > 2 in reversed order
+///   inspect(a.compare(b), content="1") // 1 > 2 in reversed order
 ///   inspect(b.compare(a), content="-1") // 2 < 1 in reversed order
-///   inspect(a == a, content="true")     // Equality works correctly
+///   inspect(a == a, content="true") // Equality works correctly
 ///   inspect(a.to_string(), content="Reverse(1)") // Shows wrapped value
+/// }
 /// ```
 pub(all) struct Reverse[T](T) derive(Eq, Show, Hash)
 
@@ -43,10 +45,12 @@ pub impl[T : Compare] Compare for Reverse[T] with compare(a, b) {
 ///
 /// # Examples
 ///
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   inspect(@cmp.maximum_by_key(1, -2, Int::abs), content="-2")
 ///   inspect(@cmp.maximum_by_key(-2, 1, Int::abs), content="-2")
 ///   inspect(@cmp.maximum_by_key(-2, 2, Int::abs), content="2")
+/// }
 /// ```
 pub fn[T, K : Compare] maximum_by_key(x : T, y : T, f : (T) -> K) -> T {
   if f(x) > f(y) {
@@ -63,10 +67,12 @@ pub fn[T, K : Compare] maximum_by_key(x : T, y : T, f : (T) -> K) -> T {
 ///
 /// # Examples
 ///
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   inspect(@cmp.minimum_by_key(1, -2, Int::abs), content="1")
 ///   inspect(@cmp.minimum_by_key(-2, 1, Int::abs), content="1")
 ///   inspect(@cmp.minimum_by_key(-2, 2, Int::abs), content="-2")
+/// }
 /// ```
 pub fn[T, K : Compare] minimum_by_key(x : T, y : T, f : (T) -> K) -> T {
   if f(x) > f(y) {
@@ -83,14 +89,15 @@ pub fn[T, K : Compare] minimum_by_key(x : T, y : T, f : (T) -> K) -> T {
 ///
 /// # Examples
 ///
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   inspect(@cmp.maximum(1, 2), content="2")
 ///   inspect(@cmp.maximum(2, 1), content="2")
-///
 ///   let fst = []
 ///   let snd = []
 ///   @cmp.maximum(fst, snd).push(0)
 ///   inspect(snd, content="[0]")
+/// }
 /// ```
 pub fn[T : Compare] maximum(x : T, y : T) -> T {
   if x > y {
@@ -107,14 +114,15 @@ pub fn[T : Compare] maximum(x : T, y : T) -> T {
 ///
 /// # Examples
 ///
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   inspect(@cmp.minimum(1, 2), content="1")
 ///   inspect(@cmp.minimum(2, 1), content="1")
-///
 ///   let fst = []
 ///   let snd = []
 ///   @cmp.minimum(fst, snd).push(0)
 ///   inspect(fst, content="[0]")
+/// }
 /// ```
 pub fn[T : Compare] minimum(x : T, y : T) -> T {
   if x > y {

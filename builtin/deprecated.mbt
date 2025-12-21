@@ -264,10 +264,12 @@ test "dump" {
 ///
 /// # Examples
 ///
-/// ```mbt
-/// let s = "Hello🤣"
-/// inspect(s.get_char(0).unwrap(), content="H")
-/// inspect(s.get_char(5).unwrap(), content="🤣")
+/// ```mbt check
+/// test {
+///   let s = "Hello🤣"
+///   inspect(s.get_char(0).unwrap(), content="H")
+///   inspect(s.get_char(5).unwrap(), content="🤣")
+/// }
 /// ```
 ///
 /// # Panics

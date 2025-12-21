@@ -30,10 +30,12 @@ priv struct Entry[K] {
 ///
 /// # Example
 ///
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let set = @hashset.from_array([(3, "three"), (8, "eight"), (1, "one")])
 ///   set.add((4, "four"))
 ///   assert_eq(set.contains((4, "four")), true)
+/// }
 /// ```
 #alias(T, deprecated)
 struct HashSet[K] {

@@ -294,17 +294,16 @@ test "umul128: handles zero correctly" {
 /// The limit should not be negative.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let r = @random.Rand::new()
 ///   let a = [1, 2, 3, 4, 5]
-///   r.shuffle(
-///     a.length(),
-///     (i : Int, j : Int) => {
-///       let t = a[i]
-///       a[i] = a[j]
-///       a[j] = t
-///     },
-///   )
+///   r.shuffle(a.length(), (i : Int, j : Int) => {
+///     let t = a[i]
+///     a[i] = a[j]
+///     a[j] = t
+///   })
+/// }
 /// ```
 pub fn Rand::shuffle(
   self : Rand,

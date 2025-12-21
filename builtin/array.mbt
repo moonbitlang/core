@@ -443,11 +443,13 @@ pub fn[T] Array::each(self : Array[T], f : (T) -> Unit raise?) -> Unit raise? {
 ///
 /// Example:
 ///
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let v = [3, 4, 5]
 ///   let mut sum = 0
-///   v.rev_each((x) => { sum = sum - x })
+///   v.rev_each(x => sum = sum - x)
 ///   @json.inspect(sum, content=-12)
+/// }
 /// ```
 #locals(f)
 pub fn[T] Array::rev_each(self : Array[T], f : (T) -> Unit) -> Unit {
@@ -461,11 +463,13 @@ pub fn[T] Array::rev_each(self : Array[T], f : (T) -> Unit) -> Unit {
 /// Iterates over the elements of the array with index in reversed order.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let v = [3, 4, 5]
 ///   let mut sum = 0
-///   v.rev_eachi((i, x) => { sum = sum + x + i })
+///   v.rev_eachi((i, x) => sum = sum + x + i)
 ///   assert_eq(sum, 15)
+/// }
 /// ```
 #locals(f)
 pub fn[T] Array::rev_eachi(
@@ -506,10 +510,12 @@ pub fn[T] Array::eachi(
 /// This method has no effect on the allocated capacity of the array, only setting the length to 0.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let v = [3, 4, 5]
 ///   v.clear()
 ///   assert_eq(v.length(), 0)
+/// }
 /// ```
 pub fn[T] Array::clear(self : Array[T]) -> Unit {
   self.unsafe_truncate_to_length(0)
@@ -519,10 +525,12 @@ pub fn[T] Array::clear(self : Array[T]) -> Unit {
 /// Maps a function over the elements of the array.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let v = [3, 4, 5]
-///   let v2 = v.map((x) => {x + 1})
+///   let v2 = v.map(x => x + 1)
 ///   assert_eq(v2, [4, 5, 6])
+/// }
 /// ```
 #locals(f)
 pub fn[T, U] Array::map(
@@ -540,10 +548,12 @@ pub fn[T, U] Array::map(
 /// Maps a function over the elements of the array in place.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let v = [3, 4, 5]
-///   v.map_in_place((x) => {x + 1})
+///   v.map_in_place(x => x + 1)
 ///   assert_eq(v, [4, 5, 6])
+/// }
 /// ```
 #locals(f)
 #alias(map_inplace, deprecated)
@@ -560,10 +570,12 @@ pub fn[T] Array::map_in_place(
 /// Maps a function over the elements of the array with index.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let v = [3, 4, 5]
-///   let v2 = v.mapi((i, x) => {x + i})
+///   let v2 = v.mapi((i, x) => x + i)
 ///   assert_eq(v2, [3, 5, 7])
+/// }
 /// ```
 #locals(f)
 pub fn[T, U] Array::mapi(
@@ -584,10 +596,12 @@ pub fn[T, U] Array::mapi(
 /// Maps a function over the elements of the array with index in place.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let v = [3, 4, 5]
-///   v.mapi_in_place((i, x) => {x + i})
+///   v.mapi_in_place((i, x) => x + i)
 ///   assert_eq(v, [3, 5, 7])
+/// }
 /// ```
 #locals(f)
 #alias(mapi_inplace, deprecated)
@@ -722,11 +736,13 @@ pub fn[T] Array::rev(self : Array[T]) -> Array[T] {
 /// This function will panic if the index is out of bounds.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let v = [3, 4, 5]
 ///   let (v1, v2) = (v[:1], v[1:])
 ///   assert_eq(v1, [3])
 ///   assert_eq(v2, [4, 5])
+/// }
 /// ```
 #deprecated("Use ArrayView instead, e.g, (a[:index], a[index:])")
 #doc(hidden)
@@ -905,10 +921,12 @@ pub fn[T : Eq] Array::strip_prefix(
 /// If the array ends with the suffix, return the array before the suffix, otherwise return None.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let v = [3, 4, 5]
 ///   let v2 = v.strip_suffix([5])
 ///   assert_eq(v2, Some([3, 4]))
+/// }
 /// ```
 pub fn[T : Eq] Array::strip_suffix(
   self : Array[T],
@@ -960,12 +978,14 @@ pub fn[T : Eq] Array::search(self : Array[T], value : T) -> Int? {
 ///
 /// # Example
 ///
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let v = [1, 2, 3, 4, 5]
-///   match v.search_by((x) => { x == 3 }) {
+///   match v.search_by(x => x == 3) {
 ///     Some(index) => assert_eq(index, 2) // 2
 ///     None => println("Not found")
 ///   }
+/// }
 /// ```
 #locals(f)
 #alias(find_index, deprecated)
@@ -983,10 +1003,12 @@ pub fn[T] Array::search_by(self : Array[T], f : (T) -> Bool) -> Int? {
 /// Performs a binary search on a sorted array to find the index of a given element.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let v = [3, 4, 5]
 ///   let result = v.binary_search(3)
 ///   assert_eq(result, Ok(0)) // The element 3 is found at index 0
+/// }
 /// ```
 ///
 /// # Arguments
@@ -1698,10 +1720,12 @@ pub impl[T] Default for Array[T] with default() {
 /// Removes a back element from an array.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let array = [1, 2, 3, 4, 5]
 ///   array.unsafe_pop_back()
 ///   assert_eq(array.last(), Some(4))
+/// }
 /// ```
 #internal(unsafe, "Panic if the array is empty on non-JS backend.")
 #doc(hidden)
@@ -1823,11 +1847,13 @@ pub fn[T] Array::from_iterator(iter : Iterator[T]) -> Array[T] {
 /// and adds them to the array using the `push` method.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let u = [1, 2, 3]
 ///   let v = [4, 5, 6]
 ///   u.push_iter(v.iter())
 ///   assert_eq(u, [1, 2, 3, 4, 5, 6])
+/// }
 /// ```
 pub fn[T] Array::push_iter(self : Self[T], iter : Iter[T]) -> Unit {
   // This function used by [Array spread operator](https://docs.moonbitlang.com/en/latest/language/fundamentals.html#spread-operator)

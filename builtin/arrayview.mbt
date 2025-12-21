@@ -458,11 +458,13 @@ pub fn[T] ArrayView::each(
 ///
 /// # Example
 /// 
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let v = [3, 4, 5][:]
 ///   let mut sum = 0
-///   v.eachi((i, x) => { sum = sum + x + i })
+///   v.eachi((i, x) => sum = sum + x + i)
 ///   inspect(sum, content="15")
+/// }
 /// ```
 pub fn[T] ArrayView::eachi(
   self : ArrayView[T],
@@ -478,10 +480,12 @@ pub fn[T] ArrayView::eachi(
 /// 
 /// # Example
 /// 
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let v = [1, 4, 6, 8, 9]
 ///   assert_false(v[:].all(elem => elem % 2 == 0))
 ///   assert_true(v[1:4].all(elem => elem % 2 == 0))
+/// }
 /// ```
 pub fn[T] ArrayView::all(
   self : ArrayView[T],
@@ -500,10 +504,12 @@ pub fn[T] ArrayView::all(
 ///
 /// # Example
 ///
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let v = [1, 2, 3, 4, 5][:]
 ///   assert_true(v.any(ele => ele < 6))
 ///   assert_false(v.any(ele => ele < 1))
+/// }
 /// ```
 pub fn[T] ArrayView::any(
   self : ArrayView[T],
@@ -552,9 +558,11 @@ pub fn[T : Eq] ArrayView::contains(self : ArrayView[T], value : T) -> Bool {
 /// Fold out values from an ArrayView according to certain rules.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let sum = [1, 2, 3, 4, 5][:].fold(init=0, (sum, elem) => sum + elem)
 ///   inspect(sum, content="15")
+/// }
 /// ```
 pub fn[A, B] ArrayView::fold(
   self : ArrayView[A],
@@ -572,9 +580,11 @@ pub fn[A, B] ArrayView::fold(
 /// Fold out values from an ArrayView according to certain rules in reversed turn.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let sum = [1, 2, 3, 4, 5][:].rev_fold(init=0, (sum, elem) => sum + elem)
 ///   inspect(sum, content="15")
+/// }
 /// ```
 pub fn[A, B] ArrayView::rev_fold(
   self : ArrayView[A],
@@ -592,9 +602,11 @@ pub fn[A, B] ArrayView::rev_fold(
 /// Fold out values from an ArrayView according to certain rules with index.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let sum = [1, 2, 3, 4, 5][:].foldi(init=0, (index, sum, _elem) => sum + index)
 ///   inspect(sum, content="10")
+/// }
 /// ```
 pub fn[A, B] ArrayView::foldi(
   self : ArrayView[A],
@@ -612,9 +624,12 @@ pub fn[A, B] ArrayView::foldi(
 /// Fold out values from an ArrayView according to certain rules in reversed turn with index.
 ///
 /// # Example
-/// ```mbt
-///   let sum = [1, 2, 3, 4, 5][:].rev_foldi(init=0, (index, sum, _elem)=> { sum + index })
+/// ```mbt check
+/// test {
+///   let sum = [1, 2, 3, 4, 5][:].rev_foldi(init=0, (index, sum, _elem) => sum +
+///     index)
 ///   inspect(sum, content="10")
+/// }
 /// ```
 pub fn[A, B] ArrayView::rev_foldi(
   self : ArrayView[A],
@@ -633,10 +648,12 @@ pub fn[A, B] ArrayView::rev_foldi(
 /// Maps a function over the elements of the array view.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let v = [3, 4, 5]
-///   let v2 = v[1:].map((x) => {x + 1})
+///   let v2 = v[1:].map(x => x + 1)
 ///   assert_eq(v2, [5, 6])
+/// }
 /// ```
 pub fn[T, U] ArrayView::map(
   self : ArrayView[T],
@@ -652,10 +669,12 @@ pub fn[T, U] ArrayView::map(
 /// Maps a function over the elements of the array view with index.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let v = [3, 4, 5]
-///   let v2 = v[1:].mapi((i, x) => {x + i})
+///   let v2 = v[1:].mapi((i, x) => x + i)
 ///   assert_eq(v2, [4, 6])
+/// }
 /// ```
 pub fn[T, U] ArrayView::mapi(
   self : ArrayView[T],
@@ -671,10 +690,12 @@ pub fn[T, U] ArrayView::mapi(
 /// Filters the array view with a predicate function.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let arr = [1, 2, 3, 4, 5, 6]
-///   let v = arr[2:].filter((x) => { x % 2 == 0 })
+///   let v = arr[2:].filter(x => x % 2 == 0)
 ///   assert_eq(v, [4, 6])
+/// }
 /// ```
 pub fn[T] ArrayView::filter(
   self : ArrayView[T],
@@ -693,10 +714,12 @@ pub fn[T] ArrayView::filter(
 /// Copy the view elements to a new array
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let view = [1, 2, 3, 4, 5, 6][2:4]
 ///   let arr = view.to_array()
 ///   assert_eq(arr, [3, 4])
+/// }
 /// ```
 pub fn[T] ArrayView::to_array(self : ArrayView[T]) -> Array[T] {
   let len = self.length()

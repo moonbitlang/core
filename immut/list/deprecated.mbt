@@ -48,8 +48,10 @@ pub fn[A] T::init_(self : T[A]) -> T[A] {
 ///
 /// # Example
 ///
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   assert_eq(@list.of([1, 2, 3]) == @list.of([1, 2, 3]), true)
+/// }
 /// ```
 #deprecated("use `==` instead")
 pub fn[A : Eq] T::equal(self : T[A], other : T[A]) -> Bool {

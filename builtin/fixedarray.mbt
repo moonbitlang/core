@@ -216,10 +216,12 @@ pub fn[T] FixedArray::is_empty(self : FixedArray[T]) -> Bool {
 /// Performs a binary search on a sorted array to find the index of a given element.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let v : FixedArray[Int] = [3, 4, 5]
 ///   let result = v.binary_search(3)
 ///   assert_eq(result, Ok(0)) // The element 3 is found at index 0
+/// }
 /// ```
 ///
 /// # Arguments
@@ -332,10 +334,12 @@ pub fn[T] FixedArray::binary_search_by(
 ///
 /// # Example
 ///
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let arr = []
 ///   [1, 2, 3, 4, 5].each(x => arr.push(x))
 ///   assert_eq(arr, [1, 2, 3, 4, 5])
+/// }
 /// ```
 pub fn[T] FixedArray::each(
   self : FixedArray[T],
@@ -384,10 +388,12 @@ test "each" {
 ///
 /// # Example
 ///
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let arr = []
 ///   [1, 2, 3, 4, 5].eachi((index, elem) => arr.push((index, elem)))
 ///   assert_eq(arr, [(0, 1), (1, 2), (2, 3), (3, 4), (4, 5)])
+/// }
 /// ```
 pub fn[T] FixedArray::eachi(
   self : FixedArray[T],
@@ -436,10 +442,12 @@ test "eachi" {
 ///
 /// # Example
 ///
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let arr = []
-///   [1, 2, 3, 4, 5].rev_each((x) => arr.push(x))
+///   [1, 2, 3, 4, 5].rev_each(x => arr.push(x))
 ///   assert_eq(arr, [5, 4, 3, 2, 1])
+/// }
 /// ```
 pub fn[T] FixedArray::rev_each(
   self : FixedArray[T],
@@ -488,10 +496,12 @@ test "rev_each" {
 ///
 /// # Example
 ///
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let arr = []
 ///   [1, 2, 3, 4, 5].rev_eachi((index, elem) => arr.push((index, elem)))
 ///   assert_eq(arr, [(0, 5), (1, 4), (2, 3), (3, 2), (4, 1)])
+/// }
 /// ```
 pub fn[T] FixedArray::rev_eachi(
   self : FixedArray[T],
@@ -544,10 +554,12 @@ test "rev_eachi" {
 ///
 /// # Example
 ///
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let doubled = arr.map(x => x * 2)
 ///   assert_eq(doubled, [2, 4, 6, 8, 10])
+/// }
 /// ```
 pub fn[T, U] FixedArray::map(
   self : FixedArray[T],
@@ -579,10 +591,12 @@ test "map" {
 /// Maps a function over the elements of the arr with index.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let arr = [3, 4, 5]
-///   let added = arr.mapi((i, x) => { x + i })
+///   let added = arr.mapi((i, x) => x + i)
 ///   assert_eq(added, [3, 5, 7])
+/// }
 /// ```
 pub fn[T, U] FixedArray::mapi(
   self : FixedArray[T],
@@ -695,9 +709,11 @@ test "from_array" {
 /// Fold out values from an array according to certain rules.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let sum = [1, 2, 3, 4, 5].fold(init=0, (sum, elem) => sum + elem)
 ///   inspect(sum, content="15")
+/// }
 /// ```
 pub fn[A, B] FixedArray::fold(
   self : FixedArray[A],
@@ -726,9 +742,11 @@ test "fold" {
 /// Fold out values from an array according to certain rules in reversed turn.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let sum = [1, 2, 3, 4, 5].rev_fold(init=0, (sum, elem) => sum + elem)
 ///   inspect(sum, content="15")
+/// }
 /// ```
 pub fn[A, B] FixedArray::rev_fold(
   self : FixedArray[A],
@@ -757,9 +775,11 @@ test "rev_fold" {
 /// Fold out values from an array according to certain rules with index.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let sum = [1, 2, 3, 4, 5].foldi(init=0, (index, sum, _elem) => sum + index)
 ///   inspect(sum, content="10")
+/// }
 /// ```
 pub fn[A, B] FixedArray::foldi(
   self : FixedArray[A],
@@ -792,9 +812,11 @@ test "fold_lefti" {
 /// Fold out values from an array according to certain rules in reversed turn with index.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let sum = [1, 2, 3, 4, 5].rev_foldi(init=0, (index, sum, _elem) => sum + index)
 ///   inspect(sum, content="10")
+/// }
 /// ```
 pub fn[A, B] FixedArray::rev_foldi(
   self : FixedArray[A],
@@ -940,10 +962,12 @@ test "rev" {
 ///
 /// # Example
 ///
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let arr = [1, 2, 3, 4, 5]
 ///   arr.swap(0, 1)
 ///   assert_eq(arr, [2, 1, 3, 4, 5])
+/// }
 /// ```
 pub fn[T] FixedArray::swap(self : FixedArray[T], i : Int, j : Int) -> Unit {
   let temp = self[i]
@@ -977,10 +1001,12 @@ test "swap" {
 ///
 /// # Example
 ///
-/// ```mbt
-///   let arr: FixedArray[Int] = [1, 2, 3, 4, 5]
+/// ```mbt check
+/// test {
+///   let arr : FixedArray[Int] = [1, 2, 3, 4, 5]
 ///   assert_true(arr.all(ele => ele < 6))
 ///   assert_false(arr.all(ele => ele < 5))
+/// }
 /// ```
 pub fn[T] FixedArray::all(
   self : FixedArray[T],
@@ -1016,10 +1042,12 @@ test "all" {
 ///
 /// # Example
 ///
-/// ```mbt
-///   let arr: FixedArray[Int] = [1, 2, 3, 4, 5]
-///   assert_true(arr.any((ele)=> { ele < 6 }))
-///   assert_true(arr.any((ele)=> { ele < 5 }))
+/// ```mbt check
+/// test {
+///   let arr : FixedArray[Int] = [1, 2, 3, 4, 5]
+///   assert_true(arr.any(ele => ele < 6))
+///   assert_true(arr.any(ele => ele < 5))
+/// }
 /// ```
 pub fn[T] FixedArray::any(
   self : FixedArray[T],
@@ -1071,9 +1099,11 @@ test "fill" {
 /// Search the array index for a given element.
 ///
 /// # Example
-/// ```mbt
-///   let arr: FixedArray[Int] = [3, 4, 5]
+/// ```mbt check
+/// test {
+///   let arr : FixedArray[Int] = [3, 4, 5]
 ///   assert_eq(arr.search(3), Some(0))
+/// }
 /// ```
 pub fn[T : Eq] FixedArray::search(self : FixedArray[T], value : T) -> Int? {
   for i in 0..<self.length() {
@@ -1107,9 +1137,11 @@ test "search" {
 /// Checks if the array contains an element.
 ///
 /// # Example
-/// ```mbt
-///   let arr: FixedArray[Int] = [3, 4, 5]
+/// ```mbt check
+/// test {
+///   let arr : FixedArray[Int] = [3, 4, 5]
 ///   assert_true(arr.contains(3))
+/// }
 /// ```
 pub fn[T : Eq] FixedArray::contains(self : FixedArray[T], value : T) -> Bool {
   for i in 0..<self.length() {
@@ -1143,9 +1175,11 @@ test "contains" {
 /// Check if the array starts with a given prefix.
 ///
 /// # Example
-/// ```mbt
-///   let arr: FixedArray[Int] = [3, 4, 5]
+/// ```mbt check
+/// test {
+///   let arr : FixedArray[Int] = [3, 4, 5]
 ///   assert_true(arr.starts_with([3, 4]))
+/// }
 /// ```
 pub fn[T : Eq] FixedArray::starts_with(
   self : FixedArray[T],
@@ -1191,9 +1225,11 @@ test "starts_with" {
 /// Check if the array ends with a given suffix.
 ///
 /// # Example
-/// ```mbt
-///   let v: FixedArray[Int] = [3, 4, 5]
+/// ```mbt check
+/// test {
+///   let v : FixedArray[Int] = [3, 4, 5]
 ///   assert_true(v.ends_with([5]))
+/// }
 /// ```
 pub fn[T : Eq] FixedArray::ends_with(
   self : FixedArray[T],

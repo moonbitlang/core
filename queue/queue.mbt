@@ -16,9 +16,11 @@
 /// Creates a new empty queue.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let queue : @queue.Queue[Int] = @queue.new()
 ///   assert_eq(queue.length(), 0)
+/// }
 /// ```
 #as_free_fn
 pub fn[A] Queue::new() -> Queue[A] {
@@ -29,10 +31,12 @@ pub fn[A] Queue::new() -> Queue[A] {
 /// Creates a new queue from an array.
 ///
 /// # Example
-/// ```mbt
-///   let array = Array::makei(3, (idx) => { idx + 1 })
+/// ```mbt check
+/// test {
+///   let array = Array::makei(3, idx => idx + 1)
 ///   let queue : @queue.Queue[Int] = @queue.from_array(array)
 ///   assert_eq(queue.length(), 3)
+/// }
 /// ```
 #as_free_fn
 #alias(of, deprecated="Use from_array instead")
@@ -64,9 +68,11 @@ impl[A : Eq] Eq for Queue[A] with equal(self, other) {
 /// Clears the queue.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let queue : @queue.Queue[Int] = @queue.from_array([1, 2, 3, 4])
 ///   queue.clear()
+/// }
 /// ```
 pub fn[A] Queue::clear(self : Queue[A]) -> Unit {
   self.length = 0
@@ -78,9 +84,11 @@ pub fn[A] Queue::clear(self : Queue[A]) -> Unit {
 /// Get the length of the queue.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let queue : @queue.Queue[Int] = @queue.new()
 ///   assert_eq(queue.length(), 0)
+/// }
 /// ```
 pub fn[A] Queue::length(self : Queue[A]) -> Int {
   self.length
@@ -90,9 +98,11 @@ pub fn[A] Queue::length(self : Queue[A]) -> Int {
 /// Checks if the queue is empty.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let queue : @queue.Queue[Int] = @queue.new()
 ///   assert_true(queue.is_empty())
+/// }
 /// ```
 pub fn[A] Queue::is_empty(self : Queue[A]) -> Bool {
   self.length == 0
@@ -102,9 +112,11 @@ pub fn[A] Queue::is_empty(self : Queue[A]) -> Bool {
 /// Adds a value to the queue.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let queue : @queue.Queue[Int] = @queue.new()
 ///   queue.push(1)
+/// }
 /// ```
 pub fn[A] Queue::push(self : Queue[A], x : A) -> Unit {
   let cell = Some({ content: x, next: None })
@@ -126,9 +138,11 @@ pub fn[A] Queue::push(self : Queue[A], x : A) -> Unit {
 /// Peeks at the first value in the queue.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let queue : @queue.Queue[Int] = @queue.from_array([1, 2, 3, 4])
 ///   assert_eq(queue.unsafe_peek(), 1)
+/// }
 /// ```
 #internal(unsafe, "Panics if the queue is empty.")
 #doc(hidden)
@@ -144,9 +158,11 @@ pub fn[A] Queue::unsafe_peek(self : Queue[A]) -> A {
 /// Peeks at the first value in the queue, which returns None if the queue is empty.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let queue : @queue.Queue[Int] = @queue.from_array([1, 2, 3, 4])
 ///   assert_eq(queue.peek(), Some(1))
+/// }
 /// ```
 pub fn[A] Queue::peek(self : Queue[A]) -> A? {
   match self.first {
@@ -159,9 +175,11 @@ pub fn[A] Queue::peek(self : Queue[A]) -> A? {
 /// Pops the first value from the queue.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let queue : @queue.Queue[Int] = @queue.from_array([1, 2, 3, 4])
 ///   assert_eq(queue.unsafe_pop(), 1)
+/// }
 /// ```
 #internal(unsafe, "Panics if the queue is empty.")
 #doc(hidden)
@@ -185,9 +203,11 @@ pub fn[A] Queue::unsafe_pop(self : Queue[A]) -> A {
 /// Pops the first value from the queue, which returns None if the queue is empty.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let queue : @queue.Queue[Int] = @queue.from_array([1, 2, 3, 4])
 ///   assert_eq(queue.pop(), Some(1))
+/// }
 /// ```
 pub fn[A] Queue::pop(self : Queue[A]) -> A? {
   match self.first {
@@ -208,10 +228,12 @@ pub fn[A] Queue::pop(self : Queue[A]) -> A? {
 /// Iterates over the queue.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let queue : @queue.Queue[Int] = @queue.from_array([1, 2, 3, 4])
 ///   let mut sum = 0
-///   queue.each((x) => { sum = sum + x })
+///   queue.each(x => sum = sum + x)
+/// }
 /// ```
 pub fn[A] Queue::each(self : Queue[A], f : (A) -> Unit) -> Unit {
   loop self.first {
@@ -227,10 +249,12 @@ pub fn[A] Queue::each(self : Queue[A], f : (A) -> Unit) -> Unit {
 /// Iterates over the queue with index.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let queue : @queue.Queue[Int] = @queue.from_array([1, 2, 3, 4])
 ///   let mut sum = 0
-///   queue.eachi((x, i) => { sum = sum + x * i })
+///   queue.eachi((x, i) => sum = sum + x * i)
+/// }
 /// ```
 pub fn[A] Queue::eachi(self : Queue[A], f : (Int, A) -> Unit) -> Unit {
   loop (self.first, 0) {
@@ -246,10 +270,12 @@ pub fn[A] Queue::eachi(self : Queue[A], f : (Int, A) -> Unit) -> Unit {
 /// Folds over the queue.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let queue : @queue.Queue[Int] = @queue.new()
-///   let sum = queue.fold(init=0, (acc, x) => { acc + x })
+///   let sum = queue.fold(init=0, (acc, x) => acc + x)
 ///   assert_eq(sum, 0)
+/// }
 /// ```
 pub fn[A, B] Queue::fold(self : Queue[A], init~ : B, f : (B, A) -> B) -> B {
   loop (self.first, init) {
@@ -262,10 +288,12 @@ pub fn[A, B] Queue::fold(self : Queue[A], init~ : B, f : (B, A) -> B) -> B {
 /// Returns a copy of the queue.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let queue : @queue.Queue[Int] = @queue.from_array([1, 2, 3, 4])
 ///   let queue2 : @queue.Queue[Int] = queue.copy()
 ///   assert_eq(queue2.length(), 4)
+/// }
 /// ```
 pub fn[A] Queue::copy(self : Queue[A]) -> Queue[A] {
   guard self.first is Some({ content, next }) else { return new() }
@@ -287,10 +315,12 @@ pub fn[A] Queue::copy(self : Queue[A]) -> Queue[A] {
 /// Adds all of the elements of source to the end of destination, then clears source.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let dst : @queue.Queue[Int] = @queue.new()
 ///   let src : @queue.Queue[Int] = @queue.from_array([5, 6, 7, 8])
 ///   src.transfer(dst)
+/// }
 /// ```
 pub fn[A] Queue::transfer(self : Queue[A], dst : Queue[A]) -> Unit {
   if self.length > 0 {
@@ -315,10 +345,12 @@ pub fn[A] Queue::transfer(self : Queue[A], dst : Queue[A]) -> Unit {
 /// Creates an iter from the queue.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let queue : @queue.Queue[Int] = @queue.from_array([5, 6, 7, 8])
-///   let sum = queue.iter().fold((x, y) => { x + y }, init=0)
+///   let sum = queue.iter().fold((x, y) => x + y, init=0)
 ///   assert_eq(sum, 26)
+/// }
 /// ```
 pub fn[A] Queue::iter(self : Queue[A]) -> Iter[A] {
   self.iterator().iter()
@@ -328,10 +360,12 @@ pub fn[A] Queue::iter(self : Queue[A]) -> Iter[A] {
 /// Creates an iter from the queue.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let queue : @queue.Queue[Int] = @queue.from_array([5, 6, 7, 8])
-///   let sum = queue.iterator().fold((x, y) => { x + y }, init=0)
+///   let sum = queue.iterator().fold((x, y) => x + y, init=0)
 ///   assert_eq(sum, 26)
+/// }
 /// ```
 pub fn[A] Queue::iterator(self : Queue[A]) -> Iterator[A] {
   let mut next_node = self.first
@@ -350,9 +384,11 @@ pub fn[A] Queue::iterator(self : Queue[A]) -> Iterator[A] {
 /// Creates a new queue from an iter.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let queue : @queue.Queue[Int] = @queue.from_iter(Iter::empty())
 ///   assert_eq(queue.length(), 0)
+/// }
 /// ```
 #as_free_fn
 pub fn[A] Queue::from_iter(iter : Iter[A]) -> Queue[A] {
@@ -365,9 +401,11 @@ pub fn[A] Queue::from_iter(iter : Iter[A]) -> Queue[A] {
 /// Creates a new queue from an iter.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let queue : @queue.Queue[Int] = @queue.from_iterator(Iterator::empty())
 ///   assert_eq(queue.length(), 0)
+/// }
 /// ```
 #as_free_fn
 pub fn[A] Queue::from_iterator(iter : Iterator[A]) -> Queue[A] {

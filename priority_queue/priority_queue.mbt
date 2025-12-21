@@ -16,9 +16,11 @@
 /// Creates a new empty priority queue.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let queue : @priority_queue.PriorityQueue[Int] = @priority_queue.new()
 ///   assert_eq(queue.length(), 0)
+/// }
 /// ```
 #as_free_fn
 pub fn[A] PriorityQueue::new() -> PriorityQueue[A] {
@@ -29,9 +31,11 @@ pub fn[A] PriorityQueue::new() -> PriorityQueue[A] {
 /// Creates a new priority queue from an array.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let queue = @priority_queue.from_array([1, 2, 3, 4, 5])
 ///   assert_eq(queue.length(), 5)
+/// }
 /// ```
 #as_free_fn
 #alias(of, deprecated="Use from_array instead")
@@ -67,10 +71,12 @@ fn[A] copy_node(x : Node[A]?) -> Node[A]? {
 /// Return a copy of the queue.
 ///
 /// # Example
-/// ```mbt
-/// let queue = @priority_queue.from_array([1, 2, 3, 4])
-/// let queue2 = queue.copy()
-/// inspect(queue2.length(), content="4")
+/// ```mbt check
+/// test {
+///   let queue = @priority_queue.from_array([1, 2, 3, 4])
+///   let queue2 = queue.copy()
+///   inspect(queue2.length(), content="4")
+/// }
 /// ```
 pub fn[A] PriorityQueue::copy(self : PriorityQueue[A]) -> PriorityQueue[A] {
   let new_que : PriorityQueue[A] = { len: self.len, top: copy_node(self.top) }
@@ -185,10 +191,12 @@ pub fn[A] PriorityQueue::length(self : PriorityQueue[A]) -> Int {
 /// Pops the first value from the priority queue.
 ///
 /// # Example
-/// ```mbt
-/// let queue = @priority_queue.from_array([1, 2, 3, 4])
-/// queue.unsafe_pop()
-/// inspect(queue.length(), content="3")
+/// ```mbt check
+/// test {
+///   let queue = @priority_queue.from_array([1, 2, 3, 4])
+///   queue.unsafe_pop()
+///   inspect(queue.length(), content="3")
+/// }
 /// ```
 #internal(unsafe, "Panic if the queue is empty.")
 #doc(hidden)
@@ -204,11 +212,13 @@ pub fn[A : Compare] PriorityQueue::unsafe_pop(self : PriorityQueue[A]) -> Unit {
 /// Pops the first value from the priority queue, which returns None if the queue is empty.
 ///
 /// # Example
-/// ```mbt
-/// let queue = @priority_queue.from_array([1, 2, 3, 4])
-/// let first = queue.pop() // Some(4)
-/// inspect(first, content="Some(4)")
-/// inspect(queue.length(), content="3")
+/// ```mbt check
+/// test {
+///   let queue = @priority_queue.from_array([1, 2, 3, 4])
+///   let first = queue.pop() // Some(4)
+///   inspect(first, content="Some(4)")
+///   inspect(queue.length(), content="3")
+/// }
 /// ```
 pub fn[A : Compare] PriorityQueue::pop(self : PriorityQueue[A]) -> A? {
   match self.top {
@@ -225,10 +235,12 @@ pub fn[A : Compare] PriorityQueue::pop(self : PriorityQueue[A]) -> A? {
 /// Adds a value to the priority queue.
 ///
 /// # Example
-/// ```mbt
-/// let queue = @priority_queue.new()
-/// queue.push(1)
-/// assert_eq(queue.length(), 1)
+/// ```mbt check
+/// test {
+///   let queue = @priority_queue.new()
+///   queue.push(1)
+///   assert_eq(queue.length(), 1)
+/// }
 /// ```
 pub fn[A : Compare] PriorityQueue::push(
   self : PriorityQueue[A],
@@ -246,10 +258,12 @@ pub fn[A : Compare] PriorityQueue::push(
 /// Peeks at the first value in the priority queue, which returns None if the priority queue is empty.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let queue = @priority_queue.from_array([1, 2, 3, 4])
 ///   let first = queue.peek() // Some(4)
 ///   assert_eq(first, Some(4))
+/// }
 /// ```
 pub fn[A] PriorityQueue::peek(self : PriorityQueue[A]) -> A? {
   match self.top {
@@ -262,10 +276,12 @@ pub fn[A] PriorityQueue::peek(self : PriorityQueue[A]) -> A? {
 /// Clears the queue.
 ///
 /// # Example
-/// ```mbt
-/// let queue = @priority_queue.from_array([1, 2, 3, 4])
-/// queue.clear()
-/// assert_eq(queue.length(), 0)
+/// ```mbt check
+/// test {
+///   let queue = @priority_queue.from_array([1, 2, 3, 4])
+///   queue.clear()
+///   assert_eq(queue.length(), 0)
+/// }
 /// ```
 pub fn[A] PriorityQueue::clear(self : PriorityQueue[A]) -> Unit {
   self.top = None
@@ -276,9 +292,11 @@ pub fn[A] PriorityQueue::clear(self : PriorityQueue[A]) -> Unit {
 /// Checks if the priority queue is empty.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let queue : @priority_queue.PriorityQueue[Int] = @priority_queue.new()
 ///   assert_eq(queue.is_empty(), true)
+/// }
 /// ```
 pub fn[A] PriorityQueue::is_empty(self : PriorityQueue[A]) -> Bool {
   self.len == 0

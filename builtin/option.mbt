@@ -124,12 +124,13 @@ pub fn[T] Option::iterator(self : T?) -> Iterator[T] {
 ///
 /// # Example
 ///
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let a = Some(5)
 ///   assert_eq(a.map(x => x * 2), Some(10))
-///
 ///   let b = None
 ///   assert_eq(b.map(x => x * 2), None)
+/// }
 /// ```
 pub fn[T, U] Option::map(self : T?, f : (T) -> U raise?) -> U? raise? {
   match self {
@@ -144,9 +145,11 @@ pub fn[T, U] Option::map(self : T?, f : (T) -> U raise?) -> U? raise? {
 ///
 /// # Example
 ///
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let a = Some(5)
 ///   assert_eq(a.map_or(3, x => x * 2), 10)
+/// }
 /// ```
 pub fn[T, U] Option::map_or(
   self : T?,
@@ -164,9 +167,11 @@ pub fn[T, U] Option::map_or(
 ///
 /// # Example
 ///
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let a = Some(5)
 ///   assert_eq(a.map_or_else(() => 3, x => x * 2), 10)
+/// }
 /// ```
 pub fn[T, U] Option::map_or_else(
   self : T?,
@@ -184,13 +189,15 @@ pub fn[T, U] Option::map_or_else(
 ///
 /// # Example
 ///
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let a = Option::Some(5)
 ///   let r1 = a.bind(x => Some(x * 2))
 ///   assert_eq(r1, Some(10))
-///   let b : Option[Int] = None
+///   let b : Int? = None
 ///   let r2 = b.bind(x => Some(x * 2))
 ///   assert_eq(r2, None)
+/// }
 /// ```
 pub fn[T, U] Option::bind(self : T?, f : (T) -> U? raise?) -> U? raise? {
   match self {
@@ -222,10 +229,12 @@ pub fn[T] Option::is_empty(self : T?) -> Bool {
 /// the same option is returned. Otherwise, `None` is returned.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let x = Some(3)
 ///   assert_eq(x.filter(x => x > 5), None)
 ///   assert_eq(x.filter(x => x < 5), Some(3))
+/// }
 /// ```
 pub fn[T] Option::filter(self : T?, f : (T) -> Bool raise?) -> T? raise? {
   match self {

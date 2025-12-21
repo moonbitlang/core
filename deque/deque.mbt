@@ -520,9 +520,11 @@ fn[A] Deque::realloc(self : Deque[A]) -> Unit {
 /// Return the front element from a deque, or `None` if it is empty.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let dv = @deque.from_array([1, 2, 3, 4, 5])
 ///   assert_eq(dv.front(), Some(1))
+/// }
 /// ```
 pub fn[A] Deque::front(self : Deque[A]) -> A? {
   if self.len == 0 {
@@ -536,9 +538,11 @@ pub fn[A] Deque::front(self : Deque[A]) -> A? {
 /// Return the back element from a deque, or `None` if it is empty.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let dv = @deque.from_array([1, 2, 3, 4, 5])
 ///   assert_eq(dv.back(), Some(5))
+/// }
 /// ```
 pub fn[A] Deque::back(self : Deque[A]) -> A? {
   if self.len == 0 {
@@ -554,10 +558,12 @@ pub fn[A] Deque::back(self : Deque[A]) -> A? {
 /// If the deque is at capacity, it will be reallocated.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let dv = @deque.from_array([1, 2, 3, 4, 5])
 ///   dv.push_front(0)
 ///   assert_eq(dv.front(), Some(0))
+/// }
 /// ```
 pub fn[A] Deque::push_front(self : Deque[A], value : A) -> Unit {
   if self.len == self.buf.length() {
@@ -576,10 +582,12 @@ pub fn[A] Deque::push_front(self : Deque[A], value : A) -> Unit {
 /// If the deque is at capacity, it will be reallocated.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let dv = @deque.from_array([1, 2, 3, 4, 5])
 ///   dv.push_back(6)
 ///   assert_eq(dv.back(), Some(6))
+/// }
 /// ```
 pub fn[A] Deque::push_back(self : Deque[A], value : A) -> Unit {
   if self.len == self.buf.length() {
@@ -596,10 +604,12 @@ pub fn[A] Deque::push_back(self : Deque[A], value : A) -> Unit {
 /// Removes a front element from a deque.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let dv = @deque.from_array([1, 2, 3, 4, 5])
 ///   dv.unsafe_pop_front()
 ///   assert_eq(dv.front(), Some(2))
+/// }
 /// ```
 #internal(unsafe, "Panic if the deque is empty.")
 #doc(hidden)
@@ -646,10 +656,12 @@ pub fn[A] Deque::unsafe_pop_front(self : Deque[A]) -> Unit {
 /// Removes a back element from a deque.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let dv = @deque.from_array([1, 2, 3, 4, 5])
 ///   dv.unsafe_pop_back()
 ///   assert_eq(dv.back(), Some(4))
+/// }
 /// ```
 #internal(unsafe, "Panic if the deque is empty.")
 #doc(hidden)
@@ -698,9 +710,11 @@ pub fn[A] Deque::unsafe_pop_back(self : Deque[A]) -> Unit {
 /// Removes a front element from a deque and returns it, or `None` if it is empty.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let dv = @deque.from_array([1, 2, 3, 4, 5])
 ///   assert_eq(dv.pop_front(), Some(1))
+/// }
 /// ```
 pub fn[A] Deque::pop_front(self : Deque[A]) -> A? {
   match self.len {
@@ -729,9 +743,11 @@ pub fn[A] Deque::pop_front(self : Deque[A]) -> A? {
 /// Removes a back element from a deque and returns it, or `None` if it is empty.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let dv = @deque.from_array([1, 2, 3, 4, 5])
 ///   assert_eq(dv.pop_back(), Some(5))
+/// }
 /// ```
 pub fn[A] Deque::pop_back(self : Deque[A]) -> A? {
   match self.len {
@@ -762,9 +778,11 @@ pub fn[A] Deque::pop_back(self : Deque[A]) -> A? {
 /// If you try to access an index which isn't in the Deque, it will panic.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let dv = @deque.from_array([1, 2, 3, 4, 5])
 ///   inspect(dv[2], content="3")
+/// }
 /// ```
 #alias("_[_]")
 pub fn[A] Deque::at(self : Deque[A], index : Int) -> A {
@@ -787,10 +805,12 @@ pub fn[A] Deque::at(self : Deque[A], index : Int) -> A {
 /// If you try to access an index which isn't in the Deque, it will panic.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let dv = @deque.from_array([1, 2, 3, 4, 5])
 ///   dv[2] = 1
 ///   inspect(dv[2], content="1")
+/// }
 /// ```
 #alias("_[_]=_")
 pub fn[A] Deque::set(self : Deque[A], index : Int, value : A) -> Unit {
@@ -883,11 +903,13 @@ pub impl[A : Eq] Eq for Deque[A] with equal(self, other) {
 /// Iterates over the elements of the deque.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let dv = @deque.from_array([1, 2, 3, 4, 5])
 ///   let mut sum = 0
-///   dv.each((x) => {sum = sum + x})
+///   dv.each(x => sum = sum + x)
 ///   inspect(sum, content="15")
+/// }
 /// ```
 pub fn[A] Deque::each(self : Deque[A], f : (A) -> Unit) -> Unit {
   for v in self {
@@ -899,11 +921,13 @@ pub fn[A] Deque::each(self : Deque[A], f : (A) -> Unit) -> Unit {
 /// Iterates over the elements of the deque with index.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let dv = @deque.from_array([1, 2, 3, 4, 5])
 ///   let mut idx_sum = 0
-///   dv.eachi((i, _x) => {idx_sum = idx_sum + i})
+///   dv.eachi((i, _x) => idx_sum = idx_sum + i)
 ///   inspect(idx_sum, content="10")
+/// }
 /// ```
 pub fn[A] Deque::eachi(self : Deque[A], f : (Int, A) -> Unit) -> Unit {
   for i, v in self {
@@ -915,11 +939,13 @@ pub fn[A] Deque::eachi(self : Deque[A], f : (Int, A) -> Unit) -> Unit {
 /// Iterates over the elements of the deque in reversed turn.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let dv = @deque.from_array([1, 2, 3, 4, 5])
 ///   let mut sum = 0
-///   dv.rev_each((x) => {sum = sum + x})
+///   dv.rev_each(x => sum = sum + x)
 ///   inspect(sum, content="15")
+/// }
 /// ```
 pub fn[A] Deque::rev_each(self : Deque[A], f : (A) -> Unit) -> Unit {
   for v in self.rev_iter() {
@@ -931,11 +957,13 @@ pub fn[A] Deque::rev_each(self : Deque[A], f : (A) -> Unit) -> Unit {
 /// Iterates over the elements of the deque in reversed turn with index.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let dv = @deque.from_array([1, 2, 3, 4, 5])
 ///   let mut idx_sum = 0
-///   dv.rev_eachi((i, _x) => {idx_sum = idx_sum + i})
+///   dv.rev_eachi((i, _x) => idx_sum = idx_sum + i)
 ///   inspect(idx_sum, content="10")
+/// }
 /// ```
 pub fn[A] Deque::rev_eachi(self : Deque[A], f : (Int, A) -> Unit) -> Unit {
   for i, v in self.rev_iter2() {
@@ -949,10 +977,12 @@ pub fn[A] Deque::rev_eachi(self : Deque[A], f : (Int, A) -> Unit) -> Unit {
 /// This method has no effect on the allocated capacity of the deque, only setting the length to 0.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let dv = @deque.from_array([1, 2, 3, 4, 5])
 ///   dv.clear()
 ///   inspect(dv.length(), content="0")
+/// }
 /// ```
 pub fn[A] Deque::clear(self : Deque[A]) -> Unit {
   let { head, buf, len, .. } = self
@@ -979,10 +1009,12 @@ pub fn[A] Deque::clear(self : Deque[A]) -> Unit {
 /// Maps a function over the elements of the deque.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let dv = @deque.from_array([3, 4, 5])
-///   let dv2 = dv.map((x) => {x + 1})
+///   let dv2 = dv.map(x => x + 1)
 ///   assert_eq(dv2, @deque.from_array([4, 5, 6]))
+/// }
 /// ```
 pub fn[A, U] Deque::map(self : Deque[A], f : (A) -> U) -> Deque[U] {
   let cap = self.buf.length()
@@ -1002,10 +1034,12 @@ pub fn[A, U] Deque::map(self : Deque[A], f : (A) -> U) -> Deque[U] {
 /// Maps a function over the elements of the deque with index.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let dv = @deque.from_array([3, 4, 5])
-///   let dv2 = dv.mapi((i, x) => {x + i}) // @deque.from_array([3, 5, 7])
+///   let dv2 = dv.mapi((i, x) => x + i) // @deque.from_array([3, 5, 7])
 ///   assert_eq(dv2, @deque.from_array([3, 5, 7]))
+/// }
 /// ```
 pub fn[A, U] Deque::mapi(self : Deque[A], f : (Int, A) -> U) -> Deque[U] {
   let cap = self.buf.length()
@@ -1025,11 +1059,13 @@ pub fn[A, U] Deque::mapi(self : Deque[A], f : (Int, A) -> U) -> Deque[U] {
 /// Test if the deque is empty.
 ///
 /// # Example
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let dv = @deque.new()
 ///   inspect(dv.is_empty(), content="true")
 ///   dv.push_back(1)
 ///   inspect(dv.is_empty(), content="false")
+/// }
 /// ```
 pub fn[A] Deque::is_empty(self : Deque[A]) -> Bool {
   self.len == 0
@@ -1183,10 +1219,12 @@ pub fn[A] Deque::filter(
 ///
 /// # Example
 ///
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let dv = @deque.from_array([1])
 ///   dv.reserve_capacity(10)
 ///   inspect(dv.capacity(), content="10")
+/// }
 /// ```
 pub fn[A] Deque::reserve_capacity(self : Deque[A], capacity : Int) -> Unit {
   if self.capacity() >= capacity {
@@ -1208,7 +1246,8 @@ pub fn[A] Deque::reserve_capacity(self : Deque[A], capacity : Int) -> Unit {
 ///
 /// # Example
 ///
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let dv = @deque.new(capacity=10)
 ///   dv.push_back(1)
 ///   dv.push_back(2)
@@ -1216,6 +1255,7 @@ pub fn[A] Deque::reserve_capacity(self : Deque[A], capacity : Int) -> Unit {
 ///   inspect(dv.capacity(), content="10")
 ///   dv.shrink_to_fit()
 ///   inspect(dv.capacity(), content="3")
+/// }
 /// ```
 pub fn[A] Deque::shrink_to_fit(self : Deque[A]) -> Unit {
   if self.capacity() <= self.length() {
