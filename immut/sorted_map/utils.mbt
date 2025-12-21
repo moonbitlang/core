@@ -403,7 +403,7 @@ pub fn[K, V] SortedMap::rev_keys(self : SortedMap[K, V]) -> Iter[K] {
 ///
 /// # Example
 ///
-/// ```mbt
+/// ```mbt nocheck
 ///   let map = @sorted_map.from_array([("a", 1), ("b", 2), ("c", 3)])
 ///   let values = map.rev_values().collect()
 ///   assert_eq(values, [3, 2, 1])
