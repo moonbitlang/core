@@ -73,6 +73,23 @@ pub fn[T] ArrayView::length(self : ArrayView[T]) -> Int {
 }
 
 ///|
+/// Returns whether the array view is empty.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let view = [1, 2, 3][:]
+///   inspect(view.is_empty(), content="false")
+///   let empty = [1, 2][0:0]
+///   inspect(empty.is_empty(), content="true")
+/// }
+/// ```
+pub fn[T] ArrayView::is_empty(self : ArrayView[T]) -> Bool {
+  self.length() == 0
+}
+
+///|
 pub fn[T] ArrayView::start_offset(self : Self[T]) -> Int {
   self.start()
 }
@@ -139,6 +156,28 @@ pub fn[T] ArrayView::get(self : ArrayView[T], index : Int) -> T? {
   let len = self.length()
   guard index >= 0 && index < len else { None }
   Some(self.buf()[self.start() + index])
+}
+
+///|
+/// Returns the last element of the array view, if any.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let view = [1, 2, 3][:]
+///   inspect(view.last(), content="Some(3)")
+///   let empty = [1, 2][0:0]
+///   inspect(empty.last(), content="None")
+/// }
+/// ```
+pub fn[T] ArrayView::last(self : ArrayView[T]) -> T? {
+  let len = self.length()
+  if len == 0 {
+    None
+  } else {
+    Some(self.unsafe_get(len - 1))
+  }
 }
 
 ///|

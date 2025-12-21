@@ -1008,6 +1008,7 @@ test "swap" {
 ///   assert_false(arr.all(ele => ele < 5))
 /// }
 /// ```
+/// 
 pub fn[T] FixedArray::all(
   self : FixedArray[T],
   f : (T) -> Bool raise?,

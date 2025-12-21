@@ -188,12 +188,14 @@ pub fn[T] ArrayView::filter(Self[T], (T) -> Bool raise?) -> Array[T] raise?
 pub fn[A, B] ArrayView::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 pub fn[A, B] ArrayView::foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
 pub fn[T] ArrayView::get(Self[T], Int) -> T?
+pub fn[T] ArrayView::is_empty(Self[T]) -> Bool
 pub fn[T : Compare] ArrayView::is_sorted(Self[T]) -> Bool
 pub fn[A] ArrayView::iter(Self[A]) -> Iter[A]
 pub fn[A] ArrayView::iter2(Self[A]) -> Iter2[Int, A]
 pub fn[X] ArrayView::iterator(Self[X]) -> Iterator[X]
 pub fn[X] ArrayView::iterator2(Self[X]) -> Iterator2[Int, X]
 pub fn[A : ToStringView] ArrayView::join(Self[A], StringView) -> String
+pub fn[T] ArrayView::last(Self[T]) -> T?
 pub fn[T] ArrayView::length(Self[T]) -> Int
 pub fn[T, U] ArrayView::map(Self[T], (T) -> U raise?) -> Array[U] raise?
 pub fn[T, U] ArrayView::mapi(Self[T], (Int, T) -> U raise?) -> Array[U] raise?
@@ -887,6 +889,7 @@ pub fn[T] ReadOnlyArray::from_iter(Iter[T]) -> Self[T]
 pub fn[T] ReadOnlyArray::from_iterator(Iterator[T]) -> Self[T]
 pub fn[T] ReadOnlyArray::get(Self[T], Int) -> T?
 pub fn[T] ReadOnlyArray::is_empty(Self[T]) -> Bool
+pub fn[T : Compare] ReadOnlyArray::is_sorted(Self[T]) -> Bool
 pub fn[T] ReadOnlyArray::iter(Self[T]) -> Iter[T]
 pub fn[T] ReadOnlyArray::iter2(Self[T]) -> Iter2[Int, T]
 pub fn[T] ReadOnlyArray::iterator(Self[T]) -> Iterator[T]
@@ -1198,6 +1201,7 @@ pub impl Hash for String
 pub impl[X : Hash] Hash for X?
 pub impl[T : Hash, E : Hash] Hash for Result[T, E]
 pub impl[T : Hash] Hash for FixedArray[T]
+pub impl[T : Hash] Hash for ReadOnlyArray[T]
 pub impl Hash for Bytes
 pub impl[A : Hash, B : Hash] Hash for (A, B)
 pub impl[A : Hash, B : Hash, C : Hash] Hash for (A, B, C)
