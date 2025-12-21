@@ -180,10 +180,13 @@ pub fn[T] ArrayView::all(Self[T], (T) -> Bool raise?) -> Bool raise?
 pub fn[T] ArrayView::any(Self[T], (T) -> Bool raise?) -> Bool raise?
 #alias("_[_]")
 pub fn[T] ArrayView::at(Self[T], Int) -> T
+pub fn[T : Compare] ArrayView::binary_search(Self[T], T) -> Result[Int, Int]
+pub fn[T] ArrayView::binary_search_by(Self[T], (T) -> Int raise?) -> Result[Int, Int] raise?
 pub fn[A] ArrayView::blit_to(Self[A], Array[A], dst_offset? : Int) -> Unit
 pub fn[T : Eq] ArrayView::contains(Self[T], T) -> Bool
 pub fn[T] ArrayView::each(Self[T], (T) -> Unit raise?) -> Unit raise?
 pub fn[T] ArrayView::eachi(Self[T], (Int, T) -> Unit raise?) -> Unit raise?
+pub fn[T : Eq] ArrayView::ends_with(Self[T], Self[T]) -> Bool
 pub fn[T] ArrayView::filter(Self[T], (T) -> Bool raise?) -> Array[T] raise?
 pub fn[A, B] ArrayView::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 pub fn[A, B] ArrayView::foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
@@ -202,7 +205,9 @@ pub fn[T, U] ArrayView::mapi(Self[T], (Int, T) -> U raise?) -> Array[U] raise?
 pub fn[A, B] ArrayView::rev_fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 pub fn[A, B] ArrayView::rev_foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
 pub fn[X] ArrayView::rev_iterator(Self[X]) -> Iterator[X]
+pub fn[T : Eq] ArrayView::search(Self[T], T) -> Int?
 pub fn[T] ArrayView::start_offset(Self[T]) -> Int
+pub fn[T : Eq] ArrayView::starts_with(Self[T], Self[T]) -> Bool
 #alias("_[_:_]")
 pub fn[T] ArrayView::sub(Self[T], start? : Int, end? : Int) -> Self[T]
 pub fn[T] ArrayView::suffixes(Self[T], include_empty? : Bool) -> Iterator[Self[T]]
