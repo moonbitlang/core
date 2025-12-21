@@ -913,6 +913,7 @@ pub fn[T : Compare] ReadOnlyArray::is_sorted(Self[T]) -> Bool
 pub fn[T] ReadOnlyArray::iter(Self[T]) -> Iter[T]
 pub fn[T] ReadOnlyArray::iter2(Self[T]) -> Iter2[Int, T]
 pub fn[T] ReadOnlyArray::iterator(Self[T]) -> Iterator[T]
+pub fn[T] ReadOnlyArray::iterator2(Self[T]) -> Iterator2[Int, T]
 pub fn ReadOnlyArray::join(Self[String], StringView) -> String
 pub fn[T] ReadOnlyArray::last(Self[T]) -> T?
 pub fn[T] ReadOnlyArray::length(Self[T]) -> Int
