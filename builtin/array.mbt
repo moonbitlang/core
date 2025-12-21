@@ -505,6 +505,38 @@ pub fn[T] Array::eachi(
 }
 
 ///|
+/// Checks whether all elements satisfy the predicate.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let arr = [1, 2, 3, 4, 5]
+///   assert_true(arr.all(x => x < 6))
+///   assert_false(arr.all(x => x < 5))
+/// }
+/// ```
+#alias(every)
+pub fn[T] Array::all(self : Array[T], f : (T) -> Bool raise?) -> Bool raise? {
+  self[:].all(f)
+}
+
+///|
+/// Checks whether any element satisfies the predicate.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let arr = [1, 2, 3, 4, 5]
+///   assert_true(arr.any(x => x < 6))
+///   assert_false(arr.any(x => x < 1))
+/// }
+/// ```
+#alias(exists)
+pub fn[T] Array::any(self : Array[T], f : (T) -> Bool raise?) -> Bool raise? {
+  self[:].any(f)
+}
+
+///|
 /// Clears the array, removing all values.
 ///
 /// This method has no effect on the allocated capacity of the array, only setting the length to 0.
