@@ -72,7 +72,7 @@ pub fn[T] Array::append(Self[T], ArrayView[T]) -> Unit
 #alias("_[_]")
 pub fn[T] Array::at(Self[T], Int) -> T
 pub fn[T : Compare] Array::binary_search(Self[T], T) -> Result[Int, Int]
-pub fn[T] Array::binary_search_by(Self[T], (T) -> Int) -> Result[Int, Int]
+pub fn[T] Array::binary_search_by(Self[T], (T) -> Int raise?) -> Result[Int, Int] raise?
 #label_migration(len, fill=false, msg="Use ArrayView::blit_to instead")
 #label_migration(src_offset, fill=false, msg="Use ArrayView::blit_to instead")
 pub fn[A] Array::blit_to(Self[A], Self[A], len? : Int, src_offset? : Int, dst_offset? : Int) -> Unit
