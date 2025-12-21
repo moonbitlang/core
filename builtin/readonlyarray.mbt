@@ -448,6 +448,22 @@ pub fn[T : Eq] ReadOnlyArray::contains(
 }
 
 ///|
+/// Checks if the ReadOnlyArray is sorted in non-decreasing order.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let arr : ReadOnlyArray[Int] = [1, 2, 3]
+///   inspect(arr.is_sorted(), content="true")
+///   let arr2 : ReadOnlyArray[Int] = [2, 1]
+///   inspect(arr2.is_sorted(), content="false")
+/// }
+/// ```
+pub fn[T : Compare] ReadOnlyArray::is_sorted(self : ReadOnlyArray[T]) -> Bool {
+  self.unsafe_reinterpret_to_fixed_array().is_sorted()
+}
+
+///|
 /// Checks if the ReadOnlyArray starts with the given prefix.
 ///
 /// # Example
@@ -626,6 +642,11 @@ pub impl[T : Eq] Eq for ReadOnlyArray[T] with equal(self, other) {
   self
   .unsafe_reinterpret_to_fixed_array()
   .equal(other.unsafe_reinterpret_to_fixed_array())
+}
+
+///|
+pub impl[T : Hash] Hash for ReadOnlyArray[T] with hash_combine(self, hasher) {
+  self.unsafe_reinterpret_to_fixed_array().hash_combine(hasher)
 }
 
 ///|
