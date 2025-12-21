@@ -526,6 +526,7 @@ pub fn[T] ArrayView::eachi(
 ///   assert_true(v[1:4].all(elem => elem % 2 == 0))
 /// }
 /// ```
+#alias(every)
 pub fn[T] ArrayView::all(
   self : ArrayView[T],
   f : (T) -> Bool raise?,
@@ -550,6 +551,7 @@ pub fn[T] ArrayView::all(
 ///   assert_false(v.any(ele => ele < 1))
 /// }
 /// ```
+#alias(exists)
 pub fn[T] ArrayView::any(
   self : ArrayView[T],
   f : (T) -> Bool raise?,

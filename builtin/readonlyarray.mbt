@@ -515,6 +515,7 @@ pub fn[T : Eq] ReadOnlyArray::ends_with(
 ///   inspect(arr2.all(fn(x) { x % 2 == 0 }), content="false")
 /// }
 /// ```
+#alias(every)
 pub fn[T] ReadOnlyArray::all(
   self : ReadOnlyArray[T],
   f : (T) -> Bool raise?,
@@ -534,6 +535,7 @@ pub fn[T] ReadOnlyArray::all(
 ///   inspect(arr2.any(fn(x) { x % 2 == 0 }), content="true")
 /// }
 /// ```
+#alias(exists)
 pub fn[T] ReadOnlyArray::any(
   self : ReadOnlyArray[T],
   f : (T) -> Bool raise?,
