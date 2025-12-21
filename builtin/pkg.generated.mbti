@@ -68,6 +68,10 @@ pub fn ArgsLoc::to_json(Self) -> String
 pub impl Show for ArgsLoc
 
 type Array[T]
+#alias(every)
+pub fn[T] Array::all(Self[T], (T) -> Bool raise?) -> Bool raise?
+#alias(exists)
+pub fn[T] Array::any(Self[T], (T) -> Bool raise?) -> Bool raise?
 pub fn[T] Array::append(Self[T], ArrayView[T]) -> Unit
 #alias("_[_]")
 pub fn[T] Array::at(Self[T], Int) -> T
@@ -176,7 +180,9 @@ pub impl[X : Show] Show for Array[X]
 pub impl[X : ToJson] ToJson for Array[X]
 
 type ArrayView[T]
+#alias(every)
 pub fn[T] ArrayView::all(Self[T], (T) -> Bool raise?) -> Bool raise?
+#alias(exists)
 pub fn[T] ArrayView::any(Self[T], (T) -> Bool raise?) -> Bool raise?
 #alias("_[_]")
 pub fn[T] ArrayView::at(Self[T], Int) -> T
@@ -812,7 +818,9 @@ pub fn[T : Default, E] Result::unwrap_or_default(Self[T, E]) -> T
 pub fn[T, E] Result::unwrap_or_else(Self[T, E], () -> T raise?) -> T raise?
 pub fn[T, E : Error] Result::unwrap_or_error(Self[T, E]) -> T raise E
 
+#alias(every)
 pub fn[T] FixedArray::all(Self[T], (T) -> Bool raise?) -> Bool raise?
+#alias(exists)
 pub fn[T] FixedArray::any(Self[T], (T) -> Bool raise?) -> Bool raise?
 #alias("_[_]")
 pub fn[T] FixedArray::at(Self[T], Int) -> T
@@ -877,7 +885,9 @@ pub fn FixedArray::unsafe_write_uint32_le(Self[Byte], Int, UInt) -> Unit
 pub fn FixedArray::unsafe_write_uint64_be(Self[Byte], Int, UInt64) -> Unit
 pub fn FixedArray::unsafe_write_uint64_le(Self[Byte], Int, UInt64) -> Unit
 
+#alias(every)
 pub fn[T] ReadOnlyArray::all(Self[T], (T) -> Bool raise?) -> Bool raise?
+#alias(exists)
 pub fn[T] ReadOnlyArray::any(Self[T], (T) -> Bool raise?) -> Bool raise?
 #alias("_[_]")
 pub fn[T] ReadOnlyArray::at(Self[T], Int) -> T
@@ -1025,8 +1035,7 @@ pub fn StringView::trim_end(Self, chars? : Self) -> Self
 #deprecated
 pub fn StringView::trim_space(Self) -> Self
 #label_migration(chars, alias=char_set)
-#label_migration(chars, allow_positional=true)
-pub fn StringView::trim_start(Self, chars~ : Self) -> Self
+pub fn StringView::trim_start(Self, chars? : Self) -> Self
 pub fn StringView::unsafe_charcode_at(Self, Int) -> Int
 pub fn StringView::view(Self, start_offset? : Int, end_offset? : Int) -> Self
 

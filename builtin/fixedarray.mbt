@@ -975,17 +975,13 @@ test "swap" {
 ///   assert_false(arr.all(ele => ele < 5))
 /// }
 /// ```
-/// 
+///
+#alias(every)
 pub fn[T] FixedArray::all(
   self : FixedArray[T],
   f : (T) -> Bool raise?,
 ) -> Bool raise? {
-  for i in 0..<self.length() {
-    if !f(self[i]) {
-      return false
-    }
-  }
-  true
+  self[:].all(f)
 }
 
 ///|
@@ -1017,16 +1013,12 @@ test "all" {
 ///   assert_true(arr.any(ele => ele < 5))
 /// }
 /// ```
+#alias(exists)
 pub fn[T] FixedArray::any(
   self : FixedArray[T],
   f : (T) -> Bool raise?,
 ) -> Bool raise? {
-  for i in 0..<self.length() {
-    if f(self[i]) {
-      return true
-    }
-  }
-  false
+  self[:].any(f)
 }
 
 ///|
