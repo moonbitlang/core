@@ -110,12 +110,14 @@ pub fn[T, K : Compare] MutArrayView::sort_by_key(
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let arr = [1, 2, 3, 4, 5]
-/// let view = arr[1:4]
-/// inspect(view.is_sorted(), content="true")
-/// let descending = [5, 4, 3, 2, 1]
-/// inspect(descending[:].is_sorted(), content="false")
+/// ```mbt check
+/// test {
+///   let arr = [1, 2, 3, 4, 5]
+///   let view = arr[1:4]
+///   inspect(view.is_sorted(), content="true")
+///   let descending = [5, 4, 3, 2, 1]
+///   inspect(descending[:].is_sorted(), content="false")
+/// }
 /// ```
 pub fn[T : Compare] ArrayView::is_sorted(self : ArrayView[T]) -> Bool {
   for i in 1..<self.length() {
@@ -149,13 +151,15 @@ pub fn[T : Compare] ArrayView::is_sorted(self : ArrayView[T]) -> Bool {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let ascending = [1, 2, 3, 4, 5]
-/// let descending = [5, 4, 3, 2, 1]
-/// let unsorted = [1, 3, 2, 4, 5]
-/// inspect(ascending.is_sorted(), content="true")
-/// inspect(descending.is_sorted(), content="false")
-/// inspect(unsorted.is_sorted(), content="false")
+/// ```mbt check
+/// test {
+///   let ascending = [1, 2, 3, 4, 5]
+///   let descending = [5, 4, 3, 2, 1]
+///   let unsorted = [1, 3, 2, 4, 5]
+///   inspect(ascending.is_sorted(), content="true")
+///   inspect(descending.is_sorted(), content="false")
+///   inspect(unsorted.is_sorted(), content="false")
+/// }
 /// ```
 pub fn[T : Compare] Array::is_sorted(self : Array[T]) -> Bool {
   self[:].is_sorted()
@@ -230,11 +234,13 @@ pub fn[T] Array::sort_by(self : Array[T], cmp : (T, T) -> Int) -> Unit {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let sorted : FixedArray[Int] = [1, 2, 3, 4, 5]
-/// let unsorted : FixedArray[Int] = [5, 4, 3, 2, 1]
-/// inspect(FixedArray::is_sorted(sorted), content="true")
-/// inspect(FixedArray::is_sorted(unsorted), content="false")
+/// ```mbt check
+/// test {
+///   let sorted : FixedArray[Int] = [1, 2, 3, 4, 5]
+///   let unsorted : FixedArray[Int] = [5, 4, 3, 2, 1]
+///   inspect(FixedArray::is_sorted(sorted), content="true")
+///   inspect(FixedArray::is_sorted(unsorted), content="false")
+/// }
 /// ```
 pub fn[T : Compare] FixedArray::is_sorted(arr : FixedArray[T]) -> Bool {
   arr[:].is_sorted()

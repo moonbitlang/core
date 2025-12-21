@@ -52,12 +52,14 @@ pub fn[K : Hash + Eq] HashSet::from_array(arr : ArrayView[K]) -> HashSet[K] {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let set : @hashset.HashSet[String] = @hashset.new()
-/// set.add("key")
-/// inspect(set.contains("key"), content="true")
-/// set.add("key") // no effect since it already exists
-/// inspect(set.length(), content="1")
+/// ```mbt check
+/// test {
+///   let set : @hashset.HashSet[String] = @hashset.new()
+///   set.add("key")
+///   inspect(set.contains("key"), content="true")
+///   set.add("key") // no effect since it already exists
+///   inspect(set.length(), content="1")
+/// }
 /// ```
 #alias(insert, deprecated)
 pub fn[K : Hash + Eq] HashSet::add(self : HashSet[K], key : K) -> Unit {
@@ -160,11 +162,13 @@ pub fn[K : Hash + Eq] HashSet::contains(self : HashSet[K], key : K) -> Bool {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let set = @hashset.from_array(["a", "b"])
-/// set.remove("a")
-/// inspect(set.contains("a"), content="false")
-/// inspect(set.length(), content="1")
+/// ```mbt check
+/// test {
+///   let set = @hashset.from_array(["a", "b"])
+///   set.remove("a")
+///   inspect(set.contains("a"), content="false")
+///   inspect(set.length(), content="1")
+/// }
 /// ```
 pub fn[K : Hash + Eq] HashSet::remove(self : HashSet[K], key : K) -> Unit {
   let hash = key.hash()
@@ -595,11 +599,13 @@ test "clear" {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let set : @hashset.HashSet[String] = @hashset.new()
-/// inspect(set.add_and_check("key"), content="true") // First insertion
-/// inspect(set.add_and_check("key"), content="false") // Already exists
-/// inspect(set.length(), content="1")
+/// ```mbt check
+/// test {
+///   let set : @hashset.HashSet[String] = @hashset.new()
+///   inspect(set.add_and_check("key"), content="true") // First insertion
+///   inspect(set.add_and_check("key"), content="false") // Already exists
+///   inspect(set.length(), content="1")
+/// }
 /// ```
 pub fn[K : Hash + Eq] HashSet::add_and_check(
   self : HashSet[K],
@@ -623,11 +629,13 @@ pub fn[K : Hash + Eq] HashSet::add_and_check(
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let set = @hashset.from_array(["a", "b"])
-/// inspect(set.remove_and_check("a"), content="true") // Successfully removed
-/// inspect(set.remove_and_check("a"), content="false") // Already removed
-/// inspect(set.length(), content="1")
+/// ```mbt check
+/// test {
+///   let set = @hashset.from_array(["a", "b"])
+///   inspect(set.remove_and_check("a"), content="true") // Successfully removed
+///   inspect(set.remove_and_check("a"), content="false") // Already removed
+///   inspect(set.length(), content="1")
+/// }
 /// ```
 pub fn[K : Hash + Eq] HashSet::remove_and_check(
   self : HashSet[K],

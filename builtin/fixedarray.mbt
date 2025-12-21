@@ -25,11 +25,13 @@
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let arr : FixedArray[Int] = [1, 2, 3]
-/// inspect(arr.get(1), content="Some(2)")
-/// let arr : FixedArray[Int] = [1, 2, 3]
-/// inspect(arr.get(3), content="None")
+/// ```mbt check
+/// test {
+///   let arr : FixedArray[Int] = [1, 2, 3]
+///   inspect(arr.get(1), content="Some(2)")
+///   let arr : FixedArray[Int] = [1, 2, 3]
+///   inspect(arr.get(3), content="None")
+/// }
 /// ```
 pub fn[T] FixedArray::get(self : FixedArray[T], idx : Int) -> T? {
   let len = self.length()
@@ -51,11 +53,13 @@ pub fn[T] FixedArray::get(self : FixedArray[T], idx : Int) -> T? {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let arr = FixedArray::make(3, 42)
-/// let mut sum = 0
-/// arr.iter().each(x => sum = sum + x)
-/// inspect(sum, content="126")
+/// ```mbt check
+/// test {
+///   let arr = FixedArray::make(3, 42)
+///   let mut sum = 0
+///   arr.iter().each(x => sum = sum + x)
+///   inspect(sum, content="126")
+/// }
 /// ```
 #intrinsic("%iter.from_array")
 pub fn[T] FixedArray::iter(self : FixedArray[T]) -> Iter[T] {
@@ -76,11 +80,13 @@ pub fn[T] FixedArray::iter(self : FixedArray[T]) -> Iter[T] {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let arr = FixedArray::make(3, 10)
-/// let mut sum = 0
-/// arr.iter2().each((i, x) => sum = sum + i + x)
-/// inspect(sum, content="33") // (0 + 10) + (1 + 10) + (2 + 10) = 33
+/// ```mbt check
+/// test {
+///   let arr = FixedArray::make(3, 10)
+///   let mut sum = 0
+///   arr.iter2().each((i, x) => sum = sum + i + x)
+///   inspect(sum, content="33") // (0 + 10) + (1 + 10) + (2 + 10) = 33
+/// }
 /// ```
 pub fn[T] FixedArray::iter2(self : FixedArray[T]) -> Iter2[Int, T] {
   self.iterator2().iter2()
@@ -97,10 +103,12 @@ pub fn[T] FixedArray::iter2(self : FixedArray[T]) -> Iter2[Int, T] {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let arr : FixedArray[Int] = FixedArray::default()
-/// inspect(arr.length(), content="0")
-/// inspect(arr.is_empty(), content="true")
+/// ```mbt check
+/// test {
+///   let arr : FixedArray[Int] = FixedArray::default()
+///   inspect(arr.length(), content="0")
+///   inspect(arr.is_empty(), content="true")
+/// }
 /// ```
 pub impl[X] Default for FixedArray[X] with default() {
   []
@@ -125,26 +133,28 @@ pub impl[X] Default for FixedArray[X] with default() {
 /// - Does nothing if the array is empty
 /// 
 /// # Example
-/// ```mbt test
-/// // Fill entire array
-/// let fa : FixedArray[Int] = [0, 0, 0, 0, 0]
-/// fa.fill(3)
-/// inspect(fa, content="[3, 3, 3, 3, 3]")
+/// ```mbt check
+/// test {
+///   // Fill entire array
+///   let fa : FixedArray[Int] = [0, 0, 0, 0, 0]
+///   fa.fill(3)
+///   inspect(fa, content="[3, 3, 3, 3, 3]")
 ///
-/// // Fill from index 1 to 3 (exclusive)
-/// let fa2 : FixedArray[Int] = [0, 0, 0, 0, 0]
-/// fa2.fill(9, start=1, end=3)
-/// inspect(fa2, content="[0, 9, 9, 0, 0]")
+///   // Fill from index 1 to 3 (exclusive)
+///   let fa2 : FixedArray[Int] = [0, 0, 0, 0, 0]
+///   fa2.fill(9, start=1, end=3)
+///   inspect(fa2, content="[0, 9, 9, 0, 0]")
 ///
-/// // Fill from index 2 to end
-/// let fa3 : FixedArray[String] = ["a", "b", "c", "d"]
-/// fa3.fill("x", start=2)
-/// inspect(
-///   fa3,
-///   content=(
-///     #|["a", "b", "x", "x"]
-///   ),
-/// )
+///   // Fill from index 2 to end
+///   let fa3 : FixedArray[String] = ["a", "b", "c", "d"]
+///   fa3.fill("x", start=2)
+///   inspect(
+///     fa3,
+///     content=(
+///       #|["a", "b", "x", "x"]
+///     ),
+///   )
+/// }
 /// ```
 pub fn[T] FixedArray::fill(
   self : FixedArray[T],
@@ -189,11 +199,13 @@ fn[T] FixedArray::unchecked_fill(
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let empty : FixedArray[Int] = []
-/// inspect(empty.is_empty(), content="true")
-/// let non_empty = [1, 2, 3]
-/// inspect(non_empty.is_empty(), content="false")
+/// ```mbt check
+/// test {
+///   let empty : FixedArray[Int] = []
+///   inspect(empty.is_empty(), content="true")
+///   let non_empty = [1, 2, 3]
+///   inspect(non_empty.is_empty(), content="false")
+/// }
 /// ```
 pub fn[T] FixedArray::is_empty(self : FixedArray[T]) -> Bool {
   self.length() == 0
@@ -269,12 +281,14 @@ pub fn[T : Compare] FixedArray::binary_search(
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let arr : FixedArray[Int] = [1, 3, 5, 7, 9]
-/// let find_3 = arr.binary_search_by(x => x.compare(3))
-/// inspect(find_3, content="Ok(1)")
-/// let find_4 = arr.binary_search_by(x => x.compare(4))
-/// inspect(find_4, content="Err(2)")
+/// ```mbt check
+/// test {
+///   let arr : FixedArray[Int] = [1, 3, 5, 7, 9]
+///   let find_3 = arr.binary_search_by(x => x.compare(3))
+///   inspect(find_3, content="Ok(1)")
+///   let find_4 = arr.binary_search_by(x => x.compare(4))
+///   inspect(find_4, content="Err(2)")
+/// }
 /// ```
 ///
 /// Notes:
@@ -612,9 +626,11 @@ test "mapi" {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let arr = FixedArray::makei(3, i => i * 2)
-/// inspect(arr, content="[0, 2, 4]")
+/// ```mbt check
+/// test {
+///   let arr = FixedArray::makei(3, i => i * 2)
+///   inspect(arr, content="[0, 2, 4]")
+/// }
 /// ```
 #locals(value)
 pub fn[T] FixedArray::makei(
@@ -658,10 +674,12 @@ test "fixedarray_new_with_index" {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let dynamic_array = [1, 2, 3, 4, 5]
-/// let fixed_array = FixedArray::from_array(dynamic_array)
-/// inspect(fixed_array, content="[1, 2, 3, 4, 5]")
+/// ```mbt check
+/// test {
+///   let dynamic_array = [1, 2, 3, 4, 5]
+///   let fixed_array = FixedArray::from_array(dynamic_array)
+///   inspect(fixed_array, content="[1, 2, 3, 4, 5]")
+/// }
 /// ```
 pub fn[T] FixedArray::from_array(array : ArrayView[T]) -> FixedArray[T] {
   FixedArray::makei(array.length(), i => array.unsafe_get(i))
@@ -816,10 +834,12 @@ test "rev_foldi" {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let arr : FixedArray[_] = [1, 2, 3, 4, 5]
-/// arr.rev_in_place()
-/// inspect(arr, content="[5, 4, 3, 2, 1]")
+/// ```mbt check
+/// test {
+///   let arr : FixedArray[_] = [1, 2, 3, 4, 5]
+///   arr.rev_in_place()
+///   inspect(arr, content="[5, 4, 3, 2, 1]")
+/// }
 /// ```
 #alias(rev_inplace, deprecated)
 pub fn[T] FixedArray::rev_in_place(self : FixedArray[T]) -> Unit {
@@ -844,11 +864,13 @@ pub fn[T] FixedArray::rev_in_place(self : FixedArray[T]) -> Unit {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let arr : FixedArray[Int] = [1, 2, 3, 4, 5]
-/// inspect(arr.rev(), content="[5, 4, 3, 2, 1]")
-/// // Original array remains unchanged
-/// inspect(arr, content="[1, 2, 3, 4, 5]")
+/// ```mbt check
+/// test {
+///   let arr : FixedArray[Int] = [1, 2, 3, 4, 5]
+///   inspect(arr.rev(), content="[5, 4, 3, 2, 1]")
+///   // Original array remains unchanged
+///   inspect(arr, content="[1, 2, 3, 4, 5]")
+/// }
 /// ```
 pub fn[T] FixedArray::rev(self : FixedArray[T]) -> FixedArray[T] {
   match self {
@@ -1235,12 +1257,14 @@ test "ends_with" {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let arr1 : FixedArray[Int] = [1, 2, 3]
-/// let arr2 : FixedArray[Int] = [1, 2, 3]
-/// let arr3 : FixedArray[Int] = [1, 2, 4]
-/// inspect(arr1 == arr2, content="true")
-/// inspect(arr1 == arr3, content="false")
+/// ```mbt check
+/// test {
+///   let arr1 : FixedArray[Int] = [1, 2, 3]
+///   let arr2 : FixedArray[Int] = [1, 2, 3]
+///   let arr3 : FixedArray[Int] = [1, 2, 4]
+///   inspect(arr1 == arr2, content="true")
+///   inspect(arr1 == arr3, content="false")
+/// }
 /// ```
 pub impl[T : Eq] Eq for FixedArray[T] with equal(
   self : FixedArray[T],
@@ -1303,14 +1327,16 @@ test "equal" {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let arr1 = [1, 2, 3]
-/// let arr2 = [1, 2, 4]
-/// let arr3 = [1, 2]
-/// inspect(arr1.compare(arr2), content="-1") // arr1 < arr2
-/// inspect(arr2.compare(arr1), content="1") // arr2 > arr1
-/// inspect(arr1.compare(arr3), content="1") // arr1 > arr3 (longer)
-/// inspect(arr1.compare(arr1), content="0") // arr1 = arr1
+/// ```mbt check
+/// test {
+///   let arr1 = [1, 2, 3]
+///   let arr2 = [1, 2, 4]
+///   let arr3 = [1, 2]
+///   inspect(arr1.compare(arr2), content="-1") // arr1 < arr2
+///   inspect(arr2.compare(arr1), content="1") // arr2 > arr1
+///   inspect(arr1.compare(arr3), content="1") // arr1 > arr3 (longer)
+///   inspect(arr1.compare(arr1), content="0") // arr1 = arr1
+/// }
 /// ```
 pub impl[T : Compare] Compare for FixedArray[T] with compare(self, other) {
   let len_self = self.length()
@@ -1340,10 +1366,12 @@ pub impl[T : Compare] Compare for FixedArray[T] with compare(self, other) {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let arr1 : FixedArray[Int] = [1, 2, 3]
-/// let arr2 : FixedArray[Int] = [4, 5, 6]
-/// inspect(arr1 + arr2, content="[1, 2, 3, 4, 5, 6]")
+/// ```mbt check
+/// test {
+///   let arr1 : FixedArray[Int] = [1, 2, 3]
+///   let arr2 : FixedArray[Int] = [4, 5, 6]
+///   inspect(arr1 + arr2, content="[1, 2, 3, 4, 5, 6]")
+/// }
 /// ```
 pub impl[T] Add for FixedArray[T] with add(self, other) {
   let slen = self.length()
@@ -1416,10 +1444,12 @@ test "iter" {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let arr = [1, 2, 3]
-/// let fixed_arr = FixedArray::from_iter(arr.iter())
-/// inspect(fixed_arr, content="[1, 2, 3]")
+/// ```mbt check
+/// test {
+///   let arr = [1, 2, 3]
+///   let fixed_arr = FixedArray::from_iter(arr.iter())
+///   inspect(fixed_arr, content="[1, 2, 3]")
+/// }
 /// ```
 pub fn[T] FixedArray::from_iter(iter : Iter[T]) -> FixedArray[T] {
   FixedArray::from_array(iter.collect())
@@ -1437,10 +1467,12 @@ pub fn[T] FixedArray::from_iter(iter : Iter[T]) -> FixedArray[T] {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let arr = [1, 2, 3]
-/// let fixed_arr = FixedArray::from_iterator(arr.iterator())
-/// inspect(fixed_arr, content="[1, 2, 3]")
+/// ```mbt check
+/// test {
+///   let arr = [1, 2, 3]
+///   let fixed_arr = FixedArray::from_iterator(arr.iterator())
+///   inspect(fixed_arr, content="[1, 2, 3]")
+/// }
 /// ```
 pub fn[T] FixedArray::from_iterator(iter : Iterator[T]) -> FixedArray[T] {
   FixedArray::from_array(iter.collect())
@@ -1458,11 +1490,13 @@ pub fn[T] FixedArray::from_iterator(iter : Iterator[T]) -> FixedArray[T] {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let array : FixedArray[Int] = [1, 2, 3]
-/// inspect(array.last(), content="Some(3)")
-/// let empty : FixedArray[Int] = []
-/// inspect(empty.last(), content="None")
+/// ```mbt check
+/// test {
+///   let array : FixedArray[Int] = [1, 2, 3]
+///   inspect(array.last(), content="Some(3)")
+///   let empty : FixedArray[Int] = []
+///   inspect(empty.last(), content="None")
+/// }
 /// ```
 pub fn[A] FixedArray::last(self : FixedArray[A]) -> A? {
   match self {
@@ -1476,9 +1510,11 @@ pub fn[A] FixedArray::last(self : FixedArray[A]) -> A? {
 ///
 /// Example:
 /// 
-/// ```mbt test
-/// let fixed_array : FixedArray[String] = ["1", "2", "3"]
-/// inspect(fixed_array.join(","), content="1,2,3")
+/// ```mbt check
+/// test {
+///   let fixed_array : FixedArray[String] = ["1", "2", "3"]
+///   inspect(fixed_array.join(","), content="1,2,3")
+/// }
 /// ```
 pub fn FixedArray::join(
   self : FixedArray[String],
@@ -1577,11 +1613,13 @@ pub fn[X] FixedArray::iterator2(self : FixedArray[X]) -> Iterator2[Int, X] {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let original = [1, 2, 3]
-/// let copied = original.copy()
-/// inspect(copied, content="[1, 2, 3]")
-/// inspect(physical_equal(original, copied), content="false")
+/// ```mbt check
+/// test {
+///   let original = [1, 2, 3]
+///   let copied = original.copy()
+///   inspect(copied, content="[1, 2, 3]")
+///   inspect(physical_equal(original, copied), content="false")
+/// }
 /// ```
 #cfg(not(target="js"))
 pub fn[T] FixedArray::copy(self : FixedArray[T]) -> FixedArray[T] {
@@ -1608,11 +1646,13 @@ pub fn[T] FixedArray::copy(self : FixedArray[T]) -> FixedArray[T] {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// let original = [1, 2, 3]
-/// let copied = original.copy()
-/// inspect(copied, content="[1, 2, 3]")
-/// inspect(physical_equal(original, copied), content="false")
+/// ```mbt check
+/// test {
+///   let original = [1, 2, 3]
+///   let copied = original.copy()
+///   inspect(copied, content="[1, 2, 3]")
+///   inspect(physical_equal(original, copied), content="false")
+/// }
 /// ```
 #cfg(target="js")
 pub fn[T] FixedArray::copy(self : FixedArray[T]) -> FixedArray[T] {

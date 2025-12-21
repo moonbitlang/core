@@ -23,9 +23,11 @@
 ///
 /// Example:
 ///
-/// ```mbt test
-/// inspect(true.to_int(), content="1")
-/// inspect(false.to_int(), content="0")
+/// ```mbt check
+/// test {
+///   inspect(true.to_int(), content="1")
+///   inspect(false.to_int(), content="0")
+/// }
 /// ```
 pub fn Bool::to_int(self : Bool) -> Int {
   if self {
@@ -47,9 +49,11 @@ pub fn Bool::to_int(self : Bool) -> Int {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// inspect(true.to_int64(), content="1")
-/// inspect(false.to_int64(), content="0")
+/// ```mbt check
+/// test {
+///   inspect(true.to_int64(), content="1")
+///   inspect(false.to_int64(), content="0")
+/// }
 /// ```
 pub fn Bool::to_int64(self : Bool) -> Int64 {
   if self {
@@ -71,9 +75,11 @@ pub fn Bool::to_int64(self : Bool) -> Int64 {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// inspect(true.to_uint(), content="1")
-/// inspect(false.to_uint(), content="0")
+/// ```mbt check
+/// test {
+///   inspect(true.to_uint(), content="1")
+///   inspect(false.to_uint(), content="0")
+/// }
 /// ```
 pub fn Bool::to_uint(self : Bool) -> UInt {
   if self {
@@ -95,9 +101,11 @@ pub fn Bool::to_uint(self : Bool) -> UInt {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// inspect(true.to_uint64(), content="1")
-/// inspect(false.to_uint64(), content="0")
+/// ```mbt check
+/// test {
+///   inspect(true.to_uint64(), content="1")
+///   inspect(false.to_uint64(), content="0")
+/// }
 /// ```
 pub fn Bool::to_uint64(self : Bool) -> UInt64 {
   if self {
@@ -124,9 +132,11 @@ pub impl Hash for Bool with hash_combine(self, hasher) {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// inspect(true.to_uint16(), content="1")
-/// inspect(false.to_uint16(), content="0")
+/// ```mbt check
+/// test {
+///   inspect(true.to_uint16(), content="1")
+///   inspect(false.to_uint16(), content="0")
+/// }
 /// ```
 ///
 pub fn Bool::to_uint16(self : Bool) -> UInt16 {
@@ -149,9 +159,11 @@ pub fn Bool::to_uint16(self : Bool) -> UInt16 {
 ///
 /// Example:
 ///
-/// ```mbt test
-/// inspect(true.to_int16(), content="1")
-/// inspect(false.to_int16(), content="0")
+/// ```mbt check
+/// test {
+///   inspect(true.to_int16(), content="1")
+///   inspect(false.to_int16(), content="0")
+/// }
 /// ```
 ///
 pub fn Bool::to_int16(self : Bool) -> Int16 {
