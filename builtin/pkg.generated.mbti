@@ -1035,8 +1035,7 @@ pub fn StringView::trim_end(Self, chars? : Self) -> Self
 #deprecated
 pub fn StringView::trim_space(Self) -> Self
 #label_migration(chars, alias=char_set)
-#label_migration(chars, allow_positional=true)
-pub fn StringView::trim_start(Self, chars~ : Self) -> Self
+pub fn StringView::trim_start(Self, chars? : Self) -> Self
 pub fn StringView::unsafe_charcode_at(Self, Int) -> Int
 pub fn StringView::view(Self, start_offset? : Int, end_offset? : Int) -> Self
 
