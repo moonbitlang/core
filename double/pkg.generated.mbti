@@ -37,7 +37,8 @@ pub fn Double::is_pos_inf(Double) -> Bool
 pub fn Double::min_normal() -> Double
 #deprecated
 pub fn Double::nan() -> Double
-#as_free_fn
+#as_free_fn(deprecated)
+#deprecated
 pub fn Double::pow(Double, Double) -> Double
 #as_free_fn
 pub fn Double::round(Double) -> Double

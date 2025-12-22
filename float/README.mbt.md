@@ -103,7 +103,5 @@ test "method style calls" {
   inspect(x.floor(), content="3")
   inspect(x.ceil(), content="4")
   inspect(x.round(), content="3")
-  let y : Float = 2.0
-  inspect(y.pow(3.0), content="8")
 }
 ```

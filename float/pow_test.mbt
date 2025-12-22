@@ -11,15 +11,3 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
-///|
-test "pow" {
-  inspect((1.0 : Float).pow(3.0), content="1")
-  inspect((-1.0 : Float).pow(3.0), content="-1")
-  inspect((2.0 : Float).pow(3.0), content="8")
-  inspect((-2.0 : Float).pow(3.0), content="-8")
-  inspect((2.0 : Float).pow(-3.0), content="0.125")
-  inspect((-2.0 : Float).pow(-3.0), content="-0.125")
-  inspect((2.0 : Float).pow(-3.14), content="0.1134398877620697")
-  inspect((-2.0 : Float).pow(-3.14), content="NaN")
-}

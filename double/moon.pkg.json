@@ -6,7 +6,8 @@
   ],
   "test-import": [
     "moonbitlang/core/bytes",
-    "moonbitlang/core/buffer"
+    "moonbitlang/core/buffer",
+    "moonbitlang/core/math"
   ],
   "targets": {
     "exp_js.mbt": ["js"],
