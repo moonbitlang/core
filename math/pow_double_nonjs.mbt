@@ -134,12 +134,12 @@ const POW_ivln2_l = 1.92596299112661746887e-08
 /// ```mbt check
 /// test {
 ///   let x = 2.0
-///   inspect(x.pow(3.0), content="8")
-///   inspect(x.pow(0.5), content="1.4142135623730951")
-///   inspect(x.pow(0.0), content="1")
-///   inspect((-1.0).pow(2.0), content="1")
-///   inspect(0.0.pow(0.0), content="1")
-///   inspect(@double.infinity.pow(-1.0), content="0")
+///   inspect(@math.pow(x, 3.0), content="8")
+///   inspect(@math.pow(x, 0.5), content="1.4142135623730951")
+///   inspect(@math.pow(x, 0.0), content="1")
+///   inspect(@math.pow(-1.0, 2.0), content="1")
+///   inspect(@math.pow(0.0, 0.0), content="1")
+///   inspect(@math.pow(@double.infinity, -1.0), content="0")
 /// }
 /// ```
 pub fn pow(x : Double, y : Double) -> Double {
