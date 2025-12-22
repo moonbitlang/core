@@ -56,7 +56,7 @@ priv enum MList[T] {
 
 ///|
 /// The global list of counters currently tracking.
-let counters : Ref[MList[(String, CoverageCounter)]] = { val: MNil }
+let counters : @ref.Ref[MList[(String, CoverageCounter)]] = { val: MNil }
 
 ///|
 /// Add the given counter along its ID to the tracking list.

@@ -19,6 +19,7 @@
     "moonbitlang/core/quickcheck",
     "moonbitlang/core/test",
     "moonbitlang/core/random",
+    "moonbitlang/core/ref",
     "moonbitlang/core/int16"
   ],
    "warn-list": "-test_unqualified_package",

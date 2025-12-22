@@ -707,7 +707,7 @@ test "Show for Result" {
 ///|
 test "Show for Ref" {
   inspect(
-    { val: "abc" }.to_string(),
+    @ref.Ref::{ val: "abc" }.to_string(),
     content=(
       #|{val: "abc"}
     ),
