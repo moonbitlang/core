@@ -13,6 +13,11 @@
 // limitations under the License.
 
 ///|
+pub(all) struct Ref[T] {
+  mut val : T
+}
+
+///|
 pub impl[X : Show] Show for Ref[X] with output(self, logger) {
   logger..write_string("{val: ")..write_object(self.val)..write_string("}")
 }

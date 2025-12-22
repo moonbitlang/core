@@ -5,6 +5,7 @@ import(
   "moonbitlang/core/bigint"
   "moonbitlang/core/builtin"
   "moonbitlang/core/json"
+  "moonbitlang/core/ref"
   "moonbitlang/core/set"
 )
 
@@ -86,6 +87,8 @@ pub using @builtin {type Json}
 pub using @builtin {type Map}
 
 pub using @builtin {type MutArrayView}
+
+pub using @ref {type Ref}
 
 pub using @set {type Set}
 
