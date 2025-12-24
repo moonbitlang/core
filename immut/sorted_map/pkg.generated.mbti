@@ -58,6 +58,7 @@ pub fn[K : Compare, V] SortedMap::merge(Self[K, V], Self[K, V]) -> Self[K, V]
 #alias(empty, deprecated)
 #as_free_fn
 pub fn[K, V] SortedMap::new() -> Self[K, V]
+pub fn[K : Compare, V] SortedMap::range(Self[K, V], K, K) -> Iterator2[K, V]
 pub fn[K : Compare, V] SortedMap::remove(Self[K, V], K) -> Self[K, V]
 #alias(foldr_with_key)
 pub fn[K, V, A] SortedMap::rev_fold(Self[K, V], (A, K, V) -> A, init~ : A) -> A
