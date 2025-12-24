@@ -68,7 +68,7 @@ pub fn[T] UninitializedArray::set(
 /// Returns an `ArrayView` that provides a window into the specified portion of
 /// the array.
 ///
-/// Throws an error if the indices are out of bounds or if `start` is greater
+/// Panics if the indices are out of bounds or if `start` is greater
 /// than `end`.
 #alias("_[_:_]")
 pub fn[T] UninitializedArray::sub(
@@ -85,6 +85,37 @@ pub fn[T] UninitializedArray::sub(
     abort("View start index out of bounds")
   }
   ArrayView::make(self, start, end - start)
+}
+
+///|
+/// Creates a mutable view into a portion of the uninitialized array.
+/// 
+/// Parameters:
+/// 
+/// * `array` : The uninitialized array to create a mutable view from.
+/// * `start` : The starting index of the view (inclusive). Defaults to 0
+/// * `end` : The ending index of the view (exclusive). If not provided, defaults
+/// to the length of the array.
+/// 
+/// Returns a `MutArrayView` that provides a mutable window into the specified
+/// portion of the array.
+/// 
+/// Panics if the indices are out of bounds or if `start` is greater
+/// than `end`.
+pub fn[T] UninitializedArray::mut_view(
+  self : UninitializedArray[T],
+  start? : Int = 0,
+  end? : Int,
+) -> MutArrayView[T] {
+  let len = self.length()
+  let end = match end {
+    None => len
+    Some(end) => end
+  }
+  guard start >= 0 && start <= end && end <= len else {
+    abort("View start index out of bounds")
+  }
+  MutArrayView::make(self, start, end - start)
 }
 
 ///|
