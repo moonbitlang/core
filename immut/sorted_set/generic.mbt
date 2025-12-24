@@ -22,6 +22,38 @@ pub fn[A] SortedSet::iter(self : SortedSet[A]) -> Iter[A] {
 }
 
 ///|
+/// Iterate over the elements in the set in descending order.
+///
+/// # Example
+///
+/// ```mbt
+///   let set = @sorted_set.from_array([1, 2, 3, 4, 5])
+///   let result = set.rev_iterator().collect()
+///   assert_eq(result, [5, 4, 3, 2, 1])
+/// ```
+pub fn[A] SortedSet::rev_iterator(self : SortedSet[A]) -> Iterator[A] {
+  let mut curr_node = self
+  let parents = []
+  Iterator::new(fn() {
+    loop curr_node {
+      Node(left~, right=Empty, value~, ..) => {
+        curr_node = left
+        Some(value)
+      }
+      Node(left~, right~, value~, ..) => {
+        parents.push((value, left))
+        continue right
+      }
+      Empty if parents.pop() is Some((value, left)) => {
+        curr_node = left
+        Some(value)
+      }
+      Empty => None
+    }
+  })
+}
+
+///|
 pub fn[A] SortedSet::iterator(self : SortedSet[A]) -> Iterator[A] {
   let mut curr_node = self
   let parents = []

@@ -170,6 +170,18 @@ test {
 }
 ```
 
+You can also use `rev_iterator()` to iterate in descending order.
+
+```mbt check
+///|
+test {
+  let set = @sorted_set.from_array([1, 2, 3, 4, 5])
+  let arr = []
+  set.rev_iterator().each(v => arr.push(v))
+  assert_eq(arr, [5, 4, 3, 2, 1])
+}
+```
+
 ## All & Any
 
 `all` and `any` can detect whether all elements in the set match or if there are elements that match.
