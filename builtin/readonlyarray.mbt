@@ -201,6 +201,27 @@ pub fn[T] ReadOnlyArray::iter2(self : ReadOnlyArray[T]) -> Iter2[Int, T] {
 }
 
 ///|
+/// Creates an iterator that yields both indices and values.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let arr : ReadOnlyArray[Int] = [10, 20, 30]
+///   let iter = arr.iterator2()
+///   let result = []
+///   while iter.next() is Some((i, x)) {
+///     result.push((i, x))
+///   }
+///   inspect(result, content="[(0, 10), (1, 20), (2, 30)]")
+/// }
+/// ```
+pub fn[T] ReadOnlyArray::iterator2(
+  self : ReadOnlyArray[T],
+) -> Iterator2[Int, T] {
+  self.unsafe_reinterpret_to_fixed_array().iterator2()
+}
+
+///|
 /// Iterates over each element in the ReadOnlyArray.
 ///
 /// # Example
