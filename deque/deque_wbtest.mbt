@@ -25,6 +25,24 @@ test "unsafe_pop_front after many push_front" {
 }
 
 ///|
+test "empty constructors keep head and tail aligned" {
+  let empty : Deque[Int] = from_array([])
+  assert_eq(empty.len, 0)
+  assert_eq(empty.head, empty.tail)
+  let copied = empty.copy()
+  assert_eq(copied.len, 0)
+  assert_eq(copied.head, copied.tail)
+  let added = empty + from_array([])
+  assert_eq(added.len, 0)
+  assert_eq(added.head, added.tail)
+  let empty_inner : Deque[Int] = from_array([])
+  let nested : Deque[Deque[Int]] = from_array([empty_inner, empty_inner])
+  let flattened = nested.flatten()
+  assert_eq(flattened.len, 0)
+  assert_eq(flattened.head, flattened.tail)
+}
+
+///|
 test "truncate zero" {
   let dq = from_array([1, 2, 3])
   dq.truncate(0)

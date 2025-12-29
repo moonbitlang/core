@@ -133,7 +133,8 @@ pub impl[A] Add for Deque[A] with add(self, other) {
   for i, x in other {
     buf[i + self.len] = x
   }
-  Deque::{ buf, len, head: 0, tail: len - 1 }
+  let tail = if len == 0 { 0 } else { len - 1 }
+  Deque::{ buf, len, head: 0, tail }
 }
 
 ///|
@@ -164,7 +165,8 @@ pub fn[A] Deque::from_array(arr : ArrayView[A]) -> Deque[A] {
   for i, x in arr {
     buf[i] = x
   }
-  Deque::{ buf, len, head: 0, tail: len - 1 }
+  let tail = if len == 0 { 0 } else { len - 1 }
+  Deque::{ buf, len, head: 0, tail }
 }
 
 ///|
@@ -194,7 +196,8 @@ pub fn[A] Deque::copy(self : Deque[A]) -> Deque[A] {
   for i, x in self {
     buf[i] = x
   }
-  Deque::{ buf, len, head: 0, tail: len - 1 }
+  let tail = if len == 0 { 0 } else { len - 1 }
+  Deque::{ buf, len, head: 0, tail }
 }
 
 ///|
@@ -1981,12 +1984,8 @@ pub fn[A] Deque::flatten(self : Deque[Deque[A]]) -> Deque[A] {
   for deque in self {
     len += deque.length()
   }
-  let target = Deque::{
-    buf: UninitializedArray::make(len),
-    len,
-    head: 0,
-    tail: len - 1,
-  }
+  let tail = if len == 0 { 0 } else { len - 1 }
+  let target = Deque::{ buf: UninitializedArray::make(len), len, head: 0, tail }
   let mut i = 0
   for deque in self {
     let (front, back) = deque.as_views()
