@@ -253,7 +253,7 @@ pub fn[A] Queue::each(self : Queue[A], f : (A) -> Unit) -> Unit {
 /// test {
 ///   let queue : @queue.Queue[Int] = @queue.from_array([1, 2, 3, 4])
 ///   let mut sum = 0
-///   queue.eachi((x, i) => sum = sum + x * i)
+///   queue.eachi((i, x) => sum = sum + i * x)
 /// }
 /// ```
 pub fn[A] Queue::eachi(self : Queue[A], f : (Int, A) -> Unit) -> Unit {

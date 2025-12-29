@@ -154,11 +154,11 @@ test "iter_fold" {
 test "iteri" {
   let queue : @queue.Queue[Int] = @queue.new()
   let mut sum = 0
-  queue.eachi((x, i) => sum = sum + x * i)
+  queue.eachi((i, x) => sum = sum + i * x)
   assert_eq(sum, 0)
   @queue.from_array([1, 2, 3, 4]).transfer(queue)
   sum = 0
-  queue.eachi((x, i) => sum = sum + x * i)
+  queue.eachi((i, x) => sum = sum + i * x)
   assert_eq(sum, 20)
 }
 
