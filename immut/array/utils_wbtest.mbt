@@ -136,7 +136,7 @@ fn random_array(n : Int) -> Array[Int] {
 }
 
 ///|
-struct Random(@ref.Ref[UInt64])
+struct Random(Ref[UInt64])
 
 ///|
 fn Random::int(self : Random, limit~ : Int) -> Int {

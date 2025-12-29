@@ -373,12 +373,12 @@ test "FixedArray::arbitrary" {
 
 ///|
 test "FixedArray::makei" {
-  let empty = FixedArray::makei(0, _i => @ref.Ref::{ val: 3 })
+  let empty = FixedArray::makei(0, _i => Ref::{ val: 3 })
   inspect(empty.length(), content="0")
-  let simple_arr = FixedArray::makei(1, _i => @ref.Ref::{ val: 2 })
+  let simple_arr = FixedArray::makei(1, _i => Ref::{ val: 2 })
   inspect(simple_arr.length(), content="1")
   inspect(simple_arr[0].val, content="2")
-  let arr = FixedArray::makei(2, _i => @ref.Ref::{ val: 1 })
+  let arr = FixedArray::makei(2, _i => Ref::{ val: 1 })
   inspect(arr.length(), content="2")
   @test.not_same_object(arr[0], arr[1])
   inspect(arr[0].val, content="1")

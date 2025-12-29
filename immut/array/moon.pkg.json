@@ -4,9 +4,6 @@
     "moonbitlang/core/quickcheck",
     { "path": "moonbitlang/core/array", "alias": "_" }
   ],
-  "wbtest-import": [
-    "moonbitlang/core/ref"
-  ],
   "targets": {
     "panic_test.mbt": [
       "not",

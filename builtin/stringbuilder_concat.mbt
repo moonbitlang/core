@@ -13,9 +13,7 @@
 // limitations under the License.
 
 ///|
-struct StringBuilder {
-  mut val : String
-}
+struct StringBuilder(Ref[String])
 
 ///|
 /// Creates a new string builder with an optional initial capacity hint.
