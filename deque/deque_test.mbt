@@ -1609,6 +1609,14 @@ test "append_self" {
 }
 
 ///|
+test "append_self_alias" {
+  let d1 = @deque.from_array([1, 2, 3])
+  d1.append(d1)
+  inspect(d1.to_array(), content="[1, 2, 3, 1, 2, 3]")
+  assert_eq(d1.length(), 6)
+}
+
+///|
 test "append_tail_position" {
   /// Test that tail is correctly updated after append
   let d1 = @deque.from_array([1, 2, 3])

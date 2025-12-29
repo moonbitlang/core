@@ -285,6 +285,11 @@ pub fn[A] Deque::blit_to(
 /// ```
 pub fn[A] Deque::append(self : Deque[A], other : Deque[A]) -> Unit {
   guard other.len != 0 else { return }
+  if physical_equal(self, other) {
+    let snapshot = other.copy()
+    self.append(snapshot)
+    return
+  }
   let space = if self.buf.length() != 0 {
     (self.head - self.tail - 1 + self.buf.length()) % self.buf.length()
   } else {
