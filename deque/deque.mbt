@@ -2023,11 +2023,25 @@ pub fn[A] Deque::flatten(self : Deque[Deque[A]]) -> Deque[A] {
 /// ```
 pub fn[A] Deque::drain(self : Deque[A], start~ : Int, len? : Int) -> Deque[A] {
   // Verify parameters
+  if start < 0 {
+    return new()
+  }
   if start >= self.len {
     return new()
   }
   let max_len = self.len - start
-  let len = if len is Some(l) && l <= max_len { l } else { max_len }
+  let len = if len is Some(l) {
+    if l <= 0 {
+      return new()
+    }
+    if l <= max_len {
+      l
+    } else {
+      max_len
+    }
+  } else {
+    max_len
+  }
   if len == 0 {
     return new()
   }
