@@ -243,13 +243,35 @@ pub fn[A] Deque::blit_to(
     src_offset >= 0 &&
     dst_offset <= dst.length() &&
     src_offset + len <= self.length()
+  guard len != 0 else { return }
+  if physical_equal(self, dst) {
+    let tmp = Array::new(capacity=len)
+    for i in 0..<len {
+      tmp.push(self[src_offset + i])
+    }
+    if dst_offset + len > dst.buf.length() {
+      dst.reserve_capacity(dst_offset + len)
+      dst.head = 0
+      dst.tail = dst.len - 1
+    }
+    let dst_len = dst.len
+    for i in 0..<len {
+      let dst_idx = (dst.head + dst_offset + i) % dst.buf.length()
+      dst.buf[dst_idx] = tmp[i]
+      if dst_offset + i >= dst_len {
+        dst.tail = (dst.tail + 1) % dst.buf.length()
+        dst.len += 1
+      }
+    }
+    return
+  }
   if dst_offset + len > dst.buf.length() {
     dst.reserve_capacity(dst_offset + len)
     dst.head = 0
     dst.tail = dst.len - 1
   }
   let dst_len = dst.len
-  for i = 0; i < len; i = i + 1 {
+  for i in 0..<len {
     let dst_idx = (dst.head + dst_offset + i) % dst.buf.length()
     let src_idx = (self.head + src_offset + i) % self.buf.length()
     dst.buf[dst_idx] = self.buf[src_idx]

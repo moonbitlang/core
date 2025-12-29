@@ -1753,6 +1753,14 @@ test "blit_to_self" {
 }
 
 ///|
+test "blit_to_self_overlap" {
+  let d = @deque.from_array([1, 2, 3, 4, 5])
+  @deque.Deque::blit_to(d, d, len=3, src_offset=0, dst_offset=1)
+  assert_eq(d.to_array(), [1, 1, 2, 3, 5])
+  inspect(d.as_views(), content="([1, 1, 2, 3, 5], [])")
+}
+
+///|
 /// Test basic chunks functionality
 test "chunks_simple" {
   let d = @deque.from_array([1, 2, 3, 4, 5])
