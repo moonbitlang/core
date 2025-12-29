@@ -12,9 +12,6 @@ pub fn[T] new(T) -> Ref[T]
 // Errors
 
 // Types and methods
-pub(all) struct Ref[T] {
-  mut val : T
-}
 pub fn[T, R] Ref::map(Self[T], (T) -> R raise?) -> Self[R] raise?
 pub fn[T] Ref::new(T) -> Self[T]
 pub fn[T, R] Ref::protect(Self[T], T, () -> R raise?) -> R raise?

@@ -133,6 +133,3 @@ pub let null : Json = @builtin.null
 
 ///|
 pub using @json {trait FromJson}
-
-///|
-pub using @ref {type Ref}
