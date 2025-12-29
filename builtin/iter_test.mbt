@@ -628,6 +628,7 @@ test "Iter::nth" {
   inspect(it().nth(2), content="Some(3)")
   inspect(it().nth(4), content="Some(5)")
   inspect(it().nth(5), content="None")
+  inspect(it().nth(-1), content="None")
   inspect(it().concat(it()).nth(5), content="Some(1)")
   inspect(it().concat(it()).nth(10), content="None")
   inspect(it().drop(1).nth(3), content="Some(5)")
