@@ -892,7 +892,11 @@ pub fn[A : Eq] Iter::contains(self : Iter[A], value : A) -> Bool {
 /// Returns the nth element of the iterator, or `None` if the iterator is
 /// shorter than `n` elements.
 pub fn[T] Iter::nth(self : Iter[T], n : Int) -> T? {
-  self.drop(n).head()
+  if n < 0 {
+    None
+  } else {
+    self.drop(n).head()
+  }
 }
 
 ///|
