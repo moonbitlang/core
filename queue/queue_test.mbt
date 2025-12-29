@@ -200,6 +200,14 @@ test "from_iter multiple elements iter" {
 }
 
 ///|
+test "transfer self" {
+  let queue : @queue.Queue[Int] = @queue.from_array([1, 2, 3])
+  queue.transfer(queue)
+  assert_eq(queue.length(), 3)
+  inspect(queue, content="@queue.from_array([1, 2, 3])")
+}
+
+///|
 test "from_iter single element iter" {
   inspect(@queue.from_iter([1].iter()), content="@queue.from_array([1])")
 }

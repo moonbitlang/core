@@ -323,6 +323,9 @@ pub fn[A] Queue::copy(self : Queue[A]) -> Queue[A] {
 /// }
 /// ```
 pub fn[A] Queue::transfer(self : Queue[A], dst : Queue[A]) -> Unit {
+  if physical_equal(self, dst) {
+    return
+  }
   if self.length > 0 {
     match dst.last {
       None => {
