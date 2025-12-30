@@ -55,6 +55,17 @@ test "ReadOnlyArray access methods" {
 }
 
 ///|
+test "ReadOnlyArray iterator2" {
+  let arr : ReadOnlyArray[Int] = [10, 20, 30]
+  let iter = arr.iterator2()
+  let result = []
+  while iter.next() is Some((i, x)) {
+    result.push((i, x))
+  }
+  inspect(result, content="[(0, 10), (1, 20), (2, 30)]")
+}
+
+///|
 test "ReadOnlyArray functional methods" {
   let arr : ReadOnlyArray[Int] = [1, 2, 3]
 
