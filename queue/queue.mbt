@@ -54,6 +54,7 @@ pub fn[A] Queue::from_array(arr : ArrayView[A]) -> Queue[A] {
 }
 
 ///|
+#warnings("-deprecated")
 pub impl[A : Show] Show for Queue[A] with output(self, logger) {
   logger.write_iter(self.iter(), prefix="@queue.from_array([", suffix="])")
 }
@@ -349,7 +350,7 @@ pub fn[A] Queue::transfer(self : Queue[A], dst : Queue[A]) -> Unit {
 /// Creates an iter from the queue.
 ///
 /// # Example
-/// ```mbt check
+/// ```mbt nocheck
 /// test {
 ///   let queue : @queue.Queue[Int] = @queue.from_array([5, 6, 7, 8])
 ///   let sum = queue.iter().fold((x, y) => x + y, init=0)

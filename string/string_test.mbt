@@ -578,6 +578,7 @@ test "to_upper" {
 }
 
 ///|
+#warnings("-deprecated")
 test "split" {
   inspect(
     "a b c d e".split(" "),
@@ -836,6 +837,7 @@ test "offset_of_nth_char property negative" {
 }
 
 ///|
+#warnings("-deprecated")
 test "split and then join should be identity" {
   let string = ""
   assert_eq(string, string.split("").map(StringView::to_string).join(""))
@@ -852,6 +854,7 @@ test "split and then join should be identity" {
 }
 
 ///|
+#warnings("-deprecated")
 test "string chars array" {
   let v0 : String = ['a', .."x"]
   assert_true(v0 is "ax")

@@ -306,6 +306,7 @@ pub fn[A] PriorityQueue::is_empty(self : PriorityQueue[A]) -> Bool {
 }
 
 ///|
+#warnings("-deprecated")
 pub impl[A : Show + Compare] Show for PriorityQueue[A] with output(self, logger) {
   logger.write_iter(
     self.iter(),

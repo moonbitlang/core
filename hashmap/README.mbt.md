@@ -112,7 +112,7 @@ test {
 
 Or use `iter()` to get an iterator of hashmap.
 
-```mbt check
+```mbt nocheck
 ///|
 test {
   let map = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])

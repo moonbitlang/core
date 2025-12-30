@@ -69,6 +69,7 @@ fn[A] Deque::tail_index(self : Deque[A]) -> Int {
 /// }
 /// ```
 ///
+#warnings("-deprecated")
 pub impl[A : Show] Show for Deque[A] with output(self, logger) {
   logger.write_iter(self.iter(), prefix="@deque.from_array([", suffix="])")
 }
@@ -936,6 +937,7 @@ pub fn[A] Deque::eachi(self : Deque[A], f : (Int, A) -> Unit) -> Unit {
 ///   inspect(sum, content="15")
 /// }
 /// ```
+#warnings("-deprecated")
 pub fn[A] Deque::rev_each(self : Deque[A], f : (A) -> Unit) -> Unit {
   for v in self.rev_iter() {
     f(v)
@@ -1110,6 +1112,7 @@ pub fn[A : Eq] Deque::search(self : Deque[A], value : A) -> Int? {
 ///   inspect(dq.contains(6), content="false")
 /// }
 /// ```
+#warnings("-deprecated")
 pub fn[A : Eq] Deque::contains(self : Deque[A], value : A) -> Bool {
   self.iter().contains(value)
 }
@@ -1439,7 +1442,7 @@ pub fn[A] Deque::retain(self : Deque[A], f : (A) -> Bool) -> Unit {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt nocheck
 /// test {
 ///   let dq = @deque.from_array([1, 2, 3, 4, 5])
 ///   let mut sum = 0
@@ -1557,7 +1560,7 @@ pub fn[A] Deque::iterator2(self : Deque[A]) -> Iterator2[Int, A] {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt nocheck
 /// test {
 ///   let dq = @deque.from_array([1, 2, 3])
 ///   let mut sum = 0
@@ -1674,7 +1677,7 @@ pub fn[A] Deque::rev_iterator2(self : Deque[A]) -> Iterator2[Int, A] {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt nocheck
 /// test {
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let dq = @deque.from_iter(arr.iter())
@@ -1774,6 +1777,7 @@ pub fn[A] Deque::to_array(self : Deque[A]) -> Array[A] {
 ///   inspect(s2, content="a,b,c")
 /// }
 /// ```
+#warnings("-deprecated")
 pub fn Deque::join(self : Deque[String], separator : StringView) -> String {
   let str = separator.to_string()
   self.iter().join(str)

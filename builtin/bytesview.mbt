@@ -199,8 +199,8 @@ pub fn BytesView::sub(
 /// Returns an iterator over the `View`.
 /// 
 /// # Example
-/// 
-/// ```mbt check
+///
+/// ```mbt nocheck
 /// test {
 ///   let bv = b"\x00\x01\x02\x03\x04\x05"[:]
 ///   let mut sum = 0

@@ -13,6 +13,7 @@
 // limitations under the License.
 
 ///|
+#warnings("-deprecated")
 test "Map keys iter" {
   let map = { "a": 1, "b": 2, "c": 3 }
   let v = map.keys()

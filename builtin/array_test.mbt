@@ -545,6 +545,7 @@ test "array_iter" {
 }
 
 ///|
+#warnings("-deprecated")
 test "array_iter2" {
   let arr = [1, 2, 3]
   inspect(arr.iter2(), content="[(0, 1), (1, 2), (2, 3)]")
@@ -958,6 +959,7 @@ test "to_string" {
 }
 
 ///|
+#warnings("-deprecated")
 test "push_iter" {
   let u = [1, 2, 3]
   let v = [4, 5, 6]

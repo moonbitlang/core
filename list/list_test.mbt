@@ -767,6 +767,7 @@ test "add" {
 }
 
 ///|
+#warnings("-deprecated")
 test "from_iter multiple elements iter" {
   inspect(
     @list.from_iter([1, 2, 3].iter()),
@@ -775,6 +776,7 @@ test "from_iter multiple elements iter" {
 }
 
 ///|
+#warnings("-deprecated")
 test "from_iter_rev multiple elements iter" {
   inspect(
     @list.from_iter_rev([1, 2, 3].iter()),
@@ -783,6 +785,7 @@ test "from_iter_rev multiple elements iter" {
 }
 
 ///|
+#warnings("-deprecated")
 test "from_iter single element iter" {
   inspect(@list.from_iter([1].iter()), content="@list.from_array([1])")
 }

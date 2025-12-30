@@ -38,7 +38,6 @@ pub fn[K : Eq, V] HashMap::intersection_with(Self[K, V], Self[K, V], (K, V, V) -
 pub fn[K, V] HashMap::iter2(Self[K, V]) -> Iter2[K, V]
 pub fn[K, V] HashMap::iterator(Self[K, V]) -> Iterator[(K, V)]
 pub fn[K, V] HashMap::iterator2(Self[K, V]) -> Iterator2[K, V]
-pub fn[K, V] HashMap::keys(Self[K, V]) -> Iter[K]
 #alias(size, deprecated)
 pub fn[K, V] HashMap::length(Self[K, V]) -> Int
 #alias(map_with_key, deprecated)
@@ -52,8 +51,6 @@ pub fn[K, V] HashMap::to_array(Self[K, V]) -> Array[(K, V)]
 #alias(merge)
 pub fn[K : Eq, V] HashMap::union(Self[K, V], Self[K, V]) -> Self[K, V]
 pub fn[K : Eq, V] HashMap::union_with(Self[K, V], Self[K, V], (K, V, V) -> V raise?) -> Self[K, V] raise?
-#alias(elems, deprecated)
-pub fn[K, V] HashMap::values(Self[K, V]) -> Iter[V]
 pub impl[K : Eq, V : Eq] Eq for HashMap[K, V]
 pub impl[K : Hash, V : Hash] Hash for HashMap[K, V]
 pub impl[K : Show, V : Show] Show for HashMap[K, V]

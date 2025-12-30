@@ -622,12 +622,18 @@ pub fn[K, V] HashMap::each(
 
 ///|
 /// Returns all keys of the map
+#warnings("-deprecated")
+#deprecated
+#doc(hidden)
 pub fn[K, V] HashMap::keys(self : HashMap[K, V]) -> Iter[K] {
   self.iter().map(p => p.0)
 }
 
 ///|
 /// Returns all values of the map
+#warnings("-deprecated")
+#deprecated
+#doc(hidden)
 #alias(elems, deprecated="Use `values` instead")
 pub fn[K, V] HashMap::values(self : HashMap[K, V]) -> Iter[V] {
   self.iter().map(p => p.1)
@@ -635,6 +641,7 @@ pub fn[K, V] HashMap::values(self : HashMap[K, V]) -> Iter[V] {
 
 ///|
 /// Converted to Iter
+#warnings("-deprecated")
 #deprecated
 #doc(hidden)
 pub fn[K, V] HashMap::iter(self : HashMap[K, V]) -> Iter[(K, V)] {
@@ -725,6 +732,7 @@ pub fn[K : Eq + Hash, V] HashMap::from_iterator(
 }
 
 ///|
+#warnings("-deprecated")
 pub impl[K : Show, V : Show] Show for HashMap[K, V] with output(self, logger) {
   logger.write_iter(
     self.iter(),

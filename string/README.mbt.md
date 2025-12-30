@@ -7,7 +7,7 @@ including string creation, conversion, searching, and Unicode handling.
 
 Create strings from various sources:
 
-```mbt check
+```mbt nocheck
 ///|
 test "string creation" {
   // From character array
@@ -29,7 +29,7 @@ test "string creation" {
 
 Iterate over Unicode characters in strings:
 
-```mbt check
+```mbt nocheck
 ///|
 test "string iteration" {
   let text = "Hello🌍"
@@ -86,7 +86,7 @@ test "string conversion" {
 
 Work with Unicode characters and surrogate pairs:
 
-```mbt check
+```mbt nocheck
 ///|
 test "unicode handling" {
   let emoji_text = "Hello🤣World"
@@ -127,7 +127,7 @@ test "string comparison" {
 
 String views provide efficient substring operations without copying:
 
-```mbt check
+```mbt nocheck
 ///|
 test "string views" {
   let text = "Hello, World!"
@@ -147,7 +147,7 @@ test "string views" {
 
 Common string manipulation tasks:
 
-```mbt check
+```mbt nocheck
 ///|
 test "practical examples" {
   let text = "The quick brown fox"

@@ -153,12 +153,14 @@ test "to_array" {
 }
 
 ///|
+#warnings("-deprecated")
 test "keys" {
   let m = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
   assert_eq(m.keys_as_iter().collect(), [1, 2, 3])
 }
 
 ///|
+#warnings("-deprecated")
 test "values" {
   let m = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
   assert_eq(m.values().collect(), ["one", "two", "three"])

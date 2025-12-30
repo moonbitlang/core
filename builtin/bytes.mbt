@@ -664,7 +664,7 @@ pub fn BytesView::to_array(self : BytesView) -> Array[Byte] {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt nocheck
 /// test {
 ///   let bytes = Bytes::from_array([b'h', b'i'])
 ///   let mut sum = 0

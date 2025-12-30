@@ -105,6 +105,7 @@ test "iterator" {
 }
 
 ///|
+#warnings("-deprecated")
 test "iter early termination in left subtree" {
   // This test should trigger the uncovered line 381 in sorted_set/set.mbt
   // We need a tree structure where the iterator terminates while traversing the left subtree
@@ -328,6 +329,7 @@ test "from_iterator empty iter" {
 }
 
 ///|
+#warnings("-deprecated")
 test "range" {
   let set = @sorted_set.from_array([1, 2, 3, 4, 5])
   inspect(set.range(2, 4), content="[2, 3, 4]")

@@ -127,12 +127,14 @@ test "eachi" {
 }
 
 ///|
+#warnings("-deprecated")
 test "keys" {
   let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
   inspect(map.keys_as_iter(), content="[1, 2, 3]")
 }
 
 ///|
+#warnings("-deprecated")
 test "values" {
   let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
   inspect(

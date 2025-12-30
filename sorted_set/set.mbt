@@ -466,6 +466,7 @@ pub fn[V : Compare] SortedSet::from_iterator(
 
 ///|
 /// Converts the set to string.
+#warnings("-deprecated")
 pub impl[V : Show] Show for SortedSet[V] with output(self, logger) {
   logger.write_iter(self.iter(), prefix="@sorted_set.from_array([", suffix="])")
 }
@@ -478,12 +479,16 @@ pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for SortedSe
 }
 
 ///|
+#warnings("-deprecated")
 impl[T : Show] Show for Node[T] with output(self, logger) {
   let x = { root: Some(self), size: 0 } // Hack for test
   logger.write_iter(x.iter())
 }
 
 ///|
+#warnings("-deprecated")
+#deprecated
+#doc(hidden)
 pub fn[V : Compare] SortedSet::range(
   self : SortedSet[V],
   low : V,

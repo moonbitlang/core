@@ -463,6 +463,7 @@ pub fn StringView::strip_suffix(
 ///   inspect(chars, content="['e', 'l', 'l', 'o', '🤣', 'x']")
 /// }
 /// ```
+#warnings("-deprecated")
 pub fn StringView::to_array(self : StringView) -> Array[Char] {
   self
   .iter()
@@ -858,6 +859,7 @@ test "is_blank" {
 /// Returns a new string with `padding_char`s prefixed to `self` if
 /// `self.char_length() < total_width`. The number of unicode characters in
 /// the returned string is `total_width` if padding is added.
+#warnings("-deprecated")
 pub fn StringView::pad_start(
   self : StringView,
   total_width : Int,
@@ -873,6 +875,7 @@ pub fn StringView::pad_start(
 /// Returns a new string with `padding_char`s prefixed to `self` if
 /// `self.char_length() < total_width`. The number of unicode characters in
 /// the returned string is `total_width` if padding is added.
+#warnings("-deprecated")
 pub fn String::pad_start(
   self : String,
   total_width : Int,
@@ -913,6 +916,7 @@ test "pad_start" {
 /// Returns a new string with `padding_char`s appended to `self` if
 /// `self.length() < total_width`. The number of unicode characters in
 /// the returned string is `total_width` if padding is added.
+#warnings("-deprecated")
 pub fn StringView::pad_end(
   self : StringView,
   total_width : Int,
@@ -928,6 +932,7 @@ pub fn StringView::pad_end(
 /// Returns a new string with `padding_char`s appended to `self` if
 /// `self.length() < total_width`. The number of unicode characters in
 /// the returned string is `total_width` if padding is added.
+#warnings("-deprecated")
 pub fn String::pad_end(
   self : String,
   total_width : Int,
@@ -1028,6 +1033,7 @@ test "repeat" {
 ///|
 /// Returns a new string with the characters in reverse order. It respects
 /// Unicode characters and surrogate pairs but not grapheme clusters.
+#warnings("-deprecated")
 pub fn StringView::rev(self : StringView) -> String {
   let buf = StringBuilder::new(size_hint=self.length())
   for c in self.rev_iter() {
@@ -1060,6 +1066,9 @@ test "rev" {
 /// 
 /// If the separator is empty, the returned iterator will contain all the
 /// characters in the string as single elements.
+#warnings("-deprecated")
+#deprecated
+#doc(hidden)
 pub fn StringView::split(
   self : StringView,
   sep : StringView,
@@ -1082,18 +1091,22 @@ pub fn StringView::split(
 
 ///|
 /// Splits the string into all substrings separated by the given separator.
-/// 
+///
 /// If the string does not contain the separator and the separator is not empty,
 /// the returned iterator will contain only one element, which is the original
 /// string.
-/// 
+///
 /// If the separator is empty, the returned iterator will contain all the
 /// characters in the string as single elements.
+#warnings("-deprecated")
+#deprecated
+#doc(hidden)
 pub fn String::split(self : String, sep : StringView) -> Iter[StringView] {
   self[:].split(sep)
 }
 
 ///|
+#warnings("-deprecated")
 test "split" {
   assert_eq("a,b,c".split(",").map(StringView::to_string).collect(), [
     "a", "b", "c",
@@ -1130,9 +1143,10 @@ test "split" {
 
 ///|
 /// Replaces the first occurrence of `old` with `new` in `self`.
-/// 
+///
 /// If `old` is empty, it matches the beginning of the string, and `new` is
 /// prepended to the string.
+#warnings("-deprecated")
 pub fn StringView::replace(
   self : StringView,
   old~ : StringView,
@@ -1151,9 +1165,10 @@ pub fn StringView::replace(
 
 ///|
 /// Replaces the first occurrence of `old` with `new` in `self`.
-/// 
+///
 /// If `old` is empty, it matches the beginning of the string, and `new` is
 /// prepended to the string.
+#warnings("-deprecated")
 pub fn String::replace(
   self : String,
   old~ : StringView,
@@ -1542,6 +1557,7 @@ test "fold with raise" {
 }
 
 ///|
+#warnings("-deprecated")
 pub fn[A] StringView::rev_fold(
   self : StringView,
   init~ : A,

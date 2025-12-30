@@ -13,6 +13,7 @@
 // limitations under the License.
 
 ///|
+#warnings("-deprecated")
 pub let general_category_ranges : Map[String, Array[Char]] = {
   "LC": LC.iter().collect(),
   "L": L.iter().collect(),

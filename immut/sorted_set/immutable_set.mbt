@@ -685,6 +685,7 @@ pub fn[A] SortedSet::filter(
 }
 
 ///|
+#warnings("-deprecated")
 pub impl[A : Show] Show for SortedSet[A] with output(self, logger) {
   logger.write_iter(
     self.iter(),
@@ -694,6 +695,7 @@ pub impl[A : Show] Show for SortedSet[A] with output(self, logger) {
 }
 
 ///|
+#warnings("-deprecated")
 pub impl[A : ToJson] ToJson for SortedSet[A] with to_json(self) {
   let capacity = self.iter().count()
   guard capacity != 0 else { return Json::array([]) }

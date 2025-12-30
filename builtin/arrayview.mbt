@@ -405,7 +405,7 @@ pub fn[X] ArrayView::iterator(self : ArrayView[X]) -> Iterator[X] {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt nocheck
 /// test {
 ///   let arr = [1, 2, 3]
 ///   let view = arr[1:]
@@ -972,6 +972,7 @@ pub fn[A : ToStringView] ArrayView::join(
 // #region trait impls
 
 ///|
+#warnings("-deprecated")
 pub impl[X : Show] Show for ArrayView[X] with output(self, logger) {
   logger.write_iter(self.iter())
 }

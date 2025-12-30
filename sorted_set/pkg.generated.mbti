@@ -38,7 +38,6 @@ pub fn[V] SortedSet::iterator(Self[V]) -> Iterator[V]
 pub fn[V] SortedSet::length(Self[V]) -> Int
 #as_free_fn
 pub fn[V] SortedSet::new() -> Self[V]
-pub fn[V : Compare] SortedSet::range(Self[V], V, V) -> Iter[V]
 pub fn[V : Compare] SortedSet::remove(Self[V], V) -> Unit
 #as_free_fn
 pub fn[V] SortedSet::singleton(V) -> Self[V]

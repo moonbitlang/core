@@ -191,6 +191,7 @@ test "insert_and_grow" {
 }
 
 ///|
+#warnings("-deprecated")
 test "array unique via Set" {
   let v = [1, 2, 3, 4, 5, 3, 2, 4, 5]
   let h = @set.Set::from_iterator(v.iterator())

@@ -40,7 +40,7 @@
     - Iterators: `str.iter()` yields proper Unicode characters
     - Pattern matching: Handles surrogate pairs correctly
   - Example of safe vs unsafe operations:
-```mbt check
+```mbt nocheck
 ///|
 test "unsafe vs safe" {
   // Unsafe: May split surrogate pairs

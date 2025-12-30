@@ -13,6 +13,7 @@
 // limitations under the License.
 
 ///|
+#warnings("-deprecated")
 #deprecated("use `_.to_array().rev_fold(...)` instead")
 pub fn[A, B] List::rev_fold(self : List[A], init~ : B, f : (B, A) -> B) -> B {
   let xs = self.to_array()

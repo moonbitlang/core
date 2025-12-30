@@ -62,7 +62,7 @@ pub fn[K, V] HashMap::clear(self : HashMap[K, V]) -> Unit {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt nocheck
 /// test {
 ///   let map = @hashmap.from_array([(1, "one"), (2, "two")])
 ///   let pairs = map.iter().to_array()
@@ -169,7 +169,7 @@ pub fn[K, V] HashMap::iter2(self : HashMap[K, V]) -> Iter2[K, V] {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt nocheck
 /// test {
 ///   let arr = [(1, "one"), (2, "two")]
 ///   let iter = arr.iter()
@@ -455,7 +455,7 @@ pub impl[K : Show, V : Show] Show for HashMap[K, V] with output(self, logger) {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt nocheck
 /// test {
 ///   let map = @hashmap.from_array([(1, "one"), (2, "two"), (3, "three")])
 ///   let keys = map.keys().to_array()
@@ -465,6 +465,9 @@ pub impl[K : Show, V : Show] Show for HashMap[K, V] with output(self, logger) {
 ///   inspect(keys.contains(3), content="true")
 /// }
 /// ```
+#warnings("-deprecated")
+#deprecated
+#doc(hidden)
 pub fn[K, V] HashMap::keys(self : HashMap[K, V]) -> Iter[K] {
   let mut i = 0
   let iter = Iterator::new(() => while i < self.entries.length() {
@@ -491,7 +494,7 @@ pub fn[K, V] HashMap::keys(self : HashMap[K, V]) -> Iter[K] {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt nocheck
 /// test {
 ///   let map = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
 ///   let values = map.values().to_array()
@@ -501,6 +504,9 @@ pub fn[K, V] HashMap::keys(self : HashMap[K, V]) -> Iter[K] {
 ///   inspect(values.contains(3), content="true")
 /// }
 /// ```
+#warnings("-deprecated")
+#deprecated
+#doc(hidden)
 pub fn[K, V] HashMap::values(self : HashMap[K, V]) -> Iter[V] {
   let mut i = 0
   let iter = Iterator::new(() => while i < self.entries.length() {

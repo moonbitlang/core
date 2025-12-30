@@ -408,7 +408,6 @@ pub fn[K, V] Map::is_empty(Self[K, V]) -> Bool
 pub fn[K, V] Map::iter2(Self[K, V]) -> Iter2[K, V]
 pub fn[K, V] Map::iterator(Self[K, V]) -> Iterator[(K, V)]
 pub fn[K, V] Map::iterator2(Self[K, V]) -> Iterator2[K, V]
-pub fn[K, V] Map::keys(Self[K, V]) -> Iter[K]
 #alias(size, deprecated)
 pub fn[K, V] Map::length(Self[K, V]) -> Int
 pub fn[K, V, V2] Map::map(Self[K, V], (K, V) -> V2) -> Self[K, V2]
@@ -422,7 +421,6 @@ pub fn[K, V] Map::retain(Self[K, V], (K, V) -> Bool) -> Unit
 pub fn[K : Hash + Eq, V] Map::set(Self[K, V], K, V) -> Unit
 pub fn[K, V] Map::to_array(Self[K, V]) -> Array[(K, V)]
 pub fn[K : Hash + Eq, V] Map::update(Self[K, V], K, (V?) -> V?) -> Unit
-pub fn[K, V] Map::values(Self[K, V]) -> Iter[V]
 pub impl[K, V] Default for Map[K, V]
 pub impl[K : Hash + Eq, V : Eq] Eq for Map[K, V]
 pub impl[K : Show, V : Show] Show for Map[K, V]
@@ -742,7 +740,6 @@ pub fn String::rev(String) -> String
 pub fn String::rev_find(String, StringView) -> Int?
 pub fn[A] String::rev_fold(String, init~ : A, (A, Char) -> A raise?) -> A raise?
 pub fn String::rev_iterator(String) -> Iterator[Char]
-pub fn String::split(String, StringView) -> Iter[StringView]
 pub fn String::strip_prefix(String, StringView) -> StringView?
 pub fn String::strip_suffix(String, StringView) -> StringView?
 #alias("_[_:_]")
@@ -1000,7 +997,6 @@ pub fn StringView::rev(Self) -> String
 pub fn StringView::rev_find(Self, Self) -> Int?
 pub fn[A] StringView::rev_fold(Self, init~ : A, (A, Char) -> A raise?) -> A raise?
 pub fn StringView::rev_iterator(Self) -> Iterator[Char]
-pub fn StringView::split(Self, Self) -> Iter[Self]
 pub fn StringView::start_offset(Self) -> Int
 pub fn StringView::strip_prefix(Self, Self) -> Self?
 pub fn StringView::strip_suffix(Self, Self) -> Self?

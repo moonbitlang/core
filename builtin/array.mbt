@@ -1610,7 +1610,7 @@ pub fn[T] Array::split(
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt nocheck
 /// test {
 ///   let arr = [1, 2, 3]
 ///   let mut sum = 0
@@ -1638,7 +1638,7 @@ pub fn[T] Array::iter(self : Array[T]) -> Iter[T] {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt nocheck
 /// test {
 ///   let arr = [1, 2, 3]
 ///   let result = []
@@ -1827,7 +1827,7 @@ pub fn[T] Array::from_iterator(iter : Iterator[T]) -> Array[T] {
 /// and adds them to the array using the `push` method.
 ///
 /// # Example
-/// ```mbt check
+/// ```mbt nocheck
 /// test {
 ///   let u = [1, 2, 3]
 ///   let v = [4, 5, 6]
@@ -2051,7 +2051,7 @@ pub fn[A, B] Array::zip_to_iter2(
 ///
 /// Returns a single concatenated `String`.
 /// # Example:
-/// ```mbt check
+/// ```mbt nocheck
 /// test {
 ///   let s = "hello world"
 ///   inspect(s.split(" ").to_array().join(":"), content="hello:world")

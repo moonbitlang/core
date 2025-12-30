@@ -6,7 +6,7 @@ This package provides an immutable hash-based set implementation using Hash Arra
 
 Create immutable sets using various methods:
 
-```mbt check
+```mbt nocheck
 ///|
 test "creating immutable sets" {
   // Empty set

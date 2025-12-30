@@ -81,6 +81,7 @@ test "HAMT::remove" {
 }
 
 ///|
+#warnings("-deprecated")
 test "keys" {
   let m = @hashmap.from_array([(1, "one"), (2, "two")])
   let keys = () => m.keys()
@@ -90,6 +91,7 @@ test "keys" {
 }
 
 ///|
+#warnings("-deprecated")
 test "HAMT::values" {
   let m = @hashmap.from_array([(1, "one"), (2, "two")])
   let values = () => m.values()

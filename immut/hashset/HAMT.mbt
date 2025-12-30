@@ -337,6 +337,7 @@ pub fn[A] HashSet::each(
 
 ///|
 /// Converted to Iter
+#warnings("-deprecated")
 #deprecated
 #doc(hidden)
 pub fn[A] HashSet::iter(self : HashSet[A]) -> Iter[A] {
@@ -412,6 +413,7 @@ pub fn[A : Eq + Hash] HashSet::from_iterator(iter : Iterator[A]) -> HashSet[A] {
 }
 
 ///|
+#warnings("-deprecated")
 pub impl[A : Show] Show for HashSet[A] with output(self, logger) {
   logger.write_iter(
     self.iter(),
@@ -435,11 +437,13 @@ pub fn[A : Eq + Hash] HashSet::from_array(arr : ArrayView[A]) -> HashSet[A] {
 }
 
 ///|
+#warnings("-deprecated")
 pub impl[A : Hash] Hash for HashSet[A] with hash_combine(self, hasher) {
   hasher.combine(self.iter().fold(init=0, (x, y) => x ^ y.hash()))
 }
 
 ///|
+#warnings("-deprecated")
 impl[A : Eq] Eq for Node[A] with equal(self, other) {
   match (self, other) {
     (Leaf(x, xs), Leaf(y, ys)) =>

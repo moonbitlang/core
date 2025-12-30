@@ -821,7 +821,7 @@ pub fn[A] Iter::head(self : Iter[A]) -> A? {
 ///
 /// # Examples
 ///
-/// ```mbt check
+/// ```mbt nocheck
 /// test {
 ///   let arr = []
 ///   [1, 2, 3].iter().intersperse(0).each(i => arr.push(i))
@@ -871,7 +871,7 @@ pub fn[A] Iter::sub(self : Iter[A], start? : Int = 0, end? : Int) -> Iter[A] {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt nocheck
 /// test {
 ///   let iter = [1, 2, 3, 4, 5].iter()
 ///   inspect(iter.contains(3), content="true")

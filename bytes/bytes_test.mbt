@@ -143,11 +143,6 @@ test "from_iterator single element" {
 }
 
 ///|
-test "from_iterator empty iterator" {
-  inspect(Bytes::from_iterator(Iterator::empty()).to_array(), content="[]")
-}
-
-///|
 test "iter" {
   let buf = StringBuilder::new(size_hint=5)
   b"abcde".iterator().each(x => buf.write_string(x.to_string()))

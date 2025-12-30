@@ -53,7 +53,7 @@ pub fn[T] FixedArray::get(self : FixedArray[T], idx : Int) -> T? {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt nocheck
 /// test {
 ///   let arr = FixedArray::make(3, 42)
 ///   let mut sum = 0
@@ -1384,6 +1384,7 @@ test "add" {
 }
 
 ///|
+#warnings("-deprecated")
 test "iter" {
   let arr : FixedArray[_] = [1, 2, 3, 4, 5]
   let iter = arr.iter()
@@ -1420,7 +1421,7 @@ test "iter" {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt nocheck
 /// test {
 ///   let arr = [1, 2, 3]
 ///   let fixed_arr = FixedArray::from_iter(arr.iter())

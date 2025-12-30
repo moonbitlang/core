@@ -421,6 +421,7 @@ pub impl[A : Eq] Eq for T[A] with equal(self, other) {
 }
 
 ///|
+#warnings("-deprecated")
 pub impl[A : Show] Show for T[A] with output(self, logger) {
   logger.write_iter(
     self.iter(),

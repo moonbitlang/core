@@ -633,6 +633,7 @@ test "view of view" {
 }
 
 ///|
+#warnings("-deprecated")
 test "iter2" {
   let str = "aa😭b😂cc"
   let view = str.view(start_offset=1, end_offset=8)
@@ -724,6 +725,7 @@ test "StringView::repeat" {
 }
 
 ///|
+#warnings("-deprecated")
 test "StringView::split take" {
   inspect(
     "a,b,c,d"[:].split(",").take(2).map(StringView::to_string).collect(),

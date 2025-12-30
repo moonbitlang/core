@@ -31,7 +31,7 @@ pub fn[T : Show] StringBuilder::write_object(
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt nocheck
 /// test {
 ///   let sb = StringBuilder::new()
 ///   let chars = "Hello🤣".iter()

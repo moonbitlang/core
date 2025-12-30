@@ -948,6 +948,7 @@ fn Parser::parse_unicode_escape(self : Parser) -> Char raise RegexpError {
 }
 
 ///|
+#warnings("-deprecated")
 fn Parser::parse_unicode_property(self : Parser) -> String raise RegexpError {
   guard self.input is ['{', .. rest] else {
     raise RegexpError(err=InvalidCharClass, source_fragment=self.input)

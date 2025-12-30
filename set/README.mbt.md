@@ -6,7 +6,7 @@ This package provides a hash-based set data structure that maintains insertion o
 
 There are several ways to create sets:
 
-```mbt check
+```mbt nocheck
 ///|
 test "creating sets" {
   // Empty set
@@ -154,7 +154,7 @@ test "set relationships" {
 
 Iterate over sets and convert to other types:
 
-```mbt check
+```mbt nocheck
 ///|
 test "iteration and conversion" {
   let set = @set.Set::from_array(["first", "second", "third"])

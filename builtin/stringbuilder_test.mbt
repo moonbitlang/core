@@ -49,6 +49,7 @@ test {
 }
 
 ///|
+#warnings("-deprecated")
 test "write_iter" {
   let str = "Hello🤣🤣🤣"
   let sb = StringBuilder::new()

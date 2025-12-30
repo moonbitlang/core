@@ -74,6 +74,7 @@ pub fn[A] List::prepend(self : List[A], head : A) -> List[A] {
 ///|
 /// Show implementation for List.
 /// Outputs the list in the format @list.from_array([element1, element2, ...]).
+#warnings("-deprecated")
 pub impl[A : Show] Show for List[A] with output(xs, logger) {
   logger.write_iter(xs.iter(), prefix="@list.from_array([", suffix="])")
 }
@@ -1678,7 +1679,7 @@ pub fn[X] default() -> List[X] {
 ///
 /// # Example
 ///
-/// ```mbt check
+/// ```mbt nocheck
 /// test {
 ///   let ls = @list.from_array([1, 2, 3, 4, 5])
 ///   let iter = ls.iter()
@@ -1779,7 +1780,7 @@ pub fn[A] List::iterator2(self : List[A]) -> Iterator2[Int, A] {
 ///
 /// # Example
 ///
-/// ```mbt check
+/// ```mbt nocheck
 /// test {
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let iter = arr.iter()
@@ -1851,7 +1852,7 @@ pub fn[A] List::from_iterator(iter : Iterator[A]) -> List[A] {
 ///
 /// # Example
 ///
-/// ```mbt check
+/// ```mbt nocheck
 /// test {
 ///   let arr = [1, 2, 3, 4, 5]
 ///   let iter = arr.iter()

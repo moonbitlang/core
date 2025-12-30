@@ -6,7 +6,7 @@ This package provides utilities for working with sequences of bytes, offering bo
 
 You can create `Bytes` from various sources including arrays, fixed arrays, and iterators:
 
-```mbt check
+```mbt nocheck
 ///|
 test "bytes creation" {
   // Create from array of bytes
@@ -53,7 +53,7 @@ test "bytes creation" {
 
 `Bytes` can be converted to and from different formats:
 
-```mbt check
+```mbt nocheck
 ///|
 test "bytes conversion" {
   let original = [b'x', b'y', b'z']

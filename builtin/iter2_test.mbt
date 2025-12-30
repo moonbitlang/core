@@ -13,6 +13,7 @@
 // limitations under the License.
 
 ///|
+#warnings("-deprecated")
 test "iter2_to_iter" {
   let numbers = [1, 2, 3]
   let iter2_numbers = numbers.iter2() // creates Iter2[Int, Int] from Array

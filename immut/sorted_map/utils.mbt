@@ -293,6 +293,7 @@ pub fn[K : Compare, V] SortedMap::from_iterator(
 
 ///|
 /// Return all keys of the map in ascending order.
+#warnings("-deprecated")
 #deprecated
 #doc(hidden)
 pub fn[K, V] SortedMap::keys_as_iter(self : SortedMap[K, V]) -> Iter[K] {
@@ -301,6 +302,7 @@ pub fn[K, V] SortedMap::keys_as_iter(self : SortedMap[K, V]) -> Iter[K] {
 
 ///|
 /// Return all elements of the map in the ascending order of their keys.
+#warnings("-deprecated")
 #deprecated
 #doc(hidden)
 pub fn[K, V] SortedMap::values(self : SortedMap[K, V]) -> Iter[V] {

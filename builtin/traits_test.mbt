@@ -13,6 +13,7 @@
 // limitations under the License.
 
 ///|
+#warnings("-deprecated")
 test "write_iter with trailing" {
   let builder = StringBuilder::new()
   let logger : &Logger = builder

@@ -236,6 +236,7 @@ test "arbitrary" {
 }
 
 ///|
+#warnings("-deprecated")
 test "optional interpolation" {
   let some_value : Int? = Some(10)
   let none_value : Int? = None

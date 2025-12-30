@@ -27,6 +27,7 @@ test "create buffer from array" {
 }
 
 ///|
+#warnings("-deprecated")
 test "create buffer from iterator" {
   let iter = [b'5', b'\x00', b'6', b'\x00', b'7', b'\x00'].iter()
   let buf = @buffer.from_iter(iter)
@@ -259,6 +260,7 @@ test "write_float_be method" {
 }
 
 ///|
+#warnings("-deprecated")
 test "write_iter" {
   let bytes = b"hello"
   let buf = @buffer.new()

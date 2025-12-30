@@ -254,6 +254,7 @@ test "grow" {
 }
 
 ///|
+#warnings("-deprecated")
 test "iter" {
   let buf = StringBuilder::new(size_hint=20)
   let map = { 1: "one", 2: "two", 3: "three" }

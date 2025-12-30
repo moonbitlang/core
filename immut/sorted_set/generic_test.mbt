@@ -27,6 +27,7 @@ test "compare with shared prefix" {
 }
 
 ///|
+#warnings("-deprecated")
 test "iter early termination - value" {
   let set = @sorted_set.from_array([1, 2, 3])
   let mut count = 0
@@ -49,6 +50,7 @@ test "iter terminates on right" {
 }
 
 ///|
+#warnings("-deprecated")
 test "iter with early termination on left subtree" {
   // Create a binary search tree with both left and right subtrees
   let set = @sorted_set.new()

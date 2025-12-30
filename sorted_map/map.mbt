@@ -192,6 +192,7 @@ pub fn[K, V] SortedMap::eachi(
 
 ///|
 /// Returns all keys in the map.
+#warnings("-deprecated")
 #deprecated
 #doc(hidden)
 pub fn[K, V] SortedMap::keys_as_iter(self : SortedMap[K, V]) -> Iter[K] {
@@ -214,6 +215,7 @@ pub fn[K, V] SortedMap::keys_as_iter(self : SortedMap[K, V]) -> Iter[K] {
 
 ///|
 /// Returns all values in the map.
+#warnings("-deprecated")
 #deprecated
 #doc(hidden)
 pub fn[K, V] SortedMap::values_as_iter(self : SortedMap[K, V]) -> Iter[V] {

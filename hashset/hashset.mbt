@@ -226,6 +226,7 @@ fn[K : Eq] HashSet::grow(self : HashSet[K]) -> Unit {
 // Utils
 
 ///|
+#warnings("-deprecated")
 pub impl[K : Show] Show for HashSet[K] with output(self, logger) {
   logger.write_iter(self.iter(), prefix="@hashset.from_array([", suffix="])")
 }
@@ -391,6 +392,7 @@ pub fn[K : Hash + Eq] HashSet::symmetric_difference(
 
 ///|
 /// Check if two sets have no common elements.
+#warnings("-deprecated")
 pub fn[K : Hash + Eq] HashSet::is_disjoint(
   self : HashSet[K],
   other : HashSet[K],
@@ -404,6 +406,7 @@ pub fn[K : Hash + Eq] HashSet::is_disjoint(
 
 ///|
 /// Check if the current set is a subset of another set.
+#warnings("-deprecated")
 pub fn[K : Hash + Eq] HashSet::is_subset(
   self : HashSet[K],
   other : HashSet[K],

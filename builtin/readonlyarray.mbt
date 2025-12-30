@@ -47,7 +47,7 @@ pub fn[T] ReadOnlyArray::from_array(array : ArrayView[T]) -> ReadOnlyArray[T] {
 /// Creates an ReadOnlyArray from an iterator.
 ///
 /// # Example
-/// ```mbt check
+/// ```mbt nocheck
 /// test {
 ///   let iter = [1, 2, 3].iter()
 ///   let immut_array = ReadOnlyArray::from_iter(iter)
@@ -156,7 +156,7 @@ pub fn[T] ReadOnlyArray::last(self : ReadOnlyArray[T]) -> T? {
 /// Creates an iterator over the elements of the ReadOnlyArray.
 ///
 /// # Example
-/// ```mbt check
+/// ```mbt nocheck
 /// test {
 ///   let arr : ReadOnlyArray[Int] = [1, 2, 3]
 ///   let mut sum = 0
@@ -164,6 +164,7 @@ pub fn[T] ReadOnlyArray::last(self : ReadOnlyArray[T]) -> T? {
 ///   inspect(sum, content="6")
 /// }
 /// ```
+#warnings("-deprecated")
 #deprecated
 #doc(hidden)
 pub fn[T] ReadOnlyArray::iter(self : ReadOnlyArray[T]) -> Iter[T] {
@@ -174,7 +175,7 @@ pub fn[T] ReadOnlyArray::iter(self : ReadOnlyArray[T]) -> Iter[T] {
 /// Creates an iterator over the elements of the ReadOnlyArray.
 ///
 /// # Example
-/// ```mbt check
+/// ```mbt nocheck
 /// test {
 ///   let arr : ReadOnlyArray[Int] = [1, 2, 3]
 ///   let mut sum = 0

@@ -42,6 +42,7 @@ test "is_empty" {
 }
 
 ///|
+#warnings("-deprecated")
 test "fixed array iter with early termination" {
   let arr : FixedArray[Int] = [1, 2, 3]
   let mut count = 0

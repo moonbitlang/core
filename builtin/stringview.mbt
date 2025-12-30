@@ -635,6 +635,7 @@ pub impl ToJson for StringView with to_json(self) {
 }
 
 ///|
+#warnings("-deprecated")
 pub impl Add for StringView with add(self, other) {
   [..self, ..other]
 }

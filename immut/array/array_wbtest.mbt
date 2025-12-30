@@ -56,6 +56,7 @@ test "mix" {
 }
 
 ///|
+#warnings("-deprecated")
 test "get" {
   let bf = branching_factor_power(4)
   let v_content = random_array(bf)
