@@ -144,6 +144,16 @@ pub impl[A] Add for Deque[A] with add(self, other) {
 }
 
 ///|
+/// Test add (operator +) with empty deques creates valid empty deque.
+test "add_empty" {
+  let empty1 : Deque[Int] = new()
+  let empty2 : Deque[Int] = new()
+  let result = empty1 + empty2
+  inspect(result.len, content="0")
+  inspect(result.is_empty(), content="true")
+}
+
+///|
 /// Creates a new deque with elements copied from an array.
 ///
 /// Parameters:
@@ -172,6 +182,14 @@ pub fn[A] Deque::from_array(arr : ArrayView[A]) -> Deque[A] {
     buf[i] = x
   }
   Deque::{ buf, len, head: 0 }
+}
+
+///|
+/// Test from_array with empty array creates valid empty deque.
+test "from_array_empty" {
+  let dq : Deque[Int] = from_array([])
+  inspect(dq.len, content="0")
+  inspect(dq.is_empty(), content="true")
 }
 
 ///|
@@ -629,6 +647,18 @@ pub fn[A] Deque::unsafe_pop_front(self : Deque[A]) -> Unit {
   let cap = self.buf.length()
   self.head = (self.head + 1) % cap
   self.len -= 1
+}
+
+///|
+test "unsafe_pop_front after many push_front" {
+  let dq = new()
+  for i in 0..<10 {
+    dq.push_front(i)
+  }
+  for i in 0..<10 {
+    dq.unsafe_pop_front()
+  }
+  assert_eq(dq.len, 0)
 }
 
 ///|
@@ -1275,6 +1305,13 @@ pub fn[A] Deque::truncate(self : Deque[A], len : Int) -> Unit {
       set_null(buf, i)
     }
   }
+}
+
+///|
+test "truncate zero" {
+  let dq = from_array([1, 2, 3])
+  dq.truncate(0)
+  inspect(dq.len, content="0")
 }
 
 ///|
@@ -2073,6 +2110,75 @@ pub fn[A] Deque::drain(self : Deque[A], start~ : Int, len? : Int) -> Deque[A] {
     self.head = 0
   }
   deque
+}
+
+///|
+test "weird behavior after drain" {
+  let deque = new(capacity=16)
+  deque.push_back(1)
+  deque.push_back(2)
+  deque.push_back(3)
+  deque.push_back(4)
+  ignore(deque.pop_front())
+  ignore(deque.pop_front())
+  ignore(deque.pop_front())
+  deque.push_back(5)
+  ignore(deque.pop_front())
+  deque.push_back(6)
+  ignore(deque.pop_front())
+  deque.push_back(7)
+  ignore(deque.pop_front())
+  deque.push_back(8)
+  ignore(deque.pop_front())
+  deque.push_back(9)
+  deque.push_back(10)
+  deque.push_back(11)
+  ignore(deque.pop_front())
+  ignore(deque.pop_front())
+  deque.push_back(12)
+  deque.push_back(13)
+  ignore(deque.pop_front())
+  deque.push_back(14)
+  ignore(deque.pop_front())
+  ignore(deque.drain(start=0, len=2))
+  deque.push_back(15)
+  ignore(deque.pop_front())
+  deque.push_back(16)
+  ignore(deque.pop_front())
+  deque.push_back(17)
+  ignore(deque.pop_front())
+  deque.push_back(18)
+  ignore(deque.pop_front())
+  deque.push_back(19)
+  ignore(deque.pop_front())
+  deque.push_back(20)
+  deque.push_back(21)
+  deque.push_back(22)
+  ignore(deque.pop_front())
+  ignore(deque.pop_front())
+  ignore(deque.pop_front())
+  deque.push_back(23)
+  deque.push_back(24)
+  deque.push_back(25)
+  ignore(deque.pop_front())
+  ignore(deque.pop_front())
+  deque.push_back(26)
+  deque.push_back(27)
+  ignore(deque.pop_front())
+  ignore(deque.pop_front())
+  ignore(deque.pop_front())
+  deque.push_back(28)
+  ignore(deque.pop_front())
+  deque.push_back(29)
+  ignore(deque.pop_front())
+  deque.push_back(30)
+  inspect(deque.as_views(), content="([29, 30], [])")
+  ignore(deque.drain(start=0, len=2))
+  inspect(deque.as_views(), content="([], [])")
+  deque.push_back(31)
+  deque.push_back(32)
+  inspect(deque.as_views(), content="([31, 32], [])")
+  ignore(deque.pop_front())
 }
 
 ///|
