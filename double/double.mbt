@@ -63,6 +63,17 @@ pub fn Double::abs(self : Double) -> Double = "%f64.abs"
 /// - If the double is positive, returns 1.0.
 /// - If the double is negative, returns -1.0.
 /// - Otherwise, returns the double itself (0.0, -0.0 and NaN).
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(3.0.signum(), content="1")
+///   inspect((-3.0).signum(), content="-1")
+///   inspect(0.0.signum(), content="0")
+///   inspect(@double.not_a_number.signum().is_nan(), content="true")
+/// }
+/// ```
 pub fn Double::signum(self : Double) -> Double {
   if self < 0.0 {
     -1.0
@@ -166,6 +177,7 @@ pub fn Double::is_neg_inf(self : Double) -> Bool {
 }
 
 ///|
+/// Implements `Hash` for `Double` using the raw IEEE 754 bit pattern.
 pub impl Hash for Double with hash_combine(self, hasher) {
   hasher.combine_double(self)
 }
@@ -203,6 +215,7 @@ pub fn Double::to_string(self : Double) -> String {
 // }
 
 ///|
+/// Implements `Show` for `Double` using `Double::to_string`.
 pub impl Show for Double with output(self, logger) {
   logger.write_string(self.to_string())
 }

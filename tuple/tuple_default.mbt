@@ -13,16 +13,46 @@
 // limitations under the License.
 
 ///|
+/// Default implementation for 2-element tuples.
+/// Each element uses `Default::default()`.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let value : (Int, Bool) = Default::default()
+///   inspect(value, content="(0, false)")
+/// }
+/// ```
 pub impl[A : Default, B : Default] Default for (A, B) with default() {
   (Default::default(), Default::default())
 }
 
 ///|
+/// Default implementation for 3-element tuples.
+/// Each element uses `Default::default()`.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let value : (Int, String, Bool) = Default::default()
+///   inspect(value, content="(0, \"\", false)")
+/// }
+/// ```
 pub impl[A : Default, B : Default, C : Default] Default for (A, B, C) with default() {
   (Default::default(), Default::default(), Default::default())
 }
 
 ///|
+/// Default implementation for 4-element tuples.
+/// Each element uses `Default::default()`.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let value : (Int, Int, Int, Int) = Default::default()
+///   inspect(value, content="(0, 0, 0, 0)")
+/// }
+/// ```
 pub impl[A : Default, B : Default, C : Default, D : Default] Default for (
   A,
   B,
@@ -38,6 +68,16 @@ pub impl[A : Default, B : Default, C : Default, D : Default] Default for (
 }
 
 ///|
+/// Default implementation for 5-element tuples.
+/// Each element uses `Default::default()`.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let value : (Int, Int, Int, Int, Int) = Default::default()
+///   inspect(value, content="(0, 0, 0, 0, 0)")
+/// }
+/// ```
 pub impl[A : Default, B : Default, C : Default, D : Default, E : Default] Default for (
   A,
   B,
@@ -55,6 +95,16 @@ pub impl[A : Default, B : Default, C : Default, D : Default, E : Default] Defaul
 }
 
 ///|
+/// Default implementation for 6-element tuples.
+/// Each element uses `Default::default()`.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let value : (Int, Int, Int, Int, Int, Int) = Default::default()
+///   inspect(value, content="(0, 0, 0, 0, 0, 0)")
+/// }
+/// ```
 pub impl[
   A : Default,
   B : Default,
@@ -74,6 +124,16 @@ pub impl[
 }
 
 ///|
+/// Default implementation for 7-element tuples.
+/// Each element uses `Default::default()`.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let value : (Int, Int, Int, Int, Int, Int, Int) = Default::default()
+///   inspect(value, content="(0, 0, 0, 0, 0, 0, 0)")
+/// }
+/// ```
 pub impl[
   A : Default,
   B : Default,
@@ -95,6 +155,16 @@ pub impl[
 }
 
 ///|
+/// Default implementation for 8-element tuples.
+/// Each element uses `Default::default()`.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let value : (Int, Int, Int, Int, Int, Int, Int, Int) = Default::default()
+///   inspect(value, content="(0, 0, 0, 0, 0, 0, 0, 0)")
+/// }
+/// ```
 pub impl[
   A : Default,
   B : Default,
@@ -118,6 +188,16 @@ pub impl[
 }
 
 ///|
+/// Default implementation for 9-element tuples.
+/// Each element uses `Default::default()`.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let value : (Int, Int, Int, Int, Int, Int, Int, Int, Int) = Default::default()
+///   inspect(value, content="(0, 0, 0, 0, 0, 0, 0, 0, 0)")
+/// }
+/// ```
 pub impl[
   A : Default,
   B : Default,
@@ -143,6 +223,16 @@ pub impl[
 }
 
 ///|
+/// Default implementation for 10-element tuples.
+/// Each element uses `Default::default()`.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let value : (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int) = Default::default()
+///   inspect(value, content="(0, 0, 0, 0, 0, 0, 0, 0, 0, 0)")
+/// }
+/// ```
 pub impl[
   A : Default,
   B : Default,
@@ -170,6 +260,16 @@ pub impl[
 }
 
 ///|
+/// Default implementation for 11-element tuples.
+/// Each element uses `Default::default()`.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let value : (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int) = Default::default()
+///   inspect(value, content="(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)")
+/// }
+/// ```
 pub impl[
   A : Default,
   B : Default,
@@ -199,6 +299,16 @@ pub impl[
 }
 
 ///|
+/// Default implementation for 12-element tuples.
+/// Each element uses `Default::default()`.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let value : (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int) = Default::default()
+///   inspect(value, content="(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)")
+/// }
+/// ```
 pub impl[
   A : Default,
   B : Default,
@@ -230,6 +340,16 @@ pub impl[
 }
 
 ///|
+/// Default implementation for 13-element tuples.
+/// Each element uses `Default::default()`.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let value : (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int) = Default::default()
+///   inspect(value, content="(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)")
+/// }
+/// ```
 pub impl[
   A : Default,
   B : Default,
@@ -263,6 +383,31 @@ pub impl[
 }
 
 ///|
+/// Default implementation for 14-element tuples.
+/// Each element uses `Default::default()`.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let value : (
+///     Int,
+///     Int,
+///     Int,
+///     Int,
+///     Int,
+///     Int,
+///     Int,
+///     Int,
+///     Int,
+///     Int,
+///     Int,
+///     Int,
+///     Int,
+///     Int,
+///   ) = Default::default()
+///   inspect(value, content="(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)")
+/// }
+/// ```
 pub impl[
   A : Default,
   B : Default,
@@ -298,6 +443,32 @@ pub impl[
 }
 
 ///|
+/// Default implementation for 15-element tuples.
+/// Each element uses `Default::default()`.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let value : (
+///     Int,
+///     Int,
+///     Int,
+///     Int,
+///     Int,
+///     Int,
+///     Int,
+///     Int,
+///     Int,
+///     Int,
+///     Int,
+///     Int,
+///     Int,
+///     Int,
+///     Int,
+///   ) = Default::default()
+///   inspect(value, content="(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)")
+/// }
+/// ```
 pub impl[
   A : Default,
   B : Default,
@@ -335,6 +506,33 @@ pub impl[
 }
 
 ///|
+/// Default implementation for 16-element tuples.
+/// Each element uses `Default::default()`.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let value : (
+///     Int,
+///     Int,
+///     Int,
+///     Int,
+///     Int,
+///     Int,
+///     Int,
+///     Int,
+///     Int,
+///     Int,
+///     Int,
+///     Int,
+///     Int,
+///     Int,
+///     Int,
+///     Int,
+///   ) = Default::default()
+///   inspect(value, content="(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)")
+/// }
+/// ```
 pub impl[
   A : Default,
   B : Default,

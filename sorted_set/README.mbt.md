@@ -1,6 +1,6 @@
 # Sorted Set
 
-A mutable set backed by a red-black tree.
+A mutable set backed by an AVL tree.
 
 # Usage
 
@@ -127,4 +127,3 @@ test {
   assert_eq(set.to_string(), "@sorted_set.from_array([1, 2, 3])")
 }
 ```
-

@@ -13,6 +13,7 @@
 // limitations under the License.
 
 ///|
+/// Measure average microseconds per iteration for `inner` over `k` runs.
 fn iter_n_microseconds(inner : () -> Unit, k : Int) -> Double {
   let ts = monotonic_clock_start()
   for i in 0..<k {
@@ -23,6 +24,7 @@ fn iter_n_microseconds(inner : () -> Unit, k : Int) -> Double {
 }
 
 ///|
+/// Run `inner` repeatedly and compute a summary of timing statistics.
 fn iter_count(name? : String, inner : () -> Unit, count : UInt) -> Summary {
   let count = count.land(0x7FFFFFFF).reinterpret_as_int()
   let threshold = 100000.0 // 100 ms
@@ -50,7 +52,17 @@ fn iter_count(name? : String, inner : () -> Unit, count : UInt) -> Summary {
 }
 
 ///|
-/// Run a benchmark in batch mode
+/// Run a benchmark in batch mode and store the resulting summary.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let bench = @bench.Bench::new()
+///   bench.bench(() => ignore(1 + 1), count=1)
+///   let dumped = bench.dump_summaries()
+///   inspect(dumped.contains("\"runs\""), content="true")
+/// }
+/// ```
 pub fn Bench::bench(
   self : Bench,
   name? : String,
@@ -66,7 +78,18 @@ pub fn Bench::bench(
 }
 
 ///|
-/// Run a benchmark and return its summary
+/// Run a benchmark and return its summary.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let summary = @bench.single_bench(() => ignore(1 + 1), count=2)
+///   let json = summary
+///     .to_json()
+///     .stringify(replacer=@json.Replacer::keep(["runs"]))
+///   inspect(json, content="{\"runs\":2}")
+/// }
+/// ```
 pub fn single_bench(
   name? : String,
   f : () -> Unit,
@@ -80,6 +103,15 @@ pub fn single_bench(
 ///|
 /// Keep a value to prevent the optimizer from removing 
 /// the calculation that produces it.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let bench = @bench.Bench::new()
+///   bench.keep(123)
+///   inspect(bench.dump_summaries(), content="[]")
+/// }
+/// ```
 pub fn[Any] Bench::keep(self : Bench, value : Any) -> Unit {
   let trait_object : &OpaqueValue = value
   self._storage = trait_object
@@ -88,6 +120,17 @@ pub fn[Any] Bench::keep(self : Bench, value : Any) -> Unit {
 ///|
 /// Returns a JSON array string containing all collected benchmark summaries.
 /// This helper is mainly used internally for tests and diagnostics.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let bench = @bench.Bench::new()
+///   inspect(bench.dump_summaries(), content="[]")
+///   bench.bench(() => ignore(1 + 2), count=1)
+///   let dumped = bench.dump_summaries()
+///   inspect(dumped.contains("\"runs\""), content="true")
+/// }
+/// ```
 #coverage.skip
 pub fn Bench::dump_summaries(self : Bench) -> String {
   "[\{self.buffer.to_string()}]"

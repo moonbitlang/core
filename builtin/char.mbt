@@ -40,12 +40,31 @@ test "Char::to_hex" {
 }
 
 ///|
+/// Hashes a `Char` by its Unicode code point.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let m = {}
+///   m['a'] = 1
+///   m['b'] = 2
+///   inspect(m, content="{'a': 1, 'b': 2}")
+/// }
+/// ```
 pub impl Hash for Char with hash_combine(self, hasher) -> Unit {
   hasher.combine_char(self)
 }
 
 ///|
 /// Checks if the value is within the ASCII range.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   inspect('A'.is_ascii(), content="true")
+///   inspect('λ'.is_ascii(), content="false")
+/// }
+/// ```
 pub fn Char::is_ascii(self : Self) -> Bool {
   self is ('\u{00}'..='\u{7F}')
 }
@@ -54,6 +73,14 @@ pub fn Char::is_ascii(self : Self) -> Bool {
 /// Checks if the value is an ASCII alphabetic  character:
 /// - U+0041 'A' ..= U+005A 'Z'
 /// - U+0061 'a' ..= U+007A 'z'
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   inspect('Z'.is_ascii_alphabetic(), content="true")
+///   inspect('1'.is_ascii_alphabetic(), content="false")
+/// }
+/// ```
 pub fn Char::is_ascii_alphabetic(self : Self) -> Bool {
   self is ('A'..='Z' | 'a'..='z')
 }
@@ -62,6 +89,14 @@ pub fn Char::is_ascii_alphabetic(self : Self) -> Bool {
 /// Checks if the value is an ASCII control character:
 /// U+0000 NUL ..= U+001F UNIT SEPARATOR, or U+007F DELETE.
 /// Note that most ASCII whitespace characters are control characters, but SPACE is not.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   inspect('\n'.is_ascii_control(), content="true")
+///   inspect(' '.is_ascii_control(), content="false")
+/// }
+/// ```
 pub fn Char::is_ascii_control(self : Self) -> Bool {
   self is ('\u{00}'..='\u{1F}' | '\u{7F}')
 }
@@ -69,6 +104,14 @@ pub fn Char::is_ascii_control(self : Self) -> Bool {
 ///|
 /// Checks if the value is an ASCII decimal digit:
 /// U+0030 '0' ..= U+0039 '9'
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   inspect('5'.is_ascii_digit(), content="true")
+///   inspect('x'.is_ascii_digit(), content="false")
+/// }
+/// ```
 pub fn Char::is_ascii_digit(self : Self) -> Bool {
   self is ('0'..='9')
 }
@@ -76,6 +119,14 @@ pub fn Char::is_ascii_digit(self : Self) -> Bool {
 ///|
 /// Checks if the value is an ASCII graphic character:
 /// U+0021 '!' ..= U+007E '~'
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   inspect('!'.is_ascii_graphic(), content="true")
+///   inspect(' '.is_ascii_graphic(), content="false")
+/// }
+/// ```
 pub fn Char::is_ascii_graphic(self : Self) -> Bool {
   self is ('\u{21}'..='\u{7E}')
 }
@@ -85,6 +136,14 @@ pub fn Char::is_ascii_graphic(self : Self) -> Bool {
 /// - U+0030 '0' ..= U+0039 '9'
 /// - U+0041 'A' ..= U+0046 'F'
 /// - U+0061 'a' ..= U+0066 'f'
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   inspect('F'.is_ascii_hexdigit(), content="true")
+///   inspect('G'.is_ascii_hexdigit(), content="false")
+/// }
+/// ```
 pub fn Char::is_ascii_hexdigit(self : Self) -> Bool {
   self is ('0'..='9' | 'A'..='F' | 'a'..='f')
 }
@@ -92,6 +151,14 @@ pub fn Char::is_ascii_hexdigit(self : Self) -> Bool {
 ///|
 /// Checks if the value is an ASCII lowercase character:
 /// U+0061 'a' ..= U+007A 'z'.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   inspect('a'.is_ascii_lowercase(), content="true")
+///   inspect('A'.is_ascii_lowercase(), content="false")
+/// }
+/// ```
 pub fn Char::is_ascii_lowercase(self : Self) -> Bool {
   self is ('a'..='z')
 }
@@ -99,6 +166,14 @@ pub fn Char::is_ascii_lowercase(self : Self) -> Bool {
 ///|
 /// Checks if the value is an ASCII octal digit:
 /// U+0030 '0' ..= U+0037 '7'
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   inspect('7'.is_ascii_octdigit(), content="true")
+///   inspect('8'.is_ascii_octdigit(), content="false")
+/// }
+/// ```
 pub fn Char::is_ascii_octdigit(self : Self) -> Bool {
   self is ('0'..='7')
 }
@@ -109,6 +184,14 @@ pub fn Char::is_ascii_octdigit(self : Self) -> Bool {
 /// - U+003A ..= U+0040 : ; < = > ? @
 /// - U+005B ..= U+0060 [ \ ] ^ _ `
 /// - U+007B ..= U+007E { | } ~
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   inspect(','.is_ascii_punctuation(), content="true")
+///   inspect('A'.is_ascii_punctuation(), content="false")
+/// }
+/// ```
 pub fn Char::is_ascii_punctuation(self : Self) -> Bool {
   self
   is ('\u{21}'..='\u{2F}'
@@ -120,6 +203,14 @@ pub fn Char::is_ascii_punctuation(self : Self) -> Bool {
 ///|
 /// Checks if the value is an ASCII uppercase character:
 /// U+0041 'A' ..= U+005A 'Z'
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   inspect('Z'.is_ascii_uppercase(), content="true")
+///   inspect('z'.is_ascii_uppercase(), content="false")
+/// }
+/// ```
 pub fn Char::is_ascii_uppercase(self : Self) -> Bool {
   self is ('A'..='Z')
 }
@@ -127,12 +218,28 @@ pub fn Char::is_ascii_uppercase(self : Self) -> Bool {
 ///|
 /// Checks if the value is an ASCII whitespace character:
 /// U+0020 SPACE, U+0009 HORIZONTAL TAB, U+000A LINE FEED, U+000B VERTICAL TAB, U+000C FORM FEED, or U+000D CARRIAGE RETURN.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   inspect('\t'.is_ascii_whitespace(), content="true")
+///   inspect('A'.is_ascii_whitespace(), content="false")
+/// }
+/// ```
 pub fn Char::is_ascii_whitespace(self : Self) -> Bool {
   self is ('\u{20}' | '\u{09}' | '\u{0A}' | '\u{0B}' | '\u{0C}' | '\u{0D}')
 }
 
 ///|
 /// Returns true if this char has the general category for control codes.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   inspect('\u{0000}'.is_control(), content="true")
+///   inspect('A'.is_control(), content="false")
+/// }
+/// ```
 pub fn Char::is_control(self : Self) -> Bool {
   self is ('\u0000'..='\u001F' | '\u007F'..='\u009F')
 }
@@ -141,6 +248,14 @@ pub fn Char::is_control(self : Self) -> Bool {
 /// Checks if a char is a digit in the given radix (range from 2 to 36).
 /// 
 /// panic if the radix is invalid.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   inspect('f'.is_digit(16U), content="true")
+///   inspect('g'.is_digit(16U), content="false")
+/// }
+/// ```
 pub fn Char::is_digit(self : Self, radix : UInt) -> Bool {
   let v = self.to_uint()
   match radix {
@@ -155,6 +270,14 @@ pub fn Char::is_digit(self : Self, radix : UInt) -> Bool {
 
 ///|
 /// Returns true if this char has the White_Space property.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   inspect(' '.is_whitespace(), content="true")
+///   inspect('A'.is_whitespace(), content="false")
+/// }
+/// ```
 pub fn Char::is_whitespace(self : Self) -> Bool {
   self
   is ('\u0009'..='\u000D'
@@ -172,6 +295,14 @@ pub fn Char::is_whitespace(self : Self) -> Bool {
 
 ///|
 /// Returns true if this char has one of the general categories for numbers.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   inspect('9'.is_numeric(), content="true")
+///   inspect('A'.is_numeric(), content="false")
+/// }
+/// ```
 pub fn Char::is_numeric(self : Self) -> Bool {
   self
   is ('\u0030'..='\u0039'
@@ -336,6 +467,14 @@ pub fn Char::is_numeric(self : Self) -> Bool {
 /// - Private use (Co)
 /// - Unassigned (Cn)
 /// - Surrogates (Cs)
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   inspect('A'.is_printable(), content="true")
+///   inspect('\u{7F}'.is_printable(), content="false")
+/// }
+/// ```
 pub fn Char::is_printable(self : Self) -> Bool {
   // Check for control characters (Cc)
   if self.is_control() {
@@ -412,6 +551,14 @@ pub fn Char::is_printable(self : Self) -> Bool {
 /// Makes a copy of the value in its ASCII lower case equivalent.
 /// ASCII letters 'A' to 'Z' are mapped to 'a' to 'z',
 /// but non-ASCII letters are unchanged.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   inspect('A'.to_ascii_lowercase(), content="a")
+///   inspect('λ'.to_ascii_lowercase(), content="λ")
+/// }
+/// ```
 pub fn Char::to_ascii_lowercase(self : Self) -> Char {
   if self.is_ascii_uppercase() {
     return (self.to_int() + 32).unsafe_to_char()
@@ -423,6 +570,14 @@ pub fn Char::to_ascii_lowercase(self : Self) -> Char {
 /// Makes a copy of the value in its ASCII upper case equivalent.
 /// ASCII letters 'a' to 'z' are mapped to 'A' to 'Z',
 /// but non-ASCII letters are unchanged.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   inspect('a'.to_ascii_uppercase(), content="A")
+///   inspect('λ'.to_ascii_uppercase(), content="λ")
+/// }
+/// ```
 pub fn Char::to_ascii_uppercase(self : Self) -> Char {
   if self.is_ascii_lowercase() {
     return (self.to_int() - 32).unsafe_to_char()
@@ -431,7 +586,14 @@ pub fn Char::to_ascii_uppercase(self : Self) -> Char {
 }
 
 ///|
-/// Convert Char to String
+/// Convert Char to String.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   inspect('a'.to_string(), content="a")
+/// }
+/// ```
 pub impl Show for Char with to_string(self : Char) -> String {
   char_to_string(self)
 }
@@ -483,6 +645,20 @@ fn char_to_string(char : Char) -> String {
 /// - Special escape: `'\n'` displays as `'\n'`  
 /// - Non-printable: `'\u{0}'` displays as `'\u{0}'`
 /// - Emoji: `'\u{1F600}'` displays as `'\u{1f600}'`
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   fn repr(c : Char) -> String {
+///     let buf = StringBuilder::new(size_hint=0)
+///     Show::output(c, buf)
+///     buf.to_string()
+///   }
+///
+///   inspect(repr('A'), content="'A'")
+///   inspect(repr('\n'), content="'\\n'")
+/// }
+/// ```
 pub impl Show for Char with output(self, logger) {
 
   // Start with opening single quote
@@ -517,6 +693,14 @@ pub impl Show for Char with output(self, logger) {
 }
 
 ///|
+/// Converts a `Char` into a JSON string value.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   inspect(ToJson::to_json('a'), content="String(\"a\")")
+/// }
+/// ```
 pub impl ToJson for Char with to_json(self : Char) -> Json {
   Json::string(self.to_string())
 }

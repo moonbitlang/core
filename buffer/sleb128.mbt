@@ -60,6 +60,25 @@ pub impl Leb128 for Int64 with output(self, buffer) {
 }
 
 ///|
+/// Writes a signed or unsigned integer in LEB128 encoding.
+///
+/// Supported types include `Int`, `Int64`, `UInt`, and `UInt64`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let buf = @buffer.new()
+///   let value : UInt = (624485).reinterpret_as_uint()
+///   buf.write_leb128(value)
+///   inspect(
+///     buf.contents(),
+///     content=(
+///       #|b"\xe5\x8e&"
+///     ),
+///   )
+/// }
+/// ```
 pub fn[A : Leb128] Buffer::write_leb128(buffer : Buffer, value : A) -> Unit {
   value.output(buffer)
 }

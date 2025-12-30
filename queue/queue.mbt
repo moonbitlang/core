@@ -19,7 +19,7 @@
 /// ```mbt check
 /// test {
 ///   let queue : @queue.Queue[Int] = @queue.new()
-///   assert_eq(queue.length(), 0)
+///   inspect(queue.length(), content="0")
 /// }
 /// ```
 #as_free_fn
@@ -35,7 +35,7 @@ pub fn[A] Queue::new() -> Queue[A] {
 /// test {
 ///   let array = Array::makei(3, idx => idx + 1)
 ///   let queue : @queue.Queue[Int] = @queue.from_array(array)
-///   assert_eq(queue.length(), 3)
+///   inspect(queue.length(), content="3")
 /// }
 /// ```
 #as_free_fn
@@ -54,13 +54,31 @@ pub fn[A] Queue::from_array(arr : ArrayView[A]) -> Queue[A] {
 }
 
 ///|
+/// Formats a queue using the same shape as `@queue.from_array`.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let queue : @queue.Queue[Int] = @queue.from_array([1, 2, 3])
+///   inspect(queue, content="@queue.from_array([1, 2, 3])")
+/// }
+/// ```
 pub impl[A : Show] Show for Queue[A] with output(self, logger) {
   logger.write_iter(self.iter(), prefix="@queue.from_array([", suffix="])")
 }
 
 ///|
 /// Tests if two queues are equal.
-impl[A : Eq] Eq for Queue[A] with equal(self, other) {
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let left : @queue.Queue[Int] = @queue.from_array([1, 2, 3])
+///   let right : @queue.Queue[Int] = @queue.from_array([1, 2, 3])
+///   inspect(left == right, content="true")
+/// }
+/// ```
+pub impl[A : Eq] Eq for Queue[A] with equal(self, other) {
   self.length == other.length && self.first == other.first
 }
 
@@ -72,6 +90,7 @@ impl[A : Eq] Eq for Queue[A] with equal(self, other) {
 /// test {
 ///   let queue : @queue.Queue[Int] = @queue.from_array([1, 2, 3, 4])
 ///   queue.clear()
+///   inspect(queue.length(), content="0")
 /// }
 /// ```
 pub fn[A] Queue::clear(self : Queue[A]) -> Unit {
@@ -87,7 +106,7 @@ pub fn[A] Queue::clear(self : Queue[A]) -> Unit {
 /// ```mbt check
 /// test {
 ///   let queue : @queue.Queue[Int] = @queue.new()
-///   assert_eq(queue.length(), 0)
+///   inspect(queue.length(), content="0")
 /// }
 /// ```
 pub fn[A] Queue::length(self : Queue[A]) -> Int {
@@ -101,7 +120,7 @@ pub fn[A] Queue::length(self : Queue[A]) -> Int {
 /// ```mbt check
 /// test {
 ///   let queue : @queue.Queue[Int] = @queue.new()
-///   assert_true(queue.is_empty())
+///   inspect(queue.is_empty(), content="true")
 /// }
 /// ```
 pub fn[A] Queue::is_empty(self : Queue[A]) -> Bool {
@@ -116,6 +135,7 @@ pub fn[A] Queue::is_empty(self : Queue[A]) -> Bool {
 /// test {
 ///   let queue : @queue.Queue[Int] = @queue.new()
 ///   queue.push(1)
+///   inspect(queue.peek(), content="Some(1)")
 /// }
 /// ```
 pub fn[A] Queue::push(self : Queue[A], x : A) -> Unit {
@@ -161,7 +181,7 @@ pub fn[A] Queue::unsafe_peek(self : Queue[A]) -> A {
 /// ```mbt check
 /// test {
 ///   let queue : @queue.Queue[Int] = @queue.from_array([1, 2, 3, 4])
-///   assert_eq(queue.peek(), Some(1))
+///   inspect(queue.peek(), content="Some(1)")
 /// }
 /// ```
 pub fn[A] Queue::peek(self : Queue[A]) -> A? {
@@ -206,7 +226,7 @@ pub fn[A] Queue::unsafe_pop(self : Queue[A]) -> A {
 /// ```mbt check
 /// test {
 ///   let queue : @queue.Queue[Int] = @queue.from_array([1, 2, 3, 4])
-///   assert_eq(queue.pop(), Some(1))
+///   inspect(queue.pop(), content="Some(1)")
 /// }
 /// ```
 pub fn[A] Queue::pop(self : Queue[A]) -> A? {
@@ -233,6 +253,7 @@ pub fn[A] Queue::pop(self : Queue[A]) -> A? {
 ///   let queue : @queue.Queue[Int] = @queue.from_array([1, 2, 3, 4])
 ///   let mut sum = 0
 ///   queue.each(x => sum = sum + x)
+///   inspect(sum, content="10")
 /// }
 /// ```
 pub fn[A] Queue::each(self : Queue[A], f : (A) -> Unit) -> Unit {
@@ -254,6 +275,7 @@ pub fn[A] Queue::each(self : Queue[A], f : (A) -> Unit) -> Unit {
 ///   let queue : @queue.Queue[Int] = @queue.from_array([1, 2, 3, 4])
 ///   let mut sum = 0
 ///   queue.eachi((i, x) => sum = sum + i * x)
+///   inspect(sum, content="20")
 /// }
 /// ```
 pub fn[A] Queue::eachi(self : Queue[A], f : (Int, A) -> Unit) -> Unit {
@@ -274,7 +296,7 @@ pub fn[A] Queue::eachi(self : Queue[A], f : (Int, A) -> Unit) -> Unit {
 /// test {
 ///   let queue : @queue.Queue[Int] = @queue.new()
 ///   let sum = queue.fold(init=0, (acc, x) => acc + x)
-///   assert_eq(sum, 0)
+///   inspect(sum, content="0")
 /// }
 /// ```
 pub fn[A, B] Queue::fold(self : Queue[A], init~ : B, f : (B, A) -> B) -> B {
@@ -292,7 +314,7 @@ pub fn[A, B] Queue::fold(self : Queue[A], init~ : B, f : (B, A) -> B) -> B {
 /// test {
 ///   let queue : @queue.Queue[Int] = @queue.from_array([1, 2, 3, 4])
 ///   let queue2 : @queue.Queue[Int] = queue.copy()
-///   assert_eq(queue2.length(), 4)
+///   inspect(queue2 == queue, content="true")
 /// }
 /// ```
 pub fn[A] Queue::copy(self : Queue[A]) -> Queue[A] {
@@ -321,6 +343,8 @@ pub fn[A] Queue::copy(self : Queue[A]) -> Queue[A] {
 ///   let dst : @queue.Queue[Int] = @queue.new()
 ///   let src : @queue.Queue[Int] = @queue.from_array([5, 6, 7, 8])
 ///   src.transfer(dst)
+///   inspect(src.length(), content="0")
+///   inspect(dst.peek(), content="Some(5)")
 /// }
 /// ```
 pub fn[A] Queue::transfer(self : Queue[A], dst : Queue[A]) -> Unit {
@@ -353,7 +377,7 @@ pub fn[A] Queue::transfer(self : Queue[A], dst : Queue[A]) -> Unit {
 /// test {
 ///   let queue : @queue.Queue[Int] = @queue.from_array([5, 6, 7, 8])
 ///   let sum = queue.iter().fold((x, y) => x + y, init=0)
-///   assert_eq(sum, 26)
+///   inspect(sum, content="26")
 /// }
 /// ```
 pub fn[A] Queue::iter(self : Queue[A]) -> Iter[A] {
@@ -368,7 +392,7 @@ pub fn[A] Queue::iter(self : Queue[A]) -> Iter[A] {
 /// test {
 ///   let queue : @queue.Queue[Int] = @queue.from_array([5, 6, 7, 8])
 ///   let sum = queue.iterator().fold((x, y) => x + y, init=0)
-///   assert_eq(sum, 26)
+///   inspect(sum, content="26")
 /// }
 /// ```
 pub fn[A] Queue::iterator(self : Queue[A]) -> Iterator[A] {
@@ -391,7 +415,7 @@ pub fn[A] Queue::iterator(self : Queue[A]) -> Iterator[A] {
 /// ```mbt check
 /// test {
 ///   let queue : @queue.Queue[Int] = @queue.from_iter(Iter::empty())
-///   assert_eq(queue.length(), 0)
+///   inspect(queue.length(), content="0")
 /// }
 /// ```
 #as_free_fn
@@ -408,7 +432,7 @@ pub fn[A] Queue::from_iter(iter : Iter[A]) -> Queue[A] {
 /// ```mbt check
 /// test {
 ///   let queue : @queue.Queue[Int] = @queue.from_iterator(Iterator::empty())
-///   assert_eq(queue.length(), 0)
+///   inspect(queue.length(), content="0")
 /// }
 /// ```
 #as_free_fn
@@ -487,6 +511,7 @@ test "cell_equal" {
 }
 
 ///|
+/// Generates random queues for QuickCheck properties.
 pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Queue[X] with arbitrary(
   size,
   rs,

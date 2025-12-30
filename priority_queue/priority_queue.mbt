@@ -55,6 +55,7 @@ pub fn[A : Compare] PriorityQueue::from_array(
 }
 
 ///|
+/// Creates a deep copy of a node chain.
 fn[A] copy_node(x : Node[A]?) -> Node[A]? {
   match x {
     None => None
@@ -84,6 +85,17 @@ pub fn[A] PriorityQueue::copy(self : PriorityQueue[A]) -> PriorityQueue[A] {
 }
 
 ///|
+/// Collects all elements into an array in descending priority order.
+///
+/// The queue itself is not modified.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let queue = @priority_queue.from_array([3, 1, 2])
+///   inspect(queue.to_array(), content="[3, 2, 1]")
+/// }
+/// ```
 pub fn[A : Compare] PriorityQueue::to_array(
   self : PriorityQueue[A],
 ) -> Array[A] {
@@ -105,11 +117,32 @@ pub fn[A : Compare] PriorityQueue::to_array(
 }
 
 ///|
+/// Returns an iterator that yields elements from highest to lowest priority.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let queue = @priority_queue.from_array([3, 1, 2])
+///   inspect(queue.iter(), content="[3, 2, 1]")
+/// }
+/// ```
 pub fn[A : Compare] PriorityQueue::iter(self : PriorityQueue[A]) -> Iter[A] {
   self.iterator().iter()
 }
 
 ///|
+/// Returns an `Iterator` over elements from highest to lowest priority.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let queue = @priority_queue.from_array([3, 1, 2])
+///   let iter = queue.iterator()
+///   inspect(iter.next(), content="Some(3)")
+///   inspect(iter.next(), content="Some(2)")
+///   inspect(iter.next(), content="Some(1)")
+/// }
+/// ```
 pub fn[A : Compare] PriorityQueue::iterator(
   self : PriorityQueue[A],
 ) -> Iterator[A] {
@@ -126,6 +159,15 @@ pub impl[A : ToJson + Compare] ToJson for PriorityQueue[A] with to_json(self) {
 }
 
 ///|
+/// Creates a priority queue from an `Iter`.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let queue = @priority_queue.from_iter([1, 3, 2].iter())
+///   inspect(queue.peek(), content="Some(3)")
+/// }
+/// ```
 #as_free_fn
 pub fn[K : Compare] PriorityQueue::from_iter(
   iter : Iter[K],
@@ -136,6 +178,15 @@ pub fn[K : Compare] PriorityQueue::from_iter(
 }
 
 ///|
+/// Creates a priority queue from an `Iterator`.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let queue = @priority_queue.from_iterator([1, 3, 2].iterator())
+///   inspect(queue.peek(), content="Some(3)")
+/// }
+/// ```
 #as_free_fn
 pub fn[K : Compare] PriorityQueue::from_iterator(
   iter : Iterator[K],
@@ -148,6 +199,7 @@ pub fn[K : Compare] PriorityQueue::from_iterator(
 }
 
 ///|
+/// Merges two pairing heap roots into one.
 fn[A : Compare] meld(x : Node[A], y : Node[A]) -> Node[A] {
   if x.content > y.content {
     y.sibling = x.child
@@ -161,6 +213,7 @@ fn[A : Compare] meld(x : Node[A], y : Node[A]) -> Node[A] {
 }
 
 ///|
+/// Performs pairwise merging of a sibling list into a single heap.
 fn[A : Compare] merges(x : Node[A]?) -> Node[A]? {
   let (x, acc) = match x {
     None => return None
@@ -183,6 +236,15 @@ fn[A : Compare] merges(x : Node[A]?) -> Node[A]? {
 }
 
 ///|
+/// Returns the number of elements in the priority queue.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let queue = @priority_queue.from_array([1, 2, 3])
+///   inspect(queue.length(), content="3")
+/// }
+/// ```
 pub fn[A] PriorityQueue::length(self : PriorityQueue[A]) -> Int {
   self.len
 }

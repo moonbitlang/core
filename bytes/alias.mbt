@@ -32,7 +32,14 @@
 pub type View = BytesView
 
 ///|
-/// same as `Bytes::default`
+/// Return an empty `Bytes` value.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   inspect(@bytes.default(), content="b\"\"")
+/// }
+/// ```
 pub fn default() -> Bytes {
   b""
 }

@@ -13,9 +13,11 @@
 // limitations under the License.
 
 ///|
+/// Wrapper type to expose internal `BigInt` fields for snapshot tests.
 struct MyBigInt(BigInt)
 
 ///|
+/// Renders the internal limb layout for snapshot inspection.
 impl Show for MyBigInt with output(self, logger) {
   logger.write_string(
     "{limbs : \{self.limbs}, sign : \{self.sign}, len : \{self.len} }",
@@ -23,6 +25,7 @@ impl Show for MyBigInt with output(self, logger) {
 }
 
 ///|
+/// Pretty-prints the internal `Sign` enum for snapshots.
 impl Show for Sign with output(self, logger) {
   match self {
     Positive => logger.write_string("Positive")
@@ -57,6 +60,7 @@ test "debug_string" {
 }
 
 ///|
+/// Asserts `BigInt` internal invariants for white-box tests.
 fn check_invariant(a : BigInt) -> Unit raise {
   guard a.len > 0 else { fail("invariant len > 0 is broken: len = \{a.len}") }
   for i in 0..<a.len {

@@ -13,12 +13,21 @@
 // limitations under the License.
 
 ///|
+/// Provides a `Show` implementation that renders references as `{val: ...}`.
 pub impl[X : Show] Show for Ref[X] with output(self, logger) {
   logger..write_string("{val: ")..write_object(self.val)..write_string("}")
 }
 
 ///|
-/// create a reference from value
+/// Creates a reference from a value.
+///
+/// # Example
+///
+/// ```mbt check
+/// test {
+///   inspect(@ref.new(3).val, content="3")
+/// }
+/// ```
 pub fn[T] Ref::new(x : T) -> Ref[T] {
   { val: x }
 }
@@ -29,7 +38,17 @@ test "to_string" {
 }
 
 ///|
-/// same as `Ref::new`
+/// Creates a reference from a value.
+///
+/// Same as `Ref::new`.
+///
+/// # Example
+///
+/// ```mbt check
+/// test {
+///   inspect(@ref.new("ok").val, content="ok")
+/// }
+/// ```
 pub fn[T] new(x : T) -> Ref[T] {
   { val: x }
 }
@@ -118,6 +137,17 @@ test "swap" {
 }
 
 ///|
+/// Updates the value of a reference using a function.
+///
+/// # Example
+///
+/// ```mbt check
+/// test {
+///   let x = @ref.new(1)
+///   x.update(a => a + 2)
+///   inspect(x.val, content="3")
+/// }
+/// ```
 pub fn[T] Ref::update(self : Ref[T], f : (T) -> T raise?) -> Unit raise? {
   self.val = f(self.val)
 }

@@ -13,49 +13,67 @@
 // limitations under the License.
 
 ///|
+/// Smallest representable `UInt` value.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   inspect(@uint.min_value, content="0")
+/// }
+/// ```
 pub let min_value : UInt = 0U
 
 ///|
+/// Largest representable `UInt` value.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   inspect(@uint.max_value, content="4294967295")
+/// }
+/// ```
 pub let max_value : UInt = 4294967295U
 
 ///|
+/// Reinterprets the `UInt` bits as an `Int64`.
+///
+/// Values larger than `Int64::max_value` become negative because the
+/// underlying bits are preserved.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   inspect(123U.to_int64(), content="123")
+/// }
+/// ```
 pub fn UInt::to_int64(self : UInt) -> Int64 {
   self.to_uint64().reinterpret_as_int64()
 }
 
 ///|
+/// Default value for `UInt` is `0`.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   inspect(UInt::default(), content="0")
+/// }
+/// ```
 pub impl Default for UInt with default() {
   0
 }
 
 ///|
-/// same as `UInt::default`
+/// Returns the default `UInt` value.
+///
+/// Same as `UInt::default()`.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   inspect(@uint.default(), content="0")
+/// }
+/// ```
 pub fn default() -> UInt {
   0
-}
-
-///|
-/// Converts the UInt to a Bytes in big-endian byte order.
-#deprecated
-#doc(hidden)
-pub fn UInt::to_be_bytes(self : UInt) -> Bytes {
-  [
-    (self >> 24).to_byte(),
-    (self >> 16).to_byte(),
-    (self >> 8).to_byte(),
-    self.to_byte(),
-  ]
-}
-
-///|
-/// Converts the UInt to a Bytes in little-endian byte order.
-#deprecated
-#doc(hidden)
-pub fn UInt::to_le_bytes(self : UInt) -> Bytes {
-  [
-    self.to_byte(),
-    (self >> 8).to_byte(),
-    (self >> 16).to_byte(),
-    (self >> 24).to_byte(),
-  ]
 }

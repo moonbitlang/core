@@ -16,6 +16,20 @@
 // Please refer to https://github.com/rust-lang/rust/blob/a19472a93e2eecce1477011fa9f7ec49b45ca164/library/test/src/stats.rs
 
 ///|
+/// Statistical summary for a benchmark run.
+///
+/// Values are in microseconds per iteration.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let summary = @bench.single_bench(() => ignore(1 + 1), count=2)
+///   let json = summary
+///     .to_json()
+///     .stringify(replacer=@json.Replacer::keep(["runs"]))
+///   inspect(json, content="{\"runs\":2}")
+/// }
+/// ```
 struct Summary {
   name : String?
   sum : Double
@@ -35,6 +49,7 @@ struct Summary {
 } derive(ToJson)
 
 ///|
+/// Build a summary from sorted sample data.
 fn Summary::new(
   name? : String,
   sorted_data~ : Array[Double],
@@ -72,6 +87,7 @@ fn Summary::new(
 }
 
 ///|
+/// Sum all samples.
 fn sum(data : Array[Double]) -> Double {
   let mut sum = 0.0
   for i in data {
@@ -81,27 +97,32 @@ fn sum(data : Array[Double]) -> Double {
 }
 
 ///|
+/// Minimum of sorted samples.
 fn min(sorted_data~ : Array[Double]) -> Double {
   sorted_data[0]
 }
 
 ///|
+/// Maximum of sorted samples.
 fn max(sorted_data~ : Array[Double]) -> Double {
   sorted_data[sorted_data.length() - 1]
 }
 
 ///|
+/// Mean of samples.
 fn mean(data : Array[Double], sum~ : Double) -> Double {
   let count = data.length()
   sum / count.to_double()
 }
 
 ///|
+/// Median of sorted samples.
 fn median(sorted_data~ : Array[Double]) -> Double {
   percentile(sorted_data~, pct=50.0)
 }
 
 ///|
+/// Sample variance of samples.
 fn variance(data : Array[Double], mean~ : Double) -> Double {
   if data.length() < 2 {
     return 0.0
@@ -115,11 +136,13 @@ fn variance(data : Array[Double], mean~ : Double) -> Double {
 }
 
 ///|
+/// Standard deviation from variance.
 fn std_dev(variance~ : Double) -> Double {
   variance.sqrt()
 }
 
 ///|
+/// Standard deviation as a percentage of the mean.
 fn std_dev_pct(mean~ : Double, std_dev~ : Double) -> Double {
   if mean == 0.0 {
     return 0.0
@@ -128,6 +151,7 @@ fn std_dev_pct(mean~ : Double, std_dev~ : Double) -> Double {
 }
 
 ///|
+/// Median absolute deviation (MAD) of samples.
 fn median_abs_dev(data : Array[Double], median_~ : Double) -> Double {
   let abs_devs = data.map(x => (median_ - x).abs())
   abs_devs.sort()
@@ -136,6 +160,7 @@ fn median_abs_dev(data : Array[Double], median_~ : Double) -> Double {
 }
 
 ///|
+/// Median absolute deviation as a percentage of the median.
 fn median_abs_dev_pct(median~ : Double, median_abs_dev~ : Double) -> Double {
   if median == 0.0 {
     return 0.0
@@ -144,6 +169,7 @@ fn median_abs_dev_pct(median~ : Double, median_abs_dev~ : Double) -> Double {
 }
 
 ///|
+/// First, second, and third quartiles for sorted samples.
 fn quartiles(sorted_data~ : Array[Double]) -> (Double, Double, Double) {
   let q1 = percentile(sorted_data~, pct=25.0)
   let q2 = percentile(sorted_data~, pct=50.0)
@@ -152,12 +178,14 @@ fn quartiles(sorted_data~ : Array[Double]) -> (Double, Double, Double) {
 }
 
 ///|
+/// Interquartile range (IQR) for quartiles.
 fn iqr(quartiles~ : (Double, Double, Double)) -> Double {
   let (q1, _, q3) = quartiles
   q3 - q1
 }
 
 ///|
+/// Percentile for sorted samples using linear interpolation.
 fn percentile(sorted_data~ : Array[Double], pct~ : Double) -> Double {
   guard sorted_data.length() > 0
   guard pct >= 0.0 && pct <= 100.0
@@ -178,6 +206,7 @@ fn percentile(sorted_data~ : Array[Double], pct~ : Double) -> Double {
 }
 
 ///|
+/// Winsorize samples in place at `pct` and `100 - pct`.
 fn winsorize(sorted_data~ : Array[Double], pct : Double) -> Unit {
   let lo = percentile(sorted_data~, pct~)
   let hi = percentile(sorted_data~, pct=100.0 - pct)

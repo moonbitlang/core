@@ -13,16 +13,47 @@
 // limitations under the License.
 
 ///|
+/// Opaque timestamp returned by `monotonic_clock_start`.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let ts = @bench.monotonic_clock_start()
+///   let elapsed = @bench.monotonic_clock_end(ts)
+///   inspect(elapsed >= 0.0, content="true")
+/// }
+/// ```
 #external
 type Timestamp
 
 ///|
+/// Return elapsed seconds for a monotonic timestamp.
 fn instant_elapsed_as_secs_f64(x : Timestamp) -> Double = "__moonbit_time_unstable" "instant_elapsed_as_secs_f64"
 
 ///|
+/// Return a monotonic clock timestamp.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let ts = @bench.monotonic_clock_start()
+///   let elapsed = @bench.monotonic_clock_end(ts)
+///   inspect(elapsed >= 0.0, content="true")
+/// }
+/// ```
 pub fn monotonic_clock_start() -> Timestamp = "__moonbit_time_unstable" "instant_now"
 
 ///|
+/// Compute elapsed microseconds from a monotonic timestamp.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let ts = @bench.monotonic_clock_start()
+///   let elapsed = @bench.monotonic_clock_end(ts)
+///   inspect(elapsed >= 0.0, content="true")
+/// }
+/// ```
 pub fn monotonic_clock_end(ts : Timestamp) -> Double {
   let elapsed_secs : Double = instant_elapsed_as_secs_f64(ts)
   elapsed_secs * 1000000.0

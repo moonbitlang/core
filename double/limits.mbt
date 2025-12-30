@@ -13,19 +13,69 @@
 // limitations under the License.
 
 ///|
+/// A quiet NaN (not-a-number) value for `Double`.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   inspect(@double.not_a_number.is_nan(), content="true")
+/// }
+/// ```
 pub let not_a_number : Double = 0x7FF8000000000001L.reinterpret_as_double()
 
 ///|
+/// Positive infinity for `Double`.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   inspect(@double.infinity.is_pos_inf(), content="true")
+/// }
+/// ```
 pub let infinity : Double = 0x7FF0000000000000L.reinterpret_as_double()
 
 ///|
+/// Negative infinity for `Double`.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   inspect(@double.neg_infinity.is_neg_inf(), content="true")
+/// }
+/// ```
 pub let neg_infinity : Double = 0xFFF0000000000000L.reinterpret_as_double()
 
 ///|
+/// The largest finite `Double` value.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   inspect(@double.max_value.is_inf(), content="false")
+///   inspect(@double.max_value > 0.0, content="true")
+/// }
+/// ```
 pub let max_value : Double = 0x7FEFFFFFFFFFFFFFL.reinterpret_as_double()
 
 ///|
+/// The most negative finite `Double` value.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   inspect(@double.min_value.is_inf(), content="false")
+///   inspect(@double.min_value < 0.0, content="true")
+/// }
+/// ```
 pub let min_value : Double = 0xFFEFFFFFFFFFFFFFL.reinterpret_as_double()
 
 ///|
+/// The smallest positive normal `Double` value.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   inspect(@double.min_positive > 0.0, content="true")
+/// }
+/// ```
 pub let min_positive : Double = 0x0010000000000000L.reinterpret_as_double()

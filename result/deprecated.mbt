@@ -19,11 +19,13 @@ pub fn[T, E] ok(value : T) -> Result[T, E] {
 }
 
 ///|
+///|
 #deprecated("Use `Err(value)` instead")
 pub fn[T, E] err(value : E) -> Result[T, E] {
   Err(value)
 }
 
+///|
 ///|
 #deprecated("use `x is Ok(_)` instead")
 pub fn[T, E] Result::is_ok(self : Result[T, E]) -> Bool {
@@ -31,11 +33,13 @@ pub fn[T, E] Result::is_ok(self : Result[T, E]) -> Bool {
 }
 
 ///|
+///|
 #deprecated("use `x is Err(_)` instead")
 pub fn[T, E] Result::is_err(self : Result[T, E]) -> Bool {
   self is Err(_)
 }
 
+///|
 ///|
 #deprecated("use `match result { Ok(value) => ok(value); Err(error) => err(error) }` instead")
 pub fn[T, E, V] Result::fold(

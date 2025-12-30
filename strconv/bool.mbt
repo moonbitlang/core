@@ -14,6 +14,17 @@
 
 ///|
 /// Parse a string and return the represented boolean value or an error.
+/// Accepted true values: "1", "t", "T", "true", "TRUE", "True".
+/// Accepted false values: "0", "f", "F", "false", "FALSE", "False".
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   inspect(@strconv.parse_bool("true"), content="true")
+///   inspect(@strconv.parse_bool("FALSE"), content="false")
+///   inspect(try? @strconv.parse_bool("nope"), content="Err(invalid syntax)")
+/// }
+/// ```
 pub fn parse_bool(str : StringView) -> Bool raise StrConvError {
   match str {
     "1" | "t" | "T" | "true" | "TRUE" | "True" => true

@@ -13,6 +13,7 @@
 // limitations under the License.
 
 ///|
+/// Internal pairing heap node storing a value and links to sibling/child nodes.
 priv struct Node[A] {
   content : A
   mut sibling : Node[A]?
@@ -20,6 +21,18 @@ priv struct Node[A] {
 }
 
 ///|
+/// A max-heap priority queue implemented as a pairing heap.
+///
+/// Elements are ordered by the `Compare` trait; the greatest element is at the
+/// front by default.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let pq = @priority_queue.from_array([3, 1, 2])
+///   inspect(pq.peek(), content="Some(3)")
+/// }
+/// ```
 #alias(T, deprecated="Use PriorityQueue instead")
 struct PriorityQueue[A] {
   mut len : Int

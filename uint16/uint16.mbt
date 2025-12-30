@@ -13,9 +13,25 @@
 // limitations under the License.
 
 ///|
+/// Maximum value representable by `UInt16`.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   inspect(@uint16.max_value, content="65535")
+/// }
+/// ```
 pub let max_value : UInt16 = 65535
 
 ///|
+/// Minimum value representable by `UInt16`.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   inspect(@uint16.min_value, content="0")
+/// }
+/// ```
 pub let min_value : UInt16 = 0
 
 ///|

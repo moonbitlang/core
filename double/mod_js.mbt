@@ -40,6 +40,16 @@ extern "js" fn Double::mod_ffi(self : Double, other : Double) -> Double =
   #| (a, b) => (a % b)
 
 ///|
+/// Calculates the floating-point remainder when `self` is divided by `other`.
+/// See `Double::mod` for detailed behavior.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   inspect(5.0.mod(3.0), content="2")
+///   inspect((-5.0).mod(3.0), content="-2")
+/// }
+/// ```
 pub impl Mod for Double with mod(self, other) {
   self.mod_ffi(other)
 }

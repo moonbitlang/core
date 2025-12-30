@@ -13,6 +13,7 @@
 // limitations under the License.
 
 ///|
+/// Singly linked list cell used by `Queue`.
 priv struct Cons[A] {
   content : A
   mut next : Cons[A]?
@@ -28,6 +29,14 @@ priv struct Cons[A] {
 ///
 /// We keep both `first` and `last` so `pop` and `push` are O(1) without
 /// scanning the list.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let queue : @queue.Queue[Int] = @queue.from_array([1, 2, 3])
+///   inspect(queue.length(), content="3")
+/// }
+/// ```
 #alias(T, deprecated)
 struct Queue[A] {
   /// Number of elements in the queue.

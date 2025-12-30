@@ -19,9 +19,13 @@
 /// For example, to create a min-heap from a max-heap data structure, or to sort
 /// in descending order instead of ascending order.
 ///
+/// The wrapped value is accessible via `.0`. The `inner()` method is deprecated
+/// and kept only for compatibility.
+///
 /// # Examples
 ///
 /// ```mbt check
+/// #warnings("-deprecated")
 /// test {
 ///   let a = @cmp.Reverse(1)
 ///   let b = @cmp.Reverse(2)
@@ -29,11 +33,24 @@
 ///   inspect(b.compare(a), content="-1") // 2 < 1 in reversed order
 ///   inspect(a == a, content="true") // Equality works correctly
 ///   inspect(a.to_string(), content="Reverse(1)") // Shows wrapped value
+///   inspect(a.0, content="1")
+///   inspect(a.inner(), content="1")
 /// }
 /// ```
 pub(all) struct Reverse[T](T) derive(Eq, Show, Hash)
 
 ///|
+/// Compares two `Reverse` values by reversing the underlying order.
+///
+/// # Examples
+///
+/// ```mbt check
+/// test {
+///   let a = @cmp.Reverse(1)
+///   let b = @cmp.Reverse(2)
+///   inspect(a.compare(b), content="1")
+/// }
+/// ```
 pub impl[T : Compare] Compare for Reverse[T] with compare(a, b) {
   -a.0.compare(b.0)
 }
