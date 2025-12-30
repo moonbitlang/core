@@ -33,6 +33,17 @@ test "truncate zero" {
 }
 
 ///|
+/// Test from_array with empty array maintains invariant:
+/// When len == 0, head and tail should point to the same slot.
+test "from_array_empty_invariant" {
+  let dq : Deque[Int] = from_array([])
+  inspect(dq.len, content="0")
+  // Invariant: when empty, head == tail
+  // BUG: currently tail == -1, violating the invariant
+  assert_eq(dq.head, dq.tail)
+}
+
+///|
 test "weird behavior after drain" {
   let deque = new(capacity=16)
   deque.push_back(1)
