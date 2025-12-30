@@ -164,7 +164,9 @@ pub fn[A] Deque::from_array(arr : ArrayView[A]) -> Deque[A] {
   for i, x in arr {
     buf[i] = x
   }
-  Deque::{ buf, len, head: 0, tail: len - 1 }
+  // When empty, head and tail must point to the same slot (invariant)
+  let tail = if len > 0 { len - 1 } else { 0 }
+  Deque::{ buf, len, head: 0, tail }
 }
 
 ///|
