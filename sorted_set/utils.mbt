@@ -13,11 +13,13 @@
 // limitations under the License.
 
 ///|
+/// Node equality compares only values (used in tests).
 impl[V : Eq] Eq for Node[V] with equal(self, other) {
   self.value == other.value
 }
 
 ///|
+/// Return the maximum of two integers.
 fn max(x : Int, y : Int) -> Int {
   if x > y {
     x
@@ -27,6 +29,7 @@ fn max(x : Int, y : Int) -> Int {
 }
 
 ///|
+/// Return the height of a node, treating `None` as zero.
 fn[V] height(node : Node[V]?) -> Int {
   match node {
     None => 0
@@ -35,6 +38,7 @@ fn[V] height(node : Node[V]?) -> Int {
 }
 
 ///|
+/// Render a node and its subtree for debugging.
 fn[V : Show] Node::debug_node(self : Node[V]) -> String {
   let l = match self.left {
     Some(left) => left.debug_node()
@@ -50,6 +54,7 @@ fn[V : Show] Node::debug_node(self : Node[V]) -> String {
 }
 
 ///|
+/// Render the full tree for debugging.
 fn[V : Show] SortedSet::debug_tree(self : SortedSet[V]) -> String {
   match self.root {
     Some(root) => root.debug_node()

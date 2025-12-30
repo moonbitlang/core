@@ -13,6 +13,7 @@
 // limitations under the License.
 
 ///|
+/// Placeholder invariant check for the JS backend.
 fn check_invariant(_a : BigInt) -> Unit raise {
   assert_true(true)
 }

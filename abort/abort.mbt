@@ -13,16 +13,20 @@
 // limitations under the License.
 
 ///|
-/// Aborts the program with an error message. Always causes a panic, regardless
-/// of the message provided.
+/// Aborts the program with an error message and never returns.
 ///
-/// Parameters:
+/// On native targets, the message is printed before panicking. On other targets,
+/// the message is ignored.
 ///
-/// * `message` : A string containing the error message to be displayed when
-/// aborting.
+/// # Example
+/// ```mbt check
+/// test "panic abort" {
+///   ignore(abort("boom"))
+/// }
+/// ```
 ///
-/// Returns a value of type `T`. However, this function never actually returns a
-/// value as it always causes a panic.
+/// # Panics
+/// Always panics.
 #cfg(not(target="native"))
 pub fn[T] abort(msg : String) -> T {
   let _ = msg
@@ -31,19 +35,24 @@ pub fn[T] abort(msg : String) -> T {
 
 ///|
 #cfg(target="native")
+/// Prints a string to standard output on native targets.
 fn println(s : String) -> Unit = "%println"
 
 ///|
-/// Aborts the program with an error message. Always causes a panic, regardless
-/// of the message provided.
+/// Aborts the program with an error message and never returns.
 ///
-/// Parameters:
+/// On native targets, the message is printed before panicking. On other targets,
+/// the message is ignored.
 ///
-/// * `message` : A string containing the error message to be displayed when
-/// aborting.
+/// # Example
+/// ```mbt check
+/// test "panic abort" {
+///   ignore(abort("boom"))
+/// }
+/// ```
 ///
-/// Returns a value of type `T`. However, this function never actually returns a
-/// value as it always causes a panic.
+/// # Panics
+/// Always panics.
 #cfg(target="native")
 pub fn[T] abort(msg : String) -> T {
   println(msg)
@@ -51,4 +60,5 @@ pub fn[T] abort(msg : String) -> T {
 }
 
 ///|
+/// Panics unconditionally using the runtime intrinsic and never returns.
 fn[T] panic_impl() -> T = "%panic"

@@ -13,6 +13,18 @@
 // limitations under the License.
 
 ///|
+/// A snapshot test helper that accumulates output before comparison.
+///
+/// Use `Test::new` to create a value, then call `write`/`writeln` and
+/// `snapshot` to compare the buffer against the stored snapshot.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let t = @test.new("sample")
+///   inspect(t.name(), content="sample")
+/// }
+/// ```
 #alias(T, deprecated)
 struct Test {
   name : String
@@ -20,6 +32,15 @@ struct Test {
 }
 
 ///|
+/// Create a new snapshot test helper with the given name.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let t = @test.new("case")
+///   inspect(t.name(), content="case")
+/// }
+/// ```
 #as_free_fn
 pub fn Test::new(name : String) -> Test {
   { name, buffer: StringBuilder::new() }

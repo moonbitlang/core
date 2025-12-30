@@ -14,6 +14,7 @@
 
 ///|
 /// Zips two arrays into a single array by applying a function to each pair of elements.
+/// The result length is the minimum of the two input lengths.
 ///
 /// Parameters:
 ///
@@ -22,6 +23,7 @@
 /// * `merge` : A function that takes two arguments, one from each array, and returns a value.
 ///
 /// Returns an array containing the results of applying the function to each pair of elements.
+/// If `merge` raises, the error is propagated.
 ///
 /// Example:
 ///
@@ -31,6 +33,12 @@
 ///   let arr2 = [4, 5, 6]
 ///   let add = (a, b) => a + b
 ///   inspect(@array.zip_with(arr1, arr2, add), content="[5, 7, 9]")
+/// }
+///
+/// test "zip_with truncates to the shorter length" {
+///   let left = [1, 2, 3]
+///   let right = [10]
+///   inspect(@array.zip_with(left, right, (a, b) => a + b), content="[11]")
 /// }
 /// ```
 pub fn[A, B, C] zip_with(

@@ -13,6 +13,15 @@
 // limitations under the License.
 
 ///|
+/// Convert an error to its display string.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let error : Error = Failure("boom")
+///   inspect(error.to_string(), content="Failure(\"boom\")")
+/// }
+/// ```
 fn Error::to_string(self : Error) -> String = "%error.to_string"
 
 ///|
@@ -42,9 +51,21 @@ pub impl Show for Error with output(self, logger) {
 }
 
 ///|
+/// Convert an error to its JSON representation.
+///
+/// The JSON shape is the same as the underlying error type's `ToJson` encoding.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let error : Error = Failure("boom")
+///   @json.inspect(error.to_json(), content=["Failure", "boom"])
+/// }
+/// ```
 fn Error::to_json(self : Error) -> Json = "%error.to_json"
 
 ///|
+/// Implements `ToJson` for `Error` by delegating to `Error::to_json`.
 pub impl ToJson for Error with to_json(self) {
   self.to_json()
 }

@@ -22,18 +22,17 @@
 /// Buffer, since it is optimized for all targets.
 /// # Usage
 ///
-/// ```mbt
-///   let buf = @buffer.new(size_hint=100)
-///   buf.write_string("Tes")
-///   buf.write_char('t')
+/// ```mbt check
+/// test {
+///   let buf = @buffer.new(size_hint=8)
+///   buf.write_string("Test")
 ///   inspect(
-///     buf.contents(), 
+///     buf.contents(),
 ///     content=(
-///       
-///   #|b"T\x00e\x00s\x00t\x00"
-///
+///       #|b"T\x00e\x00s\x00t\x00"
 ///     ),
 ///   )
+/// }
 /// ```
 #alias(T, deprecated)
 struct Buffer {
@@ -132,7 +131,21 @@ pub fn new(size_hint? : Int = 0) -> Buffer {
 }
 
 ///|
-/// Create a buffer from a bytes.
+/// Creates a buffer containing a copy of `bytes`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let buf = @buffer.from_bytes(b"Hi")
+///   inspect(
+///     buf.contents(),
+///     content=(
+///       #|b"Hi"
+///     ),
+///   )
+/// }
+/// ```
 pub fn from_bytes(bytes : Bytes) -> Buffer {
   let val_len = bytes.length()
   let buf = new(size_hint=val_len)
@@ -144,7 +157,21 @@ pub fn from_bytes(bytes : Bytes) -> Buffer {
 }
 
 ///|
-/// Create a buffer from an array.
+/// Creates a buffer containing the bytes from `arr`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let buf = @buffer.from_array([0x41, 0x42])
+///   inspect(
+///     buf.contents(),
+///     content=(
+///       #|b"AB"
+///     ),
+///   )
+/// }
+/// ```
 pub fn from_array(arr : ArrayView[Byte]) -> Buffer {
   let buf = new(size_hint=arr.length())
   for byte in arr {
@@ -157,7 +184,21 @@ pub fn from_array(arr : ArrayView[Byte]) -> Buffer {
 }
 
 ///|
-/// Create a buffer from an iterator.
+/// Creates a buffer from an iterator of bytes.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let buf = @buffer.from_iter(b"Hi".iter())
+///   inspect(
+///     buf.contents(),
+///     content=(
+///       #|b"Hi"
+///     ),
+///   )
+/// }
+/// ```
 pub fn from_iter(iter : Iter[Byte]) -> Buffer {
   let buf = new()
   let mut capacity = buf.data.length()
@@ -778,7 +819,22 @@ pub fn Buffer::write_bytesview(self : Buffer, value : BytesView) -> Unit {
 }
 
 ///|
-/// Write a char into buffer as UTF8.
+/// Writes a single Unicode scalar value as UTF-8 bytes.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let buf = @buffer.new()
+///   buf.write_char_utf8('A')
+///   inspect(
+///     buf.contents(),
+///     content=(
+///       #|b"A"
+///     ),
+///   )
+/// }
+/// ```
 pub fn Buffer::write_char_utf8(buf : Self, value : Char) -> Unit {
   let code = value.to_uint()
   match code {
@@ -813,7 +869,22 @@ pub fn Buffer::write_char_utf8(buf : Self, value : Char) -> Unit {
 }
 
 ///|
-/// Write a char into buffer as UTF16LE.
+/// Writes a single Unicode scalar value as UTF-16LE bytes.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let buf = @buffer.new()
+///   buf.write_char_utf16le('A')
+///   inspect(
+///     buf.contents(),
+///     content=(
+///       #|b"A\x00"
+///     ),
+///   )
+/// }
+/// ```
 pub fn Buffer::write_char_utf16le(buf : Self, value : Char) -> Unit {
   let code = value.to_uint()
   if code < 0x10000 {
@@ -837,7 +908,22 @@ pub fn Buffer::write_char_utf16le(buf : Self, value : Char) -> Unit {
 }
 
 ///|
-/// Write a char into buffer as UTF16BE.
+/// Writes a single Unicode scalar value as UTF-16BE bytes.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let buf = @buffer.new()
+///   buf.write_char_utf16be('A')
+///   inspect(
+///     buf.contents(),
+///     content=(
+///       #|b"\x00A"
+///     ),
+///   )
+/// }
+/// ```
 pub fn Buffer::write_char_utf16be(buf : Self, value : Char) -> Unit {
   let code = value.to_uint()
   if code < 0x10000 {
@@ -861,6 +947,22 @@ pub fn Buffer::write_char_utf16be(buf : Self, value : Char) -> Unit {
 }
 
 ///|
+/// Writes a string as UTF-8 bytes.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let buf = @buffer.new()
+///   buf.write_string_utf8("Hi")
+///   inspect(
+///     buf.contents(),
+///     content=(
+///       #|b"Hi"
+///     ),
+///   )
+/// }
+/// ```
 pub fn Buffer::write_string_utf8(buf : Self, string : StringView) -> Unit {
   for ch in string {
     buf.write_char_utf8(ch)
@@ -868,6 +970,22 @@ pub fn Buffer::write_string_utf8(buf : Self, string : StringView) -> Unit {
 }
 
 ///|
+/// Writes a string as UTF-16LE bytes.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let buf = @buffer.new()
+///   buf.write_string_utf16le("Hi")
+///   inspect(
+///     buf.contents(),
+///     content=(
+///       #|b"H\x00i\x00"
+///     ),
+///   )
+/// }
+/// ```
 #alias(write_stringview, deprecated="use write_string_utf16le instead")
 pub fn Buffer::write_string_utf16le(buf : Self, string : StringView) -> Unit {
   let len = string.length()
@@ -881,6 +999,22 @@ pub fn Buffer::write_string_utf16le(buf : Self, string : StringView) -> Unit {
 }
 
 ///|
+/// Writes a string as UTF-16BE bytes.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let buf = @buffer.new()
+///   buf.write_string_utf16be("Hi")
+///   inspect(
+///     buf.contents(),
+///     content=(
+///       #|b"\x00H\x00i"
+///     ),
+///   )
+/// }
+/// ```
 pub fn Buffer::write_string_utf16be(buf : Self, string : StringView) -> Unit {
   let len = string.length()
   buf.grow_if_necessary(buf.len + len * 2)
@@ -1065,6 +1199,17 @@ pub fn Buffer::to_bytes(self : Buffer) -> Bytes {
 }
 
 ///|
+/// Returns a view over the bytes currently stored in the buffer.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let buf = @buffer.new()
+///   buf.write_bytes(b"Hi")
+///   inspect(buf.view().length(), content="2")
+/// }
+/// ```
 pub fn Buffer::view(self : Buffer) -> ArrayView[Byte] {
   self.data[0:self.len]
 }

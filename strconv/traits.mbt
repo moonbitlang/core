@@ -19,6 +19,19 @@
 // - Implements Eisel-Lemire algorithm to speed up floating point parsing.
 
 ///|
+/// Trait for parsing a value from a `StringView`.
+/// Implement `from_str` for a type to enable `from_str("...")` and
+/// `Type::from_str("...")` usage. `from_string` is deprecated.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let n : Int = @strconv.from_str("42")
+///   inspect(n, content="42")
+///   let d : Double = @strconv.from_str("1.5")
+///   inspect(d, content="1.5")
+/// }
+/// ```
 pub(open) trait FromStr {
   #as_free_fn
   from_str(StringView) -> Self raise StrConvError = _

@@ -137,6 +137,19 @@ pub fn parse_int64(
 ///|
 /// Parse a string in the given base (0, 2 to 36), return a Int number or an error.
 /// If the `~base` argument is 0, the base will be inferred by the prefix.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   inspect(@strconv.parse_int("42"), content="42")
+///   inspect(@strconv.parse_int("-15"), content="-15")
+///   inspect(@strconv.parse_int("0b1010", base=0), content="10")
+///   inspect(
+///     try? @strconv.parse_int("not-a-number"),
+///     content="Err(invalid syntax)",
+///   )
+/// }
+/// ```
 pub fn parse_int(str : StringView, base? : Int = 0) -> Int raise StrConvError {
   let n = parse_int64(str, base~)
   if n < INT_MIN.to_int64() || n > INT_MAX.to_int64() {

@@ -13,29 +13,25 @@
 // limitations under the License.
 
 ///|
-#deprecated("Use infix bitwise operator `>>` instead")
-#coverage.skip
-pub fn BigInt::asr(self : BigInt, n : Int) -> BigInt {
-  self >> n
+#deprecated
+#doc(hidden)
+pub fn UInt::to_be_bytes(self : UInt) -> Bytes {
+  [
+    (self >> 24).to_byte(),
+    (self >> 16).to_byte(),
+    (self >> 8).to_byte(),
+    self.to_byte(),
+  ]
 }
 
 ///|
-#deprecated("Use infix bitwise operator `<<` instead")
-#coverage.skip
-pub fn BigInt::shl(self : BigInt, n : Int) -> BigInt {
-  self << n
-}
-
-///|
-#deprecated("Use infix bitwise operator `<<` instead")
-#coverage.skip
-pub fn BigInt::lsl(self : BigInt, n : Int) -> BigInt {
-  self << n
-}
-
-///|
-#deprecated("Use infix bitwise operator `>>` instead")
-#coverage.skip
-pub fn BigInt::shr(self : BigInt, n : Int) -> BigInt {
-  self >> n
+#deprecated
+#doc(hidden)
+pub fn UInt::to_le_bytes(self : UInt) -> Bytes {
+  [
+    self.to_byte(),
+    (self >> 8).to_byte(),
+    (self >> 16).to_byte(),
+    (self >> 24).to_byte(),
+  ]
 }

@@ -396,6 +396,21 @@ pub fn Float::until(
 pub fn Float::to_double(self : Float) -> Double = "%f32.to_f64"
 
 ///|
+/// Converts a float value to a JSON number.
+///
+/// Parameters:
+///
+/// * `self` : The floating-point number to encode.
+///
+/// Returns a JSON number containing the float value as a double.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect((1.25 : Float).to_json(), content="Number(1.25)")
+/// }
+/// ```
 pub impl ToJson for Float with to_json(self : Float) -> Json {
   Json::number(self.to_double())
 }
@@ -646,15 +661,91 @@ pub fn Float::op_neq(self : Float, other : Float) -> Bool = "%f32.ne"
 pub impl Compare for Float with compare(self, other) = "%f32.compare"
 
 ///|
+/// Returns whether the left-hand float is strictly less than the right-hand
+/// float.
+///
+/// Parameters:
+///
+/// * `x` : The left-hand operand.
+/// * `y` : The right-hand operand.
+///
+/// Returns `true` when `x < y`, otherwise `false`. If either operand is NaN,
+/// returns `false`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect((1.0 : Float) < (2.0 : Float), content="true")
+///   inspect(@float.not_a_number < (2.0 : Float), content="false")
+/// }
+/// ```
 pub impl Compare for Float with op_lt(x, y) = "%f32.lt"
 
 ///|
+/// Returns whether the left-hand float is less than or equal to the right-hand
+/// float.
+///
+/// Parameters:
+///
+/// * `x` : The left-hand operand.
+/// * `y` : The right-hand operand.
+///
+/// Returns `true` when `x <= y`, otherwise `false`. If either operand is NaN,
+/// returns `false`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect((2.0 : Float) <= (2.0 : Float), content="true")
+///   inspect(@float.not_a_number <= (2.0 : Float), content="false")
+/// }
+/// ```
 pub impl Compare for Float with op_le(x, y) = "%f32.le"
 
 ///|
+/// Returns whether the left-hand float is strictly greater than the right-hand
+/// float.
+///
+/// Parameters:
+///
+/// * `x` : The left-hand operand.
+/// * `y` : The right-hand operand.
+///
+/// Returns `true` when `x > y`, otherwise `false`. If either operand is NaN,
+/// returns `false`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect((3.0 : Float) > (2.0 : Float), content="true")
+///   inspect(@float.not_a_number > (2.0 : Float), content="false")
+/// }
+/// ```
 pub impl Compare for Float with op_gt(x, y) = "%f32.gt"
 
 ///|
+/// Returns whether the left-hand float is greater than or equal to the
+/// right-hand float.
+///
+/// Parameters:
+///
+/// * `x` : The left-hand operand.
+/// * `y` : The right-hand operand.
+///
+/// Returns `true` when `x >= y`, otherwise `false`. If either operand is NaN,
+/// returns `false`.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect((2.0 : Float) >= (2.0 : Float), content="true")
+///   inspect(@float.not_a_number >= (2.0 : Float), content="false")
+/// }
+/// ```
 pub impl Compare for Float with op_ge(x, y) = "%f32.ge"
 
 ///|

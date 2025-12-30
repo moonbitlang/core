@@ -13,9 +13,25 @@
 // limitations under the License.
 
 ///|
+/// Largest representable 64-bit signed integer.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   inspect(@int64.max_value, content="9223372036854775807")
+/// }
+/// ```
 pub let max_value = 9223372036854775807L
 
 ///|
+/// Smallest representable 64-bit signed integer.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   inspect(@int64.min_value, content="-9223372036854775808")
+/// }
+/// ```
 pub let min_value = -9223372036854775808L
 
 ///|

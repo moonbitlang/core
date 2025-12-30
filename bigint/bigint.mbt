@@ -46,6 +46,18 @@ pub impl ToJson for BigInt with to_json(self : BigInt) -> Json {
 }
 
 ///|
+/// Parses a `BigInt` from a JSON string value.
+///
+/// The JSON value must be a string containing a decimal representation of the
+/// integer.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let value : @bigint.BigInt = @json.from_json(Json::string("123456"))
+///   inspect(value, content="123456")
+/// }
+/// ```
 pub impl @json.FromJson for BigInt with from_json(json, path) {
   guard json is String(s) else {
     raise @json.JsonDecodeError(
@@ -57,6 +69,16 @@ pub impl @json.FromJson for BigInt with from_json(json, path) {
 }
 
 ///|
+/// Generates arbitrary `BigInt` values for property tests.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let rs = @splitmix.RandomState::default()
+///   let value : @bigint.BigInt = @quickcheck.Arbitrary::arbitrary(0, rs)
+///   inspect(value, content="0")
+/// }
+/// ```
 pub impl @quickcheck.Arbitrary for BigInt with arbitrary(size, rs) {
   if size == 0 {
     0
@@ -66,7 +88,15 @@ pub impl @quickcheck.Arbitrary for BigInt with arbitrary(size, rs) {
 }
 
 ///|
-/// Returns the default value `0` for `BigInt`
+/// Returns the default value `0` for `BigInt`.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let value : @bigint.BigInt = Default::default()
+///   inspect(value, content="0")
+/// }
+/// ```
 pub impl Default for BigInt with default() {
   zero
 }
@@ -168,7 +198,20 @@ pub fn BigInt::compare_int(self : BigInt, other : Int) -> Int {
 }
 
 ///|
-/// Compare a `BigInt` with an `Int64`.
+/// Compares a `BigInt` with an `Int64`.
+///
+/// Returns a negative value if `self` is less than `other`, zero if they are
+/// equal, and a positive value if `self` is greater than `other`.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let big = @bigint.BigInt::from_int64(42L)
+///   inspect(big.compare_int64(24L), content="1")
+///   inspect(big.compare_int64(42L), content="0")
+///   inspect(big.compare_int64(100L), content="-1")
+/// }
+/// ```
 pub fn BigInt::compare_int64(self : BigInt, other : Int64) -> Int {
   guard can_convert_to_int64(self) else {
     return if is_neg(self) { -1 } else { 1 }
@@ -243,6 +286,7 @@ pub impl Hash for BigInt with hash_combine(self, hasher) {
 }
 
 ///|
+/// Returns the sign of the `BigInt` as -1, 0, or 1.
 fn BigInt::signum(self : Self) -> Int {
   if self.is_zero() {
     0

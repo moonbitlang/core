@@ -90,6 +90,16 @@ pub fn parse_uint64(
 ///|
 /// Parse a string in the given base (0, 2 to 36), return an UInt number or an error.
 /// If the `~base` argument is 0, the base will be inferred by the prefix.
+/// A leading sign is not accepted.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   inspect(@strconv.parse_uint("42"), content="42")
+///   inspect(@strconv.parse_uint("0xff", base=0), content="255")
+///   inspect(try? @strconv.parse_uint("-1"), content="Err(invalid syntax)")
+/// }
+/// ```
 pub fn parse_uint(str : StringView, base? : Int = 0) -> UInt raise StrConvError {
   let n = parse_uint64(str, base~)
   if n > UINT_MAX.to_uint64() {

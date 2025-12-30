@@ -13,6 +13,17 @@
 // limitations under the License.
 
 ///|
+/// Error raised by `@strconv` parsing functions.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let result : Result[Int, @strconv.StrConvError] = try? @strconv.parse_int(
+///     "nope",
+///   )
+///   inspect(result, content="Err(invalid syntax)")
+/// }
+/// ```
 pub(all) suberror StrConvError String
 
 ///|

@@ -12,11 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// This package implements the set data structure.
-// The types stored in set need to implement the Compare trait.
-// All operations over sets are purely applicative (no side-effects).
+// This package implements a mutable sorted set backed by an AVL tree.
+// The element type must implement the Compare trait.
+// Mutating operations update the set in place; set operations return new sets.
 
 ///|
+/// A mutable, ordered set backed by an AVL tree.
+///
+/// Values are ordered by `Compare`. Inserting an equal value replaces the stored
+/// value.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let set = @sorted_set.from_array([3, 1, 2, 2])
+///   inspect(set.to_array(), content="[1, 2, 3]")
+/// }
+/// ```
 #alias(T, deprecated)
 struct SortedSet[V] {
   mut root : Node[V]?
@@ -24,6 +36,7 @@ struct SortedSet[V] {
 }
 
 ///|
+/// Internal AVL tree node for `SortedSet`.
 priv struct Node[V] {
   mut value : V
   mut left : Node[V]?

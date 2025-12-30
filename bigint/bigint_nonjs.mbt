@@ -14,6 +14,14 @@
 
 ///|
 /// A big integer represented as an array of Int.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let n : @bigint.BigInt = 123N
+///   inspect(n, content="123")
+/// }
+/// ```
 //
 // Design explained:
 // - Why use an FixedArray of Int with a len field instead of an Array[Int]?
@@ -37,6 +45,7 @@ struct BigInt {
 }
 
 ///|
+/// Internal sign tag for `BigInt`.
 priv enum Sign {
   Positive
   Negative
@@ -368,6 +377,7 @@ pub impl Mul for BigInt with mul(self : BigInt, other : BigInt) -> BigInt {
 // Simplest way to multiply two BigInts.
 
 ///|
+/// Multiplies two positive `BigInt` values using grade-school multiplication.
 fn BigInt::grade_school_mul(self : BigInt, other : BigInt) -> BigInt {
   let self_len = self.len
   let other_len = other.len
@@ -393,6 +403,7 @@ fn BigInt::grade_school_mul(self : BigInt, other : BigInt) -> BigInt {
 // Karatsuba multiplication
 
 ///|
+/// Multiplies two positive `BigInt` values using Karatsuba multiplication.
 fn BigInt::karatsuba_mul(self : BigInt, other : BigInt) -> BigInt {
   let half = (max(self.len, other.len) + 1) / 2
   let (xl, xh) = self.split(half)
@@ -408,6 +419,7 @@ fn BigInt::karatsuba_mul(self : BigInt, other : BigInt) -> BigInt {
 // Get the lower half of the number.
 
 ///|
+/// Splits a positive `BigInt` at `half` limbs into lower and upper parts.
 fn BigInt::split(self : BigInt, half : Int) -> (BigInt, BigInt) {
   if self.len <= half {
     return ({ ..self, sign: Positive }, zero)
@@ -519,6 +531,7 @@ pub impl Mod for BigInt with mod(self : BigInt, other : BigInt) -> BigInt {
 // Assumption: other != zero.
 
 ///|
+/// Divides two positive `BigInt` values and returns (quotient, remainder).
 fn BigInt::grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
   // Handle edge cases
   if self < other {
@@ -1190,6 +1203,7 @@ pub fn BigInt::to_hex(self : BigInt, uppercase? : Bool = true) -> String {
 }
 
 ///|
+/// Returns a copy of the `BigInt` with a fresh limbs array.
 fn BigInt::copy(self : BigInt) -> BigInt {
   let new_limbs = FixedArray::make(self.len, 0U)
   new_limbs.unsafe_blit(0, self.limbs, 0, self.len)
@@ -1197,6 +1211,7 @@ fn BigInt::copy(self : BigInt) -> BigInt {
 }
 
 ///|
+/// Returns the larger of two comparable values.
 fn[T : Compare] max(a : T, b : T) -> T {
   if a > b {
     a
@@ -1856,12 +1871,15 @@ pub fn BigInt::ctz(self : BigInt) -> Int {
 }
 
 ///|
+/// Converts a `Double` to `Int` without overflow checks.
 fn unchecked_double_to_int(d : Double) -> Int = "%f64_to_i32"
 
 ///|
+/// Reinterprets a fixed array of bytes as a `Bytes` without copying.
 fn unsafe_fixedarray_to_bytes(arr : FixedArray[Byte]) -> Bytes = "%identity"
 
 ///|
+/// Returns whether `x` fits into a 32-bit signed integer.
 fn can_convert_to_int(x : BigInt) -> Bool {
   // bigint range from [-(2^32 - 1), 2^32 - 1] has len == 1. But here we only
   // want bigint from [-2^31, 2^31 - 1]
@@ -1874,6 +1892,7 @@ fn can_convert_to_int(x : BigInt) -> Bool {
 }
 
 ///|
+/// Returns whether `x` fits into a 64-bit signed integer.
 fn can_convert_to_int64(x : BigInt) -> Bool {
   x.len <= 2 &&
   (if x.sign == Negative {
@@ -1884,6 +1903,7 @@ fn can_convert_to_int64(x : BigInt) -> Bool {
 }
 
 ///|
+/// Returns true when `x` is negative.
 fn is_neg(x : BigInt) -> Bool {
   x.sign == Negative
 }
@@ -1904,6 +1924,7 @@ test "limb length" {
 }
 
 ///|
+/// Returns the absolute value limbs from least significant to most significant.
 fn BigInt::limbs(self : Self) -> Array[UInt] {
   self.limbs[:self.len].to_array()
 }

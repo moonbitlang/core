@@ -13,9 +13,24 @@
 // limitations under the License.
 
 ///|
+/// Opaque trait used to keep values alive across optimizations.
 priv trait OpaqueValue {}
 
 ///|
+/// Benchmark runner that collects summaries and JSON output.
+///
+/// Use `Bench::bench` to run named benchmarks, then `Bench::dump_summaries`
+/// to export the collected results.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let bench = @bench.Bench::new()
+///   bench.bench(() => ignore(1 + 1), count=1)
+///   let dumped = bench.dump_summaries()
+///   inspect(dumped.contains("\"runs\""), content="true")
+/// }
+/// ```
 #alias(T)
 struct Bench {
   buffer : StringBuilder
@@ -24,6 +39,15 @@ struct Bench {
 }
 
 ///|
+/// Create a new benchmark runner with empty state.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let bench = @bench.Bench::new()
+///   inspect(bench.dump_summaries(), content="[]")
+/// }
+/// ```
 #as_free_fn
 pub fn Bench::new() -> Bench {
   let buffer = StringBuilder::new()

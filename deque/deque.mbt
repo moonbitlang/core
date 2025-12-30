@@ -464,11 +464,6 @@ pub fn[A] Deque::remove(self : Deque[A], index : Int) -> A {
 }
 
 ///|
-/// Creates a new deque from a fixed array, preserving the order of elements.
-///
-/// Parameters:
-
-///|
 /// Returns the number of elements in the deque.
 ///
 /// Parameters:
@@ -663,25 +658,6 @@ pub fn[A] Deque::unsafe_pop_front(self : Deque[A]) -> Unit {
 }
 
 ///|
-/// Removes and discards the first element from the deque. This function is a
-/// deprecated version of `unsafe_pop_front`.
-///
-/// Parameters:
-///
-/// * `self` : The deque to remove the first element from.
-///
-/// Throws a runtime error if the deque is empty.
-///
-/// Example:
-///
-/// ```mbt test
-///   let dq = @deque.from_array([1, 2, 3])
-///   dq.unsafe_pop_front()
-///   inspect(dq, content="@deque.from_array([2, 3])")
-/// ```
-///
-
-///|
 /// Removes a back element from a deque.
 ///
 /// # Example
@@ -713,27 +689,6 @@ pub fn[A] Deque::unsafe_pop_back(self : Deque[A]) -> Unit {
     }
   }
 }
-
-///|
-/// Removes and discards the last element from a deque.
-///
-/// Parameters:
-///
-/// * `deque` : The deque to remove the last element from.
-///
-/// Throws a runtime error if the deque is empty.
-///
-/// Example:
-///
-/// ```mbt test
-///   let dq = @deque.from_array([1, 2, 3])
-///   // Deprecated way:
-///   // dq.pop_back_exn()
-///   // Recommended way:
-///   dq.unsafe_pop_back()
-///   inspect(dq, content="@deque.from_array([1, 2])")
-/// ```
-///
 
 ///|
 /// Removes a front element from a deque and returns it, or `None` if it is empty.
@@ -1409,12 +1364,6 @@ pub fn[A] Deque::retain_map(self : Deque[A], f : (A) -> A?) -> Unit {
 }
 
 ///|
-/// Filters and maps elements in-place using a provided function. Modifies the
-/// deque to retain only elements for which the provided function returns `Some`,
-/// and updates those elements with the values inside the `Some` variant.
-///
-
-///|
 /// Filters elements in-place by retaining only the elements that satisfy the
 /// given predicate. Modifies the deque to keep only the elements for which the
 /// predicate function returns `true`.
@@ -1822,10 +1771,15 @@ pub fn Deque::join(self : Deque[String], separator : StringView) -> String {
 ///
 /// Returns a JSON array containing all elements from the deque converted to
 /// their JSON representations.
-/// test "T::to_json" {
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
 ///   let dq = @deque.from_array([1, 2, 3])
 ///   let json = dq.to_json()
 ///   inspect(json, content="Array([Number(1), Number(2), Number(3)])")
+/// }
 /// ```
 ///
 pub impl[A : ToJson] ToJson for Deque[A] with to_json(self : Deque[A]) -> Json {
@@ -2247,6 +2201,15 @@ pub fn[A] Deque::binary_search_by(
 
 ///|
 /// Safe element access with bounds checking
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let dq = @deque.from_array([10, 20, 30])
+///   inspect(dq.get(1), content="Some(20)")
+///   inspect(dq.get(3), content="None")
+/// }
+/// ```
 pub fn[A] Deque::get(self : Deque[A], index : Int) -> A? {
   if index >= 0 && index < self.len {
     let physical_index = (self.head + index) % self.buf.length()
@@ -2421,6 +2384,15 @@ pub fn[A] Deque::rev(self : Deque[A]) -> Deque[A] {
 ///
 /// # Note
 /// This function handles the circular buffer nature of the deque internally.
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let dq = @deque.from_array([1, 2, 3, 4])
+///   dq.shuffle_in_place(rand=_ => 0)
+///   inspect(dq, content="@deque.from_array([2, 3, 4, 1])")
+/// }
+/// ```
 pub fn[A] Deque::shuffle_in_place(
   self : Deque[A],
   rand~ : (Int) -> Int,
@@ -2447,6 +2419,16 @@ pub fn[A] Deque::shuffle_in_place(
 /// To use this function, you need to provide a rand function, which takes an integer as its upper bound
 /// and returns an integer.
 /// *rand n* is expected to return a uniformly distributed integer between 0 and n - 1
+///
+/// # Example
+/// ```mbt check
+/// test {
+///   let dq = @deque.from_array([1, 2, 3, 4])
+///   let shuffled = dq.shuffle(rand=_ => 0)
+///   inspect(shuffled, content="@deque.from_array([2, 3, 4, 1])")
+///   inspect(dq, content="@deque.from_array([1, 2, 3, 4])")
+/// }
+/// ```
 pub fn[A] Deque::shuffle(self : Deque[A], rand~ : (Int) -> Int) -> Deque[A] {
   // Create a copy of the original deque
   let new_deque = self.copy()
