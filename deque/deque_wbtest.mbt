@@ -55,6 +55,32 @@ test "add_empty_invariant" {
 }
 
 ///|
+/// Test copy with empty deque maintains invariant:
+/// When len == 0, head and tail should point to the same slot.
+test "copy_empty_invariant" {
+  let empty : Deque[Int] = new()
+  let result = empty.copy()
+  inspect(result.len, content="0")
+  // Invariant: when empty, head == tail
+  // BUG: currently tail == -1, violating the invariant
+  assert_eq(result.head, result.tail)
+}
+
+///|
+/// Test flatten with all empty inner deques maintains invariant:
+/// When len == 0, head and tail should point to the same slot.
+test "flatten_empty_invariant" {
+  let empty1 : Deque[Int] = new()
+  let empty2 : Deque[Int] = new()
+  let outer : Deque[Deque[Int]] = from_array([empty1, empty2])
+  let result = outer.flatten()
+  inspect(result.len, content="0")
+  // Invariant: when empty, head == tail
+  // BUG: currently tail == -1, violating the invariant
+  assert_eq(result.head, result.tail)
+}
+
+///|
 test "weird behavior after drain" {
   let deque = new(capacity=16)
   deque.push_back(1)
