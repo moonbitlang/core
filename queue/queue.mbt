@@ -313,6 +313,7 @@ pub fn[A] Queue::copy(self : Queue[A]) -> Queue[A] {
 /// Transfers all elements from one queue to another.
 ///
 /// Adds all of the elements of source to the end of destination, then clears source.
+/// If source and destination are the same queue, this is a no-op.
 ///
 /// # Example
 /// ```mbt check
@@ -323,6 +324,9 @@ pub fn[A] Queue::copy(self : Queue[A]) -> Queue[A] {
 /// }
 /// ```
 pub fn[A] Queue::transfer(self : Queue[A], dst : Queue[A]) -> Unit {
+  if physical_equal(self, dst) {
+    return // no-op for self-transfer
+  }
   if self.length > 0 {
     match dst.last {
       None => {
