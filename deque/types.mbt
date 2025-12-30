@@ -12,13 +12,44 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// head and tail point to non-empty slots. When the buffer is empty, head and tail points to the same slot.
-
 ///|
+/// A double-ended queue (deque) backed by a growable circular buffer.
+///
+/// Layout:
+/// ```text
+/// Non-contiguous case (head > tail, wrapped around):
+///   buf: [4, 5, _, _, _, 1, 2, 3]
+///              ^        ^
+///            tail     head
+///   Logical order: [1, 2, 3, 4, 5]
+///
+/// Contiguous case (head <= tail):
+///   buf: [_, 1, 2, 3, 4, 5, _, _]
+///           ^           ^
+///         head        tail
+///   Logical order: [1, 2, 3, 4, 5]
+///
+/// Empty case (len == 0):
+///   buf: [_, _, _, _]
+///           ^
+///       head=tail (both point to same slot, value is undefined)
+/// ```
+///
+/// Invariants:
+/// - `len` is the number of elements in the deque (0 <= len <= buf.length())
+/// - When `len == 0`: `head` and `tail` point to the same slot (value undefined)
+/// - When `len > 0`: `head` points to the first element, `tail` points to the last
+/// - Both `head` and `tail` always point to occupied slots (not the next empty slot)
+/// - Elements are stored circularly: index `i` maps to `buf[(head + i) % buf.length()]`
+/// - `tail == (head + len - 1) % buf.length()` when `len > 0`
 #alias(T, deprecated)
 struct Deque[A] {
+  /// Circular buffer storing elements. May contain uninitialized slots.
   mut buf : UninitializedArray[A]
+  /// Number of elements currently in the deque.
   mut len : Int
+  /// Index of the first element (front). When empty, equals `tail`.
   mut head : Int
+  /// Index of the last element (back). When empty, equals `head`.
   mut tail : Int
 }
