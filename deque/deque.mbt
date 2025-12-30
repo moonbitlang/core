@@ -133,7 +133,9 @@ pub impl[A] Add for Deque[A] with add(self, other) {
   for i, x in other {
     buf[i + self.len] = x
   }
-  Deque::{ buf, len, head: 0, tail: len - 1 }
+  // When empty, head and tail must point to the same slot (invariant)
+  let tail = if len > 0 { len - 1 } else { 0 }
+  Deque::{ buf, len, head: 0, tail }
 }
 
 ///|
