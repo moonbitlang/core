@@ -553,3 +553,18 @@ test "Map::merge_in_place empty maps" {
   map1.merge_in_place(map1)
   inspect(map1.length(), content="2")
 }
+
+///|
+test "Map::merge_in_place self alias" {
+  let map1 : Map[String, Int] = Map::new()
+  for i in 0..<6 {
+    map1.set(i.to_string(), i)
+  }
+  let cap = map1.capacity()
+  map1.merge_in_place(map1)
+  assert_eq(map1.capacity(), cap)
+  assert_eq(map1.length(), 6)
+  for i in 0..<6 {
+    assert_eq(map1.get(i.to_string()), Some(i))
+  }
+}
