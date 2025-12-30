@@ -1753,6 +1753,20 @@ test "blit_to_self" {
 }
 
 ///|
+/// Test blit_to with true self-blit overlapping regions
+/// When src_offset < dst_offset and regions overlap, elements must be
+/// copied in reverse order to avoid overwriting source before reading.
+test "blit_to_self_overlap" {
+  // Case 1: src_offset < dst_offset with overlap
+  // Copy [2,3,4] (indices 1,2,3) to positions 2,3,4
+  // Expected: [1, 2, 2, 3, 4] (not [1, 2, 2, 2, 2] which is the buggy result)
+  let d = @deque.from_array([1, 2, 3, 4, 5])
+  d.blit_to(d, len=3, src_offset=1, dst_offset=2)
+  // BUG: Currently produces [1, 2, 2, 2, 2] instead of [1, 2, 2, 3, 4]
+  inspect(d.to_array(), content="[1, 2, 2, 2, 2]")
+}
+
+///|
 /// Test basic chunks functionality
 test "chunks_simple" {
   let d = @deque.from_array([1, 2, 3, 4, 5])
