@@ -241,3 +241,20 @@ test "queue arbitrary" {
   )
   inspect(samples[15], content="@queue.from_array([])")
 }
+
+///|
+test "transfer_self" {
+  // Test self-transfer: q.transfer(q) should be a no-op
+  let q : @queue.Queue[Int] = @queue.from_array([1, 2, 3])
+  q.transfer(q)
+  // After self-transfer, queue should remain unchanged
+  inspect(q, content="@queue.from_array([1, 2, 3])")
+}
+
+///|
+test "transfer_self_empty" {
+  // Test self-transfer on empty queue
+  let q : @queue.Queue[Int] = @queue.new()
+  q.transfer(q)
+  inspect(q, content="@queue.from_array([])")
+}

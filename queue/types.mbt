@@ -18,13 +18,22 @@ priv struct Cons[A] {
   mut next : Cons[A]?
 } derive(Eq)
 
-// Invariant:
-// - length == 0 <=> first is None && last is None
-
 ///|
+/// A FIFO queue backed by a singly linked list of `Cons` cells.
+///
+/// Layout:
+/// - `first` points to the head cell (front of the queue).
+/// - `last` points to the tail cell (back of the queue) and its `next` is None.
+/// - When empty, `first` and `last` are None and `length` is 0.
+///
+/// We keep both `first` and `last` so `pop` and `push` are O(1) without
+/// scanning the list.
 #alias(T, deprecated)
 struct Queue[A] {
+  /// Number of elements in the queue.
   mut length : Int
+  /// Head cell (front) for O(1) peek/pop.
   mut first : Cons[A]?
+  /// Tail cell (back) for O(1) push/append.
   mut last : Cons[A]?
 }
