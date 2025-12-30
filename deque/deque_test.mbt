@@ -1759,11 +1759,22 @@ test "blit_to_self" {
 test "blit_to_self_overlap" {
   // Case 1: src_offset < dst_offset with overlap
   // Copy [2,3,4] (indices 1,2,3) to positions 2,3,4
-  // Expected: [1, 2, 2, 3, 4] (not [1, 2, 2, 2, 2] which is the buggy result)
+  // Expected: [1, 2, 2, 3, 4]
   let d = @deque.from_array([1, 2, 3, 4, 5])
   d.blit_to(d, len=3, src_offset=1, dst_offset=2)
-  // BUG: Currently produces [1, 2, 2, 2, 2] instead of [1, 2, 2, 3, 4]
-  inspect(d.to_array(), content="[1, 2, 2, 2, 2]")
+  inspect(d.to_array(), content="[1, 2, 2, 3, 4]")
+
+  // Case 2: dst_offset < src_offset with overlap (forward copy is safe)
+  // Copy [3,4,5] (indices 2,3,4) to positions 0,1,2
+  // Expected: [3, 4, 5, 4, 5]
+  let d2 = @deque.from_array([1, 2, 3, 4, 5])
+  d2.blit_to(d2, len=3, src_offset=2, dst_offset=0)
+  inspect(d2.to_array(), content="[3, 4, 5, 4, 5]")
+
+  // Case 3: No overlap (src and dst regions don't intersect)
+  let d3 = @deque.from_array([1, 2, 3, 4, 5])
+  d3.blit_to(d3, len=2, src_offset=0, dst_offset=3)
+  inspect(d3.to_array(), content="[1, 2, 3, 1, 2]")
 }
 
 ///|

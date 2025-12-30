@@ -249,13 +249,38 @@ pub fn[A] Deque::blit_to(
     dst.tail = dst.len - 1
   }
   let dst_len = dst.len
-  for i = 0; i < len; i = i + 1 {
-    let dst_idx = (dst.head + dst_offset + i) % dst.buf.length()
-    let src_idx = (self.head + src_offset + i) % self.buf.length()
-    dst.buf[dst_idx] = self.buf[src_idx]
-    if dst_offset + i >= dst_len {
-      dst.tail = (dst.tail + 1) % dst.buf.length()
-      dst.len += 1
+  // Check for overlapping self-blit requiring reverse copy:
+  // When src and dst are the same object, src_offset < dst_offset, and regions overlap,
+  // we must copy in reverse order to avoid overwriting source before reading.
+  let needs_reverse = physical_equal(self, dst) &&
+    src_offset < dst_offset &&
+    src_offset + len > dst_offset
+  if needs_reverse {
+    // First, extend the deque length if writing beyond current length
+    let new_len = if dst_offset + len > dst_len {
+      dst_offset + len
+    } else {
+      dst_len
+    }
+    if new_len > dst_len {
+      dst.tail = (dst.head + new_len - 1) % dst.buf.length()
+      dst.len = new_len
+    }
+    // Copy in reverse order
+    for i = len - 1; i >= 0; i = i - 1 {
+      let dst_idx = (dst.head + dst_offset + i) % dst.buf.length()
+      let src_idx = (self.head + src_offset + i) % self.buf.length()
+      dst.buf[dst_idx] = self.buf[src_idx]
+    }
+  } else {
+    for i = 0; i < len; i = i + 1 {
+      let dst_idx = (dst.head + dst_offset + i) % dst.buf.length()
+      let src_idx = (self.head + src_offset + i) % self.buf.length()
+      dst.buf[dst_idx] = self.buf[src_idx]
+      if dst_offset + i >= dst_len {
+        dst.tail = (dst.tail + 1) % dst.buf.length()
+        dst.len += 1
+      }
     }
   }
 }
