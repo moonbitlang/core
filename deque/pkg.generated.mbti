@@ -44,7 +44,6 @@ pub fn[A] Deque::front(Self[A]) -> A?
 pub fn[A] Deque::get(Self[A], Int) -> A?
 pub fn[A] Deque::insert(Self[A], Int, A) -> Unit
 pub fn[A] Deque::is_empty(Self[A]) -> Bool
-pub fn[A] Deque::iter(Self[A]) -> Iter[A]
 pub fn[A] Deque::iter2(Self[A]) -> Iter2[Int, A]
 pub fn[A] Deque::iterator(Self[A]) -> Iterator[A]
 pub fn[A] Deque::iterator2(Self[A]) -> Iterator2[Int, A]
@@ -68,7 +67,6 @@ pub fn[A] Deque::rev_each(Self[A], (A) -> Unit) -> Unit
 pub fn[A] Deque::rev_eachi(Self[A], (Int, A) -> Unit) -> Unit
 #alias(rev_inplace, deprecated)
 pub fn[A] Deque::rev_in_place(Self[A]) -> Unit
-pub fn[A] Deque::rev_iter(Self[A]) -> Iter[A]
 pub fn[A] Deque::rev_iter2(Self[A]) -> Iter2[Int, A]
 pub fn[A] Deque::rev_iterator(Self[A]) -> Iterator[A]
 pub fn[A] Deque::rev_iterator2(Self[A]) -> Iterator2[Int, A]

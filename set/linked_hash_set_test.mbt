@@ -100,10 +100,10 @@ test "each" {
 test "iter" {
   let buf = StringBuilder::new(size_hint=20)
   let map = @set.Set::from_array(["a", "b", "c"])
-  map.iter().each(e => buf.write_string("[\{e}]"))
+  map.iterator().each(e => buf.write_string("[\{e}]"))
   inspect(buf, content="[a][b][c]")
   buf.reset()
-  map.iter().take(2).each(e => buf.write_string("[\{e}]"))
+  map.iterator().take(2).each(e => buf.write_string("[\{e}]"))
   inspect(buf, content="[a][b]")
 }
 
@@ -193,7 +193,7 @@ test "insert_and_grow" {
 ///|
 test "array unique via Set" {
   let v = [1, 2, 3, 4, 5, 3, 2, 4, 5]
-  let h = @set.Set::from_iter(v.iter())
+  let h = @set.Set::from_iterator(v.iterator())
   let v = [..h]
   @json.inspect([..h], content=[1, 2, 3, 4, 5])
   @json.inspect(v, content=[1, 2, 3, 4, 5])
@@ -236,17 +236,17 @@ test "clear_and_reinsert" {
 
 ///|
 test "from_iter multiple elements iter" {
-  inspect(@set.Set::from_iter([1, 2, 3].iter()), content="{1, 2, 3}")
+  inspect(@set.Set::from_iterator([1, 2, 3].iterator()), content="{1, 2, 3}")
 }
 
 ///|
 test "from_iter single element iter" {
-  inspect(@set.Set::from_iter([1].iter()), content="{1}")
+  inspect(@set.Set::from_iterator([1].iterator()), content="{1}")
 }
 
 ///|
-test "from_iter empty iter" {
-  let map : @set.Set[Int] = @set.Set::from_iter(Iter::empty())
+test "from_iterator empty iterator" {
+  let map : @set.Set[Int] = @set.Set::from_iterator(Iterator::empty())
   inspect(map, content="{}")
 }
 

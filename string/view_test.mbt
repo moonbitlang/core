@@ -53,8 +53,8 @@ test "stringview subview" {
 test "stringview op_get" {
   let str = "Hello🤣🤣🤣"
   let view = str.view(start_offset=1, end_offset=7)
-  inspect(view.iter().nth(4).unwrap(), content="🤣")
-  inspect(view.iter().nth(4).unwrap(), content="🤣")
+  inspect(view.iterator().nth(4).unwrap(), content="🤣")
+  inspect(view.iterator().nth(4).unwrap(), content="🤣")
 }
 
 ///|
@@ -69,8 +69,8 @@ test "stringview op_get iterator" {
 test "stringview rev_get" {
   let str = "Hello🤣🤣🤣"
   let view = str.view(start_offset=1, end_offset=7)
-  inspect(view.rev_iter().nth(0).unwrap(), content="🤣")
-  inspect(view.rev_iter().nth(4).unwrap(), content="e")
+  inspect(view.rev_iterator().nth(0).unwrap(), content="🤣")
+  inspect(view.rev_iterator().nth(4).unwrap(), content="e")
 }
 
 ///|
@@ -137,7 +137,7 @@ test "stringview empty" {
 test "panic out of bounds1" {
   let str = "Hello🤣🤣🤣"
   let view = str.view(start_offset=1, end_offset=7)
-  let _ = view.iter().nth(5).unwrap()
+  let _ = view.iterator().nth(5).unwrap()
 
 }
 
@@ -161,7 +161,7 @@ test "panic out of bounds3" {
 test "panic out of bounds4" {
   let str = "hello"
   let view = str.view(start_offset=0, end_offset=0)
-  let _ = view.iter().nth(0).unwrap()
+  let _ = view.iterator().nth(0).unwrap()
 
 }
 
@@ -302,7 +302,7 @@ test "panic negative index 9" {
 // test "panic rev_get2" {
 //   let str = "Hello🤣🤣🤣"
 //   let view = str[1:6]
-//   let _ = view.rev_iter().nth(-1).unwrap()
+//   let _ = view.rev_iterator().nth(-1).unwrap()
 
 // }
 
@@ -310,16 +310,16 @@ test "panic negative index 9" {
 test "stringview iter" {
   let str = "hello🤣🤣🤣"
   let view = str.view(start_offset=1, end_offset=7)
-  inspect(view.iter().count(), content="5")
-  inspect(view.iter(), content="['e', 'l', 'l', 'o', '🤣']")
+  inspect(view.iterator().count(), content="5")
+  inspect(view.iterator(), content="['e', 'l', 'l', 'o', '🤣']")
 }
 
 ///|
 test "stringview rev_iter" {
   let str = "hello🤣🤣🤣"
   let view = str.view(start_offset=1, end_offset=7)
-  inspect(view.rev_iter().count(), content="5")
-  inspect(view.rev_iter(), content="['🤣', 'o', 'l', 'l', 'e']")
+  inspect(view.rev_iterator().count(), content="5")
+  inspect(view.rev_iterator(), content="['🤣', 'o', 'l', 'l', 'e']")
 }
 
 ///|
@@ -427,7 +427,7 @@ test "panic_length_ge invalid surrogate pair" {
 test "take first character from surrogate pairs" {
   let str = "Hello😀😃"
   let view = str.view()
-  let result = view.iter().take(6).collect().length()
+  let result = view.iterator().take(6).collect().length()
   // 6 characters total: 5 ASCII + 1 emoji
   inspect(result, content="6")
 }
@@ -660,7 +660,7 @@ test "from_array" {
 
 ///|
 test "from_iter" {
-  let v = StringView::from_iter(['a', '😭', 'b', '😂', 'c'].iter())
+  let v = StringView::from_iterator(['a', '😭', 'b', '😂', 'c'].iterator())
   inspect(v, content="a😭b😂c")
 }
 

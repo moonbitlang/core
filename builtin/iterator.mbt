@@ -695,6 +695,8 @@ pub fn[X] Iterator::to_array(self : Iterator[X]) -> Array[X] {
 }
 
 ///|
+#deprecated
+#doc(hidden)
 pub fn[X] Iterator::iter(self : Iterator[X]) -> Iter[X] {
   Iter(yield_ => while self.next() is Some(x) {
     guard yield_(x) is IterContinue else { break IterEnd }

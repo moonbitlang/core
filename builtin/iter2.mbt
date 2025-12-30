@@ -72,6 +72,8 @@ pub fn[A, B] Iter2::each(self : Iter2[A, B], f : (A, B) -> Unit) -> Unit {
 }
 
 ///|
+#deprecated
+#doc(hidden)
 pub fn[A, B] Iter2::iter(self : Iter2[A, B]) -> Iter[(A, B)] {
   Iter(yield_ => self.run((a, b) => yield_((a, b))))
 }

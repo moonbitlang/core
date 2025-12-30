@@ -19,7 +19,10 @@ test "String::from_array" {
 
 ///|
 test "String::from_iter" {
-  inspect(String::from_iter(['1', '2', '3', '4', '5'].iter()), content="12345")
+  inspect(
+    String::from_iterator(['1', '2', '3', '4', '5'].iterator()),
+    content="12345",
+  )
 }
 
 ///|
@@ -154,7 +157,7 @@ test "to_array" {
 test "chars" {
   let mut str = ""
   "A😊𠮷BA😊𠮷B"
-  .iter()
+  .iterator()
   .each(c => str = str + c.to_int().to_string() + "\n")
   inspect(
     str,
@@ -171,11 +174,11 @@ test "chars" {
     ),
   )
   inspect(
-    "A😊𠮷BA😊𠮷B".iter().take(2).collect(),
+    "A😊𠮷BA😊𠮷B".iterator().take(2).collect(),
     content="['A', '😊']",
   )
   inspect(
-    "A😊𠮷BA😊𠮷B".iter().take(4).collect(),
+    "A😊𠮷BA😊𠮷B".iterator().take(4).collect(),
     content="['A', '😊', '𠮷', 'B']",
   )
 }
@@ -214,7 +217,7 @@ test "iterator" {
 test "rev_iter" {
   let mut str = ""
   "A😊𠮷BA😊𠮷B"
-  .rev_iter()
+  .rev_iterator()
   .each(c => str = str + c.to_int().to_string() + "\n")
   inspect(
     str,
@@ -231,11 +234,11 @@ test "rev_iter" {
     ),
   )
   inspect(
-    "A😊𠮷BA😊𠮷B".rev_iter().take(2).collect(),
+    "A😊𠮷BA😊𠮷B".rev_iterator().take(2).collect(),
     content="['B', '𠮷']",
   )
   inspect(
-    "A😊𠮷BA😊𠮷B".rev_iter().take(4).collect(),
+    "A😊𠮷BA😊𠮷B".rev_iterator().take(4).collect(),
     content="['B', '𠮷', '😊', 'A']",
   )
 }
@@ -708,14 +711,14 @@ test "pad_right" {
 ///|
 // test "panic rev_get1" {
 //   let str = "Hello🤣🤣🤣"
-//   let _ = str.rev_iter().nth(-1).unwrap()
+//   let _ = str.rev_iterator().nth(-1).unwrap()
 
 // }
 
 ///|
 test "panic rev_get2" {
   let str = "Hello🤣🤣🤣"
-  let _ = str.rev_iter().nth(8).unwrap()
+  let _ = str.rev_iterator().nth(8).unwrap()
 
 }
 
@@ -818,7 +821,7 @@ test "offset_of_nth_char property" {
   let n = s.char_length()
   for i in 0..<n {
     let index = s.offset_of_nth_char(i).unwrap()
-    assert_eq(s.get_char(index).unwrap(), s.iter().nth(i).unwrap())
+    assert_eq(s.get_char(index).unwrap(), s.iterator().nth(i).unwrap())
   }
 }
 
@@ -828,7 +831,7 @@ test "offset_of_nth_char property negative" {
   let n = s.char_length()
   for i in 1..=n {
     let index = s.offset_of_nth_char(-i).unwrap()
-    assert_eq(s.get_char(index).unwrap(), s.rev_iter().nth(i - 1).unwrap())
+    assert_eq(s.get_char(index).unwrap(), s.rev_iterator().nth(i - 1).unwrap())
   }
 }
 

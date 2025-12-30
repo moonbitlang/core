@@ -241,6 +241,9 @@ pub fn String::to_array(self : String) -> Array[Char] {
 ///   assert_eq(s.length(), 15)
 /// } // Utf16 code units
 /// ```
+#warnings("-deprecated")
+#deprecated
+#doc(hidden)
 pub fn String::iter(self : String) -> Iter[Char] {
   self.iterator().iter()
 }
@@ -318,6 +321,9 @@ pub fn String::iterator2(self : String) -> Iterator2[Int, Char] {
 ///   ])
 /// }
 /// ```
+#warnings("-deprecated")
+#deprecated
+#doc(hidden)
 pub fn String::rev_iter(self : String) -> Iter[Char] {
   self.rev_iterator().iter()
 }

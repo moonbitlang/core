@@ -114,8 +114,6 @@ pub fn[A : Eq] T::is_prefix(Self[A], Self[A]) -> Bool
 #deprecated
 pub fn[A : Eq] T::is_suffix(Self[A], Self[A]) -> Bool
 #deprecated
-pub fn[A] T::iter(Self[A]) -> Iter[A]
-#deprecated
 pub fn[A] T::iter2(Self[A]) -> Iter2[Int, A]
 #deprecated
 pub fn[A] T::last(Self[A]) -> A?

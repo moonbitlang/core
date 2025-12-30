@@ -337,6 +337,8 @@ pub fn[A] HashSet::each(
 
 ///|
 /// Converted to Iter
+#deprecated
+#doc(hidden)
 pub fn[A] HashSet::iter(self : HashSet[A]) -> Iter[A] {
   fn go(node) -> Iter[A] {
     match node {

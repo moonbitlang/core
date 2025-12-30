@@ -17,6 +17,9 @@
 // All operations over sets are purely applicative (no side-effects).
 
 ///|
+#warnings("-deprecated")
+#deprecated
+#doc(hidden)
 pub fn[A] SortedSet::iter(self : SortedSet[A]) -> Iter[A] {
   self.iterator().iter()
 }

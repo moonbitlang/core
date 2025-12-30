@@ -178,6 +178,9 @@ pub impl Show for StringView with to_string(self) {
 
 ///|
 /// Returns an iterator over the Unicode characters in the string view.
+#warnings("-deprecated")
+#deprecated
+#doc(hidden)
 pub fn StringView::iter(self : StringView) -> Iter[Char] {
   self.iterator().iter()
 }
@@ -235,6 +238,9 @@ pub fn StringView::iterator2(self : StringView) -> Iterator2[Int, Char] {
 
 ///|
 /// Returns an iterator over the Unicode characters in the string view in reverse order.
+#warnings("-deprecated")
+#deprecated
+#doc(hidden)
 pub fn StringView::rev_iter(self : StringView) -> Iter[Char] {
   self.rev_iterator().iter()
 }

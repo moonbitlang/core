@@ -672,6 +672,9 @@ pub fn BytesView::to_array(self : BytesView) -> Array[Byte] {
 ///   inspect(sum, content="209") // ASCII values: 'h'(104) + 'i'(105) = 209
 /// }
 /// ```
+#warnings("-deprecated")
+#deprecated
+#doc(hidden)
 pub fn Bytes::iter(self : Bytes) -> Iter[Byte] {
   self.iterator().iter()
 }

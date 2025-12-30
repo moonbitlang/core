@@ -45,7 +45,7 @@ test "is_empty" {
 test "fixed array iter with early termination" {
   let arr : FixedArray[Int] = [1, 2, 3]
   let mut count = 0
-  let iter = arr.iter()
+  let iter = arr.iterator()
   let _ = iter.run(x => {
     count = count + 1
     if x == 2 {
@@ -300,15 +300,15 @@ test "FixedArray::from_array with array of different type" {
 
 ///|
 test "FixedArray::from_iter with multiple elements iterator" {
-  let iter = [1, 2, 3, 4, 5].iter()
-  let result = FixedArray::from_iter(iter)
+  let iter = [1, 2, 3, 4, 5].iterator()
+  let result = FixedArray::from_iterator(iter)
   assert_eq(result, [1, 2, 3, 4, 5])
 }
 
 ///|
 test "FixedArray::from_iter with single element iterator" {
-  let iter = [1].iter()
-  let result = FixedArray::from_iter(iter)
+  let iter = [1].iterator()
+  let result = FixedArray::from_iterator(iter)
   assert_eq(result, [1])
 }
 

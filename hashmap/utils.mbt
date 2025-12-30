@@ -71,6 +71,9 @@ pub fn[K, V] HashMap::clear(self : HashMap[K, V]) -> Unit {
 ///   inspect(pairs.contains((2, "two")), content="true")
 /// }
 /// ```
+#warnings("-deprecated")
+#deprecated
+#doc(hidden)
 pub fn[K, V] HashMap::iter(self : HashMap[K, V]) -> Iter[(K, V)] {
   self.iterator().iter()
 }

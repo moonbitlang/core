@@ -288,6 +288,9 @@ pub fn[K] HashSet::clear(self : HashSet[K]) -> Unit {
 
 ///|
 /// Returns the iterator of the hash set.
+#warnings("-deprecated")
+#deprecated
+#doc(hidden)
 pub fn[K] HashSet::iter(self : HashSet[K]) -> Iter[K] {
   self.iterator().iter()
 }

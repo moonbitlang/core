@@ -414,6 +414,9 @@ pub fn[X] ArrayView::iterator(self : ArrayView[X]) -> Iterator[X] {
 ///   inspect(sum, content="5")
 /// }
 /// ```
+#warnings("-deprecated")
+#deprecated
+#doc(hidden)
 pub fn[A] ArrayView::iter(self : ArrayView[A]) -> Iter[A] {
   self.iterator().iter()
 }

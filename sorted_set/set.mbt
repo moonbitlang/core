@@ -413,6 +413,9 @@ pub fn[V] SortedSet::to_array(self : SortedSet[V]) -> Array[V] {
 
 ///|
 /// Returns an iterator.
+#warnings("-deprecated")
+#deprecated
+#doc(hidden)
 pub fn[V] SortedSet::iter(self : SortedSet[V]) -> Iter[V] {
   self.iterator().iter()
 }

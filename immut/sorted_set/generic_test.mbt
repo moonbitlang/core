@@ -31,7 +31,7 @@ test "iter early termination - value" {
   let set = @sorted_set.from_array([1, 2, 3])
   let mut count = 0
   let _ = set
-    .iter()
+    .iterator()
     .run(x => if x == 2 {
       IterEnd
     } else {
@@ -44,7 +44,7 @@ test "iter early termination - value" {
 ///|
 test "iter terminates on right" {
   let set = @sorted_set.from_array([1, 2, 3])
-  let result = set.iter().take(2).to_array()
+  let result = set.iterator().take(2).to_array()
   inspect(result, content="[1, 2]")
 }
 
@@ -58,7 +58,7 @@ test "iter with early termination on left subtree" {
 
   // Create an iterator that stops after processing the left subtree
   let mut count = 0
-  let iter = set.iter()
+  let iter = set.iterator()
   let _ = iter.run((_ : Int) => {
     count = count + 1
     if count == 1 {

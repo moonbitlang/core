@@ -608,7 +608,10 @@ test "default" {
 ///|
 test "iter_map_fold" {
   let ls = @list.from_array([1, 2, 3, 4, 5])
-  inspect(ls.iter().map(x => x + 1).fold((a, b) => a + b, init=0), content="20")
+  inspect(
+    ls.iterator().map(x => x + 1).fold((a, b) => a + b, init=0),
+    content="20",
+  )
 }
 
 ///|

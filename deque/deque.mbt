@@ -1447,6 +1447,9 @@ pub fn[A] Deque::retain(self : Deque[A], f : (A) -> Bool) -> Unit {
 ///   inspect(sum, content="15")
 /// }
 /// ```
+#warnings("-deprecated")
+#deprecated
+#doc(hidden)
 pub fn[A] Deque::iter(self : Deque[A]) -> Iter[A] {
   self.iterator().iter()
 }
@@ -1562,6 +1565,9 @@ pub fn[A] Deque::iterator2(self : Deque[A]) -> Iterator2[Int, A] {
 ///   inspect(sum, content="321")
 /// }
 /// ```
+#warnings("-deprecated")
+#deprecated
+#doc(hidden)
 pub fn[A] Deque::rev_iter(self : Deque[A]) -> Iter[A] {
   self.rev_iterator().iter()
 }

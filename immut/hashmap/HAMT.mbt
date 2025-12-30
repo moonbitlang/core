@@ -635,6 +635,8 @@ pub fn[K, V] HashMap::values(self : HashMap[K, V]) -> Iter[V] {
 
 ///|
 /// Converted to Iter
+#deprecated
+#doc(hidden)
 pub fn[K, V] HashMap::iter(self : HashMap[K, V]) -> Iter[(K, V)] {
   fn go(node) -> Iter[(K, V)] {
     match node {

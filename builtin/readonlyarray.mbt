@@ -164,6 +164,8 @@ pub fn[T] ReadOnlyArray::last(self : ReadOnlyArray[T]) -> T? {
 ///   inspect(sum, content="6")
 /// }
 /// ```
+#deprecated
+#doc(hidden)
 pub fn[T] ReadOnlyArray::iter(self : ReadOnlyArray[T]) -> Iter[T] {
   self.unsafe_reinterpret_to_fixed_array().iter()
 }

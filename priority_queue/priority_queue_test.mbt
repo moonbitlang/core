@@ -58,7 +58,7 @@ test "iter" {
   }
   inspect(buf, content="[3][2][1]")
   buf.reset()
-  for e in v.iter().take(2) {
+  for e in v.iterator().take(2) {
     buf.write_string("[\{e}]")
   }
   inspect(buf, content="[3][2]")
@@ -116,11 +116,11 @@ test "pop" {
   let pq_ = @priority_queue.from_array([1])
   pq_.pop() |> ignore
   inspect(pq_.length(), content="0")
-  let p = @priority_queue.from_iter([0, 1, 4, 5, 6, 2, 3].iter())
+  let p = @priority_queue.from_iterator([0, 1, 4, 5, 6, 2, 3].iterator())
   p.pop() |> ignore
   p.pop() |> ignore
   p.pop() |> ignore
-  inspect(p.iter(), content="[3, 2, 1, 0]")
+  inspect(p.iterator(), content="[3, 2, 1, 0]")
   inspect(p.length(), content="4")
 }
 
@@ -159,7 +159,7 @@ test "is_empty" {
 ///|
 test "from_iter multiple elements iter" {
   inspect(
-    @priority_queue.from_iter([1, 2, 3].iter()),
+    @priority_queue.from_iterator([1, 2, 3].iterator()),
     content="@priority_queue.from_array([3, 2, 1])",
   )
 }
@@ -167,15 +167,15 @@ test "from_iter multiple elements iter" {
 ///|
 test "from_iter single element iter" {
   inspect(
-    @priority_queue.from_iter([1].iter()),
+    @priority_queue.from_iterator([1].iterator()),
     content="@priority_queue.from_array([1])",
   )
 }
 
 ///|
-test "from_iter empty iter" {
-  let pq : @priority_queue.PriorityQueue[Int] = @priority_queue.from_iter(
-    Iter::empty(),
+test "from_iterator empty iterator" {
+  let pq : @priority_queue.PriorityQueue[Int] = @priority_queue.from_iterator(
+    Iterator::empty(),
   )
   inspect(pq, content="@priority_queue.from_array([])")
 }
@@ -220,7 +220,7 @@ test "complex" {
   for i in 0..=1000 {
     assert_eq(pq.pop(), Some(1000 - i))
   }
-  inspect(pq.iter(), content="[]")
+  inspect(pq.iterator(), content="[]")
   assert_eq(pq.length(), 0)
 }
 
@@ -234,6 +234,6 @@ test "priority queue large data" {
   for i in 0..=10000000 {
     assert_eq(pq.pop(), Some(-i))
   }
-  inspect(pq.iter(), content="[]")
+  inspect(pq.iterator(), content="[]")
   assert_eq(pq.length(), 0)
 }

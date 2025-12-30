@@ -192,6 +192,8 @@ pub fn[K, V] SortedMap::eachi(
 
 ///|
 /// Returns all keys in the map.
+#deprecated
+#doc(hidden)
 pub fn[K, V] SortedMap::keys_as_iter(self : SortedMap[K, V]) -> Iter[K] {
   let todo_list = []
   let mut next_node = self.root
@@ -212,6 +214,8 @@ pub fn[K, V] SortedMap::keys_as_iter(self : SortedMap[K, V]) -> Iter[K] {
 
 ///|
 /// Returns all values in the map.
+#deprecated
+#doc(hidden)
 pub fn[K, V] SortedMap::values_as_iter(self : SortedMap[K, V]) -> Iter[V] {
   let todo_list = []
   let mut next_node = self.root
@@ -239,6 +243,9 @@ pub fn[K, V] SortedMap::to_array(self : SortedMap[K, V]) -> Array[(K, V)] {
 }
 
 ///|
+#warnings("-deprecated")
+#deprecated
+#doc(hidden)
 pub fn[K, V] SortedMap::iter(self : SortedMap[K, V]) -> Iter[(K, V)] {
   self.iterator().iter()
 }

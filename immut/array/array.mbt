@@ -299,6 +299,9 @@ pub impl[A] Add for T[A] with add(self, other) {
 
 ///|
 /// Return an iterator over the array.
+#warnings("-deprecated")
+#deprecated
+#doc(hidden)
 pub fn[A] T::iter(self : T[A]) -> Iter[A] {
   self.tree.iterator().iter()
 }

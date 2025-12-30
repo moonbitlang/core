@@ -61,6 +61,9 @@ pub fn[T] FixedArray::get(self : FixedArray[T], idx : Int) -> T? {
 ///   inspect(sum, content="126")
 /// }
 /// ```
+#warnings("-deprecated")
+#deprecated
+#doc(hidden)
 #intrinsic("%iter.from_array")
 pub fn[T] FixedArray::iter(self : FixedArray[T]) -> Iter[T] {
   self.iterator().iter()

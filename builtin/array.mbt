@@ -1618,6 +1618,9 @@ pub fn[T] Array::split(
 ///   inspect(sum, content="6")
 /// }
 /// ```
+#warnings("-deprecated")
+#deprecated
+#doc(hidden)
 pub fn[T] Array::iter(self : Array[T]) -> Iter[T] {
   self.iterator().iter()
 }
@@ -1643,6 +1646,9 @@ pub fn[T] Array::iter(self : Array[T]) -> Iter[T] {
 ///   inspect(result, content="[3, 2, 1]")
 /// }
 /// ```
+#warnings("-deprecated")
+#deprecated
+#doc(hidden)
 pub fn[T] Array::rev_iter(self : Array[T]) -> Iter[T] {
   self.rev_iterator().iter()
 }

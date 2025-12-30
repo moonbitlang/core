@@ -231,6 +231,9 @@ pub fn[K : Compare, V] SortedMap::from_array(
 }
 
 ///|
+#warnings("-deprecated")
+#deprecated
+#doc(hidden)
 pub fn[K, V] SortedMap::iter(self : SortedMap[K, V]) -> Iter[(K, V)] {
   self.iterator().iter()
 }
@@ -264,11 +267,15 @@ pub fn[K, V] SortedMap::iterator2(self : SortedMap[K, V]) -> Iterator2[K, V] {
 }
 
 ///|
+#deprecated
+#doc(hidden)
 pub fn[K, V] SortedMap::iter2(self : SortedMap[K, V]) -> Iter2[K, V] {
   self.iterator2().iter2()
 }
 
 ///|
+#deprecated
+#doc(hidden)
 #as_free_fn
 pub fn[K : Compare, V] SortedMap::from_iter(
   iter : Iter[(K, V)],
@@ -286,12 +293,16 @@ pub fn[K : Compare, V] SortedMap::from_iterator(
 
 ///|
 /// Return all keys of the map in ascending order.
+#deprecated
+#doc(hidden)
 pub fn[K, V] SortedMap::keys_as_iter(self : SortedMap[K, V]) -> Iter[K] {
   self.iter().map(p => p.0)
 }
 
 ///|
 /// Return all elements of the map in the ascending order of their keys.
+#deprecated
+#doc(hidden)
 pub fn[K, V] SortedMap::values(self : SortedMap[K, V]) -> Iter[V] {
   self.iter().map(p => p.1)
 }

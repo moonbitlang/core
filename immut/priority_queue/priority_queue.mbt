@@ -73,6 +73,9 @@ pub fn[A : Compare] PriorityQueue::to_array(
 }
 
 ///|
+#warnings("-deprecated")
+#deprecated
+#doc(hidden)
 pub fn[A : Compare] PriorityQueue::iter(self : PriorityQueue[A]) -> Iter[A] {
   self.iterator().iter()
 }

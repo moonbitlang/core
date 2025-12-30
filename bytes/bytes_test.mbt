@@ -108,19 +108,22 @@ test "to_array" {
 ///|
 test "from_iter multiple elements" {
   inspect(
-    Bytes::from_iter([b'\x00', b'\x01', b'\x02'].iter()).to_array(),
+    Bytes::from_iterator([b'\x00', b'\x01', b'\x02'].iterator()).to_array(),
     content="[b'\\x00', b'\\x01', b'\\x02']",
   )
 }
 
 ///|
 test "from_iter single element" {
-  inspect(Bytes::from_iter([b'\x00'].iter()).to_array(), content="[b'\\x00']")
+  inspect(
+    Bytes::from_iterator([b'\x00'].iterator()).to_array(),
+    content="[b'\\x00']",
+  )
 }
 
 ///|
-test "from_iter empty iterator" {
-  inspect(Bytes::from_iter(Iter::empty()).to_array(), content="[]")
+test "from_iterator empty iterator" {
+  inspect(Bytes::from_iterator(Iterator::empty()).to_array(), content="[]")
 }
 
 ///|
@@ -147,10 +150,10 @@ test "from_iterator empty iterator" {
 ///|
 test "iter" {
   let buf = StringBuilder::new(size_hint=5)
-  b"abcde".iter().each(x => buf.write_string(x.to_string()))
+  b"abcde".iterator().each(x => buf.write_string(x.to_string()))
   inspect(buf, content="b'\\x61'b'\\x62'b'\\x63'b'\\x64'b'\\x65'")
   buf.reset()
-  b"abcde".iter().take(2).each(x => buf.write_string(x.to_string()))
+  b"abcde".iterator().take(2).each(x => buf.write_string(x.to_string()))
   inspect(buf, content="b'\\x61'b'\\x62'")
 }
 
@@ -234,8 +237,8 @@ test "Bytes::of with different byte values" {
 
 ///|
 test "Bytes::from_iter with multiple elements" {
-  let iter = [b'a', b'b', b'c'].iter()
-  let bytes = Bytes::from_iter(iter)
+  let iter = [b'a', b'b', b'c'].iterator()
+  let bytes = Bytes::from_iterator(iter)
   inspect(
     bytes,
     content=(

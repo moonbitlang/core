@@ -208,6 +208,9 @@ pub fn BytesView::sub(
 ///   inspect(sum, content="15")
 /// }
 /// ```
+#warnings("-deprecated")
+#deprecated
+#doc(hidden)
 pub fn BytesView::iter(self : BytesView) -> Iter[Byte] {
   self.iterator().iter()
 }

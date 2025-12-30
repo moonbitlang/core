@@ -1686,6 +1686,9 @@ pub fn[X] default() -> List[X] {
 ///   inspect(sum, content="15")
 /// }
 /// ```
+#warnings("-deprecated")
+#deprecated
+#doc(hidden)
 pub fn[A] List::iter(self : List[A]) -> Iter[A] {
   self.iterator().iter()
 }

@@ -187,7 +187,7 @@ test "iter" {
   let x = Option::Some(42)
   let exb = StringBuilder::new(size_hint=0)
   x
-  .iter()
+  .iterator()
   .each(x => {
     exb.write_string(x.to_string())
     exb.write_char('\n')
@@ -202,7 +202,7 @@ test "iter" {
   exb.reset()
   let y : Int? = None
   y
-  .iter()
+  .iterator()
   .each(x => {
     exb.write_string(x.to_string())
     exb.write_char('\n')

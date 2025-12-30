@@ -762,6 +762,8 @@ pub fn Iter::join(self : Iter[String], sep : String) -> String {
 ///|
 /// Iter itself is an iterator.
 /// so that it works with array spread operator. e.g, `[..iter]`
+#deprecated
+#doc(hidden)
 pub fn[T] Iter::iter(self : Iter[T]) -> Iter[T] {
   self
 }

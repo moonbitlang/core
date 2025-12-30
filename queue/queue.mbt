@@ -356,6 +356,9 @@ pub fn[A] Queue::transfer(self : Queue[A], dst : Queue[A]) -> Unit {
 ///   assert_eq(sum, 26)
 /// }
 /// ```
+#warnings("-deprecated")
+#deprecated
+#doc(hidden)
 pub fn[A] Queue::iter(self : Queue[A]) -> Iter[A] {
   self.iterator().iter()
 }

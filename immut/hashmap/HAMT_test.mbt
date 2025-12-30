@@ -107,7 +107,7 @@ test "HAMT::iter" {
     (5, "e"),
     (11111, "f"),
   ])
-  let array = data.iter().collect()
+  let array = data.iterator().collect()
   array.sort()
   inspect(
     array,
@@ -182,8 +182,10 @@ test "HAMT::from_iter" {
 }
 
 ///|
-test "HAMT::from_iter empty" {
-  let map : @hashmap.HashMap[Int, Int] = @hashmap.from_iter(Iter::empty())
+test "HAMT::from_iterator empty" {
+  let map : @hashmap.HashMap[Int, Int] = @hashmap.from_iterator(
+    Iterator::empty(),
+  )
   assert_eq(map.length(), 0)
 }
 

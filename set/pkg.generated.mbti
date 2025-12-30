@@ -30,7 +30,6 @@ pub fn[K : Hash + Eq] Set::is_disjoint(Self[K], Self[K]) -> Bool
 pub fn[K] Set::is_empty(Self[K]) -> Bool
 pub fn[K : Hash + Eq] Set::is_subset(Self[K], Self[K]) -> Bool
 pub fn[K : Hash + Eq] Set::is_superset(Self[K], Self[K]) -> Bool
-pub fn[K] Set::iter(Self[K]) -> Iter[K]
 pub fn[K] Set::iterator(Self[K]) -> Iterator[K]
 #alias(size, deprecated)
 pub fn[K] Set::length(Self[K]) -> Int

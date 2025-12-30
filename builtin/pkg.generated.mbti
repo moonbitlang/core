@@ -107,7 +107,6 @@ pub fn[T] Array::get(Self[T], Int) -> T?
 pub fn[T] Array::insert(Self[T], Int, T) -> Unit
 pub fn[T] Array::is_empty(Self[T]) -> Bool
 pub fn[T : Compare] Array::is_sorted(Self[T]) -> Bool
-pub fn[T] Array::iter(Self[T]) -> Iter[T]
 pub fn[A] Array::iter2(Self[A]) -> Iter2[Int, A]
 pub fn[X] Array::iterator(Self[X]) -> Iterator[X]
 pub fn[X] Array::iterator2(Self[X]) -> Iterator2[Int, X]
@@ -142,7 +141,6 @@ pub fn[A, B] Array::rev_fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 pub fn[A, B] Array::rev_foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
 #alias(rev_inplace, deprecated)
 pub fn[T] Array::rev_in_place(Self[T]) -> Unit
-pub fn[T] Array::rev_iter(Self[T]) -> Iter[T]
 pub fn[X] Array::rev_iterator(Self[X]) -> Iterator[X]
 pub fn[T : Eq] Array::search(Self[T], T) -> Int?
 #alias(find_index, deprecated)
@@ -199,7 +197,6 @@ pub fn[A, B] ArrayView::foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B 
 pub fn[T] ArrayView::get(Self[T], Int) -> T?
 pub fn[T] ArrayView::is_empty(Self[T]) -> Bool
 pub fn[T : Compare] ArrayView::is_sorted(Self[T]) -> Bool
-pub fn[A] ArrayView::iter(Self[A]) -> Iter[A]
 pub fn[A] ArrayView::iter2(Self[A]) -> Iter2[Int, A]
 pub fn[X] ArrayView::iterator(Self[X]) -> Iterator[X]
 pub fn[X] ArrayView::iterator2(Self[X]) -> Iterator2[Int, X]
@@ -267,7 +264,6 @@ pub fn[T, B] Iter::fold(Self[T], init~ : B, (B, T) -> B raise?) -> B raise?
 pub fn[T, K : Eq + Hash] Iter::group_by(Self[T], (T) -> K) -> Map[K, Array[T]]
 pub fn[A] Iter::head(Self[A]) -> A?
 pub fn[A] Iter::intersperse(Self[A], A) -> Self[A]
-pub fn[T] Iter::iter(Self[T]) -> Self[T]
 pub fn[T] Iter::iter2(Self[T]) -> Iter2[Int, T]
 pub fn Iter::join(Self[String], String) -> String
 pub fn[T] Iter::just_run(Self[T], (T) -> IterResult) -> Unit
@@ -299,7 +295,6 @@ pub impl[X : ToJson] ToJson for Iter[X]
 type Iter2[A, B]
 pub fn[A, B] Iter2::concat(Self[A, B], Self[A, B]) -> Self[A, B]
 pub fn[A, B] Iter2::each(Self[A, B], (A, B) -> Unit) -> Unit
-pub fn[A, B] Iter2::iter(Self[A, B]) -> Iter[(A, B)]
 pub fn[A, B] Iter2::iter2(Self[A, B]) -> Self[A, B]
 #deprecated
 pub fn[A, B] Iter2::new(((A, B) -> IterResult) -> IterResult) -> Self[A, B]
@@ -331,7 +326,6 @@ pub fn[X, Y] Iterator::flat_map(Self[X], (X) -> Self[Y]) -> Self[Y]
 pub fn[X] Iterator::flatten(Self[Self[X]]) -> Self[X]
 pub fn[X, R] Iterator::fold(Self[X], init~ : R, (R, X) -> R raise?) -> R raise?
 pub fn[X] Iterator::intersperse(Self[X], X) -> Self[X]
-pub fn[X] Iterator::iter(Self[X]) -> Iter[X]
 pub fn[X] Iterator::iter2(Self[X]) -> Iter2[Int, X]
 pub fn[X] Iterator::iterator(Self[X]) -> Self[X]
 pub fn[X] Iterator::iterator2(Self[X]) -> Iterator2[Int, X]
@@ -411,7 +405,6 @@ pub fn[V] Map::get_from_string(Self[String, V], StringView) -> V?
 pub fn[K : Hash + Eq, V] Map::get_or_default(Self[K, V], K, V) -> V
 pub fn[K : Hash + Eq, V] Map::get_or_init(Self[K, V], K, () -> V) -> V
 pub fn[K, V] Map::is_empty(Self[K, V]) -> Bool
-pub fn[K, V] Map::iter(Self[K, V]) -> Iter[(K, V)]
 pub fn[K, V] Map::iter2(Self[K, V]) -> Iter2[K, V]
 pub fn[K, V] Map::iterator(Self[K, V]) -> Iterator[(K, V)]
 pub fn[K, V] Map::iterator2(Self[K, V]) -> Iterator2[K, V]
@@ -732,7 +725,6 @@ pub fn String::has_prefix(String, StringView) -> Bool
 pub fn String::has_suffix(String, StringView) -> Bool
 pub fn String::is_blank(String) -> Bool
 pub fn String::is_empty(String) -> Bool
-pub fn String::iter(String) -> Iter[Char]
 pub fn String::iter2(String) -> Iter2[Int, Char]
 pub fn String::iterator(String) -> Iterator[Char]
 pub fn String::iterator2(String) -> Iterator2[Int, Char]
@@ -749,7 +741,6 @@ pub fn String::replace_all(String, old~ : StringView, new~ : StringView) -> Stri
 pub fn String::rev(String) -> String
 pub fn String::rev_find(String, StringView) -> Int?
 pub fn[A] String::rev_fold(String, init~ : A, (A, Char) -> A raise?) -> A raise?
-pub fn String::rev_iter(String) -> Iter[Char]
 pub fn String::rev_iterator(String) -> Iterator[Char]
 pub fn String::split(String, StringView) -> Iter[StringView]
 pub fn String::strip_prefix(String, StringView) -> StringView?
@@ -788,7 +779,6 @@ pub fn[T] Option::is_empty(T?) -> Bool
 pub fn[T] Option::is_none(T?) -> Bool
 #deprecated
 pub fn[T] Option::is_some(T?) -> Bool
-pub fn[T] Option::iter(T?) -> Iter[T]
 pub fn[T] Option::iterator(T?) -> Iterator[T]
 pub fn[T, U] Option::map(T?, (T) -> U raise?) -> U? raise?
 pub fn[T, U] Option::map_or(T?, U, (T) -> U raise?) -> U raise?
@@ -844,7 +834,6 @@ pub fn[T] FixedArray::from_iterator(Iterator[T]) -> Self[T]
 pub fn[T] FixedArray::get(Self[T], Int) -> T?
 pub fn[T] FixedArray::is_empty(Self[T]) -> Bool
 pub fn[T : Compare] FixedArray::is_sorted(Self[T]) -> Bool
-pub fn[T] FixedArray::iter(Self[T]) -> Iter[T]
 pub fn[T] FixedArray::iter2(Self[T]) -> Iter2[Int, T]
 pub fn[X] FixedArray::iterator(Self[X]) -> Iterator[X]
 pub fn[X] FixedArray::iterator2(Self[X]) -> Iterator2[Int, X]
@@ -905,7 +894,6 @@ pub fn[T] ReadOnlyArray::from_iterator(Iterator[T]) -> Self[T]
 pub fn[T] ReadOnlyArray::get(Self[T], Int) -> T?
 pub fn[T] ReadOnlyArray::is_empty(Self[T]) -> Bool
 pub fn[T : Compare] ReadOnlyArray::is_sorted(Self[T]) -> Bool
-pub fn[T] ReadOnlyArray::iter(Self[T]) -> Iter[T]
 pub fn[T] ReadOnlyArray::iter2(Self[T]) -> Iter2[Int, T]
 pub fn[T] ReadOnlyArray::iterator(Self[T]) -> Iterator[T]
 pub fn ReadOnlyArray::join(Self[String], StringView) -> String
@@ -936,7 +924,6 @@ pub fn Bytes::from_fixedarray(FixedArray[Byte], len? : Int) -> Bytes
 pub fn Bytes::from_iter(Iter[Byte]) -> Bytes
 pub fn Bytes::from_iterator(Iterator[Byte]) -> Bytes
 pub fn Bytes::get(Bytes, Int) -> Byte?
-pub fn Bytes::iter(Bytes) -> Iter[Byte]
 pub fn Bytes::iter2(Bytes) -> Iter2[Int, Byte]
 pub fn Bytes::iterator(Bytes) -> Iterator[Byte]
 pub fn Bytes::iterator2(Bytes) -> Iterator2[Int, Byte]
@@ -960,7 +947,6 @@ pub fn BytesView::at(Self, Int) -> Byte
 pub fn BytesView::data(Self) -> Bytes
 pub fn BytesView::find(Self, Self) -> Int?
 pub fn BytesView::get(Self, Int) -> Byte?
-pub fn BytesView::iter(Self) -> Iter[Byte]
 pub fn BytesView::iter2(Self) -> Iter2[Int, Byte]
 pub fn BytesView::iterator(Self) -> Iterator[Byte]
 pub fn BytesView::iterator2(Self) -> Iterator2[Int, Byte]
@@ -998,7 +984,6 @@ pub fn StringView::has_prefix(Self, Self) -> Bool
 pub fn StringView::has_suffix(Self, Self) -> Bool
 pub fn StringView::is_blank(Self) -> Bool
 pub fn StringView::is_empty(Self) -> Bool
-pub fn StringView::iter(Self) -> Iter[Char]
 pub fn StringView::iter2(Self) -> Iter2[Int, Char]
 pub fn StringView::iterator(Self) -> Iterator[Char]
 pub fn StringView::iterator2(Self) -> Iterator2[Int, Char]
@@ -1014,7 +999,6 @@ pub fn StringView::replace_all(Self, old~ : Self, new~ : Self) -> Self
 pub fn StringView::rev(Self) -> String
 pub fn StringView::rev_find(Self, Self) -> Int?
 pub fn[A] StringView::rev_fold(Self, init~ : A, (A, Char) -> A raise?) -> A raise?
-pub fn StringView::rev_iter(Self) -> Iter[Char]
 pub fn StringView::rev_iterator(Self) -> Iterator[Char]
 pub fn StringView::split(Self, Self) -> Iter[Self]
 pub fn StringView::start_offset(Self) -> Int

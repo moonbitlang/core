@@ -60,8 +60,8 @@ test "Map::of" {
 
 ///|
 test "Map::from_iter" {
-  let iter = [("a", 1), ("b", 2), ("c", 3)].iter()
-  let map = Map::from_iter(iter)
+  let iter = [("a", 1), ("b", 2), ("c", 3)].iterator()
+  let map = Map::from_iterator(iter)
   inspect(
     map,
     content=(

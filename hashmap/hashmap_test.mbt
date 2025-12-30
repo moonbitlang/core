@@ -147,7 +147,7 @@ test "each" {
 ///|
 test "iter_collect" {
   let map = @hashmap.from_array([(1, "one"), (2, "two"), (3, "three")])
-  let array = map.iter().collect()
+  let array = map.iterator().collect()
   array.sort()
   inspect(
     array,
@@ -285,7 +285,7 @@ test "get_nonexistent_key_with_psl" {
 
 ///|
 test "from_iter multiple elements iter" {
-  let map = @hashmap.from_iter([(1, 1), (2, 2), (3, 3)].iter())
+  let map = @hashmap.from_iterator([(1, 1), (2, 2), (3, 3)].iterator())
   guard map is { 1: 1, 2: 2, 3: 3, .. } else {
     fail("Map is not expected: \{map}")
   }
@@ -295,14 +295,16 @@ test "from_iter multiple elements iter" {
 ///|
 test "from_iter single element iter" {
   inspect(
-    @hashmap.from_iter([(1, 1)].iter()),
+    @hashmap.from_iterator([(1, 1)].iterator()),
     content="HashMap::from_array([(1, 1)])",
   )
 }
 
 ///|
-test "from_iter empty iter" {
-  let map : @hashmap.HashMap[Int, Int] = @hashmap.from_iter(Iter::empty())
+test "from_iterator empty iterator" {
+  let map : @hashmap.HashMap[Int, Int] = @hashmap.from_iterator(
+    Iterator::empty(),
+  )
   inspect(map, content="HashMap::from_array([])")
 }
 

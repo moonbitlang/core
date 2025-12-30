@@ -35,7 +35,6 @@ pub fn[K : Eq + Hash, V] HashMap::from_iterator(Iterator[(K, V)]) -> Self[K, V]
 pub fn[K : Eq + Hash, V] HashMap::get(Self[K, V], K) -> V?
 pub fn[K : Eq, V] HashMap::intersection(Self[K, V], Self[K, V]) -> Self[K, V]
 pub fn[K : Eq, V] HashMap::intersection_with(Self[K, V], Self[K, V], (K, V, V) -> V raise?) -> Self[K, V] raise?
-pub fn[K, V] HashMap::iter(Self[K, V]) -> Iter[(K, V)]
 pub fn[K, V] HashMap::iter2(Self[K, V]) -> Iter2[K, V]
 pub fn[K, V] HashMap::iterator(Self[K, V]) -> Iterator[(K, V)]
 pub fn[K, V] HashMap::iterator2(Self[K, V]) -> Iterator2[K, V]
