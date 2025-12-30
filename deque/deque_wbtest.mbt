@@ -62,7 +62,6 @@ test "copy_empty_invariant" {
   let result = empty.copy()
   inspect(result.len, content="0")
   // Invariant: when empty, head == tail
-  // BUG: currently tail == -1, violating the invariant
   assert_eq(result.head, result.tail)
 }
 
@@ -76,7 +75,6 @@ test "flatten_empty_invariant" {
   let result = outer.flatten()
   inspect(result.len, content="0")
   // Invariant: when empty, head == tail
-  // BUG: currently tail == -1, violating the invariant
   assert_eq(result.head, result.tail)
 }
 
