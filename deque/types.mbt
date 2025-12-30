@@ -42,6 +42,15 @@
 /// - Both `head` and `tail` always point to occupied slots (not the next empty slot)
 /// - Elements are stored circularly: index `i` maps to `buf[(head + i) % buf.length()]`
 /// - `tail == (head + len - 1) % buf.length()` when `len > 0`
+///
+/// Why `head == tail` when empty?
+/// - Avoids invalid index: when constructing a deque starting at `head = 0`,
+///   the natural expression `tail = len - 1` yields `-1` when `len == 0`.
+///   Since `-1` is not a valid buffer index, we require `tail == head` instead.
+/// - Simplifies first push: both pointers already reference a valid slot,
+///   so `push_back`/`push_front` can write directly without special-casing.
+/// - Uniform representation: every empty deque looks the same regardless of
+///   how it was created (new, cleared, drained, etc.).
 #alias(T, deprecated)
 struct Deque[A] {
   /// Circular buffer storing elements. May contain uninitialized slots.
