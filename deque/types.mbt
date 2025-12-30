@@ -15,41 +15,43 @@
 ///|
 /// A double-ended queue (deque) backed by a growable circular buffer.
 ///
+/// This implementation follows the Rust `VecDeque` design: only `head` and `len`
+/// are stored, with `tail` computed on demand as `(head + len - 1) % cap`.
+///
 /// Layout:
 /// ```text
-/// Non-contiguous case (head > tail, wrapped around):
+/// Wrapped case (head + len > cap):
 ///   buf: [4, 5, _, _, _, 1, 2, 3]
 ///              ^        ^
-///            tail     head
+///        (tail)       head
+///   head = 5, len = 5, tail = (5 + 5 - 1) % 8 = 1
 ///   Logical order: [1, 2, 3, 4, 5]
 ///
-/// Contiguous case (head <= tail):
+/// Contiguous case (head + len <= cap):
 ///   buf: [_, 1, 2, 3, 4, 5, _, _]
 ///           ^           ^
-///         head        tail
+///         head       (tail)
+///   head = 1, len = 5, tail = (1 + 5 - 1) % 8 = 5
 ///   Logical order: [1, 2, 3, 4, 5]
 ///
 /// Empty case (len == 0):
 ///   buf: [_, _, _, _]
 ///           ^
-///       head=tail (both point to same slot, value is undefined)
+///         head (tail is undefined, not accessed)
 /// ```
 ///
 /// Invariants:
-/// - `len` is the number of elements in the deque (0 <= len <= buf.length())
-/// - When `len == 0`: `head` and `tail` point to the same slot (value undefined)
-/// - When `len > 0`: `head` points to the first element, `tail` points to the last
-/// - Both `head` and `tail` always point to occupied slots (not the next empty slot)
-/// - Elements are stored circularly: index `i` maps to `buf[(head + i) % buf.length()]`
-/// - `tail == (head + len - 1) % buf.length()` when `len > 0`
+/// - `0 <= len <= buf.length()`
+/// - `0 <= head < buf.length()`
+/// - Element at index `i` is at `buf[(head + i) % buf.length()]`
+/// - When `len > 0`: front is `buf[head]`, back is `buf[(head + len - 1) % cap]`
+/// - When `len == 0`: no valid element, `head` can be any valid index
 #alias(T, deprecated)
 struct Deque[A] {
   /// Circular buffer storing elements. May contain uninitialized slots.
   mut buf : UninitializedArray[A]
   /// Number of elements currently in the deque.
   mut len : Int
-  /// Index of the first element (front). When empty, equals `tail`.
+  /// Index of the first element (front). Valid range: 0 <= head < buf.length().
   mut head : Int
-  /// Index of the last element (back). When empty, equals `head`.
-  mut tail : Int
 }

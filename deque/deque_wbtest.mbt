@@ -21,7 +21,7 @@ test "unsafe_pop_front after many push_front" {
   for i in 0..<10 {
     dq.unsafe_pop_front()
   }
-  assert_eq(dq.head, dq.tail)
+  assert_eq(dq.len, 0)
 }
 
 ///|
@@ -29,29 +29,24 @@ test "truncate zero" {
   let dq = from_array([1, 2, 3])
   dq.truncate(0)
   inspect(dq.len, content="0")
-  assert_eq(dq.head, dq.tail)
 }
 
 ///|
-/// Test from_array with empty array maintains invariant:
-/// When len == 0, head and tail should point to the same slot.
-test "from_array_empty_invariant" {
+/// Test from_array with empty array creates valid empty deque.
+test "from_array_empty" {
   let dq : Deque[Int] = from_array([])
   inspect(dq.len, content="0")
-  // Invariant: when empty, head == tail
-  assert_eq(dq.head, dq.tail)
+  inspect(dq.is_empty(), content="true")
 }
 
 ///|
-/// Test add (operator +) with empty deques maintains invariant:
-/// When len == 0, head and tail should point to the same slot.
-test "add_empty_invariant" {
+/// Test add (operator +) with empty deques creates valid empty deque.
+test "add_empty" {
   let empty1 : Deque[Int] = new()
   let empty2 : Deque[Int] = new()
   let result = empty1 + empty2
   inspect(result.len, content="0")
-  // Invariant: when empty, head == tail
-  assert_eq(result.head, result.tail)
+  inspect(result.is_empty(), content="true")
 }
 
 ///|

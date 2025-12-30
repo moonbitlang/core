@@ -40,7 +40,14 @@ fn[T] set_null(buffer : UninitializedArray[T], index : Int) = "%fixedarray.set_n
 /// ```
 #as_free_fn
 pub fn[A] Deque::new(capacity? : Int = 0) -> Deque[A] {
-  Deque::{ buf: UninitializedArray::make(capacity), len: 0, head: 0, tail: 0 }
+  Deque::{ buf: UninitializedArray::make(capacity), len: 0, head: 0 }
+}
+
+///|
+/// Computes the tail index (index of last element) on demand.
+/// Only valid when len > 0.
+fn[A] Deque::tail_index(self : Deque[A]) -> Int {
+  (self.head + self.len - 1) % self.buf.length()
 }
 
 ///|
@@ -133,9 +140,7 @@ pub impl[A] Add for Deque[A] with add(self, other) {
   for i, x in other {
     buf[i + self.len] = x
   }
-  // When empty, head and tail must point to the same slot (invariant)
-  let tail = if len > 0 { len - 1 } else { 0 }
-  Deque::{ buf, len, head: 0, tail }
+  Deque::{ buf, len, head: 0 }
 }
 
 ///|
@@ -166,9 +171,7 @@ pub fn[A] Deque::from_array(arr : ArrayView[A]) -> Deque[A] {
   for i, x in arr {
     buf[i] = x
   }
-  // When empty, head and tail must point to the same slot (invariant)
-  let tail = if len > 0 { len - 1 } else { 0 }
-  Deque::{ buf, len, head: 0, tail }
+  Deque::{ buf, len, head: 0 }
 }
 
 ///|
@@ -198,7 +201,7 @@ pub fn[A] Deque::copy(self : Deque[A]) -> Deque[A] {
   for i, x in self {
     buf[i] = x
   }
-  Deque::{ buf, len, head: 0, tail: len - 1 }
+  Deque::{ buf, len, head: 0 }
 }
 
 ///|
@@ -250,7 +253,6 @@ pub fn[A] Deque::blit_to(
   if dst_offset + len > dst.buf.length() {
     dst.reserve_capacity(dst_offset + len)
     dst.head = 0
-    dst.tail = dst.len - 1
   }
   let dst_len = dst.len
   // Check for overlapping self-blit requiring reverse copy:
@@ -267,7 +269,6 @@ pub fn[A] Deque::blit_to(
       dst_len
     }
     if new_len > dst_len {
-      dst.tail = (dst.head + new_len - 1) % dst.buf.length()
       dst.len = new_len
     }
     // Copy in reverse order
@@ -282,7 +283,6 @@ pub fn[A] Deque::blit_to(
       let src_idx = (self.head + src_offset + i) % self.buf.length()
       dst.buf[dst_idx] = self.buf[src_idx]
       if dst_offset + i >= dst_len {
-        dst.tail = (dst.tail + 1) % dst.buf.length()
         dst.len += 1
       }
     }
@@ -314,11 +314,7 @@ pub fn[A] Deque::blit_to(
 /// ```
 pub fn[A] Deque::append(self : Deque[A], other : Deque[A]) -> Unit {
   guard other.len != 0 else { return }
-  let space = if self.buf.length() != 0 {
-    (self.head - self.tail - 1 + self.buf.length()) % self.buf.length()
-  } else {
-    0
-  }
+  let space = self.buf.length() - self.len
   if space < other.len {
     let new_cap = if self.len + other.len > self.buf.length() * 2 {
       self.len + other.len
@@ -331,11 +327,11 @@ pub fn[A] Deque::append(self : Deque[A], other : Deque[A]) -> Unit {
     }
     self.buf = new_buf
     self.head = 0
-    self.tail = self.len - 1
   }
+  let cap = self.buf.length()
   for _, y in other {
-    self.tail = (self.tail + 1) % self.buf.length()
-    self.buf[self.tail] = y
+    let write_idx = (self.head + self.len) % cap
+    self.buf[write_idx] = y
     self.len += 1
   }
 }
@@ -380,6 +376,7 @@ pub fn[A] Deque::insert(self : Deque[A], index : Int, value : A) -> Unit {
   }
   let cap = self.buf.length()
   if index < self.len / 2 {
+    // Shift front elements left
     let new_head = (self.head - 1 + cap) % cap
     for i = 0; i < index; i = i + 1 {
       let to = (new_head + i) % cap
@@ -388,13 +385,12 @@ pub fn[A] Deque::insert(self : Deque[A], index : Int, value : A) -> Unit {
     }
     self.head = new_head
   } else {
-    let new_tail = (self.tail + 1) % cap
+    // Shift back elements right
     for i = self.len; i > index; i = i - 1 {
       let from = (self.head + i - 1) % cap
       let to = (self.head + i) % cap
       self.buf[to] = self.buf[from]
     }
-    self.tail = new_tail
   }
   self.buf[(self.head + index) % cap] = value
   self.len += 1
@@ -441,6 +437,7 @@ pub fn[A] Deque::remove(self : Deque[A], index : Int) -> A {
   let res = self[index]
   let cap = self.buf.length()
   if index < self.len / 2 {
+    // Shift front elements right
     let new_head = (self.head + 1) % cap
     for i = index - 1; i >= 0; i = i - 1 {
       let to = (self.head + i + 1) % cap
@@ -450,14 +447,14 @@ pub fn[A] Deque::remove(self : Deque[A], index : Int) -> A {
     set_null(self.buf, self.head)
     self.head = new_head
   } else {
-    let new_tail = (self.tail - 1 + cap) % cap
+    // Shift back elements left
+    let tail_idx = (self.head + self.len - 1) % cap
     for i = index + 1; i < self.len; i = i + 1 {
       let to = (self.head + i - 1) % cap
       let from = (self.head + i) % cap
       self.buf[to] = self.buf[from]
     }
-    set_null(self.buf, self.tail)
-    self.tail = new_tail
+    set_null(self.buf, tail_idx)
   }
   self.len -= 1
   res
@@ -518,28 +515,13 @@ pub fn[A] Deque::capacity(self : Deque[A]) -> Int {
 ///|
 /// Reallocate the deque with a new capacity.
 fn[A] Deque::realloc(self : Deque[A]) -> Unit {
-  let old_cap = self.len
+  let old_cap = self.buf.length()
   let new_cap = if old_cap == 0 { 8 } else { old_cap * 2 }
   let new_buf = UninitializedArray::make(new_cap)
-  if old_cap > 0 {
-    if self.tail >= self.head {
-      for i = self.head, j = 0; i <= self.tail; i = i + 1, j = j + 1 {
-        new_buf[j] = self.buf[i]
-      }
-    } else {
-      let mut j = 0
-      for i in self.head..<self.buf.length() {
-        new_buf[j] = self.buf[i]
-        j += 1
-      }
-      for i in 0..=self.tail {
-        new_buf[j] = self.buf[i]
-        j += 1
-      }
-    }
-    self.tail = self.len - 1
-  } else {
-    self.tail = 0
+  // Copy elements linearly to new buffer
+  for i in 0..<self.len {
+    let src_idx = (self.head + i) % old_cap
+    new_buf[i] = self.buf[src_idx]
   }
   self.head = 0
   self.buf = new_buf
@@ -577,7 +559,7 @@ pub fn[A] Deque::back(self : Deque[A]) -> A? {
   if self.len == 0 {
     None
   } else {
-    Some(self.buf[self.tail])
+    Some(self.buf[self.tail_index()])
   }
 }
 
@@ -598,9 +580,8 @@ pub fn[A] Deque::push_front(self : Deque[A], value : A) -> Unit {
   if self.len == self.buf.length() {
     self.realloc()
   }
-  if self.len != 0 {
-    self.head = (self.head + self.buf.length() - 1) % self.buf.length()
-  }
+  let cap = self.buf.length()
+  self.head = (self.head - 1 + cap) % cap
   self.buf[self.head] = value
   self.len += 1
 }
@@ -622,10 +603,9 @@ pub fn[A] Deque::push_back(self : Deque[A], value : A) -> Unit {
   if self.len == self.buf.length() {
     self.realloc()
   }
-  if self.len != 0 {
-    self.tail = (self.tail + self.buf.length() + 1) % self.buf.length()
-  }
-  self.buf[self.tail] = value
+  let cap = self.buf.length()
+  let write_idx = (self.head + self.len) % cap
+  self.buf[write_idx] = value
   self.len += 1
 }
 
@@ -644,22 +624,11 @@ pub fn[A] Deque::push_back(self : Deque[A], value : A) -> Unit {
 #doc(hidden)
 #alias(pop_front_exn, deprecated)
 pub fn[A] Deque::unsafe_pop_front(self : Deque[A]) -> Unit {
-  match self.len {
-    0 => abort("The deque is empty!")
-    1 => {
-      set_null(self.buf, self.head)
-      self.len -= 1
-    }
-    _ => {
-      set_null(self.buf, self.head)
-      self.head = if self.head < self.buf.length() - 1 {
-        self.head + 1
-      } else {
-        0
-      }
-      self.len -= 1
-    }
-  }
+  guard self.len > 0 else { abort("The deque is empty!") }
+  set_null(self.buf, self.head)
+  let cap = self.buf.length()
+  self.head = (self.head + 1) % cap
+  self.len -= 1
 }
 
 ///|
@@ -696,22 +665,10 @@ pub fn[A] Deque::unsafe_pop_front(self : Deque[A]) -> Unit {
 #doc(hidden)
 #alias(pop_back_exn, deprecated)
 pub fn[A] Deque::unsafe_pop_back(self : Deque[A]) -> Unit {
-  match self.len {
-    0 => abort("The deque is empty!")
-    1 => {
-      set_null(self.buf, self.tail)
-      self.len -= 1
-    }
-    _ => {
-      set_null(self.buf, self.tail)
-      self.tail = if self.tail > 0 {
-        self.tail - 1
-      } else {
-        self.buf.length() - 1
-      }
-      self.len -= 1
-    }
-  }
+  guard self.len > 0 else { abort("The deque is empty!") }
+  let tail_idx = self.tail_index()
+  set_null(self.buf, tail_idx)
+  self.len -= 1
 }
 
 ///|
@@ -746,26 +703,13 @@ pub fn[A] Deque::unsafe_pop_back(self : Deque[A]) -> Unit {
 /// }
 /// ```
 pub fn[A] Deque::pop_front(self : Deque[A]) -> A? {
-  match self.len {
-    0 => None
-    1 => {
-      let origin_head = self.buf[self.head]
-      set_null(self.buf, self.head)
-      self.len -= 1
-      Some(origin_head)
-    }
-    _ => {
-      let origin_head = self.buf[self.head]
-      set_null(self.buf, self.head)
-      self.head = if self.head < self.buf.length() - 1 {
-        self.head + 1
-      } else {
-        0
-      }
-      self.len -= 1
-      Some(origin_head)
-    }
-  }
+  guard self.len > 0 else { return None }
+  let value = self.buf[self.head]
+  set_null(self.buf, self.head)
+  let cap = self.buf.length()
+  self.head = (self.head + 1) % cap
+  self.len -= 1
+  Some(value)
 }
 
 ///|
@@ -779,26 +723,12 @@ pub fn[A] Deque::pop_front(self : Deque[A]) -> A? {
 /// }
 /// ```
 pub fn[A] Deque::pop_back(self : Deque[A]) -> A? {
-  match self.len {
-    0 => None
-    1 => {
-      let origin_back = self.buf[self.tail]
-      set_null(self.buf, self.tail)
-      self.len -= 1
-      Some(origin_back)
-    }
-    _ => {
-      let origin_back = self.buf[self.tail]
-      set_null(self.buf, self.tail)
-      self.tail = if self.tail > 0 {
-        self.tail - 1
-      } else {
-        self.buf.length() - 1
-      }
-      self.len -= 1
-      Some(origin_back)
-    }
-  }
+  guard self.len > 0 else { return None }
+  let tail_idx = self.tail_index()
+  let value = self.buf[tail_idx]
+  set_null(self.buf, tail_idx)
+  self.len -= 1
+  Some(value)
 }
 
 ///|
@@ -884,7 +814,7 @@ pub fn[A] Deque::set(self : Deque[A], index : Int, value : A) -> Unit {
 /// ```
 pub fn[A] Deque::as_views(self : Deque[A]) -> (ArrayView[A], ArrayView[A]) {
   guard self.len != 0 else { ([][:], [][:]) }
-  let { buf, head, len, .. } = self
+  let { buf, head, len } = self
   let cap = buf.length()
   let head_len = cap - head
   if head_len >= len {
@@ -1014,7 +944,7 @@ pub fn[A] Deque::rev_eachi(self : Deque[A], f : (Int, A) -> Unit) -> Unit {
 /// }
 /// ```
 pub fn[A] Deque::clear(self : Deque[A]) -> Unit {
-  let { head, buf, len, .. } = self
+  let { head, buf, len } = self
   let cap = buf.length()
   let head_len = cap - head
   if head_len >= len {
@@ -1031,7 +961,6 @@ pub fn[A] Deque::clear(self : Deque[A]) -> Unit {
   }
   self.len = 0
   self.head = 0
-  self.tail = 0
 }
 
 ///|
@@ -1055,7 +984,7 @@ pub fn[A, U] Deque::map(self : Deque[A], f : (A) -> U) -> Deque[U] {
       let idx = (self.head + i) % cap
       buf[i] = f(self.buf[idx])
     }
-    Deque::{ buf, len: self.len, head: 0, tail: self.len - 1 }
+    Deque::{ buf, len: self.len, head: 0 }
   }
 }
 
@@ -1080,7 +1009,7 @@ pub fn[A, U] Deque::mapi(self : Deque[A], f : (Int, A) -> U) -> Deque[U] {
       let idx = (self.head + i) % cap
       buf[i] = f(i, self.buf[idx])
     }
-    Deque::{ buf, len: self.len, head: 0, tail: self.len - 1 }
+    Deque::{ buf, len: self.len, head: 0 }
   }
 }
 
@@ -1200,9 +1129,7 @@ pub fn[A] Deque::extract_if(self : Deque[A], f : (A) -> Bool) -> Deque[A] {
     set_null(self.buf, (self.head + i) % self.buf.length())
   }
   let removed_len = removed.length()
-  let cap = self.buf.length()
   self.len -= removed_len
-  self.tail = (self.tail - removed_len + cap) % cap
   removed
 }
 
@@ -1260,10 +1187,9 @@ pub fn[A] Deque::reserve_capacity(self : Deque[A], capacity : Int) -> Unit {
     return
   }
   let new_buf : UninitializedArray[A] = UninitializedArray::make(capacity)
-  let { buf, len, head, .. } = self
+  let { buf, len, head } = self
   self.buf = new_buf
   self.head = 0
-  self.tail = if len == 0 { 0 } else { len - 1 }
   for i in 0..<len {
     let idx = (head + i) % buf.length()
     self.buf[i] = buf[idx]
@@ -1290,10 +1216,9 @@ pub fn[A] Deque::shrink_to_fit(self : Deque[A]) -> Unit {
   if self.capacity() <= self.length() {
     return
   }
-  let { buf, len, head, .. } = self
+  let { buf, len, head } = self
   self.buf = UninitializedArray::make(len)
   self.head = 0
-  self.tail = if len == 0 { 0 } else { len - 1 }
   for i in 0..<len {
     let idx = (head + i) % buf.length()
     self.buf[i] = buf[idx]
@@ -1334,7 +1259,6 @@ pub fn[A] Deque::truncate(self : Deque[A], len : Int) -> Unit {
     // Thus, we need to drop the latter part of the back view.
     self.len = len
     let start = len - front.length()
-    self.tail = start - 1
     for i in start..<back.length() {
       set_null(buf, i)
     }
@@ -1344,7 +1268,6 @@ pub fn[A] Deque::truncate(self : Deque[A], len : Int) -> Unit {
     // - The entire back view.
     self.len = len
     let start = head + len
-    self.tail = start - 1
     for i in start..<self.buf.length() {
       set_null(buf, i)
     }
@@ -1870,12 +1793,10 @@ pub impl[A : @json.FromJson] @json.FromJson for Deque[A] with from_json(
   }
   let len = arr.length()
   let buf = UninitializedArray::make(len)
-  let head = 0
-  let tail = if len == 0 { 0 } else { len - 1 }
   for i, x in arr {
     buf[i] = @json.FromJson::from_json(x, path.add_index(i))
   }
-  { len, buf, head, tail }
+  { len, buf, head: 0 }
 }
 
 ///|
@@ -2010,12 +1931,7 @@ pub fn[A] Deque::flatten(self : Deque[Deque[A]]) -> Deque[A] {
   for deque in self {
     len += deque.length()
   }
-  let target = Deque::{
-    buf: UninitializedArray::make(len),
-    len,
-    head: 0,
-    tail: len - 1,
-  }
+  let target = Deque::{ buf: UninitializedArray::make(len), len, head: 0 }
   let mut i = 0
   for deque in self {
     let (front, back) = deque.as_views()
@@ -2061,12 +1977,7 @@ pub fn[A] Deque::drain(self : Deque[A], start~ : Int, len? : Int) -> Deque[A] {
     return new()
   }
   // Prepare deque to return
-  let deque = Deque::{
-    buf: UninitializedArray::make(len),
-    len,
-    head: 0,
-    tail: len - 1,
-  }
+  let deque = Deque::{ buf: UninitializedArray::make(len), len, head: 0 }
   // Prepare slices
   let (front, back) = self.as_views()
   // We drain from front and back accordingly
@@ -2116,7 +2027,6 @@ pub fn[A] Deque::drain(self : Deque[A], start~ : Int, len? : Int) -> Deque[A] {
           for i in (front.start_offset() + start)..<self.buf.length() {
             set_null(self.buf, i)
           }
-          self.tail = front.start_offset() + start - 1
         } else {
           // back is not empty
           let new_head = front.start_offset() + front_max_drain
@@ -2129,7 +2039,6 @@ pub fn[A] Deque::drain(self : Deque[A], start~ : Int, len? : Int) -> Deque[A] {
           for i in back_len..<back.length() {
             set_null(self.buf, i)
           }
-          self.tail = back_len - 1
         }
       } else {
         // set_null
@@ -2158,16 +2067,10 @@ pub fn[A] Deque::drain(self : Deque[A], start~ : Int, len? : Int) -> Deque[A] {
     for i in (back.length() - len)..<back.length() {
       set_null(self.buf, i)
     }
-    if back.length() == len {
-      self.tail = self.buf.length() - 1
-    } else {
-      self.tail = back.length() - len - 1
-    }
   }
   self.len -= len
   if self.len == 0 {
     self.head = 0
-    self.tail = 0
   }
   deque
 }
@@ -2362,7 +2265,7 @@ pub fn[A] Deque::rev_in_place(self : Deque[A]) -> Unit {
   guard self.len > 0 else { return }
   let cap = self.buf.length()
   let mut left = self.head
-  let mut right = self.tail
+  let mut right = self.tail_index()
   for _ in 0..<(self.len / 2) {
     let temp = self.buf[left]
     self.buf[left] = self.buf[right]
@@ -2400,16 +2303,7 @@ pub fn[A] Deque::rev(self : Deque[A]) -> Deque[A] {
     new_buf[i] = self.buf[src_idx]
   }
   // Create new deque with reversed elements
-  Deque::{
-    buf: new_buf,
-    len,
-    head: 0,
-    tail: if len == 0 {
-      0
-    } else {
-      len - 1
-    },
-  }
+  Deque::{ buf: new_buf, len, head: 0 }
 }
 
 ///|
