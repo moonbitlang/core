@@ -614,6 +614,32 @@ pub impl Div for Float with div(self, other) = "%f32.div"
 pub impl Eq for Float with equal(self : Float, other : Float) -> Bool = "%f32.eq"
 
 ///|
+/// Tests two floating-point numbers for inequality. Follows IEEE 754 inequality
+/// comparison rules, where NaN values are not equal to any value, including
+/// themselves.
+///
+/// Parameters:
+///
+/// * `self` : The first floating-point number to compare.
+/// * `other` : The second floating-point number to compare.
+///
+/// Returns `true` if the numbers are not equal, `false` otherwise. Note that `-0.0`
+/// and `+0.0` are considered equal.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let x = 3.14
+///   let y = 3.14
+///   let z = 0.0 / 0.0 // NaN
+///   inspect(x != y, content="false")
+///   inspect(z != z, content="true") // NaN is not equal to itself
+/// }
+/// ```
+pub impl Eq for Float with not_equal(self : Float, other : Float) -> Bool = "%f32.ne"
+
+///|
 #deprecated("Use `a != b` instead")
 #doc(hidden)
 pub fn Float::op_neq(self : Float, other : Float) -> Bool = "%f32.ne"

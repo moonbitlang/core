@@ -108,6 +108,11 @@ pub impl Eq for UInt16 with equal(self, that) {
 }
 
 ///|
+pub impl Eq for UInt16 with not_equal(self, that) {
+  self.to_int() != that.to_int()
+}
+
+///|
 pub impl Compare for UInt16 with compare(self, that) {
   self.to_int().compare(that.to_int())
 }
