@@ -82,6 +82,14 @@ pub impl Eq for Byte with equal(self : Byte, that : Byte) -> Bool {
 }
 
 ///|
+/// Compares two `Byte` values for inequality.
+///
+/// Parameters:
+///
+/// - `self` : The first `Byte` value to compare.
+/// - `that` : The second `Byte` value to compare.
+///
+/// Returns `true` if the two `Byte` values are not equal, otherwise `false`.
 pub impl Eq for Byte with not_equal(self : Byte, that : Byte) -> Bool {
   self.to_int() != that.to_int()
 }

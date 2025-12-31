@@ -701,6 +701,23 @@ pub fn Int::popcnt(self : Int) -> Int = "%i32_popcnt"
 pub impl Eq for Int with equal(self : Int, other : Int) -> Bool = "%i32_eq"
 
 ///|
+/// Compares two integers for inequality.
+///
+/// Parameters:
+///
+/// * `self` : The first integer to compare.
+/// * `other` : The second integer to compare.
+///
+/// Returns `true` if the integers have different values, `false` otherwise.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(42 != 42, content="false")
+///   inspect(42 != -42, content="true")
+/// }
+/// ```
 pub impl Eq for Int with not_equal(self : Int, other : Int) -> Bool = "%i32_ne"
 
 ///|
@@ -1080,6 +1097,29 @@ pub fn Double::sqrt(self : Double) -> Double = "%f64_sqrt"
 pub impl Eq for Double with equal(self : Double, other : Double) -> Bool = "%f64_eq"
 
 ///|
+/// Compares two double-precision floating-point numbers for inequality following
+/// IEEE 754 rules. Returns `true` if the numbers are not equal.
+///
+/// Parameters:
+///
+/// * `self` : The first double-precision floating-point number to compare.
+/// * `other` : The second double-precision floating-point number to compare.
+///
+/// Returns `true` if the numbers are not equal, `false` otherwise.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let a = 3.14
+///   let b = 3.14
+///   let c = 2.718
+///   inspect(a != b, content="false")
+///   inspect(a != c, content="true")
+///   let nan = 0.0 / 0.0 // NaN
+///   inspect(nan != nan, content="true") // NaN != NaN is true
+/// }
+/// ```
 pub impl Eq for Double with not_equal(self : Double, other : Double) -> Bool = "%f64_ne"
 
 ///|
@@ -1247,6 +1287,27 @@ pub fn Char::from_int(val : Int) -> Char = "%char_from_int"
 pub impl Eq for Char with equal(self : Char, other : Char) -> Bool = "%char_eq"
 
 ///|
+/// Compares two characters for inequality.
+///
+/// Parameters:
+///
+/// * `self` : The first character to compare.
+/// * `other` : The second character to compare.
+///
+/// Returns `true` if the characters represent different Unicode code points,
+/// `false` otherwise.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let a = 'A'
+///   let b = 'A'
+///   let c = 'B'
+///   inspect(a != b, content="false")
+///   inspect(a != c, content="true")
+/// }
+/// ```
 pub impl Eq for Char with not_equal(self : Char, other : Char) -> Bool = "%i32_ne"
 
 ///|
@@ -2035,6 +2096,26 @@ pub impl Mod for UInt with mod(self, other) = "%u32.mod"
 pub impl Eq for UInt with equal(self : UInt, other : UInt) -> Bool = "%u32.eq"
 
 ///|
+/// Compares two unsigned 32-bit integers for inequality.
+///
+/// Parameters:
+///
+/// * `self` : The first unsigned integer operand.
+/// * `other` : The second unsigned integer operand to compare with.
+///
+/// Returns `true` if the integers have different values, `false` otherwise.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   let a = 42U
+///   let b = 42U
+///   let c = 24U
+///   inspect(a != b, content="false")
+///   inspect(a != c, content="true")
+/// }
+/// ```
 pub impl Eq for UInt with not_equal(self : UInt, other : UInt) -> Bool = "%u32.ne"
 
 ///|
