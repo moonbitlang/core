@@ -614,6 +614,9 @@ pub impl Div for Float with div(self, other) = "%f32.div"
 pub impl Eq for Float with equal(self : Float, other : Float) -> Bool = "%f32.eq"
 
 ///|
+pub impl Eq for Float with not_equal(self : Float, other : Float) -> Bool = "%f32.ne"
+
+///|
 #deprecated("Use `a != b` instead")
 #doc(hidden)
 pub fn Float::op_neq(self : Float, other : Float) -> Bool = "%f32.ne"

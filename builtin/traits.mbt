@@ -18,6 +18,12 @@ pub(open) trait Eq {
   equal(Self, Self) -> Bool = _
   #deprecated("use `equal` instead", skip_current_package=true)
   op_equal(Self, Self) -> Bool = _
+  not_equal(Self, Self) -> Bool = _
+}
+
+///|
+impl Eq with not_equal(x, y) {
+  !(x == y)
 }
 
 ///|

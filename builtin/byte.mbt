@@ -82,6 +82,11 @@ pub impl Eq for Byte with equal(self : Byte, that : Byte) -> Bool {
 }
 
 ///|
+pub impl Eq for Byte with not_equal(self : Byte, that : Byte) -> Bool {
+  self.to_int() != that.to_int()
+}
+
+///|
 /// Adds two `Byte` values together and returns the result as a `Byte`.
 ///
 /// Parameters:

@@ -1164,6 +1164,7 @@ pub(open) trait Eq {
   equal(Self, Self) -> Bool = _
   #deprecated
   op_equal(Self, Self) -> Bool = _
+  not_equal(Self, Self) -> Bool = _
 }
 pub impl Eq for Unit
 pub impl Eq for Bool

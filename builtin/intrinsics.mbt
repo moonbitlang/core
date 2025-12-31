@@ -701,6 +701,9 @@ pub fn Int::popcnt(self : Int) -> Int = "%i32_popcnt"
 pub impl Eq for Int with equal(self : Int, other : Int) -> Bool = "%i32_eq"
 
 ///|
+pub impl Eq for Int with not_equal(self : Int, other : Int) -> Bool = "%i32_ne"
+
+///|
 /// Compares two integers and returns their relative order.
 ///
 /// Parameters:
@@ -1077,6 +1080,9 @@ pub fn Double::sqrt(self : Double) -> Double = "%f64_sqrt"
 pub impl Eq for Double with equal(self : Double, other : Double) -> Bool = "%f64_eq"
 
 ///|
+pub impl Eq for Double with not_equal(self : Double, other : Double) -> Bool = "%f64_ne"
+
+///|
 #deprecated("Use `a != b` instead")
 #doc(hidden)
 pub fn Double::op_neq(self : Double, other : Double) -> Bool = "%f64_ne"
@@ -1239,6 +1245,9 @@ pub fn Char::from_int(val : Int) -> Char = "%char_from_int"
 /// }
 /// ```
 pub impl Eq for Char with equal(self : Char, other : Char) -> Bool = "%char_eq"
+
+///|
+pub impl Eq for Char with not_equal(self : Char, other : Char) -> Bool = "%i32_ne"
 
 ///|
 /// Compares two characters based on their Unicode code points. Returns a
@@ -2024,6 +2033,9 @@ pub impl Mod for UInt with mod(self, other) = "%u32.mod"
 /// }
 /// ```
 pub impl Eq for UInt with equal(self : UInt, other : UInt) -> Bool = "%u32.eq"
+
+///|
+pub impl Eq for UInt with not_equal(self : UInt, other : UInt) -> Bool = "%u32.ne"
 
 ///|
 #deprecated("Use `a != b` instead")
