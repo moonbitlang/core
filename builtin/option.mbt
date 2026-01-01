@@ -104,6 +104,8 @@ pub impl[X] Default for X? with default() {
 }
 
 ///|
+#deprecated
+#doc(hidden)
 pub fn[T] Option::iter(self : T?) -> Iter[T] {
   match self {
     Some(v) => Iter::singleton(v)

@@ -1241,7 +1241,8 @@ pub fn[X] default() -> T[X] {
 }
 
 ///|
-#deprecated("use `@list` instead")
+#deprecated
+#doc(hidden)
 pub fn[A] T::iter(self : T[A]) -> Iter[A] {
   Iter::new(yield_ => loop self {
     Nil => IterContinue

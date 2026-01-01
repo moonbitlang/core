@@ -567,6 +567,9 @@ pub fn[K, V] Map::clear(self : Map[K, V]) -> Unit {
 
 ///|
 /// Returns the iterator of the hash map, provide elements in the order of insertion.
+#warnings("-deprecated")
+#deprecated
+#doc(hidden)
 pub fn[K, V] Map::iter(self : Map[K, V]) -> Iter[(K, V)] {
   self.iterator().iter()
 }
@@ -597,6 +600,9 @@ pub fn[K, V] Map::iter2(self : Map[K, V]) -> Iter2[K, V] {
 }
 
 ///|
+#warnings("-deprecated")
+#deprecated
+#doc(hidden)
 pub fn[K, V] Map::keys(self : Map[K, V]) -> Iter[K] {
   let mut curr_entry = self.head
   Iterator::new(fn() {
@@ -611,6 +617,9 @@ pub fn[K, V] Map::keys(self : Map[K, V]) -> Iter[K] {
 }
 
 ///|
+#warnings("-deprecated")
+#deprecated
+#doc(hidden)
 pub fn[K, V] Map::values(self : Map[K, V]) -> Iter[V] {
   let mut curr_entry = self.head
   Iterator::new(fn() {

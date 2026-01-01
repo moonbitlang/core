@@ -187,6 +187,7 @@ test "Byte::to_json" {
 }
 
 ///|
+#warnings("-deprecated")
 test "Iter[X] to_json" {
   let v = "a b c d".split(" ")
   @json.inspect(v, content=["a", "b", "c", "d"])

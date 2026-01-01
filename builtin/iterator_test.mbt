@@ -271,13 +271,13 @@ test "mapi" {
 test "filter_map" {
   let arr = [1, 2, 3, 4, 5]
   let r1 = arr
-    .iter()
+    .iterator()
     .filter_map(x => if x < 3 { None } else { Some(x) })
     .collect()
   inspect(r1, content="[3, 4, 5]")
-  let r2 : Array[Unit] = arr.iter().filter_map(_x => None).collect()
+  let r2 : Array[Unit] = arr.iterator().filter_map(_x => None).collect()
   inspect(r2, content="[]")
-  let r3 : Array[Unit] = [].iter().filter_map(Option::Some(_)).collect()
+  let r3 : Array[Unit] = [].iterator().filter_map(Option::Some(_)).collect()
   inspect(r3, content="[]")
   // Test using next() directly to ensure the closure is executed
   let it1 = [1, 2, 3, 4, 5]
@@ -435,35 +435,35 @@ test "tree" {
 
 ///|
 test "Iterator::intersperse" {
-  inspect([1, 2, 3].iter().intersperse(0), content="[1, 0, 2, 0, 3]")
+  inspect([1, 2, 3].iterator().intersperse(0), content="[1, 0, 2, 0, 3]")
   inspect(
-    [1, 2, 3, 4, 5, 6, 7, 8, 9].iter().intersperse(0),
+    [1, 2, 3, 4, 5, 6, 7, 8, 9].iterator().intersperse(0),
     content="[1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 0, 7, 0, 8, 0, 9]",
   )
-  inspect(([] : Array[Int]).iter().intersperse(0), content="[]")
-  inspect([1].iter().intersperse(0), content="[1]")
+  inspect(([] : Array[Int]).iterator().intersperse(0), content="[]")
+  inspect([1].iterator().intersperse(0), content="[1]")
 }
 
 ///|
 test "Iterator::last" {
-  inspect([1, 2, 3].iter().last(), content="Some(3)")
-  inspect([1].iter().last(), content="Some(1)")
-  inspect(([] : Array[Int]).iter().last(), content="None")
+  inspect([1, 2, 3].iterator().last(), content="Some(3)")
+  inspect([1].iterator().last(), content="Some(1)")
+  inspect(([] : Array[Int]).iterator().last(), content="None")
 }
 
 ///|
 test "Iterator::head" {
-  inspect([1, 2, 3].iter().head(), content="Some(1)")
-  inspect([1].iter().head(), content="Some(1)")
-  inspect(([] : Array[Int]).iter().head(), content="None")
+  inspect([1, 2, 3].iterator().head(), content="Some(1)")
+  inspect([1].iterator().head(), content="Some(1)")
+  inspect(([] : Array[Int]).iterator().head(), content="None")
 }
 
 ///|
 test "Iterator::as_view" {
-  inspect([1, 2, 3].iter()[1:2], content="[2]")
-  inspect([1, 2, 3].iter()[1:], content="[2, 3]")
-  inspect([1, 2, 3].iter()[1:], content="[2, 3]")
-  inspect([1, 2, 3].iter()[:], content="[1, 2, 3]")
+  inspect([1, 2, 3].iterator()[1:2], content="[2]")
+  inspect([1, 2, 3].iterator()[1:], content="[2, 3]")
+  inspect([1, 2, 3].iterator()[1:], content="[2, 3]")
+  inspect([1, 2, 3].iterator()[:], content="[1, 2, 3]")
 }
 
 ///|
@@ -548,11 +548,11 @@ test "Iterator::nth" {
 ///|
 test "@builtin.Iterator::maximum" {
   // Basic functionality with integers
-  inspect([1, 2, 3, 4, 5].iter().maximum(), content="Some(5)")
+  inspect([1, 2, 3, 4, 5].iterator().maximum(), content="Some(5)")
   // With negative numbers
-  inspect([-5, -3, -1, -10].iter().maximum(), content="Some(-1)")
+  inspect([-5, -3, -1, -10].iterator().maximum(), content="Some(-1)")
   // Single element
-  inspect([42].iter().maximum(), content="Some(42)")
+  inspect([42].iterator().maximum(), content="Some(42)")
   // Empty iterator should return None
   let empty_iter : Iterator[Int] = Iterator::empty()
   inspect(empty_iter.maximum(), content="None")
@@ -583,7 +583,7 @@ test "Iterator::intersperse with early termination" {
 ///|
 test "Iterator::iter method" {
   let original = [1, 2, 3].iterator()
-  let result = original.iter().collect()
+  let result = original.iterator().collect()
   inspect(result, content="[1, 2, 3]")
 }
 

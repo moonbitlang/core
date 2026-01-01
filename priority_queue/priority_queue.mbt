@@ -105,6 +105,9 @@ pub fn[A : Compare] PriorityQueue::to_array(
 }
 
 ///|
+#warnings("-deprecated")
+#deprecated
+#doc(hidden)
 pub fn[A : Compare] PriorityQueue::iter(self : PriorityQueue[A]) -> Iter[A] {
   self.iterator().iter()
 }
@@ -303,6 +306,7 @@ pub fn[A] PriorityQueue::is_empty(self : PriorityQueue[A]) -> Bool {
 }
 
 ///|
+#warnings("-deprecated")
 pub impl[A : Show + Compare] Show for PriorityQueue[A] with output(self, logger) {
   logger.write_iter(
     self.iter(),

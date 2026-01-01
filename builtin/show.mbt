@@ -196,11 +196,13 @@ pub impl[T : Show, E : Show] Show for Result[T, E] with output(self, logger) {
 }
 
 ///|
+#warnings("-deprecated")
 pub impl[X : Show] Show for FixedArray[X] with output(self, logger) {
   logger.write_iter(self.iter())
 }
 
 ///|
+#warnings("-deprecated")
 pub impl[X : Show] Show for Array[X] with output(self, logger) {
   logger.write_iter(self.iter())
 }

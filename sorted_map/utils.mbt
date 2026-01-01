@@ -61,6 +61,7 @@ fn[K : Show, V : Show] SortedMap::debug_tree(self : SortedMap[K, V]) -> String {
 }
 
 ///|
+#warnings("-deprecated")
 pub impl[K : Show, V : Show] Show for SortedMap[K, V] with output(self, logger) {
   logger.write_iter(self.iter(), prefix="@sorted_map.from_array([", suffix="])")
 }

@@ -127,12 +127,14 @@ test "eachi" {
 }
 
 ///|
+#warnings("-deprecated")
 test "keys" {
   let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
   inspect(map.keys_as_iter(), content="[1, 2, 3]")
 }
 
 ///|
+#warnings("-deprecated")
 test "values" {
   let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
   inspect(
@@ -158,13 +160,13 @@ test "to_array" {
 test "iter_collect" {
   let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
   inspect(
-    map.iter().collect(),
+    map.iterator().collect(),
     content=(
       #|[(1, "a"), (2, "b"), (3, "c")]
     ),
   )
   inspect(
-    map.iter().take(2).collect(),
+    map.iterator().take(2).collect(),
     content=(
       #|[(1, "a"), (2, "b")]
     ),
@@ -191,7 +193,7 @@ test "iterator" {
 ///|
 test "from_iter multiple elements iter" {
   inspect(
-    @sorted_map.from_iter([(1, 1), (2, 2), (3, 3)].iter()),
+    @sorted_map.from_iterator([(1, 1), (2, 2), (3, 3)].iterator()),
     content="@sorted_map.from_array([(1, 1), (2, 2), (3, 3)])",
   )
 }
@@ -199,15 +201,15 @@ test "from_iter multiple elements iter" {
 ///|
 test "from_iter single element iter" {
   inspect(
-    @sorted_map.from_iter([(1, 1)].iter()),
+    @sorted_map.from_iterator([(1, 1)].iterator()),
     content="@sorted_map.from_array([(1, 1)])",
   )
 }
 
 ///|
-test "from_iter empty iter" {
-  let pq : @sorted_map.SortedMap[Int, Int] = @sorted_map.from_iter(
-    Iter::empty(),
+test "from_iterator empty iterator" {
+  let pq : @sorted_map.SortedMap[Int, Int] = @sorted_map.from_iterator(
+    Iterator::empty(),
   )
   inspect(pq, content="@sorted_map.from_array([])")
 }

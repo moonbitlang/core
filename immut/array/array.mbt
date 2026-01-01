@@ -299,6 +299,9 @@ pub impl[A] Add for T[A] with add(self, other) {
 
 ///|
 /// Return an iterator over the array.
+#warnings("-deprecated")
+#deprecated
+#doc(hidden)
 pub fn[A] T::iter(self : T[A]) -> Iter[A] {
   self.tree.iterator().iter()
 }
@@ -418,6 +421,7 @@ pub impl[A : Eq] Eq for T[A] with equal(self, other) {
 }
 
 ///|
+#warnings("-deprecated")
 pub impl[A : Show] Show for T[A] with output(self, logger) {
   logger.write_iter(
     self.iter(),

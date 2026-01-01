@@ -93,8 +93,8 @@ test "eachi" {
 ///|
 test "iter" {
   let set = @sorted_set.from_array([3, 2, 1])
-  inspect(set.iter().collect(), content="[1, 2, 3]")
-  inspect(set.iter().take(2).collect(), content="[1, 2]")
+  inspect(set.iterator().collect(), content="[1, 2, 3]")
+  inspect(set.iterator().take(2).collect(), content="[1, 2]")
 }
 
 ///|
@@ -105,6 +105,7 @@ test "iterator" {
 }
 
 ///|
+#warnings("-deprecated")
 test "iter early termination in left subtree" {
   // This test should trigger the uncovered line 381 in sorted_set/set.mbt
   // We need a tree structure where the iterator terminates while traversing the left subtree
@@ -116,7 +117,7 @@ test "iter early termination in left subtree" {
   // Since the tree is sorted and 3 is in the left subtree of 5,
   // this should cause go(left) to return IterEnd, triggering line 381
   let _ = set
-    .iter()
+    .iterator()
     .run(x => {
       count += 1
       if x == 3 {
@@ -274,11 +275,11 @@ test "equal" {
 ///|
 test "from_iter multiple elements iter" {
   inspect(
-    @sorted_set.from_iter([1, 2, 3].iter()),
+    @sorted_set.from_iterator([1, 2, 3].iterator()),
     content="@sorted_set.from_array([1, 2, 3])",
   )
   inspect(
-    @sorted_set.from_iter([1, 1, 1].iter()),
+    @sorted_set.from_iterator([1, 1, 1].iterator()),
     content="@sorted_set.from_array([1])",
   )
 }
@@ -286,14 +287,16 @@ test "from_iter multiple elements iter" {
 ///|
 test "from_iter single element iter" {
   inspect(
-    @sorted_set.from_iter([1].iter()),
+    @sorted_set.from_iterator([1].iterator()),
     content="@sorted_set.from_array([1])",
   )
 }
 
 ///|
-test "from_iter empty iter" {
-  let pq : @sorted_set.SortedSet[Int] = @sorted_set.from_iter(Iter::empty())
+test "from_iterator empty iterator" {
+  let pq : @sorted_set.SortedSet[Int] = @sorted_set.from_iterator(
+    Iterator::empty(),
+  )
   inspect(pq, content="@sorted_set.from_array([])")
 }
 
@@ -326,6 +329,7 @@ test "from_iterator empty iter" {
 }
 
 ///|
+#warnings("-deprecated")
 test "range" {
   let set = @sorted_set.from_array([1, 2, 3, 4, 5])
   inspect(set.range(2, 4), content="[2, 3, 4]")

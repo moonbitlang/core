@@ -445,6 +445,9 @@ pub fn[K] Set::clear(self : Set[K]) -> Unit {
 
 ///|
 /// Returns the iterator of the hash set, provide elements in the order of insertion.
+#warnings("-deprecated")
+#deprecated
+#doc(hidden)
 pub fn[K] Set::iter(self : Set[K]) -> Iter[K] {
   self.iterator().iter()
 }

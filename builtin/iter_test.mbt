@@ -265,6 +265,7 @@ test "mapi" {
 }
 
 ///|
+#warnings("-deprecated")
 test "filter_map" {
   let arr = [1, 2, 3, 4, 5]
   let r1 = arr
@@ -350,6 +351,7 @@ test "collect" {
 }
 
 ///|
+#warnings("-deprecated")
 test "until" {
   // edge cases
   inspect((0).until(10).take(100), content="[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]")
@@ -528,6 +530,7 @@ test "tree" {
 }
 
 ///|
+#warnings("-deprecated")
 test "Iter::intersperse" {
   inspect([1, 2, 3].iter().intersperse(0), content="[1, 0, 2, 0, 3]")
   inspect(
@@ -539,6 +542,7 @@ test "Iter::intersperse" {
 }
 
 ///|
+#warnings("-deprecated")
 test "Iter::last" {
   inspect([1, 2, 3].iter().last(), content="Some(3)")
   inspect([1].iter().last(), content="Some(1)")
@@ -546,6 +550,7 @@ test "Iter::last" {
 }
 
 ///|
+#warnings("-deprecated")
 test "Iter::head" {
   inspect([1, 2, 3].iter().head(), content="Some(1)")
   inspect([1].iter().head(), content="Some(1)")
@@ -553,6 +558,7 @@ test "Iter::head" {
 }
 
 ///|
+#warnings("-deprecated")
 test "Iter::as_view" {
   inspect([1, 2, 3].iter()[1:2], content="[2]")
   inspect([1, 2, 3].iter()[1:], content="[2, 3]")
@@ -579,12 +585,14 @@ test "peek function - empty iterator" {
 }
 
 ///|
+#warnings("-deprecated")
 test "peek function - multiple elements" {
   let iter = [1, 2, 3].iter()
   inspect(iter.peek(), content="Some(1)")
 }
 
 ///|
+#warnings("-deprecated")
 test "peek function - random cases" {
   let iter1 = [10, 20, 30].iter()
   inspect(iter1.peek(), content="Some(10)")
@@ -611,18 +619,21 @@ test "@builtin.join/single_element" {
 }
 
 ///|
+#warnings("-deprecated")
 test "@builtin.join/multiple_elements_with_separator" {
   let iter : Iter[String] = ["A", "B", "C"].iter()
   inspect(iter.join(","), content="A,B,C")
 }
 
 ///|
+#warnings("-deprecated")
 test "@builtin.join/multiple_elements_without_separator" {
   let iter : Iter[String] = ["A", "B", "C"].iter()
   inspect(iter.join(""), content="ABC")
 }
 
 ///|
+#warnings("-deprecated")
 test "Iter::nth" {
   let it = () => [1, 2, 3, 4, 5].iter()
   inspect(it().nth(2), content="Some(3)")
@@ -638,6 +649,7 @@ test "Iter::nth" {
 }
 
 ///|
+#warnings("-deprecated")
 test "@builtin.Iter::maximum" {
   // Basic functionality with integers
   inspect([1, 2, 3, 4, 5].iter().maximum(), content="Some(5)")
@@ -651,6 +663,7 @@ test "@builtin.Iter::maximum" {
 }
 
 ///|
+#warnings("-deprecated")
 test "@builtin.Iter::minimum" {
   // Test with normal sequence
   let arr = [3, 1, 4, 1, 5].iter()
@@ -666,6 +679,7 @@ test "@builtin.Iter::minimum" {
 }
 
 ///|
+#warnings("-deprecated")
 test "Iter::intersperse with early termination" {
   let iter = [1, 2, 3].iter()
   let result = iter.intersperse(0).take(3).collect()
@@ -673,6 +687,7 @@ test "Iter::intersperse with early termination" {
 }
 
 ///|
+#warnings("-deprecated")
 test "Iter::iter method" {
   let original = [1, 2, 3].iter()
   let result = original.iter().collect()
@@ -680,6 +695,7 @@ test "Iter::iter method" {
 }
 
 ///|
+#warnings("-deprecated")
 test "Iter::contains method" {
   let iter = [1, 2, 3, 4, 5].iter()
   inspect(iter.contains(3), content="true")
@@ -687,6 +703,7 @@ test "Iter::contains method" {
 }
 
 ///|
+#warnings("-deprecated")
 test "Iter::flatten method" {
   let nested = [[1, 2], [3, 4], [5, 6]].iter().map(Array::iter)
   let flattened = nested.flatten().collect()
@@ -694,6 +711,7 @@ test "Iter::flatten method" {
 }
 
 ///|
+#warnings("-deprecated")
 test "Iter::add operator" {
   let iter1 = [1, 2, 3].iter()
   let iter2 = [4, 5, 6].iter()
@@ -809,6 +827,7 @@ test "Float::until negative step" {
 // }
 
 ///|
+#warnings("-deprecated")
 test "iter2" {
   let iter : Iter[Int] = [].iter()
   for _, _ in iter.iter2() {
@@ -821,6 +840,7 @@ test "iter2" {
 }
 
 ///|
+#warnings("-deprecated")
 test "Iter::iter2" {
   let iter = [0, 1, 2].iter()
   for i, x in iter.iter2() {

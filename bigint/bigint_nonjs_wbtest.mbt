@@ -31,6 +31,7 @@ impl Show for Sign with output(self, logger) {
 }
 
 ///|
+#warnings("-deprecated")
 test "debug_string" {
   let buf = StringBuilder::new()
   let v : Array[MyBigInt] = [0, 1, 2, 3, 4, -0, -1, -2, -3]
@@ -57,6 +58,7 @@ test "debug_string" {
 }
 
 ///|
+#warnings("-deprecated")
 fn check_invariant(a : BigInt) -> Unit raise {
   guard a.len > 0 else { fail("invariant len > 0 is broken: len = \{a.len}") }
   for i in 0..<a.len {

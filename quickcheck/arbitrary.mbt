@@ -122,6 +122,7 @@ pub impl[X : Arbitrary] Arbitrary for Iterator[X] with arbitrary(size, rs) {
 }
 
 ///|
+#warnings("-deprecated")
 pub impl[X : Arbitrary] Arbitrary for Iter[X] with arbitrary(size, rs) {
   let iter : Iterator[X] = Arbitrary::arbitrary(size, rs)
   iter.iter()

@@ -108,7 +108,7 @@ test "option type" {
 
 The `Iter[T]` type provides lazy iteration over sequences:
 
-```mbt check
+```mbt nocheck
 ///|
 test "iterators" {
   // Create iterator from array

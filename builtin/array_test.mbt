@@ -540,11 +540,12 @@ test "array_split" {
 ///|
 test "array_iter" {
   let arr = [1, 2, 3]
-  inspect(arr.iter(), content="[1, 2, 3]")
-  inspect(arr.iter().take(1), content="[1]")
+  inspect(arr.iterator(), content="[1, 2, 3]")
+  inspect(arr.iterator().take(1), content="[1]")
 }
 
 ///|
+#warnings("-deprecated")
 test "array_iter2" {
   let arr = [1, 2, 3]
   inspect(arr.iter2(), content="[(0, 1), (1, 2), (2, 3)]")
@@ -958,6 +959,7 @@ test "to_string" {
 }
 
 ///|
+#warnings("-deprecated")
 test "push_iter" {
   let u = [1, 2, 3]
   let v = [4, 5, 6]
@@ -1016,9 +1018,9 @@ test "filter_map" {
 ///|
 test "from_iter" {
   let arr : Array[Int] = []
-  inspect(Array::from_iter(arr.iter()), content="[]")
+  inspect(Array::from_iterator(arr.iterator()), content="[]")
   let arr = [1, 2, 3, 4, 5]
-  inspect(Array::from_iter(arr.iter()), content="[1, 2, 3, 4, 5]")
+  inspect(Array::from_iterator(arr.iterator()), content="[1, 2, 3, 4, 5]")
 }
 
 ///|

@@ -30,6 +30,7 @@ pub fn JsonPath::add_key(self : JsonPath, key : String) -> JsonPath {
 }
 
 ///|
+#warnings("-deprecated")
 pub impl Show for JsonPath with output(self, logger) {
   // Helper to write a JSON Pointer token without intermediate allocations
   fn write_token(logger : &Logger, token : String) -> Unit {

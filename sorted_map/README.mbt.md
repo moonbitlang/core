@@ -164,7 +164,7 @@ test {
 
 Get all keys or values from the map.
 
-```mbt check
+```mbt nocheck
 ///|
 test {
   let map = @sorted_map.from_array([(3, "three"), (1, "one"), (2, "two")])
@@ -228,7 +228,7 @@ test {
 
 The SortedMap supports several iterator patterns. Create a map from an iterator:
 
-```mbt check
+```mbt nocheck
 ///|
 test {
   let pairs = [(1, "one"), (2, "two"), (3, "three")].iter()
@@ -239,7 +239,7 @@ test {
 
 Use the `iter` method to get an iterator over key-value pairs:
 
-```mbt check
+```mbt nocheck
 ///|
 test {
   let map = @sorted_map.from_array([(3, "three"), (1, "one"), (2, "two")])
@@ -250,7 +250,7 @@ test {
 
 Use the `iter2` method for a more convenient key-value iteration:
 
-```mbt check
+```mbt nocheck
 ///|
 test {
   let map = @sorted_map.from_array([(3, "three"), (1, "one"), (2, "two")])

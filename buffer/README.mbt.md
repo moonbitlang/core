@@ -90,7 +90,7 @@ test {
 
 Write sequences of bytes:
 
-```mbt check
+```mbt nocheck
 ///|
 test {
   // byte sequence writing

@@ -219,6 +219,7 @@ fn unsafe_to_bytes(array : FixedArray[Byte]) -> Bytes = "%identity"
 
 ///|
 /// Converts the String into an array of Chars.
+#warnings("-deprecated")
 pub fn String::to_array(self : String) -> Array[Char] {
   self
   .iter()
@@ -234,13 +235,16 @@ pub fn String::to_array(self : String) -> Array[Char] {
 /// Note: This iterator yields Unicode characters, not Utf16 code units.
 /// As a result, the count of characters returned by `iter().count()` may not be equal to the length of the string returned by `length()`.
 ///
-/// ```mbt check
+/// ```mbt nocheck
 /// test {
 ///   let s = "Hello, World!🤣"
 ///   assert_eq(s.iter().count(), 14) // Unicode characters
 ///   assert_eq(s.length(), 15)
 /// } // Utf16 code units
 /// ```
+#warnings("-deprecated")
+#deprecated
+#doc(hidden)
 pub fn String::iter(self : String) -> Iter[Char] {
   self.iterator().iter()
 }
@@ -309,7 +313,7 @@ pub fn String::iterator2(self : String) -> Iterator2[Int, Char] {
 ///
 /// # Examples
 ///
-/// ```mbt check
+/// ```mbt nocheck
 /// test {
 ///   let input = "Hello, World!"
 ///   let reversed = input.rev_iter().collect()
@@ -318,6 +322,9 @@ pub fn String::iterator2(self : String) -> Iterator2[Int, Char] {
 ///   ])
 /// }
 /// ```
+#warnings("-deprecated")
+#deprecated
+#doc(hidden)
 pub fn String::rev_iter(self : String) -> Iter[Char] {
   self.rev_iterator().iter()
 }

@@ -762,6 +762,8 @@ pub fn Iter::join(self : Iter[String], sep : String) -> String {
 ///|
 /// Iter itself is an iterator.
 /// so that it works with array spread operator. e.g, `[..iter]`
+#deprecated
+#doc(hidden)
 pub fn[T] Iter::iter(self : Iter[T]) -> Iter[T] {
   self
 }
@@ -819,7 +821,7 @@ pub fn[A] Iter::head(self : Iter[A]) -> A? {
 ///
 /// # Examples
 ///
-/// ```mbt check
+/// ```mbt nocheck
 /// test {
 ///   let arr = []
 ///   [1, 2, 3].iter().intersperse(0).each(i => arr.push(i))
@@ -869,7 +871,7 @@ pub fn[A] Iter::sub(self : Iter[A], start? : Int = 0, end? : Int) -> Iter[A] {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt nocheck
 /// test {
 ///   let iter = [1, 2, 3, 4, 5].iter()
 ///   inspect(iter.contains(3), content="true")

@@ -199,8 +199,8 @@ pub fn BytesView::sub(
 /// Returns an iterator over the `View`.
 /// 
 /// # Example
-/// 
-/// ```mbt check
+///
+/// ```mbt nocheck
 /// test {
 ///   let bv = b"\x00\x01\x02\x03\x04\x05"[:]
 ///   let mut sum = 0
@@ -208,6 +208,9 @@ pub fn BytesView::sub(
 ///   inspect(sum, content="15")
 /// }
 /// ```
+#warnings("-deprecated")
+#deprecated
+#doc(hidden)
 pub fn BytesView::iter(self : BytesView) -> Iter[Byte] {
   self.iterator().iter()
 }

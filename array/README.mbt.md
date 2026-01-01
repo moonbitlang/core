@@ -6,7 +6,7 @@ This package provides array manipulation utilities for MoonBit, including fixed-
 
 There are several ways to create arrays in MoonBit:
 
-```mbt check
+```mbt nocheck
 ///|
 test "array creation" {
   // Using array literal

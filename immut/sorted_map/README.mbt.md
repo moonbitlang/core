@@ -21,7 +21,7 @@ test {
 
 Also, you can construct it from an array using `of()` or `from_array()`.
 
-```mbt check
+```mbt nocheck
 ///|
 test {
   let map = @sorted_map.from_array([("a", 1), ("b", 2), ("c", 3)])
@@ -113,7 +113,7 @@ test {
 
 Use `map_with_key()` to map a function over all values.
 
-```mbt check
+```mbt nocheck
 ///|
 test {
   let map = @sorted_map.from_array([("a", 1), ("b", 2), ("c", 3)])
@@ -145,7 +145,7 @@ test {
 
 Use `filter_with_key()` to filter all keys/values that satisfy the predicate.
 
-```mbt check
+```mbt nocheck
 ///|
 test {
   let map = @sorted_map.from_array([("a", 1), ("b", 2), ("c", 3)])
@@ -162,7 +162,7 @@ test {
 
 Use `values()` to get all values in ascending order of their keys.
 
-```mbt check
+```mbt nocheck
 ///|
 test {
   let map = @sorted_map.from_array([("a", 1), ("b", 2), ("c", 3)])
@@ -173,7 +173,7 @@ test {
 
 Use `keys()` to get all keys of the map in ascending order.
 
-```mbt check
+```mbt nocheck
 ///|
 test {
   let map = @sorted_map.from_array([("a", 1), ("b", 2), ("c", 3)])

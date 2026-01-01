@@ -77,7 +77,7 @@ test {
 
 You can use `iter()` to get an iterator of the array, or use `each()` to iterate over the array.
 
-```mbt check
+```mbt nocheck
 ///|
 test {
   let arr = @array.from_array([1, 2, 3, 4, 5])

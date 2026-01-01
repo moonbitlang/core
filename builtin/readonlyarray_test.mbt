@@ -20,7 +20,7 @@ test "ReadOnlyArray constructors" {
   inspect(arr1[2], content="3")
 
   // Test from_iter
-  let arr2 = ReadOnlyArray::from_iter([4, 5, 6].iter())
+  let arr2 = ReadOnlyArray::from_iterator([4, 5, 6].iterator())
   inspect(arr2[1], content="5")
 
   // Test from_iterator

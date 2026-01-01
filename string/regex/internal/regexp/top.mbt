@@ -135,6 +135,7 @@ pub fn Regexp::group_count(self : Regexp) -> Int {
 ///   )
 /// }
 /// ```
+#warnings("-deprecated")
 pub fn Regexp::group_names(self : Regexp) -> Array[String] {
   self.map.keys().collect()
 }
@@ -386,6 +387,7 @@ pub fn MatchResult::get(self : Self, index : Int) -> StringView? {
 /// }
 /// ```
 ///
+#warnings("-deprecated")
 pub fn MatchResult::groups(self : Self) -> Map[String, StringView] {
   self.names
   .iter()

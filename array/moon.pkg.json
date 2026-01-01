@@ -2,9 +2,6 @@
   "import": [
     "moonbitlang/core/builtin"
   ],
-  "test-import": [
-    "moonbitlang/core/char"
-  ],
   "targets": {
     "array_js.mbt": ["js"],
     "array_nonjs.mbt": ["not", "js"],

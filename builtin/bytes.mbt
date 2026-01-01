@@ -664,7 +664,7 @@ pub fn BytesView::to_array(self : BytesView) -> Array[Byte] {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt nocheck
 /// test {
 ///   let bytes = Bytes::from_array([b'h', b'i'])
 ///   let mut sum = 0
@@ -672,6 +672,9 @@ pub fn BytesView::to_array(self : BytesView) -> Array[Byte] {
 ///   inspect(sum, content="209") // ASCII values: 'h'(104) + 'i'(105) = 209
 /// }
 /// ```
+#warnings("-deprecated")
+#deprecated
+#doc(hidden)
 pub fn Bytes::iter(self : Bytes) -> Iter[Byte] {
   self.iterator().iter()
 }

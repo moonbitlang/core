@@ -37,7 +37,6 @@ pub fn[A : @json.FromJson + Compare] SortedSet::from_json(Json) -> Self[A] raise
 #alias(inter, deprecated)
 pub fn[A : Compare] SortedSet::intersection(Self[A], Self[A]) -> Self[A]
 pub fn[A] SortedSet::is_empty(Self[A]) -> Bool
-pub fn[A] SortedSet::iter(Self[A]) -> Iter[A]
 pub fn[A] SortedSet::iterator(Self[A]) -> Iterator[A]
 #alias(size, deprecated)
 pub fn[A] SortedSet::length(Self[A]) -> Int

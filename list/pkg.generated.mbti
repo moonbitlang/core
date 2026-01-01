@@ -58,7 +58,6 @@ pub fn[A] List::intersperse(Self[A], A) -> Self[A]
 pub fn[A] List::is_empty(Self[A]) -> Bool
 pub fn[A : Eq] List::is_prefix(Self[A], Self[A]) -> Bool
 pub fn[A : Eq] List::is_suffix(Self[A], Self[A]) -> Bool
-pub fn[A] List::iter(Self[A]) -> Iter[A]
 pub fn[A] List::iter2(Self[A]) -> Iter2[Int, A]
 pub fn[A] List::iterator(Self[A]) -> Iterator[A]
 pub fn[A] List::iterator2(Self[A]) -> Iterator2[Int, A]

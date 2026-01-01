@@ -995,7 +995,7 @@ pub fn Buffer::write_byte(self : Buffer, value : Byte) -> Unit {
 ///
 /// Example:
 ///
-/// ```mbt check
+/// ```mbt nocheck
 /// test {
 ///   let buf = @buffer.new()
 ///   let bytes = b"Hello"

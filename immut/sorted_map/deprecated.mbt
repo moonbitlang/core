@@ -37,6 +37,7 @@ pub fn[K, V, A] SortedMap::fold(
 
 ///|
 /// Return all keys of the map in ascending order.
+#warnings("-deprecated")
 #deprecated("Use `keys_as_iter` instead. `keys` will return `Iter[K]` instead of `Array[K]` in the future.")
 #coverage.skip
 pub fn[K, V] SortedMap::keys(self : SortedMap[K, V]) -> Array[K] {
@@ -44,6 +45,7 @@ pub fn[K, V] SortedMap::keys(self : SortedMap[K, V]) -> Array[K] {
 }
 
 ///|
+#warnings("-deprecated")
 #deprecated("Use `values` instead")
 #coverage.skip
 pub fn[K, V] SortedMap::elems(self : SortedMap[K, V]) -> Array[V] {

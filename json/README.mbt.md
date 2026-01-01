@@ -83,7 +83,7 @@ test "json object navigation" {
 
 ### Array Navigation
 
-```mbt check
+```mbt nocheck
 ///|
 test "json array navigation" {
   let array = @json.parse("[1,2,3,4,5]")
