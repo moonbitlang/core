@@ -1155,3 +1155,61 @@ test "compare" {
   inspect(empty.compare(list1), content="-1") // empty < non-empty
   inspect(list1.compare(empty), content="1") // non-empty > empty
 }
+
+///|
+test "flat_map and filter_map skip empties" {
+  let ls = @list.from_array([0, 1, 2])
+  inspect(
+    ls.flat_map(x => if x == 0 {
+      @list.empty()
+    } else {
+      @list.from_array([x, x])
+    }),
+    content="@list.from_array([1, 1, 2, 2])",
+  )
+  inspect(
+    ls.filter_map(x => if x == 0 { None } else { Some(x * 2) }),
+    content="@list.from_array([2, 4])",
+  )
+}
+
+///|
+test "unzip empty" {
+  let (xs, ys) : (@list.List[Int], @list.List[String]) = @list.empty().unzip()
+  inspect(xs, content="@list.from_array([])")
+  inspect(ys, content="@list.from_array([])")
+}
+
+///|
+test "unfold none" {
+  let r : @list.List[Int] = @list.unfold(init=0, _ => None)
+  inspect(r, content="@list.from_array([])")
+}
+
+///|
+test "take and take_while edge cases" {
+  let empty : @list.List[Int] = @list.empty()
+  inspect(empty.take(3), content="@list.from_array([])")
+  inspect(
+    @list.from_array([1, 2]).take_while(_ => true),
+    content="@list.from_array([1, 2])",
+  )
+  inspect(
+    @list.from_array([1, 2]).take_while(_ => false),
+    content="@list.from_array([])",
+  )
+}
+
+///|
+test "remove empty and head" {
+  let ls = @list.from_array([1, 2, 3])
+  inspect(ls.remove(1), content="@list.from_array([2, 3])")
+  let empty : @list.List[Int] = @list.empty()
+  inspect(empty.remove(1), content="@list.from_array([])")
+}
+
+///|
+test "List default trait" {
+  let ls : @list.List[Int] = Default::default()
+  inspect(ls, content="@list.from_array([])")
+}

@@ -32,3 +32,61 @@ test "to_string for Option Some" {
   let x : Int? = Some(42)
   inspect(x.to_string(), content="Some(42)")
 }
+
+///|
+test "unwrap_or variants" {
+  let some : Int? = Some(10)
+  let none : Int? = None
+  inspect(some.unwrap_or(5), content="10")
+  inspect(none.unwrap_or(5), content="5")
+  inspect(some.unwrap_or_else(() => 7), content="10")
+  inspect(none.unwrap_or_else(() => 7), content="7")
+  inspect(none.unwrap_or_default(), content="0")
+}
+
+///|
+test "compare default iter and iterator" {
+  inspect(Some(1).compare(Some(2)), content="-1")
+  inspect(Some(2).compare(Some(1)), content="1")
+  inspect((None : Int?).compare(Some(1)), content="-1")
+  inspect((None : Int?).compare(None), content="0")
+  let default_opt : Int? = Default::default()
+  inspect(default_opt, content="None")
+  let iter_values = []
+  (Some(3) : Int?).iter().each(iter_values.push(_))
+  inspect(iter_values, content="[3]")
+  let iter_empty = []
+  (None : Int?).iter().each(iter_empty.push(_))
+  inspect(iter_empty, content="[]")
+  let iterator_values = (Some(4) : Int?).iterator().collect()
+  inspect(iterator_values, content="[4]")
+  let iterator_empty = (None : Int?).iterator().collect()
+  inspect(iterator_empty, content="[]")
+}
+
+///|
+test "map_or and filter" {
+  let some : Int? = Some(3)
+  let none : Int? = None
+  inspect(some.map_or(10, x => x * 2), content="6")
+  inspect(none.map_or(10, x => x * 2), content="10")
+  inspect(some.map_or_else(() => 7, x => x * 2), content="6")
+  inspect(none.map_or_else(() => 7, x => x * 2), content="7")
+  inspect(none.filter(_ => true), content="None")
+}
+
+///|
+test "unwrap_or_error" {
+  assert_eq(
+    (None : String?).unwrap_or_error(Failure("boom")) catch {
+      Failure(err) => err
+    },
+    "boom",
+  )
+  assert_eq(
+    Some("ok").unwrap_or_error(Failure("boom")) catch {
+      Failure(err) => err
+    },
+    "ok",
+  )
+}

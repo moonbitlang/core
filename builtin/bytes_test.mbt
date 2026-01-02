@@ -280,3 +280,14 @@ test "@builtin.Bytes::compare/empty" {
   inspect(empty.compare(non_empty), content="-1") // empty is less than non-empty
   inspect(non_empty.compare(empty), content="1") // non-empty is greater than empty
 }
+
+///|
+test "Bytes find and rev_find" {
+  let target = b"abcabc"
+  let pattern = b"abc"
+  inspect(target.find(pattern[:]), content="Some(0)")
+  inspect(target.rev_find(pattern[:]), content="Some(3)")
+  inspect(target.find(b"zzz"[:]), content="None")
+  inspect(target[:].find(b"bca"[:]), content="Some(1)")
+  inspect(target[:].rev_find(b"bca"[:]), content="Some(1)")
+}

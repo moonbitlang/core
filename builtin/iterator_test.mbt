@@ -635,3 +635,55 @@ test "Iterator::iter2" {
     assert_eq(i, x)
   }
 }
+
+///|
+test "Iterator::to_json and any on empty" {
+  let iter = [1, 2, 3].iterator()
+  @json.inspect(ToJson::to_json(iter), content=[1, 2, 3])
+  let empty : Iterator[Int] = Iterator::empty()
+  inspect(empty.any(_ => true), content="false")
+}
+
+///|
+test "Iterator::map_while empty and last" {
+  let empty : Iterator[Int] = Iterator::empty()
+  inspect(empty.map_while(_ => Some(1)).collect(), content="[]")
+  inspect([1, 2, 3].iterator().last(), content="Some(3)")
+  let empty_last : Iterator[Int] = Iterator::empty()
+  inspect(empty_last.last(), content="None")
+}
+
+///|
+test "Iterator::maximum" {
+  inspect([1, 3, 2].iterator().maximum(), content="Some(3)")
+  let empty : Iterator[Int] = Iterator::empty()
+  inspect(empty.maximum(), content="None")
+}
+
+///|
+test "Iterator::sub variants" {
+  inspect([1, 2, 3].iterator().sub(start=-1).collect(), content="[1, 2, 3]")
+  inspect([1, 2, 3].iterator().sub(start=0, end=2).collect(), content="[1, 2]")
+  inspect([1, 2, 3].iterator().sub(start=1).collect(), content="[2, 3]")
+  inspect([1, 2, 3, 4].iterator().sub(start=1, end=3).collect(), content="[]")
+}
+
+///|
+test "Iterator::iterator and Iterator2 conversions" {
+  inspect([1, 2].iterator().iterator().collect(), content="[1, 2]")
+  let pairs = ['a', 'b']
+    .iterator2()
+    .iterator()
+    .map(pair => {
+      let (i, ch) = pair
+      "\{i}:\{ch}"
+    })
+    .collect()
+  inspect(pairs, content="[\"0:a\", \"1:b\"]")
+  let buf = StringBuilder::new()
+  let iter2 = ['x', 'y'].iterator2().iterator2()
+  while iter2.next() is Some((_, ch)) {
+    buf.write_char(ch)
+  }
+  inspect(buf.to_string(), content="xy")
+}

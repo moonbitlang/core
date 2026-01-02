@@ -135,3 +135,57 @@ test "code_unit_at" {
   inspect(s.code_unit_at(10), content="55357") // High surrogate of '😀'
   inspect(s.code_unit_at(11), content="56832") // Low surrogate of '😀'
 }
+
+///|
+test "String default and to_array" {
+  inspect(String::default(), content="")
+  let chars = "Hi".to_array()
+  inspect(chars.length(), content="2")
+  inspect(String::from_array(chars), content="Hi")
+}
+
+///|
+test "String from_iter and from_iterator" {
+  let iter = ['a', 'b', 'c'].iter()
+  inspect(String::from_iter(iter), content="abc")
+  let iterator = ['x', 'y'].iterator()
+  inspect(String::from_iterator(iterator), content="xy")
+}
+
+///|
+test "String rev_iterator with surrogate" {
+  let buf = StringBuilder::new()
+  "A😀B".rev_iterator().each(c => buf.write_char(c))
+  inspect(buf.to_string(), content="B😀A")
+}
+
+///|
+test "char_length_eq and char_length_ge" {
+  let s = "hi😀"
+  inspect(s.char_length_eq(3), content="true")
+  inspect(s.char_length_eq(4), content="false")
+  inspect(s.char_length_ge(2), content="true")
+  inspect(s.char_length_ge(5), content="false")
+}
+
+///|
+test "offset_of_nth_char out of range" {
+  inspect("abc".offset_of_nth_char(5), content="None")
+}
+
+///|
+test "panic char_length invalid range" {
+  ignore("abc".char_length(start_offset=2, end_offset=1))
+}
+
+///|
+test "panic char_length_eq invalid surrogate" {
+  let invalid = String::from_array([(0xD800).unsafe_to_char(), 'a'])
+  ignore(invalid.char_length_eq(1))
+}
+
+///|
+test "panic char_length_ge invalid surrogate" {
+  let invalid = String::from_array([(0xD800).unsafe_to_char(), 'a'])
+  ignore(invalid.char_length_ge(1))
+}
