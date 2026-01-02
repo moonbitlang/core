@@ -309,3 +309,17 @@ test "overlapping writes" {
     inspect(buffer[i], content="b'\\x00'") // Should remain 0 (untouched)
   }
 }
+
+///|
+test "unsafe_read_uint16 and view reads" {
+  let bytes = b"\x34\x12\x78\x56\x9a\xbc"
+  inspect(bytes.unsafe_read_uint16_le(0).to_int(), content="4660")
+  inspect(bytes.unsafe_read_uint16_be(0).to_int(), content="13330")
+  let view = b"\x00\x01\x02\x03\x04\x05\x06\x07\x08"[1:9]
+  inspect(view.unsafe_read_uint64_le(0) == 0x0807060504030201UL, content="true")
+  inspect(view.unsafe_read_uint64_be(0) == 0x0102030405060708UL, content="true")
+  inspect(view.unsafe_read_uint32_le(0) == 0x04030201U, content="true")
+  inspect(view.unsafe_read_uint32_be(0) == 0x01020304U, content="true")
+  inspect(view.unsafe_read_uint16_le(6).to_int(), content="2055")
+  inspect(view.unsafe_read_uint16_be(6).to_int(), content="1800")
+}
