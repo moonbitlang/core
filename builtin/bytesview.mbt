@@ -208,6 +208,7 @@ pub fn BytesView::sub(
 ///   inspect(sum, content="15")
 /// }
 /// ```
+#deprecated("Use `BytesView::iterator()` to get an external iterator.", skip_current_package=true)
 pub fn BytesView::iter(self : BytesView) -> Iter[Byte] {
   self.iterator().iter()
 }
@@ -226,6 +227,7 @@ pub fn BytesView::iter(self : BytesView) -> Iter[Byte] {
 ///   inspect(sum, content="30")
 /// }
 /// ```
+#deprecated("Use `BytesView::iterator2()` to get an external iterator.", skip_current_package=true)
 pub fn BytesView::iter2(self : BytesView) -> Iter2[Int, Byte] {
   self.iterator2().iter2()
 }

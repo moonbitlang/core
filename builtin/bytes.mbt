@@ -559,6 +559,7 @@ pub fn BytesView::to_fixedarray(self : BytesView) -> FixedArray[Byte] {
 ///   )
 /// }
 /// ```
+#deprecated("Use `Bytes::from_iterator()` with an external iterator.", skip_current_package=true)
 pub fn Bytes::from_iter(iter : Iter[Byte]) -> Bytes {
   Bytes::from_array(iter.collect())
 }
@@ -672,6 +673,7 @@ pub fn BytesView::to_array(self : BytesView) -> Array[Byte] {
 ///   inspect(sum, content="209") // ASCII values: 'h'(104) + 'i'(105) = 209
 /// }
 /// ```
+#deprecated("Use `Bytes::iterator()` to get an external iterator.", skip_current_package=true)
 pub fn Bytes::iter(self : Bytes) -> Iter[Byte] {
   self.iterator().iter()
 }
@@ -719,6 +721,7 @@ pub fn Bytes::iterator(self : Bytes) -> Iterator[Byte] {
 ///   })
 ///   inspect(buf, content="b'\\x61'b'\\x62'b'\\x63'b'\\x64'b'\\x65'")
 ///   inspect(keys, content="[0, 1, 2, 3, 4]")
+#deprecated("Use `Bytes::iterator2()` to get an external iterator.", skip_current_package=true)
 pub fn Bytes::iter2(self : Bytes) -> Iter2[Int, Byte] {
   self.iterator2().iter2()
 }

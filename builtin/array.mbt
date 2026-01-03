@@ -1618,6 +1618,7 @@ pub fn[T] Array::split(
 ///   inspect(sum, content="6")
 /// }
 /// ```
+#deprecated("Use `Array::iterator()` to get an external iterator.", skip_current_package=true)
 pub fn[T] Array::iter(self : Array[T]) -> Iter[T] {
   self.iterator().iter()
 }
@@ -1643,6 +1644,7 @@ pub fn[T] Array::iter(self : Array[T]) -> Iter[T] {
 ///   inspect(result, content="[3, 2, 1]")
 /// }
 /// ```
+#deprecated("Use `Array::rev_iterator()` to get an external iterator.", skip_current_package=true)
 pub fn[T] Array::rev_iter(self : Array[T]) -> Iter[T] {
   self.rev_iterator().iter()
 }
@@ -1668,6 +1670,7 @@ pub fn[T] Array::rev_iter(self : Array[T]) -> Iter[T] {
 ///   inspect(sum, content="63") // (0 + 10) + (1 + 20) + (2 + 30) = 63
 /// }
 /// ```
+#deprecated("Use `Array::iterator2()` to get an external iterator.", skip_current_package=true)
 pub fn[A] Array::iter2(self : Array[A]) -> Iter2[Int, A] {
   self.iterator2().iter2()
 }
@@ -1787,6 +1790,7 @@ pub fn[A] Array::retain_map(self : Array[A], f : (A) -> A?) -> Unit {
 ///   inspect(arr, content="[42]")
 /// }
 /// ```
+#deprecated("Use `Array::from_iterator()` with an external iterator.", skip_current_package=true)
 pub fn[T] Array::from_iter(iter : Iter[T]) -> Array[T] {
   iter.collect()
 }
@@ -1829,10 +1833,19 @@ pub fn[T] Array::from_iterator(iter : Iterator[T]) -> Array[T] {
 ///   assert_eq(u, [1, 2, 3, 4, 5, 6])
 /// }
 /// ```
+#deprecated("Use `Array::push_iterator()` with an external iterator.", skip_current_package=true)
 pub fn[T] Array::push_iter(self : Self[T], iter : Iter[T]) -> Unit {
   // This function used by [Array spread operator](https://docs.moonbitlang.com/en/latest/language/fundamentals.html#spread-operator)
   // it can't be removed and deprecated
   for x in iter {
+    self.push(x)
+  }
+}
+
+///|
+/// Adds all elements from an external iterator to the end of the array.
+pub fn[T] Array::push_iterator(self : Self[T], iter : Iterator[T]) -> Unit {
+  while iter.next() is Some(x) {
     self.push(x)
   }
 }
@@ -2019,10 +2032,20 @@ pub fn[T1, T2] Array::unzip(self : Array[(T1, T2)]) -> (Array[T1], Array[T2]) {
 ///   )
 /// }
 /// ```
+#deprecated("Use `Array::zip_to_iterator2()` to get an external iterator.", skip_current_package=true)
 pub fn[A, B] Array::zip_to_iter2(
   self : Array[A],
   other : Array[B],
 ) -> Iter2[A, B] {
+  self.zip_to_iterator2(other).iter2()
+}
+
+///|
+/// Zips two arrays into an external iterator that yields corresponding elements.
+pub fn[A, B] Array::zip_to_iterator2(
+  self : Array[A],
+  other : Array[B],
+) -> Iterator2[A, B] {
   let length = if self.length() < other.length() {
     self.length()
   } else {
@@ -2034,7 +2057,7 @@ pub fn[A, B] Array::zip_to_iter2(
     let elem = (self[i], other[i])
     i += 1
     Some(elem)
-  }).iter2()
+  })
 }
 
 ///|

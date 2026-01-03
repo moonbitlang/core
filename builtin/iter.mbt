@@ -15,21 +15,25 @@
 // Types
 
 ///|
+#deprecated("Internal iterator `Iter` is deprecated. Use external `Iterator` (e.g. `xs.iterator()` or `Iterator::new`).", skip_current_package=true)
 struct Iter[T](((T) -> IterResult) -> IterResult)
 
 //TODO: Add intrinsic for Iter::run
 
 ///|
+#deprecated("Internal iterator `Iter` is deprecated. Use external `Iterator` (e.g. `xs.iterator()` or `Iterator::new`).", skip_current_package=true)
 pub fn[T] Iter::run(self : Iter[T], f : (T) -> IterResult) -> IterResult {
   self(f)
 }
 
 ///|
+#deprecated("Internal iterator `Iter` is deprecated. Use external `Iterator` (e.g. `xs.iterator()` or `Iterator::new`).", skip_current_package=true)
 pub fn[T] Iter::just_run(self : Iter[T], f : (T) -> IterResult) -> Unit {
   self(f) |> ignore
 }
 
 ///|
+#deprecated("`IterResult` is part of the deprecated internal iterator API. Use external `Iterator` loops instead.", skip_current_package=true)
 pub(all) enum IterResult {
   IterEnd // false
   IterContinue // true
@@ -54,6 +58,7 @@ pub impl[T : Show] Show for Iter[T] with output(self, logger) {
 /// - `self`: The iterator to consume.
 /// - `f`: A function that takes an element of type `T` and returns `Unit`. This function is applied to each element of the iterator.
 /// TODO: change the intrinsic to match the function name
+#deprecated("Internal iterator `Iter` is deprecated. Use external `Iterator` (e.g. `xs.iterator()` or `Iterator::new`).", skip_current_package=true)
 pub fn[T] Iter::each(self : Iter[T], f : (T) -> Unit raise?) -> Unit raise? {
   for a in self {
     f(a)
@@ -61,11 +66,13 @@ pub fn[T] Iter::each(self : Iter[T], f : (T) -> Unit raise?) -> Unit raise? {
 }
 
 ///|
+#deprecated("Internal iterator `Iter` is deprecated. Use external `Iterator` (e.g. `xs.iterator()` or `Iterator::new`).", skip_current_package=true)
 pub fn[T] Iter::any(self : Iter[T], f : (T) -> Bool) -> Bool {
   self.run(k => if f(k) { IterEnd } else { IterContinue }) != IterContinue
 }
 
 ///|
+#deprecated("Internal iterator `Iter` is deprecated. Use external `Iterator` (e.g. `xs.iterator()` or `Iterator::new`).", skip_current_package=true)
 pub fn[T] Iter::all(self : Iter[T], f : (T) -> Bool) -> Bool {
   self.run(k => if !f(k) { IterEnd } else { IterContinue }) is IterContinue
 }
@@ -82,6 +89,7 @@ pub fn[T] Iter::all(self : Iter[T], f : (T) -> Bool) -> Bool {
 /// - `self`: The iterator to consume.
 /// - `f`: A function that takes an index of type `Int` and an element of type `T` and returns `Unit`. This function is applied to each element of the iterator.
 /// TODO: Add intrinsic
+#deprecated("Internal iterator `Iter` is deprecated. Use external `Iterator` (e.g. `xs.iterator()` or `Iterator::new`).", skip_current_package=true)
 pub fn[T] Iter::eachi(
   self : Iter[T],
   f : (Int, T) -> Unit raise?,
@@ -111,6 +119,7 @@ pub fn[T] Iter::eachi(
 ///
 /// Returns the final accumulator value after folding all elements of the iterator.
 #locals(f)
+#deprecated("Internal iterator `Iter` is deprecated. Use external `Iterator` (e.g. `xs.iterator()` or `Iterator::new`).", skip_current_package=true)
 pub fn[T, B] Iter::fold(
   self : Iter[T],
   init~ : B,
@@ -137,6 +146,7 @@ pub fn[T, B] Iter::fold(
 /// # Returns
 ///
 /// Returns the number of elements in the iterator.
+#deprecated("Internal iterator `Iter` is deprecated. Use external `Iterator` (e.g. `xs.iterator()` or `Iterator::new`).", skip_current_package=true)
 pub fn[T] Iter::count(self : Iter[T]) -> Int {
   self.fold((acc, _) => acc + 1, init=0)
 }
@@ -145,7 +155,7 @@ pub fn[T] Iter::count(self : Iter[T]) -> Int {
 
 ///|
 /// Do not use this method, it is for internal use only.
-#deprecated("`Iter::new`, and the internal iterator type `Iter`, is deprecated. Create an external iterator `Iterator`, and use `Iterator::iter` to migrate usage of `Iter::new`. `Iter` will become an alias of `Iterator` in the future. See https://github.com/moonbitlang/core/pull/3050 for more details.")
+#deprecated("Internal iterator `Iter` is deprecated. Use `Iterator::new` and external iterator APIs instead.", skip_current_package=true)
 pub fn[T] Iter::new(f : ((T) -> IterResult) -> IterResult) -> Iter[T] {
   Iter(f)
 }
@@ -160,6 +170,7 @@ pub fn[T] Iter::new(f : ((T) -> IterResult) -> IterResult) -> Iter[T] {
 /// # Returns
 ///
 /// Returns an empty iterator of type `Iter[T]`.
+#deprecated("Internal iterator `Iter` is deprecated. Use external `Iterator` (e.g. `xs.iterator()` or `Iterator::new`).", skip_current_package=true)
 pub fn[T] Iter::empty() -> Iter[T] {
   _ => IterContinue
 }
@@ -178,6 +189,7 @@ pub fn[T] Iter::empty() -> Iter[T] {
 /// # Returns
 ///
 /// Returns an iterator of type `Iter[T]` that contains the single element `a`.
+#deprecated("Internal iterator `Iter` is deprecated. Use external `Iterator` (e.g. `xs.iterator()` or `Iterator::new`).", skip_current_package=true)
 pub fn[T] Iter::singleton(a : T) -> Iter[T] {
   yield_ => yield_(a)
 }
@@ -197,6 +209,7 @@ pub fn[T] Iter::singleton(a : T) -> Iter[T] {
 ///
 /// Returns an iterator of type `Iter[T]` that repeats the element `a` indefinitely.
 #intrinsic("%iter.repeat")
+#deprecated("Internal iterator `Iter` is deprecated. Use external `Iterator` (e.g. `xs.iterator()` or `Iterator::new`).", skip_current_package=true)
 pub fn[T] Iter::repeat(a : T) -> Iter[T] {
   yield_ => loop yield_(a) {
     IterContinue => continue yield_(a)
@@ -218,6 +231,7 @@ pub fn[T] Iter::repeat(a : T) -> Iter[T] {
 /// # Returns
 ///
 /// Returns an iterator that iterates over the range of Int from `start` to `end - 1`.
+#deprecated("Internal iterator `Iter` is deprecated. Use external `Iterator` (e.g. `xs.iterator()` or `Iterator::new`).", skip_current_package=true)
 pub fn Int::until(
   self : Int,
   end : Int,
@@ -261,6 +275,7 @@ pub fn Int::until(
 /// # Returns
 ///
 /// Returns an iterator that iterates over the range of Int64 from `start` to `end - 1`.
+#deprecated("Internal iterator `Iter` is deprecated. Use external `Iterator` (e.g. `xs.iterator()` or `Iterator::new`).", skip_current_package=true)
 pub fn Int64::until(
   self : Int64,
   end : Int64,
@@ -304,6 +319,7 @@ pub fn Int64::until(
 /// # Returns
 ///
 /// Returns an iterator that iterates over the range of Double from `start` to `end - 1`.
+#deprecated("Internal iterator `Iter` is deprecated. Use external `Iterator` (e.g. `xs.iterator()` or `Iterator::new`).", skip_current_package=true)
 pub fn Double::until(
   self : Double,
   end : Double,
@@ -351,6 +367,7 @@ pub fn Double::until(
 ///
 /// A new iterator that only contains the elements for which the predicate function returns `IterContinue`.
 #intrinsic("%iter.filter")
+#deprecated("Internal iterator `Iter` is deprecated. Use external `Iterator` (e.g. `xs.iterator()` or `Iterator::new`).", skip_current_package=true)
 pub fn[T] Iter::filter(self : Iter[T], f : (T) -> Bool) -> Iter[T] {
   yield_ => self.run(a => if f(a) { yield_(a) } else { IterContinue })
 }
@@ -372,6 +389,7 @@ pub fn[T] Iter::filter(self : Iter[T], f : (T) -> Bool) -> Iter[T] {
 ///
 /// A new iterator that contains the transformed elements.
 #intrinsic("%iter.map")
+#deprecated("Internal iterator `Iter` is deprecated. Use external `Iterator` (e.g. `xs.iterator()` or `Iterator::new`).", skip_current_package=true)
 pub fn[T, R] Iter::map(self : Iter[T], f : (T) -> R) -> Iter[R] {
   yield_ => self.run(a => yield_(f(a)))
 }
@@ -392,6 +410,7 @@ pub fn[T, R] Iter::map(self : Iter[T], f : (T) -> R) -> Iter[R] {
 /// # Returns
 ///
 /// A new iterator that contains the transformed elements.
+#deprecated("Internal iterator `Iter` is deprecated. Use external `Iterator` (e.g. `xs.iterator()` or `Iterator::new`).", skip_current_package=true)
 pub fn[T, R] Iter::mapi(self : Iter[T], f : (Int, T) -> R) -> Iter[R] {
   yield_ => {
     let mut i = -1
@@ -406,6 +425,7 @@ pub fn[T, R] Iter::mapi(self : Iter[T], f : (Int, T) -> R) -> Iter[R] {
 /// Transforms the elements of the iterator using a mapping function that returns an `Option`.
 /// The elements for which the function returns `None` are filtered out.
 #alias(map_option, deprecated)
+#deprecated("Internal iterator `Iter` is deprecated. Use external `Iterator` (e.g. `xs.iterator()` or `Iterator::new`).", skip_current_package=true)
 pub fn[A, B] Iter::filter_map(self : Iter[A], f : (A) -> B?) -> Iter[B] {
   yield_ => self.run(a => match f(a) {
     Some(b) => yield_(b)
@@ -430,6 +450,7 @@ pub fn[A, B] Iter::filter_map(self : Iter[A], f : (A) -> B?) -> Iter[B] {
 ///
 /// A new iterator that contains the flattened elements.
 #intrinsic("%iter.flat_map")
+#deprecated("Internal iterator `Iter` is deprecated. Use external `Iterator` (e.g. `xs.iterator()` or `Iterator::new`).", skip_current_package=true)
 pub fn[T, R] Iter::flat_map(self : Iter[T], f : (T) -> Iter[R]) -> Iter[R] {
   yield_ => self.run(x => f(x).run(yield_))
 }
@@ -446,6 +467,7 @@ pub fn[T, R] Iter::flat_map(self : Iter[T], f : (T) -> Iter[R]) -> Iter[R] {
 ///   // }
 /// }
 /// ```
+#deprecated("Internal iterator `Iter` is deprecated. Use external `Iterator` (e.g. `xs.iterator()` or `Iterator::new`).", skip_current_package=true)
 pub fn[T] Iter::flatten(self : Iter[Iter[T]]) -> Iter[T] {
   yield_ => self.run(x => x.run(yield_))
 }
@@ -465,6 +487,7 @@ pub fn[T] Iter::flatten(self : Iter[Iter[T]]) -> Iter[T] {
 /// # Returns
 ///
 /// The same iterator.
+#deprecated("Internal iterator `Iter` is deprecated. Use external `Iterator` (e.g. `xs.iterator()` or `Iterator::new`).", skip_current_package=true)
 pub fn[T] Iter::tap(self : Iter[T], f : (T) -> Unit) -> Iter[T] {
   self.map(a => {
     f(a)
@@ -488,6 +511,7 @@ pub fn[T] Iter::tap(self : Iter[T], f : (T) -> Unit) -> Iter[T] {
 ///
 /// A new iterator that contains the first `n` elements.
 // #intrinsic("%iter.take")
+#deprecated("Internal iterator `Iter` is deprecated. Use external `Iterator` (e.g. `xs.iterator()` or `Iterator::new`).", skip_current_package=true)
 pub fn[T] Iter::take(self : Iter[T], n : Int) -> Iter[T] {
   yield_ => {
     // [..take(10,seq), next] would continue
@@ -525,6 +549,7 @@ pub fn[T] Iter::take(self : Iter[T], n : Int) -> Iter[T] {
 /// # Returns
 ///
 /// A new iterator that contains the elements as long as the predicate function returns `true`.
+#deprecated("Internal iterator `Iter` is deprecated. Use external `Iterator` (e.g. `xs.iterator()` or `Iterator::new`).", skip_current_package=true)
 pub fn[T] Iter::take_while(self : Iter[T], f : (T) -> Bool) -> Iter[T] {
   yield_ => {
     // `r` represents the overall return value.
@@ -550,6 +575,7 @@ pub fn[T] Iter::take_while(self : Iter[T], f : (T) -> Bool) -> Iter[T] {
 
 ///|
 /// Transforms the elements of the iterator using a mapping function upto the function returns `None`.
+#deprecated("Internal iterator `Iter` is deprecated. Use external `Iterator` (e.g. `xs.iterator()` or `Iterator::new`).", skip_current_package=true)
 pub fn[A, B] Iter::map_while(self : Iter[A], f : (A) -> B?) -> Iter[B] {
   yield_ => {
     let mut r : IterResult = IterContinue
@@ -582,6 +608,7 @@ pub fn[A, B] Iter::map_while(self : Iter[A], f : (A) -> B?) -> Iter[B] {
 /// # Returns
 ///
 /// A new iterator that starts after skipping the first `n` elements.
+#deprecated("Internal iterator `Iter` is deprecated. Use external `Iterator` (e.g. `xs.iterator()` or `Iterator::new`).", skip_current_package=true)
 pub fn[T] Iter::drop(self : Iter[T], n : Int) -> Iter[T] {
   yield_ => {
     let mut i = 0
@@ -609,6 +636,7 @@ pub fn[T] Iter::drop(self : Iter[T], n : Int) -> Iter[T] {
 /// # Returns
 ///
 /// A new iterator that starts after skipping the elements as long as the predicate function returns `true`.
+#deprecated("Internal iterator `Iter` is deprecated. Use external `Iterator` (e.g. `xs.iterator()` or `Iterator::new`).", skip_current_package=true)
 pub fn[T] Iter::drop_while(self : Iter[T], f : (T) -> Bool) -> Iter[T] {
   yield_ => {
     let mut dropping = true
@@ -636,6 +664,7 @@ pub fn[T] Iter::drop_while(self : Iter[T], f : (T) -> Bool) -> Iter[T] {
 /// # Returns
 ///
 /// An `Option` that contains the first element that satisfies the predicate function, or `None` if no such element is found.
+#deprecated("Internal iterator `Iter` is deprecated. Use external `Iterator` (e.g. `xs.iterator()` or `Iterator::new`).", skip_current_package=true)
 pub fn[T] Iter::find_first(self : Iter[T], f : (T) -> Bool) -> T? {
   for a in self {
     if f(a) {
@@ -647,6 +676,7 @@ pub fn[T] Iter::find_first(self : Iter[T], f : (T) -> Bool) -> T? {
 }
 
 ///|
+#deprecated("Internal iterator `Iter` is deprecated. Use external `Iterator` (e.g. `xs.iterator()` or `Iterator::new`).", skip_current_package=true)
 pub fn[T] Iter::peek(self : Iter[T]) -> T? {
   let mut first = None
   self.just_run(a => {
@@ -712,6 +742,7 @@ pub fn[T] Iter::append(self : Iter[T], a : T) -> Iter[T] {
 ///
 /// Returns a new iterator that contains the elements of `self` followed by the elements of `other`.
 #intrinsic("%iter.concat")
+#deprecated("Internal iterator `Iter` is deprecated. Use external `Iterator` (e.g. `xs.iterator()` or `Iterator::new`).", skip_current_package=true)
 pub fn[T] Iter::concat(self : Iter[T], other : Iter[T]) -> Iter[T] {
   yield_ => if self.run(yield_) is IterContinue {
     other.run(yield_)
@@ -727,6 +758,7 @@ pub impl[T] Add for Iter[T] with add(self, other) {
 
 ///|
 /// Collects the elements of the iterator into an array.
+#deprecated("Internal iterator `Iter` is deprecated. Use external `Iterator` (e.g. `xs.iterator()` or `Iterator::new`).", skip_current_package=true)
 pub fn[T] Iter::to_array(self : Iter[T]) -> Array[T] {
   let result = []
   for e in self {
@@ -737,6 +769,7 @@ pub fn[T] Iter::to_array(self : Iter[T]) -> Array[T] {
 
 ///|
 /// Collects the elements of the iterator into an array.
+#deprecated("Internal iterator `Iter` is deprecated. Use external `Iterator` (e.g. `xs.iterator()` or `Iterator::new`).", skip_current_package=true)
 pub fn[T] Iter::collect(self : Iter[T]) -> Array[T] {
   let result = []
   self.each(e => result.push(e))
@@ -745,6 +778,7 @@ pub fn[T] Iter::collect(self : Iter[T]) -> Array[T] {
 
 ///|
 /// Collects the elements of the iterator into a string.
+#deprecated("Internal iterator `Iter` is deprecated. Use external `Iterator` (e.g. `xs.iterator()` or `Iterator::new`).", skip_current_package=true)
 pub fn Iter::join(self : Iter[String], sep : String) -> String {
   let buf = StringBuilder::new()
   let mut first = true
@@ -762,12 +796,14 @@ pub fn Iter::join(self : Iter[String], sep : String) -> String {
 ///|
 /// Iter itself is an iterator.
 /// so that it works with array spread operator. e.g, `[..iter]`
+#deprecated("Internal iterator `Iter` is deprecated. Use external `Iterator` (e.g. `xs.iterator()` or `Iterator::new`).", skip_current_package=true)
 pub fn[T] Iter::iter(self : Iter[T]) -> Iter[T] {
   self
 }
 
 ///|
 /// Returns the last element of the iterator, or `None` if the iterator is empty.
+#deprecated("Internal iterator `Iter` is deprecated. Use external `Iterator` (e.g. `xs.iterator()` or `Iterator::new`).", skip_current_package=true)
 pub fn[A] Iter::last(self : Iter[A]) -> A? {
   let mut last = None
   for a in self {
@@ -801,6 +837,7 @@ pub fn[A] Iter::last(self : Iter[A]) -> A? {
 ///   assert_eq(iter.head(), None)
 /// }
 /// ```
+#deprecated("Internal iterator `Iter` is deprecated. Use external `Iterator` (e.g. `xs.iterator()` or `Iterator::new`).", skip_current_package=true)
 pub fn[A] Iter::head(self : Iter[A]) -> A? {
   for i in self {
     break Some(i)
@@ -826,6 +863,7 @@ pub fn[A] Iter::head(self : Iter[A]) -> A? {
 ///   assert_eq(arr, [1, 0, 2, 0, 3])
 /// }
 /// ```
+#deprecated("Internal iterator `Iter` is deprecated. Use external `Iterator` (e.g. `xs.iterator()` or `Iterator::new`).", skip_current_package=true)
 pub fn[A] Iter::intersperse(self : Iter[A], sep : A) -> Iter[A] {
   yield_ => {
     let mut first = true
@@ -842,6 +880,7 @@ pub fn[A] Iter::intersperse(self : Iter[A], sep : A) -> Iter[A] {
 
 ///|
 #alias("_[_:_]")
+#deprecated("Internal iterator `Iter` is deprecated. Use external `Iterator` (e.g. `xs.iterator()` or `Iterator::new`).", skip_current_package=true)
 pub fn[A] Iter::sub(self : Iter[A], start? : Int = 0, end? : Int) -> Iter[A] {
   // Note here we mark `end` as an optional parameter
   // since the meaningful default value of `end` is the length of the iterator
@@ -878,6 +917,7 @@ pub fn[A] Iter::sub(self : Iter[A], start? : Int = 0, end? : Int) -> Iter[A] {
 ///   inspect(iter.contains(1), content="false")
 /// }
 /// ```
+#deprecated("Internal iterator `Iter` is deprecated. Use external `Iterator` (e.g. `xs.iterator()` or `Iterator::new`).", skip_current_package=true)
 pub fn[A : Eq] Iter::contains(self : Iter[A], value : A) -> Bool {
   for v in self {
     if v == value {
@@ -891,6 +931,7 @@ pub fn[A : Eq] Iter::contains(self : Iter[A], value : A) -> Bool {
 ///|
 /// Returns the nth element of the iterator, or `None` if the iterator is
 /// shorter than `n` elements.
+#deprecated("Internal iterator `Iter` is deprecated. Use external `Iterator` (e.g. `xs.iterator()` or `Iterator::new`).", skip_current_package=true)
 pub fn[T] Iter::nth(self : Iter[T], n : Int) -> T? {
   if n < 0 {
     None
@@ -900,6 +941,7 @@ pub fn[T] Iter::nth(self : Iter[T], n : Int) -> T? {
 }
 
 ///|
+#deprecated("Internal iterator `Iter` is deprecated. Use external `Iterator` (e.g. `xs.iterator()` or `Iterator::new`).", skip_current_package=true)
 pub fn[T : Compare] Iter::maximum(self : Iter[T]) -> T? {
   let mut res = None
   for x in self {
@@ -912,6 +954,7 @@ pub fn[T : Compare] Iter::maximum(self : Iter[T]) -> T? {
 }
 
 ///|
+#deprecated("Internal iterator `Iter` is deprecated. Use external `Iterator` (e.g. `xs.iterator()` or `Iterator::new`).", skip_current_package=true)
 pub fn[T : Compare] Iter::minimum(self : Iter[T]) -> T? {
   let mut res = None
   for x in self {
@@ -963,6 +1006,7 @@ pub fn[T, K : Eq + Hash] Iter::group_by(
 
 ///|
 /// Returns an iterator that iterates over the index and the element of the iterator.
+#deprecated("Internal iterator `Iter` is deprecated. Use external `Iterator` (e.g. `xs.iterator()` or `Iterator::new`).", skip_current_package=true)
 pub fn[T] Iter::iter2(self : Iter[T]) -> Iter2[Int, T] {
   yield_ => {
     let mut index = -1

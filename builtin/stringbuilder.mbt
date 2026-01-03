@@ -39,11 +39,23 @@ pub fn[T : Show] StringBuilder::write_object(
 ///   assert_eq(sb.to_string(), "Hello🤣")
 /// }
 /// ```
+#deprecated("Use `StringBuilder::write_iterator()` with an external iterator.", skip_current_package=true)
 pub fn StringBuilder::write_iter(
   self : StringBuilder,
   iter : Iter[Char],
 ) -> Unit {
   for ch in iter {
+    self.write_char(ch)
+  }
+}
+
+///|
+/// Writes characters from an external iterator to the StringBuilder.
+pub fn StringBuilder::write_iterator(
+  self : StringBuilder,
+  iter : Iterator[Char],
+) -> Unit {
+  while iter.next() is Some(ch) {
     self.write_char(ch)
   }
 }

@@ -241,6 +241,7 @@ pub fn String::to_array(self : String) -> Array[Char] {
 ///   assert_eq(s.length(), 15)
 /// } // Utf16 code units
 /// ```
+#deprecated("Use `String::iterator()` to get an external iterator.", skip_current_package=true)
 pub fn String::iter(self : String) -> Iter[Char] {
   self.iterator().iter()
 }
@@ -279,6 +280,7 @@ pub fn String::iterator(self : String) -> Iterator[Char] {
 }
 
 ///|
+#deprecated("Use `String::iterator2()` to get an external iterator.", skip_current_package=true)
 pub fn String::iter2(self : String) -> Iter2[Int, Char] {
   self.iterator2().iter2()
 }
@@ -318,6 +320,7 @@ pub fn String::iterator2(self : String) -> Iterator2[Int, Char] {
 ///   ])
 /// }
 /// ```
+#deprecated("Use `String::rev_iterator()` to get an external iterator.", skip_current_package=true)
 pub fn String::rev_iter(self : String) -> Iter[Char] {
   self.rev_iterator().iter()
 }
@@ -569,6 +572,7 @@ pub fn String::from_array(chars : ArrayView[Char]) -> String {
 
 ///|
 /// Convert char iterator to string,
+#deprecated("Use `String::from_iterator()` with an external iterator.", skip_current_package=true)
 pub fn String::from_iter(iter : Iter[Char]) -> String {
   let buf = StringBuilder::new()
   for c in iter {

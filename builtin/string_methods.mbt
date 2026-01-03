@@ -1060,13 +1060,13 @@ test "rev" {
 /// 
 /// If the separator is empty, the returned iterator will contain all the
 /// characters in the string as single elements.
-pub fn StringView::split(
+pub fn StringView::split_iterator(
   self : StringView,
   sep : StringView,
-) -> Iter[StringView] {
+) -> Iterator[StringView] {
   let sep_len = sep.length()
   if sep_len == 0 {
-    return self.iter().map(c => c.to_string().view())
+    return self.iterator().map(c => c.to_string().view())
   }
   let mut remaining = Some(self)
   Iterator::new(() => {
@@ -1077,7 +1077,7 @@ pub fn StringView::split(
     }
     remaining = Some(view.view(start_offset=end + sep_len))
     Some(view.view(end_offset=end))
-  }).iter()
+  })
 }
 
 ///|
@@ -1089,8 +1089,34 @@ pub fn StringView::split(
 /// 
 /// If the separator is empty, the returned iterator will contain all the
 /// characters in the string as single elements.
+#deprecated("Use `StringView::split_iterator()` to get an external iterator.", skip_current_package=true)
+pub fn StringView::split(
+  self : StringView,
+  sep : StringView,
+) -> Iter[StringView] {
+  self.split_iterator(sep).iter()
+}
+
+///|
+/// Splits the string into all substrings separated by the given separator.
+/// 
+/// If the string does not contain the separator and the separator is not empty,
+/// the returned iterator will contain only one element, which is the original
+/// string.
+/// 
+/// If the separator is empty, the returned iterator will contain all the
+/// characters in the string as single elements.
+pub fn String::split_iterator(
+  self : String,
+  sep : StringView,
+) -> Iterator[StringView] {
+  self[:].split_iterator(sep)
+}
+
+///|
+#deprecated("Use `String::split_iterator()` to get an external iterator.", skip_current_package=true)
 pub fn String::split(self : String, sep : StringView) -> Iter[StringView] {
-  self[:].split(sep)
+  self[:].split_iterator(sep).iter()
 }
 
 ///|

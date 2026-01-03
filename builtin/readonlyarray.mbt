@@ -54,6 +54,7 @@ pub fn[T] ReadOnlyArray::from_array(array : ArrayView[T]) -> ReadOnlyArray[T] {
 ///   inspect(immut_array[0], content="1")
 /// }
 /// ```
+#deprecated("Use `ReadOnlyArray::from_iterator()` with an external iterator.", skip_current_package=true)
 pub fn[T] ReadOnlyArray::from_iter(iter : Iter[T]) -> ReadOnlyArray[T] {
   unsafe_reinterpret_from_fixed_array(FixedArray::from_iter(iter))
 }
@@ -164,6 +165,7 @@ pub fn[T] ReadOnlyArray::last(self : ReadOnlyArray[T]) -> T? {
 ///   inspect(sum, content="6")
 /// }
 /// ```
+#deprecated("Use `ReadOnlyArray::iterator()` to get an external iterator.", skip_current_package=true)
 pub fn[T] ReadOnlyArray::iter(self : ReadOnlyArray[T]) -> Iter[T] {
   self.unsafe_reinterpret_to_fixed_array().iter()
 }
@@ -196,6 +198,7 @@ pub fn[T] ReadOnlyArray::iterator(self : ReadOnlyArray[T]) -> Iterator[T] {
 ///   inspect(sum, content="63") // (0+10) + (1+20) + (2+30) = 63
 /// }
 /// ```
+#deprecated("Use `ReadOnlyArray::iterator2()` to get an external iterator.", skip_current_package=true)
 pub fn[T] ReadOnlyArray::iter2(self : ReadOnlyArray[T]) -> Iter2[Int, T] {
   self.unsafe_reinterpret_to_fixed_array().iter2()
 }

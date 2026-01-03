@@ -62,6 +62,7 @@ pub fn[T] FixedArray::get(self : FixedArray[T], idx : Int) -> T? {
 /// }
 /// ```
 #intrinsic("%iter.from_array")
+#deprecated("Use `FixedArray::iterator()` to get an external iterator.", skip_current_package=true)
 pub fn[T] FixedArray::iter(self : FixedArray[T]) -> Iter[T] {
   self.iterator().iter()
 }
@@ -88,6 +89,7 @@ pub fn[T] FixedArray::iter(self : FixedArray[T]) -> Iter[T] {
 ///   inspect(sum, content="33") // (0 + 10) + (1 + 10) + (2 + 10) = 33
 /// }
 /// ```
+#deprecated("Use `FixedArray::iterator2()` to get an external iterator.", skip_current_package=true)
 pub fn[T] FixedArray::iter2(self : FixedArray[T]) -> Iter2[Int, T] {
   self.iterator2().iter2()
 }
@@ -1425,6 +1427,7 @@ test "iter" {
 ///   inspect(fixed_arr, content="[1, 2, 3]")
 /// }
 /// ```
+#deprecated("Use `FixedArray::from_iterator()` with an external iterator.", skip_current_package=true)
 pub fn[T] FixedArray::from_iter(iter : Iter[T]) -> FixedArray[T] {
   FixedArray::from_array(iter.collect())
 }
