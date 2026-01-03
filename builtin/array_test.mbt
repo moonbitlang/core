@@ -1,4 +1,4 @@
-// Copyright 2025 International Digital Economy Academy
+// Copyright 2026 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -867,7 +867,7 @@ test "retain_map empty" {
 test "Array::blit_to grows destination" {
   let src = [1, 2, 3]
   let dst = [0]
-  src.blit_to(dst, len=2, src_offset=1, dst_offset=0)
+  src[1:3].blit_to(dst)
   inspect(dst, content="[2, 3]")
 }
 

@@ -1,4 +1,4 @@
-// Copyright 2025 International Digital Economy Academy
+// Copyright 2026 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -52,7 +52,7 @@ impl Logger for TestLogger with write_view(self, value) {
 ///|
 test "Eq helpers" {
   inspect(Eq::not_equal(1, 2), content="true")
-  inspect(Eq::op_equal(3, 3), content="true")
+  inspect(Eq::equal(3, 3), content="true")
   let a : Pair = Pair::{ left: 1, right: 2 }
   let b : Pair = Pair::{ left: 1, right: 3 }
   inspect(Eq::not_equal(a, b), content="true")

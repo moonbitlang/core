@@ -1,4 +1,4 @@
-// Copyright 2025 International Digital Economy Academy
+// Copyright 2026 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
 // limitations under the License.
 
 ///|
+#warnings("-deprecated")
 test "parse error branches" {
   guard (try? @json.parse("")) is Err(InvalidEof) else {
     fail("expected InvalidEof for empty input")
