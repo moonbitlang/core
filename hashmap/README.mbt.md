@@ -110,13 +110,13 @@ test {
 }
 ```
 
-Or use `iter()` to get an iterator of hashmap.
+Or use `iterator()` to get an iterator of hashmap.
 
 ```mbt check
 ///|
 test {
   let map = @hashmap.from_array([("a", 1), ("b", 2), ("c", 3)])
-  let _iter = map.iter()
+  let _iter = map.iterator()
 
 }
 ```

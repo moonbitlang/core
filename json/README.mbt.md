@@ -99,7 +99,7 @@ test "json array navigation" {
   // Iterate through array
   guard array is Array(values)
   inspect(
-    values.iter(),
+    values.iterator(),
     content="[Number(1), Number(2), Number(3), Number(4), Number(5)]",
   )
 }
