@@ -206,7 +206,10 @@ test "default" {
 ///|
 test "iter2" {
   let map = @sorted_map.from_array([(2, "two"), (1, "one")])
-  inspect(map.iter2().to_array(), content="[(1, \"one\"), (2, \"two\")]")
+  inspect(
+    map.iterator2().iterator().to_array(),
+    content="[(1, \"one\"), (2, \"two\")]",
+  )
 }
 
 ///|

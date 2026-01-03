@@ -184,7 +184,8 @@ test "Float::until basics" {
 ///|
 test "Float::until with NaN step" {
   let values = []
-  for x in (1.0 : Float).until(1.0, step=@float.not_a_number, inclusive=true) {
+  let iter = (1.0 : Float).until(1.0, step=@float.not_a_number, inclusive=true)
+  while iter.next() is Some(x) {
     values.push(x)
   }
   inspect(values, content="[1]")

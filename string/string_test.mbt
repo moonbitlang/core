@@ -18,11 +18,6 @@ test "String::from_array" {
 }
 
 ///|
-test "String::from_iter" {
-  inspect(String::from_iter(['1', '2', '3', '4', '5'].iter()), content="12345")
-}
-
-///|
 test "String::from_iterator" {
   inspect(
     String::from_iterator(['1', '2', '3', '4', '5'].iterator()),
@@ -151,36 +146,6 @@ test "to_array" {
 }
 
 ///|
-test "chars" {
-  let mut str = ""
-  "A😊𠮷BA😊𠮷B"
-  .iter()
-  .each(c => str = str + c.to_int().to_string() + "\n")
-  inspect(
-    str,
-    content=(
-      #|65
-      #|128522
-      #|134071
-      #|66
-      #|65
-      #|128522
-      #|134071
-      #|66
-      #|
-    ),
-  )
-  inspect(
-    "A😊𠮷BA😊𠮷B".iter().take(2).collect(),
-    content="['A', '😊']",
-  )
-  inspect(
-    "A😊𠮷BA😊𠮷B".iter().take(4).collect(),
-    content="['A', '😊', '𠮷', 'B']",
-  )
-}
-
-///|
 test "iterator" {
   let mut str = ""
   "A😊𠮷BA😊𠮷B"
@@ -211,36 +176,6 @@ test "iterator" {
 }
 
 ///|
-test "rev_iter" {
-  let mut str = ""
-  "A😊𠮷BA😊𠮷B"
-  .rev_iter()
-  .each(c => str = str + c.to_int().to_string() + "\n")
-  inspect(
-    str,
-    content=(
-      #|66
-      #|134071
-      #|128522
-      #|65
-      #|66
-      #|134071
-      #|128522
-      #|65
-      #|
-    ),
-  )
-  inspect(
-    "A😊𠮷BA😊𠮷B".rev_iter().take(2).collect(),
-    content="['B', '𠮷']",
-  )
-  inspect(
-    "A😊𠮷BA😊𠮷B".rev_iter().take(4).collect(),
-    content="['B', '𠮷', '😊', 'A']",
-  )
-}
-
-///|
 test "rev_iterator" {
   let mut str = ""
   "A😊𠮷BA😊𠮷B"
@@ -267,28 +202,6 @@ test "rev_iterator" {
   inspect(
     "A😊𠮷BA😊𠮷B".rev_iterator().take(4).collect(),
     content="['B', '𠮷', '😊', 'A']",
-  )
-}
-
-///|
-test "iter2" {
-  let mut str = ""
-  "A😊𠮷BA😊𠮷B"
-  .iter2()
-  .each((i, c) => str = str + "\{i}: \{c.to_int()} \n")
-  inspect(
-    str,
-    content=(
-      #|0: 65 
-      #|1: 128522 
-      #|2: 134071 
-      #|3: 66 
-      #|4: 65 
-      #|5: 128522 
-      #|6: 134071 
-      #|7: 66 
-      #|
-    ),
   )
 }
 
@@ -577,88 +490,88 @@ test "to_upper" {
 ///|
 test "split" {
   inspect(
-    "a b c d e".split(" "),
+    "a b c d e".split_iterator(" "),
     content=(
       #|["a", "b", "c", "d", "e"]
     ),
   )
   inspect(
-    "abcde".split("x"),
+    "abcde".split_iterator("x"),
     content=(
       #|["abcde"]
     ),
   )
-  inspect("".split(""), content="[]")
+  inspect("".split_iterator(""), content="[]")
   inspect(
-    "".split("x"),
+    "".split_iterator("x"),
     content=(
       #|[""]
     ),
   )
   inspect(
-    "你 wow 好 wow 月 wow 兔".split(" wow "),
+    "你 wow 好 wow 月 wow 兔".split_iterator(" wow "),
     content=(
       #|["你", "好", "月", "兔"]
     ),
   )
   inspect(
-    "👍😍😭👍😍😭👍😍😭👍".split("😍😭"),
+    "👍😍😭👍😍😭👍😍😭👍".split_iterator("😍😭"),
     content=(
       #|["👍", "👍", "👍", "👍"]
     ),
   )
   // Additional test cases
   inspect(
-    "a,b,c,d,e".split(","),
+    "a,b,c,d,e".split_iterator(","),
     content=(
       #|["a", "b", "c", "d", "e"]
     ),
   )
   inspect(
-    "a,,b,,c".split(","),
+    "a,,b,,c".split_iterator(","),
     content=(
       #|["a", "", "b", "", "c"]
     ),
   )
   inspect(
-    "a,,b,,c".split(",,"),
+    "a,,b,,c".split_iterator(",,"),
     content=(
       #|["a", "b", "c"]
     ),
   )
   inspect(
-    "a b c d e".split(""),
+    "a b c d e".split_iterator(""),
     content=(
       #|["a", " ", "b", " ", "c", " ", "d", " ", "e"]
     ),
   )
   inspect(
-    "a,b,c,d,e".split(","),
+    "a,b,c,d,e".split_iterator(","),
     content=(
       #|["a", "b", "c", "d", "e"]
     ),
   )
   inspect(
-    "abcde".split(""),
+    "abcde".split_iterator(""),
     content=(
       #|["a", "b", "c", "d", "e"]
     ),
   )
   inspect(
-    "a b c d e".split(" "),
+    "a b c d e".split_iterator(" "),
     content=(
       #|["a", "b", "c", "d", "e"]
     ),
   )
   inspect(
-    "abcde".split("x"),
+    "abcde".split_iterator("x"),
     content=(
       #|["abcde"]
     ),
   )
-  inspect("".split(""), content="[]")
+  inspect("".split_iterator(""), content="[]")
   inspect(
-    "".split("x"),
+    "".split_iterator("x"),
     content=(
       #|[""]
     ),
@@ -708,14 +621,14 @@ test "pad_right" {
 ///|
 // test "panic rev_get1" {
 //   let str = "Hello🤣🤣🤣"
-//   let _ = str.rev_iter().nth(-1).unwrap()
+//   let _ = str.rev_iterator().nth(-1).unwrap()
 
 // }
 
 ///|
 test "panic rev_get2" {
   let str = "Hello🤣🤣🤣"
-  let _ = str.rev_iter().nth(8).unwrap()
+  let _ = str.rev_iterator().nth(8).unwrap()
 
 }
 
@@ -818,7 +731,7 @@ test "offset_of_nth_char property" {
   let n = s.char_length()
   for i in 0..<n {
     let index = s.offset_of_nth_char(i).unwrap()
-    assert_eq(s.get_char(index).unwrap(), s.iter().nth(i).unwrap())
+    assert_eq(s.get_char(index).unwrap(), s.iterator().nth(i).unwrap())
   }
 }
 
@@ -828,29 +741,53 @@ test "offset_of_nth_char property negative" {
   let n = s.char_length()
   for i in 1..=n {
     let index = s.offset_of_nth_char(-i).unwrap()
-    assert_eq(s.get_char(index).unwrap(), s.rev_iter().nth(i - 1).unwrap())
+    assert_eq(s.get_char(index).unwrap(), s.rev_iterator().nth(i - 1).unwrap())
   }
 }
 
 ///|
 test "split and then join should be identity" {
   let string = ""
-  assert_eq(string, string.split("").map(StringView::to_string).join(""))
-  assert_eq(string, string.split("a").map(StringView::to_string).join("a"))
+  assert_eq(
+    string,
+    string.split_iterator("").map(StringView::to_string).join(""),
+  )
+  assert_eq(
+    string,
+    string.split_iterator("a").map(StringView::to_string).join("a"),
+  )
   let string = "a,b,c,"
-  assert_eq(string, string.split("").map(StringView::to_string).join(""))
-  assert_eq(string, string.split(",").map(StringView::to_string).join(","))
+  assert_eq(
+    string,
+    string.split_iterator("").map(StringView::to_string).join(""),
+  )
+  assert_eq(
+    string,
+    string.split_iterator(",").map(StringView::to_string).join(","),
+  )
   let string = "a b c"
-  assert_eq(string, string.split("").map(StringView::to_string).join(""))
-  assert_eq(string, string.split(" ").map(StringView::to_string).join(" "))
+  assert_eq(
+    string,
+    string.split_iterator("").map(StringView::to_string).join(""),
+  )
+  assert_eq(
+    string,
+    string.split_iterator(" ").map(StringView::to_string).join(" "),
+  )
   let string = "aaaaa"
-  assert_eq(string, string.split("").map(StringView::to_string).join(""))
-  assert_eq(string, string.split("a").map(StringView::to_string).join("a"))
+  assert_eq(
+    string,
+    string.split_iterator("").map(StringView::to_string).join(""),
+  )
+  assert_eq(
+    string,
+    string.split_iterator("a").map(StringView::to_string).join("a"),
+  )
 }
 
 ///|
 test "string chars array" {
-  let v0 : String = ['a', .."x"]
+  let v0 : String = String::from_array(['a', 'x'])
   assert_true(v0 is "ax")
   let v : String = ['a', 'b']
   assert_true(v is "ab")

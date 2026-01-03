@@ -154,7 +154,7 @@ test "each" {
 ///|
 test "iter_fold" {
   let q = @queue.from_array([1, 2, 3, 4, 5])
-  inspect(q.iter().fold((x, y) => x + y, init=0), content="15")
+  inspect(q.iterator().fold((x, y) => x + y, init=0), content="15")
 }
 
 ///|
@@ -196,25 +196,6 @@ test "length" {
 test "iterator" {
   let q = @queue.from_array([1, 2, 3, 4, 5])
   inspect(q.iterator().fold((x, y) => x + y, init=0), content="15")
-}
-
-///|
-test "from_iter multiple elements iter" {
-  inspect(
-    @queue.from_iter([1, 2, 3].iter()),
-    content="@queue.from_array([1, 2, 3])",
-  )
-}
-
-///|
-test "from_iter single element iter" {
-  inspect(@queue.from_iter([1].iter()), content="@queue.from_array([1])")
-}
-
-///|
-test "from_iter empty iter" {
-  let pq : @queue.Queue[Int] = @queue.from_iter(Iter::empty())
-  inspect(pq, content="@queue.from_array([])")
 }
 
 ///|

@@ -91,7 +91,7 @@ test "iter" {
   let buf = StringBuilder::new(size_hint=0)
   let mut i = 0
   dv
-  .iter()
+  .iterator()
   .each(x => {
     buf.write_string(x.to_string())
     buf.write_char('\n')
@@ -110,7 +110,7 @@ test "iter" {
     ),
   )
   inspect(
-    dv.iter().take(4).filter(x => x % 2 == 0).fold((a, x) => a + x, init=0),
+    dv.iterator().take(4).filter(x => x % 2 == 0).fold((a, x) => a + x, init=0),
     content="6",
   )
 }
@@ -464,23 +464,6 @@ test "reserve_and_push" {
 }
 
 ///|
-test "from_iter multiple elements iter" {
-  inspect(
-    @deque.from_iter([1, 2, 3].iter()),
-    content="@deque.from_array([1, 2, 3])",
-  )
-}
-
-///|
-test "from_iter single element iter" {
-  inspect(@deque.from_iter([1].iter()), content="@deque.from_array([1])")
-}
-
-///|
-test "from_iter empty iter" {
-  let dq : @deque.Deque[Int] = @deque.from_iter(Iter::empty())
-  inspect(dq, content="@deque.from_array([])")
-}
 
 ///|
 test "from_iterator multiple elements iter" {
@@ -567,9 +550,9 @@ test "iter when tail needs to wrap around" {
   dq.push_back(2) // tail = 1
   dq.unsafe_pop_front() // head = 1
   dq.push_back(3) // tail = 0 (wraps around)
-  inspect(dq.iter().to_array(), content="[2, 3]")
-  inspect(dq.iter().filter(x => x % 2 == 0).to_array(), content="[2]")
-  inspect(dq.iter().filter(x => x % 2 != 0).to_array(), content="[3]")
+  inspect(dq.iterator().to_array(), content="[2, 3]")
+  inspect(dq.iterator().filter(x => x % 2 == 0).to_array(), content="[2]")
+  inspect(dq.iterator().filter(x => x % 2 != 0).to_array(), content="[3]")
 }
 
 ///|
@@ -604,7 +587,7 @@ test "rev_iter when head needs to wrap around" {
   for i in 3..=6 {
     dq.push_back(i)
   }
-  inspect(dq.rev_iter().to_array(), content="[6, 5, 4, 3]")
+  inspect(dq.rev_iterator().to_array(), content="[6, 5, 4, 3]")
 }
 
 ///|
@@ -758,12 +741,16 @@ test "test_shrink_to_fit" {
   let start = 0
   for len in 0..=cap {
     // 0, 1, 2, .., len - 1
-    let expected = @deque.from_array(start.until(len).collect())
+    let expected_values = []
+    for i in start..<len {
+      expected_values.push(i)
+    }
+    let expected = @deque.from_array(expected_values)
     for head_pos in 0..=max_cap {
       tester.reserve_capacity(head_pos)
       tester.clear()
       tester.reserve_capacity(63)
-      for i in start.until(len) {
+      for i in start..<len {
         tester.push_back(i)
       }
       tester.shrink_to_fit()
@@ -844,7 +831,7 @@ test "deque guard iter coverage improvement" {
     }
     let mut sym = -1
     for t in 0..=n {
-      for elem in dq.iter() {
+      for elem in dq.iterator() {
         sym = elem
         if elem == t {
           break
@@ -874,12 +861,12 @@ test "deque guard iter after push_front and push_back" {
     dq.push_back(i)
   }
   dq.push_front(-1)
-  let arr = FixedArray::from_iter(dq.iter())
+  let arr = FixedArray::from_iterator(dq.iterator())
   assert_eq(arr, [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14])
   for t in 0..=15 {
     let mut count = 0
     let mut expect = -2
-    for i in dq.iter() {
+    for i in dq.iterator() {
       count += 1
       expect = i
       if i == t - 1 {
@@ -901,7 +888,7 @@ test "deque guard iter2 coverage improvement" {
     }
     let mut sym = (-1, -1)
     for t in 0..=n {
-      for index, elem in dq.iter2() {
+      for index, elem in dq.iterator2() {
         sym = (index, elem)
         if elem == n - t {
           break
@@ -1117,7 +1104,7 @@ test "pop_back when wrapped around" {
 test "rev_iter when wrapped around" {
   let dq = @deque.from_array([1, 2, 3, 4, 5])
   dq.push_front(6)
-  inspect(dq.rev_iter(), content="[5, 4, 3, 2, 1, 6]")
+  inspect(dq.rev_iterator(), content="[5, 4, 3, 2, 1, 6]")
 }
 
 ///|
@@ -1125,7 +1112,7 @@ test "rev_iter2 when wrapped around" {
   let dq = @deque.from_array([1, 2, 3, 4, 5])
   dq.push_front(6)
   inspect(
-    dq.rev_iter2(),
+    dq.rev_iterator2(),
     content="[(0, 5), (1, 4), (2, 3), (3, 2), (4, 1), (5, 6)]",
   )
 }
