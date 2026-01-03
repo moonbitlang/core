@@ -46,3 +46,9 @@ test "next_float" {
   inspect(result >= 0.0, content="true")
   inspect(result <= 1.0, content="true")
 }
+
+///|
+test "mix_gamma else branch seed" {
+  let state = @splitmix.new(seed=930507UL)
+  inspect(state.next_uint(), content="3773570134")
+}

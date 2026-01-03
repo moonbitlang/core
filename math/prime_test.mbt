@@ -123,6 +123,13 @@ test "trial_divisions 2048-bit bucket" {
 }
 
 ///|
+test "trial_divisions above 4096-bit bucket" {
+  let r = @random.Rand::new()
+  let n = (1N << 4097) + 1N
+  assert_false(@math.is_probable_prime(n, r))
+}
+
+///|
 #cfg(false)
 test "is_probable_prime edge cases" {
   let r = @random.Rand::new()

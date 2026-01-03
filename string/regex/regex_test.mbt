@@ -18,3 +18,9 @@ test "named group missing" {
   guard regex.execute("abc") is Some(result) else { fail("expected match") }
   inspect(result.named_group("missing"), content="None")
 }
+
+///|
+test "escape form feed" {
+  let regex = @regex.compile("\\f")
+  inspect(regex.execute("\u{c}") is Some(_), content="true")
+}
