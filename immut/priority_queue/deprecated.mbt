@@ -11,3 +11,20 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+///|
+#warnings("-deprecated")
+#deprecated("Use `PriorityQueue::iterator()` to get an external iterator.")
+pub fn[A : Compare] PriorityQueue::iter(self : PriorityQueue[A]) -> Iter[A] {
+  self.iterator().iter()
+}
+
+///|
+#warnings("-deprecated")
+#deprecated("Use `PriorityQueue::from_iterator()` with an external iterator.")
+#as_free_fn
+pub fn[A : Compare] PriorityQueue::from_iter(
+  iter : Iter[A],
+) -> PriorityQueue[A] {
+  iter.fold(init=new(), (s, e) => s.push(e))
+}

@@ -157,11 +157,11 @@ pub fn from_array(arr : ArrayView[Byte]) -> Buffer {
 }
 
 ///|
-/// Create a buffer from an iterator.
-pub fn from_iter(iter : Iter[Byte]) -> Buffer {
+/// Create a buffer from an external iterator.
+pub fn from_iterator(iter : Iterator[Byte]) -> Buffer {
   let buf = new()
   let mut capacity = buf.data.length()
-  for byte in iter {
+  while iter.next() is Some(byte) {
     // inline write_byte and grow_if_necessary
     // only call grow_if_necessary when necessary
     if buf.len == capacity {
@@ -986,7 +986,7 @@ pub fn Buffer::write_byte(self : Buffer, value : Byte) -> Unit {
 }
 
 ///|
-/// Writes bytes from an iterator to the buffer. 
+/// Writes bytes from an external iterator to the buffer.
 ///
 /// Parameters:
 ///
@@ -999,7 +999,7 @@ pub fn Buffer::write_byte(self : Buffer, value : Byte) -> Unit {
 /// test {
 ///   let buf = @buffer.new()
 ///   let bytes = b"Hello"
-///   buf.write_iter(bytes.iter())
+///   buf.write_iterator(bytes.iterator())
 ///   inspect(
 ///     buf.contents(),
 ///     content=(
@@ -1008,8 +1008,8 @@ pub fn Buffer::write_byte(self : Buffer, value : Byte) -> Unit {
 ///   )
 /// }
 /// ```
-pub fn Buffer::write_iter(self : Buffer, iter : Iter[Byte]) -> Unit {
-  for byte in iter {
+pub fn Buffer::write_iterator(self : Buffer, iter : Iterator[Byte]) -> Unit {
+  while iter.next() is Some(byte) {
     self.write_byte(byte)
   }
 }

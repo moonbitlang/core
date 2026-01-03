@@ -29,7 +29,7 @@
 ///   let x = 42
 ///   ignore(x) // Explicitly ignore the value
 ///   let mut sum = 0
-///   ignore([1, 2, 3].iter().each(x => sum = sum + x)) // Ignore the Unit return value of each()
+///   ignore([1, 2, 3].iterator().each(x => sum = sum + x)) // Ignore the Unit return value of each()
 /// }
 /// ```
 pub fn[T] ignore(t : T) -> Unit = "%ignore"

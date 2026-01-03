@@ -149,6 +149,37 @@ pub fn[Obj : Show] &Logger::write_object(self : &Logger, obj : Obj) -> Unit {
 }
 
 ///|
+/// Writes values from an external iterator to the logger.
+pub fn[T : Show] &Logger::write_iterator(
+  self : &Logger,
+  iter : Iterator[T],
+  prefix? : String = "[",
+  suffix? : String = "]",
+  sep? : String = ", ",
+  trailing? : Bool = false,
+) -> Unit {
+  self.write_string(prefix)
+  if trailing {
+    while iter.next() is Some(x) {
+      self.write_object(x)
+      self.write_string(sep)
+    }
+  } else {
+    let mut first = true
+    while iter.next() is Some(x) {
+      if first {
+        first = false
+      } else {
+        self.write_string(sep)
+      }
+      self.write_object(x)
+    }
+  }
+  self.write_string(suffix)
+}
+
+///|
+#deprecated("Use `Logger::write_iterator()` with an external iterator.", skip_current_package=true)
 pub fn[T : Show] &Logger::write_iter(
   self : &Logger,
   iter : Iter[T],

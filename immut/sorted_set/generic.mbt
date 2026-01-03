@@ -17,11 +17,6 @@
 // All operations over sets are purely applicative (no side-effects).
 
 ///|
-pub fn[A] SortedSet::iter(self : SortedSet[A]) -> Iter[A] {
-  self.iterator().iter()
-}
-
-///|
 pub fn[A] SortedSet::iterator(self : SortedSet[A]) -> Iterator[A] {
   let mut curr_node = self
   let parents = []
@@ -46,12 +41,6 @@ pub fn[A] SortedSet::iterator(self : SortedSet[A]) -> Iterator[A] {
 
 ///|
 #as_free_fn
-pub fn[A : Compare] SortedSet::from_iter(iter : Iter[A]) -> SortedSet[A] {
-  iter.fold(init=new(), (s, e) => s.add(e))
-}
-
-///|
-#as_free_fn
 pub fn[A : Compare] SortedSet::from_iterator(
   iter : Iterator[A],
 ) -> SortedSet[A] {
@@ -65,7 +54,7 @@ test {
 
 ///|
 pub impl[A : Eq] Eq for SortedSet[A] with equal(self, other) -> Bool {
-  // There's no `Iter::zip` (https://github.com/moonbitlang/core/issues/994#issuecomment-2350935193),
+  // There's no `Iterator::zip` (https://github.com/moonbitlang/core/issues/994#issuecomment-2350935193),
   // so we have to use the manual implementation below:
   guard self.length() == other.length() else { return false }
   let iter = self.iterator()
