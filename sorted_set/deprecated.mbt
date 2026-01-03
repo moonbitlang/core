@@ -11,3 +11,32 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+///|
+/// Returns an internal iterator.
+#warnings("-deprecated")
+#deprecated("Use `SortedSet::iterator()` to get an external iterator.")
+pub fn[V] SortedSet::iter(self : SortedSet[V]) -> Iter[V] {
+  self.iterator().iter()
+}
+
+///|
+#warnings("-deprecated")
+#deprecated("Use `SortedSet::from_iterator()` with an external iterator.")
+#as_free_fn
+pub fn[V : Compare] SortedSet::from_iter(iter : Iter[V]) -> SortedSet[V] {
+  let s = new()
+  iter.each(e => s.add(e))
+  s
+}
+
+///|
+#warnings("-deprecated")
+#deprecated("Use `SortedSet::range_iterator()` to get an external iterator.")
+pub fn[V : Compare] SortedSet::range(
+  self : SortedSet[V],
+  low : V,
+  high : V,
+) -> Iter[V] {
+  self.range_iterator(low, high).iter()
+}

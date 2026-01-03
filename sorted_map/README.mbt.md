@@ -168,8 +168,8 @@ Get all keys or values from the map.
 ///|
 test {
   let map = @sorted_map.from_array([(3, "three"), (1, "one"), (2, "two")])
-  assert_eq(map.keys_as_iter().collect(), [1, 2, 3])
-  assert_eq(map.values_as_iter().collect(), ["one", "two", "three"])
+  assert_eq(map.keys_iterator().collect(), [1, 2, 3])
+  assert_eq(map.values_iterator().collect(), ["one", "two", "three"])
 }
 ```
 
@@ -198,7 +198,10 @@ test {
     (5, "five"),
   ])
   let range_items = []
-  map.range(2, 4).each((k, v) => range_items.push((k, v)))
+  let iter = map.range_iterator2(2, 4)
+  while iter.next() is Some((k, v)) {
+    range_items.push((k, v))
+  }
   assert_eq(range_items, [(2, "two"), (3, "three"), (4, "four")])
 }
 ```
@@ -214,12 +217,18 @@ Edge cases for range operations:
 test {
   let map = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
   let range_items = []
-  map.range(0, 10).each((k, v) => range_items.push((k, v)))
+  let iter = map.range_iterator2(0, 10)
+  while iter.next() is Some((k, v)) {
+    range_items.push((k, v))
+  }
   assert_eq(range_items, [(1, "one"), (2, "two"), (3, "three")])
 
   // Example with invalid range
   let empty_range : Array[(Int, String)] = []
-  map.range(10, 5).each((k, v) => empty_range.push((k, v)))
+  let empty_iter = map.range_iterator2(10, 5)
+  while empty_iter.next() is Some((k, v)) {
+    empty_range.push((k, v))
+  }
   assert_eq(empty_range, [])
 }
 ```
@@ -231,8 +240,8 @@ The SortedMap supports several iterator patterns. Create a map from an iterator:
 ```mbt check
 ///|
 test {
-  let pairs = [(1, "one"), (2, "two"), (3, "three")].iter()
-  let map = @sorted_map.from_iter(pairs)
+  let pairs = [(1, "one"), (2, "two"), (3, "three")].iterator()
+  let map = @sorted_map.from_iterator(pairs)
   assert_eq(map.length(), 3)
 }
 ```
@@ -243,7 +252,7 @@ Use the `iter` method to get an iterator over key-value pairs:
 ///|
 test {
   let map = @sorted_map.from_array([(3, "three"), (1, "one"), (2, "two")])
-  let pairs = map.iter().to_array()
+  let pairs = map.iterator().to_array()
   assert_eq(pairs, [(1, "one"), (2, "two"), (3, "three")])
 }
 ```
@@ -255,7 +264,10 @@ Use the `iter2` method for a more convenient key-value iteration:
 test {
   let map = @sorted_map.from_array([(3, "three"), (1, "one"), (2, "two")])
   let transformed = []
-  map.iter2().each((k, v) => transformed.push(k.to_string() + ": " + v))
+  let iter = map.iterator2()
+  while iter.next() is Some((k, v)) {
+    transformed.push(k.to_string() + ": " + v)
+  }
   assert_eq(transformed, ["1: one", "2: two", "3: three"])
 }
 ```

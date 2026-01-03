@@ -106,29 +106,29 @@ test "option type" {
 
 ## Iterator Type
 
-The `Iter[T]` type provides lazy iteration over sequences:
+The `Iterator[T]` type provides lazy iteration over sequences:
 
 ```mbt check
 ///|
 test "iterators" {
   // Create iterator from array
   let numbers = [1, 2, 3, 4, 5]
-  let iter = numbers.iter()
+  let iter = numbers.iterator()
 
   // Collect back to array
   let collected = iter.collect()
   inspect(collected, content="[1, 2, 3, 4, 5]")
 
   // Map transformation
-  let doubled = numbers.iter().map(fn(x) { x * 2 }).collect()
+  let doubled = numbers.iterator().map(fn(x) { x * 2 }).collect()
   inspect(doubled, content="[2, 4, 6, 8, 10]")
 
   // Filter elements
-  let evens = numbers.iter().filter(fn(x) { x % 2 == 0 }).collect()
+  let evens = numbers.iterator().filter(fn(x) { x % 2 == 0 }).collect()
   inspect(evens, content="[2, 4]")
 
   // Fold (reduce) operation
-  let sum = numbers.iter().fold(init=0, fn(acc, x) { acc + x })
+  let sum = numbers.iterator().fold(init=0, fn(acc, x) { acc + x })
   inspect(sum, content="15")
 }
 ```

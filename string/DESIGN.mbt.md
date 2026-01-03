@@ -37,7 +37,7 @@
     * `find` and `rev_find` will return the charcode index if the target is
       found. The index can be used to create a view of the string.
   - For unicode-safe operations, it's recommended to use:
-    - Iterators: `str.iter()` yields proper Unicode characters
+    - Iterators: `str.iterator()` yields proper Unicode characters
     - Pattern matching: Handles surrogate pairs correctly
   - Example of safe vs unsafe operations:
 ```mbt check
@@ -47,7 +47,7 @@ test "unsafe vs safe" {
   let emoji = "🎉"
   let _ = emoji.get_char(1) // Gets second half of surrogate pair
   // Safe: Uses iterator
-  for c in "Hello 🌍".iter() {
+  for c in "Hello 🌍".iterator() {
     // Properly handles both ASCII and Unicode chars
     ignore(c)
   }
@@ -102,7 +102,7 @@ test "view conversion" {
     operation and the input type:
 
     * **Substring Operations** (like `trim`, `split`): Always return `View` or
-      `Iter[View]` because these operations create subparts of the original
+      `Iterator[View]` because these operations create subparts of the original
       String. Using `View` is more efficient as it avoids copying.
 
     * **Transformation Operations** (like `replace`, `to_upper`): Return type

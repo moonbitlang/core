@@ -103,13 +103,6 @@ test "eachi" {
 }
 
 ///|
-test "iter" {
-  let set = @sorted_set.from_array([3, 2, 1])
-  inspect(set.iter().collect(), content="[1, 2, 3]")
-  inspect(set.iter().take(2).collect(), content="[1, 2]")
-}
-
-///|
 test "iterator" {
   let set = @sorted_set.from_array([3, 2, 1])
   inspect(set.iterator().collect(), content="[1, 2, 3]")
@@ -117,27 +110,21 @@ test "iterator" {
 }
 
 ///|
-test "iter early termination in left subtree" {
-  // This test should trigger the uncovered line 381 in sorted_set/set.mbt
+test "iterator early termination in left subtree" {
   // We need a tree structure where the iterator terminates while traversing the left subtree
   let set = @sorted_set.from_array([5, 3, 7, 1, 4, 6, 8])
   let mut count = 0
   let mut found_target = false
 
-  // Create an iterator that terminates when it finds value 3
-  // Since the tree is sorted and 3 is in the left subtree of 5,
-  // this should cause go(left) to return IterEnd, triggering line 381
-  let _ = set
-    .iter()
-    .run(x => {
-      count += 1
-      if x == 3 {
-        found_target = true
-        IterEnd // This should propagate up and trigger the uncovered line
-      } else {
-        IterContinue
-      }
-    })
+  // Stop pulling values once we reach 3.
+  let iter = set.iterator()
+  while iter.next() is Some(x) {
+    count += 1
+    if x == 3 {
+      found_target = true
+      break
+    }
+  }
   inspect(found_target, content="true")
   inspect(count, content="2") // Should visit 1, then 3 and terminate
 }
@@ -284,30 +271,6 @@ test "equal" {
 }
 
 ///|
-test "from_iter multiple elements iter" {
-  inspect(
-    @sorted_set.from_iter([1, 2, 3].iter()),
-    content="@sorted_set.from_array([1, 2, 3])",
-  )
-  inspect(
-    @sorted_set.from_iter([1, 1, 1].iter()),
-    content="@sorted_set.from_array([1])",
-  )
-}
-
-///|
-test "from_iter single element iter" {
-  inspect(
-    @sorted_set.from_iter([1].iter()),
-    content="@sorted_set.from_array([1])",
-  )
-}
-
-///|
-test "from_iter empty iter" {
-  let pq : @sorted_set.SortedSet[Int] = @sorted_set.from_iter(Iter::empty())
-  inspect(pq, content="@sorted_set.from_array([])")
-}
 
 ///|
 test "from_iterator multiple elements iter" {
@@ -338,11 +301,11 @@ test "from_iterator empty iter" {
 }
 
 ///|
-test "range" {
+test "range_iterator" {
   let set = @sorted_set.from_array([1, 2, 3, 4, 5])
-  inspect(set.range(2, 4), content="[2, 3, 4]")
-  inspect(set.range(1, 1), content="[1]")
-  inspect(set.range(5, 5), content="[5]")
+  inspect(set.range_iterator(2, 4), content="[2, 3, 4]")
+  inspect(set.range_iterator(1, 1), content="[1]")
+  inspect(set.range_iterator(5, 5), content="[5]")
 }
 
 ///|

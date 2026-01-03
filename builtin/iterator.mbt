@@ -695,6 +695,7 @@ pub fn[X] Iterator::to_array(self : Iterator[X]) -> Array[X] {
 }
 
 ///|
+#deprecated("Avoid converting to internal `Iter`; use `Iterator` methods or loops directly.", skip_current_package=true)
 pub fn[X] Iterator::iter(self : Iterator[X]) -> Iter[X] {
   Iter(yield_ => while self.next() is Some(x) {
     guard yield_(x) is IterContinue else { break IterEnd }
@@ -709,6 +710,7 @@ pub fn[X] Iterator::iterator(self : Iterator[X]) -> Iterator[X] {
 }
 
 ///|
+#deprecated("Avoid converting to internal `Iter2`; use `Iterator2` methods or loops directly.", skip_current_package=true)
 pub fn[X] Iterator::iter2(self : Iterator[X]) -> Iter2[Int, X] {
   Iter2(fn(yield_) {
     let mut i = 0
@@ -929,6 +931,7 @@ pub fn[X, Y] Iterator2::next(self : Iterator2[X, Y]) -> (X, Y)? {
 }
 
 ///|
+#deprecated("Avoid converting to internal `Iter2`; use `Iterator2` methods or loops directly.", skip_current_package=true)
 pub fn[X, Y] Iterator2::iter2(self : Iterator2[X, Y]) -> Iter2[X, Y] {
   Iter2(yield_ => while self.next() is Some((x, y)) {
     guard yield_(x, y) is IterContinue else { break IterEnd }

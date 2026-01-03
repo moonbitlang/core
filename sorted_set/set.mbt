@@ -413,12 +413,6 @@ pub fn[V] SortedSet::to_array(self : SortedSet[V]) -> Array[V] {
 
 ///|
 /// Returns an iterator.
-pub fn[V] SortedSet::iter(self : SortedSet[V]) -> Iter[V] {
-  self.iterator().iter()
-}
-
-///|
-/// Returns an iterator.
 pub fn[V] SortedSet::iterator(self : SortedSet[V]) -> Iterator[V] {
   let mut curr_node = self.root
   let parents = []
@@ -443,14 +437,6 @@ pub fn[V] SortedSet::iterator(self : SortedSet[V]) -> Iterator[V] {
 
 ///|
 #as_free_fn
-pub fn[V : Compare] SortedSet::from_iter(iter : Iter[V]) -> SortedSet[V] {
-  let s = new()
-  iter.each(e => s.add(e))
-  s
-}
-
-///|
-#as_free_fn
 pub fn[V : Compare] SortedSet::from_iterator(
   iter : Iterator[V],
 ) -> SortedSet[V] {
@@ -464,31 +450,35 @@ pub fn[V : Compare] SortedSet::from_iterator(
 ///|
 /// Converts the set to string.
 pub impl[V : Show] Show for SortedSet[V] with output(self, logger) {
-  logger.write_iter(self.iter(), prefix="@sorted_set.from_array([", suffix="])")
+  logger.write_iterator(
+    self.iterator(),
+    prefix="@sorted_set.from_array([",
+    suffix="])",
+  )
 }
 
 ///|
 pub impl[X : @quickcheck.Arbitrary + Compare] @quickcheck.Arbitrary for SortedSet[
   X,
 ] with arbitrary(size, rs) {
-  @quickcheck.Arbitrary::arbitrary(size, rs) |> from_iter
+  @quickcheck.Arbitrary::arbitrary(size, rs) |> from_iterator
 }
 
 ///|
 impl[T : Show] Show for Node[T] with output(self, logger) {
   let x = { root: Some(self), size: 0 } // Hack for test
-  logger.write_iter(x.iter())
+  logger.write_iterator(x.iterator())
 }
 
 ///|
-pub fn[V : Compare] SortedSet::range(
+pub fn[V : Compare] SortedSet::range_iterator(
   self : SortedSet[V],
   low : V,
   high : V,
-) -> Iter[V] {
+) -> Iterator[V] {
   let mut curr_node = self.root
   let parents = []
-  let iter = Iterator::new(() => loop curr_node {
+  Iterator::new(() => loop curr_node {
     Some({ value, left, right, height: _ }) => {
       let cmp_key_low = value.compare(low)
       let cmp_key_high = value.compare(high)
@@ -517,7 +507,6 @@ pub fn[V : Compare] SortedSet::range(
     }
     None => None
   })
-  iter.iter()
 }
 
 // AVL tree operations

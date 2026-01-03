@@ -136,7 +136,7 @@ pub fn Regexp::group_count(self : Regexp) -> Int {
 /// }
 /// ```
 pub fn Regexp::group_names(self : Regexp) -> Array[String] {
-  self.map.keys().collect()
+  self.map.keys_iterator().collect()
 }
 
 ///|
@@ -388,13 +388,13 @@ pub fn MatchResult::get(self : Self, index : Int) -> StringView? {
 ///
 pub fn MatchResult::groups(self : Self) -> Map[String, StringView] {
   self.names
-  .iter()
+  .iterator()
   .filter_map(p => if self.get(p.1) is Some(content) {
     Some((p.0, content))
   } else {
     None
   })
-  |> Map::from_iter
+  |> Map::from_iterator
 }
 
 ///|

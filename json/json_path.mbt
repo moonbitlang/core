@@ -37,7 +37,7 @@ pub impl Show for JsonPath with output(self, logger) {
       logger.write_string(token)
       return
     }
-    for ch in token.iter() {
+    for ch in token.iterator() {
       match ch {
         '~' => logger.write_string("~0")
         '/' => logger.write_string("~1")

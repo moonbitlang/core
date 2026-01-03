@@ -39,7 +39,7 @@ test "bytes creation" {
   )
 
   // Create from iterator
-  let iter_bytes = Bytes::from_iter(arr.iter())
+  let iter_bytes = Bytes::from_iterator(arr.iterator())
   inspect(
     iter_bytes,
     content=(
@@ -68,7 +68,7 @@ test "bytes conversion" {
   inspect(fixed, content="[b'\\x78', b'\\x79', b'\\x7A']")
 
   // Convert to iterator and collect back
-  let collected = bytes.iter().to_array()
+  let collected = bytes.iterator().to_array()
   inspect(collected, content="[b'\\x78', b'\\x79', b'\\x7A']")
 }
 ```

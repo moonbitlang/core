@@ -178,6 +178,7 @@ pub impl Show for StringView with to_string(self) {
 
 ///|
 /// Returns an iterator over the Unicode characters in the string view.
+#deprecated("Use `StringView::iterator()` to get an external iterator.", skip_current_package=true)
 pub fn StringView::iter(self : StringView) -> Iter[Char] {
   self.iterator().iter()
 }
@@ -204,6 +205,7 @@ pub fn StringView::iterator(self : StringView) -> Iterator[Char] {
 }
 
 ///|
+#deprecated("Use `StringView::iterator2()` to get an external iterator.", skip_current_package=true)
 pub fn StringView::iter2(self : StringView) -> Iter2[Int, Char] {
   self.iterator2().iter2()
 }
@@ -235,6 +237,7 @@ pub fn StringView::iterator2(self : StringView) -> Iterator2[Int, Char] {
 
 ///|
 /// Returns an iterator over the Unicode characters in the string view in reverse order.
+#deprecated("Use `StringView::rev_iterator()` to get an external iterator.", skip_current_package=true)
 pub fn StringView::rev_iter(self : StringView) -> Iter[Char] {
   self.rev_iterator().iter()
 }
@@ -406,8 +409,13 @@ pub fn StringView::from_array(chars : ArrayView[Char]) -> StringView {
 
 ///|
 /// Convert char iterator to string view.
+#deprecated("Use `StringView::from_iterator()` with an external iterator.", skip_current_package=true)
 pub fn StringView::from_iter(iter : Iter[Char]) -> StringView {
-  String::from_iter(iter)
+  let buf = StringBuilder::new()
+  for c in iter {
+    buf.write_char(c)
+  }
+  buf.to_string().view()
 }
 
 ///|

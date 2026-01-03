@@ -567,6 +567,7 @@ pub fn[K, V] Map::clear(self : Map[K, V]) -> Unit {
 
 ///|
 /// Returns the iterator of the hash map, provide elements in the order of insertion.
+#deprecated("Use `Map::iterator()` to get an external iterator.", skip_current_package=true)
 pub fn[K, V] Map::iter(self : Map[K, V]) -> Iter[(K, V)] {
   self.iterator().iter()
 }
@@ -592,12 +593,14 @@ pub fn[K, V] Map::iterator2(self : Map[K, V]) -> Iterator2[K, V] {
 }
 
 ///|
+#deprecated("Use `Map::iterator2()` to get an external iterator.", skip_current_package=true)
 pub fn[K, V] Map::iter2(self : Map[K, V]) -> Iter2[K, V] {
   self.iterator2().iter2()
 }
 
 ///|
-pub fn[K, V] Map::keys(self : Map[K, V]) -> Iter[K] {
+/// Returns an external iterator over the keys of the map.
+pub fn[K, V] Map::keys_iterator(self : Map[K, V]) -> Iterator[K] {
   let mut curr_entry = self.head
   Iterator::new(fn() {
     match curr_entry {
@@ -607,11 +610,12 @@ pub fn[K, V] Map::keys(self : Map[K, V]) -> Iter[K] {
       }
       None => None
     }
-  }).iter()
+  })
 }
 
 ///|
-pub fn[K, V] Map::values(self : Map[K, V]) -> Iter[V] {
+/// Returns an external iterator over the values of the map.
+pub fn[K, V] Map::values_iterator(self : Map[K, V]) -> Iterator[V] {
   let mut curr_entry = self.head
   Iterator::new(fn() {
     match curr_entry {
@@ -621,7 +625,19 @@ pub fn[K, V] Map::values(self : Map[K, V]) -> Iter[V] {
       }
       None => None
     }
-  }).iter()
+  })
+}
+
+///|
+#deprecated("Use `Map::keys_iterator()` to get an external iterator.", skip_current_package=true)
+pub fn[K, V] Map::keys(self : Map[K, V]) -> Iter[K] {
+  self.keys_iterator().iter()
+}
+
+///|
+#deprecated("Use `Map::values_iterator()` to get an external iterator.", skip_current_package=true)
+pub fn[K, V] Map::values(self : Map[K, V]) -> Iter[V] {
+  self.values_iterator().iter()
 }
 
 ///|
@@ -670,6 +686,7 @@ pub fn[K : Hash + Eq, V] Map::of(arr : FixedArray[(K, V)]) -> Map[K, V] {
 }
 
 ///|
+#deprecated("Use `Map::from_iterator()` with an external iterator.", skip_current_package=true)
 pub fn[K : Hash + Eq, V] Map::from_iter(iter : Iter[(K, V)]) -> Map[K, V] {
   let m = {}
   for e in iter {

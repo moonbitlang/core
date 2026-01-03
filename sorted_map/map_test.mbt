@@ -127,16 +127,16 @@ test "eachi" {
 }
 
 ///|
-test "keys" {
+test "keys_iterator" {
   let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
-  inspect(map.keys_as_iter(), content="[1, 2, 3]")
+  inspect(map.keys_iterator(), content="[1, 2, 3]")
 }
 
 ///|
-test "values" {
+test "values_iterator" {
   let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
   inspect(
-    map.values_as_iter(),
+    map.values_iterator(),
     content=(
       #|["a", "b", "c"]
     ),
@@ -158,13 +158,13 @@ test "to_array" {
 test "iter_collect" {
   let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
   inspect(
-    map.iter().collect(),
+    map.iterator().collect(),
     content=(
       #|[(1, "a"), (2, "b"), (3, "c")]
     ),
   )
   inspect(
-    map.iter().take(2).collect(),
+    map.iterator().take(2).collect(),
     content=(
       #|[(1, "a"), (2, "b")]
     ),
@@ -189,28 +189,6 @@ test "iterator" {
 }
 
 ///|
-test "from_iter multiple elements iter" {
-  inspect(
-    @sorted_map.from_iter([(1, 1), (2, 2), (3, 3)].iter()),
-    content="@sorted_map.from_array([(1, 1), (2, 2), (3, 3)])",
-  )
-}
-
-///|
-test "from_iter single element iter" {
-  inspect(
-    @sorted_map.from_iter([(1, 1)].iter()),
-    content="@sorted_map.from_array([(1, 1)])",
-  )
-}
-
-///|
-test "from_iter empty iter" {
-  let pq : @sorted_map.SortedMap[Int, Int] = @sorted_map.from_iter(
-    Iter::empty(),
-  )
-  inspect(pq, content="@sorted_map.from_array([])")
-}
 
 ///|
 test "from_iterator multiple elements iter" {
@@ -260,7 +238,7 @@ test "iter2" {
 }
 
 ///|
-test "range" {
+test "range_iterator2" {
   let map = @sorted_map.from_array([
     (1, "a"),
     (2, "b"),
@@ -269,19 +247,19 @@ test "range" {
     (5, "e"),
   ])
   inspect(
-    map.range(2, 4),
+    map.range_iterator2(2, 4),
     content=(
       #|[(2, "b"), (3, "c"), (4, "d")]
     ),
   )
   inspect(
-    map.range(1, 1),
+    map.range_iterator2(1, 1),
     content=(
       #|[(1, "a")]
     ),
   )
   inspect(
-    map.range(5, 5),
+    map.range_iterator2(5, 5),
     content=(
       #|[(5, "e")]
     ),

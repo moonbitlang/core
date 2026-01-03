@@ -239,7 +239,7 @@ test "Byte::to_json" {
 }
 
 ///|
-test "Iter[X] to_json" {
-  let v = "a b c d".split(" ")
+test "Iterator[X] to_json" {
+  let v = "a b c d".split_iterator(" ")
   @json.inspect(v, content=["a", "b", "c", "d"])
 }

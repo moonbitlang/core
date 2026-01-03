@@ -183,11 +183,11 @@ test "compare" {
 }
 
 ///|
-test "iter" {
+test "iterator" {
   let x = Option::Some(42)
   let exb = StringBuilder::new(size_hint=0)
   x
-  .iter()
+  .iterator()
   .each(x => {
     exb.write_string(x.to_string())
     exb.write_char('\n')
@@ -202,7 +202,7 @@ test "iter" {
   exb.reset()
   let y : Int? = None
   y
-  .iter()
+  .iterator()
   .each(x => {
     exb.write_string(x.to_string())
     exb.write_char('\n')
@@ -239,7 +239,10 @@ test "arbitrary" {
 test "optional interpolation" {
   let some_value : Int? = Some(10)
   let none_value : Int? = None
-  @json.inspect([1, 2, 3, ..some_value, ..none_value, 4, 5], content=[
-    1, 2, 3, 10, 4, 5,
-  ])
+  let arr = [1, 2, 3]
+  arr.push_iterator(some_value.iterator())
+  arr.push_iterator(none_value.iterator())
+  arr.push(4)
+  arr.push(5)
+  @json.inspect(arr, content=[1, 2, 3, 10, 4, 5])
 }

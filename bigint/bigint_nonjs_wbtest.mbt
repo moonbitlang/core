@@ -34,7 +34,7 @@ impl Show for Sign with output(self, logger) {
 test "debug_string" {
   let buf = StringBuilder::new()
   let v : Array[MyBigInt] = [0, 1, 2, 3, 4, -0, -1, -2, -3]
-  (buf as &Logger).write_iter(v.iter(), sep="\n", prefix="", suffix="")
+  (buf as &Logger).write_iterator(v.iterator(), sep="\n", prefix="", suffix="")
   // Logger::writer_iter()
   // trait logger has no method write_iter
   // precise:
@@ -66,7 +66,7 @@ fn check_invariant(a : BigInt) -> Unit raise {
       )
     }
   }
-  if a.limbs.iter().take(a.len).any(x => x > 0) {
+  if a.limbs.iterator().take(a.len).any(x => x > 0) {
     guard a.limbs[a.len - 1] > 0 else {
       fail(
         "invariant (exists 0 <= i < len. limbs[i] > 0) => limbs[len-1] > 0 is broken",
@@ -79,7 +79,7 @@ fn check_invariant(a : BigInt) -> Unit raise {
       )
     }
   }
-  guard a.limbs.iter().drop(a.len).all(x => x == 0) else {
+  guard a.limbs.iterator().drop(a.len).all(x => x == 0) else {
     fail(
       "invariant forall len <= i < limbs.length(). limbs[i] == 0 is broken: len = \{a.len}, limbs = \{a.limbs}",
     )

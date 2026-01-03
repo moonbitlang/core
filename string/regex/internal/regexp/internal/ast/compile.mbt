@@ -190,7 +190,7 @@ pub impl ToJson for Ast with to_json(self) {
       } else {
         ["Repeat {\{min},} greedy=\{greedy}", inner]
       }
-    Concat(regexs) => [..regexs.map(_.to_json())]
+    Concat(regexs) => Json::array(regexs.iterator().map(_.to_json()).collect())
     Alternate(left, right) => ["Alternate", left, right]
   }
 }

@@ -180,9 +180,9 @@ test {
 }
 ```
 
-## Iter & Map
+## Iterator & Map
 
-deque supports vector-like `iter/iteri/map/mapi` functions and their inverse forms.
+deque supports vector-like `iterator/iterator2/each/eachi/map/mapi` functions and their inverse forms.
 
 ```mbt check
 ///|

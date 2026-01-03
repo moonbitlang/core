@@ -16,7 +16,7 @@ test "string creation" {
   inspect(str1, content="Hello")
 
   // From character iterator
-  let str2 = String::from_iter(['W', 'o', 'r', 'l', 'd'].iter())
+  let str2 = String::from_iterator(['W', 'o', 'r', 'l', 'd'].iterator())
   inspect(str2, content="World")
 
   // Default empty string
@@ -35,24 +35,23 @@ test "string iteration" {
   let text = "Hello🌍"
 
   // Forward iteration
-  let chars = text.iter().collect()
+  let chars = text.iterator().collect()
   inspect(chars, content="['H', 'e', 'l', 'l', 'o', '🌍']")
 
   // Reverse iteration
-  let reversed = text.rev_iter().collect()
+  let reversed = text.rev_iterator().collect()
   inspect(reversed, content="['🌍', 'o', 'l', 'l', 'e', 'H']")
 
   // Iteration with indices - demonstrate iter2 functionality
   let mut count = 0
   let mut first_char = 'a'
-  text
-  .iter2()
-  .each(fn(idx, char) {
+  let iter = text.iterator2()
+  while iter.next() is Some((idx, char)) {
     if idx == 0 {
       first_char = char
     }
     count = count + 1
-  })
+  }
   inspect(first_char, content="H")
   inspect(count, content="6") // 6 Unicode characters
 }
@@ -92,7 +91,7 @@ test "unicode handling" {
   let emoji_text = "Hello🤣World"
 
   // Character count vs UTF-16 code unit count
-  let char_count = emoji_text.iter().count()
+  let char_count = emoji_text.iterator().count()
   let code_unit_count = emoji_text.length()
   inspect(char_count, content="11") // Unicode characters
   inspect(code_unit_count, content="12") // UTF-16 code units
@@ -134,7 +133,7 @@ test "string views" {
   let view = text[:][7:12] // "World" - create view using slice notation
 
   // Views support similar operations as strings
-  let chars = view.iter().collect()
+  let chars = view.iterator().collect()
   inspect(chars, content="['W', 'o', 'r', 'l', 'd']")
 
   // Convert view back to string
@@ -152,8 +151,8 @@ Common string manipulation tasks:
 test "practical examples" {
   let text = "The quick brown fox"
 
-  // Split into words (using whitespace) - returns Iter[View]
-  let words = text.split(" ").collect()
+  // Split into words (using whitespace) - returns Iterator[View]
+  let words = text.split_iterator(" ").collect()
   inspect(words.length(), content="4")
   inspect(words[0].to_string(), content="The")
   inspect(words[3].to_string(), content="fox")
@@ -161,12 +160,12 @@ test "practical examples" {
   // Join words back together - convert views to strings first
   let word_strings = words.map(fn(v) { v.to_string() })
   let mut result = ""
-  for i, word in word_strings.iter2() {
+  word_strings.eachi((i, word) => {
     if i > 0 {
       result = result + "-"
     }
     result = result + word
-  }
+  })
   inspect(result, content="The-quick-brown-fox")
 
   // Case conversion (works on views)

@@ -53,9 +53,9 @@ pub fn Float::to_int(Float) -> Int
 pub fn Float::to_le_bytes(Float) -> Bytes
 #as_free_fn
 pub fn Float::trunc(Float) -> Float
-pub fn Float::until(Float, Float, step? : Float, inclusive? : Bool) -> Iter[Float]
+pub fn Float::until(Float, Float, step? : Float, inclusive? : Bool) -> Iterator[Float]
 #deprecated
-pub fn Float::upto(Float, Float, inclusive? : Bool) -> Iter[Float]
+pub fn Float::upto(Float, Float, inclusive? : Bool) -> Iterator[Float]
 pub impl Add for Float
 pub impl Compare for Float
 pub impl Default for Float
