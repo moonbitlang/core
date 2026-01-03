@@ -186,6 +186,38 @@ test "array_sort_by_all_equal" {
 }
 
 ///|
+test "array_sort_pred_skip_duplicates" {
+  let arr = Array::make(32, 5)
+  arr[0] = 1
+  arr[1] = 2
+  arr[2] = 3
+  arr[3] = 4
+  arr[8] = 9
+  arr[16] = 5
+  arr[24] = 1
+  arr.sort()
+  assert_true(arr.is_sorted())
+  assert_eq(arr[0], 1)
+  assert_eq(arr[31], 9)
+}
+
+///|
+test "array_sort_by_pred_skip_duplicates" {
+  let arr = Array::make(32, 5)
+  arr[0] = 4
+  arr[1] = 3
+  arr[2] = 2
+  arr[3] = 1
+  arr[8] = 9
+  arr[16] = 5
+  arr[24] = 1
+  arr.sort_by((a, b) => a.compare(b))
+  assert_true(arr.is_sorted())
+  assert_eq(arr[0], 1)
+  assert_eq(arr[31], 9)
+}
+
+///|
 test "array_each" {
   let arr = [1, 2, 3]
   let mut sum = 0
