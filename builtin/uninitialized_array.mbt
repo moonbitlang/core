@@ -133,6 +133,7 @@ test "panic as_view with invalid_end" {
 }
 
 ///|
+#coverage.skip
 #intrinsic("%fixedarray.fill")
 #cfg(not(target="js"))
 fn[T] UninitializedArray::unchecked_fill(
