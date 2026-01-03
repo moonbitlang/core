@@ -176,3 +176,14 @@ test "Double::is_neg_inf" {
 test "min equal to neg max" {
   assert_true(min_value == -max_value)
 }
+
+///|
+
+///|
+#warnings("-deprecated")
+test "pow extreme exponents" {
+  let big = 2.0.pow(4000.0)
+  inspect(big.is_pos_inf(), content="true")
+  let small = 2.0.pow(-4000.0)
+  inspect(small == 0.0, content="true")
+}

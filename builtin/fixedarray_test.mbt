@@ -83,6 +83,15 @@ test "FixedArray::iter2 with empty array" {
 }
 
 ///|
+#cfg(target="js")
+test "FixedArray::copy on js" {
+  let arr : FixedArray[Int] = [1, 2, 3]
+  let copied = arr.copy()
+  inspect(copied, content="[1, 2, 3]")
+  inspect(physical_equal(arr, copied), content="false")
+}
+
+///|
 test "FixedArray::iter2 with single element" {
   let arr = FixedArray::make(1, 42)
   let pairs : Array[(Int, Int)] = []

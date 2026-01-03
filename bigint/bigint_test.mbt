@@ -42,6 +42,12 @@ test "bit_length zero" {
 }
 
 ///|
+test "bit_length default" {
+  let zero = @bigint.BigInt::default()
+  inspect(zero.bit_length(), content="0")
+}
+
+///|
 test "add" {
   let a = @bigint.BigInt::from_int64(123456789012345678L)
   let b = @bigint.BigInt::from_int64(987654321098765432L)

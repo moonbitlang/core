@@ -81,3 +81,15 @@ test "get_char invalid surrogate pair" {
   let v = s[:]
   inspect(v.get_char(0), content="None")
 }
+
+///|
+test "replace_all on view with matches" {
+  let view = "foo bar foo".view()
+  inspect(view.replace_all(old="foo", new="baz"), content="baz bar baz")
+}
+
+///|
+test "replace_all on string with matches" {
+  let s = "foo foo"
+  inspect(s.replace_all(old="foo", new="x"), content="x x")
+}

@@ -504,3 +504,12 @@ test "Int16 int64 conversions" {
   let back = Int16::from_int64(as64)
   inspect(back.to_int(), content="123")
 }
+
+///|
+#cfg(target="js")
+test "Int16 int64 conversions on js" {
+  inspect(Int16::from_int64(42), content="42")
+  inspect(Int16::from_int64(-42), content="-42")
+  inspect(Int16::to_int64(123), content="123")
+  inspect(Int16::to_int64(-123), content="-123")
+}
