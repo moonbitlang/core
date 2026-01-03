@@ -6,7 +6,10 @@ pub fn from_array(ArrayView[Byte]) -> Buffer
 
 pub fn from_bytes(Bytes) -> Buffer
 
+#deprecated
 pub fn from_iter(Iter[Byte]) -> Buffer
+
+pub fn from_iterator(Iterator[Byte]) -> Buffer
 
 pub fn new(size_hint? : Int) -> Buffer
 
@@ -37,7 +40,9 @@ pub fn Buffer::write_int64_be(Self, Int64) -> Unit
 pub fn Buffer::write_int64_le(Self, Int64) -> Unit
 pub fn Buffer::write_int_be(Self, Int) -> Unit
 pub fn Buffer::write_int_le(Self, Int) -> Unit
+#deprecated
 pub fn Buffer::write_iter(Self, Iter[Byte]) -> Unit
+pub fn Buffer::write_iterator(Self, Iterator[Byte]) -> Unit
 pub fn[A : Leb128] Buffer::write_leb128(Self, A) -> Unit
 pub fn Buffer::write_object(Self, &Show) -> Unit
 pub fn Buffer::write_string_utf16be(Self, StringView) -> Unit
