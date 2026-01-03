@@ -54,17 +54,20 @@ This blocks coverage of JS-only code paths listed below.
 These are reachable in principle, but require very specific input patterns that
 are hard to trigger without white-box hooks or dedicated generators:
 - `builtin/array_sort_impl.mbt:253` heap sort fallback when quicksort limit
-  reaches zero.
+  reaches zero. Attempted a degenerate `Compare` ordering in
+  `builtin/array_test.mbt`, but the fallback is still not observed.
 - `builtin/linked_hash_map.mbt:1004,1011,1021,1024` view comparison branches
   not hit by current `Map::get_from_string/get_from_bytes` cases.
 - `builtin/string_methods.mbt:1215,1265` defensive break on final segment in
   `replace_all` loops.
 - `double/internal/ryu/ryu.mbt:229,255,435` carry/rounding branches.
 - `double/scalbn.mbt:17,20,23,26,29,32,35,38,42,43` extreme exponent scaling.
-- `math/log_double_nonjs.mbt:256,264,266` edge-case log branches.
+- `math/log_double_nonjs.mbt:256,264,266` `ln_1p` edge-case branches; crafted
+  inputs still miss the `hu == 0` fast-paths due to early-return guards.
 - `math/pow.mbt:229,231` subnormal base handling in float pow.
 - `math/pow_double_nonjs.mbt:330,332` subnormal base handling in double pow.
-- `math/prime.mbt:287,323` rare primality branches.
+- `math/prime.mbt:287,323` rare primality branches. Tried a deterministic
+  `Rand` with `128017` and base `54`; still no hit on the `z == 1` branch.
 - `math/trig_double_nonjs.mbt:433,461,512,582,635,640,663,664,665,666,689,714,
   721,722,725,755,759,762,780,783,790,798,802,806,811,870,915,919,921,925`
   specialized rounding and edge-case paths.
@@ -76,7 +79,8 @@ are hard to trigger without white-box hooks or dedicated generators:
 - `list/list.mbt:242,279,376,555,722,735,777,878,929,967,980,1194,1258,1319,
   1370,1543,1578,1801` specialized list edge cases.
 - `string/regex/internal/regexp/internal/parse/parse.mbt:495,583,624,625`
-  parser error branches for specific invalid regex patterns.
+  parser error branches for specific invalid regex patterns. Added char-class
+  escape coverage tests; `\f`/range-end escapes still report uncovered here.
 
 ## Follow-ups
 - Once JS coverage works again, re-run `moon test --target js --enable-coverage`

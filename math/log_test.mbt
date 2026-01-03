@@ -98,6 +98,17 @@ test "ln" {
 }
 
 ///|
+test "ln mantissa edge cases" {
+  assert_eq(@math.ln(1.0), 0.0)
+  let near_one = 0x3ff0000000000001UL.reinterpret_as_double()
+  let res_one = @math.ln(near_one)
+  assert_true((res_one - 2.220446049250313e-16).abs() < 1.0e-20)
+  let near_two = 0x4000000000000001UL.reinterpret_as_double()
+  let res_two = @math.ln(near_two)
+  assert_true((res_two - 0.6931471805599453).abs() < 1.0e-12)
+}
+
+///|
 test "lnf subnormal input" {
   let sub = Float::reinterpret_from_uint(1U)
   let res = @math.lnf(sub)
@@ -121,6 +132,17 @@ test "ln_1p small and large values" {
   let large_res = @math.ln_1p(large)
   assert_true(!large_res.is_nan())
   assert_true(large_res > 0.0)
+}
+
+///|
+test "ln_1p mantissa edge cases" {
+  let step = 2.98023223876953125e-8
+  let res_step = @math.ln_1p(step)
+  assert_true((res_step - step).abs() < 1.0e-12)
+  let near_two = 1.0 + step
+  let res_near_two = @math.ln_1p(near_two)
+  assert_true((res_near_two - 0.6931471805599453).abs() < 1.0e-7)
+  assert_true((@math.ln_1p(1.0) - 0.6931471805599453).abs() < 1.0e-15)
 }
 
 ///|

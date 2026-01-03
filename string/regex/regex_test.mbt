@@ -24,3 +24,24 @@ test "escape form feed" {
   let regex = @regex.compile("\\f")
   inspect(regex.execute("\u{c}") is Some(_), content="true")
 }
+
+///|
+test "char class escape form feed and vertical tab" {
+  let regex = @regex.compile("[\\f\\v]")
+  assert_true(regex.execute("\u{c}") is Some(_))
+  assert_true(regex.execute("\u{b}") is Some(_))
+}
+
+///|
+test "char class range escape endpoints" {
+  let range_v = @regex.compile("[\\t-\\v]")
+  assert_true(range_v.execute("\u{b}") is Some(_))
+  let range_f = @regex.compile("[\\v-\\f]")
+  assert_true(range_f.execute("\u{c}") is Some(_))
+}
+
+///|
+test "compile trailing backslash" {
+  let result = try? @regex.compile("\\")
+  assert_true(result is Err(_))
+}
