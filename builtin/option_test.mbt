@@ -53,10 +53,10 @@ test "compare default iter and iterator" {
   let default_opt : Int? = Default::default()
   inspect(default_opt, content="None")
   let iter_values = []
-  (Some(3) : Int?).iter().each(iter_values.push(_))
+  (Some(3) : Int?).iterator().each(iter_values.push(_))
   inspect(iter_values, content="[3]")
   let iter_empty = []
-  (None : Int?).iter().each(iter_empty.push(_))
+  (None : Int?).iterator().each(iter_empty.push(_))
   inspect(iter_empty, content="[]")
   let iterator_values = (Some(4) : Int?).iterator().collect()
   inspect(iterator_values, content="[4]")

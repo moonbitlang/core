@@ -62,15 +62,13 @@ test "stable_sort short run" {
 test "fixed array iter with early termination" {
   let arr : FixedArray[Int] = [1, 2, 3]
   let mut count = 0
-  let iter = arr.iter()
-  let _ = iter.run(x => {
+  let iter = arr.iterator()
+  while iter.next() is Some(x) {
     count = count + 1
     if x == 2 {
-      IterEnd
-    } else {
-      IterContinue
+      break
     }
-  })
+  }
   inspect(count, content="2")
 }
 
@@ -78,7 +76,10 @@ test "fixed array iter with early termination" {
 test "FixedArray::iter2 with empty array" {
   let arr : FixedArray[Int] = []
   let mut count = 0
-  arr.iter2().each((_, _) => count = count + 1)
+  let iter = arr.iterator2()
+  while iter.next() is Some((_i, _x)) {
+    count = count + 1
+  }
   inspect(count, content="0")
 }
 
@@ -86,7 +87,10 @@ test "FixedArray::iter2 with empty array" {
 test "FixedArray::iter2 with single element" {
   let arr = FixedArray::make(1, 42)
   let pairs : Array[(Int, Int)] = []
-  arr.iter2().each((i, x) => pairs.push((i, x)))
+  let iter = arr.iterator2()
+  while iter.next() is Some((i, x)) {
+    pairs.push((i, x))
+  }
   inspect(pairs, content="[(0, 42)]")
 }
 
@@ -313,27 +317,6 @@ test "FixedArray::from_array with array of different type" {
   for i in 0..<3 {
     assert_eq(fixedArray[i], array[i])
   }
-}
-
-///|
-test "FixedArray::from_iter with multiple elements iterator" {
-  let iter = [1, 2, 3, 4, 5].iter()
-  let result = FixedArray::from_iter(iter)
-  assert_eq(result, [1, 2, 3, 4, 5])
-}
-
-///|
-test "FixedArray::from_iter with single element iterator" {
-  let iter = [1].iter()
-  let result = FixedArray::from_iter(iter)
-  assert_eq(result, [1])
-}
-
-///|
-test "FixedArray::from_iter with empty iterator" {
-  let iter : Iter[Int] = Iter::empty()
-  let result = FixedArray::from_iter(iter)
-  assert_eq(result, [])
 }
 
 ///|

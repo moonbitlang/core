@@ -82,7 +82,7 @@ test "remove on empty set" {
 ///|
 test "@hashset.iter" {
   let data = @hashset.from_array(["a", "b", "d", "e", "f"])
-  let array = data.iter().collect()
+  let array = data.iterator().collect()
   array.sort()
   inspect(
     array,
@@ -108,7 +108,7 @@ test "@hashset.iterator" {
 ///|
 test "@hashset.to_string" {
   let set = @hashset.new().add(1).add(3).add(0x0f_ff_ff_ff).add(42)
-  let content = set.iter().collect()
+  let content = set.iterator().collect()
   assert_eq(set.to_string(), "@immut/hashset.from_array(\{content})")
 }
 
@@ -132,25 +132,6 @@ test "@hashset.is_empty" {
 }
 
 ///|
-test "from_iter multiple elements iter" {
-  let data = [1, 2, 3]
-  let set = @hashset.from_iter(data.iter())
-  verify_content(set, data)
-}
-
-///|
-test "from_iter single element iter" {
-  inspect(
-    @hashset.from_iter([1].iter()),
-    content="@immut/hashset.from_array([1])",
-  )
-}
-
-///|
-test "from_iter empty iter" {
-  let pq : @hashset.HashSet[Int] = @hashset.from_iter(Iter::empty())
-  inspect(pq, content="@immut/hashset.from_array([])")
-}
 
 ///|
 test "from_iterator multiple elements iter" {
@@ -227,7 +208,7 @@ test "arbitrary implementation for hashset" {
   // Use @quickcheck.gen to generate an arbitrary hashset of Int
   let set : @hashset.HashSet[Int] = @quickcheck.gen()
   // Make sure the generated set is valid by converting it to array and back
-  let arr = set.iter().to_array()
+  let arr = set.iterator().to_array()
   let set2 = @hashset.from_array(arr)
   assert_eq(set, set2)
 }
@@ -452,7 +433,7 @@ test "@hashset collision" {
   let b = MyString("b")
   let c = MyString("c")
   let set = @hashset.new().add(a).add(b).add(c)
-  inspect(set.iter().to_array(), content="[c, b, a]")
+  inspect(set.iterator().to_array(), content="[c, b, a]")
   set.each((x : MyString) => x |> ignore)
   inspect(set.length(), content="3")
 }

@@ -581,26 +581,6 @@ test "disjoint with different sets" {
 }
 
 ///|
-test "from_iter multiple elements iter" {
-  inspect(
-    @sorted_set.from_iter([1, 2, 3].iter()),
-    content="@immut/sorted_set.from_array([1, 2, 3])",
-  )
-}
-
-///|
-test "from_iter single element iter" {
-  inspect(
-    @sorted_set.from_iter([1].iter()),
-    content="@immut/sorted_set.from_array([1])",
-  )
-}
-
-///|
-test "from_iter empty iter" {
-  let pq : @sorted_set.SortedSet[Int] = @sorted_set.from_iter(Iter::empty())
-  inspect(pq, content="@immut/sorted_set.from_array([])")
-}
 
 ///|
 test "from_iterator multiple elements iter" {

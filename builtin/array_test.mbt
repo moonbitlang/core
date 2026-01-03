@@ -608,15 +608,15 @@ test "array_split" {
 ///|
 test "array_iter" {
   let arr = [1, 2, 3]
-  inspect(arr.iter(), content="[1, 2, 3]")
-  inspect(arr.iter().take(1), content="[1]")
+  inspect(arr.iterator(), content="[1, 2, 3]")
+  inspect(arr.iterator().take(1), content="[1]")
 }
 
 ///|
 test "array_iter2" {
   let arr = [1, 2, 3]
-  inspect(arr.iter2(), content="[(0, 1), (1, 2), (2, 3)]")
-  inspect(arr.iter2().iter().take(1), content="[(0, 1)]")
+  inspect(arr.iterator2(), content="[(0, 1), (1, 2), (2, 3)]")
+  inspect(arr.iterator2().iterator().take(1), content="[(0, 1)]")
 }
 
 ///|
@@ -1041,10 +1041,10 @@ test "to_string" {
 }
 
 ///|
-test "push_iter" {
+test "push_iterator" {
   let u = [1, 2, 3]
   let v = [4, 5, 6]
-  u.push_iter(v.iter())
+  u.push_iterator(v.iterator())
   inspect(u, content="[1, 2, 3, 4, 5, 6]")
 }
 
@@ -1094,14 +1094,6 @@ test "filter_map" {
   let arr = [1, 2, 3, 4, 5]
   let mapped = arr.filter_map(x => if x % 2 == 0 { Some(x) } else { None })
   inspect(mapped, content="[2, 4]")
-}
-
-///|
-test "from_iter" {
-  let arr : Array[Int] = []
-  inspect(Array::from_iter(arr.iter()), content="[]")
-  let arr = [1, 2, 3, 4, 5]
-  inspect(Array::from_iter(arr.iter()), content="[1, 2, 3, 4, 5]")
 }
 
 ///|
@@ -1189,12 +1181,12 @@ test "@array.zip_with" {
 }
 
 ///|
-test "zip_to_iter2" {
+test "zip_to_iterator2" {
   // Test with two non-empty arrays
   let arr1 = [1, 2, 3]
   let arr2 = ['a', 'b', 'c']
   inspect(
-    arr1.zip_to_iter2(arr2).to_array(),
+    arr1.zip_to_iterator2(arr2).iterator().to_array(),
     content="[(1, 'a'), (2, 'b'), (3, 'c')]",
   )
 
@@ -1202,7 +1194,7 @@ test "zip_to_iter2" {
   let arr3 = [1, 2]
   let arr4 = ["a", "b", "c"]
   inspect(
-    arr3.zip_to_iter2(arr4).to_array(),
+    arr3.zip_to_iterator2(arr4).iterator().to_array(),
     content=(
       #|[(1, "a"), (2, "b")]
     ),
@@ -1211,30 +1203,24 @@ test "zip_to_iter2" {
   // Test with an empty array
   let arr5 : Array[Int] = []
   let arr6 = ["a", "b", "c"]
-  inspect(arr5.zip_to_iter2(arr6), content="[]")
+  inspect(arr5.zip_to_iterator2(arr6).iterator().to_array(), content="[]")
 }
 
 ///|
-test "zip_to_iter2 early termination" {
-  // This test should trigger the uncovered line 301: break IterEnd
-  // We create an iterator that terminates early when it encounters a specific value
+test "zip_to_iterator2 early termination" {
+  // Stop early when we encounter a specific value.
   let arr1 = [1, 2, 3, 4, 5]
   let arr2 = ['a', 'b', 'c', 'd', 'e']
   let mut count = 0
   let mut found_target = false
-
-  // Use run to iterate with early termination
-  let _ = arr1
-    .zip_to_iter2(arr2)
-    .run((x, _y) => {
-      count += 1
-      if x == 3 {
-        found_target = true
-        IterEnd // This should trigger the uncovered line 301
-      } else {
-        IterContinue
-      }
-    })
+  let iter = arr1.zip_to_iterator2(arr2)
+  while iter.next() is Some((x, _y)) {
+    count += 1
+    if x == 3 {
+      found_target = true
+      break
+    }
+  }
   inspect(found_target, content="true")
   inspect(count, content="3") // Should visit (1,'a'), (2,'b'), (3,'c') and terminate
 }

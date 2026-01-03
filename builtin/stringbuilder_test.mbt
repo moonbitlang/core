@@ -49,13 +49,13 @@ test {
 }
 
 ///|
-test "write_iter" {
+test "write_iterator" {
   let str = "Hello🤣🤣🤣"
   let sb = StringBuilder::new()
-  sb.write_iter(str.iter())
+  sb.write_iterator(str.iterator())
   inspect(sb.to_string(), content="Hello🤣🤣🤣")
   let str_view = str[1:7]
-  sb.write_iter(str_view.iter())
+  sb.write_iterator(str_view.iterator())
   inspect(sb.to_string(), content="Hello🤣🤣🤣ello🤣")
 }
 
