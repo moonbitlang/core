@@ -36,6 +36,12 @@ test "neg" {
 }
 
 ///|
+test "bit_length zero" {
+  let zero = 0N
+  inspect(zero.bit_length(), content="0")
+}
+
+///|
 test "add" {
   let a = @bigint.BigInt::from_int64(123456789012345678L)
   let b = @bigint.BigInt::from_int64(987654321098765432L)

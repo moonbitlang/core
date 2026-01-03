@@ -85,6 +85,20 @@ test "new" {
 }
 
 ///|
+test "new with zero capacity grows on insert" {
+  let m : @hashset.HashSet[Int] = @hashset.new(capacity=0)
+  m.add(1)
+  assert_true(m.contains(1))
+  assert_true(m.capacity() > 0)
+}
+
+///|
+test "default" {
+  let m : @hashset.HashSet[Int] = Default::default()
+  inspect(m.length(), content="0")
+}
+
+///|
 test "insert" {
   let m = @hashset.new()
   m.add("a")

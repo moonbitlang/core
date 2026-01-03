@@ -45,6 +45,16 @@ struct Pair {
 } derive(Eq, Show)
 
 ///|
+struct Wrapper {
+  value : Int
+}
+
+///|
+impl Eq for Wrapper with equal(self, other) {
+  self.value == other.value
+}
+
+///|
 impl Logger for TestLogger with write_view(self, value) {
   self.output = self.output + value.to_string()
 }
@@ -56,6 +66,14 @@ test "Eq helpers" {
   let a : Pair = Pair::{ left: 1, right: 2 }
   let b : Pair = Pair::{ left: 1, right: 3 }
   inspect(Eq::not_equal(a, b), content="true")
+}
+
+///|
+#warnings("-deprecated")
+test "Eq op_equal default" {
+  let a = Wrapper::{ value: 1 }
+  let b = Wrapper::{ value: 2 }
+  inspect(Eq::op_equal(a, b), content="false")
 }
 
 ///|

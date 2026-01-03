@@ -42,6 +42,23 @@ test "is_empty" {
 }
 
 ///|
+test "fill with range" {
+  let arr : FixedArray[Int] = [0, 0, 0, 0]
+  arr.fill(5, start=1, end=3)
+  inspect(arr, content="[0, 5, 5, 0]")
+}
+
+///|
+test "stable_sort short run" {
+  let arr : FixedArray[Int] = [
+    1, 2, 3, 0, 9, 8, 7, 6, 5, 4, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
+    22, 23,
+  ]
+  arr.stable_sort()
+  assert_true(FixedArray::is_sorted(arr))
+}
+
+///|
 test "fixed array iter with early termination" {
   let arr : FixedArray[Int] = [1, 2, 3]
   let mut count = 0
