@@ -341,6 +341,14 @@ test "remove" {
 }
 
 ///|
+test "merge and concat with empty right" {
+  let set = @sorted_set.new().add(2).add(1)
+  inspect(set.remove(2), content="@immut/sorted_set.from_array([1])")
+  let other = @sorted_set.new().add(1)
+  inspect(set.intersection(other), content="@immut/sorted_set.from_array([1])")
+}
+
+///|
 test "min" {
   inspect(
     @sorted_set.from_array([7, 2, 9, 4, 5, 6, 3, 8, 1]).min(),
