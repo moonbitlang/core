@@ -21,6 +21,12 @@ test "is_empty" {
 }
 
 ///|
+test "arbitrary samples" {
+  let samples = (@quickcheck.samples(3) : Array[@array.T[Int]])
+  inspect(samples.length(), content="3")
+}
+
+///|
 test "set with valid index" {
   let v = @array.from_array([1, 2, 3, 4, 5])
   let v1 = v.set(2, 10) // This should not trigger the panic

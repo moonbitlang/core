@@ -176,6 +176,7 @@ pub fn[T] FixedArray::fill(
 }
 
 ///|
+#coverage.skip
 #intrinsic("%fixedarray.fill")
 fn[T] FixedArray::unchecked_fill(
   self : FixedArray[T],
