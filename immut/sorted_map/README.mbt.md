@@ -25,8 +25,8 @@ Also, you can construct it from an array using `of()` or `from_array()`.
 ///|
 test {
   let map = @sorted_map.from_array([("a", 1), ("b", 2), ("c", 3)])
-  assert_eq(map.values().collect(), [1, 2, 3])
-  assert_eq(map.keys_as_iter().collect(), ["a", "b", "c"])
+  assert_eq(map.values_iterator().collect(), [1, 2, 3])
+  assert_eq(map.keys_iterator().collect(), ["a", "b", "c"])
 }
 ```
 
@@ -118,9 +118,9 @@ Use `map_with_key()` to map a function over all values.
 test {
   let map = @sorted_map.from_array([("a", 1), ("b", 2), ("c", 3)])
   let map = map.map_with_key((_, v) => v + 1)
-  assert_eq(map.values().collect(), [2, 3, 4])
+  assert_eq(map.values_iterator().collect(), [2, 3, 4])
   let map = map.map_with_key((_k, v) => v + 1)
-  assert_eq(map.values().collect(), [3, 4, 5])
+  assert_eq(map.values_iterator().collect(), [3, 4, 5])
 }
 ```
 
@@ -150,34 +150,34 @@ Use `filter_with_key()` to filter all keys/values that satisfy the predicate.
 test {
   let map = @sorted_map.from_array([("a", 1), ("b", 2), ("c", 3)])
   let map = map.filter_with_key((_, v) => v > 1)
-  assert_eq(map.values().collect(), [2, 3])
-  assert_eq(map.keys_as_iter().collect(), ["b", "c"])
+  assert_eq(map.values_iterator().collect(), [2, 3])
+  assert_eq(map.keys_iterator().collect(), ["b", "c"])
   let map = map.filter_with_key((k, v) => k > "a" && v > 1)
-  assert_eq(map.values().collect(), [2, 3])
-  assert_eq(map.keys_as_iter().collect(), ["b", "c"])
+  assert_eq(map.values_iterator().collect(), [2, 3])
+  assert_eq(map.keys_iterator().collect(), ["b", "c"])
 }
 ```
 
 ## Conversion
 
-Use `values()` to get all values in ascending order of their keys.
+Use `values_iterator()` to get all values in ascending order of their keys.
 
 ```mbt check
 ///|
 test {
   let map = @sorted_map.from_array([("a", 1), ("b", 2), ("c", 3)])
-  let values = map.values()
+  let values = map.values_iterator()
   assert_eq(values.collect(), [1, 2, 3])
 }
 ```
 
-Use `keys()` to get all keys of the map in ascending order.
+Use `keys_iterator()` to get all keys of the map in ascending order.
 
 ```mbt check
 ///|
 test {
   let map = @sorted_map.from_array([("a", 1), ("b", 2), ("c", 3)])
-  let keys = map.keys_as_iter() // ["a", "b", "c"]
+  let keys = map.keys_iterator() // ["a", "b", "c"]
   assert_eq(keys.collect(), ["a", "b", "c"])
 }
 ```
