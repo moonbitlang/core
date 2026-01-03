@@ -18,7 +18,7 @@ test "array creation" {
   inspect(arr2, content="[0, 2, 4]")
 
   // Creating from iterator
-  let arr3 = Array::from_iter("hello".iter())
+  let arr3 = Array::from_iterator("hello".iterator())
   inspect(arr3, content="['h', 'e', 'l', 'l', 'o']")
 }
 ```

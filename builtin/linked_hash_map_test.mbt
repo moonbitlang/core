@@ -15,16 +15,16 @@
 ///|
 test "Map keys iter" {
   let map = { "a": 1, "b": 2, "c": 3 }
-  let v = map.keys()
+  let v = map.keys_iterator()
   inspect(
     v,
     content=(
       #|["a", "b", "c"]
     ),
   )
-  inspect(map.values(), content="[1, 2, 3]")
-  inspect(({} : Map[String, Int]).keys(), content="[]")
-  inspect(({} : Map[String, Int]).values(), content="[]")
+  inspect(map.values_iterator(), content="[1, 2, 3]")
+  inspect(({} : Map[String, Int]).keys_iterator(), content="[]")
+  inspect(({} : Map[String, Int]).values_iterator(), content="[]")
 }
 
 ///|
@@ -65,18 +65,6 @@ test "Map::of" {
 }
 
 ///|
-test "Map::from_iter" {
-  let iter = [("a", 1), ("b", 2), ("c", 3)].iter()
-  let map = Map::from_iter(iter)
-  inspect(
-    map,
-    content=(
-      #|{"a": 1, "b": 2, "c": 3}
-    ),
-  )
-}
-
-///|
 test "Map::from_iterator" {
   let iter = [("a", 1), ("b", 2), ("c", 3)].iterator()
   let map = Map::from_iterator(iter)
@@ -112,11 +100,13 @@ test "Map::iterator" {
 }
 
 ///|
-test "Map:: iter2" {
+test "Map::iterator2" {
   let map = { "a": 1, "b": 2, "c": 3 }
-  let v = map.iter2()
   let mut res = ""
-  v.each((k, v) => res = res + k + v.to_string())
+  let iter = map.iterator2()
+  while iter.next() is Some((k, v)) {
+    res = res + k + v.to_string()
+  }
   inspect(res, content="a1b2c3")
 }
 

@@ -106,21 +106,24 @@ test "to_array" {
 }
 
 ///|
-test "from_iter multiple elements" {
+test "from_iterator via deprecated name" {
   inspect(
-    Bytes::from_iter([b'\x00', b'\x01', b'\x02'].iter()).to_array(),
+    Bytes::from_iterator([b'\x00', b'\x01', b'\x02'].iterator()).to_array(),
     content="[b'\\x00', b'\\x01', b'\\x02']",
   )
 }
 
 ///|
-test "from_iter single element" {
-  inspect(Bytes::from_iter([b'\x00'].iter()).to_array(), content="[b'\\x00']")
+test "from_iterator single element (alias)" {
+  inspect(
+    Bytes::from_iterator([b'\x00'].iterator()).to_array(),
+    content="[b'\\x00']",
+  )
 }
 
 ///|
-test "from_iter empty iterator" {
-  inspect(Bytes::from_iter(Iter::empty()).to_array(), content="[]")
+test "from_iterator empty iterator (alias)" {
+  inspect(Bytes::from_iterator(Iterator::empty()).to_array(), content="[]")
 }
 
 ///|
@@ -145,30 +148,6 @@ test "from_iterator empty iterator" {
 }
 
 ///|
-test "iter" {
-  let buf = StringBuilder::new(size_hint=5)
-  b"abcde".iter().each(x => buf.write_string(x.to_string()))
-  inspect(buf, content="b'\\x61'b'\\x62'b'\\x63'b'\\x64'b'\\x65'")
-  buf.reset()
-  b"abcde".iter().take(2).each(x => buf.write_string(x.to_string()))
-  inspect(buf, content="b'\\x61'b'\\x62'")
-}
-
-///|
-test "iter2" {
-  let buf = StringBuilder::new(size_hint=5)
-  let keys = []
-  b"abcde"
-  .iter2()
-  .each((i, x) => {
-    buf.write_string(x.to_string())
-    keys.push(i)
-  })
-  inspect(buf, content="b'\\x61'b'\\x62'b'\\x63'b'\\x64'b'\\x65'")
-  inspect(keys, content="[0, 1, 2, 3, 4]")
-}
-
-///|
 test "iterator" {
   let buf = StringBuilder::new(size_hint=5)
   b"abcde".iterator().each(x => buf.write_string(x.to_string()))
@@ -182,8 +161,7 @@ test "iterator" {
 test "iterator2" {
   let buf = StringBuilder::new(size_hint=5)
   let keys = []
-  let it = b"abcde".iterator2()
-  while it.next() is Some((i, x)) {
+  for i, x in b"abcde".iterator2() {
     buf.write_string(x.to_string())
     keys.push(i)
   }
@@ -224,18 +202,6 @@ test "default_empty_bytes" {
 test "Bytes::of with different byte values" {
   let arr : FixedArray[Byte] = [b'a', b'b', b'c']
   let bytes = Bytes::from_array(arr)
-  inspect(
-    bytes,
-    content=(
-      #|b"abc"
-    ),
-  )
-}
-
-///|
-test "Bytes::from_iter with multiple elements" {
-  let iter = [b'a', b'b', b'c'].iter()
-  let bytes = Bytes::from_iter(iter)
   inspect(
     bytes,
     content=(

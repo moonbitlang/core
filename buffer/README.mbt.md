@@ -102,7 +102,7 @@ test {
   buf.write_bytes(bytes)
 
   // Write byte iterator
-  buf.write_iter(bytes.iter())
+  buf.write_iterator(bytes.iterator())
   let contents = buf.to_bytes()
   inspect(
     contents,

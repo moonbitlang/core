@@ -410,10 +410,11 @@ pub fn[X] ArrayView::iterator(self : ArrayView[X]) -> Iterator[X] {
 ///   let arr = [1, 2, 3]
 ///   let view = arr[1:]
 ///   let mut sum = 0
-///   view.iter().each(x => sum = sum + x)
+///   view.iterator().each(x => sum = sum + x)
 ///   inspect(sum, content="5")
 /// }
 /// ```
+#deprecated("Use `ArrayView::iterator()` to get an external iterator.", skip_current_package=true)
 pub fn[A] ArrayView::iter(self : ArrayView[A]) -> Iter[A] {
   self.iterator().iter()
 }
@@ -450,16 +451,16 @@ pub fn[X] ArrayView::iterator2(self : ArrayView[X]) -> Iterator2[Int, X] {
 ///   let view = arr[1:]
 ///   let mut sum = 0
 ///   let mut sum_keys = 0
-///   view
-///   .iter2()
-///   .each((i, x) => {
+///   let iter = view.iterator2()
+///   while iter.next() is Some((i, x)) {
 ///     sum = sum + x
 ///     sum_keys = sum_keys + i
-///   })
+///   }
 ///   inspect(sum, content="5")
 ///   inspect(sum_keys, content="1")
 /// }
 /// ```
+#deprecated("Use `ArrayView::iterator2()` to get an external iterator.", skip_current_package=true)
 pub fn[A] ArrayView::iter2(self : ArrayView[A]) -> Iter2[Int, A] {
   self.iterator2().iter2()
 }

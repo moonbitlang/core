@@ -59,14 +59,14 @@ test "mix" {
 test "get" {
   let bf = branching_factor_power(4)
   let v_content = random_array(bf)
-  let v = from_iter(v_content.iter())
+  let v = from_iterator(v_content.iterator())
   inspect(v.length(), content=bf.to_string())
   inspect(v[0], content=v_content[0].to_string())
   inspect(v[bf - 1], content=v_content[bf - 1].to_string())
   inspect(v[bf / 2], content=v_content[bf / 2].to_string())
   let bf = branching_factor
   let v_content = random_array(bf)
-  let v = from_iter(v_content.iter())
+  let v = from_iterator(v_content.iterator())
   inspect(v.length(), content=bf.to_string())
   inspect(v[0], content=v_content[0].to_string())
   inspect(v[bf - 1], content=v_content[bf - 1].to_string())

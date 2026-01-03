@@ -83,7 +83,7 @@ test "HAMT::remove" {
 ///|
 test "keys" {
   let m = @hashmap.from_array([(1, "one"), (2, "two")])
-  let keys = () => m.keys()
+  let keys = () => m.keys_iterator()
   inspect(keys().contains(1), content="true")
   inspect(keys().contains(2), content="true")
   inspect(keys().contains(3), content="false")
@@ -92,7 +92,7 @@ test "keys" {
 ///|
 test "HAMT::values" {
   let m = @hashmap.from_array([(1, "one"), (2, "two")])
-  let values = () => m.values()
+  let values = () => m.values_iterator()
   inspect(values().contains("one"), content="true")
   inspect(values().contains("two"), content="true")
   inspect(values().contains("three"), content="false")
@@ -107,7 +107,7 @@ test "HAMT::iter" {
     (5, "e"),
     (11111, "f"),
   ])
-  let array = data.iter().collect()
+  let array = data.iterator().collect()
   array.sort()
   inspect(
     array,
@@ -126,7 +126,7 @@ test "HAMT::iter2" {
     (5, "e"),
     (11111, "f"),
   ])
-  let array = data.iter2().to_array()
+  let array = data.iterator2().iterator().to_array()
   array.sort()
   inspect(
     array,
@@ -140,7 +140,8 @@ test "HAMT::iter2" {
 test "HAMT::iter2 with early break" {
   let data = @hashmap.from_array([(1, "a"), (2, "b"), (3, "c")])
   let mut count = 0
-  for _k, _v in data.iter2() {
+  let iter = data.iterator2()
+  while iter.next() is Some((_k, _v)) {
     count += 1
     if count == 2 {
       break
@@ -158,33 +159,6 @@ test "HAMT::iterator2" {
     sum = sum + k + v
   }
   assert_eq(sum, 66)
-}
-
-///|
-#warnings("-deprecated")
-test "HAMT::from_iter" {
-  let iter = Iter::new(fn(yield_) {
-    if yield_((1, "one")) is IterEnd {
-      return IterEnd
-    }
-    if yield_((2, "two")) is IterEnd {
-      return IterEnd
-    }
-    if yield_((3, "three")) is IterEnd {
-      return IterEnd
-    }
-    IterContinue
-  })
-  let map = @hashmap.from_iter(iter)
-  assert_eq(map.get(1), Some("one"))
-  assert_eq(map.get(2), Some("two"))
-  assert_eq(map.get(3), Some("three"))
-}
-
-///|
-test "HAMT::from_iter empty" {
-  let map : @hashmap.HashMap[Int, Int] = @hashmap.from_iter(Iter::empty())
-  assert_eq(map.length(), 0)
 }
 
 ///|

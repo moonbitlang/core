@@ -27,7 +27,7 @@ test "creating sets" {
   inspect(from_fixed.length(), content="3")
 
   // From iterator
-  let from_iter = @set.Set::from_iter([1, 2, 3, 4, 5].iter())
+  let from_iter = @set.Set::from_iterator([1, 2, 3, 4, 5].iterator())
   inspect(from_iter.length(), content="5")
 }
 ```
@@ -174,7 +174,7 @@ test "iteration and conversion" {
   inspect(indices_sum, content="3") // 0 + 1 + 2 = 3
 
   // Use iterator
-  let elements = set.iter().collect()
+  let elements = set.iterator().collect()
   inspect(elements.length(), content="3")
 
   // Copy a set

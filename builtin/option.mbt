@@ -104,6 +104,7 @@ pub impl[X] Default for X? with default() {
 }
 
 ///|
+#deprecated("Use `Option::iterator()` to get an external iterator.", skip_current_package=true)
 pub fn[T] Option::iter(self : T?) -> Iter[T] {
   match self {
     Some(v) => Iter::singleton(v)

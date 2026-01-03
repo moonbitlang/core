@@ -70,17 +70,6 @@ test "to_array empty" {
 }
 
 ///|
-test "iter" {
-  let buf = StringBuilder::new(size_hint=20)
-  let v = @array.from_array([1, 2, 3])
-  v.iter().each(e => buf.write_string("[\{e}]"))
-  inspect(buf, content="[1][2][3]")
-  buf.reset()
-  v.iter().take(2).each(e => buf.write_string("[\{e}]"))
-  inspect(buf, content="[1][2]")
-}
-
-///|
 test "iterator" {
   let buf = StringBuilder::new(size_hint=20)
   let v = @array.from_array([1, 2, 3])
@@ -237,31 +226,6 @@ test "new_with" {
 }
 
 ///|
-test "from_iter multiple elements iter" {
-  inspect(
-    @array.from_iter([1, 2, 3].iter()),
-    content="@immut/array.from_array([1, 2, 3])",
-  )
-  inspect(
-    (0).until(32) |> @array.from_iter(),
-    content="@immut/array.from_array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31])",
-  )
-  inspect(
-    (0).until(33) |> @array.from_iter(),
-    content="@immut/array.from_array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32])",
-  )
-}
-
-///|
-test "from_iter single element iter" {
-  inspect(@array.from_iter([1].iter()), content="@immut/array.from_array([1])")
-}
-
-///|
-test "from_iter empty iter" {
-  let pq : @array.T[Int] = @array.from_iter(Iter::empty())
-  inspect(pq, content="@immut/array.from_array([])")
-}
 
 ///|
 test "from_iterator multiple elements iter" {

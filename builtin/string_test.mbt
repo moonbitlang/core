@@ -43,20 +43,20 @@ test "String::escape" {
 ///|
 test "panic codepoint_at1" {
   let str = "Hello🤣🤣🤣"
-  let _ = str.iter().nth(8).unwrap()
+  let _ = str.iterator().nth(8).unwrap()
 
 }
 
 ///|
 test "codepoint_at regular character at end of string" {
   let s = "Hello"
-  inspect(s.iter().nth(4).unwrap(), content="o")
+  inspect(s.iterator().nth(4).unwrap(), content="o")
 }
 
 ///|
 test "codepoint_at emoji" {
   let s = "👋"
-  inspect(s.iter().nth(0).unwrap(), content="👋")
+  inspect(s.iterator().nth(0).unwrap(), content="👋")
 }
 
 ///|
@@ -145,9 +145,7 @@ test "String default and to_array" {
 }
 
 ///|
-test "String from_iter and from_iterator" {
-  let iter = ['a', 'b', 'c'].iter()
-  inspect(String::from_iter(iter), content="abc")
+test "String from_iterator" {
   let iterator = ['x', 'y'].iterator()
   inspect(String::from_iterator(iterator), content="xy")
 }

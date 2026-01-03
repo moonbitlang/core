@@ -21,11 +21,13 @@
 // ```
 
 ///|
+#deprecated("Internal iterator `Iter2` is deprecated. Use external `Iterator2` (e.g. `xs.iterator2()` or `Iterator2::new`).", skip_current_package=true)
 struct Iter2[A, B](((A, B) -> IterResult) -> IterResult)
 
 //TODO: Add intrinsic for Iter::run
 
 ///|
+#deprecated("Internal iterator `Iter2` is deprecated. Use external `Iterator2` (e.g. `xs.iterator2()` or `Iterator2::new`).", skip_current_package=true)
 pub fn[A, B] Iter2::run(
   self : Iter2[A, B],
   f : (A, B) -> IterResult,
@@ -55,7 +57,7 @@ pub impl[A : Show, B : Show] Show for Iter2[A, B] with output(self, logger) {
 }
 
 ///|
-#deprecated("`Iter2::new`, and the internal iterator type `Iter2`, is deprecated. Create an external iterator `Iterator2`, and use `Iterator2::iter2` to migrate usage of `Iter2::new`. `Iter2` will become an alias of `Iterator2` in the future. See https://github.com/moonbitlang/core/pull/3050 for more details.")
+#deprecated("Internal iterator `Iter2` is deprecated. Use `Iterator2::new` and external iterator APIs instead.", skip_current_package=true)
 pub fn[A, B] Iter2::new(
   f : ((A, B) -> IterResult) -> IterResult,
 ) -> Iter2[A, B] {
@@ -63,6 +65,7 @@ pub fn[A, B] Iter2::new(
 }
 
 ///|
+#deprecated("Internal iterator `Iter2` is deprecated. Use external `Iterator2` (e.g. `xs.iterator2()` or `Iterator2::new`).", skip_current_package=true)
 pub fn[A, B] Iter2::each(self : Iter2[A, B], f : (A, B) -> Unit) -> Unit {
   self.run((a, b) => {
     f(a, b)
@@ -72,11 +75,13 @@ pub fn[A, B] Iter2::each(self : Iter2[A, B], f : (A, B) -> Unit) -> Unit {
 }
 
 ///|
+#deprecated("Internal iterator `Iter2` is deprecated. Use external `Iterator2` (e.g. `xs.iterator2()` or `Iterator2::new`).", skip_current_package=true)
 pub fn[A, B] Iter2::iter(self : Iter2[A, B]) -> Iter[(A, B)] {
   Iter(yield_ => self.run((a, b) => yield_((a, b))))
 }
 
 ///|
+#deprecated("Internal iterator `Iter2` is deprecated. Use external `Iterator2` (e.g. `xs.iterator2()` or `Iterator2::new`).", skip_current_package=true)
 pub fn[A, B] Iter2::iter2(self : Iter2[A, B]) -> Iter2[A, B] {
   // This is a no-op to make sure
   // `for k,v in map.iter2() { ... }`
@@ -85,6 +90,7 @@ pub fn[A, B] Iter2::iter2(self : Iter2[A, B]) -> Iter2[A, B] {
 }
 
 ///|
+#deprecated("Internal iterator `Iter2` is deprecated. Use external `Iterator2` (e.g. `xs.iterator2()` or `Iterator2::new`).", skip_current_package=true)
 pub fn[A, B] Iter2::to_array(self : Iter2[A, B]) -> Array[(A, B)] {
   let arr = []
   for k, v in self {
@@ -109,12 +115,15 @@ pub fn[A, B] Iter2::to_array(self : Iter2[A, B]) -> Array[(A, B)] {
 ///
 /// ```mbt check
 /// test {
+///   let first = "abc".iterator2().iterator()
+///   let second = "def".iterator2().iterator()
 ///   inspect(
-///     "abc".iter2().concat("def".iter2()).to_array(),
+///     first.concat(second).to_array(),
 ///     content="[(0, 'a'), (1, 'b'), (2, 'c'), (0, 'd'), (1, 'e'), (2, 'f')]",
 ///   )
 /// }
 /// ```
+#deprecated("Internal iterator `Iter2` is deprecated. Use external `Iterator2` (e.g. `xs.iterator2()` or `Iterator2::new`).", skip_current_package=true)
 pub fn[A, B] Iter2::concat(
   self : Iter2[A, B],
   other : Iter2[A, B],

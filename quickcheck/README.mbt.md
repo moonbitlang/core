@@ -53,7 +53,7 @@ test "builtin types" {
   let v : (Int, Int64, UInt, UInt64, Float, Double, BigInt) = @quickcheck.gen()
   inspect(v, content="(0, 0, 0, 0, 0.23986786603927612, 0.7917029935679342, 0)")
   // Collections
-  let v : (String, Bytes, Iter[Int]) = @quickcheck.gen()
+  let v : (String, Bytes, Iterator[Int]) = @quickcheck.gen()
   inspect(
     v,
     content=(

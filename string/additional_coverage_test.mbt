@@ -26,19 +26,19 @@ test "String iter2 with surrogate pairs" {
   // Convert iter2 to array for inspection
   let result = []
   let mut i = 0
-  s
-  .iter2()
-  .each((idx, c) => {
+  for idx, c in s.iterator2() {
     if i < 3 {
       result.push((idx, c))
     }
     i = i + 1
-  })
+  }
   inspect(result, content="[(0, 'H'), (1, 'e'), (2, 'l')]")
 
   // Count characters using iter2
   let mut count = 0
-  s.iter2().each((_, _) => count = count + 1)
+  for _idx, _c in s.iterator2() {
+    count = count + 1
+  }
   inspect(count, content="11") // 5 chars + emoji + 5 chars
 }
 

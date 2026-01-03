@@ -34,6 +34,7 @@ pub fn[K, V, A] SortedMap::foldl_with_key(Self[K, V], (A, K, V) -> A, init~ : A)
 #as_free_fn
 pub fn[K : Compare, V] SortedMap::from_array(ArrayView[(K, V)]) -> Self[K, V]
 #as_free_fn
+#deprecated
 pub fn[K : Compare, V] SortedMap::from_iter(Iter[(K, V)]) -> Self[K, V]
 #as_free_fn
 pub fn[K : Compare, V] SortedMap::from_iterator(Iterator[(K, V)]) -> Self[K, V]
@@ -42,13 +43,17 @@ pub fn[V : @json.FromJson] SortedMap::from_json(Json) -> Self[String, V] raise @
 #alias(lookup, deprecated)
 pub fn[K : Compare, V] SortedMap::get(Self[K, V], K) -> V?
 pub fn[K, V] SortedMap::is_empty(Self[K, V]) -> Bool
+#deprecated
 pub fn[K, V] SortedMap::iter(Self[K, V]) -> Iter[(K, V)]
+#deprecated
 pub fn[K, V] SortedMap::iter2(Self[K, V]) -> Iter2[K, V]
 pub fn[K, V] SortedMap::iterator(Self[K, V]) -> Iterator[(K, V)]
 pub fn[K, V] SortedMap::iterator2(Self[K, V]) -> Iterator2[K, V]
 #deprecated
 pub fn[K, V] SortedMap::keys(Self[K, V]) -> Array[K]
+#deprecated
 pub fn[K, V] SortedMap::keys_as_iter(Self[K, V]) -> Iter[K]
+pub fn[K, V] SortedMap::keys_iterator(Self[K, V]) -> Iterator[K]
 #alias(size, deprecated)
 pub fn[K, V] SortedMap::length(Self[K, V]) -> Int
 #deprecated
@@ -65,7 +70,9 @@ pub fn[K, V, A] SortedMap::rev_fold(Self[K, V], (A, K, V) -> A, init~ : A) -> A
 pub fn[K, V] SortedMap::singleton(K, V) -> Self[K, V]
 pub fn[K, V] SortedMap::to_array(Self[K, V]) -> Array[(K, V)]
 pub fn[K : Show, V : ToJson] SortedMap::to_json(Self[K, V]) -> Json
+#deprecated
 pub fn[K, V] SortedMap::values(Self[K, V]) -> Iter[V]
+pub fn[K, V] SortedMap::values_iterator(Self[K, V]) -> Iterator[V]
 pub impl[K : Compare, V : Compare] Compare for SortedMap[K, V]
 pub impl[K, V] Default for SortedMap[K, V]
 pub impl[K : Eq, V : Eq] Eq for SortedMap[K, V]

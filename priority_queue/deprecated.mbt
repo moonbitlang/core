@@ -13,28 +13,20 @@
 // limitations under the License.
 
 ///|
-/// Converted to internal Iter.
 #warnings("-deprecated")
-#deprecated("Use `HashSet::iterator()` to get an external iterator.")
-pub fn[A] HashSet::iter(self : HashSet[A]) -> Iter[A] {
-  fn go(node) -> Iter[A] {
-    match node {
-      Leaf(k, bucket) => Iter::singleton(k) + bucket.iter()
-      Flat(k, _) => Iter::singleton(k)
-      Branch(children) => children.data.iter().flat_map(go)
-    }
-  }
-
-  match self.0 {
-    None => Iter::empty()
-    Some(node) => go(node)
-  }
+#deprecated("Use `PriorityQueue::iterator()` to get an external iterator.")
+pub fn[A : Compare] PriorityQueue::iter(self : PriorityQueue[A]) -> Iter[A] {
+  self.iterator().iter()
 }
 
 ///|
 #warnings("-deprecated")
-#deprecated("Use `HashSet::from_iterator()` with an external iterator.")
+#deprecated("Use `PriorityQueue::from_iterator()` with an external iterator.")
 #as_free_fn
-pub fn[A : Eq + Hash] HashSet::from_iter(iter : Iter[A]) -> HashSet[A] {
-  iter.fold(init=new(), (s, e) => s.add(e))
+pub fn[K : Compare] PriorityQueue::from_iter(
+  iter : Iter[K],
+) -> PriorityQueue[K] {
+  let s = new()
+  iter.each(e => s.push(e))
+  s
 }

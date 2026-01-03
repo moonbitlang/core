@@ -13,6 +13,7 @@
 // limitations under the License.
 
 ///|
+#warnings("-deprecated")
 test "iter2_to_iter" {
   let numbers = [1, 2, 3]
   let iter2_numbers = numbers.iter2() // creates Iter2[Int, Int] from Array
@@ -22,6 +23,7 @@ test "iter2_to_iter" {
 }
 
 ///|
+#warnings("-deprecated")
 test "iter2 identity function should return its input" {
   let m : @builtin.Map[String, Int] = @builtin.Map::new()
   m.set("x", 1)
@@ -33,6 +35,7 @@ test "iter2 identity function should return its input" {
 }
 
 ///|
+#warnings("-deprecated")
 test "Iter2::concat" {
   inspect(
     "abcde".iter2().concat("fghij".iter2()).to_array(),

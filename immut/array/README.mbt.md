@@ -6,14 +6,14 @@ Immutable array is a persistent data structure that provides random access and u
 
 ## Create
 
-You can create an empty array using `new()` or construct it using `of()`, or use `from_iter()` to construct it from an iterator.
+You can create an empty array using `new()` or construct it using `of()`, or use `from_iterator()` to construct it from an iterator.
 
 ```mbt check
 ///|
 test {
   let _arr1 = @array.from_array([1, 2, 3, 4, 5])
   let _arr2 : @array.T[Int] = @array.new()
-  let _arr3 = @array.from_iter((1).until(5))
+  let _arr3 = @array.from_iterator([1, 2, 3, 4].iterator())
   let _arr4 = @array.from_array([1, 2, 3])
 
 }
@@ -75,13 +75,13 @@ test {
 
 ## Iteration
 
-You can use `iter()` to get an iterator of the array, or use `each()` to iterate over the array.
+You can use `iterator()` to get an iterator of the array, or use `each()` to iterate over the array.
 
 ```mbt check
 ///|
 test {
   let arr = @array.from_array([1, 2, 3, 4, 5])
-  inspect(arr.iter(), content="[1, 2, 3, 4, 5]")
+  inspect(arr.iterator(), content="[1, 2, 3, 4, 5]")
   let val = []
   arr.each(v => val.push(v))
   assert_eq(val, [1, 2, 3, 4, 5])
