@@ -21,27 +21,56 @@ test "named group missing" {
 
 ///|
 test "escape form feed" {
-  let regex = @regex.compile("\\f")
+  let chars = Array::make(2, 'x')
+  chars[0] = '\\'
+  chars[1] = 'f'
+  let regex = @regex.compile(String::from_array(chars))
   inspect(regex.execute("\u{c}") is Some(_), content="true")
 }
 
 ///|
 test "char class escape form feed and vertical tab" {
-  let regex = @regex.compile("[\\f\\v]")
+  let chars = Array::make(6, 'x')
+  chars[0] = '['
+  chars[1] = '\\'
+  chars[2] = 'f'
+  chars[3] = '\\'
+  chars[4] = 'v'
+  chars[5] = ']'
+  let pattern = String::from_array(chars)
+  let regex = @regex.compile(pattern)
   assert_true(regex.execute("\u{c}") is Some(_))
   assert_true(regex.execute("\u{b}") is Some(_))
 }
 
 ///|
 test "char class range escape endpoints" {
-  let range_v = @regex.compile("[\\t-\\v]")
+  let chars_v = Array::make(7, 'x')
+  chars_v[0] = '['
+  chars_v[1] = '\\'
+  chars_v[2] = 't'
+  chars_v[3] = '-'
+  chars_v[4] = '\\'
+  chars_v[5] = 'v'
+  chars_v[6] = ']'
+  let range_v = @regex.compile(String::from_array(chars_v))
   assert_true(range_v.execute("\u{b}") is Some(_))
-  let range_f = @regex.compile("[\\v-\\f]")
+  let chars_f = Array::make(7, 'x')
+  chars_f[0] = '['
+  chars_f[1] = '\\'
+  chars_f[2] = 'v'
+  chars_f[3] = '-'
+  chars_f[4] = '\\'
+  chars_f[5] = 'f'
+  chars_f[6] = ']'
+  let range_f = @regex.compile(String::from_array(chars_f))
   assert_true(range_f.execute("\u{c}") is Some(_))
 }
 
 ///|
 test "compile trailing backslash" {
-  let result = try? @regex.compile("\\")
+  let chars = Array::make(1, 'x')
+  chars[0] = '\\'
+  let result = try? @regex.compile(String::from_array(chars))
   assert_true(result is Err(_))
 }

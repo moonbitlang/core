@@ -1224,13 +1224,13 @@ test "scalbnf exponent clamp" {
 ///|
 test "powf subnormal base" {
   let subnormal = Float::reinterpret_from_int(1)
-  let result = @math.powf(subnormal, 2.0)
-  assert_true(result >= 0.0)
+  let result = @math.powf(subnormal, 3.0)
+  assert_true(result == 0.0)
 }
 
 ///|
 test "pow subnormal double base" {
   let subnormal = 1UL.reinterpret_as_double()
-  let result = @math.pow(subnormal, 2.0)
-  assert_true(result >= 0.0)
+  let result = @math.pow(subnormal, 3.0)
+  assert_true(result == 0.0)
 }

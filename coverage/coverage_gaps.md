@@ -64,8 +64,11 @@ are hard to trigger without white-box hooks or dedicated generators:
 - `double/scalbn.mbt:17,20,23,26,29,32,35,38,42,43` extreme exponent scaling.
 - `math/log_double_nonjs.mbt:256,264,266` `ln_1p` edge-case branches; crafted
   inputs still miss the `hu == 0` fast-paths due to early-return guards.
-- `math/pow.mbt:229,231` subnormal base handling in float pow.
+- `math/pow.mbt:229,231` subnormal base handling in float pow. Tried
+  `Float::reinterpret_from_int(1)` with exponent `3.0`, but wasm-gc still
+  bypasses the subnormal branch (likely subnormal flush-to-zero).
 - `math/pow_double_nonjs.mbt:330,332` subnormal base handling in double pow.
+  Tried `1UL.reinterpret_as_double()` with exponent `3.0`, still no hit.
 - `math/prime.mbt:287,323` rare primality branches. Tried a deterministic
   `Rand` with `128017` and base `54`; still no hit on the `z == 1` branch.
 - `math/trig_double_nonjs.mbt:433,461,512,582,635,640,663,664,665,666,689,714,
@@ -79,8 +82,9 @@ are hard to trigger without white-box hooks or dedicated generators:
 - `list/list.mbt:242,279,376,555,722,735,777,878,929,967,980,1194,1258,1319,
   1370,1543,1578,1801` specialized list edge cases.
 - `string/regex/internal/regexp/internal/parse/parse.mbt:495,583,624,625`
-  parser error branches for specific invalid regex patterns. Added char-class
-  escape coverage tests; `\f`/range-end escapes still report uncovered here.
+  parser error branches for specific invalid regex patterns. Built runtime
+  patterns with `\f`/`\v` and escaped range endpoints, but these lines still
+  report uncovered.
 
 ## Follow-ups
 - Once JS coverage works again, re-run `moon test --target js --enable-coverage`
