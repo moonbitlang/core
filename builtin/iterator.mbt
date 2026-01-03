@@ -816,6 +816,10 @@ pub fn[X] Iterator::sub(
         }
         while index < start {
           guard self.next() is Some(_) else { return None }
+          index += 1
+        }
+        if index >= end {
+          return None
         }
         let result = self.next()
         if result is Some(_) {
