@@ -1666,8 +1666,7 @@ pub fn[T] Array::rev_iter(self : Array[T]) -> Iter[T] {
 /// test {
 ///   let arr = [10, 20, 30]
 ///   let mut sum = 0
-///   let iter = arr.iterator2()
-///   while iter.next() is Some((i, x)) {
+///   for i, x in arr.iterator2() {
 ///     sum = sum + i + x
 ///   }
 ///   inspect(sum, content="63") // (0 + 10) + (1 + 20) + (2 + 30) = 63

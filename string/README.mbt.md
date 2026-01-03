@@ -45,8 +45,7 @@ test "string iteration" {
   // Iteration with indices - demonstrate iter2 functionality
   let mut count = 0
   let mut first_char = 'a'
-  let iter = text.iterator2()
-  while iter.next() is Some((idx, char)) {
+  for idx, char in text.iterator2() {
     if idx == 0 {
       first_char = char
     }

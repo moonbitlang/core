@@ -60,3 +60,31 @@ pub fn[A] List::from_iter(iter : Iter[A]) -> List[A] {
 pub fn[A] List::from_iter_rev(iter : Iter[A]) -> List[A] {
   iter.fold(init=Empty, (acc, e) => More(e, tail=acc))
 }
+
+///|
+/// Reverse fold a list.
+#deprecated("use `_.rev().fold(...)` instead")
+pub fn[A, B] List::rev_fold(self : List[A], init~ : B, f : (B, A) -> B) -> B {
+  self.rev().fold(init~, f)
+}
+
+///|
+/// Reverse fold with index.
+#deprecated("use `_.rev().foldi(...)` instead")
+pub fn[A, B] List::rev_foldi(
+  self : List[A],
+  init~ : B,
+  f : (Int, B, A) -> B,
+) -> B {
+  self.rev().foldi(init~, f)
+}
+
+///|
+/// Get the tail (all elements except the first) of the list.
+#deprecated("use `unsafe_tail` instead")
+pub fn[A] List::tail(self : List[A]) -> List[A] {
+  match self {
+    Empty => Empty
+    More(_, tail~) => tail
+  }
+}

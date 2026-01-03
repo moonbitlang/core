@@ -198,8 +198,7 @@ test {
     (5, "five"),
   ])
   let range_items = []
-  let iter = map.range_iterator2(2, 4)
-  while iter.next() is Some((k, v)) {
+  for k, v in map.range_iterator2(2, 4) {
     range_items.push((k, v))
   }
   assert_eq(range_items, [(2, "two"), (3, "three"), (4, "four")])
@@ -217,16 +216,14 @@ Edge cases for range operations:
 test {
   let map = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
   let range_items = []
-  let iter = map.range_iterator2(0, 10)
-  while iter.next() is Some((k, v)) {
+  for k, v in map.range_iterator2(0, 10) {
     range_items.push((k, v))
   }
   assert_eq(range_items, [(1, "one"), (2, "two"), (3, "three")])
 
   // Example with invalid range
   let empty_range : Array[(Int, String)] = []
-  let empty_iter = map.range_iterator2(10, 5)
-  while empty_iter.next() is Some((k, v)) {
+  for k, v in map.range_iterator2(10, 5) {
     empty_range.push((k, v))
   }
   assert_eq(empty_range, [])
@@ -264,8 +261,7 @@ Use the `iter2` method for a more convenient key-value iteration:
 test {
   let map = @sorted_map.from_array([(3, "three"), (1, "one"), (2, "two")])
   let transformed = []
-  let iter = map.iterator2()
-  while iter.next() is Some((k, v)) {
+  for k, v in map.iterator2() {
     transformed.push(k.to_string() + ": " + v)
   }
   assert_eq(transformed, ["1: one", "2: two", "3: three"])

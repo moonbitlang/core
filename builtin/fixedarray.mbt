@@ -85,8 +85,7 @@ pub fn[T] FixedArray::iter(self : FixedArray[T]) -> Iter[T] {
 /// test {
 ///   let arr = FixedArray::make(3, 10)
 ///   let mut sum = 0
-///   let iter = arr.iterator2()
-///   while iter.next() is Some((i, x)) {
+///   for i, x in arr.iterator2() {
 ///     sum = sum + i + x
 ///   }
 ///   inspect(sum, content="33") // (0 + 10) + (1 + 10) + (2 + 10) = 33

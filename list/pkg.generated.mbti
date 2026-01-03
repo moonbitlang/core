@@ -86,6 +86,10 @@ pub fn[A] List::remove_at(Self[A], Int) -> Self[A]
 pub fn[A] List::repeat(Int, A) -> Self[A]
 pub fn[A] List::rev(Self[A]) -> Self[A]
 pub fn[A] List::rev_concat(Self[A], Self[A]) -> Self[A]
+#deprecated
+pub fn[A, B] List::rev_fold(Self[A], init~ : B, (B, A) -> B) -> B
+#deprecated
+pub fn[A, B] List::rev_foldi(Self[A], init~ : B, (Int, B, A) -> B) -> B
 pub fn[A, B] List::rev_map(Self[A], (A) -> B raise?) -> Self[B] raise?
 #as_free_fn
 pub fn[A, S] List::rev_unfold((S) -> (A, S)? raise?, init~ : S) -> Self[A] raise?
@@ -94,6 +98,8 @@ pub fn[A, B] List::scan_right(Self[A], (B, A) -> B raise?, init~ : B) -> Self[B]
 #as_free_fn
 pub fn[A] List::singleton(A) -> Self[A]
 pub fn[A : Compare] List::sort(Self[A]) -> Self[A]
+#deprecated
+pub fn[A] List::tail(Self[A]) -> Self[A]
 pub fn[A] List::take(Self[A], Int) -> Self[A]
 pub fn[A] List::take_while(Self[A], (A) -> Bool raise?) -> Self[A] raise?
 pub fn[A] List::to_array(Self[A]) -> Array[A]

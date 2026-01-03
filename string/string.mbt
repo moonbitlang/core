@@ -32,9 +32,10 @@ pub fn from_array(chars : ArrayView[Char]) -> String {
 
 ///|
 /// Convert char iterator to string,
+#warnings("-deprecated")
 #deprecated
-pub fn from_iter(iter : Iterator[Char]) -> String {
-  String::from_iterator(iter)
+pub fn from_iter(iter : Iter[Char]) -> String {
+  String::from_array(iter.collect())
 }
 
 ///|

@@ -26,8 +26,7 @@ test "String iter2 with surrogate pairs" {
   // Convert iter2 to array for inspection
   let result = []
   let mut i = 0
-  let iter = s.iterator2()
-  while iter.next() is Some((idx, c)) {
+  for idx, c in s.iterator2() {
     if i < 3 {
       result.push((idx, c))
     }
@@ -37,8 +36,7 @@ test "String iter2 with surrogate pairs" {
 
   // Count characters using iter2
   let mut count = 0
-  let iter_count = s.iterator2()
-  while iter_count.next() is Some((_idx, _c)) {
+  for _idx, _c in s.iterator2() {
     count = count + 1
   }
   inspect(count, content="11") // 5 chars + emoji + 5 chars
