@@ -22,11 +22,13 @@ pub fn[A] HashSet::each(Self[A], (A) -> Unit raise?) -> Unit raise?
 #as_free_fn
 pub fn[A : Eq + Hash] HashSet::from_array(ArrayView[A]) -> Self[A]
 #as_free_fn
+#deprecated
 pub fn[A : Eq + Hash] HashSet::from_iter(Iter[A]) -> Self[A]
 #as_free_fn
 pub fn[A : Eq + Hash] HashSet::from_iterator(Iterator[A]) -> Self[A]
 pub fn[K : Eq] HashSet::intersection(Self[K], Self[K]) -> Self[K]
 pub fn[A] HashSet::is_empty(Self[A]) -> Bool
+#deprecated
 pub fn[A] HashSet::iter(Self[A]) -> Iter[A]
 pub fn[A] HashSet::iterator(Self[A]) -> Iterator[A]
 #alias(size, deprecated)

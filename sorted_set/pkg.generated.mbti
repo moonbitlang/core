@@ -27,19 +27,23 @@ pub fn[V] SortedSet::eachi(Self[V], (Int, V) -> Unit raise?) -> Unit raise?
 #as_free_fn
 pub fn[V : Compare] SortedSet::from_array(ArrayView[V]) -> Self[V]
 #as_free_fn
+#deprecated
 pub fn[V : Compare] SortedSet::from_iter(Iter[V]) -> Self[V]
 #as_free_fn
 pub fn[V : Compare] SortedSet::from_iterator(Iterator[V]) -> Self[V]
 #alias(intersect, deprecated)
 pub fn[V : Compare] SortedSet::intersection(Self[V], Self[V]) -> Self[V]
 pub fn[V] SortedSet::is_empty(Self[V]) -> Bool
+#deprecated
 pub fn[V] SortedSet::iter(Self[V]) -> Iter[V]
 pub fn[V] SortedSet::iterator(Self[V]) -> Iterator[V]
 #alias(size, deprecated)
 pub fn[V] SortedSet::length(Self[V]) -> Int
 #as_free_fn
 pub fn[V] SortedSet::new() -> Self[V]
+#deprecated
 pub fn[V : Compare] SortedSet::range(Self[V], V, V) -> Iter[V]
+pub fn[V : Compare] SortedSet::range_iterator(Self[V], V, V) -> Iterator[V]
 pub fn[V : Compare] SortedSet::remove(Self[V], V) -> Unit
 #as_free_fn
 pub fn[V] SortedSet::singleton(V) -> Self[V]

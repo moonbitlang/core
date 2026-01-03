@@ -37,6 +37,7 @@ pub fn[A] Deque::flatten(Self[Self[A]]) -> Self[A]
 #as_free_fn
 pub fn[A] Deque::from_array(ArrayView[A]) -> Self[A]
 #as_free_fn
+#deprecated
 pub fn[A] Deque::from_iter(Iter[A]) -> Self[A]
 #as_free_fn
 pub fn[A] Deque::from_iterator(Iterator[A]) -> Self[A]
@@ -44,7 +45,9 @@ pub fn[A] Deque::front(Self[A]) -> A?
 pub fn[A] Deque::get(Self[A], Int) -> A?
 pub fn[A] Deque::insert(Self[A], Int, A) -> Unit
 pub fn[A] Deque::is_empty(Self[A]) -> Bool
+#deprecated
 pub fn[A] Deque::iter(Self[A]) -> Iter[A]
+#deprecated
 pub fn[A] Deque::iter2(Self[A]) -> Iter2[Int, A]
 pub fn[A] Deque::iterator(Self[A]) -> Iterator[A]
 pub fn[A] Deque::iterator2(Self[A]) -> Iterator2[Int, A]
@@ -68,7 +71,9 @@ pub fn[A] Deque::rev_each(Self[A], (A) -> Unit) -> Unit
 pub fn[A] Deque::rev_eachi(Self[A], (Int, A) -> Unit) -> Unit
 #alias(rev_inplace, deprecated)
 pub fn[A] Deque::rev_in_place(Self[A]) -> Unit
+#deprecated
 pub fn[A] Deque::rev_iter(Self[A]) -> Iter[A]
+#deprecated
 pub fn[A] Deque::rev_iter2(Self[A]) -> Iter2[Int, A]
 pub fn[A] Deque::rev_iterator(Self[A]) -> Iterator[A]
 pub fn[A] Deque::rev_iterator2(Self[A]) -> Iterator2[Int, A]
