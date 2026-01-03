@@ -150,6 +150,33 @@ test "array_append" {
 }
 
 ///|
+#warnings("-deprecated")
+test "array_blit_to_grows_dst" {
+  let src = [1, 2, 3, 4]
+  let dst = [9]
+  src.blit_to(dst, len=3, src_offset=1, dst_offset=1)
+  inspect(dst, content="[9, 2, 3, 4]")
+}
+
+///|
+test "array_sort_with_duplicates" {
+  let arr = Array::make(40, 7)
+  arr.sort()
+  assert_eq(arr.length(), 40)
+  assert_eq(arr[0], 7)
+  assert_eq(arr[39], 7)
+}
+
+///|
+test "array_sort_by_all_equal" {
+  let arr = Array::make(32, 1)
+  arr.sort_by((_, _) => 0)
+  assert_eq(arr.length(), 32)
+  assert_eq(arr[0], 1)
+  assert_eq(arr[31], 1)
+}
+
+///|
 test "array_each" {
   let arr = [1, 2, 3]
   let mut sum = 0

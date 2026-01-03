@@ -32,6 +32,16 @@ test "to_string" {
 }
 
 ///|
+#warnings("-deprecated")
+test "to_fixedarray with len" {
+  let bytes = b"abcd"
+  let arr = bytes.to_fixedarray(len=3)
+  assert_eq(arr.length(), 3)
+  assert_eq(arr[0], b'a')
+  assert_eq(arr[2], b'c')
+}
+
+///|
 test "sub_string" {
   assert_eq(HELLO_WORLD.to_unchecked_string(offset=0, length=5 * 2), "Hello")
 }

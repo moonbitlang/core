@@ -44,3 +44,23 @@ test "from_string forwarding" {
   let value : Int = @strconv.FromStr::from_str("42")
   inspect(value, content="42")
 }
+
+///|
+#warnings("-deprecated")
+test "from_string deprecated bridge" {
+  let value : Int = @strconv.FromStr::from_string("7")
+  inspect(value, content="7")
+}
+
+///|
+test "parse_double slow path with plus and underscores" {
+  let value = @strconv.parse_double("+0_0000_0000_0000_0000_0000_12345")
+  assert_eq(value, 12345.0)
+}
+
+///|
+test "parse_double many digits with leading zero" {
+  let value = @strconv.parse_double("0.00000000000000000000012345")
+  assert_true(value > 0.0)
+  assert_true(value < 1.0e-15)
+}

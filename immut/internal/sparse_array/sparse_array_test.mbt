@@ -60,6 +60,22 @@ test "SparseArray::union" {
 }
 
 ///|
+test "SparseArray::intersection partial" {
+  let left = @sparse_array.singleton(0, 1).add(1, 2).add(2, 3)
+  let right = @sparse_array.singleton(0, 10).add(1, 20).add(2, 30)
+  let inter = left.intersection(right, (x, y) => if x == 2 {
+    None
+  } else {
+    Some(x + y)
+  })
+  guard inter is Some(result) else { fail("expected intersection result") }
+  inspect(
+    [result.get(0), result.get(1), result.get(2)],
+    content="[Some(11), None, Some(33)]",
+  )
+}
+
+///|
 test "SparseArray::iter" {
   let arr = @sparse_array.singleton(0, 0).add(1, 1).add(3, 3).add(31, 31)
   let buf = StringBuilder::new(size_hint=0)

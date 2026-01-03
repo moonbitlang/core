@@ -43,10 +43,24 @@ test "to_string" {
 }
 
 ///|
+test "make with full leaf" {
+  let v = @array.make(32, 7)
+  inspect(v.length(), content="32")
+  inspect(v[0], content="7")
+  inspect(v[31], content="7")
+}
+
+///|
 test "to_array" {
   let v = @array.from_array([1, 2, 3, 4])
   inspect(v.to_array().to_string(), content="[1, 2, 3, 4]")
   inspect(v.push(5).to_array().to_string(), content="[1, 2, 3, 4, 5]")
+}
+
+///|
+test "to_array empty" {
+  let v : @array.T[Int] = @array.new()
+  inspect(v.to_array().to_string(), content="[]")
 }
 
 ///|
@@ -145,6 +159,13 @@ test "equal" {
   inspect(v1 == v3, content="false")
   inspect(v1 == v4, content="false")
   inspect(v5 == v6, content="true")
+}
+
+///|
+test "add concat" {
+  let left = @array.from_array([1, 2])
+  let right = @array.from_array([3, 4])
+  inspect(left + right, content="@immut/array.from_array([1, 2, 3, 4])")
 }
 
 ///|

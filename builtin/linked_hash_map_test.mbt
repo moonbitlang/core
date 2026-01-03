@@ -89,6 +89,18 @@ test "Map::from_iterator" {
 }
 
 ///|
+test "Map::get_from_view" {
+  let string_map : Map[String, Int] = { "alpha": 1, "beta": 2 }
+  inspect(Map::get_from_string(string_map, "alp"[:]), content="None")
+  inspect(Map::get_from_string(string_map, "alphx"[:]), content="None")
+  inspect(Map::get_from_string(string_map, "alpha"[:]), content="Some(1)")
+  let bytes_map : Map[Bytes, Int] = { b"abc": 10, b"xyz": 20 }
+  inspect(Map::get_from_bytes(bytes_map, b"ab"[:]), content="None")
+  inspect(Map::get_from_bytes(bytes_map, b"abd"[:]), content="None")
+  inspect(Map::get_from_bytes(bytes_map, b"abc"[:]), content="Some(10)")
+}
+
+///|
 test "Map::iterator" {
   let map = { "a": 1, "b": 2, "c": 3 }
   let v = map.iterator()
