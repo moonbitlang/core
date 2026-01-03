@@ -1,4 +1,4 @@
-// Copyright 2025 International Digital Economy Academy
+// Copyright 2026 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -208,7 +208,7 @@ test "Bytes::equal with differing bytes" {
 ///|
 test "Bytes::to_fixedarray with len" {
   let bytes = b"hello"
-  let arr = bytes.to_fixedarray(len=3)
+  let arr = bytes[:3].to_fixedarray()
   inspect(arr, content="[b'\\x68', b'\\x65', b'\\x6C']")
 }
 

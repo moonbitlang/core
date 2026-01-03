@@ -1,4 +1,4 @@
-// Copyright 2025 International Digital Economy Academy
+// Copyright 2026 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -41,6 +41,6 @@ test "parse_uint64 overflow check" {
 
 ///|
 test "from_string forwarding" {
-  let value : Int = FromStr::from_string("42")
+  let value : Int = @strconv.FromStr::from_str("42")
   inspect(value, content="42")
 }
