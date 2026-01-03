@@ -61,6 +61,16 @@ test "parse numbers" {
 }
 
 ///|
+test "parse negative huge exponent" {
+  inspect(
+    try? @json.parse("-1e999999999"),
+    content=(
+      #|Ok(Number(-Infinity, repr=Some("-1e999999999")))
+    ),
+  )
+}
+
+///|
 test "parse and stringify large integers" {
   // Test integers at Int boundaries
   let min_int = "-2147483648" // Int.min_value

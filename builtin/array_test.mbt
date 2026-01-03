@@ -116,6 +116,15 @@ test "array_unsafe_pop" {
 }
 
 ///|
+test "array_unsafe_pop reference" {
+  let arr = ["a", "b"]
+  inspect(arr.unsafe_pop(), content="b")
+  inspect(arr, content="[\"a\"]")
+  arr.push("c")
+  inspect(arr, content="[\"a\", \"c\"]")
+}
+
+///|
 test "array_push" {
   let arr = [1, 2, 3]
   arr.push(4)
