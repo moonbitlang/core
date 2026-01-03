@@ -18,3 +18,10 @@ test "zip_with" {
   let right = [10, 20]
   inspect(@array.zip_with(left, right, (a, b) => a + b), content="[11, 22]")
 }
+
+///|
+test "zip_with left shorter" {
+  let left = [1, 2]
+  let right = [10, 20, 30]
+  inspect(@array.zip_with(left, right, (a, b) => a + b), content="[11, 22]")
+}

@@ -121,6 +121,15 @@ test "to_string runtime zero paths" {
 }
 
 ///|
+#cfg(target="js")
+test "to_string js wrappers" {
+  inspect((255).to_string(radix=16), content="ff")
+  inspect(255U.to_string(radix=16), content="ff")
+  inspect(255L.to_string(radix=16), content="ff")
+  inspect(255UL.to_string(radix=16), content="ff")
+}
+
+///|
 test "panic UInt64::to_string invalid radix" {
   let arr = Array::new()
   arr.push(1)

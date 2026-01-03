@@ -80,6 +80,13 @@ test "Hash" {
 }
 
 ///|
+#cfg(target="js")
+test "Float::from_int64 and from_uint64 on js" {
+  inspect(Float::from_uint64(42UL), content="42")
+  inspect(Float::from_int64(-42L), content="-42")
+}
+
+///|
 test "Float::is_inf/special_values" {
   inspect(@float.infinity.is_inf(), content="true")
   inspect(@float.neg_infinity.is_inf(), content="true")

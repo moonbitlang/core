@@ -1220,3 +1220,17 @@ test "scalbnf exponent clamp" {
   assert_true(@math.scalbnf(1.0, 500).is_pos_inf())
   inspect(@math.scalbnf(1.0, -500), content="0")
 }
+
+///|
+test "powf subnormal base" {
+  let subnormal = Float::reinterpret_from_int(1)
+  let result = @math.powf(subnormal, 3.0)
+  assert_true(result == 0.0)
+}
+
+///|
+test "pow subnormal double base" {
+  let subnormal = 1UL.reinterpret_as_double()
+  let result = @math.pow(subnormal, 3.0)
+  assert_true(result == 0.0)
+}

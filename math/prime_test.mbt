@@ -82,6 +82,33 @@ test "@math.is_probable_prime" {
 }
 
 ///|
+struct SeqSource {
+  values : Array[UInt64]
+  mut idx : Int
+}
+
+///|
+impl @random.Source for SeqSource with next(self) -> UInt64 {
+  let idx = self.idx
+  self.idx += 1
+  if idx < self.values.length() {
+    self.values[idx]
+  } else {
+    0UL
+  }
+}
+
+///|
+test "miller rabin detects z == 1 branch" {
+  let gen_check : SeqSource = { values: [0UL, 0UL, 52UL], idx: 0 }
+  let rand_check = @random.Rand::new(generator=gen_check as &@random.Source)
+  inspect(rand_check.bigint(17), content="52")
+  let gen : SeqSource = { values: [0UL, 0UL, 52UL], idx: 0 }
+  let rand = @random.Rand::new(generator=gen as &@random.Source)
+  assert_false(@math.is_probable_prime(128017N, rand, iters=1))
+}
+
+///|
 test "@math.probable_prime" {
   let rand = @random.Rand::new()
   inspect(

@@ -119,6 +119,14 @@ test "combine float" {
 }
 
 ///|
+#cfg(target="js")
+test "hasher default seed on js" {
+  let hasher = Hasher::new()
+  hasher.combine_int(1)
+  inspect(hasher.finalize().to_string().length() > 0, content="true")
+}
+
+///|
 test "combine string" {
   let hash = v => {
     let hasher = Hasher::new(seed=0)
