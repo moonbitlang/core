@@ -78,6 +78,9 @@ test "@math.log2 @math.log10" {
   assert_eq(@math.log10(3.0), 0.47712125471966244)
   assert_eq(@math.log10(11.0), 1.041392685158225)
   assert_eq(@math.log10(15.0), 1.1760912590556813)
+  assert_true(@math.log10(-1.0).is_nan())
+  assert_true(@math.log10(0.0).is_neg_inf())
+  assert_true(@math.log10(@double.infinity).is_pos_inf())
 }
 
 ///|
@@ -92,4 +95,43 @@ test "ln" {
   assert_eq(@math.ln(2.0), 0.6931471805599453)
   assert_eq(@math.ln(1.1125369292536007e-308), -709.0895657128241)
   assert_eq(@math.ln(5.562684646268003e-309), -709.782712893384)
+}
+
+///|
+test "lnf subnormal input" {
+  let sub = Float::reinterpret_from_uint(1U)
+  let res = @math.lnf(sub)
+  assert_true(!res.is_nan())
+  assert_true(res < 0.0)
+}
+
+///|
+test "ln_1pf large input branch" {
+  let res = @math.ln_1pf(1.0e10)
+  assert_true(!res.is_nan())
+  assert_true(res > 0.0)
+}
+
+///|
+test "ln_1p small and large values" {
+  let tiny = 1.0e-10
+  let tiny_res = @math.ln_1p(tiny)
+  assert_true((tiny_res - tiny).abs() < 1.0e-20)
+  let large = 1.0e20
+  let large_res = @math.ln_1p(large)
+  assert_true(!large_res.is_nan())
+  assert_true(large_res > 0.0)
+}
+
+///|
+test "ln_1p mid-range branches" {
+  let mid = @math.ln_1p(0.1)
+  assert_true(mid > 0.0 && mid < 0.2)
+  let near_one = @math.ln_1p(0.9999999999999999)
+  assert_true(near_one > 0.0)
+}
+
+///|
+test "log2 zero input" {
+  assert_true(@math.log2(0.0).is_neg_inf())
 }

@@ -573,6 +573,26 @@ impl Eq for MyString with equal(self, other) {
 }
 
 ///|
+struct SegKey(Int, Int)
+
+///|
+impl Hash for SegKey with hash(self) {
+  let SegKey(_, hash) = self
+  hash
+}
+
+///|
+impl Hash for SegKey with hash_combine(self, hasher) {
+  let SegKey(_, hash) = self
+  hasher.combine_int(hash)
+}
+
+///|
+impl Eq for SegKey with equal(self, other) {
+  self.0 == other.0
+}
+
+///|
 test "get collision" {
   let map = @hashmap.from_array([(MyString("a"), 1), (MyString("b"), 2)])
   assert_eq(map.get(MyString("a")), Some(1))
@@ -588,6 +608,27 @@ test "add_with_hash collision" {
   assert_eq(map.get(MyString("c")), None)
   let map = map.add(MyString("c"), 3)
   assert_eq(map.get(MyString("c")), Some(3))
+}
+
+///|
+test "HAMT join_2 last segment split" {
+  let k1 = SegKey(1, 0)
+  let k2 = SegKey(2, 1 << 25)
+  let map = @hashmap.new().add(k1, "a").add(k2, "b")
+  inspect(map.get(k1), content="Some(\"a\")")
+  inspect(map.get(k2), content="Some(\"b\")")
+}
+
+///|
+test "HAMT leaf bucket updates" {
+  let map = @hashmap.new()
+    .add(MyString("a"), 1)
+    .add(MyString("b"), 2)
+    .add(MyString("c"), 3)
+  let map = map.add(MyString("c"), 30)
+  inspect(map.get(MyString("c")), content="Some(30)")
+  let map = map.add(MyString("a"), 10)
+  inspect(map.get(MyString("a")), content="Some(10)")
 }
 
 ///|

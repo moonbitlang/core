@@ -103,6 +103,19 @@ test "@math.probable_prime" {
 }
 
 ///|
+test "panic is_probable_prime non-positive iters" {
+  let r = @random.Rand::new()
+  ignore(@math.is_probable_prime(17N, r, iters=0))
+}
+
+///|
+test "trial_divisions 1024-bit bucket" {
+  let r = @random.Rand::new()
+  let n = (1N << 1023) * 3N + 3N
+  assert_false(@math.is_probable_prime(n, r))
+}
+
+///|
 #cfg(false)
 test "is_probable_prime edge cases" {
   let r = @random.Rand::new()

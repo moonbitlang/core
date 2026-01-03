@@ -20,6 +20,18 @@ test "remove on empty set" {
 }
 
 ///|
+test "default" {
+  let set : @sorted_set.SortedSet[Int] = Default::default()
+  inspect(set.length(), content="0")
+}
+
+///|
+test "arbitrary samples" {
+  let samples = (@quickcheck.samples(3) : Array[@sorted_set.SortedSet[Int]])
+  inspect(samples.length(), content="3")
+}
+
+///|
 test "disjoint" {
   inspect(
     @sorted_set.from_array([1, 2, 3]).disjoint(

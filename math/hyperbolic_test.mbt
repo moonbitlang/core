@@ -152,3 +152,22 @@ test "atanhf Test" {
     )
   }
 }
+
+///|
+test "tanhf midrange branch" {
+  let res = @math.tanhf(0.4)
+  assert_true(res > 0.0 && res < 1.0)
+}
+
+///|
+test "hyperbolic double branch coverage" {
+  inspect(@math.sinh(0.5), content="0.5210953054937474")
+  assert_true(@math.sinh(10.0) > 0.0)
+  assert_true(@math.sinh(25.0) > 0.0)
+  assert_true(@math.sinh(710.0) > 0.0)
+  assert_true(@math.cosh(30.0) > 0.0)
+  assert_true(@math.cosh(710.0) > 0.0)
+  assert_true(@math.tanh(0.5).is_close(0.46211715726000974))
+  assert_true(@math.asinh(1.0e20) > 0.0)
+  assert_true(@math.acosh(1.0e20) > 0.0)
+}

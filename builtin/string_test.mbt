@@ -189,3 +189,76 @@ test "panic char_length_ge invalid surrogate" {
   let invalid = String::from_array([(0xD800).unsafe_to_char(), 'a'])
   ignore(invalid.char_length_ge(1))
 }
+
+///|
+test "StringView pad_start and pad_end no padding" {
+  let view = "hello"[1:3]
+  inspect(view.pad_start(2, 'x'), content="el")
+  inspect(view.pad_end(2, 'x'), content="el")
+}
+
+///|
+test "StringView repeat non-positive" {
+  let view = "hi"[:]
+  let mut n = 1
+  n -= view.length()
+  inspect(view.repeat(n), content="")
+}
+
+///|
+test "StringView replace and replace_all" {
+  let chars = Array::make(6, 'x')
+  chars[0] = 'a'
+  chars[1] = 'b'
+  chars[2] = 'c'
+  chars[3] = 'a'
+  chars[4] = 'b'
+  chars[5] = 'c'
+  let base = String::from_array(chars)
+  let view = base[:]
+  inspect(view.replace(old="ab", new="X"), content="Xcabc")
+  inspect(view.replace(old="zz", new="X"), content="abcabc")
+  inspect(view.replace_all(old="ab", new="X"), content="XcXc")
+}
+
+///|
+test "String replace_all basic" {
+  let chars = Array::make(3, 'x')
+  chars[0] = 'a'
+  chars[1] = 'b'
+  chars[2] = 'a'
+  let base = String::from_array(chars)
+  inspect(base.replace_all(old="a", new="x"), content="xbx")
+}
+
+///|
+test "String to_lower no uppercase" {
+  inspect("abc".to_lower(), content="abc")
+  inspect("abc"[:].to_lower(), content="abc")
+}
+
+///|
+test "panic offset_of_nth_char invalid range" {
+  ignore("abc".offset_of_nth_char(0, start_offset=2, end_offset=1))
+}
+
+///|
+test "offset_of_nth_char backward out of range" {
+  inspect(
+    "abc".offset_of_nth_char(-2, start_offset=0, end_offset=1),
+    content="None",
+  )
+}
+
+///|
+test "String get_char invalid surrogate pair" {
+  let invalid = String::from_array([(0xD800).unsafe_to_char(), 'a'])
+  inspect(invalid.get_char(0), content="None")
+  inspect(invalid[:].get_char(0), content="None")
+}
+
+///|
+test "StringView repeat single" {
+  let view = "repeat".view()
+  inspect(view.repeat(1), content="repeat")
+}

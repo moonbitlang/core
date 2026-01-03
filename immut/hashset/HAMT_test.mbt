@@ -74,6 +74,12 @@ test "@hashset.remove" {
 }
 
 ///|
+test "remove on empty set" {
+  let empty : @hashset.HashSet[Int] = @hashset.new()
+  inspect(empty.remove(1), content="@immut/hashset.from_array([])")
+}
+
+///|
 test "@hashset.iter" {
   let data = @hashset.from_array(["a", "b", "d", "e", "f"])
   let array = data.iter().collect()
@@ -294,6 +300,35 @@ impl Show for MyString with output(self, logger) {
 }
 
 ///|
+struct SegKey(Int, Int)
+
+///|
+impl Hash for SegKey with hash(self) {
+  let SegKey(_, hash) = self
+  hash
+}
+
+///|
+impl Hash for SegKey with hash_combine(self, hasher) {
+  let SegKey(_, hash) = self
+  hasher.combine_int(hash)
+}
+
+///|
+impl Eq for SegKey with equal(self, other) {
+  self.0 == other.0
+}
+
+///|
+test "HAMT join_2 last segment split" {
+  let k1 = SegKey(1, 0)
+  let k2 = SegKey(2, 1 << 25)
+  let set = @hashset.new().add(k1).add(k2)
+  inspect(set.contains(k1), content="true")
+  inspect(set.contains(k2), content="true")
+}
+
+///|
 test "HAMT::remove_with_hash collision" {
   let set = @hashset.from_array([MyString("a"), MyString("b")])
   let set1 = set.remove(MyString("c"))
@@ -314,6 +349,16 @@ test "HAMT::union with collision" {
   assert_eq(u.contains(MyString("a")), true)
   assert_eq(u.contains(MyString("b")), true)
   assert_eq(u.contains(MyString("c")), true)
+}
+
+///|
+test "HAMT::union collision identical" {
+  let m1 = @hashset.from_array([MyString("a"), MyString("b")])
+  let m2 = @hashset.from_array([MyString("a"), MyString("b")])
+  let u = m1.union(m2)
+  inspect(u.contains(MyString("a")), content="true")
+  inspect(u.contains(MyString("b")), content="true")
+  inspect(u.length(), content="2")
 }
 
 ///|
@@ -377,6 +422,31 @@ test "@hashset.intersection patch" {
 }
 
 ///|
+test "intersection single common key" {
+  let set1 = @hashset.from_array([1, 2, 3])
+  let set2 = @hashset.from_array([3, 4, 5])
+  let inter = set1.intersection(set2)
+  inspect(inter, content="@immut/hashset.from_array([3])")
+}
+
+///|
+test "intersection collision leaf" {
+  let set1 = @hashset.from_array([MyString("a"), MyString("b")])
+  let set2 = @hashset.from_array([MyString("b"), MyString("c")])
+  let inter = set1.intersection(set2)
+  inspect(inter.contains(MyString("b")), content="true")
+  inspect(inter.length(), content="1")
+}
+
+///|
+test "intersection collision empty" {
+  let set1 = @hashset.from_array([MyString("a"), MyString("b")])
+  let set2 = @hashset.from_array([MyString("c"), MyString("d")])
+  let inter = set1.intersection(set2)
+  inspect(inter.length(), content="0")
+}
+
+///|
 test "@hashset collision" {
   let a = MyString("a")
   let b = MyString("b")
@@ -385,6 +455,17 @@ test "@hashset collision" {
   inspect(set.iter().to_array(), content="[c, b, a]")
   set.each((x : MyString) => x |> ignore)
   inspect(set.length(), content="3")
+}
+
+///|
+test "add duplicate in collision leaf" {
+  let a = MyString("a")
+  let b = MyString("b")
+  let set = @hashset.new().add(a).add(b)
+  let set2 = set.add(a)
+  inspect(set2.length(), content="2")
+  inspect(set2.contains(a), content="true")
+  inspect(set2.contains(b), content="true")
 }
 
 ///|

@@ -19,6 +19,58 @@ test "Json default value" {
 }
 
 ///|
+test "Json null and bool equality" {
+  let n1 = Json::null()
+  let n2 = Json::null()
+  inspect(n1 == n2, content="true")
+  inspect(false.to_json() == false.to_json(), content="true")
+  inspect(Json::null(), content="Null")
+}
+
+///|
+test "Json number equality" {
+  let a = Json::number(1.5)
+  let b = Json::number(1.5)
+  let c = Json::number(2.0)
+  inspect(a == b, content="true")
+  inspect(a == c, content="false")
+}
+
+///|
+test "Json string equality" {
+  let a = Json::string("hi")
+  let b = Json::string("hi")
+  let c = Json::string("bye")
+  inspect(a == b, content="true")
+  inspect(a == c, content="false")
+}
+
+///|
+test "Json array equality" {
+  let a = Json::array([Json::number(1), Json::string("x")])
+  let b = Json::array([Json::number(1), Json::string("x")])
+  let c = Json::array([Json::number(2)])
+  inspect(a == b, content="true")
+  inspect(a == c, content="false")
+}
+
+///|
+test "Json object equality" {
+  let a = Json::object({ "x": Json::number(1), "y": Json::string("a") })
+  let b = Json::object({ "x": Json::number(1), "y": Json::string("a") })
+  let c = Json::object({ "x": Json::number(2) })
+  inspect(a == b, content="true")
+  inspect(a == c, content="false")
+}
+
+///|
+test "Json equality mismatch" {
+  let a = Json::null()
+  let b = Json::string("x")
+  inspect(a == b, content="false")
+}
+
+///|
 test "Int64 to_json" {
   let i : Int64 = 42L
   inspect(i.to_json(), content="String(\"42\")")

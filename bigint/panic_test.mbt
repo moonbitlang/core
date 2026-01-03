@@ -42,3 +42,35 @@ test "panic negative shift right" {
 test "panic from_string empty" {
   @bigint.BigInt::from_string("") |> ignore
 }
+
+///|
+test "panic from_string invalid character" {
+  @bigint.BigInt::from_string("12a") |> ignore
+}
+
+///|
+test "panic from_hex empty" {
+  @bigint.BigInt::from_hex("") |> ignore
+}
+
+///|
+test "panic from_hex invalid character" {
+  @bigint.BigInt::from_hex("g") |> ignore
+}
+
+///|
+test "panic pow negative exponent" {
+  let base = @bigint.BigInt::from_int(2)
+  let exp = @bigint.BigInt::from_int(-1)
+  base.pow(exp) |> ignore
+}
+
+///|
+test "panic from_octets empty" {
+  @bigint.BigInt::from_octets(Bytes::new(0)) |> ignore
+}
+
+///|
+test "panic to_octets negative" {
+  (-1N).to_octets() |> ignore
+}

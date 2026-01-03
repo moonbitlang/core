@@ -124,3 +124,9 @@ test "update with error handling" {
   y.update(a => a + 1)
   assert_eq(y.val, 4)
 }
+
+///|
+test "arbitrary ref samples" {
+  let samples = (@quickcheck.samples(3) : Array[Ref[Int]])
+  inspect(samples.length(), content="3")
+}

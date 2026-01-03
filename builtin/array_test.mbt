@@ -857,6 +857,21 @@ test "retain_map" {
 }
 
 ///|
+test "retain_map empty" {
+  let arr : Array[Int] = []
+  arr.retain_map(x => Some(x))
+  inspect(arr, content="[]")
+}
+
+///|
+test "Array::blit_to grows destination" {
+  let src = [1, 2, 3]
+  let dst = [0]
+  src.blit_to(dst, len=2, src_offset=1, dst_offset=0)
+  inspect(dst, content="[2, 3]")
+}
+
+///|
 test "array_fill - basic functionality" {
   let arr = [1, 2, 3, 4, 5]
   arr.fill(42)
@@ -1250,4 +1265,12 @@ test "Array::iterator2 empty" {
   let arr : Array[Int] = []
   let iter = arr.iterator2()
   assert_eq(iter.next(), None)
+}
+
+///|
+test "Array::unsafe_pop" {
+  let arr = [1, 2, 3]
+  let value = arr.unsafe_pop()
+  inspect(value, content="3")
+  inspect(arr, content="[1, 2]")
 }

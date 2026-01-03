@@ -5236,3 +5236,10 @@ test "test to_uint64 with large double" {
   let c = b.to_uint64()
   assert_eq(a, c)
 }
+
+///|
+test "Int64 hash combine" {
+  let hasher = Hasher::new(seed=0)
+  hasher.combine(42L)
+  inspect(hasher.finalize() != 0, content="true")
+}

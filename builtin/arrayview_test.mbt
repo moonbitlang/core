@@ -119,6 +119,27 @@ test "panic negative index4" {
 }
 
 ///|
+test "ArrayView::start_offset" {
+  let arr = [1, 2, 3]
+  let view = arr[1:3]
+  inspect(view.start_offset(), content="1")
+}
+
+///|
+test "panic FixedArray sub invalid range" {
+  let arr : FixedArray[Int] = [1, 2, 3]
+  let _ = arr[2:1]
+
+}
+
+///|
+test "ArrayView equality mismatch" {
+  let left = [1, 2, 3][:]
+  let right = [1, 4, 3][:]
+  inspect(left == right, content="false")
+}
+
+///|
 test "panic negative index5" {
   let arr = [1, 2, 3][:]
   let _ = arr[-4:]

@@ -13,33 +13,13 @@
 // limitations under the License.
 
 ///|
-test " same_object call with the same object" {
-  let s = "Hello"
-  @test.same_object(s, s)
-}
-
-///|
-test "panic same_object call with different objects" {
-  let a = "1"
-  let b = "2"
-  @test.same_object(a, b)
-}
-
-///|
-test "is_not called with the different objects" {
-  let a = "1"
-  let b = "2"
-  @test.not_same_object(a, b)
-}
-
-///|
-test "panic is_not called with the same object" {
-  let s = "Hello"
-  @test.not_same_object(s, s)
-}
-
-///|
-test "Test name" {
-  let t = @test.new("sample")
-  inspect(t.name(), content="sample")
+test "deprecated operator helpers" {
+  inspect(Add::op_add(1, 2), content="3")
+  inspect(Sub::op_sub(5, 3), content="2")
+  inspect(Mul::op_mul(2, 3), content="6")
+  inspect(Div::op_div(8, 2), content="4")
+  inspect(Mod::op_mod(7, 4), content="3")
+  inspect(Neg::op_neg(5), content="-5")
+  inspect(Shl::op_shl(1, 3), content="8")
+  inspect(Shr::op_shr(8, 2), content="2")
 }

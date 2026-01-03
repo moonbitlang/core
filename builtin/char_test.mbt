@@ -48,3 +48,40 @@ test "char show" {
   assert_eq('\b'.to_string().escape(), "\"\\b\"")
   inspect('中', content="中")
 }
+
+///|
+test "char ascii classification" {
+  inspect('A'.is_ascii(), content="true")
+  inspect('Z'.is_ascii_alphabetic(), content="true")
+  inspect('\u{00}'.is_ascii_control(), content="true")
+  inspect('5'.is_ascii_digit(), content="true")
+  inspect('!'.is_ascii_graphic(), content="true")
+  inspect('f'.is_ascii_hexdigit(), content="true")
+  inspect('g'.is_ascii_hexdigit(), content="false")
+  inspect('a'.is_ascii_lowercase(), content="true")
+  inspect('7'.is_ascii_octdigit(), content="true")
+  inspect('!'.is_ascii_punctuation(), content="true")
+  inspect('A'.is_ascii_uppercase(), content="true")
+  inspect(' '.is_ascii_whitespace(), content="true")
+}
+
+///|
+test "char digit and whitespace" {
+  inspect('9'.is_digit(10U), content="true")
+  inspect('a'.is_digit(16U), content="true")
+  inspect('\u{00A0}'.is_whitespace(), content="true")
+  inspect('9'.is_numeric(), content="true")
+}
+
+///|
+test "char printable and ascii case" {
+  inspect('A'.to_ascii_lowercase(), content="a")
+  inspect('b'.to_ascii_uppercase(), content="B")
+  inspect((0xD800).unsafe_to_char().is_printable(), content="false")
+  inspect('\u{2028}'.is_printable(), content="false")
+}
+
+///|
+test "panic Char::is_digit invalid radix" {
+  '0'.is_digit(1U) |> ignore
+}

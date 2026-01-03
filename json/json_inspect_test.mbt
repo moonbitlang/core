@@ -55,3 +55,19 @@ test "json inspect" {
     "color": "Blue",
   })
 }
+
+///|
+test "json inspect error paths" {
+  let default_result = try? @json.inspect(1)
+  let default_is_err = match default_result {
+    Ok(_) => false
+    Err(_) => true
+  }
+  inspect(default_is_err, content="true")
+  let mismatch_result = try? @json.inspect(1, content=2)
+  let mismatch_is_err = match mismatch_result {
+    Ok(_) => false
+    Err(_) => true
+  }
+  inspect(mismatch_is_err, content="true")
+}

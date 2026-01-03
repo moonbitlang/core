@@ -19,6 +19,12 @@ test "new" {
 }
 
 ///|
+test "default" {
+  let queue : @priority_queue.PriorityQueue[Int] = Default::default()
+  inspect(queue.length(), content="0")
+}
+
+///|
 test "from_array" {
   let pq = @priority_queue.from_array([1, 3, 6, 4, 5])
   inspect(pq.peek(), content="Some(6)")
@@ -122,6 +128,12 @@ test "pop" {
   p.pop() |> ignore
   inspect(p.iter(), content="[3, 2, 1, 0]")
   inspect(p.length(), content="4")
+}
+
+///|
+test "pop empty" {
+  let pq : @priority_queue.PriorityQueue[Int] = @priority_queue.new()
+  inspect(pq.pop(), content="None")
 }
 
 ///|

@@ -545,6 +545,12 @@ test "default" {
 }
 
 ///|
+test "Default::default" {
+  let ls : @list.T[Int] = Default::default()
+  inspect(ls, content="@list.from_array([])")
+}
+
+///|
 test "List::output with non-empty list" {
   let buf = StringBuilder::new(size_hint=100)
   let list = @list.of([1, 2, 3, 4, 5])
@@ -577,6 +583,15 @@ test "List::from_json" {
   for xs in (@quickcheck.samples(20) : Array[@list.T[Int]]) {
     assert_eq(xs, @json.from_json(xs.to_json()))
   }
+}
+
+///|
+test "from_json rejects non-array" {
+  let bad_json : Json = { "a": 1 }
+  let result : Result[@list.T[Int], @json.JsonDecodeError] = try? @list.from_json(
+    bad_json,
+  )
+  inspect(result is Err(_), content="true")
 }
 
 ///|

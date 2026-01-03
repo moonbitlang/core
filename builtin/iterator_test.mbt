@@ -666,6 +666,7 @@ test "Iterator::sub variants" {
   inspect([1, 2, 3].iterator().sub(start=0, end=2).collect(), content="[1, 2]")
   inspect([1, 2, 3].iterator().sub(start=1).collect(), content="[2, 3]")
   inspect([1, 2, 3, 4].iterator().sub(start=1, end=3).collect(), content="[]")
+  inspect([1, 2, 3].iterator().sub(start=1, end=0).collect(), content="[]")
 }
 
 ///|

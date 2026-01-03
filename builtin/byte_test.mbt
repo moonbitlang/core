@@ -201,3 +201,15 @@ test "byte_mod" {
   inspect((80 : Byte) % 8, content="b'\\x00'")
   inspect((42 : Byte) % 17, content="b'\\x08'")
 }
+
+///|
+test "byte comparisons and lnot" {
+  let a = b"\x01"[0]
+  let b = b"\x02"[0]
+  inspect(Eq::not_equal(a, b), content="true")
+  inspect(Compare::op_lt(a, b), content="true")
+  inspect(Compare::op_le(b, b), content="true")
+  inspect(Compare::op_gt(b, a), content="true")
+  inspect(Compare::op_ge(b, b), content="true")
+  inspect(b'\x0F'.lnot(), content="b'\\xF0'")
+}

@@ -16,10 +16,39 @@
 let default_init_capacity = 8
 
 ///|
+struct Key {
+  id : Int
+  hash_value : Int
+} derive(Eq)
+
+///|
+impl Hash for Key with hash_combine(self, hasher) {
+  hasher.combine_int(self.hash_value)
+}
+
+///|
+impl Hash for Key with hash(self) {
+  self.hash_value
+}
+
+///|
 test "new" {
   let m : @set.Set[Int] = @set.Set::new()
   assert_eq(m.capacity(), default_init_capacity)
   assert_eq(m.length(), 0)
+}
+
+///|
+test "default" {
+  let m : @set.Set[Int] = Default::default()
+  inspect(m.length(), content="0")
+}
+
+///|
+test "copy empty" {
+  let m : @set.Set[Int] = @set.Set::new()
+  let copied = m.copy()
+  inspect(copied.length(), content="0")
 }
 
 ///|
@@ -86,6 +115,29 @@ test "is_empty" {
   assert_eq(m.is_empty(), false)
   m.remove("a")
   assert_eq(m.is_empty(), true)
+}
+
+///|
+test "is_disjoint prefers shorter iteration" {
+  let m1 = @set.Set::from_array([1, 2, 3, 4])
+  let m2 = @set.Set::from_array([5])
+  inspect(m1.is_disjoint(m2), content="true")
+}
+
+///|
+test "is_disjoint detects overlap in else branch" {
+  let m1 = @set.Set::from_array([1, 2, 3, 4])
+  let m2 = @set.Set::from_array([4])
+  inspect(m1.is_disjoint(m2), content="false")
+}
+
+///|
+test "remove stops on shorter probe" {
+  let set : @set.Set[Key] = @set.Set::new()
+  set.add({ id: 1, hash_value: 0 })
+  set.add({ id: 2, hash_value: 1 })
+  set.remove({ id: 3, hash_value: 0 })
+  inspect(set.length(), content="2")
 }
 
 ///|

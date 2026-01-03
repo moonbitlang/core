@@ -23,6 +23,12 @@ test "new" {
 }
 
 ///|
+test "default" {
+  let set : @sorted_set.SortedSet[Int] = Default::default()
+  inspect(set, content="@immut/sorted_set.from_array([])")
+}
+
+///|
 test "disjoint" {
   inspect(
     @sorted_set.from_array([1]).disjoint(@sorted_set.from_array([1, 2, 3])),
@@ -44,6 +50,12 @@ test "disjoint" {
     @sorted_set.from_array([1, 2, 3]).subset(@sorted_set.from_array([3, 4, 5])),
     content="false",
   )
+}
+
+///|
+test "disjoint same instance" {
+  let set = @sorted_set.from_array([1, 2, 3])
+  inspect(set.disjoint(set), content="false")
 }
 
 ///|
@@ -131,10 +143,31 @@ test "union" {
 }
 
 ///|
+test "union smaller left non-singleton" {
+  let left = @sorted_set.from_array([1, 3])
+  let right = @sorted_set.from_array([0, 2, 4, 5])
+  inspect(
+    left.union(right),
+    content="@immut/sorted_set.from_array([0, 1, 2, 3, 4, 5])",
+  )
+}
+
+///|
+
+///|
 test "map" {
   inspect(
     @sorted_set.from_array([1, 2, 3, 4, 5]).map(x => x * 2),
     content="@immut/sorted_set.from_array([2, 4, 6, 8, 10])",
+  )
+}
+
+///|
+test "map non-monotonic" {
+  let set = @sorted_set.from_array([1, 2, 3])
+  inspect(
+    set.map(x => 4 - x),
+    content="@immut/sorted_set.from_array([1, 2, 3])",
   )
 }
 
@@ -399,6 +432,22 @@ test "from_json" {
   for xs in (@quickcheck.samples(20) : Array[@sorted_set.SortedSet[Int]]) {
     assert_eq(xs, @json.from_json(xs.to_json()))
   }
+}
+
+///|
+test "from_json free function" {
+  let json : Json = [1, 2, 3]
+  let set : @sorted_set.SortedSet[Int] = @sorted_set.from_json(json)
+  inspect(set, content="@immut/sorted_set.from_array([1, 2, 3])")
+}
+
+///|
+test "from_json rejects non-array" {
+  let bad_json : Json = { "a": 1 }
+  let result : Result[@sorted_set.SortedSet[Int], @json.JsonDecodeError] = try? @sorted_set.from_json(
+    bad_json,
+  )
+  inspect(result is Err(_), content="true")
 }
 
 ///|

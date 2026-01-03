@@ -13,33 +13,42 @@
 // limitations under the License.
 
 ///|
-test " same_object call with the same object" {
-  let s = "Hello"
-  @test.same_object(s, s)
+test "BytesView sub with end None" {
+  let view = b"\x01\x02\x03"[:]
+  let sub = view[1:]
+  inspect(sub.length(), content="2")
 }
 
 ///|
-test "panic same_object call with different objects" {
-  let a = "1"
-  let b = "2"
-  @test.same_object(a, b)
+test "BytesView::to_bytes full view" {
+  let bytes = b"abc"
+  let view = bytes[:]
+  inspect(view.to_bytes(), content="b\"abc\"")
 }
 
 ///|
-test "is_not called with the different objects" {
-  let a = "1"
-  let b = "2"
-  @test.not_same_object(a, b)
+test "BytesView::to_bytes partial view" {
+  let bytes = b"abcd"
+  let view = bytes[1:3]
+  inspect(view.to_bytes(), content="b\"bc\"")
 }
 
 ///|
-test "panic is_not called with the same object" {
-  let s = "Hello"
-  @test.not_same_object(s, s)
+test "panic BytesView out of bounds" {
+  let view = b"\x01\x02"[:]
+  let _ = view[2]
+
 }
 
 ///|
-test "Test name" {
-  let t = @test.new("sample")
-  inspect(t.name(), content="sample")
+test "panic Bytes sub invalid index" {
+  let _ = b"\x01\x02"[2:1]
+
+}
+
+///|
+test "panic BytesView sub invalid index" {
+  let view = b"\x01\x02"[:]
+  let _ = view[2:1]
+
 }
