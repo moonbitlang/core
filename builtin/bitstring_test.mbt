@@ -22,6 +22,64 @@ test "extract bit" {
 }
 
 ///|
+test "BytesView::unsafe_extract_bit_signed" {
+  let view = b"\x80"[:]
+  inspect(view.unsafe_extract_bit_signed(0, 1), content="-1")
+}
+
+///|
+test "panic ArrayView::unsafe_extract_uint_le invalid len" {
+  let arr : Array[Byte] = [b'\x01', b'\x02', b'\x03', b'\x04']
+  let view = arr[:]
+  view.unsafe_extract_uint_le(0, 40) |> ignore
+}
+
+///|
+test "panic ArrayView::unsafe_extract_uint_be invalid len" {
+  let arr : Array[Byte] = [b'\x01', b'\x02', b'\x03', b'\x04']
+  let view = arr[:]
+  view.unsafe_extract_uint_be(0, 40) |> ignore
+}
+
+///|
+test "panic ArrayView::unsafe_extract_uint64_le invalid len" {
+  let arr : Array[Byte] = [b'\x01', b'\x02', b'\x03', b'\x04']
+  let view = arr[:]
+  view.unsafe_extract_uint64_le(0, 80) |> ignore
+}
+
+///|
+test "panic ArrayView::unsafe_extract_uint64_be invalid len" {
+  let arr : Array[Byte] = [b'\x01', b'\x02', b'\x03', b'\x04']
+  let view = arr[:]
+  view.unsafe_extract_uint64_be(0, 80) |> ignore
+}
+
+///|
+test "panic BytesView::unsafe_extract_uint_le invalid len" {
+  let view = b"\x01\x02\x03\x04"[:]
+  view.unsafe_extract_uint_le(0, 40) |> ignore
+}
+
+///|
+test "panic BytesView::unsafe_extract_uint_be invalid len" {
+  let view = b"\x01\x02\x03\x04"[:]
+  view.unsafe_extract_uint_be(0, 40) |> ignore
+}
+
+///|
+test "panic BytesView::unsafe_extract_uint64_le invalid len" {
+  let view = b"\x01\x02\x03\x04"[:]
+  view.unsafe_extract_uint64_le(0, 80) |> ignore
+}
+
+///|
+test "panic BytesView::unsafe_extract_uint64_be invalid len" {
+  let view = b"\x01\x02\x03\x04"[:]
+  view.unsafe_extract_uint64_be(0, 80) |> ignore
+}
+
+///|
 test "extract byte" {
   let bs1 = b"\x89\xab\xcd\xef"
   let bs2 : Array[Byte] = bs1.to_array()

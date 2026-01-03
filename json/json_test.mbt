@@ -124,6 +124,13 @@ test "stringify" {
 }
 
 ///|
+test "stringify with custom indents" {
+  let json : Json = { "a": 1 }
+  inspect(json.stringify(indent=5), content="{\n     \"a\": 1\n}")
+  inspect(json.stringify(indent=7), content="{\n       \"a\": 1\n}")
+}
+
+///|
 test "stringify with replacer" {
   let json : Json = { "a": 1.0, "b": 2.0, "c": 3.0, "d": 4.0 }
 

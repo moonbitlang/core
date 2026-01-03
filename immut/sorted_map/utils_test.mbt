@@ -196,3 +196,31 @@ test "from_json" {
     assert_eq(xs, @json.from_json(xs.to_json()))
   }
 }
+
+///|
+test "default" {
+  let map : @sorted_map.SortedMap[Int, Int] = Default::default()
+  inspect(map.length(), content="0")
+}
+
+///|
+test "iter2" {
+  let map = @sorted_map.from_array([(2, "two"), (1, "one")])
+  inspect(map.iter2().to_array(), content="[(1, \"one\"), (2, \"two\")]")
+}
+
+///|
+test "from_json free function" {
+  let json : Json = { "a": 1, "b": 2 }
+  let map : @sorted_map.SortedMap[String, Int] = @sorted_map.from_json(json)
+  @json.inspect(map.to_json(), content={ "a": 1, "b": 2 })
+}
+
+///|
+test "from_json rejects non-object" {
+  let bad_json : Json = [1, 2, 3]
+  let result : Result[@sorted_map.SortedMap[String, Int], @json.JsonDecodeError] = try? @sorted_map.from_json(
+    bad_json,
+  )
+  inspect(result is Err(_), content="true")
+}

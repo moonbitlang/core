@@ -868,3 +868,8 @@ test "guard const" {
   let s = "hello.txt"
   assert_true(s is [.., .. ".txt"])
 }
+
+///|
+test "string default" {
+  inspect(@string.default(), content="")
+}

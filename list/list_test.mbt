@@ -263,6 +263,15 @@ test "flat_map" {
 }
 
 ///|
+test "flat_map single element" {
+  let ls = @list.from_array([1])
+  inspect(
+    ls.flat_map(x => @list.from_array([x])),
+    content="@list.from_array([1])",
+  )
+}
+
+///|
 test "filter_map" {
   let ls = @list.from_array([4, 2, 2, 6, 3, 1])
   let rs : @list.List[Int] = @list.empty()
@@ -328,6 +337,21 @@ test "flatten" {
   let el : @list.List[@list.List[Int]] = @list.empty()
   inspect(ls.flatten(), content="@list.from_array([1, 2, 3, 4, 5, 6, 7, 8, 9])")
   inspect(el.flatten(), content="@list.from_array([])")
+}
+
+///|
+test "flatten with empty head" {
+  let ls = @list.from_array([
+    (@list.empty() : @list.List[Int]),
+    @list.from_array([1, 2]),
+  ])
+  inspect(ls.flatten(), content="@list.from_array([1, 2])")
+}
+
+///|
+test "flatten single list" {
+  let ls = @list.from_array([@list.from_array([1, 2])])
+  inspect(ls.flatten(), content="@list.from_array([1, 2])")
 }
 
 ///|

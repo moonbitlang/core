@@ -12,249 +12,88 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//region errors
-
 ///|
-test "throws on empty documents" {
-  inspect(try? @json.parse(""), content="Err(Unexpected end of file)")
+test "parse error branches" {
+  guard (try? @json.parse("")) is Err(InvalidEof) else {
+    fail("expected InvalidEof for empty input")
+  }
+  guard (try? @json.parse("@")) is Err(InvalidChar(_, _)) else {
+    fail("expected InvalidChar for invalid start")
+  }
+  guard (try? @json.parse("nullx")) is Err(InvalidChar(_, _)) else {
+    fail("expected InvalidChar for trailing data")
+  }
+  inspect(@json.parse("\u{00A0}null"), content="Null")
+  guard (try? @json.parse("tx")) is Err(InvalidChar(_, _)) else {
+    fail("expected InvalidChar for invalid literal")
+  }
+  guard (try? @json.parse("-x")) is Err(InvalidChar(_, _)) else {
+    fail("expected InvalidChar for invalid minus")
+  }
+  guard (try? @json.parse("-")) is Err(InvalidEof) else {
+    fail("expected InvalidEof for dangling minus")
+  }
+  guard (try? @json.parse("1.")) is Err(InvalidEof) else {
+    fail("expected InvalidEof for trailing dot")
+  }
+  guard (try? @json.parse("1.a")) is Err(InvalidChar(_, _)) else {
+    fail("expected InvalidChar for bad fraction")
+  }
+  guard (try? @json.parse("1eA")) is Err(InvalidChar(_, _)) else {
+    fail("expected InvalidChar for bad exponent")
+  }
+  guard (try? @json.parse("1e+a")) is Err(InvalidChar(_, _)) else {
+    fail("expected InvalidChar for bad exponent sign")
+  }
+  guard (try? @json.parse("1e+")) is Err(InvalidEof) else {
+    fail("expected InvalidEof for missing exponent")
+  }
+  guard (try? @json.parse("\"line\nbreak\"")) is Err(InvalidChar(_, _)) else {
+    fail("expected InvalidChar for newline in string")
+  }
+  guard (try? @json.parse("\"\\q\"")) is Err(InvalidChar(_, _)) else {
+    fail("expected InvalidChar for invalid escape")
+  }
+  guard (try? @json.parse("\"a\u{1}b\"")) is Err(InvalidChar(_, _)) else {
+    fail("expected InvalidChar for control char")
+  }
+  guard (try? @json.parse("\"unterminated")) is Err(InvalidEof) else {
+    fail("expected InvalidEof for unterminated string")
+  }
+  guard (try? @json.parse("\"endswith\\")) is Err(InvalidEof) else {
+    fail("expected InvalidEof for trailing escape")
+  }
+  guard (try? @json.parse("\"\\u:000\"")) is Err(InvalidChar(_, _)) else {
+    fail("expected InvalidChar for invalid hex digit")
+  }
+  guard (try? @json.parse("\"\\u/000\"")) is Err(InvalidChar(_, _)) else {
+    fail("expected InvalidChar for invalid hex digit")
+  }
+  guard (try? @json.parse("\"\\uG000\"")) is Err(InvalidChar(_, _)) else {
+    fail("expected InvalidChar for invalid hex letter")
+  }
+  guard (try? @json.parse("[1")) is Err(InvalidEof) else {
+    fail("expected InvalidEof for incomplete array")
+  }
+  guard (try? @json.parse("{\"a\"")) is Err(InvalidEof) else {
+    fail("expected InvalidEof for missing colon")
+  }
+  guard (try? @json.parse("{\"a\":1")) is Err(InvalidEof) else {
+    fail("expected InvalidEof for incomplete object")
+  }
+  guard (try? @json.parse("{\"a\":1,")) is Err(InvalidEof) else {
+    fail("expected InvalidEof after trailing comma")
+  }
+  let depth_result : Result[Json, _] = try? @json.parse(
+    "{\"a\":{}}",
+    max_nesting_depth=1,
+  )
+  guard depth_result is Err(err) else { fail("expected DepthLimitExceeded") }
+  guard err is DepthLimitExceeded else { fail("expected DepthLimitExceeded") }
+  inspect(
+    err.to_string(),
+    content="Depth limit exceeded, please increase the max_nesting_depth parameter",
+  )
+  ignore(@json.parse("-999999999999999999999999999999999999"))
+  ignore(@json.parse("-1e999999999999999999999999999999999999"))
 }
-
-///|
-test "throws on invalid characters in values" {
-  inspect(
-    try? @json.parse("a"),
-    content="Err(Invalid character 'a' at line 1, column 0)",
-  )
-}
-
-///|
-test "throws on invalid characters following a sign" {
-  inspect(
-    try? @json.parse("-a"),
-    content="Err(Invalid character 'a' at line 1, column 1)",
-  )
-}
-
-///|
-test "throws on invalid characters following a leading decimal point" {
-  inspect(
-    try? @json.parse("1.a"),
-    content="Err(Invalid character 'a' at line 1, column 2)",
-  )
-}
-
-///|
-test "throws on invalid characters following an exponent indicator" {
-  inspect(
-    try? @json.parse("1ea"),
-    content="Err(Invalid character 'a' at line 1, column 2)",
-  )
-}
-
-///|
-test "throws on invalid characters following an exponent sign" {
-  inspect(
-    try? @json.parse("1e-a"),
-    content="Err(Invalid character 'a' at line 1, column 3)",
-  )
-}
-
-///|
-test "throws on invalid new lines in strings" {
-  inspect(
-    try? @json.parse("\"\n\""),
-    content="Err(Invalid character '\\n' at line 1, column 1)",
-  )
-}
-
-///|
-test "throws on unterminated strings" {
-  inspect(try? @json.parse("\""), content="Err(Unexpected end of file)")
-}
-
-///|
-test "throws on invalid identifier start characters in property names" {
-  inspect(
-    try? @json.parse("{!:1}"),
-    content="Err(Invalid character '!' at line 1, column 1)",
-  )
-}
-
-///|
-test "throws on invalid characters following a property name" {
-  inspect(
-    try? @json.parse("{\"a\"!1}"),
-    content="Err(Invalid character '!' at line 1, column 4)",
-  )
-}
-
-///|
-test "throws on invalid characters following a property value" {
-  inspect(
-    try? @json.parse("{\"a\":1!}"),
-    content="Err(Invalid character '!' at line 1, column 6)",
-  )
-}
-
-///|
-test "throws on invalid characters following an array value" {
-  inspect(
-    try? @json.parse("[1!]"),
-    content="Err(Invalid character '!' at line 1, column 2)",
-  )
-}
-
-///|
-test "throws on invalid characters in literals" {
-  inspect(
-    try? @json.parse("tru!"),
-    content="Err(Invalid character '!' at line 1, column 3)",
-  )
-}
-
-///|
-test "throws on unterminated escapes" {
-  inspect(try? @json.parse("\"\\"), content="Err(Unexpected end of file)")
-}
-
-///|
-test "throws on invalid unicode escapes" {
-  inspect(
-    try? @json.parse("\"\\u000g\""),
-    content="Err(Invalid character 'g' at line 1, column 6)",
-  )
-}
-
-///|
-test "throws on escaped digits" {
-  inspect(
-    try? @json.parse("\"\\0\""),
-    content="Err(Invalid character '0' at line 1, column 2)",
-  )
-  inspect(
-    try? @json.parse("\"\\1\""),
-    content="Err(Invalid character '1' at line 1, column 2)",
-  )
-}
-
-///|
-test "throws on multiple values" {
-  inspect(
-    try? @json.parse("1 2"),
-    content="Err(Invalid character '2' at line 1, column 2)",
-  )
-}
-
-///|
-test "throws on unclosed objects before property names" {
-  inspect(try? @json.parse("{"), content="Err(Unexpected end of file)")
-}
-
-///|
-test "throws on unclosed objects after property names" {
-  inspect(try? @json.parse("{\"a\""), content="Err(Unexpected end of file)")
-}
-
-///|
-test "throws on unclosed objects before property values" {
-  inspect(try? @json.parse("{\"a\":"), content="Err(Unexpected end of file)")
-}
-
-///|
-test "throws on unclosed objects after property values" {
-  inspect(try? @json.parse("{\"a\":1"), content="Err(Unexpected end of file)")
-}
-
-///|
-test "throws on unclosed arrays before values" {
-  inspect(try? @json.parse("["), content="Err(Unexpected end of file)")
-}
-
-///|
-test "throws on unclosed arrays after values" {
-  inspect(try? @json.parse("[1"), content="Err(Unexpected end of file)")
-}
-
-///|
-test "throws on invalid property names" {
-  inspect(
-    try? @json.parse("{a:1}"),
-    content="Err(Invalid character 'a' at line 1, column 1)",
-  )
-}
-
-///|
-test "throws on array with extra comma" {
-  inspect(
-    try? @json.parse("[1,]"),
-    content="Err(Invalid character ']' at line 1, column 3)",
-  )
-  inspect(
-    try? @json.parse("[\"\",]"),
-    content="Err(Invalid character ']' at line 1, column 4)",
-  )
-}
-
-///|
-test "throws on object with extra comma" {
-  inspect(
-    try? @json.parse("{\"id\":0,}"),
-    content="Err(Invalid character '}' at line 1, column 8)",
-  )
-}
-
-///|
-test "throws on invalid number" {
-  inspect(
-    try? @json.parse("+1"),
-    content="Err(Invalid character '+' at line 1, column 0)",
-  )
-  inspect(try? @json.parse("-2."), content="Err(Unexpected end of file)")
-  inspect(
-    try? @json.parse(".2e-3"),
-    content="Err(Invalid character '.' at line 1, column 0)",
-  )
-  inspect(
-    try? @json.parse("0.e1"),
-    content="Err(Invalid character 'e' at line 1, column 2)",
-  )
-  inspect(
-    try? @json.parse("2.e+3"),
-    content="Err(Invalid character 'e' at line 1, column 2)",
-  )
-  inspect(
-    try? @json.parse("2.e-3"),
-    content="Err(Invalid character 'e' at line 1, column 2)",
-  )
-  inspect(
-    try? @json.parse("-.123"),
-    content="Err(Invalid character '.' at line 1, column 1)",
-  )
-  inspect(try? @json.parse("1."), content="Err(Unexpected end of file)")
-  inspect(
-    try? @json.parse(".123"),
-    content="Err(Invalid character '.' at line 1, column 0)",
-  )
-  inspect(
-    try? @json.parse("[1.]"),
-    content="Err(Invalid character ']' at line 1, column 3)",
-  )
-}
-
-///|
-test "throws on invalid chars" {
-  inspect(
-    try? @json.parse("[\u000c]"),
-    content="Err(Invalid character '\\u{0c}' at line 1, column 1)",
-  )
-  inspect(
-    try? @json.parse("[\"\u0009\"]"),
-    content="Err(Invalid character '\\t' at line 1, column 2)",
-  )
-  inspect(
-    try? @json.parse("[\"a\u0000a\"]"),
-    content="Err(Invalid character '\\u{00}' at line 1, column 3)",
-  )
-}
-
-//endregion

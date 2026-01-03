@@ -192,9 +192,51 @@ test "fixedarray_byte_blit_from_bytes" {
 
 ///|
 test "Bytes::equal with differing bytes" {
-  let bytes1 = b"\x01\x02\x03"
-  let bytes2 = b"\x01\x02\xFF" // Same length as bytes1 but last byte differs
-  inspect(bytes1 == bytes2, content="false")
+  let arr1 = Array::make(3, b'\x00')
+  arr1[0] = 0x01
+  arr1[1] = 0x02
+  arr1[2] = 0x03
+  let arr2 = Array::make(3, b'\x00')
+  arr2[0] = 0x01
+  arr2[1] = 0x02
+  arr2[2] = 0x04
+  let bytes1 = Bytes::from_array(arr1)
+  let bytes2 = Bytes::from_array(arr2)
+  inspect(Bytes::equal(bytes1, bytes2), content="false")
+}
+
+///|
+test "Bytes::to_fixedarray with len" {
+  let bytes = b"hello"
+  let arr = bytes.to_fixedarray(len=3)
+  inspect(arr, content="[b'\\x68', b'\\x65', b'\\x6C']")
+}
+
+///|
+test "Bytes::iter2" {
+  let iter = b"ab".iter2()
+  inspect(iter, content="[(0, b'\\x61'), (1, b'\\x62')]")
+}
+
+///|
+test "Bytes::add and repeat" {
+  inspect(
+    b"ab" + b"cd",
+    content=(
+      #|b"abcd"
+    ),
+  )
+  inspect(
+    b"xy".repeat(1),
+    content=(
+      #|b"xy"
+    ),
+  )
+}
+
+///|
+test "Bytes::rev_find none" {
+  inspect(b"abc".rev_find(b"x"), content="None")
 }
 
 ///|
@@ -290,4 +332,10 @@ test "Bytes find and rev_find" {
   inspect(target.find(b"zzz"[:]), content="None")
   inspect(target[:].find(b"bca"[:]), content="Some(1)")
   inspect(target[:].rev_find(b"bca"[:]), content="Some(1)")
+}
+
+///|
+test "BytesView::to_array" {
+  let view = b"hi"[:]
+  inspect(view.to_array(), content="[b'\\x68', b'\\x69']")
 }

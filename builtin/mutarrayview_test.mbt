@@ -250,3 +250,54 @@ test "iterator2" {
   let iter = arr.iterator2()
   inspect(iter.to_string(), content="[(0, 1), (1, 2), (2, 3), (3, 4), (4, 5)]")
 }
+
+///|
+test "panic MutArrayView index out of bounds" {
+  let arr = [1, 2]
+  let view = arr.mut_view()
+  let _ = view[2]
+
+}
+
+///|
+test "panic MutArrayView set out of bounds" {
+  let arr = [1, 2]
+  let view = arr.mut_view()
+  view[2] = 3
+}
+
+///|
+test "panic FixedArray mut_view invalid range" {
+  let arr : FixedArray[Int] = [1, 2, 3]
+  let _ = arr.mut_view(start=2, end=1)
+
+}
+
+///|
+test "panic MutArrayView sub invalid range" {
+  let arr = [1, 2, 3]
+  let view = arr.mut_view()
+  let _ = view[2:1]
+
+}
+
+///|
+test "MutArrayView iterators" {
+  let arr = [1, 2, 3]
+  let view = arr.mut_view()
+  inspect(view.iterator().to_array(), content="[1, 2, 3]")
+  inspect(view.rev_iterator().to_array(), content="[3, 2, 1]")
+  inspect(view.iterator2().to_string(), content="[(0, 1), (1, 2), (2, 3)]")
+}
+
+///|
+test "MutArrayView equality compare hash" {
+  let arr = [1, 2, 3]
+  let left = arr.mut_view()
+  let right = arr.mut_view()
+  inspect(left == right, content="true")
+  inspect(left.compare(right), content="0")
+  let hasher = Hasher::new(seed=0)
+  hasher.combine(left)
+  inspect(hasher.finalize() != 0, content="true")
+}

@@ -184,6 +184,7 @@ test "atan2f function comprehensive" {
   // Testing quadrant IV (x > 0, y < 0)
   assert_true(@math.atan2f(-1.0, 1.0).is_close(-pi / 4.0))
   assert_true(@math.atan2f(-2.0, 1.0).is_close(-@math.atanf(2.0)))
+  assert_true(@math.atan2f(-2.0, 2.0).is_close(-pi / 4.0))
 
   // Testing along axes
   assert_true(@math.atan2f(0.0, 1.0).is_close(0.0))
@@ -515,4 +516,49 @@ test "rem_pio2 double - negative value coverage" {
   // Very large negative value to trigger complex path
   let val3 = -1000.0
   inspect(@math.sin(val3), content="-0.8268795405320025")
+}
+
+///|
+test "atan2 double branch coverage" {
+  inspect(@math.atan2(0.0, 2.0), content="0")
+  inspect(@math.atan2(@double.infinity, 2.0), content="1.5707963267948966")
+  assert_true(
+    @math.atan2(1.0e200, 2.0).is_close(
+      @math.PI / 2.0,
+      absolute_tolerance=1.0e-12,
+    ),
+  )
+}
+
+///|
+test "sin and cos double edge paths" {
+  inspect(@math.sin(0.5), content="0.479425538604203")
+  assert_true(@math.cos(0.79).abs() <= 1.0)
+  assert_true(
+    @math.cos(3.0 * @math.PI / 2.0).is_close(0.0, absolute_tolerance=1.0e-12),
+  )
+}
+
+///|
+test "sin/cos huge arguments" {
+  let values = [1.0e20, -1.0e20, 1.0e300]
+  for v in values {
+    let s = @math.sin(v)
+    let c = @math.cos(v)
+    assert_true(s.abs() <= 1.0)
+    assert_true(c.abs() <= 1.0)
+  }
+}
+
+///|
+test "atan2f branch coverage" {
+  let pi = Float::from_double(@math.PI)
+  assert_true(@math.atan2f(-1.0, @float.neg_infinity).is_close(-pi))
+  assert_true(
+    @math.atan2f(1.0e20, 2.0).is_close(pi / 2.0, absolute_tolerance=1.0e-5),
+  )
+  assert_true(
+    @math.atan2f(1.0, -1.0e20).is_close(pi, absolute_tolerance=1.0e-5),
+  )
+  assert_true(@math.atan2f(1.0, 2.0).is_close(@math.atanf(0.5)))
 }

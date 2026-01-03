@@ -64,6 +64,14 @@ test "@strconv.parse_int64/base_parsing" {
   inspect(@strconv.parse_int64("0xFF"), content="255")
   inspect(@strconv.parse_int64("0b1010"), content="10")
   inspect(@strconv.parse_int64("0o777"), content="511")
+  let prefix = "0o"
+  let digits = "17"
+  let text = prefix + digits
+  inspect(@strconv.parse_int64(text, base=8), content="15")
+  let prefix_bin = "0b"
+  let bits = "101"
+  let bin_text = prefix_bin + bits
+  inspect(@strconv.parse_int64(bin_text, base=2), content="5")
 }
 
 ///|

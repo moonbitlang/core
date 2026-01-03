@@ -190,6 +190,30 @@ test "powf" {
 }
 
 ///|
+test "powf branch coverage" {
+  let near_one = Float::reinterpret_from_int(0x3f7fffff)
+  let sub = Float::reinterpret_from_int(1)
+  let under = @math.powf(0.5, 1.0e10)
+  assert_true(under == 0.0)
+  let over = @math.powf(1.5, 1.0e10)
+  assert_true(over.is_inf())
+  let close = @math.powf(near_one, 1.0e10)
+  assert_true(close <= 1.0)
+  let sub_res = @math.powf(sub, 2.0)
+  assert_true(sub_res == 0.0)
+  let interval = @math.powf(1.8, 3.0)
+  assert_true(interval > 0.0)
+  let overflow_edge = @math.powf(2.0, 128.0)
+  assert_true(overflow_edge.is_inf())
+  let underflow_deep = @math.powf(2.0, -200.0)
+  assert_true(underflow_deep == 0.0)
+  let underflow_edge = @math.powf(2.0, -150.0)
+  assert_true(underflow_edge == 0.0)
+  let subnorm = @math.powf(2.0, -130.0)
+  assert_true(subnorm > 0.0)
+}
+
+///|
 test "pow" {
   let test_cases = [
     (1.1, 1.1, 1.1105342410545758),
@@ -1150,4 +1174,49 @@ test "pow" {
       msg="Test failed: \{a} ** \{b} = \{actual}, expected \{expect}",
     )
   }
+}
+
+///|
+test "pow double branch coverage" {
+  let nan_res = @math.pow(-1.0, 0.5)
+  assert_true(nan_res.is_nan())
+  assert_eq(@math.pow(-1.0, 3.0), -1.0)
+  assert_eq(@math.pow(-2.0, 3.0), -8.0)
+  let tiny = @math.pow(0.5, 1.0e20)
+  assert_true(tiny == 0.0)
+  let huge = @math.pow(2.0, 1.0e20)
+  assert_true(huge.is_inf())
+  let near_one = @math.pow(0.9999999999999999, 1.0e10)
+  assert_true(near_one > 0.0)
+  let sub = @math.pow(1.0e-320, 2.0)
+  assert_true(sub == 0.0)
+  let overflow_edge = @math.pow(2.0, 1024.0)
+  assert_true(overflow_edge.is_inf())
+  let underflow_edge = @math.pow(2.0, -1075.0)
+  assert_true(underflow_edge == 0.0)
+}
+
+///|
+test "powf infinity exponent branches" {
+  assert_eq(@math.powf(-1.0, @float.infinity), 1.0)
+  assert_true(@math.powf(2.0, @float.infinity).is_pos_inf())
+  inspect(@math.powf(0.5, @float.infinity), content="0")
+  assert_true(@math.powf(0.5, @float.neg_infinity).is_pos_inf())
+}
+
+///|
+test "powf huge even exponent negative base" {
+  assert_true(@math.powf(-2.0, 16777216.0).is_pos_inf())
+}
+
+///|
+test "pow double infinity exponent branch" {
+  assert_true(@math.pow(1.0, @double.infinity).is_nan())
+  assert_eq(@math.pow(2.0, 1.0), 2.0)
+}
+
+///|
+test "scalbnf exponent clamp" {
+  assert_true(@math.scalbnf(1.0, 500).is_pos_inf())
+  inspect(@math.scalbnf(1.0, -500), content="0")
 }

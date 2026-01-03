@@ -1041,3 +1041,25 @@ test "default" {
   let a = @bigint.BigInt::default()
   assert_eq(a, 0N)
 }
+
+///|
+test "BigInt bit ops and arbitrary" {
+  let rs = @splitmix.new(seed=1)
+  let _ = @bigint.BigInt::arbitrary(1, rs)
+  let small = @bigint.BigInt::from_int(1)
+  let big = @bigint.BigInt::from_string("123456789012345678901234567891")
+  inspect(small.land(big).to_string(), content="1")
+  inspect(small.lor(big).to_string(), content="123456789012345678901234567891")
+  inspect(small.lxor(big).to_string(), content="123456789012345678901234567890")
+}
+
+///|
+test "BigInt bit_length negative multi-limb" {
+  let neg = @bigint.BigInt::from_string("-4294967297")
+  inspect(neg.bit_length() > 0, content="true")
+}
+
+///|
+test "BigInt bit_length zero" {
+  inspect(@bigint.BigInt::from_int(0).bit_length(), content="0")
+}

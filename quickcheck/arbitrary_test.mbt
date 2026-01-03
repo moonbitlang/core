@@ -103,3 +103,23 @@ test "arbitrary gen bytes" {
     ),
   )
 }
+
+///|
+test "arbitrary size branches" {
+  let rs1 = @splitmix.RandomState::default()
+  let _ : Int64 = @quickcheck.Arbitrary::arbitrary(4, rs1)
+  let rs2 = @splitmix.RandomState::default()
+  let _ : UInt64 = @quickcheck.Arbitrary::arbitrary(4, rs2)
+  let rs3 = @splitmix.RandomState::default()
+  let mut result : Result[Int, Int] = Ok(0)
+  for _ in 0..<64 {
+    result = @quickcheck.Arbitrary::arbitrary(1, rs3)
+    if result is Err(_) {
+      break
+    }
+  }
+  guard result is Err(_) else { fail("expected Err from Result arbitrary") }
+  let rs4 = @splitmix.RandomState::default()
+  let _ : FixedArray[Int] = @quickcheck.Arbitrary::arbitrary(3, rs4)
+
+}

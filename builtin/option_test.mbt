@@ -90,3 +90,16 @@ test "unwrap_or_error" {
     "ok",
   )
 }
+
+///|
+test "unwrap_or_default Some" {
+  let some : Int? = Some(5)
+  inspect(some.unwrap_or_default(), content="5")
+}
+
+///|
+test "Option compare Some vs None" {
+  let some : Int? = Some(1)
+  let none : Int? = None
+  inspect(some.compare(none), content="1")
+}

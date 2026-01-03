@@ -207,6 +207,37 @@ test "write_int_be method" {
 }
 
 ///|
+test "write_string_utf16be and view" {
+  let buf = @buffer.new(size_hint=8)
+  buf.write_string_utf16be("AZ")
+  inspect(
+    buf.to_bytes(),
+    content=(
+      #|b"\x00A\x00Z"
+    ),
+  )
+  inspect(buf.view().length(), content="4")
+}
+
+///|
+test "panic Buffer::write_char_utf8 out of range" {
+  let buf = @buffer.new()
+  buf.write_char_utf8((0x110000).unsafe_to_char())
+}
+
+///|
+test "panic Buffer::write_char_utf16le out of range" {
+  let buf = @buffer.new()
+  buf.write_char_utf16le((0x110000).unsafe_to_char())
+}
+
+///|
+test "panic Buffer::write_char_utf16be out of range" {
+  let buf = @buffer.new()
+  buf.write_char_utf16be((0x110000).unsafe_to_char())
+}
+
+///|
 test "write_double_le method" {
   let buf = @buffer.new(size_hint=16)
   buf.write_double_le(-2)

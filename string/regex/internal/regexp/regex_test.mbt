@@ -293,6 +293,111 @@ test "invalid regex test" {
 }
 
 ///|
+test "regex parse error branches" {
+  guard (try? @regexp.compile("(?<name"))
+    is Err(RegexpError(err=InvalidNamedCapture, ..)) else {
+    fail("expected InvalidNamedCapture for missing '>'")
+  }
+  guard (try? @regexp.compile("(?<dup>a)(?<dup>b)"))
+    is Err(RegexpError(err=InvalidNamedCapture, ..)) else {
+    fail("expected InvalidNamedCapture for duplicate name")
+  }
+  guard (try? @regexp.compile("(?m:abc"))
+    is Err(RegexpError(err=MissingParenthesis, ..)) else {
+    fail("expected MissingParenthesis for scoped flags")
+  }
+  guard (try? @regexp.compile("\\"))
+    is Err(RegexpError(err=TrailingBackslash, ..)) else {
+    fail("expected TrailingBackslash")
+  }
+  guard (try? @regexp.compile("\\09"))
+    is Err(RegexpError(err=InvalidEscape, ..)) else {
+    fail("expected InvalidEscape for \\0 followed by digit")
+  }
+  guard (try? @regexp.compile("\\1")) is Err(RegexpError(err=InvalidEscape, ..)) else {
+    fail("expected InvalidEscape for reserved escape")
+  }
+  guard (try? @regexp.compile("[\\c]"))
+    is Err(RegexpError(err=InvalidEscape, ..)) else {
+    fail("expected InvalidEscape in char class")
+  }
+  guard (try? @regexp.compile("[a-\\c]"))
+    is Err(RegexpError(err=InvalidEscape, ..)) else {
+    fail("expected InvalidEscape in range end")
+  }
+  guard (try? @regexp.compile("[a-\\b]"))
+    is Err(RegexpError(err=InvalidCharClass, ..)) else {
+    fail("expected InvalidCharClass for reversed range")
+  }
+  guard (try? @regexp.compile("[\\"))
+    is Err(RegexpError(err=TrailingBackslash, ..)) else {
+    fail("expected TrailingBackslash in char class")
+  }
+  guard (try? @regexp.compile("[a-\\"))
+    is Err(RegexpError(err=TrailingBackslash, ..)) else {
+    fail("expected TrailingBackslash in range end")
+  }
+  guard (try? @regexp.compile("[abc"))
+    is Err(RegexpError(err=MissingBracket, ..)) else {
+    fail("expected MissingBracket")
+  }
+  guard (try? @regexp.compile("(?q:abc)"))
+    is Err(RegexpError(err=InvalidRepeatOp, ..)) else {
+    fail("expected InvalidRepeatOp for unknown flag")
+  }
+  guard (try? @regexp.compile("\\pL"))
+    is Err(RegexpError(err=InvalidCharClass, ..)) else {
+    fail("expected InvalidCharClass for missing '{'")
+  }
+  guard (try? @regexp.compile("\\p{L"))
+    is Err(RegexpError(err=InvalidCharClass, ..)) else {
+    fail("expected InvalidCharClass for missing '}'")
+  }
+  guard (try? @regexp.compile("\\p{NoSuch}"))
+    is Err(RegexpError(err=InvalidCharClass, ..)) else {
+    fail("expected InvalidCharClass for unknown property")
+  }
+}
+
+///|
+test "regex escape branches" {
+  let vt_regex = @regexp.compile("\\v")
+  inspect(vt_regex.execute("\u{b}").matched(), content="true")
+  inspect(vt_regex.execute("v").matched(), content="false")
+  let null_regex = @regexp.compile("\\0")
+  inspect(null_regex.execute("\u{0}").matched(), content="true")
+  let case_regex = @regexp.compile("(?i:\\q)")
+  inspect(case_regex.execute("Q").matched(), content="true")
+  let not_space = @regexp.compile("[\\S]+")
+  inspect(not_space.execute("A").matched(), content="true")
+  let vt_class = @regexp.compile("[\\v]")
+  inspect(vt_class.execute("\u{b}").matched(), content="true")
+  let backspace_class = @regexp.compile("[\\b]")
+  inspect(backspace_class.execute("\u{8}").matched(), content="true")
+  let range_newline = @regexp.compile("[\\t-\\n]")
+  inspect(range_newline.execute("\n").matched(), content="true")
+}
+
+///|
+test "match result missing groups" {
+  let regex = @regexp.compile("(?<a>a)?b")
+  let result = regex.execute("b")
+  inspect(result.groups(), content="{}")
+  inspect(result.results(), content="[Some(\"b\"), None]")
+}
+
+///|
+test "to_json branches" {
+  ignore(@ast.Ast::Empty.to_json())
+  let node = @ast.Ast::ZeroOrOne(
+    @ast.Ast::CharClass(['a', 'a'], neg=false),
+    greedy=true,
+  )
+  ignore(node.to_json())
+  ignore(@vm.Instruction::Assertion(@vm.Predicate::BeginText).to_json())
+}
+
+///|
 test "quantifiers and repetition" {
   // Test * quantifier (zero or more)
   let regex = @regexp.compile("ab*c")

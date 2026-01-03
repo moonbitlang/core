@@ -26,6 +26,10 @@ test "@math.cbrtf" {
   inspect(@math.cbrtf(@float.not_a_number), content="NaN")
   inspect(@math.cbrtf(@float.infinity), content="Infinity")
   inspect(@math.cbrtf(@float.neg_infinity), content="-Infinity")
+  let subnormal = Float::reinterpret_from_uint(1U)
+  let sub_res = @math.cbrtf(subnormal)
+  assert_false(sub_res.is_nan())
+  assert_false(sub_res.is_inf())
 }
 
 ///|
@@ -45,4 +49,13 @@ test "@math.hypotf" {
   inspect(@math.hypotf(1.0, @float.infinity), content="Infinity")
   inspect(@math.hypotf(@float.neg_infinity, 1.0), content="Infinity")
   inspect(@math.hypotf(1, @float.neg_infinity), content="Infinity")
+  let small = @math.hypotf(1.0, 1.0e-8)
+  assert_true(small.is_close(1.0))
+}
+
+///|
+test "@math.hypot small ratio" {
+  let ys = [0.0]
+  let small = @math.hypot(1.0, ys[0])
+  assert_true(small.is_close(1.0))
 }

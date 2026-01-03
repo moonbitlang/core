@@ -85,3 +85,46 @@ test "to_string with radix" {
     content="4000000000000000",
   )
 }
+
+///|
+test "UInt64 decimal digit counts" {
+  inspect(100000UL.to_string(), content="100000")
+  inspect(1000000UL.to_string(), content="1000000")
+  inspect(10000000000UL.to_string(), content="10000000000")
+  inspect(100000000000UL.to_string(), content="100000000000")
+  inspect(1000000000000UL.to_string(), content="1000000000000")
+  inspect(10000000000000UL.to_string(), content="10000000000000")
+  inspect(100000000000000UL.to_string(), content="100000000000000")
+  inspect(1000000000000000UL.to_string(), content="1000000000000000")
+}
+
+///|
+test "panic Int::to_string invalid radix" {
+  ignore((1).to_string(radix=1))
+}
+
+///|
+test "panic UInt::to_string invalid radix" {
+  ignore(1U.to_string(radix=37))
+}
+
+///|
+test "to_string runtime zero paths" {
+  let arr = Array::new()
+  arr.push(1)
+  ignore(arr.pop())
+  let zero = arr.length()
+  inspect(zero.to_string(radix=16), content="0")
+  inspect(zero.to_string(radix=2), content="0")
+  inspect(zero.to_int64().to_string(radix=16), content="0")
+  inspect(zero.to_int64().to_string(radix=2), content="0")
+}
+
+///|
+test "panic UInt64::to_string invalid radix" {
+  let arr = Array::new()
+  arr.push(1)
+  ignore(arr.pop())
+  let zero = arr.length().to_uint64()
+  ignore(UInt64::to_string(zero, radix=1))
+}

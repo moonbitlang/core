@@ -13,33 +13,8 @@
 // limitations under the License.
 
 ///|
-test " same_object call with the same object" {
-  let s = "Hello"
-  @test.same_object(s, s)
-}
-
-///|
-test "panic same_object call with different objects" {
-  let a = "1"
-  let b = "2"
-  @test.same_object(a, b)
-}
-
-///|
-test "is_not called with the different objects" {
-  let a = "1"
-  let b = "2"
-  @test.not_same_object(a, b)
-}
-
-///|
-test "panic is_not called with the same object" {
-  let s = "Hello"
-  @test.not_same_object(s, s)
-}
-
-///|
-test "Test name" {
-  let t = @test.new("sample")
-  inspect(t.name(), content="sample")
+test "zip_with" {
+  let left = [1, 2, 3]
+  let right = [10, 20]
+  inspect(@array.zip_with(left, right, (a, b) => a + b), content="[11, 22]")
 }

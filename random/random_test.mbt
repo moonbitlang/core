@@ -39,6 +39,25 @@ test "prng" {
 }
 
 ///|
+struct FixedSource {
+  mut value : UInt64
+}
+
+///|
+impl @random.Source for FixedSource with next(self) -> UInt64 {
+  let current = self.value
+  self.value += 1UL
+  current
+}
+
+///|
+test "Rand::new with generator" {
+  let gen : FixedSource = { value: 1UL }
+  let rand = @random.Rand::new(generator=gen as &@random.Source)
+  inspect(rand.int(limit=10) < 10, content="true")
+}
+
+///|
 test {
   let random = @random.Rand::new()
   inspect(random.float(), content="0.27378302812576294")

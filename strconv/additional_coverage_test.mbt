@@ -38,3 +38,9 @@ test "parse_uint64 overflow check" {
     _ => fail("Expected StrConvError but got different error")
   }
 }
+
+///|
+test "from_string forwarding" {
+  let value : Int = FromStr::from_string("42")
+  inspect(value, content="42")
+}

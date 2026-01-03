@@ -28,6 +28,12 @@ test "Map keys iter" {
 }
 
 ///|
+test "Map::default" {
+  let m : Map[String, Int] = Default::default()
+  inspect(m.length(), content="0")
+}
+
+///|
 test "Map::of" {
   let arr : FixedArray[(String, Int)] = [("a", 1), ("b", 2), ("c", 3)]
   let map = Map::of(arr)
@@ -463,6 +469,14 @@ test "Map::get_from_string" {
   let view3 = "notfound"[:]
   inspect(map.get_from_string(view3), content="None")
 
+  // Test length mismatch
+  let short_view = "hell"[:]
+  inspect(map.get_from_string(short_view), content="None")
+
+  // Test content mismatch with same length
+  let mismatch_view = "hella"[:]
+  inspect(map.get_from_string(mismatch_view), content="None")
+
   // Test empty string
   let empty_map = { "": 42 }
   let empty_view = ""[:]
@@ -490,6 +504,14 @@ test "Map::get_from_bytes" {
   // Test non-existent key
   let view3 = b"notfound"[:]
   inspect(map.get_from_bytes(view3), content="None")
+
+  // Test length mismatch
+  let short_view = b"hell"[:]
+  inspect(map.get_from_bytes(short_view), content="None")
+
+  // Test content mismatch with same length
+  let mismatch_view = b"hellx"[:]
+  inspect(map.get_from_bytes(mismatch_view), content="None")
 
   // Test empty bytes
   let empty_map = { b"": 42 }
@@ -552,4 +574,51 @@ test "Map::merge_in_place empty maps" {
   inspect(map1.get("a"), content="Some(1)")
   map1.merge_in_place(map1)
   inspect(map1.length(), content="2")
+}
+
+///|
+priv struct LKey(Int, Int) derive(Eq)
+
+///|
+impl Hash for LKey with hash(self) {
+  let LKey(_, hash) = self
+  hash
+}
+
+///|
+impl Hash for LKey with hash_combine(self, hasher) {
+  let LKey(_, hash) = self
+  hasher.combine_int(hash)
+}
+
+///|
+test "Map collision probe paths" {
+  let map : Map[LKey, Int] = {}
+  let k1 = LKey::LKey(1, 1)
+  let k2 = LKey::LKey(2, 2)
+  map[k1] = 10
+  map[k2] = 20
+  let k1b = LKey::LKey(3, 1)
+  map.update(k1b, fn(v) {
+    match v {
+      Some(_) => None
+      None => Some(30)
+    }
+  })
+  inspect(map.get(k1b), content="Some(30)")
+  inspect(map[k1b], content="30")
+  inspect(map.get_or_default(LKey::LKey(4, 0), 99), content="99")
+  inspect(map.contains(LKey::LKey(5, 0)), content="false")
+}
+
+///|
+test "Map early exit on psl" {
+  let map : Map[LKey, Int] = {}
+  let k1 = LKey::LKey(1, 0)
+  let k2 = LKey::LKey(2, 1)
+  map[k1] = 10
+  map[k2] = 20
+  let missing = LKey::LKey(3, 0)
+  inspect(map.get_or_default(missing, 77), content="77")
+  inspect(map.contains(missing), content="false")
 }

@@ -282,6 +282,15 @@ test "from_json_tail_bug" {
 }
 
 ///|
+test "from_json rejects non-array" {
+  let bad_json : Json = { "a": 1 }
+  let result : Result[@deque.Deque[Int], @json.JsonDecodeError] = try? @json.from_json(
+    bad_json,
+  )
+  inspect(result is Err(_), content="true")
+}
+
+///|
 test "copy" {
   inspect(
     (@deque.new() : @deque.Deque[Int]).copy(),
@@ -1775,6 +1784,11 @@ test "blit_to_self_overlap" {
   let d3 = @deque.from_array([1, 2, 3, 4, 5])
   d3.blit_to(d3, len=2, src_offset=0, dst_offset=3)
   inspect(d3.to_array(), content="[1, 2, 3, 1, 2]")
+
+  // Case 4: Overlap with growth past current length
+  let d4 = @deque.from_array([1, 2, 3, 4, 5])
+  d4.blit_to(d4, len=3, src_offset=1, dst_offset=3)
+  inspect(d4.to_array(), content="[1, 2, 3, 2, 3, 4]")
 }
 
 ///|

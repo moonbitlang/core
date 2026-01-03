@@ -890,3 +890,150 @@ test "ArrayView::from_json" {
   let v : ArrayView[Int] = @json.from_json(u)
   inspect(v, content="[1, 2, 3]")
 }
+
+///|
+test "from_json special cases" {
+  let nan_value : Double = @json.from_json(Json::string("NaN"))
+  @json.inspect(nan_value, content="NaN")
+  let inf_value : Double = @json.from_json(Json::string("Infinity"))
+  @json.inspect(inf_value, content="Infinity")
+  let neg_inf_value : Double = @json.from_json(Json::string("-Infinity"))
+  @json.inspect(neg_inf_value, content="-Infinity")
+  let array_view_result : Result[ArrayView[Int], _] = try? @json.from_json(
+    Json::string("oops"),
+  )
+  guard array_view_result
+    is Err(JsonDecodeError((_, "ArrayView::from_json: expected array"))) else {
+    fail("expected ArrayView::from_json error")
+  }
+  let bytes_type_result : Result[Bytes, _] = try? @json.from_json(
+    Json::number(1),
+  )
+  guard bytes_type_result
+    is Err(JsonDecodeError((_, "Bytes::from_json: expected string"))) else {
+    fail("expected Bytes::from_json type error")
+  }
+  let bytes_escape_result : Result[Bytes, _] = try? @json.from_json(
+    Json::string("bad\\\\"),
+  )
+  guard bytes_escape_result
+    is Err(JsonDecodeError((_, "Bytes::from_json: invalid escape sequence"))) else {
+    fail("expected Bytes::from_json escape error")
+  }
+  let bytes_invalid_result : Result[Bytes, _] = try? @json.from_json(
+    Json::string("\u{0}"),
+  )
+  guard bytes_invalid_result
+    is Err(JsonDecodeError((_, "Bytes::from_json: invalid byte sequence"))) else {
+    fail("expected Bytes::from_json byte error")
+  }
+}
+
+///|
+test "tuple size mismatch" {
+  let wrong = [1].to_json()
+  let res2 : Result[(Int, Int), _] = try? @json.from_json(wrong)
+  guard res2 is Err(JsonDecodeError((_, "expected tuple of size 2"))) else {
+    fail("expected size 2 error")
+  }
+  let res3 : Result[(Int, Int, Int), _] = try? @json.from_json(wrong)
+  guard res3 is Err(JsonDecodeError((_, "expected tuple of size 3"))) else {
+    fail("expected size 3 error")
+  }
+  let res4 : Result[(Int, Int, Int, Int), _] = try? @json.from_json(wrong)
+  guard res4 is Err(JsonDecodeError((_, "expected tuple of size 4"))) else {
+    fail("expected size 4 error")
+  }
+  let res5 : Result[(Int, Int, Int, Int, Int), _] = try? @json.from_json(wrong)
+  guard res5 is Err(JsonDecodeError((_, "expected tuple of size 5"))) else {
+    fail("expected size 5 error")
+  }
+  let res6 : Result[(Int, Int, Int, Int, Int, Int), _] = try? @json.from_json(
+    wrong,
+  )
+  guard res6 is Err(JsonDecodeError((_, "expected tuple of size 6"))) else {
+    fail("expected size 6 error")
+  }
+  let res7 : Result[(Int, Int, Int, Int, Int, Int, Int), _] = try? @json.from_json(
+    wrong,
+  )
+  guard res7 is Err(JsonDecodeError((_, "expected tuple of size 7"))) else {
+    fail("expected size 7 error")
+  }
+  let res8 : Result[(Int, Int, Int, Int, Int, Int, Int, Int), _] = try? @json.from_json(
+    wrong,
+  )
+  guard res8 is Err(JsonDecodeError((_, "expected tuple of size 8"))) else {
+    fail("expected size 8 error")
+  }
+  let res9 : Result[(Int, Int, Int, Int, Int, Int, Int, Int, Int), _] = try? @json.from_json(
+    wrong,
+  )
+  guard res9 is Err(JsonDecodeError((_, "expected tuple of size 9"))) else {
+    fail("expected size 9 error")
+  }
+  let res10 : Result[(Int, Int, Int, Int, Int, Int, Int, Int, Int, Int), _] = try? @json.from_json(
+    wrong,
+  )
+  guard res10 is Err(JsonDecodeError((_, "expected tuple of size 10"))) else {
+    fail("expected size 10 error")
+  }
+  let res11 : Result[(Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int), _] = try? @json.from_json(
+    wrong,
+  )
+  guard res11 is Err(JsonDecodeError((_, "expected tuple of size 11"))) else {
+    fail("expected size 11 error")
+  }
+  let res12 : Result[
+    (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int),
+    _,
+  ] = try? @json.from_json(wrong)
+  guard res12 is Err(JsonDecodeError((_, "expected tuple of size 12"))) else {
+    fail("expected size 12 error")
+  }
+  let res13 : Result[
+    (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int),
+    _,
+  ] = try? @json.from_json(wrong)
+  guard res13 is Err(JsonDecodeError((_, "expected tuple of size 13"))) else {
+    fail("expected size 13 error")
+  }
+  let res14 : Result[
+    (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int),
+    _,
+  ] = try? @json.from_json(wrong)
+  guard res14 is Err(JsonDecodeError((_, "expected tuple of size 14"))) else {
+    fail("expected size 14 error")
+  }
+  let res15 : Result[
+    (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int),
+    _,
+  ] = try? @json.from_json(wrong)
+  guard res15 is Err(JsonDecodeError((_, "expected tuple of size 15"))) else {
+    fail("expected size 15 error")
+  }
+  let res16 : Result[
+    (
+      Int,
+      Int,
+      Int,
+      Int,
+      Int,
+      Int,
+      Int,
+      Int,
+      Int,
+      Int,
+      Int,
+      Int,
+      Int,
+      Int,
+      Int,
+      Int,
+    ),
+    _,
+  ] = try? @json.from_json(wrong)
+  guard res16 is Err(JsonDecodeError((_, "expected tuple of size 16"))) else {
+    fail("expected size 16 error")
+  }
+}

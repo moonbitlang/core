@@ -32,3 +32,36 @@ test "hash_data" {
   map[data] = 1
   inspect(map, content="{{x: [1, 2, 3], y: [4, 5, 6]}: 1}")
 }
+
+///|
+struct TestLogger {
+  mut output : String
+}
+
+///|
+struct Pair {
+  left : Int
+  right : Int
+} derive(Eq, Show)
+
+///|
+impl Logger for TestLogger with write_view(self, value) {
+  self.output = self.output + value.to_string()
+}
+
+///|
+test "Eq helpers" {
+  inspect(Eq::not_equal(1, 2), content="true")
+  inspect(Eq::op_equal(3, 3), content="true")
+  let a : Pair = Pair::{ left: 1, right: 2 }
+  let b : Pair = Pair::{ left: 1, right: 3 }
+  inspect(Eq::not_equal(a, b), content="true")
+}
+
+///|
+test "Logger defaults" {
+  let logger = TestLogger::{ output: "" }
+  logger.write_string("hi")
+  logger.write_char('!')
+  inspect(logger.output, content="hi!")
+}

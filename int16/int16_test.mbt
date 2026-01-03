@@ -488,3 +488,19 @@ test "Show for Int16 - base 36 (radix=36)" {
   inspect((-36 : Int16).to_string(radix=36), content="-10")
   inspect((-32768 : Int16).to_string(radix=36), content="-pa8")
 }
+
+///|
+test "Int16 not_equal and hash" {
+  inspect(Eq::not_equal((1 : Int16), (2 : Int16)), content="true")
+  let hasher = Hasher::new(seed=0)
+  hasher.combine((42 : Int16))
+  inspect(hasher.finalize() != 0, content="true")
+}
+
+///|
+test "Int16 int64 conversions" {
+  let val : Int16 = (123 : Int16)
+  let as64 = val.to_int64()
+  let back = Int16::from_int64(as64)
+  inspect(back.to_int(), content="123")
+}

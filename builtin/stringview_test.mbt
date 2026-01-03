@@ -121,3 +121,30 @@ test "panic StringView::view invalid range" {
 test "panic String::view invalid range" {
   ignore("abc".view(start_offset=2, end_offset=1))
 }
+
+///|
+test "StringView iter2 and eq length mismatch" {
+  let view = "abc"[:]
+  inspect(view.iter2().to_string(), content="[(0, 'a'), (1, 'b'), (2, 'c')]")
+  inspect(view == "ab"[:], content="false")
+}
+
+///|
+test "StringView compare physical equal" {
+  let s = "abc"
+  let left = s[:]
+  let right = s[:]
+  inspect(left.compare(right), content="0")
+}
+
+///|
+test "String::sub invalid start index" {
+  let s = "\u{1F600}A"
+  inspect(try? s[1:], content="Err(InvalidIndex)")
+}
+
+///|
+test "StringView::sub invalid start index" {
+  let view = "\u{1F600}A"[:]
+  inspect(try? view[1:], content="Err(InvalidIndex)")
+}

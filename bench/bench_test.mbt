@@ -13,33 +13,24 @@
 // limitations under the License.
 
 ///|
-test " same_object call with the same object" {
-  let s = "Hello"
-  @test.same_object(s, s)
+test "bench single_bench minimal" {
+  let summary = @bench.single_bench(
+    () => {
+      let mut x = 0
+      x = x + 1
+      ignore(x)
+    },
+    name="noop",
+    count=1,
+  )
+  let json = ToJson::to_json(summary).stringify()
+  inspect(json.contains("\"runs\""), content="true")
 }
 
 ///|
-test "panic same_object call with different objects" {
-  let a = "1"
-  let b = "2"
-  @test.same_object(a, b)
-}
-
-///|
-test "is_not called with the different objects" {
-  let a = "1"
-  let b = "2"
-  @test.not_same_object(a, b)
-}
-
-///|
-test "panic is_not called with the same object" {
-  let s = "Hello"
-  @test.not_same_object(s, s)
-}
-
-///|
-test "Test name" {
-  let t = @test.new("sample")
-  inspect(t.name(), content="sample")
+test "bench buffer writes with multiple samples" {
+  let bench = @bench.Bench::new()
+  bench.bench(() => ignore(1 + 1), name="first", count=1)
+  bench.bench(() => ignore(2 + 2), name="second", count=1)
+  inspect(bench.dump_summaries().contains(","), content="true")
 }

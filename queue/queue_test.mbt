@@ -19,6 +19,13 @@ test "new" {
 }
 
 ///|
+test "copy empty" {
+  let queue : @queue.Queue[Int] = @queue.new()
+  let copied = queue.copy()
+  inspect(copied.length(), content="0")
+}
+
+///|
 test "from_fixed_array_1" {
   let queue = @queue.from_array([1, 2, 3, 4])
   let queue2 = @queue.from_array([1])

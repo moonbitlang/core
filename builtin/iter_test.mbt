@@ -192,6 +192,13 @@ test "drop" {
 }
 
 ///|
+test "sub" {
+  let iter = test_from_array([1, 2, 3, 4, 5])
+  let res = iter.sub(start=1, end=4).collect()
+  inspect(res, content="[2, 3, 4]")
+}
+
+///|
 test "drop_while" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
   let exb = StringBuilder::new(size_hint=0)
@@ -461,6 +468,29 @@ test "eachi" {
   inspect(exb, content="13579")
 }
 
+///|
+test "intersperse early end" {
+  let iter = test_from_array([1, 2, 3])
+  let res = iter.intersperse(0).take(1).collect()
+  inspect(res, content="[1]")
+}
+
+///|
+test "intersperse stops on separator" {
+  let iter = [1, 2].iter().intersperse(0)
+  let seen = []
+  iter.run(x => {
+    seen.push(x)
+    if x == 0 {
+      IterEnd
+    } else {
+      IterContinue
+    }
+  })
+  |> ignore
+  inspect(seen, content="[1, 0]")
+}
+
 // For testing purposes
 
 ///|
@@ -723,6 +753,15 @@ test "Float::until with early termination" {
 test "Double::until with large numbers" {
   let result = 1000000.0.until(2000000.0, step=500000.0).collect()
   inspect(result, content="[1000000, 1500000]")
+}
+
+///|
+test "Double::until with NaN step" {
+  let values = []
+  for x in 1.0.until(1.0, step=@double.not_a_number, inclusive=true) {
+    values.push(x)
+  }
+  inspect(values, content="[1]")
 }
 
 ///|

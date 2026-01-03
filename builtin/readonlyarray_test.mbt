@@ -154,3 +154,19 @@ test "ReadOnlyArray compare" {
   inspect(empty1.compare(arr1), content="-1") // empty < non-empty
   inspect(arr1.compare(empty1), content="1") // non-empty > empty
 }
+
+///|
+test "ReadOnlyArray iterator and sub" {
+  let arr : ReadOnlyArray[Int] = [1, 2, 3]
+  inspect(arr.iterator().to_array(), content="[1, 2, 3]")
+  inspect(arr[1:], content="[2, 3]")
+}
+
+///|
+test "ReadOnlyArray json and hash" {
+  let arr : ReadOnlyArray[Int] = [1, 2, 3]
+  @json.inspect(arr, content=[1, 2, 3])
+  let hasher = Hasher::new(seed=0)
+  hasher.combine(arr)
+  inspect(hasher.finalize() != 0, content="true")
+}

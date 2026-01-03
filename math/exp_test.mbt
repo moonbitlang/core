@@ -63,3 +63,59 @@ test "expm1f Test" {
     )
   }
 }
+
+///|
+test "expm1f reduced branch k=1" {
+  let res = @math.expm1f(0.4)
+  inspect(res > 0.0 && res < 1.0, content="true")
+}
+
+///|
+test "expm1f large k branch" {
+  let x = Float::reinterpret_from_uint(0x42b17217U)
+  let res = @math.expm1f(x)
+  assert_true(res > 0.0)
+}
+
+///|
+test "exp double special cases" {
+  assert_true(@math.exp(@double.infinity).is_pos_inf())
+  inspect(@math.exp(@double.neg_infinity), content="0")
+  assert_true(@math.exp(1000.0).is_pos_inf())
+  inspect(@math.exp(-1000.0), content="0")
+}
+
+///|
+test "exp double moderate values" {
+  inspect(@math.exp(0.1), content="1.1051709180756477")
+}
+
+///|
+test "expm1 double special cases" {
+  inspect(@math.expm1(-100.0), content="-1")
+  inspect(@math.expm1(0.1), content="0.10517091807564763")
+}
+
+///|
+test "expf underflow path" {
+  let res = @math.expf(-110.0)
+  assert_true(res == 0.0)
+}
+
+///|
+test "exp double k boundaries" {
+  let high = @math.exp(709.5)
+  assert_true(!high.is_inf())
+  assert_true(high > 0.0)
+  let low = @math.exp(-740.0)
+  assert_true(low > 0.0)
+  assert_true(low < 1.0e-300)
+}
+
+///|
+test "expm1 double branches" {
+  let mid = @math.expm1(0.4)
+  assert_true(mid > 0.0 && mid < 1.0)
+  let big = @math.expm1(20.0)
+  assert_true(big > 1.0e8)
+}

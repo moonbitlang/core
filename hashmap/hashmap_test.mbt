@@ -210,6 +210,12 @@ test "to_array" {
 }
 
 ///|
+test "to_array empty" {
+  let map : @hashmap.HashMap[Int, String] = @hashmap.new()
+  inspect(map.to_array(), content="[]")
+}
+
+///|
 test "get_nonexistent_key" {
   let m = @hashmap.new()
   m.set("a", 1)
@@ -487,4 +493,45 @@ test "@hashmap.merge_in_place empty maps" {
   verify_content(map1, [("a", 1), ("b", 2)])
   map1.merge_in_place(map1)
   verify_content(map1, [("a", 1), ("b", 2)])
+}
+
+///|
+priv struct Key(Int, Int) derive(Eq)
+
+///|
+impl Hash for Key with hash(self) {
+  let Key(_, hash) = self
+  hash
+}
+
+///|
+impl Hash for Key with hash_combine(self, hasher) {
+  let Key(_, hash) = self
+  hasher.combine_int(hash)
+}
+
+///|
+test "hashmap collision probe paths" {
+  let map : @hashmap.HashMap[Key, Int] = @hashmap.new()
+  let k0 = Key::Key(0, 0)
+  let k1 = Key::Key(1, 1)
+  map.set(k0, 10)
+  map.set(k1, 20)
+  inspect(map.get_or_default(Key::Key(2, 0), 99), content="99")
+  inspect(map.contains(Key::Key(3, 0)), content="false")
+}
+
+///|
+test "hashmap get_or_init push_away" {
+  let map : @hashmap.HashMap[Key, Int] = @hashmap.new()
+  map.set(Key::Key(1, 1), 10)
+  map.set(Key::Key(2, 2), 20)
+  inspect(map.get_or_init(Key::Key(3, 1), () => 30), content="30")
+  inspect(map.get(Key::Key(3, 1)), content="Some(30)")
+}
+
+///|
+test "hashmap default" {
+  let map : @hashmap.HashMap[Int, Int] = Default::default()
+  inspect(map.length(), content="0")
 }

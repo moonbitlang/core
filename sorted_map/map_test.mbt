@@ -313,11 +313,26 @@ test "to_json with empty map" {
 }
 
 ///|
+test "default" {
+  let map : @sorted_map.SortedMap[Int, Int] = Default::default()
+  inspect(map.length(), content="0")
+}
+
+///|
 test "from_json" {
   for
     xs in (@quickcheck.samples(20) : Array[@sorted_map.SortedMap[String, Int]]) {
     assert_eq(xs, @json.from_json(xs.to_json()))
   }
+}
+
+///|
+test "from_json rejects non-object" {
+  let bad_json : Json = 1
+  let result : Result[@sorted_map.SortedMap[String, Int], @json.JsonDecodeError] = try? @json.from_json(
+    bad_json,
+  )
+  inspect(result is Err(_), content="true")
 }
 
 ///|

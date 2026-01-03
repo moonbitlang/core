@@ -31,3 +31,13 @@ test "panic get" {
 test "panic Deque::set" {
   @deque.from_array([1, 2, 3])[-1] = 1
 }
+
+///|
+test "panic insert out of bounds" {
+  @deque.from_array([1, 2, 3]).insert(4, 9)
+}
+
+///|
+test "panic remove out of bounds" {
+  @deque.from_array([1, 2, 3]).remove(3) |> ignore
+}

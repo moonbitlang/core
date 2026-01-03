@@ -68,3 +68,8 @@ test "UInt16 hash combine" {
   hasher.combine((0x00FF : UInt16))
   inspect(hasher.finalize() != 0, content="true")
 }
+
+///|
+test "UInt16 not_equal" {
+  inspect(Eq::not_equal((0x0001 : UInt16), (0x0002 : UInt16)), content="true")
+}
