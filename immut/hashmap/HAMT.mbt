@@ -1,4 +1,4 @@
-// Copyright 2025 International Digital Economy Academy
+// Copyright 2026 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -621,33 +621,15 @@ pub fn[K, V] HashMap::each(
 }
 
 ///|
-/// Returns all keys of the map
-pub fn[K, V] HashMap::keys(self : HashMap[K, V]) -> Iter[K] {
-  self.iter().map(p => p.0)
+/// Returns all keys of the map.
+pub fn[K, V] HashMap::keys_iterator(self : HashMap[K, V]) -> Iterator[K] {
+  self.iterator().map(p => p.0)
 }
 
 ///|
-/// Returns all values of the map
-#alias(elems, deprecated="Use `values` instead")
-pub fn[K, V] HashMap::values(self : HashMap[K, V]) -> Iter[V] {
-  self.iter().map(p => p.1)
-}
-
-///|
-/// Converted to Iter
-pub fn[K, V] HashMap::iter(self : HashMap[K, V]) -> Iter[(K, V)] {
-  fn go(node) -> Iter[(K, V)] {
-    match node {
-      Leaf(k, v, bucket) => Iter::singleton((k, v)) + bucket.iter()
-      Flat(k, v, _) => Iter::singleton((k, v))
-      Branch(children) => children.data.iter().flat_map(go)
-    }
-  }
-
-  match self.0 {
-    None => Iter::empty()
-    Some(node) => go(node)
-  }
+/// Returns all values of the map.
+pub fn[K, V] HashMap::values_iterator(self : HashMap[K, V]) -> Iterator[V] {
+  self.iterator().map(p => p.1)
 }
 
 ///|
@@ -702,19 +684,6 @@ pub fn[K, V] HashMap::iterator2(self : HashMap[K, V]) -> Iterator2[K, V] {
 }
 
 ///|
-pub fn[K, V] HashMap::iter2(self : HashMap[K, V]) -> Iter2[K, V] {
-  self.iterator2().iter2()
-}
-
-///|
-#as_free_fn
-pub fn[K : Eq + Hash, V] HashMap::from_iter(
-  iter : Iter[(K, V)],
-) -> HashMap[K, V] {
-  iter.fold(init=new(), (m, e) => m.add(e.0, e.1))
-}
-
-///|
 #as_free_fn
 pub fn[K : Eq + Hash, V] HashMap::from_iterator(
   iter : Iterator[(K, V)],
@@ -724,8 +693,8 @@ pub fn[K : Eq + Hash, V] HashMap::from_iterator(
 
 ///|
 pub impl[K : Show, V : Show] Show for HashMap[K, V] with output(self, logger) {
-  logger.write_iter(
-    self.iter(),
+  logger.write_iterator(
+    self.iterator(),
     prefix="@immut/hashmap.from_array([",
     suffix="])",
   )

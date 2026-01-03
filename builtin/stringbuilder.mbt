@@ -1,4 +1,4 @@
-// Copyright 2025 International Digital Economy Academy
+// Copyright 2026 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -34,8 +34,8 @@ pub fn[T : Show] StringBuilder::write_object(
 /// ```mbt check
 /// test {
 ///   let sb = StringBuilder::new()
-///   let chars = "Hello🤣".iter()
-///   sb.write_iter(chars)
+///   let chars = "Hello🤣".iterator()
+///   sb.write_iterator(chars)
 ///   assert_eq(sb.to_string(), "Hello🤣")
 /// }
 /// ```

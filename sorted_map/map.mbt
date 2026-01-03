@@ -1,4 +1,4 @@
-// Copyright 2025 International Digital Economy Academy
+// Copyright 2026 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -192,7 +192,7 @@ pub fn[K, V] SortedMap::eachi(
 
 ///|
 /// Returns all keys in the map.
-pub fn[K, V] SortedMap::keys_as_iter(self : SortedMap[K, V]) -> Iter[K] {
+pub fn[K, V] SortedMap::keys_iterator(self : SortedMap[K, V]) -> Iterator[K] {
   let todo_list = []
   let mut next_node = self.root
   Iterator::new(fn() {
@@ -207,12 +207,12 @@ pub fn[K, V] SortedMap::keys_as_iter(self : SortedMap[K, V]) -> Iter[K] {
       }
       None => None
     }
-  }).iter()
+  })
 }
 
 ///|
 /// Returns all values in the map.
-pub fn[K, V] SortedMap::values_as_iter(self : SortedMap[K, V]) -> Iter[V] {
+pub fn[K, V] SortedMap::values_iterator(self : SortedMap[K, V]) -> Iterator[V] {
   let todo_list = []
   let mut next_node = self.root
   Iterator::new(fn() {
@@ -227,7 +227,7 @@ pub fn[K, V] SortedMap::values_as_iter(self : SortedMap[K, V]) -> Iter[V] {
       }
       None => None
     }
-  }).iter()
+  })
 }
 
 ///|
@@ -239,14 +239,6 @@ pub fn[K, V] SortedMap::to_array(self : SortedMap[K, V]) -> Array[(K, V)] {
 }
 
 ///|
-pub fn[K, V] SortedMap::iter(self : SortedMap[K, V]) -> Iter[(K, V)] {
-  self.iterator().iter()
-}
-
-///|
-pub fn[K, V] SortedMap::iter2(self : SortedMap[K, V]) -> Iter2[K, V] {
-  self.iterator2().iter2()
-}
 
 ///|
 pub fn[K, V] SortedMap::iterator(self : SortedMap[K, V]) -> Iterator[(K, V)] {
@@ -274,16 +266,6 @@ pub fn[K, V] SortedMap::iterator2(self : SortedMap[K, V]) -> Iterator2[K, V] {
 
 ///|
 #as_free_fn
-pub fn[K : Compare, V] SortedMap::from_iter(
-  iter : Iter[(K, V)],
-) -> SortedMap[K, V] {
-  let m = new()
-  iter.each(e => m[e.0] = e.1)
-  m
-}
-
-///|
-#as_free_fn
 pub fn[K : Compare, V] SortedMap::from_iterator(
   iter : Iterator[(K, V)],
 ) -> SortedMap[K, V] {
@@ -299,16 +281,16 @@ pub impl[K : @quickcheck.Arbitrary + Compare, V : @quickcheck.Arbitrary] @quickc
   K,
   V,
 ] with arbitrary(size, rs) {
-  @quickcheck.Arbitrary::arbitrary(size, rs) |> from_iter
+  @quickcheck.Arbitrary::arbitrary(size, rs) |> from_iterator
 }
 
 ///|
-/// Returns a new array of key-value pairs that are within the specified range [low, high].
-pub fn[K : Compare, V] SortedMap::range(
+/// Returns a new iterator of key-value pairs within the specified range [low, high].
+pub fn[K : Compare, V] SortedMap::range_iterator2(
   self : SortedMap[K, V],
   low : K,
   high : K,
-) -> Iter2[K, V] {
+) -> Iterator2[K, V] {
   let todo_list = []
   let mut next_node = self.root
   Iterator2::new(fn() {
@@ -341,7 +323,7 @@ pub fn[K : Compare, V] SortedMap::range(
       }
       None => None
     }
-  }).iter2()
+  })
 }
 
 ///|

@@ -1,4 +1,4 @@
-// Copyright 2025 International Digital Economy Academy
+// Copyright 2026 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -227,7 +227,11 @@ fn[K : Eq] HashSet::grow(self : HashSet[K]) -> Unit {
 
 ///|
 pub impl[K : Show] Show for HashSet[K] with output(self, logger) {
-  logger.write_iter(self.iter(), prefix="@hashset.from_array([", suffix="])")
+  logger.write_iterator(
+    self.iterator(),
+    prefix="@hashset.from_array([",
+    suffix="])",
+  )
 }
 
 ///|
@@ -288,12 +292,6 @@ pub fn[K] HashSet::clear(self : HashSet[K]) -> Unit {
 
 ///|
 /// Returns the iterator of the hash set.
-pub fn[K] HashSet::iter(self : HashSet[K]) -> Iter[K] {
-  self.iterator().iter()
-}
-
-///|
-/// Returns the iterator of the hash set.
 pub fn[K] HashSet::iterator(self : HashSet[K]) -> Iterator[K] {
   let mut i = 0
   let len = self.entries.length()
@@ -320,14 +318,6 @@ pub fn[K] HashSet::to_array(self : HashSet[K]) -> Array[K] {
     }
   }
   arr
-}
-
-///|
-#as_free_fn
-pub fn[K : Hash + Eq] HashSet::from_iter(iter : Iter[K]) -> HashSet[K] {
-  let s = new()
-  iter.each(e => s.add(e))
-  s
 }
 
 ///|
@@ -393,9 +383,9 @@ pub fn[K : Hash + Eq] HashSet::is_disjoint(
   other : HashSet[K],
 ) -> Bool {
   if self.length() <= other.length() {
-    self.iter().all(k => !other.contains(k))
+    self.iterator().all(k => !other.contains(k))
   } else {
-    other.iter().all(k => !self.contains(k))
+    other.iterator().all(k => !self.contains(k))
   }
 }
 
@@ -406,7 +396,7 @@ pub fn[K : Hash + Eq] HashSet::is_subset(
   other : HashSet[K],
 ) -> Bool {
   if self.length() <= other.length() {
-    self.iter().all(k => other.contains(k))
+    self.iterator().all(k => other.contains(k))
   } else {
     false
   }
@@ -449,7 +439,7 @@ pub impl[K : Hash + Eq] Sub for HashSet[K] with sub(self, other) {
 pub impl[X : @quickcheck.Arbitrary + Eq + Hash] @quickcheck.Arbitrary for HashSet[
   X,
 ] with arbitrary(size, rs) {
-  @quickcheck.Arbitrary::arbitrary(size, rs) |> from_iter
+  @quickcheck.Arbitrary::arbitrary(size, rs) |> from_iterator
 }
 
 ///|

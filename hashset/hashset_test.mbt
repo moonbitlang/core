@@ -149,7 +149,7 @@ test "is_empty" {
 
 ///|
 test "iter" {
-  let m = @hashset.from_array(["a", "b", "c"]).iter().collect()
+  let m = @hashset.from_array(["a", "b", "c"]).iterator().collect()
   m.sort()
   inspect(
     m,
@@ -363,19 +363,22 @@ test "clear_and_reinsert" {
 
 ///|
 test "from_iter multiple elements iter" {
-  let array = @hashset.from_iter([1, 2, 3].iter()).to_array()
+  let array = @hashset.from_iterator([1, 2, 3].iterator()).to_array()
   array.sort()
   inspect(array, content="[1, 2, 3]")
 }
 
 ///|
 test "from_iter single element iter" {
-  inspect(@hashset.from_iter([1].iter()), content="@hashset.from_array([1])")
+  inspect(
+    @hashset.from_iterator([1].iterator()),
+    content="@hashset.from_array([1])",
+  )
 }
 
 ///|
 test "from_iter empty iter" {
-  let map : @hashset.HashSet[Int] = @hashset.from_iter(Iter::empty())
+  let map : @hashset.HashSet[Int] = @hashset.from_iterator(Iterator::empty())
   inspect(map, content="@hashset.from_array([])")
 }
 

@@ -13,6 +13,18 @@
 // limitations under the License.
 
 ///|
+fn range(start : Int, end : Int) -> Iterator[Int] {
+  let mut current = start
+  Iterator::new(() => if current >= end {
+    None
+  } else {
+    let value = current
+    current += 1
+    Some(value)
+  })
+}
+
+///|
 test "empty" {
   let iter = Iterator::empty()
   let exb = StringBuilder::new(size_hint=0)
@@ -52,13 +64,13 @@ test "take" {
   inspect(exb, content="123")
   // normal take
   let evaluated = []
-  let collected = (1).until(20).tap(evaluated.push(_)).take(10).collect()
+  let collected = range(1, 20).tap(evaluated.push(_)).take(10).collect()
   inspect(collected, content="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]")
   inspect(evaluated, content="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]")
   // take with concat
   let evaluated2 = []
-  let collected2a = (1).until(20).tap(i => evaluated2.push("a\{i}")).take(5)
-  let collected2b = (1).until(20).tap(i => evaluated2.push("b\{i}")).take(5)
+  let collected2a = range(1, 20).tap(i => evaluated2.push("a\{i}")).take(5)
+  let collected2b = range(1, 20).tap(i => evaluated2.push("b\{i}")).take(5)
   let collected2 = collected2a.concat(collected2b).collect()
   inspect(collected2, content="[1, 2, 3, 4, 5, 1, 2, 3, 4, 5]")
   inspect(
@@ -69,8 +81,8 @@ test "take" {
   )
   // take 0 with concat
   let evaluated3 = []
-  let collected3a = (1).until(20).tap(i => evaluated3.push("a\{i}")).take(0)
-  let collected3b = (1).until(20).tap(i => evaluated3.push("b\{i}")).take(5)
+  let collected3a = range(1, 20).tap(i => evaluated3.push("a\{i}")).take(0)
+  let collected3b = range(1, 20).tap(i => evaluated3.push("b\{i}")).take(5)
   let collected3 = collected3a.concat(collected3b).collect()
   inspect(collected3, content="[1, 2, 3, 4, 5]")
   inspect(
@@ -271,13 +283,13 @@ test "mapi" {
 test "filter_map" {
   let arr = [1, 2, 3, 4, 5]
   let r1 = arr
-    .iter()
+    .iterator()
     .filter_map(x => if x < 3 { None } else { Some(x) })
     .collect()
   inspect(r1, content="[3, 4, 5]")
-  let r2 : Array[Unit] = arr.iter().filter_map(_x => None).collect()
+  let r2 : Array[Unit] = arr.iterator().filter_map(_x => None).collect()
   inspect(r2, content="[]")
-  let r3 : Array[Unit] = [].iter().filter_map(Option::Some(_)).collect()
+  let r3 : Array[Unit] = [].iterator().filter_map(Option::Some(_)).collect()
   inspect(r3, content="[]")
   // Test using next() directly to ensure the closure is executed
   let it1 = [1, 2, 3, 4, 5]
@@ -435,41 +447,41 @@ test "tree" {
 
 ///|
 test "Iterator::intersperse" {
-  inspect([1, 2, 3].iter().intersperse(0), content="[1, 0, 2, 0, 3]")
+  inspect([1, 2, 3].iterator().intersperse(0), content="[1, 0, 2, 0, 3]")
   inspect(
-    [1, 2, 3, 4, 5, 6, 7, 8, 9].iter().intersperse(0),
+    [1, 2, 3, 4, 5, 6, 7, 8, 9].iterator().intersperse(0),
     content="[1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 0, 7, 0, 8, 0, 9]",
   )
-  inspect(([] : Array[Int]).iter().intersperse(0), content="[]")
-  inspect([1].iter().intersperse(0), content="[1]")
+  inspect(([] : Array[Int]).iterator().intersperse(0), content="[]")
+  inspect([1].iterator().intersperse(0), content="[1]")
 }
 
 ///|
 test "Iterator::last" {
-  inspect([1, 2, 3].iter().last(), content="Some(3)")
-  inspect([1].iter().last(), content="Some(1)")
-  inspect(([] : Array[Int]).iter().last(), content="None")
+  inspect([1, 2, 3].iterator().last(), content="Some(3)")
+  inspect([1].iterator().last(), content="Some(1)")
+  inspect(([] : Array[Int]).iterator().last(), content="None")
 }
 
 ///|
 test "Iterator::head" {
-  inspect([1, 2, 3].iter().head(), content="Some(1)")
-  inspect([1].iter().head(), content="Some(1)")
-  inspect(([] : Array[Int]).iter().head(), content="None")
+  inspect([1, 2, 3].iterator().head(), content="Some(1)")
+  inspect([1].iterator().head(), content="Some(1)")
+  inspect(([] : Array[Int]).iterator().head(), content="None")
 }
 
 ///|
 test "Iterator::as_view" {
-  inspect([1, 2, 3].iter()[1:2], content="[2]")
-  inspect([1, 2, 3].iter()[1:], content="[2, 3]")
-  inspect([1, 2, 3].iter()[1:], content="[2, 3]")
-  inspect([1, 2, 3].iter()[:], content="[1, 2, 3]")
+  inspect([1, 2, 3].iterator()[1:2], content="[2]")
+  inspect([1, 2, 3].iterator()[1:], content="[2, 3]")
+  inspect([1, 2, 3].iterator()[1:], content="[2, 3]")
+  inspect([1, 2, 3].iterator()[:], content="[1, 2, 3]")
 }
 
 ///|
 test "Iterator::enumerate" {
-  inspect([1, 2, 3].iter2(), content="[(0, 1), (1, 2), (2, 3)]")
-  inspect([1, 2, 3].iter2().to_string(), content="[(0, 1), (1, 2), (2, 3)]")
+  inspect([1, 2, 3].iterator2(), content="[(0, 1), (1, 2), (2, 3)]")
+  inspect([1, 2, 3].iterator2().to_string(), content="[(0, 1), (1, 2), (2, 3)]")
 }
 
 ///|
@@ -548,11 +560,11 @@ test "Iterator::nth" {
 ///|
 test "@builtin.Iterator::maximum" {
   // Basic functionality with integers
-  inspect([1, 2, 3, 4, 5].iter().maximum(), content="Some(5)")
+  inspect([1, 2, 3, 4, 5].iterator().maximum(), content="Some(5)")
   // With negative numbers
-  inspect([-5, -3, -1, -10].iter().maximum(), content="Some(-1)")
+  inspect([-5, -3, -1, -10].iterator().maximum(), content="Some(-1)")
   // Single element
-  inspect([42].iter().maximum(), content="Some(42)")
+  inspect([42].iterator().maximum(), content="Some(42)")
   // Empty iterator should return None
   let empty_iter : Iterator[Int] = Iterator::empty()
   inspect(empty_iter.maximum(), content="None")
@@ -583,7 +595,7 @@ test "Iterator::intersperse with early termination" {
 ///|
 test "Iterator::iter method" {
   let original = [1, 2, 3].iterator()
-  let result = original.iter().collect()
+  let result = original.iterator().collect()
   inspect(result, content="[1, 2, 3]")
 }
 
@@ -612,7 +624,7 @@ test "Iterator::add operator" {
 ///|
 test "Iterator::iterator2" {
   let iter : Iterator[Int] = [].iterator()
-  for _, _ in iter.iter2() {
+  for _, _ in iter.iterator2() {
     assert_true(false)
   }
   let iter = [0, 1, 2].iterator().iterator2()
@@ -628,7 +640,7 @@ test "Iterator::iterator2" {
 ///|
 test "Iterator::iter2" {
   let iter = [0, 1, 2].iterator()
-  for i, x in iter.iter2() {
+  for i, x in iter.iterator2() {
     assert_eq(i, x)
   }
   for i, x in iter {

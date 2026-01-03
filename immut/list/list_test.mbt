@@ -28,6 +28,7 @@ test "length" {
 }
 
 ///|
+#warnings("-deprecated")
 test "iter" {
   let ls = @list.of([1, 2, 3, 4, 5])
   let mut failed = false
@@ -40,12 +41,14 @@ test "iter" {
 }
 
 ///|
+#warnings("-deprecated")
 test "iter_map_fold" {
   let ls = @list.of([1, 2, 3, 4, 5])
   inspect(ls.iter().map(x => x + 1).fold((a, b) => a + b, init=0), content="20")
 }
 
 ///|
+#warnings("-deprecated")
 test "iteri" {
   let mut v = 0
   let mut failed = false
@@ -665,6 +668,7 @@ test "add" {
 }
 
 ///|
+#warnings("-deprecated")
 test "@list.from_iter multiple elements iter" {
   inspect(
     @list.from_iter([1, 2, 3].iter()),
@@ -673,6 +677,7 @@ test "@list.from_iter multiple elements iter" {
 }
 
 ///|
+#warnings("-deprecated")
 test "@list.from_iter_rev multiple elements iter" {
   inspect(
     @list.from_iter_rev([1, 2, 3].iter()),
@@ -681,11 +686,13 @@ test "@list.from_iter_rev multiple elements iter" {
 }
 
 ///|
+#warnings("-deprecated")
 test "@list.from_iter single element iter" {
   inspect(@list.from_iter([1].iter()), content="@list.from_array([1])")
 }
 
 ///|
+#warnings("-deprecated")
 test "@list.from_iter empty iter" {
   let pq : @list.T[Int] = @list.from_iter(Iter::empty())
   inspect(pq, content="@list.from_array([])")
@@ -704,6 +711,7 @@ test "hash" {
 }
 
 ///|
+#warnings("-deprecated")
 test "stackover flow" {
   let iter = Int::until(0, 1 << 20)
   let lst = @list.from_iter(iter)

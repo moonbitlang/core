@@ -1,4 +1,4 @@
-// Copyright 2025 International Digital Economy Academy
+// Copyright 2026 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -536,10 +536,8 @@ pub impl[K : @quickcheck.Arbitrary + Hash + Eq, V : @quickcheck.Arbitrary] @quic
   V,
 ] with arbitrary(size, rs) {
   let m = new()
-  (@quickcheck.Arbitrary::arbitrary(size, rs) : Iter[(K, V)]).each(kv => m.set(
-    kv.0,
-    kv.1,
-  ))
+  let iter : Iterator[(K, V)] = @quickcheck.Arbitrary::arbitrary(size, rs)
+  iter.each(kv => m.set(kv.0, kv.1))
   m
 }
 

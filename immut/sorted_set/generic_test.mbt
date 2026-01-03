@@ -1,4 +1,4 @@
-// Copyright 2025 International Digital Economy Academy
+// Copyright 2026 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,29 +27,28 @@ test "compare with shared prefix" {
 }
 
 ///|
-test "iter early termination - value" {
+test "iterator early termination - value" {
   let set = @sorted_set.from_array([1, 2, 3])
   let mut count = 0
-  let _ = set
-    .iter()
-    .run(x => if x == 2 {
-      IterEnd
-    } else {
-      count = count + 1
-      IterContinue
-    })
+  let iter = set.iterator()
+  while iter.next() is Some(x) {
+    if x == 2 {
+      break
+    }
+    count = count + 1
+  }
   inspect(count, content="1")
 }
 
 ///|
-test "iter terminates on right" {
+test "iterator terminates on right" {
   let set = @sorted_set.from_array([1, 2, 3])
-  let result = set.iter().take(2).to_array()
+  let result = set.iterator().take(2).collect()
   inspect(result, content="[1, 2]")
 }
 
 ///|
-test "iter with early termination on left subtree" {
+test "iterator with early termination on left subtree" {
   // Create a binary search tree with both left and right subtrees
   let set = @sorted_set.new()
     .add(2) // root
@@ -58,15 +57,11 @@ test "iter with early termination on left subtree" {
 
   // Create an iterator that stops after processing the left subtree
   let mut count = 0
-  let iter = set.iter()
-  let _ = iter.run((_ : Int) => {
+  let iter = set.iterator()
+  while iter.next() is Some(_) {
     count = count + 1
-    if count == 1 {
-      IterEnd
-    } else {
-      IterContinue
-    }
-  })
+    break
+  }
 
   // Verify that we stopped after processing the first element
   inspect(count, content="1")

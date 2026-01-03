@@ -64,8 +64,6 @@ test "StringView core operations" {
   inspect(buf.to_string(), content="0:b;1:😀;2:c;")
   let from_arr = StringView::from_array(['x', 'y'])
   inspect(from_arr.to_string(), content="xy")
-  let from_iter = StringView::from_iter(['m', 'n'].iter())
-  inspect(from_iter.to_string(), content="mn")
   let from_iterator = StringView::from_iterator(['p', 'q'].iterator())
   inspect(from_iterator.to_string(), content="pq")
   let make_view = StringView::make(3, 'a')
@@ -125,7 +123,10 @@ test "panic String::view invalid range" {
 ///|
 test "StringView iter2 and eq length mismatch" {
   let view = "abc"[:]
-  inspect(view.iter2().to_string(), content="[(0, 'a'), (1, 'b'), (2, 'c')]")
+  inspect(
+    view.iterator2().to_string(),
+    content="[(0, 'a'), (1, 'b'), (2, 'c')]",
+  )
   inspect(view == "ab"[:], content="false")
 }
 

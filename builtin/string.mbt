@@ -1,4 +1,4 @@
-// Copyright 2025 International Digital Economy Academy
+// Copyright 2026 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -237,7 +237,7 @@ pub fn String::to_array(self : String) -> Array[Char] {
 /// ```mbt check
 /// test {
 ///   let s = "Hello, World!🤣"
-///   assert_eq(s.iter().count(), 14) // Unicode characters
+///   assert_eq(s.iterator().count(), 14) // Unicode characters
 ///   assert_eq(s.length(), 15)
 /// } // Utf16 code units
 /// ```
@@ -314,7 +314,7 @@ pub fn String::iterator2(self : String) -> Iterator2[Int, Char] {
 /// ```mbt check
 /// test {
 ///   let input = "Hello, World!"
-///   let reversed = input.rev_iter().collect()
+///   let reversed = input.rev_iterator().collect()
 ///   assert_eq(reversed, [
 ///     '!', 'd', 'l', 'r', 'o', 'W', ' ', ',', 'o', 'l', 'l', 'e', 'H',
 ///   ])

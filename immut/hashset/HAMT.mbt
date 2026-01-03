@@ -1,4 +1,4 @@
-// Copyright 2025 International Digital Economy Academy
+// Copyright 2026 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -336,23 +336,6 @@ pub fn[A] HashSet::each(
 }
 
 ///|
-/// Converted to Iter
-pub fn[A] HashSet::iter(self : HashSet[A]) -> Iter[A] {
-  fn go(node) -> Iter[A] {
-    match node {
-      Leaf(k, bucket) => Iter::singleton(k) + bucket.iter()
-      Flat(k, _) => Iter::singleton(k)
-      Branch(children) => children.data.iter().flat_map(go)
-    }
-  }
-
-  match self.0 {
-    None => Iter::empty()
-    Some(node) => go(node)
-  }
-}
-
-///|
 /// Converted to Iterator
 pub fn[A] HashSet::iterator(self : HashSet[A]) -> Iterator[A] {
   enum CurrNode {
@@ -399,20 +382,14 @@ pub fn[A] HashSet::iterator(self : HashSet[A]) -> Iterator[A] {
 
 ///|
 #as_free_fn
-pub fn[A : Eq + Hash] HashSet::from_iter(iter : Iter[A]) -> HashSet[A] {
-  iter.fold(init=new(), (s, e) => s.add(e))
-}
-
-///|
-#as_free_fn
 pub fn[A : Eq + Hash] HashSet::from_iterator(iter : Iterator[A]) -> HashSet[A] {
   iter.fold(init=new(), (s, e) => s.add(e))
 }
 
 ///|
 pub impl[A : Show] Show for HashSet[A] with output(self, logger) {
-  logger.write_iter(
-    self.iter(),
+  logger.write_iterator(
+    self.iterator(),
     prefix="@immut/hashset.from_array([",
     suffix="])",
   )
@@ -434,7 +411,7 @@ pub fn[A : Eq + Hash] HashSet::from_array(arr : ArrayView[A]) -> HashSet[A] {
 
 ///|
 pub impl[A : Hash] Hash for HashSet[A] with hash_combine(self, hasher) {
-  hasher.combine(self.iter().fold(init=0, (x, y) => x ^ y.hash()))
+  hasher.combine(self.iterator().fold(init=0, (x, y) => x ^ y.hash()))
 }
 
 ///|
@@ -445,7 +422,7 @@ impl[A : Eq] Eq for Node[A] with equal(self, other) {
       {
         let keys1 = xs.add(x)
         let keys2 = ys.add(y)
-        keys1.iter().all(keys2.contains(_))
+        keys1.iterator().all(keys2.contains(_))
       }
     (Flat(x, pathx), Flat(y, pathy)) => pathx == pathy && x == y
     (Branch(xs), Branch(ys)) => xs == ys

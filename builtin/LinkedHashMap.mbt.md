@@ -125,7 +125,7 @@ test {
 }
 ```
 
-### Iter
+### Iterator
 
 You can use `each()` or `eachi()` to iterate through all key-value pairs in the order of insertion.
 

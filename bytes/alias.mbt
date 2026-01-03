@@ -1,4 +1,4 @@
-// Copyright 2025 International Digital Economy Academy
+// Copyright 2026 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -44,15 +44,15 @@ pub fn from_fixedarray(arr : FixedArray[Byte], len? : Int) -> Bytes {
 }
 
 ///|
-#deprecated("Use `Bytes::from_iter` instead")
-pub fn from_iter(iter : Iter[Byte]) -> Bytes {
-  Bytes::from_iter(iter)
+#deprecated("Use `Bytes::from_iterator` instead")
+pub fn from_iter(iter : Iterator[Byte]) -> Bytes {
+  Bytes::from_iterator(iter)
 }
 
 ///|
 #deprecated("Use `Bytes::from_iterator` instead")
 pub fn from_iterator(iter : Iterator[Byte]) -> Bytes {
-  Bytes::from_array(iter.collect())
+  Bytes::from_iterator(iter)
 }
 
 ///|

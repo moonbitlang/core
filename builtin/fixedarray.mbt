@@ -57,7 +57,7 @@ pub fn[T] FixedArray::get(self : FixedArray[T], idx : Int) -> T? {
 /// test {
 ///   let arr = FixedArray::make(3, 42)
 ///   let mut sum = 0
-///   arr.iter().each(x => sum = sum + x)
+///   arr.iterator().each(x => sum = sum + x)
 ///   inspect(sum, content="126")
 /// }
 /// ```
@@ -85,7 +85,10 @@ pub fn[T] FixedArray::iter(self : FixedArray[T]) -> Iter[T] {
 /// test {
 ///   let arr = FixedArray::make(3, 10)
 ///   let mut sum = 0
-///   arr.iter2().each((i, x) => sum = sum + i + x)
+///   let iter = arr.iterator2()
+///   while iter.next() is Some((i, x)) {
+///     sum = sum + i + x
+///   }
 ///   inspect(sum, content="33") // (0 + 10) + (1 + 10) + (2 + 10) = 33
 /// }
 /// ```
@@ -1423,7 +1426,7 @@ test "iter" {
 /// ```mbt check
 /// test {
 ///   let arr = [1, 2, 3]
-///   let fixed_arr = FixedArray::from_iter(arr.iter())
+///   let fixed_arr = FixedArray::from_iterator(arr.iterator())
 ///   inspect(fixed_arr, content="[1, 2, 3]")
 /// }
 /// ```

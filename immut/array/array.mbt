@@ -1,4 +1,4 @@
-// Copyright 2025 International Digital Economy Academy
+// Copyright 2026 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -86,36 +86,6 @@ pub fn[A] T::makei(len : Int, f : (Int) -> A raise?) -> T[A] raise? {
 #as_free_fn(of, deprecated="Use from_array instead")
 pub fn[A] T::from_array(arr : ArrayView[A]) -> T[A] {
   makei(arr.length(), i => arr[i])
-}
-
-///|
-#as_free_fn
-pub fn[A] T::from_iter(iter : Iter[A]) -> T[A] {
-  let mut buf : FixedArray[A] = []
-  let mut index = 0
-  let leaves = []
-  iter.each(x => if index == 0 {
-    buf = FixedArray::make(branching_factor, x)
-    index += 1
-  } else if index < branching_factor {
-    buf[index] = x
-    index += 1
-  } else {
-    leaves.push(buf)
-    index = 1
-    buf = FixedArray::make(branching_factor, x)
-  })
-  if index == branching_factor {
-    leaves.push(buf)
-  } else if index > 0 {
-    let res = FixedArray::make(index, buf[0])
-    buf.blit_to(res, len=index)
-    leaves.push(res)
-  }
-  let size = leaves.fold(init=0, (acc, xs) => acc + xs.length())
-  let (shift, cap) = shift_cap_of_size(size)
-  let tree = if size == 0 { Empty } else { from_leaves(leaves[:], cap) }
-  { shift, tree, size }
 }
 
 ///|
@@ -299,12 +269,6 @@ pub impl[A] Add for T[A] with add(self, other) {
 
 ///|
 /// Return an iterator over the array.
-pub fn[A] T::iter(self : T[A]) -> Iter[A] {
-  self.tree.iterator().iter()
-}
-
-///|
-/// Return an iterator over the array.
 pub fn[A] T::iterator(self : T[A]) -> Iterator[A] {
   self.tree.iterator()
 }
@@ -419,8 +383,8 @@ pub impl[A : Eq] Eq for T[A] with equal(self, other) {
 
 ///|
 pub impl[A : Show] Show for T[A] with output(self, logger) {
-  logger.write_iter(
-    self.iter(),
+  logger.write_iterator(
+    self.iterator(),
     prefix="@immut/array.from_array([",
     suffix="])",
   )

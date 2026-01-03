@@ -29,6 +29,7 @@ pub fn[A, B] SortedSet::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 #as_free_fn
 pub fn[A : Compare] SortedSet::from_array(ArrayView[A]) -> Self[A]
 #as_free_fn
+#deprecated
 pub fn[A : Compare] SortedSet::from_iter(Iter[A]) -> Self[A]
 #as_free_fn
 pub fn[A : Compare] SortedSet::from_iterator(Iterator[A]) -> Self[A]
@@ -37,6 +38,7 @@ pub fn[A : @json.FromJson + Compare] SortedSet::from_json(Json) -> Self[A] raise
 #alias(inter, deprecated)
 pub fn[A : Compare] SortedSet::intersection(Self[A], Self[A]) -> Self[A]
 pub fn[A] SortedSet::is_empty(Self[A]) -> Bool
+#deprecated
 pub fn[A] SortedSet::iter(Self[A]) -> Iter[A]
 pub fn[A] SortedSet::iterator(Self[A]) -> Iterator[A]
 #alias(size, deprecated)

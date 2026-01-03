@@ -1,4 +1,4 @@
-// Copyright 2025 International Digital Economy Academy
+// Copyright 2026 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -190,7 +190,7 @@ pub impl ToJson for Ast with to_json(self) {
       } else {
         ["Repeat {\{min},} greedy=\{greedy}", inner]
       }
-    Concat(regexs) => [..regexs.map(_.to_json())]
+    Concat(regexs) => Json::array(regexs.iterator().map(_.to_json()).collect())
     Alternate(left, right) => ["Alternate", left, right]
   }
 }

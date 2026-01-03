@@ -81,7 +81,7 @@ test "iter_take_each" {
   let buf = StringBuilder::new(size_hint=20)
   let map = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
   map
-  .iter()
+  .iterator()
   .each(e => {
     let (k, v) = e
     buf.write_string("[\{k}-\{v}]")
@@ -89,7 +89,7 @@ test "iter_take_each" {
   inspect(buf, content="[1-one][2-two][3-three]")
   buf.reset()
   map
-  .iter()
+  .iterator()
   .take(2)
   .each(e => {
     let (k, v) = e
@@ -143,7 +143,7 @@ test "foldr_with_key" {
 ///|
 test "collect" {
   let m = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
-  assert_eq(m.iter().collect(), [(1, "one"), (2, "two"), (3, "three")])
+  assert_eq(m.iterator().collect(), [(1, "one"), (2, "two"), (3, "three")])
 }
 
 ///|
@@ -155,13 +155,13 @@ test "to_array" {
 ///|
 test "keys" {
   let m = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
-  assert_eq(m.keys_as_iter().collect(), [1, 2, 3])
+  assert_eq(m.keys_iterator().collect(), [1, 2, 3])
 }
 
 ///|
-test "values" {
+test "values_iterator" {
   let m = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
-  assert_eq(m.values().collect(), ["one", "two", "three"])
+  assert_eq(m.values_iterator().collect(), ["one", "two", "three"])
 }
 
 ///|
@@ -232,28 +232,6 @@ test "show" {
 }
 
 ///|
-test "from_iter multiple elements iter" {
-  inspect(
-    @sorted_map.from_iter([(1, 1), (2, 2), (3, 3)].iter()),
-    content="@immut/sorted_map.from_array([(1, 1), (2, 2), (3, 3)])",
-  )
-}
-
-///|
-test "from_iter single element iter" {
-  inspect(
-    @sorted_map.from_iter([(1, 1)].iter()),
-    content="@immut/sorted_map.from_array([(1, 1)])",
-  )
-}
-
-///|
-test "from_iter empty iter" {
-  let pq : @sorted_map.SortedMap[Int, Int] = @sorted_map.from_iter(
-    Iter::empty(),
-  )
-  inspect(pq, content="@immut/sorted_map.from_array([])")
-}
 
 ///|
 test "from_iterator multiple elements iter" {

@@ -1,4 +1,4 @@
-// Copyright 2025 International Digital Economy Academy
+// Copyright 2026 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -115,8 +115,10 @@ pub fn[A, B] Iter2::to_array(self : Iter2[A, B]) -> Array[(A, B)] {
 ///
 /// ```mbt check
 /// test {
+///   let first = "abc".iterator2().iterator()
+///   let second = "def".iterator2().iterator()
 ///   inspect(
-///     "abc".iter2().concat("def".iter2()).to_array(),
+///     first.concat(second).to_array(),
 ///     content="[(0, 'a'), (1, 'b'), (2, 'c'), (0, 'd'), (1, 'e'), (2, 'f')]",
 ///   )
 /// }

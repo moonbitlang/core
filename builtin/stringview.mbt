@@ -1,4 +1,4 @@
-// Copyright 2025 International Digital Economy Academy
+// Copyright 2026 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -411,7 +411,11 @@ pub fn StringView::from_array(chars : ArrayView[Char]) -> StringView {
 /// Convert char iterator to string view.
 #deprecated("Use `StringView::from_iterator()` with an external iterator.", skip_current_package=true)
 pub fn StringView::from_iter(iter : Iter[Char]) -> StringView {
-  String::from_iter(iter)
+  let buf = StringBuilder::new()
+  for c in iter {
+    buf.write_char(c)
+  }
+  buf.to_string().view()
 }
 
 ///|

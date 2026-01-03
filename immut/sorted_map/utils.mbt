@@ -1,4 +1,4 @@
-// Copyright 2025 International Digital Economy Academy
+// Copyright 2026 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -231,9 +231,6 @@ pub fn[K : Compare, V] SortedMap::from_array(
 }
 
 ///|
-pub fn[K, V] SortedMap::iter(self : SortedMap[K, V]) -> Iter[(K, V)] {
-  self.iterator().iter()
-}
 
 ///|
 pub fn[K, V] SortedMap::iterator(self : SortedMap[K, V]) -> Iterator[(K, V)] {
@@ -264,17 +261,6 @@ pub fn[K, V] SortedMap::iterator2(self : SortedMap[K, V]) -> Iterator2[K, V] {
 }
 
 ///|
-pub fn[K, V] SortedMap::iter2(self : SortedMap[K, V]) -> Iter2[K, V] {
-  self.iterator2().iter2()
-}
-
-///|
-#as_free_fn
-pub fn[K : Compare, V] SortedMap::from_iter(
-  iter : Iter[(K, V)],
-) -> SortedMap[K, V] {
-  iter.fold(init=new(), (m, e) => m.add(e.0, e.1))
-}
 
 ///|
 #as_free_fn
@@ -286,14 +272,14 @@ pub fn[K : Compare, V] SortedMap::from_iterator(
 
 ///|
 /// Return all keys of the map in ascending order.
-pub fn[K, V] SortedMap::keys_as_iter(self : SortedMap[K, V]) -> Iter[K] {
-  self.iter().map(p => p.0)
+pub fn[K, V] SortedMap::keys_iterator(self : SortedMap[K, V]) -> Iterator[K] {
+  self.iterator().map(p => p.0)
 }
 
 ///|
 /// Return all elements of the map in the ascending order of their keys.
-pub fn[K, V] SortedMap::values(self : SortedMap[K, V]) -> Iter[V] {
-  self.iter().map(p => p.1)
+pub fn[K, V] SortedMap::values_iterator(self : SortedMap[K, V]) -> Iterator[V] {
+  self.iterator().map(p => p.1)
 }
 
 ///|

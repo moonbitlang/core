@@ -1,4 +1,4 @@
-// Copyright 2025 International Digital Economy Academy
+// Copyright 2026 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,10 +13,20 @@
 // limitations under the License.
 
 ///|
-test "category names" {
-  @unicode.general_category_ranges
-  .keys_iterator()
-  .each(key => assert_true(
-    @unicode.general_category_property_value_alises.contains(key),
-  ))
+#warnings("-deprecated")
+#deprecated("Use `PriorityQueue::iterator()` to get an external iterator.")
+pub fn[A : Compare] PriorityQueue::iter(self : PriorityQueue[A]) -> Iter[A] {
+  self.iterator().iter()
+}
+
+///|
+#warnings("-deprecated")
+#deprecated("Use `PriorityQueue::from_iterator()` with an external iterator.")
+#as_free_fn
+pub fn[K : Compare] PriorityQueue::from_iter(
+  iter : Iter[K],
+) -> PriorityQueue[K] {
+  let s = new()
+  iter.each(e => s.push(e))
+  s
 }

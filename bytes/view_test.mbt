@@ -92,16 +92,6 @@ test "panic invalid index6" {
 }
 
 ///|
-test "iter" {
-  let bs = b"\x00\x01\x02\x03\x04\x05"
-  let bv = bs[:]
-  inspect(
-    bv.iter().to_array(),
-    content="[b'\\x00', b'\\x01', b'\\x02', b'\\x03', b'\\x04', b'\\x05']",
-  )
-}
-
-///|
 test "iterator" {
   let bs = b"\x00\x01\x02\x03\x04\x05"
   let bv = bs[1:5]
@@ -469,7 +459,7 @@ test "iter break early" {
   let mut count = 0
   let mut total = 0
   view
-  .iter()
+  .iterator()
   .take(2)
   .each(x => {
     count = count + 1

@@ -152,9 +152,9 @@ test {
 }
 ```
 
-## Iter & Fold & Map
+## Iterator & Fold & Map
 
-Like other sequential containers, set also has iterative methods such as `iter`, `fold`, and `map`, and their order is based on the comparison being less than the order.
+Like other sequential containers, set also has iterative methods such as `iterator`, `fold`, and `map`, and their order is based on the comparison being less than the order.
 
 ```mbt check
 ///|

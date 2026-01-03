@@ -36,17 +36,6 @@ test "to_array" {
 }
 
 ///|
-test "as_iter" {
-  let buf = StringBuilder::new(size_hint=20)
-  let v = @priority_queue.from_array([1, 2, 3])
-  v.iter().each(e => buf.write_string("[\{e}]"))
-  inspect(buf, content="[3][2][1]")
-  buf.reset()
-  v.iter().take(2).each(e => buf.write_string("[\{e}]"))
-  inspect(buf, content="[3][2]")
-}
-
-///|
 test "iterator" {
   let buf = StringBuilder::new(size_hint=20)
   let v = @priority_queue.from_array([1, 2, 3])
@@ -126,28 +115,6 @@ test "length" {
 }
 
 ///|
-test "from_iter multiple elements iter" {
-  inspect(
-    @priority_queue.PriorityQueue::from_iter([1, 2, 3].iter()),
-    content="@immut/priority_queue.from_array([3, 2, 1])",
-  )
-}
-
-///|
-test "from_iter single element iter" {
-  inspect(
-    @priority_queue.PriorityQueue::from_iter([1].iter()),
-    content="@immut/priority_queue.from_array([1])",
-  )
-}
-
-///|
-test "from_iter empty iter" {
-  let pq : @priority_queue.PriorityQueue[Int] = @priority_queue.PriorityQueue::from_iter(
-    Iter::empty(),
-  )
-  inspect(pq, content="@immut/priority_queue.from_array([])")
-}
 
 ///|
 test "from_iterator multiple elements iter" {
@@ -208,7 +175,10 @@ test "complex" {
     rng.int(limit=upper)
   }
 
-  let arr = (0).until(1000, inclusive=true).collect()
+  let arr = []
+  for i in 0..=1000 {
+    arr.push(i)
+  }
   arr.shuffle_in_place(rand~)
   let mut pq = @priority_queue.new()
   for i in 0..=1000 {
@@ -219,7 +189,7 @@ test "complex" {
     assert_eq(pq.peek(), Some(1000 - i))
     pq = pq.pop().unwrap()
   }
-  inspect(pq.iter(), content="[]")
+  inspect(pq.iterator(), content="[]")
   inspect(pq.length(), content="0")
 }
 

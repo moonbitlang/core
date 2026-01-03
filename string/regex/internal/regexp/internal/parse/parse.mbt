@@ -962,7 +962,7 @@ fn Parser::parse_unicode_property(self : Parser) -> String raise RegexpError {
     raise RegexpError(err=InvalidCharClass, source_fragment=self.input)
   }
   self.input = rest // consume '}'
-  String::from_iter(chars.iter())
+  String::from_iterator(chars.iterator())
 }
 
 ///|

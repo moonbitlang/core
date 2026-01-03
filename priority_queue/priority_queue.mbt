@@ -1,4 +1,4 @@
-// Copyright 2025 International Digital Economy Academy
+// Copyright 2026 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -105,9 +105,6 @@ pub fn[A : Compare] PriorityQueue::to_array(
 }
 
 ///|
-pub fn[A : Compare] PriorityQueue::iter(self : PriorityQueue[A]) -> Iter[A] {
-  self.iterator().iter()
-}
 
 ///|
 pub fn[A : Compare] PriorityQueue::iterator(
@@ -123,16 +120,6 @@ pub impl[A : ToJson + Compare] ToJson for PriorityQueue[A] with to_json(self) {
     arr.push(x.to_json())
   }
   Json::array(arr)
-}
-
-///|
-#as_free_fn
-pub fn[K : Compare] PriorityQueue::from_iter(
-  iter : Iter[K],
-) -> PriorityQueue[K] {
-  let s = new()
-  iter.each(e => s.push(e))
-  s
 }
 
 ///|
@@ -304,8 +291,8 @@ pub fn[A] PriorityQueue::is_empty(self : PriorityQueue[A]) -> Bool {
 
 ///|
 pub impl[A : Show + Compare] Show for PriorityQueue[A] with output(self, logger) {
-  logger.write_iter(
-    self.iter(),
+  logger.write_iterator(
+    self.iterator(),
     prefix="@priority_queue.from_array([",
     suffix="])",
   )

@@ -1,4 +1,4 @@
-// Copyright 2025 International Digital Economy Academy
+// Copyright 2026 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -75,7 +75,7 @@ pub fn[A] List::prepend(self : List[A], head : A) -> List[A] {
 /// Show implementation for List.
 /// Outputs the list in the format @list.from_array([element1, element2, ...]).
 pub impl[A : Show] Show for List[A] with output(xs, logger) {
-  logger.write_iter(xs.iter(), prefix="@list.from_array([", suffix="])")
+  logger.write_iterator(xs.iterator(), prefix="@list.from_array([", suffix="])")
 }
 
 ///|
@@ -1681,25 +1681,6 @@ pub fn[X] default() -> List[X] {
 /// ```mbt check
 /// test {
 ///   let ls = @list.from_array([1, 2, 3, 4, 5])
-///   let iter = ls.iter()
-///   let sum = iter.fold(init=0, (acc, x) => acc + x)
-///   inspect(sum, content="15")
-/// }
-/// ```
-pub fn[A] List::iter(self : List[A]) -> Iter[A] {
-  self.iterator().iter()
-}
-
-///|
-/// Create an iterator over the list elements.
-/// 
-/// Returns an iterator that yields each element of the list in order.
-///
-/// # Example
-///
-/// ```mbt check
-/// test {
-///   let ls = @list.from_array([1, 2, 3, 4, 5])
 ///   let iter = ls.iterator()
 ///   let sum = iter.fold(init=0, (acc, x) => acc + x)
 ///   inspect(sum, content="15")
@@ -1716,25 +1697,6 @@ pub fn[A] List::iterator(self : List[A]) -> Iterator[A] {
       }
     }
   })
-}
-
-///|
-/// Create an iterator over the list elements with indices.
-/// 
-/// Returns an iterator that yields pairs of (index, element) for each
-/// element in the list.
-///
-/// # Example
-///
-/// ```mbt check
-/// test {
-///   let ls = @list.from_array([10, 20, 30])
-///   let iter = ls.iter2()
-///   inspect(iter, content="[(0, 10), (1, 20), (2, 30)]")
-/// }
-/// ```
-pub fn[A] List::iter2(self : List[A]) -> Iter2[Int, A] {
-  self.iterator2().iter2()
 }
 
 ///|
@@ -1779,42 +1741,6 @@ pub fn[A] List::iterator2(self : List[A]) -> Iterator2[Int, A] {
 /// ```mbt check
 /// test {
 ///   let arr = [1, 2, 3, 4, 5]
-///   let iter = arr.iter()
-///   let ls = @list.from_iter(iter)
-///   assert_eq(ls, @list.from_array([1, 2, 3, 4, 5]))
-/// }
-/// ```
-#as_free_fn
-pub fn[A] List::from_iter(iter : Iter[A]) -> List[A] {
-  let mut res = Empty
-  let mut ptr = Empty
-  for x in iter {
-    match (res, ptr) {
-      (Empty, _) => {
-        res = More(x, tail=Empty)
-        ptr = res
-      }
-      (More(_), More(_) as ptr_) => {
-        ptr_.tail = More(x, tail=Empty)
-        ptr = ptr_.tail
-      }
-      (_, _) => panic()
-    }
-  }
-  res
-}
-
-///|
-/// Convert an iterator into a list, preserving order of elements.
-/// 
-/// Creates a list from an iterator, maintaining the same order as the iterator.
-/// If order is not important, consider using `from_iter_rev` for better performance.
-///
-/// # Example
-///
-/// ```mbt check
-/// test {
-///   let arr = [1, 2, 3, 4, 5]
 ///   let iter = arr.iterator()
 ///   let ls = @list.from_iterator(iter)
 ///   assert_eq(ls, @list.from_array([1, 2, 3, 4, 5]))
@@ -1837,28 +1763,6 @@ pub fn[A] List::from_iterator(iter : Iterator[A]) -> List[A] {
     }
   }
   head
-}
-
-///|
-/// Convert an iterator into a list in reverse order.
-/// 
-/// Creates a list from an iterator, but the resulting list will have elements
-/// in reverse order compared to the iterator. This is more efficient than
-/// `from_iter` when order doesn't matter.
-///
-/// # Example
-///
-/// ```mbt check
-/// test {
-///   let arr = [1, 2, 3, 4, 5]
-///   let iter = arr.iter()
-///   let ls = @list.from_iter_rev(iter)
-///   assert_eq(ls, @list.from_array([5, 4, 3, 2, 1]))
-/// }
-/// ```
-#as_free_fn
-pub fn[A] List::from_iter_rev(iter : Iter[A]) -> List[A] {
-  iter.fold(init=Empty, (acc, e) => More(e, tail=acc))
 }
 
 ///|

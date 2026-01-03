@@ -1,4 +1,4 @@
-// Copyright 2025 International Digital Economy Academy
+// Copyright 2026 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ pub impl Show for JsonPath with output(self, logger) {
       logger.write_string(token)
       return
     }
-    for ch in token.iter() {
+    for ch in token.iterator() {
       match ch {
         '~' => logger.write_string("~0")
         '/' => logger.write_string("~1")

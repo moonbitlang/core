@@ -1,4 +1,4 @@
-// Copyright 2025 International Digital Economy Academy
+// Copyright 2026 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -33,8 +33,8 @@ pub fn from_array(chars : ArrayView[Char]) -> String {
 ///|
 /// Convert char iterator to string,
 #deprecated
-pub fn from_iter(iter : Iter[Char]) -> String {
-  String::from_iter(iter)
+pub fn from_iter(iter : Iterator[Char]) -> String {
+  String::from_iterator(iter)
 }
 
 ///|

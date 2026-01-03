@@ -1,4 +1,4 @@
-// Copyright 2025 International Digital Economy Academy
+// Copyright 2026 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -55,7 +55,11 @@ pub fn[A] Queue::from_array(arr : ArrayView[A]) -> Queue[A] {
 
 ///|
 pub impl[A : Show] Show for Queue[A] with output(self, logger) {
-  logger.write_iter(self.iter(), prefix="@queue.from_array([", suffix="])")
+  logger.write_iterator(
+    self.iterator(),
+    prefix="@queue.from_array([",
+    suffix="])",
+  )
 }
 
 ///|
@@ -346,22 +350,7 @@ pub fn[A] Queue::transfer(self : Queue[A], dst : Queue[A]) -> Unit {
 }
 
 ///|
-/// Creates an iter from the queue.
-///
-/// # Example
-/// ```mbt check
-/// test {
-///   let queue : @queue.Queue[Int] = @queue.from_array([5, 6, 7, 8])
-///   let sum = queue.iter().fold((x, y) => x + y, init=0)
-///   assert_eq(sum, 26)
-/// }
-/// ```
-pub fn[A] Queue::iter(self : Queue[A]) -> Iter[A] {
-  self.iterator().iter()
-}
-
-///|
-/// Creates an iter from the queue.
+/// Creates an iterator from the queue.
 ///
 /// # Example
 /// ```mbt check
@@ -382,23 +371,6 @@ pub fn[A] Queue::iterator(self : Queue[A]) -> Iterator[A] {
       }
     }
   })
-}
-
-///|
-/// Creates a new queue from an iter.
-///
-/// # Example
-/// ```mbt check
-/// test {
-///   let queue : @queue.Queue[Int] = @queue.from_iter(Iter::empty())
-///   assert_eq(queue.length(), 0)
-/// }
-/// ```
-#as_free_fn
-pub fn[A] Queue::from_iter(iter : Iter[A]) -> Queue[A] {
-  let q = new()
-  iter.each(e => q.push(e))
-  q
 }
 
 ///|
@@ -491,5 +463,5 @@ pub impl[X : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Queue[X] with arbi
   size,
   rs,
 ) {
-  @quickcheck.Arbitrary::arbitrary(size, rs) |> from_iter
+  @quickcheck.Arbitrary::arbitrary(size, rs) |> from_iterator
 }

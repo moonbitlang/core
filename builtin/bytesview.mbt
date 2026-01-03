@@ -1,4 +1,4 @@
-// Copyright 2025 International Digital Economy Academy
+// Copyright 2026 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -204,7 +204,7 @@ pub fn BytesView::sub(
 /// test {
 ///   let bv = b"\x00\x01\x02\x03\x04\x05"[:]
 ///   let mut sum = 0
-///   bv.iter().each(x => sum = sum + x.to_int())
+///   bv.iterator().each(x => sum = sum + x.to_int())
 ///   inspect(sum, content="15")
 /// }
 /// ```
@@ -223,7 +223,10 @@ pub fn BytesView::iter(self : BytesView) -> Iter[Byte] {
 /// test {
 ///   let bv = b"\x00\x01\x02\x03\x04\x05"[:]
 ///   let mut sum = 0
-///   bv.iter2().each((i, x) => sum = sum + i + x.to_int())
+///   let iter = bv.iterator2()
+///   while iter.next() is Some((i, x)) {
+///     sum = sum + i + x.to_int()
+///   }
 ///   inspect(sum, content="30")
 /// }
 /// ```

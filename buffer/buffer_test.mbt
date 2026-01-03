@@ -28,14 +28,14 @@ test "create buffer from array" {
 
 ///|
 test "create buffer from iterator" {
-  let iter = [b'5', b'\x00', b'6', b'\x00', b'7', b'\x00'].iter()
-  let buf = @buffer.from_iter(iter)
+  let iter = [b'5', b'\x00', b'6', b'\x00', b'7', b'\x00'].iterator()
+  let buf = @buffer.from_iterator(iter)
   inspect(buf, content="567")
-  let iter = [].iter()
-  let buf = @buffer.from_iter(iter)
+  let iter = [].iterator()
+  let buf = @buffer.from_iterator(iter)
   inspect(buf, content="")
-  let iter = b"0\x00".iter()
-  let buf = @buffer.from_iter(iter)
+  let iter = b"0\x00".iterator()
+  let buf = @buffer.from_iterator(iter)
   inspect(buf, content="0")
 }
 
@@ -290,10 +290,10 @@ test "write_float_be method" {
 }
 
 ///|
-test "write_iter" {
+test "write_iterator" {
   let bytes = b"hello"
   let buf = @buffer.new()
-  buf.write_iter(bytes.iter())
+  buf.write_iterator(bytes.iterator())
   inspect(
     buf.contents(),
     content=(
@@ -301,7 +301,7 @@ test "write_iter" {
     ),
   )
   let bytes_view = bytes[1:3]
-  buf.write_iter(bytes_view.iter())
+  buf.write_iterator(bytes_view.iterator())
   inspect(
     buf.contents(),
     content=(

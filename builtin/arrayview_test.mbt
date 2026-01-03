@@ -299,11 +299,11 @@ test "compare" {
 ///|
 test "iter" {
   let array = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-  @json.inspect(array[:].iter().to_array(), content=[
+  @json.inspect(array[:].iterator().to_array(), content=[
     0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
   ])
-  @json.inspect(array[5:].iter().to_array(), content=[5, 6, 7, 8, 9, 10])
-  @json.inspect(array[5:9].iter().to_array(), content=[5, 6, 7, 8])
+  @json.inspect(array[5:].iterator().to_array(), content=[5, 6, 7, 8, 9, 10])
+  @json.inspect(array[5:9].iterator().to_array(), content=[5, 6, 7, 8])
 }
 
 ///|
@@ -312,12 +312,11 @@ test "iter2" {
   let view = arr[1:]
   let mut sum = 0
   let mut sum_keys = 0
-  view
-  .iter2()
-  .each((i, x) => {
+  let iter = view.iterator2()
+  while iter.next() is Some((i, x)) {
     sum = sum + x
     sum_keys = sum_keys + i
-  })
+  }
   inspect(sum, content="5")
   inspect(sum_keys, content="1")
 }

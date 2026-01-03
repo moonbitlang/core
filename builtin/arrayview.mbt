@@ -1,4 +1,4 @@
-// Copyright 2025 International Digital Economy Academy
+// Copyright 2026 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -410,7 +410,7 @@ pub fn[X] ArrayView::iterator(self : ArrayView[X]) -> Iterator[X] {
 ///   let arr = [1, 2, 3]
 ///   let view = arr[1:]
 ///   let mut sum = 0
-///   view.iter().each(x => sum = sum + x)
+///   view.iterator().each(x => sum = sum + x)
 ///   inspect(sum, content="5")
 /// }
 /// ```
@@ -451,12 +451,11 @@ pub fn[X] ArrayView::iterator2(self : ArrayView[X]) -> Iterator2[Int, X] {
 ///   let view = arr[1:]
 ///   let mut sum = 0
 ///   let mut sum_keys = 0
-///   view
-///   .iter2()
-///   .each((i, x) => {
+///   let iter = view.iterator2()
+///   while iter.next() is Some((i, x)) {
 ///     sum = sum + x
 ///     sum_keys = sum_keys + i
-///   })
+///   }
 ///   inspect(sum, content="5")
 ///   inspect(sum_keys, content="1")
 /// }

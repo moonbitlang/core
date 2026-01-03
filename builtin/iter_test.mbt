@@ -13,6 +13,7 @@
 // limitations under the License.
 
 ///|
+#warnings("-deprecated")
 test "empty" {
   let iter = Iter::empty()
   let exb = StringBuilder::new(size_hint=0)
@@ -21,6 +22,7 @@ test "empty" {
 }
 
 ///|
+#warnings("-deprecated")
 test "singleton" {
   let iter = Iter::singleton('1')
   let exb = StringBuilder::new(size_hint=0)
@@ -29,6 +31,7 @@ test "singleton" {
 }
 
 ///|
+#warnings("-deprecated")
 test "repeat" {
   let iter = Iter::repeat('1')
   let exb = StringBuilder::new(size_hint=0)
@@ -39,12 +42,14 @@ test "repeat" {
 }
 
 ///|
+#warnings("-deprecated")
 test "count" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
   assert_eq(iter.count(), 5)
 }
 
 ///|
+#warnings("-deprecated")
 test "take" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
   let exb = StringBuilder::new(size_hint=0)
@@ -82,6 +87,7 @@ test "take" {
 }
 
 ///|
+#warnings("-deprecated")
 test "take2" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
   let exb = StringBuilder::new(size_hint=0)
@@ -90,6 +96,7 @@ test "take2" {
 }
 
 ///|
+#warnings("-deprecated")
 test "take_while" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
   let exb = StringBuilder::new(size_hint=0)
@@ -98,6 +105,7 @@ test "take_while" {
 }
 
 ///|
+#warnings("-deprecated")
 test "take_while2" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
   let exb = StringBuilder::new(size_hint=0)
@@ -109,6 +117,7 @@ test "take_while2" {
 }
 
 ///|
+#warnings("-deprecated")
 test "take_while3" {
   let iter = test_from_array([1, 2, 3])
   let res = iter
@@ -119,6 +128,7 @@ test "take_while3" {
 }
 
 ///|
+#warnings("-deprecated")
 test "take_while4" {
   let iter = test_from_array([1, 2, 3, 4, 5, 6])
   let res = iter.take_while(x => x <= 5).take(4).fold(init=0, (x, y) => x + y)
@@ -126,6 +136,7 @@ test "take_while4" {
 }
 
 ///|
+#warnings("-deprecated")
 test "take_while5" {
   let iter = test_from_array([1, 2, 3, 4, 5, 6])
   let res = iter.take(4).take_while(x => x >= 5).fold((x, y) => x + y, init=0)
@@ -133,6 +144,7 @@ test "take_while5" {
 }
 
 ///|
+#warnings("-deprecated")
 test "map_while1" {
   let iter = test_from_array([1, 2, 3, 4, 5])
   let exb = StringBuilder::new(size_hint=0)
@@ -143,6 +155,7 @@ test "map_while1" {
 }
 
 ///|
+#warnings("-deprecated")
 test "map_while2" {
   let iter = test_from_array([1, 2, 3, 4, 5])
   let exb = StringBuilder::new(size_hint=0)
@@ -154,6 +167,7 @@ test "map_while2" {
 }
 
 ///|
+#warnings("-deprecated")
 test "map_while3" {
   let iter = test_from_array([1, 2, 3])
   let res = iter
@@ -164,6 +178,7 @@ test "map_while3" {
 }
 
 ///|
+#warnings("-deprecated")
 test "map_while4" {
   let iter = test_from_array([1, 2, 3, 4, 5, 6])
   let res = iter
@@ -174,6 +189,7 @@ test "map_while4" {
 }
 
 ///|
+#warnings("-deprecated")
 test "map_while5" {
   let iter = test_from_array([1, 2, 3, 4, 5, 6])
   let res = iter
@@ -184,6 +200,7 @@ test "map_while5" {
 }
 
 ///|
+#warnings("-deprecated")
 test "drop" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
   let exb = StringBuilder::new(size_hint=0)
@@ -192,6 +209,7 @@ test "drop" {
 }
 
 ///|
+#warnings("-deprecated")
 test "sub" {
   let iter = test_from_array([1, 2, 3, 4, 5])
   let res = iter.sub(start=1, end=4).collect()
@@ -199,6 +217,7 @@ test "sub" {
 }
 
 ///|
+#warnings("-deprecated")
 test "drop_while" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
   let exb = StringBuilder::new(size_hint=0)
@@ -207,6 +226,7 @@ test "drop_while" {
 }
 
 ///|
+#warnings("-deprecated")
 test "drop_while2" {
   let iter = test_from_array([1, 2, 3, 4, 5])
   let res = iter
@@ -217,6 +237,7 @@ test "drop_while2" {
 }
 
 ///|
+#warnings("-deprecated")
 test "drop_while3" {
   let iter = test_from_array([1, 2, 3, 4, 5])
   let exb = StringBuilder::new(size_hint=0)
@@ -233,6 +254,7 @@ test "drop_while3" {
 }
 
 ///|
+#warnings("-deprecated")
 test "drop_while4" {
   let iter = test_from_array([1, 2, 3, 4, 5])
   let res = iter
@@ -244,6 +266,7 @@ test "drop_while4" {
 }
 
 ///|
+#warnings("-deprecated")
 test "filter" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
   let exb = StringBuilder::new(size_hint=0)
@@ -252,6 +275,7 @@ test "filter" {
 }
 
 ///|
+#warnings("-deprecated")
 test "map" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
   let exb = StringBuilder::new(size_hint=0)
@@ -262,6 +286,7 @@ test "map" {
 }
 
 ///|
+#warnings("-deprecated")
 test "mapi" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
   let exb = StringBuilder::new(size_hint=0)
@@ -272,6 +297,7 @@ test "mapi" {
 }
 
 ///|
+#warnings("-deprecated")
 test "filter_map" {
   let arr = [1, 2, 3, 4, 5]
   let r1 = arr
@@ -286,6 +312,7 @@ test "filter_map" {
 }
 
 ///|
+#warnings("-deprecated")
 test "flat_map" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
   let exb = StringBuilder::new(size_hint=0)
@@ -294,6 +321,7 @@ test "flat_map" {
 }
 
 ///|
+#warnings("-deprecated")
 test "flat_map2" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
   let exb = StringBuilder::new(size_hint=0)
@@ -302,6 +330,7 @@ test "flat_map2" {
 }
 
 ///|
+#warnings("-deprecated")
 test "fold" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
   let result = (iter.fold((acc, x) => acc + x.to_int(), init=0) / 5).unsafe_to_char()
@@ -309,6 +338,7 @@ test "fold" {
 }
 
 ///|
+#warnings("-deprecated")
 test "find_first" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
   let result = iter.find_first(x => x > '3')
@@ -318,6 +348,7 @@ test "find_first" {
 }
 
 ///|
+#warnings("-deprecated")
 test "find_first2" {
   let iter = test_from_array([1, 2, 3]).concat(test_from_array([4, 5, 6]))
   let result = iter.find_first(x => x % 2 == 0)
@@ -325,6 +356,7 @@ test "find_first2" {
 }
 
 ///|
+#warnings("-deprecated")
 test "tap" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
   let exb = StringBuilder::new(size_hint=0)
@@ -333,6 +365,7 @@ test "tap" {
 }
 
 ///|
+#warnings("-deprecated")
 test "concat" {
   let iter1 = test_from_array(['1', '2', '3'])
   let iter2 = test_from_array(['4', '5', '6'])
@@ -357,6 +390,7 @@ test "collect" {
 }
 
 ///|
+#warnings("-deprecated")
 test "until" {
   // edge cases
   inspect((0).until(10).take(100), content="[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]")
@@ -453,6 +487,7 @@ test "until" {
 }
 
 ///|
+#warnings("-deprecated")
 test "each" {
   let iter = test_from_array(['1', '2', '3', '4', '5'])
   let exb = StringBuilder::new(size_hint=5)
@@ -461,6 +496,7 @@ test "each" {
 }
 
 ///|
+#warnings("-deprecated")
 test "eachi" {
   let iter = test_from_array([1, 2, 3, 4, 5])
   let exb = StringBuilder::new(size_hint=5)
@@ -469,6 +505,7 @@ test "eachi" {
 }
 
 ///|
+#warnings("-deprecated")
 test "intersperse early end" {
   let iter = test_from_array([1, 2, 3])
   let res = iter.intersperse(0).take(1).collect()
@@ -476,6 +513,7 @@ test "intersperse early end" {
 }
 
 ///|
+#warnings("-deprecated")
 test "intersperse stops on separator" {
   let iter = [1, 2].iter().intersperse(0)
   let seen = []
@@ -506,6 +544,7 @@ fn[T] test_from_array(arr : Array[T]) -> Iter[T] {
 }
 
 ///|
+#warnings("-deprecated")
 test "any" {
   let iter = [1, 2, 3, 4, 5, 6] |> test_from_array
   assert_eq(iter.take(3).any(x => x < 4), true)
@@ -517,6 +556,7 @@ test "any" {
 }
 
 ///|
+#warnings("-deprecated")
 test "all" {
   let iter = [1, 2, 3, 4, 5, 6] |> test_from_array
   assert_eq(iter.take(3).all(x => x < 4), true)
@@ -526,6 +566,7 @@ test "all" {
 }
 
 ///|
+#warnings("-deprecated")
 enum Tree {
   Leaf(Int)
   Node(Tree, Int, Tree)
@@ -549,6 +590,7 @@ fn Tree::iter(self : Tree) -> Iter[Int] {
 }
 
 ///|
+#warnings("-deprecated")
 test "tree" {
   // let tree = Node(Node(Leaf(1), Leaf(2)), Node(Leaf(3), Leaf(4)))
   let tree = Node(Node(Leaf(1), 2, Leaf(3)), 4, Leaf(5))
@@ -558,6 +600,7 @@ test "tree" {
 }
 
 ///|
+#warnings("-deprecated")
 test "Iter::intersperse" {
   inspect([1, 2, 3].iter().intersperse(0), content="[1, 0, 2, 0, 3]")
   inspect(
@@ -569,6 +612,7 @@ test "Iter::intersperse" {
 }
 
 ///|
+#warnings("-deprecated")
 test "Iter::last" {
   inspect([1, 2, 3].iter().last(), content="Some(3)")
   inspect([1].iter().last(), content="Some(1)")
@@ -576,6 +620,7 @@ test "Iter::last" {
 }
 
 ///|
+#warnings("-deprecated")
 test "Iter::head" {
   inspect([1, 2, 3].iter().head(), content="Some(1)")
   inspect([1].iter().head(), content="Some(1)")
@@ -583,6 +628,7 @@ test "Iter::head" {
 }
 
 ///|
+#warnings("-deprecated")
 test "Iter::as_view" {
   inspect([1, 2, 3].iter()[1:2], content="[2]")
   inspect([1, 2, 3].iter()[1:], content="[2, 3]")
@@ -591,30 +637,35 @@ test "Iter::as_view" {
 }
 
 ///|
+#warnings("-deprecated")
 test "Iter::enumerate" {
   inspect([1, 2, 3].iter2(), content="[(0, 1), (1, 2), (2, 3)]")
   inspect([1, 2, 3].iter2().to_string(), content="[(0, 1), (1, 2), (2, 3)]")
 }
 
 ///|
+#warnings("-deprecated")
 test "peek function - basic functionality" {
   let iter = Iter::singleton(42)
   inspect(iter.peek(), content="Some(42)")
 }
 
 ///|
+#warnings("-deprecated")
 test "peek function - empty iterator" {
   let iter : Iter[Int] = Iter::empty()
   inspect(iter.peek(), content="None")
 }
 
 ///|
+#warnings("-deprecated")
 test "peek function - multiple elements" {
   let iter = [1, 2, 3].iter()
   inspect(iter.peek(), content="Some(1)")
 }
 
 ///|
+#warnings("-deprecated")
 test "peek function - random cases" {
   let iter1 = [10, 20, 30].iter()
   inspect(iter1.peek(), content="Some(10)")
@@ -629,30 +680,35 @@ test "peek function - random cases" {
 }
 
 ///|
+#warnings("-deprecated")
 test "@builtin.join/empty_iter" {
   let empty_iter : Iter[String] = Iter::empty()
   inspect(empty_iter.join(""), content="")
 }
 
 ///|
+#warnings("-deprecated")
 test "@builtin.join/single_element" {
   let single_elem_iter : Iter[String] = Iter::singleton("Test")
   inspect(single_elem_iter.join(""), content="Test")
 }
 
 ///|
+#warnings("-deprecated")
 test "@builtin.join/multiple_elements_with_separator" {
   let iter : Iter[String] = ["A", "B", "C"].iter()
   inspect(iter.join(","), content="A,B,C")
 }
 
 ///|
+#warnings("-deprecated")
 test "@builtin.join/multiple_elements_without_separator" {
   let iter : Iter[String] = ["A", "B", "C"].iter()
   inspect(iter.join(""), content="ABC")
 }
 
 ///|
+#warnings("-deprecated")
 test "Iter::nth" {
   let it = () => [1, 2, 3, 4, 5].iter()
   inspect(it().nth(2), content="Some(3)")
@@ -668,6 +724,7 @@ test "Iter::nth" {
 }
 
 ///|
+#warnings("-deprecated")
 test "@builtin.Iter::maximum" {
   // Basic functionality with integers
   inspect([1, 2, 3, 4, 5].iter().maximum(), content="Some(5)")
@@ -681,6 +738,7 @@ test "@builtin.Iter::maximum" {
 }
 
 ///|
+#warnings("-deprecated")
 test "@builtin.Iter::minimum" {
   // Test with normal sequence
   let arr = [3, 1, 4, 1, 5].iter()
@@ -696,6 +754,7 @@ test "@builtin.Iter::minimum" {
 }
 
 ///|
+#warnings("-deprecated")
 test "Iter::intersperse with early termination" {
   let iter = [1, 2, 3].iter()
   let result = iter.intersperse(0).take(3).collect()
@@ -703,6 +762,7 @@ test "Iter::intersperse with early termination" {
 }
 
 ///|
+#warnings("-deprecated")
 test "Iter::iter method" {
   let original = [1, 2, 3].iter()
   let result = original.iter().collect()
@@ -710,6 +770,7 @@ test "Iter::iter method" {
 }
 
 ///|
+#warnings("-deprecated")
 test "Iter::contains method" {
   let iter = [1, 2, 3, 4, 5].iter()
   inspect(iter.contains(3), content="true")
@@ -717,6 +778,7 @@ test "Iter::contains method" {
 }
 
 ///|
+#warnings("-deprecated")
 test "Iter::flatten method" {
   let nested = [[1, 2], [3, 4], [5, 6]].iter().map(Array::iter)
   let flattened = nested.flatten().collect()
@@ -724,6 +786,7 @@ test "Iter::flatten method" {
 }
 
 ///|
+#warnings("-deprecated")
 test "Iter::add operator" {
   let iter1 = [1, 2, 3].iter()
   let iter2 = [4, 5, 6].iter()
@@ -732,30 +795,35 @@ test "Iter::add operator" {
 }
 
 ///|
+#warnings("-deprecated")
 test "Float::until with step=0" {
   let result = 1.0.until(2.0, step=0.0).collect()
   inspect(result, content="[]")
 }
 
 ///|
+#warnings("-deprecated")
 test "Float::until basic test" {
   let result = 0.0.until(3.0, step=1.0).collect()
   inspect(result, content="[0, 1, 2]")
 }
 
 ///|
+#warnings("-deprecated")
 test "Float::until with early termination" {
   let result = 0.0.until(10.0).take(3).collect()
   inspect(result, content="[0, 1, 2]")
 }
 
 ///|
+#warnings("-deprecated")
 test "Double::until with large numbers" {
   let result = 1000000.0.until(2000000.0, step=500000.0).collect()
   inspect(result, content="[1000000, 1500000]")
 }
 
 ///|
+#warnings("-deprecated")
 test "Double::until with NaN step" {
   let values = []
   for x in 1.0.until(1.0, step=@double.not_a_number, inclusive=true) {
@@ -765,6 +833,7 @@ test "Double::until with NaN step" {
 }
 
 ///|
+#warnings("-deprecated")
 test "Float::until with early break" {
   for i in 0.0.until(10.0) {
     if i > 2.0 {
@@ -775,6 +844,7 @@ test "Float::until with early break" {
 }
 
 ///|
+#warnings("-deprecated")
 test "Float::until negative step" {
   let result = 10.0.until(0.0, step=-2.0).collect()
   inspect(result, content="[10, 8, 6, 4, 2]")
@@ -848,6 +918,7 @@ test "Float::until negative step" {
 // }
 
 ///|
+#warnings("-deprecated")
 test "iter2" {
   let iter : Iter[Int] = [].iter()
   for _, _ in iter.iter2() {
@@ -860,6 +931,7 @@ test "iter2" {
 }
 
 ///|
+#warnings("-deprecated")
 test "Iter::iter2" {
   let iter = [0, 1, 2].iter()
   for i, x in iter.iter2() {

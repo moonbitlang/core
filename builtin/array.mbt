@@ -1,4 +1,4 @@
-// Copyright 2025 International Digital Economy Academy
+// Copyright 2026 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -1614,7 +1614,7 @@ pub fn[T] Array::split(
 /// test {
 ///   let arr = [1, 2, 3]
 ///   let mut sum = 0
-///   arr.iter().each(x => sum = sum + x)
+///   arr.iterator().each(x => sum = sum + x)
 ///   inspect(sum, content="6")
 /// }
 /// ```
@@ -1640,7 +1640,7 @@ pub fn[T] Array::iter(self : Array[T]) -> Iter[T] {
 /// test {
 ///   let arr = [1, 2, 3]
 ///   let result = []
-///   arr.rev_iter().each(x => result.push(x))
+///   arr.rev_iterator().each(x => result.push(x))
 ///   inspect(result, content="[3, 2, 1]")
 /// }
 /// ```
@@ -1666,7 +1666,10 @@ pub fn[T] Array::rev_iter(self : Array[T]) -> Iter[T] {
 /// test {
 ///   let arr = [10, 20, 30]
 ///   let mut sum = 0
-///   arr.iter2().each((i, x) => sum = sum + i + x)
+///   let iter = arr.iterator2()
+///   while iter.next() is Some((i, x)) {
+///     sum = sum + i + x
+///   }
 ///   inspect(sum, content="63") // (0 + 10) + (1 + 20) + (2 + 30) = 63
 /// }
 /// ```
@@ -1785,8 +1788,8 @@ pub fn[A] Array::retain_map(self : Array[A], f : (A) -> A?) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let iter = Iter::singleton(42)
-///   let arr = Array::from_iter(iter)
+///   let iter = Iterator::singleton(42)
+///   let arr = Array::from_iterator(iter)
 ///   inspect(arr, content="[42]")
 /// }
 /// ```
@@ -1829,7 +1832,7 @@ pub fn[T] Array::from_iterator(iter : Iterator[T]) -> Array[T] {
 /// test {
 ///   let u = [1, 2, 3]
 ///   let v = [4, 5, 6]
-///   u.push_iter(v.iter())
+///   u.push_iterator(v.iterator())
 ///   assert_eq(u, [1, 2, 3, 4, 5, 6])
 /// }
 /// ```
@@ -2027,7 +2030,7 @@ pub fn[T1, T2] Array::unzip(self : Array[(T1, T2)]) -> (Array[T1], Array[T2]) {
 ///   let arr1 = [1, 2, 3]
 ///   let arr2 = ['a', 'b', 'c']
 ///   inspect(
-///     arr1.zip_to_iter2(arr2).to_array(),
+///     arr1.zip_to_iterator2(arr2).iterator().to_array(),
 ///     content="[(1, 'a'), (2, 'b'), (3, 'c')]",
 ///   )
 /// }
@@ -2071,7 +2074,7 @@ pub fn[A, B] Array::zip_to_iterator2(
 /// ```mbt check
 /// test {
 ///   let s = "hello world"
-///   inspect(s.split(" ").to_array().join(":"), content="hello:world")
+///   inspect(s.split_iterator(" ").to_array().join(":"), content="hello:world")
 /// }
 /// ```
 pub fn[A : ToStringView] Array::join(

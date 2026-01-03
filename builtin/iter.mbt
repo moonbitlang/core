@@ -1,4 +1,4 @@
-// Copyright 2025 International Digital Economy Academy
+// Copyright 2026 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -831,9 +831,9 @@ pub fn[A] Iter::last(self : Iter[A]) -> A? {
 ///
 /// ```mbt check
 /// test {
-///   let iter = Iter::singleton(42)
+///   let iter = Iterator::singleton(42)
 ///   assert_eq(iter.head(), Some(42))
-///   let iter : Iter[Int] = Iter::empty()
+///   let iter : Iterator[Int] = Iterator::empty()
 ///   assert_eq(iter.head(), None)
 /// }
 /// ```
@@ -859,7 +859,7 @@ pub fn[A] Iter::head(self : Iter[A]) -> A? {
 /// ```mbt check
 /// test {
 ///   let arr = []
-///   [1, 2, 3].iter().intersperse(0).each(i => arr.push(i))
+///   [1, 2, 3].iterator().intersperse(0).each(i => arr.push(i))
 ///   assert_eq(arr, [1, 0, 2, 0, 3])
 /// }
 /// ```
@@ -910,10 +910,10 @@ pub fn[A] Iter::sub(self : Iter[A], start? : Int = 0, end? : Int) -> Iter[A] {
 ///
 /// ```mbt check
 /// test {
-///   let iter = [1, 2, 3, 4, 5].iter()
+///   let iter = [1, 2, 3, 4, 5].iterator()
 ///   inspect(iter.contains(3), content="true")
 ///   inspect(iter.contains(6), content="false")
-///   let iter = Iter::empty()
+///   let iter = Iterator::empty()
 ///   inspect(iter.contains(1), content="false")
 /// }
 /// ```
@@ -982,7 +982,7 @@ pub fn[T : Compare] Iter::minimum(self : Iter[T]) -> T? {
 /// # Example
 ///
 /// ```mbt test,notest
-///   let iter = [1, 1, 2, 3, 2, 2, 1].iter()
+///   let iter = [1, 1, 2, 3, 2, 2, 1].iterator()
 ///   let result = iter.group_by((x) => x)
 ///   assert_eq(result.get(1), Some([1, 1, 1]))
 ///   assert_eq(result.get(2), Some([2, 2, 2]))

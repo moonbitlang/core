@@ -224,7 +224,7 @@ test "Bytes::to_fixedarray with len" {
 
 ///|
 test "Bytes::iter2" {
-  let iter = b"ab".iter2()
+  let iter = b"ab".iterator2()
   inspect(iter, content="[(0, b'\\x61'), (1, b'\\x62')]")
 }
 

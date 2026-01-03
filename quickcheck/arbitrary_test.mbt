@@ -51,7 +51,7 @@ test "gen with default parameters" {
 
 ///|
 test "iter arbitrary" {
-  let samples : Array[Iter[Int]] = @quickcheck.samples(20)
+  let samples : Array[Iterator[Int]] = @quickcheck.samples(20)
   inspect("[0, 0, 0, 1, 2, -2]", content="[0, 0, 0, 1, 2, -2]")
   inspect(samples[1:5], content="[[], [], [0], [0]]")
   // inspect(samples[9], content="[0, 0, 0, 1, 2, -2]") (Cause infinite loop?)
@@ -78,17 +78,14 @@ test "arbitrary float" {
 ///|
 test "arbitrary_iter_break" {
   let rs = @splitmix.RandomState::default()
-  let iter : Iter[Int] = @quickcheck.gen(size=4, state=rs)
-  // An Iter with a length greater than 0 is required here
+  let iter : Iterator[Int] = @quickcheck.gen(size=4, state=rs)
+  // An Iterator with a length greater than 0 is required here
   let mut i = 0
-  match
-    iter.run(_ => {
-      i = i + 1
-      IterEnd
-    }) {
-    IterEnd => inspect(i, content="1")
-    IterContinue => panic()
+  while iter.next() is Some(_) {
+    i = i + 1
+    break
   }
+  inspect(i, content="1")
 }
 
 ///|

@@ -15,7 +15,7 @@ pub fn from_array(ArrayView[Byte]) -> Bytes
 pub fn from_fixedarray(FixedArray[Byte], len? : Int) -> Bytes
 
 #deprecated
-pub fn from_iter(Iter[Byte]) -> Bytes
+pub fn from_iter(Iterator[Byte]) -> Bytes
 
 #deprecated
 pub fn from_iterator(Iterator[Byte]) -> Bytes

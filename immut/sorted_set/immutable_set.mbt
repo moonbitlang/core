@@ -686,8 +686,8 @@ pub fn[A] SortedSet::filter(
 
 ///|
 pub impl[A : Show] Show for SortedSet[A] with output(self, logger) {
-  logger.write_iter(
-    self.iter(),
+  logger.write_iterator(
+    self.iterator(),
     prefix="@immut/sorted_set.from_array([",
     suffix="])",
   )
@@ -695,7 +695,7 @@ pub impl[A : Show] Show for SortedSet[A] with output(self, logger) {
 
 ///|
 pub impl[A : ToJson] ToJson for SortedSet[A] with to_json(self) {
-  let capacity = self.iter().count()
+  let capacity = self.iterator().count()
   guard capacity != 0 else { return Json::array([]) }
   let jsons = Array::new(capacity~)
   self.each(a => jsons.push(a.to_json()))

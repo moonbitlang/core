@@ -70,7 +70,11 @@ fn[A] Deque::tail_index(self : Deque[A]) -> Int {
 /// ```
 ///
 pub impl[A : Show] Show for Deque[A] with output(self, logger) {
-  logger.write_iter(self.iter(), prefix="@deque.from_array([", suffix="])")
+  logger.write_iterator(
+    self.iterator(),
+    prefix="@deque.from_array([",
+    suffix="])",
+  )
 }
 
 ///|
@@ -937,7 +941,7 @@ pub fn[A] Deque::eachi(self : Deque[A], f : (Int, A) -> Unit) -> Unit {
 /// }
 /// ```
 pub fn[A] Deque::rev_each(self : Deque[A], f : (A) -> Unit) -> Unit {
-  for v in self.rev_iter() {
+  for v in self.rev_iterator() {
     f(v)
   }
 }
@@ -955,7 +959,7 @@ pub fn[A] Deque::rev_each(self : Deque[A], f : (A) -> Unit) -> Unit {
 /// }
 /// ```
 pub fn[A] Deque::rev_eachi(self : Deque[A], f : (Int, A) -> Unit) -> Unit {
-  for i, v in self.rev_iter2() {
+  for i, v in self.rev_iterator2() {
     f(i, v)
   }
 }
@@ -1111,7 +1115,7 @@ pub fn[A : Eq] Deque::search(self : Deque[A], value : A) -> Int? {
 /// }
 /// ```
 pub fn[A : Eq] Deque::contains(self : Deque[A], value : A) -> Bool {
-  self.iter().contains(value)
+  self.iterator().contains(value)
 }
 
 ///|
@@ -1443,30 +1447,6 @@ pub fn[A] Deque::retain(self : Deque[A], f : (A) -> Bool) -> Unit {
 /// test {
 ///   let dq = @deque.from_array([1, 2, 3, 4, 5])
 ///   let mut sum = 0
-///   dq.iter().each(x => sum = sum + x)
-///   inspect(sum, content="15")
-/// }
-/// ```
-pub fn[A] Deque::iter(self : Deque[A]) -> Iter[A] {
-  self.iterator().iter()
-}
-
-///|
-/// Creates an iterator over the elements of the deque, allowing sequential
-/// access to its elements in order from front to back.
-///
-/// Parameters:
-///
-/// * `deque` : The deque to iterate over.
-///
-/// Returns an iterator that yields each element in the deque in order.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let dq = @deque.from_array([1, 2, 3, 4, 5])
-///   let mut sum = 0
 ///   dq.iterator().each(x => sum = sum + x)
 ///   inspect(sum, content="15")
 /// }
@@ -1489,33 +1469,7 @@ pub fn[A] Deque::iterator(self : Deque[A]) -> Iterator[A] {
 ///
 /// * `self` : The deque to iterate over.
 ///
-/// Returns an iterator of type `Iter2[Int, A]` that produces tuples of `(index,
-/// element)`, where `index` starts from 0 and increments by 1 for each element,
-/// and `element` is the corresponding element from the deque.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let dq = @deque.from_array([10, 20, 30])
-///   let mut sum = 0
-///   dq.iter2().each((i, x) => sum = sum + i * x)
-///   inspect(sum, content="80") // 0*10 + 1*20 + 2*30 = 80
-/// }
-/// ```
-pub fn[A] Deque::iter2(self : Deque[A]) -> Iter2[Int, A] {
-  self.iterator2().iter2()
-}
-
-///|
-/// Returns an iterator that yields pairs of indices and elements from the deque
-/// in order, starting from the front.
-///
-/// Parameters:
-///
-/// * `self` : The deque to iterate over.
-///
-/// Returns an iterator of type `Iter2[Int, A]` that produces tuples of `(index,
+/// Returns an iterator of type `Iterator2[Int, A]` that produces tuples of `(index,
 /// element)`, where `index` starts from 0 and increments by 1 for each element,
 /// and `element` is the corresponding element from the deque.
 ///
@@ -1540,30 +1494,6 @@ pub fn[A] Deque::iterator2(self : Deque[A]) -> Iterator2[Int, A] {
     index += 1
     Some(result)
   })
-}
-
-///|
-/// Creates an iterator that yields elements in reverse order.
-///
-/// Parameters:
-///
-/// * `self` : The deque to iterate over.
-///
-/// Returns an iterator that yields elements from the deque in reverse order,
-/// starting from the last element.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let dq = @deque.from_array([1, 2, 3])
-///   let mut sum = 0
-///   dq.rev_iter().each(x => sum = sum * 10 + x)
-///   inspect(sum, content="321")
-/// }
-/// ```
-pub fn[A] Deque::rev_iter(self : Deque[A]) -> Iter[A] {
-  self.rev_iterator().iter()
 }
 
 ///|
@@ -1613,32 +1543,6 @@ pub fn[A] Deque::rev_iterator(self : Deque[A]) -> Iterator[A] {
 /// test {
 ///   let dq = @deque.from_array([1, 2, 3])
 ///   let mut s = ""
-///   dq.rev_iter2().each((i, x) => s = s + "\{i}:\{x} ")
-///   inspect(s, content="0:3 1:2 2:1 ")
-/// }
-/// ```
-pub fn[A] Deque::rev_iter2(self : Deque[A]) -> Iter2[Int, A] {
-  self.rev_iterator2().iter2()
-}
-
-///|
-/// Creates an iterator that yields index-value pairs of elements in the deque in
-/// reverse order.
-///
-/// Parameters:
-///
-/// * `self` : The deque to iterate over.
-///
-/// Returns an iterator that yields tuples of `(index, value)` pairs, where the
-/// index starts from 0 and increments by 1, while values are taken from the
-/// deque in reverse order.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let dq = @deque.from_array([1, 2, 3])
-///   let mut s = ""
 ///   let it = dq.rev_iterator2()
 ///   while it.next() is Some((i, x)) {
 ///     s = s + "\{i}:\{x} "
@@ -1654,32 +1558,6 @@ pub fn[A] Deque::rev_iterator2(self : Deque[A]) -> Iterator2[Int, A] {
     rev_index -= 1
     Some((index, self.buf[(self.head + rev_index) % self.buf.length()]))
   })
-}
-
-///|
-/// Creates a new deque containing the elements from the given iterator.
-///
-/// Parameters:
-///
-/// * `iter` : An iterator containing the elements to be added to the deque.
-///
-/// Returns a new deque containing all elements from the iterator in the same
-/// order.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let arr = [1, 2, 3, 4, 5]
-///   let dq = @deque.from_iter(arr.iter())
-///   inspect(dq, content="@deque.from_array([1, 2, 3, 4, 5])")
-/// }
-/// ```
-#as_free_fn
-pub fn[A] Deque::from_iter(iter : Iter[A]) -> Deque[A] {
-  let dq = new()
-  iter.each(e => dq.push_back(e))
-  dq
 }
 
 ///|
@@ -1770,7 +1648,7 @@ pub fn[A] Deque::to_array(self : Deque[A]) -> Array[A] {
 /// ```
 pub fn Deque::join(self : Deque[String], separator : StringView) -> String {
   let str = separator.to_string()
-  self.iter().join(str)
+  self.iterator().join(str)
 }
 
 ///|
