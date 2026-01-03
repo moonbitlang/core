@@ -312,13 +312,14 @@ pub impl Mod for Float with mod(self : Float, other : Float) -> Float {
 /// # Returns
 ///
 /// Returns an iterator that iterates over the range of Float from `start` to `end - 1`.
+#warnings("-deprecated")
 #deprecated("Use `..<` in for loop or `until` method instead")
 #coverage.skip
 pub fn Float::upto(
   self : Float,
   end : Float,
   inclusive? : Bool = false,
-) -> Iterator[Float] {
+) -> Iter[Float] {
   let mut i = self
   Iterator::new(() => {
     guard i < end || (inclusive && i == end) else { None }
@@ -327,7 +328,7 @@ pub fn Float::upto(
       i += 1
     }
     Some(result)
-  })
+  }).iter()
 }
 
 ///|
@@ -344,17 +345,18 @@ pub fn Float::upto(
 /// # Returns
 ///
 /// Returns an iterator that iterates over the range of Float from `start` to `end - 1`.
+#warnings("-deprecated")
 pub fn Float::until(
   self : Float,
   end : Float,
   step? : Float = 1.0,
   inclusive? : Bool = false,
-) -> Iterator[Float] {
+) -> Iter[Float] {
   if step == 0.0 {
-    return Iterator::empty()
+    return Iter::empty()
   }
   let mut curr_value = Some(self)
-  Iterator::new(() => {
+  let iter = Iterator::new(() => {
     guard curr_value is Some(i) else { None }
     guard (step > 0.0 && i < end) ||
       (step < 0.0 && i > end) ||
@@ -370,6 +372,7 @@ pub fn Float::until(
     }
     Some(i)
   })
+  iter.iter()
 }
 
 ///|

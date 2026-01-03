@@ -223,8 +223,7 @@ pub fn BytesView::iter(self : BytesView) -> Iter[Byte] {
 /// test {
 ///   let bv = b"\x00\x01\x02\x03\x04\x05"[:]
 ///   let mut sum = 0
-///   let iter = bv.iterator2()
-///   while iter.next() is Some((i, x)) {
+///   for i, x in bv.iterator2() {
 ///     sum = sum + i + x.to_int()
 ///   }
 ///   inspect(sum, content="30")

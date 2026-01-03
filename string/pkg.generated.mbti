@@ -12,7 +12,7 @@ pub fn default() -> String
 pub fn from_array(ArrayView[Char]) -> String
 
 #deprecated
-pub fn from_iter(Iterator[Char]) -> String
+pub fn from_iter(Iter[Char]) -> String
 
 #deprecated
 pub fn from_iterator(Iterator[Char]) -> String

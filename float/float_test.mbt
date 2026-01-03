@@ -172,6 +172,7 @@ test "panic Float::is_close negative tolerance" {
 }
 
 ///|
+#warnings("-deprecated")
 test "Float::until basics" {
   inspect((0.0 : Float).until(1.0, step=0.5).collect(), content="[0, 0.5]")
   inspect((0.0 : Float).until(1.0, step=0.0).collect(), content="[]")
@@ -182,10 +183,11 @@ test "Float::until basics" {
 }
 
 ///|
+#warnings("-deprecated")
 test "Float::until with NaN step" {
   let values = []
   let iter = (1.0 : Float).until(1.0, step=@float.not_a_number, inclusive=true)
-  while iter.next() is Some(x) {
+  for x in iter {
     values.push(x)
   }
   inspect(values, content="[1]")

@@ -161,8 +161,7 @@ test "iterator" {
 test "iterator2" {
   let buf = StringBuilder::new(size_hint=5)
   let keys = []
-  let it = b"abcde".iterator2()
-  while it.next() is Some((i, x)) {
+  for i, x in b"abcde".iterator2() {
     buf.write_string(x.to_string())
     keys.push(i)
   }
