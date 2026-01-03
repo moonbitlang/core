@@ -77,6 +77,7 @@ pub fn[X] T::default() -> T[X] {
 }
 
 ///|
+#warnings("-deprecated")
 #deprecated("use `@immut/list.from_iter` instead")
 #coverage.skip
 pub fn[A] T::from_iter(iter : Iter[A]) -> T[A] {

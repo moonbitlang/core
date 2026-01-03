@@ -67,8 +67,8 @@ pub impl[K : Hash, V : Hash] Hash for SortedMap[K, V] with hash_combine(
 
 ///|
 pub impl[K : Show, V : Show] Show for SortedMap[K, V] with output(self, logger) {
-  logger.write_iter(
-    self.iter(),
+  logger.write_iterator(
+    self.iterator(),
     prefix="@immut/sorted_map.from_array([",
     suffix="])",
   )

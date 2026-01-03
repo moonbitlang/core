@@ -19,6 +19,7 @@ pub fn[A] T::add(self : T[A], head : A) -> T[A] {
 }
 
 ///|
+#warnings("-deprecated")
 pub impl[A : Show] Show for T[A] with output(xs, logger) {
   logger.write_iter(xs.iter(), prefix="@list.from_array([", suffix="])")
 }
@@ -436,7 +437,7 @@ pub fn[A, B] T::rev_fold(
 ) -> B raise? {
   let xs = self.to_array()
   let mut acc = init
-  for x in xs.rev_iter() {
+  for x in xs.rev_iterator() {
     acc = f(x, acc)
   }
   acc
@@ -1241,6 +1242,7 @@ pub fn[X] default() -> T[X] {
 }
 
 ///|
+#warnings("-deprecated")
 #deprecated("use `@list` instead")
 pub fn[A] T::iter(self : T[A]) -> Iter[A] {
   Iter::new(yield_ => loop self {
@@ -1255,6 +1257,7 @@ pub fn[A] T::iter(self : T[A]) -> Iter[A] {
 }
 
 ///|
+#warnings("-deprecated")
 #deprecated("use `@list` instead")
 pub fn[A] T::iter2(self : T[A]) -> Iter2[Int, A] {
   Iter2::new(yield_ => loop (self, 0) {
@@ -1272,12 +1275,14 @@ pub fn[A] T::iter2(self : T[A]) -> Iter2[Int, A] {
 /// Convert the iterator into a list. Preserves order of elements.
 /// This function is tail-recursive, but consumes 2*n memory. 
 /// If the order of elements is not important, use `from_iter_rev` instead.
+#warnings("-deprecated")
 #deprecated("use `@list` instead")
 pub fn[A] from_iter(iter : Iter[A]) -> T[A] {
   iter.fold(init=Nil, (acc, e) => Cons(e, acc)).rev()
 }
 
 ///|
+#warnings("-deprecated")
 #deprecated("use `@list` instead")
 pub fn[A] from_iter_rev(iter : Iter[A]) -> T[A] {
   iter.fold(init=Nil, (acc, e) => Cons(e, acc))

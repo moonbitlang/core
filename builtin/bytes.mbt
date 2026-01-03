@@ -549,8 +549,8 @@ pub fn BytesView::to_fixedarray(self : BytesView) -> FixedArray[Byte] {
 ///
 /// ```mbt check
 /// test {
-///   let iter = Iter::singleton(b'h')
-///   let bytes = Bytes::from_iter(iter)
+///   let iter = Iterator::singleton(b'h')
+///   let bytes = Bytes::from_iterator(iter)
 ///   inspect(
 ///     bytes,
 ///     content=(
@@ -559,6 +559,7 @@ pub fn BytesView::to_fixedarray(self : BytesView) -> FixedArray[Byte] {
 ///   )
 /// }
 /// ```
+#deprecated("Use `Bytes::from_iterator()` with an external iterator.", skip_current_package=true)
 pub fn Bytes::from_iter(iter : Iter[Byte]) -> Bytes {
   Bytes::from_array(iter.collect())
 }
@@ -668,10 +669,11 @@ pub fn BytesView::to_array(self : BytesView) -> Array[Byte] {
 /// test {
 ///   let bytes = Bytes::from_array([b'h', b'i'])
 ///   let mut sum = 0
-///   bytes.iter().each(b => sum = sum + b.to_int())
+///   bytes.iterator().each(b => sum = sum + b.to_int())
 ///   inspect(sum, content="209") // ASCII values: 'h'(104) + 'i'(105) = 209
 /// }
 /// ```
+#deprecated("Use `Bytes::iterator()` to get an external iterator.", skip_current_package=true)
 pub fn Bytes::iter(self : Bytes) -> Iter[Byte] {
   self.iterator().iter()
 }
@@ -713,12 +715,14 @@ pub fn Bytes::iterator(self : Bytes) -> Iterator[Byte] {
 /// Example:
 ///   let buf = StringBuilder::new(size_hint=5)
 ///   let keys = []
-///   b"abcde".iter2().each((i, x) => {
+///   let iter = b"abcde".iterator2()
+///   while iter.next() is Some((i, x)) {
 ///     buf.write_string(x.to_string())
-///     keys.push( i )
-///   })
+///     keys.push(i)
+///   }
 ///   inspect(buf, content="b'\\x61'b'\\x62'b'\\x63'b'\\x64'b'\\x65'")
 ///   inspect(keys, content="[0, 1, 2, 3, 4]")
+#deprecated("Use `Bytes::iterator2()` to get an external iterator.", skip_current_package=true)
 pub fn Bytes::iter2(self : Bytes) -> Iter2[Int, Byte] {
   self.iterator2().iter2()
 }

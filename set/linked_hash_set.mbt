@@ -445,8 +445,9 @@ pub fn[K] Set::clear(self : Set[K]) -> Unit {
 
 ///|
 /// Returns the iterator of the hash set, provide elements in the order of insertion.
-pub fn[K] Set::iter(self : Set[K]) -> Iter[K] {
-  self.iterator().iter()
+#deprecated("Use `Set::iterator()` to get an external iterator.", skip_current_package=true)
+pub fn[K] Set::iter(self : Set[K]) -> Iterator[K] {
+  self.iterator()
 }
 
 ///|
@@ -490,12 +491,9 @@ pub impl[K : Hash + Eq] Eq for Set[K] with equal(self, other) {
 
 ///|
 #as_free_fn
-pub fn[K : Hash + Eq] Set::from_iter(iter : Iter[K]) -> Set[K] {
-  let m = Set::new()
-  for e in iter {
-    m.add(e)
-  }
-  m
+#deprecated("Use `Set::from_iterator()` with an external iterator.", skip_current_package=true)
+pub fn[K : Hash + Eq] Set::from_iter(iter : Iterator[K]) -> Set[K] {
+  Set::from_iterator(iter)
 }
 
 ///|

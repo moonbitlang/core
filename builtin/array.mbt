@@ -1614,10 +1614,11 @@ pub fn[T] Array::split(
 /// test {
 ///   let arr = [1, 2, 3]
 ///   let mut sum = 0
-///   arr.iter().each(x => sum = sum + x)
+///   arr.iterator().each(x => sum = sum + x)
 ///   inspect(sum, content="6")
 /// }
 /// ```
+#deprecated("Use `Array::iterator()` to get an external iterator.", skip_current_package=true)
 pub fn[T] Array::iter(self : Array[T]) -> Iter[T] {
   self.iterator().iter()
 }
@@ -1639,10 +1640,11 @@ pub fn[T] Array::iter(self : Array[T]) -> Iter[T] {
 /// test {
 ///   let arr = [1, 2, 3]
 ///   let result = []
-///   arr.rev_iter().each(x => result.push(x))
+///   arr.rev_iterator().each(x => result.push(x))
 ///   inspect(result, content="[3, 2, 1]")
 /// }
 /// ```
+#deprecated("Use `Array::rev_iterator()` to get an external iterator.", skip_current_package=true)
 pub fn[T] Array::rev_iter(self : Array[T]) -> Iter[T] {
   self.rev_iterator().iter()
 }
@@ -1664,10 +1666,14 @@ pub fn[T] Array::rev_iter(self : Array[T]) -> Iter[T] {
 /// test {
 ///   let arr = [10, 20, 30]
 ///   let mut sum = 0
-///   arr.iter2().each((i, x) => sum = sum + i + x)
+///   let iter = arr.iterator2()
+///   while iter.next() is Some((i, x)) {
+///     sum = sum + i + x
+///   }
 ///   inspect(sum, content="63") // (0 + 10) + (1 + 20) + (2 + 30) = 63
 /// }
 /// ```
+#deprecated("Use `Array::iterator2()` to get an external iterator.", skip_current_package=true)
 pub fn[A] Array::iter2(self : Array[A]) -> Iter2[Int, A] {
   self.iterator2().iter2()
 }
@@ -1782,11 +1788,12 @@ pub fn[A] Array::retain_map(self : Array[A], f : (A) -> A?) -> Unit {
 ///
 /// ```mbt check
 /// test {
-///   let iter = Iter::singleton(42)
-///   let arr = Array::from_iter(iter)
+///   let iter = Iterator::singleton(42)
+///   let arr = Array::from_iterator(iter)
 ///   inspect(arr, content="[42]")
 /// }
 /// ```
+#deprecated("Use `Array::from_iterator()` with an external iterator.", skip_current_package=true)
 pub fn[T] Array::from_iter(iter : Iter[T]) -> Array[T] {
   iter.collect()
 }
@@ -1825,14 +1832,23 @@ pub fn[T] Array::from_iterator(iter : Iterator[T]) -> Array[T] {
 /// test {
 ///   let u = [1, 2, 3]
 ///   let v = [4, 5, 6]
-///   u.push_iter(v.iter())
+///   u.push_iterator(v.iterator())
 ///   assert_eq(u, [1, 2, 3, 4, 5, 6])
 /// }
 /// ```
+#deprecated("Use `Array::push_iterator()` with an external iterator.", skip_current_package=true)
 pub fn[T] Array::push_iter(self : Self[T], iter : Iter[T]) -> Unit {
   // This function used by [Array spread operator](https://docs.moonbitlang.com/en/latest/language/fundamentals.html#spread-operator)
   // it can't be removed and deprecated
   for x in iter {
+    self.push(x)
+  }
+}
+
+///|
+/// Adds all elements from an external iterator to the end of the array.
+pub fn[T] Array::push_iterator(self : Self[T], iter : Iterator[T]) -> Unit {
+  while iter.next() is Some(x) {
     self.push(x)
   }
 }
@@ -2014,15 +2030,25 @@ pub fn[T1, T2] Array::unzip(self : Array[(T1, T2)]) -> (Array[T1], Array[T2]) {
 ///   let arr1 = [1, 2, 3]
 ///   let arr2 = ['a', 'b', 'c']
 ///   inspect(
-///     arr1.zip_to_iter2(arr2).to_array(),
+///     arr1.zip_to_iterator2(arr2).iterator().to_array(),
 ///     content="[(1, 'a'), (2, 'b'), (3, 'c')]",
 ///   )
 /// }
 /// ```
+#deprecated("Use `Array::zip_to_iterator2()` to get an external iterator.", skip_current_package=true)
 pub fn[A, B] Array::zip_to_iter2(
   self : Array[A],
   other : Array[B],
 ) -> Iter2[A, B] {
+  self.zip_to_iterator2(other).iter2()
+}
+
+///|
+/// Zips two arrays into an external iterator that yields corresponding elements.
+pub fn[A, B] Array::zip_to_iterator2(
+  self : Array[A],
+  other : Array[B],
+) -> Iterator2[A, B] {
   let length = if self.length() < other.length() {
     self.length()
   } else {
@@ -2034,7 +2060,7 @@ pub fn[A, B] Array::zip_to_iter2(
     let elem = (self[i], other[i])
     i += 1
     Some(elem)
-  }).iter2()
+  })
 }
 
 ///|
@@ -2048,7 +2074,7 @@ pub fn[A, B] Array::zip_to_iter2(
 /// ```mbt check
 /// test {
 ///   let s = "hello world"
-///   inspect(s.split(" ").to_array().join(":"), content="hello:world")
+///   inspect(s.split_iterator(" ").to_array().join(":"), content="hello:world")
 /// }
 /// ```
 pub fn[A : ToStringView] Array::join(

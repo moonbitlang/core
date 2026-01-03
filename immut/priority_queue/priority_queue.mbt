@@ -73,9 +73,6 @@ pub fn[A : Compare] PriorityQueue::to_array(
 }
 
 ///|
-pub fn[A : Compare] PriorityQueue::iter(self : PriorityQueue[A]) -> Iter[A] {
-  self.iterator().iter()
-}
 
 ///|
 pub fn[A : Compare] PriorityQueue::iterator(
@@ -85,12 +82,6 @@ pub fn[A : Compare] PriorityQueue::iterator(
 }
 
 ///|
-#as_free_fn
-pub fn[A : Compare] PriorityQueue::from_iter(
-  iter : Iter[A],
-) -> PriorityQueue[A] {
-  iter.fold(init=new(), (s, e) => s.push(e))
-}
 
 ///|
 #as_free_fn
@@ -309,8 +300,8 @@ pub fn[A] PriorityQueue::length(self : PriorityQueue[A]) -> Int {
 
 ///|
 pub impl[A : Show + Compare] Show for PriorityQueue[A] with output(self, logger) {
-  logger.write_iter(
-    self.iter(),
+  logger.write_iterator(
+    self.iterator(),
     prefix="@immut/priority_queue.from_array([",
     suffix="])",
   )

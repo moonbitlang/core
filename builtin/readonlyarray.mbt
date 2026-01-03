@@ -49,13 +49,14 @@ pub fn[T] ReadOnlyArray::from_array(array : ArrayView[T]) -> ReadOnlyArray[T] {
 /// # Example
 /// ```mbt check
 /// test {
-///   let iter = [1, 2, 3].iter()
-///   let immut_array = ReadOnlyArray::from_iter(iter)
+///   let iter = [1, 2, 3].iterator()
+///   let immut_array = ReadOnlyArray::from_iterator(iter)
 ///   inspect(immut_array[0], content="1")
 /// }
 /// ```
+#deprecated("Use `ReadOnlyArray::from_iterator()` with an external iterator.", skip_current_package=true)
 pub fn[T] ReadOnlyArray::from_iter(iter : Iter[T]) -> ReadOnlyArray[T] {
-  unsafe_reinterpret_from_fixed_array(FixedArray::from_iter(iter))
+  unsafe_reinterpret_from_fixed_array(FixedArray::from_array(iter.collect()))
 }
 
 ///|
@@ -160,10 +161,11 @@ pub fn[T] ReadOnlyArray::last(self : ReadOnlyArray[T]) -> T? {
 /// test {
 ///   let arr : ReadOnlyArray[Int] = [1, 2, 3]
 ///   let mut sum = 0
-///   arr.iter().each(fn(x) { sum = sum + x })
+///   arr.iterator().each(fn(x) { sum = sum + x })
 ///   inspect(sum, content="6")
 /// }
 /// ```
+#deprecated("Use `ReadOnlyArray::iterator()` to get an external iterator.", skip_current_package=true)
 pub fn[T] ReadOnlyArray::iter(self : ReadOnlyArray[T]) -> Iter[T] {
   self.unsafe_reinterpret_to_fixed_array().iter()
 }
@@ -176,7 +178,7 @@ pub fn[T] ReadOnlyArray::iter(self : ReadOnlyArray[T]) -> Iter[T] {
 /// test {
 ///   let arr : ReadOnlyArray[Int] = [1, 2, 3]
 ///   let mut sum = 0
-///   arr.iter().each(fn(x) { sum = sum + x })
+///   arr.iterator().each(fn(x) { sum = sum + x })
 ///   inspect(sum, content="6")
 /// }
 /// ```
@@ -192,10 +194,11 @@ pub fn[T] ReadOnlyArray::iterator(self : ReadOnlyArray[T]) -> Iterator[T] {
 /// test {
 ///   let arr : ReadOnlyArray[Int] = [10, 20, 30]
 ///   let mut sum = 0
-///   arr.iter2().each(fn(i, x) { sum = sum + i + x })
+///   arr.iterator().eachi((i, x) => sum = sum + i + x)
 ///   inspect(sum, content="63") // (0+10) + (1+20) + (2+30) = 63
 /// }
 /// ```
+#deprecated("Use `ReadOnlyArray::iterator()` with `Iterator::eachi` or `Iterator::iterator2()` for indices.", skip_current_package=true)
 pub fn[T] ReadOnlyArray::iter2(self : ReadOnlyArray[T]) -> Iter2[Int, T] {
   self.unsafe_reinterpret_to_fixed_array().iter2()
 }

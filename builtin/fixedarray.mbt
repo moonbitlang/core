@@ -57,11 +57,12 @@ pub fn[T] FixedArray::get(self : FixedArray[T], idx : Int) -> T? {
 /// test {
 ///   let arr = FixedArray::make(3, 42)
 ///   let mut sum = 0
-///   arr.iter().each(x => sum = sum + x)
+///   arr.iterator().each(x => sum = sum + x)
 ///   inspect(sum, content="126")
 /// }
 /// ```
 #intrinsic("%iter.from_array")
+#deprecated("Use `FixedArray::iterator()` to get an external iterator.", skip_current_package=true)
 pub fn[T] FixedArray::iter(self : FixedArray[T]) -> Iter[T] {
   self.iterator().iter()
 }
@@ -84,10 +85,14 @@ pub fn[T] FixedArray::iter(self : FixedArray[T]) -> Iter[T] {
 /// test {
 ///   let arr = FixedArray::make(3, 10)
 ///   let mut sum = 0
-///   arr.iter2().each((i, x) => sum = sum + i + x)
+///   let iter = arr.iterator2()
+///   while iter.next() is Some((i, x)) {
+///     sum = sum + i + x
+///   }
 ///   inspect(sum, content="33") // (0 + 10) + (1 + 10) + (2 + 10) = 33
 /// }
 /// ```
+#deprecated("Use `FixedArray::iterator2()` to get an external iterator.", skip_current_package=true)
 pub fn[T] FixedArray::iter2(self : FixedArray[T]) -> Iter2[Int, T] {
   self.iterator2().iter2()
 }
@@ -1421,10 +1426,11 @@ test "iter" {
 /// ```mbt check
 /// test {
 ///   let arr = [1, 2, 3]
-///   let fixed_arr = FixedArray::from_iter(arr.iter())
+///   let fixed_arr = FixedArray::from_iterator(arr.iterator())
 ///   inspect(fixed_arr, content="[1, 2, 3]")
 /// }
 /// ```
+#deprecated("Use `FixedArray::from_iterator()` with an external iterator.", skip_current_package=true)
 pub fn[T] FixedArray::from_iter(iter : Iter[T]) -> FixedArray[T] {
   FixedArray::from_array(iter.collect())
 }

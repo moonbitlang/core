@@ -204,10 +204,11 @@ pub fn BytesView::sub(
 /// test {
 ///   let bv = b"\x00\x01\x02\x03\x04\x05"[:]
 ///   let mut sum = 0
-///   bv.iter().each(x => sum = sum + x.to_int())
+///   bv.iterator().each(x => sum = sum + x.to_int())
 ///   inspect(sum, content="15")
 /// }
 /// ```
+#deprecated("Use `BytesView::iterator()` to get an external iterator.", skip_current_package=true)
 pub fn BytesView::iter(self : BytesView) -> Iter[Byte] {
   self.iterator().iter()
 }
@@ -222,10 +223,14 @@ pub fn BytesView::iter(self : BytesView) -> Iter[Byte] {
 /// test {
 ///   let bv = b"\x00\x01\x02\x03\x04\x05"[:]
 ///   let mut sum = 0
-///   bv.iter2().each((i, x) => sum = sum + i + x.to_int())
+///   let iter = bv.iterator2()
+///   while iter.next() is Some((i, x)) {
+///     sum = sum + i + x.to_int()
+///   }
 ///   inspect(sum, content="30")
 /// }
 /// ```
+#deprecated("Use `BytesView::iterator2()` to get an external iterator.", skip_current_package=true)
 pub fn BytesView::iter2(self : BytesView) -> Iter2[Int, Byte] {
   self.iterator2().iter2()
 }
