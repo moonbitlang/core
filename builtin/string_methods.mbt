@@ -452,10 +452,142 @@ pub fn StringView::strip_suffix(
 }
 
 ///|
-/// Converts the View into an array of Chars.
-/// 
+/// Removes the given prefix from the view if it exists, otherwise returns the
+/// original view unchanged.
+///
+/// Unlike `strip_prefix` which returns `None` when the prefix doesn't match,
+/// `chop_prefix` always returns a view.
+///
 /// # Example
-/// 
+///
+/// ```mbt check
+/// test {
+///   let view = "hello world"[:]
+///   inspect(view.chop_prefix("hello "), content="world")
+///   inspect(view.chop_prefix("hi "), content="hello world")
+///   inspect(view.chop_prefix("hello world"), content="")
+/// }
+/// ```
+#alias(remove_prefix)
+pub fn StringView::chop_prefix(
+  self : StringView,
+  prefix : StringView,
+) -> StringView {
+  if self.has_prefix(prefix) {
+    self.view(start_offset=prefix.length())
+  } else {
+    self
+  }
+}
+
+///|
+/// Removes the given suffix from the view if it exists, otherwise returns the
+/// original view unchanged.
+///
+/// Unlike `strip_suffix` which returns `None` when the suffix doesn't match,
+/// `chop_suffix` always returns a view.
+///
+/// # Example
+///
+/// ```mbt check
+/// test {
+///   let view = "hello world"[:]
+///   inspect(view.chop_suffix(" world"), content="hello")
+///   inspect(view.chop_suffix(" moon"), content="hello world")
+///   inspect(view.chop_suffix("hello world"), content="")
+/// }
+/// ```
+#alias(remove_suffix)
+pub fn StringView::chop_suffix(
+  self : StringView,
+  suffix : StringView,
+) -> StringView {
+  if self.has_suffix(suffix) {
+    self.view(end_offset=self.length() - suffix.length())
+  } else {
+    self
+  }
+}
+
+///|
+/// Removes the given prefix from the string if it exists, otherwise returns the
+/// original string as a view.
+///
+/// Unlike `strip_prefix` which returns `None` when the prefix doesn't match,
+/// `chop_prefix` always returns a view.
+///
+/// # Example
+///
+/// ```mbt check
+/// test {
+///   inspect("hello world".chop_prefix("hello "), content="world")
+///   inspect("hello world".chop_prefix("hi "), content="hello world")
+///   inspect("hello".chop_prefix("hello"), content="")
+/// }
+/// ```
+#alias(remove_prefix)
+pub fn String::chop_prefix(self : String, prefix : StringView) -> StringView {
+  self[:].chop_prefix(prefix)
+}
+
+///|
+/// Removes the given suffix from the string if it exists, otherwise returns the
+/// original string as a view.
+///
+/// Unlike `strip_suffix` which returns `None` when the suffix doesn't match,
+/// `chop_suffix` always returns a view.
+///
+/// # Example
+///
+/// ```mbt check
+/// test {
+///   inspect("hello world".chop_suffix(" world"), content="hello")
+///   inspect("hello world".chop_suffix(" moon"), content="hello world")
+///   inspect("hello".chop_suffix("hello"), content="")
+/// }
+/// ```
+#alias(remove_suffix)
+pub fn String::chop_suffix(self : String, suffix : StringView) -> StringView {
+  self[:].chop_suffix(suffix)
+}
+
+///|
+test "chop_prefix" {
+  inspect("hello world".chop_prefix("hello "), content="world")
+  inspect("hello world".chop_prefix("hi "), content="hello world")
+  inspect("hello".chop_prefix("hello"), content="")
+  inspect("".chop_prefix(""), content="")
+  inspect("".chop_prefix("a"), content="")
+  inspect("abc".chop_prefix(""), content="abc")
+  inspect("😀hello".chop_prefix("😀"), content="hello")
+  inspect("😀😃hello".chop_prefix("😀😃"), content="hello")
+  // View version
+  let view = "hello world"[:]
+  inspect(view.chop_prefix("hello "), content="world")
+  inspect(view.chop_prefix("hi "), content="hello world")
+}
+
+///|
+test "chop_suffix" {
+  inspect("hello world".chop_suffix(" world"), content="hello")
+  inspect("hello world".chop_suffix(" moon"), content="hello world")
+  inspect("hello".chop_suffix("hello"), content="")
+  inspect("".chop_suffix(""), content="")
+  inspect("".chop_suffix("a"), content="")
+  inspect("abc".chop_suffix(""), content="abc")
+  inspect("hello😀".chop_suffix("😀"), content="hello")
+  inspect("hello😀😃".chop_suffix("😀😃"), content="hello")
+  // View version
+  let view = "hello world"[:]
+  inspect(view.chop_suffix(" world"), content="hello")
+  inspect(view.chop_suffix(" moon"), content="hello world")
+}
+
+///|
+/// Converts the View into an array of Chars.
+///
+/// # Example
+///
 /// ```mbt check
 /// test {
 ///   let view = "Hello🤣xa"[1:-1]
