@@ -324,13 +324,13 @@ test "has_prefix" {
 
 ///|
 /// Removes the given suffix from the string if it exists.
-/// 
+///
 /// Returns `Some(prefix)` if the string ends with the given suffix,
 /// where `prefix` is the string without the suffix.
 /// Returns `None` if the string does not end with the suffix.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```mbt check
 /// test {
 ///   inspect("hello world".strip_suffix(" world"), content="Some(\"hello\")")
@@ -338,12 +338,9 @@ test "has_prefix" {
 ///   inspect("hello".strip_suffix("hello"), content="Some(\"\")")
 /// }
 /// ```
+#alias(chop_suffix)
 pub fn String::strip_suffix(self : String, suffix : StringView) -> StringView? {
-  if self.has_suffix(suffix) {
-    Some(self.view(end_offset=self.length() - suffix.length()))
-  } else {
-    None
-  }
+  self[:].strip_suffix(suffix)
 }
 
 ///|
@@ -372,13 +369,13 @@ test "strip_suffix" {
 
 ///|
 /// Removes the given prefix from the string if it exists.
-/// 
+///
 /// Returns `Some(suffix)` if the string starts with the given prefix,
 /// where `suffix` is the string without the prefix.
 /// Returns `None` if the string does not start with the prefix.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```mbt check
 /// test {
 ///   inspect("hello world".strip_prefix("hello "), content="Some(\"world\")")
@@ -386,23 +383,20 @@ test "strip_suffix" {
 ///   inspect("hello".strip_prefix("hello"), content="Some(\"\")")
 /// }
 /// ```
+#alias(chop_prefix)
 pub fn String::strip_prefix(self : String, prefix : StringView) -> StringView? {
-  if self.has_prefix(prefix) {
-    Some(self.view(start_offset=prefix.length()))
-  } else {
-    None
-  }
+  self[:].strip_prefix(prefix)
 }
 
 ///|
 /// Removes the given prefix from the view if it exists.
-/// 
+///
 /// Returns `Some(suffix)` if the view starts with the given prefix,
 /// where `suffix` is the view without the prefix.
 /// Returns `None` if the view does not start with the prefix.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```mbt check
 /// test {
 ///   let view = "hello world"[:]
@@ -411,13 +405,14 @@ pub fn String::strip_prefix(self : String, prefix : StringView) -> StringView? {
 ///   inspect(view.strip_prefix("hello world"), content="Some(\"\")")
 /// }
 /// ```
-/// 
+#alias(chop_prefix)
 pub fn StringView::strip_prefix(
   self : StringView,
   prefix : StringView,
 ) -> StringView? {
-  if self.has_prefix(prefix) {
-    Some(self.view(start_offset=prefix.length()))
+  let prefix_len = prefix.length()
+  if self.length() >= prefix_len && self.view(end_offset=prefix_len) == prefix {
+    Some(self.view(start_offset=prefix_len))
   } else {
     None
   }
@@ -425,13 +420,13 @@ pub fn StringView::strip_prefix(
 
 ///|
 /// Removes the given suffix from the view if it exists.
-/// 
+///
 /// Returns `Some(prefix)` if the view ends with the given suffix,
 /// where `prefix` is the view without the suffix.
 /// Returns `None` if the view does not end with the suffix.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```mbt check
 /// test {
 ///   let view = "hello world"[:]
@@ -440,12 +435,16 @@ pub fn StringView::strip_prefix(
 ///   inspect(view.strip_suffix("hello world"), content="Some(\"\")")
 /// }
 /// ```
+#alias(chop_suffix)
 pub fn StringView::strip_suffix(
   self : StringView,
   suffix : StringView,
 ) -> StringView? {
-  if self.has_suffix(suffix) {
-    Some(self.view(end_offset=self.length() - suffix.length()))
+  let self_len = self.length()
+  let suffix_len = suffix.length()
+  if self_len >= suffix_len &&
+    self.view(start_offset=self_len - suffix_len) == suffix {
+    Some(self.view(end_offset=self_len - suffix_len))
   } else {
     None
   }
@@ -453,9 +452,9 @@ pub fn StringView::strip_suffix(
 
 ///|
 /// Converts the View into an array of Chars.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```mbt check
 /// test {
 ///   let view = "Hello🤣xa"[1:-1]

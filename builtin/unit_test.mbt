@@ -25,3 +25,31 @@ test {
   let unit2 = ()
   assert_true(physical_equal(unit1, unit2))
 }
+
+///|
+test {
+  let unit1 = ()
+  let unit2 = ()
+  inspect(unit1.compare(unit2), content="0")
+}
+
+///|
+test {
+  let unit = ()
+  inspect(Hasher::new(seed=0)..combine(unit).finalize(), content="148298089")
+}
+
+///|
+test "Unit hash_combine test" {
+  let hasher = Hasher::new()
+  let _ = Hash::hash_combine((), hasher)
+  let hash1 = hasher.finalize()
+  let hasher2 = Hasher::new()
+  assert_not_eq(hash1, hasher2.finalize())
+}
+
+///|
+test "Unit::default returns unit value" {
+  let unit = Unit::default()
+  inspect(unit, content="()")
+}
