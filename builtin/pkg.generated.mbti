@@ -711,6 +711,10 @@ pub fn String::char_length_eq(String, Int, start_offset? : Int, end_offset? : In
 pub fn String::char_length_ge(String, Int, start_offset? : Int, end_offset? : Int) -> Bool
 #deprecated
 pub fn String::charcode_at(String, Int) -> Int
+#alias(remove_prefix)
+pub fn String::chop_prefix(String, StringView) -> StringView
+#alias(remove_suffix)
+pub fn String::chop_suffix(String, StringView) -> StringView
 #deprecated
 pub fn String::codepoint_at(String, Int) -> Char
 pub fn String::contains(String, StringView) -> Bool
@@ -979,6 +983,10 @@ pub fn StringView::at(Self, Int) -> UInt16
 pub fn StringView::char_length(Self) -> Int
 pub fn StringView::char_length_eq(Self, Int) -> Bool
 pub fn StringView::char_length_ge(Self, Int) -> Bool
+#alias(remove_prefix)
+pub fn StringView::chop_prefix(Self, Self) -> Self
+#alias(remove_suffix)
+pub fn StringView::chop_suffix(Self, Self) -> Self
 pub fn StringView::contains(Self, Self) -> Bool
 pub fn StringView::contains_any(Self, chars~ : Self) -> Bool
 pub fn StringView::contains_char(Self, Char) -> Bool
