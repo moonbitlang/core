@@ -4,7 +4,7 @@ changelog should follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 
 `MoonBit Language Changes`  no need for such detailed classification.
 
-## [Unreleased]
+## [0.6.36]
 
 ### `moonbitlang/core` Changes 
 
@@ -28,6 +28,22 @@ changelog should follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 #### Fixed
 
 ### MoonBit Language Changes
+
+#### Added
+
+- Introduced the `#declaration_only` attribute for function, method, and type declarations. These declarations can be called or tested immediately but require a concrete implementation to function at runtime. Accessing a declaration without an implementation will result in a runtime crash.
+
+- The compiler can now report unused warning on async annotations when the function is actually synchronous
+
+- `moonfmt` will automatically migrate `mbt test`/`mbt test(async)` code blocks in Markdown to `mbt check`.
+
+#### Changed
+
+- The default value of optional arguments can now raise error or perform async operations, as long as the function itself allow these effects
+
+- Refactored the representation of JS backend trait objects. Each trait object now consists of two fields: the underlying data and a method table. This allows trait objects of the same type to share a single method table.
+
+#### Deprecated
 
 ## [0.6.35]
 
