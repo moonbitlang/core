@@ -1096,6 +1096,7 @@ pub(open) trait Compare : Eq {
   op_le(Self, Self) -> Bool = _
   op_ge(Self, Self) -> Bool = _
 }
+pub impl Compare for Unit
 pub impl Compare for Bool
 pub impl Compare for Byte
 pub impl Compare for Char
@@ -1132,6 +1133,7 @@ pub impl Compare for StringView
 pub(open) trait Default {
   default() -> Self
 }
+pub impl Default for Unit
 pub impl Default for Bool
 pub impl Default for Byte
 pub impl Default for Char
@@ -1204,6 +1206,7 @@ pub(open) trait Hash {
   hash_combine(Self, Hasher) -> Unit
   hash(Self) -> Int = _
 }
+pub impl Hash for Unit
 pub impl Hash for Bool
 pub impl Hash for Byte
 pub impl Hash for Char

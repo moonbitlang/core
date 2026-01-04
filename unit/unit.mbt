@@ -13,27 +13,8 @@
 // limitations under the License.
 
 ///|
-pub fn Unit::to_string(_ : Self) -> String {
-  "()"
-}
-
-///|
-pub impl Hash for Unit with hash_combine(_, hasher) -> Unit {
-  hasher.combine_unit()
-}
-
-///|
-pub impl Default for Unit with default() -> Unit {
-  ()
-}
-
-///|
 /// same as `Unit::default`
+#deprecated("Use `Unit::default` instead")
 pub fn default() -> Unit {
   ()
-}
-
-///|
-pub impl Compare for Unit with compare(_, _) {
-  0
 }
