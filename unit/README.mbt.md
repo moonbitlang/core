@@ -22,12 +22,12 @@ test "unit construction" {
   let u1 = ()
 
   // Via default constructor
-  let u2 = @unit.default()
+  let u2 = Unit::default()
   fn println(_ : String) {
 
   }
   // All unit values are identical
-  inspect(u1 == u2, content="true")
+  assert_eq(u1, u2)
 
   // Common pattern: functions that return unit
   fn log_message(msg : String) -> Unit {

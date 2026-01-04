@@ -16,3 +16,18 @@
 pub impl Eq for Unit with equal(_ : Unit, _ : Unit) -> Bool {
   true
 }
+
+///|
+pub impl Compare for Unit with compare(_, _) {
+  0
+}
+
+///|
+pub impl Default for Unit with default() -> Unit {
+  ()
+}
+
+///|
+pub impl Hash for Unit with hash_combine(_, hasher) -> Unit {
+  hasher.combine_unit()
+}
