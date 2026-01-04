@@ -752,7 +752,9 @@ pub fn[A] String::rev_fold(String, init~ : A, (A, Char) -> A raise?) -> A raise?
 pub fn String::rev_iter(String) -> Iter[Char]
 pub fn String::rev_iterator(String) -> Iterator[Char]
 pub fn String::split(String, StringView) -> Iter[StringView]
+#alias(chop_prefix)
 pub fn String::strip_prefix(String, StringView) -> StringView?
+#alias(chop_suffix)
 pub fn String::strip_suffix(String, StringView) -> StringView?
 #alias("_[_:_]")
 pub fn String::sub(String, start? : Int, end? : Int) -> StringView raise CreatingViewError
@@ -1018,7 +1020,9 @@ pub fn StringView::rev_iter(Self) -> Iter[Char]
 pub fn StringView::rev_iterator(Self) -> Iterator[Char]
 pub fn StringView::split(Self, Self) -> Iter[Self]
 pub fn StringView::start_offset(Self) -> Int
+#alias(chop_prefix)
 pub fn StringView::strip_prefix(Self, Self) -> Self?
+#alias(chop_suffix)
 pub fn StringView::strip_suffix(Self, Self) -> Self?
 #alias("_[_:_]")
 pub fn StringView::sub(Self, start? : Int, end? : Int) -> Self raise CreatingViewError
