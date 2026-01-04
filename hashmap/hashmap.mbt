@@ -36,7 +36,7 @@
 /// ```
 #as_free_fn
 pub fn[K, V] HashMap::new(capacity? : Int = 8) -> HashMap[K, V] {
-  let capacity = capacity.next_power_of_two()
+  let capacity = capacity.next_power_of_two().max(8)
   {
     size: 0,
     capacity,
