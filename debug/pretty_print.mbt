@@ -301,3 +301,9 @@ pub fn render(r : Repr, max_depth? : Int, compact_threshold? : Int) -> String {
   let info = prune_repr_info(max_depth, r)
   print_content(render_repr(threshold, info).no_wrap())
 }
+
+///|
+/// Print a value in human-readable format to standard output.
+pub fn[T : Debug] debug(x : T) -> Unit {
+  println(render(x.to_repr()))
+}

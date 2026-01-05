@@ -24,6 +24,8 @@ pub fn[T : @builtin.Eq + @builtin.Show] assert_not_eq(T, T, msg? : String, loc~ 
 #callsite(autofill(loc))
 pub fn assert_true(Bool, msg? : String, loc~ : @builtin.SourceLoc) -> Unit raise
 
+pub fn[T : @builtin.Debug] debug(T) -> Unit
+
 #deprecated
 #callsite(autofill(loc))
 pub fn[T] dump(T, name? : String, loc~ : @builtin.SourceLoc) -> T
