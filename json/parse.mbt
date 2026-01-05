@@ -25,6 +25,7 @@ pub fn valid(input : StringView) -> Bool {
 ///|
 /// Parse a JSON input string into a Json value, with an optional maximum nesting depth (default is 1024)
 #label_migration(max_nesting_depth, fill=false)
+#cfg(not(target="js"))
 pub fn parse(
   input : StringView,
   max_nesting_depth? : Int = 1024,
