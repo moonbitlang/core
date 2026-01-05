@@ -493,6 +493,7 @@ pub fn Repr::literal(String) -> Self
 pub fn Repr::omitted() -> Self
 pub fn Repr::opaque_(String, Array[Self]) -> Self
 pub fn Repr::record(Map[String, Self]) -> Self
+pub fn Repr::shallow(Self) -> Self
 pub fn Repr::string(String) -> Self
 pub fn Repr::traverse(Self, (Self) -> Self) -> Self
 pub fn Repr::tuple(Array[Self]) -> Self
@@ -500,6 +501,7 @@ pub fn Repr::uint(UInt) -> Self
 pub fn Repr::uint16(UInt16) -> Self
 pub fn Repr::uint64(UInt64) -> Self
 pub fn Repr::unit() -> Self
+pub fn Repr::with_children(Self, Array[Self]) -> Self
 
 pub(all) type SourceLoc
 pub fn SourceLoc::to_json_string(Self) -> String
