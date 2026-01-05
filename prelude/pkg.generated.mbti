@@ -87,6 +87,8 @@ pub using @builtin {type Map}
 
 pub using @builtin {type MutArrayView}
 
+pub using @builtin {type Repr}
+
 pub using @set {type Set}
 
 pub using @builtin {type SnapshotError}
@@ -106,6 +108,8 @@ pub using @builtin {trait BitOr}
 pub using @builtin {trait BitXOr}
 
 pub using @builtin {trait Compare}
+
+pub using @builtin {trait Debug}
 
 pub using @builtin {trait Default}
 

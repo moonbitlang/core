@@ -196,3 +196,9 @@ impl Eq with equal(self, other) {
 impl Eq with op_equal(self, other) {
   Eq::equal(self, other)
 }
+
+///|
+/// Trait for types that can be converted to human-readable debugging info.
+pub trait Debug {
+  to_repr(Self) -> Repr
+}
