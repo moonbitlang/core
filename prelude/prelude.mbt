@@ -39,6 +39,7 @@ pub using @builtin {
   trait Hash,
   trait Logger,
   trait Show,
+  trait Debug,
   trait ToJson,
   trait Default,
   trait Add,
@@ -70,6 +71,7 @@ pub using @builtin {
   type SnapshotError,
   type SourceLoc,
   type StringBuilder,
+  type Repr,
 }
 
 ///|
