@@ -96,7 +96,7 @@ pub fn Repr::children(self : Repr) -> Array[Repr] {
 /// - `MapEntry` expects exactly two children and falls back to `MapEntry(Omitted, Omitted)`.
 /// - This is intentionally not a total inverse of `children`: invalid arity is
 ///   clamped to keep the tree well-formed for generic traversal.
-fn Repr::with_children(self : Repr, children : Array[Repr]) -> Repr {
+pub fn Repr::with_children(self : Repr, children : Array[Repr]) -> Repr {
   match self {
     UnitLit
     | Fixnum(_)
@@ -285,4 +285,32 @@ pub fn Repr::ctor(name : String, args : Array[(String?, Repr)]) -> Repr {
       }
     }),
   )
+}
+
+///|
+/// A shallow copy of `self` containing only its "label" (children replaced).
+///
+/// This is used by diff/pretty-print when the structure is preserved but
+/// children are rendered separately.
+pub fn Repr::shallow(self : Repr) -> Repr {
+  match self {
+    UnitLit
+    | Fixnum(_)
+    | DoubleLit(_)
+    | FloatLit(_)
+    | BoolLit(_)
+    | CharLit(_)
+    | StringLit(_)
+    | Literal(_)
+    | Omitted => self
+    Tuple(_) => Tuple([])
+    Array(_) => Array([])
+    Record(_) => Record([])
+    Enum(name, _) => Enum(name, [])
+    Opaque(name, _) => Opaque(name, [])
+    Map(_) => Map([])
+    RecordField(name, _) => RecordField(name, Omitted)
+    EnumLabeledArg(label, _) => EnumLabeledArg(label, Omitted)
+    MapEntry(_, _) => MapEntry(Omitted, Omitted)
+  }
 }
