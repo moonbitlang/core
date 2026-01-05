@@ -278,6 +278,15 @@ test "rev_keys is reverse of keys" {
 }
 
 ///|
+test "rev_keys is reverse of keys (quickcheck)" {
+  for xs in (@quickcheck.samples(50) : Array[@sorted_map.SortedMap[Int, Int]]) {
+    let forward = xs.keys_as_iter().collect()
+    let reverse = xs.rev_keys().collect()
+    assert_eq(reverse, forward.rev())
+  }
+}
+
+///|
 test "rev_values is reverse of values" {
   let map = @sorted_map.from_array([
     (3, "three"),
