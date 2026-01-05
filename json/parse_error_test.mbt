@@ -24,7 +24,9 @@ test "parse error branches" {
   guard (try? @json.parse("nullx")) is Err(InvalidChar(_, _)) else {
     fail("expected InvalidChar for trailing data")
   }
-  inspect(@json.parse("\u{00A0}null"), content="Null")
+  guard (try? @json.parse("\u{00A0}null")) is Err(InvalidChar(_, _)) else {
+    fail("expected InvalidChar for leading non-breaking space")
+  }
   guard (try? @json.parse("tx")) is Err(InvalidChar(_, _)) else {
     fail("expected InvalidChar for invalid literal")
   }

@@ -13,18 +13,6 @@
 // limitations under the License.
 
 ///|
-let non_ascii_whitespace : CharClass = CharClass::of([
-  ('\u00A0', '\u00A0'),
-  ('\u1680', '\u1680'),
-  ('\u2000', '\u200A'),
-  ('\u2028', '\u2029'),
-  ('\u202F', '\u202F'),
-  ('\u205F', '\u205F'),
-  ('\u3000', '\u3000'),
-  ('\uFEFF', '\uFEFF'),
-])
-
-///|
 fn ParseContext::lex_value(
   ctx : ParseContext,
   allow_rbracket~ : Bool,
@@ -87,9 +75,6 @@ fn ParseContext::lex_value(
         return String(s)
       }
       Some(c) => {
-        if c > '\u{7f}' && non_ascii_whitespace.contains(c) {
-          continue
-        }
         let shift = -c.utf16_len()
         ctx.invalid_char(shift~)
       }
