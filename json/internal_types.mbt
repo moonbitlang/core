@@ -34,32 +34,6 @@ fn ParseContext::make(
 }
 
 ///|
-priv struct CharClass(Array[(Char, Char)])
-
-///|
-fn CharClass::of(array : Array[(Char, Char)]) -> CharClass {
-  CharClass(array)
-}
-
-///|
-fn CharClass::contains(self : CharClass, c : Char) -> Bool {
-  let CharClass(self) = self
-  for left = 0, right = self.length(); left < right; {
-    let middle = (left + right) / 2
-    let (min, max) = self[middle]
-    if c < min {
-      continue left, middle
-    } else if c > max {
-      continue middle + 1, right
-    } else {
-      break true
-    }
-  } else {
-    false
-  }
-}
-
-///|
 priv enum Token {
   Null
   True

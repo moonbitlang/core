@@ -118,10 +118,7 @@ fn ParseContext::lex_skip_whitespace(ctx : ParseContext) -> Unit {
   for {
     match ctx.read_char() {
       Some('\t' | ' ' | '\n' | '\r') => continue
-      Some(c) => {
-        if c > '\u{7f}' && non_ascii_whitespace.contains(c) {
-          continue
-        }
+      Some(_) => {
         ctx.offset -= 1
         break
       }

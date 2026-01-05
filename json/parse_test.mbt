@@ -222,7 +222,7 @@ test "parses escaped characters" {
 
 ///|
 test "parses whitespace" {
-  let json = test_parse("{\t \u00A0\uFEFF\n\r\u2028\u2029\u2003}")
+  let json = test_parse("{\t \n\r}")
   assert_eq(json, Json::object({}))
 }
 //endregion
