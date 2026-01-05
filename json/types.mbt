@@ -25,6 +25,8 @@ pub(all) suberror ParseError {
   InvalidNumber(Position, String)
   InvalidIdentEscape(Position)
   DepthLimitExceeded
+  /// Only used on JS backend
+  SyntaxError(String)
 } derive(Eq, ToJson)
 
 ///|
@@ -57,6 +59,10 @@ pub impl Show for ParseError with output(self, logger) {
       logger.write_string(
         "Depth limit exceeded, please increase the max_nesting_depth parameter",
       )
+    SyntaxError(msg) => {
+      logger.write_string("Syntax error: ")
+      logger.write_string(msg)
+    }
   }
 }
 
