@@ -75,6 +75,9 @@ pub using @builtin {
 }
 
 ///|
+pub using @debug {debug}
+
+///|
 /// Applies a function to a value and returns the original value.
 ///
 /// # Parameters

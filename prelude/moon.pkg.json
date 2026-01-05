@@ -3,7 +3,8 @@
     "moonbitlang/core/builtin",
     "moonbitlang/core/bigint",
     "moonbitlang/core/set",
-    "moonbitlang/core/json"
+    "moonbitlang/core/json",
+    "moonbitlang/core/debug"
   ],
   "warn-list": "-test_unqualified_package"
 }

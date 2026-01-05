@@ -2,6 +2,8 @@
 package "moonbitlang/core/debug"
 
 // Values
+pub fn[T : Debug] debug(T) -> Unit
+
 pub fn render(Repr, max_depth? : Int, compact_threshold? : Int) -> String
 
 // Errors
