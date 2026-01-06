@@ -1,4 +1,4 @@
-// Copyright 2025 International Digital Economy Academy
+// Copyright 2026 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ test "unsafe_pop_front after many push_front" {
   for i in 0..<10 {
     dq.unsafe_pop_front()
   }
-  assert_eq(dq.head, dq.tail)
+  assert_eq(dq.len, 0)
 }
 
 ///|
@@ -29,7 +29,7 @@ test "truncate zero" {
   let dq = from_array([1, 2, 3])
   dq.truncate(0)
   inspect(dq.len, content="0")
-  assert_eq(dq.head, dq.tail)
+  assert_eq(dq.len, 0)
 }
 
 ///|

@@ -1,4 +1,4 @@
-// Copyright 2025 International Digital Economy Academy
+// Copyright 2026 International Digital Economy Academy
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -279,6 +279,15 @@ test "from_json_tail_bug" {
   assert_eq(dq.back(), None)
   dq.push_back(1)
   assert_eq(dq.back(), Some(1))
+}
+
+///|
+test "from_json rejects non-array" {
+  let bad_json : Json = { "a": 1 }
+  let result : Result[@deque.Deque[Int], @json.JsonDecodeError] = try? @json.from_json(
+    bad_json,
+  )
+  inspect(result is Err(_), content="true")
 }
 
 ///|
@@ -1609,14 +1618,6 @@ test "append_self" {
 }
 
 ///|
-test "append_self_alias" {
-  let d1 = @deque.from_array([1, 2, 3])
-  d1.append(d1)
-  inspect(d1.to_array(), content="[1, 2, 3, 1, 2, 3]")
-  assert_eq(d1.length(), 6)
-}
-
-///|
 test "append_tail_position" {
   /// Test that tail is correctly updated after append
   let d1 = @deque.from_array([1, 2, 3])
@@ -1758,6 +1759,36 @@ test "blit_to_self" {
   @deque.Deque::blit_to(d.copy(), d, len=3, src_offset=0, dst_offset=2)
   assert_eq(d.to_array(), [1, 2, 1, 2, 3])
   inspect(d.as_views(), content="([1, 2, 1, 2, 3], [])")
+}
+
+///|
+/// Test blit_to with true self-blit overlapping regions
+/// When src_offset < dst_offset and regions overlap, elements must be
+/// copied in reverse order to avoid overwriting source before reading.
+test "blit_to_self_overlap" {
+  // Case 1: src_offset < dst_offset with overlap
+  // Copy [2,3,4] (indices 1,2,3) to positions 2,3,4
+  // Expected: [1, 2, 2, 3, 4]
+  let d = @deque.from_array([1, 2, 3, 4, 5])
+  d.blit_to(d, len=3, src_offset=1, dst_offset=2)
+  inspect(d.to_array(), content="[1, 2, 2, 3, 4]")
+
+  // Case 2: dst_offset < src_offset with overlap (forward copy is safe)
+  // Copy [3,4,5] (indices 2,3,4) to positions 0,1,2
+  // Expected: [3, 4, 5, 4, 5]
+  let d2 = @deque.from_array([1, 2, 3, 4, 5])
+  d2.blit_to(d2, len=3, src_offset=2, dst_offset=0)
+  inspect(d2.to_array(), content="[3, 4, 5, 4, 5]")
+
+  // Case 3: No overlap (src and dst regions don't intersect)
+  let d3 = @deque.from_array([1, 2, 3, 4, 5])
+  d3.blit_to(d3, len=2, src_offset=0, dst_offset=3)
+  inspect(d3.to_array(), content="[1, 2, 3, 1, 2]")
+
+  // Case 4: Overlap with growth past current length
+  let d4 = @deque.from_array([1, 2, 3, 4, 5])
+  d4.blit_to(d4, len=3, src_offset=1, dst_offset=3)
+  inspect(d4.to_array(), content="[1, 2, 3, 2, 3, 4]")
 }
 
 ///|
