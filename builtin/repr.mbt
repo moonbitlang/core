@@ -78,6 +78,7 @@ pub enum Repr {
 /// - `RecordField`/`EnumLabeledArg` have one child; `MapEntry` has two.
 /// - `children` and `with_children` form a partial lens for tree rewrites:
 ///   `self.with_children(self.children()) == self`.
+#doc(hidden)
 pub fn Repr::children(self : Repr) -> Array[Repr] {
   match self {
     UnitLit
@@ -110,6 +111,7 @@ pub fn Repr::children(self : Repr) -> Array[Repr] {
 /// - `MapEntry` expects exactly two children and falls back to `MapEntry(Omitted, Omitted)`.
 /// - This is intentionally not a total inverse of `children`: invalid arity is
 ///   clamped to keep the tree well-formed for generic traversal.
+#doc(hidden)
 pub fn Repr::with_children(self : Repr, children : Array[Repr]) -> Repr {
   match self {
     UnitLit
@@ -150,6 +152,7 @@ pub fn Repr::with_children(self : Repr, children : Array[Repr]) -> Repr {
 ///
 /// `f` runs after children are traversed (post-order), so it sees rewritten
 /// children and can hide fields by rewriting `RecordField`/`EnumLabeledArg` nodes.
+#doc(hidden)
 pub fn Repr::traverse(self : Repr, f : (Repr) -> Repr) -> Repr {
   fn go(node : Repr) -> Repr {
     let children = node.children()
@@ -162,54 +165,63 @@ pub fn Repr::traverse(self : Repr, f : (Repr) -> Repr) -> Repr {
 
 ///|
 /// Construct a `Integer` leaf.
+#doc(hidden)
 pub fn Repr::integer(x : String) -> Repr {
   Integer(x)
 }
 
 ///|
 /// Construct a `DoubleLit` leaf.
+#doc(hidden)
 pub fn Repr::double(x : Double) -> Repr {
   DoubleLit(x)
 }
 
 ///|
 /// Construct a `FloatLit` leaf.
+#doc(hidden)
 pub fn Repr::float(x : Float) -> Repr {
   FloatLit(x)
 }
 
 ///|
 /// Construct a `BoolLit` leaf.
+#doc(hidden)
 pub fn Repr::bool(x : Bool) -> Repr {
   BoolLit(x)
 }
 
 ///|
 /// Construct a `CharLit` leaf.
+#doc(hidden)
 pub fn Repr::char(x : Char) -> Repr {
   CharLit(x)
 }
 
 ///|
 /// Construct a `StringLit` leaf.
+#doc(hidden)
 pub fn Repr::string(x : String) -> Repr {
   StringLit(x)
 }
 
 ///|
 /// Construct a `Tuple` node from pre-built child `Repr`s.
+#doc(hidden)
 pub fn Repr::tuple(children : Array[Repr]) -> Repr {
   Tuple(children)
 }
 
 ///|
 /// Construct an `Array` node from pre-built child `Repr`s.
+#doc(hidden)
 pub fn Repr::array(children : Array[Repr]) -> Repr {
   Array(children)
 }
 
 ///|
 /// Construct a `Record` node from pre-built child `Repr`s.
+#doc(hidden)
 pub fn Repr::record(fields : Map[String, Repr]) -> Repr {
   Record(fields.to_array().map(fn(p) { RecordField(p.0, p.1) }))
 }
@@ -219,18 +231,21 @@ pub fn Repr::record(fields : Map[String, Repr]) -> Repr {
 ///
 /// This is useful for values where you want to keep a tag/type name but still
 /// show a structural summary through children (e.g. `<Map: {...}>`).
+#doc(hidden)
 pub fn Repr::opaque_(name : String, children : Array[Repr]) -> Repr {
   Opaque(name, children)
 }
 
 ///|
 /// Construct a `Literal(value)` leaf (already formatted).
+#doc(hidden)
 pub fn Repr::literal(value : String) -> Repr {
   Literal(value)
 }
 
 ///|
 /// Construct a `Map` node from key/value `Repr` pairs (for map literals).
+#doc(hidden)
 pub fn Repr::dict(contents : Array[(Repr, Repr)]) -> Repr {
   Map(
     contents.map(fn(pair) {
@@ -242,11 +257,13 @@ pub fn Repr::dict(contents : Array[(Repr, Repr)]) -> Repr {
 
 ///|
 /// Construct an `Omitted` marker node.
+#doc(hidden)
 pub fn Repr::omitted() -> Repr {
   Omitted
 }
 
 ///|
+#doc(hidden)
 pub fn Repr::unit() -> Repr {
   UnitLit
 }
@@ -255,6 +272,7 @@ pub fn Repr::unit() -> Repr {
 /// Construct an `Enum(name, args)` node for enum/constructor applications.
 ///
 /// Use `None` for positional arguments and `Some(label)` for labeled ones.
+#doc(hidden)
 pub fn Repr::ctor(name : String, args : Array[(String?, Repr)]) -> Repr {
   Enum(
     name,
@@ -273,6 +291,7 @@ pub fn Repr::ctor(name : String, args : Array[(String?, Repr)]) -> Repr {
 ///
 /// This is used by diff/pretty-print when the structure is preserved but
 /// children are rendered separately.
+#doc(hidden)
 pub fn Repr::shallow(self : Repr) -> Repr {
   match self {
     UnitLit
