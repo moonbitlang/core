@@ -1342,3 +1342,27 @@ test "Array::unsafe_pop" {
   inspect(value, content="3")
   inspect(arr, content="[1, 2]")
 }
+
+///|
+test "Array::append/self_alias" {
+  // Test appending array to itself - this should double the array
+  // Using small capacity to force reallocation during append
+  let arr = Array::new(capacity=3)
+  arr.push(1)
+  arr.push(2)
+  arr.push(3)
+  arr.append(arr[:])
+  inspect(arr, content="[1, 2, 3, 1, 2, 3]")
+}
+
+///|
+test "Array::append/self_alias_partial" {
+  // Test appending a partial view of array to itself
+  let arr = Array::new(capacity=4)
+  arr.push(1)
+  arr.push(2)
+  arr.push(3)
+  arr.push(4)
+  arr.append(arr[1:3]) // Append [2, 3]
+  inspect(arr, content="[1, 2, 3, 4, 2, 3]")
+}
