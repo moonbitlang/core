@@ -20,7 +20,7 @@ let default_max_depth : Int = 4
 /// Default layout threshold for compact-vs-multiline decisions.
 ///
 /// Larger values prefer single-line output.
-let default_threshold : Int = 80
+let default_threshold : Int = 30
 
 ///|
 /// Prune a `Repr` using max_depth (replacing with `Omitted`).
@@ -306,12 +306,12 @@ fn render_repr(threshold : Int, info : Repr) -> Content {
 ///   small enough under this threshold, it is kept on one line, otherwise it is
 ///   broken into multiple lines.
 ///   Larger values prefer single-line output. Defaults to `80` when `None`.
-pub fn render(r : Repr, max_depth? : Int, compact_threshold? : Int) -> String {
+pub fn render(r : Repr, max_depth? : Int) -> String {
   let max_depth : Int? = match max_depth {
     Some(_) => max_depth
     None => Some(default_max_depth)
   }
-  let threshold = compact_threshold.unwrap_or(default_threshold)
+  let threshold = default_threshold
   let info = prune_repr_info(max_depth, r)
   print_content(render_repr(threshold, info).no_wrap())
 }
