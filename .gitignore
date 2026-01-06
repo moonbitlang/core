@@ -12,3 +12,5 @@ bisect.coverage
 .auto-coder/
 .moonagent/
 node_modules/
+_build
+target

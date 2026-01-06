@@ -769,7 +769,7 @@ test "map with error callback" {
   let arr = [1, 2, 3]
   let v = try? arr.map(x => {
     if x == 2 {
-      raise Failure("Error at 2")
+      raise Failure::Failure("Error at 2")
     }
     x + 1
   })
@@ -803,7 +803,7 @@ test "mapi with error callback" {
   let arr = [1, 2, 3]
   let v = try? arr.mapi((i, x) => {
     if x == 2 {
-      raise Failure("Error at 2")
+      raise Failure::Failure("Error at 2")
     }
     x + i
   })
@@ -821,7 +821,7 @@ test "mapi with error callback 2" {
   try
     arr.mapi((i, x) => {
       if x == 2 {
-        raise Failure("Error at 2")
+        raise Failure::Failure("Error at 2")
       }
       x + i
     })
@@ -837,7 +837,7 @@ test "filter with error callback" {
   let arr = [1, 2, 3]
   let v = try? arr.filter(x => {
     if x == 2 {
-      raise Failure("Error at 2")
+      raise Failure::Failure("Error at 2")
     }
     x % 2 == 0
   })
@@ -855,7 +855,7 @@ test "filter with error callback 2" {
   try
     arr.filter(x => {
       if x == 2 {
-        raise Failure("Error at 2")
+        raise Failure::Failure("Error at 2")
       }
       x % 2 == 0
     })
@@ -871,7 +871,7 @@ test "map_inplace with error callback" {
   let arr = [1, 2, 3]
   let v = try? arr.map_in_place(x => {
     if x == 2 {
-      raise Failure("Error at 2")
+      raise Failure::Failure("Error at 2")
     }
     x + 1
   })
@@ -889,7 +889,7 @@ test "map_inplace with error callback 2" {
   try
     arr.map_in_place(x => {
       if x == 2 {
-        raise Failure("Error at 2")
+        raise Failure::Failure("Error at 2")
       }
       x + 1
     })
@@ -905,7 +905,7 @@ test "mapi_inplace with error callback" {
   let arr = [1, 2, 3]
   let v = try? arr.mapi_in_place((i, x) => {
     if x == 2 {
-      raise Failure("Error at 2")
+      raise Failure::Failure("Error at 2")
     }
     x + i
   })

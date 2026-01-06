@@ -487,7 +487,7 @@ pub fn inspect(
     Some(x) => x.stringify(escape_slash=false)
   }
   if actual != want {
-    raise InspectError(
+    raise InspectError::InspectError(
       "@EXPECT_FAILED {\"loc\": \{loc}, \"args_loc\": \{args_loc}, \"expect\": \{want.escape()}, \"actual\": \{actual.escape()}, \"mode\": \"json\"}",
     )
   }

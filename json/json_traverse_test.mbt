@@ -114,7 +114,7 @@ test "prune_loc - arrays" {
   ])
   @json.inspect(
     arr1.prune_loc_test(),
-    content=[Null, true, 123, "test"], // FIXME: support null
+    content=[null, true, 123, "test"], // FIXME: support null
   )
 
   // Nested arrays

@@ -11,7 +11,7 @@ MoonBit uses a structured error system with `raise` and `try` constructs:
 test "basic error handling" {
   fn divide(a : Int, b : Int) -> Int raise {
     if b == 0 {
-      raise Failure("Division by zero")
+      raise Failure::Failure("Division by zero")
     } else {
       a / b
     }
@@ -154,7 +154,7 @@ test "resource management" {
     risky_operation() catch {
       ResourceError(_) =>
         // Cleanup happens here
-        raise Failure("Operation failed after cleanup")
+        raise Failure::Failure("Operation failed after cleanup")
     }
   }
 
@@ -197,10 +197,10 @@ test "error composition" {
 
   fn initialize_app() -> String raise {
     let config = load_config() catch {
-      ConfigError(msg) => raise Failure("Config error: " + msg)
+      ConfigError(msg) => raise Failure::Failure("Config error: " + msg)
     }
     let db = connect_database(config) catch {
-      DatabaseError(msg) => raise Failure("Database error: " + msg)
+      DatabaseError(msg) => raise Failure::Failure("Database error: " + msg)
     }
     "App initialized with " + db
   }

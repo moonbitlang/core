@@ -707,7 +707,7 @@ test "Show for Result" {
 ///|
 test "Show for Ref" {
   inspect(
-    { val: "abc" }.to_string(),
+    Ref::{ val: "abc" }.to_string(),
     content=(
       #|{val: "abc"}
     ),
@@ -813,7 +813,7 @@ test "char_special" {
 
 ///|
 test "Show for Failure" {
-  let f = Failure("test error message")
+  let f = Failure::Failure("test error message")
   inspect(
     f.to_string(),
     content=(
