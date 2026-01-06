@@ -61,7 +61,7 @@ pub enum Repr {
   /// Labeled argument node. Conventionally appears only under `Enum`.
   EnumLabeledArg(String, Repr)
   /// Opaque wrapper node: prints as `<name>` or `<name: ...>` and keeps children.
-  Opaque(String, Array[Repr])
+  Opaque(String, Repr)
   /// Pre-rendered leaf string (already formatted, no quoting/escaping applied).
   Literal(String)
   /// Key/value node. Conventionally appears only under `Map`.
@@ -90,13 +90,9 @@ pub fn Repr::children(self : Repr) -> Array[Repr] {
     | StringLit(_)
     | Literal(_)
     | Omitted => []
-    Tuple(xs)
-    | Array(xs)
-    | Record(xs)
-    | Enum(_, xs)
-    | Opaque(_, xs)
-    | Map(xs) => xs
-    RecordField(_, value) | EnumLabeledArg(_, value) => [value]
+    Tuple(xs) | Array(xs) | Record(xs) | Enum(_, xs) | Map(xs) => xs
+    Opaque(_, value) | RecordField(_, value) | EnumLabeledArg(_, value) =>
+      [value]
     MapEntry(key, value) => [key, value]
   }
 }
@@ -127,7 +123,6 @@ pub fn Repr::with_children(self : Repr, children : Array[Repr]) -> Repr {
     Array(_) => Array(children)
     Record(_) => Record(children)
     Enum(name, _) => Enum(name, children)
-    Opaque(name, _) => Opaque(name, children)
     Map(_) => Map(children)
     RecordField(name, _) =>
       match children {
@@ -143,6 +138,11 @@ pub fn Repr::with_children(self : Repr, children : Array[Repr]) -> Repr {
       match children {
         [key, value] => MapEntry(key, value)
         _ => MapEntry(Omitted, Omitted)
+      }
+    Opaque(name, _) =>
+      match children {
+        [value] => Opaque(name, value)
+        _ => Opaque(name, Omitted)
       }
   }
 }
@@ -232,7 +232,7 @@ pub fn Repr::record(fields : Map[String, Repr]) -> Repr {
 /// This is useful for values where you want to keep a tag/type name but still
 /// show a structural summary through children (e.g. `<Map: {...}>`).
 #doc(hidden)
-pub fn Repr::opaque_(name : String, children : Array[Repr]) -> Repr {
+pub fn Repr::opaque_(name : String, children : Repr) -> Repr {
   Opaque(name, children)
 }
 
@@ -307,7 +307,7 @@ pub fn Repr::shallow(self : Repr) -> Repr {
     Array(_) => Array([])
     Record(_) => Record([])
     Enum(name, _) => Enum(name, [])
-    Opaque(name, _) => Opaque(name, [])
+    Opaque(name, _) => Opaque(name, Omitted)
     Map(_) => Map([])
     RecordField(name, _) => RecordField(name, Omitted)
     EnumLabeledArg(label, _) => EnumLabeledArg(label, Omitted)
