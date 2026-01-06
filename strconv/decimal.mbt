@@ -53,13 +53,13 @@ fn parse_decimal_from_view(str : StringView) -> Decimal raise StrConvError {
   let mut has_dp = false
   let mut has_digits = false
   // read sign
-  let rest = match str {
-    ['-', .. rest] => {
-      d.negative = true
-      rest
-    }
-    ['+', .. rest] => rest
-    _ => str
+  let (rest, negative) = lexmatch str {
+    ("-", rest) => (rest, true)
+    ("\+", rest) => (rest, false)
+    _ => (str, false)
+  }
+  if negative {
+    d.negative = true
   }
   // read digits
   let rest = loop rest {
@@ -92,20 +92,16 @@ fn parse_decimal_from_view(str : StringView) -> Decimal raise StrConvError {
     d.decimal_point = d.digits_num
   }
   // read exponent part
-  let rest = match rest {
-    ['e' | 'E', .. rest] => {
-      let mut exp_sign = 1
-      let rest = match rest {
-        ['+', .. rest] => rest
-        ['-', .. rest] => {
-          exp_sign = -1
-          rest
-        }
-        rest => rest
+  let rest = lexmatch rest {
+    ("[eE]", exp_rest) => {
+      let (exp_rest, exp_sign) = lexmatch exp_rest {
+        ("\+", next) => (next, 1)
+        ("-", next) => (next, -1)
+        _ => (exp_rest, 1)
       }
-      guard rest is ['0'..='9', ..] else { syntax_err() }
+      guard exp_rest is ['0'..='9', ..] else { syntax_err() }
       let mut exp = 0
-      let rest = loop rest {
+      let rest = loop exp_rest {
         ['_', .. rest] => continue rest
         ['0'..='9' as digit, .. rest] => {
           exp = exp * 10 + (digit.to_int() - '0')
@@ -116,7 +112,7 @@ fn parse_decimal_from_view(str : StringView) -> Decimal raise StrConvError {
       d.decimal_point += exp_sign * exp
       rest
     }
-    rest => rest
+    _ => rest
   }
   // finish
   guard rest is [] else { syntax_err() }

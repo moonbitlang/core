@@ -34,20 +34,32 @@ fn check_and_consume_base(
 ) -> (Int, StringView, Bool) raise StrConvError {
   // if the base is not given, we need to determine it from the prefix
   if base == 0 {
-    match view {
-      ['0', 'x' | 'X', .. rest] => (16, rest, true)
-      ['0', 'o' | 'O', .. rest] => (8, rest, true)
-      ['0', 'b' | 'B', .. rest] => (2, rest, true)
+    lexmatch view {
+      ("0[xX]", rest) => (16, rest, true)
+      ("0[oO]", rest) => (8, rest, true)
+      ("0[bB]", rest) => (2, rest, true)
       _ => (10, view, false)
     }
-  } else {
-    // if the base is given, we need to check whether the prefix is consistent with it
-    match view {
-      ['0', 'x' | 'X', .. rest] if base == 16 => (16, rest, true)
-      ['0', 'o' | 'O', .. rest] if base == 8 => (8, rest, true)
-      ['0', 'b' | 'B', .. rest] if base == 2 => (2, rest, true)
-      _ => if base is (2..=36) { (base, view, false) } else { base_err() }
+  } else if base == 16 {
+    lexmatch view {
+      ("0[xX]", rest) => (16, rest, true)
+      _ => (16, view, false)
     }
+  } else if base == 8 {
+    lexmatch view {
+      ("0[oO]", rest) => (8, rest, true)
+      _ => (8, view, false)
+    }
+  } else if base == 2 {
+    lexmatch view {
+      ("0[bB]", rest) => (2, rest, true)
+      _ => (2, view, false)
+    }
+    // if the base is given, we need to check whether the prefix is consistent with it
+  } else if base is (2..=36) {
+    (base, view, false)
+  } else {
+    base_err()
   }
 }
 
@@ -87,10 +99,10 @@ pub fn parse_int64(
   base? : Int = 0,
 ) -> Int64 raise StrConvError {
   guard str != "" else { syntax_err() }
-  let (neg, rest) = match str.view() {
-    ['+', .. rest] => (false, rest)
-    ['-', .. rest] => (true, rest)
-    rest => (false, rest)
+  let (neg, rest) = lexmatch str {
+    ("\+", rest) => (false, rest)
+    ("-", rest) => (true, rest)
+    _ => (false, str)
   }
 
   // `allow_underscore` is used to check validity of underscores
@@ -158,11 +170,11 @@ fn check_underscore(str : StringView) -> Bool {
   }
 
   // base prefix
-  let (rest, allow_underscore, hex) = match rest {
-    ['0', 'x' | 'X', .. rest] => (rest, true, true)
-    ['0', 'o' | 'O', .. rest] => (rest, true, false)
-    ['0', 'b' | 'B', .. rest] => (rest, true, false)
-    rest => (rest, false, false)
+  let (rest, allow_underscore, hex) = lexmatch rest {
+    ("0[xX]", rest) => (rest, true, true)
+    ("0[oO]", rest) => (rest, true, false)
+    ("0[bB]", rest) => (rest, true, false)
+    _ => (rest, false, false)
   }
 
   // 'e' and 'E' are valid hex digits
@@ -201,10 +213,10 @@ fn check_underscore(str : StringView) -> Bool {
 
 ///|
 fn determine_base(s : String) -> Int {
-  match s {
-    ['0', 'x' | 'X', ..] => 16
-    ['0', 'o' | 'O', ..] => 8
-    ['0', 'b' | 'B', ..] => 2
+  lexmatch s[:] {
+    ("0[xX]", _) => 16
+    ("0[oO]", _) => 8
+    ("0[bB]", _) => 2
     _ => 10
   }
 }
