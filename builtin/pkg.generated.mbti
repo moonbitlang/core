@@ -478,25 +478,6 @@ pub enum Repr {
   MapEntry(Repr, Repr)
   Omitted
 }
-pub fn Repr::array(Array[Self]) -> Self
-pub fn Repr::bool(Bool) -> Self
-pub fn Repr::char(Char) -> Self
-pub fn Repr::children(Self) -> Array[Self]
-pub fn Repr::ctor(String, Array[(String?, Self)]) -> Self
-pub fn Repr::dict(Array[(Self, Self)]) -> Self
-pub fn Repr::double(Double) -> Self
-pub fn Repr::float(Float) -> Self
-pub fn Repr::integer(String) -> Self
-pub fn Repr::literal(String) -> Self
-pub fn Repr::omitted() -> Self
-pub fn Repr::opaque_(String, Array[Self]) -> Self
-pub fn Repr::record(Map[String, Self]) -> Self
-pub fn Repr::shallow(Self) -> Self
-pub fn Repr::string(String) -> Self
-pub fn Repr::traverse(Self, (Self) -> Self) -> Self
-pub fn Repr::tuple(Array[Self]) -> Self
-pub fn Repr::unit() -> Self
-pub fn Repr::with_children(Self, Array[Self]) -> Self
 
 pub(all) type SourceLoc
 pub fn SourceLoc::to_json_string(Self) -> String
