@@ -86,15 +86,15 @@ fn SourceLocRepr::parse(repr : String) -> SourceLocRepr {
       "@"
       ("[^:]*" as pkg)
       ":"
-      (".+" as filename)
+      (".+?" as filename)
       ":"
-      ("[^:]+" as start_line)
+      ("[[:digit:]]+" as start_line)
       ":"
-      (".+" as start_column)
+      ("[[:digit:]]+" as start_column)
       "-"
-      ("[^:]+" as end_line)
+      ("[[:digit:]]+" as end_line)
       ":"
-      (".+" as end_column)
+      ("[[:digit:]]+" as end_column)
     ) => { pkg, filename, start_line, start_column, end_line, end_column }
     _ => panic()
   }
