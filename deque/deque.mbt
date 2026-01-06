@@ -331,11 +331,16 @@ pub fn[A] Deque::blit_to(
 /// }
 /// ```
 pub fn[A] Deque::append(self : Deque[A], other : Deque[A]) -> Unit {
-  guard other.len != 0 else { return }
+  // Capture other's state before any modifications to handle self-aliasing
+  let other_len = other.len
+  let other_head = other.head
+  let other_buf = other.buf
+  let other_buf_len = other_buf.length()
+  guard other_len != 0 else { return }
   let space = self.buf.length() - self.len
-  if space < other.len {
-    let new_cap = if self.len + other.len > self.buf.length() * 2 {
-      self.len + other.len
+  if space < other_len {
+    let new_cap = if self.len + other_len > self.buf.length() * 2 {
+      self.len + other_len
     } else {
       self.buf.length() * 2
     }
@@ -347,9 +352,11 @@ pub fn[A] Deque::append(self : Deque[A], other : Deque[A]) -> Unit {
     self.head = 0
   }
   let cap = self.buf.length()
-  for _, y in other {
+  // Use captured state to read from other, avoiding aliasing issues
+  for i = 0; i < other_len; i = i + 1 {
+    let read_idx = (other_head + i) % other_buf_len
     let write_idx = (self.head + self.len) % cap
-    self.buf[write_idx] = y
+    self.buf[write_idx] = other_buf[read_idx]
     self.len += 1
   }
 }
