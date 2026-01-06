@@ -213,13 +213,13 @@ test "iter" {
 ///|
 test "or error" {
   assert_eq(
-    (None : String?).unwrap_or_error(Failure("This is serious")) catch {
+    (None : String?).unwrap_or_error(Failure::Failure("This is serious")) catch {
       Failure(err) => err
     },
     "This is serious",
   )
   assert_eq(
-    Some("This is ok").unwrap_or_error(Failure("This is serious")) catch {
+    Some("This is ok").unwrap_or_error(Failure::Failure("This is serious")) catch {
       Failure(err) => err
     },
     "This is ok",

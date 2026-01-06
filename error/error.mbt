@@ -28,7 +28,7 @@ fn Error::to_string(self : Error) -> String = "%error.to_string"
 ///
 /// ```mbt check
 /// test {
-///   let error : Error = Failure("test error")
+///   let error : Error = Failure::Failure("test error")
 ///   inspect(
 ///     error,
 ///     content=(

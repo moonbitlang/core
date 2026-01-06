@@ -78,13 +78,13 @@ test "map_or and filter" {
 ///|
 test "unwrap_or_error" {
   assert_eq(
-    (None : String?).unwrap_or_error(Failure("boom")) catch {
+    (None : String?).unwrap_or_error(Failure::Failure("boom")) catch {
       Failure(err) => err
     },
     "boom",
   )
   assert_eq(
-    Some("ok").unwrap_or_error(Failure("boom")) catch {
+    Some("ok").unwrap_or_error(Failure::Failure("boom")) catch {
       Failure(err) => err
     },
     "ok",
