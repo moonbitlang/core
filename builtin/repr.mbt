@@ -246,7 +246,7 @@ pub fn Repr::literal(value : String) -> Repr {
 ///|
 /// Construct a `Map` node from key/value `Repr` pairs (for map literals).
 #doc(hidden)
-pub fn Repr::dict(contents : Array[(Repr, Repr)]) -> Repr {
+pub fn Repr::map(contents : Array[(Repr, Repr)]) -> Repr {
   Map(
     contents.map(fn(pair) {
       let (k, v) = pair
