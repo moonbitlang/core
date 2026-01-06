@@ -289,16 +289,18 @@ pub fn asinh(x : Double) -> Double {
 ///
 /// Example
 ///
-/// ```mbt test
-///  inspect(@math.acosh(1.0), content="0")
-///  inspect(@math.acosh(2.0), content="1.3169578969248166")
-///  inspect(@math.acosh(1000.0), content="7.600902209541989")
-///  inspect(@math.acosh(@double.not_a_number), content="NaN")
-///  inspect(@math.acosh(@double.infinity), content="Infinity")
-///  inspect(@math.acosh(-1.0), content="NaN")
-///  inspect(@math.acosh(-2.0), content="NaN")
-///  inspect(@math.acosh(@double.neg_infinity), content="NaN")
-/// 
+/// ```mbt check
+/// test {
+///   inspect(@math.acosh(1.0), content="0")
+///   inspect(@math.acosh(2.0), content="1.3169578969248166")
+///   inspect(@math.acosh(1000.0), content="7.600902209541989")
+///   inspect(@math.acosh(@double.not_a_number), content="NaN")
+///   inspect(@math.acosh(@double.infinity), content="Infinity")
+///   inspect(@math.acosh(-1.0), content="NaN")
+///   inspect(@math.acosh(-2.0), content="NaN")
+///   inspect(@math.acosh(@double.neg_infinity), content="NaN")
+/// }
+/// ```
 pub fn acosh(x : Double) -> Double {
   let one = 1.0
   let hx = get_high_word(x).reinterpret_as_int()

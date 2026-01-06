@@ -925,26 +925,6 @@ pub fn[T : Compare] Iter::minimum(self : Iter[T]) -> T? {
 
 ///|
 /// Groups elements of an iterator according to a discriminator function.
-///
-/// # Parameters
-///
-/// * `self` - The input iterator.
-/// * `f` - The discriminator function that maps elements to keys.
-///
-/// # Returns
-///
-/// A Map where keys are the result of applying the discriminator function to elements,
-/// and values are arrays containing all elements that share the same key.
-///
-/// # Example
-///
-/// ```mbt test,notest
-///   let iter = [1, 1, 2, 3, 2, 2, 1].iter()
-///   let result = iter.group_by((x) => x)
-///   assert_eq(result.get(1), Some([1, 1, 1]))
-///   assert_eq(result.get(2), Some([2, 2, 2]))
-///   assert_eq(result.get(3), Some([3]))
-/// ```
 #deprecated
 pub fn[T, K : Eq + Hash] Iter::group_by(
   self : Iter[T],

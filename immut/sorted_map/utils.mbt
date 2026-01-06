@@ -301,10 +301,12 @@ pub fn[K, V] SortedMap::values(self : SortedMap[K, V]) -> Iter[V] {
 ///
 /// # Example
 ///
-/// ```mbt
+/// ```mbt check
+/// test {
 ///   let map = @sorted_map.from_array([("a", 1), ("b", 2), ("c", 3)])
 ///   let keys = map.rev_keys().collect()
 ///   assert_eq(keys, ["c", "b", "a"])
+/// }
 /// ```
 pub fn[K, V] SortedMap::rev_keys(self : SortedMap[K, V]) -> Iterator[K] {
   let mut curr_node = self
