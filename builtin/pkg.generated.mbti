@@ -460,7 +460,7 @@ pub impl[X : Show] Show for MutArrayView[X]
 
 pub enum Repr {
   UnitLit
-  Fixnum(String)
+  Integer(String)
   DoubleLit(Double)
   FloatLit(Float)
   BoolLit(Bool)
@@ -486,9 +486,7 @@ pub fn Repr::ctor(String, Array[(String?, Self)]) -> Self
 pub fn Repr::dict(Array[(Self, Self)]) -> Self
 pub fn Repr::double(Double) -> Self
 pub fn Repr::float(Float) -> Self
-pub fn Repr::int(Int) -> Self
-pub fn Repr::int16(Int16) -> Self
-pub fn Repr::int64(Int64) -> Self
+pub fn Repr::integer(String) -> Self
 pub fn Repr::literal(String) -> Self
 pub fn Repr::omitted() -> Self
 pub fn Repr::opaque_(String, Array[Self]) -> Self
@@ -497,9 +495,6 @@ pub fn Repr::shallow(Self) -> Self
 pub fn Repr::string(String) -> Self
 pub fn Repr::traverse(Self, (Self) -> Self) -> Self
 pub fn Repr::tuple(Array[Self]) -> Self
-pub fn Repr::uint(UInt) -> Self
-pub fn Repr::uint16(UInt16) -> Self
-pub fn Repr::uint64(UInt64) -> Self
 pub fn Repr::unit() -> Self
 pub fn Repr::with_children(Self, Array[Self]) -> Self
 
@@ -628,9 +623,6 @@ pub fn Int::unsafe_to_char(Int) -> Char
 pub fn Int::until(Int, Int, step? : Int, inclusive? : Bool) -> Iter[Int]
 #deprecated
 pub fn Int::upto(Int, Int, inclusive? : Bool) -> Iter[Int]
-
-pub fn Int16::to_int(Int16) -> Int
-pub fn Int16::to_string(Int16, radix? : Int) -> String
 
 pub fn Int64::abs(Int64) -> Int64
 #deprecated
@@ -1351,7 +1343,6 @@ pub impl Show for Bool
 pub impl Show for Byte
 pub impl Show for Char
 pub impl Show for Int
-pub impl Show for Int16
 pub impl Show for Int64
 pub impl Show for UInt
 pub impl Show for UInt16

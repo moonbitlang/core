@@ -88,7 +88,7 @@ fn Repr::info_adds_depth(info : Repr) -> Bool {
 fn info_size(info : Repr) -> Int {
   match info {
     UnitLit => 1
-    Fixnum(_) => 1
+    Integer(_) => 1
     DoubleLit(_) => 1
     FloatLit(_) => 1
     BoolLit(_) => 1
@@ -174,7 +174,7 @@ fn pretty_print_label(name : String) -> String {
 fn pretty_print_repr_go(label : Repr, children : Array[Content]) -> Content {
   match label {
     UnitLit => comma_seq("(", ")", [])
-    Fixnum(s) => {
+    Integer(s) => {
       let needs_parens = s.length() > 0 && s.code_unit_at(0) == '-'
       no_parens(content_parens(if needs_parens { 1 } else { 0 }, [s]))
     }

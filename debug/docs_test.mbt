@@ -171,8 +171,8 @@ fn tag_repr(tag : Tag) -> Repr {
 ///|
 fn example_repr(example : Example) -> Repr {
   Repr::record({
-    "answer": Repr::int(example.answer),
-    "xs": Repr::array(example.xs.map(fn(x) { Repr::int(x) })),
+    "answer": Repr::integer(example.answer.to_string()),
+    "xs": Repr::array(example.xs.map(fn(x) { Repr::integer(x.to_string()) })),
     "tag": tag_repr(example.tag),
   })
 }
@@ -200,10 +200,10 @@ struct WeirdKeys {
 ///|
 fn weird_keys_repr(value : WeirdKeys) -> Repr {
   Repr::record({
-    "snake_case_ok": Repr::int(value.snake_case_ok),
-    "with space": Repr::int(value.with_space),
-    "k-v": Repr::int(value.k_dash_v),
-    "CamelCase": Repr::int(value.camel_case),
+    "snake_case_ok": Repr::integer(value.snake_case_ok.to_string()),
+    "with space": Repr::integer(value.with_space.to_string()),
+    "k-v": Repr::integer(value.k_dash_v.to_string()),
+    "CamelCase": Repr::integer(value.camel_case.to_string()),
   })
 }
 
@@ -231,7 +231,7 @@ struct Numbers {
 
 ///|
 fn numbers_repr(value : Numbers) -> Repr {
-  Repr::array(value.xs.map(fn(x) { Repr::int(x) }))
+  Repr::array(value.xs.map(fn(x) { Repr::integer(x.to_string()) }))
 }
 
 ///|
@@ -256,8 +256,8 @@ test "docs: threshold controls single-line vs multi-line" {
 ///|
 test "docs: nested arrays expand with trailing commas" {
   let r = Repr::array([
-    Repr::array([Repr::int(1), Repr::int(2)]),
-    Repr::array([Repr::int(3)]),
+    Repr::array([Repr::integer("1"), Repr::integer("2")]),
+    Repr::array([Repr::integer("3")]),
   ])
   inspect(
     render(r, compact_threshold=0),
@@ -276,7 +276,11 @@ test "docs: nested arrays expand with trailing commas" {
 ///|
 test "docs: record containing arrays expands" {
   let r = Repr::record({
-    "xs": Repr::array([Repr::int(1), Repr::int(2), Repr::int(3)]),
+    "xs": Repr::array([
+      Repr::integer("1"),
+      Repr::integer("2"),
+      Repr::integer("3"),
+    ]),
     "ys": Repr::array([]),
   })
   inspect(
@@ -298,8 +302,8 @@ test "docs: record containing arrays expands" {
 test "docs: nested record expands" {
   let r = Repr::record({
     "outer": Repr::record({
-      "a": Repr::int(1),
-      "b": Repr::record({ "c": Repr::int(2) }),
+      "a": Repr::integer("1"),
+      "b": Repr::record({ "c": Repr::integer("2") }),
     }),
   })
   inspect(
@@ -325,7 +329,10 @@ enum Shape {
 fn shape_repr(shape : Shape) -> Repr {
   match shape {
     Point(x~, y~) =>
-      Repr::ctor("Point", [(Some("x"), Repr::int(x)), (Some("y"), Repr::int(y))])
+      Repr::ctor("Point", [
+        (Some("x"), Repr::integer(x.to_string())),
+        (Some("y"), Repr::integer(y.to_string())),
+      ])
     Line(a, b) =>
       Repr::ctor("Line", [(None, shape_repr(a)), (None, shape_repr(b))])
   }
@@ -366,8 +373,8 @@ test "docs: nested enums + arrays expand consistently" {
     (
       None,
       Repr::ctor("Inner", [
-        (None, Repr::array([Repr::int(1), Repr::int(2)])),
-        (None, Repr::record({ "k": Repr::int(3) })),
+        (None, Repr::array([Repr::integer("1"), Repr::integer("2")])),
+        (None, Repr::record({ "k": Repr::integer("3") })),
       ]),
     ),
   ])
@@ -397,7 +404,7 @@ fn dict_repr(value : DictExample) -> Repr {
   Repr::dict(
     value.entries.map(fn(pair) {
       let (k, v) = pair
-      (Repr::string(k), Repr::int(v))
+      (Repr::string(k), Repr::integer(v.to_string()))
     }),
   )
 }
@@ -437,7 +444,9 @@ struct OpaqueExample {
 
 ///|
 fn opaque_repr(value : OpaqueExample) -> Repr {
-  Repr::opaque_(value.label, [Repr::array(value.xs.map(fn(x) { Repr::int(x) }))])
+  Repr::opaque_(value.label, [
+    Repr::array(value.xs.map(fn(x) { Repr::integer(x.to_string()) })),
+  ])
 }
 
 ///|

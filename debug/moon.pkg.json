@@ -6,5 +6,8 @@
     "moonbitlang/core/double",
     "moonbitlang/core/float"
   ],
+  "test-import": [
+    "moonbitlang/core/int"
+  ],
   "warn-list": "-alert_visibility-test_unqualified_package"
 }
