@@ -736,7 +736,7 @@ fn Parser::parse_repeat(self : Parser) -> (UInt, UInt?) raise RegexpError {
           guard self.input is ['}', .. rest] else {
             raise RegexpError(err=InvalidRepeatOp, source_fragment=self.input)
           }
-          self.input = rest // consume '}'
+          self.input = rest
 
           // Validate the range
           if max < min {
@@ -794,32 +794,12 @@ fn Parser::parse_number(self : Parser) -> UInt raise RegexpError {
 ///
 /// Throws: Error_ when the group name format is incorrect
 fn Parser::parse_group_name(self : Parser) -> String raise RegexpError {
-  let mut name = ""
-  let mut first = true
-  while self.input is [ch, .. rest] && ch != '>' {
-    if first {
-      // The first character must be a letter or an underscore
-      if ch is ('a'..='z' | 'A'..='Z' | '_') {
-        name += ch.to_string()
-        self.input = rest
-        first = false
-      } else {
-        raise RegexpError(err=InvalidNamedCapture, source_fragment=self.input)
-      }
-    } else if ch is ('a'..='z' | 'A'..='Z' | '0'..='9' | '_') {
-      // Subsequent characters can be letters, numbers, or underscores
-      name += ch.to_string()
-      self.input = rest
-    } else {
-      raise RegexpError(err=InvalidNamedCapture, source_fragment=self.input)
-    }
+  let (name, rest) = lexmatch self.input {
+    ("[A-Za-z_][A-Za-z0-9_]*" as name, rest) => (name, rest)
+    _ => raise RegexpError(err=InvalidNamedCapture, source_fragment=self.input)
   }
-
-  // Check if the group name is empty
-  if name == "" {
-    raise RegexpError(err=InvalidNamedCapture, source_fragment=self.input)
-  }
-  name
+  self.input = rest
+  String::from_iter(name.iter())
 }
 
 ///|
@@ -949,20 +929,12 @@ fn Parser::parse_unicode_escape(self : Parser) -> Char raise RegexpError {
 
 ///|
 fn Parser::parse_unicode_property(self : Parser) -> String raise RegexpError {
-  guard self.input is ['{', .. rest] else {
-    raise RegexpError(err=InvalidCharClass, source_fragment=self.input)
+  let (property_name, rest) = lexmatch self.input {
+    ("[{]" ("[^}]*" as property_name) "[}]", rest) => (property_name, rest)
+    _ => raise RegexpError(err=InvalidCharClass, source_fragment=self.input)
   }
-  self.input = rest // consume '{'
-  let chars = []
-  while self.input is [ch, .. rest] && ch != '}' {
-    chars.push(ch)
-    self.input = rest
-  }
-  guard self.input is ['}', .. rest] else {
-    raise RegexpError(err=InvalidCharClass, source_fragment=self.input)
-  }
-  self.input = rest // consume '}'
-  String::from_iter(chars.iter())
+  self.input = rest
+  String::from_iter(property_name.iter())
 }
 
 ///|

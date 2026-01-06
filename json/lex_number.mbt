@@ -158,10 +158,9 @@ fn ParseContext::lex_number_end(
       Ok(i) if i <= 9007199254740991 && i >= -9007199254740991 =>
         return (i.to_double(), None)
       _ =>
-        return if s is ['-', ..] {
-          (@double.neg_infinity, Some(s))
-        } else {
-          (@double.infinity, Some(s))
+        return lexmatch s {
+          ("-", _) => (@double.neg_infinity, Some(s))
+          _ => (@double.infinity, Some(s))
         }
     }
   } else {
@@ -171,10 +170,9 @@ fn ParseContext::lex_number_end(
       Ok(d) => (d, None)
       // If parsing fails as a double, treat it as infinity and preserve the string
       Err(_) =>
-        if s is ['-', ..] {
-          (@double.neg_infinity, Some(s))
-        } else {
-          (@double.infinity, Some(s))
+        lexmatch s {
+          ("-", _) => (@double.neg_infinity, Some(s))
+          _ => (@double.infinity, Some(s))
         }
     }
   }
