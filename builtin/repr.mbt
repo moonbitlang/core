@@ -33,9 +33,9 @@
 #visibility(change_to="abstract", "Experimental API, do not pattern match it.")
 pub enum Repr {
   UnitLit
-  /// Fixed-width integer literal leaf (stored as string representation).
-  /// Covers Int16, Int, Int64, UInt16, UInt, UInt64, etc.
-  Fixnum(String)
+  /// Integer literal stored as string representation.
+  /// Covers Int16, Int, Int64, UInt16, UInt, UInt64, BigInt, etc.
+  Integer(String)
   /// 64-bit floating-point literal leaf.
   DoubleLit(Double)
   /// 32-bit floating-point literal leaf.
@@ -81,7 +81,7 @@ pub enum Repr {
 pub fn Repr::children(self : Repr) -> Array[Repr] {
   match self {
     UnitLit
-    | Fixnum(_)
+    | Integer(_)
     | DoubleLit(_)
     | FloatLit(_)
     | BoolLit(_)
@@ -113,7 +113,7 @@ pub fn Repr::children(self : Repr) -> Array[Repr] {
 pub fn Repr::with_children(self : Repr, children : Array[Repr]) -> Repr {
   match self {
     UnitLit
-    | Fixnum(_)
+    | Integer(_)
     | DoubleLit(_)
     | FloatLit(_)
     | BoolLit(_)
@@ -161,42 +161,9 @@ pub fn Repr::traverse(self : Repr, f : (Repr) -> Repr) -> Repr {
 }
 
 ///|
-/// Smart constructors for `Repr` (constructible outside the package).
-
-///|
-/// Construct a `Fixnum` leaf from an Int16.
-pub fn Repr::int16(x : Int16) -> Repr {
-  Fixnum(x.to_string())
-}
-
-///|
-/// Construct a `Fixnum` leaf from an Int.
-pub fn Repr::int(x : Int) -> Repr {
-  Fixnum(x.to_string())
-}
-
-///|
-/// Construct a `Fixnum` leaf from an Int64.
-pub fn Repr::int64(x : Int64) -> Repr {
-  Fixnum(x.to_string() + "L")
-}
-
-///|
-/// Construct a `Fixnum` leaf from a UInt16.
-pub fn Repr::uint16(x : UInt16) -> Repr {
-  Fixnum(x.to_string())
-}
-
-///|
-/// Construct a `Fixnum` leaf from a UInt.
-pub fn Repr::uint(x : UInt) -> Repr {
-  Fixnum(x.to_string() + "U")
-}
-
-///|
-/// Construct a `Fixnum` leaf from a UInt64.
-pub fn Repr::uint64(x : UInt64) -> Repr {
-  Fixnum(x.to_string() + "UL")
+/// Construct a `Integer` leaf.
+pub fn Repr::integer(x : String) -> Repr {
+  Integer(x)
 }
 
 ///|
@@ -309,7 +276,7 @@ pub fn Repr::ctor(name : String, args : Array[(String?, Repr)]) -> Repr {
 pub fn Repr::shallow(self : Repr) -> Repr {
   match self {
     UnitLit
-    | Fixnum(_)
+    | Integer(_)
     | DoubleLit(_)
     | FloatLit(_)
     | BoolLit(_)
