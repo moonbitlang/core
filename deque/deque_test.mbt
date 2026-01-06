@@ -2130,3 +2130,15 @@ test "flatten reads uninitialized memory" {
   assert_eq(flat_deque.length(), 2)
   assert_eq(flat_deque.to_array(), [1, 2])
 }
+
+///|
+test "Deque::append/self_alias" {
+  // Test appending deque to itself - this should double the deque
+  // Using small capacity to force reallocation during append
+  let dq = @deque.new(capacity=3)
+  dq.push_back(1)
+  dq.push_back(2)
+  dq.push_back(3)
+  dq.append(dq)
+  inspect(dq.to_array(), content="[1, 2, 3, 1, 2, 3]")
+}
