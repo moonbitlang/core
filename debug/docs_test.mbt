@@ -51,40 +51,7 @@ test "Nested List" {
   }
 
   inspect(
-    render(repeat(10).debug(), max_depth=100, compact_threshold=100),
-    content=(
-      #|Cons(
-      #|  { answer: 1, xs: [1, 2, 3], tag: Ok("test string result") },
-      #|  Cons(
-      #|    { answer: 1, xs: [1, 2, 3], tag: Ok("test string result") },
-      #|    Cons(
-      #|      { answer: 1, xs: [1, 2, 3], tag: Ok("test string result") },
-      #|      Cons(
-      #|        { answer: 1, xs: [1, 2, 3], tag: Ok("test string result") },
-      #|        Cons(
-      #|          { answer: 1, xs: [1, 2, 3], tag: Ok("test string result") },
-      #|          Cons(
-      #|            { answer: 1, xs: [1, 2, 3], tag: Ok("test string result") },
-      #|            Cons(
-      #|              { answer: 1, xs: [1, 2, 3], tag: Ok("test string result") },
-      #|              Cons(
-      #|                { answer: 1, xs: [1, 2, 3], tag: Ok("test string result") },
-      #|                Cons(
-      #|                  { answer: 1, xs: [1, 2, 3], tag: Ok("test string result") },
-      #|                  Cons({ answer: 1, xs: [1, 2, 3], tag: Ok("test string result") }, Nil),
-      #|                ),
-      #|              ),
-      #|            ),
-      #|          ),
-      #|        ),
-      #|      ),
-      #|    ),
-      #|  ),
-      #|)
-    ),
-  )
-  inspect(
-    render(repeat(10).debug(), max_depth=100, compact_threshold=10),
+    render(repeat(10).debug(), max_depth=100),
     content=(
       #|Cons(
       #|  {
@@ -182,9 +149,13 @@ test "docs: custom type pretty_print" {
   let sample : Example = { answer: 42, xs: [1, 2, 3], tag: Ok("done") }
   let r = example_repr(sample)
   inspect(
-    render(r, compact_threshold=100),
+    render(r),
     content=(
-      #|{ answer: 42, xs: [1, 2, 3], tag: Ok("done") }
+      #|{
+      #|  answer: 42,
+      #|  xs: [1, 2, 3],
+      #|  tag: Ok("done"),
+      #|}
     ),
   )
 }
@@ -217,9 +188,14 @@ test "docs: record keys are quoted when needed" {
   }
   let r = weird_keys_repr(sample)
   inspect(
-    render(r, compact_threshold=100),
+    render(r),
     content=(
-      #|{ snake_case_ok: 1, "with space": 2, "k-v": 3, "CamelCase": 4 }
+      #|{
+      #|  snake_case_ok: 1,
+      #|  "with space": 2,
+      #|  "k-v": 3,
+      #|  "CamelCase": 4,
+      #|}
     ),
   )
 }
@@ -239,18 +215,9 @@ test "docs: threshold controls single-line vs multi-line" {
   let sample : Numbers = { xs: [1, 2, 3] }
   let r = numbers_repr(sample)
   let compact = render(r)
-  let expanded = render(r, compact_threshold=0)
+  let expanded = render(r)
   inspect(compact, content="[1, 2, 3]")
-  inspect(
-    expanded,
-    content=(
-      #|[
-      #|  1,
-      #|  2,
-      #|  3,
-      #|]
-    ),
-  )
+  inspect(expanded, content="[1, 2, 3]")
 }
 
 ///|
@@ -259,18 +226,7 @@ test "docs: nested arrays expand with trailing commas" {
     Repr::array([Repr::integer("1"), Repr::integer("2")]),
     Repr::array([Repr::integer("3")]),
   ])
-  inspect(
-    render(r, compact_threshold=0),
-    content=(
-      #|[
-      #|  [
-      #|    1,
-      #|    2,
-      #|  ],
-      #|  [3],
-      #|]
-    ),
-  )
+  inspect(render(r), content="[[1, 2], [3]]")
 }
 
 ///|
@@ -283,19 +239,7 @@ test "docs: record containing arrays expands" {
     ]),
     "ys": Repr::array([]),
   })
-  inspect(
-    render(r, compact_threshold=0),
-    content=(
-      #|{
-      #|  xs: [
-      #|    1,
-      #|    2,
-      #|    3,
-      #|  ],
-      #|  ys: [],
-      #|}
-    ),
-  )
+  inspect(render(r), content="{ xs: [1, 2, 3], ys: [] }")
 }
 
 ///|
@@ -306,17 +250,7 @@ test "docs: nested record expands" {
       "b": Repr::record({ "c": Repr::integer("2") }),
     }),
   })
-  inspect(
-    render(r, compact_threshold=0),
-    content=(
-      #|{
-      #|  outer: {
-      #|    a: 1,
-      #|    b: { c: 2 },
-      #|  },
-      #|}
-    ),
-  )
+  inspect(render(r), content="{ outer: { a: 1, b: { c: 2 } } }")
 }
 
 ///|
@@ -343,8 +277,13 @@ test "docs: labeled enum arguments are printed" {
   let sample : Shape = Line(Point(x=1, y=2), Point(x=3, y=4))
   let r = shape_repr(sample)
   inspect(
-    render(r, compact_threshold=100),
-    content="Line(Point(x=1, y=2), Point(x=3, y=4))",
+    render(r),
+    content=(
+      #|Line(
+      #|  Point(x=1, y=2),
+      #|  Point(x=3, y=4),
+      #|)
+    ),
   )
 }
 
@@ -355,16 +294,7 @@ test "docs: enums expand with trailing commas" {
     (None, Repr::literal("b")),
     (None, Repr::literal("c")),
   ])
-  inspect(
-    render(r, compact_threshold=0),
-    content=(
-      #|Enum(
-      #|  a,
-      #|  b,
-      #|  c,
-      #|)
-    ),
-  )
+  inspect(render(r), content="Enum(a, b, c)")
 }
 
 ///|
@@ -378,20 +308,7 @@ test "docs: nested enums + arrays expand consistently" {
       ]),
     ),
   ])
-  inspect(
-    render(r, compact_threshold=0),
-    content=(
-      #|Outer(
-      #|  Inner(
-      #|    [
-      #|      1,
-      #|      2,
-      #|    ],
-      #|    { k: 3 },
-      #|  ),
-      #|)
-    ),
-  )
+  inspect(render(r), content="Outer(Inner([1, 2], { k: 3 }))")
 }
 
 ///|
@@ -414,7 +331,7 @@ test "docs: dict prints as k: v pairs" {
   let sample : DictExample = { entries: [("a", 1), ("b", 2)] }
   let r = dict_repr(sample)
   inspect(
-    render(r, compact_threshold=100),
+    render(r),
     content=(
       #|{ "a": 1, "b": 2 }
     ),
@@ -426,12 +343,9 @@ test "docs: dict expands with quoted keys + trailing commas" {
   let sample : DictExample = { entries: [("a", 1), ("b", 2)] }
   let r = dict_repr(sample)
   inspect(
-    render(r, compact_threshold=0),
+    render(r),
     content=(
-      #|{
-      #|  "a": 1,
-      #|  "b": 2,
-      #|}
+      #|{ "a": 1, "b": 2 }
     ),
   )
 }
@@ -453,5 +367,5 @@ fn opaque_repr(value : OpaqueExample) -> Repr {
 test "docs: opaque wrappers show tag and children" {
   let sample : OpaqueExample = { label: "Vec", xs: [1, 2] }
   let r = opaque_repr(sample)
-  inspect(render(r, compact_threshold=100), content="<Vec: [1, 2]>")
+  inspect(render(r), content="<Vec: [1, 2]>")
 }
