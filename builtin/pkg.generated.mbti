@@ -458,27 +458,6 @@ pub impl[T : Eq] Eq for MutArrayView[T]
 pub impl[A : Hash] Hash for MutArrayView[A]
 pub impl[X : Show] Show for MutArrayView[X]
 
-pub enum Repr {
-  UnitLit
-  Integer(String)
-  DoubleLit(Double)
-  FloatLit(Float)
-  BoolLit(Bool)
-  CharLit(Char)
-  StringLit(String)
-  Tuple(Array[Repr])
-  Array(Array[Repr])
-  Record(Array[Repr])
-  Enum(String, Array[Repr])
-  Map(Array[Repr])
-  RecordField(String, Repr)
-  EnumLabeledArg(String, Repr)
-  Opaque(String, Repr)
-  Literal(String)
-  MapEntry(Repr, Repr)
-  Omitted
-}
-
 pub(all) type SourceLoc
 pub fn SourceLoc::to_json_string(Self) -> String
 pub impl Show for SourceLoc
@@ -1154,10 +1133,6 @@ pub impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T
 pub impl[T0 : Compare, T1 : Compare, T2 : Compare, T3 : Compare, T4 : Compare, T5 : Compare, T6 : Compare, T7 : Compare, T8 : Compare, T9 : Compare, T10 : Compare, T11 : Compare, T12 : Compare, T13 : Compare, T14 : Compare, T15 : Compare] Compare for (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15)
 pub impl Compare for BytesView
 pub impl Compare for StringView
-
-pub trait Debug {
-  to_repr(Self) -> Repr
-}
 
 pub(open) trait Default {
   default() -> Self

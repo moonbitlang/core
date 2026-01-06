@@ -9,8 +9,12 @@ pub fn render(Repr, max_depth? : Int) -> String
 // Errors
 
 // Types and methods
+type Repr
 
 // Type aliases
 
 // Traits
+pub trait Debug {
+  to_repr(Self) -> Repr
+}
 

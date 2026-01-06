@@ -30,8 +30,7 @@
 //   intended for "map-like" collections (MoonBit map literals like `{ k: v }`).
 // - `Opaque` is intended for "container-like" wrappers that keep a type/tag but
 //   otherwise behave structurally through their children.
-#visibility(change_to="abstract", "Experimental API, do not pattern match it.")
-pub enum Repr {
+enum Repr {
   UnitLit
   /// Integer literal stored as string representation.
   /// Covers Int16, Int, Int64, UInt16, UInt, UInt64, BigInt, etc.
@@ -78,8 +77,7 @@ pub enum Repr {
 /// - `RecordField`/`EnumLabeledArg` have one child; `MapEntry` has two.
 /// - `children` and `with_children` form a partial lens for tree rewrites:
 ///   `self.with_children(self.children()) == self`.
-#doc(hidden)
-pub fn Repr::children(self : Repr) -> Array[Repr] {
+fn Repr::children(self : Repr) -> Array[Repr] {
   match self {
     UnitLit
     | Integer(_)
@@ -107,8 +105,7 @@ pub fn Repr::children(self : Repr) -> Array[Repr] {
 /// - `MapEntry` expects exactly two children and falls back to `MapEntry(Omitted, Omitted)`.
 /// - This is intentionally not a total inverse of `children`: invalid arity is
 ///   clamped to keep the tree well-formed for generic traversal.
-#doc(hidden)
-pub fn Repr::with_children(self : Repr, children : Array[Repr]) -> Repr {
+fn Repr::with_children(self : Repr, children : Array[Repr]) -> Repr {
   match self {
     UnitLit
     | Integer(_)
@@ -291,8 +288,7 @@ pub fn Repr::ctor(name : String, args : Array[(String?, Repr)]) -> Repr {
 ///
 /// This is used by diff/pretty-print when the structure is preserved but
 /// children are rendered separately.
-#doc(hidden)
-pub fn Repr::shallow(self : Repr) -> Repr {
+fn Repr::shallow(self : Repr) -> Repr {
   match self {
     UnitLit
     | Integer(_)

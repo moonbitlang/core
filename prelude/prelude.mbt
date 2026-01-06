@@ -39,7 +39,6 @@ pub using @builtin {
   trait Hash,
   trait Logger,
   trait Show,
-  trait Debug,
   trait ToJson,
   trait Default,
   trait Add,
@@ -71,11 +70,10 @@ pub using @builtin {
   type SnapshotError,
   type SourceLoc,
   type StringBuilder,
-  type Repr,
 }
 
 ///|
-pub using @debug {debug}
+pub using @debug {debug, type Repr, trait Debug}
 
 ///|
 /// Applies a function to a value and returns the original value.
