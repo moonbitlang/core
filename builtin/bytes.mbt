@@ -437,8 +437,20 @@ pub impl Compare for Bytes with compare(self, other) {
 ///     ),
 ///   )
 /// }
+///
+/// test {
+///   let arr : FixedArray[Byte] = [b'h', b'e', b'l', b'l', b'o']
+///   let bytes = Bytes::from_array(arr)
+///   inspect(
+///     bytes,
+///     content=(
+///       #|b"hello"
+///     ),
+///   )
+/// }
 /// ```
-#alias(of, deprecated="Use Bytes::from_array instead")
+// TODO: marked as intrinsic, inline if it is constant
+#alias(of, deprecated)
 pub fn Bytes::from_array(arr : ArrayView[Byte]) -> Bytes {
   Bytes::makei(arr.length(), i => arr[i])
 }
@@ -589,32 +601,6 @@ pub fn Bytes::from_iter(iter : Iter[Byte]) -> Bytes {
 pub fn Bytes::from_iterator(iter : Iterator[Byte]) -> Bytes {
   Bytes::from_array(iter.collect())
 }
-
-///|
-/// Creates a new bytes sequence from a fixed-size byte array.
-///
-/// Parameters:
-///
-/// * `array` : A fixed-size array of bytes to be converted into a bytes
-/// sequence. Elements in the array should be of type `Byte`.
-///
-/// Returns a new bytes sequence containing the same bytes as the input array.
-///
-/// Example:
-///
-/// ```mbt test
-///   let arr : FixedArray[Byte] = [b'h', b'e', b'l', b'l', b'o']
-///   let bytes = Bytes::of(arr)
-///   inspect(
-///     bytes, 
-///     content=(
-///       
-///   #|b"hello"
-/// 
-///     ),
-///   )
-/// ```
-/// TODO: marked as intrinsic, inline if it is constant
 
 ///|
 /// Converts a bytes sequence into an array of bytes.
