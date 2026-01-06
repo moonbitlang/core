@@ -358,9 +358,10 @@ struct OpaqueExample {
 
 ///|
 fn opaque_repr(value : OpaqueExample) -> Repr {
-  Repr::opaque_(value.label, [
+  Repr::opaque_(
+    value.label,
     Repr::array(value.xs.map(fn(x) { Repr::integer(x.to_string()) })),
-  ])
+  )
 }
 
 ///|

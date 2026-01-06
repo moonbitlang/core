@@ -473,7 +473,7 @@ pub enum Repr {
   Map(Array[Repr])
   RecordField(String, Repr)
   EnumLabeledArg(String, Repr)
-  Opaque(String, Array[Repr])
+  Opaque(String, Repr)
   Literal(String)
   MapEntry(Repr, Repr)
   Omitted
