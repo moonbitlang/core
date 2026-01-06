@@ -1,6 +1,15 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "moonbitlang/core/debug"
 
+import(
+  "moonbitlang/core/buffer"
+  "moonbitlang/core/deque"
+  "moonbitlang/core/immut/array"
+  "moonbitlang/core/immut/sorted_map"
+  "moonbitlang/core/immut/sorted_set"
+  "moonbitlang/core/queue"
+)
+
 // Values
 pub fn[T : Debug] debug(T) -> Unit
 
@@ -17,4 +26,69 @@ type Repr
 pub trait Debug {
   to_repr(Self) -> Repr
 }
+pub impl Debug for Unit
+pub impl Debug for Bool
+pub impl Debug for Byte
+pub impl Debug for Char
+pub impl Debug for Int
+pub impl Debug for Int16
+pub impl Debug for Int64
+pub impl Debug for UInt
+pub impl Debug for UInt16
+pub impl Debug for UInt64
+pub impl Debug for Float
+pub impl Debug for Double
+pub impl Debug for String
+pub impl[T : Debug] Debug for T?
+pub impl[T : Debug, E : Debug] Debug for Result[T, E]
+pub impl[T : Debug] Debug for FixedArray[T]
+pub impl[T : Debug] Debug for ReadOnlyArray[T]
+pub impl Debug for Bytes
+pub impl[T : Debug] Debug for Ref[T]
+pub impl Debug for @buffer.Buffer
+pub impl[T : Debug] Debug for Array[T]
+pub impl[T : Debug] Debug for ArrayView[T]
+pub impl[A] Debug for Iter[A]
+pub impl[A, B] Debug for Iter2[A, B]
+pub impl[A] Debug for Iterator[A]
+pub impl[A, B] Debug for Iterator2[A, B]
+pub impl[K : Debug, V : Debug] Debug for Map[K, V]
+pub impl[T : Debug] Debug for MutArrayView[T]
+pub impl Debug for SourceLoc
+pub impl[A : Debug] Debug for @deque.Deque[A]
+pub impl[K : Debug, V : Debug] Debug for @moonbitlang/core/hashmap.HashMap[K, V]
+pub impl[K : Debug] Debug for @moonbitlang/core/hashset.HashSet[K]
+pub impl[A : Debug] Debug for @array.T[A]
+pub impl[K : Debug, V : Debug] Debug for @moonbitlang/core/immut/hashmap.HashMap[K, V]
+pub impl[K : Debug] Debug for @moonbitlang/core/immut/hashset.HashSet[K]
+pub impl[A : Debug] Debug for @moonbitlang/core/immut/list.T[A]
+pub impl[A : Debug + Compare] Debug for @moonbitlang/core/immut/priority_queue.PriorityQueue[A]
+pub impl[K : Debug, V : Debug] Debug for @sorted_map.SortedMap[K, V]
+pub impl[K : Debug] Debug for @sorted_set.SortedSet[K]
+pub impl[A : Debug] Debug for @moonbitlang/core/list.List[A]
+pub impl[A : Debug + Compare] Debug for @moonbitlang/core/priority_queue.PriorityQueue[A]
+pub impl[A : Debug] Debug for @queue.Queue[A]
+pub impl[A : Debug, B : Debug] Debug for (A, B)
+pub impl[A : Debug, B : Debug, C : Debug] Debug for (A, B, C)
+pub impl[A : Debug, B : Debug, C : Debug, D : Debug] Debug for (A, B, C, D)
+pub impl[A : Debug, B : Debug, C : Debug, D : Debug, E : Debug] Debug for (A, B, C, D, E)
+pub impl[A : Debug, B : Debug, C : Debug, D : Debug, E : Debug, F : Debug] Debug for (A, B, C, D, E, F)
+pub impl[A : Debug, B : Debug, C : Debug, D : Debug, E : Debug, F : Debug, G : Debug] Debug for (A, B, C, D, E, F, G)
+pub impl[A : Debug, B : Debug, C : Debug, D : Debug, E : Debug, F : Debug, G : Debug, H : Debug] Debug for (A, B, C, D, E, F, G, H)
+pub impl[A : Debug, B : Debug, C : Debug, D : Debug, E : Debug, F : Debug, G : Debug, H : Debug, I : Debug] Debug for (A, B, C, D, E, F, G, H, I)
+pub impl[A : Debug, B : Debug, C : Debug, D : Debug, E : Debug, F : Debug, G : Debug, H : Debug, I : Debug, J : Debug] Debug for (A, B, C, D, E, F, G, H, I, J)
+pub impl[A : Debug, B : Debug, C : Debug, D : Debug, E : Debug, F : Debug, G : Debug, H : Debug, I : Debug, J : Debug, K : Debug] Debug for (A, B, C, D, E, F, G, H, I, J, K)
+pub impl[A : Debug, B : Debug, C : Debug, D : Debug, E : Debug, F : Debug, G : Debug, H : Debug, I : Debug, J : Debug, K : Debug, L : Debug] Debug for (A, B, C, D, E, F, G, H, I, J, K, L)
+pub impl[A : Debug, B : Debug, C : Debug, D : Debug, E : Debug, F : Debug, G : Debug, H : Debug, I : Debug, J : Debug, K : Debug, L : Debug, M : Debug] Debug for (A, B, C, D, E, F, G, H, I, J, K, L, M)
+pub impl[A : Debug, B : Debug, C : Debug, D : Debug, E : Debug, F : Debug, G : Debug, H : Debug, I : Debug, J : Debug, K : Debug, L : Debug, M : Debug, N : Debug] Debug for (A, B, C, D, E, F, G, H, I, J, K, L, M, N)
+pub impl[A : Debug, B : Debug, C : Debug, D : Debug, E : Debug, F : Debug, G : Debug, H : Debug, I : Debug, J : Debug, K : Debug, L : Debug, M : Debug, N : Debug, O : Debug] Debug for (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O)
+pub impl[A : Debug, B : Debug, C : Debug, D : Debug, E : Debug, F : Debug, G : Debug, H : Debug, I : Debug, J : Debug, K : Debug, L : Debug, M : Debug, N : Debug, O : Debug, P : Debug] Debug for (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P)
+pub impl[A : Debug, B : Debug, C : Debug, D : Debug, E : Debug, F : Debug, G : Debug, H : Debug, I : Debug, J : Debug, K : Debug, L : Debug, M : Debug, N : Debug, O : Debug, P : Debug, Q : Debug] Debug for (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q)
+pub impl[A : Debug, B : Debug, C : Debug, D : Debug, E : Debug, F : Debug, G : Debug, H : Debug, I : Debug, J : Debug, K : Debug, L : Debug, M : Debug, N : Debug, O : Debug, P : Debug, Q : Debug, R : Debug] Debug for (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R)
+pub impl[A : Debug, B : Debug, C : Debug, D : Debug, E : Debug, F : Debug, G : Debug, H : Debug, I : Debug, J : Debug, K : Debug, L : Debug, M : Debug, N : Debug, O : Debug, P : Debug, Q : Debug, R : Debug, S : Debug] Debug for (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S)
+pub impl[A : Debug, B : Debug, C : Debug, D : Debug, E : Debug, F : Debug, G : Debug, H : Debug, I : Debug, J : Debug, K : Debug, L : Debug, M : Debug, N : Debug, O : Debug, P : Debug, Q : Debug, R : Debug, S : Debug, T : Debug] Debug for (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T)
+pub impl[A : Debug, B : Debug, C : Debug, D : Debug, E : Debug, F : Debug, G : Debug, H : Debug, I : Debug, J : Debug, K : Debug, L : Debug, M : Debug, N : Debug, O : Debug, P : Debug, Q : Debug, R : Debug, S : Debug, T : Debug, U : Debug] Debug for (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U)
+pub impl[A : Debug, B : Debug, C : Debug, D : Debug, E : Debug, F : Debug, G : Debug, H : Debug, I : Debug, J : Debug, K : Debug, L : Debug, M : Debug, N : Debug, O : Debug, P : Debug, Q : Debug, R : Debug, S : Debug, T : Debug, U : Debug, V : Debug] Debug for (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V)
+pub impl Debug for BytesView
+pub impl Debug for StringView
 
