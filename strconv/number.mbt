@@ -48,11 +48,12 @@ fn try_parse_19digits(s : StringView, x : UInt64) -> (StringView, UInt64, Int) {
 
 ///|
 fn parse_scientific(s : StringView) -> (StringView, Int64)? {
+  let mut s = s
   let exp_num = 0L
-  let (s, neg_exp) = lexmatch s {
-    ("-", rest) => (rest, true)
-    ("\+", rest) => (rest, false)
-    _ => (s, false)
+  let mut neg_exp = false
+  if s is ['+' | '-' as ch, .. rest] {
+    neg_exp = ch == '-'
+    s = rest
   }
   if s is ['0'..='9', ..] {
     let (s, exp_num, _) = s.fold_digits(exp_num, (digit, exp_num : Int64) => if exp_num <
@@ -77,10 +78,9 @@ fn parse_number(s : StringView) -> Number? raise StrConvError {
   let start = s
 
   // handle optional +/- sign
-  let (s, negative) = lexmatch s {
-    ("-", rest) => (rest, true)
-    ("\+", rest) => (rest, false)
-    _ => (s, false)
+  let (s, negative) = match s {
+    ['-', .. rest] => (rest, true)
+    ['+', .. rest] | rest => (rest, false)
   }
   if s.is_empty() {
     return None
@@ -161,10 +161,9 @@ fn parse_number(s : StringView) -> Number? raise StrConvError {
 ///|
 /// Parse the number from the string, raising `StrConvError` if invalid.
 fn parse_inf_nan(rest : StringView) -> Double raise StrConvError {
-  let (pos, rest) = lexmatch rest {
-    ("-", next) => (false, next)
-    ("\+", next) => (true, next)
-    _ => (true, rest)
+  let (pos, rest) = match rest {
+    ['-', .. rest] => (false, rest)
+    ['+', .. rest] | rest => (true, rest)
   }
   lexmatch rest {
     "(?i:nan)" => @double.not_a_number

@@ -46,10 +46,8 @@ pub fn parse_uint64(
   base? : Int = 0,
 ) -> UInt64 raise StrConvError {
   guard str != "" else { syntax_err() }
-  lexmatch str {
-    ("-", _) => syntax_err()
-    ("\+", _) => syntax_err()
-    _ => ()
+  if str is ['+' | '-', ..] {
+    syntax_err()
   }
 
   // `allow_underscore` is used to check validity of underscores

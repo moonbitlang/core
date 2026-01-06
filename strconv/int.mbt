@@ -99,10 +99,10 @@ pub fn parse_int64(
   base? : Int = 0,
 ) -> Int64 raise StrConvError {
   guard str != "" else { syntax_err() }
-  let (neg, rest) = lexmatch str {
-    ("\+", rest) => (false, rest)
-    ("-", rest) => (true, rest)
-    _ => (false, str)
+  let (neg, rest) = match str.view() {
+    ['+', .. rest] => (false, rest)
+    ['-', .. rest] => (true, rest)
+    rest => (false, rest)
   }
 
   // `allow_underscore` is used to check validity of underscores
@@ -163,12 +163,11 @@ pub fn parse_int(str : StringView, base? : Int = 0) -> Int raise StrConvError {
 ///|
 fn check_underscore(str : StringView) -> Bool {
   // skip the sign
-  let rest = lexmatch str {
-    ("\+", rest) => rest
-    ("-", rest) => rest
-    _ => str
+  let rest = match str {
+    ['+' | '-', .. rest] => rest
+    rest => rest
+    // CR: the type maybe a bit confusing?
   }
-  // CR: the type maybe a bit confusing?
 
   // base prefix
   let (rest, allow_underscore, hex) = lexmatch rest {
