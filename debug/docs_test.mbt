@@ -318,7 +318,7 @@ struct DictExample {
 
 ///|
 fn dict_repr(value : DictExample) -> Repr {
-  Repr::dict(
+  Repr::map(
     value.entries.map(fn(pair) {
       let (k, v) = pair
       (Repr::string(k), Repr::integer(v.to_string()))
