@@ -12,7 +12,6 @@
     "moonbitlang/core/queue",
     "moonbitlang/core/priority_queue",
     "moonbitlang/core/buffer",
-    "moonbitlang/core/ref",
     { "path": "moonbitlang/core/immut/list", "alias": "immut_list" },
     { "path": "moonbitlang/core/immut/array", "alias": "immut_array" },
     { "path": "moonbitlang/core/immut/priority_queue", "alias": "immut_priority_queue" },
@@ -22,7 +21,8 @@
     { "path": "moonbitlang/core/immut/hashset", "alias": "immut_hashset" }
   ],
   "test-import": [
-    "moonbitlang/core/int"
+    "moonbitlang/core/int",
+    "moonbitlang/core/ref"
   ],
   "warn-list": "-alert_visibility-test_unqualified_package"
 }
