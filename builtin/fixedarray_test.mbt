@@ -63,14 +63,12 @@ test "fixed array iter with early termination" {
   let arr : FixedArray[Int] = [1, 2, 3]
   let mut count = 0
   let iter = arr.iter()
-  let _ = iter.run(x => {
+  for x in iter {
     count = count + 1
     if x == 2 {
-      IterEnd
-    } else {
-      IterContinue
+      break
     }
-  })
+  }
   inspect(count, content="2")
 }
 

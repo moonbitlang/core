@@ -81,14 +81,13 @@ test "arbitrary_iter_break" {
   let iter : Iter[Int] = @quickcheck.gen(size=4, state=rs)
   // An Iter with a length greater than 0 is required here
   let mut i = 0
-  match
-    iter.run(_ => {
-      i = i + 1
-      IterEnd
-    }) {
-    IterEnd => inspect(i, content="1")
-    IterContinue => panic()
+  for _ in iter {
+    i = i + 1
+    break
+  } else {
+    panic()
   }
+  inspect(i, content="1")
 }
 
 ///|
