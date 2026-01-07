@@ -28,11 +28,11 @@ pub fn[A] T::from_array(ArrayView[A]) -> Self[A]
 #as_free_fn
 pub fn[A] T::from_iter(Iter[A]) -> Self[A]
 #as_free_fn
-pub fn[A] T::from_iterator(Iterator[A]) -> Self[A]
+pub fn[A] T::from_iterator(Iter[A]) -> Self[A]
 pub fn[A] T::get(Self[A], Int) -> A?
 pub fn[A] T::is_empty(Self[A]) -> Bool
 pub fn[A] T::iter(Self[A]) -> Iter[A]
-pub fn[A] T::iterator(Self[A]) -> Iterator[A]
+pub fn[A] T::iterator(Self[A]) -> Iter[A]
 pub fn[A] T::length(Self[A]) -> Int
 #as_free_fn
 pub fn[A] T::make(Int, A) -> Self[A]

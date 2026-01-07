@@ -18,7 +18,8 @@
 /// to advance iteration.
 /// All read operations on `Iterator` will advance the iterator,
 /// and would give different result when called multiple times.
-struct Iterator[X](() -> X?)
+#alias(Iterator)
+struct Iter[X](() -> X?)
 
 ///|
 /// Get the next element from an iterator, or return `None` if no more element exists.
@@ -195,8 +196,8 @@ pub fn[X] Iterator::count(self : Iterator[X]) -> Int {
 ///
 /// This function is intended for use by data structure authors,
 /// and should not be called by end users in general.
-pub fn[X] Iterator::new(f : () -> X?) -> Iterator[X] {
-  Iterator(f)
+pub fn[X] Iter::new(f : () -> X?) -> Iter[X] {
+  Iter(f)
 }
 
 ///|
@@ -695,44 +696,20 @@ pub fn[X] Iterator::to_array(self : Iterator[X]) -> Array[X] {
 }
 
 ///|
+#alias(iterator)
 pub fn[X] Iterator::iter(self : Iterator[X]) -> Iter[X] {
-  Iter(yield_ => while self.next() is Some(x) {
-    guard yield_(x) is IterContinue else { break IterEnd }
-  } else {
-    IterContinue
-  })
-}
-
-///|
-pub fn[X] Iterator::iterator(self : Iterator[X]) -> Iterator[X] {
   self
 }
 
 ///|
+#alias(iterator2)
 pub fn[X] Iterator::iter2(self : Iterator[X]) -> Iter2[Int, X] {
-  Iter2(fn(yield_) {
-    let mut i = 0
-    while self.next() is Some(x) {
-      guard yield_(i, x) is IterContinue else { break IterEnd }
-      i += 1
-    } else {
-      IterContinue
-    }
-  })
-}
-
-///|
-pub fn[X] Iterator::iterator2(self : Iterator[X]) -> Iterator2[Int, X] {
   let mut i = 0
-  Iterator2::new(fn() {
-    match self.next() {
-      None => None
-      Some(x) => {
-        let result = Some((i, x))
-        i += 1
-        result
-      }
-    }
+  Iter(() => {
+    guard self.next() is Some(elem) else { None }
+    let result = Some((i, elem))
+    i += 1
+    result
   })
 }
 
@@ -906,20 +883,23 @@ pub fn[X : Compare] Iterator::minimum(self : Iterator[X]) -> X? {
 /// This type is used for `for _, _ in ..` loop
 /// (`for .. in` loop with two loop variables),
 /// and should not be used directly in general.
-pub(all) struct Iterator2[X, Y](Iterator[(X, Y)])
+#alias(Iterator2)
+pub(all) struct Iter2[X, Y](Iterator[(X, Y)])
 
 ///|
-pub fn[X, Y] Iterator2::new(f : () -> (X, Y)?) -> Iterator2[X, Y] {
-  Iterator2(Iterator::new(f))
+pub fn[X, Y] Iter2::new(f : () -> (X, Y)?) -> Iter2[X, Y] {
+  Iter2(Iter::new(f))
 }
 
 ///|
-pub fn[X, Y] Iterator2::iterator(self : Iterator2[X, Y]) -> Iterator[(X, Y)] {
+#alias(iterator)
+pub fn[X, Y] Iterator2::iter(self : Iterator2[X, Y]) -> Iterator[(X, Y)] {
   self.0
 }
 
 ///|
-pub fn[X, Y] Iterator2::iterator2(self : Iterator2[X, Y]) -> Iterator2[X, Y] {
+#alias(iterator2)
+pub fn[X, Y] Iterator2::iter2(self : Iterator2[X, Y]) -> Iterator2[X, Y] {
   self
 }
 
@@ -929,15 +909,36 @@ pub fn[X, Y] Iterator2::next(self : Iterator2[X, Y]) -> (X, Y)? {
 }
 
 ///|
-pub fn[X, Y] Iterator2::iter2(self : Iterator2[X, Y]) -> Iter2[X, Y] {
-  Iter2(yield_ => while self.next() is Some((x, y)) {
-    guard yield_(x, y) is IterContinue else { break IterEnd }
-  } else {
-    IterContinue
-  })
+pub impl[X : Show, Y : Show] Show for Iterator2[X, Y] with output(self, logger) {
+  self.0.output(logger)
 }
 
 ///|
-pub impl[X : Show, Y : Show] Show for Iterator2[X, Y] with output(self, logger) {
-  self.0.output(logger)
+pub fn[X, Y] Iter2::run(
+  self : Iter2[X, Y],
+  f : (X, Y) -> IterResult,
+) -> IterResult {
+  while self.0.next() is Some((x, y)) {
+    guard f(x, y) is IterContinue else { break IterEnd }
+  } else {
+    IterContinue
+  }
+}
+
+///|
+pub fn[X, Y] Iter2::each(self : Iter2[X, Y], f : (X, Y) -> Unit) -> Unit {
+  self.0.each(pair => f(pair.0, pair.1))
+}
+
+///|
+pub fn[X, Y] Iter2::concat(
+  self : Iter2[X, Y],
+  other : Iter2[X, Y],
+) -> Iter2[X, Y] {
+  Iter2(self.0.concat(other.0))
+}
+
+///|
+pub fn[X, Y] Iter2::to_array(self : Iter2[X, Y]) -> Array[(X, Y)] {
+  self.0.to_array()
 }

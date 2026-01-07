@@ -25,10 +25,10 @@ pub fn[A] Queue::from_array(ArrayView[A]) -> Self[A]
 #as_free_fn
 pub fn[A] Queue::from_iter(Iter[A]) -> Self[A]
 #as_free_fn
-pub fn[A] Queue::from_iterator(Iterator[A]) -> Self[A]
+pub fn[A] Queue::from_iterator(Iter[A]) -> Self[A]
 pub fn[A] Queue::is_empty(Self[A]) -> Bool
 pub fn[A] Queue::iter(Self[A]) -> Iter[A]
-pub fn[A] Queue::iterator(Self[A]) -> Iterator[A]
+pub fn[A] Queue::iterator(Self[A]) -> Iter[A]
 pub fn[A] Queue::length(Self[A]) -> Int
 #as_free_fn
 pub fn[A] Queue::new() -> Self[A]

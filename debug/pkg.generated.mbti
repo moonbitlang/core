@@ -53,8 +53,6 @@ pub impl[T : Debug] Debug for Array[T]
 pub impl[T : Debug] Debug for ArrayView[T]
 pub impl[A] Debug for Iter[A]
 pub impl[A, B] Debug for Iter2[A, B]
-pub impl[A] Debug for Iterator[A]
-pub impl[A, B] Debug for Iterator2[A, B]
 pub impl[K : Debug, V : Debug] Debug for Map[K, V]
 pub impl[T : Debug] Debug for MutArrayView[T]
 pub impl Debug for SourceLoc

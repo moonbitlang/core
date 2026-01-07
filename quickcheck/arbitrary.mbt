@@ -110,7 +110,7 @@ pub impl Arbitrary for String with arbitrary(size, rs) {
 }
 
 ///|
-pub impl[X : Arbitrary] Arbitrary for Iterator[X] with arbitrary(size, rs) {
+pub impl[X : Arbitrary] Arbitrary for Iter[X] with arbitrary(size, rs) {
   let len = if size == 0 { 0 } else { rs.next_positive_int() % size }
   let mut i = 0
   Iterator::new(() => {
@@ -119,12 +119,6 @@ pub impl[X : Arbitrary] Arbitrary for Iterator[X] with arbitrary(size, rs) {
     i += 1
     Some(elem)
   })
-}
-
-///|
-pub impl[X : Arbitrary] Arbitrary for Iter[X] with arbitrary(size, rs) {
-  let iter : Iterator[X] = Arbitrary::arbitrary(size, rs)
-  iter.iter()
 }
 
 ///|

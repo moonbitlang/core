@@ -80,10 +80,6 @@ pub using @builtin {type Iter2}
 
 pub using @builtin {type IterResult}
 
-pub using @builtin {type Iterator}
-
-pub using @builtin {type Iterator2}
-
 pub using @builtin {type Json}
 
 pub using @builtin {type Map}
