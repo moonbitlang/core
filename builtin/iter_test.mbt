@@ -473,15 +473,12 @@ test "intersperse early end" {
 test "intersperse stops on separator" {
   let iter = [1, 2].iter().intersperse(0)
   let seen = []
-  iter.run(x => {
+  for x in iter {
     seen.push(x)
     if x == 0 {
-      IterEnd
-    } else {
-      IterContinue
+      break
     }
-  })
-  |> ignore
+  }
   inspect(seen, content="[1, 0]")
 }
 
@@ -575,33 +572,33 @@ test "Iter::enumerate" {
 ///|
 test "peek function - basic functionality" {
   let iter = Iter::singleton(42)
-  inspect(iter.peek(), content="Some(42)")
+  inspect(iter.next(), content="Some(42)")
 }
 
 ///|
 test "peek function - empty iterator" {
   let iter : Iter[Int] = Iter::empty()
-  inspect(iter.peek(), content="None")
+  inspect(iter.next(), content="None")
 }
 
 ///|
 test "peek function - multiple elements" {
   let iter = [1, 2, 3].iter()
-  inspect(iter.peek(), content="Some(1)")
+  inspect(iter.next(), content="Some(1)")
 }
 
 ///|
 test "peek function - random cases" {
   let iter1 = [10, 20, 30].iter()
-  inspect(iter1.peek(), content="Some(10)")
+  inspect(iter1.next(), content="Some(10)")
   let iter2 = [-5, 0, 5].iter()
-  inspect(iter2.peek(), content="Some(-5)")
+  inspect(iter2.next(), content="Some(-5)")
   let iter3 = [100, 200, 300, 400].iter()
-  inspect(iter3.peek(), content="Some(100)")
+  inspect(iter3.next(), content="Some(100)")
   let iter4 = [-10, -20, -30].iter()
-  inspect(iter4.peek(), content="Some(-10)")
+  inspect(iter4.next(), content="Some(-10)")
   let iter5 = [0, 0, 0].iter()
-  inspect(iter5.peek(), content="Some(0)")
+  inspect(iter5.next(), content="Some(0)")
 }
 
 ///|
