@@ -581,8 +581,6 @@ pub fn Int::to_uint16(Int) -> UInt16
 pub fn Int::to_uint64(Int) -> UInt64
 pub fn Int::unsafe_to_char(Int) -> Char
 pub fn Int::until(Int, Int, step? : Int, inclusive? : Bool) -> Iter[Int]
-#deprecated
-pub fn Int::upto(Int, Int, inclusive? : Bool) -> Iter[Int]
 
 pub fn Int64::abs(Int64) -> Int64
 #deprecated
@@ -612,8 +610,6 @@ pub fn Int64::to_uint16(Int64) -> UInt16
 #deprecated
 pub fn Int64::to_uint64(Int64) -> UInt64
 pub fn Int64::until(Int64, Int64, step? : Int64, inclusive? : Bool) -> Iter[Int64]
-#deprecated
-pub fn Int64::upto(Int64, Int64, inclusive? : Bool) -> Iter[Int64]
 
 pub fn UInt::clz(UInt) -> Int
 pub fn UInt::ctz(UInt) -> Int
@@ -640,8 +636,6 @@ pub fn UInt::to_string(UInt, radix? : Int) -> String
 pub fn UInt::to_uint16(UInt) -> UInt16
 pub fn UInt::to_uint64(UInt) -> UInt64
 pub fn UInt::trunc_double(Double) -> UInt
-#deprecated
-pub fn UInt::upto(UInt, UInt, inclusive? : Bool) -> Iter[UInt]
 
 pub fn UInt16::is_leading_surrogate(UInt16) -> Bool
 pub fn UInt16::is_surrogate(UInt16) -> Bool
@@ -681,8 +675,6 @@ pub fn UInt64::to_string(UInt64, radix? : Int) -> String
 pub fn UInt64::to_uint(UInt64) -> UInt
 pub fn UInt64::to_uint16(UInt64) -> UInt16
 pub fn UInt64::trunc_double(Double) -> UInt64
-#deprecated
-pub fn UInt64::upto(UInt64, UInt64, inclusive? : Bool) -> Iter[UInt64]
 
 pub fn Double::convert_uint(UInt) -> Double
 pub fn Double::convert_uint64(UInt64) -> Double
@@ -699,8 +691,6 @@ pub fn Double::to_int(Double) -> Int
 pub fn Double::to_int64(Double) -> Int64
 pub fn Double::to_uint64(Double) -> UInt64
 pub fn Double::until(Double, Double, step? : Double, inclusive? : Bool) -> Iter[Double]
-#deprecated
-pub fn Double::upto(Double, Double, inclusive? : Bool) -> Iter[Double]
 
 #alias("_[_]")
 #alias(code_unit_at)
