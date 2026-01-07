@@ -54,12 +54,12 @@ pub fn StringView::length(self : StringView) -> Int {
 pub fn StringView::suffixes(
   self : StringView,
   include_empty? : Bool = false,
-) -> Iterator[StringView] {
+) -> Iter[StringView] {
   let str = self.str()
   let end = self.end()
   let mut next_start = self.start()
   let mut finished = false
-  Iterator::new(fn() -> StringView? {
+  Iter::new(fn() -> StringView? {
     if finished {
       None
     } else if next_start == end {
@@ -178,17 +178,12 @@ pub impl Show for StringView with to_string(self) {
 
 ///|
 /// Returns an iterator over the Unicode characters in the string view.
+#alias(iterator, deprecated)
 pub fn StringView::iter(self : StringView) -> Iter[Char] {
-  self.iterator().iter()
-}
-
-///|
-/// Returns an iterator over the Unicode characters in the string view.
-pub fn StringView::iterator(self : StringView) -> Iterator[Char] {
   let start = self.start()
   let end = self.end()
   let mut index = start
-  Iterator::new(fn() {
+  Iter::new(fn() {
     guard index < end else { None }
     let c1 = self.str().unsafe_charcode_at(index)
     if c1.is_leading_surrogate() && index + 1 < self.end() {
@@ -204,17 +199,13 @@ pub fn StringView::iterator(self : StringView) -> Iterator[Char] {
 }
 
 ///|
+#alias(iterator2, deprecated)
 pub fn StringView::iter2(self : StringView) -> Iter2[Int, Char] {
-  self.iterator2().iter2()
-}
-
-///|
-pub fn StringView::iterator2(self : StringView) -> Iterator2[Int, Char] {
   let start = self.start()
   let end = self.end()
   let mut index = start
   let mut char_index = 0
-  Iterator2::new(fn() {
+  Iter2::new(fn() {
     guard index < end else { None }
     let c1 = self.str().unsafe_charcode_at(index)
     if c1.is_leading_surrogate() && index + 1 < self.end() {
@@ -235,17 +226,12 @@ pub fn StringView::iterator2(self : StringView) -> Iterator2[Int, Char] {
 
 ///|
 /// Returns an iterator over the Unicode characters in the string view in reverse order.
+#alias(rev_iterator, deprecated)
 pub fn StringView::rev_iter(self : StringView) -> Iter[Char] {
-  self.rev_iterator().iter()
-}
-
-///|
-/// Returns an iterator over the Unicode characters in the string view in reverse order.
-pub fn StringView::rev_iterator(self : StringView) -> Iterator[Char] {
   let start = self.start()
   let end = self.end()
   let mut index = end
-  Iterator::new(fn() {
+  Iter::new(fn() {
     guard index > start else { None }
     index -= 1
     let c1 = self.str().unsafe_charcode_at(index)
@@ -406,14 +392,9 @@ pub fn StringView::from_array(chars : ArrayView[Char]) -> StringView {
 
 ///|
 /// Convert char iterator to string view.
+#alias(from_iterator, deprecated)
 pub fn StringView::from_iter(iter : Iter[Char]) -> StringView {
   String::from_iter(iter)
-}
-
-///|
-/// Convert char iterator to string view.
-pub fn StringView::from_iterator(iter : Iterator[Char]) -> StringView {
-  String::from_iterator(iter)
 }
 
 ///|

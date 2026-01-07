@@ -17,24 +17,20 @@
 // All operations over sets are purely applicative (no side-effects).
 
 ///|
-pub fn[A] SortedSet::iter(self : SortedSet[A]) -> Iter[A] {
-  self.iterator().iter()
-}
-
-///|
 /// Iterate over the elements in the set in descending order.
 ///
 /// # Example
 ///
 /// ```mbt
 ///   let set = @sorted_set.from_array([1, 2, 3, 4, 5])
-///   let result = set.rev_iterator().collect()
+///   let result = set.rev_iter().collect()
 ///   assert_eq(result, [5, 4, 3, 2, 1])
 /// ```
-pub fn[A] SortedSet::rev_iterator(self : SortedSet[A]) -> Iterator[A] {
+#alias(rev_iterator, deprecated)
+pub fn[A] SortedSet::rev_iter(self : SortedSet[A]) -> Iter[A] {
   let mut curr_node = self
   let parents = []
-  Iterator::new(fn() {
+  Iter::new(fn() {
     loop curr_node {
       Node(left~, right=Empty, value~, ..) => {
         curr_node = left
@@ -54,10 +50,11 @@ pub fn[A] SortedSet::rev_iterator(self : SortedSet[A]) -> Iterator[A] {
 }
 
 ///|
-pub fn[A] SortedSet::iterator(self : SortedSet[A]) -> Iterator[A] {
+#alias(iterator, deprecated)
+pub fn[A] SortedSet::iter(self : SortedSet[A]) -> Iter[A] {
   let mut curr_node = self
   let parents = []
-  Iterator::new(fn() {
+  Iter::new(fn() {
     loop curr_node {
       Node(left=Empty, right~, value~, size=_) => {
         curr_node = right
@@ -78,15 +75,9 @@ pub fn[A] SortedSet::iterator(self : SortedSet[A]) -> Iterator[A] {
 
 ///|
 #as_free_fn
+#alias(from_iterator, deprecated)
+#as_free_fn(from_iterator, deprecated)
 pub fn[A : Compare] SortedSet::from_iter(iter : Iter[A]) -> SortedSet[A] {
-  iter.fold(init=new(), (s, e) => s.add(e))
-}
-
-///|
-#as_free_fn
-pub fn[A : Compare] SortedSet::from_iterator(
-  iter : Iterator[A],
-) -> SortedSet[A] {
   iter.fold(init=new(), (s, e) => s.add(e))
 }
 
@@ -100,8 +91,8 @@ pub impl[A : Eq] Eq for SortedSet[A] with equal(self, other) -> Bool {
   // There's no `Iter::zip` (https://github.com/moonbitlang/core/issues/994#issuecomment-2350935193),
   // so we have to use the manual implementation below:
   guard self.length() == other.length() else { return false }
-  let iter = self.iterator()
-  let iter1 = other.iterator()
+  let iter = self.iter()
+  let iter1 = other.iter()
   while iter.next() is Some(a) && iter1.next() is Some(b) {
     guard a == b else { break false }
   } else {
@@ -114,8 +105,8 @@ pub impl[A : Compare] Compare for SortedSet[A] with compare(self, other) -> Int 
   let my_size = self.length()
   let other_size = other.length()
   guard my_size == other_size else { return my_size - other_size }
-  let iter = self.iterator()
-  let iter1 = other.iterator()
+  let iter = self.iter()
+  let iter1 = other.iter()
   while iter.next() is Some(a) && iter1.next() is Some(b) {
     let cmp = a.compare(b)
     guard cmp is 0 else { break cmp }

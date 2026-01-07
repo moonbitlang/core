@@ -132,7 +132,7 @@ pub fn String::substring(self : String, start? : Int = 0, end? : Int) -> String 
 pub fn String::suffixes(
   self : String,
   include_empty? : Bool = false,
-) -> Iterator[StringView] {
+) -> Iter[StringView] {
   self[:].suffixes(include_empty~)
 }
 
@@ -232,7 +232,7 @@ pub fn String::to_array(self : String) -> Array[Char] {
 /// Returns an iterator over the Unicode characters in the string.
 ///
 /// Note: This iterator yields Unicode characters, not Utf16 code units.
-/// As a result, the count of characters returned by `iter().count()` may not be equal to the length of the string returned by `length()`.
+/// As a result, the count of characters returned by `iterator().count()` may not be equal to the length of the string returned by `length()`.
 ///
 /// ```mbt check
 /// test {
@@ -241,27 +241,11 @@ pub fn String::to_array(self : String) -> Array[Char] {
 ///   assert_eq(s.length(), 15)
 /// } // Utf16 code units
 /// ```
+#alias(iterator, deprecated)
 pub fn String::iter(self : String) -> Iter[Char] {
-  self.iterator().iter()
-}
-
-///|
-/// Returns an iterator over the Unicode characters in the string.
-///
-/// Note: This iterator yields Unicode characters, not Utf16 code units.
-/// As a result, the count of characters returned by `iterator().count()` may not be equal to the length of the string returned by `length()`.
-///
-/// ```mbt check
-/// test {
-///   let s = "Hello, World!🤣"
-///   assert_eq(s.iterator().count(), 14) // Unicode characters
-///   assert_eq(s.length(), 15)
-/// } // Utf16 code units
-/// ```
-pub fn String::iterator(self : String) -> Iterator[Char] {
   let len = self.length()
   let mut index = 0
-  Iterator::new(fn() {
+  Iter::new(fn() {
     guard index < len else { None }
     let c1 = self.unsafe_charcode_at(index)
     if c1.is_leading_surrogate() && index + 1 < len {
@@ -279,13 +263,9 @@ pub fn String::iterator(self : String) -> Iterator[Char] {
 }
 
 ///|
+#alias(iterator2, deprecated)
 pub fn String::iter2(self : String) -> Iter2[Int, Char] {
-  self.iterator2().iter2()
-}
-
-///|
-pub fn String::iterator2(self : String) -> Iterator2[Int, Char] {
-  self.iterator().iterator2()
+  self.iter().iter2()
 }
 
 ///|
@@ -318,44 +298,11 @@ pub fn String::iterator2(self : String) -> Iterator2[Int, Char] {
 ///   ])
 /// }
 /// ```
+#alias(rev_iterator, deprecated)
 pub fn String::rev_iter(self : String) -> Iter[Char] {
-  self.rev_iterator().iter()
-}
-
-///|
-/// Returns an iterator that yields characters from the end to the start of the string. This function handles
-/// Unicode surrogate pairs correctly, ensuring that characters are not split across surrogate pairs.
-///
-/// # Parameters
-///
-/// - `self` : The input `String` to be iterated in reverse.
-///
-/// # Returns
-///
-/// - An `Iter[Char]` that yields characters from the end to the start of the string.
-///
-/// # Behavior
-///
-/// - The function iterates over the string in reverse order.
-/// - If a trailing surrogate is encountered, it checks for a preceding leading surrogate to form a complete Unicode code point.
-/// - Yields each character or combined code point to the iterator.
-/// - Stops iteration if the `yield_` function returns `IterEnd`.
-///
-/// # Examples
-///
-/// ```mbt check
-/// test {
-///   let input = "Hello, World!"
-///   let reversed = input.rev_iterator().collect()
-///   assert_eq(reversed, [
-///     '!', 'd', 'l', 'r', 'o', 'W', ' ', ',', 'o', 'l', 'l', 'e', 'H',
-///   ])
-/// }
-/// ```
-pub fn String::rev_iterator(self : String) -> Iterator[Char] {
   let len = self.length()
   let mut index = len
-  Iterator::new(fn() {
+  Iter::new(fn() {
     guard index > 0 else { None }
     index -= 1
     let c1 = self.unsafe_charcode_at(index)
@@ -569,17 +516,8 @@ pub fn String::from_array(chars : ArrayView[Char]) -> String {
 
 ///|
 /// Convert char iterator to string,
+#alias(from_iterator, deprecated)
 pub fn String::from_iter(iter : Iter[Char]) -> String {
-  let buf = StringBuilder::new()
-  for c in iter {
-    buf.write_char(c)
-  }
-  buf.to_string()
-}
-
-///|
-/// Convert char iterator to string,
-pub fn String::from_iterator(iter : Iterator[Char]) -> String {
   let buf = StringBuilder::new()
   for c in iter {
     buf.write_char(c)

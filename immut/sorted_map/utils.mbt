@@ -231,15 +231,11 @@ pub fn[K : Compare, V] SortedMap::from_array(
 }
 
 ///|
+#alias(iterator, deprecated)
 pub fn[K, V] SortedMap::iter(self : SortedMap[K, V]) -> Iter[(K, V)] {
-  self.iterator().iter()
-}
-
-///|
-pub fn[K, V] SortedMap::iterator(self : SortedMap[K, V]) -> Iterator[(K, V)] {
   let mut curr_node = self
   let parents = []
-  Iterator::new(fn() {
+  Iter::new(fn() {
     loop curr_node {
       Tree(k, value~, Empty, r, ..) => {
         curr_node = r
@@ -259,27 +255,17 @@ pub fn[K, V] SortedMap::iterator(self : SortedMap[K, V]) -> Iterator[(K, V)] {
 }
 
 ///|
-pub fn[K, V] SortedMap::iterator2(self : SortedMap[K, V]) -> Iterator2[K, V] {
-  self.iterator()
-}
-
-///|
+#alias(iterator2, deprecated)
 pub fn[K, V] SortedMap::iter2(self : SortedMap[K, V]) -> Iter2[K, V] {
-  self.iterator2().iter2()
+  self.iter()
 }
 
 ///|
 #as_free_fn
+#alias(from_iterator, deprecated)
+#as_free_fn(from_iterator, deprecated)
 pub fn[K : Compare, V] SortedMap::from_iter(
   iter : Iter[(K, V)],
-) -> SortedMap[K, V] {
-  iter.fold(init=new(), (m, e) => m.add(e.0, e.1))
-}
-
-///|
-#as_free_fn
-pub fn[K : Compare, V] SortedMap::from_iterator(
-  iter : Iterator[(K, V)],
 ) -> SortedMap[K, V] {
   iter.fold(init=new(), (m, e) => m.add(e.0, e.1))
 }
@@ -308,10 +294,10 @@ pub fn[K, V] SortedMap::values(self : SortedMap[K, V]) -> Iter[V] {
 ///   assert_eq(keys, ["c", "b", "a"])
 /// }
 /// ```
-pub fn[K, V] SortedMap::rev_keys(self : SortedMap[K, V]) -> Iterator[K] {
+pub fn[K, V] SortedMap::rev_keys(self : SortedMap[K, V]) -> Iter[K] {
   let mut curr_node = self
   let parents = []
-  Iterator::new(fn() {
+  Iter::new(fn() {
     loop curr_node {
       Tree(k, l, Empty, ..) => {
         curr_node = l
@@ -340,10 +326,10 @@ pub fn[K, V] SortedMap::rev_keys(self : SortedMap[K, V]) -> Iterator[K] {
 ///   let values = map.rev_values().collect()
 ///   assert_eq(values, [3, 2, 1])
 /// ```
-pub fn[K, V] SortedMap::rev_values(self : SortedMap[K, V]) -> Iterator[V] {
+pub fn[K, V] SortedMap::rev_values(self : SortedMap[K, V]) -> Iter[V] {
   let mut curr_node = self
   let parents = []
-  Iterator::new(fn() {
+  Iter::new(fn() {
     loop curr_node {
       Tree(_k, value~, l, Empty, ..) => {
         curr_node = l

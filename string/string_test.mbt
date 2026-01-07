@@ -23,14 +23,6 @@ test "String::from_iter" {
 }
 
 ///|
-test "String::from_iterator" {
-  inspect(
-    String::from_iterator(['1', '2', '3', '4', '5'].iterator()),
-    content="12345",
-  )
-}
-
-///|
 test "default" {
   inspect(String::default())
 }
@@ -181,36 +173,6 @@ test "chars" {
 }
 
 ///|
-test "iterator" {
-  let mut str = ""
-  "A😊𠮷BA😊𠮷B"
-  .iterator()
-  .each(c => str = str + c.to_int().to_string() + "\n")
-  inspect(
-    str,
-    content=(
-      #|65
-      #|128522
-      #|134071
-      #|66
-      #|65
-      #|128522
-      #|134071
-      #|66
-      #|
-    ),
-  )
-  inspect(
-    "A😊𠮷BA😊𠮷B".iterator().take(2).collect(),
-    content="['A', '😊']",
-  )
-  inspect(
-    "A😊𠮷BA😊𠮷B".iterator().take(4).collect(),
-    content="['A', '😊', '𠮷', 'B']",
-  )
-}
-
-///|
 test "rev_iter" {
   let mut str = ""
   "A😊𠮷BA😊𠮷B"
@@ -241,64 +203,11 @@ test "rev_iter" {
 }
 
 ///|
-test "rev_iterator" {
-  let mut str = ""
-  "A😊𠮷BA😊𠮷B"
-  .rev_iterator()
-  .each(c => str = str + c.to_int().to_string() + "\n")
-  inspect(
-    str,
-    content=(
-      #|66
-      #|134071
-      #|128522
-      #|65
-      #|66
-      #|134071
-      #|128522
-      #|65
-      #|
-    ),
-  )
-  inspect(
-    "A😊𠮷BA😊𠮷B".rev_iterator().take(2).collect(),
-    content="['B', '𠮷']",
-  )
-  inspect(
-    "A😊𠮷BA😊𠮷B".rev_iterator().take(4).collect(),
-    content="['B', '𠮷', '😊', 'A']",
-  )
-}
-
-///|
 test "iter2" {
   let mut str = ""
   "A😊𠮷BA😊𠮷B"
   .iter2()
   .each((i, c) => str = str + "\{i}: \{c.to_int()} \n")
-  inspect(
-    str,
-    content=(
-      #|0: 65 
-      #|1: 128522 
-      #|2: 134071 
-      #|3: 66 
-      #|4: 65 
-      #|5: 128522 
-      #|6: 134071 
-      #|7: 66 
-      #|
-    ),
-  )
-}
-
-///|
-test "iterator2" {
-  let str = StringBuilder::new()
-  let it = "A😊𠮷BA😊𠮷B".iterator2()
-  while it.next() is Some((i, c)) {
-    str.write_string("\{i}: \{c.to_int()} \n")
-  }
   inspect(
     str,
     content=(

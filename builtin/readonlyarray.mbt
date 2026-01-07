@@ -54,23 +54,9 @@ pub fn[T] ReadOnlyArray::from_array(array : ArrayView[T]) -> ReadOnlyArray[T] {
 ///   inspect(immut_array[0], content="1")
 /// }
 /// ```
+#alias(from_iterator, deprecated)
 pub fn[T] ReadOnlyArray::from_iter(iter : Iter[T]) -> ReadOnlyArray[T] {
   unsafe_reinterpret_from_fixed_array(FixedArray::from_iter(iter))
-}
-
-///|
-/// Creates an ReadOnlyArray from an iterator.
-///
-/// # Example
-/// ```mbt check
-/// test {
-///   let iter = [1, 2, 3].iterator()
-///   let immut_array = ReadOnlyArray::from_iterator(iter)
-///   inspect(immut_array[0], content="1")
-/// }
-/// ```
-pub fn[T] ReadOnlyArray::from_iterator(iter : Iterator[T]) -> ReadOnlyArray[T] {
-  unsafe_reinterpret_from_fixed_array(FixedArray::from_iterator(iter))
 }
 
 ///|
@@ -164,24 +150,9 @@ pub fn[T] ReadOnlyArray::last(self : ReadOnlyArray[T]) -> T? {
 ///   inspect(sum, content="6")
 /// }
 /// ```
+#alias(iterator, deprecated)
 pub fn[T] ReadOnlyArray::iter(self : ReadOnlyArray[T]) -> Iter[T] {
   self.unsafe_reinterpret_to_fixed_array().iter()
-}
-
-///|
-/// Creates an iterator over the elements of the ReadOnlyArray.
-///
-/// # Example
-/// ```mbt check
-/// test {
-///   let arr : ReadOnlyArray[Int] = [1, 2, 3]
-///   let mut sum = 0
-///   arr.iter().each(fn(x) { sum = sum + x })
-///   inspect(sum, content="6")
-/// }
-/// ```
-pub fn[T] ReadOnlyArray::iterator(self : ReadOnlyArray[T]) -> Iterator[T] {
-  self.unsafe_reinterpret_to_fixed_array().iterator()
 }
 
 ///|

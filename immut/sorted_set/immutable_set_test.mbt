@@ -603,30 +603,6 @@ test "from_iter empty iter" {
 }
 
 ///|
-test "from_iterator multiple elements iter" {
-  inspect(
-    @sorted_set.from_iterator([1, 2, 3].iterator()),
-    content="@immut/sorted_set.from_array([1, 2, 3])",
-  )
-}
-
-///|
-test "from_iterator single element iter" {
-  inspect(
-    @sorted_set.from_iterator([1].iterator()),
-    content="@immut/sorted_set.from_array([1])",
-  )
-}
-
-///|
-test "from_iterator empty iter" {
-  let pq : @sorted_set.SortedSet[Int] = @sorted_set.from_iterator(
-    Iterator::empty(),
-  )
-  inspect(pq, content="@immut/sorted_set.from_array([])")
-}
-
-///|
 test "size" {
   // Empty set should have size 0
   let empty_set : @sorted_set.SortedSet[Int] = @sorted_set.new()

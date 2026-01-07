@@ -281,11 +281,11 @@ fn[A] Tree::each(self : Tree[A], f : (A) -> Unit raise?) -> Unit raise? {
 }
 
 ///|
-fn[A] Tree::iterator(self : Tree[A]) -> Iterator[A] {
+fn[A] Tree::iter(self : Tree[A]) -> Iter[A] {
   let mut curr_tree = self
   let mut curr_index = 0
   let parents = []
-  Iterator::new(fn() {
+  Iter::new(fn() {
     loop curr_tree {
       Node(children, _) as t if curr_index < children.length() => {
         let child = children.unsafe_get(curr_index)

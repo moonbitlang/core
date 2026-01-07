@@ -15,8 +15,8 @@
 ///|
 pub impl[K : Eq, V : Eq] Eq for SortedMap[K, V] with equal(self, other) {
   guard self.size == other.size else { return false }
-  let iter = self.iterator()
-  let iter1 = other.iterator()
+  let iter = self.iter()
+  let iter1 = other.iter()
   while iter.next() is Some(a) && iter1.next() is Some(b) {
     guard a == b else { break false }
   } else {
@@ -195,7 +195,7 @@ pub fn[K, V] SortedMap::eachi(
 pub fn[K, V] SortedMap::keys_as_iter(self : SortedMap[K, V]) -> Iter[K] {
   let todo_list = []
   let mut next_node = self.root
-  Iterator::new(fn() {
+  Iter::new(fn() {
     loop next_node {
       Some({ left, key, value: _, right, height: _ }) => {
         todo_list.push((key, right))
@@ -207,7 +207,7 @@ pub fn[K, V] SortedMap::keys_as_iter(self : SortedMap[K, V]) -> Iter[K] {
       }
       None => None
     }
-  }).iter()
+  })
 }
 
 ///|
@@ -215,7 +215,7 @@ pub fn[K, V] SortedMap::keys_as_iter(self : SortedMap[K, V]) -> Iter[K] {
 pub fn[K, V] SortedMap::values_as_iter(self : SortedMap[K, V]) -> Iter[V] {
   let todo_list = []
   let mut next_node = self.root
-  Iterator::new(fn() {
+  Iter::new(fn() {
     loop next_node {
       Some({ left, key: _, value, right, height: _ }) => {
         todo_list.push((value, right))
@@ -239,20 +239,11 @@ pub fn[K, V] SortedMap::to_array(self : SortedMap[K, V]) -> Array[(K, V)] {
 }
 
 ///|
+#alias(iterator, deprecated)
 pub fn[K, V] SortedMap::iter(self : SortedMap[K, V]) -> Iter[(K, V)] {
-  self.iterator().iter()
-}
-
-///|
-pub fn[K, V] SortedMap::iter2(self : SortedMap[K, V]) -> Iter2[K, V] {
-  self.iterator2().iter2()
-}
-
-///|
-pub fn[K, V] SortedMap::iterator(self : SortedMap[K, V]) -> Iterator[(K, V)] {
   let todo_list = []
   let mut next_node = self.root
-  Iterator::new(fn() {
+  Iter::new(fn() {
     loop next_node {
       Some({ left, key, value, right, height: _ }) => {
         todo_list.push((key, value, right))
@@ -268,24 +259,17 @@ pub fn[K, V] SortedMap::iterator(self : SortedMap[K, V]) -> Iterator[(K, V)] {
 }
 
 ///|
-pub fn[K, V] SortedMap::iterator2(self : SortedMap[K, V]) -> Iterator2[K, V] {
-  self.iterator()
+#alias(iterator2, deprecated)
+pub fn[K, V] SortedMap::iter2(self : SortedMap[K, V]) -> Iter2[K, V] {
+  self.iter()
 }
 
 ///|
 #as_free_fn
+#alias(from_iterator, deprecated)
+#as_free_fn(from_iterator, deprecated)
 pub fn[K : Compare, V] SortedMap::from_iter(
   iter : Iter[(K, V)],
-) -> SortedMap[K, V] {
-  let m = new()
-  iter.each(e => m[e.0] = e.1)
-  m
-}
-
-///|
-#as_free_fn
-pub fn[K : Compare, V] SortedMap::from_iterator(
-  iter : Iterator[(K, V)],
 ) -> SortedMap[K, V] {
   let m = new()
   while iter.next() is Some((k, v)) {
@@ -311,7 +295,7 @@ pub fn[K : Compare, V] SortedMap::range(
 ) -> Iter2[K, V] {
   let todo_list = []
   let mut next_node = self.root
-  Iterator2::new(fn() {
+  Iter2::new(fn() {
     loop next_node {
       Some({ left, key, value, right, height: _ }) => {
         let cmp_key_low = key.compare(low)

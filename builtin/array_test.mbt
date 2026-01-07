@@ -1105,14 +1105,6 @@ test "from_iter" {
 }
 
 ///|
-test "from_iterator" {
-  let arr : Array[Int] = []
-  inspect(Array::from_iterator(arr.iterator()), content="[]")
-  let arr = [1, 2, 3, 4, 5]
-  inspect(Array::from_iterator(arr.iterator()), content="[1, 2, 3, 4, 5]")
-}
-
-///|
 test "Array::last" {
   // Test with a random array of integers
   inspect([1, 2, 3, 4, 5].last(), content="Some(5)")
@@ -1304,23 +1296,23 @@ test "panic fill with invalid end" {
 }
 
 ///|
-test "Array::rev_iterator" {
+test "Array::rev_iter" {
   let arr = [1, 2, 3, 4, 5]
-  let iter = arr.rev_iterator()
+  let iter = arr.rev_iter()
   inspect(iter.to_array(), content="[5, 4, 3, 2, 1]")
 }
 
 ///|
-test "Array::rev_iterator empty" {
+test "Array::rev_iter empty" {
   let arr : Array[Int] = []
-  let iter = arr.rev_iterator()
+  let iter = arr.rev_iter()
   assert_eq(iter.next(), None)
 }
 
 ///|
-test "Array::iterator2" {
+test "Array::iter2" {
   let arr = [10, 20, 30, 40]
-  let iter = arr.iterator2()
+  let iter = arr.iter2()
   let results = []
   while iter.next() is Some((i, x)) {
     results.push((i, x))
@@ -1329,9 +1321,9 @@ test "Array::iterator2" {
 }
 
 ///|
-test "Array::iterator2 empty" {
+test "Array::iter2 empty" {
   let arr : Array[Int] = []
-  let iter = arr.iterator2()
+  let iter = arr.iter2()
   assert_eq(iter.next(), None)
 }
 

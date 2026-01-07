@@ -145,17 +145,15 @@ test "String default and to_array" {
 }
 
 ///|
-test "String from_iter and from_iterator" {
+test "String from_iter" {
   let iter = ['a', 'b', 'c'].iter()
   inspect(String::from_iter(iter), content="abc")
-  let iterator = ['x', 'y'].iterator()
-  inspect(String::from_iterator(iterator), content="xy")
 }
 
 ///|
-test "String rev_iterator with surrogate" {
+test "String rev_iter with surrogate" {
   let buf = StringBuilder::new()
-  "A😀B".rev_iterator().each(c => buf.write_char(c))
+  "A😀B".rev_iter().each(c => buf.write_char(c))
   inspect(buf.to_string(), content="B😀A")
 }
 

@@ -205,7 +205,7 @@ test "iterator" {
   let buf = StringBuilder::new(size_hint=20)
   let map = @sorted_map.from_array([(1, "one"), (2, "two"), (3, "three")])
   map
-  .iterator()
+  .iter()
   .each(e => {
     let (k, v) = e
     buf.write_string("[\{k}-\{v}]")
@@ -213,7 +213,7 @@ test "iterator" {
   inspect(buf, content="[1-one][2-two][3-three]")
   buf.reset()
   map
-  .iterator()
+  .iter()
   .take(2)
   .each(e => {
     let (k, v) = e
@@ -251,30 +251,6 @@ test "from_iter single element iter" {
 test "from_iter empty iter" {
   let pq : @sorted_map.SortedMap[Int, Int] = @sorted_map.from_iter(
     Iter::empty(),
-  )
-  inspect(pq, content="@immut/sorted_map.from_array([])")
-}
-
-///|
-test "from_iterator multiple elements iter" {
-  inspect(
-    @sorted_map.from_iterator([(1, 1), (2, 2), (3, 3)].iterator()),
-    content="@immut/sorted_map.from_array([(1, 1), (2, 2), (3, 3)])",
-  )
-}
-
-///|
-test "from_iterator single element iter" {
-  inspect(
-    @sorted_map.from_iterator([(1, 1)].iterator()),
-    content="@immut/sorted_map.from_array([(1, 1)])",
-  )
-}
-
-///|
-test "from_iterator empty iter" {
-  let pq : @sorted_map.SortedMap[Int, Int] = @sorted_map.from_iterator(
-    Iterator::empty(),
   )
   inspect(pq, content="@immut/sorted_map.from_array([])")
 }

@@ -25,14 +25,14 @@ pub fn[A, B] T::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 #as_free_fn(of, deprecated)
 #as_free_fn
 pub fn[A] T::from_array(ArrayView[A]) -> Self[A]
+#alias(from_iterator, deprecated)
+#as_free_fn(from_iterator, deprecated)
 #as_free_fn
 pub fn[A] T::from_iter(Iter[A]) -> Self[A]
-#as_free_fn
-pub fn[A] T::from_iterator(Iter[A]) -> Self[A]
 pub fn[A] T::get(Self[A], Int) -> A?
 pub fn[A] T::is_empty(Self[A]) -> Bool
+#alias(iterator, deprecated)
 pub fn[A] T::iter(Self[A]) -> Iter[A]
-pub fn[A] T::iterator(Self[A]) -> Iter[A]
 pub fn[A] T::length(Self[A]) -> Int
 #as_free_fn
 pub fn[A] T::make(Int, A) -> Self[A]

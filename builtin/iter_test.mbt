@@ -283,6 +283,23 @@ test "filter_map" {
   inspect(r2, content="[]")
   let r3 : Array[Unit] = [].iter().filter_map(Option::Some(_)).collect()
   inspect(r3, content="[]")
+  // Test using next() directly to ensure the closure is executed
+  let it1 = [1, 2, 3, 4, 5]
+    .iter()
+    .filter_map(fn(x) { if x % 2 == 0 { Some(x * 10) } else { None } })
+  inspect(it1.next(), content="Some(20)")
+  inspect(it1.next(), content="Some(40)")
+  inspect(it1.next(), content="None")
+  // Test None branch inside while loop
+  let it2 = [1, 2, 3]
+    .iter()
+    .filter_map(fn(x) { if x == 2 { None } else { Some(x) } })
+  inspect(it2.next(), content="Some(1)")
+  inspect(it2.next(), content="Some(3)")
+  inspect(it2.next(), content="None")
+  // Test iter exhaustion (else branch)
+  let it3 : Iter[Unit] = [1].iter().filter_map(fn(_) { None })
+  inspect(it3.next(), content="None")
 }
 
 ///|
@@ -516,9 +533,26 @@ enum Tree {
 }
 
 ///|
-#warnings("-deprecated")
 fn Tree::iter(self : Tree) -> Iter[Int] {
-  self.iterator().iter()
+  let parents = []
+  let mut head = Some(self)
+  Iter::new(fn() {
+    loop head {
+      Some(Leaf(x)) => {
+        head = None
+        Some(x)
+      }
+      Some(Node(l, x, r)) => {
+        parents.push((x, r))
+        continue Some(l)
+      }
+      None if parents.pop() is Some((x, r)) => {
+        head = Some(r)
+        Some(x)
+      }
+      None => None
+    }
+  })
 }
 
 ///|
@@ -570,25 +604,25 @@ test "Iter::enumerate" {
 }
 
 ///|
-test "peek function - basic functionality" {
+test "next function - basic functionality" {
   let iter = Iter::singleton(42)
   inspect(iter.next(), content="Some(42)")
 }
 
 ///|
-test "peek function - empty iterator" {
+test "next function - empty iter" {
   let iter : Iter[Int] = Iter::empty()
   inspect(iter.next(), content="None")
 }
 
 ///|
-test "peek function - multiple elements" {
+test "next function - multiple elements" {
   let iter = [1, 2, 3].iter()
   inspect(iter.next(), content="Some(1)")
 }
 
 ///|
-test "peek function - random cases" {
+test "next function - random cases" {
   let iter1 = [10, 20, 30].iter()
   inspect(iter1.next(), content="Some(10)")
   let iter2 = [-5, 0, 5].iter()
@@ -648,7 +682,7 @@ test "@builtin.Iter::maximum" {
   inspect([-5, -3, -1, -10].iter().maximum(), content="Some(-1)")
   // Single element
   inspect([42].iter().maximum(), content="Some(42)")
-  // Empty iterator should return None
+  // Empty iter should return None
   let empty_iter : Iter[Int] = Iter::empty()
   inspect(empty_iter.maximum(), content="None")
 }
@@ -826,6 +860,10 @@ test "iter2" {
   for _, _ in iter.iter2() {
     assert_true(false)
   }
+  let iter = [0, 1, 2].iter().iter2()
+  while iter.next() is Some((i, x)) {
+    assert_eq(i, x)
+  }
   let iter = [0, 1, 2].iter()
   for i, x in iter.iter2() {
     assert_eq(i, x)
@@ -841,4 +879,58 @@ test "Iter::iter2" {
   for i, x in iter {
     assert_eq(i, x)
   }
+}
+
+///|
+test "Iter::to_json and any on empty" {
+  let iter = [1, 2, 3].iter()
+  @json.inspect(ToJson::to_json(iter), content=[1, 2, 3])
+  let empty : Iter[Int] = Iter::empty()
+  inspect(empty.any(_ => true), content="false")
+}
+
+///|
+test "Iter::map_while empty and last" {
+  let empty : Iter[Int] = Iter::empty()
+  inspect(empty.map_while(_ => Some(1)).collect(), content="[]")
+  inspect([1, 2, 3].iter().last(), content="Some(3)")
+  let empty_last : Iter[Int] = Iter::empty()
+  inspect(empty_last.last(), content="None")
+}
+
+///|
+test "Iter::maximum" {
+  inspect([1, 3, 2].iter().maximum(), content="Some(3)")
+  let empty : Iter[Int] = Iter::empty()
+  inspect(empty.maximum(), content="None")
+}
+
+///|
+test "Iter::sub variants" {
+  inspect([1, 2, 3].iter().sub(start=-1).collect(), content="[1, 2, 3]")
+  inspect([1, 2, 3].iter().sub(start=0, end=2).collect(), content="[1, 2]")
+  inspect([1, 2, 3].iter().sub(start=1).collect(), content="[2, 3]")
+  inspect([1, 2, 3, 4].iter().sub(start=1, end=3).collect(), content="[2, 3]")
+  inspect([1, 2, 3].iter().sub(start=2, end=2).collect(), content="[]")
+  inspect([1, 2, 3].iter().sub(start=1, end=0).collect(), content="[]")
+}
+
+///|
+test "Iter::iter and Iter2 conversions" {
+  inspect([1, 2].iter().iter().collect(), content="[1, 2]")
+  let pairs = ['a', 'b']
+    .iter2()
+    .iter()
+    .map(pair => {
+      let (i, ch) = pair
+      "\{i}:\{ch}"
+    })
+    .collect()
+  inspect(pairs, content="[\"0:a\", \"1:b\"]")
+  let buf = StringBuilder::new()
+  let iter2 = ['x', 'y'].iter2().iter2()
+  while iter2.next() is Some((_, ch)) {
+    buf.write_char(ch)
+  }
+  inspect(buf.to_string(), content="xy")
 }

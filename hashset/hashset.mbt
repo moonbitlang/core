@@ -288,16 +288,11 @@ pub fn[K] HashSet::clear(self : HashSet[K]) -> Unit {
 
 ///|
 /// Returns the iterator of the hash set.
+#alias(iterator, deprecated)
 pub fn[K] HashSet::iter(self : HashSet[K]) -> Iter[K] {
-  self.iterator().iter()
-}
-
-///|
-/// Returns the iterator of the hash set.
-pub fn[K] HashSet::iterator(self : HashSet[K]) -> Iterator[K] {
   let mut i = 0
   let len = self.entries.length()
-  Iterator::new(fn() {
+  Iter::new(fn() {
     while i < len {
       let entry = self.entries.unsafe_get(i)
       i += 1
@@ -324,15 +319,9 @@ pub fn[K] HashSet::to_array(self : HashSet[K]) -> Array[K] {
 
 ///|
 #as_free_fn
+#alias(from_iterator, deprecated)
+#as_free_fn(from_iterator, deprecated)
 pub fn[K : Hash + Eq] HashSet::from_iter(iter : Iter[K]) -> HashSet[K] {
-  let s = new()
-  iter.each(e => s.add(e))
-  s
-}
-
-///|
-#as_free_fn
-pub fn[K : Hash + Eq] HashSet::from_iterator(iter : Iterator[K]) -> HashSet[K] {
   let s = new()
   while iter.next() is Some(e) {
     s.add(e)

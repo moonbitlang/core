@@ -1551,7 +1551,7 @@ pub fn[T] Array::windows(self : Array[T], size : Int) -> Array[ArrayView[T]] {
 pub fn[T] Array::suffixes(
   self : Array[T],
   include_empty? : Bool = false,
-) -> Iterator[ArrayView[T]] {
+) -> Iter[ArrayView[T]] {
   self[:].suffixes(include_empty~)
 }
 
@@ -1618,8 +1618,9 @@ pub fn[T] Array::split(
 ///   inspect(sum, content="6")
 /// }
 /// ```
+#alias(iterator, deprecated)
 pub fn[T] Array::iter(self : Array[T]) -> Iter[T] {
-  self.iterator().iter()
+  self[:].iter()
 }
 
 ///|
@@ -1643,8 +1644,9 @@ pub fn[T] Array::iter(self : Array[T]) -> Iter[T] {
 ///   inspect(result, content="[3, 2, 1]")
 /// }
 /// ```
+#alias(rev_iterator, deprecated)
 pub fn[T] Array::rev_iter(self : Array[T]) -> Iter[T] {
-  self.rev_iterator().iter()
+  self[:].rev_iter()
 }
 
 ///|
@@ -1668,8 +1670,9 @@ pub fn[T] Array::rev_iter(self : Array[T]) -> Iter[T] {
 ///   inspect(sum, content="63") // (0 + 10) + (1 + 20) + (2 + 30) = 63
 /// }
 /// ```
+#alias(iterator2, deprecated)
 pub fn[A] Array::iter2(self : Array[A]) -> Iter2[Int, A] {
-  self.iterator2().iter2()
+  self[:].iter2()
 }
 
 ///|
@@ -1787,30 +1790,8 @@ pub fn[A] Array::retain_map(self : Array[A], f : (A) -> A?) -> Unit {
 ///   inspect(arr, content="[42]")
 /// }
 /// ```
+#alias(from_iterator, deprecated)
 pub fn[T] Array::from_iter(iter : Iter[T]) -> Array[T] {
-  iter.collect()
-}
-
-///|
-/// Creates a new array containing all elements from an iterator.
-///
-/// Parameters:
-///
-/// * `iter` : An iterator containing elements of type `T`.
-///
-/// Returns a new array containing all elements from the iterator in the same
-/// order.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let iter = Iterator::singleton(42)
-///   let arr = Array::from_iterator(iter)
-///   inspect(arr, content="[42]")
-/// }
-/// ```
-pub fn[T] Array::from_iterator(iter : Iterator[T]) -> Array[T] {
   iter.collect()
 }
 
@@ -2029,7 +2010,7 @@ pub fn[A, B] Array::zip_to_iter2(
     other.length()
   }
   let mut i = 0
-  Iterator2::new(() => {
+  Iter2::new(() => {
     guard i < length else { None }
     let elem = (self[i], other[i])
     i += 1
@@ -2056,19 +2037,4 @@ pub fn[A : ToStringView] Array::join(
   separator : StringView,
 ) -> String {
   self[:].join(separator)
-}
-
-///|
-pub fn[X] Array::iterator(self : Array[X]) -> Iterator[X] {
-  self[:].iterator()
-}
-
-///|
-pub fn[X] Array::rev_iterator(self : Array[X]) -> Iterator[X] {
-  self[:].rev_iterator()
-}
-
-///|
-pub fn[X] Array::iterator2(self : Array[X]) -> Iterator2[Int, X] {
-  self[:].iterator2()
 }

@@ -45,14 +45,9 @@ pub fn from_fixedarray(arr : FixedArray[Byte], len? : Int) -> Bytes {
 
 ///|
 #deprecated("Use `Bytes::from_iter` instead")
+#alias(from_iterator, deprecated="Use `Bytes::from_iter` instead")
 pub fn from_iter(iter : Iter[Byte]) -> Bytes {
   Bytes::from_iter(iter)
-}
-
-///|
-#deprecated("Use `Bytes::from_iterator` instead")
-pub fn from_iterator(iter : Iterator[Byte]) -> Bytes {
-  Bytes::from_array(iter.collect())
 }
 
 ///|
