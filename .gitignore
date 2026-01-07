@@ -1,5 +1,7 @@
 target/
 .mooncakes/
+target
+_build/
 
 # Coverage-related files
 moonbit-coverage-*.txt
