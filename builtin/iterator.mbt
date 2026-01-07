@@ -848,6 +848,7 @@ pub fn[X : Eq] Iterator::contains(self : Iterator[X], value : X) -> Bool {
 /// shorter than `n` elements.
 /// The iterator `self` will advance past the returned element.
 pub fn[X] Iterator::nth(self : Iterator[X], n : Int) -> X? {
+  guard n >= 0 else { None }
   for i = 0; i < n; i = i + 1 {
     guard self.next() is Some(_) else { break None }
   } else {
