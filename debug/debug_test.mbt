@@ -30,14 +30,24 @@ test "inspect" {
 
 ///|
 test "tuple Debug implementations" {
-  inspect(pretty_test((1, "a")), content="(1, \"a\")")
+  inspect(
+    (1, "a"),
+    content=(
+      #|(1, "a")
+    ),
+  )
 
   // Test tuple3
-  inspect(pretty_test((1, "a", true)), content="(1, \"a\", true)")
+  inspect(
+    (1, "a", true),
+    content=(
+      #|(1, "a", true)
+    ),
+  )
 
   // Test tuple4
   inspect(
-    pretty_test((1, "a", true, 2.0)),
+    (1, "a", true, 2.0),
     content=(
       #|(1, "a", true, 2)
     ),
@@ -45,7 +55,7 @@ test "tuple Debug implementations" {
 
   // Test tuple5
   inspect(
-    pretty_test((1, "a", true, 2.0, 'c')),
+    (1, "a", true, 2.0, 'c'),
     content=(
       #|(1, "a", true, 2, 'c')
     ),
@@ -53,7 +63,7 @@ test "tuple Debug implementations" {
 
   // Test tuple6
   inspect(
-    pretty_test((1, "a", true, 2.0, 'c', 6)),
+    (1, "a", true, 2.0, 'c', 6),
     content=(
       #|(1, "a", true, 2, 'c', 6)
     ),
@@ -61,7 +71,7 @@ test "tuple Debug implementations" {
 
   // Test tuple7
   inspect(
-    pretty_test((1, "a", true, 2.0, 'c', 6, "g")),
+    (1, "a", true, 2.0, 'c', 6, "g"),
     content=(
       #|(1, "a", true, 2, 'c', 6, "g")
     ),
@@ -69,7 +79,7 @@ test "tuple Debug implementations" {
 
   // Test tuple8
   inspect(
-    pretty_test((1, "a", true, 2.0, 'c', 6, "g", false)),
+    (1, "a", true, 2.0, 'c', 6, "g", false),
     content=(
       #|(
       #|  1,
@@ -86,7 +96,7 @@ test "tuple Debug implementations" {
 
   // Test tuple9
   inspect(
-    pretty_test((1, "a", true, 2.0, 'c', 6, "g", false, 9)),
+    (1, "a", true, 2.0, 'c', 6, "g", false, 9),
     content=(
       #|(
       #|  1,
@@ -104,7 +114,7 @@ test "tuple Debug implementations" {
 
   // Test tuple10
   inspect(
-    pretty_test((1, "a", true, 2.0, 'c', 6, "g", false, 9, "j")),
+    (1, "a", true, 2.0, 'c', 6, "g", false, 9, "j"),
     content=(
       #|(
       #|  1,
@@ -123,7 +133,7 @@ test "tuple Debug implementations" {
 
   // Test tuple11
   inspect(
-    pretty_test((1, "a", true, 2.0, 'c', 6, "g", false, 9, "j", 11)),
+    (1, "a", true, 2.0, 'c', 6, "g", false, 9, "j", 11),
     content=(
       #|(
       #|  1,
@@ -143,7 +153,7 @@ test "tuple Debug implementations" {
 
   // Test tuple12
   inspect(
-    pretty_test((1, "a", true, 2.0, 'c', 6, "g", false, 9, "j", 11, "l")),
+    (1, "a", true, 2.0, 'c', 6, "g", false, 9, "j", 11, "l"),
     content=(
       #|(
       #|  1,
@@ -164,7 +174,7 @@ test "tuple Debug implementations" {
 
   // Test tuple13
   inspect(
-    pretty_test((1, "a", true, 2.0, 'c', 6, "g", false, 9, "j", 11, "l", 13)),
+    (1, "a", true, 2.0, 'c', 6, "g", false, 9, "j", 11, "l", 13),
     content=(
       #|(
       #|  1,
@@ -186,9 +196,7 @@ test "tuple Debug implementations" {
 
   // Test tuple14
   inspect(
-    pretty_test(
-      (1, "a", true, 2.0, 'c', 6, "g", false, 9, "j", 11, "l", 13, "n"),
-    ),
+    (1, "a", true, 2.0, 'c', 6, "g", false, 9, "j", 11, "l", 13, "n"),
     content=(
       #|(
       #|  1,
@@ -211,9 +219,7 @@ test "tuple Debug implementations" {
 
   // Test tuple15
   inspect(
-    pretty_test(
-      (1, "a", true, 2.0, 'c', 6, "g", false, 9, "j", 11, "l", 13, "n", 15),
-    ),
+    (1, "a", true, 2.0, 'c', 6, "g", false, 9, "j", 11, "l", 13, "n", 15),
     content=(
       #|(
       #|  1,
@@ -237,9 +243,7 @@ test "tuple Debug implementations" {
 
   // Test tuple16
   inspect(
-    pretty_test(
-      (1, "a", true, 2.0, 'c', 6, "g", false, 9, "j", 11, "l", 13, "n", 15, "p"),
-    ),
+    (1, "a", true, 2.0, 'c', 6, "g", false, 9, "j", 11, "l", 13, "n", 15, "p"),
     content=(
       #|(
       #|  1,
@@ -264,11 +268,8 @@ test "tuple Debug implementations" {
 
   // Test tuple17
   inspect(
-    pretty_test(
-      (
-        1, "a", true, 2.0, 'c', 6, "g", false, 9, "j", 11, "l", 13, "n", 15, "p",
-        17,
-      ),
+    (
+      1, "a", true, 2.0, 'c', 6, "g", false, 9, "j", 11, "l", 13, "n", 15, "p", 17,
     ),
     content=(
       #|(
@@ -295,11 +296,9 @@ test "tuple Debug implementations" {
 
   // Test tuple18
   inspect(
-    pretty_test(
-      (
-        1, "a", true, 2.0, 'c', 6, "g", false, 9, "j", 11, "l", 13, "n", 15, "p",
-        17, "r",
-      ),
+    (
+      1, "a", true, 2.0, 'c', 6, "g", false, 9, "j", 11, "l", 13, "n", 15, "p", 17,
+      "r",
     ),
     content=(
       #|(
@@ -327,11 +326,9 @@ test "tuple Debug implementations" {
 
   // Test tuple19
   inspect(
-    pretty_test(
-      (
-        1, "a", true, 2.0, 'c', 6, "g", false, 9, "j", 11, "l", 13, "n", 15, "p",
-        17, "r", 19,
-      ),
+    (
+      1, "a", true, 2.0, 'c', 6, "g", false, 9, "j", 11, "l", 13, "n", 15, "p", 17,
+      "r", 19,
     ),
     content=(
       #|(
@@ -360,11 +357,9 @@ test "tuple Debug implementations" {
 
   // Test tuple20
   inspect(
-    pretty_test(
-      (
-        1, "a", true, 2.0, 'c', 6, "g", false, 9, "j", 11, "l", 13, "n", 15, "p",
-        17, "r", 19, "t",
-      ),
+    (
+      1, "a", true, 2.0, 'c', 6, "g", false, 9, "j", 11, "l", 13, "n", 15, "p", 17,
+      "r", 19, "t",
     ),
     content=(
       #|(
@@ -394,11 +389,9 @@ test "tuple Debug implementations" {
 
   // Test tuple21
   inspect(
-    pretty_test(
-      (
-        1, "a", true, 2.0, 'c', 6, "g", false, 9, "j", 11, "l", 13, "n", 15, "p",
-        17, "r", 19, "t", 21,
-      ),
+    (
+      1, "a", true, 2.0, 'c', 6, "g", false, 9, "j", 11, "l", 13, "n", 15, "p", 17,
+      "r", 19, "t", 21,
     ),
     content=(
       #|(
@@ -429,11 +422,9 @@ test "tuple Debug implementations" {
 
   // Test tuple22
   inspect(
-    pretty_test(
-      (
-        1, "a", true, 2.0, 'c', 6, "g", false, 9, "j", 11, "l", 13, "n", 15, "p",
-        17, "r", 19, "t", 21, "v",
-      ),
+    (
+      1, "a", true, 2.0, 'c', 6, "g", false, 9, "j", 11, "l", 13, "n", 15, "p", 17,
+      "r", 19, "t", 21, "v",
     ),
     content=(
       #|(
@@ -467,64 +458,69 @@ test "tuple Debug implementations" {
 ///|
 #warnings("-deprecated")
 test "core data structures Debug implementations" {
-  inspect(pretty_test((1 : Int16)), content="1")
-  inspect(pretty_test((1 : UInt16)), content="1")
-  inspect(pretty_test((1 : UInt64)), content="1")
-  inspect(pretty_test((1.0 : Float)), content="1")
+  inspect((1 : Int16), content="1")
+  inspect((1 : UInt16), content="1")
+  inspect((1 : UInt64), content="1")
+  inspect((1.0 : Float), content="1")
   let b : Bytes = b"ab"
-  inspect(pretty_test(b), content="<Bytes: [0x61, 0x62]>")
+  inspect(b, content="<Bytes: [0x61, 0x62]>")
   let bv : BytesView = b[:]
-  inspect(pretty_test(bv), content="<BytesView: [0x61, 0x62]>")
+  inspect(bv, content="<BytesView: [0x61, 0x62]>")
   let sv : StringView = "abc"[:]
   inspect(
-    pretty_test(sv),
+    sv,
     content=(
       #|<StringView: "abc">
     ),
   )
   let av : ArrayView[Int] = [1, 2, 3][1:3]
-  inspect(pretty_test(av), content="<ArrayView: [2, 3]>")
+  inspect(av, content="<ArrayView: [2, 3]>")
   let fa : FixedArray[Int] = [1, 2, 3]
-  inspect(pretty_test(fa), content="<FixedArray: [1, 2, 3]>")
+  inspect(fa, content="<FixedArray: [1, 2, 3]>")
   let ro : ReadOnlyArray[Int] = [1, 2, 3]
-  inspect(pretty_test(ro), content="<ReadOnlyArray: [1, 2, 3]>")
+  inspect(ro, content="<ReadOnlyArray: [1, 2, 3]>")
   let lst : @list.List[Int] = @list.from_array([1, 2, 3])
-  inspect(pretty_test(lst), content="<List: [1, 2, 3]>")
+  inspect(lst, content="<List: [1, 2, 3]>")
   let dq : @deque.Deque[Int] = @deque.from_array([1, 2, 3])
-  inspect(pretty_test(dq), content="<Deque: [1, 2, 3]>")
+  inspect(dq, content="<Deque: [1, 2, 3]>")
   let q : @queue.Queue[Int] = @queue.from_array([1, 2, 3])
-  inspect(pretty_test(q), content="<Queue: [1, 2, 3]>")
+  inspect(q, content="<Queue: [1, 2, 3]>")
   let pq : @priority_queue.PriorityQueue[Int] = @priority_queue.from_array([
     3, 1, 2,
   ])
-  inspect(pretty_test(pq), content="<PriorityQueue: [3, 2, 1]>")
+  inspect(pq, content="<PriorityQueue: [3, 2, 1]>")
   let buf = @buffer.new()
   buf.write_bytes(b"ab")
-  inspect(pretty_test(buf), content="<Buffer: [0x61, 0x62]>")
+  inspect(buf, content="<Buffer: [0x61, 0x62]>")
   let r : Ref[Int] = @ref.new(1)
-  inspect(pretty_test(r), content="<Ref: 1>")
+  inspect(r, content="<Ref: 1>")
   let mv : MutArrayView[Int] = [1, 2, 3].mut_view(start=1, end=3)
-  inspect(pretty_test(mv), content="<MutArrayView: [2, 3]>")
-  inspect(pretty_test((Ok(1) : Result[Int, String])), content="Ok(1)")
-  inspect(pretty_test((Err("e") : Result[Int, String])), content="Err(\"e\")")
+  inspect(mv, content="<MutArrayView: [2, 3]>")
+  inspect((Ok(1) : Result[Int, String]), content="Ok(1)")
+  inspect(
+    (Err("e") : Result[Int, String]),
+    content=(
+      #|Err("e")
+    ),
+  )
 
   // Test immut containers
   let immut_lst = @immut_list.from_array([1, 2, 3])
-  inspect(pretty_test(immut_lst), content="<List: [1, 2, 3]>")
+  inspect(immut_lst, content="<List: [1, 2, 3]>")
   let immut_arr = @immut_array.from_array([1, 2, 3])
-  inspect(pretty_test(immut_arr), content="<Array: [1, 2, 3]>")
+  inspect(immut_arr, content="<Array: [1, 2, 3]>")
   let immut_pq = @immut_priority_queue.from_array([3, 1, 2])
-  inspect(pretty_test(immut_pq), content="<PriorityQueue: [3, 2, 1]>")
+  inspect(immut_pq, content="<PriorityQueue: [3, 2, 1]>")
   let immut_sm = @immut_sorted_map.from_array([(1, "a"), (2, "b")])
   inspect(
-    pretty_test(immut_sm),
+    immut_sm,
     content=(
       #|<SortedMap:
       #|  { 1: "a", 2: "b" }>
     ),
   )
   let immut_ss = @immut_sorted_set.from_array([3, 1, 2])
-  inspect(pretty_test(immut_ss), content="<SortedSet: [1, 2, 3]>")
+  inspect(immut_ss, content="<SortedSet: [1, 2, 3]>")
 }
 
 ///|
@@ -532,20 +528,20 @@ test "Debug for hash-based collections" {
   // The order is unstable.
   let hm : @hashmap.HashMap[Int, String] = @hashmap.from_array([(2, "b")])
   inspect(
-    pretty_test(hm),
+    hm,
     content=(
       #|<HashMap: { 2: "b" }>
     ),
   )
   let hs : @hashset.HashSet[Int] = @hashset.from_array([1])
-  inspect(pretty_test(hs), content="<HashSet: [1]>")
+  inspect(hs, content="<HashSet: [1]>")
   let immut_hm = @immut_hashmap.from_array([(2, "b")])
-  inspect(pretty_test(immut_hm), content="<HashMap: { 2: \"b\" }>")
+  inspect(
+    immut_hm,
+    content=(
+      #|<HashMap: { 2: "b" }>
+    ),
+  )
   let immut_hs = @immut_hashset.from_array([3])
-  inspect(pretty_test(immut_hs), content="<HashSet: [3]>")
-}
-
-///|
-fn[T : Debug] pretty_test(x : T) -> String {
-  x.to_repr() |> render
+  inspect(immut_hs, content="<HashSet: [3]>")
 }
