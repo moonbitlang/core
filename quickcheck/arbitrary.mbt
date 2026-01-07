@@ -113,7 +113,7 @@ pub impl Arbitrary for String with arbitrary(size, rs) {
 pub impl[X : Arbitrary] Arbitrary for Iter[X] with arbitrary(size, rs) {
   let len = if size == 0 { 0 } else { rs.next_positive_int() % size }
   let mut i = 0
-  Iterator::new(() => {
+  Iter::new(() => {
     guard i < len else { None }
     let elem = X::arbitrary(i, rs)
     i += 1

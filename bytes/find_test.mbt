@@ -43,9 +43,9 @@ test "rev_find" {
 }
 
 ///|
-test "Bytes::from_iterator" {
+test "Bytes::from_iter" {
   inspect(
-    Bytes::from_iterator(([97, 98, 99] : Array[Byte]).iterator()),
+    Bytes::from_iter(([97, 98, 99] : Array[Byte]).iter()),
     content="b\"abc\"",
   )
 }

@@ -170,14 +170,14 @@ test {
 }
 ```
 
-You can also use `rev_iterator()` to iterate in descending order.
+You can also use `rev_iter()` to iterate in descending order.
 
 ```mbt check
 ///|
 test {
   let set = @sorted_set.from_array([1, 2, 3, 4, 5])
   let arr = []
-  set.rev_iterator().each(v => arr.push(v))
+  set.rev_iter().each(v => arr.push(v))
   assert_eq(arr, [5, 4, 3, 2, 1])
 }
 ```

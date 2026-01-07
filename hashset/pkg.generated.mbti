@@ -27,17 +27,17 @@ pub fn[K] HashSet::eachi(Self[K], (Int, K) -> Unit raise?) -> Unit raise?
 #as_free_fn(of, deprecated)
 #as_free_fn
 pub fn[K : Hash + Eq] HashSet::from_array(ArrayView[K]) -> Self[K]
+#alias(from_iterator, deprecated)
+#as_free_fn(from_iterator, deprecated)
 #as_free_fn
 pub fn[K : Hash + Eq] HashSet::from_iter(Iter[K]) -> Self[K]
-#as_free_fn
-pub fn[K : Hash + Eq] HashSet::from_iterator(Iter[K]) -> Self[K]
 pub fn[K : Hash + Eq] HashSet::intersection(Self[K], Self[K]) -> Self[K]
 pub fn[K : Hash + Eq] HashSet::is_disjoint(Self[K], Self[K]) -> Bool
 pub fn[K] HashSet::is_empty(Self[K]) -> Bool
 pub fn[K : Hash + Eq] HashSet::is_subset(Self[K], Self[K]) -> Bool
 pub fn[K : Hash + Eq] HashSet::is_superset(Self[K], Self[K]) -> Bool
+#alias(iterator, deprecated)
 pub fn[K] HashSet::iter(Self[K]) -> Iter[K]
-pub fn[K] HashSet::iterator(Self[K]) -> Iter[K]
 #alias(size, deprecated)
 pub fn[K] HashSet::length(Self[K]) -> Int
 #as_free_fn

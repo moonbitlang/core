@@ -172,23 +172,6 @@ test "iter_collect" {
 }
 
 ///|
-test "iterator" {
-  let map = @sorted_map.from_array([(3, "c"), (2, "b"), (1, "a")])
-  inspect(
-    map.iterator().collect(),
-    content=(
-      #|[(1, "a"), (2, "b"), (3, "c")]
-    ),
-  )
-  inspect(
-    map.iterator().take(2).collect(),
-    content=(
-      #|[(1, "a"), (2, "b")]
-    ),
-  )
-}
-
-///|
 test "from_iter multiple elements iter" {
   inspect(
     @sorted_map.from_iter([(1, 1), (2, 2), (3, 3)].iter()),
@@ -208,30 +191,6 @@ test "from_iter single element iter" {
 test "from_iter empty iter" {
   let pq : @sorted_map.SortedMap[Int, Int] = @sorted_map.from_iter(
     Iter::empty(),
-  )
-  inspect(pq, content="@sorted_map.from_array([])")
-}
-
-///|
-test "from_iterator multiple elements iter" {
-  inspect(
-    @sorted_map.from_iterator([(1, 1), (2, 2), (3, 3)].iterator()),
-    content="@sorted_map.from_array([(1, 1), (2, 2), (3, 3)])",
-  )
-}
-
-///|
-test "from_iterator single element iter" {
-  inspect(
-    @sorted_map.from_iterator([(1, 1)].iterator()),
-    content="@sorted_map.from_array([(1, 1)])",
-  )
-}
-
-///|
-test "from_iterator empty iter" {
-  let pq : @sorted_map.SortedMap[Int, Int] = @sorted_map.from_iterator(
-    Iterator::empty(),
   )
   inspect(pq, content="@sorted_map.from_array([])")
 }

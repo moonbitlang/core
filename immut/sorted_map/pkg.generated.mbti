@@ -33,19 +33,19 @@ pub fn[K, V, A] SortedMap::foldl_with_key(Self[K, V], (A, K, V) -> A, init~ : A)
 #as_free_fn(of, deprecated)
 #as_free_fn
 pub fn[K : Compare, V] SortedMap::from_array(ArrayView[(K, V)]) -> Self[K, V]
+#alias(from_iterator, deprecated)
+#as_free_fn(from_iterator, deprecated)
 #as_free_fn
 pub fn[K : Compare, V] SortedMap::from_iter(Iter[(K, V)]) -> Self[K, V]
-#as_free_fn
-pub fn[K : Compare, V] SortedMap::from_iterator(Iter[(K, V)]) -> Self[K, V]
 #as_free_fn
 pub fn[V : @json.FromJson] SortedMap::from_json(Json) -> Self[String, V] raise @json.JsonDecodeError
 #alias(lookup, deprecated)
 pub fn[K : Compare, V] SortedMap::get(Self[K, V], K) -> V?
 pub fn[K, V] SortedMap::is_empty(Self[K, V]) -> Bool
+#alias(iterator, deprecated)
 pub fn[K, V] SortedMap::iter(Self[K, V]) -> Iter[(K, V)]
+#alias(iterator2, deprecated)
 pub fn[K, V] SortedMap::iter2(Self[K, V]) -> Iter2[K, V]
-pub fn[K, V] SortedMap::iterator(Self[K, V]) -> Iter[(K, V)]
-pub fn[K, V] SortedMap::iterator2(Self[K, V]) -> Iter2[K, V]
 #deprecated
 pub fn[K, V] SortedMap::keys(Self[K, V]) -> Array[K]
 pub fn[K, V] SortedMap::keys_as_iter(Self[K, V]) -> Iter[K]

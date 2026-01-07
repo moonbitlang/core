@@ -58,11 +58,11 @@ test "stringview op_get" {
 }
 
 ///|
-test "stringview op_get iterator" {
+test "stringview op_get iter" {
   let str = "Hello🤣🤣🤣"
   let view = str.view(start_offset=1, end_offset=7)
-  inspect(view.iterator().nth(4).unwrap(), content="🤣")
-  inspect(view.iterator().nth(4).unwrap(), content="🤣")
+  inspect(view.iter().nth(4).unwrap(), content="🤣")
+  inspect(view.iter().nth(4).unwrap(), content="🤣")
 }
 
 ///|
@@ -74,11 +74,11 @@ test "stringview rev_get" {
 }
 
 ///|
-test "stringview rev_get rev_iterator" {
+test "stringview rev_get rev_iter" {
   let str = "Hello🤣🤣🤣"
   let view = str.view(start_offset=1, end_offset=7)
-  inspect(view.rev_iterator().nth(0).unwrap(), content="🤣")
-  inspect(view.rev_iterator().nth(4).unwrap(), content="e")
+  inspect(view.rev_iter().nth(0).unwrap(), content="🤣")
+  inspect(view.rev_iter().nth(4).unwrap(), content="e")
 }
 
 ///|
@@ -320,14 +320,6 @@ test "stringview rev_iter" {
   let view = str.view(start_offset=1, end_offset=7)
   inspect(view.rev_iter().count(), content="5")
   inspect(view.rev_iter(), content="['🤣', 'o', 'l', 'l', 'e']")
-}
-
-///|
-test "stringview rev_iterator" {
-  let str = "hello🤣🤣🤣"
-  let view = str.view(start_offset=1, end_offset=7)
-  let iter = view.rev_iterator()
-  inspect(iter, content="['🤣', 'o', 'l', 'l', 'e']")
 }
 
 ///|
@@ -643,16 +635,6 @@ test "iter2" {
 }
 
 ///|
-test "iterator2" {
-  let str = "aa😭b😂cc"
-  let view = str.view(start_offset=1, end_offset=8)
-  inspect(
-    view.iterator2(),
-    content="[(0, 'a'), (1, '😭'), (2, 'b'), (3, '😂'), (4, 'c')]",
-  )
-}
-
-///|
 test "from_array" {
   let v = StringView::from_array(['a', '😭', 'b', '😂', 'c'])
   inspect(v, content="a😭b😂c")
@@ -661,12 +643,6 @@ test "from_array" {
 ///|
 test "from_iter" {
   let v = StringView::from_iter(['a', '😭', 'b', '😂', 'c'].iter())
-  inspect(v, content="a😭b😂c")
-}
-
-///|
-test "from_iterator" {
-  let v = StringView::from_iterator(['a', '😭', 'b', '😂', 'c'].iterator())
   inspect(v, content="a😭b😂c")
 }
 

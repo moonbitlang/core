@@ -160,18 +160,6 @@ test "iter" {
 }
 
 ///|
-test "iterator" {
-  let m = @hashset.from_array(["a", "b", "c"]).iterator().collect()
-  m.sort()
-  inspect(
-    m,
-    content=(
-      #|["a", "b", "c"]
-    ),
-  )
-}
-
-///|
 test "iteri" {
   let m = @hashset.from_array(["1", "2", "3"])
   let s = []
@@ -376,27 +364,6 @@ test "from_iter single element iter" {
 ///|
 test "from_iter empty iter" {
   let map : @hashset.HashSet[Int] = @hashset.from_iter(Iter::empty())
-  inspect(map, content="@hashset.from_array([])")
-}
-
-///|
-test "from_iterator multiple elements iter" {
-  let array = @hashset.from_iterator([1, 2, 3].iterator()).to_array()
-  array.sort()
-  inspect(array, content="[1, 2, 3]")
-}
-
-///|
-test "from_iterator single element iter" {
-  inspect(
-    @hashset.from_iterator([1].iterator()),
-    content="@hashset.from_array([1])",
-  )
-}
-
-///|
-test "from_iterator empty iter" {
-  let map : @hashset.HashSet[Int] = @hashset.from_iterator(Iterator::empty())
   inspect(map, content="@hashset.from_array([])")
 }
 

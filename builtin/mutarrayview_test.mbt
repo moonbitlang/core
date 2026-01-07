@@ -231,23 +231,23 @@ test "fixedarray_mut_sub" {
 }
 
 ///|
-test "iterator" {
+test "iter" {
   let arr = [1, 2, 3, 4, 5]
-  let iter = arr.iterator().map(x => x * 2)
+  let iter = arr.iter().map(x => x * 2)
   inspect(iter.to_array(), content="[2, 4, 6, 8, 10]")
 }
 
 ///|
-test "rev_iterator" {
+test "rev_iter" {
   let arr = [1, 2, 3, 4, 5]
-  let iter = arr.rev_iterator().map(x => x * 2)
+  let iter = arr.rev_iter().map(x => x * 2)
   inspect(iter.to_array(), content="[10, 8, 6, 4, 2]")
 }
 
 ///|
-test "iterator2" {
+test "iter2" {
   let arr = [1, 2, 3, 4, 5]
-  let iter = arr.iterator2()
+  let iter = arr.iter2()
   inspect(iter.to_string(), content="[(0, 1), (1, 2), (2, 3), (3, 4), (4, 5)]")
 }
 
@@ -285,9 +285,9 @@ test "panic MutArrayView sub invalid range" {
 test "MutArrayView iterators" {
   let arr = [1, 2, 3]
   let view = arr.mut_view()
-  inspect(view.iterator().to_array(), content="[1, 2, 3]")
-  inspect(view.rev_iterator().to_array(), content="[3, 2, 1]")
-  inspect(view.iterator2().to_string(), content="[(0, 1), (1, 2), (2, 3)]")
+  inspect(view.iter().to_array(), content="[1, 2, 3]")
+  inspect(view.rev_iter().to_array(), content="[3, 2, 1]")
+  inspect(view.iter2().to_string(), content="[(0, 1), (1, 2), (2, 3)]")
 }
 
 ///|

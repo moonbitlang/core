@@ -361,10 +361,10 @@ pub fn[T] FixedArray::sub(
 pub fn[T] ArrayView::suffixes(
   self : Self[T],
   include_empty? : Bool = false,
-) -> Iterator[ArrayView[T]] {
+) -> Iter[ArrayView[T]] {
   let len = self.length()
   let mut i = 0
-  Iterator::new(fn() -> ArrayView[T]? {
+  Iter::new(fn() -> ArrayView[T]? {
     if i < len {
       let suffix = self[i:]
       i += 1
@@ -379,17 +379,6 @@ pub fn[T] ArrayView::suffixes(
     } else {
       None
     }
-  })
-}
-
-///|
-pub fn[X] ArrayView::iterator(self : ArrayView[X]) -> Iterator[X] {
-  let mut i = 0
-  Iterator::new(fn() {
-    guard i < self.length() else { None }
-    let elem = self.unsafe_get(i)
-    i += 1
-    Some(elem)
   })
 }
 
@@ -414,28 +403,25 @@ pub fn[X] ArrayView::iterator(self : ArrayView[X]) -> Iterator[X] {
 ///   inspect(sum, content="5")
 /// }
 /// ```
-pub fn[A] ArrayView::iter(self : ArrayView[A]) -> Iter[A] {
-  self.iterator().iter()
-}
-
-///|
-pub fn[X] ArrayView::rev_iterator(self : ArrayView[X]) -> Iterator[X] {
-  let mut i = self.length()
-  Iterator::new(fn() {
-    guard i > 0 else { None }
-    i -= 1
-    Some(self.unsafe_get(i))
+#alias(iterator, deprecated)
+pub fn[X] ArrayView::iter(self : ArrayView[X]) -> Iter[X] {
+  let mut i = 0
+  Iter::new(fn() {
+    guard i < self.length() else { None }
+    let elem = self.unsafe_get(i)
+    i += 1
+    Some(elem)
   })
 }
 
 ///|
-pub fn[X] ArrayView::iterator2(self : ArrayView[X]) -> Iterator2[Int, X] {
-  let mut i = 0
-  Iterator2::new(fn() {
-    guard i < self.length() else { None }
-    let result = Some((i, self.unsafe_get(i)))
-    i += 1
-    result
+#alias(rev_iterator, deprecated)
+pub fn[X] ArrayView::rev_iter(self : ArrayView[X]) -> Iter[X] {
+  let mut i = self.length()
+  Iter::new(fn() {
+    guard i > 0 else { None }
+    i -= 1
+    Some(self.unsafe_get(i))
   })
 }
 
@@ -460,8 +446,15 @@ pub fn[X] ArrayView::iterator2(self : ArrayView[X]) -> Iterator2[Int, X] {
 ///   inspect(sum_keys, content="1")
 /// }
 /// ```
-pub fn[A] ArrayView::iter2(self : ArrayView[A]) -> Iter2[Int, A] {
-  self.iterator2().iter2()
+#alias(iterator2, deprecated)
+pub fn[X] ArrayView::iter2(self : ArrayView[X]) -> Iter2[Int, X] {
+  let mut i = 0
+  Iter2::new(fn() {
+    guard i < self.length() else { None }
+    let result = Some((i, self.unsafe_get(i)))
+    i += 1
+    result
+  })
 }
 
 ///|

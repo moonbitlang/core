@@ -71,35 +71,11 @@ pub fn[K, V] HashMap::clear(self : HashMap[K, V]) -> Unit {
 ///   inspect(pairs.contains((2, "two")), content="true")
 /// }
 /// ```
+#alias(iterator, deprecated)
 pub fn[K, V] HashMap::iter(self : HashMap[K, V]) -> Iter[(K, V)] {
-  self.iterator().iter()
-}
-
-///|
-/// Returns an iterator over the key-value pairs in the map.
-///
-/// Parameters:
-///
-/// * `map` : The hash map to iterate over.
-///
-/// Returns an iterator that yields tuples of `(key, value)` for each entry in
-/// the map, in unspecified order.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let map = @hashmap.from_array([(1, "one"), (2, "two")])
-///   let pairs = map.iterator().to_array()
-///   inspect(pairs.length(), content="2")
-///   inspect(pairs.contains((1, "one")), content="true")
-///   inspect(pairs.contains((2, "two")), content="true")
-/// }
-/// ```
-pub fn[K, V] HashMap::iterator(self : HashMap[K, V]) -> Iterator[(K, V)] {
   let mut i = 0
   let len = self.entries.length()
-  Iterator::new(fn() {
+  Iter::new(fn() {
     while i < len {
       let entry = self.entries.unsafe_get(i)
       i += 1
@@ -122,34 +98,9 @@ pub fn[K, V] HashMap::iterator(self : HashMap[K, V]) -> Iterator[(K, V)] {
 /// Returns an iterator that yields tuples of `(key, value)` for each entry in
 /// the map, in unspecified order.
 /// This is mainly used for `for _, _ in ..` loops.
-pub fn[K, V] HashMap::iterator2(self : HashMap[K, V]) -> Iterator2[K, V] {
-  self.iterator()
-}
-
-///|
-/// Creates an iterator over the key-value pairs in the map, where the key and
-/// value are passed as separate arguments to the yielding function.
-///
-/// Parameters:
-///
-/// * `map` : The hash map to iterate over.
-///
-/// Returns an iterator `Iter2[K, V]` that yields each key-value pair in the map
-/// as separate arguments. This differs from `iter()` which yields tuples of
-/// key-value pairs.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let map = @hashmap.from_array([(1, "one"), (2, "two")])
-///   let mut sum = 0
-///   map.iter2().each((k, _) => sum = sum + k)
-///   inspect(sum, content="3")
-/// }
-/// ```
+#alias(iterator2, deprecated)
 pub fn[K, V] HashMap::iter2(self : HashMap[K, V]) -> Iter2[K, V] {
-  self.iterator2().iter2()
+  self.iter()
 }
 
 ///|
@@ -168,47 +119,17 @@ pub fn[K, V] HashMap::iter2(self : HashMap[K, V]) -> Iter2[K, V] {
 ///
 /// ```mbt check
 /// test {
-///   let arr = [(1, "one"), (2, "two")]
-///   let iter = arr.iter()
+///   let iter = Iter::singleton((1, "one")) + Iter::singleton((2, "two"))
 ///   let map = @hashmap.from_iter(iter)
 ///   inspect(map.get(1), content="Some(\"one\")")
 ///   inspect(map.get(2), content="Some(\"two\")")
 /// }
 /// ```
 #as_free_fn
+#alias(from_iterator, deprecated)
+#as_free_fn(from_iterator, deprecated)
 pub fn[K : Hash + Eq, V] HashMap::from_iter(
   iter : Iter[(K, V)],
-) -> HashMap[K, V] {
-  let m = new()
-  iter.each(e => m[e.0] = e.1)
-  m
-}
-
-///|
-/// Creates a new hash map from an iterator of key-value pairs.
-///
-/// Parameters:
-///
-/// * `iter` : An iterator that yields key-value pairs. The key type must
-/// implement both `Hash` and `Eq` traits.
-///
-/// Returns a new hash map containing all key-value pairs from the iterator. If
-/// the iterator yields multiple pairs with the same key, the later value will
-/// overwrite the earlier one.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let iter = Iterator::singleton((1, "one")) + Iterator::singleton((2, "two"))
-///   let map = @hashmap.from_iterator(iter)
-///   inspect(map.get(1), content="Some(\"one\")")
-///   inspect(map.get(2), content="Some(\"two\")")
-/// }
-/// ```
-#as_free_fn
-pub fn[K : Hash + Eq, V] HashMap::from_iterator(
-  iter : Iterator[(K, V)],
 ) -> HashMap[K, V] {
   let m = new()
   while iter.next() is Some((k, v)) {
@@ -464,7 +385,7 @@ pub impl[K : Show, V : Show] Show for HashMap[K, V] with output(self, logger) {
 /// ```
 pub fn[K, V] HashMap::keys(self : HashMap[K, V]) -> Iter[K] {
   let mut i = 0
-  let iter = Iterator::new(() => while i < self.entries.length() {
+  let iter = Iter::new(() => while i < self.entries.length() {
     let entry = self.entries[i]
     i += 1
     if entry is Some({ key, .. }) {
@@ -500,7 +421,7 @@ pub fn[K, V] HashMap::keys(self : HashMap[K, V]) -> Iter[K] {
 /// ```
 pub fn[K, V] HashMap::values(self : HashMap[K, V]) -> Iter[V] {
   let mut i = 0
-  let iter = Iterator::new(() => while i < self.entries.length() {
+  let iter = Iter::new(() => while i < self.entries.length() {
     let entry = self.entries[i]
     i += 1
     if entry is Some({ value, .. }) {

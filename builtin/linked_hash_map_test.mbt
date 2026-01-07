@@ -77,18 +77,6 @@ test "Map::from_iter" {
 }
 
 ///|
-test "Map::from_iterator" {
-  let iter = [("a", 1), ("b", 2), ("c", 3)].iterator()
-  let map = Map::from_iterator(iter)
-  inspect(
-    map,
-    content=(
-      #|{"a": 1, "b": 2, "c": 3}
-    ),
-  )
-}
-
-///|
 test "Map::get_from_view" {
   let string_map : Map[String, Int] = { "alpha": 1, "beta": 2 }
   inspect(Map::get_from_string(string_map, "alp"[:]), content="None")
@@ -101,9 +89,9 @@ test "Map::get_from_view" {
 }
 
 ///|
-test "Map::iterator" {
+test "Map::iter" {
   let map = { "a": 1, "b": 2, "c": 3 }
-  let v = map.iterator()
+  let v = map.iter()
   let mut res = ""
   while v.next() is Some((k, v)) {
     res = res + k + v.to_string()

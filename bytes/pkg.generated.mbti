@@ -14,11 +14,9 @@ pub fn from_array(ArrayView[Byte]) -> Bytes
 #deprecated
 pub fn from_fixedarray(FixedArray[Byte], len? : Int) -> Bytes
 
+#alias(from_iterator, deprecated)
 #deprecated
 pub fn from_iter(Iter[Byte]) -> Bytes
-
-#deprecated
-pub fn from_iterator(Iter[Byte]) -> Bytes
 
 #deprecated
 pub fn of(ArrayView[Byte]) -> Bytes

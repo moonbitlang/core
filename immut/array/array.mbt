@@ -90,37 +90,9 @@ pub fn[A] T::from_array(arr : ArrayView[A]) -> T[A] {
 
 ///|
 #as_free_fn
+#alias(from_iterator, deprecated)
+#as_free_fn(from_iterator, deprecated)
 pub fn[A] T::from_iter(iter : Iter[A]) -> T[A] {
-  let mut buf : FixedArray[A] = []
-  let mut index = 0
-  let leaves = []
-  iter.each(x => if index == 0 {
-    buf = FixedArray::make(branching_factor, x)
-    index += 1
-  } else if index < branching_factor {
-    buf[index] = x
-    index += 1
-  } else {
-    leaves.push(buf)
-    index = 1
-    buf = FixedArray::make(branching_factor, x)
-  })
-  if index == branching_factor {
-    leaves.push(buf)
-  } else if index > 0 {
-    let res = FixedArray::make(index, buf[0])
-    buf.blit_to(res, len=index)
-    leaves.push(res)
-  }
-  let size = leaves.fold(init=0, (acc, xs) => acc + xs.length())
-  let (shift, cap) = shift_cap_of_size(size)
-  let tree = if size == 0 { Empty } else { from_leaves(leaves[:], cap) }
-  { shift, tree, size }
-}
-
-///|
-#as_free_fn
-pub fn[A] T::from_iterator(iter : Iterator[A]) -> T[A] {
   let mut buf : FixedArray[A] = []
   let mut index = 0
   let leaves = []
@@ -299,14 +271,9 @@ pub impl[A] Add for T[A] with add(self, other) {
 
 ///|
 /// Return an iterator over the array.
+#alias(iterator, deprecated)
 pub fn[A] T::iter(self : T[A]) -> Iter[A] {
-  self.tree.iterator().iter()
-}
-
-///|
-/// Return an iterator over the array.
-pub fn[A] T::iterator(self : T[A]) -> Iterator[A] {
-  self.tree.iterator()
+  self.tree.iter()
 }
 
 ///|

@@ -567,15 +567,10 @@ pub fn[K, V] Map::clear(self : Map[K, V]) -> Unit {
 
 ///|
 /// Returns the iterator of the hash map, provide elements in the order of insertion.
+#alias(iterator, deprecated)
 pub fn[K, V] Map::iter(self : Map[K, V]) -> Iter[(K, V)] {
-  self.iterator().iter()
-}
-
-///|
-/// Returns the iterator of the hash map, provide elements in the order of insertion.
-pub fn[K, V] Map::iterator(self : Map[K, V]) -> Iterator[(K, V)] {
   let mut curr_entry = self.head
-  Iterator::new(fn() {
+  Iter::new(fn() {
     match curr_entry {
       Some({ key, value, next, .. }) => {
         curr_entry = next
@@ -587,19 +582,15 @@ pub fn[K, V] Map::iterator(self : Map[K, V]) -> Iterator[(K, V)] {
 }
 
 ///|
-pub fn[K, V] Map::iterator2(self : Map[K, V]) -> Iterator2[K, V] {
-  self.iterator()
-}
-
-///|
+#alias(iterator2, deprecated)
 pub fn[K, V] Map::iter2(self : Map[K, V]) -> Iter2[K, V] {
-  self.iterator2().iter2()
+  self.iter()
 }
 
 ///|
 pub fn[K, V] Map::keys(self : Map[K, V]) -> Iter[K] {
   let mut curr_entry = self.head
-  Iterator::new(fn() {
+  Iter::new(fn() {
     match curr_entry {
       Some({ key, next, .. }) => {
         curr_entry = next
@@ -607,13 +598,13 @@ pub fn[K, V] Map::keys(self : Map[K, V]) -> Iter[K] {
       }
       None => None
     }
-  }).iter()
+  })
 }
 
 ///|
 pub fn[K, V] Map::values(self : Map[K, V]) -> Iter[V] {
   let mut curr_entry = self.head
-  Iterator::new(fn() {
+  Iter::new(fn() {
     match curr_entry {
       Some({ value, next, .. }) => {
         curr_entry = next
@@ -621,7 +612,7 @@ pub fn[K, V] Map::values(self : Map[K, V]) -> Iter[V] {
       }
       None => None
     }
-  }).iter()
+  })
 }
 
 ///|
@@ -670,18 +661,8 @@ pub fn[K : Hash + Eq, V] Map::of(arr : FixedArray[(K, V)]) -> Map[K, V] {
 }
 
 ///|
+#alias(from_iterator, deprecated)
 pub fn[K : Hash + Eq, V] Map::from_iter(iter : Iter[(K, V)]) -> Map[K, V] {
-  let m = {}
-  for e in iter {
-    m.set(e.0, e.1)
-  }
-  m
-}
-
-///|
-pub fn[K : Hash + Eq, V] Map::from_iterator(
-  iter : Iterator[(K, V)],
-) -> Map[K, V] {
   let m = {}
   while iter.next() is Some((k, v)) {
     m.set(k, v)

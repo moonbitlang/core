@@ -379,9 +379,10 @@ pub fn[T] MutArrayView::sub(
 // limitations under the License.
 
 ///|
-pub fn[X] MutArrayView::iterator(self : MutArrayView[X]) -> Iterator[X] {
+#alias(iterator, deprecated)
+pub fn[X] MutArrayView::iter(self : MutArrayView[X]) -> Iter[X] {
   let mut i = 0
-  Iterator::new(fn() {
+  Iter::new(fn() {
     guard i < self.length() else { None }
     let elem = self.unsafe_get(i)
     i += 1
@@ -390,9 +391,10 @@ pub fn[X] MutArrayView::iterator(self : MutArrayView[X]) -> Iterator[X] {
 }
 
 ///|
-pub fn[X] MutArrayView::rev_iterator(self : MutArrayView[X]) -> Iterator[X] {
+#alias(rev_iterator, deprecated)
+pub fn[X] MutArrayView::rev_iter(self : MutArrayView[X]) -> Iter[X] {
   let mut i = self.length()
-  Iterator::new(fn() {
+  Iter::new(fn() {
     guard i > 0 else { None }
     i -= 1
     Some(self.unsafe_get(i))
@@ -400,9 +402,10 @@ pub fn[X] MutArrayView::rev_iterator(self : MutArrayView[X]) -> Iterator[X] {
 }
 
 ///|
-pub fn[X] MutArrayView::iterator2(self : MutArrayView[X]) -> Iterator2[Int, X] {
+#alias(iterator2, deprecated)
+pub fn[X] MutArrayView::iter2(self : MutArrayView[X]) -> Iter2[Int, X] {
   let mut i = 0
-  Iterator2::new(fn() {
+  Iter2::new(fn() {
     guard i < self.length() else { None }
     let result = Some((i, self.unsafe_get(i)))
     i += 1

@@ -40,59 +40,6 @@ pub fn[T] FixedArray::get(self : FixedArray[T], idx : Int) -> T? {
 }
 
 ///|
-///
-/// Creates an iterator over the elements of a fixed-size array, providing
-/// sequential access to each element.
-///
-/// Parameters:
-///
-/// * `array` : The fixed-size array to iterate over.
-///
-/// Returns an iterator that yields each element of the array in order from first
-/// to last.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let arr = FixedArray::make(3, 42)
-///   let mut sum = 0
-///   arr.iter().each(x => sum = sum + x)
-///   inspect(sum, content="126")
-/// }
-/// ```
-#intrinsic("%iter.from_array")
-pub fn[T] FixedArray::iter(self : FixedArray[T]) -> Iter[T] {
-  self.iterator().iter()
-}
-
-///|
-/// Returns an iterator that yields both indices and values from the fixed array.
-/// The iterator provides pairs of `(index, value)` where indices start from 0
-/// and increment sequentially.
-///
-/// Parameters:
-///
-/// * `array` : The fixed array to iterate over.
-///
-/// Returns an iterator of type `Iter2[Int, T]` that yields tuples of indices and
-/// values from the array.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let arr = FixedArray::make(3, 10)
-///   let mut sum = 0
-///   arr.iter2().each((i, x) => sum = sum + i + x)
-///   inspect(sum, content="33") // (0 + 10) + (1 + 10) + (2 + 10) = 33
-/// }
-/// ```
-pub fn[T] FixedArray::iter2(self : FixedArray[T]) -> Iter2[Int, T] {
-  self.iterator2().iter2()
-}
-
-///|
 /// Returns an empty fixed-size array of the specified type.
 ///
 /// Parameters:
@@ -1425,30 +1372,8 @@ test "iter" {
 ///   inspect(fixed_arr, content="[1, 2, 3]")
 /// }
 /// ```
+#alias(from_iterator, deprecated)
 pub fn[T] FixedArray::from_iter(iter : Iter[T]) -> FixedArray[T] {
-  FixedArray::from_array(iter.collect())
-}
-
-///|
-/// Creates a new fixed array from an iterator.
-///
-/// Parameters:
-///
-/// * `iterator` : An iterator of type `Iter[T]` from which elements will be
-/// collected into a fixed array.
-///
-/// Returns a new fixed array containing all elements from the iterator.
-///
-/// Example:
-///
-/// ```mbt check
-/// test {
-///   let arr = [1, 2, 3]
-///   let fixed_arr = FixedArray::from_iterator(arr.iterator())
-///   inspect(fixed_arr, content="[1, 2, 3]")
-/// }
-/// ```
-pub fn[T] FixedArray::from_iterator(iter : Iterator[T]) -> FixedArray[T] {
   FixedArray::from_array(iter.collect())
 }
 
@@ -1565,13 +1490,15 @@ test "FixedArray::join" {
 }
 
 ///|
-pub fn[X] FixedArray::iterator(self : FixedArray[X]) -> Iterator[X] {
-  self[:].iterator()
+#alias(iterator, deprecated)
+pub fn[X] FixedArray::iter(self : FixedArray[X]) -> Iter[X] {
+  self[:].iter()
 }
 
 ///|
-pub fn[X] FixedArray::iterator2(self : FixedArray[X]) -> Iterator2[Int, X] {
-  self[:].iterator2()
+#alias(iterator2, deprecated)
+pub fn[X] FixedArray::iter2(self : FixedArray[X]) -> Iter2[Int, X] {
+  self[:].iter2()
 }
 
 ///|
