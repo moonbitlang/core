@@ -336,8 +336,8 @@ pub fn[V : Compare] SortedSet::disjoint(
 ///|
 pub impl[V : Eq] Eq for SortedSet[V] with equal(self, other) {
   guard self.size == other.size else { return false }
-  let iter = self.iterator()
-  let iter1 = other.iterator()
+  let iter = self.iter()
+  let iter1 = other.iter()
   while iter.next() is Some(a) && iter1.next() is Some(b) {
     guard a == b else { break false }
   } else {
@@ -413,16 +413,11 @@ pub fn[V] SortedSet::to_array(self : SortedSet[V]) -> Array[V] {
 
 ///|
 /// Returns an iterator.
+#alias(iterator, deprecated)
 pub fn[V] SortedSet::iter(self : SortedSet[V]) -> Iter[V] {
-  self.iterator().iter()
-}
-
-///|
-/// Returns an iterator.
-pub fn[V] SortedSet::iterator(self : SortedSet[V]) -> Iterator[V] {
   let mut curr_node = self.root
   let parents = []
-  Iterator::new(fn() {
+  Iter::new(fn() {
     loop curr_node {
       Some({ left: None, value, right, height: _ }) => {
         curr_node = right
@@ -443,17 +438,9 @@ pub fn[V] SortedSet::iterator(self : SortedSet[V]) -> Iterator[V] {
 
 ///|
 #as_free_fn
+#alias(from_iterator, deprecated)
+#as_free_fn(from_iterator, deprecated)
 pub fn[V : Compare] SortedSet::from_iter(iter : Iter[V]) -> SortedSet[V] {
-  let s = new()
-  iter.each(e => s.add(e))
-  s
-}
-
-///|
-#as_free_fn
-pub fn[V : Compare] SortedSet::from_iterator(
-  iter : Iterator[V],
-) -> SortedSet[V] {
   let s = new()
   while iter.next() is Some(e) {
     s.add(e)
@@ -488,7 +475,7 @@ pub fn[V : Compare] SortedSet::range(
 ) -> Iter[V] {
   let mut curr_node = self.root
   let parents = []
-  let iter = Iterator::new(() => loop curr_node {
+  let iter = Iter::new(() => loop curr_node {
     Some({ value, left, right, height: _ }) => {
       let cmp_key_low = value.compare(low)
       let cmp_key_high = value.compare(high)

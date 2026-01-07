@@ -42,14 +42,14 @@ pub fn[A, B] List::foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise
 #as_free_fn(of, deprecated)
 #as_free_fn
 pub fn[A] List::from_array(ArrayView[A]) -> Self[A]
+#alias(from_iterator, deprecated)
+#as_free_fn(from_iterator, deprecated)
 #as_free_fn
 pub fn[A] List::from_iter(Iter[A]) -> Self[A]
+#alias(from_iterator_rev, deprecated)
+#as_free_fn(from_iterator_rev, deprecated)
 #as_free_fn
 pub fn[A] List::from_iter_rev(Iter[A]) -> Self[A]
-#as_free_fn
-pub fn[A] List::from_iterator(Iter[A]) -> Self[A]
-#as_free_fn
-pub fn[A] List::from_iterator_rev(Iter[A]) -> Self[A]
 #as_free_fn
 pub fn[A : @json.FromJson] List::from_json(Json) -> Self[A] raise @json.JsonDecodeError
 pub fn[A] List::head(Self[A]) -> A?
@@ -58,10 +58,10 @@ pub fn[A] List::intersperse(Self[A], A) -> Self[A]
 pub fn[A] List::is_empty(Self[A]) -> Bool
 pub fn[A : Eq] List::is_prefix(Self[A], Self[A]) -> Bool
 pub fn[A : Eq] List::is_suffix(Self[A], Self[A]) -> Bool
+#alias(iterator, deprecated)
 pub fn[A] List::iter(Self[A]) -> Iter[A]
+#alias(iterator2, deprecated)
 pub fn[A] List::iter2(Self[A]) -> Iter2[Int, A]
-pub fn[A] List::iterator(Self[A]) -> Iter[A]
-pub fn[A] List::iterator2(Self[A]) -> Iter2[Int, A]
 pub fn[A] List::last(Self[A]) -> A?
 pub fn[A] List::length(Self[A]) -> Int
 pub fn[A : Eq, B] List::lookup(Self[(A, B)], A) -> B?

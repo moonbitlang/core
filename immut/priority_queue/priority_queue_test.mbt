@@ -47,13 +47,13 @@ test "as_iter" {
 }
 
 ///|
-test "iterator" {
+test "iter" {
   let buf = StringBuilder::new(size_hint=20)
   let v = @priority_queue.from_array([1, 2, 3])
-  v.iterator().each(e => buf.write_string("[\{e}]"))
+  v.iter().each(e => buf.write_string("[\{e}]"))
   inspect(buf, content="[3][2][1]")
   buf.reset()
-  v.iterator().take(2).each(e => buf.write_string("[\{e}]"))
+  v.iter().take(2).each(e => buf.write_string("[\{e}]"))
   inspect(buf, content="[3][2]")
 }
 
@@ -145,30 +145,6 @@ test "from_iter single element iter" {
 test "from_iter empty iter" {
   let pq : @priority_queue.PriorityQueue[Int] = @priority_queue.PriorityQueue::from_iter(
     Iter::empty(),
-  )
-  inspect(pq, content="@immut/priority_queue.from_array([])")
-}
-
-///|
-test "from_iterator multiple elements iter" {
-  inspect(
-    @priority_queue.PriorityQueue::from_iterator([1, 2, 3].iterator()),
-    content="@immut/priority_queue.from_array([3, 2, 1])",
-  )
-}
-
-///|
-test "from_iterator single element iter" {
-  inspect(
-    @priority_queue.PriorityQueue::from_iterator([1].iterator()),
-    content="@immut/priority_queue.from_array([1])",
-  )
-}
-
-///|
-test "from_iterator empty iter" {
-  let pq : @priority_queue.PriorityQueue[Int] = @priority_queue.PriorityQueue::from_iterator(
-    Iterator::empty(),
   )
   inspect(pq, content="@immut/priority_queue.from_array([])")
 }

@@ -1686,28 +1686,10 @@ pub fn[X] default() -> List[X] {
 ///   inspect(sum, content="15")
 /// }
 /// ```
+#alias(iterator, deprecated)
 pub fn[A] List::iter(self : List[A]) -> Iter[A] {
-  self.iterator().iter()
-}
-
-///|
-/// Create an iterator over the list elements.
-/// 
-/// Returns an iterator that yields each element of the list in order.
-///
-/// # Example
-///
-/// ```mbt check
-/// test {
-///   let ls = @list.from_array([1, 2, 3, 4, 5])
-///   let iter = ls.iterator()
-///   let sum = iter.fold(init=0, (acc, x) => acc + x)
-///   inspect(sum, content="15")
-/// }
-/// ```
-pub fn[A] List::iterator(self : List[A]) -> Iterator[A] {
   let mut next = self
-  Iterator::new(fn() {
+  Iter::new(fn() {
     match next {
       Empty => None
       More(head, tail~) => {
@@ -1733,29 +1715,11 @@ pub fn[A] List::iterator(self : List[A]) -> Iterator[A] {
 ///   inspect(iter, content="[(0, 10), (1, 20), (2, 30)]")
 /// }
 /// ```
+#alias(iterator2, deprecated)
 pub fn[A] List::iter2(self : List[A]) -> Iter2[Int, A] {
-  self.iterator2().iter2()
-}
-
-///|
-/// Create an iterator over the list elements with indices.
-/// 
-/// Returns an iterator that yields pairs of (index, element) for each
-/// element in the list.
-///
-/// # Example
-///
-/// ```mbt check
-/// test {
-///   let ls = @list.from_array([10, 20, 30])
-///   let iter = ls.iterator2()
-///   inspect(iter, content="[(0, 10), (1, 20), (2, 30)]")
-/// }
-/// ```
-pub fn[A] List::iterator2(self : List[A]) -> Iterator2[Int, A] {
   let mut i = 0
   let mut next = self
-  Iterator2::new(fn() {
+  Iter2::new(fn() {
     match next {
       Empty => None
       More(head, tail~) => {
@@ -1785,43 +1749,9 @@ pub fn[A] List::iterator2(self : List[A]) -> Iterator2[Int, A] {
 /// }
 /// ```
 #as_free_fn
+#alias(from_iterator, deprecated)
+#as_free_fn(from_iterator, deprecated)
 pub fn[A] List::from_iter(iter : Iter[A]) -> List[A] {
-  let mut res = Empty
-  let mut ptr = Empty
-  for x in iter {
-    match (res, ptr) {
-      (Empty, _) => {
-        res = More(x, tail=Empty)
-        ptr = res
-      }
-      (More(_), More(_) as ptr_) => {
-        ptr_.tail = More(x, tail=Empty)
-        ptr = ptr_.tail
-      }
-      (_, _) => panic()
-    }
-  }
-  res
-}
-
-///|
-/// Convert an iterator into a list, preserving order of elements.
-/// 
-/// Creates a list from an iterator, maintaining the same order as the iterator.
-/// If order is not important, consider using `from_iter_rev` for better performance.
-///
-/// # Example
-///
-/// ```mbt check
-/// test {
-///   let arr = [1, 2, 3, 4, 5]
-///   let iter = arr.iterator()
-///   let ls = @list.from_iterator(iter)
-///   assert_eq(ls, @list.from_array([1, 2, 3, 4, 5]))
-/// }
-/// ```
-#as_free_fn
-pub fn[A] List::from_iterator(iter : Iterator[A]) -> List[A] {
   let mut head = Empty
   let mut tail = Empty
   while iter.next() is Some(x) {
@@ -1844,7 +1774,7 @@ pub fn[A] List::from_iterator(iter : Iterator[A]) -> List[A] {
 /// 
 /// Creates a list from an iterator, but the resulting list will have elements
 /// in reverse order compared to the iterator. This is more efficient than
-/// `from_iter` when order doesn't matter.
+/// `from_iterator` when order doesn't matter.
 ///
 /// # Example
 ///
@@ -1857,29 +1787,9 @@ pub fn[A] List::from_iterator(iter : Iterator[A]) -> List[A] {
 /// }
 /// ```
 #as_free_fn
+#alias(from_iterator_rev, deprecated)
+#as_free_fn(from_iterator_rev, deprecated)
 pub fn[A] List::from_iter_rev(iter : Iter[A]) -> List[A] {
-  iter.fold(init=Empty, (acc, e) => More(e, tail=acc))
-}
-
-///|
-/// Convert an iterator into a list in reverse order.
-/// 
-/// Creates a list from an iterator, but the resulting list will have elements
-/// in reverse order compared to the iterator. This is more efficient than
-/// `from_iterator` when order doesn't matter.
-///
-/// # Example
-///
-/// ```mbt check
-/// test {
-///   let arr = [1, 2, 3, 4, 5]
-///   let iter = arr.iterator()
-///   let ls = @list.from_iterator_rev(iter)
-///   assert_eq(ls, @list.from_array([5, 4, 3, 2, 1]))
-/// }
-/// ```
-#as_free_fn
-pub fn[A] List::from_iterator_rev(iter : Iterator[A]) -> List[A] {
   iter.fold(init=Empty, (acc, e) => More(e, tail=acc))
 }
 

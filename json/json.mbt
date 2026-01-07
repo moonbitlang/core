@@ -110,7 +110,7 @@ fn indent_str(level : Int, indent : Int) -> String {
 /// Internal stack frame used by iterative stringify to avoid recursion
 priv enum WriteFrame {
   Array(Array[Json], mut i~ : Int) // (arr, index)
-  Object(Iterator[(String, Json)], mut first~ : Bool) // (kvs, first)
+  Object(Iter[(String, Json)], mut first~ : Bool) // (kvs, first)
 }
 
 ///|
@@ -286,7 +286,7 @@ pub fn Json::stringify(
             buf.write_char('{')
             buf.write_string(indent_str(depth, indent))
             // After child value printed, we resume from this frame
-            stack.push(WriteFrame::Object(members.iterator(), first=true))
+            stack.push(WriteFrame::Object(members.iter(), first=true))
           }
         Array(arr) =>
           if arr.is_empty() {
@@ -449,7 +449,7 @@ pub fn Json::transform(self : Self, replacer : Replacer) -> Json {
   match self {
     Object(members) =>
       members
-      .iterator()
+      .iter()
       .filter_map(pair => {
         let (k, v) = pair
         if replacer(k, v) is Some(v2) {
@@ -458,7 +458,7 @@ pub fn Json::transform(self : Self, replacer : Replacer) -> Json {
           None
         }
       })
-      |> Map::from_iterator()
+      |> Map::from_iter()
       |> Object
     Array(members) => Array(members.map(m => m.transform(replacer)))
     value => value

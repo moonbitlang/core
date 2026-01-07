@@ -208,45 +208,11 @@ pub fn BytesView::sub(
 ///   inspect(sum, content="15")
 /// }
 /// ```
+#alias(iterator, deprecated)
 pub fn BytesView::iter(self : BytesView) -> Iter[Byte] {
-  self.iterator().iter()
-}
-
-///|
-/// Creates an iterator that yields tuples of index and byte,
-/// indices start from 0.
-/// 
-/// # Example
-/// 
-/// ```mbt check
-/// test {
-///   let bv = b"\x00\x01\x02\x03\x04\x05"[:]
-///   let mut sum = 0
-///   bv.iter2().each((i, x) => sum = sum + i + x.to_int())
-///   inspect(sum, content="30")
-/// }
-/// ```
-pub fn BytesView::iter2(self : BytesView) -> Iter2[Int, Byte] {
-  self.iterator2().iter2()
-}
-
-///|
-/// Returns an iterator over the `View`.
-/// 
-/// # Example
-/// 
-/// ```mbt check
-/// test {
-///   let bv = b"\x00\x01\x02\x03\x04\x05"[:]
-///   let mut sum = 0
-///   bv.iterator().each(x => sum = sum + x.to_int())
-///   inspect(sum, content="15")
-/// }
-/// ```
-pub fn BytesView::iterator(self : BytesView) -> Iterator[Byte] {
   let mut i = 0
   let len = self.length()
-  Iterator::new(fn() {
+  Iter::new(fn() {
     guard i < len else { None }
     let result = self.unsafe_get(i)
     i += 1
@@ -263,7 +229,7 @@ pub fn BytesView::iterator(self : BytesView) -> Iterator[Byte] {
 /// test {
 ///   let buf = StringBuilder::new(size_hint=5)
 ///   let keys = []
-///   let it = b"abcde"[:].iterator2()
+///   let it = b"abcde"[:].iter2()
 ///   while it.next() is Some((i, x)) {
 ///     buf.write_string(x.to_string())
 ///     keys.push(i)
@@ -272,10 +238,11 @@ pub fn BytesView::iterator(self : BytesView) -> Iterator[Byte] {
 ///   inspect(keys, content="[0, 1, 2, 3, 4]")
 /// }
 /// ```
-pub fn BytesView::iterator2(self : BytesView) -> Iterator2[Int, Byte] {
+#alias(iterator2, deprecated)
+pub fn BytesView::iter2(self : BytesView) -> Iter2[Int, Byte] {
   let mut i = 0
   let len = self.length()
-  Iterator2::new(fn() {
+  Iter2::new(fn() {
     guard i < len else { None }
     let result = (i, self.unsafe_get(i))
     i += 1

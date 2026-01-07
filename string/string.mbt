@@ -40,8 +40,8 @@ pub fn from_iter(iter : Iter[Char]) -> String {
 ///|
 /// Convert char iterator to string,
 #deprecated
-pub fn from_iterator(iter : Iterator[Char]) -> String {
-  String::from_iterator(iter)
+pub fn from_iterator(iter : Iter[Char]) -> String {
+  String::from_iter(iter)
 }
 
 ///|

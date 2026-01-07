@@ -109,16 +109,16 @@ pub fn[A, B] Array::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 #alias(fold_lefti, deprecated)
 pub fn[A, B] Array::foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
 pub fn[T] Array::from_fixed_array(FixedArray[T]) -> Self[T]
+#alias(from_iterator, deprecated)
 pub fn[T] Array::from_iter(Iter[T]) -> Self[T]
-pub fn[T] Array::from_iterator(Iter[T]) -> Self[T]
 pub fn[T] Array::get(Self[T], Int) -> T?
 pub fn[T] Array::insert(Self[T], Int, T) -> Unit
 pub fn[T] Array::is_empty(Self[T]) -> Bool
 pub fn[T : Compare] Array::is_sorted(Self[T]) -> Bool
+#alias(iterator, deprecated)
 pub fn[T] Array::iter(Self[T]) -> Iter[T]
+#alias(iterator2, deprecated)
 pub fn[A] Array::iter2(Self[A]) -> Iter2[Int, A]
-pub fn[X] Array::iterator(Self[X]) -> Iter[X]
-pub fn[X] Array::iterator2(Self[X]) -> Iter2[Int, X]
 pub fn[A : ToStringView] Array::join(Self[A], StringView) -> String
 pub fn[A] Array::last(Self[A]) -> A?
 pub fn[T] Array::length(Self[T]) -> Int
@@ -150,8 +150,8 @@ pub fn[A, B] Array::rev_fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 pub fn[A, B] Array::rev_foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
 #alias(rev_inplace, deprecated)
 pub fn[T] Array::rev_in_place(Self[T]) -> Unit
+#alias(rev_iterator, deprecated)
 pub fn[T] Array::rev_iter(Self[T]) -> Iter[T]
-pub fn[X] Array::rev_iterator(Self[X]) -> Iter[X]
 pub fn[T : Eq] Array::search(Self[T], T) -> Int?
 #alias(find_index, deprecated)
 pub fn[T] Array::search_by(Self[T], (T) -> Bool) -> Int?
@@ -207,10 +207,10 @@ pub fn[A, B] ArrayView::foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B 
 pub fn[T] ArrayView::get(Self[T], Int) -> T?
 pub fn[T] ArrayView::is_empty(Self[T]) -> Bool
 pub fn[T : Compare] ArrayView::is_sorted(Self[T]) -> Bool
-pub fn[A] ArrayView::iter(Self[A]) -> Iter[A]
-pub fn[A] ArrayView::iter2(Self[A]) -> Iter2[Int, A]
-pub fn[X] ArrayView::iterator(Self[X]) -> Iter[X]
-pub fn[X] ArrayView::iterator2(Self[X]) -> Iter2[Int, X]
+#alias(iterator, deprecated)
+pub fn[X] ArrayView::iter(Self[X]) -> Iter[X]
+#alias(iterator2, deprecated)
+pub fn[X] ArrayView::iter2(Self[X]) -> Iter2[Int, X]
 pub fn[A : ToStringView] ArrayView::join(Self[A], StringView) -> String
 pub fn[T] ArrayView::last(Self[T]) -> T?
 pub fn[T] ArrayView::length(Self[T]) -> Int
@@ -218,7 +218,8 @@ pub fn[T, U] ArrayView::map(Self[T], (T) -> U raise?) -> Array[U] raise?
 pub fn[T, U] ArrayView::mapi(Self[T], (Int, T) -> U raise?) -> Array[U] raise?
 pub fn[A, B] ArrayView::rev_fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 pub fn[A, B] ArrayView::rev_foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
-pub fn[X] ArrayView::rev_iterator(Self[X]) -> Iter[X]
+#alias(rev_iterator, deprecated)
+pub fn[X] ArrayView::rev_iter(Self[X]) -> Iter[X]
 pub fn[T : Eq] ArrayView::search(Self[T], T) -> Int?
 pub fn[T] ArrayView::start_offset(Self[T]) -> Int
 pub fn[T : Eq] ArrayView::starts_with(Self[T], Self[T]) -> Bool
@@ -250,7 +251,7 @@ pub fn Hasher::combine_unit(Self) -> Unit
 pub fn Hasher::finalize(Self) -> Int
 pub fn Hasher::new(seed? : Int) -> Self
 
-#alias(Iterator)
+#alias(Iterator, deprecated)
 type Iter[X]
 pub fn[X] Iter::all(Self[X], (X) -> Bool) -> Bool
 pub fn[X] Iter::any(Self[X], (X) -> Bool) -> Bool
@@ -302,7 +303,7 @@ pub impl[T] Add for Iter[T]
 pub impl[X : Show] Show for Iter[X]
 pub impl[X : ToJson] ToJson for Iter[X]
 
-#alias(Iterator2)
+#alias(Iterator2, deprecated)
 pub(all) struct Iter2[X, Y](Iter[(X, Y)])
 pub fn[X, Y] Iter2::concat(Self[X, Y], Self[X, Y]) -> Self[X, Y]
 pub fn[X, Y] Iter2::each(Self[X, Y], (X, Y) -> Unit) -> Unit
@@ -353,18 +354,18 @@ pub fn[K, V] Map::copy(Self[K, V]) -> Self[K, V]
 pub fn[K, V] Map::each(Self[K, V], (K, V) -> Unit raise?) -> Unit raise?
 pub fn[K, V] Map::eachi(Self[K, V], (Int, K, V) -> Unit raise?) -> Unit raise?
 pub fn[K : Hash + Eq, V] Map::from_array(ArrayView[(K, V)]) -> Self[K, V]
+#alias(from_iterator, deprecated)
 pub fn[K : Hash + Eq, V] Map::from_iter(Iter[(K, V)]) -> Self[K, V]
-pub fn[K : Hash + Eq, V] Map::from_iterator(Iter[(K, V)]) -> Self[K, V]
 pub fn[K : Hash + Eq, V] Map::get(Self[K, V], K) -> V?
 pub fn[V] Map::get_from_bytes(Self[Bytes, V], BytesView) -> V?
 pub fn[V] Map::get_from_string(Self[String, V], StringView) -> V?
 pub fn[K : Hash + Eq, V] Map::get_or_default(Self[K, V], K, V) -> V
 pub fn[K : Hash + Eq, V] Map::get_or_init(Self[K, V], K, () -> V) -> V
 pub fn[K, V] Map::is_empty(Self[K, V]) -> Bool
+#alias(iterator, deprecated)
 pub fn[K, V] Map::iter(Self[K, V]) -> Iter[(K, V)]
+#alias(iterator2, deprecated)
 pub fn[K, V] Map::iter2(Self[K, V]) -> Iter2[K, V]
-pub fn[K, V] Map::iterator(Self[K, V]) -> Iter[(K, V)]
-pub fn[K, V] Map::iterator2(Self[K, V]) -> Iter2[K, V]
 pub fn[K, V] Map::keys(Self[K, V]) -> Iter[K]
 #alias(size, deprecated)
 pub fn[K, V] Map::length(Self[K, V]) -> Int
@@ -388,11 +389,14 @@ pub impl[K : Show, V : ToJson] ToJson for Map[K, V]
 type MutArrayView[T]
 #alias("_[_]")
 pub fn[T] MutArrayView::at(Self[T], Int) -> T
-pub fn[X] MutArrayView::iterator(Self[X]) -> Iter[X]
-pub fn[X] MutArrayView::iterator2(Self[X]) -> Iter2[Int, X]
+#alias(iterator, deprecated)
+pub fn[X] MutArrayView::iter(Self[X]) -> Iter[X]
+#alias(iterator2, deprecated)
+pub fn[X] MutArrayView::iter2(Self[X]) -> Iter2[Int, X]
 pub fn[T] MutArrayView::length(Self[T]) -> Int
 pub fn[T] MutArrayView::mut_view(Self[T], start? : Int, end? : Int) -> Self[T]
-pub fn[X] MutArrayView::rev_iterator(Self[X]) -> Iter[X]
+#alias(rev_iterator, deprecated)
+pub fn[X] MutArrayView::rev_iter(Self[X]) -> Iter[X]
 #alias("_[_]=_")
 pub fn[T] MutArrayView::set(Self[T], Int, T) -> Unit
 pub fn[T : Compare] MutArrayView::sort(Self[T]) -> Unit
@@ -657,8 +661,8 @@ pub fn String::find(String, StringView) -> Int?
 pub fn String::find_by(String, (Char) -> Bool) -> Int?
 pub fn[A] String::fold(String, init~ : A, (A, Char) -> A raise?) -> A raise?
 pub fn String::from_array(ArrayView[Char]) -> String
+#alias(from_iterator, deprecated)
 pub fn String::from_iter(Iter[Char]) -> String
-pub fn String::from_iterator(Iter[Char]) -> String
 #deprecated
 pub fn String::get(String, Int) -> Int?
 pub fn String::get_char(String, Int) -> Char?
@@ -668,10 +672,10 @@ pub fn String::has_prefix(String, StringView) -> Bool
 pub fn String::has_suffix(String, StringView) -> Bool
 pub fn String::is_blank(String) -> Bool
 pub fn String::is_empty(String) -> Bool
+#alias(iterator, deprecated)
 pub fn String::iter(String) -> Iter[Char]
+#alias(iterator2, deprecated)
 pub fn String::iter2(String) -> Iter2[Int, Char]
-pub fn String::iterator(String) -> Iter[Char]
-pub fn String::iterator2(String) -> Iter2[Int, Char]
 #alias(charcode_length, deprecated)
 pub fn String::length(String) -> Int
 pub fn String::lexical_compare(String, String) -> Int
@@ -685,8 +689,8 @@ pub fn String::replace_all(String, old~ : StringView, new~ : StringView) -> Stri
 pub fn String::rev(String) -> String
 pub fn String::rev_find(String, StringView) -> Int?
 pub fn[A] String::rev_fold(String, init~ : A, (A, Char) -> A raise?) -> A raise?
+#alias(rev_iterator, deprecated)
 pub fn String::rev_iter(String) -> Iter[Char]
-pub fn String::rev_iterator(String) -> Iter[Char]
 pub fn String::split(String, StringView) -> Iter[StringView]
 #alias(chop_prefix)
 pub fn String::strip_prefix(String, StringView) -> StringView?
@@ -726,8 +730,8 @@ pub fn[T] Option::is_empty(T?) -> Bool
 pub fn[T] Option::is_none(T?) -> Bool
 #deprecated
 pub fn[T] Option::is_some(T?) -> Bool
+#alias(iterator, deprecated)
 pub fn[T] Option::iter(T?) -> Iter[T]
-pub fn[T] Option::iterator(T?) -> Iter[T]
 pub fn[T, U] Option::map(T?, (T) -> U raise?) -> U? raise?
 pub fn[T, U] Option::map_or(T?, U, (T) -> U raise?) -> U raise?
 pub fn[T, U] Option::map_or_else(T?, () -> U raise?, (T) -> U raise?) -> U raise?
@@ -777,15 +781,15 @@ pub fn[T] FixedArray::fill(Self[T], T, start? : Int, end? : Int) -> Unit
 pub fn[A, B] FixedArray::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 pub fn[A, B] FixedArray::foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
 pub fn[T] FixedArray::from_array(ArrayView[T]) -> Self[T]
+#alias(from_iterator, deprecated)
 pub fn[T] FixedArray::from_iter(Iter[T]) -> Self[T]
-pub fn[T] FixedArray::from_iterator(Iter[T]) -> Self[T]
 pub fn[T] FixedArray::get(Self[T], Int) -> T?
 pub fn[T] FixedArray::is_empty(Self[T]) -> Bool
 pub fn[T : Compare] FixedArray::is_sorted(Self[T]) -> Bool
-pub fn[T] FixedArray::iter(Self[T]) -> Iter[T]
-pub fn[T] FixedArray::iter2(Self[T]) -> Iter2[Int, T]
-pub fn[X] FixedArray::iterator(Self[X]) -> Iter[X]
-pub fn[X] FixedArray::iterator2(Self[X]) -> Iter2[Int, X]
+#alias(iterator, deprecated)
+pub fn[X] FixedArray::iter(Self[X]) -> Iter[X]
+#alias(iterator2, deprecated)
+pub fn[X] FixedArray::iter2(Self[X]) -> Iter2[Int, X]
 pub fn FixedArray::join(Self[String], StringView) -> String
 pub fn[A] FixedArray::last(Self[A]) -> A?
 pub fn[T] FixedArray::length(Self[T]) -> Int
@@ -838,14 +842,14 @@ pub fn[T : Eq] ReadOnlyArray::ends_with(Self[T], Self[T]) -> Bool
 pub fn[A, B] ReadOnlyArray::fold(Self[A], init~ : B, (B, A) -> B raise?) -> B raise?
 pub fn[A, B] ReadOnlyArray::foldi(Self[A], init~ : B, (Int, B, A) -> B raise?) -> B raise?
 pub fn[T] ReadOnlyArray::from_array(ArrayView[T]) -> Self[T]
+#alias(from_iterator, deprecated)
 pub fn[T] ReadOnlyArray::from_iter(Iter[T]) -> Self[T]
-pub fn[T] ReadOnlyArray::from_iterator(Iter[T]) -> Self[T]
 pub fn[T] ReadOnlyArray::get(Self[T], Int) -> T?
 pub fn[T] ReadOnlyArray::is_empty(Self[T]) -> Bool
 pub fn[T : Compare] ReadOnlyArray::is_sorted(Self[T]) -> Bool
+#alias(iterator, deprecated)
 pub fn[T] ReadOnlyArray::iter(Self[T]) -> Iter[T]
 pub fn[T] ReadOnlyArray::iter2(Self[T]) -> Iter2[Int, T]
-pub fn[T] ReadOnlyArray::iterator(Self[T]) -> Iter[T]
 pub fn ReadOnlyArray::join(Self[String], StringView) -> String
 pub fn[T] ReadOnlyArray::last(Self[T]) -> T?
 pub fn[T] ReadOnlyArray::length(Self[T]) -> Int
@@ -871,13 +875,13 @@ pub fn Bytes::find(Bytes, BytesView) -> Int?
 pub fn Bytes::from_array(ArrayView[Byte]) -> Bytes
 #deprecated
 pub fn Bytes::from_fixedarray(FixedArray[Byte], len? : Int) -> Bytes
+#alias(from_iterator, deprecated)
 pub fn Bytes::from_iter(Iter[Byte]) -> Bytes
-pub fn Bytes::from_iterator(Iter[Byte]) -> Bytes
 pub fn Bytes::get(Bytes, Int) -> Byte?
+#alias(iterator, deprecated)
 pub fn Bytes::iter(Bytes) -> Iter[Byte]
+#alias(iterator2, deprecated)
 pub fn Bytes::iter2(Bytes) -> Iter2[Int, Byte]
-pub fn Bytes::iterator(Bytes) -> Iter[Byte]
-pub fn Bytes::iterator2(Bytes) -> Iter2[Int, Byte]
 pub fn Bytes::length(Bytes) -> Int
 pub fn Bytes::make(Int, Byte) -> Bytes
 pub fn Bytes::makei(Int, (Int) -> Byte raise?) -> Bytes raise?
@@ -898,10 +902,10 @@ pub fn BytesView::at(Self, Int) -> Byte
 pub fn BytesView::data(Self) -> Bytes
 pub fn BytesView::find(Self, Self) -> Int?
 pub fn BytesView::get(Self, Int) -> Byte?
+#alias(iterator, deprecated)
 pub fn BytesView::iter(Self) -> Iter[Byte]
+#alias(iterator2, deprecated)
 pub fn BytesView::iter2(Self) -> Iter2[Int, Byte]
-pub fn BytesView::iterator(Self) -> Iter[Byte]
-pub fn BytesView::iterator2(Self) -> Iter2[Int, Byte]
 pub fn BytesView::length(Self) -> Int
 pub fn BytesView::rev_find(Self, Self) -> Int?
 pub fn BytesView::start_offset(Self) -> Int
@@ -925,8 +929,8 @@ pub fn StringView::find(Self, Self) -> Int?
 pub fn StringView::find_by(Self, (Char) -> Bool) -> Int?
 pub fn[A] StringView::fold(Self, init~ : A, (A, Char) -> A raise?) -> A raise?
 pub fn StringView::from_array(ArrayView[Char]) -> Self
+#alias(from_iterator, deprecated)
 pub fn StringView::from_iter(Iter[Char]) -> Self
-pub fn StringView::from_iterator(Iter[Char]) -> Self
 #deprecated
 pub fn StringView::get(Self, Int) -> Int?
 pub fn StringView::get_char(Self, Int) -> Char?
@@ -936,10 +940,10 @@ pub fn StringView::has_prefix(Self, Self) -> Bool
 pub fn StringView::has_suffix(Self, Self) -> Bool
 pub fn StringView::is_blank(Self) -> Bool
 pub fn StringView::is_empty(Self) -> Bool
+#alias(iterator, deprecated)
 pub fn StringView::iter(Self) -> Iter[Char]
+#alias(iterator2, deprecated)
 pub fn StringView::iter2(Self) -> Iter2[Int, Char]
-pub fn StringView::iterator(Self) -> Iter[Char]
-pub fn StringView::iterator2(Self) -> Iter2[Int, Char]
 pub fn StringView::length(Self) -> Int
 pub fn StringView::lexical_compare(Self, Self) -> Int
 pub fn StringView::make(Int, Char) -> Self
@@ -952,8 +956,8 @@ pub fn StringView::replace_all(Self, old~ : Self, new~ : Self) -> Self
 pub fn StringView::rev(Self) -> String
 pub fn StringView::rev_find(Self, Self) -> Int?
 pub fn[A] StringView::rev_fold(Self, init~ : A, (A, Char) -> A raise?) -> A raise?
+#alias(rev_iterator, deprecated)
 pub fn StringView::rev_iter(Self) -> Iter[Char]
-pub fn StringView::rev_iterator(Self) -> Iter[Char]
 pub fn StringView::split(Self, Self) -> Iter[Self]
 pub fn StringView::start_offset(Self) -> Int
 #alias(chop_prefix)

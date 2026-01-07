@@ -73,29 +73,17 @@ pub fn[A : Compare] PriorityQueue::to_array(
 }
 
 ///|
+#alias(iterator, deprecated)
 pub fn[A : Compare] PriorityQueue::iter(self : PriorityQueue[A]) -> Iter[A] {
-  self.iterator().iter()
-}
-
-///|
-pub fn[A : Compare] PriorityQueue::iterator(
-  self : PriorityQueue[A],
-) -> Iterator[A] {
-  self.to_array().iterator()
+  self.to_array().iter()
 }
 
 ///|
 #as_free_fn
+#alias(from_iterator, deprecated)
+#as_free_fn(from_iterator, deprecated)
 pub fn[A : Compare] PriorityQueue::from_iter(
   iter : Iter[A],
-) -> PriorityQueue[A] {
-  iter.fold(init=new(), (s, e) => s.push(e))
-}
-
-///|
-#as_free_fn
-pub fn[A : Compare] PriorityQueue::from_iterator(
-  iter : Iterator[A],
 ) -> PriorityQueue[A] {
   iter.fold(init=new(), (s, e) => s.push(e))
 }

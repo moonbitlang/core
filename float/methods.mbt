@@ -320,14 +320,14 @@ pub fn Float::upto(
   inclusive? : Bool = false,
 ) -> Iter[Float] {
   let mut i = self
-  Iterator::new(() => {
+  Iter::new(() => {
     guard i < end || (inclusive && i == end) else { None }
     let result = i
     if i != end {
       i += 1
     }
     Some(result)
-  }).iter()
+  })
 }
 
 ///|
@@ -354,7 +354,7 @@ pub fn Float::until(
     return Iter::empty()
   }
   let mut curr_value = Some(self)
-  let iter = Iterator::new(() => {
+  Iter::new(() => {
     guard curr_value is Some(i) else { None }
     guard (step > 0.0 && i < end) ||
       (step < 0.0 && i > end) ||
@@ -370,7 +370,6 @@ pub fn Float::until(
     }
     Some(i)
   })
-  iter.iter()
 }
 
 ///|

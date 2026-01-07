@@ -104,18 +104,11 @@ pub impl[X] Default for X? with default() {
 }
 
 ///|
+#alias(iterator, deprecated)
 pub fn[T] Option::iter(self : T?) -> Iter[T] {
   match self {
     Some(v) => Iter::singleton(v)
     None => Iter::empty()
-  }
-}
-
-///|
-pub fn[T] Option::iterator(self : T?) -> Iterator[T] {
-  match self {
-    Some(v) => Iterator::singleton(v)
-    None => Iterator::empty()
   }
 }
 

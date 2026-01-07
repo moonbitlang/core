@@ -18,7 +18,7 @@
 /// to advance iteration.
 /// All read operations on `Iterator` will advance the iterator,
 /// and would give different result when called multiple times.
-#alias(Iterator)
+#alias(Iterator, deprecated)
 struct Iter[X](() -> X?)
 
 ///|
@@ -27,17 +27,14 @@ struct Iter[X](() -> X?)
 /// Calling `next` repeatedly will iterate through all elements in the iterator.
 #alias(peek, deprecated)
 #alias(head)
-pub fn[X] Iterator::next(self : Iterator[X]) -> X? {
+pub fn[X] Iter::next(self : Iter[X]) -> X? {
   (self.0)()
 }
 
 ///|
 #locals(f)
 #deprecated("write a loop instead.")
-pub fn[X] Iterator::run(
-  self : Iterator[X],
-  f : (X) -> IterResult,
-) -> IterResult {
+pub fn[X] Iter::run(self : Iter[X], f : (X) -> IterResult) -> IterResult {
   while self.next() is Some(x) {
     guard f(x) is IterContinue else { break IterEnd }
   } else {
@@ -47,7 +44,7 @@ pub fn[X] Iterator::run(
 
 ///|
 #deprecated("write a loop instead.")
-pub fn[X] Iterator::just_run(self : Iterator[X], f : (X) -> IterResult) -> Unit {
+pub fn[X] Iter::just_run(self : Iter[X], f : (X) -> IterResult) -> Unit {
   while self.next() is Some(x) {
     if f(x) is IterEnd {
       break
@@ -56,7 +53,7 @@ pub fn[X] Iterator::just_run(self : Iterator[X], f : (X) -> IterResult) -> Unit 
 }
 
 ///|
-pub impl[X : Show] Show for Iterator[X] with output(self, logger) {
+pub impl[X : Show] Show for Iter[X] with output(self, logger) {
   logger.write_string("[")
   if self.next() is Some(x) {
     logger.write_object(x)
@@ -69,7 +66,7 @@ pub impl[X : Show] Show for Iterator[X] with output(self, logger) {
 }
 
 ///|
-pub impl[X : ToJson] ToJson for Iterator[X] with to_json(self) {
+pub impl[X : ToJson] ToJson for Iter[X] with to_json(self) {
   Json::array(self.map(_.to_json()).collect())
 }
 
@@ -85,10 +82,7 @@ pub impl[X : ToJson] ToJson for Iterator[X] with to_json(self) {
 /// - `self`: The iterator to consume.
 /// - `f`: A function that takes an element of type `X` and returns `Unit`. This function is applied to each element of the iterator.
 #locals(f)
-pub fn[X] Iterator::each(
-  self : Iterator[X],
-  f : (X) -> Unit raise?,
-) -> Unit raise? {
+pub fn[X] Iter::each(self : Iter[X], f : (X) -> Unit raise?) -> Unit raise? {
   while self.next() is Some(x) {
     f(x)
   }
@@ -96,7 +90,7 @@ pub fn[X] Iterator::each(
 
 ///|
 #locals(f)
-pub fn[X] Iterator::any(self : Iterator[X], f : (X) -> Bool) -> Bool {
+pub fn[X] Iter::any(self : Iter[X], f : (X) -> Bool) -> Bool {
   while self.next() is Some(x) {
     if f(x) {
       break true
@@ -108,7 +102,7 @@ pub fn[X] Iterator::any(self : Iterator[X], f : (X) -> Bool) -> Bool {
 
 ///|
 #locals(f)
-pub fn[X] Iterator::all(self : Iterator[X], f : (X) -> Bool) -> Bool {
+pub fn[X] Iter::all(self : Iter[X], f : (X) -> Bool) -> Bool {
   while self.next() is Some(x) {
     guard f(x) else { break false }
   } else {
@@ -128,8 +122,8 @@ pub fn[X] Iterator::all(self : Iterator[X], f : (X) -> Bool) -> Bool {
 /// - `self`: The iterator to consume.
 /// - `f`: A function that takes an index of type `Int` and an element of type `X` and returns `Unit`. This function is applied to each element of the iterator.
 #locals(f)
-pub fn[X] Iterator::eachi(
-  self : Iterator[X],
+pub fn[X] Iter::eachi(
+  self : Iter[X],
   f : (Int, X) -> Unit raise?,
 ) -> Unit raise? {
   let mut i = 0
@@ -157,8 +151,8 @@ pub fn[X] Iterator::eachi(
 ///
 /// Returns the final accumulator value after folding all elements of the iterator.
 #locals(f)
-pub fn[X, R] Iterator::fold(
-  self : Iterator[X],
+pub fn[X, R] Iter::fold(
+  self : Iter[X],
   init~ : R,
   f : (R, X) -> R raise?,
 ) -> R raise? {
@@ -183,7 +177,7 @@ pub fn[X, R] Iterator::fold(
 /// # Returns
 ///
 /// Returns the number of elements in the iterator.
-pub fn[X] Iterator::count(self : Iterator[X]) -> Int {
+pub fn[X] Iter::count(self : Iter[X]) -> Int {
   self.fold((acc, _) => acc + 1, init=0)
 }
 
@@ -209,8 +203,8 @@ pub fn[X] Iter::new(f : () -> X?) -> Iter[X] {
 ///
 /// # Returns
 ///
-/// Returns an empty iterator of type `Iterator[X]`.
-pub fn[X] Iterator::empty() -> Iterator[X] {
+/// Returns an empty iterator of type `Iter[X]`.
+pub fn[X] Iter::empty() -> Iter[X] {
   () => None
 }
 
@@ -227,8 +221,8 @@ pub fn[X] Iterator::empty() -> Iterator[X] {
 ///
 /// # Returns
 ///
-/// Returns an iterator of type `Iterator[X]` that contains the single element `a`.
-pub fn[X] Iterator::singleton(elem : X) -> Iterator[X] {
+/// Returns an iterator of type `Iter[X]` that contains the single element `a`.
+pub fn[X] Iter::singleton(elem : X) -> Iter[X] {
   let mut consumed = false
   fn() {
     if consumed {
@@ -253,8 +247,8 @@ pub fn[X] Iterator::singleton(elem : X) -> Iterator[X] {
 ///
 /// # Returns
 ///
-/// Returns an iterator of type `Iterator[X]` that repeats the element `x` indefinitely.
-pub fn[X] Iterator::repeat(x : X) -> Iterator[X] {
+/// Returns an iterator of type `Iter[X]` that repeats the element `x` indefinitely.
+pub fn[X] Iter::repeat(x : X) -> Iter[X] {
   () => Some(x)
 }
 
@@ -276,7 +270,7 @@ pub fn[X] Iterator::repeat(x : X) -> Iterator[X] {
 ///
 /// # Note
 /// The old iterator `self` must not be used again after calling `filter`.
-pub fn[X] Iterator::filter(self : Iterator[X], f : (X) -> Bool) -> Iterator[X] {
+pub fn[X] Iter::filter(self : Iter[X], f : (X) -> Bool) -> Iter[X] {
   fn() {
     while self.next() is Some(x) {
       if f(x) {
@@ -307,7 +301,7 @@ pub fn[X] Iterator::filter(self : Iterator[X], f : (X) -> Bool) -> Iterator[X] {
 ///
 /// # Note
 /// The old iterator `self` must not be used again after calling `map`.
-pub fn[X, Y] Iterator::map(self : Iterator[X], f : (X) -> Y) -> Iterator[Y] {
+pub fn[X, Y] Iter::map(self : Iter[X], f : (X) -> Y) -> Iter[Y] {
   fn() {
     match self.next() {
       Some(x) => Some(f(x))
@@ -335,10 +329,7 @@ pub fn[X, Y] Iterator::map(self : Iterator[X], f : (X) -> Y) -> Iterator[Y] {
 ///
 /// # Note
 /// The old iterator `self` must not be used again after calling `mapi`.
-pub fn[X, Y] Iterator::mapi(
-  self : Iterator[X],
-  f : (Int, X) -> Y,
-) -> Iterator[Y] {
+pub fn[X, Y] Iter::mapi(self : Iter[X], f : (Int, X) -> Y) -> Iter[Y] {
   let mut i = 0
   fn() {
     match self.next() {
@@ -357,10 +348,7 @@ pub fn[X, Y] Iterator::mapi(
 /// The elements for which the function returns `None` are filtered out.
 ///
 /// The old iterator `self` must not be used again after calling `filter_map`.
-pub fn[X, Y] Iterator::filter_map(
-  self : Iterator[X],
-  f : (X) -> Y?,
-) -> Iterator[Y] {
+pub fn[X, Y] Iter::filter_map(self : Iter[X], f : (X) -> Y?) -> Iter[Y] {
   fn() {
     while self.next() is Some(x) {
       match f(x) {
@@ -393,11 +381,8 @@ pub fn[X, Y] Iterator::filter_map(
 /// # Note
 /// The old iterator `self` and the iterators returned by `f`
 /// must not be used again after calling `flat_map`.
-pub fn[X, Y] Iterator::flat_map(
-  self : Iterator[X],
-  f : (X) -> Iterator[Y],
-) -> Iterator[Y] {
-  let mut current_iter = Some(Iterator::empty())
+pub fn[X, Y] Iter::flat_map(self : Iter[X], f : (X) -> Iter[Y]) -> Iter[Y] {
+  let mut current_iter = Some(Iter::empty())
   fn() {
     guard current_iter is Some(iter) else { None }
     loop iter.next() {
@@ -414,14 +399,14 @@ pub fn[X, Y] Iterator::flat_map(
 
 ///|
 /// `iter.map(f).flatten() == iter.flat_map(f)`
-pub fn[X] Iterator::flatten(self : Iterator[Iterator[X]]) -> Iterator[X] {
+pub fn[X] Iter::flatten(self : Iter[Iter[X]]) -> Iter[X] {
   self.flat_map(it => it)
 }
 
 ///|
 /// Collects the elements of the iterator into a string.
 /// The old iterator `self` must not be used again after calling `join`.
-pub fn Iterator::join(self : Iterator[String], sep : String) -> String {
+pub fn Iter::join(self : Iter[String], sep : String) -> String {
   let result = StringBuilder::new()
   if self.next() is Some(x) {
     result.write_string(x)
@@ -451,7 +436,7 @@ pub fn Iterator::join(self : Iterator[String], sep : String) -> String {
 ///
 /// # Note
 /// The old iterator `self` must not be used again after calling `tap`.
-pub fn[X] Iterator::tap(self : Iterator[X], f : (X) -> Unit) -> Iterator[X] {
+pub fn[X] Iter::tap(self : Iter[X], f : (X) -> Unit) -> Iter[X] {
   fn() {
     let result = self.next()
     if result is Some(x) {
@@ -479,7 +464,7 @@ pub fn[X] Iterator::tap(self : Iterator[X], f : (X) -> Unit) -> Iterator[X] {
 ///
 /// # Note
 /// The old iterator `self` must not be used again after calling `take`.
-pub fn[X] Iterator::take(self : Iterator[X], n : Int) -> Iterator[X] {
+pub fn[X] Iter::take(self : Iter[X], n : Int) -> Iter[X] {
   let mut remaining = n
   fn() {
     guard remaining > 0 else { None }
@@ -509,10 +494,7 @@ pub fn[X] Iterator::take(self : Iterator[X], n : Int) -> Iterator[X] {
 ///
 /// # Note
 /// The old iterator `self` must not be used again after calling `take_while`.
-pub fn[X] Iterator::take_while(
-  self : Iterator[X],
-  f : (X) -> Bool,
-) -> Iterator[X] {
+pub fn[X] Iter::take_while(self : Iter[X], f : (X) -> Bool) -> Iter[X] {
   let mut still_running = true
   fn() {
     guard still_running else { None }
@@ -529,10 +511,7 @@ pub fn[X] Iterator::take_while(
 ///|
 /// Transforms the elements of the iterator using a mapping function upto the function returns `None`.
 /// The old iterator `self` must not be used again after calling `map_while`.
-pub fn[X, Y] Iterator::map_while(
-  self : Iterator[X],
-  f : (X) -> Y?,
-) -> Iterator[Y] {
+pub fn[X, Y] Iter::map_while(self : Iter[X], f : (X) -> Y?) -> Iter[Y] {
   let mut still_running = true
   fn() {
     guard still_running else { None }
@@ -564,7 +543,7 @@ pub fn[X, Y] Iterator::map_while(
 ///
 /// # Note
 /// The old iterator `self` must not be used again after calling `drop`.
-pub fn[X] Iterator::drop(self : Iterator[X], n : Int) -> Iterator[X] {
+pub fn[X] Iter::drop(self : Iter[X], n : Int) -> Iter[X] {
   let mut remaining = n
   fn() {
     while remaining > 0 {
@@ -594,10 +573,7 @@ pub fn[X] Iterator::drop(self : Iterator[X], n : Int) -> Iterator[X] {
 ///
 /// # Note
 /// The old iterator `self` must not be used again after calling `drop_while`.
-pub fn[X] Iterator::drop_while(
-  self : Iterator[X],
-  f : (X) -> Bool,
-) -> Iterator[X] {
+pub fn[X] Iter::drop_while(self : Iter[X], f : (X) -> Bool) -> Iter[X] {
   let mut dropped = false
   fn() {
     if !dropped {
@@ -630,7 +606,7 @@ pub fn[X] Iterator::drop_while(
 ///
 /// # Note
 /// The iterator `self` will advance past the returned element.
-pub fn[X] Iterator::find_first(self : Iterator[X], f : (X) -> Bool) -> X? {
+pub fn[X] Iter::find_first(self : Iter[X], f : (X) -> Bool) -> X? {
   while self.next() is Some(x) {
     if f(x) {
       break Some(x)
@@ -658,10 +634,7 @@ pub fn[X] Iterator::find_first(self : Iterator[X], f : (X) -> Bool) -> X? {
 ///
 /// # Note
 /// The old iterator `self` and `other` must not be used again after calling `tap`.
-pub fn[X] Iterator::concat(
-  self : Iterator[X],
-  other : Iterator[X],
-) -> Iterator[X] {
+pub fn[X] Iter::concat(self : Iter[X], other : Iter[X]) -> Iter[X] {
   let mut in_first = true
   fn() {
     if in_first {
@@ -679,7 +652,7 @@ pub fn[X] Iterator::concat(
 }
 
 ///|
-pub impl[T] Add for Iterator[T] with add(self, other) {
+pub impl[T] Add for Iter[T] with add(self, other) {
   self.concat(other)
 }
 
@@ -687,7 +660,7 @@ pub impl[T] Add for Iterator[T] with add(self, other) {
 /// Collects the elements of the iterator into an array.
 /// The old iterator `self` must not be used again.
 #alias(collect)
-pub fn[X] Iterator::to_array(self : Iterator[X]) -> Array[X] {
+pub fn[X] Iter::to_array(self : Iter[X]) -> Array[X] {
   let result = []
   while self.next() is Some(x) {
     result.push(x)
@@ -697,13 +670,13 @@ pub fn[X] Iterator::to_array(self : Iterator[X]) -> Array[X] {
 
 ///|
 #alias(iterator)
-pub fn[X] Iterator::iter(self : Iterator[X]) -> Iter[X] {
+pub fn[X] Iter::iter(self : Iter[X]) -> Iter[X] {
   self
 }
 
 ///|
 #alias(iterator2)
-pub fn[X] Iterator::iter2(self : Iterator[X]) -> Iter2[Int, X] {
+pub fn[X] Iter::iter2(self : Iter[X]) -> Iter2[Int, X] {
   let mut i = 0
   Iter(() => {
     guard self.next() is Some(elem) else { None }
@@ -716,7 +689,7 @@ pub fn[X] Iterator::iter2(self : Iterator[X]) -> Iter2[Int, X] {
 ///|
 /// Returns the last element of the iterator, or `None` if the iterator is empty.
 /// The old iterator `self` must not be used again after calling `last`.
-pub fn[X] Iterator::last(self : Iterator[X]) -> X? {
+pub fn[X] Iter::last(self : Iter[X]) -> X? {
   loop (None, self.next()) {
     (last, None) => last
     (_, Some(_) as x) => continue (x, self.next())
@@ -736,14 +709,14 @@ pub fn[X] Iterator::last(self : Iterator[X]) -> X? {
 /// ```mbt check
 /// test {
 ///   let arr = []
-///   [1, 2, 3].iterator().intersperse(0).each(i => arr.push(i))
+///   [1, 2, 3].iter().intersperse(0).each(i => arr.push(i))
 ///   assert_eq(arr, [1, 0, 2, 0, 3])
 /// }
 /// ```
 ///
 /// # Note
 /// The old iterator `self` must not be used again after calling `intersperse`.
-pub fn[X] Iterator::intersperse(self : Iterator[X], sep : X) -> Iterator[X] {
+pub fn[X] Iter::intersperse(self : Iter[X], sep : X) -> Iter[X] {
   enum State {
     Init
     Output_Elem(X)
@@ -776,11 +749,7 @@ pub fn[X] Iterator::intersperse(self : Iterator[X], sep : X) -> Iterator[X] {
 
 ///|
 #alias("_[_:_]")
-pub fn[X] Iterator::sub(
-  self : Iterator[X],
-  start? : Int = 0,
-  end? : Int,
-) -> Iterator[X] {
+pub fn[X] Iter::sub(self : Iter[X], start? : Int = 0, end? : Int) -> Iter[X] {
   match (start, end) {
     (_..=0, None) => self
     (_..=0, Some(end)) => self.take(end)
@@ -823,17 +792,17 @@ pub fn[X] Iterator::sub(
 ///
 /// ```mbt check
 /// test {
-///   let iter = [1, 2, 3, 4, 5].iterator()
+///   let iter = [1, 2, 3, 4, 5].iter()
 ///   inspect(iter.contains(3), content="true")
 ///   inspect(iter.contains(6), content="false")
-///   let iter = Iterator::empty()
+///   let iter = Iter::empty()
 ///   inspect(iter.contains(1), content="false")
 /// }
 /// ```
 ///
 /// # Note
 /// The old iterator `self` will advance past the searched element.
-pub fn[X : Eq] Iterator::contains(self : Iterator[X], value : X) -> Bool {
+pub fn[X : Eq] Iter::contains(self : Iter[X], value : X) -> Bool {
   while self.next() is Some(x) {
     if x == value {
       break true
@@ -847,7 +816,7 @@ pub fn[X : Eq] Iterator::contains(self : Iterator[X], value : X) -> Bool {
 /// Returns the nth element of the iterator, or `None` if the iterator is
 /// shorter than `n` elements.
 /// The iterator `self` will advance past the returned element.
-pub fn[X] Iterator::nth(self : Iterator[X], n : Int) -> X? {
+pub fn[X] Iter::nth(self : Iter[X], n : Int) -> X? {
   guard n >= 0 else { None }
   for i = 0; i < n; i = i + 1 {
     guard self.next() is Some(_) else { break None }
@@ -857,7 +826,7 @@ pub fn[X] Iterator::nth(self : Iterator[X], n : Int) -> X? {
 }
 
 ///|
-pub fn[X : Compare] Iterator::maximum(self : Iterator[X]) -> X? {
+pub fn[X : Compare] Iter::maximum(self : Iter[X]) -> X? {
   guard self.next() is Some(x) else { return None }
   let mut res = x
   while self.next() is Some(x) {
@@ -869,7 +838,7 @@ pub fn[X : Compare] Iterator::maximum(self : Iterator[X]) -> X? {
 }
 
 ///|
-pub fn[X : Compare] Iterator::minimum(self : Iterator[X]) -> X? {
+pub fn[X : Compare] Iter::minimum(self : Iter[X]) -> X? {
   guard self.next() is Some(x) else { return None }
   let mut res = x
   while self.next() is Some(x) {
@@ -884,8 +853,8 @@ pub fn[X : Compare] Iterator::minimum(self : Iterator[X]) -> X? {
 /// This type is used for `for _, _ in ..` loop
 /// (`for .. in` loop with two loop variables),
 /// and should not be used directly in general.
-#alias(Iterator2)
-pub(all) struct Iter2[X, Y](Iterator[(X, Y)])
+#alias(Iterator2, deprecated)
+pub(all) struct Iter2[X, Y](Iter[(X, Y)])
 
 ///|
 pub fn[X, Y] Iter2::new(f : () -> (X, Y)?) -> Iter2[X, Y] {
@@ -894,23 +863,23 @@ pub fn[X, Y] Iter2::new(f : () -> (X, Y)?) -> Iter2[X, Y] {
 
 ///|
 #alias(iterator)
-pub fn[X, Y] Iterator2::iter(self : Iterator2[X, Y]) -> Iterator[(X, Y)] {
+pub fn[X, Y] Iter2::iter(self : Iter2[X, Y]) -> Iter[(X, Y)] {
   self.0
 }
 
 ///|
 #alias(iterator2)
-pub fn[X, Y] Iterator2::iter2(self : Iterator2[X, Y]) -> Iterator2[X, Y] {
+pub fn[X, Y] Iter2::iter2(self : Iter2[X, Y]) -> Iter2[X, Y] {
   self
 }
 
 ///|
-pub fn[X, Y] Iterator2::next(self : Iterator2[X, Y]) -> (X, Y)? {
+pub fn[X, Y] Iter2::next(self : Iter2[X, Y]) -> (X, Y)? {
   self.0.next()
 }
 
 ///|
-pub impl[X : Show, Y : Show] Show for Iterator2[X, Y] with output(self, logger) {
+pub impl[X : Show, Y : Show] Show for Iter2[X, Y] with output(self, logger) {
   self.0.output(logger)
 }
 

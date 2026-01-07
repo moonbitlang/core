@@ -105,15 +105,9 @@ pub fn[A : Compare] PriorityQueue::to_array(
 }
 
 ///|
+#alias(iterator, deprecated)
 pub fn[A : Compare] PriorityQueue::iter(self : PriorityQueue[A]) -> Iter[A] {
-  self.iterator().iter()
-}
-
-///|
-pub fn[A : Compare] PriorityQueue::iterator(
-  self : PriorityQueue[A],
-) -> Iterator[A] {
-  self.to_array().iterator()
+  self.to_array().iter()
 }
 
 ///|
@@ -127,18 +121,10 @@ pub impl[A : ToJson + Compare] ToJson for PriorityQueue[A] with to_json(self) {
 
 ///|
 #as_free_fn
+#alias(from_iterator, deprecated)
+#as_free_fn(from_iterator, deprecated)
 pub fn[K : Compare] PriorityQueue::from_iter(
   iter : Iter[K],
-) -> PriorityQueue[K] {
-  let s = new()
-  iter.each(e => s.push(e))
-  s
-}
-
-///|
-#as_free_fn
-pub fn[K : Compare] PriorityQueue::from_iterator(
-  iter : Iterator[K],
 ) -> PriorityQueue[K] {
   let s = new()
   while iter.next() is Some(e) {

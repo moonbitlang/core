@@ -150,17 +150,6 @@ test "HAMT::iter2 with early break" {
 }
 
 ///|
-test "HAMT::iterator2" {
-  let data = @hashmap.from_array([(1, 10), (2, 20), (3, 30)])
-  let iter = data.iterator2()
-  let mut sum = 0
-  while iter.next() is Some((k, v)) {
-    sum = sum + k + v
-  }
-  assert_eq(sum, 66)
-}
-
-///|
 test "HAMT::from_iter" {
   let iter = [(1, "one"), (2, "two"), (3, "three")].iter()
   let map = @hashmap.from_iter(iter)
@@ -221,41 +210,16 @@ test "to_array" {
 }
 
 ///|
-test "from_iterator multiple elements iter" {
-  let map = @hashmap.from_iterator([(1, 1), (2, 2), (3, 3)].iterator())
-  guard map is { 1: 1, 2: 2, 3: 3, .. } else {
-    fail("Map is not as expected: \{map}")
-  }
-  inspect(map.length(), content="3")
-}
-
-///|
-test "from_iterator single element iter" {
-  inspect(
-    @hashmap.from_iterator([(1, 1)].iterator()),
-    content="@immut/hashmap.from_array([(1, 1)])",
-  )
-}
-
-///|
-test "from_iterator empty iter" {
-  let pq : @hashmap.HashMap[Int, Int] = @hashmap.from_iterator(
-    Iterator::empty(),
-  )
-  inspect(pq, content="@immut/hashmap.from_array([])")
-}
-
-///|
-test "HAMT::iterator on empty map" {
+test "HAMT::iter on empty map" {
   let map : @hashmap.HashMap[Int, Int] = @hashmap.new()
-  let iter = map.iterator()
+  let iter = map.iter()
   assert_eq(iter.next(), None)
 }
 
 ///|
-test "HAMT::iterator on collision map" {
+test "HAMT::iter on collision map" {
   let map = @hashmap.from_array([(MyString("a"), 1), (MyString("b"), 2)])
-  let iter = map.iterator()
+  let iter = map.iter()
   let results = []
   while iter.next() is Some(pair) {
     results.push(pair)
@@ -264,9 +228,9 @@ test "HAMT::iterator on collision map" {
 }
 
 ///|
-test "HAMT::iterator on branch map" {
+test "HAMT::iter on branch map" {
   let map = @hashmap.from_array([(1, 10), (2, 20), (3, 30), (4, 40)])
-  let iter = map.iterator()
+  let iter = map.iter()
   let mut count = 0
   while iter.next() is Some(_) {
     count += 1

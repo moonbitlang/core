@@ -184,9 +184,9 @@ test "iter2" {
 }
 
 ///|
-test "iterator" {
+test "iter" {
   let map = @hashmap.from_array([(1, "one"), (2, "two"), (3, "three")])
-  let array = map.iterator().collect()
+  let array = map.iter().collect()
   array.sort()
   inspect(
     array,
@@ -309,31 +309,6 @@ test "from_iter single element iter" {
 ///|
 test "from_iter empty iter" {
   let map : @hashmap.HashMap[Int, Int] = @hashmap.from_iter(Iter::empty())
-  inspect(map, content="HashMap::from_array([])")
-}
-
-///|
-test "from_iterator multiple elements iter" {
-  let map = @hashmap.from_iterator([(1, 1), (2, 2), (3, 3)].iterator())
-  guard map is { 1: 1, 2: 2, 3: 3, .. } else {
-    fail("Map is not expected: \{map}")
-  }
-  inspect(map.length(), content="3")
-}
-
-///|
-test "from_iterator single element iter" {
-  inspect(
-    @hashmap.from_iterator([(1, 1)].iterator()),
-    content="HashMap::from_array([(1, 1)])",
-  )
-}
-
-///|
-test "from_iterator empty iter" {
-  let map : @hashmap.HashMap[Int, Int] = @hashmap.from_iterator(
-    Iterator::empty(),
-  )
   inspect(map, content="HashMap::from_array([])")
 }
 

@@ -72,7 +72,7 @@ test "StringView core operations" {
   inspect(view.char_length_eq(3), content="true")
   inspect(view.char_length_ge(4), content="false")
   let buf = StringBuilder::new()
-  let it = view.iterator2()
+  let it = view.iter2()
   while it.next() is Some((i, ch)) {
     buf.write_string("\{i}:\{ch};")
   }
@@ -81,8 +81,6 @@ test "StringView core operations" {
   inspect(from_arr.to_string(), content="xy")
   let from_iter = StringView::from_iter(['m', 'n'].iter())
   inspect(from_iter.to_string(), content="mn")
-  let from_iterator = StringView::from_iterator(['p', 'q'].iterator())
-  inspect(from_iterator.to_string(), content="pq")
   let make_view = StringView::make(3, 'a')
   inspect(make_view.to_string(), content="aaa")
   inspect(StringView::default(), content="")

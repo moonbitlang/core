@@ -17,13 +17,13 @@ type PriorityQueue[A]
 #as_free_fn(of, deprecated)
 #as_free_fn
 pub fn[A : Compare] PriorityQueue::from_array(ArrayView[A]) -> Self[A]
+#alias(from_iterator, deprecated)
+#as_free_fn(from_iterator, deprecated)
 #as_free_fn
 pub fn[A : Compare] PriorityQueue::from_iter(Iter[A]) -> Self[A]
-#as_free_fn
-pub fn[A : Compare] PriorityQueue::from_iterator(Iter[A]) -> Self[A]
 pub fn[A] PriorityQueue::is_empty(Self[A]) -> Bool
+#alias(iterator, deprecated)
 pub fn[A : Compare] PriorityQueue::iter(Self[A]) -> Iter[A]
-pub fn[A : Compare] PriorityQueue::iterator(Self[A]) -> Iter[A]
 pub fn[A] PriorityQueue::length(Self[A]) -> Int
 #as_free_fn
 pub fn[A] PriorityQueue::new() -> Self[A]

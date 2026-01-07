@@ -45,7 +45,7 @@ test "unwrap_or variants" {
 }
 
 ///|
-test "compare default iter and iterator" {
+test "compare default iter" {
   inspect(Some(1).compare(Some(2)), content="-1")
   inspect(Some(2).compare(Some(1)), content="1")
   inspect((None : Int?).compare(Some(1)), content="-1")
@@ -58,10 +58,6 @@ test "compare default iter and iterator" {
   let iter_empty = []
   (None : Int?).iter().each(iter_empty.push(_))
   inspect(iter_empty, content="[]")
-  let iterator_values = (Some(4) : Int?).iterator().collect()
-  inspect(iterator_values, content="[4]")
-  let iterator_empty = (None : Int?).iterator().collect()
-  inspect(iterator_empty, content="[]")
 }
 
 ///|

@@ -27,18 +27,18 @@ pub fn[K, V, A] HashMap::fold(Self[K, V], init~ : A, (A, K, V) -> A raise?) -> A
 #as_free_fn(of, deprecated)
 #as_free_fn
 pub fn[K : Eq + Hash, V] HashMap::from_array(ArrayView[(K, V)]) -> Self[K, V]
+#alias(from_iterator, deprecated)
+#as_free_fn(from_iterator, deprecated)
 #as_free_fn
 pub fn[K : Eq + Hash, V] HashMap::from_iter(Iter[(K, V)]) -> Self[K, V]
-#as_free_fn
-pub fn[K : Eq + Hash, V] HashMap::from_iterator(Iter[(K, V)]) -> Self[K, V]
 #alias(find, deprecated)
 pub fn[K : Eq + Hash, V] HashMap::get(Self[K, V], K) -> V?
 pub fn[K : Eq, V] HashMap::intersection(Self[K, V], Self[K, V]) -> Self[K, V]
 pub fn[K : Eq, V] HashMap::intersection_with(Self[K, V], Self[K, V], (K, V, V) -> V raise?) -> Self[K, V] raise?
+#alias(iterator, deprecated)
 pub fn[K, V] HashMap::iter(Self[K, V]) -> Iter[(K, V)]
+#alias(iterator2, deprecated)
 pub fn[K, V] HashMap::iter2(Self[K, V]) -> Iter2[K, V]
-pub fn[K, V] HashMap::iterator(Self[K, V]) -> Iter[(K, V)]
-pub fn[K, V] HashMap::iterator2(Self[K, V]) -> Iter2[K, V]
 pub fn[K, V] HashMap::keys(Self[K, V]) -> Iter[K]
 #alias(size, deprecated)
 pub fn[K, V] HashMap::length(Self[K, V]) -> Int
