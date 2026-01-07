@@ -271,12 +271,6 @@ pub impl[K : Debug] Debug for @immut_hashset.HashSet[K] with to_repr(self) {
 }
 
 ///|
-#warnings("-deprecated")
-pub impl[A : Debug] Debug for @immut_list.T[A] with to_repr(self) {
-  Repr::opaque_("List", Repr::array(self.to_array().map(fn(x) { x.to_repr() })))
-}
-
-///|
 pub impl[A : Debug] Debug for @immut_array.T[A] with to_repr(self) {
   Repr::opaque_(
     "Array",
@@ -1446,8 +1440,6 @@ test "core data structures Debug implementations" {
   inspect(pretty_test((Err("e") : Result[Int, String])), content="Err(\"e\")")
 
   // Test immut containers
-  let immut_lst = @immut_list.from_array([1, 2, 3])
-  inspect(pretty_test(immut_lst), content="<List: [1, 2, 3]>")
   let immut_arr = @immut_array.from_array([1, 2, 3])
   inspect(pretty_test(immut_arr), content="<Array: [1, 2, 3]>")
   let immut_pq = @immut_priority_queue.from_array([3, 1, 2])
