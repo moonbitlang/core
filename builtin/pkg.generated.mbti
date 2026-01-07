@@ -700,8 +700,6 @@ pub fn String::char_length(String, start_offset? : Int, end_offset? : Int) -> In
 pub fn String::char_length_eq(String, Int, start_offset? : Int, end_offset? : Int) -> Bool
 pub fn String::char_length_ge(String, Int, start_offset? : Int, end_offset? : Int) -> Bool
 #deprecated
-pub fn String::charcode_at(String, Int) -> Int
-#deprecated
 pub fn String::codepoint_at(String, Int) -> Char
 pub fn String::contains(String, StringView) -> Bool
 pub fn String::contains_any(String, chars~ : StringView) -> Bool
@@ -1030,7 +1028,9 @@ pub fn StringView::trim_end(Self, chars? : Self) -> Self
 pub fn StringView::trim_space(Self) -> Self
 #label_migration(chars, alias=char_set)
 pub fn StringView::trim_start(Self, chars? : Self) -> Self
+#deprecated
 pub fn StringView::unsafe_charcode_at(Self, Int) -> Int
+pub fn StringView::unsafe_get(Self, Int) -> UInt16
 pub fn StringView::view(Self, start_offset? : Int, end_offset? : Int) -> Self
 
 // Type aliases

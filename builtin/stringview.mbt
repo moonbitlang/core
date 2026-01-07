@@ -31,13 +31,15 @@ fn StringView::make_view(str : String, start : Int, end : Int) -> StringView = "
 /// Returns the UTF-16 code unit at the given index.
 /// 
 /// This method has O(1) complexity.
+/// Panics if the index is out of bounds.
+/// TODO: make it intrinsic
 #alias("_[_]")
 #alias(code_unit_at)
 pub fn StringView::at(self : StringView, index : Int) -> UInt16 {
   guard index >= 0 && index < self.length() else {
     abort("Index out of bounds")
   }
-  self.str().code_unit_at(self.start() + index)
+  self.unsafe_get(index)
 }
 
 ///|
@@ -71,10 +73,10 @@ pub fn StringView::suffixes(
       }
     } else {
       let suffix = StringView::make_view(str, next_start, end)
-      let code = str.unsafe_charcode_at(next_start)
+      let code = str.unsafe_get(next_start)
       if code.is_leading_surrogate() &&
         next_start + 1 < end &&
-        str.unsafe_charcode_at(next_start + 1).is_trailing_surrogate() {
+        str.unsafe_get(next_start + 1).is_trailing_surrogate() {
         next_start += 2
       } else {
         next_start += 1
@@ -118,6 +120,16 @@ pub fn StringView::view(
 }
 
 ///|
+/// Returns the UTF-16 code unit at the given index without checking if the
+/// index is within bounds.
+///
+/// This method has O(1) complexity.
+#internal(unsafe, "Undefined behavior if index is out of bounds.")
+pub fn StringView::unsafe_get(self : StringView, index : Int) -> UInt16 {
+  self.str().unsafe_get(self.start() + index)
+}
+
+///|
 /// Returns the charcode(code unit) at the given index without checking if the
 /// index is within bounds.
 /// 
@@ -136,7 +148,7 @@ pub fn StringView::view(
 ///   inspect(view.unsafe_charcode_at(5), content="67")
 /// }
 /// ```
-/// TODO: rename to `unsafe_get`
+#deprecated("Use `StringView::unsafe_get` instead")
 pub fn StringView::unsafe_charcode_at(self : StringView, index : Int) -> Int {
   self.str().unsafe_charcode_at(self.start() + index)
 }
@@ -204,11 +216,15 @@ pub fn StringView::iterator(self : StringView) -> Iterator[Char] {
 }
 
 ///|
+/// Returns an iterator over the Unicode characters in the string view,
+/// yielding pairs of (character index, character).
 pub fn StringView::iter2(self : StringView) -> Iter2[Int, Char] {
   self.iterator2().iter2()
 }
 
 ///|
+/// Returns an iterator over the Unicode characters in the string view,
+/// yielding pairs of (character index, character).
 pub fn StringView::iterator2(self : StringView) -> Iterator2[Int, Char] {
   let start = self.start()
   let end = self.end()

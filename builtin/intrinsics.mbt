@@ -1730,23 +1730,17 @@ pub fn String::length(self : String) -> Int = "%string_length"
 
 ///|
 /// Returns the UTF-16 code unit at the given index.
-///
-/// Parameters:
-///
-/// * `string` : The string to access.
-/// * `index` : The position in the string from which to retrieve the code unit.
-///
-/// This method has O(1) complexity.
-#deprecated("Use `_[_]` instead which returns UInt16")
-pub fn String::charcode_at(self : String, idx : Int) -> Int = "%string_get"
-
-///|
-/// Returns the UTF-16 code unit at the given index.
 /// 
 /// This method has O(1) complexity.
+/// Panics if the index is out of bounds.
 #alias("_[_]")
 #alias(code_unit_at)
 pub fn String::at(self : String, idx : Int) -> UInt16 = "%string_get"
+
+///|
+#internal(unsafe, "Undefined behavior if index is out of bounds.")
+#doc(hidden)
+pub fn String::unsafe_get(self : String, idx : Int) -> UInt16 = "%string.unsafe_get"
 
 ///|
 /// Returns the UTF-16 code unit at a given position in the string without
@@ -1776,6 +1770,7 @@ pub fn String::at(self : String, idx : Int) -> UInt16 = "%string_get"
 /// TODO: rename to `unsafe_get`
 #internal(unsafe, "Panic if index is out of bounds.")
 #doc(hidden)
+#deprecated("Use `String::unsafe_get` instead")
 pub fn String::unsafe_charcode_at(self : String, idx : Int) -> Int = "%string.unsafe_get"
 
 ///|

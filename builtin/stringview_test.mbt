@@ -51,6 +51,21 @@ test "code_unit_at" {
 }
 
 ///|
+test "unsafe_get" {
+  let s = "Hello, 世界!😀"
+  inspect(s[:].unsafe_get(0), content="72") // 'H'
+  inspect(s[:].unsafe_get(7), content="19990") // '世'
+  inspect(s[:].unsafe_get(8), content="30028") // '界'
+  inspect(s[:].unsafe_get(10), content="55357") // High surrogate of '😀'
+  inspect(s[:].unsafe_get(11), content="56832") // Low surrogate of '😀'
+  let view = s[7:] // "世界!😀"
+  inspect(view.unsafe_get(0), content="19990") // '世'
+  inspect(view.unsafe_get(1), content="30028") // '界'
+  inspect(view.unsafe_get(3), content="55357") // High surrogate of '😀'
+  inspect(view.unsafe_get(4), content="56832") // Low surrogate of '😀'
+}
+
+///|
 test "StringView core operations" {
   let view = "ab😀c".view(start_offset=1)
   inspect(view.char_length(), content="3")
