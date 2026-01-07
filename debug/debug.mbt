@@ -86,18 +86,12 @@ pub impl Debug for StringView with to_repr(self) {
 
 ///|
 pub impl Debug for Bytes with to_repr(self) {
-  Repr::opaque_(
-    "Bytes",
-    Repr::array(self.to_array().map(fn(b) { Debug::to_repr(b) })),
-  )
+  Repr::opaque_("Bytes", Repr::array(self.to_array().map(Debug::to_repr)))
 }
 
 ///|
 pub impl Debug for BytesView with to_repr(self) {
-  Repr::opaque_(
-    "BytesView",
-    Repr::array(self.to_array().map(fn(b) { Debug::to_repr(b) })),
-  )
+  Repr::opaque_("BytesView", Repr::array(self.to_array().map(Debug::to_repr)))
 }
 
 ///|
@@ -107,25 +101,19 @@ pub impl Debug for Unit with to_repr(_) {
 
 ///|
 pub impl[T : Debug] Debug for Array[T] with to_repr(self) {
-  Repr::array(self.map(fn(x) { x.to_repr() }))
+  Repr::array(self.map(Debug::to_repr))
 }
 
 ///|
 pub impl[T : Debug] Debug for ArrayView[T] with to_repr(self) {
-  Repr::opaque_(
-    "ArrayView",
-    Repr::array(self.to_array().map(fn(x) { x.to_repr() })),
-  )
+  Repr::opaque_("ArrayView", Repr::array(self.to_array().map(Debug::to_repr)))
 }
 
 ///|
 pub impl[T : Debug] Debug for FixedArray[T] with to_repr(self) {
   // `FixedArray` can be viewed as `ArrayView` via slicing.
   let view : ArrayView[T] = self[:]
-  Repr::opaque_(
-    "FixedArray",
-    Repr::array(view.to_array().map(fn(x) { x.to_repr() })),
-  )
+  Repr::opaque_("FixedArray", Repr::array(view.to_array().map(Debug::to_repr)))
 }
 
 ///|
@@ -134,7 +122,7 @@ pub impl[T : Debug] Debug for ReadOnlyArray[T] with to_repr(self) {
   let view : ArrayView[T] = self[:]
   Repr::opaque_(
     "ReadOnlyArray",
-    Repr::array(view.to_array().map(fn(x) { x.to_repr() })),
+    Repr::array(view.to_array().map(Debug::to_repr)),
   )
 }
 
@@ -156,7 +144,7 @@ pub impl[T : Debug, E : Debug] Debug for Result[T, E] with to_repr(self) {
 
 ///|
 pub impl[A : Debug] Debug for @list.List[A] with to_repr(self) {
-  Repr::opaque_("List", Repr::array(self.to_array().map(fn(x) { x.to_repr() })))
+  Repr::opaque_("List", Repr::array(self.to_array().map(Debug::to_repr)))
 }
 
 ///|
@@ -171,20 +159,20 @@ pub impl[K : Debug, V : Debug] Debug for @hashmap.HashMap[K, V] with to_repr(
 
 ///|
 pub impl[K : Debug] Debug for @hashset.HashSet[K] with to_repr(self) {
-  let xs : Array[Repr] = self.to_array().map(fn(x) { x.to_repr() })
+  let xs : Array[Repr] = self.to_array().map(Debug::to_repr)
   Repr::opaque_("HashSet", Repr::array(xs))
 }
 
 ///|
 pub impl[A : Debug] Debug for @deque.Deque[A] with to_repr(self) {
-  Repr::opaque_("Deque", Repr::array(self.to_array().map(x => x.to_repr())))
+  Repr::opaque_("Deque", Repr::array(self.to_array().map(Debug::to_repr)))
 }
 
 ///|
 pub impl[A : Debug] Debug for @queue.Queue[A] with to_repr(self) {
   Repr::opaque_(
     "Queue",
-    Repr::array(self.iter().to_array().map(x => x.to_repr())),
+    Repr::array(self.iter().to_array().map(Debug::to_repr)),
   )
 }
 
@@ -212,7 +200,7 @@ pub impl[A, B] Debug for Iterator2[A, B] with to_repr(_) {
 pub impl[T : Debug] Debug for MutArrayView[T] with to_repr(self) {
   Repr::opaque_(
     "MutArrayView",
-    Repr::array(self[:].to_array().map(x => x.to_repr())),
+    Repr::array(self[:].to_array().map(Debug::to_repr)),
   )
 }
 
@@ -226,7 +214,7 @@ pub impl[A : Debug + Compare] Debug for @priority_queue.PriorityQueue[A] with to
   self,
 ) {
   // `PriorityQueue` iteration order depends on internal heap state; sort for stable output.
-  let xs : Array[Repr] = self.to_array().map(x => x.to_repr())
+  let xs : Array[Repr] = self.to_array().map(Debug::to_repr)
   Repr::opaque_("PriorityQueue", Repr::array(xs))
 }
 
@@ -248,10 +236,7 @@ pub impl[K : Debug, V : Debug] Debug for @immut_sorted_map.SortedMap[K, V] with 
 
 ///|
 pub impl[K : Debug] Debug for @immut_sorted_set.SortedSet[K] with to_repr(self) {
-  Repr::opaque_(
-    "SortedSet",
-    Repr::array(self.to_array().map(fn(x) { x.to_repr() })),
-  )
+  Repr::opaque_("SortedSet", Repr::array(self.to_array().map(Debug::to_repr)))
 }
 
 ///|
@@ -266,29 +251,26 @@ pub impl[K : Debug, V : Debug] Debug for @immut_hashmap.HashMap[K, V] with to_re
 
 ///|
 pub impl[K : Debug] Debug for @immut_hashset.HashSet[K] with to_repr(self) {
-  let xs : Array[Repr] = self.iter().to_array().map(fn(x) { x.to_repr() })
+  let xs : Array[Repr] = self.iter().to_array().map(Debug::to_repr)
   Repr::opaque_("HashSet", Repr::array(xs))
 }
 
 ///|
 #warnings("-deprecated")
 pub impl[A : Debug] Debug for @immut_list.T[A] with to_repr(self) {
-  Repr::opaque_("List", Repr::array(self.to_array().map(fn(x) { x.to_repr() })))
+  Repr::opaque_("List", Repr::array(self.to_array().map(Debug::to_repr)))
 }
 
 ///|
 pub impl[A : Debug] Debug for @immut_array.T[A] with to_repr(self) {
-  Repr::opaque_(
-    "Array",
-    Repr::array(self.to_array().map(fn(x) { x.to_repr() })),
-  )
+  Repr::opaque_("Array", Repr::array(self.to_array().map(Debug::to_repr)))
 }
 
 ///|
 pub impl[A : Debug + Compare] Debug for @immut_priority_queue.PriorityQueue[A] with to_repr(
   self,
 ) {
-  let xs : Array[Repr] = self.to_array().map(fn(x) { x.to_repr() })
+  let xs : Array[Repr] = self.to_array().map(Debug::to_repr)
   Repr::opaque_("PriorityQueue", Repr::array(xs))
 }
 
