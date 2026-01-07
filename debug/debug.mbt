@@ -966,6 +966,64 @@ pub impl[
 }
 
 ///|
+/// Checks that the structural representation (`Repr`) of an object matches the
+/// expected content. Used in test blocks to ensure API results are as expected,
+/// and stores a pretty-printed string for comparison.
+///
+/// Parameters:
+/// - `obj`: The object to inspect. Must implement the `Debug` trait.
+/// - `content`: The expected string representation of the object. Defaults to an empty string if not provided.
+/// - `loc`: Source code location information for error reporting. Automatically provided by the compiler.
+/// - `args_loc`: Location information for function arguments in the source code. Automatically provided by the compiler.
+///
+/// Raises an `InspectError` if the actual `Repr` does not match the expected content.
+///
+/// Example:
+///
+/// ```mbt check
+/// test {
+///   inspect(42, content="42")
+///   inspect('c', content="'c'")
+///   inspect(
+///     "hello",
+///     content=(
+///       #|"hello"
+///     ),
+///   )
+///   inspect(
+///     ([1, 2, 3, 4], "string", Some(3.14)),
+///     content=(
+///       #|(
+///       #|  [1, 2, 3, 4],
+///       #|  "string",
+///       #|  Some(3.14),
+///       #|)
+///     ),
+///   )
+/// }
+/// ```
+#callsite(autofill(args_loc, loc))
+pub fn inspect(
+  obj : &Debug,
+  content? : String,
+  loc~ : SourceLoc,
+  args_loc~ : ArgsLoc,
+) -> Unit raise InspectError {
+  let loc = loc.to_json_string()
+  let args_loc = args_loc.to_json()
+  let actual = render(obj.to_repr())
+  let want = match content {
+    None => ""
+    Some(x) => x
+  }
+  if actual != want {
+    raise InspectError(
+      "@EXPECT_FAILED {\"loc\": \{loc}, \"args_loc\": \{args_loc}, \"expect\": \{want.escape()}, \"actual\": \{actual.escape()} }",
+    )
+  }
+}
+
+///|
 test "tuple Debug implementations" {
   inspect(pretty_test((1, "a")), content="(1, \"a\")")
 

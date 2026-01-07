@@ -13,6 +13,9 @@ import(
 // Values
 pub fn[T : Debug] debug(T) -> Unit
 
+#callsite(autofill(args_loc, loc))
+pub fn inspect(&Debug, content? : String, loc~ : SourceLoc, args_loc~ : ArgsLoc) -> Unit raise InspectError
+
 pub fn render(Repr, max_depth? : Int) -> String
 
 // Errors
