@@ -15,7 +15,7 @@ pub fn from_array(ArrayView[Char]) -> String
 pub fn from_iter(Iter[Char]) -> String
 
 #deprecated
-pub fn from_iterator(Iterator[Char]) -> String
+pub fn from_iterator(Iter[Char]) -> String
 
 // Errors
 

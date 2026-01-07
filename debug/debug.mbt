@@ -194,18 +194,8 @@ pub impl[A] Debug for Iter[A] with to_repr(_) {
 }
 
 ///|
-pub impl[A] Debug for Iterator[A] with to_repr(_) {
-  Repr::opaque_("Iterator", Omitted)
-}
-
-///|
 pub impl[A, B] Debug for Iter2[A, B] with to_repr(_) {
   Repr::opaque_("Iter2", Omitted)
-}
-
-///|
-pub impl[A, B] Debug for Iterator2[A, B] with to_repr(_) {
-  Repr::opaque_("Iterator2", Omitted)
 }
 
 ///|

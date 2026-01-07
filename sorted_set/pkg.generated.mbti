@@ -29,12 +29,12 @@ pub fn[V : Compare] SortedSet::from_array(ArrayView[V]) -> Self[V]
 #as_free_fn
 pub fn[V : Compare] SortedSet::from_iter(Iter[V]) -> Self[V]
 #as_free_fn
-pub fn[V : Compare] SortedSet::from_iterator(Iterator[V]) -> Self[V]
+pub fn[V : Compare] SortedSet::from_iterator(Iter[V]) -> Self[V]
 #alias(intersect, deprecated)
 pub fn[V : Compare] SortedSet::intersection(Self[V], Self[V]) -> Self[V]
 pub fn[V] SortedSet::is_empty(Self[V]) -> Bool
 pub fn[V] SortedSet::iter(Self[V]) -> Iter[V]
-pub fn[V] SortedSet::iterator(Self[V]) -> Iterator[V]
+pub fn[V] SortedSet::iterator(Self[V]) -> Iter[V]
 #alias(size, deprecated)
 pub fn[V] SortedSet::length(Self[V]) -> Int
 #as_free_fn
