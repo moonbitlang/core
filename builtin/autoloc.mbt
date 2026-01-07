@@ -57,16 +57,10 @@ priv struct SourceLocRepr {
 ///|
 impl Show for SourceLocRepr with output(self, logger) {
   let pkg = self.pkg
-  let (module_name, package_name) = {
-    guard pkg.find("/") is Some(first_slash) else { (pkg, None) }
-    guard pkg.view(start_offset=first_slash + 1).find("/") is Some(second_slash) else {
-      (pkg, None)
-    }
-    let module_name_end = first_slash + 1 + second_slash
-    (
-      pkg.view(end_offset=module_name_end),
-      Some(pkg.view(start_offset=module_name_end + 1)),
-    )
+  let (module_name, package_name) = lexmatch pkg {
+    (("[^/]*/[^/]*" as module_name) "/" (".*" as package_name)) =>
+      (module_name, Some(package_name))
+    _ => (pkg, None)
   }
   if package_name is Some(pkg_name) {
     logger..write_view(pkg_name)..write_char('/')
@@ -87,34 +81,23 @@ impl Show for SourceLocRepr with output(self, logger) {
 
 ///|
 fn SourceLocRepr::parse(repr : String) -> SourceLocRepr {
-  fn parse_loc(view : StringView) -> (StringView, StringView)? {
-    guard view.find(":") is Some(i) else { None }
-    guard i > 0 && i + 1 < view.length() else { None }
-    Some((view.view(end_offset=i), view.view(start_offset=i + 1)))
+  lexmatch repr[:] {
+    (
+      "@"
+      ("[^:]*" as pkg)
+      ":"
+      (".+?" as filename)
+      ":"
+      ("[[:digit:]]+" as start_line)
+      ":"
+      ("[[:digit:]]+" as start_column)
+      "-"
+      ("[[:digit:]]+" as end_line)
+      ":"
+      ("[[:digit:]]+" as end_column)
+    ) => { pkg, filename, start_line, start_column, end_line, end_column }
+    _ => panic()
   }
-  // extract package name
-  guard repr is ['@', .. rest]
-  guard rest.find(":") is Some(pkg_end)
-  let pkg = rest.view(start_offset=0, end_offset=pkg_end)
-
-  // extract end location in reverse
-  guard rest.rev_find("-") is Some(start_loc_end)
-  guard start_loc_end + 1 < rest.length()
-  let end_loc = rest.view(start_offset=start_loc_end + 1)
-  guard parse_loc(end_loc) is Some((end_line, end_column))
-  let rest = rest.view(end_offset=start_loc_end)
-
-  // extract start location
-  guard rest.rev_find(":") is Some(start_line_end) &&
-    rest.view(end_offset=start_line_end).rev_find(":") is Some(filename_end)
-  guard filename_end + 1 < rest.length()
-  let start_loc = rest.view(start_offset=filename_end + 1)
-  guard parse_loc(start_loc) is Some((start_line, start_column))
-
-  // everything else remaining is treated as filename
-  guard filename_end > pkg_end + 1
-  let filename = rest.view(start_offset=pkg_end + 1, end_offset=filename_end)
-  { pkg, filename, start_line, start_column, end_line, end_column }
 }
 
 ///|
