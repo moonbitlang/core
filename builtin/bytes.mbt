@@ -137,7 +137,7 @@ pub fn FixedArray::blit_from_string(
   guard length >= 0 && s1 >= 0 && e1 < len1 && s2 >= 0 && e2 < len2
   let end_str_offset = str_offset + length
   for i = str_offset, j = bytes_offset; i < end_str_offset; i = i + 1, j = j + 2 {
-    let c = str.unsafe_charcode_at(i).reinterpret_as_uint()
+    let c = str.unsafe_get(i).to_int().reinterpret_as_uint()
     self[j] = (c & 0xff).to_byte()
     self[j + 1] = (c >> 8).to_byte()
   }

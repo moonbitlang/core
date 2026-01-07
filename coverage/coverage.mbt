@@ -115,7 +115,7 @@ pub fn end() -> Unit {
     let str = sbuf.0[i]
     let mut start = 0
     for j in 0..<str.length() {
-      if str.unsafe_charcode_at(j) == '\n' {
+      if str.unsafe_get(j) == '\n' {
         line_buf.write_view(try! str[start:j])
         println(line_buf.to_string())
         line_buf.reset()

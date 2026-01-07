@@ -72,9 +72,9 @@ pub fn String::char_length(
   for utf16_index = start_offset, char_count = 0
       utf16_index < end_offset
       utf16_index = utf16_index + 1, char_count = char_count + 1 {
-    let c1 = self.unsafe_charcode_at(utf16_index)
+    let c1 = self.unsafe_get(utf16_index)
     if c1.is_leading_surrogate() && utf16_index + 1 < end_offset {
-      let c2 = self.unsafe_charcode_at(utf16_index + 1)
+      let c2 = self.unsafe_get(utf16_index + 1)
       if c2.is_trailing_surrogate() {
         continue utf16_index + 2, char_count + 1
       } else {
@@ -186,9 +186,7 @@ pub impl Compare for String with compare(self, other) {
   match len.compare(other.length()) {
     0 => {
       for i in 0..<len {
-        let order = self
-          .unsafe_charcode_at(i)
-          .compare(other.unsafe_charcode_at(i))
+        let order = self.unsafe_get(i).compare(other.unsafe_get(i))
         if order != 0 {
           return order
         }
@@ -263,11 +261,11 @@ pub fn String::iterator(self : String) -> Iterator[Char] {
   let mut index = 0
   Iterator::new(fn() {
     guard index < len else { None }
-    let c1 = self.unsafe_charcode_at(index)
+    let c1 = self.unsafe_get(index)
     if c1.is_leading_surrogate() && index + 1 < len {
-      let c2 = self.unsafe_charcode_at(index + 1)
+      let c2 = self.unsafe_get(index + 1)
       if c2.is_trailing_surrogate() {
-        let c = code_point_of_surrogate_pair(c1, c2)
+        let c = code_point_of_surrogate_pair(c1.to_int(), c2.to_int())
         index += 2
         return Some(c)
       }
@@ -358,12 +356,12 @@ pub fn String::rev_iterator(self : String) -> Iterator[Char] {
   Iterator::new(fn() {
     guard index > 0 else { None }
     index -= 1
-    let c1 = self.unsafe_charcode_at(index)
+    let c1 = self.unsafe_get(index)
     if c1.is_trailing_surrogate() && index - 1 >= 0 {
-      let c2 = self.unsafe_charcode_at(index - 1)
+      let c2 = self.unsafe_get(index - 1)
       if c2.is_leading_surrogate() {
         index -= 1
-        return Some(code_point_of_surrogate_pair(c2, c1))
+        return Some(code_point_of_surrogate_pair(c2.to_int(), c1.to_int()))
       }
     }
     Some(c1.unsafe_to_char())
@@ -384,7 +382,7 @@ fn String::offset_of_nth_char_forward(
   let mut utf16_offset = start_offset
   let mut char_count = 0
   while utf16_offset < end_offset && char_count < n {
-    let c = self.unsafe_charcode_at(utf16_offset)
+    let c = self.unsafe_get(utf16_offset)
     // check if this is a surrogate pair
     if c.is_leading_surrogate() {
       utf16_offset = utf16_offset + 2
@@ -418,7 +416,7 @@ fn String::offset_of_nth_char_backward(
   // Iterating backwards from the end of the string. 
   // Invariant: utf16_offset always points to the previous character
   while utf16_offset - 1 >= start_offset && char_count < n {
-    let c = self.unsafe_charcode_at(utf16_offset - 1)
+    let c = self.unsafe_get(utf16_offset - 1)
     if c.is_trailing_surrogate() {
       utf16_offset = utf16_offset - 2
     } else {
@@ -470,9 +468,9 @@ pub fn String::char_length_eq(
   for index = start_offset, count = 0
       index < end_offset && count < len
       index = index + 1, count = count + 1 {
-    let c1 = self.unsafe_charcode_at(index)
+    let c1 = self.unsafe_get(index)
     if c1.is_leading_surrogate() && index + 1 < end_offset {
-      let c2 = self.unsafe_charcode_at(index + 1)
+      let c2 = self.unsafe_get(index + 1)
       if c2.is_trailing_surrogate() {
         continue index + 2, count + 1
       } else {
@@ -498,9 +496,9 @@ pub fn String::char_length_ge(
   for index = start_offset, count = 0
       index < end_offset && count < len
       index = index + 1, count = count + 1 {
-    let c1 = self.unsafe_charcode_at(index)
+    let c1 = self.unsafe_get(index)
     if c1.is_leading_surrogate() && index + 1 < end_offset {
-      let c2 = self.unsafe_charcode_at(index + 1)
+      let c2 = self.unsafe_get(index + 1)
       if c2.is_trailing_surrogate() {
         continue index + 2, count + 1
       } else {

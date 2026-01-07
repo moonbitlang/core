@@ -96,7 +96,7 @@ pub impl Show for String with output(self, logger) {
       flush_segment(seg, i)
       break
     }
-    let code = self.unsafe_charcode_at(i)
+    let code = self.unsafe_get(i)
     match code {
       '"' | '\\' as c => {
         flush_segment(seg, i)

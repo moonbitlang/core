@@ -140,17 +140,17 @@ pub fn StringView::unsafe_get(self : StringView, index : Int) -> UInt16 {
 /// test {
 ///   let str = "B🤣🤣C"
 ///   let view = str[:]
-///   inspect(view.unsafe_charcode_at(0), content="66")
-///   inspect(view.unsafe_charcode_at(1), content="55358")
-///   inspect(view.unsafe_charcode_at(2), content="56611")
-///   inspect(view.unsafe_charcode_at(3), content="55358")
-///   inspect(view.unsafe_charcode_at(4), content="56611")
-///   inspect(view.unsafe_charcode_at(5), content="67")
+///   inspect(view.unsafe_get(0), content="66")
+///   inspect(view.unsafe_get(1), content="55358")
+///   inspect(view.unsafe_get(2), content="56611")
+///   inspect(view.unsafe_get(3), content="55358")
+///   inspect(view.unsafe_get(4), content="56611")
+///   inspect(view.unsafe_get(5), content="67")
 /// }
 /// ```
 #deprecated("Use `StringView::unsafe_get` instead")
 pub fn StringView::unsafe_charcode_at(self : StringView, index : Int) -> Int {
-  self.str().unsafe_charcode_at(self.start() + index)
+  self.str().unsafe_get(self.start() + index).to_int()
 }
 
 ///|
@@ -202,12 +202,12 @@ pub fn StringView::iterator(self : StringView) -> Iterator[Char] {
   let mut index = start
   Iterator::new(fn() {
     guard index < end else { None }
-    let c1 = self.str().unsafe_charcode_at(index)
+    let c1 = self.str().unsafe_get(index)
     if c1.is_leading_surrogate() && index + 1 < self.end() {
-      let c2 = self.str().unsafe_charcode_at(index + 1)
+      let c2 = self.str().unsafe_get(index + 1)
       if c2.is_trailing_surrogate() {
         index += 2
-        return Some(code_point_of_surrogate_pair(c1, c2))
+        return Some(code_point_of_surrogate_pair(c1.to_int(), c2.to_int()))
       }
     }
     index += 1
@@ -232,11 +232,14 @@ pub fn StringView::iterator2(self : StringView) -> Iterator2[Int, Char] {
   let mut char_index = 0
   Iterator2::new(fn() {
     guard index < end else { None }
-    let c1 = self.str().unsafe_charcode_at(index)
+    let c1 = self.str().unsafe_get(index)
     if c1.is_leading_surrogate() && index + 1 < self.end() {
-      let c2 = self.str().unsafe_charcode_at(index + 1)
+      let c2 = self.str().unsafe_get(index + 1)
       if c2.is_trailing_surrogate() {
-        let result = (char_index, code_point_of_surrogate_pair(c1, c2))
+        let result = (
+          char_index,
+          code_point_of_surrogate_pair(c1.to_int(), c2.to_int()),
+        )
         index += 2
         char_index += 1
         return Some(result)
@@ -264,12 +267,12 @@ pub fn StringView::rev_iterator(self : StringView) -> Iterator[Char] {
   Iterator::new(fn() {
     guard index > start else { None }
     index -= 1
-    let c1 = self.str().unsafe_charcode_at(index)
+    let c1 = self.str().unsafe_get(index)
     if c1.is_trailing_surrogate() && index - 1 >= 0 {
-      let c2 = self.str().unsafe_charcode_at(index - 1)
+      let c2 = self.str().unsafe_get(index - 1)
       if c2.is_leading_surrogate() {
         index -= 1
-        return Some(code_point_of_surrogate_pair(c2, c1))
+        return Some(code_point_of_surrogate_pair(c2.to_int(), c1.to_int()))
       }
     }
     Some(c1.unsafe_to_char())
@@ -286,8 +289,8 @@ pub impl Eq for StringView with equal(self, other) {
     return true
   }
   for i in 0..<len {
-    guard self.str().unsafe_charcode_at(self.start() + i) ==
-      other.str().unsafe_charcode_at(other.start() + i) else {
+    guard self.str().unsafe_get(self.start() + i) ==
+      other.str().unsafe_get(other.start() + i) else {
       return false
     }
   }
@@ -310,8 +313,8 @@ pub impl Compare for StringView with compare(self, other) {
   for i in 0..<self_len {
     let cmp = self
       .str()
-      .unsafe_charcode_at(self.start() + i)
-      .compare(other.str().unsafe_charcode_at(other.start() + i))
+      .unsafe_get(self.start() + i)
+      .compare(other.str().unsafe_get(other.start() + i))
     guard cmp == 0 else { return cmp }
   }
   0
@@ -372,8 +375,8 @@ pub fn StringView::lexical_compare(
 
   // Compare character by character up to the minimum length
   for i in 0..<min_len {
-    let self_char = self.str().unsafe_charcode_at(self.start() + i)
-    let other_char = other.str().unsafe_charcode_at(other.start() + i)
+    let self_char = self.str().unsafe_get(self.start() + i)
+    let other_char = other.str().unsafe_get(other.start() + i)
     let cmp = self_char.compare(other_char)
     if cmp != 0 {
       return cmp
@@ -502,10 +505,10 @@ pub fn String::sub(
   }
   let start = if start < 0 { len + start } else { start }
   guard start >= 0 && start <= end && end <= len else { raise IndexOutOfBounds }
-  if start < len && self.unsafe_charcode_at(start).is_trailing_surrogate() {
+  if start < len && self.unsafe_get(start).is_trailing_surrogate() {
     raise InvalidIndex
   }
-  if end < len && self.unsafe_charcode_at(end).is_trailing_surrogate() {
+  if end < len && self.unsafe_get(end).is_trailing_surrogate() {
     raise InvalidIndex
   }
   StringView::make_view(self, start, end)
@@ -582,11 +585,10 @@ pub fn StringView::sub(
 
   // Check for surrogate pair boundaries
   if abs_start < str_len &&
-    self.str().unsafe_charcode_at(abs_start).is_trailing_surrogate() {
+    self.str().unsafe_get(abs_start).is_trailing_surrogate() {
     raise InvalidIndex
   }
-  if abs_end < str_len &&
-    self.str().unsafe_charcode_at(abs_end).is_trailing_surrogate() {
+  if abs_end < str_len && self.str().unsafe_get(abs_end).is_trailing_surrogate() {
     raise InvalidIndex
   }
   StringView::make_view(self.str(), abs_start, abs_end)

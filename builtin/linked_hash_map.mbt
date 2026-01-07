@@ -1006,8 +1006,7 @@ fn StringView::equal_to_string(self : Self, other : String) -> Bool {
     return true
   }
   for i in 0..<len {
-    guard str.unsafe_charcode_at(self.start() + i) ==
-      other.unsafe_charcode_at(i) else {
+    guard str.unsafe_get(self.start() + i) == other.unsafe_get(i) else {
       return false
     }
   }

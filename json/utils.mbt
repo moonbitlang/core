@@ -17,7 +17,7 @@ fn offset_to_position(input : StringView, offset : Int) -> Position {
   let mut line = 1
   let mut column = 0
   for i in 0..<offset {
-    if input.unsafe_charcode_at(i) == '\n' {
+    if input.unsafe_get(i) == '\n' {
       line += 1
       column = 0
     } else {
