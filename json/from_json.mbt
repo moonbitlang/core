@@ -144,10 +144,10 @@ pub impl FromJson for Char with from_json(json, path) {
   }
   let len = a.length()
   if len == 1 {
-    a.unsafe_charcode_at(0).unsafe_to_char()
+    a.unsafe_get(0).unsafe_to_char()
   } else if len == 2 {
-    let c1 = a.unsafe_charcode_at(0)
-    let c2 = a.unsafe_charcode_at(1)
+    let c1 = a.unsafe_get(0).to_int()
+    let c2 = a.unsafe_get(1).to_int()
     if c1 is (0xD800..=0xDBFF) && c2 is (0xDC00..=0xDFFF) {
       let c3 = (c1 << 10) + c2 - 0x35fdc00
       c3.unsafe_to_char()

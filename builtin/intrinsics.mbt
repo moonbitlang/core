@@ -1759,12 +1759,12 @@ pub fn String::unsafe_get(self : String, idx : Int) -> UInt16 = "%string.unsafe_
 /// ```mbt check
 /// test {
 ///   let str = "B🤣🤣C"
-///   inspect(str.unsafe_charcode_at(0), content="66") // 'B'
-///   inspect(str.unsafe_charcode_at(1), content="55358") // First surrogate of 🤣
-///   inspect(str.unsafe_charcode_at(2), content="56611") // Second surrogate of 🤣
-///   inspect(str.unsafe_charcode_at(3), content="55358") // First surrogate of 🤣
-///   inspect(str.unsafe_charcode_at(4), content="56611") // Second surrogate of 🤣
-///   inspect(str.unsafe_charcode_at(5), content="67") // 'C'
+///   inspect(str.unsafe_get(0), content="66") // 'B'
+///   inspect(str.unsafe_get(1), content="55358") // First surrogate of 🤣
+///   inspect(str.unsafe_get(2), content="56611") // Second surrogate of 🤣
+///   inspect(str.unsafe_get(3), content="55358") // First surrogate of 🤣
+///   inspect(str.unsafe_get(4), content="56611") // Second surrogate of 🤣
+///   inspect(str.unsafe_get(5), content="67") // 'C'
 /// }
 /// ```
 /// TODO: rename to `unsafe_get`

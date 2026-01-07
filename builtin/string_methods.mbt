@@ -33,18 +33,18 @@ fn brute_force_find(haystack : StringView, needle : StringView) -> Int? {
   let needle_len = needle.length()
   guard needle_len > 0 else { return Some(0) }
   guard haystack_len >= needle_len else { return None }
-  let needle_first = needle.unsafe_charcode_at(0)
+  let needle_first = needle.unsafe_get(0)
   let forward_len = haystack_len - needle_len
   let mut i = 0
   while i <= forward_len {
     // Skip positions where first charcode doesn't match
-    while i <= forward_len && haystack.unsafe_charcode_at(i) != needle_first {
+    while i <= forward_len && haystack.unsafe_get(i) != needle_first {
       i += 1
     }
     if i <= forward_len {
       // Check remaining charcodes for full match
       for j in 1..<needle_len {
-        if haystack.unsafe_charcode_at(i + j) != needle.unsafe_charcode_at(j) {
+        if haystack.unsafe_get(i + j) != needle.unsafe_get(j) {
           break
         }
       } else {
@@ -70,14 +70,15 @@ fn boyer_moore_horspool_find(
   // Build skip table
   let skip_table = FixedArray::make(1 << 8, needle_len)
   for i in 0..<(needle_len - 1) {
-    skip_table[needle.unsafe_charcode_at(i) & 0xFF] = needle_len - 1 - i
+    skip_table[needle.unsafe_get(i).to_int() & 0xFF] = needle_len - 1 - i
   }
   for i = 0
       i <= haystack_len - needle_len
-      i = i + skip_table[haystack.unsafe_charcode_at(i + needle_len - 1) & 0xFF] {
+      i = i +
+        skip_table[haystack.unsafe_get(i + needle_len - 1).to_int() & 0xFF] {
     // Check all charcodes for match at current position
     for j in 0..=(needle_len - 1) {
-      if haystack.unsafe_charcode_at(i + j) != needle.unsafe_charcode_at(j) {
+      if haystack.unsafe_get(i + j) != needle.unsafe_get(j) {
         break
       }
     } else {
@@ -183,17 +184,17 @@ fn brute_force_rev_find(haystack : StringView, needle : StringView) -> Int? {
   let needle_len = needle.length()
   guard needle_len > 0 else { return Some(haystack_len) }
   guard haystack_len >= needle_len else { return None }
-  let needle_first = needle.unsafe_charcode_at(0)
+  let needle_first = needle.unsafe_get(0)
   let mut i = haystack_len - needle_len
   while i >= 0 {
     // Skip positions where first charcode doesn't match
-    while i >= 0 && haystack.unsafe_charcode_at(i) != needle_first {
+    while i >= 0 && haystack.unsafe_get(i) != needle_first {
       i -= 1
     }
     if i >= 0 {
       // Check remaining charcodes for full match
       for j in 1..<needle_len {
-        if haystack.unsafe_charcode_at(i + j) != needle.unsafe_charcode_at(j) {
+        if haystack.unsafe_get(i + j) != needle.unsafe_get(j) {
           break
         }
       } else {
@@ -218,14 +219,14 @@ fn boyer_moore_horspool_rev_find(
   guard haystack_len >= needle_len else { return None }
   let skip_table = FixedArray::make(1 << 8, needle_len)
   for i = needle_len - 1; i > 0; i = i - 1 {
-    skip_table[needle.unsafe_charcode_at(i) & 0xFF] = i
+    skip_table[needle.unsafe_get(i).to_int() & 0xFF] = i
   }
   for i = haystack_len - needle_len
       i >= 0
-      i = i - skip_table[haystack.unsafe_charcode_at(i) & 0xFF] {
+      i = i - skip_table[haystack.unsafe_get(i).to_int() & 0xFF] {
     // Check all charcodes for match at current position
     for j in 0..<needle_len {
-      if haystack.unsafe_charcode_at(i + j) != needle.unsafe_charcode_at(j) {
+      if haystack.unsafe_get(i + j) != needle.unsafe_get(j) {
         break
       }
     } else {
@@ -593,7 +594,7 @@ pub fn StringView::contains_char(self : StringView, c : Char) -> Bool {
   if c <= 0xFFFF {
     // Search BMP
     for i in 0..<len {
-      if self.unsafe_charcode_at(i) == c {
+      if self.unsafe_get(i).to_int() == c {
         return true
       }
     }
@@ -607,9 +608,9 @@ pub fn StringView::contains_char(self : StringView, c : Char) -> Bool {
     // Search surrogate pair
     let mut i = 0
     while i < len - 1 {
-      if self.unsafe_charcode_at(i) == high {
+      if self.unsafe_get(i).to_int() == high {
         i += 1
-        if self.unsafe_charcode_at(i) == low {
+        if self.unsafe_get(i).to_int() == low {
           return true
         }
       }
@@ -1594,7 +1595,7 @@ test "rev_fold with raise" {
 #deprecated("The return type is about to change to `UInt16?` in a future release. Please check boundaries manually and use `String::code_unit_at` instead.", skip_current_package=true)
 pub fn String::get(self : String, idx : Int) -> Int? {
   guard idx >= 0 && idx < self.length() else { return None }
-  Some(self.unsafe_charcode_at(idx))
+  Some(self.unsafe_get(idx).to_int())
 }
 
 ///|
@@ -1603,7 +1604,7 @@ pub fn String::get(self : String, idx : Int) -> Int? {
 #deprecated("The return type is about to change to `UInt16?` in a future release. Please check boundaries manually and use `StringView::code_unit_at` instead.", skip_current_package=true)
 pub fn StringView::get(self : StringView, idx : Int) -> Int? {
   guard idx >= 0 && idx < self.length() else { return None }
-  Some(self.unsafe_charcode_at(idx))
+  Some(self.unsafe_get(idx).to_int())
 }
 
 ///|
@@ -1639,12 +1640,12 @@ test "View::get basic cases" {
 /// of bounds or the index splits a surrogate pair.
 pub fn String::get_char(self : String, idx : Int) -> Char? {
   guard idx >= 0 && idx < self.length() else { return None }
-  let c = self.unsafe_charcode_at(idx)
+  let c = self.unsafe_get(idx)
   if c.is_leading_surrogate() {
     guard idx + 1 < self.length() else { return None }
-    let next = self.unsafe_charcode_at(idx + 1)
+    let next = self.unsafe_get(idx + 1)
     if next.is_trailing_surrogate() {
-      Some(code_point_of_surrogate_pair(c, next))
+      Some(code_point_of_surrogate_pair(c.to_int(), next.to_int()))
     } else {
       None
     }
@@ -1660,12 +1661,12 @@ pub fn String::get_char(self : String, idx : Int) -> Char? {
 /// of bounds or the index splits a surrogate pair.
 pub fn StringView::get_char(self : StringView, idx : Int) -> Char? {
   guard idx >= 0 && idx < self.length() else { return None }
-  let c = self.unsafe_charcode_at(idx)
+  let c = self.unsafe_get(idx)
   if c.is_leading_surrogate() {
     guard idx + 1 < self.length() else { return None }
-    let next = self.unsafe_charcode_at(idx + 1)
+    let next = self.unsafe_get(idx + 1)
     if next.is_trailing_surrogate() {
-      Some(code_point_of_surrogate_pair(c, next))
+      Some(code_point_of_surrogate_pair(c.to_int(), next.to_int()))
     } else {
       None
     }

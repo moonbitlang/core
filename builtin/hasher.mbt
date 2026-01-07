@@ -388,7 +388,7 @@ pub fn Hasher::combine_bytes(self : Hasher, value : Bytes) -> Unit {
 /// ```
 pub fn Hasher::combine_string(self : Hasher, value : String) -> Unit {
   for i in 0..<value.length() {
-    self.combine_uint(value.unsafe_charcode_at(i).reinterpret_as_uint())
+    self.combine_uint(value.unsafe_get(i).to_int().reinterpret_as_uint())
   }
 }
 
@@ -506,7 +506,7 @@ pub impl Hash for StringView with hash_combine(
 ) -> Unit {
   let str = self.str()
   for i in self.start()..<self.end() {
-    hasher.combine_uint(str.unsafe_charcode_at(i).reinterpret_as_uint())
+    hasher.combine_uint(str.unsafe_get(i).to_int().reinterpret_as_uint())
   }
 }
 

@@ -1016,11 +1016,7 @@ pub fn BigInt::from_string(input : String) -> BigInt {
   if len == 0 {
     abort("empty string")
   }
-  let sign : Sign = if input.unsafe_charcode_at(0) == '-' {
-    Negative
-  } else {
-    Positive
-  }
+  let sign : Sign = if input.unsafe_get(0) == '-' { Negative } else { Positive }
   let mut b_len = (
       unchecked_double_to_int(len.to_double() / decimal_ratio) +
       1 +
@@ -1034,7 +1030,7 @@ pub fn BigInt::from_string(input : String) -> BigInt {
       Negative => 1
       Positive => 0
     })..<input.length() {
-    let x = input.unsafe_charcode_at(i) - '0'
+    let x = input.unsafe_get(i).to_int() - '0'.to_int()
     if x < 0 || x > 9 {
       abort("invalid character")
     }
@@ -1094,7 +1090,7 @@ pub fn BigInt::from_hex(input : String) -> BigInt {
   if len == 0 {
     abort("empty string")
   }
-  let (sign, number_len) = if input.unsafe_charcode_at(0) == '-' {
+  let (sign, number_len) = if input.unsafe_get(0) == '-' {
     (Negative, len - 1)
   } else {
     (Positive, len)
@@ -1108,13 +1104,13 @@ pub fn BigInt::from_hex(input : String) -> BigInt {
     let start = len - quotient * nb_char - mod
     for i in 0..<mod {
       b[b_len - 1] = (b[b_len - 1] << 4) |
-        char_from_hex(input.unsafe_charcode_at(start + i))
+        char_from_hex(input.unsafe_get(start + i).to_int())
     }
   }
   for i in 0..<quotient {
     let start = len - (i + 1) * nb_char
     for j in 0..<nb_char {
-      b[i] = (b[i] << 4) | char_from_hex(input.unsafe_charcode_at(start + j))
+      b[i] = (b[i] << 4) | char_from_hex(input.unsafe_get(start + j).to_int())
     }
   }
   while b[b_len - 1] == 0 && b_len > 1 {

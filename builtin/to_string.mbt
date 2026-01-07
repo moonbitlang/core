@@ -42,24 +42,15 @@ fn int_to_string_hex(
     let byte_val = n.land(0xFFU).reinterpret_as_int()
     let hi = byte_val / 16
     let lo = byte_val % 16
-    buffer.unsafe_set(
-      digit_start + offset,
-      ALPHABET.unsafe_charcode_at(hi).to_uint16(),
-    )
-    buffer.unsafe_set(
-      digit_start + offset + 1,
-      ALPHABET.unsafe_charcode_at(lo).to_uint16(),
-    )
+    buffer.unsafe_set(digit_start + offset, ALPHABET.unsafe_get(hi))
+    buffer.unsafe_set(digit_start + offset + 1, ALPHABET.unsafe_get(lo))
     n = n >> 8
   }
 
   // Handle remaining single hex digit
   if offset == 1 {
     let nibble = n.land(0xFU).reinterpret_as_int()
-    buffer.unsafe_set(
-      digit_start,
-      ALPHABET.unsafe_charcode_at(nibble).to_uint16(),
-    )
+    buffer.unsafe_set(digit_start, ALPHABET.unsafe_get(nibble))
   }
 }
 
@@ -83,10 +74,7 @@ fn int_to_string_generic(
     while n > 0U {
       offset = offset - 1
       let digit = n.land(mask).reinterpret_as_int()
-      buffer.unsafe_set(
-        digit_start + offset,
-        ALPHABET.unsafe_charcode_at(digit).to_uint16(),
-      )
+      buffer.unsafe_set(digit_start + offset, ALPHABET.unsafe_get(digit))
       n = n >> shift
     }
   } else {
@@ -95,10 +83,7 @@ fn int_to_string_generic(
       offset = offset - 1
       let q = n / base
       let digit = (n - q * base).reinterpret_as_int()
-      buffer.unsafe_set(
-        digit_start + offset,
-        ALPHABET.unsafe_charcode_at(digit).to_uint16(),
-      )
+      buffer.unsafe_set(digit_start + offset, ALPHABET.unsafe_get(digit))
       n = q
     }
   }
@@ -475,24 +460,15 @@ fn int64_to_string_hex(
     let byte_val = n.land(0xFFUL).to_int()
     let hi = byte_val / 16
     let lo = byte_val % 16
-    buffer.unsafe_set(
-      digit_start + offset,
-      ALPHABET.unsafe_charcode_at(hi).to_uint16(),
-    )
-    buffer.unsafe_set(
-      digit_start + offset + 1,
-      ALPHABET.unsafe_charcode_at(lo).to_uint16(),
-    )
+    buffer.unsafe_set(digit_start + offset, ALPHABET.unsafe_get(hi))
+    buffer.unsafe_set(digit_start + offset + 1, ALPHABET.unsafe_get(lo))
     n = n >> 8
   }
 
   // Handle remaining single hex digit
   if offset == 1 {
     let nibble = n.land(0xFUL).to_int()
-    buffer.unsafe_set(
-      digit_start,
-      ALPHABET.unsafe_charcode_at(nibble).to_uint16(),
-    )
+    buffer.unsafe_set(digit_start, ALPHABET.unsafe_get(nibble))
   }
 }
 
@@ -516,10 +492,7 @@ fn int64_to_string_generic(
     while n > 0UL {
       offset = offset - 1
       let digit = n.land(mask).to_int()
-      buffer.unsafe_set(
-        digit_start + offset,
-        ALPHABET.unsafe_charcode_at(digit).to_uint16(),
-      )
+      buffer.unsafe_set(digit_start + offset, ALPHABET.unsafe_get(digit))
       n = n >> shift
     }
   } else {
@@ -528,10 +501,7 @@ fn int64_to_string_generic(
       offset = offset - 1
       let q = n / base
       let digit = (n - q * base).to_int()
-      buffer.unsafe_set(
-        digit_start + offset,
-        ALPHABET.unsafe_charcode_at(digit).to_uint16(),
-      )
+      buffer.unsafe_set(digit_start + offset, ALPHABET.unsafe_get(digit))
       n = q
     }
   }
