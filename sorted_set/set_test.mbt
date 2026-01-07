@@ -127,17 +127,13 @@ test "iter early termination in left subtree" {
   // Create an iterator that terminates when it finds value 3
   // Since the tree is sorted and 3 is in the left subtree of 5,
   // this should cause go(left) to return IterEnd, triggering line 381
-  let _ = set
-    .iter()
-    .run(x => {
-      count += 1
-      if x == 3 {
-        found_target = true
-        IterEnd // This should propagate up and trigger the uncovered line
-      } else {
-        IterContinue
-      }
-    })
+  for x in set.iter() {
+    count += 1
+    if x == 3 {
+      found_target = true
+      break // This should propagate up and trigger the uncovered line
+    }
+  }
   inspect(found_target, content="true")
   inspect(count, content="2") // Should visit 1, then 3 and terminate
 }

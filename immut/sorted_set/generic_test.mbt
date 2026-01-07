@@ -30,14 +30,13 @@ test "compare with shared prefix" {
 test "iter early termination - value" {
   let set = @sorted_set.from_array([1, 2, 3])
   let mut count = 0
-  let _ = set
-    .iter()
-    .run(x => if x == 2 {
-      IterEnd
+  for x in set {
+    if x == 2 {
+      break
     } else {
       count = count + 1
-      IterContinue
-    })
+    }
+  }
   inspect(count, content="1")
 }
 
@@ -59,14 +58,12 @@ test "iter with early termination on left subtree" {
   // Create an iterator that stops after processing the left subtree
   let mut count = 0
   let iter = set.iter()
-  let _ = iter.run((_ : Int) => {
+  for _ in iter {
     count = count + 1
     if count == 1 {
-      IterEnd
-    } else {
-      IterContinue
+      break
     }
-  })
+  }
 
   // Verify that we stopped after processing the first element
   inspect(count, content="1")
