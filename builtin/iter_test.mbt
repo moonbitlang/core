@@ -343,15 +343,9 @@ test "concat" {
 }
 
 ///|
-#warnings("-deprecated")
 test "collect" {
   let arr = ['1', '2', '3', '4', '5']
-  let iter = Iter::new(yield_ => {
-    for i in 0..<arr.length() {
-      yield_(arr[i]) |> ignore
-    }
-    IterContinue
-  })
+  let iter = arr.iter()
   let vec = iter.collect()
   assert_eq(vec, ['1', '2', '3', '4', '5'])
 }
@@ -494,15 +488,8 @@ test "intersperse stops on separator" {
 // For testing purposes
 
 ///|
-#warnings("-deprecated")
 fn[T] test_from_array(arr : Array[T]) -> Iter[T] {
-  Iter::new(yield_ => for i in 0..<arr.length() {
-    if yield_(arr[i]) is IterEnd {
-      break IterEnd
-    }
-  } else {
-    IterContinue
-  })
+  arr.iter()
 }
 
 ///|
@@ -534,18 +521,7 @@ enum Tree {
 ///|
 #warnings("-deprecated")
 fn Tree::iter(self : Tree) -> Iter[Int] {
-  Iter::new(yield_ => match self {
-    Leaf(x) => yield_(x)
-    Node(l, v, r) =>
-      // ([ .. l, v , .. r]).apply(f)
-      if l.iter().run(yield_) is IterEnd {
-        IterEnd
-      } else if yield_(v) is IterEnd {
-        IterEnd
-      } else {
-        r.iter().run(yield_)
-      }
-  })
+  self.iterator().iter()
 }
 
 ///|
