@@ -106,24 +106,21 @@ pub impl[T : Debug] Debug for Array[T] with to_repr(self) {
 
 ///|
 pub impl[T : Debug] Debug for ArrayView[T] with to_repr(self) {
-  Repr::opaque_("ArrayView", Repr::array(self.to_array().map(Debug::to_repr)))
+  Repr::opaque_("ArrayView", Repr::array(self.map(Debug::to_repr)))
 }
 
 ///|
 pub impl[T : Debug] Debug for FixedArray[T] with to_repr(self) {
   // `FixedArray` can be viewed as `ArrayView` via slicing.
   let view : ArrayView[T] = self[:]
-  Repr::opaque_("FixedArray", Repr::array(view.to_array().map(Debug::to_repr)))
+  Repr::opaque_("FixedArray", Repr::array(view.map(Debug::to_repr)))
 }
 
 ///|
 pub impl[T : Debug] Debug for ReadOnlyArray[T] with to_repr(self) {
   // `ReadOnlyArray` can be viewed as `ArrayView` via slicing.
   let view : ArrayView[T] = self[:]
-  Repr::opaque_(
-    "ReadOnlyArray",
-    Repr::array(view.to_array().map(Debug::to_repr)),
-  )
+  Repr::opaque_("ReadOnlyArray", Repr::array(view.map(Debug::to_repr)))
 }
 
 ///|
@@ -198,10 +195,7 @@ pub impl[A, B] Debug for Iterator2[A, B] with to_repr(_) {
 
 ///|
 pub impl[T : Debug] Debug for MutArrayView[T] with to_repr(self) {
-  Repr::opaque_(
-    "MutArrayView",
-    Repr::array(self[:].to_array().map(Debug::to_repr)),
-  )
+  Repr::opaque_("MutArrayView", Repr::array(self[:].map(Debug::to_repr)))
 }
 
 ///|
