@@ -86,61 +86,6 @@ test "dump" {
 }
 
 ///|
-/// Returns the Unicode code point at the given index.
-///
-/// This method counts Unicode code points (characters) rather than UTF-16 code units.
-/// It properly handles surrogate pairs to return the correct Unicode character.
-///
-/// # Examples
-///
-/// ```mbt check
-/// test {
-///   let s = "Hello🤣"
-///   inspect(s.get_char(0).unwrap(), content="H")
-///   inspect(s.get_char(5).unwrap(), content="🤣")
-/// }
-/// ```
-///
-/// # Panics
-///
-/// Panics if:
-/// - The index is out of bounds
-/// - The string contains an invalid surrogate pair
-#deprecated("The index will be changed to utf16 index. If you want to access n-th character, use `str.iter().nth(n).unwrap()` instead.")
-pub fn String::codepoint_at(self : String, index : Int) -> Char {
-  let charcode_len = self.length()
-  guard index >= 0 && index < charcode_len else { abort("index out of bounds") }
-  for char_count = 0, utf16_offset = 0
-      char_count < charcode_len && utf16_offset < index
-      char_count = char_count + 1, utf16_offset = utf16_offset + 1 {
-    let c1 = self.unsafe_get(char_count)
-    if c1.is_leading_surrogate() && char_count + 1 < charcode_len {
-      let c2 = self.unsafe_get(char_count + 1)
-      if c2.is_trailing_surrogate() {
-        continue char_count + 2, utf16_offset + 1
-      } else {
-        abort("invalid surrogate pair")
-      }
-    }
-  } else {
-    guard utf16_offset == index && char_count < charcode_len else {
-      abort("index out of bounds")
-    }
-    let c1 = self.unsafe_get(char_count)
-    if c1.is_leading_surrogate() && char_count + 1 < charcode_len {
-      let c2 = self.unsafe_get(char_count + 1)
-      if c2.is_trailing_surrogate() {
-        code_point_of_surrogate_pair(c1.to_int(), c2.to_int())
-      } else {
-        abort("invalid surrogate pair")
-      }
-    } else {
-      c1.unsafe_to_char()
-    }
-  }
-}
-
-///|
 /// Returns the Unicode code point at the given index without bounds checking.
 #deprecated("Use `s.get_char(i).unwrap()` instead", skip_current_package=true)
 pub fn String::unsafe_char_at(self : String, index : Int) -> Char {

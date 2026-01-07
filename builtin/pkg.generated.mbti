@@ -699,8 +699,6 @@ pub fn String::at(String, Int) -> UInt16
 pub fn String::char_length(String, start_offset? : Int, end_offset? : Int) -> Int
 pub fn String::char_length_eq(String, Int, start_offset? : Int, end_offset? : Int) -> Bool
 pub fn String::char_length_ge(String, Int, start_offset? : Int, end_offset? : Int) -> Bool
-#deprecated
-pub fn String::codepoint_at(String, Int) -> Char
 pub fn String::contains(String, StringView) -> Bool
 pub fn String::contains_any(String, chars~ : StringView) -> Bool
 pub fn String::contains_char(String, Char) -> Bool
