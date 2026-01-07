@@ -223,6 +223,7 @@ pub fn inspect(
 pub(all) suberror SnapshotError String
 
 ///|
+#deprecated
 pub(all) suberror BenchError String
 
 ///|
