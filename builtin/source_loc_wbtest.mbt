@@ -32,6 +32,12 @@ test "SourceLocRepr::parse" {
       #|{"pkg":"path/to/pkg","filename":"/中文路径/中文文件.mbt","start_line":1,"start_column":1,"end_line":2,"end_column":2}
     ),
   )
+  inspect(
+    SourceLocRepr::parse("@pkg:dir:123/sub:file.mbt:10:20-30:40").to_json_string(),
+    content=(
+      #|{"pkg":"pkg","filename":"dir:123/sub:file.mbt","start_line":10,"start_column":20,"end_line":30,"end_column":40}
+    ),
+  )
 }
 
 ///|
