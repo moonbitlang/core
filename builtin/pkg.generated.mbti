@@ -285,8 +285,6 @@ pub fn[A, B] Iter::map_while(Self[A], (A) -> B?) -> Self[B]
 pub fn[T, R] Iter::mapi(Self[T], (Int, T) -> R) -> Self[R]
 pub fn[T : Compare] Iter::maximum(Self[T]) -> T?
 pub fn[T : Compare] Iter::minimum(Self[T]) -> T?
-#deprecated
-pub fn[T] Iter::new(((T) -> IterResult) -> IterResult) -> Self[T]
 pub fn[T] Iter::nth(Self[T], Int) -> T?
 pub fn[T] Iter::peek(Self[T]) -> T?
 #deprecated
@@ -309,8 +307,6 @@ pub fn[A, B] Iter2::concat(Self[A, B], Self[A, B]) -> Self[A, B]
 pub fn[A, B] Iter2::each(Self[A, B], (A, B) -> Unit) -> Unit
 pub fn[A, B] Iter2::iter(Self[A, B]) -> Iter[(A, B)]
 pub fn[A, B] Iter2::iter2(Self[A, B]) -> Self[A, B]
-#deprecated
-pub fn[A, B] Iter2::new(((A, B) -> IterResult) -> IterResult) -> Self[A, B]
 pub fn[A, B] Iter2::run(Self[A, B], (A, B) -> IterResult) -> IterResult
 pub fn[A, B] Iter2::to_array(Self[A, B]) -> Array[(A, B)]
 pub impl[A : Show, B : Show] Show for Iter2[A, B]

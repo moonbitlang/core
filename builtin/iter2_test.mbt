@@ -43,12 +43,7 @@ test "Iter2::concat" {
 ///|
 #warnings("-deprecated")
 test "Iter2::concat with early return" {
-  let first = Iter2::new(y => {
-    for i, v in "abcde" {
-      ignore(y(i, v))
-    }
-    IterEnd
-  })
+  let first = "abcde".iter2()
   inspect(
     first.concat("fghij".iter2()).to_array(),
     content="[(0, 'a'), (1, 'b'), (2, 'c'), (3, 'd'), (4, 'e')]",
