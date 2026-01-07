@@ -161,20 +161,8 @@ test "HAMT::iterator2" {
 }
 
 ///|
-#warnings("-deprecated")
 test "HAMT::from_iter" {
-  let iter = Iter::new(fn(yield_) {
-    if yield_((1, "one")) is IterEnd {
-      return IterEnd
-    }
-    if yield_((2, "two")) is IterEnd {
-      return IterEnd
-    }
-    if yield_((3, "three")) is IterEnd {
-      return IterEnd
-    }
-    IterContinue
-  })
+  let iter = [(1, "one"), (2, "two"), (3, "three")].iter()
   let map = @hashmap.from_iter(iter)
   assert_eq(map.get(1), Some("one"))
   assert_eq(map.get(2), Some("two"))

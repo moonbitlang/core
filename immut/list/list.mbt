@@ -1243,29 +1243,27 @@ pub fn[X] default() -> T[X] {
 ///|
 #deprecated("use `@list` instead")
 pub fn[A] T::iter(self : T[A]) -> Iter[A] {
-  Iter::new(yield_ => loop self {
-    Nil => IterContinue
+  let mut next = self
+  Iterator::new(() => match next {
+    Nil => None
     Cons(head, tail) => {
-      if yield_(head) is IterEnd {
-        break IterEnd
-      }
-      continue tail
+      next = tail
+      Some(head)
     }
-  })
+  }).iter()
 }
 
 ///|
 #deprecated("use `@list` instead")
 pub fn[A] T::iter2(self : T[A]) -> Iter2[Int, A] {
-  Iter2::new(yield_ => loop (self, 0) {
-    (Nil, _) => IterEnd
-    (Cons(head, tail), i) => {
-      if yield_(i, head) is IterEnd {
-        break IterEnd
-      }
-      continue (tail, i + 1)
+  let mut next = self
+  Iterator::new(() => match next {
+    Nil => None
+    Cons(head, tail) => {
+      next = tail
+      Some(head)
     }
-  })
+  }).iter2()
 }
 
 ///|
