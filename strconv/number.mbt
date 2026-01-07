@@ -165,19 +165,14 @@ fn parse_inf_nan(rest : StringView) -> Double raise StrConvError {
     ['-', .. rest] => (false, rest)
     ['+', .. rest] | rest => (true, rest)
   }
-  match rest {
-    ['n' | 'N', 'a' | 'A', 'n' | 'N'] => @double.not_a_number
-    ['i' | 'I', 'n' | 'N', 'f' | 'F', .. rest] => {
-      guard rest
-        is ([] | ['i' | 'I', 'n' | 'N', 'i' | 'I', 't' | 'T', 'y' | 'Y']) else {
-        syntax_err()
-      }
+  lexmatch rest {
+    "(?i:nan)" => @double.not_a_number
+    "(?i:inf(inity)?)" =>
       if pos {
         @double.infinity
       } else {
         @double.neg_infinity
       }
-    }
     _ => syntax_err()
   }
 }
