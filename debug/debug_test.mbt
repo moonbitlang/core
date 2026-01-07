@@ -505,8 +505,6 @@ test "core data structures Debug implementations" {
   )
 
   // Test immut containers
-  let immut_lst = @immut_list.from_array([1, 2, 3])
-  @debug.debug_inspect(immut_lst, content="<List: [1, 2, 3]>")
   let immut_arr = @immut_array.from_array([1, 2, 3])
   @debug.debug_inspect(immut_arr, content="<Array: [1, 2, 3]>")
   let immut_pq = @immut_priority_queue.from_array([3, 1, 2])

@@ -11,7 +11,7 @@
     "moonbitlang/core/queue",
     "moonbitlang/core/priority_queue",
     "moonbitlang/core/buffer",
-    { "path": "moonbitlang/core/immut/list", "alias": "immut_list" },
+    "moonbitlang/core/ref",
     { "path": "moonbitlang/core/immut/array", "alias": "immut_array" },
     { "path": "moonbitlang/core/immut/priority_queue", "alias": "immut_priority_queue" },
     { "path": "moonbitlang/core/immut/sorted_map", "alias": "immut_sorted_map" },
