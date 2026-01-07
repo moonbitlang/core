@@ -17,68 +17,66 @@ fn ParseContext::lex_value(
   ctx : ParseContext,
   allow_rbracket~ : Bool,
 ) -> Token raise ParseError {
-  for {
-    match ctx.read_char() {
-      Some('\t' | ' ' | '\n' | '\r') => continue
-      Some('{') => return LBrace
-      Some('[') => return LBracket
-      Some(']') =>
-        if allow_rbracket {
-          return RBracket
-        } else {
-          ctx.invalid_char(shift=-1)
+  ctx.lex_skip_whitespace()
+  match ctx.read_char() {
+    Some('{') => return LBrace
+    Some('[') => return LBracket
+    Some(']') =>
+      if allow_rbracket {
+        return RBracket
+      } else {
+        ctx.invalid_char(shift=-1)
+      }
+    Some('n') => {
+      ctx.expect_ascii_char('u')
+      ctx.expect_ascii_char('l')
+      ctx.expect_ascii_char('l')
+      return Null
+    }
+    Some('t') => {
+      ctx.expect_ascii_char('r')
+      ctx.expect_ascii_char('u')
+      ctx.expect_ascii_char('e')
+      return True
+    }
+    Some('f') => {
+      ctx.expect_ascii_char('a')
+      ctx.expect_ascii_char('l')
+      ctx.expect_ascii_char('s')
+      ctx.expect_ascii_char('e')
+      return False
+    }
+    Some('-') =>
+      match ctx.read_char() {
+        Some('0') => {
+          let (n, repr) = ctx.lex_zero(start=ctx.offset - 2)
+          return Number(n, repr.map(_.to_string()))
         }
-      Some('n') => {
-        ctx.expect_ascii_char('u')
-        ctx.expect_ascii_char('l')
-        ctx.expect_ascii_char('l')
-        return Null
-      }
-      Some('t') => {
-        ctx.expect_ascii_char('r')
-        ctx.expect_ascii_char('u')
-        ctx.expect_ascii_char('e')
-        return True
-      }
-      Some('f') => {
-        ctx.expect_ascii_char('a')
-        ctx.expect_ascii_char('l')
-        ctx.expect_ascii_char('s')
-        ctx.expect_ascii_char('e')
-        return False
-      }
-      Some('-') =>
-        match ctx.read_char() {
-          Some('0') => {
-            let (n, repr) = ctx.lex_zero(start=ctx.offset - 2)
+        Some(c2) => {
+          if c2 is ('1'..='9') {
+            let (n, repr) = ctx.lex_decimal_integer(start=ctx.offset - 2)
             return Number(n, repr.map(_.to_string()))
           }
-          Some(c2) => {
-            if c2 is ('1'..='9') {
-              let (n, repr) = ctx.lex_decimal_integer(start=ctx.offset - 2)
-              return Number(n, repr.map(_.to_string()))
-            }
-            ctx.invalid_char(shift=-1)
-          }
-          None => raise InvalidEof
+          ctx.invalid_char(shift=-1)
         }
-      Some('0') => {
-        let (n, repr) = ctx.lex_zero(start=ctx.offset - 1)
-        return Number(n, repr.map(_.to_string()))
+        None => raise InvalidEof
       }
-      Some('1'..='9') => {
-        let (n, repr) = ctx.lex_decimal_integer(start=ctx.offset - 1)
-        return Number(n, repr.map(_.to_string()))
-      }
-      Some('"') => {
-        let s = ctx.lex_string()
-        return String(s)
-      }
-      Some(c) => {
-        let shift = -c.utf16_len()
-        ctx.invalid_char(shift~)
-      }
-      None => raise InvalidEof
+    Some('0') => {
+      let (n, repr) = ctx.lex_zero(start=ctx.offset - 1)
+      return Number(n, repr.map(_.to_string()))
     }
+    Some('1'..='9') => {
+      let (n, repr) = ctx.lex_decimal_integer(start=ctx.offset - 1)
+      return Number(n, repr.map(_.to_string()))
+    }
+    Some('"') => {
+      let s = ctx.lex_string()
+      return String(s)
+    }
+    Some(c) => {
+      let shift = -c.utf16_len()
+      ctx.invalid_char(shift~)
+    }
+    None => raise InvalidEof
   }
 }

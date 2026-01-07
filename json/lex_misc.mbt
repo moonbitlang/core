@@ -115,15 +115,10 @@ test "expect_char with surrogate pair" {
 
 ///|
 fn ParseContext::lex_skip_whitespace(ctx : ParseContext) -> Unit {
-  for {
-    match ctx.read_char() {
-      Some('\t' | ' ' | '\n' | '\r') => continue
-      Some(_) => {
-        ctx.offset -= 1
-        break
-      }
-      None => break
-    }
+  let rest = ctx.input.view(start_offset=ctx.offset, end_offset=ctx.end_offset)
+  lexmatch rest {
+    ("[ \t\r\n]+", next) => ctx.offset = ctx.end_offset - next.length()
+    _ => ()
   }
 }
 
