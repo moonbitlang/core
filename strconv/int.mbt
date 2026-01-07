@@ -158,11 +158,11 @@ fn check_underscore(str : StringView) -> Bool {
   }
 
   // base prefix
-  let (rest, allow_underscore, hex) = match rest {
-    ['0', 'x' | 'X', .. rest] => (rest, true, true)
-    ['0', 'o' | 'O', .. rest] => (rest, true, false)
-    ['0', 'b' | 'B', .. rest] => (rest, true, false)
-    rest => (rest, false, false)
+  let (rest, allow_underscore, hex) = lexmatch rest {
+    ("0[xX]", rest) => (rest, true, true)
+    ("0[oO]", rest) => (rest, true, false)
+    ("0[bB]", rest) => (rest, true, false)
+    _ => (rest, false, false)
   }
 
   // 'e' and 'E' are valid hex digits
@@ -194,18 +194,6 @@ fn check_underscore(str : StringView) -> Bool {
         // Non-digit found (not after underscore) - continue but don't allow underscores
         continue (rest, false, false)
       }
-  }
-}
-
-// Determine the base of the value.
-
-///|
-fn determine_base(s : String) -> Int {
-  match s {
-    ['0', 'x' | 'X', ..] => 16
-    ['0', 'o' | 'O', ..] => 8
-    ['0', 'b' | 'B', ..] => 2
-    _ => 10
   }
 }
 
@@ -241,17 +229,6 @@ test "check_underscore" {
   assert_false(check_underscore("1__2_3"))
   assert_false(check_underscore("_123"))
   assert_false(check_underscore("123_"))
-}
-
-///|
-test "determine_base" {
-  inspect(determine_base("1234"), content="10")
-  inspect(determine_base("0x1234"), content="16")
-  inspect(determine_base("0X1234"), content="16")
-  inspect(determine_base("0o1234"), content="8")
-  inspect(determine_base("0O1234"), content="8")
-  inspect(determine_base("0b1010"), content="2")
-  inspect(determine_base("0B1010"), content="2")
 }
 
 ///|
