@@ -18,6 +18,9 @@ test "parse error branches" {
   guard (try? @json.parse("")) is Err(InvalidEof) else {
     fail("expected InvalidEof for empty input")
   }
+  guard (try? @json.parse(" \t\r\n")) is Err(InvalidEof) else {
+    fail("expected InvalidEof for whitespace-only input")
+  }
   guard (try? @json.parse("@")) is Err(InvalidChar(_, _)) else {
     fail("expected InvalidChar for invalid start")
   }

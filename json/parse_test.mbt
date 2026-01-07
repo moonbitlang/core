@@ -225,6 +225,24 @@ test "parses whitespace" {
   let json = test_parse("{\t \n\r}")
   assert_eq(json, Json::object({}))
 }
+
+///|
+test "parses leading and trailing whitespace" {
+  let json = test_parse(" \n\t[1, 2]\r ")
+  assert_eq(json, Json::array([Json::number(1.0), Json::number(2.0)]))
+}
+
+///|
+test "parses whitespace around separators" {
+  let json = test_parse("{\"a\" \n:\t1 ,\r\"b\" : [ true , false ] }")
+  assert_eq(
+    json,
+    Json::object({
+      "a": Json::number(1.0),
+      "b": Json::array([Json::boolean(true), Json::boolean(false)]),
+    }),
+  )
+}
 //endregion
 
 ///|
