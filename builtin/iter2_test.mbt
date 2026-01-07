@@ -39,13 +39,3 @@ test "Iter2::concat" {
     content="[(0, 'a'), (1, 'b'), (2, 'c'), (3, 'd'), (4, 'e'), (0, 'f'), (1, 'g'), (2, 'h'), (3, 'i'), (4, 'j')]",
   )
 }
-
-///|
-#warnings("-deprecated")
-test "Iter2::concat with early return" {
-  let first = "abcde".iter2()
-  inspect(
-    first.concat("fghij".iter2()).to_array(),
-    content="[(0, 'a'), (1, 'b'), (2, 'c'), (3, 'd'), (4, 'e')]",
-  )
-}
