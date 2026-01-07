@@ -7,6 +7,7 @@ import {
   "moonbitlang/core/immut/array",
   "moonbitlang/core/immut/sorted_map",
   "moonbitlang/core/immut/sorted_set",
+  "moonbitlang/core/list",
   "moonbitlang/core/queue",
 }
 
@@ -66,11 +67,10 @@ pub impl[K : Debug] Debug for @moonbitlang/core/hashset.HashSet[K]
 pub impl[A : Debug] Debug for @array.T[A]
 pub impl[K : Debug, V : Debug] Debug for @moonbitlang/core/immut/hashmap.HashMap[K, V]
 pub impl[K : Debug] Debug for @moonbitlang/core/immut/hashset.HashSet[K]
-pub impl[A : Debug] Debug for @moonbitlang/core/immut/list.T[A]
 pub impl[A : Debug + Compare] Debug for @moonbitlang/core/immut/priority_queue.PriorityQueue[A]
 pub impl[K : Debug, V : Debug] Debug for @sorted_map.SortedMap[K, V]
 pub impl[K : Debug] Debug for @sorted_set.SortedSet[K]
-pub impl[A : Debug] Debug for @moonbitlang/core/list.List[A]
+pub impl[A : Debug] Debug for @list.List[A]
 pub impl[A : Debug + Compare] Debug for @moonbitlang/core/priority_queue.PriorityQueue[A]
 pub impl[A : Debug] Debug for @queue.Queue[A]
 pub impl[A : Debug, B : Debug] Debug for (A, B)
