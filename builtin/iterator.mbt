@@ -18,7 +18,7 @@
 /// to advance iteration.
 /// All read operations on `Iterator` will advance the iterator,
 /// and would give different result when called multiple times.
-#alias(Iterator, deprecated)
+#alias(Iterator, deprecated="The name `Iterator` is deprecated, use `Iter` instead. Note that if you have defined `iterator()` method to support `for .. in` loop, you should also rename `iterator()` to `iter()`. See https://github.com/moonbitlang/core/pull/3127 for more details.")
 struct Iter[X](() -> X?)
 
 ///|
@@ -853,7 +853,7 @@ pub fn[X : Compare] Iter::minimum(self : Iter[X]) -> X? {
 /// This type is used for `for _, _ in ..` loop
 /// (`for .. in` loop with two loop variables),
 /// and should not be used directly in general.
-#alias(Iterator2, deprecated)
+#alias(Iterator2, deprecated="The name `Iterator2` is deprecated, use `Iter2` instead. Note that if you have defined `iterator2()` method to support `for .. in` loop, you should also rename `iterator2()` to `iter2()`. See https://github.com/moonbitlang/core/pull/3127 for more details.")
 pub(all) struct Iter2[X, Y](Iter[(X, Y)])
 
 ///|
