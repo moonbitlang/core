@@ -33,10 +33,14 @@ Define custom error types using `suberror`:
 
 ```mbt check
 ///|
-suberror ValidationError String
+suberror ValidationError {
+  ValidationError(String)
+}
 
 ///|
-suberror NetworkError String
+suberror NetworkError {
+  NetworkError(String)
+}
 
 ///|
 test "custom errors" {
@@ -78,7 +82,9 @@ The error package provides `Show` and `ToJson` implementations:
 
 ```mbt check
 ///|
-suberror MyError Int derive(ToJson)
+suberror MyError {
+  MyError(Int)
+} derive(ToJson)
 
 ///|
 test "error display and json" {
@@ -100,10 +106,14 @@ Handle errors at different levels of your application:
 
 ```mbt check
 ///|
-suberror ParseError String
+suberror ParseError {
+  ParseError(String)
+}
 
 ///|
-suberror FileError String
+suberror FileError {
+  FileError(String)
+}
 
 ///|
 test "error propagation" {
@@ -140,7 +150,9 @@ Use `protect` functions for resource cleanup:
 
 ```mbt check
 ///|
-suberror ResourceError String
+suberror ResourceError {
+  ResourceError(String)
+}
 
 ///|
 test "resource management" {
@@ -172,10 +184,14 @@ Combine multiple error-producing operations:
 
 ```mbt check
 ///|
-suberror ConfigError String
+suberror ConfigError {
+  ConfigError(String)
+}
 
 ///|
-suberror DatabaseError String
+suberror DatabaseError {
+  DatabaseError(String)
+}
 
 ///|
 test "error composition" {

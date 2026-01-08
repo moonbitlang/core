@@ -13,7 +13,9 @@
 // limitations under the License.
 
 ///|
-pub suberror Malformed BytesView
+pub suberror Malformed {
+  Malformed(BytesView)
+}
 
 ///|
 pub fn decode(

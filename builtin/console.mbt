@@ -56,7 +56,9 @@ pub fn[T : Show] println(input : T) -> Unit {
 ///   inspect(x, content="42") // Raises InspectError with detailed failure message
 /// }
 /// ```
-pub(all) suberror InspectError String
+pub(all) suberror InspectError {
+  InspectError(String)
+}
 
 ///|
 fn base64_encode(data : FixedArray[Byte]) -> String {
@@ -220,10 +222,14 @@ pub fn inspect(
 ///   }
 /// }
 /// ```
-pub(all) suberror SnapshotError String
+pub(all) suberror SnapshotError {
+  SnapshotError(String)
+}
 
 ///|
-pub(all) suberror BenchError String
+pub(all) suberror BenchError {
+  BenchError(String)
+}
 
 ///|
 test "panic error case of inspect" {

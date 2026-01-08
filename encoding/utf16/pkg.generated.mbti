@@ -9,7 +9,9 @@ pub fn decode_lossy(BytesView, ignore_bom? : Bool, endianness? : Endian) -> Stri
 pub fn encode(StringView, bom? : Bool, endianness? : Endian) -> Bytes
 
 // Errors
-pub suberror Malformed BytesView
+pub suberror Malformed {
+  Malformed(BytesView)
+}
 
 // Types and methods
 pub(all) enum Endian {

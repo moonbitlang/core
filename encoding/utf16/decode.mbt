@@ -13,7 +13,9 @@
 // limitations under the License.
 
 ///|
-pub suberror Malformed BytesView
+pub suberror Malformed {
+  Malformed(BytesView)
+}
 
 ///|
 /// The Unicode Replacement Character, which is used to replace invalid or unrecognized sequences during lossy decoding.

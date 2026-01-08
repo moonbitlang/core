@@ -13,7 +13,9 @@
 // limitations under the License.
 
 ///|
-pub(all) suberror JsonDecodeError (JsonPath, String) derive(Eq, Show, ToJson)
+pub(all) suberror JsonDecodeError {
+  JsonDecodeError((JsonPath, String))
+} derive(Eq, Show, ToJson)
 
 ///|
 /// Trait for types that can be converted from `Json`
