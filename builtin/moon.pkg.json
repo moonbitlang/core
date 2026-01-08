@@ -18,8 +18,7 @@
     "moonbitlang/core/float",
     "moonbitlang/core/quickcheck",
     "moonbitlang/core/test",
-    "moonbitlang/core/random",
-    "moonbitlang/core/int16"
+    "moonbitlang/core/random"
   ],
    "warn-list": "-test_unqualified_package",
   "targets": {
