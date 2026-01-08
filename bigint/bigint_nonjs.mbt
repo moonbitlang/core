@@ -1478,15 +1478,12 @@ pub impl BitAnd for BigInt with land(self : BigInt, other : BigInt) -> BigInt {
   // return the result
   let limbs = FixedArray::make(max_length - 1, 0U)
   limbs..unsafe_blit(0, x_limbs, 0, max_length - 1)
-  {
-    limbs,
-    sign: new_sign,
-    len: if self.len > other.len {
-      self.len
-    } else {
-      other.len
-    },
+  // Normalize len by finding the highest non-zero limb
+  let mut actual_len = max_length - 1
+  while actual_len > 1 && limbs[actual_len - 1] == 0U {
+    actual_len -= 1
   }
+  { limbs, sign: new_sign, len: actual_len }
 }
 
 ///|
@@ -1576,15 +1573,12 @@ pub impl BitOr for BigInt with lor(self : BigInt, other : BigInt) -> BigInt {
   // return the result
   let limbs = FixedArray::make(max_length - 1, 0U)
   limbs.unsafe_blit(0, x_limbs, 0, max_length - 1)
-  {
-    limbs,
-    sign: new_sign,
-    len: if self.len > other.len {
-      self.len
-    } else {
-      other.len
-    },
+  // Normalize len by finding the highest non-zero limb
+  let mut actual_len = max_length - 1
+  while actual_len > 1 && limbs[actual_len - 1] == 0U {
+    actual_len -= 1
   }
+  { limbs, sign: new_sign, len: actual_len }
 }
 
 ///|
@@ -1674,15 +1668,12 @@ pub impl BitXOr for BigInt with lxor(self : BigInt, other : BigInt) -> BigInt {
   // return the result
   let limbs = FixedArray::make(max_length - 1, 0U)
   limbs.unsafe_blit(0, x_limbs, 0, max_length - 1)
-  {
-    limbs,
-    sign: new_sign,
-    len: if self.len > other.len {
-      self.len
-    } else {
-      other.len
-    },
+  // Normalize len by finding the highest non-zero limb
+  let mut actual_len = max_length - 1
+  while actual_len > 1 && limbs[actual_len - 1] == 0U {
+    actual_len -= 1
   }
+  { limbs, sign: new_sign, len: actual_len }
 }
 
 ///|

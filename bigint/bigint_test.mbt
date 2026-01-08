@@ -604,6 +604,44 @@ test "land_5" {
 }
 
 ///|
+test "land_bug_24400320830243753476_and_1" {
+  // Issue: 24400320830243753476N & 1N caused runtime crash
+  // The number 24400320830243753476 is even (low bit is 0)
+  // AND with 1 should give 0, testing proper len normalization
+  let a = @bigint.BigInt::from_string("24400320830243753476")
+  let b = @bigint.BigInt::from_string("1")
+  inspect(a & b, content="0")
+}
+
+///|
+test "land_result_zero_normalization" {
+  // Test various cases where AND results in 0 to ensure len normalization
+  let a = @bigint.BigInt::from_string("2") // 0b10
+  let b = @bigint.BigInt::from_string("1") // 0b01
+  inspect(a & b, content="0")
+
+  // Larger even number AND with 1
+  let c = @bigint.BigInt::from_string("18446744073709551616") // 2^64
+  let d = @bigint.BigInt::from_string("1")
+  inspect(c & d, content="0")
+
+  // Complementary bitmasks
+  let e = @bigint.BigInt::from_hex("aaaaaaaaaaaaaaaa")
+  let f = @bigint.BigInt::from_hex("5555555555555555")
+  inspect(e & f, content="0")
+}
+
+///|
+test "land_different_sizes" {
+  // Test AND with operands of different sizes to ensure proper len calculation
+  let small = @bigint.BigInt::from_string("255")
+  let large = @bigint.BigInt::from_string(
+    "340282366920938463463374607431768211455",
+  )
+  inspect(small & large, content="255")
+}
+
+///|
 test "lor_1" {
   let a = @bigint.BigInt::from_string("-10")
   let b = @bigint.BigInt::from_string("11")
@@ -639,6 +677,19 @@ test "lor_5" {
 }
 
 ///|
+test "lor_result_normalization" {
+  // Test OR operations that may have trailing zeros in limbs
+  let a = @bigint.BigInt::from_string("15") // 0b1111
+  let b = @bigint.BigInt::from_string("240") // 0b11110000
+  inspect(a | b, content="255")
+
+  // OR with zero should return the non-zero operand
+  let c = @bigint.BigInt::from_string("24400320830243753476")
+  let d = @bigint.BigInt::from_string("0")
+  inspect(c | d, content="24400320830243753476")
+}
+
+///|
 test "lxor_1" {
   let a = @bigint.BigInt::from_string("-10")
   let b = @bigint.BigInt::from_string("11")
@@ -671,6 +722,22 @@ test "lxor_5" {
   let a = @bigint.BigInt::from_string("0")
   let b = @bigint.BigInt::from_hex("ffffffffffffffff")
   inspect(a ^ b, content="18446744073709551615")
+}
+
+///|
+test "lxor_result_zero_normalization" {
+  // XOR with self should give 0, testing len normalization
+  let a = @bigint.BigInt::from_string("24400320830243753476")
+  inspect(a ^ a, content="0")
+
+  // XOR of same values
+  let b = @bigint.BigInt::from_hex("ffffffffffffffff")
+  inspect(b ^ b, content="0")
+
+  // XOR resulting in zero
+  let c = @bigint.BigInt::from_string("255")
+  let d = @bigint.BigInt::from_string("255")
+  inspect(c ^ d, content="0")
 }
 
 ///|
