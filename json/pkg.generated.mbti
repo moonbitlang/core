@@ -13,7 +13,9 @@ pub fn parse(StringView, max_nesting_depth? : Int) -> Json raise ParseError
 pub fn valid(StringView) -> Bool
 
 // Errors
-pub(all) suberror JsonDecodeError (JsonPath, String)
+pub(all) suberror JsonDecodeError {
+  JsonDecodeError((JsonPath, String))
+}
 pub impl Eq for JsonDecodeError
 pub impl Show for JsonDecodeError
 pub impl ToJson for JsonDecodeError

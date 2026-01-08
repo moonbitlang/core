@@ -13,10 +13,14 @@
 // limitations under the License.
 
 ///|
-suberror StringError String
+suberror StringError {
+  StringError(String)
+}
 
 ///|
-suberror IntError Int
+suberror IntError {
+  IntError(Int)
+}
 
 ///|
 test {

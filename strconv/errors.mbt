@@ -13,7 +13,9 @@
 // limitations under the License.
 
 ///|
-pub(all) suberror StrConvError String
+pub(all) suberror StrConvError {
+  StrConvError(String)
+}
 
 ///|
 pub impl Show for StrConvError with output(self, logger) {

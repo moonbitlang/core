@@ -44,7 +44,9 @@ pub fn[T : Show] println(T) -> Unit
 pub fn[T : Show] repr(T) -> String
 
 // Errors
-pub(all) suberror BenchError String
+pub(all) suberror BenchError {
+  BenchError(String)
+}
 
 pub suberror CreatingViewError {
   IndexOutOfBounds
@@ -52,13 +54,19 @@ pub suberror CreatingViewError {
 }
 pub impl Show for CreatingViewError
 
-pub(all) suberror Failure String
+pub(all) suberror Failure {
+  Failure(String)
+}
 pub impl Show for Failure
 pub impl ToJson for Failure
 
-pub(all) suberror InspectError String
+pub(all) suberror InspectError {
+  InspectError(String)
+}
 
-pub(all) suberror SnapshotError String
+pub(all) suberror SnapshotError {
+  SnapshotError(String)
+}
 
 // Types and methods
 pub(all) struct ArgsLoc(Array[SourceLoc?])

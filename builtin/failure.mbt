@@ -34,7 +34,9 @@
 ///   @json.inspect(err, content=["Failure", "Test assertion failed"])
 /// }
 /// ```
-pub(all) suberror Failure String derive(ToJson, Show)
+pub(all) suberror Failure {
+  Failure(String)
+} derive(ToJson, Show)
 
 ///|
 /// Raises a `Failure` error with a given message and source location.
