@@ -1193,6 +1193,17 @@ fn BigInt::copy(self : BigInt) -> BigInt {
 }
 
 ///|
+/// Normalizes the len field by finding the highest non-zero limb.
+/// Ensures that the BigInt invariant is maintained: if all limbs are 0, len must be 1.
+fn normalize_len(limbs : FixedArray[UInt], max_len : Int) -> Int {
+  let mut actual_len = max_len
+  while actual_len > 1 && limbs[actual_len - 1] == 0U {
+    actual_len -= 1
+  }
+  actual_len
+}
+
+///|
 fn[T : Compare] max(a : T, b : T) -> T {
   if a > b {
     a
@@ -1478,12 +1489,7 @@ pub impl BitAnd for BigInt with land(self : BigInt, other : BigInt) -> BigInt {
   // return the result
   let limbs = FixedArray::make(max_length - 1, 0U)
   limbs..unsafe_blit(0, x_limbs, 0, max_length - 1)
-  // Normalize len by finding the highest non-zero limb
-  let mut actual_len = max_length - 1
-  while actual_len > 1 && limbs[actual_len - 1] == 0U {
-    actual_len -= 1
-  }
-  { limbs, sign: new_sign, len: actual_len }
+  { limbs, sign: new_sign, len: normalize_len(limbs, max_length - 1) }
 }
 
 ///|
@@ -1573,12 +1579,7 @@ pub impl BitOr for BigInt with lor(self : BigInt, other : BigInt) -> BigInt {
   // return the result
   let limbs = FixedArray::make(max_length - 1, 0U)
   limbs.unsafe_blit(0, x_limbs, 0, max_length - 1)
-  // Normalize len by finding the highest non-zero limb
-  let mut actual_len = max_length - 1
-  while actual_len > 1 && limbs[actual_len - 1] == 0U {
-    actual_len -= 1
-  }
-  { limbs, sign: new_sign, len: actual_len }
+  { limbs, sign: new_sign, len: normalize_len(limbs, max_length - 1) }
 }
 
 ///|
@@ -1668,12 +1669,7 @@ pub impl BitXOr for BigInt with lxor(self : BigInt, other : BigInt) -> BigInt {
   // return the result
   let limbs = FixedArray::make(max_length - 1, 0U)
   limbs.unsafe_blit(0, x_limbs, 0, max_length - 1)
-  // Normalize len by finding the highest non-zero limb
-  let mut actual_len = max_length - 1
-  while actual_len > 1 && limbs[actual_len - 1] == 0U {
-    actual_len -= 1
-  }
-  { limbs, sign: new_sign, len: actual_len }
+  { limbs, sign: new_sign, len: normalize_len(limbs, max_length - 1) }
 }
 
 ///|
