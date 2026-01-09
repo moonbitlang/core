@@ -1,6 +1,6 @@
 # Sorted Set
 
-A mutable set backed by a red-black tree.
+A mutable set backed by an AVL tree that maintains elements in sorted order.
 
 # Usage
 
