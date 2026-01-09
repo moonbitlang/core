@@ -128,3 +128,30 @@ test {
 }
 ```
 
+## Performance
+
+- **add**: O(log n)
+- **remove**: O(log n)
+- **contains**: O(log n)
+- **iterate**: O(n)
+- **space complexity**: O(n)
+
+## Implementation Notes
+
+The SortedSet is implemented as an AVL tree, a self-balancing binary search tree. After insertions and deletions, the tree automatically rebalances to maintain O(log n) search, insertion, and deletion times.
+
+Key properties of the AVL tree implementation:
+- Each node stores a height field (difference in subtree heights)
+- The height difference is maintained between -1 and 1 for all nodes
+- Rebalancing is done through tree rotations (single and double rotations)
+
+## Comparison with Other Collections
+
+- **@hashset.HashSet**: Provides O(1) average case lookups but doesn't maintain order; use when order doesn't matter
+- **@sorted_set.SortedSet**: Maintains elements in sorted order; use when you need elements to be sorted
+
+Choose SortedSet when you need:
+- Elements in sorted order
+- Efficient ordered iteration
+- Logarithmic time operations
+
