@@ -141,8 +141,8 @@ test {
 The SortedSet is implemented as an AVL tree, a self-balancing binary search tree. After insertions and deletions, the tree automatically rebalances to maintain O(log n) search, insertion, and deletion times.
 
 Key properties of the AVL tree implementation:
-- Each node stores a height field (difference in subtree heights)
-- The height difference is maintained between -1 and 1 for all nodes
+- Each node stores a height field indicating the height of that subtree
+- The balance factor (height difference between left and right subtrees) is maintained between -1 and 1 for all nodes
 - Rebalancing is done through tree rotations (single and double rotations)
 
 ## Comparison with Other Collections
