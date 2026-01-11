@@ -527,10 +527,19 @@ extern "js" fn is_neg(x : BigInt) -> Bool =
 ///|
 fn BigInt::limbs(self : Self) -> Array[UInt] {
   guard !self.is_zero() else { [0] }
+  let abs = self * BigInt::from_int(self.signum())
   let result = []
-  for n = self * BigInt::from_int(self.signum()); n > 0; n = n >> 32 {
+  for n = abs, shift = 0; n > 0; n = n >> 32, shift = shift + 32 {
     let limb = n.to_uint()
     result.push(limb)
+  } where {
+    invariant: shift >= 0,
+    invariant: shift % 32 == 0,
+    invariant: n == abs >> shift,
+    reasoning: (
+      #|Each step shifts the absolute value right by 32 bits,
+      #|so `n` tracks the remaining limbs until it becomes zero.
+    ),
   }
   result
 }

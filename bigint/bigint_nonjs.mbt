@@ -382,6 +382,14 @@ fn BigInt::grade_school_mul(self : BigInt, other : BigInt) -> BigInt {
         carry
       limbs[i + j] = (product % radix).to_uint()
       carry = product / radix
+    } where {
+      invariant: j >= 0,
+      invariant: i + j < len,
+      invariant: carry < radix,
+      reasoning: (
+        #|j advances across other limbs while carry is nonzero,
+        #|and indices stay within the preallocated result limbs.
+      ),
     }
   }
   if limbs[self_len + other_len - 1] == 0 {
@@ -412,12 +420,14 @@ fn BigInt::split(self : BigInt, half : Int) -> (BigInt, BigInt) {
   if self.len <= half {
     return ({ ..self, sign: Positive }, zero)
   }
-  let lower_len = for i = half - 1; i > 0; i = i - 1 {
+  let mut lower_len = 1
+  let scan_len = if half > 1 { half - 1 } else { 0 }
+  for offset in 0..<scan_len {
+    let i = half - 1 - offset
     if self.limbs[i] > 0 {
-      break i + 1
+      lower_len = i + 1
+      break
     }
-  } else {
-    1
   }
   let lower = FixedArray::make(lower_len, 0U)
   lower.unsafe_blit(0, self.limbs, 0, lower_len)
@@ -535,7 +545,8 @@ fn BigInt::grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
     let a = ret.limbs
     let x = number.to_uint64()
     let mut y = 0UL
-    for i = self.len - 1; i >= 0; i = i - 1 {
+    for offset in 0..<self.len {
+      let i = self.len - 1 - offset
       y = y << radix_bit_len
       y += a[i].to_uint64()
       a[i] = ((y / x) & radix_mask).to_uint()
@@ -592,8 +603,10 @@ fn BigInt::grade_school_div(self : BigInt, other : BigInt) -> (BigInt, BigInt) {
   let v1 = b[b_len - 1]
   let v2 = b[b_len - 2]
   let q = FixedArray::make(a_len - b_len, 0U)
+  let q_len = q.length()
   // D2 - D7 loop through m to 0
-  for i = q.length() - 1; i >= 0; i = i - 1 {
+  for offset in 0..<q_len {
+    let i = q_len - 1 - offset
     let u0 = a[i + b_len]
     let u1 = a[i + b_len - 1]
     let u2 = a[i + b_len - 2]
@@ -760,7 +773,9 @@ pub impl Shr for BigInt with shr(self : BigInt, n : Int) -> BigInt {
     let new_limbs = FixedArray::make(new_len, 0U)
     let a = self.limbs
     let mut carry = 0UL
-    for i = self.len - 1; i >= lz; i = i - 1 {
+    let count = self.len - lz
+    for offset in 0..<count {
+      let i = self.len - 1 - offset
       let x = a[i].to_uint64()
       new_limbs[i - lz] = ((x >> r) | carry).to_uint()
       carry = (x << (radix_bit_len - r)) % radix
@@ -840,7 +855,8 @@ pub impl Compare for BigInt with compare(self, other) {
       other_len - self_len
     }
   }
-  for i = self_len - 1; i >= 0; i = i - 1 {
+  for offset in 0..<self_len {
+    let i = self_len - 1 - offset
     if self.limbs[i] != other.limbs[i] {
       return if self.sign == Positive {
         self.limbs[i].compare(other.limbs[i])
@@ -927,7 +943,8 @@ pub fn BigInt::to_string(self : BigInt) -> String {
   let s = if self.sign == Negative { "-" } else { "" }
   let v = Array::make(decimal_len, 0L)
   let mut v_idx = 0
-  for i = self.len - 1; i >= 0; i = i - 1 {
+  for offset in 0..<self.len {
+    let i = self.len - 1 - offset
     let mut x = self.limbs[i].to_int64()
     for j in 0..<v_idx {
       let y = (v[j] << radix_bit_len) | x
@@ -1158,7 +1175,8 @@ pub fn BigInt::to_hex(self : BigInt, uppercase? : Bool = true) -> String {
   } else {
     StringBuilder::new(size_hint=self.len * digits_per_limb)
   }
-  for i = self.len - 1; i >= 0; i = i - 1 { // TODO: reverse iteration would be a bit faster.
+  for offset in 0..<self.len {
+    let i = self.len - 1 - offset
     // split the limb into 4-bit chunks
     let mut x = self.limbs[i]
     let digits = FixedArray::make(digits_per_limb, '0')
@@ -1390,7 +1408,10 @@ pub fn BigInt::to_octets(self : BigInt, length? : Int) -> Bytes {
   let len = (head_bits + 7) / 8 + tail_len * (radix_bit_len / 8)
   let len = max(length, len)
   let result = FixedArray::make(len, Byte::default())
-  for i = 0; i < len && i / 4 < self.len; i = i + 1 {
+  for i in 0..<len {
+    if i / 4 >= self.len {
+      break
+    }
     result[len - 1 - i] = ((self.limbs[i / 4] >> (i % 4 * 8)) & 0xffU)
       .reinterpret_as_int()
       .to_byte()
@@ -1767,7 +1788,8 @@ pub fn BigInt::to_uint64(self : BigInt) -> UInt64 {
   let len = 64 / radix_bit_len
   let len = if value.len < len { value.len } else { len }
   let mut result = 0UL
-  for i = len - 1; i >= 0; i = i - 1 {
+  for offset in 0..<len {
+    let i = len - 1 - offset
     result = result << radix_bit_len
     result = result | (value.limbs[i].to_uint64() & radix_mask)
   }
@@ -1803,7 +1825,10 @@ pub fn BigInt::bit_length(self : BigInt) -> Int {
   if self.sign == Negative {
     // check if this number is a power of two
     let mut pow2 = self.limbs[0].popcnt() == 1
-    for i = 1; i < self.len && pow2; i = i + 1 {
+    for i in 1..<self.len {
+      if !pow2 {
+        break
+      }
       pow2 = self.limbs[i] == 0
     }
     if pow2 {
