@@ -49,6 +49,13 @@ pub impl[A : @json.FromJson] @json.FromJson for T[A] with from_json(json, path) 
     continue i - 1, list.add(A::from_json(arr[i], path.add_index(i)))
   } else {
     list
+  } where {
+    invariant: i >= 0,
+    invariant: i < arr.length(),
+    reasoning: (
+      #|i starts at arr.length() - 1 and decreases by 1 each iteration,
+      #|so the loop terminates when i becomes -1.
+    ),
   }
 }
 
@@ -77,6 +84,13 @@ pub fn[A] from_array(arr : ArrayView[A]) -> T[A] {
     continue i - 1, Cons(arr[i], list)
   } else {
     list
+  } where {
+    invariant: i >= 0,
+    invariant: i < arr.length(),
+    reasoning: (
+      #|i starts at arr.length() - 1 and decreases by 1 each iteration,
+      #|so the loop terminates when i becomes -1.
+    ),
   }
 }
 
@@ -1288,6 +1302,13 @@ pub fn[A] of(arr : ArrayView[A]) -> T[A] {
     continue i - 1, Cons(arr[i], list)
   } else {
     list
+  } where {
+    invariant: i >= 0,
+    invariant: i < arr.length(),
+    reasoning: (
+      #|i starts at arr.length() - 1 and decreases by 1 each iteration,
+      #|so the loop terminates when i becomes -1.
+    ),
   }
 }
 
