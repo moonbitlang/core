@@ -227,6 +227,13 @@ pub fn[K : Compare, V] SortedMap::from_array(
     continue i + 1, mp.add(k, v)
   } else {
     mp
+  } where {
+    invariant: i >= 0,
+    invariant: i <= array.length(),
+    reasoning: (
+      #|i starts at 0 and increases by 1 each iteration,
+      #|so the loop terminates when i reaches array.length().
+    ),
   }
 }
 
