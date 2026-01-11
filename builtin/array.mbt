@@ -1158,6 +1158,14 @@ pub fn[T] Array::retain(self : Array[T], f : (T) -> Bool raise?) -> Unit raise? 
   } else {
     // we use `else` here to capture `j`
     self.unsafe_truncate_to_length(j)
+  } where {
+    invariant: 0 <= i && i <= len,
+    invariant: 0 <= j && j <= i,
+    reasoning: (
+      #|Scan the original prefix [0, i) and compact kept elements into [0, j).
+      #|Each step advances i and increases j by at most one, so indices stay
+      #|within bounds and the loop terminates when i reaches len.
+    ),
   }
 }
 
@@ -1263,11 +1271,11 @@ pub fn[A, B] Array::fold(
   init~ : B,
   f : (B, A) -> B raise?,
 ) -> B raise? {
-  for i = 0, acc = init; i < self.length(); {
-    continue i + 1, f(acc, self[i])
-  } else {
-    acc
+  let mut acc = init
+  for i in 0..<self.length() {
+    acc = f(acc, self[i])
   }
+  acc
 }
 
 ///|
@@ -1288,11 +1296,13 @@ pub fn[A, B] Array::rev_fold(
   init~ : B,
   f : (B, A) -> B raise?,
 ) -> B raise? {
-  for i = self.length() - 1, acc = init; i >= 0; {
-    continue i - 1, f(acc, self[i])
-  } else {
-    acc
+  let len = self.length()
+  let mut acc = init
+  for offset in 0..<len {
+    let i = len - 1 - offset
+    acc = f(acc, self[i])
   }
+  acc
 }
 
 ///|
@@ -1313,11 +1323,11 @@ pub fn[A, B] Array::foldi(
   init~ : B,
   f : (Int, B, A) -> B raise?,
 ) -> B raise? {
-  for i = 0, acc = init; i < self.length(); {
-    continue i + 1, f(i, acc, self[i])
-  } else {
-    acc
+  let mut acc = init
+  for i in 0..<self.length() {
+    acc = f(i, acc, self[i])
   }
+  acc
 }
 
 ///|
@@ -1339,11 +1349,12 @@ pub fn[A, B] Array::rev_foldi(
   f : (Int, B, A) -> B raise?,
 ) -> B raise? {
   let len = self.length()
-  for i = len - 1, acc = init; i >= 0; {
-    continue i - 1, f(len - i - 1, acc, self[i])
-  } else {
-    acc
+  let mut acc = init
+  for offset in 0..<len {
+    let i = len - 1 - offset
+    acc = f(offset, acc, self[i])
   }
+  acc
 }
 
 ///|
@@ -1842,7 +1853,8 @@ pub fn[T] Array::shuffle_in_place(
   rand~ : (Int) -> Int,
 ) -> Unit {
   let n = self.length()
-  for i = n - 1; i > 0; i = i - 1 {
+  for offset in 1..<n {
+    let i = n - offset
     let j = rand(i + 1) % (i + 1)
     // for safety, perf is not a concern here
     // TODO: maybe return an error later

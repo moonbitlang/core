@@ -83,6 +83,15 @@ pub fn String::char_length(
     }
   } else {
     char_count
+  } where {
+    invariant: start_offset <= utf16_index && utf16_index <= end_offset,
+    invariant: char_count >= 0,
+    invariant: char_count <= utf16_index - start_offset,
+    reasoning: (
+      #|utf16_index advances by 1 or 2 code units per iteration while
+      #|char_count increments once per character, so utf16_index moves toward
+      #|end_offset and char_count never exceeds consumed code units.
+    ),
   }
 }
 
@@ -426,6 +435,16 @@ pub fn String::char_length_eq(
     }
   } else {
     count == len && index == end_offset
+  } where {
+    invariant: start_offset <= index && index <= end_offset,
+    invariant: count >= 0,
+    invariant: count <= len,
+    invariant: count <= index - start_offset,
+    reasoning: (
+      #|Each iteration consumes one character (count + 1) and advances the
+      #|UTF-16 index by 1 or 2 code units, keeping count bounded by both len
+      #|and the number of consumed code units.
+    ),
   }
 }
 
@@ -454,6 +473,16 @@ pub fn String::char_length_ge(
     }
   } else {
     count >= len
+  } where {
+    invariant: start_offset <= index && index <= end_offset,
+    invariant: count >= 0,
+    invariant: count <= len,
+    invariant: count <= index - start_offset,
+    reasoning: (
+      #|Each iteration consumes one character and advances the UTF-16 index by
+      #|1 or 2 code units; the loop stops when count reaches len or the range
+      #|is exhausted.
+    ),
   }
 }
 

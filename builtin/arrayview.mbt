@@ -694,6 +694,16 @@ pub fn[T : Compare] ArrayView::binary_search(
     } else {
       Err(i)
     }
+  } where {
+    invariant: 0 <= i && i <= j && j <= len,
+    invariant: i == 0 || self.unsafe_get(i - 1) < value,
+    invariant: j == len || self.unsafe_get(j) >= value,
+    reasoning: (
+      #|Maintain a shrinking search window [i, j) where everything before i is
+      #|less than value and everything from j onward is >= value. Each step
+      #|moves i or j past h, preserving the boundary witnesses and ensuring
+      #|termination when i == j.
+    ),
   }
 }
 
@@ -727,6 +737,16 @@ pub fn[T] ArrayView::binary_search_by(
     } else {
       Err(i)
     }
+  } where {
+    invariant: 0 <= i && i <= j && j <= len,
+    invariant: i == 0 || cmp(self.unsafe_get(i - 1)) < 0,
+    invariant: j == len || cmp(self.unsafe_get(j)) >= 0,
+    reasoning: (
+      #|Use cmp as the ordering predicate to keep the search interval [i, j)
+      #|consistent: elements before i compare < 0 and elements from j compare
+      #|>= 0. Each iteration drops half the range and the witnesses prove
+      #|correctness when the window collapses.
+    ),
   }
 }
 
@@ -745,11 +765,11 @@ pub fn[A, B] ArrayView::fold(
   init~ : B,
   f : (B, A) -> B raise?,
 ) -> B raise? {
-  for i = 0, acc = init; i < self.length(); {
-    continue i + 1, f(acc, self[i])
-  } else {
-    acc
+  let mut acc = init
+  for i in 0..<self.length() {
+    acc = f(acc, self[i])
   }
+  acc
 }
 
 ///|
@@ -767,11 +787,13 @@ pub fn[A, B] ArrayView::rev_fold(
   init~ : B,
   f : (B, A) -> B raise?,
 ) -> B raise? {
-  for i = self.length() - 1, acc = init; i >= 0; {
-    continue i - 1, f(acc, self[i])
-  } else {
-    acc
+  let len = self.length()
+  let mut acc = init
+  for offset in 0..<len {
+    let i = len - 1 - offset
+    acc = f(acc, self[i])
   }
+  acc
 }
 
 ///|
@@ -789,11 +811,11 @@ pub fn[A, B] ArrayView::foldi(
   init~ : B,
   f : (Int, B, A) -> B raise?,
 ) -> B raise? {
-  for i = 0, acc = init; i < self.length(); {
-    continue i + 1, f(i, acc, self[i])
-  } else {
-    acc
+  let mut acc = init
+  for i in 0..<self.length() {
+    acc = f(i, acc, self[i])
   }
+  acc
 }
 
 ///|
@@ -813,11 +835,12 @@ pub fn[A, B] ArrayView::rev_foldi(
   f : (Int, B, A) -> B raise?,
 ) -> B raise? {
   let len = self.length()
-  for i = len - 1, acc = init; i >= 0; {
-    continue i - 1, f(len - i - 1, acc, self[i])
-  } else {
-    acc
+  let mut acc = init
+  for offset in 0..<len {
+    let i = len - 1 - offset
+    acc = f(offset, acc, self[i])
   }
+  acc
 }
 
 ///|

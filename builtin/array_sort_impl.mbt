@@ -65,7 +65,11 @@ fn[T : Compare] timsort(arr : MutArrayView[T]) -> Unit {
 ///|
 fn[T : Compare] MutArrayView::insertion_sort(arr : MutArrayView[T]) -> Unit {
   for i in 1..<arr.length() {
-    for j = i; j > 0 && arr[j] < arr[j - 1]; j = j - 1 {
+    for offset in 0..<i {
+      let j = i - offset
+      if arr[j] >= arr[j - 1] {
+        break
+      }
       arr.swap(j, j - 1)
     }
   }
@@ -93,8 +97,20 @@ fn[T : Compare] merge(arr : MutArrayView[T], mid : Int) -> Unit {
     }
   } else {
     p2
+  } where {
+    invariant: p1 >= 0 && p1 < mid,
+    invariant: p2 >= 0 && p2 < buf_len,
+    invariant: p == p1 + p2 + 1,
+    reasoning: (
+      #|Merge from the end: p is the write index and p1/p2 point to the last
+      #|unmerged elements of each run. Each step decrements p and exactly one
+      #|of p1/p2, so p == p1 + p2 + 1 is preserved and the loop terminates when
+      #|one run is exhausted.
+    ),
   }
-  for i = buf_remaining; i >= 0; i = i - 1 {
+  let remaining = buf_remaining + 1
+  for offset in 0..<remaining {
+    let i = buf_remaining - offset
     arr[i] = buf[i]
   }
 }
@@ -110,21 +126,25 @@ fn[T : Compare] find_streak(arr : MutArrayView[T]) -> (Int, Bool) {
   }
   let assume_reverse = arr[1] < arr[0]
   if assume_reverse {
-    for end = 2 {
-      if end < len && arr[end] < arr[end - 1] {
-        continue end + 1
-      } else {
-        break (end, true)
+    let mut end = len
+    for idx in 2..<len {
+      if arr[idx] < arr[idx - 1] {
+        continue
       }
+      end = idx
+      break
     }
+    (end, true)
   } else {
-    for end = 2 {
-      if end < len && arr[end] >= arr[end - 1] {
-        continue end + 1
-      } else {
-        break (end, false)
+    let mut end = len
+    for idx in 2..<len {
+      if arr[idx] >= arr[idx - 1] {
+        continue
       }
+      end = idx
+      break
     }
+    (end, false)
   }
 }
 
@@ -314,7 +334,11 @@ fn[T : Compare] fixed_try_bubble_sort(arr : MutArrayView[T]) -> Bool {
   let mut tries = 0
   for i in 1..<arr.length() {
     let mut sorted = true
-    for j = i; j > 0 && arr[j - 1] > arr[j]; j = j - 1 {
+    for offset in 0..<i {
+      let j = i - offset
+      if arr[j - 1] <= arr[j] {
+        break
+      }
       sorted = false
       arr.swap(j, j - 1)
     }
@@ -336,7 +360,11 @@ fn[T : Compare] fixed_try_bubble_sort(arr : MutArrayView[T]) -> Bool {
 /// Returns whether the array is sorted.
 fn[T : Compare] fixed_bubble_sort(arr : MutArrayView[T]) -> Unit {
   for i in 1..<arr.length() {
-    for j = i; j > 0 && arr[j - 1] > arr[j]; j = j - 1 {
+    for offset in 0..<i {
+      let j = i - offset
+      if arr[j - 1] <= arr[j] {
+        break
+      }
       arr.swap(j, j - 1)
     }
   }
@@ -414,10 +442,13 @@ fn[T : Compare] fixed_choose_pivot(arr : MutArrayView[T]) -> (Int, Bool) {
 ///|
 fn[T : Compare] fixed_heap_sort(arr : MutArrayView[T]) -> Unit {
   let len = arr.length()
-  for i = len / 2 - 1; i >= 0; i = i - 1 {
+  let heapify_len = len / 2
+  for offset in 0..<heapify_len {
+    let i = heapify_len - 1 - offset
     fixed_sift_down(arr, i)
   }
-  for i = len - 1; i > 0; i = i - 1 {
+  for offset in 1..<len {
+    let i = len - offset
     arr.swap(0, i)
     fixed_sift_down(arr.slice(0, i), 0)
   }
@@ -456,7 +487,8 @@ fn fixed_test_sort(f : (MutArrayView[Int]) -> Unit) -> Unit raise {
   for i in 0..<1000 {
     arr[i] = 1000 - i - 1
   }
-  for i = 10; i < 1000; i = i + 10 {
+  for step in 1..<100 {
+    let i = step * 10
     arr.swap(i, i - 1)
   }
   f(arr.mut_view())
@@ -491,7 +523,8 @@ test "stable_sort" {
   for i in 0..<1000 {
     arr[i] = 1000 - i - 1
   }
-  for i = 10; i < 1000; i = i + 10 {
+  for step in 1..<100 {
+    let i = step * 10
     arr.swap(i, i - 1)
   }
   arr.mut_view().stable_sort()

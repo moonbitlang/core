@@ -44,7 +44,12 @@ pub fn BytesView::rev_find(target : BytesView, pattern : BytesView) -> Int? {
   // TODO: more efficient algorithm
   let target_len = target.length()
   let pattern_len = pattern.length()
-  for i = target_len - pattern_len; i >= 0; i = i - 1 {
+  let start = target_len - pattern_len
+  if start < 0 {
+    return None
+  }
+  for offset in 0..<(start + 1) {
+    let i = start - offset
     for j in 0..<pattern_len {
       guard target.unsafe_get(i + j) == pattern.unsafe_get(j) else { break }
     } else {

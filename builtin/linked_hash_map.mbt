@@ -134,6 +134,13 @@ fn[K : Eq, V] Map::set_with_hash(
         continue psl + 1, (idx + 1) & self.capacity_mask
       }
     }
+  } where {
+    invariant: psl >= 0,
+    invariant: idx == ((hash + psl) & self.capacity_mask),
+    reasoning: (
+      #|Linear probing advances idx by one and increments psl,
+      #|so idx tracks the hash plus probe distance until a slot is chosen.
+    ),
   }
   let entry = { prev: self.tail, next: None, psl, key, value, hash }
   self.add_entry_to_tail(idx, entry)
@@ -163,6 +170,14 @@ fn[K, V] Map::push_away(
           continue psl + 1, (idx + 1) & self.capacity_mask, entry
         }
     }
+  } where {
+    invariant: psl >= 0,
+    invariant: psl > entry.psl,
+    invariant: idx == (idx & self.capacity_mask),
+    reasoning: (
+      #|psl and idx advance together through the table while the carried entry
+      #|has a larger probe distance than its stored PSL, so swapping is justified.
+    ),
   }
 }
 
@@ -209,6 +224,13 @@ pub fn[K : Hash + Eq, V] Map::get(self : Map[K, V], key : K) -> V? {
       break None
     }
     continue i + 1, (idx + 1) & self.capacity_mask
+  } where {
+    invariant: i >= 0,
+    invariant: idx == ((hash + i) & self.capacity_mask),
+    reasoning: (
+      #|`i` is the probe distance from the initial hash; idx advances in lockstep.
+      #|The search stops on an empty slot, a match, or when i exceeds entry.psl.
+    ),
   }
 }
 
@@ -223,6 +245,13 @@ pub fn[K : Hash + Eq, V] Map::at(self : Map[K, V], key : K) -> V {
     }
     guard i <= entry.psl
     continue i + 1, (idx + 1) & self.capacity_mask
+  } where {
+    invariant: i >= 0,
+    invariant: idx == ((hash + i) & self.capacity_mask),
+    reasoning: (
+      #|`i` is the probe distance from the initial hash; idx advances in lockstep.
+      #|We keep probing while i stays within the stored PSL.
+    ),
   }
 }
 
@@ -268,6 +297,13 @@ pub fn[K : Hash + Eq, V] Map::get_or_default(
       }
       None => break default
     }
+  } where {
+    invariant: i >= 0,
+    invariant: idx == ((hash + i) & self.capacity_mask),
+    reasoning: (
+      #|`i` is the probe distance from the initial hash; idx advances in lockstep.
+      #|The search ends on a miss or when i exceeds the stored PSL.
+    ),
   }
 }
 
@@ -297,6 +333,13 @@ pub fn[K : Hash + Eq, V] Map::get_or_init(
         break (idx, psl, new_value, None)
       }
     }
+  } where {
+    invariant: psl >= 0,
+    invariant: idx == ((hash + psl) & self.capacity_mask),
+    reasoning: (
+      #|Linear probing advances idx by one and increments psl,
+      #|so idx tracks the hash plus probe distance until a slot is chosen.
+    ),
   }
   if self.size >= self.grow_at {
     // Slow path, we need to resize
@@ -333,6 +376,13 @@ pub fn[K : Hash + Eq, V] Map::contains(self : Map[K, V], key : K) -> Bool {
       break false
     }
     continue i + 1, (idx + 1) & self.capacity_mask
+  } where {
+    invariant: i >= 0,
+    invariant: idx == ((hash + i) & self.capacity_mask),
+    reasoning: (
+      #|`i` is the probe distance from the initial hash; idx advances in lockstep.
+      #|Probing stops at an empty slot, a match, or when i exceeds entry.psl.
+    ),
   }
 }
 
@@ -374,6 +424,13 @@ pub fn[K : Hash + Eq, V : Eq] Map::contains_kv(
       break false
     }
     continue i + 1, (idx + 1) & self.capacity_mask
+  } where {
+    invariant: i >= 0,
+    invariant: idx == ((hash + i) & self.capacity_mask),
+    reasoning: (
+      #|`i` is the probe distance from the initial hash; idx advances in lockstep.
+      #|Probing stops at an empty slot, a match, or when i exceeds entry.psl.
+    ),
   }
 }
 
@@ -420,6 +477,13 @@ fn[K : Eq, V] Map::remove_with_hash(
       break
     }
     continue i + 1, (idx + 1) & self.capacity_mask
+  } where {
+    invariant: i >= 0,
+    invariant: idx == ((hash + i) & self.capacity_mask),
+    reasoning: (
+      #|`i` is the probe distance from the initial hash; idx advances in lockstep.
+      #|The search ends on a miss, a match, or when i exceeds entry.psl.
+    ),
   }
 }
 
@@ -953,6 +1017,13 @@ pub fn[K : Hash + Eq, V] Map::update(
         break (idx, psl, new_value, None)
       }
     }
+  } where {
+    invariant: psl >= 0,
+    invariant: idx == ((hash + psl) & self.capacity_mask),
+    reasoning: (
+      #|Linear probing advances idx by one and increments psl,
+      #|so idx tracks the hash plus probe distance until a slot is chosen.
+    ),
   }
   if self.size >= self.grow_at {
     // Slow path, we need to resize
@@ -1041,6 +1112,13 @@ pub fn[V] Map::get_from_bytes(map : Self[Bytes, V], key : BytesView) -> V? {
       break None
     }
     continue i + 1, (idx + 1) & map.capacity_mask
+  } where {
+    invariant: i >= 0,
+    invariant: idx == ((hash + i) & map.capacity_mask),
+    reasoning: (
+      #|`i` is the probe distance from the initial hash; idx advances in lockstep.
+      #|The search stops on an empty slot, a match, or when i exceeds entry.psl.
+    ),
   }
 }
 
@@ -1078,5 +1156,12 @@ pub fn[V] Map::get_from_string(map : Self[String, V], key : StringView) -> V? {
       break None
     }
     continue i + 1, (idx + 1) & map.capacity_mask
+  } where {
+    invariant: i >= 0,
+    invariant: idx == ((hash + i) & map.capacity_mask),
+    reasoning: (
+      #|`i` is the probe distance from the initial hash; idx advances in lockstep.
+      #|The search stops on an empty slot, a match, or when i exceeds entry.psl.
+    ),
   }
 }

@@ -92,7 +92,11 @@ fn[T] fixed_try_bubble_sort_by(
   let mut tries = 0
   for i in 1..<arr.length() {
     let mut sorted = true
-    for j = i; j > 0 && cmp(arr[j - 1], arr[j]) > 0; j = j - 1 {
+    for offset in 0..<i {
+      let j = i - offset
+      if cmp(arr[j - 1], arr[j]) <= 0 {
+        break
+      }
       sorted = false
       arr.swap(j, j - 1)
     }
@@ -114,7 +118,11 @@ fn[T] fixed_try_bubble_sort_by(
 /// Returns whether the array is sorted.
 fn[T] fixed_bubble_sort_by(arr : MutArrayView[T], cmp : (T, T) -> Int) -> Unit {
   for i in 1..<arr.length() {
-    for j = i; j > 0 && cmp(arr[j - 1], arr[j]) > 0; j = j - 1 {
+    for offset in 0..<i {
+      let j = i - offset
+      if cmp(arr[j - 1], arr[j]) <= 0 {
+        break
+      }
       arr.swap(j, j - 1)
     }
   }
@@ -196,10 +204,13 @@ fn[T] fixed_choose_pivot_by(
 ///|
 fn[T] fixed_heap_sort_by(arr : MutArrayView[T], cmp : (T, T) -> Int) -> Unit {
   let len = arr.length()
-  for i = len / 2 - 1; i >= 0; i = i - 1 {
+  let heapify_len = len / 2
+  for offset in 0..<heapify_len {
+    let i = heapify_len - 1 - offset
     fixed_sift_down_by(arr, i, cmp)
   }
-  for i = len - 1; i > 0; i = i - 1 {
+  for offset in 1..<len {
+    let i = len - offset
     arr.swap(0, i)
     fixed_sift_down_by(arr.slice(0, i), 0, cmp)
   }
