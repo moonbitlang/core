@@ -134,6 +134,13 @@ fn[K : Eq] Set::add_with_hash(self : Set[K], key : K, hash : Int) -> Unit {
         continue psl + 1, (idx + 1) & self.capacity_mask
       }
     }
+  } where {
+    invariant: psl >= 0,
+    invariant: idx == ((hash + psl) & self.capacity_mask),
+    reasoning: (
+      #|Linear probing advances idx by one and increments psl,
+      #|so idx tracks the hash plus probe distance until a slot is chosen.
+    ),
   }
   let entry = { prev: self.tail, next: None, psl, key, hash }
   self.add_entry_to_tail(idx, entry)
@@ -159,6 +166,14 @@ fn[K] Set::push_away(self : Set[K], idx : Int, entry : Entry[K]) -> Unit {
           continue psl + 1, (idx + 1) & self.capacity_mask, entry
         }
     }
+  } where {
+    invariant: psl >= 0,
+    invariant: psl > entry.psl,
+    invariant: idx == (idx & self.capacity_mask),
+    reasoning: (
+      #|psl and idx advance together through the table while the carried entry
+      #|has a larger probe distance than its stored PSL, so swapping is justified.
+    ),
   }
 }
 
@@ -211,6 +226,13 @@ pub fn[K : Hash + Eq] Set::add_and_check(self : Set[K], key : K) -> Bool {
         continue psl + 1, (idx + 1) & self.capacity_mask
       }
     }
+  } where {
+    invariant: psl >= 0,
+    invariant: idx == ((hash + psl) & self.capacity_mask),
+    reasoning: (
+      #|Linear probing advances idx by one and increments psl,
+      #|so idx tracks the hash plus probe distance until a slot is chosen.
+    ),
   }
   if added {
     let entry = { prev: self.tail, next: None, psl, key, hash }
@@ -233,6 +255,13 @@ pub fn[K : Hash + Eq] Set::contains(self : Set[K], key : K) -> Bool {
       break false
     }
     continue i + 1, (idx + 1) & self.capacity_mask
+  } where {
+    invariant: i >= 0,
+    invariant: idx == ((hash + i) & self.capacity_mask),
+    reasoning: (
+      #|`i` is the probe distance from the initial hash; idx advances in lockstep.
+      #|The search stops on an empty slot, a match, or when i exceeds entry.psl.
+    ),
   }
 }
 
@@ -271,6 +300,13 @@ pub fn[K : Hash + Eq] Set::remove(self : Set[K], key : K) -> Unit {
       break
     }
     continue i + 1, (idx + 1) & self.capacity_mask
+  } where {
+    invariant: i >= 0,
+    invariant: idx == ((hash + i) & self.capacity_mask),
+    reasoning: (
+      #|`i` is the probe distance from the initial hash; idx advances in lockstep.
+      #|The loop stops when the key is found or the probe can no longer match.
+    ),
   }
 }
 
@@ -309,6 +345,13 @@ pub fn[K : Hash + Eq] Set::remove_and_check(self : Set[K], key : K) -> Bool {
       break false
     }
     continue i + 1, (idx + 1) & self.capacity_mask
+  } where {
+    invariant: i >= 0,
+    invariant: idx == ((hash + i) & self.capacity_mask),
+    reasoning: (
+      #|`i` is the probe distance from the initial hash; idx advances in lockstep.
+      #|The search stops on an empty slot, a match, or when i exceeds entry.psl.
+    ),
   }
 }
 
