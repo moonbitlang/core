@@ -30,6 +30,12 @@ impl Source for @random_source.ChaCha8 with next(self : @random_source.ChaCha8) 
       return x
     }
     self.refill()
+  } where {
+    invariant: true,
+    reasoning: (
+      #|Each iteration attempts to read from the buffer; refill is retried
+      #|until a value is produced.
+    ),
   }
 }
 
@@ -316,6 +322,13 @@ pub fn Rand::shuffle(
   for i = limit - 1; i > 0; i = i - 1 {
     let j = self.int(limit=i + 1)
     swap(i, j)
+  } where {
+    invariant: i > 0,
+    invariant: i < limit,
+    reasoning: (
+      #|i starts at limit - 1 and decreases by 1 each iteration,
+      #|so the loop terminates when i becomes 0.
+    ),
   }
 }
 
