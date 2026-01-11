@@ -46,6 +46,13 @@ pub fn[A : Compare] SortedSet::from_array(array : ArrayView[A]) -> SortedSet[A] 
     continue i - 1, set.add(array[i])
   } else {
     set
+  } where {
+    invariant: i >= 0,
+    invariant: i < array.length(),
+    reasoning: (
+      #|i starts at array.length() - 1 and decreases by 1 each iteration,
+      #|so the loop terminates when i becomes -1.
+    ),
   }
 }
 
