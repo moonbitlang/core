@@ -308,6 +308,13 @@ fn Decimal::assign(self : Decimal, v : Int64) -> Unit {
   for i = n - 1; i >= 0; i = i - 1 {
     self.digits[self.digits_num] = buf[i]
     self.digits_num += 1
+  } where {
+    invariant: i >= 0,
+    invariant: i < n,
+    reasoning: (
+      #|i starts at n - 1 and decreases by 1 each iteration,
+      #|so the loop terminates when i becomes -1.
+    ),
   }
   self.decimal_point = self.digits_num
   self.trim()
