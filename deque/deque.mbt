@@ -290,13 +290,14 @@ pub fn[A] Deque::blit_to(
       dst.len = new_len
     }
     // Copy in reverse order
-    for i = len - 1; i >= 0; i = i - 1 {
+    for offset in 0..<len {
+      let i = len - 1 - offset
       let dst_idx = (dst.head + dst_offset + i) % dst.buf.length()
       let src_idx = (self.head + src_offset + i) % self.buf.length()
       dst.buf[dst_idx] = self.buf[src_idx]
     }
   } else {
-    for i = 0; i < len; i = i + 1 {
+    for i in 0..<len {
       let dst_idx = (dst.head + dst_offset + i) % dst.buf.length()
       let src_idx = (self.head + src_offset + i) % self.buf.length()
       dst.buf[dst_idx] = self.buf[src_idx]
@@ -353,7 +354,7 @@ pub fn[A] Deque::append(self : Deque[A], other : Deque[A]) -> Unit {
   }
   let cap = self.buf.length()
   // Use captured state to read from other, avoiding aliasing issues
-  for i = 0; i < other_len; i = i + 1 {
+  for i in 0..<other_len {
     let read_idx = (other_head + i) % other_buf_len
     let write_idx = (self.head + self.len) % cap
     self.buf[write_idx] = other_buf[read_idx]
@@ -403,7 +404,7 @@ pub fn[A] Deque::insert(self : Deque[A], index : Int, value : A) -> Unit {
   if index < self.len / 2 {
     // Shift front elements left
     let new_head = (self.head - 1 + cap) % cap
-    for i = 0; i < index; i = i + 1 {
+    for i in 0..<index {
       let to = (new_head + i) % cap
       let from = (self.head + i) % cap
       self.buf[to] = self.buf[from]
@@ -411,7 +412,9 @@ pub fn[A] Deque::insert(self : Deque[A], index : Int, value : A) -> Unit {
     self.head = new_head
   } else {
     // Shift back elements right
-    for i = self.len; i > index; i = i - 1 {
+    let shift = self.len - index
+    for offset in 0..<shift {
+      let i = self.len - offset
       let from = (self.head + i - 1) % cap
       let to = (self.head + i) % cap
       self.buf[to] = self.buf[from]
@@ -464,7 +467,8 @@ pub fn[A] Deque::remove(self : Deque[A], index : Int) -> A {
   if index < self.len / 2 {
     // Shift front elements right
     let new_head = (self.head + 1) % cap
-    for i = index - 1; i >= 0; i = i - 1 {
+    for offset in 0..<index {
+      let i = index - 1 - offset
       let to = (self.head + i + 1) % cap
       let from = (self.head + i) % cap
       self.buf[to] = self.buf[from]
@@ -474,7 +478,7 @@ pub fn[A] Deque::remove(self : Deque[A], index : Int) -> A {
   } else {
     // Shift back elements left
     let tail_idx = (self.head + self.len - 1) % cap
-    for i = index + 1; i < self.len; i = i + 1 {
+    for i in (index + 1)..<self.len {
       let to = (self.head + i - 1) % cap
       let from = (self.head + i) % cap
       self.buf[to] = self.buf[from]
@@ -1760,7 +1764,10 @@ pub fn[A] Deque::chunks(self : Deque[A], size : Int) -> Deque[Deque[A]] {
   let mut i = 0
   while i < self.length() {
     let chunk = Deque::new(capacity=size)
-    for j = 0; j < size && i < self.length(); j = j + 1 {
+    for _ in 0..<size {
+      if i >= self.length() {
+        break
+      }
       chunk.push_back(self[i])
       i = i + 1
     }
@@ -2138,6 +2145,14 @@ pub fn[A] Deque::binary_search_by(
     } else {
       Err(i)
     }
+  } where {
+    invariant: 0 <= i && i <= j && j <= len,
+    invariant: i == 0 || cmp(self[i - 1]) < 0,
+    invariant: j == len || cmp(self[j]) >= 0,
+    reasoning: (
+      #|Each step shrinks the search window [i, j), so j - i decreases.
+      #|At exit, i == j is the leftmost match or the correct insertion point.
+    ),
   }
 }
 
@@ -2314,7 +2329,8 @@ pub fn[A] Deque::shuffle_in_place(
 ) -> Unit {
   let n = self.len
   let buf_length = self.buf.length()
-  for i = n - 1; i > 0; i = i - 1 {
+  for offset in 1..<n {
+    let i = n - offset
     let j = rand(i + 1)
     // Calculate circular buffer positions
     let i_pos = (self.head + i) % buf_length
