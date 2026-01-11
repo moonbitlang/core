@@ -126,7 +126,7 @@ test "T::retain - single element map" {
 ///|
 test "T::retain - large map with complex predicate" {
   let map = @hashmap.new()
-  for i = 0; i < 100; i = i + 1 {
+  for i in 0..<100 {
     map.set("key" + i.to_string(), i)
   }
 
@@ -146,7 +146,7 @@ test "T::retain - with collisions" {
   // Create keys that likely hash to same buckets
   let map = @hashmap.new()
   let keys = ["a", "aa", "aaa", "aaaa", "aaaaa"]
-  for i = 0; i < keys.length(); i = i + 1 {
+  for i in 0..<keys.length() {
     map.set(keys[i], i)
   }
 

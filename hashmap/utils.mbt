@@ -14,16 +14,17 @@
 
 ///|
 fn[K : Show, V : Show] HashMap::_debug_entries(self : HashMap[K, V]) -> String {
-  for s = "", i = 0; i < self.entries.length(); {
-    let s = if i > 0 { s + "," } else { s }
-    match self.entries[i] {
-      None => continue s + "_", i + 1
-      Some({ psl, key, value, .. }) =>
-        continue s + "(\{psl},\{key},\{value})", i + 1
+  let mut s = ""
+  for i in 0..<self.entries.length() {
+    if i > 0 {
+      s = s + ","
     }
-  } else {
-    s
+    match self.entries[i] {
+      None => s = s + "_"
+      Some({ psl, key, value, .. }) => s = s + "(\{psl},\{key},\{value})"
+    }
   }
+  s
 }
 
 ///|
@@ -315,13 +316,11 @@ pub fn[K, V] HashMap::eachi(
   self : HashMap[K, V],
   f : (Int, K, V) -> Unit raise?,
 ) -> Unit raise? {
-  for i = 0, idx = 0; i < self.capacity; {
-    match self.entries[i] {
-      Some({ key, value, .. }) => {
-        f(idx, key, value)
-        continue i + 1, idx + 1
-      }
-      None => continue i + 1, idx
+  let mut idx = 0
+  for i in 0..<self.capacity {
+    if self.entries[i] is Some({ key, value, .. }) {
+      f(idx, key, value)
+      idx += 1
     }
   }
 }
@@ -461,7 +460,10 @@ pub fn[K, V] HashMap::values(self : HashMap[K, V]) -> Iter[V] {
 pub fn[K, V] HashMap::retain(self : HashMap[K, V], f : (K, V) -> Bool) -> Unit {
   let size = self.size
   let mut j = 0
-  for i = 0; j < size; i = i + 1 {
+  for i in 0..<self.capacity {
+    if j >= size {
+      break
+    }
     while self.entries[i] is Some(entry) {
       j = j + 1
       if f(entry.key, entry.value) {
