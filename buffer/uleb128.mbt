@@ -14,7 +14,7 @@
 
 ///|
 pub impl Leb128 for UInt with output(self, buffer) {
-  for value = self {
+  for value = self, shift = 0 {
     if value < 128 {
       // Single byte: no continuation bit (0xxxxxxx)
       buffer.write_byte(value.to_byte())
@@ -22,14 +22,22 @@ pub impl Leb128 for UInt with output(self, buffer) {
     } else {
       // Multiple bytes: set continuation bit (1xxxxxxx) and continue
       buffer.write_byte(((value % 128) | 128).to_byte())
-      continue value / 128
+      continue value / 128, shift + 7
     }
+  } where {
+    invariant: shift >= 0,
+    invariant: shift % 7 == 0,
+    invariant: value == self >> shift,
+    reasoning: (
+      #|Each iteration shifts the remaining value right by 7 bits,
+      #|so `value` decreases until it fits in a single byte.
+    ),
   }
 }
 
 ///|
 pub impl Leb128 for UInt64 with output(self, buffer) {
-  for value = self {
+  for value = self, shift = 0 {
     if value < 128 {
       // Single byte: no continuation bit (0xxxxxxx)
       buffer.write_byte(value.to_byte())
@@ -37,7 +45,15 @@ pub impl Leb128 for UInt64 with output(self, buffer) {
     } else {
       // Multiple bytes: set continuation bit (1xxxxxxx) and continue
       buffer.write_byte(((value % 128) | 128).to_byte())
-      continue value / 128
+      continue value / 128, shift + 7
     }
+  } where {
+    invariant: shift >= 0,
+    invariant: shift % 7 == 0,
+    invariant: value == self >> shift,
+    reasoning: (
+      #|Each iteration shifts the remaining value right by 7 bits,
+      #|so `value` decreases until it fits in a single byte.
+    ),
   }
 }
