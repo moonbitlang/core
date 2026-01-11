@@ -431,6 +431,12 @@ pub fn MatchResult::results(self : Self) -> Array[StringView?] {
     } else {
       results.push(Some(self.input.view(start_offset=start, end_offset=end)))
     }
+  } where {
+    invariant: i >= 0,
+    invariant: i <= self.captures.length() / 2,
+    reasoning: (
+      #|i starts at 0 and increases by 1 until it reaches captures.length() / 2.
+    ),
   }
   results
 }
