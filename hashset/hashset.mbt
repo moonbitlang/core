@@ -89,6 +89,13 @@ fn[K : Eq] HashSet::add_with_hash(
         continue psl + 1, (idx + 1) & self.capacity_mask
       }
     }
+  } where {
+    invariant: psl >= 0,
+    invariant: idx == ((hash + psl) & self.capacity_mask),
+    reasoning: (
+      #|Linear probing advances idx by one and increments psl,
+      #|so idx tracks the hash plus probe distance until a slot is chosen.
+    ),
   }
   let entry = { psl, key, hash }
   self.set_entry(entry, idx)
@@ -119,6 +126,14 @@ fn[K] HashSet::push_away(
           continue psl + 1, (idx + 1) & self.capacity_mask, entry
         }
     }
+  } where {
+    invariant: psl >= 0,
+    invariant: psl > entry.psl,
+    invariant: idx == (idx & self.capacity_mask),
+    reasoning: (
+      #|psl and idx advance together through the table while the carried entry
+      #|has a larger probe distance than its stored PSL, so swapping is justified.
+    ),
   }
 }
 
@@ -146,6 +161,13 @@ pub fn[K : Hash + Eq] HashSet::contains(self : HashSet[K], key : K) -> Bool {
       break false
     }
     continue i + 1, (idx + 1) & self.capacity_mask
+  } where {
+    invariant: i >= 0,
+    invariant: idx == ((hash + i) & self.capacity_mask),
+    reasoning: (
+      #|`i` is the probe distance from the initial hash; idx advances in lockstep.
+      #|The search stops on an empty slot, a match, or when i exceeds entry.psl.
+    ),
   }
 }
 
@@ -183,6 +205,13 @@ pub fn[K : Hash + Eq] HashSet::remove(self : HashSet[K], key : K) -> Unit {
       break
     }
     continue i + 1, (idx + 1) & self.capacity_mask
+  } where {
+    invariant: i >= 0,
+    invariant: idx == ((hash + i) & self.capacity_mask),
+    reasoning: (
+      #|`i` is the probe distance from the initial hash; idx advances in lockstep.
+      #|The loop stops when the key is found or the probe can no longer match.
+    ),
   }
 }
 
