@@ -49,6 +49,13 @@ pub fn[A] Queue::from_array(arr : ArrayView[A]) -> Queue[A] {
     continue i - 1, { content: arr[i], next: Some(x) }
   } else {
     x
+  } where {
+    invariant: i >= 0,
+    invariant: i < length,
+    reasoning: (
+      #|i starts at length - 2 and decreases by 1 each iteration,
+      #|so the loop terminates when i becomes -1.
+    ),
   }
   { length, first: Some(first), last: Some(last) }
 }
