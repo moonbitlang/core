@@ -57,6 +57,11 @@ fn ParseContext::lex_string(ctx : ParseContext) -> String raise ParseError {
         }
       None => raise InvalidEof
     }
+  } where {
+    invariant: true,
+    reasoning: (
+      #|The loop advances until the closing quote or an error is encountered.
+    ),
   }
   buf.to_string()
 }

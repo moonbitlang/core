@@ -30,6 +30,11 @@ fn ParseContext::lex_decimal_integer(
       }
       None => return ctx.lex_number_end(start, ctx.offset)
     }
+  } where {
+    invariant: true,
+    reasoning: (
+      #|The loop consumes digits until a non-digit terminator or EOF is seen.
+    ),
   }
 }
 
@@ -66,6 +71,11 @@ fn ParseContext::lex_decimal_fraction(
       }
       None => return ctx.lex_number_end(start, ctx.offset)
     }
+  } where {
+    invariant: true,
+    reasoning: (
+      #|The loop consumes fractional digits until a terminator or EOF is seen.
+    ),
   }
 }
 
@@ -120,6 +130,11 @@ fn ParseContext::lex_decimal_exponent_integer(
       }
       None => return ctx.lex_number_end(start, ctx.offset)
     }
+  } where {
+    invariant: true,
+    reasoning: (
+      #|The loop consumes exponent digits until a terminator or EOF is seen.
+    ),
   }
 }
 
