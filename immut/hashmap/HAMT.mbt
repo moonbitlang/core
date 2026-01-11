@@ -346,6 +346,14 @@ pub fn[K, V] HashMap::length(self : HashMap[K, V]) -> Int {
           continue i + 1, total_size + node_size(children.data[i])
         } else {
           total_size
+        } where {
+          invariant: i >= 0,
+          invariant: i <= children.data.length(),
+          invariant: total_size >= 0,
+          reasoning: (
+            #|i starts at 0 and increases by 1 each iteration,
+            #|so the loop terminates when i reaches children.data.length().
+          ),
         }
     }
   }
