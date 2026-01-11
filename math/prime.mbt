@@ -255,6 +255,12 @@ pub fn probable_prime(bits : Int, rand : @random.Rand) -> @bigint.BigInt {
     if is_probable_prime(b, rand) {
       break b
     }
+  } where {
+    invariant: true,
+    reasoning: (
+      #|Each iteration samples a new candidate; the loop terminates when a
+      #|candidate passes the probabilistic primality test.
+    ),
   }
 }
 
@@ -302,6 +308,11 @@ fn miller_rabin_test(
       if x < w3 {
         break x
       }
+    } where {
+      invariant: true,
+      reasoning: (
+        #|Each iteration samples a random value; it terminates once x < w3.
+      ),
     }
     let b = rand_b + 2N
     // (step 4.3) z = b^m mod w
