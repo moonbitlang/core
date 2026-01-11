@@ -43,6 +43,12 @@ test "@hashset.size" {
     assert_eq(set.length(), i)
   } else {
     assert_eq(set.add(0).length(), 20)
+  } where {
+    invariant: i >= 0,
+    invariant: i <= 20,
+    reasoning: (
+      #|i increases by 1 each iteration until it reaches 20.
+    ),
   }
   let set = @hashset.new()
   inspect(set.length(), content="0")
@@ -70,6 +76,14 @@ test "@hashset.remove" {
   for i = 0; i < 100; i = i + 2 {
     assert_eq(map.contains(i), false)
     assert_eq(map.contains(i + 1), true)
+  } where {
+    invariant: i >= 0,
+    invariant: i <= 100,
+    invariant: i % 2 == 0,
+    reasoning: (
+      #|i starts at 0 and increases by 2 each iteration,
+      #|so the loop terminates when i reaches 100.
+    ),
   }
 }
 
