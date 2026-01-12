@@ -948,15 +948,15 @@ pub impl[
 ///
 /// ```mbt check
 /// test {
-///   inspect(42, content="42")
-///   inspect('c', content="'c'")
-///   inspect(
+///   @debug.debug_inspect(42, content="42")
+///   @debug.debug_inspect('c', content="'c'")
+///   @debug.debug_inspect(
 ///     "hello",
 ///     content=(
 ///       #|"hello"
 ///     ),
 ///   )
-///   inspect(
+///   @debug.debug_inspect(
 ///     ([1, 2, 3, 4], "string", Some(3.14)),
 ///     content=(
 ///       #|(
