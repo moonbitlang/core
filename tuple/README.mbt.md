@@ -43,9 +43,9 @@ test {
   let tuple = (1, 2)
   let tuple2 = ((pair : (Int, Int)) => (pair.0 + 1, pair.1))(tuple)
   inspect(tuple2, content="(2, 2)")
-  let tuple3 = tuple |> then(pair => (pair.0, pair.1 + 1))
+  let tuple3 = tuple |> pair => { (pair.0, pair.1 + 1) }
   inspect(tuple3, content="(1, 3)")
-  let mapped = tuple |> then(pair => (pair.0 + 1, pair.1 - 1))
+  let mapped = tuple |> pair => { (pair.0 + 1, pair.1 - 1) }
   inspect(mapped, content="(2, 1)")
 }
 ```
