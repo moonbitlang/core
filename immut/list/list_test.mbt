@@ -23,8 +23,8 @@ test "from_array" {
 ///|
 test "length" {
   let ls = @list.of([1, 2, 3, 4, 5])
-  @json.inspect(ls.length(), content=5)
-  @json.inspect(@list.singleton(11), content=[11])
+  @json.json_inspect(ls.length(), content=5)
+  @json.json_inspect(@list.singleton(11), content=[11])
 }
 
 ///|
@@ -569,13 +569,13 @@ test "List::output with empty list" {
 ///|
 test "List::to_json with non-empty list" {
   let list = @list.of([1, 2, 3, 4, 5])
-  @json.inspect(ToJson::to_json(list), content=[1, 2, 3, 4, 5])
+  @json.json_inspect(ToJson::to_json(list), content=[1, 2, 3, 4, 5])
 }
 
 ///|
 test "List::to_json with empty list" {
   let list : @list.T[Int] = Nil
-  @json.inspect(ToJson::to_json(list), content=[])
+  @json.json_inspect(ToJson::to_json(list), content=[])
 }
 
 ///|

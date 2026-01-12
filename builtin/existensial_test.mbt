@@ -35,5 +35,5 @@ test {
       _ => abort("impossible")
     }
   }
-  @json.inspect(buf.to_string(), content="x1")
+  @json.json_inspect(buf.to_string(), content="x1")
 }

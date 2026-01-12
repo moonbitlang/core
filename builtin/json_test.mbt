@@ -92,7 +92,7 @@ test "double to json with positive infinity" {
       #|String("Infinity")
     ),
   )
-  @json.inspect(pos_inf, content="Infinity")
+  @json.json_inspect(pos_inf, content="Infinity")
 }
 
 ///|
@@ -104,8 +104,8 @@ test "double to json with negative infinity" {
       #|String("-Infinity")
     ),
   )
-  @json.inspect(neg_inf, content="-Infinity")
-  @json.inspect(0.0 / 0.0, content="NaN")
+  @json.json_inspect(neg_inf, content="-Infinity")
+  @json.json_inspect(0.0 / 0.0, content="NaN")
 }
 
 ///|
@@ -241,5 +241,5 @@ test "Byte::to_json" {
 ///|
 test "Iter[X] to_json" {
   let v = "a b c d".split(" ")
-  @json.inspect(v, content=["a", "b", "c", "d"])
+  @json.json_inspect(v, content=["a", "b", "c", "d"])
 }

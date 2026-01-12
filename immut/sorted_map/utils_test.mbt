@@ -174,7 +174,7 @@ test "panic get with empty map" {
 test "to_json with non-empty map" {
   let map = [(3, "three"), (8, "eight"), (1, "one"), (2, "two"), (0, "zero")]
     |> @sorted_map.from_array
-  @json.inspect(map.to_json(), content={
+  @json.json_inspect(map.to_json(), content={
     "0": "zero",
     "1": "one",
     "2": "two",
@@ -186,7 +186,7 @@ test "to_json with non-empty map" {
 ///|
 test "to_json with empty map" {
   let map : @sorted_map.SortedMap[Int, String] = @sorted_map.new()
-  @json.inspect(map.to_json(), content={})
+  @json.json_inspect(map.to_json(), content={})
 }
 
 ///|
@@ -337,7 +337,7 @@ test "rev_values with complex tree" {
 test "from_json free function" {
   let json : Json = { "a": 1, "b": 2 }
   let map : @sorted_map.SortedMap[String, Int] = @sorted_map.from_json(json)
-  @json.inspect(map.to_json(), content={ "a": 1, "b": 2 })
+  @json.json_inspect(map.to_json(), content={ "a": 1, "b": 2 })
 }
 
 ///|

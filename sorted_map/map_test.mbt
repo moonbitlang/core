@@ -256,7 +256,7 @@ test "to_json with non-empty map" {
     (2, "two"),
     (0, "zero"),
   ])
-  @json.inspect(map.to_json(), content={
+  @json.json_inspect(map.to_json(), content={
     "0": "zero",
     "1": "one",
     "2": "two",
@@ -268,7 +268,7 @@ test "to_json with non-empty map" {
 ///|
 test "to_json with empty map" {
   let map : @sorted_map.SortedMap[Int, String] = @sorted_map.new()
-  @json.inspect(map.to_json(), content={})
+  @json.json_inspect(map.to_json(), content={})
 }
 
 ///|
@@ -298,7 +298,7 @@ test "from_json rejects non-object" {
 test "json roundtrip verification" {
   let original : Json = { "key1": 42, "key2": 100, "key3": -5 }
   let restored : @sorted_map.SortedMap[String, Int] = @json.from_json(original)
-  @json.inspect(restored, content={ "key1": 42, "key2": 100, "key3": -5 })
+  @json.json_inspect(restored, content={ "key1": 42, "key2": 100, "key3": -5 })
 }
 
 ///|

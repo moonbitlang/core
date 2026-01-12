@@ -462,7 +462,7 @@ test "nested json" {
       "key3": { "subkey1": u, "subkey2": h, "subkey3": [1, 2, 3] },
     },
   }
-  @json.inspect(v, content={
+  @json.json_inspect(v, content={
     "nestedmap": {
       "key1": 3,
       "a": { "w": 3 },
@@ -543,15 +543,15 @@ test "transformer" {
       other => Some(other)
     }),
   )
-  @json.inspect(newjson, content={ "a": 10, "b": { "c": 20, "d": [3, 4] } })
+  @json.json_inspect(newjson, content={ "a": 10, "b": { "c": 20, "d": [3, 4] } })
 
   // keep
   let newjson2 = json.transform(@json.Replacer::keep(["a", "b", "c"]))
-  @json.inspect(newjson2, content={ "a": 1, "b": { "c": 2 } })
+  @json.json_inspect(newjson2, content={ "a": 1, "b": { "c": 2 } })
 
   // exclude
   let newjson3 = json.transform(@json.Replacer::exclude(["a", "d"]))
-  @json.inspect(newjson3, content={ "b": { "c": 2 } })
+  @json.json_inspect(newjson3, content={ "b": { "c": 2 } })
 }
 
 ///|
@@ -563,17 +563,17 @@ test "transformer with array" {
       other => Some(other)
     }),
   )
-  @json.inspect(newjson, content=[1, { "a": 3 }, [3, 4]])
+  @json.json_inspect(newjson, content=[1, { "a": 3 }, [3, 4]])
 
   // keep
   let newjson2 = json.transform(@json.Replacer::keep(["a"]))
-  @json.inspect(newjson2, content=[1, { "a": 2 }, [3, 4]])
+  @json.json_inspect(newjson2, content=[1, { "a": 2 }, [3, 4]])
 
   // exclude
   let newjson3 = json.transform(@json.Replacer::exclude(["a"]))
-  @json.inspect(newjson3, content=[1, {}, [3, 4]])
+  @json.json_inspect(newjson3, content=[1, {}, [3, 4]])
   let newjson4 : Json = [{ "a": [{ "b": [{ "c": [{ "d": 1 }] }] }] }]
-  @json.inspect(newjson4.transform(@json.Replacer::exclude(["d"])), content=[
+  @json.json_inspect(newjson4.transform(@json.Replacer::exclude(["d"])), content=[
     { "a": [{ "b": [{ "c": [{}] }] }] },
   ])
 }

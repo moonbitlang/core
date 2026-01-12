@@ -114,11 +114,11 @@ pub fn Bytes::to_unchecked_string(
 /// test {
 ///   let bytes = FixedArray::make(6, b'\x00')
 ///   bytes.blit_from_string(0, "ABC", 0, 3)
-///   @json.inspect(bytes, content=[65, 0, 66, 0, 67, 0]) // 'A'
+///   @json.json_inspect(bytes, content=[65, 0, 66, 0, 67, 0]) // 'A'
 ///   bytes.blit_from_string(0, "你好啊", 0, 3)
-///   @json.inspect(bytes, content=[96, 79, 125, 89, 74, 85]) // '你好啊'
+///   @json.json_inspect(bytes, content=[96, 79, 125, 89, 74, 85]) // '你好啊'
 ///   bytes.blit_from_string(0, "😈", 0, 2)
-///   @json.inspect(bytes, content=[61, 216, 8, 222, 74, 85]) // '😈'
+///   @json.json_inspect(bytes, content=[61, 216, 8, 222, 74, 85]) // '😈'
 /// }
 /// ```
 pub fn FixedArray::blit_from_string(

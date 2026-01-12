@@ -47,8 +47,8 @@ fn[T : Range] my_range(lo : T, hi : T) -> RangeImpl[T] {
 
 ///|
 test {
-  @json.inspect(my_range(1, 10), content={ "lo": 1, "hi": 10 })
-  @json.inspect(my_range("a", "z"), content={ "lo": "a", "hi": "z" })
+  @json.json_inspect(my_range(1, 10), content={ "lo": 1, "hi": 10 })
+  @json.json_inspect(my_range("a", "z"), content={ "lo": "a", "hi": "z" })
 }
 
 ///|

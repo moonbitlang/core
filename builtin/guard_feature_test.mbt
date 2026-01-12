@@ -42,11 +42,11 @@ fn simplify(e : Expr) -> Expr {
 test "simplify" {
   let _ignored = Add(Div(Lit(1), Lit(2)), Div(Lit(1), Lit(2)))
   let e = Sub(Mul(Lit(1), Var("x")), Mul(Lit(1), Var("x")))
-  @json.inspect(e, content=[
+  @json.json_inspect(e, content=[
     "Sub",
     ["Mul", ["Lit", 1], ["Var", "x"]],
     ["Mul", ["Lit", 1], ["Var", "x"]],
   ])
   let simplified = simplify(e)
-  @json.inspect(simplified, content=["Lit", 0])
+  @json.json_inspect(simplified, content=["Lit", 0])
 }

@@ -215,7 +215,7 @@ test "compare" {
 ///|
 test "to_json" {
   let pq = @priority_queue.from_array([1, 2, 3])
-  @json.inspect(pq.peek().unwrap(), content=3)
+  @json.json_inspect(pq.peek().unwrap(), content=3)
   let json = pq.to_json()
-  @json.inspect(json, content=[3, 2, 1])
+  @json.json_inspect(json, content=[3, 2, 1])
 }

@@ -183,7 +183,7 @@ test "alternate capture" {
     ),
     greedy=true,
   )
-  @json.inspect(regex.compile(), content=[
+  @json.json_inspect(regex.compile(), content=[
     ["Split", 3, 1],
     ["Chars", ["'\\u{00}'", "'\\u{10ffff}'"]],
     ["Jump", 0],

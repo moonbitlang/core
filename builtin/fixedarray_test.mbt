@@ -222,10 +222,10 @@ test "fixedarray_fill - empty array" {
 test "fixedarray_fill - with different types" {
   let str_fa : FixedArray[String] = ["a", "b", "c", "d"]
   str_fa.fill("x", start=1, end=3)
-  @json.inspect(str_fa, content=["a", "x", "x", "d"])
+  @json.json_inspect(str_fa, content=["a", "x", "x", "d"])
   let bool_fa : FixedArray[Bool] = [true, false, true, false]
   bool_fa.fill(true, start=0, end=2)
-  @json.inspect(bool_fa, content=[true, true, true, false])
+  @json.json_inspect(bool_fa, content=[true, true, true, false])
 }
 
 ///|

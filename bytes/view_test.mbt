@@ -23,8 +23,8 @@ test "basic1" {
   inspect(bv2, content="b\"\\x00\\x01\\x02\\x03\\x04\\x05\"")
   inspect(bv3, content="b\"\\x01\\x02\\x03\\x04\\x05\"")
   inspect(bv4, content="b\"\\x00\\x01\\x02\\x03\"")
-  @json.inspect(bv1, content="\\x01\\x02\\x03")
-  @json.inspect(b"abc"[:], content="abc")
+  @json.json_inspect(bv1, content="\\x01\\x02\\x03")
+  @json.json_inspect(b"abc"[:], content="abc")
 }
 
 ///|
@@ -408,7 +408,7 @@ test "View::to_int64_(be|le) test cases" {
     bytes4 is [i64le(d), ..] else {
     fail("Failed to match int64 big-endian pattern")
   }
-  @json.inspect((a, b, c, d), content=[
+  @json.json_inspect((a, b, c, d), content=[
     "1", "-1152921504606846976", "9223372036854775807", "-1",
   ])
 }

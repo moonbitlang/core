@@ -589,17 +589,17 @@ test "deque push_back when empty" {
   d.push_back(f)
   inspect(d, content="@deque.from_array([1])")
   let d = @deque.from_array(["a", "b"])
-  @json.inspect(d.pop_front(), content=["a"])
-  @json.inspect(d.pop_front(), content=["b"])
+  @json.json_inspect(d.pop_front(), content=["a"])
+  @json.json_inspect(d.pop_front(), content=["b"])
   d.push_back("b")
-  @json.inspect(d, content=["b"])
+  @json.json_inspect(d, content=["b"])
 }
 
 ///|
 test "deque as_views" {
   // Test empty deque
   let dq1 : @deque.Deque[Int] = @deque.new()
-  @json.inspect(dq1.as_views(), content=[[], []])
+  @json.json_inspect(dq1.as_views(), content=[[], []])
 
   // Test contiguous case (head_len >= len)
   let dq2 = @deque.from_array([1, 2, 3])
@@ -613,7 +613,7 @@ test "deque as_views" {
   dq3.push_back(5)
   dq3.push_back(6)
   // Now the deque should be [3, 4, 5, 6] with internal wrap-around
-  @json.inspect(dq3.as_views(), content=[[3, 4], [5, 6]])
+  @json.json_inspect(dq3.as_views(), content=[[3, 4], [5, 6]])
 }
 
 ///|
@@ -653,7 +653,7 @@ test "test_reserve_capacity" {
   assert_eq(dq[1], 2)
   assert_eq(dq[2], 3)
   assert_eq(dq[3], 4)
-  @json.inspect(dq.to_array(), content=[1, 2, 3, 4])
+  @json.json_inspect(dq.to_array(), content=[1, 2, 3, 4])
 }
 
 ///|
@@ -853,20 +853,20 @@ test "deque truncate" {
   // Empty deque
   let dq : @deque.Deque[Int] = @deque.new()
   dq.truncate(3)
-  @json.inspect(dq, content=[])
+  @json.json_inspect(dq, content=[])
 
   // Length is greater than current length
   let dq = @deque.from_array([1, 2, 3, 4, 5])
   dq.truncate(3)
-  @json.inspect(dq, content=[1, 2, 3])
+  @json.json_inspect(dq, content=[1, 2, 3])
 
   // Length is equal to current length
   dq.truncate(3)
-  @json.inspect(dq, content=[1, 2, 3])
+  @json.json_inspect(dq, content=[1, 2, 3])
 
   // Length is less than current length
   dq.truncate(2)
-  @json.inspect(dq, content=[1, 2])
+  @json.json_inspect(dq, content=[1, 2])
 
   // Test split case (head_len < len)
   // Push and pop to create a wrap-around situation
@@ -878,18 +878,18 @@ test "deque truncate" {
   ..push_back(7)
   ..push_back(8)
   // Current layout: [7, 8, X, 4, 5, 6]
-  @json.inspect(dq.as_views(), content=[[4, 5, 6], [7, 8]])
+  @json.json_inspect(dq.as_views(), content=[[4, 5, 6], [7, 8]])
   dq.truncate(42)
   // Current layout: [7, 8, X, 4, 5, 6]
-  @json.inspect(dq.as_views(), content=[[4, 5, 6], [7, 8]])
+  @json.json_inspect(dq.as_views(), content=[[4, 5, 6], [7, 8]])
   dq.truncate(4)
   // Current layout: [7, X, X, 4, 5, 6]
-  @json.inspect(dq.as_views(), content=[[4, 5, 6], [7]])
+  @json.json_inspect(dq.as_views(), content=[[4, 5, 6], [7]])
   // Current layout: [X, X, X, 4, 5, X]
   dq.truncate(2)
-  @json.inspect(dq.as_views(), content=[[4, 5], []])
+  @json.json_inspect(dq.as_views(), content=[[4, 5], []])
   dq.truncate(-1)
-  @json.inspect(dq.as_views(), content=[[4, 5], []])
+  @json.json_inspect(dq.as_views(), content=[[4, 5], []])
 }
 
 ///|
@@ -899,12 +899,12 @@ test "deque retain" {
   // Empty deque
   let dq : @deque.Deque[Int] = @deque.new()
   dq.retain(is_even)
-  @json.inspect(dq, content=[])
+  @json.json_inspect(dq, content=[])
 
   // Non-empty deque
   let dq = @deque.from_array([1, 2, 3, 4, 5])
   dq.retain(is_even)
-  @json.inspect(dq.as_views(), content=[[2, 4], []])
+  @json.json_inspect(dq.as_views(), content=[[2, 4], []])
 
   // Test split case (head_len < len)
   fn dq() raise {
@@ -917,15 +917,21 @@ test "deque retain" {
     ..push_back(7)
     ..push_back(8)
     // Current layout: [7, 8, X, 4, 5, 6]
-    @json.inspect(dq.as_views(), content=[[4, 5, 6], [7, 8]])
+    @json.json_inspect(dq.as_views(), content=[[4, 5, 6], [7, 8]])
     dq
   }
 
-  @json.inspect(dq()..retain(is_even).as_views(), content=[[4, 6, 8], []])
-  @json.inspect(dq()..retain(x => x >= 5).as_views(), content=[[5, 6, 7], [8]])
-  @json.inspect(dq()..retain(x => x >= 7).as_views(), content=[[7, 8], []])
-  @json.inspect(dq()..retain(_ => false).as_views(), content=[[], []])
-  @json.inspect(dq()..retain(_ => true).as_views(), content=[[4, 5, 6], [7, 8]])
+  @json.json_inspect(dq()..retain(is_even).as_views(), content=[[4, 6, 8], []])
+  @json.json_inspect(dq()..retain(x => x >= 5).as_views(), content=[
+    [5, 6, 7],
+    [8],
+  ])
+  @json.json_inspect(dq()..retain(x => x >= 7).as_views(), content=[[7, 8], []])
+  @json.json_inspect(dq()..retain(_ => false).as_views(), content=[[], []])
+  @json.json_inspect(dq()..retain(_ => true).as_views(), content=[
+    [4, 5, 6],
+    [7, 8],
+  ])
 }
 
 ///|
@@ -937,12 +943,12 @@ test "deque retain_map" {
   // Empty deque
   let dq : @deque.Deque[Int] = @deque.new()
   dq.retain_map(inc_if_even)
-  @json.inspect(dq, content=[])
+  @json.json_inspect(dq, content=[])
 
   // Non-empty deque
   let dq = @deque.from_array([1, 2, 3, 4, 5])
   dq.retain_map(inc_if_even)
-  @json.inspect(dq.as_views(), content=[[3, 5], []])
+  @json.json_inspect(dq.as_views(), content=[[3, 5], []])
 
   // Test split case (head_len < len)
   fn dq() raise {
@@ -955,23 +961,23 @@ test "deque retain_map" {
     ..push_back(7)
     ..push_back(8)
     // Current layout: [7, 8, X, 4, 5, 6]
-    @json.inspect(dq.as_views(), content=[[4, 5, 6], [7, 8]])
+    @json.json_inspect(dq.as_views(), content=[[4, 5, 6], [7, 8]])
     dq
   }
 
-  @json.inspect(dq()..retain_map(inc_if_even).as_views(), content=[
+  @json.json_inspect(dq()..retain_map(inc_if_even).as_views(), content=[
     [5, 7, 9],
     [],
   ])
-  @json.inspect(dq()..retain_map(inc_if(x => x >= 5)).as_views(), content=[
+  @json.json_inspect(dq()..retain_map(inc_if(x => x >= 5)).as_views(), content=[
     [6, 7, 8],
     [9],
   ])
-  @json.inspect(dq()..retain_map(inc_if(x => x >= 7)).as_views(), content=[
+  @json.json_inspect(dq()..retain_map(inc_if(x => x >= 7)).as_views(), content=[
     [8, 9],
     [],
   ])
-  @json.inspect(dq()..retain_map(Option::Some(_)).as_views(), content=[
+  @json.json_inspect(dq()..retain_map(Option::Some(_)).as_views(), content=[
     [4, 5, 6],
     [7, 8],
   ])
@@ -981,14 +987,14 @@ test "deque retain_map" {
 test "@deque.to_array/empty" {
   let dq : @deque.Deque[Int] = @deque.new()
   let arr = dq.to_array()
-  @json.inspect(arr, content=[])
+  @json.json_inspect(arr, content=[])
 }
 
 ///|
 test "@deque.to_array/basic" {
   let dq = @deque.from_array([1, 2, 3, 4, 5])
   let arr = dq.to_array()
-  @json.inspect(arr, content=[1, 2, 3, 4, 5])
+  @json.json_inspect(arr, content=[1, 2, 3, 4, 5])
 }
 
 ///|
@@ -1001,7 +1007,7 @@ test "@deque.to_array/wrapped_around" {
   dq.pop_front() |> ignore
   dq.push_back(4)
   let arr = dq.to_array()
-  @json.inspect(arr, content=[2, 3, 4])
+  @json.json_inspect(arr, content=[2, 3, 4])
 }
 
 ///|
@@ -1325,9 +1331,9 @@ test "rev_inplace" {
   dq3.push_back(5)
   dq3.push_back(6)
   // Now the deque should be [3, 4, 5, 6] with internal wrap-around
-  @json.inspect(dq3.as_views(), content=[[3, 4], [5, 6]])
+  @json.json_inspect(dq3.as_views(), content=[[3, 4], [5, 6]])
   dq3.rev_in_place()
-  @json.inspect(dq3.as_views(), content=[[6, 5], [4, 3]])
+  @json.json_inspect(dq3.as_views(), content=[[6, 5], [4, 3]])
 }
 
 ///|
@@ -1379,9 +1385,9 @@ test "rev" {
   dq3.push_back(5)
   dq3.push_back(6)
   // Now the deque should be [3, 4, 5, 6] with internal wrap-around
-  @json.inspect(dq3.as_views(), content=[[3, 4], [5, 6]])
+  @json.json_inspect(dq3.as_views(), content=[[3, 4], [5, 6]])
   let dq3_reversed = dq3.rev()
-  @json.inspect(dq3_reversed.as_views(), content=[[6, 5, 4, 3], []])
+  @json.json_inspect(dq3_reversed.as_views(), content=[[6, 5, 4, 3], []])
 }
 
 ///|

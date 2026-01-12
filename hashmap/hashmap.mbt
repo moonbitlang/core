@@ -615,7 +615,7 @@ pub fn[K, V] HashMap::copy(self : HashMap[K, V]) -> HashMap[K, V] {
 ///   let map2 = @hashmap.from_array([("b", 3), ("c", 4)])
 ///   let merged = map1.merge(map2).to_array()
 ///   merged.sort()
-///   @json.inspect(merged, content=[["a", 1], ["b", 3], ["c", 4]])
+///   @json.json_inspect(merged, content=[["a", 1], ["b", 3], ["c", 4]])
 /// }
 /// ```
 pub fn[K : Eq, V] HashMap::merge(
@@ -648,7 +648,7 @@ pub fn[K : Eq, V] HashMap::merge(
 ///   map1.merge_in_place(map2)
 ///   let merged = map1.to_array()
 ///   merged.sort()
-///   @json.inspect(merged, content=[["a", 1], ["b", 3], ["c", 4]])
+///   @json.json_inspect(merged, content=[["a", 1], ["b", 3], ["c", 4]])
 /// }
 /// ```
 pub fn[K : Eq, V] HashMap::merge_in_place(

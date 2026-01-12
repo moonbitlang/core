@@ -212,7 +212,7 @@ test {
   assert_true(summary.iqr.is_close(13.125))
   assert_true(summary.batch_size == 3)
   assert_true(summary.runs == 8)
-  @json.inspect(summary, content={
+  @json.json_inspect(summary, content={
     "sum": 92.69999999999999,
     "min": 1.1,
     "max": 33.3,
