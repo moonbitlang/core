@@ -1,6 +1,6 @@
 # moonbitlang/core
 
-[![check](https://github.com/moonbitlang/core/actions/workflows/stable-check.yml/badge.svg)](https://github.com/moonbitlang/core/actions/workflows/stable-check.yml) [![Coverage Status](https://coveralls.io/repos/github/moonbitlang/core/badge.svg?branch=main)](https://coveralls.io/github/moonbitlang/core?branch=main)
+[![check](https://github.com/moonbitlang/core/actions/workflows/stable-check.yml/badge.svg)](https://github.com/moonbitlang/core/actions/workflows/stable-check.yml) [![Coverage Status](https://coveralls.io/repos/github/moonbitlang/core/badge.svg?branch=main&service=github)](https://coveralls.io/github/moonbitlang/core?branch=main)
 [![doc](https://img.shields.io/badge/docs-mooncakes.io-green)](https://mooncakes.io/docs/moonbitlang/core)
 
 
