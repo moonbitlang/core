@@ -969,7 +969,8 @@ pub impl[
 /// }
 /// ```
 #callsite(autofill(args_loc, loc))
-pub fn inspect(
+#alias(inspect, deprecated="use `debug_inspect` without package name instead")
+pub fn debug_inspect(
   obj : &Debug,
   content? : String,
   loc~ : SourceLoc,

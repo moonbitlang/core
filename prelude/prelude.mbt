@@ -73,7 +73,7 @@ pub using @builtin {
 }
 
 ///|
-pub using @debug {debug, type Repr, trait Debug}
+pub using @debug {debug, type Repr, trait Debug, debug_inspect}
 
 ///|
 /// Applies a function to a value and returns the original value.

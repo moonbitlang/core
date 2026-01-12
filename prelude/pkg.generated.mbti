@@ -27,6 +27,9 @@ pub fn assert_true(Bool, msg? : String, loc~ : @builtin.SourceLoc) -> Unit raise
 
 pub fn[T : @debug.Debug] debug(T) -> Unit
 
+#callsite(autofill(args_loc, loc))
+pub fn debug_inspect(&@debug.Debug, content? : String, loc~ : @builtin.SourceLoc, args_loc~ : @builtin.ArgsLoc) -> Unit raise @builtin.InspectError
+
 #deprecated
 #callsite(autofill(loc))
 pub fn[T] dump(T, name? : String, loc~ : @builtin.SourceLoc) -> T
