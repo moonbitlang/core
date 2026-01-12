@@ -36,6 +36,7 @@ fn[T : Compare] timsort(arr : MutArrayView[T]) -> Unit {
   let len = arr.length()
   if len <= max_insertion {
     MutArrayView::insertion_sort(arr)
+    return
   }
   let mut end = 0
   let mut start = 0
