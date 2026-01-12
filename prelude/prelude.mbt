@@ -113,20 +113,21 @@ pub fn[T] tap(value : T, f : (T) -> Unit raise) -> T raise {
 /// ```mbt check
 /// test {
 ///   let x = 5
-///   let result = x |> then(n => n * 2)
+///   let result = x |> n => { n * 2 }
 ///   assert_eq(result, 10)
 /// }
 /// ```
 /// 
 /// ```mbt check
 /// test {
-///   let result : Result[Unit, Failure] = try? (5 |> then(x => fail(x.to_string())))
+///   let result : Result[Unit, Failure] = try? (5 |> x => { fail(x.to_string()) })
 ///   match result {
 ///     Err(Failure(_)) => ()
 ///     Ok(_) => fail("expected failure")
 ///   }
 /// }
 /// ```
+#deprecated("use `value |> (x) => {...}` operator instead")
 pub fn[T, R] then(value : T, f : (T) -> R raise?) -> R raise? {
   f(value)
 }
