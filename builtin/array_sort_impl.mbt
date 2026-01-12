@@ -580,3 +580,44 @@ fn minimum(x : Int, y : Int) -> Int {
     x
   }
 }
+
+///|
+/// A wrapper type that counts comparisons for testing purposes
+priv struct CompareCounter {
+  value : Int
+  counter : Ref[Int]
+}
+
+///|
+impl Eq for CompareCounter with equal(self, other) {
+  self.value == other.value
+}
+
+///|
+impl Compare for CompareCounter with compare(self, other) {
+  self.counter.val += 1
+  self.value.compare(other.value)
+}
+
+///|
+/// Test that timsort returns early for small arrays without doing extra work.
+/// The bug (missing return statement after insertion_sort for small arrays)
+/// would cause timsort to continue processing, resulting in extra comparisons.
+test "timsort_early_return_for_small_arrays" {
+  let count : Ref[Int] = { val: 0 }
+  let arr : FixedArray[CompareCounter] = FixedArray::make(
+    10,
+    { value: 0, counter: count },
+  )
+  for i in 0..<10 {
+    arr[i] = { value: 10 - i, counter: count }
+  }
+  arr.mut_view().stable_sort()
+  // With insertion sort only: O(n^2/2) comparisons, roughly 45 for n=10
+  // With the bug (timsort continues after insertion_sort), find_streak adds
+  // approximately n-1 more comparisons (9 for n=10), plus overhead.
+  // We set a threshold of 55 to catch the bug while allowing for insertion sort variance.
+  // Insertion sort worst case is n*(n-1)/2 = 45 comparisons for n=10.
+  // With the bug, we get at least 45 + 9 = 54 comparisons.
+  inspect(count.val, content="45")
+}
