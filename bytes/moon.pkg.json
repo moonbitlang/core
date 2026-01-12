@@ -1,6 +1,10 @@
 {
   "import": [
-    "moonbitlang/core/builtin"
+    "moonbitlang/core/builtin",
+    {
+      "path": "moonbitlang/core/internal/regex_engine",
+      "alias": "re"
+    }
   ],
   "test-import": [
     "moonbitlang/core/array",
