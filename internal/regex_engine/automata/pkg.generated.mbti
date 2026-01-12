@@ -1,0 +1,81 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/internal/regex_engine/automata"
+
+import(
+  "moonbitlang/core/internal/regex_engine/shared_types"
+  "moonbitlang/core/internal/regex_engine/shared_types/rechar_set"
+)
+
+// Values
+pub fn delta(ctx~ : Context, State, Int, next_cat~ : @shared_types.Category) -> State
+
+pub fn e_after(ctx~ : Context, @shared_types.Category) -> Expr
+
+pub fn e_alt(ctx~ : Context, Array[Expr]) -> Expr
+
+pub fn e_before(ctx~ : Context, @shared_types.Category) -> Expr
+
+pub fn e_copy(ctx~ : Context, Expr) -> Expr
+
+pub fn e_cset(ctx~ : Context, @rechar_set.RecharSet) -> Expr
+
+pub let e_eps : Expr
+
+pub fn e_mark(ctx~ : Context, Mark) -> Expr
+
+pub fn e_rep(ctx~ : Context, @shared_types.QuantifierMode, @shared_types.Preference, Expr) -> Expr
+
+pub fn e_seq(ctx~ : Context, @shared_types.Preference, Expr, Expr) -> Expr
+
+pub fn is_eps(Expr) -> Bool
+
+pub let st_dummy : State
+
+// Errors
+
+// Types and methods
+type Context
+pub fn Context::new() -> Self
+
+type Expr
+
+pub(all) struct Mark(Int)
+#deprecated
+pub fn Mark::inner(Self) -> Int
+pub impl Compare for Mark
+pub impl Eq for Mark
+pub impl Hash for Mark
+
+type MarkSlotMap
+pub fn MarkSlotMap::get_slot(Self, Mark) -> Slot
+pub fn MarkSlotMap::iter2(Self) -> Iter2[Mark, Slot]
+pub impl Eq for MarkSlotMap
+pub impl Hash for MarkSlotMap
+
+pub struct Slot(Int)
+#deprecated
+pub fn Slot::inner(Self) -> Int
+pub fn Slot::is_assigned(Self) -> Bool
+pub fn Slot::unassigned() -> Self
+pub impl Eq for Slot
+pub impl Hash for Slot
+
+pub struct State {
+  // private fields
+}
+pub fn State::slot(Self) -> Slot
+pub fn State::start(@shared_types.Category, Expr) -> Self
+pub fn State::status(Self) -> Status
+pub impl Eq for State
+pub impl Hash for State
+
+pub enum Status {
+  Failed
+  Match(MarkSlotMap)
+  Running
+}
+
+// Type aliases
+
+// Traits
+

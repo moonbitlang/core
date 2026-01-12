@@ -1,0 +1,25 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/internal/regex_engine/symbol_map"
+
+import(
+  "moonbitlang/core/internal/regex_engine/shared_types/rechar_set"
+)
+
+// Values
+pub fn new() -> SymbolMap
+
+// Errors
+
+// Types and methods
+type SymbolMap
+pub fn SymbolMap::finalize(Self, Int, Int) -> (&Table, ReadOnlyArray[Int])
+pub fn SymbolMap::split(Self, @rechar_set.RecharSet) -> Unit
+
+// Type aliases
+
+// Traits
+pub trait Table {
+  map(Self, Int) -> Int
+  map_set(Self, @rechar_set.RecharSet) -> @rechar_set.RecharSet
+}
+
