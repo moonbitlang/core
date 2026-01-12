@@ -14,7 +14,7 @@
 
 ///|
 /// Trait for types that can be converted to human-readable debugging info.
-pub trait Debug {
+pub(open) trait Debug {
   to_repr(Self) -> Repr
 }
 
