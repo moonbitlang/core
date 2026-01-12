@@ -5,7 +5,6 @@
     "moonbitlang/core/double/internal/ryu"
   ],
   "test-import": [
-    "moonbitlang/core/bytes",
     "moonbitlang/core/buffer",
     "moonbitlang/core/math"
   ],

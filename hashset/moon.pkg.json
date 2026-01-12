@@ -6,7 +6,6 @@
     "moonbitlang/core/quickcheck"
   ],
   "test-import": [
-    "moonbitlang/core/string",
     "moonbitlang/core/int",
     "moonbitlang/core/json"
   ]

@@ -10,7 +10,6 @@
   ],
   "test-import": [
     "moonbitlang/core/int",
-    "moonbitlang/core/string",
     "moonbitlang/core/option"
   ]
 }

@@ -2,7 +2,6 @@
   "import": [
     "moonbitlang/core/builtin",
     "moonbitlang/core/tuple",
-    "moonbitlang/core/string",
     "moonbitlang/core/array",
     "moonbitlang/core/quickcheck",
     "moonbitlang/core/json"

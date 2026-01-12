@@ -5,7 +5,6 @@
     "moonbitlang/core/string/regex/internal/regexp/internal/unicode",
     "moonbitlang/core/builtin",
     "moonbitlang/core/array",
-    "moonbitlang/core/string",
     "moonbitlang/core/int",
     "moonbitlang/core/char",
     "moonbitlang/core/set"

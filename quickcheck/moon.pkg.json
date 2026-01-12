@@ -9,8 +9,7 @@
     "moonbitlang/core/bigint",
     "moonbitlang/core/float",
     "moonbitlang/core/double",
-    "moonbitlang/core/tuple",
-    "moonbitlang/core/bytes"
+    "moonbitlang/core/tuple"
 
   ]
 }
