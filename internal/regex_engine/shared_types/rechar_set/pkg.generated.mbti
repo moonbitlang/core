@@ -1,0 +1,31 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/internal/regex_engine/shared_types/rechar_set"
+
+// Values
+
+// Errors
+
+// Types and methods
+type RecharSet
+pub fn RecharSet::char(Int) -> Self
+pub fn RecharSet::char_range(Int, Int) -> Self
+pub fn RecharSet::contains(Self, Int) -> Bool
+pub fn RecharSet::difference(Self, Self) -> Self
+pub fn RecharSet::empty() -> Self
+pub fn RecharSet::first_interval(Self) -> (Int, Int)?
+pub fn RecharSet::from_sorted_array(ArrayView[(Int, Int)]) -> Self
+pub fn RecharSet::intersection(Self, Self) -> Self
+pub fn RecharSet::intervals(Self) -> Iter[(Int, Int)]
+pub fn RecharSet::is_empty(Self) -> Bool
+pub fn RecharSet::last_interval(Self) -> (Int, Int)?
+pub fn RecharSet::offset_by(Self, (Int) -> Int) -> Self
+pub fn RecharSet::union(Self, Self) -> Self
+pub impl Add for RecharSet
+pub impl BitAnd for RecharSet
+pub impl Sub for RecharSet
+
+// Type aliases
+pub type Rechar = Int
+
+// Traits
+

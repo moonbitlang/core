@@ -1,0 +1,64 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbitlang/core/internal/regex_engine/shared_types"
+
+import(
+  "moonbitlang/core/internal/regex_engine/shared_types/rechar_set"
+)
+
+// Values
+
+// Errors
+
+// Types and methods
+pub struct Category(Int)
+pub fn Category::dummy() -> Self
+pub fn Category::inexistant() -> Self
+pub fn Category::inexistant_or_newline() -> Self
+pub fn Category::inexistant_or_non_word() -> Self
+#deprecated
+pub fn Category::inner(Self) -> Int
+pub fn Category::intersects(Self, Self) -> Bool
+pub fn Category::newline() -> Self
+pub fn Category::not_word() -> Self
+pub fn Category::word() -> Self
+pub impl Add for Category
+pub impl Eq for Category
+pub impl Hash for Category
+
+pub(all) enum Preference {
+  Shortest
+  Longest
+  First
+}
+pub impl Eq for Preference
+pub impl Hash for Preference
+
+pub struct Profile {
+  lb : Int
+  ub : Int
+  valid : @rechar_set.RecharSet
+  word : @rechar_set.RecharSet
+  non_word : @rechar_set.RecharSet
+  digit : @rechar_set.RecharSet
+  non_digit : @rechar_set.RecharSet
+  space : @rechar_set.RecharSet
+  non_space : @rechar_set.RecharSet
+  line_terminator : @rechar_set.RecharSet
+  non_line_terminator : @rechar_set.RecharSet
+  case_insensitive : (@rechar_set.RecharSet) -> @rechar_set.RecharSet
+  category : (Int) -> Category
+}
+pub fn Profile::new(valid~ : @rechar_set.RecharSet, word~ : @rechar_set.RecharSet, digit~ : @rechar_set.RecharSet, space~ : @rechar_set.RecharSet, line_terminator~ : @rechar_set.RecharSet, case_insensitive~ : (@rechar_set.RecharSet) -> @rechar_set.RecharSet, category~ : (Int) -> Category) -> Self
+
+pub(all) enum QuantifierMode {
+  Greedy
+  NonGreedy
+}
+
+// Type aliases
+pub type Rechar = Int
+
+pub using @rechar_set {type RecharSet}
+
+// Traits
+
