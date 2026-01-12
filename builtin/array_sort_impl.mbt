@@ -606,10 +606,10 @@ impl Compare for CompareCounter with compare(self, other) {
 /// would cause timsort to continue processing, resulting in extra comparisons.
 test "timsort_early_return_for_small_arrays" {
   let count : Ref[Int] = { val: 0 }
-  let arr : FixedArray[CompareCounter] = FixedArray::make(
-    10,
-    { value: 0, counter: count },
-  )
+  let arr : FixedArray[CompareCounter] = FixedArray::make(10, {
+    value: 0,
+    counter: count,
+  })
   for i in 0..<10 {
     arr[i] = { value: 10 - i, counter: count }
   }
