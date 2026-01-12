@@ -4,8 +4,7 @@
     "moonbitlang/core/option",
     "moonbitlang/core/tuple",
     "moonbitlang/core/quickcheck",
-    "moonbitlang/core/json",
-    "moonbitlang/core/string"
+    "moonbitlang/core/json"
   ],
   "test-import": ["moonbitlang/core/array"]
 }

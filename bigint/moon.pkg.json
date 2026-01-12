@@ -6,8 +6,6 @@
     "moonbitlang/core/json",
     "moonbitlang/core/quickcheck",
     "moonbitlang/core/quickcheck/splitmix",
-    "moonbitlang/core/string",
-    "moonbitlang/core/bytes",
     "moonbitlang/core/int16",
     "moonbitlang/core/uint16"
   ],

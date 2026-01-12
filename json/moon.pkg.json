@@ -5,7 +5,6 @@
     "moonbitlang/core/char",
     "moonbitlang/core/double",
     "moonbitlang/core/float",
-    "moonbitlang/core/string",
     "moonbitlang/core/strconv",
     "moonbitlang/core/option",
     "moonbitlang/core/buffer"
@@ -13,7 +12,6 @@
   "test-import": [
     "moonbitlang/core/result",
     "moonbitlang/core/unit",
-    "moonbitlang/core/bigint",
-    "moonbitlang/core/bytes"
+    "moonbitlang/core/bigint"
   ]
 }

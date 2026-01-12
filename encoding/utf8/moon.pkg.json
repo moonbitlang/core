@@ -1,8 +1,6 @@
 {
   "import": [
     "moonbitlang/core/buffer",
-    "moonbitlang/core/string",
-    "moonbitlang/core/bytes",
     "moonbitlang/core/builtin"
   ]
 }

@@ -5,7 +5,6 @@
   ],
   "test-import": [
     "moonbitlang/core/option",
-    "moonbitlang/core/error",
-    "moonbitlang/core/string"
+    "moonbitlang/core/error"
   ]
 }
