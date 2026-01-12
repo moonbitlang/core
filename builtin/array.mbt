@@ -448,7 +448,7 @@ pub fn[T] Array::each(self : Array[T], f : (T) -> Unit raise?) -> Unit raise? {
 ///   let v = [3, 4, 5]
 ///   let mut sum = 0
 ///   v.rev_each(x => sum = sum - x)
-///   @json.inspect(sum, content=-12)
+///   @json.json_inspect(sum, content=-12)
 /// }
 /// ```
 #locals(f)

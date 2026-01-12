@@ -17,8 +17,8 @@ const HELLO_WORLD = b"H\x00e\x00l\x00l\x00o\x00,\x00 \x00W\x00o\x00r\x00l\x00d\x
 
 ///|
 test "json repr" {
-  @json.inspect(b"hello", content="hello")
-  @json.inspect(
+  @json.json_inspect(b"hello", content="hello")
+  @json.json_inspect(
     b"\x00\x01\x02\x03",
     content=(
       #|\x00\x01\x02\x03

@@ -15,31 +15,34 @@
 ///|
 test "2-tuple to_json" {
   let pair = (42, "hello")
-  @json.inspect(pair.to_string(), content="(42, \"hello\")")
+  @json.json_inspect(pair.to_string(), content="(42, \"hello\")")
 }
 
 ///|
 test "3-tuple to_json" {
   let triple = (42, "hello", true)
-  @json.inspect(triple.to_string(), content="(42, \"hello\", true)")
+  @json.json_inspect(triple.to_string(), content="(42, \"hello\", true)")
 }
 
 ///|
 test "4-tuple to_json" {
   let tuple = (42, "hello", true, 3.14)
-  @json.inspect(tuple.to_string(), content="(42, \"hello\", true, 3.14)")
+  @json.json_inspect(tuple.to_string(), content="(42, \"hello\", true, 3.14)")
 }
 
 ///|
 test "5-tuple to_json" {
   let tuple = (42, "hello", true, 3.14, 'a')
-  @json.inspect(tuple.to_string(), content="(42, \"hello\", true, 3.14, 'a')")
+  @json.json_inspect(
+    tuple.to_string(),
+    content="(42, \"hello\", true, 3.14, 'a')",
+  )
 }
 
 ///|
 test "6-tuple to_json" {
   let tuple = (42, "hello", true, 3.14, 'a', 1)
-  @json.inspect(
+  @json.json_inspect(
     tuple.to_string(),
     content="(42, \"hello\", true, 3.14, 'a', 1)",
   )
@@ -48,7 +51,7 @@ test "6-tuple to_json" {
 ///|
 test "7-tuple to_json" {
   let tuple = (42, "hello", true, 3.14, 'a', 1, "world")
-  @json.inspect(
+  @json.json_inspect(
     tuple.to_string(),
     content="(42, \"hello\", true, 3.14, 'a', 1, \"world\")",
   )
@@ -57,7 +60,7 @@ test "7-tuple to_json" {
 ///|
 test "8-tuple to_json" {
   let tuple = (42, "hello", true, 3.14, 'a', 1, "world", false)
-  @json.inspect(
+  @json.json_inspect(
     tuple.to_string(),
     content="(42, \"hello\", true, 3.14, 'a', 1, \"world\", false)",
   )
@@ -66,7 +69,7 @@ test "8-tuple to_json" {
 ///|
 test "9-tuple to_json" {
   let tuple = (42, "hello", true, 3.14, 'a', 1, "world", false, 2.71)
-  @json.inspect(
+  @json.json_inspect(
     tuple.to_string(),
     content="(42, \"hello\", true, 3.14, 'a', 1, \"world\", false, 2.71)",
   )
@@ -75,7 +78,7 @@ test "9-tuple to_json" {
 ///|
 test "10-tuple to_json" {
   let tuple = (42, "hello", true, 3.14, 'a', 1, "world", false, 2.71, 'b')
-  @json.inspect(
+  @json.json_inspect(
     tuple.to_string(),
     content="(42, \"hello\", true, 3.14, 'a', 1, \"world\", false, 2.71, 'b')",
   )
@@ -84,7 +87,7 @@ test "10-tuple to_json" {
 ///|
 test "11-tuple to_json" {
   let tuple = (42, "hello", true, 3.14, 'a', 1, "world", false, 2.71, 'b', 43UL)
-  @json.inspect(
+  @json.json_inspect(
     tuple.to_string(),
     content="(42, \"hello\", true, 3.14, 'a', 1, \"world\", false, 2.71, 'b', 43)",
   )
@@ -95,7 +98,7 @@ test "12-tuple to_json" {
   let tuple = (
     42, "hello", true, 3.14, 'a', 1, "world", false, 2.71, 'b', 43UL, 0x12345678U,
   )
-  @json.inspect(
+  @json.json_inspect(
     tuple.to_string(),
     content="(42, \"hello\", true, 3.14, 'a', 1, \"world\", false, 2.71, 'b', 43, 305419896)",
   )
@@ -107,7 +110,7 @@ test "13-tuple to_json" {
     42, "hello", true, 3.14, 'a', 1, "world", false, 2.71, 'b', 43UL, 0x12345678U,
     0x87654321L,
   )
-  @json.inspect(
+  @json.json_inspect(
     tuple.to_string(),
     content="(42, \"hello\", true, 3.14, 'a', 1, \"world\", false, 2.71, 'b', 43, 305419896, 2271560481)",
   )
@@ -131,7 +134,7 @@ test "14-tuple to_json" {
     0x87654321L,
     (0xabcdef, 1234567890UL),
   )
-  @json.inspect(
+  @json.json_inspect(
     tuple.to_string(),
     content="(42, \"hello\", true, 3.14, 'a', 1, \"world\", false, 2.71, 'b', 43, 305419896, 2271560481, (11259375, 1234567890))",
   )
@@ -156,7 +159,7 @@ test "15-tuple to_json" {
     (0xabcdef, 1234567890UL),
     (0x12345678UL, 0x87654321UL, 0xabcdefUL),
   )
-  @json.inspect(
+  @json.json_inspect(
     tuple.to_string(),
     content="(42, \"hello\", true, 3.14, 'a', 1, \"world\", false, 2.71, 'b', 43, 305419896, 2271560481, (11259375, 1234567890), (305419896, 2271560481, 11259375))",
   )
@@ -182,7 +185,7 @@ test "16-tuple to_json" {
     (0x12345678UL, 0x87654321UL, 0xabcdefUL),
     ("wow", [0x87654321UL, 1234567890UL]),
   )
-  @json.inspect(
+  @json.json_inspect(
     tuple.to_string(),
     content="(42, \"hello\", true, 3.14, 'a', 1, \"world\", false, 2.71, 'b', 43, 305419896, 2271560481, (11259375, 1234567890), (305419896, 2271560481, 11259375), (\"wow\", [2271560481, 1234567890]))",
   )

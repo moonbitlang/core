@@ -473,7 +473,8 @@ pub impl ToJson for Json with to_json(self) {
 
 ///|
 #callsite(autofill(args_loc, loc))
-pub fn inspect(
+#alias(inspect, deprecated="Use `json_inspect` without package name instead.")
+pub fn json_inspect(
   obj : &ToJson,
   content? : Json,
   loc~ : SourceLoc,

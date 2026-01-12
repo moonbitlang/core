@@ -15,49 +15,51 @@
 ///|
 test "2-tuple to_json" {
   let pair = (42, "hello")
-  @json.inspect(pair, content=[42, "hello"])
+  @json.json_inspect(pair, content=[42, "hello"])
 }
 
 ///|
 test "3-tuple to_json" {
   let triple = (42, "hello", true)
-  @json.inspect(triple, content=[42, "hello", true])
+  @json.json_inspect(triple, content=[42, "hello", true])
 }
 
 ///|
 test "4-tuple to_json" {
   let tuple = (42, "hello", true, 3.14)
-  @json.inspect(tuple, content=[42, "hello", true, 3.14])
+  @json.json_inspect(tuple, content=[42, "hello", true, 3.14])
 }
 
 ///|
 test "5-tuple to_json" {
   let tuple = (42, "hello", true, 3.14, 'a')
-  @json.inspect(tuple, content=[42, "hello", true, 3.14, "a"])
+  @json.json_inspect(tuple, content=[42, "hello", true, 3.14, "a"])
 }
 
 ///|
 test "6-tuple to_json" {
   let tuple = (42, "hello", true, 3.14, 'a', 1)
-  @json.inspect(tuple, content=[42, "hello", true, 3.14, "a", 1])
+  @json.json_inspect(tuple, content=[42, "hello", true, 3.14, "a", 1])
 }
 
 ///|
 test "7-tuple to_json" {
   let tuple = (42, "hello", true, 3.14, 'a', 1, "world")
-  @json.inspect(tuple, content=[42, "hello", true, 3.14, "a", 1, "world"])
+  @json.json_inspect(tuple, content=[42, "hello", true, 3.14, "a", 1, "world"])
 }
 
 ///|
 test "8-tuple to_json" {
   let tuple = (42, "hello", true, 3.14, 'a', 1, "world", false)
-  @json.inspect(tuple, content=[42, "hello", true, 3.14, "a", 1, "world", false])
+  @json.json_inspect(tuple, content=[
+    42, "hello", true, 3.14, "a", 1, "world", false,
+  ])
 }
 
 ///|
 test "9-tuple to_json" {
   let tuple = (42, "hello", true, 3.14, 'a', 1, "world", false, 2.71)
-  @json.inspect(tuple, content=[
+  @json.json_inspect(tuple, content=[
     42, "hello", true, 3.14, "a", 1, "world", false, 2.71,
   ])
 }
@@ -65,7 +67,7 @@ test "9-tuple to_json" {
 ///|
 test "10-tuple to_json" {
   let tuple = (42, "hello", true, 3.14, 'a', 1, "world", false, 2.71, 'b')
-  @json.inspect(tuple, content=[
+  @json.json_inspect(tuple, content=[
     42, "hello", true, 3.14, "a", 1, "world", false, 2.71, "b",
   ])
 }
@@ -73,7 +75,7 @@ test "10-tuple to_json" {
 ///|
 test "11-tuple to_json" {
   let tuple = (42, "hello", true, 3.14, 'a', 1, "world", false, 2.71, 'b', 43UL)
-  @json.inspect(tuple, content=[
+  @json.json_inspect(tuple, content=[
     42, "hello", true, 3.14, "a", 1, "world", false, 2.71, "b", "43",
   ])
 }
@@ -83,7 +85,7 @@ test "12-tuple to_json" {
   let tuple = (
     42, "hello", true, 3.14, 'a', 1, "world", false, 2.71, 'b', 43UL, 0x12345678U,
   )
-  @json.inspect(tuple, content=[
+  @json.json_inspect(tuple, content=[
     42, "hello", true, 3.14, "a", 1, "world", false, 2.71, "b", "43", 305419896,
   ])
 }
@@ -94,7 +96,7 @@ test "13-tuple to_json" {
     42, "hello", true, 3.14, 'a', 1, "world", false, 2.71, 'b', 43UL, 0x12345678U,
     0x87654321L,
   )
-  @json.inspect(tuple, content=[
+  @json.json_inspect(tuple, content=[
     42, "hello", true, 3.14, "a", 1, "world", false, 2.71, "b", "43", 305419896,
     "2271560481",
   ])
@@ -118,7 +120,7 @@ test "14-tuple to_json" {
     0x87654321L,
     (0xabcdef, 1234567890UL),
   )
-  @json.inspect(tuple, content=[
+  @json.json_inspect(tuple, content=[
     42,
     "hello",
     true,
@@ -155,7 +157,7 @@ test "15-tuple to_json" {
     (0xabcdef, 1234567890UL),
     (0x12345678UL, 0x87654321UL, 0xabcdefUL),
   )
-  @json.inspect(tuple, content=[
+  @json.json_inspect(tuple, content=[
     42,
     "hello",
     true,
@@ -194,7 +196,7 @@ test "16-tuple to_json" {
     -0.00001,
     ("wow", [0x87654321UL, 1234567890UL]),
   )
-  @json.inspect(tuple, content=[
+  @json.json_inspect(tuple, content=[
     "hello",
     42,
     true,

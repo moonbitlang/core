@@ -219,11 +219,11 @@ test "fixedarray_sub" {
 test "ArrayView::suffixes" {
   let arr = [1, 2, 3]
   let suffixes = arr[:].suffixes().collect()
-  @json.inspect(suffixes, content=[[1, 2, 3], [2, 3], [3]])
+  @json.json_inspect(suffixes, content=[[1, 2, 3], [2, 3], [3]])
   let suffixes_with_empty = arr[:].suffixes(include_empty=true).collect()
-  @json.inspect(suffixes_with_empty, content=[[1, 2, 3], [2, 3], [3], []])
+  @json.json_inspect(suffixes_with_empty, content=[[1, 2, 3], [2, 3], [3], []])
   let suffixes_no_empty = arr[:].suffixes(include_empty=false).collect()
-  @json.inspect(suffixes_no_empty, content=[[1, 2, 3], [2, 3], [3]])
+  @json.json_inspect(suffixes_no_empty, content=[[1, 2, 3], [2, 3], [3]])
 }
 
 ///|
@@ -299,11 +299,11 @@ test "compare" {
 ///|
 test "iter" {
   let array = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-  @json.inspect(array[:].iter().to_array(), content=[
+  @json.json_inspect(array[:].iter().to_array(), content=[
     0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
   ])
-  @json.inspect(array[5:].iter().to_array(), content=[5, 6, 7, 8, 9, 10])
-  @json.inspect(array[5:9].iter().to_array(), content=[5, 6, 7, 8])
+  @json.json_inspect(array[5:].iter().to_array(), content=[5, 6, 7, 8, 9, 10])
+  @json.json_inspect(array[5:9].iter().to_array(), content=[5, 6, 7, 8])
 }
 
 ///|
@@ -325,8 +325,8 @@ test "iter2" {
 ///|
 test "to_string" {
   let arr = [0, 1, 2, 3, 4]
-  @json.inspect(arr[1:3], content=[1, 2])
-  @json.inspect("\{arr[1:3]}!", content="[1, 2]!")
+  @json.json_inspect(arr[1:3], content=[1, 2])
+  @json.json_inspect("\{arr[1:3]}!", content="[1, 2]!")
 }
 
 ///|
@@ -364,7 +364,7 @@ test "arrayview_map" {
   inspect(mapped.length(), content="2")
   inspect(mapped[0], content="4")
   inspect(mapped[1], content="6")
-  @json.inspect(([1] : Array[Int])[1:].map(x => x), content=[])
+  @json.json_inspect(([1] : Array[Int])[1:].map(x => x), content=[])
 }
 
 ///|

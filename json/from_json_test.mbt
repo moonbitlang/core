@@ -894,11 +894,11 @@ test "ArrayView::from_json" {
 ///|
 test "from_json special cases" {
   let nan_value : Double = @json.from_json(Json::string("NaN"))
-  @json.inspect(nan_value, content="NaN")
+  @json.json_inspect(nan_value, content="NaN")
   let inf_value : Double = @json.from_json(Json::string("Infinity"))
-  @json.inspect(inf_value, content="Infinity")
+  @json.json_inspect(inf_value, content="Infinity")
   let neg_inf_value : Double = @json.from_json(Json::string("-Infinity"))
-  @json.inspect(neg_inf_value, content="-Infinity")
+  @json.json_inspect(neg_inf_value, content="-Infinity")
   let array_view_result : Result[ArrayView[Int], _] = try? @json.from_json(
     Json::string("oops"),
   )

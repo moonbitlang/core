@@ -31,7 +31,7 @@
 ///   match err {
 ///     Failure(msg) => inspect(msg, content="Test assertion failed")
 ///   }
-///   @json.inspect(err, content=["Failure", "Test assertion failed"])
+///   @json.json_inspect(err, content=["Failure", "Test assertion failed"])
 /// }
 /// ```
 pub(all) suberror Failure {

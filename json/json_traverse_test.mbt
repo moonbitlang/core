@@ -112,14 +112,14 @@ test "prune_loc - arrays" {
     Json::number(123.0),
     Json::string("test"),
   ])
-  @json.inspect(
+  @json.json_inspect(
     arr1.prune_loc_test(),
     content=[null, true, 123, "test"], // FIXME: support null
   )
 
   // Nested arrays
   let arr2 : Json = [[1, 2], []]
-  @json.inspect(arr2.prune_loc(), content=[[[1, 2], []]])
+  @json.json_inspect(arr2.prune_loc(), content=[[[1, 2], []]])
 }
 
 ///|
@@ -129,7 +129,7 @@ test "prune_loc - objects without loc" {
 
   // Object with no "loc" key
   let obj1 : Json = { "name": Json::string("John"), "age": Json::number(30.0) }
-  @json.inspect(obj1.prune_loc(), content=[{ "name": "John", "age": 30 }])
+  @json.json_inspect(obj1.prune_loc(), content=[{ "name": "John", "age": 30 }])
 }
 
 ///|
@@ -141,7 +141,7 @@ test "prune_loc - objects with loc key" {
       "column": Json::number(5.0),
     }),
   }
-  @json.inspect(obj_only_loc.prune_loc(), content=null) // FIXME: None -> Null
+  @json.json_inspect(obj_only_loc.prune_loc(), content=null) // FIXME: None -> Null
 
   // Object with "loc" and other keys - "loc" should be removed
   let obj_with_loc : Json = {
@@ -152,7 +152,7 @@ test "prune_loc - objects with loc key" {
       "column": Json::number(5.0),
     }),
   }
-  @json.inspect(obj_with_loc.prune_loc(), content=[
+  @json.json_inspect(obj_with_loc.prune_loc(), content=[
     { "type": "function", "name": "myFunc" },
   ])
 }
@@ -164,13 +164,13 @@ test "prune_loc - nested objects" {
     "outer": Json::object({ "loc": Json::string("should be removed") }),
     "value": Json::number(42.0),
   }
-  @json.inspect(nested1.prune_loc(), content=[{ "value": 42 }])
+  @json.json_inspect(nested1.prune_loc(), content=[{ "value": 42 }])
 
   // Nested object where all objects are pruned
   let nested2 : Json = {
     "inner": Json::object({ "loc": Json::string("remove me") }),
   }
-  @json.inspect(
+  @json.json_inspect(
     nested2.prune_loc(),
     content=null, // FIXME: None -> Null
   )
@@ -198,7 +198,7 @@ test "prune_loc - complex mixed structure" {
     },
   }
   let result = complex.prune_loc_test()
-  @json.inspect(
+  @json.json_inspect(
     result,
     content={
       "ast": {
@@ -221,7 +221,7 @@ test "prune_loc - array with objects containing loc" {
     },
     { "value": 3.0 },
   ]
-  @json.inspect(arr_with_loc_objects.prune_loc_test(), content=[
+  @json.json_inspect(arr_with_loc_objects.prune_loc_test(), content=[
     { "value": 1 },
     { "value": 3 },
   ])

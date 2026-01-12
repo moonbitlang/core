@@ -239,7 +239,7 @@ test "arbitrary" {
 test "optional interpolation" {
   let some_value : Int? = Some(10)
   let none_value : Int? = None
-  @json.inspect([1, 2, 3, ..some_value, ..none_value, 4, 5], content=[
+  @json.json_inspect([1, 2, 3, ..some_value, ..none_value, 4, 5], content=[
     1, 2, 3, 10, 4, 5,
   ])
 }

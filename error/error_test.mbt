@@ -162,8 +162,8 @@ suberror ErrWithoutToJson {
 ///|
 test "error to json" {
   //TODO: note despite `impl ToJson for Error`, for suberror
-  // we can not use `@json.inspect` to inspect the error
-  // @json.inspect(ErrWithoutToJson(42))
+  // we can not use `@json.json_inspect` to inspect the error
+  // @json.json_inspect(ErrWithoutToJson(42))
   // This also applies to `impl Show for Error`, for suberror
   // we can not use `inspect` to inspect the error
   // we may auto-derive `ToJson` and `Show` for suberror automatically

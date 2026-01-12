@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// shadow @json.inspect
+// shadow @json.json_inspect
 
 ///|
 using @builtin {inspect}

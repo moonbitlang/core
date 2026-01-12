@@ -228,7 +228,9 @@ test "insert_and_grow" {
   }
   assert_eq(m.length(), 10)
   assert_eq(m.capacity(), 16)
-  @json.inspect(m, content=["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"])
+  @json.json_inspect(m, content=[
+    "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
+  ])
 }
 
 ///|
@@ -236,8 +238,8 @@ test "array unique via Set" {
   let v = [1, 2, 3, 4, 5, 3, 2, 4, 5]
   let h = @set.Set::from_iter(v.iter())
   let v = [..h]
-  @json.inspect([..h], content=[1, 2, 3, 4, 5])
-  @json.inspect(v, content=[1, 2, 3, 4, 5])
+  @json.json_inspect([..h], content=[1, 2, 3, 4, 5])
+  @json.json_inspect(v, content=[1, 2, 3, 4, 5])
 }
 
 ///|

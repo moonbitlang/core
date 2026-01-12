@@ -21,6 +21,7 @@ test "parse and validate jsons" {
   let json = @json.parse("{\"key\": 42}") catch {
     (_ : @json.ParseError) => panic()
     // _ => panic() // redundant, the type checker won't refine further
+
   }
 
   // Pretty print with indentation
@@ -86,7 +87,7 @@ test "json object navigation" {
 ```mbt check
 ///|
 test "json array navigation" {
-  let array = @json.parse("[1,2,3,4,5]")
+  let array = @json.parse("[1, 2, 3, 4, 5]")
 
   // Access by index
   let first = if array is Array([f, ..]) { Some(f) } else { None }
@@ -166,10 +167,13 @@ test "json inspection" {
 
   // Simple json values
   let json_value : Json = { "key": "value", "numbers": [1, 2, 3] }
-  @json.inspect(json_value, content={ "key": "value", "numbers": [1, 2, 3] })
+  @json.json_inspect(json_value, content={
+    "key": "value",
+    "numbers": [1, 2, 3],
+  })
 
   // Null and boolean values
   let json_special = { "null": null, "bool": true }
-  @json.inspect(json_special, content={ "null": null, "bool": true })
+  @json.json_inspect(json_special, content={ "null": null, "bool": true })
 }
 ```

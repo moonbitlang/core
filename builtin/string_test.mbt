@@ -100,26 +100,28 @@ test "panic codepoint_length with invalid surrogate pair" {
 ///|
 test "String::suffixes" {
   let suffixes = "za🤣b".suffixes().map(v => v.to_string()).collect()
-  @json.inspect(suffixes, content=["za🤣b", "a🤣b", "🤣b", "b"])
+  @json.json_inspect(suffixes, content=["za🤣b", "a🤣b", "🤣b", "b"])
   let suffixes_with_empty = "za🤣b"
     .suffixes(include_empty=true)
     .map(v => v.to_string())
     .collect()
-  @json.inspect(suffixes_with_empty, content=[
+  @json.json_inspect(suffixes_with_empty, content=[
     "za🤣b", "a🤣b", "🤣b", "b", "",
   ])
   let suffixes_no_empty = "za🤣b"
     .suffixes(include_empty=false)
     .map(v => v.to_string())
     .collect()
-  @json.inspect(suffixes_no_empty, content=["za🤣b", "a🤣b", "🤣b", "b"])
+  @json.json_inspect(suffixes_no_empty, content=[
+    "za🤣b", "a🤣b", "🤣b", "b",
+  ])
   let empty_suffixes = "".suffixes().map(v => v.to_string()).collect()
-  @json.inspect(empty_suffixes, content=[])
+  @json.json_inspect(empty_suffixes, content=[])
   let empty_suffixes_with_empty = ""
     .suffixes(include_empty=true)
     .map(v => v.to_string())
     .collect()
-  @json.inspect(empty_suffixes_with_empty, content=[""])
+  @json.json_inspect(empty_suffixes_with_empty, content=[""])
 }
 
 ///|

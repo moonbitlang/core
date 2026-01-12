@@ -42,6 +42,9 @@ pub fn[T] ignore(T) -> Unit
 #callsite(autofill(args_loc, loc))
 pub fn inspect(&@builtin.Show, content? : String, loc~ : @builtin.SourceLoc, args_loc~ : @builtin.ArgsLoc) -> Unit raise @builtin.InspectError
 
+#callsite(autofill(args_loc, loc))
+pub fn json_inspect(&@builtin.ToJson, content? : @builtin.Json, loc~ : @builtin.SourceLoc, args_loc~ : @builtin.ArgsLoc) -> Unit raise @builtin.InspectError
+
 pub fn not(Bool) -> Bool
 
 pub let null : @builtin.Json

@@ -83,7 +83,9 @@ pub fn[A : Compare] SortedSet::from_iter(iter : Iter[A]) -> SortedSet[A] {
 
 ///|
 test {
-  @json.inspect(from_array([2, 7, 1, 2, 3, 4, 5]), content=[1, 2, 3, 4, 5, 7])
+  @json.json_inspect(from_array([2, 7, 1, 2, 3, 4, 5]), content=[
+    1, 2, 3, 4, 5, 7,
+  ])
 }
 
 ///|

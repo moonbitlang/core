@@ -251,10 +251,10 @@ test "trim_start" {
 
 ///|
 test "contains" {
-  @json.inspect("abc".contains("a"), content=true)
-  @json.inspect("中文".contains("文"), content=true)
-  @json.inspect("中文".contains("中"), content=true)
-  @json.inspect("中文".contains("a"), content=false)
+  @json.json_inspect("abc".contains("a"), content=true)
+  @json.json_inspect("中文".contains("文"), content=true)
+  @json.json_inspect("中文".contains("中"), content=true)
+  @json.json_inspect("中文".contains("a"), content=false)
 }
 
 ///|

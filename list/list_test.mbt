@@ -31,8 +31,8 @@ test "pipe" {
 ///|
 test "length" {
   let ls = @list.from_array([1, 2, 3, 4, 5])
-  @json.inspect(ls.length(), content=5)
-  @json.inspect(@list.singleton(11), content=[11])
+  @json.json_inspect(ls.length(), content=5)
+  @json.json_inspect(@list.singleton(11), content=[11])
 }
 
 ///|
@@ -654,13 +654,13 @@ test "List::output with empty list" {
 ///|
 test "List::to_json with non-empty list" {
   let list = @list.from_array([1, 2, 3, 4, 5])
-  @json.inspect(ToJson::to_json(list), content=[1, 2, 3, 4, 5])
+  @json.json_inspect(ToJson::to_json(list), content=[1, 2, 3, 4, 5])
 }
 
 ///|
 test "List::to_json with empty list" {
   let list : @list.List[Int] = @list.empty()
-  @json.inspect(ToJson::to_json(list), content=[])
+  @json.json_inspect(ToJson::to_json(list), content=[])
 }
 
 ///|
@@ -674,18 +674,18 @@ test "List::from_json" {
 test "to_json/from_json" {
   let list = @list.from_array([1, 2, 3, 4, 5])
   let json_expected : Json = [1, 2, 3, 4, 5]
-  @json.inspect(list, content=json_expected)
+  @json.json_inspect(list, content=json_expected)
   let list2 : @list.List[Int] = @json.from_json(json_expected)
-  @json.inspect(list2, content=json_expected)
+  @json.json_inspect(list2, content=json_expected)
   let v : Result[@list.List[Int], @json.JsonDecodeError] = try? @json.from_json({
       "a": 1,
     },
   )
-  @json.inspect(v, content={
+  @json.json_inspect(v, content={
     "Err": ["JsonDecodeError", ["", "@list.from_json: expected array"]],
   })
   let v2 : @list.List[Int] = @list.from_json([1, 2, 3, 4])
-  @json.inspect(v2, content=[1, 2, 3, 4])
+  @json.json_inspect(v2, content=[1, 2, 3, 4])
 }
 
 ///|

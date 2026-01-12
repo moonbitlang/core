@@ -14,12 +14,12 @@
 
 ///|
 test {
-  @json.inspect(1, content=1)
+  @json.json_inspect(1, content=1)
 }
 
 ///|
 test {
-  @json.inspect({ "x": 1 }, content={ "x": 1 })
+  @json.json_inspect({ "x": 1 }, content={ "x": 1 })
 }
 
 ///|
@@ -47,9 +47,9 @@ struct Line {
 test "json inspect" {
   let p1 = { x: 0, y: 0, color: Color::Red }
   let p2 = { x: 1, y: 2, color: Color::Green }
-  @json.inspect(p1, content={ "x": 0, "y": 0, "color": "Red" })
+  @json.json_inspect(p1, content={ "x": 0, "y": 0, "color": "Red" })
   let line = { p1, p2, color: Color::Blue }
-  @json.inspect(line, content={
+  @json.json_inspect(line, content={
     "p1": { "x": 0, "y": 0, "color": "Red" },
     "p2": { "x": 1, "y": 2, "color": "Green" },
     "color": "Blue",
@@ -58,13 +58,13 @@ test "json inspect" {
 
 ///|
 test "json inspect error paths" {
-  let default_result = try? @json.inspect(1)
+  let default_result = try? @json.json_inspect(1)
   let default_is_err = match default_result {
     Ok(_) => false
     Err(_) => true
   }
   inspect(default_is_err, content="true")
-  let mismatch_result = try? @json.inspect(1, content=2)
+  let mismatch_result = try? @json.json_inspect(1, content=2)
   let mismatch_is_err = match mismatch_result {
     Ok(_) => false
     Err(_) => true

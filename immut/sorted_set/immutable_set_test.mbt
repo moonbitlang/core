@@ -431,8 +431,13 @@ test "compare" {
 
 ///|
 test "to_json" {
-  @json.inspect(@sorted_set.from_array([5, 2, 4, 3, 1]), content=[1, 2, 3, 4, 5])
-  @json.inspect((@sorted_set.from_array([]) : @sorted_set.SortedSet[Int]), content=[])
+  @json.json_inspect(@sorted_set.from_array([5, 2, 4, 3, 1]), content=[
+    1, 2, 3, 4, 5,
+  ])
+  @json.json_inspect(
+    (@sorted_set.from_array([]) : @sorted_set.SortedSet[Int]),
+    content=[],
+  )
 }
 
 ///|
