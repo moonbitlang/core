@@ -14,13 +14,13 @@
 
 ///|
 test "inspect" {
-  @debug.inspect(
+  @debug.debug_inspect(
     Some("msg"),
     content=(
       #|Some("msg")
     ),
   )
-  @debug.inspect(
+  @debug.debug_inspect(
     @list.from_array(["data1", "data2"]),
     content=(
       #|<List: ["data1", "data2"]>
@@ -30,7 +30,7 @@ test "inspect" {
 
 ///|
 test "tuple Debug implementations" {
-  inspect(
+  @debug.debug_inspect(
     (1, "a"),
     content=(
       #|(1, "a")
@@ -38,7 +38,7 @@ test "tuple Debug implementations" {
   )
 
   // Test tuple3
-  inspect(
+  @debug.debug_inspect(
     (1, "a", true),
     content=(
       #|(1, "a", true)
@@ -46,7 +46,7 @@ test "tuple Debug implementations" {
   )
 
   // Test tuple4
-  inspect(
+  @debug.debug_inspect(
     (1, "a", true, 2.0),
     content=(
       #|(1, "a", true, 2)
@@ -54,7 +54,7 @@ test "tuple Debug implementations" {
   )
 
   // Test tuple5
-  inspect(
+  @debug.debug_inspect(
     (1, "a", true, 2.0, 'c'),
     content=(
       #|(1, "a", true, 2, 'c')
@@ -62,7 +62,7 @@ test "tuple Debug implementations" {
   )
 
   // Test tuple6
-  inspect(
+  @debug.debug_inspect(
     (1, "a", true, 2.0, 'c', 6),
     content=(
       #|(1, "a", true, 2, 'c', 6)
@@ -70,7 +70,7 @@ test "tuple Debug implementations" {
   )
 
   // Test tuple7
-  inspect(
+  @debug.debug_inspect(
     (1, "a", true, 2.0, 'c', 6, "g"),
     content=(
       #|(1, "a", true, 2, 'c', 6, "g")
@@ -78,7 +78,7 @@ test "tuple Debug implementations" {
   )
 
   // Test tuple8
-  inspect(
+  @debug.debug_inspect(
     (1, "a", true, 2.0, 'c', 6, "g", false),
     content=(
       #|(
@@ -95,7 +95,7 @@ test "tuple Debug implementations" {
   )
 
   // Test tuple9
-  inspect(
+  @debug.debug_inspect(
     (1, "a", true, 2.0, 'c', 6, "g", false, 9),
     content=(
       #|(
@@ -113,7 +113,7 @@ test "tuple Debug implementations" {
   )
 
   // Test tuple10
-  inspect(
+  @debug.debug_inspect(
     (1, "a", true, 2.0, 'c', 6, "g", false, 9, "j"),
     content=(
       #|(
@@ -132,7 +132,7 @@ test "tuple Debug implementations" {
   )
 
   // Test tuple11
-  inspect(
+  @debug.debug_inspect(
     (1, "a", true, 2.0, 'c', 6, "g", false, 9, "j", 11),
     content=(
       #|(
@@ -152,7 +152,7 @@ test "tuple Debug implementations" {
   )
 
   // Test tuple12
-  inspect(
+  @debug.debug_inspect(
     (1, "a", true, 2.0, 'c', 6, "g", false, 9, "j", 11, "l"),
     content=(
       #|(
@@ -173,7 +173,7 @@ test "tuple Debug implementations" {
   )
 
   // Test tuple13
-  inspect(
+  @debug.debug_inspect(
     (1, "a", true, 2.0, 'c', 6, "g", false, 9, "j", 11, "l", 13),
     content=(
       #|(
@@ -195,7 +195,7 @@ test "tuple Debug implementations" {
   )
 
   // Test tuple14
-  inspect(
+  @debug.debug_inspect(
     (1, "a", true, 2.0, 'c', 6, "g", false, 9, "j", 11, "l", 13, "n"),
     content=(
       #|(
@@ -218,7 +218,7 @@ test "tuple Debug implementations" {
   )
 
   // Test tuple15
-  inspect(
+  @debug.debug_inspect(
     (1, "a", true, 2.0, 'c', 6, "g", false, 9, "j", 11, "l", 13, "n", 15),
     content=(
       #|(
@@ -242,7 +242,7 @@ test "tuple Debug implementations" {
   )
 
   // Test tuple16
-  inspect(
+  @debug.debug_inspect(
     (1, "a", true, 2.0, 'c', 6, "g", false, 9, "j", 11, "l", 13, "n", 15, "p"),
     content=(
       #|(
@@ -267,7 +267,7 @@ test "tuple Debug implementations" {
   )
 
   // Test tuple17
-  inspect(
+  @debug.debug_inspect(
     (
       1, "a", true, 2.0, 'c', 6, "g", false, 9, "j", 11, "l", 13, "n", 15, "p", 17,
     ),
@@ -295,7 +295,7 @@ test "tuple Debug implementations" {
   )
 
   // Test tuple18
-  inspect(
+  @debug.debug_inspect(
     (
       1, "a", true, 2.0, 'c', 6, "g", false, 9, "j", 11, "l", 13, "n", 15, "p", 17,
       "r",
@@ -325,7 +325,7 @@ test "tuple Debug implementations" {
   )
 
   // Test tuple19
-  inspect(
+  @debug.debug_inspect(
     (
       1, "a", true, 2.0, 'c', 6, "g", false, 9, "j", 11, "l", 13, "n", 15, "p", 17,
       "r", 19,
@@ -356,7 +356,7 @@ test "tuple Debug implementations" {
   )
 
   // Test tuple20
-  inspect(
+  @debug.debug_inspect(
     (
       1, "a", true, 2.0, 'c', 6, "g", false, 9, "j", 11, "l", 13, "n", 15, "p", 17,
       "r", 19, "t",
@@ -388,7 +388,7 @@ test "tuple Debug implementations" {
   )
 
   // Test tuple21
-  inspect(
+  @debug.debug_inspect(
     (
       1, "a", true, 2.0, 'c', 6, "g", false, 9, "j", 11, "l", 13, "n", 15, "p", 17,
       "r", 19, "t", 21,
@@ -421,7 +421,7 @@ test "tuple Debug implementations" {
   )
 
   // Test tuple22
-  inspect(
+  @debug.debug_inspect(
     (
       1, "a", true, 2.0, 'c', 6, "g", false, 9, "j", 11, "l", 13, "n", 15, "p", 17,
       "r", 19, "t", 21, "v",
@@ -458,46 +458,46 @@ test "tuple Debug implementations" {
 ///|
 #warnings("-deprecated")
 test "core data structures Debug implementations" {
-  inspect((1 : Int16), content="1")
-  inspect((1 : UInt16), content="1")
-  inspect((1 : UInt64), content="1")
-  inspect((1.0 : Float), content="1")
+  @debug.debug_inspect((1 : Int16), content="1")
+  @debug.debug_inspect((1 : UInt16), content="1")
+  @debug.debug_inspect((1 : UInt64), content="1")
+  @debug.debug_inspect((1.0 : Float), content="1")
   let b : Bytes = b"ab"
-  inspect(b, content="<Bytes: [0x61, 0x62]>")
+  @debug.debug_inspect(b, content="<Bytes: [0x61, 0x62]>")
   let bv : BytesView = b[:]
-  inspect(bv, content="<BytesView: [0x61, 0x62]>")
+  @debug.debug_inspect(bv, content="<BytesView: [0x61, 0x62]>")
   let sv : StringView = "abc"[:]
-  inspect(
+  @debug.debug_inspect(
     sv,
     content=(
       #|<StringView: "abc">
     ),
   )
   let av : ArrayView[Int] = [1, 2, 3][1:3]
-  inspect(av, content="<ArrayView: [2, 3]>")
+  @debug.debug_inspect(av, content="<ArrayView: [2, 3]>")
   let fa : FixedArray[Int] = [1, 2, 3]
-  inspect(fa, content="<FixedArray: [1, 2, 3]>")
+  @debug.debug_inspect(fa, content="<FixedArray: [1, 2, 3]>")
   let ro : ReadOnlyArray[Int] = [1, 2, 3]
-  inspect(ro, content="<ReadOnlyArray: [1, 2, 3]>")
+  @debug.debug_inspect(ro, content="<ReadOnlyArray: [1, 2, 3]>")
   let lst : @list.List[Int] = @list.from_array([1, 2, 3])
-  inspect(lst, content="<List: [1, 2, 3]>")
+  @debug.debug_inspect(lst, content="<List: [1, 2, 3]>")
   let dq : @deque.Deque[Int] = @deque.from_array([1, 2, 3])
-  inspect(dq, content="<Deque: [1, 2, 3]>")
+  @debug.debug_inspect(dq, content="<Deque: [1, 2, 3]>")
   let q : @queue.Queue[Int] = @queue.from_array([1, 2, 3])
-  inspect(q, content="<Queue: [1, 2, 3]>")
+  @debug.debug_inspect(q, content="<Queue: [1, 2, 3]>")
   let pq : @priority_queue.PriorityQueue[Int] = @priority_queue.from_array([
     3, 1, 2,
   ])
-  inspect(pq, content="<PriorityQueue: [3, 2, 1]>")
+  @debug.debug_inspect(pq, content="<PriorityQueue: [3, 2, 1]>")
   let buf = @buffer.new()
   buf.write_bytes(b"ab")
-  inspect(buf, content="<Buffer: [0x61, 0x62]>")
+  @debug.debug_inspect(buf, content="<Buffer: [0x61, 0x62]>")
   let r : Ref[Int] = @ref.new(1)
-  inspect(r, content="<Ref: 1>")
+  @debug.debug_inspect(r, content="<Ref: 1>")
   let mv : MutArrayView[Int] = [1, 2, 3].mut_view(start=1, end=3)
-  inspect(mv, content="<MutArrayView: [2, 3]>")
-  inspect((Ok(1) : Result[Int, String]), content="Ok(1)")
-  inspect(
+  @debug.debug_inspect(mv, content="<MutArrayView: [2, 3]>")
+  @debug.debug_inspect((Ok(1) : Result[Int, String]), content="Ok(1)")
+  @debug.debug_inspect(
     (Err("e") : Result[Int, String]),
     content=(
       #|Err("e")
@@ -506,13 +506,13 @@ test "core data structures Debug implementations" {
 
   // Test immut containers
   let immut_lst = @immut_list.from_array([1, 2, 3])
-  inspect(immut_lst, content="<List: [1, 2, 3]>")
+  @debug.debug_inspect(immut_lst, content="<List: [1, 2, 3]>")
   let immut_arr = @immut_array.from_array([1, 2, 3])
-  inspect(immut_arr, content="<Array: [1, 2, 3]>")
+  @debug.debug_inspect(immut_arr, content="<Array: [1, 2, 3]>")
   let immut_pq = @immut_priority_queue.from_array([3, 1, 2])
-  inspect(immut_pq, content="<PriorityQueue: [3, 2, 1]>")
+  @debug.debug_inspect(immut_pq, content="<PriorityQueue: [3, 2, 1]>")
   let immut_sm = @immut_sorted_map.from_array([(1, "a"), (2, "b")])
-  inspect(
+  @debug.debug_inspect(
     immut_sm,
     content=(
       #|<SortedMap:
@@ -520,28 +520,28 @@ test "core data structures Debug implementations" {
     ),
   )
   let immut_ss = @immut_sorted_set.from_array([3, 1, 2])
-  inspect(immut_ss, content="<SortedSet: [1, 2, 3]>")
+  @debug.debug_inspect(immut_ss, content="<SortedSet: [1, 2, 3]>")
 }
 
 ///|
 test "Debug for hash-based collections" {
   // The order is unstable.
   let hm : @hashmap.HashMap[Int, String] = @hashmap.from_array([(2, "b")])
-  inspect(
+  @debug.debug_inspect(
     hm,
     content=(
       #|<HashMap: { 2: "b" }>
     ),
   )
   let hs : @hashset.HashSet[Int] = @hashset.from_array([1])
-  inspect(hs, content="<HashSet: [1]>")
+  @debug.debug_inspect(hs, content="<HashSet: [1]>")
   let immut_hm = @immut_hashmap.from_array([(2, "b")])
-  inspect(
+  @debug.debug_inspect(
     immut_hm,
     content=(
       #|<HashMap: { 2: "b" }>
     ),
   )
   let immut_hs = @immut_hashset.from_array([3])
-  inspect(immut_hs, content="<HashSet: [3]>")
+  @debug.debug_inspect(immut_hs, content="<HashSet: [3]>")
 }
