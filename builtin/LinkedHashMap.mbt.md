@@ -31,9 +31,9 @@ test {
   inspect(map.get("a"), content="Some(1)")
   inspect(map.get_or_default("a", 0), content="1")
   inspect(map.get_or_default("b", 0), content="0")
-  @json.inspect(map, content={ "a": 1 })
+  @json.json_inspect(map, content={ "a": 1 })
   map.set("a", 2) // duplicate key
-  @json.inspect(map, content={ "a": 2 })
+  @json.json_inspect(map, content={ "a": 2 })
 }
 ```
 
@@ -135,9 +135,9 @@ test {
   let map = { "a": 1, "b": 2, "c": 3 }
   let arr = []
   map.each((k, v) => arr.push((k, v)))
-  @json.inspect(arr, content=[["a", 1], ["b", 2], ["c", 3]])
+  @json.json_inspect(arr, content=[["a", 1], ["b", 2], ["c", 3]])
   let arr2 = []
   map.eachi((i, k, v) => arr2.push((i, k, v)))
-  @json.inspect(arr2, content=[[0, "a", 1], [1, "b", 2], [2, "c", 3]])
+  @json.json_inspect(arr2, content=[[0, "a", 1], [1, "b", 2], [2, "c", 3]])
 }
 ```
