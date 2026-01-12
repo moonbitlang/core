@@ -13,8 +13,8 @@ You can use `new()` or `of()` to create a priority queue.
 test {
   let queue1 : @priority_queue.PriorityQueue[Int] = @priority_queue.new()
   let queue2 = @priority_queue.from_array([1, 2, 3])
-  @json.inspect(queue1, content=[])
-  @json.inspect(queue2, content=[3, 2, 1])
+  @json.json_inspect(queue1, content=[])
+  @json.json_inspect(queue2, content=[3, 2, 1])
 }
 ```
 
@@ -90,7 +90,7 @@ test {
 
 ## Pop
 
-You can use `pop()` to pop the element at the front of the priority queue, respectively, and like [Peek](#Peek), its return values are `Option`, loaded with the value of the element being popped.
+You can use `pop()` to pop the element at the front of the priority queue, respectively, and like [Peek](#Peek), its return values are `Option` , loaded with the value of the element being popped.
 
 ```mbt check
 ///|

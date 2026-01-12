@@ -155,7 +155,7 @@ test "json path" {
 
 ## JSON-based Snapshot Testing
 
-`@json.inspect()` can be used as an alternative to `inspect()` when a value's
+`@json.json_inspect()` can be used as an alternative to `inspect()` when a value's
 `ToJson` implementation is considered a better debugging representation than its
 `Show` implementation. This is particularly true for deeply-nested data
 structures.

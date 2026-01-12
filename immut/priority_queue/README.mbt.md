@@ -51,7 +51,7 @@ You can use `peek()` to look at the head element of a queue, which must be eithe
 test {
   let pq = @priority_queue.from_array([1, 2, 3, 4, 5])
   assert_eq(pq.peek(), Some(5))
-  // @json.inspect(pq)
+  // @json.json_inspect(pq)
   // we have to add `@json` package in test-import
   // it's reported unused package currently
 }

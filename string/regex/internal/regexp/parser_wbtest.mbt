@@ -328,7 +328,7 @@ test "parse named capture group error cases" {
 test "parse valid group name formats" {
   // Starts with a letter
   let regex = parse("(?<group>abc)").ast
-  @json.inspect((regex : Ast), content=[
+  @json.json_inspect((regex : Ast), content=[
     "Capture 1",
     [
       ["CharClass neg=false", ["'a'", "'a'"]],
@@ -339,7 +339,7 @@ test "parse valid group name formats" {
 
   // Starts with an underscore
   let regex = parse("(?<_group>abc)").ast
-  @json.inspect((regex : Ast), content=[
+  @json.json_inspect((regex : Ast), content=[
     "Capture 1",
     [
       ["CharClass neg=false", ["'a'", "'a'"]],
@@ -350,7 +350,7 @@ test "parse valid group name formats" {
 
   // Contains digits
   let regex = parse("(?<group1>abc)").ast
-  @json.inspect((regex : Ast), content=[
+  @json.json_inspect((regex : Ast), content=[
     "Capture 1",
     [
       ["CharClass neg=false", ["'a'", "'a'"]],
@@ -361,7 +361,7 @@ test "parse valid group name formats" {
 
   // Contains multiple underscores
   let regex = parse("(?<my_group_1>abc)").ast
-  @json.inspect((regex : Ast), content=[
+  @json.json_inspect((regex : Ast), content=[
     "Capture 1",
     [
       ["CharClass neg=false", ["'a'", "'a'"]],
@@ -706,7 +706,7 @@ test "parse unicode general property" {
 ///|
 test "parse unmatched curly brace" {
   let regex = parse("a|b}").ast
-  @json.inspect(regex, content=[
+  @json.json_inspect(regex, content=[
     "Alternate",
     ["CharClass neg=false", ["'a'", "'a'"]],
     [
@@ -720,13 +720,13 @@ test "parse unmatched curly brace" {
 test "parse character class range with escaped end character" {
   // Test unicode escapes in ranges
   let regex = parse("[a-\\u007A]").ast // Should parse as range from 'a' to 'z' (U+007A)
-  @json.inspect(regex, content=["CharClass neg=false", ["'a'", "'z'"]])
+  @json.json_inspect(regex, content=["CharClass neg=false", ["'a'", "'z'"]])
   let regex = parse("[a-\\u{7A}]").ast // Should parse as range from 'a' to 'z' (U+007A)
-  @json.inspect(regex, content=["CharClass neg=false", ["'a'", "'z'"]])
+  @json.json_inspect(regex, content=["CharClass neg=false", ["'a'", "'z'"]])
 
   // Test with literal backslash in range - backslash (0x5C) < 'z' (0x7A)
   let regex = parse("[\\\\-z]").ast // Should parse as range from '\' to 'z'
-  @json.inspect(regex, content=["CharClass neg=false", ["'\\\\'", "'z'"]])
+  @json.json_inspect(regex, content=["CharClass neg=false", ["'\\\\'", "'z'"]])
 
   // Test invalid range (end char < start char) - tab comes before 'z', so this should error
   let result = try? parse("[z-\\t]")
@@ -746,11 +746,11 @@ test "parse character class range with escaped end character" {
 
   // Test escaped characters on both sides of range - newline (0x0A) to carriage return (0x0D)
   let regex = parse("[\\n-\\r]").ast
-  @json.inspect(regex, content=["CharClass neg=false", ["'\\n'", "'\\r'"]])
+  @json.json_inspect(regex, content=["CharClass neg=false", ["'\\n'", "'\\r'"]])
 
   // Test range with special escape : \s-\s should be treated as literal characters '-'
   let regex = parse("[\\s-\\s]").ast
-  @json.inspect(regex, content=[
+  @json.json_inspect(regex, content=[
     "CharClass neg=false",
     [
       "'\\t'", "'\\r'", "' '", "' '", "' '", "' '", "' '", "' '", "' '",
