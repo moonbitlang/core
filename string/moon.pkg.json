@@ -1,5 +1,12 @@
 {
-  "import": ["moonbitlang/core/builtin", "moonbitlang/core/char"],
+  "import": [
+    "moonbitlang/core/builtin",
+    "moonbitlang/core/char",
+    {
+      "path": "moonbitlang/core/internal/regex_engine",
+      "alias": "re"
+    }
+  ],
   "test-import": [
     "moonbitlang/core/list",
     "moonbitlang/core/json",
@@ -15,6 +22,10 @@
     }
   ],
   "targets": {
-    "panic_test.mbt": ["not", "native", "llvm"]
+    "panic_test.mbt": [
+      "not",
+      "native",
+      "llvm"
+    ]
   }
 }

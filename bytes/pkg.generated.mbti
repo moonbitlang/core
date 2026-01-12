@@ -24,6 +24,15 @@ pub fn of(ArrayView[Byte]) -> Bytes
 // Errors
 
 // Types and methods
+type BytesRegex
+pub fn BytesRegex::execute(Self, BytesView, lastIndex? : Int) -> MatchResult?
+
+type MatchResult
+pub fn MatchResult::after(Self) -> BytesView
+pub fn MatchResult::before(Self) -> BytesView
+pub fn MatchResult::content(Self) -> BytesView
+pub fn MatchResult::group(Self, Int) -> BytesView?
+pub fn MatchResult::named_group(Self, String) -> BytesView?
 
 // Type aliases
 #deprecated
