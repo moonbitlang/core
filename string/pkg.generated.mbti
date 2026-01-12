@@ -20,6 +20,15 @@ pub fn from_iterator(Iter[Char]) -> String
 // Errors
 
 // Types and methods
+type MatchResult
+pub fn MatchResult::after(Self) -> StringView
+pub fn MatchResult::before(Self) -> StringView
+pub fn MatchResult::content(Self) -> StringView
+pub fn MatchResult::group(Self, Int) -> StringView?
+pub fn MatchResult::named_group(Self, String) -> StringView?
+
+type Regex
+pub fn Regex::execute(Self, StringView, lastIndex? : Int) -> MatchResult?
 
 // Type aliases
 #deprecated
