@@ -1,4 +1,0 @@
-aabbcc
-aab
-bc
-c
