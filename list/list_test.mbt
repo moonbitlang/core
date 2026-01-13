@@ -733,9 +733,12 @@ test "List::output with non-empty list" {
   let buf = StringBuilder::new(size_hint=100)
   let list = @list.from_array([1, 2, 3, 4, 5])
   Show::output(list, buf)
-  debug_inspect(buf, content=(
-    #|"@list.from_array([1, 2, 3, 4, 5])"
-  ))
+  debug_inspect(
+    buf,
+    content=(
+      #|"@list.from_array([1, 2, 3, 4, 5])"
+    ),
+  )
 }
 
 ///|
@@ -743,9 +746,12 @@ test "List::output with empty list" {
   let buf = StringBuilder::new(size_hint=100)
   let list : @list.List[Int] = @list.empty()
   Show::output(list, buf)
-  debug_inspect(buf, content=(
-    #|"@list.from_array([])"
-  ))
+  debug_inspect(
+    buf,
+    content=(
+      #|"@list.from_array([])"
+    ),
+  )
 }
 
 ///|
